@@ -1,5 +1,5 @@
 Eggdrop Tcl Commands
-Last revised: May 17, 2002
+Last revised: May 21, 2002
      _________________________________________________________________
 
 This is an exhaustive list of all the Tcl commands added to Eggdrop. All
@@ -834,17 +834,6 @@ marked with vertical bars (|) on the left.
      Returns: nothing
      Module: core
 
-  restart
-    Description: rehashes the bot, kills all timers, reloads all modules,
-      and reconnects the bot to the next server in its list.
-    Returns: nothing
-    Module: core
-
-  rehash
-    Description: rehashes the bot
-    Returns: nothing
-    Module: core
-
   dccsimul <idx> <text>
     Description: simulates text typed in by the dcc user specified. Note
       that in v0.9, this only simulated commands; now a command must be
@@ -1457,6 +1446,17 @@ marked with vertical bars (|) on the left.
 
   reloadhelp
     Description: reloads the bot's help files.
+    Returns: nothing
+    Module: core
+
+  restart
+    Description: rehashes the bot, kills all timers, reloads all modules,
+      and reconnects the bot to the next server in its list.
+    Returns: nothing
+    Module: core
+
+  rehash
+    Description: rehashes the bot
     Returns: nothing
     Module: core
 
