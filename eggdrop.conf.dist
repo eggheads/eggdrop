@@ -1,7 +1,7 @@
 #! /path/to/eggdrop
 # ^- set that to the directory eggdrop is in ie "#! /users/lamest/egg/eggdrop"
 #
-# $Id: eggdrop.conf.dist,v 1.41 2000/02/02 12:12:50 per Exp $
+# $Id: eggdrop.conf.dist,v 1.42 2000/05/01 06:15:42 poptix Exp $
 #
 # This is a sample configuration file for your bot.  You will definitely
 # want to edit this, to set up your bot.  Right now it creates a bot called
@@ -255,7 +255,7 @@ set resolve-timeout 15
 # (does anyone besides Sun use this?)
 #set firewall "!sun-barr.ebay:3666"
 
-# if you have a NAT firewall (you box has an IP in one of the following
+# if you have a NAT firewall (your box has an IP in one of the following
 # ranges: 192.168.0.0-192.168.255.255, 172.16.0.0-172.31.255.255,
 # 10.0.0.0-10.255.255.255 and your firewall transparently changes your
 # address to a unique address for your box.) or you have IP masquerading
