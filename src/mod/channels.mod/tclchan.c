@@ -1,7 +1,7 @@
 /*
  * tclchan.c -- part of channels.mod
  *
- * $Id: tclchan.c,v 1.76 2003/02/27 10:18:40 tothwolf Exp $
+ * $Id: tclchan.c,v 1.77 2003/02/28 12:45:49 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -959,7 +959,7 @@ static int tcl_channel_get(Tcl_Interp *irp, struct chanset_t *chan,
     simple_sprintf(s, "%d", chan->exempt_time);
   else if (!strcmp(setting, "invite-time"))
     simple_sprintf(s, "%d", chan->invite_time);
-  else if (!strcmp(setting, "flood-pub"))
+  else if (!strcmp(setting, "flood-chan"))
     simple_sprintf(s, "%d %d", chan->flood_pub_thr, chan->flood_pub_time);
   else if (!strcmp(setting, "flood-ctcp"))
     simple_sprintf(s, "%d %d", chan->flood_ctcp_thr, chan->flood_ctcp_time);
