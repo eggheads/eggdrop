@@ -4,7 +4,7 @@
  *   provides the code used by the bot if the DNS module is not loaded
  *   DNS Tcl commands
  * 
- * $Id: dns.c,v 1.10 1999/12/25 15:05:27 fabian Exp $
+ * $Id: dns.c,v 1.11 1999/12/26 12:21:51 fabian Exp $
  */
 /* 
  * Written by Fabian Knittel <fknittel@gmx.de>
@@ -248,24 +248,37 @@ void dcc_dnshostbyip(IP ip)
 
 static void dns_tcl_iporhostres(IP ip, char *hostn, int ok, void *other)
 {
-  char *proc = (char *) other;
+  devent_tclinfo_t *tclinfo = (devent_tclinfo_t *) other;
   
   Context;
-  if (Tcl_VarEval(interp, proc, " ", iptostr(htonl(ip)), " ", hostn,
-		  ok ? " 1" : " 0", NULL) == TCL_ERROR)
-    putlog(LOG_MISC, "*", DCC_TCLERROR, proc, interp->result);
+  if (Tcl_VarEval(interp, tclinfo->proc, " ", iptostr(htonl(ip)), " ", hostn,
+		  ok ? " 1" : " 0", tclinfo->paras, NULL) == TCL_ERROR)
+    putlog(LOG_MISC, "*", DCC_TCLERROR, tclinfo->proc, interp->result);
 
   /* Free the memory. It will be unused after this event call. */
-  nfree(proc);
+  nfree(tclinfo->proc);
+  if (tclinfo->paras)
+    nfree(tclinfo->paras);
+  nfree(tclinfo);
 }
 
 static int dns_tclexpmem(void *other)
 {
-  char *proc = (char *) other;
+  devent_tclinfo_t *tclinfo = (devent_tclinfo_t *) other;
   int l = 0;
 
-  if (proc)
-    l = strlen(proc) + 1;
+  debug1("I'm in tclexpmem... %p", other);
+  if (tclinfo) {
+    l = sizeof(devent_tclinfo_t);
+    if (tclinfo->proc) {
+      l += strlen(tclinfo->proc) + 1;
+      debug1("accounting for proc: %s", tclinfo->proc);
+    }
+    if (tclinfo->paras)
+      l += strlen(tclinfo->paras) + 1;
+      debug1("accounting for paras: %s", tclinfo->paras);
+  }
+  debug1("... returning %d bytes usage.", l);
   return l;
 }
 
@@ -281,9 +294,10 @@ devent_type DNS_TCLEVENT_IPBYHOST = {
   dns_tcl_iporhostres
 };
 
-static void tcl_dnsipbyhost(char *hostn, char *proc)
+static void tcl_dnsipbyhost(char *hostn, char *proc, char *paras)
 {
   devent_t *de;
+  devent_tclinfo_t *tclinfo;
 
   Context;
   de = nmalloc(sizeof(devent_t));
@@ -297,16 +311,26 @@ static void tcl_dnsipbyhost(char *hostn, char *proc)
   de->lookup = RES_IPBYHOST;
   de->res_data.hostname = nmalloc(strlen(hostn) + 1);
   strcpy(de->res_data.hostname, hostn);
-  de->other = nmalloc(strlen(proc) + 1);
-  strcpy(de->other, proc);
+
+  /* Store additional data. */
+  tclinfo = nmalloc(sizeof(devent_tclinfo_t));
+  tclinfo->proc = nmalloc(strlen(proc) + 1);
+  strcpy(tclinfo->proc, proc);
+  if (paras) {
+    tclinfo->paras = nmalloc(strlen(paras) + 1);
+    strcpy(tclinfo->paras, paras);
+  } else
+    tclinfo->paras = NULL;
+  de->other = tclinfo;
 
   /* Send request. */
   dns_ipbyhost(hostn);
 }
 
-static void tcl_dnshostbyip(IP ip, char *proc)
+static void tcl_dnshostbyip(IP ip, char *proc, char *paras)
 {
   devent_t *de;
+  devent_tclinfo_t *tclinfo;
 
   Context;
   de = nmalloc(sizeof(devent_t));
@@ -319,8 +343,17 @@ static void tcl_dnshostbyip(IP ip, char *proc)
   de->type = &DNS_TCLEVENT_HOSTBYIP;
   de->lookup = RES_HOSTBYIP;
   de->res_data.ip_addr = ip;
-  de->other = nmalloc(strlen(proc) + 1);
-  strcpy(de->other, proc);
+
+  /* Store additional data. */
+  tclinfo = nmalloc(sizeof(devent_tclinfo_t));
+  tclinfo->proc = nmalloc(strlen(proc) + 1);
+  strcpy(tclinfo->proc, proc);
+  if (paras) {
+    tclinfo->paras = nmalloc(strlen(paras) + 1);
+    strcpy(tclinfo->paras, paras);
+  } else
+    tclinfo->paras = NULL;
+  de->other = tclinfo;
 
   /* Send request. */
   dns_hostbyip(ip);
@@ -490,14 +523,37 @@ int expmem_dns(void)
 static int tcl_dnslookup STDVAR
 {
   struct in_addr inaddr;
-  
+  char *paras = NULL;
+ 
   Context;
-  BADARGS(3, 3, " ip-address/hostname proc");
+  if (argc < 3) {
+    Tcl_AppendResult(irp, "wrong # args: should be \"", argv[0],
+		     " ip-address/hostname proc ?args...?\"", NULL);
+    return TCL_ERROR;
+  }
+
+  if (argc > 3) {
+    int l = 0, p;
+
+    /* Create a string with a leading space out of all provided
+     * additional parameters.
+     */
+    paras = nmalloc(1);
+    paras[0] = 0;
+    for (p = 3; p < argc; p++) {
+      l += strlen(argv[p]) + 1;
+      paras = nrealloc(paras, l + 1);
+      strcat(paras, " ");
+      strcat(paras, argv[p]);
+    }
+  }
 
   if (inet_aton(argv[1], &inaddr))
-    tcl_dnshostbyip(ntohl(inaddr.s_addr), argv[2]);
+    tcl_dnshostbyip(ntohl(inaddr.s_addr), argv[2], paras);
   else
-    tcl_dnsipbyhost(argv[1], argv[2]);
+    tcl_dnsipbyhost(argv[1], argv[2], paras);
+  if (paras)
+    nfree(paras);
   return TCL_OK;
 }
 

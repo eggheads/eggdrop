@@ -883,13 +883,15 @@ specific commands, see later.
   unames
    returns:  The current operating system the bot is using.
 
-| dnslookup <ip-address/hostname> <proc>
-|   Issues an asynchronous dns lookup request. The command will return
-|   immediately if the dns module is loaded, otherwise it will block until
-|   the request has completed. 
+| dnslookup <ip-address/hostname> <proc> [[arg1] [arg2] ... [argn]]
+|   Issues an asynchronous dns lookup request. The command will block if
+|   dns module is not loaded, otherwise it will either return immediately
+|   or immediately call the proc (e.g. if the lookup is already cached).
 |   As soon as the request completes, <proc> will be called as follows:
-|     <proc> ipaddress hostname status
-|   status is 1 if the lookup was successful and 0 if it wasn't.
+|     <proc> ipaddress hostname status [[arg1] [arg2] ... [argn]]
+|   status is 1 if the lookup was successful and 0 if it wasn't. All
+|   additional parameters (called arg1, arg2 and argn above) get appended
+|   to the proc's other parameters.
 
 GLOBAL VARIABLES:
   (All config-file variables are global, too.  But these variables
