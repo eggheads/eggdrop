@@ -15,7 +15,7 @@
  * 1.4       1997-11-25      1.2.2.0         Added language addition  Kirk
  * 1.5       1998-07-12      1.3.0.0         Fixed ;me and updated    BB
  *
- * $Id: wire.c,v 1.29 2004/01/09 05:56:39 wcc Exp $
+ * $Id: wire.c,v 1.30 2004/03/14 13:52:29 wcc Exp $
  */
 /*
  * Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004 Eggheads Development Team
@@ -72,6 +72,7 @@ static wire_list *wirelist;
 
 static cmd_t wire_bot[] = {
   {0, 0, 0, 0},                 /* Saves having to malloc :P */
+  {0, 0, 0, 0}                  /* add_builtin expects a terminating elem */
 };
 
 static void wire_leave();
