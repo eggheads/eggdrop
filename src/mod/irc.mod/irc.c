@@ -319,11 +319,13 @@ static void reset_chan_info(struct chanset_t *chan)
 	use_exempts == 1 ) {
       chan->ircnet_status |= CHAN_ASKED_EXEMPTS;
       dprintf(DP_MODE, "MODE %s +e\n", chan->name);
+      recheck_exempt(chan);
     }
     if (!(chan->ircnet_status & CHAN_ASKED_INVITED) &&
 	use_invites == 1) {
       chan->ircnet_status |= CHAN_ASKED_INVITED;
       dprintf(DP_MODE, "MODE %s +I\n", chan->name);
+      recheck_invite(chan);
     }
     /* these 2 need to get out asap, so into the mode queue */
     if (use_354)
@@ -504,20 +506,12 @@ static void check_expired_chanstuff()
 	       !u_sticky_exempt(chan->exempts, e->exempt) && 
 	       !u_sticky_exempt(global_exempts,e->exempt))) {
 	    /* Check to see if it matches a ban */
-	    /*Leave this extra logging in for now. Can be removed later
-	     * Jason */
-	    int match = 0;
-	    b = chan->channel.ban;
-	    while (b->ban[0] && !match) {
-	      if (wild_match(b->ban, e->exempt) ||
-		  wild_match(e->exempt,b->ban))
-		match=1;
-	      else
-		b = b->next;
-	    }
-	    if (match) {
+	    if (u_match_ban(chan->bans,e->exempt) || 
+		u_match_ban(global_bans,e->exempt)) {
+	      /*Leave this extra logging in for now. Can be removed later
+	       * Jason */
 	      putlog(LOG_MODES, chan->name,
-		     "(%s) Channel exemption %s NOT expired. Ban still set!",
+		     "(%s) Channel exemption on %s NOT expired. Ban still set!",
 		     chan->name, e->exempt);
 	    } else {
 	      putlog(LOG_MODES, chan->name,
@@ -530,7 +524,7 @@ static void check_expired_chanstuff()
 	}
       }
     }
-    
+
     if (use_invites ==1 ) {
       if (channel_dynamicinvites(chan) && me_op(chan)) {
 	for (inv = chan->channel.invite; inv->invite[0]; inv = inv->next) {
@@ -538,11 +532,11 @@ static void check_expired_chanstuff()
 	      (((now - inv->timer) > (60 * invite_time)) &&
 	       !u_sticky_invite(chan->invites, inv->invite) && 
 	       !u_sticky_invite(global_invites,inv->invite))) {
-	    if ((chan->channel.mode & CHANINV) && isinvited(chan,inv->invitemask) {
+	    if (chan->channel.mode & CHANINV) {
 	      /*Leave this extra logging in for now. Can be removed later
 	       * Jason */
 	      putlog(LOG_MODES, chan->name,
-		     "(%s) Channel invitation %s NOT expired. i mode still set!",
+		     "(%s) Channel invitation on %s NOT expired. i mode still set!",
 		     chan->name, inv->invite);
 	    } else {
 	      putlog(LOG_MODES, chan->name,
