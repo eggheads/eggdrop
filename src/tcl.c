@@ -4,7 +4,7 @@
  *   Tcl initialization
  *   getting and setting Tcl/eggdrop variables
  * 
- * $Id: tcl.c,v 1.25 2000/12/10 15:10:27 guppy Exp $
+ * $Id: tcl.c,v 1.26 2000/12/17 21:48:42 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -515,6 +515,12 @@ void init_tcl(int argc, char **argv)
   Tcl_InitMemory(interp);
 #endif
 
+#if TCL_MAJOR_VERSION >= 8 && TCL_MINOR_VERSION >= 1
+  /* Set default encoding to default system encoding, i.e. binary.
+     Unicode support present since Tcl library version 8.1. */
+  Tcl_SetSystemEncoding(interp, NULL);
+#endif
+
   /* Set Tcl variable tcl_interactive to 0 */
   Tcl_SetVar(interp, "tcl_interactive", "0", TCL_GLOBAL_ONLY);
 
@@ -524,7 +530,6 @@ void init_tcl(int argc, char **argv)
 
   /* Add new commands */
   Tcl_CreateCommand(interp, "logfile", tcl_logfile, NULL, NULL);
-  /* Isnt this much neater :) */
   add_tcl_commands(tcluser_cmds);
   add_tcl_commands(tcldcc_cmds);
   add_tcl_commands(tclmisc_cmds);
@@ -562,49 +567,20 @@ void do_tcl(char *whatzit, char *script)
   }
 }
 
-/* Read the tcl file fname into memory and interpret it. Not using
- * Tcl_EvalFile avoids problems with high ascii characters.
+/* Interpret tcl file fname.
  *
  * returns:   1 - if everything was okay
  */
 int readtclprog(char *fname)
 {
-  int	 code;
-  long	 size;
-  char	*script;
   FILE	*f;
 
+  /* Check whether file is readable. */
   if ((f = fopen(fname, "r")) == NULL)
     return 0;
-
-  /* Find out file size. */
-  fseek(f, 0, SEEK_END);
-  size = ftell(f);
-  fseek(f, 0, SEEK_SET);
-
-  /* Allocate buffer to save the file's data in. */
-  if ((script = nmalloc(size + 1)) == NULL) {
-    fclose(f);
-    return 0;
-  }
-  script[size] = 0;
-
-  /* Read file's data to the allocated buffer. */
-  fread(script, 1, size, f);
   fclose(f);
 
-  if (debug_tcl) {
-    if ((f = fopen("DEBUG.TCL", "a")) != NULL)
-      fprintf(f, "*** eval: %s\n", script);
-  }
-  code = Tcl_Eval(interp, script);
-  nfree(script);
-  if (debug_tcl && f) {
-    fprintf(f, "*** done eval, result=%d\n", code);
-    fclose(f);
-  }
-
-  if (code != TCL_OK) {
+  if (Tcl_EvalFile(interp, fname) != TCL_OK) {
     putlog(LOG_MISC, "*", "Tcl error in file '%s':", fname);
     putlog(LOG_MISC, "*", "%s",
 	   Tcl_GetVar(interp, "errorInfo", TCL_GLOBAL_ONLY));

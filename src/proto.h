@@ -7,7 +7,7 @@
  * because they use structures in those
  * (saves including those .h files EVERY time) - Beldin
  * 
- * $Id: proto.h,v 1.36 2000/11/21 04:46:17 guppy Exp $
+ * $Id: proto.h,v 1.37 2000/12/17 21:48:42 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -263,7 +263,7 @@ int sockoptions(int sock, int operation, int sock_options);
 void protect_tcl();
 void unprotect_tcl();
 void do_tcl(char *, char *);
-int readtclprog(char *);
+int readtclprog(char *fname);
 int findidx(int);
 int findanyidx(int);
 
