@@ -16,7 +16,7 @@ dnl You should have received a copy of the GNU General Public License
 dnl along with this program; if not, write to the Free Software
 dnl Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 dnl
-dnl $Id: aclocal.m4,v 1.92 2004/07/25 11:17:33 wcc Exp $
+dnl $Id: aclocal.m4,v 1.93 2004/08/08 18:16:59 wcc Exp $
 dnl
 
 
@@ -1245,7 +1245,7 @@ configure: error:
   ./configure using the --with-tcllib='/path/to/libtcl.so' and
   --with-tclinc='/path/to/tcl.h' options.
 
-  See doc/COMPILING-FAQ's 'Tcl Detection and Installation' section for more
+  See doc/COMPILE-GUIDE's 'Tcl Detection and Installation' section for more
   information.
 
 EOF
@@ -1269,7 +1269,7 @@ configure: error:
   current version is $tclrecommendver and can be downloaded from
   ${tclrecommendsite}.
 
-  See doc/COMPILING-FAQ's 'Tcl Detection and Installation' section
+  See doc/COMPILE-GUIDE's 'Tcl Detection and Installation' section
   for more information.
 
 EOF

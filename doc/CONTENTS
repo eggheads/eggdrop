@@ -1,7 +1,7 @@
-$Id: CONTENTS,v 1.20 2004/07/25 03:56:58 wcc Exp $
+$Id: CONTENTS,v 1.21 2004/08/08 18:16:59 wcc Exp $
 
 Directory Contents - doc/
-Last revised: December 07, 2003
+Last revised: August 04, 2004
     _____________________________________________________________________
 
                           Directory Contents - doc/
@@ -30,10 +30,10 @@ Last revised: December 07, 2003
     Fill out this form and e-mail it to bugs@eggheads.org if you find a bug
     in Eggdrop.
 
-  COMPILING-FAQ
+  COMPILE-GUIDE
     If you have trouble compiling your Eggdrop, take a look in this file.
 
-  first_script.txt
+  FIRST-SCRIPT
     This document will help get you started with Tcl scripting for Eggdrop.
 
   KNOWN-PROBLEMS
@@ -53,11 +53,11 @@ Last revised: December 07, 2003
     Documentation on Eggdrop Tcl commands available to scripters can be found
     here.
 
-  text-substitutions.doc
+  TEXT-SUBSTITUTIONS
     This contains documentation on %-variables that can be used in help, MOTD,
     and BANNER files.
 
-  tricks
+  TRICKS
     Some advanced tips on making Eggdrop do what you want it to do can be found
     here. It also contains tweaking tips for your config file.
 

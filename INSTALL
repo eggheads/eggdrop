@@ -1,4 +1,4 @@
-$Id: INSTALL,v 1.24 2004/07/25 03:56:58 wcc Exp $
+$Id: INSTALL,v 1.25 2004/08/08 18:16:59 wcc Exp $
 
 Compilation and Installation of Eggdrop
 Last revised: July 24, 2004
@@ -12,7 +12,7 @@ Last revised: July 24, 2004
   experienced users.
 
   For more information on compiling Eggdrop, see the Compile Guide in
-  doc/COMPILING-FAQ (and of course, the README FILE).
+  doc/COMPILE-GUIDE (and of course, the README FILE).
 
   Contents:
     1. What is Eggdrop?
