@@ -31,25 +31,30 @@ This file is only for experienced users.
     2. Type 'make' from the eggdrop directory.  Or to force a statically
        linked module bot type 'make static'.  Otherwise the Makefile will
        determin which type of bot your system will support.  Dynamic is
-       aways the better way to go if possible.  And for the brave with
-       off the wall operating systems you can type 'make eggmod' but be
-       warned that it might not work.  If it does please contact the dev
-       team and let them know it did or/and what you did to make it work.
+       always the better way to go if possible. There're also the options
+       debug and sdebug (static-debug) which will give more detailed
+       output on (a highly unlikely :) crash. This might help the devteam
+       to track down the crash and fix the bug. Debug and sdebug will take
+       a little longer to compile and will enlarge the binary a bit, but
+       it's worth if you want to support eggdrop development.
 
     3. Eggdrop must be installed in a directory somewhere.  This is
        accomplished by entering the unix command:
 		make install DEST=<directory>
  		example make install DEST=/home/egguser/eggdrop
+        (note you must use full path for every file to be correctly installed)
 
 	[The following is performed from the directory installed above]
 
     4. Copy the file 'eggdrop.conf.dist' to a new file, usually the
        same name as the bot that will use it, e.g. "LamestBot".
 
-    5. Start the bot with the "-m" option to create a user file, ie
+    5. Edit your config file LamestBot completely.
+
+    6. Start the bot with the "-m" option to create a user file, ie
        'eggdrop -m LamestBot'.
 
-    6. When starting the bot in the future, drop the "-m".  If you have
+    7. When starting the bot in the future, drop the "-m".  If you have
        edited your bot script correctly, you can type:
            chmod u+x <my-bot-script-name>
        e.g.
@@ -59,12 +64,12 @@ This file is only for experienced users.
        start up your bot.  For this to work, the top line of your script MUST
        contain the correct path to eggdrop.
 
-    7. It's advisable to run your bot via crontab so that it will automatic-
+    8. It's advisable to run your bot via crontab so that it will automatic-
        ally restart if the machine goes down or (heaven forbid) the bot
-       should crash.  Look at the file 'scripts/botchk' for a great start
-       with crontabbing the bot.
+       should crash. Look at the file 'scripts/botchk' and 'scripts/autobotchk'
+       for a great start with crontabbing the bot.
 
-    8. Smile, and if you haven't already read the README file in its
+    9. Smile, and if you haven't already read the README file in its
        entirety, go take a long walk off a short pier.
 
 
@@ -94,7 +99,23 @@ need to type make modules to compile only the modules portion of the bot.
 
     1. WHAT DO I DO IF...?
 
-       (1a) READ THE README FILE!
+       READ THE README FILE!
+
+    2. THE README DOES NOT ANSWER...!
+
+       READ THE README FILE AGAIN!
+
+
+    3. I still don't know how to....
+
+       Well, go to www.egghelp.org or www.eggheads.org and see if you can
+       find there what you're looking for. There're also lots of IRC help
+       channels (usually #eggdrop) and various mailinglists. Try Eggheads
+       mailinglist http://scrambled.eggheads.org/mailman/listinfo/eggheads
+
 
 This is the end. If you read to this point, hopefully you have also read
 the README file. If not, then READ IT!&@#%@!
+
+Have fun with Eggdrop!
+
