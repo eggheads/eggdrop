@@ -1,35 +1,35 @@
-/* 
+/*
  * dnscore.c -- part of dns.mod
  *   This file contains all core functions needed for the eggdrop dns module.
  *   Many of them are only minimaly modified from the original source.
- * 
+ *
  * Modified/written by Fabian Knittel <fknittel@gmx.de>
- * 
- * $Id: coredns.c,v 1.18 2001/01/16 17:13:22 guppy Exp $
+ *
+ * $Id: coredns.c,v 1.19 2001/04/12 02:39:46 guppy Exp $
  */
-/* 
- * Portions copyright (C) 1999, 2000  Eggheads
- * 
+/*
+ * Portions Copyright (C) 1999, 2000, 2001 Eggheads Development Team
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-/* 
+/*
  * Borrowed from mtr  --  a network diagnostic tool
  * Copyright (C) 1997,1998  Matt Kimball <mkimball@xmission.com>
  * Released under the GPL, as above.
- * 
+ *
  * Non-blocking DNS portion --
  * Copyright (C) 1998  Simon Kirby <sim@neato.org>
  * Released under the GPL, as above.
@@ -141,7 +141,7 @@ typedef struct {
 #define HFIXEDSZ (sizeof(packetheader))
 #endif
 
-/* 
+/*
  * Byte order independent macros for packetheader
  */
 #define getheader_rd(x) (x->databyte_a & 1)
@@ -186,7 +186,7 @@ static char sendstring[1024 + 1];
 static const char nullstring[] = "";
 
 
-/* 
+/*
  *    Miscellaneous helper functions
  */
 
@@ -234,7 +234,7 @@ static struct resolve *allocresolve()
 }
 
 
-/* 
+/*
  *    Hash and linked-list related functions
  */
 
@@ -557,7 +557,7 @@ static struct resolve *findip(IP ip)
 }
 
 
-/* 
+/*
  *    Network and resolver related functions
  */
 
@@ -592,7 +592,7 @@ static void resendrequest(struct resolve *rp, int type)
     rp->expiretime = now + (RES_RETRYDELAY * rp->sends);
     /* Add (back) to expire list */
     linkresolve(rp);
- 
+
     if (type == T_A) {
 	dorequest(rp->hostn, type, rp->id);
 	ddebug1(RES_MSG "Sent domain lookup request for \"%s\".",
@@ -685,7 +685,7 @@ static void parserespacket(u_8bit_t *s, int l)
     }
     hp = (packetheader *) s;
     /* Convert data to host byte order
-     * 
+     *
      * hp->id does not need to be redundantly byte-order flipped, it
      * is only echoed by nameserver
      */
@@ -1006,7 +1006,7 @@ static void dns_check_expires(void)
 static void dns_lookup(IP ip)
 {
     struct resolve *rp;
-    
+
     ip = htonl(ip);
     if ((rp = findip(ip))) {
 	if (rp->state == STATE_FINISHED || rp->state == STATE_FAILED) {
@@ -1038,7 +1038,7 @@ static void dns_forward(char *hostn)
     struct resolve *rp;
     struct in_addr inaddr;
 
-    /* Check if someone passed us an IP address as hostname 
+    /* Check if someone passed us an IP address as hostname
      * and return it straight away.
      */
     if (egg_inet_aton(hostn, &inaddr)) {
@@ -1092,7 +1092,7 @@ static int init_dns_network(void)
 	killsock(resfd);
 	return 0;
     }
-    
+
     egg_inet_aton("127.0.0.1", &inaddr);
     localhost = inaddr.s_addr;
     return 1;

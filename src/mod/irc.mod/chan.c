@@ -1,27 +1,27 @@
-/* 
+/*
  * chan.c -- part of irc.mod
  *   almost everything to do with channel manipulation
  *   telling channel status
  *   'who' response
  *   user kickban, kick, op, deop
  *   idle kicking
- * 
- * $Id: chan.c,v 1.63 2001/01/16 17:13:22 guppy Exp $
+ *
+ * $Id: chan.c,v 1.64 2001/04/12 02:39:46 guppy Exp $
  */
-/* 
- * Copyright (C) 1997  Robey Pointer
- * Copyright (C) 1999, 2000  Eggheads
- * 
+/*
+ * Copyright (C) 1997 Robey Pointer
+ * Copyright (C) 1999, 2000, 2001 Eggheads Development Team
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -158,7 +158,7 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
 
   if (!chan || (which < 0) || (which >= FLOOD_CHAN_MAX))
     return 0;
-  m = ismember(chan, floodnick); 
+  m = ismember(chan, floodnick);
   /* Do not punish non-existant channel members and IRC services like
    * ChanServ
    */
@@ -291,7 +291,7 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
       if (!channel_enforcebans(chan) && me_op(chan)) {
 	  char s[UHOSTLEN];
 	  m = chan->channel.member;
-	  
+
 	  while (m && m->nick[0]) {
 	    sprintf(s, "%s!%s", m->nick, m->userhost);
 	    if (wild_match(h, s) &&
@@ -320,7 +320,7 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
     case FLOOD_DEOP:
       if (me_op(chan) && !chan_sentkick(m)) {
 	putlog(LOG_MODES, chan->dname,
-	       CHAN_MASSDEOP, chan->dname, from); 
+	       CHAN_MASSDEOP, chan->dname, from);
 	dprintf(DP_MODE, "KICK %s %s :%s\n",
 		chan->name, floodnick, CHAN_MASSDEOP_KICK);
 	m->flags |= SENTKICK;
@@ -442,7 +442,7 @@ static void refresh_exempt(struct chanset_t *chan, char *user)
   maskrec	*e;
   masklist	*b;
   int		 cycle;
-  
+
   /* Check channel exempts in first cycle and global exempts
      in second cycle. */
   for (cycle = 0; cycle < 2; cycle++) {
@@ -530,12 +530,12 @@ static void recheck_exempts(struct chanset_t *chan)
   maskrec	*e;
   masklist	*b;
   int		 cycle;
-  
+
   /* Check channel exempts in first cycle and global exempts
      in second cycle. */
   for (cycle = 0; cycle < 2; cycle++) {
     for (e = cycle ? chan->exempts : global_exempts; e; e = e->next) {
-      if (!isexempted(chan, e->mask) && 
+      if (!isexempted(chan, e->mask) &&
           (!channel_dynamicexempts(chan) || (e->flags & MASKREC_STICKY)))
         add_mode(chan, '+', 'e', e->mask);
       for (b = chan->channel.ban; b && b->mask[0]; b = b->next) {
@@ -557,7 +557,7 @@ static void recheck_invites(struct chanset_t *chan)
 {
   maskrec	*ir;
   int		 cycle;
-  
+
   /* Check channel invites in first cycle and global invites
      in second cycle. */
   for (cycle = 0; cycle < 2; cycle++)  {
@@ -580,13 +580,13 @@ static void resetmasks(struct chanset_t *chan, masklist *m, maskrec *mrec,
 {
   if (!me_op(chan))
     return;                     /* Can't do it */
-    
+
   /* Remove masks we didn't put there */
   for (; m && m->mask[0]; m = m->next) {
     if (!u_equals_mask(global_masks, m->mask) && !u_equals_mask(mrec, m->mask))
       add_mode(chan, '-', mode, m->mask);
   }
-  
+
   /* Make sure the intended masks are still there */
   switch (mode) {
     case 'b':
@@ -609,7 +609,7 @@ static void recheck_channel_modes(struct chanset_t *chan)
   int cur = chan->channel.mode,
       mns = chan->mode_mns_prot,
       pls = chan->mode_pls_prot;
- 
+
   if (!(chan->status & CHAN_ASKEDMODES)) {
     if (pls & CHANINV && !(cur & CHANINV))
       add_mode(chan, '+', 'i', "");
@@ -737,7 +737,7 @@ static void recheck_channel(struct chanset_t *chan, int dobans)
 	  dprintf(DP_SERVER, "KICK %s %s :%s\n", chan->name, m->nick,
 		  p ? p : IRC_POLITEKICK);
 	  m->flags |= SENTKICK;
-	} 
+	}
       }
       /* now lets look at de-op'd ppl */
       if (!chan_hasop(m) &&
@@ -749,8 +749,8 @@ static void recheck_channel(struct chanset_t *chan, int dobans)
 	add_mode(chan, '+', 'o', m->nick);
 	  /* otherwise, lets check +v stuff if the llamas want it */
       } else if (!chan_hasvoice(m) && !chan_hasop(m)) {
-	if ((channel_autovoice(chan) && !chan_quiet(fr) && 
-	     (chan_voice(fr) || glob_voice(fr))) || 
+	if ((channel_autovoice(chan) && !chan_quiet(fr) &&
+	     (chan_voice(fr) || glob_voice(fr))) ||
 	    (!chan_quiet(fr) && (glob_gvoice(fr) || chan_gvoice(fr)))) {
 	  add_mode(chan, '+', 'v', m->nick);
 	}
@@ -849,7 +849,7 @@ static int got324(char *from, char *msg)
 	  *p = 0;
 	}
       }
-      if ((chan->channel.mode & CHANKEY) && !(chan->channel.key[0])) 
+      if ((chan->channel.mode & CHANKEY) && !(chan->channel.key[0]))
         chan->status |= CHAN_ASKEDMODES;
     }
     if (msg[i] == 'l') {
@@ -1169,7 +1169,7 @@ static int got403(char *from, char *msg)
 {
   char *chname;
   struct chanset_t *chan;
-  
+
   newsplit(&msg);
   chname = newsplit(&msg);
   if (chname && chname[0]=='!') {
@@ -1346,7 +1346,7 @@ static int gotinvite(char *from, char *msg)
   if (!chan)
     /* Might be a short-name */
     chan = findchan_by_dname(msg);
-  
+
   if (chan && (channel_pending(chan) || channel_active(chan)))
     dprintf(DP_HELP, "NOTICE %s :I'm already here.\n", nick);
   else if (chan && !channel_inactive(chan))
@@ -1477,7 +1477,7 @@ static int gotjoin(char *from, char *chname)
     /* As this is a !channel, we need to search for it by display (short)
      * name now. This will happen when we initially join the channel, as we
      * dont know the unique channel name that the server has made up. <cybah>
-     */  
+     */
     int	l_chname = strlen(chname);
 
     if (l_chname > (CHANNEL_ID_LEN + 1)) {
@@ -1512,7 +1512,7 @@ static int gotjoin(char *from, char *chname)
      */
     chan = findchan_by_dname(chname);
   }
-  
+
   if (!chan || channel_inactive(chan)) {
     putlog(LOG_MISC, "*", "joined %s but didn't want to!", chname);
     dprintf(DP_MODE, "PART %s\n", chname);
@@ -1566,7 +1566,7 @@ static int gotjoin(char *from, char *chname)
 	/* The tcl binding might have deleted the current user and the
 	 * current channel, so we'll now have to re-check whether they
 	 * both still exist.
-	 */ 
+	 */
 	chan = findchan(chname);
 	if (!chan) {
 	  if (ch_dname)
@@ -1654,7 +1654,7 @@ static int gotjoin(char *from, char *chname)
 	      (u_match_mask(global_exempts,from) ||
 	       u_match_mask(chan->exempts, from)))) {
           if (channel_enforcebans(chan) && !chan_op(fr) && !glob_op(fr) &&
-              !glob_friend(fr) && !chan_friend(fr) && !chan_sentkick(m) && 
+              !glob_friend(fr) && !chan_friend(fr) && !chan_sentkick(m) &&
               !(use_exempts && isexempted(chan, from))) {
             for (b = chan->channel.ban; b->mask[0]; b = b->next) {
               if (wild_match(b->mask, from)) {
@@ -1677,7 +1677,7 @@ static int gotjoin(char *from, char *chname)
 	    dprintf(DP_MODE, "KICK %s %s :%s\n", chname, nick,
 		    (p && (p[0] != '@')) ? p : IRC_COMMENTKICK);
 	    m->flags |= SENTKICK;
-	  } 
+	  }
 	}
 	/* Are they a chan op, or global op without chan deop? */
 	if ((chan_op(fr) || (glob_op(fr) && !chan_deop(fr))) &&
@@ -1722,7 +1722,7 @@ static int gotpart(char *from, char *msg)
   fixcolon(msg);
   chan = findchan(chname);
   if (chan && channel_inactive(chan)) {
-    clear_channel(chan, 1);  
+    clear_channel(chan, 1);
     chan->status &= ~(CHAN_ACTIVE | CHAN_PEND);
     return 0;
   }

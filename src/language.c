@@ -1,32 +1,32 @@
-/* 
+/*
  * language.c -- handles:
  *   language support code
- * 
- * $Id: language.c,v 1.11 2000/12/10 15:10:27 guppy Exp $
+ *
+ * $Id: language.c,v 1.12 2001/04/12 02:39:43 guppy Exp $
  */
-/* 
- * Copyright (C) 1997  Robey Pointer
- * Copyright (C) 1999, 2000  Eggheads
- * 
+/*
+ * Copyright (C) 1997 Robey Pointer
+ * Copyright (C) 1999, 2000, 2001 Eggheads Development Team
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-/* 
+/*
  * DOES:
  *              Nothing <- typical BB code :)
- * 
+ *
  * ENVIRONMENT VARIABLES:
  *              EGG_LANG       - language to use (default: "english")
  *              EGG_LANGDIR    - directory with all lang files
@@ -42,12 +42,12 @@
  *              DCC .relang
  *              DCC .ldump
  *              DCC .lstat
- * 
+ *
  * FILE FORMAT: language.lang
  *              <textidx>,<text>
  * TEXT MESSAGE USAGE:
  *              get_language(<textidx> [,<PARMS>])
- * 
+ *
  * ADDING LANGUAGES:
  *              o       Copy an existing <section>.<oldlanguage>.lang to a
  *                      new .lang file and modify as needed.
@@ -60,7 +60,7 @@
  *              o       Create a <newsection>.english.lang file.
  *              o       Add add_lang_section("<newsection>"); to your module
  *                      startup function.
- * 
+ *
  */
 
 #include "main.h"
@@ -134,7 +134,7 @@ void add_lang(char *lang)
   if (langpriority)
     lp->next = langpriority;
   langpriority = lp;
-  debug1("LANG: Language loaded: %s", lang); 
+  debug1("LANG: Language loaded: %s", lang);
 }
 
 /* Remove a language from the list of preferred languages.
@@ -153,7 +153,7 @@ static int del_lang(char *lang)
       if (lp->lang)
         nfree(lp->lang);
       nfree(lp);
-      debug1("LANG: Language unloaded: %s", lang); 
+      debug1("LANG: Language unloaded: %s", lang);
       return 1;
     }
     lpo = lp;
@@ -332,7 +332,7 @@ void add_lang_section(char *section)
   else
     langsection = ls;
   debug1("LANG: Section loaded: %s", section);
-  
+
   /* Always load base language */
   langfile = get_specific_langfile(BASELANG, ls);
   if (langfile) {
@@ -623,7 +623,7 @@ static int cmd_languagestatus(struct userrec *u, int idx, char *par)
 	  used, empty, maxdepth, (float) ltexts / 64.0);
   if (lp) {
     int c = 0;
-    
+
     dprintf(idx, "   Supported languages:");
     while (lp) {
       dprintf(idx, "%s %s", c ? "," : "", lp->lang);
@@ -670,7 +670,7 @@ static int tcl_language STDVAR
 static int tcl_plslang STDVAR
 {
   BADARGS(2, 2, " language");
-  
+
   add_lang(argv[1]);
   recheck_lang_sections();
 
@@ -678,7 +678,7 @@ static int tcl_plslang STDVAR
 }
 
 static int tcl_mnslang STDVAR
-{ 
+{
   BADARGS(2, 2, " language");
 
   if (!del_lang(argv[1])) {
@@ -691,7 +691,7 @@ static int tcl_mnslang STDVAR
 }
 
 static int tcl_addlangsection STDVAR
-{ 
+{
   BADARGS(2, 2, " section");
 
   add_lang_section(argv[1]);
@@ -699,7 +699,7 @@ static int tcl_addlangsection STDVAR
 }
 
 static int tcl_dellangsection STDVAR
-{ 
+{
   BADARGS(2, 2, " section");
 
   if (!del_lang_section(argv[1])) {

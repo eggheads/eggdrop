@@ -1,9 +1,10 @@
 /*
  * snprintf.c - a portable implementation of snprintf and vsnprintf
  *
- * $Id: snprintf.c,v 1.3 2000/04/05 19:40:31 fabian Exp $
+ * $Id: snprintf.c,v 1.4 2001/04/12 02:39:44 guppy Exp $
  */
-/* Portions Copyright (C) 2000  Eggheads
+/*
+ * Portions Copyright (C) 2000, 2001 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -61,9 +62,9 @@
  *    original.  Also, there is now a builtin-test, just compile with:
  *           gcc -DTEST_SNPRINTF -o snprintf snprintf.c -lm
  *    and run snprintf for results.
- * 
+ *
  *  Thomas Roessler <roessler@guug.de> 01/27/98 for mutt 0.89i
- *    The PGP code was using unsigned hexadecimal formats. 
+ *    The PGP code was using unsigned hexadecimal formats.
  *    Unfortunately, unsigned formats simply didn't work.
  *
  *  Michael Elkins <me@cs.hmc.edu> 03/05/98 for mutt 0.90.8
@@ -567,7 +568,7 @@ static void fmtfp(char *buffer, size_t * currlen, size_t maxlen,
   long intpart;
   long fracpart;
 
-  /* 
+  /*
    * AIX manpage says the default is 0, but Solaris says the default
    * is 6, and sprintf on AIX defaults to 6
    */
@@ -590,8 +591,8 @@ static void fmtfp(char *buffer, size_t * currlen, size_t maxlen,
 
   intpart = ufvalue;
 
-  /* 
-   * Sorry, we only support 9 digits past the decimal because of our 
+  /*
+   * Sorry, we only support 9 digits past the decimal because of our
    * conversion method
    */
   if (max > 9)

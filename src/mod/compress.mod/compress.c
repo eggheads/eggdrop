@@ -1,26 +1,26 @@
-/* 
+/*
  * compress.c -- part of compress.mod
  *   uses the compression library libz to compress and uncompress the
  *   userfiles during the sharing process
- * 
+ *
  * Written by Fabian Knittel <fknittel@gmx.de>. Based on zlib examples
  * by Jean-loup Gailly and Miguel Albrecht.
- * 
- * $Id: compress.c,v 1.8 2001/01/16 17:13:21 guppy Exp $
+ *
+ * $Id: compress.c,v 1.9 2001/04/12 02:39:45 guppy Exp $
  */
-/* 
- * Copyright (C) 2000  Eggheads
- * 
+/*
+ * Copyright (C) 2000, 2001 Eggheads Development Team
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -257,7 +257,7 @@ static int compress_to_file(char *f_src, char *f_target, int mode_num)
     fout = gzopen(f_target, mode);
   }
 #endif /* HAVE_MMAP */
-    
+
   while (1) {
     len = fread(buf, 1, sizeof(buf), fin);
     if (ferror(fin)) {
@@ -365,7 +365,7 @@ static uff_table_t compress_uff_table[] = {
   {NULL,	0,		NULL,		    0,	   NULL,       NULL}
 };
 
-/* 
+/*
  *    Compress module related code
  */
 

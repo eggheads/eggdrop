@@ -1,26 +1,26 @@
-/* 
+/*
  * dns.c -- handles:
  *   DNS resolve calls and events
  *   provides the code used by the bot if the DNS module is not loaded
  *   DNS Tcl commands
- * 
- * $Id: dns.c,v 1.20 2001/03/10 22:44:47 guppy Exp $
+ *
+ * $Id: dns.c,v 1.21 2001/04/12 02:39:43 guppy Exp $
  */
-/* 
+/*
  * Written by Fabian Knittel <fknittel@gmx.de>
- * 
- * Copyright (C) 1999, 2000  Eggheads
- * 
+ *
+ * Copyright (C) 1999, 2000, 2001 Eggheads Development Team
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -242,7 +242,7 @@ void dcc_dnshostbyip(IP ip)
 static void dns_tcl_iporhostres(IP ip, char *hostn, int ok, void *other)
 {
   devent_tclinfo_t *tclinfo = (devent_tclinfo_t *) other;
-  
+
   if (Tcl_VarEval(interp, tclinfo->proc, " ", iptostr(htonl(ip)), " ",
 		  hostn, ok ? " 1" : " 0", tclinfo->paras, NULL) == TCL_ERROR)
     putlog(LOG_MISC, "*", DCC_TCLERROR, tclinfo->proc, interp->result);
@@ -426,7 +426,7 @@ void call_ipbyhost(char *hostn, IP ip, int ok)
 }
 
 
-/* 
+/*
  *    Async DNS emulation functions
  */
 
@@ -456,7 +456,7 @@ void block_dns_ipbyhost(char *host)
 {
   struct in_addr inaddr;
 
-  /* Check if someone passed us an IP address as hostname 
+  /* Check if someone passed us an IP address as hostname
    * and return it straight away */
   if (egg_inet_aton(host, &inaddr)) {
     call_ipbyhost(host, ntohl(inaddr.s_addr), 1);
@@ -502,7 +502,7 @@ static int tcl_dnslookup STDVAR
 {
   struct in_addr inaddr;
   char *paras = NULL;
- 
+
   if (argc < 3) {
     Tcl_AppendResult(irp, "wrong # args: should be \"", argv[0],
 		     " ip-address/hostname proc ?args...?\"", NULL);

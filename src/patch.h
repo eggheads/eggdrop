@@ -1,31 +1,31 @@
-/* 
+/*
  * patch.h
  *   header file for adding patches to Eggdrop's version string
- * 
+ *
  * PLACE YOUR PATCHES HERE...
- * 
+ *
  * HOW TO DO IT:
- * 
+ *
  * replace a  *** PATCH GOES HERE *** line with a patch("patchname");
  * statement, leave the rest of the file alone, this allows better
  * overlapping patches.
- * 
- * $Id: patch.h,v 1.452 2001/04/07 19:36:53 guppy Exp $
+ *
+ * $Id: patch.h,v 1.453 2001/04/12 02:39:43 guppy Exp $
  */
-/* 
- * Copyright (C) 1997  Robey Pointer
- * Copyright (C) 1999, 2000  Eggheads
- * 
+/*
+ * Copyright (C) 1997 Robey Pointer
+ * Copyright (C) 1999, 2000, 2001 Eggheads Development Team
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -41,12 +41,12 @@ patch("CVS");			/* CVS version */
  *
  *
  */
-patch("986671981");		/* current unixtime */
+patch("987043733");		/* current unixtime */
 /*
  *
  *
  */
-patch("modes-per-line");
+patch("copyright2001");
 /*
  *
  *

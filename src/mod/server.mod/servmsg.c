@@ -1,22 +1,22 @@
-/* 
+/*
  * servmsg.c -- part of server.mod
- * 
- * $Id: servmsg.c,v 1.51 2001/01/16 17:13:23 guppy Exp $
+ *
+ * $Id: servmsg.c,v 1.52 2001/04/12 02:39:47 guppy Exp $
  */
-/* 
- * Copyright (C) 1997  Robey Pointer
- * Copyright (C) 1999, 2000  Eggheads
- * 
+/*
+ * Copyright (C) 1997 Robey Pointer
+ * Copyright (C) 1999, 2000, 2001 Eggheads Development Team
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -30,16 +30,16 @@ static char   altnick_char = 0;
 /* We try to change to a preferred unique nick here. We always first try the
  * specified alternate nick. If that failes, we repeatedly modify the nick
  * until it gets accepted.
- * 
+ *
  * sent nick:
  *     "<altnick><c>"
  *                ^--- additional count character: 1-9^-_\\[]`a-z
  *          ^--------- given, alternate nick
- * 
+ *
  * The last added character is always saved in altnick_char. At the very first
  * attempt (were altnick_char is 0), we try the alternate nick without any
  * additions.
- * 
+ *
  * fixed by guppy (1999/02/24) and Fabian (1999/11/26)
  */
 static int gotfake433(char *from)

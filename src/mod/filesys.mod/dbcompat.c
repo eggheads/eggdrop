@@ -1,40 +1,40 @@
-/* 
+/*
  * dbcompat.c -- part of filesys.mod
  *   Compability functions to convert older DBs to the newest version.
- * 
+ *
  * Written for filedb3 by Fabian Knittel <fknittel@gmx.de>
- * 
- * $Id: dbcompat.c,v 1.9 2001/01/16 17:13:22 guppy Exp $
+ *
+ * $Id: dbcompat.c,v 1.10 2001/04/12 02:39:46 guppy Exp $
  */
-/* 
- * Copyright (C) 1997  Robey Pointer
- * Copyright (C) 1999, 2000  Eggheads
- * 
+/*
+ * Copyright (C) 1997 Robey Pointer
+ * Copyright (C) 1999, 2000, 2001 Eggheads Development Team
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
- 
+
 /* Convert '.files' db to newest db. Returns 1 if a valid file is
  * found and could be converted, 0 in all other cases.
- * 
+ *
  * '.files' is a text file which contains file records built up in the
  * following way:
  *      '<filename> <nick> <tm> <gots>\n'
  *      '- <comment>\n'
  *      '- <comment>\n'
  *      ...
- */ 
+ */
 static int convert_old_files(char *path, char *newfiledb)
 {
   FILE *f, *fdb;
@@ -221,12 +221,12 @@ static void convert_version2(FILE *fdb_s, FILE *fdb_t)
 /* Converts old versions of the filedb to the newest. Returns 1 if all went
  * well and otherwise 0. The new db is first written to a temporary place
  * and then moved over to the original db's position.
- * 
+ *
  * Note: Unfortunately there is a small time-frame where aren't locking the
  *       DB, but want to replace it with a new one, using movefile().
  *       TODO: Copy old db to tmp file and then build the new db directly
  *             in the original file. This solves the tiny locking problem.
- * 
+ *
  * Also remember to check the returned *fdb_s on failure, as it could be
  * NULL.
  */

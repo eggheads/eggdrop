@@ -1,4 +1,4 @@
-/* 
+/*
  * chanprog.c -- handles:
  *   rmspace()
  *   maintaining the server list
@@ -6,23 +6,23 @@
  *   timers, utimers
  *   telling the current programmed settings
  *   initializing a lot of stuff and loading the tcl scripts
- * 
- * $Id: chanprog.c,v 1.22 2001/02/24 20:08:51 guppy Exp $
+ *
+ * $Id: chanprog.c,v 1.23 2001/04/12 02:39:43 guppy Exp $
  */
-/* 
- * Copyright (C) 1997  Robey Pointer
- * Copyright (C) 1999, 2000  Eggheads
- * 
+/*
+ * Copyright (C) 1997 Robey Pointer
+ * Copyright (C) 1999, 2000, 2001 Eggheads Development Team
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -480,7 +480,7 @@ void chanprog()
     FILE *f;
     char s[161], rands[8];
 
-    /* Possible file race condition solved by using a random string 
+    /* Possible file race condition solved by using a random string
      * and the process id in the filename.
      * FIXME: This race is only partitially fixed. We could still be
      *        overwriting an existing file / following a malicious

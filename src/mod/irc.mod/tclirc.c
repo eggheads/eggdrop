@@ -1,22 +1,22 @@
-/* 
+/*
  * tclirc.c -- part of irc.mod
- * 
- * $Id: tclirc.c,v 1.19 2001/02/15 04:33:18 tothwolf Exp $
+ *
+ * $Id: tclirc.c,v 1.20 2001/04/12 02:39:46 guppy Exp $
  */
-/* 
- * Copyright (C) 1997  Robey Pointer
- * Copyright (C) 1999, 2000  Eggheads
- * 
+/*
+ * Copyright (C) 1997 Robey Pointer
+ * Copyright (C) 1999, 2000, 2001 Eggheads Development Team
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -363,7 +363,7 @@ static int tcl_getchanidle STDVAR
 static inline int tcl_chanmasks(masklist *m, Tcl_Interp *irp)
 {
   char *list[3], work[20], *p;
-  
+
   while(m && m->mask && m->mask[0]) {
     list[0] = m->mask;
     list[1] = m->who;
@@ -683,7 +683,7 @@ static int tcl_putkick STDVAR
 
   BADARGS(3, 4, " channel nick?s? ?comment?");
   chan = findchan_by_dname(argv[1]);
-  if (chan == NULL) { 
+  if (chan == NULL) {
     Tcl_AppendResult(irp, "illegal channel: ", argv[1], NULL);
     return TCL_ERROR;
   }
@@ -695,7 +695,7 @@ static int tcl_putkick STDVAR
     Tcl_AppendResult(irp, "need op", NULL);
     return TCL_ERROR;
   }
-  
+
   kicknick[0] = 0;
   p = argv[2];
   /* Loop through all given nicks */
@@ -706,7 +706,7 @@ static int tcl_putkick STDVAR
       *p = 0;
       p++;
     }
-    
+
     m = ismember(chan, nick);
     if (!m)
       continue;			/* Skip non-existant nicks */

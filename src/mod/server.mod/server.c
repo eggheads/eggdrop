@@ -1,23 +1,23 @@
-/* 
+/*
  * server.c -- part of server.mod
  *   basic irc server support
- * 
- * $Id: server.c,v 1.60 2001/01/16 17:13:23 guppy Exp $
+ *
+ * $Id: server.c,v 1.61 2001/04/12 02:39:47 guppy Exp $
  */
-/* 
- * Copyright (C) 1997  Robey Pointer
- * Copyright (C) 1999, 2000  Eggheads
- * 
+/*
+ * Copyright (C) 1997 Robey Pointer
+ * Copyright (C) 1999, 2000, 2001 Eggheads Development Team
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -140,9 +140,9 @@ static int burst;
  */
 
 /* Called periodically to shove out another queued item.
- * 
+ *
  * 'mode' queue gets priority now.
- * 
+ *
  * Most servers will allow 'busts' of upto 5 msgs, so let's put something
  * in to support flushing modeq a little faster if possible.
  * Will send upto 4 msgs from modeq, and then send 1 msg every time
@@ -965,7 +965,7 @@ static void clearq(struct server_list *xx)
 }
 
 /* Set botserver to the next available server.
- * 
+ *
  * -> if (*ptr == -1) then jump to that particular server
  */
 static void next_server(int *ptr, char *serv, unsigned int *port, char *pass)
@@ -1578,7 +1578,7 @@ static void server_report(int idx, int details)
 static void msgq_clear(struct msgq_head *qh)
 {
   register struct msgq	*q, *qq;
-  
+
   for (q = qh->head; q; q = qq) {
     qq = q->next;
     nfree(q->msg);

@@ -1,22 +1,22 @@
-/* 
+/*
  * share.c -- part of share.mod
- * 
- * $Id: share.c,v 1.48 2001/02/24 20:11:45 guppy Exp $
+ *
+ * $Id: share.c,v 1.49 2001/04/12 02:39:47 guppy Exp $
  */
-/* 
- * Copyright (C) 1997  Robey Pointer
- * Copyright (C) 1999, 2000  Eggheads
- * 
+/*
+ * Copyright (C) 1997 Robey Pointer
+ * Copyright (C) 1999, 2000, 2001 Eggheads Development Team
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -39,7 +39,7 @@
 /* Minimum version I will share with. */
 static const int min_share		= 1029900;
 /* Earliest version that supports exempts and invites. */
-static const int min_exemptinvite	= 1032800; 
+static const int min_exemptinvite	= 1032800;
 /* Minimum version that supports userfile features. */
 static const int min_uffeature		= 1050200;
 
@@ -83,7 +83,7 @@ static int private_globals_bitmask();
 #include "uf_features.c"
 
 
-/* 
+/*
  *   Botnet commands
  */
 
@@ -1296,7 +1296,7 @@ static void shareout_but EGG_VARARGS_DEF(struct chanset_t *, arg1)
 }
 
 
-/* 
+/*
  *    Resync buffers
  */
 
@@ -1544,7 +1544,7 @@ static int write_tmp_userfile(char *fn, struct userrec *bu, int idx)
 /* Create a copy of the entire userlist (for sending user lists to clone
  * bots) -- userlist is reversed in the process, which is OK because the
  * receiving bot reverses the list AGAIN when saving.
- * 
+ *
  * t = 0:   copy everything BUT tandem-bots
  * t = 1:   copy only tandem-bots
  * t = 2;   copy all entries
@@ -1634,7 +1634,7 @@ static void finish_share(int idx)
     unlink(dcc[idx].u.xfer->filename);
     return;
   }
-  
+
   if (dcc[j].u.bot->uff_flags & UFF_OVERRIDE)
     debug1("NOTE: Sharing passively with %s, overriding local bots.",
 	   dcc[j].nick);
@@ -1642,7 +1642,7 @@ static void finish_share(int idx)
     /* Copy the bots over. The entries will be used in the new user list. */
     u = dup_userlist(1);
 
-  /* 
+  /*
    * This is where we remove all global and channel bans/exempts/invites and
    * ignores since they will be replaced by what our hub gives us.
    */
@@ -1705,7 +1705,7 @@ static void finish_share(int idx)
   userlist = u;			/* Set new user list.			*/
   lastuser = NULL;		/* Reset last accessed user ptr.	*/
 
-  /* 
+  /*
    * Migrate:
    *   - old channel flags over (unshared channels see)
    *   - unshared (got_share == 0) user entries

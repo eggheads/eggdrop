@@ -1,23 +1,23 @@
-/* 
+/*
  * cmdsserv.c -- part of server.mod
  *   handles commands from a user via dcc that cause server interaction
- * 
- * $Id: cmdsserv.c,v 1.7 2000/07/09 14:07:13 fabian Exp $
+ *
+ * $Id: cmdsserv.c,v 1.8 2001/04/12 02:39:47 guppy Exp $
  */
-/* 
- * Copyright (C) 1997  Robey Pointer
- * Copyright (C) 1999, 2000  Eggheads
- * 
+/*
+ * Copyright (C) 1997 Robey Pointer
+ * Copyright (C) 1999, 2000, 2001 Eggheads Development Team
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -97,7 +97,7 @@ static void cmd_clearqueue(struct userrec *u, int idx, char *par)
     msgq_clear(&modeq);
     msgq_clear(&mq);
     msgq_clear(&hq);
-    double_warned = burst = 0;  
+    double_warned = burst = 0;
     dprintf(idx, "Removed %d msgs from all queues\n", msgs);
   } else if (!egg_strcasecmp(par, "mode")) {
     msgs = modeq.tot;
@@ -107,7 +107,7 @@ static void cmd_clearqueue(struct userrec *u, int idx, char *par)
     double_warned = 0;
     dprintf(idx, "Removed %d msgs from the %s queue\n", msgs, "mode");
   } else if (!egg_strcasecmp(par, "help")) {
-    msgs = hq.tot;   
+    msgs = hq.tot;
     msgq_clear(&hq);
     double_warned = 0;
     dprintf(idx, "Removed %d msgs from the %s queue\n", msgs, "help");

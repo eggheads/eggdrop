@@ -1,25 +1,25 @@
-/* 
+/*
  * userrec.c -- handles:
  *   add_q() del_q() str2flags() flags2str() str2chflags() chflags2str()
  *   a bunch of functions to find and change user records
  *   change and check user (and channel-specific) flags
- * 
- * $Id: userrec.c,v 1.29 2000/12/10 15:10:27 guppy Exp $
+ *
+ * $Id: userrec.c,v 1.30 2001/04/12 02:39:44 guppy Exp $
  */
-/* 
- * Copyright (C) 1997  Robey Pointer
- * Copyright (C) 1999, 2000  Eggheads
- * 
+/*
+ * Copyright (C) 1997 Robey Pointer
+ * Copyright (C) 1999, 2000, 2001 Eggheads Development Team
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -85,7 +85,7 @@ void *_user_realloc(void *ptr, int size, const char *file, int line)
 inline int expmem_mask(struct maskrec *m)
 {
   int result = 0;
-  
+
   while (m) {
     result += sizeof(struct maskrec);
     result += strlen(m->mask) + 1;
@@ -93,10 +93,10 @@ inline int expmem_mask(struct maskrec *m)
       result += strlen(m->user) + 1;
     if (m->desc)
       result += strlen(m->desc) + 1;
-      
+
     m = m->next;
   }
-  
+
   return result;
 }
 
@@ -148,7 +148,7 @@ int expmem_users()
     /* Account for each channel's invite-list user */
     tot += expmem_mask(chan->invites);
   }
-  
+
   tot += expmem_mask(global_bans);
   tot += expmem_mask(global_exempts);
   tot += expmem_mask(global_invites);
@@ -263,7 +263,7 @@ void correct_handle(char *handle)
 }
 
 /* This will be usefull in a lot of places, much more code re-use so we
- * endup with a smaller executable bot. <cybah> 
+ * endup with a smaller executable bot. <cybah>
  */
 void clear_masks(maskrec *m)
 {
@@ -271,14 +271,14 @@ void clear_masks(maskrec *m)
 
   while (m) {
     temp = m->next;
-      
+
     if (m->mask)
       nfree(m->mask);
     if (m->user)
       nfree(m->user);
     if (m->desc)
       nfree(m->desc);
-	
+
     nfree(m);
     m = temp;
   }
@@ -301,7 +301,7 @@ void clear_userlist(struct userrec *bu)
       dcc[i].user = NULL;
     clear_chanlist();
     lastuser = NULL;
-    
+
     while (global_ign)
       delignore(global_ign->igmask);
 
@@ -314,7 +314,7 @@ void clear_userlist(struct userrec *bu)
       clear_masks(cst->bans);
       clear_masks(cst->exempts);
       clear_masks(cst->invites);
-      
+
       cst->bans = cst->exempts = cst->invites = NULL;
     }
   }
@@ -631,7 +631,7 @@ struct userrec *adduser(struct userrec *bu, char *handle, char *host,
   } else {
     u->flags = default_flags;
     u->flags_udef = default_uflags;
-  }  
+  }
   set_user(&USERENTRY_PASS, u, pass);
   if (!noxtra) {
     xk = nmalloc(sizeof(struct xtra_key));
@@ -648,7 +648,7 @@ struct userrec *adduser(struct userrec *bu, char *handle, char *host,
     /* About this fixfrom():
      *   We should use this fixfrom before every call of adduser()
      *   but its much easier to use here...  (drummer)
-     *   Only use it if we have a host :) (dw) 
+     *   Only use it if we have a host :) (dw)
      */
     host = fixfrom(host);
     p = strchr(host, ',');
@@ -665,7 +665,7 @@ struct userrec *adduser(struct userrec *bu, char *handle, char *host,
   noshare = oldshare;
   if ((!noshare) && (handle[0] != '*') && (!(flags & USER_UNSHARED)) &&
       (bu == userlist)) {
-    struct flag_record fr = {FR_GLOBAL, 0, 0, 0, 0, 0};    
+    struct flag_record fr = {FR_GLOBAL, 0, 0, 0, 0, 0};
     char x[100];
 
     fr.global = u->flags;
@@ -847,7 +847,7 @@ void touch_laston(struct userrec *u, char *where, time_t timeval)
 /*  Go through all channel records and try to find a matching
  *  nick. Will return the user's user record if that is known
  *  to the bot.  (Fabian)
- *  
+ *
  *  Warning: This is unreliable by concept!
  */
 struct userrec *get_user_by_nick(char *nick)

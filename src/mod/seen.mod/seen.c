@@ -1,61 +1,61 @@
-/* 
+/*
  * seen.c -- part of seen.mod
  *  Implement the seen.tcl script functionality via module
- * 
+ *
  * by ButchBub - Scott G. Taylor (staylor@mrynet.com)
- * 
+ *
  * 0.1     1997-07-29      Initial. [BB]
  * 1.0     1997-07-31      Release. [BB]
  * 1.1     1997-08-05      Add nick->handle lookup for NICK's. [BB]
  * 1.2     1997-08-20      Minor fixes. [BB]
  * 1.2a    1997-08-24      Minor fixes. [BB]
- * 
- * $Id: seen.c,v 1.20 2001/01/16 17:13:23 guppy Exp $
+ *
+ * $Id: seen.c,v 1.21 2001/04/12 02:39:47 guppy Exp $
  */
-/* 
- * Copyright (C) 1999, 2000  Eggheads
- * 
+/*
+ * Copyright (C) 1999, 2000, 2001 Eggheads Development Team
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-/* 
+/*
  *  Currently, PUB, DCC and MSG commands are supported.  No party-line
  *      filtering is performed.
- * 
+ *
  *  For boyfriend/girlfriend support, this module relies on the XTRA
  *      fields in the userfile to use BF and GF, respectively, for
  *      these fields.
- * 
+ *
  *  userinfo1.0.tcl nicely compliments this script by providing
  *      the necessary commands to facilitate modification of these
  *      fields via DCC and IRC MSG commands.
- * 
+ *
  *  A basic definition of the parsing syntax follows:
- * 
+ *
  *      trigger :: seen [ <key> [ [ and | or ] <key> [...]]]
- * 
+ *
  *        <key> :: <keyword> [ <keyarg> ]
- * 
+ *
  *    <keyword> :: god | jesus | shit | me | yourself | my | <nick>'s |
  *                 your
  *       <nick> :: (any current on-channel IRC nick or userlist nick or handle)
- * 
+ *
  *     <keyarg> :: (see below)
- * 
+ *
  *              KEYWORD KEYARG
- * 
+ *
  *              my      boyfriend
  *                      bf
  *                      girlfriend
@@ -67,7 +67,7 @@
  *                      bf
  *                      girlfriend
  *                      gf
- * 
+ *
  */
 
 #define MODULE_NAME "seen"

@@ -1,31 +1,31 @@
-/* 
+/*
  * main.c -- handles:
  *   core event handling
  *   signal handling
  *   command line arguments
  *   context and assert debugging
- * 
- * $Id: main.c,v 1.55 2001/04/01 17:42:55 guppy Exp $
+ *
+ * $Id: main.c,v 1.56 2001/04/12 02:39:43 guppy Exp $
  */
-/* 
- * Copyright (C) 1997  Robey Pointer
- * Copyright (C) 1999, 2000  Eggheads
- * 
+/*
+ * Copyright (C) 1997 Robey Pointer
+ * Copyright (C) 1999, 2000, 2001 Eggheads Development Team
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-/* 
+/*
  * The author (Robey Pointer) can be reached at:  robey@netcom.com
  * NOTE: Robey is no long working on this code, there is a discussion
  * list avaliable at eggheads@eggheads.org.
@@ -70,7 +70,7 @@ extern tcl_timer_t	*timer,
 extern jmp_buf		 alarmret;
 
 
-/* 
+/*
  * Please use the PATCH macro instead of directly altering the version
  * string from now on (it makes it much easier to maintain patches).
  * Also please read the README file regarding your rights to distribute
@@ -214,7 +214,7 @@ void write_debug()
   if (nested_debug) {
     /* Yoicks, if we have this there's serious trouble!
      * All of these are pretty reliable, so we'll try these.
-     * 
+     *
      * NOTE: dont try and display context-notes in here, it's
      *       _not_ safe <cybah>
      */
@@ -702,9 +702,8 @@ int main(int argc, char **argv)
 #include "patch.h"
   /* Version info! */
   egg_snprintf(ver, sizeof ver, "eggdrop v%s", egg_version);
-  egg_snprintf(version, sizeof version, 
-	       "Eggdrop v%s  (c)1997 Robey Pointer (c)1999, 2000  Eggheads",
-     egg_version);
+  egg_snprintf(version, sizeof version, "Eggdrop v%s (C)1997 Robey Pointer (C)2001 Eggheads",
+	       egg_version);
   /* Now add on the patchlevel (for Tcl) */
   sprintf(&egg_version[strlen(egg_version)], " %u", egg_numver);
   strcat(egg_version, egg_xtra);
@@ -948,7 +947,7 @@ int main(int argc, char **argv)
 	      else
 		itraffic_unknown_today += strlen(buf) + 1;
 	    }
-	    dcc[idx].type->activity(idx, buf, i);      
+	    dcc[idx].type->activity(idx, buf, i);
 	  } else
 	    putlog(LOG_MISC, "*",
 		   "!!! untrapped dcc activity: type %s, sock %d",

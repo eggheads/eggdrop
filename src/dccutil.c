@@ -1,27 +1,27 @@
-/* 
+/*
  * dccutil.c -- handles:
  *   lots of little functions to send formatted text to
  *   varying types of connections
  *   '.who', '.whom', and '.dccstat' code
  *   memory management for dcc structures
  *   timeout checking for dcc connections
- * 
- * $Id: dccutil.c,v 1.30 2001/04/06 22:28:42 guppy Exp $
+ *
+ * $Id: dccutil.c,v 1.31 2001/04/12 02:39:43 guppy Exp $
  */
-/* 
- * Copyright (C) 1997  Robey Pointer
- * Copyright (C) 1999, 2000  Eggheads
- * 
+/*
+ * Copyright (C) 1997 Robey Pointer
+ * Copyright (C) 1999, 2000, 2001 Eggheads Development Team
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -178,13 +178,13 @@ void chatout EGG_VARARGS_DEF(char *, arg1)
   len = strlen(s);
   if (len > 511)
     len = 511;
-  s[len + 1] = 0;    
+  s[len + 1] = 0;
 
   for (i = 0; i < dcc_total; i++)
     if (dcc[i].type == &DCC_CHAT)
       if (dcc[i].u.chat->channel >= 0)
         dprintf(i, "%s", s);
-  
+
 }
 
 /* Print to all on this channel but one.
@@ -204,13 +204,13 @@ void chanout_but EGG_VARARGS_DEF(int, arg1)
   len = strlen(s);
   if (len > 511)
     len = 511;
-  s[len + 1] = 0; 
-    
+  s[len + 1] = 0;
+
   for (i = 0; i < dcc_total; i++)
     if ((dcc[i].type == &DCC_CHAT) && (i != x))
       if (dcc[i].u.chat->channel == chan)
         dprintf(i, "%s", s);
-  
+
 }
 
 void dcc_chatter(int idx)
@@ -533,7 +533,7 @@ void do_boot(int idx, char *by, char *reason)
       (dcc[idx].u.chat->channel >= 0)) {
     char x[1024];
 
-    egg_snprintf(x, sizeof x, DCC_BOOTED3, by, dcc[idx].nick, 
+    egg_snprintf(x, sizeof x, DCC_BOOTED3, by, dcc[idx].nick,
 		 reason[0] ? ": " : "", reason);
     chanout_but(idx, dcc[idx].u.chat->channel, "*** %s.\n", x);
     if (dcc[idx].u.chat->channel < 100000)

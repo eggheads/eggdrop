@@ -1,24 +1,24 @@
-/* 
+/*
  * dns.c -- part of dns.mod
  *   domain lookup glue code for eggdrop
- * 
+ *
  * Written by Fabian Knittel <fknittel@gmx.de>
- * 
- * $Id: dns.c,v 1.21 2001/01/16 17:13:22 guppy Exp $
+ *
+ * $Id: dns.c,v 1.22 2001/04/12 02:39:46 guppy Exp $
  */
-/* 
- * Copyright (C) 1999, 2000  Eggheads
- * 
+/*
+ * Copyright (C) 1999, 2000, 2001 Eggheads Development Team
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -38,7 +38,7 @@ static Function *global = NULL;
 #include "coredns.c"
 
 
-/* 
+/*
  *    DNS event related code
  */
 
@@ -77,7 +77,7 @@ static void dns_event_failure(struct resolve *rp, int type)
 }
 
 
-/* 
+/*
  *    DNS Socket related code
  */
 
@@ -119,7 +119,7 @@ static struct dcc_table DCC_DNS =
 };
 
 
-/* 
+/*
  *    DNS module related code
  */
 
@@ -132,7 +132,7 @@ static void dns_free_cache(void)
     if (rp->hostn)
       nfree(rp->hostn);
     nfree(rp);
-  } 
+  }
   expireresolves = NULL;
 }
 
@@ -145,7 +145,7 @@ static int dns_cache_expmem(void)
     size += sizeof(struct resolve);
     if (rp->hostn)
       size += strlen(rp->hostn) + 1;
-  } 
+  }
   return size;
 }
 
@@ -199,7 +199,7 @@ static Function dns_table[] =
 char *dns_start(Function *global_funcs)
 {
   int idx;
-  
+
   global = global_funcs;
   module_register(MODULE_NAME, dns_table, 1, 0);
   if (!module_depend(MODULE_NAME, "eggdrop", 106, 0)) {

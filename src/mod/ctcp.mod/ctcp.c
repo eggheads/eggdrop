@@ -1,23 +1,23 @@
-/* 
+/*
  * ctcp.c -- part of ctcp.mod
  *   all the ctcp handling (except DCC, it's special ;)
- * 
- * $Id: ctcp.c,v 1.11 2001/01/16 17:13:22 guppy Exp $
+ *
+ * $Id: ctcp.c,v 1.12 2001/04/12 02:39:45 guppy Exp $
  */
-/* 
- * Copyright (C) 1997  Robey Pointer
- * Copyright (C) 1999, 2000  Eggheads
- * 
+/*
+ * Copyright (C) 1997 Robey Pointer
+ * Copyright (C) 1999, 2000, 2001 Eggheads Development Team
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -61,7 +61,7 @@ static int ctcp_PING(char *nick, char *uhost, char *handle,
   struct userrec *u = get_user_by_handle(userlist, handle);
   int atr = u ? u->flags : 0;
 
-  if ((ctcp_mode != 1 || (atr & USER_OP)) && strlen(text) <= 80) 
+  if ((ctcp_mode != 1 || (atr & USER_OP)) && strlen(text) <= 80)
       simple_sprintf(ctcp_reply, "%s\001%s %s\001", ctcp_reply, keyword, text);
   return 1;
 }
@@ -159,7 +159,7 @@ static int ctcp_CHAT(char *nick, char *uhost, char *handle, char *object,
         return 1;
       }
     }
-    simple_sprintf(ctcp_reply, "%s\001ERROR no telnet port\001", 
+    simple_sprintf(ctcp_reply, "%s\001ERROR no telnet port\001",
                    ctcp_reply);
   }
   return 1;

@@ -1,23 +1,23 @@
-/* 
+/*
  * irc.c -- part of irc.mod
- *   support for channels within the bot 
- * 
- * $Id: irc.c,v 1.49 2001/01/31 05:38:06 guppy Exp $
+ *   support for channels within the bot
+ *
+ * $Id: irc.c,v 1.50 2001/04/12 02:39:46 guppy Exp $
  */
-/* 
- * Copyright (C) 1997  Robey Pointer
- * Copyright (C) 1999, 2000  Eggheads
- * 
+/*
+ * Copyright (C) 1997 Robey Pointer
+ * Copyright (C) 1999, 2000, 2001 Eggheads Development Team
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -60,7 +60,7 @@ static int use_354 = 0;			/* Use ircu's short 354 /who
 					   responses. */
 static int kick_method = 1;		/* How many kicks does the irc network
 					   support at once?
-					   0 = as many as possible. 
+					   0 = as many as possible.
 					       (Ernst 18/3/1998) */
 static int kick_fun = 0;
 static int ban_fun = 0;
@@ -92,7 +92,7 @@ static int want_to_revenge(struct chanset_t *chan, struct userrec *u,
     return 0;
 
   get_user_flagrec(u, &fr, chan->dname);
- 
+
   /* Kickee is not a friend? */
   if (!chan_friend(fr) && !glob_friend(fr) &&
       /* ... and they didn't kick themself? */
@@ -154,7 +154,7 @@ static void punish_badguy(struct chanset_t *chan, char *whobad,
     kick_msg = "revenge!";
   }
   putlog(LOG_MISC, chan->dname, "Punishing %s (%s)", badnick, reason);
- 
+
   /* Set the offender +d */
   if ((chan->revenge_mode > 0) &&
       /* ... unless there's no more to do */
@@ -213,7 +213,7 @@ static void punish_badguy(struct chanset_t *chan, char *whobad,
       putlog(LOG_MISC, "*", "Now deopping %s (%s)", whobad, reason);
     }
   }
-  
+
   /* Always try to deop the offender */
   if (!mevictim)
     add_mode(chan, '-', 'o', badnick);
@@ -478,7 +478,7 @@ static void status_log()
   struct chanset_t *chan;
   char s[20], s2[20];
   int chops, voice, nonops, bans, invites, exempts;
-  
+
   for (chan = chanset; chan != NULL; chan = chan->next) {
     if (channel_active(chan) && channel_logstatus(chan) &&
         !channel_inactive(chan)) {
@@ -554,7 +554,7 @@ static void check_lonely_channel(struct chanset_t *chan)
       /* + is opless. Complaining about no ops when without special
        * help(services), we cant get them - Raist
        */
-      if (chan->name[0] != '+')	
+      if (chan->name[0] != '+')
 	putlog(LOG_MISC, "*", "%s is active but has no ops :(", chan->dname);
       whined = 1;
     }
@@ -609,7 +609,7 @@ static void check_expired_chanstuff()
 	if (use_exempts && channel_dynamicexempts(chan) && exempt_time)
 	  for (e = chan->channel.exempt; e->mask[0]; e = e->next)
 	    if (now - e->timer > 60 * exempt_time &&
-		!u_sticky_mask(chan->exempts, e->mask) && 
+		!u_sticky_mask(chan->exempts, e->mask) &&
 		!u_sticky_mask(global_exempts, e->mask) &&
 		expired_mask(chan, e->who)) {
 	      /* Check to see if it matches a ban */
@@ -641,7 +641,7 @@ static void check_expired_chanstuff()
 	    invite_time && !(chan->channel.mode & CHANINV))
 	  for (b = chan->channel.invite; b->mask[0]; b = b->next)
 	    if (now - b->timer > 60 * invite_time &&
-		!u_sticky_mask(chan->invites, b->mask) && 
+		!u_sticky_mask(chan->invites, b->mask) &&
 		!u_sticky_mask(global_invites, b->mask) &&
 		expired_mask(chan, b->who)) {
 	      putlog(LOG_MODES, chan->dname,
@@ -1139,7 +1139,7 @@ char *irc_start(Function * global_funcs)
   for (chan = chanset; chan; chan = chan->next) {
     if (!channel_inactive(chan))
       dprintf(DP_MODE, "JOIN %s %s\n",
-              (chan->name[0]) ? chan->name : chan->dname, chan->key_prot);      
+              (chan->name[0]) ? chan->name : chan->dname, chan->key_prot);
     chan->status &= ~(CHAN_ACTIVE | CHAN_PEND | CHAN_ASKEDBANS);
     chan->ircnet_status &= ~(CHAN_ASKED_INVITED | CHAN_ASKED_EXEMPTS);
   }

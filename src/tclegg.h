@@ -1,23 +1,23 @@
-/* 
+/*
  * tclegg.h
  *   stuff used by tcl.c and tclhash.c
- * 
- * $Id: tclegg.h,v 1.11 2001/01/26 21:18:22 guppy Exp $
+ *
+ * $Id: tclegg.h,v 1.12 2001/04/12 02:39:43 guppy Exp $
  */
-/* 
- * Copyright (C) 1997  Robey Pointer
- * Copyright (C) 1999, 2000  Eggheads
- * 
+/*
+ * Copyright (C) 1997 Robey Pointer
+ * Copyright (C) 1999, 2000, 2001 Eggheads Development Team
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -45,7 +45,7 @@
 #define BIND_STACKABLE      0x08
 #define BIND_HAS_BUILTINS   0x10
 #define BIND_WANTRET        0x20
-#define BIND_ALTER_ARGS     0x40 
+#define BIND_ALTER_ARGS     0x40
 
 /* Return values
  */
@@ -144,8 +144,8 @@ static const LocaleTable localeTable[] = {
   {"Jp_JP",		"shiftjis"},
   {"japan",		"euc-jp"},
 #ifdef hpux
-  {"japanese",		"shiftjis"},	
-  {"ja",		"shiftjis"},	
+  {"japanese",		"shiftjis"},
+  {"ja",		"shiftjis"},
 #else
   {"japanese",		"euc-jp"},
   {"ja",		"euc-jp"},
@@ -162,9 +162,9 @@ static const LocaleTable localeTable[] = {
   {"ko_KR.eucKR",	"euc-kr"},
   {"korean",		"euc-kr"},
 
-  {"ru",		"iso8859-5"},		
-  {"ru_RU",		"iso8859-5"},		
-  {"ru_SU",		"iso8859-5"},		
+  {"ru",		"iso8859-5"},
+  {"ru_RU",		"iso8859-5"},
+  {"ru_SU",		"iso8859-5"},
 
   {"zh",		"cp936"},
 

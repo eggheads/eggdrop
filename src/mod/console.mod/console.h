@@ -1,10 +1,10 @@
 /*
  * console.h -- part of console.mod
  *
- * $Id: console.h,v 1.1 2000/09/23 17:45:23 fabian Exp $
+ * $Id: console.h,v 1.2 2001/04/12 02:39:45 guppy Exp $
  */
 /*
- * Copyright (C) 2000  Eggheads
+ * Copyright (C) 2000, 2001 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

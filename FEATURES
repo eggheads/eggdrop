@@ -182,5 +182,5 @@ how's that look? :)
 make install DEST=<directory>
 
   ------------------------------------------------------------------------
-(c) 1997 Robey Pointer
-(c) 2000 Eggheads Development Team
+Copyright (C) 1997 Robey Pointer
+Copyright (C) 2000, 2001 Eggheads Development Team

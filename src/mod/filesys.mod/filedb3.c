@@ -1,32 +1,32 @@
-/* 
+/*
  * filedb3.c -- part of filesys.mod
  *   low level functions for file db handling
- * 
+ *
  * Rewritten by Fabian Knittel <fknittel@gmx.de>
- * 
- * $Id: filedb3.c,v 1.17 2001/01/16 17:13:22 guppy Exp $
+ *
+ * $Id: filedb3.c,v 1.18 2001/04/12 02:39:46 guppy Exp $
  */
-/* 
- * Copyright (C) 1997  Robey Pointer
- * Copyright (C) 1999, 2000  Eggheads
- * 
+/*
+ * Copyright (C) 1997 Robey Pointer
+ * Copyright (C) 1999, 2000, 2001 Eggheads Development Team
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
 /*  filedb structure:
- * 
+ *
  *  +---------------+                           _
  *  | filedb_top    |                           _|  DB header
  *  |---------------|
@@ -53,11 +53,11 @@
  *  | ...           |
  *  .               .
  *  .               .
- * 
+ *
  *  To know how long the complete entry is, you need to read out the
  *  header first. This concept allows us to have unlimited filename
  *  lengths, unlimited description lengths, etc.
- * 
+ *
  *  Buffer is an area which doesn't contain any information and which
  *  is just skipped. It only serves as a placeholder to allow entries
  *  which shrink in size to maintain their position without messing up
@@ -70,7 +70,7 @@
 static int count = 0;
 
 
-/* 
+/*
  *   Memory management helper functions
  */
 
@@ -100,7 +100,7 @@ static void free_fdbe(filedb_entry **fdbe)
 static filedb_entry *_malloc_fdbe(char *file, int line)
 {
   filedb_entry *fdbe = NULL;
-  
+
 #ifdef EBUG_MEM
   /* This is a hack to access the nmalloc function with
    * special file and line information
@@ -117,7 +117,7 @@ static filedb_entry *_malloc_fdbe(char *file, int line)
 }
 
 
-/* 
+/*
  *  File locking
  */
 
@@ -149,7 +149,7 @@ static void unlockfile(FILE * f)
 }
 
 
-/* 
+/*
  *   filedb functions
  */
 
@@ -191,7 +191,7 @@ static int filedb_delfile(FILE *fdb, long pos)
     return 0;
   fread(&fdh, 1, sizeof(filedb_header), fdb);	/* Read header		*/
   fdh.stat = FILE_UNUSED;
-  
+
   /* Assign all available space to buffer. Simplifies
    * space calculation later on.
    */
@@ -205,13 +205,13 @@ static int filedb_delfile(FILE *fdb, long pos)
 
 /* Searches for a suitable place to write an entry which uses tot
  * bytes for dynamic data.
- * 
+ *
  *  * If there is no such existing entry, it just points to the
  *    end of the DB.
  *  * If it finds an empty entry and it has enough space to fit
  *    in another entry, we split it up and only use the space we
  *    really need.
- * 
+ *
  * Note: We can assume that empty entries' dyn_lengths are zero.
  *       Therefore we only need to check buf_len.
  */
@@ -231,7 +231,7 @@ static filedb_entry *filedb_findempty(FILE *fdb, int tot)
       if (fdbe->buf_len > (tot + sizeof(filedb_header) + FILEDB_ESTDYN)) {
 	filedb_entry *fdbe_oe;
 
-	/* Create new entry containing the additional space */ 
+	/* Create new entry containing the additional space */
 	fdbe_oe = malloc_fdbe();
 	fdbe_oe->stat = FILE_UNUSED;
 	fdbe_oe->pos = fdbe->pos + sizeof(filedb_header) + tot;
@@ -243,8 +243,8 @@ static filedb_entry *filedb_findempty(FILE *fdb, int tot)
 	 * entry.
 	 */
 	fdbe->buf_len = tot;
-      } 
-      return fdbe;		
+      }
+      return fdbe;
     }
     free_fdbe(&fdbe);
     fdbe = filedb_getfile(fdb, ftell(fdb), GET_HEADER);
@@ -258,16 +258,16 @@ static filedb_entry *filedb_findempty(FILE *fdb, int tot)
 }
 
 /* Updates or creates entries and information in the filedb.
- * 
+ *
  *   * If the new entry is the same size or smaller than the original
  *     one, we use the old position and just adjust the buffer length
  *     apropriately.
  *   * If the entry is completely _new_ or if the entry's new size is
  *     _bigger_ than the old one, we search for a new position which
  *     suits our needs.
- * 
+ *
  * Note that the available space also includes the buffer.
- * 
+ *
  * The file pointer will _always_ position directly after the updated
  * entry.
  */
@@ -632,7 +632,7 @@ static void filedb_timestamp(FILE * fdb)
 }
 
 /* Updates the specified filedb in several ways:
- * 
+ *
  * 1. Adds all new files from the directory to the db.
  * 2. Removes all stale entries from the db.
  * 3. Optimises the db.
@@ -646,7 +646,7 @@ static void filedb_update(char *path, FILE *fdb, int sort)
   long where = 0;
   char *name = NULL, *s = NULL;
 
-  /* 
+  /*
    * FIRST: make sure every real file is in the database
    */
   dir = opendir(path);
@@ -687,7 +687,7 @@ static void filedb_update(char *path, FILE *fdb, int sort)
     my_free(name);
   closedir(dir);
 
-  /* 
+  /*
    * SECOND: make sure every db file is real
    */
   filedb_readtop(fdb, NULL);
@@ -707,9 +707,9 @@ static void filedb_update(char *path, FILE *fdb, int sort)
     fdbe = filedb_getfile(fdb, where, GET_FILENAME);
   }
 
-  /* 
+  /*
    * THIRD: optimise database
-   * 
+   *
    * Instead of sorting, we only clean up the db, because sorting is now
    * done on-the-fly when we display the file list.
    */
@@ -751,7 +751,7 @@ static FILE *filedb_open(char *path, int sort)
   /* Use alternate filename if requested */
   if (filedb_path[0]) {
     char *s2;
- 
+
     s2 = make_point_path(path);
     s = nmalloc(strlen(filedb_path) + strlen(s2) + 8);
     simple_sprintf(s, "%sfiledb.%s", filedb_path, s2);
@@ -797,7 +797,7 @@ static FILE *filedb_open(char *path, int sort)
       return fdb;
     }
   }
-  
+
   lockfile(fdb);			/* Lock it from other bots */
   filedb_readtop(fdb, &fdbt);
   if (fdbt.version < FILEDB_NEWEST_VER) {
@@ -989,7 +989,7 @@ static void filedb_ls(FILE *fdb, int idx, char *mask, int showall)
 	  *p = 0;
 	  if ((fdbe->desc)[0]) {
 	    char *sd;
-	   
+
 	    sd = nmalloc(strlen(fdbe->desc) + 5);
 	    sprintf(sd, "   %s\n", fdbe->desc);
 	    filelist_addout(flist, sd);
@@ -1000,7 +1000,7 @@ static void filedb_ls(FILE *fdb, int idx, char *mask, int showall)
 	}
 	if ((fdbe->desc)[0]) {
 	  char *sd;
-	   
+
 	  sd = nmalloc(strlen(fdbe->desc) + 5);
 	  sprintf(sd, "   %s\n", fdbe->desc);
 	  filelist_addout(flist, sd);

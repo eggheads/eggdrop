@@ -1,24 +1,24 @@
-/* 
+/*
  * cmds.c -- handles:
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
- * 
- * $Id: cmds.c,v 1.48 2001/01/21 07:25:48 guppy Exp $
+ *
+ * $Id: cmds.c,v 1.49 2001/04/12 02:39:43 guppy Exp $
  */
-/* 
- * Copyright (C) 1997  Robey Pointer
- * Copyright (C) 1999, 2000  Eggheads
- * 
+/*
+ * Copyright (C) 1997 Robey Pointer
+ * Copyright (C) 1999, 2000, 2001 Eggheads Development Team
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -260,7 +260,7 @@ static void cmd_botinfo(struct userrec *u, int idx, char *par)
   if (module_find("server", 0, 0)) {
     while (chan != NULL) {
       if (!channel_secret(chan)) {
-	if ((strlen(s) + strlen(chan->dname) + strlen(network) 
+	if ((strlen(s) + strlen(chan->dname) + strlen(network)
                    + strlen(botnetnick) + strlen(ver) + 1) >= 490) {
           strcat(s,"++  ");
           break; /* yeesh! */
@@ -274,7 +274,7 @@ static void cmd_botinfo(struct userrec *u, int idx, char *par)
     if (s[0]) {
       s[strlen(s) - 2] = 0;
       dprintf(idx, "*** [%s] %s <%s> (%s) [UP %s]\n", botnetnick,
-	      ver, network, s, s2); 
+	      ver, network, s, s2);
     } else
       dprintf(idx, "*** [%s] %s <%s> (%s) [UP %s]\n", botnetnick,
 	      ver, network, BOT_NOCHANNELS, s2);
@@ -652,7 +652,7 @@ static void cmd_console(struct userrec *u, int idx, char *par)
   get_user_flagrec(u, &fr, dcc[idx].u.chat->con_chan);
   strcpy(s1, par);
   nick = newsplit(&par);
-  /* Don't remove '+' as someone couldn't have '+' in CHANMETA cause 
+  /* Don't remove '+' as someone couldn't have '+' in CHANMETA cause
    * he doesn't use IRCnet ++rtc.
    */
   if (nick[0] && !strchr(CHANMETA "+-*", nick[0]) && glob_master(fr)) {
@@ -672,7 +672,7 @@ static void cmd_console(struct userrec *u, int idx, char *par)
   if (!nick[0])
     nick = newsplit(&par);
   /* Consider modeless channels, starting with '+' */
-  if ((nick [0] == '+' && findchan_by_dname(nick)) || 
+  if ((nick [0] == '+' && findchan_by_dname(nick)) ||
       (nick [0] != '+' && strchr(CHANMETA "*", nick[0]))) {
     if (strcmp(nick, "*") && !findchan_by_dname(nick)) {
       dprintf(idx, "Invalid console channel: %s\n", nick);
@@ -1150,7 +1150,7 @@ static void cmd_unlink(struct userrec *u, int idx, char *par)
     botunlink(idx, bot, par);
     return;
   }
-  /* If we're directly connected to that bot, just do it 
+  /* If we're directly connected to that bot, just do it
    * (is nike gunna sue?)
    */
   if (!egg_strcasecmp(dcc[i].nick, bot))
@@ -1321,7 +1321,7 @@ int check_dcc_attrs(struct userrec *u, int oatr)
 	stat |= STAT_CHAT;
       dcc[i].status = stat;
       /* Check if they no longer have access to wherever they are.
-       * 
+       *
        * NOTE: DON'T kick someone off the party line just cuz they lost +p
        *       (pinvite script removes +p after 5 mins automatically)
        */
@@ -1687,7 +1687,7 @@ static void cmd_botattr(struct userrec *u, int idx, char *par)
     }
   }
   par = arg;
-  
+
   user.match = FR_GLOBAL;
   get_user_flagrec(u, &user, chan ? chan->dname : 0);
   if (!glob_botmast(user)) {
@@ -2029,7 +2029,7 @@ static void cmd_strip(struct userrec *u, int idx, char *par)
   }
   if (nick[0])
     putlog(LOG_CMDS, "*", "#%s# strip %s %s", dcc[idx].nick, nick, changes);
-  else 
+  else
     putlog(LOG_CMDS, "*", "#%s# strip %s", dcc[idx].nick, changes);
   if (dest == idx) {
     dprintf(idx, "Your strip settings are: %s (%s)\n",
@@ -2439,7 +2439,7 @@ static void cmd_mns_user(struct userrec *u, int idx, char *par)
     if (idx2 != dcc_total) {
       dprintf(idx, "You can't remove a directly linked bot.\n");
       return;
-    }     
+    }
   }
   if ((u->flags & USER_BOTMAST) && !(u->flags & USER_MASTER) &&
       !(u2->flags & USER_BOT)) {
@@ -2548,7 +2548,7 @@ static void cmd_mns_host(struct userrec *u, int idx, char *par)
       dprintf(idx, "You can't remove hosts while having the +d or +k flag.\n");
       return;
     }
-  
+
   if (egg_strcasecmp(handle, dcc[idx].nick)) {
     if (!(u2->flags & USER_BOT) && !(u->flags & USER_MASTER) &&
 	!chan_master(fr)) {
@@ -2558,7 +2558,7 @@ static void cmd_mns_host(struct userrec *u, int idx, char *par)
 	       !(u->flags & USER_OWNER)) {
       dprintf(idx, "You can't remove hostmask from a shared bot.\n");
       return;
-    } else if ((u2->flags & (USER_OWNER|USER_MASTER)) && 
+    } else if ((u2->flags & (USER_OWNER|USER_MASTER)) &&
 	       !(u->flags & USER_OWNER) && (u2 != u)) {
       dprintf(idx, "Can't remove hostmasks from the bot owner/master.\n");
       return;
@@ -2718,7 +2718,7 @@ cmd_t C_dcc[] =
   {"chat",		"",	(Function) cmd_chat,		NULL},
   {"chattr",		"m|m",	(Function) cmd_chattr,		NULL},
   {"chhandle",		"t",	(Function) cmd_chhandle,	NULL},
-  {"chnick",		"t",	(Function) cmd_chhandle,	NULL}, 
+  {"chnick",		"t",	(Function) cmd_chhandle,	NULL},
   {"chpass",		"t",	(Function) cmd_chpass,		NULL},
   {"comment",		"m",	(Function) cmd_comment,		NULL},
   {"console",		"to|o",	(Function) cmd_console,		NULL},

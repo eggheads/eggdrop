@@ -1,27 +1,27 @@
-/* 
+/*
  * transfer.c -- part of transfer.mod
- * 
- * $Id: transfer.c,v 1.35 2001/01/22 23:47:34 guppy Exp $
+ *
+ * $Id: transfer.c,v 1.36 2001/04/12 02:39:47 guppy Exp $
  */
-/* 
- * Copyright (C) 1997  Robey Pointer
- * Copyright (C) 1999, 2000  Eggheads
- * 
+/*
+ * Copyright (C) 1997 Robey Pointer
+ * Copyright (C) 1999, 2000, 2001 Eggheads Development Team
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-/* 
+/*
  * Small code snippets related to REGET/RESEND support were taken from
  * BitchX, copyright by panasync.
  */
@@ -53,7 +53,7 @@ static int dcc_block = 1024;	/* Size of one dcc block */
 static int quiet_reject;        /* Quietly reject dcc chat or sends from
                                    users without access? */
 
-/* 
+/*
  * Prototypes
  */
 static void stats_add_dnload(struct userrec *, unsigned long);
@@ -68,7 +68,7 @@ static struct dcc_table DCC_GET_PENDING;
 static fileq_t *fileq = NULL;
 
 
-/* 
+/*
  *   Misc functions
  */
 
@@ -83,9 +83,9 @@ static fileq_t *fileq = NULL;
 #define WILDS '*'
 #define WILDQ '?'
 #define NOMATCH 0
-/* 
+/*
  * wild_match_file(char *ma, char *na)
- * 
+ *
  * Features:  Forward, case-sensitive, ?, *
  * Best use:  File mask matching, as it is case-sensitive
  */
@@ -196,7 +196,7 @@ static char *replace_spaces(char *fn)
 }
 
 
-/* 
+/*
  *    Tcl sent, rcvd, tout and lost functions
  */
 
@@ -213,13 +213,13 @@ static int builtin_sentrcvd STDVAR
 static int builtin_toutlost STDVAR
 {
   Function F = (Function) cd;
- 
+
   BADARGS(6, 6, " hand nick path acked length");
   CHECKVALIDITY(builtin_toutlost);
   F(argv[1], argv[2], argv[3], argv[4], argv[5]);
   return TCL_OK;
 }
- 
+
 static void check_tcl_sentrcvd(struct userrec *u, char *nick, char *path,
 			       p_tcl_bind_list h)
 {
@@ -241,7 +241,7 @@ static void check_tcl_toutlost(struct userrec *u, char *nick, char *path,
   struct flag_record fr = {FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0};
   char *hand = u ? u->handle : "*";	/* u might be NULL. */
   char s[15];
- 
+
   get_user_flagrec(u, &fr, NULL);
   Tcl_SetVar(interp, "_sr1", hand, 0);
   Tcl_SetVar(interp, "_sr2", nick, 0);
@@ -252,9 +252,9 @@ static void check_tcl_toutlost(struct userrec *u, char *nick, char *path,
   Tcl_SetVar(interp, "_sr5", s, 0);
   check_tcl_bind(h, hand, &fr, " $_sr1 $_sr2 $_sr3 $_sr4 $_sr5",
 		 MATCH_MASK | BIND_USE_ATTR | BIND_STACKABLE);
-}                                                                     
+}
 
-/* 
+/*
  *    File queue functions
  */
 
@@ -574,7 +574,7 @@ static int tcl_getfileq STDVAR
 }
 
 
-/* 
+/*
  *    Misc Tcl functions
  */
 
@@ -634,7 +634,7 @@ static int tcl_getfilesendtime STDVAR
 {
   int	sock, i;
   char	s[15];
- 
+
   BADARGS(2, 2, " idx");
   /* Btw, what the tcl interface refers to as `idx' is the socket number
      for the C part. */
@@ -663,7 +663,7 @@ static tcl_cmds mytcls[] =
 };
 
 
-/* 
+/*
  *    DCC routines
  */
 
@@ -896,7 +896,7 @@ inline static void handle_resend_packet(int idx, transfer_reget *reget_data)
 
 /* Handles DCC packets the client sends us. As soon as the last sent dcc
  * block is fully acknowledged we send the next block.
- * 
+ *
  * Note: The first received packet during reget is a special 8 bit packet
  *       containing special information.
  */
@@ -1086,7 +1086,7 @@ static void eof_dcc_get(int idx)
     check_tcl_toutlost(u, dcc[idx].nick, dcc[idx].u.xfer->dir,
 		       dcc[idx].u.xfer->acked, dcc[idx].u.xfer->length,
 		       H_lost);
- 
+
     putlog(LOG_FILES, "*", "Lost dcc get %s from %s!%s",
 	   dcc[idx].u.xfer->origname, dcc[idx].nick, dcc[idx].host);
     wipe_tmp_filename(dcc[idx].u.xfer->filename, idx);
@@ -1174,7 +1174,7 @@ static void transfer_get_timeout(int i)
      */
     egg_snprintf(xx, sizeof xx, "%s!%s", dcc[i].nick, dcc[i].host);
     u = get_user_by_host(xx);
-    check_tcl_toutlost(u, dcc[i].nick, dcc[i].u.xfer->dir, 
+    check_tcl_toutlost(u, dcc[i].nick, dcc[i].u.xfer->dir,
 		       dcc[i].u.xfer->acked, dcc[i].u.xfer->length, H_tout);
 
     putlog(LOG_FILES, "*", "DCC timeout: GET %s (%s) at %lu/%lu",
@@ -1252,7 +1252,7 @@ static int expmem_dcc_xfer(void *x)
 {
   register struct xfer_info *p = (struct xfer_info *) x;
   int tot;
-  
+
   tot = sizeof(struct xfer_info);
   if (p->filename)
     tot += strlen(p->filename) + 1;
@@ -1387,7 +1387,7 @@ static void dcc_get_pending(int idx, char *buf, int len)
   dcc[idx].type = &DCC_GET;
   dcc[idx].u.xfer->ack_type = XFER_ACK_UNKNOWN;
 
-  /* 
+  /*
    * Note: The file was already opened and dcc[idx].u.xfer->f may be
    *       used immediately. Leave it opened until the file transfer
    *       is complete.
@@ -1433,7 +1433,7 @@ static void dcc_get_pending(int idx, char *buf, int len)
 
 /* Starts a new DCC SEND or DCC RESEND connection to `nick', transferring
  * `filename' from `dir'.
- * 
+ *
  * Use raw_dcc_resend() and raw_dcc_send() instead of this function.
  */
 static int raw_dcc_resend_send(char *filename, char *nick, char *from,
@@ -1525,7 +1525,7 @@ static tcl_ints myints[] =
 };
 
 
-/* 
+/*
  *    fstat functions
  */
 
@@ -1817,7 +1817,7 @@ static int fstat_tcl_set(Tcl_Interp *irp, struct userrec *u,
 }
 
 
-/* 
+/*
  *    CTCP functions
  */
 
@@ -1853,7 +1853,7 @@ static int ctcp_DCC_RESUME(char *nick, char *from, char *handle,
 	    nick, p ? p + 1 : dcc[i].u.xfer->origname);
     return 1;
   }
-  dcc[i].u.xfer->type = XFER_RESUME_PEND; 
+  dcc[i].u.xfer->type = XFER_RESUME_PEND;
   dcc[i].u.xfer->offset = offset;
   dprintf(DP_HELP, "PRIVMSG %s :\001DCC ACCEPT %s %d %u\001\n", nick,
 	  fn, port, offset);
@@ -1883,7 +1883,7 @@ static cmd_t transfer_load[] =
   {NULL,	"",	NULL,			NULL}
 };
 
-/* 
+/*
  *   Module functions
  */
 

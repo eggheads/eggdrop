@@ -1,25 +1,25 @@
-/* 
+/*
  * dcc.c -- handles:
  *   activity on a dcc socket
  *   disconnect on a dcc socket
  *   ...and that's it!  (but it's a LOT)
- * 
- * $Id: dcc.c,v 1.43 2001/02/27 17:06:28 guppy Exp $
+ *
+ * $Id: dcc.c,v 1.44 2001/04/12 02:39:43 guppy Exp $
  */
-/* 
- * Copyright (C) 1997  Robey Pointer
- * Copyright (C) 1999, 2000  Eggheads
- * 
+/*
+ * Copyright (C) 1997 Robey Pointer
+ * Copyright (C) 1999, 2000, 2001 Eggheads Development Team
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -303,12 +303,12 @@ static void dcc_bot_digest(int idx, char *challenge, char *password)
   MD5Update(&md5context, (unsigned char *) challenge, strlen(challenge));
   MD5Update(&md5context, (unsigned char *) password, strlen(password));
   MD5Final(digest, &md5context);
-  
+
   for (i = 0; i < 16; i++)
     sprintf(digest_string + (i*2), "%.2x", digest[i]);
-  dprintf(idx, "digest %s\n", digest_string);  
+  dprintf(idx, "digest %s\n", digest_string);
   putlog(LOG_BOTS, "*", "Received challenge from %s... sending response ...",
-	 dcc[idx].nick);  
+	 dcc[idx].nick);
 }
 
 static void dcc_bot_new(int idx, char *buf, int x)
@@ -522,10 +522,10 @@ static int dcc_bot_check_digest(int idx, char *remote_digest)
   MD5Update(&md5context, (unsigned char *) password, strlen(password));
 
   MD5Final(digest, &md5context);
-  
+
   for (i = 0; i < 16; i++)
     sprintf(digest_string + (i * 2), "%.2x", digest[i]);
-  
+
   if (!strcmp(digest_string, remote_digest))
     return 1;
   putlog(LOG_BOTS, "*", "Response (password hash) from %s incorrect",
@@ -2075,11 +2075,11 @@ void dcc_telnet_got_ident(int i, char *host)
   strcpy(dcc[i].u.chat->con_chan, chanset ? chanset->name : "*");
   /* Displays a customizable banner. */
   if (use_telnet_banner)
-    show_banner(i);  
+    show_banner(i);
   /* This is so we dont tell someone doing a portscan anything
    * about ourselves. <cybah>
    */
-  if (stealth_telnets) 
+  if (stealth_telnets)
     sub_lang(i, MISC_BANNER_STEALTH);
   else {
     dprintf(i, "\n\n");

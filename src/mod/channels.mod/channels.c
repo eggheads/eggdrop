@@ -1,23 +1,23 @@
-/* 
+/*
  * channels.c -- part of channels.mod
  *   support for channels within the bot
- * 
- * $Id: channels.c,v 1.46 2001/01/16 17:13:21 guppy Exp $
+ *
+ * $Id: channels.c,v 1.47 2001/04/12 02:39:45 guppy Exp $
  */
-/* 
- * Copyright (C) 1997  Robey Pointer
- * Copyright (C) 1999, 2000  Eggheads
- * 
+/*
+ * Copyright (C) 1997 Robey Pointer
+ * Copyright (C) 1999, 2000, 2001 Eggheads Development Team
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -33,7 +33,7 @@ static Function *global		= NULL;
 static int  setstatic;
 static int  use_info;
 static int  ban_time;
-static int  exempt_time;		/* If exempt_time = 0, never remove 
+static int  exempt_time;		/* If exempt_time = 0, never remove
 					   them */
 static int  invite_time;		/* If invite_time = 0, never remove
 					   them */
@@ -276,7 +276,7 @@ static void remove_channel(struct chanset_t *chan)
 {
    int		 i;
    module_entry	*me;
-   
+
    /* Remove the channel from the list, so that noone can pull it
       away from under our feet during the check_tcl_part() call. */
    (void) chanset_unlink(chan);

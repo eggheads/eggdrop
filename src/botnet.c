@@ -1,4 +1,4 @@
-/* 
+/*
  * botnet.c -- handles:
  *   keeping track of which bot's connected where in the chain
  *   dumping a list of bots or a bot tree to a user
@@ -6,23 +6,23 @@
  *   rejecting a bot
  *   linking, unlinking, and relaying to another bot
  *   pinging the bots periodically and checking leaf status
- * 
- * $Id: botnet.c,v 1.32 2001/01/16 17:13:20 guppy Exp $
+ *
+ * $Id: botnet.c,v 1.33 2001/04/12 02:39:43 guppy Exp $
  */
-/* 
- * Copyright (C) 1997  Robey Pointer
- * Copyright (C) 1999, 2000  Eggheads
- * 
+/*
+ * Copyright (C) 1997 Robey Pointer
+ * Copyright (C) 1999, 2000, 2001 Eggheads Development Team
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -385,7 +385,7 @@ void unvia(int idx, tand_t * who)
       bot = bot->next;
   }
 #ifndef NO_OLD_BOTNET
-  /* Every bot unvia's bots behind anyway, so why send msg's for 
+  /* Every bot unvia's bots behind anyway, so why send msg's for
    * EVERY one? - will this break things?!
    */
   tandout_but(idx, "unlinked %s\n", who->bot);

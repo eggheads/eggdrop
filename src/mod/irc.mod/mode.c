@@ -1,25 +1,25 @@
-/* 
+/*
  * mode.c -- part of irc.mod
  *   queueing and flushing mode changes made by the bot
  *   channel mode changes and the bot's reaction to them
  *   setting and getting the current wanted channel modes
- * 
- * $Id: mode.c,v 1.41 2001/04/07 19:36:53 guppy Exp $
+ *
+ * $Id: mode.c,v 1.42 2001/04/12 02:39:46 guppy Exp $
  */
-/* 
- * Copyright (C) 1997  Robey Pointer
- * Copyright (C) 1999, 2000  Eggheads
- * 
+/*
+ * Copyright (C) 1997 Robey Pointer
+ * Copyright (C) 1999, 2000, 2001 Eggheads Development Team
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -61,7 +61,7 @@ static void flush_mode(struct chanset_t *chan, int pri)
       *p++ = chan->pls[i];
     chan->pls[0] = 0;
   }
-  
+
   chan->bytes = 0;
   chan->compat = 0;
 
@@ -74,10 +74,10 @@ static void flush_mode(struct chanset_t *chan, int pri)
 
     postsize -= egg_strcatn(post, chan->key, sizeof(post));
     postsize -= egg_strcatn(post, " ", sizeof(post));
-    
+
     nfree(chan->key), chan->key = NULL;
   }
-  
+
   /* max +l is signed 2^32 on ircnet at least... so makesure we've got at least
    * a 13 char buffer for '-2147483647 \0'. We'll be overwriting the existing
    * terminating null in 'post', so makesure postsize >= 12.
@@ -87,13 +87,13 @@ static void flush_mode(struct chanset_t *chan, int pri)
       *p++ = '+', plus = 1;
     }
     *p++ = 'l';
-    
+
     /* 'sizeof(post) - 1' is used because we want to overwrite the old null */
     postsize -= sprintf(&post[(sizeof(post) - 1) - postsize], "%d ", chan->limit);
-    
+
     chan->limit = 0;
   }
-  
+
   /* -k ? */
   if (chan->rmkey) {
     if (plus) {
@@ -103,7 +103,7 @@ static void flush_mode(struct chanset_t *chan, int pri)
 
     postsize -= egg_strcatn(post, chan->rmkey, sizeof(post));
     postsize -= egg_strcatn(post, " ", sizeof(post));
-    
+
     nfree(chan->rmkey), chan->rmkey = NULL;
   }
 
@@ -113,20 +113,20 @@ static void flush_mode(struct chanset_t *chan, int pri)
       if (plus) {
         *p++ = '-', plus = 0;
       }
-      
+
       *p++ = ((chan->cmode[i].type & BAN) ? 'b' :
-              ((chan->cmode[i].type & CHOP) ? 'o' : 
-               ((chan->cmode[i].type & EXEMPT) ? 'e' : 
+              ((chan->cmode[i].type & CHOP) ? 'o' :
+               ((chan->cmode[i].type & EXEMPT) ? 'e' :
                 ((chan->cmode[i].type & INVITE) ? 'I' : 'v'))));
-      
+
       postsize -= egg_strcatn(post, chan->cmode[i].op, sizeof(post));
       postsize -= egg_strcatn(post, " ", sizeof(post));
-      
+
       nfree(chan->cmode[i].op), chan->cmode[i].op = NULL;
       chan->cmode[i].type = 0;
     }
   }
-  
+
   /* now do all the + modes... */
   for (i = 0; i < modesperline; i++) {
     if (chan->cmode[i].type & PLUS && postsize > strlen(chan->cmode[i].op)) {
@@ -135,8 +135,8 @@ static void flush_mode(struct chanset_t *chan, int pri)
       }
 
       *p++ = ((chan->cmode[i].type & BAN) ? 'b' :
-              ((chan->cmode[i].type & CHOP) ? 'o' : 
-               ((chan->cmode[i].type & EXEMPT) ? 'e' : 
+              ((chan->cmode[i].type & CHOP) ? 'o' :
+               ((chan->cmode[i].type & EXEMPT) ? 'e' :
                 ((chan->cmode[i].type & INVITE) ? 'I' : 'v'))));
 
       postsize -= egg_strcatn(post, chan->cmode[i].op, sizeof(post));
@@ -146,7 +146,7 @@ static void flush_mode(struct chanset_t *chan, int pri)
       chan->cmode[i].type = 0;
     }
   }
-  
+
   /* remember to terminate the buffer ('out')... */
   *p = 0;
 
@@ -176,7 +176,7 @@ static void real_add_mode(struct chanset_t *chan,
   masklist *m;
   memberlist *mx;
   char s[21];
-  
+
   if (!me_op(chan))
     return;			/* No point in queueing the mode */
 
@@ -225,7 +225,7 @@ static void real_add_mode(struct chanset_t *chan,
 	     (mode == 'v' ? VOICE :
 	      (mode == 'e' ? EXEMPT : INVITE))));
 
-    /* 
+    /*
      * FIXME: Some networks remove overlapped bans, IrcNet does not
      *        (poptix/drummer)
      *
@@ -714,7 +714,7 @@ static void got_exempt(struct chanset_t *chan, char *nick, char *from,
     if (!nick[0] && bounce_modes)
       reversing = 1;
   }
-  if (reversing || (bounce_exempts && !nick[0] && 
+  if (reversing || (bounce_exempts && !nick[0] &&
 		   (!u_equals_mask(global_exempts, who) ||
 		    !u_equals_mask(chan->exempts, who))))
     add_mode(chan, '-', 'e', who);
@@ -794,7 +794,7 @@ static void got_invite(struct chanset_t *chan, char *nick, char *from,
     if ((!nick[0]) && (bounce_modes))
       reversing = 1;
   }
-  if (reversing || (bounce_invites && (!nick[0])  && 
+  if (reversing || (bounce_invites && (!nick[0])  &&
 		    (!u_equals_mask(global_invites, who) ||
 		     !u_equals_mask(chan->invites, who))))
     add_mode(chan, '-', 'I', who);
@@ -1069,7 +1069,7 @@ static int gotmode(char *from, char *origmsg)
 		  !glob_master(user) && !chan_master(user)) {
 		if ((channel_autovoice(chan) && !chan_quiet(victim) &&
 		    (chan_voice(victim) || glob_voice(victim))) ||
-		    (!chan_quiet(victim) && 
+		    (!chan_quiet(victim) &&
 		    (glob_gvoice(victim) || chan_gvoice(victim)))) {
 		  add_mode(chan, '+', 'v', op);
 		} else if (reversing)

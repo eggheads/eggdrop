@@ -1,4 +1,4 @@
-/* 
+/*
  * users.c -- handles:
  *   testing and enforcing ignores
  *   adding and removing ignores
@@ -7,25 +7,25 @@
  *   sending and receiving a userfile from a bot
  *   listing users ('.whois' and '.match')
  *   reading the user file
- * 
+ *
  * dprintf'ized, 9nov1995
- * 
- * $Id: users.c,v 1.23 2000/12/10 15:10:27 guppy Exp $
+ *
+ * $Id: users.c,v 1.24 2001/04/12 02:39:44 guppy Exp $
  */
-/* 
- * Copyright (C) 1997  Robey Pointer
- * Copyright (C) 1999, 2000  Eggheads
- * 
+/*
+ * Copyright (C) 1997 Robey Pointer
+ * Copyright (C) 1999, 2000, 2001 Eggheads Development Team
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -308,7 +308,7 @@ static void restore_chanexempt(struct chanset_t *chan, char *host)
 {
   char *expi, *add, *last, *user, *desc;
   int flags = 0;
-  
+
   expi = strchr_unescape(host, ':', '\\');
   if (expi) {
       if (*expi == '+') {
@@ -316,10 +316,10 @@ static void restore_chanexempt(struct chanset_t *chan, char *host)
 	expi++;
       }
     add = strchr(expi, ':');
-    if (add) { 
+    if (add) {
       if (add[-1] == '*') {
 	flags |= MASKREC_STICKY;
-	add[-1] = 0;   
+	add[-1] = 0;
       } else
 	*add = 0;
       add++;
@@ -351,7 +351,7 @@ static void restore_chanexempt(struct chanset_t *chan, char *host)
 			desc, atoi(expi), flags, now, 0);
 	  return;
 	}
-      } 
+      }
     }
   }
   putlog(LOG_MISC, "*", "*** Malformed exemptline for %s.",
@@ -362,25 +362,25 @@ static void restore_chaninvite(struct chanset_t *chan, char *host)
 {
   char *expi, *add, *last, *user, *desc;
   int flags = 0;
-  
+
   expi = strchr_unescape(host, ':', '\\');
-  if (expi) { 
-    if (*expi == '+') {  
-      flags |= MASKREC_PERM;  
+  if (expi) {
+    if (*expi == '+') {
+      flags |= MASKREC_PERM;
       expi++;
     }
     add = strchr(expi, ':');
     if (add) {
       if (add[-1] == '*') {
 	flags |= MASKREC_STICKY;
-	add[-1] = 0; 
+	add[-1] = 0;
       } else
 	*add = 0;
       add++;
-      if (*add == '+') { 
+      if (*add == '+') {
 	last = strchr(add, ':');
 	if (last) {
-	  *last = 0;   
+	  *last = 0;
 	  last++;
 	  user = strchr(last, ':');
 	  if (user) {
@@ -620,7 +620,7 @@ void tell_users_match(int idx, char *mtch, int start, int limit,
   dprintf(idx, MISC_FOUNDMATCH, cnt, cnt == 1 ? "" : "es");
 }
 
-/* 
+/*
  * tagged lines in the user file:
  * * OLD:
  * #  (comment)
@@ -743,7 +743,7 @@ int readuserfile(char *file, struct userrec **ret)
 	    if (lasthand[0] == '#' || lasthand[0] == '+')
 	      restore_chaninvite(cst,s);
 	    else if (lasthand[0] == '*')
-	      if (lasthand[1] == 'I') {  
+	      if (lasthand[1] == 'I') {
 		restore_chaninvite(NULL, s);
 		ginvite_total++;
 	      }
@@ -837,7 +837,7 @@ int readuserfile(char *file, struct userrec **ret)
 	  /* channel-specific invites */
 	  strcpy(lasthand, &code[2]);
 	  u = NULL;
-	  if (!findchan_by_dname(lasthand)) {   
+	  if (!findchan_by_dname(lasthand)) {
 	    strcpy(s1, lasthand);
 	    strcat(s1, " ");
 	    if (strstr(ignored, s1) == NULL) {
@@ -858,7 +858,7 @@ int readuserfile(char *file, struct userrec **ret)
 	      cst = NULL;
 	      lasthand[0] = 0;
 	    }
-	  } 
+	  }
 	} else if (!strncmp(code, "--", 2)) {
 	  if (u) {
 	    /* new format storage */
@@ -961,7 +961,7 @@ int readuserfile(char *file, struct userrec **ret)
       putlog(LOG_MISC, "*", "(!) I have an user record, but without +b");
       /* u->flags |= USER_BOT; */
     }
-    
+
     for (e = u->entries; e; e = e->next)
       if (e->name) {
 	struct user_entry_type *uet = find_entry_type(e->name);

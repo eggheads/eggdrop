@@ -1,10 +1,11 @@
 /*
  * memcpy.c -- provides memcpy() if necessary.
  *
- * $Id: memcpy.c,v 1.1 2000/03/23 23:20:07 fabian Exp $
+ * $Id: memcpy.c,v 1.2 2001/04/12 02:39:44 guppy Exp $
  */
-/* Copyright (C) 1997  Robey Pointer
- * Copyright (C) 1999, 2000  Eggheads
+/*
+ * Copyright (C) 1997 Robey Pointer
+ * Copyright (C) 1999, 2000, 2001 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

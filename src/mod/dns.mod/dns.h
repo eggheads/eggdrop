@@ -1,34 +1,34 @@
-/* 
+/*
  * dns.h -- part of dns.mod
  *   dns module header file
- * 
+ *
  * Written by Fabian Knittel <fknittel@gmx.de>
- * 
- * $Id: dns.h,v 1.7 2000/09/09 11:39:10 fabian Exp $
+ *
+ * $Id: dns.h,v 1.8 2001/04/12 02:39:46 guppy Exp $
  */
-/* 
- * Copyright (C) 1999, 2000  Eggheads
- * 
+/*
+ * Copyright (C) 1999, 2000, 2001 Eggheads Development Team
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-/* 
+/*
  * Borrowed from mtr  --  a network diagnostic tool
  * Copyright (C) 1997,1998  Matt Kimball <mkimball@xmission.com>
  * Released under GPL, as above.
- * 
+ *
  * Non-blocking DNS portion --
  * Copyright (C) 1998  Simon Kirby <sim@neato.org>
  * Released under GPL, as above.

@@ -491,7 +491,7 @@ README
 
      (7) BORING LEGAL STUFF
 
-          The eggdrop bot is copyright © by Robey Pointer. As of
+          The eggdrop bot is copyright (C) by Robey Pointer. As of
           January 1997, eggdrop is distributed according to the GNU
           General Public License. There should be a copy of this
           license in the file COPYING. If not, write to the Free
@@ -500,7 +500,7 @@ README
 
           As of eggdrop1.3.28 all changes made by the Eggheads
           development team to the eggdrop source code and any related
-          files are copyright © by Eggheads. The source code will
+          files are copyright (C) by Eggheads. The source code will
           still be distributed according to the GNU General Public
           License as Robey Pointer did in the past.
 
@@ -544,8 +544,7 @@ README
 
                   ### DO NOT SEND ROBEY EMAIL ABOUT EGGDROP ###
 
-          Robey is no longer developing the eggdrop code (although he
-          does put a word in every now and then) so don't bother
+          Robey is no longer developing the eggdrop code so don't bother
           emailing him. If you have a serious problem, email the
           eggdrop mailing list and it will get to the coders.
 
@@ -608,5 +607,5 @@ README
           know.
 
   ------------------------------------------------------------------------
-(c) 1997 Robey Pointer
-(c) 2000 Eggheads Development Team
+Copyright (C) 1997 Robey Pointer
+Copyright (C) 1999, 2000, 2001 Eggheads Development Team

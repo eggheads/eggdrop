@@ -1,22 +1,22 @@
-/* 
+/*
  * tclchan.c -- part of channels.mod
- * 
- * $Id: tclchan.c,v 1.45 2001/04/06 22:28:43 guppy Exp $
+ *
+ * $Id: tclchan.c,v 1.46 2001/04/12 02:39:45 guppy Exp $
  */
-/* 
- * Copyright (C) 1997  Robey Pointer
- * Copyright (C) 1999, 2000  Eggheads
- * 
+/*
+ * Copyright (C) 1997 Robey Pointer
+ * Copyright (C) 1999, 2000, 2001 Eggheads Development Team
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -131,7 +131,7 @@ static int tcl_stick STDVAR
 {
   struct chanset_t *chan;
   int ok = 0;
-  
+
   BADARGS(2, 3, " ban ?channel?");
   if (argc == 3) {
     chan = findchan_by_dname(argv[2]);
@@ -230,7 +230,7 @@ static int tcl_isexempt STDVAR
 {
   struct chanset_t *chan;
   int ok = 0;
-  
+
   BADARGS(2, 3, " exempt ?channel?");
   if (argc == 3) {
     chan = findchan_by_dname(argv[2]);
@@ -254,7 +254,7 @@ static int tcl_isinvite STDVAR
 {
   struct chanset_t *chan;
   int ok = 0;
-  
+
   BADARGS(2, 3, " invite ?channel?");
   if (argc == 3) {
     chan = findchan_by_dname(argv[2]);
@@ -303,7 +303,7 @@ static int tcl_isexemptsticky STDVAR
 {
   struct chanset_t *chan;
   int ok = 0;
-  
+
   BADARGS(2, 3, " exempt ?channel?");
   if (argc == 3) {
     chan = findchan_by_dname(argv[2]);
@@ -327,7 +327,7 @@ static int tcl_isinvitesticky STDVAR
 {
   struct chanset_t *chan;
   int ok = 0;
-  
+
   BADARGS(2, 3, " invite ?channel?");
   if (argc == 3) {
     chan = findchan_by_dname(argv[2]);
@@ -574,7 +574,7 @@ static int tcl_newchanexempt STDVAR
   struct chanset_t *chan;
   char exempt[161], cmt[MASKREASON_LEN], from[HANDLEN + 1];
   int sticky = 0;
- 
+
   BADARGS(5, 7, " channel exempt creator comment ?lifetime? ?options?");
   chan = findchan_by_dname(argv[1]);
   if (chan == NULL) {
@@ -606,14 +606,14 @@ static int tcl_newchanexempt STDVAR
     add_mode(chan, '+', 'e', exempt);
   return TCL_OK;
 }
- 
+
 static int tcl_newexempt STDVAR
 {
   time_t expire_time;
   struct chanset_t *chan;
   char exempt[UHOSTLEN], cmt[MASKREASON_LEN], from[HANDLEN + 1];
   int sticky = 0;
- 
+
   BADARGS(4, 6, " exempt creator comment ?lifetime? ?options?");
   if (argc == 6) {
     if (!egg_strcasecmp(argv[5], "none"));
@@ -644,14 +644,14 @@ static int tcl_newexempt STDVAR
   }
   return TCL_OK;
 }
- 
+
 static int tcl_newchaninvite STDVAR
 {
   time_t expire_time;
   struct chanset_t *chan;
   char invite[161], cmt[MASKREASON_LEN], from[HANDLEN + 1];
   int sticky = 0;
-  
+
   BADARGS(5, 7, " channel invite creator comment ?lifetime? ?options?");
   chan = findchan_by_dname(argv[1]);
   if (chan == NULL) {
@@ -683,7 +683,7 @@ static int tcl_newchaninvite STDVAR
     add_mode(chan, '+', 'I', invite);
   return TCL_OK;
 }
- 
+
 static int tcl_newinvite STDVAR
 {
   time_t expire_time;
@@ -1041,7 +1041,7 @@ static int tcl_channel_modify(Tcl_Interp * irp, struct chanset_t *chan,
     else if (!strcmp(item[i], "+protectfriends"))
       chan->status |= CHAN_PROTECTFRIENDS;
     else if (!strcmp(item[i], "-protectfriends"))
-      chan->status &= ~CHAN_PROTECTFRIENDS;   
+      chan->status &= ~CHAN_PROTECTFRIENDS;
     else if (!strcmp(item[i], "+dontkickops"))
       chan->status |= CHAN_DONTKICKOPS;
     else if (!strcmp(item[i], "-dontkickops"))
@@ -1109,7 +1109,7 @@ static int tcl_channel_modify(Tcl_Interp * irp, struct chanset_t *chan,
     else if (!strncmp(item[i], "flood-", 6)) {
       int *pthr = 0, *ptime;
       char *p;
-      
+
       if (!strcmp(item[i] + 6, "chan")) {
 	pthr = &chan->flood_pub_thr;
 	ptime = &chan->flood_pub_time;
@@ -1237,7 +1237,7 @@ static int tcl_channel_modify(Tcl_Interp * irp, struct chanset_t *chan,
       if ((me = module_find("irc", 1, 2)))
 	(me->funcs[IRC_RECHECK_CHANNEL_MODES])(chan);
   }
-  if (x > 0) 
+  if (x > 0)
     return TCL_ERROR;
   return TCL_OK;
 }
@@ -1261,7 +1261,7 @@ static int tcl_do_masklist(maskrec *m, Tcl_Interp *irp)
     Tcl_Free((char *) p);
     m = m->next;
   }
-  return TCL_OK;  
+  return TCL_OK;
 }
 
 static int tcl_banlist STDVAR
@@ -1277,14 +1277,14 @@ static int tcl_banlist STDVAR
     }
     return tcl_do_masklist(chan->bans, irp);
   }
-  
+
   return tcl_do_masklist(global_bans, irp);
 }
 
 static int tcl_exemptlist STDVAR
 {
   struct chanset_t *chan;
-  
+
   BADARGS(1, 2, " ?channel?");
   if (argc == 2) {
     chan = findchan_by_dname(argv[1]);
@@ -1294,14 +1294,14 @@ static int tcl_exemptlist STDVAR
     }
     return tcl_do_masklist(chan->exempts, irp);
   }
-  
+
   return tcl_do_masklist(global_exempts, irp);
 }
 
 static int tcl_invitelist STDVAR
 {
   struct chanset_t *chan;
-  
+
   BADARGS(1, 2, " ?channel?");
   if (argc == 2) {
     chan = findchan_by_dname(argv[1]);
@@ -1397,7 +1397,7 @@ static int tcl_setchaninfo STDVAR
 
   BADARGS(4, 4, " handle channel info");
   chan = findchan_by_dname(argv[2]);
-  if (chan == NULL) { 
+  if (chan == NULL) {
     Tcl_AppendResult(irp, "illegal channel: ", argv[2], NULL);
     return TCL_ERROR;
   }
@@ -1495,10 +1495,10 @@ static void init_channel(struct chanset_t *chan, int reset)
 
   chan->channel.ban = (masklist *) nmalloc(sizeof(masklist));
   init_masklist(chan->channel.ban);
-  
+
   chan->channel.exempt = (masklist *) nmalloc(sizeof(masklist));
   init_masklist(chan->channel.exempt);
-  
+
   chan->channel.invite = (masklist *) nmalloc(sizeof(masklist));
   init_masklist(chan->channel.invite);
 
@@ -1511,7 +1511,7 @@ static void init_channel(struct chanset_t *chan, int reset)
 static void clear_masklist(masklist *m)
 {
   masklist *temp;
-  
+
   while (m) {
     temp = m->next;
     if (m->mask)
@@ -1537,7 +1537,7 @@ static void clear_channel(struct chanset_t *chan, int reset)
     nfree(m);
     m = m1;
   }
-  
+
   clear_masklist(chan->channel.ban);
   chan->channel.ban = NULL;
   clear_masklist(chan->channel.exempt);
@@ -1604,14 +1604,14 @@ static int tcl_channel_add(Tcl_Interp *irp, char *newname, char *options)
     chan->idle_kick = global_idle_kick;
     chan->aop_min = global_aop_min;
     chan->aop_max = global_aop_max;
-    
+
     /* We _only_ put the dname (display name) in here so as not to confuse
      * any code later on. chan->name gets updated with the channel name as
      * the server knows it, when we join the channel. <cybah>
      */
     strncpy(chan->dname, newname, 81);
     chan->dname[80] = 0;
-    
+
     /* Initialize chan->channel info */
     init_channel(chan, 0);
     list_append((struct list_type **) &chanset, (struct list_type *) chan);
@@ -1631,13 +1631,13 @@ static int tcl_channel_add(Tcl_Interp *irp, char *newname, char *options)
   Tcl_Free((char *) item);
   if (join && !channel_inactive(chan) && module_find("irc", 0, 0))
     dprintf(DP_SERVER, "JOIN %s %s\n", chan->dname, chan->key_prot);
-  return ret; 
+  return ret;
 }
 
 static int tcl_setudef STDVAR
 {
   int type;
-  
+
   BADARGS(3, 3, " type name");
   if (!egg_strcasecmp(argv[1], "flag"))
     type = UDEF_FLAG;
@@ -1655,7 +1655,7 @@ static int tcl_renudef STDVAR
 {
   struct udef_struct *ul;
   int type, found = 0;
-  
+
   BADARGS(4, 4, " type oldname newname");
   if (!egg_strcasecmp(argv[1], "flag"))
     type = UDEF_FLAG;
@@ -1684,7 +1684,7 @@ static int tcl_deludef STDVAR
 {
   struct udef_struct *ul, *ull;
   int type, found = 0;
-  
+
   BADARGS(3, 3, " type name");
   if (!egg_strcasecmp(argv[1], "flag"))
     type = UDEF_FLAG;

@@ -1,25 +1,25 @@
-/* 
+/*
  * tcl.c -- handles:
  *   the code for every command eggdrop adds to Tcl
  *   Tcl initialization
  *   getting and setting Tcl/eggdrop variables
- * 
- * $Id: tcl.c,v 1.32 2001/04/06 22:28:43 guppy Exp $
+ *
+ * $Id: tcl.c,v 1.33 2001/04/12 02:39:43 guppy Exp $
  */
-/* 
- * Copyright (C) 1997  Robey Pointer
- * Copyright (C) 1999, 2000  Eggheads
- * 
+/*
+ * Copyright (C) 1997 Robey Pointer
+ * Copyright (C) 1999, 2000, 2001 Eggheads Development Team
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -153,7 +153,7 @@ static int tcl_logfile STDVAR
     }
   /* Do not add logfiles without any flags to log ++rtc */
   if (!logmodes (argv [1])) {
-    Tcl_AppendResult (interp, "can't remove \"", argv[3], 
+    Tcl_AppendResult (interp, "can't remove \"", argv[3],
                      "\" from list: no such logfile", NULL);
     return TCL_ERROR;
   }
@@ -507,7 +507,7 @@ void init_tcl(int argc, char **argv)
 /* This must be done *BEFORE* Tcl_SetSystemEncoding(),
  * or Tcl_SetSystemEncoding() will cause a segfault.
  */
-#ifndef HAVE_PRE7_5_TCL	
+#ifndef HAVE_PRE7_5_TCL
   /* This is used for 'info nameofexecutable'.
    * The filename in argv[0] must exist in a directory listed in
    * the environment variable PATH for it to register anything.

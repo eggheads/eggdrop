@@ -1,24 +1,24 @@
-/* 
+/*
  * botcmd.c -- handles:
  *   commands that comes across the botnet
  *   userfile transfer and update commands from sharebots
- * 
- * $Id: botcmd.c,v 1.19 2001/03/11 07:02:57 guppy Exp $
+ *
+ * $Id: botcmd.c,v 1.20 2001/04/12 02:39:43 guppy Exp $
  */
-/* 
- * Copyright (C) 1997  Robey Pointer
- * Copyright (C) 1999, 2000  Eggheads
- * 
+/*
+ * Copyright (C) 1997 Robey Pointer
+ * Copyright (C) 1999, 2000, 2001 Eggheads Development Team
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -136,7 +136,7 @@ static void bot_chan2(int idx, char *msg)
   } else {
     chanout_but(-1, chan, "%s\n", TBUF);
     /* Send to new version bots */
-    if (i >= 0) 
+    if (i >= 0)
       botnet_send_chan(idx, from, NULL, chan, msg);
     if (strchr(from, '@') != NULL)
       check_tcl_chat(from, chan, msg);
@@ -483,7 +483,7 @@ static void bot_infoq(int idx, char *par)
       if (!channel_secret(chan)) {
         if ((strlen(s) + strlen(chan->dname) + strlen(network)
                    + strlen(botnetnick) + strlen(ver) + 1) >= 200) {
-          strcat(s,"++  "); 
+          strcat(s,"++  ");
           break; /* Yegads..! */
         }
 	strcat(s, chan->dname);
@@ -929,12 +929,12 @@ static void bot_handshake(int idx, char *par)
   struct userrec *u = get_user_by_handle(userlist, dcc[idx].nick);
 
   /* We *don't* want botnet passwords migrating */
-  noshare = 1;		
+  noshare = 1;
   set_user(&USERENTRY_PASS, u, par);
   noshare = 0;
 }
 
-/* Used to send a direct msg from Tcl on one bot to Tcl on another 
+/* Used to send a direct msg from Tcl on one bot to Tcl on another
  * zapf <frombot> <tobot> <code [param]>
  */
 static void bot_zapf(int idx, char *par)
@@ -962,7 +962,7 @@ static void bot_zapf(int idx, char *par)
     botnet_send_zapf(i, from, to, par);
 }
 
-/* Used to send a global msg from Tcl on one bot to every other bot 
+/* Used to send a global msg from Tcl on one bot to every other bot
  * zapf-broad <frombot> <code [param]>
  */
 static void bot_zapfbroad(int idx, char *par)
@@ -1038,7 +1038,7 @@ static void bot_motd(int idx, char *par)
   }
 }
 
-/* These are still here, so that they will pass the relevant 
+/* These are still here, so that they will pass the relevant
  * requests through even if no filesys is loaded.
  *
  * filereject <bot:filepath> <sock:nick@bot> <reason...>
@@ -1449,9 +1449,9 @@ static void bot_versions(int sock, char *par)
  *
  * function call should be:
  * int bot_whatever(idx,"parameters");
- * 
+ *
  * SORT these, dcc_bot uses a shortcut which requires them sorted
- * 
+ *
  * yup, those are tokens there to allow a more efficient botnet as
  * time goes on (death to slowly upgrading llama's)
  */

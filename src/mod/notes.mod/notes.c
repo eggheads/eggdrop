@@ -1,26 +1,26 @@
-/* 
+/*
  * notes.c -- part of notes.mod
  *   reading and sending notes
  *   killing old notes and changing the destinations
  *   note cmds
  *   note ignores
- * 
- * $Id: notes.c,v 1.28 2001/01/31 05:40:14 guppy Exp $
+ *
+ * $Id: notes.c,v 1.29 2001/04/12 02:39:47 guppy Exp $
  */
-/* 
- * Copyright (C) 1997  Robey Pointer
- * Copyright (C) 1999, 2000  Eggheads
- * 
+/*
+ * Copyright (C) 1997 Robey Pointer
+ * Copyright (C) 1999, 2000, 2001 Eggheads Development Team
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -455,7 +455,7 @@ static int tcl_listnotes STDVAR
   return TCL_OK;
 }
 
-/* 
+/*
  * srd="+" : index
  * srd="-" : read all msgs
  * else    : read msg in list : (ex: .notes read 5-9;12;13;18-)
@@ -564,7 +564,7 @@ static void notes_read(char *hand, char *nick, char *srd, int idx)
   }
 }
 
-/* 
+/*
  * sdl="-" : erase all msgs
  * else    : erase msg in list : (ex: .notes erase 2-4;8;16-)
  * idx=-1  : /msg
@@ -846,7 +846,7 @@ static void notes_hourly()
 	      break;
 	    }
 	  if (k) {
-	    dprintf(DP_HELP, "NOTICE %s :You have %d note%s waiting on %s.\n", 
+	    dprintf(DP_HELP, "NOTICE %s :You have %d note%s waiting on %s.\n",
 		    m->nick, k, k == 1 ? "" : "s", botname);
 	    dprintf(DP_HELP, "NOTICE %s :%s /MSG %s NOTES [pass] INDEX\n",
 		        m->nick, NOTES_FORLIST, botname);
@@ -1019,7 +1019,7 @@ int del_note_ignore(struct userrec *u, char *mask)
   ignoresn = get_note_ignores(u, &ignores);
   if (!ignoresn)
     return 0;
-  
+
   buf = user_malloc(1);
   buf[0] = 0;
   for (i = 0; i < ignoresn; i++) {

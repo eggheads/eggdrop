@@ -1,23 +1,23 @@
-/* 
+/*
  * tcluser.c -- handles:
  *   Tcl stubs for the user-record-oriented commands
- * 
- * $Id: tcluser.c,v 1.18 2000/12/08 03:07:38 guppy Exp $
+ *
+ * $Id: tcluser.c,v 1.19 2001/04/12 02:39:44 guppy Exp $
  */
-/* 
- * Copyright (C) 1997  Robey Pointer
- * Copyright (C) 1999, 2000  Eggheads
- * 
+/*
+ * Copyright (C) 1997 Robey Pointer
+ * Copyright (C) 1999, 2000, 2001 Eggheads Development Team
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -528,7 +528,7 @@ static int tcl_setuser STDVAR
     list_insert((&(u->entries)), e);
   }
   r = et->tcl_set(irp, u, e, argc, argv);
-  /* Yeah... e is freed, and we read it... (tcl: setuser hand HOSTS none) */  
+  /* Yeah... e is freed, and we read it... (tcl: setuser hand HOSTS none) */
   if (!e->u.list) {
     if (list_delete((struct list_type **) &(u->entries),
 		    (struct list_type *) e))

@@ -1,26 +1,26 @@
-/* 
+/*
  * botmsg.c -- handles:
  *   formatting of messages to be sent on the botnet
  *   sending differnet messages to different versioned bots
- * 
+ *
  * by Darrin Smith (beldin@light.iinet.net.au)
- * 
- * $Id: botmsg.c,v 1.21 2001/04/06 22:28:42 guppy Exp $
+ *
+ * $Id: botmsg.c,v 1.22 2001/04/12 02:39:43 guppy Exp $
  */
-/* 
- * Copyright (C) 1997  Robey Pointer
- * Copyright (C) 1999, 2000  Eggheads
- * 
+/*
+ * Copyright (C) 1997 Robey Pointer
+ * Copyright (C) 1999, 2000, 2001 Eggheads Development Team
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -51,16 +51,16 @@ void tandout_but EGG_VARARGS_DEF(int, arg1)
 
   x = EGG_VARARGS_START(int, arg1, va);
   format = va_arg(va, char *);
-  egg_vsnprintf(s, 511, format, va);      
+  egg_vsnprintf(s, 511, format, va);
   va_end(va);
   len = strlen(s);
   if (len > 511)
     len = 511;
-  s[len + 1] = 0;  
+  s[len + 1] = 0;
 
 #if (TCL_MAJOR_VERSION >= 8 && TCL_MINOR_VERSION >= 1) || (TCL_MAJOR_VERSION >= 9)
   str_nutf8tounicode(s, sizeof s);
-#endif    
+#endif
 
   for (i = 0; i < dcc_total; i++)
     if ((dcc[i].type == &DCC_BOT) && (i != x) &&
@@ -304,17 +304,17 @@ void botnet_send_priv EGG_VARARGS_DEF(int, arg1)
   to = va_arg(va, char *);
   tobot = va_arg(va, char *);
   format = va_arg(va, char *);
-  egg_vsnprintf(tbuf, 450, format, va);    
+  egg_vsnprintf(tbuf, 450, format, va);
   va_end(va);
-  
+
   len = strlen(tbuf);
   if (len > 450)
     len = 450;
-  tbuf[len + 1] = 0;    
+  tbuf[len + 1] = 0;
 
 #if (TCL_MAJOR_VERSION >= 8 && TCL_MINOR_VERSION >= 1) || (TCL_MAJOR_VERSION >= 9)
   str_nutf8tounicode(tbuf, sizeof tbuf);
-#endif    
+#endif
 
   if (tobot) {
 #ifndef NO_OLD_BOTNET

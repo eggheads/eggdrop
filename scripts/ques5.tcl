@@ -1,5 +1,9 @@
 #
-# quesedilla, (c) 1995 Robey Pointer (c) 1999, 2000 Eggheads
+# ques5.tcl
+#
+# Copyright (C) 1995 Robey Pointer
+# Copyright (C) 1999, 2000, 2001 Eggheads Development Team
+#
 # v1 -- 20aug95
 # v2 -- 2oct95   [improved it]
 # v3 -- 17mar96  [fixed it up for 1.0 multi-channel]
@@ -7,7 +11,7 @@
 # v4.00001 nov97 [blurgh]
 # v5-BETA1 -- 26sep99 by rtc
 #
-# $Id: ques5.tcl,v 1.4 2001/04/06 22:31:03 guppy Exp $
+# $Id: ques5.tcl,v 1.5 2001/04/12 02:39:43 guppy Exp $
 #
 # o clean webfile var removal
 # o using timezone variable from config file

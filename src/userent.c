@@ -1,23 +1,23 @@
-/* 
+/*
  * userent.c -- handles:
  *   user-entry handling, new stylem more versatile.
- * 
- * $Id: userent.c,v 1.19 2001/02/26 03:56:18 guppy Exp $
+ *
+ * $Id: userent.c,v 1.20 2001/04/12 02:39:44 guppy Exp $
  */
-/* 
- * Copyright (C) 1997  Robey Pointer
- * Copyright (C) 1999, 2000  Eggheads
- * 
+/*
+ * Copyright (C) 1997 Robey Pointer
+ * Copyright (C) 1999, 2000, 2001 Eggheads Development Team
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -129,16 +129,16 @@ int def_set(struct userrec *u, struct user_entry *e, void *buf)
     if (l > 160)
       l = 160;
 
-    
+
     e->u.string = user_realloc (e->u.string, l + 1);
-    
+
     strncpyz (e->u.string, string, l + 1);
-    
+
     for (i = e->u.string; *i; i++)
-      /* Allow bold, inverse, underline, color text here... 
+      /* Allow bold, inverse, underline, color text here...
        * But never add cr or lf!! --rtc
        */
-     if ((unsigned int) *i < 32 && !strchr ("\002\003\026\037", *i)) 
+     if ((unsigned int) *i < 32 && !strchr ("\002\003\026\037", *i))
         *i = '?';
   } else { /* string == NULL && e->u.string != NULL */
     nfree(e->u.string);
@@ -392,7 +392,7 @@ static int laston_tcl_set(Tcl_Interp * irp, struct userrec *u,
   struct chanuserrec *cr;
 
   BADARGS(4, 5, " handle LASTON time ?place?");
-  
+
   if ((argc == 5) && argv[4][0] && strchr(CHANMETA, argv[4][0])) {
     /* Search for matching channel */
     for (cr = u->chanrec; cr; cr = cr->next)

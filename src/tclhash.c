@@ -1,4 +1,4 @@
-/* 
+/*
  * tclhash.c -- handles:
  *   bind and unbind
  *   checking and triggering the various in-bot bindings
@@ -6,23 +6,23 @@
  *   adding/removing new binding tables
  *   (non-Tcl) procedure lookups for msg/dcc/file commands
  *   (Tcl) binding internal procedures to msg/dcc/file commands
- * 
- * $Id: tclhash.c,v 1.25 2001/04/06 22:39:52 guppy Exp $
+ *
+ * $Id: tclhash.c,v 1.26 2001/04/12 02:39:43 guppy Exp $
  */
-/* 
- * Copyright (C) 1997  Robey Pointer
- * Copyright (C) 1999, 2000  Eggheads
- * 
+/*
+ * Copyright (C) 1997 Robey Pointer
+ * Copyright (C) 1999, 2000, 2001 Eggheads Development Team
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -257,7 +257,7 @@ tcl_bind_list_t *add_bind_table(const char *nme, int flg, Function func)
 
   /* Do not allow coders to use bind table names longer than
      4 characters. */
-  Assert(strlen(nme) <= 4); 
+  Assert(strlen(nme) <= 4);
 
   for (tl = bind_table_list, tl_prev = NULL; tl; tl_prev = tl, tl = tl->next) {
     if (tl->flags & HT_DELETED)
@@ -1032,7 +1032,7 @@ void check_tcl_time(struct tm *tm)
   Tcl_SetVar(interp, "_time4", (char *) y, 0);
   egg_snprintf(y, sizeof y, "%04d", tm->tm_year + 1900);
   Tcl_SetVar(interp, "_time5", (char *) y, 0);
-  egg_snprintf(y, sizeof y, "%02d %02d %02d %02d %04d", tm->tm_min, tm->tm_hour, 
+  egg_snprintf(y, sizeof y, "%02d %02d %02d %02d %04d", tm->tm_min, tm->tm_hour,
 	       tm->tm_mday, tm->tm_mon, tm->tm_year + 1900);
   check_tcl_bind(H_time, y, 0,
 		 " $_time1 $_time2 $_time3 $_time4 $_time5",
@@ -1091,7 +1091,7 @@ void tell_binds(int idx, char *par)
 	  int	ok = 0;
 
           if (patmatc == 1) {
-            if (wild_match(name, tl->name) || 
+            if (wild_match(name, tl->name) ||
                 wild_match(name, tm->mask) ||
                 wild_match(name, tc->func_name))
 	      ok = 1;

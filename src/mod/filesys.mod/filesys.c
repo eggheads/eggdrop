@@ -1,23 +1,23 @@
-/* 
+/*
  * filesys.c -- part of filesys.mod
  *   main file of the filesys eggdrop module
- * 
- * $Id: filesys.c,v 1.40 2001/01/22 23:47:33 guppy Exp $
+ *
+ * $Id: filesys.c,v 1.41 2001/04/12 02:39:46 guppy Exp $
  */
-/* 
- * Copyright (C) 1997  Robey Pointer
- * Copyright (C) 1999, 2000  Eggheads
- * 
+/*
+ * Copyright (C) 1997 Robey Pointer
+ * Copyright (C) 1999, 2000, 2001 Eggheads Development Team
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -407,7 +407,7 @@ static int _dcc_send(int idx, char *filename, char *nick, char *dir,
     while ((p = strchr(p, ' ')) != NULL)
       *p = '_';
   }
-    
+
   if (egg_strcasecmp(nick, dcc[idx].nick))
     dprintf(DP_HELP, "NOTICE %s :Here is %s file from %s %s...\n", nick,
 	    resend ? "the" : "a", dcc[idx].nick, resend ? "again " : "");
@@ -468,7 +468,7 @@ static int do_dcc_send(int idx, char *dir, char *fn, char *nick, int resend)
     char *tempfn = mktempfile(fn);
 
     /* Copy this file to /tmp, add a random prefix to the filename. */
-    s = nrealloc(s, strlen(dccdir) + strlen(dir) + strlen(fn) + 2); 
+    s = nrealloc(s, strlen(dccdir) + strlen(dir) + strlen(fn) + 2);
     sprintf(s, "%s%s%s%s", dccdir, dir, dir[0] ? "/" : "", fn);
     s1 = nrealloc(s1, strlen(tempdir) + strlen(tempfn) + 1);
     sprintf(s1, "%s%s", tempdir, tempfn);
@@ -483,7 +483,7 @@ static int do_dcc_send(int idx, char *dir, char *fn, char *nick, int resend)
       return 0;
     }
   } else {
-    s1 = nrealloc(s1, strlen(dccdir) + strlen(dir) + strlen(fn) + 2); 
+    s1 = nrealloc(s1, strlen(dccdir) + strlen(dir) + strlen(fn) + 2);
     sprintf(s1, "%s%s%s%s", dccdir, dir, dir[0] ? "/" : "", fn);
   }
   s = nrealloc(s, strlen(dir) + strlen(fn) + 2);
@@ -616,7 +616,7 @@ static struct dcc_table DCC_FILES_PASS =
 
 
 static void filesys_dcc_send_hostresolved(int);
-	
+
 /* Received a ctcp-dcc.
  */
 static void filesys_dcc_send(char *nick, char *from, struct userrec *u,
@@ -699,7 +699,7 @@ static void filesys_dcc_send(char *nick, char *from, struct userrec *u,
 /* Create a temporary filename with random elements. Shortens
  * the filename if the total string is longer than NAME_MAX.
  * The original buffer is not modified.   (Fabian)
- * 
+ *
  * Please adjust MKTEMPFILE_TOT if you change any lengths
  *   7 - size of the random string
  *   2 - size of additional characters in "%u-%s-%s" format string

@@ -1,25 +1,25 @@
-/* 
+/*
  * eggdrop.h
  *   Eggdrop compile-time settings
- * 
+ *
  *   IF YOU ALTER THIS FILE, YOU NEED TO RECOMPILE THE BOT.
- * 
- * $Id: eggdrop.h,v 1.36 2000/10/27 19:35:51 fabian Exp $
+ *
+ * $Id: eggdrop.h,v 1.37 2001/04/12 02:39:43 guppy Exp $
  */
-/* 
- * Copyright (C) 1997  Robey Pointer
- * Copyright (C) 1999, 2000  Eggheads
- * 
+/*
+ * Copyright (C) 1997 Robey Pointer
+ * Copyright (C) 1999, 2000, 2001 Eggheads Development Team
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -28,19 +28,19 @@
 #ifndef _EGG_EGGDROP_H
 #define _EGG_EGGDROP_H
 
-/* 
+/*
  * If you're *only* going to link to new version bots (1.3.0 or higher)
  * then you can safely define this.
  */
 #undef NO_OLD_BOTNET
 
-/* 
+/*
  * Undefine this to completely disable context debugging.
  * WARNING: DO NOT send in bug reports if you undefine this!
  */
 #define DEBUG_CONTEXT
 
-/* 
+/*
  * HANDLEN note:
  *       HANDLEN defines the maximum length a handle on the bot can be.
  *       Standard (and minimum) is 9 characters long.
@@ -259,7 +259,7 @@ struct dcc_t {
   char nick[NICKLEN];
   char host[UHOSTLEN];
   struct dcc_table *type;
-  time_t timeval;		/* Use for any timing stuff 
+  time_t timeval;		/* Use for any timing stuff
 				   - this is used for timeout checking	*/
   unsigned long status;		/* A LOT of dcc types have status
 				   thingos, this makes it more avaliabe	*/
@@ -318,7 +318,7 @@ struct xfer_info {
 };
 
 enum {				/* transfer connection handling a ...	*/
-	XFER_SEND,		/*  ... normal file-send to s.o.	*/ 
+	XFER_SEND,		/*  ... normal file-send to s.o.	*/
 	XFER_RESEND,		/*  ... file-resend to s.o.		*/
 	XFER_RESEND_PEND,	/*  ... (as above) and waiting for info	*/
 	XFER_RESUME,		/*  ... file-send-resume to s.o.	*/
