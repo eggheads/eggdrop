@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: mod-server.html,v 1.27 2003/02/13 23:56:43 wcc Exp $ -->
+<!-- $Id: mod-server.html,v 1.28 2003/05/07 00:23:24 wcc Exp $ -->
 
 <html>
   <head>
@@ -123,8 +123,16 @@
           Commands</a>).</p>
         </dd>
 
-        <dt><strong>set servers { irc.change.this:6667 irc.example.com:7000 }
-        </strong></dt>
+        <dt><strong>set servers {</strong></dt>
+<pre>
+        you.need.to.change.this:6667
+        another.example.com:7000:password
+        {[3ffe:1234:2345::ABCD]}
+        {[3ffe:1234:2345::BCDE]:6668}
+        {[3ffe:1234:2345::CDEF]:6667:password}
+</pre>
+        <p><strong>}</strong></p>
+
 
         <dd>
           <p>This is the bot&#39;s server list. The bot will start at the first

@@ -73,7 +73,13 @@ There are also some variables you can set in your config file:
      EVNT bind (see doc/tcl-commands.doc).
 
 
-   set servers { irc.change.this:6667 irc.example.com:7000 }
+   set servers {
+     you.need.to.change.this:6667
+     another.example.com:7000:password
+     {[3ffe:1234:2345::ABCD]}
+     {[3ffe:1234:2345::BCDE]:6668}
+     {[3ffe:1234:2345::CDEF]:6667:password}
+   }
      This is the bot's server list. The bot will start at the first server
      listed, and cycle through them whenever it gets disconnected. You need to
      change these servers to YOUR network's servers.
