@@ -1,7 +1,7 @@
 /* 
  * servmsg.c -- part of server.mod
  * 
- * $Id: servmsg.c,v 1.14 1999/12/22 12:11:03 fabian Exp $
+ * $Id: servmsg.c,v 1.15 1999/12/22 12:24:58 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -21,6 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+
 
 static time_t last_ctcp = (time_t) 0L;
 static int count_ctcp = 0;
@@ -242,6 +243,7 @@ static int match_my_nick(char *nick)
 static int got001(char *from, char *msg)
 {
   struct server_list *x;
+  struct igrec *u = global_ign;
   int i, servidx = findanyidx(serv);
   struct chanset_t *chan;
 
@@ -267,6 +269,12 @@ static int got001(char *from, char *msg)
 	dprintf(DP_SERVER, "JOIN %s %s\n",
 	        (chan->name[0]) ? chan->name : chan->dname, chan->key_prot);
     }
+  if (use_silence) {
+	if (u) {
+	  for (; u; u = u->next)
+            dprintf(DP_SERVER, "SILENCE +%s",u->igmask);
+	}
+  }
   if (strcasecmp(from, dcc[servidx].host)) {
     putlog(LOG_MISC, "*", "(%s claims to be %s; updating server list)",
 	   dcc[servidx].host, from);

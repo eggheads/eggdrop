@@ -4,7 +4,7 @@
  * 
  * dprintf'ized, 1aug1996
  * 
- * $Id: tcluser.c,v 1.8 1999/12/21 17:35:10 fabian Exp $
+ * $Id: tcluser.c,v 1.9 1999/12/22 12:24:58 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -451,13 +451,14 @@ static int tcl_newignore STDVAR {
       expire_time = now + (60 * atol(argv[4]));
   }
   addignore(ign, from, cmt, expire_time);
-
+  dprintf(DP_SERVER, "SILENCE +%s\n", ign);
   return TCL_OK;
 }
 
 static int tcl_killignore STDVAR {
   Context;
   BADARGS(2, 2, " hostmask");
+  dprintf(DP_SERVER, "SILENCE +%s\n", argv[1]);
   Tcl_AppendResult(irp, delignore(argv[1]) ? "1" : "0", NULL);
   return TCL_OK;
 }
