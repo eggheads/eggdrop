@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  * 
- * $Id: chan.c,v 1.27 2000/01/30 17:59:53 fabian Exp $
+ * $Id: chan.c,v 1.28 2000/01/31 22:56:00 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -411,7 +411,7 @@ static void refresh_ban_kick(struct chanset_t *chan, char *user, char *nick)
 /* This is a bit cumbersome at the moment, but it works... Any improvements
  * then feel free to have a go.. Jason
  */
-static void refresh_exempt (struct chanset_t * chan, char * user)
+static void refresh_exempt(struct chanset_t *chan, char *user)
 {
   maskrec *e;
   masklist *b;
@@ -438,7 +438,7 @@ static void refresh_exempt (struct chanset_t * chan, char * user)
   }
 }
 
-static void refresh_invite (struct chanset_t * chan, char * user)
+static void refresh_invite(struct chanset_t *chan, char *user)
 {
   maskrec *i;
   int cycle;
@@ -976,13 +976,16 @@ static int got315(char *from, char *msg)
 /* got 367: ban info
  * <server> 367 <to> <chan> <ban> [placed-by] [timestamp]
  */
-static int got367(char *from, char *msg)
+static int got367(char *from, char *origmsg)
 {
-  char s[UHOSTLEN], *ban, *who, *chname;
+  char s[UHOSTLEN], *ban, *who, *chname, buf[511], *msg;
   struct chanset_t *chan;
   struct userrec *u;
   struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
 
+  strncpy(buf, origmsg, 510);
+  buf[510] = 0;
+  msg = buf;
   newsplit(&msg);
   chname = newsplit(&msg);
   chan = findchan(chname);
@@ -1051,15 +1054,18 @@ static int got368(char *from, char *msg)
 /* got 348: ban exemption info
  * <server> 348 <to> <chan> <exemption>
  */
-static int got348(char *from, char *msg)
+static int got348(char *from, char *origmsg)
 {
-  char * exempt, * who, *chname;
+  char *exempt, *who, *chname, buf[511], *msg;
   struct chanset_t *chan;
+
+  strncpy(buf, origmsg, 510);
+  buf[510] = 0;
+  msg = buf;
   if (use_exempts == 0)
     return 0;
   newsplit(&msg);
   chname = newsplit(&msg);
-  
   chan = findchan(chname);
   if (!chan || !(channel_pending(chan) || channel_active(chan)))
     return 0;
@@ -1115,11 +1121,14 @@ static int got349(char *from, char *msg)
 /* got 346: invite exemption info
  * <server> 346 <to> <chan> <exemption>
  */
-static int got346(char *from, char *msg)
+static int got346(char *from, char *origmsg)
 {
-  char * invite, * who, *chname;
+  char *invite, *who, *chname, buf[511], *msg;
   struct chanset_t *chan;
 
+  strncpy(buf, origmsg, 510);
+  buf[510] = 0;
+  msg = buf;
   if (use_invites == 0)
     return 0;
   newsplit(&msg);
@@ -1740,14 +1749,18 @@ static int gotpart(char *from, char *msg)
 
 /* Got a kick
  */
-static int gotkick(char *from, char *msg)
+static int gotkick(char *from, char *origmsg)
 {
   char *nick, *whodid, *chname, s1[UHOSTLEN], buf[UHOSTLEN], *uhost = buf;
+  char buf2[511], *msg;
   memberlist *m;
   struct chanset_t *chan;
   struct userrec *u;
   struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
 
+  strncpy(buf2, origmsg, 510);
+  buf2[510] = 0;
+  msg = buf2;
   chname = newsplit(&msg);
   chan = findchan(chname);
   if (chan && channel_active(chan)) {

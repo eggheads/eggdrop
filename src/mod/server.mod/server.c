@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  * 
- * $Id: server.c,v 1.34 2000/01/28 22:14:03 fabian Exp $
+ * $Id: server.c,v 1.35 2000/01/31 22:56:01 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -110,10 +110,20 @@ static char *get_altbotnick(void);
 static int calc_penalty(char *);
 static int fast_deq(int);
 static char *splitnicks(char **);
-static void check_kicks(char *, char *);
-static void check_kicks_in_q(struct msgq_head *, char *, char *);
+static void check_queues(char *, char *);
+static void parse_q(struct msgq_head *, char *, char *);
 static void purge_kicks(struct msgq_head *);
 static int deq_kick(int);
+static void check_lag(char *);
+static void check_notlagged(char *);
+static int lagged = 0;
+static int lagchecktype;
+static char *lagcheckstring;
+static char *lagcheckstring2;
+static int use_lagcheck;
+#define LC_KICK 1
+#define LC_OVMODE 2
+#define LC_BEIMODE 3
 
 #include "servmsg.c"
 
@@ -165,6 +175,8 @@ static void deq_msg()
   /* Send upto 4 msgs to server if the *critical queue* has anything in it */
   if (modeq.head) {
     while (modeq.head && (burst < 4) && ((last_time - now) < MAXPENALTY)) {
+      if (lagged && (burst >= 3))
+        return;
       if (deq_kick(DP_MODE)) {
         burst++;
         continue;
@@ -179,6 +191,7 @@ static void deq_msg()
       if (debug_output)
         putlog(LOG_SRVOUT, "*", "[m->] %s", modeq.head->msg);
       modeq.tot--;
+      check_lag(modeq.head->msg);
       last_time += calc_penalty(modeq.head->msg);
       q = modeq.head->next;
       nfree(modeq.head->msg);
@@ -191,7 +204,7 @@ static void deq_msg()
     return;
   }
   /* Send something from the normal msg q even if we're slightly bursting */
-  if (burst > 1)
+  if ((burst > 1) || lagged)
     return;
   if (mq.head) {
     burst++;
@@ -203,6 +216,7 @@ static void deq_msg()
     if (debug_output)
       putlog(LOG_SRVOUT, "*", "[s->] %s", mq.head->msg);
     mq.tot--;
+    check_lag(mq.head->msg);
     last_time += calc_penalty(mq.head->msg);
     q = mq.head->next;
     nfree(mq.head->msg);
@@ -225,6 +239,7 @@ static void deq_msg()
   if (debug_output)
     putlog(LOG_SRVOUT, "*", "[h->] %s", hq.head->msg);
   hq.tot--;
+  check_lag(hq.head->msg);
   last_time += calc_penalty(hq.head->msg);
   q = hq.head->next;
   nfree(hq.head->msg);
@@ -232,6 +247,129 @@ static void deq_msg()
   hq.head = q;
   if (!hq.head)
     hq.last = 0;
+}
+
+static void check_lag(char *buf)
+{
+  char msgstr[511], *msg, *cmd, *chans, *nicks, *nick, *ch, *par, pm, mode, *modes;
+  struct chanset_t *cs;
+  int found;
+
+  if (lagged || !use_lagcheck)
+    return;
+  if (lagcheckstring) {
+    nfree(lagcheckstring);
+    lagcheckstring = NULL;
+  }
+  if (lagcheckstring2) {
+    nfree(lagcheckstring2);
+    lagcheckstring2 = NULL;
+  }
+  lagchecktype = 0;
+  strncpy(msgstr, buf, 510);
+  msgstr[510] = 0;
+  msg = msgstr;
+  if (msg[strlen(msg) - 1] == '\n')
+    msg[strlen(msg) - 1] = 0;
+  cmd = newsplit(&msg);
+  if (!strcasecmp(cmd, "KICK")) {
+    chans = newsplit(&msg);
+    nicks = newsplit(&msg);
+    nick = nicks;
+    while (strlen(nicks) > 0)
+      nick = splitnicks(&nicks);
+    found = 0;
+    while (strlen(chans) > 0) {
+      ch = splitnicks(&chans);
+      cs = findchan(ch);
+      if (!cs)
+        continue;
+      if (ismember(cs, nick)) {
+        found = 1;
+        break;
+      }
+    }
+    if (!found) {
+      debug0("member not on target chans, aborting lagcheck");
+      lagged = 0;
+      return;
+    }
+    lagcheckstring = nmalloc(strlen(nick) + 1);
+    lagcheckstring2 = nmalloc(strlen(nick) + 1);
+    strcpy(lagcheckstring2, nick);
+    strcpy(lagcheckstring, nick);
+    lagged = 1;
+    lagchecktype = LC_KICK;
+    debug2("Starting lagcheck using KICK %s (%s)", nick, buf);
+  } else if (!strcasecmp(cmd, "MODE")) {
+    chans = newsplit(&msg);
+    modes = newsplit(&msg);
+    par = newsplit(&msg);
+    ch = splitnicks(&chans);
+    cs = findchan(ch);
+    if (!cs) {
+      debug0("I'm not on the target channel, aborting lagcheck");
+      lagged = 0;
+      return;
+    }
+    pm = modes[0];
+    if (((pm != '+') && (pm != '-')) || (strlen(par) < 1)) {
+      lagged = 0;
+      return;
+    }
+    mode = modes[1];
+    if (strchr("ov", mode)) {
+      if (!ismember(cs, par)) {
+        debug0("Target vor o/v mode not on channel, aborting lagcheck.");
+        lagged = 0;
+        return;
+      }
+      lagcheckstring = nmalloc(strlen(par) + 4);
+      sprintf(lagcheckstring, "%c%c %s", pm, mode, par);
+      lagged = 1;
+      lagchecktype = LC_OVMODE;
+      debug2("Starting lagcheck using MODE %s (%s)", lagcheckstring, buf);
+    } else if (strchr("beI", mode)) {
+      lagcheckstring = nmalloc(strlen(par) + 4);
+      sprintf(lagcheckstring, "%c%c %s", pm, mode, par);
+      lagged = 1;
+      lagchecktype = LC_BEIMODE;
+      debug2("Starting lagcheck using MODE %s (%s)", lagcheckstring, buf);
+    } else {
+      lagged = 0;
+      return;
+    }
+  }
+}
+
+static void check_notlagged(char *buf)
+{
+  if (!lagged || (lagchecktype == LC_KICK))
+    return;
+  debug1("check_notlagged: %s", buf);
+  if (!lagcheckstring) {
+    lagged = 0;
+    return;
+  }
+  if (lagchecktype == LC_KICK) {
+    debug1("LC_KICK should not appear here", lagcheckstring);
+    return;
+  }
+  if ((buf[0] == '+') || (buf[0] == '-')) {
+    if (!strcasecmp(lagcheckstring, buf)) {
+      debug1("MODE %s processed, I guess I'm not lagged", lagcheckstring);
+      nfree(lagcheckstring);
+      lagcheckstring = NULL;
+      lagged = 0;
+    }
+  } else {
+    if (!strcasecmp(lagcheckstring + 3, buf)) {
+      debug2("%s left, stopping lagcheck for %s", buf, lagcheckstring);
+      nfree(lagcheckstring);
+      lagcheckstring = NULL;
+      lagged = 0;
+    }
+  }
 }
 
 static int calc_penalty(char * msg)
@@ -489,6 +627,7 @@ static int fast_deq(int which)
           break;
       }
     }
+    check_lag(tosend);
     last_time += calc_penalty(tosend);
     return 1;
   }
@@ -496,68 +635,108 @@ static int fast_deq(int which)
   return 0;
 }
 
-static void check_kicks(char *oldnick, char *newnick)
+static void check_queues(char *oldnick, char *newnick)
 {
-  
+  char pm, mode;
+
   Context;
-  if (modeq.head)
-    check_kicks_in_q(&modeq, oldnick, newnick);
-  if (mq.head)
-    check_kicks_in_q(&mq, oldnick, newnick);
-  if (hq.head)
-    check_kicks_in_q(&hq, oldnick, newnick);
+  if ((optimize_kicks == 2) || (use_lagcheck == 2)) {
+    if (modeq.head)
+      parse_q(&modeq, oldnick, newnick);
+    if (mq.head)
+      parse_q(&mq, oldnick, newnick);
+    if (hq.head)
+      parse_q(&hq, oldnick, newnick);
+  }
+  if (lagged) {
+    if (lagchecktype == LC_KICK) {
+      if (!strcasecmp(lagcheckstring, oldnick)) {
+        nfree(lagcheckstring);
+        lagcheckstring = nmalloc(strlen(newnick) + 1);
+        strcpy(lagcheckstring, newnick);
+      }
+    } else if (!strcasecmp(lagcheckstring + 3, oldnick)) {
+      pm = lagcheckstring[0];
+      mode = lagcheckstring[1];
+      nfree(lagcheckstring);
+      lagcheckstring = nmalloc(strlen(newnick) + 4);
+      lagcheckstring[0] = pm;
+      lagcheckstring[1] = mode;
+      strcpy(lagcheckstring + 3, newnick);
+    }
+  }
   Context;
 }
 
-static void check_kicks_in_q(struct msgq_head *q, char *oldnick, char *newnick)
+static void parse_q(struct msgq_head *q, char *oldnick, char *newnick)
 {
   struct msgq *m, *lm;
-  char buf[511], *reason, *nicks, *nick, *chan, newnicks[511], newmsg[511];
+  char buf[511], *msg, *nicks, *nick, *chan, newnicks[511], newmsg[511];
   int changed;
-  
+
   Context;
   m = q->head;
   lm = NULL;
   while (m) {
-    if (!strncasecmp(m->msg, "KICK", 4)) {
+    changed = 0;
+    if ((optimize_kicks == 2) && !strncasecmp(m->msg, "KICK ", 5)) {
       newnicks[0] = 0;
-      changed = 0;
       strncpy(buf, m->msg, 510);
       buf[510] = 0;
-      reason = buf;
-      newsplit(&reason);
-      chan = newsplit(&reason);
-      nicks = newsplit(&reason);
+      msg = buf;
+      newsplit(&msg);
+      chan = newsplit(&msg);
+      nicks = newsplit(&msg);
       while (strlen(nicks) > 0) {
         nick = splitnicks(&nicks);
         if (!strcasecmp(nick, oldnick) &&
             ((9 + strlen(chan) + strlen(newnicks) + strlen(newnick) +
-              strlen(nicks) + strlen(reason)) < 510)) {
+              strlen(nicks) + strlen(msg)) < 510)) {
           if (newnick)
             sprintf(newnicks, "%s,%s", newnicks, newnick);
           changed = 1;
         } else
           sprintf(newnicks, ",%s", nick);
       }
-      if (changed) {
-        if (newnicks[0] == 0) {
-          if (!lm)
-            q->head = m->next;
-          else
-            lm->next = m->next;
-          nfree(m->msg);
-          nfree(m);
-          m = lm;
-          q->tot--;
-          if (!q->head)
-            q->last = 0;
-        } else {
-          nfree(m->msg);
-          sprintf(newmsg, "KICK %s %s %s", chan, newnicks + 1, reason);
-          m->msg = nmalloc(strlen(newmsg) + 1);
-          m->len = strlen(newmsg);
-          strcpy(m->msg, newmsg);
-        }
+      sprintf(newmsg, "KICK %s %s %s", chan, newnicks + 1, msg);
+    } else if ((use_lagcheck == 2) && !strncasecmp(m->msg, "MODE ", 5)) {
+      newnicks[0] = 0;
+      strncpy(buf, m->msg, 510);
+      buf[510] = 0;
+      msg = buf;
+      newsplit(&msg);
+      sprintf(newnicks, "%s", newsplit(&msg));
+      sprintf(newnicks, "%s %s", newnicks, newsplit(&msg));
+      while (strlen(msg) > 0) {
+        nick = newsplit(&msg);
+        if (!strcasecmp(nick, oldnick) &&
+            ((9 + strlen(newnicks) + strlen(newnick) +
+              strlen(nicks) + strlen(msg)) < 510)) {
+          if (newnick)
+            sprintf(newnicks, "%s %s", newnicks, newnick);
+          changed = 1;
+        } else
+          sprintf(newnicks, "%s %s", newnicks, nick);
+      }
+      sprintf(newmsg, "MODE %s", newnicks);
+    }
+    if (changed) {
+      if (newnicks[0] == 0) {
+        if (!lm)
+          q->head = m->next;
+        else
+          lm->next = m->next;
+        nfree(m->msg);
+        nfree(m);
+        m = lm;
+        q->tot--;
+        if (!q->head)
+          q->last = 0;
+      } else {
+        nfree(m->msg);
+        m->msg = nmalloc(strlen(newmsg) + 1);
+        m->len = strlen(newmsg);
+        strcpy(m->msg, newmsg);
       }
     }
     lm = m;
@@ -576,7 +755,7 @@ static void purge_kicks(struct msgq_head *q)
   char newmsg[511], chans[511], *chns, *ch;
   int changed, found;
   struct chanset_t *cs;
-  
+
   Context;
   m = q->head;
   lm = NULL;
@@ -739,7 +918,7 @@ static int deq_kick(int which)
       m = h->head->next;
   }
   sprintf(newmsg, "KICK %s %s %s", chan, newnicks + 1, reason);
-  tputs(serv, newmsg, strlen(newmsg));  
+  tputs(serv, newmsg, strlen(newmsg));
   if (debug_output) {
     newmsg[strlen(newmsg) - 1] = 0;
     switch (which) {
@@ -756,6 +935,7 @@ static int deq_kick(int which)
     debug3("Changed: %d, kick-method: %d, nr: %d", changed, kick_method, nr);
   }
   h->tot--;
+  check_lag(newmsg);
   last_time += calc_penalty(newmsg);
   m = h->head->next;
   nfree(h->head->msg);
@@ -796,6 +976,7 @@ static void empty_msgq()
   modeq.tot = mq.tot = hq.tot = modeq.warned = mq.warned = hq.warned = 0;
   mq.head = hq.head = modeq.head = mq.last = hq.last = modeq.last = 0;
   burst = 0;
+  lagged = 0;
 }
 
 /* Use when sending msgs... will spread them out so there's no flooding.
@@ -1334,6 +1515,8 @@ static tcl_ints my_tcl_ints[] =
   {"nick-len",			&nick_len,			0},
   {"optimize-kicks",		&optimize_kicks,		0},
   {"isjuped",			&nick_juped,			0},
+  {"use-lagcheck",		&use_lagcheck,			0},
+  {"bot-is-lagged",		&lagged,			0},
   {NULL,			NULL,				0}
 };
 
@@ -1661,6 +1844,10 @@ static int server_expmem()
     tot += sizeof(struct msgq);
     m = m->next;
   }
+  if (lagcheckstring)
+    tot += strlen(lagcheckstring) + 1;
+  if (lagcheckstring2)
+    tot += strlen(lagcheckstring2) + 1;
   return tot;
 }
 
@@ -1769,6 +1956,14 @@ static char *server_close()
   del_hook(HOOK_PRE_REHASH, (Function) server_prerehash);
   del_hook(HOOK_REHASH, (Function) server_postrehash);
   Context;
+  if (lagcheckstring) {
+    nfree(lagcheckstring);
+    lagcheckstring = NULL;
+  }
+  if (lagcheckstring2) {
+    nfree(lagcheckstring2);
+    lagcheckstring2 = NULL;
+  }
   module_undepend(MODULE_NAME);
   return NULL;
 }
@@ -1887,6 +2082,11 @@ char *server_start(Function * global_funcs)
   lastpingtime = 0;
   last_time = 0;
   nick_len = 9;
+  lagchecktype = 0;
+  lagcheckstring = NULL;
+  lagcheckstring2 = NULL;
+  lagged = 0;
+  use_lagcheck = 0;
 
   Context;
   server_table[4] = (Function) botname;

@@ -4,7 +4,7 @@
  *   channel mode changes and the bot's reaction to them
  *   setting and getting the current wanted channel modes
  * 
- * $Id: mode.c,v 1.19 2000/01/22 23:43:09 fabian Exp $
+ * $Id: mode.c,v 1.20 2000/01/31 22:56:01 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -979,16 +979,19 @@ static void got_uninvite(struct chanset_t *chan, char *nick, char *from,
   }
 }
 
-static void gotmode(char *from, char *msg)
+static int gotmode(char *from, char *origmsg)
 {
-  char *nick, *ch, *op, *chg;
-  char s[UHOSTLEN];
+  char *nick, *ch, *op, *chg, *msg;
+  char s[UHOSTLEN], buf[511];
   char ms2[3];
   int z;
   struct userrec *u;
   memberlist *m;
   struct chanset_t *chan;
 
+  strncpy(buf, origmsg, 510);
+  buf[510] = 0;
+  msg = buf;
   /* Usermode changes? */
   if (msg[0] && (strchr(CHANMETA, msg[0]) != NULL)) {
     ch = newsplit(&msg);
@@ -1238,4 +1241,5 @@ static void gotmode(char *from, char *msg)
         chan->status |= CHAN_ASKEDMODES;
     }
   }
+  return 0;
 }

@@ -1,7 +1,7 @@
 /* 
  * servmsg.c -- part of server.mod
  * 
- * $Id: servmsg.c,v 1.27 2000/01/28 22:14:03 fabian Exp $
+ * $Id: servmsg.c,v 1.28 2000/01/31 22:56:01 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -50,7 +50,7 @@ static int gotfake433(char *from)
   /* First run? */
   if (altnick_char == 0) {
     char *alt = get_altbotnick();
-   
+
     if (alt[0] && (rfc_casecmp(alt, botname)))
       /* Alternate nickname defined. Let's try that first. */
       strcpy(botname, alt);
@@ -70,7 +70,7 @@ static int gotfake433(char *from)
   } else {
     char *oknicks = "^-_\\[]`";
     char *p = strchr(oknicks, altnick_char);
-    
+
     if (p == NULL) {
       if (altnick_char == '9')
         altnick_char = oknicks[0];
@@ -758,7 +758,7 @@ static void got303(char *from, char *msg)
   char *tmp, *alt;
   int ison_orig = 0, ison_alt = 0;
 
-  if (!use_ison || !keepnick || 
+  if (!use_ison || !keepnick ||
       !strncmp(botname, origbotname, strlen(botname))) {
     return;
   }
@@ -787,13 +787,14 @@ static void got303(char *from, char *msg)
 /* Trace failed! meaning my nick is not in use! 206 (undernet)
  * 401 (other non-efnet) 402 (Efnet)
  */
-static void trace_fail(char *from, char *msg)
+static int trace_fail(char *from, char *msg)
 {
   if (keepnick && !use_ison  && !strcasecmp (botname, origbotname)) {
     if (!nick_juped)
       putlog(LOG_MISC, "*", IRC_GETORIGNICK, origbotname);
     dprintf(DP_MODE, "NICK %s\n", origbotname);
   }
+  return 0;
 }
 
 /* 432 : Bad nickname
@@ -919,8 +920,7 @@ static int gotnick(char *from, char *msg)
   u = get_user_by_host(from);
   nick = splitnick(&from);
   fixcolon(msg);
-  if (optimize_kicks == 2)
-    check_kicks(nick, msg);
+  check_queues(nick, msg);
   if (match_my_nick(nick)) {
     /* Regained nick! */
     strncpy(botname, msg, NICKMAX);
@@ -1081,20 +1081,35 @@ static int gotping(char *from, char *msg)
   return 0;
 }
 
-/* 2sec penalty for each successful kick.
- */
-static int kickpenalty(char *from, char *msg)
+static int gotkick(char *from, char *msg)
 {
-  /* char buf[UHOSTLEN], *nick, *uhost = buf; */
-  
-  if (!use_penalties)
+  char *nick, buf2[511], *pbuf, *victim;
+
+/*  strcpy(uhost, from); */
+/*  nick = splitnick(&uhost); */
+  nick = from;
+  if (strcmp(nick, botname))  /* not my kick, I don't need to bother about it */
     return 0;
-  /* strcpy(uhost, from); */      /* somehow, from doesn't contain n!u@h */
-  /* nick = splitnick(&uhost); */ /* anymore use this workaround until   */
-  if (!strcmp(from, botname)) {   /* the real problem is found           */
+  if (use_penalties) {
     last_time += 2;
     if (debug_output)
       putlog(LOG_SRVOUT, "*", "adding 2secs penalty (successful kick)");
+  }
+  if (!lagged)
+    return 0;
+  strncpy(buf2, msg, 510);
+  buf2[510] = 0;
+  pbuf = buf2;
+  newsplit(&pbuf);
+  victim = newsplit(&pbuf);
+  check_notlagged(victim);
+  if (!strcasecmp(victim, lagcheckstring)) {
+    debug1("I kicked %s, so I think I'm not lagged", victim);
+    lagged = 0;
+    nfree(lagcheckstring);
+    lagcheckstring = NULL;
+    nfree(lagcheckstring2);
+    lagcheckstring2 = NULL;
   }
   return 0;
 }
@@ -1142,6 +1157,106 @@ static int whoispenalty(char *from, char *msg)
   return 0;
 }
 
+static int lagcheck_left(char *from, char *msg)
+{
+  check_notlagged(from);
+  return 0;
+}
+
+static int lagcheck_notop(char *from, char *msg)
+{
+  if (!lagged)
+    return 0;
+  debug0("Got 482 (notopped) reply, I guess I'm not lagged.");
+  if (lagcheckstring) {
+    nfree(lagcheckstring);
+    lagcheckstring = NULL;
+  }
+  lagged = 0;
+  return 0;
+}
+
+static int lagcheck_367 (char *from, char *msg)
+{
+  char buf[511], *mask;
+
+  if (!lagged || (lagchecktype != LC_BEIMODE))
+    return 0;
+  strncpy(buf, msg, 510);
+  buf[510] = 0;
+  mask = buf;
+  newsplit(&mask);
+  newsplit(&mask);
+  if (lagcheckstring) {
+    if (strcasecmp(lagcheckstring + 3, mask))
+      return 0;
+  }
+  lagged = 0;
+  if (lagcheckstring) {
+    nfree(lagcheckstring);
+    lagcheckstring = NULL;
+  }
+  debug0("mask already set, I guess I'm not lagged");
+  return 0;
+}
+
+static int lagcheck_mode (char *from, char *origmsg)
+{
+  char *modes, pm, buf[511], *msg;
+
+  if (strcmp(from, botname))  /* that wasn't my modechange... */
+    return 0;
+  strncpy(buf, origmsg, 510);
+  buf[510] = 0;
+  msg = buf;
+  newsplit(&msg);
+  modes = newsplit(&msg);
+  if (strlen(msg) < 1)
+    return 0;
+  pm = '+';
+  while (modes[0]) {
+    if (strchr("+-", modes[0]))
+      pm = modes[0];
+    else if (strchr("ovbeI", modes[0])) {
+      sprintf(buf, "%c%c %s", pm, modes[0], newsplit(&msg));
+      check_notlagged(buf);
+    } else if ((modes[0] == 'l') && (pm = '+'))
+      newsplit(&msg);
+    else if (modes[0] == 'k')
+      newsplit(&msg);
+    modes++;
+  }
+  return 0;
+}
+
+static int lagcheck_401(char *from, char *origmsg)
+{
+  char buf[511], *msg;
+
+  if (!lagged || lagchecktype != LC_KICK)
+    return 0;
+  strncpy(buf, origmsg, 510);
+  buf[510] = 0;
+  msg = buf;
+  if (strcmp(newsplit(&msg), botname)) {
+    debug1("This shouldn't happen.(%s)", origmsg);
+    return 0;
+  }
+  if (!strcasecmp(lagcheckstring2, newsplit(&msg))) {
+    lagged = 0;
+    if (lagcheckstring) {
+      nfree(lagcheckstring);
+      lagcheckstring = NULL;
+    }
+    if (lagcheckstring2) {
+      nfree(lagcheckstring2);
+      lagcheckstring2 = NULL;
+    }
+    debug0("got 401/441 reply, guess I'm not lagged");
+  }
+  return 0;
+}
+
 static cmd_t my_raw_binds[] =
 {
   {"PRIVMSG",	"",	(Function) gotmsg,		NULL},
@@ -1163,9 +1278,18 @@ static cmd_t my_raw_binds[] =
   {"451",	"",	(Function) got451,		NULL},
   {"NICK",	"",	(Function) gotnick,		NULL},
   {"ERROR",	"",	(Function) goterror,		NULL},
-  {"KICK",	"",	(Function) kickpenalty,		NULL},
+  {"KICK",	"",	(Function) gotkick,		NULL},
   {"200",	"",	(Function) tracepenalty,	NULL},
   {"318",	"",	(Function) whoispenalty,	NULL},
+  {"PART",	"",	(Function) lagcheck_left,	NULL},
+  {"QUIT",	"",	(Function) lagcheck_left,	NULL},
+  {"482",	"",	(Function) lagcheck_notop,	NULL},
+  {"367",	"",	(Function) lagcheck_367,	NULL},
+  {"348",	"",	(Function) lagcheck_367,	NULL},
+  {"346",	"",	(Function) lagcheck_367,	NULL},
+  {"MODE",	"",	(Function) lagcheck_mode,	"lagcheck:MODE"},
+  {"401",	"",	(Function) lagcheck_401,	"lagcheck:401"},
+  {"441",	"",	(Function) lagcheck_401,	"lagcheck:441"},
   {NULL,	NULL,	NULL,				NULL}
 };
 
@@ -1231,7 +1355,7 @@ static void connect_server(void)
     /* Resolve the hostname. */
     dcc_dnsipbyhost(dcc[servidx].host);
   }
-} 
+}
 
 static void server_resolve_failure(int servidx)
 {
