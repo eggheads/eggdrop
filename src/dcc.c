@@ -4,7 +4,7 @@
  *   disconnect on a dcc socket
  *   ...and that's it!  (but it's a LOT)
  *
- * $Id: dcc.c,v 1.48 2001/09/24 04:25:39 guppy Exp $
+ * $Id: dcc.c,v 1.49 2001/09/25 23:21:44 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -298,10 +298,10 @@ static void dcc_bot_digest(int idx, char *challenge, char *password)
   unsigned char digest[16];
   int           i;
 
-  MD5Init(&md5context);
-  MD5Update(&md5context, (unsigned char *) challenge, strlen(challenge));
-  MD5Update(&md5context, (unsigned char *) password, strlen(password));
-  MD5Final(digest, &md5context);
+  MD5_Init(&md5context);
+  MD5_Update(&md5context, (unsigned char *) challenge, strlen(challenge));
+  MD5_Update(&md5context, (unsigned char *) password, strlen(password));
+  MD5_Final(digest, &md5context);
 
   for (i = 0; i < 16; i++)
     sprintf(digest_string + (i*2), "%.2x", digest[i]);
@@ -510,17 +510,17 @@ static int dcc_bot_check_digest(int idx, char *remote_digest)
   int           i;
   char          *password = get_user(&USERENTRY_PASS, dcc[idx].user);
 
-  MD5Init(&md5context);
+  MD5_Init(&md5context);
 
   egg_snprintf(digest_string, 33, "<%x%x@", getpid(),
 	       (unsigned int) dcc[idx].timeval);
-  MD5Update(&md5context, (unsigned char *) digest_string,
+  MD5_Update(&md5context, (unsigned char *) digest_string,
 	    strlen(digest_string));
-  MD5Update(&md5context, (unsigned char *) botnetnick, strlen(botnetnick));
-  MD5Update(&md5context, (unsigned char *) ">", 1);
-  MD5Update(&md5context, (unsigned char *) password, strlen(password));
+  MD5_Update(&md5context, (unsigned char *) botnetnick, strlen(botnetnick));
+  MD5_Update(&md5context, (unsigned char *) ">", 1);
+  MD5_Update(&md5context, (unsigned char *) password, strlen(password));
 
-  MD5Final(digest, &md5context);
+  MD5_Final(digest, &md5context);
 
   for (i = 0; i < 16; i++)
     sprintf(digest_string + (i * 2), "%.2x", digest[i]);
