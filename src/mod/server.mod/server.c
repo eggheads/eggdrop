@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  *
- * $Id: server.c,v 1.107 2004/01/09 08:23:53 wcc Exp $
+ * $Id: server.c,v 1.108 2004/01/09 09:48:33 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -818,28 +818,37 @@ static void queue_server(int which, char *buf, int len)
   switch (which) {
   case DP_MODE_NEXT:
     qnext = 1;
+    /* Fallthrough */
+
   case DP_MODE:
     h = &modeq;
     tempq = modeq;
     if (double_mode)
       doublemsg = 1;
     break;
+
   case DP_SERVER_NEXT:
     qnext = 1;
+    /* Fallthrough */
+
   case DP_SERVER:
     h = &mq;
     tempq = mq;
     if (double_server)
       doublemsg = 1;
     break;
+
   case DP_HELP_NEXT:
     qnext = 1;
+    /* Fallthrough */
+
   case DP_HELP:
     h = &hq;
     tempq = hq;
     if (double_help)
       doublemsg = 1;
     break;
+
   default:
     putlog(LOG_MISC, "*", "Warning: queuing unknown type to server!");
     return;
