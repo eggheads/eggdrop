@@ -1,14 +1,14 @@
-PATCH HOWTO v1.2			                  18 Feb 2000
+PATCH HOWTO v1.2			                  29 May 2000
 
 
 
 INDEX
 
-I.	    ABOUT THIS DOCUMENT
-II.	    TERMS USED
+I.      ABOUT THIS DOCUMENT
+II.     TERMS USED
 III.	APPLYING A PATCH
-IV.	    DOING AND SUBMITTING PATCH
-V.  	DOWNLOADING A PATCH
+IV.     DOING AND SUBMITTING PATCH
+V.      DOWNLOADING A PATCH
 
 
 
@@ -76,7 +76,12 @@ There are several steps to submit a patch to the eggdev team:
 2. do a 'diff -bur eggdrop1.5.original eggdrop1.5.modified > myfirst.patch'
 3. send an email to patches@eggheads.org with the patch attached and a detailed
    description of what you changed and why you changed it. Don't forget to write
-   for which botversion your patch was made.
+   for which botversion your patch was made. Please send a second email with
+   same info to eggdev@eggheads.org, this time without the patch attached.
+
+
+Please, never patch src/patch.h or one of the UPDATES files. We will do it.
+Thank you.
 
 
 
