@@ -4,7 +4,7 @@
  *   disconnect on a dcc socket
  *   ...and that's it!  (but it's a LOT)
  *
- * $Id: dcc.c,v 1.44 2001/04/12 02:39:43 guppy Exp $
+ * $Id: dcc.c,v 1.45 2001/05/12 20:50:57 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1257,10 +1257,13 @@ static void dcc_dupwait(int idx, char *buf, int i)
  */
 static void timeout_dupwait(int idx)
 {
+  char x[100];
+
   /* Still duplicate? */
   if (in_chain(dcc[idx].nick)) {
+    egg_snprintf(x, sizeof x, "%s!%s", dcc[idx].nick, dcc[idx].host);
     dprintf(idx, "error Already connected.\n");
-    putlog(LOG_BOTS, "*", DCC_DUPLICATE, dcc[idx].host);
+    putlog(LOG_BOTS, "*", DCC_DUPLICATE, x);
     killsock(dcc[idx].sock);
     lostdcc(idx);
   } else {
