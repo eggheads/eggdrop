@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  *
- * $Id: cmds.c,v 1.50 2001/05/20 00:25:58 guppy Exp $
+ * $Id: cmds.c,v 1.51 2001/06/01 22:03:15 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -931,12 +931,13 @@ static void cmd_chpass(struct userrec *u, int idx, char *par)
 
 static void cmd_chaddr(struct userrec *u, int idx, char *par)
 {
+  int telnet_port = 3333, relay_port = 3333;
   char *handle, *addr, *p, *q;
   struct bot_addr *bi;
   struct userrec *u1;
 
   if (!par[0]) {
-    dprintf(idx, "Usage: chaddr <botname> <address:botport#/userport#>\n");
+    dprintf(idx, "Usage: chaddr <botname> <address[:telnet-port[/relay-port]]>\n");
     return;
   }
   handle = newsplit(&par);
@@ -954,14 +955,21 @@ static void cmd_chaddr(struct userrec *u, int idx, char *par)
   }
   putlog(LOG_CMDS, "*", "#%s# chaddr %s %s", dcc[idx].nick, handle, addr);
   dprintf(idx, "Changed bot's address.\n");
+
+  bi = (struct bot_addr *) get_user(&USERENTRY_BOTADDR, u1);
+  if (bi) {
+    telnet_port = bi->telnet_port;
+    relay_port = bi->relay_port;
+  }
+
   bi = user_malloc(sizeof(struct bot_addr));
 
   q = strchr(addr, ':');
   if (!q) {
     bi->address = user_malloc(strlen(addr) + 1);
     strcpy(bi->address, addr);
-    bi->telnet_port = 3333;
-    bi->relay_port = 3333;
+    bi->telnet_port = telnet_port;
+    bi->relay_port = relay_port;
   } else {
     bi->address = user_malloc(q - addr + 1);
     strncpyz(bi->address, addr, q - addr + 1);

@@ -7,7 +7,7 @@
  *   linking, unlinking, and relaying to another bot
  *   pinging the bots periodically and checking leaf status
  *
- * $Id: botnet.c,v 1.33 2001/04/12 02:39:43 guppy Exp $
+ * $Id: botnet.c,v 1.34 2001/06/01 22:03:15 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -984,7 +984,7 @@ int botlink(char *linker, int idx, char *nick)
       }
     /* Address to connect to is in 'info' */
     bi = (struct bot_addr *) get_user(&USERENTRY_BOTADDR, u);
-    if (!bi || !strlen(bi->address) || !bi->telnet_port) {
+    if (!bi || !strlen(bi->address) || !bi->telnet_port || (bi->telnet_port <= 0)) {
       if (idx >= 0) {
 	dprintf(idx, "%s '%s'.\n", BOT_NOTELNETADDY, nick);
 	dprintf(idx, "%s .chaddr %s %s\n",
@@ -1112,7 +1112,7 @@ void tandem_relay(int idx, char *nick, register int i)
   }
   /* Address to connect to is in 'info' */
   bi = (struct bot_addr *) get_user(&USERENTRY_BOTADDR, u);
-  if (!bi) {
+  if (!bi || !strlen(bi->address) || !bi->relay_port || (bi->relay_port <= 0)) {
     dprintf(idx, "%s '%s'.\n", BOT_NOTELNETADDY, nick);
     dprintf(idx, "%s .chaddr %s %s\n",
 	    MISC_USEFORMAT, nick, MISC_CHADDRFORMAT);
