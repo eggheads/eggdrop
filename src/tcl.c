@@ -566,7 +566,7 @@ int readtclprog(char *fname)
 
 void add_tcl_strings(tcl_strings * list)
 {
-  int i;
+  int i, tmp;
   strinfo *st;
 
   for (i = 0; list[i].name; i++) {
@@ -577,7 +577,10 @@ void add_tcl_strings(tcl_strings * list)
       st->max = -st->max;
     st->str = list[i].buf;
     st->flags = (list[i].flags & STR_DIR);
+    tmp = protect_readonly;
+    protect_readonly = 0;
     tcl_eggstr((ClientData) st, interp, list[i].name, NULL, TCL_TRACE_WRITES);
+    protect_readonly = tmp;
     tcl_eggstr((ClientData) st, interp, list[i].name, NULL, TCL_TRACE_READS);
     Tcl_TraceVar(interp, list[i].name, TCL_TRACE_READS | TCL_TRACE_WRITES |
 		 TCL_TRACE_UNSETS, tcl_eggstr, (ClientData) st);
@@ -607,7 +610,7 @@ void rem_tcl_strings(tcl_strings * list)
 
 void add_tcl_ints(tcl_ints * list)
 {
-  int i;
+  int i, tmp;
   intinfo *ii;
 
   for (i = 0; list[i].name; i++) {
@@ -615,7 +618,10 @@ void add_tcl_ints(tcl_ints * list)
     strtot += sizeof(intinfo);
     ii->var = list[i].val;
     ii->ro = list[i].readonly;
+    tmp = protect_readonly;
+    protect_readonly = 0;
     tcl_eggint((ClientData) ii, interp, list[i].name, NULL, TCL_TRACE_WRITES);
+    protect_readonly = tmp; 
     tcl_eggint((ClientData) ii, interp, list[i].name, NULL, TCL_TRACE_READS);
     Tcl_TraceVar(interp, list[i].name,
 		 TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
@@ -650,13 +656,19 @@ void add_tcl_coups(tcl_coups * list)
 {
   coupletinfo *cp;
   int i;
+/* int tmp; */
 
   for (i = 0; list[i].name; i++) {
     cp = (coupletinfo *) nmalloc(sizeof(coupletinfo));
     strtot += sizeof(coupletinfo);
     cp->left = list[i].lptr;
     cp->right = list[i].rptr;
+/*  tmp = protect_readonly;
+    protect_readonly = 0;
+*/
+
     tcl_eggcouplet((ClientData) cp, interp, list[i].name, NULL, TCL_TRACE_WRITES);
+/*  protect_readonly = tmp; */
     tcl_eggcouplet((ClientData) cp, interp, list[i].name, NULL, TCL_TRACE_READS);
     Tcl_TraceVar(interp, list[i].name,
 		 TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,

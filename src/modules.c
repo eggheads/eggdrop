@@ -472,6 +472,7 @@ Function global_table[] =
   (Function) mod_contextnote,
   (Function) assert_failed,
   (Function) & protect_readonly, /* int */
+  (Function) del_lang_section,
 };
 
 void init_modules(void)

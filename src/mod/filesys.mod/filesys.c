@@ -823,6 +823,7 @@ static char *filesys_close()
     rem_builtins(H_ctcp, myctcp);
   del_bind_table(H_fil);
   del_entry_type(&USERENTRY_DCCDIR);
+  del_lang_section("filesys");
   module_undepend(MODULE_NAME);
   return NULL;
 }

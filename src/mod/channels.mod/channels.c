@@ -789,14 +789,12 @@ static Function channels_table[] =
 /* *HOLE* channels_funcs[32] used to be u_sticky_exempt() <cybah> */
   (Function) NULL,
   (Function) NULL,
-/* *HOLE* channels_funcs[34] used to be u_setsticky_invite() <cybah> */
-  (Function) NULL,
+  (Function) killchanset,
   (Function) u_delinvite,
   /* 36 - 39 */
   (Function) u_addinvite,
-  (Function) NULL,
-/* *HOLE* channels_funcs[38] used to be u_sticky_invite() <cybah> */
-  (Function) NULL,
+  (Function) tcl_channel_add,
+  (Function) tcl_channel_modify,
   (Function) write_exempts,
   /* 40 - 43 */
   (Function) write_invites,
