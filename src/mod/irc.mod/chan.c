@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  * 
- * $Id: chan.c,v 1.33 2000/02/25 21:36:33 fabian Exp $
+ * $Id: chan.c,v 1.34 2000/02/29 20:10:11 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -821,10 +821,8 @@ static int got324(char *from, char *msg)
 static int got352or4(struct chanset_t *chan, char *user, char *host,
 		     char *nick, char *flags)
 {
-  struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
-  char userhost[UHOSTLEN], *p;
+  char userhost[UHOSTLEN];
   memberlist *m;
-  int waschanop;
 
   m = ismember(chan, nick);	/* In my channel list copy? */
   if (!m) {			/* Nope, so update */
@@ -843,7 +841,6 @@ static int got352or4(struct chanset_t *chan, char *user, char *host,
     strcpy(botuserhost, m->userhost);	/* Yes, save my own userhost */
     m->joined = now;		/* set this to keep the whining masses happy */
   }
-  waschanop = me_op(chan);	/* Am I opped here? */
   if (strchr(flags, '@') != NULL)	/* Flags say he's opped? */
     m->flags |= (CHANOP | WASOP);	/* Yes, so flag in my table */
   else
@@ -854,51 +851,10 @@ static int got352or4(struct chanset_t *chan, char *user, char *host,
     m->flags &= ~CHANVOICE;
   if (!(m->flags & (CHANVOICE | CHANOP)))
     m->flags |= STOPWHO;
-  if (match_my_nick(nick) && !waschanop && me_op(chan))
-    recheck_channel(chan, 1);
   if (match_my_nick(nick) && any_ops(chan) && !me_op(chan) &&
       chan->need_op[0])
     do_tcl("need-op", chan->need_op);
   m->user = get_user_by_host(userhost);
-  get_user_flagrec(m->user, &fr, chan->dname);
-  /* Are they a chanop, and me too */
-  if (chan_hasop(m) && me_op(chan) &&
-      /* ... and are they a channel or global de-op */
-      ((chan_deop(fr) || (glob_deop(fr) && !chan_op(fr))) ||
-       /* or is it bitch mode & they're not an op anywhere */
-       (channel_bitch(chan) && !chan_op(fr) &&
-	!(glob_op(fr) && !chan_deop(fr)))) &&
-      /* and of course it's not me */
-      !match_my_nick(nick)) {
-    add_mode(chan, '-', 'o', nick);
-  }
-  /* If channel is enforce bans */
-  if (channel_enforcebans(chan) &&
-      /* ... and user matches a ban */
-      (u_match_mask(global_bans, userhost) ||
-       u_match_mask(chan->bans, userhost)) &&
-      /* ... and it's not me, and i'm an op */
-      !match_my_nick(nick) && me_op(chan) &&
-      !chan_friend(fr) && !glob_friend(fr) &&
-      !isexempted(chan, userhost) &&
-      !(channel_dontkickops(chan) &&
-	(chan_op(fr) || (glob_op(fr) && !chan_deop(fr))))) {	/* arthur2 */
-    /* *bewm* */
-    dprintf(DP_SERVER, "KICK %s %s :%s\n", chan->name, nick, IRC_BANNED);
-    m->flags |= SENTKICK;
-  }
-  /* if the user is a +k */
-  else if ((chan_kick(fr) || glob_kick(fr)) &&
-	   /* ... and it's not me :) (who'd set me +k anyway, a sicko?) and if
-	    * I'm an op */
-	   !match_my_nick(nick) && me_op(chan)) {
-    /* cya later! */
-    p = get_user(&USERENTRY_COMMENT, m->user);
-    quickban(chan, userhost);
-    dprintf(DP_SERVER, "KICK %s %s :%s\n", chan->name, nick,
-	    p ? p : IRC_POLITEKICK);
-    m->flags |= SENTKICK;
-  }
   return 0;
 }
 
@@ -975,6 +931,8 @@ static int got315(char *from, char *msg)
     dprintf(DP_MODE, "JOIN %s %s\n",
 	    (chan->name[0]) ? chan->name : chan->dname, chan->key_prot);
   }
+  else if (me_op(chan))
+    recheck_channel(chan, 1);
   /* do not check for i-lines here. */
   return 0;
 }
