@@ -4,7 +4,7 @@
  *   disconnect on a dcc socket
  *   ...and that's it!  (but it's a LOT)
  *
- * $Id: dcc.c,v 1.80 2004/07/02 21:02:02 wcc Exp $
+ * $Id: dcc.c,v 1.81 2004/07/31 01:21:53 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -468,7 +468,7 @@ static void display_dcc_fork_bot(int idx, char *buf)
 
 struct dcc_table DCC_BOT = {
   "BOT",
-  DCT_BOT,
+  DCT_BOT | DCT_VALIDIDX,
   eof_dcc_bot,
   dcc_bot,
   NULL,
