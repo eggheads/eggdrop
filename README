@@ -155,7 +155,7 @@ README
                (2) you don't need to go through this whole
                process every time; if you want to get a CVS
                version of eggdrop at a later time, you can just
-               'cd ~/eggdrop1.4' and type 'cvs update -AP'.
+               'cd ~/eggdrop1.4' and type 'cvs update -dAP'.
                (3) if you experience errors when using 'export',
                you might be using tclsh as a shell. If so, try
                using the command 'setenv' instead of 'export':
@@ -540,7 +540,7 @@ README
           To subscribe to the eggheads mailing list, send email to:
           eggheads-request@eggheads.org In the body of the message,
           put "subscribe eggheads"; or go to
-          http://scrambled.eggheads.org/mailman/listinfo/eggheads
+          http://www.eggheads.org/mailman/listinfo/eggheads
 
                   ### DO NOT SEND ROBEY EMAIL ABOUT EGGDROP ###
 
