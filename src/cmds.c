@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  *
- * $Id: cmds.c,v 1.67 2001/12/16 14:55:59 guppy Exp $
+ * $Id: cmds.c,v 1.68 2001/12/20 06:32:01 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -50,7 +50,7 @@ extern Tcl_Interp	*interp;
 extern char		 botnetnick[], origbotname[], ver[], network[],
 			 owner[], spaces[], quit_msg[];
 extern time_t		 now, online_since;
-
+extern module_entry	*module_list;
 
 static char	*btos(unsigned long);
 
@@ -2577,13 +2577,20 @@ static void cmd_mns_host(struct userrec *u, int idx, char *par)
 static void cmd_modules(struct userrec *u, int idx, char *par)
 {
   int ptr;
+  char *bot;
+  module_entry *me;
 
-  if (!par[0])
-    dprintf(idx, "Usage: modules <bot>\n");
-  else {
     putlog(LOG_CMDS, "*", "#%s# modules %s", dcc[idx].nick, par);
-    if ((ptr = nextbot(par)) >= 0)
-      dprintf(ptr, "v %s %s %d:%s\n", botnetnick, par, dcc[idx].sock,
+
+  if (!par[0]) {  
+    dprintf(idx, "Modules loaded:\n");
+    for (me = module_list; me; me = me->next)
+      dprintf(idx, "  Module: %s (v%d.%d)\n", me->name, me->major, me->minor);
+    dprintf(idx, "End of modules list.\n");
+  } else {
+    bot = newsplit(&par);
+    if ((ptr = nextbot(bot)) >= 0)
+      dprintf(ptr, "v %s %s %d:%s\n", botnetnick, bot, dcc[idx].sock,
 	      dcc[idx].nick);
     else
       dprintf(idx, "No such bot online.\n");

@@ -80,8 +80,9 @@ see also: +ignore, -ignore, set ignore-time
    dependencies & status report, you can get info only on a 
    specific module by specifying it.
 %{help=modules}%{+n}
-###  %bmodules%b <botname>
-   requests a listing of the modules running on the remote bot
+###  %bmodules%b [botname]
+   requests a listing of the modules loaded on the remote bot or your
+   bot if no botname is specified.
 %{help=motd}
 ###  %bmotd%b [botname]
    will redisplay the party-line message of the day, which was
