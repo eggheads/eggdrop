@@ -1,0 +1,58 @@
+# Traduction par Fraggle, merci de me contacter à benoit_jerome@penguinpowered.com si vous voulez
+# y contribuer.
+
+# FILES_
+
+0x300,Conversion de l'image du système de fichier dans %s ...
+0x301,filedb-update: ne peut ouvrir le répertoire!
+0x302,(!) Conversion cassée de filedb dans %s
+0x303,Nom de ficher                   Taille  Envoyé par/Date      # Pris\n
+0x304,------------------------------  ------  -------------------  ------\n
+0x305,Aucuns fichers dans ce répertoire.\n
+0x306,Aucun fichier ne correspond.\n
+0x307,Le répertoire n'existe pas
+0x308,Le fichier n'existe pas
+0x309,Le fichier n'est pas partagé
+0x30a,(distant)
+0x30b,Erreur lors de la tentative d'envoi du ficher
+0x30c,(envoi)
+0x30d,Requête distante pour /%s%s%s (envoi)
+0x30e,\nLe système de fichier semble être cassé en ce moment.\n
+0x30f,(Le files-path est défini dans un répertoire incorrect.)\n
+0x310,Répertoire courant
+0x311,Nouveau répertoire courant
+0x312,Aucun répertoire de ce type.\n
+0x313,Répertoire incorrect.\n
+0x314,Soyez raisonnable.\n
+0x315,%s n'est pas disponible actuellement.\n
+0x316,Demande de %s de %s ...\n
+0x317,%s est déjà un ficher normal.\n
+0x318,Changement de la liaison à %s\n
+0x319,Vous n'avez rien déposé %s\n
+0x31a,Création du répertoire
+0x31b,Obligation d'avoir +%s pour l'accès\n
+0x31c,Changed %s/ to require +%s to access\n
+0x31d,Changes %s/ to require no flags to access\n
+0x31e,Suppression du répertoire
+0x31f,Répertoire source incorrect.\n
+0x320,Répertoire destination incorrect.\n
+0x321,vous ne pouvez pas %s des fichers au dessus d'eux mêmes.\n
+0x322,existe en tant que répertoire -- interrompre
+0x323,sur lui même?  Nuh uh.
+0x324,Destination
+0x325,copier
+0x326,Copié
+0x327,déplacer
+0x328,Déplacé
+0x329,Ne peut écrire
+0x32a,est nécessaire
+0x32b,Caché
+0x32c,Visible
+0x32d,Partagé
+0x32e,Non partagé
+0x32f,Ajout d'une liaison
+0x330,Changé
+0x331,Blanked
+0x332,Supprimé
+0x33a,Bienvenue sur le serveur de fichiers de %B\n
+0x33b,Tous les transferts de fichiers seront transmis à '%N' par défaut.\n(Vous pouvez spécifier un surnom alternatif avec la commande 'get'.)\nTapez 'help' pour l'aide.\n
