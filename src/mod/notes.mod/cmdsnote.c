@@ -2,7 +2,7 @@
  * cmdsnote.c -- part of notes.mod
  *   handles all notes interaction over the party line
  * 
- * $Id: cmdsnote.c,v 1.9 2001/01/16 17:13:23 guppy Exp $
+ * $Id: cmdsnote.c,v 1.10 2001/01/21 07:32:40 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -216,12 +216,11 @@ static void cmd_note(struct userrec *u, int idx, char *par)
   char handle[512], *p;
   int echo;
 
+  p = newsplit(&par);
   if (!par[0]) {
     dprintf(idx, "%s: note <to-whom> <message>\n", NOTES_USAGE);
     return;
   }
-  /* Could be file system user */
-  p = newsplit(&par);
   while ((*par == ' ') || (*par == '<') || (*par == '>'))
     par++;			/* These are now illegal *starting* notes
 				 * characters */
