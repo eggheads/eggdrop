@@ -357,22 +357,19 @@ static void refresh_ban_kick(struct chanset_t *chan, char *user, char *nick)
       u = global_bans;
     for (; u; u = u->next) {
       if (wild_match(u->banmask, user)) {
-	if (u->lastactive < now - 60) {
-	  m = ismember(chan, nick);
-	  if (m && chan_hasop(m))
-	    add_mode(chan, '-', 'o', nick);	/* guess it can't hurt */
-	  do_ban(chan, u->banmask);
-	  u->lastactive = now;
-	  c[0] = 0;
-	  if (u->desc && (u->desc[0] != '@')) {
-	    if (strcmp(IRC_PREBANNED, ""))
-	      sprintf(c, "%s: %s", IRC_PREBANNED, u->desc);
-	    else
-	      sprintf(c, "%s", u->desc);
-	  }
-	  kick_all(chan, u->banmask, c[0] ? c : IRC_YOUREBANNED);
-	  return;		/* drop out on 1st ban */
+	m = ismember(chan, nick);
+	if (m && chan_hasop(m))
+	  add_mode(chan, '-', 'o', nick);	/* guess it can't hurt */
+	do_ban(chan, u->banmask);
+	c[0] = 0;
+	if (u->desc && (u->desc[0] != '@')) {
+	  if (strcmp(IRC_PREBANNED, ""))
+	    sprintf(c, "%s: %s", IRC_PREBANNED, u->desc);
+	  else
+	    sprintf(c, "%s", u->desc);
 	}
+	kick_all(chan, u->banmask, c[0] ? c : IRC_YOUREBANNED);
+	return;		/* drop out on 1st ban */
       }
     }
   }
