@@ -19,7 +19,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #
-# $Id: modconfig,v 1.14 2004/01/09 05:56:36 wcc Exp $
+# $Id: modconfig,v 1.15 2004/06/15 07:20:55 wcc Exp $
 
 
 mc_pn=`echo $0 | sed -e 's/^.*\///'`
@@ -65,7 +65,7 @@ while true; do
 		echo "${mc_pn}: warning: unknown option \`${1}'." 2>&1
 	;;
 	*)
-		#  Non-option parameter. 
+		#  Non-option parameter.
 		break
 	;;
 	esac
@@ -177,7 +177,6 @@ Commands:
     help                 Displays this information.
     detect-modules       Find all available modules.
     modules-still-exist  Check wether all known modules still exist.
-    eggautoconf          Recreate the configure scripts in every module dir.
 
 Options:
     --top_srcdir=DIR     Top directory         (At least one of these two
@@ -488,7 +487,7 @@ xadd)
 ;;
 xclear)
 #
-#  Clear list of modules 
+#  Clear list of modules
 #
 
 	echo "${mc_pn}: cleared list of eggdrop modules." 1>&6
@@ -700,33 +699,6 @@ EOF
 		echo " failed!" 1>&6
 		exit 1
 	fi
-;;
-xeggautoconf)
-#
-#  Recreate the eggdrop specific configure scripts for every module.
-#
-
-	#  Detect available modules
-	mc_mods=`echo ${mc_mod_dir}/*.mod`
-
-	#  Error out if we have no available modules
-	if test "${mc_mods}" = "echo ${mc_mod_dir}/*.mod"; then
-		echo "${mc_pn}: error: no modules found." 1>&2
-		exit 1
-	fi
-
-	#  Loop through each available module
-	for mc_modd in ${mc_mods}; do
-		#  Skip modules without their own configure script.
-		if test ! -r "${mc_modd}/configure.in"; then
-			continue
-		fi
-
-		#  Remove directory information from name
-		mc_mod=`echo ${mc_modd} | sed -e 's/.*\///'`
-		echo "Creating configure for module '${mc_mod}'."
-		(cd ${mc_modd} && ../eggautoconf)
-	done
 ;;
 *)
 	if test "x${mc_cmd}" = x; then

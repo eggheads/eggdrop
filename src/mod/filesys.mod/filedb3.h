@@ -4,7 +4,7 @@
  *
  * Written by Fabian Knittel <fknittel@gmx.de>
  *
- * $Id: filedb3.h,v 1.17 2004/06/14 01:14:07 wcc Exp $
+ * $Id: filedb3.h,v 1.18 2004/06/15 07:20:55 wcc Exp $
  */
 /*
  * Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004 Eggheads Development Team
@@ -26,24 +26,6 @@
 
 #ifndef _EGG_MOD_FILESYS_FILEDB3_H
 #define _EGG_MOD_FILESYS_FILEDB3_H
-
-/*
- * FIXME: These really should be in the .c files that include this header
- */
-#ifdef HAVE_CONFIG_H
-#  include "config.h"
-#endif
-
-#ifdef TIME_WITH_SYS_TIME
-#  include <sys/time.h>
-#  include <time.h>
-#else
-#  ifdef HAVE_SYS_TIME_H
-#    include <sys/time.h>
-#  else
-#    include <time.h>
-#  endif
-#endif
 
 /* Top of each DB */
 typedef struct {

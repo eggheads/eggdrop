@@ -6,7 +6,7 @@
  * Written by Fabian Knittel <fknittel@gmx.de>. Based on zlib examples
  * by Jean-loup Gailly and Miguel Albrecht.
  *
- * $Id: compress.c,v 1.23 2004/06/14 01:14:06 wcc Exp $
+ * $Id: compress.c,v 1.24 2004/06/15 07:20:55 wcc Exp $
  */
 /*
  * Copyright (C) 2000, 2001, 2002, 2003, 2004 Eggheads Development Team
@@ -35,7 +35,6 @@
 
 #include "src/mod/module.h"
 #include "share.mod/share.h"
-#include "compress_config.h"
 
 #ifdef HAVE_MMAP
 #  undef panic
@@ -436,6 +435,7 @@ char *compress_start(Function *global_funcs)
     module_undepend(MODULE_NAME);
     return "This module requires Eggdrop 1.6.0 or later.";
   }
+
   share_funcs = module_depend(MODULE_NAME, "share", 2, 3);
   if (!share_funcs) {
     module_undepend(MODULE_NAME);

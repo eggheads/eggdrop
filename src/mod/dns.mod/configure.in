@@ -1,92 +1,117 @@
-dnl Eggdrop compile-time configuration file for src/mod/dns.mod
+dnl configure.ac: this file is processed by autoconf to produce ./configure.
 dnl
-dnl $Id: configure.in,v 1.10 2003/12/20 22:29:51 wcc Exp $
+dnl $Id: configure.in,v 1.11 2004/06/15 07:20:55 wcc Exp $
 
-dnl This file is based on the autoconf m4 macros. Special eggdrop
-dnl macros are used to optimise the size of the resulting configure
-dnl script `./configure'.  Run `../eggautoconf' to update that
-dnl script. You need to have the GNU autoconf package installed
-dnl though.
+AC_PREREQ(2.59)
 
-
-dnl Instead of AC_INIT, we call EGG_INIT().
 sinclude(../eggmod.m4)
+
+AC_INIT([Eggdrop DNS Module],[1.6.17],[bugs@eggheads.org])
 EGG_INIT(coredns.c)
 
+AC_CONFIG_SRCDIR(coredns.c)
+AC_CONFIG_AUX_DIR(../../../misc)
 
-AC_PROG_CC
-AC_CYGWIN
+AC_COPYRIGHT([Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004 Eggheads Development Team])
+AC_REVISION($Revision: 1.11 $)
 
 dns_reslib_avail="true"
-AC_CHECK_FUNC(res_init, ,
-  AC_CHECK_LIB(resolv, res_init, RESLIB="-lresolv",
-    AC_CHECK_LIB(bind, res_init, RESLIB="-lbind", [dnl
-      dns_reslib_avail="false";
-    ])dnl
-  )dnl
-)dnl
 
-if test "${dns_reslib_avail}" = false; then
+AC_CHECK_FUNC(res_init, [],
+[
+  AC_CHECK_LIB(resolv, res_init,
+  [
+    RESLIB="-lresolv"
+  ], [
+    AC_CHECK_LIB(bind, res_init,
+    [
+      RESLIB="-lbind"
+    ], [
+      dns_reslib_avail="false"
+    ])
+  ])
+])
+
+if test "${dns_reslib_avail}" = "false"; then
   dns_reslib_avail="true"
-  AC_CHECK_FUNC(__res_init, ,
-    AC_CHECK_LIB(resolv, __res_init, RESLIB="-lresolv",
-      AC_CHECK_LIB(bind, __res_init, RESLIB="-lbind", [dnl
+
+  AC_CHECK_FUNC(__res_init, [],
+  [
+    AC_CHECK_LIB(resolv, __res_init,
+    [
+      RESLIB="-lresolv"
+    ], [
+      AC_CHECK_LIB(bind, __res_init,
+      [
+        RESLIB="-lbind"
+      ], [
+        dns_reslib_avail="false"
+      ])
+    ])
+  ])
+fi
+
+AC_CHECK_FUNC(res_mkquery, [],
+[
+  AC_CHECK_LIB(resolv, res_mkquery,
+  [
+    if test "x${RESLIB}" != "x-lresolv"; then
+      RESLIB="${RESLIB} -lresolv"
+    fi
+  ], [
+    AC_CHECK_LIB(bind, res_mkquery,
+    [
+      if test "x${RESLIB}" != "x-lbind"; then
+        RESLIB="${RESLIB} -lbind"
+      fi
+    ], [
+      dns_reslib_avail="false"
+    ])
+  ])
+])
+
+if test "${dns_reslib_avail}" = "false"; then
+  dns_reslib_avail="true"
+
+  AC_CHECK_FUNC(__res_mkquery, [],
+  [
+    AC_CHECK_LIB(resolv, __res_mkquery,
+    [
+      if test "x${RESLIB}" != "x-lresolv"; then
+        RESLIB="${RESLIB} -lresolv"
+      fi
+    ], [
+      AC_CHECK_LIB(bind, __res_mkquery,
+      [
+        if test "x${RESLIB}" != "x-lbind"; then
+          RESLIB="${RESLIB} -lbind"
+        fi
+      ], [
         dns_reslib_avail="false";
-      ])dnl
-    )dnl
-  )dnl
-fi
-
-AC_CHECK_FUNC(res_mkquery, ,
-  AC_CHECK_LIB(resolv, res_mkquery, [dnl
-    if test "x${RESLIB}" != "x-lresolv"; then
-      RESLIB="${RESLIB} -lresolv"
-    fi
-  ],
-    AC_CHECK_LIB(bind, res_mkquery, [dnl
-      if test "x${RESLIB}" != "x-lbind"; then
-        RESLIB="${RESLIB} -lbind"
-      fi
-    ], [dnl
-      dns_reslib_avail="false";
+      ])
     ])
-  )
-)
+  ])
+fi
 
-if test "${dns_reslib_avail}" = false; then
-dns_reslib_avail="true" 
-AC_CHECK_FUNC(__res_mkquery, ,
-  AC_CHECK_LIB(resolv, __res_mkquery, [dnl
-    if test "x${RESLIB}" != "x-lresolv"; then
-      RESLIB="${RESLIB} -lresolv"
-    fi
-  ],
-    AC_CHECK_LIB(bind, __res_mkquery, [dnl
-      if test "x${RESLIB}" != "x-lbind"; then
-        RESLIB="${RESLIB} -lbind"
+# Cygwin checks.
+AC_CANONICAL_HOST
+if test "${dns_reslib_avail}" = "false"; then
+  case $host_os in
+    *cygwin* )
+      AC_MSG_CHECKING([for /usr/local/bind/lib/libbind.a])
+      if test -r /usr/local/bind/lib/libbind.a; then
+        AC_MSG_RESULT([yes])
+        RESLIB="${RESLIB} -L/usr/local/bind/lib -lbind"
+        RESINCLUDE="-I/usr/local/bind/include"
+        dns_reslib_avail="true"
+      else
+        AC_MSG_RESULT([no])
       fi
-    ], [dnl
-      dns_reslib_avail="false";
-    ])
-  )
-)
+    ;;
+  esac
 fi
 
-if test "${dns_reslib_avail}" = false; then
-  if test "$ac_cv_cygwin" = "yes"; then
-    AC_MSG_CHECKING(for /usr/local/bind/lib/libbind.a)
-    if test -r /usr/local/bind/lib/libbind.a; then
-      AC_MSG_RESULT(yes)
-      RESLIB="${RESLIB} -L/usr/local/bind/lib -lbind"
-      RESINCLUDE="-I/usr/local/bind/include"
-      dns_reslib_avail="true" 
-    else
-      AC_MSG_RESULT(no)
-    fi
-  fi
-fi
-
-if test "${dns_reslib_avail}" = false; then
+if test "${dns_reslib_avail}" = "false"; then
   cat >&2 <<EOF
 configure: warning:
 
@@ -100,4 +125,5 @@ fi
 AC_SUBST(RESLIB)
 AC_SUBST(RESINCLUDE)
 
-AC_OUTPUT(Makefile)
+AC_CONFIG_FILES([Makefile])
+AC_OUTPUT

@@ -1,48 +1,36 @@
 dnl eggmod.m4
-dnl   macros eggdrop modules should use instead of the original autoconf
-dnl   versions.
 dnl
-dnl $Id: eggmod.m4,v 1.6 2003/12/09 22:21:47 wcc Exp $
+dnl $Id: eggmod.m4,v 1.7 2004/06/15 07:20:55 wcc Exp $
 
-dnl
 dnl EGG_REMOVE_MOD(MODULE-NAME)
 dnl
+dnl Removes a module from the list of modules to be compiled.
 define(EGG_REMOVE_MOD,
-[${srcdir}/../../../misc/modconfig -q --top_srcdir=${srcdir}/../../.. --bindir=../../.. del $1])
+[
+  ${srcdir}/../../../misc/modconfig -q --top_srcdir=${srcdir}/../../.. --bindir=../../.. del $1
+])
 
-dnl
 dnl EGG_INIT(UNIQUE-SOURCE-FILE)
-dnl
 define(EGG_INIT,
-[AC_INIT($1)
-## SPLIT
-# configure  --  Special configure variant for eggdrop modules based on the
-#                GNU autoconf scripts.
-#
-# Automatically created by src/mod/eggautoconf from `configure.in'
-#
+[
+  # This tells the code in eggmod.sh to search for the file `$1'.
+  # That way we can make sure we're started from the correct directory.
+  ac_egg_uniquefile=$1
 
-echo "Running in eggdrop mode."
-echo ""
+  # Scan for out source directory
+  ac_egg_srcdir=.
+  for i in [$]*; do
+    case "[$]{i}" in
+      --srcdir=*)
+        ac_egg_srcdir=`echo [$]{i} | sed -e 's/^--srcdir=//'`
+      ;;
+    esac
+  done
 
-# This tells the code in eggmod.sh to search for the file `$1'.
-# That way we can make sure we're started from the correct directory.
-ac_egg_uniquefile=$1
-
-# Scan for out source directory
-ac_egg_srcdir=.
-for i in [$]*; do
-  case "[$]{i}" in
-    --srcdir=*)
-      ac_egg_srcdir=`echo [$]{i} | sed -e 's/^--srcdir=//'`
-    ;;
-  esac
-done
-if test -r [$]{ac_egg_srcdir}/../eggmod.sh; then
-	. [$]{ac_egg_srcdir}/../eggmod.sh
-else
-	echo "[$]0: error: failed to locate eggmod.sh in [$]{ac_egg_srcdir}/.." >&2
-	exit 1
-fi
-
-# Standard autoconf commands/tests follow below.])
+  if test -r [$]{ac_egg_srcdir}/../eggmod.sh; then
+    [$]{ac_egg_srcdir}/../eggmod.sh
+  else
+    echo "[$]0: error: failed to locate eggmod.sh in [$]{ac_egg_srcdir}/.." >&2
+    exit 1
+  fi
+])

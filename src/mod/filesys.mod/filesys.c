@@ -2,7 +2,7 @@
  * filesys.c -- part of filesys.mod
  *   main file of the filesys eggdrop module
  *
- * $Id: filesys.c,v 1.64 2004/06/14 01:14:07 wcc Exp $
+ * $Id: filesys.c,v 1.65 2004/06/15 07:20:55 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -26,13 +26,11 @@
 #define MODULE_NAME "filesys"
 #define MAKING_FILESYS
 
-#ifdef HAVE_CONFIG_H
-#  include "config.h"
-#endif
-
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <sys/file.h>
+
+#include "src/mod/module.h"
 
 #ifdef HAVE_DIRENT_H
 #  include <dirent.h>
@@ -51,7 +49,17 @@
 #  endif
 #endif
 
-#include "src/mod/module.h"
+#ifdef TIME_WITH_SYS_TIME
+#  include <sys/time.h>
+#  include <time.h>
+#else
+#  ifdef HAVE_SYS_TIME_H
+#    include <sys/time.h>
+#  else
+#    include <time.h>
+#  endif
+#endif
+
 #include "filedb3.h"
 #include "filesys.h"
 #include "src/tandem.h"
@@ -75,16 +83,14 @@ static char dccin[121] = "";
 static int upload_to_cd = 0;
 
 /* Maximum allowable file size for dcc send (1M). 0 indicates
- * unlimited file size.
- */
+ * unlimited file size. */
 static int dcc_maxsize = 1024;
 
 /* Maximum number of users can be in the file area at once */
 static int dcc_users = 0;
 
 /* Where to put the filedb, if not in a hidden '.filedb' file in
- * each directory.
- */
+ * each directory. */
 static char filedb_path[121] = "";
 
 /* Prototypes */

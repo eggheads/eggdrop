@@ -10,7 +10,7 @@
  * 1.2     1997-08-20      Minor fixes. [BB]
  * 1.2a    1997-08-24      Minor fixes. [BB]
  *
- * $Id: seen.c,v 1.34 2004/06/14 01:14:07 wcc Exp $
+ * $Id: seen.c,v 1.35 2004/06/15 07:20:55 wcc Exp $
  */
 /*
  * Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004 Eggheads Development Team
@@ -73,9 +73,7 @@
 #define MODULE_NAME "seen"
 #define MAKING_SEEN
 
-#ifdef HAVE_CONFIG_H
-#  include "config.h"
-#endif
+#include "src/mod/module.h"
 
 #ifdef TIME_WITH_SYS_TIME
 #  include <sys/time.h>
@@ -88,7 +86,6 @@
 #  endif
 #endif
 
-#include "src/mod/module.h"
 #include "src/users.h"
 #include "src/chan.h"
 #include "channels.mod/channels.h"
@@ -158,32 +155,27 @@ static int dcc_seen(struct userrec *u, int idx, char *par)
 static void do_seen(int idx, char *prefix, char *nick, char *hand,
                     char *channel, char *text)
 {
-  char stuff[512];
-  char word1[512], word2[512];
-  char whotarget[512];
-  char object[512];
-  char *oix;
-  char whoredirect[512];
+  char stuff[512], word1[512], word2[512], whotarget[512], object[512],
+       whoredirect[512], *oix, *lastonplace = 0;
   struct userrec *urec;
   struct chanset_t *chan;
   struct laston_info *li;
   struct chanuserrec *cr;
   memberlist *m = NULL;
-  int onchan = 0;
-  int i;
-  time_t laston = 0;
-  time_t work;
-  char *lastonplace = 0;
+  int onchan = 0, i;
+  time_t laston = 0, work;
 
-  whotarget[0] = 0;
+  whotarget[0]   = 0;
   whoredirect[0] = 0;
-  object[0] = 0;
+  object[0]      = 0;
+
   /* Was ANYONE specified */
   if (!text[0]) {
     dprintf(idx, "%sUm, %s, it might help if you ask me about _someone_...\n",
             prefix, nick);
     return;
   }
+
   wordshift(word1, text);
   oix = strchr(word1, '\'');
   /* Have we got a NICK's target? */

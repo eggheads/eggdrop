@@ -2,7 +2,7 @@
 #  This is the Makefile for EGGDROP (the IRC bot)
 #  You should never need to edit this.
 #
-# $Id: Makefile.in,v 1.36 2004/04/09 18:31:37 wcc Exp $
+# $Id: Makefile.in,v 1.37 2004/06/15 07:20:54 wcc Exp $
 
 SHELL = @SHELL@
 top_srcdir = @top_srcdir@
@@ -64,7 +64,7 @@ XLIBS = @TCL_LIBS@ @LIBS@
 TCLLIB = @TCLLIB@
 TCLLIBFN = @TCLLIBFN@
 
-DEBCFLAGS = -DDEBUG_ASSERT -DDEBUG_MEM 
+DEBCFLAGS = -DDEBUG_ASSERT -DDEBUG_MEM
 
 modconf = $(top_srcdir)/misc/modconfig --top_srcdir=$(top_srcdir)
 
@@ -146,9 +146,6 @@ depend:
 	@cd src/md5 && $(MAKE_DEPEND) depend
 	@cd src/mod && $(MAKE_DEPEND) depend
 	@cd src/compat && $(MAKE_DEPEND) depend
-
-eggautoconf:
-	@$(modconf) eggautoconf
 
 config:
 	@$(modconf) modules-still-exist
