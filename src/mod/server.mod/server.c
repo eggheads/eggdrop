@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  *
- * $Id: server.c,v 1.75 2002/01/02 03:46:40 guppy Exp $
+ * $Id: server.c,v 1.76 2002/02/07 05:14:45 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1557,8 +1557,6 @@ static void server_postrehash()
   /* Change botname back incase we were using altnick previous to rehash. */
   else if (oldnick[0])
     strcpy(botname, oldnick);
-  if (initserver[0])
-    do_tcl("init-server", initserver);
 }
 
 static void server_die()
@@ -1759,23 +1757,23 @@ static Function server_table[] =
   (Function) newserver,		/* char *				*/
   (Function) & newserverport,	/* int					*/
   (Function) newserverpass,	/* char *				*/
-  /* 24 - 27 */
   (Function) & cycle_time,	/* int					*/
+  /* 24 - 27 */
   (Function) & default_port,	/* int					*/
   (Function) & server_online,	/* int					*/
   (Function) & min_servs,	/* int					*/
-  /* 28 - 31 */
   (Function) & H_raw,		/* p_tcl_bind_list			*/
+  /* 28 - 31 */
   (Function) & H_wall,		/* p_tcl_bind_list			*/
   (Function) & H_msg,		/* p_tcl_bind_list			*/
   (Function) & H_msgm,		/* p_tcl_bind_list			*/
-  /* 32 - 35 */
   (Function) & H_notc,		/* p_tcl_bind_list			*/
+  /* 32 - 35 */
   (Function) & H_flud,		/* p_tcl_bind_list			*/
   (Function) & H_ctcp,		/* p_tcl_bind_list			*/
   (Function) & H_ctcr,		/* p_tcl_bind_list			*/
-  /* 36 - 39 */
   (Function) ctcp_reply,
+  /* 36 - 38 */
   (Function) get_altbotnick,	/* char *				*/
   (Function) & nick_len,	/* int					*/
   (Function) check_tcl_notc

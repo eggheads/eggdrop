@@ -1,10 +1,12 @@
-$Id: UPDATES1.6,v 1.306 2002/02/07 05:04:20 guppy Exp $
+$Id: UPDATES1.6,v 1.307 2002/02/07 05:14:44 guppy Exp $
 
 Changes in Eggdrop: (since v1.6.0)
 ----------------------------------
 
 1.6.9
 Found by  Fixed by  What...
+          Wcc       do not eval init-server on rehash since this variable is used for
+                    performing tcl commands on a succesful server connection
 MaSsKilla dw	    Couldn't introduce new users through telnet if a
 		      handle named "new" existed.
 SiD3WiNDR Wcc       MISC_USERFCREATE1 should use origbotname instead of botnetnick
