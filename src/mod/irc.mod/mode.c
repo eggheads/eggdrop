@@ -4,7 +4,7 @@
  *   channel mode changes and the bot's reaction to them
  *   setting and getting the current wanted channel modes
  *
- * $Id: mode.c,v 1.76 2004/01/10 08:41:38 wcc Exp $
+ * $Id: mode.c,v 1.77 2004/06/27 17:26:51 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1035,6 +1035,24 @@ static int gotmode(char *from, char *origmsg)
           todo = CHANLONLY;
           if (!nick[0] && bounce_modes)
             reversing = 1;
+          break;
+        case 'D':
+          todo = CHANDELJN;
+          if (!nick[0] && bounce_modes)
+            reversing = 1;
+          break;
+        case 'u':
+          todo = CHANSTRIP;
+          if (!nick[0] && bounce_modes)
+            reversing = 1;
+          break;
+        case 'N':
+          todo = CHANNONOTC;
+          if (!nick[0] && bounce_modes)
+            reversing = 1;
+          break;
+        case 'd':
+          todo = CHANINVIS;
           break;
         case 't':
           todo = CHANTOPIC;

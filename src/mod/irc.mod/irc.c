@@ -2,7 +2,7 @@
  * irc.c -- part of irc.mod
  *   support for channels within the bot
  *
- * $Id: irc.c,v 1.99 2004/06/14 01:14:07 wcc Exp $
+ * $Id: irc.c,v 1.100 2004/06/27 17:26:51 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -313,8 +313,8 @@ static int killmember(struct chanset_t *chan, char *nick)
     if (!rfc_casecmp(x->nick, nick))
       break;
   if (!x || !x->nick[0]) {
-    if (!channel_pending(chan))
-      putlog(LOG_MISC, "*", "(!) killmember(%s) -> nonexistent", nick);
+    if (!channel_pending(chan) && !channel_djoins(chan))
+        putlog(LOG_MISC, "*", "(!) killmember(%s) -> nonexistent", nick);
     return 0;
   }
   if (old)

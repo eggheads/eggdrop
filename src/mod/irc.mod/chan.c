@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  *
- * $Id: chan.c,v 1.116 2004/05/26 00:20:19 wcc Exp $
+ * $Id: chan.c,v 1.117 2004/06/27 17:26:51 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -99,6 +99,14 @@ static char *getchanmode(struct chanset_t *chan)
     s[i++] = 'M';
   if (atr & CHANLONLY)
     s[i++] = 'r';
+  if (atr & CHANDELJN)
+    s[i++] = 'D';
+  if (atr & CHANSTRIP)
+    s[i++] = 'u';
+  if (atr & CHANNONOTC)
+    s[i++] = 'N';
+  if (atr & CHANINVIS)
+    s[i++] = 'd';
   if (atr & CHANNOMSG)
     s[i++] = 'n';
   if (atr & CHANANON)
@@ -663,6 +671,18 @@ static void recheck_channel_modes(struct chanset_t *chan)
       add_mode(chan, '+', 'r', "");
     else if (mns & CHANLONLY && cur & CHANLONLY)
       add_mode(chan, '-', 'r', "");
+    if (pls & CHANDELJN && !(cur & CHANDELJN))
+      add_mode(chan, '+', 'D', "");
+    else if (mns & CHANDELJN && cur & CHANDELJN)
+      add_mode(chan, '-', 'D', "");
+    if (pls & CHANSTRIP && !(cur & CHANSTRIP))
+      add_mode(chan, '+', 'u', "");
+    else if (mns & CHANSTRIP && cur & CHANSTRIP)
+      add_mode(chan, '-', 'u', "");
+    if (pls & CHANNONOTC && !(cur & CHANNONOTC))
+      add_mode(chan, '+', 'N', "");
+    else if (mns & CHANNONOTC && cur & CHANNONOTC)
+      add_mode(chan, '-', 'N', "");
     if (pls & CHANTOPIC && !(cur & CHANTOPIC))
       add_mode(chan, '+', 't', "");
     else if (mns & CHANTOPIC && cur & CHANTOPIC)
@@ -908,6 +928,14 @@ static int got324(char *from, char *msg)
       chan->channel.mode |= CHANMODREG;
     if (msg[i] == 'r')
       chan->channel.mode |= CHANLONLY;
+    if (msg[i] == 'D')
+      chan->channel.mode |= CHANDELJN;
+    if (msg[i] == 'u')
+      chan->channel.mode |= CHANSTRIP;
+    if (msg[i] == 'N')
+      chan->channel.mode |= CHANNONOTC;
+    if (msg[i] == 'd')
+      chan->channel.mode |= CHANINVIS;
     if (msg[i] == 't')
       chan->channel.mode |= CHANTOPIC;
     if (msg[i] == 'n')
