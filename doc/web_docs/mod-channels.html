@@ -1,0 +1,458 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.7 [en] (WinNT; U) [Netscape]">
+   <title>Eggdrop Documentation: Channels Module</title>
+</head>
+<body text="#000000" bgcolor="#FFFFFF" link="#3333FF" vlink="#3333FF" alink="#3333FF">
+<b><font face="Arial, Helvetica"><font color="#FF0000"><font size=-1>CHANNELS
+MODULE
+<hr>TCL COMMANDS:</font></font></font></b>
+<blockquote><b><font face="Arial, Helvetica"><font size=-1>channel add
+&lt;name> &lt;option-list></font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>adds a channel record for
+the bot to monitor; the full list of possible options is given in the "eggdrop.conf"
+sample config file; note that the channel options must be in a list (enclosed
+in {})</font></font>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: nothing</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>channel set &lt;name>
+&lt;options...></font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>sets options for the channel
+specified; the full list of possible options is given in the "eggdrop.conf"
+sample config file</font></font>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: nothing</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>channel info &lt;name></font></font></b>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: list of info
+about that channel record: enforced mode, idle kick limit, need-op script,
+need-invite script, and then various +/- options as seen in the config
+file</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>channel remove &lt;name></font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>destroys a channel record
+for the bot and makes the bot no longer monitor that channel</font></font>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: nothing</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>savechannels</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>saves the channel settings
+to the channel-file if one is defined.</font></font>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: nothing</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>loadchannels</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>reloads the channel settings
+from the channel-file if one is defined.</font></font>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: nothing</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>channels</font></font></b>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: list of the
+channels the bot is monitoring (or trying to)</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>validchan &lt;channel></font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>checks if the bot is monitoring
+that channel</font></font>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: 1 if the channel
+exists, 0 if not</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>isdynamic &lt;channel></font></font></b>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: 1 if the channel
+is an existing dynamic channel, 0 if not</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>newchanban &lt;channel>
+&lt;ban> &lt;creator> &lt;comment> [lifetime] [options]</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>adds a ban to the enforced
+ban list of a channel; creator is given credit for the ban in the ban list;
+lifetime is specified in minutes; if lifetime is not specified, ban-time
+(usually 60) is used; setting the lifetime to 0 makes it a permanent ban;
+valid options are:</font></font>
+<blockquote><font face="Arial, Helvetica"><font size=-1><b>sticky</b> -
+forces the ban to be always active on a channel, even with dynamic bans
+on.Prefacing the comment with a * has the same effect.</font></font>
+<br><font face="Arial, Helvetica"><font size=-1><b>none</b> - (no effect)</font></font></blockquote>
+<i><font face="Arial, Helvetica"><font size=-1>returns: nothing</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>newban &lt;ban> &lt;creator>
+&lt;comment> [lifetime] [options]</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>adds a ban to the global
+ban list (which takes effect on all channels); other arguments work exactly
+like newchanban</font></font>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: nothing</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>killchanban &lt;channel>
+&lt;ban></font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>removes a ban from the
+enforced ban list for a channel</font></font>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: "1" if successful,
+"0" otherwise</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>killban &lt;ban></font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>removes a ban from the
+global ban list</font></font>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: "1" if successful,
+"0" otherwise</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>isban &lt;ban> [channel]</font></font></b>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: "1" if that
+ban is in the global ban list, "0" otherwise; if a channel is specified,
+that channel's ban list is checked too</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>ispermban &lt;ban> [channel]</font></font></b>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: "1" if that
+ban is in the global ban list AND is marked as permanent, "0" otherwise;
+if a channel is specified, that channel's ban list is checked too</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>matchban &lt;nick!user@host>
+[channel]</font></font></b>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: "1" if that
+user address matches a ban in the global ban list, "0" otherwise; if a
+channel is specified, that channel's ban list is checked too</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>banlist [channel]</font></font></b>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: list of global
+bans, or (if a channel is specified) list of channel-specific bans; each
+entry is itself a list, containing: hostmask, comment, expiration timestamp,
+time added, last time active, and creator (the three timestamps are in
+unixtime format)</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>newchanexempt &lt;channel>
+&lt;exempt> &lt;creator> &lt;comment> [lifetime] [options]</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>adds a exempt to the exempt
+list of a channel; creator is given credit for the exempt in the exempt
+list; lifetime is specified in minutes; if lifetime is not specified, exempt-time
+(usually 60) is used; setting the lifetime to 0 makes it a permanent exempt;
+valid options are:</font></font>
+<blockquote><font face="Arial, Helvetica"><font size=-1><b>sticky</b> -
+forces the exempt to be always active on a channel, even with dynamic exempts
+on. Prefacing the comment with a * has the same effect.</font></font>
+<br><font face="Arial, Helvetica"><font size=-1><b>none</b> - (no effect)</font></font></blockquote>
+<i><font face="Arial, Helvetica"><font size=-1>returns: nothing</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>newexempt &lt;exempt>
+&lt;creator> &lt;comment> [lifetime] [options]</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>adds a exempt to the global
+exempt list (which takes effect on all channels); other arguments work
+exactly like newchanexempt</font></font>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: nothing</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>killchanexempt &lt;channel>
+&lt;exempt></font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>removes a exempt from the
+exempt list for a channel</font></font>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: "1" if successful,
+"0" otherwise</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>killexempt &lt;exempt></font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>removes a exempt from the
+global exempt list</font></font>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: "1" if successful,
+"0" otherwise</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>isexempt &lt;exempt>
+[channel]</font></font></b>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: "1" if that
+exempt is in the global exempt list, "0" otherwise; if a channel is specified,
+that channel's exempt list is checked too</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>ispermexempt &lt;exempt>
+[channel]</font></font></b>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: "1" if that
+exempt is in the global exempt list AND is marked as permanent, "0" otherwise;
+if a channel is specified, that channel's exempt list is checked too</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>matchexempt &lt;nick!user@host>
+[channel]</font></font></b>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: "1" if that
+user address matches a exempt in the global exempt list, "0" otherwise;
+if a channel is specified, that channel's exempt list is checked too</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>exemptlist [channel]</font></font></b>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: list of global
+exempts, or (if a channel is specified) list of channel-specific exempts;
+each entry is itself a list, containing: hostmask, comment, expiration
+timestamp, time added, last time active, and creator (the three timestamps
+are in unixtime format)</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>newchaninvite &lt;channel>
+&lt;invite> &lt;creator> &lt;comment> [lifetime] [options]</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>adds a invite to the invite
+list of a channel; creator is given credit for the invite in the invite
+list; lifetime is specified in minutes; if lifetime is not specified, invite-time
+(usually 60) is used; setting the lifetime to 0 makes it a permanent invite;
+valid options are:</font></font>
+<blockquote><font face="Arial, Helvetica"><font size=-1><b>sticky</b> -
+forces the invite to be always active on a channel, even with dynamic invites
+on. Prefacing the comment with a * has the same effect.</font></font>
+<br><font face="Arial, Helvetica"><font size=-1><b>none</b> - (no effect)</font></font></blockquote>
+<i><font face="Arial, Helvetica"><font size=-1>returns: nothing</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>newinvite &lt;invite>
+&lt;creator> &lt;comment> [lifetime] [options]</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>adds a invite to the global
+invite list (which takes effect on all channels); other arguments work
+exactly like newchaninvite</font></font>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: nothing</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>killchaninvite &lt;channel>
+&lt;invite></font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>removes a invite from the
+invite list for a channel</font></font>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: "1" if successful,
+"0" otherwise</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>killinvite &lt;invite></font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>removes a invite from the
+global invite list</font></font>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: "1" if successful,
+"0" otherwise</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>isinvite &lt;invite>
+[channel]</font></font></b>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: "1" if that
+invite is in the global invite list, "0" otherwise; if a channel is specified,
+that channel's invite list is checked too</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>isperminvite &lt;invite>
+[channel]</font></font></b>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: "1" if that
+invite is in the global invite list AND is marked as permanent, "0" otherwise;
+if a channel is specified, that channel's invite list is checked too</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>matchinvite &lt;nick!user@host>
+[channel]</font></font></b>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: "1" if that
+user address matches a invite in the global invite list, "0" otherwise;
+if a channel is specified, that channel's invite list is checked too</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>invitelist [channel]</font></font></b>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: list of global
+invites, or (if a channel is specified) list of channel-specific invites;
+each entry is itself a list, containing: hostmask, comment, expiration
+timestamp, time added, last time active, and creator (the three timestamps
+are in unixtime format)</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>addchanrec &lt;handle>
+&lt;channel></font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>add a channel record for
+the user</font></font>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: "1" on success,
+"0" if the user does not exist or if there isn't such a channel</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>delchanrec &lt;handle>
+&lt;channel></font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>removes a channel record
+for the user; this includes all associated channel flags</font></font>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: "1" on success,
+"0" if the user does not exist or if there isn't such a channel</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>getchaninfo &lt;handle>
+&lt;channel></font></font></b>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: info line for
+a specific channel (behaves just like 'getinfo')</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>setchaninfo &lt;handle>
+&lt;channel> &lt;info></font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>sets the info line on a
+specific channel for a user</font></font>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: nothing</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>setlaston &lt;handle>
+[channel] [time]</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>sets the laston time for
+a user, if a channel is specified then the channel laston time is set,
+otherwise the global one is set, if no time is given the current time is
+used.</font></font></blockquote>
+
+<hr><b><font face="Arial, Helvetica"><font color="#FF0000"><font size=-1>TCL
+VARIABLES:</font></font></font></b>
+<blockquote><b><font face="Arial, Helvetica"><font size=-1>share-greet
+0/1</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>If sharing userfiles, share
+info lines?</font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>use-info 0/1</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>Allow use of global &amp;
+channel info lines</font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>ban-time &lt;mins></font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>Set the time a ban will
+be kept on a dynamicbans channel</font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>exempt-time &lt;mins></font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>Set the time an exempt
+will be kept on a dynamicexempts channel</font></font><font face="Arial, Helvetica"><font size=-1></font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>invite-time &lt;mins></font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>Set the time an invite
+will be kept on a dynamicinvites channel</font></font><font face="Arial, Helvetica"><font size=-1></font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>chanfile</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>Where to store settings
+set using +/-chan, settings in this file OVERRIDE config file settings.
+If you want the config file settings to override, set this to ""</font></font></blockquote>
+
+<hr><b><font face="Arial, Helvetica"><font color="#FF0000"><font size=-1>C
+FUNCTIONS:</font></font></font></b>
+<blockquote><font face="Arial, Helvetica"><font size=-1>The following C
+functions are exported by this module for use by other modules, all of
+these are part of the modcall_channels structure, which can be found by
+calling module_depends(ME,"channels",1,1,0)</font></font>
+<blockquote><b><font face="Arial, Helvetica"><font size=-1>int setsticky_ban
+(struct chanset_t * chan, chat * ban, int yn);</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>set a ban sticky or unsticky,
+chan = channel (NULL for global ban), ban = ban, either a number (eg "1")
+or the ban itself, yn = yes/no for stick/unstick</font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>int delban (struct chanset_t
+* chan, char * ban, int doit);</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>remove a ban for a channel
+(or global if chan == NULL), ban can be a string for the ban or a string
+number which is counted down to 0, doit is 1 for delete, 0 for counting
+through</font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>int addban (struct chanset_t
+* chan, char * ban, char * from, char * note, time_t expire_time, int flags);</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>add a new channel ban (global
+ban if chan == NULL), ban is the ban, from is who set it, note is a descriptive
+note on the ban, expire_time is how long the ban lasts. flags is any of:</font></font>
+<blockquote><font face="Arial, Helvetica"><font size=-1><b>BANREC_STICKY</b>:
+make this ban a sticky ban</font></font>
+<br><font face="Arial, Helvetica"><font size=-1><b>BANREC_PERM</b>: make
+this ban a permanent ban</font></font></blockquote>
+<b><font face="Arial, Helvetica"><font size=-1>int write_bans (FILE * file,
+int idx);</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>writes all the bans to
+the file file, as if being prepared for a userfile send to the bot specified
+by idx, (-1 = global write) This only really exists for the sharing module.</font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>struct chanuserrec *
+get_chanrec (struct userrec * u, char * chan);</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>Returns the channel record
+for a user (u) associated with channel chan, or NULL if no such channel
+record exists.</font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>struct chanuserrec *
+add_chanrec (struct userrec * u, char * chan);</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>Adds a new channel record
+(or returns the old one if it exists already) for a user (u) with channel
+chan. chan must be a valid channel or NULL will be returned.</font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>void del_chanrec (struct
+userrec * u, char *);</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>Removes a channel record
+for a user (u) of channel chan. Silently fails if no such channel record
+exists.</font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>void set_handle_chaninfo
+(struct userrec * userlist, char * handle, char * channel, char * info);</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>Sets the channel info for
+user handle (in userlist - there can be 2 userlists during sharing transfer)
+on channel channel to info.</font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>int match_ban (struct
+chanset_t * chan, char * hostmask);</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>Returns 1 if the given
+host mask matches a ban on the given channel (global bans if chan == NULL)</font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>int equals_ban (struct
+chanset_t * chan, char * ban);</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>Returns 1 if the given
+ban is in the banlist for the given channel, 2 if the ban is sticky.</font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>void set_handle_laston
+(char * chan, struct userrec * u, time_t when);</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>Set a users laston time,
+chan = "*" for global time, otherwise specifies a channel record which
+must exist (otherwise it's not set)</font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>void get_handle_chaninfo
+(char * handle, char * channel, char * buffer);</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>Sets buffer to equal a
+users channel specific info line for the given channel (if one exists)</font></font></blockquote>
+</blockquote>
+<b><font face="Arial, Helvetica"><font color="#FF0000"><font size=-1>C
+VARIABLES:</font></font></font></b>
+<blockquote><b><font face="Arial, Helvetica"><font size=-1>int ban_time</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>time in minutes for bans
+to last</font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>int use_info</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>use info lines?</font></font></blockquote>
+
+<hr><b><font face="Arial, Helvetica"><font color="#FF0000"><font size=-1>EXTENDABLE
+CHANNEL SETTINGS:</font></font></font></b>
+<blockquote><font face="Arial, Helvetica"><font size=-1>It is now possible
+to add additional settings for channels, to do so, first define a chan_settings_type
+structure and pass it to add_chan_settings, this will initialise the settings
+for each current channel (and cause it to be added to any new channels)
+(to ensure a clean cleanup of your module be sure to rem_chan_settings
+in you close function). To access the settings from you module use find_chan_settings.</font></font>
+<p><font face="Arial, Helvetica"><font size=-1>The structure:</font></font>
+<blockquote><i><font face="Arial, Helvetica"><font size=-1>struct chan_settings_type
+{</font></font></i>
+<blockquote><i><font face="Arial, Helvetica"><font size=-1>struct chan_settings_type
+* next;</font></font></i>
+<br><i><font face="Arial, Helvetica"><font size=-1>int (*set_handler) (
+struct chan_settings * cst, char * arg1, char * arg2, int idx);</font></font></i>
+<br><i><font face="Arial, Helvetica"><font size=-1>void (*view_handler)
+( int idx, struct chan_settings * );</font></font></i>
+<br><i><font face="Arial, Helvetica"><font size=-1>int (*write_handler)
+( FILE *, struct chan_settings * );</font></font></i>
+<br><i><font face="Arial, Helvetica"><font size=-1>int (*get_handler) (
+Tcl_Interp *, struct chan_settings *);</font></font></i>
+<br><i><font face="Arial, Helvetica"><font size=-1>void (*init_handler)
+(struct chan_settings *);</font></font></i>
+<br><i><font face="Arial, Helvetica"><font size=-1>void (*kill_handler)
+(struct chan_settings *);</font></font></i>
+<br><i><font face="Arial, Helvetica"><font size=-1>int (*expmem_handler)
+(struct chan_settings *);</font></font></i></blockquote>
+<i><font face="Arial, Helvetica"><font size=-1>};</font></font></i></blockquote>
+<font face="Arial, Helvetica"><font size=-1>Explanation:</font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>next</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>internally used pointer</font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>set_handler</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>this is called any time
+the setting is set, from tcl, the chanfile or by using .chanset, cst is
+the relevant channel settings, arg1 &amp; arg2 are then next 2 arguments,
+idx is a users idx (-1 if internally set), return 0 if you dont process
+this setting, 1 if you only use arg1, 2 if you use both arguments</font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>view_handler</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>this function displays
+the channel settings defined by this type to the user</font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>write_handler</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>this function writes the
+setting out to the chanfile, it should be in the form <i>'channel set &lt;#channel>
+settings\n'</i></font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>get_handler</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>this function is used to
+output the value of the settings to tcl</font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>init_handler</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>this function is called
+every time the setting is created for a channel, allowing additional setup
+to be done</font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>kill_handler</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>this function is called
+every time the setting is destroyed for a channel, allowing you to cleanup
+the structures</font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>expmem_handler</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>if any memory was malloced
+for this setting (type memtype_settings) it should be tallyed in this function
+for memory checking)</font></font>
+<p><font face="Arial, Helvetica"><font size=-1>The actual channel setings
+structure:</font></font>
+<blockquote><i><font face="Arial, Helvetica"><font size=-1>struct chan_settings
+{</font></font></i>
+<blockquote><i><font face="Arial, Helvetica"><font size=-1>struct chan_settings_type
+* type; /* points to the structure above */</font></font></i>
+<br><i><font face="Arial, Helvetica"><font size=-1>struct chan_settings
+* next; /* internal list var */</font></font></i>
+<br><i><font face="Arial, Helvetica"><font size=-1>struct chanset_t * chan;
+/* the channel for this setting */</font></font></i>
+<br><i><font face="Arial, Helvetica"><font size=-1>void * extra; /* you
+can use this to point to any extra allocated memory */</font></font></i></blockquote>
+<i><font face="Arial, Helvetica"><font size=-1>};</font></font></i></blockquote>
+<b><font face="Arial, Helvetica"><font size=-1>struct chan_settings * find_chan_settings
+(struct chanset_t * chan, struct chan_settings_type * type)</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>lookup a channel setting
+for a channel, it *should* always exist.</font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>void add_chan_settings
+(struct chan_settings_type * type)</font></font></b>
+<br><b><font face="Arial, Helvetica"><font size=-1>void rem_chan_settings
+(struct chan_settings_type * type)</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>add/remove a channel setting
+type, calling init/kill for each existing channel.</font></font>
+<p><font face="Arial, Helvetica"><font size=-1>Shown below are the list
+of built-in settings, and then the extra structure:</font></font>
+<p><font face="Arial, Helvetica"><font size=-1><b>CHANSET_FLOOD</b> - flood
+settings</font></font>
+<br>&nbsp;
+<br>&nbsp;
+<blockquote><i><font face="Arial, Helvetica"><font size=-1>struct chan_settings_flood
+{</font></font></i>
+<blockquote><i><font face="Arial, Helvetica"><font size=-1>int pub_thr;</font></font></i>
+<br><i><font face="Arial, Helvetica"><font size=-1>int pub_time;</font></font></i>
+<br><i><font face="Arial, Helvetica"><font size=-1>int join_thr;</font></font></i>
+<br><i><font face="Arial, Helvetica"><font size=-1>int join_time;</font></font></i>
+<br><i><font face="Arial, Helvetica"><font size=-1>int deop_thr;</font></font></i>
+<br><i><font face="Arial, Helvetica"><font size=-1>int deop_time;</font></font></i>
+<br><i><font face="Arial, Helvetica"><font size=-1>int kick_thr;</font></font></i>
+<br><i><font face="Arial, Helvetica"><font size=-1>int kick_time;</font></font></i>
+<br><i><font face="Arial, Helvetica"><font size=-1>int ctcp_thr;</font></font></i>
+<br><i><font face="Arial, Helvetica"><font size=-1>int ctcp_time;</font></font></i></blockquote>
+<i><font face="Arial, Helvetica"><font size=-1>};</font></font></i></blockquote>
+<font face="Arial, Helvetica"><font size=-1><b>CHANSET_CHANMODE</b> - protect
+mode settings</font></font>
+<blockquote><i><font face="Arial, Helvetica"><font size=-1>struct chan_settings_chanmode
+{</font></font></i>
+<blockquote><i><font face="Arial, Helvetica"><font size=-1>int pls_prot;
+/* modes to enforce */</font></font></i>
+<br><i><font face="Arial, Helvetica"><font size=-1>int mns_prot; /* modes
+to reject */</font></font></i>
+<br><i><font face="Arial, Helvetica"><font size=-1>int limit_prot; /* desired
+limit */</font></font></i>
+<br><i><font face="Arial, Helvetica"><font size=-1>char key_prot[121];
+/* desired password */</font></font></i></blockquote>
+<i><font face="Arial, Helvetica"><font size=-1>};</font></font></i></blockquote>
+<font face="Arial, Helvetica"><font size=-1><b>CHANSET_IDLE</b> - max idle
+time</font></font>
+<blockquote><i><font face="Arial, Helvetica"><font size=-1>(long)extra
+= minutes</font></font></i></blockquote>
+<font face="Arial, Helvetica"><font size=-1><b>CHANSET_FLAGS</b> - various
++/- flags extra</font></font>
+<blockquote><i><font face="Arial, Helvetica"><font size=-1>No structure
+is used</font></font></i></blockquote>
+<font face="Arial, Helvetica"><font size=-1><b>*NOTE*</b>: all memory used
+in channel settings should be my_malloc'd from memtype_settings</font></font></blockquote>
+
+<hr><i><font face="Arial, Helvetica"><font size=-1>(c) 1997 Robey Pointer</font></font></i>
+<br><i><font face="Arial, Helvetica"><font size=-1>(c) 2000 Eggheads Development
+Team</font></font></i>
+</body>
+</html>

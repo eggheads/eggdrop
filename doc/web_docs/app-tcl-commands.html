@@ -1,0 +1,742 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.7 [en] (WinNT; U) [Netscape]">
+   <title>Eggdrop Documentation: TCL-COMMANDS.DOC</title>
+</head>
+<body text="#000000" bgcolor="#FFFFFF" link="#3333FF" vlink="#3333FF" alink="#3333FF">
+<font face="Arial, Helvetica"><font size=-1><b><font color="#FF0000">TCL-COMMANDS.DOC
+<hr></font></b>This is an exhaustive list of all the Tcl commands added
+to eggdrop. All of the normal Tcl built-in commands are still there, of
+course. But you can also use these to manipulate features of the bot. They
+are listed according to category.</font></font>
+<p><font face="Arial, Helvetica"><font size=-1><b>NOTICE:</b> This list
+is accurate for the v1.4 series of eggdrop!</font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>SCRIPTS WHICH WERE WRITTEN
+FOR EARLIER VERSIONS WILL PROBABLY NOT WORK WITHOUT MODIFICATION. ALTHOUGH
+SOME CAN BE MADE TO WORK USING THE COMPAT.TCL DISTRIBUTED WITH EGGDROP.
+<hr>Sections:</font></font></b>
+<blockquote><b><font face="Arial, Helvetica"><font color="#FF0000"><font size=-1>Core
+Eggdrop Commands</font></font></font></b>
+<blockquote>
+<li>
+<font face="Arial, Helvetica"><font size=-1><a href="#Core-Output">Output
+Commands</a></font></font></li>
+
+<li>
+<font face="Arial, Helvetica"><font size=-1><a href="#Core-UserRec">User
+Record Manipulation Commands</a></font></font></li>
+
+<li>
+<font face="Arial, Helvetica"><font size=-1><a href="#Core-Channel">Channel
+Commands</a></font></font></li>
+
+<li>
+<font face="Arial, Helvetica"><font size=-1><a href="#Core-DCC">DCC Commands</a></font></font></li>
+
+<li>
+<font face="Arial, Helvetica"><font size=-1><a href="#Core-Misc">Miscellaneous
+Commands</a></font></font></li>
+
+<li>
+<font face="Arial, Helvetica"><font size=-1><a href="#Core-GlobalVars">Global
+Variables</a></font></font></li>
+
+<li>
+<font face="Arial, Helvetica"><font size=-1><a href="#Core-CommandExt">Command
+Extension</a></font></font></li>
+
+<li>
+<font face="Arial, Helvetica"><font size=-1><a href="#Core-ReturnV">Return
+Values</a></font></font></li>
+
+<li>
+<font face="Arial, Helvetica"><font size=-1><a href="#Core-Match">Match
+Characters</a></font></font></li>
+</blockquote>
+<b><font face="Arial, Helvetica"><font color="#FF0000"><font size=-1>Eggdrop
+Module Information (TCL commands, general info., etc..)</font></font></font></b>
+<blockquote>
+<li>
+<font face="Arial, Helvetica"><font size=-1><a href="mod-assoc.html">Assoc
+Module</a></font></font></li>
+
+<li>
+<font face="Arial, Helvetica"><font size=-1><a href="mod-blowfish.html">Blowfish
+Module</a></font></font></li>
+
+<li>
+<font face="Arial, Helvetica"><font size=-1><a href="mod-channels.html">Channels
+Module</a></font></font></li>
+
+<li>
+<font face="Arial, Helvetica"><font size=-1><a href="mod-filesys.html">File
+System Module</a></font></font></li>
+
+<li>
+<font face="Arial, Helvetica"><font size=-1><a href="mod-irc.html">IRC
+Module</a></font></font></li>
+
+<li>
+<font face="Arial, Helvetica"><font size=-1><a href="mod-notes.html">Notes
+Module</a></font></font></li>
+
+<li>
+<font face="Arial, Helvetica"><font size=-1><a href="mod-server.html">Server
+Module</a></font></font></li>
+</blockquote>
+</blockquote>
+<a NAME="Core"></a>
+<hr><b><font face="Arial, Helvetica"><font color="#FF0000"><font size=-1>CORE
+EGGDROP COMMANDS</font></font></font></b>
+<p><font face="Arial, Helvetica"><font size=-1>These are commands provided
+in the core part of eggdrop, for module specific commands, select the appropriate
+link above for the module you want information on.</font></font>
+<p><a NAME="Core-Output"></a>
+<hr><b><font face="Arial, Helvetica"><font color="#FF0000"><font size=-1>OUTPUT
+COMMANDS</font></font></font></b>
+<p><b><font face="Arial, Helvetica"><font size=-1>putcmdlog &lt;text></font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>sends text to the log for
+any channel, marked as 'command' (c)</font></font>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: nothing</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>putxferlog &lt;text></font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>sends text to the log for
+any channel, marked as 'file-area' (x)</font></font>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: nothing</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>putloglev &lt;level(s)>
+&lt;channel> &lt;text></font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>sends text to the log,
+tagged with all of the valid levels given (use "*" to indicate all log
+levels)</font></font>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: nothing</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>dumpfile &lt;nick> &lt;filename></font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>dumps out a file from the
+help/text directory to a user on IRC via msg (one line per msg); the user
+has no flags, so the flag bindings won't work within the file.</font></font>
+<p><a NAME="Core-UserRec"></a>
+<hr><b><font face="Arial, Helvetica"><font color="#FF0000"><font size=-1>USER
+RECORD MANIPULATION COMMANDS</font></font></font></b>
+<p><b><font face="Arial, Helvetica"><font size=-1>countusers</font></font></b>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: number of users
+in the bot's database</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>validuser &lt;handle></font></font></b>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: "1" if a user
+by that name exists; '0' otherwise</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>finduser &lt;nick!user@host></font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>finds the user record which
+most closely matches the given user@host</font></font>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: the handle
+found, or "*" if none</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>userlist [flags]</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1><i>returns: a list of the
+handles of users on the bot</i> you can use the new flag matching system
+here,</font></font>
+<br><font face="Arial, Helvetica"><font size=-1><b>usage:</b> [global]{&amp;/|}[chan]{&amp;/|}[bot]</font></font>
+<br><font face="Arial, Helvetica"><font size=-1>matches the flags relevantly,
+(chan matches vs anywhere), &amp; specifies an and match, | specifies or,
+only the first of these is relevant, the default is or.</font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>passwdok &lt;handle>
+&lt;pass></font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>checks the password given
+against the user's password -- if the user has not set a password, will
+always return "1"; check against the password "" (a blank string) to find
+out if a user has no password set</font></font>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: "1" if password
+matches for that user; "0" if not</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>getuser &lt;handle> &lt;entry-type>
+[extra info]</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>this is a generic interface
+to the new generic userfile support, it return info specific to each entry-type,
+valid entry types are:</font></font>
+<blockquote><font face="Arial, Helvetica"><font size=-1><b>BOTFL</b> -
+returns the current bot-specific flags for the user (if it's a bot :)</font></font>
+<br><font face="Arial, Helvetica"><font size=-1><b>BOTADDR</b> - (another
+bot-only thing :) returns a list containing the bots address, the bots
+telnet port, and it's relay port.</font></font>
+<br><font face="Arial, Helvetica"><font size=-1><b>HOSTS</b> - returns
+a list of the host for the user</font></font>
+<br><font face="Arial, Helvetica"><font size=-1><b>LASTON</b> - returns
+a list containing the unixtime last seen, and the last seen place.</font></font>
+<br><i><font face="Arial, Helvetica"><font size=-1>OR</font></font></i>
+<br><font face="Arial, Helvetica"><font size=-1><b>LASTON #channel</b>
+returns the time last seen on the channel or 0 if no info</font></font>
+<br><font face="Arial, Helvetica"><font size=-1><b>INFO</b> - returns the
+user's global info line</font></font>
+<br><font face="Arial, Helvetica"><font size=-1><b>COMMENT</b> - returns
+the master-visible only comment for the user</font></font>
+<br><font face="Arial, Helvetica"><font size=-1><b>EMAIL</b> - returns
+the users email address</font></font>
+<br><font face="Arial, Helvetica"><font size=-1><b>URL</b> - returns the
+users url address</font></font>
+<br><font face="Arial, Helvetica"><font size=-1><b>XTRA</b> - returns xtra
+info, use the form:</font></font>
+<br><b><font face="Arial, Helvetica"><font size=-1>getuser &lt;handle>
+XTRA &lt;key></font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>to receive data set for
+a certain key</font></font></blockquote>
+<b><font face="Arial, Helvetica"><font size=-1>setuser &lt;handle> &lt;entry-type>
+[extra info]</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>this is the counterpart
+of getuser, it lets you set the various values extra ones not supported
+about:</font></font>
+<blockquote><font face="Arial, Helvetica"><font size=-1><b>PASS</b> - use
+this to set a users password (no 3rd arg will clear it)</font></font>
+<br><font face="Arial, Helvetica"><font size=-1><b>HOSTS</b> - for setting
+hosts, no extra info = clear, otherwise <b>*1*</b> hostmask is added</font></font>
+<br><font face="Arial, Helvetica"><font size=-1><b>LASTON</b> - sets global
+laston time, will also set laston time for any channel the user has a chanrec
+for (if it matches) to prevent setting a channel time from <b>ALSO</b>
+setting the global time use <b>LASTON time #channel *</b></font></font>
+<br><font face="Arial, Helvetica"><font size=-1><b>XTRA</b> - in the form:</font></font>
+<br><b><font face="Arial, Helvetica"><font size=-1>setuser &lt;handle>
+XTRA &lt;key> &lt;data></font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>sets upto 500 bytes of
+data per key (use no data to clear)</font></font></blockquote>
+<b><font face="Arial, Helvetica"><font size=-1>chnick &lt;old-handle> &lt;new-handle></font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>changes a user's handle</font></font>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: "1" on success;
+"0" if the handle is already used, the handle is invalid, or the user can't
+be found</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>chattr &lt;handle> [changes
+[channel]]</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>changes the attributes
+for a user record, if you include any -- changes are of the form "+f",
+"-o", "+dk", "-o+d", etc; if a channel is specified, the channel-specific
+flags for that channel are altered you can now use the +o|-o #channel format
+here too.</font></font>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: new flags for
+the user (if you made no changes, returns current flags); if a channel
+was specified, the channel-specific flags for that channel are returned
+-- returns "*" if that user does not exist</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>matchattr &lt;handle>
+&lt;flags> [channel]</font></font></b>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: "1" if the
+specified user has the matching flags. (using the new matching system)</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>adduser &lt;handle> &lt;hostmask></font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>creates a new user entry
+with the handle and hostmask given (with no pass- word, and the default
+flags)</font></font>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: "1" if successful,
+"0" if it already existed</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>deluser &lt;handle></font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>attempts to erase a user
+record with that handle</font></font>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: "1" if successful,
+"0" if no such user exists</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>delhost &lt;handle> &lt;hostmask></font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>deletes a hostmask from
+a user's hostmask list</font></font>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: "1" on success,
+"0" if that hostmask wasn't in the list or the user does not exist</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>newignore &lt;hostmask>
+&lt;creator> &lt;comment> [lifetime]</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>adds an entry to the ignore
+list; creator is given credit for the ignore; lifetime is how many minutes
+until the ignore expires and is removed; if lifetime is not specified,
+ignore-time (usually 60) is used; setting the lifetime to 0 makes it a
+permanent ignore</font></font>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: nothing</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>killignore &lt;hostmask></font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>removes an entry from the
+ignore list</font></font>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: "1" if successful,
+"0" otherwise</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>ignorelist</font></font></b>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: list of ignores;
+each entry is itself a list, containing: hostmask, comment, expiration
+timestamp, time added, and creator (the three timestamps are in unixtime
+format)</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>isignore &lt;hostmask></font></font></b>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: "1" if the
+ignore is in the list, "0" otherwise</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>save</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>writes the userfile to
+disk</font></font>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: nothing</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>reload</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>loads the userfile from
+disk (replacing whatever's in memory)</font></font>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: nothing</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>backup</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>makes a simple backup of
+the userfile that's on disk</font></font>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: nothing</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>getting-users</font></font></b>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: "1" if the
+bot is currently downloading a userfile from a sharebot (and hence, user
+records are about to drastically change), "0" if not</font></font></i>
+<p><a NAME="Core-Channel"></a>
+<hr><b><font face="Arial, Helvetica"><font color="#FF0000"><font size=-1>CHANNEL
+COMMANDS</font></font></font></b>
+<p><b><font face="Arial, Helvetica"><font size=-1>channel add &lt;name>
+&lt;option-list></font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>adds a channel record for
+the bot to monitor; the full list of possible options is given in the "eggdrop.conf.dist"
+sample config file; note that the channel options must be in a list (enclosed
+in {})</font></font>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: nothing</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>channel set &lt;name>
+&lt;options...></font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>sets options for the channel
+specified; the full list of possible options is given in the "eggdrop.conf.dist"
+sample config file</font></font>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: nothing</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>channel info &lt;name></font></font></b>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: list of info
+about that channel record: enforced mode, idle kick limit, need-op script,
+need-invite script, and then various +/- options as seen in the config
+file</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>channel remove &lt;name></font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>destroys a channel record
+for the bot and makes the bot no longer monitor that channel</font></font>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: nothing</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>savechannels</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>saves the channel settings
+to the channel-file if one is defined.</font></font>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: nothing</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>loadchannels</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>reloads the channel settings
+from the channel-file if one is defined.</font></font>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: nothing</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>channels</font></font></b>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: list of the
+channels the bot is monitoring (or trying to)</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>validchan &lt;channel></font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>checks if the bot is monitoring
+that channel</font></font>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: 1 if the channel
+exists, 0 if not</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>isdynamic &lt;channel></font></font></b>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: 1 if the channel
+is an existing dynamic channel, 0 if not</font></font></i>
+<p><a NAME="Core-DCC"></a>
+<hr><b><font face="Arial, Helvetica"><font color="#FF0000"><font size=-1>DCC
+COMMANDS</font></font></font></b>
+<p><b><font face="Arial, Helvetica"><font size=-1>putdcc &lt;idx> &lt;text></font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>sends text to the dcc user
+indicated</font></font>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: nothing</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>dccbroadcast &lt;message></font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>sends your message to everyone
+on the party line on the bot net, in the form "*** &lt;message>" for local
+users, and "*** [Bot] &lt;message>" for users on other bots</font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>dccputchan &lt;channel>
+&lt;message></font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>sends your message to everyone
+on a certain channel on the bot net, in a form exactly like dccbroadcast
+does -- valid channels are 0 thru 99999</font></font>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: nothing</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>restart</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>restarts the bot</font></font>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: nothing</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>rehash</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>rehashes the bot</font></font>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: nothing</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>dccsimul &lt;idx> &lt;text...></font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>simulates text typed in
+by the dcc user specified -- note that in v0.9, this only simulated commands;
+now a command must be preceded by a '.' to be simulated</font></font>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: nothing</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>hand2idx &lt;handle></font></font></b>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: the idx (a
+number greater than or equal to zero) for the user given, if she is on
+the party line in chat mode (even if she is currently on a channel or in
+chat off), the file area, or in the control of a script; "-1" otherwise
+-- if the user is on multiple times, the oldest idx is returned</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>idx2hand &lt;idx></font></font></b>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: handle of the
+user with that idx</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>valididx &lt;idx></font></font></b>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: "1" if the
+idx currently exists; "0" if not</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>getchan &lt;idx></font></font></b>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: the current
+party line channel for a user on the party line -- "0" indicates he's on
+the group party line, "-1" means he has chat off, and a value from 1 to
+99999 is a private channel</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>setchan &lt;idx> &lt;channel></font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>sets a party line user's
+channel rather suddenly (the party line user is not notified that she is
+now on a new channel); a channel name can be used (provided it exists)</font></font>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: nothing</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>console &lt;idx> [channel]
+[console-modes]</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>changes a dcc user's console
+mode, either to an absolute mode (like "mpj") or just adding/removing flags
+(like "+pj" or "-moc" or "+mp-c"); the user's console channel view can
+be changed also (as long as the new channel is defined in the bot)</font></font>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: a list containing
+the user's (new) channel view, and (new) console mode, or nothing if that
+user isn't currently in dcc chat</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>echo &lt;idx> [status]</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>turns a user's echo on
+or off; the status has to be a 1 or 0</font></font>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: new value of
+echo for that user (or the current value, if status was omitted)</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>killdcc &lt;idx></font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>kills a party-line or file
+area connection, rather abruptly</font></font>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: nothing</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>dccused</font></font></b>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: number of dcc
+connections currently in use</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>dcclist</font></font></b>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: list of active
+dcc connections that are in the chat area, the file area, or a script;
+each item in the list will be a sublist with four elements: idx, nickname,
+hostname, and type; type will be "chat", "files", "bot", "file_receiving",
+"file_sending", "file_send_pending", or "script" (or "socket" for connections
+that haven't been put under 'control' yet) or any new dcc type that gets
+added.</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>getdccidle &lt;idx></font></font></b>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: number of seconds
+the dcc chat/file system/script user has been idle</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>getdccaway &lt;idx></font></font></b>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: away message
+for a dcc chat user (or "" if the user is not set away)</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>setdccaway &lt;idx> &lt;message></font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>sets a party line user's
+away message and marks them away; if set to "", the user is marked un-away</font></font>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: nothing</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>listen &lt;port> [mask]</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>accepts connections from
+users only (no bots); the optional mask is used to identify permitted nicknames;
+if the mask begins with '@' it is interpreted to be a mask of permitted
+hosts to accept connections from</font></font>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: port #</font></font></i>
+<br><b><font face="Arial, Helvetica"><font size=-1>listen &lt;port> off</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>stop listening at a port</font></font>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: nothing</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>dccdumpfile &lt;idx>
+&lt;filename></font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>dumps out a file from the
+text directory to a dcc chat user; the flag matching that's used everywhere
+else works here too</font></font>
+<p><a NAME="Core-Misc"></a>
+<hr><b><font face="Arial, Helvetica"><font color="#FF0000"><font size=-1>MISCELLANEOUS
+COMMANDS</font></font></font></b>
+<p><b><font face="Arial, Helvetica"><font size=-1>bind &lt;type> &lt;attr(s)>
+&lt;command-name> [proc-name]</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>adds a new keyword command
+to the bot; valid types are listed below; the &lt;attr(s)> are the flags
+that a user must have to trigger this command; the &lt;command-name> for
+each type is listed below; &lt;proc-name> is the name of the Tcl procedure
+to call for this command (see below for the format of the procedure call);
+if the proc-name is omitted, no binding is added -- instead, the current
+binding is returned (if it's stackable, a list of the current bindings
+is returned) yes, you can use the new flag binding method here too, and
+this is where it becomes truely phearful since you may never need to check
+attr's inside functions again...imagine:</font></font>
+<blockquote><i><font face="Arial, Helvetica"><font size=-1>bind pub -o&amp;+o
+command command_proc</font></font></i></blockquote>
+<i><font face="Arial, Helvetica"><font size=-1>returns: name of the command
+that was added, or (if proc-name was omitted), a list of the current bindings
+for this command</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>unbind &lt;type> &lt;attr(s)>
+&lt;command-name> &lt;proc-name></font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>removes a previously-made
+binding</font></font>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: name of the
+command that was removed</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>logfile [&lt;modes> &lt;channel>
+&lt;filename>]</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>creates a new logfile,
+which will log the modes given for the channel listed -- or, if no logfile
+is specified, just returns a list of logfiles; "*" can be used to mean
+all channels; you can also change the modes and channel of an existing
+logfile with this command -- entering a blank mode and channel makes the
+bot stop logging there</font></font>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: filename of
+logfile created, or (if no logfile is specified) a list of logfiles like:
+"{mco * eggdrop.log} {jp #lame lame.log}"</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>maskhost &lt;nick!user@host></font></font></b>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: hostmask for
+the string given ("n!u@1.2.3.4" -> "*!u@1.2.3.*", "n!u@lame.com" -> "*!u@lame.com",
+"n!u@a.b.edu" -> "*!u@*.b.edu")</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>unixtime</font></font></b>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: a long integer
+which is the current time according to unix</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>time</font></font></b>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: the current
+time in 24-hour format (ie "14:15")</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>strftime &lt;formatstring>
+[time]</font></font></b>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: a formatted
+string of time using standard strftime format, uses the value of time,
+or now if no time specified</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>date</font></font></b>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: the current
+date in standard format (ie "21 Dec 1994")</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>ctime &lt;unixtime></font></font></b>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: a string of
+the date/time represented by the unix time given (i.e. "Fri Aug 3 11:34:55
+1973")</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>myip</font></font></b>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: a long number
+representing the bot's IP address, as it might appear in (for example)
+a DCC request</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>rand &lt;limit></font></font></b>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: a random integer
+between 0 and limit-1</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>die [reason]</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>causes the bot to log a
+fatal error and exit completely; if no reason is given, "EXIT" is used</font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>unames</font></font></b>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: the current
+operating system the bot is using.</font></font></i>
+<p><a NAME="Core-GlobalVars"></a>
+<hr><b><font face="Arial, Helvetica"><font color="#FF0000"><font size=-1>GLOBAL
+VARIABLES:</font></font></font></b>
+<br><i><font face="Arial, Helvetica"><font size=-1>(All config-file variables
+are global too, but these variables are set by the bot.)</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>version</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>current bot version (ie:
+"1.1.2+pl1 1010201 pl1"); first item is the text version, second item is
+a numerical version, and any following items are the names of patches that
+have been added</font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>numversion</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>current numeric bot version
+(ie: "1010201");</font></font>
+<blockquote><font face="Arial, Helvetica"><font size=-1>Numerical version
+is "MMNNRRPP" where:</font></font>
+<blockquote><font face="Arial, Helvetica"><font size=-1>MM is the major
+release number</font></font>
+<br><font face="Arial, Helvetica"><font size=-1>NN is the minor release
+number</font></font>
+<br><font face="Arial, Helvetica"><font size=-1>RR is the sub-release number</font></font>
+<br><font face="Arial, Helvetica"><font size=-1>PP is the patch level for
+that sub-release</font></font></blockquote>
+</blockquote>
+<b><font face="Arial, Helvetica"><font size=-1>uptime</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>unixtime value for when
+the bot was started</font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>lastbind</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>The last command binding
+which triggered. This allows you to identify which command triggered a
+tcl routine.</font></font>
+<p><a NAME="Core-CommandExt"></a>
+<hr><b><font face="Arial, Helvetica"><font color="#FF0000"><font size=-1>COMMAND
+EXTENSION</font></font></font></b>
+<p><font face="Arial, Helvetica"><font size=-1>You can use the 'bind' command
+to attach Tcl procedures to certain events. For example, you can write
+a Tcl procedure that gets called every time a user says "danger" on the
+channel. The following is a list of the types of bindings, and how they
+work. Under each binding type is the format of the bind command, the list
+of arguments sent to the Tcl proc, and an explanation.</font></font>
+<p><font face="Arial, Helvetica"><font size=-1>Some bindings are marked
+as "stackable". That means that you can bind multiple commands to the same
+trigger. Normally, for example, a binding of "bind msg - stop msg_stop"
+(which makes a msg-command "stop" call the Tcl proc "msg_stop") will overwrite
+any previous binding you had for the msg-command "stop". With stackable
+bindings, like 'msgm' for example, you can bind to the same command or
+mask again and again. When the binding is triggered, ALL the Tcl procs
+that are bound to it will be called, one after another.</font></font>
+<p><font face="Arial, Helvetica"><font size=-1>To remove a binding, use
+"unbind". For example, to remove that binding for the msg-command "stop",
+use "unbind msg - stop msg_stop".</font></font>
+<p><font face="Arial, Helvetica"><font size=-1>There are more bindings
+which are enabled from the loading of specific modules, see the specific
+module information pages to see which module provides which bindings.</font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>DCC</font></font></b>
+<blockquote><font face="Arial, Helvetica"><font size=-1>bind dcc &lt;flags>
+&lt;command> &lt;proc></font></font>
+<br><font face="Arial, Helvetica"><font size=-1>proc-name &lt;handle> &lt;idx>
+&lt;args></font></font></blockquote>
+<font face="Arial, Helvetica"><font size=-1>used for commands from a dcc
+chat on the party line; as in MSG, the command is the first word and everything
+else is the argument string; the idx is valid until the user disconnects;
+after that it may be reused, so be careful about storing an idx for long
+periods of time</font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>BOT</font></font></b>
+<blockquote><font face="Arial, Helvetica"><font size=-1>bind bot &lt;flags>
+&lt;command> &lt;proc></font></font>
+<br><font face="Arial, Helvetica"><font size=-1>proc-name &lt;from-bot>
+&lt;command> &lt;args></font></font></blockquote>
+<font face="Arial, Helvetica"><font size=-1>triggered by a message coming
+from another bot in the botnet; works similar to a DCC binding; the first
+word is the command and the rest becomes the argument string; flags are
+ignored</font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>CHON (stackable)</font></font></b>
+<blockquote><font face="Arial, Helvetica"><font size=-1>bind chon &lt;flags>
+&lt;mask> &lt;proc></font></font>
+<br><font face="Arial, Helvetica"><font size=-1>proc-name &lt;handle> &lt;idx></font></font></blockquote>
+<font face="Arial, Helvetica"><font size=-1>when someone first enters the
+"party-line" area of the bot via dcc chat or telnet, this is triggered
+before they are connected to a chat channel (so yes, you can change the
+channel in a 'chon' proc); mask matches against handle; this is NOT triggered
+when someone returns from the file area, etc</font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>CHOF (stackable)</font></font></b>
+<blockquote><font face="Arial, Helvetica"><font size=-1>bind chof &lt;flags>
+&lt;mask> &lt;proc></font></font>
+<br><font face="Arial, Helvetica"><font size=-1>proc-name &lt;handle> &lt;idx></font></font></blockquote>
+<font face="Arial, Helvetica"><font size=-1>triggered when someone leaves
+the party line to disconnect from the bot; mask matches against the handle;
+note that the connection may have already been dropped by the user, so
+don't send output to that idx</font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>CHAT (stackable)</font></font></b>
+<blockquote><font face="Arial, Helvetica"><font size=-1>bind chat &lt;flags>
+&lt;mask> &lt;proc></font></font>
+<br><font face="Arial, Helvetica"><font size=-1>proc-name &lt;nick> &lt;channel#>
+&lt;text></font></font></blockquote>
+<font face="Arial, Helvetica"><font size=-1>when someone says something
+on the botnet, it invokes this binding; flags is ignored; nick could be
+a user on this bot (i.e. "DronePup") or on another bot (i.e. "Eden@Wilde");
+the mask is checked against the text</font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>LINK (stackable)</font></font></b>
+<blockquote><font face="Arial, Helvetica"><font size=-1>bind link &lt;flags>
+&lt;mask> &lt;proc></font></font>
+<br><font face="Arial, Helvetica"><font size=-1>proc-name &lt;botname>
+&lt;via></font></font></blockquote>
+<font face="Arial, Helvetica"><font size=-1>triggered when a bot links
+into the botnet; botname is the name of the bot that just linked in; via
+is the bot it linked through; the mask is checked against the bot that
+linked; flags is ignored</font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>DISC (stackable)</font></font></b>
+<blockquote><font face="Arial, Helvetica"><font size=-1>bind disc &lt;flags>
+&lt;mask> &lt;proc></font></font>
+<br><font face="Arial, Helvetica"><font size=-1>proc-name &lt;botname></font></font></blockquote>
+<font face="Arial, Helvetica"><font size=-1>triggered when a bot disconnects
+from the botnet for whatever reason; just like the link bind, flags are
+ignored; mask is checked against the nickname of the bot that left</font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>FILT (stackable)</font></font></b>
+<blockquote><font face="Arial, Helvetica"><font size=-1>bind filt &lt;flags>
+&lt;mask> &lt;proc></font></font>
+<br><font face="Arial, Helvetica"><font size=-1>proc-name &lt;idx> &lt;text></font></font></blockquote>
+<font face="Arial, Helvetica"><font size=-1>DCC party line and file system
+users have their text sent through filt before being processed; if the
+proc a blank string, the text is considered parsed; otherwise the bot will
+use the text returned from the proc and continue parsing that</font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>ACT (stackable)</font></font></b>
+<blockquote><font face="Arial, Helvetica"><font size=-1>bind act &lt;flags>
+&lt;mask> &lt;proc></font></font>
+<br><font face="Arial, Helvetica"><font size=-1>proc-name &lt;nick> &lt;channel#>
+&lt;action></font></font></blockquote>
+<font face="Arial, Helvetica"><font size=-1>when someone does an action
+on the botnet, it invokes this binding; flags is ignored; the mask is checked
+against the text of the action (this is very similar to the CHAT binding)</font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>BCST (stackable)</font></font></b>
+<blockquote><font face="Arial, Helvetica"><font size=-1>bind chat &lt;flags>
+&lt;mask> &lt;proc></font></font>
+<br><font face="Arial, Helvetica"><font size=-1>proc-name &lt;bot> &lt;channel#>
+&lt;text></font></font></blockquote>
+<font face="Arial, Helvetica"><font size=-1>when a bot says something on
+the botnet, it invokes this binding; flags is ignored; the mask is checked
+against the text</font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>CHJN (stackable)</font></font></b>
+<blockquote><font face="Arial, Helvetica"><font size=-1>bind chat &lt;flags>
+&lt;mask> &lt;proc></font></font>
+<br><font face="Arial, Helvetica"><font size=-1>proc-name &lt;bot> &lt;nick>
+&lt;channel#> &lt;flag>&lt;sock> &lt;from></font></font></blockquote>
+<font face="Arial, Helvetica"><font size=-1>when someone joins a botnet
+channel, it invokes this binding; flags is ignored; the mask is checked
+against the text</font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>CHPT (stackable)</font></font></b>
+<blockquote><font face="Arial, Helvetica"><font size=-1>bind chat &lt;flags>
+&lt;mask> &lt;proc></font></font>
+<br><font face="Arial, Helvetica"><font size=-1>proc-name &lt;bot> &lt;nick>
+&lt;sock> &lt;chan></font></font></blockquote>
+<font face="Arial, Helvetica"><font size=-1>when someone parts a botnet
+channel, it invokes this binding; flags is ignored; the mask is checked
+against the channel</font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>TIME (stackable)</font></font></b>
+<blockquote><font face="Arial, Helvetica"><font size=-1>bind time - &lt;mask>
+&lt;proc></font></font>
+<br><font face="Arial, Helvetica"><font size=-1>proc-name &lt;min> &lt;hour>
+&lt;day> &lt;month> &lt;year></font></font></blockquote>
+<font face="Arial, Helvetica"><font size=-1>allows you to schedule procedure
+calls at certain times, mask matches 5 space seperated integers of the
+form: "min hour day month year"</font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>AWAY (stackable)</font></font></b>
+<blockquote><font face="Arial, Helvetica"><font size=-1>bind away - &lt;mask>
+&lt;proc></font></font>
+<br><font face="Arial, Helvetica"><font size=-1>proc-name &lt;bot> &lt;idx>
+&lt;msg></font></font></blockquote>
+<font face="Arial, Helvetica"><font size=-1>triggers when a user goes away
+or comes back on the botnet (msg == "" when returning)</font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>LOAD (stackable)</font></font></b>
+<blockquote><font face="Arial, Helvetica"><font size=-1>bind load - &lt;mask>
+&lt;proc></font></font>
+<br><font face="Arial, Helvetica"><font size=-1>proc-name &lt;module></font></font></blockquote>
+<font face="Arial, Helvetica"><font size=-1>triggers when a module is loaded.</font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>UNLD (stackable)</font></font></b>
+<blockquote><font face="Arial, Helvetica"><font size=-1>bind unld - &lt;mask>
+&lt;proc></font></font>
+<br><font face="Arial, Helvetica"><font size=-1>proc-name &lt;module></font></font></blockquote>
+<font face="Arial, Helvetica"><font size=-1>triggers when a module is unloaded.</font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>NKCH (stackable)</font></font></b>
+<blockquote><font face="Arial, Helvetica"><font size=-1>bind nkch - &lt;mask>
+&lt;proc></font></font>
+<br><font face="Arial, Helvetica"><font size=-1>proc-name &lt;oldnick>
+&lt;newnick></font></font></blockquote>
+<font face="Arial, Helvetica"><font size=-1>triggered whenever a local
+users nick is changed (in the userfile)</font></font>
+<p><a NAME="Core-ReturnV"></a>
+<hr><b><font face="Arial, Helvetica"><font color="#FF0000"><font size=-1>RETURN
+VALUES</font></font></font></b>
+<p><font face="Arial, Helvetica"><font size=-1>Several bindings pay attention
+to the value you return from the proc (using "return $value"). Usually
+they expect a 0 or 1, and failing to return any value is interpreted as
+a 0.</font></font>
+<p><font face="Arial, Helvetica"><font size=-1>Here's a list of the bindings
+that use the return value from procs they trigger, these bindings are mostly
+enabled from the loading of specific modules, see the specific module information
+pages to see which module provides which bindings.</font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>MSG</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>Return 1 to make the command
+get logged like so:</font></font>
+<br><font face="Arial, Helvetica"><font size=-1>(nick!user@host) !handle!
+command</font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>DCC</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>Return 1 to make the command
+get logged like so:</font></font>
+<br><font face="Arial, Helvetica"><font size=-1>#handle# command</font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>FIL</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>Return 1 to make the command
+get logged like so:</font></font>
+<br><font face="Arial, Helvetica"><font size=-1>#handle# files: command</font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>PUB</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>Return 1 to make the command
+get logged like so:</font></font>
+<br><font face="Arial, Helvetica"><font size=-1>&lt;&lt;nick>> !handle!
+command</font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>CTCP</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>Return 1 to ask the bot
+not to process the CTCP command on its own. Otherwise it would send its
+own response to the CTCP (possibly an error message if it doesn't know
+how to deal with it).</font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>FILT</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>Return 1 to indicate the
+text has been processed, and the bot should just ignore it. Otherwise it
+will treat the text like any other.</font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>FLUD</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>Return 1 to ask the bot
+not to take action on the flood. Otherwise it will do its normal punishment.</font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>RAW</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>Return 1 to ask the bot
+not to process the server text. This can affect the bot's performance (by
+causing it to miss things that it would normally act on) -- you have been
+warned.</font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>WALL</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>Return 1 to make the command
+get logged liked so:</font></font>
+<br><font face="Arial, Helvetica"><font size=-1>!nick! msg</font></font>
+<p><a NAME="Core-Match"></a>
+<hr><b><font face="Arial, Helvetica"><font color="#FF0000"><font size=-1>MATCH
+CHARACTERS</font></font></font></b>
+<p><font face="Arial, Helvetica"><font size=-1>Many of the bindings allow
+match characters in the arguments. Here are the four special characters:</font></font>
+<blockquote><font face="Arial, Helvetica"><font size=-1>? matches any single
+character</font></font>
+<br><font face="Arial, Helvetica"><font size=-1>* matches 0 or more characters
+of any type</font></font>
+<br><font face="Arial, Helvetica"><font size=-1>% matches 0 or more non-space
+characters (can be used to match a single word)</font></font>
+<br><font face="Arial, Helvetica"><font size=-1>~ matches 1 or more space
+characters (can be used for whitespace between words)</font></font></blockquote>
+
+<hr><i><font face="Arial, Helvetica"><font size=-1>(c) 1997 Robey Pointer</font></font></i>
+<br><i><font face="Arial, Helvetica"><font size=-1>(c) 2000 Eggheads Development
+Team</font></font></i>
+</body>
+</html>

@@ -1,0 +1,549 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.7 [en] (WinNT; U) [Netscape]">
+   <title>Eggdrop Documentation: README file</title>
+</head>
+<body text="#000000" bgcolor="#FFFFFF" link="#3333FF" vlink="#3333FF" alink="#3333FF">
+<b><font face="Arial, Helvetica"><font color="#FF0000"><font size=-1>README</font></font></font></b>
+<hr>
+<ol><font face="Arial, Helvetica"><font size=-1>Please at least <b>SKIM</b>
+this document before asking questions. In fact,<b> READ IT</b> if you've
+never successfully set up an eggdrop bot before.<b> PLEASE! READ IT!</b>
+If you haven't read this file, and ask for help expect to be told to <b>READ</b>
+the README file first! or rotfm :)</font></font>
+<p><b><font color="#FF0000">Contents</font></b>
+<p><font face="Arial, Helvetica"><font size=-1><a href="#item0">Important
+notice</a></font></font>
+<p><font face="Arial, Helvetica"><font size=-1>1&nbsp;&nbsp;&nbsp; <a href="#item1">What
+is Eggdrop?</a></font></font>
+<br><font face="Arial, Helvetica"><font size=-1>2&nbsp;&nbsp;&nbsp; <a href="#item2">How
+do I get Eggdrop</a></font></font>
+<ol><font face="Arial, Helvetica"><font size=-1>2a&nbsp;&nbsp;&nbsp; <a href="#item2a">CVS
+usage</a></font></font></ol>
+<font face="Arial, Helvetica"><font size=-1>3&nbsp;&nbsp;&nbsp; <a href="#item3">Quick
+startup</a></font></font>
+<br><font face="Arial, Helvetica"><font size=-1>4&nbsp;&nbsp;&nbsp; <a href="#item4">Upgrading</a></font></font>
+<ol><font face="Arial, Helvetica"><font size=-1>4a&nbsp;&nbsp;&nbsp; <a href="#item4a">From
+a pres-1.3/1.4 version to 1.4</a></font></font>
+<br><font face="Arial, Helvetica"><font size=-1>4b&nbsp;&nbsp;&nbsp; <a href="#item4b">From
+an older 1.3/1.4 version to a newer one</a></font></font></ol>
+<font face="Arial, Helvetica"><font size=-1>5&nbsp;&nbsp;&nbsp; <a href="#item5">Frequently
+Asked Questions</a></font></font>
+<ol>
+<ol>
+<li>
+<font face="Arial, Helvetica"><font size=-1><a href="#faq1">What do I do
+if I get the Error "User file not found"?</a></font></font></li>
+
+<li>
+<font face="Arial, Helvetica"><font size=-1><a href="#faq2">My Eggdrop
+won't run; It just says "Can't find your hostname!"</a></font></font></li>
+
+<li>
+<font face="Arial, Helvetica"><font size=-1><a href="#faq3">What the Heck
+is TCL?</a></font></font></li>
+
+<li>
+<font face="Arial, Helvetica"><font size=-1><a href="#faq4">My bot dies
+and the last entry in the logfile is "Received terminate signal". What
+does that mean and can I prevent it?</a></font></font></li>
+
+<li>
+<font face="Arial, Helvetica"><font size=-1><a href="#faq5">My compile
+dies at the last minute with "LD fatal signal 11"!</a></font></font></li>
+
+<li>
+<font face="Arial, Helvetica"><font size=-1><a href="#faq6">Someone else
+set up a bot I don't like. Are there any backdoors I can use to take their
+bot down?</a></font></font></li>
+
+<li>
+<font face="Arial, Helvetica"><font size=-1><a href="#faq7">What are modules?</a></font></font></li>
+
+<li>
+<font face="Arial, Helvetica"><font size=-1><a href="#faq8">Can I compile
+eggdrop without dynamic modules?</a></font></font></li>
+
+<br><font face="Arial, Helvetica"><font size=-1>8.1&nbsp;&nbsp;&nbsp; <a href="#faq8.1">Do
+I still need to "loadmodule modules"???</a></font></font>
+<li>
+<font face="Arial, Helvetica"><font size=-1><a href="#faq9">Where can I
+get a precompiled Eggdrop for my computer?</a></font></font></li>
+
+<li>
+<font face="Arial, Helvetica"><font size=-1><a href="#faq10">I get "Makefile:3
+: invalid operator" of some such thing When I try to "make"</a></font></font></li>
+
+<li>
+<font face="Arial, Helvetica"><font size=-1><a href="#faq11">When I "tclsh
+scripts/weed &lt;userfile> c" It barfs chunks at me and dies.</a></font></font></li>
+
+<li>
+<font face="Arial, Helvetica"><font size=-1><a href="#faq12">I get "ld-elf.so.1:
+Shared object "libtcl80.so.1" not found" or "eggdrop: error in loading
+shared libraries / libtcl8.1.so: cannot open shared object file: No such
+file or directory" when I try to start my bot.</a></font></font></li>
+
+<li>
+<font face="Arial, Helvetica"><font size=-1><a href="#faq13">I get a whole
+pile of "unresolved symbol 'Tcl_AppendResult'" (or some other symbol) when
+I try to load a module.</a></font></font></li>
+</ol>
+</ol>
+6&nbsp;&nbsp;&nbsp; <a href="#item6">Setting up a crontab</a>
+<ol>6a&nbsp;&nbsp;&nbsp; <a href="#item6a">Setting up a crontab using autobotchk</a></ol>
+7&nbsp;&nbsp;&nbsp; <a href="#item7">Boring legal stuff</a>
+<br>8&nbsp;&nbsp;&nbsp; <a href="#item8">Mailing list</a>
+<br>9&nbsp;&nbsp;&nbsp; <a href="#item9">Documentation</a>
+<br>10&nbsp; <a href="#item10">Obtaining help</a></ol>
+
+<hr WIDTH="100%">
+<ol><a NAME="item0"></a><b><font face="Arial, Helvetica"><font color="#FF0000"><font size=-1>(0)
+NOTICE</font></font></font></b>
+<blockquote><font face="Arial, Helvetica"><font size=-1>Please read this
+file carefully before trying to set up this bot. Also, make <b>SURE</b>
+that you select your +n (owner) users wisely! They have 100% access to
+your bot and account!<b> ONLY GIVE THIS POWER TO SOMEONE YOU TRUST COMPLETELY!!</b></font></font></blockquote>
+<a NAME="item1"></a><b><font face="Arial, Helvetica"><font color="#FF0000"><font size=-1>(1)
+WHAT IS EGGDROP?</font></font></font></b>
+<blockquote><font face="Arial, Helvetica"><font size=-1>Eggdrop is an IRC
+bot, written in C. If you don't know what IRC is, this is probably not
+whatever you're looking for! Eggdrop, being a bot, sits on a channel and
+takes protective measures: to keep the channel from being taken over (in
+the few ways that anything CAN), to recognize banished users or sites and
+reject them, to recognize privileged users and let them gain ops, etc.</font></font>
+<p><font face="Arial, Helvetica"><font size=-1>One of the more unique features
+of eggdrop is its "partyline", accessible via DCC chat, which allows you
+to talk to other people lag-free. Consider it a multi-way DCC chat, or
+a miniature IRC (complete with channels). You can link up with other bots
+and expand the partyline until it actually becomes something very much
+like IRC, in fact.</font></font>
+<p><font face="Arial, Helvetica"><font size=-1>Eggdrop is always being
+improved and adjusted because there are bugs to be fixed and features to
+be added (if the users demand them, and they make actually sense). In fact,
+it existed for several years as v0.7 - v0.9 before finally going 1.0. This
+version of eggdrop is part of the 1.4 tree. A valiant effort has been made
+to chase down and destroy bugs.</font></font>
+<p><font face="Arial, Helvetica"><font size=-1>This README file contains
+information about how to get eggdrop, how to quickly compile the bot, what
+you may need to do when upgrading from older versions, a list of frequently
+asked questions about compiling, how to set up a crontab, some boring legal
+stuff, info about the mailing list (a great place to ask questions, and
+a good place to report bugs also), some basics about CVS usage and some
+channels where you might get help with eggdrop.</font></font>
+<p><font face="Arial, Helvetica"><font size=-1>The preliminary documentation
+is in "eggdrop.doc" and is intended to be read after you have eggdrop compiled
+and set up.</font></font>
+<br>&nbsp;</blockquote>
+<a NAME="item2"></a><b><font face="Arial, Helvetica"><font color="#FF0000"><font size=-1>(2)
+HOW TO GET EGGDROP</font></font></font></b>
+<blockquote><font face="Arial, Helvetica"><font size=-1>Before you can
+compile eggdrop, you need to have Tcl installed on your system. Most systems
+should have Tcl on them by now -- you can check by trying the command "tclsh".
+If it works, you will be given a "%" prompt, and you can type "exit" to
+exit the program. That means Tcl is on your system. If tclsh doesn't load,
+then Tcl probably isn't on your system, and you will need to ftp it. The
+best ftp site is:</font></font>
+<center>
+<p><font face="Arial, Helvetica"><a href="ftp://ftp.scriptics.com/pub/tcl">ftp://ftp.scriptics.com/pub/tcl</a></font></center>
+
+<p><font face="Arial, Helvetica"><font size=-1>Tcl comes with the Slackware
+distribution of Linux. HOWEVER, the one that comes on Slackware 3.0 is
+goofed up and you'll have to re-install it for yourself to get it working.</font></font>
+<p><font face="Arial, Helvetica"><font size=-1>Currently, the 1.4 tree
+of eggdrop is developed at eggheads.org. You can get the latest version
+of eggdrop from ftp.eggheads.org.</font></font>
+<p><font face="Arial, Helvetica"><font size=-1>You might try www.eggheads.org
+for help and information.</font></font>
+<br>&nbsp;</blockquote>
+<a NAME="item2a"></a><b><font face="Arial, Helvetica"><font color="#FF0000"><font size=-1>(2a)
+CVS USAGE</font></font></font></b>
+<blockquote><font face="Arial, Helvetica"><font size=-1>You might obtain
+the *very latest* version of eggdrop that is still under development by
+using CVS. CVS means 'Concurrent Versions System' and is a tool for developers
+to always keep source code up to date. Try 'man cvs' on your shell for
+more information about CVS ;-)</font></font>
+<p><font face="Arial, Helvetica"><font size=-1>This intended only for users
+that know a fairly bit about eggdrop. Be aware that the versions of eggdrop
+that you get by CVS are still being developed, and may be buggy. The Eggheads
+devteam will in *NO WAY* take any responsibility for whatever might happen
+to you or your shell if you use a CVS version of eggdrop.</font></font>
+<p><font face="Arial, Helvetica"><font size=-1>To obtain eggdrop over CVS,
+do as follows:</font></font>
+<blockquote><font face="Arial, Helvetica"><font size=-1>(1) log into your
+shell</font></font>
+<br><font face="Arial, Helvetica"><font size=-1>(2) type 'export CVSROOT=:pserver:anonymous@cvs.eggheads.org:/usr/local/cvsroot'</font></font>
+<br><font face="Arial, Helvetica"><font size=-1>(3) type 'cvs login'</font></font>
+<br><font face="Arial, Helvetica"><font size=-1>(4) press &lt;enter> when
+it asks for a password.</font></font>
+<br><font face="Arial, Helvetica"><font size=-1>(5) in your home dir, type
+'cvs checkout eggdrop1.4'</font></font>
+<br><font face="Arial, Helvetica"><font size=-1>(6) in ~/eggdrop1.4, you
+should have a copy of the latest CVS version of eggdrop.</font></font></blockquote>
+<b><font face="Arial, Helvetica"><font size=-1>Notes:</font></font></b>
+<blockquote><font face="Arial, Helvetica"><font size=-1>(1) you can 'cvs
+logout', but you don't need to.</font></font>
+<br><font face="Arial, Helvetica"><font size=-1>(2) you don't need to go
+through this whole process every time; if you want to get a CVS version
+of eggdrop at a later time, you can just 'cd ~/eggdrop1.4' and type 'cvs
+update -A'.</font></font>
+<br><font face="Arial, Helvetica"><font size=-1>(3) if you experience errors
+when using 'export', you might be using tclsh as a shell. If so, try using
+the command 'setenv' instead of 'export': 'setenv CVSROOT :pserver:anonymous@cvs.eggheads.org:/usr/local/cvsroot'</font></font></blockquote>
+</blockquote>
+<a NAME="item3"></a><b><font face="Arial, Helvetica"><font color="#FF0000"><font size=-1>(3)
+QUICK STARTUP</font></font></font></b>
+<blockquote>
+<center><b><font face="Arial, Helvetica"><font size=+1>#### NOW INCLUDED
+IN 'INSTALL' - READ IT *<u>AFTER</u>* FINISHING THIS ####</font></font></b></center>
+</blockquote>
+<a NAME="item4"></a><b><font face="Arial, Helvetica"><font color="#FF0000"><font size=-1>(4)
+UPGRADING</font></font></font></b>
+<blockquote><a NAME="item4a"></a><b><font face="Arial, Helvetica"><font color="#FF0000"><font size=-1>(4a)
+FROM A PRE-1.3/1.4 VERSION TO 1.4</font></font></font></b>
+<blockquote><font face="Arial, Helvetica"><font size=-1>#### BACK UP YOUR
+USERFILE ####</font></font>
+<p><font face="Arial, Helvetica"><font size=-1>We can't re-iterate this
+enough, if you are upgrading, and you have even a slight possibility of
+downgrading again later you will HAVE to back up your userfile, or you
+will lose it. v1.3 of eggdrop radically changed alot of things.</font></font>
+<p><font face="Arial, Helvetica"><font size=-1>There are many major changes
+between v0.9, v1.0, v1.1 and v1.3/1.4 so PAY ATTENTION to this part if
+you have a v0.9, 1.0 or 1.1 bot already. If you're just starting out, you
+can skip this section.</font></font>
+<p><font face="Arial, Helvetica"><font size=-1>to 1.3/1.4: * If you run
+sharebots, you will need to upgrade them all at the same time because of
+the new userfile format. Older bots will be able to link in, but will not
+get or send a userfile. 1.2's will also tend to refuse to share with another
+pre1.2. MAKE A NEW CONFIG FILE from the example, there are some radical
+extras.</font></font>
+<p><font face="Arial, Helvetica"><font size=-1>from 0.9/1.0 to 1.3/1.4:
+* Just redo the whole thing, absolutely everything has changed including
+the userfile and config file formats.</font></font>
+<p><font face="Arial, Helvetica"><font size=-1>from 1.1/1.2 to 1.3/1.4:
+* You will likely want to redo the config file, as much as changed. BACK
+UP!! You will need to run 'tclsh scripts/weed/&lt;userfile> c' to convert
+your userfile from v3 (1.1/1.2) to v4 (1.3/1.4)</font></font></blockquote>
+<a NAME="item4b"></a><b><font face="Arial, Helvetica"><font color="#FF0000"><font size=-1>(4b)
+FROM AN OLDER 1.3/1.4 VERSION TO A NEWER ONE</font></font></font></b>
+<blockquote><font face="Arial, Helvetica"><font size=-1>If you followed
+the INSTALL file and did a 'make install' (or 'make install DEST=&lt;path>')
+after 'make', this will be pretty easy. Just upload the new eggdrop1.4.xx.tar.gz
+file to the home dir of your shell, gunzip and untar it, and type 'cd ~/eggdrop1.4.xx'.
+Then, type './configure', 'make', then kill the bot ('.die' on the partyline,
+or use 'kill' on the shell) and 'make install' to the same directory your
+bot is currently in. Then, you can just restart your bot.</font></font></blockquote>
+</blockquote>
+<a NAME="item5"></a><b><font face="Arial, Helvetica"><font color="#FF0000"><font size=-1>(5)
+FREQUENTLY ASKED QUESTIONS (or "Why doesn't this thing work?")</font></font></font></b>
+<blockquote><a NAME="faq1"></a><b><font face="Arial, Helvetica"><font color="#FF0000"><font size=-1>1.
+WHAT DO I DO IF I GET THE ERROR "USER FILE NOT FOUND"?</font></font></font></b>
+<blockquote><font face="Arial, Helvetica"><font size=-1>(1) Run eggdrop
+with the "-m" option (i.e., "eggdrop -m mybot").</font></font>
+<br><font face="Arial, Helvetica"><font size=-1>(2) Go to IRC and send
+"hello" to your bot (i.e., "/msg mybot hello").</font></font>
+<br><font face="Arial, Helvetica"><font size=-1>(3) You will become an
+owner on your bot. You can leave the bot running (nobody else will become
+a master if they say "hello"), but in the future, don't use the "-m" option
+when running the bot.</font></font></blockquote>
+<a NAME="faq2"></a><b><font face="Arial, Helvetica"><font color="#FF0000"><font size=-1>2.
+MY EGGDROP WON'T RUN; IT JUST SAYS "CAN'T FIND YOUR HOSTNAME!"</font></font></font></b>
+<blockquote><font face="Arial, Helvetica"><font size=-1>Your machine is
+set up strangely, and eggdrop can't figure out its network hostname. You
+can get around this by setting an environment variable called HOSTNAME.</font></font>
+<p><font face="Arial, Helvetica"><font size=-1>In sh or ksh:</font></font>
+<blockquote><font face="Arial, Helvetica"><font size=-1>$ HOSTNAME=myhost.domain.edu</font></font>
+<br><font face="Arial, Helvetica"><font size=-1>$ export HOSTNAME</font></font></blockquote>
+<font face="Arial, Helvetica"><font size=-1>In csh or tcsh:</font></font>
+<blockquote><font face="Arial, Helvetica"><font size=-1>% setenv HOSTNAME
+myhost.domain.edu</font></font></blockquote>
+<font face="Arial, Helvetica"><font size=-1>It should work after that.
+You may want to bug your system administrator to set up her /etc/hosts
+file correctly, or add those above commands to your '.login' file (sh or
+ksh: '.profile').</font></font></blockquote>
+
+<p><br><a NAME="faq3"></a><b><font face="Arial, Helvetica"><font color="#FF0000"><font size=-1>3.
+WHAT THE HECK IS TCL?</font></font></font></b>
+<blockquote><font face="Arial, Helvetica"><font size=-1>Tcl is a scripting
+language written by John Ousterhout. It's much better than most "in-built"
+script languages (like the one in ircII) and is meant to be linked with
+anything needing a script language. So I linked it with eggdrop. The file
+"tcl-commands.doc" in the eggdrop directory contains a list of the commands
+added to Tcl by eggdrop. There are also several example scripts in the
+scripts/ directory, and there are gobs of scripts floating around on the
+ftp sites if you like working by example (which is typically the best way).</font></font></blockquote>
+
+<p><br><a NAME="faq4"></a><b><font face="Arial, Helvetica"><font color="#FF0000"><font size=-1>4.
+MY BOT DIES AND THE LAST ENTRY IN THE LOGFILE IS "RECEIVED TERMINATE SIGNAL".
+WHAT DOES THAT MEAN AND CAN I PREVENT IT?</font></font></font></b>
+<blockquote><font face="Arial, Helvetica"><font size=-1>There's nothing
+you can do to prevent it. It means the system administrator is killing
+the eggdrop process. Most of the time, it's an automatic thing that happens
+when the system is being rebooted, so it's harmless. If you have a crontab
+running, the bot will get restarted when the system is back online. Occasionally
+the system administrator will kill the bot manually -- for example, if
+he/she doesn't want bots running on the system.</font></font></blockquote>
+
+<p><br><a NAME="faq5"></a><b><font face="Arial, Helvetica"><font color="#FF0000"><font size=-1>5.
+MY COMPILE DIES AT THE LAST MINUTE WITH "LD FATAL SIGNAL 11"!</font></font></font></b>
+<blockquote><font face="Arial, Helvetica"><font size=-1>This happens on
+Linux machines that have recently been converted to ELF by upgrading to
+Slackware 3.0. Apparently Slackware 3.0 comes with a non-ELF (a.out) Tcl
+library, and the compiler doesn't handle that well. (It should give you
+an error; instead it barfs.) Fixing it is tricky because even if you recompile
+libtcl.a, the linker will most likely find the "bad" one first, and your
+work will be in vain.</font></font>
+<p><font face="Arial, Helvetica"><font size=-1>Here's a fix that's been
+floating around on the eggdrop list:</font></font>
+<blockquote><font face="Arial, Helvetica"><font size=-1>1. Recompile 'libtcl.a'
+for yourself, to make sure an ELF librar is created.</font></font>
+<br><font face="Arial, Helvetica"><font size=-1>2. Copy it into your eggdrop/src
+directory, naming it 'libtcl2.a'.</font></font>
+<br><font face="Arial, Helvetica"><font size=-1>3. Edit the Makefile and
+change the line that says '-L/usr/lib -ltcl' to '-L. -ltcl2'.</font></font>
+<br><font face="Arial, Helvetica"><font size=-1>4. Recompile eggdrop.</font></font></blockquote>
+<font face="Arial, Helvetica"><font size=-1>Also send hate-mail to the
+Slackware guy telling him to stop messing up the libraries. He seemed to
+assume that everyone would still want to compile old-style (a.out) binaries.</font></font></blockquote>
+<a NAME="faq6"></a><b><font face="Arial, Helvetica"><font color="#FF0000"><font size=-1>6.
+SOMEONE ELSE SET UP A BOT I DON'T LIKE. ARE THERE ANY BACKDOORS I CAN USE
+TO TAKE THEIR BOT DOWN?</font></font></font></b>
+<blockquote><font face="Arial, Helvetica"><font size=-1>No, there have
+never been any backdoors and there never will be, so please stop asking.
+Every once in a while, someone finds a way to exploit a bug in eggdrop,
+but we fix these bugs as soon as we find out about them. If you want to
+bring down someone else's bot, you will not have my/our help.</font></font></blockquote>
+<a NAME="faq7"></a><b><font face="Arial, Helvetica"><font color="#FF0000"><font size=-1>7.
+WHAT ARE MODULES?</font></font></font></b>
+<blockquote><font face="Arial, Helvetica"><font size=-1>Modules are a way
+of adding extra C code from the bot, much like Tcl scripts, without requiring
+the bot recompiling, see doc/MODULES for more info.</font></font></blockquote>
+<a NAME="faq8"></a><b><font face="Arial, Helvetica"><font color="#FF0000"><font size=-1>8.
+CAN I COMPILE EGGDROP WITHOUT DYNAMIC MODULES?</font></font></font></b>
+<blockquote><font face="Arial, Helvetica"><font size=-1>Yes, you can, if
+./configure detects that your system CAN'T run modules it will setup 'make'
+to link the modules in statically for you, you can also choose this option
+if you can do dynamic modules by typing 'make static'. You can also try
+to compile dynamic modules on a static-only system by typing 'make eggdrop'.</font></font>
+<p><a NAME="faq8.1"></a><b><font face="Arial, Helvetica"><font color="#FF0000"><font size=-1>8.1
+DO I STILL NEED TO 'loadmodule modules' ???</font></font></font></b>
+<blockquote><font face="Arial, Helvetica"><font color="#000000"><font size=-1>YES,
+when you compile statically, all the modules are linked into the main executable
+*but* they are not enabled until you use loadmodule to enable then, hence
+you get nearly the same functionality with static modules as dynamic modules.</font></font></font></blockquote>
+</blockquote>
+<a NAME="faq9"></a><b><font face="Arial, Helvetica"><font color="#FF0000"><font size=-1>9.
+WHERE CAN I GET A PRECOMPILED EGGDROP FOR MY COMPUTER?</font></font></font></b>
+<blockquote><font face="Arial, Helvetica"><font size=-1>It is <b>HIGHLY</b>
+recommended <b>AGAINST</b> using precompiled Eggdrops from untrusted sources.
+Eggdrop has been a regular target for hacking and crashing. Distribution
+of precompiled (binary) versions of Eggdrop are the easiest way of hackers
+to provide you with the easiest (and most dangerous) way of gaining access
+to not only your bot, but to your computer account directly. Don't advertise
+your precompiled eggdrop binary sites on the eggdrop list either =P</font></font></blockquote>
+<a NAME="faq10"></a><b><font face="Arial, Helvetica"><font color="#FF0000"><font size=-1>10.
+I GET 'Makefile:3 :invalid operator' OR SOME-SUCH-THING WHEN I TRY TO 'make'</font></font></font></b>
+<blockquote><font face="Arial, Helvetica"><font size=-1>Try 'gmake'</font></font></blockquote>
+<a NAME="faq11"></a><b><font face="Arial, Helvetica"><font color="#FF0000"><font size=-1>11.
+WHEN I 'tclsh scripts/weed &lt;userfile> c' IT BARFS CHUNKS AT ME AND DIES
+:(</font></font></font></b>
+<blockquote><font face="Arial, Helvetica"><font size=-1>UPGRADE YOUR TCL,
+you are probably using tcl 7.5 or earlier, some of the commands in weed
+require tcl7.6 to run, so either upgrade it, or removing the offending
+lines from you userfile (those starting with '.' generally) and accept
+the loss of that data.</font></font></blockquote>
+<a NAME="faq12"></a><b><font face="Arial, Helvetica"><font color="#FF0000"><font size=-1>12.
+I get "ld-elf.so.1: Shared object "libtcl80.so.1" not found" or "eggdrop:
+error in loading shared libraries / libtcl8.1.so: cannot open shared object
+file: No such file or directory" when I try to start my bot.</font></font></font></b>
+<blockquote><font face="Arial, Helvetica"><font size=-1>'./configure' is
+looking in the wrong place for tcl; it looks like it compiled with one
+version of tcl and tries to load another. Maybe your sysadmin upgraded
+tcl and didn't tell you. In that case, you should just need to recompile
+your bot.</font></font>
+<p><font face="Arial, Helvetica"><font size=-1>Or maybe when upgrading
+he didn't clean the old version of tcl, and './configure' is looking for
+the files in the wrong places, or trying to use different versions of tcl.h
+and libtcl*. Smack your admin and have him install tcl properly ;) Or try
+to:</font></font>
+<p><font face="Arial, Helvetica"><font size=-1>./configure --with-tcllib=&lt;path-to-tcl-lib>&nbsp;
+--with-tclinc=&lt;path-to-tcl-inc></font></font>
+<p><font face="Arial, Helvetica"><font size=-1>tell configure where to
+look for the tcl files. try to look for them like:</font></font>
+<br><font face="Arial, Helvetica"><font size=-1>for libtcl:</font></font>
+<blockquote><font face="Arial, Helvetica"><font size=-1>ls /usr/lib/libtcl*</font></font>
+<br><font face="Arial, Helvetica"><font size=-1>ls /usr/local/lib/libtcl*</font></font></blockquote>
+<font face="Arial, Helvetica"><font size=-1>for tcl.h:</font></font>
+<blockquote><font face="Arial, Helvetica"><font size=-1>ls /usr/include/tcl.h</font></font>
+<br><font face="Arial, Helvetica"><font size=-1>ls /usr/local/include/tcl.h</font></font></blockquote>
+<font face="Arial, Helvetica"><font size=-1>If everything else fails, try
+to install tcl to your home dir ;) (Suggested by dw@Undernet, dw@lixom.nu)</font></font></blockquote>
+<a NAME="faq13"></a><b><font face="Arial, Helvetica"><font color="#FF0000"><font size=-1>13.
+I get a whole pile of "Unresolved symbol 'Tcl_AppendResult'" (or some other
+symbol) when I try to load a modules.</font></font></font></b>
+<blockquote><font face="Arial, Helvetica"><font size=-1>POSSIBILITY A:
+see 12.</font></font>
+<p><font face="Arial, Helvetica"><font size=-1>POSSIBILITY B:</font></font>
+<p><font face="Arial, Helvetica"><font size=-1>Some of the standard libraries
+have been compiled for static linking only on your machine, you have 3
+options:</font></font>
+<p><font face="Arial, Helvetica"><font size=-1>(1) if it's your own machine,
+recompile TCL using dynamic linking by using './configure --enable-shared'
+when you configure TCL (not the bot) and then remake, &amp; reinstall</font></font>
+<br><font face="Arial, Helvetica"><font size=-1>(2) if it's not you machine,
+you make have to resort to 'make static' and 'make sinstall DESTDIR=&lt;dir>'
+to make and install your bot.</font></font>
+<br><font face="Arial, Helvetica"><font size=-1>(3) if you are of a more
+aggressive sense of mind, go beat the stuffing out of your admin for have
+lame static libraries :)</font></font></blockquote>
+</blockquote>
+<a NAME="item6"></a><b><font face="Arial, Helvetica"><font color="#FF0000"><font size=-1>(6)
+SETTING UP A CRONTAB</font></font></font></b>
+<blockquote><font face="Arial, Helvetica"><font size=-1>Eggdrop has become
+more stable with time, thanks mostly to people reporting bug details and
+helping find places where it crashes. However, there are still a -few-
+places where things aren't perfect. Few if any things in life are.</font></font>
+<p><font face="Arial, Helvetica"><font size=-1>Also, most systems go down
+from time to time. These things cause your bot to disappear from IRC, and
+you have to restart it.</font></font>
+<p><font face="Arial, Helvetica"><font size=-1>The eggdrop source file
+includes a csh script called 'botchk' that will help keep the bot online.
+It will make the machine check every ten minutes to make sure your bot
+is still running. To use it, you have to add a line to your crontab. First,
+edit 'botchk' and change the directory and command line parameters so that
+it will be able to start up your bot. Then, add this line to your crontab:</font></font>
+<p><font face="Arial, Helvetica"><font size=-1>0,10,20,30,40,50 * * * *
+/home/mydir/botchk</font></font>
+<p><font face="Arial, Helvetica"><font size=-1>If you don't want to get
+emails from cron, put this:</font></font>
+<p><font face="Arial, Helvetica"><font size=-1>0,10,20,30,40,50 * * * *
+/home/mydir/botchk >/dev/null 2>&amp;1</font></font>
+<p><font face="Arial, Helvetica"><font size=-1>Naturally, you need to change
+the path to the correct path for botchk. If you've never used crontab before,
+here is a simple way to add that line: Create a new file called 'mycron'
+and put the above line into it. Then, from your shell prompt, type % crontab
+mycron That will create a new crontab entry for you, with a line that runs
+botchk every ten minutes. Botchk will then restart the bot when necessary
+(and send you email informing you).</font></font></blockquote>
+<a NAME="item6a"></a><b><font face="Arial, Helvetica"><font color="#FF0000"><font size=-1>(6a)
+SETTING UP A CRONTAB USING AUTOBOTCHK</font></font></font></b>
+<blockquote><font face="Arial, Helvetica"><font size=-1>Included with your
+eggdrop is an eggdrop utility called 'autobotchk'. Using autobotchk is
+probably the fastest way of creating your botchk and crontabbing it with
+just a few required steps.</font></font>
+<p><font face="Arial, Helvetica"><font size=-1>To crontab your bot follow
+the following steps:</font></font>
+<p><font face="Arial, Helvetica"><font size=-1>(1) type 'cp scripts/autobotchk
+..'</font></font>
+<br><font face="Arial, Helvetica"><font size=-1>(2) type './autobotchk
+&lt;eggdrop config file>'</font></font>
+<p><font face="Arial, Helvetica"><font size=-1>This will hopefully crontab
+your bot using the default setup. If you want a list of autobotchk options,
+type './autobotchk'. An example with options would be:</font></font>
+<p><font face="Arial, Helvetica"><font size=-1>./autobotchk eggdrop.conf.dist
+-noemail -5</font></font>
+<p><font face="Arial, Helvetica"><font size=-1>This would setup crontab
+to run the botchk every 5 minutes and also to not send you e-mail saying
+that it restarted your bot.</font></font></blockquote>
+<a NAME="item7"></a><b><font face="Arial, Helvetica"><font color="#FF0000"><font size=-1>(7)
+BORING LEGAL STUFF</font></font></font></b>
+<blockquote><font face="Arial, Helvetica"><font size=-1>The eggdrop bot
+is copyright </font></font>&copy;<font face="Arial, Helvetica"><font size=-1>
+by Robey Pointer. As of January 1997, eggdrop is distributed according
+to the GNU General Public License. There should be a copy of this license
+in the file COPYING. If not, write to the Free Software Foundation, Inc.,
+675 Mass Ave, Cambridge, MA 02139, USA.</font></font>
+<p><font face="Arial, Helvetica"><font size=-1>As of eggdrop1.3.28 all
+changes made by the Eggheads development team to the eggdrop source code
+and any related files are copyright </font></font>&copy;<font face="Arial, Helvetica"><font size=-1>
+by Eggheads. The source code will still be distributed according to the
+GNU General Public License as Robey Pointer did in the past.</font></font>
+<p><font face="Arial, Helvetica"><font size=-1>Releases previous to 1.0m
+were made using a different licensing scheme. You may, at your option,
+use the GNU General Public License on those versions (instead of the license
+packaged with them) with my blessing. For any versions bearing a copyright
+date of 1997 or later, you have no choice -- you must use the GNU General
+Public License.</font></font>
+<p><font face="Arial, Helvetica"><font size=-1>The files "match.c", "net.c",
+and "blowfish.c" are exempt from the above restrictions. "match.c" is original
+code by Chris Fuller (email: crf@cfox.bchs.uh.edu) and has been placed
+by him into the public domain. "net.c" is by me and I [who?] also choose
+to place it in the public domain. "blowfish.c" is by various sources and
+is in the public domain. All 3 files contain useful functions that could
+easily be ported to other applications -- the other parts of the bot generally
+don't.</font></font>
+<p><font face="Arial, Helvetica"><font size=-1>Tcl is by John Ousterhout
+and is in no way affiliated with eggdrop, and likely has its own set of
+copyrights and whatnots.</font></font>
+<p><font face="Arial, Helvetica"><font size=-1>There is no warranty, implied
+or whatever. You use this software at your own risk, no matter what purpose
+you put it to.</font></font>
+<p><font face="Arial, Helvetica"><font size=-1>You didn't pay for it, so
+don't expect magic.</font></font></blockquote>
+<a NAME="item8"></a><b><font face="Arial, Helvetica"><font color="#FF0000"><font size=-1>(8)
+MAILING LIST</font></font></font></b>
+<blockquote><font face="Arial, Helvetica"><font size=-1>There are currently
+a couple of mailing lists about eggdrop. eggheads@eggdheads.org is the
+one relevant for posts about eggdrop 1.4 &amp; 1.5 (and bug fixes, and
+suggestions, etc).</font></font>
+<p><font face="Arial, Helvetica"><font size=-1>To subscribe to the eggheads
+mailing list, send email to: eggheads-request@eggheads.org In the body
+of the message, put "subscribe eggheads"; or go to <a href="http://scrambled.eggheads.org/mailman/listinfo/eggheads">http://scrambled.eggheads.org/mailman/listinfo/eggheads</a></font></font>
+<center>
+<p><b><u><font face="Arial, Helvetica"><font size=+1>### DO <font color="#FF0000">NOT</font>
+SEND ROBEY EMAIL ABOUT EGGDROP ###</font></font></u></b></center>
+
+<p><font face="Arial, Helvetica"><font size=-1>Robey is no longer developing
+the eggdrop code (although he does put a word in every now and then) so
+don't bother emailing him. If you have a serious problem, email the eggdrop
+mailing list and it will get to the coders.</font></font>
+<p><font face="Arial, Helvetica"><font size=-1>Please, before posting to
+this list, see what things are like, and when you do post, read over your
+post for readability, spelling, and grammar mistakes. Obviously, we're
+all human (or are we?) and we all make mistakes (heck, look at this document!
+;).</font></font>
+<p><font face="Arial, Helvetica"><font size=-1>Open discussion and debate
+is integral to change and progress. Don't flame others over mere form (grammar
+and spelling), or even substantive issues either for that matter. Please
+read and follow the mailing list rules.</font></font>
+<p><font face="Arial, Helvetica"><font size=-1>The eggheads@eggheads.org
+maillist is not dedicated to those all too common questions we have all
+seen on other lists... for example:</font></font>
+<p><font face="Arial, Helvetica"><font size=-1>"Why does my bot say this:
+Please edit your config file."</font></font>
+<br><font face="Arial, Helvetica"><font size=-1>"How do I telnet my bot?"</font></font>
+<br><font face="Arial, Helvetica"><font size=-1>"Where do I get eggdrop
+for windows??????"</font></font>
+<br><font face="Arial, Helvetica"><font size=-1>etc..</font></font>
+<p><font face="Arial, Helvetica"><font size=-1>Bug reports, technical questions,
+your thoughts or suggestions on new features being added to Eggdrop, things
+that should be removed or fixed, amazing problems that even stump the guru's,
+etc... are what we want to see here.</font></font></blockquote>
+<a NAME="item9"></a><b><font face="Arial, Helvetica"><font color="#FF0000"><font size=-1>(9)
+DOCUMENTATION</font></font></font></b>
+<blockquote><font face="Arial, Helvetica"><font size=-1>We're trying to
+keep the documentation up to date. If you feel that anything is missing
+here, or that anything should be added etc, please email eggheads@eggheads.org
+about it, thank you.</font></font></blockquote>
+<a NAME="item10"></a><b><font face="Arial, Helvetica"><font color="#FF0000"><font size=-1>(10)
+OBTAINING HELP</font></font></font></b>
+<blockquote><font face="Arial, Helvetica"><font size=-1>There is currently
+no uniform channel in existence to support eggdrop. At one time, such channels
+did exist, but they most often deteriorate into a vanity channel, where
+no one is willing to help.</font></font>
+<p><font face="Arial, Helvetica"><font size=-1>However, we'll list a few
+places here where you *might* get help. Note though that we are not responsible
+for those channels, or necessarily run those channels ourselves.</font></font>
+<p><font face="Arial, Helvetica"><font size=-1>Undernet - #eggdrop EFNet
+- #eggtcl, #eggheads IRCNet - #eggdrop, #egghelp, #bothelp</font></font>
+<p><font face="Arial, Helvetica"><font size=-1>If there are any serious
+places that should be added, let us know.</font></font></blockquote>
+</ol>
+
+<hr><i><font face="Arial, Helvetica"><font size=-1>(c) 1997 Robey Pointer</font></font></i>
+<br><i><font face="Arial, Helvetica"><font size=-1>(c) 2000 Eggheads Development
+Team</font></font></i>
+</body>
+</html>

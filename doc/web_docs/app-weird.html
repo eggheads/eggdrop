@@ -1,0 +1,64 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.7 [en] (WinNT; U) [Netscape]">
+   <title>Eggdrop Documentation: Weird Messages That Get Logged</title>
+</head>
+<body text="#000000" bgcolor="#FFFFFF" link="#3333FF" vlink="#3333FF" alink="#3333FF">
+<b><font face="Arial, Helvetica"><font color="#FF0000"><font size=-1>WEIRD
+MESSAGES THAT GET LOGGED</font></font></font></b>
+<hr>
+<blockquote><font face="Arial, Helvetica"><font size=-1>Shown below are
+some messages that eggdrop might log from time to time that are a bit strange
+and don't make it really that obvious what it's harping on about:</font></font>
+<blockquote><b><font face="Arial, Helvetica"><font size=-1>(!) timer drift
+-- spun N minutes</font></font></b></blockquote>
+<font face="Arial, Helvetica"><font size=-1>This is caused by one of several
+known things..</font></font>
+<li>
+<font face="Arial, Helvetica"><font size=-1>Your bot was swapped out of
+memory for a while, or that for some reason the computer stopped letting
+the bot run. Once a minute, eggdrop does a few maintanance things, including
+counting down any Tcl timers you have going. If for some reason, several
+minutes pass without eggdrop getting to do this, it logs this message to
+let you know what happened. It's generally a bad thing, because it means
+that the system your bot is on is very busy, and the bot can hardly keep
+track of the channel very well when it gets swapped out for minutes at
+a time.</font></font></li>
+
+<li>
+<font face="Arial, Helvetica"><font size=-1>On some systems (at least Linux)
+if the dns your bot is using to lookup hostnames is broken, and *very*
+slow in responding (this can occur if the dns's uplink doesnt exist) then
+you will get 4/5 minute time drifts continuously, not much can be done
+about this, it's an operating system problem :(</font></font></li>
+
+<li>
+<font face="Arial, Helvetica"><font size=-1>The clock on your machine has
+just been changed (e.g. it was running behind by several minutes and was
+just corrected)</font></font></li>
+
+<blockquote><b><font face="Arial, Helvetica"><font size=-1>(!) killmember(Nickname)
+-> nonexistant</font></font></b></blockquote>
+<font face="Arial, Helvetica"><font size=-1>We have yet to track this down.
+It's a mildly bad thing, though. It means the bot just got informed by
+the server that someone left the channel -- but the bot has no record of
+that person ever being ON the channel.</font></font>
+<p><font face="Arial, Helvetica"><font size=-1>jwilkinson@mail.utexas.edu
+had some insight into this one:</font></font>
+<p><font face="Arial, Helvetica"><font size=-1>This is not an eggdrop bug,
+at least not most of the time. This is a bug in all but perhaps the very
+latest ircd systems. It's not uncommon during netsplits and other joins
+for the server to lose track of killed or collided join notices. Also,
+in some servers, it is possible to specify non-standard characters, such
+as carret symbols, which get falsely interpreted as capital letters.</font></font>
+<p><font face="Arial, Helvetica"><font size=-1>When converted to lowercase,
+these symbols fail to get processed, and joins are not reported, although
+parts are.</font></font></blockquote>
+
+<hr><i><font face="Arial, Helvetica"><font size=-1>(c) 1997 Robey Pointer</font></font></i>
+<br><i><font face="Arial, Helvetica"><font size=-1>(c) 2000 Eggheads Development
+Team</font></font></i>
+</body>
+</html>

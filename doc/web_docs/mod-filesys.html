@@ -1,0 +1,188 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.7 [en] (WinNT; U) [Netscape]">
+   <title>Eggdrop Documentation: Filesys Module</title>
+</head>
+<body text="#000000" bgcolor="#FFFFFF" link="#3333FF" vlink="#3333FF" alink="#3333FF">
+<b><font face="Arial, Helvetica"><font color="#FF0000"><font size=-1>FILESYS
+MODULE
+<hr>TCL COMMANDS:</font></font></font></b>
+<blockquote><b><font face="Arial, Helvetica"><font size=-1>setpwd &lt;idx>
+&lt;dir></font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>changes the directory of
+a file system user, in exactly the same way as a 'cd' command would (ie,
+the directory can be specified relative or absolute)</font></font>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: nothing</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>getpwd &lt;idx></font></font></b>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: the current
+directory of a file system user</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>getfiles &lt;dir></font></font></b>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: list of files
+in the directory given; the directory is relative to dcc-path</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>getdirs &lt;dir></font></font></b>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: list of subdirectories
+in the directory given; the directory is relative to dcc-path</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>filesend &lt;idx> &lt;filename>
+[ircnick]</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>like dccsend, except it
+operates for a current filesystem user, and the filename is assumed to
+be a relative path from that user's current directory</font></font>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: "0" on failure;
+"1" on success (either an immediate send or a queued send)</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>setdesc &lt;dir> &lt;file>
+&lt;desc></font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>sets the description for
+a file in a file system directory; the directory is relative to the dcc-path</font></font>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: nothing</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>getdesc &lt;dir> &lt;file></font></font></b>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: the description
+for a file in the file system, if one exists</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>setowner &lt;dir> &lt;file>
+&lt;handle></font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>changes the owner for a
+file in the file system; the directory is relative to the dcc-path</font></font>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: nothing</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>getowner &lt;dir> &lt;file></font></font></b>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: the owner of
+a file in the file system</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>setlink &lt;dir> &lt;file>
+&lt;link></font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>creates or changes a linked
+file (a file that actually exists on another bot); the directory is relative
+to dcc-path <i>returns: nothing</i></font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>getlink &lt;dir> &lt;file></font></font></b>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: the link for
+a linked file, if it exists</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>getfileq &lt;handle></font></font></b>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: list of files
+queued by someone; each item in the list will be a sublist with two elements:
+nickname the file is being sent to, and the filename</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>setuploads &lt;handle>
+&lt;#uploads> &lt;size-in-k></font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>sets a user's statistics
+on the number of files uploaded and the total kilobytes uploaded</font></font>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: nothing</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>getuploads &lt;handle></font></font></b>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: list containing
+upload statistics for a user: the first element is the number of files
+uploaded; the second element is the total kilobytes uploaded</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>setdnloads &lt;handle>
+&lt;#dnloads> &lt;size-in-k></font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>like setuploads, but sets
+the download statistics</font></font>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: nothing</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>getdnloads &lt;handle></font></font></b>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: list containing
+download statistics, in the same format as getuploads</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>mkdir &lt;directory>
+[required-flags]</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>creates a directory in
+the files system, only users with the required flags may access</font></font>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns:</font></font></i>
+<br><font face="Arial, Helvetica"><font size=-1>0 on success</font></font>
+<br><font face="Arial, Helvetica"><font size=-1>1 on can't create directory</font></font>
+<br><font face="Arial, Helvetica"><font size=-1>2 on directory exists but
+is not a directory</font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>rmdir &lt;directory></font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>removes a directory from
+the file system.</font></font>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: 0 on success,
+1 on failure</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>mv &lt;file> &lt;destination></font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>moves the file from it's
+source to the given destination, file can also be a mask, eg /incoming/*
+provided the destination is a directory</font></font>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: number of files
+copied on success or negative numbers to indicate errors: -1 = invalid
+source file, -2 = invalid dest -3 = you're trying to copy onto itself (duh!)
+-4 = no matches found</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>cp &lt;file> &lt;destination></font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>exactly the same as mv
+except it leaves the original file there as well</font></font>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: same as mv</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>getflags &lt;dir></font></font></b>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: the flags required
+to access this directory</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>setflags &lt;dir> [flags]</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>sets the flags required
+to access the directory</font></font>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: 0 on success,
+-1 on failure</font></font></i></blockquote>
+
+<hr><b><font face="Arial, Helvetica"><font color="#FF0000"><font size=-1>TCL
+VARIABLES:</font></font></font></b>
+<blockquote><b><font face="Arial, Helvetica"><font size=-1>files-path</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>where the filesys is stored</font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>incoming-path</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>where to upload files if
+upload-to-cd = 0</font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>filedb-path</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>where to store filedb's
+if they can't be stored in the directories themselves</font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>max-filesize</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>maximum file transfer size
+in kbytes</font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>max-file-users</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>maximum number of users
+allowed in the file area</font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>upload-to-pwd</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>allow users to upload to
+their current directory?</font></font></blockquote>
+
+<hr><b><font face="Arial, Helvetica"><font color="#FF0000"><font size=-1>USER
+ENTRIES:</font></font></font></b>
+<blockquote><font face="Arial, Helvetica"><font size=-1>Two user entries
+relating to filesytem transfers are also added, <b>FSTAT</b> and <b>DCCDIR</b>
+to TCL users (<b>USERENTRY_FSTAT</b> and <b>USERENTRY_DCCDIR</b> to C programmers,
+see filesys.h for the struct for fstat, dccdir is a normal unshared string).
+The values can be set/read using get/setuser</font></font>
+<blockquote><font face="Arial, Helvetica"><font size=-1><b>getuser &lt;handle></b>
+FSTAT [u/d]</font></font>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: the users FSTAT
+entry, if u or d is specified, only the uploads or downloads are returned,
+otherwise uploads and downloads are returned, all are in the form 'files
+kbytes'</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>setuser &lt;handle> FSTAT
+&lt;u/d> [files [kbytes]]</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>sets a users FSTAT entry
+(u = uploads, d = downloads), settings default to 0.</font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>getuser &lt;handle> DCCDIR</font></font></b>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: the user's
+currently saved dcc directory</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>setuser &lt;handle> DCCDIR
+&lt;dir></font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>sets a new value for a
+users dcc directory</font></font></blockquote>
+</blockquote>
+
+<hr><b><font face="Arial, Helvetica"><font color="#FF0000"><font size=-1>BINDING(S)
+TABLE(S):</font></font></font></b>
+<blockquote><font face="Arial, Helvetica"><font size=-1>A binding table
+is also provided for the file system area commands: (<b>Note:</b> everything
+is passed through the <b>FILT</b> binding table first)</font></font>
+<blockquote><b><font face="Arial, Helvetica"><font size=-1>bind fil &lt;flags>
+&lt;command> &lt;proc></font></font></b>
+<blockquote><font face="Arial, Helvetica"><font size=-1>calls TCL: <i>(tcl
+callback provided)</i></font></font>
+<blockquote><font face="Arial, Helvetica"><font size=-1>procname &lt;handle>
+&lt;idx> &lt;args></font></font>
+<br><i><font face="Arial, Helvetica"><font size=-1>return: 1 to make the
+file get logged as:</font></font></i>
+<br><i><font face="Arial, Helvetica"><font size=-1>#handle# files: command</font></font></i></blockquote>
+<font face="Arial, Helvetica"><font size=-1>calls C:</font></font>
+<blockquote><font face="Arial, Helvetica"><font size=-1>args[1] = &amp;
+(int) idx;</font></font>
+<br><font face="Arial, Helvetica"><font size=-1>args[2] = char * args;</font></font></blockquote>
+</blockquote>
+<font face="Arial, Helvetica"><font size=-1>Used for commands from a file
+area user. the command is the first word and everything else is the args
+string. the idx is valid until the user disconnects.</font></font></blockquote>
+</blockquote>
+
+<hr><i><font face="Arial, Helvetica"><font size=-1>(c) 1997 Robey Pointer</font></font></i>
+<br><i><font face="Arial, Helvetica"><font size=-1>(c) 2000 Eggheads Development
+Team</font></font></i>
+</body>
+</html>

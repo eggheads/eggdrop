@@ -1,0 +1,93 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.7 [en] (WinNT; U) [Netscape]">
+   <title>Eggdrop Documentation: Access Levels? No, Flags</title>
+</head>
+<body text="#000000" bgcolor="#FFFFFF" link="#3333FF" vlink="#3333FF" alink="#3333FF">
+<b><font face="Arial, Helvetica"><font color="#FF0000"><font size=-1>ACCESS
+LEVELS? NO, FLAGS</font></font></font></b>
+<hr>
+<blockquote><font face="Arial, Helvetica"><font size=-1>Eggdrop does not
+have access levels like some bots. There are no meaningless numbers or
+titles. Instead, each user has "flags" that entitle them to certain privileges.
+Think of a flag as a badge. Any user can have any number of flags -- you
+can have no flags, or you can have all of them. Some flags are good, some
+are bad. Each flag is identified by a letter. The standard global flags
+are:</font></font>
+<blockquote><b><font face="Arial, Helvetica"><font size=-1>n (owner):</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>Someone who has absolute
+control -- you generally only want one or two people to have this flag.</font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>m (master):</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>Someone who has access
+to almost every feature of the bot.</font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>t (botnet):</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>Someone who has access
+to all features dealing with the botnet.</font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>x (xfer):</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>Someone who has access
+to the file transfer area of the bot (if it exists) and can send and receive
+files to/from the bot.</font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>j (janitor):</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>Someone who can perform
+maintanence in the file area of the bot (if it exists) -- like a "master"
+of the file area.</font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>c (common):</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>Marks a user who is really
+just a public irc site from which any number of people can use irc, making
+the user@host information useless.</font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>p (party):</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>Someone who has access
+to the party line.</font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>b (bot):</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>Marks a user that is really
+a bot.</font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>u (unshare):</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>User record is not sent
+to other bots</font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>h (hilite):</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>Use nice formatting codes,
+bold, inverse, etc. in the help files</font></font></blockquote>
+<font face="Arial, Helvetica"><font size=-1>Also, there are 26 user-defined
+flags numbered A-Z (capitals). Bots can have specific flags which are explained
+later on. The channel flags for the bot are: <i>(these can also be applied
+globally, or on a channel-specific basis)</i></font></font>
+<blockquote><b><font face="Arial, Helvetica"><font size=-1>o (op):</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>Someone who can ask for
+channel op (+o) status on the channel at will.</font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>d (deop):</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>Someone who is not permitted
+to ever gain channel op status.</font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>k (kick):</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>Someone who should be kicked
+if they ever attempt to join the channel.</font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>f (friend):</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>If revenge mode is on,
+the bot won't take revenge on someone with this flag.</font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>m (master):</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>Someone who has the ability
+to add/delete/modify users on the channel.</font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>n (owner):</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>Someone who owns the channel
+and has access to a reasonable amount of commands.</font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>a (auto-op):</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>Automatically op the person
+when they join the channel even if the channel isn't +autoop.</font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>v (auto-voice):</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>Automatically give this
+person a voice it they join a +autovoice channel.</font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>g(auto-voice):</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>Automatically give this
+person a voice even if the channel is not autovoice. Works similar to +a</font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>q (quiet):</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>Do not allow this person
+to get a voice on a +autovoice channel.</font></font></blockquote>
+<font face="Arial, Helvetica"><font size=-1>Once again there are 26 user-defined
+flags numbered A-Z, as channel flags.</font></font></blockquote>
+
+<hr><i><font face="Arial, Helvetica"><font size=-1>(c) 1997 Robey Pointer</font></font></i>
+<br><i><font face="Arial, Helvetica"><font size=-1>(c) 2000 Eggheads Development
+Team</font></font></i>
+</body>
+</html>
