@@ -7469,7 +7469,7 @@ rm -f conftest.out ;;
     default-2 )
 if test -f .modules
 then
-  $ac_given_srcdir/misc/modconfig --top_srcdir="$ac_given_srcdir" Makefile
+  $srcdir/misc/modconfig --top_srcdir="$srcdir/src" Makefile
 fi ;;
   esac
 done

@@ -1,7 +1,7 @@
 dnl aclocal.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: aclocal.m4,v 1.54 2002/02/22 05:26:05 guppy Exp $
+dnl $Id: aclocal.m4,v 1.55 2002/02/24 07:57:42 guppy Exp $
 dnl
 
 
@@ -1230,7 +1230,7 @@ AC_DEFUN(EGG_CATCH_MAKEFILE_REBUILD, [dnl
   AC_OUTPUT_COMMANDS([
 if test -f .modules
 then
-  $ac_given_srcdir/misc/modconfig --top_srcdir="$ac_given_srcdir" Makefile
+  $srcdir/misc/modconfig --top_srcdir="$srcdir/src" Makefile
 fi])
 ])dnl
 
