@@ -1,7 +1,7 @@
 /*
  * servmsg.c -- part of server.mod
  *
- * $Id: servmsg.c,v 1.52 2001/04/12 02:39:47 guppy Exp $
+ * $Id: servmsg.c,v 1.53 2001/05/18 22:35:04 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -707,18 +707,11 @@ static void minutely_checks()
      */
     if (strncmp(botname, origbotname, strlen(botname))) {
       /* See if my nickname is in use and if if my nick is right.  */
-      if (use_ison) {
-	/* Save space and use the same ISON :P */
 	alt = get_altbotnick();
 	if (alt[0] && egg_strcasecmp (botname, alt))
 	  dprintf(DP_SERVER, "ISON :%s %s %s\n", botname, origbotname, alt);
 	else
           dprintf(DP_SERVER, "ISON :%s %s\n", botname, origbotname);
-      } else
-	dprintf(DP_SERVER, "TRACE %s\n", origbotname);
-      /* Will return 206(undernet), 401(other), or 402(efnet) numeric if
-       * not online.
-      */
     }
   }
   if (min_servs == 0)
@@ -759,7 +752,7 @@ static void got303(char *from, char *msg)
   char *tmp, *alt;
   int ison_orig = 0, ison_alt = 0;
 
-  if (!use_ison || !keepnick ||
+  if (!keepnick ||
       !strncmp(botname, origbotname, strlen(botname))) {
     return;
   }
@@ -783,19 +776,6 @@ static void got303(char *from, char *msg)
       dprintf(DP_SERVER, "NICK %s\n", alt);
     }
   }
-}
-
-/* Trace failed! meaning my nick is not in use! 206 (undernet)
- * 401 (other non-efnet) 402 (Efnet)
- */
-static int trace_fail(char *from, char *msg)
-{
-  if (keepnick && !use_ison  && !egg_strcasecmp (botname, origbotname)) {
-    if (!nick_juped)
-      putlog(LOG_MISC, "*", IRC_GETORIGNICK, origbotname);
-    dprintf(DP_SERVER, "NICK %s\n", origbotname);
-  }
-  return 0;
 }
 
 /* 432 : Bad nickname
@@ -1100,18 +1080,6 @@ static int gotkick(char *from, char *msg)
   return 0;
 }
 
-/* Additional 3sec penalty if a link was traced.
- */
-static int tracepenalty(char *from, char *msg)
-{
-  if (use_penalties) {
-    last_time += 3;
-    if (debug_output)
-      putlog(LOG_SRVOUT, "*", "adding 3secs penalty (traced link)");
-  }
-  return 0;
-}
-
 /* Another sec penalty if bot did a whois on another server.
  */
 static int whoispenalty(char *from, char *msg)
@@ -1152,11 +1120,8 @@ static cmd_t my_raw_binds[] =
   {"PONG",	"",	(Function) gotpong,		NULL},
   {"WALLOPS",	"",	(Function) gotwall,		NULL},
   {"001",	"",	(Function) got001,		NULL},
-  {"206",	"",	(Function) trace_fail,		NULL},
   {"251",	"",	(Function) got251,		NULL},
   {"303",	"",	(Function) got303,		NULL},
-  {"401",	"",	(Function) trace_fail,		NULL},
-  {"402",	"",	(Function) trace_fail,		NULL},
   {"432",	"",	(Function) got432,		NULL},
   {"433",	"",	(Function) got433,		NULL},
   {"437",	"",	(Function) got437,		NULL},
@@ -1166,7 +1131,6 @@ static cmd_t my_raw_binds[] =
   {"NICK",	"",	(Function) gotnick,		NULL},
   {"ERROR",	"",	(Function) goterror,		NULL},
   {"KICK",	"",	(Function) gotkick,		NULL},
-  {"200",	"",	(Function) tracepenalty,	NULL},
   {"318",	"",	(Function) whoispenalty,	NULL},
   {NULL,	NULL,	NULL,				NULL}
 };

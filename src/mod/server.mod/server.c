@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  *
- * $Id: server.c,v 1.62 2001/05/12 20:48:36 guppy Exp $
+ * $Id: server.c,v 1.63 2001/05/18 22:35:04 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -80,7 +80,6 @@ static int answer_ctcp;		/* answer how many stacked ctcp's ? */
 static int lowercase_ctcp;	/* answer lowercase CTCP's (non-standard) */
 static char bothost[81];	/* dont mind me, Im stupid */
 static int check_mode_r;	/* check for IRCNET +r modes */
-static int use_ison;		/* arthur2 static */
 static int net_type;
 static char connectserver[121];	/* what, if anything, to do before connect
 				   to the server */
@@ -1277,7 +1276,6 @@ static tcl_ints my_tcl_ints[] =
   {"server-cycle-wait",		(int *) &server_cycle_wait,	0},
   {"default-port",		&default_port,			0},
   {"check-mode-r",		&check_mode_r,			0},
-  {"use-ison",			&use_ison,			0},
   {"net-type",			&net_type,			0},
   {"ctcp-mode",			&ctcp_mode,			0},
   {"double-mode",		&double_mode,			0},/* G`Quann */
@@ -1814,7 +1812,6 @@ char *server_start(Function *global_funcs)
   check_mode_r = 0;
   maxqmsg = 300;
   burst = 0;
-  use_ison = 1;
   net_type = NETT_EFNET;
   double_mode = 0;
   double_server = 0;

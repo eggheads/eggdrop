@@ -114,13 +114,6 @@ set serverror-quit 1
     Valid settings are 0 for OFF and 1 ON.
 
 
-set use-ison 1
-    This setting makes the bot not u se /trace but /ison to check if our
-    botnick is free or being used.
-    Please note: some irc admins, look for excessive use of /trace
-    Valid settings are 0 for OFF and 1 ON.
-
-
 set max-queue-msg 300
     Set here the maximum number of lines to queue to the server. If you're
     going to dump large chunks of text to people over irc, you will probably
