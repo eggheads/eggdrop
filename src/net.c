@@ -962,8 +962,7 @@ int sanitycheck_dcc(char *nick, char *from, char *ipaddy, char *port)
     putlog(LOG_MISC, "*", "ALERT: (%s!%s) sent a DCC request with bogus IP information of %s port %u!",
 	   nick, from, badaddress, prt);
   else
-    putlog(LOG_MISC, "*", "ALERT: (%s!%s) sent a DCC request with bogus IP information of (%s [%s]) port %u!",
-	   nick, from, dnsname, badaddress, prt);
-  /* Probably evil. */
+    return 1; /* <- usually happens when we have 
+			a user with an unresolved hostmask! */
   return 0;
 }
