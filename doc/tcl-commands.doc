@@ -1,7 +1,7 @@
-$Id: tcl-commands.doc,v 1.104 2003/12/09 00:27:13 wcc Exp $
+$Id: tcl-commands.doc,v 1.105 2003/12/13 22:06:07 wcc Exp $
 
 Eggdrop Tcl Commands
-Last revised: December 08, 2003
+Last revised: December 13, 2003
      _________________________________________________________________
 
                            Eggdrop Tcl Commands
@@ -2063,16 +2063,17 @@ marked with vertical bars (|) on the left.
 
          Description: triggered whenever one of these events happen. flags
            are ignored; valid events are:
-             sighup     - called on a kill -HUP <pid>
-             sigterm    - called on a kill -TERM <pid>
-             sigill     - called on a kill -ILL <pid>
-             sigquit    - called on a kill -QUIT <pid>
-             save       - called when the userfile is saved
-             rehash     - called just after a rehash
-             prerehash  - called just before a rehash
-             prerestart - called just before a restart
-             logfile    - called when the logs are switched daily
-             loaded     - called when the bot is done loading
+             sighup          - called on a kill -HUP <pid>
+             sigterm         - called on a kill -TERM <pid>
+             sigill          - called on a kill -ILL <pid>
+             sigquit         - called on a kill -QUIT <pid>
+             save            - called when the userfile is saved
+             rehash          - called just after a rehash
+             prerehash       - called just before a rehash
+             prerestart      - called just before a restart
+             logfile         - called when the logs are switched daily
+             loaded          - called when the bot is done loading
+|            userfile-loaded - called after userfile has been loaded
 
              connect-server    - called just before we connect to an IRC server
              init-server       - called when we actually get on our IRC server

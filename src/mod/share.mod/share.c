@@ -1,7 +1,7 @@
 /*
  * share.c -- part of share.mod
  *
- * $Id: share.c,v 1.76 2003/11/01 23:26:58 wcc Exp $
+ * $Id: share.c,v 1.77 2003/12/13 22:06:08 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1866,6 +1866,7 @@ static void finish_share(int idx)
   clear_userlist(ou);
   unlink(dcc[idx].u.xfer->filename);    /* Done with you!               */
   reaffirm_owners();            /* Make sure my owners are +n   */
+  check_tcl_event("userfile-loaded");
   updatebot(-1, dcc[j].nick, '+', 0);
 }
 

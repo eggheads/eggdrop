@@ -7,7 +7,7 @@
  *   telling the current programmed settings
  *   initializing a lot of stuff and loading the tcl scripts
  *
- * $Id: chanprog.c,v 1.45 2003/11/27 05:45:06 wcc Exp $
+ * $Id: chanprog.c,v 1.46 2003/12/13 22:06:08 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -506,6 +506,7 @@ void chanprog()
     unlink(s);
   }
   reaffirm_owners();
+  check_tcl_event("userfile-loaded");
 }
 
 /* Reload the user file from disk
@@ -524,6 +525,7 @@ void reload()
   if (!readuserfile(userfile, &userlist))
     fatal(MISC_MISSINGUSERF, 0);
   reaffirm_owners();
+  check_tcl_event("userfile-loaded");
   call_hook(HOOK_READ_USERFILE);
 }
 
