@@ -2,7 +2,7 @@
  * irc.c -- part of irc.mod
  *   support for channels within the bot 
  * 
- * $Id: irc.c,v 1.47 2001/01/16 17:13:22 guppy Exp $
+ * $Id: irc.c,v 1.48 2001/01/23 04:33:56 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -88,28 +88,27 @@ static int want_to_revenge(struct chanset_t *chan, struct userrec *u,
   struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
   struct flag_record fr2 = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
 
-  get_user_flagrec(u, &fr, chan->dname);
+  /* Do not take revenge upon ourselves */
+  if (match_my_nick(badnick))
+    return 0;
+
   get_user_flagrec(u2, &fr2, chan->dname);
 
-  /* If we don't even know the user we'll probably not want to protect
-   * it.
-   */
+  /* Why protect people we do not even know? */
   if (!u2)
     return 0;
 
+  get_user_flagrec(u, &fr, chan->dname);
+ 
   /* Kickee is not a friend? */
   if (!chan_friend(fr) && !glob_friend(fr) &&
-      /* ... and I didn't kick them? */
-      !match_my_nick(badnick) &&
       /* ... and they didn't kick themself? */
       rfc_casecmp(badnick, victim)) {
     /* They kicked ME? and I'm revenging?... muahaHAHAHA! */
     if (mevictim) {
       if (channel_revengebot(chan))
         return 1;
-    }
-    /* Revenge for others? */
-    else if (channel_revenge(chan) &&
+    } else if (channel_revenge(chan) &&
               /* ... and protecting friends, and kicked is a valid friend? */
              ((channel_protectfriends(chan) &&
                (chan_friend(fr2) || (glob_friend(fr2) && !chan_deop(fr2)))) ||
