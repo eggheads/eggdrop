@@ -2,7 +2,7 @@
  * files.c - part of filesys.mod
  *   handles all file system commands
  * 
- * $Id: files.c,v 1.18 2000/02/01 20:36:18 fabian Exp $
+ * $Id: files.c,v 1.19 2000/02/29 20:03:57 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -513,8 +513,8 @@ static void cmd_reget_get(int idx, char *par, int resend)
   if (!ok)
     dprintf(idx, FILES_NOMATCH);
   else
-    putlog(LOG_FILES, "*", "files: #%s# %sget %s %s", dcc[idx].nick, what, par,
-	   resend ? "re" : "");
+    putlog(LOG_FILES, "*", "files: #%s# %sget %s %s", dcc[idx].nick,
+	   resend ? "re" : "", what, par);
 }
 
 static void cmd_reget(int idx, char *par)

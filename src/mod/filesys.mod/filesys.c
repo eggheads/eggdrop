@@ -2,7 +2,7 @@
  * filesys.c -- part of filesys.mod
  *   main file of the filesys eggdrop module
  * 
- * $Id: filesys.c,v 1.23 2000/02/01 20:36:18 fabian Exp $
+ * $Id: filesys.c,v 1.24 2000/02/29 20:03:57 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -742,11 +742,9 @@ static void filesys_dcc_send_hostresolved(int i)
   char *s1, *param, prt[100], ip[100], *tempf;
   int len = dcc[i].u.dns->ibuf, j;
 
-  strncpy(dcc[i].host, dcc[i].u.dns->host, UHOSTLEN - 1);
-  dcc[i].host[UHOSTLEN - 1] = 0;
   sprintf(prt, "%d", dcc[i].port);
   sprintf(ip, "%lu", iptolong(my_htonl(dcc[i].addr)));
-  if (!hostsanitycheck_dcc(dcc[i].nick, dcc[i].host, dcc[i].addr,
+  if (!hostsanitycheck_dcc(dcc[i].nick, dcc[i].u.dns->host, dcc[i].addr,
                            dcc[i].u.dns->host, prt)) {
     lostdcc(i);
     return;
