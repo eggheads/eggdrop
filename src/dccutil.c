@@ -134,7 +134,7 @@ void dprintf VARARGS_DEF(int, arg1)
   } else {
     if (len > 500) {		/* truncate to fit */
       SBUF[500] = 0;
-      strcat(SBUF + len, "\n");
+      strcat(SBUF, "\n");
       len = 501;
     }
     if (dcc[idx].type && ((long) (dcc[idx].type->output) == 1)) {
