@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  *
- * $Id: main.c,v 1.73 2001/11/10 19:45:33 poptix Exp $
+ * $Id: main.c,v 1.74 2001/11/16 05:01:32 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -175,7 +175,8 @@ void fatal(const char *s, int recoverable)
 
 int expmem_chanprog(), expmem_users(), expmem_misc(), expmem_dccutil(),
  expmem_botnet(), expmem_tcl(), expmem_tclhash(), expmem_net(),
- expmem_modules(int), expmem_language(), expmem_tcldcc();
+ expmem_modules(int), expmem_language(), expmem_tcldcc(),
+ expmem_tclmisc();
 
 /* For mem.c : calculate memory we SHOULD be using
  */
@@ -185,7 +186,8 @@ int expected_memory(void)
 
   tot = expmem_chanprog() + expmem_users() + expmem_misc() +
     expmem_dccutil() + expmem_botnet() + expmem_tcl() + expmem_tclhash() +
-    expmem_net() + expmem_modules(0) + expmem_language() + expmem_tcldcc();
+    expmem_net() + expmem_modules(0) + expmem_language() + expmem_tcldcc() +
+    expmem_tclmisc();
   return tot;
 }
 
