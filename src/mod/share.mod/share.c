@@ -575,9 +575,13 @@ static void share_mns_exemptchan (int idx, char * par) {
     chan = findchan(chname);
     fr.match = (FR_CHAN | FR_BOT);
     get_user_flagrec(dcc[idx].user,&fr,chname);
-    if (chan && (bot_chan(fr) || bot_global(fr))) {
+    if (!chan || !channel_shared(chan) ||
+        !(bot_chan(fr) || bot_global(fr)))
+      putlog(LOG_CMDS, "*",
+        "Cancel channel exempt %s on %s rejected - channel not shared.",
+        par, chname);
+    else {
       shareout_but(chan,idx, "-ec %s %s\n", chname, par);
-      if (channel_shared(chan)) {
 	putlog(LOG_CMDS, "*", "%s: cancel exempt %s on %s", dcc[idx].nick,
 	       par, chname);
 	noshare = 1;
@@ -585,7 +589,6 @@ static void share_mns_exemptchan (int idx, char * par) {
 	noshare = 0;
       }
     } 
-  }
 }
 
 static void share_mns_invitechan (int idx, char * par) {
@@ -597,16 +600,19 @@ static void share_mns_invitechan (int idx, char * par) {
     chan = findchan(chname);
     fr.match = (FR_CHAN | FR_BOT);
     get_user_flagrec(dcc[idx].user,&fr,chname);
-    if (chan && (bot_chan(fr) || bot_global(fr))) {
+    if (!chan || !channel_shared(chan) ||
+        !(bot_chan(fr) || bot_global(fr)))
+      putlog(LOG_CMDS, "*",
+        "Cancel channel invite %s on %s rejected - channel not shared.",
+        par, chname);
+    else {
       shareout_but(chan,idx, "-invc %s %s\n", chname, par);
-      if (channel_shared(chan)) {
 	putlog(LOG_CMDS, "*", "%s: cancel invite %s on %s", dcc[idx].nick,
 	       par, chname);
 	noshare = 1;
  	    u_delinvite(chan, par,1);
  	    noshare = 0;
       }
-    } 
   }
 }
 
