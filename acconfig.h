@@ -5,7 +5,7 @@
  * acconfig.h
  *   template file autoheader uses when building config.h.in
  * 
- * $Id: acconfig.h,v 1.13 2003/03/04 10:33:11 tothwolf Exp $
+ * $Id: acconfig.h,v 1.14 2003/03/04 22:14:03 wcc Exp $
  */
 
 /* Define if modules will work on your system. */
@@ -20,9 +20,6 @@
 /* Define if running on OSF/1 platform. */
 #undef OSF1_HACKS
 
-/* Define to use Eggdrop's snprintf functions without regard to HAVE_SNPRINTF. */
-#undef BROKEN_SNPRINTF
-
 /* Define if running on OSF/1 platform. */
 #undef STOP_UAC
 
@@ -34,6 +31,12 @@
 
 /* Define if running under Cygwin.  */
 #undef CYGWIN_HACKS
+
+/* Define if system supports long long. */
+#undef HAVE_LONG_LONG
+
+/* Define if vsnprintf is C99 compliant. */
+#undef HAVE_C99_VSNPRINTF
 
 /* Define if you have a version of libsafe with a broken sscanf(). */
 #undef LIBSAFE_HACKS

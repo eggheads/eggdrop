@@ -5,7 +5,7 @@
  * acconfig.h
  *   template file autoheader uses when building config.h.in
  * 
- * $Id: config.h.in,v 1.27 2003/03/04 10:33:11 tothwolf Exp $
+ * $Id: config.h.in,v 1.28 2003/03/04 22:14:03 wcc Exp $
  */
 
 /* Define if modules will work on your system. */
@@ -20,9 +20,6 @@
 /* Define if running on OSF/1 platform. */
 #undef OSF1_HACKS
 
-/* Define to use Eggdrop's snprintf functions without regard to HAVE_SNPRINTF. */
-#undef BROKEN_SNPRINTF
-
 /* Define if running on OSF/1 platform. */
 #undef STOP_UAC
 
@@ -34,6 +31,12 @@
 
 /* Define if running under Cygwin.  */
 #undef CYGWIN_HACKS
+
+/* Define if system supports long long. */
+#undef HAVE_LONG_LONG
+
+/* Define if vsnprintf is C99 compliant. */
+#undef HAVE_C99_VSNPRINTF
 
 /* Define if you have a version of libsafe with a broken sscanf(). */
 #undef LIBSAFE_HACKS
@@ -54,15 +57,18 @@
 #undef EGG_MOD_EXT
 
 
+/* Define to 1 if you have the `asprintf' function. */
+#undef HAVE_ASPRINTF
+
 /* Define to 1 if you have the `clock' function. */
 #undef HAVE_CLOCK
+
+/* Define to 1 if you have the <ctype.h> header file. */
+#undef HAVE_CTYPE_H
 
 /* Define to 1 if you have the <dirent.h> header file, and it defines `DIR'.
    */
 #undef HAVE_DIRENT_H
-
-/* Define to 1 if you have the <dlfcn.h> header file. */
-#undef HAVE_DLFCN_H
 
 /* Define to 1 if you have the `dlopen' function. */
 #undef HAVE_DLOPEN
@@ -105,6 +111,10 @@
 
 /* Define to 1 if you have the <limits.h> header file. */
 #undef HAVE_LIMITS_H
+
+/* Define to 1 if long double works and has more range or precision than
+   double. */
+#undef HAVE_LONG_DOUBLE
 
 /* Define to 1 if you have the `memcpy' function. */
 #undef HAVE_MEMCPY
@@ -197,6 +207,9 @@
 
 /* Define to 1 if you have the <unistd.h> header file. */
 #undef HAVE_UNISTD_H
+
+/* Define to 1 if you have the `vasprintf' function. */
+#undef HAVE_VASPRINTF
 
 /* Define to 1 if you have the `vsnprintf' function. */
 #undef HAVE_VSNPRINTF

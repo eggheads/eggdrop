@@ -1,7 +1,7 @@
 dnl aclocal.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: aclocal.m4,v 1.63 2003/03/04 10:33:11 tothwolf Exp $
+dnl $Id: aclocal.m4,v 1.64 2003/03/04 22:14:03 wcc Exp $
 dnl
 
 
@@ -305,7 +305,6 @@ case "$egg_cv_var_system_type" in
       ;;
     esac
     AC_DEFINE(STOP_UAC)dnl
-    AC_DEFINE(BROKEN_SNPRINTF)dnl
   ;;
   SunOS)
     if test "`echo $egg_cv_var_system_release | cut -d . -f 1`" = "5"
@@ -430,6 +429,65 @@ EOF
   exit 1
 fi
 ])dnl
+
+
+dnl  EGG_C_LONG_LONG
+dnl
+AC_DEFUN(EGG_C_LONG_LONG, [dnl
+# Code borrowed from Samba
+AC_CACHE_CHECK([for long long], egg_cv_have_long_long, [
+AC_TRY_RUN([
+#include <stdio.h>
+int main() {
+	long long x = 1000000;
+	x *= x;
+	exit(((x / 1000000) == 1000000) ? 0: 1);
+}
+],
+egg_cv_have_long_long="yes",
+egg_cv_have_long_long="no",
+egg_cv_have_long_long="cross")])
+if test "$egg_cv_have_long_long" = "yes"
+then
+  AC_DEFINE(HAVE_LONG_LONG)
+fi
+])
+
+
+dnl  EGG_FUNC_C99_VSNPRINTF
+dnl
+AC_DEFUN(EGG_FUNC_C99_VSNPRINTF, [dnl
+# Code borrowed from Samba
+AC_CACHE_CHECK([for C99 vsnprintf], egg_cv_have_c99_vsnprintf, [
+AC_TRY_RUN([
+#include <sys/types.h>
+#include <stdarg.h>
+void foo(const char *format, ...) { 
+	va_list ap;
+	int len;
+	char buf[5];
+
+	va_start(ap, format);
+	len = vsnprintf(0, 0, format, ap);
+	va_end(ap);
+	if (len != 5) exit(1);
+
+	if (snprintf(buf, 3, "hello") != 5 || strcmp(buf, "he") != 0) exit(1);
+
+	exit(0);
+}
+int main(){
+	foo("hello");
+}
+],
+egg_cv_have_c99_vsnprintf="yes",
+egg_cv_have_c99_vsnprintf="no",
+egg_cv_have_c99_vsnprintf="cross")])
+if test "$egg_cv_have_c99_vsnprintf" = "yes"
+then
+  AC_DEFINE(HAVE_C99_VSNPRINTF)
+fi
+])
 
 
 dnl  EGG_HEADER_STDC()

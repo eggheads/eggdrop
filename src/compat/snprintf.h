@@ -1,8 +1,7 @@
 /*
- * snprintf.h
- *   header file for snprintf.c
+ * snprintf.h --
  *
- * $Id: snprintf.h,v 1.14 2003/03/04 10:33:11 tothwolf Exp $
+ *	prototypes for snprintf.c
  */
 /*
  * Copyright (C) 2000, 2001, 2002, 2003 Eggheads Development Team
@@ -21,43 +20,42 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+/*
+ * $Id: snprintf.h,v 1.15 2003/03/04 22:14:03 wcc Exp $
+ */
 
-#ifndef _EGG_COMPAT_SNPRINTF_H_
-#define _EGG_COMPAT_SNPRINTF_H_
+#ifndef _EGG_SNPRINTF_H
+#define _EGG_SNPRINTF_H
 
-#include "src/main.h"
-#include <stdio.h>
-
-/* Check for broken snprintf versions */
-#ifdef BROKEN_SNPRINTF
-#  ifdef HAVE_VSNPRINTF
-#    undef HAVE_VSNPRINTF
-#  endif
-#  ifdef HAVE_SNPRINTF
-#    undef HAVE_SNPRINTF
-#  endif
+#ifdef HAVE_CONFIG_H
+# include "config.h"
 #endif
 
-/* Use the system libraries version of vsnprintf() if available. Otherwise
- * use our own.
- */
-#ifndef HAVE_VSNPRINTF
-int egg_vsnprintf(char *str, size_t count, const char *fmt, va_list ap);
+#include <stdio.h>
+#include <stdarg.h>		/* FIXME: possible varargs.h conflicts */
+
+#if !defined(HAVE_VSNPRINTF) || !defined(HAVE_C99_VSNPRINTF)
+int egg_vsnprintf(char *str, size_t count, const char *fmt, va_list args);
 #else
 #  define egg_vsnprintf vsnprintf
 #endif
 
-/* Use the system libraries version of snprintf() if available. Otherwise
- * use our own.
- */
-#ifndef HAVE_SNPRINTF
-#  ifdef __STDC__
+#if !defined(HAVE_SNPRINTF) || !defined(HAVE_C99_VSNPRINTF)
 int egg_snprintf(char *str, size_t count, const char *fmt, ...);
-#  else
-int egg_snprintf();
-#  endif
 #else
 #  define egg_snprintf snprintf
 #endif
 
-#endif /* !_EGG_COMPAT_SNPRINTF_H_ */
+#ifndef HAVE_VASPRINTF
+int egg_vasprintf(char **ptr, const char *format, va_list ap);
+#else
+#  define egg_vasprintf vasprintf
+#endif
+
+#ifndef HAVE_ASPRINTF
+int egg_asprintf(char **ptr, const char *format, ...);
+#else
+#  define egg_asprintf asprintf
+#endif
+
+#endif				/* !_EGG_SNPRINTF_H */
