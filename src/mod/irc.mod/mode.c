@@ -4,7 +4,7 @@
  *   channel mode changes and the bot's reaction to them
  *   setting and getting the current wanted channel modes
  * 
- * $Id: mode.c,v 1.23 2000/06/10 01:02:23 fabian Exp $
+ * $Id: mode.c,v 1.24 2000/06/10 01:03:44 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -577,8 +577,10 @@ static void got_ban(struct chanset_t *chan, char *nick, char *from,
     }
     for (i = 0; who[i]; i++)
       if (((who[i] < 32) || (who[i] == 127)) &&
-	  (who[i] != 2) && (who[i] != 22) && (who[i] != 31))
+	  (who[i] != 2) && (who[i] != 22) && (who[i] != 31)) {
 	bogus = 1;
+	break;
+      }
     if (bogus) {
       if (glob_bot(user) || glob_friend(user) || chan_friend(user) ||
 	  (channel_dontkickops(chan) &&

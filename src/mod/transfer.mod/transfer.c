@@ -1,7 +1,7 @@
 /* 
  * transfer.c -- part of transfer.mod
  * 
- * $Id: transfer.c,v 1.26 2000/05/06 22:00:31 fabian Exp $
+ * $Id: transfer.c,v 1.27 2000/06/10 01:03:44 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -580,7 +580,7 @@ static int tcl_dccsend STDVAR
       nfn--;
       *nfn = 0;
       nfn++;
-      sys = nmalloc(strlen(argv[1]) + 1);
+      sys = nmalloc(strlen(argv[1]) + 2);
       sprintf(sys, "*%s", argv[1]);
       queue_file(sys, nfn, "(script)", argv[2]);
       nfree(sys);

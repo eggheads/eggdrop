@@ -1,7 +1,7 @@
 /* 
  * userchan.c -- part of channels.mod
  * 
- * $Id: userchan.c,v 1.12 2000/03/23 23:17:57 fabian Exp $
+ * $Id: userchan.c,v 1.13 2000/06/10 01:03:43 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -367,7 +367,7 @@ static int u_delinvite (struct chanset_t * c, char * who, int doit)
 	shareout(NULL,"-inv %s\n", who);
     }
     if (!c)
-      ginvite_total --;
+      ginvite_total--;
     nfree((*u)->mask);
     if ((*u)->desc)
       nfree((*u)->desc);

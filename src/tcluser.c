@@ -2,7 +2,7 @@
  * tcluser.c -- handles:
  *   Tcl stubs for the user-record-oriented commands
  * 
- * $Id: tcluser.c,v 1.16 2000/04/05 19:25:34 fabian Exp $
+ * $Id: tcluser.c,v 1.17 2000/06/10 01:03:43 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -468,7 +468,6 @@ static int tcl_newignore STDVAR
       expire_time = now + (60 * atol(argv[4]));
   }
   addignore(ign, from, cmt, expire_time);
-  dprintf(DP_SERVER, "SILENCE +%s\n", ign);
   return TCL_OK;
 }
 
@@ -476,7 +475,6 @@ static int tcl_killignore STDVAR
 {
   Context;
   BADARGS(2, 2, " hostmask");
-  dprintf(DP_SERVER, "SILENCE +%s\n", argv[1]);
   Tcl_AppendResult(irp, delignore(argv[1]) ? "1" : "0", NULL);
   return TCL_OK;
 }
