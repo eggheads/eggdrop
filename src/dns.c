@@ -185,11 +185,14 @@ void block_dns_ipbyhost(char *host)
     hp = gethostbyname(host);
     alarm(0);
 
-    in = (struct in_addr *) (hp->h_addr_list[0]);
-    ip = (IP) (in->s_addr);
-    call_ipbyhost(host, my_ntohl(ip), 1);
-  } else {
-    call_ipbyhost(host, 0, 0);
+    if (hp) {
+      in = (struct in_addr *) (hp->h_addr_list[0]);
+      ip = (IP) (in->s_addr);
+      call_ipbyhost(host, my_ntohl(ip), 1);
+      return;
+    }
   }
+  /* Fall through */
+  call_ipbyhost(host, 0, 0);
   context;
 }
