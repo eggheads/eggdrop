@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  *
- * $Id: cmds.c,v 1.55 2001/06/28 19:21:55 guppy Exp $
+ * $Id: cmds.c,v 1.56 2001/06/30 06:29:55 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -236,7 +236,6 @@ static void cmd_botinfo(struct userrec *u, int idx, char *par)
   time_t now2;
   int hr, min;
 
-  chan = chanset;
   now2 = now - online_since;
   s2[0] = 0;
   if (now2 > 86400) {
@@ -258,7 +257,7 @@ static void cmd_botinfo(struct userrec *u, int idx, char *par)
   botnet_send_infoq(-1, s);
   s[0] = 0;
   if (module_find("server", 0, 0)) {
-    while (chan != NULL) {
+    for (chan = chanset; chan; chan = chan->next) { 
       if (!channel_secret(chan)) {
 	if ((strlen(s) + strlen(chan->dname) + strlen(network)
                    + strlen(botnetnick) + strlen(ver) + 1) >= 490) {
@@ -268,7 +267,6 @@ static void cmd_botinfo(struct userrec *u, int idx, char *par)
 	strcat(s, chan->dname);
 	strcat(s, ", ");
       }
-      chan = chan->next;
     }
 
     if (s[0]) {
@@ -1377,7 +1375,6 @@ int check_dcc_chanattrs(struct userrec *u, char *chname, int chflags,
 
   if (!u)
     return 0;
-  chan = chanset;
   for (i = 0; i < dcc_total; i++) {
     if ((dcc[i].type->flags & DCT_MASTER) &&
 	!egg_strcasecmp(u->handle, dcc[i].nick)) {
@@ -1415,12 +1412,10 @@ int check_dcc_chanattrs(struct userrec *u, char *chname, int chflags,
 	   (!(ochatr & (USER_OP | USER_MASTER | USER_OWNER))))) {
 	struct flag_record fr = {FR_CHAN, 0, 0, 0, 0, 0};
 
-	while (chan && !found) {
+	for (chan = chanset; chan && !found; chan = chan->next) {
 	  get_user_flagrec(u, &fr, chan->dname);
 	  if (fr.chan & (USER_OP | USER_MASTER | USER_OWNER))
 	    found = 1;
-	  else
-	    chan = chan->next;
 	}
 	if (!chan)
 	  chan = chanset;

@@ -2,7 +2,7 @@
  * channels.c -- part of channels.mod
  *   support for channels within the bot
  *
- * $Id: channels.c,v 1.49 2001/06/28 19:01:14 guppy Exp $
+ * $Id: channels.c,v 1.50 2001/06/30 06:29:56 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -229,11 +229,9 @@ static void get_mode_protect(struct chanset_t *chan, char *s)
  */
 static int ismodeline(masklist *m, char *user)
 {
-  while (m && m->mask[0]) {
+  for (; m && m->mask[0]; m = m->next)  
     if (!rfc_casecmp(m->mask, user))
       return 1;
-    m = m->next;
-  }
   return 0;
 }
 
@@ -241,11 +239,9 @@ static int ismodeline(masklist *m, char *user)
  */
 static int ismasked(masklist *m, char *user)
 {
-  while (m && m->mask[0]) {
+  for (; m && m->mask[0]; m = m->next)
     if (wild_match(m->mask, user))
       return 1;
-    m = m->next;
-  }
   return 0;
 }
 
@@ -547,8 +543,7 @@ static void channels_report(int idx, int details)
   char s[1024], s2[100];
   struct flag_record fr = {FR_CHAN | FR_GLOBAL, 0, 0, 0, 0, 0};
 
-  chan = chanset;
-  while (chan != NULL) {
+  for (chan = chanset; chan; chan = chan->next) {
     if (idx != DP_STDOUT)
       get_user_flagrec(dcc[idx].user, &fr, chan->dname);
     if ((idx == DP_STDOUT) || glob_master(fr) || chan_master(fr)) {
@@ -657,7 +652,6 @@ static void channels_report(int idx, int details)
                   chan->revenge_mode);
       }
     }
-    chan = chan->next;
   }
   if (details) {
     dprintf(idx, "    Bans last %d mins.\n", ban_time);
@@ -670,13 +664,12 @@ static int expmem_masklist(masklist *m)
 {
   int result = 0;
 
-  while (m) {
+  for (; m; m = m->next) {
     result += sizeof(masklist);
     if (m->mask)
         result += strlen(m->mask) + 1;
     if (m->who)
         result += strlen(m->who) + 1;
-    m = m->next;
   }
   return result;
 }
@@ -684,9 +677,9 @@ static int expmem_masklist(masklist *m)
 static int channels_expmem()
 {
   int tot = 0, i;
-  struct chanset_t *chan = chanset;
+  struct chanset_t *chan;
 
-  while (chan != NULL) {
+  for (chan = chanset; chan; chan = chan->next) {
     tot += sizeof(struct chanset_t);
 
     tot += strlen(chan->channel.key) + 1;
@@ -704,8 +697,6 @@ static int channels_expmem()
       tot += strlen(chan->key) + 1;
     if (chan->rmkey)
       tot += strlen(chan->rmkey) + 1;
-
-    chan = chan->next;
   }
   tot += expmem_udef(udef);
   return tot;

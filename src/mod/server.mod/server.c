@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  *
- * $Id: server.c,v 1.66 2001/06/28 19:21:56 guppy Exp $
+ * $Id: server.c,v 1.67 2001/06/30 06:29:57 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -924,11 +924,10 @@ static void queue_server(int which, char *buf, int len)
  */
 static void add_server(char *ss)
 {
-  struct server_list *x, *z = serverlist;
+  struct server_list *x, *z;
   char *p, *q;
 
-  while (z && z->next)
-    z = z->next;
+  for (z = serverlist; z && z->next; z = z->next);
   while (ss) {
     p = strchr(ss, ',');
     if (p)
@@ -999,7 +998,7 @@ static void next_server(int *ptr, char *serv, unsigned int *port, char *pass)
     return;
   /* -1  -->  Go to specified server */
   if (*ptr == (-1)) {
-    while (x) {
+    for (; x; x = x->next) {
       if (x->port == *port) {
 	if (!egg_strcasecmp(x->name, serv)) {
 	  *ptr = i;
@@ -1010,7 +1009,6 @@ static void next_server(int *ptr, char *serv, unsigned int *port, char *pass)
 	  return;
 	}
       }
-      x = x->next;
       i++;
     }
     /* Gotta add it: */

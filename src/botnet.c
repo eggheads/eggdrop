@@ -7,7 +7,7 @@
  *   linking, unlinking, and relaying to another bot
  *   pinging the bots periodically and checking leaf status
  *
- * $Id: botnet.c,v 1.34 2001/06/01 22:03:15 guppy Exp $
+ * $Id: botnet.c,v 1.35 2001/06/30 06:29:55 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -78,13 +78,11 @@ void init_bots()
 
 tand_t *findbot(char *who)
 {
-  tand_t *ptr = tandbot;
+  tand_t *ptr;
 
-  while (ptr) {
+  for (ptr = tandbot; ptr; ptr = ptr->next)
     if (!egg_strcasecmp(ptr->bot, who))
       return ptr;
-    ptr = ptr->next;
-  }
   return NULL;
 }
 

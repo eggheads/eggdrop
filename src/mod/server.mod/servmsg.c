@@ -1,7 +1,7 @@
 /*
  * servmsg.c -- part of server.mod
  *
- * $Id: servmsg.c,v 1.54 2001/05/25 11:06:04 poptix Exp $
+ * $Id: servmsg.c,v 1.55 2001/06/30 06:29:57 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1089,7 +1089,7 @@ static int whoispenalty(char *from, char *msg)
 
   if (x && use_penalties) {
     i = ii = 0;
-    while (x != NULL) {
+    for (; x; x = x->next) {
       if (i == curserv) {
         if ((strict_servernames == 1) || !x->realname) {
           if (strcmp(x->name, from))
@@ -1099,7 +1099,6 @@ static int whoispenalty(char *from, char *msg)
             ii = 1;
         }
       }
-      x = x->next;
       i++;
     }
     if (ii) {

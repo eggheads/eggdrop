@@ -1,7 +1,7 @@
 /*
  * tclserv.c -- part of server.mod
  *
- * $Id: tclserv.c,v 1.8 2001/04/12 02:39:47 guppy Exp $
+ * $Id: tclserv.c,v 1.9 2001/06/30 06:29:57 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -137,26 +137,20 @@ static int tcl_clearqueue STDVAR
   BADARGS(2,2, " queue");
   if (!strcmp(argv[1],"all")) {
     msgs = (int) (modeq.tot + mq.tot + hq.tot);
-    q = modeq.head;
-    while (q) {
+    for (q = modeq.head; q; q = qq) { 
       qq = q->next;
       nfree(q->msg);
       nfree(q);
-      q = qq;
     }
-    q = mq.head;
-    while (q) {
+    for (q = mq.head; q; q = qq) {
       qq = q->next;
       nfree(q->msg);
       nfree(q);
-      q = qq;
     }
-    q = hq.head;
-    while (q) {
+    for (q = hq.head; q; q = qq) {
       qq = q->next;
       nfree(q->msg);
       nfree(q);
-      q = qq;
     }
     modeq.tot = mq.tot = hq.tot = modeq.warned = mq.warned = hq.warned = 0;
     mq.head = hq.head = modeq.head = mq.last = hq.last = modeq.last = 0;
@@ -167,12 +161,10 @@ static int tcl_clearqueue STDVAR
     return TCL_OK;
   } else if (!strncmp(argv[1],"serv", 4)) {
     msgs = mq.tot;
-    q = mq.head;
-    while (q) {
+    for (q = mq.head; q; q = qq) {
       qq = q->next;
       nfree(q->msg);
       nfree(q);
-      q = qq;
     }
     mq.tot = mq.warned = 0;
     mq.head = mq.last = 0;
@@ -186,12 +178,10 @@ static int tcl_clearqueue STDVAR
     return TCL_OK;
   } else if (!strcmp(argv[1],"mode")) {
     msgs = modeq.tot;
-    q = modeq.head;
-    while (q) {
+    for (q = modeq.head; q; q = qq) { 
       qq = q->next;
       nfree(q->msg);
       nfree(q);
-      q = qq;
     }
     if (mq.tot == 0)
       burst = 0;
@@ -203,12 +193,10 @@ static int tcl_clearqueue STDVAR
     return TCL_OK;
   } else if (!strcmp(argv[1],"help")) {
     msgs = hq.tot;
-    q = hq.head;
-    while (q) {
+    for (q = hq.head; q; q = qq) {
       qq = q->next;
       nfree(q->msg);
       nfree(q);
-      q = qq;
     }
     double_warned = 0;
     hq.tot = hq.warned = 0;

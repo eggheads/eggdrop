@@ -1,7 +1,7 @@
 /*
  * tclchan.c -- part of channels.mod
  *
- * $Id: tclchan.c,v 1.46 2001/04/12 02:39:45 guppy Exp $
+ * $Id: tclchan.c,v 1.47 2001/06/30 06:29:56 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -725,7 +725,7 @@ static int tcl_newinvite STDVAR
 static int tcl_channel_info(Tcl_Interp * irp, struct chanset_t *chan)
 {
   char s[121];
-  struct udef_struct *ul = udef;
+  struct udef_struct *ul;
 
   get_mode_protect(chan, s);
   Tcl_AppendElement(irp, s);
@@ -846,8 +846,7 @@ static int tcl_channel_info(Tcl_Interp * irp, struct chanset_t *chan)
     Tcl_AppendElement(irp, "+nodesynch");
   else
     Tcl_AppendElement(irp, "-nodesynch");
-  while (ul) {
-    if (ul->defined && ul->name) {
+  for (ul = udef; ul && ul->defined && ul->name; ul = ul->next) {
       if (ul->type == UDEF_FLAG) {
         simple_sprintf(s, "%c%s", getudef(ul->values, chan->dname) ? '+' : '-',
 		       ul->name);
@@ -858,8 +857,6 @@ static int tcl_channel_info(Tcl_Interp * irp, struct chanset_t *chan)
       } else
         debug1("UDEF-ERROR: unknown type %d", ul->type);
     }
-    ul = ul->next;
-  }
   return TCL_OK;
 }
 
@@ -1246,7 +1243,7 @@ static int tcl_do_masklist(maskrec *m, Tcl_Interp *irp)
 {
   char ts[21], ts1[21], ts2[21], *list[6], *p;
 
-  while (m) {
+  for (; m; m = m->next) {
     list[0] = m->mask;
     list[1] = m->desc;
     sprintf(ts, "%lu", m->expire);
@@ -1259,7 +1256,6 @@ static int tcl_do_masklist(maskrec *m, Tcl_Interp *irp)
     p = Tcl_Merge(6, list);
     Tcl_AppendElement(irp, p);
     Tcl_Free((char *) p);
-    m = m->next;
   }
   return TCL_OK;
 }
@@ -1319,11 +1315,9 @@ static int tcl_channels STDVAR
   struct chanset_t *chan;
 
   BADARGS(1, 1, "");
-  chan = chanset;
-  while (chan != NULL) {
+  for (chan = chanset; chan; chan = chan->next) 
     Tcl_AppendElement(irp, chan->dname);
-    chan = chan->next;
-  } return TCL_OK;
+  return TCL_OK;
 }
 
 static int tcl_savechannels STDVAR
@@ -1512,14 +1506,13 @@ static void clear_masklist(masklist *m)
 {
   masklist *temp;
 
-  while (m) {
+  for (; m; m = temp) {
     temp = m->next;
     if (m->mask)
       nfree(m->mask);
     if (m->who)
       nfree(m->who);
     nfree(m);
-    m = temp;
   }
 }
 
@@ -1531,11 +1524,9 @@ static void clear_channel(struct chanset_t *chan, int reset)
 
   if (chan->channel.topic)
     nfree(chan->channel.topic);
-  m = chan->channel.member;
-  while (m != NULL) {
+  for (m = chan->channel.member; m; m = m1) {
     m1 = m->next;
     nfree(m);
-    m = m1;
   }
 
   clear_masklist(chan->channel.ban);
@@ -1694,8 +1685,7 @@ static int tcl_deludef STDVAR
     Tcl_AppendResult(irp, "invalid type. Must be one of: flag, int", NULL);
     return TCL_ERROR;
   }
-  ul = udef;
-  while (ul) {
+  for (ul = udef; ul; ul = ul->next) {
     ull = ul->next;
     if (!ull)
       break;
@@ -1706,7 +1696,6 @@ static int tcl_deludef STDVAR
       nfree(ull);
       found = 1;
     }
-    ul = ul->next;
   }
   if (udef) {
     if (udef->type == type && !egg_strcasecmp(udef->name, argv[2])) {

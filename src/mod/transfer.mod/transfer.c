@@ -1,7 +1,7 @@
 /*
  * transfer.c -- part of transfer.mod
  *
- * $Id: transfer.c,v 1.38 2001/06/20 14:44:20 poptix Exp $
+ * $Id: transfer.c,v 1.39 2001/06/30 06:29:57 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -260,13 +260,11 @@ static void check_tcl_toutlost(struct userrec *u, char *nick, char *path,
 
 static int expmem_fileq()
 {
-  fileq_t *q = fileq;
+  fileq_t *q;
   int tot = 0;
 
-  while (q != NULL) {
+  for (q = fileq; q; q = q->next) 
     tot += strlen(q->dir) + strlen(q->file) + 2 + sizeof(fileq_t);
-    q = q->next;
-  }
   return tot;
 }
 
@@ -327,15 +325,13 @@ static void flush_fileq(char *to)
 
 static void send_next_file(char *to)
 {
-  fileq_t *q = fileq, *this = NULL;
+  fileq_t *q, *this = NULL;
   char *s, *s1;
   int x;
 
-  while (q != NULL) {
+  for (q = fileq; q; q = q->next)
     if (!egg_strcasecmp(q->to, to))
       this = q;
-    q = q->next;
-  }
   if (this == NULL)
     return;			/* None */
   /* Copy this file to /tmp */
@@ -422,9 +418,9 @@ static void show_queued_files(int idx)
 {
   int i, cnt = 0, len;
   char spaces[] = "                                 ";
-  fileq_t *q = fileq;
+  fileq_t *q;
 
-  while (q != NULL) {
+  for (q = fileq; q; q = q->next) {
     if (!egg_strcasecmp(q->nick, dcc[idx].nick)) {
       if (!cnt) {
 	spaces[HANDLEN - 9] = 0;
@@ -442,7 +438,6 @@ static void show_queued_files(int idx)
 		q->dir[0] ? "/" : "", q->file);
       spaces[len] = ' ';
     }
-    q = q->next;
   }
   for (i = 0; i < dcc_total; i++) {
     if ((dcc[i].type == &DCC_GET_PENDING || dcc[i].type == &DCC_GET) &&
@@ -554,10 +549,10 @@ static void fileq_cancel(int idx, char *par)
 static int tcl_getfileq STDVAR
 {
   char *s = NULL;
-  fileq_t *q = fileq;
+  fileq_t *q;
 
   BADARGS(2, 2, " handle");
-  while (q != NULL) {
+  for (q = fileq; q; q = q->next) {
     if (!egg_strcasecmp(q->nick, argv[1])) {
       s = nrealloc(s, strlen(q->to) + strlen(q->dir) + strlen(q->file) + 4);
       if (q->dir[0] == '*')
@@ -566,7 +561,6 @@ static int tcl_getfileq STDVAR
 	sprintf(s, "%s /%s%s%s", q->to, q->dir, q->dir[0] ? "/" : "", q->file);
       Tcl_AppendElement(irp, s);
     }
-    q = q->next;
   }
   if (s)
     nfree(s);

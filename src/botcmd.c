@@ -3,7 +3,7 @@
  *   commands that comes across the botnet
  *   userfile transfer and update commands from sharebots
  *
- * $Id: botcmd.c,v 1.20 2001/04/12 02:39:43 guppy Exp $
+ * $Id: botcmd.c,v 1.21 2001/06/30 06:29:55 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -460,7 +460,6 @@ static void bot_infoq(int idx, char *par)
   time_t now2;
   int hr, min;
 
-  chan = chanset;
   now2 = now - online_since;
   s2[0] = 0;
   if (now2 > 86400) {
@@ -479,7 +478,7 @@ static void bot_infoq(int idx, char *par)
   sprintf(&s2[strlen(s2)], "%02d:%02d", (int) hr, (int) min);
   if (module_find("server", 0, 0)) {
     s[0] = 0;
-    while (chan != NULL) {
+    for (chan = chanset; chan; chan = chan->next) {
       if (!channel_secret(chan)) {
         if ((strlen(s) + strlen(chan->dname) + strlen(network)
                    + strlen(botnetnick) + strlen(ver) + 1) >= 200) {
@@ -489,7 +488,6 @@ static void bot_infoq(int idx, char *par)
 	strcat(s, chan->dname);
 	strcat(s, ", ");
       }
-      chan = chan->next;
     }
     if (s[0]) {
       s[strlen(s) - 2] = 0;

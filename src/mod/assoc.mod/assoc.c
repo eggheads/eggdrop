@@ -2,7 +2,7 @@
  * assoc.c -- part of assoc.mod
  *   the assoc code, moved here mainly from botnet.c for module work
  *
- * $Id: assoc.c,v 1.15 2001/06/20 14:44:17 poptix Exp $
+ * $Id: assoc.c,v 1.16 2001/06/30 06:29:56 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -34,10 +34,10 @@
 static Function *global = NULL;
 
 /* Keep track of channel associations */
-typedef struct travis {
+typedef struct assoc_t_ {
   char name[21];
   unsigned int channel;
-  struct travis *next;
+  struct assoc_t_ *next;
 } assoc_t;
 
 /* Channel name-number associations */
@@ -59,13 +59,11 @@ static void botnet_send_assoc(int idx, int chan, char *nick,
 
 static int assoc_expmem()
 {
-  assoc_t *a = assoc;
+  assoc_t *a;
   int size = 0;
 
-  while (a != NULL) {
+  for (a = assoc; a; a = a->next)
     size += sizeof(assoc_t);
-    a = a->next;
-  }
   return size;
 }
 
@@ -75,17 +73,14 @@ static void link_assoc(char *bot, char *via)
 
   if (!egg_strcasecmp(via, botnetnick)) {
     int idx = nextbot(bot);
-    assoc_t *a = assoc;
+    assoc_t *a;
 
     if (!(bot_flags(dcc[idx].user) & BOT_ISOLATE)) {
-      while (a != NULL) {
-	if (a->name[0]) {
+      for (a = assoc; a && a->name[0]; a = a->next) {
           simple_sprintf(x, "assoc %D %s %s", (int) a->channel, botnetnick,
            		a->name);
 	  botnet_send_zapf(idx, botnetnick, dcc[idx].nick, x);
 	}
-	a = a->next;
-      }
     }
   }
 }
@@ -94,7 +89,7 @@ static void kill_assoc(int chan)
 {
   assoc_t *a = assoc, *last = NULL;
 
-  while (a != NULL) {
+  while (a) {
     if (a->channel == chan) {
       if (last != NULL)
 	last->next = a->next;
@@ -111,57 +106,49 @@ static void kill_assoc(int chan)
 
 static void kill_all_assoc()
 {
-  assoc_t *a = assoc, *x;
+  assoc_t *a, *x;
 
-  while (a != NULL) {
-    x = a;
-    a = a->next;
-    nfree(x);
+  for (a = assoc; a; a = x) {
+    x = a->next;
+    nfree(a);
   }
   assoc = NULL;
 }
 
 static void add_assoc(char *name, int chan)
 {
-  assoc_t *a = assoc, *b, *old = NULL;
+  assoc_t *a, *b, *old = NULL;
 
-  while (a != NULL) {
+  for (a = assoc; a; a = a->next) {
     if (name[0] != 0 && !egg_strcasecmp(a->name, name)) {
       kill_assoc(a->channel);
       add_assoc(name, chan);
       return;
     }
     if (a->channel == chan) {
-      strncpy(a->name, name, 20);
-      a->name[20] = 0;
+      strncpyz(a->name, name, sizeof a->name);
       return;
     }
-    a = a->next;
   }
   /* Add in numerical order */
-  a = assoc;
-  while (a != NULL) {
+  for (a = assoc; a; old = a, a = a->next) {
     if (a->channel > chan) {
       b = (assoc_t *) nmalloc(sizeof(assoc_t));
       b->next = a;
       b->channel = chan;
-      strncpy(b->name, name, 20);
-      b->name[20] = 0;
+      strncpyz(b->name, name, sizeof b->name);
       if (old == NULL)
 	assoc = b;
       else
 	old->next = b;
       return;
     }
-    old = a;
-    a = a->next;
   }
   /* Add at the end */
   b = (assoc_t *) nmalloc(sizeof(assoc_t));
   b->next = NULL;
   b->channel = chan;
-  strncpy(b->name, name, 20);
-  b->name[20] = 0;
+  strncpyz(b->name, name, sizeof b->name);
   if (old == NULL)
     assoc = b;
   else
@@ -170,25 +157,21 @@ static void add_assoc(char *name, int chan)
 
 static int get_assoc(char *name)
 {
-  assoc_t *a = assoc;
+  assoc_t *a;
 
-  while (a != NULL) {
+  for (a = assoc; a; a = a->next)
     if (!egg_strcasecmp(a->name, name))
       return a->channel;
-    a = a->next;
-  }
   return -1;
 }
 
 static char *get_assoc_name(int chan)
 {
-  assoc_t *a = assoc;
+  assoc_t *a;
 
-  while (a != NULL) {
+  for (a = assoc; a; a = a->next)
     if (a->channel == chan)
       return a->name;
-    a = a->next;
-  }
   return NULL;
 }
 
@@ -201,12 +184,9 @@ static void dump_assoc(int idx)
     return;
   }
   dprintf(idx, " %s  %s\n", ASSOC_CHAN, ASSOC_NAME);
-  while (a != NULL) {
-    if (a->name[0])
+  for (; a && a->name[0]; a = a->next)
       dprintf(idx, "%c%5d %s\n", (a->channel < 100000) ? ' ' : '*',
 	      a->channel % 100000, a->name);
-    a = a->next;
-  }
   return;
 }
 
@@ -364,14 +344,13 @@ static void zapf_assoc(char *botnick, char *code, char *par)
  */
 static void assoc_report(int idx, int details)
 {
-  assoc_t *a = assoc;
+  assoc_t *a;
   int size = 0, count = 0;;
 
   if (details) {
-    while (a != NULL) {
+    for (a = assoc; a; a = a->next) {
       count++;
       size += sizeof(assoc_t);
-      a = a->next;
     }
     dprintf(idx, "    %d assocs using %d bytes\n",
 	    count, size);

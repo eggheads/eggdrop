@@ -10,7 +10,7 @@
  *
  * dprintf'ized, 9nov1995
  *
- * $Id: users.c,v 1.25 2001/04/13 06:33:23 guppy Exp $
+ * $Id: users.c,v 1.26 2001/06/30 06:29:55 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -497,8 +497,7 @@ void tell_user(int idx, struct userrec *u, int master)
 	  (li && li->lastonplace) ? li->lastonplace : "nowhere");
   spaces[l] = ' ';
   /* channel flags? */
-  ch = u->chanrec;
-  while (ch != NULL) {
+  for (ch = u->chanrec; ch; ch = ch->next) {
     fr.match = FR_CHAN | FR_GLOBAL;
     get_user_flagrec(dcc[idx].user, &fr, ch->channel);
     if (glob_op(fr) || chan_op(fr)) {
@@ -521,7 +520,6 @@ void tell_user(int idx, struct userrec *u, int master)
       if (ch->info != NULL)
 	dprintf(idx, "    INFO: %s\n", ch->info);
     }
-    ch = ch->next;
   }
   /* user-defined extra fields */
   for (ue = u->entries; ue; ue = ue->next)
@@ -553,7 +551,7 @@ void tell_user_ident(int idx, char *id, int master)
 void tell_users_match(int idx, char *mtch, int start, int limit,
 		      int master, char *chname)
 {
-  struct userrec *u = userlist;
+  struct userrec *u;
   int fnd = 0, cnt, nomns = 0, flags = 0;
   struct list_type *q;
   struct flag_record user, pls, mns;
@@ -583,7 +581,7 @@ void tell_users_match(int idx, char *mtch, int start, int limit,
       chname = dcc[idx].u.chat->con_chan;
     flags = 1;
   }
-  while (u != NULL) {
+  for (u = userlist; u; u = u->next) {
     if (flags) {
       get_user_flagrec(u, &user, chname);
       if (flagrec_eq(&pls, &user)) {
@@ -615,7 +613,6 @@ void tell_users_match(int idx, char *mtch, int start, int limit,
 	}
       }
     }
-    u = u->next;
   }
   dprintf(idx, MISC_FOUNDMATCH, cnt, cnt == 1 ? "" : "es");
 }

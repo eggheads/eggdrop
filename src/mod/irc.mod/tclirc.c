@@ -1,7 +1,7 @@
 /*
  * tclirc.c -- part of irc.mod
  *
- * $Id: tclirc.c,v 1.20 2001/04/12 02:39:46 guppy Exp $
+ * $Id: tclirc.c,v 1.21 2001/06/30 06:29:56 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -41,13 +41,10 @@ static int tcl_chanlist STDVAR
     Tcl_AppendResult(irp, "invalid channel: ", argv[1], NULL);
     return TCL_ERROR;
   }
-  m = chan->channel.member;
   if (argc == 2) {
     /* No flag restrictions so just whiz it thru quick */
-    while (m && m->nick[0]) {
+    for (m = chan->channel.member; m && m->nick[0]; m = m->next)
       Tcl_AppendElement(irp, m->nick);
-      m = m->next;
-    }
     return TCL_OK;
   }
   break_down_flags(argv[2], &plus, &minus);
@@ -58,7 +55,7 @@ static int tcl_chanlist STDVAR
       !plus.chan && !plus.udef_chan && !plus.bot && !f)
     return TCL_OK;
   minus.match = plus.match ^ (FR_AND | FR_OR);
-  while (m && m->nick[0]) {
+  for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
     simple_sprintf(s1, "%s!%s", m->nick, m->userhost);
     u = get_user_by_host(s1);
     get_user_flagrec(u, &user, argv[1]);
@@ -67,7 +64,6 @@ static int tcl_chanlist STDVAR
       if (!f || !flagrec_eq(&minus, &user))
 	Tcl_AppendElement(irp, m->nick);
     }
-    m = m->next;
   }
   return TCL_OK;
 }
@@ -298,8 +294,7 @@ static int tcl_getchanhost STDVAR
       return TCL_ERROR;
     }
   }
-  chan = chanset;
-  while (chan != NULL) {
+  for (chan = chanset; chan; chan = chan->next) {
     m = ismember(chan, argv[1]);
     if (m && ((chan == thechan) || (thechan == NULL))) {
       Tcl_AppendResult(irp, m->userhost, NULL);
@@ -364,7 +359,7 @@ static inline int tcl_chanmasks(masklist *m, Tcl_Interp *irp)
 {
   char *list[3], work[20], *p;
 
-  while(m && m->mask && m->mask[0]) {
+  for (; m && m->mask && m->mask[0]; m = m->next) {
     list[0] = m->mask;
     list[1] = m->who;
     simple_sprintf(work, "%d", now - m->timer);
@@ -372,7 +367,6 @@ static inline int tcl_chanmasks(masklist *m, Tcl_Interp *irp)
     p = Tcl_Merge(3, list);
     Tcl_AppendElement(irp, p);
     Tcl_Free((char *) p);
-    m = m->next;
   }
   return TCL_OK;
 }
@@ -624,15 +618,13 @@ static int tcl_hand2nick STDVAR
     chan = chanset;
   }
   while ((chan != NULL) && ((thechan == NULL) || (thechan == chan))) {
-    m = chan->channel.member;
-    while (m && m->nick[0]) {
+    for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
       simple_sprintf(s, "%s!%s", m->nick, m->userhost);
       u = get_user_by_host(s);
       if (u && !egg_strcasecmp(u->handle, argv[1])) {
 	Tcl_AppendResult(irp, m->nick, NULL);
 	return TCL_OK;
       }
-      m = m->next;
     }
     chan = chan->next;
   }

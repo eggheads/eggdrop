@@ -2,7 +2,7 @@
  * tcluser.c -- handles:
  *   Tcl stubs for the user-record-oriented commands
  *
- * $Id: tcluser.c,v 1.21 2001/06/06 21:35:52 poptix Exp $
+ * $Id: tcluser.c,v 1.22 2001/06/30 06:29:55 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -323,7 +323,7 @@ static int tcl_delhost STDVAR
 
 static int tcl_userlist STDVAR
 {
-  struct userrec *u = userlist;
+  struct userrec *u;
   struct flag_record user, plus, minus;
   int ok = 1, f = 0;
 
@@ -339,7 +339,7 @@ static int tcl_userlist STDVAR
 	 minus.udef_chan || minus.bot);
   }
   minus.match = plus.match ^ (FR_AND | FR_OR);
-  while (u) {
+  for (u = userlist; u; u = u->next) {
     if (argc >= 2) {
       user.match = FR_GLOBAL | FR_CHAN | FR_BOT | (argc == 3 ? 0 : FR_ANYWH);
       get_user_flagrec(u, &user, argv[2]);	/* argv[2] == NULL for argc = 2 ;) */
@@ -350,7 +350,6 @@ static int tcl_userlist STDVAR
     }
     if (ok)
       Tcl_AppendElement(interp, u->handle);
-    u = u->next;
   }
   return TCL_OK;
 }

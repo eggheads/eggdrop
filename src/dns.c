@@ -4,7 +4,7 @@
  *   provides the code used by the bot if the DNS module is not loaded
  *   DNS Tcl commands
  *
- * $Id: dns.c,v 1.21 2001/04/12 02:39:43 guppy Exp $
+ * $Id: dns.c,v 1.22 2001/06/30 06:29:55 guppy Exp $
  */
 /*
  * Written by Fabian Knittel <fknittel@gmx.de>
@@ -176,9 +176,9 @@ devent_type DNS_DCCEVENT_IPBYHOST = {
 
 void dcc_dnsipbyhost(char *hostn)
 {
-  devent_t *de = dns_events;
+  devent_t *de;
 
-  while (de) {
+  for (de = dns_events; de; de = de->next) {
     if (de->type && (de->type == &DNS_DCCEVENT_IPBYHOST) &&
 	(de->lookup == RES_IPBYHOST)) {
       if (de->res_data.hostname &&
@@ -186,7 +186,6 @@ void dcc_dnsipbyhost(char *hostn)
 	/* No need to add anymore. */
 	return;
     }
-    de = de->next;
   }
 
   de = nmalloc(sizeof(devent_t));
@@ -207,16 +206,15 @@ void dcc_dnsipbyhost(char *hostn)
 
 void dcc_dnshostbyip(IP ip)
 {
-  devent_t *de = dns_events;
+  devent_t *de;
 
-  while (de) {
+  for (de = dns_events; de; de = de->next) {
     if (de->type && (de->type == &DNS_DCCEVENT_HOSTBYIP) &&
 	(de->lookup == RES_HOSTBYIP)) {
       if (de->res_data.ip_addr == ip)
 	/* No need to add anymore. */
 	return;
     }
-    de = de->next;
   }
 
   de = nmalloc(sizeof(devent_t));
@@ -351,16 +349,15 @@ static void tcl_dnshostbyip(IP ip, char *proc, char *paras)
 
 inline static int dnsevent_expmem(void)
 {
-  devent_t *de = dns_events;
+  devent_t *de;
   int tot = 0;
 
-  while (de) {
+  for (de = dns_events; de; de = de->next) {
     tot += sizeof(devent_t);
     if ((de->lookup == RES_IPBYHOST) && de->res_data.hostname)
       tot += strlen(de->res_data.hostname) + 1;
     if (de->type && de->type->expmem)
       tot += de->type->expmem(de->other);
-    de = de->next;
   }
   return tot;
 }

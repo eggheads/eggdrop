@@ -1,7 +1,7 @@
 /*
  * userchan.c -- part of channels.mod
  *
- * $Id: userchan.c,v 1.23 2001/04/12 02:39:45 guppy Exp $
+ * $Id: userchan.c,v 1.24 2001/06/30 06:29:56 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -24,13 +24,11 @@
 
 struct chanuserrec *get_chanrec(struct userrec *u, char *chname)
 {
-  struct chanuserrec *ch = u->chanrec;
+  struct chanuserrec *ch;
 
-  while (ch != NULL) {
+  for (ch = u->chanrec; ch; ch = ch->next) 
     if (!rfc_casecmp(ch->channel, chname))
       return ch;
-    ch = ch->next;
-  }
   return NULL;
 }
 
@@ -124,10 +122,8 @@ static void set_handle_chaninfo(struct userrec *bu, char *handle,
 
 static void del_chanrec(struct userrec *u, char *chname)
 {
-  struct chanuserrec *ch, *lst;
+  struct chanuserrec *ch = u->chanrec, *lst = NULL;
 
-  lst = NULL;
-  ch = u->chanrec;
   while (ch) {
     if (!rfc_casecmp(chname, ch->channel)) {
       if (lst == NULL)
@@ -216,25 +212,21 @@ static int u_setsticky_mask(struct chanset_t *chan, maskrec *u, char *uhost,
  */
 static int u_equals_mask(maskrec *u, char *mask)
 {
-  while (u) {
+  for (; u; u = u->next)
     if (!rfc_casecmp(u->mask, mask)) {
       if (u->flags & MASKREC_PERM)
         return 2;
       else
         return 1;
     }
-    u = u->next;
-  }
   return 0;
 }
 
 static int u_match_mask(maskrec *rec, char *mask)
 {
-  while (rec) {
+  for (; rec; rec = rec->next)
     if (wild_match(rec->mask, mask))
       return 1;
-    rec = rec->next;
-  }
   return 0;
 }
 
@@ -810,11 +802,11 @@ static void tell_bans(int idx, int show_inact, char *match)
       display_ban(idx, k++, u, chan, show_inact);
   }
   if (chan->status & CHAN_ACTIVE) {
-    masklist *b = chan->channel.ban;
+    masklist *b;
     char s[UHOSTLEN], *s1, *s2, fill[256];
     int min, sec;
 
-    while (b->mask[0]) {
+    for (b = chan->channel.ban; b && b->mask[0]; b = b->next) {    
       if ((!u_equals_mask(global_bans, b->mask)) &&
 	  (!u_equals_mask(chan->bans, b->mask))) {
 	strcpy(s, b->who);
@@ -836,7 +828,6 @@ static void tell_bans(int idx, int show_inact, char *match)
 	  dprintf(idx, "* [%3d] %s\n", k, fill);
 	k++;
       }
-      b = b->next;
     }
   }
   if (k == 1)
@@ -902,11 +893,11 @@ static void tell_exempts(int idx, int show_inact, char *match)
       display_exempt(idx, k++, u, chan, show_inact);
   }
   if (chan->status & CHAN_ACTIVE) {
-    masklist *e = chan->channel.exempt;
+    masklist *e;
     char s[UHOSTLEN], *s1, *s2,fill[256];
     int min, sec;
 
-    while (e->mask[0]) {
+    for (e = chan->channel.exempt; e && e->mask[0]; e = e->next) {
       if ((!u_equals_mask(global_exempts,e->mask)) &&
 	  (!u_equals_mask(chan->exempts, e->mask))) {
 	strcpy(s, e->who);
@@ -928,7 +919,6 @@ static void tell_exempts(int idx, int show_inact, char *match)
 	  dprintf(idx, "* [%3d] %s\n", k, fill);
 	k++;
       }
-      e = e->next;
     }
   }
   if (k == 1)
@@ -994,11 +984,11 @@ static void tell_invites(int idx, int show_inact, char *match)
       display_invite(idx, k++, u, chan, show_inact);
   }
   if (chan->status & CHAN_ACTIVE) {
-    masklist *i = chan->channel.invite;
+    masklist *i;
     char s[UHOSTLEN], *s1, *s2,fill[256];
     int min, sec;
 
-    while (i->mask[0]) {
+    for (i = chan->channel.invite; i && i->mask[0]; i = i->next) {
       if ((!u_equals_mask(global_invites,i->mask)) &&
 	  (!u_equals_mask(chan->invites, i->mask))) {
 	strcpy(s, i->who);
@@ -1020,7 +1010,6 @@ static void tell_invites(int idx, int show_inact, char *match)
 	  dprintf(idx, "* [%3d] %s\n", k, fill);
 	k++;
       }
-      i = i->next;
     }
   }
   if (k == 1)
@@ -1293,8 +1282,7 @@ static void check_expired_bans(void)
   struct chanset_t *chan;
   masklist *b;
 
-  u = global_bans;
-  while (u) {
+  for (u = global_bans; u; u = u2) { 
     u2 = u->next;
     if (!(u->flags & MASKREC_PERM) && (now >= u->expire)) {
       putlog(LOG_MISC, "*", "%s %s (%s)", BANS_NOLONGER,
@@ -1308,12 +1296,10 @@ static void check_expired_bans(void)
 	  }
       u_delban(NULL, u->mask, 1);
     }
-    u = u2;
   }
   /* Check for specific channel-domain bans expiring */
   for (chan = chanset; chan; chan = chan->next) {
-    u = chan->bans;
-    while (u) {
+    for (u = chan->bans; u; u = u2) {
       u2 = u->next;
       if (!(u->flags & MASKREC_PERM) && (now >= u->expire)) {
 	putlog(LOG_MISC, "*", "%s %s %s %s (%s)", BANS_NOLONGER,
@@ -1326,7 +1312,6 @@ static void check_expired_bans(void)
 	  }
 	u_delban(chan, u->mask, 1);
       }
-      u = u2;
     }
   }
 }
@@ -1342,8 +1327,7 @@ static void check_expired_exempts(void)
 
   if (!use_exempts)
     return;
-  u = global_exempts;
-  while (u) {
+  for (u = global_exempts; u; u = u2) {
     u2 = u->next;
     if (!(u->flags & MASKREC_PERM) && (now >= u->expire)) {
       putlog(LOG_MISC, "*", "%s %s (%s)", EXEMPTS_NOLONGER,
@@ -1372,12 +1356,10 @@ static void check_expired_exempts(void)
       }
       u_delexempt(NULL, u->mask,1);
     }
-    u = u2;
   }
   /* Check for specific channel-domain exempts expiring */
   for (chan = chanset; chan; chan = chan->next) {
-    u = chan->exempts;
-    while (u) {
+    for (u = chan->exempts; u; u = u2) {
       u2 = u->next;
       if (!(u->flags & MASKREC_PERM) && (now >= u->expire)) {
         match=0;
@@ -1405,7 +1387,6 @@ static void check_expired_exempts(void)
           u_delexempt(chan, u->mask, 1);
         }
       }
-      u = u2;
     }
   }
 }
@@ -1420,8 +1401,7 @@ static void check_expired_invites(void)
 
   if (!use_invites)
     return;
-  u = global_invites;
-  while (u) {
+  for (u = global_invites; u; u = u2) {
     u2 = u->next;
     if (!(u->flags & MASKREC_PERM) && (now >= u->expire)) {
       putlog(LOG_MISC, "*", "%s %s (%s)", INVITES_NOLONGER,
@@ -1436,12 +1416,10 @@ static void check_expired_invites(void)
 	    }
       u_delinvite(NULL, u->mask,1);
     }
-    u = u2;
   }
   /* Check for specific channel-domain invites expiring */
   for (chan = chanset; chan; chan = chan->next) {
-    u = chan->invites;
-    while (u) {
+    for (u = chan->invites; u; u = u2) {
       u2 = u->next;
       if (!(u->flags & MASKREC_PERM) && (now >= u->expire)) {
 	putlog(LOG_MISC, "*", "%s %s %s %s (%s)", INVITES_NOLONGER,
@@ -1455,7 +1433,6 @@ static void check_expired_invites(void)
 	    }
 	u_delinvite(chan, u->mask, 1);
       }
-      u = u2;
     }
   }
 }

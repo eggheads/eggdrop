@@ -2,7 +2,7 @@
  * language.c -- handles:
  *   language support code
  *
- * $Id: language.c,v 1.13 2001/06/22 05:49:31 guppy Exp $
+ * $Id: language.c,v 1.14 2001/06/30 06:29:55 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -195,11 +195,10 @@ static int add_message(int lidx, char *ltext)
  */
 static void recheck_lang_sections(void)
 {
-  lang_sec *ls = langsection;
+  lang_sec *ls;
   char *langfile;
 
-  while (ls) {
-    if (ls->section) {
+  for (ls = langsection; ls && ls->section; ls = ls->next) {
       langfile = get_langfile(ls);
       /* Found a language with a more preferred language? */
       if (langfile) {
@@ -207,8 +206,6 @@ static void recheck_lang_sections(void)
         nfree(langfile);
       }
     }
-    ls = ls->next;
-  }
 }
 
 /* Parse a language file
@@ -557,15 +554,13 @@ static int cmd_languagedump(struct userrec *u, int idx, char *par)
 static char text[512];
 char *get_language(int idx)
 {
-  lang_tab *l = langtab[idx & 63];
+  lang_tab *l;
 
   if (!idx)
     return "MSG-0-";
-  while (l) {
+  for (l = langtab[idx & 63]; l; l = l->next)
     if (idx == l->idx)
       return l->text;
-    l = l->next;
-  }
   egg_snprintf(text, sizeof text, "MSG%03X", idx);
   return text;
 }
@@ -629,21 +624,18 @@ static int cmd_languagestatus(struct userrec *u, int idx, char *par)
     int c = 0;
 
     dprintf(idx, "   Supported languages:");
-    while (lp) {
+    for (; lp; lp = lp->next) {  
       dprintf(idx, "%s %s", c ? "," : "", lp->lang);
       c = 1;
-      lp = lp->next;
     }
     dprintf(idx, "\n");
   }
   if (ls) {
     dprintf(idx, "\n   SECTION              LANG\n");
     dprintf(idx, "   ==============================\n");
-    while (ls) {
+    for (; ls; ls = ls->next)
       dprintf(idx, "   %-20s %s\n", ls->section,
 	      ls->lang ? ls->lang : "<none>");
-      ls = ls->next;
-    }
   }
   return 0;
 }

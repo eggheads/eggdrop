@@ -4,7 +4,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: modules.c,v 1.50 2001/06/24 20:49:23 poptix Exp $
+ * $Id: modules.c,v 1.51 2001/06/30 06:29:55 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -561,8 +561,9 @@ int expmem_modules(int y)
 {
   int c = 0;
   int i;
-  module_entry *p = module_list;
-  dependancy *d = dependancy_list;
+  module_entry *p;
+  dependancy *d;
+  struct hook_entry *q;
 #ifdef STATIC
   struct static_list *s;
 #endif
@@ -572,26 +573,20 @@ int expmem_modules(int y)
   for (s = static_modules; s; s = s->next)
     c += sizeof(struct static_list) + strlen(s->name) + 1;
 #endif
-  for (i = 0; i < REAL_HOOKS; i++) {
-    struct hook_entry *q = hook_list[i];
 
-    while (q) {
+  for (i = 0; i < REAL_HOOKS; i++)
+    for (q = hook_list[i]; q; q = q->next)
       c += sizeof(struct hook_entry);
 
-      q = q->next;
-    }
-  }
-  while (d) {
+  for (d = dependancy_list; d; d = d->next)
     c += sizeof(dependancy);
-    d = d->next;
-  }
-  while (p) {
+
+  for (p = module_list; p; p = p->next) {
     c += sizeof(module_entry);
     c += strlen(p->name) + 1;
     f = p->funcs;
     if (f && f[MODCALL_EXPMEM] && !y)
       c += (int) (f[MODCALL_EXPMEM] ());
-    p = p->next;
   }
   return c;
 }
@@ -599,17 +594,15 @@ int expmem_modules(int y)
 int module_register(char *name, Function * funcs,
 		    int major, int minor)
 {
-  module_entry *p = module_list;
+  module_entry *p;
 
-  while (p) {
-    if (p->name && !egg_strcasecmp(name, p->name)) {
+  for (p = module_list; p && p->name; p = p->next)
+    if (!egg_strcasecmp(name, p->name)) {
       p->major = major;
       p->minor = minor;
       p->funcs = funcs;
       return 1;
     }
-    p = p->next;
-  }
   return 0;
 }
 
@@ -737,14 +730,12 @@ char *module_unload(char *name, char *user)
 
   while (p) {
     if ((p->name != NULL) && (!strcmp(name, p->name))) {
-      dependancy *d = dependancy_list;
+      dependancy *d;
 
-      while (d != NULL) {
-	if (d->needed == p) {
+      for (d = dependancy_list; d; d = d->next)  
+	if (d->needed == p)
 	  return MOD_NEEDED;
-	}
-	d = d->next;
-      }
+
       f = p->funcs;
       if (f && !f[MODCALL_CLOSE])
 	return MOD_NOCLOSEDEF;
@@ -782,36 +773,30 @@ char *module_unload(char *name, char *user)
 
 module_entry *module_find(char *name, int major, int minor)
 {
-  module_entry *p = module_list;
+  module_entry *p;
 
-  while (p) {
-    if (p->name && (major == p->major || !major) &&
-	minor <= p->minor && !egg_strcasecmp(name, p->name))
+  for (p = module_list; p && p->name; p = p->next) 
+    if ((major == p->major || !major) && minor <= p->minor && 
+	!egg_strcasecmp(name, p->name))
       return p;
-    p = p->next;
-  }
   return NULL;
 }
 
 static int module_rename(char *name, char *newname)
 {
-  module_entry *p = module_list;
+  module_entry *p;
 
-  while (p) {
+  for (p = module_list; p; p = p->next)
     if (!egg_strcasecmp(newname, p->name))
       return 0;
-    p = p->next;
-  }
-  p = module_list;
-  while (p) {
-    if (p->name && !egg_strcasecmp(name, p->name)) {
+
+  for (p = module_list; p && p->name; p = p->next)
+    if (!egg_strcasecmp(name, p->name)) {
       nfree(p->name);
       p->name = nmalloc(strlen(newname) + 1);
       strcpy(p->name, newname);
       return 1;
     }
-    p = p->next;
-  }
   return 0;
 }
 
@@ -1059,20 +1044,18 @@ void do_module_report(int idx, int details, char *which)
 
   if (p && !which && details)
     dprintf(idx, "MODULES LOADED:\n");
-  while (p) {
+  for (; p; p = p->next) {
     if (!which || !egg_strcasecmp(which, p->name)) {
-      dependancy *d = dependancy_list;
+      dependancy *d;
 
       if (details)
 	dprintf(idx, "Module: %s, v %d.%d\n", p->name ? p->name : "CORE",
 		p->major, p->minor);
       if (details > 1) {
-	while (d != NULL) {
+	for (d = dependancy_list; d; d = d->next) 
 	  if (d->needing == p)
 	    dprintf(idx, "    requires: %s, v %d.%d\n", d->needed->name,
 		    d->major, d->minor);
-	  d = d->next;
-	}
       }
       if (p->funcs) {
 	Function f = p->funcs[MODCALL_REPORT];
@@ -1083,7 +1066,6 @@ void do_module_report(int idx, int details, char *which)
       if (which)
 	return;
     }
-    p = p->next;
   }
   if (which)
     dprintf(idx, "No such module.\n");

@@ -4,7 +4,7 @@
  *   channel mode changes and the bot's reaction to them
  *   setting and getting the current wanted channel modes
  *
- * $Id: mode.c,v 1.42 2001/04/12 02:39:46 guppy Exp $
+ * $Id: mode.c,v 1.43 2001/06/30 06:29:56 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -544,12 +544,11 @@ static void got_deop(struct chanset_t *chan, char *nick, char *from,
   /* Was the bot deopped? */
   if (match_my_nick(who)) {
     /* Cancel any pending kicks and modes */
-    memberlist *m2 = chan->channel.member;
+    memberlist *m2;
 
-    while (m2 && m2->nick[0]) {
+    for (m2 = chan->channel.member; m2 && m2->nick[0]; m2 = m2->next)
 	m2->flags &= ~(SENTKICK | SENTDEOP | SENTOP | SENTVOICE | SENTDEVOICE);
-      m2 = m2->next;
-    }
+
     check_tcl_need(chan->dname, "op");
     if (chan->need_op[0])
       do_tcl("need-op", chan->need_op);
@@ -723,12 +722,10 @@ static void got_exempt(struct chanset_t *chan, char *nick, char *from,
 static void got_unexempt(struct chanset_t *chan, char *nick, char *from,
 			 char *who, struct userrec *u)
 {
-  masklist *e, *old;
+  masklist *e = chan->channel.exempt, *old = NULL;
   masklist *b ;
   int match = 0;
 
-  e = chan->channel.exempt;
-  old = NULL;
   while (e && e->mask[0] && rfc_casecmp(e->mask, who)) {
     old = e;
     e = e->next;
@@ -803,10 +800,8 @@ static void got_invite(struct chanset_t *chan, char *nick, char *from,
 static void got_uninvite(struct chanset_t *chan, char *nick, char *from,
 			 char *who, struct userrec *u)
 {
-  masklist *inv, *old;
+  masklist *inv = chan->channel.invite, *old = NULL;
 
-  inv = chan->channel.invite;
-  old = NULL;
   while (inv->mask[0] && rfc_casecmp(inv->mask, who)) {
     old = inv;
     inv = inv->next;

@@ -2,7 +2,7 @@
  * irc.c -- part of irc.mod
  *   support for channels within the bot
  *
- * $Id: irc.c,v 1.52 2001/06/20 14:44:19 poptix Exp $
+ * $Id: irc.c,v 1.53 2001/06/30 06:29:56 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -291,13 +291,12 @@ static void set_key(struct chanset_t *chan, char *k)
 static int hand_on_chan(struct chanset_t *chan, struct userrec *u)
 {
   char s[UHOSTLEN];
-  memberlist *m = chan->channel.member;
+  memberlist *m;
 
-  while (m && m->nick[0]) {
+  for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
     sprintf(s, "%s!%s", m->nick, m->userhost);
     if (u == get_user_by_host(s))
       return 1;
-    m = m->next;
   }
   return 0;
 }
@@ -307,8 +306,7 @@ static int hand_on_chan(struct chanset_t *chan, struct userrec *u)
  */
 static void newmask(masklist *m, char *s, char *who)
 {
-  while (m->mask[0] && rfc_casecmp(m->mask, s))
-    m = m->next;
+  for (; m && m->mask[0] && rfc_casecmp(m->mask, s); m = m->next);
   if (m->mask[0])
     return;			/* Already existent mask */
 
@@ -667,8 +665,7 @@ static void check_expired_chanstuff()
 	      }
 	    }
       }
-      m = chan->channel.member;
-      while (m && m->nick[0]) {
+      for (m = chan->channel.member; m && m->nick[0]; m = n) {
 	n = m->next;
 	if (m->split && now - m->split > wait_split) {
 	  sprintf(s, "%s!%s", m->nick, m->userhost);
@@ -905,10 +902,8 @@ static void flush_modes()
   struct chanset_t *chan;
   memberlist *m;
 
-  chan = chanset;
-  while (chan != NULL) {
-    m = chan->channel.member;
-    while (m && m->nick[0]) {
+  for (chan = chanset; chan; chan = chan->next) {
+    for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
       if (m->delay && m->delay <= now) {
 	m->delay = 0L;
 	m->flags &= ~FULL_DELAY;
@@ -921,10 +916,8 @@ static void flush_modes()
           add_mode(chan, '+', 'v', m->nick);
         }
       }
-      m = m->next;
     }
     flush_mode(chan, NORMAL);
-    chan = chan->next;
   }
 }
 

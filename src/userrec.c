@@ -4,7 +4,7 @@
  *   a bunch of functions to find and change user records
  *   change and check user (and channel-specific) flags
  *
- * $Id: userrec.c,v 1.30 2001/04/12 02:39:44 guppy Exp $
+ * $Id: userrec.c,v 1.31 2001/06/30 06:29:55 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -86,15 +86,13 @@ inline int expmem_mask(struct maskrec *m)
 {
   int result = 0;
 
-  while (m) {
+  for (; m; m = m->next) {
     result += sizeof(struct maskrec);
     result += strlen(m->mask) + 1;
     if (m->user)
       result += strlen(m->user) + 1;
     if (m->desc)
       result += strlen(m->desc) + 1;
-
-    m = m->next;
   }
 
   return result;
@@ -112,15 +110,12 @@ int expmem_users()
   struct igrec *i;
 
   tot = 0;
-  u = userlist;
-  while (u != NULL) {
-    ch = u->chanrec;
-    while (ch) {
+  for (u = userlist; u; u = u->next) { 
+    for (ch = u->chanrec; ch; ch = ch->next) {
       tot += sizeof(struct chanuserrec);
 
       if (ch->info != NULL)
 	tot += strlen(ch->info) + 1;
-      ch = ch->next;
     }
     tot += sizeof(struct userrec);
 
@@ -134,7 +129,6 @@ int expmem_users()
 	tot += ue->type->expmem(ue);
       }
     }
-    u = u->next;
   }
   /* Account for each channel's masks */
   for (chan = chanset; chan; chan = chan->next) {
@@ -168,12 +162,10 @@ int expmem_users()
 int count_users(struct userrec *bu)
 {
   int tot = 0;
-  struct userrec *u = bu;
+  struct userrec *u ;
 
-  while (u != NULL) {
+  for (u = bu; u; u = u->next)
     tot++;
-    u = u->next;
-  }
   return tot;
 }
 
@@ -214,7 +206,7 @@ struct userrec *check_dcclist_hand(char *handle)
 
 struct userrec *get_user_by_handle(struct userrec *bu, char *handle)
 {
-  struct userrec *u = bu, *ret;
+  struct userrec *u, *ret;
 
   if (!handle)
     return NULL;
@@ -239,14 +231,12 @@ struct userrec *get_user_by_handle(struct userrec *bu, char *handle)
     }
     cache_miss++;
   }
-  while (u) {
+  for (u = bu; u; u = u->next)
     if (!egg_strcasecmp(u->handle, handle)) {
       if (bu == userlist)
 	lastuser = u;
       return u;
     }
-    u = u->next;
-  }
   return NULL;
 }
 
@@ -269,30 +259,26 @@ void clear_masks(maskrec *m)
 {
   maskrec *temp = NULL;
 
-  while (m) {
+  for (; m; m = temp) {
     temp = m->next;
-
     if (m->mask)
       nfree(m->mask);
     if (m->user)
       nfree(m->user);
     if (m->desc)
       nfree(m->desc);
-
     nfree(m);
-    m = temp;
   }
 }
 
 void clear_userlist(struct userrec *bu)
 {
-  struct userrec *u = bu, *v;
+  struct userrec *u, *v;
   int i;
 
-  while (u != NULL) {
+  for (u = bu; u; u = v) {
     v = u->next;
     freeuser(u);
-    u = v;
   }
   if (userlist == bu) {
     struct chanset_t *cst;
@@ -368,18 +354,13 @@ struct userrec *get_user_by_host(char *host)
  */
 struct userrec *get_user_by_equal_host(char *host)
 {
-  struct userrec *u = userlist;
+  struct userrec *u;
   struct list_type *q;
 
-  while (u != NULL) {
-    q = get_user(&USERENTRY_HOSTS, u);
-    while (q != NULL) {
+  for (u = userlist; u; u = u->next)
+    for (q = get_user(&USERENTRY_HOSTS, u); q; q = q->next)
       if (!rfc_casecmp(q->extra, host))
 	return u;
-      q = q->next;
-    }
-    u = u->next;
-  }
   return NULL;
 }
 
@@ -562,11 +543,8 @@ void write_userfile(int idx)
   strcpy(s1, ctime(&tt));
   fprintf(f, "#4v: %s -- %s -- written %s", ver, botnetnick, s1);
   ok = 1;
-  u = userlist;
-  while (u != NULL && ok) {
+  for (u = userlist; u && ok; u = u->next)
     ok = write_user(u, f, idx);
-    u = u->next;
-  }
   if (!ok || fflush(f)) {
     putlog(LOG_MISC, "*", "%s (%s)", USERF_ERRWRITE, strerror(ferror(f)));
     fclose(f);

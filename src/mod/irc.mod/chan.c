@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  *
- * $Id: chan.c,v 1.66 2001/06/14 12:39:55 poptix Exp $
+ * $Id: chan.c,v 1.67 2001/06/30 06:29:56 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -43,9 +43,7 @@ static memberlist *newmember(struct chanset_t *chan)
 {
   memberlist *x;
 
-  x = chan->channel.member;
-  while (x && x->nick[0])
-    x = x->next;
+  for (x = chan->channel.member; x && x->nick[0]; x = x->next); 
   x->next = (memberlist *) channel_malloc(sizeof(memberlist));
   x->next->next = NULL;
   x->next->nick[0] = 0;
@@ -135,11 +133,9 @@ static void check_exemptlist(struct chanset_t *chan, char *from)
  */
 static void do_mask(struct chanset_t *chan, masklist *m, char *mask, char Mode)
 {
-  while(m && m->mask[0]) {
+  for (; m && m->mask[0]; m = m->next)
     if (wild_match(mask, m->mask) && rfc_casecmp(mask, m->mask))
       add_mode(chan, '-', Mode, m->mask);
-    m = m->next;
-  }
   add_mode(chan, '+', Mode, mask);
   flush_mode(chan, QUICK);
 }
@@ -290,9 +286,7 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
       u_addban(chan, h, origbotname, ftype, now + (60 * ban_time), 0);
       if (!channel_enforcebans(chan) && me_op(chan)) {
 	  char s[UHOSTLEN];
-	  m = chan->channel.member;
-
-	  while (m && m->nick[0]) {
+	  for (m = chan->channel.member; m && m->nick[0]; m = m->next) {	  
 	    sprintf(s, "%s!%s", m->nick, m->userhost);
 	    if (wild_match(h, s) &&
 		(m->joined >= chan->floodtime[which]) &&
@@ -305,7 +299,6 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
 	        dprintf(DP_SERVER, "KICK %s %s :%s\n", chan->name, m->nick,
 		      IRC_NICK_FLOOD);
 	    }
-	    m = m->next;
 	  }
 	}
       return 1;
@@ -359,8 +352,7 @@ static void kick_all(struct chanset_t *chan, char *hostmask, char *comment, int 
   k = 0;
   flushed = 0;
   kicknick[0] = 0;
-  m = chan->channel.member;
-  while (m && m->nick[0]) {
+  for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
     sprintf(s, "%s!%s", m->nick, m->userhost);
     get_user_flagrec(m->user ? m->user : get_user_by_host(s), &fr, chan->dname);
     if (wild_match(hostmask, s) && !chan_sentkick(m) &&
@@ -389,7 +381,6 @@ static void kick_all(struct chanset_t *chan, char *hostmask, char *comment, int 
 	kicknick[0] = 0;
       }
     }
-    m = m->next;
   }
   if (k > 0)
     dprintf(DP_SERVER, "KICK %s %s :%s\n", chan->name, kicknick, comment);
@@ -704,8 +695,7 @@ static void recheck_channel(struct chanset_t *chan, int dobans)
     return;                     /* ... it's better not to deop everybody */
   stacking++;
   /* Okay, sort through who needs to be deopped. */
-  m = chan->channel.member;
-  while (m && m->nick[0]) {
+  for (m = chan->channel.member; m && m->nick[0]; m = m->next) { 
     sprintf(s, "%s!%s", m->nick, m->userhost);
     if (!m->user)
       m->user = get_user_by_host(s);
@@ -781,7 +771,6 @@ static void recheck_channel(struct chanset_t *chan, int dobans)
 	}
       }
     }
-    m = m->next;
   }
   if (dobans) {
     if (channel_nouserbans(chan) && !stop_reset)
@@ -1848,8 +1837,7 @@ static int gotnick(char *from, char *msg)
   strcpy(uhost, from);
   nick = splitnick(&uhost);
   fixcolon(msg);
-  chan = chanset;
-  while (chan) {
+  for (chan = chanset; chan; chan = chan->next) { 
     m = ismember(chan, nick);
     if (m) {
       putlog(LOG_JOIN, chan->dname, "Nick change: %s -> %s", nick, msg);
@@ -1888,7 +1876,6 @@ static int gotnick(char *from, char *msg)
 	m->flags &= ~SENTKICK;
       check_tcl_nick(nick, uhost, u, chan->dname, msg);
     }
-    chan = chan->next;
   }
   clear_chanlist_member(msg);	/* Cache for nick 'msg' is meaningless now. */
   return 0;
