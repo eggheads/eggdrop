@@ -5,7 +5,7 @@
  *   note cmds
  *   note ignores
  * 
- * $Id: notes.c,v 1.22 2000/09/12 15:26:53 fabian Exp $
+ * $Id: notes.c,v 1.23 2000/09/18 20:04:59 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -851,7 +851,8 @@ static void notes_hourly()
 	      k = 0;		/* They already know they have notes */
 	  }
 	  if (k) {
-	    dprintf(DP_HELP, BOT_NOTESWAIT1, BOT_NOTESWAIT1_ARGS);
+	    dprintf(DP_HELP, BOT_NOTESWAIT1, m->nick, k, k == 1 ? "" : "s", 
+                    origbotname);
 	    dprintf(DP_HELP, "NOTICE %s :%s /MSG %s NOTES [pass] INDEX\n",
 		    m->nick, BOT_NOTESWAIT2, botname);
 	  }
@@ -863,7 +864,7 @@ static void notes_hourly()
     for (l = 0; l < dcc_total; l++) {
       k = num_notes(dcc[l].nick);
       if ((k > 0) && (dcc[l].type->flags & DCT_CHAT)) {
-	dprintf(l, BOT_NOTESWAIT3, BOT_NOTESWAIT3_ARGS);
+	dprintf(l, BOT_NOTESWAIT3, k, k == 1 ? "" : "s");
 	dprintf(l, BOT_NOTESWAIT4);
       }
     }

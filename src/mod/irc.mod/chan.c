@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  * 
- * $Id: chan.c,v 1.47 2000/09/09 11:36:59 fabian Exp $
+ * $Id: chan.c,v 1.48 2000/09/18 20:04:58 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -324,7 +324,7 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
     case FLOOD_DEOP:
       if (me_op(chan) && !chan_sentkick(m)) {
 	putlog(LOG_MODES, chan->dname,
-	       CHAN_MASSDEOP, CHAN_MASSDEOP_ARGS); 
+	       CHAN_MASSDEOP, chan->dname, from); 
 	dprintf(DP_MODE, "KICK %s %s :%s\n",
 		chan->name, floodnick, CHAN_MASSDEOP_KICK);
 	m->flags |= SENTKICK;

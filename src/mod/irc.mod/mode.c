@@ -4,7 +4,7 @@
  *   channel mode changes and the bot's reaction to them
  *   setting and getting the current wanted channel modes
  * 
- * $Id: mode.c,v 1.34 2000/09/09 11:36:59 fabian Exp $
+ * $Id: mode.c,v 1.35 2000/09/18 20:04:58 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -358,7 +358,7 @@ static void got_op(struct chanset_t *chan, char *nick, char *from,
 
   m = ismember(chan, who);
   if (!m) {
-    putlog(LOG_MISC, chan->dname, CHAN_BADCHANMODE, CHAN_BADCHANMODE_ARGS);
+    putlog(LOG_MISC, chan->dname, CHAN_BADCHANMODE, chan->dname, who);
     dprintf(DP_MODE, "WHO %s\n", who);
     return;
   }
@@ -449,7 +449,7 @@ static void got_deop(struct chanset_t *chan, char *nick, char *from,
 
   m = ismember(chan, who);
   if (!m) {
-    putlog(LOG_MISC, chan->dname, CHAN_BADCHANMODE, CHAN_BADCHANMODE_ARGS);
+    putlog(LOG_MISC, chan->dname, CHAN_BADCHANMODE, chan->dname, who);
     dprintf(DP_MODE, "WHO %s\n", who);
     return;
   }
@@ -988,7 +988,7 @@ static int gotmode(char *from, char *origmsg)
 	  m = ismember(chan, op);
 	  if (!m) {
 	    putlog(LOG_MISC, chan->dname,
-		   CHAN_BADCHANMODE, CHAN_BADCHANMODE_ARGS2);
+		   CHAN_BADCHANMODE, chan->dname, op);
 	    dprintf(DP_MODE, "WHO %s\n", op);
 	  } else {
 	    get_user_flagrec(m->user, &victim, chan->dname);

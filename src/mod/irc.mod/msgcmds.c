@@ -2,7 +2,7 @@
  * msgcmds.c -- part of irc.mod
  *   all commands entered via /MSG
  * 
- * $Id: msgcmds.c,v 1.16 2000/09/12 15:26:53 fabian Exp $
+ * $Id: msgcmds.c,v 1.17 2000/09/18 20:04:58 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -46,8 +46,8 @@ static int msg_hello(char *nick, char *h, struct userrec *u, char *p)
     struct flag_record fr = {FR_GLOBAL, 0, 0, 0, 0, 0};
     fr.global = atr;
 
-    dprintf(DP_HELP, IRC_BADHOST1, IRC_BADHOST1_ARGS);
-    dprintf(DP_HELP, IRC_BADHOST2, IRC_BADHOST2_ARGS);
+    dprintf(DP_HELP, IRC_BADHOST1, nick);
+    dprintf(DP_HELP, IRC_BADHOST2, nick, botname);
     return 1;
   }
   simple_sprintf(s, "%s!%s", nick, h);
@@ -84,8 +84,8 @@ static int msg_hello(char *nick, char *h, struct userrec *u, char *p)
     if (ismember(chan, nick))
       add_chanrec_by_handle(userlist, nick, chan->dname);
   }
-  dprintf(DP_HELP, IRC_SALUT1, IRC_SALUT1_ARGS);
-  dprintf(DP_HELP, IRC_SALUT2, IRC_SALUT2_ARGS);
+  dprintf(DP_HELP, IRC_SALUT1, nick, nick, botname);
+  dprintf(DP_HELP, IRC_SALUT2, nick, host);
   if (common) {
     dprintf(DP_HELP, "NOTICE %s :%s\n", nick, IRC_SALUT2A);
     dprintf(DP_HELP, "NOTICE %s :%s\n", nick, IRC_SALUT2B);
@@ -94,16 +94,16 @@ static int msg_hello(char *nick, char *h, struct userrec *u, char *p)
     fr.global = sanity_check(default_flags | USER_OWNER);
 
     dprintf(DP_HELP, "NOTICE %s :%s\n", nick, IRC_INITOWNER1);
-    dprintf(DP_HELP, IRC_NEWBOT1, IRC_NEWBOT1_ARGS);
-    dprintf(DP_HELP, IRC_NEWBOT2, IRC_NEWBOT2_ARGS);
-    putlog(LOG_MISC, "*", IRC_INIT1, IRC_INIT1_ARGS);
+    dprintf(DP_HELP, IRC_NEWBOT1, nick, botname);
+    dprintf(DP_HELP, IRC_NEWBOT2, nick);
+    putlog(LOG_MISC, "*", IRC_INIT1, nick);
     make_userfile = 0;
     write_userfile(-1);
     add_note(nick, origbotname, IRC_INITNOTE, -1, 0);
   } else {
     fr.global = default_flags;
 
-    dprintf(DP_HELP, IRC_INTRO1, IRC_INTRO1_ARGS);
+    dprintf(DP_HELP, IRC_INTRO1, nick, botname);
   }
   if (notify_new[0]) {
     sprintf(s, IRC_INITINTRO, nick, host);
@@ -193,7 +193,7 @@ static int msg_ident(char *nick, char *host, struct userrec *u, char *par)
   u2 = get_user_by_handle(userlist, who);
   if (!u2) {
     if (u && !quiet_reject) {
-      dprintf(DP_HELP, IRC_MISIDENT, IRC_MISIDENT_ARGS);
+      dprintf(DP_HELP, IRC_MISIDENT, nick, nick, u->handle);
     }
   } else if (rfc_casecmp(who, origbotname) && !(u2->flags & USER_BOT)) {
     /* This could be used as detection... */
@@ -210,7 +210,7 @@ static int msg_ident(char *nick, char *host, struct userrec *u, char *par)
       return 1;
     } else if (u) {
       if (!quiet_reject)
-	dprintf(DP_HELP, IRC_MISIDENT, IRC_MISIDENT_ARGS2);
+	dprintf(DP_HELP, IRC_MISIDENT, nick, who, u->handle);
       return 1;
     } else {
       struct chanset_t *chan = chanset;

@@ -6,7 +6,7 @@
  *   memory management for dcc structures
  *   timeout checking for dcc connections
  * 
- * $Id: dccutil.c,v 1.22 2000/06/20 19:54:54 fabian Exp $
+ * $Id: dccutil.c,v 1.23 2000/09/18 20:04:57 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -506,7 +506,8 @@ void do_boot(int idx, char *by, char *reason)
   int files = (dcc[idx].type != &DCC_CHAT);
 
   dprintf(idx, DCC_BOOTED1);
-  dprintf(idx, DCC_BOOTED2, DCC_BOOTED2_ARGS);
+  dprintf(idx, DCC_BOOTED2, files ? "file section" : "bot",
+          by, reason[0] ? ": " : ".", reason);
   /* If it's a partyliner (chatterer :) */
   /* Horrible assumption that DCT_CHAT using structure uses same format
    * as DCC_CHAT */
@@ -514,8 +515,8 @@ void do_boot(int idx, char *by, char *reason)
       (dcc[idx].u.chat->channel >= 0)) {
     char x[1024];
 
-    simple_sprintf(x, "%s booted %s from the party line%s%s",
-		   by, dcc[idx].nick, reason[0] ? ": " : "", reason);
+    simple_sprintf(x, DCC_BOOTED3, by, dcc[idx].nick, reason[0] ? ": " : "",
+                   reason);
     chanout_but(idx, dcc[idx].u.chat->channel, "*** %s.\n", x);
     if (dcc[idx].u.chat->channel < 100000)
       botnet_send_part_idx(idx, x);

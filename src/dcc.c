@@ -4,7 +4,7 @@
  *   disconnect on a dcc socket
  *   ...and that's it!  (but it's a LOT)
  * 
- * $Id: dcc.c,v 1.34 2000/09/09 11:39:09 fabian Exp $
+ * $Id: dcc.c,v 1.35 2000/09/18 20:04:57 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1392,7 +1392,7 @@ static void dcc_telnet_id(int idx, char *buf, int atr)
     dcc[idx].type = &DCC_TELNET_NEW;
     dcc[idx].timeval = now;
     dprintf(idx, "\n");
-    dprintf(idx, IRC_TELNET, IRC_TELNET_ARGS);
+    dprintf(idx, IRC_TELNET, botnetnick);
     dprintf(idx, IRC_TELNET1);
     dprintf(idx, "\nEnter the nickname you would like to use.\n");
     return;

@@ -2,7 +2,7 @@
  * lang.h
  *   Conversion definitions for language support
  * 
- * $Id: lang.h,v 1.15 2000/08/03 21:51:33 fabian Exp $
+ * $Id: lang.h,v 1.16 2000/09/18 20:04:57 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -138,14 +138,11 @@
 #define IRC_INTRODUCED		get_language(0x608)
 #define IRC_COMMONSITE		get_language(0x609)
 #define IRC_SALUT1		get_language(0x60a)
-#define IRC_SALUT1_ARGS		nick, nick, botname
 #define IRC_SALUT2		get_language(0x60b)
-#define IRC_SALUT2_ARGS		nick, host
 #define IRC_SALUT2A		get_language(0x60c)
 #define IRC_SALUT2B		get_language(0x60d)
 #define IRC_INITOWNER1		get_language(0x60e)
 #define IRC_INIT1		get_language(0x60f)
-#define IRC_INIT1_ARGS		nick
 #define IRC_INITNOTE		get_language(0x610)
 #define IRC_INITINTRO		get_language(0x611)
 #define IRC_PASS		get_language(0x612)
@@ -158,8 +155,6 @@
 #define IRC_CHANGEPASS		get_language(0x619)
 #define IRC_FAILCOMMON		get_language(0x61a)
 #define IRC_MISIDENT		get_language(0x61b)
-#define IRC_MISIDENT_ARGS	nick, nick, u->handle
-#define IRC_MISIDENT_ARGS2	nick, who, u->handle
 #define IRC_DENYACCESS		get_language(0x61c)
 #define IRC_RECOGNIZED		get_language(0x61d)
 #define IRC_ADDHOSTMASK		get_language(0x61e)
@@ -230,17 +225,11 @@
 #define IRC_SERVNOTONCHAN	get_language(0x65f)
 #define IRC_BADCHANKEY		get_language(0x660)
 #define IRC_INTRO1		get_language(0x661)
-#define IRC_INTRO1_ARGS		nick, botname
 #define IRC_BADHOST1		get_language(0x662)
-#define IRC_BADHOST1_ARGS	nick
 #define IRC_BADHOST2		get_language(0x663)
-#define IRC_BADHOST2_ARGS	nick, botname
 #define IRC_NEWBOT1		get_language(0x664)
-#define IRC_NEWBOT1_ARGS	nick, botname
 #define IRC_NEWBOT2		get_language(0x665)
-#define IRC_NEWBOT2_ARGS	nick
 #define IRC_TELNET		get_language(0x666)
-#define IRC_TELNET_ARGS		botnetnick
 #define IRC_TELNET1		get_language(0x667)
 #define IRC_LIMBO		get_language(0x668)
 #define IRC_TELNETFLOOD		get_language(0x669)
@@ -302,10 +291,7 @@
  */
 #define CHAN_NOSUCH		get_language(0x900)
 #define CHAN_BADCHANMODE	get_language(0x902)
-#define CHAN_BADCHANMODE_ARGS	chan->dname, who
-#define CHAN_BADCHANMODE_ARGS2	chan->dname, op
 #define CHAN_MASSDEOP		get_language(0x903)
-#define CHAN_MASSDEOP_ARGS	chan->dname, from
 #define CHAN_MASSDEOP_KICK	get_language(0x904)
 #define CHAN_FORCEJOIN		get_language(0x907)
 #define CHAN_FAKEMODE		get_language(0x908)
@@ -343,11 +329,8 @@
 #define BOT_CANTMODNOTE		get_language(0xb12)
 #define BOT_NOTESERASED		get_language(0xb13)
 #define BOT_NOTESWAIT1		get_language(0xb14)
-#define BOT_NOTESWAIT1_ARGS	m->nick, k, k == 1 ? "" : "s", origbotname
-#define BOT_NOTESWAIT1_ARGS2	nick, k, k == 1 ? "" : "s", origbotname
 #define BOT_NOTESWAIT2		get_language(0xb15)
 #define BOT_NOTESWAIT3		get_language(0xb16)
-#define BOT_NOTESWAIT3_ARGS	k, k == 1 ? "" : "s"
 #define BOT_NOTESWAIT4		get_language(0xb17)
 #define BOT_MSGDIE		get_language(0xb18)
 #define BOT_NOSUCHUSER		get_language(0xb19)
@@ -479,11 +462,7 @@
 #define DCC_FLOODBOOT		get_language(0xc1d)
 #define DCC_BOOTED1		get_language(0xc1e)
 #define DCC_BOOTED2		get_language(0xc1f)
-#define DCC_BOOTED2_ARGS	files ? "file section" : "bot", \
-				by, reason[0] ? ": " : ".", reason
 #define DCC_BOOTED3		get_language(0xc20)
-#define DCC_BOOTED3_ARGS	by, dcc[idx].nick, \
-                                reason[0] ? ": " : ".", reason
 
 /* Stuff from chan.c
  */
