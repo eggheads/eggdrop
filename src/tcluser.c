@@ -525,8 +525,9 @@ static int tcl_setuser STDVAR {
   r = et->tcl_set(irp, u, e, argc, argv);
   /* yeah... e is freed, and we read it... (tcl: setuser hand HOSTS none) */  
   if (!e->u.list) {
-    if (list_delete((struct list_type **) &(u->entries), (struct list_type *) e))
-    nfree(e);
+    if (list_delete((struct list_type **) &(u->entries),
+		    (struct list_type *) e))
+      nfree(e);
     /* else maybe already freed... (entry_type==HOSTS) <drummer> */
   }
   return r;
