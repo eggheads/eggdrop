@@ -1,7 +1,7 @@
 /*
  * tclchan.c -- part of channels.mod
  *
- * $Id: tclchan.c,v 1.71 2003/01/29 05:48:41 wcc Exp $
+ * $Id: tclchan.c,v 1.72 2003/01/29 06:12:04 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1086,8 +1086,7 @@ static int tcl_channel STDVAR
   return TCL_ERROR;
 }
 
-/* Parse options for a channel.
- */
+/* Parse options for a channel. */
 static int tcl_channel_modify(Tcl_Interp *irp, struct chanset_t *chan,
                               int items, char **item)
 {
@@ -1322,7 +1321,7 @@ static int tcl_channel_modify(Tcl_Interp *irp, struct chanset_t *chan,
     else if (!strcmp(item[i], "-stopnethack"));
     else if (!strcmp(item[i], "+stopnethack"));
     else if (!strcmp(item[i], "-wasoptest"));
-    else if (!strcmp(item[i], "+wasoptest"));   /* Eule 01.2000 */
+    else if (!strcmp(item[i], "+wasoptest")); /* Eule 01.2000 */
     else if (!strcmp(item[i], "+clearbans"));
     else if (!strcmp(item[i], "-clearbans"));
     else if (!strncmp(item[i], "flood-", 6)) {
@@ -1415,7 +1414,7 @@ static int tcl_channel_modify(Tcl_Interp *irp, struct chanset_t *chan,
         }
         else if (ul->type == UDEF_INT && (!egg_strcasecmp(item[i], ul->name) ||
                  !strncmp(item[i], "udef-int-", 9) &&
-                 !egg_strcasecmp(item[i] + 9, ul->name)))) {
+                 !egg_strcasecmp(item[i] + 9, ul->name))) {
           i++;
           if (i >= items) {
             if (irp)
