@@ -4,7 +4,7 @@
  *   channel mode changes and the bot's reaction to them
  *   setting and getting the current wanted channel modes
  *
- * $Id: mode.c,v 1.48 2001/10/30 16:04:08 poptix Exp $
+ * $Id: mode.c,v 1.49 2001/11/13 22:51:50 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -442,7 +442,8 @@ static void got_op(struct chanset_t *chan, char *nick, char *from,
           add_mode(chan, '-', 'o', who);
         }
       } else if (!(chan_op(victim) ||
-		 (glob_op(victim) && !chan_deop(victim)))) {
+		 ((!chan_op(victim) || !glob_op(victim)) && 
+                  chan_deop(victim)))) {
 		  if (snm == 1 || snm == 4 || (snm == 3 && !chan_wasop(m))) {
 		    add_mode(chan, '-', 'o', who);
 		    m->flags |= FAKEOP;
