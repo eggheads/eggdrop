@@ -3,7 +3,7 @@
  *   moving the process to the background, i.e. forking, while keeping threads
  *   happy.
  * 
- * $Id: bg.c,v 1.1 2000/09/27 19:48:54 fabian Exp $
+ * $Id: bg.c,v 1.2 2000/10/27 19:36:34 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -69,13 +69,21 @@ extern char	pid_file[];
  *       exits.
  */
 
-/* Messages sent from the newly forked process to the original process,
- * connected to the terminal.
- */
-#  define BG_MSG_QUIT		'\100'	/* Quit original process. Write
-				 	   PID file, etc. i.e. detach.	 */
-#  define BG_MSG_ABORT		'\101'	/* Quit original process.	 */
-#  define BG_MSG_TRANSFERPF	'\102'	/* Sending pid_file.		 */
+/* Format of messages sent from the newly forked process to the
+   original process, connected to the terminal. */
+typedef struct {
+	enum {
+		BG_COMM_QUIT,		/* Quit original process. Write
+					   PID file, etc. i.e. detach.	 */
+		BG_COMM_ABORT,		/* Quit original process.	 */
+		BG_COMM_TRANSFERPF	/* Sending pid_file.		 */
+	} comm_type;
+	union {
+		struct {		/* Data for BG_COMM_TRANSFERPF.	 */
+			int	len;	/* Length of the file name.	 */
+		} transferpf;
+	} comm_data;
+} bg_comm_t;
 
 typedef enum {
 	BG_NONE = 0,			/* No forking has taken place
@@ -85,15 +93,16 @@ typedef enum {
 } bg_state_t;
 
 typedef struct {
-	int		com[2];		/* Pair of fd's used to
-					   communicate between parent
-					   and split process.		 */
+	int		comm_recv;	/* Receives messages from the
+					   child process.		 */
+	int		comm_send;	/* Sends messages to the parent
+					   process.			 */
 	bg_state_t	state;		/* Current state, see above
 					   enum descriptions.		 */
 	pid_t		child_pid;	/* PID of split process.	 */
 } bg_t;
 
-static bg_t	bg = { { 0 }, 0 };
+static bg_t	bg = { 0 };
 
 #endif /* SUPPORT_THREADS */
 
@@ -104,42 +113,48 @@ static bg_t	bg = { { 0 }, 0 };
  */
 static void bg_do_detach(pid_t p)
 {
-    FILE *fp;
+  FILE	*fp;
 
-    /* Need to attempt to write pid now, not later. */
-    unlink(pid_file);
-    fp = fopen(pid_file, "w");
-    if (fp != NULL) {
-      fprintf(fp, "%u\n", p);
-      if (fflush(fp)) {
-	/* Kill bot incase a botchk is run from crond. */
-	printf(EGG_NOWRITE, pid_file);
-	printf("  Try freeing some disk space\n");
-	fclose(fp);
-	unlink(pid_file);
-	exit(1);
-      }
-    fclose(fp);
-    } else
+  /* Need to attempt to write pid now, not later. */
+  unlink(pid_file);
+  fp = fopen(pid_file, "w");
+  if (fp != NULL) {
+    fprintf(fp, "%u\n", p);
+    if (fflush(fp)) {
+      /* Kill bot incase a botchk is run from crond. */
       printf(EGG_NOWRITE, pid_file);
-    printf("Launched into the background  (pid: %d)\n\n", p);
+      printf("  Try freeing some disk space\n");
+      fclose(fp);
+      unlink(pid_file);
+      exit(1);
+    }
+    fclose(fp);
+  } else
+    printf(EGG_NOWRITE, pid_file);
+  printf("Launched into the background  (pid: %d)\n\n", p);
 #if HAVE_SETPGID
-    setpgid(p, p);
+  setpgid(p, p);
 #endif
-    exit(0);
+  exit(0);
 }
 
 void bg_prepare_split(void)
 {
 #ifdef SUPPORT_THREADS
   /* Create a pipe between parent and split process, fork to create a
-   * parent and a split process and wait for messages on the pipe.
-   */
-  pid_t	p;
-  char	com_buf;
+     parent and a split process and wait for messages on the pipe. */
+  pid_t		p;
+  bg_comm_t	message;
 
-  if (pipe(bg.com) < 0)
-    fatal("CANNOT OPEN PIPE.", 0);
+  {
+    int		comm_pair[2];
+
+    if (pipe(comm_pair) < 0)
+      fatal("CANNOT OPEN PIPE.", 0);
+
+    bg.comm_recv = comm_pair[0];
+    bg.comm_send = comm_pair[1];
+  }
 
   p = fork();
   if (p == -1)
@@ -152,26 +167,23 @@ void bg_prepare_split(void)
     bg.state = BG_PARENT;
   }
 
-  while (read(bg.com[0], &com_buf, 1) > 0) {
-    switch (com_buf) {
-    case BG_MSG_QUIT:
+  while (read(bg.comm_recv, &message, sizeof(message)) > 0) {
+    switch (message.comm_type) {
+    case BG_COMM_QUIT:
       bg_do_detach(p);
       break;
-    case BG_MSG_ABORT:
+    case BG_COMM_ABORT:
       exit(1);
       break;
-    case BG_MSG_TRANSFERPF:
+    case BG_COMM_TRANSFERPF:
       /* Now transferring file from split process.
        */
-      /* First message is the number of bytes to be received. */
-      if (read(bg.com[0], &com_buf, 1) <= 0)
+      if (message.comm_data.transferpf.len >= 40)
+	message.comm_data.transferpf.len = 40 - 1;
+      /* Next message contains data. */
+      if (read(bg.comm_recv, pid_file, message.comm_data.transferpf.len) <= 0)
 	goto error;
-      if (com_buf >= 40)
-	com_buf = 40 - 1;
-      /* Second message contains data. */
-      if (read(bg.com[0], pid_file, (size_t) com_buf) <= 0)
-	goto error;
-      pid_file[(int) com_buf] = 0;
+      pid_file[message.comm_data.transferpf.len] = 0;
       break;
     }
   }
@@ -190,21 +202,20 @@ error:
  */
 static void bg_send_pidfile(void)
 {
-    char com_buf = BG_MSG_TRANSFERPF;
+  bg_comm_t	message;
 
-    /* Send type message. */
-    if (write(bg.com[1], &com_buf, 1) < 0)
-      goto error;
-    /* Send length of data. */
-    com_buf = strlen(pid_file);
-    if (write(bg.com[1], &com_buf, 1) < 0)
-      goto error;
-    /* Send data. */
-    if (write(bg.com[1], pid_file, (size_t) com_buf) < 0)
-      goto error;
-    return;
+  message.comm_type = BG_COMM_TRANSFERPF;
+  message.comm_data.transferpf.len = strlen(pid_file);
+
+  /* Send type message. */
+  if (write(bg.comm_send, &message, sizeof(message)) < 0)
+    goto error;
+  /* Send data. */
+  if (write(bg.comm_send, pid_file, message.comm_data.transferpf.len) < 0)
+    goto error;
+  return;
 error:
-    fatal("COMMUNICATION THROUGH PIPE BROKE.", 0);
+  fatal("COMMUNICATION THROUGH PIPE BROKE.", 0);
 }
 #endif
 
@@ -214,15 +225,15 @@ void bg_send_quit(bg_quit_t q)
   if (bg.state == BG_PARENT) {
     kill(bg.child_pid, SIGKILL);
   } else if (bg.state == BG_SPLIT) {
-    char com_buf;
+    bg_comm_t	message;
 
     if (q == BG_QUIT) {
       bg_send_pidfile();
-      com_buf = BG_MSG_QUIT;
+      message.comm_type = BG_COMM_QUIT;
     } else
-      com_buf = BG_MSG_ABORT;
+      message.comm_type = BG_COMM_ABORT;
     /* Send message. */
-    if (write(bg.com[1], &com_buf, 1) < 0)
+    if (write(bg.comm_send, &message, sizeof(message)) < 0)
       fatal("COMMUNICATION THROUGH PIPE BROKE.", 0);
   }
 #endif
@@ -232,8 +243,7 @@ void bg_do_split(void)
 {
 #ifdef SUPPORT_THREADS
   /* Tell our parent process to go away now, as we don't need it
-   * anymore.
-   */
+     anymore. */
   bg_send_quit(BG_QUIT);
 #else
   /* Split off a new process.
