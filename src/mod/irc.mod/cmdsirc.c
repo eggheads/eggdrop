@@ -40,6 +40,7 @@ static void cmd_act(struct userrec *u, int idx, char *par)
 {
   char *chname;
   struct chanset_t *chan;
+  memberlist *m;
 
   if (!par[0]) {
     dprintf(idx, "Usage: act [channel] <action>\n");
@@ -51,6 +52,15 @@ static void cmd_act(struct userrec *u, int idx, char *par)
     chname = 0;
   if (!(chan = has_op(idx, chname)))
     return;
+  m = ismember(chan, botname);
+  if (!m) {
+    dprintf(idx, "Cannot say to %s: I'm not on that channel.\n", chan->name);
+    return;
+  }
+  if ((chan->channel.mode & CHANMODER) && !(m->flags & (CHANOP | CHANVOICE))) {
+    dprintf(idx, "Cannot say to %s, it is moderated.\n", chan->name);
+    return;
+  }
   putlog(LOG_CMDS, "*", "#%s# (%s) act %s", dcc[idx].nick,
 	 chan->name, par);
   dprintf(DP_HELP, "PRIVMSG %s :\001ACTION %s\001\n",
@@ -76,9 +86,10 @@ static void cmd_say(struct userrec *u, int idx, char *par)
 {
   char *chname;
   struct chanset_t *chan;
+  memberlist *m;
 
   if (!par[0]) {
-    dprintf(idx, "Usage: say <message>\n");
+    dprintf(idx, "Usage: say [channel] <message>\n");
     return;
   }
   if (strchr(CHANMETA, par[0]) != NULL)
@@ -87,6 +98,15 @@ static void cmd_say(struct userrec *u, int idx, char *par)
     chname = 0;
   if (!(chan = has_op(idx, chname)))
     return;
+  m = ismember(chan, botname);
+  if (!m) {
+    dprintf(idx, "Cannot say to %s: I'm not on that channel.\n", chan->name);
+    return;
+  }
+  if ((chan->channel.mode & CHANMODER) && !(m->flags & (CHANOP | CHANVOICE))) {
+    dprintf(idx, "Cannot say to %s, it is moderated.\n", chan->name);
+    return;
+  }
   putlog(LOG_CMDS, "*", "#%s# (%s) say %s", dcc[idx].nick, chan->name, par);
   dprintf(DP_HELP, "PRIVMSG %s :%s\n", chan->name, par);
   dprintf(idx, "Said to %s: %s\n", chan->name, par);
