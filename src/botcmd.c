@@ -3,7 +3,7 @@
  *   commands that comes across the botnet
  *   userfile transfer and update commands from sharebots
  *
- * $Id: botcmd.c,v 1.26 2002/01/14 21:19:36 guppy Exp $
+ * $Id: botcmd.c,v 1.27 2002/03/10 18:47:52 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -661,8 +661,8 @@ static void bot_nlinked(int idx, char *par)
     /* Loop! */
     putlog(LOG_BOTS, "*", "%s %s (mutual: %s)",
 	   BOT_LOOPDETECT, dcc[idx].nick, newbot);
-    simple_sprintf(s, "%s (%s): %s %s", MISC_LOOP, newbot, MISC_DISCONNECTED,
-		   dcc[idx].nick);
+    simple_sprintf(s, "%s %s: disconnecting %s", MISC_LOOP, newbot,
+        dcc[idx].nick);
     dprintf(idx, "error Loop (%s)\n", newbot);
   }
   if (!s[0]) {
