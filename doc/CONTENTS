@@ -6,8 +6,14 @@ settings/
 man1/
    unix man pages, should you ever need them
 
+web_docs/
+  all doc files in html
+
 BOTNET
    a guid to flags and bot user file sharing
+
+CONTENTS
+  this file
 
 KNOWN-PROBLEMS
    i.e. things that are broke, but aren't getting fixed anytime soon
@@ -28,16 +34,16 @@ UPDATES.pre1.3
    a list of what's changed in pre 1.3 versions
 
 compiling.FAQ
-   Chad Wagner's helpful guide to getting eggdrop to compile on odd
-   or mis-installed systems
+  if you have troubles compiling your eggdrop, take a look
+  into this file
 
 eggdrop.doc
    the primary documentation on running an eggdrop bot -- to be used
    AFTER you get it compiled  (unfinished, but a good starter course)
 
 patch.howto
-   a how-to on applying patches to eggdrop, snagged from ftp.sodre.net
-   (patches are a popular way to modify parts of eggdrop)
+  a how-to on applying and making patches to eggdrop
+  (patches are a popular way to fix bugs in programs)
 
 motd.settings
    documentation for the motd file

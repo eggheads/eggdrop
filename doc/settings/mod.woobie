@@ -1,0 +1,8 @@
+##### WOOBIE MODULE #####
+
+this serves absolutely no purpose and is for demonstrative purposes only. If
+you are looking for starting point in writing modules, woobie is the right thing.
+
+Put this line into your eggdrop.conf.dist file to load wire module:
+
+loadmodule woobie

@@ -1,0 +1,73 @@
+Contents of the doc/settings/ directory:
+
+CONTENTS
+  this file
+
+core.settings
+  all module independent eggdrop settings are documented here
+
+mod.assoc
+  The assoc module is documented, including it's settings and tcl
+  commands / variables in this file
+
+mod.blowfish
+  The blowfisg module is documented, including it's settings and tcl
+  commands / variables in this file
+
+mod.channel
+  The channel module is documented, including it's settings and tcl
+  commands / variables in this file
+
+mod.compress
+  The compress module is documented, including it's settings and tcl
+  commands / variables in this file
+
+mod.console
+  The console module is documented, including it's settings and tcl
+  commands / variables in this file
+
+mod.ctcp
+  The ctcp module is documented, including it's settings and tcl
+  commands / variables in this file
+
+mod.dns
+  The dns module is documented, including it's settings and tcl
+  commands / variables in this file
+
+mod.filesys
+  The filesys module is documented, including it's settings and tcl
+  commands / variables in this file
+
+mod.irc
+  The irc module is documented, including it's settings and tcl
+  commands / variables in this file
+
+mod.notes
+  The notes module is documented, including it's settings and tcl
+  commands / variables in this file
+
+mod.seen
+  The seen module is documented, including it's settings and tcl
+  commands / variables in this file
+
+mod.server
+  The server module is documented, including it's settings and tcl
+  commands / variables in this file
+
+mod.share
+  The server module is documented, including it's settings and tcl
+  commands / variables in this file
+
+mod.transfer
+  The transfer module is documented, including it's settings and tcl
+  commands / variables in this file
+
+mod.wire
+  The wire module is documented, including it's settings and tcl
+  commands / variables in this file
+
+mod.woobie
+  The exemplary woobie module
+
+tricks
+  some advanced tips on making eggdrop do what you want it to do

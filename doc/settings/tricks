@@ -1,0 +1,23 @@
+tweaking tips for your config file
+
+As your botnet grows bigger and you have to maintain more and more bots
+with their config files, you might render those little tweaking tips usefull,
+since they can make your life configuring, maintaining and adding of bots
+lot's of easier.
+
+well, here we go:
+
+- config file split
+  You can export parts of your config file to seperate files. For example, if
+  you have several config files which differ from themselfes only by the
+  nickname and the used servers, you can export them to an own file and link
+  it with the 'source' command, similar to a script.
+  The advance of this trick is, that you have to edit / upload only the small
+  file instead of the big one. This technique is also usefull if you want to
+  maintain always the same channel settings, etc.
+
+- variable usage in the config file
+  you can use variables in your config file since it's a plain tcl file. For
+  example, you can set 'userfile' and 'chanfile' to "$myvar" and define $myvar
+  in the first line by 'set myvar "yourbotname"'. By this way, you can maintain
+  your files by changing just one line.

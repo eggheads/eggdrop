@@ -8,7 +8,7 @@ II    WHY USE MODULES?
 III   HOW TO USE MODULES?
 IV    CURRENT MODULES
 V     PROGRAMMING MODULES
-VI    
+VI    WHAT TO DO WITH A MODULE?
 
 
 I.    WHAT ARE MODULES?
@@ -68,6 +68,9 @@ blowfish    : Encryption support needed for encrypting your users' passwords.
 channels    : Provides channel related support for the bot, without it, it
               will just sit on irc, it can respond to msg & ctcp commands,
               but that's all.
+compress    : This module provides an zlib support for compress transfer of files
+              vi athe botnet. For Example, compressed userfile transfers are
+              possible now.
 console     : This module provides storage of console settings when you exit
               the bot (or .store).
 ctcp        : This provides the normal ctcp replies that you'd expect.
@@ -327,3 +330,12 @@ void rem_builtins (p_tcl_hash_list table, cmd_t *cc);
    which require 0/1 or char * for those which require a string (eg filt)
    or nothing if no return is required.
    return is also in src/tclhash.c
+
+
+VI.    WHAT TO DO WITH A MODULE?
+
+   If you have written a module and feel that you want to share
+   it with the rest of the eggdrop comunity, upload it to the incoming
+   directory on ftp.eggheads.org(/pub/eggdrop/incoming). Place a nice
+   descriptive text with it and makes it way to the modules directory.
+   Don't forgot to write for which eggdrop version this module is for...

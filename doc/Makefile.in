@@ -1,5 +1,5 @@
 # Makefile for doc/
-# $Id: Makefile.in,v 1.8 2000/03/23 23:17:54 fabian Exp $
+# $Id: Makefile.in,v 1.9 2000/03/31 22:50:27 fabian Exp $
 
 SHELL = /bin/sh
 top_srcdir = @top_srcdir@
@@ -14,12 +14,13 @@ INSTALL_SCRIPT = @INSTALL_SCRIPT@
 
 DOCS = BOTNET BUG-REPORT CONTENTS KNOWN-PROBLEMS MODULES \
 UPDATES.pre1.3 UPDATES1.3 UPDATES1.4 UPDATES1.5 compiling.FAQ \
-eggdrop.doc patch.howto tcl-commands.doc tricks motd.settings
+eggdrop.doc patch.howto tcl-commands.doc tricks readme text-substitutions.doc
 
 MAN1 = man1/eggdrop.1
 
 WEB_DOCS = $(srcdir)/web_docs/*.html
-SETTING_DOCS = $(srcdir)/settings/mod.*
+SETTING_DOCS = core.settings tricks contents
+SETTING_MOD_DOCS = $(srcdir)/settings/mod.*
 
 doofus:
 	@echo ""
@@ -53,9 +54,11 @@ install:
 	@for i in $(MAN1); do \
 		$(INSTALL_DATA) $(srcdir)/$$i $(DEST)/doc/man1/; \
 	done
-	@$(INSTALL_DATA) $(srcdir)/settings/core.settings $(DEST)/doc/settings/
-	@if test "x`echo $(SETTING_DOCS)`" != "x$(SETTING_DOCS)"; then \
-		for i in `echo $(SETTING_DOCS)`; do \
+	@for i in $(SETTING_DOCS); do \
+		$(INSTALL_DATA) $(srcdir)/settings/$$i $(DEST)/doc/settings/; \
+	done
+	@if test "x`echo $(SETTING_MOD_DOCS)`" != "x$(SETTING_MOD_DOCS)"; then \
+		for i in `echo $(SETTING_MOD_DOCS)`; do \
 			$(INSTALL_DATA) $$i $(DEST)/doc/settings/; \
 		done; \
 	fi
