@@ -997,8 +997,11 @@ GLOBAL VARIABLES:
     The last command binding which triggered. This allows you to
     identify which command triggered a Tcl routine.
 
- isjuped
-   value is 1 if bot's nick is juped(437) 0 otherwise.
+  isjuped
+    value is 1 if bot's nick is juped(437) 0 otherwise.
+
+  hand-len
+    the value of the HANDLEN setting in src/eggdrop.h
 
 COMMAND EXTENSION:
 

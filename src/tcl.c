@@ -4,7 +4,7 @@
  *   Tcl initialization
  *   getting and setting Tcl/eggdrop variables
  *
- * $Id: tcl.c,v 1.41 2001/11/04 09:18:44 guppy Exp $
+ * $Id: tcl.c,v 1.42 2001/12/29 05:43:34 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -82,8 +82,9 @@ int	    par_telnet_flood = 1;       /* trigger telnet flood for +f
 					   ppl? - dw			      */
 int	    quiet_save = 0;             /* quiet-save patch by Lucas	      */
 int	    strtot = 0;
-int utftot = 0;
-int clientdata_stuff = 0;
+int 	    handlen = HANDLEN;
+int	    utftot = 0;
+int	    clientdata_stuff = 0;
 
 
 /* Prototypes for tcl */
@@ -441,6 +442,7 @@ static tcl_strings def_tcl_strings[] =
 static tcl_ints def_tcl_ints[] =
 {
   {"ignore-time",		&ignore_time,		0},
+  {"hand-len",			&handlen,		2},
   {"dcc-flood-thr",		&dcc_flood_thr,		0},
   {"hourly-updates",		&notify_users_at,	0},
   {"switch-logfiles-at",	&switch_logfiles_at,	0},
