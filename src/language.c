@@ -91,7 +91,7 @@ int cmd_loadlanguage(struct userrec *u, int idx, char *par)
   }
   if (idx != DP_LOG)
     putlog(LOG_CMDS, "*", "#%s# language %s", dcc[idx].nick, par);
-  if (par[0] == '.' && par[0] == '/') {
+  if (par[0] == '.' || par[0] == '/') {
     langfile = nmalloc(strlen(par) + 1);
     strcpy(langfile, par);
   } else {
