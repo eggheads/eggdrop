@@ -1,7 +1,7 @@
 # Makefile for scripts/
-# $Id: Makefile.in,v 1.6 1999/12/15 02:32:57 guppy Exp $
+# $Id: Makefile.in,v 1.7 2000/07/17 21:03:07 guppy Exp $
 
-SHELL = /bin/sh
+SHELL = @SHELL@
 top_srcdir = @top_srcdir@
 
 @SET_MAKE@

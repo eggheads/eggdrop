@@ -1,7 +1,7 @@
 # Makefile for src/md5/
-# $Id: Makefile.in,v 1.4 1999/12/15 02:32:58 guppy Exp $
+# $Id: Makefile.in,v 1.5 2000/07/17 21:03:07 guppy Exp $
 
-SHELL = /bin/sh
+SHELL = @SHELL@
 top_srcdir = @top_srcdir@
 
 @SET_MAKE@
