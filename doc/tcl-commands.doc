@@ -47,6 +47,11 @@ specific commands, see later.
     one kick command as possible.
     returns: nothing
 
+| putkickall <channel> <mask> [reason]
+|   sends kicks to the server and tries to put as many nicks into
+|   one kick command as possible.
+|   returns: nothing
+
   putlog <text>
     sends text to the log for any channel, marked as 'misc' (o)
     returns: nothing
@@ -260,21 +265,21 @@ specific commands, see later.
     makes a ban no longer sticky, or if a channel is specified, then it is
     unstuck on that channel. returns: "1" is successful, "0" otherwise
 
-| stickexempt <exemptmask> [channel]
-|   makes an exempt sticky, or if a channel is specified, then it is set
-|   sticky on that channel. returns: "1" is successful, "0" otherwise
+  stickexempt <exemptmask> [channel]
+    makes an exempt sticky, or if a channel is specified, then it is set
+    sticky on that channel. returns: "1" is successful, "0" otherwise
 
-| unstickexempt <exemptmask> [channel]
-|   makes an exempt no longer sticky, or if a channel is specified, then it
-|   is unstuck on that channel. returns: "1" is successful, "0" otherwise
+  unstickexempt <exemptmask> [channel]
+    makes an exempt no longer sticky, or if a channel is specified, then it
+    is unstuck on that channel. returns: "1" is successful, "0" otherwise
 
-| stickinvite <invitemask> [channel]
-|   makes an invite sticky, or if a channel is specified, then it is set
-|   sticky on that channel. returns: "1" is successful, "0" otherwise
+  stickinvite <invitemask> [channel]
+    makes an invite sticky, or if a channel is specified, then it is set
+    sticky on that channel. returns: "1" is successful, "0" otherwise
 
-| unstickinvite <invitemask> [channel]
-|   makes an invite no longer sticky, or if a channel is specified, then it
-|   is unstuck on that channel. returns: "1" is successful, "0" otherwise
+  unstickinvite <invitemask> [channel]
+    makes an invite no longer sticky, or if a channel is specified, then it
+    is unstuck on that channel. returns: "1" is successful, "0" otherwise
 
   killchanban <channel> <ban>
     removes a ban from the enforced ban list for a channel
@@ -484,9 +489,9 @@ specific commands, see later.
     returns: "1" if someone by that nickname is on the channel and has chop;
       "0" otherwise
 
-| wasop <nickname> <channel>
-|   returns: "1" if someone that just got opped/deopped in the chan had op
-|     before the modechange; "0" otherwise
+  wasop <nickname> <channel>
+    returns: "1" if someone that just got opped/deopped in the chan had op
+      before the modechange; "0" otherwise
 
   isvoice <nickname> <channel>
     returns: "1" if someone by that nickname is on the channel and has voice
@@ -928,18 +933,18 @@ specific commands, see later.
   unames
    returns:  The current operating system the bot is using.
 
-| dnslookup <ip-address/hostname> <proc> [[arg1] [arg2] ... [argn]]
-|   Issues an asynchronous dns lookup request. The command will block if
-|   dns module is not loaded, otherwise it will either return immediately
-|   or immediately call the proc (e.g. if the lookup is already cached).
-|   As soon as the request completes, <proc> will be called as follows:
-|     <proc> ipaddress hostname status [[arg1] [arg2] ... [argn]]
-|   status is 1 if the lookup was successful and 0 if it wasn't. All
-|   additional parameters (called arg1, arg2 and argn above) get appended
-|   to the proc's other parameters.
+  dnslookup <ip-address/hostname> <proc> [[arg1] [arg2] ... [argn]]
+    Issues an asynchronous dns lookup request. The command will block if
+    dns module is not loaded, otherwise it will either return immediately
+    or immediately call the proc (e.g. if the lookup is already cached).
+    As soon as the request completes, <proc> will be called as follows:
+      <proc> ipaddress hostname status [[arg1] [arg2] ... [argn]]
+    status is 1 if the lookup was successful and 0 if it wasn't. All
+    additional parameters (called arg1, arg2 and argn above) get appended
+    to the proc's other parameters.
 
-| md5 <string>
-|   returns: the 128 bits MD5 "message-digest" of the specified string.
+  md5 <string>
+    returns: the 128 bits MD5 "message-digest" of the specified string.
 
 
 GLOBAL VARIABLES:
@@ -1604,18 +1609,18 @@ users to read later
 
 ***### COMPRESS MODULE COMMANDS ###***
 
-| compressfile [-level <level>] <src-file> [target-file]
-| uncompressfile <src-file> [target-file]
-|   Compress or uncompress files. The level option specifies the compression
-|   mode to use when compressing. Available modes are from 0 (minimum CPU
-|   usage, minimum compression) all the way up to 9 (maximum CPU usage,
-|   maximum compression).
-|   If you don't specify the target-file, the src-file will be overwritten.
+  compressfile [-level <level>] <src-file> [target-file]
+  uncompressfile <src-file> [target-file]
+    Compress or uncompress files. The level option specifies the compression
+    mode to use when compressing. Available modes are from 0 (minimum CPU
+    usage, minimum compression) all the way up to 9 (maximum CPU usage,
+    maximum compression).
+    If you don't specify the target-file, the src-file will be overwritten.
 
-| iscompressed <filename>
-|   Determines whether <filename> is gzip compressed. Returns "1" if it is,
-|   "0" if it isn't and "2" if some kind of error prevented the checks from
-|   succeeding.
+  iscompressed <filename>
+    Determines whether <filename> is gzip compressed. Returns "1" if it is,
+    "0" if it isn't and "2" if some kind of error prevented the checks from
+    succeeding.
 
 ***### FILE SYSTEM MODULE COMMANDS ###***
 
