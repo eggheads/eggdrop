@@ -1136,7 +1136,7 @@ static int got405(char *from, char *msg)
 
   newsplit(&msg);
   chname = newsplit(&msg);
-  putlog(LOG_MISC, "*", "%s %s", IRC_TOOMANYCHANS, chname);
+  putlog(LOG_MISC, "*", IRC_TOOMANYCHANS, chname);
   return 0;
 }
 
@@ -1148,7 +1148,7 @@ static int got471(char *from, char *msg)
 
   newsplit(&msg);
   chname = newsplit(&msg);
-  putlog(LOG_JOIN, chname, "%s %s", IRC_CHANFULL, chname);
+  putlog(LOG_JOIN, chname, IRC_CHANFULL, chname);
   chan = findchan(chname);
   if (chan && chan->need_limit[0])
     do_tcl("need-limit", chan->need_limit);
@@ -1163,7 +1163,7 @@ static int got473(char *from, char *msg)
 
   newsplit(&msg);
   chname = newsplit(&msg);
-  putlog(LOG_JOIN, chname, "%s %s", IRC_CHANINVITEONLY, chname);
+  putlog(LOG_JOIN, chname, IRC_CHANINVITEONLY, chname);
   chan = findchan(chname);
   if (chan && chan->need_invite[0])
     do_tcl("need-invite", chan->need_invite);
@@ -1178,7 +1178,7 @@ static int got474(char *from, char *msg)
 
   newsplit(&msg);
   chname = newsplit(&msg);
-  putlog(LOG_JOIN, chname, "%s %s", IRC_BANNEDFROMCHAN, chname);
+  putlog(LOG_JOIN, chname, IRC_BANNEDFROMCHAN, chname);
   chan = findchan(chname);
   if (chan && chan->need_unban[0])
     do_tcl("need-unban", chan->need_unban);
@@ -1196,7 +1196,7 @@ static int got442(char *from, char *msg)
   chan = findchan(chname);
   if (chan) {
     if (!channel_inactive(chan)) {
-      putlog(LOG_MISC, chname, "%s %s", IRC_SERVNOTONCHAN, chname);
+      putlog(LOG_MISC, chname, IRC_SERVNOTONCHAN, chname);
       clear_channel(chan, 1);
       chan->status &= ~CHAN_ACTIVE;
       dprintf(DP_MODE, "JOIN %s %s\n", chan->name, chan->key_prot);

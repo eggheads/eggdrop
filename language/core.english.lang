@@ -252,11 +252,11 @@ Telnet to the bot and enter 'NEW' as your nickname.
 0x658,...and thank you for playing.
 0x659,Jumping servers (need %d servers, only have %d)
 0x65a,changing servers
-0x65b,I'm on too many channels--can't join:
-0x65c,Channel full--can't join:
-0x65d,Channel invite only--can't join:
-0x65e,Banned from channel--can't join:
-0x65f,Server says I'm not on channel:
+0x65b,I'm on too many channels--can't join: %s
+0x65c,Channel full--can't join: %s
+0x65d,Channel invite only--can't join: %s
+0x65e,Banned from channel--can't join: %s
+0x65f,Server says I'm not on channel: %s
 0x660,Bad key--can't join: %s
 0x661,NOTICE %s :All commands are done via /MSG. For the complete list, /MSG %s help   Cya!\n
 0x662,NOTICE %s :I don't recognize you from that host.\n

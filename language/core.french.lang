@@ -226,11 +226,11 @@
 0x658,... et merci d'avoir joué.
 0x659,Je change de serveur (j'ai besoin de %d serveurs, je n'en ai que %d)
 0x65a,je change de serveur
-0x65b,Je suis sur trop de canaux. Je ne peux pas venir sur:
-0x65c,Le canal est plein -- je ne peux venir sur:
-0x65d,Le canal est réservé aux invités -- je ne peux venir sur:
-0x65e,Je suis banni du canal -- je ne peux venir sur:
-0x65f,Le serveur dit que je ne suis pas sur le canal:
+0x65b,Je suis sur trop de canaux. Je ne peux pas venir sur: %s
+0x65c,Le canal est plein -- je ne peux venir sur: %s
+0x65d,Le canal est réservé aux invités -- je ne peux venir sur: %s
+0x65e,Je suis banni du canal -- je ne peux venir sur: %s
+0x65f,Le serveur dit que je ne suis pas sur le canal: %s
 0x660,Mauvaise clé -- je ne peux venir sur: %s
 0x661,NOTICE %s :Toutes les commandes sont faites par /MSG. pour la liste complete, /MSG %s help   Cya!\n
 0x662,NOTICE %s :Je ne vous reconnais pas sur ce host.\n
