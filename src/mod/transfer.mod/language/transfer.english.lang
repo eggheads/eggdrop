@@ -1,0 +1,64 @@
+# transfer.english.lang
+#   langauge messages for transfer module
+
+0xf00,Refused dcc get %s: copy to %s FAILED!
+0xf01,NOTICE %s :File system is broken; aborting queued files.\n
+0xf02,NOTICE %s :Here is a file from %s ...\n
+0xf03.DCC connections full: GET %s [%s]
+0xf04,NOTICE %s :DCC connections full; aborting queued files.\n
+0xf05,DCC socket error: GET %s [%s]
+0xf06,NOTICE %s :DCC socket error; aborting queued files.\n
+0xf07,Aborted dcc get %s: File is empty!
+0xf08,NOTICE %s :File %s is empty, aborting transfer.\n
+0xf09,  Send to  %s  Filename\n
+0xf0a,  ---------%s  --------------------\n
+0xf0b,  %s%s  %s  [WAITING]\n
+0xf0c,  %s%s  %s  (%.1f%% done)\n
+0xf0d,No files queued up.\n
+0xf0e,Total: %d\n
+0xf0f,Cancelled: %s to %s\n
+0xf10,Cancelled: %s  (aborted dcc send)\n
+0xf11,NOTICE %s :Transfer of %s aborted by %s\n
+0xf12,DCC cancel: GET %s (%s) at %lu/%lu
+0xf13,No matches.\n
+0xf14,Cancelled %d file%s.\n
+0xf15,Completed dcc send %s from %s!%s
+0xf16,Filename %d length. Way To LONG.
+0xf17,NOTICE %s :Filename %d length Way To LONG!\n
+0xf18,To Bad So Sad Your Dad!
+0xf19,NOTICE %s :To Bad So Sad Your Dad!\n
+0xf1a,FAILED move `%s' from `%s'! File lost!
+0xf1b,Thanks for the file!\n
+0xf1c,NOTICE %s :Thanks for the file!\n
+0xf1d,Lost userfile transfer from %s; aborting.
+0xf1e,bye\n
+0xf1f,Disconnected %s (aborted userfile transfer)
+0xf20,Lost dcc send %s from %s!%s (%lu/%lu)
+0xf21,(!) reget packet from %s for %s is invalid!	
+0xf22,!! Resuming file transfer behind file end for %s to %s
+0xf23,!!! Trying to skip ahead on userfile transfer
+0xf24,Resuming file transfer at %dk for %s to %s
+0xf25,Completed userfile transfer to %s.
+0xf26,Finished dcc send %s to %s
+0xf27,Lost userfile transfer; aborting.
+0xf28,Lost dcc get %s from %s!%s
+0xf29,NOTICE %s :Bogus file length.\n
+0xf2a,File too long: dropping dcc send %s from %s!%s
+0xf2b,Timeout on userfile transfer.
+0xf2c,Disconnected %s (timed-out userfile transfer)
+0xf2e,NOTICE %s :Timeout during transfer, aborting %s.\n
+0xf2f,DCC timeout: GET %s (%s) at %lu/%lu
+0xf30,DCC timeout: SEND %s (%s) at %lu/%lu
+0xf31,send  (%lu)/%lu\n    Filename: %s\n
+0xf32,send  waited %lus\n    Filename: %s\n
+0xf33,conn  send
+0xf34,DCC connection: SEND %s (%s)
+0xf35,NOTICE %s :Bad connection (%s)\n
+0xf36,DCC bad connection: GET %s (%s!%s)
+0xf37,Begin DCC %ssend %s to %s
+0xf38,re
+0xf39,NOTICE %s :Ignoring resume of `%s': no data requested.\n
+0xf40,Unloading transfer module, killing all transfer connections...
+0xf41,    DCC block is %d%s, max concurrent d/ls is %d\n
+0xf42,    Using %d bytes of memory\n
+0xf43,This module requires eggdrop1.6.0 or later

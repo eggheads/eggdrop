@@ -1,7 +1,7 @@
 /*
  * transfer.h -- part of transfer.mod
  *
- * $Id: transfer.h,v 1.11 2001/04/12 02:39:47 guppy Exp $
+ * $Id: transfer.h,v 1.12 2001/12/02 07:11:15 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -82,5 +82,69 @@ typedef struct zarrf {
 } fileq_t;
 
 #endif				/* MAKING_TRANSFER */
+
+/* Language file additions */
+#define TRANSFER_COPY_FAILED        get_language(0xf00)
+#define TRANSFER_FILESYS_BROKEN     get_language(0xf01)
+#define TRANSFER_FILE_ARRIVE        get_language(0xf02)
+#define TRANSFER_LOG_CONFULL        get_language(0xf03)
+#define TRANSFER_NOTICE_CONFULL     get_language(0xf04)
+#define TRANSFER_LOG_SOCKERR        get_language(0xf05)
+#define TRANSFER_NOTICE_SOCKERR     get_language(0xf06)
+#define TRANSFER_LOG_FILEEMPTY      get_language(0xf07)
+#define TRANSFER_NOTICE_FILEEMPTY   get_language(0xf08)
+#define TRANSFER_SEND_TO            get_language(0xf09)
+#define TRANSFER_LINES              get_language(0xf0a)
+#define TRANSFER_WAITING            get_language(0xf0b)
+#define TRANSFER_DONE               get_language(0xf0c)
+#define TRANSFER_QUEUED_UP          get_language(0xf0d)
+#define TRANSFER_TOTAL              get_language(0xf0e)
+#define TRANSFER_CANCELLED          get_language(0xf0f)
+#define TRANSFER_ABORT_DCCSEND      get_language(0xf10)
+#define TRANSFER_NOTICE_ABORT       get_language(0xf11)
+#define TRANSFER_DCC_CANCEL         get_language(0xf12)
+#define TRANSFER_NO_MATCHES         get_language(0xf13)
+#define TRANSFER_CANCELLED_FILE     get_language(0xf14)
+#define TRANSFER_COMPLETED_DCC      get_language(0xf15)
+#define TRANSFER_FILENAME_TOOLONG   get_language(0xf16)
+#define TRANSFER_NOTICE_FNTOOLONG   get_language(0xf17)
+#define TRANSFER_TOO_BAD            get_language(0xf18)
+#define TRANSFER_NOTICE_TOOBAD      get_language(0xf19)
+#define TRANSFER_FAILED_MOVE        get_language(0xf1a)
+#define TRANSFER_THANKS             get_language(0xf1b)
+#define TRANSFER_NOTICE_THANKS      get_language(0xf1c)
+#define TRANSFER_BYE                get_language(0xf1d)
+#define TRANSFER_USERFILE_LOST      get_language(0xf1e)
+#define TRANSFER_USERFILE_DISCON    get_language(0xf1f)
+#define TRANSFER_LOST_DCCSEND       get_language(0xf20)
+#define TRANSFER_REGET_PACKET       get_language(0xf21)
+#define TRANSFER_BEHIND_FILEEND     get_language(0xf22)
+#define TRANSFER_TRY_SKIP_AHEAD     get_language(0xf23)
+#define TRANSFER_RESUME_FILE        get_language(0xf24)
+#define TRANSFER_COMPLETED_USERFILE get_language(0xf25)
+#define TRANSFER_FINISHED_DCCSEND   get_language(0xf26)
+#define TRANSFER_ABORT_USERFILE     get_language(0xf27)
+#define TRANSFER_LOST_DCCGET        get_language(0xf28)
+#define TRANSFER_BOGUS_FILE_LENGTH  get_language(0xf29)
+#define TRANSFER_FILE_TOO_LONG      get_language(0xf2a)
+#define TRANSFER_USERFILE_TIMEOUT   get_language(0xf2b)
+#define TRANSFER_DICONNECT_TIMEOUT  get_language(0xf2c)
+#define TRANSFER_NOTICE_TIMEOUT     get_language(0xf2d)
+#define TRANSFER_LOG_TIMEOUT        get_language(0xf2e)
+#define TRANSFER_DCC_GET_TIMEOUT    get_language(0xf2f)
+#define TRANSFER_DCC_SEND_TIMEOUT   get_language(0xf30)
+#define TRANSFER_SEND               get_language(0xf31)
+#define TRANSFER_SEND_WAITED        get_language(0xf32)
+#define TRANSFER_CONN_SEND          get_language(0xf33)
+#define TRANSFER_DCC_CONN           get_language(0xf34)
+#define TRANSFER_NOTICE_BAD_CONN    get_language(0xf35)
+#define TRANSFER_LOG_BAD_CONN       get_language(0xf36)
+#define TRANSFER_BEGIN_DCC          get_language(0xf37)
+#define TRANSFER_RE                 get_language(0xf38)
+#define TRANSFER_DCC_IGNORED        get_language(0xf39)
+#define TRANSFER_UNLOADING          get_language(0xf40)
+#define TRANSFER_STAT_BLOCK         get_language(0xf41)
+#define TRANSFER_STAT_MEMORY        get_language(0xf42)
+/* end of langauge addon */
 
 #endif				/* _EGG_MOD_TRANSFER_TRANSFER_H */
