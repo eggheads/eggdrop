@@ -4,7 +4,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: modules.c,v 1.29 2000/04/05 19:51:53 fabian Exp $
+ * $Id: modules.c,v 1.30 2000/04/05 19:55:13 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -864,27 +864,30 @@ int module_undepend(char *name1)
 
 void *mod_malloc(int size, char *modname, char *filename, int line)
 {
-  char x[100];
+  char x[100], *p;
 
-  sprintf(x, "%s:%s", modname, filename);
+  p = strrchr(filename, '/');
+  sprintf(x, "%s:%s", modname, p ? p + 1 : filename);
   x[19] = 0;
   return n_malloc(size, x, line);
 }
 
 void *mod_realloc(void *ptr, int size, char *modname, char *filename, int line)
 {
-  char x[100];
+  char x[100], *p;
 
-  sprintf(x, "%s:%s", modname, filename);
+  p = strrchr(filename, '/');
+  sprintf(x, "%s:%s", modname, p ? p + 1 : filename);
   x[19] = 0;
   return n_realloc(ptr, size, x, line);
 }
 
 void mod_free(void *ptr, char *modname, char *filename, int line)
 {
-  char x[100];
+  char x[100], *p;
 
-  sprintf(x, "%s:%s", modname, filename);
+  p = strrchr(filename, '/');
+  sprintf(x, "%s:%s", modname, p ? p + 1 : filename);
   x[19] = 0;
   n_free(ptr, x, line);
 }

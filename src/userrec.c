@@ -4,7 +4,7 @@
  *   a bunch of functions to find and change user records
  *   change and check user (and channel-specific) flags
  * 
- * $Id: userrec.c,v 1.18 2000/03/23 23:17:56 fabian Exp $
+ * $Id: userrec.c,v 1.19 2000/04/05 19:55:13 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -57,17 +57,19 @@ int		userfile_perm = 0600;	/* Userfile permissions,
 #ifdef DEBUG_MEM
 void *_user_malloc(int size, char *file, int line)
 {
-  char x[1024];
+  char x[1024], *p;
 
-  simple_sprintf(x, "userrec.c:%s", file);
+  p = strrchr(file, '/');
+  simple_sprintf(x, "userrec.c:%s", p ? p + 1 : file);
   return n_malloc(size, x, line);
 }
 
 void *_user_realloc(void *ptr, int size, char *file, int line)
 {
-  char x[1024];
+  char x[1024], *p;
 
-  simple_sprintf(x, "userrec.c:%s", file);
+  p = strrchr(file, '/');
+  simple_sprintf(x, "userrec.c:%s", p ? p + 1 : file);
   return n_realloc(ptr, size, x, line);
 }
 #else

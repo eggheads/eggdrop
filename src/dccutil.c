@@ -6,7 +6,7 @@
  *   memory management for dcc structures
  *   timeout checking for dcc connections
  * 
- * $Id: dccutil.c,v 1.19 2000/03/23 23:17:55 fabian Exp $
+ * $Id: dccutil.c,v 1.20 2000/04/05 19:55:12 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -383,7 +383,8 @@ void *_get_data_ptr(int size, char *file, int line)
 #ifdef DEBUG_MEM
   char x[1024];
 
-  simple_sprintf(x, "dccutil.c:%s", file);
+  p = strrchr(file, '/');
+  simple_sprintf(x, "dccutil.c:%s", p ? p + 1 : file);
   p = n_malloc(size, x, line);
 #else
   p = nmalloc(size);

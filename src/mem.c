@@ -3,7 +3,7 @@
  *   memory allocation and deallocation
  *   keeping track of what memory is being used by whom
  * 
- * $Id: mem.c,v 1.11 2000/03/23 23:17:55 fabian Exp $
+ * $Id: mem.c,v 1.12 2000/04/05 19:55:13 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -173,11 +173,8 @@ void debug_mem_to_dcc(int idx)
       for (me = module_list; me; me = me->next)
 	if (!strcmp(fn, me->name))
 	  me->mem_work += l;
-    } else {
+    } else
       dprintf(idx, "Not logging file %s!\n", fn);
-    }
-    if (p)
-      *p = ':';
   }
   for (i = 0; i < MAX_MEM; i++) {
     switch (i) {
@@ -295,9 +292,10 @@ void debug_mem_to_dcc(int idx)
 
 void *n_malloc(int size, char *file, int line)
 {
-  void *x;
+  void	*x;
 #ifdef DEBUG_MEM
-  int i = 0;
+  int	 i = 0;
+  char	*p;
 #endif
 
   x = (void *) malloc(size);
@@ -315,7 +313,8 @@ void *n_malloc(int size, char *file, int line)
   memtbl[i].ptr = x;
   memtbl[i].line = line;
   memtbl[i].size = size;
-  strncpy(memtbl[i].file, file, 19);
+  p = strrchr(file, '/');
+  strncpy(memtbl[i].file, p ? p + 1 : file, 19);
   memtbl[i].file[19] = 0;
   memused += size;
   lastused++;
@@ -327,6 +326,9 @@ void *n_realloc(void *ptr, int size, char *file, int line)
 {
   void *x;
   int i = 0;
+#ifdef DEBUG_MEM
+  char *p;
+#endif
 
   /* ptr == NULL is valid. Avoiding duplicate code further down */
   if (!ptr)
@@ -349,7 +351,8 @@ void *n_realloc(void *ptr, int size, char *file, int line)
   memtbl[i].ptr = x;
   memtbl[i].line = line;
   memtbl[i].size = size;
-  strncpy(memtbl[i].file, file, 19);
+  p = strrchr(file, '/');
+  strncpy(memtbl[i].file, p ? p + 1 : file, 19);
   memtbl[i].file[19] = 0;
   memused += size;
 #endif
