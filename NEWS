@@ -1,28 +1,34 @@
 News
 Last revised: May 19, 2002
-  ________________________________________________________________________
+     _________________________________________________________________
 
-What's new? First, read the following documents:
+                                   News
 
-     INSTALL
-     README
-     BOTNET
-     UPDATES1.6
-     tcl-commands.doc
 
-All of these documents combined will fill you in on the latest changes to
-Eggdrop in version 1.6.x. All files, with the exception of UPDATES1.6, are
-also available in html format in doc/html/.
+  What's new? First, read the following documents:
 
-A lot of things have changed in this version, so at a minimum, read the
-UPDATES1.6 text file. UPDATES shows what's been added and fixed along the
-way.
+    INSTALL
+    README
+    doc/BOTNET
+    doc/UPDATES1.6
+    doc/tcl-commands.doc
 
-If you are upgrading from a pre-1.6 version of Eggdrop:
+  All of these documents combined will fill you in on the latest changes to
+  Eggdrop in version 1.6.x. All files, with the exception of UPDATES1.6, are
+  also available in html format in doc/html/.
 
-     1. Before you start the bot for the first time, BACKUP your userfile.
+  A lot of things have changed in this version, so at a minimum, read the
+  UPDATES1.6 text file. UPDATES shows what's been added and fixed along the
+  way.
 
-     2. DON'T USE YOUR OLD CONFIG FILE. MAKE A NEW ONE!
+  If you are upgrading from a pre-1.6 version of Eggdrop:
+
+    1. Before you start the bot for the first time, BACKUP your userfile.
+
+    2. DON'T USE YOUR OLD CONFIG FILE. MAKE A NEW ONE!
+
+     _________________________________________________________________
+
 
 Changes made to Eggdrop 1.6.x from Eggdrop1.4.x:
 

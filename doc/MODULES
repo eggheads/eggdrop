@@ -1,34 +1,35 @@
-EGGDROP MODULE INFORMATION                                        01 Mar 2002
+Eggdrop Module Information
+Last revised: June 05, 2002
+     _________________________________________________________________
+
+                        Eggdrop Module Information
 
 
 INDEX
 
-I.   WHAT ARE MODULES?
-II.  WHY USE MODULES?
-III. HOW TO INSTALL A MODULE
-IV.  MODULES INCLUDED WITH EGGDROP
-V.   PROGRAMMING MODULES
-VI.  WHAT TO DO WITH A MODULE?
+I.   What are modules?
+II.  Why use modules?
+III. How to install a module
+IV.  Modules included with eggdrop
+V.   Programming modules
+VI.  What to do with a module?
 
 
-
-
-
-I. WHAT ARE MODULES?
+I. What are modules?
 
   Modules are portions of code which are loaded separately to the
   bot itself and provide extra services. For example, the filesys
   module provides the entire file system.
 
 
-II. WHY USE MODULES?
+II. Why use modules?
 
   Modules allow C coders to add their own enhancements to the
   bot without recompiling the whole thing, and without increasing
   the size of the Eggdrop core.
 
 
-III. HOW TO INSTALL A MODULE
+III. How to install a module
 
   Please note that these are only basic instructions for compiling and
   installing a module. Please read any and all directions included with
@@ -56,7 +57,7 @@ III. HOW TO INSTALL A MODULE
   To see your currently running modules type '.module'.
 
 
-IV. MODULES INCLUDED WITH EGGDROP
+IV. Modules included with eggdrop
 
   assoc       This module provides assoc support, i.e. naming channels on
               the botnet.
@@ -128,7 +129,7 @@ IV. MODULES INCLUDED WITH EGGDROP
               point in writing modules, woobie is the right thing.
 
 
-V. PROGRAMMING MODULES
+V. Programming modules
 
   WARNING:
         This section is very likely to be out of date. It was not updated
@@ -242,7 +243,7 @@ V. PROGRAMMING MODULES
 
        (iv) static int MODULE_expmem ()
             This should tally all memory you allocate/deallocate within
-            the module (using modmalloc & modfree). It's used by memory
+            the module (using nmalloc & nfree) in bytes. It's used by memory
             debugging to track memory faults, and it is used by .status
             to  total up memory usage.
 
@@ -269,7 +270,9 @@ V. PROGRAMMING MODULES
                context;
 
                  - actually a #define; records the current position in
-                   execution (for debugging)
+                   execution (for debugging).  Using context is no longer
+                   recommended, because it uses too much resources and a core
+                   file provides much more information.
 
                void   dprintf (int idx,char *format, ... )
 
@@ -367,7 +370,7 @@ V. PROGRAMMING MODULES
                     { char *func_name, Function *function_to_call }
 
                    These are normal Tcl commands (as done in tcl*.c).
-                   Use { 0, 0 } to indicate the end of the list.
+                   Use { NULL, NULL } to indicate the end of the list.
 
           void add_tcl_ints(tcl_ints *);
           void rem_tcl_ints(tcl_ints *);
@@ -378,7 +381,7 @@ V. PROGRAMMING MODULES
 
                     { char *variable_name, int *variable, int readonly }
 
-                    Use {0,0,0}; to indicate the end of the list.
+                    Use { NULL, NULL, NULL }; to indicate the end of the list.
 
           void add_tcl_strings(tcl_strings *);
           void rem_tcl_strings(tcl_strings *);
@@ -388,7 +391,8 @@ V. PROGRAMMING MODULES
 
                     { char * variable_name, char *string, int length, int flags }
 
-                    Use { 0, 0, 0, 0 } to indicate the end of the list.
+                    Use { NULL, NULL, NULL, NULL } to indicate the end of the
+                    list.
 
                     length: set to 0 if you want a const string.
 
@@ -411,7 +415,7 @@ V. PROGRAMMING MODULES
 
                     { char *command, char *flags, Function *function }
 
-                    terminate with { 0, 0, 0, 0 }
+                    terminate with { NULL, NULL, NULL, NULL }
 
                     this is EXACTLY like a bind command in Tcl (heck, tcl_bind
                     calls the same function this does).
@@ -425,14 +429,14 @@ V. PROGRAMMING MODULES
                     is required. return is also in src/tclhash.c
 
 
-VI. WHAT TO DO WITH A MODULE?
+VI. What to do with a module?
 
    If you have written a module and feel that you wish to share it with the
    rest of the Eggdrop community, upload it to the incoming directory on
-   incoming.eggheads.org(/incoming/modules/1.6). Place a nice descriptive
-   text with it, and it'll make its way to the modules directory on
-   ftp.eggheads.org. Don't forget to mention in your text file which
-   version Eggdrop the module is written for.
+   incoming.eggheads.org (/incoming/modules/1.6). Place a nice descriptive
+   text (modulename.desc) with it, and it'll make its way to the modules
+   directory on ftp.eggheads.org. Don't forget to mention in your text file
+   which version Eggdrop the module is written for.
      _________________________________________________________________
 
    Copyright (C) 1999, 2000, 2001, 2002 Eggheads Development Team

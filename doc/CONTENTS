@@ -1,64 +1,69 @@
-Contents of the doc/ directory:
+Directory Contents - doc/
+Last revised: June 04, 2002
+     _________________________________________________________________
 
-html/
-  An HTML version of Eggdrop's documentation is provided in this directory.
+                          Directory Contents - doc/                   
 
-man1/
-  This contains Unix man page files.
 
-settings/
-  This directory contains documentation for all config file and module
-  settings.
+  html/
+    An HTML version of Eggdrop's documentation is provided in this directory.
 
-ABOUT
-  Information about Eggdrop and a brief history can be found in this file.
+  man1/
+    This contains Unix man page files.
 
-AUTHORS
-  A list of Eggdrop developers and contributors is in this file.
+  settings/
+    This directory contains documentation for all config file and module
+    settings.
 
-BOTNET
-  This is a guide to flags and bot user file sharing.
+  ABOUT
+    Information about Eggdrop and a brief history can be found in this file.
 
-BUG-REPORT
-  Fill out this form and e-mail it to bugs@eggheads.org if you find a bug
-  in Eggdrop.
+  AUTHORS
+    A list of Eggdrop developers and contributors is in this file.
 
-compiling.FAQ
-  If you have trouble compiling your Eggdrop, take a look in this file.
+  BOTNET
+    This is a guide to flags and bot user file sharing.
 
-first_script.txt
-  This document will help get you started with Tcl scripting for Eggdrop.
+  BUG-REPORT
+    Fill out this form and e-mail it to bugs@eggheads.org if you find a bug
+    in Eggdrop.
 
-KNOWN-PROBLEMS
-  See this file for a list of things that are broken but aren't getting
-  fixed anytime soon
+  compiling.FAQ
+    If you have trouble compiling your Eggdrop, take a look in this file.
 
-MODULES
-  Information on writing Eggdrop modules can be found in this document.
+  first_script.txt
+    This document will help get you started with Tcl scripting for Eggdrop.
 
-PARTYLINE
-  This file contains information about Eggdrop's partyline.
+  KNOWN-PROBLEMS
+    See this file for a list of things that are broken but aren't getting
+    fixed anytime soon
 
-patch.howto
-   This is a how-to on applying and creating Eggdrop patches.
+  MODULES
+    Information on writing Eggdrop modules can be found in this document.
 
-tcl-commands.doc
-   Documentation on Eggdrop Tcl commands available to scripters can be found
-   here.
+  PARTYLINE
+    This file contains information about Eggdrop's partyline.
 
-text-substitutions.doc
-   This contains documentation on %-variables that can be used in help, MOTD,
-   and BANNER files.
+  patch.howto
+    This is a how-to on applying and creating Eggdrop patches.
 
-tricks
-   Some advanced tips on making Eggdrop do what you want it to do can be found
-   here. It also contains tweaking tips for your config file.
+  tcl-commands.doc
+    Documentation on Eggdrop Tcl commands available to scripters can be found
+    here.
 
-UPDATES1.6
-   This is a complete list of changes made to Eggdrop 1.6.
+  text-substitutions.doc
+    This contains documentation on %-variables that can be used in help, MOTD,
+    and BANNER files.
 
-UPDATES1.5
-   This is a complete list of changes made to Eggdrop 1.5.
+  tricks
+    Some advanced tips on making Eggdrop do what you want it to do can be found
+    here. It also contains tweaking tips for your config file.
 
-UPDATES.pre1.5
-   This is a complete list of changes made to Eggdrop before version 1.5.
+  UPDATES1.6
+    This is a complete list of changes made to Eggdrop 1.6.
+
+  UPDATES1.5
+    This is a complete list of changes made to Eggdrop 1.5.
+
+  UPDATES.pre1.5
+    This is a complete list of changes made to Eggdrop before version 1.5.

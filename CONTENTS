@@ -1,56 +1,69 @@
-One (1) Eggdrop bot (n.)  Functional on many UNIX platforms. README is
-   included for you (human) to read (please). Helpful stuff.
+Directory Contents - doc/
+Last revised: June 04, 2002
+     _________________________________________________________________
 
-"What are all these files for?"
+                           Directory Contents - /
 
-COPYING
-   Eggdrop legal information is contained in this file.
 
-FEATURES
-   This tells you what Eggdrop can do -- a kind of advertisement.
+  "What are all these files for?"
 
-Makefile
-Makefile.in
-   These help with the automated compiling of the bot.
+  doc/
+    Lots of IMPORTANT DOCUMENTATION that you MUST READ is in this directory.
 
-NEWS
-   This lists significant differences with previous versions.
+  help/
+    All of the bot's help files are stored here.
 
-README
-   You should read this file before even trying to compile Eggdrop.
+  language/
+    All of the bot's language files are stored here.
 
-config*
-   These are scripts for automatic configure of the bot.
+  logs/
+    This is a good place for eggdrop to store log files.
 
-doc/
-   Lots of IMPORTANT DOCUMENTATION that you MUST READ is in this directory.
+  misc/
+    These are misc. source/script files.
 
-eggdrop.simple.conf
-   This is a simple configuration file for your bot.
+  scripts/
+    Tcl scripts included with Eggdrop are contained in this directory.
 
-eggdrop.advanced.conf
-   This is an advanced configuration file for your bot.
+  src/
+    This is the Eggdrop source.
 
-eggdrop.complete.conf
-   This is a configuration file including all options for your bot.
+  text/
+    This contains the motd and banner files.
 
-filesys/
-   This is the default filesystem directory.
+  acconfig.h
+  aclocal.m4
+  config.h.in
+  configure
+  configure.in
+    These are scripts for automatic configure of the bot.
 
-help/
-   All of the bot's help files are stored here.
+  COPYING
+    Eggdrop legal information is contained in this file.
 
-language/
-   All of the bot's language files are stored here.
+  disabled_modules
+    Any module listed in this file will not be compiled by default.
 
-misc/
-  These are misc. source/script files.
+  eggdrop.advanced.conf
+    This is an advanced configuration file for your bot.
 
-text/
-   This contains the motd and banner files.
+  eggdrop.complete.conf
+    This is a configuration file including all options for your bot.
 
-scripts/
-   Tcl scripts included with Eggdrop are contained in this directory.
+  eggdrop.simple.conf
+    This is a simple configuration file for your bot.
 
-src/
-   This is the Eggdrop source.
+  FEATURES
+    This tells you what Eggdrop can do -- a kind of advertisement.
+
+  INSTALL
+    Information on installing your Eggdrop.
+
+  Makefile.in
+    This help with the automated compiling of the bot.
+
+  NEWS
+    This lists significant differences with previous versions.
+
+  README
+    You should read this file before even trying to compile Eggdrop.

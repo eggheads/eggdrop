@@ -1,5 +1,5 @@
 Eggdrop Tcl Commands
-Last revised: May 21, 2002
+Last revised: June 04, 2002
      _________________________________________________________________
 
 This is an exhaustive list of all the Tcl commands added to Eggdrop. All
@@ -1165,8 +1165,8 @@ marked with vertical bars (|) on the left.
     Module: transfer
 
   getfilesendtime <idx>
-    Returns: the unix time when a file transfer started, or a negative
-      number:
+    Returns: the unixtime value from when a file transfer started, or a
+      negative number:
         -1 no matching transfer with the specified idx was found
         -2 the idx matches an entry which is not a file transfer
     Module: transfer
@@ -1294,7 +1294,8 @@ marked with vertical bars (|) on the left.
     Module: core
 
   unixtime
-    Returns: a long integer which is the current time according to unix
+    Returns: a long integer which represents the number of seconds that have
+      passed since 00:00 Jan 1, 1970 (GMT).
     Module: core
 
   duration <seconds>
