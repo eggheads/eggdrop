@@ -2,7 +2,7 @@
  * irc.c -- part of irc.mod
  *   support for channels within the bot 
  * 
- * $Id: irc.c,v 1.42 2000/11/06 04:06:43 guppy Exp $
+ * $Id: irc.c,v 1.43 2000/11/08 19:45:35 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -514,7 +514,7 @@ static void status_log()
 
       putlog(LOG_MISC, chan->dname,
 	     "%s%-10s (%s) : [m/%d o/%d v/%d n/%d b/%d e/%s I/%s]",
-             me_op(chan) ? "@" : me_voice(chan) ? "+" : " ", chan->dname,
+             me_op(chan) ? "@" : me_voice(chan) ? "+" : "", chan->dname,
              getchanmode(chan), chan->channel.members, chops, voice, nonops,
 	     bans, use_exempts ? s : "-", use_invites ? s2 : "-");
     }
