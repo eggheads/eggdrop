@@ -2,7 +2,7 @@
  * chancmds.c -- part of irc.mod
  *   handles commands directly relating to channel interaction
  *
- * $Id: cmdsirc.c,v 1.34 2002/06/13 20:43:08 wcc Exp $
+ * $Id: cmdsirc.c,v 1.35 2002/07/09 05:40:56 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -646,9 +646,8 @@ static void cmd_channel(struct userrec *u, int idx, char *par)
        *chname;
   struct chanset_t *chan;
   memberlist *m;
-  static char spaces[33] = "                              ";
-  static char spaces2[33] = "                              ";
-  int len, len2;
+  int maxnicklen, maxhandlen;
+  char format[81];
 
   if (!has_oporhalfop(idx, par))
     return;
@@ -675,13 +674,22 @@ static void cmd_channel(struct userrec *u, int idx, char *par)
   if (chan->channel.topic)
     dprintf(idx, "%s: %s\n", IRC_CHANNELTOPIC, chan->channel.topic);
   if (channel_active(chan)) {
+    /* find max nicklen and handlen */
+    maxnicklen = maxhandlen = 0;
+    for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
+	if(strlen(m->nick) > maxnicklen)
+	    maxnicklen = strlen(m->nick);
+	if(m->user)
+	    if(strlen(m->user->handle) > maxhandlen)
+		maxhandlen = strlen(m->user->handle);
+    }
+    if(maxnicklen < 9) maxnicklen = 9;
+    if(maxhandlen < 9) maxhandlen = 9;
+    
     dprintf(idx, "(n = owner, m = master, o = op, d = deop, b = bot)\n");
-    spaces[nick_len - 9] = 0;
-    spaces2[HANDLEN - 9] = 0;
-    dprintf(idx, " NICKNAME %s HANDLE   %s JOIN   IDLE  USER@HOST\n",
-	    spaces, spaces2);
-    spaces[nick_len - 9] = ' ';
-    spaces2[HANDLEN - 9] = ' ';
+    snprintf(format, sizeof format, " %%-%us %%-%us %%-6s %%-5s %%s\n", 
+			maxnicklen, maxhandlen);
+    dprintf(idx, format, "NICKNAME", "HANDLE", " JOIN", "IDLE", "USER@HOST");
     for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
       if (m->joined > 0) {
 	if ((now - (m->joined)) > 86400)
@@ -775,16 +783,18 @@ static void cmd_channel(struct userrec *u, int idx, char *par)
 	chanflag = '+';
       else
 	chanflag = ' ';
-      spaces[len = (nick_len - strlen(m->nick))] = 0;
-      spaces2[len2 = (HANDLEN - strlen(handle))] = 0;
-      if (chan_issplit(m))
-	dprintf(idx, "%c%s%s %s%s %s %c     <- netsplit, %lus\n", chanflag,
-		m->nick, spaces, handle, spaces2, s, atrflag,
+      if (chan_issplit(m)) {
+        snprintf(format, sizeof format, 
+			"%%c%%-%us %%-%us %%s %%c     <- netsplit, %%lus\n", 
+			maxnicklen, maxhandlen);
+	dprintf(idx, format, chanflag, m->nick, handle, s, atrflag,
 		now - (m->split));
-      else if (!rfc_casecmp(m->nick, botname))
-	dprintf(idx, "%c%s%s %s%s %s %c     <- it's me!\n", chanflag, m->nick,
-		spaces, handle, spaces2, s, atrflag);
-      else {
+      } else if (!rfc_casecmp(m->nick, botname)) {
+        snprintf(format, sizeof format, 
+			"%%c%%-%us %%-%us %%s %%c     <- it's me!\n", 
+			maxnicklen, maxhandlen);
+	dprintf(idx, format, chanflag, m->nick, handle, s, atrflag);
+      } else {
 	/* Determine idle time */
 	if (now - (m->last) > 86400)
 	  egg_snprintf(s1, sizeof s1, "%2lud", ((now - (m->last)) / 86400));
@@ -794,11 +804,11 @@ static void cmd_channel(struct userrec *u, int idx, char *par)
 	  egg_snprintf(s1, sizeof s1, "%2lum", ((now - (m->last)) / 60));
 	else
 	  strncpyz(s1, "   ", sizeof s1);
-	dprintf(idx, "%c%s%s %s%s %s %c %s  %s\n", chanflag, m->nick,
-		spaces, handle, spaces2, s, atrflag, s1, m->userhost);
+	snprintf(format, sizeof format, "%%c%%-%us %%-%us %%s %%c %%s  %%s\n", 
+			maxnicklen, maxhandlen);
+	dprintf(idx, format, chanflag, m->nick,	handle, s, atrflag, s1, 
+		    m->userhost);
       }
-      spaces[len] = ' ';
-      spaces2[len2] = ' ';
       if (chan_fakeop(m))
 	dprintf(idx, "    (%s)\n", IRC_FAKECHANOP);
       if (chan_sentop(m))

@@ -6,7 +6,7 @@
  *   memory management for dcc structures
  *   timeout checking for dcc connections
  *
- * $Id: dccutil.c,v 1.38 2002/03/27 04:27:29 guppy Exp $
+ * $Id: dccutil.c,v 1.39 2002/07/09 05:40:55 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -36,7 +36,7 @@
 
 extern struct dcc_t	*dcc;
 extern int		 dcc_total, max_dcc, dcc_flood_thr, backgrd, MAXSOCKS;
-extern char		 botnetnick[], spaces[], version[];
+extern char		 botnetnick[], version[];
 extern time_t		 now;
 extern sock_list	*socklist;
 extern Tcl_Interp	*interp;
@@ -314,15 +314,27 @@ void dcc_remove_lost(void)
  */
 void tell_dcc(int zidx)
 {
-  int i, j, k;
+  int i, j;
   char other[160];
+  char format[81];
+  int nicklen;
 
-  spaces[HANDLEN - 9] = 0;
-  dprintf(zidx, "SOCK ADDR     PORT  NICK     %s HOST              TYPE\n"
-	  ,spaces);
-  dprintf(zidx, "---- -------- ----- ---------%s ----------------- ----\n"
-	  ,spaces);
-  spaces[HANDLEN - 9] = ' ';
+  /* calculate max nicklen */
+  nicklen = 0;
+  for (i = 0; i < dcc_total; i++) {
+      if(strlen(dcc[i].nick) > nicklen)
+          nicklen = strlen(dcc[i].nick);
+  }
+  if(nicklen < 9) nicklen = 9;
+  
+  snprintf(format, sizeof format, "%%-4s %%-8s %%-5s %%-%us %%-17s %%s\n", 
+                          nicklen);
+  dprintf(zidx, format, "SOCK", "ADDR",     "PORT",  "NICK", "HOST", "TYPE");
+  dprintf(zidx, format, "----", "--------", "-----", "---------", 
+                        "-----------------", "----");
+
+  snprintf(format, sizeof format, "%%-4d %%08X %%5d %%-%us %%-17s %%s\n", 
+                          nicklen);
   /* Show server */
   for (i = 0; i < dcc_total; i++) {
     j = strlen(dcc[i].host);
@@ -336,11 +348,8 @@ void tell_dcc(int zidx)
       sprintf(other, "?:%lX  !! ERROR !!", (long) dcc[i].type);
       break;
     }
-    k = HANDLEN - strlen(dcc[i].nick);
-    spaces[k] = 0;
-    dprintf(zidx, "%-4d %08X %5d %s%s %-17s %s\n", dcc[i].sock, dcc[i].addr,
-	    dcc[i].port, dcc[i].nick, spaces, dcc[i].host + j, other);
-    spaces[k] = ' ';
+    dprintf(zidx, format, dcc[i].sock, dcc[i].addr, dcc[i].port, dcc[i].nick, 
+			  dcc[i].host + j, other);
   }
 }
 

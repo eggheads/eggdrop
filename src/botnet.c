@@ -7,7 +7,7 @@
  *   linking, unlinking, and relaying to another bot
  *   pinging the bots periodically and checking leaf status
  *
- * $Id: botnet.c,v 1.42 2002/03/22 03:53:56 guppy Exp $
+ * $Id: botnet.c,v 1.43 2002/07/09 05:40:55 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -31,7 +31,6 @@
 #include "main.h"
 #include "tandem.h"
 
-extern char		 spaces[], spaces2[];
 extern int		 dcc_total, backgrd, connect_timeout, max_dcc,
 			 egg_numver;
 extern struct userrec	*userlist;
@@ -430,8 +429,9 @@ char *lastbot(char *who)
  */
 void answer_local_whom(int idx, int chan)
 {
-  char c, idle[40], spaces2[33] = "                               ";
-  int i, len, len2, t, nicklen, botnicklen, total=0;
+  char format[81];
+  char c, idle[40];
+  int i, t, nicklen, botnicklen, total=0;
 
   if (chan == (-1))
     dprintf(idx, "%s (+: %s, *: %s)\n", BOT_BOTNETUSERS, BOT_PARTYLINE,
@@ -464,13 +464,12 @@ void answer_local_whom(int idx, int chan)
   if(nicklen < 9) nicklen = 9;
   if(botnicklen < 9) botnicklen = 9;
 
-  spaces[nicklen - 9] = 0;
-  spaces2[botnicklen - 9] = 0;
-  dprintf(idx, " Nick     %s   Bot      %s  Host\n", spaces, spaces2);
-  dprintf(idx, "----------%s   ---------%s  --------------------\n",
-	  spaces, spaces2);
-  spaces[nicklen - 9] = ' ';
-  spaces2[botnicklen - 9] = ' ';
+  snprintf(format, sizeof format, "%%-%us   %%-%us  %%s\n", 
+                                  nicklen, botnicklen);
+  dprintf(idx, format, " Nick", 	" Bot",      " Host");
+  dprintf(idx, format, "----------",	"---------", "--------------------");
+  snprintf(format, sizeof format, "%%c%%-%us %%c %%-%us  %%s%%s\n", 
+                                  nicklen, botnicklen);
   for (i = 0; i < dcc_total; i++)
     if (dcc[i].type == &DCC_CHAT) {
       if ((chan == (-1)) || ((chan >= 0) && (dcc[i].u.chat->channel == chan))) {
@@ -491,16 +490,11 @@ void answer_local_whom(int idx, int chan)
 	    sprintf(idle, " [idle %lum]", mins);
 	} else
 	  idle[0] = 0;
-	spaces[len = nicklen - strlen(dcc[i].nick)] = 0;
-	spaces2[len2 = botnicklen - strlen(botnetnick)] = 0;
         total++;
-	dprintf(idx, "%c%s%s %c %s%s  %s%s\n", c, dcc[i].nick, spaces,
+	dprintf(idx, format, c, dcc[i].nick, 
 		(dcc[i].u.chat->channel == 0) && (chan == (-1)) ? '+' :
 		(dcc[i].u.chat->channel > GLOBAL_CHANS) &&
-		(chan == (-1)) ? '*' : ' ',
-		botnetnick, spaces2, dcc[i].host, idle);
-	spaces[len] = ' ';
-	spaces2[len2] = ' ';
+		(chan == (-1)) ? '*' : ' ', botnetnick, dcc[i].host, idle);
 	if (dcc[i].u.chat->away != NULL)
 	  dprintf(idx, "   AWAY: %s\n", dcc[i].u.chat->away);
       }
@@ -526,14 +520,10 @@ void answer_local_whom(int idx, int chan)
 	  sprintf(idle, " [idle %lum]", mins);
       } else
 	idle[0] = 0;
-      spaces[len = nicklen - strlen(party[i].nick)] = 0;
-      spaces2[len2 = botnicklen - strlen(party[i].bot)] = 0;
       total++;
-      dprintf(idx, "%c%s%s %c %s%s  %s%s\n", c, party[i].nick, spaces,
+      dprintf(idx, format, c, party[i].nick, 
 	      (party[i].chan == 0) && (chan == (-1)) ? '+' : ' ',
-	      party[i].bot, spaces2, party[i].from, idle);
-      spaces[len] = ' ';
-      spaces2[len2] = ' ';
+	      party[i].bot, party[i].from, idle);
       if (party[i].status & PLSTAT_AWAY)
 	dprintf(idx, "   %s: %s\n", MISC_AWAY,
 		party[i].away ? party[i].away : "");

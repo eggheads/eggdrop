@@ -10,7 +10,7 @@
  *
  * dprintf'ized, 9nov1995
  *
- * $Id: users.c,v 1.33 2002/03/27 04:27:29 guppy Exp $
+ * $Id: users.c,v 1.34 2002/07/09 05:40:55 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -40,8 +40,6 @@ char natip[121] = "";
 
 #include <netinet/in.h>
 #include <arpa/inet.h>
-char spaces[33] = "                                 ";
-char spaces2[33] = "                                 ";
 
 extern struct dcc_t *dcc;
 extern struct userrec *userlist, *lastuser;
@@ -474,7 +472,8 @@ static void restore_ignore(char *host)
 void tell_user(int idx, struct userrec *u, int master)
 {
   char s[81], s1[81];
-  int n, l = HANDLEN - strlen(u->handle);
+  char format[81];
+  int n;
   time_t now2;
   struct chanuserrec *ch;
   struct user_entry *ue;
@@ -498,11 +497,11 @@ void tell_user(int idx, struct userrec *u, int master)
     else
       egg_strftime(s1, 6, "%H:%M", localtime(&li->laston));
   }
-  spaces[l] = 0;
-  dprintf(idx, "%s%s %-5s%5d %-15s %s (%-10.10s)\n", u->handle, spaces,
+  snprintf(format, sizeof format, "%%-%us %%-5s%%5d %%-15s %%s (%%-10.10s)\n", 
+                          HANDLEN);
+  dprintf(idx, format, u->handle, 
 	  get_user(&USERENTRY_PASS, u) ? "yes" : "no", n, s, s1,
 	  (li && li->lastonplace) ? li->lastonplace : "nowhere");
-  spaces[l] = ' ';
   /* channel flags? */
   for (ch = u->chanrec; ch; ch = ch->next) {
     fr.match = FR_CHAN | FR_GLOBAL;
@@ -521,9 +520,8 @@ void tell_user(int idx, struct userrec *u, int master)
       fr.chan = ch->flags;
       fr.udef_chan = ch->flags_udef;
       build_flags(s, &fr, NULL);
-      spaces[HANDLEN - 9] = 0;
-      dprintf(idx, "%s  %-18s %-15s %s\n", spaces, ch->channel, s, s1);
-      spaces[HANDLEN - 9] = ' ';
+      snprintf(format, sizeof format, "%%%us  %%-18s %%-15s %%s\n", HANDLEN-9);
+      dprintf(idx, format, " ", ch->channel, s, s1);
       if (ch->info != NULL)
 	dprintf(idx, "    INFO: %s\n", ch->info);
     }
@@ -537,6 +535,7 @@ void tell_user(int idx, struct userrec *u, int master)
 /* show user by ident */
 void tell_user_ident(int idx, char *id, int master)
 {
+  char format[81];
   struct userrec *u;
 
   u = get_user_by_handle(userlist, id);
@@ -546,9 +545,9 @@ void tell_user_ident(int idx, char *id, int master)
     dprintf(idx, "%s.\n", USERF_NOMATCH);
     return;
   }
-  spaces[HANDLEN - 6] = 0;
-  dprintf(idx, "HANDLE%s PASS NOTES FLAGS           LAST\n", spaces);
-  spaces[HANDLEN - 6] = ' ';
+  snprintf(format, sizeof format, "%%-%us PASS NOTES FLAGS           LAST\n", 
+                          HANDLEN);
+  dprintf(idx, format, "HANDLE");
   tell_user(idx, u, master);
 }
 
@@ -558,6 +557,7 @@ void tell_user_ident(int idx, char *id, int master)
 void tell_users_match(int idx, char *mtch, int start, int limit,
 		      int master, char *chname)
 {
+  char format[81];
   struct userrec *u;
   int fnd = 0, cnt, nomns = 0, flags = 0;
   struct list_type *q;
@@ -565,9 +565,9 @@ void tell_users_match(int idx, char *mtch, int start, int limit,
 
   dprintf(idx, "*** %s '%s':\n", MISC_MATCHING, mtch);
   cnt = 0;
-  spaces[HANDLEN - 6] = 0;
-  dprintf(idx, "HANDLE%s PASS NOTES FLAGS           LAST\n", spaces);
-  spaces[HANDLEN - 6] = ' ';
+  snprintf(format, sizeof format, "%%-%us PASS NOTES FLAGS           LAST\n", 
+                      HANDLEN);
+  dprintf(idx, format, "HANDLE");
   if (start > 1)
     dprintf(idx, "(%s %d)\n", MISC_SKIPPING, start - 1);
   if (strchr("+-&|", *mtch)) {

@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  *
- * $Id: cmds.c,v 1.80 2002/03/27 04:27:29 guppy Exp $
+ * $Id: cmds.c,v 1.81 2002/07/09 05:40:55 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -48,7 +48,7 @@ extern unsigned long	 otraffic_irc, otraffic_irc_today,
 			 itraffic_unknown, itraffic_unknown_today;
 extern Tcl_Interp	*interp;
 extern char		 botnetnick[], origbotname[], ver[], network[],
-			 owner[], spaces[], quit_msg[];
+			 owner[], quit_msg[];
 extern time_t		 now, online_since;
 extern module_entry	*module_list;
 
@@ -90,7 +90,9 @@ static int add_bot_hostmask(int idx, char *nick)
 
 static void tell_who(struct userrec *u, int idx, int chan)
 {
-  int i, k, ok = 0, atr = u ? u->flags : 0, len;
+  int i, k, ok = 0, atr = u ? u->flags : 0;
+  int nicklen;
+  char format[81];
   char s[1024];			/* temp fix - 1.4 has a better one */
 
   if (!chan)
@@ -111,20 +113,29 @@ static void tell_who(struct userrec *u, int idx, int chan)
 		       chan % GLOBAL_CHANS,
 		       MISC_OWNER, MISC_MASTER, MISC_OP);
   }
+
+  /* calculate max nicklen */
+  nicklen = 0;
+  for (i = 0; i < dcc_total; i++) {
+      if(strlen(dcc[i].nick) > nicklen)
+          nicklen = strlen(dcc[i].nick);
+  }
+  if(nicklen < 9) nicklen = 9;
+  
   for (i = 0; i < dcc_total; i++)
     if (dcc[i].type == &DCC_CHAT)
       if (dcc[i].u.chat->channel == chan) {
-	spaces[len = HANDLEN - strlen(dcc[i].nick)] = 0;
 	if (atr & USER_OWNER) {
-	  sprintf(s, "  [%.2lu]  %c%s%s %s",
+	  snprintf(format, sizeof format, "  [%%.2lu]  %%c%%-%us %%s", nicklen);
+	  sprintf(s, format,
 		  dcc[i].sock, (geticon(i) == '-' ? ' ' : geticon(i)),
-		  dcc[i].nick, spaces, dcc[i].host);
+		  dcc[i].nick, dcc[i].host);
 	} else {
-	  sprintf(s, "  %c%s%s %s",
+	  snprintf(format, sizeof format, "  %%c%%-%us %%s", nicklen);
+	  sprintf(s, format,
 		  (geticon(i) == '-' ? ' ' : geticon(i)),
-		  dcc[i].nick, spaces, dcc[i].host);
+		  dcc[i].nick, dcc[i].host);
 	}
-	spaces[len] = ' ';
 	if (atr & USER_MASTER) {
 	  if (dcc[i].u.chat->con_flags)
 	    sprintf(&s[strlen(s)], " (con:%s)",
@@ -154,19 +165,20 @@ static void tell_who(struct userrec *u, int idx, int chan)
 	dprintf(idx, "Bots connected:\n");
       }
       egg_strftime(s, 14, "%d %b %H:%M", localtime(&dcc[i].timeval));
-      spaces[len = HANDLEN - strlen(dcc[i].nick)] = 0;
       if (atr & USER_OWNER) {
-	dprintf(idx, "  [%.2lu]  %s%c%s%s (%s) %s\n",
+        snprintf(format, sizeof format, "  [%%.2lu]  %%s%%c%%-%us (%%s) %%s\n", 
+			    nicklen);
+	dprintf(idx, format,
 		dcc[i].sock, dcc[i].status & STAT_CALLED ? "<-" : "->",
 		dcc[i].status & STAT_SHARE ? '+' : ' ',
-		dcc[i].nick, spaces, s, dcc[i].u.bot->version);
+		dcc[i].nick, s, dcc[i].u.bot->version);
       } else {
-	dprintf(idx, "  %s%c%s%s (%s) %s\n",
+        snprintf(format, sizeof format, "  %%s%%c%%-%us (%%s) %%s\n", nicklen);
+	dprintf(idx, format,
 		dcc[i].status & STAT_CALLED ? "<-" : "->",
 		dcc[i].status & STAT_SHARE ? '+' : ' ',
-		dcc[i].nick, spaces, s, dcc[i].u.bot->version);
+		dcc[i].nick, s, dcc[i].u.bot->version);
       }
-      spaces[len] = ' ';
     }
   ok = 0;
   for (i = 0; i < dcc_total; i++) {
@@ -175,18 +187,15 @@ static void tell_who(struct userrec *u, int idx, int chan)
 	ok = 1;
 	dprintf(idx, "Other people on the bot:\n");
       }
-      spaces[len = HANDLEN - strlen(dcc[i].nick)] = 0;
       if (atr & USER_OWNER) {
-	sprintf(s, "  [%.2lu]  %c%s%s ",
-		dcc[i].sock,
-		(geticon(i) == '-' ? ' ' : geticon(i)), dcc[i].nick,
-		spaces);
+	snprintf(format, sizeof format, "  [%%.2lu]  %%c%%-%us ", nicklen);
+	sprintf(s, format, dcc[i].sock,
+		(geticon(i) == '-' ? ' ' : geticon(i)), dcc[i].nick);
       } else {
-	sprintf(s, "  %c%s%s ",
-		(geticon(i) == '-' ? ' ' : geticon(i)), dcc[i].nick,
-		spaces);
+	snprintf(format, sizeof format, "  %%c%%-%us ", nicklen);
+	sprintf(s, format,
+		(geticon(i) == '-' ? ' ' : geticon(i)), dcc[i].nick);
       }
-      spaces[len] = ' ';
       if (atr & USER_MASTER) {
 	if (dcc[i].u.chat->channel < 0)
 	  strcat(s, "(-OFF-) ");
@@ -218,17 +227,18 @@ static void tell_who(struct userrec *u, int idx, int chan)
 	ok = 1;
 	dprintf(idx, "Other people on the bot:\n");
       }
-      spaces[len = HANDLEN - strlen(dcc[i].nick)] = 0;
       if (atr & USER_OWNER) {
-	sprintf(s, "  [%.2lu]  %c%s%s (files) %s",
+	snprintf(format, sizeof format, "  [%%.2lu]  %%c%%-%us (files) %%s", 
+				nicklen);
+	sprintf(s, format,
 		dcc[i].sock, dcc[i].status & STAT_CHAT ? '+' : ' ',
-		dcc[i].nick, spaces, dcc[i].host);
+		dcc[i].nick, dcc[i].host);
       } else {
-	sprintf(s, "  %c%s%s (files) %s",
+	snprintf(format, sizeof format, "  %%c%%-%us (files) %%s", nicklen);
+	sprintf(s, format,
 		dcc[i].status & STAT_CHAT ? '+' : ' ',
-		dcc[i].nick, spaces, dcc[i].host);
+		dcc[i].nick, dcc[i].host);
       }
-      spaces[len] = ' ';
       dprintf(idx, "%s\n", s);
     }
   }
