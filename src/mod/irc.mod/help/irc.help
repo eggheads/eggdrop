@@ -199,19 +199,19 @@ See also: console, devoice
    The following commands are provided by the irc module:
 
    For channel ops:
-      %bact            halfop       say          resetbans%b
-      %bdeop           invite       topic        resetinvites%b
-      %bop             channel      dehalfop     resetexempts%b
-      %bdevoice        voice%b
+      %bact          halfop       say          resetbans%b
+      %bdeop         invite       topic        resetinvites%b
+      %bop           channel      dehalfop     resetexempts%b
+      %bdevoice      voice%b
 
    For channel ops or halfops:
-      %bkick           kickban%b
+      %bkick         kickban%b
 
    For global ops:
       %bmsg%b
 
    For channel masters:
-      %badduser        deluser      reset%b
+      %badduser      deluser      reset%b
 
    Config file variables for configuring the irc module:
       %blearn-users     wait-info           mode-buf-length%b
@@ -226,13 +226,13 @@ See also: console, devoice
 %{help=all}%{+o|o}
 ###  %birc module%b commands
    For channel ops:
-      %bact            halfop       say          resetbans%b
-      %bdeop           invite       topic        resetinvites%b
-      %bop             channel      dehalfop     resetexempts%b
-      %bdevoice        voice%b
+      %bact          halfop       say          resetbans%b
+      %bdeop         invite       topic        resetinvites%b
+      %bop           channel      dehalfop     resetexempts%b
+      %bdevoice      voice%b
 %{+o}
    For global ops:
       %bmsg%b
 %{+m|m}
    For channel masters:
-      %badduser        deluser      reset%b
+      %badduser      deluser      reset%b

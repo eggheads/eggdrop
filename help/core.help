@@ -184,34 +184,35 @@ userfile-perm
 switch-logfiles-at
 %{end}
    Use %b'.help set <variable>'%b for more info on each variable.
-%{+n}
-%{help=all}
+%{help=all}%{-}
 ###  %bcore%b commands
-     %bwho          away         quit         whom         me%b
-     %bpage         match        motd         bots         newpass%b
-     %bchat         handle       whoami       echo         strip%b
-     %bsu           trace        fixcodes     bottree      vbottree%b
-     %bbotinfo      relay        -host%b
+   For all users:
+      %bwho          away         quit         whom%b
+      %bme           page         match        motd%b
+      %bbots         newpass      chat         handle%b
+      %bwhoami       echo         strip        su%b
+      %btrace        fixcodes     bottree      vbottree%b
+      %bbotinfo      relay        -host%b
 %{o|o}
    For ops:
-     %baddlog       console      match        whois%b
+      %baddlog       console      match        whois%b
 %{+t}
    For botnet masters:
-     %b+bot         botattr      chhandle     chpass       +host%b
-     %b-bot         link         chaddr       boot         %b
-     %bunlink       banner       dccstat%b
+      %b+bot         botattr      chhandle     chpass%b
+      %b+host        -bot         link         chaddr%b
+      %bboot         unlink       banner       dccstat%b
 %{+m|m}
-   For masters:
-     %bchattr       save         backup       reload       status%b
-     %btraffic      uptime%b
+   For channel masters:
+      %bchattr       save         backup       reload%b
+      %bstatus       traffic      uptime%b
 %{+m}
-     %b+user        +ignore      comment      binds        ignores%b
-     %b-user        -ignore      dccstat      debug        rehash%b
-     %brestart      module%b
+   For global masters:
+      %b+user        +ignore      comment      binds%b
+      %bignores      -user        -ignore      dccstat%b
+      %bdebug        rehash       restart      module%b
 %{+n}
    For owners:
-     %bdie          simul        loadmod      unloadmod    language%b
-     %bset          tcl          rehelp       modules      +lang%b
-     %b-lang        +lsec        -lsec        lstat        relang%b
-     %bldump%b
-%{-}
+      %bdie          simul        loadmod      unloadmod%b
+      %blanguage     set          tcl          rehelp%b
+      %bmodules      +lang        -lang        +lsec%b
+      %b-lsec        lstat        relang       ldump%b
