@@ -20,7 +20,7 @@ PATCH("943171534"); /* current unixtime */
 /*
  *
  */
-PATCH("sharegreet");
+PATCH("sync");
 /*
  *
  */

@@ -686,7 +686,7 @@ static char *traced_globchanset(ClientData cdata, Tcl_Interp * irp,
 
 static tcl_ints my_tcl_ints[] =
 {
-  {"share-greet", &share_greet, 0},
+  {"share-greet", 0, 0},
   {"use-info", &use_info, 0},
   {"ban-time", &ban_time, 0},
   {"exempt-time", &exempt_time, 0},
