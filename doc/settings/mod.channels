@@ -307,7 +307,8 @@ There are also some variables you can set in your config file:
         -secret         -seen
         +shared         +statuslog
         +userbans       +userexempts
-        +userinvites
+        +userinvites    +protecthalfops
+        +autohalfop
   }
 
      _________________________________________________________________

@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: mod-channels.html,v 1.16 2002/03/09 21:14:15 wcc Exp $ -->
+<!-- $Id: mod-channels.html,v 1.17 2002/07/21 02:39:03 wcc Exp $ -->
 
 <html>
   <head>
@@ -173,6 +173,42 @@
 
                     <td>If the channel is -bitch, see stopnethack-mode 2<br>
                     If the channel is +bitch, see stopnethack-mode 4</td>
+                  </tr>
+                </table>
+              </dd>
+
+              <dt><strong>revenge-mode 1</strong></dt>
+
+              <dd>
+                <p>This settings defines how the bot should punish bad users
+                when revenging. There are four possible settings:</p>
+
+                <table border=0>
+                  <tr>
+                    <td>0</td>
+
+                    <td>Deop the user.</td>
+                  </tr>
+
+                  <tr>
+                    <td>1</td>
+
+                    <td>Deop the user and give them the +d flag for the
+                    channel.</td>
+                  </tr>
+
+                  <tr>
+                    <td>2</td>
+
+                    <td>Deop the user, give them the +d flag for the channel,
+                    and kick them.</td>
+                  </tr>
+
+                  <tr>
+                    <td>3</td>
+
+                    <td>Deop the user, give them the +d flag for the channel,
+                    kick, and ban them.</td>
                   </tr>
                 </table>
               </dd>
@@ -364,6 +400,14 @@
                 <strong>This is insecure and not recommended.</strong></p>
               </dd>
 
+              <dt><strong>autohalfop</strong></dt>
+
+              <dd>
+                <p>Halfop users with the +l flag as soon as they join the
+                channel? <strong>This is insecure and not
+                recommended.</strong></p>
+              </dd>
+
               <dt><strong>bitch</strong></dt>
 
               <dd>
@@ -381,6 +425,13 @@
 
               <dd>
                 <p>Re-op a user with the +o flag if they get deopped?</p>
+              </dd>
+
+              <dt><strong>protecthalfops</strong></dt>
+
+              <dd>
+                <p>Re-halfop a user with the +l flag if they get
+                dehalfopped?</p>
               </dd>
 
               <dt><strong>protectfriends</strong></dt>
@@ -500,17 +551,19 @@
 
       <p><strong>set global-chanset {</strong></p>
 <pre>
-  -nodesynch -enforcebans
-  +dynamicbans +userbans
-  -autoop -bitch
-  +greet +protectops
-  +statuslog -revenge
-  -secret -autovoice
-  +cycle +dontkickops
-  -inactive -protectfriends
-  +shared -seen
-  +userexempts +dynamicexempts
-  +userinvites +dynamicinvites
+        -autoop         -autovoice
+        -bitch          +cycle
+        +dontkickops    +dynamicbans
+        +dynamicexempts +dynamicinvites
+        -enforcebans    +greet
+        -inactive       -nodesynch
+        -protectfriends +protectops
+        -revenge        -revengebot
+        -secret         -seen
+        +shared         +statuslog
+        +userbans       +userexempts
+        +userinvites    +protecthalfops
+        +autohalfop
 </pre>
       <p><strong>}</strong></p>
     </blockquote>
