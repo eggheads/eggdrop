@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  *
- * $Id: cmds.c,v 1.57 2001/07/03 01:33:34 poptix Exp $
+ * $Id: cmds.c,v 1.58 2001/07/03 16:46:08 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1244,7 +1244,6 @@ static void cmd_banner(struct userrec *u, int idx, char *par)
 int check_dcc_attrs(struct userrec *u, int oatr)
 {
   int i, stat;
-  char *p, *q, s[121];
 
   if (!u)
     return 0;
