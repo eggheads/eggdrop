@@ -4,7 +4,7 @@
  *   Tcl initialization
  *   getting and setting Tcl/eggdrop variables
  * 
- * $Id: tcl.c,v 1.26 2000/12/17 21:48:42 guppy Exp $
+ * $Id: tcl.c,v 1.27 2001/01/22 23:41:11 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -26,6 +26,7 @@
  */
 
 #include "main.h"
+#include <locale.h>
 
 /* Used for read/write to internal strings */
 typedef struct {
@@ -493,12 +494,90 @@ extern tcl_cmds tcluser_cmds[], tcldcc_cmds[], tclmisc_cmds[], tcldns_cmds[];
  */
 void init_tcl(int argc, char **argv)
 {
-#ifndef HAVE_PRE7_5_TCL
+#if TCL_MAJOR_VERSION >= 8 && TCL_MINOR_VERSION >= 1
+  const char *encoding;
   int i;
+  char *langEnv;
+#endif
+#ifndef HAVE_PRE7_5_TCL
+  int j;
   char pver[1024] = "";
 #endif
 
-#ifndef HAVE_PRE7_5_TCL
+/* Code based on Tcl's TclpSetInitialEncodings() */
+#if TCL_MAJOR_VERSION >= 8 && TCL_MINOR_VERSION >= 1
+  /* Determine the current encoding from the LC_* or LANG environment
+   * variables.
+   */
+  langEnv = getenv("LC_ALL");
+  if (langEnv == NULL || langEnv[0] == '\0') {
+    langEnv = getenv("LC_CTYPE");
+  }
+  if (langEnv == NULL || langEnv[0] == '\0') {
+    langEnv = getenv("LANG");
+  }
+  if (langEnv == NULL || langEnv[0] == '\0') {
+    langEnv = NULL;
+  }
+
+  encoding = NULL;
+  if (langEnv != NULL) {
+    for (i = 0; localeTable[i].lang != NULL; i++)
+      if (strcmp(localeTable[i].lang, langEnv) == 0) {
+	encoding = localeTable[i].encoding;
+	break;
+      }
+
+    /* There was no mapping in the locale table.  If there is an
+     * encoding subfield, we can try to guess from that.
+     */
+    if (encoding == NULL) {
+      char *p;
+
+      for (p = langEnv; *p != '\0'; p++) {
+        if (*p == '.') {
+          p++;
+          break;
+        }
+      }
+      if (*p != '\0') {
+        Tcl_DString ds;
+        Tcl_DStringInit(&ds);
+        Tcl_DStringAppend(&ds, p, -1);
+
+        encoding = Tcl_DStringValue(&ds);
+        Tcl_UtfToLower(Tcl_DStringValue(&ds));
+        if (Tcl_SetSystemEncoding(NULL, encoding) == TCL_OK) {
+          Tcl_DStringFree(&ds);
+          goto resetPath;
+        }
+        Tcl_DStringFree(&ds);
+        encoding = NULL;
+      }
+    }
+  }
+
+  if (encoding == NULL) {
+    encoding = "iso8859-1";
+  }
+
+  Tcl_SetSystemEncoding(NULL, encoding);
+
+  resetPath:
+
+  /* Initialize the C library's locale subsystem. */
+  setlocale(LC_CTYPE, "");
+
+  /* In case the initial locale is not "C", ensure that the numeric
+   * processing is done in "C" locale regardless. */
+  setlocale(LC_NUMERIC, "C");
+
+  /* Keep the iso8859-1 encoding preloaded.  The IO package uses it for
+   * gets on a binary channel. */
+  Tcl_GetEncoding(NULL, "iso8859-1");
+#endif
+
+#ifndef HAVE_PRE7_5_TCL 
   /* This is used for 'info nameofexecutable'.
    * The filename in argv[0] must exist in a directory listed in
    * the environment variable PATH for it to register anything.
@@ -506,23 +585,29 @@ void init_tcl(int argc, char **argv)
   Tcl_FindExecutable(argv[0]);
 #endif
 
-  /* Initialize the interpreter */
+  /* Create Tcl interpreter */
   interp = Tcl_CreateInterp();
-  Tcl_Init(interp);
 
 #ifdef DEBUG_MEM
-  /* Initialize Tcl's memory debugging if we have it */
+  /* Initialize Tcl's memory debugging if we want it */
   Tcl_InitMemory(interp);
 #endif
 
-#if TCL_MAJOR_VERSION >= 8 && TCL_MINOR_VERSION >= 1
-  /* Set default encoding to default system encoding, i.e. binary.
-     Unicode support present since Tcl library version 8.1. */
-  Tcl_SetSystemEncoding(interp, NULL);
-#endif
+  /* Initialize Tcl interpreter */
+  Tcl_Init(interp);
 
   /* Set Tcl variable tcl_interactive to 0 */
   Tcl_SetVar(interp, "tcl_interactive", "0", TCL_GLOBAL_ONLY);
+
+#ifndef HAVE_PRE7_5_TCL
+  /* Add eggdrop to Tcl's package list */
+  for (j = 0; j <= strlen(egg_version); j++) {
+    if ((egg_version[j] == ' ') || (egg_version[j] == '+'))
+      break;
+    pver[strlen(pver)] = egg_version[j];
+  }
+  Tcl_PkgProvide(interp, "eggdrop", pver);
+#endif
 
   /* Initialize binds and traces */
   init_bind();
@@ -534,16 +619,6 @@ void init_tcl(int argc, char **argv)
   add_tcl_commands(tcldcc_cmds);
   add_tcl_commands(tclmisc_cmds);
   add_tcl_commands(tcldns_cmds);
-
-#ifndef HAVE_PRE7_5_TCL
-  /* Add eggdrop to Tcl's package list */
-  for (i = 0; i <= strlen(egg_version); i++) {
-    if ((egg_version[i] == ' ') || (egg_version[i] == '+'))
-      break;
-    pver[strlen(pver)] = egg_version[i];
-  }
-  Tcl_PkgProvide(interp, "eggdrop", pver);
-#endif
 }
 
 void do_tcl(char *whatzit, char *script)
