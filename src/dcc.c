@@ -4,7 +4,7 @@
  *   disconnect on a dcc socket
  *   ...and that's it!  (but it's a LOT)
  *
- * $Id: dcc.c,v 1.52 2002/01/08 04:26:10 guppy Exp $
+ * $Id: dcc.c,v 1.53 2002/02/07 05:04:20 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1535,7 +1535,6 @@ static void dcc_telnet_new(int idx, char *buf, int x)
 
   buf[HANDLEN] = 0;
   strip_telnet(dcc[idx].sock, buf, &x);
-  strcpy(dcc[idx].nick, buf);
   dcc[idx].timeval = now;
   for (x = 0; x < strlen(buf); x++)
     if ((buf[x] <= 32) || (buf[x] >= 127))
@@ -1554,6 +1553,7 @@ static void dcc_telnet_new(int idx, char *buf, int x)
   } else if (!egg_strcasecmp(buf, botnetnick)) {
     dprintf(idx, "Sorry, can't use my name for a nick.\n");
   } else {
+    strcpy(dcc[idx].nick, buf);
     if (make_userfile)
       userlist = adduser(userlist, buf, "-telnet!*@*", "-",
 			 sanity_check(default_flags | USER_PARTY |
