@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  * 
- * $Id: server.c,v 1.47 2000/08/06 14:50:45 fabian Exp $
+ * $Id: server.c,v 1.48 2000/08/11 22:42:21 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1728,6 +1728,7 @@ static void server_report(int idx, int details)
   if (server_online) {
     int servidx = findanyidx(serv);
 
+    nick_juped = 0;
     dprintf(idx, "    Server %s:%d %s\n", dcc[servidx].host, dcc[servidx].port,
 	    trying_server ? "(trying)" : s);
   } else

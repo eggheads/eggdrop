@@ -1,7 +1,7 @@
 /* 
  * servmsg.c -- part of server.mod
  * 
- * $Id: servmsg.c,v 1.41 2000/07/13 21:19:52 fabian Exp $
+ * $Id: servmsg.c,v 1.42 2000/08/11 22:42:21 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1349,6 +1349,8 @@ static void connect_server(void)
   } else
     pass[0] = 0;
   if (!cycle_time) {
+    struct chanset_t *chan;
+
     if (connectserver[0])	/* drummer */
       do_tcl("connect-server", connectserver);
     check_tcl_event("connect-server");
@@ -1359,8 +1361,13 @@ static void connect_server(void)
     dcc[servidx].port = botserverport;
     strcpy(dcc[servidx].nick, "(server)");
     strncpyz(dcc[servidx].host, botserver, UHOSTLEN);
+
+    nick_juped = 0;
+    for (chan = chanset; chan; chan = chan->next)
+      chan->status &= ~CHAN_JUPED;
+
     dcc[servidx].timeval = now;
-    dcc[servidx].sock = (-1);
+    dcc[servidx].sock = -1;
     dcc[servidx].u.dns->host = get_data_ptr(strlen(dcc[servidx].host) + 1);
     strcpy(dcc[servidx].u.dns->host, dcc[servidx].host);
     dcc[servidx].u.dns->cbuf = get_data_ptr(strlen(pass) + 1);
