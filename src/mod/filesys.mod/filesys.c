@@ -2,7 +2,7 @@
  * filesys.c -- part of filesys.mod
  *   main file of the filesys eggdrop module
  *
- * $Id: filesys.c,v 1.45 2001/10/09 10:55:07 tothwolf Exp $
+ * $Id: filesys.c,v 1.46 2001/12/29 05:48:34 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -149,7 +149,7 @@ static int check_tcl_fil(char *cmd, int idx, char *args)
   x = check_tcl_bind(H_fil, cmd, &fr, " $_fil1 $_fil2 $_fil3",
 		     MATCH_PARTIAL | BIND_USE_ATTR | BIND_HAS_BUILTINS);
   if (x == BIND_AMBIGUOUS) {
-    dprintf(idx, "Ambigious command.\n");
+    dprintf(idx, "Ambiguous command.\n");
     return 0;
   }
   if (x == BIND_NOMATCH) {
@@ -930,7 +930,7 @@ static char *filesys_close()
   int i;
   p_tcl_bind_list H_ctcp;
 
-  putlog(LOG_MISC, "*", "Unloading filesystem, killing all filesystem connections..");
+  putlog(LOG_MISC, "*", "Unloading filesystem; killing all filesystem connections.");
   for (i = 0; i < dcc_total; i++)
     if (dcc[i].type == &DCC_FILES) {
       dprintf(i, DCC_BOOTED1);
@@ -983,11 +983,11 @@ char *filesys_start(Function * global_funcs)
   module_register(MODULE_NAME, filesys_table, 2, 0);
   if (!module_depend(MODULE_NAME, "eggdrop", 106, 0)) {
     module_undepend(MODULE_NAME);
-    return "You need at least eggdrop1.6.0 to run this module.";
+    return "You need at least eggdrop1.6.0 to use the filesystem module.";
   }
   if (!(transfer_funcs = module_depend(MODULE_NAME, "transfer", 2, 0))) {
     module_undepend(MODULE_NAME);
-    return "You need the transfer module to user the file system.";
+    return "You need the transfer module to use the filesystem module.";
   }
   add_tcl_commands(mytcls);
   add_tcl_strings(mystrings);

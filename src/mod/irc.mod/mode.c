@@ -1,10 +1,10 @@
 /*
  * mode.c -- part of irc.mod
- *   queueing and flushing mode changes made by the bot
+ *   queuing and flushing mode changes made by the bot
  *   channel mode changes and the bot's reaction to them
  *   setting and getting the current wanted channel modes
  *
- * $Id: mode.c,v 1.52 2001/12/19 04:57:54 guppy Exp $
+ * $Id: mode.c,v 1.53 2001/12/29 05:48:34 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer

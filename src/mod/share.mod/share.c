@@ -1,7 +1,7 @@
 /*
  * share.c -- part of share.mod
  *
- * $Id: share.c,v 1.59 2001/12/22 20:25:17 guppy Exp $
+ * $Id: share.c,v 1.60 2001/12/29 05:48:34 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1240,7 +1240,7 @@ static void share_endstartup(int idx, char *par)
 
 static void share_end(int idx, char *par)
 {
-  putlog(LOG_BOTS, "*", "Ending sharing with %s, (%s).", dcc[idx].nick, par);
+  putlog(LOG_BOTS, "*", "Ending sharing with %s (%s).", dcc[idx].nick, par);
   cancel_user_xfer(-idx, 0);
   dcc[idx].status &= ~(STAT_SHARE | STAT_GETTING | STAT_SENDING |
 		       STAT_OFFERED | STAT_AGGRESSIVE);
