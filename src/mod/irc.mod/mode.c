@@ -4,7 +4,7 @@
  *   channel mode changes and the bot's reaction to them
  *   setting and getting the current wanted channel modes
  * 
- * $Id: mode.c,v 1.21 2000/02/18 22:27:53 fabian Exp $
+ * $Id: mode.c,v 1.22 2000/04/13 21:44:05 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -598,7 +598,8 @@ static void got_ban(struct chanset_t *chan, char *nick, char *from,
 		(s1[i] != '!') && (s1[i] != '@'))
 	      ok = 1;
 	  }
-	  add_mode(chan, '-', 'b', who);
+	  if (!glob_master(user) && !chan_master(user))
+	    add_mode(chan, '-', 'b', who);
 	  flush_mode(chan, NORMAL);
 	  /* Only re-add it if it has something besides wildcards */
 	  if (ok)
