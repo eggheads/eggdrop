@@ -1,7 +1,7 @@
 /* 
  * transfer.c -- part of transfer.mod
  * 
- * $Id: transfer.c,v 1.23 2000/03/23 23:17:59 fabian Exp $
+ * $Id: transfer.c,v 1.24 2000/04/05 19:27:30 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -775,6 +775,7 @@ static void eof_dcc_send(int idx)
     ofn = nmalloc(strlen(tempdir) + strlen(dcc[idx].u.xfer->filename) + 1);
     sprintf(ofn, "%s%s", tempdir, dcc[idx].u.xfer->filename);
     unlink(ofn);
+    nfree(ofn);
     killsock(dcc[idx].sock);
     lostdcc(idx);
   }
