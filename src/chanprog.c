@@ -432,7 +432,6 @@ void chanprog()
   } else if (make_userfile) {
      make_userfile = 0;
      printf(MISC_USERFEXISTS);
-     readuserfile(userfile, &userlist);
   }
   context;
   if (helpdir[0])

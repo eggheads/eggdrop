@@ -138,7 +138,7 @@ module, please consult the default config file for info.\n
 Telnet to the bot and enter 'NEW' as your nickname.
 0x537,OR Go to IRC and:  /msg %s hello\n
 0x538,This will make the bot recognize you as the master.
-0x539,USERFILE ALREADY EXISTS (drop the '-m')
+0x539,USERFILE ALREADY EXISTS (drop the '-m')\n
 0x53a,CAN'T WRITE TO TEMP DIR
 0x53b,Can't reload user file!
 0x53c,User file is missing!
