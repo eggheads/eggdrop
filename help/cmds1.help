@@ -220,7 +220,7 @@ See also: whois
 %{help=comment}%{+m}
 ###  %bcomment%b <user> <comment...>
    Creates or changes the comment field for a user.  The comment field
-   can only be seen via 'user' or 'match'.  Non-masters cannot see the
+   can only be seen via 'whois' or 'match'.  Non-masters cannot see the
    comment field.
 %{help=console}%{+to|o}
 ###  %bconsole%b [channel] [modes]

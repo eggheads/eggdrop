@@ -359,10 +359,8 @@ int open_telnet_raw(int sock, char *server, int sport)
 
   name.sin_family = AF_INET;
   name.sin_addr.s_addr = (myip[0] ? getmyip() : INADDR_ANY);
-  if (bind(sock, (struct sockaddr *) &name, sizeof(name)) < 0) {
-    killsock(sock);
+  if (bind(sock, (struct sockaddr *) &name, sizeof(name)) < 0)
     return -1;
-  }
   bzero((char *) &name, sizeof(struct sockaddr_in));
 
   name.sin_family = AF_INET;
@@ -379,10 +377,8 @@ int open_telnet_raw(int sock, char *server, int sport)
     } else {
       hp = NULL;
     }
-    if (hp == NULL) {
-      killsock(sock);
+    if (hp == NULL)
       return -2;
-    }
     my_memcpy((char *) &name.sin_addr, hp->h_addr, hp->h_length);
     name.sin_family = hp->h_addrtype;
   }
@@ -397,10 +393,8 @@ int open_telnet_raw(int sock, char *server, int sport)
       if (firewall[0])
 	return proxy_connect(sock, server, sport, proxy);
       return sock;		/* async success! */
-    } else {
-      killsock(sock);
+    } else
       return -1;
-    }
   }
   /* synchronous? :/ */
   if (firewall[0])
@@ -411,7 +405,12 @@ int open_telnet_raw(int sock, char *server, int sport)
 /* ordinary non-binary connection attempt */
 int open_telnet(char *server, int port)
 {
-  return open_telnet_raw(getsock(0), server, port);
+  int sock = getsock(0),
+      ret = open_telnet_raw(sock, server, port);
+
+  if (ret < 0)
+    killsock(sock);
+  return ret;
 }
 
 /* returns a socket number for a listening socket that will accept any

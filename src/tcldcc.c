@@ -178,6 +178,7 @@ static int tcl_getchan STDVAR
 static int tcl_setchan STDVAR
 {
   int idx, i, chan;
+  module_entry *me;
 
   context;
   BADARGS(3, 3, " idx channel");
@@ -226,6 +227,11 @@ static int tcl_setchan STDVAR
       botnet_send_join_idx(idx, oldchan);
     check_tcl_chjn(botnetnick, dcc[idx].nick, chan, geticon(idx),
 		   dcc[idx].sock, dcc[idx].host);
+  }
+  /* new style autosave here too -- rtc, 10/07/1999*/
+  if ((me = module_find("console", 1, 1))) {
+    Function *func = me->funcs;
+    (func[CONSOLE_DOSTORE]) (idx);
   }
   return TCL_OK;
 }
@@ -313,6 +319,7 @@ static int tcl_console STDVAR
 static int tcl_strip STDVAR
 {
   int i, j, pls, arg;
+  module_entry *me;
 
   context;
   BADARGS(2, 4, " idx ?strip-flags?");
@@ -348,12 +355,18 @@ static int tcl_strip STDVAR
     }
   }
   Tcl_AppendElement(irp, stripmasktype(dcc[i].u.chat->strip_flags));
+  /* new style autosave here too -- rtc, 10/07/1999*/
+  if ((me = module_find("console", 1, 1))) {
+    Function *func = me->funcs;
+    (func[CONSOLE_DOSTORE]) (i);
+  }
   return TCL_OK;
 }
 
 static int tcl_echo STDVAR
 {
   int i, j;
+  module_entry *me;
 
   context;
   BADARGS(2, 3, " idx ?status?");
@@ -377,6 +390,11 @@ static int tcl_echo STDVAR
     Tcl_AppendResult(irp, "1", NULL);
   else
     Tcl_AppendResult(irp, "0", NULL);
+  /* new style autosave here too -- rtc, 10/07/1999*/
+  if ((me = module_find("console", 1, 1))) {
+    Function *func = me->funcs;
+    (func[CONSOLE_DOSTORE]) (i);
+  }
   return TCL_OK;
 }
 
@@ -384,6 +402,7 @@ static int tcl_page STDVAR
 {
   int i, j;
   char x[20];
+  module_entry *me;
 
   context;
   BADARGS(2, 3, " idx ?status?");
@@ -412,6 +431,11 @@ static int tcl_page STDVAR
     Tcl_AppendResult(irp, x, NULL);
   } else
     Tcl_AppendResult(irp, "0", NULL);
+  /* new style autosave here too -- rtc, 10/07/1999*/
+  if ((me = module_find("console", 1, 1))) {
+    Function *func = me->funcs;
+    (func[CONSOLE_DOSTORE]) (i);
+  }
   return TCL_OK;
 }
 
@@ -849,6 +873,7 @@ static int tcl_connect STDVAR
   sock = getsock(0);
   z = open_telnet_raw(sock, argv[1], atoi(argv[2]));
   if (z < 0) {
+    killsock(sock);
     if (z == (-2))
       strcpy(s, "DNS lookup failed");
     else
