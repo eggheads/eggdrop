@@ -1935,11 +1935,14 @@ marked with vertical bars (|) on the left.
 
     (33) WALL (stackable)
          bind wall <flags> <mask> <proc>
-         proc-name <handle> <msg>
+         proc-name <from> <msg>
 
          Description: when the bot receives a wallops, it invokes this
            binding. flags are ignored; the mask is matched against the text
-           of the wallops msg.
+           of the wallops msg. Note that RFC shows the server name as a source
+           of the message, whereas many IRCds send the nick!user@host of the
+           actual sender, thus, Eggdrop will not parse it at all, but simply
+           pass it to bind in its original form.
          Module: server
 
     (34) BCST (stackable)

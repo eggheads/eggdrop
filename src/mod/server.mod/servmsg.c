@@ -1,7 +1,7 @@
 /*
  * servmsg.c -- part of server.mod
  *
- * $Id: servmsg.c,v 1.65 2002/12/24 02:30:08 wcc Exp $
+ * $Id: servmsg.c,v 1.66 2003/01/02 00:07:46 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -670,19 +670,19 @@ static int got251(char *from, char *msg)
 static int gotwall(char *from, char *msg)
 {
   char *nick;
-  char *p;
   int r;
 
   fixcolon(msg);
-  p = strchr(from, '!');
-  if (p && (p == strrchr(from, '!'))) {
-    nick = splitnick(&from);
-    r = check_tcl_wall(nick, msg);
-    if (r == 0)
+  r = check_tcl_wall(from, msg);
+
+  if (r == 0) {
+    /* Following is not needed at all, but we'll keep it for compatibility sake,
+     * so not to confuse possible scripts that are parsing log files.
+     */
+    if (strchr(from,'!')) {
+      nick = splitnick(&from);
       putlog(LOG_WALL, "*", "!%s(%s)! %s", nick, from, msg);
-  } else {
-    r = check_tcl_wall(from, msg);
-    if (r == 0)
+    } else
       putlog(LOG_WALL, "*", "!%s! %s", from, msg);
   }
   return 0;
