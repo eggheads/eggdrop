@@ -1,4 +1,4 @@
-$Id: mod.server,v 1.32 2004/07/25 03:56:59 wcc Exp $
+$Id: mod.server,v 1.33 2004/09/02 22:49:25 wcc Exp $
 
 Server Module
 Last revised: February 12, 2003
@@ -136,8 +136,8 @@ Last revised: February 12, 2003
 
 
     set strict-host 0
-      Set this to 1 if you don't want your the bot to strip a leading '~'
-      on user@hosts.
+      Set this to 0 if you want the bot to strip '~' characters from user@hosts
+      before matching them.
 
 
     set quiet-reject 1

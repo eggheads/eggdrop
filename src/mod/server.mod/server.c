@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  *
- * $Id: server.c,v 1.118 2004/07/02 21:02:02 wcc Exp $
+ * $Id: server.c,v 1.119 2004/09/02 22:49:25 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -882,7 +882,7 @@ static void queue_server(int which, char *buf, int len)
 
     q->len = len;
     q->msg = nmalloc(len + 1);
-    memcpy(q->msg, buf, len);
+    egg_memcpy(q->msg, buf, len);
     q->msg[len] = 0;
     h->tot++;
     h->warned = 0;
