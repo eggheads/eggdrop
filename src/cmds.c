@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  *
- * $Id: cmds.c,v 1.74 2002/02/20 00:13:22 wcc Exp $
+ * $Id: cmds.c,v 1.75 2002/02/20 03:32:20 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -622,9 +622,9 @@ static void cmd_boot(struct userrec *u, int idx, char *par)
       }
       files = (dcc[i].type->flags & DCT_FILES);
       if (files)
-        dprintf(idx, "Booted %s from the file section.\n", dcc[i].nick);
+        dprintf(idx, "Booted %s from the file area.\n", dcc[i].nick);
       else
-        dprintf(idx, "Booted %s from the bot.\n", dcc[i].nick);
+        dprintf(idx, "Booted %s from the party line.\n", dcc[i].nick);
       putlog(LOG_CMDS, "*", "#%s# boot %s %s", dcc[idx].nick, who, par);
       do_boot(i, dcc[idx].nick, par);
       ok = 1;
@@ -834,7 +834,7 @@ static void cmd_chhandle(struct userrec *u, int idx, char *par)
        !(atr2 & USER_BOT))
       dprintf(idx, "You can't change handles for non-bots.\n");
     else if ((bot_flags(u2) & BOT_SHARE) && !(atr & USER_OWNER))
-      dprintf(idx, "You can't change shared bot's nick.\n");
+      dprintf(idx, "You can't change share bot's nick.\n");
     else if ((atr2 & USER_OWNER) && !(atr & USER_OWNER) &&
             egg_strcasecmp(dcc[idx].nick, hand))
       dprintf(idx, "You can't change a bot owner's handle.\n");
@@ -867,7 +867,7 @@ static void cmd_handle(struct userrec *u, int idx, char *par)
     if ((newhandle[i] <= 32) || (newhandle[i] >= 127) || (newhandle[i] == '@'))
       newhandle[i] = '?';
   if (strchr(BADHANDCHARS, newhandle[0]) != NULL) {
-    dprintf(idx, "Bizarre quantum forces prevent handle from starting with '%c'\n",
+    dprintf(idx, "Bizarre quantum forces prevent handle from starting with '%c'.\n",
 	    newhandle[0]);
   } else if (get_user_by_handle(userlist, newhandle) &&
 	     egg_strcasecmp(dcc[idx].nick, newhandle)) {
@@ -900,7 +900,7 @@ static void cmd_chpass(struct userrec *u, int idx, char *par)
 	     !(u->flags & USER_BOT))
       dprintf(idx, "You can't change passwords for non-bots.\n");
     else if ((bot_flags(u) & BOT_SHARE) && !(atr & USER_OWNER))
-      dprintf(idx, "You can't change shared bot's password.\n");
+      dprintf(idx, "You can't change a share bot's password.\n");
     else if ((u->flags & USER_OWNER) && !(atr & USER_OWNER) &&
 	     egg_strcasecmp(handle, dcc[idx].nick))
       dprintf(idx, "You can't change a bot owner's password.\n");
@@ -948,7 +948,7 @@ static void cmd_chaddr(struct userrec *u, int idx, char *par)
     return;
   }
   if ((bot_flags(u1) & BOT_SHARE) && (!u || !u->flags & USER_OWNER)) {
-    dprintf(idx, "You can't change shared bot's address.\n");
+    dprintf(idx, "You can't change a share bot's address.\n");
     return;
   }
   putlog(LOG_CMDS, "*", "#%s# chaddr %s %s", dcc[idx].nick, handle, addr);
@@ -2414,7 +2414,7 @@ static void cmd_mns_user(struct userrec *u, int idx, char *par)
   }
   if (u2->flags & USER_BOT) {
     if ((bot_flags(u2) & BOT_SHARE) && !(u->flags & USER_OWNER)) {
-      dprintf(idx, "You can't remove shared bots.\n");
+      dprintf(idx, "You can't remove share bots.\n");
       return;
     }
     for (idx2 = 0; idx2 < dcc_total; idx2++)
@@ -2479,7 +2479,7 @@ static void cmd_pls_host(struct userrec *u, int idx, char *par)
     }
     if (!(u->flags & USER_OWNER) && (u2->flags & USER_BOT) &&
 	(bot_flags(u2) & BOT_SHARE)) {
-      dprintf(idx, "You can't add hostmasks to share-bots.\n");
+      dprintf(idx, "You can't add hostmasks to share bots.\n");
       return;
     }
     if ((u2->flags & (USER_OWNER|USER_MASTER)) &&
@@ -2505,7 +2505,7 @@ static void cmd_pls_host(struct userrec *u, int idx, char *par)
     }
   putlog(LOG_CMDS, "*", "#%s# +host %s %s", dcc[idx].nick, handle, host);
   addhost_by_handle(handle, host);
-  dprintf(idx, "Added '%s' to %s\n", host, handle);
+  dprintf(idx, "Added '%s' to %s.\n", host, handle);
   if ((me = module_find("irc", 0, 0))) {
     Function *func = me->funcs;
 
@@ -2553,7 +2553,7 @@ static void cmd_mns_host(struct userrec *u, int idx, char *par)
       return;
     } else if ((u2->flags & USER_BOT) && (bot_flags(u2) & BOT_SHARE) &&
 	       !(u->flags & USER_OWNER)) {
-      dprintf(idx, "You can't remove hostmask from a shared bot.\n");
+      dprintf(idx, "You can't remove hostmasks from a share bot.\n");
       return;
     } else if ((u2->flags & (USER_OWNER|USER_MASTER)) &&
 	       !(u->flags & USER_OWNER) && (u2 != u)) {
@@ -2566,7 +2566,7 @@ static void cmd_mns_host(struct userrec *u, int idx, char *par)
   }
   if (delhost_by_handle(handle, host)) {
     putlog(LOG_CMDS, "*", "#%s# -host %s %s", dcc[idx].nick, handle, host);
-    dprintf(idx, "Removed '%s' from %s\n", host, handle);
+    dprintf(idx, "Removed '%s' from %s.\n", host, handle);
     if ((me = module_find("irc", 0, 0))) {
       Function *func = me->funcs;
 
@@ -2698,7 +2698,7 @@ static char *btos(unsigned long  bytes)
 
 static void cmd_whoami(struct userrec *u, int idx, char *par)
 {
-  dprintf(idx, "You are %s@%s\n", dcc[idx].nick, botnetnick);
+  dprintf(idx, "You are %s@%s.\n", dcc[idx].nick, botnetnick);
   putlog(LOG_CMDS, "*", "#%s# whoami", dcc[idx].nick);
 }
 
