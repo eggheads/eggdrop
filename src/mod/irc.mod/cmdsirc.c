@@ -2,7 +2,7 @@
  * chancmds.c -- part of irc.mod
  *   handles commands directly relating to channel interaction
  *
- * $Id: cmdsirc.c,v 1.51 2003/03/11 06:12:42 wcc Exp $
+ * $Id: cmdsirc.c,v 1.52 2003/03/18 21:23:08 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -386,13 +386,8 @@ static void cmd_halfop(struct userrec *u, int idx, char *par)
   }
 
   get_user_flagrec(dcc[idx].user, &user, chan->dname);
-  if (!chan_op(user) && (!glob_op(user) || chan_deop(user))) {
-    dprintf(idx, "You are not a channel op on %s.\n", chan->dname);
-    return;
-  }
-
   m = ismember(chan, nick);
-  if (m) {
+  if (m && !chan_op(user) && (!glob_op(user) || chan_deop(user))) {
     egg_snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
     u2 = m->user ? m->user : get_user_by_host(s);
 
@@ -457,13 +452,8 @@ static void cmd_dehalfop(struct userrec *u, int idx, char *par)
   }
 
   get_user_flagrec(dcc[idx].user, &user, chan->dname);
-  if (!chan_op(user) && (!glob_op(user) || chan_deop(user))) {
-    dprintf(idx, "You are not a channel op on %s.\n", chan->dname);
-    return;
-  }
-
   m = ismember(chan, nick);
-  if (m) {
+  if (m && !chan_op(user) && (!glob_op(user) || chan_deop(user))) {
     egg_snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
     u2 = m->user ? m->user : get_user_by_host(s);
 
@@ -525,6 +515,7 @@ static void cmd_voice(struct userrec *u, int idx, char *par)
   char *nick;
   memberlist *m;
   char s[UHOSTLEN];
+  int fail = 0;
 
   nick = newsplit(&par);
   chan = get_channel(idx, par);
@@ -537,14 +528,9 @@ static void cmd_voice(struct userrec *u, int idx, char *par)
   }
 
   get_user_flagrec(dcc[idx].user, &user, chan->dname);
-  if (!chan_op(user) && !chan_halfop(user) && ((!glob_op(user) ||
-      chan_deop(user)) || (!glob_halfop(user) || chan_dehalfop(user)))) {
-    dprintf(idx, "You are not a channel op or halfop on %s.\n", chan->dname);
-    return;
-  }
-
   m = ismember(chan, nick);
-  if (m) {
+  if (m && !chan_op(user) && !chan_halfop(user) && ((!glob_op(user) ||
+      chan_deop(user)) || (!glob_halfop(user) || chan_dehalfop(user)))) {
     egg_snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
     u2 = m->user ? m->user : get_user_by_host(s);
 
@@ -596,14 +582,9 @@ static void cmd_devoice(struct userrec *u, int idx, char *par)
   }
 
   get_user_flagrec(dcc[idx].user, &user, chan->dname);
-  if (!chan_op(user) && !chan_halfop(user) && ((!glob_op(user) ||
-      chan_deop(user)) || (!glob_halfop(user) || chan_dehalfop(user)))) {
-    dprintf(idx, "You are not a channel op or halfop on %s.\n", chan->dname);
-    return;
-  }
-
   m = ismember(chan, nick);
-  if (m) {
+  if (m && !chan_op(user) && !chan_halfop(user) && ((!glob_op(user) ||
+      chan_deop(user)) || (!glob_halfop(user) || chan_dehalfop(user)))) {
     egg_snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
     u2 = m->user ? m->user : get_user_by_host(s);
 
