@@ -756,6 +756,19 @@ specific commands, see later.
     dumps out a file from the text directory to a dcc chat user;
     the flag matching that's used everywhere else works here too
 
+*** DNS COMMANDS ***
+
+  dnsip2host <ip-address> <proc>
+    Issues an asynchronous dns lookup request. The command will return
+    immediately if the dns module is loaded. As soon as the request has
+    finished, <proc> will be called as follows:
+      <proc> ipaddress hostname status
+    status will be 1 for a successful and 0 for an unsuccessful lookup.
+
+  dnshost2ip <hostname> <proc>
+    Same as dnsip2host, only that we attempt to resolve a hostname to the
+    corresponding ip now.
+
 *** MISCELLANEOUS COMMANDS ***
 
   bind <type> <attr(s)> <command-name> [proc-name]

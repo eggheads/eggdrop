@@ -1,5 +1,5 @@
 # Makefile for src/
-# $Id: Makefile.in,v 1.5 1999/12/21 17:35:08 fabian Exp $
+# $Id: Makefile.in,v 1.6 1999/12/25 00:07:50 fabian Exp $
 
 SHELL = /bin/sh
 top_srcdir = @top_srcdir@
@@ -130,3 +130,4 @@ userrec.o: userrec.c main.h lang.h eggdrop.h flags.h proto.h ../lush.h \
 users.o: users.c main.h lang.h eggdrop.h flags.h proto.h ../lush.h \
  cmdt.h tclegg.h tclhash.h chan.h users.h modules.h mod/modvals.h \
  tandem.h
+dns.o: dns.c dns.h

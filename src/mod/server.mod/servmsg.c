@@ -1,7 +1,7 @@
 /* 
  * servmsg.c -- part of server.mod
  * 
- * $Id: servmsg.c,v 1.15 1999/12/22 12:24:58 fabian Exp $
+ * $Id: servmsg.c,v 1.16 1999/12/25 00:07:51 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1211,14 +1211,15 @@ static void connect_server(void)
     dcc[servidx].u.dns->dns_type = RES_IPBYHOST;
     dcc[servidx].u.dns->type = &SERVER_SOCKET;
 
-    /* I'm resolving... don't start another server connect request */
-    resolvserv = 1;
-    /* resolve the hostname */
-    dns_ipbyhost(dcc[servidx].host);
     if (server_cycle_wait)
       /* back to 1st server & set wait time */
       /* put it here, just in case the server quits on us quickly */
       cycle_time = server_cycle_wait;
+
+    /* I'm resolving... don't start another server connect request */
+    resolvserv = 1;
+    /* Resolve the hostname. */
+    dcc_dnsipbyhost(dcc[servidx].host);
   }
 } 
 

@@ -1,12 +1,13 @@
 /* 
  * dns.c -- handles:
- *   DNS calls
+ *   DNS resolve calls and events
  *   provides the code used by the bot if the DNS module is not loaded
+ *   DNS Tcl commands
  * 
- * $Id: dns.c,v 1.8 1999/12/21 17:35:09 fabian Exp $
+ * $Id: dns.c,v 1.9 1999/12/25 00:07:50 fabian Exp $
  */
 /* 
- * Written by Fabian Knittel
+ * Written by Fabian Knittel <fknittel@gmx.de>
  * 
  * Copyright (C) 1999  Eggheads
  * 
@@ -32,12 +33,21 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
+#include "dns.h"
+
 extern struct dcc_t *dcc;
 extern int dcc_total;
 extern int resolve_timeout;
 extern time_t now;
 extern jmp_buf alarmret;
+extern Tcl_Interp *interp;
 
+devent_t *dns_events = NULL;
+
+
+/*
+ *   DCC functions
+ */
 
 void dcc_dnswait(int idx, char *buf, int len)
 {
@@ -103,9 +113,15 @@ struct dcc_table DCC_DNSWAIT =
   0
 };
 
+
+/*
+ *   DCC events
+ */
+
 /* Walk through every dcc entry and look for waiting DNS requests
- * of RES_HOSTBYIP for our IP address */
-void call_hostbyip(IP ip, char *hostn, int ok)
+ * of RES_HOSTBYIP for our IP address.
+ */
+static void dns_dcchostbyip(IP ip, char *hostn, int ok, void *other)
 {
   int idx;
 
@@ -127,8 +143,9 @@ void call_hostbyip(IP ip, char *hostn, int ok)
 }
 
 /* Walk through every dcc entry and look for waiting DNS requests
- * of RES_IPBYHOST for our hostname */
-void call_ipbyhost(char *hostn, IP ip, int ok)
+ * of RES_IPBYHOST for our hostname.
+ */
+static void dns_dccipbyhost(IP ip, char *hostn, int ok, void *other)
 {
   int idx;
 
@@ -146,9 +163,255 @@ void call_ipbyhost(char *hostn, IP ip, int ok)
   }
 }
 
+static int dns_dccexpmem(void *other)
+{
+  return 0;
+}
+
+devent_type DNS_DCCEVENT_HOSTBYIP = {
+  "DCCEVENT_HOSTBYIP",
+  dns_dccexpmem,
+  dns_dcchostbyip
+};
+
+devent_type DNS_DCCEVENT_IPBYHOST = {
+  "DCCEVENT_IPBYHOST",
+  dns_dccexpmem,
+  dns_dccipbyhost
+};
+
+void dcc_dnsipbyhost(char *hostn)
+{
+  devent_t *de = dns_events;
+
+  Context;
+  while (de) {
+    if (de->type && (de->type == &DNS_DCCEVENT_IPBYHOST) &&
+	(de->lookup == RES_IPBYHOST)) {
+      if (de->res_data.hostname && !strcmp(de->res_data.hostname, hostn))
+	/* No need to add anymore. */
+	return;
+    }
+    de = de->next;
+  }
+
+  de = nmalloc(sizeof(devent_t));
+  memset(de, 0, sizeof(devent_t));
+
+  /* Link into list. */
+  de->next = dns_events;
+  dns_events = de;
+
+  de->type = &DNS_DCCEVENT_IPBYHOST;
+  de->lookup = RES_IPBYHOST;
+  de->res_data.hostname = nmalloc(strlen(hostn) + 1);
+  strcpy(de->res_data.hostname, hostn);
+  de->timeout = 0;
+
+  /* Send request. */
+  dns_ipbyhost(hostn);
+}
+
+void dcc_dnshostbyip(IP ip)
+{
+  devent_t *de = dns_events;
+
+  Context;
+  while (de) {
+    if (de->type && (de->type == &DNS_DCCEVENT_HOSTBYIP) &&
+	(de->lookup == RES_HOSTBYIP)) {
+      if (de->res_data.ip_addr == ip)
+	/* No need to add anymore. */
+	return;
+    }
+    de = de->next;
+  }
+
+  de = nmalloc(sizeof(devent_t));
+  memset(de, 0, sizeof(devent_t));
+
+  /* Link into list. */
+  de->next = dns_events;
+  dns_events = de;
+
+  de->type = &DNS_DCCEVENT_HOSTBYIP;
+  de->lookup = RES_HOSTBYIP;
+  de->res_data.ip_addr = ip;
+  de->timeout = 0;
+
+  /* Send request. */
+  dns_hostbyip(ip);
+}
+
+
+/*
+ *   Tcl events
+ */
+
+static void dns_tcl_iporhostres(IP ip, char *hostn, int ok, void *other)
+{
+  char *proc = (char *) other;
+  
+  Context;
+  if (Tcl_VarEval(interp, proc, " ", iptostr(htonl(ip)), " ", hostn,
+		  ok ? " 1" : " 0", NULL) == TCL_ERROR)
+    putlog(LOG_MISC, "*", DCC_TCLERROR, proc, interp->result);
+
+  /* Free the memory. It will be unused after this event call. */
+  nfree(proc);
+}
+
+static int dns_tclexpmem(void *other)
+{
+  char *proc = (char *) other;
+  int l = 0;
+
+  if (proc)
+    l = strlen(proc) + 1;
+  return l;
+}
+
+devent_type DNS_TCLEVENT_HOSTBYIP = {
+  "TCLEVENT_HOSTBYIP",
+  dns_tclexpmem,
+  dns_tcl_iporhostres
+};
+
+devent_type DNS_TCLEVENT_IPBYHOST = {
+  "TCLEVENT_IPBYHOST",
+  dns_tclexpmem,
+  dns_tcl_iporhostres
+};
+
+static void tcl_dnsipbyhost(char *hostn, char *proc, time_t timeout)
+{
+  devent_t *de = nmalloc(sizeof(devent_t));
+
+  Context;
+  memset(de, 0, sizeof(devent_t));
+  /* Link into list. */
+  de->next = dns_events;
+  dns_events = de;
+
+  de->type = &DNS_TCLEVENT_IPBYHOST;
+  de->lookup = RES_IPBYHOST;
+  de->res_data.hostname = nmalloc(strlen(hostn) + 1);
+  strcpy(de->res_data.hostname, hostn);
+  de->misc.proc = nmalloc(strlen(proc) + 1);
+  strcpy(de->misc.proc, proc);
+  de->timeout = timeout;
+
+  /* Send request. */
+  dns_ipbyhost(hostn);
+}
+
+static void tcl_dnshostbyip(IP ip, char *proc, time_t timeout)
+{
+  devent_t *de = nmalloc(sizeof(devent_t));
+
+  Context;
+  memset(de, 0, sizeof(devent_t));
+  /* Link into list. */
+  de->next = dns_events;
+  dns_events = de;
+
+  de->type = &DNS_TCLEVENT_HOSTBYIP;
+  de->lookup = RES_HOSTBYIP;
+  de->res_data.ip_addr = ip;
+  de->misc.proc = nmalloc(strlen(proc) + 1);
+  strcpy(de->misc.proc, proc);
+  de->timeout = timeout;
+
+  /* Send request. */
+  dns_hostbyip(ip);
+}
+
+
+/*
+ *    Event functions
+ */
+
+inline static int dnsevent_expmem(void)
+{
+  devent_t *de = dns_events;
+  int tot = 0;
+
+  Context;
+  while (de) {
+    tot += sizeof(devent_t);
+    if ((de->lookup == RES_IPBYHOST) && de->res_data.hostname)
+      tot += strlen(de->res_data.hostname) + 1;
+    if (de->type && de->type->expmem)
+      tot += de->type->expmem(de->misc.other);
+    de = de->next;
+  }
+  return tot;
+}
+
+void call_hostbyip(IP ip, char *hostn, int ok)
+{
+  devent_t *de = dns_events, *ode = NULL, *nde = NULL;
+
+  Context;
+  while (de) {
+    nde = de->next;
+    if ((de->lookup == RES_HOSTBYIP) &&
+	(!de->res_data.ip_addr || (de->res_data.ip_addr == ip))) {
+      /* Remove the event from the list here, to avoid conflicts if one of
+       * the event handlers re-adds another event. */
+      if (ode)
+	ode->next = de->next;
+      else
+	dns_events = de->next;
+
+      if (de->type && de->type->event)
+	de->type->event(ip, hostn, ok, de->misc.other);
+      else
+	putlog(LOG_MISC, "*", "(!) Unknown DNS event type found: %s",
+	       (de->type && de->type->name) ? de->type->name : "<empty>");
+      nfree(de);
+      de = ode;
+    }
+    ode = de;
+    de = nde;
+  }
+}
+
+void call_ipbyhost(char *hostn, IP ip, int ok)
+{
+  devent_t *de = dns_events, *ode = NULL, *nde = NULL;
+
+  Context;
+  while (de) {
+    nde = de->next;
+    if ((de->lookup == RES_IPBYHOST) &&
+	(!de->res_data.hostname || !strcmp(de->res_data.hostname, hostn))) {
+      /* Remove the event from the list here, to avoid conflicts if one of
+       * the event handlers re-adds another event. */
+      if (ode)
+	ode->next = de->next;
+      else
+	dns_events = de->next;
+
+      if (de->type && de->type->event)
+	de->type->event(ip, hostn, ok, de->misc.other);
+      else
+	putlog(LOG_MISC, "*", "(!) Unknown DNS event type found: %s",
+	       (de->type && de->type->name) ? de->type->name : "<empty>");
+
+      if (de->res_data.hostname)
+	nfree(de->res_data.hostname);
+      nfree(de);
+      de = ode;
+    }
+    ode = de;
+    de = nde;
+  }
+}
+
 
 /* 
- *    Async DNS emulation
+ *    Async DNS emulation functions
  */
 
 void block_dns_hostbyip(IP ip)
@@ -202,8 +465,61 @@ void block_dns_ipbyhost(char *host)
       call_ipbyhost(host, my_ntohl(ip), 1);
       return;
     }
+    /* Fall through. */
   }
-  /* Fall through */
   call_ipbyhost(host, 0, 0);
   Context;
 }
+
+
+/*
+ *   Misc functions
+ */
+
+int expmem_dns(void)
+{
+  return dnsevent_expmem();
+}
+
+
+/*
+ *   Tcl functions
+ */
+
+/* dnsip2host <ip-address> <proc> */
+static int tcl_dnsip2host STDVAR
+{
+  struct in_addr inaddr;
+  
+  Context;
+  BADARGS(3, 3, " ip-address proc");
+
+  if (inet_aton(argv[1], &inaddr)) {
+    tcl_dnshostbyip(ntohl(inaddr.s_addr), argv[2], 0);
+    return TCL_OK;
+  } else {
+    Tcl_AppendResult(irp, "invalid ip address: ", argv[1], NULL);
+    return TCL_ERROR;
+  }
+}
+
+/* dnshost2ip <host> <proc> */
+static int tcl_dnshost2ip STDVAR
+{
+  Context;
+  BADARGS(3, 3, " host proc");
+
+  if (argv[1][0] == 0) {
+    Tcl_AppendResult(irp, "invalid hostname", NULL);
+    return TCL_ERROR;
+  }
+  tcl_dnsipbyhost(argv[1], argv[2], 0);
+  return TCL_OK;
+}
+
+tcl_cmds tcldns_cmds[] =
+{
+  {"dnsip2host",	tcl_dnsip2host},
+  {"dnshost2ip",	tcl_dnshost2ip},
+  {NULL,		NULL}
+};

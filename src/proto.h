@@ -7,7 +7,7 @@
  * because they use structures in those
  * (saves including those .h files EVERY time) - Beldin
  * 
- * $Id: proto.h,v 1.14 1999/12/24 14:21:53 fabian Exp $
+ * $Id: proto.h,v 1.15 1999/12/25 00:07:50 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -162,6 +162,8 @@ void block_dns_hostbyip(IP);
 void block_dns_ipbyhost(char *);
 void call_hostbyip(IP, char *, int);
 void call_ipbyhost(char *, IP, int);
+void dcc_dnshostbyip(IP);
+void dcc_dnsipbyhost(char *);
 
 /* gotdcc.c */
 void gotdcc(char *, char *, struct userrec *, char *);

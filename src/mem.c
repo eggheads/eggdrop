@@ -5,7 +5,7 @@
  * 
  * dprintf'ized, 15nov1995
  * 
- * $Id: mem.c,v 1.6 1999/12/21 17:35:09 fabian Exp $
+ * $Id: mem.c,v 1.7 1999/12/25 00:07:50 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -80,6 +80,7 @@ int expmem_net();
 int expmem_modules();
 int expmem_language();
 int expmem_tcldcc();
+int expmem_dns();
 void tell_netdebug();
 void do_module_report(int, int, char *);
 
@@ -129,7 +130,7 @@ void tell_mem_status_dcc(int idx)
 void debug_mem_to_dcc(int idx)
 {
 #ifdef DEBUG_MEM
-#define MAX_MEM 11
+#define MAX_MEM 12
   unsigned long exp[MAX_MEM], use[MAX_MEM], l;
   int i, j;
   char fn[20], sofar[81];
@@ -147,6 +148,7 @@ void debug_mem_to_dcc(int idx)
   exp[8] = expmem_tclhash();
   exp[9] = expmem_modules(1);
   exp[10] = expmem_tcldcc();
+  exp[11] = expmem_dns();
   for (me = module_list; me; me = me->next)
     me->mem_work = 0;
   for (i = 0; i < MAX_MEM; i++)
@@ -179,6 +181,8 @@ void debug_mem_to_dcc(int idx)
       use[9] += l;
     else if (!strcasecmp(fn, "tcldcc.c"))
       use[10] += l;
+    else if (!strcasecmp(fn, "dns.c"))
+      use[11] += l;
     else if (p) {
       for (me = module_list; me; me = me->next)
 	if (!strcmp(fn, me->name))
@@ -223,6 +227,9 @@ void debug_mem_to_dcc(int idx)
       break;
     case 10:
       strcpy(fn, "tcldcc.c");
+      break;
+    case 11:
+      strcpy(fn, "dns.c");
       break;
     }
     if (use[i] == exp[i]) {

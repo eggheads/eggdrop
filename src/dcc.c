@@ -6,7 +6,7 @@
  * 
  * dprintf'ized, 27oct1995
  * 
- * $Id: dcc.c,v 1.15 1999/12/22 12:11:02 fabian Exp $
+ * $Id: dcc.c,v 1.16 1999/12/25 00:07:50 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1128,7 +1128,7 @@ static void dcc_telnet(int idx, char *buf, int i)
   dcc[i].u.dns->dns_type = RES_HOSTBYIP;
   dcc[i].u.dns->ibuf = dcc[idx].sock;
   dcc[i].u.dns->type = &DCC_IDENTWAIT;
-  dns_hostbyip(ip);
+  dcc_dnshostbyip(ip);
 }
 
 static void dcc_telnet_hostresolved(int i)

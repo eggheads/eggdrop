@@ -6,7 +6,7 @@
  * 
  * dprintf'ized, 4feb1996
  * 
- * $Id: tcl.c,v 1.11 1999/12/21 17:35:10 fabian Exp $
+ * $Id: tcl.c,v 1.12 1999/12/25 00:07:50 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -472,7 +472,7 @@ void kill_tcl()
   Tcl_DeleteInterp(interp);
 }
 
-extern tcl_cmds tcluser_cmds[], tcldcc_cmds[], tclmisc_cmds[];
+extern tcl_cmds tcluser_cmds[], tcldcc_cmds[], tclmisc_cmds[], tcldns_cmds[];
 
 /* not going through Tcl's crazy main() system (what on earth was he
  * smoking?!) so we gotta initialize the Tcl interpreter */
@@ -513,6 +513,7 @@ void init_tcl(int argc, char **argv)
   add_tcl_commands(tcluser_cmds);
   add_tcl_commands(tcldcc_cmds);
   add_tcl_commands(tclmisc_cmds);
+  add_tcl_commands(tcldns_cmds);
 
 #ifndef HAVE_PRE7_5_TCL
   /* add eggdrop to Tcl's package list */

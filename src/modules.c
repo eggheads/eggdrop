@@ -4,7 +4,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: modules.c,v 1.16 1999/12/24 14:21:53 fabian Exp $
+ * $Id: modules.c,v 1.17 1999/12/25 00:07:50 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -484,8 +484,8 @@ Function global_table[] =
   (Function) & DCC_DNSWAIT,	/* struct dcc_table * */
   (Function) hostsanitycheck_dcc,
   /* 240 - 243 */
-  (Function) & dns_ipbyhost,	/* Function * */
-  (Function) & dns_hostbyip,	/* Function * */
+  (Function) dcc_dnsipbyhost,
+  (Function) dcc_dnshostbyip,
   (Function) changeover_dcc,  
   (Function) make_rand_str,
   /* 244 - 247 */

@@ -1,7 +1,7 @@
 /* 
  * module.h
  * 
- * $Id: module.h,v 1.15 1999/12/24 14:21:53 fabian Exp $
+ * $Id: module.h,v 1.16 1999/12/25 00:07:50 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -372,8 +372,8 @@
 #define DCC_DNSWAIT (*(struct dcc_table *)(global[238]))
 #define hostsanitycheck_dcc ((int(*)(char *, char *, IP, char *, char *))global[239])
 /* 240 - 243 */
-#define dns_ipbyhost ((void (*)(char *))(*(Function**)(global[240])))
-#define dns_hostbyip ((void (*)(IP))(*(Function**)(global[241])))
+#define dcc_dnsipbyhost ((void (*)(char *))global[240])
+#define dcc_dnshostbyip ((void (*)(IP))global[241])
 #define changeover_dcc ((void (*)(int, struct dcc_table *, int))global[242])
 #define make_rand_str ((void (*) (char *, int))global[243])
 /* 244 - 247 */
