@@ -1,7 +1,8 @@
 # Makefile for src/mod/dns.mod/
-# $Id: Makefile.in,v 1.7 2000/09/12 15:26:52 fabian Exp $
+# $Id: Makefile.in,v 1.8 2001/07/24 15:08:22 guppy Exp $
 
 RESLIB = @RESLIB@
+RESINCLUDE = @RESINCLUDE@
 srcdir = .
 
 
@@ -17,7 +18,7 @@ static: ../dns.o
 modules: ../../../dns.$(MOD_EXT)
 
 ../dns.o:
-	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c $(srcdir)/dns.c
+	$(CC) $(CFLAGS) $(CPPFLAGS) $(RESINCLUDE) -DMAKING_MODS -c $(srcdir)/dns.c
 	@rm -f ../dns.o
 	mv dns.o ../
 
