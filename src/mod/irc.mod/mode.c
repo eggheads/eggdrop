@@ -489,7 +489,7 @@ static void got_ban(struct chanset_t *chan, char *nick, char *from,
   bogus = 0;
   check = 1;
   if (!match_my_nick(nick)) {	/* it's not my ban */
-    if (channel_nouserbans(chan) && !glob_bot(user) &&
+    if (channel_nouserbans(chan) && !nick[0] && !glob_bot(user) &&
 	!glob_master(user) && !chan_master(user)) {
       /* no bans made by users */
       add_mode(chan, '-', 'b', who);
@@ -682,7 +682,7 @@ static void got_exempt(struct chanset_t *chan, char *nick, char *from,
   bogus = 0;
   check = 1;
   if (!match_my_nick(nick)) {	/* it's not my exemption */
-    if (channel_nouserexempts(chan) && !glob_bot(user) &&
+    if (channel_nouserexempts(chan) && !nick[0] && !glob_bot(user) &&
 	!glob_master(user) && !chan_master(user)) {
       /* no exempts made by users */
       add_mode(chan, '-', 'e', who);
@@ -789,7 +789,7 @@ static void got_invite(struct chanset_t *chan, char *nick, char *from,
   bogus = 0;
   check = 1;
   if (!match_my_nick(nick)) {	/* it's not my invitation */
-    if (channel_nouserinvites(chan) && !glob_bot(user) &&
+    if (channel_nouserinvites(chan) && !nick[0] && !glob_bot(user) &&
 	!glob_master(user) && !chan_master(user)) {
       /* no exempts made by users */
       add_mode(chan, '-', 'I', who);

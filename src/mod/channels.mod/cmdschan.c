@@ -1220,9 +1220,8 @@ static void cmd_chaninfo(struct userrec *u, int idx, char *par)
 	    (chan->status & CHAN_SECRET) ? '+' : '-');
     dprintf(idx, "     %cshared     %cautovoice    %ccycle        %cseen\n",
 	    (chan->status & CHAN_SHARED) ? '+' : '-',
-/* FIXME: clean this up */
-	    channel_autovoice(chan) ? '+' : '-',
-	    channel_cycle(chan) ? '+' : '-',
+	    (chan->status & CHAN_AUTOVOICE) ? '+' : '-',
+	    (chan->status & CHAN_CYCLE) ? '+' : '-',
 	    (chan->status & CHAN_SEEN) ? '+' : '-');
     dprintf(idx, "     %cdontkickops              %cwasoptest    %cinactive\n",
 	    (chan->status & CHAN_DONTKICKOPS) ? '+' : '-',
