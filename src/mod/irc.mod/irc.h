@@ -1,7 +1,7 @@
 /*
  * irc.h -- part of irc.mod
  *
- * $Id: irc.h,v 1.18 2002/06/13 20:43:08 wcc Exp $
+ * $Id: irc.h,v 1.19 2002/09/22 08:12:30 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -54,6 +54,7 @@ static int any_ops(struct chanset_t *);
 static int hand_on_chan(struct chanset_t *, struct userrec *);
 static char *getchanmode(struct chanset_t *);
 static void flush_mode(struct chanset_t *, int);
+static void set_delay(struct chanset_t *, char *);
 
 /* reset(bans|exempts|invites) are now just macros that call resetmasks
  * in order to reduce the code duplication. <cybah>

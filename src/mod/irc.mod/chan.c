@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  *
- * $Id: chan.c,v 1.95 2002/08/30 03:07:04 wcc Exp $
+ * $Id: chan.c,v 1.96 2002/09/22 08:12:30 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -713,42 +713,59 @@ static void check_this_member(struct chanset_t *chan, char *nick, struct flag_re
   if (!m || match_my_nick(nick) || (!me_op(chan) && !me_halfop(chan)))
     return;
 
-  sprintf(s, "%s!%s", m->nick, m->userhost);
-  if (me_op(chan)) {
-    if (chan_hasop(m)) {
-      if (chan_deop(*fr) || (glob_deop(*fr) && !chan_op(*fr))) {
-        add_mode(chan, '-', 'o', m->nick);
-      } else if (channel_bitch(chan) && (!chan_op(*fr) && !(glob_op(*fr) &&
-	         !chan_deop(*fr)))) {
+  if (me_op(chan) || me_halfop(chan)) {
+    if (me_op(chan)) {
+      if (chan_hasop(m) && ((chan_deop(*fr) || (glob_deop(*fr) &&
+          !chan_op(*fr))) || (channel_bitch(chan) && (!chan_op(*fr) &&
+          !(glob_op(*fr) && !chan_deop(*fr)))))) {
         add_mode(chan, '-', 'o', m->nick);
       }
+      if (chan_hashalfop(m) && ((chan_dehalfop(*fr) || (glob_dehalfop(*fr) &&
+          !chan_halfop(*fr)) || (channel_bitch(chan) && (!chan_halfop(*fr) &&
+          !(glob_halfop(*fr) && !chan_dehalfop(*fr)))))))
+        add_mode(chan, '-', 'h', m->nick);
+      if (!chan_hasop(m) && (chan_op(*fr) || (glob_op(*fr) &&
+          !chan_deop(*fr))) && (channel_autoop(chan) || glob_autoop(*fr) ||
+          chan_autoop(*fr)))
+        if (!chan->aop_min)
+          add_mode(chan, '+', 'o', m->nick);
+        else {
+          set_delay(chan, m->nick);
+          m->flags |= SENTOP;
+	}
+      else if (!chan_hasop(m) && !chan_hashalfop(m) && (chan_halfop(*fr) ||
+               (glob_halfop(*fr) && !chan_dehalfop(*fr))) &&
+               (channel_autohalfop(chan) || glob_autohalfop(*fr) ||
+               chan_autohalfop(*fr)))
+        if (!chan->aop_min)
+          add_mode(chan, '+', 'h', m->nick);
+        else {
+          set_delay(chan, m->nick);
+          m->flags |= SENTHALFOP;
+	}
     }
-    if (chan_hashalfop(m)) {
-      if (chan_dehalfop(*fr) || (glob_dehalfop(*fr) && !chan_halfop(*fr))) {
-        add_mode(chan, '-', 'h', m->nick);
-      } else if (channel_bitch(chan) && (!chan_halfop(*fr) &&
-	         !(glob_halfop(*fr) && !chan_dehalfop(*fr)))) {
-        add_mode(chan, '-', 'h', m->nick);
+    if (chan_hasvoice(m) && (chan_quiet(*fr) || (glob_quiet(*fr) &&
+        !chan_voice(*fr))))
+      add_mode(chan, '-', 'v', m->nick);
+    if (!chan_hasvoice(m) && !chan_hasop(m) && !chan_hashalfop(m) &&
+        (chan_voice(*fr) || (glob_voice(*fr) && !chan_quiet(*fr))) &&
+        (channel_autovoice(chan) || glob_gvoice(*fr) || chan_gvoice(*fr)))
+      if (!chan->aop_min)
+        add_mode(chan, '+', 'v', m->nick);
+      else {
+        set_delay(chan, m->nick);
+        m->flags |= SENTVOICE;
       }
-    }
   }
-  /* check vs invites */
-  if (use_invites &&
-      (u_match_mask(global_invites,s) ||
-       u_match_mask(chan->invites, s)))
+
+  sprintf(s, "%s!%s", m->nick, m->userhost);
+  if (use_invites && (u_match_mask(global_invites,s) ||
+      u_match_mask(chan->invites, s)))
     refresh_invite(chan, s);
-  /* don't kickban if permanent exempted */
-  if (!(use_exempts &&
-	(u_match_mask(global_exempts,s) ||
-	 u_match_mask(chan->exempts, s)))) {
-    /* if match a ban */
-    if (u_match_mask(global_bans, s) ||
-        u_match_mask(chan->bans, s)) {
-      /* bewm */
+  if (!(use_exempts && (u_match_mask(global_exempts ,s) ||
+      u_match_mask(chan->exempts, s)))) {
+    if (u_match_mask(global_bans, s) || u_match_mask(chan->bans, s))
       refresh_ban_kick(chan, s, m->nick);
-      /* ^ will use the ban comment */
-    }
-    /* are they +k ? */
     if (!chan_sentkick(m) && (chan_kick(*fr) || glob_kick(*fr)) &&
 	(me_op(chan) || (me_halfop(chan) && !chan_hasop(m)))) {
       check_exemptlist(chan, s);
@@ -757,31 +774,6 @@ static void check_this_member(struct chanset_t *chan, char *nick, struct flag_re
       dprintf(DP_SERVER, "KICK %s %s :%s\n", chan->name, m->nick,
 	      p ? p : IRC_POLITEKICK);
       m->flags |= SENTKICK;
-    }
-  }
-  if (!chan_hasop(m) && me_op(chan) && (chan_op(*fr) || (glob_op(*fr) &&
-      !chan_deop(*fr))) && (channel_autoop(chan) || (glob_autoop(*fr) ||
-      chan_autoop(*fr)))) {
-    add_mode(chan, '+', 'o', m->nick);
-  } else if (me_op(chan) && !chan_hashalfop(m) && !chan_hasop(m)) {
-    if ((channel_autohalfop(chan) && !chan_dehalfop(*fr) &&
-	(chan_halfop(*fr) || glob_halfop(*fr))) || (!chan_dehalfop(*fr) &&
-	(glob_autohalfop(*fr) || chan_autohalfop(*fr)))) {
-      add_mode(chan, '+', 'h', m->nick);
-    }
-    if (chan_hashalfop(m) && (chan_dehalfop(*fr) || (glob_dehalfop(*fr) &&
-	!chan_halfop(*fr)))) {
-      add_mode(chan, '-', 'h', m->nick);
-    }
-  } else if (!chan_hasvoice(m) && !chan_hasop(m) && !chan_hashalfop(m)) {
-    if ((channel_autovoice(chan) && !chan_quiet(*fr) && (chan_voice(*fr) ||
-	glob_voice(*fr))) || (!chan_quiet(*fr) && (glob_gvoice(*fr) ||
-	chan_gvoice(*fr)))) {
-      add_mode(chan, '+', 'v', m->nick);
-    }
-    if (chan_hasvoice(m) && (chan_quiet(*fr) || (glob_quiet(*fr) &&
-	!chan_voice(*fr)))) {
-      add_mode(chan, '-', 'v', m->nick);
     }
   }
 }
@@ -1539,11 +1531,11 @@ static void set_delay(struct chanset_t *chan, char *nick)
   if (count)
     for (m2 = chan->channel.member; m2 && m2->nick[0]; m2 = m2->next)
       if (m2->delay && !(m2->flags & FULL_DELAY)) {
- m2->delay = a_delay;
- if (count + 1 >=  modesperline)
-   m2->flags |= FULL_DELAY;
+        m2->delay = a_delay;
+        if (count + 1 >=  modesperline)
+          m2->flags |= FULL_DELAY;
       }
-  if (count + 1 >=modesperline)
+  if (count + 1 >= modesperline)
     m->flags |= FULL_DELAY;
   m->delay = a_delay;
 }
