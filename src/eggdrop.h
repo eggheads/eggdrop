@@ -4,7 +4,7 @@
  * 
  *   IF YOU ALTER THIS FILE, YOU NEED TO RECOMPILE THE BOT.
  * 
- * $Id: eggdrop.h,v 1.34 2000/09/23 17:46:55 fabian Exp $
+ * $Id: eggdrop.h,v 1.35 2000/10/27 19:28:21 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -183,9 +183,12 @@
 #endif
 
 #ifdef DEBUG_ASSERT
-#  define Assert(expr)	eggAssert(__FILE__, __LINE__, NULL, (int)(expr))
+#  define Assert(expr)	do {						\
+	if (!(expr))							\
+		eggAssert(__FILE__, __LINE__, NULL);			\
+} while (0)
 #else
-#  define Assert(expr)	{}
+#  define Assert(expr)	do {	} while (0)
 #endif
 
 #ifndef COMPILING_MEM

@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  * 
- * $Id: main.c,v 1.43 2000/09/27 19:48:54 fabian Exp $
+ * $Id: main.c,v 1.44 2000/10/27 19:28:21 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -154,7 +154,7 @@ int	cx_ptr = 0;
 #endif
 
 
-void fatal(char *s, int recoverable)
+void fatal(const char *s, int recoverable)
 {
   int i;
 
@@ -177,7 +177,7 @@ int expmem_chanprog(), expmem_users(), expmem_misc(), expmem_dccutil(),
 
 /* For mem.c : calculate memory we SHOULD be using
  */
-int expected_memory()
+int expected_memory(void)
 {
   int tot;
 
@@ -371,7 +371,7 @@ static void got_ill(int z)
 
 #ifdef DEBUG_CONTEXT
 /* Context */
-void eggContext(char *file, int line, char *module)
+void eggContext(const char *file, int line, const char *module)
 {
   char x[31], *p;
 
@@ -389,7 +389,8 @@ void eggContext(char *file, int line, char *module)
 
 /* Called from the ContextNote macro.
  */
-void eggContextNote(char *file, int line, char *module, char *note)
+void eggContextNote(const char *file, int line, const char *module,
+		    const char *note)
 {
   char x[31], *p;
 
@@ -410,19 +411,16 @@ void eggContextNote(char *file, int line, char *module, char *note)
 #ifdef DEBUG_ASSERT
 /* Called from the Assert macro.
  */
-void eggAssert(char *file, int line, char *module, int expr)
+void eggAssert(const char *file, int line, const char *module)
 {
-  if (!(expr)) {
 #ifdef DEBUG_CONTEXT
-    write_debug();
+  write_debug();
 #endif
-    if (!module) {
-      putlog(LOG_MISC, "*", "* In file %s, line %u", file, line);
-    } else {
-      putlog(LOG_MISC, "*", "* In file %s:%s, line %u", module, file, line);
-    }
-    fatal("ASSERT FAILED -- CRASHING!", 1);
-  }
+  if (!module)
+    putlog(LOG_MISC, "*", "* In file %s, line %u", file, line);
+  else
+    putlog(LOG_MISC, "*", "* In file %s:%s, line %u", module, file, line);
+  fatal("ASSERT FAILED -- CRASHING!", 1);
 }
 #endif
 
@@ -467,7 +465,7 @@ static void do_arg(char *s)
     strcpy(configfile, s);
 }
 
-void backup_userfile()
+void backup_userfile(void)
 {
   char s[150];
 
@@ -645,7 +643,7 @@ int init_mem(), init_dcc_max(), init_userent(), init_misc(), init_bots(),
  init_net(), init_modules(), init_tcl(int, char **),
  init_language(int);
 
-void patch(char *str)
+void patch(const char *str)
 {
   char *p = strchr(egg_version, '+');
 
