@@ -4,7 +4,7 @@
  *   Tcl initialization
  *   getting and setting Tcl/eggdrop variables
  *
- * $Id: tcl.c,v 1.76 2004/04/10 03:52:28 stdarg Exp $
+ * $Id: tcl.c,v 1.77 2004/06/09 17:34:16 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -160,8 +160,11 @@ static char *tcl_eggcouplet(ClientData cdata, Tcl_Interp *irp,
     if (s != NULL) {
       int nr1, nr2;
 
+      nr1 = nr2 = 0;
+
       if (strlen(s) > 40)
         s[40] = 0;
+
       sscanf(s, "%d%*c%d", &nr1, &nr2);
       *(cp->left) = nr1;
       *(cp->right) = nr2;

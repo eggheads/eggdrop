@@ -4,7 +4,7 @@
  *   disconnect on a dcc socket
  *   ...and that's it!  (but it's a LOT)
  *
- * $Id: dcc.c,v 1.77 2004/04/06 06:56:38 wcc Exp $
+ * $Id: dcc.c,v 1.78 2004/06/09 17:34:16 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1915,6 +1915,7 @@ void dcc_ident(int idx, char *buf, int len)
   char response[512], uid[512], buf1[UHOSTLEN];
   int i;
 
+  *response = *uid = '\0';
   sscanf(buf, "%*[^:]:%[^:]:%*[^:]:%[^\n]\n", response, uid);
   rmspace(response);
   if (response[0] != 'U') {
