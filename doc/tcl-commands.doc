@@ -1,5 +1,5 @@
 Eggdrop Tcl Commands
-Last revised: March 08, 2002
+Last revised: March 20, 2002
      _________________________________________________________________
 
 This is an exhaustive list of all the Tcl commands added to Eggdrop. All
@@ -1710,7 +1710,7 @@ marked with vertical bars (|) on the left.
 
          Description: dest will be a nickname (the bot's nickname, obviously)
            or channel name. keyword is the ctcp command (which can contain
-           wildcards, and text may be empty. If the proc returns 0, the bot
+           wildcards), and text may be empty. If the proc returns 0, the bot
            will attempt its own processing of the ctcp command.
          Module: server
 
