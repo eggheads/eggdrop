@@ -2,7 +2,7 @@
  * cmdschan.c -- part of channels.mod
  *   commands from a user via dcc that cause server interaction
  *
- * $Id: cmdschan.c,v 1.66 2003/03/24 05:47:07 wcc Exp $
+ * $Id: cmdschan.c,v 1.67 2003/08/20 04:52:14 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -471,18 +471,23 @@ static void cmd_mns_ban(struct userrec *u, int idx, char *par)
     return;
   }
   if ((i = atoi(ban)) > 0) {
+    /* substract the numer of global bans to get the number of the channel ban */
     egg_snprintf(s, sizeof s, "%d", i);
-    j = u_delban(chan, s, 1);
-    if (j > 0) {
-      if (lastdeletedmask)
-        mask = lastdeletedmask;
-      else
-        mask = s;
-      putlog(LOG_CMDS, "*", "#%s# (%s) -ban %s", dcc[idx].nick, chan->dname,
-             mask);
-      dprintf(idx, "Removed %s channel ban: %s\n", chan->dname, mask);
-      add_mode(chan, '-', 'b', mask);
-      return;
+    j = u_delban(0, s, 0);
+    if (j < 0) {
+      egg_snprintf(s, sizeof s, "%d", -j);
+      j = u_delban(chan, s, 1);
+      if (j > 0) {
+        if (lastdeletedmask)
+          mask = lastdeletedmask;
+        else
+          mask = s;
+        putlog(LOG_CMDS, "*", "#%s# (%s) -ban %s", dcc[idx].nick, chan->dname,
+               mask);
+        dprintf(idx, "Removed %s channel ban: %s\n", chan->dname, mask);
+        add_mode(chan, '-', 'b', mask);
+        return;
+      }
     }
     i = 0;
     for (b = chan->channel.ban; b && b->mask && b->mask[0]; b = b->next) {
@@ -573,18 +578,23 @@ static void cmd_mns_exempt(struct userrec *u, int idx, char *par)
     chan = findchan_by_dname(chname);
   if (chan) {
     if ((i = atoi(exempt)) > 0) {
+      /* substract the numer of global exempts to get the number of the channel exempt */
       egg_snprintf(s, sizeof s, "%d", i);
-      j = u_delexempt(chan, s, 1);
-      if (j > 0) {
-        if (lastdeletedmask)
-          mask = lastdeletedmask;
-        else
-          mask = s;
-        putlog(LOG_CMDS, "*", "#%s# (%s) -exempt %s", dcc[idx].nick,
-               chan->dname, mask);
-        dprintf(idx, "Removed %s channel exempt: %s\n", chan->dname, mask);
-        add_mode(chan, '-', 'e', mask);
-        return;
+      j = u_delexempt(0, s, 0);
+      if (j < 0) {
+        egg_snprintf(s, sizeof s, "%d", -j);
+        j = u_delexempt(chan, s, 1);
+        if (j > 0) {
+          if (lastdeletedmask)
+            mask = lastdeletedmask;
+          else
+            mask = s;
+          putlog(LOG_CMDS, "*", "#%s# (%s) -exempt %s", dcc[idx].nick,
+                 chan->dname, mask);
+          dprintf(idx, "Removed %s channel exempt: %s\n", chan->dname, mask);
+          add_mode(chan, '-', 'e', mask);
+          return;
+        }
       }
       i = 0;
       for (e = chan->channel.exempt; e && e->mask && e->mask[0]; e = e->next) {
@@ -680,18 +690,23 @@ static void cmd_mns_invite(struct userrec *u, int idx, char *par)
     chan = findchan_by_dname(chname);
   if (chan) {
     if ((i = atoi(invite)) > 0) {
+      /* substract the numer of global invites to get the number of the channel invite */
       egg_snprintf(s, sizeof s, "%d", i);
-      j = u_delinvite(chan, s, 1);
-      if (j > 0) {
-        if (lastdeletedmask)
-          mask = lastdeletedmask;
-        else
-          mask = s;
-        putlog(LOG_CMDS, "*", "#%s# (%s) -invite %s", dcc[idx].nick,
-               chan->dname, mask);
-        dprintf(idx, "Removed %s channel invite: %s\n", chan->dname, mask);
-        add_mode(chan, '-', 'I', mask);
-        return;
+      j = u_delinvite(0, s, 0);
+      if (j < 0) {
+        egg_snprintf(s, sizeof s, "%d", -j);
+        j = u_delinvite(chan, s, 1);
+        if (j > 0) {
+          if (lastdeletedmask)
+            mask = lastdeletedmask;
+          else
+            mask = s;
+          putlog(LOG_CMDS, "*", "#%s# (%s) -invite %s", dcc[idx].nick,
+                 chan->dname, mask);
+          dprintf(idx, "Removed %s channel invite: %s\n", chan->dname, mask);
+          add_mode(chan, '-', 'I', mask);
+          return;
+        }
       }
       i = 0;
       for (inv = chan->channel.invite; inv && inv->mask && inv->mask[0];

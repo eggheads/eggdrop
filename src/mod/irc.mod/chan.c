@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  *
- * $Id: chan.c,v 1.110 2003/03/04 08:51:45 wcc Exp $
+ * $Id: chan.c,v 1.111 2003/08/20 04:52:14 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -2184,7 +2184,7 @@ static int gotmsg(char *from, char *msg)
     get_user_flagrec(u, &fr, chan->dname);
     m = ismember(chan, nick);
     /* Discard -- kick user if it was to the channel */
-    if ((me_op(chan) || (me_halfop(chan) && !chan_hasop(m))) && m &&
+    if (m && (me_op(chan) || (me_halfop(chan) && !chan_hasop(m))) &&
         !chan_sentkick(m) && !chan_friend(fr) && !glob_friend(fr) &&
         !(channel_dontkickops(chan) && (chan_op(fr) || (glob_op(fr) &&
         !chan_deop(fr)))) && !(use_exempts && ban_fun &&

@@ -4,7 +4,7 @@
  *   channel mode changes and the bot's reaction to them
  *   setting and getting the current wanted channel modes
  *
- * $Id: mode.c,v 1.73 2003/03/16 05:04:33 wcc Exp $
+ * $Id: mode.c,v 1.74 2003/08/20 04:52:14 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -965,7 +965,7 @@ static int gotmode(char *from, char *origmsg)
       if (m && channel_active(chan) && (me_op(chan) || (me_halfop(chan) &&
           !chan_hasop(m))) && !(glob_friend(user) || chan_friend(user) ||
           (channel_dontkickops(chan) && (chan_op(user) || (glob_op(user) &&
-          !chan_deop(user))))) && !match_my_nick(from)) {
+          !chan_deop(user))))) && !match_my_nick(nick)) {
         if (chan_fakeop(m) || chan_fakehalfop(m)) {
           putlog(LOG_MODES, ch, CHAN_FAKEMODE, ch);
           dprintf(DP_MODE, "KICK %s %s :%s\n", ch, nick, CHAN_FAKEMODE_KICK);
