@@ -23,7 +23,6 @@ CAUTION:
      userfile if this is an upgrade from a previous version.
 
      2. DON'T USE YOUR OLD CONFIG FILE.. MAKE A NEW ONE.........
-        there are really some news things in it...
 
 Changes made to Eggdrop 1.6.x from Eggdrop1.4.x
 
@@ -88,6 +87,12 @@ NICK LENGTH
 
      To support longer nicknames as some irc servers do (dalnet I
      think) a settings was added for this one (nick-len).
+
+PENALTY CALCULATION
+
+     Eggdrop calculates penalty points on IRCNET now, so it won't
+     flood itself off anymore. This feature also works on Efnet and
+     Undernet. Should work on other networks, too
 
 SHARE MODULE
 

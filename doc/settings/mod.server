@@ -200,6 +200,14 @@ set double-help 0
     Allow a msg being twice in help queue?
     Valid settings are 0 for OFF and 1 ON.
 
+set use-penalties 1 (default on net-type 1)
+    This enables eggdrop's penalty calculation. Every command eggdrop sends to
+    the irc server raises it's penatly points. If eggdrop reaches a server limit,
+    it gets disconnected with "excess flood" message. Eggdrop is able to count
+    internal those penalty points, too and take measures against excess flooding.
+    Note: it's highly adviced to turn this on!
+
+
 
 set optimize-kicks 1
     Optimize kicks optimizes kick queue. It also traces nick changes and parts in
