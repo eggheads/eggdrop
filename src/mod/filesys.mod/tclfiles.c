@@ -2,7 +2,7 @@
  * tclfiles.c -- part of filesys.mod
  *   Tcl stubs for file system commands moved here to support modules
  *
- * $Id: tclfiles.c,v 1.12 2001/04/12 02:39:46 guppy Exp $
+ * $Id: tclfiles.c,v 1.13 2001/05/25 11:06:04 poptix Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -282,7 +282,7 @@ static int tcl_mkdir STDVAR
   char *s = NULL, *t, *d, *p;
   struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
 
-  BADARGS(2, 3, " dir ?required-flags ?channel??");
+  BADARGS(2, 4, " dir ?required-flags ?channel??");
   malloc_strcpy(s, argv[1]);
   if (s[strlen(s) - 1] == '/')
      s[strlen(s) - 1] = 0;

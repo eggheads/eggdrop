@@ -1,7 +1,7 @@
 /*
  * servmsg.c -- part of server.mod
  *
- * $Id: servmsg.c,v 1.53 2001/05/18 22:35:04 guppy Exp $
+ * $Id: servmsg.c,v 1.54 2001/05/25 11:06:04 poptix Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1166,7 +1166,14 @@ static void connect_server(void)
     pass[0] = 0;
   if (!cycle_time) {
     struct chanset_t *chan;
+    struct server_list *x = serverlist;
 
+    if (!x) {
+      putlog(LOG_SERV, "*", "No servers in server list");
+      cycle_time = 300;
+      return;
+    }
+ 
     servidx = new_dcc(&DCC_DNSWAIT, sizeof(struct dns_info));
     if (servidx < 0) {
       putlog(LOG_SERV, "*",
