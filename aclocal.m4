@@ -1,7 +1,7 @@
 dnl aclocal.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: aclocal.m4,v 1.48 2001/11/11 20:24:44 guppy Exp $
+dnl $Id: aclocal.m4,v 1.49 2001/11/30 01:34:24 guppy Exp $
 dnl
 
 
@@ -1237,12 +1237,32 @@ fi])
 dnl  EGG_SAVE_PARAMETERS()
 dnl
 AC_DEFUN(EGG_SAVE_PARAMETERS, [dnl
-  dnl  Normally, we shouldn't use this level as it's not intended for this
-  dnl  type of code, but there's no other way to run it before the main
-  dnl  parameter loop in configure.
-  AC_DIVERT_PUSH(AC_DIVERSION_NOTICE)dnl
-  egg_ac_parameters="[$]*"
-  AC_DIVERT_POP()dnl to NORMAL
+  # Remove --cache-file and --srcdir arguments so they do not pile up.
+  egg_ac_parameters=
+  ac_prev=
+  for ac_arg in $ac_configure_args; do
+    if test -n "$ac_prev"; then
+      ac_prev=
+      continue
+    fi
+    case $ac_arg in
+    -cache-file | --cache-file | --cache-fil | --cache-fi \
+    | --cache-f | --cache- | --cache | --cach | --cac | --ca | --c)
+      ac_prev=cache_file ;;
+    -cache-file=* | --cache-file=* | --cache-fil=* | --cache-fi=* \
+    | --cache-f=* | --cache-=* | --cache=* | --cach=* | --cac=* | --ca=* \
+    | --c=*)
+      ;;
+    --config-cache | -C)
+      ;;
+    -srcdir | --srcdir | --srcdi | --srcd | --src | --sr)
+      ac_prev=srcdir ;;
+    -srcdir=* | --srcdir=* | --srcdi=* | --srcd=* | --src=* | --sr=*)
+      ;;
+    *) egg_ac_parameters="$egg_ac_parameters $ac_arg" ;;
+    esac
+  done
+
   AC_SUBST(egg_ac_parameters)dnl
 ])dnl
 
