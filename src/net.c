@@ -2,7 +2,7 @@
  * net.c -- handles:
  *   all raw network i/o
  * 
- * $Id: net.c,v 1.37 2001/11/11 19:56:54 guppy Exp $
+ * $Id: net.c,v 1.38 2001/11/11 20:43:12 poptix Exp $
  */
 /* 
  * This is hereby released into the public domain.
@@ -657,6 +657,7 @@ static int sockread(char *s, int *len)
 	  *len = 0;
 	  return i;
 	}
+	errno = 0;
 	if ((socklist[i].sock == STDOUT) && !backgrd)
 	  x = read(STDIN, s, grab);
 	else
@@ -670,6 +671,7 @@ static int sockread(char *s, int *len)
 	    debug1("net: eof!(read) socket %d", socklist[i].sock);
 	    return -1;
 	  } else {
+	    debug3("sockread EAGAIN: %d %d (%s)",socklist[i].sock,errno,strerror(errno));
 	    continue; /* EAGAIN */
 	  }
 	}
@@ -994,11 +996,11 @@ void tputs(register int z, char *s, unsigned int len)
 void dequeue_sockets()
 {
   int i, x;
-/* start poptix test code, this should avoid writes to sockets not ready to be written to. */
+
   int z=0, fds;
   fd_set wfds;
   struct timeval tv;
-
+/* ^-- start poptix test code, this should avoid writes to sockets not ready to be written to. */
   fds = getdtablesize();
 
 #ifdef FD_SETSIZE
@@ -1034,6 +1036,7 @@ void dequeue_sockets()
     if (!(socklist[i].flags & SOCK_UNUSED) &&
 	(socklist[i].outbuf != NULL) && (FD_ISSET(socklist[i].sock, &wfds))) {
       /* Trick tputs into doing the work */
+      errno = 0;
       x = write(socklist[i].sock, socklist[i].outbuf,
 		socklist[i].outbuflen);
       if ((x < 0) && (errno != EAGAIN)
@@ -1061,8 +1064,9 @@ void dequeue_sockets()
 	egg_memcpy(socklist[i].outbuf, p + x, socklist[i].outbuflen - x);
 	socklist[i].outbuflen -= x;
 	nfree(p);
+      } else {
+	debug3("dequeue_sockets(): errno = %d (%s) on %d",errno,strerror(errno),socklist[i].sock);
       }
-     
       /* All queued data was sent. Call handler if one exists and the
        * dcc entry wants it.
        */
