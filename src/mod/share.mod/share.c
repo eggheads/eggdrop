@@ -1,7 +1,7 @@
 /* 
  * share.c -- part of share.mod
  * 
- * $Id: share.c,v 1.45 2000/12/14 04:11:54 guppy Exp $
+ * $Id: share.c,v 1.46 2000/12/21 20:12:43 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1012,7 +1012,7 @@ static void share_ufsend(int idx, char *par)
   FILE *f;
 
   Context;
-  sprintf(s, ".share.%s.users", botnetnick);
+  egg_snprintf(s, sizeof s, ".share.%s.%lu.users", botnetnick, now);
   if (!(b_status(idx) & STAT_SHARE)) {
     dprintf(idx, "s e You didn't ask; you just started sending.\n");
     dprintf(idx, "s e Ask before sending the userfile.\n");
