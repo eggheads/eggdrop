@@ -2,7 +2,7 @@
  * irc.c -- part of irc.mod
  *   support for channels withing the bot
  *
- * $Id: irc.c,v 1.40 2000/05/28 18:31:32 guppy Exp $
+ * $Id: irc.c,v 1.41 2000/05/30 21:04:56 guppy Exp $
  */
 /*
  * Copyright (C) 1997  Robey Pointer
@@ -159,12 +159,12 @@ static void punish_badguy(struct chanset_t *chan, char *whobad,
   reason[0] = 0;
   switch (type) {
   case REVENGE_KICK:
-    kick_msg = IRC_DEOP_PROTECT;
+    kick_msg = IRC_KICK_PROTECT;
     simple_sprintf(reason, "kicked %s off %s", victim, chan->name);
     break;
   case REVENGE_DEOP:
     simple_sprintf(reason, "deopped %s on %s", victim, chan->name);
-    kick_msg = IRC_KICK_PROTECT;
+    kick_msg = IRC_DEOP_PROTECT;
     break;
   default:
     kick_msg = "revenge!";
