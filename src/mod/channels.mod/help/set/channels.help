@@ -11,24 +11,6 @@
    when a user joins the channel is you have set 'greet' on).
    this disables '/msg whois' and '/msg who' obviously, and makes
    the setting of 'greet' meaningless.
-%{help=set ban-time}
-%{+n}
-###  %bset ban-time%b <#>
-   specifies how long (in minutes) a temporary ban will last
-   on the bot before being purged.
-see also: bans, +ban, kickban, set ignore-time
-%{help=set exempt-time}
-%{+n}
-###  %bset exempt-time%b <#>
-   specifies how long (in minutes) a temporary exemption will last
-   on the channel before being purged. if set to 0, bot never
-   removes it. this is an IRCnet feature.
-%{help=set invite-time}
-%{+n}
-###  %bset invite-time%b <#>
-   specifies how long (in minutes) a temporary invitation will
-   last on the channel before being purged. if set to 0, bot never
-   removes it. this is an IRCnet feature.
 %{help=set chanfile}
 %{+n}
 ###  %bset chanfile%b

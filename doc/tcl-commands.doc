@@ -255,8 +255,8 @@ marked with vertical bars (|) on the left.
     Description: adds a ban to the global ban list (which takes effect on
       all channels); creator is given credit for the ban in the ban list.
       lifetime is specified in minutes. If lifetime is not specified,
-      ban-time (usually 60) is used. Setting the lifetime to 0 makes it a
-      permanent ban.
+      global-ban-time (usually 60) is used. Setting the lifetime to 0 makes
+      it a permanent ban.
     Options:
       sticky: forces the ban to be always active on a channel, even
               with dynamicbans on

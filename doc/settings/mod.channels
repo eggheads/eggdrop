@@ -76,7 +76,7 @@ There are also some variables you can set in your config file:
 
     stopnethack-mode 0
        This setting will make the bot de-op anyone who enters the channel
-       with serverops. There're seven different modes for this settings:
+       with serverops. There are seven different modes for this settings:
          0 turn off
          1 isoptest (allow serverop if registered op)
          2 wasoptest (allow serverop if user had op before split)
@@ -94,6 +94,25 @@ There are also some variables you can set in your config file:
         1 Deop the user and give them the +d flag for the channel.
         2 Deop the user, give them the +d flag for the channel, and kick them.
         3 Deop the user, give them the +d flag for the channel, kick, and ban them.
+
+   ban-time 120
+      Set here how long temporary bans will last (in minutes). If you
+      set this setting to 0, the bot will never remove them.
+
+   exempt-time 60
+      Set here how long temporary exempts will last (in minutes). If you set
+      this setting to 0, the bot will never remove them. The bot will check
+      the exempts every X minutes, but will not remove the exempt if a ban is
+      set on the channel that matches that exempt. Once the ban is removed,
+      then the exempt will be removed the next time the bot checks. Please note
+      that this is an IRCnet feature.
+
+   invite-time 60
+      Set here how long temporary invites will last (in minutes). If you set
+      this setting to 0, the bot will never remove them. The bot will check
+      the invites every X minutes, but will not remove the invite if a channel
+      is set to +i. Once the channel is -i then the invite will be removed the
+      next time the bot checks. Please note that this is an IRCnet feature.
 
    aop-delay (minimum:maximum)
       This is used for autoop, autohalfop, autovoice. If an op or voice joins a
@@ -234,7 +253,7 @@ There are also some variables you can set in your config file:
 
      statuslog
        Log the channel status line every 5 minutes? This shows the bot's
-       status on the channel (op, voice, etc.), The channel's modes, and
+       status on the channel (op, voice, etc.), the channel's modes, and
        the number of +m/+o/+v/+n/+b/+e/+I users on the channel. A sample 
        status line follows:
        
@@ -294,6 +313,9 @@ There are also some variables you can set in your config file:
   set global-chanmode "nt-likm"
   set global-stopnethack-mode 0
   set global-revenge-mode 0
+  set global-ban-time 120
+  set global-exempt-time 60
+  set global-invite-time 60
 
   set global-chanset {
         -autoop         -autovoice
