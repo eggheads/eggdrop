@@ -6,7 +6,7 @@
  * 
  * dprintf'ized, 10nov1995
  * 
- * $Id: userrec.c,v 1.9 1999/12/27 20:39:23 fabian Exp $
+ * $Id: userrec.c,v 1.10 2000/01/01 19:08:47 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -874,22 +874,26 @@ struct userrec *get_user_by_nick(char *nick)
 
 void user_del_chan(char *dname)
 {
-  struct chanuserrec *ch, *z;
+  struct chanuserrec *ch, *och;
   struct userrec *u;
 
   for (u = userlist; u; u = u->next) {
     ch = u->chanrec;
-    while (ch)
+    och = NULL;
+    while (ch) {
       if (!rfc_casecmp(dname, ch->channel)) {
-	z = ch;
-	ch = ch->next;
-	if (u->chanrec == z)
-	  u->chanrec = ch;
-	if (z->info != NULL)
-	  nfree(z->info);
-	nfree(z);
+	if (och)
+	  och->next = ch->next;
+	else
+	  u->chanrec = ch->next;
+
+	if (ch->info)
+	  nfree(ch->info);
+	nfree(ch);
 	break;
-      } else
-	ch = ch->next;
+      }
+      och = ch;
+      ch = ch->next;
+    }
   }
 }

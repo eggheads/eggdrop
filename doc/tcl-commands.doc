@@ -455,6 +455,10 @@ specific commands, see later.
     returns: "1" if someone by that nickname is on the channel and has chop;
       "0" otherwise
 
+| wasop <nickname> <channel>
+|   returns: "1" if someone that just got opped/deopped in the chan had op
+|     before the modechange; "0" otherwise
+
   isvoice <nickname> <channel>
     returns: "1" if someone by that nickname is on the channel and has voice
       (+v); "0" otherwise
@@ -924,7 +928,7 @@ GLOBAL VARIABLES:
     unixtime value for when the bot was started
 
   server-online
-     unixtime value for how long the bot has been on its server
+     unixtime value for when the bot connected to its current server
 
   lastbind
     The last command binding which triggered.   This allows you to

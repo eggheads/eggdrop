@@ -1,7 +1,7 @@
 #! /path/to/eggdrop
 # ^- set that to the directory eggdrop is in ie "#! /users/lamest/egg/eggdrop"
 #
-# $Id: eggdrop.conf.dist,v 1.15 1999/12/22 12:21:41 fabian Exp $
+# $Id: eggdrop.conf.dist,v 1.16 2000/01/01 19:08:46 fabian Exp $
 #
 # This is a sample configuration file for your bot.  You will definitely
 # want to edit this, to set up your bot.  Right now it creates a bot called
@@ -209,8 +209,8 @@ set dcc-sanitycheck 0
 # and a timeout value for ident lookups would help (seconds)
 set ident-timeout 5
 
-# [0/1] users with the +o (global op) flag will still need the +p (party
-# line) flag to join the dcc chat party line?
+# [0/1] users with the +o (global or channel op) flag will still need the +p 
+# (party line) flag to join the dcc chat party line?
 set require-p 0
 
 # [0/1] allow people to telnet in, type 'NEW', and become a new user?

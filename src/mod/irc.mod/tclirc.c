@@ -1,7 +1,7 @@
 /* 
  * tclirc.c -- part of irc.mod
  * 
- * $Id: tclirc.c,v 1.8 1999/12/21 17:35:30 fabian Exp $
+ * $Id: tclirc.c,v 1.9 2000/01/01 19:08:48 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -138,7 +138,6 @@ static int tcl_isop STDVAR
   }
   if ((mx = ismember(chan, argv[1])) && chan_hasop(mx))
     Tcl_AppendResult(irp, "1", NULL);
-
   else
     Tcl_AppendResult(irp, "0", NULL);
   return TCL_OK;
@@ -161,6 +160,25 @@ static int tcl_isvoice STDVAR
     Tcl_AppendResult(irp, "0", NULL);
   return TCL_OK;
 }
+
+static int tcl_wasop STDVAR
+{
+  struct chanset_t *chan;
+  memberlist *mx;
+
+  BADARGS(3, 3, " nick channel");
+  chan = findchan(argv[2]);
+  if (chan == NULL) {
+    Tcl_AppendResult(irp, "illegal channel: ", argv[2], NULL);
+    return TCL_ERROR;
+  }
+  if ((mx = ismember(chan, argv[1])) && chan_wasop(mx))
+    Tcl_AppendResult(irp, "1", NULL);
+  else
+    Tcl_AppendResult(irp, "0", NULL);
+  return TCL_OK;
+}
+
 
 static int tcl_onchan STDVAR
 {
@@ -687,6 +705,7 @@ static tcl_cmds tclchan_cmds[] =
   {"botisvoice", tcl_botisvoice},
   {"isop", tcl_isop},
   {"isvoice", tcl_isvoice},
+  {"wasop", tcl_wasop},
   {"onchan", tcl_onchan},
   {"handonchan", tcl_handonchan},
   {"ischanban", tcl_ischanban},

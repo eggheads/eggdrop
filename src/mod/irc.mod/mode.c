@@ -8,7 +8,7 @@
  * multi-channel, 6feb1996
  * stopped the bot deopping masters and bots in bitch mode, pteron 23Mar1997
  * 
- * $Id: mode.c,v 1.14 1999/12/22 12:21:43 fabian Exp $
+ * $Id: mode.c,v 1.15 2000/01/01 19:08:47 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -369,17 +369,25 @@ static void got_op(struct chanset_t *chan, char *nick, char *from,
   if (!me_op(chan) && match_my_nick(who))
     check_chan = 1;
 
-  /* flags need to be set correctly right from the beginning now, so that
-   * add_mode() doesn't get irritated  (Fabian) */
-  m->flags |= CHANOP;
-  m->flags &= ~SENTOP;
-
   if (!m->user) {
     simple_sprintf(s, "%s!%s", m->nick, m->userhost);
     u = get_user_by_host(s);
   } else
     u = m->user;
+
   get_user_flagrec(u, &victim, chan->dname);
+  /* flags need to be set correctly right from the beginning now, so that
+   * add_mode() doesn't get irritated  (Fabian) */
+  m->flags |= CHANOP;
+  check_tcl_mode(nick, from, u, chan->dname, "+o", who);
+  /* added new meaning of WASOP:
+   * in mode binds it means: was he op before get (de)opped
+   * (stupid IrcNet allows opped users to be opped again and
+   *  opless users to be deopped)
+   * script now can use [wasop nick chan] proc to check
+   * if user was op or wasnt  (drummer) */
+  m->flags &= ~SENTOP;
+
   /* I'm opped, and the opper isn't me */
   if (me_op(chan) && !match_my_nick(who) &&
     /* and it isn't a server op */
@@ -419,7 +427,7 @@ static void got_op(struct chanset_t *chan, char *nick, char *from,
       }
     }
   }
-  m->flags &= ~WASOP;
+  m->flags |= WASOP;
   if (check_chan)
     recheck_channel(chan, 1);
 }
@@ -438,15 +446,20 @@ static void got_deop(struct chanset_t *chan, char *nick, char *from,
     dprintf(DP_MODE, "WHO %s\n", who);
     return;
   }
-  had_op = chan_hasop(m);
-  /* flags need to be set correctly right from the beginning now, so that
-   * add_mode() doesn't get irritated  (Fabian) */
-  m->flags &= ~(CHANOP | SENTDEOP | FAKEOP | WASOP);
 
   simple_sprintf(s, "%s!%s", m->nick, m->userhost);
   simple_sprintf(s1, "%s!%s", nick, from);
   u = get_user_by_host(s);
   get_user_flagrec(u, &victim, chan->dname);
+
+  had_op = chan_hasop(m);
+  /* flags need to be set correctly right from the beginning now, so that
+   * add_mode() doesn't get irritated  (Fabian) */
+  m->flags &= ~(CHANOP | SENTDEOP | FAKEOP);
+  check_tcl_mode(nick, from, u, chan->dname, "-o", who);
+  /* check comments in got_op()  (drummer) */
+  m->flags &= ~WASOP;
+
   /* deop'd someone on my oplist? */
   if (me_op(chan)) {
     int ok = 1;
@@ -1113,7 +1126,6 @@ static void gotmode(char *from, char *msg)
 	case 'o':
 	  op = newsplit(&msg);
 	  fixcolon(op);
-	  check_tcl_mode(nick, from, u, chan->dname, ms2, op);
 	  if (ms2[0] == '+')
 	    got_op(chan, nick, from, op, &user);
 	  else
@@ -1128,11 +1140,11 @@ static void gotmode(char *from, char *msg)
 		   CHAN_BADCHANMODE, CHAN_BADCHANMODE_ARGS2);
 	    dprintf(DP_MODE, "WHO %s\n", op);
 	  } else {
-	    check_tcl_mode(nick, from, u, chan->dname, ms2, op);
 	    get_user_flagrec(m->user, &victim, chan->dname);
 	    if (ms2[0] == '+') {
 	      m->flags &= ~SENTVOICE;
 	      m->flags |= CHANVOICE;
+	      check_tcl_mode(nick, from, u, chan->dname, ms2, op);
 	      if (!glob_master(user) && !chan_master(user)) {
 		if (channel_autovoice(chan) &&
 		    (chan_quiet(victim) ||
@@ -1145,6 +1157,7 @@ static void gotmode(char *from, char *msg)
 	    } else {
 	      m->flags &= ~SENTDEVOICE;
 	      m->flags &= ~CHANVOICE;
+	      check_tcl_mode(nick, from, u, chan->dname, ms2, op);
 	      if (!glob_master(user) && !chan_master(user)) {
 		if ((channel_autovoice(chan) && !chan_quiet(victim) &&
 		    (chan_voice(victim) || glob_voice(victim))) ||
