@@ -24,14 +24,14 @@ see also: set allow-resync
 %{help=set private-global}%{+n}
 ###  %bset private-global%b 0/1
    If you are sharing userfiles with someone else, and you don't
-   want %bany%b global flags on the other bots propogated to your bot, 
+   want %bany%b global flags on the other bots propagated to your bot, 
    set this.  It overrides the setting of private-globals.
    
 see also: set private-globals
 %{help=set private-globals}%{+n}
 ###  %bset private-globals%b [flags]
    If you are sharing userfiles with someone else, and you don't
-   want various global flags on the other bots propogated to your bot, 
+   want various global flags on the other bots propagated to your bot, 
    set this to the global flags you would like to remain unaffected.
    The setting of private-global will override this.   
    

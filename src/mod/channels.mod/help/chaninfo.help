@@ -9,15 +9,15 @@
 %{+n}
      ATTENTION: Due to security concerns, only permanent owners can set the
                 need-* modes.
-	%bneed-op%b           tcl command to execute when the bot doesn't have
+	%bneed-op%b      Tcl command to execute when the bot doesn't have
 	                  ops
-	%bneed-invite%b  tcl command to execute when the bot needs to be
-	             invited to the channel (ie channel has mode +i)
-	%bneed-key%b     tcl command to execute when the bot needs to find 
+	%bneed-invite%b  Tcl command to execute when the bot needs to be
+	                  invited to the channel (i.e. channel has mode +i)
+	%bneed-key%b     Tcl command to execute when the bot needs to find 
 	             out the key to the channel
-	%bneed-unban%b   tcl command to execute when the bot is banned and
+	%bneed-unban%b   Tcl command to execute when the bot is banned and
                      can't get on the channel
-	%bneed-limit%b        tcl command to execute when the bot can't
+	%bneed-limit%b   Tcl command to execute when the bot can't
 	                  join the channel because the channel is full
 %{+m|m}
 	%bstopnethack-mode%b    de-op anyone who enters the channel with server
@@ -41,7 +41,7 @@
                        0:0 no delay
                        x:x x sec delaytime
                        x:y random delay, minimum x sec, maximum y sec
-     The following can be set + or - (eg .chanset #channel -enforcebans)
+     The following can be set + or - (e.g. .chanset #channel -enforcebans)
 	%benforcebans%b    kicks people who match channel bans?
 	%bdynamicbans%b    only activate bans on channel when they are needed
 	%buserbans%b       allow other users to place bans on the channel
@@ -57,9 +57,9 @@
 	%bprotectfriends%b re-op a +f user who gets deopped?
 	%bdontkickops%b    never kick +o flag people
 	%binactive%b        never join this channel, or leave if already
-	                joined.
-                       Usefull as you can make the bot leave a channel without
-                       loosing it's settings or affecting any sharing.
+	                    joined. Useful as you can make the bot leave
+                            a channel without loosing it's settings or
+                            affecting any sharing.
 	%bstatuslog%b      log the channel status every 5 minutes
 	%bcycle%b          cycle the channel when it becomes op-less
 	%brevenge%b         take revenge on anyone who deops or kicks friends
@@ -84,7 +84,7 @@
 	%bflood-ctcp%b  this defines the flood level for ctcp's to the channel
 	            (include PING & VERSION), except for ACTION's
 	%bflood-join%b  this defines the number of joins from a give user@host
-	            that constituts a flood
+	            that constitutes a flood
 	%bflood-kick%b   how many kicks in the given time are a flood
 	%bflood-deop%b   deops in the given time
 %{+n|n}

@@ -30,7 +30,7 @@ See also: invites, -invite, stick, unstick
      Lets you add another channel to the bot, this cause the bot to 
      join the channel, and for you to make changes to it's settings.
      This channel is not permanent unless %b"chanfile"%b has been
-     defined in the config file, and is saved everytime the userfile
+     defined in the config file, and is saved every time the userfile
      is saved, or by using %b'.chansave'%b
      
 See also: +chan, -chan, chanload, chanset, chaninfo
@@ -64,7 +64,7 @@ See also: invites, +invite, stick, unstick
 ### %b-chan%b <channel>
      This removes ALL information about a channel from the bot. It's not
      made permanent unless a channel-file has been defined in the user
-     file, in which case it's saved each time the usefile is, or by using
+     file, in which case it's saved each time the userfile is, or by using
      .chansave.
      
      %f*** IMPORTANT ***%f
@@ -115,7 +115,7 @@ See also: chattr
    the channel.  a "*" marks a ban which is NOT in the permban list but
    IS on the channel.
 
-   Af you use 'bans' it will show you only the bans which are
+   If you use 'bans' it will show you only the bans which are
    currently in action on the channel.  If you use 'bans all' it
    will show you every ban in memory (with 'perm-bans' on, these
    are identical).
@@ -143,7 +143,7 @@ See also: -ban, +ban, console, set ban-time, stick, unstick
            Created 15:10
    The number (5) can be used to reference the invite if you wish
    to remove it (see '.-invite').  Next is the actual hostmask being
-   invitened.  The "(perm)" means that the invite is "permanent": that
+   invited.  The "(perm)" means that the invite is "permanent": that
    is, it doesn't automatically expire.  If there is an elapsed time
    showing instead, the time displayed is how long the invite has been
    active.  Those kind of invites expire after one hour.  The second line
@@ -158,7 +158,7 @@ See also: -ban, +ban, console, set ban-time, stick, unstick
    the channel.  a "*" marks a invite which is NOT in the perminvite list but
    IS on the channel.
 
-   Af you use 'invites' it will show you only the invites which are
+   If you use 'invites' it will show you only the invites which are
    currently in action on the channel.  If you use 'invites all' it
    will show you every invite in memory (with 'perm-invites' on, these
    are identical).
@@ -202,7 +202,7 @@ See also: -invite, +invite, console, set invite-time, stick, unstick
    not currently on the channel.  a "*" marks a ban exemption which is NOT
    in the permban exemption list but IS on the channel.
 
-   Af you use 'exempts' it will show you only the ban exemptions which are
+   If you use 'exempts' it will show you only the ban exemptions which are
    currently in action on the channel.  If you use 'ban exemptions all' it
    will show you every ban exemption in memory (with 'perm-exempts' on,
    these are identical).

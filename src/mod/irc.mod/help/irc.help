@@ -13,7 +13,7 @@
    bot remembers).
 
    If you want to add a user using a static hostmask, prefix their nick
-   with a '!'. ie .adduser !Lamer
+   with a '!'. i.e. .adduser !Lamer
    
 see also: +host, -host, +user, -user
 %{help=deluser}%{+m|m}
@@ -132,7 +132,7 @@ see also: kickban, console
    the ban in the ban list, and used as the kick comment.
      appending a prefix of ! or @ to a nickname changes the ban
    mask used:
-        eg. with a host of nick!ident@host.name.domain
+        e.g. with a host of nick!ident@host.name.domain
 
         command        banmask
         .kickban nick  *!*dent@*.name.domain
@@ -185,8 +185,8 @@ see also: console
      for global masters:
        %breset%b
 %{+n}
-   various tcl settings are avaliable and can be viewed by using
-   %b'help set <setting>'%b. Thes include:
+   various Tcl settings are available and can be viewed by using
+   %b'help set <setting>'%b. These include:
       %blearn-users%b      %bwait-split%b
       %bwait-info%b        %bmodes-per-line%b
       %bmode-buf-length%b  %bbounce-bans%b

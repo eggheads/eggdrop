@@ -90,7 +90,7 @@ see also: set nick, set altnick
 %{help=set quiet-reject}%{+n}
 ###  %bset quiet-reject%b 0/1
    Some of the message & ctcp commands return negative messages to 
-   unknown users, whilst this is polite & usefull, it's also a
+   unknown users, while this is polite & useful, it's also a
    possible detection method, enabling this will cause the bot
    to only send positive responses to know users.
 %{help=set max-queue-msg}%{+n}
@@ -100,7 +100,7 @@ see also: set nick, set altnick
    and starts dropping messages.
 %{help=set trigger-on-ignore}%{+n}
 ###  %bset trigger-on-ignore%b 0/1
-   Enadling this will cause ignored users to trigger bindings anyway,
+   Enabling this will cause ignored users to trigger bindings anyway,
    normally and ignored user is just that, someone who is ignored.
 %{help=set answer-ctcp}%{+n}
 ###  %bset answer-ctcp%b 0/1
@@ -110,7 +110,7 @@ see also: set nick, set altnick
 ###  %bset server-cycle-wait%b <#>
    This sets the number of seconds to wait between successive server
    connects, this can be used to prevent the throttling problems
-   with ircu & ocnnecting to quickly.
+   with ircu & connecting too quickly.
 %{help=set default-port}%{+n}   
 ###  %bset default-port%b <#>
    sets the default port the bot tries to connect to when there
@@ -177,8 +177,8 @@ see also: default-port
    3 = Dalnet, 4 = Others.
 %{help=server settings}%{+n}
 ###  Settings for the %bserver module%b
-   This is a list of the tcl variables the can be used to setup
-   the server module, for a list of revelant commands type
+   This is a list of the Tcl variables the can be used to setup
+   the server module, for a list of relevant commands type
    %b'.help server module'%b.
      %bserver-online%b        %bservlimit%b      %bnick%b
      %bnever-give-up%b        %bflood-ctcp%b     %bserver%b

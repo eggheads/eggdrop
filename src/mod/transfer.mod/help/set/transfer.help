@@ -33,6 +33,6 @@
 ###  help on the %btransfer module%b
    This module provides support for file transfers by the bot, it's
    used by both the share and filesys modules.
-   The following tcl settings are avalible, and more info is
+   The following Tcl settings are available, and more info is
    provide by %b'.help set <variable>'%b
      %bxfer-timeout%b  %bcopy-to-tmp%b  %bdcc-block%b  %bmax-dloads%b

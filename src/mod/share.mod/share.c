@@ -1,7 +1,7 @@
 /*
  * share.c -- part of share.mod
  *
- * $Id: share.c,v 1.56 2001/07/26 21:57:31 guppy Exp $
+ * $Id: share.c,v 1.57 2001/11/29 04:43:39 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1081,7 +1081,7 @@ static void share_userfileq(int idx, char *par)
 
   flush_tbuf(dcc[idx].nick);
   if (bfl & BOT_AGGRESSIVE)
-    dprintf(idx, "s un I have you marked for Agressive sharing.\n");
+    dprintf(idx, "s un I have you marked for Aggressive sharing.\n");
   else if (!(bfl & BOT_PASSIVE))
     dprintf(idx, "s un You are not marked for sharing with me.\n");
   else if (min_share > dcc[idx].u.bot->numver)
@@ -2161,7 +2161,7 @@ static void share_report(int idx, int details)
 	} else if (dcc[i].status & STAT_AGGRESSIVE) {
 	  dprintf(idx, "    Passively sharing with %s.\n", dcc[i].nick);
 	} else if (dcc[i].status & STAT_SHARE) {
-	  dprintf(idx, "    Agressively sharing with %s.\n", dcc[i].nick);
+	  dprintf(idx, "    Aggressively sharing with %s.\n", dcc[i].nick);
 	}
       }
     status_tbufs(idx);

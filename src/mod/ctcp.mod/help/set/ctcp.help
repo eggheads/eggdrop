@@ -19,5 +19,5 @@ see also: set ctcp-version, set ctcp-finger
 ###  %bset ctcp-version%b <text>
    specifies the response to send to a CTCP VERSION request.  one
    example is:
-      ircII 2.8 Linux 1.2.4 :ircii 2.6: almost there...
+      ircII 2.8 Linux 1.2.4 :ircII 2.6: almost there...
 see also: set ctcp-finger, set ctcp-userinfo

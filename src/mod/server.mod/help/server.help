@@ -31,7 +31,7 @@
    Command(s) avalible: (use %b'.help <command>'%b for more info)
       %bservers%b  %{+m}%bjump%b  %bdump%b
 %{+n}
-   There is also a list of tcl settings avalible,
+   There is also a list of Tcl settings available,
    use %b'.help server settings'%b   
 %{help=all}%{+o|o}
 ###  commands for the %bserver module%b
