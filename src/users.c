@@ -10,7 +10,7 @@
  *
  * dprintf'ized, 9nov1995
  *
- * $Id: users.c,v 1.40 2003/02/15 08:59:30 wcc Exp $
+ * $Id: users.c,v 1.41 2003/02/15 19:42:59 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -88,7 +88,7 @@ int delignore(char *ign)
   if (!strchr(ign, '!') && (j = atoi(ign))) {
     for (u = &global_ign, j--; *u && j; u = &((*u)->next), j--);
     if (*u) {
-      strncpyz(temp, (*u)->mask, sizeof temp);
+      strncpyz(temp, (*u)->igmask, sizeof temp);
       i = 1;
     }
   } else {
