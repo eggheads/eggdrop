@@ -174,7 +174,7 @@ see also: console
      for channel ops:
        %bresetbans%b %bact%b      %bchannel%b    %bdeop%b     %bsay%b
        %binvite%b    %bkick%b     %bkickban%b    %bop%b       %btopic%b
-       %bresetexempts%b           %resetinvites%b
+       %bresetexempts%b           %bresetinvites%b
 %{+o}
      for global ops:
        %bmsg%b 
@@ -193,7 +193,7 @@ see also: console
       %bbounce-exempts%b   %bbounce-invites%b
       %bbounce-modes%b     %bmax-bans%b
       %bmax-exempts%b      %bmax-invites%b
-      %max-modes%b         %buse-354%b
+      %bmax-modes%b        %buse-354%b
 %{help=all}%{+o|o}
 ###  commands for the %birc module%b
   for channel ops:

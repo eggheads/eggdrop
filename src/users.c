@@ -10,7 +10,7 @@
  * 
  * dprintf'ized, 9nov1995
  * 
- * $Id: users.c,v 1.17 2000/01/17 16:14:45 per Exp $
+ * $Id: users.c,v 1.18 2000/02/06 18:37:44 per Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -820,6 +820,7 @@ int readuserfile(char *file, struct userrec **ret)
 	} else if (!strncmp(code, "::", 2)) {
 	  /* channel-specific bans */
 	  strcpy(lasthand, &code[2]);
+	  u = NULL;
 	  if (!findchan(lasthand)) {
 	    strcpy(s1, lasthand);
 	    strcat(s1, " ");
@@ -846,6 +847,7 @@ int readuserfile(char *file, struct userrec **ret)
 	} else if (strncmp(code, "&&", 2) == 0) {
 	  /* channel-specific exempts */
 	  strcpy(lasthand, &code[2]);
+	  u = NULL;
 	  if (!findchan(lasthand)) {
 	    strcpy(s1, lasthand);
 	    strcat(s1, " ");
@@ -872,6 +874,7 @@ int readuserfile(char *file, struct userrec **ret)
 	} else if (strncmp(code, "$$", 2) == 0) {  
 	  /* channel-specific invites */
 	  strcpy(lasthand, &code[2]);
+	  u = NULL;
 	  if (!findchan(lasthand)) {   
 	    strcpy(s1, lasthand);
 	    strcat(s1, " ");

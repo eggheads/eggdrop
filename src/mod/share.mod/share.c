@@ -1,7 +1,7 @@
 /* 
  * share.c -- part of share.mod
  * 
- * $Id: share.c,v 1.27 2000/01/08 21:23:17 per Exp $
+ * $Id: share.c,v 1.28 2000/02/06 18:37:44 per Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -437,7 +437,7 @@ static void share_pls_bothost(int idx, char *par)
 	userlist = adduser(userlist, hand, par, p, USER_BOT);
       }
       if (!(dcc[idx].status & STAT_GETTING))
-	putlog(LOG_CMDS, "*", "%s: +bothost %s %s", dcc[idx].nick, hand, par);
+	putlog(LOG_CMDS, "*", "%s: +host %s %s", dcc[idx].nick, hand, par);
     }
   }
 }
