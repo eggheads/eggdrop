@@ -2,7 +2,7 @@
  * lang.h
  *   Conversion definitions for language support
  *
- * $Id: lang.h,v 1.24 2001/12/20 04:53:28 guppy Exp $
+ * $Id: lang.h,v 1.25 2001/12/31 06:47:13 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -479,7 +479,7 @@
 #define DCC_CLOSED		get_language(0xe16)
 #define DCC_FAILED		get_language(0xe17)
 #define DCC_BADSRC		get_language(0xe18)
-#define DCC_BADIP		get_language(0xe19)
+/* was: DCC_BADIP 0xe19 */
 #define DCC_BADHOST		get_language(0xe1a)
 #define DCC_TELCONN		get_language(0xe1b)
 #define DCC_IDENTFAIL		get_language(0xe1c)

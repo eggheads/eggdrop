@@ -6,7 +6,7 @@
 # Modified by Michael for 1.3.25.
 # Modified by rtc for 1.4.0
 #
-# $Id: core.german.lang,v 1.26 2001/12/20 04:53:28 guppy Exp $
+# $Id: core.german.lang,v 1.27 2001/12/31 06:47:13 guppy Exp $
 
 # General stuff
 0x001,Gebrauch
@@ -422,7 +422,7 @@ Baue eine Telnetverbindung zu dem Bot auf und gib 'NEW' als Deinen Nickname ein.
 0xe16,DCC-Verbindung geschlossen (%s!%s)
 0xe17,Einkommende TELNET-Verbindung fehlgeschlagen (%s)
 0xe18,Verbindung zu %s/%d zurueckgewiesen (falscher Quellport)
-0xe19,Verbindung zu %s/%d zurueckgeweisen (ungueltige ip-adresse)
+# 0xe19 - unused 
 0xe1a,Verbindung zu %s zurueckgewiesen (falscher hostname)
 0xe1b,Telnet-Verbindung: %s/%d
 0xe1c,Ident fehlgeschlagen fuer %s: %s
