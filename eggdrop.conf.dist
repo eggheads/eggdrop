@@ -193,6 +193,9 @@ set open-telnets 0
 # (usefull if someone portscans your machine, they wont know we're here)
 set stealth-telnets 0
 
+# [0/1] Display a banner when people telnet in.
+set use-telnet-banner 0
+
 # how long (in seconds) should i wait for a connect (dcc chat, telnet,
 # relay, etc) before it times out?
 set connect-timeout 15
