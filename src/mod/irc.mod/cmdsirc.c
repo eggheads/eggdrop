@@ -2,7 +2,7 @@
  * chancmds.c -- part of irc.mod
  *   handles commands direclty relating to channel interaction
  * 
- * $Id: cmdsirc.c,v 1.8 2000/01/01 19:22:33 fabian Exp $
+ * $Id: cmdsirc.c,v 1.9 2000/01/02 02:42:12 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -850,9 +850,11 @@ static void cmd_deluser(struct userrec *u, int idx, char *par)
   }
   get_user_flagrec(u, &victim, NULL);
   /* This maybe should allow glob +n's to deluser glob +n's but I don't
-   * like that - beldin */
+   * like that - beldin
+   */
   /* Checks vs channel owner/master ANYWHERE now -
-   * so deluser on a channel they're not on should work */
+   * so deluser on a channel they're not on should work
+   */
   /* Shouldn't allow people to remove permanent owners (guppy 9Jan1999) */
   if ((glob_owner(victim) && strcasecmp(dcc[idx].nick, nick)) ||
       isowner(u->handle)) {

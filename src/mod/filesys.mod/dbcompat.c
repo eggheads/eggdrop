@@ -4,7 +4,7 @@
  * 
  * Written for filedb3 by Fabian Knittel <fknittel@gmx.de>
  * 
- * $Id: dbcompat.c,v 1.4 1999/12/21 17:35:16 fabian Exp $
+ * $Id: dbcompat.c,v 1.5 2000/01/02 02:42:11 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -63,7 +63,7 @@ static int convert_old_files(char *path, char *newfiledb)
   filedb_initdb(fdb);
 
   putlog(LOG_FILES, "*", FILES_CONVERT, path);
-  /* scan contents of .files and painstakingly create .filedb entries */
+  /* Scan contents of .files and painstakingly create .filedb entries */
   while (!feof(f)) {
     s = nmalloc(121);
     s1 = s;
@@ -74,9 +74,9 @@ static int convert_old_files(char *path, char *newfiledb)
       fn = newsplit(&s1);
       rmspace(fn);
       if ((fn[0]) && (fn[0] != ';') && (fn[0] != '#')) {
-	/* not comment */
+	/* Not comment */
 	if (fn[0] == '-') {
-	  /* adjust comment for current file */
+	  /* Adjust comment for current file */
 	  if (in_file && fdbe) {
 	    rmspace(s);
 	    if (fdbe->desc) {
@@ -110,17 +110,17 @@ static int convert_old_files(char *path, char *newfiledb)
 	  fdbe->uploaded = atoi(tm);
 	  sprintf(s, "%s/%s", path, fn);
 	  if (stat(s, &st) == 0) {
-	    /* file is okay */
+	    /* File is okay */
 	    if (S_ISDIR(st.st_mode)) {
 	      fdbe->stat |= FILE_DIR;
 	      if (nick[0] == '+') {
 		char x[100];
-		/* only do global flags, it's an old one */
+		/* Only do global flags, it's an old one */
 		struct flag_record fr = {FR_GLOBAL, 0, 0, 0, 0, 0};
 
 		break_down_flags(nick + 1, &fr, NULL);
 		build_flags(x, &fr, NULL);
-		/* we only want valid flags */
+		/* We only want valid flags */
 		malloc_strcpy(fdbe->flags_req, x);
 	      }
 	    }
@@ -259,7 +259,8 @@ static int convert_old_db(FILE **fdb_s, char *filedb)
       filedb_initdb(fdb_t);			/* Initialise new DB	*/
 
       /* Convert old database to new one, saving
-       * in temporary db file */
+       * in temporary db file
+       */
       if (fdbt.version == FILEDB_VERSION1)
         convert_version1(*fdb_s, fdb_t);	/* v1 -> v3		*/
       else
@@ -279,7 +280,8 @@ static int convert_old_db(FILE **fdb_s, char *filedb)
 	lockfile(*fdb_s);
 	/* Now we should have recreated the original situation,
 	 * with the file pointer just pointing to the new version
-	 * of the DB instead of the original one. */
+	 * of the DB instead of the original one.
+	 */
 	ret = 1;
       } else
         putlog(LOG_MISC, "*", "(!) Reopening db %s failed.", filedb);

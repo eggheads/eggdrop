@@ -1,7 +1,7 @@
 /* 
  * transfer.h -- part of transfer.mod
  * 
- * $Id: transfer.h,v 1.5 1999/12/22 12:11:04 fabian Exp $
+ * $Id: transfer.h,v 1.6 2000/01/02 02:42:13 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -25,10 +25,12 @@
 #ifndef _EGG_MOD_TRANSFER_TRANSFER_H
 #define _EGG_MOD_TRANSFER_TRANSFER_H
 
-#define DCCSEND_OK     0
-#define DCCSEND_FULL   1	/* DCC table is full			*/
-#define DCCSEND_NOSOCK 2	/* Can not open a listening socket	*/
-#define DCCSEND_BADFN  3	/* No such file				*/
+enum {
+  DCCSEND_OK = 0,
+  DCCSEND_FULL,		/* DCC table is full			*/
+  DCCSEND_NOSOCK,	/* Can not open a listening socket	*/
+  DCCSEND_BADFN,	/* No such file				*/
+};
 
 #ifndef MAKING_TRANSFER
 /* 4 - 7 */

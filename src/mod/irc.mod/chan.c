@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  * 
- * $Id: chan.c,v 1.18 2000/01/01 19:22:33 fabian Exp $
+ * $Id: chan.c,v 1.19 2000/01/02 02:42:12 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -531,7 +531,8 @@ static void recheck_invites(struct chanset_t * chan) {
   for (i = 0; i < 2; i++)  {
     for (ir = i ? chan->invites : global_invites; ir; ir = ir->next) {
       /* If invite isn't set and (channel is not dynamic invites and not invite
-       * only) or invite is sticky */
+       * only) or invite is sticky.
+       */
       if (!isinvited(chan, ir->mask) && ((!channel_dynamicinvites(chan) &&
           !(chan->channel.mode & CHANINV)) || ir->flags & MASKREC_STICKY))
         do_mask(chan, chan->channel.invite, ir->mask, 'I');
@@ -721,7 +722,7 @@ static void recheck_channel(struct chanset_t *chan, int dobans)
       add_mode(chan, '-', 'k', chan->channel.key);
   }
   if ((chan->status & CHAN_ASKEDMODES) && dobans &&
-     !channel_inactive(chan)) /* spot on guppy, this just keeps the
+     !channel_inactive(chan)) /* Spot on guppy, this just keeps the
  	                       * checking sane */
     dprintf(DP_SERVER, "MODE %s\n", chan->name);
   stacking--;
@@ -1884,7 +1885,8 @@ static int gotquit(char *from, char *msg)
     }
   }
   /* Our nick quit? if so, grab it. Heck, our altnick quit maybe, maybe
-   * we want it. */
+   * we want it.
+   */
   if (keepnick) {
     alt = get_altbotnick();
     if (!rfc_casecmp(nick, origbotname)) {
@@ -2095,10 +2097,9 @@ static int gotnotice(char *from, char *msg)
       strcpy(ctcp, p1);
       strcpy(p1 - 1, p + 1);
       p = strchr(msg, 1);
-      /* if (!ignoring) */ /* removed by Eule 17.7.99 */
-	detect_chan_flood(nick, uhost, from, chan,
-			  strncmp(ctcp, "ACTION ", 7) ?
-			  FLOOD_CTCP : FLOOD_PRIVMSG, NULL);
+      detect_chan_flood(nick, uhost, from, chan,
+			strncmp(ctcp, "ACTION ", 7) ?
+			FLOOD_CTCP : FLOOD_PRIVMSG, NULL);
       if (ctcp[0] != ' ') {
 	code = newsplit(&ctcp);
 	u = get_user_by_host(from);

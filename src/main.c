@@ -7,7 +7,7 @@
  * 
  * dprintf'ized, 15nov1995
  * 
- * $Id: main.c,v 1.20 2000/01/01 19:42:29 fabian Exp $
+ * $Id: main.c,v 1.21 2000/01/02 02:42:10 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -648,11 +648,14 @@ int main(int argc, char **argv)
   struct sigaction sv;
   struct chanset_t *chan;
 
-  /* Make sure it can write core if you make debug else it pretty useless(dw)*/
 #ifdef DEBUG_MEM
+  /* Make sure it can write core, if you make debug. Else it's pretty
+   * useless (dw)
+   */
   {
 #include <sys/resource.h>
     struct rlimit cdlim;
+
     cdlim.rlim_cur = RLIM_INFINITY;
     cdlim.rlim_max = RLIM_INFINITY;
     setrlimit(RLIMIT_CORE, &cdlim);

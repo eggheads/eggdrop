@@ -5,7 +5,7 @@
  * 
  * Written for filedb3 by Fabian Knittel <fknittel@gmx.de>
  * 
- * $Id: dbcompat.h,v 1.2 1999/12/21 17:35:16 fabian Exp $
+ * $Id: dbcompat.h,v 1.3 2000/01/02 02:42:11 fabian Exp $
  */
 /* 
  * Copyright (C) 1999  Eggheads
@@ -32,51 +32,51 @@
  *    DB entry structures for v1 and v2
  */
 
-/* structure for file database (per directory) */
+/* Structure for file database (per directory) */
 struct filler1 {
-  char xxx[1 + 61 + 301 + 10 + 11 + 61];
-  unsigned short int uuu[2];
-  time_t ttt[2];
-  unsigned int iii[2];
+  char			xxx[1 + 61 + 301 + 10 + 11 + 61];
+  unsigned short int	uuu[2];
+  time_t		ttt[2];
+  unsigned int		iii[2];
 };
 
 typedef struct {
-  char version;
-  unsigned short int stat;	/* misc */
-  time_t timestamp;		/* last time this db was updated */
-  char filename[61];
-  char desc[301];		/* should be plenty */
-  char uploader[10];		/* where this file came from */
-  unsigned char flags_req[11];	/* access flags required */
-  time_t uploaded;		/* time it was uploaded */
-  unsigned int size;		/* file length */
-  unsigned short int gots;	/* times the file was downloaded */
-  char sharelink[61];		/* points to where? */
-  char unused[512 - sizeof(struct filler1)];
+  char			version;
+  unsigned short int	stat;		/* Misc */
+  time_t		timestamp;	/* Last time this db was updated */
+  char			filename[61];
+  char			desc[301];	/* Should be plenty */
+  char			uploader[10];	/* Where this file came from */
+  unsigned char		flags_req[11];	/* Access flags required */
+  time_t		uploaded;	/* Time it was uploaded */
+  unsigned int		size;		/* File length */
+  unsigned short int	gots;		/* Times the file was downloaded */
+  char			sharelink[61];	/* Points to where? */
+  char			unused[512 - sizeof(struct filler1)];
 } filedb1;
 
 struct filler2 {
-  char xxx[1 + 61 + 186 + 81 + 33 + 22 + 61];
-  unsigned short int uuu[2];
-  time_t ttt[2];
-  unsigned int iii[1];
+  char			xxx[1 + 61 + 186 + 81 + 33 + 22 + 61];
+  unsigned short int	uuu[2];
+  time_t		ttt[2];
+  unsigned int		iii[1];
 };
 
 typedef struct {
-  char version;
-  unsigned short int stat;	/* misc */
-  time_t timestamp;		/* last time this db was updated */
-  char filename[61];
-  char desc[186];		/* should be plenty - shrink it, we need
-				 * the  space :) */
-  char chname[81];		/* channel for chan spec stuff */
-  char uploader[33];		/* where this file came from */
-  char flags_req[22];		/* access flags required */
-  time_t uploaded;		/* time it was uploaded */
-  unsigned int size;		/* file length */
-  unsigned short int gots;	/* times the file was downloaded */
-  char sharelink[61];		/* points to where? */
-  char unused[512 - sizeof(struct filler2)];
+  char			version;
+  unsigned short int	stat;		/* Misc */
+  time_t		timestamp;	/* Last time this db was updated */
+  char			filename[61];
+  char			desc[186];	/* Should be plenty - shrink it, we
+					 * Need the  space :) */
+  char			chname[81];	/* Channel for chan spec stuff */
+  char			uploader[33];	/* Where this file came from */
+  char			flags_req[22];	/* Access flags required */
+  time_t		uploaded;	/* Time it was uploaded */
+  unsigned int		size;		/* File length */
+  unsigned short int	gots;		/* Times the file was downloaded */
+  char			sharelink[61];	/* Points to where? */
+  char			unused[512 - sizeof(struct filler2)];
 } filedb2;
 
 /* 

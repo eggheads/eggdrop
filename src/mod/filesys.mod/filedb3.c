@@ -4,7 +4,7 @@
  * 
  * Rewritten by Fabian Knittel <fknittel@gmx.de>
  * 
- * $Id: filedb3.c,v 1.6 1999/12/21 17:35:16 fabian Exp $
+ * $Id: filedb3.c,v 1.7 2000/01/02 02:42:11 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -105,7 +105,8 @@ static filedb_entry *_malloc_fdbe(char *file, int line)
   
 #ifdef EBUG_MEM
   /* This is a hack to access the nmalloc function with
-   * special file and line information */
+   * special file and line information
+   */
   fdbe = ((void *) (global[0] (sizeof(filedb_entry), MODULE_NAME, file, line)));
 #else
   fdbe = nmalloc(sizeof(filedb_entry));
@@ -198,7 +199,8 @@ static int filedb_delfile(FILE *fdb, long pos)
   fdh.stat = FILE_UNUSED;
   
   /* Assign all available space to buffer. Simplifies
-   * space calculation later on. */
+   * space calculation later on.
+   */
   fdh.buffer_len += filedb_tot_dynspace(fdh);
   filedb_zero_dynspace(fdh);
 
@@ -232,7 +234,8 @@ static filedb_entry *filedb_findempty(FILE *fdb, int tot)
     if ((fdbe->stat & FILE_UNUSED) && (fdbe->buf_len >= tot)) {
       /* Do we have enough space to split up the entry to form
        * another empty entry? That way we would use the space
-       * more efficiently. */
+       * more efficiently.
+       */
       if (fdbe->buf_len > (tot + sizeof(filedb_header) + FILEDB_ESTDYN)) {
 	filedb_entry *fdbe_oe;
 
@@ -245,7 +248,8 @@ static filedb_entry *filedb_findempty(FILE *fdb, int tot)
 	free_fdbe(&fdbe_oe);
 
 	/* Cut down buf_len of entry as the rest is now used in the new
-	 * entry. */
+	 * entry.
+	 */
 	fdbe->buf_len = tot;
       } 
       Context;
@@ -294,7 +298,8 @@ static int _filedb_updatefile(FILE *fdb, long pos, filedb_entry *fdbe,
 
   /* Only add the buffer length if the buffer is not empty. Otherwise it
    * would result in lots of 1 byte entries which actually don't contain
-   * any data. */
+   * any data.
+   */
   if (fdbe->filename)
     fdh.filename_len = strlen(fdbe->filename) + 1;
   if (fdbe->desc)
@@ -315,10 +320,12 @@ static int _filedb_updatefile(FILE *fdb, long pos, filedb_entry *fdbe,
     Assert(pos != POS_NEW);		/* We NEED a position		*/
     /* If we only update the header, we don't need to worry about
      * sizes and just use the old place (i.e. the place pointed
-     * to by pos). */
+     * to by pos).
+     */
     if (update < UPDATE_ALL) {
       /* Unless forced to it, we ignore new buffer sizes if we do not
-       * run in UPDATE_ALL mode. */
+       * run in UPDATE_ALL mode.
+       */
       if (update != UPDATE_SIZE) {
         ndyntot = odyntot;
         nbuftot = obuftot;
@@ -328,13 +335,15 @@ static int _filedb_updatefile(FILE *fdb, long pos, filedb_entry *fdbe,
       if ((pos != POS_NEW) &&
 	 /* and if our new size is smaller than the old size, we
 	  * just adjust the buffer length and still use the same
-	  * position */
+	  * position
+	  */
           (ndyntot <= (odyntot + obuftot))) {
 	nbuftot = (odyntot + obuftot) - ndyntot;
       } else {
 	/* If we have an existing position, but the new entry doesn't
 	 * fit into it's old home, we need to delete it before
-	 * repositioning. */
+	 * repositioning.
+	 */
 	if (pos != POS_NEW)
           filedb_delfile(fdb, pos);
 	reposition = 1;
@@ -353,10 +362,12 @@ static int _filedb_updatefile(FILE *fdb, long pos, filedb_entry *fdbe,
     n_fdbe = filedb_findempty(fdb, filedb_tot_dynspace(fdh));
     fdbe->pos = pos = n_fdbe->pos;
     /* If we create a new entry (instead of using an existing one),
-     * buf_len is zero */
+     * buf_len is zero
+     */
     if (n_fdbe->buf_len > 0)
       /* Note: empty entries have dyn_len set to zero, so we only
-       *       need to consider buf_len. */
+       *       need to consider buf_len.
+       */
       nbuftot = n_fdbe->buf_len - ndyntot;
     else
       nbuftot = 0;
@@ -456,11 +467,8 @@ static filedb_entry *_filedb_getfile(FILE *fdb, long pos, int get,
   /* Read additional data from db */
   if (get >= GET_FILENAME) {
     filedb_read(fdb, fdbe->filename, fdh.filename_len);
-    debug4("filedb_getfile; (%d) filename %s (dyn %d, buf %d)", pos, (fdh.stat & FILE_UNUSED) ? "<UNUSED>" : fdbe->filename, fdbe->dyn_len, fdbe->buf_len);
-  } else {
+  } else
     fseek(fdb, fdh.filename_len, SEEK_CUR);
-    debug3("filedb_getfile; (%d) filename <not read> (dyn %d, buf %d)", pos, fdbe->dyn_len, fdbe->buf_len);
-  }
   if ((get < GET_FULL) || (fdh.stat & FILE_UNUSED))
     fseek(fdb, fdh.desc_len + fdh.chan_len + fdh.uploader_len
 	  + fdh.flags_req_len, SEEK_CUR);
@@ -571,7 +579,8 @@ static void filedb_mergeempty(FILE *fdb)
 	    break;	/* It is, exit loop. */
 
 	  /* Woohoo, found an empty entry. Append it's space to
-	   * our target entry's buffer space. */
+	   * our target entry's buffer space.
+	   */
 	  fdbe_t->buf_len += sizeof(filedb_header) + fdbe_i->buf_len;
 	  modified++;
 	  free_fdbe(&fdbe_i);
@@ -646,13 +655,12 @@ static void filedb_timestamp(FILE * fdb)
  */
 static void filedb_update(char *path, FILE * fdb, int sort)
 {
-  struct dirent *dd    = NULL;
-  struct stat    st;
-  filedb_entry  *fdbe  = NULL;
-  DIR           *dir   = NULL;
-  long           where = 0;
-  char          *name  = NULL;
-  char          *s     = NULL;
+  struct dirent *dd = NULL;
+  struct stat st;
+  filedb_entry *fdbe = NULL;
+  DIR *dir = NULL;
+  long where = 0;
+  char *name = NULL, *s = NULL;
 
   /* 
    * FIRST: make sure every real file is in the database
@@ -733,8 +741,7 @@ static void filedb_update(char *path, FILE * fdb, int sort)
  */
 static char *make_point_path(char *path)
 {
-    char *s2 = NULL,
-	 *p  = NULL;
+    char *s2 = NULL, *p = NULL;
 
     malloc_strcpy(s2, path);
     if (s2[strlen(s2) - 1] == '/')
@@ -793,7 +800,7 @@ static FILE *filedb_open(char *path, int sort)
     } else {
       filedb_top fdbt;
 
-      /* create new database and fix it up */
+      /* Create new database and fix it up */
       fdb = fopen(s, "w+b");
       if (!fdb) {
 	my_free(s);
@@ -820,7 +827,8 @@ static FILE *filedb_open(char *path, int sort)
     if (!convert_old_db(&fdb, s)) {
       /* Conversion failed. Unlock file again and error out.
        * (convert_old_db() could have modified fdb, so check
-       * for fdb != NULL.) */
+       * for fdb != NULL.)
+       */
       if (fdb)
         unlockfile(fdb);
       my_free(npath);
@@ -831,14 +839,15 @@ static FILE *filedb_open(char *path, int sort)
     filedb_update(npath, fdb, sort);
   }
   stat(npath, &st);
-  /* update filedb if:
+  /* Update filedb if:
    * + it's been 6 hours since it was last updated
    * + the directory has been visibly modified since then
-   * (6 hours may be a bit often) */
+   * (6 hours may be a bit often)
+   */
   if (sort || ((now - fdbt.timestamp) > (6 * 3600)) ||
       (fdbt.timestamp < st.st_mtime) ||
       (fdbt.timestamp < st.st_ctime))
-    /* file database isn't up-to-date! */
+    /* File database isn't up-to-date! */
     filedb_update(npath, fdb, sort & 1);
 
   if (!sort)
@@ -905,7 +914,7 @@ static void filedb_ls(FILE *fdb, int idx, char *mask, int showall)
     if (fdbe->stat & FILE_UNUSED)
       ok = 0;
     if (ok && (fdbe->stat & FILE_DIR) && fdbe->flags_req) {
-      /* check permissions */
+      /* Check permissions */
       struct flag_record req = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
 
       break_down_flags(fdbe->flags_req, &req, NULL);
@@ -921,7 +930,7 @@ static void filedb_ls(FILE *fdb, int idx, char *mask, int showall)
     if (ok && (fdbe->stat & FILE_HIDDEN) && !(showall))
       ok = 0;
     if (ok) {
-      /* display it! */
+      /* Display it! */
       if (cnt == 0) {
 	dprintf(idx, FILES_LSHEAD1);
 	dprintf(idx, FILES_LSHEAD2);
@@ -944,7 +953,8 @@ static void filedb_ls(FILE *fdb, int idx, char *mask, int showall)
 	}
 	/* Note: You have to keep the sprintf and the nmalloc statements
 	 *       in sync, i.e. always check that you allocate enough
-	 *       memory. */
+	 *       memory.
+	 */
 	if ((fdbe->flags_req) &&
 	    (user.global &(USER_MASTER | USER_JANITOR))) {
 	  s3 = nmalloc(42 + strlen(s2 ? s2 : "") + 6 +
@@ -986,13 +996,13 @@ static void filedb_ls(FILE *fdb, int idx, char *mask, int showall)
 	  sprintf(s1, "%4dk", (int) (fdbe->size / 1024));
 	if (fdbe->sharelink)
 	  strcpy(s1, "     ");
-	/* too long? */
+	/* Too long? */
 	if (strlen(fdbe->filename) > 30) {
 	  s3 = nmalloc(strlen(fdbe->filename) + 2);
 	  sprintf(s3, "%s\n", fdbe->filename);
 	  filelist_addout(flist, s3);
 	  my_free(s3);
-	  /* causes filename to be displayed on its own line */
+	  /* Causes filename to be displayed on its own line */
 	} else
 	  malloc_strcpy(s3, fdbe->filename);
 	s4 = nmalloc(69 + strlen(s3 ? s3 : "") + strlen(s1) +
@@ -1086,7 +1096,7 @@ static void remote_filereq(int idx, char *from, char *file)
 	reject = FILES_NOSHARE;
       else {
 	s1 = nmalloc(strlen(dccdir) + strlen(dir) + strlen(what) + 2);
-	/* copy to /tmp if needed */
+	/* Copy to /tmp if needed */
 	sprintf(s1, "%s%s%s%s", dccdir, dir, dir[0] ? "/" : "", what);
 	if (copy_to_tmp) {
 	  s = nmalloc(strlen(tempdir) + strlen(what) + 1);
@@ -1115,9 +1125,9 @@ static void remote_filereq(int idx, char *from, char *file)
     Context;
     return;
   }
-  /* grab info from dcc struct and bounce real request across net */
+  /* Grab info from dcc struct and bounce real request across net */
   i = dcc_total - 1;
-  s = nmalloc(40);	/* enough? */
+  s = nmalloc(40);	/* Enough? */
   simple_sprintf(s, "%d %u %d", iptolong(getmyip()), dcc[i].port,
 		dcc[i].u.xfer->length);
   botnet_send_filesend(idx, s1, from, s);
@@ -1129,7 +1139,10 @@ static void remote_filereq(int idx, char *from, char *file)
   Context;
 }
 
-/*** for tcl: ***/
+
+/*
+ *    Tcl functions
+ */
 
 static void filedb_getdesc(char *dir, char *fn, char **desc)
 {
@@ -1221,7 +1234,7 @@ static void filedb_setlink(char *dir, char *fn, char *link)
   filedb_readtop(fdb, NULL);
   fdbe = filedb_matchfile(fdb, ftell(fdb), fn);
   if (fdbe) {
-    /* change existing one? */
+    /* Change existing one? */
     if ((fdbe->stat & FILE_DIR) || !fdbe->sharelink)
       return;
     if (!link || !link[0])

@@ -4,7 +4,7 @@
  * 
  * Written by Fabian Knittel <fknittel@gmx.de>
  * 
- * $Id: filedb3.h,v 1.4 1999/12/21 17:35:16 fabian Exp $
+ * $Id: filedb3.h,v 1.5 2000/01/02 02:42:11 fabian Exp $
  */
 /* 
  * Copyright (C) 1999  Eggheads
@@ -31,46 +31,48 @@
 
 /* Top of each DB */
 typedef struct {
-  char version;				/* db version			*/
-  time_t timestamp;			/* last updated			*/
+  char version;				/* DB version			*/
+  time_t timestamp;			/* Last updated			*/
 } filedb_top;
 
 /* Header of each entry */
 typedef struct {
-  time_t uploaded;			/* upload time			*/
-  unsigned int size;			/* file size			*/
-  unsigned short int stat;		/* misc information		*/
-  unsigned short int gots;		/* number of gets		*/
-  unsigned short int filename_len; 	/* length of filename buf	*/
-  unsigned short int desc_len;	 	/* length of description buf	*/
-  unsigned short int sharelink_len;	/* length of sharelink buf	*/
-  unsigned short int chan_len;		/* length of channel name buf	*/
-  unsigned short int uploader_len;	/* length of uploader buf	*/
-  unsigned short int flags_req_len;	/* length of flags buf		*/
-  unsigned short int buffer_len;	/* length of additional buffer	*/
+  time_t uploaded;			/* Upload time			*/
+  unsigned int size;			/* File size			*/
+  unsigned short int stat;		/* Misc information		*/
+  unsigned short int gots;		/* Number of gets		*/
+  unsigned short int filename_len; 	/* Length of filename buf	*/
+  unsigned short int desc_len;	 	/* Length of description buf	*/
+  unsigned short int sharelink_len;	/* Length of sharelink buf	*/
+  unsigned short int chan_len;		/* Length of channel name buf	*/
+  unsigned short int uploader_len;	/* Length of uploader buf	*/
+  unsigned short int flags_req_len;	/* Length of flags buf		*/
+  unsigned short int buffer_len;	/* Length of additional buffer	*/
 } filedb_header;
 
 /* Structure used to pass data between lower level
- * and higher level functions. */
+ * and higher level functions.
+ */
 typedef struct {
-  time_t uploaded;			/* upload time			*/
-  unsigned int size;			/* file size			*/
-  unsigned short int stat;		/* misc information		*/
-  unsigned short int gots;		/* number of gets		*/
-  unsigned short int _type;		/* type of entry (private)	*/
+  time_t uploaded;			/* Upload time			*/
+  unsigned int size;			/* File size			*/
+  unsigned short int stat;		/* Misc information		*/
+  unsigned short int gots;		/* Number of gets		*/
+  unsigned short int _type;		/* Type of entry (private)	*/
 
-  /* NOTE: These two are only valid during one db open/close. During entry
-   *       movements, this may be even shorter. */
-  long pos;				/* last position in the filedb	*/
-  unsigned short int dyn_len;		/* length of dynamic data in DB	*/
-  unsigned short int buf_len;		/* length of additional buffer	*/
+  /* NOTE: These three are only valid during one db open/close. Entry
+   *       movements often invalidate them too.
+   */
+  long pos;				/* Last position in the filedb	*/
+  unsigned short int dyn_len;		/* Length of dynamic data in DB	*/
+  unsigned short int buf_len;		/* Length of additional buffer	*/
 
-  char *filename;			/* filename			*/
-  char *desc;				/* description			*/
-  char *sharelink;			/* share link			*/
-  char *chan;				/* channel name			*/
-  char *uploader;			/* uploader			*/
-  char *flags_req;			/* required flags		*/
+  char *filename;			/* Filename			*/
+  char *desc;				/* Description			*/
+  char *sharelink;			/* Share link			*/
+  char *chan;				/* Channel name			*/
+  char *uploader;			/* Uploader			*/
+  char *flags_req;			/* Required flags		*/
 } filedb_entry;
 
 
@@ -126,7 +128,7 @@ typedef struct {
 #define FILEDB_VERSION3	0x0003	/* Newest DB version			*/
 
 #define POS_NEW		0	/* Position which indicates that the
-				   entry wants to be repositioned.	*/
+				 * entry wants to be repositioned.	*/
 
 #define FILE_UNUSED	0x0001	/* Deleted entry */
 #define FILE_DIR	0x0002	/* It's actually a directory */

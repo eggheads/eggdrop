@@ -4,10 +4,7 @@
  * 
  * Written by Fabian Knittel <fknittel@gmx.de>
  * 
- * Sun Oct 03 18:34:41 1999  Fabian
- *     * Initial release
- * 
- * $Id: dns.c,v 1.6 1999/12/24 14:21:53 fabian Exp $
+ * $Id: dns.c,v 1.7 2000/01/02 02:42:11 fabian Exp $
  */
 /* 
  * Copyright (C) 1999  Eggheads
@@ -92,8 +89,8 @@ static void eof_dns_socket(int idx)
   Context;
   putlog(LOG_MISC, "*", "DNS Error: socket closed.");
   killsock(dcc[idx].sock);
-  /* try to reopen socket */
-  if (init_network()) {
+  /* Try to reopen socket */
+  if (init_dns_network()) {
     putlog(LOG_MISC, "*", "DNS socket successfully reopened!");
     dcc[idx].sock = resfd;
     dcc[idx].timeval = now;
@@ -117,12 +114,12 @@ struct dcc_table DCC_DNS =
   DCT_LISTEN,
   eof_dns_socket,
   dns_socket,
-  0,
-  0,
+  NULL,
+  NULL,
   display_dns_socket,
-  0,
-  0,
-  0
+  NULL,
+  NULL,
+  NULL
 };
 
 
@@ -135,11 +132,10 @@ static void cmd_resolve(struct userrec *u, int idx, char *par)
   struct in_addr inaddr;
 
   Context;
-  if (inet_aton(par, &inaddr)) {
+  if (inet_aton(par, &inaddr))
     dns_lookup(my_ntohl(inaddr.s_addr));
-  } else {
+  else
     dns_forward(par);
-  }
   return;
 }
 
@@ -188,8 +184,8 @@ static int dns_report(int idx, int details)
 }
 
 static cmd_t dns_dcc[] = {
-  {"resolve", "", (Function) cmd_resolve, NULL},
-  {NULL, NULL, NULL, NULL}
+  {"resolve",		"",	(Function) cmd_resolve,		NULL},
+  {NULL,		NULL,	NULL,				NULL}
 };
 
 static char *dns_close()
@@ -233,13 +229,13 @@ static Function dns_table[] =
   /* 4 - 7 */
 };
 
-char *dns_start(Function * global_funcs)
+char *dns_start(Function *global_funcs)
 {
   int i;
   
   global = global_funcs;
   Context;
-  if (!dns_open())
+  if (!init_dns_core())
     return "DNS initialisation failed.";
   i = new_dcc(&DCC_DNS, 0);
   dcc[i].sock = resfd;

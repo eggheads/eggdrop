@@ -1,7 +1,7 @@
 /* 
  * transfer.c -- part of transfer.mod
  * 
- * $Id: transfer.c,v 1.15 2000/01/01 19:34:14 fabian Exp $
+ * $Id: transfer.c,v 1.16 2000/01/02 02:42:13 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -49,10 +49,10 @@ static int copy_to_tmp = 1;	/* Copy files to /tmp before transmitting? */
 static int wait_dcc_xfer = 300;	/* Timeout time on DCC xfers */
 static p_tcl_bind_list H_rcvd, H_sent;
 static int dcc_limit = 3;	/* Maximum number of simultaneous file
-				 * downloads allowed */
+				   downloads allowed */
 static int dcc_block = 1024;	/* Size of one dcc block */
 static int quiet_reject;        /* Quietly reject dcc chat or sends from
-                                 * users without access? */
+                                   users without access? */
 
 /* 
  * Prototypes
@@ -76,8 +76,9 @@ static fileq_t *fileq = NULL;
 #undef MATCH
 #define MATCH (match+sofar)
 
-/* this function SHAMELESSLY :) pinched from match.c in the original
- * source, see that file for info about the author etc */
+/* This function SHAMELESSLY :) pinched from match.c in the original
+ * source, see that file for info about the author etc.
+ */
 
 #define QUOTE '\\'
 #define WILDS '*'
@@ -103,7 +104,8 @@ static int wild_match_file(register char *m, register char *n)
    * string), so if the mask is empty it is a non-match.  Since the
    * algorithm handles this correctly without testing for it here and this
    * shouldn't be called with null masks anyway, it should be a bit faster
-   * this way */
+   * this way.
+   */
   while (*n) {
     /* Used to test for (!*m) here, but this scheme seems to work better */
     switch (*m) {
@@ -262,7 +264,8 @@ static void deq_this(fileq_t * this)
   nfree(q);
 }
 
-/* Remove all files queued to a certain user */
+/* Remove all files queued to a certain user.
+ */
 static void flush_fileq(char *to)
 {
   fileq_t *q = fileq;
@@ -482,8 +485,8 @@ static void fileq_cancel(int idx, char *par)
       if (wild_match_file(par, nfn)) {
 	dprintf(idx, "Cancelled: %s  (aborted dcc send)\n", nfn);
 	if (strcasecmp(dcc[i].nick, dcc[idx].nick))
-	  dprintf(DP_HELP, "NOTICE %s :Transfer of %s aborted by %s\n", dcc[i].nick,
-		  nfn, dcc[idx].nick);
+	  dprintf(DP_HELP, "NOTICE %s :Transfer of %s aborted by %s\n",
+		  dcc[i].nick, nfn, dcc[idx].nick);
 	if (dcc[i].type == &DCC_GET)
 	  putlog(LOG_FILES, "*", "DCC cancel: GET %s (%s) at %lu/%lu", nfn,
 		 dcc[i].nick, dcc[i].status, dcc[i].u.xfer->length);
@@ -666,7 +669,7 @@ static void eof_dcc_send(int idx)
     Context;
     l = strlen(dcc[idx].u.xfer->filename);
     if (l > NAME_MAX) {
-      /* the filename is to long... blow it off */
+      /* The filename is to long... blow it off */
       putlog(LOG_FILES, "*", "Filename %d length. Way To LONG.", l);
       dprintf(DP_HELP, "NOTICE %s :Filename %d length Way To LONG!\n",
               dcc[idx].nick, l);
@@ -678,7 +681,7 @@ static void eof_dcc_send(int idx)
       return;
     }
     Context;
-    /* move the file from /tmp */
+    /* Move the file from /tmp */
     ofn = nmalloc(strlen(tempdir) + strlen(dcc[idx].u.xfer->filename) + 1);
     nfn = nmalloc(strlen(dcc[idx].u.xfer->dir) + strlen(dcc[idx].u.xfer->origname) + 1);
     simple_sprintf(ofn, "%s%s", tempdir, dcc[idx].u.xfer->filename);
@@ -688,7 +691,7 @@ static void eof_dcc_send(int idx)
       putlog(LOG_MISC | LOG_FILES, "*",
 	     "FAILED move `%s' from `%s'! File lost!", nfn, ofn);
     else {
-      /* add to file database */
+      /* Add to file database */
       module_entry *fs = module_find("filesys", 0, 0);
 
       if (fs != NULL) {
@@ -714,7 +717,7 @@ static void eof_dcc_send(int idx)
     lostdcc(idx);
     return;
   }
-  /* failure :( */
+  /* Failure :( */
   Context;
   fclose(dcc[idx].u.xfer->f);
   if (!strcmp(dcc[idx].nick, "*users")) {
@@ -728,7 +731,7 @@ static void eof_dcc_send(int idx)
       putlog(LOG_BOTS, "*", "Lost userfile transfer to %s; aborting.",
 	     dcc[y].nick);
       unlink(dcc[idx].u.xfer->filename);
-      /* drop that bot */
+      /* Drop that bot */
       dprintf(y, "bye\n");
       simple_sprintf(s, "Disconnected %s (aborted userfile transfer)",
 		     dcc[y].nick);
@@ -774,7 +777,8 @@ inline static void handle_resend_packet(int idx, transfer_reget *reget_data)
 {
   if (byte_order_test() != reget_data->byte_order) {
     /* The sender's byte order does not match our's so we need to switch the
-     * bytes first, before we can make use of them. */
+     * bytes first, before we can make use of them.
+     */
     reget_data->packet_id = ((reget_data->packet_id & 0x00ff) << 8) |
 	    		    ((reget_data->packet_id & 0xff00) >> 8);
     reget_data->byte_offset = ((reget_data->byte_offset & 0xff000000) >> 24) |
@@ -807,7 +811,8 @@ static void dcc_get(int idx, char *buf, int len)
   dcc[idx].timeval = now;		/* Mark as active		*/
 
   /* Add bytes to our buffer if we don't have a complete response yet.
-   * This is either a 4 bit ack or the 8 bit reget packet. */
+   * This is either a 4 bit ack or the 8 bit reget packet.
+   */
   if ((w < 4) ||
       ((w < 8) && (dcc[idx].u.xfer->type == XFER_RESEND_PEND))) {
     my_memcpy(&(dcc[idx].u.xfer->buf[dcc[idx].u.xfer->sofar]), buf, len);
@@ -842,7 +847,8 @@ static void dcc_get(int idx, char *buf, int len)
       my_memcpy(bbuf, &(buf[p]), w);
     }
     /* This is more compatable than ntohl for machines where an int
-     * is more than 4 bytes: */
+     * is more than 4 bytes:
+     */
     cmp = ((unsigned int) (bbuf[0]) << 24) +
 	  ((unsigned int) (bbuf[1]) << 16) +
 	  ((unsigned int) (bbuf[2]) << 8) + bbuf[3];
@@ -863,7 +869,8 @@ static void dcc_get(int idx, char *buf, int len)
     }
   } else
     /* If we didn't start at the top of the file, we need to add the offset
-     * to make the check routines happy below. */
+     * to make the check routines happy below.
+     */
     cmp += dcc[idx].u.xfer->offset;
 
   if (cmp != dcc[idx].status)
@@ -902,7 +909,8 @@ static void dcc_get(int idx, char *buf, int len)
 	f(dcc[idx].u.xfer->dir);
       }
       /* Download is credited to the user who requested it
-       * (not the user who actually received it) */
+       * (not the user who actually received it)
+       */
       stats_add_dnload(u, dcc[idx].u.xfer->length);
       putlog(LOG_FILES, "*", "Finished dcc send %s to %s",
 	     dcc[idx].u.xfer->origname, dcc[idx].nick);
@@ -910,7 +918,7 @@ static void dcc_get(int idx, char *buf, int len)
       strcpy((char *) xnick, dcc[idx].nick);
     }
     lostdcc(idx);
-    /* any to dequeue? */
+    /* Any to dequeue? */
     if (!at_limit(xnick))
       send_next_file(xnick);
     return;
@@ -918,7 +926,8 @@ static void dcc_get(int idx, char *buf, int len)
   Context;
 
   /* Note:  No fseek() needed here, because the file position is kept from
-   *        the last run. */
+   *        the last run.
+   */
   l = dcc_block;
   if ((l == 0) || (dcc[idx].status + l > dcc[idx].u.xfer->length))
     l = dcc[idx].u.xfer->length - dcc[idx].status;
@@ -943,7 +952,7 @@ static void eof_dcc_get(int idx)
 	  (dcc[x].type->flags & DCT_BOT))
 	y = x;
     putlog(LOG_BOTS, "*", "Lost userfile transfer; aborting.");
-    /* unlink(dcc[idx].u.xfer->filename); *//* <- already unlinked */
+    /* Note: no need to unlink the xfer file, as it's already unlinked. */
     xnick[0] = 0;
     /* Drop that bot */
     dprintf(-dcc[y].sock, "bye\n");
@@ -1124,7 +1133,8 @@ static int expmem_dcc_xfer(void *x)
   if (p->filename)
     tot += strlen(p->filename) + 1;
   /* We need to check if origname points to filename before
-   * accounting for the memory. */
+   * accounting for the memory.
+   */
   if (p->origname && (p->filename != p->origname))
     tot += strlen(p->origname) + 1;
   return tot;
@@ -1137,7 +1147,8 @@ static void kill_dcc_xfer(int idx, void *x)
   if (p->filename)
     nfree(p->filename);
   /* We need to check if origname points to filename before
-   * attempting to free the memory. */
+   * attempting to free the memory.
+   */
   if (p->origname && (p->origname != p->filename))
     nfree(p->origname);
   nfree(x);
@@ -1272,7 +1283,8 @@ static void dcc_get_pending(int idx, char *buf, int len)
     dcc[idx].u.xfer->offset = 0;
 
     /* If we're resending the data, wait for the client's response first,
-     * before sending anything ourself. */
+     * before sending anything ourself.
+     */
     if (dcc[idx].u.xfer->type != XFER_RESEND_PEND) {
       if ((dcc_block == 0) || (dcc[idx].u.xfer->length < dcc_block))
         dcc[idx].status = dcc[idx].u.xfer->length;
@@ -1537,14 +1549,14 @@ static int fstat_tcl_set(Tcl_Interp * irp, struct userrec *u,
 
 static struct user_entry_type USERENTRY_FSTAT =
 {
-  0,
+  NULL,
   fstat_gotshare,
   fstat_dupuser,
   fstat_unpack,
   fstat_pack,
   fstat_write_userfile,
   fstat_kill,
-  0,
+  NULL,
   fstat_set,
   fstat_tcl_get,
   fstat_tcl_set,

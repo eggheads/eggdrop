@@ -1,5 +1,5 @@
 # Makefile for src/mod/dns.mod/
-# $Id: Makefile,v 1.4 1999/12/21 17:35:15 fabian Exp $
+# $Id: Makefile,v 1.5 2000/01/02 02:42:11 fabian Exp $
 
 doofus:
 	@echo ""
@@ -13,7 +13,7 @@ modules: ../../../dns.so
 
 ../dns.o:
 	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c dns.c
-	rm -f ../irc.o
+	rm -f ../dns.o
 	mv dns.o ../
 
 ../../../dns.so: ../dns.o

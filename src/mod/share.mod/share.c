@@ -1,7 +1,7 @@
 /* 
  * share.c -- part of share.mod
  * 
- * $Id: share.c,v 1.15 2000/01/01 19:34:14 fabian Exp $
+ * $Id: share.c,v 1.16 2000/01/02 02:42:13 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -35,28 +35,22 @@
 #include <sys/stat.h>
 
 /* Minimum version I will share with */
-static const int min_share = 1029900;	
+static const int min_share = 1029900;
 /* Earliest version that supports exempts and invites */
 static const int min_exemptinvite = 1032800; 
 /* Minimum version I will share with, allowing +b records to be overridden */
 static const int min_bot_share = 1050100;
 
 static Function *global = NULL, *transfer_funcs = NULL, *channels_funcs = NULL;
-static int private_owner = 1, private_global = 0, private_user = 0;
+
+static int private_owner = 1;
+static int private_global = 0;
+static int private_user = 0;
 static char private_globals[50];
 static int allow_resync = 0;
 static struct flag_record fr = {0, 0, 0, 0, 0, 0};
 static int resync_time = 900;
 static int overr_local_bots = 0;	/* Override local bots?		*/
-
-static void start_sending_users(int);
-static void shareout_but EGG_VARARGS(struct chanset_t *, arg1);
-static int flush_tbuf(char *);
-static int can_resync(char *);
-static void dump_resync(int);
-static void q_resync(char *, struct chanset_t *);
-static void cancel_user_xfer(int, void *);
-static int private_globals_bitmask();
 
 
 /* Store info for sharebots */
@@ -71,6 +65,17 @@ static struct tandbuf {
   time_t timer;
   struct share_msgq *q;
 } tbuf[5];
+
+
+/* Prototypes */
+static void start_sending_users(int);
+static void shareout_but EGG_VARARGS(struct chanset_t *, arg1);
+static int flush_tbuf(char *);
+static int can_resync(char *);
+static void dump_resync(int);
+static void q_resync(char *, struct chanset_t *);
+static void cancel_user_xfer(int, void *);
+static int private_globals_bitmask();
 
 
 /* 
@@ -607,6 +612,7 @@ static void share_mns_banchan(int idx, char *par)
 static void share_mns_exemptchan (int idx, char * par) {
   char *chname;
   struct chanset_t *chan;
+
   if (dcc[idx].status & STAT_SHARE) {
     chname = newsplit(&par);
     chan = findchan_by_dname(chname);
@@ -820,8 +826,8 @@ static void share_pls_invite (int idx, char * par) {
      if (expire_time != 0L)
        expire_time += now;
      u_addinvite(NULL,invite, from, par, expire_time,flags);
-     putlog(LOG_CMDS, "*", "%s: global invite %s (%s:%s)", dcc[idx].nick, invite,
-	    from, par);
+     putlog(LOG_CMDS, "*", "%s: global invite %s (%s:%s)", dcc[idx].nick,
+	    invite, from, par);
      noshare = 0;
   }
 }
@@ -945,8 +951,10 @@ static void share_userfileq(int idx, char *par)
     for (i = 0; i < dcc_total; i++)
       if (dcc[i].type->flags & DCT_BOT) {
 	if ((dcc[i].status & STAT_SHARE) &&
-	    (dcc[i].status & STAT_AGGRESSIVE) && (i != idx))
+	    (dcc[i].status & STAT_AGGRESSIVE) && (i != idx)) {
 	  ok = 0;
+	  break;
+	}
       }
     if (!ok)
       dprintf(idx, "s un Already sharing.\n");
@@ -1008,7 +1016,7 @@ static void share_ufsend(int idx, char *par)
       dcc[i].u.xfer->length = atoi(par);
       dcc[idx].status |= STAT_GETTING;
       dcc[i].u.xfer->f = f;
-      /* don't buffer this */
+      /* Don't buffer this */
       dcc[i].sock = sock;
     }
   }
@@ -1110,46 +1118,46 @@ static void share_end(int idx, char *par)
 /* Note: these MUST be sorted. */
 static botcmd_t C_share[] =
 {
-  {"!", (Function) share_endstartup},
-  {"+b", (Function) share_pls_ban},
-  {"+bc", (Function) share_pls_banchan},
-  {"+bh", (Function) share_pls_bothost},
-  {"+cr", (Function) share_pls_chrec},
-  {"+e", (Function) share_pls_exempt },
-  {"+ec", (Function) share_pls_exemptchan },
-  {"+h", (Function) share_pls_host},
-  {"+i", (Function) share_pls_ignore},
-  {"+inv", (Function) share_pls_invite },
-  {"+invc", (Function) share_pls_invitechan },
-  {"-b", (Function) share_mns_ban},
-  {"-bc", (Function) share_mns_banchan},
-  {"-cr", (Function) share_mns_chrec},
-  {"-e", (Function) share_mns_exempt },
-  {"-ec", (Function) share_mns_exemptchan },
-  {"-h", (Function) share_mns_host},
-  {"-i", (Function) share_mns_ignore},
-  {"-inv", (Function) share_mns_invite },
-  {"-invc", (Function) share_mns_invitechan },
-  {"a", (Function) share_chattr},
-  {"c", (Function) share_change},
-  {"chchinfo", (Function) share_chchinfo},
-  {"e", (Function) share_end},
-  {"h", (Function) share_chhand},
-  {"k", (Function) share_killuser},
-  {"n", (Function) share_newuser},
-  {"r!", (Function) share_resync},
-  {"r?", (Function) share_resyncq},
-  {"rn", (Function) share_resync_no},
-  {"s", (Function) share_stick_ban },
-  {"se", (Function) share_stick_exempt },
-  {"sInv", (Function) share_stick_invite },
-  {"u?", (Function) share_userfileq},
-  {"un", (Function) share_ufno},
-  {"us", (Function) share_ufsend},
-  {"uy", (Function) share_ufyes},
-  {"uyo", (Function) share_ufyes_override},
-  {"v", (Function) share_version},
-  {0, 0}
+  {"!",		(Function) share_endstartup},
+  {"+b",	(Function) share_pls_ban},
+  {"+bc",	(Function) share_pls_banchan},
+  {"+bh",	(Function) share_pls_bothost},
+  {"+cr",	(Function) share_pls_chrec},
+  {"+e",	(Function) share_pls_exempt},
+  {"+ec",	(Function) share_pls_exemptchan},
+  {"+h",	(Function) share_pls_host},
+  {"+i",	(Function) share_pls_ignore},
+  {"+inv",	(Function) share_pls_invite},
+  {"+invc",	(Function) share_pls_invitechan},
+  {"-b",	(Function) share_mns_ban},
+  {"-bc",	(Function) share_mns_banchan},
+  {"-cr",	(Function) share_mns_chrec},
+  {"-e",	(Function) share_mns_exempt},
+  {"-ec",	(Function) share_mns_exemptchan},
+  {"-h",	(Function) share_mns_host},
+  {"-i",	(Function) share_mns_ignore},
+  {"-inv",	(Function) share_mns_invite},
+  {"-invc",	(Function) share_mns_invitechan},
+  {"a",		(Function) share_chattr},
+  {"c",		(Function) share_change},
+  {"chchinfo",	(Function) share_chchinfo},
+  {"e",		(Function) share_end},
+  {"h",		(Function) share_chhand},
+  {"k",		(Function) share_killuser},
+  {"n",		(Function) share_newuser},
+  {"r!",	(Function) share_resync},
+  {"r?",	(Function) share_resyncq},
+  {"rn",	(Function) share_resync_no},
+  {"s",		(Function) share_stick_ban},
+  {"se",	(Function) share_stick_exempt},
+  {"sInv",	(Function) share_stick_invite},
+  {"u?",	(Function) share_userfileq},
+  {"un",	(Function) share_ufno},
+  {"us",	(Function) share_ufsend},
+  {"uy",	(Function) share_ufyes},
+  {"uyo",	(Function) share_ufyes_override},
+  {"v",		(Function) share_version},
+  {NULL,	NULL}
 };
 
 
@@ -1177,13 +1185,11 @@ static void shareout_mod EGG_VARARGS_DEF(struct chanset_t *, arg1)
   char *format;
   char s[601];
   struct chanset_t *chan;
-
   va_list va;
   chan = EGG_VARARGS_START(struct chanset_t *, arg1, va);
 
   if (!chan || channel_shared(chan)) {
     format = va_arg(va, char *);
-
     strcpy(s, "s ");
 #ifdef HAVE_VSNPRINTF
     if ((l = vsnprintf(s + 2, 509, format, va)) < 0)
@@ -1213,8 +1219,8 @@ static void shareout_but EGG_VARARGS_DEF(struct chanset_t *, arg1)
   char *format;
   char s[601];
   struct chanset_t *chan;
-
   va_list va;
+
   chan = EGG_VARARGS_START(struct chanset_t *, arg1, va);
   x = va_arg(va, int);
   format = va_arg(va, char *);
@@ -1344,7 +1350,7 @@ static struct share_msgq *q_addmsg(struct share_msgq *qq,
   for (q = qq; q->next; q = q->next)
     cnt++;
   if (cnt > 1000)
-    return NULL;		/* return null: did not alter queue */
+    return NULL;		/* Return null: did not alter queue */
   q->next = (struct share_msgq *) nmalloc(sizeof(struct share_msgq));
 
   q = q->next;
@@ -1622,12 +1628,14 @@ static void finish_share(int idx)
   userlist = (void *) -1;	/* Do this to prevent .user messups	*/
   Context;
   /* Bot user pointers are updated to point to the new list, all others
-   * are set to NULL. */
+   * are set to NULL.
+   */
   for (i = 0; i < dcc_total; i++)
     dcc[i].user = get_user_by_handle(u, dcc[i].nick);
 
   /* Read the transferred userfile. Add entries to u, which already holds
-   * the bot entries in non-override mode. */
+   * the bot entries in non-override mode.
+   */
   if (!readuserfile(dcc[idx].u.xfer->filename, &u)) {
     putlog(LOG_MISC, "*", "%s", USERF_CANTREAD);
     userlist = NULL;		/* Leaving it at -1 would make the bot
@@ -1767,11 +1775,13 @@ static void start_sending_users(int idx)
     dprintf(idx, "s us %lu %d %lu\n",
 	    iptolong(natip[0] ? (IP) inet_addr(natip) : getmyip()),
 	    dcc[i].port, dcc[i].u.xfer->length);
-    /* Start up a tbuf to queue outgoing changes for this bot until the */
-    /* userlist is done transferring */
+    /* Start up a tbuf to queue outgoing changes for this bot until the
+     * userlist is done transferring.
+     */
     new_tbuf(dcc[idx].nick);
     /* Immediately, queue bot hostmasks & addresses (jump-start) - if we
-     * don't override the leaf's local bots. */
+     * don't override the leaf's local bots.
+     */
     if (!(dcc[idx].status & STAT_OVERRIDE)) {
       for (u = userlist; u; u = u->next) {
         if ((u->flags & USER_BOT) && !(u->flags & USER_UNSHARED)) {
@@ -1818,7 +1828,8 @@ static void start_sending_users(int idx)
     }
     q_tbuf(dcc[idx].nick, "s !\n", NULL);
     /* Wish could unlink the file here to avoid possibly leaving it lying
-     * around, but that messes up NFS clients. */
+     * around, but that messes up NFS clients.
+     */
     Context;
   }
 }
@@ -1877,19 +1888,19 @@ static void cancel_user_xfer(int idx, void *x)
 
 static tcl_ints my_ints[] =
 {
-  {"allow-resync", &allow_resync},
-  {"resync-time", &resync_time},
-  {"private-owner", &private_owner},
-  {"private-global", &private_global},
-  {"private-user", &private_user},
-  {"override-bots", &overr_local_bots},
-  {0, 0}
+  {"allow-resync",	&allow_resync},
+  {"resync-time",	&resync_time},
+  {"private-owner",	&private_owner},
+  {"private-global",	&private_global},
+  {"private-user",	&private_user},
+  {"override-bots",	&overr_local_bots},
+  {NULL,		NULL}
 };
 
 static tcl_strings my_strings[] =
 {
-  {"private-globals", private_globals, 50, 0},
-  {NULL, NULL, 0, 0}
+  {"private-globals",	private_globals,	50,	0},
+  {NULL,		NULL,			0,	0}
 };
 
 static void cmd_flush(struct userrec *u, int idx, char *par)
@@ -1904,8 +1915,8 @@ static void cmd_flush(struct userrec *u, int idx, char *par)
 
 static cmd_t my_cmds[] =
 {
-  {"flush", "n", (Function) cmd_flush, NULL},
-  {0, 0, 0, 0}
+  {"flush",	"n",	(Function) cmd_flush,		NULL},
+  {NULL,	NULL,	NULL,				NULL}
 };
 
 static char *share_close()
@@ -2009,6 +2020,7 @@ static void share_report(int idx, int details)
 }
 
 char *share_start();
+
 static Function share_table[] =
 {
   (Function) share_start,
@@ -2060,5 +2072,5 @@ int private_globals_bitmask()
   struct flag_record fr = {FR_GLOBAL, 0, 0, 0, 0, 0};
 
   break_down_flags(private_globals, &fr, 0);
-  return fr.global |(private_owner ? USER_OWNER : 0);
+  return fr.global | (private_owner ? USER_OWNER : 0);
 }

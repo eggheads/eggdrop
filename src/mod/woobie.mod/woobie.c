@@ -2,10 +2,10 @@
  * woobie.c -- part of woobie.mod
  *   nonsensical command to exemplify module programming
  * 
- * Originally written by ButchBub	- 15 July     1997
- * Comments by Fabian Knittel		- 29 December 1999
+ * Originally written by ButchBub	  15 July     1997
+ * Comments by Fabian Knittel		  29 December 1999
  * 
- * $Id: woobie.c,v 1.7 2000/01/01 19:12:19 fabian Exp $
+ * $Id: woobie.c,v 1.8 2000/01/02 02:42:13 fabian Exp $
  */
 /* 
  * Copyright (C) 1999  Eggheads

@@ -4,7 +4,7 @@
  * 
  * Written by Fabian Knittel <fknittel@gmx.de>
  * 
- * $Id: dns.h,v 1.3 1999/12/21 17:35:16 fabian Exp $
+ * $Id: dns.h,v 1.4 2000/01/02 02:42:11 fabian Exp $
  */
 /* 
  * Copyright (C) 1999  Eggheads
@@ -37,23 +37,21 @@
 #ifndef _EGG_MOD_DNS_DNS_H
 #define _EGG_MOD_DNS_DNS_H
 
-typedef u_32bit_t ip_t;
-
 struct resolve {
-    struct resolve *next;
-    struct resolve *previous;
-    struct resolve *nextid;
-    struct resolve *previousid;
-    struct resolve *nextip;
-    struct resolve *previousip;
-    struct resolve *nexthost;
-    struct resolve *previoushost;
-    time_t expiretime;
-    char *hostn;
-    ip_t ip;
-    word id;
-    byte state;
-    byte sends;
+    struct resolve	*next;
+    struct resolve	*previous;
+    struct resolve	*nextid;
+    struct resolve	*previousid;
+    struct resolve	*nextip;
+    struct resolve	*previousip;
+    struct resolve	*nexthost;
+    struct resolve	*previoushost;
+    time_t		expiretime;
+    char		*hostn;
+    IP			ip;
+    word		id;
+    byte		state;
+    byte		sends;
 };
 
 enum {
@@ -66,4 +64,18 @@ enum {
 #define IS_PTR(x) (x->state == STATE_PTRREQ)
 #define IS_A(x)   (x->state == STATE_AREQ)
 
-#endif				/* _EGG_MOD_DNS_DNS_H */
+#ifdef DEBUG_DNS
+# define ddebug0		debug0
+# define ddebug1		debug1
+# define ddebug2		debug2
+# define ddebug3		debug3
+# define ddebug4		debug4
+#else	/* !DEBUG_DNS */
+# define ddebug0(x)
+# define ddebug1(x, x1)
+# define ddebug2(x, x1, x2)
+# define ddebug3(x, x1, x2, x3)
+# define ddebug4(x, x1, x2, x3, x4)
+#endif	/* !DEBUG_DNS */
+
+#endif	/* _EGG_MOD_DNS_DNS_H */

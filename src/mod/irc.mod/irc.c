@@ -2,7 +2,7 @@
  * irc.c -- part of irc.mod
  *   support for channels within the bot 
  * 
- * $Id: irc.c,v 1.11 2000/01/01 19:22:33 fabian Exp $
+ * $Id: irc.c,v 1.12 2000/01/02 02:42:12 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -100,7 +100,8 @@ static int want_to_revenge(struct chanset_t *chan, struct userrec *u,
   get_user_flagrec(u2, &fr2, chan->dname);
 
   /* If we don't even know the user we'll probably not want to protect
-   * it. */
+   * it.
+   */
   if (!u2)
     return 0;
 
@@ -206,7 +207,8 @@ static void punish_badguy(struct chanset_t *chan, char *whobad,
       maskhost(s1, s);
       strcpy(s1, badnick);
       /* If that handle exists use "badX" (where X is an increasing number)
-       * instead */
+       * instead.
+       */
       while (get_user_by_handle(userlist, s1)) {
         if (!strncmp(s1, "bad", 3)) {
           int i;
@@ -367,7 +369,8 @@ static int killmember(struct chanset_t *chan, char *nick)
   nfree(x);
   chan->channel.members--;
   /* The following two errors should NEVER happen. We will try to correct
-   * them though, to keep the bot from crashing. */
+   * them though, to keep the bot from crashing.
+   */
   if (chan->channel.members < 0) {
      putlog(LOG_MISC, "*", "(!) BUG: number of members is negative: %d",
 	    chan->channel.members);
@@ -537,12 +540,14 @@ static void check_lonely_channel(struct chanset_t *chan)
       do_tcl("need-op", chan->need_op);
   } else {
     /* Other people here, but none are ops. If there are other bots make
-     * them LEAVE! */
+     * them LEAVE!
+     */
     int ok = 1;
 
     if (!whined) {
       /* + is opless. Complaining about no ops when without special
-       * help(services), we cant get them - Raist */
+       * help(services), we cant get them - Raist
+       */
       if (chan->name[0] != '+')	
 	putlog(LOG_MISC, "*", "%s is active but has no ops :(", chan->dname);
       whined = 1;
@@ -644,7 +649,8 @@ static void check_expired_chanstuff()
 		 b = b->next;
 	      }
 	      /* Leave this extra logging in for now. Can be removed later
-	       * Jason */
+	       * Jason
+	       */
 	      if (match) {
 	        putlog(LOG_MODES, chan->dname,
 		       "(%s) Channel exemption %s NOT expired. Ban still set!",
@@ -680,7 +686,8 @@ static void check_expired_chanstuff()
 	      if ((chan->channel.mode & CHANINV) &&
 		  isinvited(chan, b->mask)) {
 	        /* Leave this extra logging in for now. Can be removed later
-	         * Jason */
+	         * Jason
+		 */
 	        putlog(LOG_MODES, chan->dname,
                    "(%s) Channel invitation %s NOT expired. i mode still set!",
 		       chan->dname, b->mask);

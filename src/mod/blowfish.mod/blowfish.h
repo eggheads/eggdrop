@@ -3,7 +3,7 @@
  * 
  * modified 19jul1996 by robey -- uses autoconf values now
  * 
- * $Id: blowfish.h,v 1.3 1999/12/21 17:35:11 fabian Exp $
+ * $Id: blowfish.h,v 1.4 2000/01/02 02:42:10 fabian Exp $
  */
 
 #ifndef _EGG_MOD_BLOWFISH_BLOWFISH_H
@@ -15,16 +15,9 @@
 #define DATAERROR        -1
 #define KEYBYTES         8
 
-#define UBYTE_08bits  char
-#define UWORD_16bits  unsigned short
-
-#if SIZEOF_INT==4
-#define UWORD_32bits  unsigned int
-#else
-#if SIZEOF_LONG==4
-#define UWORD_32bits  unsigned long
-#endif
-#endif
+#define UBYTE_08bits  u_8bit_t
+#define UWORD_16bits  u_16bit_t
+#define UWORD_32bits  u_32bit_t
 
 /* choose a byte order for your hardware */
 

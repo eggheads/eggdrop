@@ -1,7 +1,7 @@
 /* 
  * files.h -- part of filesys.mod
  * 
- * $Id: files.h,v 1.3 1999/12/21 17:35:16 fabian Exp $
+ * $Id: files.h,v 1.4 2000/01/02 02:42:11 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -25,7 +25,7 @@
 #ifndef _EGG_MOD_FILESYS_FILES_H
 #define _EGG_MOD_FILESYS_FILES_H
 
-/* language file additions for the file area */
+/* Language file additions for the file area */
 #define FILES_CONVERT    get_language(0x300)
 #define FILES_NOUPDATE   get_language(0x301)
 #define FILES_NOCONVERT  get_language(0x302)

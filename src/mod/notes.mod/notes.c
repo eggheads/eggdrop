@@ -5,7 +5,7 @@
  *   note cmds
  *   note ignores
  * 
- * $Id: notes.c,v 1.9 2000/01/01 19:24:38 fabian Exp $
+ * $Id: notes.c,v 1.10 2000/01/02 02:42:12 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -47,18 +47,18 @@ static Function *global = NULL;	/* DAMN fcntl.h */
 
 static struct user_entry_type USERENTRY_FWD =
 {
-  0,				/* always 0 ;) */
-  0,
-  0,
-  0,
-  0,
-  0,
-  0,
-  0,
-  0,
-  0,
-  0,
-  0,
+  NULL,				/* always 0 ;) */
+  NULL,
+  NULL,
+  NULL,
+  NULL,
+  NULL,
+  NULL,
+  NULL,
+  NULL,
+  NULL,
+  NULL,
+  NULL,
   fwd_display,
   "FWD"
 };

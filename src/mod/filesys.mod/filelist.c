@@ -4,7 +4,7 @@
  * 
  * Written by Fabian Knittel <fknittel@gmx.de>
  * 
- * $Id: filelist.c,v 1.5 1999/12/21 17:35:16 fabian Exp $
+ * $Id: filelist.c,v 1.6 2000/01/02 02:42:11 fabian Exp $
  */
 /* 
  * Copyright (C) 1999  Eggheads
@@ -36,7 +36,8 @@ static filelist_t *filelist_new(void)
   return flist;
 }
 
-static void filelist_free(filelist_t *flist) {
+static void filelist_free(filelist_t *flist)
+{
   int i;
 
   if (!flist)
@@ -51,8 +52,10 @@ static void filelist_free(filelist_t *flist) {
   my_free(flist);
 }
 
-/* Increase number of filelist entries */
-static void filelist_add(filelist_t *flist, char *filename) {
+/* Increase number of filelist entries.
+ */
+static void filelist_add(filelist_t *flist, char *filename)
+{
   flist->tot++;
   flist->elements = nrealloc(flist->elements, flist->tot * sizeof(filelist_t));
   FILELIST_LE(flist).fn = nmalloc(strlen(filename) + 1);
@@ -60,8 +63,10 @@ static void filelist_add(filelist_t *flist, char *filename) {
   FILELIST_LE(flist).output = NULL;
 }
 
-/* Add data to the end of filelist entry's output string */
-static inline void filelist_addout(filelist_t *flist, char *desc) {
+/* Add data to the end of filelist entry's output string
+ */
+static void filelist_addout(filelist_t *flist, char *desc)
+{
   if (FILELIST_LE(flist).output) {
     FILELIST_LE(flist).output = nrealloc(FILELIST_LE(flist).output, strlen(FILELIST_LE(flist).output) + strlen(desc) + 1);
     strcat(FILELIST_LE(flist).output, desc);
@@ -81,7 +86,8 @@ static inline void filelist_idxshow(filelist_t *flist, int idx)
 }
 
 /* Uses QSort to sort the list of filenames. This function is
- * called recursively. */
+ * called recursively.
+ */
 static void filelist_qsort(filelist_t *flist, int l, int r)
 {
   int i = l, j = r, middle;
@@ -112,7 +118,8 @@ static void filelist_qsort(filelist_t *flist, int l, int r)
     filelist_qsort(flist, i, r);
 }
 
-/* Sort list of filenames */
+/* Sort list of filenames.
+ */
 static void filelist_sort(filelist_t *flist)
 {
   Assert(flist);

@@ -1,7 +1,7 @@
 /* 
  * tclserv.c -- part of server.mod
  * 
- * $Id: tclserv.c,v 1.3 1999/12/21 17:35:31 fabian Exp $
+ * $Id: tclserv.c,v 1.4 2000/01/02 02:42:13 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -258,12 +258,12 @@ static int tcl_queuesize STDVAR
 
 static tcl_cmds my_tcl_cmds[] =
 {
-  {"jump", tcl_jump},
-  {"isbotnick", tcl_isbotnick},
-  {"clearqueue", tcl_clearqueue},
-  {"queuesize", tcl_queuesize},
-  {"puthelp", tcl_puthelp},
-  {"putserv", tcl_putserv},
-  {"putquick", tcl_putquick},
-  {0, 0},
+  {"jump",		tcl_jump},
+  {"isbotnick",		tcl_isbotnick},
+  {"clearqueue",	tcl_clearqueue},
+  {"queuesize",		tcl_queuesize},
+  {"puthelp",		tcl_puthelp},
+  {"putserv",		tcl_putserv},
+  {"putquick",		tcl_putquick},
+  {NULL,		NULL},
 };

@@ -1,7 +1,7 @@
 /* 
  * channels.h -- part of channels.mod
  * 
- * $Id: channels.h,v 1.8 1999/12/21 17:35:11 fabian Exp $
+ * $Id: channels.h,v 1.9 2000/01/02 02:42:10 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -26,6 +26,25 @@
 #define _EGG_MOD_CHANNELS_CHANNELS_H
 
 #ifdef MAKING_CHANNELS
+
+/* User defined chanmodes/settings */
+#define UDEF_FLAG 1
+#define UDEF_INT 2
+
+struct udef_chans {
+  struct udef_chans *next;
+  char *chan;
+  int value;
+};
+
+struct udef_struct {
+  struct udef_struct *next;
+  char *name;
+  int defined;
+  int type;
+  struct udef_chans *values;
+};
+
 static void del_chanrec(struct userrec *u, char *);
 static struct chanuserrec *get_chanrec(struct userrec *u, char *chname);
 static struct chanuserrec *add_chanrec(struct userrec *u, char *chname);
@@ -35,7 +54,8 @@ static void set_handle_chaninfo(struct userrec *bu, char *handle,
 				char *chname, char *info);
 static void set_handle_laston(char *chan, struct userrec *u, time_t n);
 static int u_sticky_mask(maskrec *u, char *uhost);
-static int u_setsticky_mask(struct chanset_t *chan, maskrec *m, char *uhost, int sticky, char *botcmd);
+static int u_setsticky_mask(struct chanset_t *chan, maskrec *m, char *uhost,
+			    int sticky, char *botcmd);
 
 static int u_equals_mask(maskrec *u, char *uhost);
 static int u_match_mask(struct maskrec *rec, char *mask);
@@ -69,6 +89,15 @@ static int tcl_channel_modify(Tcl_Interp * irp, struct chanset_t *chan,
 			      int items, char **item);
 static int tcl_channel_add(Tcl_Interp * irp, char *, char *);
 static char *convert_element(char *src, char *dst);
+static int expmem_udef(struct udef_struct *);
+static int expmem_udef_chans (struct udef_chans *);
+static void free_udef(struct udef_struct *);
+static void free_udef_chans(struct udef_chans *);
+static int getudef(struct udef_chans *, char *);
+static void initudef(int type, char *, int);
+static void setudef(struct udef_struct *, struct udef_chans *, char *, int);
+static void remove_channel(struct chanset_t *);
+
 #else
 
 /* 4 - 7 */
@@ -122,7 +151,7 @@ static char *convert_element(char *src, char *dst);
 
 #endif				/* MAKING_CHANNELS */
 
-/* Macro's here because their functions were replaced by somthing more
+/* Macro's here because their functions were replaced by something more
  * generic. <cybah>
  */
 #define isbanned(chan, user)    ismasked((chan)->channel.ban, user)

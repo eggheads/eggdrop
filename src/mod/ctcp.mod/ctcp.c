@@ -2,7 +2,7 @@
  * ctcp.c -- part of ctcp.mod
  *   all the ctcp handling (except DCC, it's special ;)
  * 
- * $Id: ctcp.c,v 1.4 1999/12/21 17:35:15 fabian Exp $
+ * $Id: ctcp.c,v 1.5 2000/01/02 02:42:11 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -37,6 +37,7 @@ static char ctcp_version[256];
 static char ctcp_finger[256];
 static char ctcp_userinfo[256];
 static int ctcp_mode = 0;
+
 
 static int ctcp_FINGER(char *nick, char *uhost, char *handle,
 		       char *object, char *keyword, char *text)
@@ -75,7 +76,8 @@ static int ctcp_VERSION(char *nick, char *uhost, char *handle,
 {
   Context;
   if ((ctcp_version[0]) && (ctcp_mode != 1))
-    simple_sprintf(ctcp_reply, "%s\001VERSION %s\001", ctcp_reply, ctcp_version);
+    simple_sprintf(ctcp_reply, "%s\001VERSION %s\001", ctcp_reply,
+		   ctcp_version);
   return 1;
 }
 
@@ -84,7 +86,8 @@ static int ctcp_USERINFO(char *nick, char *uhost, char *handle,
 {
   Context;
   if ((ctcp_userinfo[0]) && (ctcp_mode != 1))
-    simple_sprintf(ctcp_reply, "%s\001USERINFO %s\001", ctcp_reply, ctcp_userinfo);
+    simple_sprintf(ctcp_reply, "%s\001USERINFO %s\001", ctcp_reply,
+		   ctcp_userinfo);
   return 1;
 }
 
@@ -159,7 +162,7 @@ static int ctcp_CHAT(char *nick, char *uhost, char *handle, char *object,
 	  ((!strcmp(dcc[i].nick, "(telnet)")) ||
 	   (!strcmp(dcc[i].nick, "(users)")))) {
 	ix = i;
-	/* do me a favour and don't change this back to a CTCP reply,
+	/* Do me a favour and don't change this back to a CTCP reply,
 	 * CTCP replies are NOTICE's this has to be a PRIVMSG
 	 * -poptix 5/1/1997 */
 	dprintf(DP_SERVER, "PRIVMSG %s :\001DCC CHAT chat %lu %u\001\n",
@@ -177,31 +180,32 @@ static int ctcp_CHAT(char *nick, char *uhost, char *handle, char *object,
 
 static cmd_t myctcp[] =
 {
-  {"FINGER", "", ctcp_FINGER, NULL},
-  {"ECHO", "", ctcp_ECHOERR, NULL},
-  {"PING", "", ctcp_PING, NULL},
-  {"ERRMSG", "", ctcp_ECHOERR, NULL},
-  {"VERSION", "", ctcp_VERSION, NULL},
-  {"USERINFO", "", ctcp_USERINFO, NULL},
-  {"CLIENTINFO", "", ctcp_CLIENTINFO, NULL},
-  {"TIME", "", ctcp_TIME, NULL},
-  {"CHAT", "", ctcp_CHAT, NULL},
-  {0, 0, 0, 0}
+  {"FINGER",		"",	ctcp_FINGER,		NULL},
+  {"ECHO",		"",	ctcp_ECHOERR,		NULL},
+  {"PING",		"",	ctcp_PING,		NULL},
+  {"ERRMSG",		"",	ctcp_ECHOERR,		NULL},
+  {"VERSION",		"",	ctcp_VERSION,		NULL},
+  {"USERINFO",		"",	ctcp_USERINFO,		NULL},
+  {"CLIENTINFO",	"",	ctcp_CLIENTINFO,	NULL},
+  {"TIME",		"",	ctcp_TIME,		NULL},
+  {"CHAT",		"",	ctcp_CHAT,		NULL},
+  {NULL,		NULL,	NULL,			NULL}
 };
 
 static tcl_strings mystrings[] =
 {
-  {"ctcp-version", ctcp_version, 120, 0},
-  {"ctcp-finger", ctcp_finger, 120, 0},
-  {"ctcp-userinfo", ctcp_userinfo, 120, 0},
-  {0, 0, 0, 0}
+  {"ctcp-version",	ctcp_version,	120,	0},
+  {"ctcp-finger",	ctcp_finger,	120,	0},
+  {"ctcp-userinfo",	ctcp_userinfo,	120,	0},
+  {NULL,		NULL,		0,	0}
 };
 
 static tcl_ints myints[] =
 {
-  {"ctcp-mode", &ctcp_mode},
-  {0, 0}
+  {"ctcp-mode",		&ctcp_mode},
+  {NULL,		NULL}
 };
+
 static char *ctcp_close()
 {
   rem_tcl_strings(mystrings);
@@ -218,8 +222,8 @@ static Function ctcp_table[] =
 {
   (Function) ctcp_start,
   (Function) ctcp_close,
-  (Function) 0,
-  (Function) 0,
+  (Function) NULL,
+  (Function) NULL,
 };
 
 char *ctcp_start(Function * global_funcs)
@@ -228,6 +232,8 @@ char *ctcp_start(Function * global_funcs)
 
   Context;
   module_register(MODULE_NAME, ctcp_table, 1, 0);
+  if (!module_depend(MODULE_NAME, "eggdrop", 105, 0))
+    return "You need an eggdrop of at least v1.5.0 to use this ctcp module.";
   if (!(server_funcs = module_depend(MODULE_NAME, "server", 1, 0)))
     return "You need the server module to use the ctcp module.";
   add_tcl_strings(mystrings);

@@ -2,7 +2,7 @@
  * assoc.c -- part of assoc.mod
  *   the assoc code, moved here mainly from botnet.c for module work
  * 
- * $Id: assoc.c,v 1.5 1999/12/21 17:35:11 fabian Exp $
+ * $Id: assoc.c,v 1.6 2000/01/02 02:42:10 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -31,14 +31,14 @@
 #undef global
 static Function *global = NULL;
 
-/* keep track of channel associations */
+/* Keep track of channel associations */
 typedef struct travis {
   char name[21];
   unsigned int channel;
   struct travis *next;
 } assoc_t;
 
-/* channel name-number associations */
+/* Channel name-number associations */
 static assoc_t *assoc;
 
 static void botnet_send_assoc(int idx, int chan, char *nick,
@@ -141,7 +141,7 @@ static void add_assoc(char *name, int chan)
     }
     a = a->next;
   }
-  /* add in numerical order */
+  /* Add in numerical order */
   a = assoc;
   while (a != NULL) {
     if (a->channel > chan) {
@@ -159,7 +159,7 @@ static void add_assoc(char *name, int chan)
     old = a;
     a = a->next;
   }
-  /* add at the end */
+  /* Add at the end */
   b = (assoc_t *) nmalloc(sizeof(assoc_t));
   b->next = NULL;
   b->channel = chan;
@@ -246,7 +246,7 @@ static int cmd_assoc(struct userrec *u, int idx, char *par)
       }
     }
     if (!par[0]) {
-      /* remove an association */
+      /* Remove an association */
       if (get_assoc_name(chan) == NULL) {
 	dprintf(idx, "Channel %s%d has no name.\n",
 		(chan < 100000) ? "" : "*", chan % 100000);
@@ -256,7 +256,8 @@ static int cmd_assoc(struct userrec *u, int idx, char *par)
       putlog(LOG_CMDS, "*", "#%s# assoc %d", dcc[idx].nick, chan);
       dprintf(idx, "Okay, removed name for channel %s%d.\n",
 	      (chan < 100000) ? "" : "*", chan % 100000);
-      chanout_but(-1, chan, "--- %s removed this channel's name.\n", dcc[idx].nick);
+      chanout_but(-1, chan, "--- %s removed this channel's name.\n",
+		  dcc[idx].nick);
       if (chan < 100000)
 	botnet_send_assoc(-1, chan, dcc[idx].nick, "0");
       return 0;
@@ -273,7 +274,8 @@ static int cmd_assoc(struct userrec *u, int idx, char *par)
     putlog(LOG_CMDS, "*", "#%s# assoc %d %s", dcc[idx].nick, chan, par);
     dprintf(idx, "Okay, channel %s%d is '%s' now.\n",
 	    (chan < 100000) ? "" : "*", chan % 100000, par);
-    chanout_but(-1, chan, "--- %s named this channel '%s'\n", dcc[idx].nick, par);
+    chanout_but(-1, chan, "--- %s named this channel '%s'\n", dcc[idx].nick,
+		par);
     if (chan < 100000)
       botnet_send_assoc(-1, chan, dcc[idx].nick, par);
   }
@@ -285,9 +287,9 @@ static int tcl_killassoc STDVAR {
 
   Context;
   BADARGS(2, 2, " chan");
-  if (argv[1][0] == '&') {
+  if (argv[1][0] == '&')
     kill_all_assoc();
-  } else {
+  else {
     chan = atoi(argv[1]);
     if ((chan < 1) || (chan > 199999)) {
       Tcl_AppendResult(irp, "invalid channel #", NULL);
@@ -362,7 +364,7 @@ static void zapf_assoc(char *botnick, char *code, char *par)
 	chanout_but(-1, chan, "--- (%s) %s removed this channel's name.\n",
 		    botnick, nick);
       } else if (get_assoc(par) != chan) {
-	/* new one i didn't know about -- pass it on */
+	/* New one i didn't know about -- pass it on */
 	s1 = get_assoc_name(chan);
 	add_assoc(par, chan);
 	chanout_but(-1, chan, "--- (%s) %s named this channel '%s'.\n",
@@ -372,7 +374,8 @@ static void zapf_assoc(char *botnick, char *code, char *par)
   }
 }
 
-/* a report on the module status */
+/* A report on the module status.
+ */
 static void assoc_report(int idx, int details)
 {
   assoc_t *a = assoc;
@@ -392,27 +395,26 @@ static void assoc_report(int idx, int details)
 
 static cmd_t mydcc[] =
 {
-  {"assoc", "", cmd_assoc, NULL},
-  {0, 0, 0, 0}
+  {"assoc",	"",	cmd_assoc,		NULL},
+  {NULL, 	NULL,	NULL,			NULL}
 };
 
 static cmd_t mybot[] =
 {
-  {"assoc", "", (Function) zapf_assoc, NULL},
-  {0, 0, 0, 0}
+  {"assoc",	"",	(Function) zapf_assoc,	NULL},
 };
 
 static cmd_t mylink[] =
 {
-  {"*", "", (Function) link_assoc, "assoc"},
-  {0, 0, 0, 0}
+  {"*",		"",	(Function) link_assoc,	"assoc"},
+  {NULL,	NULL,	NULL,			NULL}
 };
 
 static tcl_cmds mytcl[] =
 {
-  {"assoc", tcl_assoc},
-  {"killassoc", tcl_killassoc},
-  {0, 0}
+  {"assoc",		tcl_assoc},
+  {"killassoc",		tcl_killassoc},
+  {NULL,		NULL}
 };
 
 static char *assoc_close()

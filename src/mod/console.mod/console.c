@@ -3,7 +3,7 @@
  *   saved console settings based on console.tcl
  *   by cmwagner/billyjoe/D. Senso
  * 
- * $Id: console.c,v 1.9 1999/12/21 17:35:15 fabian Exp $
+ * $Id: console.c,v 1.10 2000/01/02 02:42:11 fabian Exp $
  */
 /* 
  * Copyright (C) 1999  Eggheads
@@ -107,7 +107,8 @@ static int console_kill(struct user_entry *e)
   return 1;
 }
 
-static int console_write_userfile(FILE * f, struct userrec *u, struct user_entry *e)
+static int console_write_userfile(FILE *f, struct userrec *u,
+				  struct user_entry *e)
 {
   struct console_info *i = e->u.extra;
 
@@ -138,11 +139,11 @@ static int console_set(struct userrec *u, struct user_entry *e, void *buf)
     ci = e->u.extra = buf;
   }
 
-  /* donut share console info */
+  /* Note: Do not share console info */
   return 1;
 }
 
-static int console_tcl_get(Tcl_Interp * irp, struct userrec *u,
+static int console_tcl_get(Tcl_Interp *irp, struct userrec *u,
 			   struct user_entry *e, int argc, char **argv)
 {
   char work[1024];
@@ -156,7 +157,7 @@ static int console_tcl_get(Tcl_Interp * irp, struct userrec *u,
   return TCL_OK;
 }
 
-int console_tcl_set(Tcl_Interp * irp, struct userrec *u,
+int console_tcl_set(Tcl_Interp *irp, struct userrec *u,
 		    struct user_entry *e, int argc, char **argv)
 {
   struct console_info *i = e->u.extra;
@@ -231,14 +232,14 @@ static int console_dupuser(struct userrec *new, struct userrec *old,
 
 static struct user_entry_type USERENTRY_CONSOLE =
 {
-  0,				/* always 0 ;) */
-  0,
+  NULL,				/* always 0 ;) */
+  NULL,
   console_dupuser,
   console_unpack,
   console_pack,
   console_write_userfile,
   console_kill,
-  0,
+  NULL,
   console_set,
   console_tcl_get,
   console_tcl_set,
@@ -282,6 +283,7 @@ static int console_chon(char *handle, int idx)
       if (p) {
 	if (dcc[idx].u.chat->channel >= 0) {
 	    char x[1024];
+
 	    chanout_but(-1, dcc[idx].u.chat->channel,
 			"*** [%s] %s\n", dcc[idx].nick, p);
 	    simple_sprintf(x, "[%s] %s", dcc[idx].nick, p);
@@ -337,22 +339,22 @@ static int console_dostore(int idx)
 
 static tcl_ints myints[] =
 {
-  {"console-autosave", &console_autosave, 0},
-  {"force-channel", &force_channel, 0},
-  {"info-party", &info_party, 0},
-  {0, 0, 0}
+  {"console-autosave",	&console_autosave,	0},
+  {"force-channel",	&force_channel,		0},
+  {"info-party",	&info_party,		0},
+  {NULL,		NULL,			0}
 };
 
 static cmd_t mychon[] =
 {
-  {"*", "", console_chon, "console:chon"},
-  {0, 0, 0, 0}
+  {"*",		"",	console_chon,		"console:chon"},
+  {NULL,	NULL,	NULL,			NULL}
 };
 
 static cmd_t mydcc[] =
 {
-  {"store", "", console_store, NULL},
-  {0, 0, 0, 0}
+  {"store",	"",	console_store,		NULL},
+  {NULL,	NULL,	NULL,			NULL}
 };
 
 static char *console_close()
@@ -373,8 +375,8 @@ static Function console_table[] =
 {
   (Function) console_start,
   (Function) console_close,
-  (Function) 0,
-  (Function) 0,
+  (Function) NULL,
+  (Function) NULL,
   (Function) console_dostore,
 };
 

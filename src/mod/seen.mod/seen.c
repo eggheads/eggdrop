@@ -10,7 +10,7 @@
  * 1.2     1997-08-20      Minor fixes. [BB]
  * 1.2a    1997-08-24      Minor fixes. [BB]
  * 
- * $Id: seen.c,v 1.11 2000/01/01 19:12:18 fabian Exp $
+ * $Id: seen.c,v 1.12 2000/01/02 02:42:12 fabian Exp $
  */
 /* 
  * Copyright (C) 1999  Eggheads
@@ -148,8 +148,8 @@ static int dcc_seen(struct userrec *u, int idx, char *par)
   return 0;
 }
 
-static void do_seen(int idx, char *prefix, char *nick, char *hand, char *channel,
-		    char *text)
+static void do_seen(int idx, char *prefix, char *nick, char *hand,
+		    char *channel, char *text)
 {
   char stuff[512];
   char word1[512], word2[512];

@@ -2,7 +2,7 @@
  * channels.c -- part of channels.mod
  *   support for channels within the bot
  * 
- * $Id: channels.c,v 1.17 1999/12/22 13:17:55 fabian Exp $
+ * $Id: channels.c,v 1.18 2000/01/02 02:42:10 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -28,19 +28,24 @@
 #include "../module.h"
 #include <sys/stat.h>
 
-static int setstatic = 0;
-static int use_info = 1;
-static int ban_time = 60;
-static int exempt_time = 0;	/* if exempt_time = 0, never remove them */
-static int invite_time = 0;	/* if invite_time = 0, never remove them */
-static char chanfile[121] = "chanfile";
-static Function *global = NULL;
-static int chan_hack = 0;
-static int must_be_owner = 0;
-static int quiet_save = 0;
+static Function *global		= NULL;
 
-/* global channel settings (drummer/dw) */
-static char glob_chanset[512] = "\
+static int  setstatic		= 0;
+static int  use_info		= 1;
+static int  ban_time		= 60;
+static int  exempt_time		= 0;	/* If exempt_time = 0, never remove 
+					   them */
+static int  invite_time		= 0;	/* If invite_time = 0, never remove
+					   them */
+static char chanfile[121]	= "chanfile";
+static int  chan_hack		= 0;
+static int  must_be_owner	= 0;
+static int  quiet_save		= 0;
+static char glob_chanmode[64]	= "nt";	/* Default chanmode (drummer,990731) */
+static struct udef_struct *udef	= NULL;
+
+/* Global channel settings (drummer/dw) */
+static char glob_chanset[512]	= "\
 -clearbans -enforcebans +dynamicbans +userbans -autoop -bitch +greet \
 +protectops +statuslog +stopnethack -revenge -secret -autovoice +cycle \
 +dontkickops -wasoptest -inactive -protectfriends +shared -seen \
@@ -48,39 +53,7 @@ static char glob_chanset[512] = "\
 -nodesynch ";
 /* DO NOT remove the extra space at the end of the string! */
 
-/* default chanmode (drummer,990731) */
-static char glob_chanmode[64] = "nt";
-
-/* user defines chanmodes/settings */
-#define UDEF_FLAG 1
-#define UDEF_INT 2
-
-struct udef_chans {
-  struct udef_chans *next;
-  char *chan;
-  int value;
-};
-
-struct udef_struct {
-  struct udef_struct *next;
-  char *name;
-  int defined;
-  int type;
-  struct udef_chans *values;
-};
-
-static int expmem_udef(struct udef_struct *);
-static int expmem_udef_chans (struct udef_chans *);
-static void free_udef(struct udef_struct *);
-static void free_udef_chans(struct udef_chans *);
-static int getudef(struct udef_chans *, char *);
-static void initudef(int type, char *, int);
-static void setudef(struct udef_struct *, struct udef_chans *, char *, int);
-static void remove_channel(struct chanset_t *);
-
-static struct udef_struct *udef = NULL;
-
-/* global flood settings */
+/* Global flood settings */
 static int gfld_chan_thr;
 static int gfld_chan_time;
 static int gfld_deop_thr;
@@ -96,6 +69,8 @@ static int gfld_ctcp_time;
 #include "cmdschan.c"
 #include "tclchan.c"
 #include "userchan.c"
+#include "udefchan.c"
+
 
 void *channel_malloc(int size, char *file, int line)
 {
@@ -110,152 +85,12 @@ void *channel_malloc(int size, char *file, int line)
   return p;
 }
 
-/* user defined channel flags/settings */
-
-static int expmem_udef (struct udef_struct *ul)
-{
-  int i = 0;
-
-  while (ul) {
-    i += sizeof(struct udef_struct);
-    i += strlen(ul->name) + 1;
-    i += expmem_udef_chans(ul->values);
-    ul = ul->next;
-  }
-  return i;
-}
-
-static int expmem_udef_chans (struct udef_chans *ul)
-{
-  int i = 0;
-  
-  while (ul) {
-    i += sizeof(struct udef_chans);
-    i += strlen(ul->chan) + 1;
-    ul = ul->next;
-  }
-  return i;
-}
-
-static int getudef(struct udef_chans *ul, char *name)
-{
-  int val = 0;
-
-  Context;
-  while (ul) {
-    if (!strcasecmp(ul->chan, name)) {
-      val = ul->value;
-      break;
-    }
-    ul = ul->next;
-  }
-  return val;
-}
-
-static void setudef(struct udef_struct *us, struct udef_chans *ul, char *name,
-		    int value)
-{
-  struct udef_chans *ull;
-
-  Context;
-  ull = ul;
-  while (ul) {
-    if (!strcasecmp(ul->chan, name)) {
-      ul->value = value;
-      return;
-    }
-    ul = ul->next;
-  }
-  ul = ull;
-  while (ul && ul->next)
-    ul = ul->next;
-  ull = nmalloc(sizeof(struct udef_chans));
-  ull->chan = nmalloc(strlen(name) + 1);
-  strcpy(ull->chan, name);
-  ull->value = value;
-  ull->next = NULL;
-  if (ul)
-    ul->next = ull;
-  else
-    us->values = ull;
-  return;
-}
-  
-static void initudef(int type, char *name, int defined)
-{
-  struct udef_struct *ul = udef;
-  struct udef_struct *ull = NULL;
-  int found = 0;
-
-  Context;
-  if (strlen(name) < 1)
-    return;
-  while (ul) {
-    if (ul->name && !strcasecmp(ul->name, name)) {
-      if (defined) {
-        debug1("UDEF: %s defined", ul->name);
-        ul->defined = 1;
-      }
-      found = 1;
-    }
-    ul = ul->next;
-  }
-  if (!found) {
-    debug2("Creating %s (type %d)", name, type);
-    ull = udef;
-    while (ull && ull->next)
-      ull = ull->next;
-    ul = nmalloc(sizeof(struct udef_struct));
-    ul->name = nmalloc(strlen(name) + 1);
-    strcpy(ul->name, name);
-    if (defined)
-      ul->defined = 1;
-    else
-      ul->defined = 0;
-    ul->type = type;
-    ul->values = NULL;
-    ul->next = NULL;
-    if (ull)
-      ull->next = ul;
-    else
-      udef = ul;
-  }
-  return;
-}
-
-static void free_udef(struct udef_struct *ul)
-{
-  struct udef_struct *ull;
-
-  while (ul) {
-    ull = ul->next;
-    free_udef_chans(ul->values);
-    nfree(ul->name);
-    nfree(ul);
-    ul = ull;
-  }
-  return;
-}
-
-static void free_udef_chans(struct udef_chans *ul)
-{
-  struct udef_chans *ull;
-  
-  while (ul) {
-    ull = ul->next;
-    nfree(ul->chan);
-    nfree(ul);
-    ul = ull;
-  }
-  return;
-}
-
 static void set_mode_protect(struct chanset_t *chan, char *set)
 {
   int i, pos = 1;
   char *s, *s1;
 
-  /* clear old modes */
+  /* Clear old modes */
   chan->mode_mns_prot = chan->mode_pls_prot = 0;
   chan->limit_prot = (-1);
   chan->key_prot[0] = 0;
@@ -321,7 +156,7 @@ static void set_mode_protect(struct chanset_t *chan, char *set)
       }
     }
   }
-  /* drummer: +s-p +p-s flood fixed. */
+  /* Prevents a +s-p +p-s flood  (fixed by drummer) */
   if (chan->mode_pls_prot & CHANSEC)
     chan->mode_pls_prot &= ~CHANPRIV;
 }
@@ -380,7 +215,8 @@ static void get_mode_protect(struct chanset_t *chan, char *s)
   }
 }
 
-/* returns true if this is one of the channel masks */
+/* Returns true if this is one of the channel masks
+ */
 static int ismodeline(masklist *m, char *user)
 {
   while (m && m->mask[0]) {
@@ -391,7 +227,8 @@ static int ismodeline(masklist *m, char *user)
   return 0;
 }
 
-/* returns true if user matches one of the masklist -- drummer */
+/* Returns true if user matches one of the masklist -- drummer
+ */
 static int ismasked(masklist *m, char *user)
 {
   while (m && m->mask[0]) {
@@ -402,8 +239,11 @@ static int ismasked(masklist *m, char *user)
   return 0;
 }
 
-/* destroy a chanset in the list */
-/* does NOT free up memory associated with channel data inside the chanset! */
+/* Destroy a chanset in the list
+ * 
+ * Note: does NOT free up memory associated with channel data inside
+ *       the chanset!
+ */
 static int killchanset(struct chanset_t *chan)
 {
   struct chanset_t *c = chanset, *old = NULL;
@@ -424,6 +264,7 @@ static int killchanset(struct chanset_t *chan)
 }
 
 /* Completely removes a channel.
+ *
  * This includes the removal of all channel-bans, -exempts and -invites, as
  * well as all user flags related to the channel.
  */
@@ -446,8 +287,9 @@ static void remove_channel(struct chanset_t *chan)
    killchanset(chan);
 }
 
-/* bind this to chon and *if* the users console channel == ***
- * then set it to a specific channel */
+/* Bind this to chon and *if* the users console channel == ***
+ * then set it to a specific channel
+ */
 static int channels_chon(char *handle, int idx)
 {
   struct flag_record fr = {FR_CHAN | FR_ANYWH | FR_GLOBAL, 0, 0, 0, 0, 0};
@@ -497,6 +339,12 @@ static char *convert_element(char *src, char *dst)
 
 #define PLSMNS(x) (x ? '+' : '-')
 
+/*
+ * Note:
+ *  - We write chanmode "" too, so that the bot won't use default-chanmode
+ *    instead of ""
+ *  - We will write empty need-xxxx too, why not? (less code + lazyness)
+ */
 static void write_channels()
 {
   FILE *f;
@@ -541,12 +389,8 @@ flood-kick %d:%d flood-deop %d:%d \
 	name,
 	channel_static(chan) ? " " : " { ",
 	w2,
-/* now bot write chanmode "" too,
- * so bot wont use default-chanmode instead of "" -- bugfix
- */
 	chan->idle_kick, /* idle-kick 0 is same as dont-idle-kick (less code)*/
 	need1, need2, need3, need4, need5,
-/* yes we will write empty need-xxxx too, why not? (less code + lazyness) */
 	chan->flood_pub_thr, chan->flood_pub_time,
         chan->flood_ctcp_thr, chan->flood_ctcp_time,
         chan->flood_join_thr, chan->flood_join_time,
@@ -615,7 +459,7 @@ static void read_channels(int create)
   if (!readtclprog(chanfile) && create) {
     FILE *f;
 
-    /* assume file isnt there & therfore make it */
+    /* Assume file isnt there & therfore make it */
     putlog(LOG_MISC, "*", "Creating channel file");
     f = fopen(chanfile, "w");
     if (!f)
@@ -642,13 +486,14 @@ static void channels_prerehash()
 {
   struct chanset_t *chan;
 
+  /* Flag will be cleared as the channels are re-added by the
+   * config file. Any still flagged afterwards will be removed.
+   */
   for (chan = chanset; chan; chan = chan->next) {
     chan->status |= CHAN_FLAGGED;
-    /* flag will be cleared as the channels are re-added by the config file */
-    /* any still flagged afterwards will be removed */
+    /* Flag is only added to channels read from config file */
     if (chan->status & CHAN_STATIC)
       chan->status &= ~CHAN_STATIC;
-    /* flag is added to channels read from config file */
   }
   setstatic = 1;
 }
@@ -659,7 +504,7 @@ static void channels_rehash()
 
   setstatic = 0;
   read_channels(1);
-  /* remove any extra channels */
+  /* Remove any extra channels, by checking the flag. */
   chan = chanset;
   while (chan) {
     if (chan->status & CHAN_FLAGGED) {
@@ -673,11 +518,10 @@ static void channels_rehash()
   }
 }
 
-/* update the add/rem_builtins in channels.c if you add to this list!! */
 static cmd_t my_chon[] =
 {
-  {"*", "", (Function) channels_chon, "channels:chon"},
-  {0, 0, 0, 0}
+  {"*",		"",	(Function) channels_chon,	"channels:chon"},
+  {NULL,	NULL,	NULL,				NULL}
 };
 
 static void channels_report(int idx, int details)
@@ -685,8 +529,7 @@ static void channels_report(int idx, int details)
   struct chanset_t *chan;
   int i;
   char s[1024], s2[100];
-  struct flag_record fr =
-  {FR_CHAN | FR_GLOBAL, 0, 0, 0, 0, 0};
+  struct flag_record fr = {FR_CHAN | FR_GLOBAL, 0, 0, 0, 0, 0};
 
   chan = chanset;
   while (chan != NULL) {
@@ -707,7 +550,7 @@ static void channels_report(int idx, int details)
       get_mode_protect(chan, s2);
       if (!channel_inactive(chan)) {
 	if (channel_active(chan)) {
-	  /*  If it's a !chan, we want to display it's unique name too <cybah> */
+	  /* If it's a !chan, we want to display it's unique name too <cybah> */
 	  if (chan->dname[0]=='!') {
 	    dprintf(idx, "    %-10s: %2d member%s enforcing \"%s\" (%s), "
 	            "unique name %s\n", chan->dname, chan->channel.members,
@@ -722,7 +565,8 @@ static void channels_report(int idx, int details)
 		  channel_pending(chan) ? "pending" : "inactive", s2, s);
 	}
       } else {
-	dprintf(idx, "    %-10s: no IRC support for this channel\n", chan->dname);
+	dprintf(idx, "    %-10s: no IRC support for this channel\n",
+		chan->dname);
       }
       if (details) {
 	s[0] = 0;
@@ -785,13 +629,16 @@ static void channels_report(int idx, int details)
 	if (chan->need_invite[0])
 	  dprintf(idx, "      To get invited I do: %s\n", chan->need_invite);
 	if (chan->need_limit[0])
-	  dprintf(idx, "      To get the channel limit up'd I do: %s\n", chan->need_limit);
+	  dprintf(idx, "      To get the channel limit up'd I do: %s\n",
+		  chan->need_limit);
 	if (chan->need_unban[0])
 	  dprintf(idx, "      To get unbanned I do: %s\n", chan->need_unban);
 	if (chan->need_key[0])
-	  dprintf(idx, "      To get the channel key I do: %s\n", chan->need_key);
+	  dprintf(idx, "      To get the channel key I do: %s\n",
+		  chan->need_key);
 	if (chan->idle_kick)
-	  dprintf(idx, "      Kicking idle users after %d min\n", chan->idle_kick);
+	  dprintf(idx, "      Kicking idle users after %d min\n",
+		  chan->idle_kick);
       }
     }
     chan = chan->next;
@@ -858,7 +705,7 @@ static char *traced_globchanset(ClientData cdata, Tcl_Interp * irp,
       Tcl_TraceVar(interp, "global-chanset",
 	    TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
 	    traced_globchanset, NULL);
-  } else { /* write */
+  } else { /* Write */
     s = Tcl_GetVar2(interp, name1, name2, TCL_GLOBAL_ONLY);
     Tcl_SplitList(interp, s, &items, &item);
     Context;
@@ -866,7 +713,7 @@ static char *traced_globchanset(ClientData cdata, Tcl_Interp * irp,
       if (!(item[i]) || (strlen(item[i]) < 2)) continue;
       s = glob_chanset;
       while (s[0]) {
-	t = strchr(s, ' '); /* cant be NULL coz of the extra space */
+	t = strchr(s, ' '); /* Can't be NULL coz of the extra space */
 	Context;
 	t[0] = 0;
 	if (!strcmp(s + 1, item[i] + 1)) {
@@ -887,31 +734,31 @@ static char *traced_globchanset(ClientData cdata, Tcl_Interp * irp,
 
 static tcl_ints my_tcl_ints[] =
 {
-  {"share-greet", 0, 0},
-  {"use-info", &use_info, 0},
-  {"ban-time", &ban_time, 0},
-  {"exempt-time", &exempt_time, 0},
-  {"invite-time", &invite_time, 0},
-  {"must-be-owner", &must_be_owner, 0},
-  {"quiet-save", &quiet_save, 0},
-  {0, 0, 0}
+  {"share-greet",	NULL,		0},
+  {"use-info",		&use_info,	0},
+  {"ban-time",		&ban_time,	0},
+  {"exempt-time",	&exempt_time,	0},
+  {"invite-time",	&invite_time,	0},
+  {"must-be-owner",	&must_be_owner,	0},
+  {"quiet-save",	&quiet_save,	0},
+  {NULL,		NULL,		0}
 };
 
 static tcl_coups mychan_tcl_coups[] =
 {
-  {"global-flood-chan", &gfld_chan_thr, &gfld_chan_time},
-  {"global-flood-deop", &gfld_deop_thr, &gfld_deop_time},
-  {"global-flood-kick", &gfld_kick_thr, &gfld_kick_time},
-  {"global-flood-join", &gfld_join_thr, &gfld_join_time},
-  {"global-flood-ctcp", &gfld_ctcp_thr, &gfld_ctcp_time},
-  {0, 0, 0}
+  {"global-flood-chan",	&gfld_chan_thr,	&gfld_chan_time},
+  {"global-flood-deop",	&gfld_deop_thr,	&gfld_deop_time},
+  {"global-flood-kick",	&gfld_kick_thr,	&gfld_kick_time},
+  {"global-flood-join",	&gfld_join_thr,	&gfld_join_time},
+  {"global-flood-ctcp",	&gfld_ctcp_thr,	&gfld_ctcp_time},
+  {NULL,		NULL,		NULL}
 };
 
 static tcl_strings my_tcl_strings[] =
 {
-  {"chanfile", chanfile, 120, STR_PROTECT},
-  {"global-chanmode", glob_chanmode, 64, 0},
-  {0, 0, 0, 0}
+  {"chanfile",		chanfile,	120,	STR_PROTECT},
+  {"global-chanmode",	glob_chanmode,	64,	0},
+  {NULL,		NULL,		0,	0}
 };
 
 static char *channels_close()
@@ -973,23 +820,19 @@ static Function channels_table[] =
   (Function) u_sticky_mask,
   (Function) ismasked,
   (Function) add_chanrec_by_handle,
-/* *HOLE* channels_funcs[23] used to be isexempted() <cybah> */
-  (Function) NULL,
+  (Function) NULL, /* [23] used to be isexempted() <cybah> */
   /* 24 - 27 */
   (Function) & exempt_time,
-/* *HOLE* channels_funcs[25] used to be isinvited() <cybah> */
-  (Function) NULL,
+  (Function) NULL, /* [25] used to be isinvited() <cybah> */
   (Function) & invite_time,
   (Function) NULL,
   /* 28 - 31 */
-/* *HOLE* channels_funcs[28] used to be u_setsticky_exempt() <cybah> */
-  (Function) NULL,
+  (Function) NULL, /* [28] used to be u_setsticky_exempt() <cybah> */
   (Function) u_delexempt,
   (Function) u_addexempt,
   (Function) NULL,
   /* 32 - 35 */
-/* *HOLE* channels_funcs[32] used to be u_sticky_exempt() <cybah> */
-  (Function) NULL,
+  (Function) NULL,/* [32] used to be u_sticky_exempt() <cybah> */
   (Function) NULL,
   (Function) killchanset,
   (Function) u_delinvite,
@@ -1022,8 +865,8 @@ char *channels_start(Function * global_funcs)
   if (!module_depend(MODULE_NAME, "eggdrop", 105, 0))
     return "This module needs eggdrop1.5.0 or later";
   add_hook(HOOK_MINUTELY, check_expired_bans);
-  add_hook(HOOK_MINUTELY,check_expired_exempts);
-  add_hook(HOOK_MINUTELY,check_expired_invites);
+  add_hook(HOOK_MINUTELY, check_expired_exempts);
+  add_hook(HOOK_MINUTELY, check_expired_invites);
   add_hook(HOOK_USERFILE, channels_writeuserfile);
   add_hook(HOOK_REHASH, channels_rehash);
   add_hook(HOOK_PRE_REHASH, channels_prerehash);
