@@ -7,7 +7,7 @@
  * 
  * dprintf'ized, 15nov1995
  * 
- * $Id: main.c,v 1.17 1999/12/25 16:18:19 fabian Exp $
+ * $Id: main.c,v 1.18 2000/01/01 19:23:47 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -613,7 +613,7 @@ static void event_resettraffic()
   otraffic_dcc_today = otraffic_unknown_today = 0;
   itraffic_irc_today = itraffic_bn_today = 0;
   itraffic_dcc_today = itraffic_unknown_today = 0;
-  itraffic_trans_today = 0;
+  itraffic_trans_today = otraffic_trans_today = 0;
 }
 
 void kill_tcl();
