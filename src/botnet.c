@@ -7,7 +7,7 @@
  *   linking, unlinking, and relaying to another bot
  *   pinging the bots periodically and checking leaf status
  * 
- * $Id: botnet.c,v 1.22 2000/05/06 22:00:31 fabian Exp $
+ * $Id: botnet.c,v 1.23 2000/05/07 00:08:03 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1296,7 +1296,7 @@ static void failed_pre_relay(int idx)
     killsock(dcc[tidx].sock);
     lostdcc(tidx);
   } else {
-    fatal("Lost my terminal??!?!?!", 0);
+    fatal("Lost my terminal?!", 0);
   }
   killsock(dcc[idx].sock);
   lostdcc(idx);

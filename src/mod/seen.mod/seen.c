@@ -10,7 +10,7 @@
  * 1.2     1997-08-20      Minor fixes. [BB]
  * 1.2a    1997-08-24      Minor fixes. [BB]
  * 
- * $Id: seen.c,v 1.15 2000/03/23 23:17:58 fabian Exp $
+ * $Id: seen.c,v 1.16 2000/05/07 00:08:03 fabian Exp $
  */
 /* 
  * Copyright (C) 1999, 2000  Eggheads
@@ -161,7 +161,7 @@ static void do_seen(int idx, char *prefix, char *nick, char *hand,
   struct chanset_t *chan;
   struct laston_info *li;
   struct chanuserrec *cr;
-  memberlist *m;
+  memberlist *m = NULL;
   int onchan = 0;
   int i;
   time_t laston = 0;

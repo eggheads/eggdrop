@@ -63,6 +63,7 @@ Instructions:
      ( ) BeOS
      ( ) BSD/OS
      ( ) Cygwin
+     ( ) Dell SVR4
      ( ) FreeBSD
      ( ) HP-UX
      ( ) IRIX
@@ -70,7 +71,7 @@ Instructions:
      ( ) Linux
      ( ) Lynx
      ( ) NetBSD
-     ( ) Next
+     ( ) NeXT
      ( ) OpenBSD
      ( ) OSF
      ( ) QNX

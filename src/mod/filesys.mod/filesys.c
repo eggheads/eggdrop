@@ -2,7 +2,7 @@
  * filesys.c -- part of filesys.mod
  *   main file of the filesys eggdrop module
  * 
- * $Id: filesys.c,v 1.28 2000/04/25 20:46:16 fabian Exp $
+ * $Id: filesys.c,v 1.29 2000/05/07 00:08:03 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -386,7 +386,7 @@ static int _dcc_send(int idx, char *filename, char *nick, char *dir,
     return 0;
   }
   if (x == DCCSEND_BADFN) {
-    dprintf(idx, "File not found (???)\n");
+    dprintf(idx, "File not found ?\n");
     putlog(LOG_FILES, "*", "DCC file not found: %sGET %s [%s]", filename,
 	   resend ? "RE" : "", dcc[idx].nick);
     return 0;

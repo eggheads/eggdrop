@@ -1,7 +1,7 @@
 dnl aclocal.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: aclocal.m4,v 1.16 2000/03/23 23:10:25 fabian Exp $
+dnl $Id: aclocal.m4,v 1.17 2000/05/07 00:08:03 fabian Exp $
 dnl
 
 
@@ -173,6 +173,13 @@ case "$egg_cv_var_system" in
       AC_DEFINE(HPUX10_HACKS)dnl
     fi
     ;;
+  dell)
+    AC_MSG_RESULT(Dell SVR4)
+    SHLIB_STRIP=touch
+    NEED_DL=0
+    MOD_LD="gcc -lelf -lucb"
+    fi
+    ;; 
   IRIX)
     AC_MSG_RESULT(you are cursed with IRIX)
     IRIX=yes
