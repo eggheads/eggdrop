@@ -617,6 +617,8 @@ static int expmem_dcc_general(void *x)
       q = q->next;
     }
   }
+  if (p->su_nick)
+    tot += strlen(p->su_nick) + 1;
   return tot;
 }
 

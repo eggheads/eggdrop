@@ -454,6 +454,7 @@ static void notes_read(char *hand, char *nick, char *srd, int idx)
   int ix = 1;
   int ir = 0;
   int rd[128];			/* is it enough ? */
+  int i;
 
   if (srd[0] == 0)
     srd = "-";
@@ -475,8 +476,9 @@ static void notes_read(char *hand, char *nick, char *srd, int idx)
   notes_parse(rd, srd);
   while (!feof(f)) {
     fgets(s, 600, f);
-    if (s[strlen(s) - 1] == '\n')
-      s[strlen(s) - 1] = 0;
+    i = strlen(s);
+    if (i && s[i - 1] == '\n')
+      s[i - 1] = 0;
     if (!feof(f)) {
       rmspace(s);
       if ((s[0]) && (s[0] != '#') && (s[0] != ';')) {	/* not comment */

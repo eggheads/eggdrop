@@ -57,6 +57,9 @@ void rmspace(char *s)
 #define whitespace(c) ( ((c)==32) || ((c)==9) || ((c)==13) || ((c)==10) )
   char *p;
 
+  if (*s == '\0')
+	return;
+
   /* wipe end of string */
   for (p = s + strlen(s) - 1; ((whitespace(*p)) && (p >= s)); p--);
   if (p != s + strlen(s) - 1)
