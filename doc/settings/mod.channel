@@ -240,8 +240,12 @@ channel set <chan> +/-<setting>
       it's annoying; i think it's neat)
 
      revenge
-      remember people who deop/kick/ban the bot or valid ops, and punish
-      them? Users with +f (friend) flag are exempt from revenge
+      remember people who deop/kick/ban the bot, valid ops or friends, and 
+      punish them? Users with +f (friend) flag are exempt from revenge
+
+     revengebot
+      this works similar to to the 'revenge' option, but it only triggers
+      if a bot got deoped, kicked or banned
 
      autovoice
       voice users with +v (voice) flag when they join the channel?

@@ -1,11 +1,15 @@
 Compiling FAQ
   ------------------------------------------------------------------------
 
+Woohoo, you're among the few people who actually read the docs, applause.
+
+
 EGGDROP AND TCL COMPILING ERRORS AND RESOLUTION FAQ
 (in other words, maybe this FAQ will help you get eggdrop compiled). by
 various contributors. If you think something should be added, please send
-en E-Mail to eggheads@eggheads.org!
-Last revised: March 21 2000
+an E-Mail to eggdev@eggheads.org or check http://www.eggheads.org/bugzilla
+if your issue is already covered there.
+Last revised: 20 August 2000
 
 Eggdrop related Questions
 
@@ -20,6 +24,8 @@ Eggdrop related Questions
           (AIX 3)
        8. UNSATISFIED SYMBOLS 'shl_findsym' and 'shl_load'  (HP-UX 9)
        9. Bot doesn't compile on Ultrix
+      10. Bot crashes at startup with msg "net.c/708" for example
+      11. I get lot's of warnings
 
 Tcl related questions
 
@@ -33,7 +39,7 @@ Tcl related questions
   ------------------------------------------------------------------------
 
 A. EGGDROP
-1. UNDEFINED REFERENCES IN NET.O  (Sun OS)
+ 1. UNDEFINED REFERENCES IN NET.O  (Sun OS)
 
 
        Undefined      first
@@ -74,7 +80,7 @@ A. EGGDROP
      nsl.  This
      will resolve the net.o errors.
 
-2. COMPILE STOPS AT THE LAST MINUTE WITH "LD FATAL SIGNAL 11"!  (Linux)
+ 2. COMPILE STOPS AT THE LAST MINUTE WITH "LD FATAL SIGNAL 11"!  (Linux)
 
      This seems to be caused by a non-ELF Tcl library binary, and the
      compiler doesn't seem to like it.  The first thing you want to do is
@@ -119,7 +125,7 @@ A. EGGDROP
      And then finally run configure again for eggdrop and then make, and
      hopefully it will work.
 
-3. LD: -ltcl7.4: EXPECTED LIBX.SO(.MAJOR.MINOR.XXX)  (various)
+ 3. LD: -ltcl7.4: EXPECTED LIBX.SO(.MAJOR.MINOR.XXX)  (various)
 
         ld: -ltcl7.4: expected libx.so(.major.minor.xxx)
         collect2: ld returned 4 exit status
@@ -161,7 +167,7 @@ A. EGGDROP
 
      Did I say finally?  Heh, finally run configure and then make again.
 
-4. STRIP TERMINATED WITH SIGNAL 6  (various)
+ 4. STRIP TERMINATED WITH SIGNAL 6  (various)
 
         collect2: strip terminated with signal 6 [IOT/Abort trap]
         *** Exit 1
@@ -188,7 +194,7 @@ A. EGGDROP
      -ltcl -lm' \
              'TCLLIB=${TCLLIB}' 'RANLIB=ranlib' 'STRIP='
 
-5. 'DIR' UNDECLARED (AND A WHOLE BUNCH OF OTHERS)   (AIX 4)
+ 5. 'DIR' UNDECLARED (AND A WHOLE BUNCH OF OTHERS)   (AIX 4)
 
         gcc -c -O2 -fno-strength-reduce -I.. -DHAVE_CONFIG_H  filedb.c
         filedb.c: In function `filedb_update':
@@ -222,7 +228,7 @@ A. EGGDROP
 
      CFLGS = -DHAVE_DIRENT_H -DHAVE_SYS_DIR_H
 
-6. 'FD_SET' UNDECLARED (AND A WHOLE BUNCH OF OTHERS)   (AIX 4)
+ 6. 'FD_SET' UNDECLARED (AND A WHOLE BUNCH OF OTHERS)   (AIX 4)
 
         gcc -c -O2 -fno-strength-reduce -I.. -DHAVE_CONFIG_H
      -DHAVE_DIRENT_H -DHAVE_SYS_DIR_H net.c
@@ -246,7 +252,7 @@ A. EGGDROP
      continuing onward, but I am not just anyone, I am a blockhead...
      <grin>)
 
-7. UNRESOLVED OR UNDEFINED SYMBOLS: ldclose, ldopen, ldnshread  (AIX 3)
+ 7. UNRESOLVED OR UNDEFINED SYMBOLS: ldclose, ldopen, ldnshread  (AIX 3)
 
      cc -s -o eggdrop chan.o chanprog.o chanset.o cmds.o dcc.o dccutil.o
      filedb.o fileq.o files.o gotdcc.o hash.o main.o match.o mem.o misc.o
@@ -281,7 +287,7 @@ A. EGGDROP
      -L/home2/f/foster/lib -ltcl7.5 -lm'\
              'TCLLIB=${TCLLIB}' 'RANLIB=ranlib' 'STRIP=-s'
 
-8. UNSATISFIED SYMBOLS 'shl_findsym' and 'shl_load'  (HP-UX 9)
+ 8. UNSATISFIED SYMBOLS 'shl_findsym' and 'shl_load'  (HP-UX 9)
 
         gcc -s -o eggdrop chan.o chanprog.o chanset.o cmds.o dcc.o
      dccutil.o filedb.o fileq.o files.o gotdcc.o hash.o main.o match.o
@@ -323,11 +329,29 @@ A. EGGDROP
      library which
      apparently resolves this problem.
 
-9. Bot doesn't compile on Ultrix
+ 9. Bot doesn't compile on Ultrix
 
      There are some known problems with make and Eggdrop on Ultrix systems.
      Try to use gmake instead. Additionally sh5 should be use, a simple
      'gmake SHELL=/bin/sh5' should be enough.
+
+10. Bot crashes at startup with msg "net.c/708" for example
+
+     On some not IA32 systems the gcc options -O2 and -O3 cause that. We don't
+     know why this happens but sometimes it helps to remove those options from
+     the Makefile. Just give it a try.
+     Ah well, drop us a note if you know why, so we can extend the info here.
+     
+11. I get lot's of warnings
+
+     Well, warnings are warning, nothing really bad. As long as the compile runs
+     through, there is nothing to worry about. Generally we try to avoid warnings,
+     but we do not have time to fix all of them in the code. This might change in 
+     the future, but at the moment you have to live with them.
+     If you feel like fixing them, do so and send us a patch (as described in
+     doc/patch-HOWTO). Thanks.
+
+
 
   ------------------------------------------------------------------------
 

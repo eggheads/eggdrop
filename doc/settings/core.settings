@@ -161,6 +161,13 @@ set quiet-save 0
     Valid settings are 0 for OFF and 1 ON.
 
 
+set logfile-suffix ".%d%b%Y"
+    If keep-all-logs is 1, this setting will define the suffix of the logfiles.
+    The default will result in a suffix like "04May2000". "%Y%m%d" will produce
+    the often used yyyymmdd format. Read the strtime manpages for more options.
+    NOTE: On systems which don't support strftime, the default format will
+    be used _always_.
+
 
 ##### FILES AND DIRECTORIES #####
 
