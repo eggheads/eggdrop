@@ -30,6 +30,7 @@ extern char ver[];
 extern char botnetnick[];
 extern time_t now;
 extern int default_flags, default_uflags;
+extern int quiet_save;
 
 int noshare = 1;		/* don't send out to sharebots */
 int sort_users = 0;		/* sort the userlist when saving */
@@ -555,7 +556,8 @@ void write_userfile(int idx)
     putlog(LOG_MISC, "*", USERF_ERRWRITE);
     return;
   }
-  putlog(LOG_MISC, "*", USERF_WRITING);
+  if (!quiet_save)
+    putlog(LOG_MISC, "*", USERF_WRITING);
   if (sort_users)
     sort_userlist();
   tt = now;

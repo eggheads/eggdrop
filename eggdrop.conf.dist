@@ -112,6 +112,10 @@ set keep-all-logs 0
 # something you probably don't want.]
 set switch-logfiles-at 300
 
+# [0/1] enable quiet saves? "Writing user file..." and "Writing channel file ..."
+# will not be logged if this option is enabled.
+set quiet-save 0
+
 # this is the default console mode -- what masters will see automatically
 # when they dcc chat with the bot (masters can alter their own console
 # flags once they connect, though) -- it uses the same event flags as

@@ -25,6 +25,7 @@ static char chanfile[121] = "chanfile";
 static Function *global = NULL;
 static int chan_hack = 0;
 static int must_be_owner = 0;
+static int quiet_save = 0;
 
 /* global channel settings (drummer/dw) */
 static char glob_chanset[512] = "\
@@ -317,7 +318,8 @@ static void write_channels()
     putlog(LOG_MISC, "*", "ERROR writing channel file.");
     return;
   }
-  putlog(LOG_MISC, "*", "Writing channel file ...");
+  if (!quiet_save)  
+    putlog(LOG_MISC, "*", "Writing channel file ...");
   fprintf(f, "#Dynamic Channel File for %s (%s) -- written %s\n",
 	  origbotname, ver, ctime(&now));
   for (chan = chanset; chan; chan = chan->next) {
@@ -727,6 +729,7 @@ static tcl_ints my_tcl_ints[] =
   {"exempt-time", &exempt_time, 0},
   {"invite-time", &invite_time, 0},
   {"must-be-owner", &must_be_owner, 0},
+  {"quiet-save", &quiet_save, 0},
   {0, 0, 0}
 };
 

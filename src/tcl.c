@@ -73,6 +73,7 @@ int max_dcc_port = 65535;	/* dcc-portrange, max port - dw/guppy */
 int quick_logs = 0;		/* quick write logs?
 				 * flush em every min instead of every 5 */
 int par_telnet_flood = 1;       /* trigger telnet flood for +f ppl? - dw */
+int quiet_save = 0;             /* quiet-save patch by Lucas */
 
 /* prototypes for tcl */
 Tcl_Interp *Tcl_CreateInterp();
@@ -415,6 +416,7 @@ static tcl_ints def_tcl_ints[] =
   {"paranoid-telnet-flood", &par_telnet_flood, 0},
   {"use-exempts", &use_exempts, 0}, /* Jason/drummer */
   {"use-invites", &use_invites, 0}, /* Jason/drummer */
+  {"quiet-save", &quiet_save, 0}, /* Lucas */
   {"force-expire", &force_expire, 0}, /* Rufus */
   {0, 0, 0}			/* arthur2 */
 };
