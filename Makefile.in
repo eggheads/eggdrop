@@ -72,7 +72,7 @@ dist: clean
 	@rm -f Makefile config.cache config.log config.status config.h lush.h
 	@rm -f doc/*~
 	@echo "all:" >Makefile
-	@echo "	@./configure; make install" >>Makefile
+	@echo "	@./configure; make" >>Makefile
 
 eggdrop: modegg modules
 
