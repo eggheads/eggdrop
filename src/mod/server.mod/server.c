@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  *
- * $Id: server.c,v 1.106 2004/01/09 05:56:38 wcc Exp $
+ * $Id: server.c,v 1.107 2004/01/09 08:23:53 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -95,7 +95,7 @@ static int optimize_kicks;
 
 
 static p_tcl_bind_list H_wall, H_raw, H_notc, H_msgm, H_msg, H_flud, H_ctcr,
-                      H_ctcp;
+                       H_ctcp;
 
 static void empty_msgq(void);
 static void next_server(int *, char *, unsigned int *, char *);
@@ -157,8 +157,10 @@ static void deq_msg()
       burst--;
     ok = 1;
   }
+
   if (serv < 0)
     return;
+
   /* Send upto 4 msgs to server if the *critical queue* has anything in it */
   if (modeq.head) {
     while (modeq.head && (burst < 4) && ((last_time - now) < MAXPENALTY)) {
@@ -173,12 +175,13 @@ static void deq_msg()
         continue;
       }
       tputs(serv, modeq.head->msg, modeq.head->len);
-      if (raw_log) {
-        modeq.head->msg[strlen(modeq.head->msg) - 1] = 0;       /* delete the "\n" */
-        putlog(LOG_SRVOUT, "*", "[m->] %s", modeq.head->msg);
-      }
       modeq.tot--;
       last_time += calc_penalty(modeq.head->msg);
+      if (raw_log) {
+        if (modeq.head->msg[strlen(modeq.head->msg) - 1 == '\n')
+          modeq.head->msg[strlen(modeq.head->msg) - 1 = 0;
+        putlog(LOG_SRVOUT, "*", "[m->] %s", modeq.head->msg);
+      }
       q = modeq.head->next;
       nfree(modeq.head->msg);
       nfree(modeq.head);
@@ -199,12 +202,13 @@ static void deq_msg()
     if (fast_deq(DP_SERVER))
       return;
     tputs(serv, mq.head->msg, mq.head->len);
-    if (raw_log) {
-      mq.head->msg[strlen(mq.head->msg) - 1] = 0;       /* delete the "\n" */
-      putlog(LOG_SRVOUT, "*", "[s->] %s", mq.head->msg);
-    }
     mq.tot--;
     last_time += calc_penalty(mq.head->msg);
+    if (raw_log) {
+      if (mq.head->msg[strlen(mq.head->msg) - 1] == '\n')
+        mq.head->msg[strlen(mq.head->msg) - 1] = 0;
+      putlog(LOG_SRVOUT, "*", "[s->] %s", mq.head->msg);
+    }
     q = mq.head->next;
     nfree(mq.head->msg);
     nfree(mq.head);
@@ -223,12 +227,13 @@ static void deq_msg()
   if (fast_deq(DP_HELP))
     return;
   tputs(serv, hq.head->msg, hq.head->len);
-  if (raw_log) {
-    hq.head->msg[strlen(hq.head->msg) - 1] = 0; /* delete the "\n" */
-    putlog(LOG_SRVOUT, "*", "[h->] %s", hq.head->msg);
-  }
   hq.tot--;
   last_time += calc_penalty(hq.head->msg);
+  if (raw_log) {
+    if (hq.head->msg[strlen(hq.head->msg) - 1] == '\n')
+      hq.head->msg[strlen(hq.head->msg) - 1] = 0;
+    putlog(LOG_SRVOUT, "*", "[h->] %s", hq.head->msg);
+  }
   q = hq.head->next;
   nfree(hq.head->msg);
   nfree(hq.head);
@@ -424,11 +429,11 @@ static int fast_deq(int which)
     /* If use_fastdeq is 2, only commands in the list should be stacked. */
     if (use_fastdeq == 2 && !found)
       return 0;
-    /* If use_fastdeq is 3, only commands that are _not_ in the list
-     * should be stacked.
-     */
+
+    /* If use_fastdeq is 3, only commands _not_ in the list should be stacked. */
     if (use_fastdeq == 3 && found)
       return 0;
+
     /* we check for the stacking method (default=1) */
     strncpyz(stackable, stackable2cmds, sizeof stackable);
     stckbl = stackable;
@@ -484,8 +489,10 @@ static int fast_deq(int which)
     if (!h->head)
       h->last = 0;
     h->tot--;
+    last_time += calc_penalty(tosend);
     if (raw_log) {
-      tosend[len - 1] = 0;
+      if (tosend[len - 1] == '\n')
+        tosend[len - 1] = 0;
       switch (which) {
       case DP_MODE:
         putlog(LOG_SRVOUT, "*", "[m=>] %s", tosend);
@@ -498,7 +505,6 @@ static int fast_deq(int which)
         break;
       }
     }
-    last_time += calc_penalty(tosend);
     return 1;
   }
   return 0;
@@ -610,7 +616,7 @@ static void purge_kicks(struct msgq_head *q)
           egg_snprintf(newnicks, sizeof newnicks, "%s,%s", newnicks, nick);
         else {
           putlog(LOG_SRVOUT, "*", "%s isn't on any target channel, removing "
-                 "kick...", nick);
+                 "kick.", nick);
           changed = 1;
         }
       }
@@ -654,6 +660,7 @@ static int deq_kick(int which)
 
   if (!optimize_kicks)
     return 0;
+
   newnicks[0] = 0;
   switch (which) {
   case DP_MODE:
@@ -668,15 +675,19 @@ static int deq_kick(int which)
   default:
     return 0;
   }
+
   if (egg_strncasecmp(h->head->msg, "KICK", 4))
     return 0;
+
   if (optimize_kicks == 2) {
     purge_kicks(h);
     if (!h->head)
       return 1;
   }
+
   if (egg_strncasecmp(h->head->msg, "KICK", 4))
     return 0;
+
   msg = h->head;
   strncpyz(buf, msg->msg, sizeof buf);
   reason = buf;
@@ -694,7 +705,7 @@ static int deq_kick(int which)
       newnicks2[0] = 0;
       strncpyz(buf2, m->msg, sizeof buf2);
       if (buf2[0] && (buf2[strlen(buf2) - 1] == '\n'))
-        buf2[strlen(buf2) - 1] = '\0';
+        buf2[strlen(buf2) - 1] = 0;
       reason2 = buf2;
       newsplit(&reason2);
       chan2 = newsplit(&reason2);
@@ -702,9 +713,8 @@ static int deq_kick(int which)
       if (!egg_strcasecmp(chan, chan2) && !egg_strcasecmp(reason, reason2)) {
         while (strlen(nicks) > 0) {
           nick = splitnicks(&nicks);
-          if ((nr < kick_method) &&
-              ((9 + strlen(chan) + strlen(newnicks) + strlen(nick) +
-              strlen(reason)) < 510)) {
+          if ((nr < kick_method) && ((9 + strlen(chan) + strlen(newnicks) +
+              strlen(nick) + strlen(reason)) < 510)) {
             egg_snprintf(newnicks, sizeof newnicks, "%s,%s", newnicks, nick);
             nr++;
             changed = 1;
@@ -743,8 +753,11 @@ static int deq_kick(int which)
   egg_snprintf(newmsg, sizeof newmsg, "KICK %s %s %s\n", chan, newnicks + 1,
                reason);
   tputs(serv, newmsg, strlen(newmsg));
+  h->tot--;
+  last_time += calc_penalty(newmsg);
   if (raw_log) {
-    newmsg[strlen(newmsg) - 1] = 0;
+    if (newmsg[strlen(newmsg) - 1] == '\n')
+      newmsg[strlen(newmsg) - 1] = 0;
     switch (which) {
     case DP_MODE:
       putlog(LOG_SRVOUT, "*", "[m->] %s", newmsg);
@@ -758,8 +771,6 @@ static int deq_kick(int which)
     }
     debug3("Changed: %d, kick-method: %d, nr: %d", changed, kick_method, nr);
   }
-  h->tot--;
-  last_time += calc_penalty(newmsg);
   m = h->head->next;
   nfree(h->head->msg);
   nfree(h->head);
@@ -779,7 +790,7 @@ static void empty_msgq()
   burst = 0;
 }
 
-/* Use when sending msgs... will spread them out so there's no flooding.
+/* Queues outgoing messages so there's no flooding.
  */
 static void queue_server(int which, char *buf, int len)
 {
@@ -790,10 +801,11 @@ static void queue_server(int which, char *buf, int len)
   /* Don't even BOTHER if there's no server online. */
   if (serv < 0)
     return;
+
   /* No queue for PING and PONG - drummer */
   if (!egg_strncasecmp(buf, "PING", 4) || !egg_strncasecmp(buf, "PONG", 4)) {
     if (buf[1] == 'I' || buf[1] == 'i')
-      lastpingtime = now;       /* lagmeter */
+      lastpingtime = now;
     tputs(serv, buf, len);
     if (raw_log) {
       if (buf[len - 1] == '\n')
@@ -806,122 +818,120 @@ static void queue_server(int which, char *buf, int len)
   switch (which) {
   case DP_MODE_NEXT:
     qnext = 1;
-    /* Fallthrough */
   case DP_MODE:
     h = &modeq;
     tempq = modeq;
     if (double_mode)
       doublemsg = 1;
     break;
-
   case DP_SERVER_NEXT:
     qnext = 1;
-    /* Fallthrough */
   case DP_SERVER:
     h = &mq;
     tempq = mq;
     if (double_server)
       doublemsg = 1;
     break;
-
   case DP_HELP_NEXT:
     qnext = 1;
-    /* Fallthrough */
   case DP_HELP:
     h = &hq;
     tempq = hq;
     if (double_help)
       doublemsg = 1;
     break;
-
   default:
-    putlog(LOG_MISC, "*", "!!! queuing unknown type to server!!");
+    putlog(LOG_MISC, "*", "Warning: queuing unknown type to server!");
     return;
   }
 
   if (h->tot < maxqmsg) {
     /* Don't queue msg if it's already queued?  */
-    if (!doublemsg)
+    if (!doublemsg) {
       for (tq = tempq.head; tq; tq = tqq) {
         tqq = tq->next;
         if (!egg_strcasecmp(tq->msg, buf)) {
           if (!double_warned) {
             if (buf[len - 1] == '\n')
               buf[len - 1] = 0;
-            debug1("msg already queued. skipping: %s", buf);
+            debug1("Message already queued; skipping: %s", buf);
             double_warned = 1;
           }
           return;
         }
       }
+    }
 
     q = nmalloc(sizeof(struct msgq));
     if (qnext)
       q->next = h->head;
     else
       q->next = NULL;
+
     if (h->head) {
       if (!qnext)
         h->last->next = q;
     } else
       h->head = q;
+
     if (qnext)
       h->head = q;
+
     h->last = q;
     q->len = len;
     q->msg = nmalloc(len + 1);
-    strncpyz(q->msg, buf, len + 1);
+    strncpyz(q->msg, buf, len);
     h->tot++;
     h->warned = 0;
     double_warned = 0;
+
+    if (raw_log) {
+      if (buf[len - 1] == '\n')
+        buf[len - 1] = 0;
+      switch (which) {
+      case DP_MODE:
+        putlog(LOG_SRVOUT, "*", "[!m] %s", buf);
+        break;
+      case DP_SERVER:
+        putlog(LOG_SRVOUT, "*", "[!s] %s", buf);
+        break;
+      case DP_HELP:
+        putlog(LOG_SRVOUT, "*", "[!h] %s", buf);
+        break;
+      case DP_MODE_NEXT:
+        putlog(LOG_SRVOUT, "*", "[!!m] %s", buf);
+        break;
+      case DP_SERVER_NEXT:
+        putlog(LOG_SRVOUT, "*", "[!!s] %s", buf);
+        break;
+      case DP_HELP_NEXT:
+        putlog(LOG_SRVOUT, "*", "[!!h] %s", buf);
+        break;
+      }
+    }
   } else {
     if (!h->warned) {
       switch (which) {
       case DP_MODE_NEXT:
         /* Fallthrough */
       case DP_MODE:
-        putlog(LOG_MISC, "*", "!!! OVER MAXIMUM MODE QUEUE");
+        putlog(LOG_MISC, "*", "Warning: over maximum mode queue!");
         break;
 
       case DP_SERVER_NEXT:
         /* Fallthrough */
       case DP_SERVER:
-        putlog(LOG_MISC, "*", "!!! OVER MAXIMUM SERVER QUEUE");
+        putlog(LOG_MISC, "*", "Warning: over maximum server queue!");
         break;
 
       case DP_HELP_NEXT:
         /* Fallthrough */
       case DP_HELP:
-        putlog(LOG_MISC, "*", "!!! OVER MAXIMUM HELP QUEUE");
+        putlog(LOG_MISC, "*", "Warning: over maximum help queue!");
         break;
       }
     }
     h->warned = 1;
-  }
-
-  if (raw_log && !h->warned) {
-    if (buf[len - 1] == '\n')
-      buf[len - 1] = 0;
-    switch (which) {
-    case DP_MODE:
-      putlog(LOG_SRVOUT, "*", "[!m] %s", buf);
-      break;
-    case DP_SERVER:
-      putlog(LOG_SRVOUT, "*", "[!s] %s", buf);
-      break;
-    case DP_HELP:
-      putlog(LOG_SRVOUT, "*", "[!h] %s", buf);
-      break;
-    case DP_MODE_NEXT:
-      putlog(LOG_SRVOUT, "*", "[!!m] %s", buf);
-      break;
-    case DP_SERVER_NEXT:
-      putlog(LOG_SRVOUT, "*", "[!!s] %s", buf);
-      break;
-    case DP_HELP_NEXT:
-      putlog(LOG_SRVOUT, "*", "[!!h] %s", buf);
-      break;
-    }
   }
 
   if (which == DP_MODE || which == DP_MODE_NEXT)
@@ -1079,7 +1089,7 @@ static int server_5char STDVAR
   Function F = (Function) cd;
 
   BADARGS(6, 6, " nick user@host handle dest/channel text");
-  
+
   CHECKVALIDITY(server_5char);
   F(argv[1], argv[2], argv[3], argv[4], argv[5]);
   return TCL_OK;
@@ -1090,7 +1100,7 @@ static int server_2char STDVAR
   Function F = (Function) cd;
 
   BADARGS(3, 3, " nick msg");
-  
+
   CHECKVALIDITY(server_2char);
   F(argv[1], argv[2]);
   return TCL_OK;
@@ -1101,7 +1111,7 @@ static int server_msg STDVAR
   Function F = (Function) cd;
 
   BADARGS(5, 5, " nick uhost hand buffer");
-  
+
   CHECKVALIDITY(server_msg);
   F(argv[1], argv[2], get_user_by_handle(userlist, argv[3]), argv[4]);
   return TCL_OK;
