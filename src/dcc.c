@@ -1115,7 +1115,6 @@ static void dcc_telnet(int idx, char *buf, int i)
   dcc[i].u.dns->dns_type = RES_HOSTBYIP;
   dcc[i].u.dns->ibuf = dcc[idx].sock;
   dcc[i].u.dns->type = &DCC_IDENTWAIT;
-
   dns_hostbyip(ip);
 }
 

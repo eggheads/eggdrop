@@ -1002,8 +1002,7 @@ static char *tcl_eggserver(ClientData cdata, Tcl_Interp * irp, char *name1,
   Tcl_UntraceVar(interp,name,TCL_TRACE_READS|TCL_TRACE_WRITES|TCL_TRACE_UNSETS, \
 	       tcl_eggserver,(ClientData)ptr)
 
-static void dcc_chat_failure(int);
-static void dcc_chat_success(int);
+static void dcc_chat_hostresolved(int);
 
 /* this only handles CHAT requests, otherwise it's handled in filesys */
 static int ctcp_DCC_CHAT(char *nick, char *from, char *handle,
@@ -1062,23 +1061,15 @@ static int ctcp_DCC_CHAT(char *nick, char *from, char *handle,
     dcc[i].user = u;
     dcc[i].u.dns->ip = dcc[i].addr;
     dcc[i].u.dns->dns_type = RES_HOSTBYIP;
-    dcc[i].u.dns->dns_success = (Function) dcc_chat_success;
-    dcc[i].u.dns->dns_failure = (Function) dcc_chat_failure;
+    dcc[i].u.dns->dns_success = (Function) dcc_chat_hostresolved;
+    dcc[i].u.dns->dns_failure = (Function) dcc_chat_hostresolved;
     dcc[i].u.dns->type = &DCC_CHAT_PASS;
-
     dns_hostbyip(dcc[i].addr);
   }
   return 1;
 }
 
-static void dcc_chat_failure(int i)
-{
-  putlog(LOG_DEBUG, "*", "Reverse lookup failed %s",
-	 iptostr(my_htonl(dcc[i].addr)));
-  lostdcc(i);
-}
-
-static void dcc_chat_success(int i)
+static void dcc_chat_hostresolved(int i)
 {
   char buf[512], ip[512];
   struct flag_record fr = {FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0};

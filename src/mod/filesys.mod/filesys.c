@@ -608,8 +608,7 @@ static struct dcc_table DCC_FILES_PASS =
 };
 
 
-static void filesys_dcc_send_lookupfailure(int);
-static void filesys_dcc_send_lookupsuccess(int);
+static void filesys_dcc_send_hostresolved(int);
 	
 /* received a ctcp-dcc */
 static void filesys_dcc_send(char *nick, char *from, struct userrec *u,
@@ -683,21 +682,13 @@ static void filesys_dcc_send(char *nick, char *from, struct userrec *u,
       dcc[i].u.dns->ibuf = atoi(msg);
       dcc[i].u.dns->ip = dcc[i].addr;
       dcc[i].u.dns->dns_type = RES_HOSTBYIP;
-      dcc[i].u.dns->dns_success = (Function) filesys_dcc_send_lookupsuccess;
-      dcc[i].u.dns->dns_failure = (Function) filesys_dcc_send_lookupfailure;
+      dcc[i].u.dns->dns_success = (Function) filesys_dcc_send_hostresolved;
+      dcc[i].u.dns->dns_failure = (Function) filesys_dcc_send_hostresolved;
       dcc[i].u.dns->type = &DCC_FORK_SEND;
-      
       dns_hostbyip(dcc[i].addr);
     }
   }
   nfree(buf);
-}
-
-static void filesys_dcc_send_lookupfailure(int i)
-{
-    putlog(LOG_DEBUG, "*", "Reverse lookup failed for %s",
-           iptostr(my_htonl(dcc[i].addr)));
-    lostdcc(i);
 }
 
 /* Create a temporary filename with random elements. Shortens
@@ -730,7 +721,7 @@ static char *mktempfile(char *filename)
   return tempname;
 }
 
-static void filesys_dcc_send_lookupsuccess(int i)
+static void filesys_dcc_send_hostresolved(int i)
 {
   FILE *f;
   char *s1, *param, prt[100], ip[100], *tempf;

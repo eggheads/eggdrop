@@ -938,7 +938,6 @@ int botlink(char *linker, int idx, char *nick)
       dcc[i].u.dns->dns_failure = (Function) botlink_resolve_failure;
       dcc[i].u.dns->dns_type = RES_IPBYHOST;
       dcc[i].u.dns->type = &DCC_FORK_BOT;
-
       dns_ipbyhost(bi->address);
       return 1;
     }
@@ -1073,7 +1072,6 @@ void tandem_relay(int idx, char *nick, int i)
   dcc[i].u.dns->dns_failure = (Function) tandem_relay_resolve_failure;
   dcc[i].u.dns->dns_type = RES_IPBYHOST;
   dcc[i].u.dns->type = &DCC_FORK_RELAY;
-
   dns_ipbyhost(bi->address);
 }
 
