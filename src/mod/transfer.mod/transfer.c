@@ -1,7 +1,7 @@
 /*
  * transfer.c -- part of transfer.mod
  *
- * $Id: transfer.c,v 1.66 2003/04/17 01:55:57 wcc Exp $
+ * $Id: transfer.c,v 1.67 2003/08/06 18:17:56 stdarg Exp $
  *
  * Copyright (C) 1997 Robey Pointer
  * Copyright (C) 1999, 2000, 2001, 2002, 2003 Eggheads Development Team
@@ -983,6 +983,8 @@ static int raw_dcc_resend_send(char *filename, char *nick, char *from,
 
   zz = -1;
   dccfile = fopen(filename, "r");
+  if (!dccfile)
+    return DCCSEND_BADFN;
   fseek(dccfile, 0, SEEK_END);
   dccfilesize = ftell(dccfile);
   fclose(dccfile);
