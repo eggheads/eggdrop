@@ -1,7 +1,7 @@
 dnl aclocal.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: aclocal.m4,v 1.17 2000/05/07 00:08:03 fabian Exp $
+dnl $Id: aclocal.m4,v 1.18 2000/05/07 00:18:36 fabian Exp $
 dnl
 
 
@@ -178,7 +178,6 @@ case "$egg_cv_var_system" in
     SHLIB_STRIP=touch
     NEED_DL=0
     MOD_LD="gcc -lelf -lucb"
-    fi
     ;; 
   IRIX)
     AC_MSG_RESULT(you are cursed with IRIX)
