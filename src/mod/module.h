@@ -1,7 +1,7 @@
 /*
  * module.h
  *
- * $Id: module.h,v 1.80 2004/01/09 05:56:37 wcc Exp $
+ * $Id: module.h,v 1.81 2004/01/09 12:07:23 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -477,6 +477,7 @@
 #define oatoi ((int (*) (const char *))global[291])
 /* 292 - 295 */
 #define str_isdigit ((int (*) (const char *))global[292])
+#define remove_crlf ((void (*)(char **))global[293])
 
 /* hostmasking */
 #define maskhost(a,b) _maskhost((a),(b),1)

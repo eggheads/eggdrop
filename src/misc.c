@@ -7,7 +7,7 @@
  *   help system
  *   motd display and %var substitution
  *
- * $Id: misc.c,v 1.68 2004/01/09 05:56:37 wcc Exp $
+ * $Id: misc.c,v 1.69 2004/01/09 12:07:22 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -257,6 +257,18 @@ char *splitnick(char **blah)
     return q;
   }
   return "";
+}
+
+void remove_crlf(char **line)
+{
+  char *p;
+
+  p = strchr(*line, '\n');
+  if (p != NULL)
+    *p = 0;
+  p = strchr(*line, '\r');
+  if (p != NULL)
+    *p = 0;
 }
 
 char *newsplit(char **rest)

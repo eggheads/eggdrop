@@ -2,7 +2,7 @@
  * net.c -- handles:
  *   all raw network i/o
  *
- * $Id: net.c,v 1.60 2003/11/01 23:26:57 wcc Exp $
+ * $Id: net.c,v 1.61 2004/01/09 12:07:22 wcc Exp $
  */
 /*
  * This is hereby released into the public domain.
@@ -923,42 +923,33 @@ void tputs(register int z, char *s, unsigned int len)
   char *p;
   static int inhere = 0;
 
-  if (z < 0)
-    return;                     /* um... HELLO?!  sanity check please! */
+  if (z < 0) /* um... HELLO?! sanity check please! */
+    return;
+
   if (((z == STDOUT) || (z == STDERR)) && (!backgrd || use_stderr)) {
     write(z, s, len);
     return;
   }
+
   for (i = 0; i < MAXSOCKS; i++) {
     if (!(socklist[i].flags & SOCK_UNUSED) && (socklist[i].sock == z)) {
       for (idx = 0; idx < dcc_total; idx++) {
-        if (dcc[idx].sock == z) {
-          if (dcc[idx].type) {
-            if (dcc[idx].type->name) {
-              if (!strncmp(dcc[idx].type->name, "BOT", 3)) {
-                otraffic_bn_today += len;
-                break;
-              } else if (!strcmp(dcc[idx].type->name, "SERVER")) {
-                otraffic_irc_today += len;
-                break;
-              } else if (!strncmp(dcc[idx].type->name, "CHAT", 4)) {
-                otraffic_dcc_today += len;
-                break;
-              } else if (!strncmp(dcc[idx].type->name, "FILES", 5)) {
-                otraffic_filesys_today += len;
-                break;
-              } else if (!strcmp(dcc[idx].type->name, "SEND")) {
-                otraffic_trans_today += len;
-                break;
-              } else if (!strncmp(dcc[idx].type->name, "GET", 3)) {
-                otraffic_trans_today += len;
-                break;
-              } else {
-                otraffic_unknown_today += len;
-                break;
-              }
-            }
-          }
+        if ((dcc[idx].sock == z) && dcc[idx].type && dcc[idx].type->name) {
+          if (!strncmp(dcc[idx].type->name, "BOT", 3))
+            otraffic_bn_today += len;
+          else if (!strcmp(dcc[idx].type->name, "SERVER"))
+            otraffic_irc_today += len;
+          else if (!strncmp(dcc[idx].type->name, "CHAT", 4))
+            otraffic_dcc_today += len;
+          else if (!strncmp(dcc[idx].type->name, "FILES", 5))
+            otraffic_filesys_today += len;
+          else if (!strcmp(dcc[idx].type->name, "SEND"))
+            otraffic_trans_today += len;
+          else if (!strncmp(dcc[idx].type->name, "GET", 3))
+            otraffic_trans_today += len;
+          else
+            otraffic_unknown_today += len;
+          break;
         }
       }
 

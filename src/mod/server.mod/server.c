@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  *
- * $Id: server.c,v 1.108 2004/01/09 09:48:33 tothwolf Exp $
+ * $Id: server.c,v 1.109 2004/01/09 12:07:23 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -101,6 +101,7 @@ static void empty_msgq(void);
 static void next_server(int *, char *, unsigned int *, char *);
 static void disconnect_server(int);
 static char *get_altbotnick(void);
+static void write_to_server(char *, int);
 static int calc_penalty(char *);
 static int fast_deq(int);
 static char *splitnicks(char **);
@@ -174,14 +175,11 @@ static void deq_msg()
         burst++;
         continue;
       }
-      tputs(serv, modeq.head->msg, modeq.head->len);
+      write_to_server(modeq.head->msg, modeq.head->len);
       modeq.tot--;
       last_time += calc_penalty(modeq.head->msg);
-      if (raw_log) {
-        if (modeq.head->msg[strlen(modeq.head->msg) - 1 == '\n')
-          modeq.head->msg[strlen(modeq.head->msg) - 1 = 0;
+      if (raw_log)
         putlog(LOG_SRVOUT, "*", "[m->] %s", modeq.head->msg);
-      }
       q = modeq.head->next;
       nfree(modeq.head->msg);
       nfree(modeq.head);
@@ -192,23 +190,25 @@ static void deq_msg()
       modeq.last = 0;
     return;
   }
+
   /* Send something from the normal msg q even if we're slightly bursting */
   if (burst > 1)
     return;
+
   if (mq.head) {
     burst++;
+
     if (deq_kick(DP_SERVER))
       return;
+
     if (fast_deq(DP_SERVER))
       return;
-    tputs(serv, mq.head->msg, mq.head->len);
+
+    write_to_server(mq.head->msg, mq.head->len);
     mq.tot--;
     last_time += calc_penalty(mq.head->msg);
-    if (raw_log) {
-      if (mq.head->msg[strlen(mq.head->msg) - 1] == '\n')
-        mq.head->msg[strlen(mq.head->msg) - 1] = 0;
+    if (raw_log)
       putlog(LOG_SRVOUT, "*", "[s->] %s", mq.head->msg);
-    }
     q = mq.head->next;
     nfree(mq.head->msg);
     nfree(mq.head);
@@ -217,23 +217,24 @@ static void deq_msg()
       mq.last = NULL;
     return;
   }
+
   /* Never send anything from the help queue unless everything else is
    * finished.
    */
   if (!hq.head || burst || !ok)
     return;
+
   if (deq_kick(DP_HELP))
     return;
+
   if (fast_deq(DP_HELP))
     return;
-  tputs(serv, hq.head->msg, hq.head->len);
+
+  write_to_server(hq.head->msg, hq.head->len);
   hq.tot--;
   last_time += calc_penalty(hq.head->msg);
-  if (raw_log) {
-    if (hq.head->msg[strlen(hq.head->msg) - 1] == '\n')
-      hq.head->msg[strlen(hq.head->msg) - 1] = 0;
+  if (raw_log)
     putlog(LOG_SRVOUT, "*", "[h->] %s", hq.head->msg);
-  }
   q = hq.head->next;
   nfree(hq.head->msg);
   nfree(hq.head);
@@ -247,11 +248,10 @@ static int calc_penalty(char *msg)
   char *cmd, *par1, *par2, *par3;
   register int penalty, i, ii;
 
-  if (!use_penalties &&
-      net_type != NETT_UNDERNET && net_type != NETT_HYBRID_EFNET)
+  if (!use_penalties && net_type != NETT_UNDERNET &&
+      net_type != NETT_HYBRID_EFNET)
     return 0;
-  if (msg[strlen(msg) - 1] == '\n')
-    msg[strlen(msg) - 1] = '\0';
+
   cmd = newsplit(&msg);
   if (msg)
     i = strlen(msg);
@@ -365,7 +365,7 @@ static int calc_penalty(char *msg)
   if (penalty > 99)
     penalty = 99;
   if (penalty < 2) {
-    putlog(LOG_SRVOUT, "*", "Penalty < 2sec, that's impossible!");
+    putlog(LOG_SRVOUT, "*", "Penalty < 2sec; that's impossible!");
     penalty = 2;
   }
   if (raw_log && penalty != 0)
@@ -401,6 +401,7 @@ static int fast_deq(int which)
 
   if (!use_fastdeq)
     return 0;
+
   switch (which) {
   case DP_MODE:
     h = &modeq;
@@ -414,6 +415,7 @@ static int fast_deq(int which)
   default:
     return 0;
   }
+
   m = h->head;
   strncpyz(msgstr, m->msg, sizeof msgstr);
   msg = msgstr;
@@ -421,11 +423,13 @@ static int fast_deq(int which)
   if (use_fastdeq > 1) {
     strncpyz(stackable, stackablecmds, sizeof stackable);
     stckbl = stackable;
-    while (strlen(stckbl) > 0)
+    while (strlen(stckbl) > 0) {
       if (!egg_strcasecmp(newsplit(&stckbl), cmd)) {
         found = 1;
         break;
       }
+    }
+
     /* If use_fastdeq is 2, only commands in the list should be stacked. */
     if (use_fastdeq == 2 && !found)
       return 0;
@@ -445,8 +449,6 @@ static int fast_deq(int which)
   }
   to = newsplit(&msg);
   len = strlen(to);
-  if (to[len - 1] == '\n')
-    to[len - 1] = 0;
   simple_sprintf(victims, "%s", to);
   while (m) {
     nm = m->next;
@@ -457,8 +459,6 @@ static int fast_deq(int which)
     nextcmd = newsplit(&nextmsg);
     nextto = newsplit(&nextmsg);
     len = strlen(nextto);
-    if (nextto[len - 1] == '\n')
-      nextto[len - 1] = 0;
     if (strcmp(to, nextto) &&!strcmp(cmd, nextcmd) && !strcmp(msg, nextmsg) &&
         ((strlen(cmd) + strlen(victims) + strlen(nextto) + strlen(msg) + 2) <
         510) && (!stack_limit || cmd_count < stack_limit - 1)) {
@@ -480,8 +480,7 @@ static int fast_deq(int which)
   if (doit) {
     simple_sprintf(tosend, "%s %s %s", cmd, victims, msg);
     len = strlen(tosend);
-    tosend[len - 1] = '\n';
-    tputs(serv, tosend, len);
+    write_to_server(tosend, len);
     m = h->head->next;
     nfree(h->head->msg);
     nfree(h->head);
@@ -491,8 +490,6 @@ static int fast_deq(int which)
     h->tot--;
     last_time += calc_penalty(tosend);
     if (raw_log) {
-      if (tosend[len - 1] == '\n')
-        tosend[len - 1] = 0;
       switch (which) {
       case DP_MODE:
         putlog(LOG_SRVOUT, "*", "[m=>] %s", tosend);
@@ -512,14 +509,14 @@ static int fast_deq(int which)
 
 static void check_queues(char *oldnick, char *newnick)
 {
-  if (optimize_kicks == 2) {
-    if (modeq.head)
-      parse_q(&modeq, oldnick, newnick);
-    if (mq.head)
-      parse_q(&mq, oldnick, newnick);
-    if (hq.head)
-      parse_q(&hq, oldnick, newnick);
-  }
+  if (optimize_kicks != 2)
+    return;
+  if (modeq.head)
+    parse_q(&modeq, oldnick, newnick);
+  if (mq.head)
+    parse_q(&mq, oldnick, newnick);
+  if (hq.head)
+    parse_q(&hq, oldnick, newnick);
 }
 
 static void parse_q(struct msgq_head *q, char *oldnick, char *newnick)
@@ -533,8 +530,6 @@ static void parse_q(struct msgq_head *q, char *oldnick, char *newnick)
     if (optimize_kicks == 2 && !egg_strncasecmp(m->msg, "KICK ", 5)) {
       newnicks[0] = 0;
       strncpyz(buf, m->msg, sizeof buf);
-      if (buf[0] && (buf[strlen(buf) - 1] == '\n'))
-        buf[strlen(buf) - 1] = '\0';
       msg = buf;
       newsplit(&msg);
       chan = newsplit(&msg);
@@ -550,7 +545,7 @@ static void parse_q(struct msgq_head *q, char *oldnick, char *newnick)
         } else
           egg_snprintf(newnicks, sizeof newnicks, ",%s", nick);
       }
-      egg_snprintf(newmsg, sizeof newmsg, "KICK %s %s %s\n", chan,
+      egg_snprintf(newmsg, sizeof newmsg, "KICK %s %s %s", chan,
                    newnicks + 1, msg);
     }
     if (changed) {
@@ -593,8 +588,6 @@ static void purge_kicks(struct msgq_head *q)
       newnicks[0] = 0;
       changed = 0;
       strncpyz(buf, m->msg, sizeof buf);
-      if (buf[0] && (buf[strlen(buf) - 1] == '\n'))
-        buf[strlen(buf) - 1] = '\0';
       reason = buf;
       newsplit(&reason);
       chan = newsplit(&reason);
@@ -615,7 +608,7 @@ static void purge_kicks(struct msgq_head *q)
         if (found)
           egg_snprintf(newnicks, sizeof newnicks, "%s,%s", newnicks, nick);
         else {
-          putlog(LOG_SRVOUT, "*", "%s isn't on any target channel, removing "
+          putlog(LOG_SRVOUT, "*", "%s isn't on any target channel; removing "
                  "kick.", nick);
           changed = 1;
         }
@@ -634,7 +627,7 @@ static void purge_kicks(struct msgq_head *q)
             q->last = 0;
         } else {
           nfree(m->msg);
-          egg_snprintf(newmsg, sizeof newmsg, "KICK %s %s %s\n", chan,
+          egg_snprintf(newmsg, sizeof newmsg, "KICK %s %s %s", chan,
                        newnicks + 1, reason);
           m->msg = nmalloc(strlen(newmsg) + 1);
           m->len = strlen(newmsg);
@@ -704,8 +697,6 @@ static int deq_kick(int which)
       changed = 0;
       newnicks2[0] = 0;
       strncpyz(buf2, m->msg, sizeof buf2);
-      if (buf2[0] && (buf2[strlen(buf2) - 1] == '\n'))
-        buf2[strlen(buf2) - 1] = 0;
       reason2 = buf2;
       newsplit(&reason2);
       chan2 = newsplit(&reason2);
@@ -736,7 +727,7 @@ static int deq_kick(int which)
             h->last = 0;
         } else {
           nfree(m->msg);
-          egg_snprintf(newmsg, sizeof newmsg, "KICK %s %s %s\n", chan2,
+          egg_snprintf(newmsg, sizeof newmsg, "KICK %s %s %s", chan2,
                        newnicks2 + 1, reason);
           m->msg = nmalloc(strlen(newmsg) + 1);
           m->len = strlen(newmsg);
@@ -750,14 +741,12 @@ static int deq_kick(int which)
     else
       m = h->head->next;
   }
-  egg_snprintf(newmsg, sizeof newmsg, "KICK %s %s %s\n", chan, newnicks + 1,
+  egg_snprintf(newmsg, sizeof newmsg, "KICK %s %s %s", chan, newnicks + 1,
                reason);
-  tputs(serv, newmsg, strlen(newmsg));
+  write_to_server(newmsg, strlen(newmsg));
   h->tot--;
   last_time += calc_penalty(newmsg);
   if (raw_log) {
-    if (newmsg[strlen(newmsg) - 1] == '\n')
-      newmsg[strlen(newmsg) - 1] = 0;
     switch (which) {
     case DP_MODE:
       putlog(LOG_SRVOUT, "*", "[m->] %s", newmsg);
@@ -802,16 +791,19 @@ static void queue_server(int which, char *buf, int len)
   if (serv < 0)
     return;
 
+  /* Remove \r\n. We will add these back when we send the text to the server.
+   * - Wcc [01/09/2004]
+   */
+  remove_crlf(&buf);
+  buf[510] = 0;
+
   /* No queue for PING and PONG - drummer */
   if (!egg_strncasecmp(buf, "PING", 4) || !egg_strncasecmp(buf, "PONG", 4)) {
     if (buf[1] == 'I' || buf[1] == 'i')
       lastpingtime = now;
-    tputs(serv, buf, len);
-    if (raw_log) {
-      if (buf[len - 1] == '\n')
-        buf[len - 1] = 0;
+    write_to_server(buf, len);
+    if (raw_log)
       putlog(LOG_SRVOUT, "*", "[m->] %s", buf);
-    }
     return;
   }
 
@@ -861,8 +853,6 @@ static void queue_server(int which, char *buf, int len)
         tqq = tq->next;
         if (!egg_strcasecmp(tq->msg, buf)) {
           if (!double_warned) {
-            if (buf[len - 1] == '\n')
-              buf[len - 1] = 0;
             debug1("Message already queued; skipping: %s", buf);
             double_warned = 1;
           }
@@ -895,8 +885,6 @@ static void queue_server(int which, char *buf, int len)
     double_warned = 0;
 
     if (raw_log) {
-      if (buf[len - 1] == '\n')
-        buf[len - 1] = 0;
       switch (which) {
       case DP_MODE:
         putlog(LOG_SRVOUT, "*", "[!m] %s", buf);
@@ -945,6 +933,17 @@ static void queue_server(int which, char *buf, int len)
 
   if (which == DP_MODE || which == DP_MODE_NEXT)
     deq_msg(); /* DP_MODE needs to be sent ASAP, flush if possible. */
+}
+
+static void write_to_server(char *buf, int len)
+{
+  char buf2[513];
+
+  strncpyz(buf2, buf, len);
+  buf2[len + 1] = '\r';
+  buf2[len + 2] = '\n';
+  buf2[513] = 0;
+  tputs(serv, buf, len);
 }
 
 /* Add a new server to the server_list.
