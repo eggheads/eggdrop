@@ -2,7 +2,7 @@
  * tcluser.c -- handles:
  *   Tcl stubs for the user-record-oriented commands
  *
- * $Id: tcluser.c,v 1.26 2001/11/03 21:58:18 guppy Exp $
+ * $Id: tcluser.c,v 1.27 2001/11/05 03:54:35 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -86,18 +86,12 @@ static int tcl_chattr STDVAR
     user.match = FR_GLOBAL | FR_CHAN;
     chan = argv[3];
     chg = argv[2];
-  } else if (argc == 3 && argv[2][0] &&
-             strchr(CHANMETA, argv[2][0]) != NULL) {
-    /* We need todo extra checking here to stop us mixing up +channel's
-     * with flags. <cybah>
-     */
-    if (!findchan_by_dname(argv[2]) && argv[2][0] != '+') {
-      /* Channel doesnt exist, and it cant possibly be flags as there
-       * is no + at the start of the string.
-       */
+  } else if (argc == 3 && argv[2][0]) {
+    int ischan = (findchan_by_dname(argv[2]) != NULL);
+    if (strchr(CHANMETA, argv[2][0]) && !ischan && argv[2][0] != '+' && argv[2][0] != '-') {
       Tcl_AppendResult(irp, "no such channel", NULL);
       return TCL_ERROR;
-    } else if(findchan_by_dname(argv[2])) {
+    } else if (ischan) {
       /* Channel exists */
       user.match = FR_GLOBAL | FR_CHAN;
       chan = argv[2];
