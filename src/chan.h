@@ -31,9 +31,11 @@ typedef struct memstruct {
 #define SENTDEOP    0x0010	/* a mode -o was already sent out for
 				   * this user */
 #define SENTKICK    0x0020	/* a kick was already sent out for this user */
-#define SENTVOICE   0x0040	/* a voice has been sent since a deop */
+#define SENTVOICE   0x0040	/* a mode +v was already sent out for
+				   * this user */
 #define SENTDEVOICE 0x0080	/* a devoice has been sent */
 #define WASOP       0x0100	/* was an op before a split */
+#define STOPWHO     0x0200
 
 #define chan_hasvoice(x) (x->flags & CHANVOICE)
 #define chan_hasop(x) (x->flags & CHANOP)
@@ -42,6 +44,7 @@ typedef struct memstruct {
 #define chan_sentdeop(x) (x->flags & SENTDEOP)
 #define chan_sentkick(x) (x->flags & SENTKICK)
 #define chan_sentvoice(x) (x->flags & SENTVOICE)
+#define chan_sentdevoice(x) (x->flags & SENTDEVOICE)
 #define chan_issplit(x) (x->split > 0)
 #define chan_wasop(x) (x->flags & WASOP)
 

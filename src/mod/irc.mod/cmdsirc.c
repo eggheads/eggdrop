@@ -167,8 +167,10 @@ static void cmd_kickban(struct userrec *u, int idx, char *par)
 	dprintf(idx, "%s is another channel bot!\n", nick);
 	return;
       }
-      if (m->flags & CHANOP)
+      if (m->flags & CHANOP) {
 	add_mode(chan, '-', 'o', m->nick);
+	m->flags |= SENTDEOP;
+      }
       switch (bantype) {
 	case '@':
 	  s1 = strchr(s, '@');
@@ -192,6 +194,7 @@ static void cmd_kickban(struct userrec *u, int idx, char *par)
       if (!par[0])
 	par = "requested";
       dprintf(DP_SERVER, "KICK %s %s :%s\n", chan->name, m->nick, par);
+      m->flags |= SENTKICK;
       u_addban(chan, s1, dcc[idx].nick, par, now + (60 * ban_time), 0);
       dprintf(idx, "Okay, done.\n");
     }
@@ -226,6 +229,7 @@ static void cmd_voice(struct userrec *u, int idx, char *par)
   }
   simple_sprintf(s, "%s!%s", m->nick, m->userhost);
   add_mode(chan, '+', 'v', nick);
+  m->flags |= SENTVOICE;
   dprintf(idx, "Gave voice to %s on %s\n", nick, chan->name);
 }
 
@@ -257,6 +261,7 @@ static void cmd_devoice(struct userrec *u, int idx, char *par)
   }
   simple_sprintf(s, "%s!%s", m->nick, m->userhost);
   add_mode(chan, '-', 'v', nick);
+  m->flags |= SENTDEVOICE;
   dprintf(idx, "Devoiced %s on %s\n", nick, chan->name);
 }
 
@@ -299,6 +304,7 @@ static void cmd_op(struct userrec *u, int idx, char *par)
     return;
   }
   add_mode(chan, '+', 'o', nick);
+  m->flags |= SENTOP;
   dprintf(idx, "Gave op to %s on %s\n", nick, chan->name);
 }
 
@@ -346,6 +352,7 @@ static void cmd_deop(struct userrec *u, int idx, char *par)
     return;
   }
   add_mode(chan, '-', 'o', nick);
+  m->flags |= SENTDEOP;
   dprintf(idx, "Took op from %s on %s\n", nick, chan->name);
 }
 
@@ -403,6 +410,7 @@ static void cmd_kick(struct userrec *u, int idx, char *par)
     return;
   }
   dprintf(DP_SERVER, "KICK %s %s :%s\n", chan->name, m->nick, par);
+  m->flags |= SENTKICK;
   dprintf(idx, "Okay, done.\n");
 }
 
@@ -748,8 +756,10 @@ static void cmd_adduser(struct userrec *u, int idx, char *par)
     get_user_flagrec(u, &user, chan->name);
     if (!(m->flags & CHANOP) &&
 	(chan_op(user) || (glob_op(user) && !chan_deop(user))) &&
-	(channel_autoop(chan) || glob_autoop(user) || chan_autoop(user)))
+	(channel_autoop(chan) || glob_autoop(user) || chan_autoop(user))) {
       add_mode(chan, '+', 'o', m->nick);
+      m->flags |= SENTOP;
+   }
   }
   putlog(LOG_CMDS, "*", "#%s# adduser %s %s", dcc[idx].nick, nick,
 	 hand == nick ? "" : hand);

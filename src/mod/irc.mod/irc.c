@@ -1,5 +1,5 @@
 /*
- * irc.c - part of channels.mod
+ * irc.c - part of irc.mod
  * support for channels withing the bot 
  */
 
@@ -602,9 +602,11 @@ static void check_expired_chanstuff()
 	  get_user_flagrec(m->user, &fr, chan->name);
 	  if (!(glob_bot(fr) || glob_friend(fr) ||
 		(glob_op(fr) && !glob_deop(fr)) ||
-		chan_friend(fr) || chan_op(fr)))
+		chan_friend(fr) || chan_op(fr))) {
 	    dprintf(DP_SERVER, "KICK %s %s :idle %d min\n", chan->name,
 		    m->nick, chan->idle_kick);
+	    m->flags |= SENTKICK;
+	  }
 	}
 	m = m->next;
       }

@@ -164,6 +164,7 @@ static int msg_ident(char *nick, char *host, struct userrec *u, char *par)
 {
   char s[121], s1[121], *pass, who[NICKLEN];
   struct userrec *u2;
+  memberlist *mx;
 
   if (match_my_nick(nick))
     return 1;
@@ -220,8 +221,11 @@ static int msg_ident(char *nick, char *host, struct userrec *u, char *par)
 	/* is the channel or the user marked auto-op? */
 	if ((channel_autoop(chan) || glob_autoop(fr) || chan_autoop(fr)) &&
 	/* are they actually validly +o ? */
-	    (chan_op(fr) || (glob_op(fr) && !chan_deop(fr))))
+	    (chan_op(fr) || (glob_op(fr) && !chan_deop(fr)))) {
 	  add_mode(chan, '+', 'o', nick);
+          mx = ismember(chan, nick);
+	  mx->flags |= SENTOP;
+	}
 	chan = chan->next;
       }
       return 1;
@@ -593,6 +597,7 @@ static int msg_op(char *nick, char *host, struct userrec *u, char *par)
 	      !chan_hasop(mx) &&
 	      (chan_op(fr) || (glob_op(fr) && !chan_deop(fr)))) {
 	    add_mode(chan, '+', 'o', nick);
+	    mx->flags |= SENTOP;
 	    putlog(LOG_CMDS, "*", "(%s!%s) !%s! OP %s",
 		   nick, host, u->handle, par);
 	  }
@@ -606,6 +611,7 @@ static int msg_op(char *nick, char *host, struct userrec *u, char *par)
 	      !chan_hasop(mx) &&
 	      (chan_op(fr) || (glob_op(fr) && !chan_deop(fr)))) {
 	    add_mode(chan, '+', 'o', nick);
+	    mx->flags |= SENTOP;
 	  }
 	  chan = chan->next;
 	}
@@ -689,6 +695,7 @@ static int msg_voice(char *nick, char *host, struct userrec *u, char *par)
 	      !chan_hasvoice(mx) &&
 	      (chan_voice(fr) || (glob_voice(fr)))) {
 	    add_mode(chan, '+', 'v', nick);
+	    mx->flags |= SENTVOICE;
 	    putlog(LOG_CMDS, "*", "(%s!%s) !%s! VOICE %s",
 		   nick, host, u->handle, par);
 	  }
@@ -702,6 +709,7 @@ static int msg_voice(char *nick, char *host, struct userrec *u, char *par)
 	      !chan_hasvoice(mx) &&
 	      (chan_voice(fr) || (glob_voice(fr)))) {
 	    add_mode(chan, '+', 'v', nick);
+	    mx->flags |= SENTVOICE;
 	  }
 	  chan = chan->next;
 	}

@@ -133,12 +133,14 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
 {
   char h[UHOSTLEN], ftype[12], *p;
   struct userrec *u;
+  memberlist *m;
   int thr = 0, lapse = 0;
   struct flag_record fr =
   {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
 
   if (!chan || (which < 0) || (which >= FLOOD_CHAN_MAX))
     return 0;
+  m = ismember(chan, floodnick); 
   get_user_flagrec(get_user_by_host(from), &fr, chan->name);
   context;
   if (glob_bot(fr) ||
@@ -240,13 +242,15 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
 	putlog(LOG_MODES, chan->name, IRC_FLOODKICK, floodnick);
 	dprintf(DP_MODE, "KICK %s %s :%s\n", chan->name, floodnick,
 		CHAN_FLOOD);
+	m->flags |= SENTKICK;
       }
       return 1;
     case FLOOD_JOIN:
     case FLOOD_NICK:
       simple_sprintf(h, "*!*@%s", p);
       if (!isbanned(chan, h) && me_op(chan)) {
-/*      add_mode(chan, '-', 'o', splitnick(&from)); */  /* useless - arthur2 */
+/*      add_mode(chan, '-', 'o', splitnick(&from));
+        m->flags |= SENTDEOP;                       */  /* useless - arthur2 */
 	do_ban(chan, h);
       }
       if ((u_match_ban(global_bans, from))
@@ -260,7 +264,7 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
       if (!channel_enforcebans(chan) && me_op(chan) && !isexempted(chan,h))
 	{
 	  char s[UHOSTLEN];
-	  memberlist *m = chan->channel.member;
+	  m = chan->channel.member;
 	  
 	  while (m->nick[0]) {
 	    sprintf(s, "%s!%s", m->nick, m->userhost);
@@ -279,6 +283,7 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
 	putlog(LOG_MODES, chan->name, "Kicking %s, for mass kick.", floodnick);
 	dprintf(DP_MODE, "KICK %s %s :%s\n", chan->name, floodnick,
 		IRC_MASSKICK);
+	m->flags |= SENTKICK;
       }
     return 1;
     case FLOOD_DEOP:
@@ -287,6 +292,7 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
 	       CHAN_MASSDEOP, CHAN_MASSDEOP_ARGS); 
 	dprintf(DP_MODE, "KICK %s %s :%s\n",
 		chan->name, floodnick, CHAN_MASSDEOP_KICK);
+	m->flags |= SENTKICK;
       }
       return 1;
     }
@@ -385,8 +391,10 @@ static void refresh_ban_kick(struct chanset_t *chan, char *user, char *nick)
     for (; u; u = u->next) {
       if (wild_match(u->banmask, user)) {
 	m = ismember(chan, nick);
-	if (m && chan_hasop(m))
+	if (m && chan_hasop(m)) {
 	  add_mode(chan, '-', 'o', nick);	/* guess it can't hurt */
+	  m->flags |= SENTDEOP;
+        }
 	do_ban(chan, u->banmask);
 	c[0] = 0;
 	if (u->desc && (u->desc[0] != '@')) {
@@ -606,26 +614,31 @@ static void recheck_channel(struct chanset_t *chan, int dobans)
 	/* if user is channel deop */
 	if (chan_deop(fr) ||
 	/* OR global deop and NOT channel op */
-	    (glob_deop(fr) && !chan_op(fr)))
+	    (glob_deop(fr) && !chan_op(fr))) {
 	  /* de-op! */
 	  add_mode(chan, '-', 'o', m->nick);
+	  m->flags |= SENTDEOP;
 	/* if channel mode is bitch */
-	else if (channel_bitch(chan) &&
+	} else if (channel_bitch(chan) &&
 	  /* AND the user isnt a channel op */
 		 (!chan_op(fr) &&
 	  /* AND the user isnt a global op, (or IS a chan deop) */
-		  !(glob_op(fr) && !chan_deop(fr))))
+		  !(glob_op(fr) && !chan_deop(fr)))) {
 	  /* de-op! mmmbop! */
 	  add_mode(chan, '-', 'o', m->nick);
+	  m->flags |= SENTDEOP;
+	    }
       }
       /* now lets look at de-op'd ppl */
       if (!chan_hasop(m) &&
       /* if they're an op, channel or global (without channel +d) */
 	  (chan_op(fr) || (glob_op(fr) && !chan_deop(fr))) &&
       /* and the channel is op on join, or they are auto-opped */
-	  (channel_autoop(chan) || (glob_autoop(fr) || chan_autoop(fr))))
+	  (channel_autoop(chan) || (glob_autoop(fr) || chan_autoop(fr)))) {
 	/* op them! */
 	add_mode(chan, '+', 'o', m->nick);
+	m->flags |= SENTOP;
+      }
       /* now lets check 'em vs bans */
       /* if we're enforcing bans */
       if (channel_enforcebans(chan) &&
@@ -647,17 +660,22 @@ static void recheck_channel(struct chanset_t *chan, int dobans)
 	p = get_user(&USERENTRY_COMMENT, m->user);
 	dprintf(DP_SERVER, "KICK %s %s :%s\n", chan->name, m->nick,
 		p ? p : IRC_POLITEKICK);
+	m->flags |= SENTKICK;
 	/* otherwise, lets check +v stuff if the llamas want it */
       } else if (!chan_hasvoice(m) && !chan_hasop(m)) {
 	if ((channel_autovoice(chan) && !chan_quiet(fr) && 
 	    (chan_voice(fr) || glob_voice(fr))) || 
-	    (!chan_quiet(fr) && (glob_gvoice(fr) || chan_gvoice(fr))))
+	    (!chan_quiet(fr) && (glob_gvoice(fr) || chan_gvoice(fr)))) {
 	  add_mode(chan, '+', 'v', m->nick);
+	  m->flags |= SENTVOICE;
+	  }
 	/* do they have a voice on the channel */
 	if (chan_hasvoice(m) &&
 	/* do they have the +q & no +v */
-	    (chan_quiet(fr) || (glob_quiet(fr) && !chan_voice(fr))))
+	    (chan_quiet(fr) || (glob_quiet(fr) && !chan_voice(fr)))) {
 	  add_mode(chan, '-', 'v', m->nick);
+	   m->flags |= SENTDEVOICE;
+	   }
       }
     }
     m = m->next;
@@ -831,6 +849,8 @@ static int got352or4(struct chanset_t *chan, char *user, char *host,
     m->flags |= CHANVOICE;	/* Yes */
   else
     m->flags &= ~CHANVOICE;
+  if (!(m->flags & (CHANVOICE | CHANOP)))
+    m->flags |= STOPWHO;
   if (match_my_nick(nick) && !waschanop && me_op(chan))
     recheck_channel(chan, 1);
   if (match_my_nick(nick) && any_ops(chan) && !me_op(chan) &&
@@ -846,8 +866,10 @@ static int got352or4(struct chanset_t *chan, char *user, char *host,
        (channel_bitch(chan) && !chan_op(fr) &&
 	!(glob_op(fr) && !chan_deop(fr)))) &&
   /* and of course it's not me */
-      !match_my_nick(nick))
+      !match_my_nick(nick)) {
     add_mode(chan, '-', 'o', nick);
+    m->flags |= SENTDEOP;
+  }
   /* if channel is enforce bans */
   if (channel_enforcebans(chan) &&
   /* and user matches a ban */
@@ -858,9 +880,11 @@ static int got352or4(struct chanset_t *chan, char *user, char *host,
       !chan_friend(fr) && !glob_friend(fr) &&
       !isexempted(chan, userhost) &&
       !(channel_dontkickops(chan) &&
-	(chan_op(fr) || (glob_op(fr) && !chan_deop(fr)))))	/* arthur2 */
+	(chan_op(fr) || (glob_op(fr) && !chan_deop(fr))))) {	/* arthur2 */
     /* *bewm* */
     dprintf(DP_SERVER, "KICK %s %s :%s\n", chan->name, nick, IRC_BANNED);
+    m->flags |= SENTKICK;
+  }
   /* if the user is a +k */
   else if ((chan_kick(fr) || glob_kick(fr)) &&
     /* and it's not me :) who'd set me +k anyway, a sicko? */
@@ -871,6 +895,7 @@ static int got352or4(struct chanset_t *chan, char *user, char *host,
     quickban(chan, userhost);
     dprintf(DP_SERVER, "KICK %s %s :%s\n", chan->name, nick,
 	    p ? p : IRC_POLITEKICK);
+    m->flags |= SENTKICK;
   }
   return 0;
 }
@@ -1408,9 +1433,11 @@ static int gotjoin(char *from, char *chname)
 	     || glob_autoop(fr) || chan_autoop(fr))) {
 	  /* give them a special surprise */
 	  add_mode(chan, '+', 'o', nick);
+	  m->flags |= SENTOP;
 	  /* also prevent +stopnethack automatically de-opping them */
 	  m->flags |= WASOP;
 	}
+    m->flags |= STOPWHO;
 	if (newmode) {
 	  putlog(LOG_JOIN, chname, "%s (%s) returned to %s (with +%s).",
 		 nick, uhost, chname, newmode);
@@ -1429,6 +1456,7 @@ static int gotjoin(char *from, char *chname)
 	strcpy(m->nick, nick);
 	strcpy(m->userhost, uhost);
 	m->user = u;
+    m->flags |= STOPWHO;
 	check_tcl_join(nick, uhost, u, chname);
 	if (newmode)
 	  do_embedded_mode(chan, nick, m, newmode);
@@ -1459,9 +1487,11 @@ static int gotjoin(char *from, char *chname)
 		if (ban_bogus)
 		  u_addban(chan, quickban(chan, uhost), origbotname,
 			   CHAN_BOGUSUSERNAME, now + (60 * ban_time), 0);
-		if (kick_bogus)
+		if (kick_bogus) {
 		  dprintf(DP_MODE, "KICK %s %s :%s\n",
 			  chname, nick, CHAN_BOGUSUSERNAME);
+		  m->flags |= SENTKICK;
+		}
 		return 0;
 	      }
 	  /* ok, the op-on-join,etc, tests...first only both if Im opped */
@@ -1478,6 +1508,7 @@ static int gotjoin(char *from, char *chname)
 		(channel_autoop(chan) || glob_autoop(fr) || chan_autoop(fr))) {
 	      /* yes! do the honors */
 	      add_mode(chan, '+', 'o', nick);
+	      m->flags |= SENTOP;
 	      m->flags |= WASOP;	/* nethack sanity */
 	      /* if it matches a ban, dispose of them */
 	    } else {
@@ -1492,10 +1523,13 @@ static int gotjoin(char *from, char *chname)
 		p = get_user(&USERENTRY_COMMENT, m->user);
 		dprintf(DP_MODE, "KICK %s %s :%s\n", chname, nick,
 			(p && (p[0] != '@')) ? p : IRC_COMMENTKICK);
+		m->flags |= SENTKICK;
 	      } else if ((channel_autovoice(chan) &&
 		 (chan_voice(fr) || (glob_voice(fr) && !chan_quiet(fr)))) ||
-		 ((glob_gvoice(fr) || chan_gvoice(fr)) && !chan_quiet(fr)))
+		 ((glob_gvoice(fr) || chan_gvoice(fr)) && !chan_quiet(fr))) {
 		add_mode(chan, '+', 'v', nick);
+		m->flags |= SENTVOICE;
+		 }
 	    }
 	  }
 	  /* don't re-display greeting if they've been on the channel
@@ -1623,11 +1657,13 @@ static int gotkick(char *from, char *msg)
       /* not kicking themselves ? */
 	  rfc_casecmp(whodid, nick) &&
       /* and Im opped ? */
-	  me_op(chan))
+	  me_op(chan)) {
 	dprintf(DP_MODE, "KICK %s %s :%s\n", chname,
 		whodid, IRC_PROTECT);
+	m->flags |= SENTKICK;
       putlog(LOG_MODES, chname, "%s kicked from %s by %s: %s", s1, chname,
 	     from, msg);
+    }
     }
     /* kicked ME?!? the sods! */
     if (match_my_nick(nick)) {
@@ -1802,13 +1838,14 @@ static int gotmsg(char *from, char *msg)
 	  (chan_op(fr) || (glob_op(fr) && !chan_deop(fr))))) {	/* arthur2 */
       m = ismember(chan, nick);
       if (m && !chan_sentkick(m)) {
-	m->flags |= SENTKICK;
 	if (ban_fun)
 	  u_addban(chan, quickban(chan, uhost), origbotname,
 		   IRC_FUNKICK, now + (60 * ban_time), 0);
-	if (kick_fun)
+	if (kick_fun) {
 	  dprintf(DP_SERVER, "KICK %s %s :%s\n",
 		  realto, nick, IRC_FUNKICK);	/* this can induce kickflood - arthur2 */
+	  m->flags |= SENTKICK;
+	}
       }
     }
     if (!ignoring) {
@@ -1929,13 +1966,14 @@ static int gotnotice(char *from, char *msg)
 	  (chan_op(fr) || (glob_op(fr) && !chan_deop(fr))))) {	/* arthur2 */
       m = ismember(chan, nick);
       if (m || !chan_sentkick(m)) {
-	m->flags |= SENTKICK;
 	if (ban_fun)
 	  u_addban(chan, quickban(chan, uhost), origbotname,
 		   IRC_FUNKICK, now + (60 * ban_time), 0);
-	if (kick_fun)
+	if (kick_fun) {
 	  dprintf(DP_SERVER, "KICK %s %s :%s\n",
 		  realto, nick, IRC_FUNKICK);	/* this can induce kickflood - arthur2 */
+	  m->flags |= SENTKICK;
+	}
       }
     }
     if (!ignoring)

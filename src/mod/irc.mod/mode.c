@@ -266,6 +266,7 @@ static void got_key(struct chanset_t *chan, char *nick, char *from,
 		    char *key)
 {
   int bogus = 0, i;
+  memberlist *m;
 
   if ((!nick[0]) && (bounce_modes))
     reversing = 1;
@@ -277,6 +278,8 @@ static void got_key(struct chanset_t *chan, char *nick, char *from,
   if (bogus && !match_my_nick(nick)) {
     putlog(LOG_MODES, chan->name, "%s on %s!", CHAN_BADCHANKEY, chan->name);
     dprintf(DP_MODE, "KICK %s %s :%s\n", chan->name, nick, CHAN_BADCHANKEY);
+    m = ismember(chan, nick);
+    m->flags |= SENTKICK;
   }
   if (((reversing) && !(chan->key_prot[0])) || (bogus) ||
       ((chan->mode_mns_prot & CHANKEY) &&
@@ -340,10 +343,10 @@ static void got_op(struct chanset_t *chan, char *nick, char *from,
     add_mode(chan, '-', 'o', who);
     m->flags |= SENTDEOP;
   }
-  if (chan_wasoptest(victim) || glob_wasoptest(victim) ||
+  if ((chan_wasoptest(victim) || glob_wasoptest(victim) ||
       chan_autoop(victim) || glob_autoop(victim) ||
       channel_autoop(chan) ||	/* drummer */
-      channel_wasoptest(chan)) {
+      channel_wasoptest(chan)) && !match_my_nick(who)) {
     /* 1.3.21 behavior: wasop test needed for stopnethack */
     if (!nick[0] && !chan_wasop(m) && !chan_sentdeop(m) &&
 	me_op(chan) && channel_stopnethack(chan)) {
@@ -444,9 +447,9 @@ static void got_deop(struct chanset_t *chan, char *nick, char *from,
     detect_chan_flood(nick, from, s1, chan, FLOOD_DEOP, who);
   /* having op hides your +v status -- so now that someone's lost ops,
    * check to see if they have +v */
-  if (!(m->flags & (CHANVOICE | SENTVOICE))) {
+  if (!(m->flags & (CHANVOICE | STOPWHO))) {
     dprintf(DP_MODE, "WHO %s\n", m->nick);
-    m->flags |= SENTVOICE;
+    m->flags |= STOPWHO;
   }
   /* was the bot deopped? */
   if (match_my_nick(who)) {
@@ -940,11 +943,13 @@ static void gotmode(char *from, char *msg)
 	    putlog(LOG_MODES, ch, CHAN_FAKEMODE, ch);
 	    dprintf(DP_MODE, "KICK %s %s :%s\n", ch, nick,
 		    CHAN_FAKEMODE_KICK);
+	    m->flags |= SENTKICK;
 	    reversing = 1;
 	  } else if (!chan_hasop(m)) {
 	    putlog(LOG_MODES, ch, CHAN_DESYNCMODE, ch);
 	    dprintf(DP_MODE, "KICK %s %s :%s\n", ch, nick,
 		    CHAN_DESYNCMODE_KICK);
+	    m->flags |= SENTKICK;
 	    reversing = 1;
 	  }
 	}
@@ -1085,10 +1090,13 @@ static void gotmode(char *from, char *msg)
 	      if (!glob_master(user) && !chan_master(user)) {
 		if (channel_autovoice(chan) &&
 		    (chan_quiet(victim) ||
-		     (glob_quiet(victim) && !chan_voice(victim))))
+		     (glob_quiet(victim) && !chan_voice(victim)))) {
 		  add_mode(chan, '-', 'v', op);
-		else if (reversing)
+		  m->flags |= SENTDEVOICE;
+		} else if (reversing) {
 		  add_mode(chan, '-', 'v', op);
+		  m->flags |= SENTDEVOICE;
+		   }
 	      }
 	    } else {
 	      m->flags &= ~SENTDEVOICE;
@@ -1097,10 +1105,13 @@ static void gotmode(char *from, char *msg)
 		if ((channel_autovoice(chan) && !chan_quiet(victim) &&
 		    (chan_voice(victim) || glob_voice(victim))) ||
 		    (!chan_quiet(victim) && 
-		    (glob_gvoice(victim) || chan_gvoice(victim))))
+		    (glob_gvoice(victim) || chan_gvoice(victim)))) {
 		  add_mode(chan, '+', 'v', op);
-		else if (reversing)
+		  m->flags |= SENTVOICE;
+		} else if (reversing) {
 		  add_mode(chan, '+', 'v', op);
+		  m->flags |= SENTVOICE;
+		 }
 	      }
 	    }
 	  }
