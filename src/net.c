@@ -2,7 +2,7 @@
  * net.c -- handles:
  *   all raw network i/o
  * 
- * $Id: net.c,v 1.19 2000/08/18 00:25:09 fabian Exp $
+ * $Id: net.c,v 1.20 2000/09/05 15:59:43 fabian Exp $
  */
 /* 
  * This is hereby released into the public domain.
@@ -205,7 +205,6 @@ int allocsock(int sock, int options)
 {
   int i;
 
-  Context;
   for (i = 0; i < MAXSOCKS; i++) {
     if (socklist[i].flags & SOCK_UNUSED) {
       /* yay!  there is table space */

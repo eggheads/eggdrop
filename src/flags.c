@@ -2,7 +2,7 @@
  * flags.c -- handles:
  *   all the flag matching/conversion functions in one neat package :)
  * 
- * $Id: flags.c,v 1.13 2000/03/23 23:17:55 fabian Exp $
+ * $Id: flags.c,v 1.14 2000/09/05 15:59:43 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -662,16 +662,13 @@ void get_user_flagrec(struct userrec *u, struct flag_record *fr,
 
   if (!u) {
     fr->global = fr->udef_global = fr->chan = fr->udef_chan = fr->bot = 0;
-
     return;
   }
   if (fr->match & FR_GLOBAL) {
     fr->global = u->flags;
-
     fr->udef_global = u->flags_udef;
   } else {
     fr->global = 0;
-
     fr->udef_global = 0;
   }
   if (fr->match & FR_BOT) {

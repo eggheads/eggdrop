@@ -1,7 +1,7 @@
 /* 
  * share.c -- part of share.mod
  * 
- * $Id: share.c,v 1.34 2000/08/06 14:47:20 fabian Exp $
+ * $Id: share.c,v 1.35 2000/09/05 15:59:43 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1632,36 +1632,41 @@ static void finish_share(int idx)
     u_delinvite(NULL, global_invites->mask, 1);
   while (global_exempts)
     u_delexempt(NULL, global_exempts->mask, 1);
-  for (chan = chanset;chan;chan=chan->next) {
+  for (chan = chanset; chan; chan = chan->next)
     if (channel_shared(chan)) {
       get_user_flagrec(dcc[j].user, &fr, chan->dname);
       if (bot_chan(fr) || bot_global(fr)) {
 	while (chan->bans)
 	  u_delban(chan, chan->bans->mask, 1);
 	while (chan->exempts)
-	  u_delexempt(chan,chan->exempts->mask,1);
+	  u_delexempt(chan, chan->exempts->mask, 1);
 	while (chan->invites)
-	  u_delinvite(chan,chan->invites->mask,1);
+	  u_delinvite(chan, chan->invites->mask, 1);
       }
     }
-  }
   noshare = 0;
   ou = userlist;		/* Save old user list			*/
   userlist = (void *) -1;	/* Do this to prevent .user messups	*/
+
   Context;
   /* Bot user pointers are updated to point to the new list, all others
-   * are set to NULL.
+   * are set to NULL. If our userfile will be overriden, just set _all_
+   * to NULL directly.
    */
-  for (i = 0; i < dcc_total; i++)
-    dcc[i].user = get_user_by_handle(u, dcc[i].nick);
+  if (u == NULL)
+    for (i = 0; i < dcc_total; i++)
+      dcc[i].user = NULL;
+  else
+    for (i = 0; i < dcc_total; i++)
+      dcc[i].user = get_user_by_handle(u, dcc[i].nick);
 
   /* Read the transferred userfile. Add entries to u, which already holds
    * the bot entries in non-override mode.
    */
   if (!readuserfile(dcc[idx].u.xfer->filename, &u)) {
     putlog(LOG_MISC, "*", "%s", USERF_CANTREAD);
-    userlist = NULL;		/* Leaving it at -1 would make the bot
-				   crash in other places.		*/
+    clear_userlist(u);
+    userlist = ou;		/* Reverting to old userlist.		 */
     return;
   }
   Context;
@@ -1693,7 +1698,7 @@ static void finish_share(int idx)
       set_user(&USERENTRY_BOTFL, u, NULL);
       set_user(&USERENTRY_PASS, u, NULL);
     } else if (u2 && !(u2->flags & (USER_BOT | USER_UNSHARED))) {
-      struct chanuserrec *cr, *cr2, *cr_old = NULL;
+      struct chanuserrec *cr, *cr_next, *cr_old = NULL;
       struct user_entry *ue;
 
       Context;
@@ -1705,25 +1710,26 @@ static void finish_share(int idx)
 
 	u->flags = (u2->flags & pgbm) | (u->flags & ~pgbm);
       }
-      for (cr = u2->chanrec; cr; cr = cr2) {
+      for (cr = u2->chanrec; cr; cr = cr_next) {
 	struct chanset_t *chan = findchan_by_dname(cr->channel);
-	int ok = 0;
 
-	cr2 = cr->next;
+	cr_next = cr->next;
 	if (chan) {
+	  int not_shared = 0;
+
 	  if (!channel_shared(chan))
-	    ok = 1;
+	    not_shared = 1;
 	  else {
 	    get_user_flagrec(dcc[j].user, &fr, chan->dname);
-	    if (chan && !bot_chan(fr) && !bot_global(fr))
-	      ok = 1;
+	    if (!bot_chan(fr) && !bot_global(fr))
+	      not_shared = 1;
 	  }
-	  if (ok) {
+	  if (not_shared) {
 	    del_chanrec(u, cr->channel);
 	    if (cr_old)
-	      cr_old->next = cr2;
+	      cr_old->next = cr_next;
 	    else
-	      u2->chanrec = cr2;
+	      u2->chanrec = cr_next;
 	    cr->next = u->chanrec;
 	    u->chanrec = cr;
 	  } else {

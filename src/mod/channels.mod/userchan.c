@@ -1,7 +1,7 @@
 /* 
  * userchan.c -- part of channels.mod
  * 
- * $Id: userchan.c,v 1.14 2000/06/20 19:54:54 fabian Exp $
+ * $Id: userchan.c,v 1.15 2000/09/05 15:59:43 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -291,8 +291,8 @@ static int u_delban(struct chanset_t *c, char *who, int doit)
 static int u_delexempt (struct chanset_t * c, char * who, int doit)
 {
   int j, i = 0;
-  maskrec * t;
-  maskrec ** u = c ? &(c->exempts) : &global_exempts;
+  maskrec *t;
+  maskrec **u = c ? &(c->exempts) : &global_exempts;
   
   if (!strchr(who,'!') && (j = atoi(who))) {
     j--;
@@ -321,7 +321,7 @@ static int u_delexempt (struct chanset_t * c, char * who, int doit)
 	shareout(NULL,"-e %s\n", who);
     }
     if (!c)
-      gexempt_total --;
+      gexempt_total--;
     nfree((*u)->mask);
     if ((*u)->desc)
       nfree((*u)->desc);
@@ -337,8 +337,8 @@ static int u_delexempt (struct chanset_t * c, char * who, int doit)
 static int u_delinvite (struct chanset_t * c, char * who, int doit)
 {
   int j, i = 0;
-  maskrec * t;
-  maskrec ** u = c ? &(c->invites) : &global_invites;
+  maskrec *t;
+  maskrec **u = c ? &(c->invites) : &global_invites;
   
   if (!strchr(who,'!') && (j = atoi(who))) {
     j--;

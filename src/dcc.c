@@ -4,7 +4,7 @@
  *   disconnect on a dcc socket
  *   ...and that's it!  (but it's a LOT)
  * 
- * $Id: dcc.c,v 1.32 2000/09/02 19:45:23 fabian Exp $
+ * $Id: dcc.c,v 1.33 2000/09/05 15:59:42 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1402,12 +1402,12 @@ static void dcc_telnet_id(int idx, char *buf, int atr)
     if (!require_p)
       ok = 1;
   }
-  if (glob_party(fr) || glob_bot(fr))
+  if (!ok && (glob_party(fr) || glob_bot(fr)))
     ok = 1;
-  if (glob_xfer(fr)) {
+  if (!ok && glob_xfer(fr)) {
     module_entry *me = module_find("filesys", 0, 0);
 
-    if (me && me->funcs[FILESYS_ISVALID] && (me->funcs[FILESYS_ISVALID]) ())
+    if (me && me->funcs[FILESYS_ISVALID] && (me->funcs[FILESYS_ISVALID])())
       ok = 1;
   }
   if (!ok) {

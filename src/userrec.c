@@ -4,7 +4,7 @@
  *   a bunch of functions to find and change user records
  *   change and check user (and channel-specific) flags
  * 
- * $Id: userrec.c,v 1.23 2000/08/27 18:52:26 fabian Exp $
+ * $Id: userrec.c,v 1.24 2000/09/05 15:59:43 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -639,8 +639,8 @@ struct userrec *adduser(struct userrec *bu, char *handle, char *host,
   u->chanrec = NULL;
   u->entries = NULL;
   if (flags != USER_DEFAULT) { /* drummer */
-  u->flags = flags;
-  u->flags_udef = 0;
+    u->flags = flags;
+    u->flags_udef = 0;
   } else {
     u->flags = default_flags;
     u->flags_udef = default_uflags;
@@ -648,7 +648,6 @@ struct userrec *adduser(struct userrec *bu, char *handle, char *host,
   set_user(&USERENTRY_PASS, u, pass);
   if (!noxtra) {
     xk = nmalloc(sizeof(struct xtra_key));
-
     xk->key = nmalloc(8);
     strcpy(xk->key, "created");
     xk->data = nmalloc(10);
