@@ -22,7 +22,7 @@ PATCH("936399022"); /* current "unix" time */
  *
  *
  */
-PATCH("resetbans"); /* last patch added */ 
+PATCH("Makefile"); /* last patch added */ 
 /*
  *
  *
