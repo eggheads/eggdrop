@@ -549,6 +549,11 @@ marked with vertical bars (|) on the left.
     Returns: a list of info about the specified channel's settings.
     Module: channels
 
+| channel get <name> <setting>
+|   Returns: The value of the setting you specify. For flags, a value of 0
+|     means it is disabled (-), and non-zero means enabled (+).
+|   Module: channels
+
   channel remove <name>
     Description: removes a channel record from the bot and makes the bot no
       longer monitor the channel

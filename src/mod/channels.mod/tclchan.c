@@ -1,7 +1,7 @@
 /*
  * tclchan.c -- part of channels.mod
  *
- * $Id: tclchan.c,v 1.57 2002/03/27 03:57:37 guppy Exp $
+ * $Id: tclchan.c,v 1.58 2002/05/18 00:04:36 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -849,6 +849,89 @@ static int tcl_channel_info(Tcl_Interp * irp, struct chanset_t *chan)
   return TCL_OK;
 }
 
+static int tcl_channel_get(Tcl_Interp * irp, struct chanset_t *chan, char *setting)
+{
+  char s[121];
+  struct udef_struct *ul;
+
+#define CHECK(x) !strcmp(setting, x)
+
+#define CHKFLAG_POS(x,y,z) (!strcmp(setting, y)) { \
+                            if(z & x) simple_sprintf(s, "%d", 1); \
+                            else simple_sprintf(s, "%d", 0); }
+
+#define CHKFLAG_NEG(x,y,z) (!strcmp(setting, y)) { \
+                            if (z & x) simple_sprintf(s, "%d", 0); \
+                            else simple_sprintf(s, "%d", 1); }
+
+  if      (CHECK("chanmode"))      get_mode_protect(chan, s);
+
+  /* Code in need_op can be longer than 120 chars, so we have to cut it.*/
+  else if (CHECK("need-op"))     { strncpy(s, chan->need_op, 120); s[120] = 0;     }
+  else if (CHECK("need-invite")) { strncpy(s, chan->need_invite, 120); s[120] = 0; }
+  else if (CHECK("need-key"))    { strncpy(s, chan->need_key, 120); s[120] = 0;    }
+  else if (CHECK("need-unban"))  { strncpy(s, chan->need_unban, 120); s[120] = 0;  }
+  else if (CHECK("need-limit"))  { strncpy(s, chan->need_limit, 120); s[120] = 0;  }
+
+  else if (CHECK("idle-kick"))     simple_sprintf(s, "%d", chan->idle_kick);
+  else if (CHECK("stop-net-hack")) simple_sprintf(s, "%d", chan->stopnethack_mode);
+  else if (CHECK("revenge-mode"))  simple_sprintf(s, "%d", chan->revenge_mode);
+  else if (CHECK("flood-pub"))     simple_sprintf(s, "%d %d", chan->flood_pub_thr, chan->flood_pub_time);
+  else if (CHECK("flood-ctcp"))    simple_sprintf(s, "%d %d", chan->flood_ctcp_thr, chan->flood_ctcp_time);
+  else if (CHECK("flood-join"))    simple_sprintf(s, "%d %d", chan->flood_join_thr, chan->flood_join_time);
+  else if (CHECK("flood-kick"))    simple_sprintf(s, "%d %d", chan->flood_kick_thr, chan->flood_kick_time);
+  else if (CHECK("flood-deop"))    simple_sprintf(s, "%d %d", chan->flood_deop_thr, chan->flood_deop_time);
+  else if (CHECK("flood-nick"))    simple_sprintf(s, "%d %d", chan->flood_nick_thr, chan->flood_nick_time);
+  else if (CHECK("aop-delay"))     simple_sprintf(s, "%d %d", chan->aop_min, chan->aop_max);
+
+  else if CHKFLAG_POS(CHAN_ENFORCEBANS,    "enforcebans",    chan->status)
+  else if CHKFLAG_POS(CHAN_DYNAMICBANS,    "dynamicbans",    chan->status)
+  else if CHKFLAG_NEG(CHAN_NOUSERBANS,     "userbans",       chan->status)
+  else if CHKFLAG_POS(CHAN_OPONJOIN,       "autoop",         chan->status)
+  else if CHKFLAG_POS(CHAN_BITCH,          "bitch",          chan->status)
+  else if CHKFLAG_POS(CHAN_GREET,          "greet",          chan->status)
+  else if CHKFLAG_POS(CHAN_PROTECTOPS,     "protectops",     chan->status)
+  else if CHKFLAG_POS(CHAN_PROTECTFRIENDS, "protectfriends", chan->status)
+  else if CHKFLAG_POS(CHAN_DONTKICKOPS,    "dontkickops",    chan->status)
+  else if CHKFLAG_POS(CHAN_INACTIVE,       "inactive",       chan->status)
+  else if CHKFLAG_POS(CHAN_LOGSTATUS,      "statuslog",      chan->status)
+  else if CHKFLAG_POS(CHAN_REVENGE,        "revenge",        chan->status)
+  else if CHKFLAG_POS(CHAN_REVENGEBOT,     "revengebot",     chan->status)
+  else if CHKFLAG_POS(CHAN_SECRET,         "secret",         chan->status)
+  else if CHKFLAG_POS(CHAN_SHARED,         "shared",         chan->status)
+  else if CHKFLAG_POS(CHAN_AUTOVOICE,      "autovoice",      chan->status)
+  else if CHKFLAG_POS(CHAN_CYCLE,          "cycle",          chan->status)
+  else if CHKFLAG_POS(CHAN_SEEN,           "seen",           chan->status)
+  else if CHKFLAG_POS(CHAN_NODESYNCH,      "nodesynch",      chan->status)
+
+  else if CHKFLAG_POS(CHAN_DYNAMICEXEMPTS, "dynamicexempts", chan->ircnet_status)
+  else if CHKFLAG_NEG(CHAN_NOUSEREXEMPTS,  "userexempts",    chan->ircnet_status)
+  else if CHKFLAG_POS(CHAN_DYNAMICINVITES, "dynamicinvites", chan->ircnet_status)
+  else if CHKFLAG_NEG(CHAN_NOUSERINVITES,  "userinvites",    chan->ircnet_status)
+
+  else {
+    /* Hopefully it's a user-defined flag. */
+    for (ul = udef; ul && ul->name; ul = ul->next) {
+      if (!strcmp(setting, ul->name)) break;
+    }
+    if (!ul || !ul->name) {
+      /* Error if it wasn't found. */
+      Tcl_AppendResult(irp, "Unknown channel setting.", NULL);
+      return(TCL_ERROR);
+    }
+
+    /* Flag or int, all the same. */
+    simple_sprintf(s, "%d", getudef(ul->values, chan->dname));
+    Tcl_AppendResult(irp, s, NULL);
+    return(TCL_OK);
+  }
+
+  /* Ok, if we make it this far, the result is "s". */
+  Tcl_AppendResult(irp, s, NULL);
+  return(TCL_OK);
+}
+
+
 static int tcl_channel STDVAR
 {
   struct chanset_t *chan;
@@ -873,6 +956,15 @@ static int tcl_channel STDVAR
     }
     return tcl_channel_modify(irp, chan, argc - 3, &argv[3]);
   }
+  if (!strcmp(argv[1], "get")) {
+    BADARGS(4, 4, " get channel-name setting-name");
+    chan = findchan_by_dname(argv[2]);
+    if (chan == NULL) {
+      Tcl_AppendResult(irp, "no such channel record", NULL);
+      return TCL_ERROR;
+    }
+    return(tcl_channel_get(irp, chan, argv[3]));
+  }
   if (!strcmp(argv[1], "info")) {
     BADARGS(3, 3, " info channel-name");
     chan = findchan_by_dname(argv[2]);
@@ -893,7 +985,7 @@ static int tcl_channel STDVAR
     return TCL_OK;
   }
   Tcl_AppendResult(irp, "unknown channel command: should be one of: ",
-		   "add, set, info, remove", NULL);
+		   "add, set, get, info, remove", NULL);
   return TCL_ERROR;
 }
 
