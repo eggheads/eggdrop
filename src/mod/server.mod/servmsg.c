@@ -1,7 +1,7 @@
 /* 
  * servmsg.c -- part of server.mod
  * 
- * $Id: servmsg.c,v 1.37 2000/06/03 12:14:41 fabian Exp $
+ * $Id: servmsg.c,v 1.38 2000/06/10 01:28:50 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1288,6 +1288,23 @@ static int lagcheck_401(char *from, char *origmsg)
   return 0;
 }
 
+static int lagcheck_478(char *from, char *origmsg)
+{
+  if (!lagged || lagchecktype == LC_KICK)
+    return 0;
+  if (lagcheckstring) {
+    nfree(lagcheckstring);
+    lagcheckstring = NULL;
+  }
+  if (lagcheckstring2) {
+    nfree(lagcheckstring2);
+    lagcheckstring2 = NULL;
+  }
+  lagged = 0;
+  debug0("Channel ban list is full, guess I'm not lagged");
+  return 0;
+}
+
 static cmd_t my_raw_binds[] =
 {
   {"PRIVMSG",	"",	(Function) gotmsg,		NULL},
@@ -1322,6 +1339,7 @@ static cmd_t my_raw_binds[] =
   {"MODE",	"",	(Function) lagcheck_mode,	"lagcheck:MODE"},
   {"401",	"",	(Function) lagcheck_401,	"lagcheck:401"},
   {"441",	"",	(Function) lagcheck_401,	"lagcheck:441"},
+  {"478",	"",	(Function) lagcheck_478,	"lagcheck:478"},
   {NULL,	NULL,	NULL,				NULL}
 };
 
