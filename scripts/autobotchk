@@ -29,7 +29,7 @@ do \
 done; \
 exec tclsh$lastver "$0" "$@"
 #
-# AutoBotchk - An Eggdrop utility to autogenerate botchk/crontab entries
+# AutoBotchk - An eggdrop utility to autogenerate botchk/crontab entries
 #
 # Copyright (C) 1999, 2000, 2001, 2002 Jeff Fisher (guppy@eggheads.org)
 #
@@ -57,144 +57,174 @@ exec tclsh$lastver "$0" "$@"
 #   14Nov2001: removed old autobotchk update entries and updated the help
 #              section a little bit. also made autobotchk move down one
 #              directory if being run from the scripts directory.
+#   15Apr2003: cleaned up a few things, fixed a few bugs, and made a little
+#              love! j/k
 #
-# $Id: autobotchk,v 1.9 2002/01/02 05:04:52 guppy Exp $
+# $Id: autobotchk,v 1.10 2003/04/15 17:37:33 guppy Exp $
 #
 
 if {$argc == 0} {
- puts "\nusage: $argv0 <eggdrop config> \[options\]"
- puts " -dir     (directory to run from instead of the current one)"
- puts " -noemail (redirect crontab e-mail to /dev/null)"
- puts " -5       (5 minute checks)"
- puts " -10      (10 minute checks)"
- puts " -15      (15 minute checks)"
- puts " -30      (30 minute checks)"
- puts ""
- exit
-} {
- puts "\nAutoBotchk 1.09.1, (C) 2002 Jeff Fisher (guppy@eggheads.org)"
- puts "------------------------------------------------------------"
+  puts "\nusage: $argv0 <eggdrop config> \[options\]"
+  puts " -dir     (directory to run autobotchk in)"
+  puts " -noemail (discard crontab e-mails)"
+  puts " -5       (5 minute checks)"
+  puts " -10      (10 minute checks)"
+  puts " -15      (15 minute checks)"
+  puts " -30      (30 minute checks)"
+  puts ""
+  exit
+}
 
- set x [join [lindex [split $argv] 0]]
- set q [lrange $argv 1 end]
- set dir [pwd]
- set delay 10
- set email 1
+fconfigure stdout -buffering none
 
- # If you renamed your eggdrop binary, you should change this variable
- set binary "eggdrop"
+proc newsplit {text {split " "}} {
+  upvar $text ours
+  append ours $split
+  set index [string first $split $ours]
+  if {$index == -1} {
+    set ours ""
+    return ""
+  }
+  set tmp [string trim [string range $ours 0 $index]]
+  set ours [string trim [string range $ours [expr $index + [string length $split]] end]]
+  return $tmp
+}
 
- for {set z 0} {$z < [llength $q]} {incr z} {
-  set opt [join [lindex $q $z]]
+puts "\nautobotchk 1.10, (C) 2003 Jeff Fisher (guppy@eggheads.org)"
+puts "------------------------------------------------------------\n"
+
+set config [newsplit argv]
+set dir [pwd]
+set delay 10
+set email 1
+
+# If you renamed your eggdrop binary, you should change this variable
+set binary "eggdrop"
+
+while {[set opt [newsplit argv]] != ""} {
   switch -- $opt {
-   -time -
-   -1 {set delay 1}
-   -5 {set delay 5}
-   -10 {set delay 10}
-   -15 {set delay 15}
-   -20 {set delay 20}
-   -30 {set delay 30}
-   -nomail -
-   -noemail {set email 0}
-   -dir {
-    set dir [string trimright [join [lindex $q [expr $z + 1]]] /]
-    if {[string match -* $dir]} {
-     puts " *** ERROR: you did not supply a directory name"
-     puts ""
-     exit
+   "-time" -
+   "-1" { set delay 1 }
+   "-5" { set delay 5 }
+   "-10" { set delay 10 } 
+   "-15" { set delay 15 }
+   "-20" { set delay 20 }
+   "-30" { set delay 30 }
+   "-nomail" -
+   "-noemail" {set email 0}
+   "-dir" {
+      set dir [newsplit argv]
+      if {[string match -* $dir]} {
+        puts "*** ERROR: you did not supply a directory name"
+        puts ""
+        exit
+      }
+      if {![file isdirectory $dir]} {
+        puts "*** ERROR: the directory you supplied is not a directory"
+        puts ""
+        exit
+      }
     }
-    if {![file isdirectory $dir]} {
-     puts " *** ERROR: the directory you supplied is not a directory"
-     puts ""
-     exit
-    }
-    incr z
-   }
   }
- }
- switch -- $delay {
-  30 { set minutes "0,30" }
-  15 { set minutes "0,15,30,45" }
-   5 { set minutes "0,5,10,15,20,25,30,35,40,45,50,55" }
-   1 { set minutes "*" }
-  default { set minutes "0,10,20,30,40,50" }
- }
- if {[string match "*/scripts" $dir]} {
-  set dir [string range $dir 0 [expr [string length $dir] - 8]]
-  puts " *** AutoBotchk is running from the scripts directory, moving down one directory"
- }
- if {![file exists $dir/$x]} {
-  puts " *** ERROR: you supplied a non-existant filename"
-  puts ""
-  exit
- } elseif {![file isfile $dir/$x]} {
-  puts " *** ERROR: unknown filetype, config files should be text files"
-  puts ""
-  exit
- } elseif {![file readable $dir/$x]} {
-  puts " *** ERROR: unable to open the file, permission denied"
-  puts ""
-  exit
- } elseif {![file exists $dir/help] || ![file isdirectory $dir/help]} {
-  puts " *** ERROR: are you sure you are running from a bot directory?"
-  puts ""
-  exit
- } elseif {![file exists $dir/$binary]} {
-  puts " *** ERROR: are you sure you are running from a bot directory?"
-  puts ""
-  exit
- }
- puts " *** Processing '$x', this will take only a second ..."
+}
 
- set f [open $dir/$x r]
- while {![eof $f]} {
-  set z [split [gets $f]]
-  if {[join [lindex $z 0]] != "set"} {continue}
-  switch -- [join [lindex $z 1]] {
-   pidfile -
-   nick -
-   userfile -
-   botnet-nick {
-    set [join [lindex $z 1]] [join [lindex $z 2]]
-    puts "     !! scanned: [join $z]"
-   }
+switch -- $delay {
+  "30" { set minutes "0,30" }
+  "15" { set minutes "0,15,30,45" }
+  "5" { set minutes "0,5,10,15,20,25,30,35,40,45,50,55" }
+  "1" { set minutes "*" }
+  default { set minutes "0,10,20,30,40,50" }
+}
+
+if {[string match "*/scripts" $dir]} {
+  set dir [string range $dir 0 [expr [string length $dir] - 8]]
+}
+
+set dir [string trimright $dir /]
+
+if {![file exists $dir/help] || ![file isdirectory $dir/help]} {
+  puts "*** ERROR: are you sure you are running from a bot directory?"
+  puts ""
+  exit
+} elseif {![file exists $dir/$binary]} {
+  puts "*** ERROR: are you sure you are running from a bot directory?"
+  puts ""
+  exit
+}
+
+puts -nonewline "Opening '$config' for processing ... "
+
+if {[catch {open $dir/$config r} fd]} {
+  puts "error:"
+  puts "  $fd\n"
+  exit
+} else {
+  puts "done"
+}
+
+set count 0
+puts -nonewline "Scanning the config file "
+
+while {![eof $fd]} {
+  incr count
+  if {$count == 100} {
+    puts -nonewline "."
+    set count 0
   }
- }
- close $f
+  set line [gets $fd]
+  if {[set blarg [newsplit line]] != "set"} {
+    continue
+  }
+  switch -- [set opt [newsplit line]] {
+    "pidfile" -
+    "nick" -
+    "userfile" -
+    "botnet-nick" {
+      set $opt [string trim [newsplit line] " \""]
+    }
+  }
+}
+close $fd
+
+if {$count != 0} {
+  puts -nonewline "."
+}
+
+puts " done"
+
  if {![info exists {botnet-nick}] && [info exists nick]} {
-  puts "         !! setting \$botnet-nick to $nick"
+  puts "  Defaulting \$botnet-nick to \"$nick\""
   set botnet-nick $nick
  }
  if {![info exists pidfile]} {
-  puts "         !! setting \$pidfile to pid.${botnet-nick}"
+  puts "  Defaulting \$pidfile to \"pid.${botnet-nick}\""
   set pidfile "pid.${botnet-nick}"
  }
  if {![info exists {botnet-nick}] || ![info exists userfile]} {
-  puts " *** ERROR: could not find either \$userfile or \$botnet-nick"
-  puts "      !! you sure its a valid Eggdrop config file?"
+  puts "  *** ERROR: could not find either \$userfile or \$botnet-nick"
+  puts ""
+  puts "  Are you sure this is a valid eggdrop config file?"
   puts ""
   exit
  }
  if {[catch {open $dir/${botnet-nick}.botchk w} fd]} {
-  puts " *** ERROR: unable to open '${botnet-nick}.botchk' for writing"
-  puts "      !! without this, this program is useless"
+  puts "  *** ERROR: unable to open '${botnet-nick}.botchk' for writing"
   puts ""
   exit
  }
- puts $fd "
-#! /bin/sh
+ puts $fd "#! /bin/sh
 #
 # ${botnet-nick}.botchk (generated on [clock format [clock seconds] -format "%B %d, %Y @ %I:%M%p"])
 #
-# Generated by AutoBotchk 1.09.1
-# Copyright (C) 1999, 2000, 2001, 2002 Jeff Fisher <guppy@eggheads.org>
+# Generated by AutoBotchk 1.10
+# Copyright (C) 1999, 2000, 2001, 2002, 2003 Jeff Fisher <guppy@eggheads.org>
 #
 
 # change this to the directory you run your bot from:
 botdir=\"$dir\"
 
 # change this to the name of your bot's script in that directory:
-botscript=\"$binary $x\"
+botscript=\"$binary $config\"
 
 # change this to the nickname of your bot (capitalization COUNTS)
 botname=\"${botnet-nick}\"
@@ -275,57 +305,65 @@ fi
 exit 0
  "
  close $fd
- puts " *** Wrote '${botnet-nick}.botchk' successfully ([file size $dir/${botnet-nick}.botchk] bytes)"
+ puts "Wrote '${botnet-nick}.botchk' successfully ([file size $dir/${botnet-nick}.botchk] bytes)"
  if {[catch {exec chmod u+x $dir/${botnet-nick}.botchk} 0]} {
-  puts "      *** ERROR: unable to 'chmod u+x' the output file"
+  puts "  *** ERROR: unable to 'chmod u+x' the output file"
   puts ""
   exit
  }
- puts "      !! chmod u+x completed"
- puts " *** Crontab mode?? Heaven forbid this is automated ..."
- set tmp "$dir/.autobotchk"
- if {$delay != "10"} {puts "      *** Using a time delay of $delay minutes."}
- if {$email} {
+ puts -nonewline "Scanning crontab entries ... "
+ 
+set tmp ".autobotchk[clock clicks].[pid]"
+if {$email} {
   set line "$minutes \* \* \* \* $dir/${botnet-nick}.botchk"
- } {
+} {
   set line "$minutes \* \* \* \* $dir/${botnet-nick}.botchk >\/dev\/null 2>&1"
-  puts "      *** Making crontab line to NOT send e-mail."
- }
- if {[catch {exec crontab -l > $tmp} error ]} {
+}
+
+if {[catch {exec crontab -l > $tmp} error ]} {
   if {![string match "*no*cron*" [string tolower $error]] &&
       ![string match "*can't open*" [string tolower $error]]} {
-   catch {exec rm -rf $tmp} 0
-   puts "      *** ERROR: unable to get crontab listing"
-   puts "           *** MSG: $error"
-   puts ""
-   exit
+    catch {file delete -force $tmp} 0
+    puts "error: unable to get crontab listing"
+    puts ""
+    puts $error
+    puts ""
+    exit
   }
- }
- set fd [open $tmp r]
- while {![eof $fd]} {
-  set z [split [gets $fd]]
-  if {[string match "*$dir/${botnet-nick}.botch*" $z]} {
-   puts "      !! ${botnet-nick}.botchk already has a crontab entry, skipping this stage"
-   puts ""
-   exit
+}
+
+set fd [open $tmp r]
+while {![eof $fd]} {
+  set z [gets $fd]
+  if {[string match "*$dir/${botnet-nick}.botchk*" $z] ||
+      [string match "*$dir//${botnet-nick}.botchk*" $z]} {
+    puts "found an existing entry, we're done now"
+    puts ""
+    exit
   }
- }
- close $fd
- set fd [open $tmp a]
- puts $fd $line
- puts "      !! adding new crontab line to existing crontab"
- close $fd
- if {[catch {exec crontab $tmp} error]} {
-  puts "      *** ERROR: unable to do 'crontab $tmp'"
-  puts "           *** MSG: $error"
+}
+
+close $fd
+
+puts "done"
+
+puts -nonewline "Adding the new crontab entry ... "
+set fd [open $tmp a]
+puts $fd $line
+close $fd
+
+if {[catch {exec crontab $tmp} error]} {
+  puts "error: unable to do 'crontab $tmp'"
+  puts ""
+  puts $error
   puts ""
   exit
- }
- catch {exec rm -f $tmp} 0
- puts "      !! crontab reloaded"
- puts ""
- puts "      !! Use 'crontab -r' to remove all your crontab entries"
- puts "      !!     'crontab -l' to view the current crontabs"
- puts ""
- exit
+} else {
+  catch {file delete -force $tmp} 0
 }
+
+puts "done"
+puts ""
+puts "Use 'crontab -l' to view all your current crontab entries"
+puts "    'crontab -r' to remove all your crontab entries"
+puts ""
