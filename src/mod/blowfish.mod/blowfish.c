@@ -2,7 +2,7 @@
  * blowfish.c -- part of blowfish.mod
  *   encryption and decryption of passwords
  *
- * $Id: blowfish.c,v 1.18 2001/04/12 02:39:44 guppy Exp $
+ * $Id: blowfish.c,v 1.19 2001/06/20 14:44:17 poptix Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -436,7 +436,7 @@ static char *blowfish_close()
   return "You can't unload an encryption module";
 }
 
-char *blowfish_start(Function *);
+EXPORT_TYPE(char *) blowfish_start(Function *);
 
 static Function blowfish_table[] =
 {

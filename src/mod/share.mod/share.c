@@ -1,7 +1,7 @@
 /*
  * share.c -- part of share.mod
  *
- * $Id: share.c,v 1.49 2001/04/12 02:39:47 guppy Exp $
+ * $Id: share.c,v 1.50 2001/06/20 14:44:20 poptix Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -2074,7 +2074,7 @@ static void share_report(int idx, int details)
   }
 }
 
-char *share_start();
+EXPORT_TYPE(char *) share_start();
 
 static Function share_table[] =
 {

@@ -2,7 +2,7 @@
  * irc.c -- part of irc.mod
  *   support for channels within the bot
  *
- * $Id: irc.c,v 1.51 2001/04/26 03:38:51 guppy Exp $
+ * $Id: irc.c,v 1.52 2001/06/20 14:44:19 poptix Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1085,7 +1085,7 @@ static char *irc_close()
   return NULL;
 }
 
-char *irc_start();
+EXPORT_TYPE(char *) irc_start();
 
 static Function irc_table[] =
 {

@@ -2,7 +2,7 @@
  * channels.c -- part of channels.mod
  *   support for channels within the bot
  *
- * $Id: channels.c,v 1.47 2001/04/12 02:39:45 guppy Exp $
+ * $Id: channels.c,v 1.48 2001/06/20 14:44:18 poptix Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -809,7 +809,7 @@ static char *channels_close()
   return NULL;
 }
 
-char *channels_start();
+EXPORT_TYPE(char *) channels_start();
 
 static Function channels_table[] =
 {

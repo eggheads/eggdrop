@@ -15,7 +15,7 @@
  * 1.4       1997-11-25      1.2.2.0         Added language addition  Kirk
  * 1.5       1998-07-12      1.3.0.0         Fixed ;me and updated    BB
  *
- * $Id: wire.c,v 1.17 2001/04/12 02:39:48 guppy Exp $
+ * $Id: wire.c,v 1.18 2001/06/20 14:44:21 poptix Exp $
  */
 /*
  * Copyright (C) 1999, 2000, 2001 Eggheads Development Team
@@ -579,7 +579,7 @@ static char *wire_close()
   return NULL;
 }
 
-char *wire_start();
+EXPORT_TYPE(char *) wire_start();
 
 static Function wire_table[] =
 {

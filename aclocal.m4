@@ -1,7 +1,7 @@
 dnl aclocal.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: aclocal.m4,v 1.33 2001/04/19 04:31:51 guppy Exp $
+dnl $Id: aclocal.m4,v 1.34 2001/06/20 14:44:16 poptix Exp $
 dnl
 
 
@@ -181,8 +181,10 @@ case "$egg_cv_var_system" in
       1.*)
         AC_MSG_RESULT(Cygwin 1.x)
         NEED_DL=0
-        MOD_LD="${CC}"
         SHLIB_LD="${CC} -shared"
+	CC="$CC -mwin32"
+	MOD_CC="${CC}"
+	MOD_LD="${CC}"
         MOD_EXT=dll
         AC_DEFINE(MODULES_OK)dnl
       ;;

@@ -1,7 +1,7 @@
 /*
  * transfer.c -- part of transfer.mod
  *
- * $Id: transfer.c,v 1.37 2001/04/12 02:44:23 guppy Exp $
+ * $Id: transfer.c,v 1.38 2001/06/20 14:44:20 poptix Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1933,7 +1933,7 @@ static void transfer_report(int idx, int details)
   }
 }
 
-char *transfer_start();
+EXPORT_TYPE(char *) transfer_start();
 
 static Function transfer_table[] =
 {

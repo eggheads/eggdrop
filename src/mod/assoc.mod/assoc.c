@@ -2,7 +2,7 @@
  * assoc.c -- part of assoc.mod
  *   the assoc code, moved here mainly from botnet.c for module work
  *
- * $Id: assoc.c,v 1.14 2001/04/13 06:33:23 guppy Exp $
+ * $Id: assoc.c,v 1.15 2001/06/20 14:44:17 poptix Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -416,7 +416,7 @@ static char *assoc_close()
   return NULL;
 }
 
-char *assoc_start();
+EXPORT_TYPE(char *) assoc_start();
 
 static Function assoc_table[] =
 {

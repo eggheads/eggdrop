@@ -3,7 +3,7 @@
  *   saved console settings based on console.tcl
  *   by cmwagner/billyjoe/D. Senso
  *
- * $Id: console.c,v 1.19 2001/04/12 02:39:45 guppy Exp $
+ * $Id: console.c,v 1.20 2001/06/20 14:44:18 poptix Exp $
  */
 /*
  * Copyright (C) 1999, 2000, 2001 Eggheads Development Team
@@ -363,7 +363,7 @@ static char *console_close()
   return NULL;
 }
 
-char *console_start();
+EXPORT_TYPE(char *) console_start();
 
 static Function console_table[] =
 {

@@ -6,7 +6,7 @@
  * Written by Fabian Knittel <fknittel@gmx.de>. Based on zlib examples
  * by Jean-loup Gailly and Miguel Albrecht.
  *
- * $Id: compress.c,v 1.9 2001/04/12 02:39:45 guppy Exp $
+ * $Id: compress.c,v 1.10 2001/06/20 14:44:18 poptix Exp $
  */
 /*
  * Copyright (C) 2000, 2001 Eggheads Development Team
@@ -399,7 +399,7 @@ static char *compress_close()
   return NULL;
 }
 
-char *compress_start();
+EXPORT_TYPE(char *) compress_start();
 
 static Function compress_table[] =
 {

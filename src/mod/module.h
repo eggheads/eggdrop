@@ -1,7 +1,7 @@
 /*
  * module.h
  *
- * $Id: module.h,v 1.45 2001/04/12 02:39:44 guppy Exp $
+ * $Id: module.h,v 1.46 2001/06/20 14:44:17 poptix Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -74,6 +74,12 @@
 #endif
 #ifdef egg_strncasecmp
 #  undef egg_strncasecmp
+#endif
+
+#if defined (__CYGWIN__) && !defined(STATIC)
+    #  define EXPORT_TYPE(type)	__declspec(dllexport) type __cdecl
+    #else
+    #  define EXPORT_TYPE(type)	type
 #endif
 
 /* Version checks for modules. */

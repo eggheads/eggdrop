@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  *
- * $Id: server.c,v 1.63 2001/05/18 22:35:04 guppy Exp $
+ * $Id: server.c,v 1.64 2001/06/20 14:44:20 poptix Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1710,7 +1710,7 @@ static char *server_close()
   return NULL;
 }
 
-char *server_start();
+EXPORT_TYPE(char *) server_start();
 
 static Function server_table[] =
 {

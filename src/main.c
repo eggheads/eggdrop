@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  *
- * $Id: main.c,v 1.61 2001/06/01 21:56:41 guppy Exp $
+ * $Id: main.c,v 1.62 2001/06/20 14:44:17 poptix Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -51,6 +51,10 @@
 #include "modules.h"
 #include "tandem.h"
 #include "bg.h"
+
+#ifdef CYGWIN_HACKS
+#include <windows.h>
+#endif
 
 #ifndef _POSIX_SOURCE
 /* Solaris needs this */
@@ -854,6 +858,9 @@ int main(int argc, char **argv)
     freopen("/dev/null", "r", stdin);
     freopen("/dev/null", "w", stdout);
     freopen("/dev/null", "w", stderr);
+#ifdef CYGWIN_HACKS
+    FreeConsole();
+#endif
   }
 
   /* Terminal emulating dcc chat */
