@@ -110,7 +110,7 @@ int notify_users_at = 0;	/* how many minutes past the hour to
 int switch_logfiles_at = 300;	/* when (military time) to switch logfiles */
 char version[81];		/* version info (long form) */
 char ver[41];			/* version info (short form) */
-char egg_xtra[1024];		/* patch info */
+char egg_xtra[2048];		/* patch info */
 int use_stderr = 1;		/* send stuff to stderr instead of logfiles? */
 int do_restart = 0;		/* .restart has been called, restart asap */
 int die_on_sighup = 0;		/* die if bot receives SIGHUP */
