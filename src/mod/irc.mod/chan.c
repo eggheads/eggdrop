@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  * 
- * $Id: chan.c,v 1.40 2000/05/28 17:32:44 fabian Exp $
+ * $Id: chan.c,v 1.41 2000/06/02 17:54:19 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1471,13 +1471,13 @@ static int gotjoin(char *from, char *chname)
   }
 
   chan = findchan(chname);
-  if (!chan && chname[0]=='!') {
+  if (!chan && chname[0] == '!') {
     /* As this is a !channel, we need to search for it by display (short)
      * name now. This will happen when we initially join the channel, as we
      * dont know the unique channel name that the server has made up. <cybah>
      */  
-    if (strlen(chname) > 6) {
-      egg_snprintf(buf, UHOSTLEN, "!%s", chname + 6);
+    if (strlen(chname) > (CHANNEL_ID_LEN + 1)) {
+      egg_snprintf(buf, UHOSTLEN, "!%s", chname + (CHANNEL_ID_LEN + 1));
       chan = findchan_by_dname(buf);
     }
   } else if (!chan) {
@@ -1514,7 +1514,7 @@ static int gotjoin(char *from, char *chname)
 	m->delay = 0L;
         m->flags = (chan_hasop(m) ? WASOP : 0);
 	m->user = u;
-	set_handle_laston(chname, u, now);
+	set_handle_laston(chan->dname, u, now);
 	m->flags |= STOPWHO;
 	if (newmode) {
 	  putlog(LOG_JOIN, chan->dname, "%s (%s) returned to %s (with +%s).",
@@ -1536,7 +1536,7 @@ static int gotjoin(char *from, char *chname)
 	strcpy(m->userhost, uhost);
 	m->user = u;
 	m->flags |= STOPWHO;
-	check_tcl_join(nick, uhost, u, chname);
+	check_tcl_join(nick, uhost, u, chan->dname);
 	if (newmode)
 	  do_embedded_mode(chan, nick, m, newmode);
 	if (match_my_nick(nick)) {
@@ -1609,7 +1609,7 @@ static int gotjoin(char *from, char *chname)
 	      }
 	    }
 	  }
-	  set_handle_laston(chname, u, now);
+	  set_handle_laston(chan->dname, u, now);
 	}
       }
       /* ok, the op-on-join,etc, tests...first only both if Im opped */
