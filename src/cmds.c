@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  *
- * $Id: cmds.c,v 1.85 2002/12/24 02:30:04 wcc Exp $
+ * $Id: cmds.c,v 1.86 2002/12/24 03:33:24 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1163,14 +1163,14 @@ static void cmd_unlink(struct userrec *u, int idx, char *par)
   bot = newsplit(&par);
   i = nextbot(bot);
   if (i < 0) {
-    botunlink(idx, bot, par);
+    botunlink(idx, bot, par, dcc[idx].nick);
     return;
   }
   /* If we're directly connected to that bot, just do it
    * (is nike gunna sue?)
    */
   if (!egg_strcasecmp(dcc[i].nick, bot))
-    botunlink(idx, bot, par);
+    botunlink(idx, bot, par, dcc[i].nick);
   else {
     char x[40];
 

@@ -2,7 +2,7 @@
  * tcldcc.c -- handles:
  *   Tcl stubs for the dcc commands
  *
- * $Id: tcldcc.c,v 1.36 2002/12/24 02:30:05 wcc Exp $
+ * $Id: tcldcc.c,v 1.37 2002/12/24 03:33:24 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -808,7 +808,7 @@ static int tcl_unlink STDVAR
   else {
     x = 1;
     if (!egg_strcasecmp(bot, dcc[i].nick))
-      x = botunlink(-2, bot, argv[2]);
+      x = botunlink(-2, bot, argv[2], botnetnick);
     else
       botnet_send_unlink(i, botnetnick, lastbot(bot), bot, argv[2]);
   }

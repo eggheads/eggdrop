@@ -3,7 +3,7 @@
  *   commands that comes across the botnet
  *   userfile transfer and update commands from sharebots
  *
- * $Id: botcmd.c,v 1.33 2002/12/24 02:30:04 wcc Exp $
+ * $Id: botcmd.c,v 1.34 2002/12/24 03:33:24 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -581,7 +581,7 @@ static void bot_unlink(int idx, char *par)
       rfrom = from;
     putlog(LOG_CMDS, "*", "#%s# unlink %s (%s)", rfrom, undes, par[0] ? par :
 	   "No reason");
-    i = botunlink(-3, undes, par[0] ? par : NULL);
+    i = botunlink(-3, undes, par[0] ? par : NULL, rfrom);
     if (i == 1) {
       p = strchr(from, '@');
       if (p) {

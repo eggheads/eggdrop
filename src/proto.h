@@ -7,7 +7,7 @@
  * because they use structures in those
  * (saves including those .h files EVERY time) - Beldin
  *
- * $Id: proto.h,v 1.49 2002/12/24 02:30:05 wcc Exp $
+ * $Id: proto.h,v 1.50 2002/12/24 03:33:24 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -69,7 +69,7 @@ int in_chain(char *);
 void tell_bots(int);
 void tell_bottree(int, int);
 int botlink(char *, int, char *);
-int botunlink(int, char *, char *);
+int botunlink(int, char *, char *, char *);
 void dump_links(int);
 void addbot(char *, char *, char *, char, int);
 void updatebot(int, char *, char, int);

@@ -7,7 +7,7 @@
  *   linking, unlinking, and relaying to another bot
  *   pinging the bots periodically and checking leaf status
  *
- * $Id: botnet.c,v 1.45 2002/12/24 02:30:04 wcc Exp $
+ * $Id: botnet.c,v 1.46 2002/12/24 03:33:24 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -864,7 +864,7 @@ int users_in_subtree(tand_t *bot)
 
 /* Break link with a tandembot
  */
-int botunlink(int idx, char *nick, char *reason)
+int botunlink(int idx, char *nick, char *reason, char *from)
 {
   char s[20];
   register int i;
@@ -908,15 +908,16 @@ int botunlink(int idx, char *nick, char *reason)
 	bots = bots_in_subtree(bot);
 	users = users_in_subtree(bot);
 	if (reason && reason[0]) {
-	  simple_sprintf(s, "%s %s (%s) (lost %d bot%s and %d user%s)",
-	  		 BOT_UNLINKEDFROM, dcc[i].nick, reason, bots,
+	  simple_sprintf(s, "%s %s (%s (%s)) (lost %d bot%s and %d user%s)",
+	  		 BOT_UNLINKEDFROM, dcc[i].nick, reason, from, bots,
 			 (bots != 1) ? "s" : "", users, (users != 1) ?
 			 "s" : "");
 	  dprintf(i, "bye %s\n", reason);
 	} else {
-	  simple_sprintf(s, "%s %s (lost %d bot%s and %d user%s)",
-	  		 BOT_UNLINKEDFROM, dcc[i].nick, bots, (bots != 1) ?
-			 "s" : "", users, (users != 1) ? "s" : "");
+	  simple_sprintf(s, "%s %s (%s) (lost %d bot%s and %d user%s)",
+	  		 BOT_UNLINKEDFROM, dcc[i].nick, from, bots,
+                         (bots != 1) ? "s" : "", users,
+                         (users != 1) ? "s" : ""); 
 	  dprintf(i, "bye No reason\n");
 	}
 	chatout("*** %s\n", s);
