@@ -6,7 +6,7 @@
 0xf00,Refused dcc get %s: copy to %s FAILED!
 0xf01,NOTICE %s :File system is broken; aborting queued files.\n
 0xf02,NOTICE %s :Here is a file from %s ...\n
-0xf03.DCC connections full: GET %s [%s]
+0xf03,DCC connections full: GET %s [%s]
 0xf04,NOTICE %s :DCC connections full; aborting queued files.\n
 0xf05,DCC socket error: GET %s [%s]
 0xf06,NOTICE %s :DCC socket error; aborting queued files.\n
