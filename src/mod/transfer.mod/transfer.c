@@ -1,7 +1,7 @@
 /* 
  * transfer.c -- part of transfer.mod
  * 
- * $Id: transfer.c,v 1.29 2000/09/09 11:37:53 fabian Exp $
+ * $Id: transfer.c,v 1.30 2000/09/23 17:46:56 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -670,6 +670,38 @@ static tcl_cmds mytcls[] =
  *    DCC routines
  */
 
+/* Instead of reading all data intended to go into the DCC block
+ * in one go, we read it in PMAX_SIZE chunks, feed it to tputs and
+ * continue until we get to know that the network buffer only
+ * buffers the data instead of sending it.
+ *
+ * In that case, we delay further sending until we receive the
+ * dcc outdone event.
+ *
+ * Note: To optimise buffer sizes, we default to PMAX_SIZE, but
+ *       allocate a smaller buffer for smaller pending_data sizes.
+ */
+#define	PMAX_SIZE	4096
+static unsigned long pump_file_to_sock(FILE *file, long sock,
+				       register unsigned long pending_data)
+{
+  const unsigned long		 buf_len = pending_data >= PMAX_SIZE ?
+	  					PMAX_SIZE : pending_data;
+  char				*bf = nmalloc(buf_len);
+  register unsigned long	 actual_size;
+
+  if (bf) {
+    do {
+      actual_size = pending_data >= buf_len ? buf_len : pending_data;
+      fread(bf, actual_size, 1, file);
+      tputs(sock, bf, actual_size);
+      pending_data -= actual_size;
+    } while (!sock_has_data(SOCK_DATA_OUTGOING, sock) && pending_data != 0);
+    nfree(bf);
+  }
+  return pending_data;
+}
+
 static void eof_dcc_fork_send(int idx)
 {
   char s1[121];
@@ -877,7 +909,7 @@ inline static void handle_resend_packet(int idx, transfer_reget *reget_data)
  */
 static void dcc_get(int idx, char *buf, int len)
 {
-  char xnick[NICKLEN], *bf;
+  char xnick[NICKLEN];
   unsigned char bbuf[4];
   unsigned long cmp, l;
   int w = len + dcc[idx].u.xfer->sofar, p = 0;
@@ -1020,10 +1052,8 @@ static void dcc_get(int idx, char *buf, int len)
   l = dcc_block;
   if (l == 0 || dcc[idx].status + l > dcc[idx].u.xfer->length)
     l = dcc[idx].u.xfer->length - dcc[idx].status;
-  bf = (char *) nmalloc(l + 1);
-  fread(bf, l, 1, dcc[idx].u.xfer->f);
-  tputs(dcc[idx].sock, bf, l);
-  nfree(bf);
+  dcc[idx].u.xfer->block_pending = pump_file_to_sock(dcc[idx].u.xfer->f,
+						     dcc[idx].sock, l);
   dcc[idx].status += l;
 }
 
@@ -1266,6 +1296,14 @@ static void out_dcc_xfer(int idx, char *buf, void *x)
 {
 }
 
+static void outdone_dcc_xfer(int idx)
+{
+  if (dcc[idx].u.xfer->block_pending)
+    dcc[idx].u.xfer->block_pending =
+	    pump_file_to_sock(dcc[idx].u.xfer->f, dcc[idx].sock,
+			      dcc[idx].u.xfer->block_pending);
+}
+
 static struct dcc_table DCC_SEND =
 {
   "SEND",
@@ -1321,7 +1359,8 @@ static struct dcc_table DCC_GET =
   display_dcc_get,
   expmem_dcc_xfer,
   kill_dcc_xfer,
-  out_dcc_xfer
+  out_dcc_xfer,
+  outdone_dcc_xfer
 };
 
 static struct dcc_table DCC_GET_PENDING =
@@ -1343,7 +1382,7 @@ static void dcc_get_pending(int idx, char *buf, int len)
   unsigned long ip;
   unsigned short port;
   int i;
-  char *bf, s[UHOSTLEN];
+  char s[UHOSTLEN];
 
   Context;
   i = answer(dcc[idx].sock, s, &ip, &port, 1);
@@ -1380,12 +1419,10 @@ static void dcc_get_pending(int idx, char *buf, int len)
       dcc[idx].status = dcc[idx].u.xfer->offset + dcc_block;
     }
 
-    bf = (char *) nmalloc(l + 1);
     /* Seek forward ... */
     fseek(dcc[idx].u.xfer->f, dcc[idx].u.xfer->offset, SEEK_SET);
-    fread(bf, l, 1, dcc[idx].u.xfer->f);
-    tputs(dcc[idx].sock, bf, l);
-    nfree(bf);
+    dcc[idx].u.xfer->block_pending = pump_file_to_sock(dcc[idx].u.xfer->f,
+						       dcc[idx].sock, l);
     dcc[idx].u.xfer->type = XFER_RESUME;
   } else {
     dcc[idx].u.xfer->offset = 0;
@@ -1398,10 +1435,9 @@ static void dcc_get_pending(int idx, char *buf, int len)
         dcc[idx].status = dcc[idx].u.xfer->length;
       else
         dcc[idx].status = dcc_block;
-      bf = (char *) nmalloc(dcc[idx].status + 1);
-      fread(bf, dcc[idx].status, 1, dcc[idx].u.xfer->f);
-      tputs(dcc[idx].sock, bf, dcc[idx].status);
-      nfree(bf);
+      dcc[idx].u.xfer->block_pending = pump_file_to_sock(dcc[idx].u.xfer->f,
+						         dcc[idx].sock,
+							 dcc[idx].status);
     } else
       dcc[idx].status = 0;
   }

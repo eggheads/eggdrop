@@ -2,7 +2,7 @@
  * net.c -- handles:
  *   all raw network i/o
  * 
- * $Id: net.c,v 1.21 2000/09/09 11:39:09 fabian Exp $
+ * $Id: net.c,v 1.22 2000/09/23 17:46:55 fabian Exp $
  */
 /* 
  * This is hereby released into the public domain.
@@ -938,7 +938,7 @@ void dequeue_sockets()
 
   for (i = 0; i < MAXSOCKS; i++) { 
     if (!(socklist[i].flags & SOCK_UNUSED) &&
-	(socklist[i].outbuf != NULL)) {
+	socklist[i].outbuf != NULL) {
       /* Trick tputs into doing the work */
       x = write(socklist[i].sock, socklist[i].outbuf,
 		socklist[i].outbuflen);
@@ -975,7 +975,7 @@ void dequeue_sockets()
       if (!socklist[i].outbuf) {
 	int idx = findanyidx(socklist[i].sock);
 
-	if ((idx > 0) && dcc[idx].type && dcc[idx].type->outdone)
+	if (idx > 0 && dcc[idx].type && dcc[idx].type->outdone)
 	  dcc[idx].type->outdone(idx);
       }
     }
@@ -1100,7 +1100,7 @@ int sock_has_data(int type, int sock)
   int ret = 0, i;
 
   for (i = 0; i < MAXSOCKS; i++)
-    if (!(socklist[i].flags & SOCK_UNUSED) && (socklist[i].sock == sock))
+    if (!(socklist[i].flags & SOCK_UNUSED) && socklist[i].sock == sock)
       break;
   if (i < MAXSOCKS) {
     switch (type) {
@@ -1111,6 +1111,7 @@ int sock_has_data(int type, int sock)
 	ret = (socklist[i].inbuf != NULL);
 	break;
     }
-  }
+  } else
+    debug1("sock_has_data: could not find socket #%d, returning false.", sock);
   return ret;
 }

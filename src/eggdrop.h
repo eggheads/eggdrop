@@ -4,7 +4,7 @@
  * 
  *   IF YOU ALTER THIS FILE, YOU NEED TO RECOMPILE THE BOT.
  * 
- * $Id: eggdrop.h,v 1.33 2000/09/09 11:39:09 fabian Exp $
+ * $Id: eggdrop.h,v 1.34 2000/09/23 17:46:55 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -309,6 +309,8 @@ struct xfer_info {
   unsigned short ack_type;	/* type of ack				   */
   unsigned long offset;		/* offset from beginning of file, during
 				   resend.				   */
+  unsigned long block_pending;	/* bytes of this DCC block which weren't
+				   sent yet.				   */
   time_t start_time;		/* Time when a xfer was started.	   */
 };
 
@@ -518,8 +520,8 @@ typedef struct {
 /* Flags to sock_has_data
  */
 enum {
-  SOCK_DATA_OUTGOING,		/* Data in in-queue?			*/
-  SOCK_DATA_INCOMING		/* Data in out-queue?			*/
+  SOCK_DATA_OUTGOING,		/* Data in out-queue?			*/
+  SOCK_DATA_INCOMING		/* Data in in-queue?			*/
 };
 
 /* Fake idx's for dprintf - these should be ridiculously large +ve nums
