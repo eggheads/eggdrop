@@ -4,7 +4,7 @@
  *
  *   IF YOU ALTER THIS FILE, YOU NEED TO RECOMPILE THE BOT.
  *
- * $Id: eggdrop.h,v 1.61 2004/07/25 11:17:34 wcc Exp $
+ * $Id: eggdrop.h,v 1.62 2004/12/11 04:23:46 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -315,15 +315,15 @@ struct dcc_table {
 struct userrec;
 
 struct dcc_t {
-  long sock;                    /* This should be a long to keep 64-bit machines sane */
-  IP addr;                      /* IP address in host byte order */
+  long sock;                    /* This should be a long to keep 64-bit machines sane. */
+  IP addr;                      /* IP address in host network byte order. */
   unsigned int port;
   struct userrec *user;
   char nick[NICKLEN];
   char host[UHOSTLEN];
   struct dcc_table *type;
-  time_t timeval;               /* This is used for timeout checking  */
-  unsigned long status;         /* A LOT of dcc types have status things; makes it more avaliabe */
+  time_t timeval;               /* This is used for timeout checking.  */
+  unsigned long status;         /* A LOT of dcc types have status things; makes it more avaliabe. */
   union {
     struct chat_info *chat;
     struct file_info *file;
