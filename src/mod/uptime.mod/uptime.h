@@ -1,7 +1,7 @@
 /*
  * uptime.h - part of the uptime module
  *
- * $Id: uptime.h,v 1.7 2002/01/02 03:46:40 guppy Exp $
+ * $Id: uptime.h,v 1.8 2002/05/03 18:08:06 guppy Exp $
  */
 /*
  * Copyright (C) 2001 proton
@@ -25,7 +25,8 @@
 #ifndef _EGG_MOD_UPTIME_UPTIME_H
 #define _EGG_MOD_UPTIME_UPTIME_H
 
-#define UPTIME_EGGDROP 2
-#define UPTIME_HOST "uptime.eggheads.org"
+const static int uptime_type = 2;
+const static int uptime_port = 9969;
+const static char *uptime_host = "uptime.eggheads.org";
 
 #endif /* _EGG_MOD_UPTIME_UPTIME_H */

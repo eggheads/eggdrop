@@ -1,5 +1,5 @@
 /*
- * $Id: uptime.c,v 1.16 2002/01/02 03:46:40 guppy Exp $
+ * $Id: uptime.c,v 1.17 2002/05/03 18:08:06 guppy Exp $
  *
  * This module reports uptime information about your bot to http://uptime.eggheads.org. The
  * purpose for this is to see how your bot rates against many others (including EnergyMechs
@@ -48,45 +48,36 @@
 
 typedef struct PackUp
 {
-        int     regnr;
-        int     pid;
-        int     type;
-        unsigned long   cookie;
-        unsigned long   uptime;
-        unsigned long   ontime;
-        unsigned long   now2;
-        unsigned long   sysup;
-        char    string[3];
-
+  int     regnr;
+  int     pid;
+  int     type;
+  unsigned long   cookie;
+  unsigned long   uptime;
+  unsigned long   ontime;
+  unsigned long   now2;
+  unsigned long   sysup;
+  char    string[3];
 } PackUp;
 
 PackUp upPack;
 
 static Function *global = NULL, *server_funcs = NULL;
 
-char *uptime_host;
-int uptimeport = 9969;
-int hours=0;
-int uptimesock;
-int uptimecount;
-unsigned long uptimeip;
-unsigned long uptimecookie;
-time_t uptimelast;
-char uptime_version[50]="";
+static int hours = 0;
+static int uptimesock;
+static int uptimecount;
+static unsigned long uptimeip;
+static time_t uptimelast;
+static char uptime_version[50]="";
 
 static int uptime_expmem() {
-	int size = 256;
-	return size;
+  return 0;
 }
 
 static void uptime_report(int idx, int details)
 {
-  int size;
-
-  Context;
-  size = uptime_expmem();
   if (details)
-    dprintf(idx, "   using %d bytes\n", size);
+    dprintf(idx, "   using %d bytes\n", uptime_expmem());
 }
 	
 
@@ -111,112 +102,122 @@ unsigned long get_ip()
 
 int init_uptime(void)
 {
-	struct  sockaddr_in sai;
-	char temp[50]="";
-	upPack.regnr = 0;
-	upPack.pid = htonl(getpid());
-	upPack.type = htonl(UPTIME_EGGDROP);
-	upPack.cookie = 0;
-	upPack.uptime = htonl(online_since);
-	uptimecookie = rand();
-	uptimecount = 0;
-	uptimelast = 0;
-	uptimeip = -1;
+  struct  sockaddr_in sai;
+  char temp[50]="";
+  upPack.regnr = 0; /* unused */
+  upPack.pid = 0;
+  upPack.type = htonl(uptime_type);
+  upPack.cookie = 0; /* unused */
+  upPack.uptime = htonl(online_since);
+  uptimecount = 0;
+  uptimelast = 0;
+  uptimeip = -1;
 
+  strncpyz(temp, ver, sizeof temp);
+  splitc(uptime_version,temp,' ');
+  strncpyz(uptime_version,temp, sizeof uptime_version);
 
-	strcpy(temp,ver);
-	splitc(uptime_version,temp,' ');
-	strcpy(uptime_version,temp);
-
-	if ((uptimesock = socket(AF_INET,SOCK_DGRAM,0)) < 0) {
-		putlog(LOG_DEBUG, "*", "init_uptime socket returned <0 %d",uptimesock);
-		return((uptimesock = -1));
-	}
-	memset(&sai,0,sizeof(sai));
-	sai.sin_addr.s_addr = INADDR_ANY;
-	sai.sin_family = AF_INET;
-	if (bind(uptimesock,(struct sockaddr*)&sai,sizeof(sai)) < 0) {
-		close(uptimesock);
-		return((uptimesock = -1));
-	}
-	fcntl(uptimesock,F_SETFL,O_NONBLOCK | fcntl(uptimesock,F_GETFL));
-	return(0);
+  if ((uptimesock = socket(AF_INET,SOCK_DGRAM,0)) < 0) {
+    putlog(LOG_DEBUG, "*", "init_uptime socket returned <0 %d",uptimesock);
+    return((uptimesock = -1));
+  }
+  memset(&sai,0,sizeof(sai));
+  sai.sin_addr.s_addr = INADDR_ANY;
+  sai.sin_family = AF_INET;
+  if (bind(uptimesock,(struct sockaddr*)&sai,sizeof(sai)) < 0) {
+    close(uptimesock);
+    return((uptimesock = -1));
+  }
+  fcntl(uptimesock,F_SETFL,O_NONBLOCK | fcntl(uptimesock,F_GETFL));
+  return(0);
 }
 
 
 int send_uptime(void)
 {
-	struct  sockaddr_in sai;
-	struct  stat st;
-	PackUp  *mem;
-	int     len, servidx = findanyidx(serv);
+  struct  sockaddr_in sai;
+  struct  stat st;
+  PackUp  *mem;
+  int     len, servidx;
+  char 	servhost[UHOSTLEN];
 
-	uptimecookie = (uptimecookie + 1) * 18457;
-	upPack.cookie = htonl(uptimecookie);
-	upPack.now2 = htonl(time(NULL));
-	if (stat("/proc",&st) < 0)
-		upPack.sysup = 0;
-	else
-		upPack.sysup = htonl(st.st_ctime);
-	upPack.uptime = htonl(online_since);
-	upPack.ontime = htonl(server_online);
-	uptimecount++;
-	if (((uptimecount & 0x7) == 0) || (uptimeip == -1)) {
-		uptimeip = get_ip();
-		if (uptimeip == -1)
-			return -2;
-	}
-	len = sizeof(upPack) + strlen(botnetnick) + strlen(dcc[servidx].host) + strlen(uptime_version);
-	mem = (PackUp*)nmalloc(len);
-	memcpy(mem,&upPack,sizeof(upPack));
-	sprintf(mem->string,"%s %s %s",botnetnick,dcc[servidx].host,uptime_version);
-	memset(&sai,0,sizeof(sai));
-	sai.sin_family = AF_INET;
-	sai.sin_addr.s_addr = uptimeip;
-	sai.sin_port = htons(uptimeport);
-	len = sendto(uptimesock,(void*)mem,len,0,(struct sockaddr*)&sai,sizeof(sai));
-	nfree(mem);
-	return len;
+  if (uptimeip == -1) {
+    uptimeip = get_ip();
+    if (uptimeip == -1)
+      return -2;
+  }
+
+  if (server_online) {
+    servidx = findanyidx(serv);
+    strncpyz(servhost, dcc[servidx].host, sizeof servhost);
+    upPack.ontime = htonl(server_online);
+  } else {
+    strncpyz(servhost, "none", sizeof servhost);
+    upPack.ontime = 0;
+  }
+
+  upPack.now2 = htonl(time(NULL));
+
+  if (!upPack.pid)
+    upPack.pid = htonl(getpid());
+
+  if (stat("/proc",&st) < 0)
+    upPack.sysup = 0;
+  else
+    upPack.sysup = htonl(st.st_ctime);
+
+  uptimecount++;
+
+  len = sizeof(upPack) + strlen(botnetnick) + strlen(servhost) + strlen(uptime_version);
+  mem = (PackUp*)nmalloc(len);
+  memcpy(mem,&upPack,sizeof(upPack));
+  sprintf(mem->string,"%s %s %s",botnetnick,servhost,uptime_version);
+  memset(&sai,0,sizeof(sai));
+  sai.sin_family = AF_INET;
+  sai.sin_addr.s_addr = uptimeip;
+  sai.sin_port = htons(uptime_port);
+  len = sendto(uptimesock,(void*)mem,len,0,(struct sockaddr*)&sai,sizeof(sai));
+  nfree(mem);
+  return len;
 }
 
-void check_hourly() {
-	hours++;
-	if (hours==6) {
-		send_uptime();
-		hours=0;
-	}
+void check_hourly()
+{
+  hours++;
+  if (hours == 6) {
+    send_uptime();
+    hours = 0;
+  }
 }
 
 static char *uptime_close()
 {
-	nfree(uptime_host);
-	close(uptimesock);
-	del_hook(HOOK_HOURLY, (Function) check_hourly);
-	module_undepend(MODULE_NAME);
-	return NULL;
+  nfree(uptime_host);
+  close(uptimesock);
+  del_hook(HOOK_HOURLY, (Function) check_hourly);
+  module_undepend(MODULE_NAME);
+  return NULL;
 }
 
 EXPORT_SCOPE char *uptime_start();
 
 static Function uptime_table[] =
-    {
-        (Function) uptime_start,
-        (Function) uptime_close,
-        (Function) uptime_expmem,
-        (Function) uptime_report,
-    };
+{
+  (Function) uptime_start,
+  (Function) uptime_close,
+  (Function) uptime_expmem,
+  (Function) uptime_report,
+};
 
 char *uptime_start(Function * global_funcs)
 {
-	global = global_funcs;
+  global = global_funcs;
 
-	Context;
-	if (!(server_funcs = module_depend(MODULE_NAME, "server", 1, 0)))
-		return "You need the server module to use the uptime module.";
-	module_register(MODULE_NAME, uptime_table, 1, 1);
-	add_hook(HOOK_HOURLY, (Function) check_hourly);
-	uptime_host=nmalloc(256);
-	strcpy(uptime_host, UPTIME_HOST);
-	init_uptime();
-	return NULL;
+  if (!(server_funcs = module_depend(MODULE_NAME, "server", 1, 0)))
+    return "You need the server module to use the uptime module.";
+  
+  module_register(MODULE_NAME, uptime_table, 1, 1);
+  add_hook(HOOK_HOURLY, (Function) check_hourly);
+  init_uptime();
+  return NULL;
 }
