@@ -19,6 +19,7 @@ Eggdrop related Questions
        7. UNRESOLVED OR UNDEFINED SYMBOLS: ldclose, ldopen, ldnshread
           (AIX 3)
        8. UNSATISFIED SYMBOLS 'shl_findsym' and 'shl_load'  (HP-UX 9)
+       9. Bot doesn't compile on Ultrix
 
 Tcl related questions
 
@@ -321,6 +322,12 @@ A. EGGDROP
      essentially at link time you are tell it to also link in the dl
      library which
      apparently resolves this problem.
+
+9. Bot doesn't compile on Ultrix
+
+     There are some known problems with make and Eggdrop on Ultrix systems.
+     Try to use gmake instead. Additionally sh5 should be use, a simple
+     'gmake SHELL=/bin/sh5' should be enough.
 
   ------------------------------------------------------------------------
 
