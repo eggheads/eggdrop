@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  *
- * $Id: chan.c,v 1.69 2001/08/19 09:04:44 poptix Exp $
+ * $Id: chan.c,v 1.70 2001/08/27 23:04:18 poptix Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -2065,13 +2065,13 @@ static int gotmsg(char *from, char *msg)
   /* Send out possible ctcp responses */
   if (ctcp_reply[0]) {
     if (ctcp_mode != 2) {
-      dprintf(DP_SERVER, "NOTICE %s :%s\n", nick, ctcp_reply);
+      dprintf(DP_HELP, "NOTICE %s :%s\n", nick, ctcp_reply);
     } else {
       if (now - last_ctcp > flud_ctcp_time) {
-	dprintf(DP_SERVER, "NOTICE %s :%s\n", nick, ctcp_reply);
+	dprintf(DP_HELP, "NOTICE %s :%s\n", nick, ctcp_reply);
 	count_ctcp = 1;
       } else if (count_ctcp < flud_ctcp_thr) {
-	dprintf(DP_SERVER, "NOTICE %s :%s\n", nick, ctcp_reply);
+	dprintf(DP_HELP, "NOTICE %s :%s\n", nick, ctcp_reply);
 	count_ctcp++;
       }
       last_ctcp = now;
