@@ -1,7 +1,7 @@
 #! /path/to/eggdrop
 # ^- set that to the directory eggdrop is in ie "#! /users/lamest/egg/eggdrop"
 #
-# $Id: eggdrop.conf.dist,v 1.40 1999/12/28 01:46:26 guppy Exp $
+# $Id: eggdrop.conf.dist,v 1.41 2000/02/02 12:12:50 per Exp $
 #
 # This is a sample configuration file for your bot.  You will definitely
 # want to edit this, to set up your bot.  Right now it creates a bot called
@@ -220,7 +220,7 @@ set open-telnets 0
 
 # [0/1] Display 'Nickname.' instead of identifying ourselves when people
 # telnet in. Set to 1 to only display Nickname.
-# (usefull if someone portscans your machine, they wont know we're here)
+# (useful if someone portscans your machine, they wont know we're here)
 set stealth-telnets 0
 
 # [0/1] Display a banner when people telnet in.
@@ -1179,7 +1179,7 @@ set info-party 0
 source scripts/alltools.tcl
 source scripts/action.fix.tcl
 
-# This script provides many usefull minor informational commands
+# This script provides many useful minor informational commands
 # (like setting users url's, email address, etc). You can modify
 # it to add extra entries, you might also want to modify help/userinfo.help
 # and help/msg/userinfo.help to change the help files.
