@@ -1208,7 +1208,7 @@ static int tcl_channels STDVAR
 
 static int tcl_savechannels STDVAR
 {
-  context;
+  Context;
   BADARGS(1, 1, "");
   if (!chanfile[0]) {
     Tcl_AppendResult(irp, "no channel file");
@@ -1220,7 +1220,7 @@ static int tcl_savechannels STDVAR
 
 static int tcl_loadchannels STDVAR
 {
-  context;
+  Context;
   BADARGS(1, 1, "");
   if (!chanfile[0]) {
     Tcl_AppendResult(irp, "no channel file");
@@ -1317,7 +1317,7 @@ static int tcl_addchanrec STDVAR
 {
   struct userrec *u;
 
-  context;
+  Context;
   BADARGS(3, 3, " handle channel");
   u = get_user_by_handle(userlist, argv[1]);
   if (!u) {
@@ -1341,7 +1341,7 @@ static int tcl_delchanrec STDVAR
 {
   struct userrec *u;
 
-  context;
+  Context;
   BADARGS(3, 3, " handle channel");
   u = get_user_by_handle(userlist, argv[1]);
   if (!u) {
@@ -1445,7 +1445,7 @@ static int tcl_channel_add(Tcl_Interp * irp, char *newname, char *options)
 
   if ((newname[0] != '#') && (newname[0] != '&'))
     return TCL_ERROR;
-  context;
+  Context;
   convert_element(glob_chanmode, buf2);
   simple_sprintf(buf, "chanmode %s ", buf2);
   strncat(buf, glob_chanset, 2047 - strlen(buf));
@@ -1453,7 +1453,7 @@ static int tcl_channel_add(Tcl_Interp * irp, char *newname, char *options)
   buf[2047] = 0;
   if (Tcl_SplitList(NULL, buf, &items, &item) != TCL_OK)
     return TCL_ERROR;
-  context;
+  Context;
   if ((chan = findchan(newname))) {
     /* already existing channel, maybe a reload of the channel file */
     chan->status &= ~CHAN_FLAGGED;	/* don't delete me! :) */

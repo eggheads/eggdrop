@@ -62,9 +62,9 @@ int def_unpack(struct userrec *u, struct user_entry *e)
 {
   char *tmp;
 
-  ASSERT (e != NULL);
-  ASSERT (e->name != NULL);
-  context;
+  Assert(e != NULL);
+  Assert(e->name != NULL);
+  Context;
   tmp = e->u.list->extra;
   e->u.list->extra = NULL;
   list_type_kill(e->u.list);
@@ -76,8 +76,8 @@ int def_pack(struct userrec *u, struct user_entry *e)
 {
   char *tmp;
 
-  ASSERT (e != NULL);
-  ASSERT (e->name == NULL);
+  Assert(e != NULL);
+  Assert(e->name == NULL);
   tmp = e->u.string;
   e->u.list = user_malloc(sizeof(struct list_type));
   e->u.list->next = NULL;
@@ -87,7 +87,7 @@ int def_pack(struct userrec *u, struct user_entry *e)
 
 int def_kill(struct user_entry *e)
 {
-  context;
+  Context;
   nfree(e->u.string);
   nfree(e);
   return 1;
@@ -95,7 +95,7 @@ int def_kill(struct user_entry *e)
 
 int def_write_userfile(FILE * f, struct userrec *u, struct user_entry *e)
 {
-  context;
+  Context;
   if (fprintf(f, "--%s %s\n", e->type->name, e->u.string) == EOF)
     return 0;
   return 1;
@@ -109,14 +109,14 @@ void *def_get(struct userrec *u, struct user_entry *e)
 int def_set(struct userrec *u, struct user_entry *e, void *buf)
 {
   char *string = (char *) buf;
-  contextnote("drummer's bug?");
+  ContextNote("drummer's bug?");
 
   if (string && !string[0])
     string = NULL;
   if (!string && !e->u.string)
     return 1;
-  ASSERT (string != e->u.string);
-  context;
+  Assert(string != e->u.string);
+  Context;
   if (string) {
     int l = strlen (string);
     char *i;
@@ -140,14 +140,14 @@ int def_set(struct userrec *u, struct user_entry *e, void *buf)
     e->u.string = NULL;
   }
 
-  ASSERT (u != NULL);
+  Assert(u != NULL);
 
   if (!noshare && (u->flags & (USER_BOT | USER_UNSHARED))) {
     if (e->type == &USERENTRY_INFO && !share_greet)
       return 1;
     shareout(NULL, "c %s %s %s\n", e->type->name, u->handle, e->u.string ? e->u.string : "");
   }
-  context;
+  Context;
   return 1;
 }
 
@@ -176,13 +176,13 @@ int def_tcl_set(Tcl_Interp * irp, struct userrec *u,
 
 int def_expmem(struct user_entry *e)
 {
-  context;
+  Context;
   return strlen(e->u.string) + 1;
 }
 
 void def_display(int idx, struct user_entry *e)
 {
-  context;
+  Context;
   dprintf(idx, "  %s: %s\n", e->type->name, e->u.string);
 }
 
@@ -194,7 +194,7 @@ int def_dupuser(struct userrec *new, struct userrec *old,
 
 static void comment_display(int idx, struct user_entry *e)
 {
-  context;
+  Context;
   if (dcc[idx].user && (dcc[idx].user->flags & USER_MASTER))
     dprintf(idx, "  COMMENT: %.70s\n", e->u.string);
 }
@@ -297,11 +297,11 @@ static int laston_unpack(struct userrec *u, struct user_entry *e)
   char *par, *arg;
   struct laston_info *li;
 
-  ASSERT (e != NULL);
-  ASSERT (e->name != NULL);
-  context;
+  Assert(e != NULL);
+  Assert(e->name != NULL);
+  Context;
   par = e->u.list->extra;
-  ASSERT (par != NULL);
+  Assert(par != NULL);
   arg = newsplit (&par);
   if (!par[0])
     par = "???";
@@ -320,9 +320,9 @@ static int laston_pack(struct userrec *u, struct user_entry *e)
   struct laston_info *li;
   int l;
 
-  ASSERT (e != NULL);
-  ASSERT (e->u.extra != NULL);
-  ASSERT (e->name == NULL);
+  Assert(e != NULL);
+  Assert(e->u.extra != NULL);
+  Assert(e->name == NULL);
   li = (struct laston_info *) e->u.extra;
   l = sprintf(work, "%lu %s", li->laston, li->lastonplace);
   e->u.list = user_malloc(sizeof(struct list_type));
@@ -340,7 +340,7 @@ static int laston_write_userfile(FILE * f,
 {
   struct laston_info *li = (struct laston_info *) e->u.extra;
 
-  context;
+  Context;
   if (fprintf(f, "--LASTON %lu %s\n", li->laston,
 	      li->lastonplace ? li->lastonplace : "") == EOF)
     return 0;
@@ -349,7 +349,7 @@ static int laston_write_userfile(FILE * f,
 
 static int laston_kill(struct user_entry *e)
 {
-  context;
+  Context;
   if (((struct laston_info *) (e->u.extra))->lastonplace)
     nfree(((struct laston_info *) (e->u.extra))->lastonplace);
   nfree(e->u.extra);
@@ -361,14 +361,14 @@ static int laston_set(struct userrec *u, struct user_entry *e, void *buf)
 {
   struct laston_info *li = (struct laston_info *) e->u.extra;
 
-  context;
+  Context;
   if (li != buf) {
     if (li) {
-      ASSERT (li->lastonplace != NULL);
+      Assert(li->lastonplace != NULL);
       nfree(li->lastonplace);
       nfree(li);
     }
-    contextnote("(sharebug) occurred in laston_set");
+    ContextNote("(sharebug) occurred in laston_set");
 
     li = e->u.extra = buf;
   }
@@ -432,7 +432,7 @@ static int laston_tcl_set(Tcl_Interp * irp, struct userrec *u,
 
 static int laston_expmem(struct user_entry *e)
 {
-  context;
+  Context;
   return sizeof(struct laston_info) +
     strlen(((struct laston_info *) (e->u.extra))->lastonplace) + 1;
 }
@@ -476,9 +476,9 @@ static int botaddr_unpack(struct userrec *u, struct user_entry *e)
   char *p, *q;
   struct bot_addr *bi = user_malloc(sizeof(struct bot_addr));
 
-  ASSERT (e != NULL);
-  ASSERT (e->name != NULL);
-  context;
+  Assert(e != NULL);
+  Assert(e->name != NULL);
+  Context;
   bzero (bi, sizeof(struct bot_addr));
 
   if (!(q = strchr ((p = e->u.list->extra), ':'))) {
@@ -508,8 +508,8 @@ static int botaddr_pack(struct userrec *u, struct user_entry *e)
   struct bot_addr *bi;
   int l;
 
-  ASSERT (e != NULL);
-  ASSERT (e->name == NULL);
+  Assert(e != NULL);
+  Assert(e->name == NULL);
   bi = (struct bot_addr *) e->u.extra;
   l = simple_sprintf(work, "%s:%u/%u", bi->address, bi->telnet_port,
               bi->relay_port);
@@ -524,11 +524,11 @@ static int botaddr_pack(struct userrec *u, struct user_entry *e)
 
 static int botaddr_kill(struct user_entry *e)
 {
-  context;
+  Context;
   nfree(((struct bot_addr *) (e->u.extra))->address);
   nfree(e->u.extra);
   nfree(e);
-  context;
+  Context;
   return 1;
 }
 
@@ -536,7 +536,7 @@ static int botaddr_write_userfile(FILE * f, struct userrec *u, struct user_entry
 {
   register struct bot_addr *bi = (struct bot_addr *) e->u.extra;
 
-  context;
+  Context;
   if (fprintf(f, "--%s %s:%u/%u\n", e->type->name, bi->address,
 	      bi->telnet_port, bi->relay_port) == EOF)
     return 0;
@@ -547,19 +547,19 @@ static int botaddr_set(struct userrec *u, struct user_entry *e, void *buf)
 {
   register struct bot_addr *bi = (struct bot_addr *) e->u.extra;
 
-  context;
+  Context;
   if (!bi && !buf)
     return 1;
   if (bi != buf) {
     if (bi) {
-      ASSERT (bi->address != NULL);
-      nfree (bi->address);
-      nfree (bi);
+      Assert(bi->address != NULL);
+      nfree(bi->address);
+      nfree(bi);
     }
-    contextnote("(sharebug) occurred in botaddr_set");
+    ContextNote("(sharebug) occurred in botaddr_set");
     bi = e->u.extra = buf;
   }
-  ASSERT (u != NULL);
+  Assert(u != NULL);
   if (bi && !noshare && !(u->flags & USER_UNSHARED)) {
     shareout(NULL, "c BOTADDR %s %s %d %d\n", u->handle,
              bi->address, bi->telnet_port, bi->relay_port);
@@ -573,7 +573,7 @@ static int botaddr_tcl_get(Tcl_Interp * interp, struct userrec *u,
   register struct bot_addr *bi = (struct bot_addr *) e->u.extra;
   char number[20];
 
-  context;
+  Context;
   sprintf(number, " %d", bi->telnet_port);
   Tcl_AppendResult(interp, bi->address, number, NULL);
   sprintf(number, " %d", bi->relay_port);
@@ -593,7 +593,7 @@ static int botaddr_tcl_set(Tcl_Interp * irp, struct userrec *u,
       bi = user_malloc(sizeof(struct bot_addr));
       bzero (bi, sizeof (struct bot_addr));
     } else {
-      ASSERT (bi->address != NULL);
+      Assert(bi->address != NULL);
       nfree(bi->address);
     }
     bi->address = user_malloc(strlen(argv[3]) + 1);
@@ -615,7 +615,7 @@ static int botaddr_expmem(struct user_entry *e)
 {
   register struct bot_addr *bi = (struct bot_addr *) e->u.extra;
 
-  context;
+  Context;
   return strlen(bi->address) + 1 + sizeof(struct bot_addr);
 }
 
@@ -623,7 +623,7 @@ static void botaddr_display(int idx, struct user_entry *e)
 {
   register struct bot_addr *bi = (struct bot_addr *) e->u.extra;
 
-  context;
+  Context;
   dprintf(idx, "  ADDRESS: %.70s\n", bi->address);
   dprintf(idx, "     telnet: %d, relay: %d\n", bi->telnet_port, bi->relay_port);
 }
@@ -692,8 +692,8 @@ int xtra_set(struct userrec *u, struct user_entry *e, void *buf)
 {
   struct xtra_key *curr, *old = NULL, *new = buf;
 
-  ASSERT (new != NULL);
-  context;
+  Assert(new != NULL);
+  Context;
   for (curr = e->u.extra; curr; curr = curr->next) {
     if (curr->key && !strcasecmp(curr->key, new->key)) {
       old = curr;
@@ -768,9 +768,9 @@ int xtra_unpack(struct userrec *u, struct user_entry *e)
   struct xtra_key *t;
   char *key, *data;
 
-  ASSERT (e != NULL);
-  ASSERT (e->name != NULL);
-  context;
+  Assert(e != NULL);
+  Assert(e->name != NULL);
+  Context;
 
   head = curr = e->u.list;
   e->u.extra = NULL;
@@ -797,9 +797,9 @@ static int xtra_pack(struct userrec *u, struct user_entry *e)
   struct list_type *t;
   struct xtra_key *curr, *next;
 
-  ASSERT (e != NULL);
-  ASSERT (e->name == NULL);
-  context;
+  Assert(e != NULL);
+  Assert(e->name == NULL);
+  Context;
   curr = e->u.extra;
   e->u.list = NULL;
   while (curr) {
@@ -822,22 +822,22 @@ static void xtra_display(int idx, struct user_entry *e)
   struct xtra_key *xk;
   char **list;
 
-  context;
+  Context;
   code = Tcl_SplitList(interp, whois_fields, &lc, &list);
   if (code == TCL_ERROR)
     return;
   /* scan thru xtra field, searching for matches */
-  context;
+  Context;
   for (xk = e->u.extra; xk; xk = xk->next) {
     /* ok, it's a valid xtra field entry */
-    context;
+    Context;
     for (j = 0; j < lc; j++) {
       if (strcasecmp(list[j], xk->key) == 0)
 	dprintf(idx, "  %s: %s\n", xk->key, xk->data);
     }
   }
   Tcl_Free((char *) list);
-  context;
+  Context;
 }
 
 static int xtra_gotshare(struct userrec *u, struct user_entry *e,
@@ -904,7 +904,7 @@ int xtra_kill(struct user_entry *e)
 {
   struct xtra_key *x, *y;
 
-  context;
+  Context;
   for (x = e->u.extra; x; x = y) {
     y = x->next;
     nfree(x->key);
@@ -912,7 +912,7 @@ int xtra_kill(struct user_entry *e)
     nfree(x);
   }
   nfree(e);
-  context;
+  Context;
   return 1;
 }
 
@@ -1039,22 +1039,22 @@ static void hosts_display(int idx, struct user_entry *e)
 
 static int hosts_set(struct userrec *u, struct user_entry *e, void *buf)
 {
-  context;
+  Context;
   if (!buf || !strcasecmp(buf, "none")) {
-    contextnote("SEGV with sharing bug track");
+    ContextNote("SEGV with sharing bug track");
     /* when the bot crashes, it's in this part, not in the 'else' part */
-    contextnote(e ? "e is valid" : "e is NULL!");
-    ASSERT (e != NULL); /* e cannot be null ++rtc */
-    contextnote((e->u.list) ? "(sharebug) e->u.list is valid" : "(sharebug) e->u.list is NULL!");
+    ContextNote(e ? "e is valid" : "e is NULL!");
+    Assert(e != NULL); /* e cannot be null ++rtc */
+    ContextNote((e->u.list) ? "(sharebug) e->u.list is valid" : "(sharebug) e->u.list is NULL!");
     list_type_kill(e->u.list);
-    contextnote("(sharebug[c1]) occurred in hosts_set - added 99/03/26");
+    ContextNote("(sharebug[c1]) occurred in hosts_set - added 99/03/26");
     e->u.list = NULL;
-    contextnote("(sharebug[c2]) occurred in hosts_set - added 99/03/26");
+    ContextNote("(sharebug[c2]) occurred in hosts_set - added 99/03/26");
   } else {
     char *host = buf, *p = strchr(host, ',');
     struct list_type **t;
 
-    contextnote("SEGV with sharing bug track");
+    ContextNote("SEGV with sharing bug track");
     /* can't have ,'s in hostmasks */
     while (p) {
       *p = '?';
@@ -1082,7 +1082,7 @@ static int hosts_set(struct userrec *u, struct user_entry *e, void *buf)
     (*t)->extra = user_malloc(strlen(host) + 1);
     strcpy((*t)->extra, host);
   }
-  contextnote("please visit http://www.eggheads.org/bugs.html now.");
+  ContextNote("please visit http://www.eggheads.org/bugs.html now.");
   return 1;
 }
 

@@ -5,9 +5,9 @@
  * that was distributed with this code.
  */
 
+#define MODULE_NAME "transfer"
 #define MAKING_TRANSFER
 #define MOD_FILESYS
-#define MODULE_NAME "transfer"
 
 /* sigh sunos */
 #include <sys/types.h>
@@ -142,7 +142,7 @@ static int expmem_fileq()
   fileq_t *q = fileq;
   int tot = 0;
 
-  context;
+  Context;
   while (q != NULL) {
     tot += strlen(q->dir) + strlen(q->file) + 2 + sizeof(fileq_t);
     q = q->next;
@@ -283,14 +283,14 @@ static void check_tcl_sentrcvd(struct userrec *u, char *nick, char *path,
   {FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0};
   char *hand = u ? u->handle : "*";
 
-  context;
+  Context;
   get_user_flagrec(u, &fr, NULL);
   Tcl_SetVar(interp, "_sr1", hand, 0);
   Tcl_SetVar(interp, "_sr2", nick, 0);
   Tcl_SetVar(interp, "_sr3", path, 0);
   check_tcl_bind(h, hand, &fr, " $_sr1 $_sr2 $_sr3",
 		 MATCH_MASK | BIND_USE_ATTR | BIND_STACKABLE);
-  context;
+  Context;
 }
 
 static void eof_dcc_fork_send(int idx)
@@ -298,7 +298,7 @@ static void eof_dcc_fork_send(int idx)
   char s1[121];
   char *s2;
 
-  context;
+  Context;
   fclose(dcc[idx].u.xfer->f);
   if (!strcmp(dcc[idx].nick, "*users")) {
     int x, y = 0;
@@ -336,7 +336,7 @@ static void eof_dcc_send(int idx)
   char ofn[121], nfn[121], s[1024], *hand;
   struct userrec *u;
 
-  context;
+  Context;
   if (dcc[idx].u.xfer->length == dcc[idx].status) {
     /* success */
     ok = 0;
@@ -410,7 +410,7 @@ static void eof_dcc_send(int idx)
     return;
   }
   /* failure :( */
-  context;
+  Context;
   fclose(dcc[idx].u.xfer->f);
   if (!strcmp(dcc[idx].nick, "*users")) {
     int x, y = 0;
@@ -456,7 +456,7 @@ static void dcc_get(int idx, char *buf, int len)
   unsigned long cmp, l;
   int w = len + dcc[idx].u.xfer->sofar, p = 0;
 
-  context;
+  Context;
   dcc[idx].timeval = now;
   if (w < 4) {
     my_memcpy(&(dcc[idx].u.xfer->buf[dcc[idx].u.xfer->sofar]), buf, len);
@@ -496,7 +496,7 @@ static void dcc_get(int idx, char *buf, int len)
   if (cmp != dcc[idx].status)
     return;
   if (dcc[idx].status == dcc[idx].u.xfer->length) {
-    context;
+    Context;
     /* successful send, we're done */
     killsock(dcc[idx].sock);
     fclose(dcc[idx].u.xfer->f);
@@ -542,7 +542,7 @@ static void dcc_get(int idx, char *buf, int len)
       send_next_file(xnick);
     return;
   }
-  context;
+  Context;
   /* note: is this fseek necessary any more? */
 /* fseek(dcc[idx].u.xfer->f,dcc[idx].status,0);   */
   l = dcc_block;
@@ -559,7 +559,7 @@ static void eof_dcc_get(int idx)
 {
   char xnick[NICKLEN], s[1024];
 
-  context;
+  Context;
   fclose(dcc[idx].u.xfer->f);
   if (!strcmp(dcc[idx].nick, "*users")) {
     int x, y = 0;
@@ -597,7 +597,7 @@ static void eof_dcc_get(int idx)
   /* send next queued file if there is one */
   if (!at_limit(xnick))
     send_next_file(xnick);
-  context;
+  Context;
 }
 
 static void dcc_send(int idx, char *buf, int len)
@@ -605,7 +605,7 @@ static void dcc_send(int idx, char *buf, int len)
   char s[512];
   unsigned long sent;
 
-  context;
+  Context;
   fwrite(buf, len, 1, dcc[idx].u.xfer->f);
   dcc[idx].status += len;
   /* put in network byte order */
@@ -706,7 +706,7 @@ static void transfer_get_timeout(int i)
 {
   char xx[1024];
 
-  context;
+  Context;
   if (!strcmp(dcc[i].nick, "*users")) {
     int x, y = 0;
 
@@ -931,7 +931,7 @@ static void dcc_get_pending(int idx, char *buf, int len)
   int i;
   char *bf, s[UHOSTLEN];
 
-  context;
+  Context;
   i = answer(dcc[idx].sock, s, &ip, &port, 1);
   killsock(dcc[idx].sock);
   dcc[idx].sock = i;
@@ -1097,7 +1097,7 @@ static int raw_dcc_send(char *filename, char *nick, char *from, char *dir)
   struct stat ss;
   FILE *f;
 
-  context;
+  Context;
   port = reserved_port;
   zz = open_listen(&port);
   if (zz == (-1))
@@ -1147,9 +1147,9 @@ static int fstat_unpack(struct userrec *u, struct user_entry *e)
   char *par, *arg;
   struct filesys_stats *fs;
 
-  ASSERT (e != NULL);
-  ASSERT (e->name != NULL);
-  context;
+  Assert(e != NULL);
+  Assert(e->name != NULL);
+  Context;
   fs = user_malloc(sizeof(struct filesys_stats));
   bzero(fs, sizeof(struct filesys_stats));
   par = e->u.list->extra;
@@ -1176,12 +1176,12 @@ static int fstat_pack(struct userrec *u, struct user_entry *e)
   register struct filesys_stats *fs;
   struct list_type *l = user_malloc(sizeof(struct list_type));
 
-  ASSERT (e != NULL);
-  ASSERT (e->name == NULL);
-  ASSERT (e->u.extra != NULL);
-  context;
+  Assert(e != NULL);
+  Assert(e->name == NULL);
+  Assert(e->u.extra != NULL);
+  Context;
   fs = e->u.extra;
-  /* if you set it in the declaration, the ASSERT will be useless. ++rtc */
+  /* if you set it in the declaration, the Assert will be useless. ++rtc */
 
   l->extra = user_malloc(40);
   sprintf(l->extra, "%09u %09u %09u %09u",
@@ -1197,9 +1197,9 @@ static int fstat_write_userfile(FILE * f, struct userrec *u,
 {
   register struct filesys_stats *fs;
 
-  ASSERT (e != NULL);
-  ASSERT (e->u.extra != NULL);
-  context;
+  Assert(e != NULL);
+  Assert(e->u.extra != NULL);
+  Context;
   fs = e->u.extra;
   if (fprintf(f, "--FSTAT %09u %09u %09u %09u\n",
 	      fs->uploads, fs->upload_ks,
@@ -1212,11 +1212,11 @@ static int fstat_set(struct userrec *u, struct user_entry *e, void *buf)
 {
   register struct filesys_stats *fs = buf;
 
-  ASSERT (e != NULL);
-  context;
+  Assert(e != NULL);
+  Context;
   if (e->u.extra != fs) {
     if (e->u.extra)
-      nfree (e->u.extra);
+      nfree(e->u.extra);
     e->u.extra = fs;
   } else if (!fs) /* e->u.extra == NULL && fs == NULL */
     return 1;
@@ -1249,8 +1249,8 @@ static int fstat_tcl_get(Tcl_Interp * irp, struct userrec *u,
   char d[50];
 
   BADARGS(3, 4, " handle FSTAT ?u/d?");
-  ASSERT (e != NULL)
-  ASSERT (e->u.extra != NULL);
+  Assert(e != NULL);
+  Assert(e->u.extra != NULL);
   fs = e->u.extra;
   if (argc == 3)
     simple_sprintf(d, "%u %u %u %u", fs->uploads, fs->upload_ks,
@@ -1271,8 +1271,8 @@ static int fstat_tcl_get(Tcl_Interp * irp, struct userrec *u,
 
 static int fstat_kill(struct user_entry *e)
 {
-  ASSERT (e != NULL);
-  context;
+  Assert(e != NULL);
+  Context;
   if (e->u.extra)
     nfree(e->u.extra);
   nfree(e);
@@ -1288,8 +1288,8 @@ static void fstat_display(int idx, struct user_entry *e)
 {
   struct filesys_stats *fs;
 
-  ASSERT (e != NULL);
-  ASSERT (e->u.extra != NULL);
+  Assert(e != NULL);
+  Assert(e->u.extra != NULL);
 
   fs = e->u.extra;
   dprintf(idx, "  FILES: %u download%s (%luk), %u upload%s (%luk)\n",
@@ -1330,7 +1330,7 @@ static int fstat_gotshare(struct userrec *u, struct user_entry *e,
   char *p;
   struct filesys_stats *fs;
 
-  ASSERT (e != NULL);
+  Assert(e != NULL);
   noshare = 1;
   switch (par[0]) {
   case 'u':
@@ -1369,7 +1369,7 @@ static int fstat_dupuser(struct userrec *u, struct userrec *o,
 {
   struct filesys_stats *fs;
 
-  context;
+  Context;
   if (e->u.extra) {
     fs = user_malloc(sizeof(struct filesys_stats));
     my_memcpy(fs, e->u.extra, sizeof(struct filesys_stats));
@@ -1421,7 +1421,7 @@ static int fstat_tcl_set(Tcl_Interp * irp, struct userrec *u,
   register struct filesys_stats *fs;
   int f = 0, k = 0;
 
-  ASSERT (e != NULL);
+  Assert(e != NULL);
   BADARGS(4, 6, " handle FSTAT u/d ?files ?ks??");
 
   if (argc > 4)
@@ -1458,7 +1458,7 @@ static char *transfer_close()
 {
   int i;
 
-  context;
+  Context;
   putlog(LOG_MISC, "*", "Unloading transfer module, killing all transfer connections..");
   for (i = dcc_total - 1; i >= 0; i--) {
     if (dcc[i].type == &DCC_GET || dcc[i].type == &DCC_GET_PENDING)
@@ -1527,7 +1527,7 @@ char *transfer_start(Function * global_funcs)
   global = global_funcs;
 
   fileq = NULL;
-  context;
+  Context;
   module_register(MODULE_NAME, transfer_table, 2, 0);
   if (!module_depend(MODULE_NAME, "eggdrop", 104, 0))
     return "This module requires eggdrop1.4.0 or later";

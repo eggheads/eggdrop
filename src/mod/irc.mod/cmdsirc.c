@@ -14,7 +14,7 @@ static struct chanset_t *has_op(int idx, char *chname)
 {
   struct chanset_t *chan;
 
-  context;
+  Context;
   if (chname && chname[0]) {
     chan = findchan(chname);
     if (!chan) {
@@ -719,7 +719,7 @@ static void cmd_adduser(struct userrec *u, int idx, char *par)
   int statichost = 0;
   char *p1 = s1;
 
-  context;
+  Context;
   if ((!par[0]) || ((par[0]=='!') && (!par[1]))) {
     dprintf(idx, "Usage: adduser <nick> [handle]\n");
     return;
@@ -749,7 +749,7 @@ static void cmd_adduser(struct userrec *u, int idx, char *par)
     hand = par;
   }
 
-  context;
+  Context;
   chan = chanset;
   while (chan != NULL) {
     m = ismember(chan, nick);

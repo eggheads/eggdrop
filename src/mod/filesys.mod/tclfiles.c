@@ -368,7 +368,7 @@ static int tcl_mv_cp(Tcl_Interp *irp, int argc, char **argv, int copy)
   long where, gwhere, wherez;
 
   BADARGS(3, 3, " oldfilepath newfilepath");
-  context;
+  Context;
   strcpy(fn, argv[1]);
   p = strrchr(fn, '/');
   if (p != NULL) {

@@ -10,8 +10,8 @@
  * COPYING that was distributed with this code.
  */
 
-#define MAKING_ASSOC
 #define MODULE_NAME "assoc"
+#define MAKING_ASSOC
 #include "../module.h"
 #include "../../tandem.h"
 #include <stdlib.h>
@@ -47,7 +47,7 @@ static int assoc_expmem()
   assoc_t *a = assoc;
   int size = 0;
 
-  context;
+  Context;
   while (a != NULL) {
     size += sizeof(assoc_t);
     a = a->next;
@@ -64,7 +64,7 @@ static void link_assoc(char *bot, char *via)
     assoc_t *a = assoc;
 
     if (!(bot_flags(dcc[idx].user) & BOT_ISOLATE)) {
-      context;
+      Context;
       while (a != NULL) {
 	if (a->name[0]) {
           simple_sprintf(x, "assoc %D %s %s", (int) a->channel, botnetnick,
@@ -81,7 +81,7 @@ static void kill_assoc(int chan)
 {
   assoc_t *a = assoc, *last = NULL;
 
-  context;
+  Context;
   while (a != NULL) {
     if (a->channel == chan) {
       if (last != NULL)
@@ -101,7 +101,7 @@ static void kill_all_assoc()
 {
   assoc_t *a = assoc, *x;
 
-  context;
+  Context;
   while (a != NULL) {
     x = a;
     a = a->next;
@@ -114,7 +114,7 @@ static void add_assoc(char *name, int chan)
 {
   assoc_t *a = assoc, *b, *old = NULL;
 
-  context;
+  Context;
   while (a != NULL) {
     if ((name[0] != 0) && (!strcasecmp(a->name, name))) {
       kill_assoc(a->channel);
@@ -162,7 +162,7 @@ static int get_assoc(char *name)
 {
   assoc_t *a = assoc;
 
-  context;
+  Context;
   while (a != NULL) {
     if (!strcasecmp(a->name, name))
       return a->channel;
@@ -175,7 +175,7 @@ static char *get_assoc_name(int chan)
 {
   assoc_t *a = assoc;
 
-  context;
+  Context;
   while (a != NULL) {
     if (a->channel == chan)
       return a->name;
@@ -188,7 +188,7 @@ static void dump_assoc(int idx)
 {
   assoc_t *a = assoc;
 
-  context;
+  Context;
   if (a == NULL) {
     dprintf(idx, "No channel names.\n");
     return;
@@ -208,7 +208,7 @@ static int cmd_assoc(struct userrec *u, int idx, char *par)
   char *num;
   int chan;
 
-  context;
+  Context;
   if (!par[0]) {
     putlog(LOG_CMDS, "*", "#%s# assoc", dcc[idx].nick);
     dump_assoc(idx);
@@ -270,7 +270,7 @@ static int cmd_assoc(struct userrec *u, int idx, char *par)
 static int tcl_killassoc STDVAR {
   int chan;
 
-  context;
+  Context;
   BADARGS(2, 2, " chan");
   if (argv[1][0] == '&') {
     kill_all_assoc();
@@ -290,7 +290,7 @@ static int tcl_assoc STDVAR {
   int chan;
   char name[21], *p;
 
-  context;
+  Context;
   BADARGS(2, 3, " chan ?name?");
   if ((argc == 2) && ((argv[1][0] < '0') || (argv[1][0] > '9'))) {
     chan = get_assoc(argv[1]);
@@ -328,7 +328,7 @@ static void zapf_assoc(char *botnick, char *code, char *par)
   char *s, *s1, *nick;
   int linking = 0, chan;
 
-  context;
+  Context;
   if ((idx >= 0) && !(bot_flags(dcc[idx].user) & BOT_ISOLATE)) {
     if (!strcasecmp(dcc[idx].nick, botnick))
       linking = b_status(idx) & STAT_LINKING;
@@ -365,7 +365,7 @@ static void assoc_report(int idx, int details)
   assoc_t *a = assoc;
   int size = 0, count = 0;;
 
-  context;
+  Context;
   if (details) {
     while (a != NULL) {
       count++;
@@ -404,7 +404,7 @@ static tcl_cmds mytcl[] =
 
 static char *assoc_close()
 {
-  context;
+  Context;
   kill_all_assoc();
   rem_builtins(H_dcc, mydcc);
   rem_builtins(H_bot, mybot);
@@ -429,7 +429,7 @@ char *assoc_start(Function * global_funcs)
 {
   global = global_funcs;
 
-  context;
+  Context;
   module_register(MODULE_NAME, assoc_table, 2, 0);
   if (!module_depend(MODULE_NAME, "eggdrop", 104, 0))
     return "This module requires eggdrop1.4.0 or later";

@@ -538,7 +538,7 @@ void check_logsize()
 /* int x=1; */
   char buf[1024];		/* should be plenty */
 
-  context;
+  Context;
   if ((keep_all_logs == 0) && (max_logsize != 0)) {
     for (i = 0; i < max_logs; i++) {
       if (logs[i].filename) {
@@ -546,16 +546,16 @@ void check_logsize()
 	  break;
 	}
 	if ((ss.st_size >> 10) > max_logsize) {
-	  context;
+	  Context;
 	  if (logs[i].f) {
 	    /* write to the log before closing it huh.. */
 	    putlog(LOG_MISC, "*", MISC_CLOGS, logs[i].filename, ss.st_size);
 	    fflush(logs[i].f);
 	    fclose(logs[i].f);
 	    logs[i].f = NULL;
-	    context;
+	    Context;
 	  }
-	  context;
+	  Context;
 
 	  simple_sprintf(buf, "%s.yesterday", logs[i].filename);
 	  buf[1023] = 0;
@@ -582,7 +582,7 @@ void check_logsize()
       }
     }
   }
-  context;
+  Context;
 }
 
 /* flush the logfiles to disk */
@@ -591,7 +591,7 @@ void flushlogs()
   int i;
   struct tm *T = localtime(&now);
 
-  context;
+  Context;
   /* logs may not be initialised yet.  (Fabian) */
   if (!logs)
     return;
@@ -615,7 +615,7 @@ void flushlogs()
       fflush(logs[i].f);
     }
   }
-  context;
+  Context;
 }
 
 /********** STRING SUBSTITUTION **********/

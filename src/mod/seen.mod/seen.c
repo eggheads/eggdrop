@@ -53,8 +53,8 @@
  * 
  */
 
-#define MAKING_SEEN
 #define MODULE_NAME "seen"
+#define MAKING_SEEN
 
 #include <time.h>
 
@@ -100,7 +100,7 @@ static int pub_seen(char *nick, char *host, char *hand,
   char prefix[50];
   struct chanset_t *chan = findchan(channel);
 
-  context;
+  Context;
   if ((chan != NULL) && channel_seen(chan)) {
     sprintf(prefix, "PRIVMSG %s :", channel);
     do_seen(DP_HELP, prefix, nick, hand, channel, text);
@@ -112,7 +112,7 @@ static int msg_seen(char *nick, char *host, struct userrec *u, char *text)
 {
   char prefix[50];
 
-  context;
+  Context;
   if (!u) {
     putlog(LOG_CMDS, "*", "[%s!%s] seen %s", nick, host, text);
     return 0;
@@ -125,7 +125,7 @@ static int msg_seen(char *nick, char *host, struct userrec *u, char *text)
 
 static int dcc_seen(struct userrec *u, int idx, char *par)
 {
-  context;
+  Context;
   putlog(LOG_CMDS, "*", "#%s# seen %s", dcc[idx].nick, par);
   do_seen(idx, "", dcc[idx].nick, dcc[idx].nick, "", par);
   return 0;
@@ -167,7 +167,7 @@ static void do_seen(int idx, char *prefix, char *nick, char *hand, char *channel
   /* Have we got a NICK's target? */
   if (oix == word1)
     return;			/* Skip anything starting with ' */
-  context;
+  Context;
   if (oix && *oix &&
       ((oix[1] && (oix[1] == 's' || oix[1] == 'S') && !oix[2]) ||
        (!oix[1] &&
@@ -328,7 +328,7 @@ static void do_seen(int idx, char *prefix, char *nick, char *hand, char *channel
     strcpy(whotarget, word1);
   }
   TARGETCONT:
-  context;
+  Context;
   /* Looking for ones own nick? */
   if (!rfc_casecmp(nick, whotarget)) {
     dprintf(idx, "%s%sLooking for yourself, eh %s?\n",
@@ -376,7 +376,7 @@ static void do_seen(int idx, char *prefix, char *nick, char *hand, char *channel
     }
   }
   /* Check if the target was on the channel, but is netsplit */
-  context;
+  Context;
   chan = findchan(channel);
   if (chan) {
     m = ismember(chan, whotarget);
@@ -647,7 +647,7 @@ char *seen_start(Function * egg_func_table)
 {
   global = egg_func_table;
 
-  context;
+  Context;
   module_register(MODULE_NAME, seen_table, 2, 0);
   if (!module_depend(MODULE_NAME, "eggdrop", 104, 0))
     return "This module needs eggdrop1.4.0 or later";

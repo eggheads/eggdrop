@@ -150,8 +150,10 @@ int del_lang_section(char *);
 /* main.c */
 void fatal(char *, int);
 int expected_memory();
+void eggContext(char *, int, char *);
+void eggContextNote(char *, int, char *, char *);
+void eggAssert(char *, int, char *, int);
 void backup_userfile();
-void assert_failed(const char *, const char *, const int);
 
 /* match.c */
 int _wild_match(register unsigned char *, register unsigned char *);

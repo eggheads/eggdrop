@@ -15,11 +15,16 @@
 #define _H_EGGDROP
 
 /* 
- * if you're *only* going to link to new version bots (1.3.0 or higher)
- * then you can safely define this 
+ * If you're *only* going to link to new version bots (1.3.0 or higher)
+ * then you can safely define this.
  */
-
 #undef NO_OLD_BOTNET
+
+/* 
+ * Undefine this to completely disable context/assert debugging.
+ * WARNING: DO NOT send in bug reports if you undefine this!
+ */
+#define DEBUG
 
 /*
  * define the maximum length a handle on the bot can be.
@@ -123,33 +128,22 @@
 #endif
 
 /* handy aliases for memory tracking and core dumps */
-
 #define nmalloc(x) n_malloc((x),__FILE__,__LINE__)
 #define nrealloc(x,y) n_realloc((x),(y),__FILE__,__LINE__)
 #define nfree(x) n_free((x),__FILE__,__LINE__)
-
-#define context { cx_ptr=((cx_ptr + 1) & 15); \
-                  strcpy(cx_file[cx_ptr],__FILE__); \
-                  cx_line[cx_ptr]=__LINE__; \
-                  cx_note[cx_ptr][0] = 0; }
-/*      It's usefull to track variables too <cybah> */
-#define contextnote(string) { cx_ptr=((cx_ptr + 1) & 15); \
-                              strncpy(cx_file[cx_ptr],__FILE__,29); \
-                              cx_file[cx_ptr][29] = 0; \
-                              cx_line[cx_ptr]=__LINE__; \
-                              strncpy(cx_note[cx_ptr],string,255); \
-                              cx_note[cx_ptr][255] = 0; }
-#define ASSERT(expr) { if (!(expr)) assert_failed (NULL, __FILE__, __LINE__); }
-
-/* move these here, makes more sense to me :) */
-extern int cx_line[16];
-extern char cx_file[16][30];
-extern char cx_note[16][256];
-extern int cx_ptr;
+#ifdef DEBUG
+#  define Context eggContext(__FILE__, __LINE__, NULL)
+#  define ContextNote(note) eggContextNote(__FILE__, __LINE__, NULL, note)
+#  define Assert(expr) eggAssert(__FILE__, __LINE__, NULL, expr)
+#else
+#  define Context {}
+#  define ContextNote(note) {}
+#  define Assert(expr) {}
+#endif
 
 #undef malloc
-#undef free
 #define malloc(x) dont_use_old_malloc(x)
+#undef free
 #define free(x) dont_use_old_free(x)
 
 /* IP type */

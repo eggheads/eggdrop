@@ -1011,7 +1011,7 @@ static void cmd_pls_chrec(struct userrec *u, int idx, char *par)
   struct userrec *u1;
   struct chanuserrec *chanrec;
 
-  context;
+  Context;
   if (!par[0]) {
     dprintf(idx, "Usage: +chrec <User> [channel]\n");
     return;
@@ -1059,7 +1059,7 @@ static void cmd_mns_chrec(struct userrec *u, int idx, char *par)
   struct userrec *u1;
   struct chanuserrec *chanrec;
 
-  context;
+  Context;
   if (!par[0]) {
     dprintf(idx, "Usage: -chrec <User> [channel]\n");
     return;

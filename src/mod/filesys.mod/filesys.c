@@ -7,8 +7,8 @@
 
 #include <fcntl.h>
 #include <sys/stat.h>
-#define MAKING_FILESYS
 #define MODULE_NAME "filesys"
+#define MAKING_FILESYS
 #ifdef HAVE_CONFIG_H
 #include "../../config.h"
 #endif
@@ -114,7 +114,7 @@ static int check_tcl_fil(char *cmd, int idx, char *args)
   struct flag_record fr =
   {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
 
-  context;
+  Context;
   get_user_flagrec(dcc[idx].user, &fr, dcc[idx].u.file->chat->con_chan);
   sprintf(s, "%ld", dcc[idx].sock);
   Tcl_SetVar(interp, "_fil1", dcc[idx].nick, 0);
@@ -181,7 +181,7 @@ static int got_files_cmd(int idx, char *msg)
 {
   char *code;
 
-  context;
+  Context;
   strcpy(msg, check_tcl_filt(idx, msg));
   if (!msg[0])
     return 1;
@@ -193,7 +193,7 @@ static int got_files_cmd(int idx, char *msg)
 
 static void dcc_files(int idx, char *buf, int i)
 {
-  context;
+  Context;
   if (buf[0] &&
       detect_dcc_flood(&dcc[idx].timeval, dcc[idx].u.file->chat, idx))
     return;
@@ -278,7 +278,7 @@ static int cmd_files(struct userrec *u, int idx, char *par)
   int atr = u ? u->flags : 0;
   static struct chat_info *ci;
 
-  context;
+  Context;
   if (dccdir[0] == 0)
     dprintf(idx, "There is no file transfer area.\n");
   else if (too_many_filers()) {
@@ -336,7 +336,7 @@ static int _dcc_send(int idx, char *filename, char *nick, char *dir)
   int x;
   char *nfn;
 
-  context;
+  Context;
   if (strlen(nick) > HANDLEN)
     nick[HANDLEN] = 0;
   x = raw_dcc_send(filename, nick, dcc[idx].nick, dir);
@@ -382,7 +382,7 @@ static int do_dcc_send(int idx, char *dir, char *nick)
   FILE *f;
   int x;
 
-  context;
+  Context;
   /* nickname? */
   fn = newsplit(&nick);
   if (strlen(nick) > NICKMAX)
@@ -443,7 +443,7 @@ static int builtin_fil STDVAR {
   int idx;
   Function F = (Function) cd;
 
-  context;
+  Context;
   BADARGS(4, 4, " hand idx param");
   idx = findanyidx(atoi(argv[2]));
   if ((idx < 0) && (dcc[idx].type != &DCC_FILES)) {
@@ -461,7 +461,7 @@ static int builtin_fil STDVAR {
 
 static void tout_dcc_files_pass(int i)
 {
-  context;
+  Context;
   dprintf(i, "Timeout.\n");
   putlog(LOG_MISC, "*", "Password timeout on dcc chat: [%s]%s", dcc[i].nick,
 	 dcc[i].host);
@@ -566,7 +566,7 @@ static void filesys_dcc_send(char *nick, char *from, struct userrec *u,
   FILE *f;
   int atr = u ? u->flags : 0, i, j;
 
-  context;
+  Context;
   strcpy(buf, text);
   param = newsplit(&msg);
   if (!(atr & USER_XFER)) {
@@ -635,7 +635,7 @@ static void filesys_dcc_send(char *nick, char *from, struct userrec *u,
 	strcpy(dcc[i].u.xfer->dir, dccin);
       dcc[i].u.xfer->length = atoi(msg);
       sprintf(s1, "%s%s", dcc[i].u.xfer->dir, param);
-      context;
+      Context;
       f = fopen(s1, "r");
       if (f) {
 	fclose(f);
@@ -685,7 +685,7 @@ static int filesys_DCC_CHAT(char *nick, char *from, char *handle,
   struct flag_record fr =
   {FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0};
 
-  context;
+  Context;
   if (!strncasecmp(text, "SEND ", 5)) {
     filesys_dcc_send(nick, from, u, text + 5);
     return 1;
@@ -799,7 +799,7 @@ static char *filesys_close()
   int i;
   p_tcl_bind_list H_ctcp;
 
-  context;
+  Context;
   putlog(LOG_MISC, "*", "Unloading filesystem, killing all filesystem connections..");
   for (i = 0; i < dcc_total; i++)
     if (dcc[i].type == &DCC_FILES) {
@@ -850,7 +850,7 @@ char *filesys_start(Function * global_funcs)
 {
   global = global_funcs;
 
-  context;
+  Context;
   dccdir[0] = 0;
   dccin[0] = 0;
   filedb_path[0] = 0;

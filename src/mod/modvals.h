@@ -64,7 +64,7 @@ typedef struct _module_entry {
 #endif
   struct _module_entry *next;
   Function *funcs;
-#ifdef EBUG_MEM
+#ifdef DEBUG_MEM
   int mem_work;
 #endif
 } module_entry;

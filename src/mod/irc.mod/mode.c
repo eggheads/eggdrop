@@ -154,7 +154,7 @@ static void real_add_mode(struct chanset_t *chan,
   memberlist *mx;
   char s[21];
   
-  context;
+  Context;
   if (!me_op(chan))
     return;			/* no point in queueing the mode */
 
@@ -208,31 +208,31 @@ static void real_add_mode(struct chanset_t *chan,
 	return;
     /* if there are already max_bans bans on the channel, don't try to add 
      * one more */
-    context;
+    Context;
     bans = 0;
     for (m = chan->channel.ban; m && m->mask[0]; m = m->next)
       bans++;
-    context;
+    Context;
     if ((plus == '+') && (mode == 'b'))
       if (bans >= max_bans)
 	return;
     /* if there are already max_exempts exemptions on the channel, don't
      * try to add one more */
-    context;
+    Context;
     exempts = 0;
     for (m = chan->channel.exempt; m && m->mask[0]; m = m->next)
       exempts++;
-    context;
+    Context;
     if ((plus == '+') && (mode == 'e'))
       if (exempts >= max_exempts)
 	return;
     /* if there are already max_invites invitations on the channel, don't
      * try to add one more */
-    context;
+    Context;
     invites = 0;
     for (m = chan->channel.invite; m && m->mask[0]; m = m->next)
       invites++;
-    context;
+    Context;
     if ((plus == '+') && (mode == 'I'))
       if (invites >= max_invites)
 	return;
@@ -704,7 +704,7 @@ static void got_exempt(struct chanset_t *chan, char *nick, char *from,
   int check, i, bogus;
   memberlist *m;
 
-  context;
+  Context;
   simple_sprintf(me, "%s!%s", botname, botuserhost);
   simple_sprintf(s, "%s!%s", nick, from);
   newexempt(chan, who, s);
@@ -777,7 +777,7 @@ static void got_unexempt(struct chanset_t *chan, char *nick, char *from,
   masklist *b ;
   int match = 0;
 
-  context;
+  Context;
   e = chan->channel.exempt;
   old = NULL;
   while (e && e->mask[0] && rfc_casecmp(e->mask, who)) {

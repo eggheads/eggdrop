@@ -16,10 +16,6 @@
 #define LOG_MISC 32
 #define MEMTBLSIZE 25000	/* yikes! */
 
-#ifdef EBUG_MEM
-#define DEBUG
-#endif
-
 #if HAVE_CONFIG_H
 #  include <config.h>
 #endif
@@ -31,7 +27,7 @@ typedef int (*Function) ();
 #include "mod/modvals.h"
 extern module_entry *module_list;
 
-#ifdef DEBUG
+#ifdef DEBUG_MEM
 unsigned long memused = 0;
 static int lastused = 0;
 
@@ -77,7 +73,7 @@ void do_module_report(int, int, char *);
 /* initialize the memory structure */
 void init_mem()
 {
-#ifdef DEBUG
+#ifdef DEBUG_MEM
   int i;
 
   for (i = 0; i < MEMTBLSIZE; i++)
@@ -88,7 +84,7 @@ void init_mem()
 /* tell someone the gory memory details */
 void tell_mem_status(char *nick)
 {
-#ifdef DEBUG
+#ifdef DEBUG_MEM
   float per;
 
   per = ((lastused * 1.0) / (MEMTBLSIZE * 1.0)) * 100.0;
@@ -101,7 +97,7 @@ void tell_mem_status(char *nick)
 
 void tell_mem_status_dcc(int idx)
 {
-#ifdef DEBUG
+#ifdef DEBUG_MEM
   int exp;
   float per;
 
@@ -119,7 +115,7 @@ void tell_mem_status_dcc(int idx)
 
 void debug_mem_to_dcc(int idx)
 {
-#ifdef DEBUG
+#ifdef DEBUG_MEM
 #define MAX_MEM 11
   unsigned long exp[MAX_MEM], use[MAX_MEM], l;
   int i, j;
@@ -295,7 +291,7 @@ void *n_malloc(int size, char *file, int line)
 {
   void *x;
 
-#ifdef DEBUG
+#ifdef DEBUG_MEM
   int i = 0;
 
 #endif
@@ -304,7 +300,7 @@ void *n_malloc(int size, char *file, int line)
     putlog(LOG_MISC, "*", "*** FAILED MALLOC %s (%d) (%d)", file, line, size);
     return NULL;
   }
-#ifdef DEBUG
+#ifdef DEBUG_MEM
   if (lastused == MEMTBLSIZE) {
     putlog(LOG_MISC, "*", "*** MEMORY TABLE FULL: %s (%d)", file, line);
     return x;
@@ -336,7 +332,7 @@ void *n_realloc(void *ptr, int size, char *file, int line)
     putlog(LOG_MISC, "*", "*** FAILED REALLOC %s (%d)", file, line);
     return NULL;
   }
-#ifdef DEBUG
+#ifdef DEBUG_MEM
   for (i = 0; (i < lastused) && (memtbl[i].ptr != ptr); i++);
   if (i == lastused) {
     putlog(LOG_MISC, "*", "*** ATTEMPTING TO REALLOC NON-MALLOC'D PTR: %s (%d)",
@@ -364,7 +360,7 @@ void n_free(void *ptr, char *file, int line)
     i = i;
     return;
   }
-#ifdef DEBUG
+#ifdef DEBUG_MEM
   /* give tcl builtins an escape mechanism */
   if (line) {
     for (i = 0; (i < lastused) && (memtbl[i].ptr != ptr); i++);

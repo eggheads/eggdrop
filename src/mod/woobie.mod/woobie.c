@@ -4,8 +4,8 @@
  *                By ButchBub - 15 July 1997
  */
 
-#define MAKING_WOOBIE
 #define MODULE_NAME "woobie"
+#define MAKING_WOOBIE
 #include "../module.h"
 #include <stdlib.h>
 
@@ -16,13 +16,13 @@ static int woobie_expmem()
 {
   int size = 0;
 
-  context;
+  Context;
   return size;
 }
 
 static int cmd_woobie(struct userrec *u, int idx, char *par)
 {
-  context;
+  Context;
   putlog(LOG_CMDS, "*", "#%s# woobie", dcc[idx].nick);
   dprintf(idx, "WOOBIE!\n");
   return 0;
@@ -33,7 +33,7 @@ static void woobie_report(int idx, int details)
 {
   int size = 0;
 
-  context;
+  Context;
   if (details)
     dprintf(idx, "    0 woobies using %d bytes\n", size);
 }
@@ -46,7 +46,7 @@ static cmd_t mydcc[] =
 
 static char *woobie_close()
 {
-  context;
+  Context;
   rem_builtins(H_dcc, mydcc);
   module_undepend(MODULE_NAME);
   return NULL;
@@ -65,7 +65,7 @@ static Function woobie_table[] =
 char *woobie_start(Function * global_funcs)
 {
   global = global_funcs;
-  context;
+  Context;
   module_register(MODULE_NAME, woobie_table, 2, 0);
   if (!module_depend(MODULE_NAME, "eggdrop", 104, 0))
     return "This module requires eggdrop1.4.0 or later";

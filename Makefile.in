@@ -15,7 +15,7 @@ EGGVERSION = @EGGVERSION@
 # things you can put here:
 #   -Wall            if you're using gcc and it supports it
 #                    (configure usually detects this anyway now)
-#   -DEBUG_MEM       to be able to debug memory allocation (.debug)
+#   -DDEBUG_MEM      to be able to debug memory allocation (.debug)
 #                    this can now be set by using 'make debug' or 'make sdebug'
 CFLGS =
 
@@ -58,7 +58,7 @@ TCLLIB = @TCLLIB@
 TCLLIBFN = @TCLLIBFN@
 
 CFLAGS = @CFLAGS@ -I.. @DEFS@ $(CFLGS)
-DEBCFLAGS = @CFLAGS@ -I.. @DEFS@ -DEBUG_MEM $(CFLGS)
+DEBCFLAGS = @CFLAGS@ -I.. @DEFS@ -DDEBUG_MEM $(CFLGS)
 
 MAKE_MODEGG = $(MAKE) 'MAKE=$(MAKE)' 'CC=$(MOD_CC)' 'LD=$(MOD_LD)' \
 'STRIP=$(MOD_STRIP)' 'RANLIB=$(RANLIB)' 'CFLAGS=$(CFLAGS)' \

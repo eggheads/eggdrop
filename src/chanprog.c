@@ -164,7 +164,7 @@ void set_chanlist(char *host, struct userrec *rec)
   memberlist *m;
   struct chanset_t *chan = chanset;
 
-  context;
+  Context;
   strncpy(buf, host, UHOSTMAX);
   buf[UHOSTMAX] = 0;
   uhost = buf;
@@ -187,7 +187,8 @@ int expmem_chanprog()
   int tot;
   tcl_timer_t *t;
 
-  context;
+  
+Context;
   tot = 0;
   for (t = timer; t; t = t->next) {
     tot += sizeof(tcl_timer_t);
@@ -394,7 +395,7 @@ void chanprog()
   /* turn off read-only variables (make them write-able) for rehash */
   protect_readonly = 0;
   /* now read it */
-  context;
+  Context;
   if (!readtclprog(configfile))
     fatal(MISC_NOCONFIGFILE, 0);
   for (i = 0; i < max_logs; i++) {
@@ -417,7 +418,7 @@ void chanprog()
   }
   /* We should be safe now */
   call_hook(HOOK_REHASH);
-  context;
+  Context;
   protect_readonly = 1;
   if (!userfile[0])
     fatal(MISC_NOUSERFILE2, 0);
@@ -437,7 +438,7 @@ void chanprog()
      make_userfile = 0;
      printf("%s\n", MISC_USERFEXISTS);
   }
-  context;
+  Context;
   if (helpdir[0])
     if (helpdir[strlen(helpdir) - 1] != '/')
       strcat(helpdir, "/");
@@ -450,7 +451,7 @@ void chanprog()
   }
   if (!botnetnick[0])
     fatal("I don't have a botnet nick!!\n", 0);
-  context;
+  Context;
   /* test tempdir: it's vital */
   {
     FILE *f;
@@ -466,7 +467,7 @@ void chanprog()
     fclose(f);
     unlink(s);
   }
-  context;
+  Context;
   reaffirm_owners();
 }
 
@@ -487,7 +488,7 @@ void reload()
   userlist = NULL;
   if (!readuserfile(userfile, &userlist))
     fatal(MISC_MISSINGUSERF, 0);
-  context;
+  Context;
   reaffirm_owners();
   call_hook(HOOK_READ_USERFILE);
 }
@@ -552,22 +553,22 @@ void do_check_timers(tcl_timer_t ** stack)
   /* new timers could be added by a Tcl script inside a current timer */
   /* so i'll just clear out the timer list completely, and add any
    * unexpired timers back on */
-  context;
+  Context;
   *stack = NULL;
   while (mark) {
-    context;
+    Context;
     if (mark->mins > 0)
       mark->mins--;
     old = mark;
     mark = mark->next;
     if (old->mins == 0) {
-      context;
+      Context;
       simple_sprintf(x, "timer%d", old->id);
       do_tcl(x, old->cmd);
       nfree(old->cmd);
       nfree(old);
     } else {
-      context;
+      Context;
       old->next = *stack;
       *stack = old;
     }

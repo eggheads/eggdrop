@@ -144,7 +144,7 @@ static int resolve_dir(char *current, char *change, char *real, int idx)
   int ret;
   long i = 0;
 
-  context;
+  Context;
   strncpy(real, current, DIRMAX);
   real[DIRMAX] = 0;
   strcpy(new, change);
@@ -229,7 +229,7 @@ static int resolve_dir(char *current, char *change, char *real, int idx)
   if (f == NULL)
     return 0;
   fclose(f);
-  context;
+  Context;
   return 1;
 }
 
@@ -311,7 +311,7 @@ static void cmd_chdir(int idx, char *msg)
   putlog(LOG_FILES, "*", "files: #%s# cd /%s", dcc[idx].nick,
 	 dcc[idx].u.file->dir);
   dprintf(idx, "%s: /%s\n", FILES_NEWCURDIR, dcc[idx].u.file->dir);
-  context;
+  Context;
 }
 
 static void files_ls(int idx, char *par, int showall)
@@ -319,7 +319,7 @@ static void files_ls(int idx, char *par, int showall)
   char *p, s[DIRLEN], destdir[DIRLEN], mask[81];
   FILE *f;
 
-  context;
+  Context;
   if (par[0]) {
     putlog(LOG_FILES, "*", "files: #%s# ls %s", dcc[idx].nick, par);
     p = strrchr(par, '/');
@@ -361,7 +361,7 @@ static void files_ls(int idx, char *par, int showall)
     filedb_ls(f, idx, "*", showall);
     filedb_close(f);
   }
-  context;
+  Context;
 }
 
 static void cmd_ls(int idx, char *par)
@@ -1234,7 +1234,7 @@ static int cmd_filestats(int idx, char *par)
   char *nick;
   struct userrec *u;
 
-  context;
+  Context;
   if (!par[0]) {
     dprintf(idx, "Usage: filestats <user>\n");
     return 0;

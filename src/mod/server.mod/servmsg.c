@@ -29,7 +29,7 @@ static int gotfake433(char *from)
 {
   int l = strlen(botname) - 1;
 
-  context;
+  Context;
   /* First run? */
   if (altnick_char == 0) {
     char *alt = get_altbotnick();
@@ -81,16 +81,16 @@ static int check_tcl_msg(char *cmd, char *nick, char *uhost,
   char *hand = u ? u->handle : "*";
   int x;
 
-  context;
+  Context;
   get_user_flagrec(u, &fr, NULL);
   Tcl_SetVar(interp, "_msg1", nick, 0);
   Tcl_SetVar(interp, "_msg2", uhost, 0);
   Tcl_SetVar(interp, "_msg3", hand, 0);
   Tcl_SetVar(interp, "_msg4", args, 0);
-  context;
+  Context;
   x = check_tcl_bind(H_msg, cmd, &fr, " $_msg1 $_msg2 $_msg3 $_msg4",
 		     MATCH_PARTIAL | BIND_HAS_BUILTINS | BIND_USE_ATTR);
-  context;
+  Context;
   if (x == BIND_EXEC_LOG)
     putlog(LOG_CMDS, "*", "(%s!%s) !%s! %s %s", nick, uhost, hand,
 	   cmd, args);
@@ -102,16 +102,16 @@ static void check_tcl_notc(char *nick, char *uhost, struct userrec *u, char *arg
   struct flag_record fr =
   {FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0};
 
-  context;
+  Context;
   get_user_flagrec(u, &fr, NULL);
   Tcl_SetVar(interp, "_notc1", nick, 0);
   Tcl_SetVar(interp, "_notc2", uhost, 0);
   Tcl_SetVar(interp, "_notc3", u ? u->handle : "*", 0);
   Tcl_SetVar(interp, "_notc4", arg, 0);
-  context;
+  Context;
   check_tcl_bind(H_notc, arg, &fr, " $_notc1 $_notc2 $_notc3 $_notc4",
 		 MATCH_MASK | BIND_USE_ATTR | BIND_STACKABLE);
-  context;
+  Context;
 }
 
 static void check_tcl_msgm(char *cmd, char *nick, char *uhost,
@@ -121,7 +121,7 @@ static void check_tcl_msgm(char *cmd, char *nick, char *uhost,
   {FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0};
   char args[1024];
 
-  context;
+  Context;
   if (arg[0])
     simple_sprintf(args, "%s %s", cmd, arg);
   else
@@ -131,10 +131,10 @@ static void check_tcl_msgm(char *cmd, char *nick, char *uhost,
   Tcl_SetVar(interp, "_msgm2", uhost, 0);
   Tcl_SetVar(interp, "_msgm3", u ? u->handle : "*", 0);
   Tcl_SetVar(interp, "_msgm4", args, 0);
-  context;
+  Context;
   check_tcl_bind(H_msgm, args, &fr, " $_msgm1 $_msgm2 $_msgm3 $_msgm4",
 		 MATCH_MASK | BIND_USE_ATTR | BIND_STACKABLE);
-  context;
+  Context;
 }
 
 /* return 1 if processed */
@@ -142,14 +142,14 @@ static int check_tcl_raw(char *from, char *code, char *msg)
 {
   int x;
 
-  context;
+  Context;
   Tcl_SetVar(interp, "_raw1", from, 0);
   Tcl_SetVar(interp, "_raw2", code, 0);
   Tcl_SetVar(interp, "_raw3", msg, 0);
-  context;
+  Context;
   x = check_tcl_bind(H_raw, code, 0, " $_raw1 $_raw2 $_raw3",
 		     MATCH_EXACT | BIND_STACKABLE | BIND_WANTRET);
-  context;
+  Context;
   return (x == BIND_EXEC_LOG);
 }
 
@@ -161,7 +161,7 @@ static int check_tcl_ctcpr(char *nick, char *uhost, struct userrec *u,
   {FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0};
   int x;
 
-  context;
+  Context;
   get_user_flagrec(u, &fr, NULL);
   Tcl_SetVar(interp, "_ctcpr1", nick, 0);
   Tcl_SetVar(interp, "_ctcpr2", uhost, 0);
@@ -174,7 +174,7 @@ static int check_tcl_ctcpr(char *nick, char *uhost, struct userrec *u,
 		     (lowercase_ctcp ? MATCH_EXACT : MATCH_CASE)
 		     | BIND_USE_ATTR | BIND_STACKABLE |
 		     ((table == H_ctcp) ? BIND_WANTRET : 0));
-  context;
+  Context;
   return (x == BIND_EXEC_LOG) || (table == H_ctcr);
 }
 
@@ -182,12 +182,12 @@ static int check_tcl_wall(char *from, char *msg)
 {
   int x;
 
-  context;
+  Context;
   Tcl_SetVar(interp, "_wall1", from, 0);
   Tcl_SetVar(interp, "_wall2", msg, 0);
-  context;
+  Context;
   x = check_tcl_bind(H_wall, msg, 0, " $_wall1 $_wall2", MATCH_MASK | BIND_STACKABLE);
-  context;
+  Context;
   if (x == BIND_EXEC_LOG) {
     putlog(LOG_WALL, "*", "!%s! %s", from, msg);
     return 1;
@@ -201,17 +201,17 @@ static int check_tcl_flud(char *nick, char *uhost, struct userrec *u,
 {
   int x;
 
-  context;
+  Context;
   Tcl_SetVar(interp, "_flud1", nick, 0);
   Tcl_SetVar(interp, "_flud2", uhost, 0);
   Tcl_SetVar(interp, "_flud3", u ? u->handle : "*", 0);
   Tcl_SetVar(interp, "_flud4", ftype, 0);
   Tcl_SetVar(interp, "_flud5", chname, 0);
-  context;
+  Context;
   x = check_tcl_bind(H_flud, ftype, 0,
 		     " $_flud1 $_flud2 $_flud3 $_flud4 $_flud5",
 		     MATCH_MASK | BIND_STACKABLE | BIND_WANTRET);
-  context;
+  Context;
   return (x == BIND_EXEC_LOG);
 }
 
@@ -304,7 +304,7 @@ static int detect_flood(char *floodnick, char *floodhost,
   int thr = 0, lapse = 0;
   int atr;
 
-  context;
+  Context;
   u = get_user_by_host(from);
   atr = u ? u->flags : 0;
   if (atr & (USER_BOT | USER_FRIEND))
@@ -636,7 +636,7 @@ static int gotwall(char *from, char *msg)
   char *p;
   int r;
 
-  context;
+  Context;
 
   fixcolon(msg);
   p = strchr(from, '!');
@@ -784,7 +784,7 @@ static int got432(char *from, char *msg)
 static int got433(char *from, char *msg)
 {
   char *tmp;
-  context;
+  Context;
   if (server_online) {
     /* we are online and have a nickname, we'll keep it */
 	newsplit(&msg);
@@ -792,7 +792,7 @@ static int got433(char *from, char *msg)
     putlog(LOG_MISC, "*", "NICK IN USE: %s (keeping '%s').", tmp, botname);
     return 0;
   }
-  context;
+  Context;
   gotfake433(from);
   return 0;
 }
@@ -826,7 +826,7 @@ static int got437(char *from, char *msg)
 /* 438 : nick change too fast */
 static int got438(char *from, char *msg)
 {
-  context;
+  Context;
   newsplit(&msg);
   newsplit(&msg);
   fixcolon(msg);
@@ -1027,7 +1027,7 @@ static void server_activity(int idx, char *msg, int len)
   }
   if (from[0])
     fixfrom(from);
-  context;
+  Context;
   /* this has GOT to go into the raw binding table, * merely because this
    * is less effecient */
   check_tcl_raw(from, code, msg);

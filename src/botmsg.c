@@ -369,7 +369,7 @@ void botnet_send_unlinked(int idx, char *bot, char *args)
 {
   int l;
 
-  context;
+  Context;
 
   if (tands > 0) {
     l = simple_sprintf(OBUF, "un %s %s\n", bot, args ? args : "");
@@ -548,7 +548,7 @@ void botnet_send_idle(int idx, char *bot, int sock, int idle, char *away)
 {
   int l;
 
-  context;
+  Context;
   if (tands > 0) {
     l = simple_sprintf(OBUF, "i %s %D %D %s\n", bot, sock, idle,
 		       away ? away : "");
@@ -637,7 +637,7 @@ void botnet_send_join_party(int idx, int linking, int useridx, int oldchan)
 {
   int l;
 
-  context;
+  Context;
   if (tands > 0) {
     l = simple_sprintf(OBUF, "j %s%s %s %D %c%D %s\n", linking ? "!" : "",
 		       party[useridx].bot, party[useridx].nick,

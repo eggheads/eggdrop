@@ -66,7 +66,7 @@ int expmem_dccutil()
 {
   int tot, i;
 
-  context;
+  Context;
   tot = sizeof(struct dcc_t) * max_dcc + sizeof(sock_list) * MAXSOCKS;
 
   for (i = 0; i < dcc_total; i++) {
@@ -226,7 +226,7 @@ void dcc_chatter(int idx)
 	i = 0;
       dcc[idx].u.chat->channel = i;
       if (dcc[idx].u.chat->channel >= 0) {
-	context;
+	Context;
 	if (dcc[idx].u.chat->channel < 100000) {
 	  botnet_send_join_idx(idx, -1);
 	}
@@ -266,7 +266,7 @@ void tell_dcc(int zidx)
   int i, j, k;
   char other[160];
 
-  context;
+  Context;
   spaces[HANDLEN - 9] = 0;
   dprintf(zidx, "SOCK ADDR     PORT  NICK     %s HOST              TYPE\n"
 	  ,spaces);
@@ -297,7 +297,7 @@ void tell_dcc(int zidx)
 /* mark someone on dcc chat as no longer away */
 void not_away(int idx)
 {
-  context;
+  Context;
   if (dcc[idx].u.chat->away == NULL) {
     dprintf(idx, "You weren't away!\n");
     return;
@@ -305,7 +305,7 @@ void not_away(int idx)
   if (dcc[idx].u.chat->channel >= 0) {
     chanout_but(-1, dcc[idx].u.chat->channel,
 		"*** %s is no longer away.\n", dcc[idx].nick);
-    context;
+    Context;
     if (dcc[idx].u.chat->channel < 100000) {
       botnet_send_away(-1, botnetnick, dcc[idx].sock, NULL, idx);
     }
@@ -333,7 +333,7 @@ void set_away(int idx, char *s)
   if (dcc[idx].u.chat->channel >= 0) {
     chanout_but(-1, dcc[idx].u.chat->channel,
 		"*** %s is now away: %s\n", dcc[idx].nick, s);
-    context;
+    Context;
     if (dcc[idx].u.chat->channel < 100000) {
       botnet_send_away(-1, botnetnick, dcc[idx].sock, s, idx);
     }
@@ -347,7 +347,7 @@ void *_get_data_ptr(int size, char *file, int line)
 {
   char *p;
 
-#ifdef EBUG_MEM
+#ifdef DEBUG_MEM
   char x[1024];
 
   simple_sprintf(x, "dccutil.c:%s", file);

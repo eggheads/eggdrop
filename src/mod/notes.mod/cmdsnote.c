@@ -100,7 +100,7 @@ static void cmd_noteigns(struct userrec *u, int idx, char *par)
   char **ignores;
   int ignoresn, i;
 
-  context;
+  Context;
   if (par[0]) {
     u2 = get_user_by_handle(userlist, par);
     if (u != u2) {
@@ -129,7 +129,7 @@ static void cmd_noteigns(struct userrec *u, int idx, char *par)
   for (i = 0; i < ignoresn; i++)
     dprintf(idx, " %s", ignores[i]);
   dprintf(idx, "\n");
-  context;
+  Context;
   nfree(ignores[0]); /* free the string buffer */
   nfree(ignores); /* free the ptr array */
 }

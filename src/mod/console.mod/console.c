@@ -4,8 +4,8 @@
  * cmwagner/billyjoe/D. Senso
  */
 
-#define MAKING_CONSOLE
 #define MODULE_NAME "console"
+#define MAKING_CONSOLE
 #include "../module.h"
 #include <stdlib.h>
 
@@ -28,9 +28,9 @@ static int console_unpack(struct userrec *u, struct user_entry *e)
   struct console_info *ci = user_malloc(sizeof(struct console_info));
   char *par, *arg;
 
-  ASSERT (e != NULL);
-  ASSERT (e->name != NULL);
-  context;
+  Assert(e != NULL);
+  Assert(e->name != NULL);
+  Context;
   par = e->u.list->extra;
   arg = newsplit(&par);
   ci->channel = user_malloc(strlen(arg) + 1);
@@ -56,9 +56,9 @@ static int console_pack(struct userrec *u, struct user_entry *e)
   struct console_info *ci;
   int l;
 
-  ASSERT (e != NULL);
-  ASSERT (e->u.extra != NULL);
-  ASSERT (e->name == NULL);
+  Assert(e != NULL);
+  Assert(e->u.extra != NULL);
+  Assert(e->name == NULL);
 
   ci = (struct console_info *) e->u.extra;
 
@@ -81,7 +81,7 @@ static int console_kill(struct user_entry *e)
 {
   struct console_info *i = e->u.extra;
 
-  context;
+  Context;
   nfree(i->channel);
   nfree(i);
   nfree(e);
@@ -92,7 +92,7 @@ static int console_write_userfile(FILE * f, struct userrec *u, struct user_entry
 {
   struct console_info *i = e->u.extra;
 
-  context;
+  Context;
   if (fprintf(f, "--CONSOLE %s %s %s %d %d %d\n",
 	      i->channel, masktype(i->conflags),
 	      stripmasktype(i->stripflags), i->echoflags,
@@ -110,11 +110,11 @@ static int console_set(struct userrec *u, struct user_entry *e, void *buf)
 
   if (ci != buf) {
     if (ci) {
-      ASSERT (ci->channel != NULL);
-      nfree (ci->channel);
-      nfree (ci);
+      Assert(ci->channel != NULL);
+      nfree(ci->channel);
+      nfree(ci);
     }
-    context;
+    Context;
 
     ci = e->u.extra = buf;
   }
@@ -177,7 +177,7 @@ int console_expmem(struct user_entry *e)
 {
   struct console_info *i = e->u.extra;
 
-  context;
+  Context;
   return sizeof(struct console_info) + strlen(i->channel) + 1;
 }
 
@@ -185,7 +185,7 @@ void console_display(int idx, struct user_entry *e)
 {
   struct console_info *i = e->u.extra;
 
-  context;
+  Context;
   if (dcc[idx].user && (dcc[idx].user->flags & USER_MASTER)) {
     dprintf(idx, "  Saved Console Settings:\n");
     dprintf(idx, "    Channel: %s\n", i->channel);
@@ -338,7 +338,7 @@ static cmd_t mydcc[] =
 
 static char *console_close()
 {
-  context;
+  Context;
   rem_builtins(H_chon, mychon);
   rem_builtins(H_dcc, mydcc);
   rem_tcl_ints(myints);
@@ -363,7 +363,7 @@ char *console_start(Function * global_funcs)
 {
   global = global_funcs;
 
-  context;
+  Context;
   module_register(MODULE_NAME, console_table, 1, 1);
   if (!module_depend(MODULE_NAME, "eggdrop", 104, 0))
     return "This module requires eggdrop1.4.0 or later";

@@ -726,7 +726,7 @@ static void tell_bans(int idx, int show_inact, char *match)
   maskrec *u;
 
   /* was channel given? */
-  context;
+  Context;
   if (match[0]) {
     chname = newsplit(&match);
     if (chname[0] && (strchr(CHANMETA, chname[0]) != NULL)) {
@@ -746,7 +746,7 @@ static void tell_bans(int idx, int show_inact, char *match)
 	    MODES_NOTACTIVE, chan->name);
   else
     dprintf(idx, "%s:\n", BANS_GLOBAL);
-  context;
+  Context;
   u = global_bans;
   for (; u; u = u->next) {
     if (match[0]) {
@@ -821,7 +821,7 @@ static void tell_exempts (int idx, int show_inact, char * match)
   maskrec * u;
   
   /* was channel given? */
-  context;
+  Context;
   if (match[0]) {
     chname = newsplit(&match);
     if (chname[0] && strchr(CHANMETA, chname[0])) {
@@ -841,7 +841,7 @@ static void tell_exempts (int idx, int show_inact, char * match)
 	    MODES_NOTACTIVE, chan->name);
   else
     dprintf(idx, "%s:\n", EXEMPTS_GLOBAL);
-  context;
+  Context;
   u = global_exempts;
   for (;u;u=u->next) {
     if (match[0]) {
@@ -916,7 +916,7 @@ static void tell_invites (int idx, int show_inact, char * match)
   maskrec * u;
   
   /* was channel given? */
-  context;
+  Context;
   if (match[0]) {
     chname = newsplit(&match);
     if (chname[0] && strchr(CHANMETA, chname[0])) {
@@ -936,7 +936,7 @@ static void tell_invites (int idx, int show_inact, char * match)
 	    MODES_NOTACTIVE, chan->name);
   else
     dprintf(idx, "%s:\n", INVITES_GLOBAL);
-  context;
+  Context;
   u = global_invites;
   for (;u;u=u->next) {
     if (match[0]) {

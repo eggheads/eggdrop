@@ -685,10 +685,10 @@ static int botfl_unpack(struct userrec *u, struct user_entry *e)
 {
   struct flag_record fr = {FR_BOT, 0, 0, 0, 0, 0};
  
-  ASSERT (e != NULL);
-  ASSERT (e->name != NULL);
+  Assert(e != NULL);
+  Assert(e->name != NULL);
 
-  context;
+  Context;
   break_down_flags(e->u.list->extra, &fr, NULL);
   list_type_kill(e->u.list);
   e->u.ulong = fr.bot;
@@ -710,7 +710,7 @@ static int botfl_pack(struct userrec *u, struct user_entry *e)
 
 static int botfl_kill(struct user_entry *e)
 {
-  context;
+  Context;
   nfree(e);
   return 1;
 }
@@ -721,7 +721,7 @@ static int botfl_write_userfile(FILE * f, struct userrec *u, struct user_entry *
   struct flag_record fr =
   {FR_BOT, 0, 0, 0, 0, 0};
 
-  context;
+  Context;
   fr.bot = e->u.ulong;
   build_flags(x, &fr, NULL);
   if (fprintf(f, "--%s %s\n", e->type->name, x) == EOF)
@@ -733,7 +733,7 @@ static int botfl_set(struct userrec *u, struct user_entry *e, void *buf)
 {
   register long atr = ((long) buf & BOT_VALID);
 
-  context;
+  Context;
   if (!(u->flags & USER_BOT))
     return 1;			/* don't even bother trying to set the flags for a non-bot */
   if ((atr & BOT_HUB) && (atr & BOT_ALT))
@@ -749,7 +749,7 @@ static int botfl_set(struct userrec *u, struct user_entry *e, void *buf)
   if (!(atr & BOT_SHARE))
     atr &= ~BOT_GLOBAL;
   e->u.ulong = atr;
-  context;
+  Context;
   return 1;
 }
 
@@ -782,7 +782,7 @@ static int botfl_tcl_set(Tcl_Interp * irp, struct userrec *u,
 
 static int botfl_expmem(struct user_entry *e)
 {
-  context;
+  Context;
   return 0;
 }
 
@@ -792,7 +792,7 @@ static void botfl_display(int idx, struct user_entry *e)
   {FR_BOT, 0, 0, 0, 0, 0};
   char x[100];
 
-  context;
+  Context;
   fr.bot = e->u.ulong;
   build_flags(x, &fr, NULL);
   dprintf(idx, "  BOT FLAGS: %s\n", x);

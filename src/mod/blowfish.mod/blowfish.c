@@ -8,8 +8,8 @@
  * domain.
  */
 
-#define MAKING_BLOWFISH
 #define MODULE_NAME "encryption"
+#define MAKING_BLOWFISH
 #include "../module.h"
 #include "blowfish.h"
 #include "bf_tab.h"		/* P-box P-array, S-box */
@@ -45,7 +45,7 @@ static int blowfish_expmem()
 {
   int i, tot = 0;
 
-  context;
+  Context;
   for (i = 0; i < BOXES; i++)
     if (box[i].P != NULL) {
       tot += ((bf_N + 2) * sizeof(UWORD_32bits));
@@ -444,7 +444,7 @@ char *blowfish_start(Function * global_funcs)
       box[i].key[0] = 0;
       box[i].lastuse = 0L;
     }
-    context;
+    Context;
     module_register(MODULE_NAME, blowfish_table, 2, 0);
     if (!module_depend(MODULE_NAME, "eggdrop", 104, 0))
       return "This module requires eggdrop1.4.0 or later";

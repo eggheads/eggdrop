@@ -60,7 +60,7 @@ void *channel_malloc(int size, char *file, int line)
 {
   char *p;
 
-#ifdef EBUG_MEM
+#ifdef DEBUG_MEM
   p = ((void *) (global[0] (size, MODULE_NAME, file, line)));
 #else
   p = nmalloc(size);
@@ -325,7 +325,7 @@ static void write_channels()
   char need1[242], need2[242], need3[242], need4[242], need5[242];
   struct chanset_t *chan;
 
-  context;
+  Context;
   if (!chanfile[0])
     return;
   sprintf(s, "%s~new", chanfile);
@@ -622,7 +622,7 @@ static int channels_expmem()
   int tot = 0;
   struct chanset_t *chan = chanset;
 
-  context;
+  Context;
   while (chan != NULL) {
     tot += sizeof(struct chanset_t);
 
@@ -649,7 +649,7 @@ static char *traced_globchanset(ClientData cdata, Tcl_Interp * irp,
   int items;
   char **item;
 
-  context;
+  Context;
   if (flags & (TCL_TRACE_READS | TCL_TRACE_UNSETS)) {
     Tcl_SetVar2(interp, name1, name2, glob_chanset, TCL_GLOBAL_ONLY);
     if (flags & TCL_TRACE_UNSETS)
@@ -659,13 +659,13 @@ static char *traced_globchanset(ClientData cdata, Tcl_Interp * irp,
   } else { /* write */
     s = Tcl_GetVar2(interp, name1, name2, TCL_GLOBAL_ONLY);
     Tcl_SplitList(interp, s, &items, &item);
-    context;
+    Context;
     for (i = 0; i<items; i++) {
       if (!(item[i]) || (strlen(item[i]) < 2)) continue;
       s = glob_chanset;
       while (s[0]) {
 	t = strchr(s, ' '); /* cant be NULL coz of the extra space */
-	context;
+	Context;
 	t[0] = 0;
 	if (!strcmp(s + 1, item[i] + 1)) {
 	  s[0] = item[i][0]; /* +- */
@@ -714,7 +714,7 @@ static tcl_strings my_tcl_strings[] =
 
 static char *channels_close()
 {
-  context;
+  Context;
   write_channels();
   rem_builtins(H_chon, my_chon);
   rem_builtins(H_dcc, C_dcc_irc);
@@ -814,7 +814,7 @@ char *channels_start(Function * global_funcs)
   gfld_join_time = 60;
   gfld_ctcp_thr = 5;
   gfld_ctcp_time = 60;
-  context;
+  Context;
   module_register(MODULE_NAME, channels_table, 1, 0);
   if (!module_depend(MODULE_NAME, "eggdrop", 104, 0))
     return "This module needs eggdrop1.4.0 or later";

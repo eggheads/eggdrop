@@ -4,6 +4,7 @@
  * flood detection
  * signal handling
  * command line arguments
+ * context and assert debugging
  * 
  * dprintf'ized, 15nov1995
  */
@@ -122,11 +123,13 @@ int die_on_sigterm = 0;		/* die if bot receives SIGTERM */
 int resolve_timeout = 15;	/* hostname/address lookup timeout */
 time_t now;			/* duh, now :) */
 
+#ifdef DEBUG
 /* context storage for fatal crashes */
 char cx_file[16][30];
 char cx_note[16][256];
 int cx_line[16];
 int cx_ptr = 0;
+#endif
 
 void fatal(char *s, int recoverable)
 {
@@ -150,7 +153,7 @@ int expected_memory()
 {
   int tot;
 
-  context;
+  Context;
   tot = expmem_chanprog() + expmem_users() + expmem_misc() +
     expmem_dccutil() + expmem_botnet() + expmem_tcl() + expmem_tclhash() +
     expmem_net() + expmem_modules(0) + expmem_language() + expmem_tcldcc();
@@ -175,6 +178,7 @@ static void check_expired_dcc()
     }
 }
 
+#ifdef DEBUG
 static int nested_debug = 0;
 
 void write_debug()
@@ -244,22 +248,13 @@ void write_debug()
     putlog(LOG_MISC, "*", "* Wrote DEBUG");
   }
 }
-
-void assert_failed (const char *module, const char *file, const int line)
-{
-  write_debug();
-  if (!module) {
-    putlog(LOG_MISC, "*", "* In file %s, line %u", file, line);
-  } else {
-    putlog(LOG_MISC, "*", "* In file %s:%s, line %u", module, file, line);
-  }
-  fatal ("ASSERT FAILED -- CRASHING!", 1);
-  exit (1);
-}
+#endif
 
 static void got_bus(int z)
 {
+#ifdef DEBUG
   write_debug();
+#endif
   fatal("BUS ERROR -- CRASHING!", 1);
 #ifdef SA_RESETHAND
   kill(getpid(), SIGBUS);
@@ -270,7 +265,9 @@ static void got_bus(int z)
 
 static void got_segv(int z)
 {
+#ifdef DEBUG
   write_debug();
+#endif
   fatal("SEGMENT VIOLATION -- CRASHING!", 1);
 #ifdef SA_RESETHAND
   kill(getpid(), SIGSEGV);
@@ -281,7 +278,9 @@ static void got_segv(int z)
 
 static void got_fpe(int z)
 {
+#ifdef DEBUG
   write_debug();
+#endif
   fatal("FLOATING POINT ERROR -- CRASHING!", 0);
 }
 
@@ -328,16 +327,60 @@ static void got_alarm(int z)
 static void got_ill(int z)
 {
   check_tcl_event("sigill");
-  write_debug();
+#ifdef DEBUG
   putlog(LOG_MISC, "*", "* Context: %s/%d [%s]", cx_file[cx_ptr],
 	 cx_line[cx_ptr], (cx_note[cx_ptr][0]) ? cx_note[cx_ptr] : "");
-  fatal ("GOT ILL SIGNAL -- CRASHING!", 1);
-#ifdef SA_RESETHAND
-  kill(getpid(), SIGILL);
-#else
-  exit(1);
 #endif
 }
+
+#ifdef DEBUG
+/* Context */
+void eggContext(char *file, int line, char *module)
+{
+  char x[100];
+
+  if (!module)
+    sprintf(x, "%s", file);
+  else
+    sprintf(x, "%s:%s", module, file);
+  x[30] = 0;
+  cx_ptr = ((cx_ptr + 1) & 15);
+  strcpy(cx_file[cx_ptr], x);
+  cx_line[cx_ptr] = line;
+  cx_note[cx_ptr][0] = 0;
+}
+
+/* ContextNote */
+void eggContextNote(char *file, int line, char *module, char *note)
+{
+  char x[100];
+
+  if (!module)
+    sprintf(x, "%s", file);
+  else
+    sprintf(x, "%s:%s", module, file);
+  x[30] = 0;
+  cx_ptr = ((cx_ptr + 1) & 15);
+  strcpy(cx_file[cx_ptr], x);
+  cx_line[cx_ptr] = line;
+  strncpy(cx_note[cx_ptr], note, 255);
+  cx_note[cx_ptr][255] = 0;
+}
+
+/* Assert */
+void eggAssert(char *file, int line, char *module, int expr)
+{
+  if (!(expr)) {
+    write_debug();
+    if (!module) {
+      putlog(LOG_MISC, "*", "* In file %s, line %u", file, line);
+    } else {
+      putlog(LOG_MISC, "*", "* In file %s:%s, line %u", module, file, line);
+    }
+    fatal("ASSERT FAILED -- CRASHING!", 1);
+  }
+}
+#endif
 
 static void do_arg(char *s)
 {
@@ -413,7 +456,7 @@ static void core_secondly()
       tell_mem_status_dcc(DP_STDOUT);
     }
   }
-  context;
+  Context;
   nowtm = localtime(&now);
   if (nowtm->tm_min != lastmin) {
     int i = 0;
@@ -427,7 +470,7 @@ static void core_secondly()
     while (nowtm->tm_min != lastmin) {
       /* timer drift, dammit */
       debug2("timer: drift (lastmin=%d, now=%d)", lastmin, nowtm->tm_min);
-      context;
+      Context;
       i++;
       lastmin = (lastmin + 1) % 60;
       call_hook(HOOK_MINUTELY);
@@ -435,11 +478,11 @@ static void core_secondly()
     if (i > 1)
       putlog(LOG_MISC, "*", "(!) timer drift -- spun %d minutes", i);
     miltime = (nowtm->tm_hour * 100) + (nowtm->tm_min);
-    context;
+    Context;
     if (((int) (nowtm->tm_min / 5) * 5) == (nowtm->tm_min)) {	/* 5 min */
       call_hook(HOOK_5MINUTELY);
       check_botnet_pings();
-      context;
+      Context;
       if (quick_logs == 0) {
 	flushlogs();
 	check_logsize();
@@ -459,10 +502,10 @@ static void core_secondly()
 	}
       }
     }
-    context;
+    Context;
     if (nowtm->tm_min == notify_users_at)
       call_hook(HOOK_HOURLY);
-    context;			/* these no longer need checking since they are
+    Context;			/* these no longer need checking since they are
 				 * all check vs minutely settings and we only
 				 * get this far on the minute */
     if (miltime == switch_logfiles_at) {
@@ -488,10 +531,10 @@ static void core_secondly()
 
 static void core_minutely()
 {
-  context;
+  Context;
   check_tcl_time(nowtm);
   do_check_timers(&timer);
-  context;
+  Context;
   if (quick_logs != 0) {
     flushlogs();
     check_logsize();
@@ -500,31 +543,31 @@ static void core_minutely()
 
 static void core_hourly()
 {
-  context;
+  Context;
   write_userfile(-1);
 }
 
 static void event_rehash()
 {
-  context;
+  Context;
   check_tcl_event("rehash");
 }
 
 static void event_prerehash()
 {
-  context;
+  Context;
   check_tcl_event("prerehash");
 }
 
 static void event_save()
 {
-  context;
+  Context;
   check_tcl_event("save");
 }
 
 static void event_logfile()
 {
-  context;
+  Context;
   check_tcl_event("logfile");
 }
 
@@ -551,7 +594,7 @@ int main(int argc, char **argv)
 
   /* initialise context list */
   for (i = 0; i < 16; i++) {
-    context;
+    Context;
   }
 #include "patch.h"
   /* version info! */
@@ -560,7 +603,7 @@ int main(int argc, char **argv)
   /* now add on the patchlevel (for Tcl) */
   sprintf(&egg_version[strlen(egg_version)], " %u", egg_numver);
   strcat(egg_version, egg_xtra);
-  context;
+  Context;
 #ifdef STOP_UAC
   {
     int nvpair[2];
@@ -621,13 +664,13 @@ int main(int argc, char **argv)
 #ifdef STATIC
   link_statics();
 #endif
-  context;
+  Context;
   strcpy(s, ctime(&now));
   s[strlen(s) - 1] = 0;
   strcpy(&s[11], &s[20]);
   putlog(LOG_ALL, "*", "--- Loading %s (%s)", ver, s);
   chanprog();
-  context;
+  Context;
   if (encrypt_pass == 0) {
     printf(MOD_NOCRYPT);
     exit(1);
@@ -639,9 +682,9 @@ int main(int argc, char **argv)
 	 botnetnick, i, count_users(userlist));
   cache_miss = 0;
   cache_hit = 0;
-  context;
+  Context;
   sprintf(pid_file, "pid.%s", botnetnick);
-  context;
+  Context;
   /* check for pre-existing eggdrop! */
   f = fopen(pid_file, "r");
   if (f != NULL) {
@@ -655,7 +698,7 @@ int main(int argc, char **argv)
       exit(1);
     }
   }
-  context;
+  Context;
 #ifndef CYGWIN_HACKS
   /* move into background? */
   if (backgrd) {
@@ -765,7 +808,7 @@ int main(int argc, char **argv)
   while (1) {
     int socket_cleanup = 0;
 
-    context;
+    Context;
 #if !defined(HAVE_PRE7_5_TCL) && !defined(HAVE_TCL_THREADS)
     /* process a single tcl event */
     Tcl_DoOneEvent(TCL_ALL_EVENTS | TCL_DONT_WAIT);
@@ -778,7 +821,7 @@ int main(int argc, char **argv)
       call_hook(HOOK_SECONDLY);
       then = now;
     }
-    context;
+    Context;
     /* only do this every so often */
     if (!socket_cleanup) {
       /* clean up sockets that were just left for dead */
@@ -799,7 +842,7 @@ int main(int argc, char **argv)
     if (xx >= 0) {		/* non-error */
       int idx;
 
-      context;
+      Context;
       for (idx = 0; idx < dcc_total; idx++)
 	if (dcc[idx].sock == xx) {
 	  if (dcc[idx].type && dcc[idx].type->activity)
@@ -815,7 +858,7 @@ int main(int argc, char **argv)
 
       if ((i == STDOUT) && !backgrd)
 	fatal("END OF FILE ON TERMINAL", 0);
-      context;
+      Context;
       for (idx = 0; idx < dcc_total; idx++)
 	if (dcc[idx].sock == i) {
 	  if (dcc[idx].type && dcc[idx].type->eof)
@@ -836,7 +879,7 @@ int main(int argc, char **argv)
 	killsock(i);
       }
     } else if ((xx == -2) && (errno != EINTR)) {	/* select() error */
-      context;
+      Context;
       putlog(LOG_MISC, "*", "* Socket error #%d; recovering.", errno);
       for (i = 0; i < dcc_total; i++) {
 	if ((fcntl(dcc[i].sock, F_GETFD, 0) == -1) && (errno = EBADF)) {
@@ -889,9 +932,9 @@ int main(int argc, char **argv)
 	  /* should be only 2 modules now -
 	   * blowfish & eggdrop */
 	  putlog(LOG_MISC, "*", MOD_STAGNANT);
-	context;
+	Context;
 	flushlogs();
-	context;
+	Context;
 	kill_tcl();
 	init_tcl(argc, argv);
 	init_language(0);

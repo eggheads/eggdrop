@@ -31,14 +31,14 @@ extern time_t now;
 /***********************************************************************/
 
 static int tcl_countusers STDVAR {
-  context;
+  Context;
   BADARGS(1, 1, "");
   Tcl_AppendResult(irp, int_to_base10(count_users(userlist)), NULL);
   return TCL_OK;
 }
 
 static int tcl_validuser STDVAR {
-  context;
+  Context;
   BADARGS(2, 2, " handle");
   Tcl_AppendResult(irp, get_user_by_handle(userlist, argv[1]) ? "1" : "0",
 		   NULL);
@@ -47,7 +47,7 @@ static int tcl_validuser STDVAR {
 static int tcl_finduser STDVAR {
   struct userrec *u;
 
-  context;
+  Context;
   BADARGS(2, 2, " nick!user@host");
   u = get_user_by_host(argv[1]);
   Tcl_AppendResult(irp, u ? u->handle : "*", NULL);
@@ -57,7 +57,7 @@ static int tcl_finduser STDVAR {
 static int tcl_passwdOk STDVAR {
   struct userrec *u;
 
-  context;
+  Context;
   BADARGS(3, 3, " handle passwd");
   Tcl_AppendResult(irp, ((u = get_user_by_handle(userlist, argv[1])) &&
 			 u_pass_match(u, argv[2])) ? "1" : "0", NULL);
@@ -69,7 +69,7 @@ static int tcl_chattr STDVAR {
   struct flag_record pls, mns, user;
   struct userrec *u;
 
-  context;
+  Context;
   BADARGS(2, 4, " handle ?changes? ?channel?");
   if ((argv[1][0] == '*') || !(u = get_user_by_handle(userlist, argv[1]))) {
     Tcl_AppendResult(irp, "*", NULL);
@@ -142,7 +142,7 @@ static int tcl_botattr STDVAR {
   struct flag_record pls, mns, user;
   struct userrec *u;
 
-  context;
+  Context;
   BADARGS(2, 4, " bot-handle ?changes? ?channel?");
   u = get_user_by_handle(userlist, argv[1]);
   if ((argv[1][0] == '*') || !u || !(u->flags & USER_BOT)) {
@@ -212,12 +212,12 @@ static int tcl_matchattr STDVAR {
   struct flag_record plus, minus, user;
   int ok = 0, f;
 
-  context;
+  Context;
   BADARGS(3, 4, " handle flags ?channel?");
-  context;			/* a2 - Last context: tcluser.c/184 */
+  Context;			/* a2 - Last context: tcluser.c/184 */
   if ((u = get_user_by_handle(userlist, argv[1])) &&
       ((argc == 3) || findchan(argv[3]))) {
-    context;			/* a2 - Last context: tcluser.c/184 */
+    Context;			/* a2 - Last context: tcluser.c/184 */
     user.match = FR_GLOBAL | (argc == 4 ? FR_CHAN : 0) | FR_BOT;
     get_user_flagrec(u, &user, argv[3]);
     plus.match = user.match;
@@ -225,7 +225,7 @@ static int tcl_matchattr STDVAR {
     f = (minus.global || minus.udef_global || minus.chan ||
 	 minus.udef_chan || minus.bot);
     if (flagrec_eq(&plus, &user)) {
-      context;			/* a2 - Last context: tcluser.c/184 */
+      Context;			/* a2 - Last context: tcluser.c/184 */
       if (!f)
 	ok = 1;
       else {
@@ -235,13 +235,13 @@ static int tcl_matchattr STDVAR {
       }
     }
   }
-  context;			/* a2 - Last context: tcluser.c/184 */
+  Context;			/* a2 - Last context: tcluser.c/184 */
   Tcl_AppendResult(irp, ok ? "1" : "0", NULL);
   return TCL_OK;
 }
 
 static int tcl_adduser STDVAR {
-  context;
+  Context;
   BADARGS(2, 3, " handle ?hostmask?");
   if (strlen(argv[1]) > HANDLEN)
     argv[1][HANDLEN] = 0;
@@ -258,7 +258,7 @@ static int tcl_addbot STDVAR {
   struct bot_addr *bi;
   char *p, *q;
 
-  context;
+  Context;
   BADARGS(3, 3, " handle address");
   if (strlen(argv[1]) > HANDLEN)
      argv[1][HANDLEN] = 0;
@@ -294,7 +294,7 @@ static int tcl_addbot STDVAR {
 }
 
 static int tcl_deluser STDVAR {
-  context;
+  Context;
   BADARGS(2, 2, " handle");
   Tcl_AppendResult(irp, (argv[1][0] == '*') ? "0" :
 		   int_to_base10(deluser(argv[1])), NULL);
@@ -302,7 +302,7 @@ static int tcl_deluser STDVAR {
 }
 
 static int tcl_delhost STDVAR {
-  context;
+  Context;
   BADARGS(3, 3, " handle hostmask");
   if ((!get_user_by_handle(userlist, argv[1])) || (argv[1][0] == '*')) {
     Tcl_AppendResult(irp, "non-existent user", NULL);
@@ -318,7 +318,7 @@ static int tcl_userlist STDVAR {
   struct flag_record user, plus, minus;
   int ok = 1, f = 0;
 
-  context;
+  Context;
   BADARGS(1, 3, " ?flags ?channel??");
   if ((argc == 3) && !findchan(argv[2])) {
     Tcl_AppendResult(irp, "Invalid channel: ", argv[2], NULL);
@@ -348,13 +348,13 @@ static int tcl_userlist STDVAR {
 }
 
 static int tcl_save STDVAR {
-  context;
+  Context;
   write_userfile(-1);
   return TCL_OK;
 }
 
 static int tcl_reload STDVAR {
-  context;
+  Context;
   reload();
   return TCL_OK;
 }
@@ -364,7 +364,7 @@ static int tcl_chnick STDVAR {
   char newhand[HANDLEN + 1];
   int x = 1, i;
 
-  context;
+  Context;
   BADARGS(3, 3, " oldnick newnick");
   u = get_user_by_handle(userlist, argv[1]);
   if (!u)
@@ -397,7 +397,7 @@ static int tcl_chnick STDVAR {
 static int tcl_getting_users STDVAR {
   int i;
 
-  context;
+  Context;
   BADARGS(1, 1, "");
   for (i = 0; i < dcc_total; i++) {
     if ((dcc[i].type == &DCC_BOT) &&
@@ -411,7 +411,7 @@ static int tcl_getting_users STDVAR {
 }
 
 static int tcl_isignore STDVAR {
-  context;
+  Context;
   BADARGS(2, 2, " nick!user@host");
   Tcl_AppendResult(irp, match_ignore(argv[1]) ? "1" : "0", NULL);
   return TCL_OK;
@@ -421,7 +421,7 @@ static int tcl_newignore STDVAR {
   time_t expire_time;
   char ign[UHOSTLEN], cmt[66], from[HANDLEN + 1];
 
-  context;
+  Context;
   BADARGS(4, 5, " hostmask creator comment ?lifetime?");
   strncpy(ign, argv[1], UHOSTMAX);
   ign[UHOSTMAX] = 0;
@@ -443,7 +443,7 @@ static int tcl_newignore STDVAR {
 }
 
 static int tcl_killignore STDVAR {
-  context;
+  Context;
   BADARGS(2, 2, " hostmask");
   Tcl_AppendResult(irp, delignore(argv[1]) ? "1" : "0", NULL);
   return TCL_OK;
@@ -454,7 +454,7 @@ static int tcl_ignorelist STDVAR {
   struct igrec *i;
   char ts[21], ts1[21], *list[5], *p;
 
-  context;
+  Context;
   BADARGS(1, 1, "");
   for (i = global_ign; i; i = i->next) {
     list[0] = i->igmask;
@@ -476,7 +476,7 @@ static int tcl_getuser STDVAR {
   struct userrec *u;
   struct user_entry *e;
 
-  context;
+  Context;
   BADARGS(3, 999, " handle type");
   if (!(et = find_entry_type(argv[2]))) {
     Tcl_AppendResult(irp, "No such info type: ", argv[2], NULL);
@@ -502,7 +502,7 @@ static int tcl_setuser STDVAR {
   struct user_entry *e;
   int r;
 
-  context;
+  Context;
   BADARGS(3, 999, " handle type ?setting....?");
   if (!(et = find_entry_type(argv[2]))) {
     Tcl_AppendResult(irp, "No such info type: ", argv[2], NULL);

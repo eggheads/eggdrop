@@ -127,7 +127,7 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
   if (!m)
     return 0;
   get_user_flagrec(get_user_by_host(from), &fr, chan->name);
-  context;
+  Context;
   if (glob_bot(fr) ||
       ((which == FLOOD_DEOP) && (glob_master(fr) || chan_master(fr))) ||
       ((which != FLOOD_DEOP) && (glob_friend(fr) || chan_friend(fr))) ||
@@ -199,7 +199,7 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
     return 0;
   }
   /* deop'n the same person, sillyness ;) - so just ignore it */
-  context;
+  Context;
   if (which == FLOOD_DEOP) {
     if (!rfc_casecmp(chan->deopd, victim))
       return 0;
@@ -207,7 +207,7 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
       strcpy(chan->deopd, victim);
   }
   chan->floodnum[which]++;
-  context;
+  Context;
   if (chan->floodnum[which] >= thr) {	/* FLOOD */
     /* reset counters */
     chan->floodnum[which] = 0;
@@ -246,7 +246,7 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
 	putlog(LOG_MISC | LOG_JOIN, chan->name, IRC_FLOODIGNORE4, p);
       strcpy(ftype + 4, " flood");
       u_addban(chan, h, origbotname, ftype, now + (60 * ban_time), 0);
-      context;
+      Context;
       /* don't kick user if exempted */
       if (!channel_enforcebans(chan) && me_op(chan) && !isexempted(chan, h))
 	{
@@ -285,7 +285,7 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
       return 1;
     }
   }
-  context;
+  Context;
   return 0;
 }
 
@@ -311,7 +311,7 @@ static void kick_all(struct chanset_t *chan, char *hostmask, char *comment)
   struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
   int k, l, flushed;
 
-  context;
+  Context;
   if (!me_op(chan))
     return;
   k = 0;
@@ -329,7 +329,7 @@ static void kick_all(struct chanset_t *chan, char *hostmask, char *comment)
 	  (chan_op(fr) || (glob_op(fr) && !chan_deop(fr))))) {	/* arthur2 */
       if (!flushed) {
 	/* we need to kick someone, flush eventual bans first */
-	context;
+	Context;
 	flush_mode(chan, QUICK);
 	flushed += 1;
       }
@@ -349,7 +349,7 @@ static void kick_all(struct chanset_t *chan, char *hostmask, char *comment)
   }
   if (k > 0)
     dprintf(DP_SERVER, "KICK %s %s :%s\n", chan->name, kicknick, comment);
-  context;
+  Context;
 }
 
 /* if any bans match this wildcard expression, refresh them on the channel */
@@ -447,7 +447,7 @@ static void enforce_bans(struct chanset_t *chan)
   char me[UHOSTLEN];
   masklist *b = chan->channel.ban;
 
-  context;
+  Context;
   if (!me_op(chan))
     return;			/* can't do it */
   simple_sprintf(me, "%s!%s", botname, botuserhost);
@@ -556,7 +556,7 @@ static void recheck_channel(struct chanset_t *chan, int dobans)
     return;                     /* it's better not to deop everybody */
   stacking++;
   /* okay, sort through who needs to be deopped. */
-  context;
+  Context;
   m = chan->channel.member;
   while (m && m->nick[0]) {
     sprintf(s, "%s!%s", m->nick, m->userhost);
@@ -863,7 +863,7 @@ static int got352(char *from, char *msg)
   char *nick, *user, *host, *chname, *flags;
   struct chanset_t *chan;
 
-  context;
+  Context;
   newsplit(&msg);		/* Skip my nick - effeciently */
   chname = newsplit(&msg);	/* Grab the channel */
   chan = findchan(chname);	/* See if I'm on channel */
@@ -884,7 +884,7 @@ static int got354(char *from, char *msg)
   char *nick, *user, *host, *chname, *flags;
   struct chanset_t *chan;
 
-  context;
+  Context;
   if (use_354) {
     newsplit(&msg);		/* Skip my nick - effeciently */
     if (msg[0] && (strchr(CHANMETA, msg[0]) != NULL)) {
@@ -1346,7 +1346,7 @@ static int gotjoin(char *from, char *chname)
   struct userrec *u;
   struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
 
-  context;
+  Context;
   fixcolon(chname);
   /* ircd 2.9 sometimes does '#chname^Gmodes' when returning from splits */
   newmode = NULL;
