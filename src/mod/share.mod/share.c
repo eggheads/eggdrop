@@ -1,7 +1,7 @@
 /*
  * share.c -- part of share.mod
  *
- * $Id: share.c,v 1.57 2001/11/29 04:43:39 guppy Exp $
+ * $Id: share.c,v 1.58 2001/12/03 03:02:41 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -597,8 +597,7 @@ static void share_change(int idx, char *par)
 	!(u->flags & USER_UNSHARED)) {
       if (!(uet = find_entry_type(key)))
 	/* If it's not a supported type, forget it */
-	putlog(LOG_CMDS, "*", "Ignore ch %s from %s (unknown type)",
-	       key, dcc[idx].nick);
+	debug2("Ignore ch %s from %s (unknown type)", key, dcc[idx].nick);
       else {
 	if (!(dcc[idx].status & STAT_GETTING))
 	  shareout_but(NULL, idx, "c %s %s %s\n", key, hand, par);
