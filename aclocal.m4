@@ -1,7 +1,7 @@
-dnl aclocal.m4
+optidnl aclocal.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: aclocal.m4,v 1.50 2001/12/04 20:12:54 guppy Exp $
+dnl $Id: aclocal.m4,v 1.51 2001/12/04 21:11:57 guppy Exp $
 dnl
 
 
@@ -127,7 +127,7 @@ fi
 ])dnl
 
 
-dnl  EGG_DISABLE_CC_OPTIMISATION()
+dnl  EGG_DISABLE_CC_OPTIMIZATION()
 dnl
 dnl check if user requested to remove -O2 cflag 
 dnl would be usefull on some weird *nix
