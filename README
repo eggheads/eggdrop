@@ -1,4 +1,4 @@
-$Id: README,v 1.40 2004/07/25 03:56:58 wcc Exp $
+$Id: README,v 1.41 2004/08/09 04:39:43 wcc Exp $
 
 Readme
 Last revised: June 5, 2002
@@ -253,6 +253,8 @@ Last revised: June 5, 2002
           create one and give owner status to the first person that introduces
           himself or herself to it. You'll need to do this when you first set
           up your bot.
+
+      -h: Show help.
 
       -v: Show version info, then quit.
 
@@ -559,8 +561,8 @@ Last revised: June 5, 2002
       EFnet - #egghelp, #eggfaq
       IRCnet - #eggdrop
       DALnet - #eggdrop, #botcentral
-      OPN - #eggdrop, #egghelp
-      QuakeNet - #eggdrop
+      FreeNode - #eggdrop, #egghelp
+      QuakeNet - #eggdrop.support
 
     If you plan to ask questions in any of the above channels, you should be
     familiar with and follow IRC etiquette.

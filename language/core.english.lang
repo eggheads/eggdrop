@@ -1,7 +1,7 @@
 # core.english.lang
 #   core language messages for eggdrop
 #
-# $Id: core.english.lang,v 1.42 2004/02/01 06:13:02 wcc Exp $
+# $Id: core.english.lang,v 1.43 2004/08/09 04:39:44 wcc Exp $
 
 # General stuff
 0x001,Usage
@@ -252,18 +252,19 @@ Telnet to the bot and enter 'NEW' as your nickname.
 0x673,nick flood
 
 # EGG_
-0x700,Command line arguments:\n\
+0x700,Usage: eggdrop [options] [config-file]\n\n\
+Options:\n\
   -h   help\n\
-  -v   print version and exit\n\
-  -n   don't go into the background\n\
-  -c   (with -n) display channel stats every 10 seconds\n\
-  -t   (with -n) use terminal to simulate dcc-chat\n\
-  -m   userfile creation mode\n\
-  optional config filename (default 'eggdrop.conf')\n
+  -n   Don't background; send all log entries to console.\n\
+  -nc  Don't background; display channel stats every 10 seconds.\n\
+  -nt  Don't background; use terminal to simulate DCC chat.\n\
+  -m   Create userfile.\n\
+  -h   Show this help.\n\
+  -v   Show version info, then quit.\n\n
 
 0x701,I detect %s already running from this directory.\n
 0x702,If this is incorrect, erase the '%s'\n
-0x703,* Warning!  Could not write %s file!\n
+0x703,* Warning! Could not write %s file!\n
 
 # USER_
 0x800,  (is a global op)
