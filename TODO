@@ -1,47 +1,63 @@
-WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING
+WARNING WARNING WARNING WARNING WARNING WARNING
 
-This TODO file is not up-to-date. Before working on a TODO point,
-subscribe to eggdev@eggheads.org (information at www.eggheads.org), then
-inform the list you wish to work on which point, and ask if someone else
-is not already working on it. A better system (web interfaced) system is
-going to be run in a few days in order to deal with those TODO points.
-Thanks for your patience <arthur2>
+This TODO is more up to date (as of August 26th, 1999) then 
+previous copies. Before working on a TODO item you may wanna
+subscribe to eggdev@eggheads.org (http://scrambled.eggheads.org/
+mailman/listinfo/eggdev) and ask if there is anyone working on 
+that TODO item.
 
-TODO list for 1.3.29
+TODO list for eggdrop1.3.29
 
-When you commit a patch about those TODO points, just remove the
-concerned part in this file. Don't renumber the other points <arthur2>
+When you have done something on this list or done anything that
+requires you to send a patch file please do the following:
 
-----------
+- make the patch file by diff'ng eggdrop1.3 and your changed
+  eggdrop directory, for example:
+    
+    diff -bur eggdrop1.3 patched1.3 > myfirstpatch
+    
+- please do not patch src/patch.h
 
-Problem status:
+- please do not renumber the TODO, instead just remove what you
+  fixed or say that you have submitted a patch
 
-        2:      no-one, we need someone who can reproduce this
-        3:      cybah
-        4:      SegFault
-        6:      no-one (changed task, please read again!)
-        7:      no-one
-       11:      no-one
-       12:      no-one
-       14:      no-one
-       15:      no-one
-       16:      no-one
-       18:      slennox
-       19:      no-one
-       20:      Tothwolf/Cybah
-       21:      drummer submitted a patch to eggdev
-       24:      no-one
-       27:      no-one
-       30:      no-one
-       32:      no-one
-       36:      no-one
-       41:      no-one
-       42:      no-one
-       44:      drummer, but need help
-       49:      drummer submitted a patch to eggdev
+- and when you e-mail the patch to eggdev, please put
 
-----------
-2. SEGV with sharing. Don't know how to reproduce this bug, but it
+    PATCH: <patch name>
+    
+  in the subject line, this is because it makes it easier for us
+  to track patch files.
+  
+and thats about all ... 
+
+----
+PROBLEM STATUS
+----
+
+	1:	no one
+	2:	no one
+	3:	Segfault (maybe ??)
+	4:	Mixter had submitted a patch
+	5:	no one
+	6:	no one
+	7:	no one
+	8:	no one
+	9:	no one
+	10:	no one
+	11: 	no one
+	12:	Tothwolf/Cybah
+	13:	no one
+	14: 	no one
+	15:	no one
+	16:	no one
+	17:	no one
+	18:	drummer (but he needs help)
+
+----
+TODO LIST
+----
+
+1. SEGV with sharing. Don't know how to reproduce this bug, but it
 occurs again and again (Found by TheUnknown). Here are two DEBUG files:
 
 Context: userent.c/940, [SEGV with sharing bug track - added 99/03/26]
@@ -79,52 +95,35 @@ Context: share:share.c/1095, []
          userent.c/942 [SEGV with sharing bug track - added 99/03/26]
 
 --
-3. CTCP flood a bot, it ignores you, then channel flood, it won't kick
+2. CTCP flood a bot, it ignores you, then channel flood, it won't kick
 you. It should ignore CTCP and not ignore ALL (found by Plex/Harry).
 
 note: there is no such thing as a CTCP ignore, will code this for
 1.3.28. users.h - line 153, and detect_flood() in servmsg.c - line 283. <cybah>
 
 --
-4. +h flag seems to be redundant with .strip (confusing)
+3. +h flag seems to be redundant with .strip (confusing)
 
 Status: SegFault is working on this
 
 --
-6.  There's been some discussion on eggdev about going back to the old way of
-    doing the help files. I'll simply paste the Q & A from the list ;) <cybah>
-
-Q. On 15 Apr, John wrote:
-   > can anyone tell me why .bans, .-ban and .+ban are missing in .help?
-
-A. its the new stupid way .help works hides lots of stuff
-   in diffrent modules so you have to .help modulename module
-   every f*cking module to see what commands there is.
-   This is not userfriendly, we should consider moving back
-   all commands to the main .help or fix a .help all command.
-
-   dw
-
-   Ok, we now have a concept but someone still needs to create a help entry
-   for each module of the form: "<modulename> cmds". The entries should
-   only contain the commands specific to their corresponding module. All
-   entries will be shown when the dcc command ".help all" is called so keep
-   the entries very brief.  -Fabian
-
---
-7. ./configure not detecting static tcl being incompatible with modules in
+4. ./configure not detecting static tcl being incompatible with modules in
     some situations (ask details to Tothwolf).
 
-Status: noone is working on this
+Status: Mixter did a patch for this, however his method stopped the configure
+        from working on all systems ...
 
 --
-11. +shared/+s flags need to be recoded. The way all this works seems to be
+5. +shared/+s flags need to be recoded. The way all this works seems to be
 confusing for users.
 
+NOTE: +shared is now default ... howver the +g share flag should be recode 
+      because it tends to be rather buggy ...
+
 Status: noone is working on this
 
 --
-12. some users asked for mIrc bantypes (1/2/3/4) for the eggdrop. A setting
+6. some users asked for mIrc bantypes (1/2/3/4) for the eggdrop. A setting
 has to be added to allow the bot-owner to choose the banmask type he wants
 his bot to use. not before 1.3.28.
 
@@ -133,17 +132,17 @@ his bot to use. not before 1.3.28.
 Status: noone is working on this
 
 --
-14. fix the eggdrop/tcl8.* info exist bug.
+7. fix the eggdrop/tcl8.* info exist bug.
 
 Status: noone is working on this
 
 --
-15. rewrite the eggdrop server queue, like Cybah's bot. not before 1.3.28.
+8. rewrite the eggdrop server queue, like Cybah's bot. not before 1.3.28.
 
 Status: Cybah ?
 
 --
-16. From the eggheads list: <cybah>
+9. From the eggheads list: <cybah>
 
 I think there is a minor bug in the way
 how botnets restructure...
@@ -162,18 +161,16 @@ for about 2 seconds before re-linking would fix this
 Mixter
 
 --
-18.
+10.
 
 There are some english sentences in the C src. They should be moved to
 /language. We also need some coordination between the different
 languages.
 
-Status: slennox is working on this.
-	Michael is working on updating the German lang file, can we pls
-	have some updates for the other languages? <cybah>
+Status: no one
 
 --
-19.
+11.
 
 (poptix' report)
 [20:10] !!! writing to nonexistent socket: 6
@@ -236,7 +233,7 @@ Context: tclhash.c/900, []
 Status: no one is working on this.
 
 --
-20. Eggdrop won't work with TCL 8.1 libs compiled with --enable-threads
+12. Eggdrop won't work with TCL 8.1 libs compiled with --enable-threads
 
 (Ian White's report)
 
@@ -267,7 +264,7 @@ This seems to occur with thread compile tcl 8.1.
 Status: Tothwolf/Cybah are working on this.
 
 --
-21. We need a better solution to the non-rfc-complient networks than to remove
+13. We need a better solution to the non-rfc-complient networks than to remove
     -DRFC_COMPLIENT from the Makefile. Need to make rfc_casecmp a pointer to a
     function and check net-type whenever the config file is loaded. Obviously
     with this approach, net-type has to be set readonly because we cant check
@@ -278,19 +275,13 @@ Status: Tothwolf/Cybah are working on this.
 
 Status: drummer submitted a patch to eggdev
 
---
-24. console.mod's console-autosave is buggy (ask Tothwolf for details)
-
-Status: no-one is working on this
-
---
-27. after you end a relay session with a bot and your using a dcc
+14. after you end a relay session with a bot and your using a dcc
     connection, shouldn't eggdrop turn off telnet codes automatically?
 
 Status: no-one is working on this
 
 --
-30. This is an odd one, and I've included code that should reproduce it...
+15. This is an odd one, and I've included code that should reproduce it...
     (Tothwolf)
    =TestBot= [04:12] joined #TestChannel but didn't want to!
 
@@ -311,41 +302,18 @@ Status: no-one is working on this
 Status: no-one is working on this
 
 --
-32. notes rejection (to ignore notes from some user@bot that keeps 
+16. notes rejection (to ignore notes from some user@bot that keeps 
     annoying them)
 
 Status: no-one is working on this
 
 --
-36. an old 1.3.20 bug (still there?)
-    (Tothwolf)
- 
-    bind nick -|- * nick:test
-    proc nick:test {nick uhost hand chan newnick} {
-       global botnick
-       putlog "$nick:$newnick:$botnick"
-       if {$newnick == $botnick} {
-          putlog "Debug:Botnick:1"
-       } else {
-          putlog "Debug:Botnick:0"
-       }
-    }
+17. .resetbans #channel doesn't work properly (ask Tothwolf for details).
 
 Status: no-one is working on this
 
 --
-41. .resetbans #channel doesn't work properly (ask Tothwolf for details).
-
-Status: no-one is working on this
-
---
-42. ignores are not sent with the userfile for sharebots (reported by
-    Tothwolf)
-
-Status: no-one is working on this
-
---
-44. Bug report from drummer
+18. Bug report from drummer
 
 =dcc(bot)= .+user user
 =dcc(bot)= .tcl setuser user HOSTS n!u@h
@@ -359,14 +327,4 @@ Status: no-one is working on this
 	   .tcl setuser user XTRA blah ""
 	   blah field will be empty, but i should be removed.
 
-Status: drummer, but need help
-
---
-49. Adds a tcl config setting to allow vs correct bogus-bans (suggested by
-matt).
-
-set bogus-bans [0/1] <- if set to 0, the bot won't do anything if people
-set bogus bans thus preventing bogus ban floods. it will only react to
-bogus bans if it is set to 1.
-
-Status: drummer submitted a patch to eggdev
+Status: 	drummer, but need help
