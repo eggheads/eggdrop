@@ -2,7 +2,7 @@
  * cmdschan.c -- part of channels.mod
  *   commands from a user via dcc that cause server interaction
  *
- * $Id: cmdschan.c,v 1.34 2000/10/27 19:29:10 fabian Exp $
+ * $Id: cmdschan.c,v 1.35 2000/11/03 17:15:49 fabian Exp $
  */
 /*
  * Copyright (C) 1997  Robey Pointer
@@ -93,8 +93,8 @@ static void cmd_pls_ban(struct userrec *u, int idx, char *par)
     }
     if (!par[0])
       par = "requested";
-    else if (strlen(par) > 65)
-      par[65] = 0;
+    else if (strlen(par) > MASKREASON_MAX)
+      par[MASKREASON_MAX] = 0;
     if (strlen(who) > UHOSTMAX - 4)
       who[UHOSTMAX - 4] = 0;
     /* Fix missing ! or @ BEFORE checking against myself */
@@ -158,7 +158,7 @@ static void cmd_pls_ban(struct userrec *u, int idx, char *par)
   }
 }
 
-static void cmd_pls_exempt (struct userrec *u, int idx, char *par)
+static void cmd_pls_exempt(struct userrec *u, int idx, char *par)
 {
   char *chname, *who, s[UHOSTLEN], s1[UHOSTLEN], *p, *p_expire;
   unsigned long int expire_time = 0, expire_foo;
@@ -226,8 +226,8 @@ static void cmd_pls_exempt (struct userrec *u, int idx, char *par)
     }
     if (!par[0])
       par = "requested";
-    else if (strlen(par) > 65)
-      par[65] = 0;
+    else if (strlen(par) > MASKREASON_MAX)
+      par[MASKREASON_MAX] = 0;
     if (strlen(who) > UHOSTMAX - 4)
       who[UHOSTMAX - 4] = 0;
     /* Fix missing ! or @ BEFORE checking against myself */
@@ -287,7 +287,7 @@ static void cmd_pls_exempt (struct userrec *u, int idx, char *par)
   }
 }
 
-static void cmd_pls_invite (struct userrec *u, int idx, char *par)
+static void cmd_pls_invite(struct userrec *u, int idx, char *par)
 {
   char *chname, *who, s[UHOSTLEN], s1[UHOSTLEN], *p, *p_expire;
   unsigned long int expire_time = 0, expire_foo;
@@ -356,8 +356,8 @@ static void cmd_pls_invite (struct userrec *u, int idx, char *par)
     }
     if (!par[0])
       par = "requested";
-    else if (strlen(par) > 65)
-      par[65] = 0;
+    else if (strlen(par) > MASKREASON_MAX)
+      par[MASKREASON_MAX] = 0;
     if (strlen(who) > UHOSTMAX - 4)
       who[UHOSTMAX - 4] = 0;
     /* Fix missing ! or @ BEFORE checking against myself */

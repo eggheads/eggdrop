@@ -1,7 +1,7 @@
 /* 
  * tclchan.c -- part of channels.mod
  * 
- * $Id: tclchan.c,v 1.37 2000/11/03 17:04:59 fabian Exp $
+ * $Id: tclchan.c,v 1.38 2000/11/03 17:15:49 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -495,7 +495,7 @@ static int tcl_newchanban STDVAR
 {
   time_t expire_time;
   struct chanset_t *chan;
-  char ban[161], cmt[66], from[HANDLEN + 1];
+  char ban[161], cmt[MASKREASON_LEN], from[HANDLEN + 1];
   int sticky = 0;
 
   BADARGS(5, 7, " channel ban creator comment ?lifetime? ?options?");
@@ -514,12 +514,9 @@ static int tcl_newchanban STDVAR
       return TCL_ERROR;
     }
   }
-  strncpy(ban, argv[2], 160);
-  ban[160] = 0;
-  strncpy(from, argv[3], HANDLEN);
-  from[HANDLEN] = 0;
-  strncpy(cmt, argv[4], 65);
-  cmt[65] = 0;
+  strncpyz(ban, argv[2], sizeof ban);
+  strncpyz(from, argv[3], sizeof from);
+  strncpyz(cmt, argv[4], sizeof cmt);
   if (argc == 5)
     expire_time = now + (60 * ban_time);
   else {
@@ -537,7 +534,7 @@ static int tcl_newban STDVAR
 {
   time_t expire_time;
   struct chanset_t *chan;
-  char ban[UHOSTLEN], cmt[66], from[HANDLEN + 1];
+  char ban[UHOSTLEN], cmt[MASKREASON_LEN], from[HANDLEN + 1];
   int sticky = 0;
 
   BADARGS(4, 6, " ban creator comment ?lifetime? ?options?");
@@ -551,12 +548,9 @@ static int tcl_newban STDVAR
       return TCL_ERROR;
     }
   }
-  strncpy(ban, argv[1], UHOSTMAX);
-  ban[UHOSTMAX] = 0;
-  strncpy(from, argv[2], HANDLEN);
-  from[HANDLEN] = 0;
-  strncpy(cmt, argv[3], 65);
-  cmt[65] = 0;
+  strncpyz(ban, argv[1], sizeof ban);
+  strncpyz(from, argv[2], sizeof from);
+  strncpyz(cmt, argv[3], sizeof cmt);
   if (argc == 4)
     expire_time = now + (60 * ban_time);
   else {
@@ -578,7 +572,7 @@ static int tcl_newchanexempt STDVAR
 {
   time_t expire_time;
   struct chanset_t *chan;
-  char exempt[161], cmt[66], from[HANDLEN+1];
+  char exempt[161], cmt[MASKREASON_LEN], from[HANDLEN + 1];
   int sticky = 0;
  
   BADARGS(5, 7, " channel exempt creator comment ?lifetime? ?options?");
@@ -597,12 +591,9 @@ static int tcl_newchanexempt STDVAR
       return TCL_ERROR;
     }
   }
-  strncpy(exempt, argv[2], 160);
-  exempt[160] = 0;
-  strncpy(from, argv[3], HANDLEN);
-  from[HANDLEN] = 0;
-  strncpy(cmt, argv[4], 65);
-  cmt[65] = 0;
+  strncpyz(exempt, argv[2], sizeof exempt);
+  strncpyz(from, argv[3], sizeof from);
+  strncpyz(cmt, argv[4], sizeof cmt);
   if (argc == 5)
     expire_time = now + (60 * exempt_time);
   else {
@@ -620,7 +611,7 @@ static int tcl_newexempt STDVAR
 {
   time_t expire_time;
   struct chanset_t *chan;
-  char exempt[UHOSTLEN], cmt[66], from[HANDLEN+1];
+  char exempt[UHOSTLEN], cmt[MASKREASON_LEN], from[HANDLEN + 1];
   int sticky = 0;
  
   BADARGS(4, 6, " exempt creator comment ?lifetime? ?options?");
@@ -634,12 +625,9 @@ static int tcl_newexempt STDVAR
       return TCL_ERROR;
     }
   }
-  strncpy(exempt, argv[1], UHOSTMAX);
-  exempt[UHOSTMAX] = 0;
-  strncpy(from, argv[2], HANDLEN);
-  from[HANDLEN] = 0;
-  strncpy(cmt, argv[3], 65);
-  cmt[65] = 0;
+  strncpyz(exempt, argv[1], sizeof exempt);
+  strncpyz(from, argv[2], sizeof from);
+  strncpyz(cmt, argv[3], sizeof cmt);
   if (argc == 4)
     expire_time = now + (60 * exempt_time);
   else {
@@ -661,7 +649,7 @@ static int tcl_newchaninvite STDVAR
 {
   time_t expire_time;
   struct chanset_t *chan;
-  char invite[161], cmt[66], from[HANDLEN+1];
+  char invite[161], cmt[MASKREASON_LEN], from[HANDLEN + 1];
   int sticky = 0;
   
   BADARGS(5, 7, " channel invite creator comment ?lifetime? ?options?");
@@ -680,12 +668,9 @@ static int tcl_newchaninvite STDVAR
       return TCL_ERROR;
     }
   }
-  strncpy(invite, argv[2], 160);
-  invite[160] = 0;
-  strncpy(from, argv[3], HANDLEN);
-  from[HANDLEN] = 0;
-  strncpy(cmt, argv[4], 65);
-  cmt[65] = 0;
+  strncpyz(invite, argv[2], sizeof invite);
+  strncpyz(from, argv[3], sizeof from);
+  strncpyz(cmt, argv[4], sizeof cmt);
   if (argc == 5)
     expire_time = now + (60 * invite_time);
   else {
@@ -703,7 +688,7 @@ static int tcl_newinvite STDVAR
 {
   time_t expire_time;
   struct chanset_t *chan;
-  char invite[UHOSTLEN], cmt[66], from[HANDLEN+1];
+  char invite[UHOSTLEN], cmt[MASKREASON_LEN], from[HANDLEN + 1];
   int sticky = 0;
 
   BADARGS(4, 6, " invite creator comment ?lifetime? ?options?");
@@ -717,12 +702,9 @@ static int tcl_newinvite STDVAR
       return TCL_ERROR;
     }
   }
-  strncpy(invite, argv[1], UHOSTMAX);
-  invite[UHOSTMAX] = 0;
-  strncpy(from, argv[2], HANDLEN);
-  from[HANDLEN] = 0;
-  strncpy(cmt, argv[3], 65);
-  cmt[65] = 0;
+  strncpyz(invite, argv[1], sizeof invite);
+  strncpyz(from, argv[2], sizeof from);
+  strncpyz(cmt, argv[3], sizeof cmt);
   if (argc == 4)
      expire_time = now + (60 * invite_time);
   else {

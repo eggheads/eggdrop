@@ -1,7 +1,7 @@
 /* 
  * channels.h -- part of channels.mod
  * 
- * $Id: channels.h,v 1.14 2000/10/27 19:29:10 fabian Exp $
+ * $Id: channels.h,v 1.15 2000/11/03 17:15:49 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -28,6 +28,11 @@
 /* User defined chanmodes/settings */
 #define UDEF_FLAG 1
 #define UDEF_INT 2
+
+#define MASKREASON_MAX	160	/* Max length of ban/invite/exempt/etc.
+				   reasons.				*/
+#define MASKREASON_LEN	(MASKREASON_MAX + 1)
+
 
 #ifdef MAKING_CHANNELS
 
