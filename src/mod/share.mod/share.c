@@ -1,7 +1,7 @@
 /* 
  * share.c -- part of share.mod
  * 
- * $Id: share.c,v 1.41 2000/09/27 19:40:44 fabian Exp $
+ * $Id: share.c,v 1.42 2000/10/27 19:32:42 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1211,7 +1211,7 @@ static void sharein_mod(int idx, char *msg)
 
     if (!y)
       /* Found a match */
-      (C_share[i].func) (idx, msg);
+      (C_share[i].func)(idx, msg);
     if (y < 0)
       f = 1;
   }

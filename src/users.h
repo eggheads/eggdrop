@@ -2,7 +2,7 @@
  * users.h
  *   structures and definitions used by users.c and userrec.c
  * 
- * $Id: users.h,v 1.6 2000/08/20 11:17:38 fabian Exp $
+ * $Id: users.h,v 1.7 2000/10/27 19:32:41 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -109,12 +109,12 @@ struct filesys_stats {
   int dnload_ks;
 };
 
-void *_user_malloc(int, char *, int);
-void *_user_realloc(void *, int, char *, int);
+void *_user_malloc(int size, const char *file, int line);
+void *_user_realloc(void *ptr, int size, const char *file, int line);
 
 #ifndef MAKING_MODS
-#  define user_malloc(x) _user_malloc(x,__FILE__,__LINE__)
-#  define user_realloc(x,y) _user_realloc(x,y,__FILE__,__LINE__)
+#  define user_malloc(x)	_user_malloc(x, __FILE__, __LINE__)
+#  define user_realloc(x, y)	_user_realloc(x, y, __FILE__, __LINE__)
 #endif
 
 int add_entry_type(struct user_entry_type *);

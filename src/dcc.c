@@ -4,7 +4,7 @@
  *   disconnect on a dcc socket
  *   ...and that's it!  (but it's a LOT)
  * 
- * $Id: dcc.c,v 1.36 2000/10/19 16:31:30 fabian Exp $
+ * $Id: dcc.c,v 1.37 2000/10/27 19:32:40 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -420,18 +420,15 @@ static void dcc_bot(int idx, char *code, int i)
     msg++;
   } else
     msg = "";
-  f = 0;
-  i = 0;
-  while ((C_bot[i].name != NULL) && (!f)) {
+  for (f = i = 0; C_bot[i].name && !f; i++) {
     int y = egg_strcasecmp(code, C_bot[i].name);
 
     if (y == 0) {
       /* Found a match */
-      (C_bot[i].func) (idx, msg);
+      (C_bot[i].func)(idx, msg);
       f = 1;
     } else if (y < 0)
       return;
-    i++;
   }
 }
 
@@ -1764,21 +1761,27 @@ static int call_tcl_func(char *name, int idx, char *args)
 
 static void dcc_script(int idx, char *buf, int len)
 {
-  void *old = NULL;
-  long oldsock = dcc[idx].sock;
+  long oldsock;
 
   strip_telnet(dcc[idx].sock, buf, &len);
-  if (!len)
+  if (len == 0)
     return;
+
   dcc[idx].timeval = now;
+  oldsock = dcc[idx].sock;	/* Remember the socket number.	*/
   if (call_tcl_func(dcc[idx].u.script->command, dcc[idx].sock, buf)) {
+    void *old_other = NULL;
+
     Context;
-    if ((dcc[idx].sock != oldsock) || (idx>max_dcc))
-      return; /* drummer: this happen after killdcc */
-    old = dcc[idx].u.script->u.other;
+    /* Check whether the socket and dcc entry are still valid. They
+       might have been killed by `killdcc'. */
+    if (dcc[idx].sock != oldsock || idx > max_dcc)
+      return;
+
+    old_other = dcc[idx].u.script->u.other;
     dcc[idx].type = dcc[idx].u.script->type;
     nfree(dcc[idx].u.script);
-    dcc[idx].u.other = old;
+    dcc[idx].u.other = old_other;
     if (dcc[idx].type == &DCC_SOCKET) {
       /* Kill the whole thing off */
       killsock(dcc[idx].sock);

@@ -4,7 +4,7 @@
  *   a bunch of functions to find and change user records
  *   change and check user (and channel-specific) flags
  * 
- * $Id: userrec.c,v 1.26 2000/10/19 16:33:11 fabian Exp $
+ * $Id: userrec.c,v 1.27 2000/10/27 19:32:41 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -54,35 +54,33 @@ int		userfile_perm = 0600;	/* Userfile permissions,
 					   default rw-------		    */
 
 
-#ifdef DEBUG_MEM
-void *_user_malloc(int size, char *file, int line)
+void *_user_malloc(int size, const char *file, int line)
 {
-  char x[1024], *p;
+#ifdef DEBUG_MEM
+  char		 x[1024];
+  const char	*p;
 
   p = strrchr(file, '/');
   simple_sprintf(x, "userrec.c:%s", p ? p + 1 : file);
   return n_malloc(size, x, line);
+#else
+  return nmalloc(size);
+#endif
 }
 
-void *_user_realloc(void *ptr, int size, char *file, int line)
+void *_user_realloc(void *ptr, int size, const char *file, int line)
 {
-  char x[1024], *p;
+#ifdef DEBUG_MEM
+  char		 x[1024];
+  const char	*p;
 
   p = strrchr(file, '/');
   simple_sprintf(x, "userrec.c:%s", p ? p + 1 : file);
   return n_realloc(ptr, size, x, line);
-}
 #else
-void *_user_malloc(int size, char *file, int line)
-{
-  return nmalloc(size);
-}
-
-void *_user_realloc(void *ptr, int size, char *file, int line)
-{
   return nrealloc(ptr, size);
-}
 #endif
+}
 
 inline int expmem_mask(struct maskrec *m)
 {
@@ -222,6 +220,7 @@ struct userrec *get_user_by_handle(struct userrec *bu, char *handle)
 
   if (!handle)
     return NULL;
+  /* FIXME: This should be done outside of this function. */
   rmspace(handle);
   if (!handle[0] || (handle[0] == '*'))
     return NULL;

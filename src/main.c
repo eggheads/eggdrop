@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  * 
- * $Id: main.c,v 1.44 2000/10/27 19:28:21 fabian Exp $
+ * $Id: main.c,v 1.45 2000/10/27 19:32:41 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -654,6 +654,16 @@ void patch(const char *str)
   sprintf(&egg_xtra[strlen(egg_xtra)], " %s", str);
 }
 
+static inline void garbage_collect(void)
+{
+  static u_8bit_t	run_cnt = 0;
+
+  if (run_cnt == 3)
+    garbage_collect_tclhash();
+  else
+    run_cnt++;
+}
+
 int main(int argc, char **argv)
 {
   int xx, i;
@@ -883,6 +893,7 @@ int main(int argc, char **argv)
     /* Process a single tcl event */
     Tcl_DoOneEvent(TCL_ALL_EVENTS | TCL_DONT_WAIT);
 #endif
+
     /* Lets move some of this here, reducing the numer of actual
      * calls to periodic_timers
      */
@@ -892,20 +903,27 @@ int main(int argc, char **argv)
       call_hook(HOOK_SECONDLY);
       then = now;
     }
+
     Context;
-    /* Only do this every so often */
+    /* Only do this every so often. */
     if (!socket_cleanup) {
-      dcc_remove_lost();
-      /* Check for server or dcc activity */
-      dequeue_sockets();
       socket_cleanup = 5;
+
+      /* Remove dead dcc entries. */
+      dcc_remove_lost();
+
+      /* Check for server or dcc activity. */
+      dequeue_sockets();
     } else
       socket_cleanup--;
+
+    /* Free unused structures. */
+    garbage_collect();
+
     xx = sockgets(buf, &i);
     if (xx >= 0) {		/* Non-error */
       int idx;
 
-      Context;
       for (idx = 0; idx < dcc_total; idx++)
 	if (dcc[idx].sock == xx) {
 	  if (dcc[idx].type && dcc[idx].type->activity) {
@@ -936,7 +954,7 @@ int main(int argc, char **argv)
     } else if (xx == -1) {	/* EOF from someone */
       int idx;
 
-      if ((i == STDOUT) && !backgrd)
+      if (i == STDOUT && !backgrd)
 	fatal("END OF FILE ON TERMINAL", 0);
       Context;
       for (idx = 0; idx < dcc_total; idx++)
@@ -958,7 +976,7 @@ int main(int argc, char **argv)
 	close(i);
 	killsock(i);
       }
-    } else if ((xx == -2) && (errno != EINTR)) {	/* select() error */
+    } else if (xx == -2 && errno != EINTR) {	/* select() error */
       Context;
       putlog(LOG_MISC, "*", "* Socket error #%d; recovering.", errno);
       for (i = 0; i < dcc_total; i++) {
@@ -971,7 +989,7 @@ int main(int argc, char **argv)
 	  i--;
 	}
       }
-    } else if (xx == (-3)) {
+    } else if (xx == -3) {
       call_hook(HOOK_IDLE);
       socket_cleanup = 0;	/* If we've been idle, cleanup & flush */
     }
@@ -1008,9 +1026,8 @@ int main(int argc, char **argv)
 	}
 	p = module_list;
 	if (p && p->next && p->next->next)
-	  /* Should be only 2 modules now -
-	   * blowfish & eggdrop
-	   */
+	  /* Should be only 2 modules now - blowfish (or some other
+	     encryption module) and eggdrop. */
 	  putlog(LOG_MISC, "*", MOD_STAGNANT);
 	Context;
 	flushlogs();

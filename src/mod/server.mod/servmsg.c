@@ -1,7 +1,7 @@
 /* 
  * servmsg.c -- part of server.mod
  * 
- * $Id: servmsg.c,v 1.48 2000/09/27 19:40:44 fabian Exp $
+ * $Id: servmsg.c,v 1.49 2000/10/27 19:32:42 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -696,7 +696,6 @@ static int gotwall(char *from, char *msg)
   int r;
 
   Context;
-
   fixcolon(msg);
   p = strchr(from, '!');
   if (p && (p == strrchr(from, '!'))) {
@@ -851,7 +850,7 @@ static int got432(char *from, char *msg)
 static int got433(char *from, char *msg)
 {
   char *tmp;
-  Context;
+
   if (server_online) {
     /* We are online and have a nickname, we'll keep it */
     newsplit(&msg);
@@ -860,7 +859,6 @@ static int got433(char *from, char *msg)
     nick_juped = 0;
     return 0;
   }
-  Context;
   gotfake433(from);
   return 0;
 }
@@ -902,7 +900,6 @@ static int got437(char *from, char *msg)
  */
 static int got438(char *from, char *msg)
 {
-  Context;
   newsplit(&msg);
   newsplit(&msg);
   fixcolon(msg);
@@ -917,8 +914,8 @@ static int got451(char *from, char *msg)
    * hoping the next server will work :) -poptix
    */
   /* Um, this does occur on a lagged anti-spoof server connection if the
-   * (minutely) sending of joins occurs before the bot does its ping reply
-   * probably should do something about it some time - beldin
+   * (minutely) sending of joins occurs before the bot does its ping reply.
+   * Probably should do something about it some time - beldin
    */
   putlog(LOG_MISC, "*", IRC_NOTREGISTERED1, from);
   nuke_server(IRC_NOTREGISTERED2);

@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  * 
- * $Id: chan.c,v 1.52 2000/10/19 16:32:21 fabian Exp $
+ * $Id: chan.c,v 1.53 2000/10/27 19:32:41 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1960,8 +1960,10 @@ static int gotmsg(char *from, char *msg)
 	!chan_friend(fr) && !glob_friend(fr) &&
 	!(channel_dontkickops(chan) &&
 	  (chan_op(fr) || (glob_op(fr) && !chan_deop(fr)))) &&	/* arthur2 */
-	!(use_exempts && ban_fun && /* don't kickban if permanent exempted -- Eule */
-	  (u_match_mask(global_exempts,from) || u_match_mask(chan->exempts, from)))) {
+	!(use_exempts && ban_fun &&
+	  /* don't kickban if permanent exempted -- Eule */
+	  (u_match_mask(global_exempts, from) ||
+	   u_match_mask(chan->exempts, from)))) {
       if (ban_fun) {
 	check_exemptlist(chan, from);
 	u_addban(chan, quickban(chan, uhost), origbotname,
@@ -2085,7 +2087,7 @@ static int gotnotice(char *from, char *msg)
   fixcolon(msg);
   strcpy(uhost, from);
   nick = splitnick(&uhost);
-    u = get_user_by_host(from);
+  u = get_user_by_host(from);
   if (flud_ctcp_thr && detect_avalanche(msg)) {
     get_user_flagrec(u, &fr, chan->dname);
     m = ismember(chan, nick);
@@ -2094,8 +2096,10 @@ static int gotnotice(char *from, char *msg)
 	!chan_friend(fr) && !glob_friend(fr) &&
 	!(channel_dontkickops(chan) &&
 	  (chan_op(fr) || (glob_op(fr) && !chan_deop(fr)))) &&	/* arthur2 */
-	!(use_exempts && ban_fun && /* don't kickban if permanent exempted -- Eule */
-	  (u_match_mask(global_exempts,from) || u_match_mask(chan->exempts, from)))) {
+	!(use_exempts && ban_fun &&
+	  /* don't kickban if permanent exempted -- Eule */
+	  (u_match_mask(global_exempts,from) ||
+	   u_match_mask(chan->exempts, from)))) {
       if (ban_fun) {
 	check_exemptlist(chan, from);
 	u_addban(chan, quickban(chan, uhost), origbotname,

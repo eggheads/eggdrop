@@ -1,7 +1,7 @@
 /* 
  * flags.h
  * 
- * $Id: flags.h,v 1.5 2000/09/23 17:46:08 fabian Exp $
+ * $Id: flags.h,v 1.6 2000/10/27 19:32:41 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -177,9 +177,9 @@ struct flag_record {
 
 #ifndef MAKING_MODS
 
-void get_user_flagrec(struct userrec *, struct flag_record *, char *);
-void set_user_flagrec(struct userrec *, struct flag_record *, char *);
-void break_down_flags(char *, struct flag_record *, struct flag_record *);
+void get_user_flagrec(struct userrec *, struct flag_record *, const char *);
+void set_user_flagrec(struct userrec *, struct flag_record *, const char *);
+void break_down_flags(const char *, struct flag_record *, struct flag_record *);
 int build_flags(char *, struct flag_record *, struct flag_record *);
 int flagrec_eq(struct flag_record *, struct flag_record *);
 int flagrec_ok(struct flag_record *, struct flag_record *);

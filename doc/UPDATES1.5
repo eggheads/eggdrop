@@ -4,6 +4,9 @@ Changes in eggdrop: (since v1.5.0)
 
 1.5.5
 Found by  Fixed by  What...
+          Fabian    Don't actually delete the bind structures immediately, use
+                    centralised garbage collector instead. Cleaned up various
+                    aspects of the bind list handling.
 Sup       Fabian    Don't insist on proper domainname during hostname detection.
 Sup       Fabian    Properly call PART bind when removing channel and the bot
                     will therefore leave the channel shortly. Also slightly

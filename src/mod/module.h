@@ -1,7 +1,7 @@
 /* 
  * module.h
  * 
- * $Id: module.h,v 1.36 2000/10/27 19:28:21 fabian Exp $
+ * $Id: module.h,v 1.37 2000/10/27 19:32:41 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -97,10 +97,10 @@
 #define module_depend ((Function *(*)(char *,char *,int,int))global[6])
 #define module_undepend ((int(*)(char *))global[7])
 /* 8 - 11 */
-#define add_bind_table ((p_tcl_bind_list(*)(char *,int,Function))global[8])
+#define add_bind_table ((p_tcl_bind_list(*)(const char *,int,Function))global[8])
 #define del_bind_table ((void (*) (p_tcl_bind_list))global[9])
-#define find_bind_table ((p_tcl_bind_list(*)(char *))global[10])
-#define check_tcl_bind ((int (*) (p_tcl_bind_list,char *,struct flag_record *,char *, int))global[11])
+#define find_bind_table ((p_tcl_bind_list(*)(const char *))global[10])
+#define check_tcl_bind ((int (*) (p_tcl_bind_list,const char *,struct flag_record *,const char *, int))global[11])
 /* 12 - 15 */
 #define add_builtins ((int (*) (p_tcl_bind_list, cmd_t *))global[12])
 #define rem_builtins ((int (*) (p_tcl_bind_list, cmd_t *))global[13])
@@ -142,8 +142,8 @@
 #define add_entry_type ((int (*) ( struct user_entry_type * ))global[42])
 #define del_entry_type ((int (*) ( struct user_entry_type * ))global[43])
 /* 44 - 47 */
-#define get_user_flagrec ((void (*)(struct userrec *, struct flag_record *, char *))global[44])
-#define set_user_flagrec ((void (*)(struct userrec *, struct flag_record *, char *))global[45])
+#define get_user_flagrec ((void (*)(struct userrec *, struct flag_record *, const char *))global[44])
+#define set_user_flagrec ((void (*)(struct userrec *, struct flag_record *, const char *))global[45])
 #define get_user_by_host ((struct userrec * (*)(char *))global[46])
 #define get_user_by_handle ((struct userrec *(*)(struct userrec *,char *))global[47])
 /* 48 - 51 */
@@ -167,7 +167,7 @@
 #define count_users ((int(*)(struct userrec *))global[62])
 #define sanity_check ((int(*)(int))global[63])
 /* 64 - 67 */
-#define break_down_flags ((void (*)(char *,struct flag_record *,struct flag_record *))global[64])
+#define break_down_flags ((void (*)(const char *,struct flag_record *,struct flag_record *))global[64])
 #define build_flags ((void (*)(char *, struct flag_record *, struct flag_record *))global[65])
 #define flagrec_eq ((int(*)(struct flag_record*,struct flag_record *))global[66])
 #define flagrec_ok ((int(*)(struct flag_record*,struct flag_record *))global[67])
@@ -197,7 +197,7 @@
 #define get_data_ptr(x) ((void *(*)(int,char*,int))global[86])(x,__FILE__,__LINE__)
 #define open_telnet ((int (*) (char *, int))global[87])
 /* 88 - 91 */
-#define check_tcl_event ((void * (*) (char *))global[88])
+#define check_tcl_event ((void * (*) (const char *))global[88])
 #define my_memcpy ((void * (*) (void *, const void *, size_t))global[89])
 #define my_atoul ((IP(*)(char *))global[90])
 #define my_strcpy ((int (*)(char *, const char *))global[91])
@@ -300,7 +300,7 @@
 #define expected_memory ((int(*)(void))global[168])
 #define tell_mem_status ((void(*)(char *))global[169])
 #define do_restart (*(int *)(global[170]))
-#define check_tcl_filt ((char *(*)(int, char *))global[171])
+#define check_tcl_filt ((const char *(*)(int, const char *))global[171])
 /* 172 - 175 */
 #define add_hook(a,b) (((void (*) (int, Function))global[172])(a,b))
 #define del_hook(a,b) (((void (*) (int, Function))global[173])(a,b))
@@ -353,7 +353,7 @@
 #define botname ((char *)(global[211]))
 /* 212 - 215 */
 #define remove_gunk ((void(*)(char *))global[212])
-#define check_tcl_chjn ((void (*) (char *,char *,int,char,int,char *))global[213])
+#define check_tcl_chjn ((void (*) (const char *,const char *,int,char,int,const char *))global[213])
 #define sanitycheck_dcc ((int (*)(char *, char *, char *, char *))global[214])
 #define isowner ((int (*)(char *))global[215])
 /* 216 - 219 */

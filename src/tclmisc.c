@@ -3,7 +3,7 @@
  *   Tcl stubs for file system commands
  *   Tcl stubs for everything else
  * 
- * $Id: tclmisc.c,v 1.14 2000/09/12 15:26:51 fabian Exp $
+ * $Id: tclmisc.c,v 1.15 2000/10/27 19:32:41 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -119,33 +119,44 @@ static int tcl_timer STDVAR
 
 static int tcl_binds STDVAR
 {
-  struct tcl_bind_mask *hm;
-  p_tcl_bind_list p, kind;
-  tcl_cmd_t *tt;
-  char *list[5], *g, flg[100], hits[160];
-  int matching = 0;
+  tcl_bind_list_t	*tl, *tl_kind;
+  tcl_bind_mask_t	*tm;
+  tcl_cmd_t		*tc;
+  char			*list[5], *g, flg[100], hits[160];
+  int			 matching = 0;
 
   BADARGS(1, 2, " ?type/mask?");
 
-  kind = find_bind_table(argv[1] ? argv[1] : "");
-  if (!kind && argv[1])
+  if (argv[1])
+    tl_kind = find_bind_table(argv[1]);
+  else
+    tl_kind = NULL;
+  if (!tl_kind && argv[1])
     matching = 1;
 
-  for (p = kind ? kind : bind_table_list; p; p = kind ? 0 : p->next) {
-    Context;
-    for (hm = p->first; hm; hm = hm->next) {
-      for (tt = hm->first; tt; tt = tt->next) {
-        if (matching && !wild_match(argv[1], p->name) && 
-            !wild_match(argv[1], hm->mask) && 
-            !wild_match(argv[1], tt->func_name))
+  for (tl = tl_kind ? tl_kind : bind_table_list; tl;
+       tl = tl_kind ? 0 : tl->next) {
+    if (tl->flags & HT_DELETED)
+      continue;
+    for (tm = tl->first; tm; tm = tm->next) {
+      if (tm->flags & TBM_DELETED)
+	continue;
+      for (tc = tm->first; tc; tc = tc->next) {
+	if (tc->attributes & TC_DELETED)
+	  continue;
+        if (matching &&
+	    !wild_match(argv[1], tl->name) && 
+            !wild_match(argv[1], tm->mask) && 
+            !wild_match(argv[1], tc->func_name))
           continue;
-	build_flags(flg, &(tt->flags), NULL);
-        sprintf(hits, "%i", (int) tt->hits);
-        list[0] = p->name;
+
+	build_flags(flg, &(tc->flags), NULL);
+        sprintf(hits, "%i", (int) tc->hits);
+        list[0] = tl->name;
         list[1] = flg;
-        list[2] = hm->mask;
+        list[2] = tm->mask;
         list[3] = hits;
-        list[4] = tt->func_name;
+        list[4] = tc->func_name;
         g = Tcl_Merge(5, list);
         Tcl_AppendElement(irp, g);
         Tcl_Free((char *) g);

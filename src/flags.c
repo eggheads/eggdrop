@@ -2,7 +2,7 @@
  * flags.c -- handles:
  *   all the flag matching/conversion functions in one neat package :)
  * 
- * $Id: flags.c,v 1.14 2000/09/05 15:59:43 fabian Exp $
+ * $Id: flags.c,v 1.15 2000/10/27 19:32:40 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -327,12 +327,12 @@ char geticon(int idx)
   return '-';
 }
 
-void break_down_flags(char *string, struct flag_record *plus,
+void break_down_flags(const char *string, struct flag_record *plus,
 		      struct flag_record *minus)
 {
-  struct flag_record *which = plus;
-  int mode = 0;			/* 0 = glob, 1 = chan, 2 = bot */
-  int flags = plus->match;
+  struct flag_record	*which = plus;
+  int			 mode = 0;	/* 0 = glob, 1 = chan, 2 = bot */
+  int			 flags = plus->match;
 
   if (!(flags & FR_GLOBAL)) {
     if (flags & FR_BOT)
@@ -604,7 +604,7 @@ int flagrec_eq(struct flag_record *req, struct flag_record *have)
 }
 
 void set_user_flagrec(struct userrec *u, struct flag_record *fr,
-		      char *chname)
+		      const char *chname)
 {
   struct chanuserrec *cr = NULL;
   int oldflags = fr->match;
@@ -656,7 +656,7 @@ void set_user_flagrec(struct userrec *u, struct flag_record *fr,
 /* Always pass the dname (display name) to this function for chname <cybah>
  */
 void get_user_flagrec(struct userrec *u, struct flag_record *fr,
-		      char *chname)
+		      const char *chname)
 {
   struct chanuserrec *cr = NULL;
 

@@ -3,7 +3,7 @@
  *   memory allocation and deallocation
  *   keeping track of what memory is being used by whom
  * 
- * $Id: mem.c,v 1.12 2000/04/05 19:55:13 fabian Exp $
+ * $Id: mem.c,v 1.13 2000/10/27 19:32:41 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -290,7 +290,7 @@ void debug_mem_to_dcc(int idx)
   tell_netdebug(idx);
 }
 
-void *n_malloc(int size, char *file, int line)
+void *n_malloc(int size, const char *file, int line)
 {
   void	*x;
 #ifdef DEBUG_MEM
@@ -322,7 +322,7 @@ void *n_malloc(int size, char *file, int line)
   return x;
 }
 
-void *n_realloc(void *ptr, int size, char *file, int line)
+void *n_realloc(void *ptr, int size, const char *file, int line)
 {
   void *x;
   int i = 0;
@@ -359,7 +359,7 @@ void *n_realloc(void *ptr, int size, char *file, int line)
   return x;
 }
 
-void n_free(void *ptr, char *file, int line)
+void n_free(void *ptr, const char *file, int line)
 {
   int i = 0;
 
