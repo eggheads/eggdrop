@@ -1,7 +1,7 @@
 /* 
  * modvals.h
  * 
- * $Id: modvals.h,v 1.6 1999/12/21 17:35:11 fabian Exp $
+ * $Id: modvals.h,v 1.7 1999/12/22 12:11:03 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -70,6 +70,7 @@
 #define SERVER_BOTNAME       4
 #define SERVER_BOTUSERHOST   5
 #define SERVER_H_CTCP       33
+#define SERVER_NICKLEN      38
 /* irc */
 #define IRC_RECHECK_CHANNEL 15
 /* notes */

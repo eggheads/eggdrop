@@ -10,7 +10,7 @@
  * 
  * dprintf'ized, 9nov1995
  * 
- * $Id: users.c,v 1.8 1999/12/21 17:35:10 fabian Exp $
+ * $Id: users.c,v 1.9 1999/12/22 12:11:02 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1112,8 +1112,11 @@ void autolink_cycle(char *start)
 	    dprintf(i, "bye\n");
 	    killsock(dcc[i].sock);
 	    lostdcc(i);
-	  } else {
-	    botnet_send_reject(i, botnetnick, NULL, u->handle, NULL, NULL);
+	  } else if (i < 0) {
+	    /* The bot is not connected, but listed in our tandem list! */
+	    putlog(LOG_BOTS, "*", "(!) BUG: rejecting not connected bot %s!",
+		   u->handle);
+	    rembot(u->handle);
 	  }
 	}
       }

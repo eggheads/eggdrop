@@ -1,7 +1,7 @@
 /* 
  * server.h -- part of server.mod
  * 
- * $Id: server.h,v 1.3 1999/12/21 17:35:31 fabian Exp $
+ * $Id: server.h,v 1.4 1999/12/22 12:11:03 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -70,6 +70,7 @@
 /* 35 - 36 */
 #define ctcp_reply ((char *)(server_funcs[35]))
 #define get_altbotnick ((char *(*)(void))(server_funcs[36]))
+#define nick_len (*(int *)(server_funcs[37]))
 #endif				/* MAKING_SERVER */
 
 #endif				/* _EGG_MOD_SERVER_SERVER_H */

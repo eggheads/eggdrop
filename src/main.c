@@ -7,7 +7,7 @@
  * 
  * dprintf'ized, 15nov1995
  * 
- * $Id: main.c,v 1.14 1999/12/21 17:35:09 fabian Exp $
+ * $Id: main.c,v 1.15 1999/12/22 12:11:02 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -158,7 +158,8 @@ void fatal(char *s, int recoverable)
   putlog(LOG_MISC, "*", "* %s", s);
   flushlogs();
   for (i = 0; i < dcc_total; i++)
-    killsock(dcc[i].sock);
+    if (dcc[i].type != &DCC_LOST)
+      killsock(dcc[i].sock);
   unlink(pid_file);
   if (!recoverable)
     exit(1);
@@ -647,6 +648,17 @@ int main(int argc, char **argv)
   struct sigaction sv;
   struct chanset_t *chan;
 
+  /* Make sure it can write core if you make debug else it pretty useless(dw)*/
+#ifdef DEBUG_MEM
+  {
+#include <sys/resource.h>
+    struct rlimit cdlim;
+    cdlim.rlim_cur = RLIM_INFINITY;
+    cdlim.rlim_max = RLIM_INFINITY;
+    setrlimit(RLIMIT_CORE, &cdlim);
+  }
+#endif
+
   /* initialise context list */
   for (i = 0; i < 16; i++) {
     Context;
@@ -884,7 +896,8 @@ int main(int argc, char **argv)
       for (i = 0; i < dcc_total; i++) {
 	if (dcc[i].type == &DCC_LOST) {
 	  dcc[i].type = (struct dcc_table *) (dcc[i].sock);
-	  lostdcc(i);
+	  dcc[i].sock = (-1);
+	  removedcc(i);
 	  i--;
 	}
       }
@@ -893,7 +906,6 @@ int main(int argc, char **argv)
       socket_cleanup = 5;
     } else
       socket_cleanup--;
-    /* new net routines: help me mary! */
     xx = sockgets(buf, &i);
     if (xx >= 0) {		/* non-error */
       int idx;

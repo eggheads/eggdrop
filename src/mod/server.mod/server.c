@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  * 
- * $Id: server.c,v 1.20 1999/12/21 17:35:30 fabian Exp $
+ * $Id: server.c,v 1.21 1999/12/22 12:11:03 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -83,14 +83,17 @@ static int must_be_owner;	/* arthur2 */
 static char connectserver[121];	/* what, if anything, to do before connect
 				 * to the server */
 static int resolvserv = 0;	/* in the process of resolving a server host */
-
-/* allow a msgs being twice in a queue ? */
-static int double_mode;
+static int double_mode;		/* allow a msgs to be twice in a queue? */
 static int double_server;
 static int double_help;
 static int double_warned;
-
 static int lastpingtime = 0;	/* IRCNet LAGmeter support -- drummer */
+static char stackablecmds[511];
+static time_t last_time = 0;
+static int use_penalties;
+static int use_fastdeq;
+static int nick_len = 9;	/* maximal nick length allowed on the
+				 * network */
 
 static Function *global = NULL;
 
@@ -99,17 +102,15 @@ static p_tcl_bind_list H_wall, H_raw, H_notc, H_msgm, H_msg, H_flud,
 
 static void empty_msgq(void);
 static void next_server(int *, char *, unsigned int *, char *);
+static void disconnect_server(int);
 static char *get_altbotnick(void);
 static int calc_penalty(char *);
-char *splitnicks(char **);
-static time_t last_time = 0;
-static int use_penalties;
-#define MAXPENALTY 10
-static int use_fastdeq;
 static int fast_deq(int);
-static char stackablecmds[511];
+static char *splitnicks(char **);
 
 #include "servmsg.c"
+
+#define MAXPENALTY 10
 
 /* number of seconds to wait between transmitting queued lines to the server
  * lower this value at your own risk.  ircd is known to start flood control
@@ -833,7 +834,7 @@ static char *get_altbotnick(void)
     return altnick;
 }
 
-static char *altnick_change(ClientData cdata, Tcl_Interp * irp, char *name1,
+static char *altnick_change(ClientData cdata, Tcl_Interp *irp, char *name1,
 			    char *name2, int flags)
 {
   Context;
@@ -842,7 +843,7 @@ static char *altnick_change(ClientData cdata, Tcl_Interp * irp, char *name1,
   return NULL;
 }
 
-static char *traced_server(ClientData cdata, Tcl_Interp * irp, char *name1,
+static char *traced_server(ClientData cdata, Tcl_Interp *irp, char *name1,
 			   char *name2, int flags)
 {
   char s[1024];
@@ -859,7 +860,7 @@ static char *traced_server(ClientData cdata, Tcl_Interp * irp, char *name1,
   return NULL;
 }
 
-static char *traced_botname(ClientData cdata, Tcl_Interp * irp, char *name1,
+static char *traced_botname(ClientData cdata, Tcl_Interp *irp, char *name1,
 			    char *name2, int flags)
 {
   char s[1024];
@@ -872,37 +873,71 @@ static char *traced_botname(ClientData cdata, Tcl_Interp * irp, char *name1,
   return NULL;
 }
 
-static char *traced_nettype(ClientData cdata, Tcl_Interp * irp, char *name1,
-			    char *name2, int flags)
+static void do_nettype(void)
 {
   switch (net_type) {
-  case 0:
+  case 0:	/* EfNet except new +e/+I hybrid */
     use_silence = 0;
     check_mode_r = 0;
+    nick_len = 9;
     break;
-  case 1:
+  case 1:	/* Ircnet */
     use_silence = 0;
     check_mode_r = 1;
     use_penalties = 1;
     use_fastdeq = 3;
+    nick_len = 9;
     simple_sprintf(stackablecmds, "INVITE AWAY VERSION NICK ISON");
     break;
-  case 2:
+  case 2:	/* Undernet */
     use_silence = 1;
     check_mode_r = 0;
     use_fastdeq = 2;
+    nick_len = 9;
     simple_sprintf(stackablecmds, "PRIVMSG NOTICE TOPIC PART WHOIS");
     break;
-  case 3:
+  case 3:	/* Dalnet */
     use_silence = 0;
     check_mode_r = 0;
+    nick_len = 32;
     break;
-  case 4:
+  case 4:	/* new +e/+I Efnet hybrid */
     use_silence = 0;
     check_mode_r = 0;
+    nick_len = 9;
     break;
   default:
     break;
+  }
+}
+
+static char *traced_nettype(ClientData cdata, Tcl_Interp *irp, char *name1,
+			    char *name2, int flags)
+{
+  do_nettype();
+  return NULL;
+}
+
+static char *traced_nicklen(ClientData cdata, Tcl_Interp *irp, char *name1,
+			    char *name2, int flags)
+{
+  if (flags & (TCL_TRACE_READS | TCL_TRACE_UNSETS)) {
+    char s[40];
+
+    sprintf(s, "%d", nick_len);
+    Tcl_SetVar2(interp, name1, name2, s, TCL_GLOBAL_ONLY);
+    if (flags & TCL_TRACE_READS)
+      Tcl_TraceVar(irp, name1, TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
+		   traced_nicklen, cdata);
+  } else {
+    char *cval = Tcl_GetVar2(interp, name1, name2, TCL_GLOBAL_ONLY);
+    long lval;
+
+    if (Tcl_ExprLong(interp, cval, &lval) != TCL_ERROR) {
+      if (lval > NICKMAX)
+	lval = NICKMAX;
+      nick_len = (int) lval;
+    }
   }
   return NULL;
 }
@@ -955,6 +990,7 @@ static tcl_ints my_tcl_ints[] =
   {"double-help", &double_help, 0},
   {"use-penalties", &use_penalties, 0},
   {"use-fastdeq", &use_fastdeq, 0},
+  {"nick-len", &nick_len, 0},
   {0, 0, 0}
 };
 
@@ -1144,6 +1180,8 @@ static void server_5minutely()
       /* uh oh!  never got pong from last time, five minutes ago! */
       /* server is probably stoned */
       int servidx = findanyidx(serv);
+
+      disconnect_server(servidx);
       lostdcc(servidx);
       putlog(LOG_SERV, "*", IRC_SERVERSTONED);
     } else if (!trying_server) {
@@ -1416,6 +1454,7 @@ static Function server_table[] =
   /* 36 - 39 */
   (Function) ctcp_reply,
   (Function) get_altbotnick,	/* char * */
+  (Function) & nick_len		/* int */
 };
 
 char *server_start(Function * global_funcs)
@@ -1473,7 +1512,7 @@ char *server_start(Function * global_funcs)
   stackablecmds[0] = 0;
   Context;
   server_table[4] = (Function) botname;
-  module_register(MODULE_NAME, server_table, 1, 0);
+  module_register(MODULE_NAME, server_table, 1, 1);
   if (!module_depend(MODULE_NAME, "eggdrop", 105, 0))
     return "This module requires eggdrop1.5.0 or later";
   /* weird ones */
@@ -1500,6 +1539,9 @@ char *server_start(Function * global_funcs)
   Tcl_TraceVar(interp, "net-type",
 	       TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
 	       traced_nettype, NULL);
+  Tcl_TraceVar(interp, "nick-len",
+	       TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
+	       traced_nicklen, NULL);
   Context;
   H_wall = add_bind_table("wall", HT_STACKABLE, server_2char);
   H_raw = add_bind_table("raw", HT_STACKABLE, server_raw);
@@ -1542,31 +1584,7 @@ char *server_start(Function * global_funcs)
   Context;
   sprintf(botuserhost, "%s@%s", botuser, bothost);	/* wishful thinking */
   curserv = 999;
-  if (net_type == 0) {		/* EfNet except new +e/+I hybrid */
-    use_silence = 0;
-    check_mode_r = 0;
-  }
-  if (net_type == 1) {		/* Ircnet */
-    use_silence = 0;
-    check_mode_r = 1;
-    use_penalties = 1;
-    use_fastdeq = 3;
-    simple_sprintf(stackablecmds, "INVITE AWAY VERSION NICK ISON");
-  }
-  if (net_type == 2) {		/* Undernet */
-    use_silence = 1;
-    check_mode_r = 0;
-    use_fastdeq = 2;
-    simple_sprintf(stackablecmds, "PRIVMSG NOTICE TOPIC PART WHOIS");
-  }
-  if (net_type == 3) {		/* Dalnet */
-    use_silence = 0;
-    check_mode_r = 0;
-  }
-  if (net_type == 4) {		/* new +e/+I Efnet hybrid */
-    use_silence = 0;
-    check_mode_r = 0;
-  }
+  do_nettype();
   putlog(LOG_MISC, "*", "=== SERVER SUPPORT LOADED");
   return NULL;
 }

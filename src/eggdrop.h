@@ -4,7 +4,7 @@
  * 
  *   IF YOU ALTER THIS FILE, YOU NEED TO RECOMPILE THE BOT.
  * 
- * $Id: eggdrop.h,v 1.19 1999/12/21 17:35:09 fabian Exp $
+ * $Id: eggdrop.h,v 1.20 1999/12/22 12:11:02 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -51,12 +51,12 @@
 
 /* handy string lengths */
 
-#define HANDLEN		9	/* valid values 9->NICKMAX */
+#define HANDLEN		  9	/* valid values 9->NICKMAX */
+#define NICKMAX		 32	/* valid values HANDLEN->32 */
+#define UHOSTMAX	160	/* reasonable, i think? */
+#define DIRMAX		256	/* paranoia */
+#define MAX_LOG_LINE	767	/* for misc.c/putlog() <cybah> */
 #define BADHANDCHARS  "-,+*=:!.@#;$%&"
-#define NICKMAX        9	/* valid values HANDLEN->32 */
-#define UHOSTMAX     160        /* reasonable, i think? */
-#define DIRMAX       256	/* paranoia */
-#define MAX_LOG_LINE 767	/* for misc.c/putlog() <cybah> */
 
 /* language stuff */
 

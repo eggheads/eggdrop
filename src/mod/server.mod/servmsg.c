@@ -1,7 +1,7 @@
 /* 
  * servmsg.c -- part of server.mod
  * 
- * $Id: servmsg.c,v 1.13 1999/12/21 17:35:31 fabian Exp $
+ * $Id: servmsg.c,v 1.14 1999/12/22 12:11:03 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -56,7 +56,7 @@ static int gotfake433(char *from)
     else {
       /* Fall back to appending count char. */
       altnick_char = '0';
-      if (l + 1 == NICKMAX) {
+      if ((l + 1) == nick_len) {
 	botname[l] = altnick_char;
       } else {
 	botname[++l]   = altnick_char;
@@ -301,6 +301,7 @@ static void nuke_server(char *reason)
     server_online = 0;
     if (reason && (servidx > 0))
       dprintf(servidx, "QUIT :%s\n", reason);
+    disconnect_server(servidx);
     lostdcc(servidx);
   }
 }
@@ -966,9 +967,19 @@ static int gotmode(char *from, char *msg)
   return 0;
 }
 
+static void disconnect_server(int idx)
+{
+  server_online = 0;
+  if (dcc[idx].sock >= 0)
+    killsock(dcc[idx].sock);
+  dcc[idx].sock = (-1);
+  serv = (-1);
+}
+
 static void eof_server(int idx)
 {
   putlog(LOG_SERV, "*", "%s %s", IRC_DISCONNECTED, dcc[idx].host);
+  disconnect_server(idx);
   lostdcc(idx);
 }
 
@@ -983,10 +994,7 @@ static void kill_server(int idx, void *x)
 {
   module_entry *me;
 
-  server_online = 0;
-  if (dcc[idx].sock >= 0)
-    killsock(dcc[idx].sock);
-  serv = -1;
+  disconnect_server(idx);
   if ((me = module_find("channels", 0, 0)) && me->funcs) {
     struct chanset_t *chan;
 
@@ -999,6 +1007,7 @@ static void kill_server(int idx, void *x)
 static void timeout_server(int idx)
 {
   putlog(LOG_SERV, "*", "Timeout: connect to %s", dcc[idx].host);
+  disconnect_server(idx);
   lostdcc(idx);
 }
 
@@ -1096,7 +1105,7 @@ static int whoispenalty(char *from, char *msg)
     i = ii = 0;
     while (x != NULL) {
       if (i == curserv) {
-        if (strict_servernames == 1) {
+        if ((strict_servernames == 1) || !x->realname) {
           if (strcmp(x->name, from))
             ii = 1;
         } else {

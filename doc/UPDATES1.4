@@ -2,12 +2,28 @@
 Changes in eggdrop: (since v1.4.0)
 ----------------------------------
 
+1.4.2
+Foundby   Fixedby   What....
+various   Fabian    nick length now set on-the-fly
+          Fabian    lostdcc behaviour change caused lost sockets in server mod
+          Fabian    lostdcc() caused corrupted dcc lists in many situations.
+                    using DCC_LOST instead now.
+          dw        Make sure a corefile can be written if you compile
+                    with debug symbols
+          dw/Fabian unbind's could crash the bot
+          Fabian    killmember was deleting non-existant entries if the channel
+                    was still pending
+GTo       Fabian    showing wrong message on revenge kick
+
 1.4.1
 Foundby   Fixedby   What....
+          Fabian    tputs could crash in a "writing to nonexistent socket" loop
+SuperS    Fabian    compile time warnings related to wild_match_file
+LtGen     Fabian    unsynced tandem list caused crash when trying to reject
           Tothwolf  added GPL header and cvs id tag to source files
           Tothwolf  fixed/added many #ifndefs in various header files
           Tothwolf  changed 'Assert(ptr != NULL)' references to 'Assert(prt)'
-	  drummer   fixed a tiny join flood bug
+          drummer   fixed a tiny join flood bug
           Tothwolf  converted the PATCH macro to a function; DEBUG_ASSERT
                     now compiles with DEBUG_MEM
           Fabian    made 32bit variable usage consistent throughout the code
@@ -25,7 +41,7 @@ flammable Fabian    unchecked fopen() return caused crash on failed open
           drummer   tcl_adduser doesn't require a hostmask anymore
 Dude      Fabian    bot now doesn't return "Can't link there" anymore if the
                     first botlink attempt failes
-Ehrenberg Fabian    crash in gotnotice for invalid channels as notice target
+LtGen     Fabian    crash in gotnotice for invalid channels as notice target
 SuperS    Tothwolf  --with-tclinc/tcllib were broken
           drummer   encryption/decryption functions now return plaintext
                     if the key is empty.

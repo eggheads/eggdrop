@@ -5,7 +5,7 @@
  * 
  * dprintf'ized, 10nov1995
  * 
- * $Id: botcmd.c,v 1.7 1999/12/21 17:35:08 fabian Exp $
+ * $Id: botcmd.c,v 1.8 1999/12/22 12:11:01 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -142,7 +142,8 @@ static void bot_chan2(int idx, char *msg)
   } else {
     chanout_but(-1, chan, "%s\n", TBUF);
     /* send to new version bots */
-    botnet_send_chan(idx, from, NULL, chan, msg);
+    if (i >= 0) 
+      botnet_send_chan(idx, from, NULL, chan, msg);
     if (strchr(from, '@') != NULL)
       check_tcl_chat(from, chan, msg);
     else
@@ -1445,7 +1446,7 @@ static void bot_versions(int sock, char *par)
   if (nextbot(frombot) != sock)
     fake_alert(sock, "versions-direction", frombot);
   else if (strcasecmp(tobot = newsplit(&par), botnetnick)) {
-    if ((sock = nextbot(tobot)))
+    if ((sock = nextbot(tobot)) >= 0)
       dprintf(sock, "v %s %s %s\n", frombot, tobot, par);
   } else {
     from = newsplit(&par);

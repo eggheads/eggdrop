@@ -1,7 +1,7 @@
 #! /path/to/eggdrop
 # ^- set that to the directory eggdrop is in ie "#! /users/lamest/egg/eggdrop"
 #
-# $Id: eggdrop.conf.dist,v 1.13 1999/12/21 17:35:03 fabian Exp $
+# $Id: eggdrop.conf.dist,v 1.14 1999/12/22 12:11:01 fabian Exp $
 #
 # This is a sample configuration file for your bot.  You will definitely
 # want to edit this, to set up your bot.  Right now it creates a bot called
@@ -773,6 +773,9 @@ set double-help 0
 # Only use this if you set net-type 5
 #set check-mode-r 1
 
+# This variable sets the maximum nick length allowed on the network. Most
+# only support 9. The maximum supported by eggdrop is 32.
+#set nick-len 9
 
 ##### CTCP MODULE #####
 

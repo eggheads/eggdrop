@@ -2,7 +2,7 @@
  * net.c -- handles:
  *   all raw network i/o
  * 
- * $Id: net.c,v 1.11 1999/12/21 17:35:10 fabian Exp $
+ * $Id: net.c,v 1.12 1999/12/22 12:11:02 fabian Exp $
  */
 /* 
  * This is hereby released into the public domain.
@@ -851,10 +851,11 @@ int sockgets(char *s, int *len)
 
 /* dump something to a socket */
 /* DO NOT PUT CONTEXTS IN HERE IF YOU WANT DEBUG TO BE MEANINGFUL!!! */
-void tputs(int z, char *s, unsigned int len)
+void tputs(register int z, char *s, unsigned int len)
 {
-  int i, x, idx;
+  register int i, x, idx;
   char *p;
+  static int inhere = 0;
 
   if (z < 0)
     return;			/* um... HELLO?!  sanity check please! */
@@ -917,9 +918,14 @@ void tputs(int z, char *s, unsigned int len)
       return;
     }
   }
-  putlog(LOG_MISC, "*", "!!! writing to nonexistent socket: %d", z);
-  s[strlen(s) - 1] = 0;
-  putlog(LOG_MISC, "*", "!-> '%s'", s);
+  /* Make sure we don't cause a crash by looping here */
+  if (!inhere) {
+    inhere = 1;
+    putlog(LOG_MISC, "*", "!!! writing to nonexistent socket: %d", z);
+    s[strlen(s) - 1] = 0;
+    putlog(LOG_MISC, "*", "!-> '%s'", s);
+    inhere = 0;
+  }
 }
 
 /* tputs might queue data for sockets, let's dump as much of it as

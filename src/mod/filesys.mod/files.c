@@ -6,7 +6,7 @@
  * rewritten, 26feb1996
  * adjustments for filedb3, 17oct1999
  * 
- * $Id: files.c,v 1.13 1999/12/21 17:35:16 fabian Exp $
+ * $Id: files.c,v 1.14 1999/12/22 12:11:03 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -429,13 +429,21 @@ static void cmd_reget_get(int idx, char *par, int resend)
   filedb_entry *fdbe;
   FILE *fdb;
   long where = 0;
+  int nicklen = NICKLEN;
 
+  /* Get the nick length if necessary. */
+  if (NICKLEN > 9) {
+    module_entry *me = module_find("server", 1, 1);
+
+    if (me && me->funcs)
+      nicklen = (int) me->funcs[SERVER_NICKLEN];
+  }
   if (!par[0]) {
     dprintf(idx, "%s: %sget <file(s)> [nickname]\n", USAGE, resend ? "re" : "");
     return;
   }
   what = newsplit(&par);
-  if (strlen(par) > NICKMAX) {
+  if (strlen(par) > nicklen) {
     dprintf(idx, FILES_BADNICK);
     return;
   }
