@@ -346,7 +346,7 @@ Telnet to the bot and enter 'NEW' as your nickname.
 0xb17,### Use '.notes read' to read them.\n
 0xb18,Bot shut down beginning....
 0xb19,No such user
-0xb1a,No channels
+0xb1a,no channels
 0xb1b,Party line members:
 0xb1c,Bots connected
 0xb1d,Other people on the bot

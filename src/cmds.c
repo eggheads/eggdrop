@@ -211,7 +211,7 @@ static void tell_who(struct userrec *u, int idx, int chan)
 
 static void cmd_botinfo(struct userrec *u, int idx, char *par)
 {
-  char s[501], s2[32];
+  char s[512], s2[32];
   struct chanset_t *chan;
   time_t now2;
   int hr, min;
@@ -239,26 +239,26 @@ static void cmd_botinfo(struct userrec *u, int idx, char *par)
   botnet_send_infoq(-1, s);
   s[0] = 0;
   if (module_find("server", 0, 0)) {
-    if (chan != NULL)
-      dprintf(idx, "*** [%s] %s <%s> [UP %s]\n", botnetnick,
-	      ver, network, s2);
     while (chan != NULL) {
       if (!channel_secret(chan)) {
-	if ((strlen(s) + strlen(chan->name) + 1) >= 500) {
-	  dprintf(idx, "%s\n", s);
-	  s[0] = 0;
+	if ((strlen(s) + strlen(chan->name) + strlen(network) 
+                   + strlen(botnetnick) + strlen(ver) + 1) >= 490) {
+          strcat(s,"++  ");
+          break; /* yeesh! */
 	}
 	strcat(s, chan->name);
 	strcat(s, ", ");
       }
       chan = chan->next;
     }
+
     if (s[0]) {
       s[strlen(s) - 2] = 0;
-      dprintf(idx, "%s\n", s);
+      dprintf(idx, "*** [%s] %s <%s> (%s) [UP %s]\n", botnetnick,
+	      ver, network, s, s2); 
     } else
-      dprintf(idx, "*** [%s] %s <%s> (no channels) [UP %s]\n", botnetnick,
-	      ver, network, s2);
+      dprintf(idx, "*** [%s] %s <%s> (%s) [UP %s]\n", botnetnick,
+	      ver, network, BOT_NOCHANNELS, s2);
   } else
     dprintf(idx, "*** [%s] %s <NO_IRC> [UP %s]\n", botnetnick, ver, s2);
 }

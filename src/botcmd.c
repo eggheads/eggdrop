@@ -438,7 +438,7 @@ static void bot_endlink(int idx, char *par)
 /* info? <from@bot>   -> send priv */
 static void bot_infoq(int idx, char *par)
 {
-  char s[161], s2[32];
+  char s[200], s2[32];
   struct chanset_t *chan;
   time_t now2;
   int hr, min;
@@ -465,6 +465,11 @@ static void bot_infoq(int idx, char *par)
     s[0] = 0;
     while (chan != NULL) {
       if (!channel_secret(chan)) {
+        if ((strlen(s) + strlen(chan->name) + strlen(network)
+                   + strlen(botnetnick) + strlen(ver) + 1) >= 200) {
+          strcat(s,"++  "); 
+          break; /* yegads..! */
+        }
 	strcat(s, chan->name);
 	strcat(s, ", ");
       }
