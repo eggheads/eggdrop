@@ -1,21 +1,28 @@
-#
-# userinfo.tcl v1.02 for Eggdrop 1.1.6 and higher
+# userinfo.tcl v1.05 for Eggdrop 1.1.6 and higher
 #           Scott G. Taylor -- ButchBub!staylor@mrynet.com
 #
-# V1.00      ButchBub     14 July      1997  Original release.  Based on
-#                       whois.tcl "URL" commands.
-# v1.01      Beldin       11 November  1997  1.3 only version
-# v1.02      Kirk         19 June      1998  extremely small fixes
-# v1.03      guppy        17 March     1999  small fixes again
-# v1.04      Ernst        15 June      1999  fix for egg 1.3.x + TCL 8.0
+# v1.00      ButchBub     14 July      1997 -Original release.  Based on
+#                                            whois.tcl "URL" commands.
+# v1.01      Beldin       11 November  1997 -1.3 only version
+# v1.02      Kirk         19 June      1998 -extremely small fixes
+# v1.03      guppy        17 March     1999 -small fixes again
+# v1.04      Ernst        15 June      1999 -fix for egg 1.3.x + TCL 8.0
+# v1.05      Dude         14 July      1999 -small cosmetic/typo fixes
+#                                           -$lastbind bug work around fix
+#                                           -added userinfo_loaded var
+#                                           -fixed bug in dcc_chuserinfo proc
+#                                           -unbinds removed user fields
+#                                           -dcc .showfields command added
+#                                           -deletes removed userinfo fields
+#                                            from the whois-fields list.
 #
 # TO USE:  o    Set the desired userinfo field keywords to the
-#       `userinfo-fields' line below where indicated.
-#      o    Load this script on a 1.1.6 or later Eggdrop bot.
-#      o    Begin having users save the desired information.  If you
-#       chose to add the default "IRL" field, they just use
-#       the IRC command: /MSG <botnick> irl Joe Blow.
-#      o    See the new information now appear with the whois command.
+#               `userinfo-fields' line below where indicated.
+#          o    Load this script on a 1.1.6 or later Eggdrop bot.
+#          o    Begin having users save the desired information.  If you
+#               choose to add the default "IRL" field, they just use
+#               the IRC command: /MSG <botnick> irl Joe Blow.
+#          o    See the new information now appear with the whois command.
 #
 # This script enhances the `whois' output utilising the `whois-fields'
 # option of eggdrop 1.1-grant and later versions.  It adds the functionality
@@ -32,22 +39,22 @@
 # The commands that will be added to the running eggdrop are:
 #  (<info> will be the respective userfile field added in `userinfo-fields')
 #
-#   TYPE    COMMAND     USAGE
+#   TYPE    COMMAND         USAGE
 #   ======  ==============  ========================================
-#   msg <info>      To change your <info> via /MSG.
-#   dcc .<info>     To change your <info> via DCC.
-#   dcc .ch<info>   To change someone else's <info> via DCC.
+#   msg      <info>         To change your <info> via /MSG.
+#   dcc     .<info>         To change your <info> via DCC.
+#   dcc     .ch<info>       To change someone else's <info> via DCC.
 #
 # Currently supported fields and commands:
 #
 #   FIELD   USAGE
 #   =====   =====================
-#   URL WWW page URL
-#   IRL In Real Life name
-#   BF  Boyfriend
-#   GF  Girlfriend
+#   URL     WWW page URL
+#   IRL     In Real Life name
+#   BF      Boyfriend
+#   GF      Girlfriend
 #   DOB     Birthday (Date Of Birth)
-#       EMAIL   Email address
+#   EMAIL   Email address
 
 ################################
 # Set your desired fields here #
@@ -57,7 +64,7 @@ set userinfo-fields "URL BF GF IRL EMAIL DOB"
 
 # This script's identification
 
-set userinfover "Userinfo v1.02"
+set userinfover "Userinfo TCL v1.05"
 
 # This script is NOT for pre-1.3.0 versions.
 
@@ -69,42 +76,73 @@ if {![info exists numversion] || ($numversion < 1030000)} {
   }
 }
 
-# Make sure we don't bail because whois-fields isn't set
+# Make sure we don't bail because whois and/or userinfo-fields arn't set.
 
-if {![info exists whois-fields]} {
-  set whois-fields ""
+if { ![info exists whois-fields]} { set whois-fields "" }
+if { ![info exists userinfo-fields]} { set userinfo-fields "" }
+
+# Add only the userinfo-fields not already in the whois-fields list.
+
+foreach field [string tolower ${userinfo-fields}] {
+ if { [lsearch -exact [string tolower ${whois-fields}] $field] == -1 } { append whois-fields " " [string toupper $field] }
 }
 
-# Add only the user-xtra fields not already in the whois-fields list
+# If olduserinfo-fields doesn't exist, create it.
 
-foreach f1 [split ${userinfo-fields}] {
-  set ffound 0
-  foreach f2 [split ${whois-fields}] {
-    if {[string tolower $f1] == [string tolower $f2]} {
-      set ffound 1
-      break
-    }
+if { ![info exists olduserinfo-fields] } { set olduserinfo-fields ${userinfo-fields} }
+
+# Delete only the userinfo-fields that have been removed but are still
+# listed in the whois-fields list.
+
+foreach field [string tolower ${olduserinfo-fields}] {
+ if { [lsearch -exact [string tolower ${whois-fields}] $field] >= 0 && [lsearch -exact [string tolower ${userinfo-fields}] $field] == -1 } {
+  set fieldtmp [lsearch -exact [string tolower ${whois-fields}] $field]
+  set whois-fields [lreplace ${whois-fields} $fieldtmp $fieldtmp]
+ }
+}
+
+# If olduserinfo-fields don't equal userinfo-fields, lets run through the
+# old list of user fields and compare them with the current list. this way
+# any fields that have been removed that were originally in the list will
+# have their msg/dcc commands unbinded so you don't have to do a restart.
+
+if { [string tolower ${olduserinfo-fields}] != [string tolower ${userinfo-fields}] } {
+ foreach field [string tolower ${olduserinfo-fields}] {
+  if { [lsearch -exact [string tolower ${userinfo-fields}] $field] == -1 } {
+   unbind msg - $field msg_setuserinfo
+   unbind dcc - $field dcc_setuserinfo
+   unbind dcc m ch$field dcc_chuserinfo
   }
-  if {$ffound == 0} {
-    append whois-fields " " $f1
-  }
+ }
+ set olduserinfo-fields ${userinfo-fields}
 }
 
 # Run through the list of user info fields and bind their commands
 
-foreach field [split ${userinfo-fields}] {
+if { ${userinfo-fields} != "" } {
+ foreach field [string tolower ${userinfo-fields}] {
   bind msg - $field msg_setuserinfo
   bind dcc - $field dcc_setuserinfo
   bind dcc m ch$field dcc_chuserinfo
+ }
 }
 
 # This is the `/msg <info>' procedure
 
 proc msg_setuserinfo {nick uhost hand arg} {
-  global lastbind quiet-reject
-
-  set userinfo [string toupper $lastbind]
-
+  global lastbind quiet-reject userinfo-fields
+# BEGIN - $lastbind bug work around fix (added by Dude in v1.05)
+  if { [lsearch -exact [string tolower ${userinfo-fields}] [string tolower $lastbind]] >= 0 } {
+   set userinfo [string toupper $lastbind]
+  } else {
+   set lsearch [lsearch [string tolower ${userinfo-fields}] [string tolower $lastbind]*]
+   if { $lsearch >= 0 } {
+    set userinfo [string toupper [lindex ${userinfo-fields} $lsearch]]
+   } else {
+    set userinfo [string toupper $lastbind]
+   }
+  }
+# END - $lastbind bug work around fix (added by Dude in v1.05)
   set arg [cleanarg $arg]
   set ignore 1
   foreach channel [channels] {
@@ -128,23 +166,35 @@ proc msg_setuserinfo {nick uhost hand arg} {
          if {[getuser $hand XTRA $userinfo] == ""} {
             putserv "NOTICE $nick :You have no $userinfo set."
          } {
-            putserv "NOTICE $nick :Now: [getuser $hand XTRA $userinfo]"
+            putserv "NOTICE $nick :Currently: [getuser $hand XTRA $userinfo]"
          }
       }
    } else {
       if {${quiet-reject} != 1} {
-        putserv
-          "NOTICE $nick :Ymust be a registered user to use this feature."
+        putserv "NOTICE $nick :You must be a registered user to use this feature."
       }
    }
-   return 1
+  putcmdlog "($nick!$uhost) !$hand! $userinfo $arg"
+  return 0
 }
 
 # This is the dcc '.<info>' procedure.
 
 proc dcc_setuserinfo {hand idx arg} {
-global lastbind
-  set userinfo [string toupper $lastbind]
+global lastbind userinfo-fields
+# BEGIN - $lastbind bug work around fix (added by Dude in v1.05)
+  if { [lsearch -exact [string tolower ${userinfo-fields}] [string tolower $lastbind]] >= 0 } {
+   set userinfo [string toupper $lastbind]
+  } else {
+   set lsearch [lsearch [string tolower ${userinfo-fields}] [string tolower $lastbind]*]
+   if { $lsearch >= 0 } {
+    set userinfo [string toupper [lindex ${userinfo-fields} $lsearch]]
+   } else {
+    # this is here just incase the work around fails
+    set userinfo [string toupper $lastbind]
+   }
+  }
+# END - $lastbind bug work around fix (added by Dude in v1.05)
   set arg [cleanarg $arg]
   if {$arg != ""} {
     if {[string tolower $arg] == "none"} {
@@ -161,16 +211,29 @@ global lastbind
       putdcc $idx "Currently: [getuser $hand XTRA $userinfo]"
     }
   }
-  return 1
+  putcmdlog "#$hand# [string tolower $userinfo] $arg"
+  return 0
 }
 
 # This is the DCC `.ch<info>' procedure
 
 proc dcc_chuserinfo {hand idx arg} {
-global lastbind
-  set userinfo [string toupper [string range $lastbind 2 end]]
+global lastbind userinfo-fields
+# BEGIN - $lastbind bug work around fix (added by Dude in v1.05)
+  if { [lsearch -exact [string tolower ${userinfo-fields}] [string tolower [string range $lastbind 2 end]]] >= 0 } {
+   set userinfo [string toupper [string range $lastbind 2 end]]
+  } else {
+   set lsearch [lsearch [string tolower ${userinfo-fields}] [string tolower [string range $lastbind 2 end]]*]
+   if { $lsearch >= 0 } {
+    set userinfo [string toupper [lindex ${userinfo-fields} $lsearch]]
+   } else {
+    # this is here just incase the work around fails
+    set userinfo [string toupper [string range $lastbind 2 end]]
+   }
+  }
+# END - $lastbind bug work around fix (added by Dude in v1.05)
   set arg [cleanarg $arg]
-  if {[llength [split $arg]] == 0} {
+  if { $arg == "" } {
     putdcc $idx "syntax: .ch[string tolower $userinfo] <who> \[<[string tolower $userinfo]>|NONE\]"
     return 0
   }
@@ -195,13 +258,26 @@ global lastbind
       putcmdlog "$userinfo for $who set to \"$info\" by $hand"
     }
   } {
-    if {[getuser $who $userinfo] == ""} {
+    if {[getuser $who XTRA $userinfo] == ""} {
       putdcc $idx "$who has no $userinfo set."
     } {
-      putdcc $idx "Currently: [getuser $who $userinfo]"
+      putdcc $idx "Currently: [getuser $who XTRA $userinfo]"
     }
   }
   return 0
+}
+
+bind dcc m showfields showfields
+
+proc showfields {hand idx arg} {
+ global userinfo-fields
+ if { ${userinfo-fields} == "" } {
+  putdcc $idx "Their is no user info fields set."
+  return 0
+ }  
+ putdcc $idx "Currently: [string toupper ${userinfo-fields}]"
+ putcmdlog "#$hand# showfields"
+ return 0
 }
 
 proc cleanarg {arg} {
@@ -215,7 +291,12 @@ proc cleanarg {arg} {
   return $response
 }
 
+# Set userinfo_loaded variable to indicate that the script was sucessfully
+# loaded. this can be used in scripts that make use of the userinfo tcl.
+
+set userinfo_loaded 1
+
 # Announce that we've loaded the script.
 
-putlog "$userinfover by ButchBub loaded for: ${userinfo-fields}."
-putlog "use '.help userinfo' for comands."
+putlog "$userinfover by ButchBub, Beldin, Kirk, guppy, Ernst, and Dude \002loaded\002 for: ${userinfo-fields}."
+putlog "use '.help userinfo' for commands."
