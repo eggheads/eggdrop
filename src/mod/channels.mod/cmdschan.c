@@ -172,6 +172,10 @@ static void cmd_pls_exempt (struct userrec * u, int idx, char * par)
   /* The two lines below added for bantime */
   unsigned long int expire_time = 0, expire_foo;
   char * p_expire;
+  if (use_exempts == 0) {
+    dprintf(idx, "This command can only be used on IRCnet or hybrid EFnet.\n");
+    return;
+  }
   if (!par[0]) {
     dprintf(idx, "Usage: +exempt <hostmask> [channel] [%%exempttime<XdXhXm>] [reason]\n");
   } else {
@@ -308,6 +312,10 @@ static void cmd_pls_invite (struct userrec * u, int idx, char * par)
   /* The two lines below added for bantime */
   unsigned long int expire_time = 0, expire_foo;
   char * p_expire;
+  if (use_invites == 0) {
+    dprintf(idx, "This command can only be used on IRCnet or hybrid EFnet. \n");
+    return;
+  }
   
   if (!par[0]) {
     dprintf(idx, "Usage: +invite <hostmask> [channel] [%%invitetime<XdXhXm>] [reason]\n");
@@ -530,7 +538,10 @@ static void cmd_mns_exempt (struct userrec * u, int idx, char * par)
   struct chanset_t *chan = 0;
   char s[UHOSTLEN + 1], *exempt, *chname;
   exemptlist *e;
-
+  if (use_exempts == 0) {
+    dprintf(idx, "This command can only be used on IRCnet or hybrid EFnet.\n");
+    return;
+  }   
   if (!par[0]) {
     dprintf(idx, "Usage: -exempt <hostmask|exempt #> [channel]\n");
     return;
@@ -620,6 +631,10 @@ static void cmd_mns_invite (struct userrec * u, int idx, char * par)
   char s[UHOSTLEN + 1], *invite, *chname;
   invitelist *inv;
   
+  if (use_invites == 0) {
+    dprintf(idx, "This command can only be used on IRCnet or hybrid EFnet.\n");
+    return;
+  }
   if (!par[0]) {
     dprintf(idx, "Usage: -invite <hostmask|invite #> [channel]\n");
     return;
@@ -715,7 +730,10 @@ static void cmd_bans(struct userrec *u, int idx, char *par)
 
 static void cmd_exempts (struct userrec * u, int idx, char * par)
 {
-
+  if (use_exempts == 0) {
+    dprintf(idx, "This command can only be used on IRCnet or hybrid EFnet.\n");
+    return;
+  }
   if (!strcasecmp(par, "all")) {
     putlog(LOG_CMDS, "*", "#%s# exempts all", dcc[idx].nick);
     tell_exempts(idx, 1, "");
@@ -727,6 +745,10 @@ static void cmd_exempts (struct userrec * u, int idx, char * par)
 
 static void cmd_invites (struct userrec * u, int idx, char * par)
 {
+  if (use_invites == 0) {
+    dprintf(idx, "This command can only be used on IRCnet or hybrid EFnet.\n");
+    return;
+  }
   if (!strcasecmp(par, "all")) {
     putlog(LOG_CMDS, "*", "#%s# invites all", dcc[idx].nick);
     tell_invites(idx, 1, "");
