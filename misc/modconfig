@@ -19,7 +19,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-# $Id: modconfig,v 1.6 2001/04/12 02:39:43 guppy Exp $
+# $Id: modconfig,v 1.7 2001/07/09 15:57:04 guppy Exp $
 
 
 mc_pn=`echo $0 | sed -e 's/^.*\///'`
@@ -233,7 +233,6 @@ xdetect-modules)
 		mc_mods_configured=yes
 
 		mv ${mc_fmodules} ${mc_fmodules}_old
-		touch ${mc_fmodules}
 
 		mc_fmodules_old=${mc_fmodules}
 		mc_fmodules=${mc_fmodules}_old
@@ -287,7 +286,8 @@ xdetect-modules)
 
 	if test "x${mc_fmodules_old}" != x; then
 		# mc_fmodules actually points to the .modules_old file.
-		rm ${mc_fmodules}
+		rm -f ${mc_fmodules}
+		touch ${mc_fmodules_old}
 	fi
 
 	echo " done." >&6
@@ -423,15 +423,21 @@ xdel)
 			fi
 		fi
 
-		#  Remove module from list of active modules.
-		if grep -v "^${mc_mod}.mod$" ${mc_fmodules} 1> ${mc_nfmodules}
-		then
-			:
-		else
-			echo "${mc_pn}: error: building new module file failed" 1>&2
-			exit 1
+		# In case there are any active modules ...
+		if test -r ${mc_fmodules}; then
+			#  Remove module from list of active modules.
+			if grep -v "^${mc_mod}.mod$" ${mc_fmodules} \
+				1> ${mc_nfmodules}
+			then
+				:
+			else
+				echo "${mc_pn}: error: building new module file failed" 1>&2
+				echo "grepping for ${mc_mod}.mod in ${mc_fmodules} and writing to ${mc_nfmodules}"
+				kill -STOP $$
+				exit 1
+			fi
+			mv ${mc_nfmodules} ${mc_fmodules}
 		fi
-		mv ${mc_nfmodules} ${mc_fmodules}
 	done
 ;;
 xadd)
