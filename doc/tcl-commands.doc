@@ -477,26 +477,29 @@ specific commands, see later.
   isbotnick <nick>
     returns: "1" if the nick matches the botnick; "0" otherwise
 
-  botisop <channel>
-    returns: "1" if the bot is an op on that channel; "0" otherwise
+  botisop [channel]
+    returns: "1" if the bot is an op on that channel (or a channel if no
+      channel is specified); "0" otherwise
 
-  botisvoice <channel>
-    returns: "1" if the bot is has a voice on that channel; "0" otherwise
+  botisvoice [channel]
+    returns: "1" if the bot is has a voice on that channel (or a channel if 
+     no channel is specified); "0" otherwise
 
-  botonchan <channel>
-   returns: "1" if the bot is on that channel; "0" otherwise
+  botonchan [channel]
+   returns: "1" if the bot is on that channel (or a channel if no channel is
+     specified); "0" otherwise
 
-  isop <nickname> <channel>
-    returns: "1" if someone by that nickname is on the channel and has chop;
-      "0" otherwise
+  isop <nickname> [channel]
+    returns: "1" if someone by that nickname is on the channel (or a channel
+      if no channel name is specified) and has chop; "0" otherwise
 
   wasop <nickname> <channel>
     returns: "1" if someone that just got opped/deopped in the chan had op
       before the modechange; "0" otherwise
 
-  isvoice <nickname> <channel>
-    returns: "1" if someone by that nickname is on the channel and has voice
-      (+v); "0" otherwise
+  isvoice <nickname> [channel]
+    returns: "1" if someone by that nickname is on the channel (or a channel
+      if no channel is specified) and has voice (+v); "0" otherwise
 
   onchan <nickname> [channel]
     returns: "1" if someone by that nickname is on the bot's channel (or 
@@ -508,9 +511,9 @@ specific commands, see later.
     if <nickname> not found, returns ""
     if <nickname> found but unknown, returns "*"
 
-  handonchan <handle> <channel>
-    returns: "1" if the the user@host for someone on the channel matches
-      for the handle given; "0" otherwise
+  handonchan <handle> [channel]
+    returns: "1" if the the user@host for someone on the channel (or a channel
+      if no channel name is specified) matches for the handle given; "0" otherwise
 
   hand2nick <handle> [channel]
     returns: nickname of the first person on the <channel> whose user@host
@@ -565,8 +568,9 @@ specific commands, see later.
   getchanjoin <nickname> <channel>
     returns: timestamp of when that person joined the channel
 
-  onchansplit <nick> <channel>
-    returns: "1" if that nick is split from the channel; "0" otherwise
+  onchansplit <nick> [channel]
+    returns: "1" if that nick is split from the channel (or a channel if no
+      channel is specified); "0" otherwise
 
   chanlist <channel> [flags[&chanflags]]
     flags are any flags that are global flags, the '&' denotes to look for
