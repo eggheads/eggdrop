@@ -2,7 +2,7 @@
  * ctcp.c -- part of ctcp.mod
  *   all the ctcp handling (except DCC, it's special ;)
  * 
- * $Id: ctcp.c,v 1.8 2000/03/23 23:17:57 fabian Exp $
+ * $Id: ctcp.c,v 1.9 2000/09/18 20:03:31 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -33,17 +33,16 @@
 
 static Function *global = NULL, *server_funcs = NULL;
 
-static char ctcp_version[256];
-static char ctcp_finger[256];
-static char ctcp_userinfo[256];
+static char ctcp_version[121];
+static char ctcp_finger[121];
+static char ctcp_userinfo[121];
 static int ctcp_mode = 0;
 
 
 static int ctcp_FINGER(char *nick, char *uhost, char *handle,
 		       char *object, char *keyword, char *text)
 {
-  Context;
-  if ((ctcp_finger[0]) && (ctcp_mode != 1))
+  if (ctcp_mode != 1 && ctcp_finger[0])
     simple_sprintf(ctcp_reply, "%s\001FINGER %s\001", ctcp_reply, ctcp_finger);
   return 1;
 }
@@ -51,8 +50,7 @@ static int ctcp_FINGER(char *nick, char *uhost, char *handle,
 static int ctcp_ECHOERR(char *nick, char *uhost, char *handle,
 			char *object, char *keyword, char *text)
 {
-  Context;
-  if ((strlen(text) <= 80) && (ctcp_mode != 1))
+  if (ctcp_mode != 1 && strlen(text) <= 80)
     simple_sprintf(ctcp_reply, "%s\001%s %s\001", ctcp_reply, keyword, text);
   return 1;
 }
@@ -63,19 +61,15 @@ static int ctcp_PING(char *nick, char *uhost, char *handle,
   struct userrec *u = get_user_by_handle(userlist, handle);
   int atr = u ? u->flags : 0;
 
-  Context;
-  if ((ctcp_mode != 1) || ((atr & (USER_OP)))) {
-    if (strlen(text) <= 80)	/* bitch ignores > 80 */
+  if ((ctcp_mode != 1 || (atr & USER_OP)) && strlen(text) <= 80) 
       simple_sprintf(ctcp_reply, "%s\001%s %s\001", ctcp_reply, keyword, text);
-  }
   return 1;
 }
 
 static int ctcp_VERSION(char *nick, char *uhost, char *handle,
 			char *object, char *keyword, char *text)
 {
-  Context;
-  if ((ctcp_version[0]) && (ctcp_mode != 1))
+  if (ctcp_mode != 1 && ctcp_version[0])
     simple_sprintf(ctcp_reply, "%s\001VERSION %s\001", ctcp_reply,
 		   ctcp_version);
   return 1;
@@ -84,8 +78,7 @@ static int ctcp_VERSION(char *nick, char *uhost, char *handle,
 static int ctcp_USERINFO(char *nick, char *uhost, char *handle,
 			 char *object, char *keyword, char *text)
 {
-  Context;
-  if ((ctcp_userinfo[0]) && (ctcp_mode != 1))
+  if (ctcp_mode != 1 && ctcp_userinfo[0])
     simple_sprintf(ctcp_reply, "%s\001USERINFO %s\001", ctcp_reply,
 		   ctcp_userinfo);
   return 1;
@@ -96,10 +89,9 @@ static int ctcp_CLIENTINFO(char *nick, char *uhosr, char *handle,
 {
   char *p = NULL;
 
-  Context;
-  if ((ctcp_mode == 1))
+  if (ctcp_mode == 1)
     return 1;
-  if (!msg[0])
+  else if (!msg[0])
     p = CLIENTINFO;
   else if (!egg_strcasecmp(msg, "sed"))
     p = CLIENTINFO_SED;
@@ -137,13 +129,12 @@ static int ctcp_CLIENTINFO(char *nick, char *uhosr, char *handle,
 static int ctcp_TIME(char *nick, char *uhost, char *handle, char *object,
 		     char *keyword, char *text)
 {
-  char tms[81];
+  char tms[25];
 
-  Context;
-  if ((ctcp_mode == 1))
+  if (ctcp_mode == 1)
     return 1;
-  strcpy(tms, ctime(&now));
-  tms[strlen(tms) - 1] = 0;
+  strncpy(tms, ctime(&now), 24);
+  tms[24] = 0;
   simple_sprintf(ctcp_reply, "%s\001TIME %s\001", ctcp_reply, tms);
   return 1;
 }
@@ -152,28 +143,24 @@ static int ctcp_CHAT(char *nick, char *uhost, char *handle, char *object,
 		     char *keyword, char *text)
 {
   struct userrec *u = get_user_by_handle(userlist, handle);
-  int atr = u ? u->flags : 0, i, ix = (-1);
+  int atr = u ? u->flags : 0, i;
 
-  Context;
   if ((atr & (USER_PARTY | USER_XFER)) ||
       ((atr & USER_OP) && !require_p)) {
+
     for (i = 0; i < dcc_total; i++) {
       if ((dcc[i].type->flags & DCT_LISTEN) &&
-	  ((!strcmp(dcc[i].nick, "(telnet)")) ||
-	   (!strcmp(dcc[i].nick, "(users)")))) {
-	ix = i;
-	/* Do me a favour and don't change this back to a CTCP reply,
-	 * CTCP replies are NOTICE's this has to be a PRIVMSG
-	 * -poptix 5/1/1997 */
+	  (!strcmp(dcc[i].nick, "(telnet)") ||
+	   !strcmp(dcc[i].nick, "(users)"))) {
 	dprintf(DP_SERVER, "PRIVMSG %s :\001DCC CHAT chat %lu %u\001\n",
 		nick,
 		iptolong(natip[0] ? (IP) inet_addr(natip) : getmyip()),
-		dcc[ix].port);
+		dcc[i].port);
+        return 1;
       }
     }
-    if (ix < 0)
-      simple_sprintf(ctcp_reply,
-		     "%s\001ERROR no telnet port\001", ctcp_reply);
+    simple_sprintf(ctcp_reply, "%s\001ERROR no telnet port\001", 
+                   ctcp_reply);
   }
   return 1;
 }
@@ -245,16 +232,16 @@ char *ctcp_start(Function * global_funcs)
   add_builtins(H_ctcp, myctcp);
   add_help_reference("ctcp.help");
   if (!ctcp_version[0]) {
-    strncpy(ctcp_version, ver, 160);
-    ctcp_version[160] = 0;
+    strncpy(ctcp_version, ver, 120);
+    ctcp_version[120] = 0;
   }
   if (!ctcp_finger[0]) {
-    strncpy(ctcp_finger, ver, 160);
-    ctcp_finger[160] = 0;
+    strncpy(ctcp_finger, ver, 120);
+    ctcp_finger[120] = 0;
   }
   if (!ctcp_userinfo[0]) {
-    strncpy(ctcp_userinfo, ver, 160);
-    ctcp_userinfo[160] = 0;
+    strncpy(ctcp_userinfo, ver, 120);
+    ctcp_userinfo[120] = 0;
   }
   return NULL;
 }
