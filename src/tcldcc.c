@@ -2,7 +2,7 @@
  * tcldcc.c -- handles:
  *   Tcl stubs for the dcc commands
  *
- * $Id: tcldcc.c,v 1.31 2001/12/20 07:51:26 guppy Exp $
+ * $Id: tcldcc.c,v 1.32 2001/12/23 06:49:13 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -968,6 +968,7 @@ static int tcl_boot STDVAR
 
   BADARGS(2, 3, " user@bot ?reason?");
   strncpyz(who, argv[1], sizeof who);
+
   if (strchr(who, '@') != NULL) {
     char whonick[HANDLEN + 1];
 
@@ -979,7 +980,7 @@ static int tcl_boot STDVAR
       i = nextbot(who);
       if (i < 0)
 	return TCL_OK;
-      botnet_send_reject(i, botnetnick, NULL, whonick, who, argv[2]);
+      botnet_send_reject(i, botnetnick, NULL, whonick, who, argv[2] ? argv[2] : "");
     } else {
       return TCL_OK;
     }
