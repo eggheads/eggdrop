@@ -49,8 +49,8 @@ static void filedb_getfiles(Tcl_Interp *, char *);
 static void filedb_getdirs(Tcl_Interp *, char *);
 static void filedb_change(char *, char *, int);
 static void tell_file_stats(int, char *);
-static int do_dcc_send(int, char *, char *);
-static int files_get(int, char *, char *);
+static int do_dcc_send(int, char *, char *, int);
+static int files_reget(int, char *, char *, int);
 static void files_setpwd(int, char *);
 static int resolve_dir(char *, char *, char **, int);
 #else

@@ -1287,7 +1287,6 @@ static void getmyhostname(char *s)
     fatal("Can't determine your hostname!", 0);
 }
 
-/* update the add/rem_builtins in server.c if you add to this list!! */
 static cmd_t my_ctcps[] =
 {
   {"DCC", "", ctcp_DCC_CHAT, "server:DCC"},

@@ -1528,6 +1528,13 @@ users to read later
     returns: "0" on failure; "1" on success (either an immediate send
       or a queued send)
 
+| fileresend <idx> <filename> [ircnick]
+|   like filesend, only that it starts a DCC RESEND instead of a DCC SEND,
+|     which allows people to resume aborted file transfers if their client
+|     supports that protocol. ircII/BitchX/etc. support it, mIRC does not.
+|   returns: "0" on failure; "1" on success (either an immediate send
+|     or a queued send)
+
   setdesc <dir> <file> <desc>
     sets the description for a file in a file system directory; the
       directory is relative to the dcc-path

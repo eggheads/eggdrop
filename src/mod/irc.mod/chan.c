@@ -1424,7 +1424,11 @@ static int gotjoin(char *from, char *chname)
      *  dont know the unique channel name that the server has made up. <cybah>
      */  
     if (strlen(chname)>6) {
+#ifdef HAVE_SNPRINTF
       snprintf(buf, UHOSTLEN, "!%s", chname + 6);
+#else
+      sprintf(buf, "!%s", chname + 6);
+#endif
       chan = findchan_by_dname(buf);
     }
   } else if (!chan) {

@@ -409,7 +409,7 @@ static void cmd_lsa(int idx, char *par)
   files_ls(idx, par, 1);
 }
 
-static void cmd_get(int idx, char *par)
+static void cmd_reget_get(int idx, char *par, int resend)
 {
   int ok = 0, i;
   char *p, *what, *destdir = NULL, *s = NULL;
@@ -418,7 +418,7 @@ static void cmd_get(int idx, char *par)
   long where = 0;
 
   if (!par[0]) {
-    dprintf(idx, "%s: get <file(s)> [nickname]\n", USAGE);
+    dprintf(idx, "%s: %sget <file(s)> [nickname]\n", USAGE, resend ? "re" : "");
     return;
   }
   what = newsplit(&par);
@@ -492,7 +492,7 @@ static void cmd_get(int idx, char *par)
 	  sprintf(xx, "%s %s", fdbe->filename, par);
 	else
 	  strcpy(xx, fdbe->filename);
-	do_dcc_send(idx, destdir, xx);
+	do_dcc_send(idx, destdir, xx, resend);
 	nfree(xx);
 	/* don't increase got count till later */
       }
@@ -505,7 +505,18 @@ static void cmd_get(int idx, char *par)
   if (!ok)
     dprintf(idx, FILES_NOMATCH);
   else
-    putlog(LOG_FILES, "*", "files: #%s# get %s %s", dcc[idx].nick, what, par);
+    putlog(LOG_FILES, "*", "files: #%s# %sget %s %s", dcc[idx].nick, what, par,
+	   resend ? "re" : "");
+}
+
+static void cmd_reget(int idx, char *par)
+{
+  cmd_reget_get(idx, par, 1);
+}
+
+static void cmd_get(int idx, char *par)
+{
+  cmd_reget_get(idx, par, 0);
 }
 
 static void cmd_file_help(int idx, char *par)
@@ -1297,6 +1308,7 @@ static cmd_t myfiles[] =
   {"desc", "", (Function) cmd_desc, NULL},
   {"filestats", "j", cmd_filestats, NULL},
   {"get", "", (Function) cmd_get, NULL},
+  {"reget", "", (Function) cmd_reget, NULL},
   {"help", "", (Function) cmd_file_help, NULL},
   {"hide", "j", (Function) cmd_hide, NULL},
   {"ln", "j", (Function) cmd_ln, NULL},
@@ -1320,7 +1332,7 @@ static cmd_t myfiles[] =
 
 /***** Tcl stub functions *****/
 
-static int files_get(int idx, char *fn, char *nick)
+static int files_reget(int idx, char *fn, char *nick, int resend)
 {
   int i;
   char *p, *what = NULL, *destdir, *s = NULL;
@@ -1405,7 +1417,7 @@ static int files_get(int idx, char *fn, char *nick)
     sprintf(what, "%s %s", fdbe->filename, nick);
   } else
     malloc_strcpy(what, fdbe->filename);
-  do_dcc_send(idx, destdir, what);
+  do_dcc_send(idx, destdir, what, resend);
   nfree2(what, destdir);
   free_fdbe(fdbe);
   /* don't increase got count till later */

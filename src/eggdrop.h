@@ -286,6 +286,18 @@ struct xfer_info {
   unsigned char sofar;		/* how much of the byte count received */
   char from[NICKLEN];		/* [GET] user who offered the file */
   FILE *f;			/* pointer to file being sent/received */
+  unsigned int type;		/* xfer connection type, see enum below */
+  unsigned long offset;		/* offset from beginning of file, during
+				   resend */
+};
+
+enum {				/* transfer connection handling a ...	*/
+	XFER_SEND,		/*  ... normal file send to s.o.	*/ 
+	XFER_RESEND,		/*  ... file resend to s.o.		*/
+	XFER_RESEND_PEND,	/*  ... (as above) and waiting for info	*/
+	XFER_RESUME,		/*  ... file send resume to s.o.	*/
+	XFER_RESUME_PEND,	/*  ... (as above) and waiting for conn */
+	XFER_GET		/*  ... file get from s.o.		*/
 };
 
 struct bot_info {

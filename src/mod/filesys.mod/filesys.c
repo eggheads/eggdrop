@@ -354,7 +354,8 @@ static int cmd_files(struct userrec *u, int idx, char *par)
 #define DCCSEND_NOSOCK 2	/* can't open a listening socket */
 #define DCCSEND_BADFN  3	/* no such file */
 
-static int _dcc_send(int idx, char *filename, char *nick, char *dir)
+static int _dcc_send(int idx, char *filename, char *nick, char *dir,
+		     int resend)
 {
   int x;
   char *nfn;
@@ -362,29 +363,32 @@ static int _dcc_send(int idx, char *filename, char *nick, char *dir)
   Context;
   if (strlen(nick) > HANDLEN)
     nick[HANDLEN] = 0;
-  x = raw_dcc_send(filename, nick, dcc[idx].nick, dir);
+  if (resend)
+    x = raw_dcc_resend(filename, nick, dcc[idx].nick, dir);
+  else
+    x = raw_dcc_send(filename, nick, dcc[idx].nick, dir);
   if (x == DCCSEND_FULL) {
     dprintf(idx, "Sorry, too many DCC connections.  (try again later)\n");
-    putlog(LOG_FILES, "*", "DCC connections full: GET %s [%s]", filename,
-	   dcc[idx].nick);
+    putlog(LOG_FILES, "*", "DCC connections full: %sGET %s [%s]", filename,
+	   resend ? "RE" : "", dcc[idx].nick);
     return 0;
   }
   if (x == DCCSEND_NOSOCK) {
     if (reserved_port) {
       dprintf(idx, "My DCC SEND port is in use.  Try later.\n");
-      putlog(LOG_FILES, "*", "DCC port in use (can't open): GET %s [%s]",
-	     filename, dcc[idx].nick);
+      putlog(LOG_FILES, "*", "DCC port in use (can't open): %sGET %s [%s]",
+	     resend ? "RE" : "", filename, dcc[idx].nick);
     } else {
       dprintf(idx, "Unable to listen at a socket.\n");
-      putlog(LOG_FILES, "*", "DCC socket error: GET %s [%s]", filename,
-	     dcc[idx].nick);
+      putlog(LOG_FILES, "*", "DCC socket error: %sGET %s [%s]", filename,
+	     resend ? "RE" : "", dcc[idx].nick);
     }
     return 0;
   }
   if (x == DCCSEND_BADFN) {
     dprintf(idx, "File not found (???)\n");
-    putlog(LOG_FILES, "*", "DCC file not found: GET %s [%s]", filename,
-	   dcc[idx].nick);
+    putlog(LOG_FILES, "*", "DCC file not found: %sGET %s [%s]", filename,
+	   resend ? "RE" : "", dcc[idx].nick);
     return 0;
   }
   nfn = strrchr(dir, '/');
@@ -393,13 +397,15 @@ static int _dcc_send(int idx, char *filename, char *nick, char *dir)
   else
     nfn++;
   if (strcasecmp(nick, dcc[idx].nick))
-    dprintf(DP_HELP, "NOTICE %s :Here is a file from %s ...\n", nick, dcc[idx].nick);
-  dprintf(idx, "Type '/DCC GET %s %s' to receive.\n", botname, nfn);
-  dprintf(idx, "Sending: %s to %s\n", nfn, nick);
+    dprintf(DP_HELP, "NOTICE %s :Here is %s file from %s %s...\n", nick,
+	    resend ? "the" : "a", dcc[idx].nick, resend ? "again " : "");
+  dprintf(idx, "Type '/DCC %sGET %s %s' to receive.\n", resend ? "RE" : "",
+	  botname, nfn);
+  dprintf(idx, "%sending: %s to %s\n", resend ? "Res" : "S", nfn, nick);
   return 1;
 }
 
-static int do_dcc_send(int idx, char *dir, char *nick)
+static int do_dcc_send(int idx, char *dir, char *nick, int resend)
 {
   char *s = NULL, *s1 = NULL, *fn;
   FILE *f;
@@ -412,12 +418,14 @@ static int do_dcc_send(int idx, char *dir, char *nick)
     nick[NICKMAX] = 0;
   if (dccdir[0] == 0) {
     dprintf(idx, "DCC file transfers not supported.\n");
-    putlog(LOG_FILES, "*", "Refused dcc get %s from [%s]", fn, dcc[idx].nick);
+    putlog(LOG_FILES, "*", "Refused dcc %sget %s from [%s]", resend ? "re" : "",
+	   fn, dcc[idx].nick);
     return 0;
   }
   if (strchr(fn, '/') != NULL) {
     dprintf(idx, "Filename cannot have '/' in it...\n");
-    putlog(LOG_FILES, "*", "Refused dcc get %s from [%s]", fn, dcc[idx].nick);
+    putlog(LOG_FILES, "*", "Refused dcc %sget %s from [%s]", resend ? "re" : "",
+	   fn, dcc[idx].nick);
     return 0;
   }
   if (dir[0]) {
@@ -430,7 +438,8 @@ static int do_dcc_send(int idx, char *dir, char *nick)
   f = fopen(s, "r");
   if (f == NULL) {
     dprintf(idx, "No such file.\n");
-    putlog(LOG_FILES, "*", "Refused dcc get %s from [%s]", fn, dcc[idx].nick);
+    putlog(LOG_FILES, "*", "Refused dcc %sget %s from [%s]", resend ? "re" : "",
+	   fn, dcc[idx].nick);
     nfree(s);
     return 0;
   }
@@ -459,8 +468,8 @@ static int do_dcc_send(int idx, char *dir, char *nick)
     if (copyfile(s, s1) != 0) {
       dprintf(idx, "Can't make temporary copy of file!\n");
       putlog(LOG_FILES | LOG_MISC, "*",
-	     "Refused dcc get %s: copy to %s FAILED!",
-	     fn, tempdir);
+	     "Refused dcc %sget %s: copy to %s FAILED!",
+	     resend ? "re" : "", fn, tempdir);
       nfree(s);
       nfree(s1);
       return 0;
@@ -471,7 +480,7 @@ static int do_dcc_send(int idx, char *dir, char *nick)
   }
   s = nrealloc(s, strlen(dir) + strlen(fn) + 2);
   sprintf(s, "%s%s%s", dir, dir[0] ? "/" : "", fn);
-  x = _dcc_send(idx, s1, nick, s);
+  x = _dcc_send(idx, s1, nick, s, resend);
   if (x != DCCSEND_OK)
     wipe_tmp_filename(s1, -1);
   nfree(s);

@@ -600,7 +600,8 @@ static int tcl_cp STDVAR
   return tcl_mv_cp(irp, argc, argv, 1);
 }
 
-static int tcl_filesend STDVAR
+static int tcl_fileresend_send(ClientData cd, Tcl_Interp *irp, int argc,
+	       		       char *argv[], int resend)
 {
   int i, idx;
   char s[HANDLEN + 1];
@@ -613,13 +614,22 @@ static int tcl_filesend STDVAR
     return TCL_ERROR;
   }
   if (argc == 4)
-     i = files_get(idx, argv[2], argv[3]);
-
+     i = files_reget(idx, argv[2], argv[3], resend);
   else
-    i = files_get(idx, argv[2], "");
+     i = files_reget(idx, argv[2], "", resend);
   sprintf(s, "%d", i);
   Tcl_AppendResult(irp, s, NULL);
   return TCL_OK;
+}
+
+static int tcl_fileresend STDVAR
+{
+  return tcl_fileresend_send(cd, irp, argc, argv, 1);
+}
+
+static int tcl_filesend STDVAR
+{
+  return tcl_fileresend_send(cd, irp, argc, argv, 0);
 }
 
 static tcl_cmds mytcls[] =
@@ -640,6 +650,7 @@ static tcl_cmds mytcls[] =
   {"share", tcl_share},
   {"unshare", tcl_unshare},
   {"filesend", tcl_filesend},
+  {"fileresend", tcl_fileresend},
   {"mkdir", tcl_mkdir},
   {"rmdir", tcl_rmdir},
   {"cp", tcl_cp},

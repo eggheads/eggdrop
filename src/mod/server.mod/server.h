@@ -1,8 +1,8 @@
 #define check_tcl_ctcp(a,b,c,d,e,f) check_tcl_ctcpr(a,b,c,d,e,f,H_ctcp)
 #define check_tcl_ctcr(a,b,c,d,e,f) check_tcl_ctcpr(a,b,c,d,e,f,H_ctcr)
+
 #ifndef MAKING_SERVER
 /* 4 - 7 */
-
 #define botuserhost ((char *)(server_funcs[5]))
 #define quiet_reject (*(int *)(server_funcs[6]))
 #define serv (*(int *)(server_funcs[7]))
@@ -43,4 +43,4 @@
 /* 35 - 36 */
 #define ctcp_reply ((char *)(server_funcs[35]))
 #define get_altbotnick ((char *(*)(void))(server_funcs[36]))
-#endif
+#endif /* !MAKING_SERVER */

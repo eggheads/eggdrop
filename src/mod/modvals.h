@@ -42,6 +42,7 @@
 /* server */
 #define SERVER_BOTNAME       4
 #define SERVER_BOTUSERHOST   5
+#define SERVER_H_CTCP       33
 /* irc */
 #define IRC_RECHECK_CHANNEL 15
 /* notes */
