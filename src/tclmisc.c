@@ -2,7 +2,7 @@
  * tclmisc.c -- handles:
  *   Tcl stubs for everything else
  *
- * $Id: tclmisc.c,v 1.37 2003/01/30 07:15:14 wcc Exp $
+ * $Id: tclmisc.c,v 1.38 2003/02/26 06:16:53 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -645,7 +645,7 @@ static int tcl_md5 STDVAR
     Tcl_WrongNumArgs(irp, 1, objv, "string");
     return TCL_ERROR;
   }
-#if (TCL_MAJOR_VERSION == 8 && TCL_MINOR_VERSION < 1)
+#if ((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION < 1))
   string = Tcl_GetStringFromObj(objv[1], &len);
 #else
   string = Tcl_GetByteArrayFromObj(objv[1], &len);
