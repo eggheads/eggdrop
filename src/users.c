@@ -225,19 +225,7 @@ static void addmask_fully(struct chanset_t *chan, maskrec **m, maskrec **global,
 {
   maskrec *p = user_malloc(sizeof(maskrec));
   maskrec **u = (chan) ? m : global;
-  char *t;
 
-  /* decode gibberish stuff */
-  t = strchr(note, '~');
-  while (t != NULL) {
-    *t = ' ';
-    t = strchr(note, '~');
-  }
-  t = strchr(note, '`');
-  while (t != NULL) {
-    *t = ',';
-    t = strchr(note, '`');
-  }
   p->next = *u;
   *u = p;
   p->expire = expire_time;
@@ -286,8 +274,8 @@ static void restore_chanban(struct chanset_t *chan, char *host)
 	    if (desc) {
 	      *desc = 0;
 	      desc++;
-	      addmask_fully(chan, &chan->bans, &global_bans, host, user, desc, atoi(expi), flags,
-			   atoi(add), atoi(last));
+	      addmask_fully(chan, &chan->bans, &global_bans, host, user,
+			    desc, atoi(expi), flags, atoi(add), atoi(last));
 	      return;
 	    }
 	  }
@@ -297,7 +285,8 @@ static void restore_chanban(struct chanset_t *chan, char *host)
 	if (desc) {
 	  *desc = 0;
 	  desc++;
-	  addmask_fully(chan, &chan->bans, &global_bans, host, add, desc, atoi(expi), flags, now, 0);
+	  addmask_fully(chan, &chan->bans, &global_bans, host, add, desc,
+			atoi(expi), flags, now, 0);
 	  return;
 	}
       }
@@ -423,7 +412,7 @@ static void restore_chaninvite (struct chanset_t * chan, char * host)
 
 static void restore_ignore(char *host)
 {
-  char *expi, *user, *added, *desc, *t;
+  char *expi, *user, *added, *desc;
   int flags = 0;
   struct igrec *p;
 
@@ -447,17 +436,6 @@ static void restore_ignore(char *host)
 	if (desc) {
 	  *desc = 0;
 	  desc++;
-	  /* decode gibberish stuff */
-	  t = strchr(desc, '~');
-	  while (t != NULL) {
-	    *t = ' ';
-	    t = strchr(desc, '~');
-	  }
-	  t = strchr(desc, '`');
-	  while (t != NULL) {
-	    *t = ',';
-	    t = strchr(desc, '`');
-	  }
 	} else
 	  desc = NULL;
       } else {

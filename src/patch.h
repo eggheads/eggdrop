@@ -22,7 +22,7 @@ PATCH("939863113"); /* current "unix" time */
  *
  *
  */
-PATCH("basegv2.patch"); /* last patch added */ 
+PATCH("strncpy.patch"); /* last patch added */ 
 /*
  *
  *

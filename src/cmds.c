@@ -793,7 +793,9 @@ static void cmd_chnick(struct userrec *u, int idx, char *par)
   struct userrec *u2;
 
   strncpy(hand, newsplit(&par), sizeof(hand));
+  hand[HANDLEN] = 0;
   strncpy(newhand, newsplit(&par), sizeof(newhand));
+  newhand[HANDLEN] = 0;
 
   if (!hand[0] || !newhand[0]) {
     dprintf(idx, "Usage: chnick <oldnick> <newnick>\n");
@@ -838,6 +840,7 @@ static void cmd_nick(struct userrec *u, int idx, char *par)
   int i;
 
   strncpy(newnick, newsplit(&par), sizeof(newnick));
+  newnick[HANDLEN] = 0;
 
   if (!newnick[0]) {
     dprintf(idx, "Usage: nick <new-handle>\n");

@@ -1,323 +1,368 @@
-#Copyright by C_Olli oliver.vogel@gmx.net
-#Bei Verbesserungsvorschlaegen, bitte email an mich.
-
-#Modifiziert von Michael fuer 1.3.25 Updates
+# Copyright (c) 1999 by eggheads
+# Original by C_Olli oliver.vogel@gmx.net (Bei Verbesserungsvorschlaegen
+# bitte email an mich)
+# Modified by Michael for 1.3.25.
+# Modified by rtc for 1.3.29
 
 # General stuff
 
-0x001,Benutzung
-0x002,Nicht erfolgt.\n
+0x001,Gebrauch
+0x002,Fehlgeschlagen.\n
 
 # BANS_
 
 0x100,Erstellt
-0x101,zuletzt angewendet
-0x102,nicht aktiv
-0x103,gesetzt von
-0x104,Globale bans
+0x101,letzter Gebrauch
+0x102,inaktiv
+0x103,hinzugefuegt von
+0x104,Globale Banns
 0x105,nicht aktiv auf
-0x106,Channel bans für
+0x106,Channelspezifische Banns fuer
 0x107,nicht aktiv
-0x108,nicht von diesem Bot gesetzt
-0x109,'.bans all' benutzen, um die ganze Liste anzuzeigen
-0x10A,Ich banne nicht länger
+0x108,nicht vom Bot
+0x109,Per '.bans all' kann man die komplette Liste anschauen
+0x10A,Ich banne nicht laenger
+
+# EXEMPTS_
+
+0x110,Erstellt
+0x111,letzter Gebrach
+0x112,inaktiv
+0x113,hinzugefuegt von
+0x114,Globale Ausnahmen
+0x115,nicht aktiv auf
+0x116,Channelspezifische Ausnahmen fuer
+0x117,nicht aktiv
+0x118,nicht vom Bot
+0x119,Per '.exempts all' kann man die komplette Liste anschauen
+0x11A,Ich mache nicht laenger eine Ausnahme fuer
+
+# Invites
+
+0x120,Erstellt
+0x121,letzter Gebrauch
+0x122,inaktiv
+0x123,hinzugefuegt von
+0x124,Global Einladungen
+0x125,nicht aktiv auf
+0x126,Channelspezifische Einladungen fuer
+0x127,nicht aktiv
+0x128,nicht vom Bot
+0x129,Per '.invites all' kann man die komplette Liste anschauen
+0x12A,Ausgeladen wurde
 
 # MOD_
 
-0x200,bereits geladen.
-0x201,Ich kann das aktuelle Verzeichnis nicht bestimmen.
+0x200,Bereits geladen.
+0x201,Aktuelles Verzeichnis kann nicht bestimmt werden.
 0x202,Keine Startfunktion definiert.
 0x203,Modul geladen:
-0x204,Wird von einem anderen Modul benötigt
-0x205,Keine 'schließen' Funktion.
-0x206,Modul nicht länger geladen:
+0x204,Wird von einem anderen Modul benoetigt
+0x205,Keine Selbstvernichtung
+0x206,Modul entfernt:
 0x207,Kein solches Modul
-0x208,Keine Informationen zum Modul:
-0x209,Fehler beim Laden von Modul:
-0x20A,Fehler beim entladen von Modul:
+0x208,Keine Informationen ueber Modul verfuegbar:
+0x209,Fehler beim Laden des Moduls:
+0x20A,Fehler beim Entfernen des Moduls:
 0x20B,Kann keine Module laden
-0x20C,Stillstehendes Modul; es WERDEN Speicherfehler auftreten!
-0x20D,Du hast Module installiert, jedoch kein Verschlüsselungsmodul ausgewählt\n\
-schaue bitte in die Standard - Konfigurationsdatei für mehr Informationen.\n
-0x20E,Modul für das Dateisystem nicht geladen.
+0x20C,Stillstehendes Modul; es WERDEN Speicherlecks auftreten!
+0x20D,Du hast die modulare Version installiert, jedoch kein \n\
+Verschluesselungsmodul ausgewaehlt. Fuer weitere Informationen siehe\n\
+die mitgelieferte Konfigurationsdatei.\n
+0x20E,Dateisystem-Modul nicht geladen.
 
 # USERF_
 
-0x400,Übertragung der Userliste vollständig; umgeschaltet zur neuen Userliste
-0x401,Ich kann das Userfile nicht öffnen, um Channeldaten neu einzulesen
+# 0x400 Scheint falsch zu sein
+0x400,Unvollstaendige Uebertragung der Benutzerliste; umgeschaltet zur neuen Benutzerliste
+0x401,Kann Benutzerdatei nicht zum Auffrischen der Channeldaten oeffnen
 0x402,ICH KANN DIE NEUE USERDATEI NICHT LESEN!
-0x403,Ich kann Ihnen das Userfile nicht schicken (interner Fehler)
-0x404,Ich kann niemanden finden, auf den dies zutrifft
-0x405,Alte Userdatei, bitte 'tclsh scripts/weed <userdatei> c' benutzen, um die Userdatei zu konvertieren
-0x406,Userdatei hat ein falsches Format.
-0x407,Beschädigte Useraufzeichnung
-0x408,Doppelte Useraufzeichnung
-0x409,Passwort konnte nicht zurückgesetzt werden für
-0x40a,Ignorierte bans in den Channels/im Channel:
-0x40b,Schreibe Userdatei...
-0x40c,FEHLER beim Schreiben der Userdatei.
-0x40d,FEHLER beim Schreiben der Userdatei zur Übertragung.
-0x40e,Erstellung einer Userdatei nicht notwendig--Abbruch
+0x403,Ich kann die Benutzerdatei nicht schicken (interner Fehler)
+0x404,Ich kann keinen passenden Eintrag finden
+0x405,Alte Benutzerdatei, bitte mit 'tclsh scripts/weed <benutzerdatei> c' konvertieren
+0x406,Ungueltiges Format der Benutzerdatei.
+0x407,Beschaedigter Benutzerdatensatz
+0x408,Doppelter Benutzerdatensatz
+0x409,Passwort konnte nicht zurueckgesetzt werden fuer
+0x40a,Ignorierte Banns fuer den/die channel(s):
+0x40b,Schreibe Benutzerdatei...
+0x40c,FEHLER beim Schreiben der Benutzerdatei.
+0x40d,FEHLER beim Schreiben der Benutzerdatei, die zur Uebertragung vorgesehen war.
+0x40e,Erstellung einer Benutzerdatei nicht notwendig -- Wird uebersprungen
 0x40f,Lade neu...
 0x410,Ich kenne niemanden mit diesem Namen.\n
-0x411,Keine Useraufzeichning.
-0x412,Erstelle eine Sicherungskopie der Userdatei...
-0x413,Verbindung nicht erfolgt; Übertragung des Userfiles abgebrochen.
-0x414,Veraltete Anfrage zum Teilen einer Userdatei von
-0x415,Veraltete Anfrage zum Teilen einer Userdatei
-0x416,Userdatei wurde abgewiesen von
+0x411,Kein Benutzerdatensatz.
+0x412,Erstelle Sicherungskopie der Benutzerdatei...
+0x413,Verbindung fehlgeschlagen; Uebertragung der Benutzerdatei abgebrochen.
+0x414,Veraltete Anfrage zum Benutzerdatei-Sharing von
+0x415,Veraltete Anfrage zum Benutzerdatei-Sharing
+0x416,Benutzerdatei wurde abgewiesen von
 
 # MISC_
 
 0x500,abgelaufen
-0x501,Gesamt
-0x502,Gelöscht
-0x503,übrig
+0x501,Insgesamt
+0x502,Geloescht
+0x503,uebrig
 0x504,auf
-0x505,Überprüfe
-0x506,breche zuerst ab
-0x507,(mehr als %d Übereinstimmungen; Liste abgeschnitten)\n
-0x508,--- %d Übereinstimmungen gefunden%s.\n
-0x509,Unbekannte Anweisung.\n
-0x50a,Was?  Gib bitte '.help' ein\n
-0x50b,Kommandoverbindungen:\n
+0x505,Vergleiche
+0x506,ueberspringe die ersten
+0x507,(mehr als %d Treffer; Liste abgeschnitten)\n
+# Sprachspezifischer Muell in []:
+0x508,--- %d Treffer gefunden [%s].\n
+0x509,Mehrdeutiger Befehl.\n
+0x50a,Wie bitte?  Du brauchst Hilfe ('.help')\n
+0x50b,Kommandoverknuepfungen:\n
 0x50c,Starte neu...
-0x50d,Versuch des Ladens von Modulen auf einem Eggdrop ohne Modul.
-0x50e,Schalte Logdateien um...
+0x50d,Versuch des Ladens eines Modul auf einem Eggdrop ohne Unterstuetzung fuer Module.
+0x50e,Wechsle Logdateien...
 0x50f,Besitzer
-0x510,Meister
-0x511,op
-0x512,untätig
+0x510,Master
+0x511,Op
+0x512,untaetig
 0x513,ABWESEND
 0x514,ignoriere
+# Ueberarbeiten, brauche kontext:
 0x515, - Verbindung getrennt
 0x516,Verbindung getrennt
-0x517,ungültiger Bot
-0x518,Schleife entdeckt: trenne Verbindung
+0x517,ungueltiger Bot
+0x518,Ring entdeckt: trenne Verbindung
 0x519,gegenseitig
 0x51a,von
 0x51b,veraltet
 0x51c,abgewiesen
-0x51d,Aufdränger
+# Babylon meint 'Steuererlass':
+0x51d,Aufdraenger
 0x51e,versuche
-0x51f,Datei mit der Mitteilung des Tages:
-0x520,Keine Datei mit einer Mitteilung des Tages.
+0x51f,MOTD-Datei:
+0x520,Keine MOTD-Datei.
 0x521,Benutze:
-0x522,<Adresse>:<Port#>[/<Weiterleitungs-Port#>]
+0x522,<Adresse>:<Port#>[/<Relais-Port#>]
 0x523,unbekannt
-0x524,Channel
-0x525,Fehler beim probieren weil butch-bub ein Würstchen ist
-0x526,schwebender
-0x527,ich will op haben!
+0x524,Channels
+0x525,Fehler-beim-probieren-weil-butch-bub-ein-Lama-ist
+0x526,dauert noch
+0x527,will op-status!
 0x528,lauernd
 0x529,Hintergrund
-0x52a,Terminal modus
-0x52b,Status modus
-0x52c,Log-verwerf Modus
+0x52a,Pseudo-Telnet
+0x52b,Statusdisplay-Modus
+0x52c,Log-Modus
 0x52d,Online seit
-0x52e,cache hit
+0x52e,Cache-Trefferrate
 0x52f,Benutze TCL Bibliothek:
-0x530,Neue User bekommen folgende Flags
+0x530,Neue Benutzer bekommen folgende Flags
 0x531,Benachrichtigung
-0x532,Ständige Botbesitzer
-0x533,WARNUNG! Du läßt Eggdrop als root laufen!
+0x532,Permanente Botbesitzer
+0x533,WARNUNG! Du laesst Eggdrop als root laufen!
 0x534,KONFIGURATIONSDATEI NICHT GELADEN (NICHT GEFUNDEN ODER FEHLER)
-0x535,USERDATEI NICHT GEFUNDEN!  (versuche './eggdrop -m', um eines zu erstellen)
-0x536,STARTE DEN BOT IM USERDATEI-ERSTELLUNGS-MODUS.\n\
-Baue eine Telnetverbindung zu dem Bot auf und gib 'NEW' als deinen Nickname.
+0x535,BENUTZERDATEI NICHT GEFUNDEN!  (probier mal './eggdrop -m', das erstellt eine)
+0x536,STARTE DEN BOT IM BENUTZERDATEI-ERSTELLUNGS-MODUS.\n\
+Baue eine Telnetverbindung zu dem Bot auf und gib 'NEW' als deinen Nickname ein.
 0x537,ODER gehe ins IRC und:  /msg %s hello\n
-0x538,Dies macht dich zum Besitzer des Bots.
-0x539,USERDATEI EXISTIERT BEREITS (das '-m' bitte weglassen)
-0x53a,KANN NICHT IN DAS TEMPORÄRE VERZEICHNIS SCHREIBEN
-0x53b,Kann die Userdatei nicht neu laden!
-0x53c,Userdatei nicht gefunden!
+0x538,Dies macht dich zum Master des Bots.
+0x539,BENUTZERDATEI EXISTIERT BEREITS (bitte das '-m' weglassen)
+0x53a,KANN NICHT IN DAS TEMPORAERE VERZEICHNIS SCHREIBEN
+0x53b,Kann die Benutzerdatei nicht neu laden!
+0x53c,Benutzerdatei fehlt!
 0x53d,verbundene Bots:
 0x53e,%B  (%E)\n\nBitte gib deinen Nickname ein:\n
-0x53f,Restarte Logdatei %s, ueber max. Groesse (%d)
-0x540,\nNicknamen.\n
+0x53f,Rotiere Logdatei %s da groesser als max-logsize (%d)
+0x540,\nNickname.\n
+0x541,Die letzte Meldung wiederholte sich %s mal.\n
 
 # IRC_
 
 0x600,gebannt
-0x601,Du bist gebannt!
-0x602,Wollte mich selbst bannen -- umgeleitet.
-0x603,das hat Spaß gemacht, machen wirs doch nochmal!
+0x601,Du bist gebannt
+0x602,Wollte mich selbst bannen -- gerade noch abgewendet.
+0x603,das war ein Spass, machen wir's doch nochmal!
 0x604,Hallo
-0x605,Auf Wiedersehen!
-0x606,Du bist gebannt, goober.
-0x607,Dein Nick ist zu lang um ihn jetzt zu der Userdatei hinzuzufügen.
-0x608,Vorgestellt zu
-0x609,gewühnlicher Platz
+0x605,Auf Wiedersehen
+0x606,Du bist gebannt, mein Lieber.
+0x607,Dein Nick ist im Moment zu lang um dich aufzunehmen.
+0x608,Bekanntschaft gemacht mit
+0x609,kein eigener Client
 0x60a,NOTICE %s :Hallo %s!  Ich bin %s, ein Eggdrop Bot.\n
-0x60b,NOTICE %s :Ich erkenne dich von nun an anhand deiner Hostmask '%s' von nun an.\n
-0x60c,Da Du von einem gewöhnlichne IRCnet aus kommst, bedeutet das, daß Du
+0x60b,NOTICE %s :Ich erkenne dich von nun an anhand deiner Hostmask '%s'.\n
+0x60c,Da Du keinen eigenen Client benutzt, bedeutet das, dass Du
 0x60d,immer diesen Nickname benutzen solltest, wenn du mit mir chattest.
 0x60e,DU BIST VON NUN AN DER BESITZER DIESES BOTS
-0x60f,Botinstallation vollständig, der erste Master ist %s
+0x60f,Botinstallation vollstaendig, der erste Master ist %s
 0x610,Willkommen zu Eggdrop! =]
-0x611,vorgestellt an %s von %s
-0x612,Du hast ein Passwort gesetzt.
-0x613,Du hast kein Passwort gesetzt.
-0x614,(DU HAST KEIN PASSWORT GESETZT)\n
-0x615,Du hast bereits ein Passwort gesetzt.
-0x616,Bitte benutze zumindest 6 Zeichen.
+0x611,Bekanntschaft gemacht mit %s von %s
+0x612,Du hast ein Passwort.
+0x613,Du hast kein Passwort.
+0x614,(DU HAST KEIN PASSWORT)\n
+0x615,Du hast bereits ein Passwort eingestellt.
+0x616,Bitte benutze mindestens 6 Zeichen.
 0x617,Passwort gesetzt auf:
 0x618,Falsches Passwort.
-0x619,Passwort geändert zu:
-0x61a,You're at a common site; you can't IDENT.
+0x619,Passwort geaendert zu:
+0x61a,Du hast keinen eigenen Client; du kannst IDENT nicht benutzen.
 0x61b,NOTICE %s :Du bist nicht %s, Du bist %s.\n
 0x61c,Zugriff verweigert.
-0x61d,Ich erkenne dich dort..
-0x61e,Habe Hostmask hinzugefügt:
-0x61f,Habe Deine eMail-Adresse beseitigt.
+0x61d,Ich erkenne dich dort.
+0x61e,Habe Hostmask hinzugefuegt:
+0x61f,Habe Deine eMail-Adresse entfernt.
 0x620,Im Moment:
 0x621,Jetzt:
-0x622,Um sie zu beseitigen:
-0x623,Du hast noch keine eMail-Adresse gesetzt bisher.
+0x622,Um sie zu entfernen:
+0x623,Du hast keine eMail-Adresse eingestellt.
 0x624,Deine Info-Zeile ist gesperrt.
-0x625,Habe deine Info-Zeile entfernt auf
+0x625,Habe deine Info-Zeile entfernt fuer
 0x626,Habe deine Info-Zeile entfernt.
-0x627,Du hast keine Userinfo gesetzt auf
-0x628,Du hast keine Userinfo gesetzt.
-0x629,Ich überwache diesen Channel nicht.
-0x62a,Setze Channelinfo zurück.
-0x62b,Wechsele den Server...
+0x627,Du hast keine Info gesetzt fuer
+0x628,Du hast keine Info gesetzt.
+0x629,Ich ueberwache diesen Channel nicht.
+0x62a,Setze Channelinfo zurueck.
+0x62b,Springe auf anderen Server...
 0x62c,Channel ist im Moment versteckt.
-0x62d,Bin jetzt auf Channel
+0x62d,Momentan auf auf dem Channel
 0x62e,Nie einen meiner Channels betreten.
 0x62f,Zuletzt gesehen am
-0x630,Ich kenne Dich nicht, bitte stell Dich mir erst vor.
-0x631,Keine Hilfe..
-0x632,Keine Hilfe dazu verfügbar.
+0x630,Ich kenne Dich nicht, bitte stell Dich mir zuerst vor.
+0x631,Keine Hilfe.
+0x632,Keine Hilfe dazu verfuegbar.
 0x633,ist keine normale Datei!
 0x634,Im Moment nicht auf diesem Channel.
-0x635,Wechsele zurück zu Nickname %s
-0x636,Server sagt mein Nickname wäre ungültig.
+0x635,Wechsele zurueck zu Nickname %s
+0x636,Server sagt mein Nickname sei ungueltig.
 0x637,NICKNAME BELEGT: Probiere '%s'
-0x638,Kann meinen nickname nicht auf %s ändern.  Ist mein Nickname gesperrt?
-0x639,Nickname wurde gesperrt
-0x63a,Channel %s ist gesperrt. :(
-0x63b,%s sagt ich sei nicht registriert, ich probiere den nächsten.
-0x63c,Du hast einen abgefuckten Server.
+0x638,Kann meinen nicknamen nicht auf %s aendern.  Ist mein Nickname gesperrt?
+0x639,Nickname wurde jupiterisiert
+0x63a,Channel %s ist jupiterisiert. :(
+0x63b,%s sagt ich sei nicht registriert, ich probiere den naechsten.
+0x63c,Du hast einen hirnamputierten Server.
 0x63d,Flood von @%s!  Wird ab sofort ignoriert!
 0x63e,CTCP flood von @%s!  Wird ab sofort ignoriert!
 0x63f,JOIN flood von @%s!  Wird gebannt.
 0x640,Channel flood von %s -- wird gekickt.
 0x641,Versuche Server
-0x642,DNS Überprüfung nicht geglückt
-0x643,Verbindung nicht erfolgt zu
-0x644,Server stoned; wechsele...
+0x642,DNS-Anfrage gescheitert
+0x643,Verbindung fehlgeschlagen zu
+0x644,Server ist eingeschlafen; springe auf den naechsten...
 0x645,Verbindung getrennt von
 0x646,Im Moment kein Server.
-0x647,Mode-Schlange ist auf
-0x648,Server-Schlange ist bei
-0x649,Hilfe-Schlange ist auf
-0x64a,Dieser Bot läuft ohne IRC Kommunikation.
+0x647,Mode-Queue ist bei
+0x648,Server-Queue ist bei
+0x649,Hilfe-Queue ist bei
+0x64a,Dieser Bot laeuft ohne IRC-Verbindung.
 0x64b,Nicht aktiv auf Channel
 0x64c,Bearbeite Channel
 0x64d,Channel
-0x64e,Rate Channel
-0x64f,Channel Thema
-0x650,verspätetes +o -- Ich lagge
-0x651,verspätetes -o -- Ich lagge
-0x652,versoäteter kick
-0x653,GEFÄLSCHTER CHANOP VOM SERVER GESETZT
+#need context
+0x64e,Erbitte Channel
+0x64f,Thema auf dem Channel
+# verspaetet?
+0x650,verspaetetes +o -- Lahme Verbindung
+0x651,verspaetetes -o -- Lahme Verbindung
+0x652,verspaeteter kick
+#need context
+0x653,VOM SERVER ERTEILER SCHEIN-CHANOP
 0x654,Ende der Channel Informationen.
-0x655,Massen-kick, setz dich in die Ecke
-0x656,Entfernter ban
+0x655,Massen-kick, ab in die Ecke
+0x656,Entfernter Bann
 0x657,Hmm, Mode-Information von einem Channel auf dem ich nicht bin
-0x658,...und danke, daß Du mitgespielt hast.
-0x659,Wechsele Server (brauche %d Server, habe nur %d)
+0x658,...und danke, dass Du mitgespielt hast.
+0x659,Springe auf naechsten Server (will %d Server, jedoch nur %d vorhanden)
 0x65a,Wechsele Server
-0x65b,Ich bin auf zu vielen Channels, kann folgenden Channel nicht betreten: %s
-0x65c,Channel überfüllt -- kann folgenden Channel nicht betreten: %s
-0x65d,Channel invite only -- kann folgenden Channel nicht betreten: %s
-0x65e,Gebannt von Channel -- kann folgenden Channel nicht betreten: %s
-0x65f,Server sagt ich sei nicht auf Channel: %s
-0x660,Falsches Passwort -- kann folgenden Channel nicht betreten: %s
-0x661,NOTICE %s :Alle Befehle erfolgen via /MSG. Für eine vollständige Liste, /MSG %s help   CU!\n
+0x65b,Bin auf zu vielen Channels -- kann %s nicht betreten
+0x65c,Channel ueberfuellt -- kann %s nicht betreten
+0x65d,Channel nur auf Einladung -- kann %s nicht betreten
+0x65e,Vom channel verbannt -- kann %s nicht betreten
+0x65f,Server meint, ich sei nicht auf dem Channel: %s
+0x660,Falsche Schluessel -- kann %s nicht betreten
+0x661,NOTICE %s :Alle Befehle erfolgen via /MSG. Fuer eine vollstaendige Liste, /MSG %s help   CU!\n
 0x662,NOTICE %s :Ich erkenne Dich nicht mit diesem Host.\n
-0x663,NOTICE %s :Entweder Du benutzt den Nickname von jemand anderem oder Du mußt eingeben: /MSG %s IDENT (password)\n
-0x664,NOTICE %s :Als Master mußt Du nun wirklich ein Passwort setzen mit /MSG %s pass <dein-neues-passwort>.\n
-0x665,NOTICE %s :Alle wichtigen Befehle werden von einem DCC Chat aus eingegeben. Von nun an brauchst Du nicht mehr die -m Option zu verwenden wenn du den Bot startest. Viel Spaß !!!\n
-0x666,Dies ist eine Telnet Schnittstelle zu %s, einem Eggdrop Bot.\nMißbrauche sie nicht, and sie wird auch allen deinen Freunden offenstehen.\n
-0x667,Du mußt Dir jetzt einen Nickname aussuchen, den Du auf dem Bot benutzt\nund ein Paßwort, damit niemand sonst vorgeben kann, er sei Du.\nBitte denke an beides!
-0x668,Von nun an brauchst Du nicht mehr die -m Option zu verwenden wenn du den Bot startest.\nViel Spaß !!!
-0x669,Telnet Verbindungs - Flood von %s!  Wird ab sofort ignoriert!
+0x663,NOTICE %s :Entweder Du benutzt den Nicknamen von jemand anders oder Du musst eingeben: /MSG %s IDENT (passwort)\n
+0x664,NOTICE %s :Als Master solltest Du nun wirklich ein Passwort setzen: mit /MSG %s pass <dein-neues-passwort>.\n
+0x665,NOTICE %s :Alle wichtigen Befehle werden per DCC Chat eingegeben. Von nun an brauchst Du nicht mehr die -m Option zu verwenden wenn du den Bot startest. Viel Spass !!!\n
+0x666,Dies ist die Telnet-Schnittstelle zu %s, einem Eggdrop Bot.\nMissbrauche sie nicht, and sie wird auch allen deinen Freunden offenstehen.\n
+0x667,Du musst Dir jetzt einen Nickname aussuchen, den Du auf dem Bot benutzt\nund ein Passwort, damit niemand sonst vorgeben kann, er sei Du.\nBitte behalte an beides!
+0x668,Von nun an brauchst Du nicht mehr die -m Option zu verwenden wenn du den Bot startest.\nViel Spass !!!
+0x669,Telnet-Verbindungsaufbau-Flood von %s!  Wird ab sofort ignoriert!
 0x66a,gebannt
 0x66b,nick Flood
-0x66c,laß meine Freunde in Ruhe, mein Lieber
-0x66d,...und komm nicht zurück.
+0x66c,schmeiss meine Freunde nicht hier raus, mein Lieber
+0x66d,...und komm nicht zurueck.
+0x66e,wechsle zurueck zum altnick %s
+# Exempt/invite uebersetzen?
+0x670,Ausnahme entfernt
+0x671,Einladung entfernt
 0x672,NICK flood von @%s!  Wird gebannt.
 
 0x700,Kommandozeilen - Optionen:\n\
   -h   Hilfe\n\
-  -v   zeige Version und beende\n\
+  -v   Version ausgeben und beenden\n\
   -n   starte nicht im Hintergrund\n\
-  -c   (mit -n) zeige Channelstatistiken alle 10 Sekunden\n\
-  -t   (mit -n) benutze Terminal, um einen DCC chat zu simulieren\n\
-  -m   Userdatei Erstellungs-Modus\n\
-  optionaler Configdateiname (Standard 'egg.config')\n
+  -c   (mit -n) zeige alle 10 Sekunden die Channelstatistiken an\n\
+  -t   (mit -n) Terminal benutzen, um einen DCC chat zu simulieren\n\
+  -m   Benutzerdatei-Erstellungs-Modus\n\
+  optionaler Konfigurationsdateiname (Standard 'egg.config')\n
 
-0x701,Ich erkenne, daß %s bereits von diesem Verzeichnis läuft.\n
-0x702,Wenn dies nicht richtig sein sollte, lösche die '%s'\n
+0x701,%s scheint in diesem Verzeichnis bereits zu laufen.\n
+0x702,Loesche '%s' wenn das nicht stimmt\n
+0x703,* Warnung!  Konnte Datei %s nicht schreiben!
 
-0x800,  (ist ein globaler op)
+0x800,  (ist ein globaler Op)
 0x801,  (ist ein Bot)
-0x802,  (ist ein Meister)
+0x802,  (ist ein Master)
 
 0x900,Kein solcher Channel definiert
-0x901,Falsches Channelpasswort
-0x902,* Mode Wechsel auf %s für nicht existierenden %s!
+0x901,Falscher Schluessel fuer den Channel
+0x902,* Mode Wechsel auf %s fuer nicht existierenden %s!
 0x903,Massen-deop auf %s von %s
-0x904,Massen-deop.  Setz dich in eine Ecke.
-0x905,Falscher ban
-0x906,ist in meiner Banliste.  Du mußt im DCC Chat '-ban' benutzen, wenn Du willst daß es funktioniert.\n
-0x907,Oops.   Irgendjemand hat mich dazu veranlaßt %s zu betreten... verlasse diesen Channel...
-0x908,Modewechsel von falschem op auf %s!  Mache das wieder rückgängig...
-0x909,Mißbrauch von illegal erhaltenen Server-ops...
-0x90a,Modewechsel von nicht - op auf %s!  Mache das wieder rückgängig...
-0x90b,Mißbrauch eines Desync
+0x904,Massen-deop.  Ab in die Ecke.
+0x905,Falscher Bann
+0x906,ist in meiner permanenten Bannliste.  Du musst im DCC Chat '-ban' benutzen, wenn Du willst dass es funktioniert.\n
+0x907,Oops.   Irgendjemand hat mich dazu veranlasst %s zu betreten... schnell raus da...
+0x908,Modewechsel von schein-op auf %s!  Mache das wieder rueckgaengig...
+0x909,Missbrauch von faelschlich erhaltenen Server-ops...
+0x90a,Modewechsel von nicht-op auf %s!  Mache das wieder rueckgaengig...
+0x90b,Missbrauch eines Desync
 0x90c,Flood
-0x90d,Falscher Ban
+0x90d,Falscher Bann
 0x90e,Falscher Username
-0x90f,Falscher Exempt
-0x910,Falscher Invite
+0x90f,Falsche Ausnahme
+0x910,Falsche Einladung
 
 0xa00,keine ignorierten User
 0xa01,Im Moment werden ignoriert
-0xa02,Ignoriere nicht länger
+0xa02,Ignoriere nicht mehr
 
 0xb00,Dieser Bot ist nicht hier.\n
 0xb01,Das ist ein Bot.  Du kannst einem Bot keine Nachrichten hinterlassen.\n
 0xb02,ist nicht da
-0xb03,Nachtichten werden von diesem Bot nicht unterstützt.\n
-0xb04,Sorry, dieser User hat schon zu viele Nachrichten.\n
+0xb03,Nachtichten werden von diesem Bot nicht unterstuetzt.\n
+0xb04,Sorry, dieser Benutzer hat schon zu viele Nachrichten.\n
 0xb05,Kann Nachrichtendatei nicht erstellen.  Sorry.\n
 0xb06,Nachrichtendatei unerreichbar!
-0xb07,Eine Nachricht für Dich ist angekommen
+0xb07,Eine Nachricht fuer Dich ist angekommen
 0xb08,Nachricht gespeichert
 0xb09,Nachricht ausgeliefert.
-0xb0a,Nachricht von außen
-0xb0b,NOTES Funktion muß eine sein von:
+0xb0a,Nachricht von aussen
+0xb0b,NOTES Funktion muss eine sein von:
 0xb0c,Du hast keine Nachrichten
-0xb0d, -- VERFÄLLT HEUTE
-0xb0e, -- VERFÄLLT IN %d TAGE%s
+0xb0d, -- VERFAELLT HEUTE
+# LANGSPEC
+0xb0e, -- VERFAELLT IN %d TAGE%s
 0xb0f,Auf Dich warten folgende Nachrichten
 0xb10,Du hast nicht so viele Nachrichten
 0xb11,Benutze '.notes read' um sie zu lesen.
-0xb12,Kann die Nachrichtendatei nicht verändern
-0xb13,Alle Nachrichten gelöscht
+0xb12,Kann die Nachrichtendatei nicht veraendern
+0xb13,Alle Nachrichten geloescht
 0xb14,NOTICE %s :Auf Dich warten %d Nachrichte%s auf %s.\n
 0xb15,Um eine Liste gezeigt zu bekommen:
 0xb16,### Auf Dich warten %d Nachrichte%s %s.\n
 0xb17,### Benutze '.notes read' um sie zu lesen.\n
-0xb18,Beginn des Herunterfahrens des Bots....
-0xb19,Kein solcher User
+0xb18,Bot wird heruntergefahren....
+0xb19,Kein solcher Benutzer
 0xb1a,Keine Channels
 0xb1b,Im Moment auf der Partyline:
 0xb1c,Verbundene Bots
-0xb1d,Andere User auf dem Bot
+0xb1d,Andere Leute auf dem Bot
+#veraltete?
 0xb1e,Verfallene 'whom' Anfrage von
 0xb1f,Versuche Verbindung herzustellen zu
 0xb20,Nicht online; Nachricht gespeichert.
