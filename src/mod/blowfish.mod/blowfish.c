@@ -2,7 +2,7 @@
  * blowfish.c -- part of blowfish.mod
  *   encryption and decryption of passwords
  * 
- * $Id: blowfish.c,v 1.16 2001/02/27 03:18:24 guppy Exp $
+ * $Id: blowfish.c,v 1.17 2001/03/10 22:32:11 guppy Exp $
  */
 /* 
  * Copyright (C) 1999  Eggheads
@@ -305,7 +305,8 @@ static void blowfish_encrypt_pass(char *text, char *new)
 static char *encrypt_string(char *key, char *str)
 {
   u_32bit_t left, right;
-  char *p, *s, *dest, *d;
+  unsigned char *p;
+  char *s, *dest, *d;
   int i;
 
   /* Pad fake string with 8 bytes to make sure there's enough */
