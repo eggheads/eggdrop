@@ -1,7 +1,7 @@
 /*
  * module.h
  *
- * $Id: module.h,v 1.56 2002/01/02 03:46:37 guppy Exp $
+ * $Id: module.h,v 1.57 2002/01/14 15:51:12 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -451,6 +451,7 @@
 #define quit_msg ((char *)(global[272]))
 #define module_load ((char *(*)(char *))global[273])
 #define module_unload ((char *(*)(char *, char *))global[274])
+#define parties (*(int *)global[275])
 
 /* This is for blowfish module, couldnt be bothered making a whole new .h
  * file for it ;)
