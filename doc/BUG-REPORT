@@ -68,16 +68,15 @@ Instructions:
      ( ) FreeBSD
      ( ) HP-UX
      ( ) IRIX
-     ( ) IRIX64
      ( ) Linux
      ( ) Lynx
      ( ) NetBSD
      ( ) NeXT
      ( ) OpenBSD
-     ( ) OSF
+     ( ) OSF/Tru64
      ( ) QNX
-     ( ) Solaris
-     ( ) Sun
+     ( ) SINIX
+     ( ) Solaris/Sun
      ( ) Ultrix
      ( ) Other - Which? _____________
 

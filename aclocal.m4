@@ -1,7 +1,7 @@
 dnl aclocal.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: aclocal.m4,v 1.32 2001/04/06 22:29:46 guppy Exp $
+dnl $Id: aclocal.m4,v 1.33 2001/04/19 04:31:51 guppy Exp $
 dnl
 
 
@@ -213,36 +213,13 @@ case "$egg_cv_var_system" in
     NEED_DL=0
     MOD_LD="${CC} -lelf -lucb"
     ;; 
-  IRIX-4.*)
-    AC_MSG_RESULT(IRIX4.+!)
-    IRIX=yes
-    SHLIB_STRIP=touch
-    NEED_DL=0
-    DEFAULT_MAKE=static
-    ;;
-  IRIX-5.*|IRIX-6.*)
-    AC_MSG_RESULT(IRIX 5 OR 6)
+  IRIX)
+    echo "$ac_t""IRIX (Have fun with IRIX 4.+!)" 1>&6
     SHLIB_LD="ld -n32 -shared -rdata_shared"
     IRIX=yes
     SHLIB_STRIP=touch
     NEED_DL=0
     DEFAULT_MAKE=static
-    ;;
-  IRIX-6.3)
-    AC_MSG_RESULT(IRIX6.3)
-    IRIX=yes
-    SHLIB_STRIP=touch
-    NEED_DL=0
-    DEFAULT_MAKE=static
-    SHLIB_LD="ld -n32 -D_OLD_TERMIOS"
-    ;;
-  IRIX64*)
-    AC_MSG_RESULT(64-BIT IRIX)
-    IRIX=yes
-    SHLIB_STRIP=strip
-    NEED_DL=0
-    DEFAULT_MAKE=static
-    SHLIB_LD="ld -32 -shared -rdata_shared"
     ;;
   Ultrix)
     AC_MSG_RESULT(Ultrix)
