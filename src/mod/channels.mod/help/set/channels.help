@@ -1,16 +1,14 @@
 %{help=set share-greet}%{+n}
 ###  %bset share-greet%b 0/1
-   if on (1) then share-bots will share their user's info lines
-   with other share bots.
+   Share user's info lines with other sharebots?
 %{help=set use-info}
 %{+n}
 ###  %bset use-info%b <0/1>
-   specifies whether to activate the info system.  if this is off,
-   the bot will not accept changes to any user's "info line" (the
-   line shown for '/msg whois' and '/msg who' requests, and shown
-   when a user joins the channel is you have set 'greet' on).
-   this disables '/msg whois' and '/msg who' obviously, and makes
-   the setting of 'greet' meaningless.
+   This activates or deactivates the info system. If this is off, the bot will
+   not accept changes to any user's "info line" (the line shown for '/msg
+   whois' and '/msg who' requests, and shown when a user joins the channel is
+   you have set 'greet' on). This disables '/msg whois' and '/msg who', and
+   makes the 'greet' setting meaningless.
 %{help=set chanfile}
 %{+n}
 ###  %bset chanfile%b
@@ -18,6 +16,6 @@
    for the bot.  it can only be set in the config file.
 %{help=set quiet-save}
 %{+n}
-###  %bset quiet-save%b 0/1
+###  %bset quiet-save%b <0/1>
    this sets if "Writing user file..." & "Writing channel file..."
    are logged.

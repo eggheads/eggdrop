@@ -58,7 +58,7 @@ See also: invites, +invite, stick, unstick
 %{help=-chan}%{+n}
 ### %b-chan%b <channel>
      This removes ALL information about a channel from the bot. It's not made
-     permanent unless the channel file has been saved.  If you remove a channel
+     permanent unless the channel file has been saved. If you remove a channel
      by accident, you can undo your changes with the 'chanload' command. Note
      that you will lose any other changed made since the last save.
 
@@ -93,14 +93,14 @@ See also: +chrec, chattr
            Created 15:10
 
    The number (5) can be used to reference the ban if you wish to remove it
-   (see '.-ban'). Next is the actual hostmask being banned.  The "(perm)" means
-   that the ban is "permanent": that is, it doesn't automatically expire. If
-   there is an elapsed time showing instead, the time displayed is how long the
-   ban has been active. Those kinds of bans expire after two hours. The second
-   line of the ban entry is the comment ("revolving check policy"), and who set
-   the ban (paulie). The last line shows when the ban was added, and possibly
-   the last time the ban was activated on the channel (if it's different from
-   the creation time).
+   (see %b'-ban'%b). Next is the actual hostmask being banned. The "(perm)"
+   means that the ban is "permanent": that is, it doesn't automatically expire.
+   If there is an elapsed time showing instead, the time displayed is how long
+   the ban has been active. These types of bans expire after two hours. The
+   second line of the ban entry is the comment ("revolving check policy"), and
+   who set the ban (paulie). The last line shows when the ban was added, and
+   possibly the last time the ban was activated on the channel (if it's
+   different from the creation time).
 
    Sometimes there will be a "!" or "*" right before the number. A "!" means
    the ban is in the bot's ban list, but is not currently on the channel. A "*"
@@ -130,10 +130,10 @@ See also: -ban, +ban, console, chanset, chaninfo, stick, unstick
              Created 01:15
 
    The number (3) can be used to reference the invite if you wish to remove it
-   (see '.-invite'). Next is the actual hostmask being invited.  The "(perm)"
+   (see %b'-invite'%b). Next is the actual hostmask being invited. The "(perm)"
    means that the invite is "permanent": that is, it doesn't automatically
    expire. If there is an elapsed time showing instead, the time displayed is
-   how long the invite has been active. Those kinds of invites expire after one
+   how long the invite has been active. These types of invites expire after one
    hour. The second line of the invite entry is the comment ("requested"), and
    who set the invite (Wcc). The last line shows when the invite was added, and
    possibly the last time the invite was activated on the channel (if it's
@@ -169,10 +169,10 @@ See also: -invite, +invite, console, chanset, chaninfo, stick, unstick
              Created 01:15
 
    The number (3) can be used to reference the exempt if you wish to remove it
-   (see '.-exempt'). Next is the actual hostmask being exempted.  The "(perm)"
+   (see %b'-exempt'%b). Next is the actual hostmask being exempted. The "(perm)"
    means that the exempt is "permanent": that is, it doesn't automatically
    expire. If there is an elapsed time showing instead, the time displayed is
-   how long the exempt has been active. Those kinds of exempts expire after one
+   how long the exempt has been active. These types of exempts expire after one
    hour. The second line of the exempt entry is the comment ("requested"), and
    who set the exempt (Wcc). The last line shows when the exempt was added, and
    possibly the last time the exempt was activated on the channel (if it's
@@ -202,7 +202,7 @@ See also: -exempt, +exempt, console, chanset, chaninfo, stick, unstick
    setting. This allows you to return to a previous setting if you've really
    messed things up.
 
-See also:%{+n} +chan, -chan,%{+n|n} chansave, chanset, chaninfo
+See also: %{+n}+chan, -chan, %{+n|n}chansave, chanset, chaninfo
 %{help=chanset}%{+n|n}
 ###  %bchanset%b <channel> <settings>
    Allows you to change the channel settings (see %b'chaninfo'%b for the
@@ -211,13 +211,13 @@ See also:%{+n} +chan, -chan,%{+n|n} chansave, chanset, chaninfo
    Changes are used until the next rehash/chanload/restart, and are saved
    whenever the channel settings are saved.
 
-See also: %{+n}+chan, -chan%{+n|n} chanload, chansave, chaninfo
+See also: %{+n}+chan, -chan %{+n|n}chanload, chansave, chaninfo
 %{help=chansave}%{+n|n}
 ###  %bchansave%b
    Saves the channel settings to the file defined by the %b"chanfile"%b
    setting. This file is reloaded during rehash and restarting the bot.
 
-See also: %{+n}+chan, -chan%{+n|n} chanload, chanset, chaninfo
+See also: %{+n}+chan, -chan %{+n|n}chanload, chanset, chaninfo
 %{help=chinfo}%{+m|m}
 ###  %bchinfo%b <user> [channel] [info-line/none]
    Sets the information line for a user. This line is shown via the /msg

@@ -6,16 +6,11 @@
    for bots and users they should be separated with a slash (/).
 
 See also: -bot
-%{help=+host}
-###  %b+host%b <hostmask>
-   Adds a hostmask to your user record. Hostmasks are used to identify your
-   handle on IRC.
- 
-%{+m|m}
-###  %b+host%b <handle> <hostmask>
-   Adds a hostmask to a user's user record. Usually, you will not need to use
-   this command, since a user can add hostmasks to his or her own record via
-   the %b/MSG IDENT%b command.
+%{help=+host}%{+t|m}
+###  %b+host%b [handle] <hostmask>
+   Adds a hostmask to a user's user record. Hostmasks are used to identify your
+   handle on IRC. If a handle is not specified, the hostmask will be added to
+   YOUR user record.
 
 See also: -host
 %{help=+ignore}%{+m}
@@ -33,15 +28,15 @@ See also: -ignore, ignores
 See also: -user, +host, -host
 %{help=-bot}%{+t}
 ###  %b-bot%b <bot>
-   This is exactly the same as %b'-user'%b (it removes a user record). It is
+   This is exactly the same as %b'.-user'%b (it removes a user record). It is
    included for convenience.
 
 See also: +bot, +user, -user
 %{help=-host}
 ###  %b-host%b <hostmask>
    Removes a host from your handle.
-
 %{+m|m}
+
 ###  %b-host%b <handle> <hostmask>
    Removes a hostmask from a user's user record.
 %{-}
@@ -78,6 +73,14 @@ See also: back
    This marks you as no longer away on the party line.
 
 See also: away
+%{help=backup}%{+m|m}
+###  %bbackup%b
+   This makes the bot write a backup of its entire user list to the disk. If
+   the channels module is loaded, this will also write a backup of the channels
+   file. This is useful if you feel the need to backup the userfile and channel
+   settings.
+
+See also: reload, rehash, save
 %{help=banner}%{+t}
 ###  %bbanner%b <text>
    Displays a message to everyone currently using the bot's party line or file
@@ -95,7 +98,7 @@ See also: away
    number of times that binding has been called. If not, go read the file
    %b'doc/tcl-commands.doc'%b for help on the Tcl bind command. Note that the
    builtin commands are now shown. You may also specify a type of binding to
-   show (i.e., %b'.binds msg'%b) or you can specify a wild card match (i.e.,
+   show (i.e. %b'.binds msg'%b) or you can specify a wild card match (i.e.,
    %b'.binds *seen*'%b) if you want to narrow the field a bit. The wild card
    matches will match against the TYPE, COMMAND and BINDING fields. You can
    view more binds by adding 'all' to the end of the command.
@@ -113,7 +116,7 @@ See also: tcl
    "Fred1" +share and -hub, you would do '.botattr Fred1 +s-h.'
 
    Whether or not you change any flags, it will show you the bot's flags
-   afterwards. To get a list of the flags possible, see %b'help whois'%b.
+   afterwards. To get a list of the flags possible, see %b'.help whois'%b.
 
    %bNOTE:%b This command is NOT used to replace .chattr. It modifies bot flags,
          such as s, h, a, u, etc.
@@ -136,7 +139,7 @@ See also: bottree, vbottree, bots
       Bots: cEvin, ruthie, Killa1
 
    There is no indication of which bots are directly connected to this current
-   bot. Use %b'who'%b%{+t} or %b'bottree'%b%{-} for that information.
+   bot. Use %b'.who'%b%{+t} or %b'.bottree'%b%{-} for that information.
 
 See also: bottree, vbottree, botinfo
 %{help=bottree}
@@ -163,9 +166,9 @@ See also: link, +bot
    these, you can specify the channel by name instead of channel number if
    you wish.
 
-   %b'chat off'%b removes you from all channels, including the main party line.
+   %b'.chat off'%b removes you from all channels, including the main party line.
    You can still use bot commands and see the console, but you can't talk to
-   anyone except via %b'.note'%b. %b'chat on'%b returns you to the main party
+   anyone except via %b'.note'%b. %b'.chat on'%b returns you to the main party
    line (channel 0) if you were elsewhere.
 
    If you prefix the channel with a '*', you will join a local channel.
@@ -193,7 +196,7 @@ See also: console
       .chattr Bill f|o #lamer
 
    Whether or not you change any flags, it will show you the user's attributes
-   afterwards. To get a list of all possible flags, see %b'help whois'%b.
+   afterwards. To get a list of all possible flags, see %b'.help whois'%b.
 
    %bNOTES:%b Only the owner may add or remove the 'n' (owner), 'm' (master) or
           't' (botnet master) flags. It is pointless to -n a permanent owner.

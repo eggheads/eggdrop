@@ -1,11 +1,5 @@
 Here are some little tricks that you may or may not know about.
 
--  You can "lock" a user's info line by putting an '@' as the first letter.
-   They won't be able to change it any more.
-
--  '.status all' will dump out virtually everything you have configured on
-   your bot.
-
 -  Tcl has a command 'info body <proc>' that will list the contents of a
    proc. 'info args <proc>' shows what you have defined as the parameters
    for the proc.
@@ -29,9 +23,6 @@ Here are some little tricks that you may or may not know about.
 
 -  You can unlink all bots and clear out the botnet info from memory by
    using '.unlink *'. It erases all channel assoc's and everything.
-
--  You can automatically make a ban sticky by adding a * as the first
-   character in the ban reason.
 
 -  You can add a user with a static hostmask when using .adduser by prefixing
    their nick with '!'.

@@ -1,10 +1,10 @@
 %{help=flush}%{+n}
 ###  %bflush%b <bot>
-   clears the resync buffer for a share-bot.  this is useful if you
-   want to start over with a userfile transfer: you can unlink the
-   sharebots, flush the resync buffer, and relink.
+   This clears the resync buffer for a share-bot. This is useful if you want to
+   start over with a userfile transfer. You can unlink the sharebots, flush the
+   resync buffer, and relink.
 
-see also: link, chattr, unlink
+See also: link, chattr, unlink
 %{help=set allow-resync}%{+n}
 ###  %bset allow-resync%b 0/1
    This setting determines if the bot will re-send the userfile every
@@ -25,7 +25,7 @@ see also: set allow-resync
 ###  %bset private-global%b 0/1
    If you are sharing userfiles with someone else, and you don't
    want %bany%b global flags on the other bots propagated to your bot,
-   set this.  It overrides the setting of private-globals.
+   set this. It overrides the setting of private-globals.
 
 see also: set private-globals
 %{help=set private-globals}%{+n}

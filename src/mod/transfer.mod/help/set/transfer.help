@@ -12,7 +12,7 @@
    ircII client defaults to 512, but admits that it may be too small.
    1024 is the most common setting.
 
-   You can set this to 0, which turns on "turbo dcc".  In turbo dcc
+   You can set this to 0, which turns on "turbo dcc". In turbo dcc
    mode, the bot will dump transfers as fast as possible, only
    stopping to count acks after it's finished.  This can dramatically
    improve the speed of file transfers, and is recommended.

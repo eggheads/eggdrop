@@ -20,16 +20,18 @@ Instructions:
 =====================================================================
 1) INFORMATION ABOUT YOUR EGGDROP
 
-1.1) version:
+1.1) Eggdrop version:
      1.6.__
 
-1.2) make type:
+1.2) Make type:
      ( ) dynamic
      ( ) static
      ( ) debug
      ( ) sdebug
 
-1.3) list of patches and/or modules you use:
+1.3) List of any options passed to ./configure:
+
+1.4) List of patches and/or modules you use:
 
 =====================================================================
 2) INFORMATION ABOUT TCL

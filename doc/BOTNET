@@ -133,7 +133,7 @@ Last revised: June 4, 2002
     linking two bots. Before you start, you need to know the address and
     port of each bot you wish to link.
 
-    Here is an example senario:
+    Here is an example scenario:
 
       BotA is on lame.org listening on port 3333, and BotB is on irc.org
       listening on port 4444. First, you have to add each Bot to the other's
