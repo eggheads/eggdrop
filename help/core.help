@@ -1,140 +1,148 @@
-%{help=common}%{+o|o}
-###  %b(the +c 'common' flag)%b
-   Sometimes a lot of people use irc from the same account, i.e.
-   example, a public telnet site.  In that case, many people can
-   have the same user@host.  For that reason, they can't use a
-   traditional user record because they will appear to all be
-   the same person.
-
-   In such cases, create a user record for the account, and mark
-   it +c, or "common access".  Marking it as "common access" means
-   that it shouldn't be used as a definitive address.  When someone
-   introduces themselves to the bot (i.e., by /msg'ing "hello")and matches
-   as a +c user, they will be given a new user record which identifies
-   them BY NICKNAME.
-
-   Obviously people with that kind of user record shouldn't be given
-   much special access, as when they change nicknames the bot
-   will identify them as someone else.
 %{help=help}
 DCC COMMANDS for %B, %V:
 %b  who          away         quit         whom         me%b
-%b  whois        page         match        motd         bots%b
-%b  addlog       newpass      console      chat         handle%b
-%b  echo         strip        su           trace        fixcodes%b
-%b  info         bottree      botinfo      relay%b
+%b  page         match        motd         bots         newpass%b
+%b  chat         handle       whoami       echo         strip%b
+%b  su           trace        fixcodes     bottree      vbottree%b
+%b  botinfo      relay        -host%b
+%{o|o}
+For ops:
+%b  addlog       console      match        whois%b
 %{+t}
 For botnet masters:
 %b  +bot         botattr      chhandle     chpass       +host%b
-%b  -bot         link         chaddr       boot         -host%b
-%b  unlink%b
+%b  -bot         link         chaddr       boot         %b
+%b  unlink       banner       dccstat%b
 %{+m|m}
 For masters:
 %b  chattr       save         backup       reload       status%b
-%b  traffic%b
+%b  traffic      uptime%b
 %{+m}
 %b  +user        +ignore      comment      binds        ignores%b
-%b  -user        -ignore      dccstat      debug        banner%b
-%b  rehash       restart      uptime       clearqueue%b
+%b  -user        -ignore      dccstat      debug        rehash%b
+%b  restart      module%b
 %{+n}
 For owners:
-%b  die          simul        module       loadmod      unloadmod%b
+%b  die          simul        loadmod      unloadmod    language%b
 %b  set          tcl          rehelp       modules      +lang%b
 %b  -lang        +lsec        -lsec        lstat        relang%b
+%b  ldump%b
 %{-}
-All commands begin with '.' and all else goes to the party line.
+All commands begin with '.', and all else goes to the party line.
 %{+m}Text starting with ',' is sent ONLY to bot-masters.%{end}
 You can get help on individual commands: %b'.help <command>'%b
 Extra help relating to loaded modules may be obtained by typing
-%b'.help <module> module'%b, possible modules include
-  %bassoc%b  %bchannels%b  %bconsole%b  %bctcp%b    %btransfer%b
-  %birc%b    %bnotes%b     %bseen%b     %bserver%b  %bshare%b
-These are distributed with the bot, and they may be loaded, others can
-be added also. You may receive a list of cmds in all loaded modules by
-using %b'.help all'%b.
-If you only remember a part of the command's name you are searching
-for, just use wildcards (e.g. %b'.help *bot*'%b) and all matching help
-texts will be displayed.
+%b'.help <module> module'%b. Possible modules include:
+%b  assoc        channels     console      transfer     irc%b
+%b  filesys      notes        seen         server       share%b
+You may receive a list of commands provided by all loaded modules by
+using %b'.help all'%b. If you only remember a part of the command's
+name you are searching for, just use wildcards (e.g. %b'.help *bot*'%b),
+and all matching help texts will be displayed.
+%{help=partyline}
+%B party-line commands:
+  %b.quit%b              Use this command to leave the party line.
+  %b.whom%b [channel]    Shows a list of all users on the party line, or on a
+                     particular channel.
+  %b.whom *%b            Shows a list of all users, indicating which ones are
+                     on the party line.
+  %b.chat%b <channel>    Makes you leave the main partyline channel and join a
+                     specific channel (valid channels are 1 to 99999, channel 0
+                     is the party line).
+  %b.me%b <action>       Preform an action to the party line.
+  %b.handle%b <handle>   Changes your nick on party line.
+  %b.help%b <command>    Shows more help on a specific command.
+The following commands are also available:
+%b  who          away         quit          page        match%b
+%b  motd         bots         newpass       whoami      echo%b
+%b  strip        su           trace        fixcodes     bottree%b
+%b  vbottree     botinfo      relay        -host%b
+Anything you type that doesn't begin with a '.' goes out to everyone on the
+party line.
+%{help=common}%{+o|o}
+###  %bcommon (the +c 'common' flag)%b
+   Sometimes a lot of people use IRC from the same account, for example, a
+   public telnet site, where many people can have the same user@host. For
+   that reason, they can't use a traditional user record because they will
+   appear to all be the same user.
+
+   In such cases, create a user record for the account, and set it +c, or
+   "common access", via the chanset command. Marking it as "common access"
+   means that it shouldn't be used as a definitive address. When someone
+   introduces themselves to the bot (i.e., by /msg "hello") and matches
+   as a +c user, they will be given a new user record which identifies them
+   BY NICKNAME.
+
+   Obviously, people with that kind of user record shouldn't be given much
+   special access, as when they change nicknames the bot will identify them
+   as someone else.
+
+See also: chattr, whois
 %{help=+lang}%{+n}
 ###  %b+lang%b <language>
-   Adds a new language to the top of the language list. All sections
-   are rechecked to test if there are language files supporting the language.
+   Adds a new language to the top of the language list. All sections are
+   rechecked to test if there are language files supporting the language.
 
 See also: -lang, +lsec, -lsec, lstat, relang
 %{help=-lang}%{+n}
 ###  %b-lang%b <language>
-   Removes a language from the language list. All sections are checked if
-   they are using the language and if so, try to load the next available
-   language instead.
+   Removes a language from the language list. If possible, the next available
+   language will be loaded.
 
 See also: +lang, +lsec, -lsec, lstat, relang
 %{help=+lsec}%{+n}
 ###  %b+lsec%b <section>
-   Adds a new section. The bot tries to load the section with the preferred
-   language if possible.
+   Adds a new language section. The bot tries to load the section with the
+   preferred language if possible.
 
-See also: +lang, -lang, -lsec, lstat, relang
+See also: -lang, +lang, -lsec, lstat, relang
 %{help=-lsec}%{+n}
 ###  %b-lsec%b <section>
-   Removes a section. The language bindings are not removed though.
+   Removes a language section. The language bindings are not removed, however.
 
 See also: +lang, -lang, +lsec, lstat, relang
 %{help=lstat}%{+n}
 ###  %blstat%b
-   Shows the language statistics, all selected languages and a list of all
+   Shows the language statistics: all selected languages and a list of all
    language sections.
 
 See also: +lang, -lang, +lsec, -lsec, relang
+%{help=ldump}%{+n}
+###  %bldump%b
+   Dumps all language data to the partyline.
+
+See also: +lang, -lang, +lsec, -lsec, relang, lstat
 %{help=relang}%{+n}
 ###  %brelang%b
    Try to find language files with a more preferred language than right now.
 
 See also: +lang, -lang, +lsec, -lsec, lstat
-
-%{help=helpparty}
-%B party-line commands:
-  %b.quit%b              leave the party line
-  %b.whom%b [channel]    show list of all users on the party line, or
-                        on a particular channel
-  %b.whom *%b            show list of all users, indicating which ones
-                        are on the party line
-  %b.chat%b <channel>    move to a channel (valid channels are 1 to 99999,
-                        channel 0 is the party line)
-  %b.me%b <action>       do an action on the party line
-  %b.note%b <who> <msg>  send a private note to someone else on the
-                        party line
-  %b.handle%b <handle>   changes nick on party line
-  %b.help%b <command>    get more help on a specific command
-The following commands are also available:
-%b   bots      newpass   email     who       echo   %b
-%b   info      away      back      strip     trace%b
-%b   page      su        fixcodes  motd      whom%b
-%b%{+x}   files%{-}%b
-Anything you type that doesn't begin with a '.' goes out to
-everyone on the party line.
 %{help=tcl}%{+n}
 ###  %btcl%b <command>
-   executes the command using Tcl.
+   Executes the specified Tcl command.
 
-   See doc/tcl-commands.doc for details on Tcl commands added to eggdrop
-   and visit http://tcl.activestate.com/ for more information on Tcl.
+   See doc/tcl-commands.doc for details on Tcl commands added to Eggdrop, and
+   visit http://tcl.activestate.com/ for more information on Tcl.
 %{help=set}%{+n}
 ###  %bset%b <variable> [value]
-   changes the values of internal settings of the bot, or, if used
-   without a value parameter, shows the current value of a setting.
-   the bot starts out with settings as given in the configuration
-   file.  here are the variables eggdrop cares about:
+   Changes the values of config-file settings of the bot, or, if used without
+   a value parameter, shows the current value of a setting. Any config file
+   setting changed with this command will be reset when the config file is
+   reloaded. Here are the variables that can be modified with this command
+   (note that other modules can add variables):
 %{cols=4}
 botnet-nick
 userfile
 motd
+paranoid-telnet-flood
+my-ip
 telnet-banner
 admin
+use-telnet-banner
 temp-path
 notify-newusers
 owner
 my-hostname
-my-ip
 nat-ip
 dcc-sanitycheck
 network
@@ -143,21 +151,18 @@ username
 version
 firewall
 telnet-flood
-paranoid-telnet-flood
 ignore-time
 dcc-flood-thr
 hourly-updates
-switch-logfiles-at
 connect-timeout
 resolve-timeout
 dupwait-timeout
-reserved-portrange
 require-p
 keep-all-logs
 open-telnets
 stealth-telnets
-use-telnet-banner
 handlen
+reserved-portrange
 console
 default-flags
 log-time
@@ -176,32 +181,37 @@ ident-timeout
 share-unlinks
 allow-dk-cmds
 userfile-perm
+switch-logfiles-at
 %{end}
-   use %b'.help set <variable>'%b for more info on each variable.
+   Use %b'.help set <variable>'%b for more info on each variable.
 %{+n}
 %{help=all}
 ###  %bcore%b commands
-%b  who          away         quit         whom         me%b
-%b  whois        page         match        motd         bots%b
-%b  addlog       newpass      console      chat         handle%b
-%b  echo         strip        su           trace        fixcodes%b
-%b  bottree      botinfo      relay%b
+     %bwho          away         quit         whom         me%b
+     %bpage         match        motd         bots         newpass%b
+     %bchat         handle       whoami       echo         strip%b
+     %bsu           trace        fixcodes     bottree      vbottree%b
+     %bbotinfo      relay        -host%b
+%{o|o}
+   For ops:
+     %baddlog       console      match        whois%b
 %{+t}
-For botnet masters:
-%b  +bot         botattr      chhandle     chpass       +host%b
-%b  -bot         link         chaddr       boot         -host%b
-%b  unlink%b
+   For botnet masters:
+     %b+bot         botattr      chhandle     chpass       +host%b
+     %b-bot         link         chaddr       boot         %b
+     %bunlink       banner       dccstat%b
 %{+m|m}
-For masters:
-%b  chattr       save         backup       reload       status%b
-%b  traffic%b
+   For masters:
+     %bchattr       save         backup       reload       status%b
+     %btraffic      uptime%b
 %{+m}
-%b  +user        +ignore      comment      binds        ignores%b
-%b  -user        -ignore      dccstat      debug        banner%b
-%b  rehash       restart      uptime       clearqueue%b
+     %b+user        +ignore      comment      binds        ignores%b
+     %b-user        -ignore      dccstat      debug        rehash%b
+     %brestart      module%b
 %{+n}
-For owners:
-%b  die          simul        module       loadmod      unloadmod%b
-%b  set          tcl          rehelp       modules      +lang%b
-%b  -lang        +lsec        -lsec        lstat        relang%b
+   For owners:
+     %bdie          simul        loadmod      unloadmod    language%b
+     %bset          tcl          rehelp       modules      +lang%b
+     %b-lang        +lsec        -lsec        lstat        relang%b
+     %bldump%b
 %{-}

@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  *
- * $Id: cmds.c,v 1.91 2003/02/02 10:19:33 wcc Exp $
+ * $Id: cmds.c,v 1.92 2003/02/04 10:21:03 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -465,7 +465,7 @@ static void cmd_help(struct userrec *u, int idx, char *par)
     if (glob_op(fr) || glob_botmast(fr) || chan_op(fr))
       tellhelp(idx, "help", &fr, 0);
     else
-      tellhelp(idx, "helpparty", &fr, 0);
+      tellhelp(idx, "partyline", &fr, 0);
   }
 }
 
@@ -2735,7 +2735,7 @@ static void cmd_whoami(struct userrec *u, int idx, char *par)
  */
 cmd_t C_dcc[] = {
   {"+bot",      "t",    (Function) cmd_pls_bot,    NULL},
-  {"+host",     "tm|m", (Function) cmd_pls_host,   NULL},
+  {"+host",     "t|m",  (Function) cmd_pls_host,   NULL},
   {"+ignore",   "m",    (Function) cmd_pls_ignore, NULL},
   {"+user",     "m",    (Function) cmd_pls_user,   NULL},
   {"-bot",      "t",    (Function) cmd_mns_user,   NULL},

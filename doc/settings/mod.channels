@@ -1,13 +1,13 @@
 Channels Module
-Last revised: February 28, 2002
+Last revised: February 04, 2003
      _________________________________________________________________
 
                              Channels Module
 
 
-This module provides channel related support for the bot. Without it,
-you won't be able to make the bot join a channel or save channel
-specific userfile information.
+This module provides channel related support for the bot. Without it, you
+won't be able to make the bot join a channel or save channel specific userfile
+information.
 
 This module requires: none
 
@@ -20,31 +20,6 @@ There are also some variables you can set in your config file:
 
   set chanfile "LamestBot.chan"
     Enter here the filename where dynamic channel settings are stored.
-
-
-  set ban-time 120
-    Set here how long temporary bans will last (in minutes). If you
-    set this setting to 0, the bot will never remove them.
-
-
-  set exempt-time 60
-    Set here how long temporary exempts will last (in minutes). If you
-    set this setting to 0, the bot will never remove them. The bot will
-    check the exempts every X minutes, but will not remove the exempt if
-    a ban is set on the channel that matches that exempt. Once the ban is
-    removed, then the exempt will be removed the next time the bot checks.
-
-    Please note that this is an IRCnet feature.
-
-
-  set invite-time 60
-    Set here how long temporary invites will last (in minutes). If you
-    set this setting to 0, the bot will never remove them.
-    The bot will check the invites every X minutes, but will not remove
-    the invite if a channel is set to +i. Once the channel is -i, then
-    the invite will be removed the next time the bot checks.
-
-    Please note that this is an IRCnet feature.
 
 
   set force-expire 0

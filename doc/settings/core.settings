@@ -23,7 +23,7 @@ Example:
 #! /path/to/eggdrop
 
 
-##### BASIC STUFF #####
+##### BASIC SETTINGS #####
 
 You can change the basic Eggdrop appearance and behavior in this section.
 
@@ -108,6 +108,13 @@ the logfile of the next day.
     the CPU usage of your bot (on the other hand it will decrease your RAM
     usage).
 
+  set raw-log 0
+    This setting allows you the logging of raw incoming server traffic via
+    console/log flag 'r', raw outgoing server traffic via console/log mode 'v',
+    raw botnet traffic via console/log mode 't', and raw share traffic via
+    console/log mode 'h'. These flags can create a large security hole,
+    allowing people to see user passwords. This is now restricted to +n users
+    only. Please choose your owners with care.
 
 logfile <logflags> <channel> "logs/logfile"
     This setting tells the bot what should be logged, from where, and to
@@ -256,7 +263,7 @@ logfile <logflags> <channel> "logs/logfile"
 
 
 
-##### BOTNET, DCC AND NETWORK #####
+##### BOTNET/DCC/TELNET #####
 
 Settings in this section should be unimportant for you until you deal with
 botnets (multiple Eggdrops connected together to maximize efficiency). You 

@@ -10,7 +10,7 @@
 # Tothwolf  06Oct1999: optimized
 # rtc       10Oct1999: added [set|get][dn|up]loads functions
 #
-# $Id: compat.tcl,v 1.9 2003/01/15 01:03:04 wcc Exp $
+# $Id: compat.tcl,v 1.10 2003/02/04 10:21:03 wcc Exp $
 
 proc gethosts {hand} {
   getuser $hand HOSTS
@@ -106,12 +106,6 @@ proc getuploads {hand} {
 # as you can see it takes a lot of effort to simulate all the old commands
 # and adapting your scripts will take such an effort you better include
 # this file forever and a day :D
-
-# the following section is for all those old guys who are since '96 in touch
-# and can't get used to new command names which make things more logical for newbies
-
-bind dcc - nick *dcc:handle
-bind dcc t chnick *dcc:chhandle
 
 # Following are some TCL global variables that are obsolete now and have been removed
 # but are still defined here so not to break older scripts
