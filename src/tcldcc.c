@@ -2,7 +2,7 @@
  * tcldcc.c -- handles:
  *   Tcl stubs for the dcc commands
  *
- * $Id: tcldcc.c,v 1.54 2004/07/05 21:42:39 wcc Exp $
+ * $Id: tcldcc.c,v 1.55 2004/08/12 06:49:58 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -125,8 +125,9 @@ static int tcl_dccsimul STDVAR
       dcc[idx].type->activity(idx, argv[2], l);
       return TCL_OK;
     }
-  } else
-      Tcl_AppendResult(irp, "invalid idx", NULL);
+  } else {
+    Tcl_AppendResult(irp, "invalid idx", NULL);
+  }
   return TCL_ERROR;
 }
 
