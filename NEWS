@@ -37,7 +37,7 @@ Changes made to Eggdrop 1.5.xx from Eggdrop1.4.xx
      This new channel setting replaces the old 'allow-desync' setting
      from global to channel functionality. This setting is usefull if
      you use some kind of chanserv or if you don't care about your
-     channel being desnych.
+     channel being desynch.
 
 ASYNCHRONOUS DNS MODULE
 
@@ -108,7 +108,7 @@ TCL COMMANDS
      * All three commands to add stuff to the queus (puthelp, putserv
        and putquick) support the '-next' parameter now which pushes
        data to the front of the queues.
-     * An command to calculate md5 checksums was added (md5).
+     * A command to calculate md5 checksums was added (md5).
      * To support the new asynch dns module, the command 'dnslookup'
        was added.
      * Four new commands regarding exempts/invites were added

@@ -45,9 +45,9 @@ The list of modules compiled is adjustable by
 Next do one of two things to load the module:
 
    from the partyline (as an owner) type:
-      .loadmodule <module-name>
+      .loadmod <module-name>
    or in a tcl script:
-      loadmodule <module-name>
+      loadmod <module-name>
       
    module-name is the part BEFORE .so, eg filesys.so module 
    you type '.loadmodule filesys'.
@@ -56,7 +56,7 @@ Normally you will want to add the loadmodule statement to your
 bot's configuration file instead of typing it every time the bot
 start.
 
-To see your currently running modules type '.modules'.
+To see your currently running modules type '.module'.
 
 
 IV.   CURRENT MODULES
@@ -122,7 +122,7 @@ Note: This is for a simple module of 1 source file, if you're doing a
        (i)   #define MODULE_NAME "module-name"
 
            You MUST use this, it's required by several short cuts in the
-	   code, it's gotta be the name you will be using in .loadmodule
+	   code, it's gotta be the name you will be using in .loadmod
 
        (ii)  #define MAKING_MODULENAME
            You MUST also include this, or else the module won't work. 
@@ -210,9 +210,9 @@ drastically reduce the size of modules on decent systems.
 	    
        (v) static void MODULE_report (int idx) 
             this should provide a relatively short report of module status
-	    (for .modules/.status)
+	    (for .module/.status)
 	    
-   (c) AVALIABLE FUNCTIONS - this is what ppl want no? :)
+   (c) AVAILABLE FUNCTIONS - this is what ppl want no? :)
        (i) reliable ones, you can RELY on these functions being available,
            they may move in the tables for the moment (since it's a work
 	   in progress) but they will be there...
