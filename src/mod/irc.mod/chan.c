@@ -230,8 +230,7 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
     case FLOOD_NICK:
       simple_sprintf(h, "*!*@%s", p);
       if (!isbanned(chan, h) && me_op(chan)) {
-/*      add_mode(chan, '-', 'o', splitnick(&from));
-        m->flags |= SENTDEOP;                       */  /* useless - arthur2 */
+/*      add_mode(chan, '-', 'o', splitnick(&from)); */  /* useless - arthur2 */
         do_mask(chan, chan->channel.ban, h, 'b');
       }
       if ((u_match_mask(global_bans, from))
@@ -364,11 +363,8 @@ static void refresh_ban_kick(struct chanset_t *chan, char *user, char *nick)
       if (wild_match(u->mask, user)) {
 	m = ismember(chan, nick);
 	get_user_flagrec(m->user, &fr, chan->name);
-	if (m && chan_hasop(m) &&
-	    !glob_friend(fr) && !chan_friend(fr)) {
+	if (!glob_friend(fr) && !chan_friend(fr))
 	  add_mode(chan, '-', 'o', nick);	/* guess it can't hurt */
-	  m->flags |= SENTDEOP;
-        }
         do_mask(chan, chan->channel.ban, u->mask, 'b');
 	c[0] = 0;
 	if (u->desc && (u->desc[0] != '@')) {
@@ -567,7 +563,6 @@ static void recheck_channel(struct chanset_t *chan, int dobans)
 	    (glob_deop(fr) && !chan_op(fr))) {
 	  /* de-op! */
 	  add_mode(chan, '-', 'o', m->nick);
-	  m->flags |= SENTDEOP;
 	/* if channel mode is bitch */
 	} else if (channel_bitch(chan) &&
 	  /* AND the user isnt a channel op */
@@ -576,7 +571,6 @@ static void recheck_channel(struct chanset_t *chan, int dobans)
 		  !(glob_op(fr) && !chan_deop(fr)))) {
 	  /* de-op! mmmbop! */
 	  add_mode(chan, '-', 'o', m->nick);
-	  m->flags |= SENTDEOP;
 	    }
       }
       /* now lets look at de-op'd ppl */
@@ -587,7 +581,6 @@ static void recheck_channel(struct chanset_t *chan, int dobans)
 	  (channel_autoop(chan) || (glob_autoop(fr) || chan_autoop(fr)))) {
 	/* op them! */
 	add_mode(chan, '+', 'o', m->nick);
-	m->flags |= SENTOP;
       }
       /* now lets check 'em vs bans */
       /* if we're enforcing bans */
@@ -617,14 +610,12 @@ static void recheck_channel(struct chanset_t *chan, int dobans)
 	    (chan_voice(fr) || glob_voice(fr))) || 
 	    (!chan_quiet(fr) && (glob_gvoice(fr) || chan_gvoice(fr)))) {
 	  add_mode(chan, '+', 'v', m->nick);
-	  m->flags |= SENTVOICE;
 	  }
 	/* do they have a voice on the channel */
 	if (chan_hasvoice(m) &&
 	/* do they have the +q & no +v */
 	    (chan_quiet(fr) || (glob_quiet(fr) && !chan_voice(fr)))) {
 	  add_mode(chan, '-', 'v', m->nick);
-	   m->flags |= SENTDEVOICE;
 	   }
       }
     }
@@ -817,7 +808,6 @@ static int got352or4(struct chanset_t *chan, char *user, char *host,
   /* and of course it's not me */
       !match_my_nick(nick)) {
     add_mode(chan, '-', 'o', nick);
-    m->flags |= SENTDEOP;
   }
   /* if channel is enforce bans */
   if (channel_enforcebans(chan) &&
@@ -1382,7 +1372,6 @@ static int gotjoin(char *from, char *chname)
 	     || glob_autoop(fr) || chan_autoop(fr))) {
 	  /* give them a special surprise */
 	  add_mode(chan, '+', 'o', nick);
-	  m->flags |= SENTOP;
 	  /* also prevent +stopnethack automatically de-opping them */
 	  m->flags |= WASOP;
 	}
@@ -1457,7 +1446,6 @@ static int gotjoin(char *from, char *chname)
 		(channel_autoop(chan) || glob_autoop(fr) || chan_autoop(fr))) {
 	      /* yes! do the honors */
 	      add_mode(chan, '+', 'o', nick);
-	      m->flags |= SENTOP;
 	      m->flags |= WASOP;	/* nethack sanity */
 	      /* if it matches a ban, dispose of them */
 	    } else {
@@ -1477,7 +1465,6 @@ static int gotjoin(char *from, char *chname)
 		 (chan_voice(fr) || (glob_voice(fr) && !chan_quiet(fr)))) ||
 		 ((glob_gvoice(fr) || chan_gvoice(fr)) && !chan_quiet(fr))) {
 		add_mode(chan, '+', 'v', nick);
-		m->flags |= SENTVOICE;
 		 }
 	    }
 	  }

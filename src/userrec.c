@@ -532,7 +532,7 @@ void write_userfile(int idx)
   context;
   unlink(userfile);
   sprintf(s, "%s~new", userfile);
-  rename(s, userfile);
+  movefile(s, userfile);
 }
 
 int change_handle(struct userrec *u, char *newh)

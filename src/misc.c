@@ -298,11 +298,19 @@ int copyfile(char *oldpath, char *newpath)
 
 int movefile(char *oldpath, char *newpath)
 {
-  int x = copyfile(oldpath, newpath);
+  int ret;
+  
+#ifdef HAVE_RENAME
+  /* try to use rename first */
+  if (rename(oldpath, newpath) == 0)
+    return 0;
+#endif /* HAVE_RENAME */
 
-  if (x == 0)
+  /* if that fails, fall back to copying the file */
+  ret = copyfile(oldpath, newpath);
+  if (ret == 0)
     unlink(oldpath);
-  return x;
+  return ret;
 }
 
 /* dump a potentially super-long string of text */
@@ -563,7 +571,7 @@ void check_logsize()
  * if (stat(buf,&ss) == -1) { 
  * * file doesnt exist, lets use it *
  */
-	  rename(logs[i].filename, buf);
+	  movefile(logs[i].filename, buf);
 /* x=0;
  * }
  * } */

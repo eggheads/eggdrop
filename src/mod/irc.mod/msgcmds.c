@@ -165,7 +165,6 @@ static int msg_ident(char *nick, char *host, struct userrec *u, char *par)
   char s[121], s1[121], *pass, who[NICKLEN];
   struct userrec *u2;
   memberlist *mx;
-
   if (match_my_nick(nick))
     return 1;
   if (u && (u->flags & USER_BOT))
@@ -220,12 +219,12 @@ static int msg_ident(char *nick, char *host, struct userrec *u, char *par)
 	get_user_flagrec(u2, &fr, chan->name);
 	/* is the channel or the user marked auto-op? */
 	if ((channel_autoop(chan) || glob_autoop(fr) || chan_autoop(fr)) &&
-	(mx = ismember(chan, nick)) && !chan_hasop(mx) && !chan_sentop(mx) &&
-	/* are they actually validly +o ? */
-	    (chan_op(fr) || (glob_op(fr) && !chan_deop(fr)))) {
+           (mx = ismember(chan, nick)) && !chan_hasop(mx) && !chan_sentop(mx) &&	
+           /* are they actually validly +o ? */
+	   (chan_op(fr) || (glob_op(fr) && !chan_deop(fr)))) {
 	  add_mode(chan, '+', 'o', nick);
-	  mx->flags |= SENTOP;
-	}
+          mx->flags |= SENTOP;
+        }
 	chan = chan->next;
       }
       return 1;
@@ -581,7 +580,6 @@ static int msg_op(char *nick, char *host, struct userrec *u, char *par)
   char *pass;
   struct flag_record fr =
   {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
-  memberlist *mx;
 
   if (match_my_nick(nick))
     return 1;
@@ -593,26 +591,18 @@ static int msg_op(char *nick, char *host, struct userrec *u, char *par)
 	chan = findchan(par);
 	if (chan && channel_active(chan)) {
 	  get_user_flagrec(u, &fr, par);
-	  if (hand_on_chan(chan, u) && (mx = ismember(chan, nick)) &&
-	      !chan_hasop(mx) &&
-	      (chan_op(fr) || (glob_op(fr) && !chan_deop(fr)))) {
+	  if (chan_op(fr) || (glob_op(fr) && !chan_deop(fr)))
 	    add_mode(chan, '+', 'o', nick);
-	    mx->flags |= SENTOP;
 	    putlog(LOG_CMDS, "*", "(%s!%s) !%s! OP %s",
 		   nick, host, u->handle, par);
-	  }
 	  return 1;
 	}
       } else {
 	chan = chanset;
 	while (chan != NULL) {
 	  get_user_flagrec(u, &fr, chan->name);
-	  if (hand_on_chan(chan, u) && (mx = ismember(chan, nick)) &&
-	      !chan_hasop(mx) &&
-	      (chan_op(fr) || (glob_op(fr) && !chan_deop(fr)))) {
+	  if (chan_op(fr) || (glob_op(fr) && !chan_deop(fr)))
 	    add_mode(chan, '+', 'o', nick);
-	    mx->flags |= SENTOP;
-	  }
 	  chan = chan->next;
 	}
 	putlog(LOG_CMDS, "*", "(%s!%s) !%s! OP", nick, host, u->handle);
@@ -680,7 +670,6 @@ static int msg_voice(char *nick, char *host, struct userrec *u, char *par)
   char *pass;
   struct flag_record fr =
   {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
-  memberlist *mx;
 
   if (match_my_nick(nick))
     return 1;
@@ -691,26 +680,18 @@ static int msg_voice(char *nick, char *host, struct userrec *u, char *par)
 	chan = findchan(par);
 	if (chan && channel_active(chan)) {
 	  get_user_flagrec(u, &fr, par);
-	  if (hand_on_chan(chan, u) && (mx = ismember(chan, nick)) &&
-	      !chan_hasvoice(mx) &&
-	      (chan_voice(fr) || (glob_voice(fr)))) {
+	  if (chan_voice(fr) || glob_voice(fr))
 	    add_mode(chan, '+', 'v', nick);
-	    mx->flags |= SENTVOICE;
 	    putlog(LOG_CMDS, "*", "(%s!%s) !%s! VOICE %s",
 		   nick, host, u->handle, par);
-	  }
 	  return 1;
 	}
       } else {
 	chan = chanset;
 	while (chan != NULL) {
 	  get_user_flagrec(u, &fr, chan->name);
-	  if (hand_on_chan(chan, u) && (mx = ismember(chan, nick)) &&
-	      !chan_hasvoice(mx) &&
-	      (chan_voice(fr) || (glob_voice(fr)))) {
+	  if (chan_voice(fr) || glob_voice(fr))
 	    add_mode(chan, '+', 'v', nick);
-	    mx->flags |= SENTVOICE;
-	  }
 	  chan = chan->next;
 	}
 	putlog(LOG_CMDS, "*", "(%s!%s) !%s! VOICE", nick, host, u->handle);

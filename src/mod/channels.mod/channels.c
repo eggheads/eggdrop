@@ -395,7 +395,7 @@ flood-kick %d:%d flood-deop %d:%d ",
   }
   fclose(f);
   unlink(chanfile);
-  rename(s, chanfile);
+  movefile(s, chanfile);
 }
 
 static void read_channels(int create)
@@ -610,9 +610,9 @@ static int expmem_masklist(masklist *m)
         
   while (m) {
     result += sizeof(masklist);
-    if (m->mask && m->mask[0])
+    if (m->mask)
         result += strlen(m->mask) + 1;
-    if (m->who && m->who[0])
+    if (m->who)
         result += strlen(m->who) + 1;
     
     m = m->next;

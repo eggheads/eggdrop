@@ -132,7 +132,7 @@ static void notes_change(char *oldnick, char *newnick)
   fclose(g);
   unlink(notefile);
   sprintf(s, "%s~new", notefile);
-  rename(s, notefile);
+  movefile(s, notefile);
   putlog(LOG_MISC, "*", "Switched %d note%s from %s to %s.", tot,
 	 tot == 1 ? "" : "s", oldnick, newnick);
 }
@@ -182,7 +182,7 @@ static void expire_notes()
   fclose(g);
   unlink(notefile);
   sprintf(s, "%s~new", notefile);
-  rename(s, notefile);
+  movefile(s, notefile);
   if (tot > 0)
     putlog(LOG_MISC, "*", "Expired %d note%s", tot, tot == 1 ? "" : "s");
 }
@@ -411,7 +411,7 @@ static int tcl_erasenotes STDVAR
   fclose(g);
   unlink(notefile);
   sprintf(s, "%s~new", notefile);
-  rename(s, notefile);
+  movefile(s, notefile);
   return TCL_OK;
 }
 
@@ -614,7 +614,7 @@ static void notes_del(char *hand, char *nick, char *sdl, int idx)
   fclose(g);
   unlink(notefile);
   sprintf(s, "%s~new", notefile);
-  rename(s, notefile);
+  movefile(s, notefile);
   if ((er == 0) && (in > 1)) {
     if (idx >= 0)
       dprintf(idx, "%s.\n", BOT_NOTTHATMANY);

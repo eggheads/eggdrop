@@ -151,12 +151,32 @@ static void real_add_mode(struct chanset_t *chan,
   int i, type, ok, l;
   int bans, exempts, invites, modes;
   masklist *m;
+  memberlist *mx;
   char s[21];
   
   context;
 
   if (!me_op(chan))
     return;			/* no point in queueing the mode */
+  if (mode == 'o' || mode == 'v') {
+    if (!(mx = ismember(chan, op))) return;
+	if (plus == '-' && mode == 'o') {
+	  if ((mx->flags & SENTDEOP) || !chan_hasop(mx)) return;
+	  mx->flags |= SENTDEOP;
+	  }
+	if (plus == '+' && mode == 'o') {
+	  if ((mx->flags & SENTOP) || chan_hasop(mx)) return;
+	  mx->flags |= SENTOP;
+	  }
+	if (plus == '-' && mode == 'v') {
+	  if ((mx->flags & SENTDEVOICE) || !chan_hasvoice(mx)) return;
+	  mx->flags |= SENTDEVOICE;
+	  }
+	if (plus == '+' && mode == 'v') {
+	  if ((mx->flags & SENTVOICE) || chan_hasvoice(mx)) return;
+	  mx->flags |= SENTVOICE;
+	  }
+  }
   if (chan->compat == 0) {
      if (mode == 'e' || mode == 'I') chan->compat = 2;
      else chan->compat = 1;
@@ -323,8 +343,8 @@ static void got_op(struct chanset_t *chan, char *nick, char *from,
     check_chan = 1;
   /* I'm opped, and the opper isn't me */
   else if (me_op(chan) && !match_my_nick(who) &&
-    /* and deop hasn't been sent for this one and it isn't a server op */
-	   !chan_sentdeop(m) && nick[0]) {
+    /* and it isn't a server op */
+	   nick[0]) {
     /* Channis is +bitch, and the opper isn't a global master or a bot */
     if (channel_bitch(chan) && !(glob_master(*opper) || glob_bot(*opper)) &&
     /* and the *opper isn't a channel master */
@@ -332,32 +352,26 @@ static void got_op(struct chanset_t *chan, char *nick, char *from,
     /* and the oppee isn't global op/master/bot */
 	!(glob_op(victim) || glob_bot(victim)) &&
     /* and the oppee isn't a channel op/master */
-	!chan_op(victim)) {
+	!chan_op(victim))
       add_mode(chan, '-', 'o', who);
-      m->flags |= SENTDEOP;
       /* opped is channel +d or global +d */
-    } else if ((chan_deop(victim) ||
+    else if ((chan_deop(victim) ||
 		(glob_deop(victim) && !chan_op(victim))) &&
-	       !glob_master(*opper) && !chan_master(*opper)) {
+	       !glob_master(*opper) && !chan_master(*opper))
       add_mode(chan, '-', 'o', who);
-      m->flags |= SENTDEOP;
-    } else if (reversing) {
+    else if (reversing)
       add_mode(chan, '-', 'o', who);
-      m->flags |= SENTDEOP;
-    }
-  } else if (reversing && !chan_sentdeop(m) && !match_my_nick(who)) {
+  } else if (reversing && !match_my_nick(who))
     add_mode(chan, '-', 'o', who);
-    m->flags |= SENTDEOP;
-  }
   if ((chan_wasoptest(victim) || glob_wasoptest(victim) ||
       chan_autoop(victim) || glob_autoop(victim) ||
       channel_autoop(chan) ||	/* drummer */
       channel_wasoptest(chan)) && !match_my_nick(who)) {
     /* 1.3.21 behavior: wasop test needed for stopnethack */
-    if (!nick[0] && !chan_wasop(m) && !chan_sentdeop(m) &&
+    if (!nick[0] && !chan_wasop(m) &&
 	me_op(chan) && channel_stopnethack(chan)) {
       add_mode(chan, '-', 'o', who);
-      m->flags |= (FAKEOP | SENTDEOP);
+      m->flags |= FAKEOP;
     } else {
       m->flags &= ~FAKEOP;
     }
@@ -365,10 +379,9 @@ static void got_op(struct chanset_t *chan, char *nick, char *from,
 				 * for stopnethack */
     if (!nick[0] &&
 	!(chan_op(victim) || (glob_op(victim) && !chan_deop(victim))) &&
-	!chan_sentdeop(m) && me_op(chan) &&
-	channel_stopnethack(chan)) {
+	me_op(chan) && channel_stopnethack(chan)) {
       add_mode(chan, '-', 'o', who);
-      m->flags |= (FAKEOP | SENTDEOP);
+      m->flags |= FAKEOP;
     } else {
       m->flags &= ~FAKEOP;
     }
@@ -425,16 +438,11 @@ static void got_deop(struct chanset_t *chan, char *nick, char *from,
       /* and the users a valid friend */
              (chan_friend(victim) || (glob_friend(victim) && !chan_deop(victim))))) &&
       /* and provided the users not a de-op */
-       !(chan_deop(victim) || (glob_deop(victim) && !chan_op(victim))) &&
-      /* and we havent sent it already */
-	  !chan_sentop(m)) {
+       !(chan_deop(victim) || (glob_deop(victim) && !chan_op(victim))))
 	/* then we'll bless them */
 	add_mode(chan, '+', 'o', who);
-	m->flags |= SENTOP;
-      } else if (reversing) {
+      else if (reversing)
 	add_mode(chan, '+', 'o', who);
-	m->flags |= SENTOP;
-      }
     }
   }
 
@@ -452,12 +460,11 @@ static void got_deop(struct chanset_t *chan, char *nick, char *from,
   }
   /* was the bot deopped? */
   if (match_my_nick(who)) {
-    /* cancel any pending kicks.  Ernst 18/3/1998 */
+    /* cancel any pending kicks and modes */
     memberlist *m2 = chan->channel.member;
 
     while (m2->nick[0]) {
-      if (chan_sentkick(m))
-	m2->flags &= ~SENTKICK;
+	m2->flags &= ~(SENTKICK | SENTDEOP | SENTOP | SENTVOICE | SENTDEVOICE);
       m2 = m2->next;
     }
     if (chan->need_op[0])
@@ -1087,10 +1094,8 @@ static void gotmode(char *from, char *msg)
 		    (chan_quiet(victim) ||
 		     (glob_quiet(victim) && !chan_voice(victim)))) {
 		  add_mode(chan, '-', 'v', op);
-		  m->flags |= SENTDEVOICE;
 		} else if (reversing) {
 		  add_mode(chan, '-', 'v', op);
-		  m->flags |= SENTDEVOICE;
 		   }
 	      }
 	    } else {
@@ -1102,10 +1107,8 @@ static void gotmode(char *from, char *msg)
 		    (!chan_quiet(victim) && 
 		    (glob_gvoice(victim) || chan_gvoice(victim)))) {
 		  add_mode(chan, '+', 'v', op);
-		  m->flags |= SENTVOICE;
 		} else if (reversing) {
 		  add_mode(chan, '+', 'v', op);
-		  m->flags |= SENTVOICE;
 		 }
 	      }
 	    }

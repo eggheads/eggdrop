@@ -5,6 +5,13 @@ Changes in eggdrop: (since v1.3.0)
 
 1.3.29
 Foundby   Fixedby   What....
+DVS01     guppy     added a timestamp value to the end of tcl_dcclist
+          Fabian    fixed memory accounting problem in the channels module
+mho	  Fabian    rename doesn't handle cross-filesystem moves. Enhanced
+		    movefile to do so now.
+	  Fabian    when compiling, EBUG_MEM gets passed to the modules now
+          Eule      read first channel-modes, before who-list
+          Eule      sentmodememberlistflags now in real_add_mode
 	  Fabian    fixed memory accounting error related to info fields.
 	  G`Quann   Fixes a clearqueue option typo (server and not serv).
           Cybah     Removed over 450 lines of code by unifying most of the

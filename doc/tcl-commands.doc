@@ -656,13 +656,14 @@ specific commands, see later.
   dccused
     returns: number of dcc connections currently in use
 
-  dcclist
-    returns: list of active dcc connections that are in the chat area, the
-      file area, or a script; each item in the list will be a sublist with
-      four elements: idx, nickname, hostname, and type; type will be "chat",
-      "files", "bot", "file_receiving", "file_sending", "file_send_pending",
-      or "script" (or "socket" for connections that haven't been put under
-|     'control' yet) or any new dcc type that gets added.
+|  dcclist ?type?
+    returns: a list of active connections, each item in the list will be a sublist
+|     of six elements:
+|	{<idx> <handle> <hostname> <type> {<other>} <timestamp>}
+
+      the types are: chat, bot, files, file_receiving, file_sending,
+      file_send_pending, script, socket (these are connections that have not
+      yet been put under 'control'), telnet, and server.
 
   whom <chan>
     returns: list of people on the botnet who are on that channel (0 is

@@ -380,7 +380,7 @@ static void eof_dcc_send(int idx)
     simple_sprintf(ofn, "%s%s", tempdir, dcc[idx].u.xfer->filename);
     simple_sprintf(nfn, "%s%s", dcc[idx].u.xfer->dir,
 		   dcc[idx].u.xfer->filename);
-    if (rename(ofn, nfn))
+    if (movefile(ofn, nfn))
       putlog(LOG_MISC | LOG_FILES, "*",
 	     "FAILED move %s from %s ! File lost!",
 	     dcc[idx].u.xfer->filename, tempdir);

@@ -1258,7 +1258,7 @@ EOF
 
     ;;
   HP-UX)
-    echo "$ac_t""HP-UX" 1>&6
+    echo "$ac_t""HP-UX, just shoot yourself now" 1>&6
     echo $ac_n "checking for shl_load in -ldld""... $ac_c" 1>&6
 echo "configure:1264: checking for shl_load in -ldld" >&5
 ac_lib_var=`echo dld'_'shl_load | sed 'y%./+-%__p_%'`
@@ -1343,8 +1343,8 @@ EOF
   *)
     if test -r /mach
     then
-      echo "$ac_t""NeXT...We are borg" 1>&6
-      echo "$ac_t""break out the static modules" 1>&6
+      echo "$ac_t""NeXT...We are borg, you will be assimilated" 1>&6
+      echo "$ac_t""break out the static modules, it's all you'll ever get :P" 1>&6
       echo "$ac_t""Hiya DK :P" 1>&6
       cat >> confdefs.h <<\EOF
 #define BORGCUBES 1
@@ -1352,7 +1352,7 @@ EOF
 
     else
       echo "$ac_t""Something unknown!!" 1>&6
-      echo "$ac_t""If you get dynamic modules to work" 1>&6
+      echo "$ac_t""If you get dynamic modules to work, be sure to let the devel team know HOW :)" 1>&6
     fi
     need_dl=0
     DEFAULT_MAKE=static

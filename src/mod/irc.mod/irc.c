@@ -191,10 +191,8 @@ static void punish_badguy(struct chanset_t *chan, char *reason, char *whobad,
   }
   
   /* always try to deop the offender */
-  if (!mevictim && me_op(chan) && !chan_sentdeop(m)) {
+  if (!mevictim)
     add_mode(chan, '-', 'o', badnick);
-    m->flags |= SENTDEOP;
-  }
   /* ban (before kicking) */
   if (revenge_mode > 2) {
     char s[UHOSTLEN], s1[UHOSTLEN];
@@ -393,11 +391,11 @@ static void reset_chan_info(struct chanset_t *chan)
       dprintf(DP_MODE, "MODE %s +I\n", chan->name);
     }
     /* these 2 need to get out asap, so into the mode queue */
+    dprintf(DP_MODE, "MODE %s\n", chan->name);
     if (use_354)
       dprintf(DP_MODE, "WHO %s %%c%%h%%n%%u%%f\n", chan->name);
     else
       dprintf(DP_MODE, "WHO %s\n", chan->name);
-    dprintf(DP_MODE, "MODE %s\n", chan->name);
     /* this is not so critical, so slide it into the standard q */
     dprintf(DP_SERVER, "TOPIC %s\n", chan->name);
     /* clear_channel nuked the data...so */

@@ -91,10 +91,6 @@
 #endif
 #endif
 
-#if !HAVE_RENAME
-#define rename movefile
-#endif
-
 #if !HAVE_SRANDOM
 #define srandom(x) srand(x)
 #endif
