@@ -1,7 +1,7 @@
 /* 
  * share.c -- part of share.mod
  * 
- * $Id: share.c,v 1.37 2000/09/09 11:40:52 fabian Exp $
+ * $Id: share.c,v 1.38 2000/09/09 17:29:08 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -127,7 +127,8 @@ static void share_stick_ban(int idx, char *par)
 
 /* Same as share_stick_ban, only for exempts.
  */
-static void share_stick_exempt(int idx, char * par) {
+static void share_stick_exempt(int idx, char *par)
+{
   char *host, *val;
   int yn;
 
@@ -137,30 +138,30 @@ static void share_stick_exempt(int idx, char * par) {
     yn = atoi(val);
     noshare = 1;
     if (!par[0]) {		/* Global exempt */
-      if (u_setsticky_exempt(NULL,host, yn) > 0) {
+      if (u_setsticky_exempt(NULL, host, yn) > 0) {
 	putlog(LOG_CMDS, "*", "%s: stick %s %c", dcc[idx].nick, host,
 	       yn ? 'y' : 'n');
-	shareout_but(NULL,idx,"se %s %d\n", host, yn);
+	shareout_but(NULL, idx, "se %s %d\n", host, yn);
       }
     } else {
       struct chanset_t *chan = findchan_by_dname(par);
       struct chanuserrec * cr;
 
-      if ((chan !=NULL) && ((channel_shared(chan) &&
+      if ((chan != NULL) && ((channel_shared(chan) &&
                              ((cr = get_chanrec(dcc[idx].user, par)) &&
                               (cr->flags & BOT_AGGRESSIVE))) ||
                             (bot_flags(dcc[idx].user) & BOT_GLOBAL)))
 	if (u_setsticky_exempt(chan, host, yn) > 0) {
 	  putlog(LOG_CMDS, "*", "%s: stick %s %c %s", dcc[idx].nick, host,
 		 yn ? 'y' : 'n', par);
-	  shareout_but(chan,idx,"se %s %d %s\n", host, yn, chan->dname);
+	  shareout_but(chan, idx, "se %s %d %s\n", host, yn, chan->dname);
 	  noshare = 0;
 	  return;
 	}
-      putlog(LOG_CMDS,"*","Rejecting invalid sticky exempt: %s on %s, %c",
-	     host,par,yn?'y':'n');
+      putlog(LOG_CMDS, "*", "Rejecting invalid sticky exempt: %s on %s, %c",
+	     host, par, yn ? 'y' : 'n');
     }
-     noshare = 0;
+    noshare = 0;
   }
 }
 
@@ -176,28 +177,28 @@ static void share_stick_invite (int idx, char * par) {
     yn = atoi(val);
     noshare = 1;
     if (!par[0]) {		/* Global invite */
-      if (u_setsticky_invite(NULL,host, yn) > 0) {
+      if (u_setsticky_invite(NULL, host, yn) > 0) {
  	    putlog(LOG_CMDS, "*", "%s: stick %s %c", dcc[idx].nick, host,
  		   yn ? 'y' : 'n');
- 	    shareout_but(NULL,idx,"sInv %s %d\n", host, yn);
+ 	    shareout_but(NULL, idx, "sInv %s %d\n", host, yn);
       }
     } else {
       struct chanset_t *chan = findchan_by_dname(par);
       struct chanuserrec * cr;
 
-      if ((chan !=NULL) && ((channel_shared(chan) &&
+      if ((chan != NULL) && ((channel_shared(chan) &&
                              ((cr = get_chanrec(dcc[idx].user, par)) &&
                               (cr->flags & BOT_AGGRESSIVE))) ||
                             (bot_flags(dcc[idx].user) & BOT_GLOBAL)))
 	if (u_setsticky_invite(chan, host, yn) > 0) {
 	  putlog(LOG_CMDS, "*", "%s: stick %s %c %s", dcc[idx].nick, host,
 		 yn ? 'y' : 'n', par);
-	  shareout_but(chan,idx,"sInv %s %d %s\n", host, yn, chan->dname);
+	  shareout_but(chan, idx, "sInv %s %d %s\n", host, yn, chan->dname);
 	  noshare = 0;
 	  return;
 	}
-      putlog(LOG_CMDS,"*","Rejecting invalid sticky invite: %s on %s, %c",
-	     host,par,yn?'y':'n');
+      putlog(LOG_CMDS, "*", "Rejecting invalid sticky invite: %s on %s, %c",
+	     host, par, yn ? 'y' : 'n');
     }
     noshare = 0;
   }

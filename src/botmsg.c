@@ -5,7 +5,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: botmsg.c,v 1.14 2000/08/19 14:17:27 fabian Exp $
+ * $Id: botmsg.c,v 1.15 2000/09/09 17:29:07 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -47,8 +47,8 @@ void tandout_but EGG_VARARGS_DEF(int, arg1)
   int i, x, l;
   char *format;
   char s[601];
-
   va_list va;
+
   x = EGG_VARARGS_START(int, arg1, va);
   format = va_arg(va, char *);
 
@@ -140,8 +140,8 @@ int simple_sprintf EGG_VARARGS_DEF(char *,arg1)
 {
   char *buf, *format, *s;
   int c = 0, i;
-
   va_list va;
+
   buf = EGG_VARARGS_START(char *, arg1, va);
   format = va_arg(va, char *);
 
@@ -295,8 +295,8 @@ void botnet_send_priv EGG_VARARGS_DEF(int, arg1)
   int idx, l;
   char *from, *to, *tobot, *format;
   char tbuf[1024];
-
   va_list va;
+
   idx = EGG_VARARGS_START(int, arg1, va);
   from = va_arg(va, char *);
   to = va_arg(va, char *);

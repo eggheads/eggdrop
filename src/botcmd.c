@@ -3,7 +3,7 @@
  *   commands that comes across the botnet
  *   userfile transfer and update commands from sharebots
  * 
- * $Id: botcmd.c,v 1.16 2000/05/06 22:02:27 fabian Exp $
+ * $Id: botcmd.c,v 1.17 2000/09/09 17:29:07 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -316,25 +316,23 @@ static void remote_tell_who(int idx, char *nick, int chan)
 
   Context;
   strcpy(s, "Channels: ");
-  c = chanset;
-  while (c != NULL) {
+  for (c = chanset; c; c = c->next)
     if (!channel_secret(c)) {
       l = strlen(c->name);
       if (i + l < 1021) {
-	if (i > 10) {
-          sprintf(s,"%s, %s",s,c->name);
-	} else {
-          strcpy(s,c->name);
+	if (i > 10)
+          sprintf(s, "%s, %s", s, c->name);
+	else {
+          strcpy(s, c->name);
 	  i += (l + 2);
         }
       }
     }
-    c = c->next;
-  }
   if (i > 10) {
     botnet_send_priv(idx, botnetnick, nick, NULL, "%s  (%s)", s, ver);
   } else
-    botnet_send_priv(idx, botnetnick, nick, NULL, "%s  (%s)", BOT_NOCHANNELS, ver);
+    botnet_send_priv(idx, botnetnick, nick, NULL, "%s  (%s)", BOT_NOCHANNELS,
+		     ver);
   if (admin[0])
     botnet_send_priv(idx, botnetnick, nick, NULL, "Admin: %s", admin);
   if (chan == 0)

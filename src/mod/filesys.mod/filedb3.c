@@ -4,7 +4,7 @@
  * 
  * Rewritten by Fabian Knittel <fknittel@gmx.de>
  * 
- * $Id: filedb3.c,v 1.13 2000/08/06 14:51:38 fabian Exp $
+ * $Id: filedb3.c,v 1.14 2000/09/09 17:29:07 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -785,7 +785,7 @@ static FILE *filedb_open(char *path, int sort)
     if (convert_old_files(npath, s)) {
       fdb = fopen(s, "r+b");
       if (fdb == NULL) {
-	putlog(LOG_MISC, FILES_NOCONVERT, npath);
+	putlog(LOG_MISC, "*", FILES_NOCONVERT, npath);
 	my_free(s);
 	my_free(npath);
 	Context;

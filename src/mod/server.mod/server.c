@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  * 
- * $Id: server.c,v 1.51 2000/09/09 11:39:11 fabian Exp $
+ * $Id: server.c,v 1.52 2000/09/09 17:29:08 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -591,7 +591,7 @@ static void purge_kicks(struct msgq_head *q)
       while (strlen(nicks) > 0) {
         found = 0;
         nick = splitnicks(&nicks);
-        egg_snprintf(chans, sizeof chans, chan);
+        strncpyz(chans, chan, sizeof chans);
         chns = chans;
         while (strlen(chns) > 0) {
           ch = newsplit(&chns);

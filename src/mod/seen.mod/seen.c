@@ -10,7 +10,7 @@
  * 1.2     1997-08-20      Minor fixes. [BB]
  * 1.2a    1997-08-24      Minor fixes. [BB]
  * 
- * $Id: seen.c,v 1.16 2000/05/07 00:08:03 fabian Exp $
+ * $Id: seen.c,v 1.17 2000/09/09 17:29:08 fabian Exp $
  */
 /* 
  * Copyright (C) 1999, 2000  Eggheads
@@ -173,10 +173,8 @@ static void do_seen(int idx, char *prefix, char *nick, char *hand,
   object[0] = 0;
   /* Was ANYONE specified */
   if (!text[0]) {
-    sprintf(stuff,
-	    "%sUm, %s, it might help if you ask me about _someone_...\n",
+    dprintf(idx, "%sUm, %s, it might help if you ask me about _someone_...\n",
 	    prefix, nick);
-    dprintf(idx, stuff);
     return;
   }
   wordshift(word1, text);
@@ -229,7 +227,7 @@ static void do_seen(int idx, char *prefix, char *nick, char *hand,
       if (whotarget[0]) {
 	sprintf(whoredirect, "%s boyfriend is %s, and ",
 		fixnick(object), whotarget);
-	goto TARGETCONT;
+	goto targetcont;
       }
       dprintf(idx,
 	      "%sI don't know who %s boyfriend is, %s.\n",
@@ -241,7 +239,7 @@ static void do_seen(int idx, char *prefix, char *nick, char *hand,
       if (whotarget[0]) {
 	sprintf(whoredirect, "%s girlfriend is %s, and ",
 		fixnick(object), whotarget);
-	goto TARGETCONT;
+	goto targetcont;
       }
       dprintf(idx,
 	      "%sI don't know who %s girlfriend is, %s.\n",
@@ -337,16 +335,14 @@ static void do_seen(int idx, char *prefix, char *nick, char *hand,
   }
   /* Check for keyword match in the internal table */
   else if (match_trigger(word1)) {
-    sprintf(word2, "%s%s\n", prefix, match_trigger(word1));
-    dprintf(idx, word2, nick);
+    dprintf(idx, "%s%s\n", prefix, match_trigger(word1));
     return;
   }
   /* Otherwise, make the target to the first word and continue */
-  else {
+  else
     strcpy(whotarget, word1);
-  }
-  TARGETCONT:
-  Context;
+
+targetcont:
   /* Looking for ones own nick? */
   if (!rfc_casecmp(nick, whotarget)) {
     dprintf(idx, "%s%sLooking for yourself, eh %s?\n",

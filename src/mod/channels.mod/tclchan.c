@@ -1,7 +1,7 @@
 /* 
  * tclchan.c -- part of channels.mod
  * 
- * $Id: tclchan.c,v 1.31 2000/08/06 14:49:56 fabian Exp $
+ * $Id: tclchan.c,v 1.32 2000/09/09 17:29:07 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -867,11 +867,11 @@ static int tcl_channel_info(Tcl_Interp * irp, struct chanset_t *chan)
   while (ul) {
     if (ul->defined && ul->name) {
       if (ul->type == UDEF_FLAG) {
-        simple_sprintf(s,"%c%s", getudef(ul->values, chan->dname) ? '+' : '-',
+        simple_sprintf(s, "%c%s", getudef(ul->values, chan->dname) ? '+' : '-',
 		       ul->name);
         Tcl_AppendElement(irp, s);
       } else if (ul->type == UDEF_INT) {
-        simple_sprintf(s,"%s %d", ul->name, getudef(ul->values, chan->dname));
+        simple_sprintf(s, "%s %d", ul->name, getudef(ul->values, chan->dname));
         Tcl_AppendElement(irp, s);
       } else
         debug1("UDEF-ERROR: unknown type %d", ul->type);
