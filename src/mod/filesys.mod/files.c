@@ -2,7 +2,7 @@
  * files.c - part of filesys.mod
  *   handles all file system commands
  *
- * $Id: files.c,v 1.35 2003/02/03 08:15:11 stdarg Exp $
+ * $Id: files.c,v 1.36 2003/02/03 08:37:01 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -207,6 +207,7 @@ static int resolve_dir(char *current, char *change, char **real, int idx)
         /* Non-existent */
         my_free(elem);
         my_free(new);
+	my_free(s);
         //malloc_strcpy(*real, current);
         strcpy(*real, current);
         return 0;
@@ -216,6 +217,7 @@ static int resolve_dir(char *current, char *change, char **real, int idx)
         free_fdbe(&fdbe);
         my_free(elem);
         my_free(new);
+	my_free(s);
         //malloc_strcpy(*real, current);
         strcpy(*real, current);
         return 0;
@@ -232,6 +234,7 @@ static int resolve_dir(char *current, char *change, char **real, int idx)
           free_fdbe(&fdbe);
           my_free(elem);
           my_free(new);
+	  my_free(s);
           //malloc_strcpy(*real, current);
           strcpy(*real, current);
           return 0;
