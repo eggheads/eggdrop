@@ -1,0 +1,66 @@
+# transfer.english.lang
+#   language messages for transfer module
+#
+# $Id: transfer.german.lang,v 1.1 2003/03/07 12:38:04 wcc Exp $
+
+0xf00,DCC get zurueckgewiesen %s: kopieren nach %s schlug fehl!
+0xf01,NOTICE %s :Das Dateisystem ist defekt; entferne die Dateien aus der Warteschlange.\n
+0xf02,NOTICE %s :Hier ist eine Datei von %s ...\n
+0xf03,DCC Verbindungen voll: GET %s [%s]
+0xf04,NOTICE %s :DCC Verbindugen voll; entferne die Dateien aus der Warteschlange.\n
+0xf05,DCC Socket Fehler: GET %s [%s]
+0xf06,NOTICE %s :DCC Socket Fehler; entferne die Dateien aus der Warteschlange.\n
+0xf07,DCC get abgebrochen %s: Datei ist leer!
+0xf08,NOTICE %s :Datei %s ist leer, breche den Transfer ab.\n
+0xf09,  Sende zu  %s  Dateiname\n
+0xf0a,  ---------%s  --------------------\n
+0xf0b,  %s%s  %s  [WARTEND]\n
+0xf0c,  %s%s  %s  (%.1f%% fertig)\n
+0xf0d,Keine Dateien in der Warteschlange.\n
+0xf0e,Total: %d\n
+0xf0f,Abgebrochen: %s to %s\n
+0xf10,Abgebrochen: %s  (DCC send abgebrochen)\n
+0xf11,NOTICE %s :Transfer von %s abgebrochen von %s\n
+0xf12,DCC cancel: GET %s (%s) bei %lu/%lu
+0xf13,Keine Treffer.\n
+0xf14,Brach %d Datei%s ab.\n
+0xf15,Komplettierte DCC send %s von %s!%s
+0xf16,Dateiname hat Laenge %d. Das ist viel zu lang.
+0xf17,NOTICE %s :Dateiname hat Laenge %d. Viel zu lang!\n
+0xf18,Pech gehabt!
+0xf19,NOTICE %s :Pech gehabt!\n
+0xf1a,FEHLER Bewegen `%s' von `%s'! Datei verloren!
+0xf1b,Danke fuer die Datei!\n
+0xf1c,NOTICE %s :Danke fuer die Datei!\n
+0xf1d,Userfile Transfer von %s verloren; breche ab.
+# 0xf1e, < dieses ist jetzt leer
+0xf1f,Getrennt von %s (Userfile Transfer abgebrochen)
+0xf20,Verlor DCC send %s von %s!%s (%lu/%lu)
+0xf21,(!) Erneutes laden von Packet von %s fuer %s ist ungueltig!
+0xf22,!! Fortsetzung von Datei-Transfer hinter dem Dateiende fuer %s zu %s
+0xf23,!!! Versuche Teile des Userfile Transfers auszulassen
+0xf24,Fortsetzung von Dateitransfer bei %dk fuer %s zu %s
+0xf25,Userfile Transfer zu %s fertiggestellt.
+0xf26,DCC send %s zu %s beendet
+0xf27,Userfile Transfer verloren; breche ab.
+0xf28,DCC get %s von %s verloren!%s
+0xf29,NOTICE %s :Falsche Dateilaenge.\n
+0xf2a,Datei zu lange: Breche dcc send %s von %s ab!%s
+0xf2b,Timeout bei Userfile Transfer.
+0xf2c,Trennte %s (timed-out Userfile Transfer)
+0xf2e,NOTICE %s :Timeout waehrend Transfer, breche %s ab.\n
+0xf2f,DCC Timeout: GET %s (%s) bei %lu/%lu
+0xf30,DCC Timeout: SEND %s (%s) bei %lu/%lu
+0xf31,send  (%lu)/%lu\n    Dateiname: %s\n
+0xf32,send  waited %lus\n    Dateiname: %s\n
+0xf33,conn  send
+0xf34,DCC Verbindung: SEND %s (%s)
+0xf35,NOTICE %s :Schlechte Verbindung (%s)\n
+0xf36,DCC schlechte Verdindung: GET %s (%s!%s)
+0xf37,Beginne DCC %ssend %s zu %s
+0xf38,re
+0xf39,NOTICE %s :Ignoriere Fortsetzung von `%s': Keine Daten angefordert.\n
+0xf40,Entlade das Transfer Modul, beende alle Transfer-Verbindungen...
+0xf41,    DCC block ist %d%s
+0xf42,    Maximum gleichzeitiger downloads pro benutzer: %d\n
+0xf43,    %d Bytes Speicher werden benutzt\n
