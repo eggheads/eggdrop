@@ -4,7 +4,7 @@
  *   a bunch of functions to find and change user records
  *   change and check user (and channel-specific) flags
  * 
- * $Id: userrec.c,v 1.25 2000/10/01 19:11:43 fabian Exp $
+ * $Id: userrec.c,v 1.26 2000/10/19 16:33:11 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -333,9 +333,10 @@ void clear_userlist(struct userrec *bu)
  */
 struct userrec *get_user_by_host(char *host)
 {
-  struct userrec *u = userlist, *ret;
+  struct userrec *u, *ret;
   struct list_type *q;
   int cnt, i;
+  char host2[UHOSTLEN];
 
   if (host == NULL)
     return NULL;
@@ -349,22 +350,21 @@ struct userrec *get_user_by_host(char *host)
     return ret;
   }
   cache_miss++;
+  strcpy(host2, host);
   host = fixfrom(host);
-  while (u != NULL) {
+  for (u = userlist; u; u = u->next) {
     q = get_user(&USERENTRY_HOSTS, u);
-    while (q != NULL) {
+    for (; q; q = q->next) {
       i = wild_match(q->extra, host);
       if (i > cnt) {
 	ret = u;
 	cnt = i;
       }
-      q = q->next;
     }
-    u = u->next;
   }
   if (ret != NULL) {
     lastuser = ret;
-    set_chanlist(host, ret);
+    set_chanlist(host2, ret);
   }
   return ret;
 }
