@@ -31,7 +31,7 @@ Last revised: June 05, 2002
 
     * A file system where users can upload and download files in an
       environment that looks and acts (for the most part) like a typical
-      unix system. It also has the ability the ability to mark files and
+      UNIX system. It also has the ability the ability to mark files and
       directories as hidden -- unaccessible to people without certain user
       flags.
 
@@ -43,7 +43,7 @@ Last revised: June 05, 2002
       the bot by means of the Tcl scripting language, giving you the power
       of TOTAL customization of your bot.
 
-    * Module support: you can remove/add featues to your bot by adding or
+    * Module support: you can remove/add features to your bot by adding or
       removing modules.
 
   NOTE:
