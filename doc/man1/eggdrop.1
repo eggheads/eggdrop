@@ -24,7 +24,7 @@ config file is actually a script written in
 .I "enhanced Tcl"
 (Tcl with extra commands and variables defined by eggdrop).  A sample
 Tcl config file with describing comments for each option,
-.IR eggdrop.conf.dist ,
+.IR eggdrop.conf,
 is given with the distribution.
 .SH OPTIONS
 .I eggdrop
@@ -35,7 +35,7 @@ displays a list of command-line options.
 .TP
 .B \-v
 displays the current version of eggdrop, as well as any patches that have
-been loaded.
+been applied.
 .TP
 .B \-n
 .I eggdrop
@@ -82,10 +82,10 @@ will rehash or die.
 .SH "ENVIRONMENT VARIABLES"
 .TP
 .B EGG_LANG
-This variable can be set to the language you want
+This variable can be set to the language in which you want
 .I eggdrop
-to speak to you. It defaults to English, but German and French are
-supported, too.
+to speak to you. It defaults to English, but German, French, and Danish
+are supported, too.
 .TP
 .B EGG_LANGDIR
 Specifies the directory where all your language files are stored.
@@ -94,14 +94,14 @@ The default is ./language
 .TP
 .I eggdrop.conf
 sample configuration file, containing
-.B all available options
-in eggdrop.
+.B all available settings
+for eggdrop.
 .TP
 .I scripts/weed
 Tcl script to sort eggdrop userfiles
 .TP
-.I scripts/botchk
-shell script suitable for crontab job
+.I scripts/autobotchk
+shell script which creates a crontab entry for your bot
 .TP
 .I scripts/*.tcl
 some example Tcl-eggdrop scripts
@@ -113,10 +113,9 @@ ircd(8)
 .PP
 There is extensive
 .B online documentation.
-Once you get the bot running, open a DCC chat with it, and send it a DCC
-message like:
+Once you get the bot running, open a DCC chat with it, and type:
 .IP
-/msg =MyBot .help
+.help
 .PP
 In addition, the files in the
 .B
@@ -127,11 +126,11 @@ about how eggdrop works and how you can use it
 .B to the limits.
 .SH AUTHORS
 Written by Robey Pointer, the Eggheads Development Team and various
-other people. See the
+others. See the
 .I doc/AUTHORS
-file for who contributed and the
-.I doc/UPDATES*
-series of files for further details.
+file for all who contributed and the
+.I doc/UPDATES1.6
+file for further details.
 .SH "REPORTING BUGS"
 Report bugs to <bugs@eggheads.org>.
 .SH COPYRIGHT
