@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  * 
- * $Id: chan.c,v 1.24 2000/01/22 23:01:55 fabian Exp $
+ * $Id: chan.c,v 1.25 2000/01/22 23:43:09 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1437,7 +1437,7 @@ static void do_embedded_mode(struct chanset_t *chan, char *nick,
     switch (*mode) {
     case 'o':
       check_tcl_mode(dcc[servidx].host, "", NULL, chan->dname, "+o", nick);
-      got_op(chan, "", dcc[servidx].host, nick, &fr);
+      got_op(chan, "", dcc[servidx].host, nick, NULL, &fr);
       break;
     case 'v':
       check_tcl_mode(dcc[servidx].host, "", NULL, chan->dname, "+v", nick);

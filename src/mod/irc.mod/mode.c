@@ -4,7 +4,7 @@
  *   channel mode changes and the bot's reaction to them
  *   setting and getting the current wanted channel modes
  * 
- * $Id: mode.c,v 1.18 2000/01/17 22:36:09 fabian Exp $
+ * $Id: mode.c,v 1.19 2000/01/22 23:43:09 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -353,7 +353,7 @@ static void got_key(struct chanset_t *chan, char *nick, char *from,
 }
 
 static void got_op(struct chanset_t *chan, char *nick, char *from,
-		   char *who, struct flag_record *opper)
+		   char *who, struct userrec *opu, struct flag_record *opper)
 {
   memberlist *m;
   char s[UHOSTLEN];
@@ -382,7 +382,7 @@ static void got_op(struct chanset_t *chan, char *nick, char *from,
    * add_mode() doesn't get irritated.
    */
   m->flags |= CHANOP;
-  check_tcl_mode(nick, from, u, chan->dname, "+o", who);
+  check_tcl_mode(nick, from, opu, chan->dname, "+o", who);
   /* Added new meaning of WASOP:
    * in mode binds it means: was he op before get (de)opped
    * (stupid IrcNet allows opped users to be opped again and
@@ -445,7 +445,7 @@ static void got_op(struct chanset_t *chan, char *nick, char *from,
 }
 
 static void got_deop(struct chanset_t *chan, char *nick, char *from,
-		     char *who)
+		     char *who, struct userrec *opu)
 {
   memberlist *m;
   char s[UHOSTLEN], s1[UHOSTLEN];
@@ -469,7 +469,7 @@ static void got_deop(struct chanset_t *chan, char *nick, char *from,
    * add_mode() doesn't get irritated.
    */
   m->flags &= ~(CHANOP | SENTDEOP | FAKEOP);
-  check_tcl_mode(nick, from, u, chan->dname, "-o", who);
+  check_tcl_mode(nick, from, opu, chan->dname, "-o", who);
   /* Check comments in got_op()  (drummer) */
   m->flags &= ~WASOP;
 
@@ -1147,9 +1147,9 @@ static void gotmode(char *from, char *msg)
 	  op = newsplit(&msg);
 	  fixcolon(op);
 	  if (ms2[0] == '+')
-	    got_op(chan, nick, from, op, &user);
+	    got_op(chan, nick, from, op, u, &user);
 	  else
-	    got_deop(chan, nick, from, op);
+	    got_deop(chan, nick, from, op, u);
 	  break;
 	case 'v':
 	  op = newsplit(&msg);
