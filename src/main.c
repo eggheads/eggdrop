@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  *
- * $Id: main.c,v 1.84 2002/05/06 22:33:47 guppy Exp $
+ * $Id: main.c,v 1.85 2002/05/06 22:35:58 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -891,7 +891,7 @@ int main(int argc, char **argv)
   }
 
   then = now;
-  online_since = now - 36000;
+  online_since = now;
   autolink_cycle(NULL);		/* Hurry and connect to tandem bots */
   add_help_reference("cmds1.help");
   add_help_reference("cmds2.help");
