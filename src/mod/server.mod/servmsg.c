@@ -942,7 +942,8 @@ static void kill_server(int idx, void *x)
   module_entry *me;
 
   server_online = 0;
-  killsock(dcc[idx].sock);
+  if (dcc[idx].sock >= 0)
+    killsock(dcc[idx].sock);
   serv = -1;
   if ((me = module_find("channels", 0, 0)) && me->funcs) {
     struct chanset_t *chan;
@@ -1080,6 +1081,7 @@ static void connect_server(void)
     strncpy(dcc[servidx].host, botserver, UHOSTLEN);
     dcc[servidx].host[UHOSTLEN] = 0;
     dcc[servidx].timeval = now;
+    dcc[servidx].sock = (-1);
     dcc[servidx].u.dns->host = get_data_ptr(strlen(dcc[servidx].host) + 1);
     strcpy(dcc[servidx].u.dns->host, dcc[servidx].host);
     dcc[servidx].u.dns->cbuf = get_data_ptr(strlen(pass) + 1);
