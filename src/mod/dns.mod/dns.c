@@ -4,7 +4,7 @@
  * 
  * Written by Fabian Knittel <fknittel@gmx.de>
  * 
- * $Id: dns.c,v 1.18 2000/11/04 16:03:30 fabian Exp $
+ * $Id: dns.c,v 1.19 2000/11/05 10:31:10 fabian Exp $
  */
 /* 
  * Copyright (C) 1999, 2000  Eggheads
@@ -29,8 +29,8 @@
 #include "src/mod/module.h"
 #include "dns.h"
 
-static void dns_event_success();
-static void dns_event_failure();
+static void dns_event_success(struct resolve *rp, int type);
+static void dns_event_failure(struct resolve *rp, int type);
 
 
 static Function *global = NULL;
@@ -57,25 +57,24 @@ static void dns_event_success(struct resolve *rp, int type)
   }
 }
 
-static void dns_event_failure(struct resolve *rp)
+static void dns_event_failure(struct resolve *rp, int type)
 {
   if (!rp)
     return;
 
   Context;
-  /* T_PTR */
-  if (rp->ip) {
+  if (type == T_PTR) {
     static char s[UHOSTLEN];
 
     debug1("DNS resolve failed for %s", iptostr(rp->ip));
     strcpy(s, iptostr(rp->ip));
     call_hostbyip(ntohl(rp->ip), s, 0);
-  }  
-  /* T_A */
-  else if (rp->hostn) {
+  } else if (type == T_A) {
     debug1("DNS resolve failed for %s", rp->hostn);
     call_ipbyhost(rp->hostn, 0, 0);
-  }
+  } else
+    debug2("DNS resolve failed for unknown %s / %s", iptostr(rp->ip),
+	   nonull(rp->hostn));
   return;
 }
 

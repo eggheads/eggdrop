@@ -5,7 +5,7 @@
  * 
  * Modified/written by Fabian Knittel <fknittel@gmx.de>
  * 
- * $Id: coredns.c,v 1.16 2000/09/09 11:39:10 fabian Exp $
+ * $Id: coredns.c,v 1.17 2000/11/05 10:31:10 fabian Exp $
  */
 /* 
  * Portions copyright (C) 1999, 2000  Eggheads
@@ -642,7 +642,7 @@ static void sendrequest(struct resolve *rp, int type)
 /* Gets called as soon as the request turns out to have failed. Calls
  * the eggdrop hook.
  */
-static void failrp(struct resolve *rp)
+static void failrp(struct resolve *rp, int type)
 {
     Context;
     if (rp->state == STATE_FINISHED)
@@ -655,7 +655,7 @@ static void failrp(struct resolve *rp)
     linkresolve(rp);
 
     ddebug0(RES_MSG "Lookup failed.");
-    dns_event_failure(rp);
+    dns_event_failure(rp, type);
 }
 
 /* Gets called as soon as the request turns out to be successful. Calls
@@ -832,14 +832,14 @@ static void parserespacket(u_8bit_t *s, int l)
 		rdatalength = sucknetword(c);
 		if (class != qclass) {
 		    ddebug2(RES_MSG "query class: %u (%s)",
-			   qclass,
-			   qclass < CLASSTYPES_COUNT ?
-				   classtypes[qclass] :
-				   classtypes[CLASSTYPES_COUNT]);
+			    qclass,
+			    qclass < CLASSTYPES_COUNT ?
+				classtypes[qclass] :
+				classtypes[CLASSTYPES_COUNT]);
 		    ddebug2(RES_MSG "rr class: %u (%s)", class,
-			   class < CLASSTYPES_COUNT ?
-				   classtypes[class] :
-				   classtypes[CLASSTYPES_COUNT]);
+			    class < CLASSTYPES_COUNT ?
+				classtypes[class] :
+				classtypes[CLASSTYPES_COUNT]);
 		    ddebug0(RES_ERR "Answered class does not match queried class.");
 		    return;
 		}
@@ -855,8 +855,8 @@ static void parserespacket(u_8bit_t *s, int l)
 		if (datatype == qdatatype) {
 		    ddebug1(RES_MSG "TTL: %s", strtdiff(sendstring, ttl));
 		    ddebug1(RES_MSG "TYPE: %s", datatype < RESOURCETYPES_COUNT ?
-			   resourcetypes[datatype] :
-			   resourcetypes[RESOURCETYPES_COUNT]);
+			    resourcetypes[datatype] :
+			    resourcetypes[RESOURCETYPES_COUNT]);
 		    if (usefulanswer)
 			switch (datatype) {
 			case T_A:
@@ -879,7 +879,7 @@ static void parserespacket(u_8bit_t *s, int l)
 				   namestring);
 			    if (r > HOSTNAMELEN) {
 				ddebug0(RES_ERR "Domain name too long.");
-				failrp(rp);
+				failrp(rp, T_PTR);
 				return;
 			    }
 			    if (!rp->hostn) {
@@ -892,8 +892,8 @@ static void parserespacket(u_8bit_t *s, int l)
 			    break;
 			default:
 			    ddebug2(RES_ERR "Received unimplemented data type: %u (%s)",
-				   datatype,
-				   datatype < RESOURCETYPES_COUNT ?
+				    datatype,
+				    datatype < RESOURCETYPES_COUNT ?
 					resourcetypes[datatype] :
 					resourcetypes[RESOURCETYPES_COUNT]);
 			}
@@ -925,7 +925,17 @@ static void parserespacket(u_8bit_t *s, int l)
     case NXDOMAIN:
 	Context;
 	ddebug0(RES_MSG "Host not found.");
-	failrp(rp);
+	switch (rp->state) {
+	case STATE_PTRREQ:
+		failrp(rp, T_PTR);
+		break;
+	case STATE_AREQ:
+		failrp(rp, T_A);
+		break;
+	default:
+		failrp(rp, 0);
+		break;
+	}
 	break;
     default:
 	Context;
@@ -1002,7 +1012,7 @@ static void dns_check_expires(void)
 	      resendrequest(rp, T_PTR);
 	    } else {
 	      ddebug0(RES_MSG "\"PTR\" query timed out.");
-	      failrp(rp);
+	      failrp(rp, T_PTR);
 	    }
 	    break;
 	case STATE_AREQ:	/* T_A send timed out */
@@ -1012,13 +1022,13 @@ static void dns_check_expires(void)
 	      resendrequest(rp, T_A);
 	    } else {
 	      ddebug0(RES_MSG "\"A\" query timed out.");
-	      failrp(rp);
+	      failrp(rp, T_A);
 	    }
 	    break;
 	default:		/* Unknown state, let it expire */
 	    ddebug1(RES_WRN "Unknown request state %d. Request expired.",
 		   rp->state);
-	    failrp(rp);
+	    failrp(rp, 0);
 	}
     }
     Context;
@@ -1033,15 +1043,14 @@ static void dns_lookup(IP ip)
     Context;
     ip = htonl(ip);
     if ((rp = findip(ip))) {
-	if ((rp->state == STATE_FINISHED)
-	    || (rp->state == STATE_FAILED)) {
-	    if ((rp->state == STATE_FINISHED) && (rp->hostn)) {
+	if (rp->state == STATE_FINISHED || rp->state == STATE_FAILED) {
+	    if (rp->state == STATE_FINISHED && rp->hostn) {
 		ddebug2(RES_MSG "Used cached record: %s == \"%s\".",
 			    iptostr(ip), rp->hostn);
 		dns_event_success(rp, T_PTR);
 	    } else {
 		ddebug1(RES_MSG "Used failed record: %s == ???", iptostr(ip));
-		dns_event_failure(rp);
+		dns_event_failure(rp, T_PTR);
 	    }
 	}
 	return;
@@ -1075,15 +1084,14 @@ static void dns_forward(char *hostn)
     }
     Context;
     if ((rp = findhost(hostn))) {
-	if ((rp->state == STATE_FINISHED)
-	    || (rp->state == STATE_FAILED)) {
-	    if ((rp->state == STATE_FINISHED) && (rp->ip)) {
+	if (rp->state == STATE_FINISHED || rp->state == STATE_FAILED) {
+	    if (rp->state == STATE_FINISHED && rp->ip) {
 		ddebug2(RES_MSG "Used cached record: %s == \"%s\".", hostn,
 		       iptostr(rp->ip));
 		dns_event_success(rp, T_A);
 	    } else {
 		ddebug1(RES_MSG "Used failed record: %s == ???", hostn);
-		dns_event_failure(rp);
+		dns_event_failure(rp, T_A);
 	    }
 	}
 	return;
