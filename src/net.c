@@ -2,7 +2,7 @@
  * net.c -- handles:
  *   all raw network i/o
  * 
- * $Id: net.c,v 1.35 2001/11/10 20:01:47 poptix Exp $
+ * $Id: net.c,v 1.36 2001/11/11 03:07:50 poptix Exp $
  */
 /* 
  * This is hereby released into the public domain.
@@ -669,6 +669,8 @@ static int sockread(char *s, int *len)
 	    socklist[i].flags &= ~SOCK_CONNECT;
 	    debug1("net: eof!(read) socket %d", socklist[i].sock);
 	    return -1;
+	  } else {
+	    continue; /* EAGAIN */
 	  }
 	}
 	s[x] = 0;
