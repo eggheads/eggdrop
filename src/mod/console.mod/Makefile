@@ -12,7 +12,7 @@ clean:
 modules: ../../../console.so
 
 static: ../console.o
-	
+
 ../../../console.so: console.o
 	$(LD) -o ../../../console.so console.o
 	$(STRIP) ../../../console.so
@@ -23,5 +23,5 @@ console.o: ../module.h ../modvals.h ../../eggdrop.h
 ../console.o: console.o
 	@rm -f ../console.o
 	@ln -s console.mod/console.o ..
-	
+
 #safety hash

@@ -10,17 +10,20 @@
 #endif
 
 /* UGH! Why couldn't Tcl pick a standard? */
-#if !defined(HAVE_OLD_TCL) && (defined(__STDC__) || defined(HAVE_STDARG_H))
-#  ifndef _STDARG_H
+#if !defined(HAVE_OLD_TCL) && (defined(__STDC__) || \
+    (defined(HAVE_STDARG_H) || defined(HAVE_STD_ARGS_H)))
+#  ifdef HAVE_STDARG_H
 #    include <stdarg.h>
+#  else
+#    ifdef HAVE_STD_ARGS_H
+#      include <std_args.h>
+#    endif
 #  endif
 #  define VARARGS(type, name) (type name, ...)
 #  define VARARGS_DEF(type, name) (type name, ...)
 #  define VARARGS_START(type, name, list) (va_start(list, name), name)
 #else
-#  ifndef _VARARGS_H
-#    include <varargs.h>
-#  endif
+#  include <varargs.h>
 #  ifdef VARARGS
 #    undef VARARGS
 #  endif

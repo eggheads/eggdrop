@@ -12,7 +12,7 @@ clean:
 modules: ../../../notes.so
 
 static: ../notes.o
-	
+
 ../../../notes.so: notes.o
 	$(LD) -o ../../../notes.so notes.o
 	$(STRIP) ../../../notes.so
@@ -24,5 +24,5 @@ notes.o: ../module.h ../modvals.h ../../eggdrop.h \
 ../notes.o: notes.o
 	@rm -f ../notes.o
 	@ln -s notes.mod/notes.o ..
-	
+
 #safety hash

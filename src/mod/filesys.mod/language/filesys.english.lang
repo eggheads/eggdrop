@@ -53,3 +53,58 @@
 0x332,Erased
 0x33a,Welcome to the %B file server\n
 0x33b,All file transfers will be sent to '%N' by default.\n(You can specify an alternate nick with the 'get' command.)\nType 'help' for help.\n
+# FILES_
+
+0x300,Converting filesystem image in %s ...
+0x301,filedb-update: can't open directory!
+0x302,(!) Broken convert to filedb in %s
+0x303,Filename                        Size  Sent by/Date         # Gets\n
+0x304,------------------------------  ----  -------------------  ------\n
+0x305,No files in this directory.\n
+0x306,No matching files.\n
+0x307,Directory does not exist
+0x308,File does not exist
+0x309,File is not shared
+0x30a,(remote)
+0x30b,Error trying to send file
+0x30c,(sending)
+0x30d,Remote request for /%s%s%s (sending)
+0x30e,\nThe file system seems to be broken right now.\n
+0x30f,(The files-path is set to an invalid directory.)\n
+0x310,Current directory
+0x311,New current directory
+0x312,No such directory.\n
+0x313,Illegal directory.\n
+0x314,Be reasonable.\n
+0x315,%s isn't available right now.\n
+0x316,Requested %s from %s ...\n
+0x317,%s is already a normal file.\n
+0x318,Changed link to %s\n
+0x319,You didn't upload %s\n
+0x31a,Created directory
+0x31b,Requires +%s to access\n
+0x31c,Changed %s/ to require +%s to access\n
+0x31d,Changes %s/ to require no flags to access\n
+0x31e,Removed directory
+0x31f,Illegal source directory.\n
+0x320,Illegal destination directory.\n
+0x321,You can't %s files on top of themselves.\n
+0x322,exists as a directory -- skipping
+0x323,onto itself?  Nuh uh.
+0x324,Destination
+0x325,copy
+0x326,Copied
+0x327,move
+0x328,Moved
+0x329,Could not write
+0x32a,requires
+0x32b,Hid
+0x32c,Unhid
+0x32d,Shared
+0x32e,Unshared
+0x32f,Added link
+0x330,Changed
+0x331,Blanked
+0x332,Erased
+0x33a,Welcome to the %B file server\n
+0x33b,All file transfers will be sent to '%N' by default.\n(You can specify an alternate nick with the 'get' command.)\nType 'help' for help.\n

@@ -12,7 +12,7 @@ clean:
 modules: ../../../woobie.so
 
 static: ../woobie.o
-	
+
 ../../../woobie.so: woobie.o
 	$(LD) -o ../../../woobie.so woobie.o
 	$(STRIP) ../../../woobie.so
@@ -23,5 +23,5 @@ woobie.o: ../module.h ../modvals.h ../../eggdrop.h
 ../woobie.o: woobie.o
 	@rm -f ../woobie.o
 	@ln -s woobie.mod/woobie.o ..
-	
+
 #safety hash

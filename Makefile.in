@@ -103,7 +103,7 @@ distrib: distclean Makefile.in
 		-o -name '*.rej' -o -name '*.bak' \) -print`
 	@rm -rf `find . \( -name "CVS" \) -print`
 	@(echo "all:"; \
-	echo "  @echo \"\""; \
+	echo "	@echo \"\""; \
 	echo "	@echo \"Before you can compile your bot you have to configure it.\""; \
 	echo "	@echo \"So please start the configure script now:\""; \
 	echo "	@echo \"\""; \
@@ -133,6 +133,7 @@ static: eggtest
 	@echo "Making core eggdrop for static linking..."
 	@echo ""
 	@cd src; $(MAKE_STATIC) static
+	@echo ""
 	@./$(EGGEXEC) -v
 	@ls -l $(EGGEXEC)
 
@@ -159,6 +160,7 @@ sdebug: eggtest
 	@echo "Making core eggdrop for static linking..."
 	@echo ""
 	@cd src; $(MAKE_SDEBUG) sdebug
+	@echo ""
 	@./$(EGGEXEC) -v
 	@ls -l $(EGGEXEC)
 
@@ -201,6 +203,7 @@ install-start:
 		echo "You haven't compiled eggdrop yet."; \
 		exit 1; \
 	fi
+	@echo ""
 	@./$(EGGEXEC) -v
 	@echo
 	@echo "Installing in directory: '$(DEST)'."
@@ -316,8 +319,11 @@ install-scripts:
 install-end:
 	@echo
 	@echo "Installation completed."
+	@echo ""
 	@echo "You MUST ensure that you edit/verify your configuration file."
 	@echo "'eggdrop.conf.dist' lists current options."
+	@echo ""
 	@echo "Remember to change directory to $(DEST) before you proceed."
+	@echo ""
 
 #safety hash

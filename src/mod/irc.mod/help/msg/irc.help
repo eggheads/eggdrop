@@ -128,3 +128,133 @@ There may also be additional commands provided by other modules.
    know, including his or her default info line, email
    address, when they were last on the channel, and
    if they are an op or master.
+%{help=die}%{+m}
+%b/MSG%b %B %bDIE%b <password> [message]
+   This makes me die (go away) -- not something you will
+   probably be doing very often.
+%{help=go}%{+o|o}
+%b/MSG%b %B %bGO%b <channel>
+   This makes me leave a channel if I'm not a channel op.
+   (It's useful for regaining ops.)
+%{help=help}
+%bMSG%b commands for %b%B%b:
+%{cols=4/50}%{-}
+ADDHOST
+INFO
+WHO
+IDENT
+HELP
+VOICE
+WHOIS
+PASS
+%{+o|o}
+OP
+INVITE
+GO
+KEY
+%{-}%{+m}
+DIE
+JUMP
+MEMORY
+SAVE
+REHASH
+RESET
+%{+m|m}
+STATUS
+%{end}
+For help on a command, %b/MSG%b %B %bHELP%b <command>
+%{+m}
+You are a master.  Many many more commands are
+available via dcc chat.
+%{-}
+Admin: %A
+There may also be additional commands provided by other modules.
+%{help=addhost}
+%b/MSG%b %B %bADDHOST%b <password> <hostmask>
+   This lets me recognize you from a new hostmask.  You must
+   use your password (the one you set with PASS) so I know
+   it's really you. The hostmask you tell me must not match
+   any existing ones.
+%{help=ident}
+%b/MSG%b %B %bIDENT%b <password> [nickname]
+   This lets me recognize you from a new address.  You must
+   use your password (the one you set with PASS) so I know
+   it's really you.  If you're using a different nickname
+   than you were when you registered, you'll have to give
+   your original nickname too.
+%{help=info}
+%b/MSG%b %B %bINFO%b [password] [channel] [an info line]
+   Whatever you set as your info line will be shown when
+   you join the channel, as long as you haven't been there
+   in the past three minutes.  It is also shown to people
+   when they ask the bot for WHO or WHOIS.  You may set an
+   info line specific to a channel like so:
+      %b/MSG%b %B %bINFO%b mypass #channel This is my info.
+   Or you may set the default info line (used when there
+   is no channel-specific one) like so:
+      %b/MSG%b %B %bINFO%b mypass This is my default info.
+%b/MSG%b %B %bINFO%b [password] [channel] %bNONE%b
+   This erases your info line.
+%{help=invite}%{+o|o}
+%b/MSG%b %B %bINVITE%b <password> <channel>
+   This will make me invite you to a channel (if I'm on
+   that channel).
+%{help=jump}%{+m}
+%b/MSG%b %B %bJUMP%b <password> [server [port [server password]]]
+   This will make me jump to a new server.  You can
+   optionally tell me a server to jump to, in the form of
+   'new.server.com' or 'new.server.com 6667'.
+%{help=memory}%{+m}
+%b/MSG%b %B %bMEMORY%b <password>
+   This makes me tell you info about how much memory I'm
+   using.  Pretty boring stuff.
+%{help=op}%{+o|o}
+%b/MSG%b %B %bOP%b <password> [channel]
+   This will tell me to op you on any channel where I have
+   ops and you don't.  If you give a channel name, I'll just
+   op you on that channel.
+%{help=voice}%{+o|o}
+%b/MSG%b %B %bVOICE%b <password> <channel>
+   This will tell me to voice you on the channel if I have
+   ops and you don't have a voice, and I monitor that channels
+   voices.
+%{help=key}%{+o|o}
+%b/MSG%b %B %bKEY%b <password> <channel>
+   This will send you the key for a channel that is +k
+   and possibly also invite if it is +i (if I'm on that
+   channel).
+%{help=pass}
+%b/MSG%b %B %bPASS%b <password>
+   This sets a password, which lets you use other commands,
+   like %bIDENT%b.
+%{+o|o}
+   Ops and masters: You need a password to use ANY op or
+   master command.
+%{-}
+%b/MSG%b %B %bPASS%b <oldpass> <newpass>
+   This is how you change your password.
+%{help=save}%{+m}
+%b/MSG%b %B %bSAVE%b <password>
+   This makes me save my userfile.
+%{help=rehash}%{+m}
+%b/MSG%b %B %bREHASH%b <password>
+   This makes me reload my config file.
+%{help=reset}%{+m}
+%b/MSG%b %B %bRESET%b <password> [channel]
+   This makes the me reset my channel information, in case
+   I'm out of sync with reality.  It isn't used much any
+   more.
+%{help=status}%{+m|m}
+%b/MSG%b %B %bSTATUS%b <password>
+   This gives you a little three line display of my current
+   status.  The status command in dcc chat is much better.
+%{help=who}
+%b/MSG%b %B %bWHO%b <channel>
+   This will show you a list of who's on that channel right
+   now, and each person's info line (if they have one).
+%{help=whois}
+%b/MSG%b %B %bWHOIS%b <nick>
+   This will give you information about someone else I
+   know, including his or her default info line, email
+   address, when they were last on the channel, and
+   if they are an op or master.

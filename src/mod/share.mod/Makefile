@@ -12,7 +12,7 @@ clean:
 modules: ../../../share.so
 
 static: ../share.o
-	
+
 ../../../share.so: share.o
 	$(LD) -o ../../../share.so share.o
 	$(STRIP) ../../../share.so
@@ -25,5 +25,5 @@ share.o: ../module.h ../modvals.h ../../eggdrop.h \
 ../share.o: share.o
 	@rm -f ../share.o
 	@ln -s share.mod/share.o ..
-	
+
 #safety hash

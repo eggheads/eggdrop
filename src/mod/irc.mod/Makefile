@@ -12,7 +12,7 @@ clean:
 modules: ../../../irc.so
 
 static: ../irc.o
-	
+
 ../../../irc.so: irc.o
 	$(LD) -o ../../../irc.so irc.o
 	$(STRIP) ../../../irc.so
@@ -27,5 +27,5 @@ irc.o:
 ../irc.o: irc.o
 	@rm -f ../irc.o
 	@ln -s irc.mod/irc.o ..
-	
+
 #safety hash

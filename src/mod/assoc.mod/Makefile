@@ -12,7 +12,7 @@ clean:
 modules: ../../../assoc.so
 
 static: ../assoc.o
-	
+
 ../../../assoc.so: assoc.o
 	$(LD) -o ../../../assoc.so assoc.o
 	$(STRIP) ../../../assoc.so
@@ -24,5 +24,5 @@ assoc.o: ../module.h ../modvals.h ../../eggdrop.h \
 ../assoc.o: assoc.o
 	@rm -f ../assoc.o
 	@ln -s assoc.mod/assoc.o ..
-	
+
 #safety hash

@@ -165,26 +165,29 @@ case "$SYSTEM" in
     AC_MSG_RESULT(OSF...)
     case `${UNAME} -r | cut -d . -f 1` in
       V*)
-	AC_MSG_RESULT(Digital OSF)
+	AC_MSG_RESULT([   Digital OSF])
+	MOD_CC="cc"
+	MOD_LD="cc"
+	SHLIB_CC="cc"
 	SHLIB_LD="ld -shared -expect_unresolved '*'"
 	SHLIB_STRIP="touch"
 	AC_DEFINE(MODULES_OK)
 	;;
       1.0|1.1|1.2)
-	AC_MSG_RESULT(pre 1.3)
+	AC_MSG_RESULT([   pre 1.3])
 	SHLIB_LD="ld -R -export $@:"
 	AC_DEFINE(MODULES_OK)
 	AC_DEFINE(OSF1_HACKS)
 	;;
       1.*)
-	AC_MSG_RESULT(1.3+)
+	AC_MSG_RESULT([   1.3+])
 	SHLIB_CC="${CC} -fpic"
 	SHLIB_LD="ld -shared"
 	AC_DEFINE(MODULES_OK)
 	AC_DEFINE(OSF1_HACKS)
 	;;
       *)
-	AC_MSG_RESULT(Some other weird OSF! No modules for you..)
+	AC_MSG_RESULT([   Some other weird OSF! No modules for you...])
 	NEED_DL=0
 	DEFAULT_MAKE=static
 	;;
@@ -217,6 +220,9 @@ case "$SYSTEM" in
     SHLIB_STRIP=touch
     NEED_DL=0
     DEFAULT_MAKE=static
+    ;;
+  Lynx)
+    AC_MSG_RESULT(Lynx OS)
     ;;
   CYGWIN*)
     AC_MSG_RESULT(Cygwin)
@@ -265,7 +271,7 @@ AC_HEADER_DIRENT
 AC_HEADER_SYS_WAIT
 AC_CHECK_HEADERS(sys/time.h)
 AC_HEADER_TIME
-AC_CHECK_HEADERS(sys/select.h sys/rusage.h unistd.h stdarg.h dlfcn.h)
+AC_CHECK_HEADERS(sys/select.h sys/rusage.h unistd.h dlfcn.h stdarg.h std_args.h)
 
 dnl Checks for typedefs, structures, and compiler characteristics.
 AC_TYPE_PID_T
@@ -662,13 +668,13 @@ else # TCLLIBFN || TCLINCFN
     fi
 
     # are we using a pre 7.5 Tcl version ?
-    OLD_TCL=`echo $TCLVER | $AWK '{split($1, i, "."); print (((i[[1]] == 7) && (i[[2]] >= 5)) || (i[[1]] >= 8)) ? "no" : "yes"}'`
+    OLD_TCL=`echo $TCLVER | $AWK '{split($1, i, "."); if (((i[[1]] == 7) && (i[[2]] >= 5)) || (i[[1]] >= 8)) print "no"; else print "yes"}'`
     if test "x${OLD_TCL}" = "xyes"
     then
       AC_DEFINE(HAVE_OLD_TCL)
     else
       # detect buggy Tcl 8.1 compiled with threads
-      BUGGY_TCL=`echo $TCLVER | $AWK '{split($1, i, "."); print ((i[[1]] == 8) && (i[[2]] == 1)) ? "yes" : "no"}'`
+      BUGGY_TCL=`echo $TCLVER | $AWK '{split($1, i, "."); if ((i[[1]] == 8) && (i[[2]] == 1)) print "yes"; else print "no"}'`
       if test "x${BUGGY_TCL}" = "xyes"
       then
 	AC_MSG_CHECKING(for buggy Tcl 8.1 threads)

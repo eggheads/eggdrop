@@ -37,3 +37,42 @@
 ###  commands for the %bserver module%b
   %bservers%b  %{+m}%bjump%b  %bdump%b
 
+%{help=dump}%{+m}
+###  %bdump%b <text>
+   dumps the text to the server.  keep in mind that this bot doesn't
+   run through ircII, so ircII commands will most likely not work this
+   way.  they need to be raw irc codes. read rfc1459 from ftp.internic.net 
+   for more help.
+%{help=jump}%{+m}
+###  %bjump%b [server [port]]
+   makes the bot jump to another server.  if you don't specify a
+   server, it will jump to the next server in its internal list (see
+   %b'help servers'%b).  if you specify a server, it will jump to that
+   server (default port is 6667), and if that server is not in the
+   internal list already, it will add it.  jumping servers ALWAYS
+   makes the bot lose ops! be careful!
+%{help=clearqueue}%{+m}
+###  %bclearqueue%b <queue>
+   removes all msgs from the specified queue (mode/server/help/all)
+%{help=servers}%{+o|o}
+###  %bservers%b
+   lists the servers that the bot has in its server list.  this is
+   the list it rotates through when changing servers.  it starts
+   with a static list which it loads from its config-file when the
+   bot is booted up.  after that, you can add servers with the
+   %b'.jump'%b command.  the server list will indicate which server the
+   bot is currently on.
+%{help=server module}%{+o|o}
+###  help on the %bserver module%b
+   This module provides all that's need to get a bot on a server and
+   sitting there, it provides server connection, raw irc, private
+   message/notice/ctcp handling. 
+   Command(s) avalible: (use %b'.help <command>'%b for more info)
+      %bservers%b  %{+m}%bjump%b  %bdump%b
+%{+n}
+   There is also a list of tcl settings avalible,
+   use %b'.help server settings'%b   
+%{help=all}%{+o|o}
+###  commands for the %bserver module%b
+  %bservers%b  %{+m}%bjump%b  %bdump%b
+

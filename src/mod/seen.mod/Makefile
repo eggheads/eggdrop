@@ -12,7 +12,7 @@ clean:
 modules: ../../../seen.so
 
 static: ../seen.o
-	
+
 ../../../seen.so: seen.o
 	$(LD) -o ../../../seen.so seen.o
 	$(STRIP) ../../../seen.so
@@ -25,5 +25,5 @@ seen.o: ../module.h ../modvals.h ../../eggdrop.h \
 ../seen.o: seen.o
 	@rm -f ../seen.o
 	@ln -s seen.mod/seen.o ..
-	
+
 #safety hash

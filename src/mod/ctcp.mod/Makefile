@@ -12,7 +12,7 @@ clean:
 modules: ../../../ctcp.so
 
 static: ../ctcp.o
-	
+
 ../../../ctcp.so: ctcp.o
 	$(LD) -o ../../../ctcp.so ctcp.o
 	$(STRIP) ../../../ctcp.so
@@ -24,5 +24,5 @@ ctcp.o: ../module.h ../modvals.h ../../eggdrop.h \
 ../ctcp.o: ctcp.o
 	@rm -f ../ctcp.o
 	@ln -s ctcp.mod/ctcp.o ..
-	
+
 #safety hash

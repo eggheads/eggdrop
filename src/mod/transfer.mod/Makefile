@@ -12,7 +12,7 @@ clean:
 modules: ../../../transfer.so
 
 static: ../transfer.o
-	
+
 ../../../transfer.so: transfer.o
 	$(LD) -o ../../../transfer.so transfer.o
 	$(STRIP) ../../../transfer.so
@@ -24,5 +24,5 @@ transfer.o: ../module.h ../modvals.h ../../eggdrop.h \
 ../transfer.o: transfer.o
 	@rm -f ../transfer.o
 	@ln -s transfer.mod/transfer.o ..
-	
+
 #safety hash

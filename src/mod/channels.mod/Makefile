@@ -12,7 +12,7 @@ clean:
 modules: ../../../channels.so
 
 static: ../channels.o
-	
+
 ../../../channels.so: channels.o
 	$(LD) -o ../../../channels.so channels.o
 	$(STRIP) ../../../channels.so
@@ -24,5 +24,5 @@ channels.o: ../module.h ../modvals.h ../../eggdrop.h \
 ../channels.o: channels.o
 	@rm -f ../channels.o
 	@ln -s channels.mod/channels.o ..
-	
+
 #safety hash

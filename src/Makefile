@@ -5,10 +5,6 @@ OBJS = botcmd.o botmsg.o botnet.o chanprog.o cmds.o dcc.o \
 	modules.o net.o rfc1459.o tcl.o tcldcc.o tclhash.o \
 	tclmisc.o tcluser.o userent.o userrec.o users.o md5/md5c.o
 
-MOD_OBJS = mod/assoc.o mod/blowfish.o mod/channels.o mod/console.o \
-	mod/ctcp.o mod/filesys.o mod/irc.o mod/notes.o mod/seen.o \
-	mod/server.o mod/share.o mod/transfer.o mod/wire.o mod/woobie.o
-
 doofus:
 	@echo ""
 	@echo "Let's try this from the right directory..."
@@ -23,12 +19,12 @@ modegg: $(OBJS) $(XREQ)
 	$(STRIP) ../$(EGGEXEC)
 	@echo "Successful compile: $(EGGEXEC)"
 	@echo ""
-	
+
 static: $(OBJS) $(XREQ)
 	@echo ""
 	@echo "Linking eggdrop... (static version)"
 	@echo ""
-	$(LD) -o ../$(EGGEXEC) $(OBJS) $(MOD_OBJS) $(XLIBS)
+	$(LD) -o ../$(EGGEXEC) $(OBJS) mod/*.o $(XLIBS)
 	$(STRIP) ../$(EGGEXEC)
 	@echo "Successful compile: $(EGGEXEC)"
 	@echo ""
@@ -40,12 +36,12 @@ memegg: $(OBJS) $(XREQ)
 	$(LD) -g -o ../$(EGGEXEC) $(OBJS) $(XLIBS)
 	@echo "Successful compile: $(EGGEXEC)"
 	@echo ""
-	
+
 sdebug: $(OBJS) $(XREQ)
 	@echo ""
 	@echo "Linking eggdrop... (static and debug version)"
 	@echo ""
-	$(LD) -g -o ../$(EGGEXEC) $(OBJS) $(MOD_OBJS) $(XLIBS)
+	$(LD) -g -o ../$(EGGEXEC) $(OBJS) mod/*.o $(XLIBS)
 	@echo "Successful compile: $(EGGEXEC)"
 	@echo ""
 

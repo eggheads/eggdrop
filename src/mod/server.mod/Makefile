@@ -12,7 +12,7 @@ clean:
 modules: ../../../server.so
 
 static: ../server.o
-	
+
 ../../../server.so: server.o
 	$(LD) -o ../../../server.so server.o
 	$(STRIP) ../../../server.so
@@ -24,5 +24,5 @@ server.o: ../module.h ../modvals.h ../../eggdrop.h \
 ../server.o: server.o
 	@rm -f ../server.o
 	@ln -s server.mod/server.o ..
-	
+
 #safety hash

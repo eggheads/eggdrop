@@ -95,6 +95,9 @@
 /* Define if you have the <stdarg.h> header file.  */
 #undef HAVE_STDARG_H
 
+/* Define if you have the <std_args.h> header file.  */
+#undef HAVE_STD_ARGS_H
+
 /* Define if running on OSF/1 platform. */
 #undef STOP_UAC
 

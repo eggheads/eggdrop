@@ -22,7 +22,8 @@ PATCH("939863113"); /* current "unix" time */
  *
  *
  */
-PATCH("too-many-fixes+2-part2.diff.patch"); /* last patch added */ 
+PATCH("fix-stuff.diff"); /* last patch added
+*/ 
 /*
  *
  *

@@ -12,7 +12,7 @@ clean:
 
 install: install-scripts install-help
 
-install-scripts
+install-scripts:
 	@if test ! -d $(DEST)/scripts; then \
 		echo "Creating a scripts subdirectory."; \
 		$(INSTALL) -d $(DEST)/scripts; \

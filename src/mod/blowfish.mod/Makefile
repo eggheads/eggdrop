@@ -12,7 +12,7 @@ clean:
 modules: ../../../blowfish.so
 
 static: ../blowfish.o
-	
+
 ../../../blowfish.so: blowfish.o
 	$(LD) -o ../../../blowfish.so blowfish.o
 	$(STRIP) ../../../blowfish.so
@@ -24,5 +24,5 @@ blowfish.o: ../module.h ../modvals.h ../../eggdrop.h \
 ../blowfish.o: blowfish.o
 	@rm -f ../blowfish.o
 	@ln -s blowfish.mod/blowfish.o ..
-	
+
 #safety hash
