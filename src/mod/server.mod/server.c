@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  *
- * $Id: server.c,v 1.92 2003/02/02 10:19:33 wcc Exp $
+ * $Id: server.c,v 1.93 2003/02/18 00:47:58 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1135,7 +1135,7 @@ static char *nick_change(ClientData cdata, Tcl_Interp *irp, char *name1,
                    TCL_TRACE_UNSETS, nick_change, cdata);
   } else {                        /* writes */
     new = Tcl_GetVar2(interp, name1, name2, TCL_GLOBAL_ONLY);
-    if (rfc_casecmp(origbotname, (char *) new)) {
+    if (strcmp(origbotname, (char *) new)) {
       if (origbotname[0]) {
         putlog(LOG_MISC, "*", "* IRC NICK CHANGE: %s -> %s", origbotname, new);
         nick_juped = 0;
