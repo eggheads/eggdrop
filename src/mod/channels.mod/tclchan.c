@@ -1118,9 +1118,6 @@ static int tcl_do_masklist(maskrec *m, Tcl_Interp *irp)
   char ts[21], ts1[21], ts2[21];
   char *list[6], *p;
 
-  if (!m)
-    return TCL_OK;
-    
   while (m) {
     list[0] = m->mask;
     list[1] = m->desc;
@@ -1134,6 +1131,7 @@ static int tcl_do_masklist(maskrec *m, Tcl_Interp *irp)
     p = Tcl_Merge(6, list);
     Tcl_AppendElement(irp, p);
     n_free(p, "", 0);
+    m = m->next;
   }
   
   return TCL_OK;  

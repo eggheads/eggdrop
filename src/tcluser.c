@@ -381,8 +381,9 @@ static int tcl_chnick STDVAR {
       x = 0;
     else if (get_user_by_handle(userlist, newhand))
       x = 0;
-    else if ((!strcasecmp(origbotname, newhand) || !rfc_casecmp(botnetnick, newhand)) &&
-             (!(u->flags & USER_BOT) || nextbot (argv [1]) != -1))      x = 0;
+    else if (!strcasecmp(botnetnick, newhand) &&
+             (!(u->flags & USER_BOT) || nextbot (argv [1]) != -1))
+      x = 0;
     else if (newhand[0] == '*')
       x = 0;
   }

@@ -241,7 +241,9 @@ static void queue_server(int which, char *buf, int len)
 	tqq = tq->next;
 	if (!strcasecmp(tq->msg, buf)) {
 	  if (!double_warned) {
-	    debug1("msg already queued. skipping: %s",buf);
+	    if (buf[len - 1] == '\n')
+	      buf[len - 1] = 0;
+	    debug1("msg already queued. skipping: %s", buf);
 	    double_warned = 1;
 	  }
 	  return;

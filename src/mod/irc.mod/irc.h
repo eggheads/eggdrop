@@ -30,8 +30,8 @@ static void flush_mode(struct chanset_t *, int);
  */
 
 #define resetbans(chan)         resetmasks((chan), (chan)->channel.ban, (chan)->bans, global_bans, 'b')
-#define resetexempts(chan)      resetmasks((chan), (chan)->channel.ban, (chan)->exempts, global_exempts, 'e')
-#define resetinvites(chan)      resetmasks((chan), (chan)->channel.ban, (chan)->invites, global_invites, 'I')
+#define resetexempts(chan)      resetmasks((chan), (chan)->channel.exempt, (chan)->exempts, global_exempts, 'e')
+#define resetinvites(chan)      resetmasks((chan), (chan)->channel.invite, (chan)->invites, global_invites, 'I')
 
 static void reset_chan_info(struct chanset_t *);
 static void recheck_channel(struct chanset_t *, int);
