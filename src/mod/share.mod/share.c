@@ -1,7 +1,7 @@
 /* 
  * share.c -- part of share.mod
  * 
- * $Id: share.c,v 1.30 2000/03/22 00:42:59 fabian Exp $
+ * $Id: share.c,v 1.31 2000/03/23 23:17:59 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -25,16 +25,16 @@
 #define MODULE_NAME "share"
 #define MAKING_SHARE
 
-#include "../module.h"
+#include "src/mod/module.h"
 
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <sys/stat.h>
 
-#include "../../chan.h"
-#include "../../users.h"
-#include "../transfer.mod/transfer.h"
-#include "../channels.mod/channels.h"
+#include "src/chan.h"
+#include "src/users.h"
+#include "transfer.mod/transfer.h"
+#include "channels.mod/channels.h"
 
 /* Minimum version I will share with */
 static const int min_share		= 1029900;
@@ -1180,7 +1180,7 @@ static void sharein_mod(int idx, char *msg)
   Context;
   code = newsplit(&msg);
   for (f = 0, i = 0; C_share[i].name && !f; i++) {
-    int y = strcasecmp(code, C_share[i].name);
+    int y = egg_strcasecmp(code, C_share[i].name);
 
     if (!y)
       /* Found a match */
@@ -1281,7 +1281,7 @@ static int flush_tbuf(char *bot)
   struct share_msgq *q;
 
   for (i = 0; i < 5; i++)
-    if (!strcasecmp(tbuf[i].bot, bot)) {
+    if (!egg_strcasecmp(tbuf[i].bot, bot)) {
       while (tbuf[i].q) {
 	q = tbuf[i].q;
 	tbuf[i].q = tbuf[i].q->next;
@@ -1372,7 +1372,7 @@ static void q_tbuf(char *bot, char *s, struct chanset_t *chan)
   struct share_msgq *q;
 
   for (i = 0; i < 5; i++)
-    if (!strcasecmp(tbuf[i].bot, bot)) {
+    if (!egg_strcasecmp(tbuf[i].bot, bot)) {
       if (chan) {
 	fr.match = (FR_CHAN | FR_BOT);
 	get_user_flagrec(get_user_by_handle(userlist, bot), &fr, chan->dname);
@@ -1410,7 +1410,7 @@ static int can_resync(char *bot)
   int i;
 
   for (i = 0; i < 5; i++)
-    if (!strcasecmp(bot, tbuf[i].bot))
+    if (!egg_strcasecmp(bot, tbuf[i].bot))
       return 1;
   return 0;
 }
@@ -1424,7 +1424,7 @@ static void dump_resync(int idx)
 
   Context;
   for (i = 0; i < 5; i++)
-    if (!strcasecmp(dcc[idx].nick, tbuf[i].bot)) {
+    if (!egg_strcasecmp(dcc[idx].nick, tbuf[i].bot)) {
       while (tbuf[i].q) {
 	q = tbuf[i].q;
 	tbuf[i].q = tbuf[i].q->next;
@@ -1591,7 +1591,7 @@ static void finish_share(int idx)
   int i, j = -1;
 
   for (i = 0; i < dcc_total; i++)
-    if (!strcasecmp(dcc[i].nick, dcc[idx].host) &&
+    if (!egg_strcasecmp(dcc[i].nick, dcc[idx].host) &&
 	(dcc[i].type->flags & DCT_BOT))
       j = i;
   if (j == -1)
@@ -1883,7 +1883,7 @@ static void cancel_user_xfer(int idx, void *x)
     if (dcc[idx].status & STAT_GETTING) {
       j = 0;
       for (i = 0; i < dcc_total; i++)
-	if ((strcasecmp(dcc[i].host, dcc[idx].nick) == 0) &&
+	if (!egg_strcasecmp(dcc[i].host, dcc[idx].nick) &&
 	    ((dcc[i].type->flags & (DCT_FILETRAN | DCT_FILESEND)) ==
 	     (DCT_FILETRAN | DCT_FILESEND)))
 	  j = i;
@@ -1897,7 +1897,7 @@ static void cancel_user_xfer(int idx, void *x)
     if (dcc[idx].status & STAT_SENDING) {
       j = 0;
       for (i = 0; i < dcc_total; i++)
-	if ((!strcasecmp(dcc[i].host, dcc[idx].nick)) &&
+	if ((!egg_strcasecmp(dcc[i].host, dcc[idx].nick)) &&
 	    ((dcc[i].type->flags & (DCT_FILETRAN | DCT_FILESEND))
 	     == DCT_FILETRAN))
 	  j = i;
@@ -2017,7 +2017,7 @@ static void share_report(int idx, int details)
 	  for (j = 0; j < dcc_total; j++)
 	    if (((dcc[j].type->flags & (DCT_FILETRAN | DCT_FILESEND))
 		 == (DCT_FILETRAN | DCT_FILESEND)) &&
-		!strcasecmp(dcc[j].host, dcc[i].nick)) {
+		!egg_strcasecmp(dcc[j].host, dcc[i].nick)) {
 	      dprintf(idx, "Downloading userlist from %s (%d%% done)\n",
 		      dcc[i].nick,
 		      (int) (100.0 * ((float) dcc[j].status) /
@@ -2031,7 +2031,7 @@ static void share_report(int idx, int details)
 	  for (j = 0; j < dcc_total; j++) {
 	    if (((dcc[j].type->flags & (DCT_FILETRAN | DCT_FILESEND))
 		 == DCT_FILETRAN)
-		&& !strcasecmp(dcc[j].host, dcc[i].nick)) {
+		&& !egg_strcasecmp(dcc[j].host, dcc[i].nick)) {
 	      if (dcc[j].type == &DCC_GET)
 		dprintf(idx, "Sending userlist to %s (%d%% done)\n",
 			dcc[i].nick,

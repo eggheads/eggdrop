@@ -2,7 +2,7 @@
  * tcluser.c -- handles:
  *   Tcl stubs for the user-record-oriented commands
  * 
- * $Id: tcluser.c,v 1.14 2000/01/30 19:26:21 fabian Exp $
+ * $Id: tcluser.c,v 1.15 2000/03/23 23:17:56 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -408,7 +408,7 @@ static int tcl_chnick STDVAR
       x = 0;
     else if (get_user_by_handle(userlist, newhand))
       x = 0;
-    else if (!strcasecmp(botnetnick, newhand) &&
+    else if (!egg_strcasecmp(botnetnick, newhand) &&
              (!(u->flags & USER_BOT) || nextbot (argv [1]) != -1))
       x = 0;
     else if (newhand[0] == '*')
@@ -513,7 +513,7 @@ static int tcl_getuser STDVAR
 
   Context;
   BADARGS(3, 999, " handle type");
-  if (!(et = find_entry_type(argv[2])) && strcasecmp(argv[2], "HANDLE")) {
+  if (!(et = find_entry_type(argv[2])) && egg_strcasecmp(argv[2], "HANDLE")) {
     Tcl_AppendResult(irp, "No such info type: ", argv[2], NULL);
     return TCL_ERROR;
   }
@@ -524,7 +524,7 @@ static int tcl_getuser STDVAR
     } else
       return TCL_OK;		/* silently ignore user * */
   }
-  if (!strcasecmp(argv[2], "HANDLE")) {
+  if (!egg_strcasecmp(argv[2], "HANDLE")) {
     Tcl_AppendResult(irp,u->handle, NULL);
   } else {
   e = find_user_entry(et, u);

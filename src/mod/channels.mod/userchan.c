@@ -1,7 +1,7 @@
 /* 
  * userchan.c -- part of channels.mod
  * 
- * $Id: userchan.c,v 1.11 2000/01/17 22:36:08 fabian Exp $
+ * $Id: userchan.c,v 1.12 2000/03/23 23:17:57 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -796,7 +796,7 @@ static void tell_bans(int idx, int show_inact, char *match)
 	s1 = splitnick(&s2);
 	if (s1[0])
 	  sprintf(fill, "%s (%s!%s)", b->mask, s1, s2);
-	else if (!strcasecmp(s, "existant"))
+	else if (!egg_strcasecmp(s, "existant"))
 	  sprintf(fill, "%s (%s)", b->mask, s2);
 	else
 	  sprintf(fill, "%s (server %s)", b->mask, s2);
@@ -890,7 +890,7 @@ static void tell_exempts(int idx, int show_inact, char *match)
 	s1 = splitnick(&s2);
 	if (s1[0])
 	  sprintf(fill, "%s (%s!%s)", e->mask, s1, s2);
-	else if (!strcasecmp(s, "existant"))
+	else if (!egg_strcasecmp(s, "existant"))
 	  sprintf(fill, "%s (%s)", e->mask, s2);
 	else
 	  sprintf(fill, "%s (server %s)", e->mask, s2);
@@ -984,7 +984,7 @@ static void tell_invites(int idx, int show_inact, char *match)
 	s1 = splitnick(&s2);
 	if (s1[0])
 	  sprintf(fill, "%s (%s!%s)", i->mask, s1, s2);
-	else if (!strcasecmp(s, "existant"))
+	else if (!egg_strcasecmp(s, "existant"))
 	  sprintf(fill, "%s (%s)", i->mask, s2);
 	else
 	  sprintf(fill, "%s (server %s)", i->mask, s2);

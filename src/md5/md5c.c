@@ -4,7 +4,7 @@
  * 
  * Modified for eggdrop.
  *
- * $Id: md5c.c,v 1.4 2000/01/01 19:42:29 fabian Exp $
+ * $Id: md5c.c,v 1.5 2000/03/23 23:17:56 fabian Exp $
  */
 /* 
  * Copyright (C) 1991, 1992  RSA Data Security, Inc.
@@ -30,9 +30,6 @@
  * documentation and/or software.
  */
 
-#ifdef HAVE_CONFIG_H
-# include "../../config.h"
-#endif
 #include "main.h"
 #include "eggdrop.h"
 #include "global.h"
@@ -145,7 +142,7 @@ unsigned int inputLen;                     /* length of input block */
 
   /* Transform as many times as possible. */
   if (inputLen >= partLen) {
-    my_memcpy ((POINTER)&context->buffer[index], (POINTER)input, partLen);
+    egg_memcpy ((POINTER)&context->buffer[index], (POINTER)input, partLen);
     MD5Transform (context->state, context->buffer);
 
     for (i = partLen; i + 63 < inputLen; i += 64)
@@ -156,7 +153,7 @@ unsigned int inputLen;                     /* length of input block */
    i = 0;
 
   /* Buffer remaining input */
-  my_memcpy ((POINTER)&context->buffer[index], (POINTER)&input[i], inputLen-i);
+  egg_memcpy ((POINTER)&context->buffer[index], (POINTER)&input[i], inputLen-i);
 }
 
 /* 

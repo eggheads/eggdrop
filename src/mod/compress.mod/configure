@@ -193,7 +193,7 @@ configure: warning:
   compress module will therefore be disabled.
 
 EOF
-  ${srcdir}/../../../misc/modconfig -q --top_srcdir=${srcdir}/../../.. del compress
+  ${srcdir}/../../../misc/modconfig -q --top_srcdir=${srcdir}/../../.. --bindir=../../.. del compress
 else
   if test "${ac_cv_header_zlib_h}" != yes; then
     cat >&2 <<EOF
@@ -203,7 +203,7 @@ configure: warning:
   compress module will therefore be disabled.
 
 EOF
-    ${srcdir}/../../../misc/modconfig -q --top_srcdir=${srcdir}/../../.. del compress
+    ${srcdir}/../../../misc/modconfig -q --top_srcdir=${srcdir}/../../.. --bindir=../../.. del compress
   fi
 fi
 for ac_hdr in unistd.h

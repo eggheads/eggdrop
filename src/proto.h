@@ -7,7 +7,7 @@
  * because they use structures in those
  * (saves including those .h files EVERY time) - Beldin
  * 
- * $Id: proto.h,v 1.21 2000/03/22 00:42:57 fabian Exp $
+ * $Id: proto.h,v 1.22 2000/03/23 23:17:55 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -36,10 +36,6 @@
 
 #ifdef HAVE_DPRINTF
 #define dprintf dprintf_eggdrop
-#endif
-
-#ifndef HAVE_BZERO
-void bzero(void *, int);
 #endif
 
 struct chanset_t;		/* keeps the compiler warnings down :) */
@@ -229,7 +225,6 @@ void make_rand_str(char *, int);
 int oatoi(const char *);
 
 /* net.c */
-void my_memcpy(char *, char *, int);
 IP my_atoul(char *);
 unsigned long iptolong(IP);
 IP getmyip();

@@ -1,7 +1,7 @@
 /* 
  * transfer.c -- part of transfer.mod
  * 
- * $Id: transfer.c,v 1.22 2000/03/22 00:42:59 fabian Exp $
+ * $Id: transfer.c,v 1.23 2000/03/23 23:17:59 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -33,10 +33,10 @@
 /* sigh sunos */
 #include <sys/types.h>
 #include <sys/stat.h>
-#include "../module.h"
-#include "../../tandem.h"
+#include "src/mod/module.h"
+#include "src/tandem.h"
 
-#include "../../users.h"
+#include "src/users.h"
 #include "transfer.h"
 
 #include <netinet/in.h>
@@ -175,7 +175,7 @@ static int at_limit(char *nick)
 
   for (i = 0; i < dcc_total; i++)
     if ((dcc[i].type == &DCC_GET) || (dcc[i].type == &DCC_GET_PENDING))
-      if (!strcasecmp(dcc[i].nick, nick))
+      if (!egg_strcasecmp(dcc[i].nick, nick))
 	x++;
   return (x >= dcc_limit);
 }
@@ -289,7 +289,7 @@ static void flush_fileq(char *to)
     q = fileq;
     fnd = 0;
     while (q != NULL) {
-      if (!strcasecmp(q->to, to)) {
+      if (!egg_strcasecmp(q->to, to)) {
 	deq_this(q);
 	q = NULL;
 	fnd = 1;
@@ -307,7 +307,7 @@ static void send_next_file(char *to)
   int x;
 
   while (q != NULL) {
-    if (!strcasecmp(q->to, to))
+    if (!egg_strcasecmp(q->to, to))
       this = q;
     q = q->next;
   }
@@ -358,7 +358,7 @@ static void send_next_file(char *to)
   }
   x = raw_dcc_send(s1, this->to, this->nick, s);
   if (x == DCCSEND_OK) {
-    if (strcasecmp(this->to, this->nick))
+    if (egg_strcasecmp(this->to, this->nick))
       dprintf(DP_HELP, "NOTICE %s :Here is a file from %s ...\n", this->to,
 	      this->nick);
     deq_this(this);
@@ -400,7 +400,7 @@ static void show_queued_files(int idx)
   fileq_t *q = fileq;
 
   while (q != NULL) {
-    if (!strcasecmp(q->nick, dcc[idx].nick)) {
+    if (!egg_strcasecmp(q->nick, dcc[idx].nick)) {
       if (!cnt) {
 	spaces[HANDLEN - 9] = 0;
 	dprintf(idx, "  Send to  %s  Filename\n", spaces);
@@ -421,8 +421,8 @@ static void show_queued_files(int idx)
   }
   for (i = 0; i < dcc_total; i++) {
     if (((dcc[i].type == &DCC_GET_PENDING) || (dcc[i].type == &DCC_GET)) &&
-	((!strcasecmp(dcc[i].nick, dcc[idx].nick)) ||
-	 (!strcasecmp(dcc[i].u.xfer->from, dcc[idx].nick)))) {
+	((!egg_strcasecmp(dcc[i].nick, dcc[idx].nick)) ||
+	 (!egg_strcasecmp(dcc[i].u.xfer->from, dcc[idx].nick)))) {
       char *nfn;
 
       if (!cnt) {
@@ -464,7 +464,7 @@ static void fileq_cancel(int idx, char *par)
     q = fileq;
     fnd = 0;
     while (q != NULL) {
-      if (!strcasecmp(dcc[idx].nick, q->nick)) {
+      if (!egg_strcasecmp(dcc[idx].nick, q->nick)) {
 	s = nrealloc(s, strlen(q->dir) + strlen(q->file) + 3);
 	if (q->dir[0] == '*')
 	  sprintf(s, "%s/%s", &q->dir[1], q->file);
@@ -493,8 +493,8 @@ static void fileq_cancel(int idx, char *par)
     nfree(s);
   for (i = 0; i < dcc_total; i++) {
     if (((dcc[i].type == &DCC_GET_PENDING) || (dcc[i].type == &DCC_GET)) &&
-	((!strcasecmp(dcc[i].nick, dcc[idx].nick)) ||
-	 (!strcasecmp(dcc[i].u.xfer->from, dcc[idx].nick)))) {
+	((!egg_strcasecmp(dcc[i].nick, dcc[idx].nick)) ||
+	 (!egg_strcasecmp(dcc[i].u.xfer->from, dcc[idx].nick)))) {
       char *nfn = strrchr(dcc[i].u.xfer->origname, '/');
 
       if (nfn == NULL)
@@ -503,7 +503,7 @@ static void fileq_cancel(int idx, char *par)
 	nfn++;
       if (wild_match_file(par, nfn)) {
 	dprintf(idx, "Cancelled: %s  (aborted dcc send)\n", nfn);
-	if (strcasecmp(dcc[i].nick, dcc[idx].nick))
+	if (egg_strcasecmp(dcc[i].nick, dcc[idx].nick))
 	  dprintf(DP_HELP, "NOTICE %s :Transfer of %s aborted by %s\n",
 		  dcc[i].nick, nfn, dcc[idx].nick);
 	if (dcc[i].type == &DCC_GET)
@@ -533,7 +533,7 @@ static int tcl_getfileq STDVAR
 
   BADARGS(2, 2, " handle");
   while (q != NULL) {
-    if (!strcasecmp(q->nick, argv[1])) {
+    if (!egg_strcasecmp(q->nick, argv[1])) {
       s = nrealloc(s, strlen(q->to) + strlen(q->dir) + strlen(q->file) + 4);
       if (q->dir[0] == '*')
 	sprintf(s, "%s %s/%s", q->to, &q->dir[1], q->file);
@@ -628,7 +628,7 @@ static void eof_dcc_fork_send(int idx)
     int x, y = 0;
 
     for (x = 0; x < dcc_total; x++)
-      if ((!strcasecmp(dcc[x].nick, dcc[idx].host)) &&
+      if ((!egg_strcasecmp(dcc[x].nick, dcc[idx].host)) &&
 	  (dcc[x].type->flags & DCT_BOT))
 	y = x;
     if (y != 0) {
@@ -728,7 +728,7 @@ static void eof_dcc_send(int idx)
     nfree(nfn);
     for (j = 0; j < dcc_total; j++)
       if (!ok && (dcc[j].type->flags & (DCT_GETNOTES | DCT_FILES)) &&
-	  !strcasecmp(dcc[j].nick, hand)) {
+	  !egg_strcasecmp(dcc[j].nick, hand)) {
 	ok = 1;
 	dprintf(j, "Thanks for the file!\n");
       }
@@ -746,7 +746,7 @@ static void eof_dcc_send(int idx)
     int x, y = 0;
 
     for (x = 0; x < dcc_total; x++)
-      if ((!strcasecmp(dcc[x].nick, dcc[idx].host)) &&
+      if ((!egg_strcasecmp(dcc[x].nick, dcc[idx].host)) &&
 	  (dcc[x].type->flags & DCT_BOT))
 	y = x;
     if (y) {
@@ -907,7 +907,7 @@ static void dcc_get(int idx, char *buf, int len)
       int x, y = 0;
 
       for (x = 0; x < dcc_total; x++)
-	if ((!strcasecmp(dcc[x].nick, dcc[idx].host)) &&
+	if ((!egg_strcasecmp(dcc[x].nick, dcc[idx].host)) &&
 	    (dcc[x].type->flags & DCT_BOT))
 	  y = x;
       if (y != 0)
@@ -970,7 +970,7 @@ static void eof_dcc_get(int idx)
     int x, y = 0;
 
     for (x = 0; x < dcc_total; x++)
-      if ((!strcasecmp(dcc[x].nick, dcc[idx].host)) &&
+      if ((!egg_strcasecmp(dcc[x].nick, dcc[idx].host)) &&
 	  (dcc[x].type->flags & DCT_BOT))
 	y = x;
     putlog(LOG_BOTS, "*", "Lost userfile transfer; aborting.");
@@ -1046,7 +1046,7 @@ static void transfer_get_timeout(int i)
     int x, y = 0;
 
     for (x = 0; x < dcc_total; x++)
-      if ((!strcasecmp(dcc[x].nick, dcc[i].host)) &&
+      if ((!egg_strcasecmp(dcc[x].nick, dcc[i].host)) &&
 	  (dcc[x].type->flags & DCT_BOT))
 	y = x;
     if (y != 0) {
@@ -1093,7 +1093,7 @@ static void tout_dcc_send(int idx)
     int x, y = 0;
 
     for (x = 0; x < dcc_total; x++)
-      if ((!strcasecmp(dcc[x].nick, dcc[idx].host)) &&
+      if ((!egg_strcasecmp(dcc[x].nick, dcc[idx].host)) &&
 	  (dcc[x].type->flags & DCT_BOT))
 	y = x;
     if (y != 0) {
@@ -1422,7 +1422,7 @@ static int fstat_unpack(struct userrec *u, struct user_entry *e)
   Assert(e);
   Assert(e->name);
   fs = user_malloc(sizeof(struct filesys_stats));
-  bzero(fs, sizeof(struct filesys_stats));
+  egg_bzero(fs, sizeof(struct filesys_stats));
   par = e->u.list->extra;
   arg = newsplit(&par);
   if (arg[0])
@@ -1613,7 +1613,7 @@ static int fstat_gotshare(struct userrec *u, struct user_entry *e,
   default:
     if (!(fs = e->u.extra)) {
       fs = user_malloc(sizeof(struct filesys_stats));
-      bzero(fs, sizeof(struct filesys_stats));
+      egg_bzero(fs, sizeof(struct filesys_stats));
     }
     p = newsplit (&par);
     if (p[0])
@@ -1658,7 +1658,7 @@ static void stats_add_dnload(struct userrec *u, unsigned long bytes)
     if (!(ue = find_user_entry (&USERENTRY_FSTAT, u)) ||
         !(fs = ue->u.extra)) {
       fs = user_malloc(sizeof(struct filesys_stats));
-      bzero(fs, sizeof(struct filesys_stats));
+      egg_bzero(fs, sizeof(struct filesys_stats));
     }
     fs->dnloads++;
     fs->dnload_ks += ((bytes + 512) / 1024);
@@ -1676,7 +1676,7 @@ static void stats_add_upload(struct userrec *u, unsigned long bytes)
     if (!(ue = find_user_entry (&USERENTRY_FSTAT, u)) ||
         !(fs = ue->u.extra)) {
       fs = user_malloc(sizeof(struct filesys_stats));
-      bzero(fs, sizeof(struct filesys_stats));
+      egg_bzero(fs, sizeof(struct filesys_stats));
     }
     fs->uploads++;
     fs->upload_ks += ((bytes + 512) / 1024);
@@ -1702,7 +1702,7 @@ static int fstat_tcl_set(Tcl_Interp * irp, struct userrec *u,
   case 'd':
     if (!(fs = e->u.extra)) {
       fs = user_malloc(sizeof(struct filesys_stats));
-      bzero(fs, sizeof(struct filesys_stats));
+      egg_bzero(fs, sizeof(struct filesys_stats));
     }
     switch (argv[3][0]) {
     case 'u':
@@ -1740,7 +1740,7 @@ static int ctcp_DCC_RESUME(char *nick, char *from, char *handle,
   Context;
   strcpy(msg, text);
   action = newsplit(&msg);
-  if (strcasecmp(action, "RESUME"))
+  if (egg_strcasecmp(action, "RESUME"))
     return 0;
   fn = newsplit(&msg);
   port = atoi(newsplit(&msg));
@@ -1869,9 +1869,9 @@ char *transfer_start(Function * global_funcs)
   Context;
   fileq = NULL;
   module_register(MODULE_NAME, transfer_table, 2, 1);
-  if (!module_depend(MODULE_NAME, "eggdrop", 105, 0)) {
+  if (!module_depend(MODULE_NAME, "eggdrop", 105, 3)) {
     module_undepend(MODULE_NAME);
-    return "This module requires eggdrop1.5.0 or later";
+    return "This module requires eggdrop1.5.3 or later";
   }
 
   add_tcl_commands(mytcls);

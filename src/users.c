@@ -10,7 +10,7 @@
  * 
  * dprintf'ized, 9nov1995
  * 
- * $Id: users.c,v 1.13 2000/02/18 22:27:53 fabian Exp $
+ * $Id: users.c,v 1.14 2000/03/23 23:17:56 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -904,7 +904,7 @@ int readuserfile(char *file, struct userrec **ret)
 	  if (u) {
 	    ue = u->entries;
 	    for (; ue && !ok; ue = ue->next)
-	      if (ue->name && !strcasecmp(code + 2, ue->name)) {
+	      if (ue->name && !egg_strcasecmp(code + 2, ue->name)) {
 		struct list_type *list;
 
 		list = user_malloc(sizeof(struct list_type));
@@ -976,7 +976,7 @@ int readuserfile(char *file, struct userrec **ret)
 
 	      u = get_user_by_handle(bu, code);
 	      for (i = 0; i < dcc_total; i++)
-		if (!strcasecmp(code, dcc[i].nick))
+		if (!egg_strcasecmp(code, dcc[i].nick))
 		  dcc[i].user = u;
 	      u->flags_udef = fr.udef_global;
 	      /* if s starts with '/' it's got file info */
@@ -997,7 +997,7 @@ int readuserfile(char *file, struct userrec **ret)
   for (u = bu; u; u = u->next) {
     struct user_entry *e;
 
-    if (!(u->flags & USER_BOT) && !strcasecmp (u->handle, botnetnick)) {
+    if (!(u->flags & USER_BOT) && !egg_strcasecmp (u->handle, botnetnick)) {
       putlog(LOG_MISC, "*", "(!) I have an user record, but without +b");
       /* u->flags |= USER_BOT; */
     }
@@ -1082,7 +1082,7 @@ void autolink_cycle(char *start)
 	  }
 	  /* did we make it where we're supposed to start?  yay! */
 	  if (!ready)
-	    if (!strcasecmp(u->handle, start)) {
+	    if (!egg_strcasecmp(u->handle, start)) {
 	      ready = 1;
 	      autc = NULL;
 	      /* if starting point is a +h bot, must be in 2nd cycle */
@@ -1100,7 +1100,7 @@ void autolink_cycle(char *start)
 	  int i;
 
 	  i = nextbot(u->handle);
-	  if ((i >= 0) && !strcasecmp(dcc[i].nick, u->handle)) {
+	  if ((i >= 0) && !egg_strcasecmp(dcc[i].nick, u->handle)) {
 	    char *p = MISC_REJECTED;
 
 	    /* we're directly connected to the offending bot?! (shudder!) */

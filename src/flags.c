@@ -2,7 +2,7 @@
  * flags.c -- handles:
  *   all the flag matching/conversion functions in one neat package :)
  * 
- * $Id: flags.c,v 1.12 2000/01/30 19:26:20 fabian Exp $
+ * $Id: flags.c,v 1.13 2000/03/23 23:17:55 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -342,10 +342,10 @@ void break_down_flags(char *string, struct flag_record *plus,
     else
       return;			/* We dont actually want any..huh? */
   }
-  bzero(plus, sizeof(struct flag_record));
+  egg_bzero(plus, sizeof(struct flag_record));
 
   if (minus)
-    bzero(minus, sizeof(struct flag_record));
+    egg_bzero(minus, sizeof(struct flag_record));
 
   plus->match = FR_OR;		/* Default binding type OR */
   while (*string) {
@@ -633,7 +633,7 @@ void set_user_flagrec(struct userrec *u, struct flag_record *fr,
     ch = findchan_by_dname(chname);
     if (!cr && ch) {
       cr = user_malloc(sizeof(struct chanuserrec));
-      bzero(cr, sizeof(struct chanuserrec));
+      egg_bzero(cr, sizeof(struct chanuserrec));
 
       cr->next = u->chanrec;
       u->chanrec = cr;

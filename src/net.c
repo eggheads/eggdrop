@@ -2,7 +2,7 @@
  * net.c -- handles:
  *   all raw network i/o
  * 
- * $Id: net.c,v 1.17 2000/03/06 19:10:12 fabian Exp $
+ * $Id: net.c,v 1.18 2000/03/23 23:17:55 fabian Exp $
  */
 /* 
  * This is hereby released into the public domain.
@@ -70,28 +70,6 @@ IP my_atoul(char *s)
   }
   return ret;
 }
-
-/* I read somewhere that memcpy() is broken on some machines.
- * It's easy to replace, so i'm not gonna take any chances, because
- * it's pretty important that it work correctly here.
- *
- * (Is this still valid?)
- */
-void my_memcpy(char *dest, char *src, int len)
-{
-  while (len--)
-    *dest++ = *src++;
-}
-
-#ifndef HAVE_BZERO
-/* bzero() is bsd-only, so here's one for non-bsd systems
- */
-void bzero(void *dest, int len)
-{
-  while (len--)
-    *((char *) dest)++ = 0;
-}
-#endif
 
 /* Initialize the socklist
  */
@@ -315,7 +293,7 @@ static int proxy_connect(int sock, char *host, int port, int proxy)
     /* numeric IP? */
     if ((host[strlen(host) - 1] >= '0') && (host[strlen(host) - 1] <= '9')) {
       IP ip = ((IP) inet_addr(host)); /* drummer */      
-      my_memcpy((char *) x, (char *) &ip, 4);	/* Beige@Efnet */
+      egg_memcpy(x, &ip, 4);	/* Beige@Efnet */
     } else {
       /* no, must be host.domain */
       if (!setjmp(alarmret)) {
@@ -329,7 +307,7 @@ static int proxy_connect(int sock, char *host, int port, int proxy)
 	killsock(sock);
 	return -2;
       }
-      my_memcpy((char *) x, (char *) hp->h_addr, hp->h_length);
+      egg_memcpy(x, hp->h_addr, hp->h_length);
     }
     for (i = 0; i < MAXSOCKS; i++) {
       if (!(socklist[i].flags & SOCK_UNUSED) && (socklist[i].sock == sock))
@@ -379,13 +357,13 @@ int open_telnet_raw(int sock, char *server, int sport)
     port = sport;
   }
   /* patch by tris for multi-hosted machines: */
-  bzero((char *) &name, sizeof(struct sockaddr_in));
+  egg_bzero((char *) &name, sizeof(struct sockaddr_in));
 
   name.sin_family = AF_INET;
   name.sin_addr.s_addr = (myip[0] ? getmyip() : INADDR_ANY);
   if (bind(sock, (struct sockaddr *) &name, sizeof(name)) < 0)
     return -1;
-  bzero((char *) &name, sizeof(struct sockaddr_in));
+  egg_bzero((char *) &name, sizeof(struct sockaddr_in));
 
   name.sin_family = AF_INET;
   name.sin_port = my_htons(port);
@@ -404,7 +382,7 @@ int open_telnet_raw(int sock, char *server, int sport)
     }
     if (hp == NULL)
       return -2;
-    my_memcpy((char *) &name.sin_addr, hp->h_addr, hp->h_length);
+    egg_memcpy(&name.sin_addr, hp->h_addr, hp->h_length);
     name.sin_family = hp->h_addrtype;
   }
   for (i = 0; i < MAXSOCKS; i++) {
@@ -453,7 +431,7 @@ int open_listen(int *port)
     return -1;
   }
   sock = getsock(SOCK_LISTEN);
-  bzero((char *) &name, sizeof(struct sockaddr_in));
+  egg_bzero((char *) &name, sizeof(struct sockaddr_in));
 
   name.sin_family = AF_INET;
   name.sin_port = my_htons(*port);	/* 0 = just assign us a port */
@@ -777,7 +755,7 @@ int sockgets(char *s, int *len)
     return socklist[ret].sock;
   }
   if (socklist[ret].flags & SOCK_BINARY) {
-    my_memcpy(s, xx, *len);
+    egg_memcpy(s, xx, *len);
     return socklist[ret].sock;
   }
   if ((socklist[ret].flags & SOCK_LISTEN) ||
@@ -914,7 +892,7 @@ void tputs(register int z, char *s, unsigned int len)
       if (socklist[i].outbuf != NULL) {
 	/* Already queueing: just add it */
 	p = (char *) nrealloc(socklist[i].outbuf, socklist[i].outbuflen + len);
-	my_memcpy(p + socklist[i].outbuflen, s, len);
+	egg_memcpy(p + socklist[i].outbuflen, s, len);
 	socklist[i].outbuf = p;
 	socklist[i].outbuflen += len;
 	return;
@@ -926,7 +904,7 @@ void tputs(register int z, char *s, unsigned int len)
       if (x < len) {
 	/* Socket is full, queue it */
 	socklist[i].outbuf = (char *) nmalloc(len - x);
-	my_memcpy(socklist[i].outbuf, &s[x], len - x);
+	egg_memcpy(socklist[i].outbuf, &s[x], len - x);
 	socklist[i].outbuflen = len - x;
       }
       return;
@@ -979,7 +957,7 @@ void dequeue_sockets()
 
 	/* This removes any sent bytes from the beginning of the buffer */
 	socklist[i].outbuf = (char *) nmalloc(socklist[i].outbuflen - x);
-	my_memcpy(socklist[i].outbuf, p + x, socklist[i].outbuflen - x);
+	egg_memcpy(socklist[i].outbuf, p + x, socklist[i].outbuflen - x);
 	socklist[i].outbuflen -= x;
 	nfree(p);
       }
@@ -1092,7 +1070,7 @@ int hostsanitycheck_dcc(char *nick, char *from, IP ip, char *dnsname,
    */
   strncpy(hostname, extracthostname(from), 255);
   hostname[255] = 0;
-  if (!strcasecmp(hostname, dnsname)) {
+  if (!egg_strcasecmp(hostname, dnsname)) {
     putlog(LOG_DEBUG, "*", "DNS information for submitted IP checks out.");
     return 1;
   }

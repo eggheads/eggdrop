@@ -1,7 +1,7 @@
 /* 
  * module.h
  * 
- * $Id: module.h,v 1.25 2000/03/22 00:42:57 fabian Exp $
+ * $Id: module.h,v 1.26 2000/03/23 23:17:56 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -65,6 +65,15 @@
 #endif
 #ifdef egg_snprintf
 #  undef egg_snprintf
+#endif
+#ifdef egg_memset
+#  undef egg_memset
+#endif
+#ifdef egg_strcasecmp
+#  undef egg_strcasecmp
+#endif
+#ifdef egg_strncasecmp
+#  undef egg_strncasecmp
 #endif
 
 /* Version checks for modules. */
@@ -188,9 +197,8 @@
 #define get_data_ptr(x) ((void *(*)(int,char*,int))global[86])(x,__FILE__,__LINE__)
 #define open_telnet ((int (*) (char *, int))global[87])
 /* 88 - 91 */
-#ifndef HAVE_BZERO
-#define bzero ((void (*) (void *, int))global[88])
-#endif
+/* global[88] is now EMPTY. Was bzero(). Use egg_memset or egg_bzero instead.
+ */
 #define my_memcpy ((void * (*) (void *, const void *, size_t))global[89])
 #define my_atoul ((IP(*)(char *))global[90])
 #define my_strcpy ((int (*)(char *, const char *))global[91])
@@ -405,7 +413,11 @@
 #define egg_inet_aton ((int (*)(const char *cp, struct in_addr *addr))global[251])
 /* 252 - 255 */
 #define egg_snprintf (global[252])
-#define egg_vsnprintf ((int (*)(char *str, size_t str_m, const char *fmt, va_list ap))global[253])
+#define egg_vsnprintf ((int (*)(char *, size_t, const char *, va_list))global[253])
+#define egg_memset ((void *(*)(void *, int, size_t))global[254])
+#define egg_strcasecmp ((int (*)(const char *, const char *))global[255])
+/* 256 - 259 */
+#define egg_strncasecmp ((int (*)(const char *, const char *, size_t))global[255])
 
 
 /* This is for blowfish module, couldnt be bothereed making a whole new .h

@@ -4,7 +4,7 @@
  *   provides the code used by the bot if the DNS module is not loaded
  *   DNS Tcl commands
  * 
- * $Id: dns.c,v 1.15 2000/03/22 00:42:57 fabian Exp $
+ * $Id: dns.c,v 1.16 2000/03/23 23:17:55 fabian Exp $
  */
 /* 
  * Written by Fabian Knittel <fknittel@gmx.de>
@@ -196,7 +196,7 @@ void dcc_dnsipbyhost(char *hostn)
   }
 
   de = nmalloc(sizeof(devent_t));
-  bzero(de, sizeof(devent_t));
+  egg_bzero(de, sizeof(devent_t));
 
   /* Link into list. */
   de->next = dns_events;
@@ -227,7 +227,7 @@ void dcc_dnshostbyip(IP ip)
   }
 
   de = nmalloc(sizeof(devent_t));
-  bzero(de, sizeof(devent_t));
+  egg_bzero(de, sizeof(devent_t));
 
   /* Link into list. */
   de->next = dns_events;
@@ -301,7 +301,7 @@ static void tcl_dnsipbyhost(char *hostn, char *proc, char *paras)
 
   Context;
   de = nmalloc(sizeof(devent_t));
-  bzero(de, sizeof(devent_t));
+  egg_bzero(de, sizeof(devent_t));
 
   /* Link into list. */
   de->next = dns_events;
@@ -334,7 +334,7 @@ static void tcl_dnshostbyip(IP ip, char *proc, char *paras)
 
   Context;
   de = nmalloc(sizeof(devent_t));
-  bzero(de, sizeof(devent_t));
+  egg_bzero(de, sizeof(devent_t));
 
   /* Link into list. */
   de->next = dns_events;

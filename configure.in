@@ -1,5 +1,5 @@
 dnl Process this file with autoconf to produce a configure script.
-AC_REVISION($Revision: 1.25 $)
+AC_REVISION($Revision: 1.26 $)
 AC_INIT(src/eggdrop.h)
 AC_CONFIG_AUX_DIR(misc)
 AC_PREFIX_DEFAULT([\${HOME}/eggdrop])
@@ -51,7 +51,7 @@ AC_CHECK_SIZEOF(char, 0)
 AC_CHECK_SIZEOF(short int, 0)
 
 # Checks for library functions
-AC_CHECK_FUNCS(clock getrusage setpgid uname sigaction sigemptyset rename strcasecmp getdtablesize bzero random srandom dlopen dprintf snprintf vsnprintf isascii inet_aton)
+AC_CHECK_FUNCS(clock getrusage setpgid uname sigaction sigemptyset rename strcasecmp strncasecmp getdtablesize memset random srandom dlopen dprintf snprintf vsnprintf isascii inet_aton memcpy)
 EGG_CHECK_FUNC_VSPRINTF
 
 # Make sure we have stdc headers, since we can't compile without them

@@ -1,7 +1,7 @@
 /* 
  * tclchan.c -- part of channels.mod
  * 
- * $Id: tclchan.c,v 1.25 2000/01/30 18:02:02 fabian Exp $
+ * $Id: tclchan.c,v 1.26 2000/03/23 23:17:57 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -505,8 +505,8 @@ static int tcl_newchanban STDVAR
     return TCL_ERROR;
   }
   if (argc == 7) {
-    if (!strcasecmp(argv[6], "none"));
-    else if (!strcasecmp(argv[6], "sticky"))
+    if (!egg_strcasecmp(argv[6], "none"));
+    else if (!egg_strcasecmp(argv[6], "sticky"))
       sticky = 1;
     else {
       Tcl_AppendResult(irp, "invalid option ", argv[6], " (must be one of: ",
@@ -542,8 +542,8 @@ static int tcl_newban STDVAR
 
   BADARGS(4, 6, " ban creator comment ?lifetime? ?options?");
   if (argc == 6) {
-    if (!strcasecmp(argv[5], "none"));
-    else if (!strcasecmp(argv[5], "sticky"))
+    if (!egg_strcasecmp(argv[5], "none"));
+    else if (!egg_strcasecmp(argv[5], "sticky"))
       sticky = 1;
     else {
       Tcl_AppendResult(irp, "invalid option ", argv[5], " (must be one of: ",
@@ -588,8 +588,8 @@ static int tcl_newchanexempt STDVAR
     return TCL_ERROR;
   }
   if (argc == 7) {
-    if (!strcasecmp(argv[6], "none"));
-    else if (!strcasecmp(argv[6], "sticky"))
+    if (!egg_strcasecmp(argv[6], "none"));
+    else if (!egg_strcasecmp(argv[6], "sticky"))
       sticky = 1;
     else {
       Tcl_AppendResult(irp, "invalid option ", argv[6], " (must be one of: ",
@@ -625,8 +625,8 @@ static int tcl_newexempt STDVAR
  
   BADARGS(4, 6, " exempt creator comment ?lifetime? ?options?");
   if (argc == 6) {
-    if (!strcasecmp(argv[5], "none"));
-    else if (strcasecmp(argv[5], "sticky") == 0)
+    if (!egg_strcasecmp(argv[5], "none"));
+    else if (egg_strcasecmp(argv[5], "sticky") == 0)
       sticky = 1;
     else {
       Tcl_AppendResult(irp, "invalid option ", argv[5], " (must be one of: ",
@@ -671,8 +671,8 @@ static int tcl_newchaninvite STDVAR
     return TCL_ERROR;
   }
   if (argc == 7) {
-    if (!strcasecmp(argv[6], "none"));
-    else if (!strcasecmp(argv[6], "sticky"))
+    if (!egg_strcasecmp(argv[6], "none"));
+    else if (!egg_strcasecmp(argv[6], "sticky"))
       sticky = 1;
     else {
       Tcl_AppendResult(irp, "invalid option ", argv[6], " (must be one of: ",
@@ -708,8 +708,8 @@ static int tcl_newinvite STDVAR
 
   BADARGS(4, 6, " invite creator comment ?lifetime? ?options?");
   if (argc == 6) {
-    if (!strcasecmp(argv[5], "none"));
-    else if (strcasecmp(argv[5], "sticky") == 0)
+    if (!egg_strcasecmp(argv[5], "none"));
+    else if (egg_strcasecmp(argv[5], "sticky") == 0)
       sticky = 1;
     else {
       Tcl_AppendResult(irp, "invalid option ", argv[5], " (must be one of: ",
@@ -1167,18 +1167,18 @@ static int tcl_channel_modify(Tcl_Interp * irp, struct chanset_t *chan,
       else if (!strncmp(item[i], "udef-int-", 9))
         initudef(UDEF_INT, item[i] + 9, 0);
       for (ul = udef; ul; ul = ul->next) {
-        if ((!strcasecmp(item[i] + 1, ul->name) ||
+        if ((!egg_strcasecmp(item[i] + 1, ul->name) ||
 	    (!strncmp(item[i] + 1, "udef-flag-", 10) &&
-	     !strcasecmp(item[i] + 11, ul->name))) &&
+	     !egg_strcasecmp(item[i] + 11, ul->name))) &&
 	    (ul->type == UDEF_FLAG)) {
           found = 1;
           if (item[i][0] == '+')
             setudef(ul, ul->values, chan->dname, 1);
           else
             setudef(ul, ul->values, chan->dname, 0);
-        } else if ((!strcasecmp(item[i], ul->name) ||
+        } else if ((!egg_strcasecmp(item[i], ul->name) ||
 		   (!strncmp(item[i], "udef-int-", 9) &&
-		    !strcasecmp(item[i] + 9, ul->name))) &&
+		    !egg_strcasecmp(item[i] + 9, ul->name))) &&
 		   (ul->type == UDEF_INT)) {
           found = 1;
           i++;
@@ -1386,7 +1386,7 @@ static int tcl_setchaninfo STDVAR
     Tcl_AppendResult(irp, "illegal channel: ", argv[2], NULL);
     return TCL_ERROR;
   }
-  if (!strcasecmp(argv[3], "none")) {
+  if (!egg_strcasecmp(argv[3], "none")) {
     set_handle_chaninfo(userlist, argv[1], argv[2], NULL);
     return TCL_OK;
   }
@@ -1564,7 +1564,7 @@ static int tcl_channel_add(Tcl_Interp * irp, char *newname, char *options)
     chan = (struct chanset_t *) nmalloc(sizeof(struct chanset_t));
 
     /* Hells bells, why set *every* variable to 0 when we have bzero? */
-    bzero(chan, sizeof(struct chanset_t));
+    egg_bzero(chan, sizeof(struct chanset_t));
 
     chan->limit_prot = (-1);
     chan->limit = (-1);
@@ -1617,9 +1617,9 @@ static int tcl_setudef STDVAR
   
   Context;
   BADARGS(3, 3, " type name");
-  if (!strcasecmp(argv[1], "flag"))
+  if (!egg_strcasecmp(argv[1], "flag"))
     type = UDEF_FLAG;
-  else if (!strcasecmp(argv[1], "int"))
+  else if (!egg_strcasecmp(argv[1], "int"))
     type = UDEF_INT;
   else {
     Tcl_AppendResult(irp, "invalid type. Must be one of: flag, int", NULL);
@@ -1636,16 +1636,16 @@ static int tcl_renudef STDVAR
   
   Context;
   BADARGS(4, 4, " type oldname newname");
-  if (!strcasecmp(argv[1], "flag"))
+  if (!egg_strcasecmp(argv[1], "flag"))
     type = UDEF_FLAG;
-  else if (!strcasecmp(argv[1], "int"))
+  else if (!egg_strcasecmp(argv[1], "int"))
     type = UDEF_INT;
   else {
     Tcl_AppendResult(irp, "invalid type. Must be one of: flag, int", NULL);
     return TCL_ERROR;
   }
   for (ul = udef; ul; ul = ul->next) {
-    if (ul->type == type && !strcasecmp(ul->name, argv[2])) {
+    if (ul->type == type && !egg_strcasecmp(ul->name, argv[2])) {
       nfree(ul->name);
       ul->name = nmalloc(strlen(argv[3]) + 1);
       strcpy(ul->name, argv[3]);
@@ -1666,9 +1666,9 @@ static int tcl_deludef STDVAR
   
   Context;
   BADARGS(3, 3, " type name");
-  if (!strcasecmp(argv[1], "flag"))
+  if (!egg_strcasecmp(argv[1], "flag"))
     type = UDEF_FLAG;
-  else if (!strcasecmp(argv[1], "int"))
+  else if (!egg_strcasecmp(argv[1], "int"))
     type = UDEF_INT;
   else {
     Tcl_AppendResult(irp, "invalid type. Must be one of: flag, int", NULL);
@@ -1679,7 +1679,7 @@ static int tcl_deludef STDVAR
     ull = ul->next;
     if (!ull)
       break;
-    if (ull->type == type && !strcasecmp(ull->name, argv[2])) {
+    if (ull->type == type && !egg_strcasecmp(ull->name, argv[2])) {
       ul->next = ull->next;
       nfree(ull->name);
       free_udef_chans(ull->values);
@@ -1689,7 +1689,7 @@ static int tcl_deludef STDVAR
     ul = ul->next;
   }
   if (udef) {
-    if (udef->type == type && !strcasecmp(udef->name, argv[2])) {
+    if (udef->type == type && !egg_strcasecmp(udef->name, argv[2])) {
       ul = udef->next;
       nfree(udef->name);
       free_udef_chans(udef->values);

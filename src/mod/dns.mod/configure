@@ -305,7 +305,7 @@ configure: warning:
   module will therefore be disabled.
 
 EOF
-  ${srcdir}/../../../misc/modconfig -q --top_srcdir=${srcdir}/../../.. del dns
+  ${srcdir}/../../../misc/modconfig -q --top_srcdir=${srcdir}/../../.. --bindir=../../.. del dns
 fi
 
 

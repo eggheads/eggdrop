@@ -4,7 +4,7 @@
  *   Tcl initialization
  *   getting and setting Tcl/eggdrop variables
  * 
- * $Id: tcl.c,v 1.17 2000/01/30 19:26:21 fabian Exp $
+ * $Id: tcl.c,v 1.18 2000/03/23 23:17:55 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -184,7 +184,7 @@ int findidx(int z)
 
 static void botnet_change(char *new)
 {
-  if (strcasecmp(botnetnick, new) != 0) {
+  if (egg_strcasecmp(botnetnick, new) != 0) {
     /* Trying to change bot's nickname */
     if (tands > 0) {
       putlog(LOG_MISC, "*", "* Tried to change my botnet nick, but I'm still linked to a botnet.");

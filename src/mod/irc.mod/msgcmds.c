@@ -2,7 +2,7 @@
  * msgcmds.c -- part of irc.mod
  *   all commands entered via /MSG
  * 
- * $Id: msgcmds.c,v 1.11 2000/03/19 23:32:09 fabian Exp $
+ * $Id: msgcmds.c,v 1.12 2000/03/23 23:17:58 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -323,7 +323,7 @@ static int msg_info(char *nick, char *host, struct userrec *u, char *par)
       dprintf(DP_HELP, "NOTICE %s :%s\n", nick, IRC_INFOLOCKED);
       return 1;
     }
-    if (!strcasecmp(par, "none")) {
+    if (!egg_strcasecmp(par, "none")) {
       par[0] = 0;
       if (chname) {
 	set_handle_chaninfo(userlist, u->handle, chname, NULL);
@@ -510,7 +510,7 @@ static int msg_whois(char *nick, char *host, struct userrec *u, char *par)
   if (s2 && s2[0] && !(u2->flags & USER_BOT))
     dprintf(DP_HELP, "NOTICE %s :[%s] %s\n", nick, u2->handle, s2);
   for (xk = get_user(&USERENTRY_XTRA, u2); xk; xk = xk->next)
-    if (!strcasecmp(xk->key, "EMAIL"))
+    if (!egg_strcasecmp(xk->key, "EMAIL"))
       dprintf(DP_HELP, "NOTICE %s :[%s] email: %s\n", nick, u2->handle,
 	      xk->data);
   ok = 0;

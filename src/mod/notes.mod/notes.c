@@ -5,7 +5,7 @@
  *   note cmds
  *   note ignores
  * 
- * $Id: notes.c,v 1.15 2000/03/22 00:42:58 fabian Exp $
+ * $Id: notes.c,v 1.16 2000/03/23 23:17:58 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -30,8 +30,8 @@
 #define MAKING_NOTES
 #include <fcntl.h>
 #include <sys/stat.h> /* chmod(..) */
-#include "../module.h"
-#include "../../tandem.h"
+#include "src/mod/module.h"
+#include "src/tandem.h"
 #undef global
 #include "notes.h"
 
@@ -95,7 +95,7 @@ static int num_notes(char *user)
       if ((s[0]) && (s[0] != '#') && (s[0] != ';')) {	/* Not comment */
 	s1 = s;
 	to = newsplit(&s1);
-	if (!strcasecmp(to, user))
+	if (!egg_strcasecmp(to, user))
 	  tot++;
       }
     }
@@ -112,7 +112,7 @@ static void notes_change(char *oldnick, char *newnick)
   char s[513], *to, *s1;
   int tot = 0;
 
-  if (!strcasecmp(oldnick, newnick))
+  if (!egg_strcasecmp(oldnick, newnick))
     return;
   if (!notefile[0])
     return;
@@ -135,7 +135,7 @@ static void notes_change(char *oldnick, char *newnick)
       if ((s[0]) && (s[0] != '#') && (s[0] != ';')) {	/* Not comment */
 	s1 = s;
 	to = newsplit(&s1);
-	if (!strcasecmp(to, oldnick)) {
+	if (!egg_strcasecmp(to, oldnick)) {
 	  tot++;
 	  fprintf(g, "%s %s\n", newnick, s1);
 	} else
@@ -223,9 +223,9 @@ static int tcl_storenote STDVAR
     /* User is valid & has a valid forwarding address */
      strcpy(fwd, f1);		/* Only 40 bytes are stored in the userfile */
      p = strchr(fwd, '@');
-    if (p && !strcasecmp(p + 1, botnetnick)) {
+    if (p && !egg_strcasecmp(p + 1, botnetnick)) {
       *p = 0;
-      if (!strcasecmp(fwd, argv[2]))
+      if (!egg_strcasecmp(fwd, argv[2]))
 	/* They're forwarding to themselves on the same bot, llama's */
 	ok = 0;
       strcpy(fwd2, fwd);
@@ -237,7 +237,7 @@ static int tcl_storenote STDVAR
       if ((f2 = get_user(&USERENTRY_FWD, ur2))) {
 	strcpy(fwd2, f2);
 	splitc(fwd2, fwd2, '@');
-	if (!strcasecmp(fwd2, argv[2]))
+	if (!egg_strcasecmp(fwd2, argv[2]))
 	/* They're forwarding to someone who forwards back to them! */
 	ok = 0;
       }
@@ -254,7 +254,7 @@ static int tcl_storenote STDVAR
 	q++;
 	if ((r = strchr(q, ' '))) {
 	  *r = 0;
-	  if (!strcasecmp(fwd, q))
+	  if (!egg_strcasecmp(fwd, q))
 	    ok = 0;
 	  *r = ' ';
 	}
@@ -412,7 +412,7 @@ static int tcl_erasenotes STDVAR
       if ((s[0]) && (s[0] != '#') && (s[0] != ';')) {	/* Not comment */
 	s1 = s;
 	to = newsplit(&s1);
-	if (!strcasecmp(to, argv[1])) {
+	if (!egg_strcasecmp(to, argv[1])) {
 	  read++;
 	  if (!notes_in(nl, read)) {
 	    fprintf(g, "%s %s\n", to, s1);
@@ -502,7 +502,7 @@ static void notes_read(char *hand, char *nick, char *srd, int idx)
       if ((s[0]) && (s[0] != '#') && (s[0] != ';')) {	/* Not comment */
 	s1 = s;
 	to = newsplit(&s1);
-	if (!strcasecmp(to, hand)) {
+	if (!egg_strcasecmp(to, hand)) {
 	  int lapse;
 
 	  from = newsplit(&s1);
@@ -620,7 +620,7 @@ static void notes_del(char *hand, char *nick, char *sdl, int idx)
       if ((s[0]) && (s[0] != '#') && (s[0] != ';')) {	/* Not comment */
 	s1 = s;
 	to = newsplit(&s1);
-	if (!strcasecmp(to, hand)) {
+	if (!egg_strcasecmp(to, hand)) {
 	  if (!notes_in(dl, in))
 	    fprintf(g, "%s %s\n", to, s1);
 	  else
@@ -703,7 +703,7 @@ static int tcl_notes STDVAR
       if ((s[0]) && (s[0] != '#') && (s[0] != ';')) {	/* Not comment */
 	s1 = s;
 	to = newsplit(&s1);
-	if (!strcasecmp(to, argv[1])) {
+	if (!egg_strcasecmp(to, argv[1])) {
 	  read++;
 	  if (notes_in(nl, read)) {
 	    count++;
@@ -753,19 +753,19 @@ static int msg_notes(char *nick, char *host, struct userrec *u, char *par)
       return 0;
   }
   fcn = newsplit(&par);
-  if (!strcasecmp(fcn, "INDEX"))
+  if (!egg_strcasecmp(fcn, "INDEX"))
     notes_read(u->handle, nick, "+", -1);
-  else if (!strcasecmp(fcn, "READ")) {
-    if (!strcasecmp(par, "ALL"))
+  else if (!egg_strcasecmp(fcn, "READ")) {
+    if (!egg_strcasecmp(par, "ALL"))
       notes_read(u->handle, nick, "-", -1);
     else
       notes_read(u->handle, nick, par, -1);
-  } else if (!strcasecmp(fcn, "ERASE")) {
-    if (!strcasecmp(par, "ALL"))
+  } else if (!egg_strcasecmp(fcn, "ERASE")) {
+    if (!egg_strcasecmp(par, "ALL"))
       notes_del(u->handle, nick, "-", -1);
     else
       notes_del(u->handle, nick, par, -1);
-  } else if (!strcasecmp(fcn, "TO")) {
+  } else if (!egg_strcasecmp(fcn, "TO")) {
     char *to;
     int i;
     FILE *f;
@@ -786,7 +786,7 @@ static int msg_notes(char *nick, char *host, struct userrec *u, char *par)
       return 1;
     }
     for (i = 0; i < dcc_total; i++) {
-      if ((!strcasecmp(dcc[i].nick, to)) &&
+      if ((!egg_strcasecmp(dcc[i].nick, to)) &&
 	  (dcc[i].type->flags & DCT_GETNOTES)) {
 	int aok = 1;
 
@@ -848,7 +848,7 @@ static void notes_hourly()
 	  k = num_notes(u->handle);
 	  for (l = 0; l < dcc_total; l++) {
 	    if ((dcc[l].type->flags & DCT_CHAT) &&
-		(!strcasecmp(dcc[l].nick, u->handle)))
+		(!egg_strcasecmp(dcc[l].nick, u->handle)))
 	      k = 0;		/* They already know they have notes */
 	  }
 	  if (k) {
@@ -876,7 +876,7 @@ static void away_notes(char *bot, int sock, char *msg)
   int idx = findanyidx(sock);
 
   Context;
-  if (strcasecmp(bot, botnetnick))
+  if (egg_strcasecmp(bot, botnetnick))
     return;
   if (msg && msg[0])
     dprintf(idx, "Notes will be stored.\n");
@@ -900,7 +900,7 @@ static void join_notes(char *nick, char *uhost, char *handle, char *par)
   if (notify_onjoin) { /* drummer */
     for (j = 0; j < dcc_total; j++)
       if ((dcc[j].type->flags & DCT_CHAT)
-	  && (!strcasecmp(dcc[j].nick, handle))) {
+	  && (!egg_strcasecmp(dcc[j].nick, handle))) {
 	return;			/* They already know they have notes */
       }
 
@@ -933,7 +933,7 @@ static struct xtra_key *getnotesentry(struct userrec *u)
     return NULL;
   /* Search for the notes ignore list entry */
   for (xk = ue->u.extra; xk; xk = xk->next)
-    if (xk->key && !strcasecmp(xk->key, NOTES_IGNKEY)) {
+    if (xk->key && !egg_strcasecmp(xk->key, NOTES_IGNKEY)) {
       nxk = xk;
       break;
     }

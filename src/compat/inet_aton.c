@@ -1,7 +1,7 @@
 /*
  * inet_aton.c -- provides inet_aton() if necessary.
  *
- * $Id: inet_aton.c,v 1.1 2000/03/22 00:42:57 fabian Exp $
+ * $Id: inet_aton.c,v 1.2 2000/03/23 23:17:56 fabian Exp $
  */
 /* Portions Copyright (C) 2000  Eggheads
  *
@@ -182,5 +182,4 @@ egg_inet_aton(cp, addr)
 ret_0:
 	return (0);
 }
-
 #endif /* HAVE_INET_ATON */

@@ -7,7 +7,7 @@
  *   telling the current programmed settings
  *   initializing a lot of stuff and loading the tcl scripts
  * 
- * $Id: chanprog.c,v 1.14 2000/03/23 23:10:26 fabian Exp $
+ * $Id: chanprog.c,v 1.15 2000/03/23 23:17:54 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -146,7 +146,7 @@ struct userrec *check_chanlist(char *host)
     m = chan->channel.member;
     while (m && m->nick[0]) {
       if (!rfc_casecmp(nick, m->nick) &&
-	  !strcasecmp(uhost, m->userhost))
+	  !egg_strcasecmp(uhost, m->userhost))
 	return m->user;
       m = m->next;
     }
@@ -165,7 +165,7 @@ struct userrec *check_chanlist_hand(char *hand)
     m = chan->channel.member;
     while (m && m->nick[0]) {
       if (m->user)
-	if (!strcasecmp(m->user->handle, hand))
+	if (!egg_strcasecmp(m->user->handle, hand))
 	  return m->user;
       m = m->next;
     }
@@ -211,7 +211,7 @@ void set_chanlist(char *host, struct userrec *rec)
     m = chan->channel.member;
     while (m && m->nick[0]) {
       if (!rfc_casecmp(nick, m->nick) &&
-	  !strcasecmp(uhost, m->userhost))
+	  !egg_strcasecmp(uhost, m->userhost))
 	m->user = rec;
       m = m->next;
     }
@@ -676,7 +676,7 @@ int isowner(char *name)
       pb++;
     }
     pl = (unsigned int) pb - (unsigned int) pa;
-    if ((pl == nl) && (!strncasecmp(pa, name, nl)))
+    if (pl == nl && !egg_strncasecmp(pa, name, nl))
       return (1);
     while (1) {
       if ((*pb == 0) || ((*pb != ',') && (*pb != ' ')))

@@ -4,7 +4,7 @@
  * 
  * Written by Fabian Knittel <fknittel@gmx.de>
  * 
- * $Id: dns.c,v 1.12 2000/03/22 00:42:58 fabian Exp $
+ * $Id: dns.c,v 1.13 2000/03/23 23:17:57 fabian Exp $
  */
 /* 
  * Copyright (C) 1999, 2000  Eggheads
@@ -26,7 +26,7 @@
 
 #define MODULE_NAME "dns"
 
-#include "../module.h"
+#include "src/mod/module.h"
 #include "dns.h"
 
 static void dns_event_success();

@@ -4,7 +4,7 @@
  * 
  * Rewritten by Fabian Knittel <fknittel@gmx.de>
  * 
- * $Id: filedb3.c,v 1.10 2000/03/04 20:38:20 fabian Exp $
+ * $Id: filedb3.c,v 1.11 2000/03/23 23:17:57 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -111,7 +111,7 @@ static filedb_entry *_malloc_fdbe(char *file, int line)
 #else
   fdbe = nmalloc(sizeof(filedb_entry));
 #endif
-  bzero(fdbe, sizeof(filedb_entry));
+  egg_bzero(fdbe, sizeof(filedb_entry));
 
   /* Mark as new, will be overwritten if necessary. */
   fdbe->_type = TYPE_NEW;
@@ -290,7 +290,7 @@ static int _filedb_updatefile(FILE *fdb, long pos, filedb_entry *fdbe,
 
   Context;
   Assert(fdbe);
-  bzero(&fdh, sizeof(filedb_header));
+  egg_bzero(&fdh, sizeof(filedb_header));
   fdh.uploaded = fdbe->uploaded;
   fdh.size = fdbe->size;
   fdh.stat = fdbe->stat;

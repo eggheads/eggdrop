@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  * 
- * $Id: chan.c,v 1.36 2000/03/22 00:42:58 fabian Exp $
+ * $Id: chan.c,v 1.37 2000/03/23 23:17:57 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -192,7 +192,7 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
   /* Okay, make sure i'm not flood-checking myself */
   if (match_my_nick(floodnick))
     return 0;
-  if (!strcasecmp(floodhost, botuserhost))
+  if (!egg_strcasecmp(floodhost, botuserhost))
     return 0;
   /* My user@host (?) */
   if ((which == FLOOD_KICK) || (which == FLOOD_DEOP))
@@ -1522,7 +1522,7 @@ static int gotjoin(char *from, char *chname)
       reset_chan_info(chan);
     } else {
       m = ismember(chan, nick);
-      if (m && m->split && !strcasecmp(m->userhost, uhost)) {
+      if (m && m->split && !egg_strcasecmp(m->userhost, uhost)) {
 	check_tcl_rejn(nick, uhost, u, chan->dname);
 	m->split = 0;
 	m->last = now;

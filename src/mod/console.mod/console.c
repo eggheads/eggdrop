@@ -3,7 +3,7 @@
  *   saved console settings based on console.tcl
  *   by cmwagner/billyjoe/D. Senso
  * 
- * $Id: console.c,v 1.13 2000/03/22 00:42:58 fabian Exp $
+ * $Id: console.c,v 1.14 2000/03/23 23:17:57 fabian Exp $
  */
 /* 
  * Copyright (C) 1999, 2000  Eggheads
@@ -25,7 +25,7 @@
 
 #define MODULE_NAME "console"
 #define MAKING_CONSOLE
-#include "../module.h"
+#include "src/mod/module.h"
 #include <stdlib.h>
 
 static Function *global = NULL;
@@ -169,7 +169,7 @@ int console_tcl_set(Tcl_Interp *irp, struct userrec *u,
   BADARGS(4, 9, " handle CONSOLE channel flags strip echo page conchan");
   if (!i) {
     i = user_malloc(sizeof(struct console_info));
-    bzero(i, sizeof(struct console_info));
+    egg_bzero(i, sizeof(struct console_info));
   }
   if (i->channel)
     nfree(i->channel);
@@ -306,7 +306,7 @@ static int console_store(struct userrec *u, int idx, char *par)
 
   if (!i) {
     i = user_malloc(sizeof(struct console_info));
-    bzero(i, sizeof(struct console_info));
+    egg_bzero(i, sizeof(struct console_info));
   }
   if (i->channel)
     nfree(i->channel);
@@ -390,9 +390,9 @@ char *console_start(Function * global_funcs)
 
   Context;
   module_register(MODULE_NAME, console_table, 1, 1);
-  if (!module_depend(MODULE_NAME, "eggdrop", 105, 0)) {
+  if (!module_depend(MODULE_NAME, "eggdrop", 105, 3)) {
     module_undepend(MODULE_NAME);
-    return "This module requires eggdrop1.5.0 or later";
+    return "This module requires eggdrop1.5.3 or later";
   }
   add_builtins(H_chon, mychon);
   add_builtins(H_dcc, mydcc);

@@ -3,7 +3,7 @@
  *   memory allocation and deallocation
  *   keeping track of what memory is being used by whom
  * 
- * $Id: mem.c,v 1.10 2000/01/30 19:26:20 fabian Exp $
+ * $Id: mem.c,v 1.11 2000/03/23 23:17:55 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -24,24 +24,19 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#define LOG_MISC 32
 #define MEMTBLSIZE 25000	/* yikes! */
+#define COMPILING_MEM
 
-#if HAVE_CONFIG_H
-#  include <config.h>
-#endif
+#include "main.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
 
-typedef int (*Function) ();
-
 #include "mod/modvals.h"
 
-extern module_entry	*module_list;
 
-void fatal(char *, int);
+extern module_entry	*module_list;
 
 #ifdef DEBUG_MEM
 unsigned long	memused = 0;
@@ -53,23 +48,9 @@ struct {
   short	 line;
   char	 file[20];
 } memtbl[MEMTBLSIZE];
-
 #endif
-
-#ifdef HAVE_DPRINTF
-#define dprintf dprintf_eggdrop
-#endif
-
-#define DP_HELP         0x7FF4
 
 /* Prototypes */
-#if !defined(HAVE_PRE7_5_TCL) && defined(__STDC__)
-void dprintf(int arg1, ...);
-void putlog(int arg1, ...);
-#else
-void dprintf();
-void putlog();
-#endif
 int expected_memory();
 int expmem_chanprog();
 int expmem_misc();
@@ -84,8 +65,6 @@ int expmem_modules();
 int expmem_language();
 int expmem_tcldcc();
 int expmem_dns();
-void tell_netdebug();
-void do_module_report(int, int, char *);
 
 
 /* Initialize the memory structure
@@ -166,29 +145,29 @@ void debug_mem_to_dcc(int idx)
     if (p)
       *p = 0;
     l = memtbl[i].size;
-    if (!strcasecmp(fn, "language.c"))
+    if (!egg_strcasecmp(fn, "language.c"))
       use[0] += l;
-    else if (!strcasecmp(fn, "chanprog.c"))
+    else if (!egg_strcasecmp(fn, "chanprog.c"))
       use[1] += l;
-    else if (!strcasecmp(fn, "misc.c"))
+    else if (!egg_strcasecmp(fn, "misc.c"))
       use[2] += l;
-    else if (!strcasecmp(fn, "userrec.c"))
+    else if (!egg_strcasecmp(fn, "userrec.c"))
       use[3] += l;
-    else if (!strcasecmp(fn, "net.c"))
+    else if (!egg_strcasecmp(fn, "net.c"))
       use[4] += l;
-    else if (!strcasecmp(fn, "dccutil.c"))
+    else if (!egg_strcasecmp(fn, "dccutil.c"))
       use[5] += l;
-    else if (!strcasecmp(fn, "botnet.c"))
+    else if (!egg_strcasecmp(fn, "botnet.c"))
       use[6] += l;
-    else if (!strcasecmp(fn, "tcl.c"))
+    else if (!egg_strcasecmp(fn, "tcl.c"))
       use[7] += l;
-    else if (!strcasecmp(fn, "tclhash.c"))
+    else if (!egg_strcasecmp(fn, "tclhash.c"))
       use[8] += l;
-    else if (!strcasecmp(fn, "modules.c"))
+    else if (!egg_strcasecmp(fn, "modules.c"))
       use[9] += l;
-    else if (!strcasecmp(fn, "tcldcc.c"))
+    else if (!egg_strcasecmp(fn, "tcldcc.c"))
       use[10] += l;
-    else if (!strcasecmp(fn, "dns.c"))
+    else if (!egg_strcasecmp(fn, "dns.c"))
       use[11] += l;
     else if (p) {
       for (me = module_list; me; me = me->next)
@@ -249,7 +228,7 @@ void debug_mem_to_dcc(int idx)
       for (j = 0; j < lastused; j++) {
 	if ((p = strchr(memtbl[j].file, ':')))
 	  *p = 0;
-	if (!strcasecmp(memtbl[j].file, fn)) {
+	if (!egg_strcasecmp(memtbl[j].file, fn)) {
 	  if (p)
 	    sprintf(&sofar[strlen(sofar)], "%-10s/%-4d:(%04d) ",
 		    p + 1, memtbl[j].line, memtbl[j].size);
@@ -289,7 +268,7 @@ void debug_mem_to_dcc(int idx)
 	strcpy(fn, memtbl[j].file);
 	if ((p = strchr(fn, ':')) != NULL) {
 	  *p = 0;
-	  if (!strcasecmp(fn, me->name)) {
+	  if (!egg_strcasecmp(fn, me->name)) {
 	    sprintf(&sofar[strlen(sofar)], "%-10s/%-4d:(%04X) ", p + 1,
 		    memtbl[j].line, memtbl[j].size);
 	    if (strlen(sofar) > 60) {

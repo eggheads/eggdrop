@@ -2,7 +2,7 @@
  * blowfish.c -- part of blowfish.mod
  *   encryption and decryption of passwords
  * 
- * $Id: blowfish.c,v 1.12 2000/03/22 00:42:57 fabian Exp $
+ * $Id: blowfish.c,v 1.13 2000/03/23 23:17:56 fabian Exp $
  */
 /* 
  * Copyright (C) 1999  Eggheads
@@ -28,7 +28,7 @@
 
 #define MODULE_NAME "encryption"
 #define MAKING_BLOWFISH
-#include "../module.h"
+#include "src/mod/module.h"
 #include "blowfish.h"
 #include "bf_tab.h"		/* P-box P-array, S-box */
 #undef global

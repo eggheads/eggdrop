@@ -2,7 +2,7 @@
  * filesys.c -- part of filesys.mod
  *   main file of the filesys eggdrop module
  * 
- * $Id: filesys.c,v 1.26 2000/03/22 00:42:58 fabian Exp $
+ * $Id: filesys.c,v 1.27 2000/03/23 23:17:57 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -47,10 +47,10 @@
 #  include <ndir.h>
 # endif
 #endif
-#include "../module.h"
+#include "src/mod/module.h"
 #include "filedb3.h"
 #include "filesys.h"
-#include "../../tandem.h"
+#include "src/tandem.h"
 #include "files.h"
 #include "dbcompat.h"
 #include "filelist.h"
@@ -411,7 +411,7 @@ static int _dcc_send(int idx, char *filename, char *nick, char *dir,
       *p = '_';
   }
     
-  if (strcasecmp(nick, dcc[idx].nick))
+  if (egg_strcasecmp(nick, dcc[idx].nick))
     dprintf(DP_HELP, "NOTICE %s :Here is %s file from %s %s...\n", nick,
 	    resend ? "the" : "a", dcc[idx].nick, resend ? "again " : "");
   dprintf(idx, "Type '/DCC %sGET %s %s' to receive.\n", resend ? "RE" : "",
@@ -830,11 +830,11 @@ static int filesys_DCC_CHAT(char *nick, char *from, char *handle,
   struct flag_record fr = {FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0};
 
   Context;
-  if (!strncasecmp(text, "SEND ", 5)) {
+  if (!egg_strncasecmp(text, "SEND ", 5)) {
     filesys_dcc_send(nick, from, u, text + 5);
     return 1;
   }
-  if (strncasecmp(text, "CHAT ", 5) || !u)
+  if (egg_strncasecmp(text, "CHAT ", 5) || !u)
     return 0;
   strcpy(buf, text + 5);
   get_user_flagrec(u, &fr, 0);
@@ -884,7 +884,7 @@ static int filesys_DCC_CHAT(char *nick, char *from, char *handle,
       dcc[i].status = STAT_ECHO;
       dcc[i].timeval = now;
       dcc[i].u.file->chat = get_data_ptr(sizeof(struct chat_info));
-      bzero(dcc[i].u.file->chat, sizeof(struct chat_info));
+      egg_bzero(dcc[i].u.file->chat, sizeof(struct chat_info));
 
       strcpy(dcc[i].u.file->chat->con_chan, "*");
       dcc[i].user = u;
@@ -996,9 +996,9 @@ char *filesys_start(Function * global_funcs)
 
   Context;
   module_register(MODULE_NAME, filesys_table, 2, 0);
-  if (!module_depend(MODULE_NAME, "eggdrop", 105, 0)) {
+  if (!module_depend(MODULE_NAME, "eggdrop", 105, 3)) {
     module_undepend(MODULE_NAME);
-    return "You need at least eggdrop1.5.0 to run this module.";
+    return "You need at least eggdrop1.5.3 to run this module.";
   }
   if (!(transfer_funcs = module_depend(MODULE_NAME, "transfer", 2, 0))) {
     module_undepend(MODULE_NAME);

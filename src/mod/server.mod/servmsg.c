@@ -1,7 +1,7 @@
 /* 
  * servmsg.c -- part of server.mod
  * 
- * $Id: servmsg.c,v 1.32 2000/03/22 00:28:28 fabian Exp $
+ * $Id: servmsg.c,v 1.33 2000/03/23 23:17:58 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -274,7 +274,7 @@ static int got001(char *from, char *msg)
   if (use_silence && global_ign)
       for (u = global_ign; u; u = u->next)
 	dprintf(DP_SERVER, "SILENCE +%s", u->igmask);
-  if (strcasecmp(from, dcc[servidx].host)) {
+  if (egg_strcasecmp(from, dcc[servidx].host)) {
     putlog(LOG_MISC, "*", "(%s claims to be %s; updating server list)",
 	   dcc[servidx].host, from);
     for (i = curserv; i > 0 && x != NULL; i--)
@@ -353,12 +353,12 @@ static int detect_flood(char *floodnick, char *floodhost, char *from, int which)
   /* Okay, make sure i'm not flood-checking myself */
   if (match_my_nick(floodnick))
     return 0;
-  if (!strcasecmp(floodhost, botuserhost))
+  if (!egg_strcasecmp(floodhost, botuserhost))
     return 0;			/* My user@host (?) */
   p = strchr(floodhost, '@');
   if (p) {
     p++;
-    if (strcasecmp(lastmsghost[which], p)) {	/* New */
+    if (egg_strcasecmp(lastmsghost[which], p)) {	/* New */
       strcpy(lastmsghost[which], p);
       lastmsgtime[which] = now;
       lastmsgs[which] = 0;
@@ -474,7 +474,7 @@ static int gotmsg(char *from, char *msg)
 	    if (!ignoring || trigger_on_ignore) {
 	      if (!check_tcl_ctcp(nick, uhost, u, to, code, ctcp) &&
 		  !ignoring) {
-		if ((lowercase_ctcp && !strcasecmp(code, "DCC")) ||
+		if ((lowercase_ctcp && !egg_strcasecmp(code, "DCC")) ||
 		    (!lowercase_ctcp && !strcmp(code, "DCC"))) {
 		  /* If it gets this far unhandled, it means that
 		   * the user is totally unknown.
@@ -708,7 +708,7 @@ static void minutely_checks()
       if (use_ison) {
 	/* Save space and use the same ISON :P */
 	alt = get_altbotnick();
-	if (alt[0] && strcasecmp (botname, alt))
+	if (alt[0] && egg_strcasecmp (botname, alt))
 	  dprintf(DP_MODE, "ISON :%s %s %s\n", botname, origbotname, alt);
 	else
           dprintf(DP_MODE, "ISON :%s %s\n", botname, origbotname);
@@ -789,7 +789,7 @@ static void got303(char *from, char *msg)
  */
 static int trace_fail(char *from, char *msg)
 {
-  if (keepnick && !use_ison  && !strcasecmp (botname, origbotname)) {
+  if (keepnick && !use_ison  && !egg_strcasecmp (botname, origbotname)) {
     if (!nick_juped)
       putlog(LOG_MISC, "*", IRC_GETORIGNICK, origbotname);
     dprintf(DP_MODE, "NICK %s\n", origbotname);
@@ -942,7 +942,7 @@ static int gotnick(char *from, char *msg)
         putlog(LOG_MISC, "*", IRC_GETORIGNICK, origbotname);
         dprintf(DP_MODE, "NICK %s\n", origbotname);
       } else if (alt[0] && !rfc_casecmp(nick, alt)
-		 && strcasecmp(botname, origbotname)) {
+		 && egg_strcasecmp(botname, origbotname)) {
         putlog(LOG_MISC, "*", IRC_GETALTNICK, alt);
         dprintf(DP_MODE, "NICK %s\n", alt);
       }
@@ -954,7 +954,7 @@ static int gotnick(char *from, char *msg)
       putlog(LOG_MISC, "*", IRC_GETORIGNICK, origbotname);
       dprintf(DP_MODE, "NICK %s\n", origbotname);
     } else if (alt[0] && !rfc_casecmp(nick, alt) &&
-	    strcasecmp(botname, origbotname)) {
+	    egg_strcasecmp(botname, origbotname)) {
       putlog(LOG_MISC, "*", IRC_GETALTNICK, altnick);
       dprintf(DP_MODE, "NICK %s\n", altnick);
     }
@@ -1106,7 +1106,7 @@ static int gotkick(char *from, char *msg)
   newsplit(&pbuf);
   victim = newsplit(&pbuf);
   check_notlagged(victim);
-  if (!strcasecmp(victim, lagcheckstring)) {
+  if (!egg_strcasecmp(victim, lagcheckstring)) {
     debug1("I kicked %s, so I think I'm not lagged", victim);
     lagged = 0;
     nfree(lagcheckstring);
@@ -1245,7 +1245,7 @@ static int lagcheck_401(char *from, char *origmsg)
     debug1("This shouldn't happen.(%s)", origmsg);
     return 0;
   }
-  if (!strcasecmp(lagcheckstring2, newsplit(&msg))) {
+  if (!egg_strcasecmp(lagcheckstring2, newsplit(&msg))) {
     lagged = 0;
     if (lagcheckstring) {
       nfree(lagcheckstring);

@@ -1,5 +1,5 @@
 # Makefile for doc/
-# $Id: Makefile.in,v 1.7 2000/03/22 00:42:56 fabian Exp $
+# $Id: Makefile.in,v 1.8 2000/03/23 23:17:54 fabian Exp $
 
 SHELL = /bin/sh
 top_srcdir = @top_srcdir@
@@ -14,11 +14,12 @@ INSTALL_SCRIPT = @INSTALL_SCRIPT@
 
 DOCS = BOTNET BUG-REPORT CONTENTS KNOWN-PROBLEMS MODULES \
 UPDATES.pre1.3 UPDATES1.3 UPDATES1.4 UPDATES1.5 compiling.FAQ \
-eggdrop.doc patch.howto tcl-commands.doc tricks
+eggdrop.doc patch.howto tcl-commands.doc tricks motd.settings
 
 MAN1 = man1/eggdrop.1
 
 WEB_DOCS = $(srcdir)/web_docs/*.html
+SETTING_DOCS = $(srcdir)/settings/mod.*
 
 doofus:
 	@echo ""
@@ -42,6 +43,9 @@ install:
 	@if test ! -d $(DEST)/doc/web_docs; then \
 		$(top_srcdir)/misc/mkinstalldirs $(DEST)/doc/web_docs; \
 	fi
+	@if test ! -d $(DEST)/doc/settings; then \
+		$(top_srcdir)/misc/mkinstalldirs $(DEST)/doc/settings; \
+	fi
 	@echo "Copying docs."
 	@for i in $(DOCS); do \
 		$(INSTALL_DATA) $(srcdir)/$$i $(DEST)/doc/; \
@@ -49,6 +53,12 @@ install:
 	@for i in $(MAN1); do \
 		$(INSTALL_DATA) $(srcdir)/$$i $(DEST)/doc/man1/; \
 	done
+	@$(INSTALL_DATA) $(srcdir)/settings/core.settings $(DEST)/doc/settings/
+	@if test "x`echo $(SETTING_DOCS)`" != "x$(SETTING_DOCS)"; then \
+		for i in `echo $(SETTING_DOCS)`; do \
+			$(INSTALL_DATA) $$i $(DEST)/doc/settings/; \
+		done; \
+	fi
 	@if test "x`echo $(WEB_DOCS)`" != "x$(WEB_DOCS)"; then \
 		for i in `echo $(WEB_DOCS)`; do \
 			$(INSTALL_DATA) $$i $(DEST)/doc/web_docs/; \

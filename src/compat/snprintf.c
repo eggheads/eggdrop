@@ -1,7 +1,7 @@
 /*
  * snprintf.c - a portable implementation of snprintf and vsnprintf
  *
- * $Id: snprintf.c,v 1.1 2000/03/22 00:42:57 fabian Exp $
+ * $Id: snprintf.c,v 1.2 2000/03/23 23:17:56 fabian Exp $
  */
 /* Portions Copyright (C) 2000  Eggheads
  *
@@ -25,7 +25,6 @@
 
 
 #ifndef HAVE_VSNPRINTF
-
 /* NOTE
  *   The following vsnprintf() routine is a slightly modified version
  *   of the original snprintf() from Mark Martinec.
@@ -528,12 +527,10 @@ int egg_vsnprintf(char *str, size_t str_m, const char *fmt, va_list ap)
                     that is, the number of characters that would have been
                     written to the buffer if it were large enough */
 }
-
 #endif /* HAVE_VSNPRINTF */
 
 
 #ifndef HAVE_SNPRINTF
-
 /* int egg_snprintf(char *str, size_t str_m, const char *fmt, ...)
  */
 int egg_snprintf EGG_VARARGS_DEF(char *, arg1)
@@ -552,5 +549,4 @@ int egg_snprintf EGG_VARARGS_DEF(char *, arg1)
   va_end(ap);
   return ret;
 }
-
 #endif /* !HAVE_SNPRINTF */

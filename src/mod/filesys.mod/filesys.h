@@ -2,7 +2,7 @@
  * filesysc.h -- part of filesys.mod
  *   header file for the filesys2 eggdrop module
  * 
- * $Id: filesys.h,v 1.7 2000/01/17 22:36:08 fabian Exp $
+ * $Id: filesys.h,v 1.8 2000/03/23 23:17:57 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -26,8 +26,8 @@
 #ifndef _EGG_MOD_FILESYS_FILESYS_H
 #define _EGG_MOD_FILESYS_FILESYS_H
 
-#include "../../lang.h"
-#include "../transfer.mod/transfer.h"
+#include "src/lang.h"
+#include "transfer.mod/transfer.h"
 
 #ifdef MAKING_FILESYS
 static int too_many_filers();

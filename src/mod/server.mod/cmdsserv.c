@@ -2,7 +2,7 @@
  * cmdsserv.c -- part of server.mod
  *   handles commands from a user via dcc that cause server interaction
  * 
- * $Id: cmdsserv.c,v 1.5 2000/01/17 22:36:09 fabian Exp $
+ * $Id: cmdsserv.c,v 1.6 2000/03/23 23:17:58 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -95,7 +95,7 @@ static void cmd_clearqueue (struct userrec * u, int idx, char * par)
     putlog(LOG_CMDS, "*", "#%s# clearqueue %s", dcc[idx].nick, par);
     return;
   }
-  if (!strcasecmp(par, "all")) {
+  if (!egg_strcasecmp(par, "all")) {
     msgs = (int) (modeq.tot + mq.tot + hq.tot);
     q = modeq.head;
     while (q) {
@@ -126,7 +126,7 @@ static void cmd_clearqueue (struct userrec * u, int idx, char * par)
     putlog(LOG_CMDS, "*", "#%s# clearqueue %s", dcc[idx].nick, par);
     return;
   }
-  if (!strcasecmp(par, "mode")) {
+  if (!egg_strcasecmp(par, "mode")) {
     q = modeq.head;
     msgs = modeq.tot;
     while (q) {
@@ -144,7 +144,7 @@ static void cmd_clearqueue (struct userrec * u, int idx, char * par)
     putlog(LOG_CMDS, "*", "#%s# clearqueue %s", dcc[idx].nick, par);
     return;
   }
-  if (!strcasecmp(par, "help")) {
+  if (!egg_strcasecmp(par, "help")) {
     msgs = hq.tot;   
     q = hq.head;
     while (q) {
@@ -160,7 +160,7 @@ static void cmd_clearqueue (struct userrec * u, int idx, char * par)
     putlog(LOG_CMDS, "*", "#%s# clearqueue %s", dcc[idx].nick, par);
     return;
   }
-  if (!strcasecmp(par, "server")) {
+  if (!egg_strcasecmp(par, "server")) {
     msgs = mq.tot;
     q = mq.head;
     while (q) {      

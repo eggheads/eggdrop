@@ -2,7 +2,7 @@
  * irc.c -- part of irc.mod
  *   support for channels within the bot 
  * 
- * $Id: irc.c,v 1.21 2000/03/22 00:42:58 fabian Exp $
+ * $Id: irc.c,v 1.22 2000/03/23 23:17:58 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -25,10 +25,10 @@
 
 #define MODULE_NAME "irc"
 #define MAKING_IRC
-#include "../module.h"
+#include "src/mod/module.h"
 #include "irc.h"
-#include "../server.mod/server.h"
-#include "../channels.mod/channels.h"
+#include "server.mod/server.h"
+#include "channels.mod/channels.h"
 #ifdef HAVE_UNAME
 #include <sys/utsname.h>
 #endif
@@ -612,7 +612,7 @@ static void check_expired_chanstuff()
 	  snick = splitnick(&sfrom);
 	  
 	  if (force_expire || channel_clearbans(chan) ||
-	      !(snick[0] && strcasecmp(sfrom, botuserhost) &&
+	      !(snick[0] && egg_strcasecmp(sfrom, botuserhost) &&
 		(m = ismember(chan, snick)) &&
 		m->user && (m->user->flags & USER_BOT) && chan_hasop(m))) {
 	    putlog(LOG_MODES, chan->dname,
@@ -635,7 +635,7 @@ static void check_expired_chanstuff()
 	    sfrom = s;
 	    snick = splitnick(&sfrom);
 	    if (force_expire || channel_clearbans(chan) ||
-		!(snick[0] && strcasecmp(sfrom, botuserhost) &&
+		!(snick[0] && egg_strcasecmp(sfrom, botuserhost) &&
 		  (m = ismember(chan, snick)) &&
 		  m->user && (m->user->flags & USER_BOT) && chan_hasop(m))) {
 	      /* Check to see if it matches a ban */
@@ -680,7 +680,7 @@ static void check_expired_chanstuff()
 	    snick = splitnick(&sfrom);
 
 	    if (force_expire || channel_clearbans(chan) ||
-		!(snick[0] && strcasecmp(sfrom, botuserhost) &&
+		!(snick[0] && egg_strcasecmp(sfrom, botuserhost) &&
 		  (m = ismember(chan, snick)) &&
 		  m->user && (m->user->flags & USER_BOT) && chan_hasop(m))) {
 	      if ((chan->channel.mode & CHANINV) &&

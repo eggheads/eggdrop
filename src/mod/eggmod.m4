@@ -2,13 +2,13 @@ dnl eggmod.m4
 dnl   macros eggdrop modules should use instead of the original autoconf
 dnl   versions.
 dnl
-dnl $Id: eggmod.m4,v 1.4 2000/03/22 00:42:57 fabian Exp $
+dnl $Id: eggmod.m4,v 1.5 2000/03/23 23:17:56 fabian Exp $
 
 dnl
 dnl EGG_REMOVE_MOD(MODULE-NAME)
 dnl
 define(EGG_REMOVE_MOD,
-[${srcdir}/../../../misc/modconfig -q --top_srcdir=${srcdir}/../../.. del $1])
+[${srcdir}/../../../misc/modconfig -q --top_srcdir=${srcdir}/../../.. --bindir=../../.. del $1])
 
 dnl
 dnl EGG_INIT(UNIQUE-SOURCE-FILE)

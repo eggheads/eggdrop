@@ -6,7 +6,7 @@
  * Written by Fabian Knittel <fknittel@gmx.de>. Based on zlib examples
  * by Jean-loup Gailly and Miguel Albrecht.
  * 
- * $Id: compress.c,v 1.2 2000/03/04 20:49:45 fabian Exp $
+ * $Id: compress.c,v 1.3 2000/03/23 23:17:57 fabian Exp $
  */
 /* 
  * Copyright (C) 2000  Eggheads
@@ -33,8 +33,8 @@
 #include <errno.h>
 #include <zlib.h>
 
-#include "../module.h"
-#include "../share.mod/share.h"
+#include "src/mod/module.h"
+#include "share.mod/share.h"
 
 #include "compress_config.h"
 #ifdef HAVE_MMAP

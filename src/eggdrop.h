@@ -4,7 +4,7 @@
  * 
  *   IF YOU ALTER THIS FILE, YOU NEED TO RECOMPILE THE BOT.
  * 
- * $Id: eggdrop.h,v 1.27 2000/03/22 00:28:28 fabian Exp $
+ * $Id: eggdrop.h,v 1.28 2000/03/23 23:17:55 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -188,10 +188,12 @@
 #  define Assert(expr)	{}
 #endif
 
-#undef malloc
-#define malloc(x)	dont_use_old_malloc(x)
-#undef free
-#define free(x)		dont_use_old_free(x)
+#ifndef COMPILING_MEM
+#  undef malloc
+#  define malloc(x)	dont_use_old_malloc(x)
+#  undef free
+#  define free(x)	dont_use_old_free(x)
+#endif /* !COMPILING_MEM */
 
 /* 32 bit type */
 #if (SIZEOF_INT == 4)

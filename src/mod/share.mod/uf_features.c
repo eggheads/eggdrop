@@ -1,7 +1,7 @@
 /* 
  * uf_features.c -- part of share.mod
  * 
- * $Id: uf_features.c,v 1.2 2000/03/04 20:49:45 fabian Exp $
+ * $Id: uf_features.c,v 1.3 2000/03/23 23:17:59 fabian Exp $
  */
 /* 
  * Copyright (C) 2000  Eggheads
@@ -82,7 +82,7 @@ static char		uff_sbuf[512];
 
 static void uff_init(void)
 {
-  memset(&uff_list, 0, sizeof(uff_head_t));
+  egg_bzero(&uff_list, sizeof(uff_head_t));
 }
 
 /* Calculate memory used for list.

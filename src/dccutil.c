@@ -6,7 +6,7 @@
  *   memory management for dcc structures
  *   timeout checking for dcc connections
  * 
- * $Id: dccutil.c,v 1.18 2000/03/22 00:42:57 fabian Exp $
+ * $Id: dccutil.c,v 1.19 2000/03/23 23:17:55 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -247,7 +247,7 @@ void lostdcc(int n)
     dcc[n].type->kill(n, dcc[n].u.other);
   else if (dcc[n].u.other)
     nfree(dcc[n].u.other);
-  bzero(&dcc[n], sizeof(struct dcc_t));
+  egg_bzero(&dcc[n], sizeof(struct dcc_t));
 
   dcc[n].sock = (-1);
   dcc[n].type = &DCC_LOST;
@@ -268,10 +268,9 @@ void removedcc(int n)
     nfree(dcc[n].u.other);
   dcc_total--;
   if (n < dcc_total)
-    my_memcpy((char *) &dcc[n], (char *) &dcc[dcc_total],
-	      sizeof(struct dcc_t));
+    egg_memcpy(&dcc[n], &dcc[dcc_total], sizeof(struct dcc_t));
   else
-    bzero(&dcc[n], sizeof(struct dcc_t)); /* drummer */
+    egg_bzero(&dcc[n], sizeof(struct dcc_t)); /* drummer */
 }
 
 /* Clean up sockets that were just left for dead.
@@ -389,7 +388,7 @@ void *_get_data_ptr(int size, char *file, int line)
 #else
   p = nmalloc(size);
 #endif
-  bzero(p, size);
+  egg_bzero(p, size);
   return p;
 }
 
@@ -434,12 +433,12 @@ int new_dcc(struct dcc_table *type, int xtra_size)
   if (dcc_total == max_dcc)
     return -1;
   dcc_total++;
-  bzero((char *) &dcc[i], sizeof(struct dcc_t));
+  egg_bzero((char *) &dcc[i], sizeof(struct dcc_t));
 
   dcc[i].type = type;
   if (xtra_size) {
     dcc[i].u.other = nmalloc(xtra_size);
-    bzero(dcc[i].u.other, xtra_size);
+    egg_bzero(dcc[i].u.other, xtra_size);
   }
   return i;
 }
@@ -458,7 +457,7 @@ void changeover_dcc(int i, struct dcc_table *type, int xtra_size)
   dcc[i].type = type;
   if (xtra_size) {
     dcc[i].u.other = nmalloc(xtra_size);
-    bzero(dcc[i].u.other, xtra_size);
+    egg_bzero(dcc[i].u.other, xtra_size);
   }
 }
 

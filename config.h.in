@@ -92,9 +92,6 @@
 /* The number of bytes in a short int.  */
 #undef SIZEOF_SHORT_INT
 
-/* Define if you have the bzero function.  */
-#undef HAVE_BZERO
-
 /* Define if you have the clock function.  */
 #undef HAVE_CLOCK
 
@@ -115,6 +112,12 @@
 
 /* Define if you have the isascii function.  */
 #undef HAVE_ISASCII
+
+/* Define if you have the memcpy function.  */
+#undef HAVE_MEMCPY
+
+/* Define if you have the memset function.  */
+#undef HAVE_MEMSET
 
 /* Define if you have the random function.  */
 #undef HAVE_RANDOM
@@ -139,6 +142,9 @@
 
 /* Define if you have the strcasecmp function.  */
 #undef HAVE_STRCASECMP
+
+/* Define if you have the strncasecmp function.  */
+#undef HAVE_STRNCASECMP
 
 /* Define if you have the uname function.  */
 #undef HAVE_UNAME

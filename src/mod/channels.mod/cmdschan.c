@@ -2,7 +2,7 @@
  * cmdschan.c -- part of channels.mod
  *   commands from a user via dcc that cause server interaction
  * 
- * $Id: cmdschan.c,v 1.20 2000/02/25 20:51:10 fabian Exp $
+ * $Id: cmdschan.c,v 1.21 2000/03/23 23:17:56 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -726,7 +726,7 @@ static void cmd_mns_invite (struct userrec * u, int idx, char * par)
 
 static void cmd_bans(struct userrec *u, int idx, char *par)
 {
-  if (!strcasecmp(par, "all")) {
+  if (!egg_strcasecmp(par, "all")) {
     putlog(LOG_CMDS, "*", "#%s# bans all", dcc[idx].nick);
     tell_bans(idx, 1, "");
   } else {
@@ -741,7 +741,7 @@ static void cmd_exempts (struct userrec * u, int idx, char * par)
     dprintf(idx, "This command can only be used with use-exempts enabled.\n");
     return;
   }
-  if (!strcasecmp(par, "all")) {
+  if (!egg_strcasecmp(par, "all")) {
     putlog(LOG_CMDS, "*", "#%s# exempts all", dcc[idx].nick);
     tell_exempts(idx, 1, "");
   } else {
@@ -756,7 +756,7 @@ static void cmd_invites (struct userrec * u, int idx, char * par)
     dprintf(idx, "This command can only be used with use-invites enabled.\n");
     return;
   }
-  if (!strcasecmp(par, "all")) {
+  if (!egg_strcasecmp(par, "all")) {
     putlog(LOG_CMDS, "*", "#%s# invites all", dcc[idx].nick);
     tell_invites(idx, 1, "");
   } else {
@@ -809,7 +809,7 @@ static void cmd_info(struct userrec *u, int idx, char *par)
     dprintf(idx, "Your info line is locked.  Sorry.\n");
     return;
   }
-  if (!strcasecmp(par, "none")) {
+  if (!egg_strcasecmp(par, "none")) {
     if (chname) {
       par[0] = 0;
       set_handle_chaninfo(userlist, dcc[idx].nick, chname, NULL);
@@ -881,7 +881,7 @@ static void cmd_chinfo(struct userrec *u, int idx, char *par)
   }
   putlog(LOG_CMDS, "*", "#%s# chinfo %s %s %s", dcc[idx].nick, handle,
 	 chname ? chname : par, chname ? par : "");
-  if (!strcasecmp(par, "none"))
+  if (!egg_strcasecmp(par, "none"))
     par[0] = 0;
   if (chname) {
     set_handle_chaninfo(userlist, handle, chname, par);
@@ -913,7 +913,7 @@ static void cmd_stick_yn(int idx, char *par, int yn)
   s[UHOSTMAX] = 0;
        
   /* Now deal with exemptions */
-  if (!strcasecmp(stick_type,"exempt")) {
+  if (!egg_strcasecmp(stick_type,"exempt")) {
     i = u_setsticky_exempt(NULL, s,
 			   (dcc[idx].user->flags & USER_MASTER) ? yn : -1);
     if (i > 0) {
@@ -940,7 +940,7 @@ static void cmd_stick_yn(int idx, char *par, int yn)
     dprintf(idx, "No such exempt.\n");
     return;
   /* Now the invites */
-  } else if (!strcasecmp(stick_type,"invite")) {
+  } else if (!egg_strcasecmp(stick_type,"invite")) {
     i = u_setsticky_invite(NULL, s,
 			   (dcc[idx].user->flags & USER_MASTER) ? yn : -1);
     if (i > 0) {
@@ -967,7 +967,7 @@ static void cmd_stick_yn(int idx, char *par, int yn)
     dprintf(idx, "No such invite.\n");
     return;
   }
-  if (strcasecmp(stick_type,"ban")) {
+  if (egg_strcasecmp(stick_type,"ban")) {
     strncpy(s, stick_type, UHOSTMAX);
     s[UHOSTMAX] = 0;    
   }

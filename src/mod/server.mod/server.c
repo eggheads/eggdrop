@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  * 
- * $Id: server.c,v 1.38 2000/03/22 00:42:58 fabian Exp $
+ * $Id: server.c,v 1.39 2000/03/23 23:17:58 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -25,7 +25,7 @@
 
 #define MODULE_NAME "server"
 #define MAKING_SERVER
-#include "../module.h"
+#include "src/mod/module.h"
 #include "server.h"
 #include <netdb.h>
 
@@ -272,7 +272,7 @@ static void check_lag(char *buf)
   if (msg[strlen(msg) - 1] == '\n')
     msg[strlen(msg) - 1] = 0;
   cmd = newsplit(&msg);
-  if (!strcasecmp(cmd, "KICK")) {
+  if (!egg_strcasecmp(cmd, "KICK")) {
     chans = newsplit(&msg);
     nicks = newsplit(&msg);
     nick = nicks;
@@ -301,7 +301,7 @@ static void check_lag(char *buf)
     lagged = 1;
     lagchecktype = LC_KICK;
     debug2("Starting lagcheck using KICK %s (%s)", nick, buf);
-  } else if (!strcasecmp(cmd, "MODE")) {
+  } else if (!egg_strcasecmp(cmd, "MODE")) {
     chans = newsplit(&msg);
     modes = newsplit(&msg);
     par = newsplit(&msg);
@@ -356,14 +356,14 @@ static void check_notlagged(char *buf)
     return;
   }
   if ((buf[0] == '+') || (buf[0] == '-')) {
-    if (!strcasecmp(lagcheckstring, buf)) {
+    if (!egg_strcasecmp(lagcheckstring, buf)) {
       debug1("MODE %s processed, I guess I'm not lagged", lagcheckstring);
       nfree(lagcheckstring);
       lagcheckstring = NULL;
       lagged = 0;
     }
   } else {
-    if (!strcasecmp(lagcheckstring + 3, buf)) {
+    if (!egg_strcasecmp(lagcheckstring + 3, buf)) {
       debug2("%s left, stopping lagcheck for %s", buf, lagcheckstring);
       nfree(lagcheckstring);
       lagcheckstring = NULL;
@@ -393,7 +393,7 @@ static int calc_penalty(char * msg)
     return 0;
   }
   penalty = (1 + i / 100);
-  if (!strcasecmp(cmd, "KICK")) {
+  if (!egg_strcasecmp(cmd, "KICK")) {
     par1 = newsplit(&msg); /* channel */
     par2 = newsplit(&msg); /* victim(s) */
     par3 = splitnicks(&par2);
@@ -408,7 +408,7 @@ static int calc_penalty(char * msg)
       par3 = splitnicks(&par1);
       penalty += ii;
     }
-  } else if (!strcasecmp(cmd, "MODE")) {
+  } else if (!egg_strcasecmp(cmd, "MODE")) {
     i = 0;
     par1 = newsplit(&msg); /* channel */
     par2 = newsplit(&msg); /* mode(s) */
@@ -431,7 +431,7 @@ static int calc_penalty(char * msg)
       ii++;
     }
     penalty += (ii * i);
-  } else if (!strcasecmp(cmd, "TOPIC")) {
+  } else if (!egg_strcasecmp(cmd, "TOPIC")) {
     penalty++;
     par1 = newsplit(&msg); /* channel */
     par2 = newsplit(&msg); /* topic */
@@ -443,14 +443,14 @@ static int calc_penalty(char * msg)
         penalty += 2;
       }
     }
-  } else if (!strcasecmp(cmd, "PRIVMSG") || !strcasecmp(cmd, "NOTICE")) {
+  } else if (!egg_strcasecmp(cmd, "PRIVMSG") || !egg_strcasecmp(cmd, "NOTICE")) {
     par1 = newsplit(&msg); /* channel(s)/nick(s) */
     /* Add one sec penalty for each recipient */
     while (strlen(par1) > 0) {
       splitnicks(&par1);
       penalty++;
     }
-  } else if (!strcasecmp(cmd, "WHO")) {
+  } else if (!egg_strcasecmp(cmd, "WHO")) {
     par1 = newsplit(&msg); /* masks */
     par2 = par1;
     while (strlen(par1) > 0) {
@@ -460,33 +460,33 @@ static int calc_penalty(char * msg)
       else
         penalty += 5;
     }
-  } else if (!strcasecmp(cmd, "AWAY")) {
+  } else if (!egg_strcasecmp(cmd, "AWAY")) {
     if (strlen(msg) > 0)
       penalty += 2;
     else
       penalty += 1;
-  } else if (!strcasecmp(cmd, "INVITE")) {
+  } else if (!egg_strcasecmp(cmd, "INVITE")) {
     /* Successful invite receives 2 or 3 penalty points. Let's go
      * with the maximum.
      */
     penalty += 3;
-  } else if (!strcasecmp(cmd, "JOIN")) {
+  } else if (!egg_strcasecmp(cmd, "JOIN")) {
     penalty += 2;
-  } else if (!strcasecmp(cmd, "PART")) {
+  } else if (!egg_strcasecmp(cmd, "PART")) {
     penalty += 4;
-  } else if (!strcasecmp(cmd, "VERSION")) {
+  } else if (!egg_strcasecmp(cmd, "VERSION")) {
     penalty += 2;
-  } else if (!strcasecmp(cmd, "TIME")) {
+  } else if (!egg_strcasecmp(cmd, "TIME")) {
     penalty += 2;
-  } else if (!strcasecmp(cmd, "TRACE")) {
+  } else if (!egg_strcasecmp(cmd, "TRACE")) {
     penalty += 2;
-  } else if (!strcasecmp(cmd, "NICK")) {
+  } else if (!egg_strcasecmp(cmd, "NICK")) {
     penalty += 3;
-  } else if (!strcasecmp(cmd, "ISON")) {
+  } else if (!egg_strcasecmp(cmd, "ISON")) {
     penalty += 1;
-  } else if (!strcasecmp(cmd, "WHOIS")) {
+  } else if (!egg_strcasecmp(cmd, "WHOIS")) {
     penalty += 2;
-  } else if (!strcasecmp(cmd, "DNS")) {
+  } else if (!egg_strcasecmp(cmd, "DNS")) {
     penalty += 2;
   } else {
     debug1("Unknown command %s, adding 1sec standard-penalty", cmd);
@@ -557,7 +557,7 @@ static int fast_deq(int which)
     stackable[510] = 0;
     stckbl = stackable;
     while (strlen(stckbl) > 0) {
-      if (!strcasecmp(newsplit(&stckbl), cmd)) {
+      if (!egg_strcasecmp(newsplit(&stckbl), cmd)) {
         found = 1;
         break;
       }
@@ -650,12 +650,12 @@ static void check_queues(char *oldnick, char *newnick)
   }
   if (lagged) {
     if (lagchecktype == LC_KICK) {
-      if (!strcasecmp(lagcheckstring, oldnick)) {
+      if (!egg_strcasecmp(lagcheckstring, oldnick)) {
         nfree(lagcheckstring);
         lagcheckstring = nmalloc(strlen(newnick) + 1);
         strcpy(lagcheckstring, newnick);
       }
-    } else if (!strcasecmp(lagcheckstring + 3, oldnick)) {
+    } else if (!egg_strcasecmp(lagcheckstring + 3, oldnick)) {
       pm = lagcheckstring[0];
       mode = lagcheckstring[1];
       nfree(lagcheckstring);
@@ -679,7 +679,7 @@ static void parse_q(struct msgq_head *q, char *oldnick, char *newnick)
   lm = NULL;
   while (m) {
     changed = 0;
-    if ((optimize_kicks == 2) && !strncasecmp(m->msg, "KICK ", 5)) {
+    if ((optimize_kicks == 2) && !egg_strncasecmp(m->msg, "KICK ", 5)) {
       newnicks[0] = 0;
       strncpy(buf, m->msg, 510);
       buf[510] = 0;
@@ -691,7 +691,7 @@ static void parse_q(struct msgq_head *q, char *oldnick, char *newnick)
       nicks = newsplit(&msg);
       while (strlen(nicks) > 0) {
         nick = splitnicks(&nicks);
-        if (!strcasecmp(nick, oldnick) &&
+        if (!egg_strcasecmp(nick, oldnick) &&
             ((9 + strlen(chan) + strlen(newnicks) + strlen(newnick) +
               strlen(nicks) + strlen(msg)) < 510)) {
           if (newnick)
@@ -701,7 +701,7 @@ static void parse_q(struct msgq_head *q, char *oldnick, char *newnick)
           sprintf(newnicks, ",%s", nick);
       }
       sprintf(newmsg, "KICK %s %s %s\n", chan, newnicks + 1, msg);
-    } else if ((use_lagcheck == 2) && !strncasecmp(m->msg, "MODE ", 5)) {
+    } else if ((use_lagcheck == 2) && !egg_strncasecmp(m->msg, "MODE ", 5)) {
       newnicks[0] = 0;
       strncpy(buf, m->msg, 510);
       buf[510] = 0;
@@ -711,7 +711,7 @@ static void parse_q(struct msgq_head *q, char *oldnick, char *newnick)
       sprintf(newnicks, "%s %s", newnicks, newsplit(&msg));
       while (strlen(msg) > 0) {
         nick = newsplit(&msg);
-        if (!strcasecmp(nick, oldnick) &&
+        if (!egg_strcasecmp(nick, oldnick) &&
             ((9 + strlen(newnicks) + strlen(newnick) +
               strlen(nicks) + strlen(msg)) < 510)) {
           if (newnick)
@@ -762,7 +762,7 @@ static void purge_kicks(struct msgq_head *q)
   m = q->head;
   lm = NULL;
   while (m) {
-    if (!strncasecmp(m->msg, "KICK", 4)) {
+    if (!egg_strncasecmp(m->msg, "KICK", 4)) {
       newnicks[0] = 0;
       changed = 0;
       strncpy(buf, m->msg, 510);
@@ -849,14 +849,14 @@ static int deq_kick(int which)
     default:
       return 0;
   }
-  if (strncasecmp(h->head->msg, "KICK", 4))
+  if (egg_strncasecmp(h->head->msg, "KICK", 4))
     return 0;
   if (optimize_kicks == 2) {
     purge_kicks(h);
     if (!h->head)
       return 1;
   }
-  if (strncasecmp(h->head->msg, "KICK", 4))
+  if (egg_strncasecmp(h->head->msg, "KICK", 4))
     return 0;
   msg = h->head;
   strncpy(buf, msg->msg, 510);
@@ -872,7 +872,7 @@ static int deq_kick(int which)
   m = msg->next;
   lm = NULL;
   while (m && (nr < kick_method)) {
-    if (!strncasecmp(m->msg, "KICK", 4)) {
+    if (!egg_strncasecmp(m->msg, "KICK", 4)) {
       changed = 0;
       newnicks2[0] = 0;
       strncpy(buf2, m->msg, 510);
@@ -883,7 +883,7 @@ static int deq_kick(int which)
       newsplit(&reason2);
       chan2 = newsplit(&reason2);
       nicks = newsplit(&reason2);
-      if (!strcasecmp(chan, chan2) && !strcasecmp(reason, reason2)) {
+      if (!egg_strcasecmp(chan, chan2) && !egg_strcasecmp(reason, reason2)) {
         while (strlen(nicks) > 0) {
           nick = splitnicks(&nicks);
           if ((nr < kick_method) &&
@@ -999,8 +999,7 @@ static void queue_server(int which, char *buf, int len)
   if (serv < 0)
     return;
   /* No queue for PING and PONG - drummer */
-  if ((strncasecmp(buf, "PING", 4) == 0) ||
-      (strncasecmp(buf, "PONG", 4) == 0)) {
+  if (!egg_strncasecmp(buf, "PING", 4) || !egg_strncasecmp(buf, "PONG", 4)) {
     if ((buf[1] == 73) || (buf[1] == 105))
       lastpingtime = now;	/* lagmeter */
     tputs(serv, buf, len);
@@ -1048,7 +1047,7 @@ static void queue_server(int which, char *buf, int len)
       tq = tempq.head;
       while (tq) {
 	tqq = tq->next;
-	if (!strcasecmp(tq->msg, buf)) {
+	if (!egg_strcasecmp(tq->msg, buf)) {
 	  if (!double_warned) {
 	    if (buf[len - 1] == '\n')
 	      buf[len - 1] = 0;
@@ -1199,10 +1198,10 @@ static void next_server(int *ptr, char *serv, unsigned int *port, char *pass)
   if (*ptr == (-1)) {
     while (x) {
       if (x->port == *port) {
-	if (!strcasecmp(x->name, serv)) {
+	if (!egg_strcasecmp(x->name, serv)) {
 	  *ptr = i;
 	  return;
-	} else if (x->realname && !strcasecmp(x->realname, serv)) {
+	} else if (x->realname && !egg_strcasecmp(x->realname, serv)) {
 	  *ptr = i;
 	  strncpy(serv, x->realname, 120);
 	  serv[120] = 0;
@@ -1615,7 +1614,7 @@ static int ctcp_DCC_CHAT(char *nick, char *from, char *handle,
   ip = newsplit(&msg);
   prt = newsplit(&msg);
   Context;
-  if (strcasecmp(action, "CHAT") || !u)
+  if (egg_strcasecmp(action, "CHAT") || !u)
     return 0;
   get_user_flagrec(u, &fr, 0);
   if (dcc_total == max_dcc) {

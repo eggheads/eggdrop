@@ -2,7 +2,7 @@
  * assoc.c -- part of assoc.mod
  *   the assoc code, moved here mainly from botnet.c for module work
  * 
- * $Id: assoc.c,v 1.8 2000/03/22 00:42:57 fabian Exp $
+ * $Id: assoc.c,v 1.9 2000/03/23 23:17:56 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -25,8 +25,8 @@
 
 #define MODULE_NAME "assoc"
 #define MAKING_ASSOC
-#include "../module.h"
-#include "../../tandem.h"
+#include "src/mod/module.h"
+#include "src/tandem.h"
 #include <stdlib.h>
 #undef global
 static Function *global = NULL;
@@ -72,7 +72,7 @@ static void link_assoc(char *bot, char *via)
 {
   char x[1024];
 
-  if (!strcasecmp(via, botnetnick)) {
+  if (!egg_strcasecmp(via, botnetnick)) {
     int idx = nextbot(bot);
     assoc_t *a = assoc;
 
@@ -129,7 +129,7 @@ static void add_assoc(char *name, int chan)
 
   Context;
   while (a != NULL) {
-    if ((name[0] != 0) && (!strcasecmp(a->name, name))) {
+    if (name[0] != 0 && !egg_strcasecmp(a->name, name)) {
       kill_assoc(a->channel);
       add_assoc(name, chan);
       return;
@@ -177,7 +177,7 @@ static int get_assoc(char *name)
 
   Context;
   while (a != NULL) {
-    if (!strcasecmp(a->name, name))
+    if (!egg_strcasecmp(a->name, name))
       return a->channel;
     a = a->next;
   }
@@ -345,7 +345,7 @@ static void zapf_assoc(char *botnick, char *code, char *par)
 
   Context;
   if ((idx >= 0) && !(bot_flags(dcc[idx].user) & BOT_ISOLATE)) {
-    if (!strcasecmp(dcc[idx].nick, botnick))
+    if (!egg_strcasecmp(dcc[idx].nick, botnick))
       linking = b_status(idx) & STAT_LINKING;
     s = newsplit(&par);
     chan = base64_to_int(s);

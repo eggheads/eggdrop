@@ -2,7 +2,7 @@
  * channels.c -- part of channels.mod
  *   support for channels within the bot
  * 
- * $Id: channels.c,v 1.27 2000/03/22 00:42:57 fabian Exp $
+ * $Id: channels.c,v 1.28 2000/03/23 23:17:56 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -26,7 +26,7 @@
 #define MODULE_NAME "channels"
 #define MAKING_CHANNELS
 #include <sys/stat.h>
-#include "../module.h"
+#include "src/mod/module.h"
 
 static Function *global		= NULL;
 
@@ -84,7 +84,7 @@ void *channel_malloc(int size, char *file, int line)
 #else
   p = nmalloc(size);
 #endif
-  bzero(p, size);
+  egg_bzero(p, size);
   return p;
 }
 
@@ -869,9 +869,9 @@ char *channels_start(Function * global_funcs)
   gfld_ctcp_time = 60;
   Context;
   module_register(MODULE_NAME, channels_table, 1, 0);
-  if (!module_depend(MODULE_NAME, "eggdrop", 105, 0)) {
+  if (!module_depend(MODULE_NAME, "eggdrop", 105, 3)) {
     module_undepend(MODULE_NAME);
-    return "This module needs eggdrop1.5.0 or later";
+    return "This module needs eggdrop1.5.3 or later";
   }
   add_hook(HOOK_MINUTELY, (Function) check_expired_bans);
   add_hook(HOOK_MINUTELY, (Function) check_expired_exempts);

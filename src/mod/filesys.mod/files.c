@@ -2,7 +2,7 @@
  * files.c - part of filesys.mod
  *   handles all file system commands
  * 
- * $Id: files.c,v 1.19 2000/02/29 20:03:57 fabian Exp $
+ * $Id: files.c,v 1.20 2000/03/23 23:17:57 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -40,7 +40,7 @@
 # endif
 #endif
 
-#include "../../stat.h"
+#include "src/stat.h"
 
 
 /* Are there too many people in the file system?
@@ -477,7 +477,7 @@ static void cmd_reget_get(int idx, char *par, int resend)
 	/* This is a link to a file on another bot... */
 	bot = nmalloc(strlen(fdbe->sharelink) + 1);
 	splitc(bot, fdbe->sharelink, ':');
-	if (!strcasecmp(bot, botnetnick)) {
+	if (!egg_strcasecmp(bot, botnetnick)) {
 	  dprintf(idx, "Can't get that file, it's linked to this bot!\n");
 	} else if (!in_chain(bot)) {
 	  dprintf(idx, FILES_NOTAVAIL, fdbe->filename);
@@ -854,7 +854,7 @@ static void cmd_desc(int idx, char *par)
     if (!(fdbe->stat & FILE_HIDDEN)) {
       ok = 1;
       if ((!(dcc[idx].user->flags & USER_JANITOR)) &&
-	  (strcasecmp(fdbe->uploader, dcc[idx].nick)))
+	  (egg_strcasecmp(fdbe->uploader, dcc[idx].nick)))
 	dprintf(idx, FILES_NOTOWNER, fdbe->filename);
       else {
 	if (desc[0]) {
@@ -1414,7 +1414,7 @@ static int files_reget(int idx, char *fn, char *nick, int resend)
     /* This is a link to a file on another bot... */
     bot = nmalloc(strlen(fdbe->sharelink) + 1);
     splitc(bot, fdbe->sharelink, ':');
-    if (!strcasecmp(bot, botnetnick)) {
+    if (!egg_strcasecmp(bot, botnetnick)) {
       /* Linked to myself *duh* */
       filedb_close(fdb);
       my_free(what);

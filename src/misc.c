@@ -7,7 +7,7 @@
  *   help system
  *   motd display and %var substitution
  * 
- * $Id: misc.c,v 1.18 2000/03/22 00:42:57 fabian Exp $
+ * $Id: misc.c,v 1.19 2000/03/23 23:17:55 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -126,20 +126,6 @@ static int is_file(char *s)
     return 1;
   return 0;
 }
-
-/* unixware has no strcasecmp() without linking in a hefty library */
-#if !HAVE_STRCASECMP
-#define upcase(c) (((c)>='a' && (c)<='z') ? (c)-'a'+'A' : (c))
-
-int strcasecmp(char *s1, char *s2)
-{
-  while ((*s1) && (*s2) && (upcase(*s1) == upcase(*s2))) {
-    s1++;
-    s2++;
-  }
-  return upcase(*s1) - upcase(*s2);
-}
-#endif
 
 int my_strcpy(char *a, char *b)
 {
@@ -452,7 +438,7 @@ void putlog EGG_VARARGS_DEF(int, arg1)
 	  /* Check if this is the same as the last line added to
 	   * the log. <cybah>
 	   */
-	  if (!strcasecmp(out + 8, logs[i].szlast)) {
+	  if (!egg_strcasecmp(out + 8, logs[i].szlast)) {
 	    /* It is a repeat, so increment repeats */
 	    logs[i].repeats++;
 	  } else {
@@ -826,7 +812,7 @@ void help_subst(char *s, char *nick, struct flag_record *flags,
 	q += 2;
 	/* Now q is the string and p is where the rest of the fcn expects */
 	if (!strncmp(q, "help=", 5)) {
-	  if (topic && strcasecmp(q + 5, topic))
+	  if (topic && egg_strcasecmp(q + 5, topic))
 	    blind |= 2;
 	  else
 	    blind &= ~2;
@@ -842,7 +828,7 @@ void help_subst(char *s, char *nick, struct flag_record *flags,
 	      blind &= ~1;
 	  } else if (q[0] == '-') {
 	    blind &= ~1;
-	  } else if (!strcasecmp(q, "end")) {
+	  } else if (!egg_strcasecmp(q, "end")) {
 	    blind &= ~1;
 	    subwidth = 70;
 	    if (cols) {
@@ -853,7 +839,7 @@ void help_subst(char *s, char *nick, struct flag_record *flags,
 	      cols = 0;
 	      towrite = sub;
 	    }
-	  } else if (!strcasecmp(q, "center"))
+	  } else if (!egg_strcasecmp(q, "center"))
 	    center = 1;
 	  else if (!strncmp(q, "cols=", 5)) {
 	    char *r;

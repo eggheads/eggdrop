@@ -15,7 +15,7 @@
  * 1.4       1997-11-25      1.2.2.0         Added language addition  Kirk
  * 1.5       1998-07-12      1.3.0.0         Fixed ;me and updated    BB
  * 
- * $Id: wire.c,v 1.11 2000/01/17 22:36:10 fabian Exp $
+ * $Id: wire.c,v 1.12 2000/03/23 23:17:59 fabian Exp $
  */
 /* 
  * Copyright (C) 1999, 2000  Eggheads
@@ -37,9 +37,9 @@
 
 #define MODULE_NAME "wire"
 #define MAKING_WIRE
-#include "../module.h"
-#include "../../users.h"
-#include "../../chan.h"
+#include "src/mod/module.h"
+#include "src/users.h"
+#include "src/chan.h"
 #include <time.h>
 #include "wire.h"
 
@@ -296,7 +296,7 @@ static int cmd_wire(struct userrec *u, int idx, char *par)
       break;
     w = w->next;
   }
-  if (!strcasecmp(par, "off")) {
+  if (!egg_strcasecmp(par, "off")) {
     if (w) {
       wire_leave(w->sock);
       dprintf(idx, "%s\n", WIRE_NOLONGERWIRED);
@@ -305,7 +305,7 @@ static int cmd_wire(struct userrec *u, int idx, char *par)
     dprintf(idx, "%s\n", WIRE_NOTONWIRE);
     return 0;
   }
-  if (!strcasecmp(par, "info")) {
+  if (!egg_strcasecmp(par, "info")) {
     if (w)
       dprintf(idx, "%s '%s'.\n", WIRE_CURRENTLYON, w->key);
     else

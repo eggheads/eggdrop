@@ -2,7 +2,7 @@
  * ctcp.c -- part of ctcp.mod
  *   all the ctcp handling (except DCC, it's special ;)
  * 
- * $Id: ctcp.c,v 1.7 2000/03/22 00:42:58 fabian Exp $
+ * $Id: ctcp.c,v 1.8 2000/03/23 23:17:57 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -26,8 +26,8 @@
 #define MODULE_NAME "ctcp"
 #define MAKING_CTCP
 #include "ctcp.h"
-#include "../module.h"
-#include "../server.mod/server.h"
+#include "src/mod/module.h"
+#include "server.mod/server.h"
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
@@ -101,29 +101,29 @@ static int ctcp_CLIENTINFO(char *nick, char *uhosr, char *handle,
     return 1;
   if (!msg[0])
     p = CLIENTINFO;
-  else if (!strcasecmp(msg, "sed"))
+  else if (!egg_strcasecmp(msg, "sed"))
     p = CLIENTINFO_SED;
-  else if (!strcasecmp(msg, "version"))
+  else if (!egg_strcasecmp(msg, "version"))
     p = CLIENTINFO_VERSION;
-  else if (!strcasecmp(msg, "clientinfo"))
+  else if (!egg_strcasecmp(msg, "clientinfo"))
     p = CLIENTINFO_CLIENTINFO;
-  else if (!strcasecmp(msg, "userinfo"))
+  else if (!egg_strcasecmp(msg, "userinfo"))
     p = CLIENTINFO_USERINFO;
-  else if (!strcasecmp(msg, "errmsg"))
+  else if (!egg_strcasecmp(msg, "errmsg"))
     p = CLIENTINFO_ERRMSG;
-  else if (!strcasecmp(msg, "finger"))
+  else if (!egg_strcasecmp(msg, "finger"))
     p = CLIENTINFO_FINGER;
-  else if (!strcasecmp(msg, "time"))
+  else if (!egg_strcasecmp(msg, "time"))
     p = CLIENTINFO_TIME;
-  else if (!strcasecmp(msg, "action"))
+  else if (!egg_strcasecmp(msg, "action"))
     p = CLIENTINFO_ACTION;
-  else if (!strcasecmp(msg, "dcc"))
+  else if (!egg_strcasecmp(msg, "dcc"))
     p = CLIENTINFO_DCC;
-  else if (!strcasecmp(msg, "utc"))
+  else if (!egg_strcasecmp(msg, "utc"))
     p = CLIENTINFO_UTC;
-  else if (!strcasecmp(msg, "ping"))
+  else if (!egg_strcasecmp(msg, "ping"))
     p = CLIENTINFO_PING;
-  else if (!strcasecmp(msg, "echo"))
+  else if (!egg_strcasecmp(msg, "echo"))
     p = CLIENTINFO_ECHO;
   if (p == NULL) {
     simple_sprintf(ctcp_reply,

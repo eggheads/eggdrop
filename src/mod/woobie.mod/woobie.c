@@ -5,7 +5,7 @@
  * Originally written by ButchBub	  15 July     1997
  * Comments by Fabian Knittel		  29 December 1999
  * 
- * $Id: woobie.c,v 1.10 2000/03/22 00:42:59 fabian Exp $
+ * $Id: woobie.c,v 1.11 2000/03/23 23:17:59 fabian Exp $
  */
 /* 
  * Copyright (C) 1999, 2000  Eggheads
@@ -27,7 +27,7 @@
 
 #define MODULE_NAME "woobie"
 #define MAKING_WOOBIE
-#include "../module.h"
+#include "src/mod/module.h"
 #include <stdlib.h>
 
 #undef global

@@ -2,7 +2,7 @@
  * cmdsnote.c -- part of notes.mod
  *   handles all notes interaction over the party line
  * 
- * $Id: cmdsnote.c,v 1.5 2000/01/17 22:36:09 fabian Exp $
+ * $Id: cmdsnote.c,v 1.6 2000/03/23 23:17:58 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -164,7 +164,7 @@ static void cmd_fwd(struct userrec *u, int idx, char *par)
     dprintf(idx, "No such user.\n");
     return;
   }
-  if ((u1->flags & USER_OWNER) && strcasecmp(handle, dcc[idx].nick)) {
+  if ((u1->flags & USER_OWNER) && egg_strcasecmp(handle, dcc[idx].nick)) {
     dprintf(idx, "Can't change notes forwarding of the bot owner.\n");
     return;
   }
@@ -197,15 +197,15 @@ static void cmd_notes(struct userrec *u, int idx, char *par)
     return;
   }
   fcn = newsplit(&par);
-  if (!strcasecmp(fcn, "index"))
+  if (!egg_strcasecmp(fcn, "index"))
     notes_read(dcc[idx].nick, "", "+", idx);
-  else if (!strcasecmp(fcn, "read")) {
-    if (!strcasecmp(par, "all"))
+  else if (!egg_strcasecmp(fcn, "read")) {
+    if (!egg_strcasecmp(par, "all"))
       notes_read(dcc[idx].nick, "", "-", idx);
     else
       notes_read(dcc[idx].nick, "", par, idx);
-  } else if (!strcasecmp(fcn, "erase")) {
-    if (!strcasecmp(par, "all"))
+  } else if (!egg_strcasecmp(fcn, "erase")) {
+    if (!egg_strcasecmp(par, "all"))
       notes_del(dcc[idx].nick, "", "-", idx);
     else
       notes_del(dcc[idx].nick, "", par, idx);

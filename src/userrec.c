@@ -4,7 +4,7 @@
  *   a bunch of functions to find and change user records
  *   change and check user (and channel-specific) flags
  * 
- * $Id: userrec.c,v 1.17 2000/01/30 19:26:21 fabian Exp $
+ * $Id: userrec.c,v 1.18 2000/03/23 23:17:56 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -209,7 +209,7 @@ struct userrec *check_dcclist_hand(char *handle)
   int i;
 
   for (i = 0; i < dcc_total; i++)
-    if (!strcasecmp(dcc[i].nick, handle))
+    if (!egg_strcasecmp(dcc[i].nick, handle))
       return dcc[i].user;
   return NULL;
 }
@@ -224,7 +224,7 @@ struct userrec *get_user_by_handle(struct userrec *bu, char *handle)
   if (!handle[0] || (handle[0] == '*'))
     return NULL;
   if (bu == userlist) {
-    if (lastuser && !strcasecmp(lastuser->handle, handle)) {
+    if (lastuser && !egg_strcasecmp(lastuser->handle, handle)) {
       cache_hit++;
       return lastuser;
     }
@@ -241,7 +241,7 @@ struct userrec *get_user_by_handle(struct userrec *bu, char *handle)
     cache_miss++;
   }
   while (u) {
-    if (!strcasecmp(u->handle, handle)) {
+    if (!egg_strcasecmp(u->handle, handle)) {
       if (bu == userlist)
 	lastuser = u;
       return u;
@@ -499,7 +499,7 @@ int sort_compare(struct userrec *a, struct userrec *b)
     if (a->flags & ~b->flags & USER_OP)
       return 0;
   }
-  return (strcasecmp(a->handle, b->handle) > 0);
+  return (egg_strcasecmp(a->handle, b->handle) > 0);
 }
 
 void sort_userlist()
@@ -598,7 +598,7 @@ int change_handle(struct userrec *u, char *newh)
   strcpy(s, u->handle);
   strcpy(u->handle, newh);
   for (i = 0; i < dcc_total; i++) {
-    if (!strcasecmp(dcc[i].nick, s) &&
+    if (!egg_strcasecmp(dcc[i].nick, s) &&
 	(dcc[i].type != &DCC_BOT)) {
       strcpy(dcc[i].nick, newh);
       if ((dcc[i].type == &DCC_CHAT) && (dcc[i].u.chat->channel >= 0)) {
@@ -736,7 +736,7 @@ int deluser(char *handle)
   int fnd = 0;
 
   while ((u != NULL) && (!fnd)) {
-    if (!strcasecmp(u->handle, handle))
+    if (!egg_strcasecmp(u->handle, handle))
       fnd = 1;
     else {
       prev = u;
