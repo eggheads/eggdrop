@@ -2,7 +2,7 @@
  * irc.c -- part of irc.mod
  *   support for channels within the bot 
  * 
- * $Id: irc.c,v 1.36 2000/10/19 16:30:33 fabian Exp $
+ * $Id: irc.c,v 1.37 2000/10/27 19:26:50 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -580,7 +580,7 @@ static void check_expired_chanstuff()
 {
   masklist *b, *e;
   memberlist *m, *n;
-  char s[UHOSTLEN], *snick, *sfrom;
+  char s[UHOSTLEN];
   struct chanset_t *chan;
   struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
   static int count = 4;
@@ -589,159 +589,111 @@ static void check_expired_chanstuff()
   if (!server_online)
     return;
   for (chan = chanset; chan; chan = chan->next) {
-    if (!(chan->status & (CHAN_ACTIVE | CHAN_PEND)) &&
-	!channel_inactive(chan) &&
-	server_online)
-      dprintf(DP_MODE, "JOIN %s %s\n",
-              (chan->name[0]) ? chan->name : chan->dname,
-              chan->channel.key[0] ? chan->channel.key : chan->key_prot);      
-    if ((chan->status & (CHAN_ACTIVE | CHAN_PEND)) &&
-	channel_inactive(chan))
-      dprintf(DP_MODE, "PART %s\n", chan->name);
-    if (channel_dynamicbans(chan) &&
-	me_op(chan) &&
-	!channel_inactive(chan) &&
-	ismember(chan, botname)) {
-      for (b = chan->channel.ban; b->mask[0]; b = b->next) {
-	if (ban_time != 0 && (((now - b->timer) > (60 * ban_time)) &&
-				!u_sticky_mask(chan->bans, b->mask) &&
-				!u_sticky_mask(global_bans, b->mask))) {
-	  strcpy(s, b->who);
-	  sfrom = s;
-	  snick = splitnick(&sfrom);
-	  
-	  if (force_expire ||
-	      !(snick[0] && egg_strcasecmp(sfrom, botuserhost) &&
-		(m = ismember(chan, snick)) &&
-		m->user && (m->user->flags & USER_BOT) && chan_hasop(m))) {
-	    putlog(LOG_MODES, chan->dname,
-		   "(%s) Channel ban on %s expired.",
-		   chan->dname, b->mask);
-	    add_mode(chan, '-', 'b', b->mask);
-	    b->timer = now;
-	  }
-	}
-      }
-    }
-    if (use_exempts == 1 && channel_dynamicexempts(chan) && me_op(chan))
-      for (e = chan->channel.exempt; e->mask[0]; e = e->next) {
-	if (exempt_time != 0 && ((now - e->timer) > (60 * exempt_time) &&
-	    !u_sticky_mask(chan->exempts, e->mask) && 
-	    !u_sticky_mask(global_exempts, e->mask))) {
-	  strcpy(s, e->who);
-	  sfrom = s;
-	  snick = splitnick(&sfrom);
-	  if (force_expire ||
-	      !(snick[0] && egg_strcasecmp(sfrom, botuserhost) &&
-		(m = ismember(chan, snick)) &&
-		m->user && (m->user->flags & USER_BOT) && chan_hasop(m))) {
-	    /* Check to see if it matches a ban */
-	    int match = 0;
+    if (channel_active(chan)) {
+      if (me_op(chan)) {
+	if (channel_dynamicbans(chan) && ban_time)
+	  for (b = chan->channel.ban; b->mask[0]; b = b->next)
+	    if (now - b->timer > 60 * ban_time &&
+		!u_sticky_mask(chan->bans, b->mask) &&
+		!u_sticky_mask(global_bans, b->mask) &&
+		expired_mask(chan, b->who)) {
+	      putlog(LOG_MODES, chan->dname,
+		     "(%s) Channel ban on %s expired.",
+		     chan->dname, b->mask);
+	      add_mode(chan, '-', 'b', b->mask);
+	      b->timer = now;
+	    }
 
-	    for (b = chan->channel.ban; b->mask[0]; b = b->next) {
-	      if (wild_match(b->mask, e->mask) ||
-		  wild_match(e->mask, b->mask)) {
-		match = 1;
-		break;
+	if (use_exempts && channel_dynamicexempts(chan) && exempt_time)
+	  for (e = chan->channel.exempt; e->mask[0]; e = e->next)
+	    if (now - e->timer > 60 * exempt_time &&
+		!u_sticky_mask(chan->exempts, e->mask) && 
+		!u_sticky_mask(global_exempts, e->mask) &&
+		expired_mask(chan, e->who)) {
+	      /* Check to see if it matches a ban */
+	      int match = 0;
+
+	      for (b = chan->channel.ban; b->mask[0]; b = b->next)
+		if (wild_match(b->mask, e->mask) ||
+		    wild_match(e->mask, b->mask)) {
+		  match = 1;
+		  break;
 	      }
-	    }
-	    /* Leave this extra logging in for now. Can be removed later
-	     * Jason
-	     */
-	    if (match) {
-	      putlog(LOG_MODES, chan->dname,
-		     "(%s) Channel exemption %s NOT expired. Exempt still set!",
-		     chan->dname, e->mask);
-	    } else {
-	      putlog(LOG_MODES, chan->dname,
-		     "(%s) Channel exemption on %s expired.",
-		     chan->dname, e->mask);
-	      add_mode(chan, '-', 'e', e->mask);
-	    }
-	    e->timer = now;
-	  }
-	}
-      }
-
-    if (use_invites == 1 && channel_dynamicinvites(chan) && me_op(chan))
-      for (b = chan->channel.invite; b->mask[0]; b = b->next) {
-	if ((invite_time != 0) &&
-	    (((now - b->timer) > (60 * invite_time)) &&
-	     !u_sticky_mask(chan->invites, b->mask) && 
-	     !u_sticky_mask(global_invites, b->mask))) {
- 	  strcpy(s, b->who);
-	  sfrom = s;
-	  snick = splitnick(&sfrom);
-
-	  if (force_expire ||
-	      !(snick[0] && egg_strcasecmp(sfrom, botuserhost) &&
-		(m = ismember(chan, snick)) &&
-		m->user && (m->user->flags & USER_BOT) && chan_hasop(m))) {
-	    if ((chan->channel.mode & CHANINV) &&
-		isinvited(chan, b->mask)) {
 	      /* Leave this extra logging in for now. Can be removed later
 	       * Jason
 	       */
-	      putlog(LOG_MODES, chan->dname,
-                    "(%s) Channel invitation %s NOT expired. Invite still set!",
-		     chan->dname, b->mask);
-	    } else {
+	      if (match) {
+		putlog(LOG_MODES, chan->dname,
+		       "(%s) Channel exemption %s NOT expired. Exempt still set!",
+		       chan->dname, e->mask);
+	      } else {
+		putlog(LOG_MODES, chan->dname,
+		       "(%s) Channel exemption on %s expired.",
+		       chan->dname, e->mask);
+		add_mode(chan, '-', 'e', e->mask);
+	      }
+	      e->timer = now;
+	    }
+
+	if (use_invites && channel_dynamicinvites(chan) &&
+	    invite_time && !(chan->channel.mode & CHANINV))
+	  for (b = chan->channel.invite; b->mask[0]; b = b->next)
+	    if (now - b->timer > 60 * invite_time &&
+		!u_sticky_mask(chan->invites, b->mask) && 
+		!u_sticky_mask(global_invites, b->mask) &&
+		expired_mask(chan, b->who)) {
 	      putlog(LOG_MODES, chan->dname,
 		     "(%s) Channel invitation on %s expired.",
 		     chan->dname, b->mask);
 	      add_mode(chan, '-', 'I', b->mask);
+	      b->timer = now;
 	    }
-	    b->timer = now;
-	  }
-	}
+
+	if (chan->idle_kick)
+	  for (m = chan->channel.member; m && m->nick[0]; m = m->next)
+	    if (now - m->last >= chan->idle_kick * 60 &&
+		!match_my_nick(m->nick) && !chan_issplit(m)) {
+	      sprintf(s, "%s!%s", m->nick, m->userhost);
+	      get_user_flagrec(m->user ? m->user : get_user_by_host(s),
+			       &fr, chan->dname);
+	      if (!(glob_bot(fr) || glob_friend(fr) ||
+		    (glob_op(fr) && !chan_deop(fr)) ||
+		    chan_friend(fr) || chan_op(fr))) {
+		dprintf(DP_SERVER, "KICK %s %s :idle %d min\n", chan->name,
+			m->nick, chan->idle_kick);
+		m->flags |= SENTKICK;
+	      }
+	    }
       }
-    m = chan->channel.member;
-    while (m && m->nick[0]) {
-      if (m->split) {
+      m = chan->channel.member;
+      while (m && m->nick[0]) {
 	n = m->next;
-	if (!channel_active(chan))
-	  killmember(chan, m->nick);
-	else if ((now - m->split) > wait_split) {
+	if (m->split && now - m->split > wait_split) {
 	  sprintf(s, "%s!%s", m->nick, m->userhost);
-	  m->user = get_user_by_host(s);
-	  check_tcl_sign(m->nick, m->userhost, m->user, chan->dname,
-			 "lost in the netsplit");
+	  check_tcl_sign(m->nick, m->userhost,
+			 m->user ? m->user : get_user_by_host(s),
+			 chan->dname, "lost in the netsplit");
 	  putlog(LOG_JOIN, chan->dname,
 		 "%s (%s) got lost in the net-split.",
 		 m->nick, m->userhost);
 	  killmember(chan, m->nick);
 	}
 	m = n;
-      } else
-	m = m->next;
-    }
-    if (channel_active(chan) && me_op(chan) && chan->idle_kick)
-      for (m = chan->channel.member; m && m->nick[0]; m = m->next)
-	if ((now - m->last) >= (chan->idle_kick * 60) &&
-	    !match_my_nick(m->nick) && !chan_issplit(m)) {
-	  sprintf(s, "%s!%s", m->nick, m->userhost);
-	  m->user = get_user_by_host(s);
-	  get_user_flagrec(m->user, &fr, chan->dname);
-	  if (!(glob_bot(fr) || glob_friend(fr) ||
-		(glob_op(fr) && !glob_deop(fr)) ||
-		chan_friend(fr) || chan_op(fr))) {
-	    dprintf(DP_SERVER, "KICK %s %s :idle %d min\n", chan->name,
-		    m->nick, chan->idle_kick);
-	    m->flags |= SENTKICK;
-	  }
-	}
-    check_lonely_channel(chan);
-  }
-  if (min_servs > 0) {
-    for (chan = chanset; chan; chan = chan->next)
-      if (channel_active(chan) && (chan->channel.members == 1))
-	ok = 1;
-    if (ok) {
-      count++;
-      if (count >= 5) {
-	dprintf(DP_SERVER, "LUSERS\n");
-	count = 0;
       }
+      check_lonely_channel(chan);
+      if (chan->channel.members == 1)
+	ok = 1;
+    }
+    else if (!channel_inactive(chan) && !channel_pending(chan))
+      dprintf(DP_MODE, "JOIN %s %s\n",
+              (chan->name[0]) ? chan->name : chan->dname,
+              chan->channel.key[0] ? chan->channel.key : chan->key_prot);
+  }
+  if (min_servs && ok) {
+    count++;
+    if (count >= 5) {
+      dprintf(DP_SERVER, "LUSERS\n");
+      count = 0;
     }
   }
 }

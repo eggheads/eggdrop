@@ -1,7 +1,7 @@
 /* 
  * channels.h -- part of channels.mod
  * 
- * $Id: channels.h,v 1.12 2000/09/13 20:49:40 fabian Exp $
+ * $Id: channels.h,v 1.13 2000/10/27 19:26:49 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -106,6 +106,7 @@ static void initudef(int type, char *, int);
 static void setudef(struct udef_struct *, char *, int);
 static void remove_channel(struct chanset_t *);
 static int ngetudef(char *, char *);
+static int expired_mask(struct chanset_t *chan, char *who);
 
 #else
 
@@ -160,6 +161,7 @@ static int ngetudef(char *, char *);
 #define initudef ((void(*)(int, char *,int))channels_funcs[42])
 #define ngetudef ((int(*)(char *, char *))channels_funcs[43])
 /* 44 - 47 */
+#define expired_mask ((int (*)(struct chanset_t *, char *))channels_funcs[44])
 
 #endif				/* MAKING_CHANNELS */
 
