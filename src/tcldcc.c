@@ -4,7 +4,7 @@
  * 
  * dprintf'ized, 1aug1996
  * 
- * $Id: tcldcc.c,v 1.17 2000/01/17 16:14:45 per Exp $
+ * $Id: tcldcc.c,v 1.18 2000/03/22 04:24:42 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -785,7 +785,7 @@ static int tcl_getdccidle STDVAR
   BADARGS(2, 2, " idx");
   i = atoi(argv[1]);
   idx = findidx(i);
-  if ((idx < 0) || (dcc[idx].type == &DCC_SCRIPT)) {
+  if (idx < 0) {
     Tcl_AppendResult(irp, "invalid idx", NULL);
     return TCL_ERROR;
   }
@@ -803,11 +803,7 @@ static int tcl_getdccaway STDVAR
   BADARGS(2, 2, " idx");
   i = atol(argv[1]);
   idx = findidx(i);
-  if (idx < 0) {
-    Tcl_AppendResult(irp, "invalid idx", NULL);
-    return TCL_ERROR;
-  }
-  if (dcc[idx].type != &DCC_CHAT) {
+  if ((idx < 0) || (dcc[idx].type != &DCC_CHAT)) {
     Tcl_AppendResult(irp, "invalid idx", NULL);
     return TCL_ERROR;
   }
@@ -825,11 +821,7 @@ static int tcl_setdccaway STDVAR
   BADARGS(3, 3, " idx message");
   i = atol(argv[1]);
   idx = findidx(i);
-  if (idx < 0) {
-    Tcl_AppendResult(irp, "invalid idx", NULL);
-    return TCL_ERROR;
-  }
-  if (dcc[idx].type != &DCC_CHAT) {
+  if ((idx < 0) || (dcc[idx].type != &DCC_CHAT)) {
     Tcl_AppendResult(irp, "invalid idx", NULL);
     return TCL_ERROR;
   }
@@ -1041,16 +1033,17 @@ static int tcl_listen STDVAR
 
 static int tcl_boot STDVAR
 {
-  char who[512];
+  char who[NOTENAMELEN];
   int i, ok = 0;
 
   Context;
   BADARGS(2, 3, " user@bot ?reason?");
-  strcpy(who, argv[1]);
+  strncpy(who, argv[1], NOTENAMELEN);
+  who[NOTENAMELEN] = 0;
   if (strchr(who, '@') != NULL) {
-    char whonick[161];
+    char whonick[HANDLEN];
      splitc(whonick, who, '@');
-     whonick[161] = 0;
+     whonick[HANDLEN] = 0;
     if (!strcasecmp(who, botnetnick))
        strcpy(who, whonick);
     else if (remote_boots > 1) {
