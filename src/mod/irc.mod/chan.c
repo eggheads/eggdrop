@@ -9,7 +9,7 @@
  * dprintf'ized, 27oct1995
  * multi-channel, 8feb1996
  * 
- * $Id: chan.c,v 1.66 2000/07/31 02:35:03 guppy Exp $
+ * $Id: chan.c,v 1.67 2000/08/07 16:23:43 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1305,6 +1305,8 @@ static int gotjoin(char *from, char *chname)
       m = ismember(chan, nick);
       if (m && m->split && !strcasecmp(m->userhost, uhost)) {
 	check_tcl_rejn(nick, uhost, u, chan->name);
+	/* The tcl binding might have deleted the current user. Recheck. */
+	u = get_user_by_host(from);
 	m->split = 0;
 	m->last = now;
 	m->delay = 0L;
@@ -1333,6 +1335,10 @@ static int gotjoin(char *from, char *chname)
 	m->user = u;
 	m->flags |= STOPWHO;
 	check_tcl_join(nick, uhost, u, chname);
+	/* The tcl binding might have deleted the current user. Use the record
+	 * saved in the channel record as that always gets updated.
+	 */
+	u = m->user;
 	if (newmode)
 	  do_embedded_mode(chan, nick, m, newmode);
 	if (match_my_nick(nick)) {
@@ -1364,9 +1370,9 @@ static int gotjoin(char *from, char *chname)
 	    if (!cr && no_chanrec_info)
 	      li = get_user(&USERENTRY_LASTON, m->user);
 	    if (channel_greet(chan) && use_info &&
-		((cr && (now - cr->laston > wait_info)) ||
+		((cr && now - cr->laston > wait_info) ||
 		 (no_chanrec_info &&
-		  (!li || (now - li->laston > wait_info))))) {
+		  (!li || now - li->laston > wait_info)))) {
 	      char s1[512], *s;
 
 	      if (!(u->flags & USER_BOT)) {
