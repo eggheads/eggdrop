@@ -2,7 +2,7 @@
  * irc.c -- part of irc.mod
  *   support for channels within the bot 
  * 
- * $Id: irc.c,v 1.48 2001/01/23 04:33:56 guppy Exp $
+ * $Id: irc.c,v 1.49 2001/01/31 05:38:06 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -79,23 +79,16 @@ static int include_lk = 1;		/* For correct calculation
 
 
 /* Contains the logic to decide wether we want to punish someone. Returns
- * true if we want to, false if not.
+ * true (1) if we want to, false (0) if not.
  */
 static int want_to_revenge(struct chanset_t *chan, struct userrec *u,
 			   struct userrec *u2, char *badnick, char *victim,
 			   int mevictim)
 {
   struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
-  struct flag_record fr2 = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
 
-  /* Do not take revenge upon ourselves */
+  /* Do not take revenge upon ourselves. */
   if (match_my_nick(badnick))
-    return 0;
-
-  get_user_flagrec(u2, &fr2, chan->dname);
-
-  /* Why protect people we do not even know? */
-  if (!u2)
     return 0;
 
   get_user_flagrec(u, &fr, chan->dname);
@@ -104,18 +97,26 @@ static int want_to_revenge(struct chanset_t *chan, struct userrec *u,
   if (!chan_friend(fr) && !glob_friend(fr) &&
       /* ... and they didn't kick themself? */
       rfc_casecmp(badnick, victim)) {
-    /* They kicked ME? and I'm revenging?... muahaHAHAHA! */
+    /* They kicked me? */
     if (mevictim) {
+      /* ... and I'm allowed to take revenge? <snicker> */
       if (channel_revengebot(chan))
         return 1;
-    } else if (channel_revenge(chan) &&
-              /* ... and protecting friends, and kicked is a valid friend? */
-             ((channel_protectfriends(chan) &&
-               (chan_friend(fr2) || (glob_friend(fr2) && !chan_deop(fr2)))) ||
-              /* ... or protecting ops and kicked is valid op? */
-              (channel_protectops(chan) &&
-               (chan_op(fr2) || (glob_op(fr2) && !chan_deop(fr2))))))
-      return 1;
+    /* Do we revenge for our users ... and do we actually know the victim? */
+    } else if (channel_revenge(chan) && u2) {
+      struct flag_record fr2 = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
+
+      get_user_flagrec(u2, &fr2, chan->dname);
+      /* Protecting friends? */
+      if ((channel_protectfriends(chan) &&
+	   /* ... and victim is valid friend? */
+	   (chan_friend(fr2) || (glob_friend(fr2) && !chan_deop(fr2)))) ||
+	  /* ... or protecting ops */
+	  (channel_protectops(chan) &&
+	   /* ... and kicked is valid op? */
+	   (chan_op(fr2) || (glob_op(fr2) && !chan_deop(fr2)))))
+	return 1;
+    }
   }
   return 0;
 }
