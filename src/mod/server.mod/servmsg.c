@@ -1,7 +1,7 @@
 /*
  * servmsg.c -- part of server.mod
  *
- * $Id: servmsg.c,v 1.60 2001/10/14 15:06:34 tothwolf Exp $
+ * $Id: servmsg.c,v 1.61 2001/10/30 03:01:02 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -883,7 +883,11 @@ static int got451(char *from, char *msg)
  */
 static int goterror(char *from, char *msg)
 {
-  fixcolon(msg);
+ /* FIXME: fixcolon doesn't do what we need here, this is a temp fix
+  * fixcolon(msg);
+  */
+  if (msg[0] == ':')
+    msg++;       
   putlog(LOG_SERV | LOG_MSGS, "*", "-ERROR from server- %s", msg);
   if (serverror_quit) {
     putlog(LOG_SERV, "*", "Disconnecting from server.");
@@ -1148,6 +1152,8 @@ static cmd_t my_raw_binds[] =
   {"442",	"",	(Function) got442,		NULL},
   {"NICK",	"",	(Function) gotnick,		NULL},
   {"ERROR",	"",	(Function) goterror,		NULL},
+/* ircu2.10.10 has a bug when a client is throttled ERROR is sent wrong */
+  {"ERROR:",	"",	(Function) goterror,		NULL},
   {"KICK",	"",	(Function) gotkick,		NULL},
   {"318",	"",	(Function) whoispenalty,	NULL},
   {"311", 	"", 	(Function) got311, 		NULL},
