@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  *
- * $Id: chan.c,v 1.76 2001/12/22 05:02:01 guppy Exp $
+ * $Id: chan.c,v 1.77 2001/12/22 06:43:57 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -826,9 +826,8 @@ static void recheck_channel(struct chanset_t *chan, int dobans)
     }
     if (channel_enforcebans(chan))
       enforce_bans(chan);
-    if (!(chan->status & CHAN_ASKEDMODES) &&
-	!channel_inactive(chan)) /* Spot on guppy, this just keeps the
-	                          * checking sane */
+    if ((chan->status & CHAN_ASKEDMODES) &&
+	!channel_inactive(chan)) 
       dprintf(DP_MODE, "MODE %s\n", chan->name);
     recheck_channel_modes(chan);
   }
@@ -894,7 +893,13 @@ static int got324(char *from, char *msg)
 	  *p = 0;
 	}
       }
-      if ((chan->channel.mode & CHANKEY) && !(chan->channel.key[0]))
+      if ((chan->channel.mode & CHANKEY) && (!chan->channel.key[0] ||
+	  !strcmp("*", chan->channel.key)))
+	/* Undernet use to show a blank channel key if one was set when
+	 * you first joined a channel; however, this has been replaced by
+	 * an asterisk and this has been agreed upon by other major IRC 
+	 * networks so we'll check for an asterisk here as well 
+	 * (guppy 22Dec2001) */ 
         chan->status |= CHAN_ASKEDMODES;
     }
     if (msg[i] == 'l') {
