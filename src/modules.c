@@ -4,7 +4,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: modules.c,v 1.31 2000/06/04 08:26:41 guppy Exp $
+ * $Id: modules.c,v 1.32 2000/07/01 06:28:03 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -967,16 +967,15 @@ void del_hook(int hook_num, Function func)
 
 int call_hook_cccc(int hooknum, char *a, char *b, char *c, char *d)
 {
-  struct hook_entry *p;
+  struct hook_entry *p, *pn;
   int f = 0;
 
   if (hooknum >= REAL_HOOKS)
     return 0;
-  p = hook_list[hooknum];
   Context;
-  while ((p != NULL) && !f) {
+  for (p = hook_list[hooknum]; p && !f; p = pn) {
+    pn = p->next;
     f = p->func(a, b, c, d);
-    p = p->next;
   }
   return f;
 }

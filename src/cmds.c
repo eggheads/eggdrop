@@ -5,7 +5,7 @@
  * 
  * dprintf'ized, 3nov1995
  * 
- * $Id: cmds.c,v 1.37 2000/06/22 03:45:05 guppy Exp $
+ * $Id: cmds.c,v 1.38 2000/07/01 06:28:03 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -2167,7 +2167,6 @@ static void cmd_page(struct userrec *u, int idx, char *par)
     dcc[idx].u.chat->line_count = 0;
     dcc[idx].u.chat->current_lines = 0;
     putlog(LOG_CMDS, "*", "#%s# page %d", dcc[idx].nick, a);
-    return;
   } else {
     dprintf(idx, "Usage: page <off or #>\n");
     return;

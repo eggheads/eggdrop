@@ -7,7 +7,7 @@
  * 
  * dprintf'ized, 5aug1996
  * 
- * $Id: notes.c,v 1.17 2000/06/22 03:45:05 guppy Exp $
+ * $Id: notes.c,v 1.18 2000/07/01 06:28:03 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -591,7 +591,7 @@ static void notes_del(char *hand, char *nick, char *sdl, int idx)
     if (idx >= 0)
       dprintf(idx, "%s.\n", BOT_NOMESSAGES);
     else
-      dprintf(DP_HELP, "NOTICE %s :BOT_NOMESSAGES.\n", nick);
+      dprintf(DP_HELP, "NOTICE %s :%s.\n", nick, BOT_NOMESSAGES);
     return;
   }
   sprintf(s, "%s~new", notefile);

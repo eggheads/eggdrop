@@ -1,7 +1,7 @@
 
 # Getops 2.2d
 
-# $Id: getops-2.2d.tcl,v 1.2 1999/12/15 02:32:57 guppy Exp $
+# $Id: getops-2.2d.tcl,v 1.3 2000/07/01 06:28:03 guppy Exp $
 
 # This script is used for bots to request and give ops to each other. 
 # For this to work, you'll need:
@@ -322,17 +322,6 @@ bind bot - gop_resp gop_resp
 
 # Ask for ops when joining a channel
 bind join - * gop_join
-
-# Get the key after getting opped
-bind mode - "* +o" get_key
-
-proc get_key { nick uhost hand chan mode whom } {
- global botnick
- if {$botnick == $whom} {
-  puthelp "MODE $chan"
- }
- return 0
-}
 
 proc requestop { chan } {
  global botnick
