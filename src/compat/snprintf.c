@@ -1,7 +1,7 @@
 /*
  * snprintf.c - a portable implementation of snprintf and vsnprintf
  *
- * $Id: snprintf.c,v 1.19 2004/01/09 05:56:37 wcc Exp $
+ * $Id: snprintf.c,v 1.20 2004/01/13 10:21:00 wcc Exp $
  */
 /*
  * Portions Copyright (C) 2000, 2001, 2002, 2003, 2004 Eggheads Development Team
@@ -156,6 +156,10 @@ static void dopr_outch(char *buffer, size_t *currlen, size_t maxlen, char c);
 #define DP_C_LDOUBLE 3
 
 #define char_to_int(p) (p - '0')
+
+#ifdef MAX
+#  undef MAX
+#endif
 #define MAX(p,q) ((p >= q) ? p : q)
 
 static void dopr(char *buffer, size_t maxlen, const char *format, va_list args)

@@ -1,4 +1,4 @@
-$Id: COMPILING-FAQ,v 1.2 2004/01/09 05:56:35 wcc Exp $
+$Id: COMPILING-FAQ,v 1.3 2004/01/13 10:21:00 wcc Exp $
 
 Compiling FAQ
 Last revised: March  24, 2003
@@ -9,318 +9,395 @@ Last revised: March  24, 2003
 
   This FAQ may help you successfully compile Eggdrop. Suggestions are by
   various contributors. If you think something should be added, please send
-  an e-mail to eggdev@eggheads.org. Note that in this document, text between
+  an e-mail to docteam@eggheads.org. Note that in this document, text between
   a '<' and a '>' should be replaced (without the '<' and '>').
 
 
   Contents:
+    Compile Guide:
+      A. Standard compile process (32-bit Linux, FreeBSD, NetBSD,
+         OpenBSD, etc.)
+      B. HP-UX B.11.00
+      C. Ultrix
+      D. Tcl Detection and Installation
 
-    1.  I get a lot of warnings
-    2.  The bot crashes at startup in "net.c/708", for example
-    3.  There is no Tcl installed on your shell
-    4.  strip terminated with signal 6 (various)
-    5.  'DIR' undeclared (and a whole bunch of others) (AIX 4)
-    6.  'fd_set' undeclared (and a whole bunch of others) (AIX 4)
-    7.  Unresolved or undefined symbols: ldclose, ldopen, ldnshread (AIX 3)
-    8.  Unsatisfied symbols 'shl_findsym' and 'shl_load' (HP-UX 9)
-    9.  The bot doesn't compile on Ultrix
+    Frequently Asked Questions:
+      1.  I get a lot of warnings.
+
+      4.  strip terminated with signal 6 (various)
+      5.  'DIR' undeclared (and a whole bunch of others) (AIX 4)
+      6.  'fd_set' undeclared (and a whole bunch of others) (AIX 4)
+      7.  Unresolved or undefined symbols: ldclose, ldopen, ldnshread (AIX 3)
+      8.  Unsatisfied symbols 'shl_findsym' and 'shl_load' (HP-UX 9)
+      10. Compile stops at the last minute with "ld fatal signal 11"! (Linux)
+      11. Undefined references in net.o (Sun OS)
+      12. ld: -ltcl7.4: expected libx.so(.major.minor.xxx) (various)
+      13. I experience problems starting the configure script (AIX/various)
+      2.  The bot crashes at startup in "net.c/708", for example.
+
+
+  Compile Guide
+    This will tell you how to compile Eggdrop on various operating systems.
+    If you have gotten Eggdrop to compile on an operating system not listed
+    here, please let the development team know how, at docteam@eggheads.org.
+    Please tell us what, if any, special steps were required to compile the
+    bot. Also, any compiler warnings/etc, and the 'config.status' file would
+    be helpful. The development team does not have access to the resources
+    needed to test portability on uncommon operating systems, so your help
+    is greatly appreciated.
+
+    A. Standard compile process (32-bit Linux, FreeBSD, NetBSD, OpenBSD, etc.)
+    B. HP-UX B.11.00
+    C. Ultrix
+    D. Tcl Detection and Installation
+
+    A. Standard compile process (32-bit Linux, FreeBSD, NetBSD, OpenBSD, etc.)
+      1. Type './configure' from the Eggdrop directory. Some of the options
+         that can be given to ./configure are explained below.
+
+           --enable-strip
+             If you want to create a smaller binary, you can use this option.
+             HOWEVER, this will remove debugging symbols and make bug reports
+             almost completely useless, and is not recomended. If disk space
+             is very limited, however, it might help to enable this.
+
+           --disable-tcl-threads
+             This disables support for Tcl threads.
+
+           --with-tcllib
+           --with-tclinc
+             See 'D. Tcl Detection and Installation' below (at the end of this
+             compile guide).
+
+      2. Type either 'make config' or 'make iconfig' to determine which
+         modules will be compiled.
+
+      3. Type 'make' from the Eggdrop directory, or to force a statically
+         linked module bot, type 'make static'. Otherwise, the Makefile will
+         use whatever type of compile the configure script determined your
+         system will support. Dynamic is always the better way to go if
+         possible. You can force a dynamic build with 'make eggdrop'. There
+         are also the 'debug' and 'sdebug' (static-debug) options, which will
+         give more detailed output on a crash. This will help the development
+         team track down the crash and fix the bug. Debug and sdebug will take
+         a little longer to compile and will enlarge the binary a bit, but
+         it's worth it if you want to support Eggdrop development.
+
+      4. Eggdrop must be installed in a directory somewhere. This is
+         accomplished by typing 'make install'.
+
+         This will install the Eggdrop in your home directory in a directory
+         called 'eggdrop' (i.e. /home/user/eggdrop).
+
+         If you want to install to a different directory, use:
+
+           make install DEST=<directory>
+
+         For example:
+
+           make install DEST=/home/user/otherdir
+
+    D. Tcl Detection
+        If ./configure does not correctly detect the location of your Tcl
+        library and header file, or if you experiance errors related to Tcl
+        during linking, preform these steps:
+
+          1. Depending on what shell your using:
+
+            bash/ksh:
+              export LB_LIBRARY_PATH='<path to DIRECTORY containing Tcl library>'
+
+            csh/tcsh/tclsh:
+              setenv LB_LIBRARY_PATH '<path to DIRECTORY containing Tcl library>'
+
+          2. Run the following command from your Eggdrop compilation directory
+             (this is all one command):
+
+            ./configure --with-tclinc='<full path to tcl.h>'
+            --with-tcllib='<full path to Tcl library>'
+
+          3. Continue compiling the bot, starting with 'make config'.
+
+        If you do not have Tcl installed on your system, you can compile it in
+        your /home directory. Download Tcl from Tcl's SourceForge project page
+        at http://www.sourceforge.net/projects/tcl/, or from ActiveState at
+        ftp://tcl.activestate.com/pub/tcl/tcl8_4/. Read Tcl's README file for
+        help with compiling and installing it. After you compile Tcl, follow
+        the steps above to allow Eggdrop to detect Tcl.
+
+
+  Frequently Asked Questions
+    1. I get a lot of warnings.
+
+      Warnings do not necessarily mean anything bad. As long as the compile
+      completes, there is really nothing to worry about. Generally, we try to
+      avoid warnings. We try to fix the warnings we are aware of. If you
+      experience warnings, you can let us know by e-mailing bugs@eggheads.org.
+      If you feel like fixing them yourself, please do so and send us a patch
+      (as described in doc/PATCH_HOWTO). Thanks.
+
+
+    2. The bot crashes at startup in "net.c/708", for example
+
+      This problem has been fixed (we think). Previously, on some non-IA32
+      systems, the gcc options -O2 and -O3 could cause this. If you experience
+      this problem, try removing the -O2 and -O3 flags from your Makefiles, and
+      contact the development team at bugs@eggheads.org.
+
+
+    3. How do I Install Tcl on my shell?
+
+      If there really is no Tcl installed on your shell, you can install
+      it temporarily in /tmp or your /home. Get the latest version of Tcl from
+       and follow the installation steps in its
+      README file. After you've installed Tcl, you have to make configure detect
+      Tcl. To achieve this, follow the steps listed above in the Compile Guide
+      under 'C. Tcl Detection'.
+
+   4. strip terminated with signal 6 (various)
+
+     collect2: strip terminated with signal 6 [IOT/Abort trap]
+     *** Exit 1
+     Stop.
+     *** Exit 1
+     Stop.
+
+     You can cut out this problem by not stripping the binary (obviously). Edit
+     your Makefile, and change this line from:
+
+       GMAKE = ${MAKE} 'CC=gcc' 'AWK=awk' 'OBJS=${OBJS}' 'TCLLIBFN=tcl.a'\
+               'CFLAGS=${CFLAGS}' 'XREQ=${XREQ}' 'XLIBS= -L/usr/local/lib -ltcl -lm' \
+               'TCLLIB=${TCLLIB}' 'RANLIB=ranlib' 'STRIP=-s'
+
+     To (your lines may differ, but what you are doing is changing 'STRIP=-s'
+     to 'STRIP='):
+
+       GMAKE = ${MAKE} 'CC=gcc' 'AWK=awk' 'OBJS=${OBJS}' 'TCLLIBFN=tcl.a'\
+               'CFLAGS=${CFLAGS}' 'XREQ=${XREQ}' 'XLIBS= -L/usr/local/lib -ltcl -lm' \
+               'TCLLIB=${TCLLIB}' 'RANLIB=ranlib' 'STRIP='
+
+
+    5. 'DIR' undeclared (and a whole bunch of others) (AIX 4)
+
+      gcc -c -O2 -fno-strength-reduce -I.. -DHAVE_CONFIG_H  filedb.c
+      filedb.c: In function `filedb_update':
+      filedb.c:209: `DIR' undeclared (first use this function)
+      filedb.c:209: (Each undeclared identifier is reported only once
+      filedb.c:209: for each function it appears in.)
+      filedb.c:209: `dir' undeclared (first use this function)
+      filedb.c:209: parse error before `*'
+      filedb.c:217: warning: assignment makes pointer from integer without a cast
+      filedb.c:218: `name' undeclared (first use this function)
+      filedb.c:218: dereferencing pointer to incomplete type
+      filedb.c:220: dereferencing pointer to incomplete type
+      filedb.c:220: dereferencing pointer to incomplete type
+      filedb.c:224: dereferencing pointer to incomplete type
+      filedb.c:224: dereferencing pointer to incomplete type
+      filedb.c:225: dereferencing pointer to incomplete type
+      filedb.c:230: `s' undeclared (first use this function)
+      filedb.c:231: `st' undeclared (first use this function)
+      filedb.c:232: `fdb' undeclared (first use this function)
+      filedb.c:232: `where' undeclared (first use this function)
+      filedb.c:237: `fdb1' undeclared (first use this function)
+      filedb.c:253: warning: assignment makes pointer from integer without a cast
+      make: The error code from the last command is 1.
+
+      The configure script didn't detect that this particular system had dirent.h
+      and sys/dir.h. The solution is to add -DHAVE_DIRENT_H -DHAVE_SYS_DIR_H to
+      the Makefile's CFLGS line:
+
+        CFLGS = -DHAVE_DIRENT_H -DHAVE_SYS_DIR_H
+
+
+    6. 'fd_set' undeclared (and a whole bunch of others) (AIX 4)
+
+      gcc -c -O2 -fno-strength-reduce -I.. -DHAVE_CONFIG_H -DHAVE_DIRENT_H -DHAVE_SYS_DIR_H net.c
+      net.c: In function `sockread':
+      net.c:390: `fd_set' undeclared (first use this function)
+      net.c:390: (Each undeclared identifier is reported only once
+      net.c:390: for each function it appears in.)
+      net.c:390: parse error before `fd'
+      net.c:396: `fd' undeclared (first use this function)
+      make: The error code from the last command is 1.
+
+      Again, this seems that one of configure's components (sed, awk,
+      or something along those lines) is broken, and configure failed to
+      detect that this system needed sys/select.h. The solution is to add
+      -DHAVE_SYS_SELECT_H to the Makefile's CFLGS line:
+
+        CFLGS = -DHAVE_DIRENT_H -DHAVE_SYS_DIR_H -DHAVE_SYS_SELECT_H
+
+
+    7. Unresolved or undefined symbols: ldclose, ldopen, ldnshread (AIX 3)
+
+      cc -s -o eggdrop chan.o chanprog.o chanset.o cmds.o dcc.o dccutil.o
+      filedb.o fileq.o files.o gotdcc.o hash.o main.o match.o mem.o misc.o
+      mode.o msgcmds.o msgnotice.o net.o tandcmd.o tandem.o tcl.o tclhash.o
+      userrec.o users.o -L/home2/f/foster/lib -ltcl7.5 -lm
+         0706-317 ERROR: Unresolved or undefined symbols detected:
+                         Symbols in error (followed by references) are dumped to the load map.
+                         The -bloadmap:<filename> option will create a load map.
+         .ldclose
+         .ldopen
+         .ldnshread
+         make: 1254-004 The error code from the last command is 8.
+
+      Apparently, what is happening is a library called ld is required. Either
+      configure doesn't know it is needed, it simply can't find it, or maybe
+      this is a unique case. The solution is to have ld linked in with the final
+      binary.
+
+      Edit your Makefile and find the line that looks something like this:
+
+        GMAKE = ${MAKE} 'CC=cc' 'AWK=awk' 'OBJS=${OBJS}' 'TCLLIBFN=tcl7.5.a'\
+                'CFLAGS=${CFLAGS}' 'XREQ=${XREQ}' 'XLIBS= -L/home2/f/foster/lib -ltcl7.5 -lm'\
+                'TCLLIB=${TCLLIB}' 'RANLIB=ranlib' 'STRIP=-s'
+
+      Add in -lld into the XLIBS assignment, like this:
+
+        GMAKE = ${MAKE} 'CC=cc' 'AWK=awk' 'OBJS=${OBJS}' 'TCLLIBFN=tcl7.5.a'\
+                'CFLAGS=${CFLAGS}' 'XREQ=${XREQ}' 'XLIBS=-lld -L/home2/f/foster/lib -ltcl7.5 -lm'\
+                'TCLLIB=${TCLLIB}' 'RANLIB=ranlib' 'STRIP=-s'
+
+    8. Unsatisfied symbols 'shl_findsym' and 'shl_load' (HP-UX 9)
+
+      gcc -s -o eggdrop chan.o chanprog.o chanset.o cmds.o dcc.o
+      dccutil.o filedb.o fileq.o files.o gotdcc.o hash.o main.o match.o
+      mem.o misc.o mode.o msgcmds.o msgnotice.o net.o tandcmd.o tandem.o
+      tcl.o tclhash.o userrec.o users.o -L/home/hltran/tcl/lib -ltcl7.5 -lm
+         /bin/ld: Unsatisfied symbols:
+            shl_findsym (code)
+            shl_load (code)
+         collect2: ld returned 1 exit status
+         *** Error code 1
+         Stop.
+
+      Upgrade to a later version of Tcl. The following should also work.
+
+      Edit your Makefile and find the line that looks something like this:
+
+        GMAKE = ${MAKE} 'CC=gcc' 'AWK=awk' 'OBJS=${OBJS}' 'TCLLIBFN=tcl7.5.a'\
+                'CFLAGS=${CFLAGS}' 'XREQ=${XREQ}' 'XLIBS= -L/usr/local/lib -ltcl7.5 -lm'\
+                'TCLLIB=${TCLLIB}' 'RANLIB=:' 'STRIP='
+
+      Add in -lld into the XLIBS assignment, like this:
+
+        GMAKE = ${MAKE} 'CC=gcc' 'AWK=awk' 'OBJS=${OBJS}' 'TCLLIBFN=tcl7.5.a'\
+                'CFLAGS=${CFLAGS}' 'XREQ=${XREQ}' 'XLIBS=-ldl -L/usr/local/lib -ltcl7.5 -lm'\
+                'TCLLIB=${TCLLIB}' 'RANLIB=:' 'STRIP='
+
+
+    9. The bot doesn't compile on Ultrix
+
+      There are some known problems with make and Eggdrop on Ultrix systems. Try
+      using gmake instead of make. Additionally, sh5 should be used. A simple
+      'gmake SHELL=/bin/sh5' should work.
+
+
     10. Compile stops at the last minute with "ld fatal signal 11"! (Linux)
+
+      This seems to be caused by a non-ELF Tcl library binary, and the compiler
+      doesn't seem to like it. The first thing you want to do is download and
+      compile Tcl yourself. Then, follow this set of commands commands to help
+      you reconfigure Eggdrop using the newly compiled Tcl library (all of this
+      should be done from your home directory):
+
+        1. Depending on what shell your using:
+
+          bash/ksh:
+            export LB_LIBRARY_PATH='<path to directory containing Tcl library>'
+
+          csh/tcsh/tclsh:
+            setenv LB_LIBRARY_PATH '<path to directory containing Tcl library>'
+
+        2. Run the following command from your Eggdrop compilation directory
+           (this is all one command):
+
+          ./configure --with-tclinc='<full path to tcl.h>'
+          --with-tcllib='<full path to Tcl library>'
+
+        3. Continue compiling the bot, starting with 'make config'.
+
+
     11. Undefined references in net.o (Sun OS)
+
+                     First
+      Undefined    Referenced
+       Symbol       In file
+
+      socket          net.o
+      gethostbyname   net.o
+      accept          net.o
+      bind            net.o
+      setsockopt      net.o
+      gethostbyaddr   net.o
+      getsockname     net.o
+      gethostname     net.o
+      listen          net.o
+      connect         net.o
+      ld: fatal: Symbol referencing errors. No output written to eggdrop
+
+      This seems to be caused by a few libraries not being detected by the
+      auto-configure script; it is relatively easy to fix. Edit your Makefile.
+      Note that yours may be slightly different than this one when it comes to
+      the Tcl library, but here is the way it probably is:
+
+        GMAKE = ${MAKE} 'CC=gcc' 'AWK=awk' 'OBJS=${OBJS}' 'TCLLIBFN=tcl.a'\
+                'CFLAGS=${CFLAGS}' 'XREQ=${XREQ}' 'XLIBS= -L/usr/local/lib -ltcl -lm'\
+                'TCLLIB=${TCLLIB}' 'RANLIB=:' 'STRIP='
+
+      Here is what you need to change it to:
+
+        GMAKE = ${MAKE} 'CC=gcc' 'AWK=awk' 'OBJS=${OBJS}' 'TCLLIBFN=tcl.a'\
+                'CFLAGS=${CFLAGS}' 'XREQ=${XREQ}' 'XLIBS=-lsocket -ldl -lnsl -L/usr/local/lib -ltcl -lm'\
+                'TCLLIB=${TCLLIB}' 'RANLIB=:' 'STRIP='
+
+      You are adding three libraries to be linked in: socket, dl, and nsl. This
+      will resolve the net.o errors.
+
+
     12. ld: -ltcl7.4: expected libx.so(.major.minor.xxx) (various)
+
+      ld: -ltcl7.4: expected libx.so(.major.minor.xxx)
+      collect2: ld returned 4 exit status
+      *** Error code 1
+      make: Fatal error: Command failed for target `eggdrop'
+
+      On some UNIX boxes, this seems to be caused by the linker. It is expecting
+      a specific filename format, and when the filename doesn't live up to its
+      expectations, it usually barfs. I always see this when the library for Tcl
+      is called libtcl7.4.a or libtcl7.5.a. If you installed Tcl yourself, rename
+      it to libtcl.a. If you didn't and your using the Tcl that the system admin
+      installed, then do the following:
+
+        1. View your Makefile. Look for the line (should be close to the top)
+           that is similar to:
+
+          XREQ = /usr/local/lib/libtcl7.4.a
+
+        2. Remember this path. The next thing you want to do, depending on what
+           shell your using, is:
+
+          bash/ksh:
+            export LB_LIBRARY_PATH='<path to DIRECTORY from XREQ line>'
+
+          csh/tcsh/tclsh:
+            setenv LB_LIBRARY_PATH '<path to DIRECTORY from XREQ line>'
+
+        3. Run the following command from your Eggdrop compilation directory
+           (this is all one command):
+
+          ./configure --with-tclinc='<full path to tcl.h>'
+          --with-tcllib='<full path to Tcl library from XREQ line>'
+
+        4. Continue compiling the bot, starting with 'make config'.
+
     13. I experience problems starting the configure script (AIX/various)
 
-
-  1. I get lots of warnings
-
-    Warnings do not necessarily mean anything bad. As long as the compile
-    completes, there is really nothing to worry about. Generally, we try to
-    avoid warnings. We try to fix the warnings we are aware of. If you
-    experience warnings, you can let us know by e-mailing bugs@eggheads.org.
-    If you feel like fixing them yourself, please do so and send us a patch
-    (as described in doc/patch.howto). Thanks.
-
-
-  2. The bot crashes at startup in "net.c/708", for example
-
-    On some non-IA32 systems, the gcc options -O2 and -O3 can cause this. We
-    don't know why this happens, but sometimes it helps to remove these flags
-    from the Makefile. To disable them, use:
-
-      ./configure --disable-cc-optimization
-
-    Please e-mail eggdev@eggheads.org if you know why this happens, so we can
-    extend the info here.
-
-
-  3. There is no Tcl installed on your shell
-
-    If there really is no Tcl installed on your shell, you can install
-    it temporarily in /tmp or your /home. Get the latest version of Tcl from
-    ftp://tcl.activestate.com/pub/tcl/ and follow the installation steps in its
-    README file. After you've installed Tcl, you have to make configure detect
-    Tcl. To achieve this, do the following:
-
-      1. Depending on what shell your using:
-
-        bash/ksh:
-          export LB_LIBRARY_PATH='<path to directory containing Tcl library>'
-
-        csh/tcsh/tclsh:
-          setenv LB_LIBRARY_PATH '<path to directory containing Tcl library>'
-
-      2. Run the following command from your Eggdrop compilation directory
-         (this is all one command):
-
-        ./configure --with-tclinc='<full path to tcl.h>'
-        --with-tcllib='<full path to Tcl library>'
-
-      3. Continue compiling the bot, starting with 'make config'.
-
-
- 4. strip terminated with signal 6 (various)
-
-   collect2: strip terminated with signal 6 [IOT/Abort trap]
-   *** Exit 1
-   Stop.
-   *** Exit 1
-   Stop.
-
-   You can cut out this problem by not stripping the binary (obviously). Edit
-   your Makefile, and change this line from:
-
-     GMAKE = ${MAKE} 'CC=gcc' 'AWK=awk' 'OBJS=${OBJS}' 'TCLLIBFN=tcl.a'\
-             'CFLAGS=${CFLAGS}' 'XREQ=${XREQ}' 'XLIBS= -L/usr/local/lib -ltcl -lm' \
-             'TCLLIB=${TCLLIB}' 'RANLIB=ranlib' 'STRIP=-s'
-
-   To (your lines may differ, but what you are doing is changing 'STRIP=-s'
-   to 'STRIP='):
-
-     GMAKE = ${MAKE} 'CC=gcc' 'AWK=awk' 'OBJS=${OBJS}' 'TCLLIBFN=tcl.a'\
-             'CFLAGS=${CFLAGS}' 'XREQ=${XREQ}' 'XLIBS= -L/usr/local/lib -ltcl -lm' \
-             'TCLLIB=${TCLLIB}' 'RANLIB=ranlib' 'STRIP='
-
-
-  5. 'DIR' undeclared (and a whole bunch of others) (AIX 4)
-
-    gcc -c -O2 -fno-strength-reduce -I.. -DHAVE_CONFIG_H  filedb.c
-    filedb.c: In function `filedb_update':
-    filedb.c:209: `DIR' undeclared (first use this function)
-    filedb.c:209: (Each undeclared identifier is reported only once
-    filedb.c:209: for each function it appears in.)
-    filedb.c:209: `dir' undeclared (first use this function)
-    filedb.c:209: parse error before `*'
-    filedb.c:217: warning: assignment makes pointer from integer without a cast
-    filedb.c:218: `name' undeclared (first use this function)
-    filedb.c:218: dereferencing pointer to incomplete type
-    filedb.c:220: dereferencing pointer to incomplete type
-    filedb.c:220: dereferencing pointer to incomplete type
-    filedb.c:224: dereferencing pointer to incomplete type
-    filedb.c:224: dereferencing pointer to incomplete type
-    filedb.c:225: dereferencing pointer to incomplete type
-    filedb.c:230: `s' undeclared (first use this function)
-    filedb.c:231: `st' undeclared (first use this function)
-    filedb.c:232: `fdb' undeclared (first use this function)
-    filedb.c:232: `where' undeclared (first use this function)
-    filedb.c:237: `fdb1' undeclared (first use this function)
-    filedb.c:253: warning: assignment makes pointer from integer without a cast
-    make: The error code from the last command is 1.
-
-    The configure script didn't detect that this particular system had dirent.h
-    and sys/dir.h. The solution is to add -DHAVE_DIRENT_H -DHAVE_SYS_DIR_H to
-    the Makefile's CFLGS line:
-
-      CFLGS = -DHAVE_DIRENT_H -DHAVE_SYS_DIR_H
-
-
-  6. 'fd_set' undeclared (and a whole bunch of others) (AIX 4)
-
-    gcc -c -O2 -fno-strength-reduce -I.. -DHAVE_CONFIG_H -DHAVE_DIRENT_H -DHAVE_SYS_DIR_H net.c
-    net.c: In function `sockread':
-    net.c:390: `fd_set' undeclared (first use this function)
-    net.c:390: (Each undeclared identifier is reported only once
-    net.c:390: for each function it appears in.)
-    net.c:390: parse error before `fd'
-    net.c:396: `fd' undeclared (first use this function)
-    make: The error code from the last command is 1.
-
-    Again, this seems that one of configure's components (sed, awk,
-    or something along those lines) is broken, and configure failed to
-    detect that this system needed sys/select.h. The solution is to add
-    -DHAVE_SYS_SELECT_H to the Makefile's CFLGS line:
-
-      CFLGS = -DHAVE_DIRENT_H -DHAVE_SYS_DIR_H -DHAVE_SYS_SELECT_H
-
-
-  7. Unresolved or undefined symbols: ldclose, ldopen, ldnshread (AIX 3)
-
-    cc -s -o eggdrop chan.o chanprog.o chanset.o cmds.o dcc.o dccutil.o
-    filedb.o fileq.o files.o gotdcc.o hash.o main.o match.o mem.o misc.o
-    mode.o msgcmds.o msgnotice.o net.o tandcmd.o tandem.o tcl.o tclhash.o
-    userrec.o users.o -L/home2/f/foster/lib -ltcl7.5 -lm
-       0706-317 ERROR: Unresolved or undefined symbols detected:
-                       Symbols in error (followed by references) are dumped to the load map.
-                       The -bloadmap:<filename> option will create a load map.
-       .ldclose
-       .ldopen
-       .ldnshread
-       make: 1254-004 The error code from the last command is 8.
-
-    Apparently, what is happening is a library called ld is required. Either
-    configure doesn't know it is needed, it simply can't find it, or maybe
-    this is a unique case. The solution is to have ld linked in with the final
-    binary.
-
-    Edit your Makefile and find the line that looks something like this:
-
-      GMAKE = ${MAKE} 'CC=cc' 'AWK=awk' 'OBJS=${OBJS}' 'TCLLIBFN=tcl7.5.a'\
-              'CFLAGS=${CFLAGS}' 'XREQ=${XREQ}' 'XLIBS= -L/home2/f/foster/lib -ltcl7.5 -lm'\
-              'TCLLIB=${TCLLIB}' 'RANLIB=ranlib' 'STRIP=-s'
-
-    Add in -lld into the XLIBS assignment, like this:
-
-      GMAKE = ${MAKE} 'CC=cc' 'AWK=awk' 'OBJS=${OBJS}' 'TCLLIBFN=tcl7.5.a'\
-              'CFLAGS=${CFLAGS}' 'XREQ=${XREQ}' 'XLIBS=-lld -L/home2/f/foster/lib -ltcl7.5 -lm'\
-              'TCLLIB=${TCLLIB}' 'RANLIB=ranlib' 'STRIP=-s'
-
-  8. Unsatisfied symbols 'shl_findsym' and 'shl_load' (HP-UX 9)
-
-    gcc -s -o eggdrop chan.o chanprog.o chanset.o cmds.o dcc.o
-    dccutil.o filedb.o fileq.o files.o gotdcc.o hash.o main.o match.o
-    mem.o misc.o mode.o msgcmds.o msgnotice.o net.o tandcmd.o tandem.o
-    tcl.o tclhash.o userrec.o users.o -L/home/hltran/tcl/lib -ltcl7.5 -lm
-       /bin/ld: Unsatisfied symbols:
-          shl_findsym (code)
-          shl_load (code)
-       collect2: ld returned 1 exit status
-       *** Error code 1
-       Stop.
-
-    Upgrade to a later version of Tcl. The following should also work.
-
-    Edit your Makefile and find the line that looks something like this:
-
-      GMAKE = ${MAKE} 'CC=gcc' 'AWK=awk' 'OBJS=${OBJS}' 'TCLLIBFN=tcl7.5.a'\
-              'CFLAGS=${CFLAGS}' 'XREQ=${XREQ}' 'XLIBS= -L/usr/local/lib -ltcl7.5 -lm'\
-              'TCLLIB=${TCLLIB}' 'RANLIB=:' 'STRIP='
-
-    Add in -lld into the XLIBS assignment, like this:
-
-      GMAKE = ${MAKE} 'CC=gcc' 'AWK=awk' 'OBJS=${OBJS}' 'TCLLIBFN=tcl7.5.a'\
-              'CFLAGS=${CFLAGS}' 'XREQ=${XREQ}' 'XLIBS=-ldl -L/usr/local/lib -ltcl7.5 -lm'\
-              'TCLLIB=${TCLLIB}' 'RANLIB=:' 'STRIP='
-
-
-  9. The bot doesn't compile on Ultrix
-
-    There are some known problems with make and Eggdrop on Ultrix systems. Try
-    using gmake instead of make. Additionally, sh5 should be used. A simple
-    'gmake SHELL=/bin/sh5' should work.
-
-
-  10. Compile stops at the last minute with "ld fatal signal 11"! (Linux)
-
-    This seems to be caused by a non-ELF Tcl library binary, and the compiler
-    doesn't seem to like it. The first thing you want to do is download and
-    compile Tcl yourself. Then, follow this set of commands commands to help
-    you reconfigure Eggdrop using the newly compiled Tcl library (all of this
-    should be done from your home directory):
-
-      1. Depending on what shell your using:
-
-        bash/ksh:
-          export LB_LIBRARY_PATH='<path to directory containing Tcl library>'
-
-        csh/tcsh/tclsh:
-          setenv LB_LIBRARY_PATH '<path to directory containing Tcl library>'
-
-      2. Run the following command from your Eggdrop compilation directory
-         (this is all one command):
-
-        ./configure --with-tclinc='<full path to tcl.h>'
-        --with-tcllib='<full path to Tcl library>'
-
-      3. Continue compiling the bot, starting with 'make config'.
-
-
-  11. Undefined references in net.o (Sun OS)
-
-                   First
-    Undefined    Referenced
-     Symbol       In file
-
-    socket          net.o
-    gethostbyname   net.o
-    accept          net.o
-    bind            net.o
-    setsockopt      net.o
-    gethostbyaddr   net.o
-    getsockname     net.o
-    gethostname     net.o
-    listen          net.o
-    connect         net.o
-    ld: fatal: Symbol referencing errors. No output written to eggdrop
-
-    This seems to be caused by a few libraries not being detected by the
-    auto-configure script; it is relatively easy to fix. Edit your Makefile.
-    Note that yours may be slightly different than this one when it comes to
-    the Tcl library, but here is the way it probably is:
-
-      GMAKE = ${MAKE} 'CC=gcc' 'AWK=awk' 'OBJS=${OBJS}' 'TCLLIBFN=tcl.a'\
-              'CFLAGS=${CFLAGS}' 'XREQ=${XREQ}' 'XLIBS= -L/usr/local/lib -ltcl -lm'\
-              'TCLLIB=${TCLLIB}' 'RANLIB=:' 'STRIP='
-
-    Here is what you need to change it to:
-
-      GMAKE = ${MAKE} 'CC=gcc' 'AWK=awk' 'OBJS=${OBJS}' 'TCLLIBFN=tcl.a'\
-              'CFLAGS=${CFLAGS}' 'XREQ=${XREQ}' 'XLIBS=-lsocket -ldl -lnsl -L/usr/local/lib -ltcl -lm'\
-              'TCLLIB=${TCLLIB}' 'RANLIB=:' 'STRIP='
-
-    You are adding three libraries to be linked in: socket, dl, and nsl. This
-    will resolve the net.o errors.
-
-
-  12. ld: -ltcl7.4: expected libx.so(.major.minor.xxx) (various)
-
-    ld: -ltcl7.4: expected libx.so(.major.minor.xxx)
-    collect2: ld returned 4 exit status
-    *** Error code 1
-    make: Fatal error: Command failed for target `eggdrop'
-
-    On some UNIX boxes, this seems to be caused by the linker. It is expecting
-    a specific filename format, and when the filename doesn't live up to its
-    expectations, it usually barfs. I always see this when the library for Tcl
-    is called libtcl7.4.a or libtcl7.5.a. If you installed Tcl yourself, rename
-    it to libtcl.a. If you didn't and your using the Tcl that the system admin
-    installed, then do the following:
-
-      1. View your Makefile. Look for the line (should be close to the top)
-         that is similar to:
-
-        XREQ = /usr/local/lib/libtcl7.4.a
-
-      2. Remember this path. The next thing you want to do, depending on what
-         shell your using, is:
-
-        bash/ksh:
-          export LB_LIBRARY_PATH='<path to DIRECTORY from XREQ line>'
-
-        csh/tcsh/tclsh:
-          setenv LB_LIBRARY_PATH '<path to DIRECTORY from XREQ line>'
-
-      3. Run the following command from your Eggdrop compilation directory
-         (this is all one command):
-
-        ./configure --with-tclinc='<full path to tcl.h>'
-        --with-tcllib='<full path to Tcl library from XREQ line>'
-
-      4. Continue compiling the bot, starting with 'make config'.
-
-  13. I experience problems starting the configure script (AIX/various)
-
-    If you receive file descriptor or bad interpreter errors when attempting
-    to run the configure script, try running 'sh configure' or 'bash configure'
-    instead of './configure'. This problem seems to show up on many AIX
-    machines.
+      If you receive file descriptor or bad interpreter errors when attempting
+      to run the configure script, try running 'sh configure' or 'bash configure'
+      instead of './configure'. This problem seems to show up on many AIX
+      machines.
      _________________________________________________________________
 
    Copyright (C) 1997 Robey Pointer

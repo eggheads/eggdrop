@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: compiling.html,v 1.22 2004/01/09 05:56:35 wcc Exp $ -->
+<!-- $Id: compiling.html,v 1.23 2004/01/13 10:21:00 wcc Exp $ -->
 
 <html>
   <head>
@@ -69,24 +69,18 @@
       experience warnings, you can let us know by e-mailing
       <a href="mailto:bugs@eggheads.org">bugs@eggheads.org</a>. If you feel
       like fixing them yourself, please do so and send us a patch (as described
-      in doc/patch.howto). Thanks.</p>
+      in doc/PATCH_HOWTO). Thanks.</p>
     </blockquote>
 
     <p><a name="faq2">2. <strong>The bot crashes at startup in
     &quot;net.c/708&quot;, for example</strong></a></p>
 
     <blockquote>
-      <p>On some non-IA32 systems, the gcc options -O2 and -O3 can cause this.
-      We don&#39;t know why this happens, but sometimes it helps to remove
-      these flags from the Makefile. To disable them, use:</p>
-
-      <blockquote>
-        <p>./configure --disable-cc-optimization</p>
-      </blockquote>
-
-      <p>Please e-mail
-      <a href="mailto:eggdev@eggheads.org">eggdev@eggheads.org</a> if you know
-      why this happens, so we can extend the info here.</p>
+      <p>This problem has been fixed (we think). Previously, on some non-IA32
+      systems, the gcc options -O2 and -O3 could cause this. If you experience
+      this problem, try removing the -O2 and -O3 flags from your Makefiles, and
+      contact the development team at <a href="mailto:bugs@eggheads.org">
+      bugs@eggheads.org</a>.</p>
     </blockquote>
 
     <p><a name="faq3">3. <strong>There is no Tcl installed on your
