@@ -2,13 +2,30 @@
  * bf_tab.h -- part of blowfish.mod
  *   Blowfish P-box and S-box tables
  * 
- * $Id: bf_tab.h,v 1.2 1999/12/21 17:35:11 fabian Exp $
+ * $Id: bf_tab.h,v 1.3 2000/01/30 19:26:21 fabian Exp $
+ */
+/* 
+ * Copyright (C) 1999  Eggheads
+ * 
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
 #ifndef _EGG_MOD_BLOWFISH_BF_TAB_H
 #define _EGG_MOD_BLOWFISH_BF_TAB_H
 
-static UWORD_32bits initbf_P[bf_N + 2] =
+static u_32bit_t initbf_P[bf_N + 2] =
 {
   0x243f6a88, 0x85a308d3, 0x13198a2e, 0x03707344,
   0xa4093822, 0x299f31d0, 0x082efa98, 0xec4e6c89,
@@ -16,7 +33,7 @@ static UWORD_32bits initbf_P[bf_N + 2] =
   0xc0ac29b7, 0xc97c50dd, 0x3f84d5b5, 0xb5470917,
   0x9216d5d9, 0x8979fb1b,
 };
-static UWORD_32bits initbf_S[4][256] =
+static u_32bit_t initbf_S[4][256] =
 {
   {
     0xd1310ba6, 0x98dfb5ac, 0x2ffd72db, 0xd01adfb7,

@@ -4,7 +4,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: modules.h,v 1.5 2000/01/17 22:36:07 fabian Exp $
+ * $Id: modules.h,v 1.6 2000/01/30 19:26:21 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -28,15 +28,15 @@
 #ifndef _EGG_MODULE_H
 #define _EGG_MODULE_H
 
-/* 
- * module related structures
+/* Module related structures
  */
-
 #include "mod/modvals.h"
 
 #ifndef MAKING_NUMMODS
-/* modules specific functions */
-/* functions called by eggdrop */
+
+/* Modules specific functions and functions called by eggdrop
+ */
+
 void do_module_report(int, int, char *);
 
 int module_register(char *name, Function * funcs,
@@ -57,8 +57,12 @@ extern struct hook_entry {
   int (*func) ();
 } *hook_list[REAL_HOOKS];
 
-#define call_hook(x) { struct hook_entry *p; \
-for (p = hook_list[x]; p; p = p->next) p->func(); }
+#define call_hook(x) {						\
+	struct hook_entry *p;					\
+								\
+	for (p = hook_list[x]; p; p = p->next)			\
+		p->func();					\
+}
 int call_hook_cccc(int, char *, char *, char *, char *);
 
 #endif

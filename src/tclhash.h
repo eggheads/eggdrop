@@ -1,7 +1,7 @@
 /* 
  * tclhash.h
  * 
- * $Id: tclhash.h,v 1.4 2000/01/17 22:36:07 fabian Exp $
+ * $Id: tclhash.h,v 1.5 2000/01/30 19:26:21 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -48,7 +48,9 @@ typedef struct tcl_bind_list {
   Function func;
 } *p_tcl_bind_list;
 
+
 #ifndef MAKING_MODS
+
 void init_bind();
 void kill_bind();
 int expmem_tclhash();
@@ -97,9 +99,12 @@ extern p_tcl_bind_list H_away, H_nkch, H_filt, H_disc, H_event;
 
 #endif
 
-#define CHECKVALIDITY(a) if (!check_validity(argv[0],a)) { \
-Tcl_AppendResult(irp, "bad builtin command call!", NULL); \
-return TCL_ERROR; \
-}
+
+#define CHECKVALIDITY(a)						\
+	if (!check_validity(argv[0], (a))) {				\
+		Tcl_AppendResult(irp, "bad builtin command call!",	\
+				 NULL);					\
+		return TCL_ERROR;					\
+	}
 
 #endif				/* _EGG_TCLHASH_H */

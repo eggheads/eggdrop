@@ -2,7 +2,7 @@
  * flags.c -- handles:
  *   all the flag matching/conversion functions in one neat package :)
  * 
- * $Id: flags.c,v 1.11 2000/01/17 22:36:06 fabian Exp $
+ * $Id: flags.c,v 1.12 2000/01/30 19:26:20 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -25,10 +25,13 @@
 
 #include "main.h"
 
-extern int use_console_r, debug_output, require_p, noshare, allow_dk_cmds;
-extern struct dcc_t *dcc;
 
-int use_console_r = 0;		/* allow users to set their console +r */
+extern int		 use_console_r, debug_output, require_p, noshare,
+			 allow_dk_cmds;
+extern struct dcc_t	*dcc;
+
+int	use_console_r = 0;	/* Allow users to set their console +r	*/
+
 
 int logmodes(char *s)
 {
@@ -130,7 +133,7 @@ int logmodes(char *s)
 
 char *masktype(int x)
 {
-  static char s[24];		/* change this if you change the levels */
+  static char s[24];		/* Change this if you change the levels */
   char *p = s;
 
   if (x & LOG_MSGS)
@@ -187,7 +190,7 @@ char *masktype(int x)
 
 char *maskname(int x)
 {
-  static char s[207];		/* change this if you change the levels */
+  static char s[207];		/* Change this if you change the levels */
   int i = 0;
 
   s[0] = 0;
@@ -244,7 +247,8 @@ char *maskname(int x)
   return s;
 }
 
-/* some flags are mutually exclusive -- this roots them out */
+/* Some flags are mutually exclusive -- this roots them out
+ */
 int sanity_check(int atr)
 {
   if ((atr & USER_BOT) &&
@@ -258,22 +262,23 @@ int sanity_check(int atr)
     atr &= ~(USER_VOICE | USER_QUIET);
   if ((atr & USER_GVOICE) && (atr & USER_QUIET))
     atr &= ~(USER_GVOICE | USER_QUIET);
-  /* can't be owner without also being master */
+  /* Can't be owner without also being master */
   if (atr & USER_OWNER)
     atr |= USER_MASTER;
-  /* master implies botmaster, op, friend and janitor */
+  /* Master implies botmaster, op, friend and janitor */
   if (atr & USER_MASTER)
     atr |= USER_BOTMAST | USER_OP | USER_FRIEND | USER_JANITOR;
-  /* can't be botnet master without party-line access */
+  /* Can't be botnet master without party-line access */
   if (atr & USER_BOTMAST)
     atr |= USER_PARTY;
-  /* janitors can use the file area */
+  /* Janitors can use the file area */
   if (atr & USER_JANITOR)
     atr |= USER_XFER;
   return atr;
 }
 
-/* sanity check on channel attributes */
+/* Sanity check on channel attributes
+ */
 int chan_sanity_check(int chatr, int atr)
 {
   if ((chatr & USER_OP) && (chatr & USER_DEOP))
@@ -284,28 +289,29 @@ int chan_sanity_check(int chatr, int atr)
     chatr &= ~(USER_VOICE | USER_QUIET);
   if ((chatr & USER_GVOICE) && (chatr & USER_QUIET))
     chatr &= ~(USER_GVOICE | USER_QUIET);
-  /* can't be channel owner without also being channel master */
+  /* Can't be channel owner without also being channel master */
   if (chatr & USER_OWNER)
     chatr |= USER_MASTER;
-  /* master implies friend & op */
+  /* Master implies friend & op */
   if (chatr & USER_MASTER)
     chatr |= USER_OP | USER_FRIEND;
-  /* can't be +s on chan unless you're a bot */
+  /* Can't be +s on chan unless you're a bot */
   if (!(atr & USER_BOT))
     chatr &= ~BOT_SHARE;
   return chatr;
 }
 
-/* get icon symbol for a user (depending on access level)
+/* Get icon symbol for a user (depending on access level)
+ *
  * (*)owner on any channel
  * (+)master on any channel
  * (%) botnet master
  * (@) op on any channel
- * (-) other */
+ * (-) other
+ */
 char geticon(int idx)
 {
-  struct flag_record fr =
-  {FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0};
+  struct flag_record fr = {FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0};
 
   if (!dcc[idx].user)
     return '-';
@@ -334,14 +340,14 @@ void break_down_flags(char *string, struct flag_record *plus,
     else if (flags & FR_CHAN)
       mode = 1;
     else
-      return;			/* we dont actually want any..huh? */
+      return;			/* We dont actually want any..huh? */
   }
   bzero(plus, sizeof(struct flag_record));
 
   if (minus)
     bzero(minus, sizeof(struct flag_record));
 
-  plus->match = FR_OR;		/* befault binding type OR */
+  plus->match = FR_OR;		/* Default binding type OR */
   while (*string) {
     switch (*string) {
     case '+':
@@ -389,7 +395,7 @@ void break_down_flags(char *string, struct flag_record *plus,
 	}
       } else if ((*string >= '0') && (*string <= '9')) {
 	switch (mode) {
-	  /* map 0->9 to A->K for glob/chan so they are not lost */
+	  /* Map 0->9 to A->K for glob/chan so they are not lost */
 	case 0:
 	  which->udef_global |= 1 << (*string - '0');
 	  break;
@@ -523,7 +529,7 @@ int flagrec_ok(struct flag_record *req,
   } else if (req->match & FR_OR) {
     int hav = have->global;
 
-    /* exception 1 - global +d/+k cant use -|-, unless they are +p */
+    /* Exception 1 - global +d/+k cant use -|-, unless they are +p */
     if (!req->chan && !req->global && !req->udef_global &&
 	!req->udef_chan) {
       if (!allow_dk_cmds) {
@@ -536,8 +542,9 @@ int flagrec_ok(struct flag_record *req,
       }
       return 1;
     }
-    /* the +n/+m checks arent needed anymore since +n/+m
-     * automatically add lower flags */
+    /* The +n/+m checks arent needed anymore since +n/+m
+     * automatically add lower flags
+     */
     if (!require_p && ((hav & USER_OP) || (have->chan & USER_OWNER)))
       hav |= USER_PARTY;
     if (hav & req->global)
@@ -618,7 +625,7 @@ void set_user_flagrec(struct userrec *u, struct flag_record *fr,
   }
   if ((oldflags & FR_BOT) && (u->flags & USER_BOT))
     set_user(&USERENTRY_BOTFL, u, (void *) fr->bot);
-  /* dont share bot attrs */
+  /* Don't share bot attrs */
   if ((oldflags & FR_CHAN) && chname) {
     for (cr = u->chanrec; cr; cr = cr->next)
       if (!rfc_casecmp(chname, cr->channel))
@@ -646,7 +653,8 @@ void set_user_flagrec(struct userrec *u, struct flag_record *fr,
   fr->match = oldflags;
 }
 
-/* Always pass the dname (display name) to this function for chname <cybah> */
+/* Always pass the dname (display name) to this function for chname <cybah>
+ */
 void get_user_flagrec(struct userrec *u, struct flag_record *fr,
 		      char *chname)
 {
@@ -728,11 +736,11 @@ static int botfl_kill(struct user_entry *e)
   return 1;
 }
 
-static int botfl_write_userfile(FILE * f, struct userrec *u, struct user_entry *e)
+static int botfl_write_userfile(FILE *f, struct userrec *u,
+				struct user_entry *e)
 {
   char x[100];
-  struct flag_record fr =
-  {FR_BOT, 0, 0, 0, 0, 0};
+  struct flag_record fr = {FR_BOT, 0, 0, 0, 0, 0};
 
   Context;
   fr.bot = e->u.ulong;
@@ -748,7 +756,9 @@ static int botfl_set(struct userrec *u, struct user_entry *e, void *buf)
 
   Context;
   if (!(u->flags & USER_BOT))
-    return 1;			/* don't even bother trying to set the flags for a non-bot */
+    return 1;			/* Don't even bother trying to set the
+				   flags for a non-bot */
+
   if ((atr & BOT_HUB) && (atr & BOT_ALT))
     atr &= ~BOT_ALT;
   if (atr & BOT_REJECT) {
@@ -766,12 +776,11 @@ static int botfl_set(struct userrec *u, struct user_entry *e, void *buf)
   return 1;
 }
 
-static int botfl_tcl_get(Tcl_Interp * interp, struct userrec *u,
+static int botfl_tcl_get(Tcl_Interp *interp, struct userrec *u,
 			 struct user_entry *e, int argc, char **argv)
 {
   char x[100];
-  struct flag_record fr =
-  {FR_BOT, 0, 0, 0, 0, 0};
+  struct flag_record fr = {FR_BOT, 0, 0, 0, 0, 0};
 
   fr.bot = e->u.ulong;
   build_flags(x, &fr, NULL);
@@ -779,14 +788,14 @@ static int botfl_tcl_get(Tcl_Interp * interp, struct userrec *u,
   return TCL_OK;
 }
 
-static int botfl_tcl_set(Tcl_Interp * irp, struct userrec *u,
+static int botfl_tcl_set(Tcl_Interp *irp, struct userrec *u,
 			 struct user_entry *e, int argc, char **argv)
 {
   struct flag_record fr = {FR_BOT, 0, 0, 0, 0, 0};
 
   BADARGS(4, 4, " handle BOTFL flags");
   if (u->flags & USER_BOT) {
-    /* silently ignore for users */
+    /* Silently ignore for users */
     break_down_flags(argv[3], &fr, NULL);
     botfl_set(u, e, (void *) fr.bot);
   }
@@ -801,8 +810,7 @@ static int botfl_expmem(struct user_entry *e)
 
 static void botfl_display(int idx, struct user_entry *e)
 {
-  struct flag_record fr =
-  {FR_BOT, 0, 0, 0, 0, 0};
+  struct flag_record fr = {FR_BOT, 0, 0, 0, 0, 0};
   char x[100];
 
   Context;

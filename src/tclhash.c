@@ -7,12 +7,7 @@
  *   (non-Tcl) procedure lookups for msg/dcc/file commands
  *   (Tcl) binding internal procedures to msg/dcc/file commands
  * 
- * Now includes FREE OF CHARGE everything from hash.c, 'cause they
- * were exporting functions to each other and only for each other.
- * dprintf'ized, 15nov1995 (hash.c)
- * dprintf'ized, 4feb1996 (tclhash.c)
- * 
- * $Id: tclhash.c,v 1.9 2000/01/17 22:36:07 fabian Exp $
+ * $Id: tclhash.c,v 1.10 2000/01/30 19:26:21 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -38,16 +33,16 @@
 #include "users.h"
 #include "match.c"
 
-extern Tcl_Interp *interp;
-extern struct dcc_t *dcc;
-extern struct userrec *userlist;
-extern int debug_tcl, dcc_total;
-extern time_t now;
+extern Tcl_Interp	*interp;
+extern struct dcc_t	*dcc;
+extern struct userrec	*userlist;
+extern int		 debug_tcl, dcc_total;
+extern time_t		 now;
 
-static p_tcl_bind_list bind_table_list;
-p_tcl_bind_list H_chat, H_act, H_bcst, H_chon, H_chof;
-p_tcl_bind_list H_load, H_unld, H_link, H_disc, H_dcc, H_chjn, H_chpt;
-p_tcl_bind_list H_bot, H_time, H_nkch, H_away, H_note, H_filt, H_event;
+static p_tcl_bind_list	bind_table_list;
+p_tcl_bind_list		H_chat, H_act, H_bcst, H_chon, H_chof,
+			H_load, H_unld, H_link, H_disc, H_dcc, H_chjn, H_chpt,
+			H_bot, H_time, H_nkch, H_away, H_note, H_filt, H_event;
 
 static int builtin_2char();
 static int builtin_3char();
@@ -59,6 +54,7 @@ static int builtin_idxchar();
 static int builtin_charidx();
 static int builtin_chat();
 static int builtin_dcc();
+
 
 int expmem_tclhash()
 {
@@ -137,9 +133,9 @@ p_tcl_bind_list add_bind_table(char *nme, int flg, Function f)
     int v = strcasecmp(p->name, nme);
 
     if (v == 0)
-      /* repeat, just return old value */
+      /* Repeat, just return old value */
       return p;
-    /* insert at start of list */
+    /* Insert at start of list */
     if (v > 0) {
       break;
     } else {
@@ -178,7 +174,7 @@ void del_bind_table(p_tcl_bind_list which)
       } else {
 	bind_table_list = p->next;
       }
-      /* cleanup code goes here */
+      /* Cleanup code goes here */
       for (ht = p->first; ht; ht = ht1) {
 	ht1 = ht->next;
 	for (tt = ht->first; tt; tt = tt1) {
@@ -240,15 +236,15 @@ static int unbind_bind_entry(p_tcl_bind_list typ, char *flags, char *cmd,
     int i = strcmp(cmd, ma->mask);
 
     if (!i)
-      break;			/* found it! fall out! */
+      break;			/* Found it! fall out! */
     ma1 = ma;
   }
   if (ma) {
     last = NULL;
     for (tt = ma->first; tt; tt = tt->next) {
-      /* if procs are same, erase regardless of flags */
+      /* If procs are same, erase regardless of flags */
       if (!strcasecmp(tt->func_name, proc)) {
-	/* erase it */
+	/* Erase it */
 	if (last) {
 	  last->next = tt->next;
 	} else if (tt->next) {
@@ -271,7 +267,8 @@ static int unbind_bind_entry(p_tcl_bind_list typ, char *flags, char *cmd,
   return 0;			/* no match */
 }
 
-/* add command (remove old one if necessary) */
+/* Add command (remove old one if necessary)
+ */
 static int bind_bind_entry(p_tcl_bind_list typ, char *flags, char *cmd,
 			   char *proc)
 {
@@ -287,7 +284,7 @@ static int bind_bind_entry(p_tcl_bind_list typ, char *flags, char *cmd,
     int i = strcmp(cmd, ma->mask);
 
     if (!i)
-      break;			/* found it! fall out! */
+      break;			/* Found it! fall out! */
     ma1 = ma;
   }
   Context;
@@ -302,7 +299,7 @@ static int bind_bind_entry(p_tcl_bind_list typ, char *flags, char *cmd,
   }
   Context;
   for (tt = ma->first; tt; tt = tt->next) {
-    /* already defined? if so replace */
+    /* Already defined? If so replace */
     if (!strcasecmp(tt->func_name, proc)) {
       tt->flags.match = FR_GLOBAL | FR_CHAN;
       break_down_flags(flags, &(tt->flags), NULL);
@@ -361,7 +358,7 @@ static int tcl_bind STDVAR
   }
   if ((long int) cd == 1) {
     if (!unbind_bind_entry(tp, argv[2], argv[3], argv[4])) {
-      /* don't error if trying to re-unbind a builtin */
+      /* Don't error if trying to re-unbind a builtin */
       if ((strcmp(argv[3], &argv[4][5]) != 0) || (argv[4][0] != '*') ||
 	  (strncmp(argv[1], &argv[4][1], 3) != 0) ||
 	  (argv[4][4] != ':')) {
@@ -518,13 +515,13 @@ static int builtin_dcc STDVAR {
     Tcl_AppendResult(irp, "invalid idx", NULL);
     return TCL_ERROR;
   }
-  if (F == 0) {
+  if (F == NULL) {
     Tcl_AppendResult(irp, "break", NULL);
     return TCL_OK;
   }
-  /* check if it's a password change, if so, don't show the password */
-  /* lets clean this up, it's debugging, we dont need pretty formats, just
-   * a cover up - and dont even bother with .tcl */
+  /* Check if it's a password change, if so, don't show the password. We
+   * don't need pretty formats here, as it's only for debugging purposes.
+   */
   debug4("tcl: builtin dcc call: %s %s %s %s", argv[0], argv[1], argv[2],
 	 (!strcmp(argv[0] + 5, "newpass") ||
 	  !strcmp(argv[0] + 5, "chpass")) ? "[something]" : argv[3]);
@@ -549,8 +546,7 @@ static int trigger_bind(char *proc, char *param)
       fprintf(f, "eval: %s%s\n", proc, param);
   }
   {
-    /*
-     * We now try to debug the Tcl_VarEval() call below by remembering both
+    /* We now try to debug the Tcl_VarEval() call below by remembering both
      * the called proc name and it's parameters. This should render us a bit
      * less helpless when we see context dumps.
      */
@@ -617,7 +613,7 @@ int check_tcl_bind(p_tcl_bind_list bind, char *match,
     if (ok) {
       tt = hm->first;
       if (match_type & BIND_STACKABLE) {
-	/* could be multiple triggers */
+	/* Could be multiple triggers */
 	while (tt) {
 	  if (match_type & BIND_USE_ATTR) {
 	    if (match_type & BIND_HAS_BUILTINS)
@@ -638,14 +634,14 @@ int check_tcl_bind(p_tcl_bind_list bind, char *match,
 	    if (match_type & BIND_ALTER_ARGS) {
 	      if ((interp->result == NULL) || !(interp->result[0]))
 		return x;
-	      /* this is such an amazingly ugly hack: */
+	      /* This is such an amazingly ugly hack: */
 	      Tcl_SetVar(interp, "_a", interp->result, 0);
 	    }
 	  }
 	  tt = tt->next;
 	}
 	if ((match_type & 3) != MATCH_MASK)
-	  f = 1;		/* this will suffice until we have
+	  f = 1;		/* This will suffice until we have
 				 * stackable partials */
       } else {
 	if (match_type & BIND_USE_ATTR) {
@@ -689,12 +685,12 @@ int check_tcl_bind(p_tcl_bind_list bind, char *match,
   return trigger_bind(proc, param);
 }
 
-/* check for tcl-bound dcc command, return 1 if found */
-/* dcc: proc-name <handle> <sock> <args...> */
+/* Check for tcl-bound dcc command, return 1 if found
+ * dcc: proc-name <handle> <sock> <args...>
+ */
 int check_tcl_dcc(char *cmd, int idx, char *args)
 {
-  struct flag_record fr =
-  {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
+  struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
   int x;
   char s[5];
 
@@ -734,8 +730,7 @@ void check_tcl_bot(char *nick, char *code, char *param)
 
 void check_tcl_chonof(char *hand, int sock, p_tcl_bind_list table)
 {
-  struct flag_record fr =
-  {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
+  struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
   char s[20];
   struct userrec *u = get_user_by_handle(userlist, hand);
 
@@ -809,8 +804,7 @@ char *check_tcl_filt(int idx, char *text)
 {
   char s[10];
   int x;
-  struct flag_record fr =
-  {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
+  struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
 
   Context;
   sprintf(s, "%ld", dcc[idx].sock);

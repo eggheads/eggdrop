@@ -2,7 +2,7 @@
  * tclegg.h
  *   stuff used by tcl.c and tclhash.c
  * 
- * $Id: tclegg.h,v 1.5 2000/01/17 22:36:07 fabian Exp $
+ * $Id: tclegg.h,v 1.6 2000/01/30 19:26:21 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -26,13 +26,14 @@
 #ifndef _EGG_TCLEGG_H
 #define _EGG_TCLEGG_H
 
-#include "../lush.h"		/* include this here, since it's needed
-				 * in this file */
+#include "../lush.h"		/* Include this here, since it's needed
+				   in this file */
 #ifndef MAKING_MODS
-#  include "proto.h"		/* this file needs this */
+#  include "proto.h"		/* This file needs this */
 #endif
 
-/* types of commands */
+/* Types of commands
+ */
 #define CMD_MSG   0
 #define CMD_DCC   1
 #define CMD_FIL   2
@@ -71,45 +72,57 @@
 #define CMD_TIME  35
 #define BINDS 36
 
-/* match types for check_tcl_bind */
+/* Match types for check_tcl_bind
+ */
 #define MATCH_PARTIAL       0
 #define MATCH_EXACT         1
 #define MATCH_MASK          2
 #define MATCH_CASE          3
 
-/* bitwise 'or' these: */
-#define BIND_USE_ATTR       4
-#define BIND_STACKABLE      8
-#define BIND_HAS_BUILTINS   16
-#define BIND_WANTRET        32
-#define BIND_ALTER_ARGS     64
+/* Bitwise 'or' these:
+ */
+#define BIND_USE_ATTR       0x04
+#define BIND_STACKABLE      0x08
+#define BIND_HAS_BUILTINS   0x10
+#define BIND_WANTRET        0x20
+#define BIND_ALTER_ARGS     0x40 
 
-/* return values */
+/* Return values
+ */
 #define BIND_NOMATCH    0
 #define BIND_AMBIGUOUS  1
-#define BIND_MATCHED    2	/* but the proc couldn't be found */
+#define BIND_MATCHED    2	/* But the proc couldn't be found */
 #define BIND_EXECUTED   3
-#define BIND_EXEC_LOG   4	/* proc returned 1 -> wants to be logged */
-#define BIND_EXEC_BRK   5	/* proc returned BREAK (quit) */
+#define BIND_EXEC_LOG   4	/* Proc returned 1 -> wants to be logged */
+#define BIND_EXEC_BRK   5	/* Proc returned BREAK (quit) */
 
-/* extra commands are stored in Tcl hash tables (one hash table for each type
- * of command: msg, dcc, etc) */
+/* Extra commands are stored in Tcl hash tables (one hash table for each type
+ * of command: msg, dcc, etc)
+ */
 typedef struct timer_str {
-  unsigned int mins;		/* time to elapse */
-  char *cmd;			/* command linked to */
-  unsigned long id;		/* used to remove timers */
-  struct timer_str *next;
+  struct timer_str	*next;
+  unsigned int		 mins;	/* Time to elapse			*/
+  char			*cmd;	/* Command linked to			*/
+  unsigned long		 id;	/* Used to remove timers		*/
 } tcl_timer_t;
 
-/* used for stub functions : */
-#define STDVAR (cd,irp,argc,argv) \
-  ClientData cd; Tcl_Interp *irp; int argc; char *argv[];
-#define BADARGS(nl,nh,example) \
-  if ((argc<(nl)) || (argc>(nh))) { \
-    Tcl_AppendResult(irp,"wrong # args: should be \"",argv[0], \
-		     (example),"\"",NULL); \
-    return TCL_ERROR; \
-  }
+
+/* Used for stub functions:
+ */
+
+#define STDVAR		(cd, irp, argc, argv)				\
+	ClientData cd;							\
+	Tcl_Interp *irp;						\
+	int argc;							\
+	char *argv[];
+
+#define BADARGS(nl, nh, example)					\
+	if ((argc < (nl)) || (argc > (nh))) {				\
+		Tcl_AppendResult(irp, "wrong # args: should be \"",	\
+				 argv[0], (example), "\"", NULL);	\
+		return TCL_ERROR;					\
+	}
+
 
 unsigned long add_timer(tcl_timer_t **, int, char *, unsigned long);
 int remove_timer(tcl_timer_t **, unsigned long);

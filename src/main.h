@@ -2,7 +2,7 @@
  * main.h
  *   include file to include most other include files
  * 
- * $Id: main.h,v 1.9 2000/01/24 20:46:50 fabian Exp $
+ * $Id: main.h,v 1.10 2000/01/30 19:26:20 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -83,35 +83,52 @@ extern struct dcc_table DCC_CHAT, DCC_BOT, DCC_LOST, DCC_SCRIPT, DCC_BOT_NEW,
 
 #endif
 
-/* from net.h */
 
-/* my own byte swappers */
+/* Our own byte swappers
+ */
 #ifdef WORDS_BIGENDIAN
-#  define swap_short(sh) (sh)
-#  define swap_long(ln) (ln)
+#  define swap_short(sh)	(sh)
+#  define swap_long(ln)		(ln)
 #else
-#  define swap_short(sh) ((((sh) & 0xff00) >> 8) | (((sh) & 0x00ff) << 8))
-#  define swap_long(ln) (swap_short(((ln)&0xffff0000)>>16) | (swap_short((ln)&0x0000ffff)<<16))
+#  define swap_short(sh)	((((sh) & 0xff00) >> 8) |		 \
+				 (((sh) & 0x00ff) << 8))
+#  define swap_long(ln)		(swap_short(((ln) & 0xffff0000) >> 16) | \
+				 (swap_short((ln) & 0x0000ffff) << 16))
 #endif
-#define iptolong(a) (0xffffffff & (long)(swap_long((unsigned long)a)))
-#define fixcolon(x) if (x[0]==':') {x++;} else {x=newsplit(&x);}
 
-#define my_ntohs(sh) swap_short(sh)
-#define my_htons(sh) swap_short(sh)
-#define my_ntohl(ln) swap_long(ln)
-#define my_htonl(ln) swap_long(ln)
+#define iptolong(a)		(0xffffffff & 				\
+				 (long) (swap_long((unsigned long) a)))
+#define fixcolon(x)		if ((x)[0] == ':') { 			\
+					(x)++;				\
+				} else {				\
+					(x) = newsplit(&(x));		\
+				}
 
-/* Stupid Borg Cube crap ;p */
-#ifdef BORGCUBES
+#define my_ntohs(sh)	swap_short(sh)
+#define my_htons(sh)	swap_short(sh)
+#define my_ntohl(ln)	swap_long(ln)
+#define my_htonl(ln)	swap_long(ln)
 
-/* net.h needs this */
-#define O_NONBLOCK      00000004	/* POSIX non-blocking I/O       */
-
-/* mod/filesys.mod/filedb.c needs this */
-#define _S_IFMT         0170000		/* type of file */
-#define _S_IFDIR        0040000		/*   directory */
-#define S_ISDIR(m)      (((m)&(_S_IFMT)) == (_S_IFDIR))
-
-#endif				/* BORGCUBES */
+#ifndef O_NONBLOCK
+#  define O_NONBLOCK	00000004    /* POSIX non-blocking I/O		   */
+#endif
+ 
+/* File attributes
+ */
+#ifndef S_IFMT
+#  define S_IFMT	0170000	    /* Bitmask for the file type bitfields */
+#endif
+#ifndef S_ISDIR
+#  ifndef S_IFDIR
+#    define S_IFDIR	0040000	    /* Directory			   */
+#  endif
+#  define S_ISDIR(m)      (((m)&(S_IFMT)) == (S_IFDIR))
+#endif
+#ifndef S_IFREG
+#  define S_IFREG	0100000     /* Regular file			   */
+#endif
+#ifndef S_IFLNK
+#  define S_IFLNK   	0120000     /* Symbolic link			   */
+#endif
 
 #endif				/* _EGG_MAIN_H */

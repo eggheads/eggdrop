@@ -2,7 +2,7 @@
  * language.c -- handles:
  *   language support code
  * 
- * $Id: language.c,v 1.8 2000/01/17 22:36:06 fabian Exp $
+ * $Id: language.c,v 1.9 2000/01/30 19:26:20 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -65,7 +65,8 @@
 
 #include "main.h"
 
-extern struct dcc_t *dcc;
+extern struct dcc_t	*dcc;
+
 
 typedef struct lang_st {
   struct lang_st *next;
@@ -84,9 +85,9 @@ typedef struct lang_t {
   struct lang_t *next;
 } lang_tab;
 
-static lang_tab *langtab[64];
-static lang_sec *langsection = NULL;
-static lang_pri *langpriority = NULL;
+static lang_tab	*langtab[64];
+static lang_sec	*langsection = NULL;
+static lang_pri	*langpriority = NULL;
 
 static int del_lang(char *);
 static int add_message(int, char *);
@@ -100,7 +101,7 @@ static int split_lang(char *, char **, char **);
 int cmd_loadlanguage(struct userrec *, int, char *);
 
 
-/* add a new preferred language to the list of languages. Newly added
+/* Add a new preferred language to the list of languages. Newly added
  * languages get the highest priority.
  */
 void add_lang(char *lang)
@@ -109,9 +110,9 @@ void add_lang(char *lang)
 
   Context;
   while (lp) {
-    /* the language already exists, moving to the beginning */
+    /* The language already exists, moving to the beginning */
     if (!strcmp(lang, lp->lang)) {
-      /* already at the front? */
+      /* Already at the front? */
       if (!lpo)
 	return;
       lpo->next = lp->next;
@@ -123,27 +124,28 @@ void add_lang(char *lang)
     lp = lp->next;
   }
 
-  /* no existing entry, create a new one */
+  /* No existing entry, create a new one */
   lp = nmalloc(sizeof(lang_pri));
   lp->lang = nmalloc(strlen(lang) + 1);
   strcpy(lp->lang, lang);
   lp->next = NULL;
 
-  /* if we have other entries, point to the beginning of the old list */
+  /* If we have other entries, point to the beginning of the old list */
   if (langpriority)
     lp->next = langpriority;
   langpriority = lp;
   putlog(LOG_MISC, "*", "LANG: Language loaded: %s", lang); 
 }
 
-/* remove a language from the list of preferred languages. */
+/* Remove a language from the list of preferred languages.
+ */
 static int del_lang(char *lang)
 {
   lang_pri *lp = langpriority, *lpo = NULL;
 
   Context;
   while (lp) {
-    /* found the language? */
+    /* Found the language? */
     if (!strcmp(lang, lp->lang)) {
       if (lpo)
 	lpo->next = lp->next;
@@ -159,7 +161,7 @@ static int del_lang(char *lang)
     lpo = lp;
     lp = lp->next;
   }
-  /* language not found */
+  /* Language not found */
   return 0;
 }
 
@@ -190,7 +192,7 @@ static int add_message(int lidx, char *ltext)
   return 0;
 }
 
-/* recheck all sections and check if any language files are available
+/* Recheck all sections and check if any language files are available
  * which match the preferred language(s) more closely
  */
 static void recheck_lang_sections(void)
@@ -202,7 +204,7 @@ static void recheck_lang_sections(void)
   while (ls) {
     if (ls->section) {
       langfile = get_langfile(ls);
-      /* found a language with a more preferred language? */
+      /* Found a language with a more preferred language? */
       if (langfile) {
         read_lang(langfile);
         nfree(langfile);
@@ -212,7 +214,8 @@ static void recheck_lang_sections(void)
   }
 }
 
-/* parse a language file */
+/* Parse a language file
+ */
 static void read_lang(char *langfile)
 {
   FILE *FLANG;
@@ -257,8 +260,9 @@ static void read_lang(char *langfile)
 	    }
 	  }
 	}
-	/* We gotta fix \n's here as, being arguments to sprintf(), */
-	/* they won't get translated */
+	/* We gotta fix \n's here as, being arguments to sprintf(),
+	 * they won't get translated.
+	 */
 	ctmp = ltext;
 	ctmp1 = ltext;
 	while (*ctmp1) {
@@ -302,21 +306,21 @@ void add_lang_section(char *section)
 
   Context;
   while (ls) {
-    /* already know of that section? */
+    /* Already know of that section? */
     if (!strcmp(section, ls->section))
       return;
     ols = ls;
     ls = ls->next;
   }
 
-  /* create new section entry */
+  /* Create new section entry */
   ls = nmalloc(sizeof(lang_sec));
   ls->section = nmalloc(strlen(section) + 1);
   strcpy(ls->section, section);
   ls->lang = NULL;
   ls->next = NULL;
 
-  /* connect to existing list of sections */
+  /* Connect to existing list of sections */
   if (ols)
     ols->next = ls;
   else
@@ -344,9 +348,9 @@ void add_lang_section(char *section)
 
 int del_lang_section(char *section)
 {
-  lang_sec *ls = langsection, *ols = NULL;
+  lang_sec *ls, *ols;
 
-  while (ls) {
+  for (ls = langsection, ols = NULL; ls; ols = ls, ls = ls->next) {
     if (ls->section && !strcmp(ls->section, section)) {
       if (ols)
 	ols->next = ls->next;
@@ -359,8 +363,6 @@ int del_lang_section(char *section)
       putlog(LOG_MISC, "*", "LANG: Section unloaded: %s", section);
       return 1;
     }
-    ols = ls;
-    ls = ls->next;
   }
   return 0;
 }
@@ -378,7 +380,7 @@ static char *get_specific_langfile(char *language, lang_sec *sec)
   sfile = fopen(langfile, "r");
   if (sfile) {
     fclose(sfile);
-    /* save language used for this section */
+    /* Save language used for this section */
     sec->lang = nrealloc(sec->lang, strlen(language) + 1);
     strcpy(sec->lang, language);
     return langfile;
@@ -393,20 +395,19 @@ static char *get_specific_langfile(char *language, lang_sec *sec)
 static char *get_langfile(lang_sec *sec)
 {
   char *langfile;
-  lang_pri *lp = langpriority;
+  lang_pri *lp;
 
   Context;
-  while (lp) {
-    /* there is no need to reload the same language */
+  for (lp = langpriority; lp; lp = lp->next) {
+    /* There is no need to reload the same language */
     if (sec->lang && !strcmp(sec->lang, lp->lang)) {
       return NULL;
     }
     langfile = get_specific_langfile(lp->lang, sec);
     if (langfile)
       return langfile;
-    lp = lp->next;
   }
-  /* we did not find any files, clear the language field */
+  /* We did not find any files, clear the language field */
   if (sec->lang)
     nfree(sec->lang);
   sec->lang = NULL;
@@ -440,7 +441,8 @@ static int split_lang(char *par, char **lang, char **section)
   return 1;
 }
 
-/* compability function to allow users/modules to use the old command. */
+/* Compability function to allow users/modules to use the old command.
+ */
 int cmd_loadlanguage(struct userrec *u, int idx, char *par)
 {
   char *section, *lang, *buf;
@@ -571,8 +573,8 @@ char *get_language(int idx)
 int expmem_language()
 {
   lang_tab *l;
-  lang_sec *ls = langsection;
-  lang_pri *lp = langpriority;
+  lang_sec *ls;
+  lang_pri *lp;
   int i, size = 0;
 
   Context;
@@ -581,24 +583,23 @@ int expmem_language()
       size += sizeof(lang_tab);
       size += (strlen(l->text) + 1);
     }
-  while (ls) {
+  for (ls = langsection; ls; ls = ls->next) {
     size += sizeof(lang_sec);
     if (ls->section)
       size += strlen(ls->section)+1;
     if (ls->lang)
       size += strlen(ls->lang)+1;
-    ls = ls->next;
   }
-  while (lp) {
+  for (lp = langpriority; lp; lp = lp->next) {
     size += sizeof(lang_pri);
     if (lp->lang)
       size += strlen(lp->lang)+1;
-    lp = lp->next;
   }
   return size;
 }
 
-/* a report on the module status - not sure if we need this now :/ */
+/* A report on the module status - only for debugging purposes
+ */
 static int cmd_languagestatus(struct userrec *u, int idx, char *par)
 {
   int ltexts = 0;
@@ -650,7 +651,8 @@ static int cmd_languagestatus(struct userrec *u, int idx, char *par)
   return 0;
 }
 
-/* compability function to allow scripts to use the old command. */
+/* Compability function to allow scripts to use the old command.
+ */
 static int tcl_language STDVAR
 {
   char *lang, *section, *buf;
@@ -720,26 +722,26 @@ static int tcl_relang STDVAR
 
 static cmd_t langdcc[] =
 {
-  {"language", "n", cmd_loadlanguage, NULL},
-  {"+lang", "n", cmd_plslang, NULL},
-  {"-lang", "n", cmd_mnslang, NULL},
-  {"+lsec", "n", cmd_plslsec, NULL},
-  {"-lsec", "n", cmd_mnslsec, NULL},
-  {"ldump", "n", cmd_languagedump, NULL},
-  {"lstat", "n", cmd_languagestatus, NULL},
-  {"relang", "n", cmd_relang, NULL},
-  {0, 0, 0, 0}
+  {"language",	"n",	cmd_loadlanguage,	NULL},
+  {"+lang",	"n",	cmd_plslang,		NULL},
+  {"-lang",	"n",	cmd_mnslang,		NULL},
+  {"+lsec",	"n",	cmd_plslsec,		NULL},
+  {"-lsec",	"n",	cmd_mnslsec,		NULL},
+  {"ldump",	"n",	cmd_languagedump,	NULL},
+  {"lstat",	"n",	cmd_languagestatus,	NULL},
+  {"relang",	"n",	cmd_relang,		NULL},
+  {NULL,	NULL,	NULL,			NULL}
 };
 
 static tcl_cmds langtcls[] =
 {
-  {"language", tcl_language},
-  {"addlang", tcl_plslang},
-  {"dellang", tcl_mnslang},
-  {"addlangsection", tcl_addlangsection},
-  {"dellangsection", tcl_dellangsection},
-  {"relang", tcl_relang},
-  {0, 0}
+  {"language",		tcl_language},
+  {"addlang",		tcl_plslang},
+  {"dellang",		tcl_mnslang},
+  {"addlangsection",	tcl_addlangsection},
+  {"dellangsection",	tcl_dellangsection},
+  {"relang",		tcl_relang},
+  {NULL,		NULL}
 };
 
 void init_language(int flag)
@@ -751,9 +753,10 @@ void init_language(int flag)
   if (flag) {
     for (i = 0; i < 32; i++)
       langtab[i] = 0;
-    /* The default language is always "english" as language files are
-     * gauranteed to exist in english. */
-    add_lang("english");
+    /* The default language is always BASELANG as language files are
+     * gauranteed to exist in that language.
+     */
+    add_lang(BASELANG);
     /* Let the user choose a different, preferred language */
     deflang = getenv("EGG_LANG");
     if (deflang)

@@ -4,7 +4,7 @@
  *   provides the code used by the bot if the DNS module is not loaded
  *   DNS Tcl commands
  * 
- * $Id: dns.c,v 1.13 2000/01/17 22:36:06 fabian Exp $
+ * $Id: dns.c,v 1.14 2000/01/30 19:26:20 fabian Exp $
  */
 /* 
  * Written by Fabian Knittel <fknittel@gmx.de>
@@ -35,14 +35,14 @@
 
 #include "dns.h"
 
-extern struct dcc_t *dcc;
-extern int dcc_total;
-extern int resolve_timeout;
-extern time_t now;
-extern jmp_buf alarmret;
-extern Tcl_Interp *interp;
+extern struct dcc_t	*dcc;
+extern int		 dcc_total;
+extern int		 resolve_timeout;
+extern time_t		 now;
+extern jmp_buf		 alarmret;
+extern Tcl_Interp	*interp;
 
-devent_t *dns_events = NULL;
+devent_t	*dns_events = NULL;
 
 
 /*

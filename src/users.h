@@ -2,7 +2,7 @@
  * users.h
  *   structures and definitions used by users.c and userrec.c
  * 
- * $Id: users.h,v 1.4 2000/01/17 22:36:07 fabian Exp $
+ * $Id: users.h,v 1.5 2000/01/30 19:26:21 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -26,18 +26,23 @@
 #ifndef _EGG_USERS_H
 #define _EGG_USERS_H
 
-/* list functions :) , next *must* be the 1st item in the struct */
+/* List functions :) , next *must* be the 1st item in the struct */
 struct list_type {
   struct list_type *next;
   char *extra;
 };
 
-#define list_insert(a,b) { b->next = *a; *a = b; }
+#define list_insert(a,b) {						\
+    	(b)->next = *(a);						\
+	*(a) = (b);							\
+}
 int list_append(struct list_type **, struct list_type *);
 int list_delete(struct list_type **, struct list_type *);
 int list_contains(struct list_type *, struct list_type *);
 
-/* new userfile format stuff */
+
+/* New userfile format stuff
+ */
 struct userrec;
 struct user_entry;
 struct user_entry_type {
@@ -60,12 +65,13 @@ struct user_entry_type {
   char *name;
 };
 
-#ifndef MAKING_MODS
-extern struct user_entry_type USERENTRY_EMAIL, USERENTRY_COMMENT, USERENTRY_LASTON,
- USERENTRY_XTRA, USERENTRY_INFO, USERENTRY_BOTADDR, USERENTRY_HOSTS,
- USERENTRY_PASS, USERENTRY_BOTFL, USERENTRY_URL;
 
+#ifndef MAKING_MODS
+extern struct user_entry_type USERENTRY_EMAIL, USERENTRY_COMMENT,
+ USERENTRY_LASTON, USERENTRY_XTRA, USERENTRY_INFO, USERENTRY_BOTADDR,
+ USERENTRY_HOSTS, USERENTRY_PASS, USERENTRY_BOTFL, USERENTRY_URL;
 #endif
+
 
 struct laston_info {
   time_t laston;
@@ -107,9 +113,10 @@ void *_user_malloc(int, char *, int);
 void *_user_realloc(void *, int, char *, int);
 
 #ifndef MAKING_MODS
-#define user_malloc(x) _user_malloc(x,__FILE__,__LINE__)
-#define user_realloc(x,y) _user_realloc(x,y,__FILE__,__LINE__)
+#  define user_malloc(x) _user_malloc(x,__FILE__,__LINE__)
+#  define user_realloc(x,y) _user_realloc(x,y,__FILE__,__LINE__)
 #endif
+
 int add_entry_type(struct user_entry_type *);
 int del_entry_type(struct user_entry_type *);
 struct user_entry_type *find_entry_type(char *);
@@ -117,18 +124,20 @@ struct user_entry *find_user_entry(struct user_entry_type *, struct userrec *);
 void *get_user(struct user_entry_type *, struct userrec *);
 int set_user(struct user_entry_type *, struct userrec *, void *);
 
-#define bot_flags(u) ((long)get_user(&USERENTRY_BOTFL,u))
-#define is_bot(u) (u && (u->flags & USER_BOT))
-#define is_master(u) (u && (u->flags & USER_MASTER))
-#define is_owner(u) (u && (u->flags & USER_OWNER))
+#define bot_flags(u)	((long)get_user(&USERENTRY_BOTFL, (u)))
+#define is_bot(u)	((u) && ((u)->flags & USER_BOT))
+#define is_master(u)	((u) && ((u)->flags & USER_MASTER))
+#define is_owner(u)	((u) && ((u)->flags & USER_OWNER))
 
-/* fake users used to store ignores and bans */
+/* Fake users used to store ignores and bans
+ */
 #define IGNORE_NAME "*ignore"
 #define BAN_NAME    "*ban"
 #define EXEMPT_NAME "*exempt"
 #define INVITE_NAME "*Invite"
 
-/* channel-specific info */
+/* Channel-specific info
+ */
 struct chanuserrec {
   struct chanuserrec *next;
   char channel[81];
@@ -138,7 +147,8 @@ struct chanuserrec {
   char *info;
 };
 
-/* new-style userlist */
+/* New-style userlist
+ */
 struct userrec {
   struct userrec *next;
   char handle[HANDLEN + 1];
@@ -161,7 +171,9 @@ extern struct igrec *global_ign;
 
 #define IGREC_PERM   2
 
-/* flags are in eggdrop.h */
+/*
+ * Note: Flags are in eggdrop.h
+ */
 
 struct userrec *adduser();
 struct userrec *get_user_by_handle(struct userrec *, char *);
@@ -170,18 +182,19 @@ struct userrec *get_user_by_nick(char *);
 struct userrec *check_chanlist();
 struct userrec *check_chanlist_hand();
 
-/* all the default userentry stuff, for code re-use */
+/* All the default userentry stuff, for code re-use
+ */
 int def_unpack(struct userrec *u, struct user_entry *e);
 int def_pack(struct userrec *u, struct user_entry *e);
 int def_kill(struct user_entry *e);
-int def_write_userfile(FILE * f, struct userrec *u, struct user_entry *e);
+int def_write_userfile(FILE *f, struct userrec *u, struct user_entry *e);
 void *def_get(struct userrec *u, struct user_entry *e);
 int def_set(struct userrec *u, struct user_entry *e, void *buf);
 int def_gotshare(struct userrec *u, struct user_entry *e,
 		 char *data, int idx);
-int def_tcl_get(Tcl_Interp * interp, struct userrec *u,
+int def_tcl_get(Tcl_Interp *interp, struct userrec *u,
 		struct user_entry *e, int argc, char **argv);
-int def_tcl_set(Tcl_Interp * irp, struct userrec *u,
+int def_tcl_set(Tcl_Interp *irp, struct userrec *u,
 		struct user_entry *e, int argc, char **argv);
 int def_expmem(struct user_entry *e);
 void def_display(int idx, struct user_entry *e);

@@ -5,7 +5,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: botmsg.c,v 1.8 2000/01/17 22:36:06 fabian Exp $
+ * $Id: botmsg.c,v 1.9 2000/01/30 19:26:19 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -29,17 +29,19 @@
 #include "main.h"
 #include "tandem.h"
 
-extern struct dcc_t *dcc;
-extern int dcc_total, tands;
-extern char botnetnick[];
-extern party_t *party;
-extern Tcl_Interp *interp;
-extern struct userrec *userlist;
+extern struct dcc_t	*dcc;
+extern int		 dcc_total, tands;
+extern char		 botnetnick[];
+extern party_t		*party;
+extern Tcl_Interp	*interp;
+extern struct userrec	*userlist;
 
-static char OBUF[1024];
+static char	OBUF[1024];
+
 
 #ifndef NO_OLD_BOTNET
-/* ditto for tandem bots */
+/* Ditto for tandem bots
+ */
 void tandout_but EGG_VARARGS_DEF(int, arg1)
 {
   int i, x, l;
@@ -64,7 +66,7 @@ void tandout_but EGG_VARARGS_DEF(int, arg1)
 }
 #endif
 
-/* thank you ircu :) */
+/* Thank you ircu :) */
 static char tobase64array[64] =
 {
   'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
@@ -194,7 +196,8 @@ int simple_sprintf EGG_VARARGS_DEF(char *,arg1)
   return c;
 }
 
-/* ditto for tandem bots */
+/* Ditto for tandem bots
+ */
 void send_tand_but(int x, char *buf, int len)
 {
   int i, iso = 0;
@@ -770,8 +773,9 @@ void botnet_send_nkch_part(int butidx, int useridx, char *oldnick)
   }
 }
 
-/* this part of add_note is more relevant to the botnet than
- * to the notes file */
+/* This part of add_note is more relevant to the botnet than
+ * to the notes file
+ */
 int add_note(char *to, char *from, char *msg, int idx, int echo)
 {
   int status, i, iaway, sock;
@@ -779,10 +783,10 @@ int add_note(char *to, char *from, char *msg, int idx, int echo)
   struct userrec *u;
 
   if (strlen(msg) > 450)
-    msg[450] = 0;		/* notes have a limit */
+    msg[450] = 0;		/* Notes have a limit */
   /* note length + PRIVMSG header + nickname + date  must be <512  */
   p = strchr(to, '@');
-  if (p != NULL) {		/* cross-bot note */
+  if (p != NULL) {		/* Cross-bot note */
     char x[20];
 
     *p = 0;
@@ -790,8 +794,8 @@ int add_note(char *to, char *from, char *msg, int idx, int echo)
     x[20] = 0;
     *p = '@';
     p++;
-    if (!strcasecmp(p, botnetnick))	/* to me?? */
-      return add_note(x, from, msg, idx, echo); /* start over, dimwit. */
+    if (!strcasecmp(p, botnetnick))	/* To me?? */
+      return add_note(x, from, msg, idx, echo); /* Start over, dimwit. */
     if (strcasecmp(from, botnetnick)) {
       if (strlen(from) > 40)
 	from[40] = 0;
@@ -814,9 +818,9 @@ int add_note(char *to, char *from, char *msg, int idx, int echo)
       botnet_send_priv(i, ssf, x, p, "%s", msg);
     } else
       botnet_send_priv(i, botf, x, p, "%s", msg);
-    return NOTE_OK;		/* forwarded to the right bot */
+    return NOTE_OK;		/* Forwarded to the right bot */
   }
-  /* might be form "sock:nick" */
+  /* Might be form "sock:nick" */
   splitc(ssf, from, ':');
   rmspace(ssf);
   splitc(ss, to, ':');
@@ -825,8 +829,8 @@ int add_note(char *to, char *from, char *msg, int idx, int echo)
     sock = (-1);
   else
     sock = atoi(ss);
-  /* don't process if there's a note binding for it */
-  if (idx != (-2)) {		/* notes from bots don't trigger it */
+  /* Don't process if there's a note binding for it */
+  if (idx != (-2)) {		/* Notes from bots don't trigger it */
     if (check_tcl_note(from, to, msg)) {
       if ((idx >= 0) && (echo))
 	dprintf(idx, "-> %s: %s\n", to, msg);
@@ -850,7 +854,7 @@ int add_note(char *to, char *from, char *msg, int idx, int echo)
   }
   status = NOTE_STORED;
   iaway = 0;
-  /* online right now? */
+  /* Online right now? */
   for (i = 0; i < dcc_total; i++) {
     if ((dcc[i].type->flags & DCT_GETNOTES) &&
 	((sock == (-1)) || (sock == dcc[i].sock)) &&
@@ -860,7 +864,7 @@ int add_note(char *to, char *from, char *msg, int idx, int echo)
       if (dcc[i].type == &DCC_CHAT)
 	if ((dcc[i].u.chat->away != NULL) &&
 	    (idx != (-2))) {
-	  /* only check away if it's not from a bot */
+	  /* Only check away if it's not from a bot */
 	  aok = 0;
 	  if (idx >= 0)
 	    dprintf(idx, "%s %s: %s\n", dcc[i].nick, BOT_USERAWAY,
@@ -892,22 +896,20 @@ int add_note(char *to, char *from, char *msg, int idx, int echo)
     }
   }
   if (idx == (-2))
-    return NOTE_OK;		/* error msg from a tandembot: don't store */
-/* call store note here */
+    return NOTE_OK;		/* Error msg from a tandembot: don't store */
+  /* Call store note here */
   Tcl_SetVar(interp, "_from", from, 0);
   Tcl_SetVar(interp, "_to", to, 0);
   Tcl_SetVar(interp, "_data", msg, 0);
   simple_sprintf(ss, "%d", dcc[idx].sock);
   Tcl_SetVar(interp, "_idx", ss, 0);
   if (Tcl_VarEval(interp, "storenote", " $_from $_to $_data $_idx", NULL) == TCL_OK) {
-    if (interp->result && interp->result[0]) {
-      /* strncpy(to, interp->result, NOTENAMELEN);
-      to[NOTENAMELEN] = 0; */ /* notebug fixed ;) -- drummer 29May1999 */
+    if (interp->result && interp->result[0])
       status = NOTE_FWD;
-    }
     if (status == NOTE_AWAY) {
-      /* user is away in all sessions -- just notify the user that a
-       * message arrived and was stored. (only oldest session is notified.) */
+      /* User is away in all sessions -- just notify the user that a
+       * message arrived and was stored. (only oldest session is notified.)
+       */
       dprintf(iaway, "*** %s.\n", BOT_NOTEARRIVED);
     }
     return status;

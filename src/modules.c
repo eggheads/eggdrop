@@ -4,7 +4,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: modules.c,v 1.23 2000/01/22 22:37:47 fabian Exp $
+ * $Id: modules.c,v 1.24 2000/01/30 19:26:21 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -30,68 +30,71 @@
 #include "tandem.h"
 #include <ctype.h>
 #ifndef STATIC
-#ifdef HPUX_HACKS
-#include <dl.h>
-#else
-#ifdef OSF1_HACKS
-#include <loader.h>
-#else
-#ifdef DLOPEN_1
+#  ifdef HPUX_HACKS
+#    include <dl.h>
+#  else
+#    ifdef OSF1_HACKS
+#      include <loader.h>
+#    else
+#      ifdef DLOPEN_1
 char *dlerror();
 void *dlopen(const char *, int);
 int dlclose(void *);
 void *dlsym(void *, char *);
-
-#define DLFLAGS 1
-#else
-#include <dlfcn.h>
-#ifndef RTLD_GLOBAL
-#define RTLD_GLOBAL 0
-#endif
-#ifndef RTLD_NOW
-#define RTLD_NOW 1
-#endif
-#ifdef RTLD_LAZY
-#define DLFLAGS RTLD_LAZY|RTLD_GLOBAL
-#else
-#define DLFLAGS RTLD_NOW|RTLD_GLOBAL
-#endif
-#endif				/* DLOPEN_1 */
-#endif				/* OSF1_HACKS */
-#endif				/* HPUX_HACKS */
-
+#        define DLFLAGS 1
+#      else
+#        include <dlfcn.h>
+#        ifndef RTLD_GLOBAL
+#          define RTLD_GLOBAL 0
+#        endif
+#        ifndef RTLD_NOW
+#          define RTLD_NOW 1
+#        endif
+#        ifdef RTLD_LAZY
+#          define DLFLAGS RTLD_LAZY|RTLD_GLOBAL
+#        else
+#          define DLFLAGS RTLD_NOW|RTLD_GLOBAL
+#        endif
+#      endif			/* DLOPEN_1 */
+#    endif			/* OSF1_HACKS */
+#  endif			/* HPUX_HACKS */
 #endif				/* STATIC */
-extern struct dcc_t *dcc;
+
+extern struct dcc_t	*dcc;
 
 #include "users.h"
 
-/* from other areas */
-extern Tcl_Interp *interp;
-extern struct userrec *userlist, *lastuser;
-extern char tempdir[], botnetnick[], botname[], natip[], hostname[];
-extern char origbotname[], botuser[], admin[], userfile[], ver[], notify_new[];
-extern char helpdir[], version[];
-extern int reserved_port, noshare, dcc_total, egg_numver, use_silence;
-extern int use_console_r, ignore_time, debug_output, gban_total, make_userfile;
-extern int gexempt_total, ginvite_total;
-extern int default_flags, require_p, max_dcc, share_greet, password_timeout;
-extern int min_dcc_port, max_dcc_port;	/* dw */
-extern int use_invites, use_exempts; /* Jason/drummer */
-extern int force_expire; /* Rufus */
-extern int do_restart;
+extern Tcl_Interp	*interp;
+extern struct userrec	*userlist, *lastuser;
+extern char		 tempdir[], botnetnick[], botname[], natip[],
+			 hostname[], origbotname[], botuser[], admin[],
+			 userfile[], ver[], notify_new[], helpdir[],
+			 version[];
+extern int		 reserved_port, noshare, dcc_total, egg_numver,
+			 use_silence, use_console_r, ignore_time,
+			 debug_output, gban_total, make_userfile,
+			 gexempt_total, ginvite_total, default_flags,
+			 require_p, max_dcc, share_greet, password_timeout,
+			 min_dcc_port, max_dcc_port, use_invites, use_exempts,
+			 force_expire, do_restart, protect_readonly,
+			 userfile_perm;
 extern time_t now, online_since;
 extern struct chanset_t *chanset;
-extern int protect_readonly;
-extern int userfile_perm;
 
-int cmd_die(), xtra_kill(), xtra_unpack();
+
+int cmd_die();
+int xtra_kill();
+int xtra_unpack();
 static int module_rename(char *name, char *newname);
 
+
 #ifndef STATIC
-/* directory to look for modules */
+
+/* Directory to look for modules */
 char moddir[121] = "modules/";
 
 #else
+
 struct static_list {
   struct static_list *next;
   char *name;
@@ -111,7 +114,8 @@ void check_static(char *name, char *(*func) ())
 
 #endif
 
-/* the null functions */
+
+/* The null functions */
 void null_func()
 {
 }
@@ -128,9 +132,14 @@ int false_func()
   return 0;
 }
 
-/* various hooks & things */
-/* the REAL hooks, when these are called, a return of 0 indicates unhandled
- * 1 is handled */
+
+/*
+ *     Various hooks & things
+ */
+
+/* The REAL hooks, when these are called, a return of 0 indicates unhandled
+ * 1 is handled
+ */
 struct hook_entry *hook_list[REAL_HOOKS];
 
 static void null_share(int idx, char *x)
@@ -162,7 +171,7 @@ void (*dns_ipbyhost) (char *) = block_dns_ipbyhost;
 module_entry *module_list;
 dependancy *dependancy_list = NULL;
 
-/* the horrible global lookup table for functions
+/* The horrible global lookup table for functions
  * BUT it makes the whole thing *much* more portable than letting each
  * OS screw up the symbols their own special way :/
  */
@@ -375,7 +384,7 @@ Function global_table[] =
   (Function) rem_help_reference,
   /* 160 - 163 */
   (Function) touch_laston,
-  (Function) & add_mode,
+  (Function) & add_mode,		/* Function * */
   (Function) rmspace,
   (Function) in_chain,
   /* 164 - 167 */
@@ -386,40 +395,40 @@ Function global_table[] =
   /* 168 - 171 */
   (Function) expected_memory,
   (Function) tell_mem_status,
-  (Function) & do_restart,
+  (Function) & do_restart,		/* int */
   (Function) check_tcl_filt,
   /* 172 - 175 */
   (Function) add_hook,
   (Function) del_hook,
-  (Function) & H_dcc,
-  (Function) & H_filt,
+  (Function) & H_dcc,			/* p_tcl_bind_list * */
+  (Function) & H_filt,			/* p_tcl_bind_list * */
   /* 176 - 179 */
-  (Function) & H_chon,
-  (Function) & H_chof,
-  (Function) & H_load,
-  (Function) & H_unld,
+  (Function) & H_chon,			/* p_tcl_bind_list * */
+  (Function) & H_chof,			/* p_tcl_bind_list * */
+  (Function) & H_load,			/* p_tcl_bind_list * */
+  (Function) & H_unld,			/* p_tcl_bind_list * */
   /* 180 - 183 */
-  (Function) & H_chat,
-  (Function) & H_act,
-  (Function) & H_bcst,
-  (Function) & H_bot,
+  (Function) & H_chat,			/* p_tcl_bind_list * */
+  (Function) & H_act,			/* p_tcl_bind_list * */
+  (Function) & H_bcst,			/* p_tcl_bind_list * */
+  (Function) & H_bot,			/* p_tcl_bind_list * */
   /* 184 - 187 */
-  (Function) & H_link,
-  (Function) & H_disc,
-  (Function) & H_away,
-  (Function) & H_nkch,
+  (Function) & H_link,			/* p_tcl_bind_list * */
+  (Function) & H_disc,			/* p_tcl_bind_list * */
+  (Function) & H_away,			/* p_tcl_bind_list * */
+  (Function) & H_nkch,			/* p_tcl_bind_list * */
   /* 188 - 191 */
-  (Function) & USERENTRY_BOTADDR,
-  (Function) & USERENTRY_BOTFL,
-  (Function) & USERENTRY_HOSTS,
-  (Function) & USERENTRY_PASS,
+  (Function) & USERENTRY_BOTADDR,	/* struct user_entry_type * */
+  (Function) & USERENTRY_BOTFL,		/* struct user_entry_type * */
+  (Function) & USERENTRY_HOSTS,		/* struct user_entry_type * */
+  (Function) & USERENTRY_PASS,		/* struct user_entry_type * */
   /* 192 - 195 */
-  (Function) & USERENTRY_XTRA,
+  (Function) & USERENTRY_XTRA,		/* struct user_entry_type * */
   (Function) user_del_chan,
-  (Function) & USERENTRY_INFO,
-  (Function) & USERENTRY_COMMENT,
+  (Function) & USERENTRY_INFO,		/* struct user_entry_type * */
+  (Function) & USERENTRY_COMMENT,	/* struct user_entry_type * */
   /* 196 - 199 */
-  (Function) & USERENTRY_LASTON,
+  (Function) & USERENTRY_LASTON,	/* struct user_entry_type * */
   (Function) putlog,
   (Function) botnet_send_chan,
   (Function) list_type_kill,
@@ -430,7 +439,7 @@ Function global_table[] =
   (Function) stripmasktype,
   /* 204 - 207 */
   (Function) sub_lang,
-  (Function) & online_since,
+  (Function) & online_since,	/* time_t * */
   (Function) cmd_loadlanguage,
   (Function) check_dcc_attrs,
   /* 208 - 211 */
@@ -454,7 +463,7 @@ Function global_table[] =
   (Function) & gexempt_total,	/* int */
   (Function) & ginvite_total,	/* int */
   /* 224 - 227 */
-  (Function) & H_event,
+  (Function) & H_event,		/* p_tcl_bind_list * */
   (Function) & use_exempts,	/* int - drummer/Jason */
   (Function) & use_invites,	/* int - drummer/Jason */
   (Function) & force_expire,	/* int - Rufus */
@@ -520,10 +529,8 @@ int expmem_modules(int y)
   int i;
   module_entry *p = module_list;
   dependancy *d = dependancy_list;
-
 #ifdef STATIC
   struct static_list *s;
-
 #endif
   Function *f;
 
@@ -531,7 +538,6 @@ int expmem_modules(int y)
 #ifdef STATIC
   for (s = static_modules; s; s = s->next)
     c += sizeof(struct static_list) + strlen(s->name) + 1;
-
 #endif
   for (i = 0; i < REAL_HOOKS; i++) {
     struct hook_entry *q = hook_list[i];
@@ -580,25 +586,19 @@ const char *module_load(char *name)
   module_entry *p;
   char *e;
   Function f;
-
 #ifndef STATIC
   char workbuf[1024];
-
-#ifdef HPUX_HACKS
+#  ifdef HPUX_HACKS
   shl_t hand;
-
-#else
-#ifdef OSF1_HACKS
+#  else
+#    ifdef OSF1_HACKS
   ldr_module_t hand;
-
-#else
+#    else
   void *hand;
-
-#endif
-#endif
+#    endif
+#  endif
 #else
   struct static_list *sl;
-
 #endif
 
   Context;
@@ -612,63 +612,63 @@ const char *module_load(char *name)
     sprintf(&(workbuf[strlen(workbuf)]), "/%s%s.so", moddir, name);
   } else
     sprintf(workbuf, "%s%s.so", moddir, name);
-#ifdef HPUX_HACKS
+#  ifdef HPUX_HACKS
   hand = shl_load(workbuf, BIND_IMMEDIATE, 0L);
   Context;
   if (!hand)
     return "Can't load module.";
-#else
-#ifdef OSF1_HACKS
-#ifndef HAVE_PRE7_5_TCL
+#  else
+#    ifdef OSF1_HACKS
+#      ifndef HAVE_PRE7_5_TCL
   hand = (Tcl_PackageInitProc *) load(workbuf, LDR_NOFLAGS);
   if (hand == LDR_NULL_MODULE)
     return "Can't load module.";
-#endif
-#else
+#      endif
+#    else
   Context;
   hand = dlopen(workbuf, DLFLAGS);
   if (!hand)
     return dlerror();
-#endif
-#endif
+#    endif
+#  endif
 
   sprintf(workbuf, "%s_start", name);
-#ifdef HPUX_HACKS
+#  ifdef HPUX_HACKS
   Context;
   if (shl_findsym(&hand, workbuf, (short) TYPE_PROCEDURE, (void *) &f))
     f = NULL;
-#else
-#ifdef OSF1_HACKS
+#  else
+#    ifdef OSF1_HACKS
   f = (Function) ldr_lookup_package(hand, workbuf);
-#else
+#    else
   f = (Function) dlsym(hand, workbuf);
-#endif
-#endif
+#    endif
+#  endif
   if (f == NULL) {		/* some OS's need the _ */
     sprintf(workbuf, "_%s_start", name);
-#ifdef HPUX_HACKS
+#  ifdef HPUX_HACKS
     if (shl_findsym(&hand, workbuf, (short) TYPE_PROCEDURE, (void *) &f))
       f = NULL;
-#else
-#ifdef OSF1_HACKS
+#  else
+#    ifdef OSF1_HACKS
     f = (Function) ldr_lookup_package(hand, workbuf);
-#else
+#    else
     f = (Function) dlsym(hand, workbuf);
-#endif
-#endif
+#    endif
+#  endif
     if (f == NULL) {
-#ifdef HPUX_HACKS
+#  ifdef HPUX_HACKS
       shl_unload(hand);
-#else
-#ifdef OSF1_HACKS
-#else
+#  else
+#    ifdef OSF1_HACKS
+#    else
       dlclose(hand);
-#endif
-#endif
+#    endif
+#  endif
       return MOD_NOSTARTDEF;
     }
   }
-#else
+#  else
   for (sl = static_modules; sl && strcasecmp(sl->name, name); sl = sl->next);
   Context;
   if (!sl)
@@ -729,14 +729,14 @@ char *module_unload(char *name, char *user)
 	if (e != NULL)
 	  return e;
 #ifndef STATIC
-#ifdef HPUX_HACKS
+#  ifdef HPUX_HACKS
 	shl_unload(p->hand);
-#else
-#ifdef OSF1_HACKS
-#else
+#  else
+#    ifdef OSF1_HACKS
+#    else
 	dlclose(p->hand);
-#endif
-#endif
+#    endif
+#  endif
 #endif				/* STATIC */
       }
       nfree(p->name);
@@ -875,7 +875,8 @@ void mod_free(void *ptr, char *modname, char *filename, int line)
   n_free(ptr, x, line);
 }
 
-/* hooks, various tables of functions to call on ceratin events */
+/* Hooks, various tables of functions to call on ceratin events
+ */
 void add_hook(int hook_num, Function func)
 {
   Context;
@@ -884,7 +885,7 @@ void add_hook(int hook_num, Function func)
 
     for (p = hook_list[hook_num]; p; p = p->next)
       if (p->func == func)
-	return;			/* dont add it if it's already there */
+	return;			/* Don't add it if it's already there */
     p = nmalloc(sizeof(struct hook_entry));
 
     p->next = hook_list[hook_num];

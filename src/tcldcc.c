@@ -2,9 +2,7 @@
  * tcldcc.c -- handles:
  *   Tcl stubs for the dcc commands
  * 
- * dprintf'ized, 1aug1996
- * 
- * $Id: tcldcc.c,v 1.12 2000/01/17 22:36:07 fabian Exp $
+ * $Id: tcldcc.c,v 1.13 2000/01/30 19:26:21 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -29,18 +27,21 @@
 #include "tandem.h"
 #include "modules.h"
 
-extern Tcl_Interp *interp;
-extern tcl_timer_t *timer, *utimer;
-extern struct dcc_t *dcc;
-extern int dcc_total, backgrd, parties, make_userfile;
-extern int do_restart, remote_boots, max_dcc;
-extern char botnetnick[];
-extern party_t *party;
-extern tand_t *tandbot;
+extern Tcl_Interp	*interp;
+extern tcl_timer_t	*timer,
+			*utimer;
+extern struct dcc_t	*dcc;
+extern int		 dcc_total, backgrd, parties, make_userfile,
+			 do_restart, remote_boots, max_dcc;
+extern char		 botnetnick[];
+extern party_t		*party;
+extern tand_t		*tandbot;
+extern time_t		 now;
 
-int enable_simul = 0;
-extern time_t now;
-static struct portmap *root = NULL;
+
+int			 enable_simul = 0;
+static struct portmap	*root = NULL;
+
 
 int expmem_tcldcc(void)
 {
@@ -72,11 +73,16 @@ static int tcl_putdcc STDVAR
   return TCL_OK;
 }
 
-/* function added by drummer@sophia.jpte.hu
- * allows tcl scripts to send out raw data
- * can be used for fast server write (idx=0)
- * usage: putdccraw <idx> <size> <rawdata> 
- * example: putdccraw 6 13 "eggdrop rulz\n" */
+/* Allows tcl scripts to send out raw data. Can be used for fast server
+ * write (idx=0)
+ * 
+ * usage:
+ * 	putdccraw <idx> <size> <rawdata> 
+ * example:
+ * 	putdccraw 6 13 "eggdrop rulz\n"
+ *
+ * (added by drummer@sophia.jpte.hu)
+ */
 static int tcl_putdccraw STDVAR
 {
   int i, j, z;
@@ -86,12 +92,10 @@ static int tcl_putdccraw STDVAR
   z = atoi(argv[1]);
   j = 0;
   for (i = 0; i < dcc_total; i++) {
-    if (!(strcmp(dcc[i].nick, "(server)")) && (z == 0)) {
+    if (!(strcmp(dcc[i].nick, "(server)")) && (z == 0))
       j = dcc[i].sock;
-    }
-    if (dcc[i].sock == z) {
+    if (dcc[i].sock == z)
       j = dcc[i].sock;
-    }
   }
   if (j == 0) {
     Tcl_AppendResult(irp, "invalid idx", NULL);
@@ -115,7 +119,7 @@ static int tcl_dccsimul STDVAR
 
       if (l > 510) {
 	l = 510;
-	argv[2][510] = 0;	/* restrict length of cmd */
+	argv[2][510] = 0;	/* Restrict length of cmd */
       }
       if (dcc[idx].type && dcc[idx].type->activity) {
 	dcc[idx].type->activity(idx, argv[2], l);
@@ -237,9 +241,10 @@ static int tcl_setchan STDVAR
     check_tcl_chjn(botnetnick, dcc[idx].nick, chan, geticon(idx),
 		   dcc[idx].sock, dcc[idx].host);
   }
-  /* new style autosave here too -- rtc, 10/07/1999*/
+  /* New style autosave here too -- rtc, 10/07/1999*/
   if ((me = module_find("console", 1, 1))) {
     Function *func = me->funcs;
+
     (func[CONSOLE_DOSTORE]) (idx);
   }
   return TCL_OK;
@@ -289,8 +294,8 @@ static int tcl_console STDVAR
     if (argv[arg][0] && ((strchr(CHANMETA, argv[arg][0]) != NULL) ||
 	(argv[arg][0] == '*'))) {
       if ((argv[arg][0] != '*') && (!findchan_by_dname(argv[arg]))) {
-        /*    If we dont find the channel, and it starts with a +... assume it
-         *  should be the console flags to set.
+        /* If we dont find the channel, and it starts with a +... assume it
+         * should be the console flags to set.
          */
         if (argv[arg][0]=='+')
           goto do_console_flags;
@@ -323,9 +328,10 @@ do_console_flags:
   }
   Tcl_AppendElement(irp, dcc[i].u.chat->con_chan);
   Tcl_AppendElement(irp, masktype(dcc[i].u.chat->con_flags));
-  /* new style autosave -- drummer,07/25/1999*/
+  /* New style autosave -- drummer,07/25/1999*/
   if ((argc > 2) && (me = module_find("console", 1, 1))) {
     Function *func = me->funcs;
+
     (func[CONSOLE_DOSTORE]) (i);
   }
   return TCL_OK;
@@ -370,9 +376,10 @@ static int tcl_strip STDVAR
     }
   }
   Tcl_AppendElement(irp, stripmasktype(dcc[i].u.chat->strip_flags));
-  /* new style autosave here too -- rtc, 10/07/1999*/
+  /* New style autosave here too -- rtc, 10/07/1999*/
   if ((argc > 2) && (me = module_find("console", 1, 1))) {
     Function *func = me->funcs;
+
     (func[CONSOLE_DOSTORE]) (i);
   }
   return TCL_OK;
@@ -405,9 +412,10 @@ static int tcl_echo STDVAR
     Tcl_AppendResult(irp, "1", NULL);
   else
     Tcl_AppendResult(irp, "0", NULL);
-  /* new style autosave here too -- rtc, 10/07/1999*/
+  /* New style autosave here too -- rtc, 10/07/1999*/
   if ((argc > 2) && (me = module_find("console", 1, 1))) {
     Function *func = me->funcs;
+
     (func[CONSOLE_DOSTORE]) (i);
   }
   return TCL_OK;
@@ -446,9 +454,10 @@ static int tcl_page STDVAR
     Tcl_AppendResult(irp, x, NULL);
   } else
     Tcl_AppendResult(irp, "0", NULL);
-  /* new style autosave here too -- rtc, 10/07/1999*/
+  /* New style autosave here too -- rtc, 10/07/1999*/
   if ((argc > 2) && (me = module_find("console", 1, 1))) {
     Function *func = me->funcs;
+
     (func[CONSOLE_DOSTORE]) (i);
   }
   return TCL_OK;
@@ -516,10 +525,10 @@ static int tcl_killdcc STDVAR
   }
   Context;
 
-  /* don't kill terminal socket */
+  /* Don't kill terminal socket */
   if ((dcc[idx].sock == STDOUT) && !backgrd)
     return TCL_OK;
-  /* make sure 'whom' info is updated for other bots */
+  /* Make sure 'whom' info is updated for other bots */
   if (dcc[idx].type->flags & DCT_CHAT) {
     chanout_but(idx, dcc[idx].u.chat->channel, "*** %s has left the %s%s%s\n",
 		dcc[idx].nick, dcc[idx].u.chat ? "channel" : "partyline",
@@ -530,8 +539,7 @@ static int tcl_killdcc STDVAR
       check_tcl_chpt(botnetnick, dcc[idx].nick, dcc[idx].sock,
 		     dcc[idx].u.chat->channel);
     check_tcl_chof(dcc[idx].nick, dcc[idx].sock);
-    /* no notice is sent to the party line -- that's the scripts' job */
-    /* well now it does go through, but the script can add a reason */
+    /* Notice is sent to the party line, the script can add a reason. */
   }
   killsock(dcc[idx].sock);
   lostdcc(idx);
@@ -633,13 +641,13 @@ static int tcl_botlist STDVAR
   return TCL_OK;
 }
 
-/* list of { idx nick host type {other}  timestamp} */
-
+/* list of { idx nick host type {other}  timestamp}
+ */
 static int tcl_dcclist STDVAR
 {
   int i;
   char idxstr[10];
-  char timestamp[15]; /* when will unixtime ever be 14 numbers long */
+  char timestamp[15];	/* When will unixtime ever be 14 numbers long */
   char *list[6], *p;
   char other[160];
 
@@ -670,7 +678,8 @@ static int tcl_dcclist STDVAR
   return TCL_OK;
 }
 
-/* list of { nick bot host flag idletime awaymsg [channel]} */
+/* list of { nick bot host flag idletime awaymsg [channel]}
+ */
 static int tcl_whom STDVAR
 {
   char c[2], idle[10], work[20], *list[7], *p;
@@ -896,7 +905,7 @@ static int tcl_connect STDVAR
     Tcl_AppendResult(irp, s, NULL);
     return TCL_ERROR;
   }
-  /* well well well... it worked! */
+  /* Well well well... it worked! */
   i = new_dcc(&DCC_SOCKET, 0);
   dcc[i].sock = sock;
   dcc[i].port = atoi(argv[2]);
@@ -908,10 +917,12 @@ static int tcl_connect STDVAR
   return TCL_OK;
 }
 
-/* create a new listening port (or destroy one) */
-/* listen <port> bots/all/users [mask]
+/* Create a new listening port (or destroy one)
+ *
+ * listen <port> bots/all/users [mask]
  * listen <port> script <proc> [flag]
- * listen <port> off */
+ * listen <port> off
+ */
 static int tcl_listen STDVAR
 {
   int i, j, idx = (-1), port, realport;
@@ -937,7 +948,7 @@ static int tcl_listen STDVAR
 	root = pmap->next;
       nfree(pmap);
     }
-    /* remove */
+    /* Remove */
     if (idx < 0) {
       Tcl_AppendResult(irp, "no such listen port is open", NULL);
       return TCL_ERROR;
@@ -947,12 +958,12 @@ static int tcl_listen STDVAR
     return TCL_OK;
   }
   if (idx < 0) {
-    /* make new one */
+    /* Make new one */
     if (dcc_total >= max_dcc) {
       Tcl_AppendResult(irp, "no more DCC slots available", NULL);
       return TCL_ERROR;
     }
-    /* try to grab port */
+    /* Try to grab port */
     j = port + 20;
     i = (-1);
     while ((port < j) && (i < 0)) {
@@ -1096,40 +1107,40 @@ static int tcl_restart STDVAR
 
 tcl_cmds tcldcc_cmds[] =
 {
-  {"putdcc", tcl_putdcc},
-  {"putdccraw", tcl_putdccraw},
-  {"putidx", tcl_putdcc},
-  {"dccsimul", tcl_dccsimul},
-  {"dccbroadcast", tcl_dccbroadcast},
-  {"hand2idx", tcl_hand2idx},
-  {"getchan", tcl_getchan},
-  {"setchan", tcl_setchan},
-  {"dccputchan", tcl_dccputchan},
-  {"console", tcl_console},
-  {"strip", tcl_strip},
-  {"echo", tcl_echo},
-  {"page", tcl_page},
-  {"control", tcl_control},
-  {"valididx", tcl_valididx},
-  {"killdcc", tcl_killdcc},
-  {"putbot", tcl_putbot},
-  {"putallbots", tcl_putallbots},
-  {"idx2hand", tcl_idx2hand},
-  {"bots", tcl_bots},
-  {"botlist", tcl_botlist},
-  {"dcclist", tcl_dcclist},
-  {"whom", tcl_whom},
-  {"dccused", tcl_dccused},
-  {"getdccidle", tcl_getdccidle},
-  {"getdccaway", tcl_getdccaway},
-  {"setdccaway", tcl_setdccaway},
-  {"islinked", tcl_islinked},
-  {"link", tcl_link},
-  {"unlink", tcl_unlink},
-  {"connect", tcl_connect},
-  {"listen", tcl_listen},
-  {"boot", tcl_boot},
-  {"rehash", tcl_rehash},
-  {"restart", tcl_restart},
-  {0, 0}
+  {"putdcc",		tcl_putdcc},
+  {"putdccraw",		tcl_putdccraw},
+  {"putidx",		tcl_putdcc},
+  {"dccsimul",		tcl_dccsimul},
+  {"dccbroadcast",	tcl_dccbroadcast},
+  {"hand2idx",		tcl_hand2idx},
+  {"getchan",		tcl_getchan},
+  {"setchan",		tcl_setchan},
+  {"dccputchan",	tcl_dccputchan},
+  {"console",		tcl_console},
+  {"strip",		tcl_strip},
+  {"echo",		tcl_echo},
+  {"page",		tcl_page},
+  {"control",		tcl_control},
+  {"valididx",		tcl_valididx},
+  {"killdcc",		tcl_killdcc},
+  {"putbot",		tcl_putbot},
+  {"putallbots",	tcl_putallbots},
+  {"idx2hand",		tcl_idx2hand},
+  {"bots",		tcl_bots},
+  {"botlist",		tcl_botlist},
+  {"dcclist",		tcl_dcclist},
+  {"whom",		tcl_whom},
+  {"dccused",		tcl_dccused},
+  {"getdccidle",	tcl_getdccidle},
+  {"getdccaway",	tcl_getdccaway},
+  {"setdccaway",	tcl_setdccaway},
+  {"islinked",		tcl_islinked},
+  {"link",		tcl_link},
+  {"unlink",		tcl_unlink},
+  {"connect",		tcl_connect},
+  {"listen",		tcl_listen},
+  {"boot",		tcl_boot},
+  {"rehash",		tcl_rehash},
+  {"restart",		tcl_restart},
+  {NULL,		NULL}
 };

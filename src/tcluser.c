@@ -2,9 +2,7 @@
  * tcluser.c -- handles:
  *   Tcl stubs for the user-record-oriented commands
  * 
- * dprintf'ized, 1aug1996
- * 
- * $Id: tcluser.c,v 1.13 2000/01/28 21:24:41 fabian Exp $
+ * $Id: tcluser.c,v 1.14 2000/01/30 19:26:21 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -30,31 +28,33 @@
 #include "chan.h"
 #include "tandem.h"
 
-/* eggdrop always uses the same interpreter */
-extern Tcl_Interp *interp;
-extern struct userrec *userlist;
-extern int default_flags, dcc_total, ignore_time;
-extern struct dcc_t *dcc;
-extern char origbotname[], botnetnick[];
-extern time_t now;
+extern Tcl_Interp	*interp;
+extern struct userrec	*userlist;
+extern int		 default_flags, dcc_total, ignore_time;
+extern struct dcc_t	*dcc;
+extern char		 origbotname[], botnetnick[];
+extern time_t		 now;
 
-/***********************************************************************/
 
-static int tcl_countusers STDVAR {
+static int tcl_countusers STDVAR
+{
   Context;
   BADARGS(1, 1, "");
   Tcl_AppendResult(irp, int_to_base10(count_users(userlist)), NULL);
   return TCL_OK;
 }
 
-static int tcl_validuser STDVAR {
+static int tcl_validuser STDVAR
+{
   Context;
   BADARGS(2, 2, " handle");
   Tcl_AppendResult(irp, get_user_by_handle(userlist, argv[1]) ? "1" : "0",
 		   NULL);
   return TCL_OK;
 }
-static int tcl_finduser STDVAR {
+
+static int tcl_finduser STDVAR
+{
   struct userrec *u;
 
   Context;
@@ -64,7 +64,8 @@ static int tcl_finduser STDVAR {
   return TCL_OK;
 }
 
-static int tcl_passwdOk STDVAR {
+static int tcl_passwdOk STDVAR
+{
   struct userrec *u;
 
   Context;
@@ -74,7 +75,8 @@ static int tcl_passwdOk STDVAR {
   return TCL_OK;
 }
 
-static int tcl_chattr STDVAR {
+static int tcl_chattr STDVAR
+{
   char *chan, *chg, work[100];
   struct flag_record pls, mns, user;
   struct userrec *u;
@@ -92,10 +94,12 @@ static int tcl_chattr STDVAR {
   } else if ((argc == 3)
 	    && (argv[2][0] && (strchr(CHANMETA, argv[2][0]) != NULL))) {
     /* We need todo extra checking here to stop us mixing up +channel's
-     * with flags. <cybah> */
+     * with flags. <cybah>
+     */
     if (!findchan_by_dname(argv[2]) && argv[2][0] != '+') {
       /* Channel doesnt exist, and it cant possibly be flags as there
-       * is no + at the start of the string. */
+       * is no + at the start of the string.
+       */
       Tcl_AppendResult(irp, "no such channel", NULL);
       return TCL_ERROR;
     } else if(findchan_by_dname(argv[2])) {
@@ -105,7 +109,8 @@ static int tcl_chattr STDVAR {
       chg = NULL;
     } else {
       /* 3rd possibility... channel doesnt exist, does start with a +.
-       * In this case we assume the string is flags. */
+       * In this case we assume the string is flags.
+       */
       user.match = FR_GLOBAL;
       chan = NULL;
       chg = argv[2];
@@ -120,11 +125,11 @@ static int tcl_chattr STDVAR {
     return TCL_ERROR;
   }
   get_user_flagrec(u, &user, chan);
-  /* make changes */
+  /* Make changes */
   if (chg) {
     pls.match = user.match;
     break_down_flags(chg, &pls, &mns);
-    /* no-one can change these flags on-the-fly */
+    /* No-one can change these flags on-the-fly */
     pls.global &=~(USER_BOT);
     mns.global &=~(USER_BOT);
     if (chan) {
@@ -141,13 +146,14 @@ static int tcl_chattr STDVAR {
     }
     set_user_flagrec(u, &user, chan);
   }
-  /* retrieve current flags and return them */
+  /* Retrieve current flags and return them */
   build_flags(work, &user, NULL);
   Tcl_AppendResult(irp, work, NULL);
   return TCL_OK;
 }
 
-static int tcl_botattr STDVAR {
+static int tcl_botattr STDVAR
+{
   char *chan, *chg, work[100];
   struct flag_record pls, mns, user;
   struct userrec *u;
@@ -166,10 +172,12 @@ static int tcl_botattr STDVAR {
   } else if ((argc == 3)
 	     && (argv[2][0] && (strchr(CHANMETA, argv[2][0]) != NULL))) {
     /* We need todo extra checking here to stop us mixing up +channel's
-     * with flags. <cybah> */
+     * with flags. <cybah>
+     */
     if (!findchan_by_dname(argv[2]) && argv[2][0] != '+') {
       /* Channel doesnt exist, and it cant possibly be flags as there
-       * is no + at the start of the string. */
+       * is no + at the start of the string.
+       */
       Tcl_AppendResult(irp, "no such channel", NULL);
       return TCL_ERROR;
     } else if(findchan_by_dname(argv[2])) {
@@ -179,7 +187,8 @@ static int tcl_botattr STDVAR {
       chg = NULL;
     } else {
       /* 3rd possibility... channel doesnt exist, does start with a +.
-       * In this case we assume the string is flags. */
+       * In this case we assume the string is flags.
+       */
       user.match = FR_BOT;
       chan = NULL;
       chg = argv[2];
@@ -194,11 +203,11 @@ static int tcl_botattr STDVAR {
     return TCL_ERROR;
   }
   get_user_flagrec(u, &user, chan);
-  /* make changes */
+  /* Make changes */
   if (chg) {
     pls.match = user.match;
     break_down_flags(chg, &pls, &mns);
-    /* no-one can change these flags on-the-fly */
+    /* No-one can change these flags on-the-fly */
     if (chan) {
       pls.chan &= BOT_SHARE;
       mns.chan &= BOT_SHARE;
@@ -210,13 +219,14 @@ static int tcl_botattr STDVAR {
     }
     set_user_flagrec(u, &user, chan);
   }
-  /* retrieve current flags and return them */
+  /* Retrieve current flags and return them */
   build_flags(work, &user, NULL);
   Tcl_AppendResult(irp, work, NULL);
   return TCL_OK;
 }
 
-static int tcl_matchattr STDVAR {
+static int tcl_matchattr STDVAR
+{
   struct userrec *u;
   struct flag_record plus, minus, user;
   int ok = 0, f;
@@ -249,7 +259,8 @@ static int tcl_matchattr STDVAR {
   return TCL_OK;
 }
 
-static int tcl_adduser STDVAR {
+static int tcl_adduser STDVAR
+{
   Context;
   BADARGS(3, 3, " handle ?hostmask?");
   if (strlen(argv[1]) > HANDLEN)
@@ -263,7 +274,8 @@ static int tcl_adduser STDVAR {
   return TCL_OK;
 }
 
-static int tcl_addbot STDVAR {
+static int tcl_addbot STDVAR
+{
   struct bot_addr *bi;
   char *p, *q;
 
@@ -302,7 +314,8 @@ static int tcl_addbot STDVAR {
   return TCL_OK;
 }
 
-static int tcl_deluser STDVAR {
+static int tcl_deluser STDVAR
+{
   Context;
   BADARGS(2, 2, " handle");
   Tcl_AppendResult(irp, (argv[1][0] == '*') ? "0" :
@@ -310,7 +323,8 @@ static int tcl_deluser STDVAR {
   return TCL_OK;
 }
 
-static int tcl_delhost STDVAR {
+static int tcl_delhost STDVAR
+{
   Context;
   BADARGS(3, 3, " handle hostmask");
   if ((!get_user_by_handle(userlist, argv[1])) || (argv[1][0] == '*')) {
@@ -322,7 +336,8 @@ static int tcl_delhost STDVAR {
   return TCL_OK;
 }
 
-static int tcl_userlist STDVAR {
+static int tcl_userlist STDVAR
+{
   struct userrec *u = userlist;
   struct flag_record user, plus, minus;
   int ok = 1, f = 0;
@@ -356,19 +371,22 @@ static int tcl_userlist STDVAR {
   return TCL_OK;
 }
 
-static int tcl_save STDVAR {
+static int tcl_save STDVAR
+{
   Context;
   write_userfile(-1);
   return TCL_OK;
 }
 
-static int tcl_reload STDVAR {
+static int tcl_reload STDVAR
+{
   Context;
   reload();
   return TCL_OK;
 }
 
-static int tcl_chnick STDVAR {
+static int tcl_chnick STDVAR
+{
   struct userrec *u;
   char newhand[HANDLEN + 1];
   int x = 1, i;
@@ -403,7 +421,8 @@ static int tcl_chnick STDVAR {
   return TCL_OK;
 }
 
-static int tcl_getting_users STDVAR {
+static int tcl_getting_users STDVAR
+{
   int i;
 
   Context;
@@ -419,14 +438,16 @@ static int tcl_getting_users STDVAR {
   return TCL_OK;
 }
 
-static int tcl_isignore STDVAR {
+static int tcl_isignore STDVAR
+{
   Context;
   BADARGS(2, 2, " nick!user@host");
   Tcl_AppendResult(irp, match_ignore(argv[1]) ? "1" : "0", NULL);
   return TCL_OK;
 }
 
-static int tcl_newignore STDVAR {
+static int tcl_newignore STDVAR
+{
   time_t expire_time;
   char ign[UHOSTLEN], cmt[66], from[HANDLEN + 1];
 
@@ -451,7 +472,8 @@ static int tcl_newignore STDVAR {
   return TCL_OK;
 }
 
-static int tcl_killignore STDVAR {
+static int tcl_killignore STDVAR
+{
   Context;
   BADARGS(2, 2, " hostmask");
   dprintf(DP_SERVER, "SILENCE +%s\n", argv[1]);
@@ -459,8 +481,10 @@ static int tcl_killignore STDVAR {
   return TCL_OK;
 }
 
-/* { hostmask note expire-time create-time creator } */
-static int tcl_ignorelist STDVAR {
+/* { hostmask note expire-time create-time creator }
+ */
+static int tcl_ignorelist STDVAR
+{
   struct igrec *i;
   char ts[21], ts1[21], *list[5], *p;
 
@@ -481,7 +505,8 @@ static int tcl_ignorelist STDVAR {
   return TCL_OK;
 }
 
-static int tcl_getuser STDVAR {
+static int tcl_getuser STDVAR
+{
   struct user_entry_type *et;
   struct userrec *u;
   struct user_entry *e;
@@ -510,7 +535,8 @@ static int tcl_getuser STDVAR {
   return TCL_OK;
 }
 
-static int tcl_setuser STDVAR {
+static int tcl_setuser STDVAR
+{
   struct user_entry_type *et;
   struct userrec *u;
   struct user_entry *e;
@@ -527,7 +553,7 @@ static int tcl_setuser STDVAR {
       Tcl_AppendResult(irp, "No such user.", NULL);
       return TCL_ERROR;
     } else
-      return TCL_OK;		/* silently ignore user * */
+      return TCL_OK;		/* Silently ignore user * */
   }
   if (!(e = find_user_entry(et, u))) {
     e = user_malloc(sizeof(struct user_entry));
@@ -538,7 +564,7 @@ static int tcl_setuser STDVAR {
     list_insert((&(u->entries)), e);
   }
   r = et->tcl_set(irp, u, e, argc, argv);
-  /* yeah... e is freed, and we read it... (tcl: setuser hand HOSTS none) */  
+  /* Yeah... e is freed, and we read it... (tcl: setuser hand HOSTS none) */  
   if (!e->u.list) {
     if (list_delete((struct list_type **) &(u->entries),
 		    (struct list_type *) e))
@@ -550,28 +576,28 @@ static int tcl_setuser STDVAR {
 
 tcl_cmds tcluser_cmds[] =
 {
-  {"countusers", tcl_countusers},
-  {"validuser", tcl_validuser},
-  {"finduser", tcl_finduser},
-  {"passwdok", tcl_passwdOk},
-  {"chattr", tcl_chattr},
-  {"botattr", tcl_botattr},
-  {"matchattr", tcl_matchattr},
-  {"matchchanattr", tcl_matchattr},
-  {"adduser", tcl_adduser},
-  {"addbot", tcl_addbot},
-  {"deluser", tcl_deluser},
-  {"delhost", tcl_delhost},
-  {"userlist", tcl_userlist},
-  {"save", tcl_save},
-  {"reload", tcl_reload},
-  {"chnick", tcl_chnick},
-  {"getting-users", tcl_getting_users},
-  {"isignore", tcl_isignore},
-  {"newignore", tcl_newignore},
-  {"killignore", tcl_killignore},
-  {"ignorelist", tcl_ignorelist},
-  {"getuser", tcl_getuser},
-  {"setuser", tcl_setuser},
-  {0, 0}
+  {"countusers",	tcl_countusers},
+  {"validuser",		tcl_validuser},
+  {"finduser",		tcl_finduser},
+  {"passwdok",		tcl_passwdOk},
+  {"chattr",		tcl_chattr},
+  {"botattr",		tcl_botattr},
+  {"matchattr",		tcl_matchattr},
+  {"matchchanattr",	tcl_matchattr},
+  {"adduser",		tcl_adduser},
+  {"addbot",		tcl_addbot},
+  {"deluser",		tcl_deluser},
+  {"delhost",		tcl_delhost},
+  {"userlist",		tcl_userlist},
+  {"save",		tcl_save},
+  {"reload",		tcl_reload},
+  {"chnick",		tcl_chnick},
+  {"getting-users",	tcl_getting_users},
+  {"isignore",		tcl_isignore},
+  {"newignore",		tcl_newignore},
+  {"killignore",	tcl_killignore},
+  {"ignorelist",	tcl_ignorelist},
+  {"getuser",		tcl_getuser},
+  {"setuser",		tcl_setuser},
+  {NULL,		NULL}
 };

@@ -4,9 +4,7 @@
  *   Tcl initialization
  *   getting and setting Tcl/eggdrop variables
  * 
- * dprintf'ized, 4feb1996
- * 
- * $Id: tcl.c,v 1.16 2000/01/17 22:36:07 fabian Exp $
+ * $Id: tcl.c,v 1.17 2000/01/30 19:26:21 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -29,12 +27,12 @@
 
 #include "main.h"
 
-/* used for read/write to internal strings */
+/* Used for read/write to internal strings */
 typedef struct {
-  char *str;			/* pointer to actual string in eggdrop */
-  int max;			/* max length (negative: read-only var when protect is on) */
-  /*   (0: read-only ALWAYS) */
-  int flags;			/* 1 = directory */
+  char *str;			/* Pointer to actual string in eggdrop	     */
+  int max;			/* max length (negative: read-only var
+				   when protect is on) (0: read-only ALWAYS) */
+  int flags;			/* 1 = directory			     */
 } strinfo;
 
 typedef struct {
@@ -42,53 +40,55 @@ typedef struct {
   int ro;
 } intinfo;
 
-extern int backgrd, flood_telnet_thr, flood_telnet_time;
-extern int shtime, share_greet, require_p, keep_all_logs;
-extern int allow_new_telnets, stealth_telnets, use_telnet_banner;
-extern int default_flags, conmask, switch_logfiles_at, connect_timeout;
-extern int firewallport, reserved_port, notify_users_at;
-extern int flood_thr, ignore_time;
-extern char origbotname[], botuser[], motdfile[], admin[], userfile[],
-	    firewall[], helpdir[], notify_new[], hostname[], myip[],
-	    moddir[], tempdir[], owner[], network[], botnetnick[],
-	    bannerfile[];
-extern int die_on_sighup, die_on_sigterm, max_logs, max_logsize, enable_simul;
-extern int dcc_total, debug_output, identtimeout, protect_telnet,
-	   dupwait_timeout;
-extern int egg_numver, share_unlinks, dcc_sanitycheck, sort_users;
-extern int tands, resolve_timeout, default_uflags, strict_host;
-extern struct dcc_t *dcc;
-extern char egg_version[], natip[];
-extern tcl_timer_t *timer, *utimer;
-extern time_t online_since;
-extern log_t *logs;
-extern int userfile_perm;
-extern char configfile[];	/* confvar patch by aaronwl */
 
-int protect_readonly = 0;	/* turn on/off readonly protection */
-char whois_fields[121] = "";	/* fields to display in a .whois */
-Tcl_Interp *interp;		/* eggdrop always uses the same interpreter */
-int dcc_flood_thr = 3;
-int debug_tcl = 0;
-int use_silence = 0;
-int use_invites = 0;		/* Jason/drummer */
-int use_exempts = 0;		/* Jason/drummer */
-int force_expire = 0;		/* Rufus */
-int remote_boots = 2;
-int allow_dk_cmds = 1;
-int must_be_owner = 1;
-int max_dcc = 20;		/* needs at least 4 or 5 just to get started
-				 * 20 should be enough */
-int min_dcc_port = 1024;	/* dcc-portrange, min port - dw/guppy */
-int max_dcc_port = 65535;	/* dcc-portrange, max port - dw/guppy */
-int quick_logs = 0;		/* quick write logs?
-				 * flush em every min instead of every 5 */
-int par_telnet_flood = 1;       /* trigger telnet flood for +f ppl? - dw */
-int quiet_save = 0;             /* quiet-save patch by Lucas */
-int strtot = 0;
+extern time_t	online_since;
+extern int	backgrd, flood_telnet_thr, flood_telnet_time;
+extern int	shtime, share_greet, require_p, keep_all_logs;
+extern int	allow_new_telnets, stealth_telnets, use_telnet_banner;
+extern int	default_flags, conmask, switch_logfiles_at, connect_timeout;
+extern int	firewallport, reserved_port, notify_users_at;
+extern int	flood_thr, ignore_time;
+extern char	origbotname[], botuser[], motdfile[], admin[], userfile[],
+		firewall[], helpdir[], notify_new[], hostname[], myip[],
+		moddir[], tempdir[], owner[], network[], botnetnick[],
+		bannerfile[], egg_version[], natip[], configfile[];
+extern int	die_on_sighup, die_on_sigterm, max_logs, max_logsize,
+		enable_simul, dcc_total, debug_output, identtimeout,
+		protect_telnet, dupwait_timeout, egg_numver, share_unlinks,
+		dcc_sanitycheck, sort_users, tands, resolve_timeout,
+		default_uflags, strict_host, userfile_perm;
+extern struct dcc_t	*dcc;
+extern tcl_timer_t	*timer, *utimer;
+extern log_t		*logs;
+
+int	    protect_readonly = 0;	/* turn on/off readonly protection */
+char	    whois_fields[121] = "";	/* fields to display in a .whois */
+Tcl_Interp *interp;			/* eggdrop always uses the same
+					   interpreter */
+int	    dcc_flood_thr = 3;
+int	    debug_tcl = 0;
+int	    use_silence = 0;
+int	    use_invites = 0;		/* Jason/drummer */
+int	    use_exempts = 0;		/* Jason/drummer */
+int	    force_expire = 0;		/* Rufus */
+int	    remote_boots = 2;
+int	    allow_dk_cmds = 1;
+int	    must_be_owner = 1;
+int	    max_dcc = 20;		/* needs at least 4 or 5 just to
+					   get started. 20 should be enough   */
+int	    min_dcc_port = 1024;	/* dcc-portrange, min port - dw/guppy */
+int	    max_dcc_port = 65535;	/* dcc-portrange, max port - dw/guppy */
+int	    quick_logs = 0;		/* quick write logs? (flush them
+					   every min instead of every 5	      */
+int	    par_telnet_flood = 1;       /* trigger telnet flood for +f
+					   ppl? - dw			      */
+int	    quiet_save = 0;             /* quiet-save patch by Lucas	      */
+int	    strtot = 0;
+
 
 /* Prototypes for tcl */
 Tcl_Interp *Tcl_CreateInterp();
+
 
 int expmem_tcl()
 {
@@ -103,7 +103,10 @@ int expmem_tcl()
   return tot + strtot;
 }
 
-/***********************************************************************/
+
+/*
+ *      Logging
+ */
 
 /* logfile [<modes> <channel> <filename>] */
 static int tcl_logfile STDVAR
@@ -113,7 +116,7 @@ static int tcl_logfile STDVAR
 
   BADARGS(1, 4, " ?logModes channel logFile?");
   if (argc == 1) {
-    /* they just want a list of the logfiles and modes */
+    /* They just want a list of the logfiles and modes */
     for (i = 0; i < max_logs; i++)
       if (logs[i].filename != NULL) {
 	strcpy(s, masktype(logs[i].mask));
@@ -148,7 +151,7 @@ static int tcl_logfile STDVAR
       Tcl_AppendResult(interp, argv[3], NULL);
       return TCL_OK;
     }
-  /* do not add logfiles without any flags to log ++rtc */
+  /* Do not add logfiles without any flags to log ++rtc */
   if (!logmodes (argv [1])) {
     Tcl_AppendResult (interp, "can't remove \"", argv[3], 
                      "\" from list: no such logfile", NULL);
@@ -182,7 +185,7 @@ int findidx(int z)
 static void botnet_change(char *new)
 {
   if (strcasecmp(botnetnick, new) != 0) {
-    /* trying to change bot's nickname */
+    /* Trying to change bot's nickname */
     if (tands > 0) {
       putlog(LOG_MISC, "*", "* Tried to change my botnet nick, but I'm still linked to a botnet.");
       putlog(LOG_MISC, "*", "* (Unlink and try again.)");
@@ -195,18 +198,21 @@ static void botnet_change(char *new)
   }
 }
 
-/**********************************************************************/
+
+/*
+ *     Vars, traces, misc
+ */
 
 int init_dcc_max(), init_misc();
 
-/* used for read/write to integer couplets */
+/* Used for read/write to integer couplets */
 typedef struct {
   int *left;			/* left side of couplet */
   int *right;			/* right side */
 } coupletinfo;
 
-/* read/write integer couplets (int1:int2) */
-static char *tcl_eggcouplet(ClientData cdata, Tcl_Interp * irp, char *name1,
+/* Read/write integer couplets (int1:int2) */
+static char *tcl_eggcouplet(ClientData cdata, Tcl_Interp *irp, char *name1,
 			    char *name2, int flags)
 {
   char *s, s1[41];
@@ -236,7 +242,7 @@ static char *tcl_eggcouplet(ClientData cdata, Tcl_Interp * irp, char *name1,
 
 /* Read or write normal integer.
  */
-static char *tcl_eggint(ClientData cdata, Tcl_Interp * irp, char *name1,
+static char *tcl_eggint(ClientData cdata, Tcl_Interp *irp, char *name1,
 			char *name2, int flags)
 {
   char *s, s1[40];
@@ -305,8 +311,9 @@ static char *tcl_eggint(ClientData cdata, Tcl_Interp * irp, char *name1,
   }
 }
 
-/* read/write normal string variable */
-static char *tcl_eggstr(ClientData cdata, Tcl_Interp * irp, char *name1,
+/* Read/write normal string variable
+ */
+static char *tcl_eggstr(ClientData cdata, Tcl_Interp *irp, char *name1,
 			char *name2, int flags)
 {
   char *s;
@@ -355,8 +362,9 @@ static char *tcl_eggstr(ClientData cdata, Tcl_Interp * irp, char *name1,
   }
 }
 
-/* add/remove tcl commands */
-void add_tcl_commands(tcl_cmds * tab)
+/* Add/remove tcl commands
+ */
+void add_tcl_commands(tcl_cmds *tab)
 {
   int i;
 
@@ -364,7 +372,7 @@ void add_tcl_commands(tcl_cmds * tab)
     Tcl_CreateCommand(interp, tab[i].name, tab[i].func, NULL, NULL);
 }
 
-void rem_tcl_commands(tcl_cmds * tab)
+void rem_tcl_commands(tcl_cmds *tab)
 {
   int i;
 
@@ -372,90 +380,90 @@ void rem_tcl_commands(tcl_cmds * tab)
     Tcl_DeleteCommand(interp, tab[i].name);
 }
 
+/* Strings */
 static tcl_strings def_tcl_strings[] =
 {
-  {"botnet-nick", botnetnick, HANDLEN, 0},
-  {"userfile", userfile, 120, STR_PROTECT},
-  {"motd", motdfile, 120, STR_PROTECT},
-  {"admin", admin, 120, 0},
-  {"help-path", helpdir, 120, STR_DIR | STR_PROTECT},
-  {"temp-path", tempdir, 120, STR_DIR | STR_PROTECT},
+  {"botnet-nick",	botnetnick,	HANDLEN,	0},
+  {"userfile",		userfile,	120,		STR_PROTECT},
+  {"motd",		motdfile,	120,		STR_PROTECT},
+  {"admin",		admin,		120,		0},
+  {"help-path",		helpdir,	120,		STR_DIR | STR_PROTECT},
+  {"temp-path",		tempdir,	120,		STR_DIR | STR_PROTECT},
 #ifndef STATIC
-  {"mod-path", moddir, 120, STR_DIR | STR_PROTECT},
+  {"mod-path",		moddir,		120,		STR_DIR | STR_PROTECT},
 #endif
-  {"notify-newusers", notify_new, 120, 0},
-  {"owner", owner, 120, STR_PROTECT},
-  {"my-hostname", hostname, 120, 0},
-  {"my-ip", myip, 120, 0},
-  {"network", network, 40, 0},
-  {"whois-fields", whois_fields, 120, 0},
-  {"nat-ip", natip, 120, 0},
-  {"username", botuser, 10, 0},
-  {"version", egg_version, 0, 0},
-  {"firewall", firewall, 120, 0},
+  {"notify-newusers",	notify_new,	120,		0},
+  {"owner",		owner,		120,		STR_PROTECT},
+  {"my-hostname",	hostname,	120,		0},
+  {"my-ip",		myip,		120,		0},
+  {"network",		network,	40,		0},
+  {"whois-fields",	whois_fields,	120,		0},
+  {"nat-ip",		natip,		120,		0},
+  {"username",		botuser,	10,		0},
+  {"version",		egg_version,	0,		0},
+  {"firewall",		firewall,	120,		0},
 /* confvar patch by aaronwl */
-  {"config", configfile, 0, 0},
-  {"telnet-banner", bannerfile, 120, STR_PROTECT},
-  {0, 0, 0, 0}
+  {"config",		configfile,	0,		0},
+  {"telnet-banner",	bannerfile,	120,		STR_PROTECT},
+  {NULL,		NULL,		0,		0}
 };
 
-  /* ints */
-
+/* Ints */
 static tcl_ints def_tcl_ints[] =
 {
-  {"ignore-time", &ignore_time, 0},
-  {"dcc-flood-thr", &dcc_flood_thr, 0},
-  {"hourly-updates", &notify_users_at, 0},
-  {"switch-logfiles-at", &switch_logfiles_at, 0},
-  {"connect-timeout", &connect_timeout, 0},
-  {"reserved-port", &reserved_port, 0},
+  {"ignore-time",		&ignore_time,		0},
+  {"dcc-flood-thr",		&dcc_flood_thr,		0},
+  {"hourly-updates",		&notify_users_at,	0},
+  {"switch-logfiles-at",	&switch_logfiles_at,	0},
+  {"connect-timeout",		&connect_timeout,	0},
+  {"reserved-port",		&reserved_port,		0},
   /* booleans (really just ints) */
-  {"require-p", &require_p, 0},
-  {"keep-all-logs", &keep_all_logs, 0},
-  {"open-telnets", &allow_new_telnets, 0},
-  {"stealth-telnets", &stealth_telnets, 0},
-  {"use-telnet-banner", &use_telnet_banner, 0},
-  {"uptime", (int *) &online_since, 2},
-  {"console", &conmask, 0},
-  {"default-flags", &default_flags, 0},
+  {"require-p",			&require_p,		0},
+  {"keep-all-logs",		&keep_all_logs,		0},
+  {"open-telnets",		&allow_new_telnets,	0},
+  {"stealth-telnets",		&stealth_telnets,	0},
+  {"use-telnet-banner",		&use_telnet_banner,	0},
+  {"uptime",			(int *) &online_since,	2},
+  {"console",			&conmask,		0},
+  {"default-flags",		&default_flags,		0},
   /* moved from eggdrop.h */
-  {"numversion", &egg_numver, 2},
-  {"debug-tcl", &debug_tcl, 1},
-  {"die-on-sighup", &die_on_sighup, 1},
-  {"die-on-sigterm", &die_on_sigterm, 1},
-  {"remote-boots", &remote_boots, 1},
-  {"max-dcc", &max_dcc, 0},
-  {"max-logs", &max_logs, 0},
-  {"max-logsize", &max_logsize, 0},
-  {"quick-logs", &quick_logs, 0},
-  {"enable-simul", &enable_simul, 1},
-  {"debug-output", &debug_output, 1},
-  {"protect-telnet", &protect_telnet, 0},
-  {"dcc-sanitycheck", &dcc_sanitycheck, 0},
-  {"sort-users", &sort_users, 0},
-  {"ident-timeout", &identtimeout, 0},
-  {"share-unlinks", &share_unlinks, 0},
-  {"log-time", &shtime, 0},
-  {"allow-dk-cmds", &allow_dk_cmds, 0},
-  {"resolve-timeout", &resolve_timeout, 0},
-  {"must-be-owner", &must_be_owner, 1},
-  {"use-silence", &use_silence, 0},			/* arthur2 */
-  {"paranoid-telnet-flood", &par_telnet_flood, 0},
-  {"use-exempts", &use_exempts, 0},			/* Jason/drummer */
-  {"use-invites", &use_invites, 0},			/* Jason/drummer */
-  {"quiet-save", &quiet_save, 0},			/* Lucas */
-  {"force-expire", &force_expire, 0},			/* Rufus */
-  {"dupwait-timeout", &dupwait_timeout, 0},
-  {"strict-host", &strict_host, 0}, 			/* drummer */
-  {"userfile-perm", &userfile_perm, 0},
-  {0, 0, 0}						/* arthur2 */
+  {"numversion",		&egg_numver,		2},
+  {"debug-tcl",			&debug_tcl,		1},
+  {"die-on-sighup",		&die_on_sighup,		1},
+  {"die-on-sigterm",		&die_on_sigterm,	1},
+  {"remote-boots",		&remote_boots,		1},
+  {"max-dcc",			&max_dcc,		0},
+  {"max-logs",			&max_logs,		0},
+  {"max-logsize",		&max_logsize,		0},
+  {"quick-logs",		&quick_logs,		0},
+  {"enable-simul",		&enable_simul,		1},
+  {"debug-output",		&debug_output,		1},
+  {"protect-telnet",		&protect_telnet,	0},
+  {"dcc-sanitycheck",		&dcc_sanitycheck,	0},
+  {"sort-users",		&sort_users,		0},
+  {"ident-timeout",		&identtimeout,		0},
+  {"share-unlinks",		&share_unlinks,		0},
+  {"log-time",			&shtime,		0},
+  {"allow-dk-cmds",		&allow_dk_cmds,		0},
+  {"resolve-timeout",		&resolve_timeout,	0},
+  {"must-be-owner",		&must_be_owner,		1},
+  {"use-silence",		&use_silence,		0},			/* arthur2 */
+  {"paranoid-telnet-flood",	&par_telnet_flood,	0},
+  {"use-exempts",		&use_exempts,		0},			/* Jason/drummer */
+  {"use-invites",		&use_invites,		0},			/* Jason/drummer */
+  {"quiet-save",		&quiet_save,		0},			/* Lucas */
+  {"force-expire",		&force_expire,		0},			/* Rufus */
+  {"dupwait-timeout",		&dupwait_timeout,	0},
+  {"strict-host",		&strict_host,		0}, 			/* drummer */
+  {"userfile-perm",		&userfile_perm,		0},
+  {NULL,			NULL,			0}	/* arthur2 */
 };
 
 static tcl_coups def_tcl_coups[] =
 {
-  {"telnet-flood", &flood_telnet_thr, &flood_telnet_time},
-  {"dcc-portrange", &min_dcc_port, &max_dcc_port},	/* dw */
-  {0, 0, 0}
+  {"telnet-flood",	&flood_telnet_thr,	&flood_telnet_time},
+  {"dcc-portrange",	&min_dcc_port,		&max_dcc_port},	/* dw */
+  {NULL,		NULL,			NULL}
 };
 
 /* Set up Tcl variables that will hook into eggdrop internal vars via
@@ -480,8 +488,9 @@ void kill_tcl()
 
 extern tcl_cmds tcluser_cmds[], tcldcc_cmds[], tclmisc_cmds[], tcldns_cmds[];
 
-/* not going through Tcl's crazy main() system (what on earth was he
- * smoking?!) so we gotta initialize the Tcl interpreter */
+/* Not going through Tcl's crazy main() system (what on earth was he
+ * smoking?!) so we gotta initialize the Tcl interpreter
+ */
 void init_tcl(int argc, char **argv)
 {
 #ifndef HAVE_PRE7_5_TCL
@@ -493,36 +502,37 @@ void init_tcl(int argc, char **argv)
 #ifndef HAVE_PRE7_5_TCL
   /* This is used for 'info nameofexecutable'.
    * The filename in argv[0] must exist in a directory listed in
-   * the environment variable PATH for it to register anything. */
+   * the environment variable PATH for it to register anything.
+   */
   Tcl_FindExecutable(argv[0]);
 #endif
 
-  /* initialize the interpreter */
+  /* Initialize the interpreter */
   interp = Tcl_CreateInterp();
   Tcl_Init(interp);
 
 #ifdef DEBUG_MEM
-  /* initialize Tcl's memory debugging if we have it */
+  /* Initialize Tcl's memory debugging if we have it */
   Tcl_InitMemory(interp);
 #endif
 
-  /* set Tcl variable tcl_interactive to 0 */
+  /* Set Tcl variable tcl_interactive to 0 */
   Tcl_SetVar(interp, "tcl_interactive", "0", TCL_GLOBAL_ONLY);
 
-  /* initialize binds and traces */
+  /* Initialize binds and traces */
   init_bind();
   init_traces();
 
-  /* add new commands */
+  /* Add new commands */
   Tcl_CreateCommand(interp, "logfile", tcl_logfile, NULL, NULL);
-  /* isnt this much neater :) */
+  /* Isnt this much neater :) */
   add_tcl_commands(tcluser_cmds);
   add_tcl_commands(tcldcc_cmds);
   add_tcl_commands(tclmisc_cmds);
   add_tcl_commands(tcldns_cmds);
 
 #ifndef HAVE_PRE7_5_TCL
-  /* add eggdrop to Tcl's package list */
+  /* Add eggdrop to Tcl's package list */
   for (i = 0; i <= strlen(egg_version); i++) {
     if ((egg_version[i] == ' ') || (egg_version[i] == '+'))
       break;
@@ -531,8 +541,6 @@ void init_tcl(int argc, char **argv)
   Tcl_PkgProvide(interp, "eggdrop", pver);
 #endif
 }
-
-/**********************************************************************/
 
 void do_tcl(char *whatzit, char *script)
 {
@@ -556,8 +564,10 @@ void do_tcl(char *whatzit, char *script)
   }
 }
 
-/* read and interpret the configfile given */
-/* return 1 if everything was okay */
+/* Read and interpret the configfile given
+ *
+ * returns:   1 if everything was okay
+ */
 int readtclprog(char *fname)
 {
   int code;
@@ -579,15 +589,14 @@ int readtclprog(char *fname)
     putlog(LOG_MISC, "*", "Tcl error in file '%s':", fname);
     putlog(LOG_MISC, "*", "%s",
           Tcl_GetVar(interp, "errorInfo", TCL_GLOBAL_ONLY));
-    /* try to go on anyway (shrug) */
-    /* no dont it's to risky now */
+    /* It's too risky to go on now. */
     return 0;
   }
-  /* refresh internal variables */
+  /* Refresh internal variables */
   return 1;
 }
 
-void add_tcl_strings(tcl_strings * list)
+void add_tcl_strings(tcl_strings *list)
 {
   int i;
   strinfo *st;
@@ -610,7 +619,7 @@ void add_tcl_strings(tcl_strings * list)
   }
 }
 
-void rem_tcl_strings(tcl_strings * list)
+void rem_tcl_strings(tcl_strings *list)
 {
   int i;
   strinfo *st;
@@ -631,7 +640,7 @@ void rem_tcl_strings(tcl_strings * list)
   }
 }
 
-void add_tcl_ints(tcl_ints * list)
+void add_tcl_ints(tcl_ints *list)
 {
   int i, tmp;
   intinfo *ii;
@@ -653,7 +662,7 @@ void add_tcl_ints(tcl_ints * list)
 
 }
 
-void rem_tcl_ints(tcl_ints * list)
+void rem_tcl_ints(tcl_ints *list)
 {
   int i;
   intinfo *ii;
@@ -674,8 +683,9 @@ void rem_tcl_ints(tcl_ints * list)
   }
 }
 
-/* allocate couplet space for tracing couplets */
-void add_tcl_coups(tcl_coups * list)
+/* Allocate couplet space for tracing couplets
+ */
+void add_tcl_coups(tcl_coups *list)
 {
   coupletinfo *cp;
   int i;
@@ -685,8 +695,10 @@ void add_tcl_coups(tcl_coups * list)
     strtot += sizeof(coupletinfo);
     cp->left = list[i].lptr;
     cp->right = list[i].rptr;
-    tcl_eggcouplet((ClientData) cp, interp, list[i].name, NULL, TCL_TRACE_WRITES);
-    tcl_eggcouplet((ClientData) cp, interp, list[i].name, NULL, TCL_TRACE_READS);
+    tcl_eggcouplet((ClientData) cp, interp, list[i].name, NULL,
+		   TCL_TRACE_WRITES);
+    tcl_eggcouplet((ClientData) cp, interp, list[i].name, NULL,
+		   TCL_TRACE_READS);
     Tcl_TraceVar(interp, list[i].name,
 		 TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
 		 tcl_eggcouplet, (ClientData) cp);

@@ -5,7 +5,7 @@
  *   note cmds
  *   note ignores
  * 
- * $Id: notes.c,v 1.13 2000/01/17 22:36:09 fabian Exp $
+ * $Id: notes.c,v 1.14 2000/01/30 19:26:22 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -29,10 +29,10 @@
 #define MODULE_NAME "notes"
 #define MAKING_NOTES
 #include <fcntl.h>
+#include <sys/stat.h> /* chmod(..) */
 #include "../module.h"
 #include "../../tandem.h"
 #undef global
-#include <sys/stat.h> /* chmod(..) */
 #include "notes.h"
 
 static int maxnotes = 50;	/* Maximum number of notes to allow stored

@@ -2,7 +2,7 @@
  * channels.c -- part of channels.mod
  *   support for channels within the bot
  * 
- * $Id: channels.c,v 1.24 2000/01/30 18:02:02 fabian Exp $
+ * $Id: channels.c,v 1.25 2000/01/30 19:26:22 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -25,8 +25,8 @@
 
 #define MODULE_NAME "channels"
 #define MAKING_CHANNELS
-#include "../module.h"
 #include <sys/stat.h>
+#include "../module.h"
 
 static Function *global		= NULL;
 
@@ -736,26 +736,26 @@ static char *traced_globchanset(ClientData cdata, Tcl_Interp * irp,
 
 static tcl_ints my_tcl_ints[] =
 {
-  {"share-greet",	NULL,		0},
-  {"use-info",		&use_info,	0},
-  {"ban-time",		&ban_time,	0},
-  {"exempt-time",	&exempt_time,	0},
-  {"invite-time",	&invite_time,	0},
-  {"must-be-owner",	&must_be_owner,	0},
-  {"quiet-save",	&quiet_save,	0},
+  {"share-greet",		NULL,				0},
+  {"use-info",			&use_info,			0},
+  {"ban-time",			&ban_time,			0},
+  {"exempt-time",		&exempt_time,			0},
+  {"invite-time",		&invite_time,			0},
+  {"must-be-owner",		&must_be_owner,			0},
+  {"quiet-save",		&quiet_save,			0},
   {"global-stopnethack-mode",	&global_stopnethack_mode,	0},
-  {NULL,		NULL,		0}
+  {NULL,			NULL,				0}
 };
 
 static tcl_coups mychan_tcl_coups[] =
 {
-  {"global-flood-chan",	&gfld_chan_thr,	&gfld_chan_time},
-  {"global-flood-deop",	&gfld_deop_thr,	&gfld_deop_time},
-  {"global-flood-kick",	&gfld_kick_thr,	&gfld_kick_time},
-  {"global-flood-join",	&gfld_join_thr,	&gfld_join_time},
-  {"global-flood-ctcp",	&gfld_ctcp_thr,	&gfld_ctcp_time},
-  {"global-flood-nick", &gfld_nick_thr, &gfld_nick_time},
-  {NULL,		NULL,		NULL}
+  {"global-flood-chan",		&gfld_chan_thr,		&gfld_chan_time},
+  {"global-flood-deop",		&gfld_deop_thr,		&gfld_deop_time},
+  {"global-flood-kick",		&gfld_kick_thr,		&gfld_kick_time},
+  {"global-flood-join",		&gfld_join_thr,		&gfld_join_time},
+  {"global-flood-ctcp",		&gfld_ctcp_thr,		&gfld_ctcp_time},
+  {"global-flood-nick",		&gfld_nick_thr, 	&gfld_nick_time},
+  {NULL,			NULL,			NULL}
 };
 
 static tcl_strings my_tcl_strings[] =

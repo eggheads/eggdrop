@@ -3,7 +3,7 @@
  *   stuff common to chan.c and mode.c
  *   users.h needs to be loaded too
  * 
- * $Id: chan.h,v 1.10 2000/01/17 22:36:06 fabian Exp $
+ * $Id: chan.h,v 1.11 2000/01/30 19:26:20 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -28,31 +28,32 @@
 #define _EGG_CHAN_H
 
 typedef struct memstruct {
-  char nick[NICKLEN];		/* "dalnet" allows 30 */
+  char nick[NICKLEN];
   char userhost[UHOSTLEN];
   time_t joined;
   unsigned short flags;
-  time_t split;			/* in case they were just netsplit */
-  time_t last;			/* for measuring idle time */
-  time_t delay;			/* for delayed autoop */
+  time_t split;			/* in case they were just netsplit	*/
+  time_t last;			/* for measuring idle time		*/
+  time_t delay;			/* for delayed autoop			*/
   struct userrec *user;
   struct memstruct *next;
 } memberlist;
 
 #define CHANMETA "#&!+"
 
-#define CHANOP      0x0001	/* channel +o */
-#define CHANVOICE   0x0002	/* channel +v */
-#define FAKEOP      0x0004	/* op'd by server */
+#define CHANOP      0x0001	/* channel +o				*/
+#define CHANVOICE   0x0002	/* channel +v				*/
+#define FAKEOP      0x0004	/* op'd by server			*/
 #define SENTOP      0x0008	/* a mode +o was already sent out for
-				   * this user */
+				   this user				*/
 #define SENTDEOP    0x0010	/* a mode -o was already sent out for
-				   * this user */
-#define SENTKICK    0x0020	/* a kick was already sent out for this user */
+				   this user				*/
+#define SENTKICK    0x0020	/* a kick was already sent out for this
+				   user					*/
 #define SENTVOICE   0x0040	/* a mode +v was already sent out for
-				   * this user */
-#define SENTDEVOICE 0x0080	/* a devoice has been sent */
-#define WASOP       0x0100	/* was an op before a split */
+				   this user				*/
+#define SENTDEVOICE 0x0080	/* a devoice has been sent		*/
+#define WASOP       0x0100	/* was an op before a split		*/
 #define STOPWHO     0x0200
 
 #define chan_hasvoice(x) (x->flags & CHANVOICE)
@@ -66,8 +67,8 @@ typedef struct memstruct {
 #define chan_issplit(x) (x->split > 0)
 #define chan_wasop(x) (x->flags & WASOP)
 
-/*        Why duplicate this struct for exempts and invites only under another
- *      name? <cybah>
+/* Why duplicate this struct for exempts and invites only under another
+ * name? <cybah>
  */
 typedef struct maskstruct {
   char *mask;
@@ -76,7 +77,7 @@ typedef struct maskstruct {
   struct maskstruct *next;
 } masklist;
 
-/* used for temporary bans, exempts and invites */
+/* Used for temporary bans, exempts and invites */
 typedef struct maskrec {
   struct maskrec *next;
   char *mask,
@@ -92,7 +93,7 @@ extern maskrec *global_bans, *global_exempts, *global_invites;
 #define MASKREC_STICKY 1
 #define MASKREC_PERM   2
 
-/* for every channel i join */
+/* For every channel i join */
 struct chan_t {
   memberlist *member;
   masklist *ban;
@@ -105,27 +106,25 @@ struct chan_t {
   int members;
 };
 
-#define CHANINV    0x0001	/* +i */
-#define CHANPRIV   0x0002	/* +p */
-#define CHANSEC    0x0004	/* +s */
-#define CHANMODER  0x0008	/* +m */
-#define CHANTOPIC  0x0010	/* +t */
-#define CHANNOMSG  0x0020	/* +n */
-#define CHANLIMIT  0x0040	/* -l -- used only for protecting modes */
-#define CHANKEY    0x0080	/* +k */
-#define CHANANON   0x0100	/* +a -- ircd 2.9 */
-#define CHANQUIET  0x0200	/* +q -- ircd 2.9 */
+#define CHANINV    0x0001	/* +i					*/
+#define CHANPRIV   0x0002	/* +p					*/
+#define CHANSEC    0x0004	/* +s					*/
+#define CHANMODER  0x0008	/* +m					*/
+#define CHANTOPIC  0x0010	/* +t					*/
+#define CHANNOMSG  0x0020	/* +n					*/
+#define CHANLIMIT  0x0040	/* -l -- used only for protecting modes	*/
+#define CHANKEY    0x0080	/* +k					*/
+#define CHANANON   0x0100	/* +a -- ircd 2.9			*/
+#define CHANQUIET  0x0200	/* +q -- ircd 2.9			*/
 
-/* for every channel i'm supposed to be active on */
+/* For every channel i'm supposed to be active on */
 struct chanset_t {
   struct chanset_t *next;
-  struct chan_t channel;	/* current information */
-  char dname[81];               /* what the users know the channel as, like
-                                 * !eggdev
-                                 */
-  char name[81];                /* what the servers know the channel as, like
-                                 * !ABCDEeggdev
-                                 */
+  struct chan_t channel;	/* current information			*/
+  char dname[81];               /* what the users know the channel as,
+				   like !eggdev				*/
+  char name[81];                /* what the servers know the channel
+				   as, like !ABCDEeggdev		*/
   char need_op[121];
   char need_key[121];
   char need_limit[121];
@@ -147,64 +146,65 @@ struct chanset_t {
   int ircnet_status;
   int idle_kick;
   int stopnethack_mode;
-  /* temporary channel bans, exempts and invites */
-  maskrec *bans,
-          *exempts,
-          *invites;
+  maskrec *bans,		/* temporary channel bans		*/
+          *exempts,		/* temporary channel exempts		*/
+          *invites;		/* temporary channel invites		*/
   /* desired channel modes: */
-  int mode_pls_prot;		/* modes to enforce */
-  int mode_mns_prot;		/* modes to reject */
-  int limit_prot;		/* desired limit */
-  char key_prot[121];		/* desired password */
+  int mode_pls_prot;		/* modes to enforce			*/
+  int mode_mns_prot;		/* modes to reject			*/
+  int limit_prot;		/* desired limit			*/
+  char key_prot[121];		/* desired password			*/
   /* queued mode changes: */
-  char pls[21];			/* positive mode changes */
-  char mns[21];			/* negative mode changes */
-  char key[81];			/* new key to set */
-  char rmkey[81];		/* old key to remove */
-  int limit;			/* new limit to set */
-  int bytes;			/* total bytes so far */
-  int compat;           /* to prevent mixing old/new modes */
+  char pls[21];			/* positive mode changes		*/
+  char mns[21];			/* negative mode changes		*/
+  char key[81];			/* new key to set			*/
+  char rmkey[81];		/* old key to remove			*/
+  int limit;			/* new limit to set			*/
+  int bytes;			/* total bytes so far			*/
+  int compat;			/* to prevent mixing old/new modes	*/
   struct {
     char *op;
     char type;
-  } cmode[6];			/* parameter-type mode changes - */
+  } cmode[6];			/* parameter-type mode changes -	*/
   /* detect floods */
   char floodwho[FLOOD_CHAN_MAX][81];
   time_t floodtime[FLOOD_CHAN_MAX];
   int floodnum[FLOOD_CHAN_MAX];
-  char deopd[NICKLEN];		/* last person deop'd (must change) */
+  char deopd[NICKLEN];		/* last person deop'd (must change	*/
 };
 
 /* behavior modes for the channel */
-#define CHAN_CLEARBANS      0x0001	/* clear bans on join */
+#define CHAN_CLEARBANS      0x0001	/* clear bans on join		      */
 #define CHAN_ENFORCEBANS    0x0002	/* kick people who match channel bans */
-#define CHAN_DYNAMICBANS    0x0004	/* only activate bans when needed */
-#define CHAN_NOUSERBANS     0x0008	/* don't let non-bots place bans */
-#define CHAN_OPONJOIN       0x0010	/* op +o people as soon as they join */
-#define CHAN_BITCH          0x0020	/* be a tightwad with ops */
-#define CHAN_GREET          0x0040	/* greet people with their info line */
+#define CHAN_DYNAMICBANS    0x0004	/* only activate bans when needed     */
+#define CHAN_NOUSERBANS     0x0008	/* don't let non-bots place bans      */
+#define CHAN_OPONJOIN       0x0010	/* op +o people as soon as they join  */
+#define CHAN_BITCH          0x0020	/* be a tightwad with ops	      */
+#define CHAN_GREET          0x0040	/* greet people with their info line  */
 #define CHAN_PROTECTOPS     0x0080	/* re-op any +o people who get deop'd */
-#define CHAN_LOGSTATUS      0x0100	/* log channel status every 5 mins */
-#define CHAN_REVENGE        0x0200	/* get revenge on bad people */
-#define CHAN_SECRET         0x0400	/* don't advertise channel on botnet */
+#define CHAN_LOGSTATUS      0x0100	/* log channel status every 5 mins    */
+#define CHAN_REVENGE        0x0200	/* get revenge on bad people	      */
+#define CHAN_SECRET         0x0400	/* don't advertise channel on botnet  */
 #define CHAN_AUTOVOICE      0x0800	/* dish out voice stuff automatically */
-#define CHAN_CYCLE          0x1000	/* cycle the channel if possible */
-#define CHAN_DONTKICKOPS    0x2000	/* never kick +o flag people - arthur2 */
-#define CHAN_INACTIVE       0x4000	/* no irc support for this channel - drummer */
-#define CHAN_PROTECTFRIENDS 0x8000  /* re-op any +f people who get deop'd */
-#define CHAN_SHARED         0x10000	/* channel is being shared */
+#define CHAN_CYCLE          0x1000	/* cycle the channel if possible      */
+#define CHAN_DONTKICKOPS    0x2000	/* never kick +o flag people
+					   -arthur2			      */
+#define CHAN_INACTIVE       0x4000	/* no irc support for this channel
+					   - drummer			      */
+#define CHAN_PROTECTFRIENDS 0x8000	/* re-op any +f people who get deop'd */
+#define CHAN_SHARED         0x10000	/* channel is being shared	      */
 #define CHAN_SEEN           0x20000
 #define CHAN_REVENGEBOT     0x40000	/* revenge on actions against the bot */
 #define CHAN_NODESYNCH      0x80000
 /*			    0x100000 */
 #define CHAN_ACTIVE         0x1000000	/* like i'm actually on the channel
-					 * and stuff */
+					   and stuff			      */
 #define CHAN_PEND           0x2000000	/* just joined; waiting for end of
-					 * WHO list */
-#define CHAN_FLAGGED        0x4000000	/* flagged during rehash for delete */
-#define CHAN_STATIC         0x8000000	/* channels that are NOT dynamic */
+					   WHO list			      */
+#define CHAN_FLAGGED        0x4000000	/* flagged during rehash for delete   */
+#define CHAN_STATIC         0x8000000	/* channels that are NOT dynamic      */
 #define CHAN_ASKEDBANS      0x10000000
-#define CHAN_ASKEDMODES     0x20000000  /* find out key-info on IRCu */
+#define CHAN_ASKEDMODES     0x20000000  /* find out key-info on IRCu          */
 
 #define CHAN_ASKED_EXEMPTS  0x0001
 #define CHAN_ASKED_INVITED  0x0002
@@ -223,6 +223,7 @@ struct chanset_t *findchan_by_dname(char *name);
 #define channel_hidden(chan) (chan->channel.mode & (CHANPRIV | CHANSEC))
 /* is this channel +t? */
 #define channel_optopic(chan) (chan->channel.mode & CHANTOPIC)
+
 #define channel_active(chan)  (chan->status & CHAN_ACTIVE)
 #define channel_pending(chan)  (chan->status & CHAN_PEND)
 #define channel_bitch(chan) (chan->status & CHAN_BITCH)
@@ -266,7 +267,7 @@ struct msgq_head {
   int warned;
 };
 
-/* used to queue a lot of things */
+/* Used to queue a lot of things */
 struct msgq {
   struct msgq *next;
   int len;

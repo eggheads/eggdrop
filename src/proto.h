@@ -7,7 +7,7 @@
  * because they use structures in those
  * (saves including those .h files EVERY time) - Beldin
  * 
- * $Id: proto.h,v 1.19 2000/01/22 22:37:47 fabian Exp $
+ * $Id: proto.h,v 1.20 2000/01/30 19:26:21 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -38,7 +38,7 @@
 #endif
 
 #ifndef HAVE_BZERO
-void bzero(char *, int);
+void bzero(void *, int);
 #endif
 
 struct chanset_t;		/* keeps the compiler warnings down :) */
@@ -58,7 +58,6 @@ extern int (*rfc_ncasecmp) (const char *, const char *, int);
 extern int (*rfc_toupper) (int);
 extern int (*rfc_tolower) (int);
 extern int (*match_noterej) (struct userrec *, char *);
-
 #endif
 
 /* botcmd.c */

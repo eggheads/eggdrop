@@ -1,54 +1,52 @@
 /* 
  * blowfish.h -- part of blowfish.mod
  * 
- * modified 19jul1996 by robey -- uses autoconf values now
+ * $Id: blowfish.h,v 1.5 2000/01/30 19:26:21 fabian Exp $
+ */
+/* 
+ * Copyright (C) 1999  Eggheads
+ * Copyright (C) 1996  Robey Pointer
  * 
- * $Id: blowfish.h,v 1.4 2000/01/02 02:42:10 fabian Exp $
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
 #ifndef _EGG_MOD_BLOWFISH_BLOWFISH_H
 #define _EGG_MOD_BLOWFISH_BLOWFISH_H
 
-#define MAXKEYBYTES 56		/* 448 bits */
-#define bf_N             16
-#define noErr            0
-#define DATAERROR        -1
-#define KEYBYTES         8
+#define MAXKEYBYTES	56		/* 448 bits */
+#define bf_N		16
+#define noErr		 0
+#define DATAERROR	-1
+#define KEYBYTES	 8
 
-#define UBYTE_08bits  u_8bit_t
-#define UWORD_16bits  u_16bit_t
-#define UWORD_32bits  u_32bit_t
-
-/* choose a byte order for your hardware */
-
+union aword {
+  u_32bit_t word;
+  u_8bit_t byte[4];
+  struct {
 #ifdef WORDS_BIGENDIAN
-/* ABCD - big endian - motorola */
-union aword {
-  UWORD_32bits word;
-  UBYTE_08bits byte[4];
-  struct {
     unsigned int byte0:8;
     unsigned int byte1:8;
     unsigned int byte2:8;
     unsigned int byte3:8;
-  } w;
-};
-
-#endif				/* WORDS_BIGENDIAN */
-
-#ifndef WORDS_BIGENDIAN
-/* DCBA - little endian - intel */
-union aword {
-  UWORD_32bits word;
-  UBYTE_08bits byte[4];
-  struct {
+#else				/* !WORDS_BIGENDIAN */
     unsigned int byte3:8;
     unsigned int byte2:8;
     unsigned int byte1:8;
     unsigned int byte0:8;
-  } w;
-};
-
 #endif				/* !WORDS_BIGENDIAN */
+  } w;
+};
 
 #endif				/* _EGG_MOD_BLOWFISH_BLOWFISH_H */

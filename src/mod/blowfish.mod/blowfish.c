@@ -2,12 +2,28 @@
  * blowfish.c -- part of blowfish.mod
  *   encryption and decryption of passwords
  * 
- * $Id: blowfish.c,v 1.9 2000/01/06 19:45:03 fabian Exp $
+ * $Id: blowfish.c,v 1.10 2000/01/30 19:26:21 fabian Exp $
  */
 /* 
- * The first half of this is very lightly edited from public domain
- * sourcecode.  For simplicity, this entire module will remain public
- * domain.
+ * Copyright (C) 1999  Eggheads
+ * Copyright (C) 1997  Robey Pointer
+ * 
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/*
+ * This code was originally in the public domain.
  */
 
 #define MODULE_NAME "encryption"
@@ -18,7 +34,7 @@
 #undef global
 static Function *global = NULL;
 
-/* each box takes up 4k so be very careful here */
+/* Each box takes up 4k so be very careful here */
 #define BOXES 3
 
 /* #define S(x,i) (bf_S[i][x.w.byte##i]) */
@@ -29,19 +45,19 @@ static Function *global = NULL;
 #define bf_F(x) (((S0(x) + S1(x)) ^ S2(x)) + S3(x))
 #define ROUND(a,b,n) (a.word ^= bf_F(b) ^ bf_P[n])
 
-/* keep a set of rotating P & S boxes */
+/* Keep a set of rotating P & S boxes */
 static struct box_t {
-  UWORD_32bits *P;
-  UWORD_32bits **S;
+  u_32bit_t *P;
+  u_32bit_t **S;
   char key[81];
   char keybytes;
   time_t lastuse;
 } box[BOXES];
 
-/* static UWORD_32bits bf_P[bf_N+2]; */
-/* static UWORD_32bits bf_S[4][256]; */
-static UWORD_32bits *bf_P;
-static UWORD_32bits **bf_S;
+/* static u_32bit_t bf_P[bf_N+2]; */
+/* static u_32bit_t bf_S[4][256]; */
+static u_32bit_t *bf_P;
+static u_32bit_t **bf_S;
 
 static int blowfish_expmem()
 {
@@ -50,14 +66,14 @@ static int blowfish_expmem()
   Context;
   for (i = 0; i < BOXES; i++)
     if (box[i].P != NULL) {
-      tot += ((bf_N + 2) * sizeof(UWORD_32bits));
-      tot += (4 * sizeof(UWORD_32bits *));
-      tot += (4 * 256 * sizeof(UWORD_32bits));
+      tot += ((bf_N + 2) * sizeof(u_32bit_t));
+      tot += (4 * sizeof(u_32bit_t *));
+      tot += (4 * 256 * sizeof(u_32bit_t));
     }
   return tot;
 }
 
-static void blowfish_encipher(UWORD_32bits * xl, UWORD_32bits * xr)
+static void blowfish_encipher(u_32bit_t * xl, u_32bit_t * xr)
 {
   union aword Xl;
   union aword Xr;
@@ -88,7 +104,7 @@ static void blowfish_encipher(UWORD_32bits * xl, UWORD_32bits * xr)
   *xl = Xr.word;
 }
 
-static void blowfish_decipher(UWORD_32bits * xl, UWORD_32bits * xr)
+static void blowfish_decipher(u_32bit_t * xl, u_32bit_t * xr)
 {
   union aword Xl;
   union aword Xr;
@@ -138,35 +154,35 @@ static void blowfish_report(int idx, int details)
   }
 }
 
-static void blowfish_init(UBYTE_08bits * key, int keybytes)
+static void blowfish_init(u_8bit_t * key, int keybytes)
 {
   int i, j, bx;
   time_t lowest;
-  UWORD_32bits data;
-  UWORD_32bits datal;
-  UWORD_32bits datar;
+  u_32bit_t data;
+  u_32bit_t datal;
+  u_32bit_t datar;
   union aword temp;
 
-  /* drummer: fixes crash if key is longer than 80 char */
+  /* drummer: Fixes crash if key is longer than 80 char. This may cause the key
+   *          to not end with \00 but that's no problem.
+   */
   if (keybytes > 80)
     keybytes = 80;
-  /* this may cause key wont end with \00 but it isnt problem */
-  /* strNcpy(), strNcmp()... */
 
-  /* is buffer already allocated for this? */
+  /* Is buffer already allocated for this? */
   for (i = 0; i < BOXES; i++)
     if (box[i].P != NULL) {
       if ((box[i].keybytes == keybytes) &&
 	  (!strncmp((char *) (box[i].key), (char *) key, keybytes))) {
-	/* match! */
+	/* Match! */
 	box[i].lastuse = now;
 	bf_P = box[i].P;
 	bf_S = box[i].S;
 	return;
       }
     }
-  /* no pre-allocated buffer: make new one */
-  /* set 'bx' to empty buffer */
+  /* No pre-allocated buffer: make new one */
+  /* Set 'bx' to empty buffer */
   bx = (-1);
   for (i = 0; i < BOXES; i++) {
     if (box[i].P == NULL) {
@@ -175,7 +191,7 @@ static void blowfish_init(UBYTE_08bits * key, int keybytes)
     }
   }
   if (bx < 0) {
-    /* find oldest */
+    /* Find oldest */
     lowest = now;
     for (i = 0; i < BOXES; i++)
       if (box[i].lastuse <= lowest) {
@@ -187,21 +203,22 @@ static void blowfish_init(UBYTE_08bits * key, int keybytes)
       nfree(box[bx].S[i]);
     nfree(box[bx].S);
   }
-  /* initialize new buffer */
+  /* Initialize new buffer */
   /* uh... this is over 4k */
-  box[bx].P = (UWORD_32bits *) nmalloc((bf_N + 2) * sizeof(UWORD_32bits));
-  box[bx].S = (UWORD_32bits **) nmalloc(4 * sizeof(UWORD_32bits *));
+  box[bx].P = (u_32bit_t *) nmalloc((bf_N + 2) * sizeof(u_32bit_t));
+  box[bx].S = (u_32bit_t **) nmalloc(4 * sizeof(u_32bit_t *));
   for (i = 0; i < 4; i++)
-    box[bx].S[i] = (UWORD_32bits *) nmalloc(256 * sizeof(UWORD_32bits));
+    box[bx].S[i] = (u_32bit_t *) nmalloc(256 * sizeof(u_32bit_t));
   bf_P = box[bx].P;
   bf_S = box[bx].S;
   box[bx].keybytes = keybytes;
   strncpy(box[bx].key, key, keybytes);
   box[bx].key[keybytes] = 0;
   box[bx].lastuse = now;
-  /* robey: reset blowfish boxes to initial state */
-  /* (i guess normally it just keeps scrambling them, but here it's
-   * important to get the same encrypted result each time) */
+  /* Robey: Reset blowfish boxes to initial state
+   * (I guess normally it just keeps scrambling them, but here it's
+   * important to get the same encrypted result each time)
+   */
   for (i = 0; i < bf_N + 2; i++)
     bf_P[i] = initbf_P[i];
   for (i = 0; i < 4; i++)
@@ -237,14 +254,13 @@ static void blowfish_init(UBYTE_08bits * key, int keybytes)
   }
 }
 
-/* stuff below this line was written by robey for eggdrop use */
-
-/* of course, if you change either of these, then your userfile will
- * no longer be able to be shared. :) */
+/* Of course, if you change either of these, then your userfile will
+ * no longer be able to be shared. :)
+ */
 #define SALT1  0xdeadd061
 #define SALT2  0x23f6b095
 
-/* convert 64-bit encrypted password to text for userfile */
+/* Convert 64-bit encrypted password to text for userfile */
 static char *base64 = "./0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 static int base64dec(char c)
@@ -259,7 +275,7 @@ static int base64dec(char c)
 
 static void blowfish_encrypt_pass(char *text, char *new)
 {
-  UWORD_32bits left, right;
+  u_32bit_t left, right;
   int n;
   char *p;
 
@@ -284,14 +300,15 @@ static void blowfish_encrypt_pass(char *text, char *new)
   *p = 0;
 }
 
-/* returned string must be freed when done with it! */
+/* Returned string must be freed when done with it!
+ */
 static char *encrypt_string(char *key, char *str)
 {
-  UWORD_32bits left, right;
+  u_32bit_t left, right;
   char *p, *s, *dest, *d;
   int i;
 
-  /* pad fake string with 8 bytes to make sure there's enough */
+  /* Pad fake string with 8 bytes to make sure there's enough */
   s = (char *) nmalloc(strlen(str) + 9);
   strcpy(s, str);
   if ((!key) || (!key[0]))
@@ -329,14 +346,15 @@ static char *encrypt_string(char *key, char *str)
   return dest;
 }
 
-/* returned string must be freed when done with it! */
+/* Returned string must be freed when done with it!
+ */
 static char *decrypt_string(char *key, char *str)
 {
-  UWORD_32bits left, right;
+  u_32bit_t left, right;
   char *p, *s, *dest, *d;
   int i;
 
-  /* pad encoded string with 0 bits in case it's bogus */
+  /* Pad encoded string with 0 bits in case it's bogus */
   s = (char *) nmalloc(strlen(str) + 12);
   strcpy(s, str);
   if ((!key) || (!key[0]))
@@ -404,13 +422,14 @@ static int tcl_encpass STDVAR
 
 static tcl_cmds mytcls[] =
 {
-  {"encrypt", tcl_encrypt},
-  {"decrypt", tcl_decrypt},
-  {"encpass", tcl_encpass},
-  {0, 0}
+  {"encrypt",	tcl_encrypt},
+  {"decrypt",	tcl_decrypt},
+  {"encpass",	tcl_encpass},
+  {NULL,	NULL}
 };
 
-/* you CANT -module an encryption module , so -module just resets it */
+/* You CANT -module an encryption module , so -module just resets it.
+ */
 static char *blowfish_close()
 {
   return "You can't unload an encryption module";
@@ -430,28 +449,29 @@ static Function blowfish_table[] =
   (Function) decrypt_string,
 };
 
-/* initialize buffered boxes */
-char *blowfish_start(Function * global_funcs)
+char *blowfish_start(Function *global_funcs)
 {
   int i;
 
-  if (global_funcs) {
-    global = global_funcs;
+  if (!global_funcs)
+    return NULL;
+  
+  global = global_funcs;
 
-    if (!module_rename("blowfish", MODULE_NAME))
-      return "Already loaded.";
-    for (i = 0; i < BOXES; i++) {
-      box[i].P = NULL;
-      box[i].S = NULL;
-      box[i].key[0] = 0;
-      box[i].lastuse = 0L;
-    }
-    Context;
-    module_register(MODULE_NAME, blowfish_table, 2, 0);
-    if (!module_depend(MODULE_NAME, "eggdrop", 105, 0))
-      return "This module requires eggdrop1.5.0 or later";
-    add_hook(HOOK_ENCRYPT_PASS, (Function) blowfish_encrypt_pass);
+  if (!module_rename("blowfish", MODULE_NAME))
+    return "Already loaded.";
+  /* Initialize buffered boxes */
+  for (i = 0; i < BOXES; i++) {
+    box[i].P = NULL;
+    box[i].S = NULL;
+    box[i].key[0] = 0;
+    box[i].lastuse = 0L;
   }
+  Context;
+  module_register(MODULE_NAME, blowfish_table, 2, 0);
+  if (!module_depend(MODULE_NAME, "eggdrop", 105, 0))
+    return "This module requires eggdrop1.5.0 or later";
+  add_hook(HOOK_ENCRYPT_PASS, (Function) blowfish_encrypt_pass);
   add_tcl_commands(mytcls);
   return NULL;
 }

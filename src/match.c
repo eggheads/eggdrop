@@ -3,7 +3,7 @@
  *   wildcard matching functions
  *   (rename to reg.c for ircII)
  * 
- * $Id: match.c,v 1.4 1999/12/21 17:35:09 fabian Exp $
+ * $Id: match.c,v 1.5 2000/01/30 19:26:20 fabian Exp $
  */
 /* 
  * Once this code was working, I added support for % so that I could
@@ -264,9 +264,9 @@ int _wild_match(register unsigned char *m, register unsigned char *n)
     return NOMATCH;
   /* find the end of each string */
   while (*(++m));
-  m--;
+    m--;
   while (*(++n));
-  n--;
+    n--;
 
   while (n >= na) {
     if ((m <= ma) || (m[-1] != QUOTE)) {	/* Only look if no quote */

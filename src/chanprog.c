@@ -7,10 +7,7 @@
  *   telling the current programmed settings
  *   initializing a lot of stuff and loading the tcl scripts
  * 
- * config file format changed 27jan1994 (Tcl outdates that)
- * dprintf'ized, 1nov1995
- * 
- * $Id: chanprog.c,v 1.12 2000/01/17 22:36:06 fabian Exp $
+ * $Id: chanprog.c,v 1.13 2000/01/30 19:26:20 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -43,37 +40,40 @@
 #endif
 #include "modules.h"
 
-extern struct userrec *userlist;
-extern log_t *logs;
-extern Tcl_Interp *interp;
-extern char ver[], botnetnick[], firewall[];
-extern char motdfile[], userfile[], helpdir[], tempdir[];
-extern char moddir[], notify_new[], owner[], configfile[];
-extern time_t now, online_since;
-extern int backgrd, term_z, con_chan, cache_hit, cache_miss, firewallport;
-extern int default_flags, max_logs, conmask, protect_readonly, make_userfile;
-extern int noshare, ignore_time;
+extern struct userrec	*userlist;
+extern log_t		*logs;
+extern Tcl_Interp	*interp;
+extern char		 ver[], botnetnick[], firewall[],
+			 motdfile[], userfile[], helpdir[], tempdir[],
+			 moddir[], notify_new[], owner[], configfile[];
+extern time_t		 now, online_since;
+extern int		 backgrd, term_z, con_chan, cache_hit, cache_miss,
+			 firewallport, default_flags, max_logs, conmask,
+			 protect_readonly, make_userfile, noshare,
+			 ignore_time;
 
-tcl_timer_t *timer = NULL, *utimer = NULL;	/* timers (minutely) and
-						 * utimers (secondly) */
-unsigned long timer_id = 1;	/* next timer of any sort will have this
-				 * number */
-struct chanset_t *chanset = NULL;	/* channel list */
-char admin[121] = "";		/* admin info */
-char origbotname[NICKLEN + 1];
-char botname[NICKLEN + 1];	/* primary botname */
+tcl_timer_t	 *timer = NULL;		/* Minutely timer		*/
+tcl_timer_t	 *utimer = NULL;	/* Secondly timer		*/
+unsigned long	  timer_id = 1;		/* Next timer of any sort will
+					   have this number		*/
+struct chanset_t *chanset = NULL;	/* Channel list			*/
+char		  admin[121] = "";	/* Admin info			*/
+char		  origbotname[NICKLEN + 1];
+char		  botname[NICKLEN + 1];	/* Primary botname		*/
 
-/* remove space characters from beginning and end of string */
-/* (more efficent by Fred1) */
+
+/* Remove space characters from beginning and end of string
+ * (more efficent by Fred1)
+ */
 void rmspace(char *s)
 {
-#define whitespace(c) ( ((c)==32) || ((c)==9) || ((c)==13) || ((c)==10) )
+#define whitespace(c) (((c) == 32) || ((c) == 9) || ((c) == 13) || ((c) == 10))
   char *p;
 
   if (*s == '\0')
 	return;
 
-  /* wipe end of string */
+  /* Wipe end of string */
   for (p = s + strlen(s) - 1; ((whitespace(*p)) && (p >= s)); p--);
   if (p != s + strlen(s) - 1)
     *(p + 1) = 0;
@@ -82,7 +82,8 @@ void rmspace(char *s)
     strcpy(s, p);
 }
 
-/* returns memberfields if the nick is in the member list */
+/* Returns memberfields if the nick is in the member list.
+ */
 memberlist *ismember(struct chanset_t *chan, char *nick)
 {
   memberlist *x;
@@ -95,7 +96,8 @@ memberlist *ismember(struct chanset_t *chan, char *nick)
   return x;
 }
 
-/* find a chanset by channel name as the server knows it (ie !ABCDEchannel) */
+/* Find a chanset by channel name as the server knows it (ie !ABCDEchannel)
+ */
 struct chanset_t *findchan(char *name)
 {
   struct chanset_t *chan = chanset;
@@ -108,7 +110,8 @@ struct chanset_t *findchan(char *name)
   return NULL;
 }
 
-/* find a chanset by display name (ie !channel) */
+/* Find a chanset by display name (ie !channel)
+ */
 struct chanset_t *findchan_by_dname(char *name)
 {
   struct chanset_t *chan = chanset;
@@ -121,9 +124,13 @@ struct chanset_t *findchan_by_dname(char *name)
   return NULL;
 }
 
-/* stupid "caching" functions */
-/* shortcut for get_user_by_host -- might have user record in one
- * of the channel caches */
+/*
+ *    "caching" functions
+ */
+
+/* Shortcut for get_user_by_host -- might have user record in one
+ * of the channel caches.
+ */
 struct userrec *check_chanlist(char *host)
 {
   char *nick, *uhost, buf[UHOSTLEN];
@@ -131,7 +138,7 @@ struct userrec *check_chanlist(char *host)
   struct chanset_t *chan;
 
   strncpy(buf, host, UHOSTMAX);
-  buf[UHOSTMAX] = 0;	/* why is this case sanely done, when there
+  buf[UHOSTMAX] = 0;	/* Why is this case sanely done, when there
 			 * are so many others? */
   uhost = buf;
   nick = splitnick(&uhost);
@@ -147,7 +154,8 @@ struct userrec *check_chanlist(char *host)
   return NULL;
 }
 
-/* shortcut for get_user_by_handle -- might have user record in channels */
+/* Shortcut for get_user_by_handle -- might have user record in channels
+ */
 struct userrec *check_chanlist_hand(char *hand)
 {
   struct chanset_t *chan = chanset;
@@ -166,8 +174,11 @@ struct userrec *check_chanlist_hand(char *hand)
   return NULL;
 }
 
-/* clear the user pointers in the chanlists */
-/* (necessary when a hostmask is added/removed or a user is added) */
+/* Clear the user pointers in the chanlists.
+ *
+ * Necessary when a hostmask is added/removed, a user is added or a new
+ * userfile is loaded.
+ */
 void clear_chanlist()
 {
   memberlist *m;
@@ -183,7 +194,8 @@ void clear_chanlist()
   }
 }
 
-/* if this user@host is in a channel, set it (it was null) */
+/* If this user@host is in a channel, set it (it was null)
+ */
 void set_chanlist(char *host, struct userrec *rec)
 {
   char *nick, *uhost, buf[UHOSTLEN];
@@ -207,7 +219,8 @@ void set_chanlist(char *host, struct userrec *rec)
   }
 }
 
-/* memory we should be using */
+/* Calculate the memory we should be using
+ */
 int expmem_chanprog()
 {
   int tot;
@@ -226,7 +239,8 @@ int expmem_chanprog()
   return tot;
 }
 
-/* dump uptime info out to dcc (guppy 9Jan99) */
+/* Dump uptime info out to dcc (guppy 9Jan99)
+ */
 void tell_verbose_uptime(int idx)
 {
   char s[256], s1[121];
@@ -260,22 +274,20 @@ void tell_verbose_uptime(int idx)
   dprintf(idx, "%s %s  (%s)\n", MISC_ONLINEFOR, s, s1);
 }
 
-/* dump status info out to dcc */
+/* Dump status info out to dcc
+ */
 void tell_verbose_status(int idx)
 {
   char s[256], s1[121], s2[81];
   char *vers_t, *uni_t;
   int i;
   time_t now2, hr, min;
-
 #if HAVE_GETRUSAGE
   struct rusage ru;
-
 #else
-#if HAVE_CLOCK
+# if HAVE_CLOCK
   clock_t cl;
-
-#endif
+# endif
 #endif
 #ifdef HAVE_UNAME
   struct utsname un;
@@ -327,32 +339,32 @@ void tell_verbose_status(int idx)
   getrusage(RUSAGE_SELF, &ru);
   hr = (int) ((ru.ru_utime.tv_sec + ru.ru_stime.tv_sec) / 60);
   min = (int) ((ru.ru_utime.tv_sec + ru.ru_stime.tv_sec) - (hr * 60));
-  sprintf(s2, "CPU %02d:%02d", (int) hr, (int) min);	/* actally min/sec */
+  sprintf(s2, "CPU %02d:%02d", (int) hr, (int) min);	/* Actally min/sec */
 #else
-#if HAVE_CLOCK
+# if HAVE_CLOCK
   cl = (clock() / CLOCKS_PER_SEC);
   hr = (int) (cl / 60);
   min = (int) (cl - (hr * 60));
-  sprintf(s2, "CPU %02d:%02d", (int) hr, (int) min);	/* actually min/sec */
-#else
+  sprintf(s2, "CPU %02d:%02d", (int) hr, (int) min);	/* Actually min/sec */
+# else
   sprintf(s2, "CPU ???");
-#endif
+# endif
 #endif
   dprintf(idx, "%s %s  (%s)  %s  %s %4.1f%%\n", MISC_ONLINEFOR,
 	  s, s1, s2, MISC_CACHEHIT,
-       100.0 * ((float) cache_hit) / ((float) (cache_hit + cache_miss)));
+	  100.0 * ((float) cache_hit) / ((float) (cache_hit + cache_miss)));
   strcpy(s, "info library");
   if ((interp) && (Tcl_Eval(interp, s) == TCL_OK))
     dprintf(idx, "%s %s\n", MISC_TCLLIBVER, interp->result);
 }
 
-/* show all internal state variables */
+/* Show all internal state variables
+ */
 void tell_settings(int idx)
 {
   char s[1024];
   int i;
-  struct flag_record fr =
-  {FR_GLOBAL, 0, 0, 0, 0, 0};
+  struct flag_record fr = {FR_GLOBAL, 0, 0, 0, 0, 0};
 
   dprintf(idx, "Botnet Nickname: %s\n", botnetnick);
   if (firewall[0])
@@ -385,7 +397,7 @@ void reaffirm_owners()
   char *p, *q, s[121];
   struct userrec *u;
 
-  /* make sure default owners are +n */
+  /* Make sure default owners are +n */
   if (owner[0]) {
     q = owner;
     p = strchr(q, ',');
@@ -417,9 +429,9 @@ void chanprog()
   for (i = 0; i < max_logs; i++)
     logs[i].flags |= LF_EXPIRING;
   conmask = 0;
-  /* turn off read-only variables (make them write-able) for rehash */
+  /* Turn off read-only variables (make them write-able) for rehash */
   protect_readonly = 0;
-  /* now read it */
+  /* Now read it */
   Context;
   if (!readtclprog(configfile))
     fatal(MISC_NOCONFIGFILE, 0);
@@ -448,7 +460,7 @@ void chanprog()
   if (!userfile[0])
     fatal(MISC_NOUSERFILE2, 0);
   if ((int) getuid() == 0) {
-    /* perhaps you should make it run something innocent here ;)
+    /* Perhaps you should make it run something innocent here ;)
      * like rm -rf /etc :) */
     printf("\n\n%s\n", MISC_ROOTWARN);
   }
@@ -477,13 +489,17 @@ void chanprog()
   if (!botnetnick[0])
     fatal("I don't have a botnet nick!!\n", 0);
   Context;
-  /* test tempdir: it's vital */
+  /* Test tempdir: it's vital */
   {
     FILE *f;
     char s[161], rands[8];
 
-    /* possible file race condition solved by using a random string 
-     * and the process id in the filename */
+    /* Possible file race condition solved by using a random string 
+     * and the process id in the filename.
+     * FIXME: This race is only partitially fixed. We could still be
+     *        overwriting an existing file / following a malicious
+     *        link.
+     */
     make_rand_str(rands, 7); /* create random string */
     sprintf(s, "%s.test-%u-%s", tempdir, getpid(), rands);
     f = fopen(s, "w");
@@ -496,7 +512,8 @@ void chanprog()
   reaffirm_owners();
 }
 
-/* reload the user file from disk */
+/* Reload the user file from disk
+ */
 void reload()
 {
   FILE *f;
@@ -528,9 +545,12 @@ void rehash()
   chanprog();
 }
 
-/* brief venture into timers */
+/*
+ *    Brief venture into timers
+ */
 
-/* add a timer */
+/* Add a timer
+ */
 unsigned long add_timer(tcl_timer_t ** stack, int elapse, char *cmd,
 			unsigned long prev_id)
 {
@@ -541,8 +561,9 @@ unsigned long add_timer(tcl_timer_t ** stack, int elapse, char *cmd,
   (*stack)->mins = elapse;
   (*stack)->cmd = (char *) nmalloc(strlen(cmd) + 1);
   strcpy((*stack)->cmd, cmd);
-  /* if it's just being added back and already had an id,
-   * don't create a new one */
+  /* If it's just being added back and already had an id,
+   * don't create a new one.
+  */
   if (prev_id > 0)
     (*stack)->id = prev_id;
   else
@@ -550,7 +571,8 @@ unsigned long add_timer(tcl_timer_t ** stack, int elapse, char *cmd,
   return (*stack)->id;
 }
 
-/* remove a timer, by id */
+/* Remove a timer, by id
+ */
 int remove_timer(tcl_timer_t ** stack, unsigned long id)
 {
   tcl_timer_t *old;
@@ -569,15 +591,17 @@ int remove_timer(tcl_timer_t ** stack, unsigned long id)
   return ok;
 }
 
-/* check timers, execute the ones that have expired */
+/* Check timers, execute the ones that have expired.
+ */
 void do_check_timers(tcl_timer_t ** stack)
 {
   tcl_timer_t *mark = *stack, *old = NULL;
   char x[30];
 
-  /* new timers could be added by a Tcl script inside a current timer */
-  /* so i'll just clear out the timer list completely, and add any
-   * unexpired timers back on */
+  /* New timers could be added by a Tcl script inside a current timer
+   * so i'll just clear out the timer list completely, and add any
+   * unexpired timers back on.
+   */
   Context;
   *stack = NULL;
   while (mark) {
@@ -600,7 +624,8 @@ void do_check_timers(tcl_timer_t ** stack)
   }
 }
 
-/* wipe all timers */
+/* Wipe all timers.
+ */
 void wipe_timers(Tcl_Interp * irp, tcl_timer_t ** stack)
 {
   tcl_timer_t *mark = *stack, *old;
@@ -614,7 +639,8 @@ void wipe_timers(Tcl_Interp * irp, tcl_timer_t ** stack)
   *stack = NULL;
 }
 
-/* return list of timers */
+/* Return list of timers
+ */
 void list_timers(Tcl_Interp * irp, tcl_timer_t * stack)
 {
   tcl_timer_t *mark = stack;
@@ -633,8 +659,8 @@ void list_timers(Tcl_Interp * irp, tcl_timer_t * stack)
   }
 }
 
-/* Oddly enough, written by proton (Emech's coder) */
-
+/* Oddly enough, written by proton (Emech's coder)
+ */
 int isowner(char *name)
 {
   char *pa, *pb;

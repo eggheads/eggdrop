@@ -3,9 +3,7 @@
  *   Tcl stubs for file system commands
  *   Tcl stubs for everything else
  * 
- * dprintf'ized, 1aug1996
- * 
- * $Id: tclmisc.c,v 1.9 2000/01/17 22:36:07 fabian Exp $
+ * $Id: tclmisc.c,v 1.10 2000/01/30 19:26:21 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -26,26 +24,25 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#include "main.h"
 #include <sys/stat.h>
+#include "main.h"
 #include "modules.h"
 #include "tandem.h"
 #ifdef HAVE_UNAME
 #include <sys/utsname.h>
 #endif
 
-/* includes for the tcl_md5 function <Olrick> */
+/* Includes for the tcl_md5 function <Olrick> */
 #include "md5/global.h"
 #include "md5/md5.h"
 
-extern tcl_timer_t *timer, *utimer;
-extern struct dcc_t *dcc;
-extern char origbotname[], botnetnick[];
-extern struct userrec *userlist;
-extern time_t now;
-extern module_entry *module_list;
+extern tcl_timer_t	*timer, *utimer;
+extern struct dcc_t	*dcc;
+extern char		 origbotname[], botnetnick[];
+extern struct userrec	*userlist;
+extern time_t		 now;
+extern module_entry	*module_list;
 
-/***********************************************************************/
 
 static int tcl_putlog STDVAR
 {
@@ -370,7 +367,7 @@ static int tcl_die STDVAR
   botnet_send_bye();
   write_userfile(-1);
   fatal(g, 0);
-  /* should never return, but, to keep gcc happy: */
+  /* Should never return, but, to keep gcc happy: */
   return TCL_OK;
 }
 
@@ -421,6 +418,7 @@ static int tcl_unames STDVAR
   char *unix_n, *vers_n;
 #ifdef HAVE_UNAME
   struct utsname un;
+
   if (uname(&un) < 0) {
 #endif
     unix_n = "*unkown*";
@@ -496,7 +494,7 @@ static int tcl_reloadhelp STDVAR
 
 static int tcl_md5 STDVAR
 {
-  MD5_CTX       context;
+  MD5_CTX       md5context;
   char          digest_string[33];       /* 32 for digest in hex + null */
   unsigned char digest[16];
   int           i;
@@ -504,9 +502,9 @@ static int tcl_md5 STDVAR
   Context;
   BADARGS(2, 2, " string");
 
-  MD5Init(&context);
-  MD5Update(&context, (unsigned char *)argv[1], strlen(argv[1]));
-  MD5Final(digest, &context);
+  MD5Init(&md5context);
+  MD5Update(&md5context, (unsigned char *)argv[1], strlen(argv[1]));
+  MD5Final(digest, &md5context);
 
   for(i=0; i<16; i++)
     sprintf(digest_string + (i*2), "%.2x", digest[i]);
@@ -518,36 +516,36 @@ static int tcl_md5 STDVAR
 
 tcl_cmds tclmisc_cmds[] =
 {
-  {"putlog", tcl_putlog},
-  {"putcmdlog", tcl_putcmdlog},
-  {"putxferlog", tcl_putxferlog},
-  {"putloglev", tcl_putloglev},
-  {"timer", tcl_timer},
-  {"utimer", tcl_utimer},
-  {"killtimer", tcl_killtimer},
-  {"killutimer", tcl_killutimer},
-  {"unixtime", tcl_unixtime},
-  {"timers", tcl_timers},
-  {"utimers", tcl_utimers},
-  {"ctime", tcl_ctime},
-  {"myip", tcl_myip},
-  {"rand", tcl_rand},
-  {"sendnote", tcl_sendnote},
-  {"dumpfile", tcl_dumpfile},
-  {"dccdumpfile", tcl_dccdumpfile},
-  {"backup", tcl_backup},
-  {"exit", tcl_die},
-  {"die", tcl_die},
-  {"strftime", tcl_strftime},
-  {"unames", tcl_unames},
-  {"unloadmodule", tcl_unloadmodule},
-  {"loadmodule", tcl_loadmodule},
-  {"checkmodule", tcl_loadmodule},
-  {"modules", tcl_modules},
-  {"loadhelp", tcl_loadhelp},
-  {"unloadhelp", tcl_unloadhelp},
-  {"reloadhelp", tcl_reloadhelp},
-  {"duration", tcl_duration},
-  {"md5", tcl_md5},
-  {0, 0}
+  {"putlog",		tcl_putlog},
+  {"putcmdlog",		tcl_putcmdlog},
+  {"putxferlog",	tcl_putxferlog},
+  {"putloglev",		tcl_putloglev},
+  {"timer",		tcl_timer},
+  {"utimer",		tcl_utimer},
+  {"killtimer",		tcl_killtimer},
+  {"killutimer",	tcl_killutimer},
+  {"unixtime",		tcl_unixtime},
+  {"timers",		tcl_timers},
+  {"utimers",		tcl_utimers},
+  {"ctime",		tcl_ctime},
+  {"myip",		tcl_myip},
+  {"rand",		tcl_rand},
+  {"sendnote",		tcl_sendnote},
+  {"dumpfile",		tcl_dumpfile},
+  {"dccdumpfile",	tcl_dccdumpfile},
+  {"backup",		tcl_backup},
+  {"exit",		tcl_die},
+  {"die",		tcl_die},
+  {"strftime",		tcl_strftime},
+  {"unames",		tcl_unames},
+  {"unloadmodule",	tcl_unloadmodule},
+  {"loadmodule",	tcl_loadmodule},
+  {"checkmodule",	tcl_loadmodule},
+  {"modules",		tcl_modules},
+  {"loadhelp",		tcl_loadhelp},
+  {"unloadhelp",	tcl_unloadhelp},
+  {"reloadhelp",	tcl_reloadhelp},
+  {"duration",		tcl_duration},
+  {"md5",		tcl_md5},
+  {NULL,		NULL}
 };
