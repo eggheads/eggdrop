@@ -454,6 +454,10 @@ specific commands, see later.
     returns: "1" if someone by that nickname is on the channel and has chop;
       "0" otherwise
 
+| wasop <nickname> <channel>
+|   returns: "1" if someone that just got opped/deopped in the chan had op
+|     before the modechange; "0" otherwise
+  
   isvoice <nickname> <channel>
     returns: "1" if someone by that nickname is on the channel and has voice
       (+v); "0" otherwise

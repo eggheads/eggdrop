@@ -9,7 +9,7 @@
  * dprintf'ized, 27oct1995
  * multi-channel, 8feb1996
  * 
- * $Id: chan.c,v 1.49 1999/12/28 01:46:27 guppy Exp $
+ * $Id: chan.c,v 1.50 1999/12/30 23:23:45 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -813,9 +813,9 @@ static int got352or4(struct chanset_t *chan, char *user, char *host,
   }
   waschanop = me_op(chan);	/* Am I opped here? */
   if (strchr(flags, '@') != NULL)	/* Flags say he's opped? */
-    m->flags |= CHANOP;		/* Yes, so flag in my table */
+    m->flags |= (CHANOP | WASOP);	/* Yes, so flag in my table */
   else
-    m->flags &= ~CHANOP;
+    m->flags &= ~(CHANOP | WASOP);
   if (strchr(flags, '+') != NULL)	/* Flags say he's voiced? */
     m->flags |= CHANVOICE;	/* Yes */
   else
@@ -1393,7 +1393,7 @@ static int gotjoin(char *from, char *chname)
 	m->split = 0;
 	m->last = now;
 	m->delay = 0L;
-        m->flags = (chan_hasop(m) ? WASOP : 0);
+        m->flags &= ~WASOP; /* drummer */
 	m->user = u;
 	set_handle_laston(chname, u, now);
 	m->flags |= STOPWHO;

@@ -6,7 +6,7 @@
  * 
  * dprintf'ized, 27oct1995
  * 
- * $Id: dcc.c,v 1.21 1999/12/22 20:30:03 guppy Exp $
+ * $Id: dcc.c,v 1.22 1999/12/30 23:23:45 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -138,7 +138,6 @@ static void greet_new_bot(int idx)
     if (dcc[i].type == &DCC_FORK_BOT) {
       killsock(dcc[i].sock);
       lostdcc(i);
-      i--;
     }
 }
 

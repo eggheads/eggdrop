@@ -1,7 +1,7 @@
 /* 
  * servmsg.c -- part of server.mod
  * 
- * $Id: servmsg.c,v 1.25 1999/12/28 01:46:27 guppy Exp $
+ * $Id: servmsg.c,v 1.26 1999/12/30 23:23:46 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -301,7 +301,7 @@ static void nuke_server(char *reason)
     if (reason && (servidx > 0))
       dprintf(servidx, "QUIT :%s\n", reason);
     disconnect_server(servidx);
-    removedcc(servidx);
+    lostdcc(servidx);
   }
 }
 
@@ -958,7 +958,7 @@ static void eof_server(int idx)
 {
   putlog(LOG_SERV, "*", "%s %s", IRC_DISCONNECTED, dcc[idx].host);
   disconnect_server(idx);
-  removedcc(idx);
+  lostdcc(idx);
 }
 
 static void display_server(int idx, char *buf)
@@ -986,7 +986,7 @@ static void timeout_server(int idx)
 {
   putlog(LOG_SERV, "*", "Timeout: connect to %s", dcc[idx].host);
   disconnect_server(idx);
-  removedcc(idx);
+  lostdcc(idx);
 }
 
 static void server_activity(int idx, char *msg, int len);

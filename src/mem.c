@@ -5,7 +5,7 @@
  * 
  * dprintf'ized, 15nov1995
  * 
- * $Id: mem.c,v 1.10 1999/12/15 02:32:58 guppy Exp $
+ * $Id: mem.c,v 1.11 1999/12/30 23:23:45 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -35,10 +35,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-typedef int (*Function) ();
+#include <errno.h>
 
+typedef int (*Function) ();
 #include "mod/modvals.h"
+
 extern module_entry *module_list;
+void fatal(char *, int);
 
 #ifdef DEBUG_MEM
 unsigned long memused = 0;
@@ -303,15 +306,15 @@ void debug_mem_to_dcc(int idx)
 void *n_malloc(int size, char *file, int line)
 {
   void *x;
-
 #ifdef DEBUG_MEM
   int i = 0;
-
 #endif
+
   x = (void *) malloc(size);
   if (x == NULL) {
-    putlog(LOG_MISC, "*", "*** FAILED MALLOC %s (%d) (%d)", file, line, size);
-    return NULL;
+    putlog(LOG_MISC, "*", "*** FAILED MALLOC %s (%d) (%d): %s", file, line,
+	   size, strerror(errno));
+    fatal("Memory allocation failed", 0);
   }
 #ifdef DEBUG_MEM
   if (lastused == MEMTBLSIZE) {

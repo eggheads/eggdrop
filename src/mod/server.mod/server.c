@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  * 
- * $Id: server.c,v 1.27 1999/12/28 01:46:27 guppy Exp $
+ * $Id: server.c,v 1.28 1999/12/30 23:23:46 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -815,7 +815,7 @@ static void server_5minutely()
       int servidx = findanyidx(serv);
 
       disconnect_server(servidx);
-      removedcc(servidx);
+      lostdcc(servidx);
       putlog(LOG_SERV, "*", IRC_SERVERSTONED);
     } else if (!trying_server) {
       /* check for server being stoned */
