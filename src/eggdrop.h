@@ -4,7 +4,7 @@
  *
  *   IF YOU ALTER THIS FILE, YOU NEED TO RECOMPILE THE BOT.
  *
- * $Id: eggdrop.h,v 1.38 2002/01/02 03:46:35 guppy Exp $
+ * $Id: eggdrop.h,v 1.39 2002/09/10 02:22:01 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -61,7 +61,7 @@
 /* Handy string lengths */
 
 #define UHOSTMAX	160	/* reasonable, i think?			*/
-#define DIRMAX		256	/* paranoia				*/
+#define DIRMAX		512	/* paranoia				*/
 #define LOGLINEMAX	767	/* for misc.c/putlog() <cybah>		*/
 #define BADHANDCHARS	"-,+*=:!.@#;$%&"
 
@@ -301,7 +301,7 @@ struct file_info {
 struct xfer_info {
   char *filename;
   char *origname;
-  char dir[121];		/* used when uploads go to the current dir */
+  char dir[DIRLEN];		/* used when uploads go to the current dir */
   unsigned long length;
   unsigned long acked;
   char buf[4];			/* you only need 5 bytes!		   */

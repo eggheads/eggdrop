@@ -1,7 +1,7 @@
 /*
  * transfer.c -- part of transfer.mod
  *
- * $Id: transfer.c,v 1.52 2002/08/15 04:51:53 wcc Exp $
+ * $Id: transfer.c,v 1.53 2002/09/10 02:22:01 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1483,8 +1483,8 @@ static int raw_dcc_resend_send(char *filename, char *nick, char *from,
     nfn = buf = replace_spaces(nfn);
   dcc[i].u.xfer->origname = get_data_ptr(strlen(nfn) + 1);
   strcpy(dcc[i].u.xfer->origname, nfn);
-  strcpy(dcc[i].u.xfer->from, from);
-  strcpy(dcc[i].u.xfer->dir, dir);
+  strncpyz(dcc[i].u.xfer->from, from, NICKLEN);
+  strncpyz(dcc[i].u.xfer->dir, dir, DIRLEN);
   dcc[i].u.xfer->length = dccfilesize;
   dcc[i].timeval = now;
   dcc[i].u.xfer->f = f;
