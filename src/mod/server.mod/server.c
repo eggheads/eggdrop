@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  * 
- * $Id: server.c,v 1.29 2000/01/06 19:45:05 fabian Exp $
+ * $Id: server.c,v 1.30 2000/01/17 22:28:04 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -226,12 +226,21 @@ static int calc_penalty(char * msg)
   register int penalty, i, ii;
 
   Context;
-  if (!use_penalties)
+  if (!use_penalties && (net_type != 2) && (net_type != 4))
     return 0;
-  penalty = 0;
   if (msg[strlen(msg) - 1] == '\n')
     msg[strlen(msg) - 1] = '\0';
   cmd = newsplit(&msg);
+  if (msg)
+    i = strlen(msg);
+  else
+    i = strlen(cmd);
+  last_time -= 2; /* undo eggdrop standard flood prot */
+  if ((net_type == 2) || (net_type == 4)) {
+    last_time += (2 + i / 120);
+    return 0;
+  }
+  penalty = (1 + i / 100);
   if (!strcasecmp(cmd, "KICK")) {
     par1 = newsplit(&msg); /* channel */
     par2 = newsplit(&msg); /* victim(s) */
@@ -248,23 +257,28 @@ static int calc_penalty(char * msg)
       penalty += ii;
     }
   } else if (!strcasecmp(cmd, "MODE")) {
+    i = 0;
     par1 = newsplit(&msg); /* channel */
     par2 = newsplit(&msg); /* mode(s) */
-    par3 = newsplit(&msg); /* victim(s) */
-    if (strlen(par3) < 1) /* ban/exempt/invite list query */
-      penalty++;
-    else {
-      for (i = 0; i < strlen(par2); i++) {
-        if (!strchr("+-", par2[i]))
-          penalty += 3;
-      }
+    if (!strlen(par2))
+      i++;
+    while (strlen(par2) > 0) {
+      if (strchr("ntimps", par2[0]))
+        i += 3;
+      else if (!strchr("+-", par2[0]))
+        i += 1;
+      par2++;
     }
-    ii = penalty;
-    par3 = splitnicks(&par1);
+    while (strlen(msg) > 0) {
+      newsplit(&msg);
+      i += 2;
+    }
+    ii = 0;
     while (strlen(par1) > 0) {
-      par3 = splitnicks(&par1);
-      penalty += ii;
+      splitnicks(&par1);
+      ii++;
     }
+    penalty += (ii * i);
   } else if (!strcasecmp(cmd, "TOPIC")) {
     penalty++;
     par1 = newsplit(&msg); /* channel */
@@ -279,11 +293,10 @@ static int calc_penalty(char * msg)
     }
   } else if (!strcasecmp(cmd, "PRIVMSG") || !strcasecmp(cmd, "NOTICE")) {
     par1 = newsplit(&msg); /* channel(s)/nick(s) */
-    par2 = par1;
-    /* Add one penalty point for each additional recipient */
+    /* Add one sec penalty for each recipient */
     while (strlen(par1) > 0) {
-      par2 = splitnicks(&par1);
-      if (strlen(par1) > 0) penalty++;
+      splitnicks(&par1);
+      penalty++;
     }
   } else if (!strcasecmp(cmd, "WHO")) {
     par1 = newsplit(&msg); /* masks */
@@ -323,10 +336,17 @@ static int calc_penalty(char * msg)
     penalty += 2;
   } else if (!strcasecmp(cmd, "DNS")) {
     penalty += 2;
+  } else {
+    debug1("Unknown command %s, adding 1sec standard-penalty", cmd);
+    penalty++;
   }
   /* Shouldn't happen, but you never know... */
-  if (penalty > 90)
-    penalty = 90;
+  if (penalty > 99)
+    penalty = 99;
+  if (penalty < 2) {
+    putlog(LOG_SRVOUT, "*", "Penalty < 2sec, that's impossible!");
+    penalty = 2;
+  }
   if (debug_output && (penalty != 0))
     putlog(LOG_SRVOUT, "*", "Adding penalty: %i", penalty);
   return penalty;

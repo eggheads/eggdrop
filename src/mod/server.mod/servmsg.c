@@ -1,7 +1,7 @@
 /* 
  * servmsg.c -- part of server.mod
  * 
- * $Id: servmsg.c,v 1.22 2000/01/07 20:04:02 fabian Exp $
+ * $Id: servmsg.c,v 1.23 2000/01/17 22:28:04 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1073,13 +1073,13 @@ static int gotping(char *from, char *msg)
  */
 static int kickpenalty(char *from, char *msg)
 {
-  char buf[UHOSTLEN], *nick, *uhost = buf;
+  /* char buf[UHOSTLEN], *nick, *uhost = buf; */
   
   if (!use_penalties)
     return 0;
-  strcpy(uhost, from);
-  nick = splitnick(&uhost);
-  if (!strcmp(nick,botname)) {
+  /* strcpy(uhost, from); */      /* somehow, from doesn't contain n!u@h */
+  /* nick = splitnick(&uhost); */ /* anymore use this workaround until   */
+  if (!strcmp(from, botname)) {   /* the real problem is found           */
     last_time += 2;
     if (debug_output)
       putlog(LOG_SRVOUT, "*", "adding 2secs penalty (successful kick)");
