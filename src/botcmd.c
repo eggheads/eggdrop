@@ -5,7 +5,7 @@
  * 
  * dprintf'ized, 10nov1995
  * 
- * $Id: botcmd.c,v 1.15 2000/01/22 23:31:54 per Exp $
+ * $Id: botcmd.c,v 1.16 2000/01/22 23:37:02 per Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -312,9 +312,9 @@ static void remote_tell_who(int idx, char *nick, int chan)
       l = strlen(c->name);
       if (i + l < 1021) {
 	if (i > 10) {
-          sprintf(s,"%s, %s",s,c->name);
+          sprintf(s, "%s, %s", s, c->name);
 	} else {
-          strcpy(s,c->name);
+          strcpy(s, c->name);
 	  i += (l + 2);
         }
       }
