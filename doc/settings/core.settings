@@ -15,7 +15,7 @@ The first line in eggdrop configuration file should contain a full qualified
 path to eggdrop executable. It has to be implemented in the way the example
 shows to make the config file work as a shell script
 
-Example: 
+Example:
 
 #! /path/to/eggdrop
 
@@ -121,7 +121,7 @@ logfile <logflags> <channel> "logs/logfile"
     Each logfile belongs to a certain channel. Events of type 'k', 'j', and 'p'
     are logged to whatever channel they happened on. Most other events are
     currently logged to every channel. You can make a logfile belong to all
-    channels by assigning it to channel "*". 
+    channels by assigning it to channel "*".
 
     Examples:
 
@@ -365,7 +365,7 @@ set firewall "host:port"
     Example:
 
     set firewall "proxy:178"
-    
+
     If you use a Sun "telnet passthru" firewall, use this setting:
 
     Example:

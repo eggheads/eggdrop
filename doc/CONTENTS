@@ -4,19 +4,25 @@ settings/
    documentation for all config file settings
 
 man1/
-   unix man pages, should you ever need them
+   unix man pages
 
-web_docs/
-  all doc files in html
+html/
+   all doc files in html
+
+AUTHORS
+   a list of eggdrop developers and contributors
 
 BOTNET
-   a guid to flags and bot user file sharing
+   a guide to flags and bot user file sharing
+
+BUG-REPORT
+   a guide how to send bug-reports
 
 CONTENTS
-  this file
+   this file
 
 KNOWN-PROBLEMS
-   i.e. things that are broke, but aren't getting fixed anytime soon
+   i.e. things that are broken, but aren't getting fixed anytime soon
 
 MODULES
    module information (not finished yet, but getting there).
@@ -34,18 +40,18 @@ UPDATES.pre1.3
    a list of what's changed in pre 1.3 versions
 
 compiling.FAQ
-  if you have troubles compiling your eggdrop, take a look
-  into this file
+   if you have troubles compiling your eggdrop, take a look
+   into this file
 
 eggdrop.doc
    the primary documentation on running an eggdrop bot -- to be used
    AFTER you get it compiled  (unfinished, but a good starter course)
 
 patch.howto
-  a how-to on applying and making patches to eggdrop
-  (patches are a popular way to fix bugs in programs)
+   a how-to on applying and making patches to eggdrop
+   (patches are a popular way to fix bugs in programs)
 
-motd.settings
+text-substitutions.doc
    documentation for the motd file
 
 tcl-commands.doc

@@ -1,4 +1,4 @@
-PATCH HOWTO v1.2			                  29 May 2000
+PATCH HOWTO v1.2                                          29 May 2000
 
 
 
@@ -6,7 +6,7 @@ INDEX
 
 I.      ABOUT THIS DOCUMENT
 II.     TERMS USED
-III.	APPLYING A PATCH
+III.    APPLYING A PATCH
 IV.     DOING AND SUBMITTING PATCH
 V.      DOWNLOADING A PATCH
 
@@ -39,7 +39,7 @@ If applicable, there is also the associated command named.
 
 
 
-III.	APPLYING A PATCH
+III.    APPLYING A PATCH
 
 To apply a patch to an eggdrop you have to get first the sourcecode of
 it (you should always keep a tar.gz archieve with the source of your

@@ -60,7 +60,7 @@ set use-info 1
 
 
 channel add #channel { SETTINGS }
-    Add each static channel you want your bot to sit in using this command. 
+    Add each static channel you want your bot to sit in using this command.
     There are many different possible settings you can insert into this
     command.
     A complete list of them:
@@ -82,7 +82,7 @@ channel add #channel { SETTINGS }
      with serverops.
      There're seven different modes for this settings:
       0 turn off,
-      1 isoptest (allow serverop if registered op), 
+      1 isoptest (allow serverop if registered op),
       2 wasoptest (allow serverop if op before split)
       3 allow serverop if isop or wasop
       4 allow serverop if isop and wasop
@@ -240,7 +240,7 @@ channel set <chan> +/-<setting>
       it's annoying; i think it's neat)
 
      revenge
-      remember people who deop/kick/ban the bot, valid ops or friends, and 
+      remember people who deop/kick/ban the bot, valid ops or friends, and
       punish them? Users with +f (friend) flag are exempt from revenge
 
      revengebot
@@ -304,9 +304,9 @@ set global-chanset {
         +cycle          +dontkickops
         -inactive       -protectfriends
         +shared         -seen
-	+userexempts	+dynamicexempts
-	+userinvites	+dynamicinvites
-	-nodesynch
+        +userexempts    +dynamicexempts
+        +userinvites    +dynamicinvites
+        -nodesynch
 }
 
 set global-chanmode "nt-likm"

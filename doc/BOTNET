@@ -1,15 +1,15 @@
-BOTNET SHARING and LINKING v2.0			                  03 Jun 1999
+BOTNET SHARING and LINKING v2.0                                   03 Jun 1999
 
 
 
 INDEX
 
-I	ABOUT THIS DOCUMENT
-II	TERMS USED
-III	WHAT IS A BOTNET FOR?
-IV	ADDING AND LINKING BOTS
-V	USING BOTFLAGS
-VI	MAKE TWO BOTS SHARE USER RECORD
+I       ABOUT THIS DOCUMENT
+II      TERMS USED
+III     WHAT IS A BOTNET FOR?
+IV      ADDING AND LINKING BOTS
+V       USING BOTFLAGS
+VI      MAKE TWO BOTS SHARE USER RECORD
 
 
 
@@ -165,7 +165,7 @@ IV. ADDING AND LINKING BOTS
 With the common terms out of the way we can start with the process of
 linking two bots. Before you start you have to know the following:
 
-	-  What are the domains and ports of the bots.
+        -  What are the domains and ports of the bots.
 
 Let's say there is BotA on lame.org listening to port 3333 and BotB
 on irc.org listening to port 4444. Now you have to add each Bot to the
@@ -184,7 +184,7 @@ Note that you can add and link as much Bots as you want to your botnet.
 
 
 
-V	USING BOTFLAGS
+V       USING BOTFLAGS
 
 Botflags are needed to assign special functions and tasks to your bots.
 
@@ -262,7 +262,7 @@ Botflags are needed to assign special functions and tasks to your bots.
 
 
 
-VI	MAKE TWO BOTS SHARE USER RECORDS
+VI      MAKE TWO BOTS SHARE USER RECORDS
 
 Before you start preparing your bots for sharing, you have to make sure that
 you've loaded the transfer, share and filesys module into your bot (look

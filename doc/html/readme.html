@@ -1,5 +1,5 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: readme.html,v 1.3 2000/07/25 19:15:50 johoho Exp $ -->
+<!-- $Id: readme.html,v 1.4 2000/10/09 12:26:33 tothwolf Exp $ -->
 
 <html>
   <head>
@@ -14,64 +14,61 @@
 
     <p>Please at least <strong>SKIM</strong> this document before asking
     questions. In fact, <strong>READ IT</strong> if you&#39;ve never
-    successfully set up an Eggdrop bot before. <strong>PLEASE! READ
-    IT!</strong> If you haven&#39;t read this file, and ask for help expect
-    to be told to <strong>READ</strong> the README file first! or rtfm
-    :)</p>
-    <hr>
+    successfully set up an Eggdrop bot before.</p>
 
     <p><strong>Contents</strong></p>
 
-    <p><a href="#notice">Important notice</a></p>
 
     <blockquote>
       <ol>
-        <li><a href="#sect1">What is Eggdrop?</a></li>
+        <li><a href="#sect1">Important notice</a></li>
+
+        <li><a href="#sect2">What is Eggdrop?</a></li>
 
         <li>
-          <a href="#sect2">How do I get Eggdrop</a> 
+          <a href="#sect3">How do I get Eggdrop</a> 
 
           <ol type="a">
-            <li><a href="#sect2a">How to get the latest version of eggdrop
+            <li><a href="#sect3a">How to get the latest version of eggdrop
             via CVS</a></li>
           </ol>
         </li>
 
-        <li><a href="#sect3">Quick startup</a></li>
+        <li><a href="#sect4">Quick startup</a></li>
 
         <li>
-          <a href="#sect4">Upgrading</a> 
+          <a href="#sect5">Upgrading</a> 
 
           <ol type="a">
-            <li><a href="#sect4a">From a pre-1.3/1.4/1.5 version to
+            <li><a href="#sect5a">From a pre-1.3/1.4/1.5 version to
             1.5</a></li>
 
-            <li><a href="#sect4b">From an older 1.3/1.4/1.5 version to a
+            <li><a href="#sect5b">From an older 1.3/1.4/1.5 version to a
             newer one</a></li>
           </ol>
         </li>
 
         <li>
-          <a href="#sect5">Setting up a crontab</a> 
+          <a href="#sect6">Setting up a crontab</a> 
 
           <ol type="a">
-            <li><a href="#sect5a">Setting up a crontab using
+            <li><a href="#sect6a">Setting up a crontab using
             autobotchk</a></li>
           </ol>
         </li>
 
-        <li><a href="#sect6">Boring legal stuff</a></li>
+        <li><a href="#sect7">Boring legal stuff</a></li>
 
-        <li><a href="#sect7">Mailing list</a></li>
+        <li><a href="#sect8">Mailing list</a></li>
 
-        <li><a href="#sect8">Documentation</a></li>
+        <li><a href="#sect9">Documentation</a></li>
 
-        <li><a href="#sect9">Obtaining help</a></li>
+        <li><a href="#sect10">Obtaining help</a></li>
       </ol>
     </blockquote>
     <hr>
 
-    <p><a name="notice"></a><strong>Notice</strong></p>
+    <p><a name="sect1"></a>1. <strong>Notice</strong></p>
 
     <blockquote>
       <p>Please read this file carefully before trying to set up this bot.
@@ -80,31 +77,31 @@
       GIVE THIS POWER TO SOMEONE YOU TRUST COMPLETELY!!</strong></p>
     </blockquote>
 
-    <p><a name="sect1"></a>1. <strong>What is Eggdrop?</strong></p>
+    <p><a name="sect2"></a>2. <strong>What is Eggdrop?</strong></p>
 
     <blockquote>
       <p>Eggdrop is an IRC bot, written in C. If you don&#39;t know what IRC
-      is, this is probably not whatever you&#39;re looking for! Eggdrop,
+      is, this is probably not whatever you&#39;re looking for. Eggdrop,
       being a bot, sits on a channel and takes protective measures: to keep
-      the channel from being taken over (in the few ways that anything CAN),
+      the channel from being taken over (in the few ways that anything can),
       to recognize banished users or sites and reject them, to recognize
       privileged users and let them gain ops, etc.</p>
 
       <p>One of the more unique features of Eggdrop is its &quot;party
-      line&quot;, accessible via DCC chat, which allows you to talk to other
-      people lag-free. Consider it a multi-way DCC chat, or a miniature IRC
-      (complete with channels). You can link up with other bots and expand
-      the party line until it actually becomes something very much like IRC,
-      in fact.</p>
+      line&quot;, accessible via DCC chat and telnet, which allows you to
+      talk to other people lag-free. Consider it a multi-way DCC chat, or a
+      miniature IRC (complete with channels). You can link up with other
+      bots and expand the party line until it actually becomes something
+      very much like IRC, in fact.</p>
 
-      <p> Eggdrop is always being improved and adjusted because there are
+      <p>Eggdrop is always being improved and adjusted because there are
       bugs to be fixed and features to be added (if the users demand them,
-      and they make actually sense). In fact, it existed for several years as
-      v0.7 - v0.9 before finally going 1.0. This version of Eggdrop is part
-      of the 1.5 tree. A valiant effort has been made to chase down and
+      and they make actually sense). In fact, it existed for several years
+      as v0.7 - v0.9 before finally going 1.0. This version of Eggdrop is
+      part of the 1.5 tree. A valiant effort has been made to chase down and
       destroy bugs.</p>
 
-      <p>This README file contains information about how to get Eggdrop, how
+      <p>This Readme file contains information about how to get Eggdrop, how
       to quickly compile the bot, what you may need to do when upgrading from
       older versions, a list of frequently asked questions about compiling,
       how to set up a crontab, some boring legal stuff, info about the
@@ -113,10 +110,10 @@
       you might get help with Eggdrop.</p>
 
       <p>The preliminary documentation is in &quot;eggdrop.doc&quot; and is
-      intended to be read after you have Eggdrop compiled and set</p>
+      intended to be read after you have Eggdrop compiled and set up.</p>
     </blockquote>
 
-    <p><a name="sect2"></a>2. <strong>How to get Eggdrop</strong></p>
+    <p><a name="sect3"></a>3. <strong>How to get Eggdrop</strong></p>
 
     <blockquote>
       <p>Before you can compile Eggdrop, you need to have Tcl installed on
@@ -128,7 +125,7 @@
       ftp it.</p>
 
       <p>The best ftp site for Tcl is:<br>
-       <a href="ftp://ftp.scriptics.com/pub/tcl/">
+      <a href="ftp://ftp.scriptics.com/pub/tcl/">
       ftp://ftp.scriptics.com/pub/tcl/</a></p>
 
       <p>Tcl comes with the Slackware distribution of Linux. HOWEVER, the one
@@ -136,15 +133,15 @@
       reinstall it for yourself to get it working.</p>
 
       <p>Currently, the 1.5 tree of Eggdrop is developed at eggheads.org. You
-      can get the latest version of Eggdrop from <a href= 
-      "ftp://ftp.eggheads.org/pub/eggdrop/">
-      ftp.eggheads.org/pub/eggdrop/</a></p>
+      can get the latest version of Eggdrop from:
+      <a href="ftp://ftp.eggheads.org/pub/eggdrop/">
+      ftp://ftp.eggheads.org/pub/eggdrop/</a></p>
 
       <p>You might also try <a href="http://www.eggheads.org/">
       www.eggheads.org</a> for more help and information.</p>
     </blockquote>
 
-    <p><a name="sect2a"></a>2a. <strong>How to get the latest version of
+    <p><a name="sect3a"></a>3a. <strong>How to get the latest version of
     eggdrop via CVS</strong></p>
 
     <blockquote>
@@ -152,7 +149,7 @@
       that is still under development by using CVS. CVS means &#39;Concurrent
       Versions System&#39; and is a tool for developers to always keep source
       code up to date. Try &#39;man cvs&#39; on your shell for more
-      information about CVS ;-)</p>
+      information about CVS.</p>
 
       <p>This intended only for users that know a fairly bit about Eggdrop.
       Be aware that the versions of Eggdrop that you get by CVS are still
@@ -199,15 +196,15 @@
       </ol>
     </blockquote>
 
-    <p><a name="sect3"></a>3. <strong>Quick startup</strong></p>
+    <p><a name="sect4"></a>4. <strong>Quick startup</strong></p>
 
     <blockquote>
       <p>Please see the <a href="install.html">Installation file</a></p>
     </blockquote>
 
-    <p><a name="sect4"></a>4. <strong>Upgrading</strong></p>
+    <p><a name="sect5"></a>5. <strong>Upgrading</strong></p>
 
-    <p><a name="sect4a"></a>4a. <strong>from a pre-1.3/1.4/1.5 version to
+    <p><a name="sect5a"></a>5a. <strong>from a pre-1.3/1.4/1.5 version to
     1.5</strong></p>
 
     <blockquote>
@@ -239,22 +236,24 @@
       userfile from v3 (1.1/1.2) to v4 (1.3/1.4/1.5)</p>
     </blockquote>
 
-    <p><a name="sect4b"></a>4b. <strong>from an older 1.3/1.4/1.5 version to
+    <p><a name="sect5b"></a>5b. <strong>from an older 1.3/1.4/1.5 version to
     a newer one</strong></p>
 
     <blockquote>
-      <p>If you followed the <a href="install.html">Installation file</a> and
-      did a &#39;make install&#39; (or &#39;make DEST=&quot;path&quot;
+      <p>If you followed the <a href="install.html">Installation file</a>
+      and did a &#39;make install&#39; (or &#39;make DEST=&quot;path&quot;
       install&#39;) after &#39;make&#39;, this will be pretty easy. Just
-      upload the new eggdrop1.5.xx.tar.gz file to the home dir of your shell,
-      gunzip and untar it, and type &#39;cd ~/eggdrop1.5.xx&#39;. Then, type
-      &#39;./configure&#39;, &#39;make&#39;, then kill the bot
+      upload the new eggdrop1.5.xx.tar.gz file to the home dir of your
+      shell, gunzip and untar it, and type &#39;cd ~/eggdrop1.5.xx&#39;.
+      Then, type &#39;./configure&#39;, &#39;make&#39;, then kill the bot
       (&#39;.die&#39; on the party line, or use &#39;kill&#39; on the shell)
       and &#39;make install&#39; to the same directory your bot is currently
-      in. Then, you can just restart your bot.</p>
+      in. Then, you can just restart your bot. You may wish to delete the
+      old eggdrop executable and modules as well, especially if you have
+      limited disk space.</p>
     </blockquote>
 
-    <p><a name="sect5"></a>5. <strong>Setting up a crontab</strong></p>
+    <p><a name="sect6"></a>6. <strong>Setting up a crontab</strong></p>
 
     <blockquote>
       <p>Eggdrop has become more stable with time, thanks mostly to people
@@ -289,7 +288,7 @@
       necessary (and send you email informing you).</p>
     </blockquote>
 
-    <p><a name="sect5a"></a>5a. <strong>Setting up a crontab using
+    <p><a name="sect6a"></a>6a. <strong>Setting up a crontab using
     autobotchk</strong></p>
 
     <blockquote>
@@ -312,7 +311,7 @@
       to not send you e-mail saying that it restarted your bot.</p>
     </blockquote>
 
-    <p><a name="sect6"></a>6. <strong>Boring legal stuff</strong></p>
+    <p><a name="sect7"></a>7. <strong>Boring legal stuff</strong></p>
 
     <blockquote>
       <p>The Eggdrop bot is copyright © by Robey Pointer. As of January 1997,
@@ -351,15 +350,18 @@
       <p>You didn&#39;t pay for it, so don&#39;t expect magic.</p>
     </blockquote>
 
-    <p><a name="sect7"></a>7. <strong>Mailing list</strong></p>
+    <p><a name="sect8"></a>8. <strong>Mailing list</strong></p>
 
     <blockquote>
+
       <p>There are currently a couple of mailing lists about Eggdrop.
-      eggheads@eggdheads.org is the one relevant for posts about Eggdrop 1.4
-      &amp; 1.5 (and bug fixes, and suggestions, etc).</p>
+      <a href="mailto:eggheads@eggheads.org">eggheads@eggheads.org</a>
+      is the one relevant for posts about Eggdrop 1.4 &amp; 1.5 (and bug
+      fixes, and suggestions, etc).</p>
 
       <p>To subscribe to the eggheads mailing list, send email to:
-      eggheads-request@eggheads.org In the body of the message, put
+      <a href="mailto:eggheads-request@eggheads.org">
+      eggheads-request@eggheads.org</a> In the body of the message, put
       &quot;subscribe eggheads&quot;; or go to <a href= 
       "http://scrambled.eggheads.org/mailman/listinfo/eggheads">
       http://scrambled.eggheads.org/mailman/listinfo/eggheads</a></p>
@@ -381,7 +383,8 @@
       substantive issues either for that matter. Please read and follow the
       mailing list rules.</p>
 
-      <p>The eggheads@eggheads.org maillist is not dedicated to those all too
+      <p>The <a href="mailto:eggheads@eggheads.org">
+      eggheads@eggheads.org</a> maillist is not dedicated to those all too
       common questions we have all seen on other lists... for example:</p>
 
       <p> &quot;Why does my bot say this: Please edit your config
@@ -396,15 +399,16 @@
       we want to see here.</p>
     </blockquote>
 
-    <p><a name="sect8"></a>8. <strong>Documentation</strong></p>
+    <p><a name="sect9"></a>9. <strong>Documentation</strong></p>
 
     <blockquote>
       <p>We&#39;re trying to keep the documentation up to date. If you feel
       that anything is missing here, or that anything should be added etc,
-      please email eggheads@eggheads.org about it, thank you.</p>
+      please email <a href="mailto:eggdev@eggheads.org">
+      eggdev@eggheads.org</a> about it, thank you.</p>
     </blockquote>
 
-    <p><a name="sect9"></a>9. <strong>Obtaining help</strong></p>
+    <p><a name="sect10"></a>10. <strong>Obtaining help</strong></p>
 
     <blockquote>
       <p>There is currently no uniform IRC channel in existence to support
@@ -449,8 +453,29 @@
         </ul>
       </blockquote>
 
-      <p>If there are any serious places that should be added, let us
-      know.</p>
+      <p>If you plan to ask questions in any of the above channels,
+      you should be familiar with and follow IRC etiquette.</p>
+
+      <p>Some important things to remember:</p>
+
+      <ul>
+        <li>Don't ask if you can ask a question, ask your question once and
+        wait. If anyone is there that can help, they will answer you.</li>
+
+        <li>Don't /msg people without their permission.</li>
+
+        <li>Don't repeat or paste large amounts of text to the channel.</li>
+
+        <li>Don't type using CAPITAL letters, colors or use ! and ?
+        excessively.</li>
+      </ul>
+
+      <p>If you break these rules, you may find yourself
+      <strong>ignored</strong>, or even <strong>kicked</strong> and or
+      <strong>banned</strong> from the channel.</p>
+
+      <p>If there are any other serious eggdrop related channels that should
+      be added to the above list, please let us know.</p>
     </blockquote>
     <hr>
 

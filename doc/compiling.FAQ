@@ -341,7 +341,7 @@ A. EGGDROP
      know why this happens but sometimes it helps to remove those options from
      the Makefile. Just give it a try.
      Ah well, drop us a note if you know why, so we can extend the info here.
-     
+
 11. I get lot's of warnings
 
      Well, warnings are warning, nothing really bad. As long as the compile runs

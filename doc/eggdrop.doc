@@ -126,9 +126,9 @@ at <eggheads@eggheads.org> (after subscribing).  Thanks.
     note, that you need to specify an absolute path here, relative paths
     like '../mydir' for example will not copy everything.
 
-    There are three config files shipped with your eggdrop, 
+    There are three config files shipped with your eggdrop,
     eggdrop.simple.conf, eggdrop.advanced.conf and eggdrop.complete.conf.
-    The names of the files already indicate their use, so no need here 
+    The names of the files already indicate their use, so no need here
     explain this further on. You need to edit that file and change almost
     everything.  It specifies the bot's nickname, server list, and pretty
     much everything else about how your bot will work.  You should also
@@ -211,7 +211,7 @@ at <eggheads@eggheads.org> (after subscribing).  Thanks.
                  want one or two people to have this flag
 
     t  (botnet)  someone who has access to all features dealing with the
-		 botnet
+                 botnet
 
     x  (xfer)    someone who has access to the file transfer area of the
                  bot (if it exists) and can send and receive files to/from
@@ -251,7 +251,7 @@ at <eggheads@eggheads.org> (after subscribing).  Thanks.
                  someone with this flag
 
     m  (master)  someone who has the ability to add/delete/modify users on
-		 the channel
+                 the channel
 
     n  (owner)   someone who owns the channel
 

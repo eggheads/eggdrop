@@ -136,12 +136,12 @@ before. PLEASE! READ IT!
 
     from 0.9/1.0 to 1.3/1.4/1.5:
            * Just redo the whole thing, absolutely everything has changed
-	     including the userfile and config file formats.
+             including the userfile and config file formats.
     from 1.1/1.2 to 1.3/1.4/1.5:
            * You will likely want to redo the config file, as much as
              changed. BACK UP!! You will need to run
-	     'tclsh scripts/weed <userfile> c' to convert your userfile
-	     from v3 (1.1/1.2) to v4 (1.3/1.4/1.5)
+             'tclsh scripts/weed <userfile> c' to convert your userfile
+             from v3 (1.1/1.2) to v4 (1.3/1.4/1.5)
 
 (4b) FROM AN OLDER 1.3/1.4/1.5 VERSION TO A NEWER ONE
 
@@ -272,11 +272,11 @@ before. PLEASE! READ IT!
     10. WHEN I 'tclsh scripts/weed <userfile> c' IT BARFS CHUNKS AT ME
         AND DIES :(
 
-	UPGRADE YOUR TCL, you are probably using tcl 7.5 or earlier,
-	some of the commands in weed require tcl7.6 to run, so either
-	upgrade it, or removing the offending lines from you
-	userfile (those starting with '.' generally) and accept the
-	loss of that data.
+        UPGRADE YOUR TCL, you are probably using tcl 7.5 or earlier,
+        some of the commands in weed require tcl7.6 to run, so either
+        upgrade it, or removing the offending lines from you
+        userfile (those starting with '.' generally) and accept the
+        loss of that data.
 
     11. I get "ld-elf.so.1: Shared object "libtcl80.so.1" not found" or
         "eggdrop: error in loading shared libraries /
@@ -314,15 +314,15 @@ before. PLEASE! READ IT!
 
         POSSIBILITY B:
 
-	Some of the standard libraries have been compiled for static
-	linking only on your machine, you have 3 options:
-	(1) if it's your own machine, recompile TCL using dynamic linking
-	    by using './configure --enable-shared' when you configure
-	    TCL (not the bot) and then remake, & reinstall
-	(2) if it's not you machine, you make have to resort to
-	    'make static' and 'make sinstall DESTDIR=<dir>' to make
-	    and install your bot.
-	(3) if you are of a more aggressive sense of mind, go beat the
+        Some of the standard libraries have been compiled for static
+        linking only on your machine, you have 3 options:
+        (1) if it's your own machine, recompile TCL using dynamic linking
+            by using './configure --enable-shared' when you configure
+            TCL (not the bot) and then remake, & reinstall
+        (2) if it's not you machine, you make have to resort to
+            'make static' and 'make sinstall DESTDIR=<dir>' to make
+            and install your bot.
+        (3) if you are of a more aggressive sense of mind, go beat the
             stuffing out of your admin for have lame static libraries :)
 
 (6) SETTING UP A CRONTAB
@@ -478,7 +478,7 @@ before. PLEASE! READ IT!
     However, if you are going to ask some questions there, we can give you some
     important advices:
     - don't ask if you may ask or anyone awake, just ask and wait
-    - don't msg people without their agreement, if they know help and 
+    - don't msg people without their agreement, if they know help and
       have time, they will answer.
     - don't repeat yourself. This will result in being kicked
     - don't use !!, colours or only CAPITAL letters.

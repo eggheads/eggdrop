@@ -1,5 +1,5 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: app-textsub.html,v 1.3 2000/04/13 11:22:55 tothwolf Exp $ -->
+<!-- $Id: app-textsub.html,v 1.4 2000/10/09 12:26:32 tothwolf Exp $ -->
 
 <html>
   <head>
@@ -12,91 +12,66 @@
     </div>
     <hr>
 
-    <p>There are some %-variables you can insert into the motd, banner, and
-    help files will be interpreted by eggdrop.</p>
+    <p>There are some special variables that can be added to the motd,
+    banner and help files that will be interpreted by eggdrop:</p>
 
     <blockquote>
       <dl>
         <dt><strong>%b</strong></dt>
 
-        <dd>
-          <p>display bold</p>
-        </dd>
+        <dd>display bold</dd>
 
         <dt><strong>%v</strong></dt>
 
-        <dd>
-          <p>display inverse</p>
-        </dd>
+        <dd>display inverse</dd>
 
         <dt><strong>%_</strong></dt>
 
-        <dd>
-          <p>display underline</p>
-        </dd>
+        <dd>display underline</dd>
 
         <dt><strong>%f</strong></dt>
 
-        <dd>
-          <p>display flashing via telnet, bold underline via irc</p>
-        </dd>
+        <dd>display flashing via telnet, bold underline via irc</dd>
 
         <dt><strong>%B</strong></dt>
 
-        <dd>
-          <p>bot&#39;s nickname (ie, &quot;LamestBot&quot;)</p>
-        </dd>
+        <dd>bot&#39;s nickname (&quot;LamestBot&quot;)</dd>
 
         <dt><strong>%V</strong></dt>
 
-        <dd>
-          <p>current eggdrop version (ie, &quot;eggdrop
-          v1.5.3+typodoc&quot;)</p>
-        </dd>
+        <dd>current eggdrop version (&quot;eggdrop
+        v1.5.3+typodoc&quot;)</dd>
 
         <dt><strong>%E</strong></dt>
 
-        <dd>
-          <p>long form of %V (ie, &quot;Eggdrop v1.5.3+typodoc (c)1997 Robey
-          Pointer (c)1999, 2000 Eggheads&quot;)</p>
-        </dd>
+        <dd>long form of %V (&quot;Eggdrop v1.5.3+typodoc (c)1997 Robey
+        Pointer (c)1999, 2000 Eggheads&quot;)</dd>
 
         <dt><strong>%C</strong></dt>
 
-        <dd>
-          <p>channels the bot is on (ie, &quot;#lamest,
-          #botnetcentral&quot;)</p>
-        </dd>
+        <dd>channels the bot is on (&quot;#lamest,
+        #botnetcentral&quot;)</dd>
 
         <dt><strong>%A</strong></dt>
 
-        <dd>
-          <p>whatever is set in &#39;admin&#39; (see &#39;set admin&#39;)</p>
-        </dd>
+        <dd>whatever is set in &#39;admin&#39; (see &#39;set
+        admin&#39;)</dd>
 
         <dt><strong>%T</strong></dt>
 
-        <dd>
-          <p>the current time (ie, &quot;15:00&quot;)</p>
-        </dd>
+        <dd>the current time (&quot;15:00&quot;)</dd>
 
         <dt><strong>%N</strong></dt>
 
-        <dd>
-          <p>the current user&#39;s nickname (ie, &quot;Robey&quot;)</p>
-        </dd>
+        <dd>the current user&#39;s nickname (&quot;Robey&quot;)</dd>
 
         <dt><strong>%U</strong></dt>
 
-        <dd>
-          <p>the current operating system the bot is on</p>
-        </dd>
+        <dd>the current operating system the bot is on</dd>
 
         <dt><strong>%%</strong></dt>
 
-        <dd>
-          <p>a percent sign (&quot;%&quot;)</p>
-        </dd>
+        <dd>a literal percent sign (&quot;%&quot;)</dd>
       </dl>
     </blockquote>
 
@@ -107,28 +82,20 @@
       <dl>
         <dt><strong>%{+m}some text%{-}</strong></dt>
 
-        <dd>
-          <p>Only masters would see this.</p>
-        </dd>
+        <dd>Only masters would see this.</dd>
 
         <dt><strong>%{+1}some text%{-}</strong></dt>
 
-        <dd>
-          <p>Only people with user flag #1 see this.</p>
-        </dd>
+        <dd>Only people with user flag #1 see this.</dd>
 
         <dt><strong>%{+b}some text%{-}</strong></dt>
 
-        <dd>
-          <p>This is only displayed to users doing a remote &#39;.motd&#39;
-          from another bot.</p>
-        </dd>
+        <dd>This is only displayed to users doing a remote &#39;.motd&#39;
+        from another bot.</dd>
 
         <dt><strong>%{+|m}some text%{-}</strong></dt>
 
-        <dd>
-          <p>Only channel masters would see this.</p>
-        </dd>
+        <dd>Only channel masters would see this.</dd>
       </dl>
     </blockquote>
 
@@ -138,27 +105,19 @@
       <dl>
         <dt><strong>%{cols=N}</strong></dt>
 
-        <dd>
-          <p>start splitting output into N columns</p>
-        </dd>
+        <dd>start splitting output into N columns</dd>
 
         <dt><strong>%{cols=N/W}</strong></dt>
 
-        <dd>
-          <p>same, but use a screen width of W</p>
-        </dd>
+        <dd>same, but use a screen width of W</dd>
 
         <dt><strong>%{end}</strong></dt>
 
-        <dd>
-          <p>end columnated or restricted (ie %{+m}) block</p>
-        </dd>
+        <dd>end columnated or restricted (%{+m}) block</dd>
 
         <dt><strong>%{center}</strong></dt>
 
-        <dd>
-          <p>center the following text (70 columns)</p>
-        </dd>
+        <dd>center the following text (70 columns)</dd>
       </dl>
     </blockquote>
     <hr>

@@ -1,61 +1,60 @@
 
-
 Changes in eggdrop: (since v1.5.0)
 ----------------------------------
 
 1.5.5
-Foundby   Fixedby   What....
+Found by  Fixed by  What...
 Abraham/  Fabian    Small typo in ismember() (added during cleanup) caused
-DennisMV              channel functions to freak out. Sigh.
+DennisMV            channel functions to freak out. Sigh.
           Cybah     flush_mode() cleanups. -{b,e,I} now sent before +{b,e,I}.
-                      used egg_strcatn to make buffer-overflow free.
-          Fabian    Fixed caching for tcl configuration details. As soon as
-                      different libraries are detected, we discard cached
-                      values.
+                    used egg_strcatn to make buffer-overflow free.
+          Fabian    Fixed caching for Tcl configuration details. As soon as
+                    different libraries are detected, we discard cached
+                    values.
           SuperS    Cleaned up style for aclocal.m4 system handling. Added
-                      support for SunOS4.
+                    support for SunOS4.
           Fabian    Caching -pipe test results for configure.
-various   TheUnknown Fixed linking for Sparc with sunos/bsd/linux, which caused
-                      the bot to crash under certain circumstances.
-          TheUnknown Added use of the -pipe compiler option, to speed-up
-                      compilation.
-          Eugene    Fixed bugs in german translation, typo in doc/MODULES and
-                      lines longer than 80 characters in a few places.
+various  TheUnknown Fixed linking for Sparc with SunOS/BSD/Linux, which caused
+                    the bot to crash under certain circumstances.
+         TheUnknown Added use of the -pipe compiler option, to speed-up
+                    compilation.
+          Eugene    Fixed bugs in German translation, typo in doc/MODULES and
+                    lines longer than 80 characters in a few places.
           Fabian    Generic cleanups.
 MsingLnk  Fabian    Fixed format-type bugs in notes.mod crashing the bot.
-various   Fabian    Added support for threaded tcl libs by implementing the
-                      early-fork hack. Cleaner support will be possible in 1.7.
+various   Fabian    Added support for threaded Tcl libs by implementing the
+                    early-fork hack. Cleaner support will be possible in 1.7.
 Wiktor    Fabian    Disabled cycling for +a !channels. Minor cleanups.
-          Fabian    Minor optimisations in irc.mod:chan.c.
+          Fabian    Minor optimizations in irc.mod:chan.c.
           Eule      Checking for m->user == NULL in kick_all() and
-                      refresh_ban_kick() now. Minor optimisations.
+                    refresh_ban_kick() now. Minor optimizations.
           guppy     Removed `SERVER SUPPORT LOADED' message.
 Igmar     Fabian    Added missing checks around new_dcc() call. This prevents
-                      the bot from crashing under high connection load.
+                    the bot from crashing under high connection load.
           Cybah     Added egg_strcatn function.
           Eugene    Repositioned help-path setting in eggdrop.simple.conf so
-                      that the modules actually load the help files.
+                    that the modules actually load the help files.
 FuzzBuster Fabian   Minor documentation fix to seen.mod help.
 Karsten   Fabian    transfer.mod allowed memory DoS for turbo-dcc.
 Johnny-   Fabian    Minor correction to the list of used flags in flag.h.
 Mnemonic
           guppy     Added language support to assoc.mod, console.mod and
-                      notes.mod. Cosmetic fix to "module loaded" message.
-          guppy     Removed some uneeded language macros.
+                    notes.mod. Cosmetic fix to "module loaded" message.
+          guppy     Removed some unneeded language macros.
           guppy     Cleaned up ctcp.mod. Reordered some of the ctcp_mode checks.
           guppy     Added the [pass] argument in the .jump help reference.
 Ben       Fabian    Added IPv6-masks support (bans/exempts/invites/ignores).
 Abraham   Fabian    Fixed minor, newly introduced mess-up in `.chaninfo' output.
 Abraham/  Fabian    User defined flags weren't displayed correctly for
-Kelvin                inactive channels, which the bot hadn't joined to yet.
+Kelvin              inactive channels, which the bot hadn't joined to yet.
 Joker     Fabian    Fixed further places where +/-revengebot was not properly
-                      integrated or documented.
+                    integrated or documented.
           Fabian    Fixed eggdrop test-run for vpath. Using autoconf macros for
-                      caching in aclocal.m4. Changed -L. to -L`pwd` for
-                      libtcls < 7.4 support hack.
-          Fabian    Added strftime compability function.
+                    caching in aclocal.m4. Changed -L. to -L`pwd` for
+                    libtcls < 7.4 support hack.
+          Fabian    Added strftime compatibility function.
           Eule      Re-added bell character to note message. This can be
-                      filtered out with the `.strip +g' command.
+                    filtered out with the `.strip +g' command.
           Koach     We now send PASS before sending NICK or USER.
           guppy/    made share.mod unlink its temp userfile.
           Fabian
@@ -63,99 +62,101 @@ guppy     Fabian    Fixed a few format string bugs. Cleaned up style.
 Wiktor    Fabian    Fixed crash when a received user file failed to load.
 Wiktor    Fabian    compress module didn't indicate errors correctly.
           Fabian    Unified generic int types. Replaced my_?to?l() with ?to?l().
-                      Replaced obsolete macros. Various cleanups.
+                    Replaced obsolete macros. Various cleanups.
           Fabian    Made sure only <module>_start function symbols were
-                      exported by modules. Fixed channels, console, dns, irc,
-                      notes and transfer modules. Removed unneeded data in
-                      non-debug mode from dns module compile.
-          Eule      Fixed memory leak in channel key handling. Optimised use
-                      of recheck_channel and recheck_channel_modes.
+                    exported by modules. Fixed channels, console, dns, irc,
+                    notes and transfer modules. Removed unneeded data in
+                    non-debug mode from dns module compile.
+          Eule      Fixed memory leak in channel key handling. Optimized use
+                    of recheck_channel and recheck_channel_modes.
 ridens    Fabian/   fixed `.whois'/`.match' crash for users without laston data,
-          SuperS      caused by strftime changes.
-          Fabian    finish_share() cleanups and optimisations.
+          SuperS    caused by strftime changes.
+          Fabian    finish_share() cleanups and optimizations.
           SuperS    Fixed configure problems on 64bit IRIX.
 SuperS    Fabian    Removed connect_server() call in nuke_server() to avoid
-                      uncontrolled recursion.
+                    uncontrolled recursion.
           Fabian    Cleaned up resolve_success and resolve_failure DNS hooks.
           Eule      Fixed various aspects of exempt handling.
 toot      Sup       add_bot_hostmask now adds static hostmasks for bots.
-          Fabian    Minor cleanups and optimisations in the irc module.
+          Fabian    Minor cleanups and optimizations in the irc module.
           Eule      Included +l and +k modes in modesperline-calculation. Added
-                      `include-lk' setting to control this.
-          SuperS    Fixed compability issues on IRIX. Added SINIX to configure.
-                      Removed unneeded header std_args.h.
+                    `include-lk' setting to control this.
+          SuperS    Fixed compatibility issues on IRIX. Added SINIX to configure.
+                    Removed unneeded header std_args.h.
           FirebaII  Fixed filesys module to use NICKMAX instead of HANDLEN in
-                      one place.
+                    one place.
           Fabian    Minor fixups in filesys module.
           G`Quann   Removed lagcheck feature because it caused too many
-                      problems.
+                    problems.
 Kool Cat  Fabian    Added meaningful error message for disabled tcl_dccsimul.
 dirtymac  Fabian    Lowered retry timeout for failed DNS requests to 10 minutes.
           Eule      Fixed possible memleaks related to chan->channel.key,
-                      chan->cmode[] and chan->key.
+                    chan->cmode[] and chan->key.
 various   Fabian    Under certain circumstances, the old user file was deleted
-                      and the new user file wasn't correctly created.
+                    and the new user file wasn't correctly created.
           blaster   Fixed crash in splitc().
           Tothwolf  Removed checks for bogus masks in +ban, +exempt, and
-                      +invite. Minor error message fixes. Minor source cleanups.
+                    +invite. Minor error message fixes. Minor source cleanups.
           Cybah     Added splitcn() to limit how many bytes get copied to first.
-                      Shrunk buffer size in cmd_boot(), using the new function.
+                    Shrunk buffer size in cmd_boot(), using the new function.
           Shaun     Fixed crash with handles larger than 19 characters.
 
 1.5.4 (August 22, 2000)
-Foundby   Fixedby   What....
+Found by  Fixed by  What...
 metatron/ Eule      Fixed buffer overflow bug with long keys (>80 chars). Keys
-NeO-MeTaL             can now be handled and saved without length limitation.
+NeO-MeTaL           can now be handled and saved without length limitation.
           Sup       H_need was being passed the wrong arguments.
           Sup       Updated the help file for cmd_pls_ignore.
           Wiktor    Updated documentation.
-          Tothwolf  Removed declartions of USERENTRY_EMAIL and USERENTRY_URL
-                      which have been unavailable for a long time.
+          Tothwolf  Removed declarations of USERENTRY_EMAIL and USERENTRY_URL
+                    which have been unavailable for a long time.
 TaKeDa    G`Quann   Lagcheck broke if bot got kicked in the wrong moment.
           Tothwolf  Removed unpopular safe_str() macro.
 Sup       guppy     Added a lifetime option to cmd_pls_ignore().
           Tothwolf  The disable_modules file now allows spaces around module
-                      names.
+                    names.
 xberry    guppy     New tcl bind: need (see tcl-commands.doc for info).
 Sup       stary     Fixed notes command broken by recent strftime changes.
           Fabian    Added open_address_listen() to listen on specific
-                      addresses or on INADDR_ANY.
-Sup       Sup/guppy Exporting tandbot and party from core to modules.
+                    addresses or on INADDR_ANY.
+Sup       Sup/      Exporting tandbot and party from core to modules.
+          guppy
           Sup       Minor fix of +/-chrec usage information.
           drummer   Added resetting of nick_juped and channel juped flags.
           Sup       Yet another minor 'Nick change' to 'Handle change' change.
           Sup       Made chanset show usage info when no settings are given.
 matt      Fabian    unlink, used as ghost bug work-around, only worked locally.
           Tothwolf  Made all code use strftime() instead of home-brewn hacks to
-                      display the time in a certain format.
+                    display the time in a certain format.
           Sup       Fixes dcc refused notices.
           Eule      Updated an overlooked JOIN to follow new channel key logic.
           Shaun     Fixed bug where handle changes with handles longer than
-                      15 characters crashed the bot.
+                    15 characters crashed the bot.
           TaKeDa    `share_newuser' failed to correctly pass on data from new
-                      users over the botnet.
+                    users over the botnet.
           Sup       doc fixes.
           symbands  Updated doc/MODULES.
           Sup       Slightly fixes and cleans up cmd_adduser().
 Ben       Eule      Enhanced channel key logic. Bot now first tries last set
-                      channel key when re-joining.
+                    channel key when re-joining.
           Sup       add_bot_hostmask now uses maskhost to get the right
-                      hostmask format.
+                    hostmask format.
           Sup       `.deluser' doesn't require the user to be on the console
-                      channel anymore.
+                    channel anymore.
           Fabian    Slightly cleaned up the transfer module and some other
-                      places in the code.
+                    places in the code.
           Scorpius/ Added `lost' and `tout' events as well as a new tcl func
-          Fabian      `getfilesendtime' to the transfer module.
+          Fabian    `getfilesendtime' to the transfer module.
           G`Quann   Lagcheck blocked the bot when it tried to (de-)op/voice a
-                      netsplitted user. Now fixed.
+                    netsplit user. Now fixed.
 RebuM     Fabian    Removed duplicate '.' before MOD_EXT in console.mod.
           RebuM/    Added proper Cygwin detection and usage of `.dll' suffix
-          Fabian      for libraries on Cygwin systems.
+          Fabian    for libraries on Cygwin systems.
           Fabian    Cleaned up server module a bit.
-TaKeDa/Sup Sup      Added no-host detection to adduser().
+TaKeDa/   Sup      Added no-host detection to adduser().
+Sup
 abfab     Fabian    Long filenames caused 'NULL' to be displayed in directory
-                      listings.
+                    listings.
           Sup       Changed chan->name to chan->dname in some places.
           SuperS    Added support for Tcl8.4 to configure script.
           Fabian    Removed version suffixes from getops and userinfo filenames.
@@ -164,25 +165,26 @@ abfab     Fabian    Long filenames caused 'NULL' to be displayed in directory
 blaster   Fabian    Removed silence left-overs. Minor other fixes.
           Eule      Removed call to enforce_bans in real_add_mode().
 Tothwolf  Fabian/   Replace all spaces in logfilenames by underscores and
-          G`Quann     changed default suffix to `.%d%b%Y'.
+          G`Quann   changed default suffix to `.%d%b%Y'.
 Lucas     G`Quann   fixed problem with lagcheck on Dalnet.
 MBroLad   Fabian    Removed all occurrences of private_owner from share.mod.
-                      Global owners are now shared by default, as in 1.4.
+                    Global owners are now shared by default, as in 1.4.
 JoKeR     Fabian    added tcl_channame2dname and tcl_chandname2name to allow
-                      tcls to support !channels.
+                    tcls to support !channels.
           guppy     removed ircu silence support.
 Wiktor/   Fabian    Fixed some places which were using chan->name instead of
-guppy                 chan->dname. This included the join bind and laston info.
+guppy               chan->dname. This included the join bind and laston info.
 Joker     Fabian    eggContext and friends didn't cut down filename paths.
           drummer   upgraded sentinel1.54 to 1.55.
           Sup       added .help tcl.
 Sup       Wiktor    extended info in patch.howto.
 Georg S.  Wiktor    added gmake hint on Ultrix to compiling.FAQ.
-Ben/Lucas Wiktor    changed *.conf.dist a bit and added chnick and nick to help.
+Ben/      Wiktor    changed *.conf.dist a bit and added chnick and nick to help.
+Lucas
           Wiktor    moved some lines from the login procedure to the motd file.
 Joker     Fabian    Illegal definition of egg_snprintf fixed for STDC systems.
           Eule      Added further bot-link check to securely avoid loops at
-                      an earlier stage.
+                    an earlier stage.
 various   Tothwolf  removed the 'BOOL FreeConsole' cygwin hack from main.c.
 FireEgl   Tothwolf  print 'Launched' message when compiled with cygwin.
           RebuM     Use opendir() instead of fopen() in files.c.
@@ -192,162 +194,163 @@ toot      Wiktor    compress.mod was missing in eggdrop.complete.conf.
           Wiktor    updates NEWS file.
 
 1.5.3 (May 07, 2000)
-Foundby   Fixedby   What....
+Found by  Fixed by  What...
           SuperS    added support for dell svr4. Fixed trigraph problems in
-                      filesys.mod/filesys.c and botnet.c (gcc2.96 problem).
+                    filesys.mod/filesys.c and botnet.c (gcc2.96 problem).
           SuperS    fixed small compile warning in seen.mod/seen.c.
           SuperS    fixed snprintf definition on systems using vargs.
-mho/Lucas G`Quann   lagcheck wasn't working correctly on Undernet/Efnet.
+mho/      G`Quann   lagcheck wasn't working correctly on Undernet/Efnet.
+Lucas
           G`Quann   Added possibility to change multiple channel settings
-                      using `.chanset * +whatever'.
+                    using `.chanset * +whatever'.
           G`Quann   Added setting `logfile-suffix'. The name says it all.
-          guppy     removed some useless #define's in tclegg.h, and did 
-                      some minor cleanups to egg_strcasecmp and str(n)cmp
+          guppy     removed some useless #define's in tclegg.h, and did
+                    some minor cleanups to egg_strcasecmp and str(n)cmp
 SuperS    Fabian    snprintf.h used wrong declaration for non-stdarg systems.
           Fabian    Various places using strcmp should use strcasecmp or
-                      rfc_casecmp instead.
+                    rfc_casecmp instead.
           Fabian    Cleaned up minor debugging messages from dns.c.
 Jason     Fabian    Under certain circumstances eggdrop would immediately
-                      reconnect to irc servers, causing massive connect
-                      flooding.
+                    reconnect to irc servers, causing massive connect
+                    flooding.
           Fabian    Minor lang fix to `cmds.c'.
           guppy     cleaned up motd.
 flame     Fabian    filesys `ls' command crashed on invalid directories.
 G`Quann/  Fabian    small makefile bug fixed in src/mod/Makefile.in. Added
-drnet                 modinfo file to assoc module. minor other fixes.
+drnet               modinfo file to assoc module. minor other fixes.
 Wiktor    Fabian    max-filesize set to 0 now means unlimited file size.
 daimonic  Wiktor    made some doc/ and README improvements
           Wiktor    Now doesn't remove bogus bans set by masters anymore.
           Jason     Moved web_docs to html to keep proper naming
           Tothwolf  Added textfile substitutions to web based docs.
-          Jason/Toth updated webdocs to include config file settings. Includes
-           /Wiktor    tidying of some files by Toth.
+          Jason/    updated web docs to include config file settings.
+          Wiktor/   Includes tidying of some files by Toth.
+          Tothwolf
           Fabian    tcl must-be-owner caused crash because of multiple defs.
 drnet     Fabian    prefixes to source filenames caused trouble in memory
-                      debugging functions.
+                    debugging functions.
 Wiktor    Fabian    compress and uncompress functions now check whether the
-                      passed filenames are actually real files.  tcl commands
-                      reworked and merged: compressfile, uncompressfile. New
-                      tcl command to check whether a file is compressed.
+                    passed filenames are actually real files. tcl commands
+                    reworked and merged: compressfile, uncompressfile. New
+                    tcl command to check whether a file is compressed.
           Wiktor    updated NEWS file. fixed typo in eggdrop.simple.conf.
 FireEgl   Fabian    replaced the old snprintf implementation with a new one
-                      supporting floating point format variables, such as %f.
+                    supporting floating point format variables, such as %f.
           Fabian    Cleaned up language load messages. Most are now moved to
-                      debug level. Each "Module loaded:" message also states
-                      wether the module has language support. \t is supported
-                      in language entries. tcl_language is depreciated.
+                    debug level. Each "Module loaded:" message also states
+                    weather the module has language support. \t is supported
+                    in language entries. tcl_language is depreciated.
 Phoenix   Fabian    resume support in the transfer module was not compatible
-                      with mircs implementation. mirc would also do some silly
-                      stuff during communication, which is now also detected.
+                    with mIRC's implementation. mIRC would also do some silly
+                    stuff during communication, which is now also detected.
 Wiktor    Fabian    fixed minor memory leak in transfer module.
           Wiktor    renamed .nick and .chnick to .handle and .chhandle. Fixed
-                      docs to reflect this change.
+                    docs to reflect this change.
           Fabian    module Makefiles contained invalid dependencies.
           Wiktor    various doc updates and changes.
 G`Quann   Fabian    forgot to change bzero to egg_bzero in one place. updated
-                      compile dependencies. fixed typos in src/mod/Makefile.in.
+                    compile dependencies. fixed typos in src/mod/Makefile.in.
           Fabian    the newly added docs now get correctly installed. updated
-                      compile dependencies. moved bzero, memcpy, strcasecmp
-                      and strncasecmp to the compat directory. cleaned up
-                      include paths.
+                    compile dependencies. moved bzero, memcpy, strcasecmp
+                    and strncasecmp to the compat directory. cleaned up
+                    include paths.
 Joker     Fabian    small bug in eggmod.m4 fixed.
           Fabian    Makefile and configure adjustments. vpath now works.
 various   Fabian/   Added a src/compat directory with functions needed by
-          Tothwolf    eggdrop, but not provided by all systems.
+          Tothwolf  eggdrop, but not provided by all systems.
           Jason     updated web docs for 1.5. Adjusted various text docs.
           Wiktor    added information about -next parameter to tcl_put*.
           Wiktor    Reworked, extended and updated documentation. Split up
-                      configuration file. Removed private-owner.
+                    configuration file. Removed private-owner.
 Ian       G`Quann   traffic logging now uses unsigned long instead of int.
           G`Quann   exporting a few additional functions to allow modules to
-                      use user definable channel flags.
+                    use user definable channel flags.
           drummer   DNS related relay fixes. Added new socket flag SOCK_VIRTUAL
-                      to stop not yet valid sockets from being accessed in the
-                      main network loop.
+                    to stop not yet valid sockets from being accessed in the
+                    main network loop.
 Wiktor    Fabian    minor Makefile fixes. minor config.status tweaks.
           Fabian    misc aclocal.m4 changes. misc/modconfig now keeps track of
-                      known modules. unknown modules are automatically selected
-                      on running `make config' / `make iconfig'. `make
-                      new-iconfig' only asks questions about newly added mods.
+                    known modules. unknown modules are automatically selected
+                    on running `make config' / `make iconfig'. `make
+                    new-iconfig' only asks questions about newly added mods.
 TheQ      Fabian    increased portability of src/mod/eggautoconf
 Lucas     Fabian    renamed aux/ to misc/ to avoid problems on win32
 Wiktor    Fabian    module names are now correctly distinguished (e.g. bseen
-                      and seen are not mixed up anymore)
+                    and seen are not mixed up anymore)
           david     tiny `.binds' fix.
           Fabian    adjusted share module to support more flexible user file
-                      handling functions. changed `compress' to use that
-                      support. added mmap() support to compress. minor fixes.
+                    handling functions. changed `compress' to use that
+                    support. added mmap() support to compress. minor fixes.
           Fabian    minor fixes to the dns modules
           Fabian    minor fixes to the filesys module
           Jason     Modified .+host so normal users could use it to add hosts
-                      to their own record as they can already use .-host. Only
-                      allows hosts that don't match other users.
+                    to their own record as they can already use .-host. Only
+                    allows hosts that don't match other users.
 toot      Fabian    added module `compress' which allows compressed user file
-                      sending; based on zlib
-          drummer   changed notc bind. adjusted tcl-commands.doc apropriately.
+                    sending; based on zlib
+          drummer   changed notc bind. adjusted tcl-commands.doc appropriately.
           drummer   fixed optimize-kick code
           Eule      recheck_channel not before end of who, remove several
-                      lines in got352or4 because in recheck_channel present.
+                    lines in got352or4 because in recheck_channel present.
 Wiktor    Fabian    made a few filesys rejects more informative to the user
 toot      Fabian    minor typo in filesys.mod caused misordered log entries and
-                      tiny bug caused uploaded files to get uncorrect credits
-Tothwolf  Fabian    configure strictly non-interactive again. module configu-
-                      ration now available through 'make [i]config'.
-                      aux/modconfig now does the job of src/mod/modtool.
+                    tiny bug caused uploaded files to get incorrect credits
+Tothwolf  Fabian    configure strictly non-interactive again. module
+                    configuration now available through 'make [i]config'.
+                    aux/modconfig now does the job of src/mod/modtool.
 Webbie/   Fabian/   various portability fixes to src/mod/modtool. minor other
-Joker     TheQ        portability fixes.
+Joker     TheQ      portability fixes.
 jay       david     the dcc cmd `.binds' now supports wildcards
 SuperS    Fabian    portability fixes to configure and modtool
 FireEgl   Fabian    every module can now have it's own configure script and
-                      modules which need features not supported by the system
-                      are disabled automatically.
+                    modules which need features not supported by the system
+                    are disabled automatically.
           Fabian    configure supports `--disable-mod-MODULE' to disable
-                      specific modules and `make reconfig' allows you to select
-                      modules interactively.
+                    specific modules and `make reconfig' allows you to select
+                    modules interactively.
           Fabian    make -j is now supported during module compilation.
           Wiktor    updated patch.howto. also fixed small bug in irc.c.
           G`Quann   fixed a bug in the lagcheck functions and a typo.
 Whilor/   Fabian    need-invite/-limit/-unban/-key failed to work when the bot
-Webbie                attempted to join a channel for the first time.
-Wiktor    Fabian    blowfish didn't re-initialise it's tcl bindings correctly
-                      after restart.
+Webbie              attempted to join a channel for the first time.
+Wiktor    Fabian    blowfish didn't re-initialize it's tcl bindings correctly
+                    after restart.
           dw        added missing global var (isjuped) and moved md5 command
-                      to right section - tcl-commands.doc.
-
+                    to right section - tcl-commands.doc.
 
 1.5.2 (February 04, 2000)
-Foundby   Fixedby   What....
+Found by  Fixed by  What...
           Jason     Stopped flooding of partyline with channel juped messages.
-                      Added display to .status and a ischanjuped tcl command.
+                    Added display to .status and a ischanjuped tcl command.
 Webbie    Fabian    tiny configure error caused version number search to fail
           G`Quann   unlink message now shows information about how many bots
-                      and users got unlinked with the bot.
+                    and users got unlinked with the bot.
           G`Quann   added protection to stop eggdrop from flooding off lagged
-                      IRC servers. Add new setting use-lagcheck.
+                    IRC servers. Add new setting use-lagcheck.
           Fabian    cleaned up all modules and the core. unified code style.
           Eule      added set global-stopnethack-mode.
           guppy     bind notc now handles channel notices, and bind part
-                      now handles part messages.
+                    now handles part messages.
           Wiktor    Updated NEWS file.
 Ian       Eule      ignore stopnethack and wasoptest in chanfile.
-          dw        dont flood us with nick is juped msges show it ones
-                      and in .status or $isjuped in tcl.
+          dw        don't flood us with nick is juped msgs show it ones
+                    and in .status or $isjuped in tcl.
           david     added reasons to several botnet quit messages
           G`Quann   optimized kick sending.
           Fabian    added 'outdone' to dcc_table structure - gets called as
-                      soon as the out buffer is emptied. Use sock_has_data() to
-                      check wether one of the sock buffers is empty.
+                    soon as the out buffer is emptied. Use sock_has_data() to
+                    check weather one of the sock buffers is empty.
           Fabian    introduced new userfile feature system for userfile sharing
 
 1.5.1
-Foundby   Fixedby   What....
+Found by  Fixed by  What...
           G`Quann   fixed the slightly broken penalty calculation code
           Tothwolf  changed the -lbind and -lresolv check-order in configure
           Eule      new stopnethack-mode
 Wiktor    Fabian    small transfer fix and two contexts for share debugging
           Fabian    minor filesys fixes. transfer module detects empty files.
           Wiktor    minor eggdrop.conf.dist fixes
-          Ian       seperate flood-nick counter to distinguish between nick
+          Ian       separate flood-nick counter to distinguish between nick
                     and join floods.
 Wiktor    Fabian    added setting userfile-perm to specify userfile permissions
           Fabian    made everything use bzero and my_memcpy instead of their
@@ -357,9 +360,9 @@ Wiktor    Fabian    added setting userfile-perm to specify userfile permissions
           Fabian    cleaned up irc.mod
           Fabian    commented woobie, cleaned up transfer and seen
           Olrick    added an md5 tcl command
-          dw        .strip can now handle the bold/highlite better
+          dw        .strip can now handle the bold/highlight better
 Johnny-   dw        missing a way to get the users handle as it is saved in
-Mnemonic            the userfile. Added getuser ype HANDLE
+Mnemonic            the userfile. Added getuser type HANDLE
 guppy     Fabian    fixed dns findhost() SEGV
           Fabian    dnslookup now allows additional parameters that get passed
                     to the proc later on.
@@ -380,16 +383,16 @@ toot      Fabian    fixed ASSERT failure in filesys. cleanups.
           G`Quann   chan->name to chan->dname fixes in user definable channel
                     flags code
 toot      Fabian    failed reverse lookups were taken too serious
-          Fabian    new option `override-bots' to define wether local bot
-                    records should be overriden by those provided by the hub.
+          Fabian    new option `override-bots' to define weather local bot
+                    records should be overridden by those provided by the hub.
 
 1.5.0
-Foundby   Fixedby   What....
+Found by  Fixed by  What...
           Fabian    the transfer and filesys modules now support resume and
-                    reget to continue aborted file downloads
+                    re-get to continue aborted file downloads
 Ehrenberg Fabian    tiny botlink return value fix
           Fabian    a few filesys fixes
-          Fabian    not re-adding existant bans to the channel anymore
+          Fabian    not re-adding existent bans to the channel anymore
 Mixter    Fabian    duplicate rejections are now delayed to allow the botnet
                     to overcome lags
           G`Quann   adds optional -next parameter to putquick, putserv and
@@ -398,7 +401,7 @@ Jason/    Fabian    further filesys db3 engine fixes
 dw
           G`Quann   fixes mem leak and stack corruption in udef chan settings
           Fabian    dns module should now also compile statically
-several	  Fabian    several filesys db3 engine fixes
+several   Fabian    several filesys db3 engine fixes
           Tothwolf  fixed typos, auto-ident messups throughout the
                     source, grammatical errors in tcl-commands.doc,
                     renamed NEWTO1.5 to NEWS, other small fixes
@@ -431,11 +434,11 @@ G`Quann   G`Quann   block_dns_hostbyip crashed on failed dns lookups
                     banner, set default config filename to eggdrop.conf,
                     put logfiles to logs/-dir by default
 guppy     Fabian    numerical hostnames are now detected
-          Fabian    outgoing bot links weren't correctly initialised, autolink
+          Fabian    outgoing bot links weren't correctly initialized, autolink
                     wasn't detecting active bot links and the dns module was
                     still broken from the last byte order changes
-G`Quann	  Fabian    was deleting socket 0 if server connect failed
-arthur2	  Fabian    the dcc[].addr is now consistently host byte order and
+G`Quann   Fabian    was deleting socket 0 if server connect failed
+arthur2   Fabian    the dcc[].addr is now consistently host byte order and
                     all async dns lookup functions accept host byte order IPs
           Fabian    added an asynchronous DNS request module which prevents
                     the bot from hanging on dns lookups.

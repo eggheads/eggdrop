@@ -263,18 +263,18 @@ specific commands, see later.
 | stickexempt <exemptmask> [channel]
 |   makes an exempt sticky, or if a channel is specified, then it is set
 |   sticky on that channel. returns: "1" is successful, "0" otherwise
-    
+
 | unstickexempt <exemptmask> [channel]
 |   makes an exempt no longer sticky, or if a channel is specified, then it
 |   is unstuck on that channel. returns: "1" is successful, "0" otherwise
 
-| stickinvite <invitemask> [channel] 
-|   makes an invite sticky, or if a channel is specified, then it is set 
+| stickinvite <invitemask> [channel]
+|   makes an invite sticky, or if a channel is specified, then it is set
 |   sticky on that channel. returns: "1" is successful, "0" otherwise
- 
-| unstickinvite <invitemask> [channel] 
-|   makes an invite no longer sticky, or if a channel is specified, then it 
-|   is unstuck on that channel. returns: "1" is successful, "0" otherwise 
+
+| unstickinvite <invitemask> [channel]
+|   makes an invite no longer sticky, or if a channel is specified, then it
+|   is unstuck on that channel. returns: "1" is successful, "0" otherwise
 
   killchanban <channel> <ban>
     removes a ban from the enforced ban list for a channel
@@ -298,7 +298,7 @@ specific commands, see later.
 
   killinvite <invite>
     removes a invite from the global invite list
-    returns: "1" if successful, "0" otherwise 
+    returns: "1" if successful, "0" otherwise
 
   ischanjuped [channel]
     returns: "1" if the channel is juped and bot is unable to join, "0"
@@ -575,7 +575,7 @@ specific commands, see later.
        are returned
     Please note, that if you're executing chanlist after a part or sign bind,
     the gone user will still be listed so you can check for wasop, isop, etc.
-   
+
 
   getchanidle <nickname> <channel>
     returns: number of minutes that person has been idle; "0" if the speci-
@@ -1095,7 +1095,7 @@ for the msg-command "stop", use "unbind msg - stop msg_stop".
        triggered by someone leaving the channel; as in JOIN, the <mask>
        is matched against "#channel nick!user@host" and can contain
        wildcards. if no part message is specified msg will be set to "".
-       
+
 |      new Tcl procs should be declared as
 |      proc partproc {nick uhost hand chan {msg ""}} { ... }
 |      for compatiblity

@@ -50,7 +50,7 @@ ASYNCHRONOUS DNS MODULE
 COMPRESS MODULE
 
      A new module called compress was introduced to eggdrop now. It
-     provides gzip support to eggdrop (via tcl commands) and enables 
+     provides gzip support to eggdrop (via tcl commands) and enables
      compressed userfile transfer.
 
 DCC COMMANDS
@@ -71,7 +71,7 @@ DOCUMENTATION
 
 EGGDROP.CONF.DIST
 
-     eggdrop.conf.dist was replaced with three files, eggdrop.simple.conf, 
+     eggdrop.conf.dist was replaced with three files, eggdrop.simple.conf,
      eggdrop.advanced.conf and eggdrop.complete.conf. This allows users to
      choose how detailed they want to configure their bot. eggdrop.simple.conf
      just contains the simplest configuration options, where
