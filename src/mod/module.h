@@ -1,7 +1,7 @@
 /* 
  * module.h
  * 
- * $Id: module.h,v 1.19 2000/01/09 14:59:29 fabian Exp $
+ * $Id: module.h,v 1.20 2000/01/09 16:34:50 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -55,6 +55,10 @@
 #undef Context
 #undef ContextNote
 #undef Assert
+
+/* Version checks for modules. */
+#define EGG_IS_MIN_VER(ver) 		((ver) <= EGG_VERSION)
+#define EGG_IS_MAX_VER(ver)		((ver) >= EGG_VERSION)
 
 /* redefine for module-relevance */
 /* 0 - 3 */

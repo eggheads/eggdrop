@@ -72,6 +72,9 @@
 /* Define for Tcl that has threads  */
 #undef HAVE_TCL_THREADS
 
+/* Defines the current eggdrop version */
+#undef EGG_VERSION
+
 /* The number of bytes in a char.  */
 #undef SIZEOF_CHAR
 
