@@ -210,7 +210,7 @@ void failed_link(int idx)
   dcc[idx].port++;
   dcc[idx].timeval = now;
   if (open_telnet_raw(dcc[idx].sock, dcc[idx].addr ?
-		      iptostr(my_ntohl(dcc[idx].addr)) : dcc[idx].host,
+		      iptostr(my_htonl(dcc[idx].addr)) : dcc[idx].host,
 		      dcc[idx].port) < 0) {
     failed_link(idx);
   }

@@ -487,8 +487,8 @@ char *hostnamefromip(unsigned long ip)
   return s;
 }
 
-/* returns a given network-style IP address as a string in the
- * "##.##.##.##" format */
+/* Returns the given network byte order IP address in the
+ * dotted format - "##.##.##.##" */
 char *iptostr(IP ip)
 {
   struct in_addr a;

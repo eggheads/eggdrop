@@ -1088,7 +1088,9 @@ static void connect_server(void)
     dcc[servidx].u.dns->dns_failure = (Function) server_resolve_failure;
     dcc[servidx].u.dns->dns_type = RES_IPBYHOST;
 
+    /* I'm resolving... don't start another server connect request */
     resolvserv = 1;
+    /* resolve the hostname */
     dns_ipbyhost(dcc[servidx].host);
     if (server_cycle_wait)
       /* back to 1st server & set wait time */
@@ -1115,29 +1117,28 @@ static void server_resolve_success(int servidx)
   dcc[servidx].addr = dcc[servidx].u.dns->ip;
   strcpy(pass, dcc[servidx].u.dns->cbuf);
   changeover_dcc(servidx, &SERVER_SOCKET, 0);
-  serv = open_telnet(iptostr(my_ntohl(dcc[servidx].addr)),
-				    dcc[servidx].port);
-    if (serv < 0) {
-	neterror(s);
+  serv = open_telnet(iptostr(my_htonl(dcc[servidx].addr)), dcc[servidx].port);
+  if (serv < 0) {
+    neterror(s);
     putlog(LOG_SERV, "*", "%s %s (%s)", IRC_FAILEDCONNECT, dcc[servidx].host,
 	   s);
     lostdcc(servidx);
       if ((oldserv == curserv) && !(never_give_up))
 	fatal("NO SERVERS WILL ACCEPT MY CONNECTION.", 0);
-    } else {
-      dcc[servidx].sock = serv;
+  } else {
+    dcc[servidx].sock = serv;
     /* queue standard login */
-      dcc[servidx].timeval = now;
-      SERVER_SOCKET.timeout_val = &server_timeout;
-      strcpy(botname, origbotname);
-      /* another server may have truncated it :/ */
-      dprintf(DP_MODE, "NICK %s\n", botname);
-      if (pass[0])
-	dprintf(DP_MODE, "PASS %s\n", pass);
-      dprintf(DP_MODE, "USER %s %s %s :%s\n",
+    dcc[servidx].timeval = now;
+    SERVER_SOCKET.timeout_val = &server_timeout;
+    strcpy(botname, origbotname);
+    /* another server may have truncated it :/ */
+    dprintf(DP_MODE, "NICK %s\n", botname);
+    if (pass[0])
+      dprintf(DP_MODE, "PASS %s\n", pass);
+    dprintf(DP_MODE, "USER %s %s %s :%s\n",
 	    botuser, bothost, dcc[servidx].host, botrealname);
-      cycle_time = 0;
-      /* We join channels AFTER getting the 001 -Wild */
-      /* wait for async result now */
+    cycle_time = 0;
+    /* We join channels AFTER getting the 001 -Wild */
+    /* wait for async result now */
   }
 }

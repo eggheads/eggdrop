@@ -200,8 +200,9 @@ struct dcc_table {
 struct userrec;
 
 struct dcc_t {
-  long sock;			/* this should be a long to keep 64-bit machines sane */
-  IP addr;
+  long sock;			/* this should be a long to keep 64-bit
+				 * machines sane */
+  IP addr;			/* IP address in host byte order */
   unsigned int port;
   struct userrec *user;
   char nick[NICKLEN];
@@ -209,8 +210,8 @@ struct dcc_t {
   struct dcc_table *type;
   time_t timeval;		/* use for any timing stuff 
 				 * - this is used for timeout checking */
-  unsigned long status;		/* A LOT of dcc types have status thingos, this
-				 * makes it more avaliabe */
+  unsigned long status;		/* A LOT of dcc types have status thingos,
+				 * this makes it more avaliabe */
   union {
     struct chat_info *chat;
     struct file_info *file;

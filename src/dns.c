@@ -6,17 +6,11 @@
  * This file is part of the eggdrop source code.
  *
  * Copyright (C) 1999  Eggheads
- * Copyright (C) 1997  Robey Pointer
+ * Written by Fabian Knittel
  *
  * Distributed according to the GNU General Public License. For full
  * details, read the top of 'main.c' or the file called COPYING that
  * was distributed with this code.
- */
-/*
- * Mon Oct 04 22:24:51 1999  Fabian Knittel
- *     * minor fixes
- * Sun Oct 03 18:34:41 1999  Fabian Knittel
- *     * Initial release
  */
 
 
@@ -101,6 +95,7 @@ void call_hostbyip(IP ip, char *hostn, int ok)
 {
   int idx;
   
+  ip = my_ntohl(ip);
   for (idx = 0; idx < dcc_total; idx++) {
     if ((dcc[idx].type == &DCC_DNSWAIT) &&
         (dcc[idx].u.dns->dns_type == RES_HOSTBYIP) &&
@@ -123,6 +118,7 @@ void call_ipbyhost(char *hostn, IP ip, int ok)
 {
   int idx;
   
+  ip = my_ntohl(ip);
   for (idx = 0; idx < dcc_total; idx++) {
     if ((dcc[idx].type == &DCC_DNSWAIT) &&
         (dcc[idx].u.dns->dns_type == RES_IPBYHOST) &&
@@ -144,31 +140,21 @@ void call_ipbyhost(char *hostn, IP ip, int ok)
 void block_dns_hostbyip(IP ip)
 {
   struct hostent *hp;
-  unsigned long addr = htonl(ip);
-  unsigned char *p;
+  unsigned long addr = my_htonl(ip);
   static char s[UHOSTLEN];
 
-  /*
-   * This actually copies hostnamefromip(), which is ugly, but there
-   * is no way to determine if the lookup was successful or not, using
-   * that interface.
-   */
   if (!setjmp(alarmret)) {
     alarm(resolve_timeout);
     hp = gethostbyaddr((char *) &addr, sizeof(addr), AF_INET);
     alarm(0);
-  } else {
-    hp = NULL;
-  }
-  if (hp == NULL) {
-    p = (unsigned char *) &addr;
-    sprintf(s, "%u.%u.%u.%u", p[0], p[1], p[2], p[3]);
-  } else {
     strncpy(s, hp->h_name, UHOSTLEN - 1);
     s[UHOSTLEN - 1] = 0;
+  } else {
+    hp = NULL;
+    strcpy(s, iptostr(addr));
   }
   /* call hooks */
-  call_hostbyip(ip, s, hp ? 1 : 0);
+  call_hostbyip(addr, s, hp ? 1 : 0);
 }
 
 void block_dns_ipbyhost(char *host)
