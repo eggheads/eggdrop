@@ -1,0 +1,51 @@
+#! /bin/sh
+#
+# egg_patchpatch -- Patch src/path.h.
+#
+#                   Copyright (C) 2000  Fabian Knittel <fknittel@gmx.de>
+#                   Released under the terms of the GNU General Public License.
+
+
+show_usage()
+{
+	echo "Usage: $0 <patch-name> [unixtime]"
+	echo ""
+	echo " patch-name - Name of last patch added."
+	echo " unixtime   - Some unixtime number or 'now'. Default is 'now'."
+	exit 1
+}
+
+if test "x$1" = "x"; then
+	show_usage;
+else
+	patch_name=$1
+fi
+if test "x$2" = "x"; then
+	unix_time=`date +%s`
+	echo "Setting unix time to now."
+else
+	unix_time=$2
+fi
+
+if test "${unix_time}" = now; then
+	unix_time=`date +%s`
+	echo "Setting unix time to now."
+fi
+
+if test ! -f src/main.c; then
+	echo "You are not in the eggdrop root directory."
+	exit 1
+fi
+
+echo "Patching src/patch.h:"
+echo "   unix time: ${unix_time}, patch name: ${patch_name}"
+if sed src/patch.h -e "s/^patch.*\")\(.*current unixtime.*\)/patch(\"${unix_time}\")\1/" -e "s/^patch.*);$/patch(\"${patch_name}\");/" > src/patch.h_
+then
+	mv src/patch.h_ src/patch.h
+else
+	echo "Failed to adjust src/patch.h"
+	exit 1
+fi
+
+exit 0
+
