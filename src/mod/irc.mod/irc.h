@@ -1,7 +1,7 @@
 /*
  * irc.h -- part of irc.mod
  *
- * $Id: irc.h,v 1.21 2002/12/24 02:30:08 wcc Exp $
+ * $Id: irc.h,v 1.22 2003/01/15 01:42:21 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -115,6 +115,8 @@ static int gotmode(char *, char *);
 /* check_this_user is here. */
 #define me_halfop ((int(*)(struct chanset_t *))irc_funcs[22])
 #define me_voice ((int(*)(struct chanset_t *))irc_funcs[23])
+/* 24 - 27 */
+#define getchanmode ((char *(*)(struct chanset_t *))irc_funcs[24])
 
 #endif				/* MAKING_IRC */
 
