@@ -1,7 +1,7 @@
 /*
  * servmsg.c -- part of server.mod
  *
- * $Id: servmsg.c,v 1.76 2003/03/07 03:27:57 stdarg Exp $
+ * $Id: servmsg.c,v 1.77 2003/03/07 03:36:10 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -950,7 +950,8 @@ static void disconnect_server(int idx)
   if (server_online > 0)
     check_tcl_event("disconnect-server");
   server_online = 0;
-  if (realservername) nfree(realservername);
+  if (realservername)
+    nfree(realservername);
   realservername = 0;
   if (dcc[idx].sock >= 0)
     killsock(dcc[idx].sock);
