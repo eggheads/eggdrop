@@ -2,7 +2,7 @@
  * net.c -- handles:
  *   all raw network i/o
  * 
- * $Id: net.c,v 1.29 2001/02/25 07:33:35 guppy Exp $
+ * $Id: net.c,v 1.30 2001/06/24 20:49:23 poptix Exp $
  */
 /* 
  * This is hereby released into the public domain.
@@ -209,7 +209,7 @@ int sockoptions(int sock, int operation, int sock_options)
   int i;
 
   for (i = 0; i < MAXSOCKS; i++)
-    if (socklist[i].sock == sock) {
+    if ((socklist[i].sock == sock) && !(socklist[i].flags & SOCK_UNUSED)) {
       if (operation == EGG_OPTION_SET)
 	      socklist[i].flags |= sock_options;
       else if (operation == EGG_OPTION_UNSET)
@@ -770,6 +770,7 @@ int sockgets(char *s, int *len)
 	  *len = socklist[i].inbuflen;
 	  egg_memcpy(s, socklist[i].inbuf, socklist[i].inbuflen);
 	  nfree(socklist[i].inbuf);
+          socklist[i].inbuf = NULL;
 	  socklist[i].inbuflen = 0;
 	} else {
 	  /* Split up into chunks of 510 bytes. */
@@ -1166,4 +1167,40 @@ int sock_has_data(int type, int sock)
   } else
     debug1("sock_has_data: could not find socket #%d, returning false.", sock);
   return ret;
+}
+
+/* flush_inbuf():
+ * checks if there's data in the incoming buffer of an connection
+ * and flushs the buffer if possible
+ *
+ * returns: -1 if the dcc entry wasn't found
+ *          -2 if dcc[idx].type->activity doesn't exist and the data couldn't
+ *             be handled
+ *          0 if buffer was empty
+ *          otherwise length of flushed buffer
+ */
+int flush_inbuf(int idx)
+{
+  int i, len;
+  char *inbuf;
+
+  Assert((idx >= 0) && (idx < dcc_total));
+  for (i = 0; i < MAXSOCKS; i++) {
+    if ((dcc[idx].sock == socklist[i].sock)
+        && !(socklist[i].flags & SOCK_UNUSED)) {
+      len = socklist[i].inbuflen;
+      if ((len > 0) && socklist[i].inbuf) {
+        if (dcc[idx].type && dcc[idx].type->activity) {
+          inbuf = socklist[i].inbuf;
+          socklist[i].inbuf = NULL;
+          dcc[idx].type->activity(idx, inbuf, len);
+          nfree(inbuf);
+          return len;
+        } else
+          return -2;
+      } else
+        return 0;
+    }
+  }
+  return -1;
 }

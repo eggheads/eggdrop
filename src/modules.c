@@ -4,7 +4,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: modules.c,v 1.49 2001/04/06 22:28:42 guppy Exp $
+ * $Id: modules.c,v 1.50 2001/06/24 20:49:23 poptix Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -82,6 +82,7 @@ extern time_t now, online_since;
 extern struct chanset_t *chanset;
 extern tand_t *tandbot;
 extern party_t *party;
+extern sock_list        *socklist;
 
 
 int cmd_die();
@@ -529,10 +530,13 @@ Function global_table[] =
   (Function) egg_strcatn,
   (Function) clear_chanlist_member,
 #if (TCL_MAJOR_VERSION >= 8 && TCL_MINOR_VERSION >= 1) || (TCL_MAJOR_VERSION >= 9)
-  (Function) str_nutf8tounicode
+  (Function) str_nutf8tounicode,
 #else
-  (Function) 0
+  (Function) 0,
 #endif
+  (Function) & socklist,              /* sock_list *                      */
+  (Function) sockoptions,
+  (Function) flush_inbuf,
 };
 
 void init_modules(void)
