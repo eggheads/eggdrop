@@ -17,7 +17,7 @@ PATCH("CVS");    /* CVS beta */
  *
  *
  */
-PATCH("939863113"); /* current "unix" time */
+PATCH("940008695"); /* current "unix" time */
 /*
  *
  *
