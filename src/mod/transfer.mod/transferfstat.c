@@ -1,7 +1,7 @@
 /*
  * transferfstat.c -- part of transfer.mod
  *
- * $Id: transferfstat.c,v 1.4 2003/02/27 10:18:40 tothwolf Exp $
+ * $Id: transferfstat.c,v 1.5 2003/03/06 03:49:41 wcc Exp $
  *
  * Copyright (C) 2003 Eggheads Development Team
  *
@@ -100,7 +100,7 @@ static int fstat_set(struct userrec *u, struct user_entry *e, void *buf)
        * Someone could do:
        *  e->u.extra->uploads = 12345;
        *  fs = user_malloc(sizeof(struct filesys_stats));
-       *  memcpy(...e->u.extra...fs...);
+       *  my_memcpy(...e->u.extra...fs...);
        *  set_user(&USERENTRY_FSTAT, u, fs);
        *
        * Then we wouldn't detect here that something's changed.

@@ -1,5 +1,5 @@
 /*
- * $Id: uptime.c,v 1.27 2003/01/29 05:48:42 wcc Exp $
+ * $Id: uptime.c,v 1.28 2003/03/06 03:49:41 wcc Exp $
  *
  * This module reports uptime information about your bot to http://uptime.eggheads.org. The
  * purpose for this is to see how your bot rates against many others (including EnergyMechs
@@ -127,7 +127,7 @@ int init_uptime(void)
     putlog(LOG_DEBUG, "*", "init_uptime socket returned < 0 %d", uptimesock);
     return ((uptimesock = -1));
   }
-  memset(&sai, 0, sizeof(sai));
+  egg_memset(&sai, 0, sizeof(sai));
   sai.sin_addr.s_addr = INADDR_ANY;
   sai.sin_family = AF_INET;
   if (bind(uptimesock, (struct sockaddr *) &sai, sizeof(sai)) < 0) {
@@ -182,9 +182,9 @@ int send_uptime(void)
   len = sizeof(upPack) + strlen(botnetnick) + strlen(servhost) +
         strlen(uptime_version);
   mem = (PackUp *) nmalloc(len);
-  memcpy(mem, &upPack, sizeof(upPack));
+  my_memcpy(mem, &upPack, sizeof(upPack));
   sprintf(mem->string, "%s %s %s", botnetnick, servhost, uptime_version);
-  memset(&sai, 0, sizeof(sai));
+  egg_memset(&sai, 0, sizeof(sai));
   sai.sin_family = AF_INET;
   sai.sin_addr.s_addr = uptimeip;
   sai.sin_port = htons(uptime_port);

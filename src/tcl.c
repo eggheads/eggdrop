@@ -4,7 +4,7 @@
  *   Tcl initialization
  *   getting and setting Tcl/eggdrop variables
  *
- * $Id: tcl.c,v 1.67 2003/03/04 08:51:45 wcc Exp $
+ * $Id: tcl.c,v 1.68 2003/03/06 03:49:41 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -285,7 +285,7 @@ static char *tcl_eggstr(ClientData cdata, Tcl_Interp *irp,
       if (!bytes)
         return NULL;
       s = malloc(len + 1);
-      memcpy(s, bytes, len);
+      egg_memcpy(s, bytes, len);
       s[len] = 0;
     }
 #else
