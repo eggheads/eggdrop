@@ -1,4 +1,4 @@
-$Id: UPDATES1.6,v 1.206 2001/11/04 09:18:44 guppy Exp $
+$Id: UPDATES1.6,v 1.207 2001/11/04 09:23:34 guppy Exp $
 
 Changes in eggdrop: (since v1.6.0)
 ----------------------------------
@@ -58,14 +58,12 @@ various   guppy     the documentation for the need bind was slightly screwy
 |^Raven^| Noyga     PRIVMSGs with the same message to the same destination
                     are no longer stacked also USERHOST/USERIP are not stacked
                     using a comma 
-          Sup       Added HOOK_DIE to allow tcl_die to have
-                    a quit message.
+          Sup       Added HOOK_DIE to allow tcl_die to have a quit message.
           TaKeDa    small resync fix
           TaKaDa    fixed tcl_md5, it was broken on tcl8.1+
           Kirben    check whether cygwin requires -mwin32 to support
                     old versions of cygwin
-          Kirben    check for bind in /usr/local/bind when using
-                    cygwin
+          Kirben    check for bind in /usr/local/bind when using cygwin
 NeoN-	  dw	    a banreason wasn't used in some cases.
 Noyga     Sup       Bot sent a useless TOPIC command to the server
                     when it joined a channel.
