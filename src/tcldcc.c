@@ -2,7 +2,7 @@
  * tcldcc.c -- handles:
  *   Tcl stubs for the dcc commands
  *
- * $Id: tcldcc.c,v 1.41 2003/01/30 07:15:14 wcc Exp $
+ * $Id: tcldcc.c,v 1.42 2003/01/31 08:02:08 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -43,7 +43,6 @@ extern unsigned long otraffic_irc, otraffic_irc_today, itraffic_irc,
                      otraffic_trans, otraffic_trans_today, itraffic_trans,
                      itraffic_trans_today, otraffic_unknown, itraffic_unknown,
                      otraffic_unknown_today, itraffic_unknown_today;
-int enable_simul = 0;
 static struct portmap *root = NULL;
 
 
@@ -110,26 +109,23 @@ static int tcl_putdccraw STDVAR
 
 static int tcl_dccsimul STDVAR
 {
+  int idx = findidx(atoi(argv[1]));
+
   BADARGS(3, 3, " idx command");
+  
+  if (idx >= 0 && (dcc[idx].type->flags & DCT_SIMUL)) {
+    int l = strlen(argv[2]);
 
-  if (enable_simul) {
-    int idx = findidx(atoi(argv[1]));
-
-    if (idx >= 0 && (dcc[idx].type->flags & DCT_SIMUL)) {
-      int l = strlen(argv[2]);
-
-      if (l > 510) {
-        l = 510;
-        argv[2][510] = 0;        /* Restrict length of cmd */
-      }
-      if (dcc[idx].type && dcc[idx].type->activity) {
-        dcc[idx].type->activity(idx, argv[2], l);
-        return TCL_OK;
-      }
-    } else
-      Tcl_AppendResult(irp, "invalid idx", NULL);
+    if (l > 510) {
+      l = 510;
+      argv[2][510] = 0;        /* Restrict length of cmd */
+    }
+    if (dcc[idx].type && dcc[idx].type->activity) {
+      dcc[idx].type->activity(idx, argv[2], l);
+      return TCL_OK;
+    }
   } else
-    Tcl_AppendResult(irp, "simul disabled", NULL);
+      Tcl_AppendResult(irp, "invalid idx", NULL);
   return TCL_ERROR;
 }
 

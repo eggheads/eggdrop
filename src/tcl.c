@@ -4,7 +4,7 @@
  *   Tcl initialization
  *   getting and setting Tcl/eggdrop variables
  *
- * $Id: tcl.c,v 1.60 2003/01/30 07:15:14 wcc Exp $
+ * $Id: tcl.c,v 1.61 2003/01/31 08:02:08 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -60,9 +60,9 @@ extern int backgrd, flood_telnet_thr, flood_telnet_time, shtime, share_greet,
            use_telnet_banner, default_flags, conmask, switch_logfiles_at,
            connect_timeout, firewallport, notify_users_at, flood_thr, tands,
            ignore_time, reserved_port_min, reserved_port_max, die_on_sighup,
-           die_on_sigterm, max_logs, max_logsize, enable_simul, dcc_total,
-           debug_output, identtimeout, dcc_sanitycheck, dupwait_timeout,
-           egg_numver, share_unlinks, protect_telnet, sort_users, strict_host,
+           die_on_sigterm, max_logs, max_logsize, dcc_total, debug_output,
+           identtimeout, dcc_sanitycheck, dupwait_timeout, egg_numver,
+           share_unlinks, protect_telnet, sort_users, strict_host,
            resolve_timeout, default_uflags, userfile_perm;
 
 extern struct dcc_t *dcc;
@@ -509,7 +509,6 @@ static tcl_ints def_tcl_ints[] = {
   {"max-logs",              &max_logs,             0},
   {"max-logsize",           &max_logsize,          0},
   {"quick-logs",            &quick_logs,           0},
-  {"enable-simul",          &enable_simul,         1},
   {"debug-output",          &debug_output,         1},
   {"protect-telnet",        &protect_telnet,       0},
   {"dcc-sanitycheck",       &dcc_sanitycheck,      0},

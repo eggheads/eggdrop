@@ -463,10 +463,6 @@ should read doc/BOTNET before modifying these settings.
     increase this later, but never decrease it.
 
 
-  set enable-simul 1
-    Enable this setting if you want to enable the 'dccsimul' Tcl command.
-
-
   set allow-dk-cmds 1
     Enable this setting if you want +d & +k users to use commands bound as -|-.
 
