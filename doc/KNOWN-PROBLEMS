@@ -7,8 +7,9 @@ BUG REPORTS:
   and the alarm does not interrupt it).
 * High-bit characters are being filtered from channel names.   This is
   a fault of the TCL interpreter, and not eggdrop.  The TCL interpreter
-  filters the characters when it reads a file for interpreting.
-* There is a "ghost bug" in eggdrop at the moment. We don't know how to
-  fix it, since we can't reproduce it. If you can so, please report it to
-  eggheads@eggheads.org. Visit http://www.eggheads.org/bugzilla/show_bug.cgi?id=4
-  for more details...
+  filters the characters when it reads a file for interpreting. Update
+  your TCL version 8.1 or higher
+* Since version 8.1 TCl support unicode characters, like for example è.
+  If those characters are handled in a script as text, you run into
+  errors, eggdrop can't handle those at the moment.
+
