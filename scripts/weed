@@ -1,4 +1,6 @@
-#!/usr/local/bin/tclsh
+#! /bin/sh
+# ^-- little trick to restart using tclsh \
+exec tclsh "$0" "$@"
 #
 # weed out certain undesirables from an eggdrop userlist
 # try just typing 'tclsh weed' to find out the options

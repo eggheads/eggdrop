@@ -930,6 +930,7 @@ static void share_ufsend(int idx, char *par)
     ip = newsplit(&par);
     port = newsplit(&par);
     if (open_telnet_dcc(sock, ip, port) < 0) {
+      killsock(sock);
       putlog(LOG_MISC, "*", "Asynchronous connection failed!");
       dprintf(idx, "s e Can't connect to you!\n");
       zapfbot(idx);

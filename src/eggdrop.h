@@ -68,7 +68,7 @@
 #endif
 
 #if (NICKMAX < 9) || (NICKMAX > 32)
-#include "invalid NIXMAX value"
+#include "invalid NICKMAX value"
 #endif
 
 #if (HANDLEN < 9) || (HANDLEN > 32)
@@ -144,11 +144,11 @@ extern int cx_ptr;
 #define free(x) dont_use_old_free(x)
 
 /* IP type */
-#if SIZEOF_INT==4
+#if (SIZEOF_INT == 4)
 typedef unsigned int IP;
 
 #else
-#if SIZEOF_LONG==4
+#if (SIZEOF_LONG == 4)
 typedef unsigned long IP;
 
 #else

@@ -27,16 +27,16 @@ specific commands, see later.
       (intended for sending messages to channels or people)
     returns: nothing
 
-  putquick <text>
-    sends text to the server, like 'dump' (intended for direct server
-    commands); output is queued so that you won't flood yourself off
-    the server, using the MODE queue (should be alot faster)
-    returns: nothing
+| putquick <text>
+|   sends text to the server, like 'dump' (intended for direct server
+|   commands); output is queued so that you won't flood yourself off
+|   the server, using the MODE queue (should be alot faster)
+|   returns: nothing
 
-  putkick <channel> <nick(s)> [reason]
-    sends kicks to the server and tries to put as many nicks into
-    one kick command as possible.
-    returns: nothing
+| putkick <channel> <nick,nick,...> [reason]
+|   sends kicks to the server and tries to put as many nicks into
+|   one kick command as possible.
+|   returns: nothing
 
   putlog <text>
     sends text to the log for any channel, marked as 'misc' (o)
@@ -60,13 +60,13 @@ specific commands, see later.
       msg (one line per msg); the user has no flags, so the
       flag bindings wont work within the file.
 
-  queuesize [queue]
-    returns: the number of msgs in all queues. If a queue is specified, only
-      the size of this queue is returned.
+| queuesize [queue]
+|   returns: the number of msgs in all queues. If a queue is specified, only
+|     the size of this queue is returned. valid queues are: mode, server, 
+|     help, or all.
 
-  clearqueue <queue>
-    removes all msgs from the specified queue
-    returns: number of deleted msgs
+|  clearqueue <queue>
+|    returns: number of deleted lines from the specified queue
 
 
 *** USER RECORD MANIPULATION COMMANDS ***
@@ -135,7 +135,7 @@ specific commands, see later.
     changes the attributes for a user record, if you include any -- changes
       are of the form "+f", "-o", "+dk", "-o+d", etc; if a channel is
       specified, the channel-specific flags for that channel are altered
-      you can now use the +o|-o #channel format here too.
+|     you can now use the +o|-o #channel format here too.
     returns: new flags for the user (if you made no changes, returns current
       flags); if a channel was specified, the global AND the channel-specific 
       flags for that channel are returned in the format of the new flagging
@@ -387,8 +387,8 @@ specific commands, see later.
 
   channel add <name> <option-list>
     adds a channel record for the bot to monitor; the full list of possible
-      options is given in the "eggdrop.conf" sample config file; note that the
-      channel options must be in a list (enclosed in {})
+      options is given in the "eggdrop.conf.dist" sample config file; note
+      that the channel options must be in a list (enclosed in {})
     returns: nothing
 
   channel set <name> <options...>
@@ -418,7 +418,7 @@ specific commands, see later.
     returns: list of the channels the bot is monitoring (or trying to)
  
   isbotnick <nick>
-    returns: "1" if the nick matches the botnick; "0" otherwise
+|   returns: "1" if the nick matches the botnick; "0" otherwise
 
   botisop <channel>
     returns: "1" if the bot is an op on that channel; "0" otherwise
@@ -426,8 +426,8 @@ specific commands, see later.
   botisvoice <channel>
     returns: "1" if the bot is has a voice on that channel; "0" otherwise
 
-  botonchan <channel>
-    returns: "1" if the bot is on that channel; "0" otherwise
+| botonchan <channel>
+|  returns: "1" if the bot is on that channel; "0" otherwise
 
   isop <nickname> <channel>
     returns: "1" if someone by that nickname is on the channel and has chop;
@@ -459,38 +459,40 @@ specific commands, see later.
   ischanban <ban> <channel>
     returns: "1" if that is a ban on the bot's channel
 
-  ischanexempt <exempt> <channel>
-    returns: "1" if that is an exemption (+e mode) on the bot's channel.
-      this is an IRCNET feature.
+| ischanexempt <exempt> <channel>
+|   returns: "1" if that is an exemption (+e mode) on the bot's channel.
+|     this is only useful on networks that support +e
 
-  ischaninvite <invite> <channel>
-    returns: "1" if that is an invitation (+I mode) on the bot's channel.
-      this is an IRCNET feature.
+| ischaninvite <invite> <channel>
+|   returns: "1" if that is an invitation (+I mode) on the bot's channel.
+|     this is only useful on networks that support +I
 
-| chanbans <channel>
-|   returns: a list of the current bans on the channel, each element is
-|     of the form {ban bywho age} age is seconds from the bots POV
+  chanbans <channel>
+    returns: a list of the current bans on the channel, each element is
+     of the form {ban bywho age} age is seconds from the bots POV
 
-  chanexempts <channel>
-    returns: a list of the current exemptions (+e mode) on the channel,
-      each element is of the form {exemption bywho age} age is seconds
-      from the bots POV. this is an IRCNET feature.
+| chanexempts <channel>
+|   returns: a list of the current exemptions (+e mode) on the channel,
+|     each element is of the form {exemption bywho age} age is seconds
+|     from the bots POV. this is only useful on networks that support
+|     +e
 
-  chaninvites <channel>
-    returns: a list of the current invitations (+I modes) on the channel,
-      each element is of the form {invitation bywho age} age is seconds
-      from the bots POV. this is an IRCNET feature.
+| chaninvites <channel>
+|   returns: a list of the current invitations (+I modes) on the channel,
+|     each element is of the form {invitation bywho age} age is seconds
+|     from the bots POV. this is only useful on networks that support
+|     +I
 
   resetbans <channel>
     removes all bans on the channel that aren't in the bot's ban list, and
       refreshes any bans that should be on the channel but aren't
     returns: nothing
 
-  resetexempts <channel>
-    removes all exemptions on the channel. this is an IRCNET feature.
+| resetexempts <channel>
+|   removes all exemptions on the channel. this is an IRCNET feature.
 
-  resetinvites <channel>
-    removes all invitations on the channel. this is an IRCNET feature.
+| resetinvites <channel>
+|   removes all invitations on the channel. this is an IRCNET feature.
 
   resetchan <channel>
     rereads in the channel info from the server
@@ -870,9 +872,9 @@ GLOBAL VARIABLES:
       and any following items are the names of patches that have been added
 
   numversion
-    current numeric bot version (ie: "1010201");
-      Numerical version is "MNNRRPP" where:
-        M  is the Major release number
+|   current numeric bot version (ie: "1010201");
+|     Numerical version is "MNNRRPP" where:
+|       M  is the Major release number
         NN is the Minor release number
         RR is the sub-release number
         PP is the patch level for that sub-release
@@ -883,9 +885,9 @@ GLOBAL VARIABLES:
 | server-online
 |    unixtime value for how long the bot has been on its server
 
-  lastbind
-    The last command binding which triggered.   This allows you to
-    identify which command triggered a tcl routine.
+| lastbind
+|   The last command binding which triggered.   This allows you to
+|   identify which command triggered a tcl routine.
 
 
 COMMAND EXTENSION:
@@ -998,14 +1000,14 @@ for the msg-command "stop", use "unbind msg - stop msg_stop".
 
   (12) KICK   (stackable)
        bind kick <flags> <mask> <proc>
-       procname <nick> <user@host> <handle> <channel> <kicked-nick> <reason>
+       procname <nick> <user@host> <handle> <channel> <target> <reason>
 
        triggered when someone is kicked off the channel; the <mask> is
-       matched against "#channel nick" where the nickname is of the person
-       who got kicked off (can use wildcards); the proc is called with
-       the nick, user@host, and handle of the kicker, plus the channel,
-       the nickname of the person who was kicked, and the reason; <flags>
-       is unused here
+       matched against "#channel target" where the target is the nickname of 
+       the person who got kicked off (can use wildcards); the proc is 
+       called with the nick, user@host, and handle of the kicker, plus the 
+       channel, the nickname of the person who was kicked, and the 
+       reason; <flags> is unused here
 
   (13) NICK   (stackable)
        bind nick <flags> <mask> <proc>
@@ -1025,21 +1027,21 @@ for the msg-command "stop", use "unbind msg - stop msg_stop".
        response to a mode change will happen AFTER all matching Tcl procs
        are called; the <mask> will have the channel prefixed (ie, "#turtle +m")
 
-       note that "victim" was added in 1.3.23 and that this will break
-       tcl scripts that were written for pre-1.3.23 versions and use this
-       binding. An easy fix (by guppy) is as follows (example):
-
-       Old script looks as follows:
-       bind mode - * mode_proc
-       proc mode_proc {nick uhost hand chan mc} { ... }
-
-       To make it work with 1.3.23+ and stay compatible with older bots, do:
-       bind mode - * mode_proc_fix
-       proc mode_proc_fix {nick uhost hand chan mc {victim ""}} {
-         if {$victim!=""} { append mc " $victim" }
-         mode_proc $nick $uhost $hand $chan $mc
-       }
-       proc mode_proc {nick uhost hand chan mc} { ... }
+|      note that "victim" was added in 1.3.23 and that this will break
+|      tcl scripts that were written for pre-1.3.23 versions and use this
+|      binding. An easy fix (by guppy) is as follows (example):
+|
+|      Old script looks as follows:
+|      bind mode - * mode_proc
+|      proc mode_proc {nick uhost hand chan mc} { ... }
+|
+|      To make it work with 1.3.23+ and stay compatible with older bots, do:
+|      bind mode - * mode_proc_fix
+|      proc mode_proc_fix {nick uhost hand chan mc {victim ""}} {
+|        if {$victim != ""} { append mc " $victim" }
+|        mode_proc $nick $uhost $hand $chan $mc
+|      }
+|      proc mode_proc {nick uhost hand chan mc} { ... }
 
 
   (15) CTCP
@@ -1123,20 +1125,20 @@ for the msg-command "stop", use "unbind msg - stop msg_stop".
 
   (23) CHAT   (stackable)
        bind chat <flags> <mask> <proc>
-       proc-name <nick> <channel#> <text>
+       proc-name <handle> <channel#> <text>
 
        when someone says something on the botnet, it invokes this binding;
-       flags is ignored; nick could be a user on this bot (ie "DronePup")
-       or on another bot (ie "Eden@Wilde"); the mask is checked against the
-       text
+       flags are ignored; handle could be a user on this bot (ie "DronePup")
+       or on another bot (ie "Eden@Wilde") and therefore you can't rely on
+       a local user record; the mask is checked against the text
 
   (24) LINK   (stackable)
        bind link <flags> <mask> <proc>
        proc-name <botname> <via>
 
-       triggered when a bot links into the botnet; botname is the name of
-       the bot that just linked in; via is the bot it linked through; the
-       mask is checked against the bot that linked; flags is ignored
+       triggered when a bot links into the botnet; botname is the botnetnick 
+       of the bot that just linked in; via is the bot it linked through; the
+       mask is checked against the bot that linked; flags are ignored
 
   (25) DISC   (stackable)
        bind disc <flags> <mask> <proc>
@@ -1144,7 +1146,7 @@ for the msg-command "stop", use "unbind msg - stop msg_stop".
 
        triggered when a bot disconnects from the botnet for whatever reason;
        just like the link bind, flags are ignored; mask is checked against the
-       nickname of the bot that left
+       botnetnick of the bot that left
 
   (26) SPLT   (stackable)
        bind splt <flags> <mask> <proc>
@@ -1184,18 +1186,18 @@ for the msg-command "stop", use "unbind msg - stop msg_stop".
        masked to "*" for the bind); flags is ignored
 
   (30) NOTE
-       bind note <flags> <nickname> <proc>
+       bind note <flags> <handle> <proc>
        procname <from> <to> <text>
 
        incoming notes (either from the party line, someone on IRC, or
        someone on another bot on the botnet) are checked against these
        binds before being process; if a bind exists, the bot will not
-       deliver the note; the nickname must be an exact match (no wild-
+       deliver the note; the handle must be an exact match (no wild-
        cards), but it is not case sensitive; flags is ignored
 
   (31) ACT   (stackable)
        bind act <flags> <mask> <proc>
-       proc-name <nick> <channel#> <action>
+       proc-name <handle> <channel#> <action>
 
        when someone does an action on the botnet, it invokes this binding;
        flags is ignored; the mask is checked against the text of the
@@ -1203,28 +1205,28 @@ for the msg-command "stop", use "unbind msg - stop msg_stop".
 
   (32) WALL   (stackable)
        bind wall <flags> <mask> <proc>
-       proc-name <nick> <msg>
+       proc-name <handle> <msg>
 
        when the bot receives a wallops, it invokes this binding; flags is
        ignored; the mask is checked against the text of the wallops msg
 
   (33) BCST   (stackable)
        bind bcst <flags> <mask> <proc>
-       proc-name <bot> <channel#> <text>
+       proc-name <botname> <channel#> <text>
 
        when a bot says something on the botnet, it invokes this binding;
        flags is ignored; the mask is checked against the text
 
   (34) CHJN   (stackable)
        bind chjn <flags> <mask> <proc>
-       proc-name <bot> <nick> <channel#> <flag><sock> <from>
+       proc-name <botname> <handle> <channel#> <flag> <idx> <from>
 
        when someone joins a botnet channel, it invokes this binding;
        flags is ignored; the mask is checked against the text
 
   (35) CHPT   (stackable)
 |      bind chpt <flags> <mask> <proc>
-|      proc-name <bot> <nick> <sock> <chan>
+|      proc-name <botname> <handle> <idx> <channel#>
 
        when someone parts a botnet channel, it invokes this binding;
        flags is ignored; the mask is checked against the channel
@@ -1237,44 +1239,48 @@ for the msg-command "stop", use "unbind msg - stop msg_stop".
        mask matches 5 space seperated integers of the form:
        "min hour day month year"
 
-  (37) AWAY   (stackable)
-       bind away - <mask> <proc>
-       proc-name <bot> <idx> <msg>
+|      min, hour, day, month have a zero padding so they are
+|      exactly two characters long, year is extended to four characters
+|      in the same way if needed ;)
 
-       triggers when a user goes away or comes back on the botnet
-       (msg == "" when returning)
+| (37) AWAY   (stackable)
+|      bind away - <mask> <proc>
+|      proc-name <botname> <idx> <text>
+|
+|      triggers when a user goes away or comes back on the botnet, text
+|      is the reason than has been specified (text == "" when returning)
 
-  (38) LOAD   (stackable)
-       bind load - <mask> <proc>
-       proc-name <module>
+| (38) LOAD   (stackable)
+|      bind load - <mask> <proc>
+|      proc-name <module>
+|
+|      triggers when a module is loaded.
 
-       triggers when a module is loaded.
+| (38) UNLD   (stackable)
+|      bind unld - <mask> <proc>
+|      proc-name <module>
+|
+|      triggers when a module is unloaded.
 
-  (38) UNLD   (stackable)
-       bind unld - <mask> <proc>
-       proc-name <module>
+| (39) NKCH   (stackable)
+|      bind nkch - <mask> <proc>
+|      proc-name <oldhandle> <newhandle>
+|
+|      triggered whenever a local users handle is changed (in the userfile)
 
-       triggers when a module is unloaded.
-
-  (39) NKCH   (stackable)
-       bind nkch - <mask> <proc>
-       proc-name <oldnick> <newnick>
-
-       triggered whenever a local users nick is changed (in the userfile)
-
-  (40) EVNT   (stackable)
-       bind evnt - <type> <proc>
-       proc-name <type> 
-
-       triggered whenever one of these events happens. valid events are:
-         sighup            (called on a kill -HUP <pid>)
-         sigterm	   (called on a kill -TERM <pid>)
-	 sigill		   (called on a kill -ILL <pid>)
-	 sigquit           (called on a kill -QUIT <pid>)
-	 save		   (called when the userfile is saved)
-	 rehash            (called just after a rehash)
-	 prerehash         (called just before a rehash)
-	 logfile           (called when the logs are switched daily)
+| (40) EVNT   (stackable)
+|      bind evnt - <type> <proc>
+|      proc-name <type> 
+|
+|      triggered whenever one of these events happens. valid events are:
+|        sighup            (called on a kill -HUP <pid>)
+|        sigterm	   (called on a kill -TERM <pid>)
+|        sigill		   (called on a kill -ILL <pid>)
+|	 sigquit           (called on a kill -QUIT <pid>)
+|	 save		   (called when the userfile is saved)
+|	 rehash            (called just after a rehash)
+|	 prerehash         (called just before a rehash)
+|	 logfile           (called when the logs are switched daily)
 
 (A) RETURN VALUES
 
@@ -1312,6 +1318,10 @@ for the msg-command "stop", use "unbind msg - stop msg_stop".
     RAW   Return 1 to ask the bot not to process the server text.  This
           can affect the bot's performance (by causing it to miss things
           that it would normally act on) -- you have been warned.
+
+|   CHON  Return 1 to ask the bot not to process the partyline join event
+
+|   CHOF  Return 1 to ask the bot not to process the partyline part event
 
     WALL  Return 1 to make the command get logged liked so:
           !nick! msg

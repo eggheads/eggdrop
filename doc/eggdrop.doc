@@ -121,8 +121,8 @@ at <eggdrop@sodre.net> (after subscribing).  Thanks.
     upgrading to a new version is somewhat painless.  You can put your
     config file and user file in that directory, and then when you
     compile a new version of eggdrop, you just have to do:
-       putegg <directory>
-    and it will copy eggdrop, weed, and optionally the help files.
+       make install DEST=<directory>
+    and it will copy eggdrop, modules, scripts, and the help files.
 
     The config file that comes with eggdrop is called "eggdrop.conf.dist".
     You need to edit that file and change almost everything.  It specifies

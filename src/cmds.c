@@ -718,7 +718,7 @@ static void cmd_console(struct userrec *u, int idx, char *par)
   /* new style autosave -- drummer,07/25/1999*/
   if ((me = module_find("console", 1, 1))) {
     Function *func = me->funcs;
-    (func[CONSOLE_DOSTORE]) (idx);
+    (func[CONSOLE_DOSTORE]) (dest);
   }
 }
 
@@ -1898,7 +1898,7 @@ static char *stripmaskname(int x)
 
 static void cmd_strip(struct userrec *u, int idx, char *par)
 {
-  char *nick, *changes, s[2];
+  char *nick, *changes, *c, s[2];
   int dest = 0, i, pls, md, ok = 0;
   module_entry *me;
 
@@ -1927,11 +1927,12 @@ static void cmd_strip(struct userrec *u, int idx, char *par)
     nick = "";
     dest = idx;
   }
-  if ((changes[0] != '+') && (changes[0] != '-'))
+  c = changes;
+  if ((c[0] != '+') && (c[0] != '-'))
     dcc[dest].u.chat->strip_flags = 0;
   s[1] = 0;
-  for (pls = 1; *changes; changes++) {
-    switch (*changes) {
+  for (pls = 1; *c; c++) {
+    switch (*c) {
     case '+':
       pls = 1;
       break;
@@ -1939,7 +1940,7 @@ static void cmd_strip(struct userrec *u, int idx, char *par)
       pls = 0;
       break;
     default:
-      s[0] = *changes;
+      s[0] = *c;
       md = stripmodes(s);
       if (pls == 1)
 	dcc[dest].u.chat->strip_flags |= md;
@@ -1947,7 +1948,10 @@ static void cmd_strip(struct userrec *u, int idx, char *par)
 	dcc[dest].u.chat->strip_flags &= ~md;
     }
   }
-  putlog(LOG_CMDS, "*", "#%s# strip %s %s", dcc[idx].nick, nick, changes);
+  if (nick[0])
+    putlog(LOG_CMDS, "*", "#%s# strip %s %s", dcc[idx].nick, nick, changes);
+  else 
+    putlog(LOG_CMDS, "*", "#%s# strip %s", dcc[idx].nick, changes);
   if (dest == idx) {
     dprintf(idx, "Your strip settings are: %s (%s)\n",
 	    stripmasktype(dcc[idx].u.chat->strip_flags),

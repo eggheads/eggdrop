@@ -44,10 +44,6 @@ language/
 motd
    sample "message of the day" displayed to party-line users as they join
 
-obsolete/putegg
-   The old script for installing the bot in another directory
-   Now try:  make install DEST=/home/mydir/eggdrop
-
 scripts/
    some tcl scripts that you might want to use
 
