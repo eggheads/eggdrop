@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: tcl-commands.html,v 1.42 2004/06/11 17:46:14 wcc Exp $ -->
+<!-- $Id: tcl-commands.html,v 1.43 2004/08/02 18:50:47 wcc Exp $ -->
 
 <html>
   <head>
@@ -1898,7 +1898,72 @@
 
         <dd>
           <p><strong>Description:</strong> modifies the strip-flags for a
-          user</p>
+          user. The supported strip-flags are:</p>
+
+          <blockquote>
+            <table>
+              <tr valign="top">
+                <td>
+                  <p><strong>b</strong></p>
+                </td>
+
+                <td>
+                  <p>remove all boldface codes</p>
+                </td>
+              </tr>
+
+              <tr valign="top">
+                <td>
+                  <p><strong>c</strong></p>
+                </td>
+
+                <td>
+                  <p>remove all color codes</p>
+                </td>
+              </tr>
+
+              <tr valign="top">
+                <td>
+                  <p><strong>r</strong></p>
+                </td>
+
+                <td>
+                  <p>remove all reverse video codes</p>
+                </td>
+              </tr>
+
+              <tr valign="top">
+                <td>
+                  <p><strong>u</strong></p>
+                </td>
+
+                <td>
+                  <p>remove all underline codes</p>
+                </td>
+              </tr>
+
+
+              <tr valign="top">
+                <td>
+                  <p><strong>a</strong></p>
+                </td>
+
+                <td>
+                  <p>remove all ANSI codes</p>
+                </td>
+              </tr>
+
+              <tr valign="top">
+                <td>
+                  <p><strong>g</strong></p>
+                </td>
+
+                <td>
+                  <p>remove all ctrl-g (bell) codes</p>
+                </td>
+              </tr>
+            </table>
+          </blockquote>
 
           <p><strong>Returns:</strong> new strip-flags for the specified user
           (or the current flags, if strip-flags was omitted)</p>
@@ -3288,6 +3353,82 @@
           <p><strong>Description:</strong> rehashes the bot</p>
 
           <p><strong>Returns:</strong> nothing</p>
+
+          <p><strong>Module:</strong> core</p>
+        </dd>
+
+        <dt><strong>* stripcodes &lt;strip-flags&gt; &lt;string&gt;</strong></dt>
+        <dd>
+          <p><strong>Description:</strong> strips specified control characters
+          from the string given. strip-flags can be any combination of the
+          following:</p>
+
+          <blockquote>
+            <table>
+              <tr valign="top">
+                <td>
+                  <p><strong>b</strong></p>
+                </td>
+
+                <td>
+                  <p>remove all boldface codes</p>
+                </td>
+              </tr>
+
+              <tr valign="top">
+                <td>
+                  <p><strong>c</strong></p>
+                </td>
+
+                <td>
+                  <p>remove all color codes</p>
+                </td>
+              </tr>
+
+              <tr valign="top">
+                <td>
+                  <p><strong>r</strong></p>
+                </td>
+
+                <td>
+                  <p>remove all reverse video codes</p>
+                </td>
+              </tr>
+
+              <tr valign="top">
+                <td>
+                  <p><strong>u</strong></p>
+                </td>
+
+                <td>
+                  <p>remove all underline codes</p>
+                </td>
+              </tr>
+
+
+              <tr valign="top">
+                <td>
+                  <p><strong>a</strong></p>
+                </td>
+
+                <td>
+                  <p>remove all ANSI codes</p>
+                </td>
+              </tr>
+
+              <tr valign="top">
+                <td>
+                  <p><strong>g</strong></p>
+                </td>
+
+                <td>
+                  <p>remove all ctrl-g (bell) codes</p>
+                </td>
+              </tr>
+            </table>
+          </blockquote>
+
+          <p><strong>Returns:</strong> the stripped string</p>
 
           <p><strong>Module:</strong> core</p>
         </dd>

@@ -1,4 +1,4 @@
-$Id: NEWS,v 1.31 2004/01/09 05:56:35 wcc Exp $
+$Id: NEWS,v 1.32 2004/08/02 18:50:46 wcc Exp $
 
 News
 Last revised: April 16, 2003
@@ -202,6 +202,8 @@ Changes made to Eggdrop 1.6.x from Eggdrop1.4.x:
     * The 'onchan', 'botonchan', 'botisvoice', 'botisop', 'onchansplit',
       'isop', 'isvoice', and 'handonchan' commands no longer require an
       argument.
+
+    * Added a "stripcodes" command to remove control codes/etc from strings.
 
     For more information about changed or added Tcl commands, see
     doc/tcl-commands.doc.

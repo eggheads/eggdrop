@@ -1,7 +1,7 @@
-$Id: tcl-commands.doc,v 1.114 2004/07/25 03:56:58 wcc Exp $
+$Id: tcl-commands.doc,v 1.115 2004/08/02 18:50:46 wcc Exp $
 
 Eggdrop Tcl Commands
-Last revised: January 12, 2004
+Last revised: August 02, 2004
     _____________________________________________________________________
 
                            Eggdrop Tcl Commands
@@ -909,7 +909,14 @@ marked with vertical bars (|) on the left.
     Module: core
 
   strip <idx> [+/-strip-flags]
-    Description: modifies the strip-flags for a user
+|   Description: modifies the strip-flags for a user. The supported
+|     strip-flags are:
+|       b - remove all boldface codes
+|       c - remove all color codes
+|       r - remove all reverse video codes
+|       u - remove all underline codes
+|       a - remove all ANSI codes
+|       g - remove all ctrl-g (bell) codes
     Returns: new strip-flags for the specified user (or the current
       flags, if strip-flags was omitted)
     Module: core
@@ -1509,6 +1516,18 @@ marked with vertical bars (|) on the left.
     Description: rehashes the bot
     Returns: nothing
     Module: core
+
+| stripcodes <strip-flags> <string>
+|   Description: strips specified control characters from the string given.
+|     strip-flags can be any combination of the following:
+|       b - remove all boldface codes
+|       c - remove all color codes
+|       r - remove all reverse video codes
+|       u - remove all underline codes
+|       a - remove all ANSI codes
+|       g - remove all ctrl-g (bell) codes
+|   Returns: the stripped string.
+|   Module: core
 
 
 *** GLOBAL VARIABLES ***

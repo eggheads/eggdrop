@@ -2,7 +2,7 @@
  * tclmisc.c -- handles:
  *   Tcl stubs for everything else
  *
- * $Id: tclmisc.c,v 1.53 2004/07/02 21:02:02 wcc Exp $
+ * $Id: tclmisc.c,v 1.54 2004/08/02 18:50:47 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -626,6 +626,43 @@ static int tcl_callevent STDVAR
   return TCL_OK;
 }
 
+static int tcl_stripcodes STDVAR
+{
+  int flags = 0;
+  char *p;
+
+  BADARGS(3, 3, " strip-flags string");
+
+  for (p = argv[1]; *p; p++)
+    switch (*p) {
+    case 'a':
+      flags |= STRIP_ANSI;
+      break;
+    case 'b':
+      flags |= STRIP_BOLD;
+      break;
+    case 'c':
+      flags |= STRIP_COLOR;
+      break;
+    case 'g':
+      flags |= STRIP_BELLS;
+      break;
+    case 'r':
+      flags |= STRIP_REV;
+      break;
+    case 'u':
+      flags |= STRIP_UNDER;
+      break;
+    default:
+      Tcl_AppendResult(irp, "Invalid strip-flags: ", argv[1], NULL);
+      return TCL_ERROR;
+    }
+
+  strip_mirc_codes(flags, argv[2]);
+  Tcl_AppendResult(irp, argv[2], NULL);
+  return TCL_OK;
+}
+
 #ifdef USE_TCL_OBJ
 static int tcl_md5(cd, irp, objc, objv)
 ClientData cd;
@@ -712,5 +749,6 @@ tcl_cmds tclmisc_cmds[] = {
 #endif /* USE_TCL_OBJ */
   {"binds",               tcl_binds},
   {"callevent",       tcl_callevent},
+  {"stripcodes",     tcl_stripcodes},
   {NULL,                       NULL}
 };
