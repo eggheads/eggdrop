@@ -1,11 +1,11 @@
 dnl configure.ac: this file is processed by autoconf to produce ./configure.
 dnl
-dnl $Id: configure.ac,v 1.15 2004/08/24 02:37:06 wcc Exp $
+dnl $Id: configure.ac,v 1.16 2004/08/24 04:44:47 wcc Exp $
 
 AC_PREREQ(2.59)
 AC_INIT([Eggdrop],[1.6.18],[bugs@eggheads.org])
 AC_COPYRIGHT([Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004 Eggheads Development Team])
-AC_REVISION($Revision: 1.15 $)
+AC_REVISION($Revision: 1.16 $)
 AC_CONFIG_SRCDIR(src/eggdrop.h)
 AC_CONFIG_AUX_DIR(misc)
 AC_CONFIG_HEADER(config.h)
@@ -107,11 +107,12 @@ tclrecommendsite="ftp://tcl.activestate.com/pub/tcl/tcl8_4/"
 tcllibnames="tcl8.4 tcl84 tcl8.3 tcl83 tcl8.2 tcl82 tcl8.1 tcl81 \
              tcl8.0 tcl80 tcl tcl7.6 tcl76 tcl7.5 tcl75 tcl7.4 tcl74 tcl7.3 \
              tcl73 tcl7.2 tcl72 tcl7.1 tcl71 tcl7.0 tcl70 tcl8.5 tcl85"
-tcllibextensions=".so .so.1 .so.1.0 .so.1.2 .dll .dylib .a .sl"
-tcllibpaths="$HOME/lib $HOME/tcl/lib /usr/local/lib /usr/lib /lib \
-             /usr/local/lib/tcl8.4 /usr/local/lib/tcl8.3 \
-             /usr/lib/tcl8.4 /usr/lib/tcl8.3 \
+tcllibextensions=".so .so.1 .so.1.0 .so.1.2 .dll .dylib .sl .a"
+tcllibpaths="$HOME/lib $HOME/tcl/lib \
+             /usr/local/lib /usr/lib /lib \
              /usr/local/lib/tcl8.5 /usr/lib/tcl8.5 \
+             /usr/local/lib/tcl8.4 /usr/lib/tcl8.4 \
+             /usr/local/lib/tcl8.3 /usr/lib/tcl8.3 \
              /usr/local/pkgs/tcl/lib /sys/lib \
              /usr/i486-linuxaout/lib /beos/system/lib $HOME"
 
@@ -119,10 +120,11 @@ tcllibpaths="$HOME/lib $HOME/tcl/lib /usr/local/lib /usr/lib /lib \
 
 # Tcl header filenames and search paths.
 tclheadernames="tcl.h"
-tclheaderpaths="$HOME/include $HOME/tcl/include /usr/local/include /usr/include \
-                /usr/local/include/tcl8.3 /usr/local/include/tcl8.4 \
-                /usr/include/tcl8.3 /usr/include/tcl8.4 \
+tclheaderpaths="$HOME/include $HOME/tcl/include \
+                /usr/local/include /usr/include \
                 /usr/local/include/tcl8.5 /usr/include/tcl8.5 \
+                /usr/local/include/tcl8.4 /usr/include/tcl8.4 \
+                /usr/local/include/tcl8.3 /usr/include/tcl8.3 \
                 /usr/local/pkgs/tcl/include /sys/include \
                 /beos/system/include /beos/devel/include $HOME"
 
