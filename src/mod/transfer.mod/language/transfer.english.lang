@@ -1,7 +1,7 @@
 # transfer.english.lang
 #   langauge messages for transfer module
 #
-# $Id: transfer.english.lang,v 1.8 2003/03/08 04:29:44 wcc Exp $
+# $Id: transfer.english.lang,v 1.9 2004/05/20 21:44:10 wcc Exp $
 
 0xf00,Refused dcc get %s: copy to %s FAILED!
 0xf01,NOTICE %s :File system is broken; aborting queued files.\n
@@ -48,7 +48,7 @@
 0xf2a,File too long: dropping dcc send %s from %s!%s
 0xf2b,Timeout on userfile transfer.
 0xf2c,Disconnected %s (timed-out userfile transfer)
-0xf2e,NOTICE %s :Timeout during transfer, aborting %s.\n
+0xf2d,NOTICE %s :Timeout during transfer, aborting %s.\n
 0xf2f,DCC timeout: GET %s (%s) at %lu/%lu
 0xf30,DCC timeout: SEND %s (%s) at %lu/%lu
 0xf31,send  (%lu)/%lu\n    Filename: %s\n

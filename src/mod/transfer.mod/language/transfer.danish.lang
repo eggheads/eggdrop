@@ -1,7 +1,7 @@
 # transfer.danish.lang
 #   language messages for transfer module
 #
-# $Id: transfer.danish.lang,v 1.6 2003/03/21 22:56:29 wcc Exp $
+# $Id: transfer.danish.lang,v 1.7 2004/05/20 21:44:10 wcc Exp $
 
 0xf00,Afviste dcc get %s: kopi til %s FEJLEDE!
 0xf01,NOTICE %s :Filsystem fejl; fjerner filer fra køen.\n
@@ -48,7 +48,7 @@
 0xf2a,Fil for lang: dropper dcc send %s fra %s!%s
 0xf2b,Timeout ved brugerfil overførsel.
 0xf2c,Afbrudt %s (timed-out brugerfil overførsel)
-0xf2e,NOTICE %s :Timeout under overførsel, annullerer %s.\n
+0xf2d,NOTICE %s :Timeout under overførsel, annullerer %s.\n
 0xf2f,DCC timeout: GET %s (%s) ved %lu/%lu
 0xf30,DCC timeout: SEND %s (%s) ved %lu/%lu
 0xf31,send  (%lu)/%lu\n    Filnavn: %s\n

@@ -1,7 +1,7 @@
 # transfer.german.lang
 #   language messages for transfer module
 #
-# $Id: transfer.german.lang,v 1.3 2003/03/08 04:29:44 wcc Exp $
+# $Id: transfer.german.lang,v 1.4 2004/05/20 21:44:10 wcc Exp $
 
 0xf00,DCC get zurueckgewiesen %s: kopieren nach %s schlug fehl!
 0xf01,NOTICE %s :Das Dateisystem ist defekt; entferne die Dateien aus der Warteschlange.\n
@@ -48,7 +48,7 @@
 0xf2a,Datei zu lange: Breche dcc send %s von %s ab!%s
 0xf2b,Timeout bei Userfile Transfer.
 0xf2c,Trennte %s (timed-out Userfile Transfer)
-0xf2e,NOTICE %s :Timeout waehrend Transfer, breche %s ab.\n
+0xf2d,NOTICE %s :Timeout waehrend Transfer, breche %s ab.\n
 0xf2f,DCC Timeout: GET %s (%s) bei %lu/%lu
 0xf30,DCC Timeout: SEND %s (%s) bei %lu/%lu
 0xf31,send  (%lu)/%lu\n    Dateiname: %s\n

@@ -1,7 +1,7 @@
 # transfer.french.lang
 #   language messages for transfer module
 #
-# $Id: transfer.french.lang,v 1.4 2003/03/08 04:29:44 wcc Exp $
+# $Id: transfer.french.lang,v 1.5 2004/05/20 21:44:10 wcc Exp $
 
 0xf00,Refus de réception dcc %s : copie de %s IMPOSSIBLE !
 0xf01,NOTICE %s :Le système de fichier est H.S.; annulation des fichiers en attente.\n
@@ -48,7 +48,7 @@
 0xf2a,Fichier trop gros : abandon de l'envoi DCC %s de %s!%s
 0xf2b,Timeout lors du transfert de la liste d'utilisateurs.
 0xf2c,Déconnexion de %s (timeout du transfert de la liste d'utilisateurs)
-0xf2e,NOTICE %s :Timeout pendant le transfert, abandon %s.\n
+0xf2d,NOTICE %s :Timeout pendant le transfert, abandon %s.\n
 0xf2f,Timeout DCC : GET %s (%s) à %lu/%lu
 0xf30,Timeout DCC : SEND %s (%s) à %lu/%lu
 0xf31,envoi (%lu)/%lu\n    Fichier: %s\n
