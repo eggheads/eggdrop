@@ -10,7 +10,7 @@
  * config file format changed 27jan1994 (Tcl outdates that)
  * dprintf'ized, 1nov1995
  * 
- * $Id: chanprog.c,v 1.19 2000/01/08 21:23:13 per Exp $
+ * $Id: chanprog.c,v 1.20 2000/03/26 17:11:37 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -565,22 +565,18 @@ void do_check_timers(tcl_timer_t ** stack)
   /* new timers could be added by a Tcl script inside a current timer */
   /* so i'll just clear out the timer list completely, and add any
    * unexpired timers back on */
-  Context;
   *stack = NULL;
   while (mark) {
-    Context;
     if (mark->mins > 0)
       mark->mins--;
     old = mark;
     mark = mark->next;
     if (old->mins == 0) {
-      Context;
       simple_sprintf(x, "timer%d", old->id);
       do_tcl(x, old->cmd);
       nfree(old->cmd);
       nfree(old);
     } else {
-      Context;
       old->next = *stack;
       *stack = old;
     }

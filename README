@@ -155,7 +155,7 @@ README
                (2) you don't need to go through this whole
                process every time; if you want to get a CVS
                version of eggdrop at a later time, you can just
-               'cd ~/eggdrop1.4' and type 'cvs update -A'.
+               'cd ~/eggdrop1.4' and type 'cvs update -AP'.
                (3) if you experience errors when using 'export',
                you might be using tclsh as a shell. If so, try
                using the command 'setenv' instead of 'export':

@@ -7,7 +7,7 @@
  * 
  * dprintf'ized, 15nov1995
  * 
- * $Id: main.c,v 1.41 2000/01/30 20:24:15 guppy Exp $
+ * $Id: main.c,v 1.42 2000/03/26 17:11:37 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -433,8 +433,10 @@ static int lastmin = 99;
 static time_t then;
 static struct tm nowtm;
 
-/* rally BB, this is not QUITE as bad as it seems <G> */
+/* really BB, this is not QUITE as bad as it seems <G> */
 /* ONCE A SECOND */
+
+/* Try to not put any Context lines in here (guppy 21Mar2000) */
 static void core_secondly()
 {
   static int cnt = 0;
@@ -453,7 +455,6 @@ static void core_secondly()
       tell_mem_status_dcc(DP_STDOUT);
     }
   }
-  Context;
   memcpy(&nowtm, localtime(&now), sizeof(struct tm));
   if (nowtm.tm_min != lastmin) {
     int i = 0;
@@ -467,7 +468,6 @@ static void core_secondly()
     while (nowtm.tm_min != lastmin) {
       /* timer drift, dammit */
       debug2("timer: drift (lastmin=%d, now=%d)", lastmin, nowtm.tm_min);
-      Context;
       i++;
       lastmin = (lastmin + 1) % 60;
       call_hook(HOOK_MINUTELY);
@@ -475,11 +475,9 @@ static void core_secondly()
     if (i > 1)
       putlog(LOG_MISC, "*", "(!) timer drift -- spun %d minutes", i);
     miltime = (nowtm.tm_hour * 100) + (nowtm.tm_min);
-    Context;
     if (((int) (nowtm.tm_min / 5) * 5) == (nowtm.tm_min)) {	/* 5 min */
       call_hook(HOOK_5MINUTELY);
       check_botnet_pings();
-      Context;
       if (quick_logs == 0) {
 	flushlogs();
 	check_logsize();
@@ -499,10 +497,9 @@ static void core_secondly()
 	}
       }
     }
-    Context;
     if (nowtm.tm_min == notify_users_at)
       call_hook(HOOK_HOURLY);
-    Context;			/* these no longer need checking since they are
+                 		/* these no longer need checking since they are
 				 * all check vs minutely settings and we only
 				 * get this far on the minute */
     if (miltime == switch_logfiles_at) {
@@ -528,10 +525,8 @@ static void core_secondly()
 
 static void core_minutely()
 {
-  Context;
   check_tcl_time(&nowtm);
   do_check_timers(&timer);
-  Context;
   if (quick_logs != 0) {
     flushlogs();
     check_logsize();

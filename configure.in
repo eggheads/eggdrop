@@ -77,7 +77,7 @@ tcllibnames="tcl tcl8.3 tcl83 tcl8.2 tcl82 tcl8.1 tcl81 \
 	tcl7.3 tcl73 tcl7.2 tcl72 tcl7.1 tcl71 tcl7.0 tcl70"
 
 # Tcl library filename suffixes
-tcllibextensions=".so .so.1 .so.1.0 .so.1.2 .a"
+tcllibextensions=".so .so.1 .so.1.0 .so.1.2 .a .sl"
 
 # Tcl library search paths
 tcllibpaths="/usr/local/lib /usr/local/pkgs/tcl/lib \
