@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  * 
- * $Id: cmds.c,v 1.46 2000/12/23 06:11:34 guppy Exp $
+ * $Id: cmds.c,v 1.47 2000/12/23 06:15:46 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -964,7 +964,7 @@ static void cmd_chaddr(struct userrec *u, int idx, char *par)
     bi->relay_port = 3333;
   } else {
     bi->address = user_malloc(q - addr + 1);
-    strncpyz(bi->address, addr, q - addr);
+    strncpyz(bi->address, addr, q - addr + 1);
     p = q + 1;
     bi->telnet_port = atoi(p);
     q = strchr(p, '/');
