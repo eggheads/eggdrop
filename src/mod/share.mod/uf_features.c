@@ -1,7 +1,7 @@
 /*
  * uf_features.c -- part of share.mod
  *
- * $Id: uf_features.c,v 1.8 2002/01/02 03:46:40 guppy Exp $
+ * $Id: uf_features.c,v 1.9 2002/03/07 21:18:52 guppy Exp $
  */
 /*
  * Copyright (C) 2000, 2001, 2002 Eggheads Development Team
@@ -139,6 +139,8 @@ static void uff_insert_entry(uff_list_t *nul)
   nul->prev = NULL;
   nul->next = NULL;
   if (lul) {
+    if (lul->next)
+      lul->next->prev = nul;
     nul->next = lul->next;
     nul->prev = lul;
     lul->next = nul;
