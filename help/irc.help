@@ -41,13 +41,17 @@ see also: adduser, +user, -user
    
 see also: bans, reset, console
 %{help=resetexempts}%{+o|o}
-###  %bresetexempts%b
-   resets the exemption list on the channel you're currently viewing
-   in the console. this is an IRCNET feature.
+###  %bresetexempts%b [channel]
+   resets the bot's exemption list for the channel. this command 
+   behaves exactly like resetbans, except it is for exempts.
+
+See also: resetbans, resetinvites
 %{help=resetinvites}%{+o|o}
-###  %bresetinvites%b
-   resets the invitation list on the channel you're currently viewing   
-   in the console. this is an IRCNET feature.
+###  %bresetinvites%b [channel]
+   resets the bot's invitation list for the channel. this command
+   behaves exactly like resetbans, except it is for invites.
+
+See also: resetbans, resetinvites
 %{help=act}%{+o|o}
 ###  %bact%b [channel] <text>
    Performs an action on the current console channel (or otherwise

@@ -659,12 +659,28 @@ static void cmd_resetbans(struct userrec *u, int idx, char *par)
 
 static void cmd_resetexempts(struct userrec *u, int idx, char *par)
 {
-  struct chanset_t *chan = findchan(dcc[idx].u.chat->con_chan);
+  char *chname;
+  struct chanset_t *chan;
 
-  get_user_flagrec(u, &user, dcc[idx].u.chat->con_chan);
-  if (!chan)
+  chname = newsplit(&par);
+  rmspace(chname);
+    
+  if (chname[0]) {
+    chan = findchan(chname);
+    if (!chan) {
+      dprintf(idx, "That channel doesnt exist!\n");
+      return;
+    }
+    get_user_flagrec(u, &user, chname);
+  } else { 
+    chan = findchan(dcc[idx].u.chat->con_chan);
+    if (!chan) {
     dprintf(idx, "Invalid console channel.\n");
-  else if (glob_op(user) || chan_op(user)) {
+      return;
+    }
+    get_user_flagrec(u, &user, dcc[idx].u.chat->con_chan);
+  }
+  if (glob_op(user) || chan_op(user)) {
     putlog(LOG_CMDS, "*", "#%s# (%s) resetexempts", dcc[idx].nick, chan->name);
     dprintf(idx, "Resetting exemptions on %s...\n", chan->name);
     resetexempts(chan);
@@ -673,12 +689,28 @@ static void cmd_resetexempts(struct userrec *u, int idx, char *par)
 
 static void cmd_resetinvites(struct userrec *u, int idx, char *par)
 {
-  struct chanset_t *chan = findchan(dcc[idx].u.chat->con_chan);
+  char *chname;
+  struct chanset_t *chan;
 
-  get_user_flagrec(u, &user, dcc[idx].u.chat->con_chan);
-  if (!chan)
+  chname = newsplit(&par);
+  rmspace(chname);
+    
+  if (chname[0]) {
+    chan = findchan(chname);
+    if (!chan) {
+      dprintf(idx, "That channel doesnt exist!\n");
+      return;
+    }
+    get_user_flagrec(u, &user, chname);
+  } else { 
+    chan = findchan(dcc[idx].u.chat->con_chan);
+    if (!chan) {
     dprintf(idx, "Invalid console channel.\n");
-  else if (glob_op(user) || chan_op(user)) {
+      return;
+    }
+    get_user_flagrec(u, &user, dcc[idx].u.chat->con_chan);
+  }
+  if (glob_op(user) || chan_op(user)) {
     putlog(LOG_CMDS, "*", "#%s# (%s) resetinvites", dcc[idx].nick, chan->name);
     dprintf(idx, "Resetting invitations on %s...\n", chan->name);
     resetinvites(chan);

@@ -814,6 +814,7 @@ static char *filesys_close()
   rem_tcl_ints(myints);
   rem_builtins(H_dcc, mydcc, 1);
   rem_builtins(H_load, myload, 1);
+  rem_builtins(H_fil, myfiles, 25);
   rem_help_reference("filesys.help");
   if ((H_ctcp = find_bind_table("ctcp")))
     rem_builtins(H_ctcp, myctcp, 1);
