@@ -3632,7 +3632,7 @@ EOF
 fi
 
 
-EGGVERSION=`grep 'char egg_version' src/main.c | $AWK '{gsub(/(\"|\;)/, "", $4); print $4}'`
+EGGVERSION=`grep 'char.egg_version' src/main.c | $AWK '{gsub(/(\"|\;)/, "", $4); print $4}'`
 egg_version_num=`echo ${EGGVERSION} | $AWK 'BEGIN { FS = "."; } { printf("%d%02d%02d", $1, $2, $3); }'`
 cat >> confdefs.h <<EOF
 #define EGG_VERSION $egg_version_num
