@@ -9813,7 +9813,7 @@ configure: error:
   ./configure using the --with-tcllib='/path/to/libtcl.so' and
   --with-tclinc='/path/to/tcl.h' options.
 
-  See doc/COMPILING-FAQ's 'Tcl Detection and Installation' section for more
+  See doc/COMPILE-GUIDE's 'Tcl Detection and Installation' section for more
   information.
 
 EOF
@@ -9832,7 +9832,7 @@ configure: error:
   current version is $tclrecommendver and can be downloaded from
   ${tclrecommendsite}.
 
-  See doc/COMPILING-FAQ's 'Tcl Detection and Installation' section
+  See doc/COMPILE-GUIDE's 'Tcl Detection and Installation' section
   for more information.
 
 EOF

@@ -1,58 +1,64 @@
-These are the example scripts that come with eggdrop.  They're meant
-to be useful AND to introduce Tcl to those who haven't dealt with it
-before.  Even people who program in Tcl may be confused by eggdrop's
-implementation at first, because so many commands were added to
-interface the bot.
+$Id: CONTENTS,v 1.11 2004/08/09 03:19:01 wcc Exp $
 
-action.fix.tcl
-   gets rid of those ugly /me's people do instead of a .me.
+Directory Contents - scripts/
+Last revised: August 08, 2004
+    _____________________________________________________________________
 
-alltools.tcl
-   toolbox.tcl, toolkit.tcl, moretools.tcl and a few more tools all in 1 file
-   toolbox.tcl
-      cmwagner's collection of handy procs
-   toolkit.tcl
-      a few useful procs that may be required by other Tcl scripts
-   moretools.tcl
-      more useful procs from David Sesno
+                        Directory Contents - scripts/
 
-autobotchk
-   Tcl script used to crontab your Eggdrop
-   usage: ./autobotchk <eggdrop config file>
+  These are the example scripts that come with eggdrop.  They're meant to be
+  useful AND to introduce Tcl to those who haven't dealt with it before. Even
+  people who program in Tcl may be confused by Eggdrop's implementation at
+  first, because so many commands were added to interface with the bot.
 
-botchk
-   A shell script which can be used for auto-starting the bot via 'cron'.
+  action.fix.tcl
+    Gets rid of those ugly /me's people do instead of a .me.
 
-cmd_resolve.tcl
-   adds a dcc command called '.resolve' which can be used to resolve hostnames
-   or ip addresses in the partyline.
+  alltools.tcl
+    Several useful procs for use in scripts.
 
-compat.tcl
-   maps old Tcl functions to new ones, for lazy people who can't be bothered
-   updating their scripts
-   
-getops.tcl
-   a way to get ops from other bots on the botnet (if they're on the
-   same channel)
+  autobotchk
+    Tcl script used to crontab your Eggdrop. Type 'scripts/autobotchk' from the
+    Eggdrop's root directory for help.
 
-klined.tcl
-   removes servers from your server list that your bot has been k-lined on
-   to prevent admins getting peeved with constant connects from your bot's host
-   
-notes2.tcl
-   Check your notes on every shared bot of the hub.
+  botchk
+    A shell script which can be used for auto-starting the bot via 'cron'.
 
-ques5.tcl
-   makes web pages of who's on each channel, updated periodically
-   (requires alltools.tcl)
+  cmd_resolve.tcl
+    Adds a dcc command called '.resolve' which can be used to resolve hostnames
+    or IP addresses via the partyline.
 
-sentinel.tcl (by slennox)
-   flood protection script for eggdrop with integrated BitchX CTCP simulation. 
-   this script is designed to provide strong protection for your bot and
-   channels against large floodnets and proxy floods.
+  compat.tcl
+    Maps old Tcl functions to new ones, for lazy people who can't be bothered
+    updating their scripts.
 
-userinfo.tcl
-   cute user info settings things 
- 
-weed
-   weed out certain undesirables from an eggdrop userlist
+  getops.tcl
+    A way for bots to get ops from other bots on the botnet (if they're on the
+    same channel).
+
+  klined.tcl
+    Removes servers from your server list that your bot has been k-lined on, to
+    prevent admins getting peeved with constant connects from your bot's host.
+
+  notes2.tcl
+    Check your notes on every shared bot of the hub.
+
+  ques5.tcl
+    Makes web pages of who's on each channel, updated periodically (requires
+    alltools.tcl).
+
+  sentinel.tcl (by slennox)
+    Flood protection script for Eggdrop with integrated BitchX CTCP simulation.
+    This script is designed to provide strong protection for your bot and
+    channels against large floodnets and proxy floods.
+
+  userinfo.tcl
+    Cute user info settings things.
+
+  weed
+    Weed out certain undesirables from an Eggdrop userlist. Type 'scripts/weed'
+    from the Eggdrop's root directory for help.
+
+    _____________________________________________________________________
+
+  Copyright (C) 2001, 2002, 2003, 2004 Eggheads Development Team
