@@ -5,7 +5,7 @@
    way.  they need to be raw irc codes. read rfc1459 from ftp.internic.net 
    for more help.
 %{help=jump}%{+m}
-###  %bjump%b [server [port]]
+###  %bjump%b [server [port [pass]]]
    makes the bot jump to another server.  if you don't specify a
    server, it will jump to the next server in its internal list (see
    %b'help servers'%b).  if you specify a server, it will jump to that
