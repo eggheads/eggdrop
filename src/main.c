@@ -749,7 +749,7 @@ int main(int argc, char **argv)
     dcc_chatter(n);
   }
   then = now;
-  online_since = 842255819;
+  online_since = now;
   autolink_cycle(NULL);		/* hurry and connect to tandem bots */
   add_help_reference("cmds1.help");
   add_help_reference("cmds2.help");
