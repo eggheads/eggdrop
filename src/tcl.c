@@ -4,7 +4,7 @@
  *   Tcl initialization
  *   getting and setting Tcl/eggdrop variables
  *
- * $Id: tcl.c,v 1.69 2003/03/10 06:06:29 wcc Exp $
+ * $Id: tcl.c,v 1.70 2003/03/11 01:41:34 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -88,7 +88,7 @@ int utftot = 0;
 int clientdata_stuff = 0;
 
 /* Compatability for removed settings.*/
-int strict_servernames = 0, enable_simul = 0, use_console_r = 0,
+int strict_servernames = 0, enable_simul = 1, use_console_r = 0,
     debug_output = 0;
 
 
