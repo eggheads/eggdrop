@@ -2,7 +2,7 @@
  * main.h
  *   include file to include most other include files
  *
- * $Id: main.h,v 1.23 2003/02/27 10:18:40 tothwolf Exp $
+ * $Id: main.h,v 1.24 2003/02/28 08:17:44 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -30,10 +30,32 @@
 #  include "config.h"
 #endif
 
-#include "lush.h"	/* We seem to need this everywhere... */
+#include "lush.h"		/* We seem to need this everywhere... */
 
 #if (((TCL_MAJOR_VERSION == 7) && (TCL_MINOR_VERSION >= 5)) || (TCL_MAJOR_VERSION > 7))
-# define USE_TCL_VARARGS
+#  define USE_TCL_EVENTS
+#  define USE_TCL_FINDEXEC
+#  define USE_TCL_PACKAGE
+#  define USE_TCL_VARARGS
+#endif
+
+#if (TCL_MAJOR_VERSION >= 8)
+#  define USE_TCL_OBJ
+#endif
+
+#if (((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 1)) || (TCL_MAJOR_VERSION > 8))
+#  define USE_TCL_BYTE_ARRAYS
+#  define USE_TCL_ENCODING
+#endif
+
+#if (((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 4)) || (TCL_MAJOR_VERSION > 8))
+#  ifdef CONST
+#    define EGG_CONST CONST
+#  else
+#    define EGG_CONST
+#  endif
+#else
+#  define EGG_CONST
 #endif
 
 /* UGH! Why couldn't Tcl pick a standard? */

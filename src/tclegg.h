@@ -2,7 +2,7 @@
  * tclegg.h
  *   stuff used by tcl.c and tclhash.c
  *
- * $Id: tclegg.h,v 1.21 2003/02/27 10:18:40 tothwolf Exp $
+ * $Id: tclegg.h,v 1.22 2003/02/28 08:17:44 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -82,31 +82,6 @@ typedef struct timer_str {
                 return TCL_ERROR;                                       \
         }                                                               \
 } while (0)
-
-#if (((TCL_MAJOR_VERSION == 7) && (TCL_MINOR_VERSION >= 5)) || (TCL_MAJOR_VERSION > 7))
-# define USE_TCL_EVENTS
-# define USE_TCL_FINDEXEC
-# define USE_TCL_PACKAGE
-#endif
-
-#if (TCL_MAJOR_VERSION >= 8)
-# define USE_TCL_OBJ
-#endif
-
-#if (((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 1)) || (TCL_MAJOR_VERSION > 8))
-# define USE_TCL_BYTE_ARRAYS
-# define USE_TCL_ENCODING
-#endif
-
-#if (((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 4)) || (TCL_MAJOR_VERSION > 8))
-# ifdef CONST
-#  define EGG_CONST CONST
-# else
-#  define EGG_CONST
-# endif
-#else
-# define EGG_CONST
-#endif
 
 unsigned long add_timer(tcl_timer_t **, int, char *, unsigned long);
 int remove_timer(tcl_timer_t **, unsigned long);
