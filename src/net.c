@@ -2,7 +2,7 @@
  * net.c -- handles:
  *   all raw network i/o
  * 
- * $Id: net.c,v 1.16 2000/01/06 21:03:45 guppy Exp $
+ * $Id: net.c,v 1.17 2000/01/17 16:14:45 per Exp $
  */
 /* 
  * This is hereby released into the public domain.
@@ -34,9 +34,7 @@
 #endif
 #endif
 
-extern int backgrd;
-extern int use_stderr;
-extern int resolve_timeout;
+extern int backgrd, use_stderr, resolve_timeout;
 
 char hostname[121] = "";	/* hostname can be specified in the config
 				 * file */

@@ -6,7 +6,7 @@
  * 
  * dprintf'ized, 4feb1996
  * 
- * $Id: tcl.c,v 1.26 2000/01/08 21:23:14 per Exp $
+ * $Id: tcl.c,v 1.27 2000/01/17 16:14:45 per Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -58,16 +58,12 @@ extern char origbotname[], botuser[], motdfile[], admin[], userfile[],
 extern int die_on_sighup, die_on_sigterm, max_logs, max_logsize, enable_simul;
 extern int dcc_total, debug_output, identtimeout, protect_telnet;
 extern int egg_numver, share_unlinks, dcc_sanitycheck, sort_users;
+extern int tands, resolve_timeout, default_uflags, strict_host;
 extern struct dcc_t *dcc;
-extern char egg_version[];
+extern char egg_version[], natip[];
 extern tcl_timer_t *timer, *utimer;
 extern time_t online_since;
 extern log_t *logs;
-extern int tands;
-extern int resolve_timeout;
-extern char natip[];
-extern int default_uflags; /* drummer */
-extern int strict_host;
 
 /* confvar patch by aaronwl */
 extern char configfile[];

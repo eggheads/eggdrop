@@ -12,7 +12,7 @@
  * dprintf'ized, 15nov1995 (hash.c)
  * dprintf'ized, 4feb1996 (tclhash.c)
  * 
- * $Id: tclhash.c,v 1.13 2000/01/08 21:23:14 per Exp $
+ * $Id: tclhash.c,v 1.14 2000/01/17 16:14:45 per Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -41,8 +41,7 @@
 extern Tcl_Interp *interp;
 extern struct dcc_t *dcc;
 extern struct userrec *userlist;
-extern int debug_tcl;
-extern int dcc_total;
+extern int debug_tcl, dcc_total;
 extern time_t now;
 
 static p_tcl_bind_list bind_table_list;

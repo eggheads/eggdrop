@@ -10,7 +10,7 @@
  * 
  * dprintf'ized, 12dec1995
  * 
- * $Id: misc.c,v 1.25 2000/01/12 20:14:52 per Exp $
+ * $Id: misc.c,v 1.26 2000/01/17 16:14:45 per Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -40,26 +40,13 @@
 #include <sys/utsname.h>
 #endif
 
-extern int dcc_total;
 extern struct dcc_t *dcc;
-extern char helpdir[];
-extern char version[];
-extern char origbotname[];
-extern char botname[];
-extern char admin[];
-extern int backgrd;
-extern int con_chan;
-extern int term_z;
-extern int use_stderr;
-extern char motdfile[];
-extern char ver[];
-extern int keep_all_logs;
-extern int quick_logs;
-extern char botnetnick[];
 extern struct chanset_t *chanset;
+extern char helpdir[], version[], origbotname[], botname[], admin[];
+extern char motdfile[], ver[], botnetnick[], bannerfile[];
+extern int backgrd, con_chan, term_z, use_stderr, dcc_total;
+extern int keep_all_logs, quick_logs, strict_host;
 extern time_t now;
-extern char bannerfile[];
-extern int strict_host;
 
 int shtime = 1;			/* whether or not to display the time
 				 * with console output */

@@ -5,7 +5,7 @@
  * 
  * dprintf'ized, 3nov1995
  * 
- * $Id: cmds.c,v 1.33 2000/01/08 21:23:13 per Exp $
+ * $Id: cmds.c,v 1.34 2000/01/17 16:14:45 per Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -36,8 +36,7 @@ extern struct dcc_t *dcc;
 extern struct userrec *userlist;
 extern tcl_timer_t *timer, *utimer;
 extern int dcc_total, remote_boots, backgrd, make_userfile, do_restart;
-extern int conmask, require_p;
-extern int must_be_owner;
+extern int conmask, require_p, must_be_owner;
 extern Tcl_Interp *interp;
 extern char botnetnick[], origbotname[], ver[];
 extern char network[], owner[], spaces[];
@@ -1630,7 +1629,7 @@ static void cmd_botattr(struct userrec *u, int idx, char *par)
     return;
   }
   for (idx2 = 0; idx2 < dcc_total; idx2++)
-    if (!strcasecmp(dcc[idx2].nick, hand))
+    if ((dcc[idx2].type != &DCC_RELAY) && !strcasecmp(dcc[idx2].nick, hand))
       break;
   if (idx2 != dcc_total) {
     dprintf(idx, "You may not change the attributes of a directly linked bot.\n");

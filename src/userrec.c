@@ -6,7 +6,7 @@
  * 
  * dprintf'ized, 10nov1995
  * 
- * $Id: userrec.c,v 1.22 2000/01/08 21:23:14 per Exp $
+ * $Id: userrec.c,v 1.23 2000/01/17 16:14:45 per Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -35,15 +35,10 @@
 #include "tandem.h"
 
 extern struct dcc_t *dcc;
-extern int dcc_total;
-extern char userfile[];
-extern int share_greet;
 extern struct chanset_t *chanset;
-extern char ver[];
-extern char botnetnick[];
+extern int default_flags, default_uflags, quiet_save, dcc_total, share_greet;
+extern char userfile[], ver[], botnetnick[];
 extern time_t now;
-extern int default_flags, default_uflags;
-extern int quiet_save;
 
 int noshare = 1;		/* don't send out to sharebots */
 int sort_users = 0;		/* sort the userlist when saving */

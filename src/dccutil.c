@@ -8,7 +8,7 @@
  * 
  * dprintf'ized, 28aug1995
  * 
- * $Id: dccutil.c,v 1.12 2000/01/08 21:23:13 per Exp $
+ * $Id: dccutil.c,v 1.13 2000/01/17 16:14:45 per Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -37,14 +37,9 @@
 #include "tandem.h"
 
 extern struct dcc_t *dcc;
-extern int dcc_total;
-extern char botnetnick[];
-extern char spaces[];
-extern char version[];
+extern int dcc_total, max_dcc, dcc_flood_thr, backgrd;
+extern char botnetnick[], spaces[], version[];
 extern time_t now;
-extern int max_dcc;
-extern int dcc_flood_thr;
-extern int backgrd;
 
 char motdfile[121] = "motd";	/* file where the motd is stored */
 int connect_timeout = 15;	/* how long to wait before a telnet

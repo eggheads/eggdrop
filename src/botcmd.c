@@ -5,7 +5,7 @@
  * 
  * dprintf'ized, 10nov1995
  * 
- * $Id: botcmd.c,v 1.13 2000/01/08 21:23:13 per Exp $
+ * $Id: botcmd.c,v 1.14 2000/01/17 16:14:44 per Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -32,20 +32,14 @@
 #include "chan.h"
 #include "modules.h"
 
+extern char botnetnick[], ver[], admin[], network[], motdfile[];
+extern int dcc_total, remote_boots, noshare;
 extern struct dcc_t *dcc;
-extern char botnetnick[];
 extern struct chanset_t *chanset;
-extern int dcc_total;
-extern char ver[];
-extern char admin[];
+extern struct userrec *userlist;
 extern Tcl_Interp *interp;
 extern time_t now, online_since;
-extern char network[];
-extern struct userrec *userlist;
-extern int remote_boots;
-extern char motdfile[];
 extern party_t *party;
-extern int noshare;
 extern module_entry *module_list;
 
 static char TBUF[1024];		/* static buffer for goofy bot stuff */

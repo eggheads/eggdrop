@@ -7,7 +7,7 @@
  * 
  * dprintf'ized, 15nov1995
  * 
- * $Id: main.c,v 1.39 2000/01/14 12:15:30 per Exp $
+ * $Id: main.c,v 1.40 2000/01/17 16:14:45 per Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -59,21 +59,15 @@ BOOL FreeConsole(VOID);
 #define _POSIX_SOURCE 1
 #endif
 
-extern char origbotname[];
-extern int dcc_total;
+extern char origbotname[], userfile[], botnetnick[];
+extern int dcc_total, conmask, cache_hit, cache_miss, max_logs, quick_logs;
 extern struct dcc_t *dcc;
-extern int conmask;
 extern struct userrec *userlist;
-extern int cache_hit, cache_miss;
-extern char userfile[];
 extern struct chanset_t *chanset;
-extern char botnetnick[];
 extern log_t *logs;
 extern Tcl_Interp *interp;
-extern int max_logs;
 extern tcl_timer_t *timer, *utimer;
 extern jmp_buf alarmret;
-extern int quick_logs;		/* dw */
 
 /* 
  * Please use the PATCH macro instead of directly altering the version

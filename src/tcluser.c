@@ -4,7 +4,7 @@
  * 
  * dprintf'ized, 1aug1996
  * 
- * $Id: tcluser.c,v 1.11 2000/01/08 21:23:14 per Exp $
+ * $Id: tcluser.c,v 1.12 2000/01/17 16:14:45 per Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -33,12 +33,9 @@
 /* eggdrop always uses the same interpreter */
 extern Tcl_Interp *interp;
 extern struct userrec *userlist;
-extern int default_flags;
+extern int default_flags, dcc_total, ignore_time;
 extern struct dcc_t *dcc;
-extern int dcc_total;
-extern char origbotname[];
-extern char botnetnick[];
-extern int ignore_time;
+extern char origbotname[], botnetnick[];
 extern time_t now;
 
 /***********************************************************************/

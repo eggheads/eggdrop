@@ -5,7 +5,7 @@
  * 
  * dprintf'ized, 1aug1996
  * 
- * $Id: tclmisc.c,v 1.9 2000/01/08 21:23:14 per Exp $
+ * $Id: tclmisc.c,v 1.10 2000/01/17 16:14:45 per Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -36,11 +36,10 @@
 
 extern tcl_timer_t *timer, *utimer;
 extern struct dcc_t *dcc;
-extern char origbotname[];
+extern char origbotname[], botnetnick[];
 extern struct userrec *userlist;
 extern time_t now;
 extern module_entry *module_list;
-extern char botnetnick[];
 
 /***********************************************************************/
 

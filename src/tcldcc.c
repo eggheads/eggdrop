@@ -4,7 +4,7 @@
  * 
  * dprintf'ized, 1aug1996
  * 
- * $Id: tcldcc.c,v 1.16 2000/01/08 21:23:14 per Exp $
+ * $Id: tcldcc.c,v 1.17 2000/01/17 16:14:45 per Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -32,16 +32,12 @@
 extern Tcl_Interp *interp;
 extern tcl_timer_t *timer, *utimer;
 extern struct dcc_t *dcc;
-extern int dcc_total;
+extern int dcc_total, backgrd, parties, make_userfile;
+extern int do_restart, remote_boots, max_dcc;
 extern char botnetnick[];
-extern int backgrd;
 extern party_t *party;
-extern int parties;
-extern int make_userfile;
-extern int do_restart;
-extern int remote_boots;
 extern tand_t *tandbot;
-extern int max_dcc;
+
 int enable_simul = 0;
 extern time_t now;
 static struct portmap *root = NULL;
