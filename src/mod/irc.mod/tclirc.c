@@ -1,7 +1,7 @@
 /*
  * tclirc.c -- part of irc.mod
  *
- * $Id: tclirc.c,v 1.22 2001/06/30 14:51:16 guppy Exp $
+ * $Id: tclirc.c,v 1.23 2001/09/23 19:56:06 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -179,7 +179,7 @@ static int tcl_wasop STDVAR
   memberlist *mx;
 
   BADARGS(3, 3, " nick channel");
-  chan = findchan(argv[2]);
+  chan = findchan_by_dname(argv[2]);
   if (chan == NULL) {
     Tcl_AppendResult(irp, "illegal channel: ", argv[2], NULL);
     return TCL_ERROR;
