@@ -780,6 +780,10 @@ static int tcl_channel_info(Tcl_Interp * irp, struct chanset_t *chan)
     Tcl_AppendElement(irp, "+revenge");
   else
     Tcl_AppendElement(irp, "-revenge");
+  if (chan->status & CHAN_REVENGEBOT)
+    Tcl_AppendElement(irp, "+revengebot");
+  else
+    Tcl_AppendElement(irp, "-revengebot");
   if (chan->status & CHAN_SECRET)
     Tcl_AppendElement(irp, "+secret");
   else
@@ -1009,6 +1013,10 @@ static int tcl_channel_modify(Tcl_Interp * irp, struct chanset_t *chan,
       chan->status |= CHAN_REVENGE;
     else if (!strcmp(item[i], "-revenge"))
       chan->status &= ~CHAN_REVENGE;
+    else if (!strcmp(item[i], "+revengebot"))
+      chan->status |= CHAN_REVENGEBOT;
+    else if (!strcmp(item[i], "-revengebot"))
+      chan->status &= ~CHAN_REVENGEBOT;
     else if (!strcmp(item[i], "+secret"))
       chan->status |= CHAN_SECRET;
     else if (!strcmp(item[i], "-secret"))

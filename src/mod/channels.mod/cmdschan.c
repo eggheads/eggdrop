@@ -1235,8 +1235,9 @@ static void cmd_chaninfo(struct userrec *u, int idx, char *par)
     dprintf(idx, "     %cdynamicinvites           %cuserinvites\n",
 	    (chan->ircnet_status & CHAN_DYNAMICINVITES) ? '+' : '-',
 	    (chan->ircnet_status & CHAN_NOUSERINVITES) ? '-' : '+');
-    dprintf(idx, "     %cprotectfriends\n",
-            (chan->status & CHAN_PROTECTFRIENDS) ? '+' : '-');
+    dprintf(idx, "     %cprotectfriends           %crevengebot\n",
+            (chan->status & CHAN_PROTECTFRIENDS) ? '+' : '-',
+	    (chan->status & CHAN_REVENGEBOT) ? '+' : '-');
     dprintf(idx, "flood settings: chan ctcp join kick deop\n");
     dprintf(idx, "number:          %3d  %3d  %3d  %3d  %3d\n",
 	    chan->flood_pub_thr, chan->flood_ctcp_thr,

@@ -8,6 +8,9 @@
 #define check_tcl_mode(a,b,c,d,e,f) check_tcl_kickmode(a,b,c,d,e,f,H_mode)
 #define check_tcl_kick(a,b,c,d,e,f) check_tcl_kickmode(a,b,c,d,e,f,H_kick)
 
+#define REVENGE_KICK 1	/* kicked victim */
+#define REVENGE_DEOP 2	/* took op */
+
 #ifdef MAKING_IRC
 static void check_tcl_kickmode(char *, char *, struct userrec *, char *, char *, char *,
 			       p_tcl_bind_list);
@@ -27,7 +30,7 @@ static void resetinvites(struct chanset_t *);
 static void reset_chan_info(struct chanset_t *);
 static void recheck_channel(struct chanset_t *, int);
 static void set_key(struct chanset_t *, char *);
-static void take_revenge(struct chanset_t *, char *, char *);
+static void maybe_revenge(struct chanset_t *, char *, char *, int);
 static int detect_chan_flood(char *, char *, char *, struct chanset_t *, int, char *);
 static void newban(struct chanset_t *, char *, char *);
 static void newexempt(struct chanset_t *, char *, char *);

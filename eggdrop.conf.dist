@@ -852,6 +852,12 @@ unbind msg - addhost *msg:addhost
 # wait-info)
 set no-chanrec-info 0
 
+# [0/1/2/3] Defines how the bot should punish bad users when revenging.
+# 0 for deop - 1 for deop and +d - 2 for deop, +d and kick - 3 for deop,
+# kick and ban. Default is 1.
+set revenge-mode 1
+
+
 ##### IRC MODULE - net-type 1 specific features (IRCnet) #####
 
 # Don't modify the following settings if you don't use IRCnet. The defaults following

@@ -45,8 +45,10 @@
 	%bstopnethack%b    de-op anyone who enters the channel with server
 	               ops
 	%bcycle%b          cycle the channel when it becomes op-less
-	%brevenge%b        take revenge on anyone who deops, kicks or
-	               bans the bot or any valid user
+	%brevenge%b        take revenge on anyone who deops or kicks
+	                   friends or ops
+	%brevengebot%b     take revenge on anyone who deops or kicks
+                           the bot
 	%bsecret%b         don't provide info about the channel over the botnet
 	%bshared%b         share user settings for this channel 
 	               (%bNOTE%b: this can be set online now)

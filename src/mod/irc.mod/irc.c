@@ -53,6 +53,8 @@ static int kick_fun = 0;
 static int ban_fun = 0;
 static int allow_desync = 0;
 static int keepnick = 1;	/* keepnick */
+static int revenge_mode = 1;	/* 0 = deop, 1 = and +d, 2 = and kick,
+				 * 3 = and ban */
 
 #include "chan.c"
 #include "mode.c"
@@ -60,43 +62,64 @@ static int keepnick = 1;	/* keepnick */
 #include "msgcmds.c"
 #include "tclirc.c"
 
-/* revenge tactic: person did something bad, if they are oplisted,
- * remove them from the op list otherwise, deop them */
-static void take_revenge(struct chanset_t *chan, char *who, char *reason)
-{
-  char *nick, s[UHOSTLEN], s1[UHOSTLEN], ct[81];
-  int i;
-  time_t tm;
-  struct userrec *u;
-  memberlist *mx = NULL;
-  struct flag_record fr =
-  {
-    FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0
-  };
 
-  u = get_user_by_host(who);
+/*  Contains the logic to decide wether we want to punish someone. Returns
+ *  true if we want to, false if not.  Fabian */
+static int want_to_revenge(struct chanset_t *chan, struct userrec *u,
+			   struct userrec *u2, char *badnick,
+			   char *victim, int mevictim)
+{
+  struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
+  struct flag_record fr2 = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
+
+  context;
   get_user_flagrec(u, &fr, chan->name);
-  if (glob_friend(fr) || chan_friend(fr)) {
-    putlog(LOG_MISC, "*", "%s is a friend (%s)", who, reason);
-    return;			/* argh! */
-  }
-  if (chan_op(fr) || (glob_op(fr) && !chan_deop(fr))) {
-    fr.match = FR_CHAN;
-    if (chan_op(fr)) {
-      fr.chan &= ~USER_OP;
-    } else {
-      fr.chan |= USER_DEOP;
+  get_user_flagrec(u2, &fr2, chan->name);
+
+  /* if we don't even know the user we'll probably not want to protect
+   * it. */
+  if (!u2)
+    return 0;
+
+  /* kickee is not a friend? */
+  if (!chan_friend(fr) && !glob_friend(fr) &&
+      /* and I didn't kick them? */
+      !match_my_nick(badnick) &&
+      /* and they didn't kick themself? */
+      rfc_casecmp(badnick, victim)) {
+    /* they kicked ME? and I'm revenging?... huahaHAHAHA! */
+    if (mevictim) {
+      if (channel_revengebot(chan))
+        return 1;
     }
-    set_user_flagrec(u, &fr, chan->name);
-    putlog(LOG_MISC, "*", "No longer opping %s[%s] (%s)", u->handle, who,
-	   reason);
-    recheck_channel(chan, 0);
-    return;
+    /* revenge for others? */
+    else if (channel_revenge(chan) &&
+              /* protecting friends and kicked is a valid friend? */
+             ((channel_protectfriends(chan) &&
+               (chan_friend(fr2) || (glob_friend(fr2) && !chan_deop(fr2)))) ||
+              /* or protecting ops and kicked is valid op? */
+              (channel_protectops(chan) &&
+               (chan_op(fr2) || (glob_op(fr2) && !chan_deop(fr2))))))
+      return 1;
   }
-  if (u_match_ban(global_bans, who) || u_match_ban(chan->bans, who)) {
-    /* what more can we do? */
+  return 0;
+}
+
+/*  Dependant on revenge_mode, punish the offender.  Fabian */
+static void punish_badguy(struct chanset_t *chan, char *reason, char *whobad,
+			  struct userrec *u, char *badnick, int mevictim)
+{
+  char ct[81];
+  memberlist *m;
+  time_t tm;
+  struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
+
+  m = ismember(chan, badnick);
+  if (!m)
     return;
-  }
+  get_user_flagrec(u, &fr, chan->name);
+
+  context;
   /* get current time into a string */
   tm = now;
   strcpy(ct, ctime(&tm));
@@ -105,51 +128,141 @@ static void take_revenge(struct chanset_t *chan, char *who, char *reason)
   strcpy(ct, &ct[8]);
   strcpy(&ct[2], &ct[3]);
   strcpy(&ct[7], &ct[10]);
-  if (chan_deop(fr) || glob_deop(fr)) {
-    /* this is out of control: BAN THEM */
-    putlog(LOG_MISC, "*", "Now banning %s (%s)", who, reason);
-    nick = splitnick(&who);
-    maskhost(who, s1);
+ 
+  context;
+  /* set the offender +d */
+  if ((revenge_mode > 0) &&
+      /* unless there's no more to do */
+      !(chan_deop(fr) || glob_deop(fr))) {
+    char s[UHOSTLEN], s1[UHOSTLEN];
+    memberlist *mx = NULL;
+
+    /* removing op */
+    if (chan_op(fr) || (glob_op(fr) && !chan_deop(fr))) {
+      fr.match = FR_CHAN;
+      if (chan_op(fr)) {
+        fr.chan &= ~USER_OP;
+      } else {
+        fr.chan |= USER_DEOP;
+      }
+      set_user_flagrec(u, &fr, chan->name);
+      putlog(LOG_MISC, "*", "No longer opping %s[%s] (%s)", u->handle, whobad,
+	     reason);
+    }
+    /* or just setting to deop */
+    else if (u) {
+      /* in the user list already, cool :) */
+      fr.match = FR_CHAN;
+      fr.chan |= USER_DEOP;
+      set_user_flagrec(u, &fr, chan->name);
+      simple_sprintf(s, "(%s) %s", ct, reason);
+      putlog(LOG_MISC, "*", "Now deopping %s[%s] (%s)", u->handle, whobad, s);
+    }
+    /* or creating new user and setting that to deop */
+    else {
+      context;
+      strcpy(s1, whobad);
+      maskhost(s1, s);
+      strcpy(s1, badnick);
+      /* if that handle exists use "badX" (where X is an increasing
+       * number) instead */
+      while (get_user_by_handle(userlist, s1)) {
+        if (!strncmp(s1, "bad", 3)) {
+          int i;
+
+          i = atoi(s1 + 3);
+          simple_sprintf(s1 + 3, "%d", i + 1);
+        } else
+          strcpy(s1, "bad1");
+      }
+      userlist = adduser(userlist, s1, s, "-", 0);
+      fr.match = FR_CHAN;
+      fr.chan = USER_DEOP;
+      fr.udef_chan = 0;
+      u = get_user_by_handle(userlist, s1);
+      if ((mx = ismember(chan, badnick)))
+        mx->user = u;
+      set_user_flagrec(u, &fr, chan->name);
+      simple_sprintf(s, "(%s) %s (%s)", ct, reason, whobad);
+      set_user(&USERENTRY_COMMENT, u, (void *) &s);
+      putlog(LOG_MISC, "*", "Now deopping %s (%s)", whobad, reason);
+    }
+  }
+  
+  /* always try to deop the offender */
+  if (!mevictim && me_op(chan) && !chan_sentdeop(m)) {
+    add_mode(chan, '-', 'o', badnick);
+    m->flags |= SENTDEOP;
+  }
+  /* ban (before kicking) */
+  if (revenge_mode > 2) {
+    char s[UHOSTLEN], s1[UHOSTLEN];
+
+    context;
+    splitnick(&whobad);
+    maskhost(whobad, s1);
     simple_sprintf(s, "(%s) %s", ct, reason);
     u_addban(chan, s1, origbotname, s, now + (60 * ban_time), 0);
-    if (me_op(chan))
+    if (!mevictim && me_op(chan)) {
       add_mode(chan, '+', 'b', s1);
+      flush_mode(chan, QUICK);
+    }
+  }
+  /* kick the offender */
+  if ((revenge_mode > 1) &&
+      /* do we kick ops? */
+      (channel_dontkickops(chan) &&
+        !(chan_op(fr) || (glob_op(fr) && !chan_deop(fr)))) &&
+      /* sent the kick already? */
+      !chan_sentkick(m) &&
+      /* can I do something about it? */
+      me_op(chan) && !mevictim) {
+    dprintf(DP_MODE, "KICK %s %s :%s\n", chan->name, badnick, IRC_PROTECT);
+    m->flags |= SENTKICK;
+  }
+  context;
+}
+
+/*  Punishes bad guys under certain circumstances using methods
+ *  as defined by the revenge_mode flag.  Fabian */
+static void maybe_revenge(struct chanset_t *chan, char *whobad,
+			  char *whovictim, int type)
+{
+  char reason[1024], *badnick, *victim;
+  int mevictim;
+  struct userrec *u, *u2;
+
+  context;
+  if (!chan || (type < 0))
     return;
-  }
-  if (u) {
-    /* in the user list already, cool :) */
-    fr.match = FR_CHAN;
-    fr.chan |= USER_DEOP;
-    set_user_flagrec(u, &fr, chan->name);
-    simple_sprintf(s, "(%s) %s", ct, reason);
-    putlog(LOG_MISC, "*", "Now deopping %s[%s] (%s)", u->handle, who, s);
-    recheck_channel(chan, 0);
+
+  /* get info about offender */
+  u = get_user_by_host(whobad);
+  badnick = splitnick(&whobad);
+
+  /* get info about victim */
+  u2 = get_user_by_host(whovictim);
+  victim = splitnick(&whovictim);
+  mevictim = match_my_nick(victim);
+
+  /* do we want to revenge? */
+  if (!want_to_revenge(chan, u, u2, badnick, victim, mevictim))
     return;
+
+  context;
+  reason[0] = 0;
+  switch (type) {
+  case REVENGE_KICK:
+    simple_sprintf(reason, "kicked %s off %s", victim, chan->name);
+    break;
+  case REVENGE_DEOP:
+    simple_sprintf(reason, "deopped %s on %s", victim, chan->name);
+    break;
   }
-  nick = splitnick(&who);
-  strcpy(s1, who);
-  maskhost(s1, s);
-  strcpy(s1, nick);
-  while (get_user_by_handle(userlist, s1)) {
-    if (!strncmp(s1, "bad", 3)) {
-      i = atoi(s1 + 3);
-      simple_sprintf(s1 + 3, "%d", i + 1);
-    } else
-      strcpy(s1, "bad1");
-  }
-  userlist = adduser(userlist, s1, s, "-", 0);
-  fr.match = FR_CHAN;
-  fr.chan = USER_DEOP;
-  fr.udef_chan = 0;
-  u = get_user_by_handle(userlist, s1);
-  if ((mx = ismember(chan, nick)))
-    mx->user = u;
-  set_user_flagrec(u, &fr, chan->name);
-  simple_sprintf(s, "(%s) %s (%s)", ct, reason, who);
-  set_user(&USERENTRY_COMMENT, u, (void *) &s);
-  putlog(LOG_MISC, "*", "Now deopping %s (%s)", who, reason);
-  recheck_channel(chan, 0);
-  recheck_bans(chan);
+  putlog(LOG_MISC, chan->name, "Punishing %s (%s)", badnick, reason);
+ 
+  /* do the vengeful thing */
+  punish_badguy(chan, reason, whobad, u, badnick, mevictim);
 }
 
 /* set the key */
@@ -815,6 +928,7 @@ static tcl_ints myints[] =
   {"strict-host", &strict_host, 0},	/* arthur2 */
   {"ctcp-mode", &ctcp_mode, 0},	/* arthur2 */
   {"keep-nick", &keepnick, 0},	/* guppy */
+  {"revenge-mode", &revenge_mode, 0},
   {0, 0, 0}			/* arthur2 */
 };
 

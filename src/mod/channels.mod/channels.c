@@ -32,7 +32,7 @@ static char glob_chanset[512] = "\
 -clearbans -enforcebans +dynamicbans +userbans -autoop -bitch +greet \
 +protectops +statuslog +stopnethack -revenge -secret -autovoice +cycle \
 +dontkickops -wasoptest -inactive -protectfriends +shared -seen \
-+userexempts +dynamicexempts +userinvites +dynamicinvites ";
++userexempts +dynamicexempts +userinvites +dynamicinvites -revengebot ";
 /* DO NOT remove the extra space at the end of the string! */
 
 /* default chanmode (drummer,990731) */
@@ -392,6 +392,8 @@ flood-kick %d:%d flood-deop %d:%d ",
 	    channel_stopnethack(chan) ? '+' : '-');
     fprintf(f, "%crevenge ",
 	    channel_revenge(chan) ? '+' : '-');
+    fprintf(f, "%crevengebot ",
+	    channel_revengebot(chan) ? '+' : '-');
     fprintf(f, "%cautovoice ",
 	    channel_autovoice(chan) ? '+' : '-');
     fprintf(f, "%csecret ",

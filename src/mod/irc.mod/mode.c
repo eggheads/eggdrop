@@ -377,7 +377,7 @@ static void got_deop(struct chanset_t *chan, char *nick, char *from,
 		     char *who)
 {
   memberlist *m;
-  char s[UHOSTLEN], s1[UHOSTLEN], s2[UHOSTLEN];
+  char s[UHOSTLEN], s1[UHOSTLEN];
   struct userrec *u;
 
   m = ismember(chan, who);
@@ -386,6 +386,7 @@ static void got_deop(struct chanset_t *chan, char *nick, char *from,
     dprintf(DP_MODE, "WHO %s\n", who);
     return;
   }
+
   simple_sprintf(s, "%s!%s", m->nick, m->userhost);
   simple_sprintf(s1, "%s!%s", nick, from);
   u = get_user_by_host(s);
@@ -420,7 +421,7 @@ static void got_deop(struct chanset_t *chan, char *nick, char *from,
       /* and provided the users not a de-op */
        !(chan_deop(victim) || (glob_deop(victim) && !chan_op(victim))) &&
       /* and we havent sent it already */
-	  !chan_sentdeop(m)) {
+	  !chan_sentop(m)) {
 	/* then we'll bless them */
 	add_mode(chan, '+', 'o', who);
 	m->flags |= SENTOP;
@@ -428,17 +429,9 @@ static void got_deop(struct chanset_t *chan, char *nick, char *from,
 	add_mode(chan, '+', 'o', who);
 	m->flags |= SENTOP;
       }
-      /* if the perpetrator is not a friend or bot, then do the
-       * vengeful thing */
-      if (!glob_bot(user) && !glob_friend(user) && !chan_friend(user) &&
-	  channel_revenge(chan)) {
-	if (nick[0]) {
-	  simple_sprintf(s2, "deopped %s", s);
-	  take_revenge(chan, s1, s2);	/* punish bad guy */
-	}
-      }
     }
   }
+
   if (!nick[0])
     putlog(LOG_MODES, chan->name, "TS resync (%s): %s deopped by %s",
 	   chan->name, who, from);
@@ -454,27 +447,23 @@ static void got_deop(struct chanset_t *chan, char *nick, char *from,
   /* was the bot deopped? */
   if (match_my_nick(who)) {
     /* cancel any pending kicks.  Ernst 18/3/1998 */
-    memberlist *m = chan->channel.member;
+    memberlist *m2 = chan->channel.member;
 
-    while (m->nick[0]) {
+    while (m2->nick[0]) {
       if (chan_sentkick(m))
-	m->flags &= ~SENTKICK;
-      m = m->next;
+	m2->flags &= ~SENTKICK;
+      m2 = m2->next;
     }
     if (chan->need_op[0])
       do_tcl("need-op", chan->need_op);
     if (!nick[0])
       putlog(LOG_MODES, chan->name, "TS resync deopped me on %s :(",
 	     chan->name);
-    /* take revenge */
-    if (channel_revenge(chan))
-      if (!glob_friend(user) && !chan_friend(user) && nick[0] &&
-	  !match_my_nick(nick)) {
-	simple_sprintf(s2, "deopped %s", botname);
-	take_revenge(chan, s1, s2);
-      }
   }
   m->flags &= ~(FAKEOP | CHANOP | SENTDEOP | WASOP);
+
+  if (nick[0])
+    maybe_revenge(chan, s1, s, REVENGE_DEOP);
 }
 
 

@@ -163,6 +163,8 @@ struct chanset_t {
 					 * when +stopnethack */
 #define CHAN_INACTIVE       0x10000	/* no irc support for this channel - drummer */
 #define CHAN_PROTECTFRIENDS 0x20000     /* re-op any +f people who get deop'd */
+/*			    0x40000 */
+/*			    0x80000 */
 #define CHAN_ACTIVE         0x1000000	/* like i'm actually on the channel
 					 * and stuff */
 #define CHAN_PEND           0x2000000	/* just joined; waiting for end of
@@ -172,6 +174,7 @@ struct chanset_t {
 #define CHAN_SHARED         0x10000000	/* channel is being shared */
 #define CHAN_ASKEDBANS      0x20000000
 #define CHAN_SEEN           0x40000000
+#define CHAN_REVENGEBOT     0x80000000	/* revenge on actions against the bot */
 
 #define CHAN_ASKED_EXEMPTS  0x0001
 #define CHAN_ASKED_INVITED  0x0002
@@ -212,6 +215,7 @@ struct chanset_t *findchan();
 #define channel_cycle(chan) (chan->status & CHAN_CYCLE)
 #define channel_seen(chan) (chan->status & CHAN_SEEN)
 #define channel_inactive(chan) (chan->status & CHAN_INACTIVE)
+#define channel_revengebot(chan) (chan->status & CHAN_REVENGEBOT)
 #define channel_dynamicexempts(chan) (chan->ircnet_status & CHAN_DYNAMICEXEMPTS)
 #define channel_nouserexempts(chan) (chan->ircnet_status & CHAN_NOUSEREXEMPTS)
 #define channel_dynamicinvites(chan) (chan->ircnet_status & CHAN_DYNAMICINVITES)

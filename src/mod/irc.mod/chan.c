@@ -1610,8 +1610,7 @@ static int gotkick(char *from, char *msg)
   memberlist *m;
   struct chanset_t *chan;
   struct userrec *u;
-  struct flag_record fr =
-  {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
+  struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
 
   chname = newsplit(&msg);
   chan = findchan(chname);
@@ -1627,52 +1626,20 @@ static int gotkick(char *from, char *msg)
       m->last = now;
     check_tcl_kick(whodid, uhost, u, chname, nick, msg);
     get_user_flagrec(u, &fr, chname);
-    /* kicking an oplisted person?  KICK THEM. */
     m = ismember(chan, nick);
     if (m) {
       struct userrec *u2;
-      struct flag_record fr2 =
-      {
-	FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0
-      };
 
       simple_sprintf(s1, "%s!%s", m->nick, m->userhost);
       u2 = get_user_by_host(s1);
       set_handle_laston(chname, u2, now);
-      get_user_flagrec(u2, &fr2, chname);
-      /* kicked has op ? */
-      if ((chan_op(fr2) || (glob_op(fr2) && !chan_deop(fr2))) &&
-      /* channel is revenge ? */
-	  channel_revenge(chan) &&
-      /* kickee isnt an op ? */
-	  !(chan_op(fr) || (glob_op(fr) && !chan_deop(fr))) &&
-      /* wasnt *me* kicking them ? */
-	  !match_my_nick(whodid) &&
-      /* not kicking themselves ? */
-	  rfc_casecmp(whodid, nick) &&
-      /* and Im opped ? */
-	  me_op(chan)) {
-	dprintf(DP_MODE, "KICK %s %s :%s\n", chname,
-		whodid, IRC_PROTECT);
-	m->flags |= SENTKICK;
-      putlog(LOG_MODES, chname, "%s kicked from %s by %s: %s", s1, chname,
-	     from, msg);
-    }
+      maybe_revenge(chan, from, s1, REVENGE_KICK);
     }
     /* kicked ME?!? the sods! */
     if (match_my_nick(nick)) {
       chan->status &= ~(CHAN_ACTIVE | CHAN_PEND);
       dprintf(DP_MODE, "JOIN %s %s\n", chan->name, chan->key_prot);
       clear_channel(chan, 1);
-      /* revenge channel? */
-      if (channel_revenge(chan) &&
-	  !(chan_friend(fr) || glob_friend(fr))) {
-	char x[1024];
-
-	simple_sprintf(x, "kicked %s off %s", botname, chan->name);
-	take_revenge(chan, from, x);
-	/* ^put the kicker on the deop list : revenge */
-      }
     } else {
       killmember(chan, nick);
       check_lonely_channel(chan);
