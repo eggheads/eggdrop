@@ -1,7 +1,7 @@
 #! /path/to/eggdrop
 # ^- set that to the directory eggdrop is in i.e. "#! /users/lamest/egg/eggdrop"
 #
-# $Id: eggdrop.conf.dist,v 1.23 2000/03/04 18:40:18 fabian Exp $
+# $Id: eggdrop.conf.dist,v 1.24 2000/03/04 20:35:04 fabian Exp $
 #
 # This is a sample configuration file for your bot.  You will definitely
 # want to edit this, to set up your bot.  Right now it creates a bot called
@@ -369,6 +369,11 @@ set allow-dk-cmds 1
 # has not yet spread over the botnet due to lag.
 set dupwait-timeout 5
 
+# Rebind +host so normal users can use it to add hosts to their user record.
+# Users below the default bind level will not be able to add hosts that match
+# another user.
+# By default this is left bound at tm|m level.
+#bind dcc -|- +host *dcc:+host
 
 
 # You MUST remove this line for this config file to work.  This has been

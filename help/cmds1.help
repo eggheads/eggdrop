@@ -10,6 +10,9 @@
    a password for themselves the first time they link.  If the bot
    has a seperate port for bots and users they should be seperated
    with a slash (/).
+%{help=+host}
+###  %b+host%b <hostmask>
+   Allows you to add a host for yourself.
 %{help=+host}%{+m|m}
 ###  %b+host%b <nickname> <hostmask>
    Adds a hostmask to a user's record on the bot.  The hostmasks

@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  * 
- * $Id: cmds.c,v 1.23 2000/02/03 21:58:28 fabian Exp $
+ * $Id: cmds.c,v 1.24 2000/03/04 20:35:04 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -2443,38 +2443,59 @@ static void cmd_pls_host(struct userrec *u, int idx, char *par)
   struct flag_record fr = {FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0};
 
   Context;
-  handle = newsplit(&par);
   if (!par[0]) {
-    dprintf(idx, "Usage: +host <handle> <newhostmask>\n");
+    dprintf(idx, "Usage: +host [handle] <newhostmask>\n");
     return;
   }
-  host = newsplit(&par);
-  u2 = get_user_by_handle(userlist, handle);
-  if (!u2) {
+
+  handle = newsplit(&par);
+
+  if (par[0]) {
+    host = newsplit(&par);
+    u2 = get_user_by_handle(userlist, handle);
+  } else {
+    host = handle;
+    handle = dcc[idx].nick;
+    u2 = u;
+  }
+  if (!u2 || !u) {
     dprintf(idx, "No such user.\n");
     return;
+  }
+  if (strcasecmp(handle, dcc[idx].nick)) {
+    get_user_flagrec(u, &fr, NULL);
+    if ((u->flags & USER_BOTMAST) && !(u->flags & USER_MASTER) &&
+	!(u2->flags & USER_BOT) && !chan_master(fr)) {
+      dprintf(idx, "You can't add hostmasks to non-bots.\n");
+      return;
+    }
+    if (!(u->flags & USER_OWNER) && (u2->flags & USER_BOT) &&
+	(bot_flags(u2) & BOT_SHARE)) {
+      dprintf(idx, "You can't add hostmasks to share-bots.\n");
+      return;
+    }
+    if ((u2->flags & (USER_OWNER|USER_MASTER)) &&
+	!(u->flags & USER_OWNER) && strcasecmp(handle, dcc[idx].nick)) {
+      dprintf(idx, "Can't add hostmasks to the bot owner/master.\n");
+      return;
+    }
+    if (!(u->flags & USER_BOTMAST) && !chan_master(fr)) {
+      dprintf(idx, "Permission denied.\n");
+      return;
+    }
+  }
+  Context;
+  if (!(u->flags & USER_BOTMAST) && !chan_master(fr)) {
+    if (get_user_by_host(host)) {
+      dprintf(idx, "You cannot add a host matching another user!\n");
+      return;
+    }
   }
   for (q = get_user(&USERENTRY_HOSTS, u); q; q = q->next)
     if (!strcasecmp(q->extra, host)) {
       dprintf(idx, "That hostmask is already there.\n");
       return;
     }
-  get_user_flagrec(u, &fr, NULL);
-  if ((u->flags & USER_BOTMAST) && !(u->flags & USER_MASTER) &&
-      !(u2->flags & USER_BOT) && !chan_master(fr)) {
-    dprintf(idx, "You can't add hostmasks to non-bots.\n");
-    return;
-  }
-  if (!(u->flags & USER_OWNER) && (u2->flags & USER_BOT) &&
-      (bot_flags(u2) & BOT_SHARE)) {
-    dprintf(idx, "You can't add hostmasks to share-bots.\n");
-    return;
-  }
-  if ((u2->flags & (USER_OWNER|USER_MASTER)) &&
-      !(u->flags & USER_OWNER) && strcasecmp(handle, dcc[idx].nick)) {
-    dprintf(idx, "Can't add hostmasks to the bot owner/master.\n");
-    return;
-  }
   putlog(LOG_CMDS, "*", "#%s# +host %s %s", dcc[idx].nick, handle, host);
   addhost_by_handle(handle, host);
   dprintf(idx, "Added '%s' to %s\n", host, handle);
