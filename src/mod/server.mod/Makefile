@@ -30,4 +30,4 @@ clean:
  ../../lang.h ../../eggdrop.h ../../flags.h ../../proto.h \
  ../../../lush.h ../../cmdt.h ../../tclegg.h ../../tclhash.h \
  ../../chan.h ../../users.h ../modvals.h ../../tandem.h server.h \
- servmsg.c cmdsserv.c
+ servmsg.c cmdsserv.c tclserv.c

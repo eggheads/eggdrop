@@ -3,6 +3,10 @@ Changes in eggdrop: (since v1.4.0)
 
 1.4.1
 Foundby   Fixedby   What....
+          guppy     moved the tcl functions in the server module to tclserv.c
+                    and fixed a small bug in clearqueue
+Nils      guppy     made tcl_stick/tcl_unstick smaller, added stick functions
+                    for exempts and invites
 toot      drummer   share-greet was broken
 toot      Fabian    broken logic in xtra_set() caused invalid free() attempts
 flammable Fabian    unchecked fopen() return caused crash on failed open

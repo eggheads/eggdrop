@@ -245,13 +245,29 @@ specific commands, see later.
 |   channels); other arguments work exactly like newchaninvite
 |   returns: nothing
 
-  stick <ban> [channel]
+  stick <banmask> [channel]
     makes a ban sticky, or if a channel is specified, then it is set sticky
     on that channel. returns: "1" is successful, "0" otherwise
 
-  unstick <ban> [channel]
-    makes a ban unstuck, or if a channel is specified, then it is unstuck
-    on that channel. returns: "1" is successful, "0" otherwise
+  unstick <banmask> [channel]
+    makes a ban no longer sticky, or if a channel is specified, then it is
+    unstuck on that channel. returns: "1" is successful, "0" otherwise
+
+| stickexempt <exemptmask> [channel]
+|   makes an exempt sticky, or if a channel is specified, then it is set
+|   sticky on that channel. returns: "1" is successful, "0" otherwise
+    
+| unstickexempt <exemptmask> [channel]
+|   makes an exempt no longer sticky, or if a channel is specified, then it
+|   is unstuck on that channel. returns: "1" is successful, "0" otherwise
+
+| stickinvite <invitemask> [channel] 
+|   makes an invite sticky, or if a channel is specified, then it is set 
+|   sticky on that channel. returns: "1" is successful, "0" otherwise
+ 
+| unstickinvite <invitemask> [channel] 
+|   makes an invite no longer sticky, or if a channel is specified, then it 
+|   is unstuck on that channel. returns: "1" is successful, "0" otherwise 
 
   killchanban <channel> <ban>
     removes a ban from the enforced ban list for a channel
