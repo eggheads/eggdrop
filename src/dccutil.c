@@ -6,7 +6,7 @@
  *   memory management for dcc structures
  *   timeout checking for dcc connections
  *
- * $Id: dccutil.c,v 1.37 2002/03/22 03:53:56 guppy Exp $
+ * $Id: dccutil.c,v 1.38 2002/03/27 04:27:29 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -314,36 +314,17 @@ void dcc_remove_lost(void)
  */
 void tell_dcc(int zidx)
 {
-  int i, j, x = 0, y;
+  int i, j, k;
   char other[160];
 
- /* search for max. nick size */
-  for (i = 0; i < dcc_total; i++)
-    {
-      if ((y = strlen(dcc[i].nick)) > x)
-        {
-          x = y;
-        }
-    }
- /* check for bounds */
-  if (x < 9)
-    x = 9;
-  else if (x > 32)
-    x = 32;
-  y = x - 9;
-
-  spaces[y] = 0;
-  dprintf(zidx, "SOCK ADDR     PORT  NICK     %s HOST              TYPE\n", spaces);
- /* make dashes */
-  for (i = 0; i < y; i++)
-    spaces[i] = '-';
-  dprintf(zidx, "---- -------- ----- ---------%s ----------------- ----\n", spaces);
-  for (i = 0; i <= y; i++)
-    spaces[i] = ' ';
-
+  spaces[HANDLEN - 9] = 0;
+  dprintf(zidx, "SOCK ADDR     PORT  NICK     %s HOST              TYPE\n"
+	  ,spaces);
+  dprintf(zidx, "---- -------- ----- ---------%s ----------------- ----\n"
+	  ,spaces);
+  spaces[HANDLEN - 9] = ' ';
   /* Show server */
-  for (i = 0; i < dcc_total; i++)
-    {
+  for (i = 0; i < dcc_total; i++) {
     j = strlen(dcc[i].host);
     if (j > 17)
       j -= 17;
@@ -351,12 +332,15 @@ void tell_dcc(int zidx)
       j = 0;
     if (dcc[i].type && dcc[i].type->display)
       dcc[i].type->display(i, other);
-      else
-        {
+    else {
       sprintf(other, "?:%lX  !! ERROR !!", (long) dcc[i].type);
       break;
     }
-      dprintf(zidx, "%-4d %08X %5d %-*s %-17s %s\n", dcc[i].sock, dcc[i].addr, dcc[i].port, x, dcc[i].nick, dcc[i].host + j, other);
+    k = HANDLEN - strlen(dcc[i].nick);
+    spaces[k] = 0;
+    dprintf(zidx, "%-4d %08X %5d %s%s %-17s %s\n", dcc[i].sock, dcc[i].addr,
+	    dcc[i].port, dcc[i].nick, spaces, dcc[i].host + j, other);
+    spaces[k] = ' ';
   }
 }
 
