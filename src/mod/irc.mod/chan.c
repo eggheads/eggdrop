@@ -416,14 +416,15 @@ static void refresh_exempt (struct chanset_t * chan, char * user) {
     for ( ; e; e = e->next) {
       if (wild_match(user,e->exemptmask) || wild_match(e->exemptmask,user)) {
 	b = chan->channel.ban;
-	while (b->ban[0] && !wild_match(b->ban, user))
+	while (b->ban[0]) {
+	  if (wild_match(b->ban, user) || wild_match(user,b->ban)) {
+	    if (e->lastactive < now - 60 && !isexempted(chan,e->exemptmask)) {
+	      do_exempt(chan, e->exemptmask);
+	      e->lastactive = now;
+	      return;
+	    }
+	  } 
 	  b = b->next;
-	if (b->ban[0]){
-	  if (e->lastactive < now - 60) {
-	    do_exempt(chan, e->exemptmask);
-	    e->lastactive = now;
-	    return;
-	  }
 	}
       }
     }
@@ -441,7 +442,7 @@ static void refresh_invite (struct chanset_t * chan, char * user) {
     for ( ; i; i = i->next) {
       if (wild_match(i->invitemask,user) && 
 	  (i->flags & INVITEREC_STICKY || (chan->channel.mode & CHANINV))) {
-	if (i->lastactive < now - 60) {
+	if (i->lastactive < now - 60 && !isinvited(chan,i->invitemask)) {
 	  do_invite(chan, i->invitemask);
 	  i->lastactive = now;
 	  return;
@@ -493,20 +494,17 @@ static void recheck_exempt (struct chanset_t * chan) {
   int i;
   
   for (i = 0; i < 2; i++) 
-    for (e = i ? chan->exempts : global_exempts; e; e = e->next) 
+    for (e = i ? chan->exempts : global_exempts; e; e = e->next) { 
       if (!isexempted(chan, e->exemptmask) && 
-	  (!channel_dynamicexempts(chan) ||  e->flags & EXEMPTREC_STICKY)){
-	if (e->flags & EXEMPTREC_STICKY){
-	  add_mode(chan, '+', 'e', e->exemptmask);
-	} else {
-	  b = chan->channel.ban;
-	  while (b->ban[0] && !wild_match(b->ban, e->exemptmask))
-	    b = b->next;
-	  if (b->ban[0]){
-	    add_mode(chan, '+', 'e', e->exemptmask);
-	  }
-	}
+	  (!channel_dynamicexempts(chan) ||  e->flags & EXEMPTREC_STICKY))
+	add_mode(chan, '+', 'e', e->exemptmask);
+      b = chan->channel.ban;
+      while (b->ban[0]) {
+	if ((wild_match(b->ban, e->exemptmask) || wild_match(e->exemptmask,b->ban)) && !isexempted(chan,e->exemptmask))
+	  do_exempt(chan, e->exemptmask);
+	b = b->next;
       }
+    }
 }
 
 /* recheck_invite */
@@ -521,7 +519,7 @@ static void recheck_invite (struct chanset_t * chan) {
       if (!isinvited(chan, ir->invitemask)  
 	  && ((!channel_dynamicinvites(chan) &&
 	       !(chan->channel.mode & CHANINV)) || ir->flags & INVITEREC_STICKY))
-	add_mode(chan, '+', 'I', ir->invitemask);
+	do_invite(chan,ir->invitemask);
 }
 
 /* resets the bans on the channel */
