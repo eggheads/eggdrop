@@ -1,15 +1,17 @@
-$Id: UPDATES1.6,v 1.281 2001/12/30 06:32:43 guppy Exp $
+$Id: UPDATES1.6,v 1.282 2001/12/30 07:56:35 guppy Exp $
 
 Changes in eggdrop: (since v1.6.0)
 ----------------------------------
 
 1.6.8
 Found by  Fixed by  What...
+          guppy     renamed nick-len to nicklen (nick-len still exists for backwards
+                    compat) to follow the standard that handlen uses
           Wcc       updated doc/BOTNET and added doc/first_script.txt
           Wcc       removed some old debugging information
 various   zip       prevent the bot from losing channel flags when allow-resync is set
           Wcc       some small cosmetic changes
-          Wcc       added $handlen for scripters to get the current length of handles from
+          Wcc       added handlen for scripters to get the current length of handles from
                     src/eggdrop.h (this setting does not adjust handle lengths however)
           BarkerJr  cmd_whom now displays a sum of all the partyline users
           Tothwolf  copyright updates
