@@ -467,6 +467,8 @@ static void recheck_channel(struct chanset_t *chan, int dobans)
 
   if (stacking)
     return;			/* wewps */
+  if (!userlist)                /* bot doesnt know anybody */
+    return;                     /* it's better not to deop everybody */
   stacking++;
   /* okay, sort through who needs to be deopped. */
   context;
@@ -585,7 +587,7 @@ static void recheck_channel(struct chanset_t *chan, int dobans)
     }
   } else if ((mns & CHANKEY) && (chan->channel.key))
     add_mode(chan, '-', 'k', chan->channel.key);
-  if (dobans)			/* spot on guppy, this just keeps the
+  if (dobans && !channel_inactive(chan)) /* spot on guppy, this just keeps the
 				 * checking sane */
     dprintf(DP_SERVER, "MODE %s\n", chan->name);
   stacking--;

@@ -83,8 +83,10 @@ char egg_version[1024] = "1.3.28";
 int egg_numver = 1032800;
 
 char notify_new[121] = "";	/* person to send a note to for new users */
-int default_flags = 0;		/* default user flags for people who say
-				 * 'hello' */
+int default_flags = 0;		/* default user flags and */
+int default_uflags = 0;		/* default userdefinied flags for people */
+				/* who say 'hello' or for .adduser */
+
 int backgrd = 1;		/* run in the background? */
 int con_chan = 0;		/* foreground: constantly display channel
 				 * stats? */

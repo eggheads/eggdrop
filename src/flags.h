@@ -59,6 +59,7 @@ struct flag_record {
 #define USER_XFER     0x00800000	/* x  user has file area access */
 #define USER_Y        0x01000000	/* y  unused */
 #define USER_Z        0x02000000	/* z  unused */
+#define USER_DEFAULT  0x40000000	/* use default-flags */
 
 /* flags specifically for bots */
 #define BOT_ALT       0x00000001	/* a  auto-link here if all +h's fail */

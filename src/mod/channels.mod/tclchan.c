@@ -636,9 +636,9 @@ static int tcl_channel_modify(Tcl_Interp * irp, struct chanset_t *chan,
     }
   }
   if (((oldstatus ^ chan->status) & CHAN_INACTIVE) && module_find("irc", 0, 0)) {
-    if (channel_inactive(chan))
+    if (channel_inactive(chan) && (chan->status & (CHAN_ACTIVE + CHAN_PEND)))
       dprintf(DP_SERVER, "PART %s\n", chan->name);
-    else
+    if (!channel_inactive(chan) && !(chan->status & (CHAN_ACTIVE + CHAN_PEND)))
       dprintf(DP_SERVER, "JOIN %s %s\n", chan->name, chan->key_prot);
   }
   if ((oldstatus ^ chan->status) & (CHAN_ENFORCEBANS+CHAN_OPONJOIN+CHAN_BITCH+CHAN_AUTOVOICE)) {
@@ -935,6 +935,8 @@ static int tcl_channel_add(Tcl_Interp * irp, char *newname, char *options)
   struct chanset_t *chan;
   int items;
   char **item;
+  int ret = TCL_OK;
+  int join = 0;
 
   if ((newname[0] != '#') && (newname[0] != '&'))
     return TCL_ERROR;
@@ -971,8 +973,7 @@ static int tcl_channel_add(Tcl_Interp * irp, char *newname, char *options)
     init_channel(chan);
     list_append((struct list_type **) &chanset, (struct list_type *) chan);
     /* channel name is stored in xtra field for sharebot stuff */
-    if (module_find("irc", 0, 0))
-      dprintf(DP_SERVER, "JOIN %s %s\n", chan->name, chan->key_prot);
+    join = 1;
   }
   if (setstatic)
     chan->status |= CHAN_STATIC;
@@ -982,10 +983,12 @@ static int tcl_channel_add(Tcl_Interp * irp, char *newname, char *options)
      * if a user goes back to an eggdrop that no-longer supports certain
      * (channel) options. */
     if ((tcl_channel_modify(irp, chan, items, item) != TCL_OK) && !chan_hack) {
-      return TCL_ERROR;
+      ret = TCL_ERROR;
     }
   }
-  return TCL_OK;
+  if (module_find("irc", 0, 0) && join && !channel_inactive(chan))
+    dprintf(DP_SERVER, "JOIN %s %s\n", chan->name, chan->key_prot);
+  return ret; 
 }
 
 static tcl_cmds channels_cmds[] =

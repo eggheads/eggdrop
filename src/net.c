@@ -295,8 +295,7 @@ static int proxy_connect(int sock, char *host, int port, int proxy)
   if (proxy == PROXY_SOCKS) {
     /* numeric IP? */
     if ((host[strlen(host) - 1] >= '0') && (host[strlen(host) - 1] <= '9')) {
-      IP ip = htonl((IP) inet_addr(host));
-
+      IP ip = ((IP) inet_addr(host)); /* drummer */      
       my_memcpy((char *) x, (char *) &ip, 4);	/* Beige@Efnet */
     } else {
       /* no, must be host.domain */

@@ -218,6 +218,7 @@ static int tcl_duration STDVAR
     return TCL_OK;
   }
   sec = atoi(argv[1]);
+  s[0] = 0;
 
   if (sec >= 31536000) {
     sprintf(s, "%d year", (int) (sec / 31536000));

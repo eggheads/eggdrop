@@ -55,6 +55,7 @@ extern log_t *logs;
 extern int tands;
 extern int resolve_timeout;
 extern char natip[];
+extern int default_uflags; /* drummer */
 
 /* confvar patch by aaronwl */
 extern char configfile[];
@@ -223,7 +224,7 @@ static char *tcl_eggint(ClientData cdata, Tcl_Interp * irp, char *name1,
       struct flag_record fr =
       {FR_GLOBAL, 0, 0, 0, 0, 0};
       fr.global = default_flags;
-
+      fr.udef_global = default_uflags;
       build_flags(s1, &fr, 0);
     } else
       sprintf(s1, "%d", *(int *) ii->var);
@@ -242,7 +243,8 @@ static char *tcl_eggint(ClientData cdata, Tcl_Interp * irp, char *name1,
 	{FR_GLOBAL, 0, 0, 0, 0, 0};
 
 	break_down_flags(s, &fr, 0);
-	default_flags = fr.global;
+	default_flags = sanity_check(fr.global); /* drummer */
+	default_uflags = fr.udef_global;
       } else if ((ii->ro == 2) || ((ii->ro == 1) && protect_readonly)) {
 	return "read-only variable";
       } else {

@@ -109,12 +109,15 @@ void *def_get(struct userrec *u, struct user_entry *e)
 
 int def_set(struct userrec *u, struct user_entry *e, void *buf)
 {
+  contextnote("drummer's bug?");
+  if (buf)
+    if (!((char *) buf)[0])
+      buf = 0;
+  if (e->u.string)
+    nfree(e->u.string);
   context;
   if (buf) {
     unsigned char *p = (unsigned char *) buf, *q = (unsigned char *) buf;
-
-    if (e->u.string)
-      nfree(e->u.string);
     while (*p && (q - (unsigned char *) buf < 160)) {
       if (*p < 32)
 	p++;
@@ -1075,10 +1078,11 @@ static int hosts_tcl_set(Tcl_Interp * irp, struct userrec *u,
   BADARGS(3, 4, " handle HOSTS ?host?");
   if (argc == 4)
     addhost_by_handle(u->handle, argv[3]);
-  else {
-    while (e->u.list && strcasecmp(e->u.list->extra, "none"))
-      delhost_by_handle(u->handle, e->u.list->extra);
-  }
+  else /* {
+     while (e->u.list && strcasecmp(e->u.list->extra, "none"))
+       delhost_by_handle(u->handle, e->u.list->extra);
+  } */
+    addhost_by_handle(u->handle, "none"); /* drummer */
   return TCL_OK;
 }
 

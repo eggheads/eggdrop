@@ -722,7 +722,7 @@ static void cmd_adduser(struct userrec *u, int idx, char *par)
   }
   if (!u) {
     dprintf(idx, "Added [%s]%s with no password.\n", hand, p1);
-    userlist = adduser(userlist, hand, p1, "-", default_flags);
+    userlist = adduser(userlist, hand, p1, "-", USER_DEFAULT);
   } else {
     dprintf(idx, "Added hostmask %s to %s.\n", p1, u->handle);
     addhost_by_handle(hand,p1);

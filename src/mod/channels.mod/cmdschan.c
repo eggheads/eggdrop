@@ -586,8 +586,9 @@ static void cmd_mns_chan(struct userrec *u, int idx, char *par)
   while (chan->bans)
     u_delban(chan, chan->bans->banmask, 1);
   noshare = 0;
+  if (!channel_inactive(chan))  
+    dprintf(DP_SERVER, "PART %s\n", chname);
   killchanset(chan);
-  dprintf(DP_SERVER, "PART %s\n", chname);
   dprintf(idx, "Channel %s removed from the bot.\n", chname);
   dprintf(idx, "This includes any channel specific bans you set.\n");
   putlog(LOG_CMDS, "*", "#%s# -chan %s", dcc[idx].nick, chname);

@@ -304,10 +304,10 @@ static int u_addban(struct chanset_t *chan, char *ban, char *from, char *note,
     flags |= BANREC_STICKY;
     note++;
   }
-  if (expire_time != 0L)
-    flags &= ~BANREC_STICKY;
-  else
+  if ((expire_time == 0L) || (flags & BANREC_PERM)) {
     flags |= BANREC_PERM;
+    expire_time = 0L;
+  }
   /* new format: */
   p = user_malloc(sizeof(struct banrec));
 

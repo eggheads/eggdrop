@@ -259,11 +259,16 @@ static void share_newuser(int idx, char *par)
 	etc3 = newsplit(&par);
 	fr.match = FR_GLOBAL;
 	break_down_flags(par, &fr, NULL);
-	fr.match = FR_CHAN;
-	userlist = adduser(userlist, etc, etc2, etc3, private_global ?
-			   (fr.global &USER_BOT) : fr.global);
+
+	if (private_global)
+	  fr.global &= USER_BOT;
+	userlist = adduser(userlist, etc, etc2, etc3, 0);
+	/* support for userdefiniedflag share - drummer */
+	u = get_user_by_handle(userlist, etc);
+	set_user_flagrec(u, &fr, 0);
+	fr.match = FR_CHAN; /* why?? */
 	noshare = 0;
-	putlog(LOG_CMDS, "*", "%s: newuser %s", dcc[idx].nick, etc);
+        putlog(LOG_CMDS, "*", "%s: newuser %s %s", dcc[idx].nick, etc, par);
       }
     }
   }

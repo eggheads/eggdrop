@@ -29,6 +29,7 @@ extern struct chanset_t *chanset;
 extern char ver[];
 extern char botnetnick[];
 extern time_t now;
+extern int default_flags, default_uflags;
 
 int noshare = 1;		/* don't send out to sharebots */
 int sort_users = 0;		/* sort the userlist when saving */
@@ -549,8 +550,13 @@ struct userrec *adduser(struct userrec *bu, char *handle, char *host,
   u->next = NULL;
   u->chanrec = NULL;
   u->entries = NULL;
+  if (flags != USER_DEFAULT) { /* drummer */
   u->flags = flags;
   u->flags_udef = 0;
+  } else {
+    u->flags = default_flags;
+    u->flags_udef = default_uflags;
+  }  
   set_user(&USERENTRY_PASS, u, pass);
   if (!noxtra) {
     xk = nmalloc(sizeof(struct xtra_key));
@@ -578,7 +584,7 @@ struct userrec *adduser(struct userrec *bu, char *handle, char *host,
   if ((!noshare) && (handle[0] != '*') && (!(flags & USER_UNSHARED)) &&
       (bu == userlist)) {
     struct flag_record fr =
-    {FR_GLOBAL, flags, 0, 0, 0, 0};
+    {FR_GLOBAL, u->flags, u->flags_udef, 0, 0, 0};    
     char x[100];
 
     build_flags(x, &fr, 0);

@@ -484,11 +484,11 @@ void reload()
 
 void rehash()
 {
+  call_hook(HOOK_PRE_REHASH);
   noshare = 1;
   clear_userlist(userlist);
   noshare = 0;
   userlist = NULL;
-  call_hook(HOOK_PRE_REHASH);
   chanprog();
 }
 

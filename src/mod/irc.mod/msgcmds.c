@@ -55,7 +55,7 @@ static int msg_hello(char *nick, char *h, struct userrec *u, char *p)
     maskhost(s, host);
     strcpy(s, host);
     simple_sprintf(host, "%s!%s", nick, s + 2);
-    userlist = adduser(userlist, nick, host, "-", default_flags);
+    userlist = adduser(userlist, nick, host, "-", USER_DEFAULT);
     putlog(LOG_MISC, "*", "%s %s (%s) -- %s",
 	   IRC_INTRODUCED, nick, host, IRC_COMMONSITE);
     common = 1;
