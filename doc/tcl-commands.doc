@@ -218,6 +218,23 @@ specific commands, see later.
 |   channels); other arguments work exactly like newchanexempt
 |   returns: nothing
 
+| newchaninvite <channel> <invite> <creator> <comment> [lifetime] [options]
+|   adds a invite to the enforced invite list of a channel; creator is
+|     given credit for the invite in the invite list; lifetime is specified
+|     in minutes; if lifetime is not specified, invite-time (usually 60) is
+|     used; setting the lifetime to 0 makes it a permanent invite; valid
+|     options are:
+|       sticky     forces the invite to be always active on a channel, even
+|                    with dynamicinvites on
+|       none       (no effect)
+|   returns: nothing
+|   N.B. The invite will not be removed until the channel has gone -i.
+|
+| newinvite <invite> <creator> <comment> [lifetime] [options]
+|   adds a invite to the global invite list (which takes effect on all
+|   channels); other arguments work exactly like newchaninvite
+|   returns: nothing
+
 | stick <ban> [channel]
 |   makes a ban sticky, or if a channel is specified, then it is set sticky
 |   on that channel. returns: "1" is successful, "0" otherwise
@@ -234,6 +251,22 @@ specific commands, see later.
     removes a ban from the global ban list
     returns: "1" if successful, "0" otherwise
 
+| killchanexempt <channel> <exempt>
+|   removes a exempt from the enforced exempt list for a channel
+|   returns: "1" if successful, "0" otherwise
+
+| killexempt <exempt>
+|   removes a exempt from the global exempt list
+|   returns: "1" if successful, "0" otherwise
+
+| killchaninvite <channel> <invite>
+|   removes a invite from the enforced invite list for a channel
+|   returns: "1" if successful, "0" otherwise
+
+| killinvite <invite>
+|   removes a invite from the global invite list
+|   returns: "1" if successful, "0" otherwise
+
   isban <ban> [channel]
     returns: "1" if that ban is in the global ban list, "0" otherwise; if
       a channel is specified, that channel's ban list is checked too
@@ -243,21 +276,71 @@ specific commands, see later.
       permanent, "0" otherwise; if a channel is specified, that channel's
       ban list is checked too
 
+| isexempt <exempt> [channel]
+|   returns: "1" if that exempt is in the global exempt list, "0" otherwise; if
+|     a channel is specified, that channel's exempt list is checked too
+
+| ispermexempt <exempt> [channel]
+|   returns: "1" if that exempt is in the global exempt list AND is marked as
+|     permanent, "0" otherwise; if a channel is specified, that channel's
+|     exempt list is checked too
+
+| isinvite <invite> [channel]
+|   returns: "1" if that invite is in the global invite list, "0" otherwise; if
+|     a channel is specified, that channel's invite list is checked too
+
+| isperminvite <invite> [channel]
+|   returns: "1" if that invite is in the global invite list AND is marked as
+|     permanent, "0" otherwise; if a channel is specified, that channel's
+|     invite list is checked too
+
   isbansticky <ban> [channel]
     returns: "1" if that ban is a sticky ban in the global ban list, "0"
       otherwise; if a channel is specified, that channel's ban list is checked
       too
+
+| isexemptsticky <exempt> [channel]
+|   returns: "1" if that exempt is a sticky exempt in the global exempt list,
+|     "0" otherwise; if a channel is specified, that channel's exempt list is
+|     checked too
+
+| isinvitesticky <invite> [channel]
+|   returns: "1" if that invite is a sticky invite in the global invite list,
+|     "0" otherwise; if a channel is specified, that channel's invite list is
+|     checked too
 
   matchban <nick!user@host> [channel]
     returns: "1" if that user address matches a ban in the global ban list,
       "0" otherwise; if a channel is specified, that channel's ban list is
       checked too
 
+| matchexempt <nick!user@host> [channel]
+|   returns: "1" if that user address matches a exempt in the global exempt
+|     list, "0" otherwise; if a channel is specified, that channel's exempt
+|     list is checked too
+
+| matchinvite <nick!user@host> [channel]
+|   returns: "1" if that user address matches a invite in the global invite
+|     list, "0" otherwise; if a channel is specified, that channel's invite
+|     list is checked too
+
   banlist [channel]
     returns: list of global bans, or (if a channel is specified) list of
       channel-specific bans; each entry is itself a list, containing:
       hostmask, comment, expiration timestamp, time added, last time
       active, and creator (the three timestamps are in unixtime format)
+
+| exemptlist [channel]
+|   returns: list of global exempts, or (if a channel is specified) list of
+|     channel-specific exempts; each entry is itself a list, containing:
+|     hostmask, comment, expiration timestamp, time added, last time
+|     active, and creator (the three timestamps are in unixtime format)
+
+| invitelist [channel]
+|   returns: list of global invites, or (if a channel is specified) list of
+|     channel-specific invites; each entry is itself a list, containing:
+|     hostmask, comment, expiration timestamp, time added, last time
+|     active, and creator (the three timestamps are in unixtime format)
 
   newignore <hostmask> <creator> <comment> [lifetime]
     adds an entry to the ignore list; creator is given credit for the
