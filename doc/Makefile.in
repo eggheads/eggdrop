@@ -1,5 +1,5 @@
 # Makefile for doc/
-# $Id: Makefile.in,v 1.11 2000/07/23 20:47:12 fabian Exp $
+# $Id: Makefile.in,v 1.12 2000/10/15 16:11:31 tothwolf Exp $
 
 SHELL = @SHELL@
 top_srcdir = @top_srcdir@
@@ -14,7 +14,7 @@ INSTALL_SCRIPT = @INSTALL_SCRIPT@
 
 DOCS = BOTNET BUG-REPORT CONTENTS KNOWN-PROBLEMS MODULES \
 UPDATES.pre1.3 UPDATES1.3 UPDATES1.4 UPDATES1.5 compiling.FAQ \
-eggdrop.doc patch.howto tcl-commands.doc tricks readme text-substitutions.doc
+eggdrop.doc patch.howto tcl-commands.doc tricks text-substitutions.doc
 
 MAN1 = man1/eggdrop.1
 
