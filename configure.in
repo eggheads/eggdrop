@@ -1,13 +1,18 @@
 dnl Process this file with autoconf to produce a configure script.
+dnl
+dnl $Id: configure.in,v 1.60 2004/01/09 01:50:22 wcc Exp $
+dnl
+
 AC_PREREQ(2.59)
 AC_INIT([Eggdrop],[1.6.16],[bugs@eggheads.org])
 AC_COPYRIGHT([Copyright (C) 1999, 2000, 2001, 2002, 2003 Eggheads Development Team])
-AC_REVISION($Id: configure.in,v 1.59 2004/01/09 01:36:38 wcc Exp $)
+AC_REVISION($Revision: 1.60 $)
 AC_CONFIG_SRCDIR(src/eggdrop.h)
 AC_CONFIG_AUX_DIR(misc)
 AC_CONFIG_HEADER(config.h)
 AC_PREFIX_DEFAULT([\${HOME}/eggdrop])
 
+EGG_MSG_CONFIGURE_START
 EGG_SAVE_PARAMETERS
 
 # Setup build environment

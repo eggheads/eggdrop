@@ -4,7 +4,7 @@
  *
  *   IF YOU ALTER THIS FILE, YOU NEED TO RECOMPILE THE BOT.
  *
- * $Id: eggdrop.h,v 1.53 2004/01/09 01:36:38 wcc Exp $
+ * $Id: eggdrop.h,v 1.54 2004/01/09 01:50:22 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -92,14 +92,14 @@
 
 
 
-/* Have to use a weird way to make the compiler error out cos not all
- * compilers support #error or error
+/* We have to generate compiler errors in a weird way since not all compilers
+ * support the #error preprocessor directive.
  */
-#if !HAVE_VSPRINTF
+#ifndef HAVE_VPRINTF
 #  include "Error: You need vsprintf to compile eggdrop."
 #endif
 
-#if HAVE_UNISTD_H
+#ifdef HAVE_UNISTD_H
 #  include <unistd.h>
 #endif
 
@@ -109,7 +109,7 @@
 #  endif
 #endif
 
-#if !defined(STDC_HEADERS)
+#ifndef STDC_HEADERS
 #  include "Error: Your system must support ANSI C Header files."
 #endif
 
