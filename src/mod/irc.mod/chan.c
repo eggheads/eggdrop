@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  *
- * $Id: chan.c,v 1.65 2001/04/26 03:38:51 guppy Exp $
+ * $Id: chan.c,v 1.66 2001/06/14 12:39:55 poptix Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1756,8 +1756,10 @@ static int gotpart(char *from, char *msg)
       chan->status &= ~CHAN_PEND;
       reset_chan_info(chan);
     }
-    check_tcl_part(nick, from, u, chan->dname, msg);
     set_handle_laston(chan->dname, u, now);
+    check_tcl_part(nick, from, u, chan->dname, msg); /* This must be directly above the killmember, in case
+    							we're doing anything to the record that would affect
+							the above */
     killmember(chan, nick);
     if (msg[0])
       putlog(LOG_JOIN, chan->dname, "%s (%s) left %s (%s).", nick, from, chan->dname, msg);
@@ -1804,8 +1806,9 @@ static int gotkick(char *from, char *origmsg)
     if (m)
       m->last = now;
     /* This _needs_ to use chan->dname <cybah> */
-    check_tcl_kick(whodid, uhost, u, chan->dname, nick, msg);
     get_user_flagrec(u, &fr, chan->dname);
+    set_handle_laston(chan->dname, u, now);
+    check_tcl_kick(whodid, uhost, u, chan->dname, nick, msg);
     m = ismember(chan, nick);
     if (m) {
       struct userrec *u2;
@@ -1927,7 +1930,12 @@ static int gotquit(char *from, char *msg)
   for (chan = chanset; chan; chan = chan->next) {
     m = ismember(chan, nick);
     if (m) {
-      set_handle_laston(chan->dname, u, now);
+      u = get_user_by_host(from);
+      if (u) {
+        set_handle_laston(chan->dname, u, now); /* If you remove this, the bot will crash when the user record in question
+						   is removed/modified during the tcl binds below, and the users was on more
+						   than one monitored channel */
+      }
       if (split) {
 	m->split = now;
 	check_tcl_splt(nick, from, u, chan->dname);
