@@ -2,7 +2,7 @@
  * files.c - part of filesys.mod
  *   handles all file system commands
  *
- * $Id: files.c,v 1.28 2001/04/12 02:39:46 guppy Exp $
+ * $Id: files.c,v 1.29 2001/11/29 02:53:32 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -116,13 +116,13 @@ static int welcome_to_files(int idx)
   return 1;
 }
 
-static void cmd_optimise(int idx, char *par)
+static void cmd_optimize(int idx, char *par)
 {
   struct userrec *u = get_user_by_handle(userlist, dcc[idx].nick);
   FILE *fdb = NULL;
   char *p   = NULL;
 
-  putlog(LOG_FILES, "*", "files: #%s# optimise", dcc[idx].nick);
+  putlog(LOG_FILES, "*", "files: #%s# optimize", dcc[idx].nick);
   p = get_user(&USERENTRY_DCCDIR, u);
   /* Does this dir even exist any more? */
   if (p) {
@@ -139,11 +139,11 @@ static void cmd_optimise(int idx, char *par)
     return;
   }
   filedb_close(fdb);
-  dprintf(idx, "Current directory is now optimised.\n");
+  dprintf(idx, "Current directory is now optimized.\n");
 }
 
 /* Given current directory, and the desired changes, fill 'real' with
- * the new current directory.  check directory parmissions along the
+ * the new current directory.  check directory permissions along the
  * way.  return 1 if the change can happen, 0 if not. 'real' will be
  * assigned newly allocated memory, so don't forget to free it...
  */
@@ -970,7 +970,7 @@ static void cmd_mkdir(int idx, char *par)
 	/* Flags is a channel. */
 	chan = flags;
 	flags = par;
-      }	/* (else) Couldnt find the channel and flags[0] is a '+', these
+      }	/* (else) Couldn't find the channel and flags[0] is a '+', these
 	 * are flags. */
     }
     if (chan[0] && !findchan(chan)) {
@@ -1350,7 +1350,12 @@ static cmd_t myfiles[] =
   {"rm",	"j",	(Function) cmd_rm,		NULL},
   {"rmdir",	"j",	(Function) cmd_rmdir,		NULL},
   {"share",	"j",	(Function) cmd_share,		NULL},
-  {"optimise",	"j",	(Function) cmd_optimise,	NULL},
+/* Since we have spelt optimize wrong for so many years, we will
+ * keep the old spelling around for the command name for now to
+ * avoid problems with people typing .optimise and wondering 
+ * where it went (guppy:28Nov2001) */
+  {"optimise",	"j",	(Function) cmd_optimize,	NULL},
+  {"optimize",	"j",	(Function) cmd_optimize,	NULL},
   {"stats",	"",	(Function) cmd_stats,		NULL},
   {"unhide",	"j",	(Function) cmd_unhide,		NULL},
   {"unshare",	"j",	(Function) cmd_unshare,		NULL},

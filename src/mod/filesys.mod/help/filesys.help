@@ -48,7 +48,7 @@ see also: mv
    to send files to other people.  if a file you want is actually
    on another bot, it may take a little bit longer so be patient.
    if that bot isn't on the botnet right now, it will say the file
-   isn't availble.
+   isn't available.
 
    there is a limit to the number of transfers you can have going
    simultaneously, so if you go over this limit, the remainder of
@@ -70,7 +70,7 @@ see also: pending, cancel
 %{+j}
 Janitor only:
   %bhide      share     mkdir     cp        rm        lsa%b
-  %bunhide    unshare   rmdir     mv        ln        optimise%b
+  %bunhide    unshare   rmdir     mv        ln        optimize%b
   %bfilestats%b
 %{+x}
 You can get help on any command via:  %bhelp <command>%b
@@ -103,10 +103,9 @@ see also: share, unshare, get
    displays the files in the current directory.  subdirectories
    are shown with "<DIR>" next to them, and other files will display
    their size (typically in kilobytes), who uploaded them (and when),
-   and how many times each file has been downloaded.  if a descrip-
-   tion of the file exists, it is displayed below the filename.  you
-   can restrict the file listing by specifying a mask, just like in
-   unix.
+   and how many times each file has been downloaded.  if a description
+   of the file exists, it is displayed below the filename.  you can
+   restrict the file listing by specifying a mask, just like in unix.
    
 see also: cd, pwd, get
 %{help=filesys/lsa}%{+j}
@@ -163,8 +162,8 @@ see also: mkdir
    files are marked as unshared.
    
 see also: unshare, lsa, ln
-%{help=filesys/optimise}%{+j}
-###  %boptimise%b
+%{help=filesys/optimize}%{+j}
+###  %boptimize%b
    cleans up the current directory's database.  if you have a large
    directory with many files you may want to use this command if
    you experience slow-downs/delays over time.  normally, the db
