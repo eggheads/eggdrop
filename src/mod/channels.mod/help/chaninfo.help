@@ -71,7 +71,7 @@
 	                (NOTE: this can be set online now)
 	%bautovoice%b      this causes the bot to also monitor channel voice
 	               settings, using the +v/+q settings.
-	%bnodesync%b       allow non-ops to perform channel modes? (Stops bot from
+	%bnodesynch%b       allow non-ops to perform channel modes? (Stops bot from
                    fighting with services such as ChanServ)
      The following are flood settings, they are set by doing
      .chanset <channel> flood-type number:seconds where number and second are
