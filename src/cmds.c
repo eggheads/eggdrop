@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  *
- * $Id: cmds.c,v 1.52 2001/06/16 01:36:06 poptix Exp $
+ * $Id: cmds.c,v 1.53 2001/06/17 14:09:31 poptix Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -2406,8 +2406,8 @@ static void cmd_pls_user(struct userrec *u, int idx, char *par)
     dprintf(idx, "Hey! That's MY name!\n");
   else {
     putlog(LOG_CMDS, "*", "#%s# +user %s %s", dcc[idx].nick, handle, host);
-    userlist = adduser(userlist, handle, host, "-", USER_DEFAULT);
-    dprintf(idx, "Added %s (%s) with no password and default flags.\n", handle, host);
+    userlist = adduser(userlist, handle, host, "-", 0);
+    dprintf(idx, "Added %s (%s) with no password and no flags.\n", handle, host);
   }
 }
 
