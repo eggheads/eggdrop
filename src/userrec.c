@@ -6,7 +6,7 @@
  * 
  * dprintf'ized, 10nov1995
  * 
- * $Id: userrec.c,v 1.19 1999/12/30 23:23:45 guppy Exp $
+ * $Id: userrec.c,v 1.20 2000/01/06 19:15:26 arthur2 Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -642,15 +642,17 @@ struct userrec *adduser(struct userrec *bu, char *handle, char *host,
     sprintf(xk->data, "%09lu", now);
     set_user(&USERENTRY_XTRA, u, xk);
   }
-  host = fixfrom(host);
+  /* strip out commas -- they're illegal */
   /* about this fixfrom():
    * we should use this fixfrom before every call of adduser()
    * but its much easier to use here...
    * (drummer)
+   * only use it if we have a host :) (dw) 
    */
-  /* strip out commas -- they're illegal */
   if (host && host[0]) {
-    char *p = strchr(host, ',');
+    char *p;
+    host = fixfrom(host);
+    p = strchr(host, ',');
 
     while (p != NULL) {
       *p = '?';
