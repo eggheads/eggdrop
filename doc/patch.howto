@@ -70,6 +70,9 @@ Last revised: March  04, 2003
          why you changed it. Don't forget to include the botversion for which
          your patch was made.
 
+	 You should also include the nick/handle/name you would like to be used
+	 in the UPDATES1.6 file (if applicable).
+
     Never modify src/patch.h or one of the UPDATES files. We will do it. If
     your patch includes changes related to autotools (./configure, etc), do
     NOT run autoconf, autoheader, etc; we will do this as well.

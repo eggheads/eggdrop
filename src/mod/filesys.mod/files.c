@@ -2,7 +2,7 @@
  * files.c - part of filesys.mod
  *   handles all file system commands
  *
- * $Id: files.c,v 1.43 2003/03/12 08:42:00 wcc Exp $
+ * $Id: files.c,v 1.44 2003/03/16 21:41:29 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -240,9 +240,10 @@ static int resolve_dir(char *current, char *change, char **real, int idx)
       }
       free_fdbe(&fdbe);
       malloc_strcpy(s, *real);
-      if (s[0])
-        if (s[strlen(s) - 1] != '/')
+      if (s[0] && s[strlen(s) - 1] != '/') {
+          s = nrealloc(s, strlen(s) + 2);
           strcat(s, "/");
+      }
       work = nmalloc(strlen(s) + strlen(elem) + 1);
       sprintf(work, "%s%s", s, elem);
       malloc_strcpy(*real, work);
