@@ -1,7 +1,7 @@
 /*
  * transfer.c -- part of transfer.mod
  *
- * $Id: transfer.c,v 1.42 2001/12/02 07:11:15 guppy Exp $
+ * $Id: transfer.c,v 1.43 2001/12/02 07:35:07 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1983,6 +1983,7 @@ char *transfer_start(Function *global_funcs)
 
   USERENTRY_FSTAT.get = def_get;
   add_entry_type(&USERENTRY_FSTAT);
-  add_lang_section("filesys");
+  add_lang_section("transfer");
   return NULL;
 }
+
