@@ -306,7 +306,7 @@ ac_includes_default="\
 # include <unistd.h>
 #endif"
 
-ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS egg_ac_parameters CC CFLAGS LDFLAGS CPPFLAGS ac_ct_CC EXEEXT OBJEXT CPP EGREP SET_MAKE RANLIB ac_ct_RANLIB INSTALL_PROGRAM INSTALL_SCRIPT INSTALL_DATA LN_S STRIP AWK BASENAME UNAME MOD_LD MOD_CC MOD_STRIP SHLIB_LD SHLIB_CC SHLIB_STRIP DEFAULT_MAKE MOD_EXT EGGEXEC TCLLIB TCLLIBFN TCLINC TCLINCFN TCL_REQS TCL_LIBS EGGVERSION DEST MOD_UPDIR LIBOBJS LTLIBOBJS'
+ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS egg_ac_parameters CC CFLAGS LDFLAGS CPPFLAGS ac_ct_CC EXEEXT OBJEXT CPP EGREP SET_MAKE RANLIB ac_ct_RANLIB INSTALL_PROGRAM INSTALL_SCRIPT INSTALL_DATA LN_S HEAD_1 STRIP AWK BASENAME UNAME MOD_LD MOD_CC MOD_STRIP SHLIB_LD SHLIB_CC SHLIB_STRIP DEFAULT_MAKE MOD_EXT EGGEXEC TCLLIB TCLLIBFN TCLINC TCLINCFN TCL_REQS TCL_LIBS EGGVERSION DEST MOD_UPDIR LIBOBJS LTLIBOBJS'
 ac_subst_files=''
 
 # Initialize some variables set by options.
@@ -3044,6 +3044,40 @@ else
   echo "$as_me:$LINENO: result: no, using $LN_S" >&5
 echo "${ECHO_T}no, using $LN_S" >&6
 fi
+
+cat << 'EOF' > conftest.head
+a
+b
+c
+EOF
+
+for ac_prog in 'head -1' 'head -n 1' 'sed 1q';
+do
+  echo "$as_me:$LINENO: checking whether $ac_prog works" >&5
+echo $ECHO_N "checking whether $ac_prog works... $ECHO_C" >&6
+  if test "${ac_cv_prog_HEAD_1+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+    if test -n "$HEAD_1"
+  then
+    ac_cv_prog_HEAD_1="$HEAD_1" # Let the user override the test.
+  else
+   if test "`cat conftest.head | $ac_prog`" = "a";
+   then
+     echo "$as_me:$LINENO: result: yes" >&5
+echo "${ECHO_T}yes" >&6
+     ac_cv_prog_HEAD_1=$ac_prog
+   else
+     echo "$as_me:$LINENO: result: no" >&5
+echo "${ECHO_T}no" >&6
+   fi
+  fi
+fi
+  test -n "$ac_cv_prog_HEAD_1" && break
+done
+
+rm -f conftest.head
+HEAD_1=$ac_cv_prog_HEAD_1
 
 # Check whether --enable-strip or --disable-strip was given.
 if test "${enable_strip+set}" = set; then
@@ -6663,14 +6697,6 @@ echo "${ECHO_T}no" >&6
   fi
 
 
-# Some newer systems don't support head -1 anymore.
-if test `echo test | head -1`
-then
-  egg_headone="head -1"
-else
-  egg_headone="head -n 1"
-fi
-
 # Both TCLLIBFN & TCLINCFN must be set, or we bail
 TCL_FOUND=0
 if test ! "${TCLLIBFN-x}" = "x" && test ! "${TCLINCFN-x}" = "x"
@@ -6688,7 +6714,7 @@ echo $ECHO_N "checking for Tcl version... $ECHO_C" >&6
   if test "${egg_cv_var_tcl_version+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
 else
-      egg_cv_var_tcl_version=`grep TCL_VERSION $TCLINC/$TCLINCFN | $egg_headone | $AWK '{gsub(/\"/, "", $3); print $3}'`
+      egg_cv_var_tcl_version=`grep TCL_VERSION $TCLINC/$TCLINCFN | $HEAD_1 | $AWK '{gsub(/\"/, "", $3); print $3}'`
 
 fi
 
@@ -6714,7 +6740,7 @@ echo $ECHO_N "checking for Tcl patch level... $ECHO_C" >&6
   if test "${egg_cv_var_tcl_patch_level+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
 else
-      eval "egg_cv_var_tcl_patch_level=`grep TCL_PATCH_LEVEL $TCLINC/$TCLINCFN | $egg_headone | $AWK '{gsub(/\"/, "", $3); print $3}'`"
+      eval "egg_cv_var_tcl_patch_level=`grep TCL_PATCH_LEVEL $TCLINC/$TCLINCFN | $HEAD_1 | $AWK '{gsub(/\"/, "", $3); print $3}'`"
 
 fi
 
@@ -7700,6 +7726,7 @@ s,@INSTALL_PROGRAM@,$INSTALL_PROGRAM,;t t
 s,@INSTALL_SCRIPT@,$INSTALL_SCRIPT,;t t
 s,@INSTALL_DATA@,$INSTALL_DATA,;t t
 s,@LN_S@,$LN_S,;t t
+s,@HEAD_1@,$HEAD_1,;t t
 s,@STRIP@,$STRIP,;t t
 s,@AWK@,$AWK,;t t
 s,@BASENAME@,$BASENAME,;t t

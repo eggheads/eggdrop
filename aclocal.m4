@@ -1,7 +1,7 @@
 dnl aclocal.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: aclocal.m4,v 1.75 2003/12/04 05:57:10 wcc Exp $
+dnl $Id: aclocal.m4,v 1.76 2003/12/10 05:21:22 tothwolf Exp $
 dnl
 
 
@@ -67,6 +67,40 @@ then
     fi
   fi
 fi
+])dnl
+
+
+dnl EGG_PROG_HEAD_1()
+dnl
+AC_DEFUN(EGG_PROG_HEAD_1,
+[cat << 'EOF' > conftest.head
+a
+b
+c
+EOF
+
+for ac_prog in 'head -1' 'head -n 1' 'sed 1q';
+do
+  AC_MSG_CHECKING([whether $ac_prog works])
+  AC_CACHE_VAL(ac_cv_prog_HEAD_1,
+[  if test -n "$HEAD_1"
+  then
+    ac_cv_prog_HEAD_1="$HEAD_1" # Let the user override the test.
+  else
+   if test "`cat conftest.head | $ac_prog`" = "a";
+   then
+     AC_MSG_RESULT([yes])
+     ac_cv_prog_HEAD_1=$ac_prog
+   else
+     AC_MSG_RESULT([no])
+   fi
+  fi])dnl
+  test -n "$ac_cv_prog_HEAD_1" && break
+done
+
+rm -f conftest.head
+HEAD_1=$ac_cv_prog_HEAD_1
+AC_SUBST(HEAD_1)dnl
 ])dnl
 
 
@@ -876,14 +910,6 @@ AC_DEFUN(EGG_TCL_DETECT_CHANGE, [dnl
 dnl  EGG_TCL_CHECK_VERSION()
 dnl
 AC_DEFUN(EGG_TCL_CHECK_VERSION, [dnl
-# Some newer systems don't support head -1 anymore.
-if test `echo test | head -1`
-then
-  egg_headone="head -1"
-else
-  egg_headone="head -n 1"
-fi
-
 # Both TCLLIBFN & TCLINCFN must be set, or we bail
 TCL_FOUND=0
 if test ! "${TCLLIBFN-x}" = "x" && test ! "${TCLINCFN-x}" = "x"
@@ -897,7 +923,7 @@ then
   fi
   AC_MSG_CHECKING(for Tcl version)
   AC_CACHE_VAL(egg_cv_var_tcl_version, [dnl
-    egg_cv_var_tcl_version=`grep TCL_VERSION $TCLINC/$TCLINCFN | $egg_headone | $AWK '{gsub(/\"/, "", [$]3); print [$]3}'`
+    egg_cv_var_tcl_version=`grep TCL_VERSION $TCLINC/$TCLINCFN | $HEAD_1 | $AWK '{gsub(/\"/, "", [$]3); print [$]3}'`
   ])
 
   if test ! "${egg_cv_var_tcl_version-x}" = "x"
@@ -915,7 +941,7 @@ then
   fi
   AC_MSG_CHECKING(for Tcl patch level)
   AC_CACHE_VAL(egg_cv_var_tcl_patch_level, [dnl
-    eval "egg_cv_var_tcl_patch_level=`grep TCL_PATCH_LEVEL $TCLINC/$TCLINCFN | $egg_headone | $AWK '{gsub(/\"/, "", [$]3); print [$]3}'`"
+    eval "egg_cv_var_tcl_patch_level=`grep TCL_PATCH_LEVEL $TCLINC/$TCLINCFN | $HEAD_1 | $AWK '{gsub(/\"/, "", [$]3); print [$]3}'`"
   ])
 
   if test ! "${egg_cv_var_tcl_patch_level-x}" = "x"
