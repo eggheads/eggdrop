@@ -1,7 +1,7 @@
 /* 
  * share.c -- part of share.mod
  * 
- * $Id: share.c,v 1.35 2000/09/05 15:59:43 fabian Exp $
+ * $Id: share.c,v 1.36 2000/09/09 11:40:02 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1603,7 +1603,7 @@ static void finish_share(int idx)
     return;
 
   if (!uff_call_receiving(j, dcc[idx].u.xfer->filename)) {
-    putlog(LOG_BOTS, "*", "Uncompressing userfile failed!");
+    putlog(LOG_BOTS, "*", "A uff parsing function failed for the userfile!");
     unlink(dcc[idx].u.xfer->filename);
     return;
   }

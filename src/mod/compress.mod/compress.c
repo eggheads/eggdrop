@@ -6,7 +6,7 @@
  * Written by Fabian Knittel <fknittel@gmx.de>. Based on zlib examples
  * by Jean-loup Gailly and Miguel Albrecht.
  * 
- * $Id: compress.c,v 1.5 2000/09/09 11:39:10 fabian Exp $
+ * $Id: compress.c,v 1.6 2000/09/09 11:40:02 fabian Exp $
  */
 /* 
  * Copyright (C) 2000  Eggheads
@@ -311,7 +311,7 @@ static int compress_file(char *filename, int mode_num)
     movefile(temp_fn, filename);
 
   nfree(temp_fn);
-  return COMPF_SUCCESS;
+  return ret;
 }
 
 /* Uncompresses a file `filename' and saves it as `filename'.
@@ -338,7 +338,7 @@ static int uncompress_file(char *filename)
     movefile(temp_fn, filename);
 
   nfree(temp_fn);
-  return COMPF_SUCCESS;
+  return ret;
 }
 
 
