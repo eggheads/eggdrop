@@ -744,6 +744,8 @@ static void got_unexempt(struct chanset_t *chan, char *nick, char *from,
 			 char *who, struct userrec *u)
 {
   exemptlist *e, *old;
+  banlist *b ;
+  int match = 0;
 
   context;
   e = chan->channel.exempt;
@@ -765,6 +767,22 @@ static void got_unexempt(struct chanset_t *chan, char *nick, char *from,
     /* that's a sticky exempt! No point in being */
     /* sticky unless we enforce it!! */
     add_mode(chan, '+', 'e', who);
+  }
+  /* if exempt was removed by master then leave it else check for bans */
+  if (!nick[0] && glob_bot(user) && !glob_master(user) && !chan_master(user)) {
+    putlog(LOG_MODES,chan->name,"(%s)  checking lists",chan->name);
+    b = chan->channel.ban;
+    while (b->ban[0] && !match) {
+      if (wild_match(b->ban, who) ||
+     wild_match(who,b->ban)) {
+   putlog(LOG_MODES,chan->name,"(%s)found match for ban %s, exempt %s",
+          chan->name,b->ban,who);
+   add_mode(chan, '+', 'e', who);
+   match=1;
+      }
+      else
+   b = b->next;
+    }
   }
   if ((u_equals_exempt(global_exempts,who) || u_equals_exempt(chan->exempts, who)) &&
       me_op(chan) && !channel_dynamicexempts(chan)) {
@@ -872,6 +890,9 @@ static void got_uninvite(struct chanset_t *chan, char *nick, char *from,
     /* sticky unless we enforce it!! */
     add_mode(chan, '+', 'I', who);
   }
+  if (!nick[0] && glob_bot(user) && !glob_master(user) && !chan_master(user)
+      &&  (chan->channel.mode & CHANINV))
+    add_mode(chan, '+', 'I', who);
   if ((u_equals_invite(global_invites,who) || u_equals_invite(chan->invites, who)) &&
       me_op(chan) && !channel_dynamicinvites(chan)) {
     /* that's a perminvite! */

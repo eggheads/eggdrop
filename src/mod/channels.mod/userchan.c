@@ -1312,6 +1312,8 @@ static void check_expired_exempts()
 {
   struct exemptrec ** u;
   struct chanset_t *chan;
+  banlist *b;
+  int match;
   
   u = &global_exempts;
   while (*u) {
@@ -1320,8 +1322,22 @@ static void check_expired_exempts()
 	     (*u)->exemptmask, MISC_EXPIRED);
       chan = chanset;
       while (chan != NULL) {
-	add_mode(chan, '-', 'e', (*u)->exemptmask);
-	chan = chan->next;
+        match=0;
+        b = chan->channel.ban;
+        while (b->ban[0] && !match) {
+          if (wild_match(b->ban, (*u)->exemptmask) ||
+            wild_match((*u)->exemptmask,b->ban))
+            match=1;
+          else
+            b = b->next;
+        }
+        if (match)
+          putlog(LOG_MISC, chan->name,
+            "Exempt not expired on channel %s. Ban still set!",
+            chan->name);
+        else
+          add_mode(chan, '-', 'e', (*u)->exemptmask);
+	    chan = chan->next;
       }
       u_delexempt(NULL,(*u)->exemptmask,1);
     } else
@@ -1332,13 +1348,28 @@ static void check_expired_exempts()
     u = &chan->exempts;
     while (*u) {
       if (!((*u)->flags & EXEMPTREC_PERM) && (now >= (*u)->expire)) {
-	putlog(LOG_MISC, "*", "%s %s %s %s (%s)", EXEMPTS_NOLONGER,
-	       (*u)->exemptmask, MISC_ONLOCALE, chan->name, MISC_EXPIRED);
-	add_mode(chan, '-', 'e', (*u)->exemptmask);
-	u_delexempt(chan,(*u)->exemptmask,1);
-      } else
-	u = &((*u)->next);
-    }
+        match=0;
+        b = chan->channel.ban;
+        while (b->ban[0] && !match) {
+          if (wild_match(b->ban, (*u)->exemptmask) ||
+            wild_match((*u)->exemptmask,b->ban))
+            match=1;
+          else
+            b = b->next;
+        }
+        if (match)
+          putlog(LOG_MISC, chan->name,
+            "Exempt not expired on channel %s. Ban still set!",
+            chan->name);
+        else {
+          putlog(LOG_MISC, "*", "%s %s %s %s (%s)", EXEMPTS_NOLONGER,
+            (*u)->exemptmask, MISC_ONLOCALE, chan->name, MISC_EXPIRED);
+          add_mode(chan, '-', 'e', (*u)->exemptmask);
+          u_delexempt(chan,(*u)->exemptmask,1);
+        }
+      }
+    u = &((*u)->next);
+	}
   }
 }
 
@@ -1346,15 +1377,16 @@ static void check_expired_exempts()
 static void check_expired_invites()
 {
   struct inviterec ** u;
-  struct chanset_t *chan;
+  struct chanset_t *chan = chanset;
   
   u = &global_invites;
   while (*u) {
-    if (!((*u)->flags & INVITEREC_PERM) && (now >= (*u)->expire)) {
+    if (!((*u)->flags & INVITEREC_PERM) && (now >= (*u)->expire)
+      && !(chan->channel.mode & CHANINV)) {
       putlog(LOG_MISC, "*", "%s %s (%s)", INVITES_NOLONGER,
 	     (*u)->invitemask, MISC_EXPIRED);
       chan = chanset;
-      while (chan != NULL) {
+      while (chan != NULL && !(chan->channel.mode & CHANINV)){
  	    add_mode(chan, '-', 'I', (*u)->invitemask);
  	    chan = chan->next;
       }

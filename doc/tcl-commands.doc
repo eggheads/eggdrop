@@ -199,6 +199,25 @@ specific commands, see later.
       other arguments work exactly like newchanban
     returns: nothing
 
+| newchanexempt <channel> <exempt> <creator> <comment> [lifetime] [options]
+|   adds a exempt to the enforced exempt list of a channel; creator is
+|     given credit for the exempt in the exempt list; lifetime is specified
+|     in minutes; if lifetime is not specified, exempt-time (usually 60) is
+|     used; setting the lifetime to 0 makes it a permanent exempt; valid
+|     options are:
+|       sticky     forces the exempt to be always active on a channel, even
+|                    with dynamicexempts on
+|       none       (no effect)
+|   returns: nothing
+|   N.B. The exempt will not be removed until the corresponding ban has been
+|   removed. For timed bans once the time period has expired the exempt will
+|   not be removed until the corresponding ban has either expired or removed
+|
+| newexempt <exempt> <creator> <comment> [lifetime] [options]
+|   adds a exempt to the global exempt list (which takes effect on all
+|   channels); other arguments work exactly like newchanexempt
+|   returns: nothing
+
 | stick <ban> [channel]
 |   makes a ban sticky, or if a channel is specified, then it is set sticky
 |   on that channel. returns: "1" is successful, "0" otherwise

@@ -17,12 +17,12 @@ PATCH("CVS");    /* CVS beta */
  *
  *
  */
-PATCH("932781275"); /* current "unix" time */
+PATCH("932782419"); /* current "unix" time */
 /*
  *
  *
  */
-PATCH("kickban.patch"); /* last patch added */ 
+PATCH("chattr.fix3.patch"); /* last patch added */ 
 /*
  *
  *

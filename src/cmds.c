@@ -1446,12 +1446,14 @@ static void cmd_chattr(struct userrec *u, int idx, char *par)
        sprintf(tmpchg,"|%s",chg);
        chg = nmalloc(sizeof(tmpchg));
        strcpy(chg,tmpchg);
-       nfree(tmpchg);
      }
   }
   chan = findchan(par);
   if (!chan && par[0] && (par[0] != '*')) {
     dprintf(idx, "No channel record for %s.\n", par);
+    if (tmpchg) {
+      nfree(chg); nfree(tmpchg);
+    }
     return;
   }
   user.match = FR_GLOBAL;
@@ -1460,11 +1462,17 @@ static void cmd_chattr(struct userrec *u, int idx, char *par)
   get_user_flagrec(u, &user, chan ? chan->name : 0);
   if (!chan && !glob_botmast(user)) {
     dprintf(idx, "You do not have Bot Master privileges.\n");
+    if (tmpchg) {
+      nfree(chg); nfree(tmpchg);
+    }
     return;
   }
   if (chan && !glob_master(user) && !chan_master(user)) {
     dprintf(idx, "You do not have channel master privileges for channel %s\n",
 	    par);
+    if (tmpchg) {
+      nfree(chg); nfree(tmpchg);
+    }
     return;
   }
   user.match &= fl;
@@ -1559,6 +1567,9 @@ static void cmd_chattr(struct userrec *u, int idx, char *par)
 	(func[15]) (chan, 0);
     }
   }
+  if (tmpchg) {
+      nfree(chg); nfree(tmpchg);
+    }
 }
 
 static void cmd_botattr(struct userrec *u, int idx, char *par)
