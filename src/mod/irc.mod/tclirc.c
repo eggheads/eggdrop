@@ -612,6 +612,7 @@ static int tcl_nick2hand STDVAR
     }
     chan = chan->next;
   }
+  context;
   return TCL_OK;		/* blank */
 }
 
