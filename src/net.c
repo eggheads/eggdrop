@@ -34,6 +34,8 @@
 extern int backgrd;
 extern int use_stderr;
 extern int resolve_timeout;
+extern int dcc_total;
+extern struct dcc_t *dcc;
 
 char hostname[121] = "";	/* hostname can be specified in the config
 				 * file */
@@ -45,6 +47,12 @@ int dcc_sanitycheck = 0;	/* we should do some sanity checking on dcc
 				 * connections. */
 sock_list *socklist = 0;	/* enough to be safe */
 int MAXSOCKS = 0;
+extern int otraffic_irc_today;
+extern int otraffic_bn_today;
+extern int otraffic_dcc_today;
+extern int otraffic_filesys_today;
+extern int otraffic_trans_today;
+extern int otraffic_unknown_today;
 
 /* types of proxy */
 #define PROXY_SOCKS   1
@@ -842,7 +850,7 @@ int sockgets(char *s, int *len)
 /* DO NOT PUT CONTEXTS IN HERE IF YOU WANT DEBUG TO BE MEANINGFUL!!! */
 void tputs(int z, char *s, unsigned int len)
 {
-  int i, x;
+  int i, x, idx;
   char *p;
 
   if (z < 0)
@@ -853,6 +861,38 @@ void tputs(int z, char *s, unsigned int len)
   }
   for (i = 0; i < MAXSOCKS; i++) {
     if (!(socklist[i].flags & SOCK_UNUSED) && (socklist[i].sock == z)) {
+      
+      for (idx = 0; idx < dcc_total; idx++) {
+        if (dcc[idx].sock == z) {
+          if (dcc[idx].type) {
+            if (dcc[idx].type->name) {
+              if (!strncmp(dcc[idx].type->name, "BOT", 3)) {
+                otraffic_bn_today += len;
+                break;
+              } else if (!strcmp(dcc[idx].type->name, "SERVER")) {
+                otraffic_irc_today += len;
+                break;
+              } else if (!strncmp(dcc[idx].type->name, "CHAT", 4)) {
+                otraffic_dcc_today += len;
+                break;
+              } else if (!strncmp(dcc[idx].type->name, "FILES", 5)) {
+                otraffic_filesys_today += len;
+                break;
+              } else if (!strcmp(dcc[idx].type->name, "SEND")) {
+                otraffic_trans_today += len;
+                break;
+              } else if (!strncmp(dcc[idx].type->name, "GET", 3)) {
+                otraffic_trans_today += len;
+                break;
+              } else {
+                otraffic_unknown_today += len;
+                break;
+              }
+            }
+          }
+        }
+      }
+      
       if (socklist[i].outbuf != NULL) {
 	/* already queueing: just add it */
 	p = (char *) nrealloc(socklist[i].outbuf, socklist[i].outbuflen + len);

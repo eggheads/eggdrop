@@ -122,6 +122,28 @@ int die_on_sighup = 0;		/* die if bot receives SIGHUP */
 int die_on_sigterm = 0;		/* die if bot receives SIGTERM */
 int resolve_timeout = 15;	/* hostname/address lookup timeout */
 time_t now;			/* duh, now :) */
+int otraffic_irc = 0; /* traffic stats */
+int otraffic_irc_today = 0;
+int otraffic_bn = 0;
+int otraffic_bn_today = 0;
+int otraffic_dcc = 0;
+int otraffic_dcc_today = 0;
+int otraffic_filesys = 0;
+int otraffic_filesys_today = 0;
+int otraffic_trans = 0;
+int otraffic_trans_today = 0;
+int otraffic_unknown = 0;
+int otraffic_unknown_today = 0;
+int itraffic_irc = 0;
+int itraffic_irc_today = 0;
+int itraffic_bn = 0;
+int itraffic_bn_today = 0;
+int itraffic_dcc = 0;
+int itraffic_dcc_today = 0;
+int itraffic_trans = 0;
+int itraffic_trans_today = 0;
+int itraffic_unknown = 0;
+int itraffic_unknown_today = 0;
 
 #ifdef DEBUG_CONTEXT
 /* context storage for fatal crashes */
@@ -575,6 +597,26 @@ static void event_logfile()
   check_tcl_event("logfile");
 }
 
+static void event_resettraffic()
+{
+  Context;
+  otraffic_irc += otraffic_irc_today;
+  itraffic_irc += itraffic_irc_today;
+  otraffic_bn += otraffic_bn_today;
+  itraffic_bn += itraffic_bn_today;
+  otraffic_dcc += otraffic_dcc_today;
+  itraffic_dcc += itraffic_dcc_today;
+  otraffic_unknown += otraffic_unknown_today;
+  itraffic_unknown += itraffic_unknown_today;
+  otraffic_trans += otraffic_trans_today;
+  itraffic_trans += itraffic_trans_today;
+  otraffic_irc_today = otraffic_bn_today = 0;
+  otraffic_dcc_today = otraffic_unknown_today = 0;
+  itraffic_irc_today = itraffic_bn_today = 0;
+  itraffic_dcc_today = itraffic_unknown_today = 0;
+  itraffic_trans_today = 0;
+}
+
 void kill_tcl();
 extern module_entry *module_list;
 void restart_chons();
@@ -818,6 +860,7 @@ int main(int argc, char **argv)
   add_hook(HOOK_PRE_REHASH, event_prerehash);
   add_hook(HOOK_USERFILE, event_save);
   add_hook(HOOK_DAILY, event_logfile);
+  add_hook(HOOK_DAILY, event_resettraffic);
 
   debug0("main: entering loop");
   while (1) {
@@ -860,9 +903,26 @@ int main(int argc, char **argv)
       Context;
       for (idx = 0; idx < dcc_total; idx++)
 	if (dcc[idx].sock == xx) {
-	  if (dcc[idx].type && dcc[idx].type->activity)
-	    dcc[idx].type->activity(idx, buf, i);
-	  else
+	  if (dcc[idx].type && dcc[idx].type->activity) {
+      /* traffic stats */
+      if (dcc[idx].type->name) {
+        if (!strncmp(dcc[idx].type->name, "BOT", 3))
+          itraffic_bn_today += strlen(buf) + 1;
+        else if (!strcmp(dcc[idx].type->name, "SERVER"))
+          itraffic_irc_today += strlen(buf) + 1;
+        else if (!strncmp(dcc[idx].type->name, "CHAT", 4))
+          itraffic_dcc_today += strlen(buf) + 1;
+        else if (!strncmp(dcc[idx].type->name, "FILES", 5))
+          itraffic_dcc_today += strlen(buf) + 1;
+        else if (!strcmp(dcc[idx].type->name, "SEND"))
+          itraffic_trans_today += strlen(buf) + 1;
+        else if (!strncmp(dcc[idx].type->name, "GET", 3))
+          itraffic_trans_today += strlen(buf) + 1;
+        else
+          itraffic_unknown_today += strlen(buf) + 1;
+      }
+      dcc[idx].type->activity(idx, buf, i);      
+	  } else
 	    putlog(LOG_MISC, "*",
 		   "!!! untrapped dcc activity: type %s, sock %d",
 		   dcc[idx].type->name, dcc[idx].sock);
