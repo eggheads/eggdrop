@@ -15,7 +15,7 @@
  * 1.4       1997-11-25      1.2.2.0         Added language addition  Kirk
  * 1.5       1998-07-12      1.3.0.0         Fixed ;me and updated    BB
  *
- * $Id: wire.c,v 1.31 2004/05/27 05:23:41 wcc Exp $
+ * $Id: wire.c,v 1.32 2004/05/27 05:33:41 wcc Exp $
  */
 /*
  * Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004 Eggheads Development Team
@@ -525,7 +525,7 @@ static void wire_report(int idx, int details)
       count++;
       w = w->next;
     }
-    
+
     dprintf(idx, "    %d wire%s\n", count, (count != 1) ? "s" : "");
     dprintf(idx, "    Using %d byte%s of memory\n", size,
             (size != 1) ? "s" : "");

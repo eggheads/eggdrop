@@ -2,7 +2,7 @@
  * net.c -- handles:
  *   all raw network i/o
  *
- * $Id: net.c,v 1.66 2004/04/10 04:53:42 wcc Exp $
+ * $Id: net.c,v 1.67 2004/05/27 05:33:40 wcc Exp $
  */
 /*
  * This is hereby released into the public domain.
@@ -323,7 +323,9 @@ static int proxy_connect(int sock, char *host, int port, int proxy)
     } else {
       /* no, must be host.domain */
       if (!setjmp(alarmret)) {
+        alarm(resolve_timeout);
         hp = gethostbyname(host);
+        alarm(0);
       } else
         hp = NULL;
       if (hp == NULL) {
@@ -437,8 +439,6 @@ int open_telnet(char *server, int port)
 
 /* Returns a socket number for a listening socket that will accept any
  * connection on a certain address -- port # is returned in port
- *
- * 'addr' is ignored if af_def is AF_INET6 -poptix (02/03/03)
  */
 int open_address_listen(IP addr, int *port)
  {
@@ -452,7 +452,7 @@ int open_address_listen(IP addr, int *port)
            "firewall)");
     return -1;
   }
-  if(getmyip() > 0) {
+  if (getmyip() > 0) {
     sock = getsock(SOCK_LISTEN);
     if (sock < 1)
       return -1;
