@@ -1,7 +1,7 @@
 /*
  * transfer.c -- part of transfer.mod
  *
- * $Id: transfer.c,v 1.55 2002/12/24 02:30:09 wcc Exp $
+ * $Id: transfer.c,v 1.56 2002/12/27 20:27:40 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -49,7 +49,7 @@ static int wait_dcc_xfer = 300;	/* Timeout time on DCC xfers */
 static p_tcl_bind_list H_rcvd, H_sent, H_lost, H_tout;
 static int dcc_limit = 3;	/* Maximum number of simultaneous file
 				   downloads allowed */
-static int dcc_block = 1024;	/* Size of one dcc block */
+static int dcc_block = 0;	/* Size of one dcc block */
 static int quiet_reject;        /* Quietly reject dcc chat or sends from
                                    users without access? */
 

@@ -2,7 +2,7 @@
  * channels.c -- part of channels.mod
  *   support for channels within the bot
  *
- * $Id: channels.c,v 1.74 2002/12/24 02:30:06 wcc Exp $
+ * $Id: channels.c,v 1.75 2002/12/27 20:27:40 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -939,7 +939,7 @@ char *channels_start(Function * global_funcs)
   strcpy(glob_chanmode, "nt");
   udef = NULL;
   global_stopnethack_mode = 0;
-  global_revenge_mode = 1;
+  global_revenge_mode = 0;
   global_ban_time = 120;
   global_exempt_time = 60;
   global_invite_time = 60;

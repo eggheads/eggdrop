@@ -87,7 +87,7 @@ There are also some variables you can set in your config file:
          6 If the channel is -bitch, see stopnethack-mode 2
            If the channel is +bitch, see stopnethack-mode 4
 
-   revenge-mode 1
+   revenge-mode 0
       This settings defines how the bot should punish bad users when
       revenging. There are four possible settings:
         0 Deop the user.
@@ -293,7 +293,7 @@ There are also some variables you can set in your config file:
 
   set global-chanmode "nt-likm"
   set global-stopnethack-mode 0
-  set global-revenge-mode 1
+  set global-revenge-mode 0
 
   set global-chanset {
         -autoop         -autovoice
