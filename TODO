@@ -6,6 +6,8 @@ subscribe to eggdev@eggheads.org (http://scrambled.eggheads.org/
 mailman/listinfo/eggdev) and ask if there is anyone working on 
 that TODO item.
 
+*** patches have to be sent to patches@eggheads.org ***
+
 TODO list for eggdrop1.3.29
 
 When you have done something on this list or done anything that
@@ -21,14 +23,26 @@ requires you to send a patch file please do the following:
 - please do not renumber the TODO, instead just remove what you
   fixed or say that you have submitted a patch
 
-- and when you e-mail the patch to eggdev, please put
+- subscribe to the patch list at
+  http://scrambled.eggheads.org/mailman/listinfo/patches
+
+- and when you e-mail the patch (with a description) to
+  patches@eggheads.org, please put
 
     PATCH: <patch name>
     
   in the subject line, this is because it makes it easier for us
   to track patch files.
   
-and thats about all ... 
+  also send a description of your patch to eggdev@eggheads.org (don't
+  attach your patch to it), so discussion about it will occur there
+
+- the patch archives can be found at
+  http://scrambled.eggheads.org/pub_archive/patches/
+
+
+
+Thanks a lot
 
 ----
 PROBLEM STATUS
