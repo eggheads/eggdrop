@@ -156,7 +156,7 @@ static int ctcp_CHAT(char *nick, char *uhost, char *handle, char *object,
   return 1;
 }
 
-static cmd_t myctcp[9] =
+static cmd_t myctcp[] =
 {
   {"FINGER", "", ctcp_FINGER, NULL},
   {"ECHO", "", ctcp_ECHOERR, NULL},
@@ -167,6 +167,7 @@ static cmd_t myctcp[9] =
   {"CLIENTINFO", "", ctcp_CLIENTINFO, NULL},
   {"TIME", "", ctcp_TIME, NULL},
   {"CHAT", "", ctcp_CHAT, NULL},
+  {0, 0, 0, 0}
 };
 
 static tcl_strings mystrings[] =
@@ -186,7 +187,7 @@ static char *ctcp_close()
 {
   rem_tcl_strings(mystrings);
   rem_tcl_ints(myints);
-  rem_builtins(H_ctcp, myctcp, 9);
+  rem_builtins(H_ctcp, myctcp);
   rem_help_reference("ctcp.help");
   module_undepend(MODULE_NAME);
   return NULL;
@@ -212,7 +213,7 @@ char *ctcp_start(Function * global_funcs)
     return "You need the server module to use the ctcp module.";
   add_tcl_strings(mystrings);
   add_tcl_ints(myints);
-  add_builtins(H_ctcp, myctcp, 9);
+  add_builtins(H_ctcp, myctcp);
   add_help_reference("ctcp.help");
   if (!ctcp_version[0]) {
     strncpy(ctcp_version, ver, 160);

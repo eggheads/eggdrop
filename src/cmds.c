@@ -2386,7 +2386,7 @@ static void cmd_modules(struct userrec *u, int idx, char *par)
  * int cmd_whatever(idx,"parameters");
  * as with msg commands, function is responsible for any logging
  */
-cmd_t C_dcc[64] =
+cmd_t C_dcc[] =
 {
   {"+bot", "t", (Function) cmd_pls_bot, NULL},
   {"+host", "tm|m", (Function) cmd_pls_host, NULL},
@@ -2452,4 +2452,5 @@ cmd_t C_dcc[64] =
   {"who", "", (Function) cmd_who, NULL},
   {"whois", "to|o", (Function) cmd_whois, NULL},
   {"whom", "", (Function) cmd_whom, NULL},
+  {0, 0, 0, 0}
 };

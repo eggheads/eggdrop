@@ -311,19 +311,21 @@ static tcl_ints myints[] =
 
 static cmd_t mychon[] =
 {
-  {"*", "", console_chon, "console:chon"}
+  {"*", "", console_chon, "console:chon"},
+  {0, 0, 0, 0}
 };
 
 static cmd_t mydcc[] =
 {
-  {"store", "", console_store, NULL}
+  {"store", "", console_store, NULL},
+  {0, 0, 0, 0}
 };
 
 static char *console_close()
 {
   context;
-  rem_builtins(H_chon, mychon, 1);
-  rem_builtins(H_dcc, mydcc, 1);
+  rem_builtins(H_chon, mychon);
+  rem_builtins(H_dcc, mydcc);
   rem_tcl_ints(myints);
   rem_help_reference("console.help");
   del_entry_type(&USERENTRY_CONSOLE);
@@ -350,8 +352,8 @@ char *console_start(Function * global_funcs)
   module_register(MODULE_NAME, console_table, 1, 0);
   if (!module_depend(MODULE_NAME, "eggdrop", 103, 0))
     return "This module requires eggdrop1.3.0 or later";
-  add_builtins(H_chon, mychon, 1);
-  add_builtins(H_dcc, mydcc, 1);
+  add_builtins(H_chon, mychon);
+  add_builtins(H_dcc, mydcc);
   add_tcl_ints(myints);
   add_help_reference("console.help");
   USERENTRY_CONSOLE.get = def_get;

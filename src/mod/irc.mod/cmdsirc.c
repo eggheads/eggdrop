@@ -905,7 +905,7 @@ static void cmd_reset(struct userrec *u, int idx, char *par)
 }
 
 /* update the add/rem_builtins in irc.c if you add to this list!! */
-static cmd_t irc_dcc[18] =
+static cmd_t irc_dcc[] =
 {
   {"adduser", "m|m", (Function) cmd_adduser, NULL},
   {"deluser", "m|m", (Function) cmd_deluser, NULL},
@@ -925,4 +925,5 @@ static cmd_t irc_dcc[18] =
   {"op", "o|o", (Function) cmd_op, NULL},
   {"say", "o|o", (Function) cmd_say, NULL},
   {"topic", "o|o", (Function) cmd_topic, NULL},
+  {0, 0, 0, 0}
 };

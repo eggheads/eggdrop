@@ -234,4 +234,5 @@ cmd_t notes_cmds[] =
   {"-noteign", "", (Function) cmd_mns_noteign, NULL},
   {"noteigns", "", (Function) cmd_noteigns, NULL},
   {"note", "", (Function) cmd_note, NULL},
+  {0, 0, 0, 0}
 };

@@ -104,12 +104,12 @@ void init_bind()
   H_act = add_bind_table("act", HT_STACKABLE, builtin_chat);
   context;
   H_event = add_bind_table("evnt", HT_STACKABLE, builtin_char);
-  add_builtins(H_dcc, C_dcc, 64);
+  add_builtins(H_dcc, C_dcc);
 }
 
 void kill_bind()
 {
-  rem_builtins(H_dcc, C_dcc, 64);
+  rem_builtins(H_dcc, C_dcc);
   while (bind_table_list) {
     del_bind_table(bind_table_list);
   }
@@ -985,41 +985,39 @@ void tell_binds(int idx, char *name)
 }
 
 /* bring the default msg/dcc/fil commands into the Tcl interpreter */
-void add_builtins(p_tcl_bind_list table, cmd_t * cc, int count)
+void add_builtins(p_tcl_bind_list table, cmd_t * cc)
 {
-  int k;
+  int k, i;
   char p[1024], *l;
 
   context;
-  while (count) {
-    count--;
+  for (i = 0;cc[i].name; i++) {
     simple_sprintf(p, "*%s:%s", table->name,
-	       cc[count].funcname ? cc[count].funcname : cc[count].name);
+	       cc[i].funcname ? cc[i].funcname : cc[i].name);
     l = (char *) nmalloc(Tcl_ScanElement(p, &k));
     Tcl_ConvertElement(p, l, k | TCL_DONT_USE_BRACES);
     Tcl_CreateCommand(interp, p, table->func,
-		      (ClientData) cc[count].func, NULL);
-    bind_bind_entry(table, cc[count].flags, cc[count].name, l);
+		      (ClientData) cc[i].func, NULL);
+    bind_bind_entry(table, cc[i].flags, cc[i].name, l);
     nfree(l);
     /* create command entry in Tcl interpreter */
   }
 }
 
 /* bring the default msg/dcc/fil commands into the Tcl interpreter */
-void rem_builtins(p_tcl_bind_list table, cmd_t * cc, int count)
+void rem_builtins(p_tcl_bind_list table, cmd_t * cc)
 {
-  int k;
+  int k, i;
   char p[1024], *l;
 
-  while (count) {
-    count--;
+  for (i = 0;cc[i].name; i++) {
     simple_sprintf(p, "*%s:%s", table->name,
-		   cc[count].funcname ? cc[count].funcname :
-		   cc[count].name);
+		   cc[i].funcname ? cc[i].funcname :
+		   cc[i].name);
     l = (char *) nmalloc(Tcl_ScanElement(p, &k));
     Tcl_ConvertElement(p, l, k | TCL_DONT_USE_BRACES);
     Tcl_DeleteCommand(interp, p);
-    unbind_bind_entry(table, cc[count].flags, cc[count].name, l);
+    unbind_bind_entry(table, cc[i].flags, cc[i].name, l);
     nfree(l);
   }
 }

@@ -1023,9 +1023,9 @@ static char *irc_close()
   del_bind_table(H_pub);
   context;
   rem_tcl_ints(myints);
-  rem_builtins(H_dcc, irc_dcc, 18);
-  rem_builtins(H_msg, C_msg, 20);
-  rem_builtins(H_raw, irc_raw, 28);
+  rem_builtins(H_dcc, irc_dcc);
+  rem_builtins(H_msg, C_msg);
+  rem_builtins(H_raw, irc_raw);
   rem_tcl_commands(tclchan_cmds);
   rem_help_reference("irc.help");
   context;
@@ -1103,9 +1103,9 @@ char *irc_start(Function * global_funcs)
 	       traced_nettype, NULL);
   context;
   add_tcl_ints(myints);
-  add_builtins(H_dcc, irc_dcc, 18);
-  add_builtins(H_msg, C_msg, 20);
-  add_builtins(H_raw, irc_raw, 28);
+  add_builtins(H_dcc, irc_dcc);
+  add_builtins(H_msg, C_msg);
+  add_builtins(H_raw, irc_raw);
   add_tcl_commands(tclchan_cmds);
   add_help_reference("irc.help");
   context;

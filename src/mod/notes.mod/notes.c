@@ -1074,26 +1074,31 @@ int match_note_ignore(struct userrec *u, char *from)
 static cmd_t notes_join[] =
 {
   {"*", "", (Function) join_notes, "notes"},
+  {0, 0, 0, 0}
 };
 
 static cmd_t notes_nkch[] =
 {
   {"*", "", (Function) notes_change, "notes"},
+  {0, 0, 0, 0}
 };
 
 static cmd_t notes_away[] =
 {
   {"*", "", (Function) away_notes, "notes"},
+  {0, 0, 0, 0}
 };
 
 static cmd_t notes_chon[] =
 {
   {"*", "", (Function) chon_notes, "notes"},
+  {0, 0, 0, 0}
 };
 
 static cmd_t notes_msgs[] =
 {
   {"notes", "", (Function) msg_notes, NULL},
+  {0, 0, 0, 0}
 };
 
 static tcl_ints notes_ints[] =
@@ -1126,7 +1131,7 @@ static int notes_irc_setup(char *mod)
   p_tcl_bind_list H_temp;
 
   if ((H_temp = find_bind_table("join")))
-    add_builtins(H_temp, notes_join, 1);
+    add_builtins(H_temp, notes_join);
   return 0;
 }
 
@@ -1135,14 +1140,15 @@ static int notes_server_setup(char *mod)
   p_tcl_bind_list H_temp;
 
   if ((H_temp = find_bind_table("msg")))
-    add_builtins(H_temp, notes_msgs, 1);
+    add_builtins(H_temp, notes_msgs);
   return 0;
 }
 
 static cmd_t notes_load[] =
 {
   {"server", "", notes_server_setup, "notes:server"},
-  {"irc", "", notes_irc_setup, "notes:irc"}
+  {"irc", "", notes_irc_setup, "notes:irc"},
+  {0, 0, 0, 0}
 };
 
 static char *notes_close()
@@ -1153,14 +1159,14 @@ static char *notes_close()
   rem_tcl_strings(notes_strings);
   rem_tcl_commands(notes_tcls);
   if ((H_temp = find_bind_table("msg")))
-    rem_builtins(H_temp, notes_msgs, 1);
+    rem_builtins(H_temp, notes_msgs);
   if ((H_temp = find_bind_table("join")))
-    rem_builtins(H_temp, notes_join, 1);
-  rem_builtins(H_dcc, notes_cmds, 6);
-  rem_builtins(H_chon, notes_chon, 1);
-  rem_builtins(H_away, notes_away, 1);
-  rem_builtins(H_nkch, notes_nkch, 1);
-  rem_builtins(H_load, notes_load, 2);
+    rem_builtins(H_temp, notes_join);
+  rem_builtins(H_dcc, notes_cmds);
+  rem_builtins(H_chon, notes_chon);
+  rem_builtins(H_away, notes_away);
+  rem_builtins(H_nkch, notes_nkch);
+  rem_builtins(H_load, notes_load);
   rem_help_reference("notes.help");
   del_hook(HOOK_MATCH_NOTEREJ, match_note_ignore);
   del_hook(HOOK_HOURLY, notes_hourly);
@@ -1211,11 +1217,11 @@ char *notes_start(Function * global_funcs)
   add_tcl_ints(notes_ints);
   add_tcl_strings(notes_strings);
   add_tcl_commands(notes_tcls);
-  add_builtins(H_dcc, notes_cmds, 6);
-  add_builtins(H_chon, notes_chon, 1);
-  add_builtins(H_away, notes_away, 1);
-  add_builtins(H_nkch, notes_nkch, 1);
-  add_builtins(H_load, notes_load, 2);
+  add_builtins(H_dcc, notes_cmds);
+  add_builtins(H_chon, notes_chon);
+  add_builtins(H_away, notes_away);
+  add_builtins(H_nkch, notes_nkch);
+  add_builtins(H_load, notes_load);
   add_help_reference("notes.help");
   notes_server_setup(0);
   notes_irc_setup(0);

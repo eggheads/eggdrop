@@ -485,9 +485,10 @@ static void channels_rehash()
 }
 
 /* update the add/rem_builtins in channels.c if you add to this list!! */
-static cmd_t my_chon[1] =
+static cmd_t my_chon[] =
 {
   {"*", "", (Function) channels_chon, "channels:chon"},
+  {0, 0, 0, 0}
 };
 
 static void channels_report(int idx, int details)
@@ -717,8 +718,8 @@ static char *channels_close()
 {
   context;
   write_channels();
-  rem_builtins(H_chon, my_chon, 1);
-  rem_builtins(H_dcc, C_dcc_irc, 21);
+  rem_builtins(H_chon, my_chon);
+  rem_builtins(H_dcc, C_dcc_irc);
   rem_tcl_commands(channels_cmds);
   rem_tcl_strings(my_tcl_strings);
   rem_tcl_ints(my_tcl_ints);
@@ -829,8 +830,8 @@ char *channels_start(Function * global_funcs)
   Tcl_TraceVar(interp, "global-chanset",
 	       TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
 	       traced_globchanset, NULL);
-  add_builtins(H_chon, my_chon, 1);
-  add_builtins(H_dcc, C_dcc_irc, 21);
+  add_builtins(H_chon, my_chon);
+  add_builtins(H_dcc, C_dcc_irc);
   add_tcl_commands(channels_cmds);
   add_tcl_strings(my_tcl_strings);
   add_help_reference("channels.help");

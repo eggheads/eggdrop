@@ -579,16 +579,19 @@ static void seen_report(int idx, int details)
 static cmd_t seen_pub[] =
 {
   {"seen", "", pub_seen, 0},
+  {0, 0, 0, 0}
 };
 
 static cmd_t seen_dcc[] =
 {
   {"seen", "", dcc_seen, 0},
+  {0, 0, 0, 0}
 };
 
 static cmd_t seen_msg[] =
 {
   {"seen", "", msg_seen, 0},
+  {0, 0, 0, 0}
 };
 
 static int server_seen_setup(char *mod)
@@ -596,7 +599,7 @@ static int server_seen_setup(char *mod)
   p_tcl_bind_list H_temp;
 
   if ((H_temp = find_bind_table("msg")))
-    add_builtins(H_temp, seen_msg, 1);
+    add_builtins(H_temp, seen_msg);
   return 0;
 }
 
@@ -605,7 +608,7 @@ static int irc_seen_setup(char *mod)
   p_tcl_bind_list H_temp;
 
   if ((H_temp = find_bind_table("pub")))
-    add_builtins(H_temp, seen_pub, 1);
+    add_builtins(H_temp, seen_pub);
   return 0;
 }
 
@@ -613,19 +616,20 @@ static cmd_t seen_load[] =
 {
   {"server", "", server_seen_setup, 0},
   {"irc", "", irc_seen_setup, 0},
+  {0, 0, 0, 0}
 };
 
 static char *seen_close()
 {
   p_tcl_bind_list H_temp;
 
-  rem_builtins(H_load, seen_load, 2);
-  rem_builtins(H_dcc, seen_dcc, 1);
+  rem_builtins(H_load, seen_load);
+  rem_builtins(H_dcc, seen_dcc);
   rem_help_reference("seen.help");
   if ((H_temp = find_bind_table("pub")))
-    rem_builtins(H_temp, seen_pub, 1);
+    rem_builtins(H_temp, seen_pub);
   if ((H_temp = find_bind_table("msg")))
-    rem_builtins(H_temp, seen_msg, 1);
+    rem_builtins(H_temp, seen_msg);
   module_undepend(MODULE_NAME);
   return NULL;
 }
@@ -649,8 +653,8 @@ char *seen_start(Function * egg_func_table)
   if (!module_depend(MODULE_NAME, "eggdrop", 103, 0))
     return
       "MODULE `seen' cannot be loaded on Eggdrops prior to version 1.3.0";
-  add_builtins(H_load, seen_load, 2);
-  add_builtins(H_dcc, seen_dcc, 1);
+  add_builtins(H_load, seen_load);
+  add_builtins(H_dcc, seen_dcc);
   add_help_reference("seen.help");
   server_seen_setup(0);
   irc_seen_setup(0);

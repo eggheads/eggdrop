@@ -272,8 +272,10 @@ void putlog (int logmode, char * channel, char * format, ... )
 void add_builtins (p_tcl_hash_list table, cmd_t * cc);
 void rem_builtins (p_tcl_hash_list table, cmd_t * cc);
    the method of adding/remove bindings for tcl hash tables.
-   table is a hash table you find with find_hash_table, cc format:
+   table is a hash table you find with find_hash_table,
+   cc format:
    { char * command, char * flags, Function * function }
+   terminate with { 0, 0, 0, 0 }
    this is EXACTLY like a bind command in tcl, (heck, tcl_bind calls
    the same function this does),
    function is called with exactly the same args as a tcl binding is

@@ -1355,7 +1355,7 @@ static void cmd_chanload(struct userrec *u, int idx, char *par)
  * int cmd_whatever(idx,"parameters");
  * as with msg commands, function is responsible for any logging */
 /* update the add/rem_builtins in channels.c if you add to this list!! */
-static cmd_t C_dcc_irc[21] =
+static cmd_t C_dcc_irc[] =
 {
   {"+ban", "o|o", (Function) cmd_pls_ban, NULL},
   {"+exempt", "o|o", (Function)cmd_pls_exempt, NULL },
@@ -1378,4 +1378,5 @@ static cmd_t C_dcc_irc[21] =
   {"info", "", (Function) cmd_info, NULL},
   {"stick", "o|o", (Function) cmd_stick, NULL},
   {"unstick", "o|o", (Function) cmd_unstick, NULL},
+  {0, 0, 0, 0}
 };

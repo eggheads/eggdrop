@@ -1001,7 +1001,7 @@ static int gotping(char *from, char *msg)
 }
 
 /* update the add/rem_builtins in server.c if you add to this list!! */
-static cmd_t my_raw_binds[19] =
+static cmd_t my_raw_binds[] =
 {
   {"PRIVMSG", "", (Function) gotmsg, NULL},
   {"NOTICE", "", (Function) gotnotice, NULL},
@@ -1022,6 +1022,7 @@ static cmd_t my_raw_binds[19] =
   {"451", "", (Function) got451, NULL},
   {"NICK", "", (Function) gotnick, NULL},
   {"ERROR", "", (Function) goterror, NULL},
+  {0, 0, 0, 0}
 };
 
 /* hook up to a server */

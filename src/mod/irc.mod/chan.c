@@ -1937,7 +1937,7 @@ static int gotnotice(char *from, char *msg)
 }
 
 /* update the add/rem_builtins in irc.c if you add to this list!! */
-static cmd_t irc_raw[28] =
+static cmd_t irc_raw[] =
 {
   {"324", "", (Function) got324, "irc:324"},
   {"352", "", (Function) got352, "irc:352"},
@@ -1968,5 +1968,6 @@ static cmd_t irc_raw[28] =
   {"347", "", (Function) got347, "irc:347"},
   {"348", "", (Function) got348, "irc:348"},
   {"349", "", (Function) got349, "irc:349"},
+  {0, 0, 0, 0}
 };
 

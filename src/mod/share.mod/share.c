@@ -1782,6 +1782,7 @@ static void cmd_flush(struct userrec *u, int idx, char *par)
 static cmd_t my_cmds[] =
 {
   {"flush", "n", (Function) cmd_flush, NULL},
+  {0, 0, 0, 0}
 };
 
 static char *share_close()
@@ -1811,7 +1812,7 @@ static char *share_close()
   DCC_BOT.kill = def_dcc_bot_kill;
   rem_tcl_ints(my_ints);
   rem_tcl_strings(my_strings);
-  rem_builtins(H_dcc, my_cmds, 1);
+  rem_builtins(H_dcc, my_cmds);
   rem_help_reference("share.help");
   return NULL;
 }
@@ -1926,7 +1927,7 @@ char *share_start(Function * global_funcs)
   DCC_BOT.kill = cancel_user_xfer;
   add_tcl_ints(my_ints);
   add_tcl_strings(my_strings);
-  add_builtins(H_dcc, my_cmds, 1);
+  add_builtins(H_dcc, my_cmds);
   context;
   return NULL;
 }

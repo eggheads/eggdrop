@@ -1210,7 +1210,7 @@ static void filesys_note(int idx, char *par)
   }
 }
 
-static cmd_t myfiles[25] =
+static cmd_t myfiles[] =
 {
   {"cancel", "", (Function) cmd_cancel, NULL},
   {"cd", "", (Function) cmd_chdir, NULL},
@@ -1237,6 +1237,7 @@ static cmd_t myfiles[25] =
   {"stats", "", cmd_stats, NULL},
   {"unhide", "j", (Function) cmd_unhide, NULL},
   {"unshare", "j", (Function) cmd_unshare, NULL},
+  {0, 0, 0, 0}
 };
 
 /***** Tcl stub functions *****/

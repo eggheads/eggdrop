@@ -372,7 +372,7 @@ static void wire_join(int idx, char *key)
     wire_bot[0].name = wirecmd;
     wire_bot[0].flags = "";
     wire_bot[0].func = (Function) wire_filter;
-    add_builtins(H_bot, wire_bot, 1);
+    add_builtins(H_bot, wire_bot);
   }
 }
 
@@ -427,7 +427,7 @@ static void wire_leave(int sock)
     wire_bot[0].name = wirecmd;
     wire_bot[0].flags = "";
     wire_bot[0].func = (Function) wire_filter;
-    rem_builtins(H_bot, wire_bot, 1);
+    rem_builtins(H_bot, wire_bot);
   }
   w2 = wirelist;
   wlast = 0;
@@ -520,16 +520,19 @@ static cmd_t wire_dcc[] =
   {"wire", "", cmd_wire, 0},
   {"onwire", "", cmd_onwire, 0},
   {"wirelist", "n", cmd_wirelist, 0},
+  {0, 0, 0, 0}
 };
 
 static cmd_t wire_chof[] =
 {
   {"*", "", (Function) chof_wire, "wire:chof"},
+  {0, 0, 0, 0}
 };
 
 static cmd_t wire_filt[] =
 {
   {";*", "", (Function) cmd_putwire, "wire:filt"},
+  {0, 0, 0, 0}
 };
 
 static char *wire_close()
@@ -549,7 +552,7 @@ static char *wire_close()
     wire_bot[0].name = wiretmp;
     wire_bot[0].flags = "";
     wire_bot[0].func = (Function) wire_filter;
-    rem_builtins(H_bot, wire_bot, 1);
+    rem_builtins(H_bot, wire_bot);
     w = w->next;
   }
   w = wirelist;
@@ -559,11 +562,11 @@ static char *wire_close()
     wire_leave(w->sock);
     w = wirelist;
   }
-  rem_builtins(H_dcc, wire_dcc, 3);
+  rem_builtins(H_dcc, wire_dcc);
   H_temp = find_bind_table("filt");
-  rem_builtins(H_temp, wire_filt, 1);
+  rem_builtins(H_temp, wire_filt);
   H_temp = find_bind_table("chof");
-  rem_builtins(H_temp, wire_chof, 1);
+  rem_builtins(H_temp, wire_chof);
   module_undepend(MODULE_NAME);
   return NULL;
 }
@@ -593,11 +596,11 @@ char *wire_start(Function * global_funcs)
   }
   me = module_find("encryption", 2, 0);
   blowfish_funcs = me->funcs;
-  add_builtins(H_dcc, wire_dcc, 3);
+  add_builtins(H_dcc, wire_dcc);
   H_temp = find_bind_table("filt");
-  add_builtins(H_filt, wire_filt, 1);
+  add_builtins(H_filt, wire_filt);
   H_temp = find_bind_table("chof");
-  add_builtins(H_chof, wire_chof, 1);
+  add_builtins(H_chof, wire_chof);
   wirelist = 0;
   /* Absolutely HUGE! change to this module
    * Ah well, at least the language file gets loaded 'on demand' - Kirk */

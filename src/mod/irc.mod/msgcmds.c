@@ -1053,7 +1053,7 @@ static int msg_jump(char *nick, char *host, struct userrec *u, char *par)
  * function is responsible for any logging
  * (return 1 if successful, 0 if not) */
 /* update the add/rem_builtins in irc.c if you add to this list!! */
-static cmd_t C_msg[20] =
+static cmd_t C_msg[] =
 {
   {"addhost", "", (Function) msg_addhost, NULL},
   {"die", "n", (Function) msg_die, NULL},
@@ -1075,4 +1075,5 @@ static cmd_t C_msg[20] =
   {"voice", "", (Function) msg_voice, NULL},
   {"who", "", (Function) msg_who, NULL},
   {"whois", "", (Function) msg_whois, NULL},
+  {0, 0, 0, 0}
 };

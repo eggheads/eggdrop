@@ -42,8 +42,8 @@
 #define find_bind_table ((p_tcl_bind_list(*)(char *))global[10])
 #define check_tcl_bind ((int (*) (p_tcl_bind_list,char *,struct flag_record *,char *, int))global[11])
 /* 12 - 15 */
-#define add_builtins ((int (*) (p_tcl_bind_list, cmd_t *,int))global[12])
-#define rem_builtins ((int (*) (p_tcl_bind_list, cmd_t *,int))global[13])
+#define add_builtins ((int (*) (p_tcl_bind_list, cmd_t *))global[12])
+#define rem_builtins ((int (*) (p_tcl_bind_list, cmd_t *))global[13])
 #define add_tcl_commands ((void (*) (tcl_cmds *))global[14])
 #define rem_tcl_commands ((void (*) (tcl_cmds *))global[15])
 /* 16 - 19 */

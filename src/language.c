@@ -681,6 +681,7 @@ static cmd_t langdcc[] =
   {"ldump", "n", cmd_languagedump, NULL},
   {"lstat", "n", cmd_languagestatus, NULL},
   {"relang", "n", cmd_relang, NULL},
+  {0, 0, 0, 0}
 };
 
 static tcl_cmds langtcls[] =
@@ -713,6 +714,6 @@ void init_language(int flag)
     add_lang_section("core");
   } else {
     add_tcl_commands(langtcls);
-    add_builtins(H_dcc, langdcc, 8);
+    add_builtins(H_dcc, langdcc);
   }
 }

@@ -380,16 +380,19 @@ static void assoc_report(int idx, int details)
 static cmd_t mydcc[] =
 {
   {"assoc", "", cmd_assoc, NULL},
+  {0, 0, 0, 0}
 };
 
 static cmd_t mybot[] =
 {
   {"assoc", "", (Function) zapf_assoc, NULL},
+  {0, 0, 0, 0}
 };
 
 static cmd_t mylink[] =
 {
   {"*", "", (Function) link_assoc, "assoc"},
+  {0, 0, 0, 0}
 };
 
 static tcl_cmds mytcl[] =
@@ -403,9 +406,9 @@ static char *assoc_close()
 {
   context;
   kill_all_assoc();
-  rem_builtins(H_dcc, mydcc, 1);
-  rem_builtins(H_bot, mybot, 1);
-  rem_builtins(H_link, mylink, 1);
+  rem_builtins(H_dcc, mydcc);
+  rem_builtins(H_bot, mybot);
+  rem_builtins(H_link, mylink);
   module_undepend(MODULE_NAME);
   rem_tcl_commands(mytcl);
   rem_help_reference("assoc.help");
@@ -431,9 +434,9 @@ char *assoc_start(Function * global_funcs)
   if (!module_depend(MODULE_NAME, "eggdrop", 103, 0))
     return "This module requires eggdrop1.3.0 or later";
   assoc = NULL;
-  add_builtins(H_dcc, mydcc, 1);
-  add_builtins(H_bot, mybot, 1);
-  add_builtins(H_link, mylink, 1);
+  add_builtins(H_dcc, mydcc);
+  add_builtins(H_bot, mybot);
+  add_builtins(H_link, mylink);
   add_tcl_commands(mytcl);
   add_help_reference("assoc.help");
   return NULL;

@@ -945,9 +945,10 @@ static void getmyhostname(char *s)
 }
 
 /* update the add/rem_builtins in server.c if you add to this list!! */
-static cmd_t my_ctcps[1] =
+static cmd_t my_ctcps[] =
 {
-  {"DCC", "", ctcp_DCC_CHAT, "server:DCC"}
+  {"DCC", "", ctcp_DCC_CHAT, "server:DCC"},
+  {0, 0, 0, 0}
 };
 
 static int tcl_isbotnick STDVAR {
@@ -1187,22 +1188,22 @@ static tcl_cmds my_tcl_cmds[] =
 
 static char *server_close()
 {
-  cmd_t C_t[1];
+  cmd_t C_t[] =
+  {
+    {"die", "m", (Function) cmd_die, NULL},
+    {0, 0, 0, 0}
+  };
 
   context;
   cycle_time = 100;
   nuke_server("Connection reset by phear");
   clearq(serverlist);
   context;
-  rem_builtins(H_dcc, C_dcc_serv, 5);
-  rem_builtins(H_raw, my_raw_binds, 19);
-  rem_builtins(H_ctcp, my_ctcps, 1);
+  rem_builtins(H_dcc, C_dcc_serv);
+  rem_builtins(H_raw, my_raw_binds);
+  rem_builtins(H_ctcp, my_ctcps);
   context;
-  C_t[0].name = "die";
-  C_t[0].flags = "m";
-  C_t[0].func = (Function) cmd_die;
-  C_t[0].funcname = NULL;
-  add_builtins(H_dcc, C_t, 1);
+  add_builtins(H_dcc, C_t);
   context;
   del_bind_table(H_wall);
   del_bind_table(H_raw);
@@ -1389,9 +1390,9 @@ char *server_start(Function * global_funcs)
   H_ctcr = add_bind_table("ctcr", HT_STACKABLE, server_6char);
   H_ctcp = add_bind_table("ctcp", HT_STACKABLE, server_6char);
   context;
-  add_builtins(H_raw, my_raw_binds, 19);
-  add_builtins(H_dcc, C_dcc_serv, 5);
-  add_builtins(H_ctcp, my_ctcps, 1);
+  add_builtins(H_raw, my_raw_binds);
+  add_builtins(H_dcc, C_dcc_serv);
+  add_builtins(H_ctcp, my_ctcps);
   add_help_reference("server.help");
   context;
   my_tcl_strings[0].buf = botname;
