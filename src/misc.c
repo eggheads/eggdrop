@@ -32,6 +32,7 @@ extern struct dcc_t *dcc;
 extern char helpdir[];
 extern char version[];
 extern char origbotname[];
+extern char botname[];
 extern char admin[];
 extern int backgrd;
 extern int con_chan;
@@ -785,7 +786,7 @@ void help_subst(char *s, char *nick, struct flag_record *flags,
 	towrite = "*UNKNOWN*";
       break;
     case 'B':
-      towrite = (isdcc ? botnetnick : origbotname);
+      towrite = (isdcc ? botnetnick : botname);
       break;
     case 'V':
       towrite = ver;
