@@ -6,7 +6,7 @@
  *   memory management for dcc structures
  *   timeout checking for dcc connections
  *
- * $Id: dccutil.c,v 1.47 2003/02/05 03:05:20 wcc Exp $
+ * $Id: dccutil.c,v 1.48 2003/02/05 04:17:07 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -35,7 +35,7 @@
 #include "tandem.h"
 
 extern struct dcc_t *dcc;
-extern int dcc_total, max_dcc, dcc_flood_thr, backgrd, copy_to_temp, MAXSOCKS;
+extern int dcc_total, max_dcc, dcc_flood_thr, backgrd, copy_to_tmp, MAXSOCKS;
 extern char botnetnick[], version[];
 extern time_t now;
 extern sock_list *socklist;
@@ -266,7 +266,7 @@ void killtransfer(int n)
       fclose(dcc[n].u.xfer->f);
       dcc[n].u.xfer->f = NULL;
     }
-    if (dcc[n].u.xfer->filename && copy_to_temp) {
+    if (dcc[n].u.xfer->filename && copy_to_tmp) {
       for (i = 0; i < dcc_total; i++) {
         if ((i != n) && (dcc[i].type->flags & DCT_FILETRAN) &&
             (dcc[i].u.xfer->filename) &&
