@@ -2,7 +2,7 @@
  * channels.c -- part of channels.mod
  *   support for channels within the bot
  * 
- * $Id: channels.c,v 1.38 2000/10/27 19:26:49 fabian Exp $
+ * $Id: channels.c,v 1.39 2000/10/27 19:29:10 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -246,26 +246,20 @@ static int ismasked(masklist *m, char *user)
   return 0;
 }
 
-/* Destroy a chanset in the list
- * 
- * Note: does NOT free up memory associated with channel data inside
- *       the chanset!
+/* Unlink chanset element from chanset list.
  */
-static int killchanset(struct chanset_t *chan)
+inline static int chanset_unlink(struct chanset_t *chan)
 {
-  struct chanset_t *c = chanset, *old = NULL;
+  struct chanset_t	*c, *c_old = NULL;
 
-  while (c) {
+  for (c = chanset; c; c_old = c, c = c->next) {
     if (c == chan) {
-      if (old)
-	old->next = c->next;
+      if (c_old)
+	c_old->next = c->next;
       else
 	chanset = c->next;
-      nfree(c);
       return 1;
     }
-    old = c;
-    c = c->next;
   }
   return 0;
 }
@@ -277,7 +271,15 @@ static int killchanset(struct chanset_t *chan)
  */
 static void remove_channel(struct chanset_t *chan)
 {
-   int i;
+   int		 i;
+   module_entry	*me;
+   
+   /* Remove the channel from the list, so that noone can pull it
+      away from under our feet during the check_tcl_part() call. */
+   (void) chanset_unlink(chan);
+
+   if ((me = module_find("irc", 1, 3)) != NULL)
+     (me->funcs[IRC_DO_CHANNEL_PART])();
 
    clear_channel(chan, 0);
    noshare = 1;
@@ -300,7 +302,7 @@ static void remove_channel(struct chanset_t *chan)
      nfree(chan->key);
    if (chan->rmkey)
      nfree(chan->rmkey);
-   killchanset(chan);
+   nfree(chan);
 }
 
 /* Bind this to chon and *if* the users console channel == ***
@@ -463,7 +465,7 @@ flood-kick %d:%d flood-deop %d:%d flood-nick %d:%d \
 
 static void read_channels(int create)
 {
-  struct chanset_t *chan, *chan2;
+  struct chanset_t *chan, *chan_next;
 
   if (!chanfile[0])
     return;
@@ -484,17 +486,12 @@ static void read_channels(int create)
       fclose(f);
   }
   chan_hack = 0;
-  chan = chanset;
-  while (chan != NULL) {
+  for (chan = chanset; chan; chan = chan_next) {
+    chan_next = chan->next;
     if (chan->status & CHAN_FLAGGED) {
       putlog(LOG_MISC, "*", "No longer supporting channel %s", chan->dname);
-      if (chan->name[0] && !channel_inactive(chan))
-        dprintf(DP_SERVER, "PART %s\n", chan->name);
-      chan2 = chan->next;
       remove_channel(chan);
-      chan = chan2;
-    } else
-      chan = chan->next;
+    }
   }
 }
 
@@ -522,11 +519,9 @@ static void channels_rehash()
   read_channels(1);
   /* Remove any extra channels, by checking the flag. */
   chan = chanset;
-  while (chan) {
+  for (chan = chanset; chan;) {
     if (chan->status & CHAN_FLAGGED) {
       putlog(LOG_MISC, "*", "No longer supporting channel %s", chan->dname);
-      if (chan->name[0] && !channel_inactive(chan))
-        dprintf(DP_SERVER, "PART %s\n", chan->name);
       remove_channel(chan);
       chan = chanset;
     } else
@@ -849,7 +844,7 @@ static Function channels_table[] =
   /* 32 - 35 */
   (Function) NULL,/* [32] used to be u_sticky_exempt() <cybah> */
   (Function) NULL,
-  (Function) killchanset,
+  (Function) NULL,	/* [34] used to be killchanset().	*/
   (Function) u_delinvite,
   /* 36 - 39 */
   (Function) u_addinvite,

@@ -1,7 +1,7 @@
 /* 
  * irc.h -- part of irc.mod
  * 
- * $Id: irc.h,v 1.12 2000/10/19 16:35:36 fabian Exp $
+ * $Id: irc.h,v 1.13 2000/10/27 19:29:11 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -104,6 +104,8 @@ static int gotmode(char *, char *);
 #define me_op ((int(*)(struct chanset_t *))irc_funcs[16])
 /* recheck_channel_modes is here */
 #define H_need (*(p_tcl_bind_list*)(irc_funcs[18]))
+/* do_channel_part is here. */
+/* 20 - 23 */
 
 #endif				/* MAKING_IRC */
 

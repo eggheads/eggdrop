@@ -1,7 +1,7 @@
 /* 
  * modvals.h
  * 
- * $Id: modvals.h,v 1.13 2000/05/28 17:32:44 fabian Exp $
+ * $Id: modvals.h,v 1.14 2000/10/27 19:29:10 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -72,6 +72,7 @@
 /* IRC */
 #define IRC_RECHECK_CHANNEL	  15
 #define IRC_RECHECK_CHANNEL_MODES 17
+#define IRC_DO_CHANNEL_PART	  19
 /* Notes */
 #define NOTES_CMD_NOTE		  4
 /* Console */

@@ -1,7 +1,7 @@
 /* 
  * channels.h -- part of channels.mod
  * 
- * $Id: channels.h,v 1.13 2000/10/27 19:26:49 fabian Exp $
+ * $Id: channels.h,v 1.14 2000/10/27 19:29:10 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -87,7 +87,6 @@ static int write_invites (FILE * f, int idx);
 static void check_expired_invites(void);
 static void write_channels(void);
 static void read_channels(int);
-static int killchanset(struct chanset_t *);
 static void clear_channel(struct chanset_t *, int);
 static void get_mode_protect(struct chanset_t *chan, char *s);
 static void set_mode_protect(struct chanset_t *chan, char *set);
@@ -107,6 +106,7 @@ static void setudef(struct udef_struct *, char *, int);
 static void remove_channel(struct chanset_t *);
 static int ngetudef(char *, char *);
 static int expired_mask(struct chanset_t *chan, char *who);
+inline static int chanset_unlink(struct chanset_t *chan);
 
 #else
 
@@ -148,7 +148,7 @@ static int expired_mask(struct chanset_t *chan, char *who);
 /* 32 - 35 */
 /* *HOLE* channels_funcs[32] used to be u_sticky_exempt() <cybah> */
 /* *HOLE* channels_funcs[33] used to be u_match_invite() <cybah> */
-#define killchanset ((int (*)(struct chanset_t *))channels_funcs[354)
+/* *HOLE* channels_funcs[34] used to be killchanset().			*/
 #define u_delinvite ((int (*)(struct chanset_t *, char *, int))channels_funcs[35])
 /* 36 - 39 */
 #define u_addinvite ((int (*)(struct chanset_t *, char *, char *, char *, time_t, int))channels_funcs[36])

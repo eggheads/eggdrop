@@ -2,7 +2,7 @@
  * cmdschan.c -- part of channels.mod
  *   commands from a user via dcc that cause server interaction
  *
- * $Id: cmdschan.c,v 1.33 2000/10/19 16:30:32 fabian Exp $
+ * $Id: cmdschan.c,v 1.34 2000/10/27 19:29:10 fabian Exp $
  */
 /*
  * Copyright (C) 1997  Robey Pointer
@@ -1133,10 +1133,6 @@ static void cmd_mns_chan(struct userrec *u, int idx, char *par)
 	    chname);
     return;
   }
-
-  /* Using chan->name is important here, especially for !chans <cybah> */
-  if (!channel_inactive(chan) && chan->name[0])
-    dprintf(DP_SERVER, "PART %s\n", chan->name);
 
   remove_channel(chan);
   dprintf(idx, "Channel %s removed from the bot.\n", chname);

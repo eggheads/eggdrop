@@ -2,7 +2,7 @@
  * irc.c -- part of irc.mod
  *   support for channels within the bot 
  * 
- * $Id: irc.c,v 1.37 2000/10/27 19:26:50 fabian Exp $
+ * $Id: irc.c,v 1.38 2000/10/27 19:29:11 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -460,6 +460,21 @@ static void reset_chan_info(struct chanset_t *chan)
     /* This is not so critical, so slide it into the standard q */
     dprintf(DP_SERVER, "TOPIC %s\n", chan->name);
     /* clear_channel nuked the data...so */
+  }
+}
+
+/* Leave the specified channel and notify registered Tcl procs. This
+ * should not be called by itsself.
+ */
+static void do_channel_part(struct chanset_t *chan)
+{
+  if (!channel_inactive(chan) && chan->name[0]) {
+    /* Using chan->name is important here, especially for !chans <cybah> */
+    dprintf(DP_SERVER, "PART %s\n", chan->name);
+
+    /* As we don't know of this channel anymore when we receive the server's
+       ack for the above PART, we have to notify about it _now_. */
+    check_tcl_part(botname, botuserhost, NULL, chan->dname, NULL);
   }
 }
 
@@ -1138,6 +1153,8 @@ static Function irc_table[] =
   (Function) me_op,
   (Function) recheck_channel_modes,
   (Function) & H_need,		/* p_tcl_bind_list		*/
+  (Function) do_channel_part,
+  /* 20 - 23 */
 };
 
 char *irc_start(Function * global_funcs)
@@ -1147,7 +1164,7 @@ char *irc_start(Function * global_funcs)
   global = global_funcs;
 
   Context;
-  module_register(MODULE_NAME, irc_table, 1, 2);
+  module_register(MODULE_NAME, irc_table, 1, 3);
   if (!module_depend(MODULE_NAME, "eggdrop", 105, 3)) {
     module_undepend(MODULE_NAME);
     return "This module needs eggdrop1.5.3 or later";

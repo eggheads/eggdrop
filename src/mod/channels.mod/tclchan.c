@@ -1,7 +1,7 @@
 /* 
  * tclchan.c -- part of channels.mod
  * 
- * $Id: tclchan.c,v 1.35 2000/10/19 16:30:32 fabian Exp $
+ * $Id: tclchan.c,v 1.36 2000/10/27 19:29:10 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -917,8 +917,6 @@ static int tcl_channel STDVAR
       Tcl_AppendResult(irp, "no such channel record", NULL);
       return TCL_ERROR;
     }
-    if (!channel_inactive(chan))
-      dprintf(DP_SERVER, "PART %s\n", chan->name);
     remove_channel(chan);
     return TCL_OK;
   }
