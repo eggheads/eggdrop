@@ -21,7 +21,7 @@
 #ifdef OSF1_HACKS
 #include <loader.h>
 #else
-#if DLOPEN_1
+#ifdef DLOPEN_1
 char *dlerror();
 void *dlopen(const char *, int);
 int dlclose(void *);

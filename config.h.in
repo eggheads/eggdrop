@@ -32,6 +32,61 @@
 /* Define if you can safely include both <sys/time.h> and <time.h>.  */
 #undef TIME_WITH_SYS_TIME
 
+/* Define if your processor stores words with the most significant
+   byte first (like Motorola and SPARC, unlike Intel and VAX).  */
+#undef WORDS_BIGENDIAN
+
+/* this will get defined if modules will work on your system  */
+#undef MODULES_OK
+
+/* use hpux dynamic linking ?  */
+#undef HPUX_HACKS
+
+/* using hpux 10.x ?  */
+#undef HPUX10_HACKS
+
+/* using osf1 ?  */
+#undef OSF1_HACKS
+
+/* Define if running on OSF/1 platform.  */
+#undef STOP_UAC
+
+/* sunos 4.0 *sigh*  */
+#undef DLOPEN_1
+
+/* running on NeXT Step  */
+#undef BORGCUBES
+
+/* running under cygwin  */
+#undef CYGWIN_HACKS
+
+/* we may need dlopen now (modules) so include it  */
+#undef HAVE_DLOPEN
+
+/* for pre Tcl 7.5 compat  */
+#undef HAVE_OLD_TCL
+
+/* for buggy Tcl 8.1 threads  */
+#undef HAVE_BUGGY_TCL_THREADS
+
+/* The number of bytes in a int.  */
+#undef SIZEOF_INT
+
+/* The number of bytes in a long.  */
+#undef SIZEOF_LONG
+
+/* Define if you have the bzero function.  */
+#undef HAVE_BZERO
+
+/* Define if you have the clock function.  */
+#undef HAVE_CLOCK
+
+/* Define if you have the dlopen function.  */
+#undef HAVE_DLOPEN
+
+/* Define if you have the dprintf function.  */
+#undef HAVE_DPRINTF
+
 /* Define if you have the getdtablesize function.  */
 #undef HAVE_GETDTABLESIZE
 
@@ -44,11 +99,8 @@
 /* Define if you have the rename function.  */
 #undef HAVE_RENAME
 
-/* Define if you have the dprintf function  */
-#undef HAVE_DPRINTF
-
-/* Define if you have the snprintf function  */
-#undef HAVE_SNPRINTF
+/* Define if you have the setpgid function.  */
+#undef HAVE_SETPGID
 
 /* Define if you have the sigaction function.  */
 #undef HAVE_SIGACTION
@@ -56,26 +108,38 @@
 /* Define if you have the sigemptyset function.  */
 #undef HAVE_SIGEMPTYSET
 
+/* Define if you have the snprintf function.  */
+#undef HAVE_SNPRINTF
+
 /* Define if you have the srandom function.  */
 #undef HAVE_SRANDOM
+
+/* Define if you have the strcasecmp function.  */
+#undef HAVE_STRCASECMP
+
+/* Define if you have the uname function.  */
+#undef HAVE_UNAME
+
+/* Define if you have the vsnprintf function.  */
+#undef HAVE_VSNPRINTF
 
 /* Define if you have the vsprintf function.  */
 #undef HAVE_VSPRINTF
 
-/* Define if you have the waitpid function.  */
-#undef HAVE_WAITPID
-
-/* Define if you have the setpgid function. */
-#undef HAVE_SETPGID
-
-/* Define if you have the clock function. */
-#undef HAVE_CLOCK
-
 /* Define if you have the <dirent.h> header file.  */
 #undef HAVE_DIRENT_H
 
+/* Define if you have the <dlfcn.h> header file.  */
+#undef HAVE_DLFCN_H
+
 /* Define if you have the <ndir.h> header file.  */
 #undef HAVE_NDIR_H
+
+/* Define if you have the <std_args.h> header file.  */
+#undef HAVE_STD_ARGS_H
+
+/* Define if you have the <stdarg.h> header file.  */
+#undef HAVE_STDARG_H
 
 /* Define if you have the <sys/dir.h> header file.  */
 #undef HAVE_SYS_DIR_H
@@ -95,66 +159,17 @@
 /* Define if you have the <unistd.h> header file.  */
 #undef HAVE_UNISTD_H
 
-/* Define if you have the <stdarg.h> header file.  */
-#undef HAVE_STDARG_H
+/* Define if you have the dl library (-ldl).  */
+#undef HAVE_LIBDL
 
-/* Define if you have the <std_args.h> header file.  */
-#undef HAVE_STD_ARGS_H
+/* Define if you have the dld library (-ldld).  */
+#undef HAVE_LIBDLD
 
-/* Define if running on OSF/1 platform. */
-#undef STOP_UAC
+/* Define if you have the dns library (-ldns).  */
+#undef HAVE_LIBDNS
 
-/* Define if you need strcasecmp */
-#undef HAVE_STRCASECMP
+/* Define if you have the nsl library (-lnsl).  */
+#undef HAVE_LIBNSL
 
-/* Define if running on Linux with thread support. */
-#undef LINUX_THREADS
-
-/* define if running on Linux and need to watch for byteorder headers */
-#undef LINUX
-
-/* define if big-endian chipset */
-#undef WORDS_BIGENDIAN
-
-/* we may need dlopen now (modules) so include it */
-#undef HAVE_DLOPEN
-
-/* this willl get defined if modules will work on your system */
-#undef MODULES_OK
-
-/* sunos 4.0 *sigh* */
-#undef DLOPEN_1 
-
-/* some systems dont have bzero, so compile in if needed */
-#undef HAVE_BZERO
-
-/* use hpux dynamic linking ? */
-#undef HPUX_HACKS
-
-/* using hpux 10.x ? */
-#undef HPUX10_HACKS
-
-/* do you actually have dlfcn.h ? */
-#undef HAVE_DLFCN_H
-
-/* assume nothing */
-#define SIZEOF_INT 0
-#define SIZEOF_LONG 0
-
-/* define for the system uname */
-#undef HAVE_UNAME
-
-/* have vsnpritf to use */
-#undef HAVE_VSNPRINTF
-
-/* running on NeXT Step */
-#undef BORGCUBES
-
-/* for pre Tcl 7.5 compat */
-#undef HAVE_OLD_TCL
-
-/* for buggy Tcl 8.1 threads */
-#undef HAVE_BUGGY_TCL_THREADS
-
-/* running under cygwin */
-#undef CYGWIN_HACKS
+/* Define if you have the socket library (-lsocket).  */
+#undef HAVE_LIBSOCKET

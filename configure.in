@@ -108,7 +108,6 @@ SHLIB_CC="${CC}"
 SHLIB_LD="${CC}"
 SHLIB_STRIP="${STRIP}"
 NEED_DL=1
-DLOPEN_1=1
 DEFAULT_MAKE=eggdrop
 AC_MSG_CHECKING(your OS)
 SYSTEM=`${UNAME}`
@@ -167,7 +166,6 @@ case "$SYSTEM" in
     CFLAGS="$CFLAGS -Wall"
     MOD_LD="${CC}"
     SHLIB_LD="${CC} -shared -nostartfiles"
-    DLOPEN_1=""
     DEFAULT_MAKE=debugmem
     AC_DEFINE(MODULES_OK)
     ;;
@@ -226,6 +224,7 @@ case "$SYSTEM" in
       SUNOS=yes
       SHLIB_LD=ld
       SHLIB_STRIP=touch
+      AC_DEFINE(DLOPEN_1)
     fi
     MOD_CC="${CC} -fPIC"
     SHLIB_CC="${CC} -fPIC"
@@ -235,7 +234,6 @@ case "$SYSTEM" in
     AC_MSG_RESULT(FreeBSD/NetBSD/OpenBSD - choose your poison)
     SHLIB_CC="${CC} -fpic"
     SHLIB_LD="ld -Bshareable -x"
-    DLOPEN_1=""
     AC_DEFINE(MODULES_OK)
     ;;
   *)
