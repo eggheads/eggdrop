@@ -6,7 +6,7 @@
  *   memory management for dcc structures
  *   timeout checking for dcc connections
  *
- * $Id: dccutil.c,v 1.51 2004/06/11 05:53:03 wcc Exp $
+ * $Id: dccutil.c,v 1.52 2004/06/11 06:06:24 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -54,6 +54,7 @@ void init_dcc_max()
 
   if (max_dcc < 1)
     max_dcc = 1;
+
   if (dcc)
     dcc = nrealloc(dcc, sizeof(struct dcc_t) * max_dcc);
   else
@@ -61,9 +62,9 @@ void init_dcc_max()
 
   MAXSOCKS = max_dcc + 10;
   if (socklist)
-    socklist = nrealloc(socklist, (sizeof *socklist) * MAXSOCKS);
+    socklist = nrealloc(socklist, sizeof(*socklist) * MAXSOCKS);
   else
-    socklist = nmalloc((sizeof *socklist) * MAXSOCKS);
+    socklist = nmalloc(sizeof(*socklist) * MAXSOCKS);
   for (; osock < MAXSOCKS; osock++)
     socklist[osock].flags = SOCK_UNUSED;
 }
