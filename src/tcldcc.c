@@ -50,7 +50,7 @@ static int tcl_putdcc STDVAR
 {
   int i, j;
 
-  context;
+  Context;
   BADARGS(3, 3, " idx text");
   i = atoi(argv[1]);
   j = findidx(i);
@@ -72,7 +72,7 @@ static int tcl_putdccraw STDVAR
 {
   int i, j, z;
 
-  context;
+  Context;
   BADARGS(4, 4, " idx size text");
   z = atoi(argv[1]);
   j = 0;
@@ -96,7 +96,7 @@ static int tcl_dccsimul STDVAR
 {
   int i, idx;
 
-  context;
+  Context;
   BADARGS(3, 3, " idx command");
   if (enable_simul) {
     i = atoi(argv[1]);
@@ -122,7 +122,7 @@ static int tcl_dccbroadcast STDVAR
 {
   char msg[401];
 
-  context;
+  Context;
   BADARGS(2, 2, " message");
   strncpy(msg, argv[1], 400);
   msg[400] = 0;
@@ -136,7 +136,7 @@ static int tcl_hand2idx STDVAR
   int i;
   char s[10];
 
-  context;
+  Context;
   BADARGS(2, 2, " nickname");
   for (i = 0; i < dcc_total; i++)
     if ((!strcasecmp(argv[1], dcc[i].nick)) &&
@@ -155,7 +155,7 @@ static int tcl_getchan STDVAR
   char s[10];
   int idx, i;
 
-  context;
+  Context;
   BADARGS(2, 2, " idx");
   i = atoi(argv[1]);
   idx = findidx(i);
@@ -180,7 +180,7 @@ static int tcl_setchan STDVAR
   int idx, i, chan;
   module_entry *me;
 
-  context;
+  Context;
   BADARGS(3, 3, " idx channel");
   i = atoi(argv[1]);
   idx = findidx(i);
@@ -241,7 +241,7 @@ static int tcl_dccputchan STDVAR
   int chan;
   char msg[401];
 
-  context;
+  Context;
   BADARGS(3, 3, " channel message");
   chan = atoi(argv[1]);
   if ((chan < 0) || (chan > 199999)) {
@@ -263,7 +263,7 @@ static int tcl_console STDVAR
   int i, j, pls, arg;
   module_entry *me;
 
-  context;
+  Context;
   BADARGS(2, 4, " idx ?channel? ?console-modes?");
   j = atoi(argv[1]);
   i = findidx(j);
@@ -327,7 +327,7 @@ static int tcl_strip STDVAR
   int i, j, pls, arg;
   module_entry *me;
 
-  context;
+  Context;
   BADARGS(2, 4, " idx ?strip-flags?");
   j = atoi(argv[1]);
   i = findidx(j);
@@ -374,7 +374,7 @@ static int tcl_echo STDVAR
   int i, j;
   module_entry *me;
 
-  context;
+  Context;
   BADARGS(2, 3, " idx ?status?");
   j = atoi(argv[1]);
   i = findidx(j);
@@ -410,7 +410,7 @@ static int tcl_page STDVAR
   char x[20];
   module_entry *me;
 
-  context;
+  Context;
   BADARGS(2, 3, " idx ?status?");
   j = atoi(argv[1]);
   i = findidx(j);
@@ -450,7 +450,7 @@ static int tcl_control STDVAR
   int idx, i;
   void *hold;
 
-  context;
+  Context;
   BADARGS(3, 3, " idx command");
   i = atoi(argv[1]);
   idx = findidx(i);
@@ -483,7 +483,7 @@ static int tcl_valididx STDVAR
 {
   int idx;
 
-  context;
+  Context;
   BADARGS(2, 2, " idx");
   idx = findidx(atoi(argv[1]));
   if ((idx < 0) || !(dcc[idx].type->flags & DCT_VALIDIDX))
@@ -497,7 +497,7 @@ static int tcl_killdcc STDVAR
 {
   int idx, i;
 
-  contextnote(argv[1] ? argv[1] : "argv[1] == NULL!");
+  ContextNote(argv[1] ? argv[1] : "argv[1] == NULL!");
   BADARGS(2, 3, " idx ?reason?");
   i = atoi(argv[1]);
   idx = findidx(i);
@@ -505,7 +505,7 @@ static int tcl_killdcc STDVAR
     Tcl_AppendResult(irp, "invalid idx", NULL);
     return TCL_ERROR;
   }
-  context;
+  Context;
 
   /* don't kill terminal socket */
   if ((dcc[idx].sock == STDOUT) && !backgrd)
@@ -534,7 +534,7 @@ static int tcl_putbot STDVAR
   int i;
   char msg[401];
 
-  context;
+  Context;
   BADARGS(3, 3, " botnick message");
   i = nextbot(argv[1]);
   if (i < 0) {
@@ -552,7 +552,7 @@ static int tcl_putallbots STDVAR
 {
   char msg[401];
 
-  context;
+  Context;
   BADARGS(2, 2, " message");
   strncpy(msg, argv[1], 400);
   msg[400] = 0;
@@ -564,7 +564,7 @@ static int tcl_idx2hand STDVAR
 {
   int i, idx;
 
-  context;
+  Context;
   BADARGS(2, 2, " idx");
   i = atoi(argv[1]);
   idx = findidx(i);
@@ -580,7 +580,7 @@ static int tcl_islinked STDVAR
 {
   int i;
 
-  context;
+  Context;
   BADARGS(2, 2, " bot");
   i = nextbot(argv[1]);
   if (i < 0)
@@ -594,7 +594,7 @@ static int tcl_bots STDVAR
 {
   tand_t *bot;
 
-  context;
+  Context;
   BADARGS(1, 1, "");
   for (bot = tandbot; bot; bot = bot->next)
      Tcl_AppendElement(irp, bot->bot);
@@ -607,7 +607,7 @@ static int tcl_botlist STDVAR
   char *list[4], *p;
   char sh[2], string[20];
 
-  context;
+  Context;
   BADARGS(1, 1, "");
   sh[1] = 0;
   list[3] = sh;
@@ -634,7 +634,7 @@ static int tcl_dcclist STDVAR
   char *list[6], *p;
   char other[160];
 
-  context;
+  Context;
   BADARGS(1, 2, " ?type?");
   for (i = 0; i < dcc_total; i++) {
     if ((argc == 1) ||
@@ -667,7 +667,7 @@ static int tcl_whom STDVAR
   char c[2], idle[10], work[20], *list[7], *p;
   int chan, i;
 
-  context;
+  Context;
   BADARGS(2, 2, " chan");
   if (argv[1][0] == '*')
      chan = -1;
@@ -739,7 +739,7 @@ static int tcl_dccused STDVAR
 {
   char s[20];
 
-  context;
+  Context;
   BADARGS(1, 1, "");
   sprintf(s, "%d", dcc_total);
   Tcl_AppendResult(irp, s, NULL);
@@ -751,7 +751,7 @@ static int tcl_getdccidle STDVAR
   int i, x, idx;
   char s[21];
 
-  context;
+  Context;
   BADARGS(2, 2, " idx");
   i = atoi(argv[1]);
   idx = findidx(i);
@@ -769,7 +769,7 @@ static int tcl_getdccaway STDVAR
 {
   int i, idx;
 
-  context;
+  Context;
   BADARGS(2, 2, " idx");
   i = atol(argv[1]);
   idx = findidx(i);
@@ -791,7 +791,7 @@ static int tcl_setdccaway STDVAR
 {
   int i, idx;
 
-  context;
+  Context;
   BADARGS(3, 3, " idx message");
   i = atol(argv[1]);
   idx = findidx(i);
@@ -819,7 +819,7 @@ static int tcl_link STDVAR
   int x, i;
   char bot[HANDLEN + 1], bot2[HANDLEN + 1];
 
-  context;
+  Context;
   BADARGS(2, 3, " ?via-bot? bot");
   strncpy(bot, argv[1], HANDLEN);
   bot[HANDLEN] = 0;
@@ -845,7 +845,7 @@ static int tcl_unlink STDVAR
   int i, x;
   char bot[HANDLEN + 1];
 
-  context;
+  Context;
   BADARGS(2, 3, " bot ?comment?");
   strncpy(bot, argv[1], HANDLEN);
   bot[HANDLEN] = 0;
@@ -869,7 +869,7 @@ static int tcl_connect STDVAR
   int i, z, sock;
   char s[81];
 
-  context;
+  Context;
   BADARGS(3, 3, " hostname port");
   if (dcc_total == max_dcc) {
     Tcl_AppendResult(irp, "out of dcc table space", NULL);
@@ -909,7 +909,7 @@ static int tcl_listen STDVAR
   char s[10];
   struct portmap *pmap = NULL, *pold = NULL;
 
-  context;
+  Context;
   BADARGS(3, 4, " port type ?mask/proc?");
   port = realport = atoi(argv[1]);
   for (pmap = root; pmap; pold = pmap, pmap = pmap->next)
@@ -1014,7 +1014,7 @@ static int tcl_boot STDVAR
   char who[512];
   int i, ok = 0;
 
-  context;
+  Context;
   BADARGS(2, 3, " user@bot ?reason?");
   strcpy(who, argv[1]);
   if (strchr(who, '@') != NULL) {
@@ -1043,7 +1043,7 @@ static int tcl_boot STDVAR
 
 static int tcl_rehash STDVAR
 {
-  context;
+  Context;
   BADARGS(1, 1, " ");
   if (make_userfile) {
     putlog(LOG_MISC, "*", USERF_NONEEDNEW);
@@ -1057,7 +1057,7 @@ static int tcl_rehash STDVAR
 
 static int tcl_restart STDVAR
 {
-  context;
+  Context;
   BADARGS(1, 1, " ");
   if (!backgrd) {
     Tcl_AppendResult(interp, "You can't restart a -n bot", NULL);

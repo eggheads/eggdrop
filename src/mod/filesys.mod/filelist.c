@@ -114,7 +114,7 @@ static void filelist_qsort(filelist_t *flist, int l, int r)
 /* Sort list of filenames */
 static void filelist_sort(filelist_t *flist)
 {
-  ASSERT(flist);
+  Assert(flist);
   if (flist->tot < 2)
     return;
   filelist_qsort(flist, 0, (flist->tot - 1));

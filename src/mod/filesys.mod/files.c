@@ -161,7 +161,7 @@ static int resolve_dir(char *current, char *change, char **real, int idx)
   struct flag_record user = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
   struct flag_record req = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
 
-  context;
+  Context;
   *real = NULL;
   malloc_strcpy(*real, current);
   if (!change[0])
@@ -261,7 +261,7 @@ static int resolve_dir(char *current, char *change, char **real, int idx)
   if (f == NULL)
     return 0;
   fclose(f);
-  context;
+  Context;
   return 1;
 }
 
@@ -347,7 +347,7 @@ static void cmd_chdir(int idx, char *msg)
   putlog(LOG_FILES, "*", "files: #%s# cd /%s", dcc[idx].nick,
 	 dcc[idx].u.file->dir);
   dprintf(idx, "%s: /%s\n", FILES_NEWCURDIR, dcc[idx].u.file->dir);
-  context;
+  Context;
 }
 
 static void files_ls(int idx, char *par, int showall)
@@ -355,7 +355,7 @@ static void files_ls(int idx, char *par, int showall)
   char *p, *s = NULL, *destdir = NULL, *mask = NULL;
   FILE *fdb;
 
-  context;
+  Context;
   if (par[0]) {
     putlog(LOG_FILES, "*", "files: #%s# ls %s", dcc[idx].nick, par);
     p = strrchr(par, '/');
@@ -396,7 +396,7 @@ static void files_ls(int idx, char *par, int showall)
     filedb_ls(fdb, idx, "*", showall);
     filedb_close(fdb);
   }
-  context;
+  Context;
 }
 
 static void cmd_ls(int idx, char *par)
@@ -1252,7 +1252,7 @@ static int cmd_filestats(int idx, char *par)
   char *nick;
   struct userrec *u;
 
-  context;
+  Context;
   if (!par[0]) {
     dprintf(idx, "Usage: filestats <user>\n");
     return 0;

@@ -3,8 +3,8 @@
  * basic irc server support
  */
 
-#define MAKING_SERVER
 #define MODULE_NAME "server"
+#define MAKING_SERVER
 #include "../module.h"
 #include "server.h"
 #include <netdb.h>
@@ -200,7 +200,7 @@ static int calc_penalty(char * msg)
   char * par3;
   int penalty, i, ii;
 
-  context;
+  Context;
   if (!use_penalties)
     return 0;
   penalty = 0;
@@ -327,7 +327,7 @@ static int fast_deq(int which)
   char *msg, *nextmsg, *cmd, *nextcmd, *to, *nextto, *stckbl;
   int len, doit , found;
 
-  context;
+  Context;
   doit = found = 0;
   if (!use_fastdeq)
     return 0;
@@ -427,7 +427,7 @@ static int fast_deq(int which)
     last_time += calc_penalty(tosend);
     return 1;
   }
-  context;
+  Context;
   return 0;
 }
 
@@ -590,7 +590,7 @@ static void add_server(char *ss)
   struct server_list *x, *z = serverlist;
   char *p, *q;
 
-  context;
+  Context;
   while (z && z->next)
     z = z->next;
   while (ss) {
@@ -800,7 +800,7 @@ static void rand_nick(char *nick)
 /* return the alternative bot nick */
 static char *get_altbotnick(void)
 {
-  context;
+  Context;
   /* a random-number nick? */
   if (strchr(altnick, '?')) {
     if (!raltnick[0]) {
@@ -816,7 +816,7 @@ static char *get_altbotnick(void)
 static char *altnick_change(ClientData cdata, Tcl_Interp * irp, char *name1,
 			    char *name2, int flags)
 {
-  context;
+  Context;
   /* always unset raltnick. Will be regenerated when needed. */
   raltnick[0] = 0;
   return NULL;
@@ -951,7 +951,7 @@ static char *tcl_eggserver(ClientData cdata, Tcl_Interp * irp, char *name1,
   struct server_list *q;
   int lc, code, i;
 
-  context;
+  Context;
   if (flags & (TCL_TRACE_READS | TCL_TRACE_UNSETS)) {
     /* create server list */
     Tcl_DStringInit(&ds);
@@ -989,7 +989,7 @@ static char *tcl_eggserver(ClientData cdata, Tcl_Interp * irp, char *name1,
       Tcl_Free((char *) list);
     }
   }
-  context;
+  Context;
   return NULL;
 }
 
@@ -1019,7 +1019,7 @@ static int ctcp_DCC_CHAT(char *nick, char *from, char *handle,
   param = newsplit(&msg);
   ip = newsplit(&msg);
   prt = newsplit(&msg);
-  context;
+  Context;
   if (strcasecmp(action, "CHAT") || !u)
     return 0;
   get_user_flagrec(u, &fr, 0);
@@ -1221,7 +1221,7 @@ static int server_expmem()
   struct msgq *m = mq.head;
   struct server_list *s = serverlist;
 
-  context;
+  Context;
   for (; s; s = s->next) {
     if (s->name)
       tot += strlen(s->name) + 1;
@@ -1302,17 +1302,17 @@ static char *server_close()
     {0, 0, 0, 0}
   };
 
-  context;
+  Context;
   cycle_time = 100;
   nuke_server("Connection reset by phear");
   clearq(serverlist);
-  context;
+  Context;
   rem_builtins(H_dcc, C_dcc_serv);
   rem_builtins(H_raw, my_raw_binds);
   rem_builtins(H_ctcp, my_ctcps);
-  context;
+  Context;
   add_builtins(H_dcc, C_t);
-  context;
+  Context;
   del_bind_table(H_wall);
   del_bind_table(H_raw);
   del_bind_table(H_notc);
@@ -1321,13 +1321,13 @@ static char *server_close()
   del_bind_table(H_flud);
   del_bind_table(H_ctcr);
   del_bind_table(H_ctcp);
-  context;
+  Context;
   rem_tcl_coups(my_tcl_coups);
   rem_tcl_strings(my_tcl_strings);
   rem_tcl_ints(my_tcl_ints);
   rem_help_reference("server.help");
   rem_tcl_commands(my_tcl_cmds);
-  context;
+  Context;
   Tcl_UntraceVar(interp, "nick",
 		 TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
 		 nick_change, NULL);
@@ -1343,16 +1343,16 @@ static char *server_close()
 		 TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
 		 traced_nettype, NULL);
   tcl_untraceserver("servers", NULL);
-  context;
+  Context;
   empty_msgq();
-  context;
+  Context;
   del_hook(HOOK_SECONDLY, server_secondly);
   del_hook(HOOK_5MINUTELY, server_5minutely);
   del_hook(HOOK_QSERV, queue_server);
   del_hook(HOOK_MINUTELY, minutely_checks);
   del_hook(HOOK_PRE_REHASH, server_prerehash);
   del_hook(HOOK_REHASH, server_postrehash);
-  context;
+  Context;
   module_undepend(MODULE_NAME);
   return NULL;
 }
@@ -1462,13 +1462,13 @@ char *server_start(Function * global_funcs)
   use_penalties = 0;
   use_fastdeq = 0;
   stackablecmds[0] = 0;
-  context;
+  Context;
   server_table[4] = (Function) botname;
   module_register(MODULE_NAME, server_table, 1, 0);
   if (!module_depend(MODULE_NAME, "eggdrop", 105, 0))
     return "This module requires eggdrop1.5.0 or later";
   /* weird ones */
-  context;
+  Context;
   /* fool bot in reading the values */
   tcl_eggserver(NULL, interp, "servers", NULL, 0);
   tcl_traceserver("servers", NULL);
@@ -1491,7 +1491,7 @@ char *server_start(Function * global_funcs)
   Tcl_TraceVar(interp, "net-type",
 	       TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
 	       traced_nettype, NULL);
-  context;
+  Context;
   H_wall = add_bind_table("wall", HT_STACKABLE, server_2char);
   H_raw = add_bind_table("raw", HT_STACKABLE, server_raw);
   H_notc = add_bind_table("notc", HT_STACKABLE, server_5char);
@@ -1500,12 +1500,12 @@ char *server_start(Function * global_funcs)
   H_flud = add_bind_table("flud", HT_STACKABLE, server_5char);
   H_ctcr = add_bind_table("ctcr", HT_STACKABLE, server_6char);
   H_ctcp = add_bind_table("ctcp", HT_STACKABLE, server_6char);
-  context;
+  Context;
   add_builtins(H_raw, my_raw_binds);
   add_builtins(H_dcc, C_dcc_serv);
   add_builtins(H_ctcp, my_ctcps);
   add_help_reference("server.help");
-  context;
+  Context;
   my_tcl_strings[0].buf = botname;
   add_tcl_strings(my_tcl_strings);
   my_tcl_ints[0].val = &use_silence;
@@ -1513,24 +1513,24 @@ char *server_start(Function * global_funcs)
   add_tcl_ints(my_tcl_ints);
   add_tcl_commands(my_tcl_cmds);
   add_tcl_coups(my_tcl_coups);
-  context;
+  Context;
   add_hook(HOOK_SECONDLY, server_secondly);
   add_hook(HOOK_5MINUTELY, server_5minutely);
   add_hook(HOOK_MINUTELY, minutely_checks);
   add_hook(HOOK_QSERV, queue_server);
   add_hook(HOOK_PRE_REHASH, server_prerehash);
   add_hook(HOOK_REHASH, server_postrehash);
-  context;
+  Context;
   mq.head = hq.head = modeq.head = 0;
   mq.last = hq.last = modeq.last = 0;
   mq.tot = hq.tot = modeq.tot = 0;
   mq.warned = hq.warned = modeq.warned = 0;
   double_warned = 0;
-  context;
+  Context;
   newserver[0] = 0;
   newserverport = 0;
   getmyhostname(bothost);
-  context;
+  Context;
   sprintf(botuserhost, "%s@%s", botuser, bothost);	/* wishful thinking */
   curserv = 999;
   if (net_type == 0) {		/* EfNet except new +e/+I hybrid */

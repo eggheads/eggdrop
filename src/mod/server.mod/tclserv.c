@@ -13,7 +13,7 @@ static int tcl_putquick STDVAR
 {
   char s[511], *p;
 
-  context;
+  Context;
   BADARGS(2, 3, " text ?options?");
   if ((argc == 3) &&
       !(!strcasecmp(argv[2], "-next") || !strcasecmp(argv[2], "-normal"))) {
@@ -40,7 +40,7 @@ static int tcl_putserv STDVAR
 {
   char s[511], *p;
 
-  context;
+  Context;
   BADARGS(2, 3, " text ?options?");
   if ((argc == 3) &&
     !(!strcasecmp(argv[2], "-next") || !strcasecmp(argv[2], "-normal"))) {
@@ -67,7 +67,7 @@ static int tcl_puthelp STDVAR
 {
   char s[511], *p;
 
-  context;
+  Context;
   BADARGS(2, 3, " text ?options?");
   if ((argc == 3) &&
     !(!strcasecmp(argv[2], "-next") || !strcasecmp(argv[2], "-normal"))) {

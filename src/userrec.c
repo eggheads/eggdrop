@@ -42,7 +42,7 @@ maskrec *global_bans = NULL,
 struct igrec *global_ign = NULL;
 int cache_hit = 0, cache_miss = 0;	/* temporary cache accounting */
 
-#ifdef EBUG_MEM
+#ifdef DEBUG_MEM
 void *_user_malloc(int size, char *file, int line)
 {
   char x[1024];
@@ -50,6 +50,7 @@ void *_user_malloc(int size, char *file, int line)
   simple_sprintf(x, "userrec.c:%s", file);
   return n_malloc(size, x, line);
 }
+
 void *_user_realloc(void *ptr, int size, char *file, int line)
 {
   char x[1024];
@@ -97,7 +98,7 @@ int expmem_users()
   struct user_entry *ue;
   struct igrec *i;
 
-  context;
+  Context;
   tot = 0;
   u = userlist;
   while (u != NULL) {
@@ -249,7 +250,7 @@ void clear_userlist(struct userrec *bu)
   struct userrec *u = bu, *v;
   int i;
 
-  context;
+  Context;
   while (u != NULL) {
     v = u->next;
     freeuser(u);
@@ -280,7 +281,7 @@ void clear_userlist(struct userrec *bu)
     }
   }
   /* remember to set your userlist to NULL after calling this */
-  context;
+  Context;
 }
 
 /* find CLOSEST host match */
@@ -493,7 +494,7 @@ void write_userfile(int idx)
   struct userrec *u;
   int ok;
 
-  context;
+  Context;
   /* also write the channel file at the same time */
   if (userlist == NULL)
     return;			/* no point in saving userfile */
@@ -511,23 +512,23 @@ void write_userfile(int idx)
   tt = now;
   strcpy(s1, ctime(&tt));
   fprintf(f, "#4v: %s -- %s -- written %s", ver, botnetnick, s1);
-  context;
+  Context;
   ok = 1;
   u = userlist;
   while ((u != NULL) && (ok)) {
     ok = write_user(u, f, idx);
     u = u->next;
   }
-  context;
+  Context;
   if (!ok || fflush(f)) {
     putlog(LOG_MISC, "*", "%s (%s)", USERF_ERRWRITE, strerror(ferror(f)));
     fclose(f);
     return;
   }
   fclose(f);
-  context;
+  Context;
   call_hook(HOOK_USERFILE);
-  context;
+  Context;
   unlink(userfile);
   sprintf(s, "%s~new", userfile);
   movefile(s, userfile);
@@ -711,7 +712,7 @@ int delhost_by_handle(char *handle, char *host)
   struct user_entry *e = NULL;
   int i = 0;
 
-  context;
+  Context;
   u = get_user_by_handle(userlist, handle);
   if (!u)
     return 0;
@@ -804,7 +805,7 @@ struct userrec *get_user_by_nick(char *nick)
   struct chanset_t *chan = chanset;
   memberlist *m;
 
-  context;
+  Context;
   while (chan) {
     m = chan->channel.member;
     while (m && m->nick[0]) {

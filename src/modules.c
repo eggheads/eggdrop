@@ -145,30 +145,6 @@ void (*dns_ipbyhost) (char *) = block_dns_ipbyhost;
 module_entry *module_list;
 dependancy *dependancy_list = NULL;
 
-void mod_context(char *module, char *file, int line)
-{
-  char x[100];
-
-  sprintf(x, "%s:%s", module, file);
-  x[30] = 0;
-  cx_ptr = ((cx_ptr + 1) & 15);
-  strcpy(cx_file[cx_ptr], x);
-  cx_line[cx_ptr] = line;
-}
-
-void mod_contextnote(char *module, char *file, int line, char *note)
-{
-  cx_ptr=((cx_ptr + 1) & 15);
-#ifdef HAVE_SNPRINTF
-  snprintf(cx_file[cx_ptr], 30, "%s:%s", module, file);
-#else
-  sprintf(cx_file[cx_ptr], "%s:%s", module, file);
-#endif
-  cx_line[cx_ptr] = line;
-  strncpy(cx_note[cx_ptr], note, 255);
-  cx_note[cx_ptr][255] = 0;
-}
-
 /* the horrible global lookup table for functions
  * BUT it makes the whole thing *much* more portable than letting each
  * OS screw up the symbols their own special way :/
@@ -179,7 +155,11 @@ Function global_table[] =
   /* 0 - 3 */
   (Function) mod_malloc,
   (Function) mod_free,
-  (Function) mod_context,
+#ifdef DEBUG
+  (Function) eggContext,
+#else
+  (Function) 0,
+#endif
   (Function) module_rename,
   /* 4 - 7 */
   (Function) module_register,
@@ -471,8 +451,13 @@ Function global_table[] =
   (Function) mod_realloc,
   (Function) xtra_set,
   /* 232 - 235 */
-  (Function) mod_contextnote,
-  (Function) assert_failed,
+#ifdef DEBUG
+  (Function) eggContextNote,
+  (Function) eggAssert,
+#else
+  (Function) 0,
+  (Function) 0,
+#endif
   (Function) allocsock,
   (Function) call_hostbyip,
   /* 236 - 239 */
@@ -494,7 +479,7 @@ void init_modules(void)
 {
   int i;
 
-  context;
+  Context;
   module_list = nmalloc(sizeof(module_entry));
   module_list->name = nmalloc(8);
   strcpy(module_list->name, "eggdrop");
@@ -522,7 +507,7 @@ int expmem_modules(int y)
 #endif
   Function *f;
 
-  context;
+  Context;
 #ifdef STATIC
   for (s = static_modules; s; s = s->next)
     c += sizeof(struct static_list) + strlen(s->name) + 1;
@@ -557,7 +542,7 @@ int module_register(char *name, Function * funcs,
 {
   module_entry *p = module_list;
 
-  context;
+  Context;
   while (p) {
     if (p->name && !strcasecmp(name, p->name)) {
       p->major = major;
@@ -596,11 +581,11 @@ const char *module_load(char *name)
 
 #endif
 
-  context;
+  Context;
   if (module_find(name, 0, 0) != NULL)
     return MOD_ALREADYLOAD;
 #ifndef STATIC
-  context;
+  Context;
   if (moddir[0] != '/') {
     if (getcwd(workbuf, 1024) == NULL)
       return MOD_BADCWD;
@@ -609,7 +594,7 @@ const char *module_load(char *name)
     sprintf(workbuf, "%s%s.so", moddir, name);
 #ifdef HPUX_HACKS
   hand = shl_load(workbuf, BIND_IMMEDIATE, 0L);
-  context;
+  Context;
   if (!hand)
     return "Can't load module.";
 #else
@@ -620,7 +605,7 @@ const char *module_load(char *name)
     return "Can't load module.";
 #endif
 #else
-  context;
+  Context;
   hand = dlopen(workbuf, DLFLAGS);
   if (!hand)
     return dlerror();
@@ -629,7 +614,7 @@ const char *module_load(char *name)
 
   sprintf(workbuf, "%s_start", name);
 #ifdef HPUX_HACKS
-  context;
+  Context;
   if (shl_findsym(&hand, workbuf, (short) TYPE_PROCEDURE, (void *) &f))
     f = NULL;
 #else
@@ -665,7 +650,7 @@ const char *module_load(char *name)
   }
 #else
   for (sl = static_modules; sl && strcasecmp(sl->name, name); sl = sl->next);
-  context;
+  Context;
   if (!sl)
     return "Unkown module.";
   f = (Function) sl->func;
@@ -675,7 +660,7 @@ const char *module_load(char *name)
     return "Malloc error";
   p->name = nmalloc(strlen(name) + 1);
   strcpy(p->name, name);
-  context;
+  Context;
   p->major = 0;
   p->minor = 0;
 #ifndef STATIC
@@ -685,7 +670,7 @@ const char *module_load(char *name)
   p->next = module_list;
   module_list = p;
   e = (((char *(*)()) f) (global_table));
-  context;
+  Context;
   if (e) {
     module_list = module_list->next;
     nfree(p->name);
@@ -694,7 +679,7 @@ const char *module_load(char *name)
   }
   check_tcl_load(name);
   putlog(LOG_MISC, "*", "%s %s", MOD_LOADED, name);
-  context;
+  Context;
   return NULL;
 }
 
@@ -704,7 +689,7 @@ char *module_unload(char *name, char *user)
   char *e;
   Function *f;
 
-  context;
+  Context;
   while (p) {
     if ((p->name != NULL) && (!strcmp(name, p->name))) {
       dependancy *d = dependancy_list;
@@ -792,7 +777,7 @@ Function *module_depend(char *name1, char *name2, int major, int minor)
   module_entry *o = module_find(name1, 0, 0);
   dependancy *d;
 
-  context;
+  Context;
   if (!p) {
     if (module_load(name2))
       return 0;
@@ -808,7 +793,7 @@ Function *module_depend(char *name1, char *name2, int major, int minor)
   d->major = major;
   d->minor = minor;
   dependancy_list = d;
-  context;
+  Context;
   return p->funcs ? p->funcs : (Function *) 1;
 }
 
@@ -818,7 +803,7 @@ int module_undepend(char *name1)
   module_entry *p = module_find(name1, 0, 0);
   dependancy *d = dependancy_list, *o = NULL;
 
-  context;
+  Context;
   if (p == NULL)
     return 0;
   while (d != NULL) {
@@ -839,7 +824,7 @@ int module_undepend(char *name1)
       d = d->next;
     }
   }
-  context;
+  Context;
   return ok;
 }
 
@@ -873,7 +858,7 @@ void mod_free(void *ptr, char *modname, char *filename, int line)
 /* hooks, various tables of functions to call on ceratin events */
 void add_hook(int hook_num, void *func)
 {
-  context;
+  Context;
   if (hook_num < REAL_HOOKS) {
     struct hook_entry *p;
 
@@ -935,7 +920,7 @@ void add_hook(int hook_num, void *func)
 
 void del_hook(int hook_num, void *func)
 {
-  context;
+  Context;
   if (hook_num < REAL_HOOKS) {
     struct hook_entry *p = hook_list[hook_num], *o = NULL;
 
@@ -996,7 +981,7 @@ int call_hook_cccc(int hooknum, char *a, char *b, char *c, char *d)
   if (hooknum >= REAL_HOOKS)
     return 0;
   p = hook_list[hooknum];
-  context;
+  Context;
   while ((p != NULL) && !f) {
     f = p->func(a, b, c, d);
     p = p->next;

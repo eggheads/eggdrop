@@ -48,7 +48,7 @@ static void dns_event_success(struct resolve *rp, int type)
   if (!rp)
     return;
 
-  context;
+  Context;
   if (type == T_PTR) {
     debug2("DNS resolved %s to %s", iptostr(rp->ip), rp->hostn);
     call_hostbyip(my_ntohl(rp->ip), rp->hostn, 1);
@@ -63,7 +63,7 @@ static void dns_event_failure(struct resolve *rp)
   if (!rp)
     return;
 
-  context;
+  Context;
   /* T_PTR */
   if (rp->ip) {
     static char s[UHOSTLEN];
@@ -87,7 +87,7 @@ static void dns_event_failure(struct resolve *rp)
 
 static void eof_dns_socket(int idx)
 {
-  context;
+  Context;
   putlog(LOG_MISC, "*", "DNS Error: socket closed.");
   killsock(dcc[idx].sock);
   /* try to reopen socket */
@@ -132,7 +132,7 @@ static void cmd_resolve(struct userrec *u, int idx, char *par)
 {
   struct in_addr inaddr;
 
-  context;
+  Context;
   if (inet_aton(par, &inaddr)) {
     dns_lookup(my_ntohl(inaddr.s_addr));
   } else {
@@ -146,7 +146,7 @@ static void dns_free_cache(void)
 {
   struct resolve *rp = expireresolves, *rpnext;
 
-  context;
+  Context;
   while (rp) {
     rpnext = rp->next;
     if (rp->hostn)
@@ -162,7 +162,7 @@ static int dns_cache_expmem(void)
   struct resolve *rp = expireresolves;
   int size = 0;
 
-  context;
+  Context;
   while (rp) {
     size += sizeof(struct resolve);
     if (rp->hostn)
@@ -194,13 +194,13 @@ static char *dns_close()
 {
   int i;
 
-  context;
+  Context;
   del_hook(HOOK_DNS_HOSTBYIP, dns_lookup);
   del_hook(HOOK_DNS_IPBYHOST, dns_forward);
   del_hook(HOOK_SECONDLY, dns_check_expires);
   rem_builtins(H_dcc, dns_dcc);
 
-  context;
+  Context;
   for (i = 0; i < dcc_total; i++) {
     if ((dcc[i].type == &DCC_DNS) &&
 	(dcc[i].sock == resfd)) {
@@ -210,11 +210,11 @@ static char *dns_close()
     }
   }
 
-  context;
+  Context;
   dns_free_cache();
-  context;
+  Context;
   module_undepend(MODULE_NAME);
-  context;
+  Context;
   return NULL;
 }
 
@@ -235,7 +235,7 @@ char *dns_start(Function * global_funcs)
   int i;
   
   global = global_funcs;
-  context;
+  Context;
   if (!dns_open())
     return "DNS initialisation failed.";
   i = new_dcc(&DCC_DNS, 0);
@@ -243,13 +243,13 @@ char *dns_start(Function * global_funcs)
   dcc[i].timeval = now;
   strcpy(dcc[i].nick, "(dns)");
 
-  context;
+  Context;
   module_register(MODULE_NAME, dns_table, 1, 0);
-  context;
+  Context;
   add_hook(HOOK_SECONDLY, dns_check_expires);
   add_hook(HOOK_DNS_HOSTBYIP, dns_lookup);
   add_hook(HOOK_DNS_IPBYHOST, dns_forward);
   add_builtins(H_dcc, dns_dcc);
-  context;
+  Context;
   return NULL;
 }

@@ -77,7 +77,7 @@ int delignore(char *ign)
   struct igrec **u;
   struct igrec *t;
 
-  context;
+  Context;
 
   i = 0;
   if (!strchr(ign, '!') && (j = atoi(ign))) {
@@ -475,7 +475,7 @@ void tell_user(int idx, struct userrec *u, int master)
   struct flag_record fr =
   {FR_GLOBAL, 0, 0, 0, 0, 0};
 
-  context;
+  Context;
   fr.global = u->flags;
 
   fr.udef_global = u->flags_udef;
@@ -499,14 +499,14 @@ void tell_user(int idx, struct userrec *u, int master)
       strcpy(s1, &s1[11]);
     }
   }
-  context;
+  Context;
   spaces[l] = 0;
   dprintf(idx, "%s%s %-5s%5d %-15s %s (%-10.10s)\n", u->handle, spaces,
 	  get_user(&USERENTRY_PASS, u) ? "yes" : "no", n, s, s1,
 	  (li && li->lastonplace) ? li->lastonplace : "nowhere");
   spaces[l] = ' ';
   /* channel flags? */
-  context;
+  Context;
   ch = u->chanrec;
   while (ch != NULL) {
     fr.match = FR_CHAN | FR_GLOBAL;
@@ -539,7 +539,7 @@ void tell_user(int idx, struct userrec *u, int master)
     ch = ch->next;
   }
   /* user-defined extra fields */
-  context;
+  Context;
   for (ue = u->entries; ue; ue = ue->next)
     if (!ue->name && ue->type->display)
       ue->type->display(idx, ue);
@@ -574,7 +574,7 @@ void tell_users_match(int idx, char *mtch, int start, int limit,
   struct list_type *q;
   struct flag_record user, pls, mns;
 
-  context;
+  Context;
   dprintf(idx, "*** %s '%s':\n", MISC_MATCHING, mtch);
   cnt = 0;
   spaces[HANDLEN - 6] = 0;
@@ -681,7 +681,7 @@ int readuserfile(char *file, struct userrec **ret)
   struct flag_record fr;
   struct chanuserrec *cr;
 
-  context;
+  Context;
   bu = (*ret);
   ignored[0] = 0;
   if (bu == userlist) {
@@ -697,7 +697,7 @@ int readuserfile(char *file, struct userrec **ret)
   if (f == NULL)
     return 0;
   noshare = noxtra = 1;
-  context;
+  Context;
   /* read opening comment */
   s = buf;
   fgets(s, 180, f);
@@ -889,7 +889,7 @@ int readuserfile(char *file, struct userrec **ret)
 	  struct user_entry *ue;
 	  int ok = 0;
 
-	  context;
+	  Context;
 	  if (u) {
 	    ue = u->entries;
 	    for (; ue && !ok; ue = ue->next)
@@ -975,14 +975,14 @@ int readuserfile(char *file, struct userrec **ret)
       }
     }
   }
-  context;
+  Context;
   fclose(f);
   (*ret) = bu;
   if (ignored[0]) {
     putlog(LOG_MISC, "*", "%s %s", USERF_IGNBANS, ignored);
   }
   putlog(LOG_MISC, "*", "Userfile loaded, unpacking...");
-  context;
+  Context;
   for (u = bu; u; u = u->next) {
     struct user_entry *e;
 
@@ -1004,7 +1004,7 @@ int readuserfile(char *file, struct userrec **ret)
       }
   }
   noshare = noxtra = 0;
-  context;
+  Context;
   /* process the user data *now* */
   return 1;
 }
@@ -1020,7 +1020,7 @@ void autolink_cycle(char *start)
   int got_hub = 0, got_alt = 0, got_shared = 0, linked, ready = 0, i,
    bfl;
 
-  context;
+  Context;
   /* don't start a new cycle if some links are still pending */
   if (!start) {
     for (i = 0; i < dcc_total; i++) {

@@ -85,7 +85,7 @@ int expmem_tcl()
 {
   int i, tot = 0;
 
-  context;
+  Context;
   for (i = 0; i < max_logs; i++)
     if (logs[i].filename != NULL) {
       tot += strlen(logs[i].filename) + 1;
@@ -451,7 +451,7 @@ static void init_traces()
 
 void kill_tcl()
 {
-  context;
+  Context;
   rem_tcl_coups(def_tcl_coups);
   rem_tcl_strings(def_tcl_strings);
   rem_tcl_ints(def_tcl_ints);
@@ -470,7 +470,7 @@ void init_tcl(int argc, char **argv)
   char pver[1024] = "";
 #endif
 
-  context;
+  Context;
 #ifndef HAVE_PRE7_5_TCL
   /* This is used for 'info nameofexecutable'.
    * The filename in argv[0] must exist in a directory listed in
@@ -482,7 +482,7 @@ void init_tcl(int argc, char **argv)
   interp = Tcl_CreateInterp();
   Tcl_Init(interp);
 
-#ifdef EBUG_MEM
+#ifdef DEBUG_MEM
   /* initialize Tcl's memory debugging if we have it */
   Tcl_InitMemory(interp);
 #endif
@@ -524,7 +524,7 @@ void do_tcl(char *whatzit, char *script)
     if (f != NULL)
       fprintf(f, "eval: %s\n", script);
   }
-  context;
+  Context;
   code = Tcl_Eval(interp, script);
   if (debug_tcl && (f != NULL)) {
     fprintf(f, "done eval, result=%d\n", code);

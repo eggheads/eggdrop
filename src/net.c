@@ -97,7 +97,7 @@ int expmem_net()
 {
   int i, tot = 0;
 
-  context;
+  Context;
   for (i = 0; i < MAXSOCKS; i++) {
     if (!(socklist[i].flags & SOCK_UNUSED)) {
       if (socklist[i].inbuf != NULL)
@@ -214,7 +214,7 @@ int allocsock(int sock, int options)
 {
   int i;
 
-  context;
+  Context;
   for (i = 0; i < MAXSOCKS; i++) {
     if (socklist[i].flags & SOCK_UNUSED) {
       /* yay!  there is table space */
@@ -693,7 +693,7 @@ int sockgets(char *s, int *len)
   char xx[514], *p, *px;
   int ret, i, data = 0;
 
-  context;
+  Context;
   for (i = 0; i < MAXSOCKS; i++) {
     /* check for stored-up data waiting to be processed */
     if (!(socklist[i].flags & SOCK_UNUSED) && (socklist[i].inbuf != NULL)) {
@@ -725,14 +725,14 @@ int sockgets(char *s, int *len)
     /* also check any sockets that might have EOF'd during write */
     if (!(socklist[i].flags & SOCK_UNUSED)
 	&& (socklist[i].flags & SOCK_EOFD)) {
-      context;
+      Context;
       s[0] = 0;
       *len = socklist[i].sock;
       return -1;
     }
   }
   /* no pent-up data of any worth -- down to business */
-  context;
+  Context;
   *len = 0;
   ret = sockread(xx, len);
   if (ret < 0) {
@@ -759,7 +759,7 @@ int sockgets(char *s, int *len)
   if ((socklist[ret].flags & SOCK_LISTEN) ||
       (socklist[ret].flags & SOCK_PASS))
     return socklist[ret].sock;
-  context;
+  Context;
   /* might be necessary to prepend stored-up data! */
   if (socklist[ret].inbuf != NULL) {
     p = socklist[ret].inbuf;
@@ -781,7 +781,7 @@ int sockgets(char *s, int *len)
       /* (leave the rest to be post-pended later) */
     }
   }
-  context;
+  Context;
   /* look for EOL marker; if it's there, i have something to show */
   p = strchr(xx, '\n');
   if (p == NULL)
@@ -805,7 +805,7 @@ int sockgets(char *s, int *len)
       data = 1;
     }
   }
-  context;
+  Context;
   *len = strlen(s);
   /* anything left that needs to be saved? */
   if (!xx[0]) {
@@ -814,26 +814,26 @@ int sockgets(char *s, int *len)
     else
       return -3;
   }
-  context;
+  Context;
   /* prepend old data back */
   if (socklist[ret].inbuf != NULL) {
-    context;
+    Context;
     p = socklist[ret].inbuf;
     socklist[ret].inbuf = (char *) nmalloc(strlen(p) + strlen(xx) + 1);
     strcpy(socklist[ret].inbuf, xx);
     strcat(socklist[ret].inbuf, p);
     nfree(p);
   } else {
-    context;
+    Context;
     socklist[ret].inbuf = (char *) nmalloc(strlen(xx) + 1);
     strcpy(socklist[ret].inbuf, xx);
   }
-  context;
+  Context;
   if (data) {
-    context;
+    Context;
     return socklist[ret].sock;
   } else {
-    context;
+    Context;
     return -3;
   }
 }
@@ -973,7 +973,7 @@ int sanitycheck_dcc(char *nick, char *from, char *ipaddy, char *port)
   /* It is disabled HERE so we only have to check in *one* spot! */
   if (!dcc_sanitycheck)
     return 1;
-  context;			/* This should be pretty solid, but
+  Context;			/* This should be pretty solid, but
 				 * something _might_ break. */
   if (prt < 1) {
     putlog(LOG_MISC, "*", "ALERT: (%s!%s) specified an impossible port of %u!",
@@ -1000,7 +1000,7 @@ int hostsanitycheck_dcc(char *nick, char *from, IP ip, char *dnsname,
   /* It is disabled HERE so we only have to check in *one* spot! */
   if (!dcc_sanitycheck)
     return 1;
-  context;			/* This should be pretty solid, but
+  Context;			/* This should be pretty solid, but
 				 * something _might_ break. */
   sprintf(badaddress, "%u.%u.%u.%u", (ip >> 24) & 0xff, (ip >> 16) & 0xff,
 	  (ip >> 8) & 0xff, ip & 0xff);

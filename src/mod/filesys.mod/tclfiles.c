@@ -430,7 +430,7 @@ static int tcl_mv_cp(Tcl_Interp * irp, int argc, char **argv, int copy)
   long where;
 
   BADARGS(3, 3, " oldfilepath newfilepath");
-  context;
+  Context;
   malloc_strcpy(fn, argv[1]);
   p = strrchr(fn, '/');
   if (p != NULL) {

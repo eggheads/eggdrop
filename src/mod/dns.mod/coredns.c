@@ -216,7 +216,7 @@ static char *strtdiff(char *d, long signeddiff)
     dword seconds, minutes, hours;
     long day;
 
-    context;
+    Context;
     if ((diff = labs(signeddiff))) {
 	seconds = diff % 60;
 	diff /= 60;
@@ -284,7 +284,7 @@ static void linkresolveid(struct resolve *addrp)
     struct resolve *rp;
     dword bashnum;
 
-    context;
+    Context;
     bashnum = getidbash(addrp->id);
     rp = idbash[bashnum];
     if (rp) {
@@ -316,7 +316,7 @@ static void unlinkresolveid(struct resolve *rp)
 {
     dword bashnum;
 
-    context;
+    Context;
     bashnum = getidbash(rp->id);
     if (idbash[bashnum] == rp) {
 	if (rp->previousid)
@@ -337,7 +337,7 @@ static void linkresolvehost(struct resolve *addrp)
     dword bashnum;
     int ret;
 
-    context;
+    Context;
     bashnum = gethostbash(addrp->hostn);
     rp = hostbash[bashnum];
     if (rp) {
@@ -372,7 +372,7 @@ static void unlinkresolvehost(struct resolve *rp)
 {
     dword bashnum;
 
-    context;
+    Context;
     bashnum = gethostbash(rp->hostn);
     if (hostbash[bashnum] == rp) {
 	if (rp->previoushost)
@@ -393,7 +393,7 @@ static void linkresolveip(struct resolve *addrp)
     struct resolve *rp;
     dword bashnum;
 
-    context;
+    Context;
     bashnum = getipbash(addrp->ip);
     rp = ipbash[bashnum];
     if (rp) {
@@ -425,7 +425,7 @@ static void unlinkresolveip(struct resolve *rp)
 {
     dword bashnum;
 
-    context;
+    Context;
     bashnum = getipbash(rp->ip);
     if (ipbash[bashnum] == rp) {
 	if (rp->previousip)
@@ -445,7 +445,7 @@ static void linkresolve(struct resolve *rp)
 {
     struct resolve *irp;
 
-    context;
+    Context;
     if (expireresolves) {
 	irp = expireresolves;
 	while ((irp->next) && (rp->expiretime >= irp->expiretime))
@@ -473,7 +473,7 @@ static void linkresolve(struct resolve *rp)
 /* Remove reqeust structure rp from the expireresolves list */
 static void untieresolve(struct resolve *rp)
 {
-    context;
+    Context;
     if (rp->previous)
 	rp->previous->next = rp->next;
     else
@@ -486,14 +486,14 @@ static void untieresolve(struct resolve *rp)
  * then delete and free the structure */
 static void unlinkresolve(struct resolve *rp)
 {
-    context;
+    Context;
     untieresolve(rp);
     unlinkresolveid(rp);
     unlinkresolveip(rp);
     if (rp->hostn)
 	unlinkresolvehost(rp);
     nfree(rp);
-    context;
+    Context;
 }
 
 /* Find request structure using the id */
@@ -502,7 +502,7 @@ static struct resolve *findid(word id)
     struct resolve *rp;
     int bashnum;
 
-    context;
+    Context;
     bashnum = getidbash(id);
     rp = idbash[bashnum];
     if (rp) {
@@ -525,7 +525,7 @@ static struct resolve *findhost(char *hostn)
     struct resolve *rp;
     int bashnum;
 
-    context;
+    Context;
     bashnum = gethostbash(hostn);
     rp = hostbash[bashnum];
     if (rp) {
@@ -551,7 +551,7 @@ static struct resolve *findip(IP ip)
     struct resolve *rp;
     dword bashnum;
 
-    context;
+    Context;
     bashnum = getipbash(ip);
     rp = ipbash[bashnum];
     if (rp) {
@@ -580,7 +580,7 @@ static void dorequest(char *s, int type, word id)
     int r, i;
     char buf[(MAX_PACKETSIZE / sizeof(char)) + 1];
 
-    context;
+    Context;
     r = res_mkquery(QUERY, s, C_IN, type, NULL, 0, NULL, buf,
 		    MAX_PACKETSIZE);
     if (r == -1) {
@@ -598,7 +598,7 @@ static void dorequest(char *s, int type, word id)
 /* (Re-)send request with existing id */
 static void resendrequest(struct resolve *rp, int type)
 {
-    context;
+    Context;
     rp->sends++;
     /* update expire time */
     rp->expiretime = now + (RES_RETRYDELAY * rp->sends);
@@ -623,7 +623,7 @@ static void resendrequest(struct resolve *rp, int type)
 /* Send request for the first time */
 static void sendrequest(struct resolve *rp, int type)
 {
-    context;
+    Context;
     /* Create unique id */
     do {
 	idseed = (((idseed + idseed) | (long) time(NULL))
@@ -639,7 +639,7 @@ static void sendrequest(struct resolve *rp, int type)
  * the eggdrop hook. */
 static void failrp(struct resolve *rp)
 {
-    context;
+    Context;
     if (rp->state == STATE_FINISHED)
 	return;
     rp->expiretime = now + RES_FAILEDDELAY;
@@ -657,7 +657,7 @@ static void failrp(struct resolve *rp)
  * the eggdrop hook. */
 static void passrp(struct resolve *rp, long ttl, int type)
 {
-    context;
+    Context;
     rp->state = STATE_FINISHED;
 
     /* Do not cache entries for too long. */
@@ -686,7 +686,7 @@ static void parserespacket(byte * s, int l)
     word rr, datatype, class, qdatatype, qclass;
     byte rdatalength;
 
-    context;
+    Context;
     if (l < sizeof(packetheader)) {
 	debug0(RES_ERR "Packet smaller than standard header size.");
 	return;
@@ -722,10 +722,10 @@ static void parserespacket(byte * s, int l)
     }
     eob = s + l;
     c = s + HFIXEDSZ;
-    context;
+    Context;
     switch (getheader_rcode(hp)) {
     case NOERROR:
-	context;
+	Context;
 	if (hp->ancount) {
 	    debug4(RES_MSG
 		   "Received nameserver reply. (qd:%u an:%u ns:%u ar:%u)",
@@ -795,7 +795,7 @@ static void parserespacket(byte * s, int l)
 				resourcetypes[RESOURCETYPES_COUNT]);
 	    }
 	    for (rr = hp->ancount + hp->nscount + hp->arcount; rr; rr--) {
-		context;
+		Context;
 		if (c > eob) {
 		    debug0(RES_ERR "Packet does not contain all specified resouce records.");
 		    return;
@@ -842,7 +842,7 @@ static void parserespacket(byte * s, int l)
 		    debug0(RES_ERR "Specified rdata length exceeds packet size.");
 		    return;
 		}
-		context;
+		Context;
 		if (datatype == qdatatype) {
 		    debug1(RES_MSG "TTL: %s", strtdiff(sendstring, ttl));
 		    debug1(RES_MSG "TYPE: %s", datatype < RESOURCETYPES_COUNT ?
@@ -913,19 +913,19 @@ static void parserespacket(byte * s, int l)
 	    debug0(RES_ERR "No error returned but no answers given.");
 	break;
     case NXDOMAIN:
-	context;
+	Context;
 	debug0(RES_MSG "Host not found.");
 	failrp(rp);
 	break;
     default:
-	context;
+	Context;
 	debug2(RES_MSG "Received error response %u. (%s)",
 		getheader_rcode(hp),
 		getheader_rcode(hp) < RESPONSECODES_COUNT ?
 			responsecodes[getheader_rcode(hp)] :
 			responsecodes[RESPONSECODES_COUNT]);
     }
-    context;
+    Context;
 }
 
 /* Read data received on our dns socket. This function should be called
@@ -936,7 +936,7 @@ static void dns_ack(void)
     int fromlen = sizeof(struct sockaddr_in);
     int r, i;
 
-    context;
+    Context;
     r =	recvfrom(resfd, (byte *) resrecvbuf, MAX_PACKETSIZE, 0,
 		 (struct sockaddr *) &from, &fromlen);
     if (r <= 0) {
@@ -960,7 +960,7 @@ static void dns_ack(void)
 	       iptostr(from.sin_addr.s_addr));
     } else
         parserespacket((byte *) resrecvbuf, r);
-    context;
+    Context;
 }
 
 /* Remove or resend expired requests. Called once a second. */
@@ -968,7 +968,7 @@ static void dns_check_expires(void)
 {
     struct resolve *rp, *nextrp;
 
-    context;
+    Context;
     for (rp = expireresolves; (rp) && (now >= rp->expiretime);
 	 rp = nextrp) {
 	nextrp = rp->next;
@@ -976,14 +976,14 @@ static void dns_check_expires(void)
 	switch (rp->state) {
 	case STATE_FINISHED:	/* TTL has expired */
 	case STATE_FAILED:	/* Fake TTL has expired */
-	    context;
+	    Context;
 	    debug4(RES_MSG "Cache record for \"%s\" (%s) has expired. (state: %u)  Marked for expire at: %ld.",
 		   nonull(rp->hostn), iptostr(rp->ip), rp->state,
 		   rp->expiretime);
 	    unlinkresolve(rp);
 	    break;
 	case STATE_PTRREQ:	/* T_PTR send timed out */
-	    context;
+	    Context;
 	    if (rp->sends <= RES_MAXSENDS) {
 	      debug1(RES_MSG "Resend #%d for \"PTR\" query...", rp->sends - 1);
 	      resendrequest(rp, T_PTR);
@@ -993,7 +993,7 @@ static void dns_check_expires(void)
 	    }
 	    break;
 	case STATE_AREQ:	/* T_A send timed out */
-	    context;
+	    Context;
 	    if (rp->sends <= RES_MAXSENDS) {
 	      debug1(RES_MSG "Resend #%d for \"A\" query...", rp->sends - 1);
 	      resendrequest(rp, T_A);
@@ -1008,7 +1008,7 @@ static void dns_check_expires(void)
 	    failrp(rp);
 	}
     }
-    context;
+    Context;
 }
 
 /* Start searching for a host-name using it's ip-address */
@@ -1016,7 +1016,7 @@ static void dns_lookup(IP ip)
 {
     struct resolve *rp;
     
-    context;
+    Context;
     ip = my_htonl(ip);
     if ((rp = findip(ip))) {
 	if ((rp->state == STATE_FINISHED)
@@ -1033,7 +1033,7 @@ static void dns_lookup(IP ip)
 	return;
     }
 
-    context;
+    Context;
     debug0(RES_MSG "Creating new record");
     rp = allocresolve();
     rp->state = STATE_PTRREQ;
@@ -1041,7 +1041,7 @@ static void dns_lookup(IP ip)
     rp->ip = ip;
     linkresolveip(rp);
     sendrequest(rp, T_PTR);
-    context;
+    Context;
 }
 
 /* Start searching for an ip-address using it's host-name */
@@ -1050,14 +1050,14 @@ static void dns_forward(char *hostn)
     struct resolve *rp;
     struct in_addr inaddr;
 
-    context;
+    Context;
     /* Check if someone passed us an IP address as hostname 
      * and return it straight away */
     if (inet_aton(hostn, &inaddr)) {
       call_ipbyhost(hostn, my_ntohl(inaddr.s_addr), 1);
       return;
     }
-    context;
+    Context;
     if ((rp = findhost(hostn))) {
 	if ((rp->state == STATE_FINISHED)
 	    || (rp->state == STATE_FAILED)) {
@@ -1073,7 +1073,7 @@ static void dns_forward(char *hostn)
 	return;
     }
 
-    context;
+    Context;
     debug0(RES_MSG "Creating new record");
     rp = allocresolve();
     rp->state = STATE_AREQ;
@@ -1082,7 +1082,7 @@ static void dns_forward(char *hostn)
     strcpy(rp->hostn, hostn);
     linkresolvehost(rp);
     sendrequest(rp, T_A);
-    context;
+    Context;
 }
 
 /* Initialise the network */
@@ -1091,7 +1091,7 @@ static int init_network(void)
     int option;
     struct in_addr inaddr;
 
-    context;
+    Context;
     resfd = socket(AF_INET, SOCK_DGRAM, 0);
     if (resfd == -1) {
 	putlog(LOG_MISC, "*",
@@ -1120,7 +1120,7 @@ static int dns_open(void)
 {
     int i;
 
-    context;
+    Context;
     /* Initialise the resolv library */
     res_init();
     if (!_res.nscount) {
@@ -1134,13 +1134,13 @@ static int dns_open(void)
     if (!init_network())
 	return 0;
 
-    context;
+    Context;
     /* Initialise the hash tables */
     aseed = time(NULL) ^ (time(NULL) << 3) ^ (dword) getpid();
     for (i = 0; i < BASH_SIZE; i++) {
 	idbash[i] = NULL;
 	hostbash[i] = NULL;
     }
-    context;
+    Context;
     return 1;
 }

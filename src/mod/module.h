@@ -21,21 +21,25 @@
 #undef nmalloc
 #undef nfree
 #undef nrealloc
-#undef context
-#undef contextnote
 #undef feof
 #undef user_malloc
 #undef dprintf
 #undef get_data_ptr
 #undef wild_match
 #undef user_realloc
-#undef ASSERT
+#undef Context
+#undef ContextNote
+#undef Assert
 
 /* redefine for module-relevance */
 /* 0 - 3 */
 #define nmalloc(x) ((void *)(global[0]((x),MODULE_NAME,__FILE__,__LINE__)))
 #define nfree(x) (global[1]((x),MODULE_NAME,__FILE__,__LINE__))
-#define context (global[2](MODULE_NAME,__FILE__,__LINE__))
+#ifdef DEBUG
+#  define Context (global[2](__FILE__, __LINE__, MODULE_NAME))
+#else
+#  define Context {}
+#endif
 #define module_rename ((int (*)(char *, char *))global[3])
 /* 4 - 7 */
 #define module_register ((int (*)(char *, Function *, int, int))global[4])
@@ -325,8 +329,13 @@
 #define nrealloc(x,y) ((void *)(global[230]((x),(y),MODULE_NAME,__FILE__,__LINE__)))
 #define xtra_set ((int(*)(struct userrec *,struct user_entry *, void *))global[231])
 /* 232 - 235 */
-#define contextnote(note) (global[232](MODULE_NAME, __FILE__, __LINE__, note))
-#define assert_failed (global[233])
+#ifdef DEBUG
+#  define ContextNote(note) (global[232](__FILE__, __LINE__, MODULE_NAME, note))
+#  define Assert(expr) (global[233](__FILE__, __LINE__, MODULE_NAME, expr))
+#else
+#  define ContextNote(note) {}
+#  define Assert(expr) {}
+#endif
 #define allocsock ((int(*)(int sock,int options))global[234])
 #define call_hostbyip ((void(*)(IP, char *, int))global[235])
 /* 236 - 239 */
@@ -342,8 +351,6 @@
 /* 244 - 247 */
 #define protect_readonly (*(int *)(global[244]))
 #define findchan_by_dname ((struct chanset_t *(*)(char *))global[245])
-
-#define ASSERT(expr) { if (!(expr)) assert_failed (MODULE_NAME, __FILE__, __LINE__); }
 
 /* this is for blowfish module, couldnt be bothereed making a whole new .h
  * file for it ;) */

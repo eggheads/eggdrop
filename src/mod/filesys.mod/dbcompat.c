@@ -42,7 +42,7 @@ static int convert_old_files(char *path, char *newfiledb)
   int in_file = 0, i;
   struct stat st;
 
-  context;
+  Context;
   s = nmalloc(strlen(path) + 8);
   sprintf(s, "%s/.files", path);
   f = fopen(s, "r");
@@ -50,7 +50,7 @@ static int convert_old_files(char *path, char *newfiledb)
   if (f == NULL)
     return 0;
 
-  context;
+  Context;
   fdb = fopen(newfiledb, "w+b");
   if (!fdb) {
     putlog(LOG_MISC, "(!) Can't create filedb in %s", newfiledb);
@@ -89,7 +89,7 @@ static int convert_old_files(char *path, char *newfiledb)
 	} else {
 	  if (fdbe) {
 	    /* File pending. Write to DB */
-	    context;
+	    Context;
 	    filedb_addfile(fdb, POS_NEW, fdbe);
 	    free_fdbe(fdbe);
 	  }
@@ -133,7 +133,7 @@ static int convert_old_files(char *path, char *newfiledb)
   }
   if (fdbe) {
     /* File pending. Write to DB */
-    context;
+    Context;
     filedb_addfile(fdb, POS_NEW, fdbe);
     free_fdbe(fdbe);
   }
@@ -142,7 +142,7 @@ static int convert_old_files(char *path, char *newfiledb)
   unlockfile(fdb);
   fclose(fdb);
   fclose(f);
-  context;
+  Context;
   return 1;
 }
 
@@ -240,13 +240,13 @@ static int convert_old_db(FILE **fdb_s, char *filedb)
   FILE *fdb_t;
   int ret = 0;					/* Default to 'failure'	*/
 
-  context;
+  Context;
   filedb_readtop(*fdb_s, &fdbt);
   /* Old DB version? */
   if ((fdbt.version > 0) && (fdbt.version < FILEDB_VERSION3)) {
     char *tempdb;
 
-    context;
+    Context;
     putlog(LOG_MISC, "*", "Converting old filedb %s to newest format.",
 	   filedb);
     /* Create temp DB name */
@@ -284,14 +284,14 @@ static int convert_old_db(FILE **fdb_s, char *filedb)
         putlog(LOG_MISC, "*", "(!) Reopening db %s failed.", filedb);
     }
     nfree(tempdb);
-    context;
+    Context;
   /* Database already at the newest version? */
   } else if (fdbt.version == FILEDB_VERSION3) {
-    context;
+    Context;
     ret = 1;					/* Always successfull	*/
   /* Unknown version? */
   } else {
-    context;
+    Context;
     putlog(LOG_MISC, "*", "(!) Unknown db version: %d", fdbt.version);
   }
   if (!ret)

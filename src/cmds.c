@@ -214,7 +214,7 @@ static void cmd_botinfo(struct userrec *u, int idx, char *par)
   time_t now2;
   int hr, min;
 
-  context;
+  Context;
   chan = chanset;
   now2 = now - online_since;
   s2[0] = 0;
@@ -1323,7 +1323,7 @@ int check_dcc_attrs(struct userrec *u, int oatr)
 	  if (dcc[i].u.chat->channel >= 0) {
 	    chanout_but(-1, dcc[i].u.chat->channel,
 			"*** %s has returned.\n", dcc[i].nick);
-	    context;
+	    Context;
 	    if (dcc[i].u.chat->channel < 100000)
 	      botnet_send_join_idx(i, -1);
 	  }
@@ -1456,7 +1456,7 @@ static void cmd_chattr(struct userrec *u, int idx, char *par)
    * chan: pointer to channel structure, NULL if none found or none specified
    * chg:  pointer to changes, NULL if none specified
    */
-  ASSERT (!(arg == NULL && chan != NULL));
+  Assert(!(arg == NULL && chan != NULL));
   if (arg && !chan) {
     dprintf(idx, "No channel record for %s.\n", arg);
     return;
@@ -1473,7 +1473,7 @@ static void cmd_chattr(struct userrec *u, int idx, char *par)
 	return;
       }
     } else if (arg && !strpbrk(chg, "&|")) {
-      context;
+      Context;
       tmpchg = nmalloc(strlen(chg) + 2);
       strcpy(tmpchg, "|");
       strcat(tmpchg, chg);
@@ -1646,7 +1646,7 @@ static void cmd_botattr(struct userrec *u, int idx, char *par)
    * chan: pointer to channel structure, NULL if none found or none specified
    * chg:  pointer to changes, NULL if none specified
    */
-  ASSERT (!(arg == NULL && chan != NULL));
+  Assert(!(arg == NULL && chan != NULL));
 
   if (arg && !chan) {
     dprintf(idx, "No channel record for %s.\n", arg);
@@ -1665,7 +1665,7 @@ static void cmd_botattr(struct userrec *u, int idx, char *par)
 	return;
       }
     } else if (arg && !strpbrk(chg, "&|")) {
-      context;
+      Context;
       tmpchg = nmalloc(strlen(chg) + 2);
       strcpy (tmpchg, "|");
       strcat (tmpchg, chg);
@@ -1760,7 +1760,7 @@ static void cmd_chat(struct userrec *u, int idx, char *par)
       chanout_but(-1, dcc[idx].u.chat->channel,
 		  "*** %s left the party line.\n",
 		  dcc[idx].nick);
-      context;
+      Context;
       if (dcc[idx].u.chat->channel < 100000)
 	botnet_send_part_idx(idx, "");
     }
@@ -1830,20 +1830,20 @@ static void cmd_chat(struct userrec *u, int idx, char *par)
 	check_tcl_chpt(botnetnick, dcc[idx].nick, dcc[idx].sock, oldchan);
       if (oldchan == 0) {
 	chanout_but(-1, 0, "*** %s left the party line.\n", dcc[idx].nick);
-	context;
+	Context;
       } else if (oldchan > 0) {
 	chanout_but(-1, oldchan, "*** %s left the channel.\n", dcc[idx].nick);
-	context;
+	Context;
       }
       dcc[idx].u.chat->channel = newchan;
       if (newchan == 0) {
 	dprintf(idx, "Entering the party line...\n");
 	chanout_but(-1, 0, "*** %s joined the party line.\n", dcc[idx].nick);
-	context;
+	Context;
       } else {
 	dprintf(idx, "Joining channel '%s'...\n", arg);
 	chanout_but(-1, newchan, "*** %s joined the channel.\n", dcc[idx].nick);
-	context;
+	Context;
       }
       check_tcl_chjn(botnetnick, dcc[idx].nick, newchan, geticon(idx),
 		     dcc[idx].sock, dcc[idx].host);
@@ -2045,7 +2045,7 @@ static void cmd_su(struct userrec *u, int idx, char *par)
   int atr = u ? u->flags : 0;
   struct flag_record fr = {FR_ANYWH | FR_CHAN | FR_GLOBAL, 0, 0, 0, 0, 0};
 
-  context;
+  Context;
   u = get_user_by_handle(userlist, par);
 
   if (!par[0])
@@ -2076,7 +2076,7 @@ static void cmd_su(struct userrec *u, int idx, char *par)
 	  botnet_send_part_idx(idx, "");
 	chanout_but(-1, dcc[idx].u.chat->channel,
 		    "*** %s left the party line.\n", dcc[idx].nick);
-	context;
+	Context;
 	/* store the old nick in the away section, for weenies who can't get
 	 * their password right ;) */
 	if (dcc[idx].u.chat->away != NULL)
@@ -2214,7 +2214,7 @@ static void cmd_set(struct userrec *u, int idx, char *msg)
 
 static void cmd_module(struct userrec *u, int idx, char *par)
 {
-  context;
+  Context;
   putlog(LOG_CMDS, "*", "#%s# module %s", dcc[idx].nick, par);
   do_module_report(idx, 2, par[0] ? par : NULL);
 }
@@ -2227,7 +2227,7 @@ static void cmd_loadmod(struct userrec *u, int idx, char *par)
          dprintf(idx, MISC_NOSUCHCMD);
          return;
      }
-  context;
+  Context;
   if (!par[0]) {
     dprintf(idx, "%s: loadmod <module>\n", USAGE);
   } else {
@@ -2239,7 +2239,7 @@ static void cmd_loadmod(struct userrec *u, int idx, char *par)
       dprintf(idx, "%s %s\n", MOD_LOADED, par);
     }
   }
-  context;
+  Context;
 }
 
 static void cmd_unloadmod(struct userrec *u, int idx, char *par)
@@ -2250,7 +2250,7 @@ static void cmd_unloadmod(struct userrec *u, int idx, char *par)
          dprintf(idx, MISC_NOSUCHCMD);
          return;
      }
-  context;
+  Context;
   if (!par[0]) {
     dprintf(idx, "%s: unloadmod <module>\n", USAGE);
   } else {
@@ -2395,7 +2395,7 @@ static void cmd_pls_host(struct userrec *u, int idx, char *par)
   struct list_type *q;
   struct flag_record fr = {FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0};
 
-  context;
+  Context;
   handle = newsplit(&par);
   if (!par[0]) {
     dprintf(idx, "Usage: +host <handle> <newhostmask>\n");
@@ -2486,7 +2486,7 @@ static void cmd_modules(struct userrec *u, int idx, char *par)
 {
   int ptr;
 
-  context;
+  Context;
   if (!par[0])
     dprintf(idx, "Usage: modules <bot>\n");
   else {
