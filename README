@@ -1,4 +1,4 @@
-$Id: README,v 1.37 2004/01/09 05:56:35 wcc Exp $
+$Id: README,v 1.38 2004/01/13 01:30:25 wcc Exp $
 
 Readme
 Last revised: June 5, 2002
@@ -135,8 +135,8 @@ Last revised: June 5, 2002
 
     This is intended only for users that know a good bit about Eggdrop. Be
     aware that the versions of Eggdrop that you get via CVS are still being
-    developed, and may be buggy. The Eggheads devteam will in NO WAY take
-    any responsibility for whatever might happen to you or your shell if
+    developed, and may be buggy. The Eggheads Development Team will in NO WAY
+    take any responsibility for whatever might happen to you or your shell if
     you use a CVS version of Eggdrop.
 
     To obtain Eggdrop over CVS, do as follows:

@@ -9,11 +9,11 @@
 %{help=set motd}%{+n}
 ###  %bset motd%b <filename>
    The MOTD (Message Of The day) is displayed when people dcc chat or
-   telnet to the bot. Look at doc/text-substitutions.doc for options.
+   telnet to the bot. Look at doc/TEXT-SUBSTITUTIONS for options.
 %{help=set telnet-banner}%{+n}
 ###  %bset telnet-banner%b <filename>
    This banner will be displayed on telnet connections. Look at
-   doc/text-substitutions.doc for options.
+   doc/TEXT-SUBSTITUTIONS for options.
 %{help=set admin}%{+n}
 ###  %bset admin%b <admin-info>
    This setting defines which contact person should be shown in

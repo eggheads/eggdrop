@@ -1,7 +1,7 @@
-$Id: tcl-commands.doc,v 1.106 2004/01/09 05:56:35 wcc Exp $
+$Id: tcl-commands.doc,v 1.107 2004/01/13 01:30:25 wcc Exp $
 
 Eggdrop Tcl Commands
-Last revised: December 13, 2003
+Last revised: January 12, 2004
      _________________________________________________________________
 
                            Eggdrop Tcl Commands
@@ -539,14 +539,14 @@ marked with vertical bars (|) on the left.
 
   channel add <name> [option-list]
     Description: adds a channel record for the bot to monitor. The full
-      list of possible options are given in doc/settings.mod.channels. Note
+      list of possible options are given in doc/settings/mod.channels. Note
       that the channel options must be in a list (enclosed in {}).
     Returns: nothing
     Module: channels
 
   channel set <name> <options...>
     Description: sets options for the channel specified. The full list of
-      possible options are given in doc/settings.mod.channels.
+      possible options are given in doc/settings/mod.channels.
     Returns: nothing
     Module: channels
 

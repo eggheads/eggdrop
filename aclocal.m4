@@ -16,7 +16,7 @@ dnl You should have received a copy of the GNU General Public License
 dnl along with this program; if not, write to the Free Software
 dnl Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 dnl
-dnl $Id: aclocal.m4,v 1.81 2004/01/12 07:49:17 wcc Exp $
+dnl $Id: aclocal.m4,v 1.82 2004/01/13 01:30:25 wcc Exp $
 dnl
 
 dnl  EGG_MSG_CONFIGURE_START()
@@ -228,7 +228,11 @@ case "$egg_cv_var_system_type" in
       3)
         MOD_CC=shlicc
         MOD_LD=shlicc
-        MOD_STRIP="$STRIP -d"
+        if test "$STRIP" = "touch"; then
+          MOD_STRIP="touch"
+        else
+          MOD_STRIP="$STRIP -d"
+        fi
         SHLIB_LD="shlicc -r"
         SHLIB_STRIP=touch
         AC_DEFINE(MODULES_OK, 1, [Define if modules will work on your system.])dnl
@@ -236,7 +240,11 @@ case "$egg_cv_var_system_type" in
       *)
         CFLAGS="$CFLAGS -Wall"
         MOD_LD="$CC"
-        MOD_STRIP="$STRIP -d"
+        if test "$STRIP" = "touch"; then
+          MOD_STRIP="touch"
+        else
+          MOD_STRIP="$STRIP -d"
+        fi
         SHLIB_CC="$CC -export-dynamic -fPIC"
         SHLIB_LD="$CC -shared -nostartfiles"
         AC_DEFINE(MODULES_OK, 1, [Define if modules will work on your system.])dnl
