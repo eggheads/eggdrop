@@ -1616,7 +1616,8 @@ marked with vertical bars (|) on the left.
          Description: just like MSGM, except it's triggered by things said
            on a channel instead of things /msg'd to the bot. The mask is
            matched against the channel name followed by the text and can
-           contain wildcards.
+           contain wildcards. Also, if a line triggers a PUB bind, it will not
+           trigger a PUBM bind.
          Module: irc
 
     (7)  NOTC (stackable)
