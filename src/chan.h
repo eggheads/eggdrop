@@ -3,7 +3,7 @@
  *   stuff common to chan.c and mode.c
  *   users.h needs to be loaded too
  * 
- * $Id: chan.h,v 1.8 2000/01/07 21:43:57 fabian Exp $
+ * $Id: chan.h,v 1.9 2000/01/17 22:13:59 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -146,6 +146,7 @@ struct chanset_t {
   int status;
   int ircnet_status;
   int idle_kick;
+  int stopnethack_mode;
   /* temporary channel bans, exempts and invites */
   maskrec *bans,
           *exempts,
@@ -184,22 +185,18 @@ struct chanset_t {
 #define CHAN_GREET          0x0040	/* greet people with their info line */
 #define CHAN_PROTECTOPS     0x0080	/* re-op any +o people who get deop'd */
 #define CHAN_LOGSTATUS      0x0100	/* log channel status every 5 mins */
-#define CHAN_STOPNETHACK    0x0200	/* deop netsplit hackers */
-#define CHAN_REVENGE        0x0400	/* get revenge on bad people */
-#define CHAN_SECRET         0x0800	/* don't advertise channel on botnet */
-#define CHAN_AUTOVOICE      0x1000	/* dish out voice stuff automatically */
-#define CHAN_CYCLE          0x2000	/* cycle the channel if possible */
-#define CHAN_DONTKICKOPS    0x4000	/* never kick +o flag people - arthur2 */
-#define CHAN_WASOPTEST      0x8000	/* wasop test for all +o user
-					 * when +stopnethack */
-#define CHAN_INACTIVE       0x10000	/* no irc support for this channel - drummer */
-#define CHAN_PROTECTFRIENDS 0x20000     /* re-op any +f people who get deop'd */
-#define CHAN_SHARED         0x40000	/* channel is being shared */
-#define CHAN_SEEN           0x80000
-#define CHAN_REVENGEBOT     0x100000	/* revenge on actions against the bot */
-#define CHAN_NODESYNCH      0x200000
-/*			    0x400000 */
-/*			    0x800000 */
+#define CHAN_REVENGE        0x0200	/* get revenge on bad people */
+#define CHAN_SECRET         0x0400	/* don't advertise channel on botnet */
+#define CHAN_AUTOVOICE      0x0800	/* dish out voice stuff automatically */
+#define CHAN_CYCLE          0x1000	/* cycle the channel if possible */
+#define CHAN_DONTKICKOPS    0x2000	/* never kick +o flag people - arthur2 */
+#define CHAN_INACTIVE       0x4000	/* no irc support for this channel - drummer */
+#define CHAN_PROTECTFRIENDS 0x8000  /* re-op any +f people who get deop'd */
+#define CHAN_SHARED         0x10000	/* channel is being shared */
+#define CHAN_SEEN           0x20000
+#define CHAN_REVENGEBOT     0x40000	/* revenge on actions against the bot */
+#define CHAN_NODESYNCH      0x80000
+/*			    0x100000 */
 #define CHAN_ACTIVE         0x1000000	/* like i'm actually on the channel
 					 * and stuff */
 #define CHAN_PEND           0x2000000	/* just joined; waiting for end of
@@ -231,7 +228,6 @@ struct chanset_t *findchan_by_dname(char *name);
 #define channel_bitch(chan) (chan->status & CHAN_BITCH)
 #define channel_nodesynch(chan) (chan->status & CHAN_NODESYNCH)
 #define channel_autoop(chan) (chan->status & CHAN_OPONJOIN)
-#define channel_wasoptest(chan) (chan->status & CHAN_WASOPTEST)
 #define channel_autovoice(chan) (chan->status & CHAN_AUTOVOICE)
 #define channel_greet(chan) (chan->status & CHAN_GREET)
 #define channel_logstatus(chan) (chan->status & CHAN_LOGSTATUS)
@@ -243,7 +239,6 @@ struct chanset_t *findchan_by_dname(char *name);
 #define channel_protectops(chan) (chan->status & CHAN_PROTECTOPS)
 #define channel_protectfriends(chan) (chan->status & CHAN_PROTECTFRIENDS)
 #define channel_dontkickops(chan) (chan->status & CHAN_DONTKICKOPS)
-#define channel_stopnethack(chan) (chan->status & CHAN_STOPNETHACK)
 #define channel_secret(chan) (chan->status & CHAN_SECRET)
 #define channel_shared(chan) (chan->status & CHAN_SHARED)
 #define channel_static(chan) (chan->status & CHAN_STATIC)

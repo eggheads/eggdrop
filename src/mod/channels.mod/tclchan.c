@@ -1,7 +1,7 @@
 /* 
  * tclchan.c -- part of channels.mod
  * 
- * $Id: tclchan.c,v 1.21 2000/01/07 21:43:57 fabian Exp $
+ * $Id: tclchan.c,v 1.22 2000/01/17 22:14:00 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -749,6 +749,8 @@ static int tcl_channel_info(Tcl_Interp * irp, struct chanset_t *chan)
   Tcl_AppendElement(irp, s);
   simple_sprintf(s, "%d", chan->idle_kick);
   Tcl_AppendElement(irp, s);
+  simple_sprintf(s, "%d", chan->stopnethack_mode);
+  Tcl_AppendElement(irp, s);
   Tcl_AppendElement(irp, chan->need_op);
   Tcl_AppendElement(irp, chan->need_invite);
   Tcl_AppendElement(irp, chan->need_key);
@@ -806,10 +808,6 @@ static int tcl_channel_info(Tcl_Interp * irp, struct chanset_t *chan)
     Tcl_AppendElement(irp, "+dontkickops");
   else
     Tcl_AppendElement(irp, "-dontkickops");
-  if (chan->status & CHAN_WASOPTEST)
-    Tcl_AppendElement(irp, "+wasoptest");
-  else
-    Tcl_AppendElement(irp, "-wasoptest");
   if (chan->status& CHAN_INACTIVE)
     Tcl_AppendElement(irp, "+inactive");
   else
@@ -818,10 +816,6 @@ static int tcl_channel_info(Tcl_Interp * irp, struct chanset_t *chan)
     Tcl_AppendElement(irp, "+statuslog");
   else
     Tcl_AppendElement(irp, "-statuslog");
-  if (chan->status & CHAN_STOPNETHACK)
-    Tcl_AppendElement(irp, "+stopnethack");
-  else
-    Tcl_AppendElement(irp, "-stopnethack");
   if (chan->status & CHAN_REVENGE)
     Tcl_AppendElement(irp, "+revenge");
   else
@@ -1013,6 +1007,15 @@ static int tcl_channel_modify(Tcl_Interp * irp, struct chanset_t *chan,
       chan->idle_kick = atoi(item[i]);
     } else if (!strcmp(item[i], "dont-idle-kick"))
       chan->idle_kick = 0;
+    else if (!strcmp(item[i], "stopnethack-mode")) {
+      i++;
+      if (i >= items) {
+	if (irp)
+	  Tcl_AppendResult(irp, "channel stopnethack-mode needs argument", NULL);
+	return TCL_ERROR;
+      }
+      chan->stopnethack_mode = atoi(item[i]);
+    }
     else if (!strcmp(item[i], "+clearbans"))
       chan->status |= CHAN_CLEARBANS;
     else if (!strcmp(item[i], "-clearbans"))
@@ -1057,10 +1060,6 @@ static int tcl_channel_modify(Tcl_Interp * irp, struct chanset_t *chan,
       chan->status |= CHAN_DONTKICKOPS;
     else if (!strcmp(item[i], "-dontkickops"))
       chan->status &= ~CHAN_DONTKICKOPS;
-    else if (!strcmp(item[i], "+wasoptest"))
-      chan->status |= CHAN_WASOPTEST;
-    else if (!strcmp(item[i], "-wasoptest"))
-      chan->status &= ~CHAN_WASOPTEST;
     else if (!strcmp(item[i], "+inactive"))
       chan->status |= CHAN_INACTIVE;
     else if (!strcmp(item[i], "-inactive"))
@@ -1069,10 +1068,6 @@ static int tcl_channel_modify(Tcl_Interp * irp, struct chanset_t *chan,
       chan->status |= CHAN_LOGSTATUS;
     else if (!strcmp(item[i], "-statuslog"))
       chan->status &= ~CHAN_LOGSTATUS;
-    else if (!strcmp(item[i], "+stopnethack"))
-      chan->status |= CHAN_STOPNETHACK;
-    else if (!strcmp(item[i], "-stopnethack"))
-      chan->status &= ~CHAN_STOPNETHACK;
     else if (!strcmp(item[i], "+revenge"))
       chan->status |= CHAN_REVENGE;
     else if (!strcmp(item[i], "-revenge"))

@@ -2,7 +2,7 @@
  * cmdschan.c -- part of channels.mod
  *   commands from a user via dcc that cause server interaction
  * 
- * $Id: cmdschan.c,v 1.16 2000/01/07 21:43:57 fabian Exp $
+ * $Id: cmdschan.c,v 1.17 2000/01/17 22:13:59 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1207,6 +1207,10 @@ static void cmd_chaninfo(struct userrec *u, int idx, char *par)
       dprintf(idx, "Idle Kick after (idle-kick): %d\n", chan->idle_kick);
     else
       dprintf(idx, "Idle Kick after (idle-kick): DONT!\n");
+    if (chan->stopnethack_mode)
+      dprintf(idx, "stopnethack-mode: %d\n", chan->stopnethack_mode);
+    else
+      dprintf(idx, "stopnethack: DONT!\n");
     /* Only bot owners can see/change these (they're TCL commands) */
     if (u->flags & USER_OWNER) {
       if (chan->need_op[0])
@@ -1231,9 +1235,8 @@ static void cmd_chaninfo(struct userrec *u, int idx, char *par)
 	    (chan->status & CHAN_BITCH) ? '+' : '-',
 	    (chan->status & CHAN_GREET) ? '+' : '-',
 	    (chan->status & CHAN_PROTECTOPS) ? '+' : '-');
-    dprintf(idx, "     %cstatuslog  %cstopnethack  %crevenge      %csecret\n",
+    dprintf(idx, "     %cstatuslog  %crevenge      %csecret\n",
 	    (chan->status & CHAN_LOGSTATUS) ? '+' : '-',
-	    (chan->status & CHAN_STOPNETHACK) ? '+' : '-',
 	    (chan->status & CHAN_REVENGE) ? '+' : '-',
 	    (chan->status & CHAN_SECRET) ? '+' : '-');
     dprintf(idx, "     %cshared     %cautovoice    %ccycle        %cseen\n",
@@ -1241,9 +1244,8 @@ static void cmd_chaninfo(struct userrec *u, int idx, char *par)
 	    (chan->status & CHAN_AUTOVOICE) ? '+' : '-',
 	    (chan->status & CHAN_CYCLE) ? '+' : '-',
 	    (chan->status & CHAN_SEEN) ? '+' : '-');
-    dprintf(idx, "     %cdontkickops              %cwasoptest    %cinactive\n",
+    dprintf(idx, "     %cdontkickops              %cinactive\n",
 	    (chan->status & CHAN_DONTKICKOPS) ? '+' : '-',
-	    (chan->status & CHAN_WASOPTEST) ? '+' : '-',
 	    (chan->status & CHAN_INACTIVE) ? '+' : '-');
     dprintf(idx, "     %cdynamicexempts           %cuserexempts\n",
 	    (chan->ircnet_status & CHAN_DYNAMICEXEMPTS) ? '+' : '-',

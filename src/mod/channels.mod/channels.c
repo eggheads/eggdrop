@@ -2,7 +2,7 @@
  * channels.c -- part of channels.mod
  *   support for channels within the bot
  * 
- * $Id: channels.c,v 1.21 2000/01/07 21:43:57 fabian Exp $
+ * $Id: channels.c,v 1.22 2000/01/17 22:13:59 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -47,8 +47,8 @@ static struct udef_struct *udef	= NULL;
 /* Global channel settings (drummer/dw) */
 static char glob_chanset[512]	= "\
 -clearbans -enforcebans +dynamicbans +userbans -autoop -bitch +greet \
-+protectops +statuslog +stopnethack -revenge -secret -autovoice +cycle \
-+dontkickops -wasoptest -inactive -protectfriends +shared -seen \
++protectops +statuslog -revenge -secret -autovoice +cycle \
++dontkickops -inactive -protectfriends +shared -seen \
 +userexempts +dynamicexempts +userinvites +dynamicinvites -revengebot \
 -nodesynch ";
 /* DO NOT remove the extra space at the end of the string! */
@@ -378,13 +378,13 @@ static void write_channels()
     convert_element(chan->need_key, need3);
     convert_element(chan->need_unban, need4);
     convert_element(chan->need_limit, need5);
-    fprintf(f, "channel %s %s%schanmode %s idle-kick %d \
+    fprintf(f, "channel %s %s%schanmode %s idle-kick %d stopnethack-mode %d \
 need-op %s need-invite %s need-key %s need-unban %s need-limit %s \
 flood-chan %d:%d flood-ctcp %d:%d flood-join %d:%d \
 flood-kick %d:%d flood-deop %d:%d flood-nick %d:%d \
 %cclearbans %cenforcebans %cdynamicbans %cuserbans %cautoop %cbitch \
-%cgreet %cprotectops %cprotectfriends %cdontkickops %cwasoptest \
-%cstatuslog %cstopnethack %crevenge %crevengebot %cautovoice %csecret \
+%cgreet %cprotectops %cprotectfriends %cdontkickops \
+%cstatuslog %crevenge %crevengebot %cautovoice %csecret \
 %cshared %ccycle %cseen %cinactive %cdynamicexempts %cuserexempts \
 %cdynamicinvites %cuserinvites %cnodesynch ",
 	channel_static(chan) ? "set" : "add",
@@ -392,6 +392,7 @@ flood-kick %d:%d flood-deop %d:%d flood-nick %d:%d \
 	channel_static(chan) ? " " : " { ",
 	w2,
 	chan->idle_kick, /* idle-kick 0 is same as dont-idle-kick (less code)*/
+	chan->stopnethack_mode,
 	need1, need2, need3, need4, need5,
 	chan->flood_pub_thr, chan->flood_pub_time,
         chan->flood_ctcp_thr, chan->flood_ctcp_time,
@@ -409,9 +410,7 @@ flood-kick %d:%d flood-deop %d:%d flood-nick %d:%d \
 	PLSMNS(channel_protectops(chan)),
         PLSMNS(channel_protectfriends(chan)),
 	PLSMNS(channel_dontkickops(chan)),
-	PLSMNS(channel_wasoptest(chan)),
 	PLSMNS(channel_logstatus(chan)),
-	PLSMNS(channel_stopnethack(chan)),
 	PLSMNS(channel_revenge(chan)),
 	PLSMNS(channel_revengebot(chan)),
 	PLSMNS(channel_autovoice(chan)),
@@ -594,14 +593,10 @@ static void channels_report(int idx, int details)
           i += my_strcpy(s + i, "protect-friends ");
 	if (channel_dontkickops(chan))
 	  i += my_strcpy(s + i, "dont-kick-ops ");
-	if (channel_wasoptest(chan))
-	  i += my_strcpy(s + i, "was-op-test ");
 	if (channel_logstatus(chan))
 	  i += my_strcpy(s + i, "log-status ");
 	if (channel_revenge(chan))
 	  i += my_strcpy(s + i, "revenge ");
-	if (channel_stopnethack(chan))
-	  i += my_strcpy(s + i, "stopnethack ");
 	if (channel_secret(chan))
 	  i += my_strcpy(s + i, "secret ");
 	if (channel_shared(chan))
@@ -642,6 +637,9 @@ static void channels_report(int idx, int details)
 	if (chan->idle_kick)
 	  dprintf(idx, "      Kicking idle users after %d min\n",
 		  chan->idle_kick);
+	if (chan->stopnethack_mode)
+	  dprintf(idx, "      stopnethack-mode %d\n",
+		  chan->stopnethack_mode);
       }
     }
     chan = chan->next;

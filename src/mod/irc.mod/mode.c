@@ -4,7 +4,7 @@
  *   channel mode changes and the bot's reaction to them
  *   setting and getting the current wanted channel modes
  * 
- * $Id: mode.c,v 1.16 2000/01/01 19:22:33 fabian Exp $
+ * $Id: mode.c,v 1.17 2000/01/17 22:14:00 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -359,6 +359,7 @@ static void got_op(struct chanset_t *chan, char *nick, char *from,
   char s[UHOSTLEN];
   struct userrec *u;
   int check_chan = 0;
+  int snm = chan->stopnethack_mode;
 
   m = ismember(chan, who);
   if (!m) {
@@ -417,15 +418,22 @@ static void got_op(struct chanset_t *chan, char *nick, char *from,
     if (chan_deop(victim) || (glob_deop(victim) && !chan_op(victim))) {
       m->flags |= FAKEOP;
       add_mode(chan, '-', 'o', who);
-    } else if (channel_stopnethack(chan)) {
-      if ((chan_wasoptest(victim) || glob_wasoptest(victim) ||
-      channel_wasoptest(chan)) && (!(m->delay))) {
+    } else if (snm > 0 && snm < 7 && !(m->delay)) {
+      if (snm == 5) snm = channel_bitch(chan) ? 1 : 3;
+      if (snm == 6) snm = channel_bitch(chan) ? 4 : 2;
+      if (chan_wasoptest(victim) || glob_wasoptest(victim) ||
+      snm == 2) {
         if (!chan_wasop(m)) {
           m->flags |= FAKEOP;
           add_mode(chan, '-', 'o', who);
         }
       } else if (!(chan_op(victim) ||
 		 (glob_op(victim) && !chan_deop(victim)))) {
+		  if (snm == 1 || snm == 4 || (snm == 3 && !chan_wasop(m))) {
+		    add_mode(chan, '-', 'o', who);
+		    m->flags |= FAKEOP;
+        }
+      } else if (snm == 4 && !chan_wasop(m)) {
         add_mode(chan, '-', 'o', who);
         m->flags |= FAKEOP;
       }

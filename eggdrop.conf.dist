@@ -1,7 +1,7 @@
 #! /path/to/eggdrop
 # ^- set that to the directory eggdrop is in ie "#! /users/lamest/egg/eggdrop"
 #
-# $Id: eggdrop.conf.dist,v 1.18 2000/01/09 14:36:53 fabian Exp $
+# $Id: eggdrop.conf.dist,v 1.19 2000/01/17 22:13:59 fabian Exp $
 #
 # This is a sample configuration file for your bot.  You will definitely
 # want to edit this, to set up your bot.  Right now it creates a bot called
@@ -455,10 +455,9 @@ set global-chanset {
         +dynamicbans    +userbans
         -autoop         -bitch
         +greet          +protectops
-        +statuslog      +stopnethack
-        -revenge        -secret
-        -autovoice      +cycle
-        +dontkickops    -wasoptest
+        +statuslog      -revenge
+        -secret         -autovoice
+        +cycle          +dontkickops
         -inactive       -protectfriends
         +shared         -seen
 	+userexempts	+dynamicexempts
@@ -475,6 +474,7 @@ set global-chanmode "nt"
 channel add #lamest {
   chanmode "+nt-likm"
   idle-kick 0
+  stopnethack-mode 0
   need-op { putserv "PRIVMSG #lamest :op me cos i'm lame!" }
   need-invite { putserv "PRIVMSG #lamest :let me in!" }
   need-key { putserv "PRIVMSG #lamest :let me in!" }
@@ -497,6 +497,19 @@ channel add #lamest {
 # idle-kick
 #   kick channel members after how many minutes of being idle?
 #   (leave out to disable, or set to 0)
+
+#   stopnethack-mode
+#     de-op anyone who enters the channel with serverops
+#       0 turn off,
+#       1 isoptest (allow serverop if registered op), 
+#       2 wasoptest (allow serverop if op before split)
+#       3 allow serverop if isop or wasop
+#       4 allow serverop if isop and wasop
+#       5 if channel -bitch: see stopnethack-mode 3
+#         if channel +bitch: see stopnethack-mode 1
+#       6 if channel -bitch: see stopnethack-mode 2
+#         if channel +bitch: see stopnethack-mode 4
+
 # need-op
 #   script to run (if any) when the bot needs to be op'd on this channel
 # need-invite
@@ -597,10 +610,6 @@ channel set #lamest +protectfriends
 #   it's annoying; i think it's neat)
 channel set #lamest +statuslog
 
-#   de-op someone that enters the channel with server ops (ie, netsplit
-#   ops) when they didn't have them before the split?
-channel set #lamest +stopnethack
-
 #   remember people who deop/kick/ban the bot or valid ops, and punish them?
 #   users with +f (friend) flag are exempt from revenge
 channel set #lamest +revenge
@@ -622,10 +631,6 @@ channel set #lamest +cycle
 #   letting them kick-flood for instance, to protect the channel agaisnt
 #   clone attacks
 channel set #lamest +dontkickops
-
-#   during net-rejoins does a wasop test for +stopnethack (same as +w user
-#   flag, but affects a whole channel)
-channel set #lamest -wasoptest
 
 #   prevents the bot from joining the channel (or makes it leave the channel
 #   if it is already there).
