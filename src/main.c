@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  * 
- * $Id: main.c,v 1.51 2001/01/31 05:32:31 guppy Exp $
+ * $Id: main.c,v 1.52 2001/01/31 05:34:23 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -117,7 +117,7 @@ char	egg_xtra[2048];		/* Patch info */
 int	use_stderr = 1;		/* Send stuff to stderr instead of logfiles? */
 int	do_restart = 0;		/* .restart has been called, restart asap */
 int	die_on_sighup = 0;	/* die if bot receives SIGHUP */
-int	die_on_sigterm = 0;	/* die if bot receives SIGTERM */
+int	die_on_sigterm = 1;	/* die if bot receives SIGTERM */
 int	resolve_timeout = 15;	/* hostname/address lookup timeout */
 time_t	now;			/* duh, now :) */
 
