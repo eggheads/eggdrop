@@ -16,30 +16,28 @@ dnl You should have received a copy of the GNU General Public License
 dnl along with this program; if not, write to the Free Software
 dnl Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 dnl
-dnl $Id: aclocal.m4,v 1.83 2004/01/13 10:04:44 wcc Exp $
+dnl $Id: aclocal.m4,v 1.84 2004/01/18 02:11:39 wcc Exp $
 dnl
 
-dnl  EGG_MSG_CONFIGURE_START()
-dnl
-AC_DEFUN(EGG_MSG_CONFIGURE_START, [dnl
-AC_MSG_RESULT()
-AC_MSG_RESULT([This is Eggdrop's GNU configure script.])
-AC_MSG_RESULT([It's going to run a bunch of tests to hopefully make your compile])
-AC_MSG_RESULT([work without much twiddling.])
-AC_MSG_RESULT()
-])dnl
+dnl EGG_MSG_CONFIGURE_START()
+AC_DEFUN(EGG_MSG_CONFIGURE_START, [
+  AC_MSG_RESULT()
+  AC_MSG_RESULT([This is Eggdrop's GNU configure script.])
+  AC_MSG_RESULT([It's going to run a bunch of tests to hopefully make your compile])
+  AC_MSG_RESULT([work without much twiddling.])
+  AC_MSG_RESULT()
+])
 
 
-dnl  EGG_MSG_CONFIGURE_END()
-dnl
-AC_DEFUN(EGG_MSG_CONFIGURE_END, [dnl
-AC_MSG_RESULT()
-AC_MSG_RESULT([Configure is done.])
-AC_MSG_RESULT()
-AC_MSG_RESULT([Type 'make config' to configure the modules, or type 'make iconfig'])
-AC_MSG_RESULT([to interactively choose which modules to compile.])
-AC_MSG_RESULT()
-])dnl
+dnl EGG_MSG_CONFIGURE_END()
+AC_DEFUN(EGG_MSG_CONFIGURE_END, [
+  AC_MSG_RESULT()
+  AC_MSG_RESULT([Configure is done.])
+  AC_MSG_RESULT()
+  AC_MSG_RESULT([Type 'make config' to configure the modules, or type 'make iconfig'])
+  AC_MSG_RESULT([to interactively choose which modules to compile.])
+  AC_MSG_RESULT()
+])
 
 
 dnl  EGG_CHECK_CC()
@@ -348,8 +346,7 @@ case "$egg_cv_var_system_type" in
       V*)
         # FIXME: we should check this in a separate test
         # Digital OSF uses an ancient version of gawk
-        if test "$AWK" = "gawk"
-        then
+        if test "$AWK" = "gawk"; then
           AWK=awk
         fi
         SHLIB_LD="ld -shared -expect_unresolved \"'*'\""
@@ -358,22 +355,24 @@ case "$egg_cv_var_system_type" in
       ;;
       1.0|1.1|1.2)
         SHLIB_LD="ld -R -export $@:"
+        AC_DEFINE(BROKEN_SNPRINTF, 1, [Define to use Eggdrop's snprintf functions regardless of HAVE_SNPRINTF.])dnl
         AC_DEFINE(MODULES_OK, 1, [Define if modules will work on your system.])dnl
         AC_DEFINE(OSF1_HACKS, 1, [Define if running on OSF/1 platform.])dnl
       ;;
       1.*)
         SHLIB_CC="$CC -fpic"
         SHLIB_LD="ld -shared"
+        AC_DEFINE(BROKEN_SNPRINTF, 1, [Define to use Eggdrop's snprintf functions regardless of HAVE_SNPRINTF.])dnl
         AC_DEFINE(MODULES_OK, 1, [Define if modules will work on your system.])dnl
         AC_DEFINE(OSF1_HACKS, 1, [Define if running on OSF/1 platform.])dnl
       ;;
       *)
+        AC_DEFINE(BROKEN_SNPRINTF, 1, [Define to use Eggdrop's snprintf functions regardless of HAVE_SNPRINTF.])dnl
         NEED_DL=0
         DEFAULT_MAKE=static
       ;;
     esac
     AC_DEFINE(STOP_UAC, 1, [Define if running on OSF/1 platform.])dnl
-    AC_DEFINE(BROKEN_SNPRINTF, 1, [Define to use Eggdrop's snprintf functions regardless of HAVE_SNPRINTF.])dnl
   ;;
   SunOS)
     if test "`echo $egg_cv_var_system_release | cut -d . -f 1`" = "5"

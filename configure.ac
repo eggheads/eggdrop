@@ -1,12 +1,12 @@
 dnl configure.ac: this file is processed by autoconf to produce ./configure.
 dnl
-dnl $Id: configure.ac,v 1.3 2004/01/12 07:49:17 wcc Exp $
+dnl $Id: configure.ac,v 1.4 2004/01/18 02:11:39 wcc Exp $
 dnl
 
 AC_PREREQ(2.59)
 AC_INIT([Eggdrop],[1.6.16],[bugs@eggheads.org])
 AC_COPYRIGHT([Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004 Eggheads Development Team])
-AC_REVISION($Revision: 1.3 $)
+AC_REVISION($Revision: 1.4 $)
 AC_CONFIG_SRCDIR(src/eggdrop.h)
 AC_CONFIG_AUX_DIR(misc)
 AC_CONFIG_HEADER(config.h)
@@ -92,7 +92,8 @@ tcllibextensions=".so .so.1 .so.1.0 .so.1.2 .a .sl .dll .dylib"
 # Tcl library search paths
 tcllibpaths="/usr/local/lib /usr/local/pkgs/tcl/lib \
 	/usr/lib /lib /usr/i486-linuxaout/lib \
-	/beos/system/lib /sys/lib $HOME/lib $HOME/tcl/lib $HOME"
+	/beos/system/lib /sys/lib /usr/local/lib/tcl8.3 /usr/local/lib/tcl8.4 \
+        /usr/lib/tcl8.3 /usr/lib/tcl8.4 $HOME/lib $HOME/tcl/lib $HOME"
 
 # Tcl header filenames
 tclheadernames="tcl.h"
@@ -100,7 +101,9 @@ tclheadernames="tcl.h"
 # Tcl header search paths
 tclheaderpaths="/usr/local/include /usr/local/pkgs/tcl/include \
 	/usr/include /beos/system/include /beos/devel/include \
-	/sys/include $HOME/include $HOME/tcl/include $HOME"
+	/sys/include /usr/local/include/tcl8.3 /usr/local/include/tcl8.4 \
+        /usr/include/tcl8.3 /usr/include/tcl8.4 $HOME/include \
+        $HOME/tcl/include $HOME"
 
 EGG_TCL_ARG_WITH
 EGG_TCL_ENV

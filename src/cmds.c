@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  *
- * $Id: cmds.c,v 1.105 2004/01/09 05:56:36 wcc Exp $
+ * $Id: cmds.c,v 1.106 2004/01/18 02:11:39 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -2798,7 +2798,7 @@ cmd_t C_dcc[] = {
   {"strip",     "",     (Function) cmd_strip,      NULL},
   {"su",        "",     (Function) cmd_su,         NULL},
   {"tcl",       "n",    (Function) cmd_tcl,        NULL},
-  {"trace",     "",     (Function) cmd_trace,      NULL},
+  {"trace",     "t",    (Function) cmd_trace,      NULL},
   {"unlink",    "t",    (Function) cmd_unlink,     NULL},
   {"unloadmod", "n",    (Function) cmd_unloadmod,  NULL},
   {"uptime",    "m|m",  (Function) cmd_uptime,     NULL},
