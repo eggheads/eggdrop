@@ -14,6 +14,8 @@ exec tclsh "$0" "$@"
 #  21Feb99: added '-5' '-10' '-15' '-30' to allow people to
 #           use a diff time value then 10 minutes.
 #  10May99: to be compatible, don't use */XX's, etc (Ernst)
+#  23Oct99: updated the internal botchk to reflect Tothwolf's
+#           changes in the eggdrop copy.
 #
 # how to use
 # ----------
@@ -52,7 +54,7 @@ if {$argc == 0} {
  puts " -30      (30 minute checks)\n\n"
  exit
 } {
- puts "\nAutoBotchk 1.06p1, (C)1999 Jeff Fisher (guppy@eggheads.org)"
+ puts "\nAutoBotchk 1.07, (C)1999 Jeff Fisher (guppy@eggheads.org)"
  puts "----------------------------------------------------------"
 
  set x [join [lindex [split $argv] 0]]
@@ -139,58 +141,109 @@ if {$argc == 0} {
   puts "      !! without this, this program is useless\n\n"
   exit
  }
- puts $fd "#! /bin/sh\n#"
- puts $fd "# Created on: [clock format [clock seconds] -format "%B %d, %Y @ %I:%M%p"]"
- puts $fd "# Created by: AutoBotchk 1.05 (C)1999 Jeff Fisher\n#"
- puts $fd "# (this is basically botchk from scripts/, credits to the author(s)\n#"
- puts $fd "\n# Directory the Eggdrop runs from:"
- puts $fd "botdir=\"$dir\""
- puts $fd "\n# Name of our configuration file (including the binary):"
- puts $fd "botscript=\"eggdrop $x\""
- puts $fd "\n# Eggdrop's nickname (capitalization COUNTS):"
- puts $fd "botname=\"${botnet-nick}\""
- puts $fd "\n# Eggdrop's userfile (capitalization COUNTS):"
- puts $fd "userfile=\"$userfile\""
- puts $fd "\n########## Edit before here if you want, but you shouldn't need too ##########"
- puts $fd "\ncd \$botdir"
- puts $fd "if test -r pid.\$botname; then"
- puts $fd "  # there is a pid file -- is it current?"
- puts $fd "  botpid=`cat pid.\$botname`"
- puts $fd "  if `kill -CHLD \$botpid >/dev/null 2>&1`; then"
- puts $fd "    # it's still going"
- puts $fd "    # back out quietly"
- puts $fd "    exit 0"
- puts $fd "  fi"
- puts $fd "  echo \"\""
- puts $fd "  echo \"Stale pid.\$botname file (erasing it)\""
- puts $fd "  rm -f pid.\$botname"
- puts $fd "fi"
- puts $fd "echo \"\""
- puts $fd "echo \"Couldn't find the bot running.  Reloading it...\""
- puts $fd "echo \"\""
- puts $fd "# Check for userfile first"
- puts $fd "if test -r \$userfile; then"
- puts $fd "  # It's there, load the bot"
- puts $fd "  ./\$botscript"
- puts $fd "  exit 0"
- puts $fd "fi"
- puts $fd "if test -r \$userfile~new; then"
- puts $fd "  # Bot f*@!ed up while saving the userfile last time.  Move it over."
- puts $fd "  echo \"Userfile missing.  Using last saved userfile...\""
- puts $fd "  mv \$userfile~new \$userfile"
- puts $fd "  ./\$botscript"
- puts $fd "  exit 0"
- puts $fd "fi"
- puts $fd "if test -r \$userfile~bak; then"
- puts $fd "  # Userfile is missing, use backup userfile."
- puts $fd "  echo \"Userfile missing.  Using backup userfile...\""
- puts $fd "  cp \$userfile~bak \$userfile"
- puts $fd "  ./\$botscript"
- puts $fd "  exit 0"
- puts $fd "fi"
- puts $fd "# Well, nothing to work with..."
- puts $fd "echo \"No userfile.  Could not reload the bot..\""
- puts $fd "exit 0"
+ puts $fd "
+#! /bin/sh
+#
+# new botchk  (for eggdrop 1.1+)
+#
+# Created on: [clock format [clock seconds] -format "%B %d, %Y @ %I:%M%p"]
+# Created by: AutoBotchk 1.07 (C)1999 Jeff Fisher
+#
+# This is a script suitable for use in a crontab.  It checks to make sure
+# your bot is running.  YOU NEED A SEPARATE CRON JOB FOR EACH BOT.  If your
+# bot isn't found, it'll try to start it back up.
+#
+# You'll need to edit this script for your bot.
+#
+# To check for your bot every 10 minutes, put the following line in your
+# crontab:
+#    0,10,20,30,40,50 * * * *   /home/mydir/botchk
+# And if you don't want to get email from crontab when it checks you bot,
+# put the following in your crontab:
+#    0,10,20,30,40,50 * * * *   /home/mydir/botchk >/dev/null 2>&1
+#
+
+# change this to the directory you run your bot from:
+botdir=\"$dir\"
+
+# change this to the name of your bot's script in that directory:
+botscript=\"eggdrop $x\"
+
+# change this to the nickname of your bot (capitalization COUNTS)
+botname=\"${botnet-nick}\"
+
+# change this to the name of your bot's userfile (capitalization COUNTS)
+userfile=\"$userfile\"
+
+########## you probably don't need to change anything below here ##########
+
+cd \$botdir
+
+# is there a pid file?
+if test -r pid.\$botname
+then
+  # there is a pid file -- is it current?
+  botpid=`cat pid.\$botname`
+  if `kill -CHLD \$botpid >/dev/null 2>&1`
+  then
+    # it's still going -- back out quietly
+    exit 0
+  fi
+  echo \"\"
+  echo \"Stale pid.\$botname file, erasing...\"
+  rm -f pid.\$botname
+fi
+
+if test -r CANTSTART.\$botname
+then
+  if test -r \$userfile || test -r \$userfile~new || test -r \$userfile~bak
+  then
+    echo \"\"
+    echo \"Userfile found, removing check file 'CANTSTART.\$botname'...\"
+    rm -f CANTSTART.\$botname
+  fi
+fi
+
+# test if we have run botchk previously and didn't find a userfile
+if test ! -f CANTSTART.\$botname
+then
+  echo \"\"
+  echo \"Couldn't find bot '\$botname' running, reloading...\"
+  echo \"\"
+  # check for userfile and reload bot if found
+  if test -r \$userfile
+  then
+    # It's there, load the bot
+    ./\$botscript
+    exit 0
+  else
+    if test -r \$userfile~new
+    then
+      # Bot f*@!ed up while saving the userfile last time.  Move it over.
+      echo \"Userfile missing.  Using last saved userfile...\"
+      mv -f \$userfile~new \$userfile
+      ./\$botscript
+      exit 0
+    else
+      if test -r \$userfile~bak
+      then
+        # Userfile is missing, use backup userfile.
+        echo \"Userfile missing.  Using backup userfile...\"
+        cp -f \$userfile~bak \$userfile
+        ./\$botscript
+        exit 0
+      else
+        # Well, nothing to work with...
+        echo \"No userfile.  Could not reload the bot...\"
+        echo \"no userfile\" > CANTSTART.\$botname
+        exit 1
+      fi
+    fi
+  fi
+fi
+
+exit 0
+ "
  close $fd
  puts " *** Wrote '${botnet-nick}.botchk' successfully ([file size $dir/${botnet-nick}.botchk] bytes)"
  if {[catch {exec chmod u+x $dir/${botnet-nick}.botchk} 0]} {
@@ -235,8 +288,9 @@ if {$argc == 0} {
   exit
  }
  catch {exec rm -rf $tmp} 0
- puts "      !! crontab reloaded\n\n"
+ puts "      !! crontab reloaded"
+ puts ""
  puts "      !! Use 'crontab -r' to remove all your crontab entries"
- puts "      !!     'crontab -l' to view the current crontabs"
+ puts "      !!     'crontab -l' to view the current crontabs\n\n"
  exit
 }
