@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  * 
- * $Id: server.c,v 1.57 2000/10/27 19:34:55 fabian Exp $
+ * $Id: server.c,v 1.58 2000/11/03 17:05:47 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -393,7 +393,7 @@ static int fast_deq(int which)
   struct msgq *m, *nm;
   char msgstr[511], nextmsgstr[511], tosend[511], victims[511], stackable[511],
        *msg, *nextmsg, *cmd, *nextcmd, *to, *nextto, *stckbl;
-  int len, doit = 0, found = 0;
+  int len, doit = 0, found = 0, who_count =0;
 
   Context;
   if (!use_fastdeq)
@@ -449,7 +449,11 @@ static int fast_deq(int which)
     if (nextto[len - 1] == '\n')
       nextto[len - 1] = 0;
     if (!strcmp(cmd, nextcmd) && !strcmp(msg, nextmsg)
-        && ((strlen(cmd) + strlen(victims) + strlen(nextto) + strlen(msg) + 2) < 510)) {
+        && ((strlen(cmd) + strlen(victims) + strlen(nextto)
+	     + strlen(msg) + 2) < 510)
+        && (egg_strcasecmp(cmd, "WHO") || who_count < MAXPENALTY - 1)) {
+      if (!egg_strcasecmp(cmd, "WHO"))
+        who_count++;
       simple_sprintf(victims, "%s,%s", victims, nextto);
       doit = 1;
       m->next = nm->next;
