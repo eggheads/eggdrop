@@ -1,7 +1,7 @@
 /*
  * snprintf.c - a portable implementation of snprintf and vsnprintf
  *
- * $Id: snprintf.c,v 1.11 2003/02/28 04:01:36 wcc Exp $
+ * $Id: snprintf.c,v 1.12 2003/03/04 07:01:08 wcc Exp $
  */
 /*
  * Portions Copyright (C) 2000, 2001, 2002, 2003 Eggheads Development Team
@@ -86,7 +86,7 @@
 #include <ctype.h>
 #include <sys/types.h>
 
-#ifndef HAVE_VSNPRINTF
+#if !defined(HAVE_VSNPRINTF) || defined(DONT_USE_SNPRINTFS)
 
 /* varargs declarations: */
 
