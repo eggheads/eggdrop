@@ -2,7 +2,7 @@
  * irc.c -- part of irc.mod
  *   support for channels within the bot
  *
- * $Id: irc.c,v 1.94 2003/11/27 03:25:10 wcc Exp $
+ * $Id: irc.c,v 1.95 2003/11/27 05:45:06 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -25,12 +25,14 @@
 
 #define MODULE_NAME "irc"
 #define MAKING_IRC
+
 #include "src/mod/module.h"
 #include "irc.h"
 #include "server.mod/server.h"
 #include "channels.mod/channels.h"
+
 #ifdef HAVE_UNAME
-#include <sys/utsname.h>
+# include <sys/utsname.h>
 #endif
 
 static p_tcl_bind_list H_topc, H_splt, H_sign, H_rejn, H_part, H_pub, H_pubm;
@@ -949,7 +951,7 @@ static void irc_report(int idx, int details)
                          p ? p : "", p ? ")" : "");
       if ((k + l) > 70) {
         dprintf(idx, "    %s\n", q);
-        strcpy(q, "           ");
+        strcpy(q, "            ");
         k = 10;
       }
       k += my_strcpy(q + k, ch);

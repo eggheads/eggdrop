@@ -7,7 +7,7 @@
  *   telling the current programmed settings
  *   initializing a lot of stuff and loading the tcl scripts
  *
- * $Id: chanprog.c,v 1.44 2003/11/27 05:10:30 wcc Exp $
+ * $Id: chanprog.c,v 1.45 2003/11/27 05:45:06 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -277,11 +277,11 @@ void tell_verbose_status(int idx)
   if (!uname(&un) < 0) {
 #endif
     vers_t = " ";
-    uni_t = "*unknown*";
+    uni_t  = "*unknown*";
 #ifdef HAVE_UNAME
   } else {
     vers_t = un.release;
-    uni_t = un.sysname;
+    uni_t  = un.sysname;
   }
 #endif
 

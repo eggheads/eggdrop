@@ -2,7 +2,7 @@
  * msgcmds.c -- part of irc.mod
  *   all commands entered via /MSG
  *
- * $Id: msgcmds.c,v 1.44 2003/11/27 05:17:02 wcc Exp $
+ * $Id: msgcmds.c,v 1.45 2003/11/27 05:45:06 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -787,7 +787,7 @@ static int msg_invite(char *nick, char *host, struct userrec *u, char *par)
 
 static int msg_status(char *nick, char *host, struct userrec *u, char *par)
 {
-  char s[256], *ve_t, *un_t, *pass;
+  char s[256], *vers_t, *uni_t, *pass;
   int i;
   struct chanset_t *chan;
   time_t now2 = now - online_since, hr, min;
@@ -795,14 +795,14 @@ static int msg_status(char *nick, char *host, struct userrec *u, char *par)
 #ifdef HAVE_UNAME
   struct utsname un;
 
-  if (uname(&un) >= 0) {
+  if (!uname(&un) < 0) {
 #endif
-    ve_t = " ";
-    un_t = "*unknown*";
+    vers_t = " ";
+    uni_t  = "*unknown*";
 #ifdef HAVE_UNAME
   } else {
-    ve_t = un.release;
-    un_t = un.sysname;
+    vers_t = un.release;
+    uni_t  = un.sysname;
   }
 #endif
 
@@ -826,7 +826,7 @@ static int msg_status(char *nick, char *host, struct userrec *u, char *par)
 
   i = count_users(userlist);
   dprintf(DP_HELP, "NOTICE %s :I am %s, running %s: %d user%s  (mem: %uk).\n",
-          nick, botnetnick, Version, i, i == 1 ? "" : "s",
+          nick, botnetnick, ver, i, i == 1 ? "" : "s",
          (int) (expected_memory() / 1024));
 
   s[0] = 0;
