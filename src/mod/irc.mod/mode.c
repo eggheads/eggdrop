@@ -8,7 +8,7 @@
  * multi-channel, 6feb1996
  * stopped the bot deopping masters and bots in bitch mode, pteron 23Mar1997
  * 
- * $Id: mode.c,v 1.39 2000/06/22 03:45:05 guppy Exp $
+ * $Id: mode.c,v 1.40 2000/07/02 23:41:01 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -280,9 +280,6 @@ static void real_add_mode(struct chanset_t *chan,
 	ok = 1;
     if (!ok)
       flush_mode(chan, NORMAL);	/* full buffer!  flush modes */
-    if ((mode == 'b') && (plus == '+') && channel_enforcebans(chan))
-      enforce_bans(chan);
-/* recheck_channel(chan,0); */
     return;
   }
   /* +k ? store key */
