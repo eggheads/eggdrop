@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  *
- * $Id: main.c,v 1.88 2002/11/23 03:16:55 wcc Exp $
+ * $Id: main.c,v 1.89 2002/12/12 03:42:35 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -95,8 +95,8 @@ int	con_chan = 0;		/* Foreground: constantly display channel
 int	term_z = 0;		/* Foreground: use the terminal as a party
 				   line? */
 char	configfile[121] = "eggdrop.conf"; /* Name of the config file */
-char	helpdir[121];		/* Directory of help files (if used) */
-char	textdir[121] = "";	/* Directory for text files that get dumped */
+char	helpdir[121] = "help/";	/* Directory of help files (if used) */
+char	textdir[121] = "text/";	/* Directory for text files that get dumped */
 int	keep_all_logs = 0;	/* Never erase logfiles, no matter how old
 				   they are? */
 char	logfile_suffix[21] = ".%d%b%Y"; /* Format of logfile suffix. */
