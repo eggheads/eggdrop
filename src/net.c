@@ -2,10 +2,14 @@
  * net.c -- handles:
  *   all raw network i/o
  *
- * $Id: net.c,v 1.74 2005/02/08 00:14:35 tothwolf Exp $
+ * $Id: net.c,v 1.75 2005/02/08 06:51:59 tothwolf Exp $
  */
 /*
- * Copyright (C) 1997 Robey Pointer
+ * This is hereby released into the public domain.
+ * Robey Pointer, robey@netcom.com
+ *
+ * Changes after Feb 23, 1999 Copyright Eggheads Development Team
+ *
  * Copyright (C) 1999 - 2005 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
