@@ -1,5 +1,5 @@
 Eggdrop Module Information
-Last revised: June 05, 2002
+Last revised: November 17, 2002
      _________________________________________________________________
 
                         Eggdrop Module Information
@@ -159,8 +159,7 @@ V. Programming modules
 
          (ii)  #define MAKING_MODULENAME
              You MUST also include this, or else the module won't work.
-             MODULENAME is the name of your module(MODULE_NAME), but in
-             caps.
+             MODULENAME is the name of your module (MODULE_NAME), but in caps.
 
          (iii)  #include "../module.h"
 
@@ -245,7 +244,7 @@ V. Programming modules
             This should tally all memory you allocate/deallocate within
             the module (using nmalloc & nfree) in bytes. It's used by memory
             debugging to track memory faults, and it is used by .status
-            to  total up memory usage.
+            to total up memory usage.
 
        (v) static void MODULE_report (int idx)
             This should provide a relatively short report of the module's
@@ -259,22 +258,22 @@ V. Programming modules
              A good portion of the remaining Eggdrop functions are available,
              check src/mod/module.h for more information.
 
-               void *nmalloc (int a);
+          void   *nmalloc ( int j );
 
-                 - allocates a bytes
+                 - allocates j bytes
 
-               void   nfree (void *a);
+          void   nfree ( void *a );
 
-                 - frees a modmalloc'd block
+                 - frees an nmalloc'd block
 
-               context;
+          context;
 
                  - actually a #define; records the current position in
                    execution (for debugging).  Using context is no longer
                    recommended, because it uses too much resources and a core
                    file provides much more information.
 
-               void   dprintf (int idx,char *format, ... )
+          void   dprintf ( int idx, char *format, ... )
 
                  - just like normal printf; outputs to a dcc/socket/server
 
@@ -288,22 +287,21 @@ V. Programming modules
                      DP_HELP   (send via help queue to server) - use this
                                for mass outputs to users
 
-               int    module_register ( char *module_name,
-                                        Function *function_table,
+          int    module_register ( char *module_name, Function *function_table,
                                         int major, int minor )
 
                  - see above
 
-          const module_entry *module_find ( char *module_name, int major, int minor);
+          const module_entry *module_find ( char *module_name, int major, int minor );
 
                  - look for a module (matching major, >= minor), and return
                    info about it.
 
                    Members of module_entry:
 
-                     char *name; - module name (duh)
-                     int major;   - real major version
-                     int minor;   - real minor version
+                     char *name;      - module name (duh)
+                     int major;       - real major version
+                     int minor;       - real minor version
                      Function *funcs; - function table (see above)
 
           int    module_depend ( char *module_name, char *needed_module,
@@ -314,17 +312,17 @@ V. Programming modules
                    load the required module if it's not already loaded.
                    returns 1 on success
 
-          int    module_undepend ( char *module_name)
+          int    module_undepend ( char *module_name )
 
                  - marks your module (module_name) as no longer needing any
                    of its dependencies
 
-          void   module_rename (char *old_module_name, char *new_module_name)
+          void   module_rename (char *old_module_name, char *new_module_name )
 
-                - renames a module
+                 - renames a module
 
-          void add_hook (int hook_num, Function *funcs)
-          void del_hook (int hook_num, Function *funcs)
+          void   add_hook ( int hook_num, Function *funcs )
+          void   del_hook ( int hook_num, Function *funcs )
 
                  - used for adding removing hooks into Eggdrop code on
                    various events, these functions are called depending
@@ -350,19 +348,19 @@ V. Programming modules
                      HOOK_DIE           - called when Eggdrop is about to die
 
 
-          char *module_load ( char *module_name );
+          char   *module_load ( char *module_name );
 
                  - tries to load the given module; returns 0 on success, or
                    an error message
 
-          char *module_unload ( char *module_name );
+          char   *module_unload ( char *module_name );
 
                  - tries to unload the given module; returns 0 on success, or
                    an error message
 
 
-          void add_tcl_commands(tcl_cmds *tab);
-          void rem_tcl_commands(tcl_cmds *tab);
+          void   add_tcl_commands ( tcl_cmds *tab );
+          void   rem_tcl_commands ( tcl_cmds *tab );
 
                  - provides a quick way to create and remove a list of Tcl
                    commands. the table is in the form:
@@ -372,8 +370,8 @@ V. Programming modules
                    These are normal Tcl commands (as done in tcl*.c).
                    Use { NULL, NULL } to indicate the end of the list.
 
-          void add_tcl_ints(tcl_ints *);
-          void rem_tcl_ints(tcl_ints *);
+          void   add_tcl_ints ( tcl_ints * );
+          void   rem_tcl_ints ( tcl_ints * );
 
                  - provides a way to add/remove links from c variables to Tcl
                    variables (add checks to see if the Tcl variable already
@@ -381,17 +379,17 @@ V. Programming modules
 
                     { char *variable_name, int *variable, int readonly }
 
-                    Use { NULL, NULL, NULL }; to indicate the end of the list.
+                    Use { NULL, NULL, 0 }; to indicate the end of the list.
 
-          void add_tcl_strings(tcl_strings *);
-          void rem_tcl_strings(tcl_strings *);
+          void   add_tcl_strings ( tcl_strings * );
+          void   rem_tcl_strings ( tcl_strings * );
 
                  - provides a way to add/remove links from c strings to Tcl
                    strings (also copies existing Tcl values). the format is:
 
-                    { char * variable_name, char *string, int length, int flags }
+                    { char *variable_name, char *string, int length, int flags }
 
-                    Use { NULL, NULL, NULL, NULL } to indicate the end of the
+                    Use { NULL, NULL, 0, 0 } to indicate the end of the
                     list.
 
                     length: set to 0 if you want a const string.
@@ -400,12 +398,12 @@ V. Programming modules
                             use STR_PROTECT if you want the variable set
                             in the config file, not during normal usage.
 
-          void putlog (int logmode, char *channel, char *format, ... )
+          void   putlog ( int logmode, char *channel, char *format, ... )
 
                  - logs a comment. see src/eggdrop.h for logmodes.
 
-          void add_builtins (p_tcl_hash_list table, cmd_t *cc);
-          void rem_builtins (p_tcl_hash_list table, cmd_t *cc);
+          void   add_builtins ( p_tcl_hash_list table, cmd_t *cc );
+          void   rem_builtins ( p_tcl_hash_list table, cmd_t *cc );
 
                  - the method of adding/remove bindings for Tcl hash tables
 
@@ -413,12 +411,14 @@ V. Programming modules
 
                    cc format:
 
-                    { char *command, char *flags, Function *function }
+                    { char *command, char *flags, Function *function,
+                      char *displayname }
 
                     terminate with { NULL, NULL, NULL, NULL }
 
                     this is EXACTLY like a bind command in Tcl (heck, tcl_bind
-                    calls the same function this does).
+                    calls the same function this does). displayname is what Tcl
+                    sees this function as (in .binds all).
 
                     function is called with exactly the same args as a Tcl
                     binding is (except for dcc, which does include the handle
