@@ -629,12 +629,28 @@ static void cmd_topic(struct userrec *u, int idx, char *par)
 
 static void cmd_resetbans(struct userrec *u, int idx, char *par)
 {
-  struct chanset_t *chan = findchan(dcc[idx].u.chat->con_chan);
+  char *chname;
+  struct chanset_t *chan;
+ 
+  chname = newsplit(&par);
+  rmspace(chname);
 
-  get_user_flagrec(u, &user, dcc[idx].u.chat->con_chan);
-  if (!chan)
-    dprintf(idx, "Invalid console channel.\n");
-  else if (glob_op(user) || chan_op(user)) {
+  if (chname[0]) {
+    chan = findchan(chname);
+    if (!chan) {
+      dprintf(idx, "That channel doesnt exist!\n");
+      return;
+    }
+    get_user_flagrec(u, &user, chname);
+  } else {
+    chan = findchan(dcc[idx].u.chat->con_chan);
+    if (!chan) {
+      dprintf(idx, "Invalid console channel.\n");
+      return; 
+    }
+    get_user_flagrec(u, &user, dcc[idx].u.chat->con_chan);
+  }
+  if (glob_op(user) || chan_op(user)) {
     putlog(LOG_CMDS, "*", "#%s# (%s) resetbans", dcc[idx].nick, chan->name);
     dprintf(idx, "Resetting bans on %s...\n", chan->name);
     resetbans(chan);

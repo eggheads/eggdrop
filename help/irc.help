@@ -32,13 +32,12 @@ see also: adduser, +user, -user
    unfortunately this command used to get a lot of use.  you can omit
    the channel name to make it reset ALL channels.
 %{help=resetbans}%{+o|o}
-###  %bresetbans%b
-   resets the ban list on the channel you're currently viewing in
-   the console.  any bans on the channel that aren't in the ban
-   list (either the global list or the local channel ban list) will
-   be removed, and if there are any bans in the global ban list or
-   channel ban list that are not currently on the channel, they will
-   be added.
+###  %bresetbans%b [channel]
+   resets the bot's ban list for the channel. any bans on the channel 
+   that aren't in the ban list (either the global list or the local
+   channel ban list) will be removed, and if there are any bans in the
+   global ban list or channel ban list that are not currently on the
+   channel, they will be added.
    
 see also: bans, reset, console
 %{help=resetexempts}%{+o|o}
