@@ -1,13 +1,29 @@
-# sentinel.tcl v2.00 (15 July 2000)
-# copyright (c) 1998-2000 by slennox <slennox@egghelp.org>
+# sentinel.tcl v2.50 (19 February 2001)
+# copyright (c) 1998-2001 by slennox <slennox@egghelp.org>
 # slennox's eggdrop page - http://www.egghelp.org/
+#
+# $Id: sentinel.tcl,v 1.2 2001/02/25 07:05:04 guppy Exp $
 #
 # Flood protection system for eggdrop, with integrated BitchX CTCP
 # simulation. This script is designed to provide strong protection for your
 # bot and channels against large floodnets and proxy floods.
 #
+# Note that this script was developed on the eggdrop 1.3, 1.4, and 1.6
+# series and may not work properly on other versions.
+#
 # v2.00 - New standalone release. Contains refinements and features from
 #         the netbots.tcl version of sentinel.tcl.
+# v2.50 - Locktimes of less than 30 were erroneously allowed.
+#         putquick -next is now supported (eggdrop 1.5+) for faster channel
+#         lock.
+#         Ban mechanism now checks if flooders are coming from the same
+#         domain or ident and performs wildcard bans instead of banning
+#         each IP/host individually.
+#         Added tsunami detection to the avalanche flood detection system.
+#         Variables are now cleared after removing a channel.
+#         Removed unnecessary botonchan checks throughout components where
+#         botisop already checks for that.
+#         Removed all unnecessary use of parentheses.
 #
 # sentinel.tcl is centered around its channel lock mechanism. It sets the
 # channel +mi (moderated and invite-only) whenever a substantial flood on
@@ -18,17 +34,19 @@
 # * Channel CTCP floods. This is the most common type of flood, and will
 #   often make users quit from the channel with 'Excess Flood'. A quick
 #   channel lock can prevent this.
-# * Channel join-part floods. A common type of channel flood in which
-#   many floodbots cycle the channel.
+# * Channel join-part floods. A common type of channel flood in which many
+#   floodbots cycle the channel.
 # * Channel nick floods. Nick floods are unique in that they can occur even
 #   after a channel is locked. sentinel has special mechanisms to deal with
 #   this as effectively as possible.
-# * Channel avalanche floods. This type of flood is quite uncommon these
-#   days.
+# * Channel avalanche/tsunami floods. While the avalanche flood is quite
+#   uncommon these days, tsunami floods are often used to seriously lag
+#   mIRC and other clients using control codes (colour, bold, underline,
+#   etc.)
 # * Channel text floods. Not small text floods - but when hundreds of
 #   messages are sent to the channel within a short period. Detected to
-#   prevent the bot from consuming high CPU and getting killed from the
-#   shell.
+#   stop really aggressive text floods and reduce the possibility of the
+#   bot crashing or consuming excessive CPU.
 #
 # sentinel also has additional protection features for the bot and channel:
 #
@@ -42,7 +60,7 @@
 # * Bot MSG flood protection. Protects the bot if it's flooded with MSGs or
 #   MSG commands.
 # * Automatic bans and ignores. During a flood, sentinel will compile a
-#   list of the flooders, and kick-ban them after the channel has been
+#   list of the flooders, then kick-ban them after the channel has been
 #   locked.
 # * BitchX simulation. This has been built-in mainly because you cannot use
 #   a third-party BitchX simulator with sentinel (only one script at a time
@@ -59,7 +77,7 @@
 #   from the channel much sooner than this, but the ban will remain in the
 #   bot's internal ban list until it expires.
 # - For greater protection against large channel floods, I recommend you
-#   also a channel limiter script, such as chanlimit.tcl.
+#   also use a channel limiter script, such as chanlimit.tcl.
 # - Where security is paramount, have one or two bots that aren't running
 #   sentinel.tcl. Since sentinel.tcl is a complex script with many
 #   automated and convenience features, there is a small potential for
@@ -70,18 +88,25 @@
 
 # Bot CTCP flood.
 set sl_bcflood 5:30
+
 # Bot MSG flood.
 set sl_bmflood 6:20
+
 # Channel CTCP flood.
 set sl_ccflood 5:20
-# Channel avalanche flood.
+
+# Channel avalanche/tsunami flood.
 set sl_avflood 6:20
+
 # Channel text flood.
 set sl_txflood 80:30
+
 # Channel bogus username join flood.
 set sl_boflood 4:20
+
 # Channel join-part flood.
 set sl_jflood 6:20
+
 # Channel nick flood.
 set sl_nkflood 6:20
 
@@ -89,14 +114,25 @@ set sl_nkflood 6:20
 # - Don't fiddle too much with the seconds field in the flood settings, as
 #   it can reduce the effectiveness of the script. The seconds field should
 #   set in the 20-60 seconds range.
-# - Avalanche flood detection may be CPU intensive on a busy channel, so
-#   you may wish to disable it (perhaps leaving it enabled on one bot).
-#   Disabling text flood protection can further reduce CPU usage.
-# - On bots with avalanche flood detection enabled, it's strongly
-#   recommended that you also enable text flood detection.
+# - Avalanche/tsunmami flood detection may be CPU intensive on a busy
+#   channel, although I don't think it's a big deal on most systems. If
+#   you're concerned about CPU usage you may wish to disable it, perhaps
+#   leaving it enabled on one bot. Disabling text flood protection can
+#   further reduce CPU usage.
+# - On bots with avalanche/tsunami flood detection enabled, it's
+#   recommended that you also enable text flood detection to cap CPU usage
+#   during a flood.
 # - If you enable nick flood detection, it's strongly recommended that it
 #   be enabled on all bots that have sentinel.tcl loaded. This is required
 #   for effective nick flood handling.
+
+# Specify the number of control characters that must be in a line before
+# it's counted by the tsunami flood detector. For efficiency reasons,
+# tsunami detection is implemented with avalanche detection, so sl_avflood
+# must be enabled for tsunami detection to be active. Setting this to 0
+# will disable tsunami detection.
+set sl_tsunami 10
+# Valid settings: 0 to disable, otherwise 1 or higher.
 
 # Length of time in minutes to ban channel flooders. This makes the bot
 # perform kicks and bans on flooders after the channel lock. For the most
@@ -162,7 +198,7 @@ set sl_cfnotice "Channel locked temporarily due to flood, sorry for any inconven
 
 # Notice to send to channel when locked due to full ban list.
 set sl_bfnotice "Channel locked temporarily due to full ban list, sorry for any inconvenience this may cause :-)"
-# Valid settings: can be set to "" to disable.
+# Valid settings: a text string, or set it to "" to disable.
 
 # Enable 'lc' and 'uc' public commands for locking/unlocking channel?
 set sl_lockcmds 2
@@ -183,16 +219,14 @@ set sl_bxsimul 0
 # Don't edit below unless you know what you're doing.
 
 if {$numversion < 1032400} {
-  if {[info commands onchan] != ""} {
-    proc botonchan {chan} {
-      global botnick
-      if {![validchan $chan]} {
-        error "illegal channel: $chan"
-      } elseif {![onchan $botnick $chan]} {
-        return 0
-      }
-      return 1
+  proc botonchan {chan} {
+    global botnick
+    if {![validchan $chan]} {
+      error "illegal channel: $chan"
+    } elseif {![onchan $botnick $chan]} {
+      return 0
     }
+    return 1
   }
   proc putquick {text} {
     putserv $text
@@ -202,10 +236,10 @@ if {$numversion < 1032400} {
 proc sl_ctcp {nick uhost hand dest key arg} {
   global botnet-nick botnick realname sl_ban sl_bflooded sl_bcflood sl_bcqueue sl_bxjointime sl_bxmachine sl_bxonestack sl_bxsimul sl_bxsystem sl_bxversion sl_bxwhoami sl_ccbanhost sl_ccbannick sl_ccflood sl_ccqueue sl_flooded sl_locked sl_note
   set chan [string tolower $dest]
-  if {(([lsearch -exact $sl_ccflood 0] == -1) && ([validchan $chan]) && (![isop $nick $chan]))} {
+  if {[lsearch -exact $sl_ccflood 0] == -1 && [validchan $chan] && ![isop $nick $chan]} {
     if {$nick == $botnick} {return 0}
-    if {(($sl_ban) && (!$sl_locked($chan)) && (![matchattr $hand f|f $chan]))} {
-      lappend sl_ccbannick($chan) $nick ; lappend sl_ccbanhost($chan) *!*[string tolower [string range $uhost [string first @ $uhost] end]]
+    if {$sl_ban && !$sl_locked($chan) && ![matchattr $hand f|f $chan]} {
+      lappend sl_ccbannick($chan) $nick ; lappend sl_ccbanhost($chan) [string tolower $uhost]
       utimer [lindex $sl_ccflood 1] [split "sl_ccbanqueue $chan"]
     }
     if {$sl_flooded($chan)} {return 1}
@@ -215,9 +249,9 @@ proc sl_ctcp {nick uhost hand dest key arg} {
       sl_lock $chan "CTCP flood" ${botnet-nick} ; return 1
     }
     if {$sl_bflooded} {return 1}
-  } elseif {(([lindex $sl_bcflood 0]) && ($dest == $botnick))} {
+  } elseif {[lindex $sl_bcflood 0] && $dest == $botnick} {
     if {$sl_bflooded} {
-      sl_ignore $uhost $hand "CTCP flooder" ; return 1
+      sl_ignore [string tolower $uhost] $hand "CTCP flooder" ; return 1
     }
     incr sl_bcqueue
     utimer [lindex $sl_bcflood 1] "incr sl_bcqueue -1"
@@ -298,7 +332,7 @@ proc sl_ctcp {nick uhost hand dest key arg} {
       return 1
     }
     "INVITE" {
-      if {(($arg == "") || ([validchan $chan]))} {return 1}
+      if {$arg == "" || [validchan $chan]} {return 1}
       set chanarg [lindex [split $arg] 0]
       if {((($sl_bxversion == "75p1+") && ([string trim [string index $chanarg 0] "#+&"] == "")) || (($sl_bxversion == "75p3+") && ([string trim [string index $chanarg 0] "#+&!"] == "")))} {
         if {[validchan $chanarg]} {
@@ -316,12 +350,12 @@ proc sl_ctcp {nick uhost hand dest key arg} {
     }
     "OP" -
     "OPS" {
-      if {(($arg == "") || ([validchan $chan]))} {return 1}
+      if {$arg == "" || [validchan $chan]} {return 1}
       putserv "NOTICE $nick :\002BitchX\002: I'm not on [lindex [split $arg] 0], or I'm not opped"
       return 1
     }
     "UNBAN" {
-      if {(($arg == "") || ([validchan $chan]))} {return 1}
+      if {$arg == "" || [validchan $chan]} {return 1}
       if {[validchan [lindex [split $arg] 0]]} {
         putserv "NOTICE $nick :\002BitchX\002: Access Denied"
       } else {
@@ -335,9 +369,9 @@ proc sl_ctcp {nick uhost hand dest key arg} {
 
 proc sl_bmflood {nick uhost hand text} {
   global sl_bmflood sl_bflooded sl_bmqueue sl_note
-  if {(([matchattr $hand b]) && ([string tolower [lindex [split $text] 0]] == "go"))} {return 0}
+  if {[matchattr $hand b] && [string tolower [lindex [split $text] 0]] == "go"} {return 0}
   if {$sl_bflooded} {
-    sl_ignore $uhost $hand "MSG flooder" ; return 0
+    sl_ignore [string tolower $uhost] $hand "MSG flooder" ; return 0
   }
   incr sl_bmqueue
   utimer [lindex $sl_bmflood 1] "incr sl_bmqueue -1"
@@ -362,34 +396,36 @@ proc sl_avflood {from keyword arg} {
   set chan [string tolower [lindex $arg 0]]
   if {![validchan $chan]} {return 0}
   set nick [lindex [split $from !] 0]
-  if {(($nick == $botnick) || ($nick == "") || ([string match *.* $nick]))} {return 0}
-  if {((![onchan $nick $chan]) || ([isop $nick $chan]))} {return 0}
-  if {((!$sl_flooded($chan)) && ([lsearch -exact $sl_txflood 0] == -1))} {
+  if {$nick == $botnick || $nick == "" || [string match *.* $nick]} {return 0}
+  if {![onchan $nick $chan] || [isop $nick $chan]} {return 0}
+  if {!$sl_flooded($chan) && [lsearch -exact $sl_txflood 0] == -1} {
     incr sl_txqueue($chan)
     if {$sl_txqueue($chan) >= [lindex $sl_txflood 0]} {
       sl_lock $chan "TEXT flood" ${botnet-nick}
     }
   }
   set text [join [lrange $arg 1 end]]
-  if {(([sl_checkaval $text]) && ([lsearch -exact $sl_avflood 0] == -1))} {
+  if {[sl_checkaval $text] && [lsearch -exact $sl_avflood 0] == -1} {
     set uhost [string trimleft [getchanhost $nick $chan] "~+-^="]
     set hand [nick2hand $nick $chan]
-    if {(($sl_ban) && (!$sl_locked($chan)) && ($nick != $botnick) && (![matchattr $hand f|f $chan]))} {
-      lappend sl_avbannick($chan) $nick ; lappend sl_avbanhost($chan) *!*[string tolower [string range $uhost [string first @ $uhost] end]]
+    if {$sl_ban && !$sl_locked($chan) && $nick != $botnick && ![matchattr $hand f|f $chan]} {
+      lappend sl_avbannick($chan) $nick ; lappend sl_avbanhost($chan) [string tolower $uhost]
       utimer [lindex $sl_avflood 1] [split "sl_avbanqueue $chan"]
     }
     if {$sl_flooded($chan)} {return 0}
     incr sl_avqueue($chan)
     utimer [lindex $sl_avflood 1] [split "sl_avqueuereset $chan"]
     if {$sl_avqueue($chan) >= [lindex $sl_avflood 0]} {
-      sl_lock $chan "AVALANCHE flood" ${botnet-nick}
+      sl_lock $chan "AVALANCHE/TSUNAMI flood" ${botnet-nick}
     }
   }
   return 0
 }
 
 proc sl_checkaval {text} {
-  if {[expr [regsub -all -- "\007" $text "" temp] + [regsub -all -- "\001" $temp "" temp]] >= 3} {return 1}
+  global sl_tsunami
+  if {[regsub -all -- "\001|\007" $text "" temp] >= 3} {return 1}
+  if {$sl_tsunami && [regsub -all -- "\002|\003|\017|\026|\037" $text "" temp] >= $sl_tsunami} {return 1}
   return 0
 }
 
@@ -397,21 +433,21 @@ proc sl_nkflood {nick uhost hand chan newnick} {
   global botnet-nick botnick sl_ban sl_banmax sl_flooded sl_globalban sl_locked sl_nickkick sl_nkbanhost sl_nkflood sl_nkflooding sl_nkqueue
   set chan [string tolower $chan]
   if {[isop $newnick $chan]} {return 0}
-  if {(($sl_ban) && (!$sl_locked($chan)) && ($nick != $botnick) && (![matchattr $hand f|f $chan]))} {
-    lappend sl_nkbanhost($chan) *!*[string tolower [string range $uhost [string first @ $uhost] end]]
+  if {$sl_ban && !$sl_locked($chan) && $nick != $botnick && ![matchattr $hand f|f $chan]} {
+    lappend sl_nkbanhost($chan) [string tolower $uhost]
     utimer [lindex $sl_nkflood 1] [split "sl_nkbanqueue $chan"]
   }
-  if {((!$sl_nickkick) && ($sl_flooded($chan)) && ($sl_locked($chan)))} {
+  if {!$sl_nickkick && $sl_flooded($chan) && $sl_locked($chan)} {
     putserv "KICK $chan $newnick :NICK flooder"
     set sl_nickkick 1 ; set sl_nkflooding($chan) [unixtime]
     if {$sl_ban} {
       set bhost *!*[string tolower [string range $uhost [string first @ $uhost] end]]
       if {$sl_globalban} {
-        if {(([llength [banlist]] < $sl_banmax) && (![isban $bhost]))} {
+        if {[llength [banlist]] < $sl_banmax && ![isban $bhost] && ![matchban *!$bhost]} {
           newban $bhost sentinel "NICK flooder" $sl_ban
         }
       } else {
-        if {(([llength [banlist $chan]] < $sl_banmax) && (![isban $bhost $chan]))} {
+        if {[llength [banlist $chan]] < $sl_banmax && ![isban $bhost $chan] && ![matchban *!$bhost $chan]} {
           newchanban $chan $bhost sentinel "NICK flooder" $sl_ban
         }
       }
@@ -438,23 +474,23 @@ proc sl_jflood {nick uhost hand chan} {
       killignore $ihost
     }
     set chan [string tolower $chan]
-    if {(([lsearch -exact $sl_boflood 0] == -1) && ([sl_checkbogus [lindex [split $uhost @] 0]]))} {
-      if {((!$sl_locked($chan)) && (![matchattr $hand f|f $chan]))} {
+    if {[lsearch -exact $sl_boflood 0] == -1 && [sl_checkbogus [lindex [split $uhost @] 0]]} {
+      if {!$sl_locked($chan) && ![matchattr $hand f|f $chan]} {
         set bhost *!*[string tolower [string range $uhost [string first @ $uhost] end]]
-        if {(($sl_boban) && ([botisop $chan]) && (!$sl_flooded($chan)))} {
+        if {$sl_boban && [botisop $chan] && !$sl_flooded($chan)} {
           putserv "KICK $chan $nick :BOGUS username"
           if {$sl_globalban} {
-            if {(([llength [banlist]] < $sl_banmax) && (![isban $bhost]))} {
+            if {[llength [banlist]] < $sl_banmax && ![isban $bhost] && ![matchban *!$bhost]} {
               newban $bhost sentinel "BOGUS username" $sl_boban
             }
           } else {
-            if {(([llength [banlist $chan]] < $sl_banmax) && (![isban $bhost $chan]))} {
+            if {[llength [banlist $chan]] < $sl_banmax && ![isban $bhost $chan] && ![matchban *!$bhost $chan]} {
               newchanban $chan $bhost sentinel "BOGUS username" $sl_boban
             }
           }
         }
         if {$sl_ban} {
-          lappend sl_bobannick($chan) $nick ; lappend sl_bobanhost($chan) $bhost
+          lappend sl_bobannick($chan) $nick ; lappend sl_bobanhost($chan) [string tolower $uhost]
           utimer [lindex $sl_boflood 1] [split "sl_bobanqueue $chan"]
         }
       }
@@ -467,14 +503,14 @@ proc sl_jflood {nick uhost hand chan} {
       }
     }
     if {[lsearch -exact $sl_jflood 0] == -1} {
-      if {(($sl_ban) && (!$sl_locked($chan)) && (![matchattr $hand f|f $chan]))} {
-        lappend sl_jbannick($chan) $nick ; lappend sl_jbanhost($chan) *!*[string tolower [string range $uhost [string first @ $uhost] end]]
+      if {$sl_ban && !$sl_locked($chan) && ![matchattr $hand f|f $chan]} {
+        lappend sl_jbannick($chan) $nick ; lappend sl_jbanhost($chan) [string tolower $uhost]
         utimer [lindex $sl_jflood 1] [split "sl_jbanqueue $chan"]
       }
       if {$sl_flooded($chan)} {return 0}
       incr sl_jqueue($chan)
       utimer [lindex $sl_jflood 1] [split "sl_jqueuereset $chan"]
-      if {(($sl_jqueue($chan) >= [lindex $sl_jflood 0]) && ($sl_pqueue($chan) >= [lindex $sl_jflood 0]))} {
+      if {$sl_jqueue($chan) >= [lindex $sl_jflood 0] && $sl_pqueue($chan) >= [lindex $sl_jflood 0]} {
         sl_lock $chan "JOIN-PART flood" ${botnet-nick}
       }
     }
@@ -490,10 +526,15 @@ proc sl_checkbogus {ident} {
 proc sl_pflood {nick uhost hand chan {msg ""}} {
   global botnick sl_ban sl_flooded sl_jflood sl_locked sl_pbanhost sl_pbannick sl_pqueue
   if {[lsearch -exact $sl_jflood 0] != -1} {return 0}
-  if {$nick == $botnick} {return 0}
+  if {$nick == $botnick} {
+    if {![validchan $chan]} {
+      timer 5 [split "sl_unsetarray $chan"]
+    }
+    return 0
+  }
   set chan [string tolower $chan]
-  if {(($sl_ban) && (!$sl_locked($chan)) && (![matchattr $hand f|f $chan]))} {
-    lappend sl_pbannick($chan) $nick ; lappend sl_pbanhost($chan) *!*[string tolower [string range $uhost [string first @ $uhost] end]]
+  if {$sl_ban && !$sl_locked($chan) && ![matchattr $hand f|f $chan]} {
+    lappend sl_pbannick($chan) $nick ; lappend sl_pbanhost($chan) [string tolower $uhost]
     utimer [lindex $sl_jflood 1] [split "sl_pbanqueue $chan"]
   }
   if {$sl_flooded($chan)} {return 0}
@@ -518,7 +559,7 @@ proc sl_lock {chan flood detected} {
   if {$detected == ${botnet-nick}} {
     set sl_flooded($chan) 1 ; set sl_bflooded 1
     if {[botisop $chan]} {
-      putquick "MODE $chan +mi"
+      sl_quicklock $chan
       sl_killutimer "sl_unlock $chan *"
       sl_killutimer "set sl_bflooded 0"
       if {$sl_mlocktime} {
@@ -568,15 +609,15 @@ proc sl_unlock {chan umode} {
     if {$umode == "mi"} {
       putlog "sentinel: flood was small, performing early unlock.."
     }
-    if {(([string match *i* $umode]) && ([string match *i* [lindex [split [getchanmode $chan]] 0]]))} {
-      if {(($sl_bfmaxbans) && ([llength [chanbans $chan]] >= $sl_bfmaxbans))} {
+    if {[string match *i* $umode] && [string match *i* [lindex [split [getchanmode $chan]] 0]]} {
+      if {$sl_bfmaxbans && [llength [chanbans $chan]] >= $sl_bfmaxbans} {
         putlog "sentinel: not removing +i on $chan due to full ban list."
       } else {
         pushmode $chan -i
         putlog "sentinel: removed +i on $chan"
       }
     }
-    if {(([string match *m* $umode]) && ([string match *m* [lindex [split [getchanmode $chan]] 0]]))} {
+    if {[string match *m* $umode] && [string match *m* [lindex [split [getchanmode $chan]] 0]]} {
       pushmode $chan -m
       putlog "sentinel: removed +m on $chan"
     }
@@ -587,7 +628,7 @@ proc sl_unlock {chan umode} {
 proc sl_mode {nick uhost hand chan mode victim} {
   global botnick sl_ban sl_bfmaxbans sl_bfnotice sl_bfull sl_flooded sl_locked sl_note sl_unlocked
   set chan [string tolower $chan]
-  if {(($mode == "+b") && ($sl_bfmaxbans) && (!$sl_bfull($chan)) && (![string match *i* [lindex [split [getchanmode $chan]] 0]]) && ([botisop $chan]) && ([llength [chanbans $chan]] >= $sl_bfmaxbans))} {
+  if {$mode == "+b" && $sl_bfmaxbans && !$sl_bfull($chan) && ![string match *i* [lindex [split [getchanmode $chan]] 0]] && [botisop $chan] && [llength [chanbans $chan]] >= $sl_bfmaxbans} {
     putserv "MODE $chan +i"
     set sl_bfull($chan) 1
     utimer 5 [split "set sl_bfull($chan) 0"]
@@ -602,13 +643,13 @@ proc sl_mode {nick uhost hand chan mode victim} {
         }
       }
     }
-  } elseif {(($mode == "+i") && ($sl_flooded($chan)))} {
+  } elseif {$mode == "+i" && $sl_flooded($chan)} {
     set sl_locked($chan) 1
     if {$sl_ban} {
       sl_killutimer "sl_*banqueue $chan"
       utimer 7 [split "sl_dokicks $chan"] ; utimer 16 [split "sl_setbans $chan"]
     }
-  } elseif {(($mode == "-i") || ($mode == "-m"))} {
+  } elseif {$mode == "-i" || $mode == "-m"} {
     set sl_locked($chan) 0
     set sl_unlocked($chan) [unixtime]
     if {$sl_flooded($chan)} {
@@ -629,13 +670,13 @@ proc sl_mode {nick uhost hand chan mode victim} {
 
 proc sl_dokicks {chan} {
   global sl_avbannick sl_bobannick sl_ccbannick sl_kflooders sl_jbannick sl_pbannick
-  if {((![botonchan $chan]) || (![botisop $chan]))} {return 0}
+  if {![botisop $chan]} {return 0}
   set sl_kflooders 0
   sl_kick $chan $sl_ccbannick($chan) "CTCP flooder" ; set sl_ccbannick($chan) ""
-  sl_kick $chan $sl_avbannick($chan) "AVALANCHE flooder" ; set sl_avbannick($chan) ""
+  sl_kick $chan $sl_avbannick($chan) "AVALANCHE/TSUNAMI flooder" ; set sl_avbannick($chan) ""
   sl_kick $chan $sl_bobannick($chan) "BOGUS username" ; set sl_bobannick($chan) ""
   set jklist $sl_jbannick($chan) ; set pklist $sl_pbannick($chan)
-  if {(($jklist != "") && ($pklist != ""))} {
+  if {$jklist != "" && $pklist != ""} {
     set klist ""
     foreach nick $jklist {
       if {[lsearch -exact $pklist $nick] != -1} {
@@ -660,7 +701,7 @@ proc sl_kick {chan klist reason} {
     unset nick
     incr sl_kflooders [llength $kicklist]
     foreach nick $kicklist {
-      if {(([onchan $nick $chan]) && (![onchansplit $nick $chan]))} {
+      if {[onchan $nick $chan] && ![onchansplit $nick $chan]} {
         lappend ksend $nick
         if {[llength $ksend] >= $sl_kicks} {
           putserv "KICK $chan [join $ksend ,] :$reason"
@@ -676,51 +717,113 @@ proc sl_kick {chan klist reason} {
 }
 
 proc sl_setbans {chan} {
-  global sl_avbanhost sl_bflooders sl_bobanhost sl_ccbanhost sl_kflooders sl_jbanhost sl_nkbanhost sl_pbanhost sl_shortlock sl_unlocked
+  global sl_avbanhost sl_bobanhost sl_ccbanhost sl_kflooders sl_jbanhost sl_nkbanhost sl_pbanhost sl_shortlock sl_unlocked
   if {![botonchan $chan]} {return 0}
-  set sl_bflooders 0
+  set sl_ccbanhost($chan) [sl_dfilter $sl_ccbanhost($chan)]
+  set sl_avbanhost($chan) [sl_dfilter $sl_avbanhost($chan)]
+  set sl_nkbanhost($chan) [sl_dfilter $sl_nkbanhost($chan)]
+  set sl_bobanhost($chan) [sl_dfilter $sl_bobanhost($chan)]
+  set sl_jbanhost($chan) [sl_dfilter $sl_jbanhost($chan)]
+  set sl_pbanhost($chan) [sl_dfilter $sl_pbanhost($chan)]
+  set allbans [sl_dfilter [concat $sl_ccbanhost($chan) $sl_avbanhost($chan) $sl_nkbanhost($chan) $sl_bobanhost($chan) $sl_jbanhost($chan) $sl_pbanhost($chan)]]
+  sl_ban $chan [sl_dcheck $allbans] "IDENT/HOST flooders"
   sl_ban $chan $sl_ccbanhost($chan) "CTCP flooder" ; set sl_ccbanhost($chan) ""
-  sl_ban $chan $sl_avbanhost($chan) "AVALANCHE flooder" ; set sl_avbanhost($chan) ""
+  sl_ban $chan $sl_avbanhost($chan) "AVALANCHE/TSUNAMI flooder" ; set sl_avbanhost($chan) ""
   sl_ban $chan $sl_nkbanhost($chan) "NICK flooder" ; set sl_nkbanhost($chan) ""
   sl_ban $chan $sl_bobanhost($chan) "BOGUS username" ; set sl_bobanhost($chan) ""
-  set jblist $sl_jbanhost($chan) ; set pblist $sl_pbanhost($chan)
-  if {(($jblist != "") && ($pblist != ""))} {
+  if {$sl_jbanhost($chan) != "" && $sl_pbanhost($chan) != ""} {
     set blist ""
-    foreach bhost $jblist {
-      if {[lsearch -exact $pblist $bhost] != -1} {
+    foreach bhost $sl_jbanhost($chan) {
+      if {[lsearch -exact $sl_pbanhost($chan) $bhost] != -1} {
         lappend blist $bhost
       }
     }
     sl_ban $chan $blist "JOIN-PART flooder"
   }
   set sl_jbanhost($chan) "" ; set sl_pbanhost($chan) ""
-  if {(($sl_shortlock) && ($sl_kflooders <= 2) && ($sl_bflooders <= 2) && ([expr [unixtime] - $sl_unlocked($chan)] > 120))} {
+  if {$sl_shortlock && $sl_kflooders <= 2 && [llength $allbans] <= 2 && [expr [unixtime] - $sl_unlocked($chan)] > 120} {
     sl_killutimer "sl_unlock $chan *"
     utimer 10 [split "sl_unlock $chan mi"]
   }
   return 0
 }
 
-proc sl_ban {chan blist reason} {
-  global sl_ban sl_banmax sl_bflooders sl_globalban
-  if {$blist != ""} {
-    set banlist ""
-    foreach bhost $blist {
-      if {[lsearch -exact $banlist $bhost] == -1} {
-        lappend banlist $bhost
-      }
+proc sl_dfilter {list} {
+  set newlist ""
+  foreach item $list {
+    if {[lsearch -exact $newlist $item] == -1} {
+      lappend newlist $item
     }
-    incr sl_bflooders [llength $banlist]
+  }
+  return $newlist
+}
+
+proc sl_dcheck {bhosts} {
+  set blist ""
+  foreach bhost $bhosts {
+    set baddr [string tolower [lindex [split [maskhost $bhost] "@"] 1]]
+    set bident [string trimleft [string tolower [lindex [split $bhost "@"] 0]] "~"]
+    if {![info exists baddrs($baddr)]} {
+      set baddrs($baddr) 1
+    } else {
+      incr baddrs($baddr)
+    }
+    if {![info exists bidents($bident)]} {
+      set bidents($bident) 1
+    } else {
+      incr bidents($bident)
+    }
+  }  
+  foreach baddr [array names baddrs] {
+    if {$baddrs($baddr) >= 2} {
+      lappend blist *!@$baddr
+    }
+  }
+  foreach bident [array names bidents] {
+    if {$bidents($bident) >= 2} {
+      lappend blist *!*$bident@*
+    }
+  }
+  return $blist
+}
+
+proc sl_ban {chan blist reason} {
+  global sl_ban sl_banmax sl_globalban
+  if {$blist != ""} {
     if {$sl_globalban} {
-      foreach bhost $banlist {
-        if {(([llength [banlist]] >= $sl_banmax) || ([isban $bhost]) || ([ispermban $bhost]))} {continue}
+      foreach bhost $blist {
+        if {![string match *!* $bhost]} {
+          if {[matchban *!$bhost]} {continue}
+          set bhost *!*[string range $bhost [string first @ $bhost] end]
+          if {[isban $bhost]} {continue}
+        } else {
+          if {[isban $bhost]} {continue}
+          foreach ban [banlist] {
+            if {[lindex $ban 5] == "sentinel" && [string match $bhost [string tolower [lindex $ban 0]]]} {
+              killban $ban
+            }
+          }
+        }
+        if {[llength [banlist]] >= $sl_banmax || [isban $bhost]} {continue}
         newban $bhost sentinel $reason $sl_ban
         putlog "sentinel: banned $bhost ($reason)"
         sl_ignore $bhost * $reason
       }
     } else {
-      foreach bhost $banlist {
-        if {(([llength [banlist $chan]] >= $sl_banmax) || ([isban $bhost $chan]) || ([ispermban $bhost $chan]))} {continue}
+      foreach bhost $blist {
+        if {![string match *!* $bhost]} {
+          if {[matchban *!$bhost $chan]} {continue}
+          set bhost *!*[string range $bhost [string first @ $bhost] end]
+          if {[isban $bhost $chan]} {continue}
+        } else {
+          if {[isban $bhost $chan]} {continue}
+          foreach ban [banlist $chan] {
+            if {[lindex $ban 5] == "sentinel" && [string match $bhost [string tolower [lindex $ban 0]]]} {
+              killchanban $chan $ban
+            }
+          }
+        }
+        if {[llength [banlist $chan]] >= $sl_banmax || [isban $bhost $chan]} {continue}
         newchanban $chan $bhost sentinel $reason $sl_ban
         putlog "sentinel: banned $bhost on $chan ($reason)"
         sl_ignore $bhost * $reason
@@ -730,18 +833,32 @@ proc sl_ban {chan blist reason} {
   return 0
 }
 
-proc sl_ignore {uhost hand flood} {
+proc sl_ignore {ihost hand flood} {
   global sl_igtime
   if {$hand != "*"} {
     foreach chan [channels] {
       if {[matchattr $hand f|f $chan]} {return 0}
     }
   }
-  set ihost *!*[string tolower [string range $uhost [string first @ $uhost] end]]
-  if {[isignore $ihost]} {return 0}
+  if {![string match *!* $ihost]} {    
+    foreach ignore [ignorelist] {
+      if {[string match [string tolower [lindex $ignore 0]] [string tolower $ihost]]} {
+        return 0
+      }
+    }
+    set ihost *!*[string range $ihost [string first @ $ihost] end]
+    if {[isignore $ihost]} {return 0}
+  } else {
+    if {[isignore $ihost]} {return 0}
+    foreach ignore [ignorelist] {
+      if {[lindex $ignore 4] == "sentinel" && [string match $ihost [string tolower [lindex $ignore 0]]]} {
+        killignore $ignore
+      }
+    }
+  }
   newignore $ihost sentinel $flood $sl_igtime
   putlog "sentinel: added $ihost to ignore list ($flood)"
-  return 0
+  return 1
 }
 
 proc sl_ccqueuereset {chan} {
@@ -842,7 +959,7 @@ proc sl_pbanqueue {chan} {
 proc sl_flud {nick uhost hand type chan} {
   global sl_flooded
   set chan [string tolower $chan]
-  if {(([validchan $chan]) && ($sl_flooded($chan)))} {return 1}
+  if {[validchan $chan] && $sl_flooded($chan)} {return 1}
   return 0
 }
 
@@ -850,8 +967,8 @@ proc sl_lc {nick uhost hand chan arg} {
   global sl_lockcmds
   set chan [string tolower $chan]
   if {![botisop $chan]} {return 0}
-  if {(($sl_lockcmds == 2) && (![isop $nick $chan]))} {return 0}
-  putquick "MODE $chan +mi"
+  if {$sl_lockcmds == 2 && ![isop $nick $chan]} {return 0}
+  sl_quicklock $chan
   putlog "sentinel: channel lock requested by $hand on $chan"
   return 0
 }
@@ -860,7 +977,7 @@ proc sl_uc {nick uhost hand chan arg} {
   global sl_lockcmds
   set chan [string tolower $chan]
   if {![botisop $chan]} {return 0}
-  if {(($sl_lockcmds == 2) && (![isop $nick $chan]))} {return 0}
+  if {$sl_lockcmds == 2 && ![isop $nick $chan]} {return 0}
   putserv "MODE $chan -mi"
   putlog "sentinel: channel unlock requested by $hand on $chan"
   return 0
@@ -876,8 +993,8 @@ proc sl_dcclc {hand idx arg} {
     }
     set locklist ""
     foreach chan [channels] {
-      if {(([botonchan $chan]) && ([botisop $chan]))} {
-        putquick "MODE $chan +mi"
+      if {[botisop $chan]} {
+        sl_quicklock $chan
         lappend locklist $chan
       }
     }
@@ -895,7 +1012,7 @@ proc sl_dcclc {hand idx arg} {
     } elseif {![botisop $chan]} {
       putidx $idx "I'm not opped on $chan" ; return 0
     }
-    putquick "MODE $chan +mi"
+    sl_quicklock $chan
     putidx $idx "Locked $chan"
   }
   return 0
@@ -911,7 +1028,7 @@ proc sl_dccuc {hand idx arg} {
     }
     set locklist ""
     foreach chan [channels] {
-      if {(([botonchan $chan]) && ([botisop $chan]))} {
+      if {[botisop $chan]} {
         putserv "MODE $chan -mi"
         lappend locklist $chan
       }
@@ -936,8 +1053,17 @@ proc sl_dccuc {hand idx arg} {
   return 0
 }
 
+proc sl_quicklock {chan} {
+  global numversion
+  if {$numversion < 1050000} {
+    putquick "MODE $chan +mi"
+  } else {
+    putquick "MODE $chan +mi" -next
+  }
+}
+
 proc sl_dcc {hand idx arg} {
-  global sl_avflood sl_ban sl_banmax sl_bcflood sl_boban sl_boflood sl_bmflood sl_bxsimul sl_bfmaxbans sl_ccflood sl_globalban sl_igtime sl_jflood sl_kicks sl_lockcmds sl_lockflags sl_ilocktime sl_mlocktime sl_nkflood sl_note sl_shortlock sl_txflood
+  global sl_avflood sl_ban sl_banmax sl_bcflood sl_boban sl_boflood sl_bmflood sl_bxsimul sl_bfmaxbans sl_ccflood sl_globalban sl_igtime sl_jflood sl_kicks sl_lockcmds sl_lockflags sl_ilocktime sl_mlocktime sl_nkflood sl_note sl_shortlock sl_tsunami sl_txflood
   putcmdlog "#$hand# sentinel $arg"
   putidx $idx "This bot is protected by sentinel.tcl by slennox"
   putidx $idx "Current settings"
@@ -960,6 +1086,11 @@ proc sl_dcc {hand idx arg} {
     putidx $idx "- Channel AVALANCHE flood:  Off"
   } else {
     putidx $idx "- Channel AVALANCHE flood:  [lindex $sl_avflood 0] in [lindex $sl_avflood 1] secs"
+  }
+  if {[lsearch -exact $sl_avflood 0] != -1 || !$sl_tsunami} {
+    putidx $idx "- Channel TSUNAMI flood:    Off"
+  } else {
+    putidx $idx "- Channel TSUNAMI flood:    [lindex $sl_avflood 0] in [lindex $sl_avflood 1] secs ($sl_tsunami ctrl codes / line)"
   }
   if {[lsearch -exact $sl_txflood 0] != -1} {
     putidx $idx "- Channel TEXT flood:       Off"
@@ -991,36 +1122,36 @@ proc sl_dcc {hand idx arg} {
   } else {
     putidx $idx "- Channel +m locktime:      $sl_mlocktime secs"
   }
-  if {(($sl_shortlock) && ($sl_ban))} {
+  if {$sl_shortlock && $sl_ban} {
     putidx $idx "- Small flood short lock:   Active"
   } else {
     putidx $idx "- Small flood short lock:   Inactive"
   }
-  if {(($sl_ban) && ($sl_ban < 120))} {
+  if {$sl_ban && $sl_ban < 120} {
     putidx $idx "- Channel flood bans:       $sl_ban mins"
   } elseif {$sl_ban >= 120} {
     putidx $idx "- Channel flood bans:       [expr $sl_ban / 60] hrs"
   } else {
     putidx $idx "- Channel flood bans:       Disabled"
   }
-  if {((!$sl_boban) || ([lsearch -exact $sl_boflood 0] != -1))} {
+  if {!$sl_boban || [lsearch -exact $sl_boflood 0] != -1} {
     putidx $idx "- Bogus username bans:      Disabled"
-  } elseif {(($sl_boban > 0) && ($sl_boban < 120))} {
+  } elseif {$sl_boban > 0 && $sl_boban < 120} {
     putidx $idx "- Bogus username bans:      $sl_boban mins"
   } elseif {$sl_boban >= 120} {
     putidx $idx "- Bogus username bans:      [expr $sl_boban / 60] hrs"
   }
-  if {(($sl_ban) || ([lsearch -exact $sl_boflood 0] == -1))} {
+  if {$sl_ban || [lsearch -exact $sl_boflood 0] == -1} {
     if {$sl_globalban} {
       putidx $idx "- Ban type:                 Global"
     } else {
       putidx $idx "- Ban type:                 Channel-specific"
     }
   }
-  if {(($sl_ban) || ([lsearch -exact $sl_boflood 0] == -1))} {
+  if {$sl_ban || [lsearch -exact $sl_boflood 0] == -1} {
     putidx $idx "- Maximum bans:             $sl_banmax"
   }
-  if {(($sl_igtime > 0) && ($sl_igtime < 120))} {
+  if {$sl_igtime > 0 && $sl_igtime < 120} {
     putidx $idx "- Flooder ignores:          $sl_igtime mins"
   } elseif {$sl_igtime >= 120} {
     putidx $idx "- Flooder ignores:          [expr $sl_igtime / 60] hrs"
@@ -1096,10 +1227,11 @@ if {$sl_bxsimul} {
 }
 
 proc sl_setarray {chan} {
-  global botnick sl_avbanhost sl_avbannick sl_avqueue sl_bfull sl_bobanhost sl_bobannick sl_boqueue sl_ccbanhost sl_ccbannick sl_ccqueue sl_flooded sl_jbanhost sl_jbannick sl_jqueue sl_locked sl_nkbanhost sl_nkflooding sl_nkqueue sl_pbanhost sl_pbannick sl_pqueue sl_txqueue sl_unlocked
+  global sl_avbanhost sl_avbannick sl_avqueue sl_bfull sl_bobanhost sl_bobannick sl_boqueue sl_ccbanhost sl_ccbannick sl_ccqueue sl_flooded sl_jbanhost sl_jbannick sl_jqueue sl_locked sl_nkbanhost sl_nkflooding sl_nkqueue sl_pbanhost sl_pbannick sl_pqueue sl_txqueue sl_unlocked
   set chan [string tolower $chan]
   sl_killutimer "incr sl_*queue($chan) -1"
   sl_killutimer "sl_*banqueue $chan"
+  sl_killutimer "sl_*queuereset $chan"
   set sl_flooded($chan) 0 ; set sl_locked($chan) 0 ; set sl_unlocked($chan) [unixtime]
   set sl_nkflooding($chan) [unixtime]
   set sl_ccqueue($chan) 0 ; set sl_ccbanhost($chan) "" ; set sl_ccbannick($chan) ""
@@ -1110,6 +1242,24 @@ proc sl_setarray {chan} {
   set sl_jqueue($chan) 0 ; set sl_jbanhost($chan) "" ; set sl_jbannick($chan) ""
   set sl_pqueue($chan) 0 ; set sl_pbanhost($chan) "" ; set sl_pbannick($chan) ""
   set sl_bfull($chan) 0
+  return 0
+}
+
+proc sl_unsetarray {chan} {
+  global sl_avbanhost sl_avbannick sl_avqueue sl_bfull sl_bobanhost sl_bobannick sl_boqueue sl_ccbanhost sl_ccbannick sl_ccqueue sl_flooded sl_jbanhost sl_jbannick sl_jqueue sl_locked sl_nkbanhost sl_nkflooding sl_nkqueue sl_pbanhost sl_pbannick sl_pqueue sl_txqueue sl_unlocked
+  set chan [string tolower $chan]
+  if {![validchan $chan] && [info exists sl_flooded($chan)]} {
+    unset sl_flooded($chan) ; unset sl_locked($chan) ; unset sl_unlocked($chan)
+    unset sl_nkflooding($chan)
+    unset sl_ccqueue($chan) ; unset sl_ccbanhost($chan) ; unset sl_ccbannick($chan)
+    unset sl_avqueue($chan) ; unset sl_avbanhost($chan) ; unset sl_avbannick($chan)
+    unset sl_txqueue($chan)
+    unset sl_nkqueue($chan) ; unset sl_nkbanhost($chan)
+    unset sl_boqueue($chan) ; unset sl_bobanhost($chan) ; unset sl_bobannick($chan)
+    unset sl_jqueue($chan) ; unset sl_jbanhost($chan) ; unset sl_jbannick($chan)
+    unset sl_pqueue($chan) ; unset sl_pbanhost($chan) ; unset sl_pbannick($chan)
+    unset sl_bfull($chan)
+  }
   return 0
 }
 
@@ -1132,7 +1282,7 @@ proc sl_killutimer {cmd} {
   return $n
 }
 
-if {((![info exists sl_unlocked]) && (![string match *sl_settimer* [utimers]]))} {
+if {![info exists sl_unlocked] && ![string match *sl_settimer* [utimers]]} {
   utimer 3 sl_settimer
 }
 
@@ -1155,10 +1305,10 @@ set sl_txflood [split $sl_txflood :] ; set sl_boflood [split $sl_boflood :]
 set sl_jflood [split $sl_jflood :] ; set sl_nkflood [split $sl_nkflood :]
 set sl_note [split $sl_note]
 
-if {(($sl_ilocktime > 0) && ($sl_ilocktime < 30))} {
+if {$sl_ilocktime > 0 && $sl_ilocktime < 30} {
   set sl_ilocktime 30
 }
-if {(($sl_mlocktime > 0) && ($sl_mlocktime < 30))} {
+if {$sl_mlocktime > 0 && $sl_mlocktime < 30} {
   set sl_mlocktime 30
 }
 
@@ -1169,17 +1319,22 @@ if {!${kick-method}} {
   set sl_kicks ${kick-method}
 }
 
-if {$numversion >= 1032100} {
-  set kick-bogus 0
+if {$numversion <= 1040400} {
+  if {$numversion >= 1032100} {
+    set kick-bogus 0
+  }
+  if {$numversion >= 1032400} {
+    set ban-bogus 0
+  }
 }
 if {$numversion >= 1032400} {
-  set ban-bogus 0 ; set kick-fun 0 ; set ban-fun 0
+  set kick-fun 0 ; set ban-fun 0
 }
 if {$numversion >= 1032500} {
   set ctcp-mode 0
 }
 
-if {((![string match *sl_txqueuereset* [utimers]]) && ([lsearch -exact $sl_txflood 0] == -1))} {
+if {![string match *sl_txqueuereset* [utimers]] && [lsearch -exact $sl_txflood 0] == -1} {
   utimer [lindex $sl_txflood 1] sl_txqueuereset
 }
 
@@ -1194,7 +1349,7 @@ if {!$sl_lockcmds} {
 bind dcc m|m sentinel sl_dcc
 bind raw - NOTICE sl_avflood
 bind raw - PRIVMSG sl_avflood
-if {(([lsearch -exact $sl_avflood 0] != -1) && ([lsearch -exact $sl_txflood 0] != -1))} {
+if {[lsearch -exact $sl_avflood 0] != -1 && [lsearch -exact $sl_txflood 0] != -1} {
   unbind raw - NOTICE sl_avflood
   unbind raw - PRIVMSG sl_avflood
 }
@@ -1221,6 +1376,6 @@ bind kick - * sl_pfloodk
 bind flud - * sl_flud
 bind mode - * sl_mode
 
-putlog "Loaded sentinel.tcl v2.00 by slennox"
+putlog "Loaded sentinel.tcl v2.50 by slennox"
 
 return
