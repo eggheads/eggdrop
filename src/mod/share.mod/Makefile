@@ -16,6 +16,7 @@ modules: ../../../share.so
 ../share.o: ../module.h ../modvals.h ../../eggdrop.h share.c ../../chan.h \
 ../../users.h ../channels.mod/channels.h ../transfer.mod/transfer.h
 	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c share.c
+	rm -f ../share.o
 	mv share.o ../
 
 ../../../share.so: ../share.o

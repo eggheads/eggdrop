@@ -311,7 +311,7 @@ static void eof_dcc_fork_send(int idx)
       dcc[y].status &= ~STAT_GETTING;
       dcc[y].status &= ~STAT_SHARE;
     }
-    putlog(LOG_MISC, "*", USERF_FAILEDXFER);
+    putlog(LOG_BOTS, "*", USERF_FAILEDXFER);
     unlink(dcc[idx].u.xfer->filename);
   } else {
     neterror(s1);
@@ -420,7 +420,7 @@ static void eof_dcc_send(int idx)
 	  (dcc[x].type->flags & DCT_BOT))
 	y = x;
     if (y) {
-      putlog(LOG_MISC, "*", "Lost userfile transfer to %s; aborting.",
+      putlog(LOG_BOTS, "*", "Lost userfile transfer to %s; aborting.",
 	     dcc[y].nick);
       unlink(dcc[idx].u.xfer->filename);
       /* drop that bot */
@@ -483,7 +483,7 @@ static void dcc_get(int idx, char *buf, int len)
   if ((cmp > dcc[idx].status) && (cmp <= dcc[idx].u.xfer->length)) {
     /* attempt to resume I guess */
     if (!strcmp(dcc[idx].nick, "*users")) {
-      putlog(LOG_MISC, "*", "!!! Trying to skip ahead on userfile transfer");
+      putlog(LOG_BOTS, "*", "!!! Trying to skip ahead on userfile transfer");
     } else {
       fseek(dcc[idx].u.xfer->f, cmp, SEEK_SET);
       dcc[idx].status = cmp;
@@ -509,7 +509,7 @@ static void dcc_get(int idx, char *buf, int len)
 	  y = x;
       if (y != 0)
 	dcc[y].status &= ~STAT_SENDING;
-      putlog(LOG_MISC, "*", "Completed userfile transfer to %s.",
+      putlog(LOG_BOTS, "*", "Completed userfile transfer to %s.",
 	     dcc[y].nick);
       unlink(dcc[idx].u.xfer->filename);
       /* any sharebot things that were queued: */
@@ -568,7 +568,7 @@ static void eof_dcc_get(int idx)
       if ((!strcasecmp(dcc[x].nick, dcc[idx].host)) &&
 	  (dcc[x].type->flags & DCT_BOT))
 	y = x;
-    putlog(LOG_MISC, "*", "Lost userfile transfer; aborting.");
+    putlog(LOG_BOTS, "*", "Lost userfile transfer; aborting.");
     /* unlink(dcc[idx].u.xfer->filename); *//* <- already unlinked */
     xnick[0] = 0;
     /* drop that bot */
@@ -719,7 +719,7 @@ static void transfer_get_timeout(int i)
       dcc[y].status &= ~STAT_SHARE;
     }
     unlink(dcc[i].u.xfer->filename);
-    putlog(LOG_MISC, "*", "Timeout on userfile transfer.");
+    putlog(LOG_BOTS, "*", "Timeout on userfile transfer.");
     dprintf(y, "bye\n");
     simple_sprintf(xx, "Disconnected %s (timed-out userfile transfer)",
 		   dcc[y].nick);
@@ -766,7 +766,7 @@ static void tout_dcc_send(int idx)
       dcc[y].status &= ~STAT_SHARE;
     }
     unlink(dcc[idx].u.xfer->filename);
-    putlog(LOG_MISC, "*", "Timeout on userfile transfer.");
+    putlog(LOG_BOTS, "*", "Timeout on userfile transfer.");
   } else {
     char xx[1024];
 

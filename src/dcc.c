@@ -580,7 +580,7 @@ static void dcc_chat_pass(int idx, char *buf, int atr)
 
 static void eof_dcc_general(int idx)
 {
-  putlog(LOG_MISC, "*",DCC_LOSTDCC, dcc[idx].nick,
+  putlog(LOG_MISC, "*", DCC_LOSTDCC, dcc[idx].nick,
 	 dcc[idx].host, dcc[idx].port);
   killsock(dcc[idx].sock);
   lostdcc(idx);
@@ -589,7 +589,7 @@ static void eof_dcc_general(int idx)
 static void tout_dcc_chat_pass(int idx)
 {
   dprintf(idx, "Timeout.\n");
-  putlog(LOG_MISC, "*",DCC_PWDTIMEOUT, dcc[idx].nick,
+  putlog(LOG_MISC, "*", DCC_PWDTIMEOUT, dcc[idx].nick,
 	 dcc[idx].host);
   killsock(dcc[idx].sock);
   lostdcc(idx);
@@ -1083,7 +1083,7 @@ static void dcc_telnet(int idx, char *buf, int i)
    * <bindle> [09:37] Lost connection while identing [168.246.255.191/0]
    */
   context;
-  /* use dcc-portrange x:x on incoming telnets to ,dw */
+  /* use dcc-portrange x:x on incoming telnets too, dw */
   if ((port < min_dcc_port) || (port > max_dcc_port)) {
     putlog(LOG_BOTS, "*", DCC_BADSRC, s, port);
     killsock(sock);
@@ -1193,8 +1193,7 @@ static void dcc_telnet_id(int idx, char *buf, int atr)
   /* toss out bad nicknames */
   if ((dcc[idx].nick[0] != '@') && (!wild_match(dcc[idx].nick, buf))) {
     dprintf(idx, "Sorry, that nickname format is invalid.\r\n");
-    
-putlog(LOG_BOTS, "*", DCC_BADNICK, dcc[idx].host);
+    putlog(LOG_BOTS, "*", DCC_BADNICK, dcc[idx].host);
     killsock(dcc[idx].sock);
     lostdcc(idx);
     return;
@@ -1241,8 +1240,7 @@ putlog(LOG_BOTS, "*", DCC_BADNICK, dcc[idx].host);
   }
   if (!ok) {
     dprintf(idx, "You don't have access.\r\n");
-    putlog(LOG_BOTS, "*", DCC_INVHANDLE,
-	   dcc[idx].host, buf);
+    putlog(LOG_BOTS, "*", DCC_INVHANDLE, dcc[idx].host, buf);
     killsock(dcc[idx].sock);
     lostdcc(idx);
     return;
@@ -1432,8 +1430,7 @@ static void dcc_telnet_new(int idx, char *buf, int x)
     if (make_userfile) {
       dprintf(idx, "\nYOU ARE THE MASTER/OWNER ON THIS BOT NOW\n");
       dprintf(idx, IRC_LIMBO);
-      putlog(LOG_MISC, "*", DCC_INSTCOMPL,
-	     buf);
+      putlog(LOG_MISC, "*", DCC_INSTCOMPL, buf);
       make_userfile = 0;
       write_userfile(-1);
       add_note(buf, botnetnick, "Welcome to eggdrop! :)", -1, 0);
@@ -1464,8 +1461,8 @@ static void dcc_telnet_pw(int idx, char *buf, int x)
     dprintf(idx, "Try another one please:\n");
     return;
   }
-  putlog(LOG_MISC, "*", DCC_NEWUSER, dcc[idx].nick,
-	 dcc[idx].host, dcc[idx].port);
+  putlog(LOG_MISC, "*", DCC_NEWUSER, dcc[idx].nick, dcc[idx].host,
+	 dcc[idx].port);
   if (notify_new[0]) {
     char s[121], s1[121], s2[121];
 
@@ -1491,16 +1488,15 @@ static void dcc_telnet_pw(int idx, char *buf, int x)
 
 static void eof_dcc_telnet_new(int idx)
 {
-  putlog(LOG_MISC, "*", DCC_LOSTNEWUSER, dcc[idx].host,
-	 dcc[idx].port);
+  putlog(LOG_MISC, "*", DCC_LOSTNEWUSER, dcc[idx].host, dcc[idx].port);
   killsock(dcc[idx].sock);
   lostdcc(idx);
 }
 
 static void eof_dcc_telnet_pw(int idx)
 {
-  putlog(LOG_MISC, "*", DCC_LOSTNEWUSR2, dcc[idx].nick,
-	 dcc[idx].host, dcc[idx].port);
+  putlog(LOG_MISC, "*", DCC_LOSTNEWUSR2, dcc[idx].nick, dcc[idx].host,
+	 dcc[idx].port);
   deluser(dcc[idx].nick);
   killsock(dcc[idx].sock);
   lostdcc(idx);
@@ -1518,8 +1514,8 @@ static void tout_dcc_telnet_new(int idx)
 static void tout_dcc_telnet_pw(int idx)
 {
   dprintf(idx, "Guess you're not there.  Bye.\n");
-  putlog(LOG_MISC, "*", DCC_TIMEOUTUSR2,
-	 dcc[idx].nick, dcc[idx].host, dcc[idx].port);
+  putlog(LOG_MISC, "*", DCC_TIMEOUTUSR2, dcc[idx].nick,
+	 dcc[idx].host, dcc[idx].port);
   killsock(dcc[idx].sock);
   lostdcc(idx);
 }
@@ -1638,9 +1634,8 @@ static void eof_dcc_script(int idx)
   if (dcc[idx].type && dcc[idx].type->eof)
     dcc[idx].type->eof(idx);
   else {
-    putlog(LOG_MISC, "*",
-	   DCC_DEADSOCKET,
-	   dcc[idx].sock, dcc[idx].type->name);
+    putlog(LOG_MISC, "*", DCC_DEADSOCKET, dcc[idx].sock,
+	   dcc[idx].type->name);
     killsock(dcc[idx].sock);
     lostdcc(idx);
   }
@@ -1752,8 +1747,7 @@ void eof_dcc_identwait(int idx)
 {
   int i;
 
-  putlog(LOG_MISC, "*", DCC_LOSTCONN,
-	 dcc[idx].host, dcc[idx].port);
+  putlog(LOG_MISC, "*", DCC_LOSTCONN, dcc[idx].host, dcc[idx].port);
   for (i = 0; i < dcc_total; i++)
     if ((dcc[i].type == &DCC_IDENT) &&
 	(dcc[i].u.ident_sock == dcc[idx].sock)) {

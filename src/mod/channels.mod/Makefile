@@ -16,6 +16,7 @@ modules: ../../../channels.so
 ../channels.o: ../module.h ../modvals.h ../../eggdrop.h cmdschan.c tclchan.c \
 userchan.c channels.h
 	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c channels.c
+	rm -f ../channels.o
 	mv channels.o ../
 
 ../../../channels.so: ../channels.o

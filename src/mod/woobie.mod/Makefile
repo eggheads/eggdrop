@@ -15,6 +15,7 @@ modules: ../../../woobie.so
 
 ../woobie.o: ../module.h ../modvals.h ../../eggdrop.h
 	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c woobie.c
+	rm -f ../woobie.o
 	mv woobie.o ../
 
 ../../../woobie.so: ../woobie.o

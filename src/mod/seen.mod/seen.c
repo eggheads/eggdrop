@@ -114,10 +114,10 @@ static int msg_seen(char *nick, char *host, struct userrec *u, char *text)
 
   context;
   if (!u) {
-    putlog(LOG_MISC, "*", "[%s!%s] seen %s", nick, host, text);
+    putlog(LOG_CMDS, "*", "[%s!%s] seen %s", nick, host, text);
     return 0;
   }
-  putlog(LOG_MISC, "*", "(%s!%s) !%s! SEEN %s", nick, host, u->handle, text);
+  putlog(LOG_CMDS, "*", "(%s!%s) !%s! SEEN %s", nick, host, u->handle, text);
   sprintf(prefix, "PRIVMSG %s :", nick);
   do_seen(DP_SERVER, prefix, nick, u->handle, "", text);
   return 0;
@@ -429,8 +429,7 @@ static void do_seen(int idx, char *prefix, char *nick, char *hand, char *channel
 	  strcat(whoredirect, whotarget);
 	  strcat(whoredirect,
 	   " is 'observing' this channel right now from my party line!");
-	  dprintf(idx, "%s%s\n",
-		  prefix, whoredirect);
+	  dprintf(idx, "%s%s\n", prefix, whoredirect);
 	} else {
 	  dprintf(idx,
 		  "%s%s%s is linked to me via DCC CHAT right now!\n",

@@ -17,6 +17,7 @@ modules: ../../../filesys.so
 files.c tclfiles.c files.h filesys.h ../../lang.h ../../tandem.h \
 ../transfer.mod/transfer.h
 	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c filesys.c
+	rm -f ../filesys.o
 	mv filesys.o ../
 
 ../../../filesys.so: ../filesys.o

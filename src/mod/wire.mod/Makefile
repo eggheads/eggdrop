@@ -16,6 +16,7 @@ modules: ../../../wire.so
 ../wire.o: ../module.h ../modvals.h ../../eggdrop.h wire.c wire.h \
 ../../chan.h ../../users.h
 	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c wire.c
+	rm -f ../wire.o
 	mv wire.o ../
 
 ../../../wire.so: ../wire.o

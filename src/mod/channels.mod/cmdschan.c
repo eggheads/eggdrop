@@ -1338,7 +1338,7 @@ static void cmd_chansave(struct userrec *u, int idx, char *par)
     dprintf(idx, "No channel saving file defined.\n");
   else {
     dprintf(idx, "Saving all dynamic channel settings.\n");
-    putlog(LOG_MISC, "*", "#%s# chansave", dcc[idx].nick);
+    putlog(LOG_CMDS, "*", "#%s# chansave", dcc[idx].nick);
     write_channels();
   }
 }
@@ -1349,7 +1349,7 @@ static void cmd_chanload(struct userrec *u, int idx, char *par)
     dprintf(idx, "No channel saving file defined.\n");
   else {
     dprintf(idx, "Reloading all dynamic channel settings.\n");
-    putlog(LOG_MISC, "*", "#%s# chanload", dcc[idx].nick);
+    putlog(LOG_CMDS, "*", "#%s# chanload", dcc[idx].nick);
     setstatic = 0;
     read_channels(1);
   }

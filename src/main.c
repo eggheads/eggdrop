@@ -250,9 +250,9 @@ void assert_failed (const char *module, const char *file, const int line)
 {
   write_debug();
   if (!module) {
-    putlog (LOG_MISC, "*", "* In file %s, line %u", file, line);
+    putlog(LOG_MISC, "*", "* In file %s, line %u", file, line);
   } else {
-    putlog (LOG_MISC, "*", "* In file %s:%s, line %u", module, file, line);
+    putlog(LOG_MISC, "*", "* In file %s:%s, line %u", module, file, line);
   }
   fatal ("ASSERT FAILED -- CRASHING!", 1);
   exit (1);

@@ -16,6 +16,7 @@ modules: ../../../transfer.so
 ../transfer.o: ../module.h ../modvals.h ../../eggdrop.h transfer.h \
 ../../tandem.h ../../users.h
 	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c transfer.c
+	rm -f ../transfer.o
 	mv transfer.o ../
 
 ../../../transfer.so: ../transfer.o

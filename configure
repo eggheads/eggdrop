@@ -2781,31 +2781,32 @@ fi
 
 echo $ac_n "checking space left in file database struct""... $ac_c" 1>&6
 echo "configure:2784: checking space left in file database struct" >&5
-if test "$cross_compiling" = yes; then
-    { echo "configure: error: can not run test program while cross compiling" 1>&2; exit 1; }
+if eval "test \"`echo '$''{'ac_cv_var_filedb_struct'+set}'`\" = set"
+then
+  echo $ac_n "(cached) $ac_c" 1>&6
 else
-  cat > conftest.$ac_ext <<EOF
-#line 2789 "configure"
+  cat > conftest.$ac_ext << EOF
 #include "confdefs.h"
-
 #include <stdio.h>
 #include <sys/time.h>
 #include "src/mod/filesys.mod/files.h"
-main() {
+int main() {
   fprintf(stdout, "%d/%d %s\n", 512 - sizeof(struct filler), sizeof(filedb), "bytes");
 }
-
 EOF
-if { (eval echo configure:2800: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext} && (./conftest; exit) 2>/dev/null
-then
-  :
-else
-  echo "configure: failed program was:" >&5
-  cat conftest.$ac_ext >&5
+  if { (eval echo configure: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}
+  then
+    ac_cv_var_filedb_struct=`./conftest${ac_exeext}`
+    rm -rf conftest*
+  else
+    echo "configure: failed program was:" >&5
+    cat conftest.$ac_ext >&5
+    ac_cv_var_filedb_struct=unknown
+    rm -rf conftest*
+  fi
+  rm -f conftest*
 fi
-rm -fr conftest*
-fi
-
+echo "$ac_t""$ac_cv_var_filedb_struct" 1>&6
 echo "$ac_t""   (standard is currently 48/512 bytes)" 1>&6
 
 # ---------- begin robey's tcl thingies
@@ -3028,7 +3029,7 @@ EOF
 fi
 
 echo $ac_n "checking for Tcl library""... $ac_c" 1>&6
-echo "configure:3032: checking for Tcl library" >&5
+echo "configure:3033: checking for Tcl library" >&5
 
 # attempt autodetect for $TCLLIBFN if it's not set
 if test ! "x${TCLLIBFN}" = "x"
@@ -3062,7 +3063,7 @@ then
 fi
 
 echo $ac_n "checking for Tcl header""... $ac_c" 1>&6
-echo "configure:3066: checking for Tcl header" >&5
+echo "configure:3067: checking for Tcl header" >&5
 
 # attempt autodetect for $TCLINCFN if it's not set
 if test ! "x${TCLINCFN}" = "x"
@@ -3110,16 +3111,23 @@ then
   echo "$ac_t""not found" 1>&6
 fi
 
-# done looking, now either TCLLIBFN & TCLINCFN are both set, or we will bail
+# done looking, now either TCLLIBFN & TCLINCFN are both set, or we bail
 if test ! "x${TCLLIBFN}" = "x" && test ! "x${TCLINCFN}" = "x"
 then
-  # is this really Tcl ?
-  TCL_VERSION=`grep TCL_VERSION $TCLINC/$TCLINCFN | head -1 | $AWK '{gsub(/\"/, "", $3); print $3}'`
+
+  # find Tcl's version
+  TCL_PATCH_LEVEL=`grep TCL_PATCH_LEVEL $TCLINC/$TCLINCFN | head -1 | $AWK '{gsub(/\"/, "", $3); print $3}'`
+  if test ! "x${TCL_PATCH_LEVEL}" = "x"
+  then
+    TCL_VERSION=$TCL_PATCH_LEVEL
+  else
+    TCL_VERSION=`grep TCL_VERSION $TCLINC/$TCLINCFN | head -1 | $AWK '{gsub(/\"/, "", $3); print $3}'`
+  fi
 fi
 
-# check Tcl version
+# check if we found Tcl's version
 echo $ac_n "checking for Tcl version""... $ac_c" 1>&6
-echo "configure:3123: checking for Tcl version" >&5
+echo "configure:3131: checking for Tcl version" >&5
 if test ! "x${TCL_VERSION}" = "x"
 then
   echo "$ac_t""$TCL_VERSION" 1>&6
@@ -3176,7 +3184,7 @@ fi
 
 # check for Tcl threads
 echo $ac_n "checking for Tcl threads""... $ac_c" 1>&6
-echo "configure:3180: checking for Tcl threads" >&5
+echo "configure:3188: checking for Tcl threads" >&5
 TCL_VER_POST81=`echo $TCL_VERSION | $AWK '{split($1, i, "."); if (((i[1] == 8) && (i[2] >= 1)) || (i[1] >= 9)) print "yes"; else print "no"}'`
 if test "x${TCL_VER_POST81}" = "xyes"
 then

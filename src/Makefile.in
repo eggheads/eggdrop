@@ -18,7 +18,7 @@ doofus:
 	@echo ""
 	@cd $(top_srcdir); $(MAKE)
 
-modegg: $(OBJS) $(XREQ)
+modegg: $(OBJS) $(XREQS)
 	@echo ""
 	@echo "Linking eggdrop..."
 	@echo ""
@@ -27,7 +27,7 @@ modegg: $(OBJS) $(XREQ)
 	@echo "Successful compile: $(EGGEXEC)"
 	@echo ""
 
-static: $(OBJS) $(XREQ)
+static: $(OBJS) $(XREQS)
 	@echo ""
 	@echo "Linking eggdrop... (static version)"
 	@echo ""
@@ -36,7 +36,7 @@ static: $(OBJS) $(XREQ)
 	@echo "Successful compile: $(EGGEXEC)"
 	@echo ""
 
-memegg: $(OBJS) $(XREQ)
+debegg: $(OBJS) $(XREQS)
 	@echo ""
 	@echo "Linking eggdrop... (debug version)"
 	@echo ""
@@ -44,7 +44,7 @@ memegg: $(OBJS) $(XREQ)
 	@echo "Successful compile: $(EGGEXEC)"
 	@echo ""
 
-sdebug: $(OBJS) $(XREQ)
+sdebug: $(OBJS) $(XREQS)
 	@echo ""
 	@echo "Linking eggdrop... (static and debug version)"
 	@echo ""
@@ -72,10 +72,10 @@ md5/md5c.o:
 
 libtcle.a: $(TCLLIB)/lib$(TCLLIBFN)
 	@echo "[ Fixing lib$(TCLLIBFN) -> libtcle.a ]"
-	cp $(TCLLIB)/lib$(TCLLIBFN) ./libtcle.a
+	cp $(TCLLIB)/lib$(TCLLIBFN) libtcle.a
 	chmod u+rw libtcle.a
-	ar d ./libtcle.a tclMain.o
-	$(RANLIB) ./libtcle.a
+	ar d libtcle.a tclMain.o
+	$(RANLIB) libtcle.a
 
 eggdrop.h:
 	@echo "You do not have the eggdrop source!"

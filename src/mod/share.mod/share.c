@@ -855,7 +855,8 @@ static void share_pls_ignore(int idx, char *par)
 
 static void share_ufno(int idx, char *par)
 {
-  putlog(LOG_BOTS, "*", "User file rejected by %s: %s", dcc[idx].nick, par);
+  putlog(LOG_BOTS, "*", "User file rejected by %s: %s",
+	 dcc[idx].nick, par);
   dcc[idx].status &= ~STAT_OFFERED;
   if (!(dcc[idx].status & STAT_GETTING))
     dcc[idx].status &= ~(STAT_SHARE | STAT_AGGRESSIVE);
@@ -869,7 +870,8 @@ static void share_ufyes(int idx, char *par)
     dcc[idx].status |= STAT_SHARE;
     dcc[idx].status |= STAT_SENDING;
     start_sending_users(idx);
-    putlog(LOG_BOTS, "*", "Sending user file send request to %s", dcc[idx].nick);
+    putlog(LOG_BOTS, "*", "Sending user file send request to %s",
+	   dcc[idx].nick);
   }
 }
 
@@ -931,7 +933,7 @@ static void share_ufsend(int idx, char *par)
     port = newsplit(&par);
     if (open_telnet_dcc(sock, ip, port) < 0) {
       killsock(sock);
-      putlog(LOG_MISC, "*", "Asynchronous connection failed!");
+      putlog(LOG_BOTS, "*", "Asynchronous connection failed!");
       dprintf(idx, "s e Can't connect to you!\n");
       zapfbot(idx);
     } else {
@@ -1190,7 +1192,7 @@ static void new_tbuf(char *bot)
       strcpy(tbuf[i].bot, bot);
       tbuf[i].q = NULL;
       tbuf[i].timer = now;
-      putlog(LOG_MISC, "*", "Creating resync buffer for %s", bot);
+      putlog(LOG_BOTS, "*", "Creating resync buffer for %s", bot);
       break;
     }
 }
@@ -1231,7 +1233,7 @@ static void check_expired_tbufs()
 	  nfree(q->msg);
 	  nfree(q);
 	}
-	putlog(LOG_MISC, "*", "Flushing resync buffer for clonebot %s.",
+	putlog(LOG_BOTS, "*", "Flushing resync buffer for clonebot %s.",
 	       tbuf[i].bot);
 	tbuf[i].bot[0] = 0;
       }
@@ -1395,7 +1397,7 @@ static int write_tmp_userfile(char *fn, struct userrec *bu, int idx)
       ok = write_exempts(f, idx); /* we share these now */
       ok = write_invites(f, idx); /* we share these now */
     } else
-      putlog(LOG_MISC, "*", "%s is too old: not sharing exempts and invites.",
+      putlog(LOG_BOTS, "*", "%s is too old: not sharing exempts and invites.",
              dcc[idx].nick);
     fclose(f);
     if (!ok)
@@ -1534,7 +1536,7 @@ static void finish_share(int idx)
       putlog(LOG_MISC, "*", "%s", USERF_CANTREAD);
     else {
       context;
-      putlog(LOG_MISC, "*", "%s.", USERF_XFERDONE);
+      putlog(LOG_BOTS, "*", "%s.", USERF_XFERDONE);
       clear_chanlist();
       userlist = u;
       lastuser = NULL;
@@ -1635,7 +1637,7 @@ static void start_sending_users(int idx)
     context;
     dprintf(idx, "s e %s\n", USERF_CANTSEND);
     context;
-    putlog(LOG_MISC, "*", "%s -- can't send userfile",
+    putlog(LOG_BOTS, "*", "%s -- can't send userfile",
 	   i == 1 ? "NO MORE DCC CONNECTIONS" :
 	   i == 2 ? "CAN'T OPEN A LISTENING SOCKET" : "BAD FILE");
     dcc[idx].status &= ~(STAT_SHARE | STAT_SENDING | STAT_AGGRESSIVE);

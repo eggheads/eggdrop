@@ -15,6 +15,7 @@ modules: ../../../blowfish.so
 
 ../blowfish.o: ../module.h ../modvals.h ../../eggdrop.h bf_tab.h blowfish.h
 	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c blowfish.c
+	rm -f ../blowfish.o
 	mv blowfish.o ../
 
 ../../../blowfish.so: ../blowfish.o

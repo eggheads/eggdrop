@@ -582,7 +582,7 @@ static void cmd_boot(struct userrec *u, int idx, char *par)
       }
       botnet_send_reject(i, dcc[idx].nick, botnetnick, whonick,
 			 who, par[0] ? par : dcc[idx].nick);
-      putlog(LOG_MISC, "*", "#%s# boot %s@%s (%s)", dcc[idx].nick, whonick,
+      putlog(LOG_BOTS, "*", "#%s# boot %s@%s (%s)", dcc[idx].nick, whonick,
 	     who, par[0] ? par : dcc[idx].nick);
     } else
       dprintf(idx, "Remote boots are disabled here.\n");

@@ -343,14 +343,32 @@ fi
 
 dnl check how much space is left in filedb (informational purposes)
 AC_MSG_CHECKING(space left in file database struct)
-AC_TRY_RUN([
+if eval "test \"`echo '$''{'ac_cv_var_filedb_struct'+set}'`\" = set"
+then
+  echo $ac_n "(cached) $ac_c" 1>&6
+else
+  cat > conftest.$ac_ext << EOF
+#include "confdefs.h"
 #include <stdio.h>
 #include <sys/time.h>
 #include "src/mod/filesys.mod/files.h"
-main() {
+int main() {
   fprintf(stdout, "%d/%d %s\n", 512 - sizeof(struct filler), sizeof(filedb), "bytes");
 }
-])
+EOF
+  if { (eval echo configure: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}
+  then
+    ac_cv_var_filedb_struct=`./conftest${ac_exeext}`
+    rm -rf conftest*
+  else
+    echo "configure: failed program was:" >&5
+    cat conftest.$ac_ext >&5
+    ac_cv_var_filedb_struct=unknown
+    rm -rf conftest*
+  fi
+  rm -f conftest*
+fi
+AC_MSG_RESULT($ac_cv_var_filedb_struct)
 AC_MSG_RESULT([   (standard is currently 48/512 bytes)])
 
 dnl where is tcl?  is it here?
@@ -647,14 +665,21 @@ then
   AC_MSG_RESULT(not found)
 fi
 
-# done looking, now either TCLLIBFN & TCLINCFN are both set, or we will bail
+# done looking, now either TCLLIBFN & TCLINCFN are both set, or we bail
 if test ! "x${TCLLIBFN}" = "x" && test ! "x${TCLINCFN}" = "x"
 then
-  # is this really Tcl ?
-  TCL_VERSION=`grep TCL_VERSION $TCLINC/$TCLINCFN | head -1 | $AWK '{gsub(/\"/, "", $3); print $3}'`
+
+  # find Tcl's version
+  TCL_PATCH_LEVEL=`grep TCL_PATCH_LEVEL $TCLINC/$TCLINCFN | head -1 | $AWK '{gsub(/\"/, "", $3); print $3}'`
+  if test ! "x${TCL_PATCH_LEVEL}" = "x"
+  then
+    TCL_VERSION=$TCL_PATCH_LEVEL
+  else
+    TCL_VERSION=`grep TCL_VERSION $TCLINC/$TCLINCFN | head -1 | $AWK '{gsub(/\"/, "", $3); print $3}'`
+  fi
 fi
 
-# check Tcl version
+# check if we found Tcl's version
 AC_MSG_CHECKING(for Tcl version)
 if test ! "x${TCL_VERSION}" = "x"
 then

@@ -16,6 +16,7 @@ modules: ../../../ctcp.so
 ../ctcp.o: ../module.h ../modvals.h ../../eggdrop.h ctcp.h \
 ../server.mod/server.h
 	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c ctcp.c
+	rm -f ../ctcp.o
 	mv ctcp.o ../
 
 ../../../ctcp.so: ../ctcp.o

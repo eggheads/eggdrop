@@ -16,6 +16,7 @@ modules: ../../../notes.so
 ../notes.o: ../module.h ../modvals.h ../../eggdrop.h cmdsnote.c notes.c \
 notes.h ../../tandem.h
 	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c notes.c
+	rm -f ../notes.o
 	mv notes.o ../
 
 ../../../notes.so: ../notes.o
