@@ -10,7 +10,7 @@
  *
  * dprintf'ized, 9nov1995
  *
- * $Id: users.c,v 1.35 2002/08/08 20:49:32 wcc Exp $
+ * $Id: users.c,v 1.36 2002/10/11 01:59:31 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -497,8 +497,8 @@ void tell_user(int idx, struct userrec *u, int master)
     else
       egg_strftime(s1, 6, "%H:%M", localtime(&li->laston));
   }
-  egg_snprintf(format, sizeof format, "%%-%us %%-5s%%5d %%-15s %%s (%%-10.10s)\n", 
-                          HANDLEN);
+  egg_snprintf(format, sizeof format, "%%-%us %%-5s%%5d %%-15s %%s (%%s)\n",
+               HANDLEN);
   dprintf(idx, format, u->handle, 
 	  get_user(&USERENTRY_PASS, u) ? "yes" : "no", n, s, s1,
 	  (li && li->lastonplace) ? li->lastonplace : "nowhere");
