@@ -1,7 +1,7 @@
 dnl aclocal.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: aclocal.m4,v 1.35 2001/06/22 05:49:30 guppy Exp $
+dnl $Id: aclocal.m4,v 1.36 2001/06/22 05:52:39 guppy Exp $
 dnl
 
 
@@ -371,8 +371,18 @@ else
   AC_CHECK_LIB(m, tan, EGG_MATH_LIB="-lm")
   # This is needed for Tcl libraries compiled with thread support
   AC_CHECK_LIB(pthread, pthread_mutex_init,
-ac_cv_lib_pthread_pthread_mutex_init=yes,
-ac_cv_lib_pthread_pthread_mutex_init=no)
+    ac_cv_lib_pthread_pthread_mutex_init=yes,
+    ac_cv_lib_pthread_pthread_mutex_init=no)
+  if test "$ac_cv_lib_pthread_pthread_mutex_init" = "no"; then
+    AC_CHECK_LIB(pthread,__pthread_mutex_init,
+      ac_cv_lib_pthread_pthread_mutex_init=yes,
+      ac_cv_lib_pthread_pthread_mutex_init=no)
+  fi
+  if test "$ac_cv_lib_pthread_pthread_mutex_init" = "no"; then
+    AC_CHECK_LIB(pthreads,pthread_mutex_init,
+      ac_cv_lib_pthreads_pthread_mutex_init=yes,
+      ac_cv_lib_pthreads_pthread_mutex_init=no)
+  fi
   if test "$SUNOS" = "yes"
   then
     # For suns without yp or something like that
@@ -438,7 +448,7 @@ AC_CACHE_CHECK(whether libsafe broke sscanf, egg_cv_var_libsafe_sscanf,
   }],egg_cv_var_libsafe_sscanf="no",egg_cv_var_libsafe_sscanf="yes",
   egg_cv_var_libsafe_sscanf="no")
 ])
-if test "x$egg_cv_var_libsafe_sscanf" == "xyes"; then
+if test "x$egg_cv_var_libsafe_sscanf" = "xyes"; then
   AC_DEFINE(LIBSAFE_HACKS)dnl
 fi
 ])dnl
@@ -942,9 +952,12 @@ else
     TCL_TESTLIBS="-L$TCLLIB -l$TCLLIBFNS $EGG_MATH_LIB $LIBS"
   fi
 fi
-if test "x${ac_cv_lib_pthread_pthread_mutex_init}" = "xyes"
-then
+if test "x${ac_cv_lib_pthread_pthread_mutex_init}" = "xyes"; then
   TCL_TESTLIBS="-lpthread $TCL_TESTLIBS"
+else
+  if text "x${ac_cv_lib_pthreads_pthread_mutex_init}" = "xyes"; then
+    TCL_TESTLIBS="-lpthreads $TCL_TESTLIBS"
+  fi
 fi
 ])dnl
 
@@ -1050,9 +1063,12 @@ EOF
   fi
 
   # Add -lpthread to $LIBS if we have it
-  if test "x${ac_cv_lib_pthread_pthread_mutex_init}" = "xyes"
-  then
+  if test "x${ac_cv_lib_pthread_pthread_mutex_init}" = "xyes"; then
     LIBS="-lpthread $LIBS"
+  else
+    if text "x${ac_cv_lib_pthreads_pthread_mutex_init}" = "xyes"; then
+      TCL_TESTLIBS="-lpthreads $TCL_TESTLIBS"
+    fi  
   fi
 fi
 ])dnl
