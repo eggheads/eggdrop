@@ -7,7 +7,7 @@
  * because they use structures in those
  * (saves including those .h files EVERY time) - Beldin
  * 
- * $Id: proto.h,v 1.15 1999/12/25 00:07:50 fabian Exp $
+ * $Id: proto.h,v 1.16 2000/01/01 19:42:29 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -39,7 +39,6 @@
 
 #ifndef HAVE_BZERO
 void bzero(char *, int);
-
 #endif
 
 struct chanset_t;		/* keeps the compiler warnings down :) */

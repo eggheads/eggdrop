@@ -4,7 +4,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: modules.c,v 1.17 1999/12/25 00:07:50 fabian Exp $
+ * $Id: modules.c,v 1.18 2000/01/01 19:42:29 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -282,11 +282,7 @@ Function global_table[] =
   (Function) _get_data_ptr,
   (Function) open_telnet,
   /* 88 - 91 */
-#ifdef HAVE_BZERO
-  (Function) null_func,
-#else
   (Function) bzero,
-#endif
   (Function) my_memcpy,
   (Function) my_atoul,
   (Function) my_strcpy,

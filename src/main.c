@@ -7,7 +7,7 @@
  * 
  * dprintf'ized, 15nov1995
  * 
- * $Id: main.c,v 1.19 2000/01/01 19:34:13 fabian Exp $
+ * $Id: main.c,v 1.20 2000/01/01 19:42:29 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -482,7 +482,7 @@ static void core_secondly()
     }
   }
   Context;
-  memcpy(&nowtm, localtime(&now), sizeof(struct tm));
+  my_memcpy((char *) &nowtm, (char *) localtime(&now), sizeof(struct tm));
   if (nowtm.tm_min != lastmin) {
     int i = 0;
 
@@ -711,7 +711,7 @@ int main(int argc, char **argv)
   /* initialize variables and stuff */
   now = time(NULL);
   chanset = NULL;
-  memcpy(&nowtm, localtime(&now), sizeof(struct tm));
+  my_memcpy((char *) &nowtm, (char *) localtime(&now), sizeof(struct tm));
   lastmin = nowtm.tm_min;
   srandom(now);
   init_mem();
