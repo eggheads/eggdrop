@@ -1,7 +1,7 @@
 /*
  * module.h
  *
- * $Id: module.h,v 1.53 2001/09/24 04:25:40 guppy Exp $
+ * $Id: module.h,v 1.54 2001/10/20 19:03:09 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -448,6 +448,8 @@
 #define kill_bot ((void (*)(char *, char *))global[271])
 /* 272 - 275 */
 #define quit_msg ((char *)(global[272]))
+#define module_load ((char *(*)(char *))global[273])
+#define module_unload ((char *(*)(char *, char *))global[274])
 
 /* This is for blowfish module, couldnt be bothered making a whole new .h
  * file for it ;)
