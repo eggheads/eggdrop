@@ -2,7 +2,7 @@
  * files.c - part of filesys.mod
  *   handles all file system commands
  *
- * $Id: files.c,v 1.40 2003/02/04 07:10:51 stdarg Exp $
+ * $Id: files.c,v 1.41 2003/02/04 08:11:30 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -174,7 +174,11 @@ static int resolve_dir(char *current, char *change, char **real, int idx)
     p++;
     malloc_strcpy(elem, new);
     strcpy(new, p);
-    if (strcmp(elem, ".") && elem[0] && !strcmp(elem, "..")) {
+    if (!elem[0] || !strcmp(elem, ".")) {
+    	p = strchr(new, '/');
+	continue;
+    }
+    else if (!strcmp(elem, "..")) {
       /* Always allowed */
       p = strrchr(*real, '/');
       if (p == NULL) {
@@ -188,7 +192,8 @@ static int resolve_dir(char *current, char *change, char **real, int idx)
         (*real)[0] = 0;
       } else
         *p = 0;
-    } else {
+    }
+    else {
       /* Allowed access here? */
       fdb = filedb_open(*real, 0);
       if (!fdb) {
