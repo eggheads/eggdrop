@@ -4,7 +4,7 @@
  *
  *   IF YOU ALTER THIS FILE, YOU NEED TO RECOMPILE THE BOT.
  *
- * $Id: eggdrop.h,v 1.56 2004/04/06 06:56:38 wcc Exp $
+ * $Id: eggdrop.h,v 1.57 2004/06/03 14:10:18 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -110,7 +110,7 @@
 #endif
 
 #ifndef STDC_HEADERS
-#  include "Error: Your system must support ANSI C Header files."
+#  include "Error: Your system must have standard ANSI C headers."
 #endif
 
 #if (NICKMAX < 9) || (NICKMAX > 32)
@@ -125,12 +125,13 @@
 #  include "Error: HANDLEN MUST BE <= NICKMAX."
 #endif
 
-/* NAME_MAX is what POSIX defines, but BSD calls it MAXNAMLEN.
- * Use 255 if we can't find anything else.
- */
 #if HAVE_SYS_PARAM_H
 #  include <sys/param.h>
 #endif
+
+/* NAME_MAX is what POSIX defines, but BSD calls it MAXNAMLEN.
+ * Use 255 if we can't find anything else.
+ */
 #ifndef NAME_MAX
 #  ifdef MAXNAMLEN
 #    define NAME_MAX    MAXNAMLEN

@@ -16,7 +16,7 @@ dnl You should have received a copy of the GNU General Public License
 dnl along with this program; if not, write to the Free Software
 dnl Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 dnl
-dnl $Id: aclocal.m4,v 1.87 2004/04/10 04:53:41 wcc Exp $
+dnl $Id: aclocal.m4,v 1.88 2004/06/03 14:10:18 wcc Exp $
 dnl
 
 dnl EGG_MSG_CONFIGURE_START()
@@ -94,7 +94,7 @@ b
 c
 EOF
 
-  for ac_prog in 'head -1' 'head -n 1' 'sed 1q'; do
+  for ac_prog in 'head -n 1' 'head -1' 'sed 1q'; do
     AC_MSG_CHECKING([whether $ac_prog works])
     AC_CACHE_VAL([ac_cv_prog_HEAD_1],
     [

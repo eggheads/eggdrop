@@ -1,4 +1,4 @@
-%{help=fixcodes}
+%{help=fixcodes}%{-}
 ###  %bfixcodes%b
    This is for use in situations where the bot gets mixed up about the type
    of connection you have with it. For example, you /CTCP CHAT the bot and
@@ -106,7 +106,7 @@ See also: modules, module, unloadmod
 
    This would show results 16 through 25 matching any users with a hostmask
    that ends with ".edu".
-%{help=me}
+%{help=me}%{-}
 ###  %bme%b <text>
    Performs an action on the party line. This appears as "* Wcc is leaving",
    etc.
@@ -123,26 +123,26 @@ See also: modules, loadmod, unloadmod
    modules currently loaded on that bot will be displayed instead.
 
 See also: module, loadmod, unloadmod
-%{help=motd}
+%{help=motd}%{-}
 ###  %bmotd%b [botname]
    This redisplays the partyline Message Of The Day, which was shown when you
    first joined the partyline. If the name of a remote bot is specified, that
    bot's motd will be displayed instead.
-%{help=newpass}
+%{help=newpass}%{-}
 ###  %bnewpass%b <password>
    Changes your password on the bot. This is similar to the '/msg <bot> pass'
    command, except you don't need to specify your old password.
 %{+t}
 
 See also: chpass
-%{help=handle}
+%{help=handle}%{-}
 ###  %bhandle%b <new-handle>
    Changes your handle on the bot. This is the handle (nickname) that the
    bot will know you as from this point forward. It is used to log into the
    bot, and for the /msg IDENT command, etc.
 
 See also: newpass%{+t}, chhand, chpass
-%{help=note}
+%{help=note}%{-}
 ###  %bnote%b <nickname[@bot]> <message>
    Sends a private note to a user on the partyline. If that user is currently
    logged in and not marked as away, the message will be received immediately.
@@ -151,14 +151,14 @@ See also: newpass%{+t}, chhand, chpass
    the nickname.
 
 See also: whom, notes
-%{help=page}
+%{help=page}%{-}
 ###  %bpage%b <number/off>
    This allows you to slow down the number of lines the bot sends you at once
    via the partyline. When enabled, any commands that send greater than the
    specified number of lines will stop when that number is reached and wait for
    you to type another command (or press enter) to continue. If you have too
    many pending lines, you may be booted off the bot.
-%{help=quit}
+%{help=quit}%{-}
 ###  %bquit%b [comment]
    This disconnects you from the partyline. If you specify a comment, it will
    be displayed to other partyline users as you leave.
@@ -195,7 +195,7 @@ See also: save%{+m}, rehash
 %{+m}
 
 See also: restart
-%{help=whoami}
+%{help=whoami}%{-}
 ###  %bwhoami%b
    Shows your current handle and to what bot you are connected.
 
@@ -225,7 +225,7 @@ See also: reload, rehash, backup
    This would appear just as if "dweeb" typed ".quit". This command will not
    work unless eggdrop has simul enabled in the config file. Please use this
    command ethically.
-%{help=strip}
+%{help=strip}%{-}
 ###  %bstrip%b [modes]
    Allows you to remove embedded 'attribute' codes your partyline output. Valid
    options are:
@@ -247,12 +247,12 @@ See also: fixcodes
    flags without prefixing the modes with a '+' or '-'.
 
 
-%{help=su}
+%{help=su}%{-}
 ###  %bsu%b <user>
    Lets you assume the identity of another user. If you are a global owner,
    this does not require a password. Otherwise, you will be asked for the
    user's password. %b.quit%b returns you to your original handle.
-%{help=trace}
+%{help=trace}%{+t}
 ###  %btrace%b <bot>
    Sends out a trace signal to another bot. If/when the trace signal returns,
    (and it should!) you will get an output that looks something like this:
@@ -275,7 +275,7 @@ See also: link, +bot, -bot, bots, bottree
    Unloads the specified module.
 
 See also: modules, module, loadmod
-%{help=whom}
+%{help=whom}%{-}
 ###  %bwhom%b [channel/*]
    Displays a list of users on the current partyline channel.
 
@@ -284,7 +284,7 @@ See also: modules, module, loadmod
        Nick        Bot        Host
       ----------   ---------  --------------------
       *Wcc         Anakha     telnet@xxx.atlaga.adelphia.net [idle 8m]
-      *BitchSmack  Anakha     telnet@xxx.atlaga.adelphia.net
+      *Blah        Anakha     telnet@xxx.atlaga.adelphia.net
       Total users: 2
 
    Each user's nickname will be listed in the first column, preceded by a "*"
@@ -299,7 +299,7 @@ See also: modules, module, loadmod
    channels will be shown.
 
 See also: who, bots, chat
-%{help=who}
+%{help=who}%{-}
 ###  %bwho%b [bot]
    Displays a list of users on the local bot.
 

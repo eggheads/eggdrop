@@ -32,7 +32,7 @@ See also: -user, +host, -host
    included for convenience.
 
 See also: +bot, +user, -user
-%{help=-host}
+%{help=-host}%{-}
 ###  %b-host%b <hostmask>
    Removes a host from your handle.
 %{+m|m}
@@ -58,7 +58,7 @@ See also: +user, +bot, -bot
    Adds your comment to the bot's logfile. Bot masters can go back later and
    review the log, and will see your comment (with your handle attached). This
    is useful for explaining confusing activity.
-%{help=away}
+%{help=away}%{-}
 ###  %baway%b [away-message]
    Marks you as "away" on the party line. Your away message will show up in
    the %b'.who'%b list, and will be displayed to anyone who tries to send you
@@ -68,7 +68,7 @@ See also: +user, +bot, -bot
    itself.
 
 See also: back
-%{help=back}
+%{help=back}%{-}
 ###  %bback%b
    This marks you as no longer away on the party line.
 
@@ -124,14 +124,14 @@ See also: tcl
          bot at the current moment.
 
 See also: whois, chattr
-%{help=botinfo}
+%{help=botinfo}%{-}
 ###  %bbotinfo%b
    Requests information from every bot currently on the botnet. Each bot should
    eventually send you one line containing its version, network setting,
    channels, and uptime.
 
 See also: bottree, vbottree, bots
-%{help=bots}
+%{help=bots}%{-}
 ###  %bbots%b
    Shows the list of bots currently on the botnet.
 
@@ -142,7 +142,7 @@ See also: bottree, vbottree, bots
    bot. Use %b'.who'%b%{+t} or %b'.bottree'%b%{-} for that information.
 
 See also: bottree, vbottree, botinfo
-%{help=bottree}
+%{help=bottree}%{-}
 ###  %bbottree%b
    Shows a tree-format diagram of the bots currently on the botnet. It's just a
    nice way to get a feel for how the bots are physically connected. If 2 bots
@@ -156,7 +156,7 @@ See also: bots, botinfo, vbottree
    they should be separated  by a slash (/).
 
 See also: link, +bot
-%{help=chat}
+%{help=chat}%{-}
 ###  %bchat%b <on/off>
 ###  %bchat%b <[*]channel number/name>
    Changes your current channel on the partyline. When you first connect to
@@ -324,7 +324,7 @@ See also: chhandle
    Display a dump of memory allocation information, assuming the bot was
    compiled with memory debugging. It's useless to anyone but developers
    trying to find memory leaks.
-%{help=echo}
+%{help=echo}%{-}
 ###  %becho%b <on/off>
    Specifies whether you want your messages echoed back to you. If it's on,
    then when you say something on the party line, it will be displayed to you
