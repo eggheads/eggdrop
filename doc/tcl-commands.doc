@@ -66,7 +66,7 @@ specific commands, see later.
 | queuesize [queue]
 |   returns: the number of msgs in all queues. If a queue is specified, only
 |     the size of this queue is returned. valid queues are: mode, server,
-|     help, or all.
+|     help.
 
 |  clearqueue <queue>
 |    returns: number of deleted lines from the specified queue
