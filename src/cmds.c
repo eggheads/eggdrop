@@ -1750,31 +1750,13 @@ static void cmd_chat(struct userrec *u, int idx, char *par)
   int newchan, oldchan;
   module_entry *me;
 
-  if (!par[0]) {
-    oldchan = dcc[idx].u.chat->channel;
-    switch (oldchan) {
-    case -1:
-      dprintf(idx, "You're currently not in chat mode\n");
-      break;
-    case 0:
-      dprintf(idx, "You're currently on the party line\n");
-      break;
-    default:
-      dprintf(idx, "You're currently on channel %s%d!\n",
-              (oldchan < 100000) ? "" : "*", oldchan % 100000);
-      break;
-    }
-    return;
-  }
-
   arg = newsplit(&par);
-
   if (!strcasecmp(arg, "off")) {
     /* turn chat off */
     if (dcc[idx].u.chat->channel < 0) {
       dprintf(idx, "You weren't in chat anyway!\n");
       return;
-    }  else {
+    } else {
       dprintf(idx, "Leaving chat mode...\n");
       check_tcl_chpt(botnetnick, dcc[idx].nick, dcc[idx].sock,
 		     dcc[idx].u.chat->channel);
@@ -1790,7 +1772,7 @@ static void cmd_chat(struct userrec *u, int idx, char *par)
     if (arg[0] == '*') {
       if (((arg[1] < '0') || (arg[1] > '9'))) {
 	if (arg[1] == 0)
- 	  newchan = 0;
+	  newchan = 0;
 	else {
 	  Tcl_SetVar(interp, "chan", arg, 0);
 	  if ((Tcl_VarEval(interp, "assoc ", "$chan", NULL) == TCL_OK) &&

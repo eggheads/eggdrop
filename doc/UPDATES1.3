@@ -4,6 +4,8 @@ Changes in eggdrop: (since v1.3.0)
 
 1.3.29
 Foundby   Fixedby   What....
+	  Fabian    bot was deop'ing itsself in got_op()
+          rtc       tcl chpt binding could call the proc with chan -1
 	  drummer   tidy-up of write_channels()
 	  Tothwolf  various configure/Makefile changes again
 	  rtc       fixed one more SEGV case that was revealed by another patch
@@ -113,8 +115,7 @@ reddawg   rtc       md5 make could fail on some OS
 Ben	  Fabian    minor doc changes to eggdrop.conf.dist
           rtc       fixed .whois to properly display local channels in 
                     console records
-          rtc       .chat should only care about the first argument and
-                    tell the user's current channel if not given one
+          rtc       .chat should only care about the first argument given
           rtc       save console settings on '.page', '.chat', '.echo' and
                     '.strip', not on '.quit' and dcc disconnect.
           drummer   misc blowfish bug fixes

@@ -272,6 +272,8 @@ else
   AC_CHECK_LIB(nsl,connect)
   AC_CHECK_LIB(dns,gethostbyname)
   AC_CHECK_LIB(dl,dlopen)
+dnl this is needed for Tcl compiled with thread support
+  AC_CHECK_LIB(pthread,pthread_create,ac_cv_lib_pthread_pthread_create=yes,ac_cv_lib_pthread_pthread_create=no)
   if test "$SUNOS" = "yes"
   then
     dnl for suns without yp or something like that
@@ -687,13 +689,13 @@ configure: error:
 
 EOF
   exit 1
-else
+fi
 
-  # is this Tcl version too old for us to use ?
-  TCL_VER_PRE70=`echo $TCL_VERSION | $AWK '{split($1, i, "."); if (i[1] < 7) print "yes"; else print "no"}'`
-  if test "$TCL_VER_PRE70" = "xyes"
-  then
-    cat << EOF >&2
+# is this Tcl version too old for us to use ?
+TCL_VER_PRE70=`echo $TCL_VERSION | $AWK '{split($1, i, "."); if (i[1] < 7) print "yes"; else print "no"}'`
+if test "$TCL_VER_PRE70" = "xyes"
+then
+  cat << EOF >&2
 configure: error:
 
   Your Tcl version is much too old for eggdrop to use.
@@ -701,89 +703,128 @@ configure: error:
   The most reliable current version is $tclrecommendver
 
 EOF
-    exit 1
-  fi
+  exit 1
+fi
 
-  # are we using a pre 7.5 Tcl version ?
+# are we using a pre 7.5 Tcl version ?
 changequote(,)dnl
-  TCL_VER_PRE75=`echo $TCL_VERSION | $AWK '{split($1, i, "."); if (((i[1] == 7) && (i[2] >= 5)) || (i[1] >= 8)) print "no"; else print "yes"}'`
+TCL_VER_PRE75=`echo $TCL_VERSION | $AWK '{split($1, i, "."); if (((i[1] == 7) && (i[2] < 5)) || (i[1] < 7)) print "yes"; else print "no"}'`
 changequote([, ])dnl
-  if test "x${TCL_VER_PRE75}" = "xyes"
+if test "x${TCL_VER_PRE75}" = "xyes"
+then
+  AC_DEFINE(HAVE_OLD_TCL)
+fi
+
+# check for Tcl threads
+AC_MSG_CHECKING(for Tcl threads)
+changequote(,)dnl
+TCL_VER_POST81=`echo $TCL_VERSION | $AWK '{split($1, i, "."); if (((i[1] == 8) && (i[2] >= 1)) || (i[1] >= 9)) print "yes"; else print "no"}'`
+changequote([, ])dnl
+if test "x${TCL_VER_POST81}" = "xyes"
+then
+
+  # check for TclpFinalizeThreadData()
+  if eval "test \"`echo '$''{'ac_cv_var_tcl_threads'+set}'`\" = set"
   then
-    AC_DEFINE(HAVE_OLD_TCL)
+    echo $ac_n "(cached) $ac_c" 1>&6
   else
-
-    # detect buggy Tcl 8.1 compiled with threads
-changequote(,)dnl
-    TCL_VER_81=`echo $TCL_VERSION | $AWK '{split($1, i, "."); if ((i[1] == 8) && (i[2] == 1)) print "yes"; else print "no"}'`
-changequote([, ])dnl
-    if test "x${TCL_VER_81}" = "xyes"
+    ac_save_LIBS="$LIBS"
+    if test "x${ac_cv_lib_pthread_pthread_create}" = "xyes"
     then
-      AC_MSG_CHECKING(for buggy Tcl 8.1 threads)
-      if test -f "$TCLLIB/$tclconfigfile"
-      then
-	TCL_HAS_THREADS=`grep 'TCL_DEFS' $TCLLIB/$tclconfigfile | grep 'TCL_THREADS=1' | wc -l`
-	if test $TCL_HAS_THREADS = 1
-	then
-	  AC_MSG_RESULT(yes...using a workaround.)
-	  AC_DEFINE(HAVE_BUGGY_TCL_THREADS)
-	else
-	  AC_MSG_RESULT(no)
-	fi
-      else
-	AC_MSG_RESULT(${tclconfigfile} is missing...better to be safe then sorry.)
-	AC_DEFINE(HAVE_BUGGY_TCL_THREADS)
-      fi
+      LIBS="-lpthread $LIBS"
     fi
-  fi
-
-  if test ! "x${TCLLIBEXT}" = "x.a"
-  then
-    TCL_REQS="$TCLLIB/lib$TCLLIBFN"
-    TCL_LIBS="-L$TCLLIB -l$TCLLIBFNS -lm"
-  else
-
-    # set default make as static for unshared Tcl library
-    if test ! "$DEFAULT_MAKE" = "static"
+    if test ! "x${TCLLIBEXT}" = "x.a"
     then
-      cat << 'EOF' >&2
-configure: warning:
-
-  Your libtcl is not a shared library.
-  configure will set default make type to static.
-
-EOF
-      DEFAULT_MAKE=static
-    fi
-
-    # are we using a pre 7.4 Tcl version ?
-changequote(,)dnl
-    TCL_VER_PRE74=`echo $TCL_VERSION | $AWK '{split($1, i, "."); if (((i[1] == 7) && (i[2] <= 3)) || (i[1] <= 6)) print "yes"; else print "no"}'`
-changequote([, ])dnl
-    if test "x${TCL_VER_PRE74}" = "xno"
-    then
-
-      # was the --with-tcllib option given ?
+      LIBS="-L$TCLLIB -l$TCLLIBFNS -lm $LIBS"
+    else
       if test ! "x${tcllibname}" = "x"
       then
-	TCL_REQS="$TCLLIB/lib$TCLLIBFN"
-	TCL_LIBS="$TCLLIB/lib$TCLLIBFN -lm"
+	LIBS="$TCLLIB/lib$TCLLIBFN -lm $LIBS"
       else
-	TCL_REQS="$TCLLIB/lib$TCLLIBFN"
-	TCL_LIBS="-L$TCLLIB -l$TCLLIBFNS -lm"
+	LIBS="-L$TCLLIB -l$TCLLIBFNS -lm $LIBS"
       fi
+    fi
+    cat > conftest.$ac_ext << EOF
+#include "confdefs.h"
+char TclpFinalizeThreadData();
+
+int main() {
+  TclpFinalizeThreadData();
+  return 0;
+}
+EOF
+    if { (eval echo configure: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}
+    then
+      rm -rf conftest*
+      eval "ac_cv_var_tcl_threads=yes"
     else
-      cat << EOF >&2
+      echo "configure: failed program was:" >&5
+      cat conftest.$ac_ext >&5
+      rm -rf conftest*
+      eval "ac_cv_var_tcl_threads=no"
+    fi
+    rm -f conftest*
+    LIBS="$ac_save_LIBS"
+  fi
+fi
+
+if test "x${ac_cv_var_tcl_threads}" = "xyes"
+then
+  AC_MSG_RESULT(yes)
+  AC_MSG_CHECKING(for Tcl threads bug)
+changequote(,)dnl
+  TCL_VER_IS81=`echo $TCL_VERSION | $AWK '{split($1, i, "."); if ((i[1] == 8) && (i[2] == 1)) print "yes"; else print "no"}'`
+changequote([, ])dnl
+  if test "x$TCL_VER_IS81" = "xyes"
+  then
+    AC_MSG_RESULT(yes)
+    AC_DEFINE(HAVE_BUGGY_TCL_THREADS)
+  else
+    AC_MSG_RESULT(no)
+  fi
+else
+  AC_MSG_RESULT(no)
+fi
+
+if test ! "x${TCLLIBEXT}" = "x.a"
+then
+  TCL_REQS="$TCLLIB/lib$TCLLIBFN"
+  TCL_LIBS="-L$TCLLIB -l$TCLLIBFNS -lm"
+else
+
+  # are we using a pre 7.4 Tcl version ?
+changequote(,)dnl
+  TCL_VER_PRE74=`echo $TCL_VERSION | $AWK '{split($1, i, "."); if (((i[1] == 7) && (i[2] < 4)) || (i[1] < 7)) print "yes"; else print "no"}'`
+changequote([, ])dnl
+  if test "x${TCL_VER_PRE74}" = "xno"
+  then
+
+    # was the --with-tcllib option given ?
+    if test ! "x${tcllibname}" = "x"
+    then
+      TCL_REQS="$TCLLIB/lib$TCLLIBFN"
+      TCL_LIBS="$TCLLIB/lib$TCLLIBFN -lm"
+    else
+      TCL_REQS="$TCLLIB/lib$TCLLIBFN"
+      TCL_LIBS="-L$TCLLIB -l$TCLLIBFNS -lm"
+    fi
+  else
+    cat << EOF >&2
 configure: warning:
 
   Your Tcl version ($TCL_VERSION) is older then 7.4.
   There are known problems, but we will work around them.
 
 EOF
-      TCL_REQS="libtcle.a"
-      TCL_LIBS="-L. -ltcle -lm"
-    fi
+    TCL_REQS="libtcle.a"
+    TCL_LIBS="-L. -ltcle -lm"
   fi
+fi
+
+# add -lpthread to $LIBS if we need it
+if test "x${ac_cv_var_tcl_threads}" = "xyes" && test "x${ac_cv_lib_pthread_pthread_create}" = "xyes"
+then
+  LIBS="-lpthread $LIBS"
 fi
 
 AC_SUBST(TCLLIB)

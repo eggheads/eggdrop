@@ -17,12 +17,12 @@ PATCH("CVS");    /* CVS beta */
  *
  *
  */
-PATCH("940275915"); /* current "unix" time */
+PATCH("940380770"); /* current "unix" time */
 /*
  *
  *
  */
-PATCH("irix64-qnx"); /* last patch added
+PATCH("stop-selfdeop"); /* last patch added
 */ 
 /*
  *

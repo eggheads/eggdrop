@@ -888,8 +888,9 @@ static void dcc_chat(int idx, char *buf, int i)
 	v = newsplit(&buf);
 	rmspace(buf);
 	if (check_tcl_dcc(v, idx, buf)) {
-	  check_tcl_chpt(botnetnick, dcc[idx].nick, dcc[idx].sock,
-			 dcc[idx].u.chat->channel);
+	  if (dcc[idx].u.chat->channel >= 0)
+	    check_tcl_chpt(botnetnick, dcc[idx].nick, dcc[idx].sock,
+			   dcc[idx].u.chat->channel);
 	  check_tcl_chof(dcc[idx].nick, dcc[idx].sock);
 	  dprintf(idx, "*** Ja mata!\n");
 	  flush_lines(idx, dcc[idx].u.chat);
