@@ -3,7 +3,7 @@
  *   stuff common to chan.c and mode.c
  *   users.h needs to be loaded too
  * 
- * $Id: chan.h,v 1.19 2000/11/21 05:18:04 guppy Exp $
+ * $Id: chan.h,v 1.20 2000/12/06 02:32:17 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -210,7 +210,9 @@ struct chanset_t {
 #define CHAN_STATIC         0x8000000	/* channels that are NOT dynamic      */
 #define CHAN_ASKEDBANS      0x10000000
 #define CHAN_ASKEDMODES     0x20000000  /* find out key-info on IRCu          */
-#define CHAN_JUPED          0x40000000  /* Is channel juped                     */
+#define CHAN_JUPED          0x40000000  /* Is channel juped                   */
+#define CHAN_STOP_CYCLE     0x80000000  /* Some efnetservers have defined
+    NO_CHANOPS_WHEN_SPLIT              */
 
 #define CHAN_ASKED_EXEMPTS  0x0001
 #define CHAN_ASKED_INVITED  0x0002
@@ -257,6 +259,7 @@ struct chanset_t *findchan_by_dname(const char *name);
 #define channel_dynamicinvites(chan) (chan->ircnet_status & CHAN_DYNAMICINVITES)
 #define channel_nouserinvites(chan) (chan->ircnet_status & CHAN_NOUSERINVITES)
 #define channel_juped(chan) (chan->status & CHAN_JUPED)
+#define channel_stop_cycle(chan) (chan->status & CHAN_STOP_CYCLE)
 
 struct msgq_head {
   struct msgq *head;

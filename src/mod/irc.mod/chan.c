@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  * 
- * $Id: chan.c,v 1.60 2000/11/29 03:10:24 guppy Exp $
+ * $Id: chan.c,v 1.61 2000/12/06 02:32:18 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1001,6 +1001,8 @@ static int got315(char *from, char *msg)
   }
   else if (me_op(chan))
     recheck_channel(chan, 1);
+  else if (chan->channel.members == 1)
+    chan->status |= CHAN_STOP_CYCLE;
   /* do not check for i-lines here. */
   return 0;
 }
@@ -1527,6 +1529,7 @@ static int gotjoin(char *from, char *chname)
     putlog(LOG_MISC, "*", "joined %s but didn't want to!", chname);
     dprintf(DP_MODE, "PART %s\n", chname);
   } else if (!channel_pending(chan)) {
+    chan->status &= ~CHAN_STOP_CYCLE;
     strcpy(uhost, from);
     nick = splitnick(&uhost);
     detect_chan_flood(nick, uhost, from, chan, FLOOD_JOIN, NULL);
