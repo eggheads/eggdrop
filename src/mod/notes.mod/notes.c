@@ -5,7 +5,7 @@
  *   note cmds
  *   note ignores
  *
- * $Id: notes.c,v 1.33 2001/11/14 16:25:48 guppy Exp $
+ * $Id: notes.c,v 1.34 2001/12/14 05:30:06 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -311,7 +311,7 @@ static int tcl_storenote STDVAR
 	    from = p + 1;
 	}
 	fprintf(f, "%s %s %lu %s%s\n", to, from, now,
-		l ? work : "", argv[3]);
+		l ? work : "", blah);
 	fclose(f);
 	if (idx >= 0)
 	  dprintf(idx, "%s.\n", NOTES_STORED_MESSAGE);
