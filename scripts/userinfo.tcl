@@ -1,7 +1,7 @@
 # userinfo.tcl v1.06 for Eggdrop 1.4.3 and higher
 #           Scott G. Taylor -- ButchBub!staylor@mrynet.com
 #
-# $Id: userinfo.tcl,v 1.2 2001/03/17 23:20:57 guppy Exp $
+# $Id: userinfo.tcl,v 1.3 2001/08/27 23:25:15 poptix Exp $
 #
 # v1.00      ButchBub     14 July      1997 -Original release.  Based on
 #                                            whois.tcl "URL" commands.
@@ -19,6 +19,9 @@
 #                                            from the whois-fields list.
 # v1.06      guppy        19 March     2000 -removed lastbind workaround since
 #                                            lastbind is fixed in eggdrop1.4.3
+# v1.07      TaKeDa       20 August    2001 -now script works also on bots,
+#                                            which didn't have server module loaded
+#                                           -added new fields PHONE & ICQ
 #
 # TO USE:  o    Set the desired userinfo field keywords to the
 #               `userinfo-fields' line below where indicated.
@@ -59,16 +62,19 @@
 #   GF      Girlfriend
 #   DOB     Birthday (Date Of Birth)
 #   EMAIL   Email address
+#   PHONE   Phone number
+#   ICQ     ICQ number
+
 
 ################################
 # Set your desired fields here #
 ################################
 
-set userinfo-fields "URL BF GF IRL EMAIL DOB"
+set userinfo-fields "URL BF GF IRL EMAIL DOB PHONE ICQ"
 
 # This script's identification
 
-set userinfover "Userinfo TCL v1.06"
+set userinfover "Userinfo TCL v1.07"
 
 # This script is NOT for pre-1.4.3 versions.
 
@@ -108,10 +114,16 @@ foreach field [string tolower ${olduserinfo-fields}] {
 # any fields that have been removed that were originally in the list will
 # have their msg/dcc commands unbinded so you don't have to do a restart.
 
+if {[info commands putserv] == ""} {
+ set isservermod 0
+} else {
+ set isservermod 1
+}
+
 if { [string tolower ${olduserinfo-fields}] != [string tolower ${userinfo-fields}] } {
  foreach field [string tolower ${olduserinfo-fields}] {
   if { [lsearch -exact [string tolower ${userinfo-fields}] $field] == -1 } {
-   unbind msg - $field msg_setuserinfo
+   if $isservermod {unbind msg - $field msg_setuserinfo}
    unbind dcc - $field dcc_setuserinfo
    unbind dcc m ch$field dcc_chuserinfo
   }
@@ -123,13 +135,14 @@ if { [string tolower ${olduserinfo-fields}] != [string tolower ${userinfo-fields
 
 if { ${userinfo-fields} != "" } {
  foreach field [string tolower ${userinfo-fields}] {
-  bind msg - $field msg_setuserinfo
+  if $isservermod {bind msg - $field msg_setuserinfo}
   bind dcc - $field dcc_setuserinfo
   bind dcc m ch$field dcc_chuserinfo
  }
 }
 
 # This is the `/msg <info>' procedure
+if $isservermod {
 
 proc msg_setuserinfo {nick uhost hand arg} {
   global lastbind quiet-reject userinfo-fields
@@ -167,6 +180,9 @@ proc msg_setuserinfo {nick uhost hand arg} {
    }
   putcmdlog "($nick!$uhost) !$hand! $userinfo $arg"
   return 0
+}
+
+#checking for server module
 }
 
 # This is the dcc '.<info>' procedure.
@@ -265,5 +281,5 @@ set userinfo_loaded 1
 
 # Announce that we've loaded the script.
 
-putlog "$userinfover by ButchBub, Beldin, Kirk, guppy, Ernst, and Dude \002loaded\002 for: ${userinfo-fields}."
+putlog "$userinfover by ButchBub, Beldin, Kirk, guppy, Ernst, Dude and TaKeDa \002loaded\002 for: ${userinfo-fields}."
 putlog "use '.help userinfo' for commands."
