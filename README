@@ -263,9 +263,9 @@ Last revised: June 5, 2002
 
     6a. WHAT DO I DO IF I GET THE ERROR "USER FILE NOT FOUND"?
 
-      1. Run Eggdrop with the "-m" option (i.e., "eggdrop -m eggdrop.conf").
+      1. Run Eggdrop with the "-m" option (i.e. "eggdrop -m eggdrop.conf").
 
-      2. Go to IRC and send "hello" to your bot (i.e., "/msg mybot hello").
+      2. Go to IRC and send "hello" to your bot (i.e. "/msg mybot hello").
 
       3. You will become an owner on your bot. You can leave the bot running
          (nobody else will become an owner if they say "hello"), but in the

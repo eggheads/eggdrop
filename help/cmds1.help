@@ -98,7 +98,7 @@ See also: reload, rehash, save
    number of times that binding has been called. If not, go read the file
    %b'doc/tcl-commands.doc'%b for help on the Tcl bind command. Note that the
    builtin commands are now shown. You may also specify a type of binding to
-   show (i.e. %b'.binds msg'%b) or you can specify a wild card match (i.e.,
+   show (i.e. %b'.binds msg'%b) or you can specify a wild card match (i.e.
    %b'.binds *seen*'%b) if you want to narrow the field a bit. The wild card
    matches will match against the TYPE, COMMAND and BINDING fields. You can
    view more binds by adding 'all' to the end of the command.

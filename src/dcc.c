@@ -4,7 +4,7 @@
  *   disconnect on a dcc socket
  *   ...and that's it!  (but it's a LOT)
  *
- * $Id: dcc.c,v 1.69 2003/11/01 23:26:57 wcc Exp $
+ * $Id: dcc.c,v 1.70 2003/11/27 02:44:11 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -815,8 +815,7 @@ struct dcc_table DCC_CHAT_PASS = {
   out_dcc_general
 };
 
-/* Make sure ansi code is just for color-changing
- */
+/* Make sure ANSI code is just for color-changing */
 int check_ansi(char *v)
 {
   int count = 2;

@@ -4,7 +4,7 @@
  *
  *   IF YOU ALTER THIS FILE, YOU NEED TO RECOMPILE THE BOT.
  *
- * $Id: eggdrop.h,v 1.49 2003/11/01 23:26:57 wcc Exp $
+ * $Id: eggdrop.h,v 1.50 2003/11/27 02:44:12 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -421,7 +421,7 @@ struct dupwait_info {
 #define STRIP_BOLD   0x00002    /* remove bold codes                    */
 #define STRIP_REV    0x00004    /* remove reverse video codes           */
 #define STRIP_UNDER  0x00008    /* remove underline codes               */
-#define STRIP_ANSI   0x00010    /* remove ALL ansi codes                */
+#define STRIP_ANSI   0x00010    /* remove ALL ANSI codes                */
 #define STRIP_BELLS  0x00020    /* remote ctrl-g's                      */
 #define STRIP_ALL    0x00040    /* remove every damn thing!             */
 

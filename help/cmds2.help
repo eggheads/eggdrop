@@ -229,12 +229,12 @@ See also: reload, rehash, backup
 ###  %bstrip%b [modes]
    Allows you to remove embedded 'attribute' codes your partyline output. Valid
    options are:
-      %bb%b  remove all boldface codes
-      %bc%b  remove all color codes
-      %br%b  remove all reverse video codes
-      %bu%b  remove all underline codes
-      %ba%b  remove all ANSI codes
-      %bg%b  remove all ctrl-g (bell) codes
+      %bb%b - remove all boldface codes
+      %bc%b - remove all color codes
+      %br%b - remove all reverse video codes
+      %bu%b - remove all underline codes
+      %ba%b - remove all ANSI codes
+      %bg%b - remove all ctrl-g (bell) codes
 
    The mode can also be a modifier like '+c' or '-bu' or '+ru-c'. If
    you omit modes, it will show your current setting.

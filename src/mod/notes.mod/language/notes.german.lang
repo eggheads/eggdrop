@@ -1,7 +1,7 @@
 # notes.german.lang
 #   language messages for the notes module
 #
-# $Id: notes.german.lang,v 1.2 2002/01/02 08:06:16 tothwolf Exp $
+# $Id: notes.german.lang,v 1.3 2003/11/27 02:44:12 wcc Exp $
 
 0xc000,  Befoerdere Nachrichten weiter an: %.70s\n
 0xc001,%d Nachrichten[%s] von %s an %s uebermittelt.
@@ -9,7 +9,7 @@
 0xc003,Nicht online; weiter befoerdert zu %s.\n
 0xc004,Nachrichten werden von diesem Bot nicht unterstuetzt.
 0xc005,Tut mir leid, dieser Benutzer hat schon zu viele Nachrichten.
-0xc006,Kann Nachrichten-Datei nicht erzeugen.  Tut mir leid.
+0xc006,Kann Nachrichten-Datei nicht erzeugen. Tut mir leid.
 0xc007,Nachrichten-Datei unerreichbar!
 0xc008,Nachricht gespeichert
 0xc009,Du hast keine Nachrichten
@@ -23,7 +23,7 @@
 0xc011,Geloescht
 0xc012,uebrig
 0xc013,# koennen Zahlen und/oder Intervalle getrennt duch ; sein
-0xc014,Dies ist ein Bot.  Du kannst einem Bot keine Nachricht hinterlassen.
+0xc014,Dies ist ein Bot. Du kannst einem Bot keine Nachricht hinterlassen.
 0xc015,Outside Nachricht
 0xc016,Nachricht zugestellt.
 0xc017,Fuer eine Liste:
