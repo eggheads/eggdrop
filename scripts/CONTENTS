@@ -8,11 +8,13 @@ action.fix.tcl
    gets rid of those ugly /me's people do instead of a .me.
 
 alltools.tcl
-   toolbox.tcl, toolkit.tcl and a few more tools all in 1 file
+   toolbox.tcl, toolkit.tcl, moretools.tcl and a few more tools all in 1 file
    toolbox.tcl
-      cmwagner's collection of handy proc's
+      cmwagner's collection of handy procs
    toolkit.tcl
-      a few useful proc's that may be required by other Tcl scripts
+      a few useful procs that may be required by other Tcl scripts
+   moretools.tcl
+      more useful procs from David Sesno
 
 autobotchk
    tcl script used to crontab your Eggdrop
@@ -38,7 +40,7 @@ notes2.tcl
 
 ques5.tcl
    makes web pages of who's on each channel, updated periodically
-   (requires toolkit.tcl)
+   (requires alltools.tcl)
 
 sentinel1.54.tcl (by slennox)
    flood protection script for eggdrop 1.3.17 and later, with integrated
