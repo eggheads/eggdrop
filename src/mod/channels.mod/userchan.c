@@ -1,7 +1,7 @@
 /*
  * userchan.c -- part of channels.mod
  *
- * $Id: userchan.c,v 1.29 2002/12/24 02:30:06 wcc Exp $
+ * $Id: userchan.c,v 1.30 2003/01/20 08:51:19 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1061,25 +1061,8 @@ static int write_bans(FILE *f, int idx)
 {
   struct chanset_t *chan;
   maskrec *b;
-  struct igrec *i;
   char	*mask;
 
-  if (global_ign)
-    if (fprintf(f, IGNORE_NAME " - -\n") == EOF)	/* Daemus */
-      return 0;
-  for (i = global_ign; i; i = i->next) {
-    mask = str_escape(i->igmask, ':', '\\');
-    if (!mask ||
-	fprintf(f, "- %s:%s%lu:%s:%lu:%s\n", mask,
-		(i->flags & IGREC_PERM) ? "+" : "", i->expire,
-		i->user ? i->user : botnetnick, i->added,
-		i->msg ? i->msg : "") == EOF) {
-      if (mask)
-	nfree(mask);
-      return 0;
-    }
-    nfree(mask);
-  }
   if (global_bans)
     if (fprintf(f, BAN_NAME " - -\n") == EOF)	/* Daemus */
       return 0;

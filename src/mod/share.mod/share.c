@@ -1,7 +1,7 @@
 /*
  * share.c -- part of share.mod
  *
- * $Id: share.c,v 1.67 2002/12/24 02:30:08 wcc Exp $
+ * $Id: share.c,v 1.68 2003/01/20 08:51:19 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1596,15 +1596,16 @@ static int write_tmp_userfile(char *fn, struct userrec *bu, int idx)
   struct userrec *u;
   int ok = 0;
 
-  if (!(f = fopen(fn, "wb")))
-    putlog(LOG_MISC, "*", USERF_ERRWRITE2);
-  else {
+  if ((f = fopen(fn, "wb"))) {
     chmod(fn, 0600);		/* make it -rw------- */
     fprintf(f, "#4v: %s -- %s -- transmit\n", ver, botnetnick);
     ok = 1;
     for (u = bu; u && ok; u = u->next)
       ok = write_user(u, f, idx);
-    ok = write_bans(f, idx);
+    if(!write_ignores(f, idx))
+      ok = 0;
+    if(!write_bans(f, idx))
+      ok = 0;
     /* Only share with bots which support exempts and invites.
      *
      * If UFF is supported, we also check the UFF flags before sharing. If
@@ -1612,18 +1613,22 @@ static int write_tmp_userfile(char *fn, struct userrec *bu, int idx)
      */
     if (dcc[idx].u.bot->numver >= min_exemptinvite) {
       if ((dcc[idx].u.bot->uff_flags & UFF_EXEMPT) ||
-	  (dcc[idx].u.bot->numver < min_uffeature))
-	ok = write_exempts(f, idx);
+	  (dcc[idx].u.bot->numver < min_uffeature)) {
+        if(!write_exempts(f, idx))
+	  ok = 0;
+      }
       if ((dcc[idx].u.bot->uff_flags & UFF_INVITE) ||
-	  (dcc[idx].u.bot->numver < min_uffeature))
-	ok = write_invites(f, idx);
+	  (dcc[idx].u.bot->numver < min_uffeature)) {
+	if(!write_invites(f, idx))
+	  ok = 0;
+      }
     } else
       putlog(LOG_BOTS, "*", "%s is too old: not sharing exempts and invites.",
              dcc[idx].nick);
     fclose(f);
-    if (!ok)
-      putlog(LOG_MISC, "*", USERF_ERRWRITE2);
   }
+  if (!ok)
+    putlog(LOG_MISC, "*", USERF_ERRWRITE2);
   return ok;
 }
 

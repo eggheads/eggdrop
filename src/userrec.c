@@ -4,7 +4,7 @@
  *   a bunch of functions to find and change user records
  *   change and check user (and channel-specific) flags
  *
- * $Id: userrec.c,v 1.41 2002/12/24 02:30:05 wcc Exp $
+ * $Id: userrec.c,v 1.42 2003/01/20 08:51:19 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -439,6 +439,30 @@ int write_user(struct userrec *u, FILE * f, int idx)
   return 1;
 }
 
+int write_ignores(FILE *f, int idx)
+{
+  struct igrec *i;
+  char *mask;
+
+  if (global_ign)
+    if (fprintf(f, IGNORE_NAME " - -\n") == EOF)	/* Daemus */
+      return 0;
+  for (i = global_ign; i; i = i->next) {
+    mask = str_escape(i->igmask, ':', '\\');
+    if (!mask ||
+        fprintf(f, "- %s:%s%lu:%s:%lu:%s\n", mask,
+                (i->flags & IGREC_PERM) ? "+" : "", i->expire,
+                i->user ? i->user : botnetnick, i->added,
+                i->msg ? i->msg : "") == EOF) {
+      if (mask)
+        nfree(mask);
+      return 0;
+    }
+    nfree(mask);
+  }
+  return 1;
+}
+
 int sort_compare(struct userrec *a, struct userrec *b)
 {
   /* Order by flags, then alphabetically
@@ -549,7 +573,7 @@ void write_userfile(int idx)
   ok = 1;
   for (u = userlist; u && ok; u = u->next)
     ok = write_user(u, f, idx);
-  if (!ok || fflush(f)) {
+  if (!ok || !write_ignores(f, -1) || fflush(f)) {
     putlog(LOG_MISC, "*", "%s (%s)", USERF_ERRWRITE, strerror(ferror(f)));
     fclose(f);
     nfree(new_userfile);

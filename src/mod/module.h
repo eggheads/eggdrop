@@ -1,7 +1,7 @@
 /*
  * module.h
  *
- * $Id: module.h,v 1.64 2003/01/18 01:58:05 wcc Exp $
+ * $Id: module.h,v 1.65 2003/01/20 08:51:19 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -460,6 +460,7 @@
 /* 280 - 283 */
 #define wild_match_per ((int (*)(const char *, const char *))global[280])
 #define killtransfer ((void(*)(int))global[281])
+#define write_ignores ((int (*)(FILE *, int))global[282])
 
 /* This is for blowfish module, couldnt be bothered making a whole new .h
  * file for it ;)
