@@ -2,7 +2,7 @@
  * irc.c -- part of irc.mod
  *   support for channels within the bot
  *
- * $Id: irc.c,v 1.62 2001/12/29 05:45:12 guppy Exp $
+ * $Id: irc.c,v 1.63 2001/12/29 05:52:35 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -348,7 +348,6 @@ static int killmember(struct chanset_t *chan, char *nick)
    * them though, to keep the bot from crashing.
    */
   if (chan->channel.members < 0) {
-     putlog(LOG_MISC, "*", "(!) BUG: number of members is negative: %d",
 	    chan->channel.members);
      chan->channel.members = 0;
      for (x = chan->channel.member; x && x->nick[0]; x = x->next)
@@ -357,7 +356,6 @@ static int killmember(struct chanset_t *chan, char *nick)
 	    chan->channel.members);
   }
   if (!chan->channel.member) {
-    putlog(LOG_MISC, "*", "(!) BUG: memberlist is NULL");
     chan->channel.member = (memberlist *) channel_malloc(sizeof(memberlist));
     chan->channel.member->nick[0] = 0;
     chan->channel.member->next = NULL;
