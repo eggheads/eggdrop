@@ -376,6 +376,7 @@ static void refresh_ban_kick(struct chanset_t *chan, char *user, char *nick)
 	if (!glob_friend(fr) && !chan_friend(fr))
 	  add_mode(chan, '-', 'o', nick);	/* guess it can't hurt */
         do_mask(chan, chan->channel.ban, u->mask, 'b');
+        u->lastactive = now;
 	c[0] = 0;
 	if (u->desc && (u->desc[0] != '@')) {
 	  if (strcmp(IRC_PREBANNED, ""))
