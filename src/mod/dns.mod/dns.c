@@ -4,7 +4,7 @@
  * 
  * Written by Fabian Knittel <fknittel@gmx.de>
  * 
- * $Id: dns.c,v 1.17 2000/09/27 19:40:44 fabian Exp $
+ * $Id: dns.c,v 1.18 2000/11/04 16:03:30 fabian Exp $
  */
 /* 
  * Copyright (C) 1999, 2000  Eggheads
@@ -127,19 +127,6 @@ static struct dcc_table DCC_DNS =
  *    DNS module related code
  */
 
-static void cmd_resolve(struct userrec *u, int idx, char *par)
-{
-  struct in_addr inaddr;
-
-  Context;
-  if (egg_inet_aton(par, &inaddr))
-    dns_lookup(ntohl(inaddr.s_addr));
-  else
-    dns_forward(par);
-  return;
-}
-
-
 static void dns_free_cache(void)
 {
   struct resolve *rp, *rpnext;
@@ -180,11 +167,6 @@ static int dns_report(int idx, int details)
   return 0;
 }
 
-static cmd_t dns_dcc[] = {
-  {"resolve",		"",	(Function) cmd_resolve,		NULL},
-  {NULL,		NULL,	NULL,				NULL}
-};
-
 static char *dns_close()
 {
   int i;
@@ -193,7 +175,6 @@ static char *dns_close()
   del_hook(HOOK_DNS_HOSTBYIP, (Function) dns_lookup);
   del_hook(HOOK_DNS_IPBYHOST, (Function) dns_forward);
   del_hook(HOOK_SECONDLY, (Function) dns_check_expires);
-  rem_builtins(H_dcc, dns_dcc);
 
   for (i = 0; i < dcc_total; i++) {
     if (dcc[i].type == &DCC_DNS &&
@@ -248,7 +229,6 @@ char *dns_start(Function *global_funcs)
   add_hook(HOOK_SECONDLY, (Function) dns_check_expires);
   add_hook(HOOK_DNS_HOSTBYIP, (Function) dns_lookup);
   add_hook(HOOK_DNS_IPBYHOST, (Function) dns_forward);
-  add_builtins(H_dcc, dns_dcc);
   Context;
   return NULL;
 }
