@@ -24,11 +24,11 @@ See also: exempts, -exempt, stick, unstick
 
 See also: invites, -invite, stick, unstick
 %{help=+chan}%{+n}
-### %b+chan%b <channel> [options]
-    Adds a channel to the bot's channel list. This channel is not permanent
-    unless %b"chanfile"%b has been set in the config file. If it has, it is
-    saved every time the userfile is saved, or by using %b'.chansave'%b. If
-    options are specified, the channel will be configured with the options.
+###  %b+chan%b <channel> [options]
+   Adds a channel to the bot's channel list. This channel is not permanent
+   unless %b"chanfile"%b has been set in the config file. If it has, it is
+   saved every time the userfile is saved, or by using %b'.chansave'%b. If
+   options are specified, the channel will be configured with the options.
 
 See also: -chan, chanset, chaninfo
 %{help=+chrec}%{+m|m}
@@ -57,22 +57,22 @@ See also: exempts, +exempt, stick, unstick
 See also: invites, +invite, stick, unstick
 %{help=-chan}%{+n}
 ### %b-chan%b <channel>
-     This removes ALL information about a channel from the bot. It's not made
-     permanent unless the channel file has been saved. If you remove a channel
-     by accident, you can undo your changes with the 'chanload' command. Note
-     that you will lose any other changed made since the last save.
+   This removes ALL information about a channel from the bot. It's not made
+   permanent unless the channel file has been saved. If you remove a channel
+   by accident, you can undo your changes with the 'chanload' command. Note
+   that you will lose any other changed made since the last save.
 
-     %f*** IMPORTANT ***%f
+   %f*** IMPORTANT ***%f
 
-     This erases ALL information about the channel, including channel settings,
-     bans, exempts, invites, and channel records for users -- %bEVERYTHING%b.
+   This erases ALL information about the channel, including channel settings,
+   bans, exempts, invites, and channel records for users -- %bEVERYTHING%b.
 
-     %bDO NOT%b use it to have the bot temporarily leave a channel. This
-     command is for abandoning a channel (e.g. the channel will have to be
-     redefined and all user flags for that channel will have to be redone.
+   %bDO NOT%b use it to have the bot temporarily leave a channel. This
+   command is for abandoning a channel (e.g. the channel will have to be
+   redefined and all user flags for that channel will have to be redone.
 
-     Even if you don't have chanfile defined, it will still erase all the
-     channel records for users on the next userfile save.
+   Even if you don't have chanfile defined, it will still erase all the
+   channel records for users on the next userfile save.
 
 See also: +chan, chansave, chanload, chanset, chaninfo
 %{help=-chrec}%{+m|m}
@@ -202,7 +202,7 @@ See also: -exempt, +exempt, console, chanset, chaninfo, stick, unstick
    setting. This allows you to return to a previous setting if you've really
    messed things up.
 
-See also: %{+n}+chan, -chan, %{+n|n}chansave, chanset, chaninfo
+See also: chansave, chanset, chaninfo%{+n}, +chan, -chan
 %{help=chanset}%{+n|n}
 ###  %bchanset%b <channel> <settings>
    Allows you to change the channel settings (see %b'chaninfo'%b for the
@@ -211,13 +211,13 @@ See also: %{+n}+chan, -chan, %{+n|n}chansave, chanset, chaninfo
    Changes are used until the next rehash/chanload/restart, and are saved
    whenever the channel settings are saved.
 
-See also: %{+n}+chan, -chan %{+n|n}chanload, chansave, chaninfo
+See also: chansave, chanload, chaninfo%{+n}, +chan, -chan
 %{help=chansave}%{+n|n}
 ###  %bchansave%b
    Saves the channel settings to the file defined by the %b"chanfile"%b
    setting. This file is reloaded during rehash and restarting the bot.
 
-See also: %{+n}+chan, -chan %{+n|n}chanload, chanset, chaninfo
+See also: chanload, chanset, chaninfo%{+n}, +chan, -chan
 %{help=chinfo}%{+m|m}
 ###  %bchinfo%b <user> [channel] [info-line/none]
    Sets the information line for a user. This line is shown via the /msg
@@ -234,8 +234,8 @@ See also: info
    %b'whois'%b. If you have set greet on, it is also shown when you joins the
    channel. If the info line begins with an '@', then it is "locked", and tou
    may no longer change it.
-
-%{+m|m}See also: chinfo%{-}
+%{+m|m}
+See also: chinfo
 %{help=stick}%{+ol|ol}
 ###  %bstick%b [ban/exempt/invite] <hostmask/number> [channel]
    Makes a ban, exempt, or invite "sticky". This means that the bot will always
@@ -243,12 +243,12 @@ See also: info
    bans. Obviously, if the channel isn't using dynamic bans, this has no
    effect.
 
-See also: bans, exempts, invites, unstick, +ban, +exempt, +invite
+See also: unstick, bans, exempts, invites, +ban, +exempt, +invite
 %{help=unstick}%{+ol|ol}
 ###  %bunstick%b [ban/exempt/invite] <hostmask/number> [channel]
    Makes a "sticky" ban, exempt, or invite normal again.
 
-See also: bans, exempts, invites, stick, -ban, -exempt, -invite
+See also: stick, bans, exempts, invites, -ban, -exempt, -invite
 %{help=channels module}%{+n}
 ###  %bchannels module%b
    This module provides channel related support for the bot. Without it, you
@@ -260,30 +260,29 @@ See also: bans, exempts, invites, stick, -ban, -exempt, -invite
    For all users:
       %binfo%b
 
-%{+lo|lo}
    For channel ops or halfops:
       %b+ban         -ban         bans         stick%b
       %b+exempt      -exempt      exempts      unstick%b
       %b+invite      -invite      invites%b
 
-%{+m|m}
    For channel masters:
       %b+chrec       -chrec       chaninfo     chinfo%b
 
-%{+n|n}
    For channel owners:
       %bchanload     chansave     chanset%b
 
-%{+n}
    For global owners:
       %b+chan        -chan%b
 
    Config file variables for configuring the channels module:
-      %bshare-greet%b  %buse-info%b  %bforce-expire%b
+      %bshare-greet     use-info            force-expire%b
    (Use %b'.help set <variable>'%b for more info)
-%{help=all}%{+o|o}
+%{help=all}%{-}
 ###  %bchannels module%b commands
-   For channel ops:
+   For all users:
+      %binfo%b
+%{+ol|ol}
+   For channel ops or halfops:
       %b+ban         -ban         bans         stick%b
       %b+exempt      -exempt      exempts      unstick%b
       %b+invite      -invite      invites%b

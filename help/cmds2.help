@@ -1,11 +1,11 @@
 %{help=fixcodes}
-### %bfixcodes%b
-     This is for use in situations where the bot gets mixed up about the type
-     of connection you have with it. For example, you /CTCP CHAT the bot and
-     it thinks you are connecting via telnet, and you see text displayed as
-     "Local time is now [1m17:17[0m" for example instead of "Local time is
-     now 17:17". Use this to turn telnet codes on or off/change the display
-     mode.
+###  %bfixcodes%b
+   This is for use in situations where the bot gets mixed up about the type
+   of connection you have with it. For example, you /CTCP CHAT the bot and
+   it thinks you are connecting via telnet, and you see text displayed as
+   "Local time is now [1m17:17[0m" for example instead of "Local time is
+   now 17:17". Use this to turn telnet codes on or off/change the display
+   mode.
 %{help=ignores}%{+m}
 ###  %bignores%b [wildcard]
    Shows a list of hostmasks from which the bot is currently ignoring msgs,
@@ -152,7 +152,7 @@ See also: newpass%{+t}, chhand, chpass
 
 See also: whom, notes
 %{help=page}
-### %bpage%b <number/off>
+###  %bpage%b <number/off>
    This allows you to slow down the number of lines the bot sends you at once
    via the partyline. When enabled, any commands that send greater than the
    specified number of lines will stop when that number is reached and wait for

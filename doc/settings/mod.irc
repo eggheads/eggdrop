@@ -1,13 +1,13 @@
 IRC Module
-Last revised: February 12, 2003
+Last revised: May 26, 2004
      _________________________________________________________________
 
                                 IRC Module
 
 
-This module controls the bots interaction on IRC. Allows the bot to
-join channels, handles channel userlists, etc. You have to load this if
-you want your bot to come on irc.
+This module controls the bots interaction on IRC. It allows the bot to
+join channels, etc. You have to load this if you want your bot to come on
+irc.
 
   This module requires: server, channels
 

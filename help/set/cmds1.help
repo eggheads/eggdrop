@@ -69,7 +69,7 @@
    This setting defines the username the bot uses on IRC. This setting
    has no effect if an ident daemon is running on your bot's machine.
 %{help=set version}%{+n}
-### %bset version%b
+###  %bset version%b
    Current bot version - "1.1.2+pl1 1010201 pl1"; first item is the
    text version, second item is a numerical version, and any following
    items are the names of patches that have been added.

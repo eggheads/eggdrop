@@ -1,5 +1,5 @@
-# $Id: modinfo,v 1.2 2003/12/10 19:04:50 wcc Exp $
+# $Id: modinfo,v 1.3 2004/05/27 01:30:12 wcc Exp $
 DESC:This module is for demonstrative purposes only.
 DESC:
 DESC:Only programmers interested in module programming might want to enable
-DESC:this module. Everyone else will DISABLE it.
+DESC:this module. Everyone else should DISABLE it.

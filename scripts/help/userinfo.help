@@ -39,7 +39,7 @@
 ###  %bchirl%b <user> none
    clears a user's 'In Real Life' name.
 %{help=chdob}%{+m}
-### %bchdob%b <user> [date of birth]
+###  %bchdob%b <user> [date of birth]
    Sets the date of birth for a user.  This info isn't really used
    by the bot for any reasons except to display.  If you don't specify
    the date of birth, the bot will show you the user's date of birth

@@ -1,28 +1,36 @@
-%{help=dump}%{+m}
-###  %bdump%b <text>
-   dumps the text to the server.  keep in mind that this bot doesn't
-   run through ircII, so ircII commands will most likely not work this
-   way.  they need to be raw irc codes. read rfc1459 from ftp.internic.net
-   for more help.
-%{help=jump}%{+m}
-###  %bjump%b [server [port [pass]]]
-   makes the bot jump to another server.  if you don't specify a
-   server, it will jump to the next server in its internal list (see
-   %b'help servers'%b).  if you specify a server, it will jump to that
-   server (default port is 6667), and if that server is not in the
-   internal list already, it will add it.  jumping servers ALWAYS
-   makes the bot lose ops! be careful!
 %{help=clearqueue}%{+m}
 ###  %bclearqueue%b <queue>
-   removes all msgs from the specified queue (mode/server/help/all)
+   Removes all msgs from the specified queue.
+
+   The queue argument can be one of:
+      %bmode%b, %bserver%b, %bhelp%b, %ball%b
+%{help=dump}%{+m}
+###  %bdump%b <text>
+   Dumps the text to the IRC server. See http://www.ietf.org/rfc/rfc1459.txt
+   for more information on the IRC protocol.
+%{help=jump}%{+m}
+###  %bjump%b [server [port [pass]]]
+   Makes the bot jump to another server. If you don't specify a server, it
+   will jump to the next server in the server list (see %b'.help servers'%b).
+   If you specify a server, it will jump to that server (the default port is
+   6667, unless you specified a different default port in your config file).
+   If the server is not in the server list already, it will be added to it.
+   Jumping servers ALWAYS makes the bot lose ops! Be careful!
+
+   Remember, you can't specify a password without specifing a port as well.
+
+See also: servers
 %{help=servers}%{+o|o}
 ###  %bservers%b
-   lists the servers that the bot has in its server list.  this is
-   the list it rotates through when changing servers.  it starts
-   with a static list which it loads from its config-file when the
-   bot is booted up.  after that, you can add servers with the
-   %b'.jump'%b command.  the server list will indicate which server the
-   bot is currently on.
+   Lists the servers contained in the bot's server list. This is the list
+   the bot rotates through when changing servers. It starts with a static list
+   which is loaded from the config file when the bot is started. After that,
+   you can add servers with the %b'.jump'%b command. The server list will
+   indicate which server the bot is currently on. For example:
+
+      <D|Ares>   irc.arcti.ca:6667 (irc.arcti.ca) <- I am here
+
+%{+m|m}See also: jump%{-}
 %{help=server module}%{+o|o}
 ###  help on the %bserver module%b
    This module provides all that's need to get a bot on a server and
@@ -34,5 +42,9 @@
    There is also a list of Tcl settings available,
    use %b'.help server settings'%b
 %{help=all}%{+o|o}
-###  commands for the %bserver module%b
-  %bservers%b  %{+m}%bjump%b  %bdump%b
+###  %bserver module%b commands
+   For channel ops:
+      %bservers%b
+%{+m|m}
+   For global masters:
+      %bjump%b       %bdump%b     %bclearqueue%b

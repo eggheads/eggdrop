@@ -1,6 +1,6 @@
-# $Id: modinfo,v 1.2 2003/12/10 19:04:50 wcc Exp $
-DESC:The irc module provides all normal irc interaction. If you want the
-DESC:normal join & maintain channels stuff, this is the module.
+# $Id: modinfo,v 1.3 2004/05/27 01:30:12 wcc Exp $
+DESC:This module controls the bots interaction on IRC. It allows the bot
+DESC:to join channels, etc.
 DESC:
 DESC:Normally you will want to ENABLE this module.
 DEPENDS:server channels

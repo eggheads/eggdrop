@@ -31,13 +31,13 @@ see also: mv
    each, and is broken up between words.  you can force a line
    break by putting a '|' in the comment.
 %{help=filesys/filestats}%{+j}
-### %bfilestats%b <user>
+###  %bfilestats%b <user>
    Reports on the users upload & download statistics.
 
-### %bfilestats%b <user> %bclear%b
+###  %bfilestats%b <user> %bclear%b
    Clears a users upload & download statistics.
 %{help=filesys/stats}%{+j}
-### %bstats%b
+###  %bstats%b
    Reports your upload & download statistics.
 %{help=filesys/get}%{+x}
 ###  %bget%b <filename(s)> [nickname]

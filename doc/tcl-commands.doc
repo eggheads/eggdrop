@@ -1,4 +1,4 @@
-$Id: tcl-commands.doc,v 1.109 2004/04/30 07:51:08 tothwolf Exp $
+$Id: tcl-commands.doc,v 1.110 2004/05/27 01:30:10 wcc Exp $
 
 Eggdrop Tcl Commands
 Last revised: January 12, 2004
@@ -692,19 +692,19 @@ marked with vertical bars (|) on the left.
   chanbans <channel>
     Returns: a list of the current bans on the channel. Each element is
       a sublist of the form {<ban> <bywho> <age>}. age is seconds from the
-      bot's POV.
+      bot's point of view
     Module: irc
 
   chanexempts <channel>
     Returns: a list of the current exempts on the channel. Each element is
       a sublist of the form {<exempts> <bywho> <age>}. age is seconds from the
-      bot's POV.
+      bot's point of view
     Module: irc
 
   chaninvites <channel>
     Returns: a list of the current invites on the channel. Each element is
       a sublist of the form {<invites> <bywho> <age>}. age is seconds from the
-      bot's POV.
+      bot's point of view
     Module: irc
 
   resetbans <channel>
