@@ -5,7 +5,7 @@
  * 
  * Modified/written by Fabian Knittel <fknittel@gmx.de>
  * 
- * $Id: coredns.c,v 1.12 2000/03/23 23:17:57 fabian Exp $
+ * $Id: coredns.c,v 1.13 2000/08/27 19:21:32 fabian Exp $
  */
 /* 
  * Portions copyright (C) 1999, 2000  Eggheads
@@ -49,8 +49,9 @@
 #define HOSTNAMELEN 	  255		/* From RFC */
 #define RES_RETRYDELAY      3
 #define RES_MAXSENDS        4
-#define RES_FAILEDDELAY  3600		/* Keep failed record for 1 hour */
-#define RES_MAX_TTL     86400		/* Maximum TTL is 1d */
+#define RES_FAILEDDELAY   600		/* TTL for failed records (in
+					   seconds). */
+#define RES_MAX_TTL     86400		/* Maximum TTL (in seconds). */
 
 #define RES_ERR "DNS Resolver error: "
 #define RES_MSG "DNS Resolver: "
