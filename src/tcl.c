@@ -4,7 +4,7 @@
  *   Tcl initialization
  *   getting and setting Tcl/eggdrop variables
  *
- * $Id: tcl.c,v 1.35 2001/07/14 12:37:08 poptix Exp $
+ * $Id: tcl.c,v 1.36 2001/07/26 03:59:44 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -89,7 +89,6 @@ int	    strtot = 0;
 
 /* Prototypes for tcl */
 Tcl_Interp *Tcl_CreateInterp();
-
 
 int expmem_tcl()
 {
@@ -382,6 +381,16 @@ void rem_tcl_commands(tcl_cmds *tab)
     Tcl_DeleteCommand(interp, tab[i].name);
 }
 
+void add_tcl_objcommands(tcl_cmds *tab)
+{
+#if (TCL_MAJOR_VERSION >= 8)
+  int i;
+
+  for (i = 0; tab[i].name; i++)
+    Tcl_CreateObjCommand(interp, tab[i].name, tab[i].func, (ClientData) 0, NULL);
+#endif
+}
+
 /* Strings */
 static tcl_strings def_tcl_strings[] =
 {
@@ -488,7 +497,7 @@ void kill_tcl()
   Tcl_DeleteInterp(interp);
 }
 
-extern tcl_cmds tcluser_cmds[], tcldcc_cmds[], tclmisc_cmds[], tcldns_cmds[];
+extern tcl_cmds tcluser_cmds[], tcldcc_cmds[], tclmisc_cmds[], tclmisc_objcmds[], tcldns_cmds[];
 
 /* Not going through Tcl's crazy main() system (what on earth was he
  * smoking?!) so we gotta initialize the Tcl interpreter
@@ -622,6 +631,7 @@ resetPath:
   add_tcl_commands(tcluser_cmds);
   add_tcl_commands(tcldcc_cmds);
   add_tcl_commands(tclmisc_cmds);
+  add_tcl_objcommands(tclmisc_objcmds);
   add_tcl_commands(tcldns_cmds);
 }
 

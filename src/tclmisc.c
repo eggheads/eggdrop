@@ -3,7 +3,7 @@
  *   Tcl stubs for file system commands
  *   Tcl stubs for everything else
  *
- * $Id: tclmisc.c,v 1.21 2001/07/24 14:19:19 guppy Exp $
+ * $Id: tclmisc.c,v 1.22 2001/07/26 03:59:45 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -494,22 +494,56 @@ static int tcl_callevent STDVAR
   return TCL_OK;
 }
 
+#if (TCL_MAJOR_VERSION >= 8)
+static int tcl_md5(cd, irp, objc, objv)
+ClientData cd;
+Tcl_Interp *irp;
+int objc;
+Tcl_Obj *CONST objv[];
+{
+#else
 static int tcl_md5 STDVAR
 {
+#endif
   MD5_CTX       md5context;
-  char          digest_string[33];       /* 32 for digest in hex + null */
+  char digest_string[33], *string;
   unsigned char digest[16];
-  int           i;
+  int i, len;
 
+#if (TCL_MAJOR_VERSION >= 8)
+  if (objc != 2) {
+    Tcl_WrongNumArgs(irp, 1, objv, "string");
+    return TCL_ERROR;
+  }
+
+#if (TCL_MAJOR_VERSION == 8 && TCL_MINOR_VERSION < 1)
+  string = Tcl_GetStringFromObj(objv[1], &len);
+#else
+  string = Tcl_GetByteArrayFromObj(objv[1], &len);
+#endif
+
+#else
   BADARGS(2, 2, " string");
+  string = argv[1];
+  len = strlen(argv[1]);
+#endif
+
   MD5Init(&md5context);
-  MD5Update(&md5context, (unsigned char *)argv[1], strlen(argv[1]));
+  MD5Update(&md5context, (unsigned char *)string, len);
   MD5Final(digest, &md5context);
   for(i=0; i<16; i++)
     sprintf(digest_string + (i*2), "%.2x", digest[i]);
   Tcl_AppendResult(irp, digest_string, NULL);
   return TCL_OK;
 }
+
+tcl_cmds tclmisc_objcmds[] =
+{
+#if (TCL_MAJOR_VERSION >= 8)
+  {"md5",	tcl_md5},
+#endif
+  {NULL,	NULL}
+};
 
 tcl_cmds tclmisc_cmds[] =
 {
@@ -543,7 +577,9 @@ tcl_cmds tclmisc_cmds[] =
   {"unloadhelp",	tcl_unloadhelp},
   {"reloadhelp",	tcl_reloadhelp},
   {"duration",		tcl_duration},
+#if (TCL_MAJOR_VERSION < 8)
   {"md5",		tcl_md5},
+#endif
   {"binds",		tcl_binds},
   {"callevent",		tcl_callevent},
   {NULL,		NULL}
