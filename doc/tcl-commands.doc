@@ -1,5 +1,5 @@
 Eggdrop Tcl Commands
-Last revised: March 20, 2002
+Last revised: March 23, 2002
      _________________________________________________________________
 
 This is an exhaustive list of all the Tcl commands added to Eggdrop. All
@@ -166,9 +166,10 @@ marked with vertical bars (|) on the left.
 
   chattr <handle> [changes [channel]]
     Description: changes the attributes for a user record, if you include any.
-      Changes are of the form '+f', '-o', '+dk', '-o+d', etc. If a channel is
-      specified, the channel-specific flags for that channel are altered. You
-      can now use the +o|-o #channel format here too.
+      Changes are of the form '+f', '-o', '+dk', '-o+d', etc. If changes are
+      specified in the format of |<changes> <channel>, the channel-specific
+      flags for that channel are altered. You can now use the +o|-o #channel
+      format here too.
     Returns: new flags for the user (if you made no changes, the current
       flags are returned). If a channel was specified, the global AND the
       channel-specific flags for that channel are returned in the format of

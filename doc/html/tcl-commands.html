@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: tcl-commands.html,v 1.8 2002/03/20 12:59:36 wcc Exp $ -->
+<!-- $Id: tcl-commands.html,v 1.9 2002/03/23 17:27:52 wcc Exp $ -->
 
 <html>
   <head>
@@ -485,9 +485,10 @@
         <dd>
           <p><strong>Description:</strong> changes the attributes for a user
           record, if you include any. Changes are of the form &#39;+f&#39;,
-          &#39;-o&#39;, &#39;+dk&#39;, &#39;-o+d&#39;, etc. If a channel is
-          specified, the channel-specific flags for that channel are altered.
-          You can now use the +o|-o #channel format here too.</p>
+          &#39;-o&#39;, &#39;+dk&#39;, &#39;-o+d&#39;, etc. If changes are
+          specified in the format of |<changes> <channel>, the channel-specific
+          flags for that channel are altered. You can now use the +o|-o
+          #channel format here too.</p>
 
           <p><strong>Returns:</strong>  new flags for the user (if you made
           no changes, the current flags are returned). If a channel was
