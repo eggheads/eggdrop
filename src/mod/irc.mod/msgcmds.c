@@ -4,7 +4,7 @@
  * 
  * dprintf'ized, 4feb1996
  * 
- * $Id: msgcmds.c,v 1.19 2000/03/05 16:18:03 guppy Exp $
+ * $Id: msgcmds.c,v 1.20 2000/03/18 19:22:37 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -42,7 +42,7 @@ static int msg_hello(char *nick, char *h, struct userrec *u, char *p)
   if (u)
     atr = u->flags;
   if (u && !(atr & USER_COMMON)) {
-    dprintf(DP_HELP, "NOTICE %s :%s, %s.\n", IRC_HI, nick, u->handle);
+    dprintf(DP_HELP, "NOTICE %s :%s, %s.\n", nick, IRC_HI, u->handle);
     return 1;
   }
   if (get_user_by_handle(userlist, nick)) {
