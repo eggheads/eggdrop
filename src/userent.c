@@ -538,6 +538,7 @@ static int botaddr_set(struct userrec *u, struct user_entry *e, void *buf)
     e->u.extra = buf;
   }
   if (!noshare && !(u && (u->flags & USER_UNSHARED))) {
+    bi = (struct bot_addr *)e->u.extra;
     shareout(NULL, "c BOTADDR %s %s %d %d\n", u->handle,
              bi->address, bi->telnet_port, bi->relay_port);
   }
