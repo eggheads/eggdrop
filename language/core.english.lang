@@ -1,7 +1,7 @@
 # core.english.lang
 #   core language messages for eggdrop
 #
-# $Id: core.english.lang,v 1.12 2000/02/03 22:54:16 fabian Exp $
+# $Id: core.english.lang,v 1.13 2000/04/05 19:35:43 fabian Exp $
 
 # General stuff
 0x001,Usage
@@ -38,7 +38,6 @@
 0x200,Already loaded.
 0x201,Can't determine current directory.
 0x202,No start function defined.
-0x203,Module loaded:
 0x204,Needed by another module
 0x205,No close function
 0x206,Module unloaded:
@@ -51,6 +50,8 @@
 0x20D,You have installed modules but have not selected an encryption\n\
 module, please consult the default config file for info.\n
 0x20E,Filesys module not loaded.
+0x20F,Module loaded: %s\t\t(with lang support)
+0x210,Module loaded: %s
 
 # USERF_
 0x400,Userlist transfer complete; switched over

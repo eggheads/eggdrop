@@ -7,7 +7,7 @@
  * because they use structures in those
  * (saves including those .h files EVERY time) - Beldin
  * 
- * $Id: proto.h,v 1.22 2000/03/23 23:17:55 fabian Exp $
+ * $Id: proto.h,v 1.23 2000/04/05 19:35:44 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -170,6 +170,7 @@ char *get_language(int);
 int cmd_loadlanguage(struct userrec *, int, char *);
 void add_lang_section(char *);
 int del_lang_section(char *);
+int exist_lang_section(char *);
 
 /* main.c */
 void fatal(char *, int);

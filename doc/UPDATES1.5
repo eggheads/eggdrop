@@ -5,6 +5,10 @@ Changes in eggdrop: (since v1.5.0)
 
 1.5.3
 Foundby   Fixedby   What....
+          Fabian    Cleaned up language load messages. Most are now moved to
+                      debug level. Each "Module loaded:" message also states
+                      wether the module has language support. \t is supported
+                      in language entries. tcl_language is depreciated.
 Phoenix   Fabian    resume support in the transfer module was not compatible
                       with mircs implementation. mirc would also do some silly
                       stuff during communication, which is now also detected.

@@ -4,7 +4,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: modules.c,v 1.27 2000/03/23 23:17:55 fabian Exp $
+ * $Id: modules.c,v 1.28 2000/04/05 19:35:43 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -708,7 +708,10 @@ const char *module_load(char *name)
     return e;
   }
   check_tcl_load(name);
-  putlog(LOG_MISC, "*", "%s %s", MOD_LOADED, name);
+  if (exist_lang_section(name))
+    putlog(LOG_MISC, "*", MOD_LOADED_WITH_LANG, name);
+  else
+    putlog(LOG_MISC, "*", MOD_LOADED, name);
   Context;
   return NULL;
 }
