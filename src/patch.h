@@ -12,7 +12,7 @@
  *
  *
  */
-PATCH("940535669");	/* current "unix" time */
+PATCH("940766835");	/* current "unix" time */
 /*
  *
  *
@@ -22,7 +22,7 @@ PATCH("CVS");		/* CVS beta */
  *
  *
  */
-PATCH("dnsfix");	/* last patch applied */
+PATCH("udef_chanstuff3");	/* last patch applied */
 /*
  *
  *

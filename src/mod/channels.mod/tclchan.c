@@ -700,6 +700,7 @@ static int tcl_newinvite STDVAR
 static int tcl_channel_info(Tcl_Interp * irp, struct chanset_t *chan)
 {
   char s[121];
+  struct udef_struct *ul = udef;
 
   get_mode_protect(chan, s);
   Tcl_AppendElement(irp, s);
@@ -820,6 +821,19 @@ static int tcl_channel_info(Tcl_Interp * irp, struct chanset_t *chan)
     Tcl_AppendElement(irp, "-userinvites");
   else
     Tcl_AppendElement(irp, "+userinvites");
+  while (ul) {
+    if (ul->defined && ul->name) {
+      if (ul->type == UDEF_FLAG) {
+        simple_sprintf(s,"%c%s", getudef(ul->values, chan->name) ? '+' : '-', ul->name);
+        Tcl_AppendElement(irp, s);
+      } else if (ul->type == UDEF_INT) {
+        simple_sprintf(s,"%s %d", ul->name, getudef(ul->values, chan->name));
+        Tcl_AppendElement(irp, s);
+      } else
+        debug1("UDEF-ERROR: unknown type %d", ul->type);
+    }
+    ul = ul->next;
+  }
   return TCL_OK;
 }
 
@@ -885,6 +899,8 @@ static int tcl_channel_modify(Tcl_Interp * irp, struct chanset_t *chan,
   int oldstatus;
   int x=0;
   module_entry *me;
+  int found;
+  struct udef_struct *ul = udef;
 
   oldstatus = chan->status;
   for (i = 0; i < items; i++) {
@@ -1094,9 +1110,36 @@ static int tcl_channel_modify(Tcl_Interp * irp, struct chanset_t *chan,
 	*ptime = 1;
       }
     } else {
-      if (irp && item[i][0]) /* ignore "" */
-	Tcl_AppendResult(irp, "illegal channel option: ", item[i], NULL);
-	x++;
+      found = 0;
+      if (!strncmp(item[i] + 1, "udef-flag-", 10))
+        initudef(UDEF_FLAG, item[i] + 11, 0);
+      else if (!strncmp(item[i], "udef-int-", 9))
+        initudef(UDEF_INT, item[i] + 9, 0);
+      for (ul = udef; ul; ul = ul->next) {
+        if ((!strcasecmp(item[i] + 1, ul->name) || (!strncmp(item[i] + 1, "udef-flag-", 10) && !strcasecmp(item[i] + 11, ul->name)))
+            && (ul->type == UDEF_FLAG)) {
+          found = 1;
+          if (item[i][0] == '+')
+            setudef(ul, ul->values, chan->name, 1);
+          else
+            setudef(ul, ul->values, chan->name, 0);
+        } else if ((!strcasecmp(item[i], ul->name) || (!strncmp(item[i], "udef-int-", 9) && !strcasecmp(item[i] + 9, ul->name))) 
+            && (ul->type == UDEF_INT)) {
+          found = 1;
+          i++;
+          if (i >= items) {
+            if (irp)
+              Tcl_AppendResult(irp, "this setting needs an argument", NULL);
+            return TCL_ERROR;
+          }
+          setudef(ul, ul->values, chan->name, atoi(item[i]));
+        }
+      }
+      if (!found) {
+        if (irp && item[i][0]) /* ignore "" */
+      	  Tcl_AppendResult(irp, "illegal channel option: ", item[i], NULL);
+      	x++;
+      }
     }
   }
   if (((oldstatus ^ chan->status) & CHAN_INACTIVE) && module_find("irc", 0, 0)) {
@@ -1494,6 +1537,101 @@ static int tcl_channel_add(Tcl_Interp * irp, char *newname, char *options)
   return ret; 
 }
 
+static int tcl_setudef STDVAR
+{
+  int type;
+  
+  context;
+  BADARGS(3, 3, " type name");
+  if (!strcasecmp(argv[1], "flag"))
+    type = UDEF_FLAG;
+  else if (!strcasecmp(argv[1], "int"))
+    type = UDEF_INT;
+  else {
+    Tcl_AppendResult(irp, "invalid type. Must be one of: flag, int", NULL);
+    return TCL_ERROR;
+  }
+  initudef(type, argv[2], 1);
+  return TCL_OK;
+}
+
+static int tcl_renudef STDVAR
+{
+  struct udef_struct *ul;
+  int type, found = 0;
+  
+  context;
+  BADARGS(4, 4, " type oldname newname");
+  if (!strcasecmp(argv[1], "flag"))
+    type = UDEF_FLAG;
+  else if (!strcasecmp(argv[1], "int"))
+    type = UDEF_INT;
+  else {
+    Tcl_AppendResult(irp, "invalid type. Must be one of: flag, int", NULL);
+    return TCL_ERROR;
+  }
+  for (ul = udef; ul; ul = ul->next) {
+    if (ul->type == type && !strcasecmp(ul->name, argv[2])) {
+      nfree(ul->name);
+      ul->name = nmalloc(strlen(argv[3]));
+      strcpy(ul->name,argv[3]);
+      found = 1;
+    }
+  }
+  if (!found) {
+    Tcl_AppendResult(irp, "not found", NULL);
+    return TCL_ERROR;
+  } else
+    return TCL_OK;
+}
+
+static int tcl_deludef STDVAR
+{
+  struct udef_struct *ul, *ull;
+  int type, found = 0;
+  
+  context;
+  BADARGS(3, 3, " type name");
+  if (!strcasecmp(argv[1], "flag"))
+    type = UDEF_FLAG;
+  else if (!strcasecmp(argv[1], "int"))
+    type = UDEF_INT;
+  else {
+    Tcl_AppendResult(irp, "invalid type. Must be one of: flag, int", NULL);
+    return TCL_ERROR;
+  }
+  ul = udef;
+  while (ul) {
+    ull = ul->next;
+    if (!ull)
+      break;
+    if (ull->type == type && !strcasecmp(ull->name, argv[2])) {
+      ul->next = ull->next;
+      nfree(ull->name);
+      free_udef_chans(ull->values);
+      nfree(ull);
+      found = 1;
+    }
+    ul = ul->next;
+  }
+  if (udef) {
+    if (udef->type == type && !strcasecmp(udef->name, argv[2])) {
+      ul = udef->next;
+      nfree(udef->name);
+      free_udef_chans(udef->values);
+      nfree(udef);
+      udef = ul;
+      found = 1;
+    }
+  }
+  context;
+  if (!found) {
+    Tcl_AppendResult(irp, "not found", NULL);
+    return TCL_ERROR;
+  } else
+    return TCL_OK;
+}
+
 static tcl_cmds channels_cmds[] =
 {
   {"killban", tcl_killban},
@@ -1536,5 +1674,8 @@ static tcl_cmds channels_cmds[] =
   {"delchanrec", tcl_delchanrec},
   {"stick", tcl_stick},
   {"unstick", tcl_unstick},
+  {"setudef", tcl_setudef},
+  {"renudef", tcl_renudef},
+  {"deludef", tcl_deludef},
   {0, 0}
 };

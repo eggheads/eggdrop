@@ -37,6 +37,34 @@ static char glob_chanset[512] = "\
 /* default chanmode (drummer,990731) */
 static char glob_chanmode[64] = "nt";
 
+/* user defines chanmodes/settings */
+#define UDEF_FLAG 1
+#define UDEF_INT 2
+
+struct udef_chans {
+  struct udef_chans *next;
+  char *chan;
+  int value;
+};
+
+struct udef_struct {
+  struct udef_struct *next;
+  char *name;
+  int defined;
+  int type;
+  struct udef_chans *values;
+};
+
+static int expmem_udef(struct udef_struct *);
+static int expmem_udef_chans (struct udef_chans *);
+static void free_udef(struct udef_struct *);
+static void free_udef_chans(struct udef_chans *);
+static int getudef(struct udef_chans *, char *);
+static void initudef(int type, char *, int);
+static void setudef(struct udef_struct *, struct udef_chans *, char *, int);
+
+static struct udef_struct *udef = NULL;
+
 /* global flood settings */
 static int gfld_chan_thr;
 static int gfld_chan_time;
@@ -65,6 +93,145 @@ void *channel_malloc(int size, char *file, int line)
 #endif
   bzero(p, size);
   return p;
+}
+
+/* user defined channel flags/settings */
+
+static int expmem_udef (struct udef_struct *ul)
+{
+  int i = 0;
+
+  while (ul) {
+    i += sizeof(struct udef_struct);
+    i += strlen(ul->name);
+    i += expmem_udef_chans(ul->values);
+    ul = ul->next;
+  }
+  return i;
+}
+
+static int expmem_udef_chans (struct udef_chans *ul)
+{
+  int i = 0;
+  
+  while (ul) {
+    i += sizeof(struct udef_chans);
+    i += strlen(ul->chan);
+    ul = ul->next;
+  }
+  return i;
+}
+
+static int getudef(struct udef_chans *ul, char *name)
+{
+  int val = 0;
+
+  context;
+  while (ul) {
+    if (!strcasecmp(ul->chan, name)) {
+      val = ul->value;
+      break;
+    }
+    ul = ul->next;
+  }
+  return val;
+}
+
+static void setudef(struct udef_struct *us, struct udef_chans *ul, char *name, int value)
+{
+  struct udef_chans *ull;
+
+  context;
+  ull = ul;
+  while (ul) {
+    if (!strcasecmp(ul->chan, name)) {
+      ul->value = value;
+      return;
+    }
+    ul = ul->next;
+  }
+  ul = ull;
+  while (ul && ul->next)
+    ul = ul->next;
+  ull = nmalloc(sizeof(struct udef_chans));
+  ull->chan = nmalloc(strlen(name));
+  strcpy(ull->chan, name);
+  ull->value = value;
+  ull->next = NULL;
+  if (ul)
+    ul->next = ull;
+  else
+    us->values = ull;
+  return;
+}
+  
+static void initudef (int type, char *name, int defined)
+{
+  struct udef_struct *ul = udef;
+  struct udef_struct *ull = NULL;
+  int found = 0;
+
+  context;
+  if (strlen(name) < 1)
+    return;
+  while (ul) {
+    if (ul->name && !strcasecmp(ul->name, name)) {
+      if (defined) {
+        debug1("UDEF: %s defined", ul->name);
+        ul->defined = 1;
+      }
+      found = 1;
+    }
+    ul = ul->next;
+  }
+  if (!found) {
+    debug2("Creating %s (type %d)", name, type);
+    ull = udef;
+    while (ull && ull->next)
+      ull = ull->next;
+    ul = nmalloc(sizeof(struct udef_struct));
+    ul->name = nmalloc(strlen(name));
+    strcpy(ul->name, name);
+    if (defined)
+      ul->defined = 1;
+    else
+      ul->defined = 0;
+    ul->type = type;
+    ul->values = NULL;
+    ul->next = NULL;
+    if (ull)
+      ull->next = ul;
+    else
+      udef = ul;
+  }
+  return;
+}
+
+static void free_udef(struct udef_struct *ul)
+{
+  struct udef_struct *ull;
+
+  while (ul) {
+    ull = ul->next;
+    free_udef_chans(ul->values);
+    nfree(ul->name);
+    nfree(ul);
+    ul = ull;
+  }
+  return;
+}
+
+static void free_udef_chans(struct udef_chans *ul)
+{
+  struct udef_chans *ull;
+  
+  while (ul) {
+    ull = ul->next;
+    nfree(ul->chan);
+    nfree(ul);
+    ul = ull;
+  }
+  return;
 }
 
 static void set_mode_protect(struct chanset_t *chan, char *set)
@@ -309,6 +476,7 @@ static void write_channels()
   char s[121], w[1024], w2[1024], name[163];
   char need1[242], need2[242], need3[242], need4[242], need5[242];
   struct chanset_t *chan;
+  struct udef_struct *ul;
 
   context;
   if (!chanfile[0])
@@ -383,6 +551,18 @@ flood-kick %d:%d flood-deop %d:%d \
  	PLSMNS(channel_dynamicinvites(chan)),
         PLSMNS(!channel_nouserinvites(chan)),
 	channel_static(chan) ? "" : " }");
+    for (ul = udef; ul; ul = ul->next) {
+      if (ul->defined && ul->name) {
+	if (ul->type == UDEF_FLAG)
+	  fprintf(f, "%c%s%s ", getudef(ul->values, chan->name) ? '+' : '-',
+		  "udef-flag-", ul->name);
+	else if (ul->type == UDEF_INT)
+	  fprintf(f, "%s%s %d ", "udef-int-", ul->name, getudef(ul->values,
+		  chan->name));
+	else
+	  debug1("UDEF-ERROR: unknown type %d", ul->type);
+      }
+    }
     if (fflush(f)) {
       putlog(LOG_MISC, "*", "ERROR writing channel file.");
       fclose(f);
@@ -638,6 +818,7 @@ static int channels_expmem()
 
     chan = chan->next;
   }
+  tot += expmem_udef(udef);
   return tot;
 }
 
@@ -717,6 +898,7 @@ static char *channels_close()
 {
   context;
   write_channels();
+  free_udef(udef);
   rem_builtins(H_chon, my_chon);
   rem_builtins(H_dcc, C_dcc_irc);
   rem_tcl_commands(channels_cmds);
