@@ -43,6 +43,7 @@ extern int keep_all_logs;
 extern char botnetnick[];
 extern struct chanset_t *chanset;
 extern time_t now;
+extern char bannerfile[];
 
 int shtime = 1;			/* whether or not to display the time
 				 * with console output */
@@ -1234,3 +1235,26 @@ char *extracthostname(char *hostmask)
   }
   return "";
 }
+
+/* show banner to telnet user, simialer to show_motd() - [seC] */
+void show_banner(int idx) {
+   FILE *vv;
+   char s[1024];
+   struct flag_record fr = {FR_GLOBAL|FR_CHAN,0,0,0,0,0};
+
+   get_user_flagrec(dcc[idx].user,&fr,dcc[idx].u.chat->con_chan);
+   vv = fopen(bannerfile, "r");
+   if (!vv || !is_file(bannerfile)) {
+      dprintf(idx, "\r\n\r\n");
+      sub_lang(idx, MISC_BANNER);
+      return;
+   }
+   while(!feof(vv)) {
+      fgets(s, 120, vv);
+      if (!s[0])
+        strcpy(s, " \n");
+      help_subst(s, dcc[idx].nick, &fr, 1, botnetnick);
+      dprintf(idx, "%s", s);
+   }
+}
+

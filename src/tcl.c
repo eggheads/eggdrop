@@ -43,7 +43,7 @@ extern int firewallport, reserved_port, notify_users_at;
 extern int flood_thr, ignore_time;
 extern char origbotname[], botuser[], motdfile[], admin[], userfile[],
  firewall[], helpdir[], notify_new[], hostname[], myip[], moddir[],
- tempdir[], owner[], network[], botnetnick[];
+ tempdir[], owner[], network[], botnetnick[], bannerfile[];
 extern int die_on_sighup, die_on_sigterm, max_logs, max_logsize, enable_simul;
 extern int dcc_total, debug_output, identtimeout, protect_telnet;
 extern int egg_numver, share_unlinks, dcc_sanitycheck, sort_users;
@@ -359,6 +359,7 @@ static tcl_strings def_tcl_strings[] =
   {"firewall", firewall, 120, 0},
 /* confvar patch by aaronwl */
   {"config", configfile, 0, 0},
+  {"telnet-banner", bannerfile, 120, STR_PROTECT},
   {0, 0, 0, 0}
 };
 

@@ -42,6 +42,7 @@ int flood_telnet_thr = 5;	/* number of telnet connections to be considered a flo
 int flood_telnet_time = 60;	/* in how many seconds? */
 extern int min_dcc_port, max_dcc_port;	/* valid portrange for telnets */
 extern int par_telnet_flood;    /* trigger telnet flood for +f ppl? */
+char bannerfile[121] = "banner"; /* file displayed on telnet login */
 
 static void strip_telnet(int sock, char *buf, int *len)
 {
@@ -1791,9 +1792,11 @@ void dcc_telnet_got_ident(int i, char *host)
   strcpy(dcc[i].u.chat->con_chan, chanset ? chanset->name : "*");
   /* This is so we dont tell someone doing a portscan anything
    * about ourselves. <cybah> */
-  if (stealth_telnets) {
+  if (stealth_telnets == 1) 
     sub_lang(i, MISC_BANNER_STEALTH);
-  } else {
+  else if (stealth_telnets == 2)
+    show_banner(i);
+  else {
     dprintf(i, "\r\n\r\n");
     sub_lang(i, MISC_BANNER);
   }

@@ -184,6 +184,7 @@ void debug_help(int);
 void reload_help_data(void);
 void remove_gunk(char *);
 char *extracthostname(char *);
+void show_banner(int i);
 
 /* net.c */
 void my_memcpy(char *, char *, int);

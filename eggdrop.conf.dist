@@ -141,6 +141,10 @@ set temp-path "/tmp"
 # check 'help set motd' for tons of motd options.
 set motd "motd"
 
+# holds the banner displayed on telnet connections
+set telnet-banner "telnet-banner"
+
+
 #####  BOTNET  #####
 
 # you probably shouldn't deal with this until reading 'botnet.doc' or
