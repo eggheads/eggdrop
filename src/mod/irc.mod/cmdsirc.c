@@ -2,7 +2,7 @@
  * chancmds.c -- part of irc.mod
  *   handles commands direclty relating to channel interaction
  * 
- * $Id: cmdsirc.c,v 1.18 2000/08/06 14:51:38 fabian Exp $
+ * $Id: cmdsirc.c,v 1.19 2000/08/25 13:12:24 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -482,7 +482,7 @@ static void cmd_invite(struct userrec *u, int idx, char *par)
 
 static void cmd_channel(struct userrec *u, int idx, char *par)
 {
-  char handle[20], s[121], s1[121], atrflag, chanflag, *chname;
+  char handle[HANDLEN + 1], s[121], s1[121], atrflag, chanflag, *chname;
   struct chanset_t *chan;
   int i;
   memberlist *m;
