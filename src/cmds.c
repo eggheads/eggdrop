@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  *
- * $Id: cmds.c,v 1.107 2004/04/06 06:56:38 wcc Exp $
+ * $Id: cmds.c,v 1.108 2004/07/05 05:14:12 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -2198,6 +2198,11 @@ static void cmd_page(struct userrec *u, int idx, char *par)
 static void cmd_tcl(struct userrec *u, int idx, char *msg)
 {
   int code;
+  char *result;
+
+#ifdef USE_TCL_ENCODING
+  Tcl_DString dstr;
+#endif
 
   if (!(isowner(dcc[idx].nick)) && (must_be_owner)) {
     dprintf(idx, MISC_NOSUCHCMD);
@@ -2205,10 +2210,25 @@ static void cmd_tcl(struct userrec *u, int idx, char *msg)
   }
   debug1("tcl: evaluate (.tcl): %s", msg);
   code = Tcl_GlobalEval(interp, msg);
+
+#ifdef USE_TCL_ENCODING
+  /* properly convert string to system encoding. */
+  Tcl_DStringInit(&dstr);
+  Tcl_UtfToExternalDString(NULL, interp->result, -1, &dstr);
+  result = Tcl_DStringValue(&dstr);
+#else
+  /* use old pre-Tcl 8.1 way. */
+  result = interp->result;
+#endif
+  
   if (code == TCL_OK)
-    dumplots(idx, "Tcl: ", interp->result);
+    dumplots(idx, "Tcl: ", result);
   else
-    dumplots(idx, "Tcl error: ", interp->result);
+    dumplots(idx, "Tcl error: ", result);
+
+#ifdef USE_TCL_ENCODING
+  Tcl_DStringFree(&dstr);
+#endif
 }
 
 /* Perform a 'set' command
@@ -2217,6 +2237,11 @@ static void cmd_set(struct userrec *u, int idx, char *msg)
 {
   int code;
   char s[512];
+  char *result;
+
+#ifdef USE_TCL_ENCODING
+  Tcl_DString dstr;
+#endif
 
   if (!(isowner(dcc[idx].nick)) && (must_be_owner)) {
     dprintf(idx, MISC_NOSUCHCMD);
@@ -2232,13 +2257,28 @@ static void cmd_set(struct userrec *u, int idx, char *msg)
   }
   strcpy(s + 4, msg);
   code = Tcl_Eval(interp, s);
+
+#ifdef USE_TCL_ENCODING
+  /* properly convert string to system encoding. */
+  Tcl_DStringInit(&dstr);
+  Tcl_UtfToExternalDString(NULL, interp->result, -1, &dstr);
+  result = Tcl_DStringValue(&dstr);
+#else
+  /* use old pre-Tcl 8.1 way. */
+  result = interp->result;
+#endif
+
   if (code == TCL_OK) {
     if (!strchr(msg, ' '))
-      dumplots(idx, "Currently: ", interp->result);
+      dumplots(idx, "Currently: ", result);
     else
       dprintf(idx, "Ok, set.\n");
   } else
-    dprintf(idx, "Error: %s\n", interp->result);
+    dprintf(idx, "Error: %s\n", result);
+
+#ifdef USE_TCL_ENCODING
+  Tcl_DStringFree(&dstr);
+#endif
 }
 
 static void cmd_module(struct userrec *u, int idx, char *par)

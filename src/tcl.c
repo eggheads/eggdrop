@@ -4,7 +4,7 @@
  *   Tcl initialization
  *   getting and setting Tcl/eggdrop variables
  *
- * $Id: tcl.c,v 1.79 2004/06/14 01:14:06 wcc Exp $
+ * $Id: tcl.c,v 1.80 2004/07/05 05:14:12 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -694,12 +694,32 @@ resetPath:
 void do_tcl(char *whatzit, char *script)
 {
   int code;
+  char *result;
+
+#ifdef USE_TCL_ENCODING
+  Tcl_DString dstr;
+#endif
 
   code = Tcl_Eval(interp, script);
+
+#ifdef USE_TCL_ENCODING
+  /* properly convert string to system encoding. */
+  Tcl_DStringInit(&dstr);
+  Tcl_UtfToExternalDString(NULL, interp->result, -1, &dstr);
+  result = Tcl_DStringValue(&dstr);
+#else
+  /* use old pre-Tcl 8.1 way. */
+  result = interp->result;
+#endif
+
   if (code != TCL_OK) {
     putlog(LOG_MISC, "*", "Tcl error in script for '%s':", whatzit);
-    putlog(LOG_MISC, "*", "%s", interp->result);
+    putlog(LOG_MISC, "*", "%s", result);
   }
+
+#ifdef USE_TCL_ENCODING
+  Tcl_DStringFree(&dstr);
+#endif
 }
 
 /* Interpret tcl file fname.
@@ -708,18 +728,40 @@ void do_tcl(char *whatzit, char *script)
  */
 int readtclprog(char *fname)
 {
+  int code;
+  char *result;
+
+#ifdef USE_TCL_ENCODING
+  Tcl_DString dstr;
+#endif
+
   if (!file_readable(fname))
     return 0;
 
-  if (Tcl_EvalFile(interp, fname) != TCL_OK) {
+  code = Tcl_EvalFile(interp, fname);
+  result = Tcl_GetVar(interp, "errorInfo", TCL_GLOBAL_ONLY);
+
+#ifdef USE_TCL_ENCODING
+  /* properly convert string to system encoding. */
+  Tcl_DStringInit(&dstr);
+  Tcl_UtfToExternalDString(NULL, result, -1, &dstr);
+  result = Tcl_DStringValue(&dstr);  
+#endif
+
+  if (code != TCL_OK) {
     putlog(LOG_MISC, "*", "Tcl error in file '%s':", fname);
-    putlog(LOG_MISC, "*", "%s",
-           Tcl_GetVar(interp, "errorInfo", TCL_GLOBAL_ONLY));
-    return 0;
+    putlog(LOG_MISC, "*", "%s", result);
+    code = 0; /* JJM: refactored to remove premature return */
+  } else {
+    /* Refresh internal variables */
+    code = 1;
   }
 
-  /* Refresh internal variables */
-  return 1;
+#ifdef USE_TCL_ENCODING
+  Tcl_DStringFree(&dstr);
+#endif
+
+  return code;
 }
 
 void add_tcl_strings(tcl_strings *list)
