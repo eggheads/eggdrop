@@ -4,7 +4,7 @@
  *   channel mode changes and the bot's reaction to them
  *   setting and getting the current wanted channel modes
  *
- * $Id: mode.c,v 1.47 2001/09/24 04:35:55 guppy Exp $
+ * $Id: mode.c,v 1.48 2001/10/30 16:04:08 poptix Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -651,7 +651,7 @@ static void got_ban(struct chanset_t *chan, char *nick, char *from,
   if (check && channel_enforcebans(chan)) {
     register maskrec *b;
     int cycle;
-    char resn[512];
+    char resn[512]="";
 
     for (cycle = 0; cycle < 2; cycle++) {
       for (b = cycle ? chan->bans : global_bans; b; b = b->next) {
