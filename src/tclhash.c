@@ -12,7 +12,7 @@
  * dprintf'ized, 15nov1995 (hash.c)
  * dprintf'ized, 4feb1996 (tclhash.c)
  * 
- * $Id: tclhash.c,v 1.14 2000/01/17 16:14:45 per Exp $
+ * $Id: tclhash.c,v 1.15 2000/02/27 19:21:40 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -965,48 +965,59 @@ void check_tcl_event(char *event)
   Context;
 }
 
-void tell_binds(int idx, char *name)
+void tell_binds(int idx, char *par)
 {
   struct tcl_bind_mask *hm;
   p_tcl_bind_list p, kind;
-  int fnd = 0;
+  int fnd = 0, showall = 0, patmatc = 0;
   tcl_cmd_t *tt;
-  char *s, *proc, flg[100];
-  int showall = 0;
+  char *name = "", *proc, *s = "", flg[100];
 
   Context;
-  s = strchr(name, ' ');
-  if (s) {
-    *s = 0;
-    s++;
-  } else {
-    s = name;
-  }
+  if (par[0])
+    name = newsplit(&par);
+  if (par[0])
+    s = newsplit(&par);
   kind = find_bind_table(name);
-  if (!strcasecmp(s, "all"))
+  if (!strcasecmp(s, "all") || !strcasecmp(name, "all"))
     showall = 1;
+  if (kind == NULL && strcasecmp(name, "all")) {
+    patmatc = 1;
+    dprintf(idx, "Bind type %s not found, using wild card match.\n", name);
+  }
+  dprintf(idx, MISC_CMDBINDS);
+  dprintf(idx, "  TYPE FLGS     COMMAND              HITS BINDING (TCL)\n");
   for (p = kind ? kind : bind_table_list; p; p = kind ? 0 : p->next) {
     for (hm = p->first; hm; hm = hm->next) {
-      if (!fnd) {
-	dprintf(idx, MISC_CMDBINDS);
-	fnd = 1;
-	dprintf(idx, "  TYPE FLGS     COMMAND              HITS BINDING (TCL)\n");
-      }
       for (tt = hm->first; tt; tt = tt->next) {
 	proc = tt->func_name;
 	build_flags(flg, &(tt->flags), NULL);
 	Context;
-	if ((showall) || (proc[0] != '*') || !strchr(proc, ':'))
-	  dprintf(idx, "  %-4s %-8s %-20s %4d %s\n", p->name, flg,
-		  hm->mask, tt->hits, tt->func_name);
+	if ((showall) || (proc[0] != '*') || !strchr(proc, ':')) {
+          if (patmatc == 1) {
+            if (wild_match(name, p->name) || 
+                wild_match(name, hm->mask) ||
+                wild_match(name, tt->func_name)) {
+	      dprintf(idx, "  %-4s %-8s %-20s %4d %s\n", p->name, flg,
+		  		hm->mask, tt->hits, tt->func_name);
+              fnd = 1;
+            }
+          } else {
+            dprintf(idx, "  %-4s %-8s %-20s %4d %s\n", p->name, flg,
+                              hm->mask, tt->hits, tt->func_name);
+            fnd = 1;
+          }
+        }
       }
     }
   }
   if (!fnd) {
-    if (!kind)
-      dprintf(idx, "No command bindings.\n");
+    if (patmatc)
+      dprintf(idx, "No command bindings found that match %s\n", name);
+    else if (kind)
+      dprintf(idx, "No command bindings for type: %s.\n", name);
     else
-      dprintf(idx, "No bindings for %s.\n", name);
+      dprintf(idx, "No command bindings exist.\n");
   }
 }
 

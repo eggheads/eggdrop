@@ -6,7 +6,7 @@
  * dprintf'ized, 25feb1996
  * english, 5mar1996
  * 
- * $Id: filedb.c,v 1.7 2000/01/08 21:23:15 per Exp $
+ * $Id: filedb.c,v 1.8 2000/02/27 19:21:41 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -822,27 +822,37 @@ static void filedb_change(char *dir, char *fn, int what)
 {
   FILE *f;
   filedb fdb;
-  long where;
+  int changed = 0;
+  long where = 0;
 
   f = filedb_open(dir, 0);
   if (f) {
-    if (findmatch(f, fn, &where, &fdb) && !(fdb.stat & FILE_DIR)) {
-      switch (what) {
+    if (findmatch(f, fn, &where, &fdb)) {
+      if (!(fdb.stat & FILE_DIR)) {
+	switch (what) {
+	case FILEDB_SHARE:
+	  fdb.stat |= FILE_SHARE;
+	  break;
+	case FILEDB_UNSHARE:
+	  fdb.stat &= ~FILE_SHARE;
+	  break;
+	}
+	changed = 1;
+      }
+      switch(what) {
       case FILEDB_HIDE:
 	fdb.stat |= FILE_HIDDEN;
+	changed = 1;
 	break;
       case FILEDB_UNHIDE:
 	fdb.stat &= ~FILE_HIDDEN;
-	break;
-      case FILEDB_SHARE:
-	fdb.stat |= FILE_SHARE;
-	break;
-      case FILEDB_UNSHARE:
-	fdb.stat &= ~FILE_SHARE;
+	changed = 1;
 	break;
       }
-      fseek(f, where, SEEK_SET);
-      fwrite(&fdb, sizeof(filedb), 1, f);
+      if (changed) {
+	fseek(f, where, SEEK_SET);
+	fwrite(&fdb, sizeof(filedb), 1, f);
+      }
     }
     filedb_close(f);
   }

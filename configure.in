@@ -82,6 +82,7 @@ tcllibextensions=".so .so.1 .so.1.0 .so.1.2 .a"
 # Tcl library search paths
 tcllibpaths="/usr/local/lib /usr/local/pkgs/tcl/lib \
 	/usr/lib /lib /usr/i486-linuxaout/lib \
+        /beos/system/lib /sys/lib \
 	$HOME/lib $HOME/tcl/lib $HOME"
 
 # Tcl header filenames
@@ -89,7 +90,8 @@ tclheadernames="tcl.h"
 
 # Tcl header search paths
 tclheaderpaths="/usr/local/include /usr/local/pkgs/tcl/include \
-	/usr/include $HOME/include $HOME/tcl/include $HOME"
+	/usr/include /beos/system/include /beos/devel/include \
+       /sys/include $HOME/include $HOME/tcl/include $HOME"
 
 EGG_TCL_ARG_WITH
 EGG_TCL_ENV

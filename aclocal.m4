@@ -1,7 +1,7 @@
-dnl aclocal.m4
+]dnl aclocal.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: aclocal.m4,v 1.6 2000/01/08 22:38:19 per Exp $
+dnl $Id: aclocal.m4,v 1.7 2000/02/27 19:21:40 guppy Exp $
 dnl
 AC_DEFUN(EGG_MSG_CONFIGURE_START, [dnl
 AC_MSG_RESULT()
@@ -156,6 +156,18 @@ case "$egg_cv_var_system" in
     SHLIB_STRIP=strip
     NEED_DL=0
     DEFAULT_MAKE=static
+    ;;
+  Ultrix)
+    AC_MSG_RESULT(Ultrix)
+    NEED_DL=0
+    SHLIB_STRIP=touch
+    DEFUALT_MAKE=static
+    ;;
+  BeOS)
+    AC_MSG_RESULT(BeOS)
+    NEED_DL=0
+    SHLIB_STRIP=strip
+    DEFUALT_MAKE=static
     ;;
   Linux)
     AC_MSG_RESULT(Linux! The choice of the GNU generation)
@@ -352,7 +364,7 @@ else
 #include "confdefs.h"
 #include <stdio.h>
 #include <sys/time.h>
-#include "src/mod/filesys.mod/files.h"
+#include "$srcdir/src/mod/filesys.mod/files.h"
 int main() {
   fprintf(stdout, "%d/%d %s\n", 512 - sizeof(struct filler), sizeof(filedb), "bytes");
   return 0;
@@ -986,7 +998,7 @@ fi
 dnl
 dnl
 AC_DEFUN(EGG_SUBST_EGGVERSION, [dnl
-EGGVERSION=`grep 'char egg_version' src/main.c | $AWK '{gsub(/(\"|\;)/, "", [$]4); print [$]4}'`
+EGGVERSION=`grep 'char egg_version' $srcdir/src/main.c | $AWK '{gsub(/(\"|\;)/, "", [$]4); print [$]4}'`
 egg_version_num=`echo ${EGGVERSION} | $AWK 'BEGIN { FS = "."; } { printf("%d%02d%02d", [$]1, [$]2, [$]3); }'`
 AC_SUBST(EGGVERSION)dnl
 AC_DEFINE_UNQUOTED(EGG_VERSION, $egg_version_num)dnl

@@ -3,7 +3,7 @@
  *   saved console settings based on console.tcl
  *   by cmwagner/billyjoe/D. Senso
  * 
- * $Id: console.c,v 1.15 2000/01/08 21:23:15 per Exp $
+ * $Id: console.c,v 1.16 2000/02/27 19:21:41 guppy Exp $
  */
 /* 
  * Copyright (C) 1999, 2000  Eggheads
@@ -32,6 +32,9 @@ static Function *global = NULL;
 static int console_autosave = 0;
 static int force_channel = 0;
 static int info_party = 0;
+
+int console_tcl_set(Tcl_Interp * irp, struct userrec *u,
+                    struct user_entry *e, int argc, char **argv);
 
 struct console_info {
   char *channel;
@@ -156,42 +159,6 @@ static int console_tcl_get(Tcl_Interp * irp, struct userrec *u,
   return TCL_OK;
 }
 
-int console_tcl_set(Tcl_Interp * irp, struct userrec *u,
-		    struct user_entry *e, int argc, char **argv)
-{
-  struct console_info *i = e->u.extra;
-  int l;
-
-  BADARGS(4, 9, " handle CONSOLE channel flags strip echo page conchan");
-  if (!i) {
-    i = user_malloc(sizeof(struct console_info));
-    bzero(i, sizeof(struct console_info));
-  }
-  if (i->channel)
-    nfree(i->channel);
-  l = strlen(argv[3]);
-  if (l > 80)
-    l = 80;
-  i->channel = user_malloc(l + 1);
-  strncpy(i->channel, argv[3], l);
-  i->channel[l] = 0;
-  if (argc > 4) {
-    i->conflags = logmodes(argv[4]);
-    if (argc > 5) {
-      i->stripflags = stripmodes(argv[5]);
-      if (argc > 6) {
-	i->echoflags = (argv[6][0] == '1') ? 1 : 0;
-	if (argc > 7) {
-	  i->page = atoi(argv[7]);
-	  if (argc > 8)
-	    i->conchan = atoi(argv[8]);
-	}
-      }
-    }
-  }
-  return TCL_OK;
-}
-
 int console_expmem(struct user_entry *e)
 {
   struct console_info *i = e->u.extra;
@@ -246,6 +213,43 @@ static struct user_entry_type USERENTRY_CONSOLE =
   console_display,
   "CONSOLE"
 };
+
+int console_tcl_set(Tcl_Interp * irp, struct userrec *u,
+ 		    struct user_entry *e, int argc, char **argv)
+{
+  struct console_info *i = e->u.extra;
+  int l;
+
+  BADARGS(4, 9, " handle CONSOLE channel flags strip echo page conchan");
+  if (!i) {
+    i = user_malloc(sizeof(struct console_info));
+    bzero(i, sizeof(struct console_info));
+  }
+  if (i->channel)
+    nfree(i->channel);
+  l = strlen(argv[3]);
+  if (l > 80)
+    l = 80;
+  i->channel = user_malloc(l + 1);
+  strncpy(i->channel, argv[3], l);
+  i->channel[l] = 0;
+  if (argc > 4) {
+    i->conflags = logmodes(argv[4]);
+    if (argc > 5) {
+      i->stripflags = stripmodes(argv[5]);
+      if (argc > 6) {
+	i->echoflags = (argv[6][0] == '1') ? 1 : 0;
+	if (argc > 7) {
+          i->page = atoi(argv[7]);
+ 	  if (argc > 8)
+ 	    i->conchan = atoi(argv[8]);
+ 	}
+      }
+    }
+  }
+  set_user(&USERENTRY_CONSOLE, u, i);
+  return TCL_OK;
+}
 
 static int console_chon(char *handle, int idx)
 {

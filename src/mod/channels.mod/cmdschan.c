@@ -2,7 +2,7 @@
  * cmdschan.c -- part of channels.mod
  *   commands from a user via dcc that cause server interaction
  * 
- * $Id: cmdschan.c,v 1.31 2000/02/02 11:53:14 per Exp $
+ * $Id: cmdschan.c,v 1.32 2000/02/27 19:21:40 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -187,7 +187,7 @@ static void cmd_pls_exempt (struct userrec * u, int idx, char * par)
   unsigned long int expire_time = 0, expire_foo;
   char * p_expire;
   if (!use_exempts) {
-    dprintf(idx, "This command can only be used on IRCnet.\n");
+    dprintf(idx, "This command can only be used with use-exempts enabled.\n");
     return;
   }
   if (!par[0]) {
@@ -328,7 +328,7 @@ static void cmd_pls_invite (struct userrec * u, int idx, char * par)
   unsigned long int expire_time = 0, expire_foo;
   char * p_expire;
   if (!use_invites) {
-    dprintf(idx, "This command can only be used on IRCnet. \n");
+    dprintf(idx, "This command can only be used with use-invites enabled.\n");
     return;
   }
   
@@ -555,7 +555,7 @@ static void cmd_mns_exempt (struct userrec * u, int idx, char * par)
   char s[UHOSTLEN], *exempt, *chname;
   masklist *e;
   if (!use_exempts) {
-    dprintf(idx, "This command can only be used on IRCnet.\n");
+    dprintf(idx, "This command can only be used with use-exempts enabled.\n");
     return;
   }   
   if (!par[0]) {
@@ -648,7 +648,7 @@ static void cmd_mns_invite (struct userrec * u, int idx, char * par)
   masklist *inv;
   
   if (!use_invites) {
-    dprintf(idx, "This command can only be used on IRCnet.\n");
+    dprintf(idx, "This command can only be used with use-invites enabled.\n");
     return;
   }
   if (!par[0]) {
@@ -747,7 +747,7 @@ static void cmd_bans(struct userrec *u, int idx, char *par)
 static void cmd_exempts (struct userrec * u, int idx, char * par)
 {
   if (!use_exempts) {
-    dprintf(idx, "This command can only be used on IRCnet.\n");
+    dprintf(idx, "This command can only be used with use-exempts enabled.\n");
     return;
   }
   if (!strcasecmp(par, "all")) {
@@ -762,7 +762,7 @@ static void cmd_exempts (struct userrec * u, int idx, char * par)
 static void cmd_invites (struct userrec * u, int idx, char * par)
 {
   if (!use_invites) {
-    dprintf(idx, "This command can only be used on IRCnet.\n");
+    dprintf(idx, "This command can only be used with use-invites enabled.\n");
     return;
   }
   if (!strcasecmp(par, "all")) {

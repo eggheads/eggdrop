@@ -8,7 +8,7 @@
  * multi-channel, 6feb1996
  * stopped the bot deopping masters and bots in bitch mode, pteron 23Mar1997
  * 
- * $Id: mode.c,v 1.36 2000/01/22 23:31:54 per Exp $
+ * $Id: mode.c,v 1.37 2000/02/27 19:21:41 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -215,11 +215,12 @@ static void real_add_mode(struct chanset_t *chan,
     type = (plus == '+' ? PLUS : MINUS) |
       (mode == 'o' ? CHOP : (mode == 'b' ? BAN : (mode == 'v' ? VOICE : (mode == 'e' ? EXEMPT : INVITE))));
     /* if -b'n a non-existant ban...nuke it */
-    if ((plus == '-') && (mode == 'b'))
-/* FIXME: some network remove overlapped bans, IrcNet doesnt (poptix/drummer)*/
-      /*if (!isbanned(chan, op))*/
-      if (!ischanban(chan, op))
-	return;
+    /* on ircnet ischanXXX() should be used, otherwise isXXXed() */
+    if ((plus == '-') &&
+       (((mode == 'b') && (!ischanban(chan, op))) ||
+        ((mode == 'e') && (!ischanexempt(chan, op))) ||
+        ((mode == 'I') && (!ischaninvite(chan, op)))))
+      return;
     /* if there are already max_bans bans on the channel, don't try to add 
      * one more */
     Context;

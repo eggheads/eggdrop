@@ -9,7 +9,7 @@
  * dprintf'ized, 27oct1995
  * multi-channel, 8feb1996
  * 
- * $Id: chan.c,v 1.58 2000/02/02 12:23:07 per Exp $
+ * $Id: chan.c,v 1.59 2000/02/27 19:21:41 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -339,7 +339,7 @@ static void kick_all(struct chanset_t *chan, char *hostmask, char *comment)
     get_user_flagrec(m->user, &fr, chan->name);
     sprintf(s, "%s!%s", m->nick, m->userhost);
     if (!chan_sentkick(m) && wild_match(hostmask, s) &&
-	!match_my_nick(m->nick) &&
+	!match_my_nick(m->nick) && !chan_issplit(m) &&
 	!glob_friend(fr) && !chan_friend(fr) &&
 	!isexempted(chan, s) &&	/* Crotale - don't kick +e users */
 	!(channel_dontkickops(chan) &&
@@ -426,7 +426,6 @@ static void refresh_exempt (struct chanset_t * chan, char * user) {
             if (e->lastactive < now - 60 && !isexempted(chan, e->mask)) {
               do_mask(chan, chan->channel.exempt, e->mask, 'e');
               e->lastactive = now;
-              return;
             }
           }
           b = b->next;

@@ -1,23 +1,23 @@
-/* 
+/*
  * irc.c -- part of irc.mod
- *   support for channels withing the bot 
- * 
- * $Id: irc.c,v 1.36 2000/01/08 21:23:16 per Exp $
+ *   support for channels withing the bot
+ *
+ * $Id: irc.c,v 1.37 2000/02/27 19:21:41 guppy Exp $
  */
-/* 
+/*
  * Copyright (C) 1997  Robey Pointer
  * Copyright (C) 1999, 2000  Eggheads
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -154,7 +154,7 @@ static void punish_badguy(struct chanset_t *chan, char *whobad,
   strcpy(ct, &ct[8]);
   strcpy(&ct[2], &ct[3]);
   strcpy(&ct[7], &ct[10]);
-  
+
   /* Put together log and kick messages */
   reason[0] = 0;
   switch (type) {
@@ -170,7 +170,7 @@ static void punish_badguy(struct chanset_t *chan, char *whobad,
     kick_msg = "revenge!";
   }
   putlog(LOG_MISC, chan->name, "Punishing %s (%s)", badnick, reason);
- 
+
   Context;
   /* Set the offender +d */
   if ((revenge_mode > 0) &&
@@ -230,7 +230,7 @@ static void punish_badguy(struct chanset_t *chan, char *whobad,
       putlog(LOG_MISC, "*", "Now deopping %s (%s)", whobad, reason);
     }
   }
-  
+
   /* Always try to deop the offender */
   if (!mevictim)
     add_mode(chan, '-', 'o', badnick);
@@ -460,7 +460,7 @@ static void log_chans()
   memberlist *m;
   struct chanset_t *chan;
   int chops, bans, invites, exempts;
-  
+
   for (chan = chanset; chan != NULL; chan = chan->next) {
     if (channel_active(chan) && channel_logstatus(chan) &&
         !channel_inactive(chan)) {
@@ -582,7 +582,7 @@ static void check_expired_chanstuff()
     if (!(chan->status & (CHAN_ACTIVE | CHAN_PEND)) &&
 	!channel_inactive(chan) &&
 	server_online)
-      dprintf(DP_MODE, "JOIN %s %s\n", chan->name, chan->key_prot);      
+      dprintf(DP_MODE, "JOIN %s %s\n", chan->name, chan->key_prot);
     if ((chan->status & (CHAN_ACTIVE | CHAN_PEND)) &&
 	channel_inactive(chan))
       dprintf(DP_MODE, "PART %s\n", chan->name);
@@ -597,7 +597,7 @@ static void check_expired_chanstuff()
 	  strcpy(s, b->who);
 	  sfrom = s;
 	  snick = splitnick(&sfrom);
-	  
+
 	  if (force_expire || channel_clearbans(chan) ||
 	      !(snick[0] && strcasecmp(sfrom, botuserhost) &&
 		(m = ismember(chan, snick)) &&
@@ -614,9 +614,9 @@ static void check_expired_chanstuff()
     if (use_exempts == 1) {
       if (channel_dynamicexempts(chan) && me_op(chan)) {
 	for (e = chan->channel.exempt; e->mask[0]; e = e->next) {
-	  if ((exempt_time != 0) && 
+	  if ((exempt_time != 0) &&
 	      (((now - e->timer) > (60 * exempt_time)) &&
-	       !u_sticky_mask(chan->exempts, e->mask) && 
+	       !u_sticky_mask(chan->exempts, e->mask) &&
 	       !u_sticky_mask(global_exempts, e->mask))) {
 	    strcpy(s, e->who);
 	    sfrom = s;
@@ -659,7 +659,7 @@ static void check_expired_chanstuff()
 	for (b = chan->channel.invite; b->mask[0]; b = b->next) {
 	  if ((invite_time != 0) &&
 	      (((now - b->timer) > (60 * invite_time)) &&
-	       !u_sticky_mask(chan->invites, b->mask) && 
+	       !u_sticky_mask(chan->invites, b->mask) &&
 	       !u_sticky_mask(global_invites, b->mask))) {
  	    strcpy(s, b->who);
 	    sfrom = s;
@@ -712,7 +712,7 @@ static void check_expired_chanstuff()
       m = chan->channel.member;
       while (m && m->nick[0]) {
 	if ((now - m->last) >= (chan->idle_kick * 60) &&
-	    !match_my_nick(m->nick)) {
+	    !match_my_nick(m->nick) && !chan_issplit(m)) {
 	  sprintf(s, "%s!%s", m->nick, m->userhost);
 	  m->user = get_user_by_host(s);
 	  get_user_flagrec(m->user, &fr, chan->name);
@@ -1035,13 +1035,13 @@ static void do_nettype()
     use_invites = 0;
     rfc_compliant = 0;
     break;
-  case 4:		/* new +e/+I Efnet hybrid */
+  case 4:		/* Hybrid-6+ */
     kick_method = 1;
     modesperline = 4;
     use_354 = 0;
     use_silence = 0;
     use_exempts = 1;
-    use_invites = 1;
+    use_invites = 0;
     rfc_compliant = 1;
     break;
   default:
@@ -1165,7 +1165,7 @@ char *irc_start(Function * global_funcs)
   Context;
   for (chan = chanset; chan; chan = chan->next) {
     if (!channel_inactive(chan))
-      dprintf(DP_MODE, "JOIN %s %s\n", chan->name, chan->key_prot);      
+      dprintf(DP_MODE, "JOIN %s %s\n", chan->name, chan->key_prot);
     chan->status &= ~(CHAN_ACTIVE | CHAN_PEND | CHAN_ASKEDBANS);
     chan->ircnet_status &= ~(CHAN_ASKED_INVITED | CHAN_ASKED_EXEMPTS);
   }
