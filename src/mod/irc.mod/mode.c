@@ -4,7 +4,7 @@
  *   channel mode changes and the bot's reaction to them
  *   setting and getting the current wanted channel modes
  *
- * $Id: mode.c,v 1.69 2003/01/30 07:15:15 wcc Exp $
+ * $Id: mode.c,v 1.70 2003/02/04 11:15:16 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -418,7 +418,7 @@ static void got_op(struct chanset_t *chan, char *nick, char *from,
       add_mode(chan, '-', 'o', who);
     else if (reversing)
       add_mode(chan, '-', 'o', who);
-  } else if (reversing && !match_my_nick(who))
+  } else if (me_op(chan) && reversing && !match_my_nick(who))
     add_mode(chan, '-', 'o', who);
   if (!nick[0] && me_op(chan) && !match_my_nick(who)) {
     if (chan_deop(victim) || (glob_deop(victim) && !chan_op(victim))) {
@@ -502,7 +502,7 @@ static void got_halfop(struct chanset_t *chan, char *nick, char *from,
       add_mode(chan, '-', 'h', who);
     else if (reversing)
       add_mode(chan, '-', 'h', who);
-  } else if (reversing && !match_my_nick(who))
+  } else if (me_op(chan) && reversing && !match_my_nick(who))
     add_mode(chan, '-', 'h', who);
   if (!nick[0] && me_op(chan) && !match_my_nick(who)) {
     if (chan_dehalfop(victim) || (glob_dehalfop(victim) &&
