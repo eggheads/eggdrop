@@ -7,7 +7,7 @@
  *   (non-Tcl) procedure lookups for msg/dcc/file commands
  *   (Tcl) binding internal procedures to msg/dcc/file commands
  *
- * $Id: tclhash.c,v 1.27 2001/07/14 12:37:08 poptix Exp $
+ * $Id: tclhash.c,v 1.28 2001/07/24 14:09:27 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -387,6 +387,10 @@ static int bind_bind_entry(tcl_bind_list_t *tl, const char *flags,
     tm->mask = nmalloc(strlen(cmd) + 1);
     strcpy(tm->mask, cmd);
 
+#if (TCL_MAJOR_VERSION >= 8 && TCL_MINOR_VERSION >= 1) || (TCL_MAJOR_VERSION >= 9)
+    str_nutf8tounicode(tm->mask, strlen(tm->mask) + 1);
+#endif
+	
     /* Link into linked list of binds. */
     tm->next = tl->first;
     tl->first = tm;
