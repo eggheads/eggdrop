@@ -770,18 +770,14 @@ static void got_unexempt(struct chanset_t *chan, char *nick, char *from,
   }
   /* if exempt was removed by master then leave it else check for bans */
   if (!nick[0] && glob_bot(user) && !glob_master(user) && !chan_master(user)) {
-    putlog(LOG_MODES,chan->name,"(%s)  checking lists",chan->name);
     b = chan->channel.ban;
     while (b->ban[0] && !match) {
       if (wild_match(b->ban, who) ||
-     wild_match(who,b->ban)) {
-   putlog(LOG_MODES,chan->name,"(%s)found match for ban %s, exempt %s",
-          chan->name,b->ban,who);
-   add_mode(chan, '+', 'e', who);
-   match=1;
-      }
-      else
-   b = b->next;
+          wild_match(who,b->ban)) {
+        add_mode(chan, '+', 'e', who);
+        match=1;
+      } else
+        b = b->next;
     }
   }
   if ((u_equals_exempt(global_exempts,who) || u_equals_exempt(chan->exempts, who)) &&
