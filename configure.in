@@ -176,7 +176,7 @@ case $system in
     AC_DEFINE(STOP_UAC)
     ;;
   HP-UX)
-    AC_MSG_RESULT(HP-UX, just shoot yourself now)
+    AC_MSG_RESULT([HP-UX, just shoot yourself now])
     AC_CHECK_LIB(dld,shl_load)
     AC_DEFINE(MODULES_OK)
     AC_DEFINE(HPUX_HACKS)
@@ -206,13 +206,13 @@ case $system in
   *)
     if test -r /mach
     then
-      AC_MSG_RESULT(NeXT...We are borg, you will be assimilated)
-      AC_MSG_RESULT(break out the static modules, it's all you'll ever get :P)
+      AC_MSG_RESULT([NeXT...We are borg, you will be assimilated])
+      AC_MSG_RESULT([break out the static modules, it's all you'll ever get :P])
       AC_MSG_RESULT(Hiya DK :P)
       AC_DEFINE(BORGCUBES)
     else
       AC_MSG_RESULT(Something unknown!!)
-      AC_MSG_RESULT(If you get dynamic modules to work, be sure to let the devel team know HOW :)
+      AC_MSG_RESULT([If you get dynamic modules to work, be sure to let the devel team know HOW :)])
     fi
     need_dl=0
     DEFAULT_MAKE=static
