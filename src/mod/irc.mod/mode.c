@@ -385,23 +385,20 @@ static void got_op(struct chanset_t *chan, char *nick, char *from,
   } else if (reversing && !match_my_nick(who))
     add_mode(chan, '-', 'o', who);
   if (!nick[0] && me_op(chan) && !match_my_nick(who)) {
-    if (channel_stopnethack(chan) &&
-    !(chan_op(victim) || (glob_op(victim) && !chan_deop(victim)))) {
-      if (chan_wasoptest(victim) || glob_wasoptest(victim) ||
-      channel_wasoptest(chan)) {
+    if (chan_deop(victim) || (glob_deop(victim) && !chan_op(victim))) {
+      m->flags |= FAKEOP;
+      add_mode(chan, '-', 'o', who);
+    } else if (channel_stopnethack(chan)) {
+      if ((chan_wasoptest(victim) || glob_wasoptest(victim) ||
+      channel_wasoptest(chan)) && (!(m->delay))) {
         if (!chan_wasop(m)) {
-          add_mode(chan, '-', 'o', who);
           m->flags |= FAKEOP;
+          add_mode(chan, '-', 'o', who);
         }
-      } else {
+      } else if (!(chan_op(victim) || (glob_op(victim) && !chan_deop(victim)))) {
         add_mode(chan, '-', 'o', who);
         m->flags |= FAKEOP;
       }
-    }
-    if (!channel_stopnethack(chan) &&
-    (chan_deop(victim) || (glob_deop(victim) && !chan_op(victim)))) {
-      add_mode(chan, '-', 'o', who);
-      m->flags |= FAKEOP;
     }
   }
   m->flags &= ~WASOP;
