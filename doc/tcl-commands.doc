@@ -1101,7 +1101,7 @@ for the msg-command "stop", use 'unbind msg - stop msg_stop'.
 
        triggered by a signoff, or possibly by someone who got netsplit and
        never returned; the signoff message is the last argument to the proc;
-       wildcards can be used in <mask>, which contains the channel name
+       wildcards can be used in <mask>, which contains 'channel + nick!user@host'
 
   (11) TOPC   (stackable)
        bind topc <flags> <mask> <proc>
