@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  *
- * $Id: cmds.c,v 1.92 2003/02/04 10:21:03 wcc Exp $
+ * $Id: cmds.c,v 1.93 2003/02/06 20:15:19 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -319,9 +319,9 @@ static void cmd_whom(struct userrec *u, int idx, char *par)
       }
     } else
       chan = atoi(par);
-    if ((chan < 0) || (chan > 99999)) {
-      dprintf(idx,
-              "Channel number out of range: must be between 0 and 99999.\n");
+    if ((chan < 0) || (chan >= GLOBAL_CHANS)) {
+      dprintf(idx, "Channel number out of range: must be between 0 and %d."
+              "\n", GLOBAL_CHANS);
       return;
     }
     answer_local_whom(idx, chan);
@@ -495,7 +495,7 @@ static void cmd_who(struct userrec *u, int idx, char *par)
       i = nextbot(par);
       if (i < 0) {
         dprintf(idx, "That bot isn't connected.\n");
-      } else if (dcc[idx].u.chat->channel > 99999)
+      } else if (dcc[idx].u.chat->channel >= GLOBAL_CHANS)
         dprintf(idx, "You are on a local channel.\n");
       else {
         char s[40];
@@ -1819,9 +1819,9 @@ static void cmd_chat(struct userrec *u, int idx, char *par)
         }
       } else
         newchan = atoi(arg);
-      if ((newchan < 0) || (newchan > 99999)) {
-        dprintf(idx,
-                "Channel number out of range: must be between 0 and 99999.\n");
+      if ((newchan < 0) || (newchan >= GLOBAL_CHANS)) {
+        dprintf(idx, "Channel number out of range: must be between 0 and %d."
+                "\n", GLOBAL_CHANS);
         return;
       }
     }

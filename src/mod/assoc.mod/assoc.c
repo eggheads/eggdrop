@@ -2,7 +2,7 @@
  * assoc.c -- part of assoc.mod
  *   the assoc code, moved here mainly from botnet.c for module work
  *
- * $Id: assoc.c,v 1.25 2003/01/30 07:15:14 wcc Exp $
+ * $Id: assoc.c,v 1.26 2003/02/06 20:15:19 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -212,7 +212,7 @@ static int cmd_assoc(struct userrec *u, int idx, char *par)
       if (chan == 0) {
         dprintf(idx, "%s\n", ASSOC_PARTYLINE);
         return 0;
-      } else if ((chan < 1) || (chan > 99999)) {
+      } else if ((chan < 1) || (chan >= GLOBAL_CHANS)) {
         dprintf(idx, "%s\n", ASSOC_CHAN_RANGE);
         return 0;
       }

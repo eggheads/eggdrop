@@ -7,7 +7,7 @@
  *   linking, unlinking, and relaying to another bot
  *   pinging the bots periodically and checking leaf status
  *
- * $Id: botnet.c,v 1.48 2003/01/30 07:15:13 wcc Exp $
+ * $Id: botnet.c,v 1.49 2003/02/06 20:15:19 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -496,7 +496,7 @@ void answer_local_whom(int idx, int chan)
         total++;
         dprintf(idx, format, c, dcc[i].nick,
                 (dcc[i].u.chat->channel == 0) && (chan == -1) ? '+' :
-                (dcc[i].u.chat->channel > GLOBAL_CHANS) &&
+                (dcc[i].u.chat->channel >= GLOBAL_CHANS) &&
                 (chan == -1) ? '*' : ' ', botnetnick, dcc[i].host, idle);
         if (dcc[i].u.chat->away != NULL)
           dprintf(idx, "   AWAY: %s\n", dcc[i].u.chat->away);
