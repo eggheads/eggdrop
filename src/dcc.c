@@ -4,7 +4,7 @@
  *   disconnect on a dcc socket
  *   ...and that's it!  (but it's a LOT)
  * 
- * $Id: dcc.c,v 1.39 2000/10/27 19:35:51 fabian Exp $
+ * $Id: dcc.c,v 1.40 2000/10/30 20:50:41 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1794,7 +1794,7 @@ static void dcc_script(int idx, char *buf, int len)
     }
     if (dcc[idx].type == &DCC_CHAT) {
       if (dcc[idx].u.chat->channel >= 0) {
-	chanout_but(-1, dcc[idx].u.chat->channel,DCC_JOIN, dcc[idx].nick);
+	chanout_but(-1, dcc[idx].u.chat->channel, DCC_JOIN, dcc[idx].nick);
 	Context;
 	if (dcc[idx].u.chat->channel < 10000)
 	  botnet_send_join_idx(idx, -1);
