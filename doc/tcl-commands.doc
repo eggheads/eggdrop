@@ -43,7 +43,7 @@ marked with vertical bars (|) on the left.
     Description: sends kicks to the server and tries to put as many nicks
       into one kick command as possible.
     Returns: nothing
-    Module: server
+    Module: irc
 
   putlog <text>
     Description: sends text to the bot's logfile, marked as 'misc' (o)
@@ -721,10 +721,10 @@ marked with vertical bars (|) on the left.
       Now you can use even more complex matching of flags, including +&- flags
       and & or | (and or or) matching.
     Returns: list of nicknames currently on the bot's channel that have all
-       of the flags specified;. If no flags are given, all of the nicknames
-       are returned. Please note that if you're executing chanlist after a 
-       part or sign bind, the gone user will still be listed, so you can 
-       check for wasop, isop, etc.
+      of the flags specified;. If no flags are given, all of the nicknames
+      are returned. Please note that if you're executing chanlist after a 
+      part or sign bind, the gone user will still be listed, so you can 
+      check for wasop, isop, etc.
     Module: irc
 
 
@@ -1101,7 +1101,7 @@ marked with vertical bars (|) on the left.
       3 the file doesn't exist
       4 the file was queued for later transfer, which means that person has 
         too many file transfers going right now
-    Module: filesys
+    Module: transfer
 
   filesend <idx> <filename> [ircnick]
     Description: like dccsend, except it operates for a current filesystem 
@@ -1155,14 +1155,14 @@ marked with vertical bars (|) on the left.
     Returns: list of files queued by someone; each item in the list will be
       a sublist with two elements: nickname the file is being sent to and
       the filename
-    Module: filesys
+    Module: transfer
 
   getfilesendtime <idx>
     Returns: the unix time when a file transfer started, or a negative 
       number:
         -1 no matching transfer with the specified idx was found
         -2 the idx matches an entry which is not a file transfer 
-    Module: filesys
+    Module: transfer
 
   mkdir <directory> [<required-flags> [channel]]
     Description: creates a directory in the file system. Only users with the 
@@ -1414,6 +1414,34 @@ marked with vertical bars (|) on the left.
       version, and dependencies. Each dependency is also a sublist containing
       the module name and version.
     Module: core
+
+  loadmodule <module>
+    Description: attempts to load the specified module.
+    Returns: "Already loaded." if the module is already loaded, "" if 
+      successful, or the reason the module couldn't be loaded.
+    Module: core
+
+  unloadmodule <module>
+    Description: attempts to unload the specified module.
+    Returns: "No such module" if the module is not loaded, "" otherwise.
+    Module: core
+
+  loadhelp <helpfile-name>
+    Description: attempts to load the specified help file from the help/ 
+      directory.
+    Returns: nothing
+    Module: core
+
+  unloadhelp <helpfile-name>
+    Description: attempts to unload the specified help file.
+    Returns: nothing
+    Module: core
+
+  reloadhelp
+    Description: reloads the bot's help files.
+    Returns: nothing
+    Module: core
+
 
 *** GLOBAL VARIABLES ***
 
@@ -1878,11 +1906,12 @@ marked with vertical bars (|) on the left.
 
     (35) CHJN (stackable)
          bind chjn <flags> <mask> <proc>
-         proc-name <botname> <handle> <channel#> <flag> <idx> <from>
+         proc-name <botname> <handle> <channel#> <flag> <idx> <user@host>
 
          Description: when someone joins a botnet channel, it invokes this
-           binding. flags are ignored; the mask is matched against the text
-           of the message and can contain wildcards.
+           binding. The mask is matched against the channel and can contain
+           wildcards. flag is one of: * (owner), + (master), @ (op), or %
+           (botnet master).
          Module: core
 
     (36) CHPT (stackable)

@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: tcl-commands.html,v 1.3 2002/03/01 21:42:24 wcc Exp $ -->
+<!-- $Id: tcl-commands.html,v 1.4 2002/03/03 02:22:45 wcc Exp $ -->
 
 <html>
   <head>
@@ -122,7 +122,7 @@
 
           <p><strong>Returns:</strong> nothing</p>
 
-          <p><strong>Module:</strong> server</p>
+          <p><strong>Module:</strong> irc</p>
         </dd>
 
         <dt><strong>putlog &lt;text&gt;</strong></dt>
@@ -2323,7 +2323,7 @@
             </table>
           </blockquote>
 
-          <p><strong>Module:</strong> filesys</p>
+          <p><strong>Module:</strong> transfer</p>
         </dd>
 
         <dt><strong>filesend &lt;idx&gt; &lt;filename&gt; 
@@ -2425,7 +2425,7 @@
           each item in the list will be a sublist with two elements: nickname
           the file is being sent to and the filename</p>
 
-          <p><strong>Module:</strong> filesys</p>
+          <p><strong>Module:</strong> transfer</p>
         </dd>
 
         <dt><strong>getfilesendtime &lt;idx&gt;</strong></dt>
@@ -2458,7 +2458,7 @@
             </table>
           </blockquote>
 
-          <p><strong>Module:</strong> filesys</p>
+          <p><strong>Module:</strong> transfer</p>
         </dd>
 
         <dt><strong>mkdir &lt;directory&gt; [&lt;required-flags&gt; 
@@ -3085,6 +3085,63 @@
           sublist contains three elements: module, version, and 
           dependencies. Each dependency is also a sublist containing the
           module name and version.</p>
+
+          <p><strong>Module:</strong> core</p>
+        </dd>
+
+        <dt><strong>loadmodule &lt;module&gt;</strong></dt>
+
+        <dd>
+          <p><strong>Description:</strong> attempts to load the specified
+          module.</p>
+
+          <p><strong>Returns:</strong> &quot;Already loaded.&quot; if the 
+          module is already loaded, &quot;&quot; if successful, or the 
+          reason the module couldn't be loaded.</p>
+
+          <p><strong>Module:</strong> core</p>
+        </dd>
+
+        <dt><strong>unloadmodule &lt;module&gt;</strong></dt>
+
+        <dd>
+          <p><strong>Description:</strong> attempts to unload the specified
+          module.</p>
+
+          <p><strong>Returns:</strong> &quot;No such module&quot; if the 
+          module is not loaded, &quot;&quot; otherwise.</p>
+
+          <p><strong>Module:</strong> core</p>
+        </dd>
+
+        <dt><strong>loadhelp &lt;helpfile-name&gt;</strong></dt>
+
+        <dd>
+          <p><strong>Description:</strong> attempts to load the specified
+          help file from the help/ directory.</p>
+
+          <p><strong>Returns:</strong> nothing</p>
+
+          <p><strong>Module:</strong> core</p>
+        </dd>
+
+        <dt><strong>unloadhelp &lt;helpfile-name&gt;</strong></dt>
+
+        <dd>
+          <p><strong>Description:</strong> attempts to unload the specified
+          help file.</p>
+
+          <p><strong>Returns:</strong> nothing</p>
+
+          <p><strong>Module:</strong> core</p>
+        </dd>
+
+        <dt><strong>reloadhelp</strong></dt>
+
+        <dd>
+          <p><strong>Description:</strong> reloads the bot's help files.</p>
+
+          <p><strong>Returns:</strong> nothing</p>
 
           <p><strong>Module:</strong> core</p>
         </dd>
@@ -3868,12 +3925,12 @@
 
               <p><strong>bind chjn &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;<br>
               proc-name &lt;botname&gt; &lt;handle&gt; &lt;channel#&gt; 
-              &lt;flag&gt; &lt;idx&gt; &lt;from&gt;</strong></p>
+              &lt;flag&gt; &lt;idx&gt; &lt;user@host&gt;</strong></p>
 
               <p><strong>Description:</strong> when someone joins a botnet 
-              channel, it invokes this binding. flags are ignored; the mask
-              is matched against the text of the message and can contain 
-              wildcards.</p>
+              channel, it invokes this binding. The mask is matched against
+              the channel and can contain wildcards. flag is one of: * 
+              (owner), + (master), @ (op), or % (botnet master).</p>
 
               <p><strong>Module:</strong> core</p>
             </li>
