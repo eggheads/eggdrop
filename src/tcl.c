@@ -4,7 +4,7 @@
  *   Tcl initialization
  *   getting and setting Tcl/eggdrop variables
  *
- * $Id: tcl.c,v 1.64 2003/02/27 10:18:40 tothwolf Exp $
+ * $Id: tcl.c,v 1.65 2003/02/28 07:20:58 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -372,7 +372,7 @@ void add_tcl_commands(tcl_cmds *table)
     clientdata_stuff += sizeof(void *) * 2;
     cdata[0] = table->func;
     cdata[1] = NULL;
-    Tcl_CreateObjCommand(interp, table->name, utf_converter, (ClientData) cdata,
+    Tcl_CreateObjCommand(interp, table->name, (Function) utf_converter, (ClientData) cdata,
                          cmd_delete_callback);
     table++;
   }
@@ -387,7 +387,7 @@ void add_cd_tcl_cmds(cd_tcl_cmd *table)
     clientdata_stuff += sizeof(void *) * 2;
     cdata[0] = table->callback;
     cdata[1] = table->cdata;
-    Tcl_CreateObjCommand(interp, table->name, utf_converter, (ClientData) cdata,
+    Tcl_CreateObjCommand(interp, table->name, (Function) utf_converter, (ClientData) cdata,
                          cmd_delete_callback);
     table++;
   }
