@@ -53,6 +53,7 @@ static int kick_fun = 0;
 static int ban_fun = 0;
 static int allow_desync = 0;
 static int keepnick = 1;	/* keepnick */
+static int prevent_mixing=1; /* to prevent mixing old/new modes */
 static int revenge_mode = 1;	/* 0 = deop, 1 = and +d, 2 = and kick,
 				 * 3 = and ban */
 
@@ -928,6 +929,7 @@ static tcl_ints myints[] =
   {"strict-host", &strict_host, 0},	/* arthur2 */
   {"ctcp-mode", &ctcp_mode, 0},	/* arthur2 */
   {"keep-nick", &keepnick, 0},	/* guppy */
+  {"prevent-mixing", &prevent_mixing, 0},
   {"revenge-mode", &revenge_mode, 0},
   {0, 0, 0}			/* arthur2 */
 };

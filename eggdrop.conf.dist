@@ -907,6 +907,11 @@ set kick-bogus-invites 0
 # [0/1] Do you want to use invites?
 # set use-invites 0
 
+# Only ircnet! prevent mixing old- and newmodes (I/e)?
+# Still allow the Server these mixes not. [set to 1]
+# IRCnetserver allows mixing old- and newmodes in the future.
+set prevent-mixing 1 
+
 ##### IRC MODULE - net-type 5 specific features (other networks) #####
 
 # kick-method defines how kicks (when enforcing bans) should be made:

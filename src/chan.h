@@ -132,6 +132,7 @@ struct chanset_t {
   char rmkey[81];		/* old key to remove */
   int limit;			/* new limit to set */
   int bytes;			/* total bytes so far */
+  int compat;           /* to prevent mixing old/new modes */
   struct {
     char *op;
     char type;

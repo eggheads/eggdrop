@@ -50,6 +50,7 @@ static void flush_mode(struct chanset_t *chan, int pri)
   chan->pls[0] = 0;
   chan->mns[0] = 0;
   chan->bytes = 0;
+  chan->compat = 0;
   ok = 0;
   /* +k or +l ? */
   if (chan->key[0]) {
@@ -156,6 +157,14 @@ static void real_add_mode(struct chanset_t *chan,
 
   if (!me_op(chan))
     return;			/* no point in queueing the mode */
+  if (chan->compat == 0) {
+     if (mode == 'e' || mode == 'I') chan->compat = 2;
+     else chan->compat = 1;
+	} else if (mode == 'e' || mode == 'I') {
+  	 if (prevent_mixing && chan->compat == 1)
+           flush_mode(chan, NORMAL);
+    } else if (prevent_mixing && chan->compat == 2)
+           flush_mode(chan, NORMAL);
   if ((mode == 'o') || (mode == 'b') || (mode == 'v') ||
       (mode == 'e') || (mode == 'I')) {
     type = (plus == '+' ? PLUS : MINUS) |
