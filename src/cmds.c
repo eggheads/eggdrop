@@ -1416,7 +1416,7 @@ int check_dcc_chanattrs(struct userrec *u, char *chname, int chflags,
 
 static void cmd_chattr(struct userrec *u, int idx, char *par)
 {
-  char *hand, *chg = NULL, work[1024];
+  char *hand, *tmpchg = NULL, *chg = NULL, work[1024];
   struct chanset_t *chan = NULL;
   struct userrec *u2;
   struct flag_record pls =
@@ -1440,8 +1440,14 @@ static void cmd_chattr(struct userrec *u, int idx, char *par)
     chg = newsplit(&par);
     if (!par[0] && strpbrk(chg, "&|"))
       par = dcc[idx].u.chat->con_chan;
-    else if (par[0] && !strpbrk(chg, "&|"))
-      fl = ~FR_GLOBAL;
+     else if (par[0] && !strpbrk(chg, "&|")) {
+       context;
+       tmpchg = nmalloc(sizeof(chg)+1);
+       sprintf(tmpchg,"|%s",chg);
+       chg = nmalloc(sizeof(tmpchg));
+       strcpy(chg,tmpchg);
+       nfree(tmpchg);
+     }
   }
   chan = findchan(par);
   if (!chan && par[0] && (par[0] != '*')) {

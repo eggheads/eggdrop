@@ -35,7 +35,6 @@ Problem status:
        41:      no-one
        42:      no-one
        44:      drummer, but need help
-       48:      no-one
        49:      drummer submitted a patch to eggdev
 
 ----------
@@ -373,12 +372,6 @@ Status: no-one is working on this
 	   blah field will be empty, but i should be removed.
 
 Status: drummer, but need help
-
---
-48. chattr should be patched to work as botattr and demand | being used
-for channels (dw's suggestion).
-
-Status: no-one is working on this
 
 --
 49. Adds a tcl config setting to allow vs correct bogus-bans (suggested by
