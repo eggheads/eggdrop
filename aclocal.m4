@@ -1,7 +1,7 @@
 dnl aclocal.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: aclocal.m4,v 1.69 2003/05/07 23:05:07 wcc Exp $
+dnl $Id: aclocal.m4,v 1.70 2003/06/10 04:27:19 stdarg Exp $
 dnl
 
 
@@ -154,9 +154,30 @@ fi
 dnl  EGG_PROG_STRIP()
 dnl
 AC_DEFUN(EGG_PROG_STRIP, [dnl
+AC_ARG_ENABLE(strip,
+[  --enable-strip          enable stripping of executables ],
+enable_strip="$enableval",
+enable_strip=no)
+
+if test "$enable_strip" = "yes"
+then
+
 AC_CHECK_PROG(STRIP, strip, strip)
 if test "${STRIP-x}" = "x"
 then
+  STRIP=touch
+else
+  cat << 'EOF' >&2
+configure: warning:
+
+  Stripping the executable, while saving some disk space, will make bug
+  reports nearly worthless. If Eggdrop crashes and you wish to report
+  a bug, you will need to recompile with stripping disabled.
+
+EOF
+fi
+
+else
   STRIP=touch
 fi
 ])dnl
