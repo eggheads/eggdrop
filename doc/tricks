@@ -43,3 +43,5 @@ Some little tricks that you may or may not know about...
   config file to make it keeping one logfile all the time. However this 
   is not recommended on high traffic channels.
 
+* You can modify eggdrops output in partyline, kick msg and other texts
+  by editing core.english.lang in language directory.
