@@ -1,3 +1,29 @@
+/* 
+ * irc.h -- part of irc.mod
+ * 
+ * $Id: irc.h,v 1.7 1999/12/15 02:32:59 guppy Exp $
+ */
+/* 
+ * Copyright (C) 1997  Robey Pointer
+ * Copyright (C) 1999  Eggheads
+ * 
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+#ifndef _EGG_MOD_IRC_IRC_H
+#define _EGG_MOD_IRC_IRC_H
+
 #define check_tcl_join(a,b,c,d) check_tcl_joinpart(a,b,c,d,H_join)
 #define check_tcl_part(a,b,c,d) check_tcl_joinpart(a,b,c,d,H_part)
 #define check_tcl_splt(a,b,c,d) check_tcl_joinpart(a,b,c,d,H_splt)
@@ -25,10 +51,9 @@ static int hand_on_chan(struct chanset_t *, struct userrec *);
 static char *getchanmode(struct chanset_t *);
 static void flush_mode(struct chanset_t *, int);
 
-/*        reset(bans|exempts|invites) are now just macros that call resetmasks
- *      in order to reduce the code duplication. <cybah>
+/* reset(bans|exempts|invites) are now just macros that call resetmasks
+ * in order to reduce the code duplication. <cybah>
  */
-
 #define resetbans(chan)         resetmasks((chan), (chan)->channel.ban, (chan)->bans, global_bans, 'b')
 #define resetexempts(chan)      resetmasks((chan), (chan)->channel.exempt, (chan)->exempts, global_exempts, 'e')
 #define resetinvites(chan)      resetmasks((chan), (chan)->channel.invite, (chan)->invites, global_invites, 'I')
@@ -68,4 +93,6 @@ static void gotmode(char *, char *);
 /* recheck_channel is here */
 /* 16 - 19 */
 #define me_op ((int(*)(irc_funcs[16]))(struct chanset_t *))
-#endif
+#endif				/* MAKING_IRC */
+
+#endif				/* _EGG_MOD_IRC_IRC_H */

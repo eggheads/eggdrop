@@ -1,4 +1,5 @@
 # Makefile for src/mod/
+# $Id: Makefile.in,v 1.7 1999/12/15 02:32:58 guppy Exp $
 
 SHELL = /bin/sh
 top_srcdir = @top_srcdir@

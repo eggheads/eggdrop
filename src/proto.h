@@ -1,20 +1,34 @@
-/*
- * prototypes!  for every function used outside its own module
+/* 
+ * proto.h
+ *   prototypes for every function used outside its own module
+ * 
  * (i guess i'm not very modular, cuz there are a LOT of these.)
  * with full prototyping, some have been moved to other .h files
- * because they use structures in those (saves including those
- * .h files EVERY time) - Beldin
+ * because they use structures in those
+ * (saves including those .h files EVERY time) - Beldin
+ * 
+ * $Id: proto.h,v 1.20 1999/12/15 02:32:58 guppy Exp $
  */
-/*
- * This file is part of the eggdrop source code
- * copyright (c) 1997 Robey Pointer
- * and is distributed according to the GNU general public license.
- * For full details, read the top of 'main.c' or the file called
- * COPYING that was distributed with this code.
+/* 
+ * Copyright (C) 1997  Robey Pointer
+ * Copyright (C) 1999  Eggheads
+ * 
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
-#ifndef _H_PROTO
-#define _H_PROTO
+#ifndef _EGG_PROTO_H
+#define _EGG_PROTO_H
 
 #include "../lush.h"
 
@@ -158,7 +172,6 @@ void backup_userfile();
 
 /* match.c */
 int _wild_match(register unsigned char *, register unsigned char *);
-
 #define wild_match(a,b) _wild_match((unsigned char *)(a),(unsigned char *)(b))
 
 /* mem.c */
@@ -272,4 +285,4 @@ int _rfc_ncasecmp(const char *, const char *, int);
 int _rfc_toupper(int);
 int _rfc_tolower(int);
 
-#endif
+#endif				/* _EGG_PROTO_H */

@@ -17,6 +17,8 @@ exec tclsh "$0" "$@"
 #  23Oct99: updated the internal botchk to reflect Tothwolf's
 #           changes in the eggdrop copy.
 #
+# $Id: autobotchk,v 1.5 1999/12/15 02:32:57 guppy Exp $
+#
 # how to use
 # ----------
 #  well, first you need to put the program into your Eggdrop

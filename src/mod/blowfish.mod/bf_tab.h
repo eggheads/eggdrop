@@ -1,6 +1,11 @@
-/* bf_tab.h: Blowfish P-box and S-box tables */
-#ifndef _H_TAB_BF
-#define _H_TAB_BF
+/* 
+ * bf_tab.h -- part of blowfish.mod
+ *   Blowfish P-box and S-box tables
+ * 
+ * $Id: bf_tab.h,v 1.2 1999/12/15 02:32:59 guppy Exp $
+ */
+#ifndef _EGG_MOD_BLOWFISH_BF_TAB_H
+#define _EGG_MOD_BLOWFISH_BF_TAB_H
 
 static UWORD_32bits initbf_P[bf_N + 2] =
 {
@@ -274,4 +279,4 @@ static UWORD_32bits initbf_S[4][256] =
     0xb74e6132, 0xce77e25b, 0x578fdfe3, 0x3ac372e6}
 };
 
-#endif
+#endif				/* _EGG_MOD_BLOWFISH_BF_TAB_H */

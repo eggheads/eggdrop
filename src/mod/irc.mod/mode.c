@@ -1,18 +1,32 @@
 /* 
- * mode.c -- handles:
- * queueing and flushing mode changes made by the bot
- * channel mode changes and the bot's reaction to them
- * setting and getting the current wanted channel modes
+ * mode.c -- part of irc.mod
+ *   queueing and flushing mode changes made by the bot
+ *   channel mode changes and the bot's reaction to them
+ *   setting and getting the current wanted channel modes
+ * 
  * dprintf'ized, 12dec1995
  * multi-channel, 6feb1996
  * stopped the bot deopping masters and bots in bitch mode, pteron 23Mar1997
+ * 
+ * $Id: mode.c,v 1.32 1999/12/15 02:32:59 guppy Exp $
  */
 /* 
- * This file is part of the eggdrop source code
- * copyright (c) 1997 Robey Pointer
- * and is distributed according to the GNU general public license.
- * For full details, read the top of 'main.c' or the file called
- * COPYING that was distributed with this code.
+ * Copyright (C) 1997  Robey Pointer
+ * Copyright (C) 1999  Eggheads
+ * 
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
 /* reversing this mode? */

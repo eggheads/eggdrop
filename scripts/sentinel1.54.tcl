@@ -1,6 +1,8 @@
 # sentinel.tcl v1.54 (10 April 1999) by slennox <slenny@ozemail.com.au>
 # Latest versions can be found at www.ozemail.com.au/~slenny/eggdrop/
 #
+# $Id: sentinel1.54.tcl,v 1.2 1999/12/15 02:32:57 guppy Exp $
+#
 # Flood protection system for eggdrop 1.3.17 and later, with integrated
 # BitchX CTCP simulation. This script is designed to provide strong
 # protection for your bot and channels against large floodnets and proxy

@@ -1,6 +1,9 @@
-# Copyright (c) 1999 by eggheads
-# translated by rtc
-# Language messages for modules `wire'
+# wire.german.lang
+#   language messages for wire module
+#
+# german translation by rtc
+#
+# $Id: wire.german.lang,v 1.4 1999/12/15 02:33:00 guppy Exp $
 
 0xa000,Du bist nicht auf dem heissen Draht.
 0xa001,Gerade auf dem heissen Draht

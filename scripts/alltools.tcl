@@ -1,3 +1,4 @@
+#
 # All-Tools TCL, includes toolbox.tcl, toolkit.tcl and moretools.tcl
 # toolbox was authored by cmwagner@sodre.net
 # toolkit was authored by (Someone claim this)[unknown]
@@ -11,6 +12,8 @@
 # rtc       20Sep1999: added isnumber, changes
 # dw        20Sep1999: use regexp for isnumber checking
 # Tothwolf  06Oct1999: optimized completely
+#
+# $Id: alltools.tcl,v 1.5 1999/12/15 02:32:57 guppy Exp $
 #
 ########################################
 # Descriptions of avaliable commands:

@@ -1,4 +1,5 @@
 # Makefile for src/mod/wire.mod/
+# $Id: Makefile,v 1.11 1999/12/15 02:33:00 guppy Exp $
 
 doofus:
 	@echo ""

@@ -2,6 +2,8 @@
 #
 # new botchk  (for eggdrop 1.1+)
 #
+# $Id: botchk,v 1.4 1999/12/15 02:32:57 guppy Exp $
+#
 # This is a script suitable for use in a crontab.  It checks to make sure
 # your bot is running.  YOU NEED A SEPARATE CRON JOB FOR EACH BOT.  If your
 # bot isn't found, it'll try to start it back up.

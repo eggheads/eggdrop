@@ -1,25 +1,22 @@
 /* 
  * main.c -- handles:
- * changing nicknames when the desired nick is in use
- * flood detection
- * signal handling
- * command line arguments
- * context and assert debugging
+ *   core event handling
+ *   signal handling
+ *   command line arguments
+ *   context and assert debugging
  * 
  * dprintf'ized, 15nov1995
+ * 
+ * $Id: main.c,v 1.29 1999/12/15 02:32:58 guppy Exp $
  */
 /* 
- * This file is part of the eggdrop source code
- * copyright (c) 1997 Robey Pointer
- * and is distributed according to the GNU general public license.
+ * Copyright (C) 1997  Robey Pointer
+ * Copyright (C) 1999  Eggheads
  * 
- * Parts of this eggdrop source code are copyright (c)1999 Eggheads
- * and is distributed according to the GNU general public license.
- * 
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
  * 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -28,8 +25,9 @@
  * 
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- * 
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/* 
  * The author (Robey Pointer) can be reached at:  robey@netcom.com
  * NOTE: Robey is no long working on this code, there is a discussion
  * list avaliable at eggheads@eggheads.org.

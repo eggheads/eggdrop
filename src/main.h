@@ -1,7 +1,29 @@
-/*
- * main.h - include file to include most other include files
+/* 
+ * main.h
+ *   include file to include most other include files
  * 
+ * $Id: main.h,v 1.10 1999/12/15 02:32:58 guppy Exp $
  */
+/* 
+ * Copyright (C) 1997  Robey Pointer
+ * Copyright (C) 1999  Eggheads
+ * 
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+#ifndef _EGG_MAIN_H
+#define _EGG_MAIN_H
 
 #ifndef MAKING_MODS
 #  ifdef HAVE_CONFIG_H
@@ -41,7 +63,7 @@
 #include "eggdrop.h"
 #include "flags.h"
 #ifndef MAKING_MODS
-#include "proto.h"
+#  include "proto.h"
 #endif
 #include "cmdt.h"
 #include "tclegg.h"
@@ -61,11 +83,11 @@ extern struct dcc_table DCC_CHAT, DCC_BOT, DCC_LOST, DCC_SCRIPT, DCC_BOT_NEW,
 
 /* my own byte swappers */
 #ifdef WORDS_BIGENDIAN
-#define swap_short(sh) (sh)
-#define swap_long(ln) (ln)
+#  define swap_short(sh) (sh)
+#  define swap_long(ln) (ln)
 #else
-#define swap_short(sh) ((((sh) & 0xff00) >> 8) | (((sh) & 0x00ff) << 8))
-#define swap_long(ln) (swap_short(((ln)&0xffff0000)>>16) | (swap_short((ln)&0x0000ffff)<<16))
+#  define swap_short(sh) ((((sh) & 0xff00) >> 8) | (((sh) & 0x00ff) << 8))
+#  define swap_long(ln) (swap_short(((ln)&0xffff0000)>>16) | (swap_short((ln)&0x0000ffff)<<16))
 #endif
 #define iptolong(a) (0xffffffff & (long)(swap_long((unsigned long)a)))
 #define fixcolon(x) if (x[0]==':') {x++;} else {x=newsplit(&x);}
@@ -81,4 +103,6 @@ extern struct dcc_table DCC_CHAT, DCC_BOT, DCC_LOST, DCC_SCRIPT, DCC_BOT_NEW,
 #define _S_IFDIR        0040000		/*   directory */
 #define S_ISDIR(m)      (((m)&(_S_IFMT)) == (_S_IFDIR))
 
-#endif
+#endif				/* BORGCUBES */
+
+#endif				/* _EGG_MAIN_H */

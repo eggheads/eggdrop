@@ -1,3 +1,29 @@
+/* 
+ * flags.h
+ * 
+ * $Id: flags.h,v 1.3 1999/12/15 02:32:58 guppy Exp $
+ */
+/* 
+ * Copyright (C) 1997  Robey Pointer
+ * Copyright (C) 1999  Eggheads
+ * 
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+#ifndef _EGG_FLAGS_H
+#define _EGG_FLAGS_H
+
 struct flag_record {
   int match;
   int global;
@@ -14,19 +40,21 @@ struct flag_record {
 #define FR_AND    0x20000000
 #define FR_ANYWH  0x10000000
 #define FR_ALL    0x0fffffff
-
-/* userflags:                             */
-/*             abcd?fgh?jk?mnopq??tuvwx?? */
-/* + user defined A-Z                     */
-/*   unused letters: eilrsyz              */
-/* botflags:                              */
-/*   0123456789ab????ghi??l???p?rs??????? */
-/*   unused letters: cdefjkmnoqtuvwxyz    */
-/* chanflags:                             */
-/*             a??d?fg???k?mno?q?s?uv???? */
-/* + user defined A-Z                     */
-/*   unused letters: bchijlprtwxyz        */
-
+/* 
+ * userflags:
+ *             abcd?fgh?jk?mnopq??tuvwx??
+ * + user defined A-Z
+ *   unused letters: eilrsyz
+ * 
+ * botflags:
+ *   0123456789ab????ghi??l???p?rs???????
+ *   unused letters: cdefjkmnoqtuvwxyz
+ * 
+ * chanflags:
+ *             a??d?fg???k?mno?q?s?uv????
+ * + user defined A-Z
+ *   unused letters: bchijlprtwxyz
+ */
 #define USER_VALID    0x00f9f6ef	/* all USER_ flags in use */
 #define CHAN_VALID    0x00757469	/* all flags that can be chan specific */
 #define BOT_VALID     0x7fe689C1	/* all BOT_ flags in use */
@@ -102,7 +130,6 @@ struct flag_record {
 #define BOT_SHARE    (BOT_AGGRESSIVE|BOT_PASSIVE)
 
 /* flag checking macros */
-
 #define chan_op(x) ((x).chan & USER_OP)
 #define glob_op(x) ((x).global & USER_OP)
 #define chan_deop(x) ((x).chan & USER_DEOP)
@@ -146,4 +173,6 @@ int sanity_check(int);
 int chan_sanity_check(int, int);
 char geticon(int);
 
-#endif
+#endif				/* MAKING_MODS */
+
+#endif				/* _EGG_FLAGS_H */

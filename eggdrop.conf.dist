@@ -1,6 +1,8 @@
 #! /path/to/eggdrop
 # ^- set that to the directory eggdrop is in ie "#! /users/lamest/egg/eggdrop"
 #
+# $Id: eggdrop.conf.dist,v 1.39 1999/12/15 02:32:57 guppy Exp $
+#
 # This is a sample configuration file for your bot.  You will definitely
 # want to edit this, to set up your bot.  Right now it creates a bot called
 # "LamestBot" which sits on channel #lamest.

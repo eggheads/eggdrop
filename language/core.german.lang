@@ -1,16 +1,18 @@
-# Copyright (c) 1999 by eggheads
+# core.english.lang
+#   core language messages for eggdrop
+#
 # Original by C_Olli oliver.vogel@gmx.net (Bei Verbesserungsvorschlaegen
 # bitte email an mich)
 # Modified by Michael for 1.3.25.
 # Modified by rtc for 1.4.0
+#
+# $Id: core.german.lang,v 1.12 1999/12/15 02:32:57 guppy Exp $
 
 # General stuff
-
 0x001,Gebrauch
 0x002,Fehlgeschlagen.\n
 
 # BANS_
-
 0x100,Erstellt
 0x101,letzter Gebrauch
 0x102,inaktiv
@@ -24,7 +26,6 @@
 0x10A,Ich banne nicht laenger
 
 # EXEMPTS_
-
 0x110,Erstellt
 0x111,letzter Gebrach
 0x112,inaktiv
@@ -38,7 +39,6 @@
 0x11A,Ich mache nicht laenger eine Ausnahme fuer
 
 # Invites
-
 0x120,Erstellt
 0x121,letzter Gebrauch
 0x122,inaktiv
@@ -52,7 +52,6 @@
 0x12A,Ausgeladen wurde
 
 # MOD_
-
 0x200,Bereits geladen.
 0x201,Aktuelles Verzeichnis kann nicht bestimmt werden.
 0x202,Keine Startfunktion definiert.
@@ -72,7 +71,6 @@ die mitgelieferte Konfigurationsdatei.\n
 0x20E,Dateisystem-Modul nicht geladen.
 
 # USERF_
-
 # 0x400 Scheint falsch zu sein
 0x400,Unvollstaendige Uebertragung der Benutzerliste; umgeschaltet zur neuen Benutzerliste
 0x401,Kann Benutzerdatei nicht zum Auffrischen der Channeldaten oeffnen
@@ -99,7 +97,6 @@ die mitgelieferte Konfigurationsdatei.\n
 0x416,Benutzerdatei wurde abgewiesen von
 
 # MISC_
-
 0x500,abgelaufen
 0x501,Insgesamt
 0x502,Geloescht
@@ -172,7 +169,6 @@ Baue eine Telnetverbindung zu dem Bot auf und gib 'NEW' als deinen Nickname ein.
 0x541,Die letzte Meldung wiederholte sich %d mal.\n
 
 # IRC_
-
 0x600,gebannt
 0x601,Du bist gebannt
 0x602,Wollte mich selbst bannen -- gerade noch abgewendet.
@@ -474,7 +470,6 @@ Baue eine Telnetverbindung zu dem Bot auf und gib 'NEW' als deinen Nickname ein.
 0xd00,In der Schwebe (keine Verbindung zum IRC)
 
 # BOTNET
-
 0xe00,Gefaelschte Nachricht abgewiesen
 0xe01,Verbunden mit
 0xe02,Falscher Bot -- wollte %s, bekam %s
@@ -485,7 +480,6 @@ Baue eine Telnetverbindung zu dem Bot auf und gib 'NEW' als deinen Nickname ein.
 0xe07,Nickwechsel:
 
 # Text aus dcc.c
-
 0xe08,Verbindung zu %s wird zurueckgewiesen
 0xe09,Verbunden mit %s.
 0xe0a,Verbindung zu %s fehlgeschlagen.

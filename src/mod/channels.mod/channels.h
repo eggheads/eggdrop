@@ -1,14 +1,28 @@
 /* 
- * channels.h - part of channels.mod
+ * channels.h -- part of channels.mod
  * 
+ * $Id: channels.h,v 1.8 1999/12/15 02:32:59 guppy Exp $
  */
 /* 
- * This file is part of the eggdrop source code
- * copyright (c) 1997 Robey Pointer
- * and is distributed according to the GNU general public license.
- * For full details, read the top of 'main.c' or the file called
- * COPYING that was distributed with this code.
+ * Copyright (C) 1997  Robey Pointer
+ * Copyright (C) 1999  Eggheads
+ * 
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+#ifndef _EGG_MOD_CHANNELS_CHANNELS_H
+#define _EGG_MOD_CHANNELS_CHANNELS_H
 
 #ifdef MAKING_CHANNELS
 static void del_chanrec(struct userrec *u, char *);
@@ -92,9 +106,8 @@ static char *convert_element(char *src, char *dst);
 #define u_addexempt ((int (*)(struct chanset_t *, char *, char *, char *, time_t, int))channels_funcs[30])
 /* *HOLE* channels_funcs[31] used to be u_equals_exempt() <cybah> */
 /* 32 - 35 */
-/* *HOLE* channels_funcs[32] used to be u_sticky_exempt()
- * *HOLE* channels_funcs[33] used to be u_match_invite()
- */
+/* *HOLE* channels_funcs[32] used to be u_sticky_exempt() <cybah> */
+/* *HOLE* channels_funcs[33] used to be u_match_invite() <cybah> */
 #define killchanset ((int (*)(struct chanset_t *))channels_funcs[354)
 #define u_delinvite ((int (*)(struct chanset_t *, char *, int))channels_funcs[35])
 /* 36 - 39 */
@@ -106,10 +119,10 @@ static char *convert_element(char *src, char *dst);
 #define write_invites ((int (*)(FILE *, int))channels_funcs[40])
 #define ismodeline ((int(*)(masklist *, char *))channels_funcs[41])
 
-#endif
+#endif				/* MAKING_CHANNELS */
 
-/*        Macro's here because their functions were replaced by somthing more
- *      generic. <cybah>
+/* Macro's here because their functions were replaced by somthing more
+ * generic. <cybah>
  */
 #define isbanned(chan, user)    ismasked((chan)->channel.ban, user)
 #define isexempted(chan, user)  ismasked((chan)->channel.exempt, user)
@@ -122,3 +135,5 @@ static char *convert_element(char *src, char *dst);
 #define u_setsticky_ban(chan, host, sticky)     u_setsticky_mask(chan, ((struct chanset_t *)chan) ? ((struct chanset_t *)chan)->bans : global_bans, host, sticky, "s")
 #define u_setsticky_exempt(chan, host, sticky)  u_setsticky_mask(chan, ((struct chanset_t *)chan) ? ((struct chanset_t *)chan)->exempts : global_exempts, host, sticky, "se")
 #define u_setsticky_invite(chan, host, sticky)  u_setsticky_mask(chan, ((struct chanset_t *)chan) ? ((struct chanset_t *)chan)->invites : global_invites, host, sticky, "sInv")
+
+#endif				/* _EGG_MOD_CHANNELS_CHANNELS_H */

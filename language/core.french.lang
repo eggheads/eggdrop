@@ -1,3 +1,6 @@
+# core.french.lang
+#   core language messages for eggdrop
+#
 # Traduit de l'anglais par TiTi <TiTi_1st@hotmail.com>
 # Pour Eggdrop 1.3.17
 #
@@ -8,14 +11,15 @@
 # Cette traduction est incomplète, merci de contacter
 # arthur2@demoniak.hay-france.com ou benoit_jerome@penguinpowered.com
 # si vous voulez l'améliorer
+#
+# $Id: core.french.lang,v 1.13 1999/12/15 02:32:57 guppy Exp $
+
 
 # General stuff
-
 0x001,Utilisation
 0x002,A échoué.\n
 
 # MODES_
-
 0x130,Créé
 0x131,utilisé dernièrement
 0x132,inactif
@@ -25,28 +29,24 @@
 0x138,n'a pas été placé par le bot
 
 # BANS_
-
 0x104,Interdictions globales
 0x106,Interdictions spécifiques au canal pour
 0x109,Utilisez '.bans all' pour voir la liste complète
 0x10A,Arrêt de l'interdiction
 
 # EXEMPTS_
-
 0x114,Exceptions globales
 0x116,Exceptions spécifiques au canal pour
 0x119,Utilisez '.exempts all' pour voir la liste complète
 0x11A,Arrêt de l'exception
 
 # INVITES_
-
 0x124,Invitations globales
 0x126,Invitations spécifiques au canal pour
 0x129,Utilisez '.invites all' pour voir la liste complète
 0x12A,Arrêt de l'invitation
 
 # MOD_
-
 0x200,Déjà chargé.
 0x201,Ne peut pas déterminer le répertoire courant.
 0x202,Aucune fonction de démarrage définie.
@@ -65,7 +65,6 @@ consultez s'il vous plaît le ficher de configuration initiale pour plus de rense
 0x20E,Module filesys non chargé.
 
 # USERF_
-
 0x400,Transfert de la liste utilisateurs terminé; utilisation de la liste
 0x401,Ne peut pas ouvrir la liste utilisateurs pour relire les données du canal
 0x402,NE PEUT PAS LIRE LA NOUVELLE LISTE UTILISATEURS
@@ -91,7 +90,6 @@ consultez s'il vous plaît le ficher de configuration initiale pour plus de rense
 0x416,Liste utilisateurs rejetée par
 
 # MISC_
-
 0x500,a expiré
 0x501,au total
 0x502,Supprimé
@@ -161,7 +159,6 @@ Faites un Telnet sur le bot et entrez 'NEW' comme surnom.
 0x541,Dernier message repété %d fois.\n
 
 # IRC_
-
 0x600,Interdit
 0x601,Vous êtes interdit
 0x602,Interdiction sur moi-même--déviée.
@@ -278,7 +275,6 @@ Faites un Telnet sur le bot et entrez 'NEW' comme surnom.
 0x672,Avalanche de SURNOM de @%s!  Interdiction.
 
 # EGG_
-
 0x700,Arguments de la ligne de commande:\n\
   -h   aide\n\
   -v   donne la version et quitte\n\
@@ -293,13 +289,11 @@ Faites un Telnet sur le bot et entrez 'NEW' comme surnom.
 0x703,* Attention! Impossible d'écrire le fichier %s!\n
 
 # USER_
-
 0x800,  (est un op global)
 0x801,  (est un bot)
 0x802,  (est un maître)
 
 # CHAN_
-
 0x900,Aucun canal de ce type défini
 0x901,Clé du canal incorrecte
 0x902,* Changement de mode sur %s pour le non-existant %s!
@@ -461,7 +455,6 @@ Faites un Telnet sur le bot et entrez 'NEW' comme surnom.
 0xd00,Je plane (pas d'interaction avec IRC)
 
 # BOTNET
-
 0xe00,Faux message rejeté
 0xe01,Lié à
 0xe02,Mauvais bot--je voulais %s, et j'ai eu %s
@@ -472,7 +465,6 @@ Faites un Telnet sur le bot et entrez 'NEW' comme surnom.
 0xe07,Changement de surnom:
 
 # dcc.c Messages
-
 0xe08,Rejet de la liaison de %s
 0xe09,Relié à %s.
 0xe0a,Echec lors de la liaison avec %s.

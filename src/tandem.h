@@ -1,13 +1,28 @@
-/*
- * This file is part of the eggdrop source code
- * copyright (c) 1997 Robey Pointer
- * and is distributed according to the GNU general public license.
- * For full details, read the top of 'main.c' or the file called
- * COPYING that was distributed with this code.
+/* 
+ * tandem.h
+ * 
+ * $Id: tandem.h,v 1.3 1999/12/15 02:32:58 guppy Exp $
  */
-
-#ifndef _H_TANDEM
-#define _H_TANDEM
+/* 
+ * Copyright (C) 1997  Robey Pointer
+ * Copyright (C) 1999  Eggheads
+ * 
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+#ifndef _EGG_TANDEM_H
+#define _EGG_TANDEM_H
 
 /* keep track of tandem-bots in the chain */
 typedef struct tand_t_struct {
@@ -75,7 +90,7 @@ void botnet_send_bye();
 void botnet_send_nkch_part(int, int, char *);
 void botnet_send_nkch(int, char *);
 
-#endif
+#endif				/* MAKING_MODS */
 
 #define b_status(a) (dcc[a].status)
 #define b_version(a) (dcc[a].u.bot->version)
@@ -83,4 +98,5 @@ void botnet_send_nkch(int, char *);
 #define b_numver(a) (dcc[a].u.bot->numver)
 
 #define safe_str(a) (a ? a : "")
-#endif
+
+#endif				/* _EGG_TANDEM_H */

@@ -1,4 +1,5 @@
 # Makefile for src/mod/share.mod/
+# $Id: Makefile,v 1.10 1999/12/15 02:33:00 guppy Exp $
 
 doofus:
 	@echo ""

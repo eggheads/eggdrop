@@ -1,4 +1,7 @@
-# FILES_
+# filesys.englisg.lang
+#   language messages for filesys module
+#
+# $Id: filesys.english.lang,v 1.4 1999/12/15 02:32:59 guppy Exp $
 
 0x300,Converting filesystem image in %s ...
 0x301,filedb-update: can't open directory!

@@ -1,4 +1,7 @@
-# Language messages for modules `wire'
+# wire.english.lang
+#   language messages for wire module
+#
+# $Id: wire.english.lang,v 1.5 1999/12/15 02:33:00 guppy Exp $
 
 0xa000,You are not on a wire.
 0xa001,Currently on wire

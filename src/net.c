@@ -1,7 +1,10 @@
-/*
+/* 
  * net.c -- handles:
- * all raw network i/o
+ *   all raw network i/o
  * 
+ * $Id: net.c,v 1.14 1999/12/15 02:32:58 guppy Exp $
+ */
+/* 
  * This is hereby released into the public domain.
  * Robey Pointer, robey@netcom.com
  */

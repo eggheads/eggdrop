@@ -1,24 +1,39 @@
 /* 
- * wire.c   - An encrypted partyline communication.
- *            Compatible with wire.tcl.
- * 
- *            by ButchBub - Scott G. Taylor (staylor@mrynet.com)
- * 
- *      REQUIRED: Eggdrop Modules (see dependancies below).
- *                Wire will only compile and work on the latest Required
- *                Eggdrop version listed below.
- * 
- *    Version   Date            Req'd Eggver    Notes                    Who
- *    .......   ..........      ............    ....................     ......
- *      1.0     1997-07-17      1.2.0           Initial.                 BB
- *      1.1     1997-07-28      1.2.0           Release version.         BB
- *      1.2     1997-08-19      1.2.1           Update and bugfixes.     BB
- *      1.3     1997-09-24      1.2.2.0         Reprogrammed for 1.2.2   BB
- *      1.4     1997-11-25      1.2.2.0         Added language addition  Kirk
- *      1.5     1998-07-12      1.3.0.0         Fixed ;me and updated    BB
- * 
+ * wire.c -- part of wire.mod
+ *   An encrypted partyline communication.
+ *   Compatible with wire.tcl.
  *   This module does not support wire usage in the files area.
  * 
+ * by ButchBub - Scott G. Taylor (staylor@mrynet.com)
+ * 
+ * Version   Date            Req'd Eggver    Notes                    Who
+ * .......   ..........      ............    ....................     ......
+ * 1.0       1997-07-17      1.2.0           Initial.                 BB
+ * 1.1       1997-07-28      1.2.0           Release version.         BB
+ * 1.2       1997-08-19      1.2.1           Update and bugfixes.     BB
+ * 1.3       1997-09-24      1.2.2.0         Reprogrammed for 1.2.2   BB
+ * 1.4       1997-11-25      1.2.2.0         Added language addition  Kirk
+ * 1.5       1998-07-12      1.3.0.0         Fixed ;me and updated    BB
+ * 
+ * $Id: wire.c,v 1.8 1999/12/15 02:33:00 guppy Exp $
+ */
+/* 
+ * Copyright (C) 1997  Robey Pointer
+ * Copyright (C) 1999  Eggheads
+ * 
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
 #define MODULE_NAME "wire"

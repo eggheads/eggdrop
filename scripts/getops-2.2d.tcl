@@ -1,6 +1,8 @@
 
 # Getops 2.2d
 
+# $Id: getops-2.2d.tcl,v 1.2 1999/12/15 02:32:57 guppy Exp $
+
 # This script is used for bots to request and give ops to each other. 
 # For this to work, you'll need:
 

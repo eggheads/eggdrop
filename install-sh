@@ -3,6 +3,8 @@
 # install - install a program, script, or datafile
 # This comes from X11R5 (mit/util/scripts/install.sh).
 #
+# $Id: install-sh,v 1.2 1999/12/15 02:32:57 guppy Exp $
+#
 # Copyright 1991 by the Massachusetts Institute of Technology
 #
 # Permission to use, copy, modify, distribute, and sell this software and its
@@ -22,7 +24,6 @@
 # This script is compatible with the BSD install script, but was written
 # from scratch.  It can only install one file at a time, a restriction
 # shared with many OS's install programs.
-
 
 # set DOITPROG to echo to test this script
 

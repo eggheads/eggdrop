@@ -1,19 +1,34 @@
-/* stuff used by tcl.c & tclhash.c */
-/*
- * This file is part of the eggdrop source code
- * copyright (c) 1997 Robey Pointer
- * and is distributed according to the GNU general public license.
- * For full details, read the top of 'main.c' or the file called
- * COPYING that was distributed with this code.
+/* 
+ * tclegg.h
+ *   stuff used by tcl.c and tclhash.c
+ * 
+ * $Id: tclegg.h,v 1.3 1999/12/15 02:32:58 guppy Exp $
  */
-
-#ifndef _H_TCLEGG
-#define _H_TCLEGG
+/* 
+ * Copyright (C) 1997  Robey Pointer
+ * Copyright (C) 1999  Eggheads
+ * 
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+#ifndef _EGG_TCLEGG_H
+#define _EGG_TCLEGG_H
 
 #include "../lush.h"		/* include this here, since it's needed
 				 * in this file */
 #ifndef MAKING_MODS
-#include "proto.h"		/* this file needs this */
+#  include "proto.h"		/* this file needs this */
 #endif
 
 /* types of commands */
@@ -134,4 +149,4 @@ void rem_tcl_coups(tcl_coups *);
 void add_tcl_ints(tcl_ints *);
 void rem_tcl_ints(tcl_ints *);
 
-#endif
+#endif				/* _EGG_TCLEGG_H */

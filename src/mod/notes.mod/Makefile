@@ -1,4 +1,5 @@
 # Makefile for src/mod/notes.mod
+# $Id: Makefile,v 1.11 1999/12/15 02:32:59 guppy Exp $
 
 doofus:
 	@echo ""

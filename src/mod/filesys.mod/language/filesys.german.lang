@@ -1,6 +1,9 @@
-# Copyright (c) 1999 by eggheads
-# translated by rtc
-# FILES_
+# filesys.german.lang
+#   language messages for filesys module
+#
+# german translation by rtc
+#
+# $Id: filesys.german.lang,v 1.4 1999/12/15 02:32:59 guppy Exp $
 
 0x300,Konvertiere Dateisystem-Abbild in %s ...
 0x301,filedb-update: kann Verzeichnis nicht oeffnen!

@@ -1,31 +1,37 @@
-/* ===================================================================
- * 
- * match.c -- wildcard matching functions
+/* 
+ * match.c
+ *   wildcard matching functions
  *   (rename to reg.c for ircII)
- *
- * Once this code was working, I added support for % so that I could use
- *  the same code both in Eggdrop and in my IrcII client.  Pleased
- *  with this, I added the option of a fourth wildcard, ~, which
- *  matches varying amounts of whitespace (at LEAST one space, though,
- *  for sanity reasons).
+ * 
+ * $Id: match.c,v 1.4 1999/12/15 02:32:58 guppy Exp $
+ */
+/*
+ * Once this code was working, I added support for % so that I could
+ * use the same code both in Eggdrop and in my IrcII client.
+ * Pleased with this, I added the option of a fourth wildcard, ~,
+ * which matches varying amounts of whitespace (at LEAST one space,
+ * though, for sanity reasons).
+ * 
  * This code would not have been possible without the prior work and
- *  suggestions of various sourced.  Special thanks to Robey for
- *  all his time/help tracking down bugs and his ever-helpful advice.
+ * suggestions of various sourced.  Special thanks to Robey for
+ * all his time/help tracking down bugs and his ever-helpful advice.
  * 
  * 04/09:  Fixed the "*\*" against "*a" bug (caused an endless loop)
- *
+ * 
  *   Chris Fuller  (aka Fred1@IRC & Fwitz@IRC)
  *     crf@cfox.bchs.uh.edu
  * 
  * I hereby release this code into the public domain
- *
- * =================================================================== */
+ * 
+ */
 
 /* This will get us around most of the mess and replace the chunk that
- * was removed from the middle of this file.   --+ Dagmar */
+ * was removed from the middle of this file.   --+ Dagmar
+ */
 /* You'll also want to grab the rfc1459.c file or change all rfc_*()
  * calls to the standard library call to make this work with ircII
- * derivatives now. */
+ * derivatives now.
+ */
 
 #ifdef HAVE_CONFIG_H
 #  include <config.h>
@@ -34,10 +40,10 @@
 /* Remove the next line to use this in IrcII */
 #define EGGDROP
 
-/* ===================================================================
+/*
  * Best to leave stuff after this point alone, but go on and change
  * it if you're adventurous...
- * =================================================================== */
+ */
 
 /* The quoting character -- what overrides wildcards (do not undef) */
 #define QUOTE '\\'
@@ -54,36 +60,40 @@
 /* The "matches AT LEAST ONE SPACE" wildcard (undef me to disable!) */
 #define WILDT '~'
 
-/* This makes sure WILDT doesn't get used in in the IrcII version of
+/*
+ * This makes sure WILDT doesn't get used in in the IrcII version of
  * this code.  If ya wanna live dangerously, you can remove these 3
  * lines, but WARNING: IT WOULD MAKE THIS CODE INCOMPATIBLE WITH THE
- * CURRENT reg.c OF IrcII!!!  Support for ~ is NOT is the reg.c of
+ * CURRENT reg.c OF IrcII!!!  Support for ~ is NOT in the reg.c of
  * IrcII, and adding it may cause compatibility problems, especially
  * in scripts.  If you don't think you have to worry about that, go
- * for it! */
+ * for it!
+ */
 #ifndef EGGDROP
 #undef WILDT
 #endif
 
-/* ===================================================================
+/*
  * If you edit below this line and it stops working, don't even THINK
  * about whining to *ME* about it!
- * =================================================================== */
+ */
 
-/* No problem, you got it wrong anyway, Chris.  You should have gone to
- * uppercase instead of lowercase.  (A really minor mistake) */
+/* 
+ * No problem, you got it wrong anyway, Chris.  You should have gone to
+ * uppercase instead of lowercase.  (A really minor mistake)
+ */
 
 /* Changing these is probably counter-productive :) */
 #define MATCH (match+saved+sofar)
 #define NOMATCH 0
 
-/* ===================================================================
+/*
  * EGGDROP:   wild_match_per(char *m, char *n)
  * IrcII:     wild_match(char *m, char *n)
  * 
  * Features:  Forward, case-insensitive, ?, *, %, ~(optional)
  * Best use:  Generic string matching, such as in IrcII-esque bindings
- * =================================================================== */
+ */
 #ifdef EGGDROP
 static int wild_match_per(register unsigned char *m, register unsigned char *n)
 #else
@@ -218,28 +228,29 @@ register unsigned char *ma, *na;
 
 #else
 
-/* ===================================================================
+/*
  * Remaining code is not used by IrcII
- * =================================================================== */
+ */
 
-/* For this matcher, sofar's high bit is used as a flag of whether or
+/* 
+ * For this matcher, sofar's high bit is used as a flag of whether or
  * not we are quoting.  The other matchers don't need this because
- * when you're going forward, you just skip over the quote char. */
+ * when you're going forward, you just skip over the quote char.
+ */
 #define UNQUOTED (0x7FFF)
 #define QUOTED   (0x8000)
 
 #undef MATCH
 #define MATCH ((match+sofar)&UNQUOTED)
 
-/* ===================================================================
+/*
  * EGGDROP:   wild_match(char *ma, char *na)
  * IrcII:     NOT USED
  * 
  * Features:  Backwards, case-insensitive, ?, *
  * Best use:  Matching of hostmasks (since they are likely to begin
  *            with a * rather than end with one).
- * =================================================================== */
-
+ */
 int _wild_match(register unsigned char *m, register unsigned char *n)
 {
   unsigned char *ma = m, *na = n, *lsm = 0, *lsn = 0;
@@ -300,7 +311,9 @@ int _wild_match(register unsigned char *m, register unsigned char *n)
   return (m >= ma) ? NOMATCH : MATCH;	/* Start of both = match */
 }
 
-/* For this matcher, no "saved" is used to track "%" and no special quoting
- * ability is needed, so we just have (match+sofar) as the result. */
+/* 
+ * For this matcher, no "saved" is used to track "%" and no special quoting
+ * ability is needed, so we just have (match+sofar) as the result.
+ */
 
 #endif

@@ -1,8 +1,11 @@
+# filesys.french.lang
+#   language messages for filesys module
+#
 # Traduction par Fraggle, merci de me contacter 
 # à benoit_jerome@penguinpowered.com
 # si vous voulez y contribuer.
-
-# FILES_
+#
+# $Id: filesys.french.lang,v 1.3 1999/12/15 02:32:59 guppy Exp $
 
 0x300,Conversion de l'image du système de fichier dans %s ...
 0x301,filedb-update: ne peut ouvrir le répertoire!

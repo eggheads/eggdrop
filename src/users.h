@@ -1,14 +1,29 @@
-/* structures and definitions used by users.c & userrec.c */
-/*
- * This file is part of the eggdrop source code
- * copyright (c) 1997 Robey Pointer
- * and is distributed according to the GNU general public license.
- * For full details, read the top of 'main.c' or the file called
- * COPYING that was distributed with this code.
+/* 
+ * users.h
+ *   structures and definitions used by users.c and userrec.c
+ * 
+ * $Id: users.h,v 1.8 1999/12/15 02:32:58 guppy Exp $
  */
-
-#ifndef _H_USERS
-#define _H_USERS
+/* 
+ * Copyright (C) 1997  Robey Pointer
+ * Copyright (C) 1999  Eggheads
+ * 
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+#ifndef _EGG_USERS_H
+#define _EGG_USERS_H
 
 /* list functions :) , next *must* be the 1st item in the struct */
 struct list_type {
@@ -172,4 +187,4 @@ void def_display(int idx, struct user_entry *e);
 int def_dupuser(struct userrec *new, struct userrec *old,
 		struct user_entry *e);
 
-#endif
+#endif				/* _EGG_USERS_H */

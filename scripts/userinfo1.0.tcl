@@ -1,6 +1,8 @@
 # userinfo.tcl v1.05 for Eggdrop 1.1.6 and higher
 #           Scott G. Taylor -- ButchBub!staylor@mrynet.com
 #
+# $Id: userinfo1.0.tcl,v 1.4 1999/12/15 02:32:57 guppy Exp $
+#
 # v1.00      ButchBub     14 July      1997 -Original release.  Based on
 #                                            whois.tcl "URL" commands.
 # v1.01      Beldin       11 November  1997 -1.3 only version

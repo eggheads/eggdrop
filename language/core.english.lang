@@ -1,5 +1,9 @@
-# General stuff
+# core.english.lang
+#   core language messages for eggdrop
+#
+# $Id: core.english.lang,v 1.16 1999/12/15 02:32:57 guppy Exp $
 
+# General stuff
 0x001,Usage
 0x002,Failed.\n
 
@@ -13,28 +17,24 @@
 0x138,not placed by bot
 
 # BANS_
-
 0x104,Global bans
 0x106,Channel bans for
 0x109,Use '.bans all' to see the total list
 0x10A,No longer banning
 
 # EXEMPTS_
-
 0x114,Global exempts
 0x116,Channel exempts for
 0x119,Use '.exempts all' to see the total list
 0x11A,No longer ban exempting
 
 # INVITES_
-
 0x124,Global invites
 0x126,Channel invites for
 0x129,Use '.invites all' to see the total list
 0x12A,No longer inviteing
 
 # MOD_
-
 0x200,Already loaded.
 0x201,Can't determine current directory.
 0x202,No start function defined.
@@ -53,7 +53,6 @@ module, please consult the default config file for info.\n
 0x20E,Filesys module not loaded.
 
 # USERF_
-
 0x400,Userlist transfer complete; switched over
 0x401,Cannot open userfile to reread channel data
 0x402,CAN'T READ NEW USERFILE
@@ -79,7 +78,6 @@ module, please consult the default config file for info.\n
 0x416,User file rejected by
 
 # MISC_
-
 0x500,expired
 0x501,total
 0x502,Erased
@@ -149,7 +147,6 @@ Telnet to the bot and enter 'NEW' as your nickname.
 0x541,Last message repeated %d time(s).\n
 
 # IRC_
-
 0x600,Banned
 0x601,You are banned
 0x602,Wanted to ban myself--deflected.
@@ -266,7 +263,6 @@ Telnet to the bot and enter 'NEW' as your nickname.
 0x672,NICK flood from @%s!  Banning.
 
 # EGG_
-
 0x700,Command line arguments:\n\
   -h   help\n\
   -v   print version and exit\n\
@@ -281,13 +277,11 @@ Telnet to the bot and enter 'NEW' as your nickname.
 0x703,* Warning!  Could not write %s file!\n
 
 # USER_
-
 0x800,  (is a global op)
 0x801,  (is a bot)
 0x802,  (is a master)
 
 # CHAN_
-
 0x900,No such channel defined
 0x901,Bogus channel key
 0x902,* Mode change on %s for nonexistant %s!
@@ -449,7 +443,6 @@ Telnet to the bot and enter 'NEW' as your nickname.
 0xd00,Floating in limbo (no IRC interaction)
 
 # BOTNET
-
 0xe00,Fake message rejected
 0xe01,Linked to
 0xe02,Wrong bot--wanted %s, got %s
@@ -460,7 +453,6 @@ Telnet to the bot and enter 'NEW' as your nickname.
 0xe07,Nick Change:
 
 # dcc.c Messages
-
 0xe08,Rejecting link from %s
 0xe09,Linked to %s.
 0xe0a,Failed link to %s.

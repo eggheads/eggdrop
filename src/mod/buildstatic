@@ -1,4 +1,5 @@
 #! /bin/sh
+# $Id: buildstatic,v 1.4 1999/12/15 02:32:58 guppy Exp $
 
 rm -f static.h
 for i in *.mod
