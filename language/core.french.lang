@@ -7,19 +7,36 @@
 0x001,Utilisation
 0x002,A manqué.\n
 
+# MODES_
+
+0x130,Créé
+0x131,utilisé dernièrement
+0x132,inactif
+0x133,placé par
+0x135,pas actif sur
+0x137,pas actif
+0x138,n'a pas été placé par le bot
+
 # BANS_
 
-0x100,Créé
-0x101,utilisé dernièrement
-0x102,inactif 
-0x103,placé par
 0x104,Bans globaux
-0x105,pas actif sur
 0x106,Bans niveau canal pour 
-0x107,pas actif
-0x108,n'a pas été placé par le bot
 0x109,Utilisez '.bans all' pour voir la liste complète
 0x10A,J'arrete de bannir
+
+# EXEMPTS_
+
+0x114,Exceptions globales
+0x116,Exceptions niveau canal pour
+0x119,Utilisez '.exempts all' pour voir la liste complète
+0x11A,J'arrete de faire exception pour
+
+# INVITES_
+
+0x124,Invitations globales
+0x126,Invitations niveau canal pour
+0x129,Utilisez '.invites all' pour voir la liste complète
+0x12A,J'arrete d'inviter
 
 # MOD_ 
 
@@ -132,6 +149,7 @@
 0x53e,%B  (%E)\n\nEntrez votre nickname\n
 0x53f,Rotation du fichier de log %s, taille maximale depassée (%d)
 0x540,\nNickname.\n
+0x541,Dernier message repété %d fois.\n
 
 # IRC_
 
@@ -245,6 +263,9 @@
 0x66b,lemmingbot
 0x66c,touche pas a mon pote
 0x66d,... pas la peine de revenir.
+0x66e,Retour au nickname alternatif %s
+0x670,Exception enlevée
+0x671,Invitation enlevée
 0x672,NICK flood from @%s!  Banning.
 
 0x700,Arguments de la ligne de commande:\n\
@@ -258,6 +279,7 @@
 
 0x701,Je détecte que %s est déja en train de s'exécuter depuis ce répertoire.\n
 0x702,Si ce n'est pas le cas, supprimez '%s'\n
+0x703,* Attention ! Impossible d'écrire le fichier %s !\n
 
 0x800,  (est un opérateur global)
 0x801,  (est un bot)
@@ -433,3 +455,47 @@
 0xe05,est maitenant absent
 0xe06,n'est plus absent
 0xe07,Changement de Nick:
+0xe08,Rejecting link from %s
+0xe09,Linked to %s.
+0xe0a,Failed link to %s.
+0xe0b,Bad password on connect attempt to %s. 
+0xe0c,Password required for connection to %s.
+0xe0d,ERROR linking %s: %s
+0xe0e,Lost Bot: %s
+0xe0f,Timeout: bot link to %s at %s:%d
+0xe10,Logged in: %s (%s/%d)
+0xe11,Bad Password: [%s]%s/%d
+0xe12,Negative on that, Houston.\n
+0xe13,*** %s has joined the party line.\n
+0xe14,Lost dcc connection to %s (%s/%d)
+0xe15,Password timeout on dcc chat: [%s]%s
+0xe16,DCC connection closed (%s!%s)
+0xe17,Failed TELNET incoming (%s)
+0xe18,Refused %s/%d (bad src port)
+0xe19,Refused %s/%d (invalid ip)
+0xe1a,Refused %s (bad hostname)
+0xe1b,Telnet connection: %s/%d
+0xe1c,Ident failed for %s: %s
+0xe1d,(!) Listening port %d abruptly died.
+0xe1e,Refused %s (bad nick)
+0xe1f,Refused %s (non-bot)
+0xe20,Refused %s (non-user)
+0xe21,Refused %s (invalid handle: %s)
+0xe22,Refused telnet connection from %s (duplicate)
+0xe23,Refused [%s]%s (no password)
+0xe24,Lost telnet connection to %s/%d
+0xe25,Ident timeout on telnet: %s
+0xe26,Bot installation complete, first master is %s
+0xe27,New user via telnet: [%s]%s/%d
+0xe28,Lost new telnet user (%s/%d)
+0xe29,Lost new telnet user %s (%s/%d)
+0xe2a,Timeout on new telnet user: %s/%d
+0xe2b,Timeout on new telnet user: [%s]%s/%d
+0xe2c,Tcl error [%s]: %s
+0xe2d,*** ATTENTION: DEAD SOCKET (%d) OF TYPE %s UNTRAPPED
+0xe2e,Lost connection while identing [%s/%d] 
+0xe2f,Timeout/EOF ident connection
+0xe30,Lost ident wait telnet socket!!
+0xe31,Denied telnet: %s, No Access
+0xe32,Refused telnet connection from %s (tried using my botnetnick)
+
