@@ -2,7 +2,7 @@
  * flags.c -- handles:
  *   all the flag matching/conversion functions in one neat package :)
  *
- * $Id: flags.c,v 1.27 2004/01/09 05:56:36 wcc Exp $
+ * $Id: flags.c,v 1.28 2004/06/12 21:00:41 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -275,6 +275,9 @@ int sanity_check(int atr)
   /* Janitors can use the file area */
   if (atr & USER_JANITOR)
     atr |= USER_XFER;
+  /* Ops should be halfops */
+  if (atr & USER_OP)
+    atr |= USER_HALFOP;
   return atr;
 }
 
@@ -300,6 +303,9 @@ int chan_sanity_check(int chatr, int atr)
   /* Master implies op */
   if (chatr & USER_MASTER)
     chatr |= USER_OP;
+  /* Op implies halfop */
+  if (chatr & USER_OP)
+    chatr |= USER_HALFOP;
   /* Can't be +s on chan unless you're a bot */
   if (!(atr & USER_BOT))
     chatr &= ~BOT_SHARE;
