@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  * 
- * $Id: cmds.c,v 1.47 2000/12/23 06:15:46 guppy Exp $
+ * $Id: cmds.c,v 1.48 2001/01/21 07:25:48 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -2540,8 +2540,16 @@ static void cmd_mns_host(struct userrec *u, int idx, char *par)
     dprintf(idx, "No such user.\n");
     return;
   }
+
+  get_user_flagrec(u, &fr, NULL);
+  /* check to see if user is +d or +k and don't let them remove hosts */
+  if ((u->flags & USER_DEOP) || (u->flags & USER_KICK) || chan_deop(fr) || chan_kick (fr))
+    {
+      dprintf(idx, "You can't remove hosts while having the +d or +k flag.\n");
+      return;
+    }
+  
   if (egg_strcasecmp(handle, dcc[idx].nick)) {
-    get_user_flagrec(u, &fr, NULL);
     if (!(u2->flags & USER_BOT) && !(u->flags & USER_MASTER) &&
 	!chan_master(fr)) {
       dprintf(idx, "You can't remove hostmasks from non-bots.\n");
