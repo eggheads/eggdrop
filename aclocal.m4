@@ -1,7 +1,7 @@
 dnl aclocal.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: aclocal.m4,v 1.34 2001/06/20 14:44:16 poptix Exp $
+dnl $Id: aclocal.m4,v 1.35 2001/06/22 05:49:30 guppy Exp $
 dnl
 
 
@@ -421,6 +421,27 @@ EOF
 fi
 ])dnl
 
+dnl  EGG_CHECK_LIBSAFE_SSCANF()
+dnl
+AC_DEFUN(EGG_CHECK_LIBSAFE_SSCANF, [dnl
+AC_CACHE_CHECK(whether libsafe broke sscanf, egg_cv_var_libsafe_sscanf,
+[dnl
+  AC_TRY_RUN([#include <stdio.h>
+  int main()
+  {
+    char *src = "0x001,guppyism\n";
+    char dst[10];
+    int idx;
+    if (sscanf(src, "0x%x,%10c", &idx, dst) == 1)
+      exit(1);
+    return 0;
+  }],egg_cv_var_libsafe_sscanf="no",egg_cv_var_libsafe_sscanf="yes",
+  egg_cv_var_libsafe_sscanf="no")
+])
+if test "x$egg_cv_var_libsafe_sscanf" == "xyes"; then
+  AC_DEFINE(LIBSAFE_HACKS)dnl
+fi
+])dnl
 
 dnl  EGG_CYGWIN()
 dnl

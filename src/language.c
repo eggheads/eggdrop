@@ -2,7 +2,7 @@
  * language.c -- handles:
  *   language support code
  *
- * $Id: language.c,v 1.12 2001/04/12 02:39:43 guppy Exp $
+ * $Id: language.c,v 1.13 2001/06/22 05:49:31 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -238,7 +238,11 @@ static void read_lang(char *langfile)
     if (lbuf[0] != '#' || lskip) {
       ltext = nrealloc(ltext, 512);
       if (sscanf(lbuf, "%s", ltext) != EOF) {
+#ifdef LIBSAFE_HACKS
+	if (sscanf(lbuf, "0x%x,%500c", &lidx, ltext) != 1) {
+#else
 	if (sscanf(lbuf, "0x%x,%500c", &lidx, ltext) != 2) {
+#endif
 	  putlog(LOG_MISC, "*", "Malformed text line in %s at %d.",
 		 langfile, lline);
 	} else {

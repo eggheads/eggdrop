@@ -58,6 +58,9 @@ EGG_CHECK_FUNC_VSPRINTF
 # Make sure we have stdc headers, since we can't compile without them
 EGG_HEADER_STDC
 
+# Make sure we are using the correct result from a broken libsafe sscanf
+EGG_CHECK_LIBSAFE_SSCANF
+
 # Checks for cygwin
 EGG_CYGWIN
 EGG_EXEEXT

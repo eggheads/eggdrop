@@ -68,6 +68,9 @@
 /* Define if running under cygwin  */
 #undef CYGWIN_HACKS
 
+/* Define if you have a version of libsafe with a broken sscanf */
+#undef LIBSAFE_HACKS
+
 /* Define if we need dlopen (for module support)  */
 #undef HAVE_DLOPEN
 

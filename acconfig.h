@@ -5,7 +5,7 @@
  * acconfig.h
  *   template file autoheader uses when building config.h.in
  * 
- * $Id: acconfig.h,v 1.7 2000/07/09 14:10:49 fabian Exp $
+ * $Id: acconfig.h,v 1.8 2001/06/22 05:49:30 guppy Exp $
  */
 
 /* Define if modules will work on your system  */
@@ -31,6 +31,9 @@
 
 /* Define if running under cygwin  */
 #undef CYGWIN_HACKS
+
+/* Define if you have a version of libsafe with a broken sscanf */
+#undef LIBSAFE_HACKS
 
 /* Define if we need dlopen (for module support)  */
 #undef HAVE_DLOPEN
