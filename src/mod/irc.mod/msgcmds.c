@@ -2,7 +2,7 @@
  * msgcmds.c -- part of irc.mod
  *   all commands entered via /MSG
  *
- * $Id: msgcmds.c,v 1.45 2003/11/27 05:45:06 wcc Exp $
+ * $Id: msgcmds.c,v 1.46 2003/11/27 05:48:12 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -846,7 +846,7 @@ static int msg_status(char *nick, char *host, struct userrec *u, char *par)
 
   if (admin[0])
     dprintf(DP_HELP, "NOTICE %s :Admin: %s.\n", nick, admin);
-  dprintf(DP_HELP, "NOTICE %s :OS: %s %s.\n", nick, un_t, ve_t);
+  dprintf(DP_HELP, "NOTICE %s :OS: %s %s.\n", nick, uni_t, vers_t);
   dprintf(DP_HELP, "NOTICE %s :Online as: %s!%s.\n", nick, botname, botuserhost);
 
   /* This shouldn't overflow anymore -Wcc */
