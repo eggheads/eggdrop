@@ -2,7 +2,7 @@
  * cmdschan.c -- part of channels.mod
  *   commands from a user via dcc that cause server interaction
  *
- * $Id: cmdschan.c,v 1.50 2002/05/18 00:07:31 guppy Exp $
+ * $Id: cmdschan.c,v 1.51 2002/06/12 21:45:19 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1092,7 +1092,7 @@ static void cmd_pls_chan(struct userrec *u, int idx, char *par)
   struct chanset_t *chan;
 
   if (!par[0]) {
-    dprintf(idx, "Usage: +chan [%s]<channel>\n", CHANMETA);
+    dprintf(idx, "Usage: +chan [%s]<channel> [options]\n", CHANMETA);
     return;
   }
 
@@ -1109,7 +1109,7 @@ static void cmd_pls_chan(struct userrec *u, int idx, char *par)
   }
 
   if (tcl_channel_add(0, chname, par) == TCL_ERROR) /* drummer */
-    dprintf(idx, "Invalid channel.\n");
+    dprintf(idx, "Invalid channel or channel options.\n");
   else
     putlog(LOG_CMDS, "*", "#%s# +chan %s", dcc[idx].nick, chname);
 }
