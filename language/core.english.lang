@@ -1,7 +1,7 @@
 # core.english.lang
 #   core language messages for eggdrop
 #
-# $Id: core.english.lang,v 1.19 2000/11/21 04:55:45 guppy Exp $
+# $Id: core.english.lang,v 1.20 2000/11/29 02:52:05 guppy Exp $
 
 # General stuff
 0x001,Usage
@@ -20,19 +20,19 @@
 0x104,Global bans
 0x106,Channel bans for
 0x109,Use '.bans all' to see the total list
-0x10A,No longer banning
+0x10a,No longer banning
 
 # EXEMPTS_
 0x114,Global exempts
 0x116,Channel exempts for
 0x119,Use '.exempts all' to see the total list
-0x11A,No longer ban exempting
+0x11a,No longer ban exempting
 
 # INVITES_
 0x124,Global invites
 0x126,Channel invites for
 0x129,Use '.invites all' to see the total list
-0x12A,No longer inviteing
+0x12a,No longer inviteing
 
 # MOD_
 0x200,Already loaded.
@@ -42,20 +42,18 @@
 0x205,No close function
 0x206,Module unloaded:
 0x207,No such module
-0x208,No infor for module:
 0x209,Error loading module:
-0x20A,Error unloading module:
-0x20B,Can't load modules
-0x20C,Stagnant module; there WILL be memory leaks!
-0x20D,You have installed modules but have not selected an encryption\n\
+0x20a,Error unloading module:
+0x20b,Can't load modules
+0x20c,Stagnant module; there WILL be memory leaks!
+0x20d,You have installed modules but have not selected an encryption\n\
 module, please consult the default config file for info.\n
-0x20E,Filesys module not loaded.
-0x20F,Module loaded: %s \t\t(with lang support)
+0x20e,Filesys module not loaded.
+0x20f,Module loaded: %s \t\t(with lang support)
 0x210,Module loaded: %s
 
 # USERF_
 0x400,Userlist transfer complete; switched over
-0x401,Cannot open userfile to reread channel data
 0x402,CAN'T READ NEW USERFILE
 0x403,Can't send userfile to you (internal error)
 0x404,Can't find anyone matching that
@@ -82,7 +80,6 @@ module, please consult the default config file for info.\n
 0x500,expired
 0x501,total
 0x502,Erased
-0x503,left
 0x504,on
 0x505,Matching
 0x506,skipping first
@@ -92,19 +89,15 @@ module, please consult the default config file for info.\n
 0x50a,What?  You need '.help'\n
 0x50b,Command bindings:\n
 0x50c,Restarting...
-0x50d,Module load attempted on non-module eggdrop.
 0x50e,Switching logfiles...
 0x50f,owner
 0x510,master
 0x511,op
 0x512,idle
 0x513,AWAY
-0x514,ignoring
-0x515,unlinked
 0x516,Disconnected
 0x517,invalid bot
 0x518,Detected loop: disconnecting
-0x519,mutual
 0x51a,from
 0x51b,outdated
 0x51c,rejected
@@ -114,9 +107,6 @@ module, please consult the default config file for info.\n
 0x520,No MOTD file.
 0x521,Use:
 0x522,<address>:<port#>[/<relay-port#>]
-0x523,unknown
-0x524,Channels
-0x525,trying-error-cause-butch-bub-is-a-weenie
 0x526,pending
 0x527,want ops!
 0x528,lurking
@@ -141,7 +131,6 @@ Telnet to the bot and enter 'NEW' as your nickname.
 0x53a,CAN'T WRITE TO TEMP DIR
 0x53b,Can't reload user file!
 0x53c,User file is missing!
-0x53d,Bots connected
 0x53e,%B  (%E)\n\nPlease enter your nickname.\n
 0x53f,Cycling logfile %s, over max-logsize (%d)
 0x540,\nNickname.\n
@@ -170,7 +159,6 @@ Telnet to the bot and enter 'NEW' as your nickname.
 0x611,introduced to %s from %s
 0x612,You have a password set.
 0x613,You don't have a password set.
-0x614,(YOU HAVE NO PASSWORD SET )\n
 0x615,You already have a password set.
 0x616,Please use at least 6 characters.
 0x617,Password set to:
@@ -181,11 +169,9 @@ Telnet to the bot and enter 'NEW' as your nickname.
 0x61c,Access denied.
 0x61d,I recognize you there.
 0x61e,Added hostmask
-0x61f,Removed your email address.
 0x620,Currently:
 0x621,Now:
 0x622,To remove it:
-0x623,You have no email address set.
 0x624,Your info line is locked
 0x625,Removed your info line on
 0x626,Removed your info line.
@@ -212,7 +198,6 @@ Telnet to the bot and enter 'NEW' as your nickname.
 0x63b,%s says I'm not registered, trying next one.
 0x63c,You have a fucked up server.
 0x63d,Flood from @%s!  Placing on ignore!
-0x63e,CTCP flood from @%s!  Placing on ignore!
 0x63f,JOIN flood from @%s!  Banning.
 0x640,Channel flood from %s -- kicking
 0x641,Trying server
@@ -224,7 +209,6 @@ Telnet to the bot and enter 'NEW' as your nickname.
 0x647,Mode queue is at
 0x648,Server queue is at
 0x649,Help queue is at
-0x64a,This bot runs without IRC interaction.
 0x64b,Not active on channel
 0x64c,Processing channel
 0x64d,Channel
@@ -313,7 +297,6 @@ Telnet to the bot and enter 'NEW' as your nickname.
 0xb1b,Party line members:
 0xb1c,Bots connected
 0xb1d,Other people on the bot
-0xb1e,Outdated 'whom' request from
 0xb1f,Attempting to link
 0xb20,Not online; note stored.
 0xb21,Notebox is full, sorry.
@@ -325,7 +308,6 @@ Telnet to the bot and enter 'NEW' as your nickname.
 0xb27,Can't unlink
 0xb28,Loop detected
 0xb29,Bogus link notice from
-0xb2a,Bogus link notice
 0xb2b,Disconnected left
 0xb2c,Linked to
 0xb2d,Illegal link by leaf
@@ -337,7 +319,6 @@ Telnet to the bot and enter 'NEW' as your nickname.
 0xb33,Remote boots are not allowed.
 0xb34,Can't boot the bot owner.
 0xb35,FILE TRANSFER REJECTED
-0xb36,I have no file system to grab files from.
 0xb37,Users across the botnet
 0xb38,Party line
 0xb39,Local channel
@@ -365,7 +346,6 @@ Telnet to the bot and enter 'NEW' as your nickname.
 0xb4f,Aborting relay attempt to
 0xb50,You are now back on
 0xb51,Relay aborted:
-0xb52,joined the party line.
 0xb53,Lost dcc connection to
 0xb54,Dropping relay attempt to
 0xb55,Success!\n\nNOW CONNECTED TO RELAY BOT
@@ -389,28 +369,11 @@ Telnet to the bot and enter 'NEW' as your nickname.
 0xc03,You must have a password set.
 0xc04,Refused DCC chat (no password)
 0xc05,Refused DCC chat (+x but no file area)
-0xc06,Refused DCC chat (file area full)
 0xc07,Too many people are in the file area right now.
-0xc08,Please try again later.
-0xc09,Refused tandem connection from %s (duplicate)
-0xc0a,I don't accept files from strangers.
-0xc0b,Refused DCC SEND %s (no access): %s!%s
 0xc0c,Sorry, too many DCC connections.
 0xc0d,DCC connections full: %s %s (%s!%s)
-0xc0e,DCC file transfers not supported.
-0xc0f,Refused DCC send %s from %s!%s
-0xc10,Filename cannot have '/' in it...
-0xc11,Sorry, file size info must be included.
-0xc12,That file already exists.
-0xc13,Can't create that file (temp dir error)
-0xc14,That file is already being sent.
-0xc15,no file size
-0xc16,Refused DCC send %s from %s: no file size
-0xc17,Sorry, file too large.
-0xc18,Refused dcc send %s (%s): file too large
 0xc19,Failed to connect
 0xc1a,DCC connection failed
-0xc1b,File system broken.
 0xc1c,Enter your password.
 0xc1d,%s has been forcibly removed for flooding.\n
 0xc1e,-=- poof -=-\n

@@ -6,7 +6,7 @@
 # Modified by Michael for 1.3.25.
 # Modified by rtc for 1.4.0
 #
-# $Id: core.german.lang,v 1.17 2000/11/16 02:49:14 guppy Exp $
+# $Id: core.german.lang,v 1.18 2000/11/29 02:52:05 guppy Exp $
 
 # General stuff
 0x001,Gebrauch
@@ -25,19 +25,19 @@
 0x104,Globale Banns
 0x106,Channelspezifische Banns fuer
 0x109,Per '.bans all' kann man die komplette Liste anschauen
-0x10A,Ich banne nicht laenger
+0x10a,Ich banne nicht laenger
 
 # EXEMPTS_
 0x114,Globale Ausnahmen
 0x116,Channelspezifische Ausnahmen fuer
 0x119,Per '.exempts all' kann man die komplette Liste anschauen
-0x11A,Ich mache nicht laenger eine Ausnahme fuer
+0x11a,Ich mache nicht laenger eine Ausnahme fuer
 
 # Invites
 0x124,Global Einladungen
 0x126,Channelspezifische Einladungen fuer
 0x129,Per '.invites all' kann man die komplette Liste anschauen
-0x12A,Ausgeladen wurde
+0x12a,Ausgeladen wurde
 
 # MOD_
 0x200,Bereits geladen.
@@ -47,22 +47,20 @@
 0x205,Keine Selbstvernichtung
 0x206,Modul entfernt:
 0x207,Kein solches Modul
-0x208,Keine Informationen ueber Modul verfuegbar:
 0x209,Fehler beim Laden des Moduls:
-0x20A,Fehler beim Entfernen des Moduls:
-0x20B,Kann keine Module laden
-0x20C,Stillstehendes Modul; es WERDEN Speicherlecks auftreten!
-0x20D,Du hast die modulare Version installiert, jedoch kein \n\
+0x20a,Fehler beim Entfernen des Moduls:
+0x20b,Kann keine Module laden
+0x20c,Stillstehendes Modul; es WERDEN Speicherlecks auftreten!
+0x20d,Du hast die modulare Version installiert, jedoch kein \n\
 Verschluesselungsmodul ausgewaehlt. Fuer weitere Informationen siehe\n\
 die mitgelieferte Konfigurationsdatei.\n
-0x20E,Dateisystem-Modul nicht geladen.
-0x20F,Module geladen: %s \t\t(mit Sprach-Unterstuetzung)
+0x20e,Dateisystem-Modul nicht geladen.
+0x20f,Module geladen: %s \t\t(mit Sprach-Unterstuetzung)
 0x210,Module geladen: %s
 
 # USERF_
 # 0x400 Scheint falsch zu sein
 0x400,Unvollstaendige Uebertragung der Benutzerliste; umgeschaltet zur neuen Benutzerliste
-0x401,Kann Benutzerdatei nicht zum Auffrischen der Channeldaten oeffnen
 0x402,ICH KANN DIE NEUE USERDATEI NICHT LESEN!
 0x403,Ich kann die Benutzerdatei nicht schicken (interner Fehler)
 0x404,Ich kann keinen passenden Eintrag finden
@@ -89,7 +87,6 @@ die mitgelieferte Konfigurationsdatei.\n
 0x500,abgelaufen
 0x501,Insgesamt
 0x502,Geloescht
-0x503,uebrig
 0x504,auf
 0x505,Vergleiche
 0x506,ueberspringe die ersten
@@ -100,20 +97,16 @@ die mitgelieferte Konfigurationsdatei.\n
 0x50a,Wie bitte?  Du brauchst Hilfe ('.help')\n
 0x50b,Kommandoverknuepfungen:\n
 0x50c,Starte neu...
-0x50d,Versuch des Ladens eines Modul auf einem Eggdrop ohne Unterstuetzung fuer Module.
 0x50e,Wechsle Logdateien...
 0x50f,Besitzer
 0x510,Master
 0x511,Op
 0x512,untaetig
 0x513,ABWESEND
-0x514,ignoriere
 # Ueberarbeiten, brauche kontext:
-0x515, - Verbindung getrennt
 0x516,Verbindung getrennt
 0x517,ungueltiger Bot
 0x518,Ring entdeckt: trenne Verbindung
-0x519,gegenseitig
 0x51a,von
 0x51b,veraltet
 0x51c,abgewiesen
@@ -124,9 +117,6 @@ die mitgelieferte Konfigurationsdatei.\n
 0x520,Keine MOTD-Datei.
 0x521,Benutze:
 0x522,<Adresse>:<Port#>[/<Relais-Port#>]
-0x523,unbekannt
-0x524,Channels
-0x525,Fehler-beim-probieren-weil-butch-bub-ein-Lama-ist
 0x526,dauert noch
 0x527,will op-status!
 0x528,lauernd
@@ -151,7 +141,6 @@ Baue eine Telnetverbindung zu dem Bot auf und gib 'NEW' als deinen Nickname ein.
 0x53a,KANN NICHT IN DAS TEMPORAERE VERZEICHNIS SCHREIBEN
 0x53b,Kann die Benutzerdatei nicht neu laden!
 0x53c,Benutzerdatei fehlt!
-0x53d,verbundene Bots:
 0x53e,%B  (%E)\n\nBitte gib deinen Nickname ein:\n
 0x53f,Rotiere Logdatei %s da groesser als max-logsize (%d)
 0x540,\nNickname.\n
@@ -179,7 +168,6 @@ Baue eine Telnetverbindung zu dem Bot auf und gib 'NEW' als deinen Nickname ein.
 0x611,Bekanntschaft gemacht mit %s von %s
 0x612,Du hast ein Passwort.
 0x613,Du hast kein Passwort.
-0x614,(DU HAST KEIN PASSWORT)\n
 0x615,Du hast bereits ein Passwort eingestellt.
 0x616,Bitte benutze mindestens 6 Zeichen.
 0x617,Passwort gesetzt auf:
@@ -190,11 +178,9 @@ Baue eine Telnetverbindung zu dem Bot auf und gib 'NEW' als deinen Nickname ein.
 0x61c,Zugriff verweigert.
 0x61d,Ich erkenne dich dort.
 0x61e,Habe Hostmask hinzugefuegt:
-0x61f,Habe Deine eMail-Adresse entfernt.
 0x620,Im Moment:
 0x621,Jetzt:
 0x622,Um sie zu entfernen:
-0x623,Du hast keine eMail-Adresse eingestellt.
 0x624,Deine Info-Zeile ist gesperrt.
 0x625,Habe deine Info-Zeile entfernt fuer
 0x626,Habe deine Info-Zeile entfernt.
@@ -221,7 +207,6 @@ Baue eine Telnetverbindung zu dem Bot auf und gib 'NEW' als deinen Nickname ein.
 0x63b,%s sagt ich sei nicht registriert, ich probiere den naechsten.
 0x63c,Du hast einen hirnamputierten Server.
 0x63d,Flood von @%s!  Wird ab sofort ignoriert!
-0x63e,CTCP flood von @%s!  Wird ab sofort ignoriert!
 0x63f,JOIN flood von @%s!  Wird gebannt.
 0x640,Channel flood von %s -- wird gekickt.
 0x641,Versuche Server
@@ -233,7 +218,6 @@ Baue eine Telnetverbindung zu dem Bot auf und gib 'NEW' als deinen Nickname ein.
 0x647,Mode-Queue ist bei
 0x648,Server-Queue ist bei
 0x649,Hilfe-Queue ist bei
-0x64a,Dieser Bot laeuft ohne IRC-Verbindung.
 0x64b,Nicht aktiv auf Channel
 0x64c,Bearbeite Channel
 0x64d,Channel
@@ -344,7 +328,6 @@ Baue eine Telnetverbindung zu dem Bot auf und gib 'NEW' als deinen Nickname ein.
 0xb1c,Verbundene Bots
 0xb1d,Andere Leute auf dem Bot
 #veraltete?
-0xb1e,Verfallene 'whom' Anfrage von
 0xb1f,Versuche Verbindung herzustellen zu
 0xb20,Nicht online; Nachricht gespeichert.
 0xb21,Nachrichtenkorb ist volll, tut mir leid.
@@ -356,7 +339,6 @@ Baue eine Telnetverbindung zu dem Bot auf und gib 'NEW' als deinen Nickname ein.
 0xb27,Kann die Verbindung nicht trennen zu
 0xb28,Ring entdeckt
 0xb29,Falsche Verbindungsmitteilung von
-0xb2a,Falsche Verbindungsmitteilung
 #???
 0xb2b,Verbindung getrennt zu den verbliebenen
 0xb2c,Verbunden mit
@@ -369,7 +351,6 @@ Baue eine Telnetverbindung zu dem Bot auf und gib 'NEW' als deinen Nickname ein.
 0xb33,Rauswuerfe durch Leute von anderen Bots aus sind nicht erlaubt.
 0xb34,Kann den Besitzer des Bots nicht rauswerden.
 0xb35,DATEIUEBERTRAGUNG ABGEWIESEN
-0xb36,Ich habe kein Dateisystem, aus dem ich Dateien entnehmen koennte.
 0xb37,Benutzer im Botnet
 0xb38,Partyline
 0xb39,Lokaler Channel
@@ -398,7 +379,6 @@ Baue eine Telnetverbindung zu dem Bot auf und gib 'NEW' als deinen Nickname ein.
 0xb4f,Breche Weiterleitungsversuch ab zu
 0xb50,Du bist wieder auf
 0xb51,Weiterleitung abgebrochen:
-0xb52,hat die Partyline betreten.
 0xb53,DCC-Verbindung verloren zu
 0xb54,Breche Weitereleitungsversuch ab zu
 0xb55,Erfolg!\n\nDU BIST NUN VERBUNDEN MIT DEM BOT
@@ -422,28 +402,11 @@ Baue eine Telnetverbindung zu dem Bot auf und gib 'NEW' als deinen Nickname ein.
 0xc03,Du must ein Passwort gesetzt haben.
 0xc04,DCC Chat abgewiesen (kein Passwort)
 0xc05,DCC Chat abgewiesen (+x aber kein Dateisystem)
-0xc06,DCC Chat abgewiesen (Dateisystem ueberfuellt)
 0xc07,Im Moment sind zu viele Benutzer im Dateisystem.
-0xc08,Bitte versuche es spaeter noch einmal.
-0xc09,Zurueckgewiesene Tandemverbindung von %s (doppelt)
-0xc0a,Ich nehme keine Dateien von Fremden an.
-0xc0b,DCC SEND abgewiesen %s (kein Zugriff): %s!%s
 0xc0c,Sorry, zu viele DCC Verbindungen.
 0xc0d,DCC Verbindungen ueberfuellt: %s %s (%s!%s)
-0xc0e,Keine Unterstuetzung fuer DCC Dateiuebertragungen.
-0xc0f,Abgewiesener DCC Send %s von %s!%s
-0xc10,Ein Dateiname kann kein '/' enthalten...
-0xc11,Sorry, Information ueber die Dateigroesse muss enthalten sein.
-0xc12,Diese Datei existiert bereits.
-0xc13,Kann diese Datei nicht erstellen (Fehler im temporaeren Verzeichnis)
-0xc14,Diese Datei bereits gesendet.
-0xc15,keine Dateigroesse
-0xc16,DCC SEND abgewiesen %s von %s: keine Dateigroesse
-0xc17,Sorry, Datei zu gross.
-0xc18,DCC SEND abgewiesen %s (%s): Datei zu gross
 0xc19,Verbindung nicht zustandegekommen
 0xc1a,DCC Verbindung nicht zustandegekommen
-0xc1b,Datesystem beschaedigt.
 0xc1c,Gib dein Passwort ein.
 0xc1d,%s wurde gewaltsam entfernt wegen Flood.\n
 0xc1e,-=- poof -=-\n

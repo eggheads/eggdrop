@@ -2,7 +2,7 @@
  * lang.h
  *   Conversion definitions for language support
  * 
- * $Id: lang.h,v 1.18 2000/10/27 19:34:54 fabian Exp $
+ * $Id: lang.h,v 1.19 2000/11/29 02:52:05 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -32,7 +32,7 @@
 /* Userfile messages
  */
 #define USERF_XFERDONE		get_language(0x400)
-#define USERF_BADREREAD		get_language(0x401)
+/* was: USERF_BADREREAD - 0x401 */
 #define USERF_CANTREAD		get_language(0x402)
 #define USERF_CANTSEND		get_language(0x403)
 #define USERF_NOMATCH		get_language(0x404)
@@ -60,7 +60,7 @@
 #define MISC_EXPIRED		get_language(0x500)
 #define MISC_TOTAL		get_language(0x501)
 #define MISC_ERASED		get_language(0x502)
-#define MISC_LEFT		get_language(0x503)
+/* was: MISC_LEFT - 0x503 */
 #define MISC_ONLOCALE		get_language(0x504)
 #define MISC_MATCHING		get_language(0x505)
 #define MISC_SKIPPING		get_language(0x506)
@@ -70,19 +70,19 @@
 #define MISC_NOSUCHCMD		get_language(0x50a)
 #define MISC_CMDBINDS		get_language(0x50b)
 #define MISC_RESTARTING		get_language(0x50c)
-#define MISC_NOMODULES		get_language(0x50d)
+/* was: MISC_NOMODULES - 0x50d */
 #define MISC_LOGSWITCH		get_language(0x50e)
 #define MISC_OWNER		get_language(0x50f)
 #define MISC_MASTER		get_language(0x510)
 #define MISC_OP			get_language(0x511)
 #define MISC_IDLE		get_language(0x512)
 #define MISC_AWAY		get_language(0x513)
-#define MISC_IGNORING		get_language(0x514)
-#define MISC_UNLINKED		get_language(0x515)
+/* was: MISC_IGNORING - 0x514 */
+/* was: MISC_UNLINKED - 0x515 */
 #define MISC_DISCONNECTED	get_language(0x516)
 #define MISC_INVALIDBOT		get_language(0x517)
 #define MISC_LOOP		get_language(0x518)
-#define MISC_MUTUAL		get_language(0x519)
+/* was: MISC_MUTUAL - 0x519 */
 #define MISC_FROM		get_language(0x51a)
 #define MISC_OUTDATED		get_language(0x51b)
 #define MISC_REJECTED		get_language(0x51c)
@@ -92,9 +92,9 @@
 #define MISC_NOMOTDFILE		get_language(0x520)
 #define MISC_USEFORMAT		get_language(0x521)
 #define MISC_CHADDRFORMAT	get_language(0x522)
-#define MISC_UNKNOWN		get_language(0x523)
-#define MISC_CHANNELS		get_language(0x524)
-#define MISC_TRYINGMISTAKE	get_language(0x525)
+/* was: MISC_UNKNOWN - 0x523 */
+/* was: MISC_CHANNELS - 0x524 */
+/* was: MISC_TRYINGMISTAKE - 0x525 */
 #define MISC_PENDING		get_language(0x526)
 #define MISC_WANTOPS		get_language(0x527)
 #define MISC_LURKING		get_language(0x528)
@@ -118,7 +118,7 @@
 #define MISC_CANTWRITETEMP	get_language(0x53a)
 #define MISC_CANTRELOADUSER	get_language(0x53b)
 #define MISC_MISSINGUSERF	get_language(0x53c)
-#define MISC_BOTSCONNECTED	get_language(0x53d)
+/* was: MISC_BOTSCONNECTED - 0x53d */
 #define MISC_BANNER		get_language(0x53e)
 #define MISC_CLOGS		get_language(0x53f)
 #define MISC_BANNER_STEALTH	get_language(0x540)
@@ -148,7 +148,7 @@
 #define IRC_INITINTRO		get_language(0x611)
 #define IRC_PASS		get_language(0x612)
 #define IRC_NOPASS		get_language(0x613)
-#define IRC_NOPASS2		get_language(0x614)
+/* was: IRC_NOPASS2 - 0x614 */
 #define IRC_EXISTPASS		get_language(0x615)
 #define IRC_PASSFORMAT		get_language(0x616)
 #define IRC_SETPASS		get_language(0x617)
@@ -159,11 +159,11 @@
 #define IRC_DENYACCESS		get_language(0x61c)
 #define IRC_RECOGNIZED		get_language(0x61d)
 #define IRC_ADDHOSTMASK		get_language(0x61e)
-#define IRC_DELMAILADDR		get_language(0x61f)
+/* was: IRC_DELMAILADDR - 0x61f */
 #define IRC_FIELDCURRENT	get_language(0x620)
 #define IRC_FIELDCHANGED	get_language(0x621)
 #define IRC_FIELDTOREMOVE	get_language(0x622)
-#define IRC_NOEMAIL		get_language(0x623)
+/* was: IRC_NOEMAIL - 0x623 */
 #define IRC_INFOLOCKED		get_language(0x624)
 #define IRC_REMINFOON		get_language(0x625)
 #define IRC_REMINFO		get_language(0x626)
@@ -190,7 +190,7 @@
 #define IRC_NOTREGISTERED1	get_language(0x63b)
 #define	IRC_NOTREGISTERED2	get_language(0x63c)
 #define IRC_FLOODIGNORE1	get_language(0x63d)
-#define IRC_FLOODIGNORE2	get_language(0x63e)
+/* was: IRC_FLOODIGNORE2 - 0x63e */
 #define IRC_FLOODIGNORE3	get_language(0x63f)
 #define IRC_FLOODKICK		get_language(0x640)
 #define IRC_SERVERTRY		get_language(0x641)
@@ -202,7 +202,7 @@
 #define IRC_MODEQUEUE		get_language(0x647)
 #define IRC_SERVERQUEUE		get_language(0x648)
 #define IRC_HELPQUEUE		get_language(0x649)
-#define IRC_BOTNOTONIRC		get_language(0x64a)
+/* was: IRC_BOTNOTONIRC - 0x64a */
 #define IRC_NOTACTIVECHAN	get_language(0x64b)
 #define IRC_PROCESSINGCHAN	get_language(0x64c)
 #define IRC_CHANNEL		get_language(0x64d)
@@ -319,7 +319,7 @@
 #define BOT_PARTYMEMBS		get_language(0xb1b)
 #define BOT_BOTSCONNECTED	get_language(0xb1c)
 #define BOT_OTHERPEOPLE		get_language(0xb1d)
-#define BOT_OUTDATEDWHOM	get_language(0xb1e)
+/* was: BOT_OUTDATEDWHOM - 0xb1e */
 #define BOT_LINKATTEMPT		get_language(0xb1f)
 #define BOT_NOTESTORED2		get_language(0xb20)
 #define BOT_NOTEBOXFULL		get_language(0xb21)
@@ -331,7 +331,7 @@
 #define BOT_CANTUNLINK		get_language(0xb27)
 #define BOT_LOOPDETECT		get_language(0xb28)
 #define BOT_BOGUSLINK		get_language(0xb29)
-#define BOT_BOGUSLINK2		get_language(0xb2a)
+/* was: BOT_BOGUSLINK2 - 0xb2a */
 #define BOT_DISCONNLEAF		get_language(0xb2b)
 #define BOT_LINKEDTO		get_language(0xb2c)
 #define BOT_ILLEGALLINK		get_language(0xb2d)
@@ -343,7 +343,7 @@
 #define BOT_NOREMOTEBOOT	get_language(0xb33)
 #define BOT_NOOWNERBOOT		get_language(0xb34)
 #define BOT_XFERREJECTED	get_language(0xb35)
-#define BOT_NOFILESYS		get_language(0xb36)
+/* was: BOT_NOFILESYS - 0xb36 */
 #define BOT_BOTNETUSERS		get_language(0xb37)
 #define BOT_PARTYLINE		get_language(0xb38)
 #define BOT_LOCALCHAN		get_language(0xb39)
@@ -371,7 +371,7 @@
 #define BOT_ABORTRELAY1		get_language(0xb4f)
 #define BOT_ABORTRELAY2		get_language(0xb50)
 #define BOT_ABORTRELAY3		get_language(0xb51)
-#define BOT_PARTYJOINED		get_language(0xb52)
+/* was: BOT_PARTYJOINED - 0xb52 */
 #define BOT_LOSTDCCUSER		get_language(0xb53)
 #define BOT_DROPPINGRELAY	get_language(0xb54)
 #define BOT_RELAYSUCCESS	get_language(0xb55)
@@ -398,7 +398,7 @@
 #define MOD_NOCLOSEDEF		get_language(0x205)
 #define MOD_UNLOADED		get_language(0x206)
 #define MOD_NOSUCH		get_language(0x207)
-#define MOD_NOINFO		get_language(0x208)
+/* was: MOD_NOINFO - 0x208 */
 #define MOD_LOADERROR		get_language(0x209)
 #define MOD_UNLOADERROR		get_language(0x20a)
 #define MOD_CANTLOADMOD		get_language(0x20b)
@@ -414,31 +414,30 @@
 #define DCC_REFUSED3		get_language(0xc03)
 #define DCC_REFUSED4		get_language(0xc04)
 #define DCC_REFUSED5		get_language(0xc05)
-#define DCC_REFUSED6		get_language(0xc06)
+/* was: DCC_REFUSED6 - 0xc06 */
 #define DCC_REFUSED7		get_language(0xc21)
 #define DCC_TOOMANY		get_language(0xc07)
-#define DCC_TRYLATER		get_language(0xc08)
-#define DCC_REFUSEDTAND		get_language(0xc09)
-#define DCC_NOSTRANGERFILES1	get_language(0xc0a)
-#define DCC_NOSTRANGERFILES2	get_language(0xc0b)
+/* was: DCC_TRYLATER - 0xc08 */
+/* was: DCC_REFUSEDTAND - 0xc09 */
+/* was: DCC_NOSTRANGERFILES1 - 0xc0a */
+/* was: DCC_NOSTRANGERFILES2 - 0xc0b */
 #define DCC_TOOMANYDCCS1	get_language(0xc0c)
 #define DCC_TOOMANYDCCS2	get_language(0xc0d)
-#define DCC_DCCNOTSUPPORTED	get_language(0xc0e)
-#define DCC_REFUSEDNODCC	get_language(0xc0f)
-#define DCC_REFUSEDNODCC_ARGS	param, nick, from
-#define DCC_FILENAMEBADSLASH	get_language(0xc10)
-#define DCC_MISSINGFILESIZE	get_language(0xc11)
-#define DCC_FILEEXISTS		get_language(0xc12)
-#define DCC_CREATEERROR		get_language(0xc13)
-#define DCC_FILEBEINGSENT	get_language(0xc14)
-#define DCC_REFUSEDNODCC2	get_language(0xc15)
-#define DCC_REFUSEDNODCC3	get_language(0xc16)
-#define DCC_FILETOOLARGE	get_language(0xc17)
-#define DCC_FILETOOLARGE2	get_language(0xc18)
+/* was: DCC_DCCNOTSUPPORTED - 0xc0e */
+/* was: DCC_REFUSEDNODCC - 0xc0f */
+/* was: DCC_FILENAMEBADSLASH - 0xc10 */
+/* was: DCC_MISSINGFILESIZE - 0xc11 */
+/* was: DCC_FILEEXISTS - 0xc12 */
+/* was: DCC_CREATEERROR - 0xc13 */
+/* was: DCC_FILEBEINGSENT - 0xc14 */
+/* was: DCC_REFUSEDNODCC2 - 0xc15 */
+/* was: DCC_REFUSEDNODCC3 - 0xc16 */
+/* was: DCC_FILETOOLARGE - 0xc17 */
+/* was: DCC_FILETOOLARGE2 - 0xc18 */
 #define DCC_CONNECTFAILED1	get_language(0xc19)
 #define DCC_CONNECTFAILED2	get_language(0xc1a)
 #define DCC_CONNECTFAILED3	get_language(0xc22)
-#define DCC_FILESYSBROKEN	get_language(0xc1b)
+/* was: DCC_FILESYSBROKEN - 0xc1b */
 #define DCC_ENTERPASS		get_language(0xc1c)
 #define DCC_FLOODBOOT		get_language(0xc1d)
 #define DCC_BOOTED1		get_language(0xc1e)
@@ -447,7 +446,7 @@
 
 /* Stuff from chan.c
  */
-#define CHAN_LIMBOBOT		get_language(0xd00)
+/* was: CHAN_LIMBOBOT - 0xd00 */
 
 /* BOTNET messages
  */
