@@ -108,31 +108,44 @@ void *def_get(struct userrec *u, struct user_entry *e)
 
 int def_set(struct userrec *u, struct user_entry *e, void *buf)
 {
+  char *string = (char *) buf;
   contextnote("drummer's bug?");
-  if (buf)
-    if (!((char *) buf)[0])
-      buf = 0;
-  if (e->u.string)
-    nfree(e->u.string);
+
+  if (string && !string[0])
+    string = NULL;
+  if (!string && !e->u.string)
+    return 1;
+  ASSERT (string != e->u.string);
   context;
-  if (buf) {
-    unsigned char *p = (unsigned char *) buf, *q = (unsigned char *) buf;
-    while (*p && (q - (unsigned char *) buf < 160)) {
-      if (*p < 32)
-	p++;
-      else
-	*q++ = *p++;
-    }
-    *q = 0;
-    e->u.string = user_malloc(((q - (unsigned char *) buf) + 1));
-    strncpy(e->u.string, (char *) buf, (q - (unsigned char *) buf));
-    (e->u.string)[(q - (unsigned char *) buf)] = 0;
-  } else
+  if (string) {
+    int l = strlen (string);
+    char *i;
+
+    if (l > 160)
+      l = 160;
+
+    
+    e->u.string = user_realloc (e->u.string, l + 1);
+    
+    strncpy (e->u.string, string, l);
+    e->u.string[l] = 0;
+    
+    for (i = e->u.string; *i; i++)
+      /* Allow bold, inverse, underline, color text here... 
+       * But never add cr or lf!! --rtc */
+      if (*i < 32 && !strchr ("\002\003\026\037", *i))
+        *i = '?';
+  } else { /* string == NULL && e->u.string != NULL */
+    nfree(e->u.string);
     e->u.string = NULL;
-  if (!noshare && (!u || !(u->flags & (USER_BOT | USER_UNSHARED)))) {
-    if ((e->type == &USERENTRY_INFO) && !share_greet)
+  }
+
+  ASSERT (u != NULL);
+
+  if (!noshare && (u->flags & (USER_BOT | USER_UNSHARED))) {
+    if (e->type == &USERENTRY_INFO && !share_greet)
       return 1;
-    shareout(NULL, "c %s %s %s\n", e->type->name, u->handle, buf ? buf : "");
+    shareout(NULL, "c %s %s %s\n", e->type->name, u->handle, e->u.string ? e->u.string : "");
   }
   context;
   return 1;

@@ -1,0 +1,76 @@
+# Makefile for src/mod/
+
+top_srcdir = @top_srcdir@
+@SET_MAKE@
+INSTALL = @INSTALL@
+INSTALL_PROGRAM = @INSTALL_PROGRAM@
+INSTALL_DATA = @INSTALL_DATA@
+INSTALL_SCRIPT = @INSTALL_SCRIPT@
+RESLIB = @RESLIB@
+
+MAKE_MOD = $(MAKE) 'MAKE=$(MAKE)' 'CC=$(CC)' 'LD=$(LD)' \
+'STRIP=$(STRIP)' 'CFLAGS=$(CFLAGS)' 'CPPFLAGS=$(CPPFLAGS)' \
+'RESLIB=$(RESLIB)'
+
+doofus:
+	@echo ""
+	@echo "Let's try this from the right directory..."
+	@echo ""
+	@cd $(top_srcdir); $(MAKE)
+
+clean:
+	@rm -f *.o *.so *~ static.h
+	@for i in *.mod; do cd $$i; $(MAKE) 'MAKE=$(MAKE)' clean; cd ../; done
+
+modules:
+	@for i in *.mod; do cd $$i; $(MAKE_MOD) modules; cd ../; done
+
+static:
+	@./buildstatic
+	@for i in *.mod; do cd $$i; $(MAKE_MOD) static; cd ../; done
+
+install: install-help install-language
+
+install-help:
+	@echo "Copying module help files."
+	@if test ! "x`echo *.mod/help/*.help`" = "x*.mod/help/*.help"; then \
+		if test ! -d $(DEST)/help; then \
+			echo "Creating 'help' subdirectory."; \
+			$(INSTALL) -d $(DEST)/help; \
+		fi; \
+		for i in *.mod/help/*.help; do \
+			$(INSTALL_DATA) $$i $(DEST)/help/; \
+		done; \
+	fi
+	@if test ! "x`echo *.mod/help/msg/*.help`" = "x*.mod/help/msg/*.help"; then \
+		if test ! -d $(DEST)/help/msg; then \
+			echo "Creating 'help/msg' subdirectory."; \
+			$(INSTALL) -d $(DEST)/help/msg; \
+		fi; \
+		for i in *.mod/help/msg/*.help; do \
+			$(INSTALL_DATA) $$i $(DEST)/help/msg/; \
+		done; \
+	fi
+	@if test ! "x`echo *.mod/help/set/*.help`" = "x*.mod/help/set/*.help"; then \
+		if test ! -d $(DEST)/help/set; then \
+			echo "Creating 'help/set' subdirectory."; \
+			$(INSTALL) -d $(DEST)/help/set; \
+		fi; \
+		for i in *.mod/help/set/*.help; do \
+			$(INSTALL_DATA) $$i $(DEST)/help/set/; \
+		done; \
+	fi
+
+install-language:
+	@echo "Copying module language files."
+	@if test ! "x`echo *.mod/language/*.lang`" = "x*.mod/language/*.lang"; then \
+		if test ! -d $(DEST)/language; then \
+			echo "Creating 'language' subdirectory."; \
+			$(INSTALL) -d $(DEST)/language; \
+		fi; \
+		for i in *.mod/language/*.lang; do \
+			$(INSTALL_DATA) $$i $(DEST)/language/; \
+		done; \
+	fi
+
+#safety hash

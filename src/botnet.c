@@ -339,7 +339,8 @@ void rempartybot(char *bot)
 
   for (i = 0; i < parties; i++)
     if (!strcasecmp(party[i].bot, bot)) {
-      check_tcl_chpt(bot, party[i].nick, party[i].sock, party[i].chan);
+      if (party[i].chan >= 0)
+        check_tcl_chpt(bot, party[i].nick, party[i].sock, party[i].chan);
       remparty(bot, party[i].sock);
       i--;
     }
@@ -861,8 +862,10 @@ int botunlink(int idx, char *nick, char *reason)
       rembot(tandbot->bot);
     while (parties) {
       parties--;
-      check_tcl_chpt(party[i].bot, party[i].nick, party[i].sock,
-		     party[i].chan);
+      /* ASSERT? */
+      if (party[i].chan >= 0) 
+        check_tcl_chpt(party[i].bot, party[i].nick, party[i].sock,
+		       party[i].chan);
     }
     strcpy(s, "killassoc &");
     Tcl_Eval(interp, s);

@@ -53,6 +53,7 @@ static int ismodeline(masklist *m, char *user);
 static int tcl_channel_modify(Tcl_Interp * irp, struct chanset_t *chan,
 			      int items, char **item);
 static int tcl_channel_add(Tcl_Interp * irp, char *, char *);
+static char *convert_element(char *src, char *dst);
 #else
 
 /* 4 - 7 */

@@ -238,6 +238,7 @@ void maskhost(char *s, char *nw)
       while (*f != '.')
 	f--;
       strncpy(nw, q, f - q);
+      /* No need to nw[f-q]=0 here. */
       nw += (f - q);
       strcpy(nw, ".*");
     } else {			/* normal host >= 3 parts */
@@ -422,7 +423,7 @@ void daysdur(time_t now, time_t then, char *out)
 
 /* log something */
 /* putlog(level,channel_name,format,...);  */
-void putlog VARARGS_DEF(int, arg1)
+void putlog EGG_VARARGS_DEF(int, arg1)
 {
   int i, type;
   char *format, *chname, s[MAX_LOG_LINE + 1], s1[256], *out;
@@ -431,7 +432,7 @@ void putlog VARARGS_DEF(int, arg1)
   struct tm *T = localtime(&now);
 
   va_list va;
-  type = VARARGS_START(int, arg1, va);
+  type = EGG_VARARGS_START(int, arg1, va);
   chname = va_arg(va, char *);
   format = va_arg(va, char *);
 
@@ -591,6 +592,9 @@ void flushlogs()
   struct tm *T = localtime(&now);
 
   context;
+  /* logs may not be initialised yet.  (Fabian) */
+  if (!logs)
+    return;
   /* Now also checks to see if there's a repeat message and
    * displays the 'last message repeated...' stuff too <cybah> */
   for (i = 0; i < max_logs; i++) {
@@ -1225,7 +1229,8 @@ void sub_lang(int idx, char *text)
   get_user_flagrec(dcc[idx].user, &fr, dcc[idx].u.chat->con_chan);
   help_subst(NULL, NULL, 0,
 	     (dcc[idx].status & STAT_TELNET) ? 0 : HELP_IRC, NULL);
-  strncpy(s, text, 1024);
+  strncpy(s, text, 1023);
+  s[1023] = 0;
   if (s[strlen(s) - 1] == '\n')
     s[strlen(s) - 1] = 0;
   if (!s[0])

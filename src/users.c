@@ -986,6 +986,11 @@ int readuserfile(char *file, struct userrec **ret)
   for (u = bu; u; u = u->next) {
     struct user_entry *e;
 
+    if (!(u->flags & USER_BOT) && !strcasecmp (u->handle, botnetnick)) {
+      putlog(LOG_MISC, "*", "(!) I have an user record, but without +b");
+      /* u->flags |= USER_BOT; */
+    }
+    
     for (e = u->entries; e; e = e->next)
       if (e->name) {
 	struct user_entry_type *uet = find_entry_type(e->name);

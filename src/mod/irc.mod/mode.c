@@ -400,7 +400,7 @@ static void got_op(struct chanset_t *chan, char *nick, char *from,
 				 * for stopnethack */
     if (!nick[0] &&
 	!(chan_op(victim) || (glob_op(victim) && !chan_deop(victim))) &&
-	me_op(chan) && channel_stopnethack(chan)) {
+	me_op(chan) && channel_stopnethack(chan) && !match_my_nick(who)) {
       add_mode(chan, '-', 'o', who);
       m->flags |= FAKEOP;
     } else {

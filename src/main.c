@@ -50,6 +50,10 @@
 #include "chan.h"
 #include "modules.h"
 #include "tandem.h"
+#ifdef CYGWIN_HACKS
+#include <windows.h>
+BOOL FreeConsole(VOID);
+#endif
 
 #ifndef _POSIX_SOURCE
 /* solaris needs this */
@@ -325,8 +329,15 @@ static void got_alarm(int z)
 static void got_ill(int z)
 {
   check_tcl_event("sigill");
+  write_debug();
   putlog(LOG_MISC, "*", "* Context: %s/%d [%s]", cx_file[cx_ptr],
 	 cx_line[cx_ptr], (cx_note[cx_ptr][0]) ? cx_note[cx_ptr] : "");
+  fatal ("GOT ILL SIGNAL -- CRASHING!", 1);
+#ifdef SA_RESETHAND
+  kill(getpid(), SIGILL);
+#else
+  exit(1);
+#endif
 }
 
 static void do_arg(char *s)
@@ -645,6 +656,7 @@ int main(int argc, char **argv)
     }
   }
   context;
+#ifndef CYGWIN_HACKS
   /* move into background? */
   if (backgrd) {
     xx = fork();
@@ -676,6 +688,7 @@ int main(int argc, char **argv)
       exit(0);
     }
   }
+#endif
   use_stderr = 0;		/* stop writing to stderr now */
   xx = getpid();
   if ((xx != 0) && (!backgrd)) {
@@ -699,13 +712,16 @@ int main(int argc, char **argv)
   if (backgrd) {
     /* ok, try to disassociate from controlling terminal */
     /* (finger cross) */
-#if HAVE_SETPGID
+#if HAVE_SETPGID && !defined(CYGWIN_HACKS)
     setpgid(0, 0);
 #endif
     /* close out stdin/out/err */
     freopen("/dev/null", "r", stdin);
     freopen("/dev/null", "w", stdout);
     freopen("/dev/null", "w", stderr);
+#ifdef CYGWIN_HACKS
+    FreeConsole();
+#endif
     /* tcl wants those file handles kept open */
 /*    close(0); close(1); close(2);  */
   }
@@ -750,10 +766,10 @@ int main(int argc, char **argv)
     int socket_cleanup = 0;
 
     context;
-#if ((TCL_MAJOR_VERSION == 7) && (TCL_MINOR_VERSION >= 5)) || (TCL_MAJOR_VERSION >= 8)
+#if !defined(HAVE_OLD_TCL) && !defined(HAVE_BUGGY_TCL_THREADS)
     /* process a single tcl event */
     Tcl_DoOneEvent(TCL_ALL_EVENTS | TCL_DONT_WAIT);
-#endif				/* TCL */
+#endif
     /* lets move some of this here, reducing the numer of actual
      * calls to periodic_timers */
     now = time(NULL);

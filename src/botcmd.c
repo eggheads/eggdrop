@@ -1289,7 +1289,8 @@ static void bot_part(int idx, char *par)
     touch_laston(u, TBUF, now);
   }
   if ((partyidx = getparty(bot, sock)) != -1) {
-    check_tcl_chpt(bot, nick, sock, party[partyidx].chan);
+    if (party[partyidx].chan >= 0)
+      check_tcl_chpt(bot, nick, sock, party[partyidx].chan);
     if ((b_numver(idx) >= NEAT_BOTNET) && !silent) {
       register int chan = party[partyidx].chan;
 

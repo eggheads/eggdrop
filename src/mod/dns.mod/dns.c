@@ -48,6 +48,7 @@ static void dns_event_success(struct resolve *rp, int type)
   if (!rp)
     return;
 
+  context;
   if (type == T_PTR) {
     debug2("DNS resolved %s to %s", iptostr(rp->ip), rp->hostn);
     call_hostbyip(my_ntohl(rp->ip), rp->hostn, 1);
@@ -62,6 +63,7 @@ static void dns_event_failure(struct resolve *rp)
   if (!rp)
     return;
 
+  context;
   /* T_PTR */
   if (rp->ip) {
     static char s[UHOSTLEN];
@@ -85,6 +87,7 @@ static void dns_event_failure(struct resolve *rp)
 
 static void eof_dns_socket(int idx)
 {
+  context;
   putlog(LOG_MISC, "*", "DNS Error: socket closed.");
   killsock(dcc[idx].sock);
   /* try to reopen socket */
@@ -159,13 +162,13 @@ static int dns_cache_expmem(void)
   struct resolve *rp = expireresolves;
   int size = 0;
 
+  context;
   while (rp) {
     size += sizeof(struct resolve);
     if (rp->hostn)
       size += strlen(rp->hostn) + 1;
     rp = rp->next;
   } 
-
   return size;
 }
 

@@ -36,6 +36,7 @@ void dcc_dnswait(int idx, char *buf, int len)
 
 void eof_dcc_dnswait(int idx)
 {
+  context;
   putlog(LOG_MISC, "*", "Lost connection while resolving hostname [%s/%d]",
 	 iptostr(dcc[idx].addr), dcc[idx].port);
   killsock(dcc[idx].sock);
@@ -52,6 +53,7 @@ static int expmem_dcc_dnswait(void *x)
   register struct dns_info *p = (struct dns_info *) x;
   int size = 0;
 
+  context;
   if (p) {
     size = sizeof(struct dns_info);
     if (p->host)
@@ -66,6 +68,7 @@ static void kill_dcc_dnswait(int idx, void *x)
 {
   register struct dns_info *p = (struct dns_info *) x;
 
+  context;
   if (p) {
     if (p->host)
       nfree(p->host);
@@ -94,7 +97,8 @@ struct dcc_table DCC_DNSWAIT =
 void call_hostbyip(IP ip, char *hostn, int ok)
 {
   int idx;
-  
+
+  context;
   for (idx = 0; idx < dcc_total; idx++) {
     if ((dcc[idx].type == &DCC_DNSWAIT) &&
         (dcc[idx].u.dns->dns_type == RES_HOSTBYIP) &&
@@ -116,7 +120,8 @@ void call_hostbyip(IP ip, char *hostn, int ok)
 void call_ipbyhost(char *hostn, IP ip, int ok)
 {
   int idx;
-  
+
+  context;
   for (idx = 0; idx < dcc_total; idx++) {
     if ((dcc[idx].type == &DCC_DNSWAIT) &&
         (dcc[idx].u.dns->dns_type == RES_IPBYHOST) &&
@@ -141,6 +146,7 @@ void block_dns_hostbyip(IP ip)
   unsigned long addr = my_htonl(ip);
   static char s[UHOSTLEN];
 
+  context;
   if (!setjmp(alarmret)) {
     alarm(resolve_timeout);
     hp = gethostbyaddr((char *) &addr, sizeof(addr), AF_INET);
@@ -153,6 +159,7 @@ void block_dns_hostbyip(IP ip)
   }
   /* call hooks */
   call_hostbyip(ip, s, hp ? 1 : 0);
+  context;
 }
 
 void block_dns_ipbyhost(char *host)
@@ -181,4 +188,5 @@ void block_dns_ipbyhost(char *host)
   } else {
     call_ipbyhost(host, 0, 0);
   }
+  context;
 }

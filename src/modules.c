@@ -21,7 +21,7 @@
 #ifdef OSF1_HACKS
 #include <loader.h>
 #else
-#if DLOPEN_1
+#ifdef DLOPEN_1
 char *dlerror();
 void *dlopen(const char *, int);
 int dlclose(void *);
@@ -158,7 +158,11 @@ void mod_context(char *module, char *file, int line)
 void mod_contextnote(char *module, char *file, int line, char *note)
 {
   cx_ptr=((cx_ptr + 1) & 15);
+#ifdef HAVE_SNPRINTF
   snprintf(cx_file[cx_ptr], 30, "%s:%s", module, file);
+#else
+  sprintf(cx_file[cx_ptr], "%s:%s", module, file);
+#endif
   cx_line[cx_ptr] = line;
   strncpy(cx_note[cx_ptr], note, 255);
   cx_note[cx_ptr][255] = 0;
@@ -607,11 +611,11 @@ const char *module_load(char *name)
     return "Can't load module.";
 #else
 #ifdef OSF1_HACKS
-#if ((TCL_MAJOR_VERSION == 7) && (TCL_MINOR_VERSION >= 5)) || (TCL_MAJOR_VERSION >= 8)
+#ifndef HAVE_OLD_TCL
   hand = (Tcl_PackageInitProc *) load(workbuf, LDR_NOFLAGS);
   if (hand == LDR_NULL_MODULE)
     return "Can't load module.";
-#endif				/* TCL */
+#endif
 #else
   context;
   hand = dlopen(workbuf, DLFLAGS);

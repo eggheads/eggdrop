@@ -195,6 +195,7 @@ static void blowfish_init(UBYTE_08bits * key, int keybytes)
   bf_S = box[bx].S;
   box[bx].keybytes = keybytes;
   strncpy(box[bx].key, key, keybytes);
+  box[bx].key[keybytes] = 0;
   box[bx].lastuse = now;
   /* robey: reset blowfish boxes to initial state */
   /* (i guess normally it just keeps scrambling them, but here it's

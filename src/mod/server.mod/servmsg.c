@@ -1109,7 +1109,7 @@ static void server_resolve_failure(int);
 /* works a little differently now... async i/o is your friend */
 static void connect_server(void)
 {
-  char pass[121], botserver[UHOSTLEN + 1];
+  char pass[121], botserver[UHOSTLEN];
   static int oldserv = -1;
   int servidx, botserverport = 0;
 
@@ -1139,8 +1139,8 @@ static void connect_server(void)
     servidx = new_dcc(&DCC_DNSWAIT, sizeof(struct dns_info));
     dcc[servidx].port = botserverport;
     strcpy(dcc[servidx].nick, "(server)");
-    strncpy(dcc[servidx].host, botserver, UHOSTLEN);
-    dcc[servidx].host[UHOSTLEN] = 0;
+    strncpy(dcc[servidx].host, botserver, UHOSTMAX);
+    dcc[servidx].host[UHOSTMAX] = 0;
     dcc[servidx].timeval = now;
     dcc[servidx].sock = (-1);
     dcc[servidx].u.dns->host = get_data_ptr(strlen(dcc[servidx].host) + 1);

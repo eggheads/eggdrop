@@ -361,7 +361,7 @@ static int tcl_reload STDVAR {
 
 static int tcl_chnick STDVAR {
   struct userrec *u;
-  char hand[HANDLEN + 1];
+  char newhand[HANDLEN + 1];
   int x = 1, i;
 
   context;
@@ -370,24 +370,24 @@ static int tcl_chnick STDVAR {
   if (!u)
      x = 0;
   else {
-    strncpy(hand, argv[2], HANDLEN);
-    hand[HANDLEN] = 0;
-    for (i = 0; i < strlen(hand); i++)
-      if ((hand[i] <= 32) || (hand[i] >= 127) || (hand[i] == '@'))
-	hand[i] = '?';
-    if (strchr("-,+*=:!.@#;$", hand[0]) != NULL)
+    strncpy(newhand, argv[2], HANDLEN);
+    newhand[HANDLEN] = 0;
+    for (i = 0; i < strlen(newhand); i++)
+      if ((newhand[i] <= 32) || (newhand[i] >= 127) || (newhand[i] == '@'))
+	newhand[i] = '?';
+    if (strchr(BADHANDCHARS, newhand[0]) != NULL)
       x = 0;
-    else if (strlen(hand) < 1)
+    else if (strlen(newhand) < 1)
       x = 0;
-    else if (get_user_by_handle(userlist, hand))
+    else if (get_user_by_handle(userlist, newhand))
       x = 0;
-    else if (!strcasecmp(origbotname, hand) || !rfc_casecmp(botnetnick, hand))
-      x = 0;
-    else if (hand[0] == '*')
+    else if ((!strcasecmp(origbotname, newhand) || !rfc_casecmp(botnetnick, newhand)) &&
+             (!(u->flags & USER_BOT) || nextbot (argv [1]) != -1))      x = 0;
+    else if (newhand[0] == '*')
       x = 0;
   }
   if (x)
-     x = change_handle(u, hand);
+     x = change_handle(u, newhand);
 
   Tcl_AppendResult(irp, x ? "1" : "0", NULL);
   return TCL_OK;
@@ -422,8 +422,8 @@ static int tcl_newignore STDVAR {
 
   context;
   BADARGS(4, 5, " hostmask creator comment ?lifetime?");
-  strncpy(ign, argv[1], UHOSTLEN - 1);
-  ign[UHOSTLEN - 1] = 0;
+  strncpy(ign, argv[1], UHOSTMAX);
+  ign[UHOSTMAX] = 0;
   strncpy(from, argv[2], HANDLEN);
   from[HANDLEN] = 0;
   strncpy(cmt, argv[3], 65);

@@ -1,3 +1,24 @@
-# Source-make
-FILENAME=console
-include ../Makefile.generic
+# Makefile for src/mod/console.mod/
+
+doofus:
+	@echo ""
+	@echo "Let's try this from the right directory..."
+	@echo ""
+	@cd ../../../; make
+
+clean:
+	@rm -f *.o *.so *~
+
+static: ../console.o
+
+modules: ../../../console.so
+
+../console.o: ../module.h ../modvals.h ../../eggdrop.h
+	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c console.c
+	mv console.o ../
+
+../../../console.so: ../console.o
+	$(LD) -o ../../../console.so ../console.o
+	$(STRIP) ../../../console.so
+
+#safety hash

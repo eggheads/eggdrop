@@ -275,7 +275,6 @@ static void dcc_bot_digest(int idx, char *challenge, char *password)
   
   for(i=0;i<16;i++)
     sprintf(DigestString + (i*2), "%.2x", Digest[i]);
- 
   dprintf(idx, "digest %s\n", DigestString);  
   putlog(LOG_BOTS, "*", "Received challenge from %s... sending response ...", dcc[idx].nick);  
 }
@@ -479,7 +478,11 @@ static int dcc_bot_check_digest(int idx, char *digest)
   
   MD5Init(&Context);
   
+#ifdef HAVE_SNPRINTF
   snprintf(DigestString, 33, "<%x%x@", getpid(), (unsigned int)dcc[idx].timeval);
+#else
+  sprintf(DigestString, "<%x%x@", getpid(), (unsigned int)dcc[idx].timeval);
+#endif
   MD5Update(&Context, (unsigned char *)DigestString, strlen(DigestString));
   MD5Update(&Context, (unsigned char *)botnetnick, strlen(botnetnick));
   MD5Update(&Context, (unsigned char *)">", 1);
@@ -887,8 +890,9 @@ static void dcc_chat(int idx, char *buf, int i)
 	v = newsplit(&buf);
 	rmspace(buf);
 	if (check_tcl_dcc(v, idx, buf)) {
-	  check_tcl_chpt(botnetnick, dcc[idx].nick, dcc[idx].sock,
-			 dcc[idx].u.chat->channel);
+	  if (dcc[idx].u.chat->channel >= 0)
+	    check_tcl_chpt(botnetnick, dcc[idx].nick, dcc[idx].sock,
+			   dcc[idx].u.chat->channel);
 	  check_tcl_chof(dcc[idx].nick, dcc[idx].sock);
 	  dprintf(idx, "*** Ja mata!\n");
 	  flush_lines(idx, dcc[idx].u.chat);
@@ -1116,10 +1120,10 @@ static void dcc_telnet_hostresolved(int i)
 {
   int idx;
   int j = 0, sock;
-  char s[UHOSTLEN + 1], s2[UHOSTLEN + 20];
+  char s[UHOSTLEN], s2[UHOSTLEN + 20];
 
-  strncpy(dcc[i].host, dcc[i].u.dns->host, UHOSTLEN - 1);
-  dcc[i].host[UHOSTLEN - 1] = 0;
+  strncpy(dcc[i].host, dcc[i].u.dns->host, UHOSTMAX);
+  dcc[i].host[UHOSTMAX] = 0;
 
   for (idx = 0; idx < dcc_total; idx++)
     if ((dcc[idx].type == &DCC_TELNET) &&
@@ -1901,8 +1905,8 @@ void dcc_telnet_got_ident(int i, char *host)
     lostdcc(i);
     return;
   }
-  strncpy(dcc[i].host, host, UHOSTLEN);
-  dcc[i].host[UHOSTLEN] = 0;
+  strncpy(dcc[i].host, host, UHOSTMAX);
+  dcc[i].host[UHOSTMAX] = 0;
   simple_sprintf(x, "telnet!%s", dcc[i].host);
   if (protect_telnet && !make_userfile) {
     struct userrec *u;

@@ -1007,7 +1007,8 @@ int hostsanitycheck_dcc(char *nick, char *from, IP ip, char *dnsname,
   /* These should pad like crazy with zeros, since 120 bytes or so is
    * where the routines providing our data currently lose interest. I'm
    * using the n-variant in case someone changes that... */
-  strncpy(hostname, extracthostname(from), 256);
+  strncpy(hostname, extracthostname(from), 255);
+  hostname[255] = 0;
   if (!strcasecmp(hostname, dnsname)) {
     putlog(LOG_DEBUG, "*", "DNS information for submitted IP checks out.");
     return 1;
