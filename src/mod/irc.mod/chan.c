@@ -9,7 +9,7 @@
  * dprintf'ized, 27oct1995
  * multi-channel, 8feb1996
  * 
- * $Id: chan.c,v 1.62 2000/05/22 18:37:30 guppy Exp $
+ * $Id: chan.c,v 1.63 2000/05/28 18:31:32 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -230,7 +230,7 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
     if (which == FLOOD_DEOP)
       chan->deopd[0] = 0;
     u = get_user_by_host(from);
-    if (check_tcl_flud(floodnick, from, u, ftype, chan->name))
+    if (check_tcl_flud(floodnick, floodhost, u, ftype, chan->name))
       return 0;
     switch (which) {
     case FLOOD_PRIVMSG:
@@ -1725,11 +1725,11 @@ static int gotquit(char *from, char *msg)
     alt = get_altbotnick();
     if (!rfc_casecmp(nick, origbotname)) {
       putlog(LOG_MISC, "*", IRC_GETORIGNICK, origbotname);
-      dprintf(DP_MODE, "NICK %s\n", origbotname);
+      dprintf(DP_SERVER, "NICK %s\n", origbotname);
     } else if (alt[0]) {
       if (!rfc_casecmp(nick, alt) && strcmp(botname, origbotname)) {
 	putlog(LOG_MISC, "*", IRC_GETALTNICK, alt);
-	dprintf(DP_MODE, "NICK %s\n", alt);
+	dprintf(DP_SERVER, "NICK %s\n", alt);
       }
     }
   }

@@ -2,7 +2,7 @@
  * irc.c -- part of irc.mod
  *   support for channels withing the bot
  *
- * $Id: irc.c,v 1.39 2000/05/22 18:37:30 guppy Exp $
+ * $Id: irc.c,v 1.40 2000/05/28 18:31:32 guppy Exp $
  */
 /*
  * Copyright (C) 1997  Robey Pointer
@@ -418,6 +418,20 @@ static int me_op(struct chanset_t *chan)
     return 0;
 }
 
+/* am i voice? */
+static int me_voice(struct chanset_t *chan)
+{
+  memberlist *mx = NULL;
+     
+  mx = ismember(chan, botname);
+  if (!mx)
+    return 0;
+  if (chan_hasvoice(mx))
+    return 1;
+  else
+    return 0;
+}
+
 /* are there any ops on the channel? */
 static int any_ops(struct chanset_t *chan)
 {
@@ -469,44 +483,50 @@ static void reset_chan_info(struct chanset_t *chan)
   }
 }
 
-/* log the channel members */
-static void log_chans()
+/* status_log() takes care of reporting the channel status of every active
+ * channel to dcc chat every 5 minutes. It has been improved upon to include
+ * more information in a smaller space */
+
+static void status_log()
 {
   masklist *b;
   memberlist *m;
   struct chanset_t *chan;
-  int chops, bans, invites, exempts;
+  char s[20], s2[20];
+  int chops, voice, nonops, bans, invites, exempts;
 
   for (chan = chanset; chan != NULL; chan = chan->next) {
     if (channel_active(chan) && channel_logstatus(chan) &&
         !channel_inactive(chan)) {
+
       chops = 0;
+      voice = 0;
+
       for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
 	if (chan_hasop(m))
 	  chops++;
+        else if (chan_hasvoice(m))
+          voice++;
       }
+      nonops = (chan->channel.members - (chops + voice));
 
       bans = 0;
+      exempts = 0;
+      invites = 0;
+
       for (b = chan->channel.ban; b->mask[0]; b = b->next)
 	bans++;
-
-      exempts = 0;
       for (b = chan->channel.exempt; b->mask[0]; b = b->next)
 	exempts++;
-
-      invites = 0;
       for (b = chan->channel.invite; b->mask[0]; b = b->next)
 	invites++;
+      sprintf(s, "%d", exempts);
+      sprintf(s2, "%d", invites);
 
-      putlog(LOG_MISC, chan->name, "%-10s: %d member%c (%d chop%s, %2d ba%s %s",
-	     chan->name, chan->channel.members, chan->channel.members == 1 ? ' ' : 's',
-	     chops, chops == 1 ? ")" : "s)", bans, bans == 1 ? "n" : "ns", me_op(chan) ? "" :
-	     "(not op'd)");
-      if ((use_invites == 1) || (use_exempts == 1)) {
-	putlog(LOG_MISC, chan->name, "%-10s: %d exemptio%s, %d invit%s",
-	       chan->name, exempts,
-	       exempts == 1 ? "n" : "ns", invites, invites == 1 ? "e" : "es");
-      }
+      putlog(LOG_MISC, chan->name, "%s%-10s (%s) : [m/%d o/%d v/%d n/%d b/%d e/%s I/%s]",
+             me_op(chan) ? "@" : me_voice(chan) ? "+" : "", chan->name,
+             getchanmode(chan), chan->channel.members, chops, voice, nonops, bans,
+             !use_exempts ? "-" : s, !use_invites ? "-" : s2);
     }
   }
 }
@@ -1119,7 +1139,7 @@ static char *irc_close()
   rem_help_reference("irc.help");
   Context;
   del_hook(HOOK_MINUTELY, (Function) check_expired_chanstuff);
-  del_hook(HOOK_5MINUTELY, (Function) log_chans);
+  del_hook(HOOK_5MINUTELY, (Function) status_log);
   del_hook(HOOK_ADD_MODE, (Function) real_add_mode);
   del_hook(HOOK_IDLE, (Function) flush_modes);
   Tcl_UntraceVar(interp, "rfc-compliant",
@@ -1188,7 +1208,7 @@ char *irc_start(Function * global_funcs)
   }
   Context;
   add_hook(HOOK_MINUTELY, (Function) check_expired_chanstuff);
-  add_hook(HOOK_5MINUTELY, (Function) log_chans);
+  add_hook(HOOK_5MINUTELY, (Function) status_log);
   add_hook(HOOK_ADD_MODE, (Function) real_add_mode);
   add_hook(HOOK_IDLE, (Function) flush_modes);
   Tcl_TraceVar(interp, "net-type",

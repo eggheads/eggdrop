@@ -4,6 +4,11 @@ Changes in eggdrop: (since v1.4.0)
 
 1.4.4
 Foundby   Fixedby   What....
+          guppy     changed the output of +statuslog to be more effective
+Ben       Fabian/   Lowered server-queue priority of nick-regain commands from
+          guppy       DP_MODE to DP_SERVER (both ISON and TRACE methods)
+          blaster   bind flud was getting the nickname passed in the
+                      user@host information
 kirben    guppy     changed the userinfo version from 1.05 to 1.06
 Wiktor    guppy     added three new events, 'init-server', 'connect-server'
                       and 'disconnect-server'
