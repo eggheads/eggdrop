@@ -1,4 +1,12 @@
-YOUR FIRST EGGDROP SCRIPT
+$Id: FIRST-SCRIPT,v 1.1 2003/12/09 00:27:13 wcc Exp $
+
+Your First Eggdrop Script
+Last revised: December 07, 2003
+     _________________________________________________________________
+
+                         Your First Eggdrop Script
+
+
 
 So you want to write an Eggdrop script, but you don't really know where to
 begin. This file will give you a very basic idea about what Eggdrop scripting
@@ -87,3 +95,6 @@ proc my_talk_handler {nick uhost hand chan text} {
 }
 
 # Here's the end of the script.
+       _________________________________________________________________
+
+   Copyright (C) 2003 Eggheads Development Team

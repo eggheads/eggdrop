@@ -1,52 +1,102 @@
-$Id: UPDATES1.6,v 1.523 2003/12/07 21:49:16 wcc Exp $
+$Id: UPDATES1.6,v 1.524 2003/12/09 00:27:13 wcc Exp $
 
-Changes in Eggdrop: (since v1.6.0)
-----------------------------------
+Eggdrop Changes (since v1.6.0)
+     _________________________________________________________________
 
-1.6.16
-Found by     Fixed by  What...
-             Wcc       exported oatoi() to modules since someone somewhere might
-                       find it useful
-BarkerJr     Wcc       fixed a bug preventing masks starting with numbers from
-                       being removed/stuck/unstuck
-wanderer     KuNgFo0/  fixed the very very horrible handling of arguments by
-             Wcc       tcl_dnslookup()
-             BarkerJr/ don't rejoin +inactive channels when kicked from them.
-             Eule      This can be caused by bot-server connection lag or full
-                       queues.
-             Wcc       uname fix in msg_status; os should display on freebsd now
-             Wcc       fixed a buffer overrun in msg_status()
-             Wcc       cosmetic fixes to .status, .who, and various msgcmds
-R. Ramos     dw        fixed a getdesc segfault when a file has no desc
-various      Wcc       removed IPv6 for now, will be implemented in a more
-                       proper way in an upcoming release
-             BarkerJr  cleaned up "illegal channel option" Tcl errors
-Darki        Wiktor    .chanset accepts '*', reflect in the docs
-T. Salomäki  Eule      fixed bug 365 (missing call to check_this_user in
-                       tcl_setuser)
-R. Brooklyn  Sven      .-ban number #channel now works correctly
-             Sven      a few minor fixes to fakemode kicks
-             Wcc       made appropriate changes to accommodate for EFnet's
-                       implementation of exempts and invites
-|SmAsH|      Wcc       bind documentation updates
-BarkerJr     Wcc       exported strip_mirc_codes() and check_ansi() from dcc.c
-             Paul E./  H_notc used wrong handler
-             stdarg
-fbs          stdarg    check to make sure file we want to send exists when
-                       resuming a transfer
-             Tothwolf  Removed unnecessary quiet_reject checks in msg_ident()
-                       that have been present since 1.3.0+bel17.
-             Paladin   fixed exporting of MD5 functions to modules
-various      stdarg    the binary is no longer stripped unless ./configure
-                       --enable-strip is used
-             tchaika   small fix to n_realloc()
-Wanderer|    Wcc       fixed output of tcl_duration to not return extra spaces
-             stdarg    cmd_topic works for halfops now
-various      stdarg    fixed cmd_(de)voice logic
-paladinz     Wcc       don't compile inet_ntop compatability code unless USE_IPV6
-                       is defined
-KuNgFo0      Wcc       typedef socklen_t to int if non-existant
-various      TaKeDa    fixed an uninitialized variable in putlog()
+                             Eggdrop Changes
+
+
+  UPDATES files from versions previous to Eggdrop v1.6.0 can be found at:
+    ftp://ftp.eggheads.org/pub/eggdrop/UPDATES/
+
+  1.6.16:
+    - new UPDATES1.6 format to allow for longer found by/patched by feilds and
+      less wrapping of description
+    * Found by: N/A - Patch by: Wcc
+
+    - exported oatoi() to modules since someone somewhere might find it useful
+    * Found by: N/A - Patch by: Wcc
+
+    - fixed a bug preventing masks starting with numbers from being
+      removed/stuck/unstuck
+    * Found by: BarkerJr - Patch by: Wcc
+
+    - fixed the very very horrible handling of arguments by tcl_dnslookup()
+    * Found by: wanderer - Patch by: KuNgFo0/Wcc
+
+    - don't rejoin +inactive channels when kicked from them. This can be caused
+      by bot-server connection lag or full queues.
+    * Found by: N/A - Patch by: BarkerJr/Eule
+
+    - uname fix in msg_status; os should display on freebsd now
+    * Found by: N/A - Patch by: Wcc
+
+    - fixed a buffer overrun in msg_status()
+    * Found by: N/A - Patch by: Wcc
+
+    - fixed a getdesc segfault when a file has no desc
+    * Found by: R. Ramos - Patch by: dw
+
+    - removed IPv6 for now, will be implemented in a more proper way in an
+      upcoming release
+    * Found by: Various - Patch by: Wcc
+
+    - cleaned up "illegal channel option" Tcl errors
+    * Found by: N/A - Patch by: BarkerJr
+
+    - .chanset accepts '*'; reflect in the docs
+    * Found by: Darki - Patch by: Wiktor
+
+    - fixed bug 365 (missing call to check_this_user in tcl_setuser)
+    * Found by: T. Salomäki - Patch by: Eule
+
+    - Description: .-ban number #channel now works correctly
+    * Found by: R. Brooklyn - Patch by: Sven
+
+    - a few minor fixes to fakemode kicks
+    * Found by: N/A - Patch by: Sven
+
+    - made appropriate changes to accommodate for EFnet's implementation of
+      exempts and invites
+    * Found by: N/A - Patch by: Wcc
+
+    - bind documentation updates
+    * Found by: |SmAsH| - Patch by: Wcc
+
+    - exported strip_mirc_codes() and check_ansi() from dcc.c to modules
+    * Found by: BarkerJr - Patch by: Wcc
+
+    - H_notc used wrong handler
+    * Found by: N/A - Patch by: Paul E./stdarg
+
+    - check to make sure file we want to send exists when resuming a transfer
+    * Found by: fbs - Patch by: stdarg
+
+    - Removed unnecessary quiet_reject checks in msg_ident() that have been
+      present since 1.3.0+bel17.
+    * Found by: N/A - Patch by: Tothwolf
+
+    - fixed exporting of MD5 functions to modules
+    * Found by: N/A - Patch by: Paladin
+
+    - the binary is no longer stripped unless ./configure --enable-strip
+      is used
+    * Found by: Various - Patch by: stdarg
+
+    - small fix to n_realloc()
+    * Found by: N/A - Patch by: tchaika
+
+    - fixed output of tcl_duration to not return extra spaces
+    * Found by: wanderer - Patch by: Wcc
+
+    - cmd_topic works for halfops now
+    * Found by: N/A - Patch by: stdarg
+
+    - fixed cmd_(de)voice logic
+    * Found by: Various - Patch by: stdarg
+
+    - fixed an uninitialized variable in putlog()
+    * Found by: Various - Patch by: TaKeDa
 
 1.6.15 (04 May 2003)
 Found by  Fixed by  What...

@@ -1,5 +1,5 @@
 Patch Howto
-Last revised: March  04, 2003
+Last revised: December 07, 2003
      _________________________________________________________________
 
                                Patch Howto
@@ -20,7 +20,7 @@ Last revised: March  04, 2003
     The following are some common terms used in this document:
 
       Patch
-        A patch is an update to the sourcecode of a program (here Eggdrop).
+        A patch is an update to the source code of a program (here Eggdrop).
         Be careful, every patch is designed for a special Eggdrop version
         and cannot be applied on every bot!
 
@@ -28,7 +28,7 @@ Last revised: March  04, 2003
   2. Applying a patch
 
     To apply a patch to an Eggdrop, you have to first obtain the Eggdrop
-    sourcecode. You should always keep a tar.gz archive with the source of
+    source code. You should always keep a tar.gz archive with the source of
     your current Eggdrop on your shell. In the next step, you have to change
     to your source directory (i.e.: /home/user/eggdrop1.6.16/) and type
     the following command:
@@ -65,10 +65,10 @@ Last revised: March  04, 2003
 
          DO NOT add any other diff options.
 
-      3. Send an email to patches@eggheads.org with the patch attached. The
+      3. Send an e-mail to patches@eggheads.org with the patch attached. The
          body should contain a detailed description of what you changed and
-         why you changed it. Don't forget to include the botversion for which
-         your patch was made.
+         why you changed it. Don't forget to include the Eggdrop version for
+         which your patch was created.
 
          You should also include the nick/handle/name you would like to be used
          in the UPDATES1.6 file (if applicable).
@@ -78,7 +78,7 @@ Last revised: March  04, 2003
     NOT run autoconf, autoheader, etc; we will do this as well.
 
     Also, please don't add credit lines all over the source when patching.
-    Patch contributers will receive credit in UPDATES1.6 and ChangeLog.
+    Patch contributors will receive credit in UPDATES1.6 and ChangeLog.
 
 
   4. Downloading a patch

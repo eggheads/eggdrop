@@ -1,3 +1,5 @@
+$Id: MODULES,v 1.26 2003/12/09 00:27:13 wcc Exp $
+
 Eggdrop Module Information
 Last revised: March 04, 2003
      _________________________________________________________________
@@ -27,8 +29,7 @@ Last revised: March 04, 2003
   2. Why use modules?
 
     Modules allow C coders to add their own enhancements to the bot while
-    keeping them optional and without increasing the size of the Eggdrop
-    core.
+    keeping them optional and without increasing the size of the Eggdrop core.
 
 
   3. How to install a module

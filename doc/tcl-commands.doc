@@ -1,6 +1,11 @@
+$Id: tcl-commands.doc,v 1.104 2003/12/09 00:27:13 wcc Exp $
+
 Eggdrop Tcl Commands
-Last revised: August 16, 2003
+Last revised: December 08, 2003
      _________________________________________________________________
+
+                           Eggdrop Tcl Commands
+
 
 This is an exhaustive list of all the Tcl commands added to Eggdrop. All
 of the normal Tcl built-in commands are still there, of course, but you

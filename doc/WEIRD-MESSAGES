@@ -1,3 +1,5 @@
+$Id: WEIRD-MESSAGES,v 1.2 2003/12/09 00:27:13 wcc Exp $
+
 Weird Messages That Get Logged
 Last revised: March  10, 2003
      _________________________________________________________________
@@ -30,7 +32,7 @@ Last revised: March  10, 2003
         - The clock on your machine has just been changed. It may have been
           running behind by several minutes and was just corrected.
 
-    (!) killmember(Nickname) -> nonexistant
+    (!) killmember(Nickname) -> nonexistent
       We have yet to track this down. It's a mildly bad thing, however. It
       means the bot just got informed by the server that someone left the
       channel -- but the bot has no record of that person ever being ON the
@@ -42,7 +44,7 @@ Last revised: March  10, 2003
         bug in all but perhaps the very latest ircd systems. It's not uncommon
         during netsplits and other joins for the server to lose track of killed
         or collided join notices. Also, in some servers, it is possible to
-        specify non-standard characters, such as carret symbols, which get
+        specify non-standard characters, such as caret symbols, which get
         falsely interpreted as capital letters.
 
         When converted to lowercase, these symbols fail to get processed, and
