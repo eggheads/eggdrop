@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  *
- * $Id: cmds.c,v 1.95 2003/03/04 08:51:44 wcc Exp $
+ * $Id: cmds.c,v 1.96 2003/03/31 12:03:56 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -2129,19 +2129,16 @@ static void cmd_su(struct userrec *u, int idx, char *par)
 
 static void cmd_fixcodes(struct userrec *u, int idx, char *par)
 {
-  if (dcc[idx].status & STAT_ECHO) {
-    dcc[idx].status |= STAT_TELNET;
-    dcc[idx].status &= ~STAT_ECHO;
-    dprintf(idx, "Turned on telnet codes.\n");
-    putlog(LOG_CMDS, "*", "#%s# fixcodes (telnet on)", dcc[idx].nick);
-    return;
-  }
   if (dcc[idx].status & STAT_TELNET) {
     dcc[idx].status |= STAT_ECHO;
     dcc[idx].status &= ~STAT_TELNET;
     dprintf(idx, "Turned off telnet codes.\n");
     putlog(LOG_CMDS, "*", "#%s# fixcodes (telnet off)", dcc[idx].nick);
-    return;
+  } else {
+    dcc[idx].status |= STAT_TELNET;
+    dcc[idx].status &= ~STAT_ECHO;
+    dprintf(idx, "Turned on telnet codes.\n");
+    putlog(LOG_CMDS, "*", "#%s# fixcodes (telnet on)", dcc[idx].nick);
   }
 }
 
