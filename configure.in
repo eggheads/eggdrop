@@ -771,17 +771,14 @@ fi
 if test "x${ac_cv_var_tcl_threads}" = "xyes"
 then
   AC_MSG_RESULT(yes)
-  AC_MSG_CHECKING(for Tcl threads bug)
-changequote(,)dnl
-  TCL_VER_IS81=`echo $TCL_VERSION | $AWK '{split($1, i, "."); if ((i[1] == 8) && (i[2] == 1)) print "yes"; else print "no"}'`
-changequote([, ])dnl
-  if test "x$TCL_VER_IS81" = "xyes"
-  then
-    AC_MSG_RESULT(yes)
-    AC_DEFINE(HAVE_BUGGY_TCL_THREADS)
-  else
-    AC_MSG_RESULT(no)
-  fi
+  cat << 'EOF' >&2
+configure: warning:
+
+  Your Tcl library is compiled with threads.
+  There are known problems, but we will attempt to work around them.
+
+EOF
+  AC_DEFINE(HAVE_BUGGY_TCL_THREADS)
 else
   AC_MSG_RESULT(no)
 fi
@@ -791,6 +788,19 @@ then
   TCL_REQS="$TCLLIB/lib$TCLLIBFN"
   TCL_LIBS="-L$TCLLIB -l$TCLLIBFNS -lm"
 else
+
+  # set default make as static for unshared Tcl library
+  if test ! "$DEFAULT_MAKE" = "static"
+  then
+    cat << 'EOF' >&2
+configure: warning:
+
+  Your Tcl library is not a shared lib.
+  configure will now set default make type to static...
+
+EOF
+    DEFAULT_MAKE=static
+  fi
 
   # are we using a pre 7.4 Tcl version ?
 changequote(,)dnl
@@ -813,7 +823,7 @@ changequote([, ])dnl
 configure: warning:
 
   Your Tcl version ($TCL_VERSION) is older then 7.4.
-  There are known problems, but we will work around them.
+  There are known problems, but we will attempt to work around them.
 
 EOF
     TCL_REQS="libtcle.a"

@@ -2,29 +2,30 @@
               Eggheads Eggdrop 1.3 Bug Report Form
 =====================================================================
 
-By reporting bugs you help to improve the quality of eggdrop which
+By reporting bugs, you help to improve the quality of eggdrop which
 naturally results in a more stable bot. The more information you
 provide, the easier and more likely it is for the dev team to fix the
-bug. So please try to add everything you think is important, in
-addition to the information asked for in this form. Thanks.
+bug. Please add everything that you think is important, in addition
+to the information requested in this form. Thanks.
 
 Note: First check http://www.eggheads.org/bugs.html to see if the bug
       you want to report is already fixed.
 
 Instructions:
-1]  Please try to fill in as many fields as possible.
+1]  Please complete as many fields as possible.
 2]  Email the completed report to: eggheads@eggheads.org
 
 =====================================================================
-1) INFORMATION ABOUT YOUR USED EGGDROP
+1) INFORMATION ABOUT YOUR EGGDROP
 
 1.1) version:
      1.3.__
 
 1.2) make type:
-     ( ) dynamic  (default)
+     ( ) dynamic
      ( ) static
-     ( ) debugmem
+     ( ) debug
+     ( ) sdebug
 
 1.3) list of patches and/or modules you use:
 
@@ -32,36 +33,50 @@ Instructions:
 2) INFORMATION ABOUT TCL
 
 2.1) TCL library version:
+     ( ) 7.0
+     ( ) 7.1
+     ( ) 7.2
+     ( ) 7.3
+     ( ) 7.4
      ( ) 7.5
-     ( ) 7.6p2
+     ( ) 7.6
      ( ) 8.0
      ( ) 8.1
      ( ) 8.2
      ( ) Other - Which? ____
 
-2.2) TCLs used:
-     [ ] Alltools.tcl
-     [ ] sentinel.tcl
-     [ ] getops.tcl
-     [ ] others. Please mention all others:
+2.2) TCL library patchlevel: ___
+  eg; p1, p2, etc for Tcl versions up to 8.0p2
+      or the 3rd part of the version number for 8.0.3 and newer
+
+2.3) TCL scripts used:
+     [ ] alltools
+     [ ] sentinel
+     [ ] getops
+     [ ] others - Please mention all others:
 
 =====================================================================
 3) INFORMATION ABOUT THE OS
 
 3.1) OS type:
-     ( ) Linux
+     ( ) BSD/OS
+     ( ) Cygwin
      ( ) FreeBSD
+     ( ) HP-UX
+     ( ) IRIX
+     ( ) IRIX64
+     ( ) Linux
+     ( ) Lynx
+     ( ) NetBSD
+     ( ) Next
      ( ) OpenBSD
+     ( ) OSF
+     ( ) QNX
      ( ) Solaris
      ( ) Sun
-     ( ) Hp-UX
-     ( ) AIX
-     ( ) OSF1
-     ( ) IRIX
      ( ) Other - Which? _____________
 
-3.2) OS Version/Release:
-     _____________
+3.2) OS Version/Release: _____________
 
 =====================================================================
 4) BUG DETAILS
@@ -84,10 +99,10 @@ Instructions:
 
 4.7) Other comments?
 
-4.8) For advanced users: If you compiled the bot using the debugmem
-     option and it dumped a "core" file when it crashed, it would be
-     *very* useful if you could paste gdb's output during the
-     following steps:
+4.8) For advanced users: If you compiled the bot using the debug or
+     sdebug options and it dumped a 'core' file when it crashed,
+     it would be *very* useful if you could paste gdb's output during
+     the following steps:
      First call gdb
          $ gdb eggdrop -c core
      and then enter 'bt' on gdb's command line:
@@ -97,5 +112,4 @@ Instructions:
 
 =====================================================================
 
-End of bug report form - Thank you for helping to improve the Eggdrop
-
+End of bug report form - Thank you for helping us improve Eggdrop.
