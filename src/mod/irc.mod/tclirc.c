@@ -1,7 +1,7 @@
 /*
  * tclirc.c -- part of irc.mod
  *
- * $Id: tclirc.c,v 1.33 2002/01/08 04:24:27 guppy Exp $
+ * $Id: tclirc.c,v 1.34 2002/03/27 03:57:38 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -729,7 +729,6 @@ static int tcl_nick2hand STDVAR
     }
     chan = chan->next;
   }
-  Tcl_AppendResult(irp, "*", NULL);
   return TCL_OK;
 }
 
