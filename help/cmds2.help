@@ -411,8 +411,8 @@ See also: whom
 
    For bots, there are additional flags seen under the "BOTATTR:" section.
    Valid botflags include:
-      %bs%b - passive share (bot is sharing user records, aggressively)
-      %bp%b - agressive share (bot is sharing user records, passively)
+      %bs%b - share aggressively (SEND userfile to a passive bot)
+      %bp%b - share passively (ACCEPT userfile from an aggressive bot)
       %bg%b - global share (bot is sharing all channels)
       %bh%b - hub (bot is autolinked at highest priority)
       %ba%b - alternate (bot is autolinked if no hub bots can be linked)
