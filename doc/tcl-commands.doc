@@ -1,4 +1,4 @@
-$Id: tcl-commands.doc,v 1.116 2004/08/24 02:37:06 wcc Exp $
+$Id: tcl-commands.doc,v 1.117 2005/01/03 20:01:43 paladin Exp $
 
 Eggdrop Tcl Commands
 Last revised: August 02, 2004
@@ -2274,4 +2274,4 @@ marked with vertical bars (|) on the left.
      words)
     _____________________________________________________________________
 
-  Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004 Eggheads Development Team
+  Copyright (C) 1999 - 2005 Eggheads Development Team

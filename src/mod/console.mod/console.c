@@ -3,10 +3,10 @@
  *   saved console settings based on console.tcl
  *   by cmwagner/billyjoe/D. Senso
  *
- * $Id: console.c,v 1.31 2004/06/14 01:14:06 wcc Exp $
+ * $Id: console.c,v 1.32 2005/01/03 20:01:45 paladin Exp $
  */
 /*
- * Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004 Eggheads Development Team
+ * Copyright (C) 1999 - 2005 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

@@ -1,4 +1,4 @@
-$Id: MODULES,v 1.30 2004/07/25 03:56:58 wcc Exp $
+$Id: MODULES,v 1.31 2005/01/03 20:01:43 paladin Exp $
 
 Eggdrop Module Information
 Last revised: March 04, 2003
@@ -393,4 +393,4 @@ Last revised: March 04, 2003
      which version Eggdrop the module is written for.
     _____________________________________________________________________
 
-  Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004 Eggheads Development Team
+  Copyright (C) 1999 - 2005 Eggheads Development Team

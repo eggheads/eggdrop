@@ -1,11 +1,11 @@
 /*
  * modvals.h
  *
- * $Id: modvals.h,v 1.27 2004/07/25 11:17:34 wcc Exp $
+ * $Id: modvals.h,v 1.28 2005/01/03 20:01:45 paladin Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004 Eggheads Development Team
+ * Copyright (C) 1999 - 2005 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

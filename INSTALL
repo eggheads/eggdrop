@@ -1,4 +1,4 @@
-$Id: INSTALL,v 1.25 2004/08/08 18:16:59 wcc Exp $
+$Id: INSTALL,v 1.26 2005/01/03 20:01:42 paladin Exp $
 
 Compilation and Installation of Eggdrop
 Last revised: July 24, 2004
@@ -149,4 +149,4 @@ Last revised: July 24, 2004
     _____________________________________________________________________
 
   Copyright (C) 1997 Robey Pointer
-  Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004 Eggheads Development Team
+  Copyright (C) 1999 - 2005 Eggheads Development Team

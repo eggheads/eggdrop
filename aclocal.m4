@@ -1,6 +1,6 @@
 dnl aclocal.m4: macros autoconf uses when building configure from configure.ac
 dnl
-dnl Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004 Eggheads Development Team
+dnl Copyright (C) 1999 - 2005 Eggheads Development Team
 dnl
 dnl This program is free software; you can redistribute it and/or
 dnl modify it under the terms of the GNU General Public License
@@ -16,7 +16,7 @@ dnl You should have received a copy of the GNU General Public License
 dnl along with this program; if not, write to the Free Software
 dnl Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 dnl
-dnl $Id: aclocal.m4,v 1.95 2004/08/21 00:16:55 wcc Exp $
+dnl $Id: aclocal.m4,v 1.96 2005/01/03 20:01:42 paladin Exp $
 dnl
 
 

@@ -2,10 +2,10 @@
  * inet_aton.h
  *   prototypes for inet_aton.c
  *
- * $Id: inet_aton.h,v 1.10 2004/06/14 01:14:06 wcc Exp $
+ * $Id: inet_aton.h,v 1.11 2005/01/03 20:01:45 paladin Exp $
  */
 /*
- * Copyright (C) 2000, 2001, 2002, 2003, 2004 Eggheads Development Team
+ * Copyright (C) 2000 - 2005 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

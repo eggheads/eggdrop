@@ -1,11 +1,11 @@
 /*
  * userchan.c -- part of channels.mod
  *
- * $Id: userchan.c,v 1.45 2004/07/02 21:02:02 wcc Exp $
+ * $Id: userchan.c,v 1.46 2005/01/03 20:01:45 paladin Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004 Eggheads Development Team
+ * Copyright (C) 1999 - 2005 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

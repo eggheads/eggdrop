@@ -1,4 +1,4 @@
-$Id: mod.server,v 1.33 2004/09/02 22:49:25 wcc Exp $
+$Id: mod.server,v 1.34 2005/01/03 20:01:44 paladin Exp $
 
 Server Module
 Last revised: February 12, 2003
@@ -225,5 +225,5 @@ Last revised: February 12, 2003
 
     _____________________________________________________________________
 
-  Copyright (C) 2000, 2001, 2002, 2003, 2004 Eggheads Development Team
+  Copyright (C) 2000 - 2005 Eggheads Development Team
 

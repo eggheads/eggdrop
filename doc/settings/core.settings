@@ -1,4 +1,4 @@
-$Id: core.settings,v 1.30 2004/07/25 03:56:59 wcc Exp $
+$Id: core.settings,v 1.31 2005/01/03 20:01:43 paladin Exp $
 
 Eggdrop Core Settings
 Last revised: April 17, 2003
@@ -543,4 +543,4 @@ Last revised: April 17, 2003
         source scripts/action.fix.tcl
     _____________________________________________________________________
 
-  Copyright (C) 2000, 2001, 2002, 2003, 2004 Eggheads Development Team
+  Copyright (C) 2000 - 2005 Eggheads Development Team

@@ -4,10 +4,10 @@
  *
  * Written by Fabian Knittel <fknittel@gmx.de>
  *
- * $Id: filedb3.h,v 1.18 2004/06/15 07:20:55 wcc Exp $
+ * $Id: filedb3.h,v 1.19 2005/01/03 20:01:46 paladin Exp $
  */
 /*
- * Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004 Eggheads Development Team
+ * Copyright (C) 1999 - 2005 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
