@@ -14,8 +14,9 @@
 # Tothwolf  06Oct1999: optimized completely
 # krbb      09Jun2000: added missing return to randstring
 # Tothwolf  18Jun2000: added ispermowner
+# Sup       02Apr2001: added matchbotattr
 #
-# $Id: alltools.tcl,v 1.5 2000/06/20 19:54:53 fabian Exp $
+# $Id: alltools.tcl,v 1.6 2001/04/02 22:50:31 guppy Exp $
 #
 ########################################
 # Descriptions of avaliable commands:
@@ -354,4 +355,13 @@ proc ispermowner {hand} {
     return 1
   }
   return 0
+}
+
+proc matchbotattr {bot flags} {
+  foreach flag [split $flags {}] {
+    if {[lsearch -exact [split [botattr $bot] {}] $flag] == -1} {
+      return 0
+    }
+  }
+  return 1
 }
