@@ -2,7 +2,7 @@
  * flags.c -- handles:
  *   all the flag matching/conversion functions in one neat package :)
  *
- * $Id: flags.c,v 1.19 2002/01/02 03:46:35 guppy Exp $
+ * $Id: flags.c,v 1.20 2002/06/13 20:43:07 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -256,8 +256,12 @@ int sanity_check(int atr)
     atr &= ~(USER_PARTY | USER_MASTER | USER_COMMON | USER_OWNER);
   if ((atr & USER_OP) && (atr & USER_DEOP))
     atr &= ~(USER_OP | USER_DEOP);
+  if ((atr & USER_HALFOP) && (atr & USER_DEHALFOP))
+    atr &= ~(USER_HALFOP | USER_DEHALFOP);
   if ((atr & USER_AUTOOP) && (atr & USER_DEOP))
     atr &= ~(USER_AUTOOP | USER_DEOP);
+  if ((atr & USER_AUTOHALFOP) && (atr & USER_DEHALFOP))
+    atr &= ~(USER_AUTOHALFOP | USER_DEHALFOP);
   if ((atr & USER_VOICE) && (atr & USER_QUIET))
     atr &= ~(USER_VOICE | USER_QUIET);
   if ((atr & USER_GVOICE) && (atr & USER_QUIET))
@@ -283,8 +287,12 @@ int chan_sanity_check(int chatr, int atr)
 {
   if ((chatr & USER_OP) && (chatr & USER_DEOP))
     chatr &= ~(USER_OP | USER_DEOP);
+  if ((chatr & USER_HALFOP) && (chatr & USER_DEHALFOP))
+    chatr &= ~(USER_HALFOP | USER_DEHALFOP);
   if ((chatr & USER_AUTOOP) && (chatr & USER_DEOP))
     chatr &= ~(USER_AUTOOP | USER_DEOP);
+  if ((chatr & USER_AUTOHALFOP) && (chatr & USER_DEHALFOP))
+    chatr &= ~(USER_AUTOHALFOP | USER_DEHALFOP);
   if ((chatr & USER_VOICE) && (chatr & USER_QUIET))
     chatr &= ~(USER_VOICE | USER_QUIET);
   if ((chatr & USER_GVOICE) && (chatr & USER_QUIET))
@@ -303,10 +311,11 @@ int chan_sanity_check(int chatr, int atr)
 
 /* Get icon symbol for a user (depending on access level)
  *
- * (*)owner on any channel
- * (+)master on any channel
+ * (*) owner on any channel
+ * (+) master on any channel
  * (%) botnet master
  * (@) op on any channel
+ * (^) halfop on any channel
  * (-) other
  */
 char geticon(int idx)
@@ -324,6 +333,8 @@ char geticon(int idx)
     return '%';
   if (chan_op(fr))
     return '@';
+  if (chan_halfop(fr))
+    return '^';
   return '-';
 }
 

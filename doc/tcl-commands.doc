@@ -604,6 +604,11 @@ marked with vertical bars (|) on the left.
       if no channel is specified); 0 otherwise
     Module: irc
 
+|  botishalfop [channel]
+|    Returns: 1 if the bot has halfops on the specified channel (or any channel
+|      if no channel is specified); 0 otherwise
+|    Module: irc
+
   botisvoice [channel]
     Returns: 1 if the bot has a voice on the specified channel (or any
       channel if no channel is specified); 0 otherwise
@@ -619,8 +624,18 @@ marked with vertical bars (|) on the left.
       any channel if no channel name is specified) and has ops; 0 otherwise
     Module: irc
 
+  ishalfop <nickname> [channel]
+    Returns: 1 if someone by the specified nickname is on the channel (or
+      any channel if no channel name is specified) and has halfops; 0 otherwise
+    Module: irc
+
   wasop <nickname> <channel>
     Returns: 1 if someone that just got opped/deopped in the chan had op
+      before the modechange; 0 otherwise
+    Module: irc
+
+  washalfop <nickname> <channel>
+    Returns: 1 if someone that just got opped/deopped in the chan had halfop
       before the modechange; 0 otherwise
     Module: irc
 

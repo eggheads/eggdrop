@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  *
- * $Id: chan.c,v 1.86 2002/05/19 15:59:54 guppy Exp $
+ * $Id: chan.c,v 1.87 2002/06/13 20:43:08 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -266,7 +266,7 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
     case FLOOD_NOTICE:
     case FLOOD_CTCP:
       /* Flooding chan! either by public or notice */
-      if (me_op(chan) && !chan_sentkick(m)) {
+      if (!chan_sentkick(m) && (me_op(chan) || (me_halfop(chan) && !chan_hasop(m)))) {
 	putlog(LOG_MODES, chan->dname, IRC_FLOODKICK, floodnick);
 	dprintf(DP_MODE, "KICK %s %s :%s\n", chan->name, floodnick,
 		CHAN_FLOOD);
@@ -280,7 +280,7 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
 	   u_match_mask(chan->exempts, from)))
 	return 1;
       simple_sprintf(h, "*!*@%s", p);
-      if (!isbanned(chan, h) && me_op(chan)) {
+      if (!isbanned(chan, h) && (me_op(chan) || me_halfop(chan))) {
 	check_exemptlist(chan, from);
 	do_mask(chan, chan->channel.ban, h, 'b');
       }
@@ -293,26 +293,28 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
 	putlog(LOG_MISC | LOG_JOIN, chan->dname, IRC_FLOODIGNORE4, p);
       strcpy(ftype + 4, " flood");
       u_addban(chan, h, botnetnick, ftype, now + (60 * ban_time), 0);
-      if (!channel_enforcebans(chan) && me_op(chan)) {
+      if (!channel_enforcebans(chan) && (me_op(chan) || me_halfop(chan))) {
 	  char s[UHOSTLEN];
 	  for (m = chan->channel.member; m && m->nick[0]; m = m->next) {	  
 	    sprintf(s, "%s!%s", m->nick, m->userhost);
 	    if (wild_match(h, s) &&
 		(m->joined >= chan->floodtime[which]) &&
-		   !chan_sentkick(m) && !match_my_nick(m->nick)) {
+		!chan_sentkick(m) && !match_my_nick(m->nick) && (me_op(chan) ||
+		(me_halfop(chan) && !chan_hasop(m)))) {
 	      m->flags |= SENTKICK;
 	      if (which == FLOOD_JOIN)
 	      dprintf(DP_SERVER, "KICK %s %s :%s\n", chan->name, m->nick,
 		      IRC_JOIN_FLOOD);
 	      else
 	        dprintf(DP_SERVER, "KICK %s %s :%s\n", chan->name, m->nick,
-		      IRC_NICK_FLOOD);
+		        IRC_NICK_FLOOD);
 	    }
 	  }
 	}
       return 1;
     case FLOOD_KICK:
-      if (me_op(chan) && !chan_sentkick(m)) {
+      if ((me_op(chan) || (me_halfop(chan) && !chan_hasop(m))) &&
+	  !chan_sentkick(m)) {
 	putlog(LOG_MODES, chan->dname, "Kicking %s, for mass kick.", floodnick);
 	dprintf(DP_MODE, "KICK %s %s :%s\n", chan->name, floodnick,
 		IRC_MASSKICK);
@@ -320,7 +322,8 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
       }
     return 1;
     case FLOOD_DEOP:
-      if (me_op(chan) && !chan_sentkick(m)) {
+      if ((me_op(chan) || (me_halfop(chan) && !chan_hasop(m))) &&
+	  !chan_sentkick(m)) {
 	putlog(LOG_MODES, chan->dname,
 	       CHAN_MASSDEOP, chan->dname, from);
 	dprintf(DP_MODE, "KICK %s %s :%s\n",
@@ -356,7 +359,7 @@ static void kick_all(struct chanset_t *chan, char *hostmask, char *comment, int 
   struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
   int k, l, flushed;
 
-  if (!me_op(chan))
+  if (!me_op(chan) && !me_halfop(chan))
     return;
   k = 0;
   flushed = 0;
@@ -364,7 +367,8 @@ static void kick_all(struct chanset_t *chan, char *hostmask, char *comment, int 
   for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
     sprintf(s, "%s!%s", m->nick, m->userhost);
     get_user_flagrec(m->user ? m->user : get_user_by_host(s), &fr, chan->dname);
-    if (wild_match(hostmask, s) && !chan_sentkick(m) &&
+    if ((me_op(chan) || (me_halfop(chan) && !chan_hasop(m))) &&
+	wild_match(hostmask, s) && !chan_sentkick(m) &&
 	!match_my_nick(m->nick) && !chan_issplit(m) &&
 	!glob_friend(fr) && !chan_friend(fr) &&
 	!(use_exempts &&
@@ -489,7 +493,7 @@ static void enforce_bans(struct chanset_t *chan)
   char		 me[UHOSTLEN];
   masklist	*b;
 
-  if (!me_op(chan))
+  if (!me_op(chan) && !me_halfop(chan))
     return;			/* Can't do it :( */
   simple_sprintf(me, "%s!%s", botname, botuserhost);
   /* Go through all bans, kicking the users. */
@@ -578,7 +582,7 @@ static void recheck_invites(struct chanset_t *chan)
 static void resetmasks(struct chanset_t *chan, masklist *m, maskrec *mrec,
 		       maskrec *global_masks, char mode)
 {
-  if (!me_op(chan))
+  if (!me_op(chan) && !me_halfop(chan))
     return;                     /* Can't do it */
 
   /* Remove masks we didn't put there */
@@ -608,7 +612,7 @@ static void check_this_ban(struct chanset_t *chan, char *banmask, int sticky)
   memberlist *m;
   char user[UHOSTLEN];
 
-  if (!me_op(chan))
+  if (!me_op(chan) && !me_halfop(chan))
     return;
   for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
     sprintf(user, "%s!%s", m->nick, m->userhost);
@@ -706,26 +710,26 @@ static void check_this_member(struct chanset_t *chan, char *nick, struct flag_re
   char s[UHOSTLEN], *p;
 
   m = ismember(chan, nick);
-  if (!m || match_my_nick(nick) || !me_op(chan))
+  if (!m || match_my_nick(nick) || (!me_op(chan) && !me_halfop(chan)))
     return;
 
   sprintf(s, "%s!%s", m->nick, m->userhost);
-  /* if channel user is current a chanop */
-  if (chan_hasop(m)) {
-  /* if user is channel deop */
-    if (chan_deop(*fr) ||
-	/* OR global deop and NOT channel op */
-	(glob_deop(*fr) && !chan_op(*fr))) {
-      /* de-op! */
-      add_mode(chan, '-', 'o', m->nick);
-      /* if channel mode is bitch */
-    } else if (channel_bitch(chan) &&
-	       /* AND the user isnt a channel op */
-	       (!chan_op(*fr) &&
-		/* AND the user isnt a global op, (or IS a chan deop) */
-		!(glob_op(*fr) && !chan_deop(*fr)))) {
-      /* de-op! mmmbop! */
-      add_mode(chan, '-', 'o', m->nick);
+  if (me_op(chan)) {
+    if (chan_hasop(m)) {
+      if (chan_deop(*fr) || (glob_deop(*fr) && !chan_op(*fr))) {
+        add_mode(chan, '-', 'o', m->nick);
+      } else if (channel_bitch(chan) && (!chan_op(*fr) && !(glob_op(*fr) &&
+	         !chan_deop(*fr)))) {
+        add_mode(chan, '-', 'o', m->nick);
+      }
+    }
+    if (chan_hashalfop(m)) {
+      if (chan_dehalfop(*fr) || (glob_dehalfop(*fr) && !chan_halfop(*fr))) {
+        add_mode(chan, '-', 'h', m->nick);
+      } else if (channel_bitch(chan) && (!chan_halfop(*fr) &&
+	         !(glob_halfop(*fr) && !chan_dehalfop(*fr)))) {
+        add_mode(chan, '-', 'h', m->nick);
+      }
     }
   }
   /* check vs invites */
@@ -745,7 +749,8 @@ static void check_this_member(struct chanset_t *chan, char *nick, struct flag_re
       /* ^ will use the ban comment */
     }
     /* are they +k ? */
-    if (!chan_sentkick(m) && (chan_kick(*fr) || glob_kick(*fr))) {
+    if (!chan_sentkick(m) && (chan_kick(*fr) || glob_kick(*fr)) &&
+	(me_op(chan) || (me_halfop(chan) && !chan_hasop(m)))) {
       check_exemptlist(chan, s);
       quickban(chan, m->userhost);
       p = get_user(&USERENTRY_COMMENT, m->user);
@@ -754,25 +759,28 @@ static void check_this_member(struct chanset_t *chan, char *nick, struct flag_re
       m->flags |= SENTKICK;
     }
   }
-  /* now lets look at de-op'd ppl */
-  if (!chan_hasop(m) &&
-      /* if they're an op, channel or global (without channel +d) */
-      (chan_op(*fr) || (glob_op(*fr) && !chan_deop(*fr))) &&
-      /* and the channel is op on join, or they are auto-opped */
-      (channel_autoop(chan) || (glob_autoop(*fr) || chan_autoop(*fr)))) {
-    /* op them! */
+  if (!chan_hasop(m) && me_op(chan) && (chan_op(*fr) || (glob_op(*fr) &&
+      !chan_deop(*fr))) && (channel_autoop(chan) || (glob_autoop(*fr) ||
+      chan_autoop(*fr)))) {
     add_mode(chan, '+', 'o', m->nick);
-    /* otherwise, lets check +v stuff if the llamas want it */
-  } else if (!chan_hasvoice(m) && !chan_hasop(m)) {
-    if ((channel_autovoice(chan) && !chan_quiet(*fr) &&
-	 (chan_voice(*fr) || glob_voice(*fr))) ||
-	  (!chan_quiet(*fr) && (glob_gvoice(*fr) || chan_gvoice(*fr)))) {
+  } else if (me_op(chan) && !chan_hashalfop(m) && !chan_hasop(m)) {
+    if ((channel_autohalfop(chan) && !chan_dehalfop(*fr) &&
+	(chan_halfop(*fr) || glob_halfop(*fr))) || (!chan_dehalfop(*fr) &&
+	(glob_autohalfop(*fr) || chan_autohalfop(*fr)))) {
+      add_mode(chan, '+', 'h', m->nick);
+    }
+    if (chan_hashalfop(m) && (chan_dehalfop(*fr) || (glob_dehalfop(*fr) &&
+	!chan_halfop(*fr)))) {
+      add_mode(chan, '-', 'h', m->nick);
+    }
+  } else if (!chan_hasvoice(m) && !chan_hasop(m) && !chan_hashalfop(m)) {
+    if ((channel_autovoice(chan) && !chan_quiet(*fr) && (chan_voice(*fr) ||
+	glob_voice(*fr))) || (!chan_quiet(*fr) && (glob_gvoice(*fr) ||
+	chan_gvoice(*fr)))) {
       add_mode(chan, '+', 'v', m->nick);
     }
-    /* do they have a voice on the channel */
-    if (chan_hasvoice(m) &&
-	/* do they have the +q & no +v */
-	(chan_quiet(*fr) || (glob_quiet(*fr) && !chan_voice(*fr)))) {
+    if (chan_hasvoice(m) && (chan_quiet(*fr) || (glob_quiet(*fr) &&
+	!chan_voice(*fr)))) {
       add_mode(chan, '-', 'v', m->nick);
     }
   }
@@ -970,11 +978,17 @@ static int got352or4(struct chanset_t *chan, char *user, char *host,
     m->flags |= (CHANOP | WASOP);	/* Yes, so flag in my table */
   else
     m->flags &= ~(CHANOP | WASOP);
+/*  Some ircds use % to mean things other than halfop.
+ *  if (strchr(flags, '%') != NULL)
+ *    m->flags |= (CHANHALFOP | WASHALFOP);
+ *  else
+ *   m->flags &= ~(CHANHALFOP | WASHALFOP);
+ */
   if (strchr(flags, '+') != NULL)	/* Flags say he's voiced? */
     m->flags |= CHANVOICE;	/* Yes */
   else
     m->flags &= ~CHANVOICE;
-  if (!(m->flags & (CHANVOICE | CHANOP)))
+  if (!(m->flags & (CHANVOICE | CHANOP | CHANHALFOP)))
     m->flags |= STOPWHO;
   if (match_my_nick(nick) && any_ops(chan) && !me_op(chan)) {
     check_tcl_need(chan->dname, "op");
@@ -1002,6 +1016,48 @@ static int got352(char *from, char *msg)
     nick = newsplit(&msg);	/* Grab the nick */
     flags = newsplit(&msg);	/* Grab the flags */
     got352or4(chan, user, host, nick, flags);
+  }
+  return 0;
+}
+
+/* got a 353: names info!
+ */
+static int got353(char *from, char *msg)
+{
+  char *nick, *chname;
+  struct chanset_t *chan;
+  memberlist *m;
+
+  newsplit(&msg); /* Skip nick */
+  newsplit(&msg); /* Skip flag */
+  chname = newsplit(&msg); /* Grab the chan */
+  chan = findchan(chname); /* Are we on the channel? */
+  if (!chan)
+    return 0;
+  fixcolon(msg);
+  while ((nick = newsplit(&msg))[0]) {
+    m = ismember(chan, nick); /* In my channel list? */
+    if (!m) {
+      m = newmember(chan);	/* Get a new channel entry */
+      m->joined = m->split = m->delay = 0L;	/* Don't know when he joined */
+      m->flags = 0; /* No flags for now */
+      m->last = now; /* Last time I saw him */
+    }
+    strcpy(m->nick, nick); /* Store the nick in list */
+    m->userhost[0] = 0; /* Store a zero-length userhost for the time being */
+    m->user = NULL; /* We'll get a handle in got352or4() */
+    if (strchr(nick, '@') != NULL)
+      m->flags |= (CHANOP | WASOP);
+    else
+      m->flags &= ~(CHANOP | WASOP);
+    if (strchr(nick, '%') != NULL)
+      m->flags |= (CHANHALFOP | WASHALFOP);
+    else
+      m->flags &= ~(CHANHALFOP | WASHALFOP);
+    if (strchr(nick, '+') != NULL)
+      m->flags |= CHANVOICE;
+    else
+      m->flags &= ~CHANVOICE;
   }
   return 0;
 }
@@ -1049,7 +1105,7 @@ static int got315(char *from, char *msg)
   chan->status &= ~CHAN_PEND;
   /* Am *I* on the channel now? if not, well d0h. */
   if (!ismember(chan, botname)) {
-    putlog(LOG_MISC | LOG_JOIN, chan->dname, "Oops, I'm not really on %s",
+    putlog(LOG_MISC | LOG_JOIN, chan->dname, "Oops, I'm not really on %s.",
 	   chan->dname);
     clear_channel(chan, 1);
     chan->status &= ~CHAN_ACTIVE;
@@ -1642,7 +1698,7 @@ static int gotjoin(char *from, char *chname)
 	m->split = 0;
 	m->last = now;
 	m->delay = 0L;
-        m->flags = (chan_hasop(m) ? WASOP : 0);
+	m->flags = (chan_hasop(m) ? WASOP : 0);
 	m->user = u;
 	set_handle_laston(chan->dname, u, now);
 	m->flags |= STOPWHO;
@@ -1657,7 +1713,7 @@ static int gotjoin(char *from, char *chname)
 	m->flags = 0;
 	m->last = now;
 	m->delay = 0L;
-        strcpy(m->nick, nick);
+	strcpy(m->nick, nick);
 	strcpy(m->userhost, uhost);
 	m->user = u;
 	m->flags |= STOPWHO;
@@ -1742,7 +1798,7 @@ static int gotjoin(char *from, char *chname)
 	}
       }
       /* ok, the op-on-join,etc, tests...first only both if Im opped */
-      if (me_op(chan)) {
+      if (me_op(chan) || me_halfop(chan)) {
 	/* Check for and reset exempts and invites.
 	 *
 	 * This will require further checking to account for when to use the
@@ -1756,7 +1812,8 @@ static int gotjoin(char *from, char *chname)
 	       u_match_mask(chan->exempts, from)))) {
           if (channel_enforcebans(chan) && !chan_op(fr) && !glob_op(fr) &&
               !glob_friend(fr) && !chan_friend(fr) && !chan_sentkick(m) &&
-              !(use_exempts && isexempted(chan, from))) {
+              !(use_exempts && isexempted(chan, from)) && (me_op(chan) ||
+	      (me_halfop(chan) && !chan_hasop(m)))) {
             for (b = chan->channel.ban; b->mask[0]; b = b->next) {
               if (wild_match(b->mask, from)) {
                 dprintf(DP_SERVER, "KICK %s %s :%s\n", chname, m->nick,
@@ -1771,7 +1828,8 @@ static int gotjoin(char *from, char *chname)
 	      u_match_mask(chan->bans, from)) {
 	    refresh_ban_kick(chan, from, nick);
 	  /* Likewise for kick'ees */
-	  } else if (!chan_sentkick(m) && (glob_kick(fr) || chan_kick(fr))) {
+	  } else if (!chan_sentkick(m) && (glob_kick(fr) || chan_kick(fr)) &&
+		     (me_op(chan) || (me_halfop(chan) && !chan_hasop(m)))) {
 	    check_exemptlist(chan, from);
 	    quickban(chan, from);
 	    p = get_user(&USERENTRY_COMMENT, m->user);
@@ -1780,20 +1838,26 @@ static int gotjoin(char *from, char *chname)
 	    m->flags |= SENTKICK;
 	  }
 	}
-	/* Are they a chan op, or global op without chan deop? */
 	if ((chan_op(fr) || (glob_op(fr) && !chan_deop(fr))) &&
-	   /* ... and is it op-on-join or is the use marked auto-op? */
 	    (channel_autoop(chan) || glob_autoop(fr) || chan_autoop(fr))) {
-	  /* Yes! do the honors. */
 	  if (!chan->aop_min)
 	    add_mode(chan, '+', 'o', nick);
 	  else {
             set_delay(chan, nick);
             m->flags |= SENTOP;
 	  }
-	} else if ((channel_autovoice(chan) &&
-		    (chan_voice(fr) || (glob_voice(fr) && !chan_quiet(fr)))) ||
-                   ((glob_gvoice(fr) || chan_gvoice(fr)) && !chan_quiet(fr))) {
+	} else if ((chan_halfop(fr) || (glob_halfop(fr) && !chan_dehalfop(fr))) &&
+		   (channel_autohalfop(chan) || glob_autohalfop(fr) ||
+		   chan_autohalfop(fr))) {
+           if (!chan->aop_min)
+             add_mode(chan, '+', 'h', nick);
+           else {
+             set_delay(chan, nick);
+             m->flags |= SENTHALFOP;
+           }
+	} else if ((channel_autovoice(chan) && (chan_voice(fr) ||
+		   (glob_voice(fr) && !chan_quiet(fr)))) || ((glob_gvoice(fr) ||
+		   chan_gvoice(fr)) && !chan_quiet(fr))) {
            if (!chan->aop_min)
              add_mode(chan, '+', 'v', nick);
            else {
@@ -1981,10 +2045,12 @@ static int gotnick(char *from, char *msg)
       }
       /* don't fill the serverqueue with modes or kicks in a nickflood */
       if (chan_sentkick(m) || chan_sentdeop(m) || chan_sentop(m) ||
-	  chan_sentdevoice(m) || chan_sentvoice(m))
+	  chan_sentdehalfop(m) || chan_senthalfop(m) || chan_sentdevoice(m) ||
+	  chan_sentvoice(m))
 	m->flags |= STOPCHECK;
       /* Any pending kick or mode to the old nick is lost. */
-	m->flags &= ~(SENTKICK | SENTDEOP | SENTOP | SENTVOICE | SENTDEVOICE);
+	m->flags &= ~(SENTKICK | SENTDEOP | SENTOP | SENTDEHALFOP | SENTHALFOP |
+		      SENTVOICE | SENTDEVOICE);
       /* nick-ban or nick is +k or something? */
       if (!chan_stopcheck(m)) {
 	get_user_flagrec(m->user ? m->user : get_user_by_host(s1), &fr, chan->dname);
@@ -2121,8 +2187,8 @@ static int gotmsg(char *from, char *msg)
     get_user_flagrec(u, &fr, chan->dname);
     m = ismember(chan, nick);
     /* Discard -- kick user if it was to the channel */
-    if (me_op(chan) && m && !chan_sentkick(m) &&
-	!chan_friend(fr) && !glob_friend(fr) &&
+    if ((me_op(chan) || (me_halfop(chan) && !chan_hasop(m))) && m &&
+	!chan_sentkick(m) && !chan_friend(fr) && !glob_friend(fr) &&
 	!(channel_dontkickops(chan) &&
 	  (chan_op(fr) || (glob_op(fr) && !chan_deop(fr)))) &&	/* arthur2 */
 	!(use_exempts && ban_fun &&
@@ -2368,6 +2434,7 @@ static cmd_t irc_raw[] =
 {
   {"324",	"",	(Function) got324,	"irc:324"},
   {"352",	"",	(Function) got352,	"irc:352"},
+  {"353",	"",	(Function) got353,	"irc:353"},
   {"354",	"",	(Function) got354,	"irc:354"},
   {"315",	"",	(Function) got315,	"irc:315"},
   {"367",	"",	(Function) got367,	"irc:367"},

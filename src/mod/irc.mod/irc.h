@@ -1,7 +1,7 @@
 /*
  * irc.h -- part of irc.mod
  *
- * $Id: irc.h,v 1.17 2002/01/02 03:46:39 guppy Exp $
+ * $Id: irc.h,v 1.18 2002/06/13 20:43:08 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -49,6 +49,7 @@ static void check_tcl_signtopcnick(char *, char *, struct userrec *u, char *,
 static void check_tcl_pubm(char *, char *, char *, char *);
 static int check_tcl_pub(char *, char *, char *, char *);
 static int me_op(struct chanset_t *);
+static int me_halfop(struct chanset_t *);
 static int any_ops(struct chanset_t *);
 static int hand_on_chan(struct chanset_t *, struct userrec *);
 static char *getchanmode(struct chanset_t *);
@@ -73,6 +74,8 @@ static int detect_chan_flood(char *, char *, char *, struct chanset_t *, int,
 static void newmask(masklist *, char *, char *);
 static char *quickban(struct chanset_t *, char *);
 static void got_op(struct chanset_t *chan, char *nick, char *from, char *who,
+ 		   struct userrec *opu, struct flag_record *opper);
+static void got_halfop(struct chanset_t *chan, char *nick, char *from, char *who,
  		   struct userrec *opu, struct flag_record *opper);
 static int killmember(struct chanset_t *chan, char *nick);
 static void check_lonely_channel(struct chanset_t *chan);
@@ -108,6 +111,7 @@ static int gotmode(char *, char *);
 /* 20 - 23 */
 /* check_this_ban is here. */
 /* check_this_user is here. */
+#define me_halfop ((int(*)(struct chanset_t *))irc_funcs[22])
 
 #endif				/* MAKING_IRC */
 

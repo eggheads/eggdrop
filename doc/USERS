@@ -32,15 +32,21 @@ Last revised: March 07, 2002
 
     o  (op)             user has op access to all of the bot's channels.
 
-    v  (voice)          user gets +v automatically on +autovoice channels.
+    y  (auto-halfop)    user is halfopped automatically upon joining a channel.
+
+    l  (halfop)         user has halfop access to all of the bot's channels.
 
     g  (auto-voice)     user is voiced automatically upon joining a channel.
+
+    v  (voice)          user gets +v automatically on +autovoice channels.
 
     f  (friend)         user is not punished for flooding, etc.
 
     p  (party)          user has access to the partyline.
 
     q  (quiet)          user does not get voice on +autovoice channels.
+
+    r  (dehalfop)       user cannot gain halfops on any of the bot's channels.
 
     d  (deop)           user cannot gain ops on any of the bot's channels.
 
@@ -61,6 +67,8 @@ Last revised: March 07, 2002
     b  (bot)            user is a bot.
 
     w  (wasop-test)     user needs wasop test for +stopnethack procedure.
+
+    z  (washalfop-test) user needs washalfop test for +stopnethack procedure.
 
     e  (nethack-exempt) user is exempted from stopnethack protection.
 

@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: tcl-commands.html,v 1.13 2002/06/06 03:11:00 wcc Exp $ -->
+<!-- $Id: tcl-commands.html,v 1.14 2002/06/13 20:43:07 wcc Exp $ -->
 
 <html>
   <head>
@@ -1310,6 +1310,16 @@
           <p><strong>Module:</strong> irc</p>
         </dd>
 
+        <dt><strong>* botishalfop [channel]</strong></dt>
+
+        <dd>
+          <p><strong>Returns:</strong> 1 if the bot has halfops on the
+          specified channel (or any channel if no channel is specified); 0
+          otherwise</p>
+
+          <p><strong>Module:</strong> irc</p>
+        </dd>
+
         <dt><strong>botisvoice [channel]</strong></dt>
 
         <dd>
@@ -1340,11 +1350,31 @@
           <p><strong>Module:</strong> irc</p>
         </dd>
 
+        <dt><strong>* ishalfop &lt;nickname&gt; [channel]</strong></dt>
+
+        <dd>
+          <p><strong>Returns:</strong> 1 if someone by the specified
+          nickname is on the channel (or any channel if no channel name is
+          specified) and has halfops; 0 otherwise</p>
+
+          <p><strong>Module:</strong> irc</p>
+        </dd>
+
         <dt><strong>wasop &lt;nickname&gt; &lt;channel&gt;</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> 1 if someone that just got
           opped/deopped in the chan had op before the modechange; 0
+          otherwise</p>
+
+          <p><strong>Module:</strong> irc</p>
+        </dd>
+
+        <dt><strong>* washalfop &lt;nickname&gt; &lt;channel&gt;</strong></dt>
+
+        <dd>
+          <p><strong>Returns:</strong> 1 if someone that just got
+          opped/deopped in the chan had halfop before the modechange; 0
           otherwise</p>
 
           <p><strong>Module:</strong> irc</p>

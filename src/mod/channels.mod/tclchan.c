@@ -1,7 +1,7 @@
 /*
  * tclchan.c -- part of channels.mod
  *
- * $Id: tclchan.c,v 1.59 2002/06/12 21:45:19 wcc Exp $
+ * $Id: tclchan.c,v 1.60 2002/06/13 20:43:08 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -756,6 +756,10 @@ static int tcl_channel_info(Tcl_Interp * irp, struct chanset_t *chan)
     Tcl_AppendElement(irp, "+autoop");
   else
     Tcl_AppendElement(irp, "-autoop");
+  if (chan->status & CHAN_AUTOHALFOP)
+    Tcl_AppendElement(irp, "+autohalfop");
+  else
+    Tcl_AppendElement(irp, "-autohalfop");
   if (chan->status & CHAN_BITCH)
     Tcl_AppendElement(irp, "+bitch");
   else
@@ -768,6 +772,10 @@ static int tcl_channel_info(Tcl_Interp * irp, struct chanset_t *chan)
     Tcl_AppendElement(irp, "+protectops");
   else
     Tcl_AppendElement(irp, "-protectops");
+  if (chan->status & CHAN_PROTECTHALFOPS)
+    Tcl_AppendElement(irp, "+protecthalfops");
+  else
+    Tcl_AppendElement(irp, "-protecthalfops");
   if (chan->status & CHAN_PROTECTFRIENDS)
     Tcl_AppendElement(irp, "+protectfriends");
   else
@@ -888,9 +896,11 @@ static int tcl_channel_get(Tcl_Interp * irp, struct chanset_t *chan, char *setti
   else if CHKFLAG_POS(CHAN_DYNAMICBANS,    "dynamicbans",    chan->status)
   else if CHKFLAG_NEG(CHAN_NOUSERBANS,     "userbans",       chan->status)
   else if CHKFLAG_POS(CHAN_OPONJOIN,       "autoop",         chan->status)
+  else if CHKFLAG_POS(CHAN_AUTOHALFOP,     "autohalfop",     chan->status)
   else if CHKFLAG_POS(CHAN_BITCH,          "bitch",          chan->status)
   else if CHKFLAG_POS(CHAN_GREET,          "greet",          chan->status)
   else if CHKFLAG_POS(CHAN_PROTECTOPS,     "protectops",     chan->status)
+  else if CHKFLAG_POS(CHAN_PROTECTHALFOPS, "protecthalfops", chan->status)
   else if CHKFLAG_POS(CHAN_PROTECTFRIENDS, "protectfriends", chan->status)
   else if CHKFLAG_POS(CHAN_DONTKICKOPS,    "dontkickops",    chan->status)
   else if CHKFLAG_POS(CHAN_INACTIVE,       "inactive",       chan->status)
@@ -1100,6 +1110,10 @@ static int tcl_channel_modify(Tcl_Interp * irp, struct chanset_t *chan,
       chan->status |= CHAN_OPONJOIN;
     else if (!strcmp(item[i], "-autoop"))
       chan->status &= ~CHAN_OPONJOIN;
+    else if (!strcmp(item[i], "+autohalfop"))
+      chan->status |= CHAN_AUTOHALFOP;
+    else if (!strcmp(item[i], "-autohalfop"))
+      chan->status &= ~CHAN_AUTOHALFOP;
     else if (!strcmp(item[i], "+bitch"))
       chan->status |= CHAN_BITCH;
     else if (!strcmp(item[i], "-bitch"))
@@ -1116,6 +1130,10 @@ static int tcl_channel_modify(Tcl_Interp * irp, struct chanset_t *chan,
       chan->status |= CHAN_PROTECTOPS;
     else if (!strcmp(item[i], "-protectops"))
       chan->status &= ~CHAN_PROTECTOPS;
+    else if (!strcmp(item[i], "+protecthalfops"))
+      chan->status |= CHAN_PROTECTHALFOPS;
+    else if (!strcmp(item[i], "-protecthalfops"))
+      chan->status &= ~CHAN_PROTECTHALFOPS;
     else if (!strcmp(item[i], "+protectfriends"))
       chan->status |= CHAN_PROTECTFRIENDS;
     else if (!strcmp(item[i], "-protectfriends"))
@@ -1306,14 +1324,14 @@ static int tcl_channel_modify(Tcl_Interp * irp, struct chanset_t *chan,
 					   chan->channel.key[0] ?
 					   chan->channel.key : chan->key_prot);
     }
-    if ((old_status ^ chan->status) &
-	(CHAN_ENFORCEBANS | CHAN_OPONJOIN | CHAN_BITCH | CHAN_AUTOVOICE)) {
+    if ((old_status ^ chan->status) & (CHAN_ENFORCEBANS | CHAN_OPONJOIN |
+	CHAN_BITCH | CHAN_AUTOVOICE | CHAN_AUTOHALFOP)) {
       if ((me = module_find("irc", 0, 0)))
-	(me->funcs[IRC_RECHECK_CHANNEL])(chan, 1);
+        (me->funcs[IRC_RECHECK_CHANNEL])(chan, 1);
     } else if (old_mode_pls_prot != chan->mode_pls_prot ||
 	       old_mode_mns_prot != chan->mode_mns_prot)
-      if ((me = module_find("irc", 1, 2)))
-	(me->funcs[IRC_RECHECK_CHANNEL_MODES])(chan);
+    if ((me = module_find("irc", 1, 2)))
+      (me->funcs[IRC_RECHECK_CHANNEL_MODES])(chan);
   }
   if (x > 0)
     return TCL_ERROR;

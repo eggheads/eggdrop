@@ -2,7 +2,7 @@
  * chancmds.c -- part of irc.mod
  *   handles commands directly relating to channel interaction
  *
- * $Id: cmdsirc.c,v 1.33 2002/03/27 04:27:29 guppy Exp $
+ * $Id: cmdsirc.c,v 1.34 2002/06/13 20:43:08 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -47,6 +47,32 @@ static struct chanset_t *has_op(int idx, char *chname)
   if (chan_op(user) || (glob_op(user) && !chan_deop(user)))
     return chan;
   dprintf(idx, "You are not a channel op on %s.\n", chan->dname);
+  return 0;
+}
+
+static struct chanset_t *has_oporhalfop(int idx, char *chname)
+{
+  struct chanset_t *chan;
+
+  if (chname && chname[0]) {
+    chan = findchan_by_dname(chname);
+    if (!chan) {
+      dprintf(idx, "No such channel.\n");
+      return 0;
+    }
+  } else {
+    chname = dcc[idx].u.chat->con_chan;
+    chan = findchan_by_dname(chname);
+    if (!chan) {
+      dprintf(idx, "Invalid console channel.\n");
+      return 0;
+    }
+  }
+  get_user_flagrec(dcc[idx].user, &user, chname);
+  if (chan_op(user) || chan_halfop(user) || (glob_op(user) &&
+      !chan_deop(user)) || (glob_halfop(user) && !chan_dehalfop(user)))
+    return chan;
+  dprintf(idx, "You are not a channel op or halfop on %s.\n", chan->dname);
   return 0;
 }
 
@@ -159,15 +185,15 @@ static void cmd_kickban(struct userrec *u, int idx, char *par)
     chname = newsplit(&par);
   else
     chname = 0;
-  if (!(chan = has_op(idx, chname)))
+  if (!(chan = has_oporhalfop(idx, chname)))
     return;
   if (!channel_active(chan)) {
     dprintf(idx, "I'm not on %s right now!\n", chan->dname);
     return;
   }
-  if (!me_op(chan)) {
-    dprintf(idx, "I can't help you now because I'm not a channel op on %s.\n",
-	    chan->dname);
+  if (!me_op(chan) && !me_halfop(chan)) {
+    dprintf(idx, "I can't help you now because I'm not a channel op or halfop %s",
+	    "on %s.\n", chan->dname);
     return;
   }
   putlog(LOG_CMDS, "*", "#%s# (%s) kickban %s", dcc[idx].nick,
@@ -184,60 +210,64 @@ static void cmd_kickban(struct userrec *u, int idx, char *par)
     m = ismember(chan, nick);
     if (!m)
       dprintf(idx, "%s is not on %s\n", nick, chan->dname);
-    else {
-      egg_snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
-      u = get_user_by_host(s);
-      get_user_flagrec(u, &victim, chan->dname);
-      if ((chan_op(victim) || (glob_op(victim) && !chan_deop(victim))) &&
-	  !(chan_master(user) || glob_master(user))) {
-	dprintf(idx, "%s is a legal op.\n", nick);
-	return;
-      }
-      if ((chan_master(victim) || glob_master(victim)) &&
-	  !(glob_owner(user) || chan_owner(user))) {
-	dprintf(idx, "%s is a %s master.\n", nick, chan->dname);
-	return;
-      }
-      if (glob_bot(victim) && !(glob_owner(victim) || chan_owner(victim))) {
-	dprintf(idx, "%s is another channel bot!\n", nick);
-	return;
-      }
-      if (use_exempts &&
-	  (u_match_mask(global_exempts,s) || u_match_mask(chan->exempts, s))) {
-	dprintf(idx, "%s is permanently exempted!\n", nick);
-	return;
-      }
-      if (m->flags & CHANOP)
-	add_mode(chan, '-', 'o', m->nick);
-      check_exemptlist(chan, s);
-      switch (bantype) {
-	case '@':
-	  s1 = strchr(s, '@');
-	  s1 -= 3;
-	  s1[0] = '*';
-	  s1[1] = '!';
-	  s1[2] = '*';
-	  break;
-	case '-':
-	  s1 = strchr(s, '-');
-	  s1[1] = '*';
-	  s1--;
-	  s1[0] = '*';
-	  break;
-	default:
-	  s1 = quickban(chan, m->userhost);
-	  break;
-      }
-      if (bantype == '@' || bantype == '-')
-	do_mask(chan, chan->channel.ban, s1, 'b');
-      if (!par[0])
-	par = "requested";
-      dprintf(DP_SERVER, "KICK %s %s :%s\n", chan->name, m->nick, par);
-      m->flags |= SENTKICK;
-      u_addban(chan, s1, dcc[idx].nick, par, now + (60 * ban_time), 0);
-      dprintf(idx, "Okay, done.\n");
-    }
+    return;
   }
+  if (!me_op(chan) && chan_hasop(m)) {
+    dprintf(idx, "I can't help you now because halfops cannot kick ops.\n",
+	    chan->dname);
+    return;
+  }
+  egg_snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
+  u = get_user_by_host(s);
+  get_user_flagrec(u, &victim, chan->dname);
+  if ((chan_op(victim) || (glob_op(victim) && !chan_deop(victim))) &&
+      !(chan_master(user) || glob_master(user))) {
+    dprintf(idx, "%s is a legal op.\n", nick);
+    return;
+  }
+  if ((chan_master(victim) || glob_master(victim)) &&
+      !(glob_owner(user) || chan_owner(user))) {
+    dprintf(idx, "%s is a %s master.\n", nick, chan->dname);
+    return;
+  }
+  if (glob_bot(victim) && !(glob_owner(victim) || chan_owner(victim))) {
+    dprintf(idx, "%s is another channel bot!\n", nick);
+    return;
+  }
+  if (use_exempts && (u_match_mask(global_exempts,s) ||
+      u_match_mask(chan->exempts, s))) {
+    dprintf(idx, "%s is permanently exempted!\n", nick);
+    return;
+  }
+  if (m->flags & CHANOP)
+    add_mode(chan, '-', 'o', m->nick);
+  check_exemptlist(chan, s);
+  switch (bantype) {
+    case '@':
+      s1 = strchr(s, '@');
+      s1 -= 3;
+      s1[0] = '*';
+      s1[1] = '!';
+      s1[2] = '*';
+      break;
+    case '-':
+      s1 = strchr(s, '-');
+      s1[1] = '*';
+      s1--;
+      s1[0] = '*';
+      break;
+    default:
+      s1 = quickban(chan, m->userhost);
+      break;
+  }
+  if (bantype == '@' || bantype == '-')
+    do_mask(chan, chan->channel.ban, s1, 'b');
+  if (!par[0])
+    par = "requested";
+  dprintf(DP_SERVER, "KICK %s %s :%s\n", chan->name, m->nick, par);
+  m->flags |= SENTKICK;
+  u_addban(chan, s1, dcc[idx].nick, par, now + (60 * ban_time), 0);
+  dprintf(idx, "Okay, done.\n");
 }
 
 static void cmd_voice(struct userrec *u, int idx, char *par)
@@ -248,7 +278,7 @@ static void cmd_voice(struct userrec *u, int idx, char *par)
   char s[UHOSTLEN];
 
   nick = newsplit(&par);
-  if (!(chan = has_op(idx, par)))
+  if (!(chan = has_oporhalfop(idx, par)))
     return;
   if (!nick[0] && !(nick = getnick(u->handle, chan))) {
     dprintf(idx, "Usage: voice <nick> [channel]\n");
@@ -258,9 +288,9 @@ static void cmd_voice(struct userrec *u, int idx, char *par)
     dprintf(idx, "I'm not on %s right now!\n", chan->dname);
     return;
   }
-  if (!me_op(chan)) {
-    dprintf(idx, "I can't help you now because I'm not a chan op on %s.\n",
-	    chan->dname);
+  if (!me_op(chan) && !me_halfop(chan)) {
+    dprintf(idx, "I can't help you now because I'm not a chan op or halfop %s",
+	    "on %s.\n", chan->dname);
     return;
   }
   putlog(LOG_CMDS, "*", "#%s# (%s) voice %s %s", dcc[idx].nick,
@@ -283,7 +313,7 @@ static void cmd_devoice(struct userrec *u, int idx, char *par)
   char s[UHOSTLEN];
 
   nick = newsplit(&par);
-  if (!(chan = has_op(idx, par)))
+  if (!(chan = has_oporhalfop(idx, par)))
     return;
   if (!nick[0] && !(nick = getnick(u->handle, chan))) {
     dprintf(idx, "Usage: devoice <nick> [channel]\n");
@@ -293,9 +323,9 @@ static void cmd_devoice(struct userrec *u, int idx, char *par)
     dprintf(idx, "I'm not on %s right now!\n", chan->dname);
     return;
   }
-  if (!me_op(chan)) {
-    dprintf(idx, "I can't do that right now I'm not a chan op on %s.\n",
-	    chan->dname);
+  if (!me_op(chan) && !me_halfop(chan)) {
+    dprintf(idx, "I can't do that right now I'm not a chan op or halfop on %s",
+	    "%s.\n", chan->dname);
     return;
   }
   putlog(LOG_CMDS, "*", "#%s# (%s) devoice %s %s", dcc[idx].nick,
@@ -353,7 +383,54 @@ static void cmd_op(struct userrec *u, int idx, char *par)
     return;
   }
   add_mode(chan, '+', 'o', nick);
-  dprintf(idx, "Gave op to %s on %s\n", nick, chan->dname);
+  dprintf(idx, "Gave op to %s on %s.\n", nick, chan->dname);
+}
+
+static void cmd_halfop(struct userrec *u, int idx, char *par)
+{
+  struct chanset_t *chan;
+  char *nick;
+  memberlist *m;
+  char s[UHOSTLEN];
+
+  nick = newsplit(&par);
+  if (!(chan = has_op(idx, par)))
+    return;
+  if (!nick[0] && !(nick = getnick(u->handle, chan))) {
+    dprintf(idx, "Usage: halfop <nick> [channel]\n");
+    return;
+  }
+  if (!channel_active(chan)) {
+    dprintf(idx, "I'm not on %s right now!\n", chan->dname);
+    return;
+  }
+  if (!me_op(chan)) {
+    dprintf(idx, "I can't help you now because I'm not a chan op on %s.\n",
+	    chan->dname);
+    return;
+  }
+  putlog(LOG_CMDS, "*", "#%s# (%s) halfop %s %s", dcc[idx].nick,
+	 dcc[idx].u.chat->con_chan, nick, par);
+  m = ismember(chan, nick);
+  if (!m) {
+    dprintf(idx, "%s is not on %s.\n", nick, chan->dname);
+    return;
+  }
+  egg_snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
+  u = get_user_by_host(s);
+  get_user_flagrec(u, &victim, chan->dname);
+  if (chan_dehalfop(victim) || (glob_dehalfop(victim) && !glob_halfop(victim))) {
+    dprintf(idx, "%s is currently being auto-dehalfopped.\n", m->nick);
+    return;
+  }
+  if (channel_bitch(chan) && !(chan_op(victim) || chan_op(victim) || 
+      (glob_op(victim) && !chan_deop(victim)) || (glob_halfop(victim) &&
+      !chan_dehalfop(victim)))) {
+    dprintf(idx, "%s is not a registered halfop.\n", m->nick);
+    return;
+  }
+  add_mode(chan, '+', 'h', nick);
+  dprintf(idx, "Gave halfop to %s on %s.\n", nick, chan->dname);
 }
 
 static void cmd_deop(struct userrec *u, int idx, char *par)
@@ -395,16 +472,72 @@ static void cmd_deop(struct userrec *u, int idx, char *par)
   get_user_flagrec(u, &victim, chan->dname);
   if ((chan_master(victim) || glob_master(victim)) &&
       !(chan_owner(user) || glob_owner(user))) {
-    dprintf(idx, "%s is a master for %s\n", m->nick, chan->dname);
+    dprintf(idx, "%s is a master for %s.\n", m->nick, chan->dname);
     return;
   }
   if ((chan_op(victim) || (glob_op(victim) && !chan_deop(victim))) &&
       !(chan_master(user) || glob_master(user))) {
-    dprintf(idx, "%s has the op flag for %s\n", m->nick, chan->dname);
+    dprintf(idx, "%s has the op flag for %s.\n", m->nick, chan->dname);
     return;
   }
   add_mode(chan, '-', 'o', nick);
-  dprintf(idx, "Took op from %s on %s\n", nick, chan->dname);
+  dprintf(idx, "Took op from %s on %s.\n", nick, chan->dname);
+}
+
+static void cmd_dehalfop(struct userrec *u, int idx, char *par)
+{
+  struct chanset_t *chan;
+  char *nick;
+  memberlist *m;
+  char s[UHOSTLEN];
+
+  nick = newsplit(&par);
+  if (!(chan = has_op(idx, par)))
+    return;
+  if (!nick[0] && !(nick = getnick(u->handle, chan))) {
+    dprintf(idx, "Usage: dehalfop <nick> [channel]\n");
+    return;
+  }
+  if (!channel_active(chan)) {
+    dprintf(idx, "I'm not on %s right now!\n", chan->dname);
+    return;
+  }
+  if (!me_op(chan)) {
+    dprintf(idx, "I can't help you now because I'm not a chan op on %s.\n",
+	    chan->dname);
+    return;
+  }
+  putlog(LOG_CMDS, "*", "#%s# (%s) dehalfop %s %s", dcc[idx].nick,
+	 dcc[idx].u.chat->con_chan, nick, par);
+  m = ismember(chan, nick);
+  if (!m) {
+    dprintf(idx, "%s is not on %s.\n", nick, chan->dname);
+    return;
+  }
+  if (match_my_nick(nick)) {
+    dprintf(idx, "I'm not going to dehalfop myself.\n");
+    return;
+  }
+  egg_snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
+  u = get_user_by_host(s);
+  get_user_flagrec(u, &victim, chan->dname);
+  if ((chan_master(victim) || glob_master(victim)) &&
+      !(chan_owner(user) || glob_owner(user))) {
+    dprintf(idx, "%s is a master for %s.\n", m->nick, chan->dname);
+    return;
+  }
+  if ((chan_op(victim) || (glob_op(victim) && !chan_deop(victim))) &&
+      !(chan_master(user) || glob_master(user))) {
+    dprintf(idx, "%s has the op flag for %s.\n", m->nick, chan->dname);
+    return;
+  }
+  if ((chan_halfop(victim) || (glob_halfop(victim) &&
+      !chan_dehalfop(victim))) && !(chan_master(user) || glob_master(user))) {
+    dprintf(idx, "%s has the halfop flag for %s.\n", m->nick, chan->dname);
+    return;
+  }
+  add_mode(chan, '-', 'h', nick);
+  dprintf(idx, "Took halfop from %s on %s.\n", nick, chan->dname);
 }
 
 static void cmd_kick(struct userrec *u, int idx, char *par)
@@ -422,15 +555,15 @@ static void cmd_kick(struct userrec *u, int idx, char *par)
     chname = newsplit(&par);
   else
     chname = 0;
-  if (!(chan = has_op(idx, chname)))
+  if (!(chan = has_oporhalfop(idx, chname)))
     return;
   if (!channel_active(chan)) {
     dprintf(idx, "I'm not on %s right now!\n", chan->dname);
     return;
   }
-  if (!me_op(chan)) {
-    dprintf(idx, "I can't help you now because I'm not a channel op on %s.\n",
-	    chan->dname);
+  if (!me_op(chan) && !me_halfop(chan)) {
+    dprintf(idx, "I can't help you now because I'm not a channel op or halfop %s",
+	    "on %s.\n", chan->dname);
     return;
   }
   putlog(LOG_CMDS, "*", "#%s# (%s) kick %s", dcc[idx].nick,
@@ -445,6 +578,11 @@ static void cmd_kick(struct userrec *u, int idx, char *par)
   m = ismember(chan, nick);
   if (!m) {
     dprintf(idx, "%s is not on %s\n", nick, chan->dname);
+    return;
+  }
+  if (!me_op(chan) && chan_hasop(m)) {
+    dprintf(idx, "I can't help you now because halfops cannot kick ops.\n",
+	    chan->dname);
     return;
   }
   egg_snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
@@ -478,14 +616,14 @@ static void cmd_invite(struct userrec *u, int idx, char *par)
   if (!par[0])
     par = dcc[idx].nick;
   nick = newsplit(&par);
-  if (!(chan = has_op(idx, par)))
+  if (!(chan = has_oporhalfop(idx, par)))
     return;
   putlog(LOG_CMDS, "*", "#%s# (%s) invite %s", dcc[idx].nick, chan->dname,
 	 nick);
-  if (!me_op(chan)) {
+  if (!me_op(chan) && !me_halfop(chan)) {
     if (chan->channel.mode & CHANINV) {
-      dprintf(idx, "I can't help you now because I'm not a channel op on %s.\n",
-	      chan->dname);
+      dprintf(idx, "I can't help you now because I'm not a channel op or %s",
+	      "halfop on %s.\n", chan->dname);
       return;
     }
     if (!channel_active(chan)) {
@@ -512,7 +650,7 @@ static void cmd_channel(struct userrec *u, int idx, char *par)
   static char spaces2[33] = "                              ";
   int len, len2;
 
-  if (!has_op(idx, par))
+  if (!has_oporhalfop(idx, par))
     return;
   chname = newsplit(&par);
   putlog(LOG_CMDS, "*", "#%s# (%s) channel %s", dcc[idx].nick,
@@ -564,41 +702,53 @@ static void cmd_channel(struct userrec *u, int idx, char *par)
       get_user_flagrec(m->user, &user, chan->dname);
       /* Determine status char to use */
       if (glob_bot(user) && (glob_op(user)||chan_op(user)))
-	atrflag = 'B';
+        atrflag = 'B';
       else if (glob_bot(user))
-	atrflag = 'b';
+        atrflag = 'b';
       else if (glob_owner(user))
-	atrflag = 'N';
+        atrflag = 'N';
       else if (chan_owner(user))
-	atrflag = 'n';
+        atrflag = 'n';
       else if (glob_master(user))
-	atrflag = 'M';
+        atrflag = 'M';
       else if (chan_master(user))
-	atrflag = 'm';
+        atrflag = 'm';
       else if (glob_deop(user))
-	atrflag = 'D';
+        atrflag = 'D';
       else if (chan_deop(user))
-	atrflag = 'd';
+        atrflag = 'd';
+      else if (glob_dehalfop(user))
+        atrflag = 'R';
+      else if (chan_dehalfop(user))
+        atrflag = 'r';
       else if (glob_autoop(user))
-	atrflag = 'A';
+        atrflag = 'A';
+      else if (chan_autohalfop(user))
+        atrflag = 'y';
+      else if (glob_autohalfop(user))
+        atrflag = 'Y';
       else if (chan_autoop(user))
-	atrflag = 'a';
+        atrflag = 'a';
       else if (glob_op(user))
-	atrflag = 'O';
+        atrflag = 'O';
       else if (chan_op(user))
-	atrflag = 'o';
+        atrflag = 'o';
+      else if (glob_halfop(user))
+        atrflag = 'L';
+      else if (chan_halfop(user))
+        atrflag = 'l';
       else if (glob_quiet(user))
-	atrflag = 'Q';
+        atrflag = 'Q';
       else if (chan_quiet(user))
-	atrflag = 'q';
+        atrflag = 'q';
       else if (glob_gvoice(user))
-	atrflag = 'G';
+        atrflag = 'G';
       else if (chan_gvoice(user))
-	atrflag = 'g';
+        atrflag = 'g';
       else if (glob_voice(user))
-	atrflag = 'V';
+        atrflag = 'V';
       else if (chan_voice(user))
-	atrflag = 'v';
+        atrflag = 'v';
       else if (glob_friend(user))
         atrflag = 'F';
       else if (chan_friend(user))
@@ -619,6 +769,8 @@ static void cmd_channel(struct userrec *u, int idx, char *par)
 	atrflag = ' ';
       if (chan_hasop(m))
 	chanflag = '@';
+      else if (chan_hashalfop(m))
+	chanflag = '%';
       else if (chan_hasvoice(m))
 	chanflag = '+';
       else
@@ -666,9 +818,9 @@ static void cmd_topic(struct userrec *u, int idx, char *par)
 
   if (par[0] && (strchr(CHANMETA, par[0]) != NULL)) {
     char *chname = newsplit(&par);
-    chan = has_op(idx, chname);
+    chan = has_oporhalfop(idx, chname);
   } else
-    chan = has_op(idx, "");
+    chan = has_oporhalfop(idx, "");
   if (chan) {
     if (!channel_active(chan)) {
       dprintf(idx, "I'm not on %s right now!\n", chan->dname);
@@ -681,9 +833,9 @@ static void cmd_topic(struct userrec *u, int idx, char *par)
       } else {
 	dprintf(idx, "No topic is set for %s\n", chan->dname);
       }
-    } else if (channel_optopic(chan) && !me_op(chan)) {
-      dprintf(idx, "I'm not a channel op on %s and the channel is +t.\n",
-	      chan->dname);
+    } else if (channel_optopic(chan) && !me_op(chan) && !me_halfop(chan)) {
+      dprintf(idx, "I'm not a channel op or halfop on %s and the channel %s",
+		  "is +t.\n", chan->dname);
     } else {
       dprintf(DP_SERVER, "TOPIC %s :%s\n", chan->name, par);
       dprintf(idx, "Changing topic...\n");
@@ -695,90 +847,41 @@ static void cmd_topic(struct userrec *u, int idx, char *par)
 
 static void cmd_resetbans(struct userrec *u, int idx, char *par)
 {
-  char *chname;
   struct chanset_t *chan;
+  char *chname = newsplit(&par);
 
-  chname = newsplit(&par);
-  rmspace(chname);
+  if (!(chan = has_oporhalfop(idx, chname)))
+    return;
 
-  if (chname[0]) {
-    chan = findchan_by_dname(chname);
-    if (!chan) {
-      dprintf(idx, "That channel doesn't exist!\n");
-      return;
-    }
-    get_user_flagrec(u, &user, chname);
-  } else {
-    chan = findchan_by_dname(dcc[idx].u.chat->con_chan);
-    if (!chan) {
-      dprintf(idx, "Invalid console channel.\n");
-      return;
-    }
-    get_user_flagrec(u, &user, dcc[idx].u.chat->con_chan);
-  }
-  if (glob_op(user) || chan_op(user)) {
-    putlog(LOG_CMDS, "*", "#%s# (%s) resetbans", dcc[idx].nick, chan->dname);
-    dprintf(idx, "Resetting bans on %s...\n", chan->dname);
-    resetbans(chan);
-  }
+  putlog(LOG_CMDS, "*", "#%s# (%s) resetbans", dcc[idx].nick, chan->dname);
+  dprintf(idx, "Resetting bans on %s...\n", chan->dname);
+  resetbans(chan);
 }
 
 static void cmd_resetexempts(struct userrec *u, int idx, char *par)
 {
-  char *chname;
   struct chanset_t *chan;
+  char *chname = newsplit(&par);
 
-  chname = newsplit(&par);
-  rmspace(chname);
-  if (chname[0]) {
-    chan = findchan_by_dname(chname);
-    if (!chan) {
-      dprintf(idx, "That channel doesn't exist!\n");
-      return;
-    }
-    get_user_flagrec(u, &user, chname);
-  } else {
-    chan = findchan_by_dname(dcc[idx].u.chat->con_chan);
-    if (!chan) {
-    dprintf(idx, "Invalid console channel.\n");
-      return;
-    }
-    get_user_flagrec(u, &user, dcc[idx].u.chat->con_chan);
-  }
-  if (glob_op(user) || chan_op(user)) {
-    putlog(LOG_CMDS, "*", "#%s# (%s) resetexempts", dcc[idx].nick, chan->dname);
-    dprintf(idx, "Resetting exemptions on %s...\n", chan->dname);
-    resetexempts(chan);
-  }
+  if (!(chan = has_oporhalfop(idx, chname)))
+    return;
+
+  putlog(LOG_CMDS, "*", "#%s# (%s) resetexempts", dcc[idx].nick, chan->dname);
+  dprintf(idx, "Resetting exempts on %s...\n", chan->dname);
+  resetexempts(chan);
 }
 
 static void cmd_resetinvites(struct userrec *u, int idx, char *par)
 {
-  char *chname;
   struct chanset_t *chan;
+  char *chname = newsplit(&par);
 
-  chname = newsplit(&par);
-  rmspace(chname);
-  if (chname[0]) {
-    chan = findchan_by_dname(chname);
-    if (!chan) {
-      dprintf(idx, "That channel doesn't exist!\n");
-      return;
-    }
-    get_user_flagrec(u, &user, chname);
-  } else {
-    chan = findchan_by_dname(dcc[idx].u.chat->con_chan);
-    if (!chan) {
-    dprintf(idx, "Invalid console channel.\n");
-      return;
-    }
-    get_user_flagrec(u, &user, dcc[idx].u.chat->con_chan);
-  }
-  if (glob_op(user) || chan_op(user)) {
-    putlog(LOG_CMDS, "*", "#%s# (%s) resetinvites", dcc[idx].nick, chan->dname);
-    dprintf(idx, "Resetting invitations on %s...\n", chan->dname);
-    resetinvites(chan);
-  }
+  if (!(chan = has_oporhalfop(idx, chname)))
+    return;
+
+  putlog(LOG_CMDS, "*", "#%s# (%s) resetinvites", dcc[idx].nick, chan->dname);
+  dprintf(idx, "Resetting resetinvites on %s...\n", chan->dname);
+  resetinvites(chan);
 }
 
 static void cmd_adduser(struct userrec *u, int idx, char *par)
@@ -970,23 +1073,25 @@ static void cmd_reset(struct userrec *u, int idx, char *par)
 
 static cmd_t irc_dcc[] =
 {
-  {"adduser",		"m|m",	(Function) cmd_adduser,		NULL},
-  {"deluser",		"m|m",	(Function) cmd_deluser,		NULL},
-  {"reset",		"m|m",	(Function) cmd_reset,		NULL},
-  {"resetbans",		"o|o",	(Function) cmd_resetbans,	NULL},
-  {"resetexempts",	"o|o",	(Function) cmd_resetexempts,	NULL},
-  {"resetinvites",	"o|o",	(Function) cmd_resetinvites,	NULL},
-  {"act",		"o|o",	(Function) cmd_act,		NULL},
-  {"channel",		"o|o",	(Function) cmd_channel,		NULL},
-  {"deop",		"o|o",	(Function) cmd_deop,		NULL},
-  {"invite",		"o|o",	(Function) cmd_invite,		NULL},
-  {"kick",		"o|o",	(Function) cmd_kick,		NULL},
-  {"kickban",		"o|o",	(Function) cmd_kickban,		NULL},
-  {"msg",		"o",	(Function) cmd_msg,		NULL},
-  {"voice",		"o|o",	(Function) cmd_voice,		NULL},
-  {"devoice",		"o|o",	(Function) cmd_devoice,		NULL},
-  {"op",		"o|o",	(Function) cmd_op,		NULL},
-  {"say",		"o|o",	(Function) cmd_say,		NULL},
-  {"topic",		"o|o",	(Function) cmd_topic,		NULL},
-  {NULL,		NULL,	NULL,				NULL}
+  {"adduser",		"m|m",	 (Function) cmd_adduser,		NULL},
+  {"deluser",		"m|m",	 (Function) cmd_deluser,		NULL},
+  {"reset",		"m|m",	 (Function) cmd_reset,		NULL},
+  {"resetbans",		"o|o",	 (Function) cmd_resetbans,	NULL},
+  {"resetexempts",	"o|o",	 (Function) cmd_resetexempts,	NULL},
+  {"resetinvites",	"o|o",	 (Function) cmd_resetinvites,	NULL},
+  {"act",		"o|o",	 (Function) cmd_act,		NULL},
+  {"channel",		"o|o",	 (Function) cmd_channel,		NULL},
+  {"deop",		"o|o",	 (Function) cmd_deop,		NULL},
+  {"dehalfop",		"o|o",	 (Function) cmd_dehalfop,		NULL},
+  {"invite",		"o|o",	 (Function) cmd_invite,		NULL},
+  {"kick",		"lo|lo", (Function) cmd_kick,		NULL},
+  {"kickban",		"lo|lo", (Function) cmd_kickban,		NULL},
+  {"msg",		"o",	 (Function) cmd_msg,		NULL},
+  {"voice",		"o|o",	 (Function) cmd_voice,		NULL},
+  {"devoice",		"o|o",	 (Function) cmd_devoice,		NULL},
+  {"op",		"o|o",	 (Function) cmd_op,		NULL},
+  {"halfop",		"o|o",	 (Function) cmd_halfop,		NULL},
+  {"say",		"o|o",	 (Function) cmd_say,		NULL},
+  {"topic",		"o|o",	 (Function) cmd_topic,		NULL},
+  {NULL,		NULL,	 NULL,				NULL}
 };

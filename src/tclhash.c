@@ -7,7 +7,7 @@
  *   (non-Tcl) procedure lookups for msg/dcc/file commands
  *   (Tcl) binding internal procedures to msg/dcc/file commands
  *
- * $Id: tclhash.c,v 1.35 2002/03/12 18:02:06 stdarg Exp $
+ * $Id: tclhash.c,v 1.36 2002/06/13 20:43:08 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -976,6 +976,9 @@ void check_tcl_chjn(const char *bot, const char *nick, int chan,
     break;
   case '@':
     fr.global = USER_OP;
+    break;
+  case '^':
+    fr.global = USER_HALFOP;
     break;
   case '%':
     fr.global = USER_BOTMAST;

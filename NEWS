@@ -1,5 +1,5 @@
 News
-Last revised: May 19, 2002
+Last revised: June 09, 2002
      _________________________________________________________________
 
                                    News
@@ -106,7 +106,7 @@ Changes made to Eggdrop 1.6.x from Eggdrop1.4.x:
   CHANNEL MODES
 
      Support for IRCnet negative limits and DALnet's +R, +M, and +c channel
-     modes has been added.
+     modes has been added. Eggdrop now also supports halfops (+h).
 
   DOCUMENTATION
 

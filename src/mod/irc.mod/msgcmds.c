@@ -2,7 +2,7 @@
  * msgcmds.c -- part of irc.mod
  *   all commands entered via /MSG
  *
- * $Id: msgcmds.c,v 1.28 2002/01/02 03:46:39 guppy Exp $
+ * $Id: msgcmds.c,v 1.29 2002/06/13 20:43:08 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -570,30 +570,31 @@ static int msg_op(char *nick, char *host, struct userrec *u, char *par)
     return 1;
   pass = newsplit(&par);
   if (u_pass_match(u, pass)) {
-    /* Prevent people from gaining ops when no password set */
     if (!u_pass_match(u, "-")) {
       if (par[0]) {
-	chan = findchan_by_dname(par);
-	if (chan && channel_active(chan)) {
-	  get_user_flagrec(u, &fr, par);
-	  if (chan_op(fr) || (glob_op(fr) && !chan_deop(fr)))
-	    add_mode(chan, '+', 'o', nick);
-	    putlog(LOG_CMDS, "*", "(%s!%s) !%s! OP %s",
-		   nick, host, u->handle, par);
-	  return 1;
-	}
+        chan = findchan_by_dname(par);
+        if (chan && channel_active(chan)) {
+          get_user_flagrec(u, &fr, par);
+          if (chan_op(fr) || chan_halfop(fr) || (glob_op(fr) && !chan_deop(fr)) ||
+	      (glob_halfop(fr) && !chan_dehalfop(fr)))
+            add_mode(chan, '+', 'h', nick);
+          putlog(LOG_CMDS, "*", "(%s!%s) !%s! HALFOP %s",
+			  nick, host, u->handle, par);
+          return 1;
+        }
       } else {
-	for (chan = chanset; chan; chan = chan->next) {
-	  get_user_flagrec(u, &fr, chan->dname);
-	  if (chan_op(fr) || (glob_op(fr) && !chan_deop(fr)))
-	    add_mode(chan, '+', 'o', nick);
-	}
-	putlog(LOG_CMDS, "*", "(%s!%s) !%s! OP", nick, host, u->handle);
-	return 1;
+        for (chan = chanset; chan; chan = chan->next) {
+          get_user_flagrec(u, &fr, chan->dname);
+          if (chan_op(fr) || chan_halfop(fr) || (glob_op(fr) && !chan_deop(fr)) ||
+	      (glob_halfop(fr) && !chan_dehalfop(fr)))
+            add_mode(chan, '+', 'h', nick);
+        }
+        putlog(LOG_CMDS, "*", "(%s!%s) !%s! HALFOP", nick, host, u->handle);
+        return 1;
       }
     }
   }
-  putlog(LOG_CMDS, "*", "(%s!%s) !*! failed OP", nick, host);
+  putlog(LOG_CMDS, "*", "(%s!%s) !*! failed HALFOP", nick, host);
   return 1;
 }
 
@@ -622,7 +623,8 @@ static int msg_key(char *nick, char *host, struct userrec *u, char *par)
       chan = findchan_by_dname(par);
       if (chan && channel_active(chan)) {
 	get_user_flagrec(u, &fr, par);
-	if (chan_op(fr) || (glob_op(fr) && !chan_deop(fr))) {
+	if (chan_op(fr) || chan_halfop(fr) || (glob_op(fr) && !chan_deop(fr)) ||
+	    (glob_halfop(fr) && !chan_dehalfop(fr))) {
 	  if (chan->channel.key[0]) {
 	    dprintf(DP_SERVER, "NOTICE %s :%s: key is %s\n", nick, par,
 		    chan->channel.key);
@@ -679,7 +681,7 @@ static int msg_voice(char *nick, char *host, struct userrec *u, char *par)
 	for (chan = chanset; chan; chan = chan->next) {
 	  get_user_flagrec(u, &fr, chan->dname);
 	  if (chan_voice(fr) || glob_voice(fr) ||
-	      chan_op(fr) || glob_op(fr))
+	      chan_op(fr) || glob_op(fr) || chan_halfop(fr) || glob_halfop(fr))
 	    add_mode(chan, '+', 'v', nick);
 	}
 	putlog(LOG_CMDS, "*", "(%s!%s) !%s! VOICE", nick, host, u->handle);
@@ -704,7 +706,8 @@ static int msg_invite(char *nick, char *host, struct userrec *u, char *par)
     if (par[0] == '*') {
       for (chan = chanset; chan; chan = chan->next) {
 	get_user_flagrec(u, &fr, chan->dname);
-	if ((chan_op(fr) || (glob_op(fr) && !chan_deop(fr))) &&
+	if ((chan_op(fr) || chan_halfop(fr) || (glob_op(fr) && !chan_deop(fr)) ||
+	    (glob_halfop(fr) && !chan_dehalfop(fr))) &&
 	    (chan->channel.mode & CHANINV))
 	  dprintf(DP_SERVER, "INVITE %s %s\n", nick, chan->name);
       }
@@ -723,7 +726,8 @@ static int msg_invite(char *nick, char *host, struct userrec *u, char *par)
     }
     /* We need to check access here also (dw 991002) */
     get_user_flagrec(u, &fr, par);
-    if (chan_op(fr) || (glob_op(fr) && !chan_deop(fr))) {
+    if (chan_op(fr) || chan_halfop(fr) || (glob_op(fr) && !chan_deop(fr)) ||
+	(glob_halfop(fr) && !chan_dehalfop(fr))) {
       dprintf(DP_SERVER, "INVITE %s %s\n", nick, par);
       putlog(LOG_CMDS, "*", "(%s!%s) !%s! INVITE %s", nick, host,
 	     u->handle, par);
@@ -1061,6 +1065,7 @@ static cmd_t C_msg[] =
   {"key",		"o|o",	(Function) msg_key,		NULL},
   {"memory",		"m",	(Function) msg_memory,		NULL},
   {"op",		"",	(Function) msg_op,		NULL},
+  {"halfop",		"",	(Function) msg_halfop,		NULL},
   {"pass",		"",	(Function) msg_pass,		NULL},
   {"rehash",		"m",	(Function) msg_rehash,		NULL},
   {"reset",		"m",	(Function) msg_reset,		NULL},

@@ -2,7 +2,7 @@
  * irc.c -- part of irc.mod
  *   support for channels within the bot
  *
- * $Id: irc.c,v 1.68 2002/06/06 18:52:24 wcc Exp $
+ * $Id: irc.c,v 1.69 2002/06/13 20:43:08 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -225,7 +225,7 @@ static void punish_badguy(struct chanset_t *chan, char *whobad,
     maskhost(whobad, s1);
     simple_sprintf(s, "(%s) %s", ct, reason);
     u_addban(chan, s1, botnetnick, s, now + (60 * ban_time), 0);
-    if (!mevictim && me_op(chan)) {
+    if (!mevictim && (me_op(chan) || me_halfop(chan))) {
       add_mode(chan, '+', 'b', s1);
       flush_mode(chan, QUICK);
     }
@@ -238,7 +238,7 @@ static void punish_badguy(struct chanset_t *chan, char *whobad,
       /* ... or have we sent the kick already? */
       !chan_sentkick(m) &&
       /* ... and can I actually do anything about it? */
-      me_op(chan) && !mevictim) {
+      (me_op(chan) || (me_halfop(chan) && !chan_hasop(m))) && !mevictim) {
     dprintf(DP_MODE, "KICK %s %s :%s\n", chan->name, badnick, kick_msg);
     m->flags |= SENTKICK;
   }
@@ -372,6 +372,21 @@ static int me_op(struct chanset_t *chan)
   if (!mx)
     return 0;
   if (chan_hasop(mx))
+    return 1;
+  else
+    return 0;
+}
+
+/* Check if I am a halfop. Returns boolean 1 or 0.
+ */
+static int me_halfop(struct chanset_t *chan)
+{
+  memberlist *mx = NULL;
+
+  mx = ismember(chan, botname);
+  if (!mx)
+    return 0;
+  if (chan_hashalfop(mx))
     return 1;
   else
     return 0;
@@ -588,7 +603,7 @@ static void check_expired_chanstuff()
     return;
   for (chan = chanset; chan; chan = chan->next) {
     if (channel_active(chan)) {
-      if (me_op(chan)) {
+      if (me_op(chan) || me_halfop(chan)) {
 	if (channel_dynamicbans(chan) && ban_time)
 	  for (b = chan->channel.ban; b->mask[0]; b = b->next)
 	    if (now - b->timer > 60 * ban_time &&
@@ -654,9 +669,10 @@ static void check_expired_chanstuff()
 	      sprintf(s, "%s!%s", m->nick, m->userhost);
 	      get_user_flagrec(m->user ? m->user : get_user_by_host(s),
 			       &fr, chan->dname);
-	      if (!(glob_bot(fr) || glob_friend(fr) ||
-		    (glob_op(fr) && !chan_deop(fr)) ||
-		    chan_friend(fr) || chan_op(fr))) {
+	      if ((!(glob_bot(fr) || glob_friend(fr) ||
+		  (glob_op(fr) && !chan_deop(fr)) ||
+		  chan_friend(fr) || chan_op(fr))) && (me_op(chan) ||
+		  me_halfop(chan) && !chan_hasop(m))) {
 		dprintf(DP_SERVER, "KICK %s %s :idle %d min\n", chan->name,
 			m->nick, chan->idle_kick);
 		m->flags |= SENTKICK;
@@ -1120,6 +1136,7 @@ static Function irc_table[] =
   /* 20 - 23 */
   (Function) check_this_ban,
   (Function) check_this_user,
+  (Function) me_halfop,
 };
 
 char *irc_start(Function * global_funcs)

@@ -2,7 +2,7 @@
  * channels.c -- part of channels.mod
  *   support for channels within the bot
  *
- * $Id: channels.c,v 1.63 2002/06/06 18:52:22 wcc Exp $
+ * $Id: channels.c,v 1.64 2002/06/13 20:43:08 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -412,8 +412,8 @@ revenge-mode %d \
 need-op %s need-invite %s need-key %s need-unban %s need-limit %s \
 flood-chan %d:%d flood-ctcp %d:%d flood-join %d:%d \
 flood-kick %d:%d flood-deop %d:%d flood-nick %d:%d aop-delay %d:%d \
-%cenforcebans %cdynamicbans %cuserbans %cautoop %cbitch \
-%cgreet %cprotectops %cprotectfriends %cdontkickops \
+%cenforcebans %cdynamicbans %cuserbans %cautoop %cautohalfop %cbitch \
+%cgreet %cprotectops %cprotecthalfops %cprotectfriends %cdontkickops \
 %cstatuslog %crevenge %crevengebot %cautovoice %csecret \
 %cshared %ccycle %cseen %cinactive %cdynamicexempts %cuserexempts \
 %cdynamicinvites %cuserinvites %cnodesynch ",
@@ -436,10 +436,12 @@ flood-kick %d:%d flood-deop %d:%d flood-nick %d:%d aop-delay %d:%d \
 	PLSMNS(channel_dynamicbans(chan)),
 	PLSMNS(!channel_nouserbans(chan)),
 	PLSMNS(channel_autoop(chan)),
+	PLSMNS(channel_autohalfop(chan)),
 	PLSMNS(channel_bitch(chan)),
 	PLSMNS(channel_greet(chan)),
 	PLSMNS(channel_protectops(chan)),
-        PLSMNS(channel_protectfriends(chan)),
+	PLSMNS(channel_protecthalfops(chan)),
+	PLSMNS(channel_protectfriends(chan)),
 	PLSMNS(channel_dontkickops(chan)),
 	PLSMNS(channel_logstatus(chan)),
 	PLSMNS(channel_revenge(chan)),
@@ -450,10 +452,10 @@ flood-kick %d:%d flood-deop %d:%d flood-nick %d:%d aop-delay %d:%d \
 	PLSMNS(channel_cycle(chan)),
 	PLSMNS(channel_seen(chan)),
 	PLSMNS(channel_inactive(chan)),
-        PLSMNS(channel_dynamicexempts(chan)),
-        PLSMNS(!channel_nouserexempts(chan)),
+	PLSMNS(channel_dynamicexempts(chan)),
+	PLSMNS(!channel_nouserexempts(chan)),
  	PLSMNS(channel_dynamicinvites(chan)),
-        PLSMNS(!channel_nouserinvites(chan)),
+	PLSMNS(!channel_nouserinvites(chan)),
 	PLSMNS(channel_nodesynch(chan)));
     for (ul = udef; ul; ul = ul->next) {
       if (ul->defined && ul->name) {
@@ -607,27 +609,31 @@ static void channels_report(int idx, int details)
 	s[0] = 0;
 	i = 0;
 	if (channel_enforcebans(chan))
-	  i += my_strcpy(s + i, "enforce-bans ");
+	  i += my_strcpy(s + i, "enforcebans ");
 	if (channel_dynamicbans(chan))
-	  i += my_strcpy(s + i, "dynamic-bans ");
-	if (channel_nouserbans(chan))
-	  i += my_strcpy(s + i, "forbid-user-bans ");
+	  i += my_strcpy(s + i, "dynamicbans ");
+	if (!channel_nouserbans(chan))
+	  i += my_strcpy(s + i, "userbans ");
 	if (channel_autoop(chan))
-	  i += my_strcpy(s + i, "op-on-join ");
+	  i += my_strcpy(s + i, "autoop ");
 	if (channel_bitch(chan))
 	  i += my_strcpy(s + i, "bitch ");
 	if (channel_greet(chan))
 	  i += my_strcpy(s + i, "greet ");
 	if (channel_protectops(chan))
-	  i += my_strcpy(s + i, "protect-ops ");
-        if (channel_protectfriends(chan))
-          i += my_strcpy(s + i, "protect-friends ");
+	  i += my_strcpy(s + i, "protectops ");
+	if (channel_protecthalfops(chan))
+	  i += my_strcpy(s + i, "protecthalfops ");
+	if (channel_protectfriends(chan))
+	  i += my_strcpy(s + i, "protectfriends ");
 	if (channel_dontkickops(chan))
-	  i += my_strcpy(s + i, "dont-kick-ops ");
+	  i += my_strcpy(s + i, "dontkickops ");
 	if (channel_logstatus(chan))
-	  i += my_strcpy(s + i, "log-status ");
+	  i += my_strcpy(s + i, "statuslog ");
 	if (channel_revenge(chan))
 	  i += my_strcpy(s + i, "revenge ");
+	if (channel_revenge(chan))
+	  i += my_strcpy(s + i, "revengebot ");
 	if (channel_secret(chan))
 	  i += my_strcpy(s + i, "secret ");
 	if (channel_shared(chan))
@@ -636,18 +642,20 @@ static void channels_report(int idx, int details)
 	  i += my_strcpy(s + i, "dynamic ");
 	if (channel_autovoice(chan))
 	  i += my_strcpy(s + i, "autovoice ");
+	if (channel_autohalfop(chan))
+	  i += my_strcpy(s + i, "autohalfop ");
 	if (channel_cycle(chan))
 	  i += my_strcpy(s + i, "cycle ");
 	if (channel_seen(chan))
 	  i += my_strcpy(s + i, "seen ");
 	if (channel_dynamicexempts(chan))
-	  i += my_strcpy(s + i, "dynamic-exempts ");
-	if (channel_nouserexempts(chan))
-	  i += my_strcpy(s + i, "forbid-user-exempts ");
+	  i += my_strcpy(s + i, "dynamicexempts ");
+	if (!channel_nouserexempts(chan))
+	  i += my_strcpy(s + i, "userexempts ");
 	if (channel_dynamicinvites(chan))
-	  i += my_strcpy(s + i, "dynamic-invites ");
-	if (channel_nouserinvites(chan))
-	  i += my_strcpy(s + i, "forbid-user-invites ");
+	  i += my_strcpy(s + i, "dynamicinvites ");
+	if (!channel_nouserinvites(chan))
+	  i += my_strcpy(s + i, "userinvites ");
 	if (channel_inactive(chan))
 	  i += my_strcpy(s + i, "inactive ");
 	if (channel_nodesynch(chan))
@@ -918,12 +926,33 @@ char *channels_start(Function * global_funcs)
   udef = NULL;
   global_stopnethack_mode = 0;
   global_revenge_mode = 1;
-  strcpy(glob_chanset, "\
--enforcebans +dynamicbans +userbans -autoop -bitch +greet \
-+protectops +statuslog -revenge -secret -autovoice +cycle \
-+dontkickops -inactive -protectfriends +shared -seen \
-+userexempts +dynamicexempts +userinvites +dynamicinvites -revengebot \
--nodesynch" /* Do not remove this extra space: */ " ");
+  strcpy(glob_chanset,
+         "-enforcebans"
+	 "+dynamicbans"
+	 "+userbans"
+	 "-autoop"
+	 "-bitch"
+	 "+greet"
+	 "+protectops"
+	 "+statuslog"
+	 "-revenge"
+	 "-secret"
+	 "-autovoice"
+	 "+cycle"
+	 "+dontkickops"
+	 "-inactive"
+	 "-protectfriends"
+	 "+shared"
+	 "-seen"
+	 "+userexempts"
+	 "+dynamicexempts"
+	 "+userinvites"
+	 "+dynamicinvites"
+	 "-revengebot"
+	 "-protecthalfops"
+	 "-autohalfop"
+	 "-nodesync"
+	 " ");
   module_register(MODULE_NAME, channels_table, 1, 0);
   if (!module_depend(MODULE_NAME, "eggdrop", 106, 7)) {
     module_undepend(MODULE_NAME);

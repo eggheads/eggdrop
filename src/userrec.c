@@ -4,7 +4,7 @@
  *   a bunch of functions to find and change user records
  *   change and check user (and channel-specific) flags
  *
- * $Id: userrec.c,v 1.39 2002/03/22 03:53:57 guppy Exp $
+ * $Id: userrec.c,v 1.40 2002/06/13 20:43:08 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -475,6 +475,10 @@ int sort_compare(struct userrec *a, struct userrec *b)
     if (~a->flags & b->flags & USER_OP)
       return 1;
     if (a->flags & ~b->flags & USER_OP)
+      return 0;
+    if (~a->flags & b->flags & USER_HALFOP)
+      return 1;
+    if (a->flags & ~b->flags & USER_HALFOP)
       return 0;
   }
   return (egg_strcasecmp(a->handle, b->handle) > 0);

@@ -1,7 +1,7 @@
 /*
  * tclirc.c -- part of irc.mod
  *
- * $Id: tclirc.c,v 1.34 2002/03/27 03:57:38 guppy Exp $
+ * $Id: tclirc.c,v 1.35 2002/06/13 20:43:08 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -96,6 +96,32 @@ static int tcl_botisop STDVAR
   return TCL_OK;
 }
 
+static int tcl_botishalfop STDVAR
+{
+  struct chanset_t *chan, *thechan = NULL;
+
+  BADARGS(1, 2, " ?channel?");
+  if (argc > 1) {
+    chan = findchan_by_dname(argv[1]);
+    thechan = chan;
+    if (!thechan) {
+      Tcl_AppendResult(irp, "illegal channel: ", argv[1], NULL);
+      return TCL_ERROR;
+    }
+  } else
+   chan = chanset;
+   
+  while (chan && (thechan == NULL || thechan == chan)) {
+    if (me_halfop(chan)) {
+      Tcl_AppendResult(irp, "1", NULL);
+      return TCL_OK;
+    }
+    chan = chan->next;
+  }
+  Tcl_AppendResult(irp, "0", NULL);
+  return TCL_OK;
+}
+
 static int tcl_ischanjuped STDVAR
 {
   struct chanset_t *chan;
@@ -171,7 +197,7 @@ static int tcl_isop STDVAR
   struct chanset_t *chan, *thechan = NULL;
   memberlist *mx;
       
-  BADARGS(2, 3, " ?nick channel?");
+  BADARGS(2, 3, " nick ?channel?");
   if (argc > 2) {
     chan = findchan_by_dname(argv[2]);
     thechan = chan;
@@ -193,12 +219,39 @@ static int tcl_isop STDVAR
   return TCL_OK;
 }
 
+static int tcl_ishalfop STDVAR
+{
+  struct chanset_t *chan, *thechan = NULL;
+  memberlist *mx;
+      
+  BADARGS(2, 3, " nick ?channel?");
+  if (argc > 2) {
+    chan = findchan_by_dname(argv[2]);
+    thechan = chan;
+    if (!thechan) {
+      Tcl_AppendResult(irp, "illegal channel: ", argv[2], NULL);
+      return TCL_ERROR;
+    }
+  } else
+   chan = chanset;
+  
+  while (chan && (thechan == NULL || thechan == chan)) {
+    if ((mx = ismember(chan, argv[1])) && chan_hashalfop(mx)) {
+      Tcl_AppendResult(irp, "1", NULL);
+      return TCL_OK;
+    }
+    chan = chan->next;
+  }
+  Tcl_AppendResult(irp, "0", NULL);
+  return TCL_OK;
+}
+
 static int tcl_isvoice STDVAR
 {
   struct chanset_t *chan, *thechan = NULL;
   memberlist *mx;
 
-  BADARGS(2, 3, " ?nick channel?");
+  BADARGS(2, 3, " nick ?channel?");
   if (argc > 2) {
     chan = findchan_by_dname(argv[2]);
     thechan = chan;
@@ -238,6 +291,23 @@ static int tcl_wasop STDVAR
   return TCL_OK;
 }
 
+static int tcl_washalfop STDVAR
+{
+  struct chanset_t *chan;
+  memberlist *mx;
+
+  BADARGS(3, 3, " nick channel");
+  chan = findchan_by_dname(argv[2]);
+  if (chan == NULL) {
+    Tcl_AppendResult(irp, "illegal channel: ", argv[2], NULL);
+    return TCL_ERROR;
+  }
+  if ((mx = ismember(chan, argv[1])) && chan_washalfop(mx))
+    Tcl_AppendResult(irp, "1", NULL);
+  else
+    Tcl_AppendResult(irp, "0", NULL);
+  return TCL_OK;
+}
 
 static int tcl_onchan STDVAR
 {
@@ -752,8 +822,8 @@ static int tcl_putkick STDVAR
     comment = argv[3];
   else
     comment = "";
-  if (!me_op(chan)) {
-    Tcl_AppendResult(irp, "need op", NULL);
+  if (!me_op(chan) && !me_halfop(chan)) {
+    Tcl_AppendResult(irp, "need op or halfop", NULL);
     return TCL_ERROR;
   }
 
@@ -769,6 +839,10 @@ static int tcl_putkick STDVAR
     }
 
     m = ismember(chan, nick);
+    if (!me_op(chan) && !(me_halfop(chan) && !chan_hasop(m))) {
+      Tcl_AppendResult(irp, "need op", NULL);
+      return TCL_ERROR;
+    }
     if (!m)
       continue;			/* Skip non-existant nicks */
     m->flags |= SENTKICK;	/* Mark as pending kick */
@@ -795,9 +869,12 @@ static tcl_cmds tclchan_cmds[] =
 {
   {"chanlist",		tcl_chanlist},
   {"botisop",		tcl_botisop},
+  {"botishalfop",	tcl_botishalfop},
   {"botisvoice",	tcl_botisvoice},
   {"isop",		tcl_isop},
   {"wasop",		tcl_wasop},
+  {"ishalfop",		tcl_ishalfop},
+  {"washalfop",	tcl_washalfop},
   {"isvoice",		tcl_isvoice},
   {"onchan",		tcl_onchan},
   {"handonchan",	tcl_handonchan},

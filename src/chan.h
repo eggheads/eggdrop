@@ -3,7 +3,7 @@
  *   stuff common to chan.c and mode.c
  *   users.h needs to be loaded too
  *
- * $Id: chan.h,v 1.27 2002/04/16 19:56:33 guppy Exp $
+ * $Id: chan.h,v 1.28 2002/06/13 20:43:07 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -41,33 +41,39 @@ typedef struct memstruct {
 
 #define CHANMETA "#&!+"
 
-#define CHANOP      0x0001	/* channel +o				*/
-#define CHANVOICE   0x0002	/* channel +v				*/
-#define FAKEOP      0x0004	/* op'd by server			*/
-#define SENTOP      0x0008	/* a mode +o was already sent out for
-				   this user				*/
-#define SENTDEOP    0x0010	/* a mode -o was already sent out for
-				   this user				*/
-#define SENTKICK    0x0020	/* a kick was already sent out for this
-				   user					*/
-#define SENTVOICE   0x0040	/* a mode +v was already sent out for
-				   this user				*/
-#define SENTDEVOICE 0x0080	/* a devoice has been sent		*/
-#define WASOP       0x0100	/* was an op before a split		*/
-#define STOPWHO     0x0200
-#define FULL_DELAY  0x0400
-#define STOPCHECK   0x0800
+#define CHANOP       0x00001 /* channel +o                                   */
+#define CHANVOICE    0x00002 /* channel +v                                   */
+#define FAKEOP       0x00004 /* op'd by server                               */
+#define SENTOP       0x00008 /* a mode +o was already sent out for this user */
+#define SENTDEOP     0x00010 /* a mode -o was already sent out for this user */
+#define SENTKICK     0x00020 /* a kick was already sent out for this user    */
+#define SENTVOICE    0x00040 /* a mode +v was already sent out for this user */
+#define SENTDEVOICE  0x00080 /* a devoice has been sent                      */
+#define WASOP        0x00100 /* was an op before a split                     */
+#define STOPWHO      0x00200
+#define FULL_DELAY   0x00400
+#define STOPCHECK    0x00800
+#define CHANHALFOP   0x01000 /* channel +h                                   */
+#define FAKEHALFOP   0x02000 /* halfop'd by server                           */
+#define SENTHALFOP   0x04000 /* a mode +h was already sent out for this user */
+#define SENTDEHALFOP 0x08000 /* a mode -h was already sent out for this user */
+#define WASHALFOP    0x10000 /* was a halfop before a split                  */
 
 #define chan_hasvoice(x) (x->flags & CHANVOICE)
 #define chan_hasop(x) (x->flags & CHANOP)
+#define chan_hashalfop(x) (x->flags & CHANHALFOP)
 #define chan_fakeop(x) (x->flags & FAKEOP)
+#define chan_fakehalfop(x) (x->flags & FAKEHALFOP)
 #define chan_sentop(x) (x->flags & SENTOP)
 #define chan_sentdeop(x) (x->flags & SENTDEOP)
+#define chan_senthalfop(x) (x->flags & SENTHALFOP)
+#define chan_sentdehalfop(x) (x->flags & SENTDEHALFOP)
 #define chan_sentkick(x) (x->flags & SENTKICK)
 #define chan_sentvoice(x) (x->flags & SENTVOICE)
 #define chan_sentdevoice(x) (x->flags & SENTDEVOICE)
 #define chan_issplit(x) (x->split > 0)
 #define chan_wasop(x) (x->flags & WASOP)
+#define chan_washalfop(x) (x->flags & WASHALFOP)
 #define chan_stopcheck(x) (x->flags & STOPCHECK)
 
 /* Why duplicate this struct for exempts and invites only under another
@@ -185,39 +191,39 @@ struct chanset_t {
 };
 
 /* behavior modes for the channel */
-#define CHAN_ENFORCEBANS    0x0001	/* kick people who match channel bans */
-#define CHAN_DYNAMICBANS    0x0002	/* only activate bans when needed     */
-#define CHAN_NOUSERBANS     0x0004	/* don't let non-bots place bans      */
-#define CHAN_OPONJOIN       0x0008	/* op +o people as soon as they join  */
-#define CHAN_BITCH          0x0010	/* be a tightwad with ops	      */
-#define CHAN_GREET          0x0020	/* greet people with their info line  */
-#define CHAN_PROTECTOPS     0x0040	/* re-op any +o people who get deop'd */
-#define CHAN_LOGSTATUS      0x0080	/* log channel status every 5 mins    */
-#define CHAN_REVENGE        0x0100	/* get revenge on bad people	      */
-#define CHAN_SECRET         0x0200	/* don't advertise channel on botnet  */
-#define CHAN_AUTOVOICE      0x0400	/* dish out voice stuff automatically */
-#define CHAN_CYCLE          0x0800	/* cycle the channel if possible      */
-#define CHAN_DONTKICKOPS    0x1000	/* never kick +o flag people
-					   -arthur2			      */
-#define CHAN_INACTIVE       0x2000	/* no irc support for this channel
-					   - drummer			      */
-#define CHAN_PROTECTFRIENDS 0x4000	/* re-op any +f people who get deop'd */
-#define CHAN_SHARED         0x8000	/* channel is being shared	      */
+#define CHAN_ENFORCEBANS    0x0001	   /* kick people who match channel bans */
+#define CHAN_DYNAMICBANS    0x0002	   /* only activate bans when needed     */
+#define CHAN_NOUSERBANS     0x0004	   /* don't let non-bots place bans      */
+#define CHAN_OPONJOIN       0x0008	   /* op +o people as soon as they join  */
+#define CHAN_BITCH          0x0010	   /* be a tightwad with ops             */
+#define CHAN_GREET          0x0020	   /* greet people with their info line  */
+#define CHAN_PROTECTOPS     0x0040	   /* re-op any +o people who get deop'd */
+#define CHAN_LOGSTATUS      0x0080	   /* log channel status every 5 mins    */
+#define CHAN_REVENGE        0x0100	   /* get revenge on bad people          */
+#define CHAN_SECRET         0x0200	   /* don't advertise channel on botnet  */
+#define CHAN_AUTOVOICE      0x0400	   /* dish out voice stuff automatically */
+#define CHAN_CYCLE          0x0800	   /* cycle the channel if possible      */
+#define CHAN_DONTKICKOPS    0x1000	   /* never kick +o flag people -arthur2 */
+#define CHAN_INACTIVE       0x2000	   /* no irc support for this channel
+                                         - drummer                           */
+#define CHAN_PROTECTFRIENDS 0x4000	   /* re-op any +f people who get deop'd */
+#define CHAN_SHARED         0x8000	   /* channel is being shared            */
 #define CHAN_SEEN           0x10000
-#define CHAN_REVENGEBOT     0x20000	/* revenge on actions against the bot */
+#define CHAN_REVENGEBOT     0x20000	   /* revenge on actions against the bot */
 #define CHAN_NODESYNCH      0x40000
-/*			    0x100000 */
-#define CHAN_ACTIVE         0x1000000	/* like i'm actually on the channel
-					   and stuff			      */
-#define CHAN_PEND           0x2000000	/* just joined; waiting for end of
-					   WHO list			      */
-#define CHAN_FLAGGED        0x4000000	/* flagged during rehash for delete   */
-#define CHAN_STATIC         0x8000000	/* channels that are NOT dynamic      */
+#define CHAN_AUTOHALFOP     0x80000    /* op +h people on join               */ 
+#define CHAN_PROTECTHALFOPS 0x100000   /* op +h people on join               */ 
+#define CHAN_ACTIVE         0x1000000  /* like i'm actually on the channel
+                                          and stuff                          */
+#define CHAN_PEND           0x2000000  /* just joined; waiting for end of
+                                          WHO list                           */
+#define CHAN_FLAGGED        0x4000000  /* flagged during rehash for delete   */
+#define CHAN_STATIC         0x8000000  /* channels that are NOT dynamic      */
 #define CHAN_ASKEDBANS      0x10000000
-#define CHAN_ASKEDMODES     0x20000000  /* find out key-info on IRCu          */
-#define CHAN_JUPED          0x40000000  /* Is channel juped                   */
-#define CHAN_STOP_CYCLE     0x80000000  /* Some efnetservers have defined
-    NO_CHANOPS_WHEN_SPLIT              */
+#define CHAN_ASKEDMODES     0x20000000 /* find out key-info on IRCu          */
+#define CHAN_JUPED          0x40000000 /* Is channel juped                   */
+#define CHAN_STOP_CYCLE     0x80000000 /* Some efnetservers have defined
+                                          NO_CHANOPS_WHEN_SPLIT              */
 
 #define CHAN_ASKED_EXEMPTS  0x0001
 #define CHAN_ASKED_INVITED  0x0002
@@ -243,6 +249,7 @@ struct chanset_t *findchan_by_dname(const char *name);
 #define channel_nodesynch(chan) (chan->status & CHAN_NODESYNCH)
 #define channel_autoop(chan) (chan->status & CHAN_OPONJOIN)
 #define channel_autovoice(chan) (chan->status & CHAN_AUTOVOICE)
+#define channel_autohalfop(chan) (chan->status & CHAN_AUTOHALFOP)
 #define channel_greet(chan) (chan->status & CHAN_GREET)
 #define channel_logstatus(chan) (chan->status & CHAN_LOGSTATUS)
 #define channel_enforcebans(chan) (chan->status & CHAN_ENFORCEBANS)
@@ -250,6 +257,7 @@ struct chanset_t *findchan_by_dname(const char *name);
 #define channel_dynamicbans(chan) (chan->status & CHAN_DYNAMICBANS)
 #define channel_nouserbans(chan) (chan->status & CHAN_NOUSERBANS)
 #define channel_protectops(chan) (chan->status & CHAN_PROTECTOPS)
+#define channel_protecthalfops(chan) (chan->status & CHAN_PROTECTHALFOPS)
 #define channel_protectfriends(chan) (chan->status & CHAN_PROTECTFRIENDS)
 #define channel_dontkickops(chan) (chan->status & CHAN_DONTKICKOPS)
 #define channel_secret(chan) (chan->status & CHAN_SECRET)
