@@ -1,7 +1,7 @@
 /* 
  * share.c -- part of share.mod
  * 
- * $Id: share.c,v 1.36 2000/09/09 11:40:02 fabian Exp $
+ * $Id: share.c,v 1.37 2000/09/09 11:40:52 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1665,17 +1665,22 @@ static void finish_share(int idx)
    */
   if (!readuserfile(dcc[idx].u.xfer->filename, &u)) {
     putlog(LOG_MISC, "*", "%s", USERF_CANTREAD);
-    clear_userlist(u);
-    userlist = ou;		/* Reverting to old userlist.		 */
+    clear_userlist(u);		/* Clear new, obsolete, user list.	*/
+    clear_chanlist();		/* Remove all user references from the
+				   channel lists.			*/
+    for (i = 0; i < dcc_total; i++)
+      dcc[i].user = get_user_by_handle(ou, dcc[i].nick);
+    userlist = ou;		/* Revert to old user list.		*/
+    lastuser = NULL;		/* Reset last accessed user ptr.	*/
     return;
   }
   Context;
   putlog(LOG_BOTS, "*", "%s.", USERF_XFERDONE);
 
   clear_chanlist();		/* Remove all user references from the
-				   channel lists			*/
-  userlist = u;			/* Set new user list			*/
-  lastuser = NULL;		/* Reset last accessed user ptr		*/
+				   channel lists.			*/
+  userlist = u;			/* Set new user list.			*/
+  lastuser = NULL;		/* Reset last accessed user ptr.	*/
 
   /* 
    * Migrate:
