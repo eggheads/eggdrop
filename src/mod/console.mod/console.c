@@ -3,7 +3,7 @@
  *   saved console settings based on console.tcl
  *   by cmwagner/billyjoe/D. Senso
  * 
- * $Id: console.c,v 1.11 2000/01/17 22:36:08 fabian Exp $
+ * $Id: console.c,v 1.12 2000/02/25 20:51:10 fabian Exp $
  */
 /* 
  * Copyright (C) 1999, 2000  Eggheads
@@ -41,6 +41,9 @@ struct console_info {
   int page;
   int conchan;
 };
+
+static struct user_entry_type USERENTRY_CONSOLE;
+
 
 static int console_unpack(struct userrec *u, struct user_entry *e)
 {
@@ -190,6 +193,7 @@ int console_tcl_set(Tcl_Interp *irp, struct userrec *u,
       }
     }
   }
+  set_user(&USERENTRY_CONSOLE, u, i);
   return TCL_OK;
 }
 

@@ -2,7 +2,7 @@
  * irc.c -- part of irc.mod
  *   support for channels within the bot 
  * 
- * $Id: irc.c,v 1.18 2000/02/18 22:45:20 fabian Exp $
+ * $Id: irc.c,v 1.19 2000/02/25 20:51:10 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1069,13 +1069,13 @@ static void do_nettype()
     use_invites = 0;
     rfc_compliant = 0;
     break;
-  case 4:		/* new +e/+I Efnet hybrid */
+  case 4:		/* hybrid-6+ */
     kick_method = 1;
     modesperline = 4;
     use_354 = 0;
     use_silence = 0;
     use_exempts = 1;
-    use_invites = 1;
+    use_invites = 0;
     rfc_compliant = 1;
     break;
   default:

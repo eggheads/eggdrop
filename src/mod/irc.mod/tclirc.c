@@ -1,7 +1,7 @@
 /* 
  * tclirc.c -- part of irc.mod
  * 
- * $Id: tclirc.c,v 1.12 2000/02/03 22:54:17 fabian Exp $
+ * $Id: tclirc.c,v 1.13 2000/02/25 20:51:11 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -371,7 +371,7 @@ inline int tcl_chanmasks(masklist *m, Tcl_Interp *irp)
   while(m && m->mask && m->mask[0]) {
     list[0] = m->mask;
     list[1] = m->who;
-    simple_sprintf(work, "%lu", now - m->timer);
+    simple_sprintf(work, "%d", now - m->timer);
     list[2] = work;
     p = Tcl_Merge(3, list);
     Tcl_AppendElement(irp, p);

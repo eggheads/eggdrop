@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  * 
- * $Id: server.c,v 1.35 2000/01/31 22:56:01 fabian Exp $
+ * $Id: server.c,v 1.36 2000/02/25 20:51:11 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1333,7 +1333,7 @@ static void rand_nick(char *nick)
   char *p = nick;
 
   while ((p = strchr(p, '?')) != NULL) {
-    *p = '0' + rand() % 10;
+    *p = '0' + random() % 10;
     p++;
   }
 }
