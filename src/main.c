@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  *
- * $Id: main.c,v 1.67 2001/07/21 06:53:30 guppy Exp $
+ * $Id: main.c,v 1.68 2001/07/24 14:05:18 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -849,7 +849,7 @@ int main(int argc, char **argv)
       } else
         printf(EGG_NOWRITE, pid_file);
 #ifdef CYGWIN_HACKS
-      printf("Launched  (pid: %d)\n\n", xx);
+      printf("Launched into the background  (pid: %d)\n\n", xx);
 #endif
     }
   }
