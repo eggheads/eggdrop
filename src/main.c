@@ -12,6 +12,9 @@
  * copyright (c) 1997 Robey Pointer
  * and is distributed according to the GNU general public license.
  * 
+ * Parts of this eggdrop source code are copyright (c)1999 Eggheads
+ * and is distributed according to the GNU general public license.
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -528,7 +531,7 @@ int main(int argc, char **argv)
 #include "patch.h"
   /* version info! */
   sprintf(ver, "eggdrop v%s", egg_version);
-  sprintf(version, "Eggdrop v%s  (c)1997 Robey Pointer", egg_version);
+  sprintf(version, "Eggdrop v%s  (c)1997 Robey Pointer (c)1999 Eggheads", egg_version);
   /* now add on the patchlevel (for Tcl) */
   sprintf(&egg_version[strlen(egg_version)], " %08u", egg_numver);
   strcat(egg_version, egg_xtra);

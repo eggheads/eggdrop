@@ -254,12 +254,12 @@ set debug-output 0
 # this now includes when the bot will save its userfile
 set hourly-updates 00
 
-# who should I send a note to when I learn new users?
-set notify-newusers "$owner"
-
 # if compiled with owner, the following user(s) will ALWAYS have the
 # owner (+n) flag (You really should change this default)
 set owner "MrLame, MrsLame"
+
+# who should I send a note to when I learn new users?
+set notify-newusers "$owner"
 
 # what flags should new users get as a default?
 # check 'help whois' for tons of options.
