@@ -167,7 +167,6 @@ case "$SYSTEM" in
     CFLAGS="$CFLAGS -Wall"
     MOD_LD="${CC}"
     SHLIB_LD="${CC} -shared -nostartfiles"
-    DEFAULT_MAKE=debug
     AC_DEFINE(MODULES_OK)
     ;;
   Lynx)
