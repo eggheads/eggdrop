@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  * 
- * $Id: server.c,v 1.31 2000/01/17 22:36:10 fabian Exp $
+ * $Id: server.c,v 1.32 2000/01/22 22:54:21 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -94,6 +94,8 @@ static int use_penalties;
 static int use_fastdeq;
 static int nick_len;		/* Maximal nick length allowed on the
 				 * network. */
+static int kick_method = 1;
+static int optimize_kicks = 0;
 
 static Function *global = NULL;
 
@@ -107,6 +109,10 @@ static char *get_altbotnick(void);
 static int calc_penalty(char *);
 static int fast_deq(int);
 static char *splitnicks(char **);
+static void check_kicks(char *, char *);
+static void check_kicks_in_q(struct msgq_head *, char *, char *);
+static void purge_kicks(struct msgq_head *);
+static int deq_kick(int);
 
 #include "servmsg.c"
 
@@ -158,14 +164,19 @@ static void deq_msg()
   /* Send upto 4 msgs to server if the *critical queue* has anything in it */
   if (modeq.head) {
     while (modeq.head && (burst < 4) && ((last_time - now) < MAXPENALTY)) {
+      if (deq_kick(DP_MODE)) {
+        burst++;
+        continue;
+      }
+      if (!modeq.head)
+        break;
       if (fast_deq(DP_MODE)) {
         burst++;
         continue;
       }
       tputs(serv, modeq.head->msg, modeq.head->len);
-      if (debug_output) {
+      if (debug_output)
         putlog(LOG_SRVOUT, "*", "[m->] %s", modeq.head->msg);
-      }
       modeq.tot--;
       last_time += calc_penalty(modeq.head->msg);
       q = modeq.head->next;
@@ -183,12 +194,13 @@ static void deq_msg()
     return;
   if (mq.head) {
     burst++;
+    if (deq_kick(DP_SERVER))
+      return;
     if (fast_deq(DP_SERVER))
       return;
     tputs(serv, mq.head->msg, mq.head->len);
-    if (debug_output) {
+    if (debug_output)
       putlog(LOG_SRVOUT, "*", "[s->] %s", mq.head->msg);
-    }
     mq.tot--;
     last_time += calc_penalty(mq.head->msg);
     q = mq.head->next;
@@ -204,12 +216,13 @@ static void deq_msg()
    */
   if (!hq.head || burst || !ok)
     return;
+  if (deq_kick(DP_HELP))
+    return;
   if (fast_deq(DP_HELP))
     return;
   tputs(serv, hq.head->msg, hq.head->len);
-  if (debug_output) {
+  if (debug_output)
     putlog(LOG_SRVOUT, "*", "[h->] %s", hq.head->msg);
-  }
   hq.tot--;
   last_time += calc_penalty(hq.head->msg);
   q = hq.head->next;
@@ -480,6 +493,276 @@ static int fast_deq(int which)
   }
   Context;
   return 0;
+}
+
+static void check_kicks(char *oldnick, char *newnick)
+{
+  
+  Context;
+  if (modeq.head)
+    check_kicks_in_q(&modeq, oldnick, newnick);
+  if (mq.head)
+    check_kicks_in_q(&mq, oldnick, newnick);
+  if (hq.head)
+    check_kicks_in_q(&hq, oldnick, newnick);
+  Context;
+}
+
+static void check_kicks_in_q(struct msgq_head *q, char *oldnick, char *newnick)
+{
+  struct msgq *m, *lm;
+  char buf[511], *reason, *nicks, *nick, *chan, newnicks[511], newmsg[511];
+  int changed;
+  
+  Context;
+  m = q->head;
+  lm = NULL;
+  while (m) {
+    if (!strncasecmp(m->msg, "KICK", 4)) {
+      newnicks[0] = 0;
+      changed = 0;
+      strncpy(buf, m->msg, 510);
+      buf[510] = 0;
+      reason = buf;
+      newsplit(&reason);
+      chan = newsplit(&reason);
+      nicks = newsplit(&reason);
+      while (strlen(nicks) > 0) {
+        nick = splitnicks(&nicks);
+        if (!strcasecmp(nick, oldnick) &&
+            ((9 + strlen(chan) + strlen(newnicks) + strlen(newnick) +
+              strlen(nicks) + strlen(reason)) < 510)) {
+          if (newnick)
+            sprintf(newnicks, "%s,%s", newnicks, newnick);
+          changed = 1;
+        } else
+          sprintf(newnicks, ",%s", nick);
+      }
+      if (changed) {
+        if (newnicks[0] == 0) {
+          if (!lm)
+            q->head = m->next;
+          else
+            lm->next = m->next;
+          nfree(m->msg);
+          nfree(m);
+          m = lm;
+          q->tot--;
+          if (!q->head)
+            q->last = 0;
+        } else {
+          nfree(m->msg);
+          sprintf(newmsg, "KICK %s %s %s", chan, newnicks + 1, reason);
+          m->msg = nmalloc(strlen(newmsg) + 1);
+          m->len = strlen(newmsg);
+          strcpy(m->msg, newmsg);
+        }
+      }
+    }
+    lm = m;
+    if (m)
+      m = m->next;
+    else
+      m = q->head;
+  }
+  Context;
+}
+
+static void purge_kicks(struct msgq_head *q)
+{
+  struct msgq *m, *lm;
+  char buf[511], *reason, *nicks, *nick, *chan, newnicks[511];
+  char newmsg[511], chans[511], *chns, *ch;
+  int changed, found;
+  struct chanset_t *cs;
+  
+  Context;
+  m = q->head;
+  lm = NULL;
+  while (m) {
+    if (!strncasecmp(m->msg, "KICK", 4)) {
+      newnicks[0] = 0;
+      changed = 0;
+      strncpy(buf, m->msg, 510);
+      buf[510] = 0;
+      reason = buf;
+      newsplit(&reason);
+      chan = newsplit(&reason);
+      nicks = newsplit(&reason);
+      while (strlen(nicks) > 0) {
+        found = 0;
+        nick = splitnicks(&nicks);
+        sprintf(chans, chan);
+        chns = chans;
+        while (strlen(chns) > 0) {
+          ch = newsplit(&chns);
+          cs = findchan(ch);
+          if (!cs)
+            continue;
+          if (ismember(cs, nick))
+            found = 1;
+        }
+        if (found)
+          sprintf(newnicks, "%s,%s", newnicks, nick);
+        else {
+          putlog(LOG_SRVOUT, "*", "%s isn't on any target channel, removing kick...",
+                 nick);
+          changed = 1;
+        }
+      }
+      if (changed) {
+        if (newnicks[0] == 0) {
+          if (!lm)
+            q->head = m->next;
+          else
+            lm->next = m->next;
+          nfree(m->msg);
+          nfree(m);
+          m = lm;
+          q->tot--;
+          if (!q->head)
+            q->last = 0;
+        } else {
+          nfree(m->msg);
+          sprintf(newmsg, "KICK %s %s %s", chan, newnicks + 1, reason);
+          m->msg = nmalloc(strlen(newmsg) + 1);
+          m->len = strlen(newmsg);
+          strcpy(m->msg, newmsg);
+        }
+      }
+    }
+    lm = m;
+    if (m)
+      m = m->next;
+    else
+      m = q->head;
+  }
+  Context;
+}
+
+static int deq_kick(int which)
+{
+  struct msgq_head *h;
+  struct msgq *msg, *m, *lm;
+  char buf[511], buf2[511], *reason2, *nicks, *chan, *chan2, *reason;
+  char *nick, newnicks[511], newnicks2[511], newmsg[511];
+  int changed = 0, nr = 0;
+
+  Context;
+  if (!optimize_kicks)
+    return 0;
+  newnicks[0] = 0;
+  switch (which) {
+    case DP_MODE:
+      h = &modeq;
+      break;
+    case DP_SERVER:
+      h = &mq;
+      break;
+    case DP_HELP:
+      h = &hq;
+      break;
+    default:
+      return 0;
+  }
+  if (strncasecmp(h->head->msg, "KICK", 4))
+    return 0;
+  if (optimize_kicks == 2) {
+    purge_kicks(h);
+    if (!h->head)
+      return 1;
+  }
+  if (strncasecmp(h->head->msg, "KICK", 4))
+    return 0;
+  msg = h->head;
+  strncpy(buf, msg->msg, 510);
+  buf[510] = 0;
+  reason = buf;
+  newsplit(&reason);
+  chan = newsplit(&reason);
+  nicks = newsplit(&reason);
+  while (strlen(nicks) > 0) {
+    sprintf(newnicks, "%s,%s", newnicks, newsplit(&nicks));
+    nr++;
+  }
+  m = msg->next;
+  lm = NULL;
+  while (m && (nr < kick_method)) {
+    if (!strncasecmp(m->msg, "KICK", 4)) {
+      changed = 0;
+      newnicks2[0] = 0;
+      strncpy(buf2, m->msg, 510);
+      buf2[510] = 0;
+      reason2 = buf2;
+      newsplit(&reason2);
+      chan2 = newsplit(&reason2);
+      nicks = newsplit(&reason2);
+      if (!strcasecmp(chan, chan2) && !strcasecmp(reason, reason2)) {
+        while (strlen(nicks) > 0) {
+          nick = splitnicks(&nicks);
+          if ((nr < kick_method) &&
+             ((9 + strlen(chan) + strlen(newnicks) + strlen(nick) +
+             strlen(reason)) < 510)) {
+            sprintf(newnicks, "%s,%s", newnicks, nick);
+            nr++;
+            changed = 1;
+          } else
+            sprintf(newnicks2, "%s,%s", newnicks2, nick);
+        }
+      }
+      if (changed) {
+        if (newnicks2[0] == 0) {
+          if (!lm)
+            h->head->next = m->next;
+          else
+            lm->next = m->next;
+          nfree(m->msg);
+          nfree(m);
+          m = lm;
+          h->tot--;
+          if (!h->head)
+            h->last = 0;
+        } else {
+          nfree(m->msg);
+          sprintf(newmsg, "KICK %s %s %s", chan2, newnicks2 + 1, reason);
+          m->msg = nmalloc(strlen(newmsg) + 1);
+          m->len = strlen(newmsg);
+          strcpy(m->msg, newmsg);
+        }
+      }
+    }
+    lm = m;
+    if (m)
+      m = m->next;
+    else
+      m = h->head->next;
+  }
+  sprintf(newmsg, "KICK %s %s %s", chan, newnicks + 1, reason);
+  tputs(serv, newmsg, strlen(newmsg));  
+  if (debug_output) {
+    newmsg[strlen(newmsg) - 1] = 0;
+    switch (which) {
+      case DP_MODE:
+        putlog(LOG_SRVOUT, "*", "[m->] %s", newmsg);
+        break;
+      case DP_SERVER:
+        putlog(LOG_SRVOUT, "*", "[s->] %s", newmsg);
+        break;
+      case DP_HELP:
+        putlog(LOG_SRVOUT, "*", "[h->] %s", newmsg);
+        break;
+    }
+    debug3("Changed: %d, kick-method: %d, nr: %d", changed, kick_method, nr);
+  }
+  h->tot--;
+  last_time += calc_penalty(newmsg);
+  m = h->head->next;
+  nfree(h->head->msg);
+  nfree(h->head);
+  h->head = m;
+  if (!h->head)
+    h->last = 0;
+  return 1;
 }
 
 /* Clean out the msg queues (like when changing servers).
@@ -943,6 +1226,7 @@ static void do_nettype(void)
     use_fastdeq = 3;
     nick_len = 9;
     simple_sprintf(stackablecmds, "INVITE AWAY VERSION NICK ISON");
+    kick_method = 4;
     break;
   case 2:	/* Undernet */
     use_silence = 1;
@@ -1045,6 +1329,7 @@ static tcl_ints my_tcl_ints[] =
   {"use-penalties",		&use_penalties,			0},
   {"use-fastdeq",		&use_fastdeq,			0},
   {"nick-len",			&nick_len,			0},
+  {"optimize-kicks", &optimize_kicks, 0},
   {NULL,			NULL,				0}
 };
 
