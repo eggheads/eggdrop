@@ -1,7 +1,7 @@
 /* 
  * tclchan.c -- part of channels.mod
  * 
- * $Id: tclchan.c,v 1.32 2000/09/09 17:29:07 fabian Exp $
+ * $Id: tclchan.c,v 1.33 2000/09/13 20:49:40 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1163,33 +1163,39 @@ static int tcl_channel_modify(Tcl_Interp * irp, struct chanset_t *chan,
 	*ptime = 1;
       }
     } else {
-      found = 0;
       if (!strncmp(item[i] + 1, "udef-flag-", 10))
         initudef(UDEF_FLAG, item[i] + 11, 0);
       else if (!strncmp(item[i], "udef-int-", 9))
         initudef(UDEF_INT, item[i] + 9, 0);
+      found = 0;
       for (ul = udef; ul; ul = ul->next) {
-        if ((!egg_strcasecmp(item[i] + 1, ul->name) ||
-	    (!strncmp(item[i] + 1, "udef-flag-", 10) &&
-	     !egg_strcasecmp(item[i] + 11, ul->name))) &&
-	    (ul->type == UDEF_FLAG)) {
-          found = 1;
+        if (ul->type == UDEF_FLAG &&
+	     /* Direct match when set during .chanset ... */
+	    (!egg_strcasecmp(item[i] + 1, ul->name) ||
+	     /* ... or with prefix when set during chanfile load. */
+	     (!strncmp(item[i] + 1, "udef-flag-", 10) &&
+	      !egg_strcasecmp(item[i] + 11, ul->name)))) {
           if (item[i][0] == '+')
-            setudef(ul, ul->values, chan->dname, 1);
+            setudef(ul, chan->dname, 1);
           else
-            setudef(ul, ul->values, chan->dname, 0);
-        } else if ((!egg_strcasecmp(item[i], ul->name) ||
-		   (!strncmp(item[i], "udef-int-", 9) &&
-		    !egg_strcasecmp(item[i] + 9, ul->name))) &&
-		   (ul->type == UDEF_INT)) {
+            setudef(ul, chan->dname, 0);
           found = 1;
+	  break;
+        } else if (ul->type == UDEF_INT &&
+		    /* Direct match when set during .chanset ... */
+		   (!egg_strcasecmp(item[i], ul->name) ||
+		    /* ... or with prefix when set during chanfile load. */
+		    (!strncmp(item[i], "udef-int-", 9) &&
+		     !egg_strcasecmp(item[i] + 9, ul->name)))) {
           i++;
           if (i >= items) {
             if (irp)
               Tcl_AppendResult(irp, "this setting needs an argument", NULL);
             return TCL_ERROR;
           }
-          setudef(ul, ul->values, chan->dname, atoi(item[i]));
+          setudef(ul, chan->dname, atoi(item[i]));
+          found = 1;
+	  break;
         }
       }
       if (!found) {

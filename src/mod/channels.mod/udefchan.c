@@ -2,7 +2,7 @@
  * udefchan.c -- part of channels.mod
  *   user definable channel flags/settings
  * 
- * $Id: udefchan.c,v 1.4 2000/03/23 23:17:57 fabian Exp $
+ * $Id: udefchan.c,v 1.5 2000/09/13 20:49:40 fabian Exp $
  */
 /* 
  * Copyright (C) 1999, 2000  Eggheads
@@ -22,27 +22,25 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-static int expmem_udef (struct udef_struct *ul)
+static int expmem_udef(struct udef_struct *ul)
 {
   int i = 0;
 
-  while (ul) {
+  for (; ul; ul = ul->next) {
     i += sizeof(struct udef_struct);
     i += strlen(ul->name) + 1;
     i += expmem_udef_chans(ul->values);
-    ul = ul->next;
   }
   return i;
 }
 
-static int expmem_udef_chans (struct udef_chans *ul)
+static int expmem_udef_chans(struct udef_chans *ul)
 {
   int i = 0;
   
-  while (ul) {
+  for (; ul; ul = ul->next) {
     i += sizeof(struct udef_chans);
     i += strlen(ul->chan) + 1;
-    ul = ul->next;
   }
   return i;
 }
@@ -51,14 +49,11 @@ static int getudef(struct udef_chans *ul, char *name)
 {
   int val = 0;
 
-  Context;
-  while (ul) {
+  for (; ul; ul = ul->next)
     if (!egg_strcasecmp(ul->chan, name)) {
       val = ul->value;
       break;
     }
-    ul = ul->next;
-  }
   return val;
 }
 
@@ -67,108 +62,88 @@ static int ngetudef(char *name, char *chan)
   struct udef_struct *l;
   struct udef_chans *ll;
 
-  Context;
   for (l = udef; l; l = l->next)
-    if (!egg_strcasecmp(l->name, name))
+    if (!egg_strcasecmp(l->name, name)) {
       for (ll = l->values; ll; ll = ll->next)
         if (!egg_strcasecmp(ll->chan, chan))
           return ll->value;
+      break;
+    }
   return 0;
 }
 
-static void setudef(struct udef_struct *us, struct udef_chans *ul, char *name,
-		    int value)
+static void setudef(struct udef_struct *us, char *name, int value)
 {
-  struct udef_chans *ull;
+  struct udef_chans *ul, *ul_last = NULL;
 
-  Context;
-  ull = ul;
-  while (ul) {
+  for (ul = us->values; ul; ul_last = ul, ul = ul->next)
     if (!egg_strcasecmp(ul->chan, name)) {
       ul->value = value;
       return;
     }
-    ul = ul->next;
-  }
-  ul = ull;
-  while (ul && ul->next)
-    ul = ul->next;
-  ull = nmalloc(sizeof(struct udef_chans));
-  ull->chan = nmalloc(strlen(name) + 1);
-  strcpy(ull->chan, name);
-  ull->value = value;
-  ull->next = NULL;
-  if (ul)
-    ul->next = ull;
+
+  ul = nmalloc(sizeof(struct udef_chans));
+  ul->chan = nmalloc(strlen(name) + 1);
+  strcpy(ul->chan, name);
+  ul->value = value;
+  ul->next = NULL;
+  if (ul_last)
+    ul_last->next = ul;
   else
-    us->values = ull;
-  return;
+    us->values = ul;
 }
   
 static void initudef(int type, char *name, int defined)
 {
-  struct udef_struct *ul = udef, *ull = NULL;
-  int found = 0;
+  struct udef_struct *ul, *ul_last = NULL;
 
-  Context;
   if (strlen(name) < 1)
     return;
-  while (ul) {
+  for (ul = udef; ul; ul_last = ul, ul = ul->next)
     if (ul->name && !egg_strcasecmp(ul->name, name)) {
       if (defined) {
         debug1("UDEF: %s defined", ul->name);
         ul->defined = 1;
       }
-      found = 1;
+      return;
     }
-    ul = ul->next;
-  }
-  if (!found) {
-    debug2("Creating %s (type %d)", name, type);
-    ull = udef;
-    while (ull && ull->next)
-      ull = ull->next;
-    ul = nmalloc(sizeof(struct udef_struct));
-    ul->name = nmalloc(strlen(name) + 1);
-    strcpy(ul->name, name);
-    if (defined)
-      ul->defined = 1;
-    else
-      ul->defined = 0;
-    ul->type = type;
-    ul->values = NULL;
-    ul->next = NULL;
-    if (ull)
-      ull->next = ul;
-    else
-      udef = ul;
-  }
-  return;
+
+  debug2("Creating %s (type %d)", name, type);
+  ul = nmalloc(sizeof(struct udef_struct));
+  ul->name = nmalloc(strlen(name) + 1);
+  strcpy(ul->name, name);
+  if (defined)
+    ul->defined = 1;
+  else
+    ul->defined = 0;
+  ul->type = type;
+  ul->values = NULL;
+  ul->next = NULL;
+  if (ul_last)
+    ul_last->next = ul;
+  else
+    udef = ul;
 }
 
 static void free_udef(struct udef_struct *ul)
 {
   struct udef_struct *ull;
 
-  while (ul) {
+  for (; ul; ul = ull) {
     ull = ul->next;
     free_udef_chans(ul->values);
     nfree(ul->name);
     nfree(ul);
-    ul = ull;
   }
-  return;
 }
 
 static void free_udef_chans(struct udef_chans *ul)
 {
   struct udef_chans *ull;
   
-  while (ul) {
+  for (; ul; ul = ull) {
     ull = ul->next;
     nfree(ul->chan);
     nfree(ul);
-    ul = ull;
   }
-  return;
 }

@@ -2,7 +2,7 @@
  * cmdschan.c -- part of channels.mod
  *   commands from a user via dcc that cause server interaction
  *
- * $Id: cmdschan.c,v 1.28 2000/08/27 19:14:53 fabian Exp $
+ * $Id: cmdschan.c,v 1.29 2000/09/13 20:49:40 fabian Exp $
  */
 /*
  * Copyright (C) 1997  Robey Pointer
@@ -1159,7 +1159,7 @@ static void cmd_chaninfo(struct userrec *u, int idx, char *par)
   char *chname, work[512];
   struct chanset_t *chan;
   int ii, tmp;
-  struct udef_struct *ul = udef;
+  struct udef_struct *ul;
 
   if (!par[0]) {
     chname = dcc[idx].u.chat->con_chan;
@@ -1236,51 +1236,54 @@ static void cmd_chaninfo(struct userrec *u, int idx, char *par)
             (chan->status & CHAN_PROTECTFRIENDS) ? '+' : '-',
 	    (chan->status & CHAN_REVENGEBOT) ? '+' : '-',
 	    (chan->status & CHAN_NODESYNCH) ? '+' : '-');
-    simple_sprintf(work, "    ");
+
     ii = 1;
     tmp = 0;
-    while (ul) {
-      if (ul->defined && (ul->type == UDEF_FLAG)) {
+    for (ul = udef; ul; ul = ul->next)
+      if (ul->defined && ul->type == UDEF_FLAG) {
+	int	work_len;
+
         if (!tmp) {
           dprintf(idx, "User defined channel flags:\n");
           tmp = 1;
         }
-        simple_sprintf(work, "%s %c%s", work,
-		       getudef(ul->values, chan->name) ? '+' : '-', ul->name);
+	if (ii == 1)
+	  egg_snprintf(work, sizeof work, "     ");
+	work_len = strlen(work);
+        egg_snprintf(work + work_len, sizeof(work) - work_len, "%c%s",
+		     getudef(ul->values, chan->dname) ? '+' : '-', ul->name);
         ii++;
         if (ii > 4) {
           dprintf(idx, "%s\n", work);
-          simple_sprintf(work, "    ");
           ii = 1;
         }
       }
-      ul = ul->next;
-    }
     if (ii > 1)
       dprintf(idx, "%s\n", work);
-    simple_sprintf(work, "");
+
+    work[0] = 0;
     ii = 1;
     tmp = 0;
-    ul = udef;
-    while (ul) {
-      if (ul->defined && (ul->type == UDEF_INT)) {
+    for (ul = udef; ul; ul = ul->next)
+      if (ul->defined && ul->type == UDEF_INT) {
+	int	work_len = strlen(work);
+
         if (!tmp) {
           dprintf(idx, "User defined channel settings:\n");
           tmp = 1;
         }
-        simple_sprintf(work, "%s%s: %d   ", work, ul->name,
-		       getudef(ul->values, chan->dname));
+        egg_snprintf(work + work_len, sizeof(work) - work_len, "%s%s: %d   ",
+		     work, ul->name, getudef(ul->values, chan->dname));
         ii++;
         if (ii > 4) {
           dprintf(idx, "%s\n", work);
-          simple_sprintf(work, "");
+	  work[0] = 0;
           ii = 1;
         }
       }
-      ul = ul->next;
-    }
     if (ii > 1)
       dprintf(idx, "%s\n", work);
+
     dprintf(idx, "flood settings: chan ctcp join kick deop nick\n");
     dprintf(idx, "number:          %3d  %3d  %3d  %3d  %3d  %3d\n",
 	    chan->flood_pub_thr, chan->flood_ctcp_thr,

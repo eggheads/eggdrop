@@ -2,7 +2,7 @@
  * channels.c -- part of channels.mod
  *   support for channels within the bot
  * 
- * $Id: channels.c,v 1.34 2000/09/09 11:37:52 fabian Exp $
+ * $Id: channels.c,v 1.35 2000/09/13 20:49:39 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -51,8 +51,7 @@ static char glob_chanset[512]	= "\
 +protectops +statuslog -revenge -secret -autovoice +cycle \
 +dontkickops -inactive -protectfriends +shared -seen \
 +userexempts +dynamicexempts +userinvites +dynamicinvites -revengebot \
--nodesynch ";
-/* DO NOT remove the extra space at the end of the string! */
+-nodesynch" /* Do not remove this extra space: */ " ";
 
 /* Global flood settings */
 static int gfld_chan_thr;
@@ -487,7 +486,8 @@ static void read_channels(int create)
     if (!f)
       putlog(LOG_MISC, "*", "Couldn't create channel file: %s.  Dropping",
 	     chanfile);
-    else fclose(f);
+    else
+      fclose(f);
   }
   chan_hack = 0;
   chan = chanset;

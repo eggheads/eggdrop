@@ -1,7 +1,7 @@
 /* 
  * channels.h -- part of channels.mod
  * 
- * $Id: channels.h,v 1.11 2000/03/19 23:56:07 fabian Exp $
+ * $Id: channels.h,v 1.12 2000/09/13 20:49:40 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -31,18 +31,26 @@
 
 #ifdef MAKING_CHANNELS
 
+/* Structure for udef channel values. Udef setting have one such
+ * structure for each channel where they have a defined value.
+ */
 struct udef_chans {
-  struct udef_chans *next;
-  char *chan;
-  int value;
+  struct udef_chans *next;	/* Ptr to next value.			*/
+  char *chan;			/* Dname of channel name.		*/
+  int value;			/* Actual value.			*/
 };
 
+/* Structure for user defined channel settings.
+ */
 struct udef_struct {
-  struct udef_struct *next;
-  char *name;
-  int defined;
-  int type;
-  struct udef_chans *values;
+  struct udef_struct *next;	/* Ptr to next setting.			*/
+  char *name;			/* Name of setting.			*/
+  int defined;			/* Boolean that specifies whether this
+				   flag was defined by, e.g. a Tcl
+				   script yet.				*/
+  int type;			/* Type of setting: UDEF_FLAG, UDEF_INT	*/
+  struct udef_chans *values;	/* Ptr to linked list of udef channel
+				   structures.				*/
 };
 
 static void del_chanrec(struct userrec *u, char *);
@@ -95,7 +103,7 @@ static void free_udef(struct udef_struct *);
 static void free_udef_chans(struct udef_chans *);
 static int getudef(struct udef_chans *, char *);
 static void initudef(int type, char *, int);
-static void setudef(struct udef_struct *, struct udef_chans *, char *, int);
+static void setudef(struct udef_struct *, char *, int);
 static void remove_channel(struct chanset_t *);
 static int ngetudef(char *, char *);
 

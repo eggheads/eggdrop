@@ -5,7 +5,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: botmsg.c,v 1.16 2000/09/12 15:25:40 fabian Exp $
+ * $Id: botmsg.c,v 1.17 2000/09/13 20:49:39 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -145,28 +145,24 @@ int simple_sprintf EGG_VARARGS_DEF(char *,arg1)
   buf = EGG_VARARGS_START(char *, arg1, va);
   format = va_arg(va, char *);
 
-  while (*format && (c < 1023)) {
+  while (*format && c < 1023) {
     if (*format == '%') {
       format++;
       switch (*format) {
       case 's':
 	s = va_arg(va, char *);
-
 	break;
       case 'd':
       case 'i':
 	i = va_arg(va, int);
-
 	s = int_to_base10(i);
 	break;
       case 'D':
 	i = va_arg(va, int);
-
 	s = int_to_base64((unsigned int) i);
 	break;
       case 'u':
 	i = va_arg(va, unsigned int);
-
         s = unsigned_int_to_base10(i);
 	break;
       case '%':
@@ -174,15 +170,14 @@ int simple_sprintf EGG_VARARGS_DEF(char *,arg1)
 	continue;
       case 'c':
 	buf[c++] = (char) va_arg(va, int);
-
 	format++;
 	continue;
       default:
 	continue;
       }
       if (s)
-      while (*s && (c < 1023))
-        buf[c++] = *s++;
+	while (*s && c < 1023)
+	  buf[c++] = *s++;
       format++;
     } else
       buf[c++] = *format++;
