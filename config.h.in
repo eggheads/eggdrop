@@ -5,7 +5,7 @@
  * acconfig.h
  *   template file autoheader uses when building config.h.in
  * 
- * $Id: config.h.in,v 1.32 2003/06/10 15:16:07 stdarg Exp $
+ * $Id: config.h.in,v 1.33 2003/06/10 19:05:37 wcc Exp $
  */
 
 /* Define if stripping is enabled. */
