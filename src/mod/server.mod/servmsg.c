@@ -1,7 +1,7 @@
 /* 
  * servmsg.c -- part of server.mod
  * 
- * $Id: servmsg.c,v 1.34 2000/04/13 21:38:42 fabian Exp $
+ * $Id: servmsg.c,v 1.35 2000/05/06 22:00:31 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -311,7 +311,7 @@ static int got442(char *from, char *msg)
 
   while (x != NULL) {
     if (i == curserv) {
-      if (strcasecmp(from, x->realname ? x->realname : x->name))
+      if (egg_strcasecmp(from, x->realname ? x->realname : x->name))
 	return 0;
       break;
     }
@@ -898,7 +898,7 @@ static int got437(char *from, char *msg)
   } else if (server_online) {
     if (!nick_juped)
       putlog(LOG_MISC, "*", "NICK IS JUPED: %s (keeping '%s').", s, botname);
-    if (!strcmp(s, origbotname))
+    if (!rfc_casecmp(s, origbotname))
       nick_juped = 1;
   } else {
     putlog(LOG_MISC, "*", "%s: %s", IRC_BOTNICKJUPED, s);
@@ -1122,10 +1122,9 @@ static int gotkick(char *from, char *msg)
 {
   char *nick, buf2[511], *pbuf, *victim;
 
-/*  strcpy(uhost, from); */
-/*  nick = splitnick(&uhost); */
   nick = from;
-  if (strcmp(nick, botname))  /* not my kick, I don't need to bother about it */
+  if (rfc_casecmp(nick, botname))
+    /* Not my kick, I don't need to bother about it. */
     return 0;
   if (use_penalties) {
     last_time += 2;
@@ -1140,7 +1139,7 @@ static int gotkick(char *from, char *msg)
   newsplit(&pbuf);
   victim = newsplit(&pbuf);
   check_notlagged(victim);
-  if (!egg_strcasecmp(victim, lagcheckstring)) {
+  if (!rfc_casecmp(victim, lagcheckstring)) {
     debug1("I kicked %s, so I think I'm not lagged", victim);
     lagged = 0;
     nfree(lagcheckstring);
@@ -1241,7 +1240,8 @@ static int lagcheck_mode (char *from, char *origmsg)
 {
   char *modes, pm, buf[511], *msg;
 
-  if (strcmp(from, botname))  /* that wasn't my modechange... */
+  if (rfc_casecmp(from, botname))
+    /* That wasn't my modechange... */
     return 0;
   strncpy(buf, origmsg, 510);
   buf[510] = 0;
@@ -1275,11 +1275,11 @@ static int lagcheck_401(char *from, char *origmsg)
   strncpy(buf, origmsg, 510);
   buf[510] = 0;
   msg = buf;
-  if (strcmp(newsplit(&msg), botname)) {
+  if (rfc_casecmp(newsplit(&msg), botname)) {
     debug1("This shouldn't happen.(%s)", origmsg);
     return 0;
   }
-  if (!egg_strcasecmp(lagcheckstring2, newsplit(&msg))) {
+  if (!rfc_casecmp(lagcheckstring2, newsplit(&msg))) {
     lagged = 0;
     if (lagcheckstring) {
       nfree(lagcheckstring);
@@ -1387,6 +1387,8 @@ static void connect_server(void)
        * Note: Put it here, just in case the server quits on us quickly
        */
       cycle_time = server_cycle_wait;
+    else
+      cycle_time = 0;
 
     /* I'm resolving... don't start another server connect request */
     resolvserv = 1;
@@ -1435,7 +1437,6 @@ static void server_resolve_success(int servidx)
       dprintf(DP_MODE, "PASS %s\n", pass);
     dprintf(DP_MODE, "USER %s %s %s :%s\n",
 	    botuser, bothost, dcc[servidx].host, botrealname);
-    cycle_time = 0;
     /* Wait for async result now */
   }
 }

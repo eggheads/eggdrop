@@ -1,7 +1,7 @@
 /* 
  * transfer.c -- part of transfer.mod
  * 
- * $Id: transfer.c,v 1.25 2000/04/05 19:31:38 fabian Exp $
+ * $Id: transfer.c,v 1.26 2000/05/06 22:00:31 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1764,7 +1764,7 @@ static int ctcp_DCC_RESUME(char *nick, char *from, char *handle,
   /* Search for existing SEND */
   for (i = 0; i < dcc_total; i++)
     if ((dcc[i].type == &DCC_GET_PENDING) &&
-	(!strcmp(dcc[i].nick, nick)) && (dcc[i].port == port))
+	(!rfc_casecmp(dcc[i].nick, nick)) && (dcc[i].port == port))
       break;
   /* No matching transfer found? */
   if (i == dcc_total)

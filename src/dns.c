@@ -4,7 +4,7 @@
  *   provides the code used by the bot if the DNS module is not loaded
  *   DNS Tcl commands
  * 
- * $Id: dns.c,v 1.16 2000/03/23 23:17:55 fabian Exp $
+ * $Id: dns.c,v 1.17 2000/05/06 22:00:31 fabian Exp $
  */
 /* 
  * Written by Fabian Knittel <fknittel@gmx.de>
@@ -153,7 +153,7 @@ static void dns_dccipbyhost(IP ip, char *hostn, int ok, void *other)
   for (idx = 0; idx < dcc_total; idx++) {
     if ((dcc[idx].type == &DCC_DNSWAIT) &&
         (dcc[idx].u.dns->dns_type == RES_IPBYHOST) &&
-        !strcmp(dcc[idx].u.dns->host, hostn)) {
+        !egg_strcasecmp(dcc[idx].u.dns->host, hostn)) {
       dcc[idx].u.dns->ip = ip;
       if (ok)
         dcc[idx].u.dns->dns_success(idx);
@@ -188,7 +188,8 @@ void dcc_dnsipbyhost(char *hostn)
   while (de) {
     if (de->type && (de->type == &DNS_DCCEVENT_IPBYHOST) &&
 	(de->lookup == RES_IPBYHOST)) {
-      if (de->res_data.hostname && !strcmp(de->res_data.hostname, hostn))
+      if (de->res_data.hostname &&
+	  !egg_strcasecmp(de->res_data.hostname, hostn))
 	/* No need to add anymore. */
 	return;
     }
@@ -267,18 +268,13 @@ static int dns_tclexpmem(void *other)
   devent_tclinfo_t *tclinfo = (devent_tclinfo_t *) other;
   int l = 0;
 
-  debug1("I'm in tclexpmem... %p", other);
   if (tclinfo) {
     l = sizeof(devent_tclinfo_t);
-    if (tclinfo->proc) {
+    if (tclinfo->proc)
       l += strlen(tclinfo->proc) + 1;
-      debug1("accounting for proc: %s", tclinfo->proc);
-    }
     if (tclinfo->paras)
       l += strlen(tclinfo->paras) + 1;
-      debug1("accounting for paras: %s", tclinfo->paras);
   }
-  debug1("... returning %d bytes usage.", l);
   return l;
 }
 
@@ -418,7 +414,8 @@ void call_ipbyhost(char *hostn, IP ip, int ok)
   while (de) {
     nde = de->next;
     if ((de->lookup == RES_IPBYHOST) &&
-	(!de->res_data.hostname || !strcmp(de->res_data.hostname, hostn))) {
+	(!de->res_data.hostname ||
+	 !egg_strcasecmp(de->res_data.hostname, hostn))) {
       /* Remove the event from the list here, to avoid conflicts if one of
        * the event handlers re-adds another event. */
       if (ode)

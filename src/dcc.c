@@ -4,7 +4,7 @@
  *   disconnect on a dcc socket
  *   ...and that's it!  (but it's a LOT)
  * 
- * $Id: dcc.c,v 1.27 2000/04/05 19:45:37 fabian Exp $
+ * $Id: dcc.c,v 1.28 2000/05/06 22:00:31 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1339,7 +1339,7 @@ void dupwait_notify(char *who)
   Assert(who);
   for (idx = 0; idx < dcc_total; idx++)
     if ((dcc[idx].type == &DCC_DUPWAIT) &&
-	!strcmp(dcc[idx].nick, who)) {
+	!egg_strcasecmp(dcc[idx].nick, who)) {
       dcc_telnet_pass(idx, dcc[idx].u.dupwait->atr);
       break;
     }

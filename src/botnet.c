@@ -7,7 +7,7 @@
  *   linking, unlinking, and relaying to another bot
  *   pinging the bots periodically and checking leaf status
  * 
- * $Id: botnet.c,v 1.21 2000/03/23 23:17:54 fabian Exp $
+ * $Id: botnet.c,v 1.22 2000/05/06 22:00:31 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -851,17 +851,12 @@ int users_in_subtree(tand_t *bot)
   nr = 0;
   if (!bot)
     return 0;
-  for (i = 0; i < parties; i++) {
-    if (!strcmp(party[i].bot, bot->bot)) {
+  for (i = 0; i < parties; i++)
+    if (!egg_strcasecmp(party[i].bot, bot->bot))
       nr++;
-    }
-  }
-  for (b = tandbot; b; b = b->next) {
-    Context;
-    if (b->bot && (b->uplink == bot)) {
+  for (b = tandbot; b; b = b->next)
+    if (b->bot && (b->uplink == bot))
       nr += users_in_subtree(b);
-    }
-  }
   Context;
   return nr;
 }
