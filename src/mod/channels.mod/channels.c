@@ -2,7 +2,7 @@
  * channels.c -- part of channels.mod
  *   support for channels within the bot
  * 
- * $Id: channels.c,v 1.42 2000/11/06 04:06:42 guppy Exp $
+ * $Id: channels.c,v 1.43 2000/11/21 05:18:04 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -43,6 +43,7 @@ static int  quiet_save;
 static char glob_chanmode[64];		/* Default chanmode (drummer,990731) */
 static struct udef_struct *udef;
 static int global_stopnethack_mode;
+static int global_revenge_mode;
 static int global_idle_kick;		/* Default idle-kick setting. */
 static int global_aop_min;
 static int global_aop_max;
@@ -397,6 +398,7 @@ static void write_channels()
     convert_element(chan->need_unban, need4);
     convert_element(chan->need_limit, need5);
     fprintf(f, "channel %s %s%schanmode %s idle-kick %d stopnethack-mode %d \
+revenge-mode %d \
 need-op %s need-invite %s need-key %s need-unban %s need-limit %s \
 flood-chan %d:%d flood-ctcp %d:%d flood-join %d:%d \
 flood-kick %d:%d flood-deop %d:%d flood-nick %d:%d aop-delay %d:%d \
@@ -411,6 +413,7 @@ flood-kick %d:%d flood-deop %d:%d flood-nick %d:%d aop-delay %d:%d \
 	w2,
 	chan->idle_kick, /* idle-kick 0 is same as dont-idle-kick (less code)*/
 	chan->stopnethack_mode,
+        chan->revenge_mode,
 	need1, need2, need3, need4, need5,
 	chan->flood_pub_thr, chan->flood_pub_time,
         chan->flood_ctcp_thr, chan->flood_ctcp_time,
@@ -650,6 +653,9 @@ static void channels_report(int idx, int details)
 	if (chan->stopnethack_mode)
 	  dprintf(idx, "      stopnethack-mode %d\n",
 		  chan->stopnethack_mode);
+        if (chan->revenge_mode)
+          dprintf(idx, "      revenge-mode %d\n",
+                  chan->revenge_mode);
       }
     }
     chan = chan->next;
@@ -752,6 +758,7 @@ static tcl_ints my_tcl_ints[] =
   {"invite-time",		&invite_time,			0},
   {"quiet-save",		&quiet_save,			0},
   {"global-stopnethack-mode",	&global_stopnethack_mode,	0},
+  {"global-revenge-mode",       &global_revenge_mode,           0},
   {"global-idle-kick",		&global_idle_kick,		0},
   {NULL,			NULL,				0}
 };
@@ -892,6 +899,7 @@ char *channels_start(Function * global_funcs)
   strcpy(glob_chanmode, "nt");
   udef = NULL;
   global_stopnethack_mode = 0;
+  global_revenge_mode = 1;
   strcpy(glob_chanset, "\
 -enforcebans +dynamicbans +userbans -autoop -bitch +greet \
 +protectops +statuslog -revenge -secret -autovoice +cycle \

@@ -2,7 +2,7 @@
  * irc.c -- part of irc.mod
  *   support for channels within the bot 
  * 
- * $Id: irc.c,v 1.43 2000/11/08 19:45:35 guppy Exp $
+ * $Id: irc.c,v 1.44 2000/11/21 05:18:05 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -66,8 +66,6 @@ static int kick_fun = 0;
 static int ban_fun = 0;
 static int keepnick = 1;		/* Keep nick */
 static int prevent_mixing = 1;		/* To prevent mixing old/new modes */
-static int revenge_mode = 1;		/* 0 = deop, 1 = and +d, 2 = and kick,
-					   3 = and ban. */
 static int rfc_compliant = 1;		/* net-type changing modifies this */
 
 static int include_lk = 1;		/* For correct calculation
@@ -161,7 +159,7 @@ static void punish_badguy(struct chanset_t *chan, char *whobad,
  
   Context;
   /* Set the offender +d */
-  if ((revenge_mode > 0) &&
+  if ((chan->revenge_mode > 0) &&
       /* ... unless there's no more to do */
       !(chan_deop(fr) || glob_deop(fr))) {
     char s[UHOSTLEN], s1[UHOSTLEN];
@@ -224,7 +222,7 @@ static void punish_badguy(struct chanset_t *chan, char *whobad,
   if (!mevictim)
     add_mode(chan, '-', 'o', badnick);
   /* Ban. Should be done before kicking. */
-  if (revenge_mode > 2) {
+  if (chan->revenge_mode > 2) {
     char s[UHOSTLEN], s1[UHOSTLEN];
 
     Context;
@@ -238,7 +236,7 @@ static void punish_badguy(struct chanset_t *chan, char *whobad,
     }
   }
   /* Kick the offender */
-  if ((revenge_mode > 1) &&
+  if ((chan->revenge_mode > 1) &&
       /* ... or don't we kick ops? */
       (channel_dontkickops(chan) &&
         !(chan_op(fr) || (glob_op(fr) && !chan_deop(fr)))) &&
@@ -922,7 +920,6 @@ static tcl_ints myints[] =
   {"ctcp-mode",			&ctcp_mode,		0},	/* arthur2 */
   {"keep-nick",			&keepnick,		0},	/* guppy */
   {"prevent-mixing",		&prevent_mixing,	0},
-  {"revenge-mode",		&revenge_mode,		0},
   {"rfc-compliant",		&rfc_compliant,		0},
   {"include-lk",		&include_lk,		0},
   {NULL,			NULL,			0}	/* arthur2 */

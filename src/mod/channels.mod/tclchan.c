@@ -1,7 +1,7 @@
 /* 
  * tclchan.c -- part of channels.mod
  * 
- * $Id: tclchan.c,v 1.38 2000/11/03 17:15:49 fabian Exp $
+ * $Id: tclchan.c,v 1.39 2000/11/21 05:18:04 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -733,6 +733,8 @@ static int tcl_channel_info(Tcl_Interp * irp, struct chanset_t *chan)
   Tcl_AppendElement(irp, s);
   simple_sprintf(s, "%d", chan->stopnethack_mode);
   Tcl_AppendElement(irp, s);
+  simple_sprintf(s, "%d", chan->revenge_mode);
+  Tcl_AppendElement(irp, s);
   Tcl_AppendElement(irp, chan->need_op);
   Tcl_AppendElement(irp, chan->need_invite);
   Tcl_AppendElement(irp, chan->need_key);
@@ -921,6 +923,10 @@ static int tcl_channel_modify(Tcl_Interp * irp, struct chanset_t *chan,
   struct udef_struct *ul = udef;
   module_entry *me;
 
+  /* make revenge-mode default to 1
+   * not sure where else this can go -toot */
+  chan->revenge_mode = 1;
+
   for (i = 0; i < items; i++) {
     if (!strcmp(item[i], "need-op")) {
       i++;
@@ -995,6 +1001,14 @@ static int tcl_channel_modify(Tcl_Interp * irp, struct chanset_t *chan,
 	return TCL_ERROR;
       }
       chan->stopnethack_mode = atoi(item[i]);
+    } else if (!strcmp(item[i], "revenge-mode")) {
+      i++;
+      if (i >= items) {
+        if (irp)
+          Tcl_AppendResult(irp, "channel revenge-mode needs argument", NULL);
+        return TCL_ERROR;
+      }
+      chan->revenge_mode = atoi(item[i]);
     }
     else if (!strcmp(item[i], "+enforcebans"))
       chan->status |= CHAN_ENFORCEBANS;

@@ -34,3 +34,8 @@ see also: bans, +ban, kickban, set ignore-time
 ###  %bset chanfile%b
    this sets the file used to store dynamic channel information 
    for the bot.  it can only be set in the config file.
+%{help=set quiet-save}
+%{+n}
+###  %bset quiet-save%b 0/1
+   this sets if "Writing user file..." & "Writing channel file..."
+   are logged.

@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  * 
- * $Id: cmds.c,v 1.43 2000/11/08 19:43:46 guppy Exp $
+ * $Id: cmds.c,v 1.44 2000/11/21 05:18:04 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -2174,7 +2174,7 @@ static void cmd_page(struct userrec *u, int idx, char *par)
       dprintf(idx, "Currently paging outputs to %d lines.\n",
 	      dcc[idx].u.chat->max_line);
     } else
-      dprintf(idx, "You dont have paging on.\n");
+      dprintf(idx, "You don't have paging on.\n");
     return;
   }
   a = atoi(par);

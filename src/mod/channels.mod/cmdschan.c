@@ -2,7 +2,7 @@
  * cmdschan.c -- part of channels.mod
  *   commands from a user via dcc that cause server interaction
  *
- * $Id: cmdschan.c,v 1.36 2000/11/21 04:56:38 guppy Exp $
+ * $Id: cmdschan.c,v 1.37 2000/11/21 05:18:04 guppy Exp $
  */
 /*
  * Copyright (C) 1997  Robey Pointer
@@ -1183,11 +1183,15 @@ static void cmd_chaninfo(struct userrec *u, int idx, char *par)
     if (chan->idle_kick)
       dprintf(idx, "Idle Kick after (idle-kick): %d\n", chan->idle_kick);
     else
-      dprintf(idx, "Idle Kick after (idle-kick): DONT!\n");
+      dprintf(idx, "Idle Kick after (idle-kick): DON'T!\n");
     if (chan->stopnethack_mode)
       dprintf(idx, "stopnethack-mode: %d\n", chan->stopnethack_mode);
     else
-      dprintf(idx, "stopnethack: DONT!\n");
+      dprintf(idx, "stopnethack: DON'T!\n");
+    if (chan->revenge_mode)
+      dprintf(idx, "revenge-mode: %d\n", chan->revenge_mode);
+    else
+      dprintf(idx, "revenge-mode: 0\n");
     /* Only bot owners can see/change these (they're TCL commands) */
     if (u->flags & USER_OWNER) {
       if (chan->need_op[0])

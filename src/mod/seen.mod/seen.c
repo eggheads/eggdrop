@@ -10,7 +10,7 @@
  * 1.2     1997-08-20      Minor fixes. [BB]
  * 1.2a    1997-08-24      Minor fixes. [BB]
  * 
- * $Id: seen.c,v 1.18 2000/11/06 04:06:44 guppy Exp $
+ * $Id: seen.c,v 1.19 2000/11/21 05:18:05 guppy Exp $
  */
 /* 
  * Copyright (C) 1999, 2000  Eggheads
@@ -335,7 +335,8 @@ static void do_seen(int idx, char *prefix, char *nick, char *hand,
   }
   /* Check for keyword match in the internal table */
   else if (match_trigger(word1)) {
-    dprintf(idx, "%s%s\n", prefix, match_trigger(word1));
+    sprintf(word2, "%s%s\n", prefix, match_trigger(word1));
+    dprintf(idx, word2, nick);
     return;
   }
   /* Otherwise, make the target to the first word and continue */

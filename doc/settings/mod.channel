@@ -91,6 +91,16 @@ channel add #channel { SETTINGS }
       6 if channel -bitch: see stopnethack-mode 2
         if channel +bitch: see stopnethack-mode 4
 
+   revenge-mode 1
+    This settings defines how the bot should punish bad users when
+    revenging.
+    There are four possible settings:
+     0 for deop
+     1 for deop and chattr +d #chan
+     2 for deop, chattr +d #chan and kick
+     3 for deop, chattr +d #chan, kick and ban.
+    Valid settings are 0-3
+
     need-op { putserv "PRIVMSG #lamest :op me cos i'm lame!" }
      This setting will make the bot do the specified thing in the
      brackets if it becomes opless.
@@ -290,6 +300,10 @@ set global-flood-join 5:60
 set global-flood-ctcp 3:60
 set global-flood-nick 5:60
 
+set global-chanmode "nt-likm"
+set global-stopnethack-mode 0
+set global-revenge-mode 1
+
 set global-chanset {
         -autoop         -autovoice
         -bitch          +cycle
@@ -305,6 +319,3 @@ set global-chanset {
         +userinvites
 }
 
-set global-chanmode "nt-likm"
-
-set global-stopnethack-mode 0

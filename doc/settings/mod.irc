@@ -78,17 +78,6 @@ set no-chanrec-info 0
     Valid settings are 0 for OFF and 1 ON.
 
 
-set revenge-mode 1
-    This settings defines how the bot should punish bad users when
-    revenging.
-    There are four possible settings:
-     0 for deop
-     1 for deop and chattr +d #chan
-     2 for deop, chattr +d #chan and kick
-     3 for deop, chattr +d #chan, kick and ban.
-    Valid settings are 0-3
-
-
 
 These were the core irc module settings. There are more settings for
 'net-type' 1 and 5. net-type has to be set in the server module config
