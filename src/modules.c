@@ -4,7 +4,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: modules.c,v 1.65 2002/01/14 15:47:42 stdarg Exp $
+ * $Id: modules.c,v 1.66 2002/02/24 07:17:57 guppy Exp $
  */
 /* 
  * Copyright (C) 1997 Robey Pointer
@@ -72,8 +72,7 @@ extern char		 tempdir[], botnetnick[], botname[], natip[],
 			 version[], quit_msg[];
 extern int	 noshare, dcc_total, egg_numver, userfile_perm,
 			 use_console_r, ignore_time, must_be_owner,
-			 debug_output, gban_total, make_userfile,
-			 gexempt_total, ginvite_total, default_flags,
+			 debug_output, make_userfile, default_flags,
 			 require_p, max_dcc, share_greet, password_timeout,
 			 use_invites, use_exempts, force_expire, do_restart,
 			 protect_readonly, reserved_port_min, reserved_port_max;
@@ -323,7 +322,7 @@ Function global_table[] =
   (Function) & debug_output,	 /* int					*/
   (Function) & noshare,		 /* int					*/
   /* 108 - 111 */
-  (Function) & gban_total,	 /* int					*/
+  (Function) 0, /* gban_total -- UNUSED! (Eule) */
   (Function) & make_userfile,	 /* int					*/
   (Function) & default_flags,	 /* int					*/
   (Function) & dcc_total,	 /* int					*/
@@ -465,8 +464,8 @@ Function global_table[] =
   /* 220 - 223 */
   (Function) & global_exempts,	/* struct exemptrec *			*/
   (Function) & global_invites,	/* struct inviterec *			*/
-  (Function) & ginvite_total,	/* int					*/
-  (Function) & gexempt_total,	/* int					*/
+  (Function) 0, /* ginvite_total -- UNUSED! (Eule) */
+  (Function) 0, /* gexempt_total -- UNUSED! (Eule) */
   /* 224 - 227 */
   (Function) & H_event,		/* p_tcl_bind_list *			*/
   (Function) & use_exempts,	/* int					*/

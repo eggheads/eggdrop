@@ -10,7 +10,7 @@
  *
  * dprintf'ized, 9nov1995
  *
- * $Id: users.c,v 1.29 2002/01/29 21:08:50 guppy Exp $
+ * $Id: users.c,v 1.30 2002/02/24 07:17:57 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -53,9 +53,6 @@ extern time_t now;
 
 char userfile[121] = "";	/* where the user records are stored */
 int ignore_time = 10;		/* how many minutes will ignores last? */
-int gban_total = 0;		/* Total number of global bans */
-int gexempt_total = 0;          /* Total number of global exempts */
-int ginvite_total = 0;          /* Total number of global invites */
 
 /* is this nick!user@host being ignored? */
 int match_ignore(char *uhost)
@@ -694,9 +691,6 @@ int readuserfile(char *file, struct userrec **ret)
   }
   if (s[1] > '4')
     fatal(USERF_INVALID, 0);
-  gban_total = 0;
-  gexempt_total = 0;
-  ginvite_total = 0;
   while (!feof(f)) {
     s = buf;
     fgets(s, 511, f);
@@ -724,10 +718,8 @@ int readuserfile(char *file, struct userrec **ret)
 	    else if (lasthand[0] == '*') {
 	      if (lasthand[1] == 'i')
 		restore_ignore(s);
-	      else {
+	      else
 		restore_chanban(NULL, s);
-		gban_total++;
-	      }
 	    } else if (lasthand[0])
 	      set_user(&USERENTRY_HOSTS, u, s);
 	  }
@@ -738,10 +730,8 @@ int readuserfile(char *file, struct userrec **ret)
 	    if (lasthand[0] == '#' || lasthand[0] == '+')
 	      restore_chanexempt(cst,s);
 	    else if (lasthand[0] == '*')
-	      if (lasthand[1] == 'e') {
+	      if (lasthand[1] == 'e')
 		restore_chanexempt(NULL, s);
-		gexempt_total++;
-	      }
 	  }
 	} else if (!strcmp(code, "@")) { /* Invitemasks */
 	  if (!lasthand[0])
@@ -750,10 +740,8 @@ int readuserfile(char *file, struct userrec **ret)
 	    if (lasthand[0] == '#' || lasthand[0] == '+')
 	      restore_chaninvite(cst,s);
 	    else if (lasthand[0] == '*')
-	      if (lasthand[1] == 'I') {
+	      if (lasthand[1] == 'I')
 		restore_chaninvite(NULL, s);
-		ginvite_total++;
-	      }
 	  }
 	} else if (!strcmp(code, "!")) {
 	  /* ! #chan laston flags [info] */
