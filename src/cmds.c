@@ -716,9 +716,9 @@ static void cmd_console(struct userrec *u, int idx, char *par)
 	    maskname(dcc[dest].u.chat->con_flags));
   }
   /* new style autosave -- drummer,07/25/1999*/
-  if ((me = module_find("console", 0, 0))) {
+  if ((me = module_find("console", 1, 1))) {
     Function *func = me->funcs;
-    (func[4]) (idx);
+    (func[CONSOLE_DOSTORE]) (idx);
   }
 }
 
@@ -1402,10 +1402,9 @@ static void cmd_chattr(struct userrec *u, int idx, char *par)
   char *hand, *tmpchg = NULL, *chg = NULL, work[1024];
   struct chanset_t *chan = NULL;
   struct userrec *u2;
-  struct flag_record pls =
-  {0, 0, 0, 0, 0, 0}, mns =
-  {0, 0, 0, 0, 0, 0}, user =
-  {0, 0, 0, 0, 0, 0};
+  struct flag_record pls = {0, 0, 0, 0, 0, 0},
+  		     mns = {0, 0, 0, 0, 0, 0},
+		     user = {0, 0, 0, 0, 0, 0};
   module_entry *me;
   int fl = -1, of = 0, ocf = 0;
 
@@ -1547,7 +1546,7 @@ static void cmd_chattr(struct userrec *u, int idx, char *par)
       Function *func = me->funcs;
 
       if (chan)
-	(func[15]) (chan, 0);
+	(func[IRC_RECHECK_CHANNEL]) (chan, 0);
     }
   }
   if (tmpchg) {

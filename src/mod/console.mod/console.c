@@ -294,7 +294,7 @@ static int console_store(struct userrec *u, int idx, char *par)
 }
 
 /* cmds.c:cmd_console calls this, better than chof bind - drummer,07/25/1999 */
-static int console_oncmd(int idx)
+static int console_dostore(int idx)
 {
   if (console_autosave)
     console_store(dcc[idx].user, idx, NULL);
@@ -341,7 +341,7 @@ static Function console_table[] =
   (Function) console_close,
   (Function) 0,
   (Function) 0,
-  (Function) console_oncmd,
+  (Function) console_dostore,
 };
 
 char *console_start(Function * global_funcs)
@@ -349,7 +349,7 @@ char *console_start(Function * global_funcs)
   global = global_funcs;
 
   context;
-  module_register(MODULE_NAME, console_table, 1, 0);
+  module_register(MODULE_NAME, console_table, 1, 1);
   if (!module_depend(MODULE_NAME, "eggdrop", 103, 0))
     return "This module requires eggdrop1.3.0 or later";
   add_builtins(H_chon, mychon);

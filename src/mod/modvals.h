@@ -43,6 +43,8 @@
 #define IRC_RECHECK_CHANNEL 15
 /* notes */
 #define NOTES_CMD_NOTE       4
+/* console */
+#define CONSOLE_DOSTORE      4
  
 #ifdef HPUX_HACKS
 #include <dl.h>

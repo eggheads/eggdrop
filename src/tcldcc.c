@@ -303,9 +303,9 @@ static int tcl_console STDVAR
   Tcl_AppendElement(irp, dcc[i].u.chat->con_chan);
   Tcl_AppendElement(irp, masktype(dcc[i].u.chat->con_flags));
   /* new style autosave -- drummer,07/25/1999*/
-  if ((me = module_find("console", 0, 0))) {
+  if ((me = module_find("console", 1, 1))) {
     Function *func = me->funcs;
-    (func[4]) (i);
+    (func[CONSOLE_DOSTORE]) (i);
   }
   return TCL_OK;
 }

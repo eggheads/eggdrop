@@ -807,6 +807,8 @@ static int check_ansi(char *v)
 
 static void eof_dcc_chat(int idx)
 {
+  module_entry *me;
+
   context;
   putlog(LOG_MISC, "*", DCC_LOSTDCC, dcc[idx].nick,
 	 dcc[idx].host, dcc[idx].port);
@@ -822,6 +824,11 @@ static void eof_dcc_chat(int idx)
   }
   context;
   check_tcl_chof(dcc[idx].nick, dcc[idx].sock);
+  context;
+  if ((me = module_find("console", 1, 1))) {
+    Function *func = me->funcs;
+    (func[CONSOLE_DOSTORE]) (idx);
+  }
   context;
   killsock(dcc[idx].sock);
   context;
@@ -887,6 +894,8 @@ static void dcc_chat(int idx, char *buf, int i)
 	v = newsplit(&buf);
 	rmspace(buf);
 	if (check_tcl_dcc(v, idx, buf)) {
+	  module_entry *me;
+
 	  check_tcl_chpt(botnetnick, dcc[idx].nick, dcc[idx].sock,
 			 dcc[idx].u.chat->channel);
 	  check_tcl_chof(dcc[idx].nick, dcc[idx].sock);
@@ -894,6 +903,10 @@ static void dcc_chat(int idx, char *buf, int i)
 	  flush_lines(idx, dcc[idx].u.chat);
 	  putlog(LOG_MISC, "*", DCC_CLOSED, dcc[idx].nick,
 		 dcc[idx].host);
+	  if ((me = module_find("console", 1, 1))) {
+	    Function *func = me->funcs;
+	    (func[CONSOLE_DOSTORE]) (idx);
+	  }
 	  if (dcc[idx].u.chat->channel >= 0) {
 	    chanout_but(-1, dcc[idx].u.chat->channel,
 			"*** %s left the party line%s%s\n",

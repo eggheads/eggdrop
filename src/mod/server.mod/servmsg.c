@@ -636,6 +636,7 @@ static void minutely_checks()
 {
   /* called once a minute... but if we're the only one on the
    * channel, we only wanna send out "lusers" once every 5 mins */
+  char *alt;
   static int count = 4;
   int ok = 0;
   struct chanset_t *chan;
@@ -645,10 +646,14 @@ static void minutely_checks()
      * check that it's not just a truncation of the full nick */
     if (strncmp(botname, origbotname, strlen(botname))) {
       /* see if my nickname is in use and if if my nick is right */
-      if (use_ison)
+      if (use_ison) {
 	/* save space and use the same ISON :P */
-        dprintf(DP_MODE, "ISON :%s %s\n", origbotname, get_altbotnick());
-      else
+	alt = get_altbotnick();
+	if (alt[0] && strcasecmp (botname, alt))
+	  dprintf(DP_MODE, "ISON :%s %s %s\n", botname, origbotname, alt);
+	else
+          dprintf(DP_MODE, "ISON :%s %s\n", botname, origbotname);
+      } else
 	dprintf(DP_MODE, "TRACE %s\n", origbotname);
       /* will return 206(undernet), 401(other), or 402(efnet) numeric if
        * not online */
@@ -686,23 +691,35 @@ static int gotpong(char *from, char *msg)
 }
 
 /* cleaned up the ison reply code .. (guppy) */
+/* .. yep, but buggy ++rtc */
 static void got303(char *from, char *msg)
 {
   char *tmp, *alt;
+  int ison_orig = 0, ison_alt = 0;
 
-  if (keepnick) {
-    newsplit(&msg);
-    fixcolon(msg);
-    tmp = newsplit(&msg);
-    if (strncmp(botname, origbotname, strlen(botname))) {
-      alt = get_altbotnick();
-      if (!tmp[0] || (alt[0] && !rfc_casecmp(tmp, alt))) {
-	putlog(LOG_MISC, "*", IRC_GETORIGNICK, origbotname);
-	dprintf(DP_MODE, "NICK %s\n", origbotname);
-      } else if (alt[0] && !msg[0] && strcasecmp(botname, alt)) {
-	putlog(LOG_MISC, "*", IRC_GETALTNICK, alt);
-	dprintf(DP_MODE, "NICK %s\n", alt);
-      }
+  /* This is a reply on ISON :<current> <orig> [<alt>] */
+
+  if (!use_ison || !keepnick || 
+      !strncmp(botname, origbotname, strlen(botname))) {
+    return;
+  }
+  newsplit(&msg);
+  fixcolon(msg);
+  alt = get_altbotnick();
+  tmp = newsplit(&msg);
+  if (tmp[0] && !rfc_casecmp(botname, tmp)) {
+    while ((tmp = newsplit(&msg))[0]) { /* no, it's NOT == */
+      if (!rfc_casecmp(tmp, origbotname))
+        ison_orig = 1;
+      else if (alt[0] && !rfc_casecmp(tmp, alt))
+        ison_alt = 1;
+    }
+    if (!ison_orig) {
+      putlog(LOG_MISC, "*", IRC_GETORIGNICK, origbotname);
+      dprintf(DP_MODE, "NICK %s\n", origbotname);
+    } else if (alt[0] && !ison_alt && rfc_casecmp(botname, alt)) {
+      putlog(LOG_MISC, "*", IRC_GETALTNICK, alt);
+      dprintf(DP_MODE, "NICK %s\n", alt);
     }
   }
 }
@@ -711,11 +728,9 @@ static void got303(char *from, char *msg)
  * 401 (other non-efnet) 402 (Efnet) */
 static void trace_fail(char *from, char *msg)
 {
-  if (!use_ison) {
-    if (!strcasecmp(botname, origbotname)) {
-      putlog(LOG_MISC, "*", IRC_GETORIGNICK, origbotname);
-      dprintf(DP_MODE, "NICK %s\n", origbotname);
-    }
+  if (keepnick && !use_ison  && !strcasecmp (botname, origbotname)) {
+    putlog(LOG_MISC, "*", IRC_GETORIGNICK, origbotname);
+    dprintf(DP_MODE, "NICK %s\n", origbotname);
   }
 }
 

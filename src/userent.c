@@ -1030,9 +1030,9 @@ static int hosts_set(struct userrec *u, struct user_entry *e, void *buf)
   if (!buf || !strcasecmp(buf, "none")) {
     contextnote("SEGV with sharing bug track");
     /* when the bot crashes, it's in this part, not in the 'else' part */
-    contextnote((e->u.list) ? "e->u.list is valid" : "e->u.list is NULL!");
-      contextnote(e ? "e is valid" : "e is NULL!");
-      if (e) {
+    contextnote(e ? "e is valid" : "e is NULL!");
+    if (e) {
+      contextnote((e->u.list) ? "e->u.list is valid" : "e->u.list is NULL!");
       list_type_kill(e->u.list);
       contextnote("SEGV with sharing bug track - added 99/03/26");
       e->u.list = NULL;

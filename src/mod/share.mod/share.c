@@ -215,7 +215,7 @@ static void share_chattr(int idx, char *par)
 	    if ((me = module_find("irc", 0, 0))) {
 	      Function *func = me->funcs;
 
-	      (func[15]) (cst, 0);
+	      (func[IRC_RECHECK_CHANNEL]) (cst, 0);
 	    }
 	  } else
 	    putlog(LOG_CMDS, "*",
@@ -244,7 +244,7 @@ static void share_chattr(int idx, char *par)
 	    Function *func = me->funcs;
 
 	    for (cst = chanset; cst; cst = cst->next)
-	      (func[15]) (cst, 0);
+	      (func[IRC_RECHECK_CHANNEL]) (cst, 0);
 	  }
 	} else
 	  putlog(LOG_CMDS, "*", "Rejected global flags for %s from %s",
