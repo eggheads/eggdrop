@@ -1115,7 +1115,7 @@ static void tell_invites (int idx, int show_inact, char * match)
 }
 
 
-/* write channel's local banlist to a file */
+/* channel's local banlist to a file */
 static int write_bans(FILE * f, int idx)
 {
   struct chanset_t *chan;
@@ -1145,11 +1145,11 @@ static int write_bans(FILE * f, int idx)
       struct flag_record fr =
       {FR_CHAN | FR_GLOBAL | FR_BOT, 0, 0, 0, 0, 0};
 
-      if ((idx >= 0) && !(fr.bot & BOT_GLOBAL))
-	get_user_flagrec(dcc[idx].user, &fr, chan->name);
+      if (idx >= 0)
+	    get_user_flagrec(dcc[idx].user, &fr, chan->name);
       else
-	fr.chan = BOT_SHARE;
-      if (fr.chan & BOT_SHARE) {
+	    fr.chan = BOT_SHARE;
+      if ((fr.chan & BOT_SHARE) || (fr.bot & BOT_GLOBAL)) {
 	if (fprintf(f, "::%s bans\n", chan->name) == EOF)
 	  return 0;
 	for (b = chan->bans; b; b = b->next)
@@ -1183,11 +1183,11 @@ static int write_exempts (FILE * f, int idx)
   for (chan = chanset;chan;chan=chan->next) 
     if ((idx < 0) || (chan->status & CHAN_SHARED)) {
       struct flag_record fr = {FR_CHAN|FR_GLOBAL|FR_BOT,0,0,0,0,0};
-      if ((idx >= 0) && !(fr.bot & BOT_GLOBAL))
-	get_user_flagrec(dcc[idx].user,&fr,chan->name);
+      if (idx >= 0)
+	    get_user_flagrec(dcc[idx].user,&fr,chan->name);
       else
-	fr.chan = BOT_SHARE;
-      if (fr.chan & BOT_SHARE) {
+	    fr.chan = BOT_SHARE;
+      if ((fr.chan & BOT_SHARE) || (fr.bot & BOT_GLOBAL)) {
 	if (fprintf(f, "&&%s exempts\n", chan->name) == EOF)
 	  return 0;
 	for (e = chan->exempts;e;e=e->next) 
@@ -1221,11 +1221,11 @@ static int write_invites (FILE * f, int idx)
   for (chan = chanset;chan;chan=chan->next) 
     if ((idx < 0) || (chan->status & CHAN_SHARED)) {
       struct flag_record fr = {FR_CHAN|FR_GLOBAL|FR_BOT,0,0,0,0,0};
-      if ((idx >= 0) && !(fr.bot & BOT_GLOBAL))
-	get_user_flagrec(dcc[idx].user,&fr,chan->name);
+      if (idx >= 0)
+	    get_user_flagrec(dcc[idx].user,&fr,chan->name);
       else
-	fr.chan = BOT_SHARE;
-      if (fr.chan & BOT_SHARE) {
+	    fr.chan = BOT_SHARE;
+      if ((fr.chan & BOT_SHARE) || (fr.bot & BOT_GLOBAL)) {
 	if (fprintf(f, "$$%s invites\n", chan->name) == EOF)
 	  return 0;
 	for (ir = chan->invites;ir;ir=ir->next) 
