@@ -4,7 +4,7 @@
  *   disconnect on a dcc socket
  *   ...and that's it!  (but it's a LOT)
  *
- * $Id: dcc.c,v 1.79 2004/07/02 20:48:51 wcc Exp $
+ * $Id: dcc.c,v 1.80 2004/07/02 21:02:02 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -363,7 +363,7 @@ static void timeout_dcc_bot_new(int idx)
 
 static void display_dcc_bot_new(int idx, char *buf)
 {
-  sprintf(buf, "bot*  waited %lus", now - dcc[idx].timeval);
+  sprintf(buf, "bot*  waited %lis", now - dcc[idx].timeval);
 }
 
 static int expmem_dcc_bot_(void *x)
@@ -633,7 +633,7 @@ static void tout_dcc_chat_pass(int idx)
 
 static void display_dcc_chat_pass(int idx, char *buf)
 {
-  sprintf(buf, "pass  waited %lus", now - dcc[idx].timeval);
+  sprintf(buf, "pass  waited %lis", now - dcc[idx].timeval);
 }
 
 static int expmem_dcc_general(void *x)
@@ -1500,7 +1500,7 @@ static void timeout_dcc_telnet_id(int idx)
 
 static void display_dcc_telnet_id(int idx, char *buf)
 {
-  sprintf(buf, "t-in  waited %lus", now - dcc[idx].timeval);
+  sprintf(buf, "t-in  waited %lis", now - dcc[idx].timeval);
 }
 
 struct dcc_table DCC_TELNET_ID = {
@@ -1663,12 +1663,12 @@ static void tout_dcc_telnet_pw(int idx)
 
 static void display_dcc_telnet_new(int idx, char *buf)
 {
-  sprintf(buf, "new   waited %lus", now - dcc[idx].timeval);
+  sprintf(buf, "new   waited %lis", now - dcc[idx].timeval);
 }
 
 static void display_dcc_telnet_pw(int idx, char *buf)
 {
-  sprintf(buf, "newp  waited %lus", now - dcc[idx].timeval);
+  sprintf(buf, "newp  waited %lis", now - dcc[idx].timeval);
 }
 
 struct dcc_table DCC_TELNET_NEW = {
@@ -1898,7 +1898,7 @@ void eof_dcc_identwait(int idx)
 
 static void display_dcc_identwait(int idx, char *buf)
 {
-  sprintf(buf, "idtw  waited %lus", now - dcc[idx].timeval);
+  sprintf(buf, "idtw  waited %lis", now - dcc[idx].timeval);
 }
 
 struct dcc_table DCC_IDENTWAIT = {

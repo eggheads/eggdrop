@@ -1,7 +1,7 @@
 /*
  * userchan.c -- part of channels.mod
  *
- * $Id: userchan.c,v 1.44 2004/01/09 05:56:37 wcc Exp $
+ * $Id: userchan.c,v 1.45 2004/07/02 21:02:02 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -475,11 +475,11 @@ static int u_addban(struct chanset_t *chan, char *ban, char *from, char *note,
 
     if (mask) {
       if (!chan)
-        shareout(NULL, "+b %s %lu %s%s %s %s\n", mask, expire_time - now,
+        shareout(NULL, "+b %s %li %s%s %s %s\n", mask, expire_time - now,
                  (flags & MASKREC_STICKY) ? "s" : "",
                  (flags & MASKREC_PERM) ? "p" : "-", from, note);
       else
-        shareout(chan, "+bc %s %lu %s %s%s %s %s\n", mask, expire_time - now,
+        shareout(chan, "+bc %s %li %s %s%s %s %s\n", mask, expire_time - now,
                  chan->dname, (flags & MASKREC_STICKY) ? "s" : "",
                  (flags & MASKREC_PERM) ? "p" : "-", from, note);
       nfree(mask);
@@ -557,11 +557,11 @@ static int u_addinvite(struct chanset_t *chan, char *invite, char *from,
 
     if (mask) {
       if (!chan)
-        shareout(NULL, "+inv %s %lu %s%s %s %s\n", mask, expire_time - now,
+        shareout(NULL, "+inv %s %li %s%s %s %s\n", mask, expire_time - now,
                  (flags & MASKREC_STICKY) ? "s" : "",
                  (flags & MASKREC_PERM) ? "p" : "-", from, note);
       else
-        shareout(chan, "+invc %s %lu %s %s%s %s %s\n", mask, expire_time - now,
+        shareout(chan, "+invc %s %li %s %s%s %s %s\n", mask, expire_time - now,
                  chan->dname, (flags & MASKREC_STICKY) ? "s" : "",
                  (flags & MASKREC_PERM) ? "p" : "-", from, note);
       nfree(mask);
@@ -639,11 +639,11 @@ static int u_addexempt(struct chanset_t *chan, char *exempt, char *from,
 
     if (mask) {
       if (!chan)
-        shareout(NULL, "+e %s %lu %s%s %s %s\n", mask, expire_time - now,
+        shareout(NULL, "+e %s %li %s%s %s %s\n", mask, expire_time - now,
                  (flags & MASKREC_STICKY) ? "s" : "",
                  (flags & MASKREC_PERM) ? "p" : "-", from, note);
       else
-        shareout(chan, "+ec %s %lu %s %s%s %s %s\n", mask, expire_time - now,
+        shareout(chan, "+ec %s %li %s %s%s %s %s\n", mask, expire_time - now,
                  chan->dname, (flags & MASKREC_STICKY) ? "s" : "",
                  (flags & MASKREC_PERM) ? "p" : "-", from, note);
       nfree(mask);

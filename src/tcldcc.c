@@ -2,7 +2,7 @@
  * tcldcc.c -- handles:
  *   Tcl stubs for the dcc commands
  *
- * $Id: tcldcc.c,v 1.52 2004/06/11 17:46:14 wcc Exp $
+ * $Id: tcldcc.c,v 1.53 2004/07/02 21:02:02 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -674,7 +674,7 @@ static int tcl_whom STDVAR
       if (dcc[i].u.chat->channel == chan || chan == -1) {
         c[0] = geticon(i);
         c[1] = 0;
-        egg_snprintf(idle, sizeof idle, "%lu", (now - dcc[i].timeval) / 60);
+        egg_snprintf(idle, sizeof idle, "%li", (now - dcc[i].timeval) / 60);
         list[0] = dcc[i].nick;
         list[1] = botnetnick;
         list[2] = dcc[i].host;
@@ -697,7 +697,7 @@ static int tcl_whom STDVAR
       if (party[i].timer == 0L)
         strcpy(idle, "0");
       else
-        egg_snprintf(idle, sizeof idle, "%lu", (now - party[i].timer) / 60);
+        egg_snprintf(idle, sizeof idle, "%li", (now - party[i].timer) / 60);
       list[0] = party[i].nick;
       list[1] = party[i].bot;
       list[2] = party[i].from ? party[i].from : "";

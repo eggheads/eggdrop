@@ -10,7 +10,7 @@
  *
  * dprintf'ized, 9nov1995
  *
- * $Id: users.c,v 1.43 2004/01/20 18:39:37 wcc Exp $
+ * $Id: users.c,v 1.44 2004/07/02 21:02:02 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -154,7 +154,7 @@ void addignore(char *ign, char *from, char *mnote, time_t expire_time)
     char *mask = str_escape(ign, ':', '\\');
 
     if (mask) {
-      shareout(NULL, "+i %s %lu %c %s %s\n", mask, expire_time - now,
+      shareout(NULL, "+i %s %li %c %s %s\n", mask, expire_time - now,
                (p->flags & IGREC_PERM) ? 'p' : '-', from, mnote);
       nfree(mask);
     }

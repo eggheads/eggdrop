@@ -2,7 +2,7 @@
  * tclmisc.c -- handles:
  *   Tcl stubs for everything else
  *
- * $Id: tclmisc.c,v 1.52 2004/06/14 01:14:06 wcc Exp $
+ * $Id: tclmisc.c,v 1.53 2004/07/02 21:02:02 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -378,7 +378,7 @@ static int tcl_unixtime STDVAR
 
   BADARGS(1, 1, "");
 
-  egg_snprintf(s, sizeof s, "%lu", (unsigned long) now2);
+  egg_snprintf(s, sizeof s, "%li", now2);
   Tcl_AppendResult(irp, s, NULL);
   return TCL_OK;
 }

@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  *
- * $Id: server.c,v 1.117 2004/06/14 01:14:07 wcc Exp $
+ * $Id: server.c,v 1.118 2004/07/02 21:02:02 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1570,7 +1570,7 @@ static void server_5minutely()
       putlog(LOG_SERV, "*", IRC_SERVERSTONED);
     } else if (!trying_server) {
       /* Check for server being stoned. */
-      dprintf(DP_MODE, "PING :%lu\n", (unsigned long) now);
+      dprintf(DP_MODE, "PING :%li\n", now);
       waiting_for_awake = 1;
     }
   }

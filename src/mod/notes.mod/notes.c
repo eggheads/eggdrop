@@ -5,7 +5,7 @@
  *   note cmds
  *   note ignores
  *
- * $Id: notes.c,v 1.51 2004/06/14 01:14:07 wcc Exp $
+ * $Id: notes.c,v 1.52 2004/07/02 21:02:02 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -313,7 +313,7 @@ static int tcl_storenote STDVAR
           else if (argv[1][0] == '@')
             from = p + 1;
         }
-        fprintf(f, "%s %s %lu %s%s\n", to, from, now, l ? work : "", blah);
+        fprintf(f, "%s %s %li %s%s\n", to, from, now, l ? work : "", blah);
         fclose(f);
         if (idx >= 0)
           dprintf(idx, "%s.\n", NOTES_STORED_MESSAGE);
@@ -816,7 +816,7 @@ static int msg_notes(char *nick, char *host, struct userrec *u, char *par)
       return 1;
     }
     chmod(notefile, userfile_perm); /* Use userfile permissions. */
-    fprintf(f, "%s %s %lu %s\n", to, u->handle, now, par);
+    fprintf(f, "%s %s %li %s\n", to, u->handle, now, par);
     fclose(f);
     dprintf(DP_HELP, "NOTICE %s :%s\n", nick, NOTES_DELIVERED);
     return 1;

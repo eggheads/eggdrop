@@ -4,7 +4,7 @@
  *   a bunch of functions to find and change user records
  *   change and check user (and channel-specific) flags
  *
- * $Id: userrec.c,v 1.51 2004/06/13 17:34:01 wcc Exp $
+ * $Id: userrec.c,v 1.52 2004/07/02 21:02:02 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -635,9 +635,9 @@ struct userrec *adduser(struct userrec *bu, char *handle, char *host,
     xk->key = nmalloc(8);
     strcpy(xk->key, "created");
     now2 = nmalloc(15);
-    sprintf(now2, "%lu", now);
+    sprintf(now2, "%li", now);
     xk->data = nmalloc(strlen(now2) + 1);
-    sprintf(xk->data, "%lu", now);
+    sprintf(xk->data, "%li", now);
     set_user(&USERENTRY_XTRA, u, xk);
     nfree(now2);
   }

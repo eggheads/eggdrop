@@ -4,7 +4,7 @@
  *   provides the code used by the bot if the DNS module is not loaded
  *   DNS Tcl commands
  *
- * $Id: dns.c,v 1.29 2004/01/09 05:56:36 wcc Exp $
+ * $Id: dns.c,v 1.30 2004/07/02 21:02:02 wcc Exp $
  */
 /*
  * Written by Fabian Knittel <fknittel@gmx.de>
@@ -64,7 +64,7 @@ void eof_dcc_dnswait(int idx)
 
 static void display_dcc_dnswait(int idx, char *buf)
 {
-  sprintf(buf, "dns   waited %lus", now - dcc[idx].timeval);
+  sprintf(buf, "dns   waited %lis", now - dcc[idx].timeval);
 }
 
 static int expmem_dcc_dnswait(void *x)
