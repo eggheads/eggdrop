@@ -142,7 +142,7 @@ static void cmd_sort(int idx, char *par)
   if (!p)
     f = filedb_open("", 1);
   filedb_close(f);
-  dprintf(idx, "Current directory has been optimised.\n");
+  dprintf(idx, "Current directory has been optimized.\n");
 }
 
 /* given current directory, and the desired changes, fill 'real' with
