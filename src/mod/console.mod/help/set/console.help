@@ -1,15 +1,14 @@
 %{help=set console-autosave}%{+n}
-###  %bset console-autosave%b 0/1
-   When this flag is set, a users console settings are automatically
-   saved for the next time the user joins the party line.
+###  %bset console-autosave%b <0/1>
+   Save users console settings automatically? Otherwise, they have to use the
+   %b'store'%b command.
    
-See Also: store
+See also: store
 %{help=set force-channel}%{+n}
 ###  %bset force-channel%b <chan#>
-   This specifies the channel to dumb users who have no stored
-   console settings on, 0 is the party line, 1-99999 are global
-   chat lines & 10000-19999 are bot-only chat lines.
+   If a user doesn't have any console settings saved, which channel do you want
+   them automatically put on?
 %{help=set info-party}%{+n}
-###  %bset info-party%b 0/1
-   When set, this flag causes a users info line to be displayed
-   to the *current* chat channel when they join it.
+###  %bset info-party%b <0/1>
+   Enable this setting if a user's global info line should be displayed when
+   they join a botnet channel.

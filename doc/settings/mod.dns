@@ -1,5 +1,5 @@
 DNS Module
-Last revised: January 1, 2002
+Last revised: February 12, 2002
      _________________________________________________________________
 
                                 DNS Module
@@ -14,11 +14,6 @@ This module requires: none
 Put this line into your Eggdrop configuration file to load the dns
 module:
 
-  loadmodule dns
-
-Put this line into your Eggdrop configuration file to load the dns
-module:
-  
   loadmodule dns
 
      _________________________________________________________________

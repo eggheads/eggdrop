@@ -2,7 +2,7 @@
 ###  %bassoc module%b
    This module provides botnet channel naming.
 
-   The following commands are provided by the channels module:
+   The following commands are provided by the assoc module:
 
    For botnet masters:
      %bassoc%b
