@@ -1,6 +1,7 @@
-.\" Orig by Robey, redone by rtc
-.\" * 08Nov1999 rtc       A line wasn't displayed
-.TH EGGDROP 1 "November 1999" "EGGDEV" "IRC goodies"
+.\" Originally by Robey, redone by rtc
+.\" * 1999-11-08 rtc       A line wasn't displayed
+.\" * 2000-10-07 Fabian    Updated and slightly re-organised.
+.TH EGGDROP 1 "October 2000" "EGGDEV" "IRC goodies"
 .SH NAME
 eggdrop \- an IRC robot program
 .SH SYNOPSIS
@@ -9,29 +10,22 @@ eggdrop \- an IRC robot program
 .RB [ config-file ]
 .SH DESCRIPTION
 .I eggdrop
-is a fully-functional Internet Relay Chat robot program.  It 
-is stand-alone, and does not require the 
+is a fully-functional Internet Relay Chat robot program.  It
+is stand-alone, and does not require the
 .I ircII
-client.  It currently supports all known IRC nets, including EFnet, 
-IRCnet, Dalnet and Undernet.
+client.  It currently supports all known IRC nets, including EFnet,
+IRCNet, Dalnet and Undernet.
 .PP
-By itself, 
-.I eggdrop 
-does nothing.  It needs a config file (usually named after your bot) 
+By itself,
+.I eggdrop
+does nothing.  It needs a config file (usually named after your bot)
 to tell it how to behave.  The
 config file is actually a script written in
 .I "enhanced TCL"
-(TCL with extra commands and variables defined by eggdrop).  A sample 
-TCL config file with describing comments for each option, 
-.IR eggdrop.conf.dist , 
+(TCL with extra commands and variables defined by eggdrop).  A sample
+TCL config file with describing comments for each option,
+.IR eggdrop.conf.dist ,
 is given with the distribution.
-.PP
-There is
-.B extensive
-online documentation.  Once you get the bot
-running, open a DCC chat with it, and send it a DCC message like:
-.IP
-/msg =MyBot .help
 .SH OPTIONS
 .I eggdrop
 options include:
@@ -65,19 +59,19 @@ The first time you run
 .IR eggdrop ,
 you need to use the -m option, to
 put eggdrop in "userfile creation" mode.  Follow the directions
-and it will build a user record database, with you listed as 
+and it will build a user record database, with you listed as
 an 'owner' (person who runs the bot).
 .SH SIGNALS
 .I eggdrop
 handles the following signals:
 .TP
 .B SIGCHLD
-This signal is ignored by 
+This signal is ignored by
 .I eggdrop
 and can be used to determine whether it's running or not.
 .TP
 .B SIGTERM
-Depending on die-on-sigterm being set to 0 or 1 in the config file, 
+Depending on die-on-sigterm being set to 0 or 1 in the config file,
 .I eggdrop
 will save the user file or die.
 .TP
@@ -88,9 +82,9 @@ will rehash or die.
 .SH "ENVIRONMENT VARIABLES"
 .TP
 .B EGG_LANG
-This variable can be set to the language you want 
+This variable can be set to the language you want
 .I eggdrop
-to speak to you. It defaults to english, but german and french are
+to speak to you. It defaults to English, but German and French are
 supported, too.
 .TP
 .B EGG_LANGDIR
@@ -98,8 +92,21 @@ Specifies the directory where all your language files are stored.
 The default is ./language
 .SH FILES
 .TP
-.I eggdrop.conf.dist
-a sample configuration file
+.I eggdrop.simple.conf
+sample configuration file, containing only the
+.B basic options
+needed by an average user.
+.TP
+.I eggdrop.advanced.conf
+sample configuration file, containing more
+.B advanced options
+useful to users who have very specific needs and who have reached a
+certain level of experience with eggdrop.
+.TP
+.I eggdrop.complete.conf
+sample configuration file, containing
+.B all available options
+in eggdrop.
 .TP
 .I scripts/weed
 TCL script to sort eggdrop userfiles
@@ -114,11 +121,36 @@ irc(1),
 ircII(1),
 tclsh(1),
 ircd(8)
+.PP
+There is extensive
+.B online documentation.
+Once you get the bot running, open a DCC chat with it, and send it a DCC
+message like:
+.IP
+/msg =MyBot .help
+.PP
+In addition, the files in the
+.B
+doc/
+sub-directory provide
+.B detailed information
+about how eggdrop works and how you can use it
+.B to the limits.
 .SH AUTHORS
-Robey Pointer 1997
-.br
-Eggheads 1999
+Written by Robey Pointer, the Eggheads Development Team and various
+other people. See the
+.I doc/AUTHORS
+file for who contributed and the
+.I doc/UPDATES*
+series of files for further details.
 .SH "REPORTING BUGS"
-Report bugs to <eggheads@eggheads.org> if you find any.
+Report bugs to <eggheads@eggheads.org>.
+.SH COPYRIGHT
+Copyright C 1994 Robey Pointer
+.br
+Copyright C 1999, 2000 Eggheads
+.PP
+This is free software; see the source for copying conditions. There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 .\" end of man page
 
