@@ -1,7 +1,7 @@
 /* 
  * servmsg.c -- part of server.mod
  * 
- * $Id: servmsg.c,v 1.43 2000/08/20 11:16:43 fabian Exp $
+ * $Id: servmsg.c,v 1.44 2000/08/31 18:10:10 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -326,15 +326,6 @@ static int got442(char *from, char *msg)
 	      chan->channel.key[0] ? chan->channel.key : chan->key_prot);
     }
 
-  /* If there was a lagcheck in progress, it probably failed now. */
-  if (lagged) {
-    lagged = 0;
-    if (lagcheckstring)
-      free_null(lagcheckstring);
-    if (lagcheckstring2)
-      free_null(lagcheckstring2);
-    debug0("got 442(not on chan) reply, guess I'm not lagged");
-  }
   return 0;
 }
 
@@ -1122,7 +1113,7 @@ static int gotping(char *from, char *msg)
 
 static int gotkick(char *from, char *msg)
 {
-  char *nick, buf2[511], *pbuf, *victim;
+  char *nick;
 
   nick = from;
   if (rfc_casecmp(nick, botname))
@@ -1132,19 +1123,6 @@ static int gotkick(char *from, char *msg)
     last_time += 2;
     if (debug_output)
       putlog(LOG_SRVOUT, "*", "adding 2secs penalty (successful kick)");
-  }
-  if (!lagged)
-    return 0;
-  strncpyz(buf2, msg, sizeof buf2);
-  pbuf = buf2;
-  newsplit(&pbuf);
-  victim = newsplit(&pbuf);
-  check_notlagged(victim);
-  if (!rfc_casecmp(victim, lagcheckstring)) {
-    debug1("I kicked %s, so I think I'm not lagged", victim);
-    lagged = 0;
-    free_null(lagcheckstring);
-    free_null(lagcheckstring2);
   }
   return 0;
 }
@@ -1192,103 +1170,6 @@ static int whoispenalty(char *from, char *msg)
   return 0;
 }
 
-static int lagcheck_left(char *from, char *msg)
-{
-  check_notlagged(from);
-  return 0;
-}
-
-static int lagcheck_notop(char *from, char *msg)
-{
-  if (!lagged)
-    return 0;
-  debug0("Got 482 (notopped) reply, I guess I'm not lagged.");
-  if (lagcheckstring)
-    free_null(lagcheckstring);
-  lagged = 0;
-  return 0;
-}
-
-static int lagcheck_367(char *from, char *msg)
-{
-  char buf[511], *mask;
-
-  if (!lagged || (lagchecktype != LC_BEIMODE))
-    return 0;
-  strncpyz(buf, msg, sizeof buf);
-  mask = buf;
-  newsplit(&mask);
-  newsplit(&mask);
-  if (lagcheckstring)
-    if (!wild_match(mask, lagcheckstring + 3) &&
-    	!wild_match(lagcheckstring + 3, mask))
-      return 0;
-  lagged = 0;
-  if (lagcheckstring)
-    free_null(lagcheckstring);
-  debug0("mask already set, I guess I'm not lagged");
-  return 0;
-}
-
-static int lagcheck_mode (char *from, char *origmsg)
-{
-  char *modes, pm, buf[511], *msg;
-
-  if (rfc_casecmp(from, botname))
-    /* That wasn't my modechange... */
-    return 0;
-  strncpyz(buf, origmsg, sizeof buf);
-  msg = buf;
-  newsplit(&msg);
-  modes = newsplit(&msg);
-  if (strlen(msg) < 1)
-    return 0;
-  pm = '+';
-  while (modes[0]) {
-    if (strchr("+-", modes[0]))
-      pm = modes[0];
-    else if (strchr("ovbeI", modes[0])) {
-      egg_snprintf(buf, sizeof buf, "%c%c %s", pm, modes[0], newsplit(&msg));
-      check_notlagged(buf);
-    } else if ((modes[0] == 'l') && (pm = '+'))
-      newsplit(&msg);
-    else if (modes[0] == 'k')
-      newsplit(&msg);
-    modes++;
-  }
-  return 0;
-}
-
-static int lagcheck_401(char *from, char *origmsg)
-{
-  char buf[511], *msg;
-
-  if (!lagged || lagchecktype != LC_KICK)
-    return 0;
-  strncpyz(buf, origmsg, sizeof buf);
-  msg = buf;
-  lagged = 0;
-  if (lagcheckstring)
-    free_null(lagcheckstring);
-  if (lagcheckstring2)
-    free_null(lagcheckstring2);
-  debug0("got 401/441 reply, guess I'm not lagged");
-  return 0;
-}
-
-static int lagcheck_478(char *from, char *origmsg)
-{
-  if (!lagged || lagchecktype == LC_KICK)
-    return 0;
-  if (lagcheckstring)
-    free_null(lagcheckstring);
-  if (lagcheckstring2)
-    free_null(lagcheckstring2);
-  lagged = 0;
-  debug0("Channel ban list is full, guess I'm not lagged");
-  return 0;
-}
-
 static cmd_t my_raw_binds[] =
 {
   {"PRIVMSG",	"",	(Function) gotmsg,		NULL},
@@ -1314,16 +1195,6 @@ static cmd_t my_raw_binds[] =
   {"KICK",	"",	(Function) gotkick,		NULL},
   {"200",	"",	(Function) tracepenalty,	NULL},
   {"318",	"",	(Function) whoispenalty,	NULL},
-  {"PART",	"",	(Function) lagcheck_left,	NULL},
-  {"QUIT",	"",	(Function) lagcheck_left,	NULL},
-  {"482",	"",	(Function) lagcheck_notop,	NULL},
-  {"367",	"",	(Function) lagcheck_367,	NULL},
-  {"348",	"",	(Function) lagcheck_367,	NULL},
-  {"346",	"",	(Function) lagcheck_367,	NULL},
-  {"MODE",	"",	(Function) lagcheck_mode,	"lagcheck:MODE"},
-  {"401",	"",	(Function) lagcheck_401,	"lagcheck:401"},
-  {"441",	"",	(Function) lagcheck_401,	"lagcheck:441"},
-  {"478",	"",	(Function) lagcheck_478,	"lagcheck:478"},
   {NULL,	NULL,	NULL,				NULL}
 };
 

@@ -208,20 +208,6 @@ set use-penalties 1 (default on net-type 1)
     Note: it's highly adviced to turn this on!
 
 
-set use-lagcheck 1
-    Lag check makes the bot check after every command send to the server if it's
-    lagging or not. If it is, queues are stopped to prevent server flooding.
-    There are three different options for this setting:
-     0 = turn it off
-     1 = enable lag check and optimize kicks
-     2 = trace nick changes and channel parts and change the queues respectively.
-    Please note, this lagcheck has been optimized for IRCNET at the moment,
-    but it should work for other networks, too. If you experience any
-    problems on other nets eggdrop still excess floods) mail the eggdrop
-    development crew please.
-    Valid settings are 0-2
-
-
 
 set optimize-kicks 1
     Optimize kicks optimizes kick queue. It also traces nick changes and parts in
