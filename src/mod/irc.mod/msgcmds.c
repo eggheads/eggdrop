@@ -2,7 +2,7 @@
  * msgcmds.c -- part of irc.mod
  *   all commands entered via /MSG
  *
- * $Id: msgcmds.c,v 1.30 2002/06/13 21:22:47 wcc Exp $
+ * $Id: msgcmds.c,v 1.31 2002/06/17 03:58:54 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -460,6 +460,11 @@ static int msg_whois(char *nick, char *host, struct userrec *u, char *par)
     return 1;
   if (!u)
     return 0;
+  if (!par[0]) {
+    dprintf(DP_HELP, "NOTICE %s :%s: /msg %s whois <handle>\n", nick,
+	    MISC_USAGE, botname);
+    return 0;
+  }
   if (strlen(par) > NICKMAX)
     par[NICKMAX] = 0;
   putlog(LOG_CMDS, "*", "(%s!%s) !%s! WHOIS %s", nick, host, u->handle, par);
