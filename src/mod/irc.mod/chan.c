@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  * 
- * $Id: chan.c,v 1.25 2000/01/22 23:43:09 fabian Exp $
+ * $Id: chan.c,v 1.26 2000/01/28 22:14:02 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1690,13 +1690,14 @@ static int gotjoin(char *from, char *chname)
 
 /* Got a part
  */
-static int gotpart(char *from, char *chname)
+static int gotpart(char *from, char *msg)
 {
-  char *nick;
+  char *nick, *chname;
   struct chanset_t *chan;
   struct userrec *u;
 
-  fixcolon(chname);
+  chname = newsplit(&msg);
+  fixcolon(msg);
   chan = findchan(chname);
   if (chan && channel_inactive(chan)) {
     clear_channel(chan, 1);  
@@ -1714,10 +1715,13 @@ static int gotpart(char *from, char *chname)
       chan->status &= ~CHAN_PEND;
       reset_chan_info(chan);
     }
-    check_tcl_part(nick, from, u, chan->dname);
+    check_tcl_part(nick, from, u, chan->dname, msg);
     set_handle_laston(chan->dname, u, now);
     killmember(chan, nick);
-    putlog(LOG_JOIN, chan->dname, "%s (%s) left %s.", nick, from, chan->dname);
+    if (msg[0])
+      putlog(LOG_JOIN, chan->dname, "%s (%s) left %s (%s).", nick, from, chan->dname, msg);
+    else
+      putlog(LOG_JOIN, chan->dname, "%s (%s) left %s.", nick, from, chan->dname);
     /* If it was me, all hell breaks loose... */
     if (match_my_nick(nick)) {
       clear_channel(chan, 1);
@@ -2062,8 +2066,8 @@ static int gotnotice(char *from, char *msg)
   fixcolon(msg);
   strcpy(uhost, from);
   nick = splitnick(&uhost);
-  if (flud_ctcp_thr && detect_avalanche(msg)) {
     u = get_user_by_host(from);
+  if (flud_ctcp_thr && detect_avalanche(msg)) {
     get_user_flagrec(u, &fr, chan->dname);
     /* Discard -- kick user if it was to the channel */
     if (me_op(chan) &&
@@ -2105,7 +2109,6 @@ static int gotnotice(char *from, char *msg)
 			FLOOD_CTCP : FLOOD_PRIVMSG, NULL);
       if (ctcp[0] != ' ') {
 	code = newsplit(&ctcp);
-	u = get_user_by_host(from);
 	if (!ignoring || trigger_on_ignore) {
 	  check_tcl_ctcr(nick, uhost, u, chan->dname, code, msg);
 	  if (!ignoring) {
@@ -2120,6 +2123,8 @@ static int gotnotice(char *from, char *msg)
   if (msg[0]) {
     /* Check even if we're ignoring the host. (modified by Eule 17.7.99) */
     detect_chan_flood(nick, uhost, from, chan, FLOOD_NOTICE, NULL);
+    if (!ignoring || trigger_on_ignore)
+      check_tcl_notc(nick, uhost, u, to, msg);
     if (!ignoring)
       putlog(LOG_PUBLIC, chan->dname, "-%s:%s- %s", nick, to, msg);
     update_idle(chan->dname, nick);

@@ -1010,11 +1010,12 @@ for the msg-command "stop", use "unbind msg - stop msg_stop".
 
   (7)  NOTC   (stackable)
        bind notc <flags> <mask> <proc>
-       procname <nick> <user@host> <handle> <text>
+|      procname <nick> <user@host> <handle> <dest> <text>
 
-       matches the entire line of text from a /notice with the mask; it
-       is considered a breach of protocol to respond to a /notice on IRC,
-       so this is intended for internal use (ie, logging, etc) only
+|      destination will be a nickname (the bot's nickname, obviously) or
+|      a channel name; matches the entire line of text from a /notice with
+       the mask; it is considered a breach of protocol to respond to a
+       /notice on IRC, so this is intended for internal use (ie, logging, etc) only
 
   (8)  JOIN   (stackable)
        bind join <flags> <mask> <proc>
@@ -1026,11 +1027,11 @@ for the msg-command "stop", use "unbind msg - stop msg_stop".
 
   (9)  PART   (stackable)
        bind part <flags> <mask> <proc>
-       procname <nick> <user@host> <handle> <channel>
+|      procname <nick> <user@host> <handle> <channel> <msg>
 
        triggered by someone leaving the channel; as in JOIN, the <mask>
        is matched against "#channel nick!user@host" and can contain
-       wildcards
+       wildcards. if no part message is specified msg will be set to "".
 
   (10) SIGN   (stackable)
        bind sign <flags> <mask> <proc>

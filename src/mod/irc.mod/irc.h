@@ -1,7 +1,7 @@
 /* 
  * irc.h -- part of irc.mod
  * 
- * $Id: irc.h,v 1.7 2000/01/22 23:43:09 fabian Exp $
+ * $Id: irc.h,v 1.8 2000/01/28 22:14:03 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -25,10 +25,9 @@
 #ifndef _EGG_MOD_IRC_IRC_H
 #define _EGG_MOD_IRC_IRC_H
 
-#define check_tcl_join(a,b,c,d) check_tcl_joinpart(a,b,c,d,H_join)
-#define check_tcl_part(a,b,c,d) check_tcl_joinpart(a,b,c,d,H_part)
-#define check_tcl_splt(a,b,c,d) check_tcl_joinpart(a,b,c,d,H_splt)
-#define check_tcl_rejn(a,b,c,d) check_tcl_joinpart(a,b,c,d,H_rejn)
+#define check_tcl_join(a,b,c,d) check_tcl_joinspltrejn(a,b,c,d,H_join)
+#define check_tcl_splt(a,b,c,d) check_tcl_joinspltrejn(a,b,c,d,H_splt)
+#define check_tcl_rejn(a,b,c,d) check_tcl_joinspltrejn(a,b,c,d,H_rejn)
 #define check_tcl_sign(a,b,c,d,e) check_tcl_signtopcnick(a,b,c,d,e,H_sign)
 #define check_tcl_topc(a,b,c,d,e) check_tcl_signtopcnick(a,b,c,d,e,H_topc)
 #define check_tcl_nick(a,b,c,d,e) check_tcl_signtopcnick(a,b,c,d,e,H_nick)
@@ -41,8 +40,9 @@
 #ifdef MAKING_IRC
 static void check_tcl_kickmode(char *, char *, struct userrec *, char *,
 			       char *, char *, p_tcl_bind_list);
-static void check_tcl_joinpart(char *, char *, struct userrec *, char *,
+static void check_tcl_joinspltrejn(char *, char *, struct userrec *, char *,
 			       p_tcl_bind_list);
+static void check_tcl_part(char *, char *, struct userrec *, char *, char *);
 static void check_tcl_signtopcnick(char *, char *, struct userrec *u, char *,
 				   char *, p_tcl_bind_list);
 static void check_tcl_pubm(char *, char *, char *, char *);

@@ -2,7 +2,7 @@
  * irc.c -- part of irc.mod
  *   support for channels within the bot 
  * 
- * $Id: irc.c,v 1.14 2000/01/17 22:36:09 fabian Exp $
+ * $Id: irc.c,v 1.15 2000/01/28 22:14:03 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -787,7 +787,7 @@ static int channels_4char STDVAR {
   return TCL_OK;
 }
 
-static void check_tcl_joinpart(char *nick, char *uhost, struct userrec *u,
+static void check_tcl_joinspltrejn(char *nick, char *uhost, struct userrec *u,
 			       char *chname, p_tcl_bind_list table)
 {
   struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
@@ -802,6 +802,28 @@ static void check_tcl_joinpart(char *nick, char *uhost, struct userrec *u,
   Tcl_SetVar(interp, "_jp4", chname, 0);
   Context;
   check_tcl_bind(table, args, &fr, " $_jp1 $_jp2 $_jp3 $_jp4",
+		 MATCH_MASK | BIND_USE_ATTR | BIND_STACKABLE);
+  Context;
+}
+
+/* we handle part messages now *sigh* (guppy 27Jan2000) */
+
+static void check_tcl_part(char *nick, char *uhost, struct userrec *u,
+			       char *chname, char *text)
+{
+  struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
+  char args[1024];
+
+  Context;
+  simple_sprintf(args, "%s %s!%s", chname, nick, uhost);
+  get_user_flagrec(u, &fr, chname);
+  Tcl_SetVar(interp, "_p1", nick, 0);
+  Tcl_SetVar(interp, "_p2", uhost, 0);
+  Tcl_SetVar(interp, "_p3", u ? u->handle : "*", 0);
+  Tcl_SetVar(interp, "_p4", chname, 0);
+  Tcl_SetVar(interp, "_p5", text[0] ? text : "", 0);
+  Context;
+  check_tcl_bind(H_part, args, &fr, " $_p1 $_p2 $_p3 $_p4 $_p5",
 		 MATCH_MASK | BIND_USE_ATTR | BIND_STACKABLE);
   Context;
 }
@@ -1202,7 +1224,7 @@ char *irc_start(Function * global_funcs)
   H_splt = add_bind_table("splt", HT_STACKABLE, channels_4char);
   H_sign = add_bind_table("sign", HT_STACKABLE, channels_5char);
   H_rejn = add_bind_table("rejn", HT_STACKABLE, channels_4char);
-  H_part = add_bind_table("part", HT_STACKABLE, channels_4char);
+  H_part = add_bind_table("part", HT_STACKABLE, channels_5char);
   H_nick = add_bind_table("nick", HT_STACKABLE, channels_5char);
   H_mode = add_bind_table("mode", HT_STACKABLE, channels_6char);
   H_kick = add_bind_table("kick", HT_STACKABLE, channels_6char);

@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  * 
- * $Id: server.c,v 1.33 2000/01/24 21:42:28 fabian Exp $
+ * $Id: server.c,v 1.34 2000/01/28 22:14:03 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1823,7 +1823,8 @@ static Function server_table[] =
   /* 36 - 39 */
   (Function) ctcp_reply,
   (Function) get_altbotnick,	/* char *				*/
-  (Function) & nick_len		/* int					*/
+  (Function) & nick_len,	/* int					*/
+  (Function) check_tcl_notc
 };
 
 char *server_start(Function * global_funcs)
@@ -1923,7 +1924,7 @@ char *server_start(Function * global_funcs)
   Context;
   H_wall = add_bind_table("wall", HT_STACKABLE, server_2char);
   H_raw = add_bind_table("raw", HT_STACKABLE, server_raw);
-  H_notc = add_bind_table("notc", HT_STACKABLE, server_5char);
+  H_notc = add_bind_table("notc", HT_STACKABLE, server_6char);
   H_msgm = add_bind_table("msgm", HT_STACKABLE, server_5char);
   H_msg = add_bind_table("msg", 0, server_msg);
   H_flud = add_bind_table("flud", HT_STACKABLE, server_5char);

@@ -1,7 +1,7 @@
 /* 
  * servmsg.c -- part of server.mod
  * 
- * $Id: servmsg.c,v 1.26 2000/01/24 21:42:28 fabian Exp $
+ * $Id: servmsg.c,v 1.27 2000/01/28 22:14:03 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -118,7 +118,7 @@ static int check_tcl_msg(char *cmd, char *nick, char *uhost,
 }
 
 static void check_tcl_notc(char *nick, char *uhost, struct userrec *u,
-	       		   char *arg)
+	       		   char *dest, char *arg)
 {
   struct flag_record fr = {FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0};
 
@@ -127,9 +127,10 @@ static void check_tcl_notc(char *nick, char *uhost, struct userrec *u,
   Tcl_SetVar(interp, "_notc1", nick, 0);
   Tcl_SetVar(interp, "_notc2", uhost, 0);
   Tcl_SetVar(interp, "_notc3", u ? u->handle : "*", 0);
-  Tcl_SetVar(interp, "_notc4", arg, 0);
+  Tcl_SetVar(interp, "_notc4", dest, 0);
+  Tcl_SetVar(interp, "_notc5", arg, 0);
   Context;
-  check_tcl_bind(H_notc, arg, &fr, " $_notc1 $_notc2 $_notc3 $_notc4",
+  check_tcl_bind(H_notc, arg, &fr, " $_notc1 $_notc2 $_notc3 $_notc4 $_notc5",
 		 MATCH_MASK | BIND_USE_ATTR | BIND_STACKABLE);
   Context;
 }
@@ -621,9 +622,11 @@ static int gotnotice(char *from, char *msg)
 	/* Hidden `250' connection count message from server */
 	if (strncmp(msg, "Highest connection count:", 25))
 	  putlog(LOG_SERV, "*", "-NOTICE- %s", msg);
-      } else if (!ignoring) {
-	check_tcl_notc(nick, from, u, msg);
-	putlog(LOG_MSGS, "*", "-%s (%s)- %s", nick, from, msg);
+      } else {
+        if (!ignoring || trigger_on_ignore)
+          check_tcl_notc(nick, uhost, u, botname, msg);
+        if (!ignoring)
+  	      putlog(LOG_MSGS, "*", "-%s (%s)- %s", nick, uhost, msg);
       }
     }
   }
