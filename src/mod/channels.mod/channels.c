@@ -2,7 +2,7 @@
  * channels.c -- part of channels.mod
  *   support for channels within the bot
  * 
- * $Id: channels.c,v 1.39 2000/10/27 19:29:10 fabian Exp $
+ * $Id: channels.c,v 1.40 2000/10/30 20:51:22 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -279,7 +279,7 @@ static void remove_channel(struct chanset_t *chan)
    (void) chanset_unlink(chan);
 
    if ((me = module_find("irc", 1, 3)) != NULL)
-     (me->funcs[IRC_DO_CHANNEL_PART])();
+     (me->funcs[IRC_DO_CHANNEL_PART])(chan);
 
    clear_channel(chan, 0);
    noshare = 1;
