@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  *
- * $Id: cmds.c,v 1.73 2002/02/12 00:35:24 wcc Exp $
+ * $Id: cmds.c,v 1.74 2002/02/20 00:13:22 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -613,7 +613,7 @@ static void cmd_boot(struct userrec *u, int idx, char *par)
       u2 = get_user_by_handle(userlist, dcc[i].nick);
       if (u2 && (u2->flags & USER_OWNER)
           && egg_strcasecmp(dcc[idx].nick, who)) {
-        dprintf(idx, "You can't boot the bot owner.\n");
+        dprintf(idx, "You can't boot a bot owner.\n");
         return;
       }
       if (u2 && (u2->flags & USER_MASTER) && !(u && (u->flags & USER_MASTER))) {
@@ -837,9 +837,9 @@ static void cmd_chhandle(struct userrec *u, int idx, char *par)
       dprintf(idx, "You can't change shared bot's nick.\n");
     else if ((atr2 & USER_OWNER) && !(atr & USER_OWNER) &&
             egg_strcasecmp(dcc[idx].nick, hand))
-      dprintf(idx, "You can't change the bot owner's handle.\n");
+      dprintf(idx, "You can't change a bot owner's handle.\n");
     else if (isowner(hand) && egg_strcasecmp(dcc[idx].nick, hand))
-      dprintf(idx, "You can't change the permanent bot owner's handle.\n");
+      dprintf(idx, "You can't change a permanent bot owner's handle.\n");
     else if (!egg_strcasecmp(newhand, botnetnick) && (!(atr2 & USER_BOT) ||
              nextbot(hand) != -1))
       dprintf(idx, "Hey! That's MY name!\n");
@@ -903,9 +903,9 @@ static void cmd_chpass(struct userrec *u, int idx, char *par)
       dprintf(idx, "You can't change shared bot's password.\n");
     else if ((u->flags & USER_OWNER) && !(atr & USER_OWNER) &&
 	     egg_strcasecmp(handle, dcc[idx].nick))
-      dprintf(idx, "You can't change the bot owner's password.\n");
+      dprintf(idx, "You can't change a bot owner's password.\n");
     else if (isowner(handle) && egg_strcasecmp(dcc[idx].nick, handle))
-      dprintf(idx, "You can't change the permanent bot owner's password.\n");
+      dprintf(idx, "You can't change a permanent bot owner's password.\n");
     else if (!par[0]) {
       putlog(LOG_CMDS, "*", "#%s# chpass %s [nothing]", dcc[idx].nick,
 	     handle);
@@ -1000,7 +1000,7 @@ static void cmd_comment(struct userrec *u, int idx, char *par)
   }
   if ((u1->flags & USER_OWNER) && !(u && (u->flags & USER_OWNER)) &&
       egg_strcasecmp(handle, dcc[idx].nick)) {
-    dprintf(idx, "You can't change comment on the bot owner.\n");
+    dprintf(idx, "You can't change comment on a bot owner.\n");
     return;
   }
   putlog(LOG_CMDS, "*", "#%s# comment %s %s", dcc[idx].nick, handle, par);
@@ -1184,7 +1184,7 @@ static void cmd_save(struct userrec *u, int idx, char *par)
 static void cmd_backup(struct userrec *u, int idx, char *par)
 {
   putlog(LOG_CMDS, "*", "#%s# backup", dcc[idx].nick);
-  dprintf(idx, "Backing up the channel & user file...\n");
+  dprintf(idx, "Backing up the channel & user files...\n");
   call_hook(HOOK_BACKUP);
 }
 
@@ -2405,11 +2405,11 @@ static void cmd_mns_user(struct userrec *u, int idx, char *par)
     return;
   }
   if (isowner(u2->handle)) {
-    dprintf(idx, "You can't remove the permanent bot owner!\n");
+    dprintf(idx, "You can't remove a permanent bot owner!\n");
     return;
   }
   if ((u2->flags & USER_OWNER) && !(u->flags & USER_OWNER)) {
-    dprintf(idx, "You can't remove the bot owner!\n");
+    dprintf(idx, "You can't remove a bot owner!\n");
     return;
   }
   if (u2->flags & USER_BOT) {
@@ -2484,7 +2484,7 @@ static void cmd_pls_host(struct userrec *u, int idx, char *par)
     }
     if ((u2->flags & (USER_OWNER|USER_MASTER)) &&
 	!(u->flags & USER_OWNER) && egg_strcasecmp(handle, dcc[idx].nick)) {
-      dprintf(idx, "You can't add hostmasks to the bot owner/master.\n");
+      dprintf(idx, "You can't add hostmasks to a bot owner/master.\n");
       return;
     }
     if (!(u->flags & USER_BOTMAST) && !chan_master(fr)) {
@@ -2557,7 +2557,7 @@ static void cmd_mns_host(struct userrec *u, int idx, char *par)
       return;
     } else if ((u2->flags & (USER_OWNER|USER_MASTER)) &&
 	       !(u->flags & USER_OWNER) && (u2 != u)) {
-      dprintf(idx, "You can't remove hostmasks from the bot owner/master.\n");
+      dprintf(idx, "You can't remove hostmasks from a bot owner/master.\n");
       return;
     } else if (!(u->flags & USER_BOTMAST) && !chan_master(fr)) {
       dprintf(idx, "Permission denied.\n");
