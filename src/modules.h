@@ -4,11 +4,11 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: modules.h,v 1.4 2000/01/06 19:45:03 fabian Exp $
+ * $Id: modules.h,v 1.5 2000/01/17 22:36:07 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
- * Copyright (C) 1999  Eggheads
+ * Copyright (C) 1999, 2000  Eggheads
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

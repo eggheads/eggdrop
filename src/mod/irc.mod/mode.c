@@ -4,11 +4,11 @@
  *   channel mode changes and the bot's reaction to them
  *   setting and getting the current wanted channel modes
  * 
- * $Id: mode.c,v 1.17 2000/01/17 22:14:00 fabian Exp $
+ * $Id: mode.c,v 1.18 2000/01/17 22:36:09 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
- * Copyright (C) 1999  Eggheads
+ * Copyright (C) 1999, 2000  Eggheads
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

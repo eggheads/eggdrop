@@ -2,11 +2,11 @@
  * lang.h
  *   Conversion definitions for language support
  * 
- * $Id: lang.h,v 1.6 1999/12/22 12:11:02 fabian Exp $
+ * $Id: lang.h,v 1.7 2000/01/17 22:36:06 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
- * Copyright (C) 1999  Eggheads
+ * Copyright (C) 1999, 2000  Eggheads
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

@@ -1,11 +1,11 @@
 /* 
  * tclserv.c -- part of server.mod
  * 
- * $Id: tclserv.c,v 1.4 2000/01/02 02:42:13 fabian Exp $
+ * $Id: tclserv.c,v 1.5 2000/01/17 22:36:10 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
- * Copyright (C) 1999  Eggheads
+ * Copyright (C) 1999, 2000  Eggheads
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

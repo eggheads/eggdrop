@@ -2,11 +2,11 @@
  * cmdt.h
  *   stuff for builtin commands
  * 
- * $Id: cmdt.h,v 1.2 1999/12/21 17:35:09 fabian Exp $
+ * $Id: cmdt.h,v 1.3 2000/01/17 22:36:06 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
- * Copyright (C) 1999  Eggheads
+ * Copyright (C) 1999, 2000  Eggheads
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

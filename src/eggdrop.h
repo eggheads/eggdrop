@@ -4,11 +4,11 @@
  * 
  *   IF YOU ALTER THIS FILE, YOU NEED TO RECOMPILE THE BOT.
  * 
- * $Id: eggdrop.h,v 1.21 2000/01/01 19:28:24 fabian Exp $
+ * $Id: eggdrop.h,v 1.22 2000/01/17 22:36:06 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
- * Copyright (C) 1999  Eggheads
+ * Copyright (C) 1999, 2000  Eggheads
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

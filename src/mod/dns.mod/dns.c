@@ -4,10 +4,10 @@
  * 
  * Written by Fabian Knittel <fknittel@gmx.de>
  * 
- * $Id: dns.c,v 1.9 2000/01/09 14:59:29 fabian Exp $
+ * $Id: dns.c,v 1.10 2000/01/17 22:36:08 fabian Exp $
  */
 /* 
- * Copyright (C) 1999  Eggheads
+ * Copyright (C) 1999, 2000  Eggheads
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

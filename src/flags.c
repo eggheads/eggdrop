@@ -2,11 +2,11 @@
  * flags.c -- handles:
  *   all the flag matching/conversion functions in one neat package :)
  * 
- * $Id: flags.c,v 1.10 2000/01/17 21:59:11 fabian Exp $
+ * $Id: flags.c,v 1.11 2000/01/17 22:36:06 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
- * Copyright (C) 1999  Eggheads
+ * Copyright (C) 1999, 2000  Eggheads
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

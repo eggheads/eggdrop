@@ -7,11 +7,11 @@
  * 
  * dprintf'ized, 15nov1995
  * 
- * $Id: main.c,v 1.24 2000/01/17 21:59:11 fabian Exp $
+ * $Id: main.c,v 1.25 2000/01/17 22:36:06 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
- * Copyright (C) 1999  Eggheads
+ * Copyright (C) 1999, 2000  Eggheads
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -663,7 +663,8 @@ int main(int argc, char **argv)
 #include "patch.h"
   /* version info! */
   sprintf(ver, "eggdrop v%s", egg_version);
-  sprintf(version, "Eggdrop v%s  (c)1997 Robey Pointer (c)1999 Eggheads", egg_version);
+  sprintf(version, "Eggdrop v%s  (c)1997 Robey Pointer (c)1999, 2000  Eggheads",
+     egg_version);
   /* now add on the patchlevel (for Tcl) */
   sprintf(&egg_version[strlen(egg_version)], " %u", egg_numver);
   strcat(egg_version, egg_xtra);

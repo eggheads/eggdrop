@@ -6,11 +6,11 @@
  * 
  * dprintf'ized, 27oct1995
  * 
- * $Id: dcc.c,v 1.19 2000/01/06 19:42:09 fabian Exp $
+ * $Id: dcc.c,v 1.20 2000/01/17 22:36:06 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
- * Copyright (C) 1999  Eggheads
+ * Copyright (C) 1999, 2000  Eggheads
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

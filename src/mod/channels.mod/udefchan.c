@@ -2,10 +2,10 @@
  * udefchan.c -- part of channels.mod
  *   user definable channel flags/settings
  * 
- * $Id: udefchan.c,v 1.1 2000/01/02 17:29:37 fabian Exp $
+ * $Id: udefchan.c,v 1.2 2000/01/17 22:36:08 fabian Exp $
  */
 /* 
- * Copyright (C) 1999  Eggheads
+ * Copyright (C) 1999, 2000  Eggheads
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

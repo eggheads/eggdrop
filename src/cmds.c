@@ -5,11 +5,11 @@
  * 
  * dprintf'ized, 3nov1995
  * 
- * $Id: cmds.c,v 1.20 2000/01/17 21:59:10 fabian Exp $
+ * $Id: cmds.c,v 1.21 2000/01/17 22:36:06 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
- * Copyright (C) 1999  Eggheads
+ * Copyright (C) 1999, 2000  Eggheads
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

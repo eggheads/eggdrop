@@ -1,11 +1,11 @@
 /* 
  * tclirc.c -- part of irc.mod
  * 
- * $Id: tclirc.c,v 1.10 2000/01/01 19:22:33 fabian Exp $
+ * $Id: tclirc.c,v 1.11 2000/01/17 22:36:09 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
- * Copyright (C) 1999  Eggheads
+ * Copyright (C) 1999, 2000  Eggheads
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

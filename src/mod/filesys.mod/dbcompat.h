@@ -5,10 +5,10 @@
  * 
  * Written for filedb3 by Fabian Knittel <fknittel@gmx.de>
  * 
- * $Id: dbcompat.h,v 1.3 2000/01/02 02:42:11 fabian Exp $
+ * $Id: dbcompat.h,v 1.4 2000/01/17 22:36:08 fabian Exp $
  */
 /* 
- * Copyright (C) 1999  Eggheads
+ * Copyright (C) 1999, 2000  Eggheads
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
