@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  *
- * $Id: chan.c,v 1.75 2001/12/19 04:57:54 guppy Exp $
+ * $Id: chan.c,v 1.76 2001/12/22 05:02:01 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -826,10 +826,10 @@ static void recheck_channel(struct chanset_t *chan, int dobans)
     }
     if (channel_enforcebans(chan))
       enforce_bans(chan);
-    if ((chan->status & CHAN_ASKEDMODES) &&
+    if (!(chan->status & CHAN_ASKEDMODES) &&
 	!channel_inactive(chan)) /* Spot on guppy, this just keeps the
 	                          * checking sane */
-      dprintf(DP_SERVER, "MODE %s\n", chan->name);
+      dprintf(DP_MODE, "MODE %s\n", chan->name);
     recheck_channel_modes(chan);
   }
   stacking--;
