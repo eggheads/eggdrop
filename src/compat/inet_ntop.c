@@ -21,13 +21,13 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: inet_ntop.c,v 1.3 2003/05/07 04:45:10 wcc Exp $";
+static const char rcsid[] = "$Id: inet_ntop.c,v 1.4 2003/05/07 04:57:04 wcc Exp $";
 #endif
 
 #include "main.h"
 #include "inet_ntop.h"
 
-#if defined (USE_IPV6) && !defined(HAVE_INET_NTOP)
+#if defined(USE_IPV6) && !defined(HAVE_INET_NTOP)
 
 #include <sys/param.h>
 #include <sys/types.h>
