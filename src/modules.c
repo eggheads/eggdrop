@@ -4,7 +4,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: modules.c,v 1.63 2002/01/02 03:46:36 guppy Exp $
+ * $Id: modules.c,v 1.64 2002/01/14 15:41:05 stdarg Exp $
  */
 /* 
  * Copyright (C) 1997 Robey Pointer
@@ -464,8 +464,8 @@ Function global_table[] =
   /* 220 - 223 */
   (Function) & global_exempts,	/* struct exemptrec *			*/
   (Function) & global_invites,	/* struct inviterec *			*/
-  (Function) & gexempt_total,	/* int					*/
   (Function) & ginvite_total,	/* int					*/
+  (Function) & gexempt_total,	/* int					*/
   /* 224 - 227 */
   (Function) & H_event,		/* p_tcl_bind_list *			*/
   (Function) & use_exempts,	/* int					*/
