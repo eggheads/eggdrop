@@ -96,9 +96,10 @@ before. PLEASE! READ IT!
 
     (1) log into your shell
     (2) type 'export CVSROOT=:pserver:anonymous@cvs.eggheads.org:/usr/local/cvsroot'
-    (3) hit enter when it asks for a password.
-    (4) in your home dir, type 'cvs checkout eggdrop1.3'
-    (5) in ~/eggdrop1.3, you should have a copy of the latest CVS version of eggdrop.
+    (3) type 'cvs login'
+    (4) hit enter when it asks for a password.
+    (5) in your home dir, type 'cvs checkout eggdrop1.3'
+    (6) in ~/eggdrop1.3, you should have a copy of the latest CVS version of eggdrop.
 
     notes:
 
