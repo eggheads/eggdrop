@@ -3,6 +3,13 @@ Changes in eggdrop: (since v1.4.0)
 
 1.4.1
 Foundby   Fixedby   What....
+          drummer   fixed a small buffer overflow in set_chanlist
+          drummer   tcl_adduser doesn't require a hostmask anymore
+various   Fabian/   channel specific user entries were not removed on -chan
+          Tothwolf
+Dude      Fabian    bot now doesn't return "Can't link there" anymore if the
+                    first botlink attempt failes
+Ehrenberg Fabian    crash in gotnotice for invalid channels as notice target
 SuperS    Tothwolf  --with-tclinc/tcllib were broken      
           drummer   encryption/decryption functions now return plaintext
                     if the key is empty.

@@ -165,7 +165,8 @@ void set_chanlist(char *host, struct userrec *rec)
   struct chanset_t *chan = chanset;
 
   context;
-  strcpy(buf, host);
+  strncpy(buf, host, UHOSTMAX);
+  buf[UHOSTMAX] = 0;
   uhost = buf;
   nick = splitnick(&uhost);
   while (chan) {

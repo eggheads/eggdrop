@@ -155,9 +155,9 @@ specific commands, see later.
     returns: "1" if the specified user has the matching flags.
     (using the new matching system)
 
-  adduser <handle> <hostmask>
-    creates a new user entry with the handle and hostmask given (with no pass-
-      word, and the default flags)
+  adduser <handle> [hostmask]
+    creates a new user entry with the handle and optional hostmask given (with 
+      no password, and the default flags)
     returns: "1" if successful, "0" if it already existed
 
   addbot <handle> <address>

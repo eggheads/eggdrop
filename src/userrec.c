@@ -372,11 +372,9 @@ int write_user(struct userrec *u, FILE * f, int idx)
   struct chanuserrec *ch;
   struct chanset_t *cst;
   struct user_entry *ue;
-  struct flag_record fr =
-  {FR_GLOBAL, 0, 0, 0, 0, 0};
+  struct flag_record fr = {FR_GLOBAL, 0, 0, 0, 0, 0};
 
   fr.global = u->flags;
-
   fr.udef_global = u->flags_udef;
   build_flags(s, &fr, NULL);
   if (fprintf(f, "%-10s - %-24s\n", u->handle, s) == EOF)
@@ -622,7 +620,7 @@ struct userrec *adduser(struct userrec *bu, char *handle, char *host,
     char x[100];
 
     build_flags(x, &fr, 0);
-    shareout(NULL, "n %s %s %s %s\n", handle, host, pass, x);
+    shareout(NULL, "n %s %s %s %s\n", handle, host ? host : "none", pass, x);
   }
   if (bu == NULL)
     bu = u;
@@ -823,4 +821,26 @@ struct userrec *get_user_by_nick(char *nick)
   }
   /* sorry, no matches */
   return NULL;
+}
+
+void user_del_chan(char *name)
+{
+  struct chanuserrec *ch, *z;
+  struct userrec *u;
+
+  for (u = userlist; u; u = u->next) {
+    ch = u->chanrec;
+    while (ch)
+      if (!rfc_casecmp(name, ch->channel)) {
+	z = ch;
+	ch = ch->next;
+	if (u->chanrec == z)
+	  u->chanrec = ch;
+	if (z->info != NULL)
+	  nfree(z->info);
+	nfree(z);
+	break;
+      } else
+	ch = ch->next;
+  }
 }

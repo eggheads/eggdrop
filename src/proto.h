@@ -249,6 +249,7 @@ int write_user(struct userrec *u, FILE * f, int shr);
 void write_userfile(int);
 struct userrec *check_dcclist_hand(char *);
 void touch_laston(struct userrec *, char *, time_t);
+void user_del_chan(char *);
 
 /* users.c */
 void addignore(char *, char *, char *, time_t);

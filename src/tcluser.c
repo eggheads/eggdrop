@@ -242,7 +242,7 @@ static int tcl_matchattr STDVAR {
 
 static int tcl_adduser STDVAR {
   context;
-  BADARGS(3, 3, " handle hostmask");
+  BADARGS(2, 3, " handle ?hostmask?");
   if (strlen(argv[1]) > HANDLEN)
     argv[1][HANDLEN] = 0;
   if ((argv[1][0] == '*') || get_user_by_handle(userlist, argv[1]))

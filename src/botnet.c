@@ -930,9 +930,9 @@ int botlink(char *linker, int idx, char *nick)
       dcc[i].u.bot->port = dcc[i].port;		/* remember where i started */
       dcc[i].sock = getsock(SOCK_STRONGCONN);
       dcc[i].user = u;
-      if (open_telnet_raw(dcc[i].sock, bi->address, dcc[i].port) >= 0)
-	return 1;
-      failed_link(i);
+      if (open_telnet_raw(dcc[i].sock, bi->address, dcc[i].port) < 0)
+	failed_link(i);
+      return 1;
     }
   }
   return 0;

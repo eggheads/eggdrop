@@ -1139,21 +1139,11 @@ static void cmd_mns_chan(struct userrec *u, int idx, char *par)
 	    chname);
     return;
   }
-  clear_channel(chan, 0);
-  noshare = 1;
-  while (chan->bans)
-    u_delban(chan, chan->bans->mask, 1);
-  /* trash any invites and exemptions as well */
-  while (chan->exempts)
-    u_delexempt(chan,chan->exempts->mask,1);
-  while (chan->invites)
-    u_delinvite(chan,chan->invites->mask,1);
-  noshare = 0;
   if (!channel_inactive(chan))  
     dprintf(DP_SERVER, "PART %s\n", chname);
-  killchanset(chan);
+  remove_channel(chan);
   dprintf(idx, "Channel %s removed from the bot.\n", chname);
-  dprintf(idx, "This includes any channel specific bans, invites and exemptions that you set.\n");
+  dprintf(idx, "This includes any channel specific bans, invites, exemptions and user records that you set.\n");
   putlog(LOG_CMDS, "*", "#%s# -chan %s", dcc[idx].nick, chname);
   for (i = 0; i < dcc_total; i++)
     if ((dcc[i].type->flags & DCT_CHAT) &&

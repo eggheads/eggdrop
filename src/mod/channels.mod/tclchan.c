@@ -865,12 +865,7 @@ static int tcl_channel STDVAR
     }
     if (!channel_inactive(chan))
       dprintf(DP_SERVER, "PART %s\n", chan->name);
-    clear_channel(chan, 0);
-    noshare = 1;
-    while (chan->bans)
-      u_delban(chan, chan->bans->mask, 1);
-    noshare = 0;
-    killchanset(chan);
+    remove_channel(chan);
     return TCL_OK;
   }
   Tcl_AppendResult(irp, "unknown channel command: should be one of: ",

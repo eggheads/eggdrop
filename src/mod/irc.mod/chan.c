@@ -1882,6 +1882,8 @@ static int gotnotice(char *from, char *msg)
   to = newsplit(&msg);
   realto = (*to == '@') ? to + 1 : to;
   chan = findchan(realto);
+  if (!chan)
+    return 0;			/* notice to an unknown channel ?? */
   fixcolon(msg);
   strcpy(uhost, from);
   nick = splitnick(&uhost);

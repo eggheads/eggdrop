@@ -276,7 +276,7 @@
 #define USERENTRY_PASS (*(struct user_entry_type *)(global[191]))
 /* 192 - 195 */
 #define USERENTRY_XTRA (*(struct user_entry_type *)(global[192]))
-
+#define user_del_chan ((void(*)(char *))(global[193]))
 #define USERENTRY_INFO (*(struct user_entry_type *)(global[194]))
 #define USERENTRY_COMMENT (*(struct user_entry_type *)(global[195]))
 /* 196 - 199 */

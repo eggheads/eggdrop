@@ -49,6 +49,8 @@ static int gfld_join_time;
 static int gfld_ctcp_thr;
 static int gfld_ctcp_time;
 
+static void remove_channel(struct chanset_t *);
+
 #include "channels.h"
 #include "cmdschan.c"
 #include "tclchan.c"
@@ -242,12 +244,34 @@ static int killchanset(struct chanset_t *chan)
   return 0;
 }
 
+/* Completely removes a channel.
+ * This includes the removal of all channel-bans, -exempts and -invites, as
+ * well as all user flags related to the channel.
+ */
+static void remove_channel(struct chanset_t *chan)
+{
+   clear_channel(chan, 0);
+   noshare = 1;
+   /* Remove channel-bans */
+   while (chan->bans)
+     u_delban(chan, chan->bans->mask, 1);
+   /* Remove channel-exempts */
+   while (chan->exempts)
+     u_delexempt(chan, chan->exempts->mask, 1);
+   /* Remove channel-invites */
+   while (chan->invites)
+     u_delinvite(chan, chan->invites->mask, 1);
+   /* Remove channel specific user flags */
+   user_del_chan(chan->name);
+   noshare = 0;
+   killchanset(chan);
+}
+
 /* bind this to chon and *if* the users console channel == ***
  * then set it to a specific channel */
 static int channels_chon(char *handle, int idx)
 {
-  struct flag_record fr =
-  {FR_CHAN | FR_ANYWH | FR_GLOBAL, 0, 0, 0, 0, 0};
+  struct flag_record fr = {FR_CHAN | FR_ANYWH | FR_GLOBAL, 0, 0, 0, 0, 0};
   int find, found = 0;
   struct chanset_t *chan = chanset;
 
@@ -285,17 +309,8 @@ static int channels_chon(char *handle, int idx)
 
 static char *convert_element(char *src, char *dst)
 {
-/*
-  char *out = dst;
-  while (src && src[0]) {
-    if (strchr("[];$\\", *src))
-      *out++ = '\\';
-    *out++ = *src++;
-  }
-  *out = 0;
-  return dst;
-*/
   int flags;
+
   Tcl_ScanElement(src, &flags);
   Tcl_ConvertElement(src, dst, flags);
   return dst;
@@ -422,17 +437,8 @@ static void read_channels(int create)
       putlog(LOG_MISC, "*", "No longer supporting channel %s", chan->name);
       if (!channel_inactive(chan))
 	dprintf(DP_SERVER, "PART %s\n", chan->name);
-      clear_channel(chan, 0);
-      noshare = 1;
-      while (chan->bans)
-	u_delban(chan, chan->bans->mask, 1);
-      while (chan->exempts)
-	u_delexempt(chan, chan->exempts->mask, 1);
-      while (chan->invites)
-	u_delinvite(chan, chan->invites->mask, 1);
-      noshare = 0;
       chan2 = chan->next;
-      killchanset(chan);
+      remove_channel(chan);
       chan = chan2;
     } else
       chan = chan->next;
@@ -467,16 +473,7 @@ static void channels_rehash()
       putlog(LOG_MISC, "*", "No longer supporting channel %s", chan->name);
       if (!channel_inactive(chan))
 	dprintf(DP_SERVER, "PART %s\n", chan->name);
-      clear_channel(chan, 0);
-      noshare = 1;
-      while (chan->bans)
-	u_delban(chan, chan->bans->mask, 1);
-      while (chan->exempts)
-	u_delexempt(chan, chan->exempts->mask, 1);
-      while (chan->invites)
-	u_delinvite(chan, chan->invites->mask, 1);
-      noshare = 0;
-      killchanset(chan);
+      remove_channel(chan);
       chan = chanset;
     } else
       chan = chan->next;
