@@ -1,0 +1,169 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<html>
+  <head>
+    <title>Eggdrop Documentation: Textfile substitutions</title>
+  </head>
+
+  <body>
+    <div align="center">
+      <p><strong>Textfile substitutions</strong></p>
+    </div>
+    <hr>
+
+    <p>There are some %-variables you can insert into the motd, banner, and
+    help files will be interpreted by eggdrop.</p>
+
+    <blockquote>
+      <dl>
+        <dt><strong>%b</strong></dt>
+
+        <dd>
+          <p>display bold</p>
+        </dd>
+
+        <dt><strong>%v</strong></dt>
+
+        <dd>
+          <p>display inverse</p>
+        </dd>
+
+        <dt><strong>%_</strong></dt>
+
+        <dd>
+          <p>display underline</p>
+        </dd>
+
+        <dt><strong>%f</strong></dt>
+
+        <dd>
+          <p>display flashing via telnet, bold underline via irc</p>
+        </dd>
+
+        <dt><strong>%B</strong></dt>
+
+        <dd>
+          <p>bot&#39;s nickname (ie, &quot;LamestBot&quot;)</p>
+        </dd>
+
+        <dt><strong>%V</strong></dt>
+
+        <dd>
+          <p>current eggdrop version (ie, &quot;eggdrop
+          v1.5.3+typodoc&quot;)</p>
+        </dd>
+
+        <dt><strong>%E</strong></dt>
+
+        <dd>
+          <p>long form of %V (ie, &quot;Eggdrop v1.5.3+typodoc (c)1997 Robey
+          Pointer (c)1999, 2000 Eggheads&quot;)</p>
+        </dd>
+
+        <dt><strong>%C</strong></dt>
+
+        <dd>
+          <p>channels the bot is on (ie, &quot;#lamest,
+          #botnetcentral&quot;)</p>
+        </dd>
+
+        <dt><strong>%A</strong></dt>
+
+        <dd>
+          <p>whatever is set in &#39;admin&#39; (see &#39;set admin&#39;)</p>
+        </dd>
+
+        <dt><strong>%T</strong></dt>
+
+        <dd>
+          <p>the current time (ie, &quot;15:00&quot;)</p>
+        </dd>
+
+        <dt><strong>%N</strong></dt>
+
+        <dd>
+          <p>the current user&#39;s nickname (ie, &quot;Robey&quot;)</p>
+        </dd>
+
+        <dt><strong>%U</strong></dt>
+
+        <dd>
+          <p>the current operating system the bot is on</p>
+        </dd>
+
+        <dt><strong>%%</strong></dt>
+
+        <dd>
+          <p>a percent sign (&quot;%&quot;)</p>
+        </dd>
+      </dl>
+    </blockquote>
+
+    <p>You can also encode messages which can only be read by people with
+    certain flags:</p>
+
+    <blockquote>
+      <dl>
+        <dt><strong>%{+m}some text%{-}</strong></dt>
+
+        <dd>
+          <p>Only masters would see this.</p>
+        </dd>
+
+        <dt><strong>%{+1}some text%{-}</strong></dt>
+
+        <dd>
+          <p>Only people with user flag #1 see this.</p>
+        </dd>
+
+        <dt><strong>%{+b}some text%{-}</strong></dt>
+
+        <dd>
+          <p>This is only displayed to users doing a remote &#39;.motd&#39;
+          from another bot.</p>
+        </dd>
+
+        <dt><strong>%{+|m}some text%{-}</strong></dt>
+
+        <dd>
+          <p>Only channel masters would see this.</p>
+        </dd>
+      </dl>
+    </blockquote>
+
+    <p>Other extended % commands are:</p>
+
+    <blockquote>
+      <dl>
+        <dt><strong>%{cols=N}</strong></dt>
+
+        <dd>
+          <p>start splitting output into N columns</p>
+        </dd>
+
+        <dt><strong>%{cols=N/W}</strong></dt>
+
+        <dd>
+          <p>same, but use a screen width of W</p>
+        </dd>
+
+        <dt><strong>%{end}</strong></dt>
+
+        <dd>
+          <p>end columnated or restricted (ie %{+m}) block</p>
+        </dd>
+
+        <dt><strong>%{centre}</strong></dt>
+
+        <dd>
+          <p>center the following text (70 columns)</p>
+        </dd>
+      </dl>
+    </blockquote>
+    <hr>
+
+    <p><em>© 1997 Robey Pointer<br>
+     © 1999,2000 Eggheads Development Team</em></p>
+  </body>
+</html>
+
