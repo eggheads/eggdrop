@@ -2,7 +2,7 @@
  * irc.c -- part of irc.mod
  *   support for channels within the bot
  *
- * $Id: irc.c,v 1.76 2002/08/02 23:50:39 wcc Exp $
+ * $Id: irc.c,v 1.77 2002/09/21 20:40:56 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -961,7 +961,7 @@ static void irc_report(int idx, int details)
 	  p = MISC_TRYING;
 	else if (chan->status & CHAN_PEND)
 	  p = MISC_PENDING;
-	else if (!me_op(chan))
+	else if ((chan->dname[0] != '+') && !me_op(chan))
 	  p = MISC_WANTOPS;
       }
       l = simple_sprintf(ch, "%s%s%s%s, ", chan->dname, p ? "(" : "",
