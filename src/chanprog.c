@@ -7,7 +7,7 @@
  *   telling the current programmed settings
  *   initializing a lot of stuff and loading the tcl scripts
  *
- * $Id: chanprog.c,v 1.32 2002/07/18 20:28:32 guppy Exp $
+ * $Id: chanprog.c,v 1.33 2002/08/11 18:45:52 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -395,12 +395,12 @@ void reaffirm_owners()
   char *p, *q, s[121];
   struct userrec *u;
 
-  /* Make sure default owners are +n */
+  /* Please stop breaking this function. */
   if (owner[0]) {
     q = owner;
     p = strchr(q, ',');
     while (p) {
-      strncpyz(s, q, p - q);
+      strncpyz(s, q, (p - q) + 1);
       rmspace(s);
       u = get_user_by_handle(userlist, s);
       if (u)
