@@ -16,7 +16,7 @@ dnl You should have received a copy of the GNU General Public License
 dnl along with this program; if not, write to the Free Software
 dnl Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 dnl
-dnl $Id: aclocal.m4,v 1.96 2005/01/03 20:01:42 paladin Exp $
+dnl $Id: aclocal.m4,v 1.97 2005/01/20 20:45:20 wcc Exp $
 dnl
 
 
@@ -592,6 +592,7 @@ AC_DEFUN([EGG_CHECK_OS],
   SUNOS="no"
   HPUX="no"
   EGG_CYGWIN="no"
+  RANDMAX="RAND_MAX"
 
   case "$egg_cv_var_system_type" in
     BSD/OS)
@@ -710,6 +711,8 @@ AC_DEFUN([EGG_CHECK_OS],
         SHLIB_LD="ld"
         SHLIB_CC="$CC -PIC"
       fi
+      # Solaris defines (2^31)-1 as the limit for random() rather than RAND_MAX.
+      RANDMAX="0x7FFFFFFF"
     ;;
     *BSD)
       # FreeBSD/OpenBSD/NetBSD
@@ -741,6 +744,7 @@ AC_DEFUN([EGG_CHECK_OS],
   AC_SUBST(SHLIB_LD)
   AC_SUBST(SHLIB_CC)
   AC_SUBST(SHLIB_STRIP)
+  AC_DEFINE_UNQUOTED(RANDOM_MAX, $RANDMAX, [Define limit of random() function.])
 ])
 
 
