@@ -5,7 +5,7 @@
  *   note cmds
  *   note ignores
  *
- * $Id: notes.c,v 1.49 2004/02/06 22:36:28 stdarg Exp $
+ * $Id: notes.c,v 1.50 2004/02/14 20:11:08 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -553,7 +553,7 @@ static void notes_read(char *hand, char *nick, char *srd, int idx)
       if (idx >= 0)
         dprintf(idx, "### %s\n", (ix != 2) ? NOTES_DCC_USAGE_READ : NOTES_DCC_USAGE_READ2);
       else
-        dprintf(DP_HELP, "NOTICE %s :%s: %d\n", nick, ix - 1, MISC_TOTAL);
+        dprintf(DP_HELP, "NOTICE %s :%s: %d\n", nick, MISC_TOTAL, ix - 1);
     }
   } else if ((ir == 0) && (ix == 1)) {
     if (idx >= 0)
