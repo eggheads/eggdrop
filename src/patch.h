@@ -10,7 +10,7 @@
  * statement, leave the rest of the file alone, this allows better
  * overlapping patches.
  *
- * $Id: patch.h,v 1.880 2003/01/23 03:32:29 wcc Exp $
+ * $Id: patch.h,v 1.881 2003/01/28 06:37:24 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -36,17 +36,17 @@
  *
  *
  */
-patch("CVS");			/* CVS version */
+patch("CVS");                   /* CVS version */
 /*
  *
  *
  */
-patch("1043292661");		/* current unixtime */
+patch("1043735017");            /* current unixtime */
 /*
  *
  *
  */
-patch("hello");
+patch("indent");
 /*
  *
  *
@@ -197,4 +197,4 @@ patch("hello");
  *
  */
 /* if that's not enough, maybe you should release a new version :) */
-#endif				/* _EGG_PATCH_H */
+#endif /* _EGG_PATCH_H */

@@ -22,13 +22,13 @@ see also: bans, +ban, kickban, set ignore-time
 ###  %bset exempt-time%b <#>
    specifies how long (in minutes) a temporary exemption will last
    on the channel before being purged. if set to 0, bot never
-   removes it. this is an IRCNET feature.
+   removes it. this is an IRCnet feature.
 %{help=set invite-time}
 %{+n}
 ###  %bset invite-time%b <#>
    specifies how long (in minutes) a temporary invitation will
    last on the channel before being purged. if set to 0, bot never
-   removes it. this is an IRCNET feature.
+   removes it. this is an IRCnet feature.
 %{help=set chanfile}
 %{+n}
 ###  %bset chanfile%b

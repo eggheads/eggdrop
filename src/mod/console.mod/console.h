@@ -1,7 +1,7 @@
 /*
  * console.h -- part of console.mod
  *
- * $Id: console.h,v 1.4 2002/12/24 02:30:07 wcc Exp $
+ * $Id: console.h,v 1.5 2003/01/28 06:37:25 wcc Exp $
  */
 /*
  * Copyright (C) 2000, 2001, 2002, 2003 Eggheads Development Team
@@ -35,4 +35,4 @@
 #define CONSOLE_YES		get_language(0xb048)
 #define CONSOLE_NO		get_language(0xb049)
 
-#endif				/* _EGG_MOD_CONSOLE_CONSOLE_H */
+#endif /* _EGG_MOD_CONSOLE_CONSOLE_H */

@@ -1,7 +1,7 @@
 /*
  * channels.h -- part of channels.mod
  *
- * $Id: channels.h,v 1.21 2002/12/24 02:30:06 wcc Exp $
+ * $Id: channels.h,v 1.22 2003/01/28 06:37:25 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -72,23 +72,23 @@ static int u_setsticky_mask(struct chanset_t *chan, maskrec *m, char *uhost,
 
 static int u_equals_mask(maskrec *u, char *uhost);
 static int u_match_mask(struct maskrec *rec, char *mask);
-static int u_delexempt (struct chanset_t * c, char * who, int doit);
-static int u_addexempt (struct chanset_t * chan, char * exempt, char * from,
- 			char * note,  time_t expire_time, int flags);
-static int u_delinvite (struct chanset_t * c, char * who, int doit);
-static int u_addinvite (struct chanset_t * chan, char * invite, char * from,
- 			char * note,  time_t expire_time, int flags);
+static int u_delexempt (struct chanset_t *c, char *who, int doit);
+static int u_addexempt (struct chanset_t *chan, char *exempt, char *from,
+ 			char *note, time_t expire_time, int flags);
+static int u_delinvite (struct chanset_t *c, char *who, int doit);
+static int u_addinvite (struct chanset_t *chan, char *invite, char *from,
+ 			char *note,  time_t expire_time, int flags);
 static int u_delban(struct chanset_t *c, char *who, int doit);
 static int u_addban(struct chanset_t *chan, char *ban, char *from, char *note,
 		    time_t expire_time, int flags);
 static void tell_bans(int idx, int show_inact, char *match);
-static int write_bans(FILE * f, int idx);
+static int write_bans(FILE *f, int idx);
 static void check_expired_bans(void);
-static void tell_exempts (int idx, int show_inact, char * match);
-static int write_exempts (FILE * f, int idx);
+static void tell_exempts (int idx, int show_inact, char *match);
+static int write_exempts (FILE *f, int idx);
 static void check_expired_exempts(void);
-static void tell_invites (int idx, int show_inact, char * match);
-static int write_invites (FILE * f, int idx);
+static void tell_invites (int idx, int show_inact, char *match);
+static int write_invites (FILE *f, int idx);
 static void check_expired_invites(void);
 static void write_channels(void);
 static void read_channels(int);
@@ -97,9 +97,9 @@ static void get_mode_protect(struct chanset_t *chan, char *s);
 static void set_mode_protect(struct chanset_t *chan, char *set);
 static int ismasked(masklist *m, char *user);
 static int ismodeline(masklist *m, char *user);
-static int tcl_channel_modify(Tcl_Interp * irp, struct chanset_t *chan,
+static int tcl_channel_modify(Tcl_Interp *irp, struct chanset_t *chan,
 			      int items, char **item);
-static int tcl_channel_add(Tcl_Interp * irp, char *, char *);
+static int tcl_channel_add(Tcl_Interp *irp, char *, char *);
 static char *convert_element(char *src, char *dst);
 static int expmem_udef(struct udef_struct *);
 static int expmem_udef_chans (struct udef_chans *);

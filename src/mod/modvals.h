@@ -1,7 +1,7 @@
 /*
  * modvals.h
  *
- * $Id: modvals.h,v 1.23 2002/12/24 02:30:06 wcc Exp $
+ * $Id: modvals.h,v 1.24 2003/01/28 06:37:25 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -90,21 +90,21 @@
 #endif
 
 typedef struct _module_entry {
-  struct _module_entry	*next;
-  char			*name;	/* Name of the module (without .so)	*/
-  int			 major;	/* Major version number MUST match	*/
-  int			 minor;	/* Minor version number MUST be >=	*/
+  struct _module_entry *next;
+  char *name;                   /* Name of the module (without .so)     */
+  int major;                    /* Major version number MUST match      */
+  int minor;                    /* Minor version number MUST be >=      */
 #ifndef STATIC
 #  ifdef HPUX_HACKS
-  shl_t			 hand;
-#  else		/* !HPUX_HACKS */
-  void			*hand;	/* Module handle			*/
-#  endif	/* !HPUX_HACKS */
-#endif		/* STATIC */
-  Function		*funcs;
+  shl_t hand;
+#  else                         /* !HPUX_HACKS */
+  void *hand;                   /* Module handle                        */
+#  endif                        /* !HPUX_HACKS */
+#endif                          /* STATIC */
+  Function *funcs;
 #  ifdef DEBUG_MEM
-  int			 mem_work;
-#  endif	/* DEBUG_MEM */
+  int mem_work;
+#  endif                        /* DEBUG_MEM */
 } module_entry;
 
-#endif		/* _EGG_MOD_MODVALS_H */
+#endif /* _EGG_MOD_MODVALS_H */

@@ -4,7 +4,7 @@
  *
  * Written by Fabian Knittel <fknittel@gmx.de>
  *
- * $Id: filedb3.h,v 1.13 2003/01/23 02:41:48 wcc Exp $
+ * $Id: filedb3.h,v 1.14 2003/01/28 06:37:26 wcc Exp $
  */
 /*
  * Copyright (C) 1999, 2000, 2001, 2002, 2003 Eggheads Development Team
@@ -48,50 +48,50 @@
 
 /* Top of each DB */
 typedef struct {
-  char version;				/* DB version			*/
-  time_t timestamp;			/* Last updated			*/
+  char version;                 /* DB version                   */
+  time_t timestamp;             /* Last updated                 */
 } filedb_top;
 
 /* Header of each entry */
 typedef struct {
-  time_t uploaded;			/* Upload time			*/
-  unsigned int size;			/* File size			*/
-  unsigned short int stat;		/* Misc information		*/
-  unsigned short int gots;		/* Number of gets		*/
-  unsigned short int filename_len; 	/* Length of filename buf	*/
-  unsigned short int desc_len;	 	/* Length of description buf	*/
-  unsigned short int sharelink_len;	/* Length of sharelink buf	*/
-  unsigned short int chan_len;		/* Length of channel name buf	*/
-  unsigned short int uploader_len;	/* Length of uploader buf	*/
-  unsigned short int flags_req_len;	/* Length of flags buf		*/
-  unsigned short int buffer_len;	/* Length of additional buffer	*/
+  time_t uploaded;              /* Upload time                  */
+  unsigned int size;            /* File size                    */
+  unsigned short int stat;      /* Misc information             */
+  unsigned short int gots;      /* Number of gets               */
+  unsigned short int filename_len;      /* Length of filename buf       */
+  unsigned short int desc_len;  /* Length of description buf    */
+  unsigned short int sharelink_len;     /* Length of sharelink buf      */
+  unsigned short int chan_len;  /* Length of channel name buf   */
+  unsigned short int uploader_len;      /* Length of uploader buf       */
+  unsigned short int flags_req_len;     /* Length of flags buf          */
+  unsigned short int buffer_len;        /* Length of additional buffer  */
 } filedb_header;
 
 /* Structure used to pass data between lower level
  * and higher level functions.
  */
 typedef struct {
-  time_t uploaded;			/* Upload time			*/
-  unsigned int size;			/* File size			*/
-  unsigned short int stat;		/* Misc information		*/
-  unsigned short int gots;		/* Number of gets		*/
-  unsigned short int _type;		/* Type of entry (private)	*/
+  time_t uploaded;              /* Upload time                  */
+  unsigned int size;            /* File size                    */
+  unsigned short int stat;      /* Misc information             */
+  unsigned short int gots;      /* Number of gets               */
+  unsigned short int _type;     /* Type of entry (private)      */
 
   /* NOTE: These three are only valid during one db open/close. Entry
    *       movements often invalidate them too, so make sure you know
    *       what you're doing before using/relying on them.
    */
-  long pos;				/* Last position in the filedb	*/
-  unsigned short int dyn_len;		/* Length of dynamic data in DB	*/
-  unsigned short int buf_len;		/* Length of additional buffer	*/
+  long pos;                     /* Last position in the filedb  */
+  unsigned short int dyn_len;   /* Length of dynamic data in DB */
+  unsigned short int buf_len;   /* Length of additional buffer  */
 
-  char *filename;			/* Filename			*/
-  char *desc;				/* Description			*/
-  char *sharelink;			/* Share link. Points to remote
-		 			   file on linked bot.		*/
-  char *chan;				/* Channel name			*/
-  char *uploader;			/* Uploader			*/
-  char *flags_req;			/* Required flags		*/
+  char *filename;               /* Filename                     */
+  char *desc;                   /* Description                  */
+  char *sharelink;              /* Share link. Points to remote
+                                 * file on linked bot.          */
+  char *chan;                   /* Channel name                 */
+  char *uploader;               /* Uploader                     */
+  char *flags_req;              /* Required flags               */
 } filedb_entry;
 
 
@@ -146,32 +146,32 @@ do {									\
  */
 
 #define FILEDB_VERSION1	0x0001
-#define FILEDB_VERSION2	0x0002	/* DB version used for 1.3, 1.4		*/
+#define FILEDB_VERSION2	0x0002  /* DB version used for 1.3, 1.4         */
 #define FILEDB_VERSION3	0x0003
-#define FILEDB_NEWEST_VER FILEDB_VERSION3	/* Newest DB version	*/
+#define FILEDB_NEWEST_VER FILEDB_VERSION3       /* Newest DB version    */
 
-#define POS_NEW		0	/* Position which indicates that the
-				   entry wants to be repositioned.	*/
+#define POS_NEW		0       /* Position which indicates that the
+                                 * entry wants to be repositioned.      */
 
-#define FILE_UNUSED	0x0001	/* Deleted entry.			*/
-#define FILE_DIR	0x0002	/* It's actually a directory.		*/
-#define FILE_SHARE	0x0004	/* Can be shared on the botnet.		*/
-#define FILE_HIDDEN	0x0008	/* Hidden file.				*/
-#define FILE_ISLINK	0x0010	/* The file is a link to another bot.	*/
+#define FILE_UNUSED	0x0001  /* Deleted entry.                       */
+#define FILE_DIR	0x0002  /* It's actually a directory.           */
+#define FILE_SHARE	0x0004  /* Can be shared on the botnet.         */
+#define FILE_HIDDEN	0x0008  /* Hidden file.                         */
+#define FILE_ISLINK	0x0010  /* The file is a link to another bot.   */
 
-#define FILEDB_ESTDYN	50	/* Estimated dynamic length of an entry	*/
+#define FILEDB_ESTDYN	50      /* Estimated dynamic length of an entry */
 
 enum {
-  GET_HEADER,			/* Only save minimal data		*/
-  GET_FILENAME,			/* Additionally save filename		*/
-  GET_FULL,			/* Save all data			*/
+  GET_HEADER,                   /* Only save minimal data               */
+  GET_FILENAME,                 /* Additionally save filename           */
+  GET_FULL,                     /* Save all data                        */
 
-  UPDATE_HEADER,		/* Only update header			*/
-  UPDATE_SIZE,			/* Update header, enforce new buf sizes	*/
-  UPDATE_ALL,			/* Update additional data too		*/
+  UPDATE_HEADER,                /* Only update header                   */
+  UPDATE_SIZE,                  /* Update header, enforce new buf sizes */
+  UPDATE_ALL,                   /* Update additional data too           */
 
-  TYPE_NEW,			/* New entry				*/
-  TYPE_EXIST			/* Existing entry			*/
+  TYPE_NEW,                     /* New entry                            */
+  TYPE_EXIST                    /* Existing entry                       */
 };
 
 
@@ -192,4 +192,4 @@ static filedb_entry *_filedb_getfile(FILE *, long, int, char *, int);
 static filedb_entry *_filedb_matchfile(FILE *, long, char *, char *, int);
 static filedb_entry *filedb_getentry(char *, char *);
 
-#endif				/* _EGG_MOD_FILESYS_FILEDB3_H */
+#endif /* _EGG_MOD_FILESYS_FILEDB3_H */

@@ -2,7 +2,7 @@
  * filesysc.h -- part of filesys.mod
  *   header file for the filesys2 eggdrop module
  *
- * $Id: filesys.h,v 1.11 2002/12/24 02:30:07 wcc Exp $
+ * $Id: filesys.h,v 1.12 2003/01/28 06:37:26 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -57,6 +57,6 @@ static int resolve_dir(char *, char *, char **, int);
 
 #else
 #define H_fil (*(p_tcl_hash_list *)(filesys_funcs[8]))
-#endif				/* MAKING_FILESYS */
+#endif /* MAKING_FILESYS */
 
-#endif				/* _EGG_MOD_FILESYS_FILESYS_H */
+#endif /* _EGG_MOD_FILESYS_FILESYS_H */

@@ -2,7 +2,7 @@
  * strcasecmp.h
  *   prototypes for strcasecmp.c
  *
- * $Id: strcasecmp.h,v 1.5 2002/12/24 02:30:06 wcc Exp $
+ * $Id: strcasecmp.h,v 1.6 2003/01/28 06:37:25 wcc Exp $
  */
 /*
  * Copyright (C) 2000, 2001, 2002, 2003 Eggheads Development Team
@@ -43,4 +43,4 @@ int egg_strncasecmp(const char *, const char *, size_t);
 #  define egg_strncasecmp	strncasecmp
 #endif
 
-#endif	/* !__EGG_COMPAT_STRCASECMP_H */
+#endif /* !__EGG_COMPAT_STRCASECMP_H */

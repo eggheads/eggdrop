@@ -5,7 +5,7 @@
  *
  * Written for filedb3 by Fabian Knittel <fknittel@gmx.de>
  *
- * $Id: dbcompat.h,v 1.7 2002/12/24 02:30:07 wcc Exp $
+ * $Id: dbcompat.h,v 1.8 2003/01/28 06:37:26 wcc Exp $
  */
 /*
  * Copyright (C) 1999, 2000, 2001, 2002, 2003 Eggheads Development Team
@@ -34,56 +34,56 @@
 
 /* Structure for file database (per directory) */
 struct filler1 {
-  char			xxx[1 + 61 + 301 + 10 + 11 + 61];
-  unsigned short int	uuu[2];
-  time_t		ttt[2];
-  unsigned int		iii[2];
+  char xxx[1 + 61 + 301 + 10 + 11 + 61];
+  unsigned short int uuu[2];
+  time_t ttt[2];
+  unsigned int iii[2];
 };
 
 typedef struct {
-  char			version;
-  unsigned short int	stat;		/* Misc */
-  time_t		timestamp;	/* Last time this db was updated */
-  char			filename[61];
-  char			desc[301];	/* Should be plenty */
-  char			uploader[10];	/* Where this file came from */
-  unsigned char		flags_req[11];	/* Access flags required */
-  time_t		uploaded;	/* Time it was uploaded */
-  unsigned int		size;		/* File length */
-  unsigned short int	gots;		/* Times the file was downloaded */
-  char			sharelink[61];	/* Points to where? */
-  char			unused[512 - sizeof(struct filler1)];
+  char version;
+  unsigned short int stat;      /* Misc */
+  time_t timestamp;             /* Last time this db was updated */
+  char filename[61];
+  char desc[301];               /* Should be plenty */
+  char uploader[10];            /* Where this file came from */
+  unsigned char flags_req[11];  /* Access flags required */
+  time_t uploaded;              /* Time it was uploaded */
+  unsigned int size;            /* File length */
+  unsigned short int gots;      /* Times the file was downloaded */
+  char sharelink[61];           /* Points to where? */
+  char unused[512 - sizeof(struct filler1)];
 } filedb1;
 
 struct filler2 {
-  char			xxx[1 + 61 + 186 + 81 + 33 + 22 + 61];
-  unsigned short int	uuu[2];
-  time_t		ttt[2];
-  unsigned int		iii[1];
+  char xxx[1 + 61 + 186 + 81 + 33 + 22 + 61];
+  unsigned short int uuu[2];
+  time_t ttt[2];
+  unsigned int iii[1];
 };
 
 typedef struct {
-  char			version;
-  unsigned short int	stat;		/* Misc */
-  time_t		timestamp;	/* Last time this db was updated */
-  char			filename[61];
-  char			desc[186];	/* Should be plenty - shrink it, we
-					 * Need the  space :) */
-  char			chname[81];	/* Channel for chan spec stuff */
-  char			uploader[33];	/* Where this file came from */
-  char			flags_req[22];	/* Access flags required */
-  time_t		uploaded;	/* Time it was uploaded */
-  unsigned int		size;		/* File length */
-  unsigned short int	gots;		/* Times the file was downloaded */
-  char			sharelink[61];	/* Points to where? */
-  char			unused[512 - sizeof(struct filler2)];
+  char version;
+  unsigned short int stat;      /* Misc */
+  time_t timestamp;             /* Last time this db was updated */
+  char filename[61];
+  char desc[186];               /* Should be plenty - shrink it, we
+                                 * Need the  space :) */
+  char chname[81];              /* Channel for chan spec stuff */
+  char uploader[33];            /* Where this file came from */
+  char flags_req[22];           /* Access flags required */
+  time_t uploaded;              /* Time it was uploaded */
+  unsigned int size;            /* File length */
+  unsigned short int gots;      /* Times the file was downloaded */
+  char sharelink[61];           /* Points to where? */
+  char unused[512 - sizeof(struct filler2)];
 } filedb2;
 
 /*
  *    Prototypes
  */
 
-static int convert_old_db(FILE **fdb, char *s);
+static int convert_old_db(FILE ** fdb, char *s);
 static int convert_old_files(char *npath, char *s);
 
-#endif				/* _EGG_MOD_FILESYS_DBCOMPAT.H */
+#endif /* _EGG_MOD_FILESYS_DBCOMPAT.H */

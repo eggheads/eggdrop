@@ -7,7 +7,7 @@
  *   help system
  *   motd display and %var substitution
  *
- * $Id: misc.c,v 1.56 2003/01/21 00:53:27 wcc Exp $
+ * $Id: misc.c,v 1.57 2003/01/28 06:37:24 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -40,24 +40,24 @@
 #endif
 #include "stat.h"
 
-extern struct dcc_t	*dcc;
-extern struct chanset_t	*chanset;
-extern char		 helpdir[], version[], origbotname[], botname[],
-			 admin[], network[], motdfile[], ver[], botnetnick[],
-			 bannerfile[], logfile_suffix[], textdir[];
-extern int		 backgrd, con_chan, term_z, use_stderr, dcc_total,
-			 keep_all_logs, quick_logs, strict_host;
-extern time_t		 now;
-extern Tcl_Interp	*interp;
+extern struct dcc_t *dcc;
+extern struct chanset_t *chanset;
+extern char helpdir[], version[], origbotname[], botname[], admin[], network[],
+            motdfile[], ver[], botnetnick[], bannerfile[], logfile_suffix[],
+            textdir[];
+extern int backgrd, con_chan, term_z, use_stderr, dcc_total, keep_all_logs,
+           quick_logs, strict_host;
+extern time_t now;
+extern Tcl_Interp *interp;
 
 
-int	 shtime = 1;		/* Whether or not to display the time
-				   with console output */
-log_t	*logs = 0;		/* Logfiles */
-int	 max_logs = 5;		/* Current maximum log files */
-int	 max_logsize = 0;	/* Maximum logfile size, 0 for no limit */
-int	 conmask = LOG_MODES | LOG_CMDS | LOG_MISC; /* Console mask */
-int	 debug_output = 0;	/* Disply output to server to LOG_SERVEROUT */
+int shtime = 1;                 /* Whether or not to display the time
+                                 * with console output */
+log_t *logs = 0;                /* Logfiles */
+int max_logs = 5;               /* Current maximum log files */
+int max_logsize = 0;            /* Maximum logfile size, 0 for no limit */
+int conmask = LOG_MODES | LOG_CMDS | LOG_MISC;  /* Console mask */
+int debug_output = 0;           /* Disply output to server to LOG_SERVEROUT */
 
 struct help_list_t {
   struct help_list_t *next;
@@ -294,23 +294,26 @@ void maskhost(const char *s, char *nw)
       nw[0] = '*';
       p = q - 7;
       i = 1;
-    } else
+    }
+    else
       i = 0;
     while (*p != '@') {
       if (!fl && strchr("~+-^=", *p)) {
         if (strict_host)
-	  nw[i] = '?';
-	else
-	  i--;
-      } else
-	nw[i] = *p;
+          nw[i] = '?';
+        else
+          i--;
+      }
+      else
+        nw[i] = *p;
       fl++;
       p++;
       i++;
     }
     nw[i++] = '@';
     q++;
-  } else {
+  }
+  else {
     nw[0] = '*';
     nw[1] = '@';
     i = 2;
@@ -323,50 +326,53 @@ void maskhost(const char *s, char *nw)
     /* TLD or 2 part host */
     strcpy(nw, q);
   else {
-    if (e == NULL) {		/* IPv6 address?		*/
+    if (e == NULL) {            /* IPv6 address?                */
       const char *mask_str;
 
       f = strrchr(q, ':');
-      if (strchr(f, '.')) {	/* IPv4 wrapped in an IPv6?	*/
-	f = strrchr(f, '.');
-	mask_str = ".*";
-      } else 			/* ... no, true IPv6.		*/
-	mask_str = ":*";
+      if (strchr(f, '.')) {     /* IPv4 wrapped in an IPv6?     */
+        f = strrchr(f, '.');
+        mask_str = ".*";
+      }
+      else                      /* ... no, true IPv6.               */
+        mask_str = ":*";
       strncpy(nw, q, f - q);
       /* No need to nw[f-q] = 0 here, as the strcpy below will
        * terminate the string for us.
        */
       nw += (f - q);
       strcpy(nw, mask_str);
-    } else {
+    }
+    else {
       for (f = e; *f; f++);
       f--;
-      if (*f >= '0' && *f <= '9') {	/* Numeric IP address */
-	while (*f != '.')
-	  f--;
-	strncpy(nw, q, f - q);
-	/* No need to nw[f-q] = 0 here, as the strcpy below will
-	 * terminate the string for us.
-	 */
-	nw += (f - q);
-	strcpy(nw, ".*");
-      } else {				/* Normal host >= 3 parts */
-	/*    a.b.c  -> *.b.c
-	 *    a.b.c.d ->  *.b.c.d if tld is a country (2 chars)
-	 *             OR   *.c.d if tld is com/edu/etc (3 chars)
-	 *    a.b.c.d.e -> *.c.d.e   etc
-	 */
-	const char *x = strchr(e + 1, '.');
+      if (*f >= '0' && *f <= '9') {     /* Numeric IP address */
+        while (*f != '.')
+          f--;
+        strncpy(nw, q, f - q);
+        /* No need to nw[f-q] = 0 here, as the strcpy below will
+         * terminate the string for us.
+         */
+        nw += (f - q);
+        strcpy(nw, ".*");
+      }
+      else {                    /* Normal host >= 3 parts */
+        /*    a.b.c  -> *.b.c
+         *    a.b.c.d ->  *.b.c.d if tld is a country (2 chars)
+         *             OR   *.c.d if tld is com/edu/etc (3 chars)
+         *    a.b.c.d.e -> *.c.d.e   etc
+         */
+        const char *x = strchr(e + 1, '.');
 
-	if (!x)
-	  x = p;
-	else if (strchr(x + 1, '.'))
-	  x = e;
-	else if (strlen(x) == 3)
-	  x = p;
-	else
-	  x = e;
-	sprintf(nw, "*%s", x);
+        if (!x)
+          x = p;
+        else if (strchr(x + 1, '.'))
+          x = e;
+        else if (strlen(x) == 3)
+          x = p;
+        else
+          x = e;
+        sprintf(nw, "*%s", x);
       }
     }
   }
@@ -376,8 +382,8 @@ void maskhost(const char *s, char *nw)
  */
 void dumplots(int idx, const char *prefix, char *data)
 {
-  char		*p = data, *q, *n, c;
-  const int	 max_data_len = 500 - strlen(prefix);
+  char *p = data, *q, *n, c;
+  const int max_data_len = 500 - strlen(prefix);
 
   if (!*data) {
     dprintf(idx, "%s\n", prefix);
@@ -393,19 +399,20 @@ void dumplots(int idx, const char *prefix, char *data)
       dprintf(idx, "%s%s\n", prefix, p);
       *n = '\n';
       p = n + 1;
-    } else {
+    }
+    else {
       /* Search backwards for the last space */
       while (*q != ' ' && q != p)
-	q--;
+        q--;
       if (q == p)
-	q = p + max_data_len;
+        q = p + max_data_len;
       c = *q;
       *q = 0;
       dprintf(idx, "%s%s\n", prefix, p);
       *q = c;
       p = q;
       if (c == ' ')
-	p++;
+        p++;
     }
   }
   /* Last trailing bit: split by linefeeds if possible */
@@ -418,7 +425,7 @@ void dumplots(int idx, const char *prefix, char *data)
     n = strchr(p, '\n');
   }
   if (*p)
-    dprintf(idx, "%s%s\n", prefix, p);	/* Last trailing bit */
+    dprintf(idx, "%s%s\n", prefix, p);  /* Last trailing bit */
 }
 
 /* Convert an interval (in seconds) to one of:
@@ -513,9 +520,9 @@ void putlog EGG_VARARGS_DEF(int, arg1)
       s2 = ct;
       /* replace spaces by underscores */
       while (s2[0]) {
-	if (s2[0] == ' ')
-	  s2[0] = '_';
-	s2++;
+        if (s2[0] == ' ')
+          s2[0] = '_';
+        s2++;
       }
     }
   }
@@ -528,51 +535,52 @@ void putlog EGG_VARARGS_DEF(int, arg1)
   if (!use_stderr) {
     for (i = 0; i < max_logs; i++) {
       if ((logs[i].filename != NULL) && (logs[i].mask & type) &&
-	  ((chname[0] == '*') || (logs[i].chname[0] == '*') ||
-	   (!rfc_casecmp(chname, logs[i].chname)))) {
-	if (logs[i].f == NULL) {
-	  /* Open this logfile */
-	  if (keep_all_logs) {
-	    egg_snprintf(s1, 256, "%s%s", logs[i].filename, ct);
-	    logs[i].f = fopen(s1, "a+");
-	  } else
-	    logs[i].f = fopen(logs[i].filename, "a+");
-	}
-	if (logs[i].f != NULL) {
-	  /* Check if this is the same as the last line added to
-	   * the log. <cybah>
-	   */
-	  if (!egg_strcasecmp(out + tsl, logs[i].szlast)) {
-	    /* It is a repeat, so increment repeats */
-	    logs[i].repeats++;
-	  } else {
-	    /* Not a repeat, check if there were any repeat
-	     * lines previously...
-	     */
-	    if (logs[i].repeats > 0) {
-	      /* Yep.. so display 'last message repeated x times'
-	       * then reset repeats. We want the current time here,
-	       * so put that in the file first.
-	       */
-	      fprintf(logs[i].f, stamp);
-	      fprintf(logs[i].f, MISC_LOGREPEAT, logs[i].repeats);
-	      logs[i].repeats = 0;
-	      /* No need to reset logs[i].szlast here
-	       * because we update it later on...
-	       */
-	    }
-	    fputs(out, logs[i].f);
-	    strncpyz(logs[i].szlast, out + tsl, LOGLINEMAX);
-	  }
-	}
+          ((chname[0] == '*') || (logs[i].chname[0] == '*') ||
+           (!rfc_casecmp(chname, logs[i].chname)))) {
+        if (logs[i].f == NULL) {
+          /* Open this logfile */
+          if (keep_all_logs) {
+            egg_snprintf(s1, 256, "%s%s", logs[i].filename, ct);
+            logs[i].f = fopen(s1, "a+");
+          }
+          else
+            logs[i].f = fopen(logs[i].filename, "a+");
+        }
+        if (logs[i].f != NULL) {
+          /* Check if this is the same as the last line added to
+           * the log. <cybah>
+           */
+          if (!egg_strcasecmp(out + tsl, logs[i].szlast))
+            /* It is a repeat, so increment repeats */
+            logs[i].repeats++;
+          else {
+            /* Not a repeat, check if there were any repeat
+             * lines previously...
+             */
+            if (logs[i].repeats > 0) {
+              /* Yep.. so display 'last message repeated x times'
+               * then reset repeats. We want the current time here,
+               * so put that in the file first.
+               */
+              fprintf(logs[i].f, stamp);
+              fprintf(logs[i].f, MISC_LOGREPEAT, logs[i].repeats);
+              logs[i].repeats = 0;
+              /* No need to reset logs[i].szlast here
+               * because we update it later on...
+               */
+            }
+            fputs(out, logs[i].f);
+            strncpyz(logs[i].szlast, out + tsl, LOGLINEMAX);
+          }
+        }
       }
     }
   }
   for (i = 0; i < dcc_total; i++)
     if ((dcc[i].type == &DCC_CHAT) && (dcc[i].u.chat->con_flags & type)) {
       if ((chname[0] == '*') || (dcc[i].u.chat->con_chan[0] == '*') ||
-	  (!rfc_casecmp(chname, dcc[i].u.chat->con_chan)))
-	dprintf(i, "%s", out);
+          (!rfc_casecmp(chname, dcc[i].u.chat->con_chan)))
+        dprintf(i, "%s", out);
     }
   if ((!backgrd) && (!con_chan) && (!term_z))
     dprintf(DP_STDOUT, "%s", out);
@@ -589,8 +597,8 @@ void putlog EGG_VARARGS_DEF(int, arg1)
  */
 void logsuffix_change(char *s)
 {
-  int	 i;
-  char	*s2 = logfile_suffix;
+  int i;
+  char *s2 = logfile_suffix;
 
   debug0("Logfile suffix changed. Closing all open logs.");
   strcpy(logfile_suffix, s);
@@ -612,29 +620,30 @@ void check_logsize()
 {
   struct stat ss;
   int i;
+
 /* int x=1; */
-  char buf[1024];		/* Should be plenty */
+  char buf[1024];               /* Should be plenty */
 
   if (!keep_all_logs && max_logsize > 0) {
     for (i = 0; i < max_logs; i++) {
       if (logs[i].filename) {
-	if (stat(logs[i].filename, &ss) != 0) {
-	  break;
-	}
-	if ((ss.st_size >> 10) > max_logsize) {
-	  if (logs[i].f) {
-	    /* write to the log before closing it huh.. */
-	    putlog(LOG_MISC, "*", MISC_CLOGS, logs[i].filename, ss.st_size);
-	    fflush(logs[i].f);
-	    fclose(logs[i].f);
-	    logs[i].f = NULL;
-	  }
+        if (stat(logs[i].filename, &ss) != 0) {
+          break;
+        }
+        if ((ss.st_size >> 10) > max_logsize) {
+          if (logs[i].f) {
+            /* write to the log before closing it huh.. */
+            putlog(LOG_MISC, "*", MISC_CLOGS, logs[i].filename, ss.st_size);
+            fflush(logs[i].f);
+            fclose(logs[i].f);
+            logs[i].f = NULL;
+          }
 
-	  egg_snprintf(buf, sizeof buf, "%s.yesterday", logs[i].filename);
-	  buf[1023] = 0;
-	  unlink(buf);
-	  movefile(logs[i].filename, buf);
-	}
+          egg_snprintf(buf, sizeof buf, "%s.yesterday", logs[i].filename);
+          buf[1023] = 0;
+          unlink(buf);
+          movefile(logs[i].filename, buf);
+        }
       }
     }
   }
@@ -655,16 +664,17 @@ void flushlogs()
    */
   for (i = 0; i < max_logs; i++) {
     if (logs[i].f != NULL) {
-       if ((logs[i].repeats > 0) && quick_logs) {
-         /* Repeat.. if quicklogs used then display 'last message
-          * repeated x times' and reset repeats.
-	  */
+      if ((logs[i].repeats > 0) && quick_logs) {
+        /* Repeat.. if quicklogs used then display 'last message
+         * repeated x times' and reset repeats.
+         */
         char stamp[33];
+
         egg_strftime(&stamp[0], 32, LOG_TS, localtime(&now));
-	fprintf(logs[i].f, "%s ", stamp);
-	fprintf(logs[i].f, MISC_LOGREPEAT, logs[i].repeats);
-	/* Reset repeats */
-	logs[i].repeats = 0;
+        fprintf(logs[i].f, "%s ", stamp);
+        fprintf(logs[i].f, MISC_LOGREPEAT, logs[i].repeats);
+        /* Reset repeats */
+        logs[i].repeats = 0;
       }
       fflush(logs[i].f);
     }
@@ -676,11 +686,11 @@ void flushlogs()
  *     String substitution functions
  */
 
-static int	 cols = 0;
-static int	 colsofar = 0;
-static int	 blind = 0;
-static int	 subwidth = 70;
-static char	*colstr = NULL;
+static int cols = 0;
+static int colsofar = 0;
+static int blind = 0;
+static int subwidth = 70;
+static char *colstr = NULL;
 
 
 /* Add string to colstr
@@ -693,7 +703,7 @@ static void subst_addcol(char *s, char *newcol)
   if ((newcol[0]) && (newcol[0] != '\377'))
     colsofar++;
   colstr = nrealloc(colstr, strlen(colstr) + strlen(newcol) +
-		    (colstr[0] ? 2 : 1));
+                    (colstr[0] ? 2 : 1));
   if ((newcol[0]) && (newcol[0] != '\377')) {
     if (colstr[0])
       strcat(colstr, "\377");
@@ -709,7 +719,7 @@ static void subst_addcol(char *s, char *newcol)
       *p = 0;
       strcat(s, q);
       for (i = strlen(q); i < colwidth; i++)
-	strcat(s, " ");
+        strcat(s, " ");
       q = p + 1;
       p = strchr(q, '\377');
     }
@@ -745,13 +755,14 @@ static void subst_addcol(char *s, char *newcol)
 #define HELP_FLASH 8
 
 void help_subst(char *s, char *nick, struct flag_record *flags,
-		int isdcc, char *topic)
+                int isdcc, char *topic)
 {
   char xx[HELP_BUF_LEN + 1], sub[161], *current, *q, chr, *writeidx,
-  *readidx, *towrite;
+       *readidx, *towrite;
   struct chanset_t *chan;
   int i, j, center = 0;
   static int help_flags;
+
 #ifdef HAVE_UNAME
   struct utsname uname_info;
 #endif
@@ -789,71 +800,77 @@ void help_subst(char *s, char *nick, struct flag_record *flags,
     switch (chr) {
     case 'b':
       if (glob_hilite(*flags)) {
-	if (help_flags & HELP_IRC) {
-	  towrite = "\002";
-	} else if (help_flags & HELP_BOLD) {
-	  help_flags &= ~HELP_BOLD;
-	  towrite = "\033[0m";
-	} else {
-	  help_flags |= HELP_BOLD;
-	  towrite = "\033[1m";
-	}
+        if (help_flags & HELP_IRC) {
+          towrite = "\002";
+        }
+        else if (help_flags & HELP_BOLD) {
+          help_flags &= ~HELP_BOLD;
+          towrite = "\033[0m";
+        }
+        else {
+          help_flags |= HELP_BOLD;
+          towrite = "\033[1m";
+        }
       }
       break;
     case 'v':
       if (glob_hilite(*flags)) {
-	if (help_flags & HELP_IRC) {
-	  towrite = "\026";
-	} else if (help_flags & HELP_REV) {
-	  help_flags &= ~HELP_REV;
-	  towrite = "\033[0m";
-	} else {
-	  help_flags |= HELP_REV;
-	  towrite = "\033[7m";
-	}
+        if (help_flags & HELP_IRC) {
+          towrite = "\026";
+        }
+        else if (help_flags & HELP_REV) {
+          help_flags &= ~HELP_REV;
+          towrite = "\033[0m";
+        }
+        else {
+          help_flags |= HELP_REV;
+          towrite = "\033[7m";
+        }
       }
       break;
     case '_':
       if (glob_hilite(*flags)) {
-	if (help_flags & HELP_IRC) {
-	  towrite = "\037";
-	} else if (help_flags & HELP_UNDER) {
-	  help_flags &= ~HELP_UNDER;
-	  towrite = "\033[0m";
-	} else {
-	  help_flags |= HELP_UNDER;
-	  towrite = "\033[4m";
-	}
+        if (help_flags & HELP_IRC) {
+          towrite = "\037";
+        }
+        else if (help_flags & HELP_UNDER) {
+          help_flags &= ~HELP_UNDER;
+          towrite = "\033[0m";
+        }
+        else {
+          help_flags |= HELP_UNDER;
+          towrite = "\033[4m";
+        }
       }
       break;
     case 'f':
       if (glob_hilite(*flags)) {
-	if (help_flags & HELP_FLASH) {
-	  if (help_flags & HELP_IRC) {
-	    towrite = "\002\037";
-	  } else {
-	    towrite = "\033[0m";
-	  }
-	  help_flags &= ~HELP_FLASH;
-	} else {
-	  help_flags |= HELP_FLASH;
-	  if (help_flags & HELP_IRC) {
-	    towrite = "\037\002";
-	  } else {
-	    towrite = "\033[5m";
-	  }
-	}
+        if (help_flags & HELP_FLASH) {
+          if (help_flags & HELP_IRC)
+            towrite = "\002\037";
+          else
+            towrite = "\033[0m";
+          help_flags &= ~HELP_FLASH;
+        }
+        else {
+          help_flags |= HELP_FLASH;
+          if (help_flags & HELP_IRC)
+            towrite = "\037\002";
+          else
+            towrite = "\033[5m";
+        }
       }
       break;
     case 'U':
 #ifdef HAVE_UNAME
       if (uname(&uname_info) >= 0) {
-	egg_snprintf(sub, sizeof sub, "%s %s", uname_info.sysname,
-		       uname_info.release);
-	towrite = sub;
-      } else
+        egg_snprintf(sub, sizeof sub, "%s %s", uname_info.sysname,
+                     uname_info.release);
+        towrite = sub;
+      }
+      else
 #endif
-	towrite = "*UNKNOWN*";
+        towrite = "*UNKNOWN*";
       break;
     case 'B':
       towrite = (isdcc ? botnetnick : botname);
@@ -877,102 +894,105 @@ void help_subst(char *s, char *nick, struct flag_record *flags,
     case 'N':
       towrite = strchr(nick, ':');
       if (towrite)
-	towrite++;
+        towrite++;
       else
-	towrite = nick;
+        towrite = nick;
       break;
     case 'C':
       if (!blind)
-	for (chan = chanset; chan; chan = chan->next) {
-	  if ((strlen(chan->dname) + writeidx + 2) >=
-	      (s + HELP_BUF_LEN)) {
-	    strncpy(writeidx, chan->dname, (s + HELP_BUF_LEN) - writeidx);
-	    s[HELP_BUF_LEN] = 0;
-	    return;
-	  }
-	  writeidx += my_strcpy(writeidx, chan->dname);
-	  if (chan->next) {
-	    *writeidx++ = ',';
-	    *writeidx++ = ' ';
-	  }
-	}
+        for (chan = chanset; chan; chan = chan->next) {
+          if ((strlen(chan->dname) + writeidx + 2) >= (s + HELP_BUF_LEN)) {
+            strncpy(writeidx, chan->dname, (s + HELP_BUF_LEN) - writeidx);
+            s[HELP_BUF_LEN] = 0;
+            return;
+          }
+          writeidx += my_strcpy(writeidx, chan->dname);
+          if (chan->next) {
+            *writeidx++ = ',';
+            *writeidx++ = ' ';
+          }
+        }
       break;
     case '{':
       q = current;
       current++;
       while ((*current != '}') && (*current))
-	current++;
+        current++;
       if (*current) {
-	*current = 0;
-	current--;
-	q += 2;
-	/* Now q is the string and p is where the rest of the fcn expects */
-	if (!strncmp(q, "help=", 5)) {
-	  if (topic && egg_strcasecmp(q + 5, topic))
-	    blind |= 2;
-	  else
-	    blind &= ~2;
-	} else if (!(blind & 2)) {
-	  if (q[0] == '+') {
-	    struct flag_record fr =
-	    {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
+        *current = 0;
+        current--;
+        q += 2;
+        /* Now q is the string and p is where the rest of the fcn expects */
+        if (!strncmp(q, "help=", 5)) {
+          if (topic && egg_strcasecmp(q + 5, topic))
+            blind |= 2;
+          else
+            blind &= ~2;
+        }
+        else if (!(blind & 2)) {
+          if (q[0] == '+') {
+            struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
 
-	    break_down_flags(q + 1, &fr, NULL);
-	    if (!flagrec_ok(&fr, flags))
-	      blind |= 1;
-	    else
-	      blind &= ~1;
-	  } else if (q[0] == '-') {
-	    blind &= ~1;
-	  } else if (!egg_strcasecmp(q, "end")) {
-	    blind &= ~1;
-	    subwidth = 70;
-	    if (cols) {
-	      sub[0] = 0;
-	      subst_addcol(sub, "\377");
-	      nfree(colstr);
-	      colstr = NULL;
-	      cols = 0;
-	      towrite = sub;
-	    }
-	  } else if (!egg_strcasecmp(q, "center"))
-	    center = 1;
-	  else if (!strncmp(q, "cols=", 5)) {
-	    char *r;
+            break_down_flags(q + 1, &fr, NULL);
+            if (!flagrec_ok(&fr, flags))
+              blind |= 1;
+            else
+              blind &= ~1;
+          }
+          else if (q[0] == '-')
+            blind &= ~1;
+          else if (!egg_strcasecmp(q, "end")) {
+            blind &= ~1;
+            subwidth = 70;
+            if (cols) {
+              sub[0] = 0;
+              subst_addcol(sub, "\377");
+              nfree(colstr);
+              colstr = NULL;
+              cols = 0;
+              towrite = sub;
+            }
+          }
+          else if (!egg_strcasecmp(q, "center"))
+            center = 1;
+          else if (!strncmp(q, "cols=", 5)) {
+            char *r;
 
-	    cols = atoi(q + 5);
-	    colsofar = 0;
-	    colstr = (char *) nmalloc(1);
-	    colstr[0] = 0;
-	    r = strchr(q + 5, '/');
-	    if (r != NULL)
-	      subwidth = atoi(r + 1);
-	  }
-	}
-      } else
-	current = q;		/* no } so ignore */
+            cols = atoi(q + 5);
+            colsofar = 0;
+            colstr = (char *) nmalloc(1);
+            colstr[0] = 0;
+            r = strchr(q + 5, '/');
+            if (r != NULL)
+              subwidth = atoi(r + 1);
+          }
+        }
+      }
+      else
+        current = q;            /* no } so ignore */
       break;
     default:
       if (!blind) {
-	*writeidx++ = chr;
-	if (writeidx >= (s + HELP_BUF_LEN)) {
-	  *writeidx = 0;
-	  return;
-	}
+        *writeidx++ = chr;
+        if (writeidx >= (s + HELP_BUF_LEN)) {
+          *writeidx = 0;
+          return;
+        }
       }
     }
     if (towrite && !blind) {
       if ((writeidx + strlen(towrite)) >= (s + HELP_BUF_LEN)) {
-	strncpy(writeidx, towrite, (s + HELP_BUF_LEN) - writeidx);
-	s[HELP_BUF_LEN] = 0;
-	return;
+        strncpy(writeidx, towrite, (s + HELP_BUF_LEN) - writeidx);
+        s[HELP_BUF_LEN] = 0;
+        return;
       }
       writeidx += my_strcpy(writeidx, towrite);
     }
     if (chr) {
       readidx = current + 2;
       current = strchr(readidx, '%');
-    } else {
+    }
+    else {
       readidx = current + 1;
       current = NULL;
     }
@@ -985,7 +1005,8 @@ void help_subst(char *s, char *nick, struct flag_record *flags,
       return;
     }
     strcpy(writeidx, readidx);
-  } else
+  }
+  else
     *writeidx = 0;
   if (center) {
     strcpy(xx, s);
@@ -993,7 +1014,7 @@ void help_subst(char *s, char *nick, struct flag_record *flags,
     if (i > 0) {
       s[0] = 0;
       for (j = 0; j < i; j++)
-	s[j] = ' ';
+        s[j] = ' ';
       strcpy(s + i, xx);
     }
   }
@@ -1014,22 +1035,23 @@ static void scan_help_file(struct help_ref *current, char *filename, int type)
     while (!feof(f)) {
       fgets(s, HELP_BUF_LEN, f);
       if (!feof(f)) {
-	p = s;
-	while ((q = strstr(p, "%{help="))) {
-	  q += 7;
-	  if ((p = strchr(q, '}'))) {
-	    *p = 0;
-	    list = nmalloc(sizeof(struct help_list_t));
+        p = s;
+        while ((q = strstr(p, "%{help="))) {
+          q += 7;
+          if ((p = strchr(q, '}'))) {
+            *p = 0;
+            list = nmalloc(sizeof(struct help_list_t));
 
-	    list->name = nmalloc(p - q + 1);
-	    strcpy(list->name, q);
-	    list->next = current->first;
-	    list->type = type;
-	    current->first = list;
-	    p++;
-	  } else
-	    p = "";
-	}
+            list->name = nmalloc(p - q + 1);
+            strcpy(list->name, q);
+            list->next = current->first;
+            list->type = type;
+            current->first = list;
+            p++;
+          }
+          else
+            p = "";
+        }
       }
     }
     fclose(f);
@@ -1043,7 +1065,7 @@ void add_help_reference(char *file)
 
   for (current = help_list; current; current = current->next)
     if (!strcmp(current->name, file))
-      return;			/* Already exists, can't re-add :P */
+      return;                   /* Already exists, can't re-add :P */
   current = nmalloc(sizeof(struct help_ref));
 
   current->name = nmalloc(strlen(file) + 1);
@@ -1067,15 +1089,15 @@ void rem_help_reference(char *file)
   for (current = help_list; current; last = current, current = current->next)
     if (!strcmp(current->name, file)) {
       while ((item = current->first)) {
-	current->first = item->next;
-	nfree(item->name);
-	nfree(item);
+        current->first = item->next;
+        nfree(item->name);
+        nfree(item);
       }
       nfree(current->name);
       if (last)
-	last->next = current->next;
+        last->next = current->next;
       else
-	help_list = current->next;
+        help_list = current->next;
       nfree(current);
       return;
     }
@@ -1110,7 +1132,7 @@ void debug_help(int idx)
     dprintf(idx, "HELP FILE(S): %s\n", current->name);
     for (item = current->first; item; item = item->next) {
       dprintf(idx, "   %s (%s)\n", item->name, (item->type == 0) ? "msg/" :
-	      (item->type == 1) ? "" : "set/");
+              (item->type == 1) ? "" : "set/");
     }
   }
 }
@@ -1124,24 +1146,24 @@ FILE *resolve_help(int dcc, char *file)
   struct help_list_t *item;
 
   /* Somewhere here goes the eventual substituation */
-  if (!(dcc & HELP_TEXT))
-  {
+  if (!(dcc & HELP_TEXT)) {
     for (current = help_list; current; current = current->next)
       for (item = current->first; item; item = item->next)
-	if (!strcmp(item->name, file)) {
-	  if (!item->type && !dcc) {
-	    egg_snprintf(s, sizeof s, "%smsg/%s", helpdir, current->name);
-	    if ((f = fopen(s, "r")))
-	      return f;
-	  } else if (dcc && item->type) {
-	    if (item->type == 1)
-	      egg_snprintf(s, sizeof s, "%s%s", helpdir, current->name);
-	    else
-	      egg_snprintf(s, sizeof s, "%sset/%s", helpdir, current->name);
-	    if ((f = fopen(s, "r")))
-	      return f;
-	  }
-	}
+        if (!strcmp(item->name, file)) {
+          if (!item->type && !dcc) {
+            egg_snprintf(s, sizeof s, "%smsg/%s", helpdir, current->name);
+            if ((f = fopen(s, "r")))
+              return f;
+          }
+          else if (dcc && item->type) {
+            if (item->type == 1)
+              egg_snprintf(s, sizeof s, "%s%s", helpdir, current->name);
+            else
+              egg_snprintf(s, sizeof s, "%sset/%s", helpdir, current->name);
+            if ((f = fopen(s, "r")))
+              return f;
+          }
+        }
     /* No match was found, so we better return NULL */
     return NULL;
   }
@@ -1160,19 +1182,19 @@ void showhelp(char *who, char *file, struct flag_record *flags, int fl)
   FILE *f = resolve_help(fl, file);
 
   if (f) {
-    help_subst(NULL, NULL, 0, HELP_IRC, NULL);	/* Clear flags */
+    help_subst(NULL, NULL, 0, HELP_IRC, NULL);  /* Clear flags */
     while (!feof(f)) {
       fgets(s, HELP_BUF_LEN, f);
       if (!feof(f)) {
-	if (s[strlen(s) - 1] == '\n')
-	  s[strlen(s) - 1] = 0;
-	if (!s[0])
-	  strcpy(s, " ");
-	help_subst(s, who, flags, 0, file);
-	if ((s[0]) && (strlen(s) > 1)) {
-	  dprintf(DP_HELP, "NOTICE %s :%s\n", who, s);
-	  lines++;
-	}
+        if (s[strlen(s) - 1] == '\n')
+          s[strlen(s) - 1] = 0;
+        if (!s[0])
+          strcpy(s, " ");
+        help_subst(s, who, flags, 0, file);
+        if ((s[0]) && (strlen(s) > 1)) {
+          dprintf(DP_HELP, "NOTICE %s :%s\n", who, s);
+          lines++;
+        }
       }
     }
     fclose(f);
@@ -1182,26 +1204,26 @@ void showhelp(char *who, char *file, struct flag_record *flags, int fl)
 }
 
 static int display_tellhelp(int idx, char *file, FILE *f,
-			    struct flag_record *flags)
+                            struct flag_record *flags)
 {
   char s[HELP_BUF_LEN + 1];
   int lines = 0;
 
   if (f) {
     help_subst(NULL, NULL, 0,
-	       (dcc[idx].status & STAT_TELNET) ? 0 : HELP_IRC, NULL);
+               (dcc[idx].status & STAT_TELNET) ? 0 : HELP_IRC, NULL);
     while (!feof(f)) {
       fgets(s, HELP_BUF_LEN, f);
       if (!feof(f)) {
-	if (s[strlen(s) - 1] == '\n')
-	  s[strlen(s) - 1] = 0;
-	if (!s[0])
-	  strcpy(s, " ");
-	help_subst(s, dcc[idx].nick, flags, 1, file);
-	if (s[0]) {
-	  dprintf(idx, "%s\n", s);
-	  lines++;
-	}
+        if (s[strlen(s) - 1] == '\n')
+          s[strlen(s) - 1] = 0;
+        if (!s[0])
+          strcpy(s, " ");
+        help_subst(s, dcc[idx].nick, flags, 1, file);
+        if (s[0]) {
+          dprintf(idx, "%s\n", s);
+          lines++;
+        }
       }
     }
     fclose(f);
@@ -1233,12 +1255,12 @@ void tellwildhelp(int idx, char *match, struct flag_record *flags)
   for (current = help_list; current; current = current->next)
     for (item = current->first; item; item = item->next)
       if (wild_match(match, item->name) && item->type) {
-	if (item->type == 1)
-	  egg_snprintf(s, sizeof s, "%s%s", helpdir, current->name);
-	else
-	  egg_snprintf(s, sizeof s, "%sset/%s", helpdir, current->name);
-	if ((f = fopen(s, "r")))
-	  display_tellhelp(idx, item->name, f, flags);
+        if (item->type == 1)
+          egg_snprintf(s, sizeof s, "%s%s", helpdir, current->name);
+        else
+          egg_snprintf(s, sizeof s, "%sset/%s", helpdir, current->name);
+        if ((f = fopen(s, "r")))
+          display_tellhelp(idx, item->name, f, flags);
       }
   if (!s[0])
     dprintf(idx, "%s\n", IRC_NOHELP2);
@@ -1258,12 +1280,12 @@ void tellallhelp(int idx, char *match, struct flag_record *flags)
     for (item = current->first; item; item = item->next)
       if (!strcmp(match, item->name) && item->type) {
 
-	if (item->type == 1)
-	  egg_snprintf(s, sizeof s, "%s%s", helpdir, current->name);
-	else
-	  egg_snprintf(s, sizeof s, "%sset/%s", helpdir, current->name);
-	if ((f = fopen(s, "r")))
-	  display_tellhelp(idx, item->name, f, flags);
+        if (item->type == 1)
+          egg_snprintf(s, sizeof s, "%s%s", helpdir, current->name);
+        else
+          egg_snprintf(s, sizeof s, "%sset/%s", helpdir, current->name);
+        if ((f = fopen(s, "r")))
+          display_tellhelp(idx, item->name, f, flags);
       }
   if (!s[0])
     dprintf(idx, "%s\n", IRC_NOHELP2);
@@ -1274,11 +1296,11 @@ void tellallhelp(int idx, char *match, struct flag_record *flags)
 void sub_lang(int idx, char *text)
 {
   char s[1024];
-  struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
+  struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
 
   get_user_flagrec(dcc[idx].user, &fr, dcc[idx].u.chat->con_chan);
   help_subst(NULL, NULL, 0,
-	     (dcc[idx].status & STAT_TELNET) ? 0 : HELP_IRC, NULL);
+             (dcc[idx].status & STAT_TELNET) ? 0 : HELP_IRC, NULL);
   strncpyz(s, text, sizeof s);
   if (s[strlen(s) - 1] == '\n')
     s[strlen(s) - 1] = 0;
@@ -1296,6 +1318,7 @@ void sub_lang(int idx, char *text)
 char *extracthostname(char *hostmask)
 {
   char *p = strrchr(hostmask, '@');
+
   return p ? p + 1 : "";
 }
 
@@ -1305,7 +1328,7 @@ void show_motd(int idx)
 {
   FILE *vv;
   char s[1024];
-  struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
+  struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
 
   if (!is_file(motdfile))
     return;
@@ -1318,17 +1341,17 @@ void show_motd(int idx)
   dprintf(idx, "\n");
   /* reset the help_subst variables to their defaults */
   help_subst(NULL, NULL, 0,
-	     (dcc[idx].status & STAT_TELNET) ? 0 : HELP_IRC, NULL);
+             (dcc[idx].status & STAT_TELNET) ? 0 : HELP_IRC, NULL);
   while (!feof(vv)) {
     fgets(s, 120, vv);
     if (!feof(vv)) {
       if (s[strlen(s) - 1] == '\n')
-	s[strlen(s) - 1] = 0;
+        s[strlen(s) - 1] = 0;
       if (!s[0])
-	strcpy(s, " ");
+        strcpy(s, " ");
       help_subst(s, dcc[idx].nick, &fr, 1, botnetnick);
       if (s[0])
-	dprintf(idx, "%s\n", s);
+        dprintf(idx, "%s\n", s);
     }
   }
   fclose(vv);
@@ -1337,10 +1360,11 @@ void show_motd(int idx)
 
 /* Show banner to telnet user 
  */
-void show_banner(int idx) {
+void show_banner(int idx)
+{
   FILE *vv;
   char s[1024];
-  struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
+  struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
 
   if (!is_file(bannerfile))
     return;
@@ -1349,14 +1373,14 @@ void show_banner(int idx) {
   if (!vv)
     return;
 
-  get_user_flagrec(dcc[idx].user, &fr,dcc[idx].u.chat->con_chan);
+  get_user_flagrec(dcc[idx].user, &fr, dcc[idx].u.chat->con_chan);
   /* reset the help_subst variables to their defaults */
   help_subst(NULL, NULL, 0, 0, NULL);
-  while(!feof(vv)) {
+  while (!feof(vv)) {
     fgets(s, 120, vv);
     if (!feof(vv)) {
       if (!s[0])
-	strcpy(s, " \n");
+        strcpy(s, " \n");
       help_subst(s, dcc[idx].nick, &fr, 0, botnetnick);
       dprintf(idx, "%s", s);
     }
@@ -1403,10 +1427,10 @@ int oatoi(const char *octal)
  */
 char *str_escape(const char *str, const char div, const char mask)
 {
-  const int	 len = strlen(str);
-  int		 buflen = (2 * len), blen = 0;
-  char		*buf = nmalloc(buflen + 1), *b = buf;
-  const char	*s;
+  const int len = strlen(str);
+  int buflen = (2 * len), blen = 0;
+  char *buf = nmalloc(buflen + 1), *b = buf;
+  const char *s;
 
   if (!buf)
     return NULL;
@@ -1416,7 +1440,7 @@ char *str_escape(const char *str, const char div, const char mask)
       buflen = (buflen * 2);
       buf = nrealloc(buf, buflen + 1);
       if (!buf)
-	return NULL;
+        return NULL;
       b = buf + blen;
     }
 
@@ -1424,7 +1448,8 @@ char *str_escape(const char *str, const char div, const char mask)
       sprintf(b, "%c%02x", mask, *s);
       b += 3;
       blen += 3;
-    } else {
+    }
+    else {
       *(b++) = *s;
       blen++;
     }
@@ -1452,20 +1477,22 @@ char *str_escape(const char *str, const char div, const char mask)
  */
 char *strchr_unescape(char *str, const char div, register const char esc_char)
 {
-  char		 buf[3];
-  register char	*s, *p;
+  char buf[3];
+  register char *s, *p;
 
   buf[2] = 0;
   for (s = p = str; *s; s++, p++) {
-    if (*s == esc_char) {	/* Found escape character.		*/
+    if (*s == esc_char) {       /* Found escape character.              */
       /* Convert code to character. */
       buf[0] = s[1], buf[1] = s[2];
       *p = (unsigned char) strtol(buf, NULL, 16);
       s += 2;
-    } else if (*s == div) {
+    }
+    else if (*s == div) {
       *p = *s = 0;
-      return (s + 1);		/* Found searched for character.	*/
-    } else
+      return (s + 1);           /* Found searched for character.        */
+    }
+    else
       *p = *s;
   }
   *p = 0;

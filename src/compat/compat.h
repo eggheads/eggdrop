@@ -2,7 +2,7 @@
  * compat.h
  *   wrap-around header for all compability functions.
  *
- * $Id: compat.h,v 1.5 2002/12/24 02:30:06 wcc Exp $
+ * $Id: compat.h,v 1.6 2003/01/28 06:37:25 wcc Exp $
  */
 /*
  * Copyright (C) 2000, 2001, 2002, 2003 Eggheads Development Team
@@ -32,4 +32,4 @@
 #include "strcasecmp.h"
 #include "strftime.h"
 
-#endif	/* !__EGG_COMPAT_COMPAT_H */
+#endif /* !__EGG_COMPAT_COMPAT_H */

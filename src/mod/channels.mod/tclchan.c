@@ -1,7 +1,7 @@
 /*
  * tclchan.c -- part of channels.mod
  *
- * $Id: tclchan.c,v 1.69 2002/12/24 02:30:06 wcc Exp $
+ * $Id: tclchan.c,v 1.70 2003/01/28 06:37:25 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -732,7 +732,7 @@ static int tcl_newinvite STDVAR
   return TCL_OK;
 }
 
-static int tcl_channel_info(Tcl_Interp * irp, struct chanset_t *chan)
+static int tcl_channel_info(Tcl_Interp *irp, struct chanset_t *chan)
 {
   char a[121], b[121], s[121];
 #if (((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 4)) || (TCL_MAJOR_VERSION > 8))
@@ -896,7 +896,7 @@ static int tcl_channel_info(Tcl_Interp * irp, struct chanset_t *chan)
   return TCL_OK;
 }
 
-static int tcl_channel_get(Tcl_Interp * irp, struct chanset_t *chan, char *setting)
+static int tcl_channel_get(Tcl_Interp *irp, struct chanset_t *chan, char *setting)
 {
   char s[121];
   struct udef_struct *ul;
@@ -1043,7 +1043,7 @@ static int tcl_channel STDVAR
 
 /* Parse options for a channel.
  */
-static int tcl_channel_modify(Tcl_Interp * irp, struct chanset_t *chan,
+static int tcl_channel_modify(Tcl_Interp *irp, struct chanset_t *chan,
 			      int items, char **item)
 {
   int i, x = 0, found,

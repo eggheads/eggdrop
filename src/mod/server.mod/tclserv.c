@@ -1,7 +1,7 @@
 /*
  * tclserv.c -- part of server.mod
  *
- * $Id: tclserv.c,v 1.12 2002/12/24 02:30:08 wcc Exp $
+ * $Id: tclserv.c,v 1.13 2003/01/28 06:37:26 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -25,6 +25,7 @@
 static int tcl_isbotnick STDVAR
 {
   BADARGS(2, 2, " nick");
+
   if (match_my_nick(argv[1]))
     Tcl_AppendResult(irp, "1", NULL);
   else
@@ -37,18 +38,20 @@ static int tcl_putquick STDVAR
   char s[511], *p;
 
   BADARGS(2, 3, " text ?options?");
-  if ((argc == 3) &&
-      egg_strcasecmp(argv[2], "-next") && egg_strcasecmp(argv[2], "-normal")) {
-      Tcl_AppendResult(irp, "unknown putquick option: should be one of: ",
-		       "-normal -next", NULL);
+
+  if ((argc == 3) && egg_strcasecmp(argv[2], "-next") &&
+      egg_strcasecmp(argv[2], "-normal")) {
+    Tcl_AppendResult(irp, "unknown putquick option: should be one of: ",
+                     "-normal -next", NULL);
     return TCL_ERROR;
   }
   strncpy(s, argv[1], 510);
+
   s[510] = 0;
   p = strchr(s, '\n');
   if (p != NULL)
     *p = 0;
-   p = strchr(s, '\r');
+  p = strchr(s, '\r');
   if (p != NULL)
     *p = 0;
   if (argc == 3 && !egg_strcasecmp(argv[2], "-next"))
@@ -63,18 +66,20 @@ static int tcl_putserv STDVAR
   char s[511], *p;
 
   BADARGS(2, 3, " text ?options?");
-  if ((argc == 3) &&
-    egg_strcasecmp(argv[2], "-next") && egg_strcasecmp(argv[2], "-normal")) {
+
+  if ((argc == 3) && egg_strcasecmp(argv[2], "-next") &&
+      egg_strcasecmp(argv[2], "-normal")) {
     Tcl_AppendResult(irp, "unknown putserv option: should be one of: ",
-		     "-normal -next", NULL);
+                     "-normal -next", NULL);
     return TCL_ERROR;
   }
   strncpy(s, argv[1], 510);
+
   s[510] = 0;
   p = strchr(s, '\n');
   if (p != NULL)
     *p = 0;
-   p = strchr(s, '\r');
+  p = strchr(s, '\r');
   if (p != NULL)
     *p = 0;
   if (argc == 3 && !egg_strcasecmp(argv[2], "-next"))
@@ -89,18 +94,19 @@ static int tcl_puthelp STDVAR
   char s[511], *p;
 
   BADARGS(2, 3, " text ?options?");
-  if ((argc == 3) &&
-    egg_strcasecmp(argv[2], "-next") && egg_strcasecmp(argv[2], "-normal")) {
+  if ((argc == 3) && egg_strcasecmp(argv[2], "-next") &&
+      egg_strcasecmp(argv[2], "-normal")) {
     Tcl_AppendResult(irp, "unknown puthelp option: should be one of: ",
-		     "-normal -next", NULL);
+                     "-normal -next", NULL);
     return TCL_ERROR;
   }
   strncpy(s, argv[1], 510);
+
   s[510] = 0;
   p = strchr(s, '\n');
   if (p != NULL)
     *p = 0;
-   p = strchr(s, '\r');
+  p = strchr(s, '\r');
   if (p != NULL)
     *p = 0;
   if (argc == 3 && !egg_strcasecmp(argv[2], "-next"))
@@ -113,6 +119,7 @@ static int tcl_puthelp STDVAR
 static int tcl_jump STDVAR
 {
   BADARGS(1, 4, " ?server? ?port? ?pass?");
+
   if (argc >= 2) {
     strncpyz(newserver, argv[1], sizeof newserver);
     if (argc >= 3)
@@ -123,6 +130,7 @@ static int tcl_jump STDVAR
       strncpyz(newserverpass, argv[3], sizeof newserverpass);
   }
   cycle_time = 0;
+
   nuke_server("changing servers\n");
   return TCL_OK;
 }
@@ -130,14 +138,14 @@ static int tcl_jump STDVAR
 static int tcl_clearqueue STDVAR
 {
   struct msgq *q, *qq;
-  int msgs;
+  int msgs = 0;
   char s[20];
 
-  msgs = 0;
-  BADARGS(2,2, " queue");
-  if (!strcmp(argv[1],"all")) {
+  BADARGS(2, 2, " queue");
+
+  if (!strcmp(argv[1], "all")) {
     msgs = (int) (modeq.tot + mq.tot + hq.tot);
-    for (q = modeq.head; q; q = qq) { 
+    for (q = modeq.head; q; q = qq) {
       qq = q->next;
       nfree(q->msg);
       nfree(q);
@@ -159,7 +167,8 @@ static int tcl_clearqueue STDVAR
     simple_sprintf(s, "%d", msgs);
     Tcl_AppendResult(irp, s, NULL);
     return TCL_OK;
-  } else if (!strncmp(argv[1],"serv", 4)) {
+  }
+  else if (!strncmp(argv[1], "serv", 4)) {
     msgs = mq.tot;
     for (q = mq.head; q; q = qq) {
       qq = q->next;
@@ -176,9 +185,10 @@ static int tcl_clearqueue STDVAR
     simple_sprintf(s, "%d", msgs);
     Tcl_AppendResult(irp, s, NULL);
     return TCL_OK;
-  } else if (!strcmp(argv[1],"mode")) {
+  }
+  else if (!strcmp(argv[1], "mode")) {
     msgs = modeq.tot;
-    for (q = modeq.head; q; q = qq) { 
+    for (q = modeq.head; q; q = qq) {
       qq = q->next;
       nfree(q->msg);
       nfree(q);
@@ -191,7 +201,8 @@ static int tcl_clearqueue STDVAR
     simple_sprintf(s, "%d", msgs);
     Tcl_AppendResult(irp, s, NULL);
     return TCL_OK;
-  } else if (!strcmp(argv[1],"help")) {
+  }
+  else if (!strcmp(argv[1], "help")) {
     msgs = hq.tot;
     for (q = hq.head; q; q = qq) {
       qq = q->next;
@@ -216,22 +227,26 @@ static int tcl_queuesize STDVAR
   int x;
 
   BADARGS(1, 2, " ?queue?");
+
   if (argc == 1) {
     x = (int) (modeq.tot + hq.tot + mq.tot);
     simple_sprintf(s, "%d", x);
     Tcl_AppendResult(irp, s, NULL);
     return TCL_OK;
-  } else if (!strncmp(argv[1], "serv", 4)) {
+  }
+  else if (!strncmp(argv[1], "serv", 4)) {
     x = (int) (mq.tot);
     simple_sprintf(s, "%d", x);
     Tcl_AppendResult(irp, s, NULL);
     return TCL_OK;
-  } else if (!strcmp(argv[1], "mode")) {
+  }
+  else if (!strcmp(argv[1], "mode")) {
     x = (int) (modeq.tot);
     simple_sprintf(s, "%d", x);
     Tcl_AppendResult(irp, s, NULL);
     return TCL_OK;
-  } else if (!strcmp(argv[1], "help")) {
+  }
+  else if (!strcmp(argv[1], "help")) {
     x = (int) (hq.tot);
     simple_sprintf(s, "%d", x);
     Tcl_AppendResult(irp, s, NULL);
@@ -241,14 +256,13 @@ static int tcl_queuesize STDVAR
   return TCL_ERROR;
 }
 
-static tcl_cmds my_tcl_cmds[] =
-{
-  {"jump",		tcl_jump},
-  {"isbotnick",		tcl_isbotnick},
-  {"clearqueue",	tcl_clearqueue},
-  {"queuesize",		tcl_queuesize},
-  {"puthelp",		tcl_puthelp},
-  {"putserv",		tcl_putserv},
-  {"putquick",		tcl_putquick},
-  {NULL,		NULL},
+static tcl_cmds my_tcl_cmds[] = {
+  {"jump",       tcl_jump},
+  {"isbotnick",  tcl_isbotnick},
+  {"clearqueue", tcl_clearqueue},
+  {"queuesize",  tcl_queuesize},
+  {"puthelp",    tcl_puthelp},
+  {"putserv",    tcl_putserv},
+  {"putquick",   tcl_putquick},
+  {NULL,         NULL}
 };

@@ -1,7 +1,7 @@
 /*
  * files.h -- part of filesys.mod
  *
- * $Id: files.h,v 1.8 2002/12/24 02:30:07 wcc Exp $
+ * $Id: files.h,v 1.9 2003/01/28 06:37:26 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -80,4 +80,4 @@
 #define FILES_WELCOME    get_language(0x33a)
 #define FILES_WELCOME1   get_language(0x33b)
 
-#endif				/* _EGG_MOD_FILESYS_FILES_H */
+#endif /* _EGG_MOD_FILESYS_FILES_H */

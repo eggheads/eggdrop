@@ -4,7 +4,7 @@
  *
  * by Darrin Smith (beldin@light.iinet.net.au)
  *
- * $Id: modules.h,v 1.11 2002/12/24 02:30:05 wcc Exp $
+ * $Id: modules.h,v 1.12 2003/01/28 06:37:24 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -39,8 +39,7 @@
 
 void do_module_report(int, int, char *);
 
-int module_register(char *name, Function * funcs,
-		    int major, int minor);
+int module_register(char *name, Function* funcs, int major, int minor);
 const char *module_load(char *module_name);
 char *module_unload(char *module_name, char *nick);
 module_entry *module_find(char *name, int, int);
@@ -48,7 +47,7 @@ Function *module_depend(char *, char *, int major, int minor);
 int module_undepend(char *);
 void *mod_malloc(int size, const char *modname, const char *filename, int line);
 void *mod_realloc(void *ptr, int size, const char *modname,
-		  const char *filename, int line);
+                  const char *filename, int line);
 void mod_free(void *ptr, const char *modname, const char *filename, int line);
 void add_hook(int hook_num, Function func);
 void del_hook(int hook_num, Function func);
@@ -79,4 +78,4 @@ typedef struct _dependancy {
 } dependancy;
 extern dependancy *dependancy_list;
 
-#endif				/* _EGG_MODULE_H */
+#endif /* _EGG_MODULE_H */

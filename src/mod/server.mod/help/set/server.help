@@ -73,7 +73,7 @@ see also: set nick, set altnick
 ###  %bset check-stoned%b 0/1
    This setting, when enabled, will cause the bot to ping the server
    occasionally to make sure it's actually still connected. It also
-   provides a 'lag-meter'. This is slightly broken on IRCNet.
+   provides a 'lag-meter'. This is slightly broken on IRCnet.
 %{help=set serverror-quit}%{+n}
 ###  %bset serverror-quit%b 0/1
    Enabling this will cause the bot to assume that an ERROR message
@@ -165,8 +165,8 @@ see also: default-port
    This read-only variable returns the current server of the bot.
 %{help=set net-type}%{+n}
 ###  %bset net-type%b
-   Defines the network the bot uses. 0 = Efnet, 1 = IRCnet, 2 = Undernet,
-   3 = Dalnet, 4 = Others.
+   Defines the network the bot uses. 0 = EFnet, 1 = IRCnet, 2 = UnderNet,
+   3 = DALnet, 4 = EFnet +e/+I hybrid, 5 = Others.
 %{help=server settings}%{+n}
 ###  Settings for the %bserver module%b
    This is a list of the Tcl variables the can be used to setup

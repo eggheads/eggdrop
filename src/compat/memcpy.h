@@ -2,7 +2,7 @@
  * memcpy.h
  *   prototypes for memcpy.c
  *
- * $Id: memcpy.h,v 1.5 2002/12/24 02:30:06 wcc Exp $
+ * $Id: memcpy.h,v 1.6 2003/01/28 06:37:25 wcc Exp $
  */
 /*
  * Copyright (C) 2000, 2001, 2002, 2003 Eggheads Development Team
@@ -35,4 +35,4 @@ void *egg_memcpy(void *dest, const void *src, size_t n);
 #  define egg_memcpy	memcpy
 #endif
 
-#endif	/* !__EGG_COMPAT_MEMCPY_H */
+#endif /* !__EGG_COMPAT_MEMCPY_H */

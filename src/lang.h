@@ -2,7 +2,7 @@
  * lang.h
  *   Conversion definitions for language support
  *
- * $Id: lang.h,v 1.28 2002/12/24 02:30:04 wcc Exp $
+ * $Id: lang.h,v 1.29 2003/01/28 06:37:24 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -507,4 +507,4 @@
 #define DCC_MYBOTNETNICK	get_language(0xe32)
 #define DCC_LOSTDUP		get_language(0xe33)
 
-#endif				/* _EGG_LANG_H */
+#endif /* _EGG_LANG_H */

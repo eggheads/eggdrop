@@ -1,7 +1,7 @@
 /*
  * assoc.h -- part of assoc.mod
  *
- * $Id: assoc.h,v 1.5 2002/12/24 02:30:06 wcc Exp $
+ * $Id: assoc.h,v 1.6 2003/01/28 06:37:25 wcc Exp $
  */
 /*
  * Copyright (C) 2000, 2001, 2002, 2003 Eggheads Development Team
@@ -42,4 +42,4 @@
 #define ASSOC_CHNAME_TOOLONG	get_language(0xb00e)
 #define ASSOC_CHNAME_FIRSTCHAR	get_language(0xb00f)
 
-#endif				/* _EGG_MOD_ASSOC_ASSOC_H */
+#endif /* _EGG_MOD_ASSOC_ASSOC_H */

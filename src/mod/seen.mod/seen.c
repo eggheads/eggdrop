@@ -10,7 +10,7 @@
  * 1.2     1997-08-20      Minor fixes. [BB]
  * 1.2a    1997-08-24      Minor fixes. [BB]
  *
- * $Id: seen.c,v 1.28 2003/01/23 02:41:48 wcc Exp $
+ * $Id: seen.c,v 1.29 2003/01/28 06:37:26 wcc Exp $
  */
 /*
  * Copyright (C) 1999, 2000, 2001, 2002, 2003 Eggheads Development Team
@@ -105,15 +105,14 @@ typedef struct {
   char *text;
 } trig_data;
 
-static trig_data trigdata[] =
-{
-  {"god",	"Let's not get into a religious discussion, %s"},
-  {"jesus",	"Let's not get into a religious discussion, %s"},
-  {"shit",	"Here's looking at you, %s"},
-  {"yourself",	"Yeah, whenever I look in a mirror..."},
-  {NULL,	"You found me, %s!"},
-  {"elvis",	"Last time I was on the moon man."},
-  {NULL,	NULL}
+static trig_data trigdata[] = {
+  {"god",      "Let's not get into a religious discussion, %s"},
+  {"jesus",    "Let's not get into a religious discussion, %s"},
+  {"shit",                         "Here's looking at you, %s"},
+  {"yourself",          "Yeah, whenever I look in a mirror..."},
+  {NULL, "                                  You found me, %s!"},
+  {"elvis",                 "Last time I was on the moon man."},
+  {NULL,                                                  NULL}
 };
 
 static int seen_expmem()
@@ -125,9 +124,9 @@ static int seen_expmem()
 
 /* PUB `seen' trigger. */
 static int pub_seen(char *nick, char *host, char *hand,
-		    char *channel, char *text)
+                    char *channel, char *text)
 {
-  char prefix[91]; /* sizeof(name) + strlen("PRIVMSG  :") */
+  char prefix[91];              /* sizeof(name) + strlen("PRIVMSG  :") */
   struct chanset_t *chan = findchan_by_dname(channel);
 
   if ((chan != NULL) && channel_seen(chan)) {
@@ -159,7 +158,7 @@ static int dcc_seen(struct userrec *u, int idx, char *par)
 }
 
 static void do_seen(int idx, char *prefix, char *nick, char *hand,
-		    char *channel, char *text)
+                    char *channel, char *text)
 {
   char stuff[512];
   char word1[512], word2[512];
@@ -184,19 +183,18 @@ static void do_seen(int idx, char *prefix, char *nick, char *hand,
   /* Was ANYONE specified */
   if (!text[0]) {
     dprintf(idx, "%sUm, %s, it might help if you ask me about _someone_...\n",
-	    prefix, nick);
+            prefix, nick);
     return;
   }
   wordshift(word1, text);
   oix = strchr(word1, '\'');
   /* Have we got a NICK's target? */
   if (oix == word1)
-    return;			/* Skip anything starting with ' */
-  if (oix && *oix &&
-      ((oix[1] && (oix[1] == 's' || oix[1] == 'S') && !oix[2]) ||
-       (!oix[1] &&
-	(oix[-1] == 's' || oix[-1] == 'z' || oix[-1] == 'x' ||
-	 oix[-1] == 'S' || oix[-1] == 'Z' || oix[-1] == 'X')))) {
+    return;                     /* Skip anything starting with ' */
+  if (oix && *oix && ((oix[1] && (oix[1] == 's' || oix[1] == 'S') &&
+      !oix[2]) || (!oix[1] && (oix[-1] == 's' || oix[-1] == 'z' ||
+      oix[-1] == 'x' || oix[-1] == 'S' || oix[-1] == 'Z' ||
+      oix[-1] == 'X')))) {
     strncpy(object, word1, oix - word1);
     object[oix - word1] = 0;
     wordshift(word1, text);
@@ -208,56 +206,56 @@ static void do_seen(int idx, char *prefix, char *nick, char *hand,
     if (!urec) {
       chan = chanset;
       while (chan) {
-	onchan = 0;
-	m = ismember(chan, object);
-	if (m) {
-	  onchan = 1;
-	  sprintf(stuff, "%s!%s", object, m->userhost);
-	  urec = get_user_by_host(stuff);
-	  if (!urec || !egg_strcasecmp(object, urec->handle))
-	    break;
-	  strcat(whoredirect, object);
-	  strcat(whoredirect, " is ");
-	  strcat(whoredirect, urec->handle);
-	  strcat(whoredirect, ", and ");
-	  strcpy(object, urec->handle);
-	  break;
-	}
-	chan = chan->next;
+        onchan = 0;
+        m = ismember(chan, object);
+        if (m) {
+          onchan = 1;
+          sprintf(stuff, "%s!%s", object, m->userhost);
+          urec = get_user_by_host(stuff);
+          if (!urec || !egg_strcasecmp(object, urec->handle))
+            break;
+          strcat(whoredirect, object);
+          strcat(whoredirect, " is ");
+          strcat(whoredirect, urec->handle);
+          strcat(whoredirect, ", and ");
+          strcpy(object, urec->handle);
+          break;
+        }
+        chan = chan->next;
       }
       if (!onchan) {
-	dprintf(idx, "%sI don't think I know who %s is, %s.\n",
-		prefix, object, nick);
-	return;
+        dprintf(idx, "%sI don't think I know who %s is, %s.\n",
+                prefix, object, nick);
+        return;
       }
     }
     if (!egg_strcasecmp(word1, "bf") || !egg_strcasecmp(word1, "boyfriend")) {
       strcpy(whotarget, getxtra(object, "BF"));
       if (whotarget[0]) {
-	sprintf(whoredirect, "%s boyfriend is %s, and ",
-		fixnick(object), whotarget);
-	goto targetcont;
+        sprintf(whoredirect, "%s boyfriend is %s, and ",
+                fixnick(object), whotarget);
+        goto targetcont;
       }
       dprintf(idx,
-	      "%sI don't know who %s boyfriend is, %s.\n",
-	      prefix, fixnick(object), nick);
+              "%sI don't know who %s boyfriend is, %s.\n",
+              prefix, fixnick(object), nick);
       return;
     }
     if (!egg_strcasecmp(word1, "gf") || !egg_strcasecmp(word1, "girlfriend")) {
       strcpy(whotarget, getxtra(object, "GF"));
       if (whotarget[0]) {
-	sprintf(whoredirect, "%s girlfriend is %s, and ",
-		fixnick(object), whotarget);
-	goto targetcont;
+        sprintf(whoredirect, "%s girlfriend is %s, and ",
+                fixnick(object), whotarget);
+        goto targetcont;
       }
       dprintf(idx,
-	      "%sI don't know who %s girlfriend is, %s.\n",
-	      prefix, fixnick(object), nick);
+              "%sI don't know who %s girlfriend is, %s.\n",
+              prefix, fixnick(object), nick);
       return;
     }
     dprintf(idx,
-	  "%sWhy are you bothering me with questions about %s %s, %s?\n",
-	    prefix, fixnick(object), word1, nick);
+            "%sWhy are you bothering me with questions about %s %s, %s?\n",
+            prefix, fixnick(object), word1, nick);
     return;
   }
   /* Keyword "my" */
@@ -270,40 +268,39 @@ static void do_seen(int idx, char *prefix, char *nick, char *hand,
     /* Do I even KNOW the requestor? */
     if (hand[0] == '*' || !hand[0]) {
       dprintf(idx,
-	      "%sI don't know you, %s, so I don't know about your %s.\n",
-	      prefix, nick, word1);
+              "%sI don't know you, %s, so I don't know about your %s.\n",
+              prefix, nick, word1);
       return;
     }
     /* "my boyfriend" */
     if (!egg_strcasecmp(word1, "boyfriend") || !egg_strcasecmp(word1, "bf")) {
       strcpy(whotarget, getxtra(hand, "BF"));
       if (whotarget[0]) {
-	sprintf(whoredirect, "%s, your boyfriend is %s, and ",
-		nick, whotarget);
-      } else {
-	dprintf(idx,
-		"%sI didn't know you had a boyfriend, %s\n",
-		prefix, nick);
-	return;
+        sprintf(whoredirect, "%s, your boyfriend is %s, and ", nick, whotarget);
+      }
+      else {
+        dprintf(idx, "%sI didn't know you had a boyfriend, %s\n", prefix, nick);
+        return;
       }
     }
     /* "my girlfriend" */
     else if (!egg_strcasecmp(word1, "girlfriend") ||
-	      !egg_strcasecmp(word1, "gf")) {
+             !egg_strcasecmp(word1, "gf")) {
       strcpy(whotarget, getxtra(hand, "GF"));
       if (whotarget[0]) {
-	sprintf(whoredirect, "%s, your girlfriend is %s, and ",
-		nick, whotarget);
-      } else {
-	dprintf(idx,
-		"%sI didn't know you had a girlfriend, %s\n",
-		prefix, nick);
-	return;
+        sprintf(whoredirect, "%s, your girlfriend is %s, and ",
+                nick, whotarget);
       }
-    } else {
+      else {
+        dprintf(idx,
+                "%sI didn't know you had a girlfriend, %s\n", prefix, nick);
+        return;
+      }
+    }
+    else {
       dprintf(idx,
-	      "%sI don't know anything about your %s, %s.\n",
-	      prefix, word1, nick);
+              "%sI don't know anything about your %s, %s.\n",
+              prefix, word1, nick);
       return;
     }
   }
@@ -313,32 +310,33 @@ static void do_seen(int idx, char *prefix, char *nick, char *hand,
     /* "your admin" */
     if (!egg_strcasecmp(word1, "owner") || !egg_strcasecmp(word1, "admin")) {
       if (admin[0]) {
-	strcpy(word2, admin);
-	wordshift(whotarget, word2);
-	strcat(whoredirect, "My owner is ");
-	strcat(whoredirect, whotarget);
-	strcat(whoredirect, ", and ");
-	if (!egg_strcasecmp(whotarget, hand)) {
-	  strcat(whoredirect, "that's YOU");
-	  if (!egg_strcasecmp(hand, nick)) {
-	    strcat(whoredirect, "!!!");
-	  } else {
-	    strcat(whoredirect, ", ");
-	    strcat(whoredirect, nick);
-	    strcat(whoredirect, "!");
-	  }
-	  dprintf(idx, "%s%s\n", prefix, whoredirect);
-	  return;
-	}
-      } else {			/* owner variable munged or not set */
-	dprintf(idx,
-		"%sI don't seem to recall who my owner is right now...\n",
-		prefix);
-	return;
+        strcpy(word2, admin);
+        wordshift(whotarget, word2);
+        strcat(whoredirect, "My owner is ");
+        strcat(whoredirect, whotarget);
+        strcat(whoredirect, ", and ");
+        if (!egg_strcasecmp(whotarget, hand)) {
+          strcat(whoredirect, "that's YOU");
+          if (!egg_strcasecmp(hand, nick))
+            strcat(whoredirect, "!!!");
+          else {
+            strcat(whoredirect, ", ");
+            strcat(whoredirect, nick);
+            strcat(whoredirect, "!");
+          }
+          dprintf(idx, "%s%s\n", prefix, whoredirect);
+          return;
+        }
       }
-    } else {			/* no "your" target specified */
-      dprintf(idx, "%sLet's not get personal, %s.\n",
-	      prefix, nick);
+      else {                    /* owner variable munged or not set */
+        dprintf(idx,
+                "%sI don't seem to recall who my owner is right now...\n",
+                prefix);
+        return;
+      }
+    }
+    else {                      /* no "your" target specified */
+      dprintf(idx, "%sLet's not get personal, %s.\n", prefix, nick);
       return;
     }
   }
@@ -356,7 +354,7 @@ targetcont:
   /* Looking for ones own nick? */
   if (!rfc_casecmp(nick, whotarget)) {
     dprintf(idx, "%s%sLooking for yourself, eh %s?\n",
-	    prefix, whoredirect, nick);
+            prefix, whoredirect, nick);
     return;
   }
   /* Check if nick is on a channel */
@@ -368,7 +366,7 @@ targetcont:
       sprintf(word1, "%s!%s", whotarget, m->userhost);
       urec = get_user_by_host(word1);
       if (!urec || !egg_strcasecmp(whotarget, urec->handle))
-	break;
+        break;
       strcat(whoredirect, whotarget);
       strcat(whoredirect, " is ");
       strcat(whoredirect, urec->handle);
@@ -383,18 +381,18 @@ targetcont:
     while (chan) {
       m = chan->channel.member;
       while (m && m->nick[0]) {
-	sprintf(word2, "%s!%s", m->nick, m->userhost);
-	urec = get_user_by_host(word2);
-	if (urec && !egg_strcasecmp(urec->handle, whotarget)) {
-	  onchan = 1;
-	  strcat(whoredirect, whotarget);
-	  strcat(whoredirect, " is ");
-	  strcat(whoredirect, m->nick);
-	  strcat(whoredirect, ", and ");
-	  strcpy(whotarget, m->nick);
-	  break;
-	}
-	m = m->next;
+        sprintf(word2, "%s!%s", m->nick, m->userhost);
+        urec = get_user_by_host(word2);
+        if (urec && !egg_strcasecmp(urec->handle, whotarget)) {
+          onchan = 1;
+          strcat(whoredirect, whotarget);
+          strcat(whoredirect, " is ");
+          strcat(whoredirect, m->nick);
+          strcat(whoredirect, ", and ");
+          strcpy(whotarget, m->nick);
+          break;
+        }
+        m = m->next;
       }
       chan = chan->next;
     }
@@ -405,14 +403,14 @@ targetcont:
     m = ismember(chan, whotarget);
     if (m && chan_issplit(m)) {
       dprintf(idx, "%s%s%s was just here, but got netsplit.\n",
-	      prefix, whoredirect, whotarget);
+              prefix, whoredirect, whotarget);
       return;
     }
   }
   /* Check if the target IS on the channel */
   if (chan && m) {
     dprintf(idx, "%s%s%s is on the channel right now!\n",
-	    prefix, whoredirect, whotarget);
+            prefix, whoredirect, whotarget);
     return;
   }
   /* Target not on this channel.   Check other channels */
@@ -421,14 +419,14 @@ targetcont:
     m = ismember(chan, whotarget);
     if (m && chan_issplit(m)) {
       dprintf(idx,
-	      "%s%s%s was just on %s, but got netsplit.\n",
-	      prefix, whoredirect, whotarget, chan->dname);
+              "%s%s%s was just on %s, but got netsplit.\n",
+              prefix, whoredirect, whotarget, chan->dname);
       return;
     }
     if (m) {
       dprintf(idx,
-	      "%s%s%s is on %s right now!\n",
-	      prefix, whoredirect, whotarget, chan->dname);
+              "%s%s%s is on %s right now!\n",
+              prefix, whoredirect, whotarget, chan->dname);
       return;
     }
     chan = chan->next;
@@ -439,7 +437,7 @@ targetcont:
   /* No match, then bail out */
   if (!urec) {
     dprintf(idx, "%s%sI don't know who %s is.\n",
-	    prefix, whoredirect, whotarget);
+            prefix, whoredirect, whotarget);
     return;
   }
   /* We had a userlist match to a handle */
@@ -447,18 +445,19 @@ targetcont:
   for (i = 0; i < dcc_total; i++) {
     if (dcc[i].type->flags & DCT_CHAT) {
       if (!egg_strcasecmp(whotarget, dcc[i].nick)) {
-	if (!rfc_casecmp(channel, dcc[i].u.chat->con_chan) &&
-	    dcc[i].u.chat->con_flags & LOG_PUBLIC) {
-	  strcat(whoredirect, whotarget);
-	  strcat(whoredirect,
-	   " is 'observing' this channel right now from my party line!");
-	  dprintf(idx, "%s%s\n", prefix, whoredirect);
-	} else {
-	  dprintf(idx,
-		  "%s%s%s is linked to me via DCC CHAT right now!\n",
-		  prefix, whoredirect, whotarget);
-	}
-	return;
+        if (!rfc_casecmp(channel, dcc[i].u.chat->con_chan) &&
+            dcc[i].u.chat->con_flags & LOG_PUBLIC) {
+          strcat(whoredirect, whotarget);
+          strcat(whoredirect,
+                 " is 'observing' this channel right now from my party line!");
+          dprintf(idx, "%s%s\n", prefix, whoredirect);
+        }
+        else {
+          dprintf(idx,
+                  "%s%s%s is linked to me via DCC CHAT right now!\n",
+                  prefix, whoredirect, whotarget);
+        }
+        return;
       }
     }
   }
@@ -469,18 +468,18 @@ targetcont:
   else
     for (cr = urec->chanrec; cr; cr = cr->next) {
       if (!rfc_casecmp(cr->channel, channel)) {
-	if (cr->laston) {
-	  laston = cr->laston;
-	  lastonplace = channel;
-	  break;
-	}
+        if (cr->laston) {
+          laston = cr->laston;
+          lastonplace = channel;
+          break;
+        }
       }
     }
   if (!cr) {
     li = get_user(&USERENTRY_LASTON, urec);
     if (!li || !li->lastonplace || !li->lastonplace[0]) {
       dprintf(idx, "%s%sI've never seen %s around.\n",
-	      prefix, whoredirect, whotarget);
+              prefix, whoredirect, whotarget);
       return;
     }
     lastonplace = li->lastonplace;
@@ -491,21 +490,22 @@ targetcont:
   work = now - laston;
   if (work >= 86400) {
     sprintf(word2, "%lu day%s, ", work / 86400,
-	    ((work / 86400) == 1) ? "" : "s");
+            ((work / 86400) == 1) ? "" : "s");
     work = work % 86400;
   }
   if (work >= 3600) {
     sprintf(word2 + strlen(word2), "%lu hour%s, ", work / 3600,
-	    ((work / 3600) == 1) ? "" : "s");
+            ((work / 3600) == 1) ? "" : "s");
     work = work % 3600;
   }
   if (work >= 60) {
     sprintf(word2 + strlen(word2), "%lu minute%s, ", work / 60,
-	    ((work / 60) == 1) ? "" : "s");
+            ((work / 60) == 1) ? "" : "s");
   }
   if (!word2[0] && (work < 60)) {
     strcpy(word2, "just moments ago!!");
-  } else {
+  }
+  else {
     strcpy(word2 + strlen(word2) - 2, " ago.");
   }
   if (lastonplace[0] && (strchr(CHANMETA, lastonplace[0]) != NULL))
@@ -517,7 +517,7 @@ targetcont:
   else
     strcpy(word1, "seen");
   dprintf(idx, "%s%s%s was last %s %s\n",
-	  prefix, whoredirect, whotarget, word1, word2);
+          prefix, whoredirect, whotarget, word1, word2);
 }
 
 static char fixit[512];
@@ -564,16 +564,17 @@ static char *getxtra(char *hand, char *field)
     ue = find_user_entry(&USERENTRY_XTRA, urec);
     if (ue)
       for (xk = ue->u.extra; xk; xk = xk->next)
-	if (xk->key && !egg_strcasecmp(xk->key, field)) {
-	  if (xk->data[0] == '{' && xk->data[strlen(xk->data) - 1] == '}' &&
-	      strlen(xk->data) > 2) {
-	    strncpy(fixit, &xk->data[1], strlen(xk->data) - 2);
-	    fixit[strlen(xk->data) - 2] = 0;
-	    return fixit;
-	  } else {
-	    return xk->data;
-	  }
-	}
+        if (xk->key && !egg_strcasecmp(xk->key, field)) {
+          if (xk->data[0] == '{' && xk->data[strlen(xk->data) - 1] == '}' &&
+              strlen(xk->data) > 2) {
+            strncpy(fixit, &xk->data[1], strlen(xk->data) - 2);
+            fixit[strlen(xk->data) - 2] = 0;
+            return fixit;
+          }
+          else {
+            return xk->data;
+          }
+        }
   }
   return "";
 }
@@ -597,22 +598,19 @@ static void seen_report(int idx, int details)
 }
 
 /* PUB channel builtin commands. */
-static cmd_t seen_pub[] =
-{
-  {"seen",	"",	pub_seen,	NULL},
-  {NULL,	NULL,	NULL,		NULL}
+static cmd_t seen_pub[] = {
+  {"seen", "",    pub_seen, NULL},
+  {NULL,   NULL, NULL,      NULL}
 };
 
-static cmd_t seen_dcc[] =
-{
-  {"seen",	"",	dcc_seen, 	NULL},
-  {NULL,	NULL,	NULL,		NULL}
+static cmd_t seen_dcc[] = {
+  {"seen", "",   dcc_seen, NULL},
+  {NULL,   NULL, NULL,     NULL}
 };
 
-static cmd_t seen_msg[] =
-{
-  {"seen",	"",	msg_seen,	NULL},
-  {NULL,	NULL,	NULL,		NULL}
+static cmd_t seen_msg[] = {
+  {"seen", "",   msg_seen, NULL},
+  {NULL,   NULL, NULL,     NULL}
 };
 
 static int server_seen_setup(char *mod)
@@ -633,11 +631,10 @@ static int irc_seen_setup(char *mod)
   return 0;
 }
 
-static cmd_t seen_load[] =
-{
-  {"server",	"",	server_seen_setup,	NULL},
-  {"irc",	"",	irc_seen_setup,		NULL},
-  {NULL,	NULL,	NULL,			NULL}
+static cmd_t seen_load[] = {
+  {"server", "",   server_seen_setup, NULL},
+  {"irc",    "",   irc_seen_setup,    NULL},
+  {NULL,     NULL, NULL,              NULL}
 };
 
 static char *seen_close()
@@ -657,15 +654,14 @@ static char *seen_close()
 
 EXPORT_SCOPE char *seen_start();
 
-static Function seen_table[] =
-{
+static Function seen_table[] = {
   (Function) seen_start,
   (Function) seen_close,
   (Function) seen_expmem,
   (Function) seen_report,
 };
 
-char *seen_start(Function * egg_func_table)
+char *seen_start(Function *egg_func_table)
 {
   global = egg_func_table;
 

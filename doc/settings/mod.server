@@ -20,11 +20,11 @@ There are also some variables you can set in your config file:
 
   set net-type 0
     What is your network?
-      0 = EFnet (non +e/+I hybrid)
+      0 = EFnet (non +e/+I Hybrid)
       1 = IRCnet
       2 = Undernet
       3 = DALnet
-      4 = EFnet +e/+I hybrid
+      4 = EFnet +e/+I Hybrid
       5 = Others
 
 

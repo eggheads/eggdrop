@@ -4,7 +4,7 @@
  *   Tcl initialization
  *   getting and setting Tcl/eggdrop variables
  *
- * $Id: tcl.c,v 1.57 2003/01/23 02:13:29 wcc Exp $
+ * $Id: tcl.c,v 1.58 2003/01/28 06:37:24 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -25,8 +25,8 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#include <stdlib.h>		/* getenv()				*/
-#include <locale.h>		/* setlocale()				*/
+#include <stdlib.h>             /* getenv()                             */
+#include <locale.h>             /* setlocale()                          */
 #include "main.h"
 
 #if ((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 1)) || (TCL_MAJOR_VERSION > 8)
@@ -35,10 +35,10 @@
 
 /* Used for read/write to internal strings */
 typedef struct {
-  char *str;			/* Pointer to actual string in eggdrop	     */
-  int max;			/* max length (negative: read-only var
-				   when protect is on) (0: read-only ALWAYS) */
-  int flags;			/* 1 = directory			     */
+  char *str;                    /* Pointer to actual string in eggdrop       */
+  int max;                      /* max length (negative: read-only var
+                                 * when protect is on) (0: read-only ALWAYS) */
+  int flags;                    /* 1 = directory                             */
 } strinfo;
 
 typedef struct {
@@ -47,7 +47,7 @@ typedef struct {
 } intinfo;
 
 
-extern time_t	online_since;
+extern time_t online_since;
 
 extern char origbotname[], botuser[], motdfile[], admin[], userfile[],
             firewall[], helpdir[], notify_new[], hostname[], myip[], moddir[],
@@ -64,19 +64,19 @@ extern int backgrd, flood_telnet_thr, flood_telnet_time, shtime, share_greet,
            debug_output, identtimeout, dcc_sanitycheck, dupwait_timeout,
            egg_numver, share_unlinks, protect_telnet, sort_users, strict_host,
            resolve_timeout, default_uflags, userfile_perm;
-	
+
 extern struct dcc_t *dcc;
-extern tcl_timer_t  *timer, *utimer;
+extern tcl_timer_t *timer, *utimer;
 
 Tcl_Interp *interp;
 
-int  protect_readonly = 0;	/* turn on/off readonly protection */
+int protect_readonly = 0; /* Enable read-only protection? */
 char whois_fields[1025] = "";
 
 int dcc_flood_thr = 3;
-int use_invites = 0;		/* Jason/drummer */
-int use_exempts = 0;		/* Jason/drummer */
-int force_expire = 0;		/* Rufus */
+int use_invites = 0;
+int use_exempts = 0;
+int force_expire = 0;
 int remote_boots = 2;
 int allow_dk_cmds = 1;
 int must_be_owner = 1;
@@ -84,8 +84,8 @@ int quiet_reject = 1;
 int copy_to_tmp = 1;
 int max_dcc = 20;
 int quick_logs = 0;
-int par_telnet_flood = 1;       /* dw */
-int quiet_save = 0;             /* Lucas */
+int par_telnet_flood = 1;
+int quiet_save = 0;
 int strtot = 0;
 int handlen = HANDLEN;
 int utftot = 0;
@@ -115,12 +115,14 @@ static void botnet_change(char *new)
   if (egg_strcasecmp(botnetnick, new)) {
     /* Trying to change bot's nickname */
     if (tands > 0) {
-      putlog(LOG_MISC, "*", "* Tried to change my botnet nick, but I'm still linked to a botnet.");
+      putlog(LOG_MISC, "*",
+             "* Tried to change my botnet nick, but I'm still linked to a botnet.");
       putlog(LOG_MISC, "*", "* (Unlink and try again.)");
       return;
-    } else {
+    }
+    else {
       if (botnetnick[0])
-	putlog(LOG_MISC, "*", "* IDENTITY CHANGE: %s -> %s", botnetnick, new);
+        putlog(LOG_MISC, "*", "* IDENTITY CHANGE: %s -> %s", botnetnick, new);
       strcpy(botnetnick, new);
     }
   }
@@ -135,17 +137,17 @@ int init_dcc_max(), init_misc();
 
 /* Used for read/write to integer couplets */
 typedef struct {
-  int *left;			/* left side of couplet */
-  int *right;			/* right side */
+  int *left;  /* left side of couplet */
+  int *right; /* right side */
 } coupletinfo;
 
 /* Read/write integer couplets (int1:int2) */
 #if (((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 4)) || (TCL_MAJOR_VERSION > 8))
-static char *tcl_eggcouplet(ClientData cdata, Tcl_Interp *irp, CONST char *name1,
-                            CONST char *name2, int flags)
+static char *tcl_eggcouplet(ClientData cdata, Tcl_Interp *irp,
+                            CONST char *name1, CONST char *name2, int flags)
 #else
 static char *tcl_eggcouplet(ClientData cdata, Tcl_Interp *irp, char *name1,
-			    char *name2, int flags)
+                            char *name2, int flags)
 #endif
 {
   char *s, s1[41];
@@ -156,15 +158,16 @@ static char *tcl_eggcouplet(ClientData cdata, Tcl_Interp *irp, char *name1,
     Tcl_SetVar2(interp, name1, name2, s1, TCL_GLOBAL_ONLY);
     if (flags & TCL_TRACE_UNSETS)
       Tcl_TraceVar(interp, name1,
-		   TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
-		   tcl_eggcouplet, cdata);
-  } else {			/* writes */
+                   TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
+                   tcl_eggcouplet, cdata);
+  }
+  else {                        /* writes */
     s = (char *) Tcl_GetVar2(interp, name1, name2, 0);
     if (s != NULL) {
       int nr1, nr2;
 
       if (strlen(s) > 40)
-	s[40] = 0;
+        s[40] = 0;
       sscanf(s, "%d%*c%d", &nr1, &nr2);
       *(cp->left) = nr1;
       *(cp->right) = nr2;
@@ -177,7 +180,7 @@ static char *tcl_eggcouplet(ClientData cdata, Tcl_Interp *irp, char *name1,
  */
 #if (((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 4)) || (TCL_MAJOR_VERSION > 8))
 static char *tcl_eggint(ClientData cdata, Tcl_Interp *irp, CONST char *name1,
-			CONST char *name2, int flags)
+                        CONST char *name2, int flags)
 #else
 static char *tcl_eggint(ClientData cdata, Tcl_Interp *irp, char *name1,
                         char *name2, int flags)
@@ -192,57 +195,67 @@ static char *tcl_eggint(ClientData cdata, Tcl_Interp *irp, char *name1,
     if ((int *) ii->var == &conmask)
       strcpy(s1, masktype(conmask));
     else if ((int *) ii->var == &default_flags) {
-      struct flag_record fr = {FR_GLOBAL, 0, 0, 0, 0, 0};
+      struct flag_record fr = { FR_GLOBAL, 0, 0, 0, 0, 0 };
       fr.global = default_flags;
+
       fr.udef_global = default_uflags;
       build_flags(s1, &fr, 0);
-    } else if ((int *) ii->var == &userfile_perm) {
+    }
+    else if ((int *) ii->var == &userfile_perm) {
       egg_snprintf(s1, sizeof s1, "0%o", userfile_perm);
-    } else
+    }
+    else
       egg_snprintf(s1, sizeof s1, "%d", *(int *) ii->var);
     Tcl_SetVar2(interp, name1, name2, s1, TCL_GLOBAL_ONLY);
     if (flags & TCL_TRACE_UNSETS)
       Tcl_TraceVar(interp, name1,
-		   TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
-		   tcl_eggint, cdata);
+                   TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
+                   tcl_eggint, cdata);
     return NULL;
-  } else {			/* Writes */
+  }
+  else {                        /* Writes */
     s = (char *) Tcl_GetVar2(interp, name1, name2, TCL_GLOBAL_ONLY);
     if (s != NULL) {
       if ((int *) ii->var == &conmask) {
-	if (s[0])
-	  conmask = logmodes(s);
-	else
-	  conmask = LOG_MODES | LOG_MISC | LOG_CMDS;
-      } else if ((int *) ii->var == &default_flags) {
-	struct flag_record fr = {FR_GLOBAL, 0, 0, 0, 0, 0};
+        if (s[0])
+          conmask = logmodes(s);
+        else
+          conmask = LOG_MODES | LOG_MISC | LOG_CMDS;
+      }
+      else if ((int *) ii->var == &default_flags) {
+        struct flag_record fr = { FR_GLOBAL, 0, 0, 0, 0, 0 };
 
-	break_down_flags(s, &fr, 0);
-	default_flags = sanity_check(fr.global); /* drummer */
-	default_uflags = fr.udef_global;
-      } else if ((int *) ii->var == &userfile_perm) {
-	int p = oatoi(s);
+        break_down_flags(s, &fr, 0);
+        default_flags = sanity_check(fr.global);        /* drummer */
 
-	if (p <= 0)
-	  return "invalid userfile permissions";
-	userfile_perm = p;
-      } else if ((ii->ro == 2) || ((ii->ro == 1) && protect_readonly)) {
-	return "read-only variable";
-      } else {
-	if (Tcl_ExprLong(interp, s, &l) == TCL_ERROR)
-	  return interp->result;
-	if ((int *) ii->var == &max_dcc) {
-	  if (l < max_dcc)
-	    return "you can't DECREASE max-dcc";
-	  max_dcc = l;
-	  init_dcc_max();
-	} else if ((int *) ii->var == &max_logs) {
-	  if (l < max_logs)
-	    return "you can't DECREASE max-logs";
-	  max_logs = l;
-	  init_misc();
-	} else
-	  *(ii->var) = (int) l;
+        default_uflags = fr.udef_global;
+      }
+      else if ((int *) ii->var == &userfile_perm) {
+        int p = oatoi(s);
+
+        if (p <= 0)
+          return "invalid userfile permissions";
+        userfile_perm = p;
+      }
+      else if ((ii->ro == 2) || ((ii->ro == 1) && protect_readonly))
+        return "read-only variable";
+      else {
+        if (Tcl_ExprLong(interp, s, &l) == TCL_ERROR)
+          return interp->result;
+        if ((int *) ii->var == &max_dcc) {
+          if (l < max_dcc)
+            return "you can't DECREASE max-dcc";
+          max_dcc = l;
+          init_dcc_max();
+        }
+        else if ((int *) ii->var == &max_logs) {
+          if (l < max_logs)
+            return "you can't DECREASE max-logs";
+          max_logs = l;
+          init_misc();
+        }
+        else
+          *(ii->var) = (int) l;
       }
     }
     return NULL;
@@ -256,7 +269,7 @@ static char *tcl_eggstr(ClientData cdata, Tcl_Interp *irp, CONST char *name1,
                         CONST char *name2, int flags)
 #else
 static char *tcl_eggstr(ClientData cdata, Tcl_Interp *irp, char *name1,
-			char *name2, int flags)
+                        char *name2, int flags)
 #endif
 {
   char *s;
@@ -268,16 +281,18 @@ static char *tcl_eggstr(ClientData cdata, Tcl_Interp *irp, char *name1,
 
       egg_snprintf(s1, sizeof s1, "%s:%d", firewall, firewallport);
       Tcl_SetVar2(interp, name1, name2, s1, TCL_GLOBAL_ONLY);
-    } else
+    }
+    else
       Tcl_SetVar2(interp, name1, name2, st->str, TCL_GLOBAL_ONLY);
     if (flags & TCL_TRACE_UNSETS) {
       Tcl_TraceVar(interp, name1, TCL_TRACE_READS | TCL_TRACE_WRITES |
-		   TCL_TRACE_UNSETS, tcl_eggstr, cdata);
+                   TCL_TRACE_UNSETS, tcl_eggstr, cdata);
       if ((st->max <= 0) && (protect_readonly || (st->max == 0)))
-	return "read-only variable"; /* it won't return the error... */
+        return "read-only variable";    /* it won't return the error... */
     }
     return NULL;
-  } else {			/* writes */
+  }
+  else {                        /* writes */
     if ((st->max <= 0) && (protect_readonly || (st->max == 0))) {
       Tcl_SetVar2(interp, name1, name2, st->str, TCL_GLOBAL_ONLY);
       return "read-only variable";
@@ -286,40 +301,43 @@ static char *tcl_eggstr(ClientData cdata, Tcl_Interp *irp, char *name1,
 #undef malloc
 #undef free
     {
-	  Tcl_Obj *obj;
-	  unsigned char *bytes;
-	  int len;
+      Tcl_Obj *obj;
+      unsigned char *bytes;
+      int len;
 
-	  obj = Tcl_GetVar2Ex(interp, name1, name2, 0);
-	  if (!obj) return(NULL);
-	  len = 0;
-	  bytes = Tcl_GetByteArrayFromObj(obj, &len);
-	  if (!bytes) return(NULL);
-	  s = malloc(len+1);
-	  memcpy(s, bytes, len);
-	  s[len] = 0;
+      obj = Tcl_GetVar2Ex(interp, name1, name2, 0);
+      if (!obj)
+        return (NULL);
+      len = 0;
+      bytes = Tcl_GetByteArrayFromObj(obj, &len);
+      if (!bytes)
+        return (NULL);
+      s = malloc(len + 1);
+      memcpy(s, bytes, len);
+      s[len] = 0;
     }
 #else
     s = (char *) Tcl_GetVar2(interp, name1, name2, 0);
 #endif
     if (s != NULL) {
       if (strlen(s) > abs(st->max))
-	s[abs(st->max)] = 0;
+        s[abs(st->max)] = 0;
       if (st->str == botnetnick)
-	botnet_change(s);
+        botnet_change(s);
       else if (st->str == logfile_suffix)
-	logsuffix_change(s);
+        logsuffix_change(s);
       else if (st->str == firewall) {
-	splitc(firewall, s, ':');
-	if (!firewall[0])
-	  strcpy(firewall, s);
-	else
-	  firewallport = atoi(s);
-      } else
-	strcpy(st->str, s);
+        splitc(firewall, s, ':');
+        if (!firewall[0])
+          strcpy(firewall, s);
+        else
+          firewallport = atoi(s);
+      }
+      else
+        strcpy(st->str, s);
       if ((st->flags) && (s[0])) {
-	if (st->str[strlen(st->str) - 1] != '/')
-	  strcat(st->str, "/");
+        if (st->str[strlen(st->str) - 1] != '/')
+          strcat(st->str, "/");
       }
 #ifdef USE_BYTE_ARRAYS
       free(s);
@@ -335,7 +353,7 @@ static char *tcl_eggstr(ClientData cdata, Tcl_Interp *irp, char *name1,
 #ifdef USE_BYTE_ARRAYS
 
 static int utf_converter(ClientData cdata, Tcl_Interp *myinterp, int objc,
-			 Tcl_Obj *CONST objv[])
+                         Tcl_Obj *CONST objv[])
 {
   char **strings, *byteptr;
   int i, len, retval, diff;
@@ -344,27 +362,28 @@ static int utf_converter(ClientData cdata, Tcl_Interp *myinterp, int objc,
   ClientData cd;
 
   objc += 5;
-  strings = (char **)nmalloc(sizeof(char *) * objc);
+  strings = (char **) nmalloc(sizeof(char *) * objc);
   egg_memset(strings, 0, sizeof(char *) * objc);
   diff = utftot;
   utftot += sizeof(char *) * objc;
   objc -= 5;
   for (i = 0; i < objc; i++) {
-    byteptr = (char *)Tcl_GetByteArrayFromObj(objv[i], &len);
-    strings[i] = (char *)nmalloc(len+1);
-    utftot += len+1;
+    byteptr = (char *) Tcl_GetByteArrayFromObj(objv[i], &len);
+    strings[i] = (char *) nmalloc(len + 1);
+    utftot += len + 1;
     strncpy(strings[i], byteptr, len);
     strings[i][len] = 0;
   }
-  callback_data = (void **)cdata;
+  callback_data = (void **) cdata;
   func = (Function) callback_data[0];
   cd = (ClientData) callback_data[1];
   diff -= utftot;
   retval = func(cd, myinterp, objc, strings);
-  for (i = 0; i < objc; i++) nfree(strings[i]);
+  for (i = 0; i < objc; i++)
+    nfree(strings[i]);
   nfree(strings);
   utftot += diff;
-  return(retval);
+  return (retval);
 }
 
 void cmd_delete_callback(ClientData cdata)
@@ -378,12 +397,12 @@ void add_tcl_commands(tcl_cmds *table)
   void **cdata;
 
   while (table->name) {
-    cdata = (void **)nmalloc(sizeof(void *) * 2);
+    cdata = (void **) nmalloc(sizeof(void *) * 2);
     clientdata_stuff += sizeof(void *) * 2;
     cdata[0] = table->func;
     cdata[1] = NULL;
     Tcl_CreateObjCommand(interp, table->name, utf_converter, (ClientData) cdata,
-			 cmd_delete_callback);
+                         cmd_delete_callback);
     table++;
   }
 }
@@ -393,12 +412,12 @@ void add_cd_tcl_cmds(cd_tcl_cmd *table)
   void **cdata;
 
   while (table->name) {
-    cdata = (void **)nmalloc(sizeof(void *) * 2);
+    cdata = (void **) nmalloc(sizeof(void *) * 2);
     clientdata_stuff += sizeof(void *) * 2;
     cdata[0] = table->callback;
     cdata[1] = table->cdata;
-    Tcl_CreateObjCommand(interp, table->name, utf_converter, (ClientData) cdata, 
-			 cmd_delete_callback);
+    Tcl_CreateObjCommand(interp, table->name, utf_converter, (ClientData) cdata,
+                         cmd_delete_callback);
     table++;
   }
 }
@@ -416,8 +435,8 @@ void add_tcl_commands(tcl_cmds *table)
 void add_cd_tcl_cmds(cd_tcl_cmd *table)
 {
   while (table->name) {
-    Tcl_CreateCommand(interp, table->name, table->callback, 
-		      (ClientData) table->cdata, NULL);
+    Tcl_CreateCommand(interp, table->name, table->callback,
+                      (ClientData) table->cdata, NULL);
     table++;
   }
 }
@@ -446,96 +465,91 @@ void add_tcl_objcommands(tcl_cmds *table)
   int i;
 
   for (i = 0; table[i].name; i++)
-    Tcl_CreateObjCommand(interp, table[i].name, table[i].func, (ClientData) 0, NULL);
+    Tcl_CreateObjCommand(interp, table[i].name, table[i].func, (ClientData) 0,
+                         NULL);
 #endif
 }
 
-/* Strings */
-static tcl_strings def_tcl_strings[] =
-{
-  {"botnet-nick",	botnetnick,	HANDLEN,	0},
-  {"userfile",		userfile,	120,		STR_PROTECT},
-  {"motd",		motdfile,	120,		STR_PROTECT},
-  {"admin",		admin,		120,		0},
-  {"help-path",		helpdir,	120,		STR_DIR | STR_PROTECT},
-  {"temp-path",		tempdir,	120,		STR_DIR | STR_PROTECT},
-  {"text-path",		textdir,	120,		STR_DIR | STR_PROTECT},
+static tcl_strings def_tcl_strings[] = {
+  {"botnet-nick",     botnetnick,     HANDLEN,                 0},
+  {"userfile",        userfile,       120,           STR_PROTECT},
+  {"motd",            motdfile,       120,           STR_PROTECT},
+  {"admin",           admin,          120,                     0},
+  {"help-path",       helpdir,        120, STR_DIR | STR_PROTECT},
+  {"temp-path",       tempdir,        120, STR_DIR | STR_PROTECT},
+  {"text-path",       textdir,        120, STR_DIR | STR_PROTECT},
 #ifndef STATIC
-  {"mod-path",		moddir,		120,		STR_DIR | STR_PROTECT},
+  {"mod-path",        moddir,         120, STR_DIR | STR_PROTECT},
 #endif
-  {"notify-newusers",	notify_new,	120,		0},
-  {"owner",		owner,		120,		STR_PROTECT},
-  {"my-hostname",	hostname,	120,		0},
-  {"my-ip",		myip,		120,		0},
-  {"network",		network,	40,		0},
-  {"whois-fields",	whois_fields,	1024,		0},
-  {"nat-ip",		natip,		120,		0},
-  {"username",		botuser,	10,		0},
-  {"version",		egg_version,	0,		0},
-  {"firewall",		firewall,	120,		0},
-/* confvar patch by aaronwl */
-  {"config",		configfile,	0,		0},
-  {"telnet-banner",	bannerfile,	120,		STR_PROTECT},
-  {"logfile-suffix",	logfile_suffix,	20,		0},
-  {"pidfile",		pid_file,       120,		STR_PROTECT},
-  {NULL,		NULL,		0,		0}
+  {"notify-newusers", notify_new,     120,                     0},
+  {"owner",           owner,          120,           STR_PROTECT},
+  {"my-hostname",     hostname,       120,                     0},
+  {"my-ip",           myip,           120,                     0},
+  {"network",         network,        40,                      0},
+  {"whois-fields",    whois_fields,   1024,                    0},
+  {"nat-ip",          natip,          120,                     0},
+  {"username",        botuser,        10,                      0},
+  {"version",         egg_version,    0,                       0},
+  {"firewall",        firewall,       120,                     0},
+  {"config",          configfile,     0,                       0},
+  {"telnet-banner",   bannerfile,     120,           STR_PROTECT},
+  {"logfile-suffix",  logfile_suffix, 20,                      0},
+  {"pidfile",         pid_file,       120,           STR_PROTECT},
+  {NULL,              NULL,           0,                       0}
 };
 
-/* Ints */
-static tcl_ints def_tcl_ints[] =
-{
-  {"ignore-time",		&ignore_time,		0},
-  {"handlen",			&handlen,		2},
-  {"dcc-flood-thr",		&dcc_flood_thr,		0},
-  {"hourly-updates",		&notify_users_at,	0},
-  {"switch-logfiles-at",	&switch_logfiles_at,	0},
-  {"connect-timeout",		&connect_timeout,	0},
-  {"reserved-port",		&reserved_port_min,	0},
-  {"require-p",			&require_p,		0},
-  {"keep-all-logs",		&keep_all_logs,		0},
-  {"open-telnets",		&allow_new_telnets,	0},
-  {"stealth-telnets",		&stealth_telnets,	0},
-  {"use-telnet-banner",		&use_telnet_banner,	0},
-  {"uptime",			(int *) &online_since,	2},
-  {"console",			&conmask,		0},
-  {"default-flags",		&default_flags,		0},
-  {"numversion",		&egg_numver,		2},
-  {"die-on-sighup",		&die_on_sighup,		1},
-  {"die-on-sigterm",		&die_on_sigterm,	1},
-  {"remote-boots",		&remote_boots,		1},
-  {"max-dcc",			&max_dcc,		0},
-  {"max-logs",			&max_logs,		0},
-  {"max-logsize",		&max_logsize,		0},
-  {"quick-logs",		&quick_logs,		0},
-  {"enable-simul",		&enable_simul,		1},
-  {"debug-output",		&debug_output,		1},
-  {"protect-telnet",		&protect_telnet,	0},
-  {"dcc-sanitycheck",		&dcc_sanitycheck,	0},
-  {"sort-users",		&sort_users,		0},
-  {"ident-timeout",		&identtimeout,		0},
-  {"share-unlinks",		&share_unlinks,		0},
-  {"log-time",			&shtime,		0},
-  {"allow-dk-cmds",		&allow_dk_cmds,		0},
-  {"resolve-timeout",		&resolve_timeout,	0},
-  {"must-be-owner",		&must_be_owner,		1},
-  {"paranoid-telnet-flood",	&par_telnet_flood,	0},
-  {"use-exempts",		&use_exempts,		0}, /* Jason/drummer */
-  {"use-invites",		&use_invites,		0}, /* Jason/drummer */
-  {"quiet-save",		&quiet_save,		0}, /* Lucas */
-  {"force-expire",		&force_expire,		0}, /* Rufus */
-  {"dupwait-timeout",		&dupwait_timeout,	0},
-  {"strict-host",		&strict_host,		0}, /* drummer */
-  {"userfile-perm",		&userfile_perm,		0},
-  {"copy-to-tmp",               &copy_to_tmp,		0},
-  {"quiet-reject",              &quiet_reject,		0},
-  {NULL,			NULL,			0}  /* arthur2 */
+static tcl_ints def_tcl_ints[] = {
+  {"ignore-time",           &ignore_time,          0},
+  {"handlen",               &handlen,              2},
+  {"dcc-flood-thr",         &dcc_flood_thr,        0},
+  {"hourly-updates",        &notify_users_at,      0},
+  {"switch-logfiles-at",    &switch_logfiles_at,   0},
+  {"connect-timeout",       &connect_timeout,      0},
+  {"reserved-port",         &reserved_port_min,    0},
+  {"require-p",             &require_p,            0},
+  {"keep-all-logs",         &keep_all_logs,        0},
+  {"open-telnets",          &allow_new_telnets,    0},
+  {"stealth-telnets",       &stealth_telnets,      0},
+  {"use-telnet-banner",     &use_telnet_banner,    0},
+  {"uptime",                (int *) &online_since, 2},
+  {"console",               &conmask,              0},
+  {"default-flags",         &default_flags,        0},
+  {"numversion",            &egg_numver,           2},
+  {"die-on-sighup",         &die_on_sighup,        1},
+  {"die-on-sigterm",        &die_on_sigterm,       1},
+  {"remote-boots",          &remote_boots,         1},
+  {"max-dcc",               &max_dcc,              0},
+  {"max-logs",              &max_logs,             0},
+  {"max-logsize",           &max_logsize,          0},
+  {"quick-logs",            &quick_logs,           0},
+  {"enable-simul",          &enable_simul,         1},
+  {"debug-output",          &debug_output,         1},
+  {"protect-telnet",        &protect_telnet,       0},
+  {"dcc-sanitycheck",       &dcc_sanitycheck,      0},
+  {"sort-users",            &sort_users,           0},
+  {"ident-timeout",         &identtimeout,         0},
+  {"share-unlinks",         &share_unlinks,        0},
+  {"log-time",              &shtime,               0},
+  {"allow-dk-cmds",         &allow_dk_cmds,        0},
+  {"resolve-timeout",       &resolve_timeout,      0},
+  {"must-be-owner",         &must_be_owner,        1},
+  {"paranoid-telnet-flood", &par_telnet_flood,     0},
+  {"use-exempts",           &use_exempts,          0},
+  {"use-invites",           &use_invites,          0},
+  {"quiet-save",            &quiet_save,           0},
+  {"force-expire",          &force_expire,         0},
+  {"dupwait-timeout",       &dupwait_timeout,      0},
+  {"strict-host",           &strict_host,          0},
+  {"userfile-perm",         &userfile_perm,        0},
+  {"copy-to-tmp",           &copy_to_tmp,          0},
+  {"quiet-reject",          &quiet_reject,         0},
+  {NULL,                    NULL,                  0}
 };
 
-static tcl_coups def_tcl_coups[] =
-{
-  {"telnet-flood",	 &flood_telnet_thr,	&flood_telnet_time},
-  {"reserved-portrange", &reserved_port_min,	&reserved_port_max},
-  {NULL,		NULL,			NULL}
+static tcl_coups def_tcl_coups[] = {
+  {"telnet-flood",       &flood_telnet_thr,  &flood_telnet_time},
+  {"reserved-portrange", &reserved_port_min, &reserved_port_max},
+  {NULL,                 NULL,                             NULL}
 };
 
 /* Set up Tcl variables that will hook into eggdrop internal vars via
@@ -557,7 +571,8 @@ void kill_tcl()
   Tcl_DeleteInterp(interp);
 }
 
-extern tcl_cmds tcluser_cmds[], tcldcc_cmds[], tclmisc_cmds[], tclmisc_objcmds[], tcldns_cmds[];
+extern tcl_cmds tcluser_cmds[], tcldcc_cmds[], tclmisc_cmds[],
+       tclmisc_objcmds[], tcldns_cmds[];
 
 /* Not going through Tcl's crazy main() system (what on earth was he
  * smoking?!) so we gotta initialize the Tcl interpreter
@@ -619,8 +634,8 @@ void init_tcl(int argc, char **argv)
   if (langEnv != NULL) {
     for (i = 0; localeTable[i].lang != NULL; i++)
       if (strcmp(localeTable[i].lang, langEnv) == 0) {
-	encoding = localeTable[i].encoding;
-	break;
+        encoding = localeTable[i].encoding;
+        break;
       }
 
     /* There was no mapping in the locale table.  If there is an
@@ -637,6 +652,7 @@ void init_tcl(int argc, char **argv)
       }
       if (*p != '\0') {
         Tcl_DString ds;
+
         Tcl_DStringInit(&ds);
         Tcl_DStringAppend(&ds, p, -1);
 
@@ -717,7 +733,7 @@ int readtclprog(char *fname)
   if (Tcl_EvalFile(interp, fname) != TCL_OK) {
     putlog(LOG_MISC, "*", "Tcl error in file '%s':", fname);
     putlog(LOG_MISC, "*", "%s",
-	   Tcl_GetVar(interp, "errorInfo", TCL_GLOBAL_ONLY));
+           Tcl_GetVar(interp, "errorInfo", TCL_GLOBAL_ONLY));
     return 0;
   }
 
@@ -745,7 +761,7 @@ void add_tcl_strings(tcl_strings *list)
     protect_readonly = tmp;
     tcl_eggstr((ClientData) st, interp, list[i].name, NULL, TCL_TRACE_READS);
     Tcl_TraceVar(interp, list[i].name, TCL_TRACE_READS | TCL_TRACE_WRITES |
-		 TCL_TRACE_UNSETS, tcl_eggstr, (ClientData) st);
+                 TCL_TRACE_UNSETS, tcl_eggstr, (ClientData) st);
   }
 }
 
@@ -756,13 +772,11 @@ void rem_tcl_strings(tcl_strings *list)
 
   for (i = 0; list[i].name; i++) {
     st = (strinfo *) Tcl_VarTraceInfo(interp, list[i].name,
-				      TCL_TRACE_READS |
-				      TCL_TRACE_WRITES |
-				      TCL_TRACE_UNSETS,
-				      tcl_eggstr, NULL);
+         TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS, tcl_eggstr,
+         NULL);
     Tcl_UntraceVar(interp, list[i].name,
-		   TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
-		   tcl_eggstr, st);
+                   TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
+                   tcl_eggstr, st);
     if (st != NULL) {
       strtot -= sizeof(strinfo);
       nfree(st);
@@ -786,8 +800,8 @@ void add_tcl_ints(tcl_ints *list)
     protect_readonly = tmp;
     tcl_eggint((ClientData) ii, interp, list[i].name, NULL, TCL_TRACE_READS);
     Tcl_TraceVar(interp, list[i].name,
-		 TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
-		 tcl_eggint, (ClientData) ii);
+                 TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
+                 tcl_eggint, (ClientData) ii);
   }
 
 }
@@ -799,13 +813,11 @@ void rem_tcl_ints(tcl_ints *list)
 
   for (i = 0; list[i].name; i++) {
     ii = (intinfo *) Tcl_VarTraceInfo(interp, list[i].name,
-				      TCL_TRACE_READS |
-				      TCL_TRACE_WRITES |
-				      TCL_TRACE_UNSETS,
-				      tcl_eggint, NULL);
+         TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS, tcl_eggint,
+         NULL);
     Tcl_UntraceVar(interp, list[i].name,
-		   TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
-		   tcl_eggint, (ClientData) ii);
+                   TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
+                   tcl_eggint, (ClientData) ii);
     if (ii) {
       strtot -= sizeof(intinfo);
       nfree(ii);
@@ -826,30 +838,28 @@ void add_tcl_coups(tcl_coups *list)
     cp->left = list[i].lptr;
     cp->right = list[i].rptr;
     tcl_eggcouplet((ClientData) cp, interp, list[i].name, NULL,
-		   TCL_TRACE_WRITES);
+                   TCL_TRACE_WRITES);
     tcl_eggcouplet((ClientData) cp, interp, list[i].name, NULL,
-		   TCL_TRACE_READS);
+                   TCL_TRACE_READS);
     Tcl_TraceVar(interp, list[i].name,
-		 TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
-		 tcl_eggcouplet, (ClientData) cp);
+                 TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
+                 tcl_eggcouplet, (ClientData) cp);
   }
 }
 
-void rem_tcl_coups(tcl_coups * list)
+void rem_tcl_coups(tcl_coups *list)
 {
   coupletinfo *cp;
   int i;
 
   for (i = 0; list[i].name; i++) {
     cp = (coupletinfo *) Tcl_VarTraceInfo(interp, list[i].name,
-					  TCL_TRACE_READS |
-					  TCL_TRACE_WRITES |
-					  TCL_TRACE_UNSETS,
-					  tcl_eggcouplet, NULL);
+         TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS, tcl_eggcouplet,
+         NULL);
     strtot -= sizeof(coupletinfo);
     Tcl_UntraceVar(interp, list[i].name,
-		   TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
-		   tcl_eggcouplet, (ClientData) cp);
+                   TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
+                   tcl_eggcouplet, (ClientData) cp);
     nfree(cp);
   }
 }

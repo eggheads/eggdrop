@@ -7,7 +7,7 @@
  * because they use structures in those
  * (saves including those .h files EVERY time) - Beldin
  *
- * $Id: proto.h,v 1.53 2003/01/20 08:51:19 wcc Exp $
+ * $Id: proto.h,v 1.54 2003/01/28 06:37:24 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -38,7 +38,7 @@
 #define dprintf dprintf_eggdrop
 #endif
 
-struct chanset_t;		/* keeps the compiler warnings down :) */
+struct chanset_t;               /* keeps the compiler warnings down :) */
 struct userrec;
 struct maskrec;
 struct igrec;
@@ -186,6 +186,7 @@ void backup_userfile(void);
 /* match.c */
 int _wild_match(register unsigned char *, register unsigned char *);
 int _wild_match_per(register unsigned char *, register unsigned char *);
+
 #define wild_match(a,b) _wild_match((unsigned char *)(a),(unsigned char *)(b))
 #define wild_match_per(a,b) _wild_match_per((unsigned char *)(a),(unsigned char *)(b))
 
@@ -290,7 +291,7 @@ void freeuser(struct userrec *);
 int change_handle(struct userrec *, char *);
 void correct_handle(char *);
 int write_user(struct userrec *, FILE *, int);
-int write_ignores(FILE * f, int);
+int write_ignores(FILE *f, int);
 void write_userfile(int);
 struct userrec *check_dcclist_hand(char *);
 void touch_laston(struct userrec *, char *, time_t);
@@ -315,4 +316,4 @@ int _rfc_ncasecmp(const char *, const char *, int);
 int _rfc_toupper(int);
 int _rfc_tolower(int);
 
-#endif				/* _EGG_PROTO_H */
+#endif /* _EGG_PROTO_H */

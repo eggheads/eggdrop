@@ -1,7 +1,7 @@
 /*
  * tandem.h
  *
- * $Id: tandem.h,v 1.10 2002/12/24 02:30:05 wcc Exp $
+ * $Id: tandem.h,v 1.11 2003/01/28 06:37:24 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -44,7 +44,7 @@ typedef struct {
   char *from;
   char flag;
   char status;
-  time_t timer;			/* Track idle time */
+  time_t timer;                 /* Track idle time */
   char *away;
 } party_t;
 
@@ -96,7 +96,7 @@ void botnet_send_nkch(int, char *);
 int bots_in_subtree(tand_t *);
 int users_in_subtree(tand_t *);
 
-#endif				/* MAKING_MODS */
+#endif /* MAKING_MODS */
 
 
 #define b_status(a)	(dcc[a].status)
@@ -104,4 +104,4 @@ int users_in_subtree(tand_t *);
 #define b_linker(a)	(dcc[a].u.bot->linker)
 #define b_numver(a)	(dcc[a].u.bot->numver)
 
-#endif				/* _EGG_TANDEM_H */
+#endif /* _EGG_TANDEM_H */

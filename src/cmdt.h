@@ -2,7 +2,7 @@
  * cmdt.h
  *   stuff for builtin commands
  *
- * $Id: cmdt.h,v 1.6 2002/12/24 02:30:04 wcc Exp $
+ * $Id: cmdt.h,v 1.7 2003/01/28 06:37:24 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -39,4 +39,4 @@ typedef struct {
   Function func;
 } botcmd_t;
 
-#endif				/* _EGG_CMDT_H */
+#endif /* _EGG_CMDT_H */

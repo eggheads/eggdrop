@@ -1,7 +1,7 @@
 /*
  * tcltransfer.c -- part of transfer.mod
  *
- * $Id: tcltransfer.c,v 1.1 2003/01/23 02:13:29 wcc Exp $
+ * $Id: tcltransfer.c,v 1.2 2003/01/28 06:37:26 wcc Exp $
  *
  * Copyright (C) 2003 Eggheads Development Team
  *
@@ -31,8 +31,8 @@ static int tcl_dccsend STDVAR
     Tcl_AppendResult(irp, "3", NULL);
     return TCL_OK;
   }
-
   nfn = strrchr(argv[1], '/');
+
   if (nfn == NULL)
     nfn = argv[1];
   else
@@ -60,7 +60,8 @@ static int tcl_dccsend STDVAR
       return TCL_OK;
     }
     copyfile(argv[1], sys);
-  } else {
+  }
+  else {
     sys = nmalloc(strlen(argv[1]) + 1);
     strcpy(sys, argv[1]);
   }
@@ -79,17 +80,19 @@ static int tcl_getfileq STDVAR
   fileq_t *q;
 
   BADARGS(2, 2, " handle");
+
   for (q = fileq; q; q = q->next) {
     if (!egg_strcasecmp(q->nick, argv[1])) {
       s = nrealloc(s, strlen(q->to) + strlen(q->dir) + strlen(q->file) + 4);
       if (q->dir[0] == '*')
-	sprintf(s, "%s %s/%s", q->to, &q->dir[1], q->file);
+        sprintf(s, "%s %s/%s", q->to, &q->dir[1], q->file);
       else
-	sprintf(s, "%s /%s%s%s", q->to, q->dir, q->dir[0] ? "/" : "", q->file);
+        sprintf(s, "%s /%s%s%s", q->to, q->dir, q->dir[0] ? "/" : "", q->file);
       Tcl_AppendElement(irp, s);
     }
   }
-  if (s) nfree(s);
+  if (s)
+    nfree(s);
   return TCL_OK;
 }
 
@@ -99,15 +102,16 @@ static int tcl_getfilesendtime STDVAR
   char s[15];
 
   BADARGS(2, 2, " idx");
+ 
   sock = atoi(argv[1]);
-
   for (i = 0; i < dcc_total; i++) {
     if (dcc[i].sock == sock) {
       if (dcc[i].type == &DCC_SEND || dcc[i].type == &DCC_GET) {
-	egg_snprintf(s, sizeof s, "%lu", dcc[i].u.xfer->start_time);
-	Tcl_AppendResult(irp, s, NULL);
-      } else
-	Tcl_AppendResult(irp, "-2", NULL); /* Not a valid file transfer */
+        egg_snprintf(s, sizeof s, "%lu", dcc[i].u.xfer->start_time);
+        Tcl_AppendResult(irp, s, NULL);
+      }
+      else
+        Tcl_AppendResult(irp, "-2", NULL); /* Not a valid file transfer */
       return TCL_OK;
     }
   }
@@ -115,10 +119,9 @@ static int tcl_getfilesendtime STDVAR
   return TCL_OK;
 }
 
-static tcl_cmds mytcls[] =
-{
-  {"dccsend",		tcl_dccsend},
-  {"getfileq",		tcl_getfileq},
-  {"getfilesendtime", 	tcl_getfilesendtime},
-  {NULL,		NULL}
+static tcl_cmds mytcls[] = {
+  {"dccsend",                 tcl_dccsend},
+  {"getfileq",               tcl_getfileq},
+  {"getfilesendtime", tcl_getfilesendtime},
+  {NULL,                             NULL}
 };

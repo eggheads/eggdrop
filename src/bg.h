@@ -1,7 +1,7 @@
 /*
  * bg.h
  *
- * $Id: bg.h,v 1.4 2002/12/24 02:30:04 wcc Exp $
+ * $Id: bg.h,v 1.5 2003/01/28 06:37:24 wcc Exp $
  */
 /*
  * Copyright (C) 2000, 2001, 2002, 2003 Eggheads Development Team
@@ -25,12 +25,12 @@
 #define _EGG_BG_H
 
 typedef enum {
-	BG_QUIT = 1,
-	BG_ABORT
+  BG_QUIT = 1,
+  BG_ABORT
 } bg_quit_t;
 
 void bg_prepare_split(void);
 void bg_send_quit(bg_quit_t q);
 void bg_do_split(void);
 
-#endif			/* _EGG_BG_H */
+#endif /* _EGG_BG_H */

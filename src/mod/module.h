@@ -1,7 +1,7 @@
 /*
  * module.h
  *
- * $Id: module.h,v 1.67 2003/01/23 02:13:29 wcc Exp $
+ * $Id: module.h,v 1.68 2003/01/28 06:37:25 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -374,9 +374,9 @@
 /* 223: gexempt_total -- UNUSED (Eule) */
 /* 224 - 227 */
 #define H_event (*(p_tcl_bind_list *)(global[224]))
-#define use_exempts (*(int *)(global[225]))	/* drummer/Jason */
-#define use_invites (*(int *)(global[226]))	/* drummer/Jason */
-#define force_expire (*(int *)(global[227]))	/* Rufus */
+#define use_exempts (*(int *)(global[225]))     /* drummer/Jason */
+#define use_invites (*(int *)(global[226]))     /* drummer/Jason */
+#define force_expire (*(int *)(global[227]))    /* Rufus */
 /* 228 - 231 */
 #define add_lang_section ((void(*)(char *))global[228])
 #define user_realloc(x,y) ((void *(*)(void *,int,char *,int))global[229])((x),(y),__FILE__,__LINE__)
@@ -477,4 +477,4 @@
 	(((char *(*)(char *,char*))encryption_funcs[5])(a,b))
 #endif
 
-#endif				/* _EGG_MOD_MODULE_H */
+#endif /* _EGG_MOD_MODULE_H */

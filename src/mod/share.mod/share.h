@@ -1,7 +1,7 @@
 /*
  * share.h -- part of share.mod
  *
- * $Id: share.h,v 1.5 2002/12/24 02:30:08 wcc Exp $
+ * $Id: share.h,v 1.6 2003/01/28 06:37:26 wcc Exp $
  */
 /*
  * Copyright (C) 1999, 2000, 2001, 2002, 2003 Eggheads Development Team
@@ -24,9 +24,9 @@
 #ifndef _EGG_MOD_SHARE_SHARE_H
 #define _EGG_MOD_SHARE_SHARE_H
 
-#define	UFF_OVERRIDE	0x000001	/* Override existing bot entries    */
-#define UFF_INVITE	0x000002	/* Send invites in user file	    */
-#define UFF_EXEMPT	0x000004	/* Send exempts in user file	    */
+#define UFF_OVERRIDE  0x000001  /* Override existing bot entries    */
+#define UFF_INVITE    0x000002  /* Send invites in user file        */
+#define UFF_EXEMPT    0x000004  /* Send exempts in user file        */
 /* Currently reserved flags for other modules:
  *      UFF_COMPRESS    0x000008	   Compress the user file
  *      UFF_ENCRYPT	0x000010	   Encrypt the user file
@@ -41,17 +41,15 @@
  */
 
 typedef struct {
-  char	 *feature;		/* Name of the feature			*/
-  int	  flag;			/* Flag representing the feature	*/
-  int	(*ask_func)(int);	/* Pointer to the function that tells
-				   us wether the feature should be
-				   considered as on.			*/
-  int	  priority;		/* Priority with which this entry gets
-				   called.				*/
-  int	(*snd)(int, char *);	/* Called before sending. Handled
-				   according to `priority'.		*/
-  int	(*rcv)(int, char *);	/* Called on receive. Handled according
-				   to `priority'.			*/
+  char *feature;            /* Name of the feature                           */
+  int flag;                 /* Flag representing the feature                 */
+  int (*ask_func) (int);    /* Pointer to the function that tells us wether
+                             * the feature should be considered as on.       */
+  int priority;             /* Priority with which this entry gets called.   */
+  int (*snd) (int, char *); /* Called before sending. Handled according to
+                             * `priority'. */
+  int (*rcv) (int, char *); /* Called on receive. Handled according to
+                             * `priority'.                                   */
 } uff_table_t;
 
 #ifndef MAKING_SHARE
@@ -61,6 +59,6 @@ typedef struct {
 #define uff_addtable ((void (*) (uff_table_t *))share_funcs[6])
 #define uff_deltable ((void (*) (uff_table_t *))share_funcs[7])
 /* 8 - 11 */
-#endif				/* !MAKING_SHARE */
+#endif /* !MAKING_SHARE */
 
-#endif				/* _EGG_MOD_SHARE_SHARE_H */
+#endif /* _EGG_MOD_SHARE_SHARE_H */

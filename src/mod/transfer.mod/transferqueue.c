@@ -1,7 +1,7 @@
 /*
  * transferqueue.c -- part of transfer.mod
  *
- * $Id: transferqueue.c,v 1.1 2003/01/23 02:13:29 wcc Exp $
+ * $Id: transferqueue.c,v 1.2 2003/01/28 06:37:26 wcc Exp $
  *
  * Copyright (C) 2003 Eggheads Development Team
  *
@@ -104,7 +104,8 @@ static void send_next_file(char *to)
   if (this->dir[0] == '*') { /* Absolute path */
     s = nmalloc(strlen(&this->dir[1]) + strlen(this->file) + 2);
     sprintf(s, "%s/%s", &this->dir[1], this->file);
-  } else {
+  }
+  else {
     char *p = strchr(this->dir, '*');
 
     if (p == NULL) {
@@ -130,14 +131,16 @@ static void send_next_file(char *to)
       nfree(s);
       return;
     }
-  } else {
+  }
+  else {
     s1 = nmalloc(strlen(s) + 1);
     strcpy(s1, s);
   }
   if (this->dir[0] == '*') {
     s = nrealloc(s, strlen(&this->dir[1]) + strlen(this->file) + 2);
     sprintf(s, "%s/%s", &this->dir[1], this->file);
-  } else {
+  }
+  else {
     s = nrealloc(s, strlen(this->dir) + strlen(this->file) + 2);
     sprintf(s, "%s%s%s", this->dir, this->dir[0] ? "/" : "", this->file);
   }
@@ -152,16 +155,18 @@ static void send_next_file(char *to)
   }
   wipe_tmp_filename(s1, -1);
   if (x == DCCSEND_FULL) {
-    putlog(LOG_FILES, "*",TRANSFER_LOG_CONFULL, s1, this->nick);
+    putlog(LOG_FILES, "*", TRANSFER_LOG_CONFULL, s1, this->nick);
     dprintf(DP_HELP, TRANSFER_NOTICE_CONFULL, this->to);
     strcpy(s, this->to);
     flush_fileq(s);
-  } else if (x == DCCSEND_NOSOCK) {
+  }
+  else if (x == DCCSEND_NOSOCK) {
     putlog(LOG_FILES, "*", TRANSFER_LOG_SOCKERR, s1, this->nick);
     dprintf(DP_HELP, TRANSFER_NOTICE_SOCKERR, this->to);
     strcpy(s, this->to);
     flush_fileq(s);
-  } else {
+  }
+  else {
     if (x == DCCSEND_FEMPTY) {
       putlog(LOG_FILES, "*", TRANSFER_LOG_FILEEMPTY, this->file);
       dprintf(DP_HELP, TRANSFER_NOTICE_FILEEMPTY, this->to, this->file);
@@ -284,9 +289,9 @@ static void fileq_cancel(int idx, char *par)
         dprintf(idx, TRANSFER_ABORT_DCCSEND, nfn);
         if (egg_strcasecmp(dcc[i].nick, dcc[idx].nick))
           dprintf(DP_HELP, TRANSFER_NOTICE_ABORT, dcc[i].nick, nfn,
-          dcc[idx].nick);
+                  dcc[idx].nick);
         if (dcc[i].type == &DCC_GET)
-          putlog(LOG_FILES, "*",TRANSFER_DCC_CANCEL, nfn, dcc[i].nick,
+          putlog(LOG_FILES, "*", TRANSFER_DCC_CANCEL, nfn, dcc[i].nick,
                  dcc[i].status, dcc[i].u.xfer->length);
         wipe_tmp_filename(dcc[i].u.xfer->filename, i);
         atot++;

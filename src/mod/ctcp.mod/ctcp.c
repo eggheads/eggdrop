@@ -2,7 +2,7 @@
  * ctcp.c -- part of ctcp.mod
  *   all the ctcp handling (except DCC, it's special ;)
  *
- * $Id: ctcp.c,v 1.19 2002/12/24 02:30:07 wcc Exp $
+ * $Id: ctcp.c,v 1.20 2003/01/28 06:37:25 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -40,7 +40,7 @@ static int ctcp_mode = 0;
 
 
 static int ctcp_FINGER(char *nick, char *uhost, char *handle,
-		       char *object, char *keyword, char *text)
+                       char *object, char *keyword, char *text)
 {
   if (ctcp_mode != 1 && ctcp_finger[0])
     simple_sprintf(ctcp_reply, "%s\001FINGER %s\001", ctcp_reply, ctcp_finger);
@@ -48,7 +48,7 @@ static int ctcp_FINGER(char *nick, char *uhost, char *handle,
 }
 
 static int ctcp_ECHOERR(char *nick, char *uhost, char *handle,
-			char *object, char *keyword, char *text)
+                        char *object, char *keyword, char *text)
 {
   if (ctcp_mode != 1 && strlen(text) <= 80)
     simple_sprintf(ctcp_reply, "%s\001%s %s\001", ctcp_reply, keyword, text);
@@ -56,36 +56,36 @@ static int ctcp_ECHOERR(char *nick, char *uhost, char *handle,
 }
 
 static int ctcp_PING(char *nick, char *uhost, char *handle,
-		     char *object, char *keyword, char *text)
+                     char *object, char *keyword, char *text)
 {
   struct userrec *u = get_user_by_handle(userlist, handle);
   int atr = u ? u->flags : 0;
 
   if ((ctcp_mode != 1 || (atr & USER_OP)) && strlen(text) <= 80)
-      simple_sprintf(ctcp_reply, "%s\001%s %s\001", ctcp_reply, keyword, text);
+    simple_sprintf(ctcp_reply, "%s\001%s %s\001", ctcp_reply, keyword, text);
   return 1;
 }
 
 static int ctcp_VERSION(char *nick, char *uhost, char *handle,
-			char *object, char *keyword, char *text)
+                        char *object, char *keyword, char *text)
 {
   if (ctcp_mode != 1 && ctcp_version[0])
     simple_sprintf(ctcp_reply, "%s\001VERSION %s\001", ctcp_reply,
-		   ctcp_version);
+                   ctcp_version);
   return 1;
 }
 
 static int ctcp_USERINFO(char *nick, char *uhost, char *handle,
-			 char *object, char *keyword, char *text)
+                         char *object, char *keyword, char *text)
 {
   if (ctcp_mode != 1 && ctcp_userinfo[0])
     simple_sprintf(ctcp_reply, "%s\001USERINFO %s\001", ctcp_reply,
-		   ctcp_userinfo);
+                   ctcp_userinfo);
   return 1;
 }
 
 static int ctcp_CLIENTINFO(char *nick, char *uhosr, char *handle,
-			   char *object, char *keyword, char *msg)
+                           char *object, char *keyword, char *msg)
 {
   char *p = NULL;
 
@@ -119,15 +119,16 @@ static int ctcp_CLIENTINFO(char *nick, char *uhosr, char *handle,
     p = CLIENTINFO_ECHO;
   if (p == NULL) {
     simple_sprintf(ctcp_reply,
-	       "%s\001ERRMSG CLIENTINFO: %s is not a valid function\001",
-		   ctcp_reply, msg);
-  } else
+                   "%s\001ERRMSG CLIENTINFO: %s is not a valid function\001",
+                   ctcp_reply, msg);
+  }
+  else
     simple_sprintf(ctcp_reply, "%s\001CLIENTINFO %s\001", ctcp_reply, p);
   return 1;
 }
 
 static int ctcp_TIME(char *nick, char *uhost, char *handle, char *object,
-		     char *keyword, char *text)
+                     char *keyword, char *text)
 {
   char tms[25];
 
@@ -140,30 +141,29 @@ static int ctcp_TIME(char *nick, char *uhost, char *handle, char *object,
 }
 
 static int ctcp_CHAT(char *nick, char *uhost, char *handle, char *object,
-		     char *keyword, char *text)
+                     char *keyword, char *text)
 {
   struct userrec *u = get_user_by_handle(userlist, handle);
   int atr = u ? u->flags : 0, i;
 
-  if ((atr & (USER_PARTY | USER_XFER)) ||
-      ((atr & USER_OP) && !require_p)) {
+  if ((atr & (USER_PARTY | USER_XFER)) || ((atr & USER_OP) && !require_p)) {
 
     if (u_pass_match(u, "-")) {
-      simple_sprintf(ctcp_reply, "%s\001ERROR no password set\001", ctcp_reply);
+      simple_sprintf(ctcp_reply, "%s\001ERROR no password set\001",
+                     ctcp_reply);
       return 1;
     }
 
     for (i = 0; i < dcc_total; i++) {
       if ((dcc[i].type->flags & DCT_LISTEN) &&
-	  (!strcmp(dcc[i].nick, "(telnet)") ||
-	   !strcmp(dcc[i].nick, "(users)"))) {
+          (!strcmp(dcc[i].nick, "(telnet)") ||
+           !strcmp(dcc[i].nick, "(users)"))) {
         /* Do me a favour and don't change this back to a CTCP reply,
          * CTCP replies are NOTICE's this has to be a PRIVMSG
          * -poptix 5/1/1997 */
-	dprintf(DP_SERVER, "PRIVMSG %s :\001DCC CHAT chat %lu %u\001\n",
-		nick,
-		iptolong(natip[0] ? (IP) inet_addr(natip) : getmyip()),
-		dcc[i].port);
+        dprintf(DP_SERVER, "PRIVMSG %s :\001DCC CHAT chat %lu %u\001\n",
+                nick, iptolong(natip[0] ? (IP) inet_addr(natip) : getmyip()),
+                dcc[i].port);
         return 1;
       }
     }
@@ -172,32 +172,29 @@ static int ctcp_CHAT(char *nick, char *uhost, char *handle, char *object,
   return 1;
 }
 
-static cmd_t myctcp[] =
-{
-  {"FINGER",		"",	ctcp_FINGER,		NULL},
-  {"ECHO",		"",	ctcp_ECHOERR,		NULL},
-  {"PING",		"",	ctcp_PING,		NULL},
-  {"ERRMSG",		"",	ctcp_ECHOERR,		NULL},
-  {"VERSION",		"",	ctcp_VERSION,		NULL},
-  {"USERINFO",		"",	ctcp_USERINFO,		NULL},
-  {"CLIENTINFO",	"",	ctcp_CLIENTINFO,	NULL},
-  {"TIME",		"",	ctcp_TIME,		NULL},
-  {"CHAT",		"",	ctcp_CHAT,		NULL},
-  {NULL,		NULL,	NULL,			NULL}
+static cmd_t myctcp[] = {
+  {"FINGER",     "",   ctcp_FINGER,     NULL},
+  {"ECHO",       "",   ctcp_ECHOERR,    NULL},
+  {"PING",       "",   ctcp_PING,       NULL},
+  {"ERRMSG",     "",   ctcp_ECHOERR,    NULL},
+  {"VERSION",    "",   ctcp_VERSION,    NULL},
+  {"USERINFO",   "",   ctcp_USERINFO,   NULL},
+  {"CLIENTINFO", "",   ctcp_CLIENTINFO, NULL},
+  {"TIME",       "",   ctcp_TIME,       NULL},
+  {"CHAT",       "",   ctcp_CHAT,       NULL},
+  {NULL,         NULL, NULL,            NULL}
 };
 
-static tcl_strings mystrings[] =
-{
-  {"ctcp-version",	ctcp_version,	120,	0},
-  {"ctcp-finger",	ctcp_finger,	120,	0},
-  {"ctcp-userinfo",	ctcp_userinfo,	120,	0},
-  {NULL,		NULL,		0,	0}
+static tcl_strings mystrings[] = {
+  {"ctcp-version",  ctcp_version,  120, 0},
+  {"ctcp-finger",   ctcp_finger,   120, 0},
+  {"ctcp-userinfo", ctcp_userinfo, 120, 0},
+  {NULL,            NULL,          0,   0}
 };
 
-static tcl_ints myints[] =
-{
-  {"ctcp-mode",		&ctcp_mode},
-  {NULL,		NULL}
+static tcl_ints myints[] = {
+  {"ctcp-mode", &ctcp_mode},
+  {NULL,              NULL}
 };
 
 static char *ctcp_close()
@@ -212,15 +209,14 @@ static char *ctcp_close()
 
 EXPORT_SCOPE char *ctcp_start();
 
-static Function ctcp_table[] =
-{
+static Function ctcp_table[] = {
   (Function) ctcp_start,
   (Function) ctcp_close,
   (Function) NULL,
   (Function) NULL,
 };
 
-char *ctcp_start(Function * global_funcs)
+char *ctcp_start(Function *global_funcs)
 {
   global = global_funcs;
 

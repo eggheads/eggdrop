@@ -1,7 +1,7 @@
 /*
  * irc.h -- part of irc.mod
  *
- * $Id: irc.h,v 1.22 2003/01/15 01:42:21 wcc Exp $
+ * $Id: irc.h,v 1.23 2003/01/28 06:37:26 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -34,18 +34,18 @@
 #define check_tcl_mode(a,b,c,d,e,f) check_tcl_kickmode(a,b,c,d,e,f,H_mode)
 #define check_tcl_kick(a,b,c,d,e,f) check_tcl_kickmode(a,b,c,d,e,f,H_kick)
 
-#define REVENGE_KICK 1		/* Kicked victim	*/
-#define REVENGE_DEOP 2		/* Took op		*/
+#define REVENGE_KICK 1          /* Kicked victim        */
+#define REVENGE_DEOP 2          /* Took op              */
 
 #ifdef MAKING_IRC
 static void check_tcl_need(char *, char *);
 static void check_tcl_kickmode(char *, char *, struct userrec *, char *,
-			       char *, char *, p_tcl_bind_list);
+                               char *, char *, p_tcl_bind_list);
 static void check_tcl_joinspltrejn(char *, char *, struct userrec *, char *,
-			       p_tcl_bind_list);
+                                   p_tcl_bind_list);
 static void check_tcl_part(char *, char *, struct userrec *, char *, char *);
 static void check_tcl_signtopcnick(char *, char *, struct userrec *u, char *,
-				   char *, p_tcl_bind_list);
+                                   char *, p_tcl_bind_list);
 static void check_tcl_pubm(char *, char *, char *, char *);
 static int check_tcl_pub(char *, char *, char *, char *);
 static int me_op(struct chanset_t *);
@@ -72,13 +72,14 @@ static void recheck_channel(struct chanset_t *, int);
 static void set_key(struct chanset_t *, char *);
 static void maybe_revenge(struct chanset_t *, char *, char *, int);
 static int detect_chan_flood(char *, char *, char *, struct chanset_t *, int,
-			     char *);
+                             char *);
 static void newmask(masklist *, char *, char *);
 static char *quickban(struct chanset_t *, char *);
 static void got_op(struct chanset_t *chan, char *nick, char *from, char *who,
- 		   struct userrec *opu, struct flag_record *opper);
-static void got_halfop(struct chanset_t *chan, char *nick, char *from, char *who,
- 		   struct userrec *opu, struct flag_record *opper);
+                   struct userrec *opu, struct flag_record *opper);
+static void got_halfop(struct chanset_t *chan, char *nick, char *from,
+                       char *who, struct userrec *opu,
+                       struct flag_record *opper);
 static int killmember(struct chanset_t *chan, char *nick);
 static void check_lonely_channel(struct chanset_t *chan);
 static int gotmode(char *, char *);
@@ -118,6 +119,6 @@ static int gotmode(char *, char *);
 /* 24 - 27 */
 #define getchanmode ((char *(*)(struct chanset_t *))irc_funcs[24])
 
-#endif				/* MAKING_IRC */
+#endif /* MAKING_IRC */
 
-#endif				/* _EGG_MOD_IRC_IRC_H */
+#endif /* _EGG_MOD_IRC_IRC_H */

@@ -2,7 +2,7 @@
  * main.h
  *   include file to include most other include files
  *
- * $Id: main.h,v 1.20 2002/12/24 02:30:05 wcc Exp $
+ * $Id: main.h,v 1.21 2003/01/28 06:37:24 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -82,9 +82,10 @@
 
 #ifndef MAKING_MODS
 extern struct dcc_table DCC_CHAT, DCC_BOT, DCC_LOST, DCC_SCRIPT, DCC_BOT_NEW,
- DCC_RELAY, DCC_RELAYING, DCC_FORK_RELAY, DCC_PRE_RELAY, DCC_CHAT_PASS,
- DCC_FORK_BOT, DCC_SOCKET, DCC_TELNET_ID, DCC_TELNET_NEW, DCC_TELNET_PW,
- DCC_TELNET, DCC_IDENT, DCC_IDENTWAIT, DCC_DNSWAIT;
+                        DCC_RELAY, DCC_RELAYING, DCC_FORK_RELAY, DCC_PRE_RELAY,
+                        DCC_CHAT_PASS, DCC_FORK_BOT, DCC_SOCKET, DCC_TELNET_ID,
+                        DCC_TELNET_NEW, DCC_TELNET_PW, DCC_TELNET, DCC_IDENT,
+                        DCC_IDENTWAIT, DCC_DNSWAIT;
 
 #endif
 
@@ -108,9 +109,9 @@ extern struct dcc_table DCC_CHAT, DCC_BOT, DCC_LOST, DCC_SCRIPT, DCC_BOT_NEW,
 #ifdef BORGCUBES
 
 /* For net.c */
-#  define O_NONBLOCK	00000004    /* POSIX non-blocking I/O		   */
+#  define O_NONBLOCK	00000004        /* POSIX non-blocking I/O              */
 
-#endif				/* BORGUBES */
+#endif /* BORGUBES */
 
 
-#endif				/* _EGG_MAIN_H */
+#endif /* _EGG_MAIN_H */

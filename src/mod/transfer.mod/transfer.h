@@ -1,7 +1,7 @@
 /*
  * transfer.h -- part of transfer.mod
  *
- * $Id: transfer.h,v 1.17 2003/01/23 02:13:29 wcc Exp $
+ * $Id: transfer.h,v 1.18 2003/01/28 06:37:26 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -27,10 +27,10 @@
 
 enum dccsend_types {
   DCCSEND_OK = 0,
-  DCCSEND_FULL,		/* DCC table is full			*/
-  DCCSEND_NOSOCK,	/* Can not open a listening socket	*/
-  DCCSEND_BADFN,	/* No such file				*/
-  DCCSEND_FEMPTY	/* File is empty			*/
+  DCCSEND_FULL,                 /* DCC table is full                    */
+  DCCSEND_NOSOCK,               /* Can not open a listening socket      */
+  DCCSEND_BADFN,                /* No such file                         */
+  DCCSEND_FEMPTY                /* File is empty                        */
 };
 
 /* File matching */
@@ -113,7 +113,7 @@ enum dccsend_types {
 #define queue_file(a,b,c,d) (((void (*)(char *,char *,char *,char *))transfer_funcs[8])(a,b,c,d))
 #define raw_dcc_send(a,b,c,d) (((int (*) (char *,char *,char *,char *))transfer_funcs[9])(a,b,c,d))
 #define show_queued_files(a) (((void (*) (int))transfer_funcs[10])(a))
-#define wild_match_file(a,b) (((int (*)(register char * m, register char * n))transfer_funcs[11])(a,b))
+#define wild_match_file(a,b) (((int (*)(register char *, register char *))transfer_funcs[11])(a,b))
 /* 12 - 15 */
 #define wipe_tmp_filename(a,b) (((void (*) (char *,int))transfer_funcs[12])(a,b))
 #define DCC_GET (*(struct dcc_table *)(transfer_funcs[13]))
@@ -143,9 +143,9 @@ static int at_limit(char *);
 static int fstat_gotshare(struct userrec *u, struct user_entry *e, char *par,
                           int idx);
 static int fstat_dupuser(struct userrec *u, struct userrec *o,
-			 struct user_entry *e);
+                         struct user_entry *e);
 static int fstat_tcl_set(Tcl_Interp *irp, struct userrec *u,
-			 struct user_entry *e, int argc, char **argv);
+                         struct user_entry *e, int argc, char **argv);
 static void stats_add_dnload(struct userrec *u, unsigned long bytes);
 static void stats_add_upload(struct userrec *u, unsigned long bytes);
 static int wild_match_file(register char *, register char *);
@@ -154,21 +154,21 @@ static int server_transfer_setup(char *);
 #define TRANSFER_REGET_PACKETID 0xfeab
 
 typedef struct {
-  u_16bit_t packet_id;		/* Identification ID, should be equal
-	 			   to TRANSFER_REGET_PACKETID		*/
-  u_8bit_t  byte_order;		/* Byte ordering, see byte_order_test()	*/
-  u_32bit_t byte_offset;	/* Number of bytes to skip relative to
-				   the file beginning			*/
+  u_16bit_t packet_id;          /* Identification ID, should be equal
+                                 * to TRANSFER_REGET_PACKETID           */
+  u_8bit_t byte_order;          /* Byte ordering, see byte_order_test() */
+  u_32bit_t byte_offset;        /* Number of bytes to skip relative to
+                                 * the file beginning                   */
 } transfer_reget;
 
 typedef struct zarrf {
-  char *dir;			/* Absolute dir if it starts with '*',
-				   otherwise dcc dir.			*/
+  char *dir;                    /* Absolute dir if it starts with '*',
+                                 * otherwise dcc dir.                   */
   char *file;
-  char nick[NICKLEN];		/* Who queued this file			*/
-  char to[NICKLEN];		/* Who will it be sent to		*/
+  char nick[NICKLEN];           /* Who queued this file                 */
+  char to[NICKLEN];             /* Who will it be sent to               */
   struct zarrf *next;
 } fileq_t;
 
-#endif				/* MAKING_TRANSFER */
-#endif				/* _EGG_MOD_TRANSFER_TRANSFER_H */
+#endif /* MAKING_TRANSFER */
+#endif /* _EGG_MOD_TRANSFER_TRANSFER_H */

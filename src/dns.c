@@ -4,7 +4,7 @@
  *   provides the code used by the bot if the DNS module is not loaded
  *   DNS Tcl commands
  *
- * $Id: dns.c,v 1.25 2002/12/24 02:30:04 wcc Exp $
+ * $Id: dns.c,v 1.26 2003/01/28 06:37:24 wcc Exp $
  */
 /*
  * Written by Fabian Knittel <fknittel@gmx.de>
@@ -35,14 +35,14 @@
 
 #include "dns.h"
 
-extern struct dcc_t	*dcc;
-extern int		 dcc_total;
-extern int		 resolve_timeout;
-extern time_t		 now;
-extern jmp_buf		 alarmret;
-extern Tcl_Interp	*interp;
+extern struct dcc_t *dcc;
+extern int dcc_total;
+extern int resolve_timeout;
+extern time_t now;
+extern jmp_buf alarmret;
+extern Tcl_Interp *interp;
 
-devent_t	*dns_events = NULL;
+devent_t *dns_events = NULL;
 
 
 /*
@@ -57,7 +57,7 @@ void dcc_dnswait(int idx, char *buf, int len)
 void eof_dcc_dnswait(int idx)
 {
   putlog(LOG_MISC, "*", "Lost connection while resolving hostname [%s/%d]",
-	 iptostr(htonl(dcc[idx].addr)), dcc[idx].port);
+         iptostr(htonl(dcc[idx].addr)), dcc[idx].port);
   killsock(dcc[idx].sock);
   lostdcc(idx);
 }
@@ -95,8 +95,7 @@ static void kill_dcc_dnswait(int idx, void *x)
   }
 }
 
-struct dcc_table DCC_DNSWAIT =
-{
+struct dcc_table DCC_DNSWAIT = {
   "DNSWAIT",
   DCT_VALIDIDX,
   eof_dcc_dnswait,
@@ -180,11 +179,11 @@ void dcc_dnsipbyhost(char *hostn)
 
   for (de = dns_events; de; de = de->next) {
     if (de->type && (de->type == &DNS_DCCEVENT_IPBYHOST) &&
-	(de->lookup == RES_IPBYHOST)) {
+        (de->lookup == RES_IPBYHOST)) {
       if (de->res_data.hostname &&
-	  !egg_strcasecmp(de->res_data.hostname, hostn))
-	/* No need to add anymore. */
-	return;
+          !egg_strcasecmp(de->res_data.hostname, hostn))
+        /* No need to add anymore. */
+        return;
     }
   }
 
@@ -210,10 +209,10 @@ void dcc_dnshostbyip(IP ip)
 
   for (de = dns_events; de; de = de->next) {
     if (de->type && (de->type == &DNS_DCCEVENT_HOSTBYIP) &&
-	(de->lookup == RES_HOSTBYIP)) {
+        (de->lookup == RES_HOSTBYIP)) {
       if (de->res_data.ip_addr == ip)
-	/* No need to add anymore. */
-	return;
+        /* No need to add anymore. */
+        return;
     }
   }
 
@@ -242,7 +241,7 @@ static void dns_tcl_iporhostres(IP ip, char *hostn, int ok, void *other)
   devent_tclinfo_t *tclinfo = (devent_tclinfo_t *) other;
 
   if (Tcl_VarEval(interp, tclinfo->proc, " ", iptostr(htonl(ip)), " ",
-		  hostn, ok ? " 1" : " 0", tclinfo->paras, NULL) == TCL_ERROR)
+                  hostn, ok ? " 1" : " 0", tclinfo->paras, NULL) == TCL_ERROR)
     putlog(LOG_MISC, "*", DCC_TCLERROR, tclinfo->proc, interp->result);
 
   /* Free the memory. It will be unused after this event call. */
@@ -303,7 +302,8 @@ static void tcl_dnsipbyhost(char *hostn, char *proc, char *paras)
   if (paras) {
     tclinfo->paras = nmalloc(strlen(paras) + 1);
     strcpy(tclinfo->paras, paras);
-  } else
+  }
+  else
     tclinfo->paras = NULL;
   de->other = tclinfo;
 
@@ -334,7 +334,8 @@ static void tcl_dnshostbyip(IP ip, char *proc, char *paras)
   if (paras) {
     tclinfo->paras = nmalloc(strlen(paras) + 1);
     strcpy(tclinfo->paras, paras);
-  } else
+  }
+  else
     tclinfo->paras = NULL;
   de->other = tclinfo;
 
@@ -369,19 +370,19 @@ void call_hostbyip(IP ip, char *hostn, int ok)
   while (de) {
     nde = de->next;
     if ((de->lookup == RES_HOSTBYIP) &&
-	(!de->res_data.ip_addr || (de->res_data.ip_addr == ip))) {
+        (!de->res_data.ip_addr || (de->res_data.ip_addr == ip))) {
       /* Remove the event from the list here, to avoid conflicts if one of
        * the event handlers re-adds another event. */
       if (ode)
-	ode->next = de->next;
+        ode->next = de->next;
       else
-	dns_events = de->next;
+        dns_events = de->next;
 
       if (de->type && de->type->event)
-	de->type->event(ip, hostn, ok, de->other);
+        de->type->event(ip, hostn, ok, de->other);
       else
-	putlog(LOG_MISC, "*", "(!) Unknown DNS event type found: %s",
-	       (de->type && de->type->name) ? de->type->name : "<empty>");
+        putlog(LOG_MISC, "*", "(!) Unknown DNS event type found: %s",
+               (de->type && de->type->name) ? de->type->name : "<empty>");
       nfree(de);
       de = ode;
     }
@@ -396,24 +397,23 @@ void call_ipbyhost(char *hostn, IP ip, int ok)
 
   while (de) {
     nde = de->next;
-    if ((de->lookup == RES_IPBYHOST) &&
-	(!de->res_data.hostname ||
-	 !egg_strcasecmp(de->res_data.hostname, hostn))) {
+    if ((de->lookup == RES_IPBYHOST) && (!de->res_data.hostname ||
+        !egg_strcasecmp(de->res_data.hostname, hostn))) {
       /* Remove the event from the list here, to avoid conflicts if one of
        * the event handlers re-adds another event. */
       if (ode)
-	ode->next = de->next;
+        ode->next = de->next;
       else
-	dns_events = de->next;
+        dns_events = de->next;
 
       if (de->type && de->type->event)
-	de->type->event(ip, hostn, ok, de->other);
+        de->type->event(ip, hostn, ok, de->other);
       else
-	putlog(LOG_MISC, "*", "(!) Unknown DNS event type found: %s",
-	       (de->type && de->type->name) ? de->type->name : "<empty>");
+        putlog(LOG_MISC, "*", "(!) Unknown DNS event type found: %s",
+               (de->type && de->type->name) ? de->type->name : "<empty>");
 
       if (de->res_data.hostname)
-	nfree(de->res_data.hostname);
+        nfree(de->res_data.hostname);
       nfree(de);
       de = ode;
     }
@@ -437,11 +437,12 @@ void block_dns_hostbyip(IP ip)
     alarm(resolve_timeout);
     hp = gethostbyaddr((char *) &addr, sizeof(addr), AF_INET);
     alarm(0);
-    if (hp) {
+    if (hp)
       strncpyz(s, hp->h_name, sizeof s);
-    } else
+    else
       strcpy(s, iptostr(addr));
-  } else {
+  }
+  else {
     hp = NULL;
     strcpy(s, iptostr(addr));
   }
@@ -503,10 +504,9 @@ static int tcl_dnslookup STDVAR
   /* This function should be using BADARGS, FIXME -poptix */
   if (argc < 3) {
     Tcl_AppendResult(irp, "wrong # args: should be \"", argv[0],
-		     " ip-address/hostname proc ?args...?\"", NULL);
+                     " ip-address/hostname proc ?args...?\"", NULL);
     return TCL_ERROR;
   }
-
   if (argc > 3) {
     int l = 0, p;
 
@@ -532,8 +532,7 @@ static int tcl_dnslookup STDVAR
   return TCL_OK;
 }
 
-tcl_cmds tcldns_cmds[] =
-{
-  {"dnslookup",	tcl_dnslookup},
-  {NULL,	NULL}
+tcl_cmds tcldns_cmds[] = {
+  {"dnslookup", tcl_dnslookup},
+  {NULL,                 NULL}
 };

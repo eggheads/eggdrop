@@ -2,7 +2,7 @@
  * misc_file.h
  *   prototypes for misc_file.c
  *
- * $Id: misc_file.h,v 1.5 2003/01/23 02:13:29 wcc Exp $
+ * $Id: misc_file.h,v 1.6 2003/01/28 06:37:24 wcc Exp $
  */
 /*
  * Copyright (C) 2000, 2001, 2002, 2003 Eggheads Development Team
@@ -29,4 +29,4 @@ int copyfile(char *, char *);
 int movefile(char *, char *);
 int file_readable(char *);
 
-#endif				/* _EGG_MISC_FILE_H */
+#endif /* _EGG_MISC_FILE_H */

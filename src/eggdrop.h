@@ -4,7 +4,7 @@
  *
  *   IF YOU ALTER THIS FILE, YOU NEED TO RECOMPILE THE BOT.
  *
- * $Id: eggdrop.h,v 1.42 2003/01/23 02:41:48 wcc Exp $
+ * $Id: eggdrop.h,v 1.43 2003/01/28 06:37:24 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -61,24 +61,24 @@
  *       configuration file instead.
  */
 
-#define HANDLEN		  9	/* valid values 9->NICKMAX		*/
-#define NICKMAX		 32	/* valid values HANDLEN->32		*/
+#define HANDLEN		  9     /* valid values 9->NICKMAX              */
+#define NICKMAX		 32     /* valid values HANDLEN->32             */
 
 
 /* Handy string lengths */
 
-#define UHOSTMAX	160	/* reasonable, i think?			*/
-#define DIRMAX		512	/* paranoia				*/
-#define LOGLINEMAX	767	/* for misc.c/putlog() <cybah>		*/
+#define UHOSTMAX	160     /* reasonable, i think?                 */
+#define DIRMAX		512     /* paranoia                             */
+#define LOGLINEMAX	767     /* for misc.c/putlog() <cybah>          */
 #define BADHANDCHARS	"-,+*=:!.@#;$%&"
 
 
 /* Language stuff */
 
-#define LANGDIR	"./language"	/* language file directory		*/
-#define BASELANG "english"	/* language which always gets loaded
-				   before all other languages. You do
-				   not want to change this.		*/
+#define LANGDIR	"./language"    /* language file directory              */
+#define BASELANG "english"      /* language which always gets loaded
+                                 * before all other languages. You do
+                                 * not want to change this.             */
 
 
 /*
@@ -158,7 +158,7 @@
 #  define random() (rand()/16)
 #endif
 
-#if !HAVE_SIGACTION		/* old "weird signals" */
+#if !HAVE_SIGACTION             /* old "weird signals" */
 #  define sigaction sigvec
 #  ifndef sa_handler
 #    define sa_handler sv_handler
@@ -207,20 +207,20 @@
 
 /* 32 bit type */
 #if (SIZEOF_INT == 4)
-typedef unsigned int		u_32bit_t;
+typedef unsigned int u_32bit_t;
 #else
 #  if (SIZEOF_LONG == 4)
-typedef unsigned long		u_32bit_t;
+typedef unsigned long u_32bit_t;
 #  else
 #    include "cant/find/32bit/type"
 #  endif
 #endif
 
-typedef unsigned short int	u_16bit_t;
-typedef unsigned char		u_8bit_t;
+typedef unsigned short int u_16bit_t;
+typedef unsigned char u_8bit_t;
 
 /* IP type */
-typedef u_32bit_t		IP;
+typedef u_32bit_t IP;
 
 #define debug0(x)		putlog(LOG_DEBUG,"*",x)
 #define debug1(x,a1)		putlog(LOG_DEBUG,"*",x,a1)
@@ -258,18 +258,18 @@ struct dcc_table {
 struct userrec;
 
 struct dcc_t {
-  long sock;			/* This should be a long to keep 64-bit
-				   machines sane			 */
-  IP addr;			/* IP address in host byte order	 */
+  long sock;                    /* This should be a long to keep 64-bit
+                                 * machines sane                         */
+  IP addr;                      /* IP address in host byte order         */
   unsigned int port;
   struct userrec *user;
   char nick[NICKLEN];
   char host[UHOSTLEN];
   struct dcc_table *type;
-  time_t timeval;		/* Use for any timing stuff
-				   - this is used for timeout checking	*/
-  unsigned long status;		/* A LOT of dcc types have status
-				   thingos, this makes it more avaliabe	*/
+  time_t timeval;               /* Use for any timing stuff
+                                 * - this is used for timeout checking  */
+  unsigned long status;         /* A LOT of dcc types have status
+                                 * thingos, this makes it more avaliabe */
   union {
     struct chat_info *chat;
     struct file_info *file;
@@ -282,21 +282,21 @@ struct dcc_t {
     struct dupwait_info *dupwait;
     int ident_sock;
     void *other;
-  } u;				/* Special use depending on type	*/
+  } u;                          /* Special use depending on type        */
 };
 
 struct chat_info {
-  char *away;			/* non-NULL if user is away		*/
-  int msgs_per_sec;		/* used to stop flooding		*/
-  int con_flags;		/* with console: what to show		*/
-  int strip_flags;		/* what codes to strip (b,r,u,c,a,g,*)	*/
-  char con_chan[81];		/* with console: what channel to view	*/
-  int channel;			/* 0=party line, -1=off			*/
-  struct msgq *buffer;		/* a buffer of outgoing lines
-				   (for .page cmd)			*/
-  int max_line;			/* maximum lines at once		*/
-  int line_count;		/* number of lines sent since last page	*/
-  int current_lines;		/* number of lines total stored		*/
+  char *away;                   /* non-NULL if user is away             */
+  int msgs_per_sec;             /* used to stop flooding                */
+  int con_flags;                /* with console: what to show           */
+  int strip_flags;              /* what codes to strip (b,r,u,c,a,g,*)  */
+  char con_chan[81];            /* with console: what channel to view   */
+  int channel;                  /* 0=party line, -1=off                 */
+  struct msgq *buffer;          /* a buffer of outgoing lines
+                                 * (for .page cmd)                      */
+  int max_line;                 /* maximum lines at once                */
+  int line_count;               /* number of lines sent since last page */
+  int current_lines;            /* number of lines total stored         */
   char *su_nick;
 };
 
@@ -308,44 +308,44 @@ struct file_info {
 struct xfer_info {
   char *filename;
   char *origname;
-  char dir[DIRLEN];		/* used when uploads go to the current dir */
+  char dir[DIRLEN];             /* used when uploads go to the current dir */
   unsigned long length;
   unsigned long acked;
-  char buf[4];			/* you only need 5 bytes!		   */
-  unsigned char sofar;		/* how much of the byte count received	   */
-  char from[NICKLEN];		/* [GET] user who offered the file	   */
-  FILE *f;			/* pointer to file being sent/received	   */
-  unsigned int type;		/* xfer connection type, see enum below	   */
-  unsigned short ack_type;	/* type of ack				   */
-  unsigned long offset;		/* offset from beginning of file, during
-				   resend.				   */
-  unsigned long block_pending;	/* bytes of this DCC block which weren't
-				   sent yet.				   */
-  time_t start_time;		/* Time when a xfer was started.	   */
+  char buf[4];                  /* you only need 5 bytes!                  */
+  unsigned char sofar;          /* how much of the byte count received     */
+  char from[NICKLEN];           /* [GET] user who offered the file         */
+  FILE *f;                      /* pointer to file being sent/received     */
+  unsigned int type;            /* xfer connection type, see enum below    */
+  unsigned short ack_type;      /* type of ack                             */
+  unsigned long offset;         /* offset from beginning of file, during
+                                 * resend.                                 */
+  unsigned long block_pending;  /* bytes of this DCC block which weren't
+                                 * sent yet.                               */
+  time_t start_time;            /* Time when a xfer was started.           */
 };
 
-enum {				/* transfer connection handling a ...	*/
-	XFER_SEND,		/*  ... normal file-send to s.o.	*/
-	XFER_RESEND,		/*  ... file-resend to s.o.		*/
-	XFER_RESEND_PEND,	/*  ... (as above) and waiting for info	*/
-	XFER_RESUME,		/*  ... file-send-resume to s.o.	*/
-	XFER_RESUME_PEND,	/*  ... (as above) and waiting for conn */
-	XFER_GET		/*  ... file-get from s.o.		*/
+enum {                          /* transfer connection handling a ...   */
+  XFER_SEND,                    /*  ... normal file-send to s.o.        */
+  XFER_RESEND,                  /*  ... file-resend to s.o.             */
+  XFER_RESEND_PEND,             /*  ... (as above) and waiting for info */
+  XFER_RESUME,                  /*  ... file-send-resume to s.o.        */
+  XFER_RESUME_PEND,             /*  ... (as above) and waiting for conn */
+  XFER_GET                      /*  ... file-get from s.o.              */
 };
 
 enum {
-	XFER_ACK_UNKNOWN,	/* We don't know how blocks are acked.	*/
-	XFER_ACK_WITH_OFFSET,	/* Skipped data is also counted as
-				   received.				*/
-	XFER_ACK_WITHOUT_OFFSET	/* Skipped data is NOT counted in ack.	*/
+  XFER_ACK_UNKNOWN,             /* We don't know how blocks are acked.  */
+  XFER_ACK_WITH_OFFSET,         /* Skipped data is also counted as
+                                 * received.                            */
+  XFER_ACK_WITHOUT_OFFSET       /* Skipped data is NOT counted in ack.  */
 };
 
 struct bot_info {
-  char version[121];		/* channel/version info			*/
-  char linker[NOTENAMELEN + 1];	/* who requested this link		*/
-  int  numver;
-  int  port;			/* base port				*/
-  int  uff_flags;		/* user file feature flags		*/
+  char version[121];            /* channel/version info                 */
+  char linker[NOTENAMELEN + 1]; /* who requested this link              */
+  int numver;
+  int port;                     /* base port                            */
+  int uff_flags;                /* user file feature flags              */
 };
 
 struct relay_info {
@@ -366,87 +366,87 @@ struct script_info {
 };
 
 struct dns_info {
-  void (*dns_success)(int);	/* is called if the dns request succeeds   */
-  void (*dns_failure)(int);	/* is called if it fails		   */
-  char *host;			/* hostname				   */
-  char *cbuf;			/* temporary buffer. Memory will be free'd
-				   as soon as dns_info is free'd	   */
-  char *cptr;			/* temporary pointer			   */
-  IP ip;			/* IP address				   */
-  int ibuf;			/* temporary buffer for one integer	   */
-  char dns_type;		/* lookup type, e.g. RES_HOSTBYIP	   */
-  struct dcc_table *type;	/* type of the dcc table we are making the
-				   lookup for				   */
+  void (*dns_success) (int);    /* is called if the dns request succeeds   */
+  void (*dns_failure) (int);    /* is called if it fails                   */
+  char *host;                   /* hostname                                */
+  char *cbuf;                   /* temporary buffer. Memory will be free'd
+                                 * as soon as dns_info is free'd           */
+  char *cptr;                   /* temporary pointer                       */
+  IP ip;                        /* IP address                              */
+  int ibuf;                     /* temporary buffer for one integer        */
+  char dns_type;                /* lookup type, e.g. RES_HOSTBYIP          */
+  struct dcc_table *type;       /* type of the dcc table we are making the
+                                 * lookup for                              */
 };
 
 /* Flags for dns_type
  */
-#define RES_HOSTBYIP  1		/* hostname to IP address		*/
-#define RES_IPBYHOST  2		/* IP address to hostname		*/
+#define RES_HOSTBYIP  1         /* hostname to IP address               */
+#define RES_IPBYHOST  2         /* IP address to hostname               */
 
 struct dupwait_info {
-  int atr;			/* the bots attributes			*/
-  struct chat_info *chat;	/* holds current chat data		*/
+  int atr;                      /* the bots attributes                  */
+  struct chat_info *chat;       /* holds current chat data              */
 };
 
 /* Flags about dcc types
  */
-#define DCT_CHAT      0x00000001	/* this dcc type receives botnet
-					   chatter			    */
-#define DCT_MASTER    0x00000002	/* received master chatter	    */
-#define DCT_SHOWWHO   0x00000004	/* show the user in .who	    */
-#define DCT_REMOTEWHO 0x00000008	/* show in remote who		    */
-#define DCT_VALIDIDX  0x00000010	/* valid idx for outputting to
-					   in tcl			    */
-#define DCT_SIMUL     0x00000020	/* can be tcl_simul'd		    */
-#define DCT_CANBOOT   0x00000040	/* can be booted		    */
-#define DCT_GETNOTES  DCT_CHAT		/* can receive notes		    */
-#define DCT_FILES     0x00000080	/* gratuitous hack ;)		    */
-#define DCT_FORKTYPE  0x00000100	/* a forking type		    */
-#define DCT_BOT       0x00000200	/* a bot connection of some sort... */
-#define DCT_FILETRAN  0x00000400	/* a file transfer of some sort	    */
-#define DCT_FILESEND  0x00000800	/* a sending file transfer,
-					   getting = !this		    */
-#define DCT_LISTEN    0x00001000	/* a listening port of some sort    */
+#define DCT_CHAT      0x00000001        /* this dcc type receives botnet
+                                         * chatter                          */
+#define DCT_MASTER    0x00000002        /* received master chatter          */
+#define DCT_SHOWWHO   0x00000004        /* show the user in .who            */
+#define DCT_REMOTEWHO 0x00000008        /* show in remote who               */
+#define DCT_VALIDIDX  0x00000010        /* valid idx for outputting to
+                                         * in tcl                           */
+#define DCT_SIMUL     0x00000020        /* can be tcl_simul'd               */
+#define DCT_CANBOOT   0x00000040        /* can be booted                    */
+#define DCT_GETNOTES  DCT_CHAT  /* can receive notes                */
+#define DCT_FILES     0x00000080        /* gratuitous hack ;)               */
+#define DCT_FORKTYPE  0x00000100        /* a forking type                   */
+#define DCT_BOT       0x00000200        /* a bot connection of some sort... */
+#define DCT_FILETRAN  0x00000400        /* a file transfer of some sort     */
+#define DCT_FILESEND  0x00000800        /* a sending file transfer,
+                                         * getting = !this                  */
+#define DCT_LISTEN    0x00001000        /* a listening port of some sort    */
 
 /* For dcc chat & files:
  */
-#define STAT_ECHO    0x00001	/* echo commands back?			*/
-#define STAT_DENY    0x00002	/* bad username (ignore password & deny
-				   access)				*/
-#define STAT_CHAT    0x00004	/* in file-system but may return	*/
-#define STAT_TELNET  0x00008	/* connected via telnet			*/
-#define STAT_PARTY   0x00010	/* only on party line via 'p' flag	*/
-#define STAT_BOTONLY 0x00020	/* telnet on bots-only connect		*/
-#define STAT_USRONLY 0x00040	/* telnet on users-only connect		*/
-#define STAT_PAGE    0x00080	/* page output to the user		*/
+#define STAT_ECHO    0x00001    /* echo commands back?                  */
+#define STAT_DENY    0x00002    /* bad username (ignore password & deny
+                                 * access)                              */
+#define STAT_CHAT    0x00004    /* in file-system but may return        */
+#define STAT_TELNET  0x00008    /* connected via telnet                 */
+#define STAT_PARTY   0x00010    /* only on party line via 'p' flag      */
+#define STAT_BOTONLY 0x00020    /* telnet on bots-only connect          */
+#define STAT_USRONLY 0x00040    /* telnet on users-only connect         */
+#define STAT_PAGE    0x00080    /* page output to the user              */
 
 /* For stripping out mIRC codes
  */
-#define STRIP_COLOR  0x00001	/* remove mIRC color codes		*/
-#define STRIP_BOLD   0x00002	/* remove bold codes			*/
-#define STRIP_REV    0x00004	/* remove reverse video codes		*/
-#define STRIP_UNDER  0x00008	/* remove underline codes		*/
-#define STRIP_ANSI   0x00010	/* remove ALL ansi codes		*/
-#define STRIP_BELLS  0x00020	/* remote ctrl-g's			*/
-#define STRIP_ALL    0x00040	/* remove every damn thing!		*/
+#define STRIP_COLOR  0x00001    /* remove mIRC color codes              */
+#define STRIP_BOLD   0x00002    /* remove bold codes                    */
+#define STRIP_REV    0x00004    /* remove reverse video codes           */
+#define STRIP_UNDER  0x00008    /* remove underline codes               */
+#define STRIP_ANSI   0x00010    /* remove ALL ansi codes                */
+#define STRIP_BELLS  0x00020    /* remote ctrl-g's                      */
+#define STRIP_ALL    0x00040    /* remove every damn thing!             */
 
 /* for dcc bot links: */
-#define STAT_PINGED  0x00001	/* waiting for ping to return		 */
-#define STAT_SHARE   0x00002	/* sharing user data with the bot	 */
-#define STAT_CALLED  0x00004	/* this bot called me			 */
-#define STAT_OFFERED 0x00008	/* offered her the user file		 */
-#define STAT_SENDING 0x00010	/* in the process of sending a user list */
-#define STAT_GETTING 0x00020	/* in the process of getting a user list */
-#define STAT_WARNED  0x00040	/* warned him about unleaflike behavior  */
-#define STAT_LEAF    0x00080	/* this bot is a leaf only		 */
-#define STAT_LINKING 0x00100	/* the bot is currently going through
-				   the linking stage			 */
-#define STAT_AGGRESSIVE   0x200	/* aggressively sharing with this bot	 */
+#define STAT_PINGED  0x00001    /* waiting for ping to return            */
+#define STAT_SHARE   0x00002    /* sharing user data with the bot        */
+#define STAT_CALLED  0x00004    /* this bot called me                    */
+#define STAT_OFFERED 0x00008    /* offered her the user file             */
+#define STAT_SENDING 0x00010    /* in the process of sending a user list */
+#define STAT_GETTING 0x00020    /* in the process of getting a user list */
+#define STAT_WARNED  0x00040    /* warned him about unleaflike behavior  */
+#define STAT_LEAF    0x00080    /* this bot is a leaf only               */
+#define STAT_LINKING 0x00100    /* the bot is currently going through
+                                 * the linking stage                     */
+#define STAT_AGGRESSIVE   0x200 /* aggressively sharing with this bot    */
 
 /* Flags for listening sockets
  */
-#define LSTN_PUBLIC  0x000001	/* No access restrictions		*/
+#define LSTN_PUBLIC  0x000001   /* No access restrictions               */
 
 /* chan & global */
 #define FLOOD_PRIVMSG    0
@@ -468,45 +468,45 @@ struct dupwait_info {
 /* Structure for internal logs */
 typedef struct {
   char *filename;
-  unsigned int mask;		/* what to send to this log		    */
-  char *chname;			/* which channel			    */
-  char szlast[LOGLINELEN];	/* for 'Last message repeated n times'
-				   stuff in misc.c/putlog() <cybah>	    */
-  int repeats;			/* number of times szLast has been repeated */
-  unsigned int flags;		/* other flags <rtc>			    */
-  FILE *f;			/* existing file			    */
+  unsigned int mask;            /* what to send to this log                 */
+  char *chname;                 /* which channel                            */
+  char szlast[LOGLINELEN];      /* for 'Last message repeated n times'
+                                 * stuff in misc.c/putlog() <cybah>         */
+  int repeats;                  /* number of times szLast has been repeated */
+  unsigned int flags;           /* other flags <rtc>                        */
+  FILE *f;                      /* existing file                            */
 } log_t;
 
 /* Logfile display flags
  */
-#define LOG_MSGS     0x000001	/* m   msgs/notice/ctcps		*/
-#define LOG_PUBLIC   0x000002	/* p   public msg/notice/ctcps		*/
-#define LOG_JOIN     0x000004	/* j   channel joins/parts/etc		*/
-#define LOG_MODES    0x000008	/* k   mode changes/kicks/bans		*/
-#define LOG_CMDS     0x000010	/* c   user dcc or msg commands		*/
-#define LOG_MISC     0x000020	/* o   other misc bot things		*/
-#define LOG_BOTS     0x000040	/* b   bot notices			*/
-#define LOG_RAW      0x000080	/* r   raw server stuff coming in	*/
-#define LOG_FILES    0x000100	/* x   file transfer commands and stats	*/
-#define LOG_LEV1     0x000200	/* 1   user log level			*/
-#define LOG_LEV2     0x000400	/* 2   user log level			*/
-#define LOG_LEV3     0x000800	/* 3   user log level			*/
-#define LOG_LEV4     0x001000	/* 4   user log level			*/
-#define LOG_LEV5     0x002000	/* 5   user log level			*/
-#define LOG_LEV6     0x004000	/* 6   user log level			*/
-#define LOG_LEV7     0x008000	/* 7   user log level			*/
-#define LOG_LEV8     0x010000	/* 8   user log level			*/
-#define LOG_SERV     0x020000	/* s   server information		*/
-#define LOG_DEBUG    0x040000	/* d   debug				*/
-#define LOG_WALL     0x080000	/* w   wallops				*/
-#define LOG_SRVOUT   0x100000	/* v   server output			*/
-#define LOG_BOTNET   0x200000	/* t   botnet traffic			*/
-#define LOG_BOTSHARE 0x400000	/* h   share traffic			*/
-#define LOG_ALL      0x7fffff	/* (dump to all logfiles)		*/
+#define LOG_MSGS     0x000001   /* m   msgs/notice/ctcps                */
+#define LOG_PUBLIC   0x000002   /* p   public msg/notice/ctcps          */
+#define LOG_JOIN     0x000004   /* j   channel joins/parts/etc          */
+#define LOG_MODES    0x000008   /* k   mode changes/kicks/bans          */
+#define LOG_CMDS     0x000010   /* c   user dcc or msg commands         */
+#define LOG_MISC     0x000020   /* o   other misc bot things            */
+#define LOG_BOTS     0x000040   /* b   bot notices                      */
+#define LOG_RAW      0x000080   /* r   raw server stuff coming in       */
+#define LOG_FILES    0x000100   /* x   file transfer commands and stats */
+#define LOG_LEV1     0x000200   /* 1   user log level                   */
+#define LOG_LEV2     0x000400   /* 2   user log level                   */
+#define LOG_LEV3     0x000800   /* 3   user log level                   */
+#define LOG_LEV4     0x001000   /* 4   user log level                   */
+#define LOG_LEV5     0x002000   /* 5   user log level                   */
+#define LOG_LEV6     0x004000   /* 6   user log level                   */
+#define LOG_LEV7     0x008000   /* 7   user log level                   */
+#define LOG_LEV8     0x010000   /* 8   user log level                   */
+#define LOG_SERV     0x020000   /* s   server information               */
+#define LOG_DEBUG    0x040000   /* d   debug                            */
+#define LOG_WALL     0x080000   /* w   wallops                          */
+#define LOG_SRVOUT   0x100000   /* v   server output                    */
+#define LOG_BOTNET   0x200000   /* t   botnet traffic                   */
+#define LOG_BOTSHARE 0x400000   /* h   share traffic                    */
+#define LOG_ALL      0x7fffff   /* (dump to all logfiles)               */
 
 /* Internal logfile flags
  */
-#define LF_EXPIRING 0x000001	/* Logfile will be closed soon		*/
+#define LF_EXPIRING 0x000001    /* Logfile will be closed soon          */
 
 #define FILEDB_HIDE     1
 #define FILEDB_UNHIDE   2
@@ -515,24 +515,24 @@ typedef struct {
 
 /* Socket flags:
  */
-#define SOCK_UNUSED     0x0001	/* empty socket				*/
-#define SOCK_BINARY     0x0002	/* do not buffer input			*/
-#define SOCK_LISTEN     0x0004	/* listening port			*/
-#define SOCK_CONNECT    0x0008	/* connection attempt			*/
-#define SOCK_NONSOCK    0x0010	/* used for file i/o on debug		*/
-#define SOCK_STRONGCONN 0x0020	/* don't report success until sure	*/
-#define SOCK_EOFD       0x0040	/* it EOF'd recently during a write	*/
-#define SOCK_PROXYWAIT	0x0080	/* waiting for SOCKS traversal		*/
-#define SOCK_PASS	0x0100	/* passed on; only notify in case
-				   of traffic				*/
-#define SOCK_VIRTUAL	0x0200	/* not-connected socket (dont read it!)	*/
-#define SOCK_BUFFER	0x0400	/* buffer data; don't notify dcc funcs	*/
+#define SOCK_UNUSED     0x0001  /* empty socket                         */
+#define SOCK_BINARY     0x0002  /* do not buffer input                  */
+#define SOCK_LISTEN     0x0004  /* listening port                       */
+#define SOCK_CONNECT    0x0008  /* connection attempt                   */
+#define SOCK_NONSOCK    0x0010  /* used for file i/o on debug           */
+#define SOCK_STRONGCONN 0x0020  /* don't report success until sure      */
+#define SOCK_EOFD       0x0040  /* it EOF'd recently during a write     */
+#define SOCK_PROXYWAIT	0x0080  /* waiting for SOCKS traversal          */
+#define SOCK_PASS	0x0100  /* passed on; only notify in case
+                                 * of traffic                           */
+#define SOCK_VIRTUAL	0x0200  /* not-connected socket (dont read it!) */
+#define SOCK_BUFFER	0x0400  /* buffer data; don't notify dcc funcs  */
 
 /* Flags to sock_has_data
  */
 enum {
-  SOCK_DATA_OUTGOING,		/* Data in out-queue?			*/
-  SOCK_DATA_INCOMING		/* Data in in-queue?			*/
+  SOCK_DATA_OUTGOING,           /* Data in out-queue?                   */
+  SOCK_DATA_INCOMING            /* Data in in-queue?                    */
 };
 
 /* Fake idx's for dprintf - these should be ridiculously large +ve nums
@@ -551,14 +551,14 @@ enum {
 #define QUICK           1
 
 /* Return codes for add_note */
-#define NOTE_ERROR      0	/* error			*/
-#define NOTE_OK         1	/* success			*/
-#define NOTE_STORED     2	/* not online; stored		*/
-#define NOTE_FULL       3	/* too many notes stored	*/
-#define NOTE_TCL        4	/* tcl binding caught it	*/
-#define NOTE_AWAY       5	/* away; stored			*/
-#define NOTE_FWD        6	/* away; forwarded		*/
-#define NOTE_REJECT     7	/* ignore mask matched		*/
+#define NOTE_ERROR      0       /* error                        */
+#define NOTE_OK         1       /* success                      */
+#define NOTE_STORED     2       /* not online; stored           */
+#define NOTE_FULL       3       /* too many notes stored        */
+#define NOTE_TCL        4       /* tcl binding caught it        */
+#define NOTE_AWAY       5       /* away; stored                 */
+#define NOTE_FWD        6       /* away; forwarded              */
+#define NOTE_REJECT     7       /* ignore mask matched          */
 
 #define STR_PROTECT     2
 #define STR_DIR         1
@@ -571,37 +571,37 @@ enum {
  * queued on them
  */
 typedef struct {
-  int		 sock;
-  short		 flags;
-  char		*inbuf;
-  char		*outbuf;
-  unsigned long  outbuflen;	/* Outbuf could be binary data	*/
-  unsigned long	 inbuflen;	/* Inbuf could be binary data	*/
+  int sock;
+  short flags;
+  char *inbuf;
+  char *outbuf;
+  unsigned long outbuflen;      /* Outbuf could be binary data  */
+  unsigned long inbuflen;       /* Inbuf could be binary data   */
 } sock_list;
 
 enum {
-  EGG_OPTION_SET	= 1,	/* Set option(s).		*/
-  EGG_OPTION_UNSET	= 2	/* Unset option(s).		*/
+  EGG_OPTION_SET = 1,           /* Set option(s).               */
+  EGG_OPTION_UNSET = 2          /* Unset option(s).             */
 };
 
 /* Telnet codes.  See "TELNET Protocol Specification" (RFC 854) and
  * "TELNET Echo Option" (RFC 875) for details.
  */
 
-#define TLN_AYT		246		/* Are You There	*/
+#define TLN_AYT		246     /* Are You There        */
 
-#define TLN_WILL	251		/* Will			*/
+#define TLN_WILL	251     /* Will                 */
 #define TLN_WILL_C	"\373"
-#define TLN_WONT	252		/* Won't		*/
+#define TLN_WONT	252     /* Won't                */
 #define TLN_WONT_C	"\374"
-#define TLN_DO		253		/* Do			*/
+#define TLN_DO		253     /* Do                   */
 #define TLN_DO_C	"\375"
-#define TLN_DONT	254		/* Don't		*/
+#define TLN_DONT	254     /* Don't                */
 #define TLN_DONT_C	"\376"
-#define TLN_IAC		255		/* Interpret As Command	*/
+#define TLN_IAC		255     /* Interpret As Command */
 #define TLN_IAC_C	"\377"
 
-#define TLN_ECHO	1		/* Echo			*/
+#define TLN_ECHO	1       /* Echo                 */
 #define TLN_ECHO_C	"\001"
 
-#endif				/* _EGG_EGGDROP_H */
+#endif /* _EGG_EGGDROP_H */

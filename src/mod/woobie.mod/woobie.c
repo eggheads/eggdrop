@@ -5,7 +5,7 @@
  * Originally written by ButchBub	  15 July     1997
  * Comments by Fabian Knittel		  29 December 1999
  *
- * $Id: woobie.c,v 1.18 2002/12/24 02:30:09 wcc Exp $
+ * $Id: woobie.c,v 1.19 2003/01/28 06:37:27 wcc Exp $
  */
 /*
  * Copyright (C) 1999, 2000, 2001, 2002, 2003 Eggheads Development Team
@@ -87,11 +87,10 @@ static void woobie_report(int idx, int details)
  *       This is only useful for stackable binding tables (and H_dcc isn't
  *       stackable).
  */
-static cmd_t mydcc[] =
-{
-  /* command	flags	function	tcl-name */
-  {"woobie",	"",	cmd_woobie,	NULL},
-  {NULL,	NULL,	NULL,		NULL}		/* Mark end. */
+static cmd_t mydcc[] = {
+  /* command  flags  function     tcl-name */
+  {"woobie",  "",    cmd_woobie,  NULL},
+  {NULL,      NULL,  NULL,        NULL}  /* Mark end. */
 };
 
 static char *woobie_close()
@@ -113,8 +112,7 @@ EXPORT_SCOPE char *woobie_start();
  * The first four have to be defined (you may define them as NULL), as
  * they are checked by eggdrop core.
  */
-static Function woobie_table[] =
-{
+static Function woobie_table[] = {
   (Function) woobie_start,
   (Function) woobie_close,
   (Function) woobie_expmem,

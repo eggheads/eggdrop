@@ -4,7 +4,7 @@
  *
  * Written by Fabian Knittel <fknittel@gmx.de>
  *
- * $Id: filelist.h,v 1.7 2002/12/24 02:30:07 wcc Exp $
+ * $Id: filelist.h,v 1.8 2003/01/28 06:37:26 wcc Exp $
  */
 /*
  * Copyright (C) 1999, 2000, 2001, 2002, 2003 Eggheads Development Team
@@ -28,13 +28,13 @@
 #define _EGG_MOD_FILESYS_FILELIST_H
 
 typedef struct {
-  char			*fn;
-  char			*output;
+  char *fn;
+  char *output;
 } filelist_element_t;
 
 typedef struct {
-  int			tot;
-  filelist_element_t	*elements;
+  int tot;
+  filelist_element_t *elements;
 } filelist_t;
 
 /* Short-cut to access the last element in filelist */
@@ -47,4 +47,4 @@ static inline void filelist_addout(filelist_t *, char *);
 static inline void filelist_idxshow(filelist_t *, int);
 static void filelist_sort(filelist_t *);
 
-#endif				/* _EGG_MOD_FILESYS_FILELIST_H */
+#endif /* _EGG_MOD_FILESYS_FILELIST_H */

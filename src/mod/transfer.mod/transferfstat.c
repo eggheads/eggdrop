@@ -1,7 +1,7 @@
 /*
  * transferfstat.c -- part of transfer.mod
  *
- * $Id: transferfstat.c,v 1.1 2003/01/23 02:13:29 wcc Exp $
+ * $Id: transferfstat.c,v 1.2 2003/01/28 06:37:26 wcc Exp $
  *
  * Copyright (C) 2003 Eggheads Development Team
  *
@@ -68,13 +68,13 @@ static int fstat_pack(struct userrec *u, struct user_entry *e)
 }
 
 static int fstat_write_userfile(FILE *f, struct userrec *u,
-				struct user_entry *e)
+                                struct user_entry *e)
 {
   register struct filesys_stats *fs;
 
   fs = e->u.extra;
   if (fprintf(f, "--FSTAT %09u %09u %09u %09u\n", fs->uploads, fs->upload_ks,
-	      fs->dnloads, fs->dnload_ks) == EOF)
+              fs->dnloads, fs->dnload_ks) == EOF)
     return 0;
 
   return 1;
@@ -88,7 +88,8 @@ static int fstat_set(struct userrec *u, struct user_entry *e, void *buf)
     if (e->u.extra)
       nfree(e->u.extra);
     e->u.extra = fs;
-  } else if (!fs) /* e->u.extra == NULL && fs == NULL */
+  }
+  else if (!fs) /* e->u.extra == NULL && fs == NULL */
     return 1;
 
   if (!noshare && !(u->flags & (USER_BOT | USER_UNSHARED))) {
@@ -116,7 +117,7 @@ static int fstat_set(struct userrec *u, struct user_entry *e, void *buf)
 }
 
 static int fstat_tcl_get(Tcl_Interp *irp, struct userrec *u,
-			 struct user_entry *e, int argc, char **argv)
+                         struct user_entry *e, int argc, char **argv)
 {
   register struct filesys_stats *fs;
   char d[50];
@@ -160,12 +161,11 @@ static void fstat_display(int idx, struct user_entry *e)
 
   fs = e->u.extra;
   dprintf(idx, "  FILES: %u download%s (%luk), %u upload%s (%luk)\n",
-	  fs->dnloads, (fs->dnloads == 1) ? "" : "s", fs->dnload_ks,
-	  fs->uploads, (fs->uploads == 1) ? "" : "s", fs->upload_ks);
+          fs->dnloads, (fs->dnloads == 1) ? "" : "s", fs->dnload_ks,
+          fs->uploads, (fs->uploads == 1) ? "" : "s", fs->upload_ks);
 }
 
-static struct user_entry_type USERENTRY_FSTAT =
-{
+static struct user_entry_type USERENTRY_FSTAT = {
   NULL,
   fstat_gotshare,
   fstat_dupuser,
@@ -183,7 +183,7 @@ static struct user_entry_type USERENTRY_FSTAT =
 };
 
 static int fstat_gotshare(struct userrec *u, struct user_entry *e,
-			  char *par, int idx)
+                          char *par, int idx)
 {
   char *p;
   struct filesys_stats *fs;
@@ -192,9 +192,9 @@ static int fstat_gotshare(struct userrec *u, struct user_entry *e,
   switch (par[0]) {
   case 'u':
   case 'd':
-    break; /* No stats_add_up/dnload here, it's already been sent... --rtc */
+    break;
   case 'r':
-    set_user (&USERENTRY_FSTAT, u, NULL);
+    set_user(&USERENTRY_FSTAT, u, NULL);
     break;
   default:
     if (!(fs = e->u.extra)) {
@@ -227,7 +227,7 @@ static int fstat_gotshare(struct userrec *u, struct user_entry *e,
 }
 
 static int fstat_dupuser(struct userrec *u, struct userrec *o,
-			 struct user_entry *e)
+                         struct user_entry *e)
 {
   struct filesys_stats *fs;
 
@@ -275,7 +275,7 @@ static void stats_add_upload(struct userrec *u, unsigned long bytes)
 }
 
 static int fstat_tcl_set(Tcl_Interp *irp, struct userrec *u,
-			 struct user_entry *e, int argc, char **argv)
+                         struct user_entry *e, int argc, char **argv)
 {
   register struct filesys_stats *fs;
   int f = 0, k = 0;

@@ -2,7 +2,7 @@
  * users.h
  *   structures and definitions used by users.c and userrec.c
  *
- * $Id: users.h,v 1.11 2002/12/24 02:30:05 wcc Exp $
+ * $Id: users.h,v 1.12 2003/01/28 06:37:24 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -48,8 +48,7 @@ struct user_entry;
 struct user_entry_type {
   struct user_entry_type *next;
   int (*got_share) (struct userrec *, struct user_entry *, char *, int);
-  int (*dup_user) (struct userrec *, struct userrec *,
-		   struct user_entry *);
+  int (*dup_user) (struct userrec *, struct userrec *, struct user_entry *);
   int (*unpack) (struct userrec *, struct user_entry *);
   int (*pack) (struct userrec *, struct user_entry *);
   int (*write_userfile) (FILE *, struct userrec *, struct user_entry *);
@@ -57,9 +56,9 @@ struct user_entry_type {
   void *(*get) (struct userrec *, struct user_entry *);
   int (*set) (struct userrec *, struct user_entry *, void *);
   int (*tcl_get) (Tcl_Interp *, struct userrec *, struct user_entry *,
-		  int, char **);
+                  int, char **);
   int (*tcl_set) (Tcl_Interp *, struct userrec *, struct user_entry *,
-		  int, char **);
+                  int, char **);
   int (*expmem) (struct user_entry *);
   void (*display) (int idx, struct user_entry *);
   char *name;
@@ -68,8 +67,8 @@ struct user_entry_type {
 
 #ifndef MAKING_MODS
 extern struct user_entry_type USERENTRY_COMMENT, USERENTRY_LASTON,
- USERENTRY_XTRA, USERENTRY_INFO, USERENTRY_BOTADDR, USERENTRY_HOSTS,
- USERENTRY_PASS, USERENTRY_BOTFL;
+  USERENTRY_XTRA, USERENTRY_INFO, USERENTRY_BOTADDR, USERENTRY_HOSTS,
+  USERENTRY_PASS, USERENTRY_BOTFL;
 #endif
 
 
@@ -189,15 +188,13 @@ int def_kill(struct user_entry *e);
 int def_write_userfile(FILE *f, struct userrec *u, struct user_entry *e);
 void *def_get(struct userrec *u, struct user_entry *e);
 int def_set(struct userrec *u, struct user_entry *e, void *buf);
-int def_gotshare(struct userrec *u, struct user_entry *e,
-		 char *data, int idx);
+int def_gotshare(struct userrec *u, struct user_entry *e, char *data, int idx);
 int def_tcl_get(Tcl_Interp *interp, struct userrec *u,
-		struct user_entry *e, int argc, char **argv);
+                struct user_entry *e, int argc, char **argv);
 int def_tcl_set(Tcl_Interp *irp, struct userrec *u,
-		struct user_entry *e, int argc, char **argv);
+                struct user_entry *e, int argc, char **argv);
 int def_expmem(struct user_entry *e);
 void def_display(int idx, struct user_entry *e);
-int def_dupuser(struct userrec *new, struct userrec *old,
-		struct user_entry *e);
+int def_dupuser(struct userrec *new, struct userrec *old, struct user_entry *e);
 
-#endif				/* _EGG_USERS_H */
+#endif /* _EGG_USERS_H */

@@ -1,7 +1,7 @@
 /*
  * userchan.c -- part of channels.mod
  *
- * $Id: userchan.c,v 1.30 2003/01/20 08:51:19 wcc Exp $
+ * $Id: userchan.c,v 1.31 2003/01/28 06:37:25 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -174,7 +174,7 @@ static int u_setsticky_mask(struct chanset_t *chan, maskrec *u, char *uhost,
 
   j = atoi(uhost);
   if (!j)
-    j = (-1);
+    j = -1;
   while(u) {
     if (j >= 0)
       j--;
@@ -279,11 +279,10 @@ static int u_delban(struct chanset_t *c, char *who, int doit)
   return i;
 }
 
-static int u_delexempt (struct chanset_t * c, char * who, int doit)
+static int u_delexempt (struct chanset_t *c, char *who, int doit)
 {
   int j, i = 0;
-  maskrec *t;
-  maskrec **u = c ? &(c->exempts) : &global_exempts;
+  maskrec *t, **u = c ? &(c->exempts) : &global_exempts;
 
   if (!strchr(who,'!') && (j = atoi(who))) {
     j--;
@@ -482,7 +481,7 @@ static int u_addinvite(struct chanset_t *chan, char *invite, char *from,
   else if (strchr(host, '@') == NULL)
     strcat(host, "@*");
   else if (strchr(host, '!') == NULL) {
-    char * i = strchr(host, '@');
+    char *i = strchr(host, '@');
     strcpy(s, i);
     *i = 0;
     strcat(host, "!*");
@@ -564,7 +563,7 @@ static int u_addexempt(struct chanset_t *chan, char *exempt, char *from,
   else if (strchr(host, '@') == NULL)
     strcat(host, "@*");
   else if (strchr(host, '!') == NULL) {
-    char * i = strchr(host, '@');
+    char *i = strchr(host, '@');
     strcpy(s, i);
     *i = 0;
     strcat(host, "!*");
@@ -888,8 +887,8 @@ static void tell_exempts(int idx, int show_inact, char *match)
   }
 
   /* don't return here, we want to show global exempts even if no chan */
-  if (!chan && !(chan = findchan_by_dname(dcc[idx].u.chat->con_chan))
-      && !(chan = chanset))
+  if (!chan && !(chan = findchan_by_dname(dcc[idx].u.chat->con_chan)) &&
+      !(chan = chanset))
     chan = NULL;
 
   if (chan && show_inact)
@@ -982,8 +981,8 @@ static void tell_invites(int idx, int show_inact, char *match)
   }
 
   /* don't return here, we want to show global invites even if no chan */
-  if (!chan && !(chan = findchan_by_dname(dcc[idx].u.chat->con_chan))
-      && !(chan = chanset))
+  if (!chan && !(chan = findchan_by_dname(dcc[idx].u.chat->con_chan)) &&
+      !(chan = chanset))
     chan = NULL;
 
   if (chan && show_inact)
@@ -1082,7 +1081,7 @@ static int write_bans(FILE *f, int idx)
   }
   for (chan = chanset; chan; chan = chan->next)
     if ((idx < 0) || (chan->status & CHAN_SHARED)) {
-      struct flag_record fr = {FR_CHAN | FR_GLOBAL | FR_BOT, 0, 0, 0, 0, 0};
+      struct flag_record fr = { FR_CHAN | FR_GLOBAL | FR_BOT, 0, 0, 0, 0, 0 };
 
       if (idx >= 0)
 	get_user_flagrec(dcc[idx].user, &fr, chan->dname);
@@ -1137,7 +1136,7 @@ static int write_exempts(FILE *f, int idx)
   }
   for (chan = chanset;chan;chan=chan->next)
     if ((idx < 0) || (chan->status & CHAN_SHARED)) {
-      struct flag_record fr = {FR_CHAN | FR_GLOBAL | FR_BOT, 0, 0, 0, 0, 0};
+      struct flag_record fr = { FR_CHAN | FR_GLOBAL | FR_BOT, 0, 0, 0, 0, 0 };
 
       if (idx >= 0)
 	get_user_flagrec(dcc[idx].user,&fr,chan->dname);
@@ -1192,7 +1191,7 @@ static int write_invites(FILE *f, int idx)
   }
   for (chan = chanset; chan; chan = chan->next)
     if ((idx < 0) || (chan->status & CHAN_SHARED)) {
-      struct flag_record fr = {FR_CHAN | FR_GLOBAL | FR_BOT, 0, 0, 0, 0, 0};
+      struct flag_record fr = { FR_CHAN | FR_GLOBAL | FR_BOT, 0, 0, 0, 0, 0 };
 
       if (idx >= 0)
 	get_user_flagrec(dcc[idx].user,&fr,chan->dname);

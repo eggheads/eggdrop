@@ -3,7 +3,7 @@
  *   stuff common to chan.c and mode.c
  *   users.h needs to be loaded too
  *
- * $Id: chan.h,v 1.34 2002/12/24 02:30:04 wcc Exp $
+ * $Id: chan.h,v 1.35 2003/01/28 06:37:24 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -32,9 +32,9 @@ typedef struct memstruct {
   char userhost[UHOSTLEN];
   time_t joined;
   unsigned short flags;
-  time_t split;			/* in case they were just netsplit	*/
-  time_t last;			/* for measuring idle time		*/
-  time_t delay;			/* for delayed autoop			*/
+  time_t split; /* in case they were just netsplit */
+  time_t last;  /* for measuring idle time         */
+  time_t delay; /* for delayed autoop              */
   struct userrec *user;
   int tried_getuser;
   struct memstruct *next;
@@ -117,32 +117,29 @@ struct chan_t {
   int members;
 };
 
-#define CHANINV    0x0001	/* +i					*/
-#define CHANPRIV   0x0002	/* +p					*/
-#define CHANSEC    0x0004	/* +s					*/
-#define CHANMODER  0x0008	/* +m					*/
-#define CHANTOPIC  0x0010	/* +t					*/
-#define CHANNOMSG  0x0020	/* +n					*/
-#define CHANLIMIT  0x0040	/* -l -- used only for protecting modes	*/
-#define CHANKEY    0x0080	/* +k					*/
-#define CHANANON   0x0100	/* +a -- ircd 2.9			*/
-#define CHANQUIET  0x0200	/* +q -- ircd 2.9			*/
-#define CHANNOCLR  0x0400	/* +c -- Bahamut			*/
-#define CHANREGON  0x0800	/* +R -- Bahamut			*/
-#define CHANMODREG 0x1000	/* +M -- Bahamut			*/
-#define CHANNOCTCP 0x2000	/* +C -- QuakeNet's ircu 2.10           */
-#define CHANLONLY  0x4000	/* +r -- ircu 2.10.11                   */
+#define CHANINV    0x0001  /* i                        */
+#define CHANPRIV   0x0002  /* p                        */
+#define CHANSEC    0x0004  /* s                        */
+#define CHANMODER  0x0008  /* m                        */
+#define CHANTOPIC  0x0010  /* t                        */
+#define CHANNOMSG  0x0020  /* n                        */
+#define CHANLIMIT  0x0040  /* l                        */
+#define CHANKEY    0x0080  /* k                        */
+#define CHANANON   0x0100  /* a - ircd 2.9             */
+#define CHANQUIET  0x0200  /* q - ircd 2.9             */
+#define CHANNOCLR  0x0400  /* c - Bahamut              */
+#define CHANREGON  0x0800  /* R - Bahamut              */
+#define CHANMODREG 0x1000  /* M - Bahamut              */
+#define CHANNOCTCP 0x2000  /* C - QuakeNet's ircu 2.10 */
+#define CHANLONLY  0x4000  /* r - ircu 2.10.11         */
 
 #define MODES_PER_LINE_MAX 6
 
-/* For every channel i'm supposed to be active on */
 struct chanset_t {
   struct chanset_t *next;
-  struct chan_t channel;	/* current information			*/
-  char dname[81];               /* what the users know the channel as,
-				   like !eggdev				*/
-  char name[81];                /* what the servers know the channel
-				   as, like !ABCDEeggdev		*/
+  struct chan_t channel;
+  char dname[81];        /* display name (!eggdev)               */
+  char name[81];         /* actual name (!ABCDEeggdev)           */
   char need_op[121];
   char need_key[121];
   char need_limit[121];
@@ -170,67 +167,60 @@ struct chanset_t {
   int ban_time;
   int invite_time;
   int exempt_time;
-  maskrec *bans,		/* temporary channel bans		*/
-          *exempts,		/* temporary channel exempts		*/
-          *invites;		/* temporary channel invites		*/
-  /* desired channel modes: */
-  int mode_pls_prot;		/* modes to enforce			*/
-  int mode_mns_prot;		/* modes to reject			*/
-  int limit_prot;		/* desired limit			*/
-  char key_prot[121];		/* desired password			*/
-  /* queued mode changes: */
-  char pls[21];			/* positive mode changes		*/
-  char mns[21];			/* negative mode changes		*/
-  char *key;			/* new key to set			*/
-  char *rmkey;			/* old key to remove			*/
-  int limit;			/* new limit to set			*/
-  int bytes;			/* total bytes so far			*/
-  int compat;			/* to prevent mixing old/new modes	*/
+  maskrec *bans,         /* temporary channel bans            */
+          *exempts,      /* temporary channel exempts         */
+          *invites;      /* temporary channel invites         */
+  int mode_pls_prot;     /* modes to enforce                  */
+  int mode_mns_prot;     /* modes to reject                   */
+  int limit_prot;        /* desired limit                     */
+  char key_prot[121];    /* desired password                  */
+  char pls[21];          /* positive mode changes             */
+  char mns[21];          /* negative mode changes             */
+  char *key;             /* new key to set                    */
+  char *rmkey;           /* old key to remove                 */
+  int limit;             /* new limit to set                  */
+  int bytes;             /* total bytes so far                */
+  int compat;            /* prevents mixing of old/new modes  */
   struct {
     char *op;
     int type;
-  } cmode[MODES_PER_LINE_MAX];			/* parameter-type mode changes -	*/
-  /* detect floods */
+  } cmode[MODES_PER_LINE_MAX];
   char floodwho[FLOOD_CHAN_MAX][81];
   time_t floodtime[FLOOD_CHAN_MAX];
   int floodnum[FLOOD_CHAN_MAX];
-  char deopd[NICKLEN];		/* last person deop'd (must change	*/
+  char deopd[NICKLEN];   /* last user deopped                 */
 };
 
-/* behavior modes for the channel */
-#define CHAN_ENFORCEBANS    0x0001	   /* kick people who match channel bans */
-#define CHAN_DYNAMICBANS    0x0002	   /* only activate bans when needed     */
-#define CHAN_NOUSERBANS     0x0004	   /* don't let non-bots place bans      */
-#define CHAN_OPONJOIN       0x0008	   /* op +o people as soon as they join  */
-#define CHAN_BITCH          0x0010	   /* be a tightwad with ops             */
-#define CHAN_GREET          0x0020	   /* greet people with their info line  */
-#define CHAN_PROTECTOPS     0x0040	   /* re-op any +o people who get deop'd */
-#define CHAN_LOGSTATUS      0x0080	   /* log channel status every 5 mins    */
-#define CHAN_REVENGE        0x0100	   /* get revenge on bad people          */
-#define CHAN_SECRET         0x0200	   /* don't advertise channel on botnet  */
-#define CHAN_AUTOVOICE      0x0400	   /* dish out voice stuff automatically */
-#define CHAN_CYCLE          0x0800	   /* cycle the channel if possible      */
-#define CHAN_DONTKICKOPS    0x1000	   /* never kick +o flag people -arthur2 */
-#define CHAN_INACTIVE       0x2000	   /* no irc support for this channel
-                                         - drummer                           */
-#define CHAN_PROTECTFRIENDS 0x4000	   /* re-op any +f people who get deop'd */
-#define CHAN_SHARED         0x8000	   /* channel is being shared            */
-#define CHAN_SEEN           0x10000
-#define CHAN_REVENGEBOT     0x20000	   /* revenge on actions against the bot */
-#define CHAN_NODESYNCH      0x40000
-#define CHAN_AUTOHALFOP     0x80000    /* op +h people on join               */ 
-#define CHAN_PROTECTHALFOPS 0x100000   /* op +h people on join               */ 
-#define CHAN_ACTIVE         0x1000000  /* like i'm actually on the channel
-                                          and stuff                          */
-#define CHAN_PEND           0x2000000  /* just joined; waiting for end of
-                                          WHO list                           */
-#define CHAN_FLAGGED        0x4000000  /* flagged during rehash for delete   */
-#define CHAN_STATIC         0x8000000  /* channels that are NOT dynamic      */
+#define CHAN_ENFORCEBANS    0x0001     /* +enforcebans    */
+#define CHAN_DYNAMICBANS    0x0002     /* +dynamicbans    */
+#define CHAN_NOUSERBANS     0x0004     /* -userbans       */
+#define CHAN_OPONJOIN       0x0008     /* +autoop         */
+#define CHAN_BITCH          0x0010     /* +bitch          */
+#define CHAN_GREET          0x0020     /* +greet          */
+#define CHAN_PROTECTOPS     0x0040     /* +protectops     */
+#define CHAN_LOGSTATUS      0x0080     /* +statuslog      */
+#define CHAN_REVENGE        0x0100     /* +revenge        */
+#define CHAN_SECRET         0x0200     /* +secret         */
+#define CHAN_AUTOVOICE      0x0400     /* +autovoice      */
+#define CHAN_CYCLE          0x0800     /* +cycle          */
+#define CHAN_DONTKICKOPS    0x1000     /* +dontkickops    */
+#define CHAN_INACTIVE       0x2000     /* +inactive       */
+#define CHAN_PROTECTFRIENDS 0x4000     /* +protectfriends */
+#define CHAN_SHARED         0x8000     /* +shared         */
+#define CHAN_SEEN           0x10000    /* +seen           */
+#define CHAN_REVENGEBOT     0x20000    /* +revengebot     */
+#define CHAN_NODESYNCH      0x40000    /* +nodesynch      */
+#define CHAN_AUTOHALFOP     0x80000    /* +autohalfop     */
+#define CHAN_PROTECTHALFOPS 0x100000   /* +protecthalfops */
+#define CHAN_ACTIVE         0x1000000  /* -inactive       */
+
+#define CHAN_PEND           0x2000000  /* waiting for end of WHO list      */
+#define CHAN_FLAGGED        0x4000000  /* flagged for delete during rehash */
+#define CHAN_STATIC         0x8000000  /* non-dynamic channel              */
 #define CHAN_ASKEDBANS      0x10000000
-#define CHAN_ASKEDMODES     0x20000000 /* find out key-info on IRCu          */
-#define CHAN_JUPED          0x40000000 /* Is channel juped                   */
-#define CHAN_STOP_CYCLE     0x80000000 /* Some efnetservers have defined
-                                          NO_CHANOPS_WHEN_SPLIT              */
+#define CHAN_ASKEDMODES     0x20000000 /* find out key-info on IRCu        */
+#define CHAN_JUPED          0x40000000 /* channel is juped                 */
+#define CHAN_STOP_CYCLE     0x80000000 /* NO_CHANOPS_WHEN_SPLIT servers    */
 
 #define CHAN_ASKED_EXEMPTS  0x0001
 #define CHAN_ASKED_INVITED  0x0002
@@ -245,10 +235,8 @@ memberlist *ismember(struct chanset_t *, char *);
 struct chanset_t *findchan(const char *name);
 struct chanset_t *findchan_by_dname(const char *name);
 
-/* is this channel +s/+p? */
-#define channel_hidden(chan) (chan->channel.mode & (CHANPRIV | CHANSEC))
-/* is this channel +t? */
-#define channel_optopic(chan) (chan->channel.mode & CHANTOPIC)
+#define channel_hidden(chan) (chan->channel.mode & (CHANPRIV | CHANSEC)) /* +s or +p ? */
+#define channel_optopic(chan) (chan->channel.mode & CHANTOPIC) /* +t? */
 
 #define channel_active(chan)  (chan->status & CHAN_ACTIVE)
 #define channel_pending(chan)  (chan->status & CHAN_PEND)
@@ -295,4 +283,4 @@ struct msgq {
   char *msg;
 };
 
-#endif				/* _EGG_CHAN_H */
+#endif /* _EGG_CHAN_H */

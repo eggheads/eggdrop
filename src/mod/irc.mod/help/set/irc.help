@@ -29,11 +29,11 @@
 %{help=set bounce-exempts}%{+n}
 ### %bset bounce-exempts%b 0/1
    do you want the bot to reverse any +e modes set by servers?
-   this is an IRCNET feature.
+   this is an IRCnet feature.
 %{help=set bounce-invites}%{+n}
 ### %bset bounce-invites%b 0/1
    do you want the bot to reverse any +I modes set by servers?
-   this is an IRCNET feature.
+   this is an IRCnet feature.
 %{help=set bounce-modes}%{+n}
 ### %bset bounce-modes%b 0/1
    do you want the bot to reverse all server modes?
@@ -46,16 +46,16 @@
 ### %bset max-exempts%b <#>
    if there are more than max-exempts active +e modes on a channel,
    then the bot won't try to put more exemptions. thus it won't flood
-   the irc server. this is an IRCNET feature.
+   the irc server. this is an IRCnet feature.
 %{help=set max-invites}%{+n}
 ### %bset max-invites%b <#>
    if there are more than max-invites active +I modes on a channel,
    then the bot won't try to put more invitations. thus it won't flood
-   the irc server. this is an IRCNET feature.
+   the irc server. this is an IRCnet feature.
 %{help=set max-modes}%{+n}
 ### %bset max-modes%b <#>
    there is a global limit for +b/+e/+I modes. this limit is set to
-   30 on 2.10 irc servers. this is an IRCNET feature.
+   30 on 2.10 irc servers. this is an IRCnet feature.
 %{help=set kick-bogus}%{+n}
 ### %bset kick-bogus%b 0/1
    do you want the bot to kick bogus usernames?

@@ -2,7 +2,7 @@
  * channels.c -- part of channels.mod
  *   support for channels within the bot
  *
- * $Id: channels.c,v 1.76 2003/01/21 00:53:27 wcc Exp $
+ * $Id: channels.c,v 1.77 2003/01/28 06:37:25 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -321,7 +321,7 @@ static void remove_channel(struct chanset_t *chan)
  */
 static int channels_chon(char *handle, int idx)
 {
-  struct flag_record fr = {FR_CHAN | FR_ANYWH | FR_GLOBAL, 0, 0, 0, 0, 0};
+  struct flag_record fr = { FR_CHAN | FR_ANYWH | FR_GLOBAL, 0, 0, 0, 0, 0 };
   int find, found = 0;
   struct chanset_t *chan = chanset;
 
@@ -568,7 +568,7 @@ static void channels_report(int idx, int details)
   struct chanset_t *chan;
   int i;
   char s[1024], s2[100];
-  struct flag_record fr = {FR_CHAN | FR_GLOBAL, 0, 0, 0, 0, 0};
+  struct flag_record fr = { FR_CHAN | FR_GLOBAL, 0, 0, 0, 0, 0 };
 
   for (chan = chanset; chan; chan = chan->next) {
     if (idx != DP_STDOUT)
@@ -734,11 +734,11 @@ static int channels_expmem()
 }
 
 #if (((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 4)) || (TCL_MAJOR_VERSION > 8))
-static char *traced_globchanset(ClientData cdata, Tcl_Interp * irp,
+static char *traced_globchanset(ClientData cdata, Tcl_Interp *irp,
 				CONST char *name1, CONST char *name2,
                                 int flags)
 #else
-static char *traced_globchanset(ClientData cdata, Tcl_Interp * irp, 
+static char *traced_globchanset(ClientData cdata, Tcl_Interp *irp, 
                                 char *name1, char *name2, int flags)
 #endif
 {
@@ -913,7 +913,7 @@ static Function channels_table[] =
   (Function) & global_invite_time,
 };
 
-char *channels_start(Function * global_funcs)
+char *channels_start(Function *global_funcs)
 {
   global = global_funcs;
 

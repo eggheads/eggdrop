@@ -2,7 +2,7 @@
  * misc.c -- handles:
  *   copyfile() movefile() file_readable()
  *
- * $Id: misc_file.c,v 1.8 2003/01/23 02:13:29 wcc Exp $
+ * $Id: misc_file.c,v 1.9 2003/01/28 06:37:24 wcc Exp $
  */
 /*
  * Copyright (C) 1999, 2000, 2001, 2002, 2003 Eggheads Development Team
@@ -61,11 +61,11 @@ int copyfile(char *oldpath, char *newpath)
   for (x = 1; x > 0;) {
     x = read(fi, buf, 512);
     if (x > 0) {
-      if (write(fo, buf, x) < x) {	/* Couldn't write */
-	close(fo);
-	close(fi);
-	unlink(newpath);
-	return 4;
+      if (write(fo, buf, x) < x) {      /* Couldn't write */
+        close(fo);
+        close(fi);
+        unlink(newpath);
+        return 4;
       }
     }
   }
