@@ -1,7 +1,7 @@
 /* 
  * servmsg.c -- part of server.mod
  * 
- * $Id: servmsg.c,v 1.21 2000/01/06 19:45:06 fabian Exp $
+ * $Id: servmsg.c,v 1.22 2000/01/07 20:04:02 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -536,8 +536,7 @@ static int gotmsg(char *from, char *msg)
       char *code;
       struct userrec *u;
 
-      if (!ignoring)
-	detect_flood(nick, uhost, from, FLOOD_PRIVMSG);
+      detect_flood(nick, uhost, from, FLOOD_PRIVMSG);
       u = get_user_by_host(from);
       code = newsplit(&msg);
       rmspace(msg);
