@@ -1,7 +1,7 @@
 /*
  * module.h
  *
- * $Id: module.h,v 1.70 2003/02/02 10:19:33 wcc Exp $
+ * $Id: module.h,v 1.71 2003/02/02 18:36:37 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -221,7 +221,7 @@
 #define max_dcc (*(int *)global[100])
 #define require_p (*(int *)global[101])
 #define ignore_time (*(int *)(global[102]))
-/* was use_console_r <Wcc[02/02/03]>
+/* was use_console_r <Wcc[02/02/03]> */
 /* 104 - 107 */
 #define reserved_port_min (*(int *)(global[104]))
 #define reserved_port_max (*(int *)(global[105]))
