@@ -4,7 +4,7 @@
  *
  * Rewritten by Fabian Knittel <fknittel@gmx.de>
  *
- * $Id: filedb3.c,v 1.26 2003/03/04 08:51:45 wcc Exp $
+ * $Id: filedb3.c,v 1.27 2003/03/12 08:42:00 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -105,7 +105,7 @@ static filedb_entry *_malloc_fdbe(char *file, int line)
   /* This is a hack to access the nmalloc function with
    * special file and line information
    */
-  fdbe = ((void *) (global[0] (sizeof(filedb_entry), MODULE_NAME, file, line)));
+  fdbe = (((void *(*)())global[0])(sizeof(filedb_entry),MODULE_NAME,file,line));
 #else
   fdbe = nmalloc(sizeof(filedb_entry));
 #endif

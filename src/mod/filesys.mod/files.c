@@ -2,7 +2,7 @@
  * files.c - part of filesys.mod
  *   handles all file system commands
  *
- * $Id: files.c,v 1.42 2003/02/04 08:23:21 wcc Exp $
+ * $Id: files.c,v 1.43 2003/03/12 08:42:00 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -432,7 +432,7 @@ static void cmd_reget_get(int idx, char *par, int resend)
     module_entry *me = module_find("server", 1, 1);
 
     if (me && me->funcs)
-      nicklen = (int) me->funcs[SERVER_NICKLEN];
+      nicklen = (*(int *)me->funcs[SERVER_NICKLEN]);
   }
   if (!par[0]) {
     dprintf(idx, "%s: %sget <file(s)> [nickname]\n", MISC_USAGE,
