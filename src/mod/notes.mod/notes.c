@@ -5,7 +5,7 @@
  *   note cmds
  *   note ignores
  *
- * $Id: notes.c,v 1.32 2001/07/17 19:53:42 guppy Exp $
+ * $Id: notes.c,v 1.33 2001/11/14 16:25:48 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -299,12 +299,12 @@ static int tcl_storenote STDVAR
 	  dprintf(idx, "%s\n", NOTES_NOTEFILE_FAILED);
 	putlog(LOG_MISC, "*", "%s", NOTES_NOTEFILE_UNREACHABLE);
       } else {
-	char *p, *from = argv[1];
+	char *p, *blah = argv[3], *from = argv[1];
 	int l = 0;
 
 	chmod(notefile, userfile_perm);	/* Use userfile permissions. */
-	while ((argv[3][0] == '<') || (argv[3][0] == '>')) {
-	  p = newsplit(&(argv[3]));
+	while ((blah[0] == '<') || (blah[0] == '>')) {
+	  p = newsplit(&blah);
 	  if (*p == '<')
 	    l += simple_sprintf(work + l, "via %s, ", p + 1);
 	  else if (argv[1][0] == '@')
