@@ -2,7 +2,7 @@
  * chancmds.c -- part of irc.mod
  *   handles commands direclty relating to channel interaction
  * 
- * $Id: cmdsirc.c,v 1.6 1999/12/21 17:35:30 fabian Exp $
+ * $Id: cmdsirc.c,v 1.7 1999/12/24 14:25:57 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -493,11 +493,11 @@ static void cmd_channel(struct userrec *u, int idx, char *par)
   i = 0;
   if (channel_active(chan)) {
     dprintf(idx, "(n = owner, m = master, o = op, d = deop, b = bot)\n");
-    spaces[NICKMAX - 9] = 0;
+    spaces[nick_len - 9] = 0;
     spaces2[HANDLEN - 9] = 0;
     dprintf(idx, " NICKNAME %s HANDLE   %s JOIN   IDLE  USER@HOST\n",
 	    spaces, spaces2);
-    spaces[NICKMAX - 9] = ' ';
+    spaces[nick_len - 9] = ' ';
     spaces2[HANDLEN - 9] = ' ';
     while (m && m->nick[0]) {
       if (m->joined > 0) {
@@ -566,7 +566,7 @@ static void cmd_channel(struct userrec *u, int idx, char *par)
 	chanflag = '+';
       else
 	chanflag = ' ';
-      spaces[len = (NICKMAX - strlen(m->nick))] = 0;
+      spaces[len = (nick_len - strlen(m->nick))] = 0;
       spaces2[len2 = (HANDLEN - strlen(handle))] = 0;
       if (chan_issplit(m))
 	dprintf(idx, "%c%s%s %s%s %s %c     <- netsplit, %lus\n", chanflag,
