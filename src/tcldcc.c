@@ -928,6 +928,7 @@ static int tcl_listen STDVAR
     dcc[idx].addr = iptolong(getmyip());
     dcc[idx].port = port;
     dcc[idx].sock = i;
+    dcc[idx].timeval = now;
   }
   /* script? */
   if (!strcasecmp(argv[2], "script")) {

@@ -2434,14 +2434,12 @@ tcllibnames="tcl tcl8.2 tcl82 tcl8.1 tcl81 \
 
 tcllibextensions=".so .so.1 .so.1.0 .so.1.2 .a"
 
-tcllibpaths="$HOME/lib $HOME/tcl/lib $HOME \
-	/usr/local/lib /usr/local/pkgs/tcl/lib \
-	/usr/lib /lib /usr/i486-linuxaout/lib"
+tcllibpaths="/usr/local/lib /usr/local/pkgs/tcl/lib \
+	/usr/lib /lib /usr/i486-linuxaout/lib \
+	$HOME/lib $HOME/tcl/lib $HOME"
 
-tclheaderpaths="$HOME/include $HOME/tcl/include $HOME \
-	/usr/local/include /usr/local/pkgs/tcl/include \
-	/usr/include"
-
+tclheaderpaths="/usr/local/include /usr/local/pkgs/tcl/include \
+	/usr/include $HOME/include $HOME/tcl/include $HOME"
 if test -r "$tcllibname"
 then
   TCLLIB=`$DIRNAME $tcllibname`
@@ -2477,10 +2475,10 @@ else
 
   # check in common places now
   echo $ac_n "checking for libtcl""... $ac_c" 1>&6
-echo "configure:2481: checking for libtcl" >&5
+echo "configure:2479: checking for libtcl" >&5
   if test ! "$TCLLIB" = ""
   then
-    echo "$ac_t""found in $TCLLIB/$TCLLIBFN" 1>&6
+    echo "$ac_t""found in $TCLLIB/lib$TCLLIBFN" 1>&6
   else
     for tcllibfn in $tcllibnames
     do
@@ -2534,7 +2532,7 @@ else
 
   # check in common places now
   echo $ac_n "checking for $TCLINCFN""... $ac_c" 1>&6
-echo "configure:2538: checking for $TCLINCFN" >&5
+echo "configure:2536: checking for $TCLINCFN" >&5
   if test ! "$TCLINC" = ""
   then
     echo "$ac_t""found in $TCLINC/$TCLINCFN" 1>&6
@@ -2599,7 +2597,7 @@ then
   exit 1
 else
   echo $ac_n "checking for Tcl version""... $ac_c" 1>&6
-echo "configure:2603: checking for Tcl version" >&5
+echo "configure:2601: checking for Tcl version" >&5
 
   for ver in $tcllibnames
   do
@@ -2624,13 +2622,13 @@ echo "configure:2603: checking for Tcl version" >&5
 
   if test $TCLVERFOUND = 1
   then
-    TCL_REQS="$TCLLIB/$TCLLIBFN"
+    TCL_REQS="$TCLLIB/lib$TCLLIBFN"
     TCL_LIBS="-L$TCLLIB -ltcl$TCLLIBVER -lm"
   else
     echo ""
     echo "Your tcl version is too old - version 7.4 or earlier"
     echo "I suggest you download and complie a more recent version"
-    echo "The most reliable current version is 8.2.0"
+    echo "The most reliable current version is 8.2.1"
     echo ""
     exit 1
   fi

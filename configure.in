@@ -307,14 +307,12 @@ tcllibnames="tcl tcl8.2 tcl82 tcl8.1 tcl81 \
 
 tcllibextensions=".so .so.1 .so.1.0 .so.1.2 .a"
 
-tcllibpaths="$HOME/lib $HOME/tcl/lib $HOME \
-	/usr/local/lib /usr/local/pkgs/tcl/lib \
-	/usr/lib /lib /usr/i486-linuxaout/lib"
+tcllibpaths="/usr/local/lib /usr/local/pkgs/tcl/lib \
+	/usr/lib /lib /usr/i486-linuxaout/lib \
+	$HOME/lib $HOME/tcl/lib $HOME"
 
-tclheaderpaths="$HOME/include $HOME/tcl/include $HOME \
-	/usr/local/include /usr/local/pkgs/tcl/include \
-	/usr/include"
-
+tclheaderpaths="/usr/local/include /usr/local/pkgs/tcl/include \
+	/usr/include $HOME/include $HOME/tcl/include $HOME"
 if test -r "$tcllibname"
 then
   TCLLIB=`$DIRNAME $tcllibname`
@@ -352,7 +350,7 @@ else
   AC_MSG_CHECKING(for libtcl)
   if test ! "$TCLLIB" = ""
   then
-    AC_MSG_RESULT(found in $TCLLIB/$TCLLIBFN)
+    AC_MSG_RESULT(found in $TCLLIB/lib$TCLLIBFN)
   else
     for tcllibfn in $tcllibnames
     do
@@ -494,13 +492,13 @@ else
 
   if test $TCLVERFOUND = 1
   then
-    TCL_REQS="$TCLLIB/$TCLLIBFN"
+    TCL_REQS="$TCLLIB/lib$TCLLIBFN"
     TCL_LIBS="-L$TCLLIB -ltcl$TCLLIBVER -lm"
   else
     echo ""
     echo "Your tcl version is too old - version 7.4 or earlier"
     echo "I suggest you download and complie a more recent version"
-    echo "The most reliable current version is 8.2.0"
+    echo "The most reliable current version is 8.2.1"
     echo ""
     exit 1
   fi
