@@ -7,7 +7,7 @@
  *   help system
  *   motd display and %var substitution
  *
- * $Id: misc.c,v 1.54 2003/01/18 04:24:41 wcc Exp $
+ * $Id: misc.c,v 1.55 2003/01/18 04:34:25 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -659,7 +659,7 @@ void flushlogs()
          /* Repeat.. if quicklogs used then display 'last message
           * repeated x times' and reset repeats.
 	  */
-        char stamp[32];
+        char stamp[33];
         egg_strftime(&stamp[0], 32, LOG_TS, localtime(&now));
 	fprintf(logs[i].f, "%s ", stamp);
 	fprintf(logs[i].f, MISC_LOGREPEAT, logs[i].repeats);
