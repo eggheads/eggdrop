@@ -13,7 +13,7 @@ Problem status:
         1:      drummer submited a patch to eggdev
         2:      poptix
         3:      cybah
-        4:      no-one
+        4:      SegFault
         6:      no-one
         7:      no-one
        10:      drummer/Mixter
@@ -99,7 +99,7 @@ note: there is no such thing as a CTCP ignore, will code this for
 --
 4. +h flag seems to be redundant with .strip (confusing)
 
-Status: noone is working on this
+Status: SegFault is working on this
 
 --
 6.  There's been some discussion on eggdev about going back to the old way of
