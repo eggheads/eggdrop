@@ -111,6 +111,12 @@ The following commands are also available:
 %b%{+x}   files%{-}%b
 Anything you type that doesn't begin with a '.' goes out to
 everyone on the party line.
+%{help=tcl}%{+n}
+###  %btcl%b <command>
+   executes the command using tcl.
+
+   See doc/tcl-commands.doc for details on tcl commands added to eggdrop
+   and visit http://dev.scriptics.com/ for more information on tcl.
 %{help=set}%{+n}
 ###  %bset%b <variable> [value]
    changes the values of internal settings of the bot, or, if used
