@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  * 
- * $Id: cmds.c,v 1.30 2000/06/03 12:14:40 fabian Exp $
+ * $Id: cmds.c,v 1.31 2000/06/10 00:54:07 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -2104,8 +2104,8 @@ static void cmd_su(struct userrec *u, int idx, char *par)
       correct_handle(par);
       putlog(LOG_CMDS, "*", "#%s# su %s", dcc[idx].nick, par);
       if (!(atr & USER_OWNER) ||
-	  ((atr & USER_OWNER) && !(isowner(dcc[idx].nick))) ||
-	  ((u->flags & USER_OWNER) && (isowner(par)))) {
+	  ((u->flags & USER_OWNER) && (isowner(par)) &&
+	   !(isowner(dcc[idx].nick)))) {
 	/* This check is only important for non-owners */
 	if (u_pass_match(u, "-")) {
 	  dprintf(idx, "No password set for user. You may not .su to them\n");
