@@ -1,10 +1,12 @@
-$Id: UPDATES1.6,v 1.454 2003/01/30 10:38:31 wcc Exp $
+$Id: UPDATES1.6,v 1.455 2003/01/30 22:39:24 wcc Exp $
 
 Changes in Eggdrop: (since v1.6.0)
 ----------------------------------
 
 1.6.14
 Found by  Fixed by  What...
+Cosmo     Wcc/      fixed a crash in u_delban (bug 267) caused by trying to
+          BarkerJr  strcpy to an initialized pointer char
 fbs       Wcc       use movefile() instead of copyfile() and unlink() when
                     moving files in filesys.mod
           Wcc       changed EFnet's max-bans/max-modes to 25

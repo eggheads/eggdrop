@@ -1,7 +1,7 @@
 /*
  * userchan.c -- part of channels.mod
  *
- * $Id: userchan.c,v 1.33 2003/01/30 07:15:14 wcc Exp $
+ * $Id: userchan.c,v 1.34 2003/01/30 22:39:24 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -235,12 +235,13 @@ static int u_delban(struct chanset_t *c, char *who, int doit)
   int j, i = 0;
   maskrec *t;
   maskrec **u = (c) ? &c->bans : &global_bans;
+  char temp[256];
 
   if (!strchr(who, '!') && (j = atoi(who))) {
     j--;
     for (; (*u) && j; u = &((*u)->next), j--);
     if (*u) {
-      strcpy(who, (*u)->mask);
+      strncpyz(temp, (*u)->mask, strlen((*u)->mask));
       i = 1;
     } else
       return -j - 1;
@@ -248,6 +249,7 @@ static int u_delban(struct chanset_t *c, char *who, int doit)
     /* Find matching host, if there is one */
     for (; *u && !i; u = &((*u)->next))
       if (!rfc_casecmp((*u)->mask, who)) {
+        strncpyz(temp, who, strlen(who));
         i = 1;
         break;
       }
@@ -256,7 +258,7 @@ static int u_delban(struct chanset_t *c, char *who, int doit)
   }
   if (i && doit) {
     if (!noshare) {
-      char *mask = str_escape(who, ':', '\\');
+      char *mask = str_escape(temp, ':', '\\');
 
       if (mask) {
         /* Distribute chan bans differently */
@@ -283,12 +285,13 @@ static int u_delexempt(struct chanset_t *c, char *who, int doit)
 {
   int j, i = 0;
   maskrec *t, **u = c ? &(c->exempts) : &global_exempts;
+  char temp[256];
 
   if (!strchr(who, '!') && (j = atoi(who))) {
     j--;
     for (; (*u) && j; u = &((*u)->next), j--);
     if (*u) {
-      strcpy(who, (*u)->mask);
+      strncpyz(temp, (*u)->mask, strlen((*u)->mask));
       i = 1;
     } else
       return -j - 1;
@@ -296,6 +299,7 @@ static int u_delexempt(struct chanset_t *c, char *who, int doit)
     /* Find matching host, if there is one */
     for (; *u && !i; u = &((*u)->next))
       if (!rfc_casecmp((*u)->mask, who)) {
+        strncpyz(temp, who, strlen(who));
         i = 1;
         break;
       }
@@ -304,7 +308,7 @@ static int u_delexempt(struct chanset_t *c, char *who, int doit)
   }
   if (i && doit) {
     if (!noshare) {
-      char *mask = str_escape(who, ':', '\\');
+      char *mask = str_escape(temp, ':', '\\');
 
       if (mask) {
         /* Distribute chan exempts differently */
@@ -332,12 +336,13 @@ static int u_delinvite(struct chanset_t *c, char *who, int doit)
   int j, i = 0;
   maskrec *t;
   maskrec **u = c ? &(c->invites) : &global_invites;
+  char temp[256];
 
   if (!strchr(who, '!') && (j = atoi(who))) {
     j--;
     for (; (*u) && j; u = &((*u)->next), j--);
     if (*u) {
-      strcpy(who, (*u)->mask);
+      strncpyz(temp, (*u)->mask, strlen((*u)->mask));
       i = 1;
     } else
       return -j - 1;
@@ -345,6 +350,7 @@ static int u_delinvite(struct chanset_t *c, char *who, int doit)
     /* Find matching host, if there is one */
     for (; *u && !i; u = &((*u)->next))
       if (!rfc_casecmp((*u)->mask, who)) {
+        strncpyz(temp, who, strlen(who));
         i = 1;
         break;
       }
@@ -353,7 +359,7 @@ static int u_delinvite(struct chanset_t *c, char *who, int doit)
   }
   if (i && doit) {
     if (!noshare) {
-      char *mask = str_escape(who, ':', '\\');
+      char *mask = str_escape(temp, ':', '\\');
 
       if (mask) {
         /* Distribute chan invites differently */
