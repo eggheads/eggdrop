@@ -2,7 +2,7 @@
  * filesys.c -- part of filesys.mod
  *   main file of the filesys eggdrop module
  *
- * $Id: filesys.c,v 1.50 2002/06/06 18:52:23 wcc Exp $
+ * $Id: filesys.c,v 1.51 2002/07/07 22:35:25 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -909,20 +909,22 @@ static int filesys_expmem()
 
 static void filesys_report(int idx, int details)
 {
-  if (dccdir[0]) {
-    dprintf(idx, "    DCC file path: %s", dccdir);
-    if (upload_to_cd)
-      dprintf(idx, "\n        incoming: (go to the current dir)\n");
-    else if (dccin[0])
-      dprintf(idx, "\n        incoming: %s\n", dccin);
-    else
-      dprintf(idx, "    (no uploads)\n");
-    if (dcc_users)
-      dprintf(idx, "        max users is %d\n", dcc_users);
-    if ((upload_to_cd) || (dccin[0]))
-      dprintf(idx, "    DCC max file size: %dk\n", dcc_maxsize);
-  } else
-    dprintf(idx, "  (Filesystem module loaded, but no active dcc path.)\n");
+  if (details) {
+    if (dccdir[0]) {
+      dprintf(idx, "    DCC file path: %s", dccdir);
+      if (upload_to_cd)
+	dprintf(idx, "\n        incoming: (go to the current dir)\n");
+      else if (dccin[0])
+	dprintf(idx, "\n        incoming: %s\n", dccin);
+      else
+	dprintf(idx, "    (no uploads)\n");
+      if (dcc_users)
+	dprintf(idx, "        max users is %d\n", dcc_users);
+      if ((upload_to_cd) || (dccin[0]))
+	dprintf(idx, "    DCC max file size: %dk\n", dcc_maxsize);
+    } else
+      dprintf(idx, "  (Filesystem module loaded, but no active dcc path.)\n");
+  }
 }
 
 static char *filesys_close()

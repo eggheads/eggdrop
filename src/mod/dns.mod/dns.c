@@ -4,7 +4,7 @@
  *
  * Written by Fabian Knittel <fknittel@gmx.de>
  *
- * $Id: dns.c,v 1.26 2002/06/06 18:52:23 wcc Exp $
+ * $Id: dns.c,v 1.27 2002/07/07 22:35:25 guppy Exp $
  */
 /*
  * Copyright (C) 1999, 2000, 2001, 2002 Eggheads Development Team
@@ -156,9 +156,10 @@ static int dns_expmem(void)
 
 static int dns_report(int idx, int details)
 {
-  dprintf(idx, "    DNS resolver is active.\n");
-  if (details)
+  if (details) {
     dprintf(idx, "    (cache uses %d bytes of memory)\n", dns_cache_expmem());
+    dprintf(idx, "    DNS resolver is active.\n");
+  }
   return 0;
 }
 
