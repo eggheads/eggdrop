@@ -4,7 +4,7 @@
  *   a bunch of functions to find and change user records
  *   change and check user (and channel-specific) flags
  *
- * $Id: userrec.c,v 1.50 2004/06/12 01:24:57 wcc Exp $
+ * $Id: userrec.c,v 1.51 2004/06/13 17:34:01 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -177,12 +177,12 @@ char *fixfrom(char *s)
     if (!*(++p))
       return s;	/* There's nothing following "!". */
   } else
-    p = s; 	/* There's no nick. */
+    p = s; /* There's no nick. */
 
   if (strchr("~+-^=", *p) && *(p + 1) != '@')
     memmove(p, p + 1, strlen(p)); /* NUL is included without +1. */
 
-  return p;
+  return s;
 }
 
 struct userrec *check_dcclist_hand(char *handle)
@@ -651,7 +651,7 @@ struct userrec *adduser(struct userrec *bu, char *handle, char *host,
      *   Only use it if we have a host :) (dw)
      */
     fixfrom(host);
-    
+
     p = strchr(host, ',');
     while (p != NULL) {
       *p = '?';
