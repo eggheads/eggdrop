@@ -46,8 +46,7 @@ set timezone "EST"
 #addlang "english"
 
 
-#####  LOG FILES  #####
-
+##### LOG FILES #####
 
 # you can specify how many log files you can have upto.  at midnight every
 # day, the old log files are renamed and a new log file begins.  by default,
@@ -131,8 +130,7 @@ set quiet-save 0
 set console "mkcobxs"
 
 
-
-#####  FILES AND DIRECTORIES  #####
+##### FILES AND DIRECTORIES #####
 
 # the userfile: where user records are stored
 set userfile "LamestBot.user"
@@ -154,7 +152,7 @@ set motd "motd"
 set telnet-banner "telnet-banner"
 
 
-#####  BOTNET  #####
+##### BOTNET #####
 
 # you probably shouldn't deal with this until reading 'botnet.doc' or
 # something.  you need to know what you're doing.
@@ -225,7 +223,8 @@ set paranoid-telnet-flood 1
 # lookup? (you might want to increase this if you are on a slow network).
 set resolve-timeout 15
 
-#####  MORE ADVANCED STUFF  #####
+
+##### MORE ADVANCED STUFF #####
 
 # are you behind a firewall?  uncomment this and specify your socks host
 #set firewall "proxy:178"
@@ -344,7 +343,7 @@ die "Please edit your config file."
 
 
 
-############## MODULES #################
+########## MODULES ##########
 
 # below are various settings for the modules available with eggdrop,
 # PLEASE EDIT THEM CAREFULLY, READ THEM, even if you're an old hand
@@ -357,8 +356,7 @@ die "Please edit your config file."
 set mod-path "modules/"
 
 
-
-#### CHANNELS MODULE #####
+##### CHANNELS MODULE #####
 
 # this next module provides channel related support for the bot, without
 # it, it will just sit on irc, it can respond to msg & ctcp commands, but
@@ -480,7 +478,6 @@ channel add #lamest {
 #   how many joins/nick changes in how many seconds is a join flood?
 #   not specifying or using number = 0 will not check join floods!
 
-
 # note that "need-op", "need-invite", etc, are limited to 120 characters,
 # so if you want to so something more complicated, just write a proc,
 # and make them call your proc.
@@ -599,6 +596,7 @@ channel add #botcentral {
   idle-kick 1
 }
 channel set #botcentral +bitch +clearbans +enforcebans -greet +revenge
+
 
 ##### SERVER MODULE #####
 
@@ -740,7 +738,6 @@ set double-help 0
 #set check-mode-r 1
 
 
-
 ##### CTCP MODULE #####
 
 # this provides the normal ctcp replies that you'd expect *RECOMMENDED*
@@ -755,6 +752,7 @@ loadmodule ctcp
 # than C CTCPs in S seconds. C/S are defined by the set flood-ctcp C:S (cf
 # server module)
 set ctcp-mode 0
+
 
 ##### IRC MODULE #####
 
@@ -854,7 +852,6 @@ set no-chanrec-info 0
 # chattr +d, kick and ban. Default is 1.
 set revenge-mode 1
 
-
 ##### IRC MODULE - net-type 1 specific features (IRCnet) #####
 
 # Don't modify the following settings if you don't use IRCnet. The defaults following
@@ -946,7 +943,6 @@ set prevent-mixing 1
 #set rfc-compliant 1
 
 
-
 ##### TRANSFER MODULE #####
 
 # uncomment this line to load the transfer module, this provides
@@ -972,7 +968,6 @@ set copy-to-tmp 1
 # time (in seconds) that a dcc file transfer can remain inactive
 # before being timed out
 set xfer-timeout 30
-
 
 
 ##### SHARE MODULE #####
@@ -1022,7 +1017,6 @@ set xfer-timeout 30
 #set private-user 0
 
 
-
 ##### FILESYSTEM MODULE #####
 
 # uncomment this line to load the file system module, this provides
@@ -1055,7 +1049,6 @@ set max-file-users 20
 # maximum allowable file size that will be received, in K
 # (default is 1024K = 1M)
 set max-filesize 1024
-
 
 
 ##### NOTES MODULE #####
@@ -1092,7 +1085,6 @@ set notify-onjoin 1
 die "You didn't edit your config file like you were told, did you?"
 
 
-
 ##### CONSOLE MODULE #####
 
 # this module provides storage of console settings when you exit the bot
@@ -1112,13 +1104,11 @@ set force-channel 0
 set info-party 0
 
 
-
 ##### WOOBIE MODULE #####
 
 # this serves absolutely no purpose and is for demonstrative
 # purposes only
 #loadmodule woobie
-
 
 
 ##### SEEN MODULE #####
@@ -1144,13 +1134,11 @@ set info-party 0
 #checkmodule blowfish
 
 
-
 ##### ASSOC MODULE #####
 
 # uncomment this line to load assoc support, i.e naming channels on
 # the botnet
 #loadmodule assoc
-
 
 
 ##### WIRE MODULE #####
@@ -1161,17 +1149,15 @@ set info-party 0
 #loadmodule wire
 
 
-
-#####  SCRIPTS  #####
+##### SCRIPTS #####
 
 # these are some commonly loaded (and needed) scripts.
 source scripts/alltools.tcl
 source scripts/action.fix.tcl
 
-#this script provides many usefull minor informational commands
-# (like setting users url's, email address, etc) you can modify
+# This script provides many usefull minor informational commands
+# (like setting users url's, email address, etc). You can modify
 # it to add extra entries, you might also want to modify help/userinfo.help
-# and help/msg/userinfo.help to change the help files
+# and help/msg/userinfo.help to change the help files.
 source scripts/userinfo1.0.tcl
 loadhelp userinfo.help
-

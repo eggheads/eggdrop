@@ -343,20 +343,14 @@ fi
 
 dnl check how much space is left in filedb (informational purposes)
 AC_MSG_CHECKING(space left in file database struct)
-
-cat > abacab.c << 'EOF'
+AC_TRY_RUN([
 #include <stdio.h>
 #include <sys/time.h>
 #include "src/mod/filesys.mod/files.h"
 main() {
-  fprintf(stdout, "%d/%d\n", 512 - sizeof(struct filler), sizeof(filedb));
+  fprintf(stdout, "%d/%d %s\n", 512 - sizeof(struct filler), sizeof(filedb), "bytes");
 }
-EOF
-
-${CC} -o abacab${EXEEXT} abacab.c
-FILEDB_SPACE=`./abacab${EXEEXT}`
-AC_MSG_RESULT($FILEDB_SPACE bytes)
-rm -f abacab${EXEEXT} abacab.o abacab.c
+])
 AC_MSG_RESULT([   (standard is currently 48/512 bytes)])
 
 dnl where is tcl?  is it here?
@@ -779,6 +773,12 @@ configure: warning:
 
 EOF
   AC_DEFINE(HAVE_BUGGY_TCL_THREADS)
+
+  # add -lpthread to $LIBS if we have it
+  if test "x${ac_cv_lib_pthread_pthread_create}" = "xyes"
+  then
+    LIBS="-lpthread $LIBS"
+  fi
 else
   AC_MSG_RESULT(no)
 fi
@@ -829,12 +829,6 @@ EOF
     TCL_REQS="libtcle.a"
     TCL_LIBS="-L. -ltcle -lm"
   fi
-fi
-
-# add -lpthread to $LIBS if we need it
-if test "x${ac_cv_var_tcl_threads}" = "xyes" && test "x${ac_cv_lib_pthread_pthread_create}" = "xyes"
-then
-  LIBS="-lpthread $LIBS"
 fi
 
 AC_SUBST(TCLLIB)

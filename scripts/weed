@@ -22,28 +22,30 @@ exec tclsh "$0" "$@"
 # field exactly matched 40 characters it would save it with no spaces after
 # it and eggdrop would reject the user record.  I know I could have easily
 # changed one character, but I couldn't help myself.  <grin>
-#                                         5 march 96
+#                                         5 march 1996
 #
-# <robey, 23jul96>:
+# <robey, 23jul1996>:
 #     upgrade for v2 userfiles
-# <bruce s, 4sep96>:
+# <bruce s, 04sep1996>:
 #     fixed xtra field from getting truncated
-# <robey, 20sep96>:
+# <robey, 20sep1996>:
 #     stopped it from mangling channel ban lists
-# <Ec|ipse & dtM, 10jun97>:
+# <Ec|ipse & dtM, 10jun1997>:
 #     upgrade for v3 userfiles
-# <Ec|ipse 18jun97>:
+# <Ec|ipse 18jun1997>:
 #     added an option to remove users from unwanted channels
-# <Ec|ipse 28oct97>:
+# <Ec|ipse 28oct1997>:
 #     upgrade for v4 userfiles, with v3 converter
-# <Ernst 8mar98>:
+# <Ernst 8mar1998>:
 #     fixed bug "list element in braces followed by X instead of space"
 #       (the use of "lrange" where you aren't sure if it's a list is bad)
 #     fixed --CONSOLE item not being included, creating "user" --CONSOLE
-# <Ernst 1apr98>:
+# <Ernst 1apr1998>:
 #     two more improper ocurrences of "lrange" removed
 # <rtc 20sep1999>:
 #     removed ancient way of determining the current time.
+# <Tothwolf 21oct1999
+#     [clock] isn't in all versions of Tcl...
 #
 
 set exempt {*ban *ignore}
@@ -57,7 +59,14 @@ set stripops 0 ; set stripmasters 0 ; set weedlurkers 0
 set chanrem {}
 set convert 0
 
-set CURRENT [clock seconds]
+if {![string compare "" [info commands clock]]} then {
+  set fd [open "/tmp/egg.timer." w]
+  close $fd
+  set CURRENT [file atime "/tmp/egg.timer."]
+  exec rm -f /tmp/egg.timer.
+} else {
+  set CURRENT [clock seconds]
+}
 
 if {$argc < 1} {
   puts stdout "\nUsage: weed <userfile> \[options\]"

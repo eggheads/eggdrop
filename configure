@@ -2781,20 +2781,31 @@ fi
 
 echo $ac_n "checking space left in file database struct""... $ac_c" 1>&6
 echo "configure:2784: checking space left in file database struct" >&5
+if test "$cross_compiling" = yes; then
+    { echo "configure: error: can not run test program while cross compiling" 1>&2; exit 1; }
+else
+  cat > conftest.$ac_ext <<EOF
+#line 2789 "configure"
+#include "confdefs.h"
 
-cat > abacab.c << 'EOF'
 #include <stdio.h>
 #include <sys/time.h>
 #include "src/mod/filesys.mod/files.h"
 main() {
-  fprintf(stdout, "%d/%d\n", 512 - sizeof(struct filler), sizeof(filedb));
+  fprintf(stdout, "%d/%d %s\n", 512 - sizeof(struct filler), sizeof(filedb), "bytes");
 }
-EOF
 
-${CC} -o abacab${EXEEXT} abacab.c
-FILEDB_SPACE=`./abacab${EXEEXT}`
-echo "$ac_t""$FILEDB_SPACE bytes" 1>&6
-rm -f abacab${EXEEXT} abacab.o abacab.c
+EOF
+if { (eval echo configure:2800: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext} && (./conftest; exit) 2>/dev/null
+then
+  :
+else
+  echo "configure: failed program was:" >&5
+  cat conftest.$ac_ext >&5
+fi
+rm -fr conftest*
+fi
+
 echo "$ac_t""   (standard is currently 48/512 bytes)" 1>&6
 
 # ---------- begin robey's tcl thingies
@@ -3017,7 +3028,7 @@ EOF
 fi
 
 echo $ac_n "checking for Tcl library""... $ac_c" 1>&6
-echo "configure:3021: checking for Tcl library" >&5
+echo "configure:3032: checking for Tcl library" >&5
 
 # attempt autodetect for $TCLLIBFN if it's not set
 if test ! "x${TCLLIBFN}" = "x"
@@ -3051,7 +3062,7 @@ then
 fi
 
 echo $ac_n "checking for Tcl header""... $ac_c" 1>&6
-echo "configure:3055: checking for Tcl header" >&5
+echo "configure:3066: checking for Tcl header" >&5
 
 # attempt autodetect for $TCLINCFN if it's not set
 if test ! "x${TCLINCFN}" = "x"
@@ -3108,7 +3119,7 @@ fi
 
 # check Tcl version
 echo $ac_n "checking for Tcl version""... $ac_c" 1>&6
-echo "configure:3112: checking for Tcl version" >&5
+echo "configure:3123: checking for Tcl version" >&5
 if test ! "x${TCL_VERSION}" = "x"
 then
   echo "$ac_t""$TCL_VERSION" 1>&6
@@ -3165,7 +3176,7 @@ fi
 
 # check for Tcl threads
 echo $ac_n "checking for Tcl threads""... $ac_c" 1>&6
-echo "configure:3169: checking for Tcl threads" >&5
+echo "configure:3180: checking for Tcl threads" >&5
 TCL_VER_POST81=`echo $TCL_VERSION | $AWK '{split($1, i, "."); if (((i[1] == 8) && (i[2] >= 1)) || (i[1] >= 9)) print "yes"; else print "no"}'`
 if test "x${TCL_VER_POST81}" = "xyes"
 then
@@ -3229,6 +3240,12 @@ EOF
 #define HAVE_BUGGY_TCL_THREADS 1
 EOF
 
+
+  # add -lpthread to $LIBS if we have it
+  if test "x${ac_cv_lib_pthread_pthread_create}" = "xyes"
+  then
+    LIBS="-lpthread $LIBS"
+  fi
 else
   echo "$ac_t""no" 1>&6
 fi
@@ -3277,12 +3294,6 @@ EOF
     TCL_REQS="libtcle.a"
     TCL_LIBS="-L. -ltcle -lm"
   fi
-fi
-
-# add -lpthread to $LIBS if we need it
-if test "x${ac_cv_var_tcl_threads}" = "xyes" && test "x${ac_cv_lib_pthread_pthread_create}" = "xyes"
-then
-  LIBS="-lpthread $LIBS"
 fi
 
 
