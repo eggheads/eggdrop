@@ -2,7 +2,7 @@
  * files.c - part of filesys.mod
  *   handles all file system commands
  *
- * $Id: files.c,v 1.36 2003/02/03 08:37:01 stdarg Exp $
+ * $Id: files.c,v 1.37 2003/02/03 09:18:23 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1128,6 +1128,7 @@ static void cmd_mv_cp(int idx, char *par, int copy)
     malloc_strcpy(oldpath, dcc[idx].u.file->dir);
   malloc_strcpy(s, par);
   if (!resolve_dir(dcc[idx].u.file->dir, s, &newpath, idx)) {
+    my_free(newpath);
     /* Destination is not just a directory */
     p = strrchr(s, '/');
     if (p == NULL) {
