@@ -38,6 +38,7 @@ static void got_op(struct chanset_t *chan, char *nick, char *from,
 static int killmember(struct chanset_t *chan, char *nick);
 static void check_lonely_channel(struct chanset_t *chan);
 static void gotmode(char *, char *);
+static int ischaninviteonly(struct chanset_t *chan);
 
 #else
 /* 4 - 7 */

@@ -20,6 +20,8 @@ static Function *global = NULL, *channels_funcs = NULL, *server_funcs = NULL;
 static int ctcp_mode;
 static int net_type;
 static int strict_host;
+static int use_exempts;
+static int use_invites;
 
 /* time to wait for user to return for net-split */
 static int wait_split = 300;
@@ -316,13 +318,13 @@ static void reset_chan_info(struct chanset_t *chan)
       dprintf(DP_MODE, "MODE %s +b\n", chan->name);
     }
     if (!(chan->ircnet_status & CHAN_ASKED_EXEMPTS) &&
-	((net_type == 1) || (net_type == 4))) {
+	use_exempts == 1 ) {
       chan->ircnet_status |= CHAN_ASKED_EXEMPTS;
       dprintf(DP_MODE, "MODE %s +e\n", chan->name);
       recheck_exempt(chan);
     }
     if (!(chan->ircnet_status & CHAN_ASKED_INVITED) &&
-	((net_type == 1) || (net_type == 4))) {
+	use_invites == 1) {
       chan->ircnet_status |= CHAN_ASKED_INVITED;
       dprintf(DP_MODE, "MODE %s +I\n", chan->name);
       recheck_invite(chan);
@@ -380,7 +382,7 @@ static void log_chans()
 	     chan->name, chan->channel.members, chan->channel.members == 1 ? ' ' : 's',
 	     chops, chops == 1 ? ")" : "s)", bans, bans == 1 ? "n" : "ns", me_op(chan) ? "" :
 	     "(not op'd)");
-      if ((net_type == 1) || (net_type ==4)) {
+      if ((use_invites == 1) || (use_exempts == 1)) {
 	putlog(LOG_MISC, chan->name, "%-10s: %d exemptio%s, %d invit%s",
 	       chan->name, exempts,
 	       exempts == 1 ? "n" : "ns", invites, invites == 1 ? "e" : "es");
@@ -461,6 +463,26 @@ static void check_lonely_channel(struct chanset_t *chan)
   }
 }
 
+/* Check to see if a channel is invite only */
+static int ischaninviteonly(struct chanset_t *chan)
+{
+  char s1[512], s2[512];
+  /* first of all get channel mode */
+  strcpy(s1, getchanmode(chan));
+  /* then check to see if a space in it. A space indicates either a +l or a
+   * +k mode. If there is a space then only want stuff before space */
+  if (strchr(s1, ' ') != NULL) {
+    splitc(s2, s1, ' ');
+  } else {
+    strcpy(s2,s1);
+  }
+  /* check channel modes looking for a i */
+  if (strchr(s2,'i') != NULL )
+    return 1;
+  else 
+    return 0;
+}
+
 static void check_expired_chanstuff()
 {
   banlist *b;
@@ -498,31 +520,54 @@ static void check_expired_chanstuff()
 	}
       }
     }
-    if (channel_dynamicexempts(chan) && me_op(chan)) {
-      for (e = chan->channel.exempt; e->exempt[0]; e = e->next) {
-	if ((exempt_time != 0) && 
-	    (((now - e->timer) > (60 * exempt_time)) &&
-	     !u_sticky_exempt(chan->exempts, e->exempt) && 
-	     !u_sticky_exempt(global_exempts,e->exempt))) {
-	  putlog(LOG_MODES, chan->name,
-		 "(%s) Channel exemption on %s expired.",
-		 chan->name, e->exempt);
-	  add_mode(chan, '-', 'e', e->exempt);
-	  e->timer = now;
+    if (use_exempts ==1) {
+      if (channel_dynamicexempts(chan) && me_op(chan)) {
+	for (e = chan->channel.exempt; e->exempt[0]; e = e->next) {
+	  if ((exempt_time != 0) && 
+	      (((now - e->timer) > (60 * exempt_time)) &&
+	       !u_sticky_exempt(chan->exempts, e->exempt) && 
+	       !u_sticky_exempt(global_exempts,e->exempt))) {
+	    /* Check to see if it matches a ban */
+	    if (u_match_ban(chan->bans,e->exempt) || 
+		u_match_ban(global_bans,e->exempt)) {
+	      /*Leave this extra logging in for now. Can be removed later
+	       * Jason */
+	      putlog(LOG_MODES, chan->name,
+		     "(%s) Channel exemption on %s NOT expired. Ban still set!",
+		     chan->name, e->exempt);
+	    } else {
+	      putlog(LOG_MODES, chan->name,
+		     "(%s) Channel exemption on %s expired.",
+		     chan->name, e->exempt);
+	      add_mode(chan, '-', 'e', e->exempt);
+	    }
+	    e->timer = now;
+	  }
 	}
       }
     }
-     if (channel_dynamicinvites(chan) && me_op(chan)) {
-      for (inv = chan->channel.invite; inv->invite[0]; inv = inv->next) {
-	if ((invite_time != 0) &&
-	    (((now - inv->timer) > (60 * invite_time)) &&
-	     !u_sticky_invite(chan->invites, inv->invite) && 
-	     !u_sticky_invite(global_invites,inv->invite))) {
-	  putlog(LOG_MODES, chan->name,
-		 "(%s) Channel invitation on %s expired.",
-		 chan->name, inv->invite);
-	  add_mode(chan, '-', 'I', inv->invite);
-	  inv->timer = now;
+
+    if (use_invites ==1 ) {
+      if (channel_dynamicinvites(chan) && me_op(chan)) {
+	for (inv = chan->channel.invite; inv->invite[0]; inv = inv->next) {
+	  if ((invite_time != 0) &&
+	      (((now - inv->timer) > (60 * invite_time)) &&
+	       !u_sticky_invite(chan->invites, inv->invite) && 
+	       !u_sticky_invite(global_invites,inv->invite))) {
+	    if (ischaninviteonly(chan)) {
+	      /*Leave this extra logging in for now. Can be removed later
+	       * Jason */
+	      putlog(LOG_MODES, chan->name,
+		     "(%s) Channel invitation on %s NOT expired. i mode still set!",
+		     chan->name, inv->invite);
+	    } else {
+	      putlog(LOG_MODES, chan->name,
+		     "(%s) Channel invitation on %s expired.",
+		     chan->name, inv->invite);
+	      add_mode(chan, '-', 'I', inv->invite);
+	    }
+	    inv->timer = now;
+	  }
 	}
       }
     }
@@ -764,6 +809,8 @@ static tcl_ints myints[] =
   {"max-invites", &max_invites, 0},
   {"max-modes", &max_modes, 0},
   {"net-type", &net_type, 0},
+  {"use-exempts", &use_exempts, 0}, /* Jason */
+  {"use-invites", &use_invites, 0}, /* Jason */
   {"strict-host", &strict_host, 0},	/* arthur2 */
   {"ctcp-mode", &ctcp_mode, 0},	/* arthur2 */
   {"keep-nick", &keepnick, 0},	/* guppy */
@@ -834,40 +881,55 @@ static void irc_report(int idx, int details)
 static char *traced_nettype(ClientData cdata, Tcl_Interp * irp, char *name1,
 			    char *name2, int flags)
 {
+  char buf[5];
   switch (net_type) {
   case 0:
     kick_method = 1;
     modesperline = 4;
     use_354 = 0;
     use_silence = 0;
+    use_exempts = 0;
+    use_invites = 0;
     break;
   case 1:
     kick_method = 4;
     modesperline = 3;
     use_354 = 0;
     use_silence = 0;
+    use_exempts = 1;
+    use_invites = 1;
     break;
   case 2:
     kick_method = 1;
     modesperline = 6;
     use_354 = 1;
     use_silence = 1;
+    use_exempts = 0;
+    use_invites = 0;
     break;
   case 3:
     kick_method = 1;
     modesperline = 6;
     use_354 = 0;
     use_silence = 0;
+    use_exempts = 0;
+    use_invites = 0;
     break;
   case 4:
     kick_method = 1;
     modesperline = 4;
     use_354 = 0;
     use_silence = 0;
+    use_exempts = 1;
+    use_invites = 1;
     break;
   default:
     break;
   }
+  sprintf(buf,"%d", use_exempts);
+  Tcl_SetVar(interp, "use-exempts", buf, 0);
+  sprintf(buf,"%d", use_invites);
+  Tcl_SetVar(interp, "use-invites", buf, 0);
   return NULL;
 }
 
@@ -952,6 +1014,7 @@ char *server_start();
 char *irc_start(Function * global_funcs)
 {
   struct chanset_t *chan;
+  char buf[5];
 
   global = global_funcs;
 
@@ -1003,27 +1066,41 @@ char *irc_start(Function * global_funcs)
     kick_method = 1;
     modesperline = 4;
     use_354 = 0;
+    use_exempts = 0;
+    use_invites = 0;
   }
   if (net_type == 1) {		/* Ircnet */
     kick_method = 4;
     modesperline = 3;
     use_354 = 0;
+    use_exempts = 1;
+    use_invites = 1;
   }
   if (net_type == 2) {		/* Undernet */
     kick_method = 1;
     modesperline = 6;
     use_354 = 1;
+    use_exempts = 0;
+    use_invites = 0;
   }
   if (net_type == 3) {		/* Dalnet */
     kick_method = 1;
     modesperline = 6;
     use_354 = 0;
+    use_exempts = 0;
+    use_invites = 0;
   }
   if (net_type == 4) {		/* new +e/+I Efnet hybrid */
     kick_method = 1;
     modesperline = 4;
     use_354 = 0;
+    use_exempts = 1;
+    use_invites = 1;
   }
+  sprintf(buf,"%d", use_exempts);
+  Tcl_SetVar(interp, "use-exempts", buf, 0);
+  sprintf(buf,"%d", use_invites);
+  Tcl_SetVar(interp, "use-invites", buf, 0);
   context;
   return NULL;
 }

@@ -255,15 +255,6 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
       putlog(LOG_MISC | LOG_JOIN, chan->name, IRC_FLOODIGNORE3, p);
       strcpy(ftype + 4, " flood");
       u_addban(chan, h, origbotname, ftype, now + (60 * ban_time), 0);
-      context; /* show up any probs in new code */
-      /* If placed ban then check for exempt... Should this go before */
-      /* ban check or after? Could go before, and ban is not placed */
-      if ((u_match_exempt(global_exempts,from))
-	  || (u_match_exempt(chan->exempts, from)))
-	return 1;		/* already exempted */
-      putlog(LOG_MISC | LOG_JOIN, chan->name, IRC_FLOODIGNORE3, p);
-      strcpy(ftype+4," flood");
-      u_addexempt(chan, h, origbotname, ftype, now + (60 * exempt_time),0);
       context;
       /* don't kick user if exempted */
       if (!channel_enforcebans(chan) && me_op(chan) && !isexempted(chan,h))
@@ -293,7 +284,7 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
     case FLOOD_DEOP:
       if (me_op(chan)) {
 	putlog(LOG_MODES, chan->name,
-	       CHAN_MASSDEOP, CHAN_MASSDEOP_ARGS);
+	       CHAN_MASSDEOP, CHAN_MASSDEOP_ARGS); 
 	dprintf(DP_MODE, "KICK %s %s :%s\n",
 		chan->name, floodnick, CHAN_MASSDEOP_KICK);
       }
@@ -411,8 +402,11 @@ static void refresh_ban_kick(struct chanset_t *chan, char *user, char *nick)
   }
 }
 
-static void refresh_exempt (struct chanset_t * chan, char * user, char * nick) {
+/* This is a bit cumbersome at the moment, but it works... Any improvements then 
+ * feel free to have a go.. Jason */
+static void refresh_exempt (struct chanset_t * chan, char * user) {
   struct exemptrec *e;
+  banlist *b;
   int cycle;
   for (cycle = 0;cycle < 2;cycle++) {
     if (cycle)
@@ -420,18 +414,24 @@ static void refresh_exempt (struct chanset_t * chan, char * user, char * nick) {
     else
       e = global_exempts;
     for ( ; e; e = e->next) {
-      if (wild_match(e->exemptmask,user)) {
-	if (e->lastactive < now - 60) {
-	  do_exempt(chan, e->exemptmask);
-	  e->lastactive = now;
-	  return;
+      if (wild_match(user,e->exemptmask) || wild_match(e->exemptmask,user)) {
+	b = chan->channel.ban;
+	while (b->ban[0] && !wild_match(b->ban, user))
+	  b = b->next;
+	if (b->ban[0]){
+	  if (e->lastactive < now - 60) {
+	    do_exempt(chan, e->exemptmask);
+	    e->lastactive = now;
+	    return;
+	  }
 	}
       }
     }
   }
 }
 
-static void refresh_invite (struct chanset_t * chan, char * user, char * nick) {
+    
+static void refresh_invite (struct chanset_t * chan, char * user) {
   struct inviterec *i;
   int cycle;
   for (cycle = 0;cycle < 2;cycle++) {
@@ -440,7 +440,8 @@ static void refresh_invite (struct chanset_t * chan, char * user, char * nick) {
     else
       i = global_invites;
     for ( ; i; i = i->next) {
-      if (wild_match(i->invitemask,user)) {
+      if (wild_match(i->invitemask,user) && 
+	  (i->flags & INVITEREC_STICKY || ischaninviteonly(chan))) {
 	if (i->lastactive < now - 60) {
 	  do_invite(chan, i->invitemask);
 	  i->lastactive = now;
@@ -489,13 +490,24 @@ static void recheck_bans(struct chanset_t *chan)
    actually in fact exempted on the channel */
 static void recheck_exempt (struct chanset_t * chan) {
   struct exemptrec *e;
+  banlist *b;
   int i;
   
   for (i = 0; i < 2; i++) 
     for (e = i ? chan->exempts : global_exempts; e; e = e->next) 
-      if (!isexempted(chan, e->exemptmask) && (!channel_dynamicexempts(chan) ||
-					       e->flags & EXEMPTREC_STICKY))
-	add_mode(chan, '+', 'e', e->exemptmask);
+      if (!isexempted(chan, e->exemptmask) && 
+	  (!channel_dynamicexempts(chan) ||  e->flags & EXEMPTREC_STICKY)){
+	if (e->flags & EXEMPTREC_STICKY){
+	  add_mode(chan, '+', 'e', e->exemptmask);
+	} else {
+	  b = chan->channel.ban;
+	  while (b->ban[0] && !wild_match(b->ban, e->exemptmask))
+	    b = b->next;
+	  if (b->ban[0]){
+	    add_mode(chan, '+', 'e', e->exemptmask);
+	  }
+	}
+      }
 }
 
 /* recheck_invite */
@@ -505,8 +517,11 @@ static void recheck_invite (struct chanset_t * chan) {
   
   for (i = 0; i < 2; i++) 
     for (ir = i ? chan->invites : global_invites; ir; ir = ir->next) 
-      if (!isinvited(chan, ir->invitemask)  && (!channel_dynamicinvites(chan) ||
-						ir->flags & INVITEREC_STICKY))
+      /* if invite isn't set and (channel is not dynamic invites and not invite
+       * only) or invite is sticky */
+      if (!isinvited(chan, ir->invitemask)  
+	  && ((!channel_dynamicinvites(chan) &&
+	       !ischaninviteonly(chan)) || ir->flags & INVITEREC_STICKY))
 	add_mode(chan, '+', 'I', ir->invitemask);
 }
 
@@ -616,16 +631,17 @@ static void recheck_channel(struct chanset_t *chan, int dobans)
       /* if we're enforcing bans */
       if (channel_enforcebans(chan) &&
       /* & they match a ban */
-	  (u_match_ban(global_bans, s) || u_match_ban(chan->bans, s)))
+	  (u_match_ban(global_bans, s) || u_match_ban(chan->bans, s))) {
 	/* bewm */
 	refresh_ban_kick(chan, s, m->nick);
+      }
       /* ^ will use the ban comment */
-      /* check vs exempts */
-      if (u_match_exempt(global_exempts,s) || u_match_exempt(chan->exempts, s))
-	refresh_exempt(chan, s, m->nick);
+      if (u_match_exempt(global_exempts,s) || u_match_exempt(chan->exempts, s)){
+	refresh_exempt(chan, s);
+      }      
       /* check vs invites */
       if (u_match_invite(global_invites,s) || u_match_invite(chan->invites, s))
-	refresh_invite(chan, s, m->nick);
+	refresh_invite(chan, s);
       /* are they +k ? */
       if (chan_kick(fr) || glob_kick(fr)) {
 	quickban(chan, m->userhost);
@@ -1013,7 +1029,7 @@ static int got348(char *from, char *msg)
 {
   char * exempt, * who, *chname;
   struct chanset_t *chan;
-  if (net_type != 1 && net_type != 4)
+  if (use_exempts == 0)
     return 0;
   newsplit(&msg);
   chname = newsplit(&msg);
@@ -1038,7 +1054,7 @@ static int got349(char *from, char *msg)
   struct chanset_t *chan;
   char *chname;
 
-  if (net_type == 1 || net_type == 4) {
+  if (use_exempts == 1) {
     newsplit(&msg);
     chname = newsplit(&msg);
     chan = findchan(chname);
@@ -1075,7 +1091,7 @@ static int got346(char *from, char *msg)
 {
   char * invite, * who, *chname;
   struct chanset_t *chan;
-  if (net_type != 1 && net_type != 4)
+  if (use_invites == 0)
     return 0;
   newsplit(&msg);
   chname = newsplit(&msg);
@@ -1099,7 +1115,7 @@ static int got347(char *from, char *msg)
   struct chanset_t *chan;
   char *chname;
 
-  if (net_type == 1 || net_type ==4) {
+  if (use_invites == 1) {
     newsplit(&msg);
     chname = newsplit(&msg);
     chan = findchan(chname);
@@ -1454,12 +1470,9 @@ static int gotjoin(char *from, char *chname)
 	    /* Check for and reset exempts and invites
 	     * this will require further checking to account for when
 	     * to use the various modes */
-	    if (u_match_exempt(global_exempts,from) || 
-		u_match_exempt(chan->exempts, from))
-	      refresh_exempt(chan, from, nick);
 	    if (u_match_invite(global_invites,from) || 
 		u_match_invite(chan->invites, from))
-	      refresh_invite(chan, from, nick);
+	      refresh_invite(chan, from);
 	    /* are they a chan op, or global op without chan deop */
 	    if ((chan_op(fr) || (glob_op(fr) && !chan_deop(fr))) &&
 		/* is it op-on-join or is the use marked auto-op */
@@ -1470,11 +1483,13 @@ static int gotjoin(char *from, char *chname)
 	      /* if it matches a ban, dispose of them */
 	    } else {
 	      if (u_match_ban(global_bans, from) ||
-		  u_match_ban(chan->bans, from))
+		  u_match_ban(chan->bans, from)) {
 		refresh_ban_kick(chan, from, nick);
-	      /* likewise for kick'ees */
-	      else if (glob_kick(fr) || chan_kick(fr)) {
+		refresh_exempt(chan, from);
+		/* likewise for kick'ees */
+	      } else if (glob_kick(fr) || chan_kick(fr)) {
 		quickban(chan, from);
+		refresh_exempt(chan, from);
 		p = get_user(&USERENTRY_COMMENT, m->user);
 		dprintf(DP_MODE, "KICK %s %s :%s\n", chname, nick,
 			(p && (p[0] != '@')) ? p : IRC_COMMENTKICK);

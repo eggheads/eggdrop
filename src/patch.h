@@ -22,7 +22,7 @@ PATCH("932053853"); /* current "unix" time */
  *
  *
  */
-PATCH("dude-userinfo.patch"); /* last patch added */ 
+PATCH("newway.patch"); /* last patch added */ 
 /*
  *
  *

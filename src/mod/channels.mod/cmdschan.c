@@ -172,7 +172,7 @@ static void cmd_pls_exempt (struct userrec * u, int idx, char * par)
   /* The two lines below added for bantime */
   unsigned long int expire_time = 0, expire_foo;
   char * p_expire;
-  if (net_type != 1 && net_type != 4) {
+  if (use_exempts == 0) {
     dprintf(idx, "This command can only be used on IRCnet or hybrid EFnet.\n");
     return;
   }
@@ -312,7 +312,7 @@ static void cmd_pls_invite (struct userrec * u, int idx, char * par)
   /* The two lines below added for bantime */
   unsigned long int expire_time = 0, expire_foo;
   char * p_expire;
-  if (net_type != 1 && net_type != 4) {
+  if (use_invites == 0) {
     dprintf(idx, "This command can only be used on IRCnet or hybrid EFnet. \n");
     return;
   }
@@ -538,7 +538,7 @@ static void cmd_mns_exempt (struct userrec * u, int idx, char * par)
   struct chanset_t *chan = 0;
   char s[UHOSTLEN + 1], *exempt, *chname;
   exemptlist *e;
-  if (net_type != 1 && net_type != 4) {
+  if (use_exempts == 0) {
     dprintf(idx, "This command can only be used on IRCnet or hybrid EFnet.\n");
     return;
   }   
@@ -631,7 +631,7 @@ static void cmd_mns_invite (struct userrec * u, int idx, char * par)
   char s[UHOSTLEN + 1], *invite, *chname;
   invitelist *inv;
   
-  if (net_type != 1 && net_type != 4) {
+  if (use_invites == 0) {
     dprintf(idx, "This command can only be used on IRCnet or hybrid EFnet.\n");
     return;
   }
@@ -730,7 +730,7 @@ static void cmd_bans(struct userrec *u, int idx, char *par)
 
 static void cmd_exempts (struct userrec * u, int idx, char * par)
 {
-  if (net_type != 1 && net_type != 4) {
+  if (use_exempts == 0) {
     dprintf(idx, "This command can only be used on IRCnet or hybrid EFnet.\n");
     return;
   }
@@ -745,7 +745,7 @@ static void cmd_exempts (struct userrec * u, int idx, char * par)
 
 static void cmd_invites (struct userrec * u, int idx, char * par)
 {
-  if (net_type != 1 && net_type != 4) {
+  if (use_invites == 0) {
     dprintf(idx, "This command can only be used on IRCnet or hybrid EFnet.\n");
     return;
   }

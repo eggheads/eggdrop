@@ -368,12 +368,18 @@ set chanfile "LamestBot.chan"
 set ban-time 120
 
 # temporary exemptions (+e modes) will last how many minutes? if set to 0,
-# bot never removes them. This is an IRCNET feature.
-set exempt-time 0
+# bot never removes them. This is an IRCNET feature. The bot will check the
+# exempts every X minutes, but will not remove the exempt if a ban is set on
+# the channel that matches that exempt. Once the ban is removed then the 
+# exempt will be removed the next time the bot checks. 
+set exempt-time 60
 
 # temporary invitations (+I modes) will last how many minutes? if set to
-# 0, bot never removes them. This is an IRCNET feature.
-set invite-time 0
+# 0, bot never removes them. This is an IRCNET feature. The bot will check the
+# invites every X minutes, but will not remove them if the channel is +i. Once
+# the channel is -i then the bot will remove then invite mode next time it 
+# checks this counter
+set invite-time 60
 
 # [0/1] share user greets with other bots on the channel if sharing user data?
 set share-greet 0
@@ -472,7 +478,8 @@ channel set #lamest +userbans
 #   only activate exempts on the channel when necessary?  (this keeps the
 #   channel's exempt list from getting excessively long.  the bot still 
 #   remembers every exempt, but it only activates a exempt on the channel
-#   when it sees  someone join who matches that exempt.)
+#   when it sees a ban set matching the exempt. The exempt remains active
+#   on the channel for as long as the ban is still active.
 channel set #lamest +dynamicexempts
 
 #   allow exempts to be made by users directly?  (if turned off, the bot will
@@ -481,8 +488,9 @@ channel set #lamest +userexempts
 
 #   only activate invites on the channel when necessary?  (this keeps the
 #   channel's invite list from getting excessively long.  the bot still 
-#   remembers every invite, but it only activates a invite on the channel
-#   when it sees  someone join who matches that invite.)
+#   remembers every invite, but the invites are only activated when the 
+#   channel is set to invite only and a user joins aftre requesting an 
+#   invite. Once set the invite remains until the channel goes to -i
 channel set #lamest +dynamicinvites
 
 #   allow invites to be made by users directly?  (if turned off, the bot will
@@ -845,13 +853,13 @@ set bounce-invites 0
 # the bot won't try to put more exemptions. Thus it won't flood the irc
 # server. Only 2.10 servers are concerned by these +e modes.
 #  * This is an IRCNET feature
-set max-exempts 0
+set max-exempts 20
 
 # If there are more than max-invites active +I modes on a channel, then
 # the bot won't try to put more invitations. Thus it won't flood the irc
 # server. Only 2.10 irc servers are concerned by these +I modes.
 #  * This is an IRCNET feature
-set max-invites 0
+set max-invites 20
 
 # [0/1] Do you want the bot to remove bogus exempts?
 set bounce-bogus-exempts 0
@@ -864,6 +872,18 @@ set bounce-bogus-invites 0
 
 # [0/1] Do you want the bot to kick users who set bogus invites?
 set kick-bogus-invites 0
+
+# The following lines should be left uncommented unless the default values
+# are being over-ridden. By default exempts and invites are on for IRCnet
+# and hybrid EFnet, but off for all other networks. This behaviour can be
+# modified by the following 2 flags. If you're network doesn't support e/I
+# modes then you'll be unable to use these features.
+#
+# [0/1] Do you want to enable exempts?
+# set use-exempts 0
+
+# [0/1] Do you want to use invites?
+# set use-invites 0
 
 ##### IRC MODULE - net-type 5 specific features (other networks) #####
 

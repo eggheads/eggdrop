@@ -62,10 +62,10 @@ static void share_stick_ban(int idx, char *par)
       struct chanset_t *chan = findchan(par);
       struct chanuserrec *cr;
 
-      if ((chan != NULL) && channel_shared(chan) &&
-	  ((bot_flags(dcc[idx].user) & BOT_GLOBAL)
-	   || ((cr = get_chanrec(dcc[idx].user, par))
-	       && (cr->flags & BOT_AGGRESSIVE))))
+      if ((chan !=NULL) && ((channel_shared(chan) &&
+                             ((cr = get_chanrec(dcc[idx].user, par)) &&
+                              (cr->flags & BOT_AGGRESSIVE))) ||
+                            (bot_flags(dcc[idx].user) & BOT_GLOBAL)))
 	if (u_setsticky_ban(chan, host, yn) > 0) {
 	  putlog(LOG_CMDS, "*", "%s: stick %s %c %s", dcc[idx].nick, host,
 		 yn ? 'y' : 'n', par);
@@ -99,11 +99,11 @@ static void share_stick_exempt (int idx, char * par) {
     } else {
       struct chanset_t *chan = findchan(par);
       struct chanuserrec * cr;
-      
-      if ((chan != NULL) && channel_shared(chan) &&
-	  ((bot_flags(dcc[idx].user) & BOT_GLOBAL) 
-	   || ((cr = get_chanrec(dcc[idx].user,par))
-	       && (cr->flags & BOT_AGGRESSIVE))))
+
+      if ((chan !=NULL) && ((channel_shared(chan) &&
+                             ((cr = get_chanrec(dcc[idx].user, par)) &&
+                              (cr->flags & BOT_AGGRESSIVE))) ||
+                            (bot_flags(dcc[idx].user) & BOT_GLOBAL)))
 	if (u_setsticky_exempt(chan, host, yn) > 0) {
 	  putlog(LOG_CMDS, "*", "%s: stick %s %c %s", dcc[idx].nick, host,
 		 yn ? 'y' : 'n', par);
@@ -137,11 +137,11 @@ static void share_stick_invite (int idx, char * par) {
     } else {
       struct chanset_t *chan = findchan(par);
       struct chanuserrec * cr;
-      
-      if ((chan != NULL) && channel_shared(chan) &&
-	  ((bot_flags(dcc[idx].user) & BOT_GLOBAL) 
-	   || ((cr = get_chanrec(dcc[idx].user,par))
-	       && (cr->flags & BOT_AGGRESSIVE))))
+
+      if ((chan !=NULL) && ((channel_shared(chan) &&
+                             ((cr = get_chanrec(dcc[idx].user, par)) &&
+                              (cr->flags & BOT_AGGRESSIVE))) ||
+                            (bot_flags(dcc[idx].user) & BOT_GLOBAL)))
 	if (u_setsticky_invite(chan, host, yn) > 0) {
 	  putlog(LOG_CMDS, "*", "%s: stick %s %c %s", dcc[idx].nick, host,
 		 yn ? 'y' : 'n', par);
@@ -1117,7 +1117,7 @@ static void shareout_mod VARARGS_DEF(struct chanset_t *, arg1)
     if ((l = vsnprintf(s + 2, 509, format, va)) < 0)
       s[2 + (l = 509)] = 0;
 #else
-    l = vsprintf(s + 2, format, va);
+    l = vsprintf(s + 2, format, va); /* Seggy: possible overflow */
 #endif
     for (i = 0; i < dcc_total; i++)
       if ((dcc[i].type->flags & DCT_BOT) &&

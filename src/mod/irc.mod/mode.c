@@ -595,9 +595,10 @@ static void got_ban(struct chanset_t *chan, char *nick, char *from,
   }
   /* If a ban is set on an exempted user then we might as well set exemption
    * at the same time */
-  if ((u_equals_exempt(global_exempts,who) || u_equals_exempt(chan->exempts, who))) {
-    add_mode(chan, '+', 'e' , who);
-  }
+  refresh_exempt(chan,who);
+  /* if ((u_equals_exempt(global_exempts,who) || u_equals_exempt(chan->exempts, who))) {
+   * add_mode(chan, '+', 'e' , who);
+   *} */
   if (check && channel_enforcebans(chan))
     kick_all(chan, who, IRC_BANNED);
   /* is it a server ban from nowhere? */
