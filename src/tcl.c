@@ -6,7 +6,7 @@
  * 
  * dprintf'ized, 4feb1996
  * 
- * $Id: tcl.c,v 1.24 1999/12/15 02:32:58 guppy Exp $
+ * $Id: tcl.c,v 1.25 1999/12/28 01:46:26 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -67,6 +67,7 @@ extern int tands;
 extern int resolve_timeout;
 extern char natip[];
 extern int default_uflags; /* drummer */
+extern int strict_host;
 
 /* confvar patch by aaronwl */
 extern char configfile[];
@@ -440,6 +441,7 @@ static tcl_ints def_tcl_ints[] =
   {"use-invites", &use_invites, 0}, /* Jason/drummer */
   {"quiet-save", &quiet_save, 0}, /* Lucas */
   {"force-expire", &force_expire, 0}, /* Rufus */
+  {"strict-host", &strict_host, 0}, /* moved from server.mod & irc.mod */
   {0, 0, 0}			/* arthur2 */
 };
 

@@ -6,7 +6,7 @@
  * 
  * dprintf'ized, 10nov1995
  * 
- * $Id: userrec.c,v 1.17 1999/12/15 02:32:58 guppy Exp $
+ * $Id: userrec.c,v 1.18 1999/12/28 01:46:26 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -54,6 +54,8 @@ maskrec *global_bans = NULL,
         *global_invites = NULL;
 struct igrec *global_ign = NULL;
 int cache_hit = 0, cache_miss = 0;	/* temporary cache accounting */
+int strict_host = 1;
+char BUF[512]; /* lame buffer for get_user_by_host() */
 
 #ifdef DEBUG_MEM
 void *_user_malloc(int size, char *file, int line)
@@ -176,6 +178,31 @@ int count_users(struct userrec *bu)
     u = u->next;
   }
   return tot;
+}
+
+/* make nick!~user@host into nick!user@host if necessary */
+/* also the new form: nick!+user@host or nick!-user@host */
+/* new: returns a statically allocated buffer with the result (drummer) */
+static char* fixfrom(char *s)
+{
+  char *p;
+
+  if (s == NULL)
+    return NULL;
+  strncpy(BUF, s, 511);
+  BUF[511] = 0;
+  if (strict_host)
+    return BUF;
+  if ((p = strchr(BUF, '!')))
+    p++;
+  else
+    p = s;			/* sometimes we get passed just a
+				 * user@host here... */
+  /* these are ludicrous. */
+  if (strchr("~+-^=", *p) && (p[1] != '@')) /* added check for @ - drummer */
+    strcpy(p, p + 1);
+  /* bug was: n!~@host -> n!@host  now: n!~@host */
+  return BUF;
 }
 
 struct userrec *check_dcclist_hand(char *handle)
@@ -318,6 +345,7 @@ struct userrec *get_user_by_host(char *host)
     return ret;
   }
   cache_miss++;
+  host = fixfrom(host);
   while (u != NULL) {
     q = get_user(&USERENTRY_HOSTS, u);
     while (q != NULL) {
@@ -337,6 +365,7 @@ struct userrec *get_user_by_host(char *host)
   return ret;
 }
 
+/* use fixfrom() or dont? (drummer) */
 struct userrec *get_user_by_equal_host(char *host)
 {
   struct userrec *u = userlist;
@@ -613,6 +642,12 @@ struct userrec *adduser(struct userrec *bu, char *handle, char *host,
     sprintf(xk->data, "%09lu", now);
     set_user(&USERENTRY_XTRA, u, xk);
   }
+  host = fixfrom(host);
+  /* about this fixfrom():
+   * we should use this fixfrom before every call of adduser()
+   * but its much easier to use here...
+   * (drummer)
+   */
   /* strip out commas -- they're illegal */
   if (host && host[0]) {
     char *p = strchr(host, ',');

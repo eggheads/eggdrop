@@ -1,6 +1,6 @@
 /* 
  * misc.c -- handles:
- *   split() maskhost() copyfile() movefile() fixfrom()
+ *   split() maskhost() copyfile() movefile()
  *   dumplots() daysago() days() daysdur()
  *   logging things
  *   queueing output for the bot (msg and help)
@@ -10,7 +10,7 @@
  * 
  * dprintf'ized, 12dec1995
  * 
- * $Id: misc.c,v 1.21 1999/12/15 02:32:58 guppy Exp $
+ * $Id: misc.c,v 1.22 1999/12/28 01:46:26 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -224,8 +224,8 @@ void maskhost(char *s, char *nw)
     } else
       i = 0;
     while (*p != '@') {
-      if ((*p == '~') || (*p == '+') || (*p == '-'))
-	nw[i] = '?';
+      if (strchr("~+-^=", *p))
+	nw[i] = '?'; 
       else
 	nw[i] = *p;
       p++;
