@@ -79,13 +79,26 @@ memberlist *ismember(struct chanset_t *chan, char *nick)
   return x;
 }
 
-/* find a chanset by channel name */
+/* find a chanset by channel name as the server knows it (ie !ABCDEchannel) */
 struct chanset_t *findchan(char *name)
 {
   struct chanset_t *chan = chanset;
 
   while (chan != NULL) {
     if (!rfc_casecmp(chan->name, name))
+      return chan;
+    chan = chan->next;
+  }
+  return NULL;
+}
+
+/* find a chanset by display name (ie !channel) */
+struct chanset_t *findchan_by_dname(char *name)
+{
+  struct chanset_t *chan = chanset;
+
+  while (chan != NULL) {
+    if (!rfc_casecmp(chan->dname, name))
       return chan;
     chan = chan->next;
   }

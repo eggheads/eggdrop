@@ -51,7 +51,7 @@ static int add_bot_hostmask(int idx, char *nick)
 	  return 0;
 	}
 	simple_sprintf(s, "*!%s", m->userhost);
-	dprintf(idx, "(Added hostmask for %s from %s)\n", nick, chan->name);
+	dprintf(idx, "(Added hostmask for %s from %s)\n", nick, chan->dname);
 	addhost_by_handle(nick, s);
 	return 1;
       }
@@ -239,12 +239,12 @@ static void cmd_botinfo(struct userrec *u, int idx, char *par)
   if (module_find("server", 0, 0)) {
     while (chan != NULL) {
       if (!channel_secret(chan)) {
-	if ((strlen(s) + strlen(chan->name) + strlen(network) 
+	if ((strlen(s) + strlen(chan->dname) + strlen(network) 
                    + strlen(botnetnick) + strlen(ver) + 1) >= 490) {
           strcat(s,"++  ");
           break; /* yeesh! */
 	}
-	strcat(s, chan->name);
+	strcat(s, chan->dname);
 	strcat(s, ", ");
       }
       chan = chan->next;
@@ -619,8 +619,7 @@ static void cmd_console(struct userrec *u, int idx, char *par)
 {
   char *nick, s[2], s1[512];
   int dest = 0, i, ok = 0, pls, md;
-  struct flag_record fr =
-  {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
+  struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
   module_entry *me;
 
   if (!par[0]) {
@@ -652,9 +651,9 @@ static void cmd_console(struct userrec *u, int idx, char *par)
   if (!nick[0])
     nick = newsplit(&par);
   /* ugly hack for stupid modeless channels ++rtc */
-  if ((nick [0] == '+' && findchan(nick)) || 
+  if ((nick [0] == '+' && findchan_by_dname(nick)) || 
       (nick [0] != '+' && strchr(CHANMETA "*", nick[0]))) {
-    if (strcmp(nick, "*") && !findchan(nick)) {
+    if (strcmp(nick, "*") && !findchan_by_dname(nick)) {
       dprintf(idx, "Invalid console channel: %s\n", nick);
       return;
     }
@@ -664,7 +663,7 @@ static void cmd_console(struct userrec *u, int idx, char *par)
 	      nick);
       return;
     }
-    strncpy(dcc[dest].u.chat->con_chan, nick, 80);
+    strncpy(dcc[dest].u.chat->con_chan, nick, 81);
     dcc[dest].u.chat->con_chan[80] = 0;
     nick[0] = 0;
     if ((dest == idx) && !glob_master(fr) && !chan_master(fr))
@@ -1393,7 +1392,7 @@ int check_dcc_chanattrs(struct userrec *u, char *chname, int chflags,
 	{FR_CHAN, 0, 0, 0, 0, 0};
 
 	while (chan && !found) {
-	  get_user_flagrec(u, &fr, chan->name);
+	  get_user_flagrec(u, &fr, chan->dname);
 	  if (fr.chan & (USER_OP | USER_MASTER | USER_OWNER))
 	    found = 1;
 	  else
@@ -1402,7 +1401,7 @@ int check_dcc_chanattrs(struct userrec *u, char *chname, int chflags,
 	if (!chan)
 	  chan = chanset;
 	if (chan)
-	  strcpy(dcc[i].u.chat->con_chan, chan->name);
+	  strcpy(dcc[i].u.chat->con_chan, chan->dname);
 	else
 	  strcpy(dcc[i].u.chat->con_chan, "*");
       }
@@ -1435,14 +1434,14 @@ static void cmd_chattr(struct userrec *u, int idx, char *par)
 
   /* Parse args */
   if (par[0]) {
-    arg = newsplit (&par);
+    arg = newsplit(&par);
     if (par[0]) {
       /* .chattr <handle> <changes> <channel> */
       chg = arg;
-      arg = newsplit (&par);
-      chan = findchan (arg);
+      arg = newsplit(&par);
+      chan = findchan_by_dname(arg);
     } else {
-      chan = findchan (arg);
+      chan = findchan_by_dname(arg);
       /* ugly hack for stupid modeless channels ++rtc */
       if (!(arg[0] == '+' && chan) &&
           !(arg[0] != '+' && strchr (CHANMETA, arg[0]))) {
@@ -1469,7 +1468,7 @@ static void cmd_chattr(struct userrec *u, int idx, char *par)
       if (!strcmp ((arg = dcc[idx].u.chat->con_chan), "*"))
         arg = NULL;
       else
-        chan = findchan (arg);
+        chan = findchan_by_dname(arg);
       if (arg && !chan) {
         dprintf (idx, "Invalid console channel %s.\n", arg);
 	return;
@@ -1486,7 +1485,7 @@ static void cmd_chattr(struct userrec *u, int idx, char *par)
   user.match = FR_GLOBAL;
   if (chan)
     user.match |= FR_CHAN;
-  get_user_flagrec(u, &user, chan ? chan->name : 0);
+  get_user_flagrec(u, &user, chan ? chan->dname : 0);
   if (!chan && !glob_botmast(user)) {
     dprintf(idx, "You do not have Bot Master privileges.\n");
     if (tmpchg)
@@ -1557,7 +1556,7 @@ static void cmd_chattr(struct userrec *u, int idx, char *par)
   }
   if (chan)
     putlog(LOG_CMDS, "*", "#%s# (%s) chattr %s %s",
-	   dcc[idx].nick, chan ? chan->name : "*", hand, chg ? chg : "");
+	   dcc[idx].nick, chan ? chan->dname : "*", hand, chg ? chg : "");
   else
     putlog(LOG_CMDS, "*", "#%s# chattr %s %s", dcc[idx].nick, hand,
 	   chg ? chg : "");
@@ -1578,13 +1577,13 @@ static void cmd_chattr(struct userrec *u, int idx, char *par)
     get_user_flagrec(u2, &user, par);
     user.chan &= ~BOT_SHARE;
     if (chg)
-      check_dcc_chanattrs(u2, chan->name, user.chan, ocf);
+      check_dcc_chanattrs(u2, chan->dname, user.chan, ocf);
     build_flags(work, &user, NULL);
     if (work[0] != '-')
       dprintf(idx, "Channel flags for %s on %s are now +%s\n", hand,
-	      chan->name, work);
+	      chan->dname, work);
     else
-      dprintf(idx, "No flags for %s on %s.\n", hand, chan->name);
+      dprintf(idx, "No flags for %s on %s.\n", hand, chan->dname);
     if (chg && (me = module_find("irc", 0, 0))) {
       Function *func = me->funcs;
 
@@ -1601,10 +1600,9 @@ static void cmd_botattr(struct userrec *u, int idx, char *par)
   char *hand, *chg = NULL, *arg = NULL, *tmpchg = NULL, work[1024];
   struct chanset_t *chan = NULL;
   struct userrec *u2;
-  struct flag_record pls =
-  {0, 0, 0, 0, 0, 0}, mns =
-  {0, 0, 0, 0, 0, 0}, user =
-  {0, 0, 0, 0, 0, 0};
+  struct flag_record pls = {0, 0, 0, 0, 0, 0},
+		     mns = {0, 0, 0, 0, 0, 0},
+		     user = {0, 0, 0, 0, 0, 0};
   int idx2;
 
   if (!par[0]) {
@@ -1631,9 +1629,9 @@ static void cmd_botattr(struct userrec *u, int idx, char *par)
       /* .botattr <handle> <changes> <channel> */
       chg = arg;
       arg = newsplit (&par);
-      chan = findchan (arg);
+      chan = findchan_by_dname(arg);
     } else {
-      chan = findchan (arg);
+      chan = findchan_by_dname(arg);
       /* ugly hack for stupid modeless channels ++rtc */
       if (!(arg[0] == '+' && chan) &&
           !(arg[0] != '+' && strchr (CHANMETA, arg[0]))) {
@@ -1662,7 +1660,7 @@ static void cmd_botattr(struct userrec *u, int idx, char *par)
       if (!strcmp ((arg = dcc[idx].u.chat->con_chan), "*"))
         arg = NULL;
       else
-        chan = findchan (arg);
+        chan = findchan_by_dname(arg);
       if (arg && !chan) {
         dprintf (idx, "Invalid console channel %s.\n", arg);
 	return;
@@ -1678,7 +1676,7 @@ static void cmd_botattr(struct userrec *u, int idx, char *par)
   par = arg;
   
   user.match = FR_GLOBAL;
-  get_user_flagrec(u, &user, chan ? chan->name : 0);
+  get_user_flagrec(u, &user, chan ? chan->dname : 0);
   if (!glob_botmast(user)) {
     dprintf(idx, "You do not have Bot Master privileges.\n");
     if (tmpchg)
@@ -1715,7 +1713,7 @@ static void cmd_botattr(struct userrec *u, int idx, char *par)
   }
   if (chan)
     putlog(LOG_CMDS, "*", "#%s# (%s) botattr %s %s",
-	   dcc[idx].nick, chan->name, hand, chg ? chg : "");
+	   dcc[idx].nick, chan->dname, hand, chg ? chg : "");
   else
     putlog(LOG_CMDS, "*", "#%s# botattr %s %s", dcc[idx].nick, hand,
 	   chg ? chg : "");
@@ -1736,9 +1734,9 @@ static void cmd_botattr(struct userrec *u, int idx, char *par)
     build_flags(work, &user, NULL);
     if (work[0] != '-')
       dprintf(idx, "Bot flags for %s on %s are now +%s\n", hand,
-	      chan->name, work);
+	      chan->dname, work);
     else
-      dprintf(idx, "No bot flags for %s on %s.\n", hand, chan->name);
+      dprintf(idx, "No bot flags for %s on %s.\n", hand, chan->dname);
   }
   if (tmpchg)
     nfree(tmpchg);
@@ -2398,8 +2396,7 @@ static void cmd_pls_host(struct userrec *u, int idx, char *par)
   char *handle, *host;
   struct userrec *u2;
   struct list_type *q;
-  struct flag_record fr =
-  {FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0};
+  struct flag_record fr = {FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0};
 
   context;
   handle = newsplit(&par);
@@ -2443,8 +2440,7 @@ static void cmd_mns_host(struct userrec *u, int idx, char *par)
 {
   char *handle, *host;
   struct userrec *u2;
-  struct flag_record fr =
-  {FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0};
+  struct flag_record fr = {FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0};
 
   if (!par[0]) {
     dprintf(idx, "Usage: -host [handle] <hostmask>\n");

@@ -382,7 +382,7 @@ int write_user(struct userrec *u, FILE * f, int idx)
   if (fprintf(f, "%-10s - %-24s\n", u->handle, s) == EOF)
     return 0;
   for (ch = u->chanrec; ch; ch = ch->next) {
-    cst = findchan(ch->channel);
+    cst = findchan_by_dname(ch->channel);
     if (cst && ((idx < 0) || channel_shared(cst))) {
       if (idx >= 0) {
 	fr.match = (FR_CHAN | FR_BOT);

@@ -73,7 +73,7 @@ static int msg_hello(char *nick, char *h, struct userrec *u, char *p)
   }
   for (chan = chanset; chan; chan = chan->next) {
     if (ismember(chan, nick))
-      add_chanrec_by_handle(userlist, nick, chan->name);
+      add_chanrec_by_handle(userlist, nick, chan->dname);
   }
   dprintf(DP_HELP, IRC_SALUT1, IRC_SALUT1_ARGS);
   dprintf(DP_HELP, IRC_SALUT2, IRC_SALUT2_ARGS);
@@ -216,7 +216,7 @@ static int msg_ident(char *nick, char *host, struct userrec *u, char *par)
       dprintf(DP_HELP, "NOTICE %s :%s: %s\n", nick, IRC_ADDHOSTMASK, s1);
       addhost_by_handle(who, s1);
       while (chan) {
-	get_user_flagrec(u2, &fr, chan->name);
+	get_user_flagrec(u2, &fr, chan->dname);
 	/* is the channel or the user marked auto-op? */
 	if ((channel_autoop(chan) || glob_autoop(fr) || chan_autoop(fr)) &&
            (mx = ismember(chan, nick)) && !chan_hasop(mx) && !chan_sentop(mx) &&	
@@ -295,7 +295,7 @@ static int msg_info(char *nick, char *host, struct userrec *u, char *par)
     }
   }
   if (par[0] && (strchr(CHANMETA, par[0]) != NULL)) {
-    if (!findchan(chname = newsplit(&par))) {
+    if (!findchan_by_dname(chname = newsplit(&par))) {
       dprintf(DP_HELP, "NOTICE %s :%s\n", nick, IRC_NOMONITOR);
       return 1;
     }
@@ -383,7 +383,7 @@ static int msg_who(char *nick, char *host, struct userrec *u, char *par)
 	    USAGE, botname);
     return 0;
   }
-  chan = findchan(par);
+  chan = findchan_by_dname(par);
   if (!chan) {
     dprintf(DP_HELP, "NOTICE %s :%s\n", nick, IRC_NOMONITOR);
     return 0;
@@ -411,7 +411,7 @@ static int msg_who(char *nick, char *host, struct userrec *u, char *par)
     if (info && (info[0] == '@'))
       info++;
     else if (u) {
-      get_handle_chaninfo(u->handle, chan->name, s);
+      get_handle_chaninfo(u->handle, chan->dname, s);
       if (s[0]) {
 	info = s;
 	if (info[0] == '@')
@@ -509,11 +509,11 @@ static int msg_whois(char *nick, char *host, struct userrec *u, char *par)
   while (chan != NULL) {
     if (hand_on_chan(chan, u2)) {
       sprintf(s1, "NOTICE %s :[%s] %s %s.", nick, u2->handle,
-	      IRC_ONCHANNOW, chan->name);
+	      IRC_ONCHANNOW, chan->dname);
       ok = 1;
     } else {
-      get_user_flagrec(u, &fr, chan->name);
-      cr = get_chanrec(u2, chan->name);
+      get_user_flagrec(u, &fr, chan->dname);
+      cr = get_chanrec(u2, chan->dname);
       if (cr && (cr->laston > tt) &&
 	  (!channel_hidden(chan) ||
 	   hand_on_chan(chan, u) ||
@@ -525,7 +525,7 @@ static int msg_whois(char *nick, char *host, struct userrec *u, char *par)
 	s[12] = 0;
 	ok = 1;
 	sprintf(s1, "NOTICE %s :[%s] %s %s on %s", nick, u2->handle,
-		IRC_LASTSEENAT, s, chan->name);
+		IRC_LASTSEENAT, s, chan->dname);
       }
     }
     chan = chan->next;
@@ -588,7 +588,7 @@ static int msg_op(char *nick, char *host, struct userrec *u, char *par)
     /* Prevent people from gaining ops when no password set */
     if (!u_pass_match(u, "-")) {
       if (par[0]) {
-	chan = findchan(par);
+	chan = findchan_by_dname(par);
 	if (chan && channel_active(chan)) {
 	  get_user_flagrec(u, &fr, par);
 	  if (chan_op(fr) || (glob_op(fr) && !chan_deop(fr)))
@@ -600,7 +600,7 @@ static int msg_op(char *nick, char *host, struct userrec *u, char *par)
       } else {
 	chan = chanset;
 	while (chan != NULL) {
-	  get_user_flagrec(u, &fr, chan->name);
+	  get_user_flagrec(u, &fr, chan->dname);
 	  if (chan_op(fr) || (glob_op(fr) && !chan_deop(fr)))
 	    add_mode(chan, '+', 'o', nick);
 	  chan = chan->next;
@@ -627,7 +627,7 @@ static int msg_key(char *nick, char *host, struct userrec *u, char *par)
   if (u_pass_match(u, pass)) {
     /* Prevent people from getting key with no pass set */
     if (!u_pass_match(u, "-")) {
-      if (!(chan = findchan(par))) {
+      if (!(chan = findchan_by_dname(par))) {
 	dprintf(DP_HELP, "NOTICE %s :%s: /MSG %s key <pass> <channel>\n",
 		nick, USAGE, botname);
 	return 1;
@@ -636,7 +636,7 @@ static int msg_key(char *nick, char *host, struct userrec *u, char *par)
 	dprintf(DP_HELP, "NOTICE %s :%s: %s\n", nick, par, IRC_NOTONCHAN);
 	return 1;
       }
-      chan = findchan(par);
+      chan = findchan_by_dname(par);
       if (chan && channel_active(chan)) {
 	get_user_flagrec(u, &fr, par);
 	if (chan_op(fr) || (glob_op(fr) && !chan_deop(fr))) {
@@ -677,7 +677,7 @@ static int msg_voice(char *nick, char *host, struct userrec *u, char *par)
   if (u_pass_match(u, pass)) {
     if (!u_pass_match(u, "-")) {
       if (par[0]) {
-	chan = findchan(par);
+	chan = findchan_by_dname(par);
 	if (chan && channel_active(chan)) {
 	  get_user_flagrec(u, &fr, par);
 	  if (chan_voice(fr) || glob_voice(fr))
@@ -689,7 +689,7 @@ static int msg_voice(char *nick, char *host, struct userrec *u, char *par)
       } else {
 	chan = chanset;
 	while (chan != NULL) {
-	  get_user_flagrec(u, &fr, chan->name);
+	  get_user_flagrec(u, &fr, chan->dname);
 	  if (chan_voice(fr) || glob_voice(fr))
 	    add_mode(chan, '+', 'v', nick);
 	  chan = chan->next;
@@ -718,7 +718,7 @@ static int msg_invite(char *nick, char *host, struct userrec *u, char *par)
   if (u_pass_match(u, pass)) {
     if (par[0] == '*') {
       for (chan = chanset; chan; chan = chan->next) {
-	get_user_flagrec(u, &fr, chan->name);
+	get_user_flagrec(u, &fr, chan->dname);
 	if ((chan_op(fr) || (glob_op(fr) && !chan_deop(fr))) &&
 	    (chan->channel.mode & CHANINV))
 	  dprintf(DP_SERVER, "INVITE %s %s\n", nick, chan->name);
@@ -727,7 +727,7 @@ static int msg_invite(char *nick, char *host, struct userrec *u, char *par)
 	     u->handle);
       return 1;
     }
-    if (!(chan = findchan(par))) {
+    if (!(chan = findchan_by_dname(par))) {
       dprintf(DP_HELP, "NOTICE %s :%s: /MSG %s invite <pass> <channel>\n",
 	      nick, USAGE, botname);
       return 1;
@@ -794,7 +794,7 @@ static int msg_status(char *nick, char *host, struct userrec *u, char *par)
   strcpy(s, "Channels: ");
   l = 10;
   for (chan = chanset; chan; chan = chan->next) {
-    l += my_strcpy(s + l, chan->name);
+    l += my_strcpy(s + l, chan->dname);
     if (!channel_active(chan))
       l += my_strcpy(s + l, " (trying)");
     else if (channel_pending(chan))
@@ -934,7 +934,7 @@ static int msg_reset(char *nick, char *host, struct userrec *u, char *par)
     return 1;
   }
   if (par[0]) {
-    chan = findchan(par);
+    chan = findchan_by_dname(par);
     if (!chan) {
       dprintf(DP_HELP, "NOTICE %s :%s: %s\n", nick, par, IRC_NOMONITOR);
       return 0;
@@ -966,7 +966,7 @@ static int msg_go(char *nick, char *host, struct userrec *u, char *par)
   if (!u)
     return 0;
   if (par[0]) {
-    chan = findchan(par);
+    chan = findchan_by_dname(par);
     if (!chan)
       return 0;
     if (!(chan->status & CHAN_ACTIVE)) {
@@ -982,11 +982,11 @@ static int msg_go(char *nick, char *host, struct userrec *u, char *par)
     }
     if (!me_op(chan)) {
       dprintf(DP_SERVER, "PART %s\n", chan->name);
-      putlog(LOG_CMDS, chan->name, "(%s!%s) !%s! GO %s", nick, host,
+      putlog(LOG_CMDS, chan->dname, "(%s!%s) !%s! GO %s", nick, host,
 	     u->handle, par);
       return 1;
     }
-    putlog(LOG_CMDS, chan->name, "(%s!%s) !%s! failed GO %s (i'm chop)",
+    putlog(LOG_CMDS, chan->dname, "(%s!%s) !%s! failed GO %s (i'm chop)",
 	   nick, host, u->handle, par);
     return 1;
   }

@@ -315,7 +315,7 @@ static void got_key(struct chanset_t *chan, char *nick, char *from,
 	(key[i] != 2) && (key[i] != 31) && (key[i] != 22))
       bogus = 1;
   if (bogus && !match_my_nick(nick)) {
-    putlog(LOG_MODES, chan->name, "%s on %s!", CHAN_BADCHANKEY, chan->name);
+    putlog(LOG_MODES, chan->dname, "%s on %s!", CHAN_BADCHANKEY, chan->dname);
     m = ismember(chan, nick);
     if (m) {
       dprintf(DP_MODE, "KICK %s %s :%s\n", chan->name, nick, CHAN_BADCHANKEY);
@@ -343,7 +343,7 @@ static void got_op(struct chanset_t *chan, char *nick, char *from,
 
   m = ismember(chan, who);
   if (!m) {
-    putlog(LOG_MISC, chan->name, CHAN_BADCHANMODE, CHAN_BADCHANMODE_ARGS);
+    putlog(LOG_MISC, chan->dname, CHAN_BADCHANMODE, CHAN_BADCHANMODE_ARGS);
     dprintf(DP_MODE, "WHO %s\n", who);
     return;
   }
@@ -361,7 +361,7 @@ static void got_op(struct chanset_t *chan, char *nick, char *from,
     u = get_user_by_host(s);
   } else
     u = m->user;
-  get_user_flagrec(u, &victim, chan->name);
+  get_user_flagrec(u, &victim, chan->dname);
   /* I'm opped, and the opper isn't me */
   if (me_op(chan) && !match_my_nick(who) &&
     /* and it isn't a server op */
@@ -419,7 +419,7 @@ static void got_deop(struct chanset_t *chan, char *nick, char *from,
 
   m = ismember(chan, who);
   if (!m) {
-    putlog(LOG_MISC, chan->name, CHAN_BADCHANMODE, CHAN_BADCHANMODE_ARGS);
+    putlog(LOG_MISC, chan->dname, CHAN_BADCHANMODE, CHAN_BADCHANMODE_ARGS);
     dprintf(DP_MODE, "WHO %s\n", who);
     return;
   }
@@ -431,7 +431,7 @@ static void got_deop(struct chanset_t *chan, char *nick, char *from,
   simple_sprintf(s, "%s!%s", m->nick, m->userhost);
   simple_sprintf(s1, "%s!%s", nick, from);
   u = get_user_by_host(s);
-  get_user_flagrec(u, &victim, chan->name);
+  get_user_flagrec(u, &victim, chan->dname);
   /* deop'd someone on my oplist? */
   if (me_op(chan)) {
     int ok = 1;
@@ -469,8 +469,8 @@ static void got_deop(struct chanset_t *chan, char *nick, char *from,
   }
 
   if (!nick[0])
-    putlog(LOG_MODES, chan->name, "TS resync (%s): %s deopped by %s",
-	   chan->name, who, from);
+    putlog(LOG_MODES, chan->dname, "TS resync (%s): %s deopped by %s",
+	   chan->dname, who, from);
   /* check for mass deop */
   if (nick[0])
     detect_chan_flood(nick, from, s1, chan, FLOOD_DEOP, who);
@@ -492,8 +492,8 @@ static void got_deop(struct chanset_t *chan, char *nick, char *from,
     if (chan->need_op[0])
       do_tcl("need-op", chan->need_op);
     if (!nick[0])
-      putlog(LOG_MODES, chan->name, "TS resync deopped me on %s :(",
-	     chan->name);
+      putlog(LOG_MODES, chan->dname, "TS resync deopped me on %s :(",
+	     chan->dname);
   }
   if (nick[0])
     maybe_revenge(chan, s1, s, REVENGE_DEOP);
@@ -517,7 +517,7 @@ static void got_ban(struct chanset_t *chan, char *nick, char *from,
     /* First of all let's check whether some luser banned us ++rtc */
     if (match_my_nick(nick)) {
       /* Bot banned itself -- doh! ++rtc */
-      putlog(LOG_MISC, "*", "Uh, banned myself on %s, reversing...", chan->name);
+      putlog(LOG_MISC, "*", "Uh, banned myself on %s, reversing...", chan->dname);
     }
     reversing = 1;
     check = 0;
@@ -582,7 +582,7 @@ static void got_ban(struct chanset_t *chan, char *nick, char *from,
     /* just an off-chance... */
     u = get_user_by_host(who);
     if (u) {
-      get_user_flagrec(u, &victim, chan->name);
+      get_user_flagrec(u, &victim, chan->dname);
       if (glob_friend(victim) || (glob_op(victim) && !chan_deop(victim)) ||
 	  chan_friend(victim) || chan_op(victim)) {
 	if (!glob_master(user) && !glob_bot(user) && !chan_master(user))
@@ -599,7 +599,7 @@ static void got_ban(struct chanset_t *chan, char *nick, char *from,
 	if (wild_match(who, s1)) {
 	  u = get_user_by_host(s1);
 	  if (u) {
-	    get_user_flagrec(u, &victim, chan->name);
+	    get_user_flagrec(u, &victim, chan->dname);
 	    if (glob_friend(victim) ||
 		(glob_op(victim) && !chan_deop(victim))
 		|| chan_friend(victim) || chan_op(victim)) {
@@ -954,7 +954,7 @@ static void gotmode(char *from, char *msg)
       z = strlen(msg);
       if (msg[--z] == ' ')	/* i hate cosmetic bugs :P -poptix */
 	msg[z] = 0;
-      putlog(LOG_MODES, chan->name, "%s: mode change '%s %s' by %s",
+      putlog(LOG_MODES, chan->dname, "%s: mode change '%s %s' by %s",
 	     ch, chg, msg, from);
       u = get_user_by_host(from);
       get_user_flagrec(u, &user, ch);
@@ -1038,7 +1038,7 @@ static void gotmode(char *from, char *msg)
 	  if ((!nick[0]) && (bounce_modes))
 	    reversing = 1;
 	  if (ms2[0] == '-') {
-	    check_tcl_mode(nick, from, u, chan->name, ms2, "");
+	    check_tcl_mode(nick, from, u, chan->dname, ms2, "");
 	    if ((reversing) && (chan->channel.maxmembers != (-1))) {
 	      simple_sprintf(s, "%d", chan->channel.maxmembers);
 	      add_mode(chan, '+', 'l', s);
@@ -1055,7 +1055,7 @@ static void gotmode(char *from, char *msg)
 	      break;
 	    }
 	    chan->channel.maxmembers = atoi(op);
-	    check_tcl_mode(nick, from, u, chan->name, ms2,
+	    check_tcl_mode(nick, from, u, chan->dname, ms2,
 			   int_to_base10(chan->channel.maxmembers));
 	    if (((reversing) &&
 		 !(chan->mode_pls_prot & CHANLIMIT)) ||
@@ -1084,7 +1084,7 @@ static void gotmode(char *from, char *msg)
 	  if (op == '\0') {
 	    break;
 	  }
-	  check_tcl_mode(nick, from, u, chan->name, ms2, op);
+	  check_tcl_mode(nick, from, u, chan->dname, ms2, op);
 	  if (ms2[0] == '+')
 	    got_key(chan, nick, from, op);
 	  else {
@@ -1099,7 +1099,7 @@ static void gotmode(char *from, char *msg)
 	case 'o':
 	  op = newsplit(&msg);
 	  fixcolon(op);
-	  check_tcl_mode(nick, from, u, chan->name, ms2, op);
+	  check_tcl_mode(nick, from, u, chan->dname, ms2, op);
 	  if (ms2[0] == '+')
 	    got_op(chan, nick, from, op, &user);
 	  else
@@ -1110,12 +1110,12 @@ static void gotmode(char *from, char *msg)
 	  fixcolon(op);
 	  m = ismember(chan, op);
 	  if (!m) {
-	    putlog(LOG_MISC, chan->name,
+	    putlog(LOG_MISC, chan->dname,
 		   CHAN_BADCHANMODE, CHAN_BADCHANMODE_ARGS2);
 	    dprintf(DP_MODE, "WHO %s\n", op);
 	  } else {
-	    check_tcl_mode(nick, from, u, chan->name, ms2, op);
-	    get_user_flagrec(m->user, &victim, chan->name);
+	    check_tcl_mode(nick, from, u, chan->dname, ms2, op);
+	    get_user_flagrec(m->user, &victim, chan->dname);
 	    if (ms2[0] == '+') {
 	      m->flags &= ~SENTVOICE;
 	      m->flags |= CHANVOICE;
@@ -1147,7 +1147,7 @@ static void gotmode(char *from, char *msg)
 	case 'b':
 	  op = newsplit(&msg);
 	  fixcolon(op);
-	  check_tcl_mode(nick, from, u, chan->name, ms2, op);
+	  check_tcl_mode(nick, from, u, chan->dname, ms2, op);
 	  if (ms2[0] == '+')
 	    got_ban(chan, nick, from, op);
 	  else
@@ -1156,7 +1156,7 @@ static void gotmode(char *from, char *msg)
 	case 'e':
 	  op = newsplit(&msg);
 	  fixcolon(op);
-	  check_tcl_mode(nick, from, u, chan->name, ms2, op);
+	  check_tcl_mode(nick, from, u, chan->dname, ms2, op);
 	  if (ms2[0] == '+')
 	    got_exempt(chan, nick, from, op);
 	  else
@@ -1165,7 +1165,7 @@ static void gotmode(char *from, char *msg)
 	case 'I':
 	  op = newsplit(&msg);
 	  fixcolon(op);
-	  check_tcl_mode(nick, from, u, chan->name, ms2, op);
+	  check_tcl_mode(nick, from, u, chan->dname, ms2, op);
 	  if (ms2[0] == '+')
 	    got_invite(chan, nick, from, op);
 	  else
@@ -1173,7 +1173,7 @@ static void gotmode(char *from, char *msg)
 	  break;
 	}
 	if (todo) {
-	  check_tcl_mode(nick, from, u, chan->name, ms2, "");
+	  check_tcl_mode(nick, from, u, chan->dname, ms2, "");
 	  if (ms2[0] == '+')
 	    chan->channel.mode |= todo;
 	  else

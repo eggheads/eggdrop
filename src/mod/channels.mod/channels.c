@@ -166,7 +166,7 @@ static void setudef(struct udef_struct *us, struct udef_chans *ul, char *name,
   return;
 }
   
-static void initudef (int type, char *name, int defined)
+static void initudef(int type, char *name, int defined)
 {
   struct udef_struct *ul = udef;
   struct udef_struct *ull = NULL;
@@ -420,7 +420,7 @@ static int channels_chon(char *handle, int idx)
   struct chanset_t *chan = chanset;
 
   if (dcc[idx].type == &DCC_CHAT) {
-    if (!findchan(dcc[idx].u.chat->con_chan) &&
+    if (!findchan_by_dname(dcc[idx].u.chat->con_chan) &&
 	((dcc[idx].u.chat->con_chan[0] != '*') ||
 	 (dcc[idx].u.chat->con_chan[1] != 0))) {
       get_user_flagrec(dcc[idx].user, &fr, NULL);
@@ -434,7 +434,7 @@ static int channels_chon(char *handle, int idx)
 	find = USER_OP;
       fr.match = FR_CHAN;
       while (chan && !found) {
-	get_user_flagrec(dcc[idx].user, &fr, chan->name);
+	get_user_flagrec(dcc[idx].user, &fr, chan->dname);
 	if (fr.chan & find)
 	  found = 1;
 	else
@@ -443,7 +443,7 @@ static int channels_chon(char *handle, int idx)
       if (!chan)
 	chan = chanset;
       if (chan)
-	strcpy(dcc[idx].u.chat->con_chan, chan->name);
+	strcpy(dcc[idx].u.chat->con_chan, chan->dname);
       else
 	strcpy(dcc[idx].u.chat->con_chan, "*");
     }
@@ -494,7 +494,7 @@ static void write_channels()
   fprintf(f, "#Dynamic Channel File for %s (%s) -- written %s\n",
 	  origbotname, ver, ctime(&now));
   for (chan = chanset; chan; chan = chan->next) {
-    convert_element(chan->name, name);
+    convert_element(chan->dname, name);
     get_mode_protect(chan, w);
     convert_element(w, w2);
     convert_element(chan->need_op, need1);
@@ -554,11 +554,11 @@ flood-kick %d:%d flood-deop %d:%d \
     for (ul = udef; ul; ul = ul->next) {
       if (ul->defined && ul->name) {
 	if (ul->type == UDEF_FLAG)
-	  fprintf(f, "%c%s%s ", getudef(ul->values, chan->name) ? '+' : '-',
+	  fprintf(f, "%c%s%s ", getudef(ul->values, chan->dname) ? '+' : '-',
 		  "udef-flag-", ul->name);
 	else if (ul->type == UDEF_INT)
 	  fprintf(f, "%s%s %d ", "udef-int-", ul->name, getudef(ul->values,
-		  chan->name));
+		  chan->dname));
 	else
 	  debug1("UDEF-ERROR: unknown type %d", ul->type);
       }
@@ -600,8 +600,9 @@ static void read_channels(int create)
   chan = chanset;
   while (chan != NULL) {
     if (chan->status & CHAN_FLAGGED) {
-      putlog(LOG_MISC, "*", "No longer supporting channel %s", chan->name);
-      dprintf(DP_SERVER, "PART %s\n", chan->name);
+      putlog(LOG_MISC, "*", "No longer supporting channel %s", chan->dname);
+      if (chan->name[0])
+        dprintf(DP_SERVER, "PART %s\n", chan->name);
       clear_channel(chan, 0);
       noshare = 1;
       while (chan->bans)
@@ -644,8 +645,9 @@ static void channels_rehash()
   chan = chanset;
   while (chan) {
     if (chan->status & CHAN_FLAGGED) {
-      putlog(LOG_MISC, "*", "No longer supporting channel %s", chan->name);
-      dprintf(DP_SERVER, "PART %s\n", chan->name);
+      putlog(LOG_MISC, "*", "No longer supporting channel %s", chan->dname);
+      if (chan->name[0])
+        dprintf(DP_SERVER, "PART %s\n", chan->name);
       clear_channel(chan, 0);
       noshare = 1;
       while (chan->bans)
@@ -680,7 +682,7 @@ static void channels_report(int idx, int details)
   chan = chanset;
   while (chan != NULL) {
     if (idx != DP_STDOUT)
-      get_user_flagrec(dcc[idx].user, &fr, chan->name);
+      get_user_flagrec(dcc[idx].user, &fr, chan->dname);
     if ((idx == DP_STDOUT) || glob_master(fr) || chan_master(fr)) {
       s[0] = 0;
       if (channel_greet(chan))
@@ -696,14 +698,22 @@ static void channels_report(int idx, int details)
       get_mode_protect(chan, s2);
       if (!channel_inactive(chan)) {
 	if (channel_active(chan)) {
-	  dprintf(idx, "    %-10s: %2d member%s enforcing \"%s\" (%s)\n", chan->name,
-		  chan->channel.members, chan->channel.members == 1 ? "," : "s,", s2, s);
+	  /*  If it's a !chan, we want to display it's unique name too <cybah> */
+	  if (chan->dname[0]=='!') {
+	    dprintf(idx, "    %-10s: %2d member%s enforcing \"%s\" (%s), "
+	            "unique name %s\n", chan->dname, chan->channel.members,
+	            (chan->channel.members==1) ? "," : "s,", s2, s, chan->name);
+	  } else {
+	    dprintf(idx, "    %-10s: %2d member%s enforcing \"%s\" (%s)\n",
+	            chan->dname, chan->channel.members,
+	            chan->channel.members == 1 ? "," : "s,", s2, s);
+	  }
 	} else {
-	  dprintf(idx, "    %-10s: (%s), enforcing \"%s\"  (%s)\n", chan->name,
+	  dprintf(idx, "    %-10s: (%s), enforcing \"%s\"  (%s)\n", chan->dname,
 		  channel_pending(chan) ? "pending" : "inactive", s2, s);
 	}
       } else {
-	dprintf(idx, "    %-10s: no IRC support for this channel\n", chan->name);
+	dprintf(idx, "    %-10s: no IRC support for this channel\n", chan->dname);
       }      
       if (details) {
 	s[0] = 0;

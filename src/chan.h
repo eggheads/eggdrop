@@ -103,7 +103,12 @@ struct chan_t {
 struct chanset_t {
   struct chanset_t *next;
   struct chan_t channel;	/* current information */
-  char name[81];
+  char dname[81];               /* what the users know the channel as, like
+                                 * !eggdev
+                                 */
+  char name[81];                /* what the servers know the channel as, like
+                                 * !ABCDEeggdev
+                                 */
   char need_op[121];
   char need_key[121];
   char need_limit[121];
@@ -196,6 +201,7 @@ struct chanset_t {
 /* prototypes */
 memberlist *ismember(struct chanset_t *, char *);
 struct chanset_t *findchan();
+struct chanset_t *findchan_by_dname(char *name);
 
 /* is this channel +s/+p? */
 #define channel_hidden(chan) (chan->channel.mode & (CHANPRIV | CHANSEC))

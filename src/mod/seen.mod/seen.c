@@ -98,12 +98,12 @@ static int pub_seen(char *nick, char *host, char *hand,
 		    char *channel, char *text)
 {
   char prefix[50];
-  struct chanset_t *chan = findchan(channel);
+  struct chanset_t *chan = findchan_by_dname(channel);
 
   context;
   if ((chan != NULL) && channel_seen(chan)) {
-    sprintf(prefix, "PRIVMSG %s :", channel);
-    do_seen(DP_HELP, prefix, nick, hand, channel, text);
+    sprintf(prefix, "PRIVMSG %s :", chan->name);
+    do_seen(DP_HELP, prefix, nick, hand, chan->dname, text);
   }
   return 0;
 }
@@ -377,7 +377,7 @@ static void do_seen(int idx, char *prefix, char *nick, char *hand, char *channel
   }
   /* Check if the target was on the channel, but is netsplit */
   context;
-  chan = findchan(channel);
+  chan = findchan_by_dname(channel);
   if (chan) {
     m = ismember(chan, whotarget);
     if (m && chan_issplit(m)) {
@@ -399,13 +399,13 @@ static void do_seen(int idx, char *prefix, char *nick, char *hand, char *channel
     if (m && chan_issplit(m)) {
       dprintf(idx,
 	      "%s%s%s was just on %s, but got netsplit.\n",
-	      prefix, whoredirect, whotarget, chan->name);
+	      prefix, whoredirect, whotarget, chan->dname);
       return;
     }
     if (m) {
       dprintf(idx,
 	      "%s%s%s is on %s right now!\n",
-	      prefix, whoredirect, whotarget, chan->name);
+	      prefix, whoredirect, whotarget, chan->dname);
       return;
     }
     chan = chan->next;

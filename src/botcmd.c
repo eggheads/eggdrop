@@ -469,12 +469,12 @@ static void bot_infoq(int idx, char *par)
     s[0] = 0;
     while (chan != NULL) {
       if (!channel_secret(chan)) {
-        if ((strlen(s) + strlen(chan->name) + strlen(network)
+        if ((strlen(s) + strlen(chan->dname) + strlen(network)
                    + strlen(botnetnick) + strlen(ver) + 1) >= 200) {
           strcat(s,"++  "); 
           break; /* yegads..! */
         }
-	strcat(s, chan->name);
+	strcat(s, chan->dname);
 	strcat(s, ", ");
       }
       chan = chan->next;

@@ -336,6 +336,7 @@
 #define make_rand_str ((void (*) (char *, int))global[243])
 /* 244 - 247 */
 #define protect_readonly (*(int *)(global[244]))
+#define findchan_by_dname ((struct chanset_t *(*)(char *))global[245])
 
 #define ASSERT(expr) { if (!(expr)) assert_failed (MODULE_NAME, __FILE__, __LINE__); }
 

@@ -327,10 +327,10 @@
 #define CHAN_NOSUCH	get_language(0x900)
 #define CHAN_BADCHANKEY	get_language(0x901)
 #define CHAN_BADCHANMODE	get_language(0x902)
-#define CHAN_BADCHANMODE_ARGS	chan->name, who
-#define CHAN_BADCHANMODE_ARGS2	chan->name, op
+#define CHAN_BADCHANMODE_ARGS	chan->dname, who
+#define CHAN_BADCHANMODE_ARGS2	chan->dname, op
 #define CHAN_MASSDEOP	get_language(0x903)
-#define CHAN_MASSDEOP_ARGS	chan->name, from
+#define CHAN_MASSDEOP_ARGS	chan->dname, from
 #define CHAN_MASSDEOP_KICK	get_language(0x904)
 #define CHAN_BADBAN	get_language(0x905)
 #define CHAN_PERMBANNED	get_language(0x906)

@@ -610,7 +610,7 @@ void set_user_flagrec(struct userrec *u, struct flag_record *fr,
     for (cr = u->chanrec; cr; cr = cr->next)
       if (!rfc_casecmp(chname, cr->channel))
 	break;
-    ch = findchan(chname);
+    ch = findchan_by_dname(chname);
     if (!cr && ch) {
       cr = user_malloc(sizeof(struct chanuserrec));
       bzero(cr, sizeof(struct chanuserrec));
@@ -633,6 +633,7 @@ void set_user_flagrec(struct userrec *u, struct flag_record *fr,
   fr->match = oldflags;
 }
 
+/* Always pass the dname (display name) to this function for chname <cybah> */
 void get_user_flagrec(struct userrec *u, struct flag_record *fr,
 		      char *chname)
 {
@@ -661,7 +662,7 @@ void get_user_flagrec(struct userrec *u, struct flag_record *fr,
       fr->chan = u->flags;
       fr->udef_chan = u->flags_udef;
       for (cr = u->chanrec; cr; cr = cr->next)
-	if (findchan(cr->channel)) {
+	if (findchan_by_dname(cr->channel)) {
 	  fr->chan |= cr->flags;
 	  fr->udef_chan |= cr->flags_udef;
 	}

@@ -279,15 +279,21 @@ static int tcl_console STDVAR
   for (arg = 2; arg < argc; arg++) {
     if (argv[arg][0] && ((strchr(CHANMETA, argv[arg][0]) != NULL) ||
 	(argv[arg][0] == '*'))) {
-      if ((argv[arg][0] != '*') && (!findchan(argv[arg]))) {
+      if ((argv[arg][0] != '*') && (!findchan_by_dname(argv[arg]))) {
+        /*    If we dont find the channel, and it starts with a +... assume it
+         *  should be the console flags to set.
+         */
+        if (argv[arg][0]=='+')
+          goto do_console_flags;
 	Tcl_AppendResult(irp, "invalid channel", NULL);
 	return TCL_ERROR;
       }
-      strncpy(dcc[i].u.chat->con_chan, argv[arg], 80);
+      strncpy(dcc[i].u.chat->con_chan, argv[arg], 81);
       dcc[i].u.chat->con_chan[80] = 0;
     } else {
       if ((argv[arg][0] != '+') && (argv[arg][0] != '-'))
 	dcc[i].u.chat->con_flags = 0;
+do_console_flags:
       for (j = 0; j < strlen(argv[arg]); j++) {
 	if (argv[arg][j] == '+')
 	  pls = 1;

@@ -487,6 +487,7 @@ Function global_table[] =
   (Function) make_rand_str,
   /* 244 - 247 */
   (Function) & protect_readonly, /* int */
+  (Function) findchan_by_dname,
 };
 
 void init_modules(void)

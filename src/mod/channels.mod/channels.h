@@ -109,6 +109,7 @@ static char *convert_element(char *src, char *dst);
 
 #endif
 
+
 /*        Macro's here because their functions were replaced by somthing more
  *      generic. <cybah>
  */

@@ -293,7 +293,7 @@ static void restore_chanban(struct chanset_t *chan, char *host)
     }
   }
   putlog(LOG_MISC, "*", "*** Malformed banline for %s.",
-	 chan ? chan->name : "global_bans");
+	 chan ? chan->dname : "global_bans");
 }
 
 static void restore_chanexempt (struct chanset_t * chan, char * host)
@@ -350,7 +350,7 @@ static void restore_chanexempt (struct chanset_t * chan, char * host)
     }
   }
   putlog(LOG_MISC,"*","*** Malformed exemptline for %s.",
-	 chan?chan->name:"global_exempts");
+	 chan?chan->dname:"global_exempts");
 }
 
 static void restore_chaninvite (struct chanset_t * chan, char * host)
@@ -407,7 +407,7 @@ static void restore_chaninvite (struct chanset_t * chan, char * host)
     }
   }
   putlog(LOG_MISC,"*","*** Malformed inviteline for %s.",
-	 chan?chan->name:"global_invites");
+	 chan?chan->dname:"global_invites");
 }
 
 static void restore_ignore(char *host)
@@ -783,7 +783,7 @@ int readuserfile(char *file, struct userrec **ret)
 	    rmspace(s);
 	    fr.match = FR_CHAN;
 	    break_down_flags(fl, &fr, 0);
-	    if (findchan(chname)) {
+	    if (findchan_by_dname(chname)) {
 	      for (cr = u->chanrec; cr; cr = cr->next)
 		if (!rfc_casecmp(cr->channel, chname))
 		  break;
@@ -809,7 +809,7 @@ int readuserfile(char *file, struct userrec **ret)
 	} else if (!strncmp(code, "::", 2)) {
 	  /* channel-specific bans */
 	  strcpy(lasthand, &code[2]);
-	  if (!findchan(lasthand)) {
+	  if (!findchan_by_dname(lasthand)) {
 	    strcpy(s1, lasthand);
 	    strcat(s1, " ");
 	    if (strstr(ignored, s1) == NULL) {
@@ -822,7 +822,7 @@ int readuserfile(char *file, struct userrec **ret)
 	    /* Remove all bans for this channel to avoid dupes */
 	    /* NOTE only remove bans for when getting a userfile
 	     * from another bot & that channel is shared */
-	    cst = findchan(lasthand);
+	    cst = findchan_by_dname(lasthand);
 	    if ((*ret == userlist) || channel_shared(cst)) {
 	      clear_masks(cst->bans);
 	      cst->bans = NULL;
@@ -835,7 +835,7 @@ int readuserfile(char *file, struct userrec **ret)
 	} else if (strncmp(code, "&&", 2) == 0) {
 	  /* channel-specific exempts */
 	  strcpy(lasthand, &code[2]);
-	  if (!findchan(lasthand)) {
+	  if (!findchan_by_dname(lasthand)) {
 	    strcpy(s1, lasthand);
 	    strcat(s1, " ");
 	    if (strstr(ignored, s1) == NULL) {
@@ -848,7 +848,7 @@ int readuserfile(char *file, struct userrec **ret)
 	    /* Remove all exempts for this channel to avoid dupes */
 	    /* NOTE only remove exempts for when getting a userfile
 	     * from another bot & that channel is shared */
-	    cst = findchan(lasthand);
+	    cst = findchan_by_dname(lasthand);
 	    if ((*ret == userlist) || channel_shared(cst)) {
 	      clear_masks(cst->exempts);
 	      cst->exempts = NULL;
@@ -861,7 +861,7 @@ int readuserfile(char *file, struct userrec **ret)
 	} else if (strncmp(code, "$$", 2) == 0) {  
 	  /* channel-specific invites */
 	  strcpy(lasthand, &code[2]);
-	  if (!findchan(lasthand)) {   
+	  if (!findchan_by_dname(lasthand)) {   
 	    strcpy(s1, lasthand);
 	    strcat(s1, " ");
 	    if (strstr(ignored, s1) == NULL) {
@@ -874,7 +874,7 @@ int readuserfile(char *file, struct userrec **ret)
 	    /* Remove all invites for this channel to avoid dupes */
 	    /* NOTE only remove invites for when getting a userfile
 	     * from another bot & that channel is shared */
-	    cst = findchan(lasthand);
+	    cst = findchan_by_dname(lasthand);
 	    if ((*ret == userlist) || channel_shared(cst)) {
 	      clear_masks(cst->invites);
               cst->invites = NULL;

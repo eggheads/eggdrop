@@ -83,12 +83,12 @@ static int tcl_chattr STDVAR {
 	    && (argv[2][0] && (strchr(CHANMETA, argv[2][0]) != NULL))) {
     /* We need todo extra checking here to stop us mixing up +channel's
      * with flags. <cybah> */
-    if (!findchan(argv[2]) && argv[2][0] != '+') {
+    if (!findchan_by_dname(argv[2]) && argv[2][0] != '+') {
       /* Channel doesnt exist, and it cant possibly be flags as there
        * is no + at the start of the string. */
       Tcl_AppendResult(irp, "no such channel", NULL);
       return TCL_ERROR;
-    } else if(findchan(argv[2])) {
+    } else if(findchan_by_dname(argv[2])) {
       /* Channel exists */
       user.match = FR_GLOBAL | FR_CHAN;
       chan = argv[2];
@@ -105,7 +105,7 @@ static int tcl_chattr STDVAR {
     chan = NULL;
     chg = argv[2];
   }
-  if (chan && !findchan(chan)) {
+  if (chan && !findchan_by_dname(chan)) {
     Tcl_AppendResult(irp, "no such channel", NULL);
     return TCL_ERROR;
   }
@@ -157,12 +157,12 @@ static int tcl_botattr STDVAR {
 	     && (argv[2][0] && (strchr(CHANMETA, argv[2][0]) != NULL))) {
     /* We need todo extra checking here to stop us mixing up +channel's
      * with flags. <cybah> */
-    if (!findchan(argv[2]) && argv[2][0] != '+') {
+    if (!findchan_by_dname(argv[2]) && argv[2][0] != '+') {
       /* Channel doesnt exist, and it cant possibly be flags as there
        * is no + at the start of the string. */
       Tcl_AppendResult(irp, "no such channel", NULL);
       return TCL_ERROR;
-    } else if(findchan(argv[2])) {
+    } else if(findchan_by_dname(argv[2])) {
       /* Channel exists */
       user.match = FR_BOT | FR_CHAN;
       chan = argv[2];
@@ -179,7 +179,7 @@ static int tcl_botattr STDVAR {
     chan = NULL;
     chg = argv[2];
   }
-  if (chan && !findchan(chan)) {
+  if (chan && !findchan_by_dname(chan)) {
     Tcl_AppendResult(irp, "no such channel", NULL);
     return TCL_ERROR;
   }
@@ -216,7 +216,7 @@ static int tcl_matchattr STDVAR {
   BADARGS(3, 4, " handle flags ?channel?");
   context;			/* a2 - Last context: tcluser.c/184 */
   if ((u = get_user_by_handle(userlist, argv[1])) &&
-      ((argc == 3) || findchan(argv[3]))) {
+      ((argc == 3) || findchan_by_dname(argv[3]))) {
     context;			/* a2 - Last context: tcluser.c/184 */
     user.match = FR_GLOBAL | (argc == 4 ? FR_CHAN : 0) | FR_BOT;
     get_user_flagrec(u, &user, argv[3]);
@@ -320,7 +320,7 @@ static int tcl_userlist STDVAR {
 
   context;
   BADARGS(1, 3, " ?flags ?channel??");
-  if ((argc == 3) && !findchan(argv[2])) {
+  if ((argc == 3) && !findchan_by_dname(argv[2])) {
     Tcl_AppendResult(irp, "Invalid channel: ", argv[2], NULL);
     return TCL_ERROR;
   }

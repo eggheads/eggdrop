@@ -32,7 +32,7 @@ static int tcl_killchanban STDVAR
   struct chanset_t *chan;
 
   BADARGS(3, 3, " channel ban");
-  chan = findchan(argv[1]);
+  chan = findchan_by_dname(argv[1]);
   if (!chan) {
     Tcl_AppendResult(irp, "invalid channel: ", argv[1], NULL);
     return TCL_ERROR;
@@ -65,7 +65,7 @@ static int tcl_killchanexempt STDVAR
 {
   struct chanset_t *chan;
   BADARGS(3, 3, " channel exempt");
-  chan = findchan(argv[1]);
+  chan = findchan_by_dname(argv[1]);
   if (!chan) {
     Tcl_AppendResult(irp, "invalid channel: ", argv[1], NULL);
     return TCL_ERROR;
@@ -98,7 +98,7 @@ static int tcl_killchaninvite STDVAR
 {
   struct chanset_t *chan;
   BADARGS(3, 3, " channel invite");
-  chan = findchan(argv[1]);
+  chan = findchan_by_dname(argv[1]);
   if (!chan) {
     Tcl_AppendResult(irp, "invalid channel: ", argv[1], NULL);
     return TCL_ERROR;
@@ -119,7 +119,7 @@ static int tcl_stick STDVAR
   
   BADARGS(2, 3, " ban ?channel?");
   if (argc == 3) {
-    chan = findchan(argv[2]);
+    chan = findchan_by_dname(argv[2]);
     if (!chan) {
       Tcl_AppendResult(irp, "invalid channel: ", argv[2], NULL);
       return TCL_ERROR;
@@ -144,7 +144,7 @@ static int tcl_unstick STDVAR
 
   BADARGS(2, 3, " ban ?channel?");
   if (argc == 3) {
-    chan = findchan(argv[2]);
+    chan = findchan_by_dname(argv[2]);
     if (!chan) {
       Tcl_AppendResult(irp, "invalid channel: ", argv[2], NULL);
       return TCL_ERROR;
@@ -168,7 +168,7 @@ static int tcl_isban STDVAR
 
   BADARGS(2, 3, " ban ?channel?");
   if (argc == 3) {
-    chan = findchan(argv[2]);
+    chan = findchan_by_dname(argv[2]);
     if (!chan) {
       Tcl_AppendResult(irp, "invalid channel: ", argv[2], NULL);
       return TCL_ERROR;
@@ -192,7 +192,7 @@ static int tcl_isexempt STDVAR
   
   BADARGS(2, 3, " exempt ?channel?");
   if (argc == 3) {
-    chan = findchan(argv[2]);
+    chan = findchan_by_dname(argv[2]);
     if (!chan) {
       Tcl_AppendResult(irp, "invalid channel: ", argv[2], NULL);
       return TCL_ERROR;
@@ -216,7 +216,7 @@ static int tcl_isinvite STDVAR
   
   BADARGS(2, 3, " invite ?channel?");
   if (argc == 3) {
-    chan = findchan(argv[2]);
+    chan = findchan_by_dname(argv[2]);
     if (!chan) {
       Tcl_AppendResult(irp, "invalid channel: ", argv[2], NULL);
       return TCL_ERROR;
@@ -241,7 +241,7 @@ static int tcl_isbansticky STDVAR
 
   BADARGS(2, 3, " ban ?channel?");
   if (argc == 3) {
-    chan = findchan(argv[2]);
+    chan = findchan_by_dname(argv[2]);
     if (!chan) {
       Tcl_AppendResult(irp, "invalid channel: ", argv[2], NULL);
       return TCL_ERROR;
@@ -265,7 +265,7 @@ static int tcl_isexemptsticky STDVAR
   
   BADARGS(2, 3, " exempt ?channel?");
   if (argc == 3) {
-    chan = findchan(argv[2]);
+    chan = findchan_by_dname(argv[2]);
     if (!chan) {
       Tcl_AppendResult(irp, "invalid channel: ", argv[2], NULL);
       return TCL_ERROR;
@@ -289,7 +289,7 @@ static int tcl_isinvitesticky STDVAR
   
   BADARGS(2, 3, " invite ?channel?");
   if (argc == 3) {
-    chan = findchan(argv[2]);
+    chan = findchan_by_dname(argv[2]);
     if (!chan) {
       Tcl_AppendResult(irp, "invalid channel: ", argv[2], NULL);
       return TCL_ERROR;
@@ -313,7 +313,7 @@ static int tcl_ispermban STDVAR
 
   BADARGS(2, 3, " ban ?channel?");
   if (argc == 3) {
-    chan = findchan(argv[2]);
+    chan = findchan_by_dname(argv[2]);
     if (chan == NULL) {
       Tcl_AppendResult(irp, "invalid channel: ", argv[2], NULL);
       return TCL_ERROR;
@@ -336,7 +336,7 @@ static int tcl_ispermexempt STDVAR
   int ok = 0;
   BADARGS(2, 3, " exempt ?channel?");
   if (argc == 3) {
-    chan = findchan(argv[2]);
+    chan = findchan_by_dname(argv[2]);
     if (chan == NULL) {
       Tcl_AppendResult(irp, "invalid channel: ", argv[2], NULL);
       return TCL_ERROR;
@@ -359,7 +359,7 @@ static int tcl_isperminvite STDVAR
   int ok = 0;
   BADARGS(2, 3, " invite ?channel?");
   if (argc == 3) {
-    chan = findchan(argv[2]);
+    chan = findchan_by_dname(argv[2]);
     if (chan == NULL) {
       Tcl_AppendResult(irp, "invalid channel: ", argv[2], NULL);
       return TCL_ERROR;
@@ -383,7 +383,7 @@ static int tcl_matchban STDVAR
 
   BADARGS(2, 3, " user!nick@host ?channel?");
   if (argc == 3) {
-    chan = findchan(argv[2]);
+    chan = findchan_by_dname(argv[2]);
     if (chan == NULL) {
       Tcl_AppendResult(irp, "invalid channel: ", argv[2], NULL);
       return TCL_ERROR;
@@ -406,7 +406,7 @@ static int tcl_matchexempt STDVAR
    int ok = 0;
     BADARGS(2, 3, " user!nick@host ?channel?");
    if (argc == 3) {
-      chan = findchan(argv[2]);
+      chan = findchan_by_dname(argv[2]);
       if (chan == NULL) {
      Tcl_AppendResult(irp, "invalid channel: ", argv[2], NULL);
      return TCL_ERROR;
@@ -429,7 +429,7 @@ static int tcl_matchinvite STDVAR
    int ok = 0;
     BADARGS(2, 3, " user!nick@host ?channel?");
    if (argc == 3) {
-      chan = findchan(argv[2]);
+      chan = findchan_by_dname(argv[2]);
       if (chan == NULL) {
      Tcl_AppendResult(irp, "invalid channel: ", argv[2], NULL);
      return TCL_ERROR;
@@ -454,7 +454,7 @@ static int tcl_newchanban STDVAR
   int sticky = 0;
 
   BADARGS(5, 7, " channel ban creator comment ?lifetime? ?options?");
-  chan = findchan(argv[1]);
+  chan = findchan_by_dname(argv[1]);
   if (chan == NULL) {
     Tcl_AppendResult(irp, "invalid channel: ", argv[1], NULL);
     return TCL_ERROR;
@@ -539,7 +539,7 @@ static int tcl_newchanexempt STDVAR
   int sticky = 0;
  
   BADARGS(5, 7, " channel exempt creator comment ?lifetime? ?options?");
-  chan = findchan(argv[1]);
+  chan = findchan_by_dname(argv[1]);
   if (chan == NULL) {
     Tcl_AppendResult(irp, "invalid channel: ", argv[1], NULL);
     return TCL_ERROR;
@@ -622,7 +622,7 @@ static int tcl_newchaninvite STDVAR
   int sticky = 0;
   
   BADARGS(5, 7, " channel invite creator comment ?lifetime? ?options?");
-  chan = findchan(argv[1]);
+  chan = findchan_by_dname(argv[1]);
   if (chan == NULL) {
     Tcl_AppendResult(irp, "invalid channel: ", argv[1], NULL);
     return TCL_ERROR;
@@ -850,7 +850,7 @@ static int tcl_channel STDVAR
   }
   if (!strcmp(argv[1], "set")) {
     BADARGS(3, 999, " set channel-name ?options?");
-    chan = findchan(argv[2]);
+    chan = findchan_by_dname(argv[2]);
     if (chan == NULL) {
       if (chan_hack == 1)
 	return TCL_OK;		/* ignore channel settings for a static
@@ -863,7 +863,7 @@ static int tcl_channel STDVAR
   }
   if (!strcmp(argv[1], "info")) {
     BADARGS(3, 3, " info channel-name");
-    chan = findchan(argv[2]);
+    chan = findchan_by_dname(argv[2]);
     if (chan == NULL) {
       Tcl_AppendResult(irp, "no such channel record", NULL);
       return TCL_ERROR;
@@ -872,7 +872,7 @@ static int tcl_channel STDVAR
   }
   if (!strcmp(argv[1], "remove")) {
     BADARGS(3, 3, " remove channel-name");
-    chan = findchan(argv[2]);
+    chan = findchan_by_dname(argv[2]);
     if (chan == NULL) {
       Tcl_AppendResult(irp, "no such channel record", NULL);
       return TCL_ERROR;
@@ -1122,9 +1122,9 @@ static int tcl_channel_modify(Tcl_Interp * irp, struct chanset_t *chan,
 	    (ul->type == UDEF_FLAG)) {
           found = 1;
           if (item[i][0] == '+')
-            setudef(ul, ul->values, chan->name, 1);
+            setudef(ul, ul->values, chan->dname, 1);
           else
-            setudef(ul, ul->values, chan->name, 0);
+            setudef(ul, ul->values, chan->dname, 0);
         } else if ((!strcasecmp(item[i], ul->name) ||
 		   (!strncmp(item[i], "udef-int-", 9) &&
 		    !strcasecmp(item[i] + 9, ul->name))) &&
@@ -1155,10 +1155,14 @@ static int tcl_channel_modify(Tcl_Interp * irp, struct chanset_t *chan,
   if (protect_readonly || chan_hack) {
     if (((oldstatus ^ chan->status) & CHAN_INACTIVE) &&
 	module_find("irc", 0, 0)) {
-      if (channel_inactive(chan) && (chan->status & (CHAN_ACTIVE | CHAN_PEND)))
+      if (channel_inactive(chan) &&
+	  (chan->status & (CHAN_ACTIVE | CHAN_PEND)))
 	dprintf(DP_SERVER, "PART %s\n", chan->name);
-      if (!channel_inactive(chan) && !(chan->status & (CHAN_ACTIVE | CHAN_PEND)))
-	dprintf(DP_SERVER, "JOIN %s %s\n", chan->name, chan->key_prot);
+      if (!channel_inactive(chan) &&
+	  !(chan->status & (CHAN_ACTIVE | CHAN_PEND)))
+	dprintf(DP_SERVER, "JOIN %s %s\n", (chan->name[0]) ?
+					   chan->name : chan->dname,
+					   chan->key_prot);
     }
     if ((oldstatus ^ chan->status) &
 	(CHAN_ENFORCEBANS | CHAN_OPONJOIN | CHAN_BITCH | CHAN_AUTOVOICE))
@@ -1200,7 +1204,7 @@ static int tcl_banlist STDVAR
 
   BADARGS(1, 2, " ?channel?");
   if (argc == 2) {
-    chan = findchan(argv[1]);
+    chan = findchan_by_dname(argv[1]);
     if (chan == NULL) {
       Tcl_AppendResult(irp, "invalid channel: ", argv[1], NULL);
       return TCL_ERROR;
@@ -1217,7 +1221,7 @@ static int tcl_exemptlist STDVAR
   
   BADARGS(1, 2, " ?channel?");
   if (argc == 2) {
-    chan = findchan(argv[1]);
+    chan = findchan_by_dname(argv[1]);
     if (chan == NULL) {
       Tcl_AppendResult(irp, "invalid channel: ", argv[1], NULL);
       return TCL_ERROR;
@@ -1234,7 +1238,7 @@ static int tcl_invitelist STDVAR
   
   BADARGS(1, 2, " ?channel?");
   if (argc == 2) {
-    chan = findchan(argv[1]);
+    chan = findchan_by_dname(argv[1]);
     if (chan == NULL) {
       Tcl_AppendResult(irp, "invalid channel: ", argv[1], NULL);
       return TCL_ERROR;
@@ -1252,7 +1256,7 @@ static int tcl_channels STDVAR
   BADARGS(1, 1, "");
   chan = chanset;
   while (chan != NULL) {
-    Tcl_AppendElement(irp, chan->name);
+    Tcl_AppendElement(irp, chan->dname);
     chan = chan->next;
   } return TCL_OK;
 }
@@ -1287,7 +1291,7 @@ static int tcl_validchan STDVAR
   struct chanset_t *chan;
 
   BADARGS(2, 2, " channel");
-  chan = findchan(argv[1]);
+  chan = findchan_by_dname(argv[1]);
   if (chan == NULL)
     Tcl_AppendResult(irp, "0", NULL);
   else
@@ -1300,7 +1304,7 @@ static int tcl_isdynamic STDVAR
   struct chanset_t *chan;
 
   BADARGS(2, 2, " channel");
-  chan = findchan(argv[1]);
+  chan = findchan_by_dname(argv[1]);
   if (chan != NULL)
     if (!channel_static(chan)) {
       Tcl_AppendResult(irp, "1", NULL);
@@ -1329,7 +1333,7 @@ static int tcl_setchaninfo STDVAR
   struct chanset_t *chan;
 
   BADARGS(4, 4, " handle channel info");
-  chan = findchan(argv[2]);
+  chan = findchan_by_dname(argv[2]);
   if (chan == NULL) { 
     Tcl_AppendResult(irp, "illegal channel: ", argv[2], NULL);
     return TCL_ERROR;
@@ -1375,7 +1379,7 @@ static int tcl_addchanrec STDVAR
     Tcl_AppendResult(irp, "0", NULL);
     return TCL_OK;
   }
-  if (!findchan(argv[2])) {
+  if (!findchan_by_dname(argv[2])) {
     Tcl_AppendResult(irp, "0", NULL);
     return TCL_OK;
   }
@@ -1494,7 +1498,7 @@ static int tcl_channel_add(Tcl_Interp * irp, char *newname, char *options)
   char buf[2048];
   char buf2[256];
 
-  if ((newname[0] != '#') && (newname[0] != '&'))
+  if (!newname || !newname[0] || !strchr(CHANMETA, newname[0]))
     return TCL_ERROR;
   context;
   convert_element(glob_chanmode, buf2);
@@ -1505,7 +1509,7 @@ static int tcl_channel_add(Tcl_Interp * irp, char *newname, char *options)
   if (Tcl_SplitList(NULL, buf, &items, &item) != TCL_OK)
     return TCL_ERROR;
   context;
-  if ((chan = findchan(newname))) {
+  if ((chan = findchan_by_dname(newname))) {
     /* already existing channel, maybe a reload of the channel file */
     chan->status &= ~CHAN_FLAGGED;	/* don't delete me! :) */
   } else {
@@ -1526,8 +1530,14 @@ static int tcl_channel_add(Tcl_Interp * irp, char *newname, char *options)
     chan->flood_deop_time = gfld_deop_time;
     chan->flood_kick_thr = gfld_kick_thr;
     chan->flood_kick_time = gfld_kick_time;
-    strncpy(chan->name, newname, 80);
-    chan->name[80] = 0;
+    
+    /*    We _only_ put the dname (display name) in here so as not to confuse
+     *  any code later on. chan->name gets updated with the channel name as
+     *  the server knows it, when we join the channel. <cybah>
+     */
+    strncpy(chan->dname, newname, 81);
+    chan->dname[80] = 0;
+    
     /* initialize chan->channel info */
     init_channel(chan);
     list_append((struct list_type **) &chanset, (struct list_type *) chan);
@@ -1545,7 +1555,7 @@ static int tcl_channel_add(Tcl_Interp * irp, char *newname, char *options)
   }
   Tcl_Free((char*) item);
   if (join && !channel_inactive(chan) && module_find("irc", 0, 0))
-    dprintf(DP_SERVER, "JOIN %s %s\n", chan->name, chan->key_prot);
+    dprintf(DP_SERVER, "JOIN %s %s\n", chan->dname, chan->key_prot);
   return ret; 
 }
 

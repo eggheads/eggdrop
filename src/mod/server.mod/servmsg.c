@@ -227,7 +227,8 @@ static int got001(char *from, char *msg)
     for (chan = chanset; chan; chan = chan->next) {
       chan->status &= ~(CHAN_ACTIVE | CHAN_PEND);
       if (!channel_inactive(chan))
-	dprintf(DP_SERVER, "JOIN %s %s\n", chan->name, chan->key_prot);
+	dprintf(DP_SERVER, "JOIN %s %s\n",
+	        (chan->name[0]) ? chan->name : chan->dname, chan->key_prot);
     }
   if (strcasecmp(from, dcc[servidx].host)) {
     putlog(LOG_MISC, "*", "(%s claims to be %s; updating server list)",

@@ -824,13 +824,13 @@ void help_subst(char *s, char *nick, struct flag_record *flags,
     case 'C':
       if (!blind)
 	for (chan = chanset; chan; chan = chan->next) {
-	  if ((strlen(chan->name) + writeidx + 2) >=
+	  if ((strlen(chan->dname) + writeidx + 2) >=
 	      (s + HELP_BUF_LEN)) {
-	    strncpy(writeidx, chan->name, (s + HELP_BUF_LEN) - writeidx);
+	    strncpy(writeidx, chan->dname, (s + HELP_BUF_LEN) - writeidx);
 	    s[HELP_BUF_LEN] = 0;
 	    return;
 	  }
-	  writeidx += my_strcpy(writeidx, chan->name);
+	  writeidx += my_strcpy(writeidx, chan->dname);
 	  if (chan->next) {
 	    *writeidx++ = ',';
 	    *writeidx++ = ' ';

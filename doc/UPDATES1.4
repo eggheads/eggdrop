@@ -5,6 +5,11 @@ Changes in eggdrop: (since v1.3.0)
 
 1.4.0
 Foundby   Fixedby   What....
+	  Cybah     Fixed tcl_console getting confused between flags and +chans.
+	  Cybah     Userfile functions need to use chan->dname.
+	  Cybah     Changed most of the user-side findchan() calls to
+		    findchan_by_dname() so the commands can support !chans.
+	  Cybah     initial !channel support.
 	  G`Quann   optimizes irc command queue and stacks as many commands
 		    as possible
 	  G`Quann   added user definable channel settings

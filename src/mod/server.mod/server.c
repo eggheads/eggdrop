@@ -1055,7 +1055,7 @@ static void dcc_chat_success(int i)
     get_user_flagrec(dcc[i].user, &fr, 0);
       if (glob_party(fr))
 	dcc[i].status |= STAT_PARTY;
-      strcpy(dcc[i].u.chat->con_chan, chanset ? chanset->name : "*");
+      strcpy(dcc[i].u.chat->con_chan, (chanset) ? chanset->dname : "*");
       dcc[i].timeval = now;
       /* ok, we're satisfied with them now: attempt the connect */
     putlog(LOG_MISC, "*", "DCC connection: CHAT (%s!%s)", dcc[i].nick,

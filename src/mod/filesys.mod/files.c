@@ -857,17 +857,17 @@ static void cmd_mkdir(int idx, char *par)
     if (!chan[0] && flags[0] && (strchr(CHANMETA, flags[0]) != NULL)) {
       /* Need some extra checking here to makesure we dont mix up
        * the flags with a +channel. <cybah> */
-      if(!findchan(flags) && flags[0] != '+') {
+      if(!findchan_by_dname(flags) && flags[0] != '+') {
 	dprintf(idx, "Invalid channel!\n");
 	return;
-      } else if(findchan(flags)) {
+      } else if(findchan_by_dname(flags)) {
 	/* flags is a channel. */
 	chan = flags;
 	flags = par;
       }				/* (else) Couldnt find the channel and
 				 * flags[0] is a '+', these are flags. */
     }
-    if (chan[0] && !findchan(chan)) {
+    if (chan[0] && !findchan_by_dname(chan)) {
       dprintf(idx, "Invalid channel!\n");
       return;
     }
