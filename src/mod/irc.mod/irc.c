@@ -2,7 +2,7 @@
  * irc.c -- part of irc.mod
  *   support for channels within the bot
  *
- * $Id: irc.c,v 1.60 2001/12/22 20:25:16 guppy Exp $
+ * $Id: irc.c,v 1.61 2001/12/22 20:58:34 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -42,10 +42,10 @@ static int net_type;
 static int strict_host;
 static int wait_split = 300;		/* Time to wait for user to return from
 					   net-split. */
-static int max_bans = 20;
+static int max_bans;
 static int max_exempts = 20;
 static int max_invites = 20;
-static int max_modes = 30;
+static int max_modes;
 static int bounce_bans = 1;
 static int bounce_exempts = 0;
 static int bounce_invites = 0;
@@ -971,6 +971,8 @@ static void do_nettype()
     use_354 = 0;
     use_exempts = 0;
     use_invites = 0;
+    max_bans = 20;
+    max_modes = 20;
     rfc_compliant = 1;
     include_lk = 0;
     break;
@@ -980,6 +982,8 @@ static void do_nettype()
     use_354 = 0;
     use_exempts = 1;
     use_invites = 1;
+    max_bans = 30;
+    max_modes = 30;
     rfc_compliant = 1;
     include_lk = 1;
     break;
@@ -989,6 +993,8 @@ static void do_nettype()
     use_354 = 1;
     use_exempts = 0;
     use_invites = 0;
+    max_bans = 30;
+    max_modes = 30;
     rfc_compliant = 1;
     include_lk = 1;
     break;
@@ -998,6 +1004,8 @@ static void do_nettype()
     use_354 = 0;
     use_exempts = 0;
     use_invites = 0;
+    max_bans = 100;
+    max_modes = 100;
     rfc_compliant = 0;
     include_lk = 1;
     break;
@@ -1007,6 +1015,8 @@ static void do_nettype()
     use_354 = 0;
     use_exempts = 1;
     use_invites = 0;
+    max_bans = 20;
+    max_modes = 20;
     rfc_compliant = 1;
     include_lk = 0;
     break;
