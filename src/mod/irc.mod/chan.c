@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  * 
- * $Id: chan.c,v 1.58 2000/11/08 22:55:06 guppy Exp $
+ * $Id: chan.c,v 1.59 2000/11/21 05:06:45 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -731,11 +731,9 @@ static void recheck_channel(struct chanset_t *chan, int dobans)
       if (!(use_exempts &&
 	    (u_match_mask(global_exempts,s) ||
 	     u_match_mask(chan->exempts, s)))) {
-	/* if we're enforcing bans */
-	if (channel_enforcebans(chan) &&
-	/* & they match a ban */
-	    (u_match_mask(global_bans, s) ||
-	     u_match_mask(chan->bans, s))) {
+        /* if match a ban */
+        if (u_match_mask(global_bans, s) ||
+            u_match_mask(chan->bans, s)) {
 	  /* bewm */
 	  refresh_ban_kick(chan, s, m->nick);
 	/* ^ will use the ban comment */
