@@ -245,6 +245,8 @@ Telnet to the bot and enter 'NEW' as your nickname.
 0x66d,...and don't come back.
 0x66e,Switching back to altnick %s
 
+# EGG_
+
 0x700,Command line arguments:\n\
   -h   help\n\
   -v   print version and exit\n\
@@ -258,9 +260,13 @@ Telnet to the bot and enter 'NEW' as your nickname.
 0x702,If this is incorrect, erase the '%s'\n
 0x703,* Warning!  Could not write %s file!\n
 
+# USER_
+
 0x800,  (is a global op)
 0x801,  (is a bot)
 0x802,  (is a master)
+
+# CHAN_
 
 0x900,No such channel defined
 0x901,Bogus channel key

@@ -424,8 +424,11 @@ void chanprog()
     if (module_find("server", 0, 0))
       printf(MISC_USERFCREATE1, origbotname);
     printf("%s\n\n", MISC_USERFCREATE2);
-  } else if (make_userfile)
-    fatal(MISC_USERFEXISTS, 0);
+  } else if (make_userfile) {
+     make_userfile = 0;
+     printf(MISC_USERFEXISTS);
+     readuserfile(userfile, &userlist);
+  }
   context;
   if (helpdir[0])
     if (helpdir[strlen(helpdir) - 1] != '/')
