@@ -2,7 +2,7 @@
  * cmdschan.c -- part of channels.mod
  *   commands from a user via dcc that cause server interaction
  * 
- * $Id: cmdschan.c,v 1.21 2000/03/23 23:17:56 fabian Exp $
+ * $Id: cmdschan.c,v 1.22 2000/05/06 22:06:44 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1318,32 +1318,52 @@ static void cmd_chaninfo(struct userrec *u, int idx, char *par)
 static void cmd_chanset(struct userrec *u, int idx, char *par)
 {
   char *chname = NULL, answers[512], *parcpy;
-  char *list[2];
+  char *list[2], *bak, *buf;
   struct chanset_t *chan = NULL;
+  int all = 0;
 
   if (!par[0])
     dprintf(idx, "Usage: chanset [%schannel] <settings>\n", CHANMETA);
   else {
-    if (strchr(CHANMETA, par[0])) {
-      chname = newsplit(&par);
-      get_user_flagrec(u, &user, chname);
-      if (!glob_master(user) && !chan_master(user)) {
-	dprintf(idx, "You dont have access to %s. \n", chname);
-	return;
-      } else if (!(chan = findchan_by_dname(chname)) && (chname[0] != '+')) {
-	dprintf(idx, "That channel doesnt exist!\n");
+    if ((strlen(par) > 2) && (par[0] == '*') && (par[1] == ' ')) {
+      all = 1;
+      get_user_flagrec(u, &user, chanset ? chanset->dname : "");
+      if (!glob_master(user)) {
+	dprintf(idx, "You need to be a global master to use .chanset *.\n");
 	return;
       }
-      if (!chan) {
-	if (par[0])
-	  *--par = ' ';
-	par = chname;
+      newsplit(&par);
+    } else {
+      if (strchr(CHANMETA, par[0])) {
+        chname = newsplit(&par);
+        get_user_flagrec(u, &user, chname);
+        if (!glob_master(user) && !chan_master(user)) {
+	  dprintf(idx, "You dont have access to %s. \n", chname);
+	  return;
+	} else if (!(chan = findchan_by_dname(chname)) && (chname[0] != '+')) {
+	  dprintf(idx, "That channel doesnt exist!\n");
+	  return;
+	}
+	if (!chan) {
+	  if (par[0])
+	    *--par = ' ';
+	  par = chname;
+	}
+      }
+      if (!chan &&
+          !(chan = findchan_by_dname(chname = dcc[idx].u.chat->con_chan))) {
+        dprintf(idx, "Invalid console channel.\n");
+        return;
       }
     }
-    if (!chan &&
-	!(chan = findchan_by_dname(chname = dcc[idx].u.chat->con_chan)))
-      dprintf(idx, "Invalid console channel.\n");
-    else {
+    if (all)
+      chan = chanset;
+    bak = par;
+    buf = nmalloc(strlen(par) + 1);
+    while (chan) {
+      chname = chan->dname;
+      strcpy(buf, bak);
+      par = buf;
       list[0] = newsplit(&par);
       answers[0] = 0;
       while (list[0][0]) {
@@ -1352,9 +1372,9 @@ static void cmd_chanset(struct userrec *u, int idx, char *par)
 	  if (tcl_channel_modify(0, chan, 1, list) == TCL_OK) {
 	    strcat(answers, list[0]);
 	    strcat(answers, " ");
-	  } else
+	  } else if (!all || !chan->next)
 	    dprintf(idx, "Error trying to set %s for %s, invalid mode\n",
-		    list[0], chname);
+		    list[0], all ? "all channels" : chname);
 	  list[0] = newsplit(&par);
 	  continue;
 	}
@@ -1366,6 +1386,7 @@ static void cmd_chanset(struct userrec *u, int idx, char *par)
 	  if (!strncmp(list[0], "need-", 5) && !(isowner(dcc[idx].nick)) &&
 	      (must_be_owner)) {
 	    dprintf(idx, "Due to security concerns, only permanent owners can set these modes.\n");
+	    nfree(buf);
 	    return;
 	  }
 	  list[1] = par;
@@ -1379,20 +1400,30 @@ static void cmd_chanset(struct userrec *u, int idx, char *par)
 	    strcat(answers, " { ");
 	    strcat(answers, parcpy);
 	    strcat(answers, " }");
-	  } else
+	  } else if (!all || !chan->next)
 	    dprintf(idx, "Error trying to set %s for %s, invalid option\n",
-		    list[0], chname);
+		    list[0], all ? "all channels" : chname);
           nfree(parcpy);
 	}
 	break;
       }
-      if (answers[0]) {
+      if (!all && answers[0]) {
 	dprintf(idx, "Successfully set modes { %s } on %s.\n",
 		answers, chname);
 	putlog(LOG_CMDS, "*", "#%s# chanset %s %s", dcc[idx].nick, chname,
 	       answers);
       }
+      if (!all)
+        chan = NULL;
+      else
+        chan = chan->next;
     }
+    if (all && answers[0]) {
+      dprintf(idx, "Successfully set modes { %s } on all channels.\n",
+	      answers);
+      putlog(LOG_CMDS, "*", "#%s# chanset * %s", dcc[idx].nick, answers);
+    }
+    nfree(buf);
   }
 }
 
