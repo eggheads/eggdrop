@@ -4,6 +4,24 @@ Changes in eggdrop: (since v1.3.0)
 
 1.3.29
 Foundby   Fixedby   What....
+Beige	  Fabian    killsock() could accidently free unused socket entries
+          Tothwolf/ fixed way we get version number for Tcl_PkgProvide()
+          ^PRS4^
+          rtc       quesedilla updated to v5
+          rtc       alltools updated 
+dw        Eule      enforcebans with split
+          Tothwolf  Removed obsolete [time] and [date] commands, Tcl7.6 and
+                    later uses [time] to time the execution of code.
+                    Scripts should now use [strftime] or compat.tcl should
+                    be loaded.
+          rtc       german language pack update
+          rtc       fixed wire.mod/filesys.mod install to copy
+                    ALL lang files
+          Tothwolf  fixed cmd_channel() calling get_user_flagrec() twice,
+                    ordering of status char, and removed redundant checking
+          Tothwolf  changed the way './configure' checks for Tcl,
+                    check for Tcl on freebsd machines properly,
+                    Makefile changes.
           dw        it said 'JOIN flood from @%s!  Banning.'
                     for nick floods.
 reddawg   rtc       md5 make could fail on some OS

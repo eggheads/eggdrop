@@ -220,34 +220,6 @@ static int tcl_unixtime STDVAR
   return TCL_OK;
 }
 
-static int tcl_time STDVAR
-{
-  char s[81];
-
-  context;
-  BADARGS(1, 1, "");
-  strcpy(s, ctime(&now));
-  strcpy(s, &s[11]);
-  s[5] = 0;
-  Tcl_AppendResult(irp, s, NULL);
-  return TCL_OK;
-}
-
-static int tcl_date STDVAR
-{
-  char s[81];
-
-  context;
-  BADARGS(1, 1, "");
-  strcpy(s, ctime(&now));
-  s[10] = s[24] = 0;
-  strcpy(s, &s[8]);
-  strcpy(&s[8], &s[20]);
-  strcpy(&s[2], &s[3]);
-  Tcl_AppendResult(irp, s, NULL);
-  return TCL_OK;
-}
-
 static int tcl_timers STDVAR
 {
   context;
@@ -517,8 +489,6 @@ tcl_cmds tclmisc_cmds[] =
   {"killtimer", tcl_killtimer},
   {"killutimer", tcl_killutimer},
   {"unixtime", tcl_unixtime},
-  {"time", tcl_time},
-  {"date", tcl_date},
   {"timers", tcl_timers},
   {"utimers", tcl_utimers},
   {"ctime", tcl_ctime},

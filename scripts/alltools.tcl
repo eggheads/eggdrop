@@ -7,21 +7,27 @@
 # updated even more by guppy 02May1999
 # fixed what guppy broke and updated again by Tothwolf 02May1999
 # more changes from Tothwolf 24/25May1999
+# reversed some of these weird changes and more fixes by rtc 20Sep1999
+# version for 1.3 bots only by rtc 24Sep1999
 
 ########################################
 # Descriptions of avaliable commands:
+## (removed from toolkit):
+# newflag <flag> - REMOVED numeric flags are no longer supported in this way
+#
 ## (toolkit):
-# putmsg <nick/chan> <text>
-#   send a message to a nick/chan
+# putmsg <nick> <text>
+#   send a message to someone on irc
 #
-# putchan <nick/chan> <text>
-#   identical to putmsg
+# putchan <channel> <text>
+#   send a public message to a channel
+#   technically identical to putmsg
 #
-# putnotc <nick/chan> <text>
-#   send a notice to a nick/chan
+# putnotc <nick/channel> <text>
+#   send a notice to a nick/channel
 #
-# putact <nick/chan> <text>
-#   send an action to a nick/chan
+# putact <nick/channel> <text>
+#   send an action to a nick/channel
 #
 ## (toolbox):
 # strlwr <string>
@@ -85,7 +91,7 @@
 # realtime [format]
 #   'time' returns the current time in 24 hour format '14:15'
 #   'date' returns the current date in the format '21 Dec 1994'
-#   not specifying any format will return the current time with
+#   not specifying any format will return the current time
 #   in 12 hour format '1:15 am'
 #
 # testip <ip>
@@ -94,32 +100,94 @@
 #
 # number_to_number <number>
 #   if the given number is between 1 and 15, return its analog representation
+#   else it returns what it gets.
+#
+## other
+# isnumber <string>
+#   returns 1 if 'string' is a number, 0 if not
 #
 ########################################
 
 # So scripts can see if allt is loaded.
 set alltools_loaded 1
-set allt_version 203
+set allt_version 205
 
 # For backward comptibility.
 set toolbox_revision 1007
 set toolbox_loaded 1
 set toolkit_loaded 1
 
-proc putmsg {who text} {
-  puthelp "PRIVMSG $who :$text"
+# Procs.............
+proc number_to_number {number} {
+  switch -- $number {
+    "0" {return "Zero"}
+    "1" {return "One"}
+    "2" {return "Two"}
+    "3" {return "Three"}
+    "4" {return "Four"}
+    "5" {return "Five"}
+    "6" {return "Six"}
+    "7" {return "Seven"}
+    "8" {return "Eight"}
+    "9" {return "Nine"}
+    "10" {return "Ten"}
+    "11" {return "Eleven"}
+    "12" {return "Twelve"}
+    "13" {return "Thirteen"}
+    "14" {return "Fourteen"}
+    "15" {return "Fifteen"}
+    default {return $number}
+  }
 }
 
-proc putchan {who text} {
-  puthelp "PRIVMSG $who :$text"
+proc isnumber {string} {
+  return [expr {![regexp \[^0-9\] $string] && $string != ""}]
 }
 
-proc putnotc {who text} {
-  puthelp "NOTICE $who :$text"
+proc testip {address} {
+  set testhost [split $address "."]
+  if {[llength $testhost] != 4} {return 0}
+  foreach part $testhost {
+    # >= 0 is just for undertandability, not really needed.
+    if {[string length $part] > 3 || ![isnumber $part] || !($part >= 0 && $part <= 255)} {
+      return 0
+    }
+  }
+  return 1
 }
 
-proc putact {who text} {
-  puthelp "PRIVMSG $who :\001ACTION $text\001"
+proc realtime {{type ""}} {
+  switch -- $type {
+    time {
+      return [clock format [clock seconds] -format "%H:%M"]
+    }
+    date {
+      return [clock format [clock seconds] -format "%d %b %Y"]
+    }
+    "" {
+      return [clock format [clock seconds] -format "%I:%M %P"]
+    }
+  }
+}
+
+proc iso {nick chan} {
+  return [matchattr [nick2hand $nick $chan] o|o $chan]
+}
+
+proc putmsg {target text} {
+  putserv "PRIVMSG $target :$text"
+}
+
+proc putnotc {target text} {
+  putserv "NOTICE $target :$text"
+}
+
+proc putchan {target text} {
+  putserv "PRIVMSG $target :$text"
+}
+
+proc putact {target text} {
+  putserv "PRIVMSG $target :\001ACTION $text\001"
 }
 
 proc strlwr {string} {
@@ -147,7 +215,7 @@ proc stridx {string index} {
 }
 
 proc iscommand {command} {
-  if {![string match "" [info commands $command]]} then {
+  if {[info commands $command] == $command} {
     return 1
   }
   return 0
@@ -155,20 +223,20 @@ proc iscommand {command} {
 
 proc timerexists {command} {
   foreach i [timers] {
-    if {[string match [lindex $i 1] $command]} then {
+    if {[lindex $i 1] == $command} {
       return [lindex $i 2]
     }
   }
-  return
+  return ""
 }
 
 proc utimerexists {command} {
   foreach i [utimers] {
-    if {[string match [lindex $i 1] $command]} then {
+    if {[lindex $i 1] == $command} {
       return [lindex $i 2]
     }
   }
-  return
+  return ""
 }
 
 proc inchain {bot} {
@@ -176,145 +244,43 @@ proc inchain {bot} {
 }
 
 proc randstring {length} {
-  set string ""
+  # [rtc] not for tcllib as rand is an eggdrop extension
+  set result ""
   set chars abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789
   set count [string length $chars]
-  for {set i 0} {[expr $i < $length]} {incr i} {
-    append string [string index $chars [rand $count]]
+  for {set i 0} {$i < $length} {incr i} {
+    append result [string index $chars [rand $count]]
   }
-  return $string
+  return $result
 }
 
 proc putdccall {text} {
-  foreach i [dcclist] {
-    set j [lindex $i 0]
-    if {[valididx $j]} then {
-      putdcc $j $text
-    }
+  foreach i [dcclist CHAT] {
+    putdcc [lindex $i 0] $text
   }
-  return
 }
 
 proc putdccbut {idx text} {
-  foreach i [dcclist] {
+  foreach i [dcclist CHAT] {
     set j [lindex $i 0]
-    if {([valididx $j]) && (![string match $j $idx])} then {
+    if {$j != $idx} {
       putdcc $j $text
     }
   }
-  return
 }
 
 proc killdccall {} {
-  foreach i [dcclist] {
-    set j [lindex $i 0]
-    if {[valididx $j]} then {
-      killdcc $j
-    }
+  foreach i [dcclist CHAT] {
+    killdcc [lindex $i 0]
   }
-  return
 }
 
 proc killdccbut {idx} {
-  foreach i [dcclist] {
+  foreach i [dcclist CHAT] {
     set j [lindex $i 0]
-    if {([valididx $j]) && (![string match $j $idx])} then {
+    if {$j != $idx} {
       killdcc $j
     }
   }
-  return
 }
 
-proc iso {nick chan} {
-  return [matchattr [nick2hand $nick $chan] o|o $chan]
-}
-
-proc realtime {args} {
-  switch -exact [lindex $args 0] {
-    time {
-      return [strftime "%H:%M"]
-    }
-    date {
-      return [strftime "%d %b %Y"]
-    }
-    default {
-      return [strftime "%l:%M %P"]
-    }
-  }
-}
-
-proc testip {ip} {
-  set tmp [split $ip .]
-  if {[expr [llength $tmp] != 4]} then {
-    return 0
-  }
-  foreach i [split [join $tmp ""] ""] {
-    if {![string match \[0-9\] $i]} then {
-      return 0
-    }
-  }
-  set index 0
-  foreach i $tmp {
-    if {(([expr [string length $i] > 3]) || \
-        (([expr $index == 3]) && (([expr $i > 254]) || ([expr $i < 1]))) || \
-        (([expr $index <= 2]) && (([expr $i > 255]) || ([expr $i < 0]))))} then {
-      return 0
-    }
-    incr index 1
-  }
-  return 1
-}
-
-proc number_to_number {number} {
-  switch -exact $number {
-    0 {
-      return Zero
-    }
-    1 {
-      return One
-    }
-    2 {
-      return Two
-    }
-    3 {
-      return Three
-    }
-    4 {
-      return Four
-    }
-    5 {
-      return Five
-    }
-    6 {
-      return Six
-    }
-    7 {
-      return Seven
-    }
-    8 {
-      return Eight
-    }
-    9 {
-      return Nine
-    }
-    10 {
-      return Ten
-    }
-    11 {
-      return Eleven
-    }
-    12 {
-      return Twelve
-    }
-    13 {
-      return Thirteen
-    }
-    14 {
-      return Fourteen
-    }
-    15 {
-      return Fifteen
-    }
-  }
-  return
-}

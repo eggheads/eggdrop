@@ -266,7 +266,7 @@ void killsock(int sock)
   int i;
 
   for (i = 0; i < MAXSOCKS; i++) {
-    if (socklist[i].sock == sock) {
+    if ((socklist[i].sock == sock) && !(socklist[i].flags & SOCK_UNUSED)) {
       close(socklist[i].sock);
       if (socklist[i].inbuf != NULL) {
 	nfree(socklist[i].inbuf);

@@ -326,43 +326,45 @@ Baue eine Telnetverbindung zu dem Bot auf und gib 'NEW' als deinen Nickname.
 0xb23,Nachricht gesendet an
 0xb24,Verbindung getrennt von:
 0xb25,User auf Channel
-0xb26,Ich kann dahin keine Verbindung herstellen
-0xb27,Ich kann die Verbindung nicht trennen zu
-0xb28,Schleife entdeckt
+0xb26,Kann keine Verbindung dorthin herstellen
+0xb27,Kann die Verbindung nicht trennen zu
+0xb28,Ring entdeckt
 0xb29,Falsche Verbindungsmitteilung von
 0xb2a,Falsche Verbindungsmitteilung
+#???
 0xb2b,Verbindung getrennt zu den verbliebenen
 0xb2c,Verbunden mit
 0xb2d,Illegale Verbindung vom Leaf
 0xb2e,Du solltest ein Leaf sein!
 0xb2f,Weise Bot ab
-0xb30,Älterer Bot entdeckt (nicht unterstützt)
-0xb31,Trace Ergebnis
+0xb30,Aelterer Bot entdeckt (nicht unterstuetzt)
+0xb31,Ergebnis der Rueckverfolgung
 0xb32,existiert nicht
-0xb33,Boots von anderen Bots aus sind nicht erlaubt.
-0xb34,Kann keinen Bsitzer des Bots booten.
-0xb35,DATEIÜBERTRAGUNG ABGEWIESEN
-0xb36,Ich habe kein Dateisystem, aus dem ich Dateien nehmen könnte.
-0xb37,User im Botnet
+0xb33,Rauswuerfe durch Leute von anderen Bots aus sind nicht erlaubt.
+0xb34,Kann den Besitzer des Bots nicht rauswerden.
+0xb35,DATEIUEBERTRAGUNG ABGEWIESEN
+0xb36,Ich habe kein Dateisystem, aus dem ich Dateien entnehmen koennte.
+0xb37,Benutzer im Botnet
 0xb38,Partyline
 0xb39,Lokaler Channel
-0xb3a,User auf Channel
+0xb3a,Benutzer auf Channel
 0xb3b,Keine Bots angebunden.
-0xb3c,Keine Trace Information für:
+0xb3c,Keine Rueckverfungungs-Information fuer:
 0xb3d,Baum zu komplex!
 0xb3e,Trenne Verbindung zu allen Bots...
-0xb3f,Gelöschter Versuch, eine Verbindung aufzubauen mit
-0xb40,Versuche nicht länger zu verbinden:
+0xb3f,Verbindungsaufbau wurde abgebrochen mit
+0xb40,Versuche nicht laenger zu verbinden:
 0xb41,Trenne Verbindung zu
 0xb42,Verbindung getrennt zu:
 0xb43,Nicht mit diesem Bot verbunden.
+#Hae?
 0xb44,Smooshing bot tables and assocs...
 0xb45,ist kein bekannter Bot.
-0xb46,Zu mir selbst eine Verbindung aufbauen?  Mein Junge, Sigmund Freud hätte seine Freude.
+0xb46,Zu mir selbst eine Verbindung aufbauen?  Mein Junge, Sigmund Freud haette seine Freude.
 0xb47,Dieser Bot ist bereits angebunden.
-0xb48,Kein Telnet Port gespeichert für
-0xb49,Verbinde mich mit
-0xb4a,Kann den User zur Weiterleitung nicht finden!
+0xb48,Kein Telnet Port gespeichert fuer
+0xb49,Verbindung wird hergestellt mit
+0xb4a,Kann den Benutzer zur Weiterleitung nicht finden!
 0xb4b,Konnte keine Verbindung aufbauen zu
 0xb4c,Weiterleitung zu mir selbst?  Was zum Teufel soll der Sinn davon sein?!
 0xb4d,Baue Verbindung auf zu
@@ -371,68 +373,115 @@ Baue eine Telnetverbindung zu dem Bot auf und gib 'NEW' als deinen Nickname.
 0xb50,Du bist wieder auf
 0xb51,Weiterleitung abgebrochen:
 0xb52,hat die Partyline betreten.
-0xb53,Habe DCC Verbindung verloren zu
-0xb54,Breche weitergeleitete Verbindung ab zu
+0xb53,DCC-Verbindung verloren zu
+0xb54,Breche Weitereleitungsversuch ab zu
 0xb55,Erfolg!\n\nDU BIST NUN VERBUNDEN MIT DEM BOT
 0xb56,(Du kannst *BYE* eingeben, um die Verbindung vorzeitig zu trennen.)
 0xb57,Weitergeleitete Verbindung:
 0xb58,hat die Partyline verlassen.
 0xb59,Hat die weitergeleitete Verbindung beendet
-0xb5a,WEITERGELEITETE VERBINDUNG BEENDET.\nDu bist wieder auf
+0xb5a,WEITERGELEITETE VERBINDUNG BEENDET.\nDu bist jetzt wieder auf
 0xb5b,hat die Partyline wieder betreten.
 0xb5c,Breche weitergeleitete Verbindung ab zu
 0xb5d,Breche die Verbindung ab zu
-0xb5e,Weitergeleitete Verbindung abgebrochen
-0xb5f,ausgepingt
+0xb5e,Relais kaputt
+0xb5f,Ping reagiert nicht
 0xb60,Unleafiges Verhalten
 0xb61,Verbindung getrennt zu Bot
-0xb62,Ich verbinde mich bereits mit diesem Bot.
+0xb62,Verbindung mit diesem Bot wird bereits hergestellt.
 
 0xc00,Ich nehme keine DCC Chats von Fremden an.
 0xc01,DCC Chat abgewiesen (kein Zugriff)
 0xc02,Kein Zugriff
 0xc03,Du must ein Passwort gesetzt haben.
-0xc04,DCC Chat abgewiesen (kein Paßwort)
+0xc04,DCC Chat abgewiesen (kein Passwort)
 0xc05,DCC Chat abgewiesen (+x aber kein Dateisystem)
-0xc06,DCC Chat abgewiesen (Dateisystem überfüllt)
-0xc07,Im Moment sind zu viele User im Dateisystem.
-0xc08,Bitte versuche es später noch einmal.
-0xc09,Zurückgewiesene Tandemverbindung von %s (doppelt)
+0xc06,DCC Chat abgewiesen (Dateisystem ueberfuellt)
+0xc07,Im Moment sind zu viele Benutzer im Dateisystem.
+0xc08,Bitte versuche es spaeter noch einmal.
+0xc09,Zurueckgewiesene Tandemverbindung von %s (doppelt)
 0xc0a,Ich nehme keine Dateien von Fremden an.
 0xc0b,DCC SEND abgewiesen %s (kein Zugriff): %s!%s
 0xc0c,Sorry, zu viele DCC Verbindungen.
-0xc0d,DCC Verbindungen überfüllt: %s %s (%s!%s)
-0xc0e,DCC Dateiübertragungen nicht unterstützt.
+0xc0d,DCC Verbindungen ueberfuellt: %s %s (%s!%s)
+0xc0e,Keine Unterstuetzung fuer DCC Dateiuebertragungen.
 0xc0f,Abgewiesener DCC Send %s von %s!%s
 0xc10,Ein Dateiname kann kein '/' enthalten...
-0xc11,Sorry, Information über Dateigröße muß enthalten sein.
+0xc11,Sorry, Information ueber die Dateigroesse muss enthalten sein.
 0xc12,Diese Datei existiert bereits.
-0xc13,Kann diese Datei nicht erstellen (Fehler im temporären Verzeichnis)
+0xc13,Kann diese Datei nicht erstellen (Fehler im temporaeren Verzeichnis)
 0xc14,Diese Datei bereits gesendet.
-0xc15,keine Dateigröße
-0xc16,DCC SEND abgewiesen %s von %s: keine Dateigröße
-0xc17,Sorry, Datei zu groß.
-0xc18,DCC SEND abgewiesen %s (%s): Datei zu groß
+0xc15,keine Dateigroesse
+0xc16,DCC SEND abgewiesen %s von %s: keine Dateigroesse
+0xc17,Sorry, Datei zu gross.
+0xc18,DCC SEND abgewiesen %s (%s): Datei zu gross
 0xc19,Verbindung nicht zustandegekommen
 0xc1a,DCC Verbindung nicht zustandegekommen
-0xc1b,Datesystem beschädigt.
-0xc1c,Gib bitte dein Paßwort ein.
+0xc1b,Datesystem beschaedigt.
+0xc1c,Gib dein Passwort ein.
 0xc1d,%s wurde gewaltsam entfernt wegen Flood.\n
 0xc1e,-=- poof -=-\n
 0xc1f,Du wurdest von dem %s runtergeworfen von %s%s%s\n
 0xc20,%s hat %s aus der Partyline rausgeschmissen%s%s\n
 0xc21,DCC Chat abgewiesen (falscher Port)
-0xc22,DCC falscher Port
+0xc22,DCC-Port ungueltig
 
-0xd00,Treibe in der Vorhölle (keine IRC Kommunikation)
+0xd00,In der Schwebe (keine Verbindung zum IRC)
 
 # BOTNET
 
-0xe00,Gefälschte Nachricht abgewiesen
+0xe00,Gefaelschte Nachricht abgewiesen
 0xe01,Verbunden mit
 0xe02,Falscher Bot -- wollte %s, bekam %s
-0xe03,verließ die
+0xe03,verliess die
 0xe04,betrat die
-0xe05,ist jetzt nicht mehr da
-0xe06,ist jetzt wieder da
+0xe05,ist ab sofort abwesend
+0xe06,ist nicht laenger weg
 0xe07,Nickwechsel:
+
+# Text aus dcc.c
+
+0xe08,Verbindung zu %s wird zurueckgewiesen
+0xe09,Verbunden mit %s.
+0xe0a,Verbindung zu %s fehlgeschlagen.
+0xe0b,Falsches Passwort beim Verbindungsaufbau mit %s.
+0xe0c,Zum Verbindungsaufbau mit %s wird ein Passwort benoetigt.
+0xe0d,FEHLER beim Verbindungsaufbau mit %s: %s
+0xe0e,Bot verlohren: %s
+0xe0f,Zeitueberschreitung: Verbindungsaufbau mit bot %s bei %s:%d
+0xe10,Eingeloggt: %s (%s/%d)
+0xe11,Falsches Passwort: [%s]%s/%d
+0xe12,Negativ, Houston.\n
+0xe13,*** %s hat die partyline betreten.\n
+0xe14,DCC connection zu %s (%s/%d) verloren
+0xe15,Zeitueberschreitung bei der Passworteingabe im dcc chat: [%s]%s
+0xe16,DCC-Verbindung geschlossen (%s!%s)
+0xe17,Einkommende TELNET-Verbindung fehlgeschlagen (%s)
+0xe18,Verbindung zu %s/%d zurueckgewiesen (falscher Quellport)
+0xe19,Verbindung zu %s/%d zurueckgeweisen (ungueltige ip-adresse)
+0xe1a,Verbindung zu %s zurueckgewiesen (falscher hostname)
+0xe1b,Telnet-Verbindung: %s/%d
+0xe1c,Ident fehlgeschlagen fuer %s: %s
+0xe1d,(!) Port %d fuer einkommende Verbindungen ohne meine Erlaubnis verstorben.
+0xe1e,%s zurueckgewiesen (falscher Nick)
+0xe1f,%s zurueckgewiesen (kein Bot)
+0xe20,%s zurueckgewiesen (kein Benutzer)
+0xe21,%s zurueckgewiesen (ungueltiger nick: %s)
+0xe22,Telnet-Verbindung von %s zurueckgewiesen (doppelt)
+0xe23,[%s]%s zurueckgewiesen (kein passwort)
+0xe24,Telnet-Verbindung zu to %s/%d verloren
+0xe25,Zeitueberschreitung der Ident-Anforderung beim Telnet: %s
+0xe26,Bot-Installation fertig, der erste Master ist %s
+0xe27,Neuer Benutzer per Telnet: [%s]%s/%d
+0xe28,Neuen Telnet-Benutzer verloren (%s/%d)
+0xe29,Neuen Telnet-Benutzer verloren %s (%s/%d)
+0xe2a,Zeitueberschreitung beim neuen Telnet-Benutzer: %s/%d
+0xe2b,Zeitueberschreitung beim neuen Telnet-Benutzer: [%s]%s/%d
+0xe2c,Tcl-Fehler [%s]: %s
+0xe2d,*** VORSICHT: TOD EINES SOCKETS (%d), TYP %s WURDE NICHT ABGEFANGEN
+0xe2e,Telnet-Verbindung waehrend des Ident-Vorgangs verloren [%s/%d]
+0xe2f,Zeitueberschreitung/EOF bei der Ident-Verbindung
+0xe30,Ident-Socket beim Wartern auf die Antwort verloren!!
+0xe31,Telnet verweigert: %s, Kein Zugriff
+0xe32,Telnet-Verbindung von %s zurueckgewiesen (versuchte, meinen botnetnick zu benutzen)
+

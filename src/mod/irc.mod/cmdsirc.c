@@ -510,8 +510,6 @@ static void cmd_channel(struct userrec *u, int idx, char *par)
       }
       get_user_flagrec(m->user, &user, chan->name);
       /* determine status char to use */
-      get_user_flagrec(m->user, &user, chan->name);
-      /* determine status char to use */
       if (glob_bot(user))
 	atrflag = 'b';
       else if (glob_owner(user))
@@ -522,30 +520,30 @@ static void cmd_channel(struct userrec *u, int idx, char *par)
 	atrflag = 'M';
       else if (chan_master(user))
 	atrflag = 'm';
-      else if (glob_op(user) && !chan_deop(user))
-	atrflag = 'O';
-      else if (chan_op(user) && !chan_deop(user))
-	atrflag = 'o';
-      else if (glob_autoop(user) && !chan_deop(user))
-	atrflag = 'A';
-      else if (chan_autoop(user) && !chan_deop(user))
-	atrflag = 'a';
-      else if (glob_deop(user) && !chan_op(user))
+      else if (glob_deop(user))
 	atrflag = 'D';
       else if (chan_deop(user))
 	atrflag = 'd';
-      else if (glob_voice(user) && !chan_quiet(user))
-	atrflag = 'V';
-      else if (chan_voice(user))
-	atrflag = 'v';
-      else if (glob_gvoice(user) && !chan_quiet(user))
-	atrflag = 'G';
-      else if (chan_gvoice(user))
-	atrflag = 'g';
-      else if (glob_quiet(user) && !chan_voice(user))
+      else if (glob_autoop(user))
+	atrflag = 'A';
+      else if (chan_autoop(user))
+	atrflag = 'a';
+      else if (glob_op(user))
+	atrflag = 'O';
+      else if (chan_op(user))
+	atrflag = 'o';
+      else if (glob_quiet(user))
 	atrflag = 'Q';
       else if (chan_quiet(user))
 	atrflag = 'q';
+      else if (glob_gvoice(user))
+	atrflag = 'G';
+      else if (chan_gvoice(user))
+	atrflag = 'g';
+      else if (glob_voice(user))
+	atrflag = 'V';
+      else if (chan_voice(user))
+	atrflag = 'v';
       else
 	atrflag = ' ';
       if (chan_hasop(m))

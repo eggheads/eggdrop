@@ -61,17 +61,21 @@ help:
 	@echo "To make eggdrop :"
 	@echo "   % make "
 
-clean: cleanmods
-	@rm -f eggdrop egg core *.o *.a *.so *~ *.stamp
-	@cd src ; rm -f eggdrop egg core *.o *.a *~ language/*~
-	@cd src/md5 ; ${MAKE} clean
-	
 cleanmods:
-	@cd src/mod ; ${MAKE} clean 'MAKE=${MAKE}'
+	@cd src/mod; ${MAKE} clean 'MAKE=${MAKE}'
 
-dist: clean
+clean: cleanmods
+	@rm -f eggdrop egg core DEBUG *.o *.a *.so *.stamp
+	@cd src; rm -f eggdrop egg core DEBUG *.o *.a
+	@cd src/md5; ${MAKE} clean
+	
+distclean: clean
 	@rm -f Makefile config.cache config.log config.status config.h lush.h
-	@rm -f doc/*~
+	@rm -f `find . \( -name '*~' -o -name '*#' -o -name '*.orig' \
+		-o -name '*.rej' -o -name '*.bak' \) -print`
+
+distrib: distclean Makefile.in
+	@rm -rf `find . \( -name "CVS" \) -print`
 	@echo "all:" >Makefile
 	@echo "	@./configure; make" >>Makefile
 
@@ -83,11 +87,10 @@ eggdrop.h:
 	@echo You do not have the eggdrop source!
 	@exit 1
 
-OBJS =  botcmd.o botmsg.o botnet.o chanprog.o cmds.o \
-	dcc.o dccutil.o flags.o language.o main.o md5/md5c.o mem.o \
-	misc.o modules.o net.o rfc1459.o \
-	tcl.o tcldcc.o tclhash.o tclmisc.o tcluser.o userent.o \
-	userrec.o users.o
+OBJS =	botcmd.o botmsg.o botnet.o chanprog.o cmds.o dcc.o \
+	dccutil.o flags.o language.o main.o mem.o misc.o \
+	modules.o net.o rfc1459.o tcl.o tcldcc.o tclhash.o \
+	tclmisc.o tcluser.o userent.o userrec.o users.o md5/md5c.o
 
 GMAKE_STATIC = ${MAKE} 'CC=${CC}' 'LD=${LD}' 'OBJS=${OBJS}'\
 'STRIP=${MOD_STRIP}' 'CFLAGS=${CFLAGS} -DSTATIC' 'XLIBS=@TCL_LIBS@ @LIBS@'
@@ -113,32 +116,32 @@ static: eggtest
 	@echo "Making module objects for static linking..."
 	@echo ""
 	@rm -f src/main.o
-	@cd src/mod;${GMAKE_STATIC} static
+	@cd src/mod; ${GMAKE_STATIC} static
 	@echo ""
 	@echo "Making core eggdrop for static linking..."
 	@echo ""
-	@cd src;${GMAKE_STATIC} static
+	@cd src; ${GMAKE_STATIC} static
 
 modegg: modtest
-	@cd src;${GMAKE_MOD} eggdrop
+	@cd src; ${GMAKE_MOD} eggdrop
 	@echo
 	@./eggdrop -v
 	@ls -la eggdrop
 	
 modules:  modtest
-	@cd src/mod;${GMAKE_SHLIB} modules
+	@cd src/mod; ${GMAKE_SHLIB} modules
 	@echo
 	@echo "modules made:"
 	@ls -la *.so
 
 debmodules:  modtest
-	@cd src/mod;${DMAKE_SHLIB} modules
+	@cd src/mod; ${DMAKE_SHLIB} modules
 	@echo
 	@echo "modules made:"
 	@ls -la *.so
 
 memegg:  modtest
-	@cd src;${DMAKE_MEM} eggdrop
+	@cd src; ${DMAKE_MEM} eggdrop
 	@echo
 	@./eggdrop -v
 	@ls -la eggdrop
@@ -197,8 +200,8 @@ ainstall:
 		rm -f $(DEST)/oeggdrop; \
 	fi
 	@if test ! -r $(DEST)/motd; then \
-	        $(CP1) motd $(DEST)/; \
-        fi
+		$(CP1) motd $(DEST)/; \
+	fi
 	@if test ! -r $(DEST)/telnet-banner; then \
 		$(CP1) telnet-banner $(DEST)/; \
 	fi
@@ -254,7 +257,7 @@ ainstall:
 		$(CP2) scripts/* $(DEST)/scripts; \
 	fi
 	@echo
-	@${MAKE} REALDEST=`cd $(DEST);pwd` install2
+	@${MAKE} REALDEST=`cd $(DEST); pwd` install2
 	@echo
 	@echo Installation completed.
 	@echo You MUST ensure that you edit/verify your configuration file.
@@ -263,6 +266,6 @@ ainstall:
 
 install2:
 	@echo Installing mods -- DEST = $(REALDEST)
-	@cd src/mod;${MAKE} REALDEST=$(REALDEST) install CP1='${CP1}'; cd ../..
+	@cd src/mod; ${MAKE} REALDEST=$(REALDEST) install CP1='${CP1}'; cd ../..
 
 #safety hash

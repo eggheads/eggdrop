@@ -252,7 +252,8 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
 	  while (m->nick[0]) {
 	    sprintf(s, "%s!%s", m->nick, m->userhost);
 	    if (wild_match(h, s) &&
-		(m->joined >= chan->floodtime[which]) && (!chan_sentkick(m))) {
+		(m->joined >= chan->floodtime[which]) &&
+		   !chan_sentkick(m) && !match_my_nick(m->nick)) {
 	      m->flags |= SENTKICK;
 	      dprintf(DP_SERVER, "KICK %s %s :%s\n", chan->name, m->nick,
 		      IRC_LEMMINGBOT);
@@ -1336,8 +1337,10 @@ static void do_embedded_mode(struct chanset_t *chan, char *nick,
 static int gotjoin(char *from, char *chname)
 {
   char *nick, *p, *newmode, buf[UHOSTLEN], *uhost = buf;
+  int ok = 1;
   struct chanset_t *chan;
   memberlist *m;
+  masklist *b, *e;
   struct userrec *u;
   struct flag_record fr =
   {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
@@ -1512,6 +1515,22 @@ static int gotjoin(char *from, char *chname)
 	    }
 	  }
 	  set_handle_laston(chname, u, now);
+	}
+      }
+      if (channel_enforcebans(chan) && me_op(chan) &&
+          !chan_op(fr) && !glob_op(fr)) {
+        for (b = chan->channel.ban; b->mask[0]; b = b->next) { 
+          if (wild_match(b->mask, from)) {
+   	    if (use_exempts)
+	      for (e = chan->channel.exempt; e->mask[0]; e = e->next)
+	        if (wild_match(e->mask, from))
+	          ok = 0;
+	    if (ok && !chan_sentkick(m)) {
+	      dprintf(DP_SERVER, "KICK %s %s :%s\n", chname, m->nick,
+		      IRC_YOUREBANNED);
+	      m->flags |= SENTKICK;    
+            }
+	  }
 	}
       }
     }
