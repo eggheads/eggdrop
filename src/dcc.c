@@ -4,7 +4,7 @@
  *   disconnect on a dcc socket
  *   ...and that's it!  (but it's a LOT)
  *
- * $Id: dcc.c,v 1.64 2003/03/13 00:55:18 wcc Exp $
+ * $Id: dcc.c,v 1.65 2003/03/13 01:05:56 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1907,23 +1907,14 @@ void dcc_ident(int idx, char *buf, int len)
   char response[512], uid[512], buf1[UHOSTLEN];
   int i;
 
-  if (sscanf(buf, "%*[^:]:%[^:]:%*[^:]:%[^\n]\n", response, uid) != 2) {
-    dcc[idx].timeval = now;
-    return;
-  }
-
-  response[511] = uid[511] = 0;
+  sscanf(buf, "%*[^:]:%[^:]:%*[^:]:%[^\n]\n", response, uid);
   rmspace(response);
-
   if (response[0] != 'U') {
     dcc[idx].timeval = now;
     return;
   }
-
   rmspace(uid);
-  uid[20] = 0; /* 20 character ident max */
-  if (strlen(uid) <= 0)
-    strcpy(uid, "telnet");
+  uid[20] = 0;                  /* 20 character ident max */
   for (i = 0; i < dcc_total; i++)
     if ((dcc[i].type == &DCC_IDENTWAIT) &&
         (dcc[i].sock == dcc[idx].u.ident_sock)) {
