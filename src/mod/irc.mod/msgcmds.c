@@ -4,7 +4,7 @@
  * 
  * dprintf'ized, 4feb1996
  * 
- * $Id: msgcmds.c,v 1.20 2000/03/18 19:22:37 guppy Exp $
+ * $Id: msgcmds.c,v 1.21 2000/05/30 20:59:49 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -884,7 +884,10 @@ static int msg_die(char *nick, char *host, struct userrec *u, char *par)
   }
   putlog(LOG_CMDS, "*", "(%s!%s) !%s! DIE", nick, host, u->handle);
   dprintf(-serv, "NOTICE %s :%s\n", nick, BOT_MSGDIE);
+  if (!par[0])
   simple_sprintf(s, "BOT SHUTDOWN (authorized by %s)", u->handle);
+  else
+    simple_sprintf(s, "BOT SHUTDOWN (%s: %s)", u->handle, par);
   chatout("*** %s\n", s);
   botnet_send_chat(-1, botnetnick, s);
   botnet_send_bye();
