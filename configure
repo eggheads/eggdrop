@@ -6056,8 +6056,8 @@ else
 #include "confdefs.h"
 
 #include <unistd.h>
-#include <sys/socket.h>
 #include <sys/types.h>
+#include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
@@ -6065,7 +6065,7 @@ int main()
 {
   socklen_t test = sizeof(int);
 
-  return test;
+  return 0;
 }
 
 _ACEOF
