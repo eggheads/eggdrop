@@ -315,12 +315,6 @@ Status: no-one is working on this
 Status: no-one is working on this
 
 --
-28. local bots telneting to local IP for a hub bot will be ignored for
-    telnet flood even with +f set for their user@host
-
-Status: dw submitted a patch to eggdev.
-
---
 30. This is an odd one, and I've included code that should reproduce it...
     (Tothwolf)
    =TestBot= [04:12] joined #TestChannel but didn't want to!
