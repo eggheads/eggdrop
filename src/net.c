@@ -2,7 +2,7 @@
  * net.c -- handles:
  *   all raw network i/o
  * 
- * $Id: net.c,v 1.22 2000/09/23 17:46:55 fabian Exp $
+ * $Id: net.c,v 1.23 2000/10/27 19:30:23 fabian Exp $
  */
 /* 
  * This is hereby released into the public domain.
@@ -1062,7 +1062,7 @@ int hostsanitycheck_dcc(char *nick, char *from, IP ip, char *dnsname,
   /* According to the latest RFC, the clients SHOULD be able to handle
    * DNS names that are up to 255 characters long.  This is not broken.
    */
-  char hostname[256], badaddress[16];
+  char hostn[256], badaddress[16];
 
   /* It is disabled HERE so we only have to check in *one* spot! */
   if (!dcc_sanitycheck)
@@ -1075,15 +1075,15 @@ int hostsanitycheck_dcc(char *nick, char *from, IP ip, char *dnsname,
    * where the routines providing our data currently lose interest. I'm
    * using the n-variant in case someone changes that...
    */
-  strncpy(hostname, extracthostname(from), 255);
-  hostname[255] = 0;
-  if (!egg_strcasecmp(hostname, dnsname)) {
+  strncpy(hostn, extracthostname(from), 255);
+  hostn[255] = 0;
+  if (!egg_strcasecmp(hostn, dnsname)) {
     putlog(LOG_DEBUG, "*", "DNS information for submitted IP checks out.");
     return 1;
   }
   if (!strcmp(badaddress, dnsname))
-    putlog(LOG_MISC, "*", "ALERT: (%s!%s) sent a DCC request with bogus IP information of %s port %u!",
-	   nick, from, badaddress, prt);
+    putlog(LOG_MISC, "*", "ALERT: (%s!%s) sent a DCC request with bogus IP "
+	   "information of %s port %u!", nick, from, badaddress, prt);
   else
     return 1; /* <- usually happens when we have 
 		    a user with an unresolved hostmask! */

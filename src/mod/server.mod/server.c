@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  * 
- * $Id: server.c,v 1.55 2000/10/27 19:24:44 fabian Exp $
+ * $Id: server.c,v 1.56 2000/10/27 19:30:24 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1637,8 +1637,8 @@ static int server_expmem()
  */
 static void getmyhostname(char *s)
 {
-  struct hostent *hp;
-  char *p;
+  struct hostent	*hp;
+  char			*p;
 
   if (hostname[0]) {
     strcpy(s, hostname);
@@ -1657,13 +1657,6 @@ static void getmyhostname(char *s)
   if (hp == NULL)
     fatal("Hostname self-lookup failed.", 0);
   strcpy(s, hp->h_name);
-  if (strchr(s, '.') != NULL)
-    return;
-  if (hp->h_aliases[0] == NULL)
-    fatal("Can't determine your hostname!", 0);
-  strcpy(s, hp->h_aliases[0]);
-  if (strchr(s, '.') == NULL)
-    fatal("Can't determine your hostname!", 0);
 }
 
 static cmd_t my_ctcps[] =
