@@ -46,11 +46,10 @@ ques5.tcl
    makes web pages of who's on each channel, updated periodically
    (requires alltools.tcl)
 
-sentinel1.55.tcl (by slennox)
-   flood protection script for eggdrop 1.3.17 and later, with integrated
-   BitchX CTCP simulation. this script is designed to provide strong 
-   protection for your bot and channels against large floodnets and proxy
-   floods.
+sentinel.tcl (by slennox)
+   flood protection script for eggdrop with integrated BitchX CTCP simulation. 
+   this script is designed to provide strong protection for your bot and
+   channels against large floodnets and proxy floods.
 
 userinfo1.0.tcl
    cute user info settings things 

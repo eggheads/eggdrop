@@ -1,5 +1,5 @@
 # Makefile for scripts/
-# $Id: Makefile.in,v 1.10 2000/11/05 21:36:47 fabian Exp $
+# $Id: Makefile.in,v 1.11 2000/11/08 19:52:38 guppy Exp $
 
 SHELL = @SHELL@
 top_srcdir = @top_srcdir@
@@ -15,7 +15,7 @@ INSTALL_SCRIPT = @INSTALL_SCRIPT@
 DOCS = CONTENTS
 
 SCRIPTS = action.fix.tcl alltools.tcl compat.tcl getops.tcl \
-klined.tcl notes2.tcl ques5.tcl sentinel1.55.tcl userinfo.tcl cmd_resolve.tcl
+klined.tcl notes2.tcl ques5.tcl sentinel.tcl userinfo.tcl cmd_resolve.tcl
 
 EXESCRIPTS = autobotchk botchk weed
 
