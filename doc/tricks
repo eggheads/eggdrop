@@ -6,7 +6,7 @@ Some little tricks that you may or may not know about...
 *  '.status all' will dump out virtually everything you have configured on
    your bot
 
-*  TCL has a command 'info body <proc>' that will list the contents of a
+*  Tcl has a command 'info body <proc>' that will list the contents of a
    proc.  'info args <proc>' shows what you have defined as the parameters
    for the proc.
 

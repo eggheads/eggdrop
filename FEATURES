@@ -32,7 +32,7 @@ regularly updated. Its features include:
      stretch not only across channels, but across irc networks (one bot on
      EFnet, one bot on Undernet, etc)
    * script language: commands and features can be added to the bot on the
-     fly, by means of the TCL script language, giving you the power of
+     fly, by means of the Tcl script language, giving you the power of
      TOTAL customization of your bot -- similar to ircII script
 
 !!! WARNING !!!
@@ -64,7 +64,7 @@ MODULE - dynamic
 The MODULE version of Eggdrop 1.6.x provides for the on-the-fly loading of
 extensions to the bot code without having to recompile the entire bot. This
 is available on OS platforms which support dynamically linked/shared
-libraries in their run-time and TCL libraries. It allows for functionality
+libraries in their run-time and Tcl libraries. It allows for functionality
 of the bot to be loaded and unloaded at any time.
 
 The base loadable modules distributed with this Eggdrop version are:

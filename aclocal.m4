@@ -1,7 +1,7 @@
 dnl aclocal.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: aclocal.m4,v 1.47 2001/09/30 05:06:33 tothwolf Exp $
+dnl $Id: aclocal.m4,v 1.48 2001/11/11 20:24:44 guppy Exp $
 dnl
 
 
@@ -269,7 +269,7 @@ case "$egg_cv_var_system_type" in
   OSF1)
     case "`echo $egg_cv_var_system_release | cut -d . -f 1`" in
       V*)
-        # FIXME: we should check this in a seperate test
+        # FIXME: we should check this in a separate test
         # Digital OSF uses an ancient version of gawk
         if test "$AWK" = "gawk"
         then
@@ -498,9 +498,9 @@ AC_SUBST(EGGEXEC)dnl
 dnl  EGG_TCL_ARG_WITH()
 dnl
 AC_DEFUN(EGG_TCL_ARG_WITH, [dnl
-# oohh new configure --variables for those with multiple tcl libs
-AC_ARG_WITH(tcllib, [  --with-tcllib=PATH      full path to tcl library], tcllibname="$withval")
-AC_ARG_WITH(tclinc, [  --with-tclinc=PATH      full path to tcl header], tclincname="$withval")
+# oohh new configure --variables for those with multiple Tcl libs
+AC_ARG_WITH(tcllib, [  --with-tcllib=PATH      full path to Tcl library], tcllibname="$withval")
+AC_ARG_WITH(tclinc, [  --with-tclinc=PATH      full path to Tcl header], tclincname="$withval")
 
 WARN=0
 # Make sure either both or neither $tcllibname and $tclincname are set
@@ -821,13 +821,13 @@ AC_DEFUN(EGG_CACHE_UNSET, [dnl
 
 dnl  EGG_TCL_DETECT_CHANGE()
 dnl
-dnl  Detect whether the tcl system has changed since our last
+dnl  Detect whether the Tcl system has changed since our last
 dnl  configure run. Set egg_tcl_changed accordingly.
 dnl
 dnl  Tcl related feature and version checks should re-run their
 dnl  checks as soon as egg_tcl_changed is set to "yes".
 AC_DEFUN(EGG_TCL_DETECT_CHANGE, [dnl
-  AC_MSG_CHECKING(whether the tcl system has changed)
+  AC_MSG_CHECKING(whether the Tcl system has changed)
   egg_tcl_changed=yes
   egg_tcl_id="$TCLLIB:$TCLLIBFN:$TCLINC:$TCLINCFN"
   if test ! "$egg_tcl_id" = ":::"
@@ -883,7 +883,7 @@ then
     TCL_FOUND=0
   fi
 
-  # Check Tcl's patch level (if avaliable)
+  # Check Tcl's patch level (if available)
   if test "$egg_tcl_changed" = "yes"
   then
     EGG_CACHE_UNSET(egg_cv_var_tcl_patch_level)
@@ -936,7 +936,7 @@ then
 configure: error:
 
   Your Tcl version is much too old for eggdrop to use.
-  I suggest you download and complie a more recent version.
+  I suggest you download and compile a more recent version.
   The most reliable current version is $tclrecommendver and
   can be downloaded from $tclrecommendsite
 
@@ -994,7 +994,7 @@ dnl  EGG_TCL_ENABLE_THREADS()
 dnl
 AC_DEFUN(EGG_TCL_ENABLE_THREADS, [dnl
 AC_ARG_ENABLE(tcl-threads,
-[  --disable-tcl-threads   Disable threaded tcl support if detected. (Ignore this
+[  --disable-tcl-threads   Disable threaded Tcl support if detected. (Ignore this
                           option unless you know what you are doing)],
 enable_tcl_threads="$enableval",
 enable_tcl_threads=yes)
@@ -1191,7 +1191,7 @@ AC_SUBST(MOD_UPDIR)dnl
 dnl  EGG_REPLACE_IF_CHANGED(FILE-NAME, CONTENTS-CMDS, INIT-CMDS)
 dnl
 dnl  Replace FILE-NAME if the newly created contents differs from the existing
-dnl  file contents.  Otherwise leave the file allone.  This avoids needless
+dnl  file contents.  Otherwise leave the file alone.  This avoids needless
 dnl  recompiles.
 dnl
 define(EGG_REPLACE_IF_CHANGED, [dnl

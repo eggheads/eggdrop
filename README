@@ -21,7 +21,7 @@ README
             1. What do I do if I get the Error "User file not found"?
             2. My Eggdrop won't run; It just says "Can't find your
                hostname!"
-            3. What the Heck is TCL?
+            3. What the Heck is Tcl?
             4. My bot dies and the last entry in the logfile is "Received
                terminate signal". What does that mean and can I prevent it?
             5. My compile dies at the last minute with "LD fatal signal
@@ -99,18 +99,18 @@ README
 
      (2) HOW TO GET EGGDROP
 
-          Before you can compile eggdrop, you need to have TCL
-          installed on your system. Most systems should have TCL on
+          Before you can compile eggdrop, you need to have Tcl
+          installed on your system. Most systems should have Tcl on
           them by now -- you can check by trying the command "tclsh".
           If it works, you will be given a "%" prompt, and you can
-          type "exit" to exit the program. That means TCL is on your
-          system. If tclsh doesn't load, then TCL probably isn't on
+          type "exit" to exit the program. That means Tcl is on your
+          system. If tclsh doesn't load, then Tcl probably isn't on
           your system, and you will need to ftp it. The best ftp site
           is:
 
                          ftp://ftp.scriptics.com/pub/tcl
 
-          TCL comes with the Slackware distribution of Linux. HOWEVER,
+          Tcl comes with the Slackware distribution of Linux. HOWEVER,
           the one that comes on Slackware 3.0 is goofed up and you'll
           have to re-install it for yourself to get it working.
 
@@ -256,15 +256,15 @@ README
                file correctly, or add those above commands to
                your '.login' file (sh or ksh: '.profile').
 
-          3. WHAT THE HECK IS TCL?
+          3. WHAT THE HECK IS Tcl?
 
-               TCL is a scripting language written by John
+               Tcl is a scripting language written by John
                Ousterhout. It's much better than most "in-built"
                script languages (like the one in ircII) and is
                meant to be linked with anything needing a script
                language. So I linked it with eggdrop. The file
                "tcl-commands.doc" in the eggdrop directory
-               contains a list of the commands added to TCL by
+               contains a list of the commands added to Tcl by
                eggdrop. There are also several example scripts in
                the scripts/ directory, and there are gobs of
                scripts floating around on the ftp sites if you
@@ -291,7 +291,7 @@ README
                This happens on Linux machines that have recently
                been converted to ELF by upgrading to Slackware
                3.0. Apparently Slackware 3.0 comes with a non-ELF
-               (a.out) TCL library, and the compiler doesn't
+               (a.out) Tcl library, and the compiler doesn't
                handle that well. (It should give you an error;
                instead it barfs.) Fixing it is tricky because
                even if you recompile libtcl.a, the linker will
@@ -328,7 +328,7 @@ README
           7. WHAT ARE MODULES?
 
                Modules are a way of adding extra C code from the
-               bot, much like TCL scripts, without requiring the
+               bot, much like Tcl scripts, without requiring the
                bot recompiling, see doc/MODULES for more info.
 
           8. CAN I COMPILE EGGDROP WITHOUT DYNAMIC MODULES?
@@ -372,9 +372,9 @@ README
           11. WHEN I 'tclsh scripts/weed <userfile> c' IT BARFS CHUNKS
           AT ME AND DIES :(
 
-               UPGRADE YOUR TCL, you are probably using tcl 7.5
+               UPGRADE YOUR Tcl, you are probably using Tcl 7.5
                or earlier, some of the commands in weed require
-               tcl7.6 to run, so either upgrade it, or removing
+               Tcl7.6 to run, so either upgrade it, or removing
                the offending lines from you userfile (those
                starting with '.' generally) and accept the loss
                of that data.
@@ -385,22 +385,22 @@ README
           or directory" when I try to start my bot.
 
                './configure' is looking in the wrong place for
-               tcl; it looks like it compiled with one version of
-               tcl and tries to load another. Maybe your sysadmin
-               upgraded tcl and didn't tell you. In that case,
+               Tcl; it looks like it compiled with one version of
+               Tcl and tries to load another. Maybe your sysadmin
+               upgraded Tcl and didn't tell you. In that case,
                you should just need to recompile your bot.
 
                Or maybe when upgrading he didn't clean the old
-               version of tcl, and './configure' is looking for
+               version of Tcl, and './configure' is looking for
                the files in the wrong places, or trying to use
                different versions of tcl.h and libtcl*. Smack
-               your admin and have him install tcl properly ;) Or
+               your admin and have him install Tcl properly ;) Or
                try to:
 
                ./configure --with-tcllib=<path-to-tcl-lib>
                --with-tclinc=<path-to-tcl-inc>
 
-               tell configure where to look for the tcl files.
+               tell configure where to look for the Tcl files.
                try to look for them like:
                for libtcl:
 
@@ -412,7 +412,7 @@ README
                     ls /usr/include/tcl.h
                     ls /usr/local/include/tcl.h
 
-               If everything else fails, try to install tcl to
+               If everything else fails, try to install Tcl to
                your home dir ;) (Suggested by dw@Undernet,
                dw@lixom.nu)
 
@@ -428,9 +428,9 @@ README
                for static linking only on your machine, you have
                3 options:
 
-               (1) if it's your own machine, recompile TCL using
+               (1) if it's your own machine, recompile Tcl using
                dynamic linking by using './configure
-               --enable-shared' when you configure TCL (not the
+               --enable-shared' when you configure Tcl (not the
                bot) and then remake, & reinstall
                (2) if it's not you machine, you make have to
                resort to 'make static' and 'make sinstall
@@ -527,7 +527,7 @@ README
           easily be ported to other applications -- the other parts of
           the bot generally don't.
 
-          TCL is by John Ousterhout and is in no way affiliated with
+          Tcl is by John Ousterhout and is in no way affiliated with
           eggdrop, and likely has its own set of copyrights and
           whatnots.
 

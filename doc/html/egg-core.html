@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: egg-core.html,v 1.10 2001/11/05 04:08:26 guppy Exp $ -->
+<!-- $Id: egg-core.html,v 1.11 2001/11/11 20:24:45 guppy Exp $ -->
 
 <html>
   <head>
@@ -12,10 +12,10 @@
     </div>
     <hr>
 
-    <p>This is an exhaustive list of all the TCL commands added by eggdrop.
-    All of the normal TCL built-in commands are still there, of course. But
+    <p>This is an exhaustive list of all the Tcl commands added by eggdrop.
+    All of the normal Tcl built-in commands are still there, of course. But
     you can also use these to manipulate features of the bot. Please see the
-    module files for TCL commands relating to each module.</p>
+    module files for Tcl commands relating to each module.</p>
 
     <p><strong>NOTICE:</strong> This list is accurate for the v1.6 series of
     eggdrop!</p>
@@ -240,7 +240,7 @@
 
           <p>There are others, but you probably shouldn't log them, it&#39;d
           be rather unethical ;). There are also five user-defined levels
-          (&#39;1&#39;..&#39;5&#39;) which are used by TCL scripts.</p>
+          (&#39;1&#39;..&#39;5&#39;) which are used by Tcl scripts.</p>
 
           <p>Each logfile belongs to a certain channel. Events of type
           &#39;k&#39;, &#39;j&#39;, and &#39;p&#39; are logged to whatever
@@ -288,7 +288,7 @@
           <p>You have to use military time in here. 300 is default and
           describes 00:00.</p>
 
-          <p>Note that a leading 0 will make TCL think this is an octal
+          <p>Note that a leading 0 will make Tcl think this is an octal
           value, something you probably don&#39;t want.</p>
         </dd>
 
@@ -751,7 +751,7 @@
 
         <dd>
           <p>Enable this setting, if you want to enable the
-          &#39;dccsimul&#39; TCL command</p>
+          &#39;dccsimul&#39; Tcl command</p>
 
           <p>Valid settings are 0 and 1.</p>
         </dd>
@@ -1545,7 +1545,7 @@
             <p>adds a new keyword command to the bot; valid types are listed
             below; the &lt;attr(s)&gt; are the flags that a user must have to
             trigger this command; the &lt;command-name&gt; for each type is
-            listed below; &lt;proc-name&gt; is the name of the TCL procedure
+            listed below; &lt;proc-name&gt; is the name of the Tcl procedure
             to call for this command (see below for the format of the
             procedure call); if the proc-name is omitted, no binding is added
             -- instead, the current binding is returned (if it&#39;s
@@ -1685,7 +1685,7 @@
 
           <dd>
             <p>The last command binding which triggered. This allows you to
-            identify which command triggered a TCL routine.</p>
+            identify which command triggered a Tcl routine.</p>
           </dd>
         </dl>
       </blockquote>
@@ -1694,21 +1694,21 @@
       <p><a name="sect7"></a>7. <strong>Command extension</strong></p>
 
       <blockquote>
-        <p>You can use the &#39;bind&#39; command to attach TCL procedures to
-        certain events. For example, you can write a TCL procedure that gets
+        <p>You can use the &#39;bind&#39; command to attach Tcl procedures to
+        certain events. For example, you can write a Tcl procedure that gets
         called every time a user says &quot;danger&quot; on the channel. The
         following is a list of the types of bindings, and how they work.
         Under each binding type is the format of the bind command, the list
-        of arguments sent to the TCL proc, and an explanation.</p>
+        of arguments sent to the Tcl proc, and an explanation.</p>
 
         <p>Some bindings are marked as &quot;stackable&quot;. That means that
         you can bind multiple commands to the same trigger. Normally, for
         example, a binding of &quot;bind msg - stop msg_stop&quot; (which
-        makes a msg-command &quot;stop&quot; call the TCL proc
+        makes a msg-command &quot;stop&quot; call the Tcl proc
         &quot;msg_stop&quot;) will overwrite any previous binding you had for
         the msg-command &quot;stop&quot;. With stackable bindings, like
         &#39;msgm&#39; for example, you can bind to the same command or mask
-        again and again. When the binding is triggered, ALL the TCL procs
+        again and again. When the binding is triggered, ALL the Tcl procs
         that are bound to it will be called, one after another.</p>
 
         <p>To remove a binding, use &quot;unbind&quot;. For example, to

@@ -38,7 +38,7 @@ e-mail to eggheads@eggheads.org (after subscribing). Thanks.
     * about 500k of disk space, or more, depending on your system (on
       Linux, the executable takes up about 400k currently -- it will
       be a lot larger on a RISC system)
-    * the TCL libraries -- if you don't have them (and most systems
+    * the Tcl libraries -- if you don't have them (and most systems
       should), check the README file on info about how to install it
       yourself (you don't need to be root)
 

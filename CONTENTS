@@ -51,7 +51,7 @@ motd
    sample "message of the day" displayed to party-line users as they join
 
 scripts/
-   some tcl scripts that you might want to use
+   some Tcl scripts that you might want to use
 
 src/
    the eggdrop source

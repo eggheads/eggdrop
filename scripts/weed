@@ -29,7 +29,7 @@ do \
 done; \
 exec tclsh$lastver "$0" "$@"
 #
-# $Id: weed,v 1.7 2001/11/05 04:08:28 guppy Exp $
+# $Id: weed,v 1.8 2001/11/11 20:24:46 guppy Exp $
 #
 # weed out certain undesirables from an eggdrop userlist
 # try just typing 'tclsh weed' to find out the options
@@ -74,7 +74,7 @@ exec tclsh$lastver "$0" "$@"
 # <rtc 20sep1999>:
 #     removed ancient way of determining the current time.
 # <Tothwolf 21oct1999>:
-#     [clock] isn't in all versions of TCL...
+#     [clock] isn't in all versions of Tcl...
 # <guppy 12Apr2001>:
 #     borrowed code from Tothwolf's Wolfpack to find tclsh better
 #

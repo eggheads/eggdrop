@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: compiling.html,v 1.7 2001/11/05 04:08:26 guppy Exp $ -->
+<!-- $Id: compiling.html,v 1.8 2001/11/11 20:24:45 guppy Exp $ -->
 
 <html>
   <head>
@@ -12,7 +12,7 @@
     </div>
     <hr>
 
-    <p><strong>Eggdrop and TCL compiling errors and resolution
+    <p><strong>Eggdrop and Tcl compiling errors and resolution
     FAQ</strong><br>
      (in other words, maybe this FAQ will help you get Eggdrop compiled).
     Suggestions by various contributors. If you think something should be
@@ -50,23 +50,23 @@
       </ol>
     </blockquote>
 
-    <p><a href="#tcl">TCL related questions</a></p>
+    <p><a href="#tcl">Tcl related questions</a></p>
 
     <blockquote>
       <ol>
-        <li><a href="#tcl1">Redeclaration in compat/unistd.h (TCL 7.4/AIX
+        <li><a href="#tcl1">Redeclaration in compat/unistd.h (Tcl 7.4/AIX
         4)</a></li>
 
-        <li><a href="#tcl2">Conflicting types for &#39;waitpid&#39; (TCL
+        <li><a href="#tcl2">Conflicting types for &#39;waitpid&#39; (Tcl
         7.5/SunOS 5.4)</a></li>
 
         <li><a href="#tcl3">Undefined symbols in tclUnixChan.o -- and many
-        others (TCL 7.5/SunOS 5.4)</a></li>
+        others (Tcl 7.5/SunOS 5.4)</a></li>
 
-        <li><a href="#tcl4">Undefined symbol &#39;getwd&#39; in getcwd.o (TCL
+        <li><a href="#tcl4">Undefined symbol &#39;getwd&#39; in getcwd.o (Tcl
         7.5/SunOS 5.4)</a></li>
 
-        <li><a href="#tcl5">There&#39;s no TCL installed on your
+        <li><a href="#tcl5">There&#39;s no Tcl installed on your
         shell</a></li>
       </ol>
     </blockquote>
@@ -99,7 +99,7 @@
     <p>This seems to be caused by a few libraries not being detected by the
     auto-configure program, it is relatively easy to fix. Edit your Makefile,
     note that yours may be slightly different than this one when it comes to
-    the TCL library, but here is the way it probably is:</p>
+    the Tcl library, but here is the way it probably is:</p>
 
     <blockquote>
 <pre>
@@ -125,10 +125,10 @@
     <p><a name="egg2">2. <strong>Compile stops at the last minute with
     &quot;ld fatal signal 11&quot;! (Linux)</strong></a></p>
 
-    <p>This seems to be caused by a non-ELF TCL library binary, and the
+    <p>This seems to be caused by a non-ELF Tcl library binary, and the
     compiler doesn&#39;t seem to like it. The first thing you want to do is
-    download and compile TCL yourself. And then follow this set of commands
-    to help you reconfigure Eggdrop using the newly compiled TCL library (all
+    download and compile Tcl yourself. And then follow this set of commands
+    to help you reconfigure Eggdrop using the newly compiled Tcl library (all
     of this should be done from your home directory):</p>
 
     <blockquote>
@@ -201,9 +201,9 @@
     <p>On some Unix boxes this seems to be caused by the linker, it is
     expecting a specific filename format and when it doesn&#39;t live up to
     it&#39;s expectations it usually barfs. I always see this caused by when
-    the library for TCL is called libtcl7.4.a or libtcl7.5.a, rename it to
+    the library for Tcl is called libtcl7.4.a or libtcl7.5.a, rename it to
     simply libtcl.a if you installed Tcl yourself, if you didn&#39;t and your
-    using the TCL that the system installed then do this:</p>
+    using the Tcl that the system installed then do this:</p>
 
     <p>View your Makefile, look for the line (should be close to the top)
     that says</p>
@@ -416,10 +416,10 @@
 </pre>
     </blockquote>
 
-    <p>I forwarded this one to Robey and he said that TCL 7.5 the dl library,
+    <p>I forwarded this one to Robey and he said that Tcl 7.5 the dl library,
     and that apparently configure couldn&#39;t detect that this was required
     in this case. So try this fix, and if it works, great, if not then use
-    TCL 7.4, I hear this works. :)</p>
+    Tcl 7.4, I hear this works. :)</p>
 
     <blockquote>
 <pre>
@@ -444,9 +444,9 @@
     dl library which apparently resolves this problem.</p>
     <hr>
 
-    <p><a name="tcl"><strong>TCL related questions</strong></a></p>
+    <p><a name="tcl"><strong>Tcl related questions</strong></a></p>
 
-    <p><a name="tcl1">1. <strong>Redeclaration in compat/unistd.h (TCL
+    <p><a name="tcl1">1. <strong>Redeclaration in compat/unistd.h (Tcl
     7.4/AIX 4)</strong></a></p>
 
     <blockquote>
@@ -493,7 +493,7 @@
       -DNEED_MATHERR=1 -Dvfork=fork</p>
     </blockquote>
 
-    <p><a name="tcl2">2. <strong>Conflicting types for &#39;waitpid&#39; (TCL
+    <p><a name="tcl2">2. <strong>Conflicting types for &#39;waitpid&#39; (Tcl
     7.5/SunOS 5.4)</strong></a></p>
 
     <blockquote>
@@ -535,7 +535,7 @@
     caused a compatible waitpid() function to be compiled.</p>
 
     <p><a name="tcl3">3. <strong>Undefined symbols in tclUnixChan.o -- and
-    many others (TCL 7.5/SunOS 5.4)</strong></a></p>
+    many others (Tcl 7.5/SunOS 5.4)</strong></a></p>
 
     <blockquote>
 <pre>
@@ -597,7 +597,7 @@
     </blockquote>
 
     <p><a name="tcl4">4. <strong>Undefined symbol &#39;getwd&#39; in getcwd.o
-    (TCL 7.5/SunOS 5.4)</strong></a></p>
+    (Tcl 7.5/SunOS 5.4)</strong></a></p>
 
     <blockquote>
 <pre>
@@ -636,15 +636,15 @@
     configure didn&#39;t detect that getcwd() wasn&#39;t necessary, so it
     caused a compatible getcwd() function to be compiled.</p>
 
-    <p><a name="tcl5">5. <strong>There&#39;s no TCL installed on your
+    <p><a name="tcl5">5. <strong>There&#39;s no Tcl installed on your
     shell</strong></a></p>
 
-    <p>If there&#39;s really no TCL installed on your shell, you can install
-    it temporary in /tmp or your home. Get the latest version of TCL from <a
+    <p>If there&#39;s really no Tcl installed on your shell, you can install
+    it temporary in /tmp or your home. Get the latest version of Tcl from <a
     href="ftp://ftp.scriptics.com/pub/tcl/">
     ftp://ftp.scriptics.com/pub/tcl/</a> and follow the installation steps in
-    it&#39;s README file. After you&#39;ve installed TCL, you have to make
-    configure detect TCL. To achieve this, you have to set either
+    it&#39;s README file. After you&#39;ve installed Tcl, you have to make
+    configure detect Tcl. To achieve this, you have to set either
     environmental variables:</p>
 
     <blockquote>

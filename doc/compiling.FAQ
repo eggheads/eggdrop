@@ -27,14 +27,14 @@ Eggdrop related Questions
       10. Bot crashes at startup with msg "net.c/708" for example
       11. I get lot's of warnings
 
-TCL related questions
+Tcl related questions
 
-       1. REDECLARATION IN COMPAT/UNISTD.H   (TCL 7.4/AIX 4)
-       2. CONFLICTING TYPES FOR 'waitpid'   (TCL 7.5/SunOS 5.4)
-       3. UNDEFINED SYMBOLS IN tclUnixChan.o -- AND MANY OTHERS   (TCL
+       1. REDECLARATION IN COMPAT/UNISTD.H   (Tcl 7.4/AIX 4)
+       2. CONFLICTING TYPES FOR 'waitpid'   (Tcl 7.5/SunOS 5.4)
+       3. UNDEFINED SYMBOLS IN tclUnixChan.o -- AND MANY OTHERS   (Tcl
           7.5/SunOS 5.4)
-       4. UNDEFINED SYMBOL 'getwd' IN getcwd.o   (TCL 7.5/SunOS 5.4)
-       5. There's no TCL installed on your shell
+       4. UNDEFINED SYMBOL 'getwd' IN getcwd.o   (Tcl 7.5/SunOS 5.4)
+       5. There's no Tcl installed on your shell
 
   ------------------------------------------------------------------------
 
@@ -82,10 +82,10 @@ A. EGGDROP
 
  2. COMPILE STOPS AT THE LAST MINUTE WITH "LD FATAL SIGNAL 11"!  (Linux)
 
-     This seems to be caused by a non-ELF TCL library binary, and the
+     This seems to be caused by a non-ELF Tcl library binary, and the
      compiler doesn't seem to like it.  The first thing you want to do is
-     download and compile tcl yourself.  And then follow this set of
-     commands to help you reconfigure eggdrop using the newly compiled TCL
+     download and compile Tcl yourself.  And then follow this set of
+     commands to help you reconfigure eggdrop using the newly compiled Tcl
      library (all of this should be done from your home directory):
 
      cd
@@ -136,9 +136,9 @@ A. EGGDROP
      On some Unix boxes this seems to be caused by the linker, it is
      expecting a specific filename format and when it doesn't live up to
      it's expectations it usually barfs.  I always see this caused by when
-     the library for TCL is called libtcl7.4.a or libtcl7.5.a, rename it to
-     simply libtcl.a if you installed TCL yourself, if you didn't and your
-     using the TCL that the system installed then do this:
+     the library for Tcl is called libtcl7.4.a or libtcl7.5.a, rename it to
+     simply libtcl.a if you installed Tcl yourself, if you didn't and your
+     using the Tcl that the system installed then do this:
 
      View your Makefile, look for the line (should be close to the top)
      that says
@@ -301,11 +301,11 @@ A. EGGDROP
         *** Error code 1
         Stop.
 
-     I forwarded this one to Robey and he said that TCL 7.5 the dl library,
+     I forwarded this one to Robey and he said that Tcl 7.5 the dl library,
      and that
      apparently configure couldn't detect that this was required in this
      case.  So
-     try this fix, and if it works, great, if not then use TCL 7.4, I hear
+     try this fix, and if it works, great, if not then use Tcl 7.4, I hear
      this
      works.  :)
 
@@ -355,9 +355,9 @@ A. EGGDROP
 
   ------------------------------------------------------------------------
 
-B. TCL
+B. Tcl
 
-1. REDECLARATION IN COMPAT/UNISTD.H   (TCL 7.4/AIX 4)
+1. REDECLARATION IN COMPAT/UNISTD.H   (Tcl 7.4/AIX 4)
 
         cc -c -O -I. -I. -DHAVE_________=1 -DSTDC_HEADERS=1
      -DNO_UNION_WAIT=1 -DNEED_MATHERR=1 -Dvfork=fork
@@ -395,7 +395,7 @@ B. TCL
      AC_FLAGS = -DHAVE_UNISTD_H=1 -DSTDC_HEADERS=1 -DNO_UNION_WAIT=1
      -DNEED_MATHERR=1 -Dvfork=fork
 
-2. CONFLICTING TYPES FOR 'waitpid'   (TCL 7.5/SunOS 5.4)
+2. CONFLICTING TYPES FOR 'waitpid'   (Tcl 7.5/SunOS 5.4)
 
         cc -c -O  -I./../generic -I. -DNO_STRERROR=1 -DNO_GETWD=1
      -DNO_WAIT3=1 -DNO_UNAME=1 -DNO_DIRENT_H=1 -DHAVE_UNISTD_H=1
@@ -423,7 +423,7 @@ B. TCL
      configure didn't detect that waitpid() wasn't necessary, so it caused
      a compatible waitpid() function to be compiled.
 
-3. UNDEFINED SYMBOLS IN tclUnixChan.o -- AND MANY OTHERS   (TCL 7.5/SunOS
+3. UNDEFINED SYMBOLS IN tclUnixChan.o -- AND MANY OTHERS   (Tcl 7.5/SunOS
 5.4)
 
         gcc  tclAppInit.o -L/export/home/rewt/tcl7.5/unix -ltcl7.5 -ldl
@@ -478,7 +478,7 @@ B. TCL
 
      LIBS = -ldl -lnsl -lsocket
 
-4. UNDEFINED SYMBOL 'getwd' IN getcwd.o   (TCL 7.5/SunOS 5.4)
+4. UNDEFINED SYMBOL 'getwd' IN getcwd.o   (Tcl 7.5/SunOS 5.4)
 
         gcc  tclAppInit.o -L/export/home/rewt/tcl7.5/unix -ltcl7.5 -ldl
      -lnsl -lsocket -lm -lc \
@@ -507,13 +507,13 @@ B. TCL
      configure didn't detect that getcwd() wasn't necessary, so it caused a
      compatible getcwd() function to be compiled.
 
-5. There's no TCL installed on your shell
+5. There's no Tcl installed on your shell
 
-     If there's really no TCL installed on your shell, you can install it
-     temporary in /tmp or your home. Get the newest version of TCL from
-     ftp.eggheads.org/pub/tcl/ (anything above TCL 8.2 should be fine) and
+     If there's really no Tcl installed on your shell, you can install it
+     temporary in /tmp or your home. Get the newest version of Tcl from
+     ftp.eggheads.org/pub/tcl/ (anything above Tcl 8.2 should be fine) and
      follow the installation steps in the README. After you've installed
-     tcl, you have to make configure detect tcl. To achieve this, you have
+     Tcl, you have to make configure detect Tcl. To achieve this, you have
      to set either environmental variables:
 
          export TCLLIB=/path/to/tcl/lib
@@ -521,7 +521,7 @@ B. TCL
 
      Please note that on some unix machines export doesn't work and you
      have to use 'setenv' instead or to pass configure the full qualified
-     path to tcl:
+     path to Tcl:
 
      ./configure --with-tcllib=/path/to/libtclx.x.so
      --with-tclinc=/path/to/tcl.h

@@ -32,7 +32,7 @@ Instructions:
 =====================================================================
 2) INFORMATION ABOUT TCL
 
-2.1) TCL library version:
+2.1) Tcl library version:
      ( ) 7.0
      ( ) 7.1
      ( ) 7.2
@@ -47,11 +47,11 @@ Instructions:
      ( ) 8.4
      ( ) Other - Which? ____
 
-2.2) TCL library patchlevel: ___
-  eg; p1, p2, etc for TCL versions up to 8.0p2
+2.2) Tcl library patchlevel: ___
+  eg; p1, p2, etc for Tcl versions up to 8.0p2
       or the 3rd part of the version number for 8.0.3 and newer
 
-2.3) TCL scripts used:
+2.3) Tcl scripts used:
      [ ] alltools
      [ ] sentinel
      [ ] getops

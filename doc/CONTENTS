@@ -40,7 +40,7 @@ patch.howto
    (patches are a popular way to fix bugs in programs)
 
 tcl-commands.doc
-   documentation for eggdrop/TCL script programmers
+   documentation for eggdrop/Tcl script programmers
 
 text-substitutions.doc
    documentation for the motd file

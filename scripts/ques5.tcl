@@ -11,7 +11,7 @@
 # v4.00001 nov97 [blurgh]
 # v5-BETA1 -- 26sep99 by rtc
 #
-# $Id: ques5.tcl,v 1.6 2001/11/05 04:08:28 guppy Exp $
+# $Id: ques5.tcl,v 1.7 2001/11/11 20:24:46 guppy Exp $
 #
 # o clean webfile var removal
 # o using timezone variable from config file
@@ -28,7 +28,7 @@
 # o now supports bold, italic and underline text style and colors.
 # v5-FINAL -- 04oct99 by rtc
 # o style converter now strictly follows HTML standard.
-# o Fake color attributes with number > 2^32 don't cause TCL
+# o Fake color attributes with number > 2^32 don't cause Tcl
 #   error anymore.
 # o now uses strftime as time and date functions have both been removed
 #   in 1.3.29
@@ -116,7 +116,7 @@ proc getnumber {string} {
 }
 
 proc webify {string} {
-  # TCL8.1 only:
+  # Tcl8.1 only:
   #return [string map {\" &quot; & &amp; < &lt; > &gt;} $string]
 
   # Otherwise use this:

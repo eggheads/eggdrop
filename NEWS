@@ -43,14 +43,14 @@ ASYNCHRONOUS DNS MODULE
 
      Eggdrop 1.6 is shipped with a new module, the dns module. It
      replaces those old dns-lookups performed by eggdrop which could
-     halt the whole bot during a time-out. We also added a new tcl
+     halt the whole bot during a time-out. We also added a new Tcl
      command 'dnslookup', so scripts can look up IP's and hostname now
      asynchronously, too.
 
 COMPRESS MODULE
 
      A new module called compress was introduced to eggdrop now. It
-     provides gzip support to eggdrop (via tcl commands) and enables
+     provides gzip support to eggdrop (via Tcl commands) and enables
      compressed userfile transfer.
 
 DCC COMMANDS
@@ -115,7 +115,7 @@ TCL COMMANDS
        stickexempt/unstickexempt, stickinvite/unstickinvite
      * New command wasop was added to check if a user had op before a
        mode change.
-     * Three new tcl commands came with the compress module
+     * Three new Tcl commands came with the compress module
        compressfile/uncompressfile and iscompressed
      * A new command to check whether the bot's nick is juped was
        added (isjuped)
@@ -124,7 +124,7 @@ TCL COMMANDS
      * a new bind called 'NEED' was added which can be used to trap
        events like need-op or need-unban but via a bind
 
-     For more information about this changed or added tcl commands see
+     For more information about this changed or added Tcl commands see
      doc/tcl-commands.doc
 
 TRAFFIC ACCOUNTING

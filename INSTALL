@@ -23,7 +23,7 @@ experienced users.
 
   1. Type './configure' from the eggdrop directory.  That script will
      determine how your system is set up, and figure out how to compile
-     eggdrop.  It will also try to find TCL, which is required to compile.
+     eggdrop.  It will also try to find Tcl, which is required to compile.
 
   2. Type either 'make config' or 'make iconfig' to determine which modules
      will be compiled.  'make config' creates the default modules.  If you

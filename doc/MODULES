@@ -46,7 +46,7 @@ Next do one of two things to load the module:
 
    from the partyline (as an owner) type:
       .loadmod <module-name>
-   or in a TCL script:
+   or in a Tcl script:
       loadmodule <module-name>
 
    module-name is the part BEFORE .so, e.g filesys.so module
@@ -292,24 +292,24 @@ char *module_unload ( char *module_name );  tries to unload the given module,
 
 void add_tcl_commands(tcl_cmds *tab);
 void rem_tcl_commands(tcl_cmds *tab);
-   provides a quick way to load & unload a list of TCL commands, the
+   provides a quick way to load & unload a list of Tcl commands, the
    table is in the form :
       { char *func_name, Function *function_to_call }
-   these are normal TCL commands (as done in tcl*.c)
+   these are normal Tcl commands (as done in tcl*.c)
    use { 0, 0 } to indicate the end of the list
 
 void add_tcl_ints(tcl_ints *);
 void rem_tcl_ints(tcl_ints *);
-   provides a way to add/remove links from c variables to TCL variables
-   (add checks to see if the TCL already exists and copies it over the C one)
+   provides a way to add/remove links from c variables to Tcl variables
+   (add checks to see if the Tcl already exists and copies it over the C one)
    format of table is :
       { char *variable_name, int *variable, int readonly }
    terminate with {0,0,0};
 
 void add_tcl_strings(tcl_strings *);
 void rem_tcl_strings(tcl_strings *);
-   provides a way to add/remove links from c strings to TCL strings
-   (also copies exists TCL values)
+   provides a way to add/remove links from c strings to Tcl strings
+   (also copies exists Tcl values)
    format:
       { char * variable_name, char *string, int length, int flags }
    terminate with { 0, 0, 0, 0 }
@@ -324,17 +324,17 @@ void putlog (int logmode, char *channel, char *format, ... )
 
 void add_builtins (p_tcl_hash_list table, cmd_t *cc);
 void rem_builtins (p_tcl_hash_list table, cmd_t *cc);
-   the method of adding/remove bindings for TCL hash tables.
+   the method of adding/remove bindings for Tcl hash tables.
    table is a hash table you find with find_hash_table,
    cc format:
    { char *command, char *flags, Function *function }
    terminate with { 0, 0, 0, 0 }
-   this is EXACTLY like a bind command in TCL, (heck, tcl_bind calls
+   this is EXACTLY like a bind command in Tcl, (heck, tcl_bind calls
    the same function this does),
-   function is called with exactly the same args as a TCL binding is
+   function is called with exactly the same args as a Tcl binding is
    (except for dcc which does include the handle in C) with type conversion
    taken into account (e.g. idx's are ints)
-   return much the same as TCL bindings, use int 0/1 for those
+   return much the same as Tcl bindings, use int 0/1 for those
    which require 0/1 or char * for those which require a string (e.g. filt)
    or nothing if no return is required.
    return is also in src/tclhash.c

@@ -463,7 +463,7 @@ set must-be-owner 0
 
 
 set enable-simul 1
-    Enable this setting, if you want to enable the 'dccsimul' tcl command
+    Enable this setting, if you want to enable the 'dccsimul' Tcl command
     Valid settings are 0 for OFF and 1 ON.
 
 

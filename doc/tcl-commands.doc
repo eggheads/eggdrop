@@ -1,5 +1,5 @@
-This is an exhaustive list of all the TCL commands added to eggdrop. All
-of the normal TCL built-in commands are still there, of course. But you
+This is an exhaustive list of all the Tcl commands added to eggdrop. All
+of the normal Tcl built-in commands are still there, of course. But you
 can also use these to manipulate features of the bot. They are listed
 according to category.
 
@@ -808,7 +808,7 @@ specific commands, see later.
     adds a new keyword command to the bot; valid types are listed below; the
       <attr(s)> are the flags that a user must have to trigger this command;
       the <command-name> for each type is listed below; <proc-name> is the
-      name of the TCL procedure to call for this command (see below for the
+      name of the Tcl procedure to call for this command (see below for the
       format of the procedure call); if the proc-name is omitted, no binding
       is added -- instead, the current binding is returned (if it's stackable,
       a list of the current bindings is returned)
@@ -825,7 +825,7 @@ specific commands, see later.
     returns: name of the command that was removed
 
  binds ?type/mask?
-  returns: a list of tcl binds, each item in the list will be a sublist of
+  returns: a list of Tcl binds, each item in the list will be a sublist of
     five elements:
       {<type> <flags> <name> <hits> <proc>}
 
@@ -843,11 +843,11 @@ specific commands, see later.
       "n!u@lame.com" -> "*!u@lame.com", "n!u@a.b.edu" -> "*!u@*.b.edu")
 
   timer <minutes> <tcl-command>
-    executes the tcl command after a certain number of minutes have passed
+    executes the Tcl command after a certain number of minutes have passed
     returns: a timerID
 
   utimer <seconds> <tcl-command>
-    executes the tcl command after a certain number of seconds have passed
+    executes the Tcl command after a certain number of seconds have passed
     returns: a timerID
 
   timers
@@ -892,7 +892,7 @@ specific commands, see later.
 
   control <idx> <command>
     removes a user from the party line and sends all future input from them
-      to the TCL command given; the command will be called with two parameters:
+      to the Tcl command given; the command will be called with two parameters:
       the idx of the user, and the input text; the command should return "0"
       to indicate success and "1" to indicate that it relinquishes control of
       the user back to the bot; the idx must be for a user in the party line
@@ -906,7 +906,7 @@ specific commands, see later.
       also do cross-bot notes)
     returns: "1" if the note was delivered locally or sent to another bot,
       "2" if the note was stored locally, "3" if the user's notebox is too
-      full to store a note, "4" if a TCL binding caught the note, "5" if
+      full to store a note, "4" if a Tcl binding caught the note, "5" if
       the note was stored because the user is away, or "0" if the send failed
 
   link [via-bot] <bot>
@@ -986,26 +986,26 @@ GLOBAL VARIABLES:
 
   lastbind
     The last command binding which triggered. This allows you to
-    identify which command triggered a tcl routine.
+    identify which command triggered a Tcl routine.
 
  isjuped
    value is 1 if bot's nick is juped(437) 0 otherwise.
 
 COMMAND EXTENSION:
 
-You can use the 'bind' command to attach TCL procedures to certain events.
-For example, you can write a TCL procedure that gets called every time a
+You can use the 'bind' command to attach Tcl procedures to certain events.
+For example, you can write a Tcl procedure that gets called every time a
 user says "danger" on the channel. The following is a list of the types of
 bindings, and how they work. Under each binding type is the format of the
-bind command, the list of arguments sent to the TCL proc, and an explanation.
+bind command, the list of arguments sent to the Tcl proc, and an explanation.
 
 Some bindings are marked as "stackable". That means that you can bind
 multiple commands to the same trigger. Normally, for example, a binding
 of 'bind msg - stop msg_stop' (which makes a msg-command "stop" call the
-TCL proc "msg_stop") will overwrite any previous binding you had for the
+Tcl proc "msg_stop") will overwrite any previous binding you had for the
 msg-command "stop". With stackable bindings, like 'msgm' for example,
 you can bind to the same command or mask again and again. When the
-binding is triggered, ALL the TCL procs that are bound to it will be
+binding is triggered, ALL the Tcl procs that are bound to it will be
 called, one after another.
 
 To remove a binding, use 'unbind'. For example, to remove that binding
@@ -1048,7 +1048,7 @@ for the msg-command "stop", use 'unbind msg - stop msg_stop'.
        procname <nick> <user@host> <handle> <text>
 
        matches the entire line of text from a /msg with the mask; this is
-       more useful for binding TCL procs to words or phrases spoken anywhere
+       more useful for binding Tcl procs to words or phrases spoken anywhere
        within a line of text
 
   (6)  PUBM   (stackable)
@@ -1070,7 +1070,7 @@ for the msg-command "stop", use 'unbind msg - stop msg_stop'.
        /notice on IRC, so this is intended for internal use (logging, etc)
        only
 
-      new TCL procs should be declared as
+      new Tcl procs should be declared as
       proc notcproc {nick uhost hand text {dest ""}} {
         global botnick; if {$dest == ""} {set dest $botnick}
         ...
@@ -1093,7 +1093,7 @@ for the msg-command "stop", use 'unbind msg - stop msg_stop'.
        is matched against "#channel nick!user@host" and can contain
        wildcards. if no part message is specified msg will be set to "".
 
-      new TCL procs should be declared as
+      new Tcl procs should be declared as
       proc partproc {nick uhost hand chan {msg ""}} { ... }
       for compatibility
 
@@ -1138,14 +1138,14 @@ for the msg-command "stop", use 'unbind msg - stop msg_stop'.
        sent here, so the <mode-change> will always be a single mode, like
        "+m" or "-o" and victim will show the value of the mode change
        (for o/v/b) otherwise ""; flags are ignored; the bot's automatic
-       response to a mode change will happen AFTER all matching TCL procs
+       response to a mode change will happen AFTER all matching Tcl procs
        are called; the <mask> will have the channel prefixed ("#turtle +m")
 
        if it is a server mode <nick> will be "", <user@host> is the server
        address and handle is *
 
        note that "victim" was added in 1.3.23 and that this will break
-       tcl scripts that were written for pre-1.3.23 versions and use this
+       Tcl scripts that were written for pre-1.3.23 versions and use this
        binding. An easy fix (by guppy) is as follows (example):
 
        Old script looks as follows:
@@ -1442,9 +1442,9 @@ for the msg-command "stop", use 'unbind msg - stop msg_stop'.
     Several bindings pay attention to the value you return from the proc
     (using 'return $value'). Usually they expect a 0 or 1, and returning an
     empty return any value is interpreted as a 0. Be aware if you omit the
-    return statement, the result of the last TCL command executed will be
+    return statement, the result of the last Tcl command executed will be
     returned by the proc. This will not likely produce the results you
-    intended (this is a "feature" of TCL).
+    intended (this is a "feature" of Tcl).
 
     Here's a list of the bindings that use the return value from procs
     they trigger:

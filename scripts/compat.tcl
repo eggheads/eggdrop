@@ -1,5 +1,5 @@
 # compat.tcl
-#   This script just quickly maps old TCL functions to the new ones,
+#   This script just quickly maps old Tcl functions to the new ones,
 #   use this is you are to lazy to get of your butt and update your scripts :D
 #   by the way it binds some old command to the new ones
 #
@@ -8,7 +8,7 @@
 # Tothwolf  06Oct1999: optimized
 # rtc       10Oct1999: added [set|get][dn|up]loads functions
 #
-# $Id: compat.tcl,v 1.6 2001/11/05 04:08:28 guppy Exp $
+# $Id: compat.tcl,v 1.7 2001/11/11 20:24:46 guppy Exp $
 
 proc gethosts {hand} {
   getuser $hand HOSTS
