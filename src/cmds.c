@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  * 
- * $Id: cmds.c,v 1.34 2000/06/21 22:28:13 fabian Exp $
+ * $Id: cmds.c,v 1.35 2000/07/09 13:51:56 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -2197,7 +2197,6 @@ static void cmd_page(struct userrec *u, int idx, char *par)
     dcc[idx].u.chat->line_count = 0;
     dcc[idx].u.chat->current_lines = 0;
     putlog(LOG_CMDS, "*", "#%s# page %d", dcc[idx].nick, a);
-    return;
   } else {
     dprintf(idx, "Usage: page <off or #>\n");
     return;

@@ -4,7 +4,7 @@
  *   a bunch of functions to find and change user records
  *   change and check user (and channel-specific) flags
  * 
- * $Id: userrec.c,v 1.19 2000/04/05 19:55:13 fabian Exp $
+ * $Id: userrec.c,v 1.20 2000/07/09 13:51:56 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -679,7 +679,8 @@ struct userrec *adduser(struct userrec *bu, char *handle, char *host,
     fr.global = u->flags;
     fr.udef_global = u->flags_udef;
     build_flags(x, &fr, 0);
-    shareout(NULL, "n %s %s %s %s\n", handle, host, pass, x);
+    shareout(NULL, "n %s %s %s %s\n", handle, host && host[0] ? host : "none",
+             pass, x);
   }
   if (bu == NULL)
     bu = u;

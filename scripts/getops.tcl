@@ -1,7 +1,7 @@
 
-# Getops 2.2e
+# Getops 2.2f
 
-# $Id: getops.tcl,v 1.1 2000/06/20 20:37:31 fabian Exp $
+# $Id: getops.tcl,v 1.2 2000/07/09 13:51:56 fabian Exp $
 
 # This script is used for bots to request and give ops to each other. 
 # For this to work, you'll need:
@@ -21,6 +21,10 @@
 # hostmasks up-to-date).
 
 # -----------------------------------------------------------------------------
+
+# 2.2f by Eule <eule@berlin.snafu.de>
+#  - removed key work-around added in 2.2d as eggdrop now handles this
+#    correctly.
 
 # 2.2e by Fabian <fknittel@gmx.de>
 #  - added support for !channels (so-called ID-channels), using chandname2name
@@ -328,17 +332,6 @@ bind bot - gop_resp gop_resp
 # Ask for ops when joining a channel
 bind join - * gop_join
 
-# Get the key after getting opped
-bind mode - "* +o" get_key
-
-proc get_key { nick uhost hand chan mode whom } {
- global botnick
- if {$botnick == $whom} {
-  puthelp "MODE [chandname2name $chan]"
- }
- return 0
-}
-
 proc requestop { chan } {
  global botnick
  set chan [string tolower $chan]
@@ -370,4 +363,4 @@ proc gop_join { nick uhost hand chan } {
 
 set getops_loaded 1
 
-putlog "GetOps v2.2e by Fabian, brainsick, Progfou, Cron@irc.pl, dtM, The_O, DarkDruid & Ernst loaded."
+putlog "GetOps v2.2f by Fabian, brainsick, Progfou, Cron@irc.pl, dtM, The_O, DarkDruid & Ernst loaded."

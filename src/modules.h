@@ -4,7 +4,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: modules.h,v 1.6 2000/01/30 19:26:21 fabian Exp $
+ * $Id: modules.h,v 1.7 2000/07/09 13:51:56 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -57,12 +57,14 @@ extern struct hook_entry {
   int (*func) ();
 } *hook_list[REAL_HOOKS];
 
-#define call_hook(x) {						\
-	struct hook_entry *p;					\
+#define call_hook(x) do {					\
+	register struct hook_entry *p, *pn;			\
 								\
-	for (p = hook_list[x]; p; p = p->next)			\
+	for (p = hook_list[x]; p; p = pn) {			\
+		pn = p->next;					\
 		p->func();					\
-}
+	}							\
+} while (0)
 int call_hook_cccc(int, char *, char *, char *, char *);
 
 #endif

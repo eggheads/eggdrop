@@ -5,7 +5,7 @@
  *   note cmds
  *   note ignores
  * 
- * $Id: notes.c,v 1.18 2000/06/21 22:28:13 fabian Exp $
+ * $Id: notes.c,v 1.19 2000/07/09 13:51:56 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -596,7 +596,7 @@ static void notes_del(char *hand, char *nick, char *sdl, int idx)
     if (idx >= 0)
       dprintf(idx, "%s.\n", BOT_NOMESSAGES);
     else
-      dprintf(DP_HELP, "NOTICE %s :BOT_NOMESSAGES.\n", nick);
+      dprintf(DP_HELP, "NOTICE %s :%s.\n", nick, BOT_NOMESSAGES);
     return;
   }
   sprintf(s, "%s~new", notefile);
