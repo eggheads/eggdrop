@@ -1,7 +1,7 @@
 dnl aclocal.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: aclocal.m4,v 1.27 2000/10/01 19:14:41 fabian Exp $
+dnl $Id: aclocal.m4,v 1.28 2000/10/01 19:19:19 fabian Exp $
 dnl
 
 
@@ -53,14 +53,17 @@ fi
 ])dnl
 
 
-dnl  EGG_CHECK_PIPE()
+dnl  EGG_CHECK_CCPIPE()
 dnl
-AC_DEFUN(EGG_CHECK_PIPE, [dnl
+dnl  Checks whether the compiler supports the `-pipe' flag, which
+dnl  speeds up the compilation.
+AC_DEFUN(EGG_CHECK_CCPIPE, [dnl
 if test -z "$no_pipe"
 then
   if test -n "$GCC"
   then
-    AC_CACHE_CHECK(if the compiler understands -pipe, egg_cv_var_ccpipe, [dnl
+    AC_CACHE_CHECK(whether the compiler understands -pipe, egg_cv_var_ccpipe,
+    [dnl
       ac_old_CC="$CC"
       CC="$CC -pipe"
       AC_TRY_COMPILE(,, egg_cv_var_ccpipe="yes", egg_cv_var_ccpipe="no")
@@ -191,10 +194,10 @@ case "$egg_cv_var_system" in
     esac
     ;;
   HP-UX)
-    AC_MSG_RESULT([HP-UX])
+    AC_MSG_RESULT(HP-UX)
     HPUX=yes
-    MOD_LD="gcc -fPIC -shared"
-    SHLIB_CC="gcc -fPIC"
+    MOD_LD="${CC} -fPIC -shared"
+    SHLIB_CC="${CC} -fPIC"
     SHLIB_LD="ld -b"
     NEED_DL=0
     AC_DEFINE(MODULES_OK)dnl
@@ -208,10 +211,10 @@ case "$egg_cv_var_system" in
     AC_MSG_RESULT(Dell SVR4)
     SHLIB_STRIP=touch
     NEED_DL=0
-    MOD_LD="gcc -lelf -lucb"
+    MOD_LD="${CC} -lelf -lucb"
     ;; 
-        IRIX-4.*)
-        AC_MSG_RESULT(IRIX4.+!)
+  IRIX-4.*)
+    AC_MSG_RESULT(IRIX4.+!)
     IRIX=yes
     SHLIB_STRIP=touch
     NEED_DL=0
@@ -219,24 +222,24 @@ case "$egg_cv_var_system" in
     ;;
   IRIX-5.*|IRIX-6.*)
     AC_MSG_RESULT(IRIX 5 OR 6)
-        SHLIB_LD="ld -n32 -shared -rdata_shared"
+    SHLIB_LD="ld -n32 -shared -rdata_shared"
     IRIX=yes
-        SHLIB_STRIP=touch
+    SHLIB_STRIP=touch
     NEED_DL=0
     DEFAULT_MAKE=static
     ;;
-        IRIX-6.3)
+  IRIX-6.3)
     AC_MSG_RESULT(IRIX6.3)
-        IRIX=yes
-        SHLIB_STRIP=touch
-        NEED_DL=0
-        DEFAULT_MAKE=static
-        SHLIB_LD="ld -n32 -D_OLD_TERMIOS"
-   ;;
+    IRIX=yes
+    SHLIB_STRIP=touch
+    NEED_DL=0
+    DEFAULT_MAKE=static
+    SHLIB_LD="ld -n32 -D_OLD_TERMIOS"
+    ;;
   IRIX64*)
     AC_MSG_RESULT(64-BIT IRIX)
     IRIX=yes
-    SHLIB_STRIP=touch
+    SHLIB_STRIP=strip
     NEED_DL=0
     DEFAULT_MAKE=static
     SHLIB_LD="ld -32 -shared -rdata_shared"
@@ -245,24 +248,24 @@ case "$egg_cv_var_system" in
     AC_MSG_RESULT(Ultrix)
     NEED_DL=0
     SHLIB_STRIP=touch
-    DEFUALT_MAKE=static
+    DEFAULT_MAKE=static
     SHELL=/bin/sh5
     ;;
   SINIX*)
-    AC_MSG_RESULT(SINIX - bit broken use at your own risk)
+    AC_MSG_RESULT(SINIX)
     NEED_DL=0
     SHLIB_STRIP=touch
-    DEFUALT_MAKE=static
+    DEFAULT_MAKE=static
     SHLIB_CC="cc -G"
     ;;
   BeOS)
     AC_MSG_RESULT(BeOS)
     NEED_DL=0
     SHLIB_STRIP=strip
-    DEFUALT_MAKE=static
+    DEFAULT_MAKE=static
     ;;
   Linux)
-    AC_MSG_RESULT(Linux! The choice of the GNU generation)
+    AC_MSG_RESULT(Linux)
     LINUX=yes
     CFLAGS="$CFLAGS -Wall"
     MOD_LD="${CC}"
@@ -271,11 +274,13 @@ case "$egg_cv_var_system" in
     AC_DEFINE(MODULES_OK)dnl
     ;;
   Lynx)
-    SHLIB_STRIP=touch
     AC_MSG_RESULT(Lynx OS)
+    NEED_DL=0  
+    DEFAULT_MAKE=static
+    SHLIB_STRIP=strip
     ;;
   OSF1)
-    AC_MSG_RESULT(OSF...)
+    AC_MSG_RESULT(OSF)
     case `${UNAME} -r | cut -d . -f 1` in
       V*)
         AC_MSG_RESULT([   Digital OSF])
@@ -311,16 +316,22 @@ case "$egg_cv_var_system" in
     esac
     AC_DEFINE(STOP_UAC)dnl
     ;;
+  SunOS-4*)
+    AC_MSG_RESULT(SunOS 4)
+    SHLIB_LD="ld"
+    SHLIB_CC="${CC} -PIC"
+    SUNOS=yes
+    SHLIB_STRIP=touch
+    ;; 
   SunOS)
     if test "x`${UNAME} -r | cut -d . -f 1`" = "x5"
     then
-      AC_MSG_RESULT(Solaris -- yay)
-      SHLIB_CC="${CC} -KPIC"     
+      AC_MSG_RESULT(Solaris)
+      SHLIB_CC="${CC} -KPIC"
       SHLIB_LD="/usr/ccs/bin/ld -G -z text"
     else
-      AC_MSG_RESULT(SunOS -- sigh)
+      AC_MSG_RESULT(SunOS)
       SUNOS=yes
-      SHLIB_CC="${CC} -PIC" 
       SHLIB_LD=ld
       SHLIB_STRIP=touch
       AC_DEFINE(DLOPEN_1)dnl
@@ -381,7 +392,7 @@ else
   AC_CHECK_LIB(dl, dlopen)
   AC_CHECK_LIB(m, tan, EGG_MATH_LIB="-lm")
   # This is needed for Tcl libraries compiled with thread support
-  AC_CHECK_LIB(pthread,pthread_mutex_init,
+  AC_CHECK_LIB(pthread, pthread_mutex_init,
 ac_cv_lib_pthread_pthread_mutex_init=yes,
 ac_cv_lib_pthread_pthread_mutex_init=no)
   if test "$SUNOS" = "yes"
@@ -435,6 +446,7 @@ fi
 
 dnl  EGG_CYGWIN()
 dnl
+dnl  Check for Cygwin support.
 AC_DEFUN(EGG_CYGWIN, [dnl
 AC_CYGWIN
 if test ! "x${CYGWIN}" = "x"
@@ -446,6 +458,8 @@ fi
 
 dnl  EGG_EXEEXT()
 dnl
+dnl  Test for executable suffix and define eggdrop's executable name
+dnl  accordingly.
 AC_DEFUN(EGG_EXEEXT, [dnl
 EGGEXEC=eggdrop
 AC_EXEEXT
@@ -772,16 +786,61 @@ AC_SUBST(TCLINCFN)dnl
 ])dnl
 
 
+dnl  EGG_CACHE_UNSET(CACHE-ID)
+dnl
+dnl  Unsets a certain cache item. Typically called before using
+dnl  the AC_CACHE_*() macros.
+AC_DEFUN(EGG_CACHE_UNSET, [dnl
+  unset $1
+])
+
+
+dnl  EGG_TCL_DETECT_CHANGE()
+dnl
+dnl  Detect whether the tcl system has changed since our last
+dnl  configure run. Set egg_tcl_changed accordingly.
+dnl
+dnl  Tcl related feature and version checks should re-run their
+dnl  checks as soon as egg_tcl_changed is set to "yes".
+AC_DEFUN(EGG_TCL_DETECT_CHANGE, [dnl
+  AC_MSG_CHECKING(whether the tcl system has changed)
+  egg_tcl_changed=yes
+  egg_tcl_id="${TCLLIB}:${TCLLIBFN}:${TCLINC}:${TCLINCFN}"
+  if test "${egg_tcl_id}" != ":::"; then
+    egg_tcl_cached=yes
+    AC_CACHE_VAL(egg_cv_var_tcl_id, [dnl
+      egg_cv_var_tcl_id="$egg_tcl_id"
+      egg_tcl_cached=no
+    ])
+    if test "${egg_tcl_cached}" = "yes"; then
+      if test "x${egg_cv_var_tcl_id}" = "x${egg_tcl_id}"; then
+        egg_tcl_changed=no
+      else
+        egg_cv_var_tcl_id="$egg_tcl_id"
+      fi
+    fi
+  fi
+  if test "$egg_tcl_changed" = "yes"; then
+    AC_MSG_RESULT(yes)
+  else
+    AC_MSG_RESULT(no)
+  fi
+])
+
+
 dnl  EGG_TCL_CHECK_VERSION()
 dnl
 AC_DEFUN(EGG_TCL_CHECK_VERSION, [dnl
 # Both TCLLIBFN & TCLINCFN must be set, or we bail
 TCL_FOUND=0
-if test ! "x${TCLLIBFN}" = "x" && test ! "x${TCLINCFN}" = "x"
+if test "x${TCLLIBFN}" != "x" && test "x${TCLINCFN}" != "x"
 then
   TCL_FOUND=1
 
   # Check Tcl's version
+  if test "$egg_tcl_changed" = "yes"; then
+    EGG_CACHE_UNSET(egg_cv_var_tcl_version)
+  fi
   AC_MSG_CHECKING(for Tcl version)
   AC_CACHE_VAL(egg_cv_var_tcl_version, [
     egg_cv_var_tcl_version=`grep TCL_VERSION $TCLINC/$TCLINCFN | head -1 | $AWK '{gsub(/\"/, "", [$]3); print [$]3}'`
@@ -796,6 +855,9 @@ then
   fi
 
   # Check Tcl's patch level (if avaliable)
+  if test "$egg_tcl_changed" = "yes"; then
+    EGG_CACHE_UNSET(egg_cv_var_tcl_patch_level)
+  fi
   AC_MSG_CHECKING(for Tcl patch level)
   AC_CACHE_VAL(egg_cv_var_tcl_patch_level, [
     eval "egg_cv_var_tcl_patch_level=`grep TCL_PATCH_LEVEL $TCLINC/$TCLINCFN | head -1 | $AWK '{gsub(/\"/, "", [$]3); print [$]3}'`"
@@ -818,14 +880,14 @@ configure: error:
 
   I can't find Tcl on this system.
 
-  Eggdrop now requires Tcl to compile.  If you already have Tcl
-  installed on this system, and I just wasn't looking in the right
-  place for it, set the environment variables TCLLIB and TCLINC so
-  I will know where to find 'libtcl.a' (or 'libtcl.so') and 'tcl.h'
-  (respectively).  Then run 'configure' again.
+  Eggdrop requires Tcl to compile.  If you already have Tcl installed
+  on this system, and I just wasn't looking in the right place for it,
+  set the environment variables TCLLIB and TCLINC so I will know where
+  to find 'libtcl.a' (or 'libtcl.so') and 'tcl.h' (respectively). Then
+  run 'configure' again.
 
-  Read the README file if you don't know what Tcl is or how to get
-  it and install it.
+  Read the README file if you don't know what Tcl is or how to get it
+  and install it.
 
 EOF
   exit 1
@@ -892,7 +954,10 @@ dnl  EGG_TCL_CHECK_FREE()
 dnl
 AC_DEFUN(EGG_TCL_CHECK_FREE, [dnl
 # Check for Tcl_Free()
-AC_CACHE_CHECK([if Tcl library has Tcl_Free], [egg_cv_var_tcl_free], [
+if test "$egg_tcl_changed" = "yes"; then
+  EGG_CACHE_UNSET(egg_cv_var_tcl_free)
+fi
+AC_CACHE_CHECK(if Tcl library has Tcl_Free, [egg_cv_var_tcl_free], [
   ac_save_LIBS="$LIBS"
   LIBS="$TCL_TESTLIBS"
   cat > conftest.$ac_ext << EOF
@@ -929,7 +994,10 @@ dnl  EGG_TCL_CHECK_THREADS()
 dnl
 AC_DEFUN(EGG_TCL_CHECK_THREADS, [dnl
 # Check for TclpFinalizeThreadData()
-AC_CACHE_CHECK([if Tcl library is multithreaded], [egg_cv_var_tcl_multithreaded], [
+if test "$egg_tcl_changed" = "yes"; then
+  EGG_CACHE_UNSET(egg_cv_var_tcl_multithreaded)
+fi
+AC_CACHE_CHECK(if Tcl library is multithreaded, egg_cv_var_tcl_multithreaded, [
   ac_save_LIBS="$LIBS"
   LIBS="$TCL_TESTLIBS"
   cat > conftest.$ac_ext << EOF

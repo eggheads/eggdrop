@@ -5,6 +5,11 @@ Changes in eggdrop: (since v1.5.0)
 
 1.5.5
 Foundby   Fixedby   What....
+          Fabian    Fixed caching for tcl configuration details. As soon as
+                      different libraries are detected, we discard cached
+                      values.
+          SuperS    Cleaned up style for aclocal.m4 system handling. Added
+                      support for SunOS4.
           Fabian    Caching -pipe test results for configure.
 various   TheUnknown Fixed linking for Sparc with sunos/bsd/linux, which caused
                       the bot to crash under certain circumstances.
