@@ -5,7 +5,7 @@
  *   note cmds
  *   note ignores
  *
- * $Id: notes.c,v 1.37 2002/01/02 08:06:15 tothwolf Exp $
+ * $Id: notes.c,v 1.38 2002/01/22 21:36:23 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -732,10 +732,10 @@ static int msg_notes(char *nick, char *host, struct userrec *u, char *par)
   if (u->flags & (USER_BOT | USER_COMMON))
     return 1;
   if (!par[0]) {
-    dprintf(DP_HELP, "NOTICE %s :%s: NOTES [pass] INDEX\n", nick, NOTES_USAGE);
-    dprintf(DP_HELP, "NOTICE %s :       NOTES [pass] TO <hand> <msg>\n", nick);
-    dprintf(DP_HELP, "NOTICE %s :       NOTES [pass] READ <# or ALL>\n", nick);
-    dprintf(DP_HELP, "NOTICE %s :       NOTES [pass] ERASE <# or ALL>\n", nick);
+    dprintf(DP_HELP, "NOTICE %s :%s: NOTES <pass> INDEX\n", nick, NOTES_USAGE);
+    dprintf(DP_HELP, "NOTICE %s :       NOTES <pass> TO <hand> <msg>\n", nick);
+    dprintf(DP_HELP, "NOTICE %s :       NOTES <pass> READ <# or ALL>\n", nick);
+    dprintf(DP_HELP, "NOTICE %s :       NOTES <pass> ERASE <# or ALL>\n", nick);
     dprintf(DP_HELP, "NOTICE %s :       %s\n", nick, NOTES_MAYBE);
     dprintf(DP_HELP, "NOTICE %s :       ex: NOTES mypass ERASE 2-4;8;16-\n", nick);
     return 1;
@@ -767,7 +767,7 @@ static int msg_notes(char *nick, char *host, struct userrec *u, char *par)
 
     to = newsplit(&par);
     if (!par[0]) {
-      dprintf(DP_HELP, "NOTICE %s :%s: NOTES [pass] TO <hand> <message>\n",
+      dprintf(DP_HELP, "NOTICE %s :%s: NOTES <pass> TO <hand> <message>\n",
 	      nick, NOTES_USAGE);
       return 0;
     }
@@ -848,7 +848,7 @@ static void notes_hourly()
 	  if (k) {
 	    dprintf(DP_HELP, "NOTICE %s :You have %d note%s waiting on %s.\n",
 		    m->nick, k, k == 1 ? "" : "s", botname);
-	    dprintf(DP_HELP, "NOTICE %s :%s /MSG %s NOTES [pass] INDEX\n",
+	    dprintf(DP_HELP, "NOTICE %s :%s /MSG %s NOTES <pass> INDEX\n",
 		        m->nick, NOTES_FORLIST, botname);
 	  }
 	}
@@ -905,7 +905,7 @@ static void join_notes(char *nick, char *uhost, char *handle, char *par)
     if (i) {
       dprintf(DP_HELP, NOTES_WAITING_ON, nick, i, i == 1 ? "" : "s",
 	      botname);
-      dprintf(DP_HELP, "NOTICE %s :%s /MSG %s NOTES [pass] INDEX\n",
+      dprintf(DP_HELP, "NOTICE %s :%s /MSG %s NOTES <pass> INDEX\n",
 	      nick, NOTES_FORLIST, botname);
     }
   }
