@@ -9,7 +9,7 @@
  * dprintf'ized, 27oct1995
  * multi-channel, 8feb1996
  * 
- * $Id: chan.c,v 1.65 2000/07/28 05:11:18 guppy Exp $
+ * $Id: chan.c,v 1.66 2000/07/31 02:35:03 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -86,6 +86,10 @@ static char *getchanmode(struct chanset_t *chan)
     s[i++] = 's';
   if (atr & CHANMODER)
     s[i++] = 'm';
+  if (atr & CHANNOCLR)
+    s[i++] = 'c';
+  if (atr & CHANREGON)
+    s[i++] = 'R';
   if (atr & CHANTOPIC)
     s[i++] = 't';
   if (atr & CHANNOMSG)
@@ -580,6 +584,14 @@ static void recheck_channel_modes(struct chanset_t *chan)
       add_mode(chan, '+', 'm', "");
     else if (mns & CHANMODER && cur & CHANMODER)
       add_mode(chan, '-', 'm', "");
+    if (pls & CHANNOCLR && !(cur & CHANNOCLR))
+      add_mode(chan, '+', 'c', "");
+    else if (mns & CHANNOCLR && cur & CHANNOCLR)
+      add_mode(chan, '-', 'c', "");
+    if (pls & CHANREGON && !(cur & CHANREGON))
+      add_mode(chan, '+', 'R', "");
+    else if (mns & CHANREGON && cur & CHANREGON)
+      add_mode(chan, '-', 'R', "");
     if (pls & CHANTOPIC && !(cur & CHANTOPIC))
       add_mode(chan, '+', 't', "");
     else if (mns & CHANTOPIC && cur & CHANTOPIC)
@@ -751,6 +763,10 @@ static int got324(char *from, char *msg)
       chan->channel.mode |= CHANSEC;
     if (msg[i] == 'm')
       chan->channel.mode |= CHANMODER;
+    if (msg[i] == 'c')
+      chan->channel.mode |= CHANNOCLR;
+    if (msg[i] == 'R')
+      chan->channel.mode |= CHANREGON;
     if (msg[i] == 't')
       chan->channel.mode |= CHANTOPIC;
     if (msg[i] == 'n')

@@ -8,7 +8,7 @@
  * multi-channel, 6feb1996
  * stopped the bot deopping masters and bots in bitch mode, pteron 23Mar1997
  * 
- * $Id: mode.c,v 1.41 2000/07/28 05:11:18 guppy Exp $
+ * $Id: mode.c,v 1.42 2000/07/31 02:35:03 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -485,7 +485,7 @@ static void got_deop(struct chanset_t *chan, char *nick, char *from,
   /* having op hides your +v status -- so now that someone's lost ops,
    * check to see if they have +v */
   if (!(m->flags & (CHANVOICE | STOPWHO))) {
-    dprintf(DP_MODE, "WHO %s\n", m->nick);
+    dprintf(DP_HELP, "WHO %s\n", m->nick);
     m->flags |= STOPWHO;
   }
   /* was the bot deopped? */
@@ -848,6 +848,16 @@ static void gotmode(char *from, char *msg)
 	  break;
 	case 'm':
 	  todo = CHANMODER;
+	  if ((!nick[0]) && (bounce_modes))
+	    reversing = 1;
+	  break;
+	case 'c':
+	  todo = CHANNOCLR;
+	  if ((!nick[0]) && (bounce_modes))
+	    reversing = 1;
+	  break;
+	case 'R':
+	  todo = CHANREGON;
 	  if ((!nick[0]) && (bounce_modes))
 	    reversing = 1;
 	  break;
