@@ -2,7 +2,7 @@
  * net.c -- handles:
  *   all raw network i/o
  *
- * $Id: net.c,v 1.61 2004/01/09 12:07:22 wcc Exp $
+ * $Id: net.c,v 1.62 2004/01/12 07:49:17 wcc Exp $
  */
 /*
  * This is hereby released into the public domain.
@@ -40,19 +40,18 @@ extern unsigned long otraffic_irc_today, otraffic_bn_today, otraffic_dcc_today,
                      otraffic_filesys_today, otraffic_trans_today,
                      otraffic_unknown_today;
 
-char hostname[121] = "";      /* Hostname can be specified in the config file */
-char myip[121] = "";          /* IP can be specified in the config file       */
+char hostname[121] = "";      /* Hostname can be specified in the config file.*/
+char myip[121] = "";          /* IP can be specified in the config file.      */
+char firewall[121] = "";      /* Socks server for firewall.                   */
+int firewallport = 1080;      /* Default port of socks 4/5 firewalls.         */
+char botuser[21] = "eggdrop"; /* Username of the user running the bot.        */
+int dcc_sanitycheck = 0;      /* Do some sanity checking on dcc connections.  */
 
-char firewall[121] = "";      /* Socks server for firewall                    */
-int firewallport = 1080;      /* Default port of Sock4/5 firewalls            */
-char botuser[21] = "eggdrop"; /* Username of the user running the bot         */
-int dcc_sanitycheck = 0;      /* We should do some sanity checking on dcc
-                               * connections.                                 */
-sock_list *socklist = NULL;   /* Enough to be safe                            */
+sock_list *socklist = NULL;   /* Enough to be safe.                           */
 int MAXSOCKS = 0;
-jmp_buf alarmret;             /* Env buffer for alarm() returns               */
+jmp_buf alarmret;             /* Env buffer for alarm() returns.              */
 
-/* Types of proxy */
+/* Types of proxies */
 #define PROXY_SOCKS   1
 #define PROXY_SUN     2
 
@@ -613,7 +612,7 @@ static int sockread(char *s, int *len)
   t.tv_usec = 0;
   FD_ZERO(&fd);
 
-  for (i = 0; i < MAXSOCKS; i++)
+  for (i = 0; i < MAXSOCKS; i++) {
     if (!(socklist[i].flags & (SOCK_UNUSED | SOCK_VIRTUAL))) {
       if ((socklist[i].sock == STDOUT) && !backgrd)
         fdtmp = STDIN;
@@ -630,15 +629,10 @@ static int sockread(char *s, int *len)
        */
       FD_SET(fdtmp, &fd);
     }
-#ifdef HPUX_HACKS
-#ifndef HPUX10_HACKS
-  x = select(fds, (int *) &fd, (int *) NULL, (int *) NULL, &t);
-#else
-  x = select(fds, &fd, NULL, NULL, &t);
-#endif
-#else
-  x = select(fds, &fd, NULL, NULL, &t);
-#endif
+  }
+  x = select((SELECT_TYPE_ARG1) fds, (SELECT_TYPE_ARG234) &fd,
+             (SELECT_TYPE_ARG234) NULL, (SELECT_TYPE_ARG234) NULL,
+             (SELECT_TYPE_ARG5) &t);
   if (x > 0) {
     /* Something happened */
     for (i = 0; i < MAXSOCKS; i++) {
@@ -1015,15 +1009,10 @@ void dequeue_sockets()
   }
   if (!z)
     return;                     /* nothing to write */
-#ifdef HPUX_HACKS
-#ifndef HPUX10_HACKS
-  select(fds, (int *) NULL, (int *) &wfds, (int *) NULL, &tv);
-#else
-  select(fds, NULL, &wfds, NULL, &tv);
-#endif
-#else
-  select(fds, NULL, &wfds, NULL, &tv);
-#endif
+
+  select((SELECT_TYPE_ARG1) fds, (SELECT_TYPE_ARG234) NULL,
+         (SELECT_TYPE_ARG234) &wfds, (SELECT_TYPE_ARG234) NULL,
+         (SELECT_TYPE_ARG5) &tv);
 
 /* end poptix */
 

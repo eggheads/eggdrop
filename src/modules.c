@@ -4,7 +4,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: modules.c,v 1.92 2004/01/09 12:07:22 wcc Exp $
+ * $Id: modules.c,v 1.93 2004/01/12 07:49:17 wcc Exp $
  */
 /* 
  * Copyright (C) 1997 Robey Pointer
@@ -25,11 +25,12 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+#include <ctype.h>
 #include "main.h"
 #include "modules.h"
 #include "tandem.h"
 #include "md5/md5.h"
-#include <ctype.h>
+#include "users.h"
 
 #ifndef STATIC
 #  ifdef HPUX_HACKS
@@ -43,7 +44,6 @@ char *dlerror();
 void *dlopen(const char *, int);
 int dlclose(void *);
 void *dlsym(void *, char *);
-
 #        define DLFLAGS 1
 #      else
 #        include <dlfcn.h>
@@ -61,13 +61,9 @@ void *dlsym(void *, char *);
 #      endif /* DLOPEN_1 */
 #    endif /* OSF1_HACKS */
 #  endif /* HPUX_HACKS */
-#endif /* STATIC */
+#endif /* !STATIC */
 
 extern struct dcc_t *dcc;
-
-#include "users.h"
-
-
 extern struct userrec *userlist, *lastuser;
 extern struct chanset_t *chanset;
 

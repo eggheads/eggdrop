@@ -16,7 +16,7 @@ dnl You should have received a copy of the GNU General Public License
 dnl along with this program; if not, write to the Free Software
 dnl Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 dnl
-dnl $Id: aclocal.m4,v 1.80 2004/01/09 01:52:44 wcc Exp $
+dnl $Id: aclocal.m4,v 1.81 2004/01/12 07:49:17 wcc Exp $
 dnl
 
 dnl  EGG_MSG_CONFIGURE_START()
@@ -483,10 +483,10 @@ fi
 ])dnl
 
 
-dnl  EGG_FUNC_VSPRINTF()
+dnl  EGG_FUNC_VPRINTF()
 dnl
-AC_DEFUN(EGG_FUNC_VSPRINTF, [dnl
-if test "$ac_cv_func_vsprintf" = "no"
+AC_DEFUN(EGG_FUNC_VPRINTF, [dnl
+if test "$ac_cv_func_vprintf" = "no"
 then
   cat << 'EOF' >&2
 configure: error:
