@@ -4,7 +4,7 @@
  *
  *   IF YOU ALTER THIS FILE, YOU NEED TO RECOMPILE THE BOT.
  *
- * $Id: eggdrop.h,v 1.44 2003/01/29 05:48:40 wcc Exp $
+ * $Id: eggdrop.h,v 1.45 2003/02/21 05:01:56 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -65,9 +65,9 @@
 
 
 /* Handy string lengths */
-#define UHOSTMAX        160  /* reasonable, i think?        */
-#define DIRMAX          512  /* paranoia                    */
-#define LOGLINEMAX      767  /* for misc.c/putlog() <cybah> */
+#define UHOSTMAX    291 + NICKMAX /* 32 (ident) + 3 (\0, !, @) + NICKMAX */
+#define DIRMAX      512           /* paranoia                            */
+#define LOGLINEMAX  767           /* for misc.c/putlog() <cybah>         */
 
 /* Invalid characters */
 #define BADNICKCHARS "-,+*=:!.@#;$%&"
