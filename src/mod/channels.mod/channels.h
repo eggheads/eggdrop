@@ -80,6 +80,18 @@ static int tcl_channel_add(Tcl_Interp * irp, char *, char *);
 #define clear_channel ((void(*)(struct chanset_t *,int))channels_funcs[15])
 /* 16 - 19 */
 #define set_handle_laston ((void (*)(char *,struct userrec *,time_t))channels_funcs[16])
+#define ban_time (*(int *)(channels_funcs[17]))
+#define use_info (*(int *)(channels_funcs[18]))
+#define get_handle_chaninfo ((void (*)(char *, char *, char *))channels_funcs[19])
+/* 20 - 23 */
+#define u_sticky_ban ((int(*)(struct banrec *, char *))channels_funcs[20])
+#define isbanned ((int(*)(struct chanset_t *,char *))channels_funcs[21])
+#define add_chanrec_by_handle ((void (*)(struct userrec *, char *, char *))channels_funcs[22])
+#define isexempted ((int(*)(struct chanset_t *,char *))channels_funcs[23])	/* Crotale */
+/* 24 - 27 */
+#define exempt_time (*(int *)(channels_funcs[24]))
+#define isinvited ((int(*)(struct chanset_t *,char *))channels_funcs[25])	/* arthur2 */
+#define invite_time (*(int *)(channels_funcs[26]))
 #define u_match_exempt ((int(*)(struct exemptrec *, char *))channels_funcs[27])
 /* 28 - 31 */
 #define u_setsticky_exempt ((int (*)(struct chanset_t *, char *,int))channels_funcs[28])
@@ -98,16 +110,5 @@ static int tcl_channel_add(Tcl_Interp * irp, char *, char *);
 #define write_exempts ((int (*)(FILE *, int))channels_funcs[39])
 /* 40 - 43 */
 #define write_invites ((int (*)(FILE *, int))channels_funcs[40])
-#define ban_time (*(int *)(channels_funcs[17]))
-#define use_info (*(int *)(channels_funcs[18]))
-#define get_handle_chaninfo ((void (*)(char *, char *, char *))channels_funcs[19])
-/* 20 - 23 */
-#define u_sticky_ban ((int(*)(struct banrec *, char *))channels_funcs[20])
-#define isbanned ((int(*)(struct chanset_t *,char *))channels_funcs[21])
-#define add_chanrec_by_handle ((void (*)(struct userrec *, char *, char *))channels_funcs[22])
-#define isexempted ((int(*)(struct chanset_t *,char *))channels_funcs[23])	/* Crotale */
-/* 24 - 27 */
-#define exempt_time (*(int *)(channels_funcs[24]))
-#define isinvited ((int(*)(struct chanset_t *,char *))channels_funcs[25])	/* arthur2 */
-#define invite_time (*(int *)(channels_funcs[26]))
+
 #endif

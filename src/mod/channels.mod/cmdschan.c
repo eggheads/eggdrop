@@ -907,7 +907,6 @@ static void cmd_stick_yn(int idx, char *par, int yn)
     dprintf(idx, "Usage: %sstick [ban/exempt/invite] <num or mask>\n", yn ? "" : "un");
     return;
   }
- 
   strncpy(s, par, UHOSTLEN);
   s[UHOSTLEN] = 0;
   if (!strcasecmp(stick_type,"ban")) {
@@ -933,64 +932,64 @@ static void cmd_stick_yn(int idx, char *par, int yn)
 	     yn ? "" : "un", s);
       dprintf(idx, "%stuck ban: %s\n", yn ? "S" : "Uns", s);
       return;
-      
-      dprintf(idx, "No such ban.\n");     
-      /* now deal with exemptions */
-    } else if (!strcasecmp(stick_type,"exempt")) {
-      i = u_setsticky_exempt(NULL, s,
-			     (dcc[idx].user->flags & USER_MASTER) ? yn : -1);
-      if (i > 0) {
-        putlog(LOG_CMDS, "*", "#%s# %sstick exempt %s", 
-	       dcc[idx].nick, yn ? "" : "un", s);
-        dprintf(idx, "%stuck exempt: %s\n", yn ? "S" : "Uns", s);
-        return;
-      }
-      /* channel-specific exempt? */
-      chan = findchan(dcc[idx].u.chat->con_chan);
-      if (!chan) {
-        dprintf(idx, "Invalid console channel.\n");
-        return;
-      }
-      if (i)
-        simple_sprintf(s, "%d", -i);
-      j = u_setsticky_exempt(chan, s, yn);
-      if (j > 0) {
-        putlog(LOG_CMDS, "*", "#%s# %sstick exempt %s", dcc[idx].nick,
-	       yn ? "" : "un", s);
-        dprintf(idx, "%stuck exempt: %s\n", yn ? "S" : "Uns", s);
-        return;
-      }
-      dprintf(idx, "No such exempt.\n");
-      
-      /* now the invites */
-    } else if (!strcasecmp(stick_type,"invite")) {
-      i = u_setsticky_invite(NULL, s,
-			     (dcc[idx].user->flags & USER_MASTER) ? yn : -1);
-      if (i > 0) {
-        putlog(LOG_CMDS, "*", "#%s# %sstick invite %s", 
-	       dcc[idx].nick, yn ? "" : "un", s);
-        dprintf(idx, "%stuck invite: %s\n", yn ? "S" : "Uns", s);
-        return;
-      }
-      /* channel-specific invite? */
-      chan = findchan(dcc[idx].u.chat->con_chan);
-      if (!chan) {
-        dprintf(idx, "Invalid console channel.\n");
-        return;
-      }
-      if (i)
-        simple_sprintf(s, "%d", -i);
-      j = u_setsticky_invite(chan, s, yn);
-      if (j > 0) {
-        putlog(LOG_CMDS, "*", "#%s# %sstick invite %s", dcc[idx].nick,
-	       yn ? "" : "un", s);
-        dprintf(idx, "%stuck invite: %s\n", yn ? "S" : "Uns", s);
-        return;
-      }
-      dprintf(idx, "No such invite.\n");
     }
+    dprintf(idx, "No such ban.\n");     
+    /* now deal with exemptions */
+  } else if (!strcasecmp(stick_type,"exempt")) {
+    i = u_setsticky_exempt(NULL, s,
+			   (dcc[idx].user->flags & USER_MASTER) ? yn : -1);
+    if (i > 0) {
+      putlog(LOG_CMDS, "*", "#%s# %sstick exempt %s", 
+	     dcc[idx].nick, yn ? "" : "un", s);
+      dprintf(idx, "%stuck exempt: %s\n", yn ? "S" : "Uns", s);
+      return;
+    }
+    /* channel-specific exempt? */
+    chan = findchan(dcc[idx].u.chat->con_chan);
+    if (!chan) {
+      dprintf(idx, "Invalid console channel.\n");
+      return;
+    }
+    if (i)
+      simple_sprintf(s, "%d", -i);
+    j = u_setsticky_exempt(chan, s, yn);
+    if (j > 0) {
+      putlog(LOG_CMDS, "*", "#%s# %sstick exempt %s", dcc[idx].nick,
+	     yn ? "" : "un", s);
+      dprintf(idx, "%stuck exempt: %s\n", yn ? "S" : "Uns", s);
+      return;
+    }
+    dprintf(idx, "No such exempt.\n");
+    
+    /* now the invites */
+  } else if (!strcasecmp(stick_type,"invite")) {
+    i = u_setsticky_invite(NULL, s,
+			   (dcc[idx].user->flags & USER_MASTER) ? yn : -1);
+    if (i > 0) {
+      putlog(LOG_CMDS, "*", "#%s# %sstick invite %s", 
+	     dcc[idx].nick, yn ? "" : "un", s);
+      dprintf(idx, "%stuck invite: %s\n", yn ? "S" : "Uns", s);
+      return;
+    }
+    /* channel-specific invite? */
+    chan = findchan(dcc[idx].u.chat->con_chan);
+    if (!chan) {
+      dprintf(idx, "Invalid console channel.\n");
+      return;
+    }
+    if (i)
+      simple_sprintf(s, "%d", -i);
+    j = u_setsticky_invite(chan, s, yn);
+    if (j > 0) {
+      putlog(LOG_CMDS, "*", "#%s# %sstick invite %s", dcc[idx].nick,
+	     yn ? "" : "un", s);
+      dprintf(idx, "%stuck invite: %s\n", yn ? "S" : "Uns", s);
+      return;
+    }
+    dprintf(idx, "No such invite.\n");
   }
 }
+
   
 static void cmd_stick(struct userrec *u, int idx, char *par)
 {
