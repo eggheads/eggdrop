@@ -62,7 +62,7 @@ int base64_to_int(char *buf)
     buf++;
   }
   return i;
-};
+}
 
 /* used for 1.0 compatibility: if a join message arrives with no sock#, */
 /* i'll just grab the next "fakesock" # (incrementing to assure uniqueness) */

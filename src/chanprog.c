@@ -446,10 +446,12 @@ void chanprog()
   /* test tempdir: it's vital */
   {
     FILE *f;
-    char s[161];
+    char s[161], rands[8];
 
-/* FIXME: possible file race condition */
-    simple_sprintf(s, "%s.test.file", tempdir);
+    /* possible file race condition solved by using a random string 
+     * and the process id in the filename */
+    make_rand_str(rands, 7); /* create random string */
+    sprintf(s, "%s.test-%u-%s", tempdir, getpid(), rands);
     f = fopen(s, "w");
     if (f == NULL)
       fatal(MISC_CANTWRITETEMP, 0);

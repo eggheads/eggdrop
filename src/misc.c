@@ -1312,3 +1312,16 @@ void show_banner(int idx) {
    }
 }
 
+/* create a string with random letters and digits */
+void make_rand_str(char *s, int len)
+{
+  int j;
+
+  for (j = 0; j < len; j++) {
+    if (random() % 3 == 0)
+      s[j] = '0' + (random() % 10);
+    else
+      s[j] = 'a' + (random() % 26);
+  }
+  s[len] = 0;
+}

@@ -362,16 +362,10 @@ void *_get_data_ptr(int size, char *file, int line)
 /* make a password, 10-15 random letters and digits */
 void makepass(char *s)
 {
-  int i, j;
+  int i;
 
   i = 10 + (random() % 6);
-  for (j = 0; j < i; j++) {
-    if (random() % 3 == 0)
-      s[j] = '0' + (random() % 10);
-    else
-      s[j] = 'a' + (random() % 26);
-  }
-  s[i] = 0;
+  make_rand_str(s, i);
 }
 
 void flush_lines(int idx, struct chat_info *ci)

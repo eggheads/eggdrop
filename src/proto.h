@@ -191,6 +191,7 @@ void reload_help_data(void);
 void remove_gunk(char *);
 char *extracthostname(char *);
 void show_banner(int i);
+void make_rand_str(char *, int);
 
 /* net.c */
 void my_memcpy(char *, char *, int);
