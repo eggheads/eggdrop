@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  *
- * $Id: server.c,v 1.81 2002/07/19 05:25:33 wcc Exp $
+ * $Id: server.c,v 1.82 2002/10/23 04:06:22 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -113,6 +113,7 @@ static void parse_q(struct msgq_head *, char *, char *);
 static void purge_kicks(struct msgq_head *);
 static int deq_kick(int);
 static void msgq_clear(struct msgq_head *qh);
+static int stack_limit;
 
 #include "servmsg.c"
 
@@ -394,7 +395,7 @@ static int fast_deq(int which)
   struct msgq *m, *nm;
   char msgstr[511], nextmsgstr[511], tosend[511], victims[511], stackable[511],
        *msg, *nextmsg, *cmd, *nextcmd, *to, *nextto, *stckbl;
-  int len, doit = 0, found = 0, who_count =0, stack_method = 1;
+  int len, doit = 0, found = 0, cmd_count =0, stack_method = 1;
 
   if (!use_fastdeq)
     return 0;
@@ -460,9 +461,8 @@ static int fast_deq(int which)
         && !strcmp(cmd, nextcmd) && !strcmp(msg, nextmsg)
         && ((strlen(cmd) + strlen(victims) + strlen(nextto)
 	     + strlen(msg) + 2) < 510)
-        && (egg_strcasecmp(cmd, "WHO") || who_count < MAXPENALTY - 1)) {
-      if (!egg_strcasecmp(cmd, "WHO"))
-        who_count++;
+        && (!stack_limit || cmd_count < stack_limit - 1)) {
+      cmd_count++;
       if (stack_method == 1)
       	simple_sprintf(victims, "%s,%s", victims, nextto);
       else
@@ -1362,6 +1362,7 @@ static tcl_ints my_tcl_ints[] =
   {"nick-len",			&nick_len,			0},
   {"optimize-kicks",		&optimize_kicks,		0},
   {"isjuped",			&nick_juped,			0},
+  {"stack-limit",		&stack_limit,			0},
   {NULL,			NULL,				0}
 };
 
@@ -1888,6 +1889,7 @@ char *server_start(Function *global_funcs)
   nick_len = 9;
   kick_method = 1;
   optimize_kicks = 0;
+  stack_limit = 4;
 
   server_table[4] = (Function) botname;
   module_register(MODULE_NAME, server_table, 1, 2);
