@@ -2,7 +2,7 @@
  * cmdsserv.c -- part of server.mod
  *   handles commands from a user via dcc that cause server interaction
  *
- * $Id: cmdsserv.c,v 1.18 2003/03/05 02:39:45 wcc Exp $
+ * $Id: cmdsserv.c,v 1.19 2003/03/16 04:49:14 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -36,11 +36,9 @@ static void cmd_servers(struct userrec *u, int idx, char *par)
     dprintf(idx, "Server list:\n");
     i = 0;
     for (; x; x = x->next) {
-      if (x->realname || ((i == curserv) && realservername))
-        egg_snprintf(s, sizeof s, "  %s:%d (%s) %s", x->name,
-                     x->port ? x->port : default_port,
-                     ((i == curserv) && realservername) ? realservername : x->realname,
-                     (i == curserv) ? "<- I am here" : "");
+      if ((i == curserv) && realservername)
+        egg_snprintf(s, sizeof s, "  %s:%d (%s) <- I am here", x->name,
+                     x->port ? x->port : default_port, realservername);
       else
         egg_snprintf(s, sizeof s, "  %s:%d %s", x->name,
                      x->port ? x->port : default_port,
