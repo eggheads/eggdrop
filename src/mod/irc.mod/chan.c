@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  *
- * $Id: chan.c,v 1.118 2005/01/03 20:01:46 paladin Exp $
+ * $Id: chan.c,v 1.119 2005/01/25 18:08:25 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -963,8 +963,8 @@ static int got324(char *from, char *msg)
           !strcmp("*", chan->channel.key)))
         /* Undernet use to show a blank channel key if one was set when
          * you first joined a channel; however, this has been replaced by
-         * an asterisk and this has been agreed upon by other major IRC 
-         * networks so we'll check for an asterisk here as well 
+         * an asterisk and this has been agreed upon by other major IRC
+         * networks so we'll check for an asterisk here as well
          * (guppy 22Dec2001) */
         chan->status |= CHAN_ASKEDMODES;
     }
@@ -2141,7 +2141,7 @@ static int gotquit(char *from, char *msg)
         /* If you remove this, the bot will crash when the user record in
          * question is removed/modified during the tcl binds below, and the
          * users was on more than one monitored channel */
-        set_handle_laston(chan->dname, u, now); 
+        set_handle_laston(chan->dname, u, now);
       if (split) {
         m->split = now;
         check_tcl_splt(nick, from, u, chan->dname);
@@ -2186,26 +2186,29 @@ static int gotquit(char *from, char *msg)
  */
 static int gotmsg(char *from, char *msg)
 {
-  char *to, *realto, buf[UHOSTLEN], *nick, buf2[512], *uhost = buf;
-  char *p, *p1, *code, *ctcp;
-  int ctcp_count = 0;
+  char *to, *realto, buf[UHOSTLEN], *nick, buf2[512], *uhost = buf, *p, *p1,
+       *code, *ctcp;
+  int ctcp_count = 0, ignoring;
   struct chanset_t *chan;
-  int ignoring;
   struct userrec *u;
   memberlist *m;
   struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
 
-  if (!strchr("&#!+@$", msg[0]))
+  /* Only handle if message is to a channel, or to @#channel. */
+  /* FIXME: Properly handle ovNotices (@+#channel), vNotices (+#channel), etc. */
+  if (!strchr(CHANMETA "@", msg[0]))
     return 0;
-  ignoring = match_ignore(from);
+
   to = newsplit(&msg);
   realto = (to[0] == '@') ? to + 1 : to;
   chan = findchan(realto);
   if (!chan)
-    return 0;                   /* Private msg to an unknown channel?? */
+    return 0; /* Unknown channel; don't process. */
+
   fixcolon(msg);
   strcpy(uhost, from);
   nick = splitnick(&uhost);
+  ignoring = match_ignore(from);
   /* Only check if flood-ctcp is active */
   if (flud_ctcp_thr && detect_avalanche(msg)) {
     u = get_user_by_host(from);
@@ -2220,8 +2223,8 @@ static int gotmsg(char *from, char *msg)
         u_match_mask(chan->exempts, from)))) {
       if (ban_fun) {
         check_exemptlist(chan, from);
-        u_addban(chan, quickban(chan, uhost), botnetnick,
-                 IRC_FUNKICK, now + (60 * chan->ban_time), 0);
+        u_addban(chan, quickban(chan, uhost), botnetnick, IRC_FUNKICK,
+                 now + (60 * chan->ban_time), 0);
       }
       if (kick_fun) {
         /* This can induce kickflood - arthur2 */
@@ -2255,8 +2258,7 @@ static int gotmsg(char *from, char *msg)
       ctcp = buf2;
       strcpy(ctcp, p1);
       strcpy(p1 - 1, p + 1);
-      detect_chan_flood(nick, uhost, from, chan,
-                        strncmp(ctcp, "ACTION ", 7) ?
+      detect_chan_flood(nick, uhost, from, chan, strncmp(ctcp, "ACTION ", 7) ?
                         FLOOD_CTCP : FLOOD_PRIVMSG, NULL);
 
       chan = findchan(realto);
@@ -2272,7 +2274,6 @@ static int gotmsg(char *from, char *msg)
           u = get_user_by_host(from);
           if (!ignoring || trigger_on_ignore) {
             if (!check_tcl_ctcp(nick, uhost, u, to, code, ctcp)) {
-
               chan = findchan(realto);
               if (!chan)
                 return 0;
@@ -2294,7 +2295,8 @@ static int gotmsg(char *from, char *msg)
       }
     }
   }
-  /* Send out possible ctcp responses */
+
+  /* Send out possible ctcp responses. */
   if (ctcp_reply[0]) {
     if (ctcp_mode != 2) {
       dprintf(DP_HELP, "NOTICE %s :%s\n", nick, ctcp_reply);
@@ -2309,6 +2311,7 @@ static int gotmsg(char *from, char *msg)
       last_ctcp = now;
     }
   }
+
   if (msg[0]) {
     /* Check even if we're ignoring the host. (modified by Eule 17.7.99) */
     detect_chan_flood(nick, uhost, from, chan, FLOOD_PRIVMSG, NULL);
