@@ -1,7 +1,7 @@
 /* 
  * share.c -- part of share.mod
  * 
- * $Id: share.c,v 1.31 2000/03/23 23:17:59 fabian Exp $
+ * $Id: share.c,v 1.32 2000/05/13 20:20:30 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -993,7 +993,7 @@ static void share_ufsend(int idx, char *par)
     putlog(LOG_MISC, "*", "NO MORE DCC CONNECTIONS -- can't grab userfile");
     dprintf(idx, "s e I can't open a DCC to you; I'm full.\n");
     zapfbot(idx);
-  } else if (!(f = fopen(s, "w"))) {
+  } else if (!(f = fopen(s, "wb"))) {
     putlog(LOG_MISC, "*", "CAN'T WRITE USERFILE DOWNLOAD FILE!");
     zapfbot(idx);
   } else {
@@ -1466,7 +1466,7 @@ static int write_tmp_userfile(char *fn, struct userrec *bu, int idx)
   struct userrec *u;
   int ok = 0;
 
-  if (!(f = fopen(fn, "w")))
+  if (!(f = fopen(fn, "wb")))
     putlog(LOG_MISC, "*", USERF_ERRWRITE2);
   else {
     chmod(fn, 0600);		/* make it -rw------- */

@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  * 
- * $Id: main.c,v 1.37 2000/05/07 01:10:35 fabian Exp $
+ * $Id: main.c,v 1.38 2000/05/13 20:20:29 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -49,9 +49,9 @@
 #include "chan.h"
 #include "modules.h"
 #include "tandem.h"
+
 #ifdef CYGWIN_HACKS
 #include <windows.h>
-BOOL FreeConsole(VOID);
 #endif
 
 #ifndef _POSIX_SOURCE
@@ -761,7 +761,6 @@ int main(int argc, char **argv)
 	 botnetnick, i, count_users(userlist));
   cache_miss = 0;
   cache_hit = 0;
-  Context;
   sprintf(pid_file, "pid.%s", botnetnick);
   Context;
 
@@ -780,9 +779,9 @@ int main(int argc, char **argv)
   }
   Context;
 
-#ifndef CYGWIN_HACKS
   /* Move into background? */
   if (backgrd) {
+#ifndef CYGWIN_HACKS
     xx = fork();
     if (xx == -1)
       fatal("CANNOT FORK PROCESS.", 0);
@@ -811,43 +810,45 @@ int main(int argc, char **argv)
 #endif
       exit(0);
     }
-  }
+  } else {			/* !backgrd */
 #endif
-  use_stderr = 0;		/* Stop writing to stderr now */
-  xx = getpid();
-  if ((xx != 0) && (!backgrd)) {
-    FILE *fp;
+    xx = getpid();
+    if (xx != 0) {
+      FILE *fp;
 
-    /* Write pid to file */
-    unlink(pid_file);
-    fp = fopen(pid_file, "w");
-    if (fp != NULL) {
-      fprintf(fp, "%u\n", xx);
-      if (fflush(fp)) {
-	/* Let the bot live since this doesn't appear to be a botchk */
-	printf(EGG_NOWRITE, pid_file);
-	fclose(fp);
-	unlink(pid_file);
+      /* Write pid to file */
+      unlink(pid_file);
+      fp = fopen(pid_file, "w");
+      if (fp != NULL) {
+        fprintf(fp, "%u\n", xx);
+        if (fflush(fp)) {
+	  /* Let the bot live since this doesn't appear to be a botchk */
+	  printf(EGG_NOWRITE, pid_file);
+	  fclose(fp);
+	  unlink(pid_file);
+        } else
+ 	  fclose(fp);
       } else
-	fclose(fp);
-    } else
-      printf(EGG_NOWRITE, pid_file);
+        printf(EGG_NOWRITE, pid_file);
+#ifdef CYGWIN_HACKS
+      printf("Launched  (pid: %d)\n\n", xx);
+#endif
+    }
   }
+
+  use_stderr = 0;		/* Stop writing to stderr now */
   if (backgrd) {
     /* Ok, try to disassociate from controlling terminal (finger cross) */
 #if HAVE_SETPGID && !defined(CYGWIN_HACKS)
     setpgid(0, 0);
 #endif
-    /* Close out stdin/out/err */
+    /* Tcl wants the stdin, stdout and stderr file handles kept open. */
     freopen("/dev/null", "r", stdin);
     freopen("/dev/null", "w", stdout);
     freopen("/dev/null", "w", stderr);
 #ifdef CYGWIN_HACKS
     FreeConsole();
 #endif
-    /* Note: Tcl wants those file handles kept open!
-     *       close(0); close(1); close(2);
-     */
   }
 
   /* Terminal emulating dcc chat */

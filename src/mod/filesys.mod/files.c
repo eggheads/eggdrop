@@ -2,7 +2,7 @@
  * files.c - part of filesys.mod
  *   handles all file system commands
  * 
- * $Id: files.c,v 1.21 2000/04/25 20:53:55 fabian Exp $
+ * $Id: files.c,v 1.22 2000/05/13 20:20:29 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -150,7 +150,8 @@ static void cmd_optimise(int idx, char *par)
 static int resolve_dir(char *current, char *change, char **real, int idx)
 {
   char *elem = NULL, *s = NULL, *new = NULL, *work = NULL, *p = NULL;
-  FILE *fdb  = NULL, *f = NULL;
+  FILE *fdb  = NULL;
+  DIR  *dir  = NULL;
   filedb_entry *fdbe = NULL;
   struct flag_record user = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0},
 		     req  = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
@@ -255,11 +256,11 @@ static int resolve_dir(char *current, char *change, char **real, int idx)
   /* Sanity check: does this dir exist? */
   s = nrealloc(s, strlen(dccdir) + strlen(*real) + 1);
   sprintf(s, "%s%s", dccdir, *real);
-  f = fopen(s, "r");
+  dir = opendir(s);
   my_free(s);
-  if (f == NULL)
+  if (!dir)
     return 0;
-  fclose(f);
+  closedir(dir);
   Context;
   return 1;
 }

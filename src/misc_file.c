@@ -2,7 +2,7 @@
  * misc.c -- handles:
  *   copyfile() movefile()
  * 
- * $Id: misc_file.c,v 1.1 2000/03/22 00:42:57 fabian Exp $
+ * $Id: misc_file.c,v 1.2 2000/05/13 20:20:29 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -44,7 +44,11 @@ int copyfile(char *oldpath, char *newpath)
   char buf[512];
   struct stat st;
 
+#ifndef CYGWIN_HACKS
   fi = open(oldpath, O_RDONLY, 0);
+#else
+  fi = open(oldpath, O_RDONLY | O_BINARY, 0);
+#endif
   if (fi < 0)
     return 1;
   fstat(fi, &st);
