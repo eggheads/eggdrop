@@ -92,7 +92,7 @@ int con_chan = 0;		/* foreground: constantly display channel
 				 * stats? */
 int term_z = 0;			/* foreground: use the terminal as a party
 				 * line? */
-char configfile[121] = "egg.config";	/* name of the config file */
+char configfile[121] = "eggdrop.conf";	/* name of the config file */
 char helpdir[121];		/* directory of help files (if used) */
 char textdir[121] = "";		/* directory for text files that get dumped */
 int keep_all_logs = 0;		/* never erase logfiles, no matter how old
@@ -439,7 +439,7 @@ static void core_secondly()
 	int j;
 
 	s[my_strcpy(s, ctime(&now)) - 1] = 0;
-	putlog(LOG_MISC, "*", "--- %.11s%s", s, s + 20);
+	putlog(LOG_ALL, "*", "--- %.11s%s", s, s + 20);
 	backup_userfile();
 	for (j = 0; j < max_logs; j++) {
 	  if (logs[j].filename != NULL && logs[j].f != NULL) {
@@ -624,7 +624,7 @@ int main(int argc, char **argv)
   i = 0;
   for (chan = chanset; chan; chan = chan->next)
     i++;
-  putlog(LOG_ALL, "*", "=== %s: %d channels, %d users.",
+  putlog(LOG_MISC, "*", "=== %s: %d channels, %d users.",
 	 botnetnick, i, count_users(userlist));
   cache_miss = 0;
   cache_hit = 0;

@@ -205,11 +205,20 @@ ainstall:
 	@if test -f $(DEST)/eggdrop; then \
 		rm -f $(DEST)/oeggdrop; \
 	fi
-	@if test ! -f $(DEST)/motd; then \
-		$(CP1) motd $(DEST)/; \
+	@if test ! -d $(DEST)/logs; then \
+		echo Creating logs subdirectory.; \
+		mkdir $(DEST)/logs; \
+		$(CP1) logs/CONTENTS $(DEST)/logs/; \
+        fi
+	@if test ! -d $(DEST)/text; then \
+		echo Creating text subdirectory.; \
+		mkdir $(DEST)/text; \
 	fi
-	@if test ! -f $(DEST)/telnet-banner; then \
-		$(CP1) telnet-banner $(DEST)/; \
+	@if test ! -f $(DEST)/text/motd; then \
+		$(CP1) text/motd $(DEST)/text/; \
+	fi
+	@if test ! -f $(DEST)/text/banner; then \
+		$(CP1) text/banner $(DEST)/text/; \
 	fi
 	@if test -h $(DEST)/modules; then \
 		echo Removing symlink to archival modules directory.; \

@@ -47,7 +47,7 @@ int flood_telnet_thr = 5;	/* number of telnet connections to be considered a flo
 int flood_telnet_time = 60;	/* in how many seconds? */
 extern int min_dcc_port, max_dcc_port;	/* valid portrange for telnets */
 extern int par_telnet_flood;    /* trigger telnet flood for +f ppl? */
-char bannerfile[121] = "telnet-banner"; /* file displayed on telnet login */
+char bannerfile[121] = "text/banner"; /* file displayed on telnet login */
 
 static void strip_telnet(int sock, char *buf, int *len)
 {
@@ -1105,6 +1105,7 @@ static void dcc_telnet(int idx, char *buf, int i)
   dcc[i].u.dns->dns_failure = (Function) dcc_telnet_hostresolved;
   dcc[i].u.dns->dns_type = RES_HOSTBYIP;
   dcc[i].u.dns->ibuf = dcc[idx].sock;
+  dcc[i].u.dns->type = &DCC_IDENTWAIT;
 
   dns_hostbyip(ip);
 }

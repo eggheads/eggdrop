@@ -50,10 +50,10 @@ static void dns_event_success(struct resolve *rp, int type)
 
   if (type == T_PTR) {
     debug2("DNS resolved %s to %s", iptostr(rp->ip), rp->hostn);
-    call_hostbyip(ntohl(rp->ip), rp->hostn, 1);
+    call_hostbyip(my_ntohl(rp->ip), rp->hostn, 1);
   } else if (type == T_A) {
     debug2("DNS resolved %s to %s", rp->hostn, iptostr(rp->ip));
-    call_ipbyhost(rp->hostn, ntohl(rp->ip), 1);
+    call_ipbyhost(rp->hostn, my_ntohl(rp->ip), 1);
   }
 }
 
@@ -68,7 +68,7 @@ static void dns_event_failure(struct resolve *rp)
 
     debug1("DNS resolve failed for %s", iptostr(rp->ip));
     strcpy(s, iptostr(rp->ip));
-    call_hostbyip(ntohl(rp->ip), s, 0);
+    call_hostbyip(my_ntohl(rp->ip), s, 0);
   }  
   /* T_A */
   else if (rp->hostn) {

@@ -32,7 +32,7 @@ extern int max_dcc;
 extern int dcc_flood_thr;
 extern int backgrd;
 
-char motdfile[121] = "motd";	/* file where the motd is stored */
+char motdfile[121] = "text/motd";	/* file where the motd is stored */
 int connect_timeout = 15;	/* how long to wait before a telnet
 				 * connection times out */
 int reserved_port = 0;

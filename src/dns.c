@@ -95,7 +95,6 @@ void call_hostbyip(IP ip, char *hostn, int ok)
 {
   int idx;
   
-  ip = my_ntohl(ip);
   for (idx = 0; idx < dcc_total; idx++) {
     if ((dcc[idx].type == &DCC_DNSWAIT) &&
         (dcc[idx].u.dns->dns_type == RES_HOSTBYIP) &&
@@ -118,7 +117,6 @@ void call_ipbyhost(char *hostn, IP ip, int ok)
 {
   int idx;
   
-  ip = my_ntohl(ip);
   for (idx = 0; idx < dcc_total; idx++) {
     if ((dcc[idx].type == &DCC_DNSWAIT) &&
         (dcc[idx].u.dns->dns_type == RES_IPBYHOST) &&
@@ -154,11 +152,20 @@ void block_dns_hostbyip(IP ip)
     strcpy(s, iptostr(addr));
   }
   /* call hooks */
-  call_hostbyip(addr, s, hp ? 1 : 0);
+  call_hostbyip(ip, s, hp ? 1 : 0);
 }
 
 void block_dns_ipbyhost(char *host)
 {
+  struct in_addr inaddr;
+
+  context;
+  /* Check if someone passed us an IP address as hostname 
+   * and return it straight away */
+  if (inet_aton(host, &inaddr)) {
+    call_ipbyhost(host, my_ntohl(inaddr.s_addr), 1);
+    return;
+  }
   if (!setjmp(alarmret)) {
     struct hostent *hp;
     struct in_addr *in;
@@ -170,7 +177,7 @@ void block_dns_ipbyhost(char *host)
 
     in = (struct in_addr *) (hp->h_addr_list[0]);
     ip = (IP) (in->s_addr);
-    call_ipbyhost(host, ip, 1);
+    call_ipbyhost(host, my_ntohl(ip), 1);
   } else {
     call_ipbyhost(host, 0, 0);
   }

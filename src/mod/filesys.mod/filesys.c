@@ -632,6 +632,7 @@ static void filesys_dcc_send(char *nick, char *from, struct userrec *u,
       dcc[i].u.dns->dns_type = RES_HOSTBYIP;
       dcc[i].u.dns->dns_success = (Function) filesys_dcc_send_lookupsuccess;
       dcc[i].u.dns->dns_failure = (Function) filesys_dcc_send_lookupfailure;
+      dcc[i].u.dns->type = &DCC_FORK_SEND;
       
       dns_hostbyip(dcc[i].addr);
     }
@@ -660,59 +661,58 @@ static void filesys_dcc_send_lookupsuccess(int i)
   }
 
   changeover_dcc(i, &DCC_FORK_SEND, sizeof(struct xfer_info));
-      if (param[0] == '.')
-	param[0] = '_';
-      strncpy(dcc[i].u.xfer->filename, param, 120);
-      dcc[i].u.xfer->filename[120] = 0;
-      if (upload_to_cd) {
+  if (param[0] == '.')
+    param[0] = '_';
+  strncpy(dcc[i].u.xfer->filename, param, 120);
+  dcc[i].u.xfer->filename[120] = 0;
+  if (upload_to_cd) {
     char *p = get_user(&USERENTRY_DCCDIR, dcc[i].user);
 
-	if (p)
-	  sprintf(dcc[i].u.xfer->dir, "%s%s/", dccdir, p);
-	else
-	  sprintf(dcc[i].u.xfer->dir, "%s", dccdir);
-      } else
-	strcpy(dcc[i].u.xfer->dir, dccin);
+    if (p)
+      sprintf(dcc[i].u.xfer->dir, "%s%s/", dccdir, p);
+    else
+      sprintf(dcc[i].u.xfer->dir, "%s", dccdir);
+  } else
+    strcpy(dcc[i].u.xfer->dir, dccin);
   dcc[i].u.xfer->length = len;
-      sprintf(s1, "%s%s", dcc[i].u.xfer->dir, param);
-      context;      
-      f = fopen(s1, "r");
-      if (f) {
-	fclose(f);
+  sprintf(s1, "%s%s", dcc[i].u.xfer->dir, param);
+  context;      
+  f = fopen(s1, "r");
+  if (f) {
+    fclose(f);
     dprintf(DP_HELP, "NOTICE %s :That file already exists.\n", dcc[i].nick);
-	lostdcc(i);
-      } else {
-	/* check for dcc-sends in process with the same filename */
-	for (j = 0; j < dcc_total; j++)
-	  if (j != i) {
-	    if ((dcc[j].type->flags & (DCT_FILETRAN | DCT_FILESEND))
-		== (DCT_FILETRAN | DCT_FILESEND)) {
-	      if (!strcmp(param, dcc[j].u.xfer->filename)) {
+    lostdcc(i);
+  } else {
+    /* check for dcc-sends in process with the same filename */
+    for (j = 0; j < dcc_total; j++)
+      if (j != i) {
+        if ((dcc[j].type->flags & (DCT_FILETRAN | DCT_FILESEND))
+	    == (DCT_FILETRAN | DCT_FILESEND)) {
+	  if (!strcmp(param, dcc[j].u.xfer->filename)) {
 	    dprintf(DP_HELP, "NOTICE %s :That file is already being sent.\n",
 		    dcc[i].nick);
-		lostdcc(i);
-		return;
-	      }
-	    }
+	    lostdcc(i);
+	    return;
 	  }
-	/* put uploads in /tmp first */
-	sprintf(s1, "%s%s", tempdir, param);
-	dcc[i].u.xfer->f = fopen(s1, "w");
-	if (dcc[i].u.xfer->f == NULL) {
-	  dprintf(DP_HELP,
-		  "NOTICE %s :Can't create that file (temp dir error)\n",
+	}
+      }
+    /* put uploads in /tmp first */
+    sprintf(s1, "%s%s", tempdir, param);
+    dcc[i].u.xfer->f = fopen(s1, "w");
+    if (dcc[i].u.xfer->f == NULL) {
+      dprintf(DP_HELP,
+	      "NOTICE %s :Can't create that file (temp dir error)\n",
 	      dcc[i].nick);
-	  lostdcc(i);
-	} else {
+      lostdcc(i);
+    } else {
       char prt[100], ip[100];
 
-	  dcc[i].timeval = now;
-	  dcc[i].sock = getsock(SOCK_BINARY);
+      dcc[i].timeval = now;
+      dcc[i].sock = getsock(SOCK_BINARY);
       sprintf(prt, "%d", dcc[i].port);
-      sprintf(ip, "%lu", iptolong(my_ntohl(dcc[i].addr)));
-	  if (open_telnet_dcc(dcc[i].sock, ip, prt) < 0) {
-	    dcc[i].type->eof(i);
-      }
+      sprintf(ip, "%lu", iptolong(my_htonl(dcc[i].addr)));
+      if (open_telnet_dcc(dcc[i].sock, ip, prt) < 0)
+	dcc[i].type->eof(i);
     }
   }
 }

@@ -199,6 +199,8 @@ see also: reload, rehash
    changes your username to that of another. If you 
    are an owner this does not require a password
    otherwise, you must enter the password of <user>.
+
+   %b.quit%b returns you to your original user.
 %{help=trace}
 ###  %btrace%b <bot>
    sends out a trace signal to another bot.  if that trace signal

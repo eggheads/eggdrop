@@ -49,6 +49,7 @@ static void clear_channel(struct chanset_t *, int);
 static void get_mode_protect(struct chanset_t *chan, char *s);
 static void set_mode_protect(struct chanset_t *chan, char *set);
 static int ismasked(masklist *m, char *user);
+static int ismodeline(masklist *m, char *user);
 static int tcl_channel_modify(Tcl_Interp * irp, struct chanset_t *chan,
 			      int items, char **item);
 static int tcl_channel_add(Tcl_Interp * irp, char *, char *);
@@ -103,6 +104,7 @@ static int tcl_channel_add(Tcl_Interp * irp, char *, char *);
 #define write_exempts ((int (*)(FILE *, int))channels_funcs[39])
 /* 40 - 43 */
 #define write_invites ((int (*)(FILE *, int))channels_funcs[40])
+#define ismodeline ((int(*)(masklist *, char *))channels_funcs[41])
 
 #endif
 
@@ -112,6 +114,10 @@ static int tcl_channel_add(Tcl_Interp * irp, char *, char *);
 #define isbanned(chan, user)    ismasked((chan)->channel.ban, user)
 #define isexempted(chan, user)  ismasked((chan)->channel.exempt, user)
 #define isinvited(chan, user)   ismasked((chan)->channel.invite, user)
+
+#define ischanban(chan, user)    ismodeline((chan)->channel.ban, user)
+#define ischanexempt(chan, user) ismodeline((chan)->channel.exempt, user)
+#define ischaninvite(chan, user) ismodeline((chan)->channel.invite, user)
 
 #define u_setsticky_ban(chan, host, sticky)     u_setsticky_mask(chan, ((struct chanset_t *)chan) ? ((struct chanset_t *)chan)->bans : global_bans, host, sticky, "s")
 #define u_setsticky_exempt(chan, host, sticky)  u_setsticky_mask(chan, ((struct chanset_t *)chan) ? ((struct chanset_t *)chan)->exempts : global_exempts, host, sticky, "se")

@@ -257,7 +257,7 @@ Baue eine Telnetverbindung zu dem Bot auf und gib 'NEW' als deinen Nickname.
   -c   (mit -n) zeige Channelstatistiken alle 10 Sekunden\n\
   -t   (mit -n) benutze Terminal, um einen DCC chat zu simulieren\n\
   -m   Userdatei Erstellungs-Modus\n\
-  optionaler Configdateiname (Standard 'egg.config')\n
+  optionaler Configdateiname (Standard 'eggdrop.conf')\n
 
 0x701,Ich erkenne, daß %s bereits von diesem Verzeichnis läuft.\n
 0x702,Wenn dies nicht richtig sein sollte, lösche die '%s'\n

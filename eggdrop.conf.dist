@@ -98,9 +98,9 @@ set quick-logs 0
 
 # in 'eggdrop.log' put private msgs/ctcps, commands, misc info, and
 # errors from any channel:
-logfile mco * "eggdrop.log"
+logfile mco * "logs/eggdrop.log"
 # in 'lame.log' put joins, parts, kicks, bans, and mode changes from #lamest:
-logfile jk #lamest "lamest.log"
+logfile jk #lamest "logs/lamest.log"
 
 # [0/1] timestamp entries in the log file? (generally a good idea)
 set log-time 1
@@ -148,10 +148,10 @@ set temp-path "/tmp"
 
 # the MOTD is displayed when people dcc chat to the bot.
 # type '.help set motd' in DCC CHAT for tons of motd options.
-set motd "motd"
+set motd "text/motd"
 
 # holds the banner displayed on telnet connections
-set telnet-banner "telnet-banner"
+set telnet-banner "text/banner"
 
 
 #####  BOTNET  #####
@@ -362,7 +362,7 @@ set mod-path "modules/"
 # this module provides asynchronous dns support. This will avoid long
 # periods where the bot just hangs there, waiting for a hostname to
 # resolve, which often let it timeout on all other connections.
-#loadmodule dns
+loadmodule dns
 
 
 #### CHANNELS MODULE #####

@@ -202,7 +202,9 @@ static void real_add_mode(struct chanset_t *chan,
       (mode == 'o' ? CHOP : (mode == 'b' ? BAN : (mode == 'v' ? VOICE : (mode == 'e' ? EXEMPT : INVITE))));
     /* if -b'n a non-existant ban...nuke it */
     if ((plus == '-') && (mode == 'b'))
-      if (!isbanned(chan, op))
+/* FIXME: some network remove overlapped bans, IrcNet doesnt (poptix/drummer)*/
+      /*if (!isbanned(chan, op))*/
+      if (!ischanban(chan, op))
 	return;
     /* if there are already max_bans bans on the channel, don't try to add 
      * one more */

@@ -607,7 +607,7 @@ static void display_ban(int idx, int number, maskrec *ban,
   }
   if (ban->flags & MASKREC_STICKY)
     strcat(s, " (sticky)");
-  if (!chan || isbanned(chan, ban->mask)) {
+  if (!chan || ischanban(chan, ban->mask)) {
     if (number >= 0) {
       dprintf(idx, "  [%3d] %s %s\n", number, ban->mask, s);
     } else {
@@ -653,7 +653,7 @@ static void display_exempt (int idx, int number, maskrec * exempt,
   }
   if (exempt->flags & MASKREC_STICKY)
     strcat(s, " (sticky)");
-  if (!chan || isexempted(chan, exempt->mask)) {
+  if (!chan || ischanexempt(chan, exempt->mask)) {
     if (number >= 0) {
       dprintf(idx, "  [%3d] %s %s\n", number, exempt->mask, s);
     } else {
@@ -699,7 +699,7 @@ static void display_invite (int idx, int number, maskrec * invite,
   }
   if (invite->flags & MASKREC_STICKY)
     strcat(s, " (sticky)");
-  if (!chan || isinvited(chan, invite->mask)) {
+  if (!chan || ischaninvite(chan, invite->mask)) {
     if (number >= 0) {
       dprintf(idx, "  [%3d] %s %s\n", number, invite->mask, s);
     } else {

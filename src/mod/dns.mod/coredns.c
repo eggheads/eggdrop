@@ -1017,7 +1017,7 @@ static void dns_lookup(IP ip)
     struct resolve *rp;
     
     context;
-    ip = htonl(ip);
+    ip = my_htonl(ip);
     if ((rp = findip(ip))) {
 	if ((rp->state == STATE_FINISHED)
 	    || (rp->state == STATE_FAILED)) {
@@ -1048,7 +1048,15 @@ static void dns_lookup(IP ip)
 static void dns_forward(char *hostn)
 {
     struct resolve *rp;
-    
+    struct in_addr inaddr;
+
+    context;
+    /* Check if someone passed us an IP address as hostname 
+     * and return it straight away */
+    if (inet_aton(hostn, &inaddr)) {
+      call_ipbyhost(hostn, my_ntohl(inaddr.s_addr), 1);
+      return;
+    }
     context;
     if ((rp = findhost(hostn))) {
 	if ((rp->state == STATE_FINISHED)

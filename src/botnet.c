@@ -902,7 +902,7 @@ int botlink(char *linker, int idx, char *nick)
       }
     /* address to connect to is in 'info' */
     bi = (struct bot_addr *) get_user(&USERENTRY_BOTADDR, u);
-    if (!bi) {
+    if (!bi || !strlen(bi->address) || !bi->telnet_port) {
       if (idx >= 0) {
 	dprintf(idx, "%s '%s'.\n", BOT_NOTELNETADDY, nick);
 	dprintf(idx, "%s .chaddr %s %s\n",
@@ -922,6 +922,7 @@ int botlink(char *linker, int idx, char *nick)
       i = new_dcc(&DCC_DNSWAIT, sizeof(struct dns_info));
       dcc[i].timeval = now;
       dcc[i].port = bi->telnet_port;
+      dcc[i].user = u;
       strcpy(dcc[i].nick, nick);
       strcpy(dcc[i].host, bi->address);
       dcc[i].u.dns->ibuf = idx;
@@ -931,6 +932,7 @@ int botlink(char *linker, int idx, char *nick)
       dcc[i].u.dns->dns_success = (Function) botlink_resolve_success;
       dcc[i].u.dns->dns_failure = (Function) botlink_resolve_failure;
       dcc[i].u.dns->dns_type = RES_IPBYHOST;
+      dcc[i].u.dns->type = &DCC_FORK_BOT;
 
       dns_ipbyhost(bi->address);
     }
@@ -1064,6 +1066,7 @@ void tandem_relay(int idx, char *nick, int i)
   dcc[i].u.dns->dns_success = (Function) tandem_relay_resolve_success;
   dcc[i].u.dns->dns_failure = (Function) tandem_relay_resolve_failure;
   dcc[i].u.dns->dns_type = RES_IPBYHOST;
+  dcc[i].u.dns->type = &DCC_FORK_RELAY;
 
   dns_ipbyhost(bi->address);
 }

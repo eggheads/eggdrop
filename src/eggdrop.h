@@ -290,6 +290,8 @@ struct dns_info {
   IP ip;			/* IP address */
   int ibuf;			/* temporary buffer for one integer */
   char dns_type;		/* lookup type, e.g. RES_HOSTBYIP */
+  struct dcc_table *type;	/* type of the dcc table we are making the
+				   lookup for */
 };
 
 /* flags for dns_type */

@@ -1089,6 +1089,7 @@ static void connect_server(void)
     dcc[servidx].u.dns->dns_success = (Function) server_resolve_success;
     dcc[servidx].u.dns->dns_failure = (Function) server_resolve_failure;
     dcc[servidx].u.dns->dns_type = RES_IPBYHOST;
+    dcc[servidx].u.dns->type = &SERVER_SOCKET;
 
     /* I'm resolving... don't start another server connect request */
     resolvserv = 1;

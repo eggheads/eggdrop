@@ -198,10 +198,22 @@ static void get_mode_protect(struct chanset_t *chan, char *s)
 }
 
 /* returns true if this is one of the channel masks */
-static int ismasked(masklist *m, char *user)
+static int ismodeline(masklist *m, char *user)
 {
   while (m && m->mask[0]) {
     if (!rfc_casecmp(m->mask, user))
+      return 1;
+    m = m->next;
+  }
+  
+  return 0;
+}
+  
+/* returns true if user matches one of the masklist -- drummer */
+static int ismasked(masklist *m, char *user)
+{
+  while (m && m->mask[0]) {
+    if (wild_match(m->mask, user))
       return 1;
     m = m->next;
   }
@@ -801,6 +813,7 @@ static Function channels_table[] =
   (Function) write_exempts,
   /* 40 - 43 */
   (Function) write_invites,
+  (Function) ismodeline,
 };
 
 char *channels_start(Function * global_funcs)

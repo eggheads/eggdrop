@@ -275,7 +275,7 @@
   -c   (avec -n) j'écris les statitstiques du canal toutes les 10 secondes\n\
   -t   (avec -n) utilise un terminal pour simuler un DCC-CHAT\n\
   -m   mode de création du fichier usager\n\
-  nom de fichier de configuration (optionnel) (par defaut 'egg.config')\n
+  nom de fichier de configuration (optionnel) (par defaut 'eggdrop.conf')\n
 
 0x701,Je détecte que %s est déja en train de s'exécuter depuis ce répertoire.\n
 0x702,Si ce n'est pas le cas, supprimez '%s'\n

@@ -1045,6 +1045,9 @@ void autolink_cycle(char *start)
 	return;
       if (dcc[i].type == &DCC_FORK_BOT)
 	return;
+      if ((dcc[i].type == &DCC_DNSWAIT) &&
+	  (dcc[i].u.dns && (dcc[i].u.dns->type == &DCC_FORK_BOT)))
+	return;
     }
   }
   if (!start) {

@@ -760,6 +760,7 @@ static int ctcp_DCC_CHAT(char *nick, char *from, char *handle,
     dcc[i].u.dns->dns_type = RES_HOSTBYIP;
     dcc[i].u.dns->dns_success = (Function) dcc_chat_success;
     dcc[i].u.dns->dns_failure = (Function) dcc_chat_failure;
+    dcc[i].u.dns->type = &DCC_CHAT_PASS;
 
     dns_hostbyip(dcc[i].addr);
   }
@@ -786,7 +787,7 @@ static void dcc_chat_success(int i)
   }
 
   dcc[i].sock = getsock(0);
-  sprintf(ip, "%lu", iptolong(my_ntohl(dcc[i].addr)));
+  sprintf(ip, "%lu", iptolong(my_htonl(dcc[i].addr)));
   if (open_telnet_dcc(dcc[i].sock, ip, buf) < 0) {
       neterror(buf);
       if(!quiet_reject)
@@ -1480,6 +1481,6 @@ char *server_start(Function * global_funcs)
     use_silence = 0;
     check_mode_r = 0;
   }
-  putlog(LOG_ALL, "*", "=== SERVER SUPPORT LOADED");
+  putlog(LOG_MISC, "*", "=== SERVER SUPPORT LOADED");
   return NULL;
 }
