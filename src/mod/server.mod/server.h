@@ -1,7 +1,7 @@
 /*
  * server.h -- part of server.mod
  *
- * $Id: server.h,v 1.20 2004/01/09 05:56:38 wcc Exp $
+ * $Id: server.h,v 1.21 2004/01/10 08:41:38 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -42,7 +42,7 @@
 /* 12 - 15 */
 #define match_my_nick ((int(*)(char *))server_funcs[12])
 #define check_tcl_flud ((int (*)(char *,char *,struct userrec *,char *,char *))server_funcs[13])
-/* #define fixfrom ((void (*)(char *))server_funcs[14]) -- moved to core */
+/* Was fixfrom (moved to core) */
 #define answer_ctcp (*(int *)(server_funcs[15]))
 /* 16 - 19 */
 #define trigger_on_ignore (*(int *)(server_funcs[16]))
@@ -76,12 +76,15 @@
 
 #else /* MAKING_SERVER */
 
-/* Macros for commonly used commands.
- */
-
+/* Macros for commonly used commands. */
 #define free_null(ptr)  do {                            \
         nfree(ptr);                                     \
         ptr = NULL;                                     \
+} while (0)
+
+#define write_to_server(x,y) do {                       \
+        tputs(serv, (x), (y));                          \
+        tputs(serv, "\r\n", 2);                         \
 } while (0)
 
 #endif /* MAKING_SERVER */

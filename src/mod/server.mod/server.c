@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  *
- * $Id: server.c,v 1.110 2004/01/09 12:23:59 wcc Exp $
+ * $Id: server.c,v 1.111 2004/01/10 08:41:38 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -101,7 +101,6 @@ static void empty_msgq(void);
 static void next_server(int *, char *, unsigned int *, char *);
 static void disconnect_server(int);
 static char *get_altbotnick(void);
-static void write_to_server(char *, int);
 static int calc_penalty(char *);
 static int fast_deq(int);
 static char *splitnicks(char **);
@@ -933,17 +932,6 @@ static void queue_server(int which, char *buf, int len)
 
   if (which == DP_MODE || which == DP_MODE_NEXT)
     deq_msg(); /* DP_MODE needs to be sent ASAP, flush if possible. */
-}
-
-static void write_to_server(char *buf, int len)
-{
-  char buf2[513];
-
-  strncpyz(buf2, buf, len);
-  buf2[len + 1] = '\r';
-  buf2[len + 2] = '\n';
-  buf2[513] = 0;
-  tputs(serv, buf, len + 2);
 }
 
 /* Add a new server to the server_list.

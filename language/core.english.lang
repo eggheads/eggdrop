@@ -1,7 +1,7 @@
 # core.english.lang
 #   core language messages for eggdrop
 #
-# $Id: core.english.lang,v 1.40 2003/11/27 05:10:30 wcc Exp $
+# $Id: core.english.lang,v 1.41 2004/01/10 08:41:38 wcc Exp $
 
 # General stuff
 0x001,Usage
@@ -240,7 +240,7 @@ Telnet to the bot and enter 'NEW' as your nickname.
 0x667,You now get to pick a nick to use on the bot,\nand a password so nobody else can pretend to be you.\nPlease remember both!
 0x668,From now on, you don't need to use the -m option to start the bot.\nEnjoy !!
 0x669,Telnet connection flood from %s!  Placing on ignore!
-0x66a,banned:
+0x66a,Banned:
 0x66b,join flood
 0x66c,don't kick my friends, bud
 0x66d,...and don't come back.
