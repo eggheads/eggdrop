@@ -2,7 +2,7 @@
  * filesys.c -- part of filesys.mod
  *   main file of the filesys eggdrop module
  *
- * $Id: filesys.c,v 1.42 2001/06/20 14:44:19 poptix Exp $
+ * $Id: filesys.c,v 1.43 2001/07/17 19:53:41 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -960,7 +960,7 @@ static char *filesys_close()
   return NULL;
 }
 
-EXPORT_TYPE(char *) filesys_start();
+EXPORT_SCOPE char *filesys_start();
 
 static Function filesys_table[] =
 {

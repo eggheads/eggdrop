@@ -4,7 +4,7 @@
  *
  * Written by Fabian Knittel <fknittel@gmx.de>
  *
- * $Id: dns.c,v 1.23 2001/06/20 14:44:19 poptix Exp $
+ * $Id: dns.c,v 1.24 2001/07/17 19:53:41 guppy Exp $
  */
 /*
  * Copyright (C) 1999, 2000, 2001 Eggheads Development Team
@@ -184,7 +184,7 @@ static char *dns_close()
   return NULL;
 }
 
-EXPORT_TYPE(char *) dns_start();
+EXPORT_SCOPE char *dns_start();
 
 static Function dns_table[] =
 {

@@ -10,7 +10,7 @@
  * 1.2     1997-08-20      Minor fixes. [BB]
  * 1.2a    1997-08-24      Minor fixes. [BB]
  *
- * $Id: seen.c,v 1.22 2001/06/20 14:44:19 poptix Exp $
+ * $Id: seen.c,v 1.23 2001/07/17 19:53:42 guppy Exp $
  */
 /*
  * Copyright (C) 1999, 2000, 2001 Eggheads Development Team
@@ -642,7 +642,7 @@ static char *seen_close()
   return NULL;
 }
 
-EXPORT_TYPE(char *) seen_start();
+EXPORT_SCOPE char *seen_start();
 
 static Function seen_table[] =
 {

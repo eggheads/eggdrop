@@ -1,6 +1,6 @@
 /* Original Copyright (c) 2000-2001 proton
  * 
- * $Id: uptime.c,v 1.8 2001/06/20 14:44:20 poptix Exp $
+ * $Id: uptime.c,v 1.9 2001/07/17 19:53:43 guppy Exp $
  * Borrowed from Emech, reports to http://uptime.energymech.net, feel free to opt out if you
  * dont like it by not loading the module.
  * 
@@ -221,7 +221,7 @@ static char *uptime_close()
 	return NULL;
 }
 
-EXPORT_TYPE(char *) uptime_start();
+EXPORT_SCOPE char *uptime_start();
 
 static Function uptime_table[] =
     {

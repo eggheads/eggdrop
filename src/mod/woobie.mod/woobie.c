@@ -5,7 +5,7 @@
  * Originally written by ButchBub	  15 July     1997
  * Comments by Fabian Knittel		  29 December 1999
  *
- * $Id: woobie.c,v 1.14 2001/06/20 14:44:21 poptix Exp $
+ * $Id: woobie.c,v 1.15 2001/07/17 19:53:43 guppy Exp $
  */
 /*
  * Copyright (C) 1999, 2000, 2001 Eggheads Development Team
@@ -105,7 +105,7 @@ static char *woobie_close()
 /* Define the prototype here, to avoid warning messages in the
  * woobie_table.
  */
-EXPORT_TYPE(char *) woobie_start();
+EXPORT_SCOPE char *woobie_start();
 
 /* This function table is exported and may be used by other modules and
  * the core.

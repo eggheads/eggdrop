@@ -5,7 +5,7 @@
  *   note cmds
  *   note ignores
  *
- * $Id: notes.c,v 1.31 2001/06/20 14:44:19 poptix Exp $
+ * $Id: notes.c,v 1.32 2001/07/17 19:53:42 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1203,7 +1203,7 @@ static void notes_report(int idx, int details)
   }
 }
 
-EXPORT_TYPE(char *) notes_start();
+EXPORT_SCOPE char *notes_start();
 
 static Function notes_table[] =
 {

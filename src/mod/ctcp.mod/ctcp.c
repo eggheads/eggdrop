@@ -2,7 +2,7 @@
  * ctcp.c -- part of ctcp.mod
  *   all the ctcp handling (except DCC, it's special ;)
  *
- * $Id: ctcp.c,v 1.14 2001/06/24 18:29:48 poptix Exp $
+ * $Id: ctcp.c,v 1.15 2001/07/17 19:53:41 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -206,7 +206,7 @@ static char *ctcp_close()
   return NULL;
 }
 
-EXPORT_TYPE(char *) ctcp_start();
+EXPORT_SCOPE char *ctcp_start();
 
 static Function ctcp_table[] =
 {
