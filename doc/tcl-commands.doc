@@ -948,9 +948,14 @@ specific commands, see later.
   md5 <string>
     returns: the 128 bit MD5 message-digest of the specified string.
 
- callevent <event>
-   Triggers the evnt bind manually for a certain event. For example:
-     callevent rehash
+  callevent <event>
+    Triggers the evnt bind manually for a certain event. For example:
+    callevent rehash
+
+| traffic
+|   returns: a list of sublists containing information about the bot's
+|     traffic usage in bytes. Each sublist contains five elements: type, 
+|     in-traffic today, in-traffic total, out-traffic today, out-traffic total.
 
 GLOBAL VARIABLES:
   (All config-file variables are global, too. But these variables
