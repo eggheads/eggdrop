@@ -1,7 +1,7 @@
 /* 
  * servmsg.c -- part of server.mod
  * 
- * $Id: servmsg.c,v 1.31 2000/02/29 20:16:55 fabian Exp $
+ * $Id: servmsg.c,v 1.32 2000/03/22 00:28:28 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -109,7 +109,7 @@ static int check_tcl_msg(char *cmd, char *nick, char *uhost,
   Tcl_SetVar(interp, "_msg4", args, 0);
   Context;
   x = check_tcl_bind(H_msg, cmd, &fr, " $_msg1 $_msg2 $_msg3 $_msg4",
-		     MATCH_PARTIAL | BIND_HAS_BUILTINS | BIND_USE_ATTR);
+		     MATCH_EXACT | BIND_HAS_BUILTINS | BIND_USE_ATTR);
   Context;
   if (x == BIND_EXEC_LOG)
     putlog(LOG_CMDS, "*", "(%s!%s) !%s! %s %s", nick, uhost, hand,

@@ -7,7 +7,7 @@
  *   (non-Tcl) procedure lookups for msg/dcc/file commands
  *   (Tcl) binding internal procedures to msg/dcc/file commands
  * 
- * $Id: tclhash.c,v 1.12 2000/03/04 21:05:06 fabian Exp $
+ * $Id: tclhash.c,v 1.13 2000/03/22 00:28:28 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -587,7 +587,7 @@ int check_tcl_bind(p_tcl_bind_list bind, char *match,
 {
   struct tcl_bind_mask *hm, *ohm = NULL, *hmp = NULL;
   int cnt = 0;
-  char *proc = NULL;
+  char *proc = NULL, *fullmatch = NULL;
   tcl_cmd_t *tt, *htt = NULL;
   int f = 0, atrok, x;
 
@@ -626,7 +626,7 @@ int check_tcl_bind(p_tcl_bind_list bind, char *match,
 	    cnt++;
 	    tt->hits++;
 	    hmp = ohm;
-	    Tcl_SetVar(interp, "lastbind", match, TCL_GLOBAL_ONLY);
+	    Tcl_SetVar(interp, "lastbind", hm->mask, TCL_GLOBAL_ONLY);
 	    x = trigger_bind(tt->func_name, param);
 	    if ((match_type & BIND_WANTRET) &&
 		!(match_type & BIND_ALTER_ARGS) && (x == BIND_EXEC_LOG))
@@ -654,6 +654,7 @@ int check_tcl_bind(p_tcl_bind_list bind, char *match,
 	if (atrok) {
 	  cnt++;
 	  proc = tt->func_name;
+         fullmatch = hm->mask;	  
 	  htt = tt;
 	  hmp = ohm;
 	  if (((match_type & 3) != MATCH_PARTIAL) ||
@@ -681,7 +682,7 @@ int check_tcl_bind(p_tcl_bind_list bind, char *match,
   }
   if (cnt > 1)
     return BIND_AMBIGUOUS;
-  Tcl_SetVar(interp, "lastbind", match, TCL_GLOBAL_ONLY);
+  Tcl_SetVar(interp, "lastbind", fullmatch, TCL_GLOBAL_ONLY);
   return trigger_bind(proc, param);
 }
 
