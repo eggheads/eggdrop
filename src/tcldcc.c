@@ -2,7 +2,7 @@
  * tcldcc.c -- handles:
  *   Tcl stubs for the dcc commands
  * 
- * $Id: tcldcc.c,v 1.25 2001/02/25 07:33:35 guppy Exp $
+ * $Id: tcldcc.c,v 1.26 2001/03/17 23:19:51 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -974,7 +974,7 @@ static int tcl_boot STDVAR
     whonick[HANDLEN] = 0;
     if (!egg_strcasecmp(who, botnetnick))
        strncpyz(who, whonick, sizeof who);
-    else if (remote_boots > 1) {
+    else if (remote_boots > 0) {
       i = nextbot(who);
       if (i < 0)
 	return TCL_OK;
