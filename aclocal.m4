@@ -16,7 +16,7 @@ dnl You should have received a copy of the GNU General Public License
 dnl along with this program; if not, write to the Free Software
 dnl Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 dnl
-dnl $Id: aclocal.m4,v 1.88 2004/06/03 14:10:18 wcc Exp $
+dnl $Id: aclocal.m4,v 1.89 2004/06/04 14:07:48 wcc Exp $
 dnl
 
 dnl EGG_MSG_CONFIGURE_START()
@@ -79,6 +79,39 @@ AC_DEFUN([EGG_CHECK_CCPIPE],
         CC="$CC -pipe"
       fi
     fi
+  fi
+])
+
+
+dnl EGG_CHECK_SOCKLEN_T()
+AC_DEFUN(EGG_CHECK_SOCKLEN_T,
+[
+  AC_CACHE_CHECK([for socklen_t], [egg_cv_socklen_t],
+  [
+    AC_RUN_IFELSE(
+    [[
+      #include <unistd.h>
+      #include <sys/types.h>
+      #include <sys/socket.h>
+      #include <netinet/in.h>
+      #include <arpa/inet.h>
+
+      int main()
+      {
+        socklen_t test = 55;
+
+        return(0);
+      }
+    ]], [
+      egg_cv_socklen_t="yes"
+    ], [
+      egg_cv_socklen_t="no"
+    ], [
+      egg_cv_socklen_t="no"
+    ])
+  ])
+  if test "$egg_cv_socklen_t" = "yes"; then
+    AC_DEFINE(HAVE_SOCKLEN_T, 1, [Define if your system has the `socklen_t' type.])
   fi
 ])
 

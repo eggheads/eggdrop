@@ -1,4 +1,4 @@
-$Id: UPDATES1.6,v 1.559 2004/06/02 06:58:58 wcc Exp $
+$Id: UPDATES1.6,v 1.560 2004/06/04 14:07:48 wcc Exp $
 
 Eggdrop Changes (since v1.6.0)
      _________________________________________________________________
@@ -11,11 +11,20 @@ Eggdrop Changes (since v1.6.0)
     ftp://ftp.eggheads.org/pub/eggdrop/UPDATES/
 
   1.6.17:
+    - Fixed a compile error related to varargs when using old Tcl versions.
+    * Found by: Thomas Neumayer - Patch by: Wcc
 
-  
+    - Fixed a compile error on systems that don't have socklen_t.
+    * Found by: Brad Edwards - Patch by: Wcc
+
+    - Suppress configure warnings on systems that use newer versions of GNU
+      coreutils.
+    * Patch by: Wcc
+
+
   1.6.16 (31 May 2004):
     + Final released on May 31, 2004.
-    
+
     - Added back a missing alarm call (removed accidentally with IPv6).
     * Patch by: TaKeDa
 

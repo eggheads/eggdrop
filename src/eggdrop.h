@@ -4,7 +4,7 @@
  *
  *   IF YOU ALTER THIS FILE, YOU NEED TO RECOMPILE THE BOT.
  *
- * $Id: eggdrop.h,v 1.57 2004/06/03 14:10:18 wcc Exp $
+ * $Id: eggdrop.h,v 1.58 2004/06/04 14:07:48 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -152,15 +152,15 @@
 #  endif
 #endif
 
-#if !HAVE_SRANDOM
+#ifndef HAVE_SRANDOM
 #  define srandom(x) srand(x)
 #endif
 
-#if !HAVE_RANDOM
+#ifndef HAVE_RANDOM
 #  define random() (rand()/16)
 #endif
 
-#if !HAVE_SIGACTION /* old "weird signals" */
+#ifndef HAVE_SIGACTION /* old "weird signals" */
 #  define sigaction sigvec
 #  ifndef sa_handler
 #    define sa_handler sv_handler
@@ -169,8 +169,12 @@
 #  endif
 #endif
 
-#if !HAVE_SIGEMPTYSET
+#ifndef HAVE_SIGEMPTYSET
 #  define sigemptyset(x) ((*(int *)(x))=0)
+#endif
+
+#ifndef HAVE_SOCKLEN_T
+typedef int socklen_t;
 #endif
 
 /*
