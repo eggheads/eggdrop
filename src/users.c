@@ -10,7 +10,7 @@
  *
  * dprintf'ized, 9nov1995
  *
- * $Id: users.c,v 1.44 2004/07/02 21:02:02 wcc Exp $
+ * $Id: users.c,v 1.45 2004/07/18 17:54:38 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -472,23 +472,24 @@ static void restore_ignore(char *host)
 
 void tell_user(int idx, struct userrec *u, int master)
 {
-  char s[81], s1[81];
-  char format[81];
-  int n;
+  char s[81], s1[81], format[81];
+  int n = 0;
   time_t now2;
   struct chanuserrec *ch;
   struct user_entry *ue;
   struct laston_info *li;
   struct flag_record fr = { FR_GLOBAL, 0, 0, 0, 0, 0 };
+  module_entry *me;
 
   fr.global = u->flags;
 
   fr.udef_global = u->flags_udef;
   build_flags(s, &fr, NULL);
-  Tcl_SetVar(interp, "user", u->handle, 0);
-  n = 0;
-  if (Tcl_VarEval(interp, "notes ", "$user", NULL) == TCL_OK)
-    n = atoi(interp->result);
+  if ((me = module_find("notes", 0, 0))) {
+    Tcl_SetVar(interp, "user", u->handle, 0);
+    if (Tcl_VarEval(interp, "notes ", "$user", NULL) == TCL_OK)
+      n = atoi(interp->result);
+  }
   li = get_user(&USERENTRY_LASTON, u);
   if (!li || !li->laston)
     strcpy(s1, "never");

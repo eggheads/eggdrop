@@ -1,4 +1,4 @@
-$Id: UPDATES1.6,v 1.581 2004/07/05 21:42:39 wcc Exp $
+$Id: UPDATES1.6,v 1.582 2004/07/18 17:54:38 wcc Exp $
 
 Eggdrop Changes (since v1.6.0)
      _________________________________________________________________
@@ -11,6 +11,9 @@ Eggdrop Changes (since v1.6.0)
     ftp://ftp.eggheads.org/pub/eggdrop/UPDATES/
 
   1.6.17:
+    - Don't try to call tcl_notes if the notes module isn't loaded.
+    * Found by: Chris Northwood - Patch by: lordares
+
     - Show a more descriptive error message when a listen socket can't be
       opened.
     * Found by: various - Patch by: Wcc
