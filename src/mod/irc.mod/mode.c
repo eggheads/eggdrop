@@ -4,7 +4,7 @@
  *   channel mode changes and the bot's reaction to them
  *   setting and getting the current wanted channel modes
  * 
- * $Id: mode.c,v 1.30 2000/09/02 18:46:34 fabian Exp $
+ * $Id: mode.c,v 1.31 2000/09/02 18:47:47 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -159,7 +159,6 @@ static void real_add_mode(struct chanset_t *chan,
 			  char plus, char mode, char *op)
 {
   int i, type, ok, l;
-  int bans, exempts, invites, modes;
   masklist *m;
   memberlist *mx;
   char s[21];
@@ -206,9 +205,13 @@ static void real_add_mode(struct chanset_t *chan,
   } else if (prevent_mixing && chan->compat == 2)
     flush_mode(chan, NORMAL);
 
-  if ((mode == 'o') || (mode == 'b') || (mode == 'v') ||
-      (mode == 'e') || (mode == 'I')) {
-    type = (plus == '+' ? PLUS : MINUS) | (mode == 'o' ? CHOP : (mode == 'b' ? BAN : (mode == 'v' ? VOICE : (mode == 'e' ? EXEMPT : INVITE))));
+  if (mode == 'o' || mode == 'b' || mode == 'v' || mode == 'e' || mode == 'I') {
+    type = (plus == '+' ? PLUS : MINUS) |
+	   (mode == 'o' ? CHOP :
+	    (mode == 'b' ? BAN :
+	     (mode == 'v' ? VOICE :
+	      (mode == 'e' ? EXEMPT : INVITE))));
+
     /* 
      * FIXME: Some networks remove overlapped bans, IrcNet does not
      *        (poptix/drummer)
@@ -216,71 +219,57 @@ static void real_add_mode(struct chanset_t *chan,
      * Note:  On ircnet ischanXXX() should be used, otherwise isXXXed().
      */
     /* If removing a non-existant mask... */
-    if (((plus == '-') &&
-         (((mode == 'b') && (!ischanban(chan, op))) ||
-          ((mode == 'e') && (!ischanexempt(chan, op))) ||
-          ((mode == 'I') && (!ischaninvite(chan, op))))) ||
+    if ((plus == '-' &&
+         ((mode == 'b' && !ischanban(chan, op)) ||
+          (mode == 'e' && !ischanexempt(chan, op)) ||
+          (mode == 'I' && !ischaninvite(chan, op)))) ||
         /* or adding an existant mask... */
-        ((plus == '+') &&
-         (((mode == 'b') && ischanban(chan, op)) ||
-          ((mode == 'e') && ischanexempt(chan, op)) ||
-          ((mode == 'I') && ischaninvite(chan, op)))))
+        (plus == '+' &&
+         ((mode == 'b' && ischanban(chan, op)) ||
+          (mode == 'e' && ischanexempt(chan, op)) ||
+          (mode == 'I' && ischaninvite(chan, op)))))
       return;	/* ...nuke it */
 
-    /* If there are already max_bans bans on the channel, don't try to add 
-     * one more.
+    /* If there are already max_bans bans, max_exempts exemptions,
+     * max_invites invitations or max_modes +b/+e/+I modes on the
+     * channel, don't try to add one more.
      */
-    Context;
-    bans = 0;
-    for (m = chan->channel.ban; m && m->mask[0]; m = m->next)
-      bans++;
-    Context;
-    if ((plus == '+') && (mode == 'b'))
-      if (bans >= max_bans)
-	return;
+    if (plus == '+' && (mode == 'b' || mode == 'e' || mode == 'I')) {
+      int	bans = 0, exempts = 0, invites = 0;
 
-    /* If there are already max_exempts exemptions on the channel, don't
-     * try to add one more.
-     */
-    Context;
-    exempts = 0;
-    for (m = chan->channel.exempt; m && m->mask[0]; m = m->next)
-      exempts++;
-    Context;
-    if ((plus == '+') && (mode == 'e'))
-      if (exempts >= max_exempts)
-	return;
+      for (m = chan->channel.ban; m && m->mask[0]; m = m->next)
+	bans++;
+      if (mode == 'b')
+	if (bans >= max_bans)
+	  return;
 
-    /* If there are already max_invites invitations on the channel, don't
-     * try to add one more.
-     */
-    Context;
-    invites = 0;
-    for (m = chan->channel.invite; m && m->mask[0]; m = m->next)
-      invites++;
-    Context;
-    if ((plus == '+') && (mode == 'I'))
-      if (invites >= max_invites)
-	return;
+      for (m = chan->channel.exempt; m && m->mask[0]; m = m->next)
+	exempts++;
+      if (mode == 'e')
+	if (exempts >= max_exempts)
+	  return;
 
-    /* If there are already max_modes +b/+e/+I modes on the channel, don't 
-     * try to add one more.
-     */
-    modes = bans + exempts + invites;
-    if ((modes >= max_modes) && (plus == '+') &&
-	((mode == 'b') || (mode == 'e') || (mode == 'I')))
-      return;
+      for (m = chan->channel.invite; m && m->mask[0]; m = m->next)
+	invites++;
+      if (mode == 'I')
+	if (invites >= max_invites)
+	  return;
+
+      if (bans + exempts + invites >= max_modes)
+	return;
+    }
+
     /* op-type mode change */
     for (i = 0; i < modesperline; i++)
-      if ((chan->cmode[i].type == type) && (chan->cmode[i].op != NULL) &&
-	  (!rfc_casecmp(chan->cmode[i].op, op)))
+      if (chan->cmode[i].type == type && chan->cmode[i].op != NULL &&
+	  !rfc_casecmp(chan->cmode[i].op, op))
 	return;			/* Already in there :- duplicate */
     ok = 0;			/* Add mode to buffer */
     l = strlen(op) + 1;
-    if ((chan->bytes + l) > mode_buf_len)
+    if (chan->bytes + l > mode_buf_len)
       flush_mode(chan, NORMAL);
     for (i = 0; i < modesperline; i++)
-      if ((chan->cmode[i].type == 0) && (!ok)) {
+      if (chan->cmode[i].type == 0 && !ok) {
 	chan->cmode[i].type = type;
 	chan->cmode[i].op = (char *) channel_malloc(l);
 	chan->bytes += l;	/* Add 1 for safety */
@@ -603,8 +592,7 @@ static void got_ban(struct chanset_t *chan, char *nick, char *from,
       }
     } else {
       /* Banning an oplisted person who's on the channel? */
-      m = chan->channel.member;
-      while (m && m->nick[0]) {
+      for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
 	sprintf(s1, "%s!%s", m->nick, m->userhost);
 	if (wild_match(who, s1)) {
 	  u = get_user_by_host(s1);
@@ -627,7 +615,6 @@ static void got_ban(struct chanset_t *chan, char *nick, char *from,
 	    }
 	  }
 	}
-	m = m->next;
       }
     }
   }
@@ -650,12 +637,10 @@ static void got_unban(struct chanset_t *chan, char *nick, char *from,
 {
   masklist *b, *old;
 
-  b = chan->channel.ban;
   old = NULL;
-  while (b->mask[0] && rfc_casecmp(b->mask, who)) {
-    old = b;
-    b = b->next;
-  }
+  for (b = chan->channel.ban; b->mask[0] && rfc_casecmp(b->mask, who);
+       old = b, b = b->next)
+    ;
   if (b->mask[0]) {
     if (old)
       old->next = b->next;
@@ -695,7 +680,7 @@ static void got_exempt(struct chanset_t *chan, char *nick, char *from,
       add_mode(chan, '-', 'e', who);
       return;
     }
-    if ((!nick[0]) && (bounce_modes))
+    if (!nick[0] && bounce_modes)
       reversing = 1;
   }
   if (reversing || (bounce_exempts && !nick[0] && 
