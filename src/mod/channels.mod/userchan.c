@@ -1,7 +1,7 @@
 /*
  * userchan.c -- part of channels.mod
  *
- * $Id: userchan.c,v 1.41 2003/12/11 00:31:28 wcc Exp $
+ * $Id: userchan.c,v 1.42 2003/12/11 00:37:00 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -176,8 +176,6 @@ static int u_setsticky_mask(struct chanset_t *chan, maskrec *u, char *uhost,
     j = atoi(uhost);
   else
     j = -1;
-
-  debug3("%s_%d_%s", uhost, sticky, botcmd);
 
   while (u) {
     if (j >= 0)
