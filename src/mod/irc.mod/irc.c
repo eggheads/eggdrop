@@ -2,7 +2,7 @@
  * irc.c -- part of irc.mod
  *   support for channels within the bot 
  * 
- * $Id: irc.c,v 1.38 2000/10/27 19:29:11 fabian Exp $
+ * $Id: irc.c,v 1.39 2000/10/27 19:38:50 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -598,8 +598,6 @@ static void check_expired_chanstuff()
   char s[UHOSTLEN];
   struct chanset_t *chan;
   struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
-  static int count = 4;
-  int ok = 0;
 
   if (!server_online)
     return;
@@ -696,20 +694,11 @@ static void check_expired_chanstuff()
 	m = n;
       }
       check_lonely_channel(chan);
-      if (chan->channel.members == 1)
-	ok = 1;
     }
     else if (!channel_inactive(chan) && !channel_pending(chan))
       dprintf(DP_MODE, "JOIN %s %s\n",
               (chan->name[0]) ? chan->name : chan->dname,
               chan->channel.key[0] ? chan->channel.key : chan->key_prot);
-  }
-  if (min_servs && ok) {
-    count++;
-    if (count >= 5) {
-      dprintf(DP_SERVER, "LUSERS\n");
-      count = 0;
-    }
   }
 }
 
