@@ -1460,7 +1460,8 @@ static int call_tcl_func(char *name, int idx, char *args)
 
 static void dcc_script(int idx, char *buf, int len)
 {
-  void *old;
+  void *old = NULL;
+  long oldsock = dcc[idx].sock;
 
   strip_telnet(dcc[idx].sock, buf, &len);
   if (!len)
@@ -1468,6 +1469,9 @@ static void dcc_script(int idx, char *buf, int len)
   dcc[idx].timeval = now;
   set_tcl_vars();
   if (call_tcl_func(dcc[idx].u.script->command, dcc[idx].sock, buf)) {
+    context;
+    if ((dcc[idx].sock != oldsock) || (idx>max_dcc))
+      return; /* drummer: this happen after killdcc */
     old = dcc[idx].u.script->u.other;
     dcc[idx].type = dcc[idx].u.script->type;
     nfree(dcc[idx].u.script);

@@ -255,6 +255,8 @@ void lostdcc(int n)
   if (n < dcc_total)
     my_memcpy((char *) &dcc[n], (char *) &dcc[dcc_total],
 	      sizeof(struct dcc_t));
+  else
+    bzero(&dcc[n], sizeof(struct dcc_t)); /* drummer */
 }
 
 /* show list of current dcc's to a dcc-chatter */
