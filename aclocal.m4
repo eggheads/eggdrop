@@ -1,7 +1,7 @@
 dnl aclocal.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: aclocal.m4,v 1.29 2000/10/27 19:33:28 fabian Exp $
+dnl $Id: aclocal.m4,v 1.30 2000/11/29 02:46:16 guppy Exp $
 dnl
 
 
@@ -983,14 +983,25 @@ fi
 ])dnl
 
 
+dnl  EGG_TCL_ENABLE_THREADS()
+dnl
+AC_DEFUN(EGG_TCL_ENABLE_THREADS, [dnl
+AC_ARG_ENABLE(tcl-threads,
+[  --disable-tcl-threads   Disable threaded tcl support if detected. (Ignore this
+                          option unless you know what you are doing)],
+enable_tcl_threads=$enableval,
+enable_tcl_threads=yes)
+])dnl
+
+
 dnl  EGG_TCL_CHECK_THREADS()
 dnl
 AC_DEFUN(EGG_TCL_CHECK_THREADS, [dnl
 # Check for TclpFinalizeThreadData()
 if test "$egg_tcl_changed" = "yes"; then
-  EGG_CACHE_UNSET(egg_cv_var_tcl_multithreaded)
+  EGG_CACHE_UNSET(egg_cv_var_tcl_threaded)
 fi
-AC_CACHE_CHECK(if Tcl library is multithreaded, egg_cv_var_tcl_multithreaded, [
+AC_CACHE_CHECK(if Tcl library is threaded, egg_cv_var_tcl_threaded, [
   ac_save_LIBS="$LIBS"
   LIBS="$TCL_TESTLIBS"
   cat > conftest.$ac_ext << EOF
@@ -1005,20 +1016,32 @@ EOF
   if { (eval echo configure: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}
   then
     rm -rf conftest*
-    egg_cv_var_tcl_multithreaded=yes
+    egg_cv_var_tcl_threaded=yes
   else
     echo "configure: failed program was:" >&5
     cat conftest.$ac_ext >&5
     rm -rf conftest*
-    egg_cv_var_tcl_multithreaded=no
+    egg_cv_var_tcl_threaded=no
   fi
   rm -f conftest*
   LIBS="$ac_save_LIBS"
 ])
 
-if test "x${egg_cv_var_tcl_multithreaded}" = "xyes"
+if test "x${egg_cv_var_tcl_threaded}" = "xyes"
 then
-  AC_DEFINE(HAVE_TCL_THREADS)dnl
+  if test "x$enable_tcl_threads" = "xno"
+  then
+
+    cat << 'EOF' >&2
+configure: warning:
+
+  You have disabled threads support on a system with a threaded Tcl library.
+  Tcl features that rely on scheduled events may not function properly.
+
+EOF
+  else
+    AC_DEFINE(HAVE_TCL_THREADS)dnl
+  fi
 
   # Add -lpthread to $LIBS if we have it
   if test "x${ac_cv_lib_pthread_pthread_mutex_init}" = "xyes"
