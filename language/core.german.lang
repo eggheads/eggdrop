@@ -6,7 +6,7 @@
 # Modified by Michael for 1.3.25.
 # Modified by rtc for 1.4.0
 #
-# $Id: core.german.lang,v 1.23 2001/04/13 06:22:10 guppy Exp $
+# $Id: core.german.lang,v 1.24 2001/04/19 04:49:54 guppy Exp $
 
 # General stuff
 0x001,Gebrauch
@@ -55,8 +55,8 @@
 Verschluesselungsmodul ausgewaehlt. Fuer weitere Informationen siehe\n\
 die mitgelieferte Konfigurationsdatei.\n
 0x20e,Dateisystem-Modul nicht geladen.
-0x20f,Module geladen: %s \t\t(mit Sprach-Unterstuetzung)
-0x210,Module geladen: %s
+0x20f,Modul geladen: %-16s (mit Sprach-Unterstuetzung)
+0x210,Modul geladen: %-16s
 
 # USERF_
 0x400,Uebertragung der Benutzerliste vollstaendig; dazu uebergegangen
