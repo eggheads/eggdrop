@@ -68,6 +68,7 @@ static void disp_dcc_files(int idx, char *buf);
 static int expmem_dcc_files(void *x);
 static void kill_dcc_files(int idx, void *x);
 static void out_dcc_files(int idx, char *buf, void *x);
+static char *mktempfile(char *filename);
 
 static struct dcc_table DCC_FILES =
 {
@@ -364,9 +365,9 @@ static int _dcc_send(int idx, char *filename, char *nick, char *dir)
 	   dcc[idx].nick);
     return 0;
   }
-  nfn = strrchr(filename, '/');
+  nfn = strrchr(dir, '/');
   if (nfn == NULL)
-    nfn = filename;
+    nfn = dir;
   else
     nfn++;
   if (strcasecmp(nick, dcc[idx].nick))
@@ -378,7 +379,7 @@ static int _dcc_send(int idx, char *filename, char *nick, char *dir)
 
 static int do_dcc_send(int idx, char *dir, char *nick)
 {
-  char s[161], s1[161], *fn;
+  char *s = NULL, *s1 = NULL, *fn;
   FILE *f;
   int x;
 
@@ -397,14 +398,18 @@ static int do_dcc_send(int idx, char *dir, char *nick)
     putlog(LOG_FILES, "*", "Refused dcc get %s from [%s]", fn, dcc[idx].nick);
     return 0;
   }
-  if (dir[0])
+  if (dir[0]) {
+    s = nmalloc(strlen(dccdir) + strlen(dir) + strlen(fn) + 2);
     sprintf(s, "%s%s/%s", dccdir, dir, fn);
-  else
+  } else {
+    s = nmalloc(strlen(dccdir) + strlen(fn) + 1);
     sprintf(s, "%s%s", dccdir, fn);
+  }
   f = fopen(s, "r");
   if (f == NULL) {
     dprintf(idx, "No such file.\n");
     putlog(LOG_FILES, "*", "Refused dcc get %s from [%s]", fn, dcc[idx].nick);
+    nfree(s);
     return 0;
   }
   fclose(f);
@@ -417,25 +422,38 @@ static int do_dcc_send(int idx, char *dir, char *nick)
     sprintf(xxx, "%d*%s%s", strlen(dccdir), dccdir, dir);
     queue_file(xxx, fn, dcc[idx].nick, nick);
     dprintf(idx, "Queued: %s to %s\n", fn, nick);
+    nfree(s);
     return 1;
   }
   if (copy_to_tmp) {
-    /* copy this file to /tmp */
+    char *tempfn = mktempfile(fn);
+
+    /* copy this file to /tmp, add a random prefix to the filename */
+    s = nrealloc(s, strlen(dccdir) + strlen(dir) + strlen(fn) + 2); 
     sprintf(s, "%s%s%s%s", dccdir, dir, dir[0] ? "/" : "", fn);
-    sprintf(s1, "%s%s", tempdir, fn);
+    s1 = nrealloc(s1, strlen(tempdir) + strlen(tempfn));
+    sprintf(s1, "%s%s", tempdir, tempfn);
+    nfree(tempfn);
     if (copyfile(s, s1) != 0) {
       dprintf(idx, "Can't make temporary copy of file!\n");
       putlog(LOG_FILES | LOG_MISC, "*",
 	     "Refused dcc get %s: copy to %s FAILED!",
 	     fn, tempdir);
+      nfree(s);
+      nfree(s1);
       return 0;
     }
-  } else
+  } else {
+    s1 = nrealloc(s1, strlen(dccdir) + strlen(dir) + strlen(fn) + 2); 
     sprintf(s1, "%s%s%s%s", dccdir, dir, dir[0] ? "/" : "", fn);
+  }
+  s = nrealloc(s, strlen(dir) + strlen(fn) + 2);
   sprintf(s, "%s%s%s", dir, dir[0] ? "/" : "", fn);
   x = _dcc_send(idx, s1, nick, s);
   if (x != DCCSEND_OK)
     wipe_tmp_filename(s1, -1);
+  nfree(s);
+  nfree(s1);
   return x;
 }
 
@@ -566,10 +584,12 @@ static void filesys_dcc_send_lookupsuccess(int);
 static void filesys_dcc_send(char *nick, char *from, struct userrec *u,
 			     char *text)
 {
-  char *param, *ip, *prt, buf[512], *msg = buf;
+  char *param, *ip, *prt, *buf = NULL, *msg;
   int atr = u ? u->flags : 0, i;
 
   context;
+  buf = nmalloc(strlen(text) + 1);
+  msg = buf;
   strcpy(buf, text);
   param = newsplit(&msg);
   if (!(atr & USER_XFER)) {
@@ -608,8 +628,10 @@ static void filesys_dcc_send(char *nick, char *from, struct userrec *u,
 	     nick);
     } else {
       /* This looks like a good place for a sanity check. */
-      if (!sanitycheck_dcc(nick, from, ip, prt))
+      if (!sanitycheck_dcc(nick, from, ip, prt)) {
+	nfree(buf);
 	return;
+      }
       i = new_dcc(&DCC_DNSWAIT, sizeof(struct dns_info));
 
       if (i < 0) {
@@ -621,7 +643,7 @@ static void filesys_dcc_send(char *nick, char *from, struct userrec *u,
       }
       dcc[i].addr = my_atoul(ip);
       dcc[i].port = atoi(prt);
-      dcc[i].sock = -1;
+      dcc[i].sock = (-1);
       dcc[i].user = u;
       strcpy(dcc[i].nick, nick);
       strcpy(dcc[i].host, from);
@@ -637,6 +659,7 @@ static void filesys_dcc_send(char *nick, char *from, struct userrec *u,
       dns_hostbyip(dcc[i].addr);
     }
   }
+  nfree(buf);
 }
 
 static void filesys_dcc_send_lookupfailure(int i)
@@ -646,25 +669,70 @@ static void filesys_dcc_send_lookupfailure(int i)
     lostdcc(i);
 }
 
+/* Create a temporary filename with random elements. Shortens
+ * the filename if the total string is longer than NAME_MAX.
+ * The original buffer is not modified.   (Fabian)
+ * 
+ * Please adjust MKTEMPFILE_TOT if you change any lengths
+ *   7 - size of the random string
+ *   2 - size of additional characters in "%u-%s-%s" format string
+ *   8 - estimated size of getpid()'s output converted to %u */
+#define MKTEMPFILE_TOT (7 + 2 + 8)
+static char *mktempfile(char *filename)
+{
+  char rands[8], *tempname, *fn = filename;
+  int l;
+
+  make_rand_str(rands, 7);
+  l = strlen(filename);
+  if ((l + MKTEMPFILE_TOT) > NAME_MAX) {
+    debug2("mktempfile: shortened buffer: %d to %d", l,
+	   (NAME_MAX - MKTEMPFILE_TOT));
+    fn[NAME_MAX - MKTEMPFILE_TOT] = 0;
+    l = NAME_MAX - MKTEMPFILE_TOT;
+    fn = nmalloc(l + 1);
+    strncpy(fn, filename, l);
+    fn[l] = 0;
+  }
+  tempname = nmalloc(l + MKTEMPFILE_TOT + 1);
+  sprintf(tempname, "%u-%s-%s", getpid(), rands, fn);
+  if (fn != filename)
+    nfree(fn);
+  debug2("mktempfile: %s -> %s", filename, tempname);
+  return tempname;
+}
+
 static void filesys_dcc_send_lookupsuccess(int i)
 {
   FILE *f;
-  char s1[512], param[512];
+  char *s1, *param, prt[100], ip[100], *tempf;
   int len = dcc[i].u.dns->ibuf, j;
 
-  strncpy(param, dcc[i].u.dns->cbuf, 511);
-  sprintf(s1, "%d", dcc[i].port);
+  strncpy(dcc[i].host, dcc[i].u.dns->host, UHOSTLEN - 1);
+  dcc[i].host[UHOSTLEN - 1] = 0;
+  sprintf(prt, "%d", dcc[i].port);
+  sprintf(ip, "%lu", iptolong(my_htonl(dcc[i].addr)));
   if (!hostsanitycheck_dcc(dcc[i].nick, dcc[i].host, dcc[i].addr,
-                           dcc[i].u.dns->host, s1)) {
+                           dcc[i].u.dns->host, prt)) {
     lostdcc(i);
     return;
   }
+  param = nmalloc(strlen(dcc[i].u.dns->cbuf) + 1);
+  strcpy(param, dcc[i].u.dns->cbuf);
 
   changeover_dcc(i, &DCC_FORK_SEND, sizeof(struct xfer_info));
   if (param[0] == '.')
     param[0] = '_';
-  strncpy(dcc[i].u.xfer->filename, param, 120);
-  dcc[i].u.xfer->filename[120] = 0;
+  /* save the original filename */
+  dcc[i].u.xfer->origname = get_data_ptr(strlen(param) + 1);
+  strcpy(dcc[i].u.xfer->origname, param);
+  tempf = mktempfile(param);
+  dcc[i].u.xfer->filename = get_data_ptr(strlen(tempf) + 1);
+  strcpy(dcc[i].u.xfer->filename, tempf);
+  /* we don't need the temporary buffers anymore */
+  nfree(tempf);
+  nfree(param);
+
   if (upload_to_cd) {
     char *p = get_user(&USERENTRY_DCCDIR, dcc[i].user);
 
@@ -675,9 +743,12 @@ static void filesys_dcc_send_lookupsuccess(int i)
   } else
     strcpy(dcc[i].u.xfer->dir, dccin);
   dcc[i].u.xfer->length = len;
-  sprintf(s1, "%s%s", dcc[i].u.xfer->dir, param);
+  s1 = nmalloc(strlen(dcc[i].u.xfer->dir) +
+	       strlen(dcc[i].u.xfer->origname) + 1);
+  sprintf(s1, "%s%s", dcc[i].u.xfer->dir, dcc[i].u.xfer->origname);
   context;      
   f = fopen(s1, "r");
+  nfree(s1);
   if (f) {
     fclose(f);
     dprintf(DP_HELP, "NOTICE %s :That file already exists.\n", dcc[i].nick);
@@ -688,7 +759,7 @@ static void filesys_dcc_send_lookupsuccess(int i)
       if (j != i) {
         if ((dcc[j].type->flags & (DCT_FILETRAN | DCT_FILESEND))
 	    == (DCT_FILETRAN | DCT_FILESEND)) {
-	  if (!strcmp(param, dcc[j].u.xfer->filename)) {
+	  if (!strcmp(dcc[i].u.xfer->origname, dcc[j].u.xfer->origname)) {
 	    dprintf(DP_HELP, "NOTICE %s :That file is already being sent.\n",
 		    dcc[i].nick);
 	    lostdcc(i);
@@ -697,20 +768,18 @@ static void filesys_dcc_send_lookupsuccess(int i)
 	}
       }
     /* put uploads in /tmp first */
-    sprintf(s1, "%s%s", tempdir, param);
+    s1 = nmalloc(strlen(tempdir) + strlen(dcc[i].u.xfer->filename) + 1);
+    sprintf(s1, "%s%s", tempdir, dcc[i].u.xfer->filename);
     dcc[i].u.xfer->f = fopen(s1, "w");
+    nfree(s1);
     if (dcc[i].u.xfer->f == NULL) {
       dprintf(DP_HELP,
 	      "NOTICE %s :Can't create that file (temp dir error)\n",
 	      dcc[i].nick);
       lostdcc(i);
     } else {
-      char prt[100], ip[100];
-
       dcc[i].timeval = now;
       dcc[i].sock = getsock(SOCK_BINARY);
-      sprintf(prt, "%d", dcc[i].port);
-      sprintf(ip, "%lu", iptolong(my_htonl(dcc[i].addr)));
       if (open_telnet_dcc(dcc[i].sock, ip, prt) < 0)
 	dcc[i].type->eof(i);
     }

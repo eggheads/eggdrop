@@ -479,6 +479,8 @@ Function global_table[] =
   (Function) & dns_ipbyhost,	/* Function * */
   (Function) & dns_hostbyip,	/* Function * */
   (Function) changeover_dcc,  
+  (Function) make_rand_str,
+  /* 244 - 247 */
 };
 
 void init_modules(void)

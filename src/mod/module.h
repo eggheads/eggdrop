@@ -333,6 +333,8 @@
 #define dns_ipbyhost ((void (*)(char *))(*(Function**)(global[240])))
 #define dns_hostbyip ((void (*)(IP))(*(Function**)(global[241])))
 #define changeover_dcc ((void (*)(int, struct dcc_table *, int))global[242])
+#define make_rand_str ((void (*) (char *, int))global[243])
+/* 244 - 247 */
 
 #define ASSERT(expr) { if (!(expr)) assert_failed (MODULE_NAME, __FILE__, __LINE__); }
 

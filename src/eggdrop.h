@@ -79,6 +79,16 @@
 #include "HANDLEN MUST BE <= NICKMAX"
 #endif
 
+/* NAME_MAX is what POSIX defines, but BSD calls it MAXNAMLEN.
+   Use 255 if we can't find anything else. */
+#ifndef NAME_MAX
+#  ifdef MAXNAMLEN
+#    define NAME_MAX	MAXNAMLEN
+#  else
+#    define NAME_MAX	255
+#  endif
+#endif
+
 /* almost every module needs some sort of time thingy, so... */
 #if TIME_WITH_SYS_TIME
 #include <sys/time.h>
@@ -246,7 +256,8 @@ struct file_info {
 };
 
 struct xfer_info {
-  char filename[121];
+  char *filename;
+  char *origname;
   char dir[121];		/* used when uploads go to the current dir */
   unsigned long length;
   unsigned long acked;

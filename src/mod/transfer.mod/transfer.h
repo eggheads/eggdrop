@@ -3,7 +3,6 @@
 #define DCCSEND_FULL   1	/* dcc table is full */
 #define DCCSEND_NOSOCK 2	/* can't open a listening socket */
 #define DCCSEND_BADFN  3	/* no such file */
-#define MAX_FILENAME_LENGTH 40	/* max file lengh */
 
 #ifndef MAKING_TRANSFER
 /* 4 - 7 */

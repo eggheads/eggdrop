@@ -943,7 +943,9 @@ static void share_ufsend(int idx, char *par)
       dcc[i].type = &DCC_FORK_SEND;
       strcpy(dcc[i].nick, "*users");
       strcpy(dcc[i].host, dcc[idx].nick);
+      dcc[i].u.xfer->filename = nmalloc(strlen(s));
       strcpy(dcc[i].u.xfer->filename, s);
+      dcc[i].u.xfer->origname = dcc[i].u.xfer->filename;
       dcc[i].u.xfer->length = atoi(par);
       dcc[idx].status |= STAT_GETTING;
       dcc[i].u.xfer->f = f;
