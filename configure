@@ -3111,7 +3111,7 @@ _ACEOF
       if test -n "$GCC"
       then
         SHLIB_CC="$CC -fPIC"
-        SHLIB_LD="$CC"
+        SHLIB_LD="$CC -shared"
       else
         SHLIB_CC="$CC -KPIC"
         SHLIB_LD="$CC -G -z text"

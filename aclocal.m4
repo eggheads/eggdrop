@@ -1,7 +1,7 @@
 dnl aclocal.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: aclocal.m4,v 1.52 2001/12/06 04:52:18 guppy Exp $
+dnl $Id: aclocal.m4,v 1.53 2002/02/20 22:32:35 guppy Exp $
 dnl
 
 
@@ -318,7 +318,7 @@ case "$egg_cv_var_system_type" in
       if test -n "$GCC"
       then
         SHLIB_CC="$CC -fPIC"
-        SHLIB_LD="$CC"
+        SHLIB_LD="$CC -shared"
       else
         SHLIB_CC="$CC -KPIC"
         SHLIB_LD="$CC -G -z text"
