@@ -911,7 +911,7 @@ static void gotmode(char *from, char *msg)
   struct chanset_t *chan;
 
   /* usermode changes? */
-  if (strchr(CHANMETA, msg[0]) != NULL) {
+  if (msg[0] && (strchr(CHANMETA, msg[0]) != NULL)) {
     ch = newsplit(&msg);
     chg = newsplit(&msg);
     reversing = 0;

@@ -79,7 +79,8 @@ static int tcl_chattr STDVAR {
     user.match = FR_GLOBAL | FR_CHAN;
     chan = argv[3];
     chg = argv[2];
-  } else if ((argc == 3) && (strchr(CHANMETA, argv[2][0]) != NULL)) {
+  } else if ((argc == 3)
+	    && (argv[2][0] && (strchr(CHANMETA, argv[2][0]) != NULL))) {
     /* We need todo extra checking here to stop us mixing up +channel's
      * with flags. <cybah> */
     if (!findchan(argv[2]) && argv[2][0] != '+') {
@@ -152,7 +153,8 @@ static int tcl_botattr STDVAR {
     user.match = FR_BOT | FR_CHAN;
     chan = argv[3];
     chg = argv[2];
-  } else if ((argc == 3) && (strchr(CHANMETA, argv[2][0]) != NULL)) {
+  } else if ((argc == 3)
+	     && (argv[2][0] && (strchr(CHANMETA, argv[2][0]) != NULL))) {
     /* We need todo extra checking here to stop us mixing up +channel's
      * with flags. <cybah> */
     if (!findchan(argv[2]) && argv[2][0] != '+') {

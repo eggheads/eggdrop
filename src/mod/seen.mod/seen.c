@@ -485,7 +485,7 @@ static void do_seen(int idx, char *prefix, char *nick, char *hand, char *channel
   } else {
     strcpy(word2 + strlen(word2) - 2, " ago.");
   }
-  if (strchr(CHANMETA, lastonplace[0]) != NULL)
+  if (lastonplace[0] && (strchr(CHANMETA, lastonplace[0]) != NULL))
     sprintf(word1, "on IRC channel %s", lastonplace);
   else if (lastonplace[0] == '@')
     sprintf(word1, "on %s", lastonplace + 1);

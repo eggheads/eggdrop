@@ -291,7 +291,7 @@ static int msg_info(char *nick, char *host, struct userrec *u, char *par)
       return 1;
     }
   }
-  if (strchr(CHANMETA, par[0]) != NULL) {
+  if (par[0] && (strchr(CHANMETA, par[0]) != NULL)) {
     if (!findchan(chname = newsplit(&par))) {
       dprintf(DP_HELP, "NOTICE %s :%s\n", nick, IRC_NOMONITOR);
       return 1;

@@ -840,7 +840,7 @@ static void tell_bans(int idx, int show_inact, char *match)
   context;
   if (match[0]) {
     chname = newsplit(&match);
-    if (strchr(CHANMETA, chname[0]) != NULL) {
+    if (chname[0] && (strchr(CHANMETA, chname[0]) != NULL)) {
       chan = findchan(chname);
       if (!chan) {
 	dprintf(idx, "%s.\n", CHAN_NOSUCH);

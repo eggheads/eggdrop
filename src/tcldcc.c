@@ -271,8 +271,8 @@ static int tcl_console STDVAR
   }
   pls = 1;
   for (arg = 2; arg < argc; arg++) {
-    if ((strchr(CHANMETA, argv[arg][0]) != NULL) ||
-	(argv[arg][0] == '*')) {
+    if (argv[arg][0] && ((strchr(CHANMETA, argv[arg][0]) != NULL) ||
+	(argv[arg][0] == '*'))) {
       if ((argv[arg][0] != '*') && (!findchan(argv[arg]))) {
 	Tcl_AppendResult(irp, "invalid channel", NULL);
 	return TCL_ERROR;

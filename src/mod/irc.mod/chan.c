@@ -905,7 +905,7 @@ static int got354(char *from, char *msg)
   context;
   if (use_354) {
     newsplit(&msg);		/* Skip my nick - effeciently */
-    if (strchr(CHANMETA, msg[0]) != NULL) {
+    if (msg[0] && (strchr(CHANMETA, msg[0]) != NULL)) {
       chname = newsplit(&msg);	/* Grab the channel */
       chan = findchan(chname);	/* See if I'm on channel */
       if (chan) {		/* Am I? */

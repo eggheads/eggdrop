@@ -594,9 +594,8 @@ static void cmd_topic(struct userrec *u, int idx, char *par)
 {
   struct chanset_t *chan;
 
-  if (strchr("&#+", par[0])) {
+  if (par[0] && (strchr(CHANMETA, par[0]) != NULL)) {
     char *chname = newsplit(&par);
-
     chan = has_op(idx, chname);
   } else
     chan = has_op(idx, "");

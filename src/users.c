@@ -819,7 +819,7 @@ int readuserfile(char *file, struct userrec **ret)
 	    }
 	    /* channel bans are never stacked with , */
 	    if (s[0]) {
-	      if (strchr(CHANMETA, lasthand[0]) != NULL)
+	      if (lasthand[0] && (strchr(CHANMETA, lasthand[0]) != NULL))	      
 		restore_chanban(cst, s);
 	      else if (lasthand[0] == '*') {
 		if (lasthand[1] == 'i') {

@@ -372,8 +372,8 @@ static int gotmsg(char *from, char *msg)
   int ctcp_count = 0;
   int ignoring;
 
- if ((strchr(CHANMETA, *msg) != NULL) ||
-     (*msg == '@'))           /* notice to a channel, not handled here */
+  if (msg[0] && ((strchr(CHANMETA, *msg) != NULL) ||
+     (*msg == '@')))           /* notice to a channel, not handled here */
     return 0;
   ignoring = match_ignore(from);
   to = newsplit(&msg);
@@ -508,8 +508,8 @@ static int gotnotice(char *from, char *msg)
   struct userrec *u;
   int ignoring;
 
-  if ((strchr(CHANMETA, *msg) != NULL) ||
-      (*msg == '@'))           /* notice to a channel, not handled here */
+  if (msg[0] && ((strchr(CHANMETA, *msg) != NULL) ||
+      (*msg == '@')))           /* notice to a channel, not handled here */
     return 0;
   ignoring = match_ignore(from);
   to = newsplit(&msg);
@@ -765,7 +765,7 @@ static int got437(char *from, char *msg)
 
   newsplit(&msg);
   s = newsplit(&msg);
-  if (strchr(CHANMETA, s[0]) != NULL) {
+  if (s[0] && (strchr(CHANMETA, s[0]) != NULL)) {
     chan = findchan(s);
     if (chan) {
       if (chan->status & CHAN_ACTIVE) {

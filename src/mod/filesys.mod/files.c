@@ -858,7 +858,7 @@ static void cmd_mkdir(int idx, char *par)
   else {
     flags = newsplit(&par);
     chan = newsplit(&par);
-    if (!chan[0] && (strchr(CHANMETA, flags[0]) != NULL)) {
+    if (!chan[0] && flags[0] && (strchr(CHANMETA, flags[0]) != NULL)) {
       /* Need some extra checking here to makesure we dont mix up
        * the flags with a +channel. <cybah> */
       if(!findchan(flags) && flags[0] != '+') {

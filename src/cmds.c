@@ -1447,7 +1447,7 @@ static void cmd_chattr(struct userrec *u, int idx, char *par)
     dprintf(idx, "No such user!\n");
     return;
   }
-  if (strchr(CHANMETA, par[0]) == NULL || par[0]=='+') {
+  if (par[0] && ((strchr(CHANMETA, par[0]) == NULL) || par[0]=='+')) {
     chg = newsplit(&par);
     if (!par[0] && strpbrk(chg, "&|"))
       par = dcc[idx].u.chat->con_chan;
@@ -1611,7 +1611,7 @@ static void cmd_botattr(struct userrec *u, int idx, char *par)
     dprintf(idx, "You may not change the attributes of a linked bot.\n");
     return;
   }
-  if (strchr(CHANMETA, par[0]) == NULL || par[0]=='+') {
+  if (par[0] && ((strchr(CHANMETA, par[0]) == NULL) || par[0]=='+')) {
     chg = newsplit(&par);
     if (!par[0] && strpbrk(chg, "|&"))
       par = dcc[idx].u.chat->con_chan;
