@@ -312,6 +312,8 @@
 #define use_exempts (*(int *)(global[225]))	/* drummer/Jason */
 #define use_invites (*(int *)(global[226]))	/* drummer/Jason */
 #define force_expire (*(int *)(global[227]))	/* Rufus */
+/* 228 - 231 */
+#define add_lang_section ((void(*)(char *))global[228])
 /* this is for blowfish module, couldnt be bothereed making a whole new .h
  * file for it ;) */
 #ifndef MAKING_BLOWFISH

@@ -601,7 +601,7 @@ char *wire_start(Function * global_funcs)
   wirelist = 0;
   /* Absolutely HUGE! change to this module
    * Ah well, at least the language file gets loaded 'on demand' - Kirk */
-  cmd_loadlanguage(0, DP_LOG, "wire.english");
+  add_lang_section("wire");
   /* Even better thing is, all the modules can be lang'ed now :)
    * and you just need this one line at the bottom of the code - Kirk */
   return NULL;

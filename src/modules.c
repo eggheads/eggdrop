@@ -441,6 +441,8 @@ Function global_table[] =
   (Function) & use_exempts,	/* int - drummer/Jason */
   (Function) & use_invites,	/* int - drummer/Jason */
   (Function) & force_expire,	/* int - Rufus */
+  /* 228 - 231 */
+  (Function) add_lang_section,
 };
 
 void init_modules(void)

@@ -9,6 +9,7 @@ Currently completed sections are:
 (6) Botnet
 (7) Userfile Sharing
 (8) Bans and How They Work
+(9) Language support
 
 Appendices:
 (Z) Weird Messages That Get Logged
@@ -469,19 +470,31 @@ at <eggdrop@sodre.net> (after subscribing).  Thanks.
 
     * Set the environment variable EGG_LANGFILE:
       csh/tcsh:
-         setenv EGG_LANGFILE <file>
+         setenv EGG_LANG <language>
       bash/ksh:
-         export EGG_LANGFILE=<file>
+         export EGG_LANG=<language>
       This takes effect right from the beginning.
 
-    * Add 'language <file>' to the bot's configuration file.
+    * Add 'addlang "<language>"' to the bot's configuration file.
+      This takes effect as soon as the command is processed, so you will
+      probably want to add it towards the top of you configuration file.
+
+    * Type '.+lang <language>' on the party line.
       This takes effect as soon as the command is processed.
 
-    * Type '.language <file>' 
-      This takes effect as soon as the command is processed.
+    <language> is either "english", "french", "german" or possibly
+    another language file.
 
-    <file> is either "core.english", "core.french", "core.german" or
-    possibly another language file.
+    The last added language is the most preferred language, so eggdrop will
+    try to find all messages in that language first and then check other
+    languages.
+
+    You can add several languages, e.g. english, french and german. If a
+    message is not found in german, eggdrop searches for a french version,
+    and if that doesn't succeed it falls back to the english message.
+
+    You can remove languages with the '-lang' command on the party line.
+    Btw: 'lstat' displays (among other information) the selected languages.
 
 
     The default language directory is "./language". If you want to specify

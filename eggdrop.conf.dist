@@ -40,6 +40,10 @@ set timezone "EST"
 #set my-hostname "virtual.host.com"
 #set my-ip "99.99.0.0"
 
+# if you want to have your eggdrop messages displayed in another language
+# change the below command to match your preferences. An alternative would
+# be to set the environment variabel EGG_LANG to that value.
+#addlang "english"
 
 
 #####  LOG FILES  #####

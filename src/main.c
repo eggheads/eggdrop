@@ -513,12 +513,12 @@ void check_static(char *, char *(*)());
 #include "mod/static.h"
 #endif
 int init_mem(), init_dcc_max(), init_userent(), init_misc(), init_bots(),
- init_net(), init_modules(), init_tcl(), init_language(char *);
+ init_net(), init_modules(), init_tcl(), init_language(int);
 
 int main(int argc, char **argv)
 {
   int xx, i;
-  char buf[520], s[520], *deflang = NULL;
+  char buf[520], s[520];
   FILE *f;
   struct sigaction sv;
   struct chanset_t *chan;
@@ -579,11 +579,7 @@ int main(int argc, char **argv)
   lastmin = nowtm->tm_min;
   srandom(now);
   init_mem();
-  deflang = getenv("EGG_LANGFILE");
-  if (deflang)
-    init_language(deflang);
-  else
-    init_language("core.english");
+  init_language(1);
   if (argc > 1)
     for (i = 1; i < argc; i++)
       do_arg(argv[i]);
@@ -595,7 +591,7 @@ int main(int argc, char **argv)
   init_net();
   init_modules();
   init_tcl();
-  init_language(NULL);
+  init_language(0);
 #ifdef STATIC
   link_statics();
 #endif
@@ -878,7 +874,7 @@ int main(int argc, char **argv)
 	context;
 	kill_tcl();
 	init_tcl();
-	init_language(NULL);
+	init_language(0);
 	x = p->funcs[MODCALL_START];
 	x(0);
 	rehash();
