@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  *
- * $Id: server.c,v 1.103 2003/04/17 01:55:57 wcc Exp $
+ * $Id: server.c,v 1.104 2003/08/16 16:41:01 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1085,7 +1085,7 @@ static int server_6char STDVAR
   Function F = (Function) cd;
   char x[20];
 
-  BADARGS(7, 7, " nick user@host handle desto/chan keyword/nick text");
+  BADARGS(7, 7, " nick user@host handle dest/chan keyword text");
 
   CHECKVALIDITY(server_6char);
   egg_snprintf(x, sizeof x, "%d",
@@ -1098,7 +1098,7 @@ static int server_5char STDVAR
 {
   Function F = (Function) cd;
 
-  BADARGS(6, 6, " nick user@host handle channel text");
+  BADARGS(6, 6, " nick user@host handle dest/channel text");
   
   CHECKVALIDITY(server_5char);
   F(argv[1], argv[2], argv[3], argv[4], argv[5]);
@@ -1980,7 +1980,7 @@ char *server_start(Function *global_funcs)
 
   H_wall = add_bind_table("wall", HT_STACKABLE, server_2char);
   H_raw = add_bind_table("raw", HT_STACKABLE, server_raw);
-  H_notc = add_bind_table("notc", HT_STACKABLE, server_6char);
+  H_notc = add_bind_table("notc", HT_STACKABLE, server_5char);
   H_msgm = add_bind_table("msgm", HT_STACKABLE, server_msg);
   H_msg = add_bind_table("msg", 0, server_msg);
   H_flud = add_bind_table("flud", HT_STACKABLE, server_5char);
