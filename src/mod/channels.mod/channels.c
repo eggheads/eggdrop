@@ -420,11 +420,7 @@ flood-kick %d:%d flood-deop %d:%d ",
   }
   fclose(f);
   unlink(chanfile);
-#ifdef RENAME
   rename(s, chanfile);
-#else
-  movefile(s, chanfile);
-#endif
 }
 
 static void read_channels(int create)

@@ -580,11 +580,7 @@ void write_userfile(int idx)
   context;
   unlink(userfile);
   sprintf(s, "%s~new", userfile);
-#ifdef RENAME
   rename(s, userfile);
-#else
-  movefile(s, userfile);
-#endif
 }
 
 int change_handle(struct userrec *u, char *newh)

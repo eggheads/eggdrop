@@ -565,11 +565,7 @@ void check_logsize()
  * if (stat(buf,&ss) == -1) { 
  * * file doesnt exist, lets use it *
  */
-#ifdef RENAME
 	  rename(logs[i].filename, buf);
-#else
-	  movefile(logs[i].filename, buf);
-#endif
 /* x=0;
  * }
  * } */

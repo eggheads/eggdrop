@@ -454,11 +454,7 @@ static void core_secondly()
 	    }
 	    simple_sprintf(s, "%s.yesterday", logs[i].filename);
 	    unlink(s);
-#ifdef RENAME
 	    rename(logs[i].filename, s);
-#else
-	    movefile(logs[i].filename, s);
-#endif
 	  }
       }
     }

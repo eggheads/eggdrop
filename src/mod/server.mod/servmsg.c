@@ -749,7 +749,7 @@ static int got433(char *from, char *msg)
     /* we are online and have a nickname, we'll keep it */
 	newsplit(&msg);
     tmp = newsplit(&msg);
-    putlog(LOG_MISC, "*", "NICK IN USE: %s (keeping '%s').\n", tmp, botname);
+    putlog(LOG_MISC, "*", "NICK IN USE: %s (keeping '%s').", tmp, botname);
     return 0;
   }
   context;

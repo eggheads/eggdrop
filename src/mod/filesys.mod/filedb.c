@@ -227,7 +227,7 @@ static void filedb_update(char *path, FILE * f, int sort)
       strncat(s1, dd->d_name, NAMLEN(dd));
       s1[strlen(path) + NAMLEN(dd) + 1] = 0;
       sprintf(s2, "%s/%s", path, name);
-      movefile(s1, s2);
+      rename(s1, s2);
     }
     if (name[0] != '.') {
       sprintf(s, "%s/%s", path, name);

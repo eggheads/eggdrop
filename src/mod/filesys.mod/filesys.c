@@ -634,6 +634,7 @@ static void filesys_dcc_send(char *nick, char *from, struct userrec *u,
 	strcpy(dcc[i].u.xfer->dir, dccin);
       dcc[i].u.xfer->length = atoi(msg);
       sprintf(s1, "%s%s", dcc[i].u.xfer->dir, param);
+      context;      
       f = fopen(s1, "r");
       if (f) {
 	fclose(f);

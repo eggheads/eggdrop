@@ -127,7 +127,7 @@ static void notes_change(char *oldnick, char *newnick)
   fclose(g);
   unlink(notefile);
   sprintf(s, "%s~new", notefile);
-  movefile(s, notefile);
+  rename(s, notefile);
   putlog(LOG_MISC, "*", "Switched %d note%s from %s to %s.", tot,
 	 tot == 1 ? "" : "s", oldnick, newnick);
 }
@@ -177,7 +177,7 @@ static void expire_notes()
   fclose(g);
   unlink(notefile);
   sprintf(s, "%s~new", notefile);
-  movefile(s, notefile);
+  rename(s, notefile);
   if (tot > 0)
     putlog(LOG_MISC, "*", "Expired %d note%s", tot, tot == 1 ? "" : "s");
 }
@@ -406,11 +406,7 @@ static int tcl_erasenotes STDVAR
   fclose(g);
   unlink(notefile);
   sprintf(s, "%s~new", notefile);
-#ifdef RENAME
   rename(s, notefile);
-#else
-  movefile(s, notefile);
-#endif
   return TCL_OK;
 }
 
@@ -614,11 +610,7 @@ static void notes_del(char *hand, char *nick, char *sdl, int idx)
   fclose(g);
   unlink(notefile);
   sprintf(s, "%s~new", notefile);
-#ifdef RENAME
   rename(s, notefile);
-#else
-  movefile(s, notefile);
-#endif
   if ((er == 0) && (in > 1)) {
     if (idx >= 0)
       dprintf(idx, "%s.\n", BOT_NOTTHATMANY);
@@ -941,12 +933,23 @@ static int chon_notes(char *nick, int idx)
 
 static void join_notes(char *nick, char *uhost, char *handle, char *par)
 {
-  int i = num_notes(handle), j;
- 
+  int i = -1, j;
+  struct chanset_t *chan = chanset;
+   
   if (notify_onjoin) { /* drummer */
     for (j = 0; j < dcc_total; j++)
-      if ((dcc[j].type->flags & DCT_CHAT) && (!strcasecmp(dcc[j].nick, handle)))
-	i = 0;			/* they already know they have notes */
+      if ((dcc[j].type->flags & DCT_CHAT)
+	  && (!strcasecmp(dcc[j].nick, handle))) {
+	return;			/* they already know they have notes */
+      }
+
+    while (!chan) {
+      if (ismember(chan, nick))
+        return;			/* they already know they have notes */
+      chan = chan->next;
+    }
+    
+    i = num_notes(handle);
     if (i) {
       dprintf(DP_HELP, "NOTICE %s :You have %d note%s waiting on %s.\n",
 	      nick, i, i == 1 ? "" : "s", botname);

@@ -11,6 +11,8 @@
 #include <sys/stat.h>
 
 static const int min_share = 1029900;	/* minimum version I will share with */
+static const int min_exemptinvite = 1032800; /* eggdrop 1.3.28 supports exempts
+					      * and invites */
 static int private_owner = 1, private_global = 0, private_user = 0;
 static char private_globals[50];
 static int allow_resync = 0;
@@ -911,7 +913,7 @@ static void share_ufsend(int idx, char *par)
   char s[1024];
   int i, sock;
   FILE *f;
-
+  context;
   sprintf(s, ".share.%s.users", botnetnick);
   if (!(b_status(idx) & STAT_SHARE)) {
     dprintf(idx, "s e You didn't ask; you just started sending.\n");
@@ -1388,8 +1390,13 @@ static int write_tmp_userfile(char *fn, struct userrec *bu, int idx)
     for (u = bu; u && ok; u = u->next)
       ok = write_user(u, f, idx);
     ok = write_bans(f, idx);
-    ok = write_exempts(f, idx); /* we share these now */
-    ok = write_invites(f, idx); /* we share these now */
+    /* only share with bots which support exempts and invites. -Fabian */
+    if (dcc[idx].u.bot->numver >= min_exemptinvite) {
+      ok = write_exempts(f, idx); /* we share these now */
+      ok = write_invites(f, idx); /* we share these now */
+    } else
+      putlog(LOG_MISC, "*", "%s is too old: not sharing exempts and invites.",
+             dcc[idx].nick);
     fclose(f);
     if (!ok)
       putlog(LOG_MISC, "*", USERF_ERRWRITE2);
