@@ -29,7 +29,7 @@ do \
 done; \
 exec tclsh$lastver "$0" "$@"
 #
-# AutoBotchk, (C)1999 Jeff Fisher (guppy@eggheads.org)
+# AutoBotchk, (C)2001 Jeff Fisher (guppy@eggheads.org)
 #
 # updates
 # -------
@@ -45,8 +45,9 @@ exec tclsh$lastver "$0" "$@"
 #           changes in the eggdrop copy.
 #  13Apr01: borrowed code from Tothwolf's Wolfpack to find tclsh
 #           better
+#  27Sep01: added new pidfile setting
 #
-# $Id: autobotchk,v 1.5 2001/04/13 19:19:14 guppy Exp $
+# $Id: autobotchk,v 1.6 2001/09/28 14:07:25 guppy Exp $
 #
 # how to use
 # ----------
@@ -60,20 +61,6 @@ exec tclsh$lastver "$0" "$@"
 #  to use, for example, './autobotchk eggdrop.conf -dir /home/bot'
 #  this now allows you to run the program from any dir :P~
 #
-# other Stuff
-# -----------
-# [22:36] <cHr|s`> when you type ./autobotchk without any options, it should give you the menu
-# [22:36] <cHr|s`> like the nukes do
-#  ^ -- he might be Urkel, but we love him anyways ..
-# [18:10] <[z]> nope...came back weith can't crontab -l error
-#  ^ -- no one said this script was perfect, mmmm z's wife
-# [19:27] <[z]> also guppy..would be nice if i could reference my bots directories ;)
-#  ^ -- just when I finished 1.05 :P
-# [18:50] <[s]> how to set the autobotchk not to recieve e-mails about the cron ??
-# [18:51] <slennox> add >/dev/null 2>&1 to the end of the crontab entry
-# [18:52] <[s]> what crontab
-# [18:52] <[s]> i have gupy's script
-# [18:52] <[s]> autobotchk
 
 if {$argc == 0} {
  puts "\nusage: $argv0 <eggdrop config> \[options\]"
@@ -85,7 +72,7 @@ if {$argc == 0} {
  puts " -30      (30 minute checks)\n\n"
  exit
 } {
- puts "\nAutoBotchk 1.08, (C)1999 Jeff Fisher (guppy@eggheads.org)"
+ puts "\nAutoBotchk 1.09, (C)2001 Jeff Fisher (guppy@eggheads.org)"
  puts "----------------------------------------------------------"
 
  set x [join [lindex [split $argv] 0]]
@@ -149,6 +136,7 @@ if {$argc == 0} {
   set z [split [gets $f]]
   if {[join [lindex $z 0]] != "set"} {continue}
   switch -- [join [lindex $z 1]] {
+   pidfile -
    nick -
    userfile -
    botnet-nick {
@@ -159,8 +147,12 @@ if {$argc == 0} {
  }
  close $f
  if {![info exists {botnet-nick}] && [info exists nick]} {
-  puts "         !! setting \$botnet-nick to \$nick"
+  puts "         !! setting \$botnet-nick to $nick"
   set botnet-nick $nick
+ }
+ if {![info exists pidfile]} {
+  puts "         !! setting \$pidfile to pid.${botnet-nick}"
+  set pidfile "pid.${botnet-nick}"
  }
  if {![info exists {botnet-nick}] || ![info exists userfile]} {
   puts " *** ERROR: could not find either \$userfile or \$botnet-nick"
@@ -175,10 +167,10 @@ if {$argc == 0} {
  puts $fd "
 #! /bin/sh
 #
-# new botchk  (for eggdrop 1.1+)
+# botchk
 #
 # Created on: [clock format [clock seconds] -format "%B %d, %Y @ %I:%M%p"]
-# Created by: AutoBotchk 1.08 (C)1999 Jeff Fisher
+# Created by: AutoBotchk 1.09 (C)2001 Jeff Fisher
 #
 # This is a script suitable for use in a crontab.  It checks to make sure
 # your bot is running.  YOU NEED A SEPARATE CRON JOB FOR EACH BOT.  If your
@@ -206,23 +198,26 @@ botname=\"${botnet-nick}\"
 # change this to the name of your bot's userfile (capitalization COUNTS)
 userfile=\"$userfile\"
 
+# change this to the name of your bot's pidfile (capitalization COUNTS)
+pidfile=\"$pidfile\"
+
 ########## you probably don't need to change anything below here ##########
 
 cd \$botdir
 
 # is there a pid file?
-if test -r pid.\$botname
+if test -r \$pidfile
 then
   # there is a pid file -- is it current?
-  botpid=`cat pid.\$botname`
+  botpid=`cat \$pidfile`
   if `kill -CHLD \$botpid >/dev/null 2>&1`
   then
     # it's still going -- back out quietly
     exit 0
   fi
   echo \"\"
-  echo \"Stale pid.\$botname file, erasing...\"
-  rm -f pid.\$botname
+  echo \"Stale \$pidfile file, erasing...\"
+  rm -f \$pidfile
 fi
 
 if test -r CANTSTART.\$botname

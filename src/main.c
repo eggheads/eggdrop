@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  *
- * $Id: main.c,v 1.71 2001/09/24 04:25:39 guppy Exp $
+ * $Id: main.c,v 1.72 2001/09/28 14:07:26 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -104,7 +104,7 @@ time_t	online_since;		/* Unix-time that the bot loaded up */
 int	make_userfile = 0;	/* Using bot in make-userfile mode? (first
 				   user to 'hello' becomes master) */
 char	owner[121] = "";	/* Permanent owner(s) of the bot */
-char	pid_file[HANDLEN + 5];		/* Name of the file for the pid to be
+char	pid_file[120];		/* Name of the file for the pid to be
 				   stored in */
 int	save_users_at = 0;	/* How many minutes past the hour to
 				   save the userfile? */
@@ -802,6 +802,7 @@ int main(int argc, char **argv)
 	 botnetnick, i, count_users(userlist));
   cache_miss = 0;
   cache_hit = 0;
+  if (!pid_file[0])
   egg_snprintf(pid_file, sizeof pid_file, "pid.%s", botnetnick);
 
   /* Check for pre-existing eggdrop! */
