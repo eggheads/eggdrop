@@ -1,5 +1,5 @@
 # Makefile for src/mod/
-# $Id: Makefile.in,v 1.8 2000/03/23 23:17:56 fabian Exp $
+# $Id: Makefile.in,v 1.9 2000/03/24 23:00:25 fabian Exp $
 
 SHELL = /bin/sh
 top_srcdir = @top_srcdir@
@@ -72,7 +72,7 @@ depend:
 		if test ! -r $$i/Makefile; then \
 			cp $(srcdir)/$$i/Makefile $$i/Makefile; \
 		fi; \
-		(cd $$i && $(MAKE_MOD) 'VPATH=../$(srcdir)/$$i' 'srcdir=../$(srcdir)/$$i' depend); \
+		(cd $$i && $(MAKE_MOD) "VPATH=../$(srcdir)/$$i" "srcdir=../$(srcdir)/$$i" depend); \
 	done
 
 config:
@@ -95,7 +95,7 @@ clean:
 		if test ! -r $$i/Makefile; then \
 			cp $(srcdir)/$$i/Makefile $$i/Makefile; \
 		fi; \
-		(cd $$i; $(MAKE) 'VPATH=../$(srcdir)/$$i' 'srcdir=../$(srcdir)/$$i' 'MAKE=$(MAKE)' clean); \
+		(cd $$i; $(MAKE) "VPATH=../$(srcdir)/$$i" "srcdir=../$(srcdir)/$$i" 'MAKE=$(MAKE)' clean); \
 	done
 
 distclean:
@@ -105,7 +105,7 @@ distclean:
 		if test ! -r $$i/Makefile; then \
 			cp $(srcdir)/$$i/Makefile $$i/Makefile; \
 		fi; \
-		(cd $$i; $(MAKE) 'VPATH=../$(srcdir)/$$i' 'srcdir=../$(srcdir)/$$i' 'MAKE=$(MAKE)' distclean); \
+		(cd $$i; $(MAKE) "VPATH=../$(srcdir)/$$i" "srcdir=../$(srcdir)/$$i" 'MAKE=$(MAKE)' distclean); \
 	done
 
 install: install-help install-language

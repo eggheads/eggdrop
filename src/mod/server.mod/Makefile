@@ -1,5 +1,5 @@
 # Makefile for src/mod/server.mod/
-# $Id: Makefile,v 1.8 2000/03/22 00:42:58 fabian Exp $
+# $Id: Makefile,v 1.9 2000/03/24 23:00:25 fabian Exp $
 
 srcdir = .
 
@@ -31,8 +31,17 @@ clean:
 distclean: clean
 
 #safety hash
-../server.o: server.c ../module.h ../../../config.h ../../main.h \
- ../../lang.h ../../eggdrop.h ../../flags.h ../../proto.h \
- ../../../lush.h ../../cmdt.h ../../tclegg.h ../../tclhash.h \
- ../../chan.h ../../users.h ../modvals.h ../../tandem.h server.h \
- servmsg.c cmdsserv.c tclserv.c
+cmdsserv.o: .././server.mod/cmdsserv.c
+server.o: .././server.mod/server.c ../../../src/mod/module.h \
+ ../../../src/main.h ../../../src/lang.h ../../../src/eggdrop.h \
+ ../../../src/flags.h ../../../src/proto.h ../../../lush.h \
+ ../../../src/misc_file.h ../../../src/cmdt.h ../../../src/tclegg.h \
+ ../../../src/tclhash.h ../../../src/chan.h ../../../src/users.h \
+ ../../../src/compat/compat.h ../../../src/compat/inet_aton.h \
+ ../../../src/compat/snprintf.h ../../../src/compat/memset.h \
+ ../../../src/compat/memcpy.h ../../../src/compat/strcasecmp.h \
+ ../../../src/mod/modvals.h ../../../src/tandem.h \
+ ../server.mod/server.h ../server.mod/servmsg.c \
+ ../server.mod/cmdsserv.c ../server.mod/tclserv.c
+servmsg.o: .././server.mod/servmsg.c
+tclserv.o: .././server.mod/tclserv.c

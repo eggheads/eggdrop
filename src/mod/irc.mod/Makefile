@@ -1,5 +1,5 @@
 # Makefile for src/mod/irc.mod/
-# $Id: Makefile,v 1.7 2000/03/22 00:42:58 fabian Exp $
+# $Id: Makefile,v 1.8 2000/03/24 23:00:25 fabian Exp $
 
 srcdir = .
 
@@ -31,9 +31,21 @@ clean:
 distclean: clean
 
 #safety hash
-../irc.o: irc.c ../module.h ../../../config.h ../../main.h ../../lang.h \
- ../../eggdrop.h ../../flags.h ../../proto.h ../../../lush.h \
- ../../cmdt.h ../../tclegg.h ../../tclhash.h ../../chan.h \
- ../../users.h ../modvals.h ../../tandem.h irc.h \
- ../server.mod/server.h ../channels.mod/channels.h chan.c mode.c \
- cmdsirc.c msgcmds.c tclirc.c
+chan.o: .././irc.mod/chan.c
+cmdsirc.o: .././irc.mod/cmdsirc.c
+irc.o: .././irc.mod/irc.c ../../../src/mod/module.h \
+ ../../../src/main.h ../../../src/lang.h ../../../src/eggdrop.h \
+ ../../../src/flags.h ../../../src/proto.h ../../../lush.h \
+ ../../../src/misc_file.h ../../../src/cmdt.h ../../../src/tclegg.h \
+ ../../../src/tclhash.h ../../../src/chan.h ../../../src/users.h \
+ ../../../src/compat/compat.h ../../../src/compat/inet_aton.h \
+ ../../../src/compat/snprintf.h ../../../src/compat/memset.h \
+ ../../../src/compat/memcpy.h ../../../src/compat/strcasecmp.h \
+ ../../../src/mod/modvals.h ../../../src/tandem.h ../irc.mod/irc.h \
+ ../../../src/mod/server.mod/server.h \
+ ../../../src/mod/channels.mod/channels.h ../irc.mod/chan.c \
+ ../irc.mod/mode.c ../irc.mod/cmdsirc.c ../irc.mod/msgcmds.c \
+ ../irc.mod/tclirc.c
+mode.o: .././irc.mod/mode.c
+msgcmds.o: .././irc.mod/msgcmds.c
+tclirc.o: .././irc.mod/tclirc.c
