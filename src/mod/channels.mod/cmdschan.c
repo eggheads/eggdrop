@@ -2,7 +2,7 @@
  * cmdschan.c -- part of channels.mod
  *   commands from a user via dcc that cause server interaction
  *
- * $Id: cmdschan.c,v 1.42 2001/04/12 02:39:45 guppy Exp $
+ * $Id: cmdschan.c,v 1.43 2001/04/26 03:38:51 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -33,6 +33,7 @@ static void cmd_pls_ban(struct userrec *u, int idx, char *par)
 {
   char *chname, *who, s[UHOSTLEN], s1[UHOSTLEN], *p, *p_expire;
   unsigned long int expire_time = 0, expire_foo;
+  int sticky = 0;
   struct chanset_t *chan = NULL;
   module_entry *me;
 
@@ -125,6 +126,7 @@ static void cmd_pls_ban(struct userrec *u, int idx, char *par)
 	u_addban(chan, s, dcc[idx].nick, par,
 		 expire_time ? now + expire_time : 0, 0);
 	if (par[0] == '*') {
+	  sticky = 1;
 	  par++;
 	  putlog(LOG_CMDS, "*", "#%s# (%s) +ban %s %s (%s) (sticky)",
 		 dcc[idx].nick, dcc[idx].u.chat->con_chan, s, chan->dname, par);
@@ -138,11 +140,12 @@ static void cmd_pls_ban(struct userrec *u, int idx, char *par)
 	 * no reason to set mode if irc.mod aint loaded. (dw 001120)
 	 */
 	if ((me = module_find("irc", 0, 0)))
-	  (me->funcs[IRC_RECHECK_CHANNEL])(chan, 1);
+	  (me->funcs[IRC_CHECK_THIS_BAN])(chan, s, sticky);
       } else {
 	u_addban(NULL, s, dcc[idx].nick, par,
 		 expire_time ? now + expire_time : 0, 0);
 	if (par[0] == '*') {
+	  sticky = 1;
 	  par++;
 	  putlog(LOG_CMDS, "*", "#%s# (GLOBAL) +ban %s (%s) (sticky)",
 		 dcc[idx].nick, s, par);
@@ -154,7 +157,7 @@ static void cmd_pls_ban(struct userrec *u, int idx, char *par)
 	}
 	if ((me = module_find("irc", 0, 0)))
 	  for (chan = chanset; chan != NULL; chan = chan->next)
-	    (me->funcs[IRC_RECHECK_CHANNEL])(chan, 1);
+	    (me->funcs[IRC_CHECK_THIS_BAN])(chan, s, sticky);
       }
     }
   }
@@ -955,7 +958,7 @@ static void cmd_stick_yn(int idx, char *par, int yn)
       dprintf(idx, "%stuck ban: %s\n", yn ? "S" : "Uns", s);
       if ((me = module_find("irc", 0, 0)))
 	for (achan = chanset; achan != NULL; achan = achan->next)
-	  (me->funcs[IRC_RECHECK_CHANNEL])(achan, 1);
+	  (me->funcs[IRC_CHECK_THIS_BAN])(achan, s, yn);
       return;
     }
     strncpyz(chname, dcc[idx].u.chat->con_chan, sizeof chname);
@@ -973,7 +976,7 @@ static void cmd_stick_yn(int idx, char *par, int yn)
            yn ? "" : "un", s, chname);
     dprintf(idx, "%stuck %s ban: %s\n", yn ? "S" : "Uns", chname, s);
     if ((me = module_find("irc", 0, 0)))
-      (me->funcs[IRC_RECHECK_CHANNEL])(chan, 1);
+      (me->funcs[IRC_CHECK_THIS_BAN])(chan, s, yn);
     return;
   }
   dprintf(idx, "No such ban.\n");

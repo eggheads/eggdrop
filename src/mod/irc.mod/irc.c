@@ -2,7 +2,7 @@
  * irc.c -- part of irc.mod
  *   support for channels within the bot
  *
- * $Id: irc.c,v 1.50 2001/04/12 02:39:46 guppy Exp $
+ * $Id: irc.c,v 1.51 2001/04/26 03:38:51 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1115,6 +1115,7 @@ static Function irc_table[] =
   (Function) & H_need,		/* p_tcl_bind_list		*/
   (Function) do_channel_part,
   /* 20 - 23 */
+  (Function) check_this_ban,
 };
 
 char *irc_start(Function * global_funcs)

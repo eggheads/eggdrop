@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  *
- * $Id: chan.c,v 1.64 2001/04/12 02:39:46 guppy Exp $
+ * $Id: chan.c,v 1.65 2001/04/26 03:38:51 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -602,6 +602,25 @@ static void resetmasks(struct chanset_t *chan, masklist *m, maskrec *mrec,
       putlog(LOG_MISC, "*", "(!) Invalid mode '%c' in resetmasks()", mode);
       break;
   }
+}
+static void check_this_ban(struct chanset_t *chan, char *banmask, int sticky)
+{
+  memberlist *m;
+  char user[UHOSTLEN];
+
+  if (!me_op(chan))
+    return;
+  for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
+    sprintf(user, "%s!%s", m->nick, m->userhost);
+    if (wild_match(banmask, user) &&
+        !(use_exempts &&
+          (u_match_mask(global_exempts, user) ||
+           u_match_mask(chan->exempts, user))))
+      refresh_ban_kick(chan, user, m->nick);
+  }
+  if (!isbanned(chan, banmask) &&
+      (!channel_dynamicbans(chan) || sticky))
+    add_mode(chan, '+', 'b', banmask);
 }
 
 static void recheck_channel_modes(struct chanset_t *chan)
