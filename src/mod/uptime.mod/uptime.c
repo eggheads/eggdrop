@@ -1,5 +1,5 @@
 /*
- * $Id: uptime.c,v 1.14 2001/10/30 01:24:06 poptix Exp $
+ * $Id: uptime.c,v 1.15 2001/11/16 04:48:43 guppy Exp $
  *
  * This module reports uptime information about your bot to http://uptime.eggheads.org. The
  * purpose for this is to see how your bot rates against many others (including EnergyMechs
@@ -187,35 +187,8 @@ void check_hourly() {
 	}
 }
 
-static int uptime_set_send(struct userrec *u, int idx, char *par)
-{
-	Context;
-	dprintf(idx,"Nick %s Ontime %lu Version %s Result %d\n", botnetnick, online_since,
-	        uptime_version, send_uptime()); 
-	return 1;
-}
-
-static cmd_t mydcc[] =
-    {
-        {"usetsend", "", uptime_set_send, NULL},
-        {0, 0, 0, 0}
-    };
-
-static tcl_strings mystrings[] =
-    {
-        {0, 0, 0, 0}
-    };
-
-static tcl_ints myints[] =
-    {
-        {0, 0}
-    };
-
 static char *uptime_close()
 {
-	rem_tcl_strings(mystrings);
-	rem_tcl_ints(myints);
-	rem_builtins(H_dcc, mydcc);
 	nfree(uptime_host);
 	close(uptimesock);
 	del_hook(HOOK_HOURLY, (Function) check_hourly);
@@ -241,9 +214,6 @@ char *uptime_start(Function * global_funcs)
 	if (!(server_funcs = module_depend(MODULE_NAME, "server", 1, 0)))
 		return "You need the server module to use the uptime module.";
 	module_register(MODULE_NAME, uptime_table, 1, 1);
-	add_tcl_strings(mystrings);
-	add_tcl_ints(myints);
-	add_builtins(H_dcc, mydcc);
 	add_hook(HOOK_HOURLY, (Function) check_hourly);
 	uptime_host=nmalloc(256);
 	strcpy(uptime_host, UPTIME_HOST);
