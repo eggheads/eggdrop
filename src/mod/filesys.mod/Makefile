@@ -2,10 +2,6 @@
 FILENAME=filesys
 include ../Makefile.generic
 
-install:
-	@echo Installing filesys language file.
-	@$(CP1) *.lang $(REALDEST)/language
-
 filesys.o: \
    ../module.h \
    filesys.h \

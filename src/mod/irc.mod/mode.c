@@ -515,8 +515,16 @@ static void got_ban(struct chanset_t *chan, char *nick, char *from,
   simple_sprintf(s, "%s!%s", nick, from);
   newban(chan, who, s);
   bogus = 0;
-  check = 1;
-  if (!match_my_nick(nick)) {	/* it's not my ban */
+  check = 1; 
+  if (wild_match(who, me) && me_op(chan)) {
+    /* First of all let's check whether some luser banned us ++rtc */
+    if (match_my_nick(nick)) {
+      /* Bot banned itself -- doh! ++rtc */
+      putlog(LOG_MISC, "*", "Uh, banned myself on %s, reversing...", chan->name);
+    }
+    reversing = 1;
+    check = 0;
+  } else if (!match_my_nick(nick)) {	/* it's not my ban */
     if (channel_nouserbans(chan) && nick[0] && !glob_bot(user) &&
 	!glob_master(user) && !chan_master(user)) {
       /* no bans made by users */
@@ -580,16 +588,11 @@ static void got_ban(struct chanset_t *chan, char *nick, char *from,
       get_user_flagrec(u, &victim, chan->name);
       if (glob_friend(victim) || (glob_op(victim) && !chan_deop(victim)) ||
 	  chan_friend(victim) || chan_op(victim)) {
-	if (!glob_master(user) && !glob_bot(user) && !chan_master(user)) {
+	if (!glob_master(user) && !glob_bot(user) && !chan_master(user))
 	  /* reversing = 1; */ /* arthur2 - 99/05/31 */
 	  check = 0;
-	}
 	if (glob_master(victim) || chan_master(victim))
 	  check = 0;
-      } else if (wild_match(who, me) && me_op(chan)) {
-	/* ^ don't really feel like being banned today, thank you! */
-	reversing = 1;
-	check = 0;
       }
     } else {
       /* banning an oplisted person who's on the channel? */

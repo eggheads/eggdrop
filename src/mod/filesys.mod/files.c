@@ -13,20 +13,20 @@
 /* PLEASE don't fail me, 'configure'! :) */
 
 #if HAVE_DIRENT_H
-#include <dirent.h>
-#define NAMLEN(dirent) strlen((dirent)->d_name)
+# include <dirent.h>
+# define NAMLEN(dirent) strlen((dirent)->d_name)
 #else
-#define dirent direct
-#define NAMLEN(dirent) (dirent)->d_namlen
-#if HAVE_SYS_NDIR_H
-#include <sys/ndir.h>
-#endif
-#if HAVE_SYS_DIR_H
-#include <sys/dir.h>
-#endif
-#if HAVE_NDIR_H
-#include <ndir.h>
-#endif
+# define dirent direct
+# define NAMLEN(dirent) (dirent)->d_namlen
+# if HAVE_SYS_NDIR_H
+#  include <sys/ndir.h>
+# endif
+# if HAVE_SYS_DIR_H
+#  include <sys/dir.h>
+# endif
+# if HAVE_NDIR_H
+#  include <ndir.h>
+# endif
 #endif
 
 /* goddamn stupid sunos 4 */
@@ -66,13 +66,12 @@ static void add_file(char *dir, char *file, char *nick)
 
 static int welcome_to_files(int idx)
 {
-  struct flag_record fr =
-  {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
+  struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
   FILE *f;
   char *p = get_user(&USERENTRY_DCCDIR, dcc[idx].user);
 
   dprintf(idx, "\n");
-  if (fr.global &USER_JANITOR)
+  if (fr.global & USER_JANITOR)
     fr.global |=USER_MASTER;
 
   /* show motd if the user went straight here without going thru the
@@ -133,10 +132,8 @@ static int resolve_dir(char *current, char *change, char *real, int idx)
   char elem[512], s[1024], new[1024], work[1024], *p;
   FILE *f;
   filedb fdb;
-  struct flag_record user =
-  {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
-  struct flag_record req =
-  {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
+  struct flag_record user = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
+  struct flag_record req = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
   int ret;
   long i = 0;
 
@@ -451,8 +448,7 @@ static void cmd_get(int idx, char *par)
 static void cmd_file_help(int idx, char *par)
 {
   char s[1024];
-  struct flag_record fr =
-  {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
+  struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
 
   get_user_flagrec(dcc[idx].user, &fr, dcc[idx].u.file->chat->con_chan);
   if (par[0]) {
@@ -1172,6 +1168,7 @@ static int cmd_stats(int idx, char *par)
 static int cmd_filestats(int idx, char *par)
 {
   char *nick;
+  struct userrec *u;
 
   context;
   if (!par[0]) {
@@ -1182,12 +1179,11 @@ static int cmd_filestats(int idx, char *par)
   putlog(LOG_FILES, "*", "#%s# filestats %s", dcc[idx].nick, nick);
   if (nick[0] == 0)
     tell_file_stats(idx, dcc[idx].nick);
-  else if (!get_user_by_handle(userlist, nick))
+  else if (!(u = get_user_by_handle(userlist, nick)))
     dprintf(idx, "No such user.\n");
   else if (!strcmp(par, "clear") && dcc[idx].user &&
 	   (dcc[idx].user->flags & USER_JANITOR)) {
-    set_handle_uploads(userlist, nick, 0, 0);
-    set_handle_dnloads(userlist, nick, 0, 0);
+    set_user (&USERENTRY_FSTAT, u, NULL);
     dprintf(idx, "Cleared filestats for %s.\n", nick);
   } else
     tell_file_stats(idx, nick);

@@ -171,8 +171,7 @@ static int convert_old_db(char *path, char *newfiledb)
 		char x[100];
 
 		/* only do global flags, it's an old one */
-		struct flag_record fr =
-		{FR_GLOBAL, 0, 0, 0, 0, 0};
+		struct flag_record fr = {FR_GLOBAL, 0, 0, 0, 0, 0};
 
 		break_down_flags(nick + 1, &fr, NULL);
 		build_flags(x, &fr, NULL);
@@ -441,8 +440,7 @@ static void filedb_ls(FILE * f, int idx, char *mask, int showall)
   filedb fdb;
   int ok = 0, cnt = 0, is = 0;
   char s[81], s1[81], *p;
-  struct flag_record user =
-  {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
+  struct flag_record user = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
 
   rewind(f);
   while (!feof(f)) {
@@ -453,8 +451,7 @@ static void filedb_ls(FILE * f, int idx, char *mask, int showall)
 	ok = 0;
       if (fdb.stat & FILE_DIR) {
 	/* check permissions */
-	struct flag_record req =
-	{FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
+	struct flag_record req = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
 
 	break_down_flags(fdb.flags_req, &req, NULL);
 	get_user_flagrec(dcc[idx].user, &user,

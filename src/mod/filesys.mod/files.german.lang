@@ -1,0 +1,60 @@
+# Copyright (c) 1999 by eggheads
+# translated by rtc
+# FILES_
+
+0x300,Konvertiere Dateisystem-Abbild in %s ...
+0x301,filedb-update: kann Verzeichnis nicht oeffnen!
+0x302,(!) Fehlerhafte Konvertierung zur filedb in %s
+0x303,Dateiname                       Gr.   Von/Datum            # Dlds\n
+0x304,------------------------------  ----  -------------------  ------\n
+0x305,Keine Dateien in diesem Verzeichnis.\n
+0x306,Keine passenden Dateien.\n
+0x307,Verzeichnis existiert nicht
+0x308,Datei existiert nicht
+0x309,Datei wird nicht geshared
+0x30a,(woanders)
+0x30b,Fehler beim Sendeversuch der Datei
+0x30c,(sende)
+0x30d,Anfrage von Bot fuer /%s%s%s (sende)
+0x30e,\nDas Dateisystem scheint gerade defunct zu sein.\n
+0x30f,(Der files-path zeigt auf ein ungueltiges Verzeichnis.)\n
+0x310,Momentanes Verzeichnis
+0x311,Neues Verzeichnis
+0x312,Kein solches Verzeichnis.\n
+0x313,Unerlaubtes Verzeichnis.\n
+0x314,Sein verfuenftig.\n
+0x315,%s ist gerade nicht verfuegbar.\n
+0x316,%s von %s angefordert ...\n
+0x317,%s ist bereits eine normale Datei.\n
+0x318,Link auf %s umgebogen\n
+0x319,Du hast %s nicht geuploaded\n
+0x31a,Verzeichnis erstellt:
+0x31b,Benoetigt +%s zum Zugriff\n
+0x31c,Rechte von %s/ geaendert, braucht jetzt +%s zum Zugriff\n
+0x31d,Rechte von %s/ geaendert, braucht keine Flags zum Zugriff mehr\n
+0x31e,Verzeichnis entfernt:
+0x31f,Unerlaubtes Quellverzeichnis.\n
+0x320,Unerlaubtes Zielverzeichnis.\n
+0x321,Du kannst Dateien nicht auf sich selbst %s.\n
+0x322,existiert als Verzeichnis -- wird uebersprungen
+0x323,auf sich selbst?  Nix da.
+0x324,Ziel
+0x325,kopieren
+0x326,Kopiert:
+0x327,verschieben
+0x328,Verschoben:
+0x329,Fehler beim Zugriff auf
+0x32a,benoetigt
+0x32b,Versteckt
+0x32c,Sichtbar gemacht
+0x32d,Geshared
+0x32e,Geunshared
+0x32f,Link hinzugefuegt:
+0x330,Geaendert
+0x331,Geleert
+0x332,Geloescht
+0x33a,Willkommen auf dem %B-Dateiserver\n
+0x33b,Alle Dateitransferts werden standardmaessig zu '%N' gesendet.\n\
+(Du kannst dem get-Kommando auch einen anderen nick uebergeben.)\n\
+Gib 'help' ein, wenn Du Hilfe brauchst.\n
+

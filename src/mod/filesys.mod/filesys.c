@@ -112,8 +112,7 @@ static int check_tcl_fil(char *cmd, int idx, char *args)
 {
   int x;
   char s[5];
-  struct flag_record fr =
-  {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
+  struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
 
   context;
   get_user_flagrec(dcc[idx].user, &fr, dcc[idx].u.file->chat->con_chan);
@@ -995,38 +994,3 @@ static int is_valid()
 
 /* 2 stupid backward compatability functions */
 /* set upload/dnload stats for a user */
-static void set_handle_uploads(struct userrec *bu, char *hand,
-			       unsigned int ups, unsigned long upk)
-{
-  struct userrec *u = get_user_by_handle(bu, hand);
-  struct user_entry *ue = find_user_entry(&USERENTRY_FSTAT, u);
-  register struct filesys_stats *fs = NULL;
-
-  if (ue)
-    fs = ue->u.extra;
-  if (!fs) {
-    fs = user_malloc(sizeof(struct filesys_stats));
-    bzero(fs, sizeof(struct filesys_stats));
-  }
-  fs->uploads = ups;
-  fs->upload_ks = upk;
-  set_user(&USERENTRY_FSTAT, u, fs);
-}
-
-static void set_handle_dnloads(struct userrec *bu, char *hand,
-			       unsigned int dns, unsigned long dnk)
-{
-  struct userrec *u = get_user_by_handle(bu, hand);
-  struct user_entry *ue = find_user_entry(&USERENTRY_FSTAT, u);
-  register struct filesys_stats *fs = NULL;
-
-  if (ue)
-    fs = ue->u.extra;
-  if (!fs) {
-    fs = user_malloc(sizeof(struct filesys_stats));
-    bzero(fs, sizeof(struct filesys_stats));
-  }
-  fs->dnloads = dns;
-  fs->dnload_ks = dnk;
-  set_user(&USERENTRY_FSTAT, u, fs);
-}

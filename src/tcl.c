@@ -551,23 +551,6 @@ void add_tcl_strings(tcl_strings * list)
   strinfo *st;
 
   for (i = 0; list[i].name; i++) {
-    if (list[i].length > 0) {
-      char *p = Tcl_GetVar(interp, list[i].name, TCL_GLOBAL_ONLY);
-
-      if (p != NULL) {
-	strncpy(list[i].buf, p, list[i].length);
-	list[i].buf[list[i].length] = 0;
-	if (list[i].flags & STR_DIR) {
-	  int x = strlen(list[i].buf);
-
-	  if ((x > 0) && (x < (list[i].length - 1)) &&
-	      (list[i].buf[x - 1] != '/')) {
-	    list[i].buf[x++] = '/';
-	    list[i].buf[x] = 0;
-	  }
-	}
-      }
-    }
     st = (strinfo *) nmalloc(sizeof(strinfo));
     strtot += sizeof(strinfo);
     st->max = list[i].length - (list[i].flags & STR_DIR);
@@ -575,6 +558,7 @@ void add_tcl_strings(tcl_strings * list)
       st->max = -st->max;
     st->str = list[i].buf;
     st->flags = (list[i].flags & STR_DIR);
+    tcl_eggstr((ClientData) st, interp, list[i].name, NULL, TCL_TRACE_WRITES);
     Tcl_TraceVar(interp, list[i].name, TCL_TRACE_READS | TCL_TRACE_WRITES |
 		 TCL_TRACE_UNSETS, tcl_eggstr, (ClientData) st);
   }
@@ -607,14 +591,11 @@ void add_tcl_ints(tcl_ints * list)
   intinfo *ii;
 
   for (i = 0; list[i].name; i++) {
-    char *p = Tcl_GetVar(interp, list[i].name, TCL_GLOBAL_ONLY);
-
-    if (p != NULL)
-      *(list[i].val) = atoi(p);
     ii = nmalloc(sizeof(intinfo));
     strtot += sizeof(intinfo);
     ii->var = list[i].val;
     ii->ro = list[i].readonly;
+    tcl_eggint((ClientData) ii, interp, list[i].name, NULL, TCL_TRACE_WRITES);
     Tcl_TraceVar(interp, list[i].name,
 		 TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
 		 tcl_eggint, (ClientData) ii);
@@ -654,6 +635,7 @@ void add_tcl_coups(tcl_coups * list)
     strtot += sizeof(coupletinfo);
     cp->left = list[i].lptr;
     cp->right = list[i].rptr;
+    tcl_eggcouplet((ClientData) cp, interp, list[i].name, NULL, TCL_TRACE_WRITES);
     Tcl_TraceVar(interp, list[i].name,
 		 TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
 		 tcl_eggcouplet, (ClientData) cp);
