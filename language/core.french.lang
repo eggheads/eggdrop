@@ -1,7 +1,7 @@
 # core.french.lang
 #   core language messages for eggdrop
 #
-# $Id: core.french.lang,v 1.22 2001/12/31 06:47:13 guppy Exp $
+# $Id: core.french.lang,v 1.23 2002/01/08 04:24:27 guppy Exp $
 
 
 # General stuff
@@ -380,7 +380,7 @@ Faites un Telnet sur le bot et entrez 'NEW' comme surnom.
 0xc1d,%s a été enlevé de force pour flood.\n
 0xc1e,-=- poof -=-\n
 0xc1f,Vous avez été viré de %s par %s%s%s\n
-0xc20,%s viré %s de la party line%s%s\n
+0xc20,%s viré %s de la party line%s%s
 0xc21,DCC chat refusé (port invalide)
 0xc22,DCC port invalide
 

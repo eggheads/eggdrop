@@ -1,7 +1,7 @@
 # core.english.lang
 #   core language messages for eggdrop
 #
-# $Id: core.english.lang,v 1.29 2001/12/31 06:47:13 guppy Exp $
+# $Id: core.english.lang,v 1.30 2002/01/08 04:24:27 guppy Exp $
 
 # General stuff
 0x001,Usage
@@ -379,7 +379,7 @@ Telnet to the bot and enter 'NEW' as your nickname.
 0xc1d,%s has been forcibly removed for flooding.\n
 0xc1e,-=- poof -=-\n
 0xc1f,You've been booted from the %s by %s%s%s\n
-0xc20,%s booted %s from the party line%s%s\n
+0xc20,%s booted %s from the party line%s%s
 0xc21,Refused DCC chat (invalid port)
 0xc22,DCC invalid port
 

@@ -1,7 +1,7 @@
 /*
  * tclirc.c -- part of irc.mod
  *
- * $Id: tclirc.c,v 1.32 2002/01/08 04:11:53 guppy Exp $
+ * $Id: tclirc.c,v 1.33 2002/01/08 04:24:27 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -26,7 +26,7 @@
  */
 static int tcl_chanlist STDVAR
 {
-  char s1[1024];
+  char nuh[1024];
   int f;
   memberlist *m;
   struct chanset_t *chan;
@@ -57,8 +57,8 @@ static int tcl_chanlist STDVAR
 
   for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
     if (!m->user) {
-      egg_snprintf(s1, sizeof s1, "%s!%s", m->nick, m->userhost); 
-      m->user = get_user_by_host(s1);
+      egg_snprintf(nuh, sizeof nuh, "%s!%s", m->nick, m->userhost); 
+      m->user = get_user_by_host(nuh);
     }
     get_user_flagrec(m->user, &user, argv[1]);
     user.match = plus.match;

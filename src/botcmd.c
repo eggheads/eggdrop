@@ -3,7 +3,7 @@
  *   commands that comes across the botnet
  *   userfile transfer and update commands from sharebots
  *
- * $Id: botcmd.c,v 1.24 2002/01/02 03:46:35 guppy Exp $
+ * $Id: botcmd.c,v 1.25 2002/01/08 04:24:27 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -898,7 +898,8 @@ static void bot_reject(int idx, char *par)
 	  }
 	  do_boot(i, from, par);
 	  ok = 1;
-	  putlog(LOG_CMDS, "*", "#%s# boot %s (%s)", from, dcc[i].nick, par);
+	  putlog(LOG_CMDS, "*", "#%s# boot %s (%s)", from, who, 
+		 par[0] ? par : "No reason");
 	}
     } else {
       i = nextbot(destbot);
