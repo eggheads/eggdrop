@@ -2,7 +2,7 @@
  * chancmds.c -- part of irc.mod
  *   handles commands direclty relating to channel interaction
  *
- * $Id: cmdsirc.c,v 1.24 2001/04/12 02:39:46 guppy Exp $
+ * $Id: cmdsirc.c,v 1.25 2001/07/02 16:39:11 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -563,7 +563,9 @@ static void cmd_channel(struct userrec *u, int idx, char *par)
       }
       get_user_flagrec(m->user, &user, chan->dname);
       /* Determine status char to use */
-      if (glob_bot(user))
+      if (glob_bot(user) && (glob_op(user)||chan_op(user)))
+	atrflag = 'B';
+      else if (glob_bot(user))
 	atrflag = 'b';
       else if (glob_owner(user))
 	atrflag = 'N';
