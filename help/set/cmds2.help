@@ -20,7 +20,7 @@ see also: set switch-logfiles-at
 ###  %bset hourly-updates%b <#>
    allows you to set the minutes past the hour that the hourly
    event hooks will be called, this effects such things as note
-   notfication.
+   notification.
 %{help=set switch-logfiles-at}%{+n}
 ###  %bset switch-logfiles-at%b <military-time>
    tells eggdrop when to switch logfiles, storing away the current

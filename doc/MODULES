@@ -68,9 +68,9 @@ blowfish    : Encryption support needed for encrypting your users' passwords.
 channels    : Provides channel related support for the bot, without it, it
               will just sit on irc, it can respond to msg & ctcp commands,
               but that's all.
-compress    : This module provides an zlib support for compress transfer of files
-              vi athe botnet. For Example, compressed userfile transfers are
-              possible now.
+compress    : This module provides an zlib support for compress transfer of
+              files via the botnet. For Example, compressed userfile transfers
+              are possible now.
 console     : This module provides storage of console settings when you exit
               the bot (or .store).
 ctcp        : This provides the normal ctcp replies that you'd expect.

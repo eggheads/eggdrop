@@ -345,9 +345,9 @@ A. EGGDROP
 11. I get lot's of warnings
 
      Well, warnings are warning, nothing really bad. As long as the compile runs
-     through, there is nothing to worry about. Generally we try to avoid warnings,
-     but we do not have time to fix all of them in the code. This might change in 
-     the future, but at the moment you have to live with them.
+     through, there is nothing to worry about. Generally we try to avoid
+     warnings, but we do not have time to fix all of them in the code. This
+     might change in the future, but at the moment you have to live with them.
      If you feel like fixing them, do so and send us a patch (as described in
      doc/patch-HOWTO). Thanks.
 
@@ -530,7 +530,3 @@ B. TCL
 
 (c) 1997 Robey Pointer
 (c) 2000 Eggheads Development Team
-
-
-
-

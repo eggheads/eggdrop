@@ -727,8 +727,8 @@ specific commands, see later.
     returns: number of dcc connections currently in use
 
   dcclist ?type?
-    returns: a list of active connections, each item in the list will be a sublist
-      of six elements:
+    returns: a list of active connections, each item in the list will be a
+      sublist of six elements:
         {<idx> <handle> <hostname> <type> {<other>} <timestamp>}
 
       the types are: chat, bot, files, file_receiving, file_sending,
@@ -864,8 +864,9 @@ specific commands, see later.
     returns: a long integer which is the current time according to unix
 
   duration <seconds>
-    returns: the number of seconds converted into years, weeks, days, hours, minutes,
-      and seconds (ie: 804600secs is turned into 1wk 2days 7hrs 30mins).
+    returns: the number of seconds converted into years, weeks, days, hours,
+      minutes, and seconds (ie: 804600secs is turned into 1wk 2days 7hrs
+      30mins).
 
   strftime <formatstring> [time]
     returns: a formatted string of time using standard strftime
@@ -1069,7 +1070,8 @@ for the msg-command "stop", use "unbind msg - stop msg_stop".
 |      destination will be a nickname (the bot's nickname, obviously) or
 |      a channel name; matches the entire line of text from a /notice with
        the mask; it is considered a breach of protocol to respond to a
-       /notice on IRC, so this is intended for internal use (ie, logging, etc) only
+       /notice on IRC, so this is intended for internal use (ie, logging, etc)
+       only
 
 |      new Tcl procs should be declared as
 |      proc notcproc {nick uhost hand chan text {dest ""}} {
@@ -1722,4 +1724,3 @@ users to read later
   setflags <dir> [flags]
     sets the flags required to access the directory
     returns: 0 on success, -1 on failure
-
