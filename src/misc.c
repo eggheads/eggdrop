@@ -7,7 +7,7 @@
  *   help system
  *   motd display and %var substitution
  *
- * $Id: misc.c,v 1.62 2003/04/17 08:29:07 stdarg Exp $
+ * $Id: misc.c,v 1.63 2003/04/30 03:47:46 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -595,7 +595,8 @@ void logsuffix_change(char *s)
   char *s2 = logfile_suffix;
 
   /* If the suffix didn't really change, ignore. It's probably a rehash. */
-  if (s && s2 && !strcmp(s, s2)) return;
+  if (s && s2 && !strcmp(s, s2))
+    return;
 
   debug0("Logfile suffix changed. Closing all open logs.");
   strcpy(logfile_suffix, s);

@@ -2,7 +2,7 @@
  * net.c -- handles:
  *   all raw network i/o
  *
- * $Id: net.c,v 1.58 2003/04/17 04:38:33 wcc Exp $
+ * $Id: net.c,v 1.59 2003/04/30 03:47:46 wcc Exp $
  */
 /*
  * This is hereby released into the public domain.
@@ -859,22 +859,23 @@ int answer(int sock, char *caller, unsigned long *ip, unsigned short *port,
  */
 int open_telnet_dcc(int sock, char *server, char *port)
 {
-#ifdef DEBUG_IPV6
-  debug1("open_telnet_dcc %s", server);
-#endif /* DEBUG_IPV6 */
   int p;
   unsigned long addr;
   char sv[500];
   unsigned char c[4];
+
+#ifdef DEBUG_IPV6
+  debug1("open_telnet_dcc %s", server);
+#endif /* DEBUG_IPV6 */
   if (port != NULL)
     p = atoi(port);
   else
     p = 2000;
 #ifdef USE_IPV6
   if (getprotocol(server) == AF_INET6) {
-#ifdef DEBUG_IPV6
+#  ifdef DEBUG_IPV6
     debug0("open_telnet_dcc, af_inet6!");
-#endif /* DEBUG_IPV6 */
+#  endif /* DEBUG_IPV6 */
     strncpyz(sv, server, sizeof sv);
     debug2("%s should be %s",sv,server);
   } else {
