@@ -3,7 +3,7 @@
  *   commands that comes across the botnet
  *   userfile transfer and update commands from sharebots
  *
- * $Id: botcmd.c,v 1.30 2002/08/21 02:05:25 wcc Exp $
+ * $Id: botcmd.c,v 1.31 2002/08/21 02:37:55 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -822,8 +822,8 @@ static void bot_traced(int idx, char *par)
             register char *c=p;
             for (; *c != '\0'; c++) if (*c == ':') j++;
           }
-	  dprintf(i, "%s -> %s (%lu secs, %d hops)\n", BOT_TRACERESULT, p,
-            now - t, j);
+	  dprintf(i, "%s -> %s (%lu secs, %d hop%s)\n", BOT_TRACERESULT, p,
+            now - t, j, (j != 1) ? "s" : "");
 	} else
 	  dprintf(i, "%s -> %s\n", BOT_TRACERESULT, p);
       }
