@@ -1,4 +1,4 @@
-$Id: tcl-commands.doc,v 1.120 2005/02/02 15:32:54 tothwolf Exp $
+$Id: tcl-commands.doc,v 1.121 2005/02/04 14:15:26 tothwolf Exp $
 
 Eggdrop Tcl Commands
 Last revised: August 02, 2004
@@ -1661,7 +1661,11 @@ marked with vertical bars (|) on the left.
 
          Description: matches the entire line of text from a /msg with the
            mask. This is useful for binding Tcl procs to words or phrases
-           spoken anywhere within a line of text.
+|          spoken anywhere within a line of text. If the proc returns 1,
+|          Eggdrop will not log the message that triggered this bind.
+|          MSGM binds are processed before MSG binds. If the exclusive-binds
+|          setting is enabled, MSG binds will not be trigged by text that
+|          a MSGM bind has already handled.
          Module: server
 
     (6)  PUBM (stackable)
@@ -1671,8 +1675,11 @@ marked with vertical bars (|) on the left.
          Description: just like MSGM, except it's triggered by things said
            on a channel instead of things /msg'd to the bot. The mask is
            matched against the channel name followed by the text and can
-           contain wildcards. Also, if a line triggers a PUB bind, it will not
-           trigger a PUBM bind.
+|          contain wildcards. If the proc returns 1, Eggdrop will not log
+|          the message that triggered this bind. PUBM binds are processed
+|          before PUB binds. If the exclusive-binds setting is enabled,
+|          PUB binds will not be trigged by text that a PUBM bind has
+|          already handled.
          Module: irc
 
     (7)  NOTC (stackable)
@@ -1683,8 +1690,9 @@ marked with vertical bars (|) on the left.
            obviously) or a channel name. mask is matched against the entire
            notice and can contain wildcards. It is considered a breach of
            protocol to respond to a /notice on IRC, so this is intended for
-           internal use (logging, etc.) only. Note that server notices do not
-           trigger the NOTC bind.
+           internal use (logging, etc.) only. Note that server notices do
+|          not trigger the NOTC bind. If the proc returns 1, Eggdrop will
+|          not log the message that triggered this bind.
 
            New Tcl procs should be declared as
              proc notcproc {nick uhost hand text {dest ""}} {
@@ -2005,7 +2013,8 @@ marked with vertical bars (|) on the left.
           of the wallops msg. Note that RFC shows the server name as a source
           of the message, whereas many IRCds send the nick!user@host of the
           actual sender, thus, Eggdrop will not parse it at all, but simply
-          pass it to bind in its original form.
+|         pass it to bind in its original form. If the proc returns 1,
+|         Eggdrop will not log the message that triggered this bind.
         Module: server
 
     (34) BCST (stackable)
@@ -2177,13 +2186,22 @@ marked with vertical bars (|) on the left.
 
     (10) CHOF  Return 1 to ask the bot not to process the partyline part event.
 
-    (11) WALL  Return 1 to make Eggdrop log the command as:
-                 !nick! msg
+|   (11) WALL  Return 1 to make Eggdrop not log the message that triggered
+|              this bind.
 
 |   (12) NOTE  Return 1 to make Eggdrop not process the note any further.
 |              This includes stacked note bindings that would be processed
 |              after this one, as well as the built-in eggdrop note handling
 |              routines.
+
+|   (13) MSGM  Return 1 to make Eggdrop not log the message that triggered
+|              this bind.
+
+|   (14) PUBM  Return 1 to make Eggdrop not log the message that triggered
+|              this bind.
+
+|   (15) NOTC  Return 1 to make Eggdrop not log the message that triggered
+|              this bind.
 
 *** CONTROL PROCEDURES ***
 

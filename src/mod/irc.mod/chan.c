@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  *
- * $Id: chan.c,v 1.120 2005/02/03 15:34:21 tothwolf Exp $
+ * $Id: chan.c,v 1.121 2005/02/04 14:15:26 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -2318,6 +2318,8 @@ static int gotmsg(char *from, char *msg)
   }
 
   if (msg[0]) {
+    int result = 0;
+
     /* Check even if we're ignoring the host. (modified by Eule 17.7.99) */
     detect_chan_flood(nick, uhost, from, chan, FLOOD_PRIVMSG, NULL);
 
@@ -2325,23 +2327,22 @@ static int gotmsg(char *from, char *msg)
     if (!chan)
       return 0;
 
+    update_idle(chan->dname, nick);
+
     if (!ignoring || trigger_on_ignore) {
-      if (check_tcl_pub(nick, uhost, chan->dname, msg))
-        return 0;
-      check_tcl_pubm(nick, uhost, chan->dname, msg);
+      result = check_tcl_pubm(nick, uhost, chan->dname, msg);
 
-      chan = findchan(realto);
-      if (!chan)
-        return 0;
-
+      if (!result || !exclusive_binds)
+        if (check_tcl_pub(nick, uhost, chan->dname, msg))
+          return 0;
     }
-    if (!ignoring) {
+
+    if (!ignoring && result != 2) {
       if (to[0] == '@')
         putlog(LOG_PUBLIC, chan->dname, "@<%s> %s", nick, msg);
       else
         putlog(LOG_PUBLIC, chan->dname, "<%s> %s", nick, msg);
     }
-    update_idle(chan->dname, nick);
   }
   return 0;
 }
@@ -2435,6 +2436,7 @@ static int gotnotice(char *from, char *msg)
     }
   }
   if (msg[0]) {
+
     /* Check even if we're ignoring the host. (modified by Eule 17.7.99) */
     detect_chan_flood(nick, uhost, from, chan, FLOOD_NOTICE, NULL);
 
@@ -2442,17 +2444,14 @@ static int gotnotice(char *from, char *msg)
     if (!chan)
       return 0;
 
-    if (!ignoring || trigger_on_ignore) {
-      check_tcl_notc(nick, uhost, u, to, msg);
+    update_idle(chan->dname, nick);
 
-      chan = findchan(realto);
-      if (!chan)
+    if (!ignoring || trigger_on_ignore)
+      if (check_tcl_notc(nick, uhost, u, to, msg) == 2)
         return 0;
-    }
 
     if (!ignoring)
       putlog(LOG_PUBLIC, chan->dname, "-%s:%s- %s", nick, to, msg);
-    update_idle(chan->dname, nick);
   }
   return 0;
 }

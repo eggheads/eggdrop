@@ -1,4 +1,4 @@
-$Id: mod.server,v 1.34 2005/01/03 20:01:44 paladin Exp $
+$Id: mod.server,v 1.35 2005/02/04 14:15:26 tothwolf Exp $
 
 Server Module
 Last revised: February 12, 2003
@@ -169,6 +169,13 @@ Last revised: February 12, 2003
 
     set trigger-on-ignore 0
       If you want Eggdrop to trigger binds for ignored users, set this to 1.
+
+
+    set exclusive-binds 0
+      This setting configures PUBM and MSGM binds to be exclusive of PUB
+      and MSG binds. This means if a MSGM bind with the mask "*help*" exists
+      and is triggered, any MSG bindings with "help" in their mask will not
+      be triggered. Don't enable this unless you know what you are doing!
 
 
     set double-mode 0

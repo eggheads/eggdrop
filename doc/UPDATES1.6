@@ -1,4 +1,4 @@
-$Id: UPDATES1.6,v 1.604 2005/02/03 18:07:21 tothwolf Exp $
+$Id: UPDATES1.6,v 1.605 2005/02/04 14:15:26 tothwolf Exp $
 
 Eggdrop Changes (since v1.6.0)
     _____________________________________________________________________
@@ -12,6 +12,28 @@ Eggdrop Changes (since v1.6.0)
 
 
   1.6.18:
+    - Added support to MSGM, PUBM, NOTC, and WALL binds to support bound
+      procs returning 1 to prevent logging of the trigger message text.
+      Fixes Bugzilla Bug # 334 "msgm bind return values"
+    - Added BIND_STACKRET bit mask and support for stacked bind return values
+      to check_tcl_bind(). This allows check_tcl_bind() to check if any
+      stacked bound procs return 1 while allowing all matching stacked binds
+      to be processed. Previously if BIND_WANTRET was used to check the
+      return value of stacked binds, only the first match would be triggered.
+    - Modified irc.mod gotmsg() function to trigger PUBM binds before
+      triggering PUB binds. MSGM and MSG binds already worked this way.
+    - Modified irc.mod gotmsg() function to allow a message to trigger both
+      PUBM and PUB binds. Previously if a message triggered a PUB bind, any
+      PUBM binds that might match the message text would not be triggered.
+      Fixes Bugzilla Bug # 351 "bind pub hogs pubm"
+    - Added exclusive-binds setting and code to gotmsg() functions to
+      allow MSGM and PUBM binds to be exclusive of MSG and PUB binds.
+    - Fixed logging for WALL bind. It had been broken since it was
+      originally implemented in eggdrop-hayes. Wallops messages were always
+      logged regardless of the return value of a bound proc. Returning '1'
+      from a bound proc now causes Eggdrop to not log the Wallops message.
+    * Patch by: Tothwolf
+
     - Check for Tcl 8.5 before older versions.
     * Patch by: Tothwolf
 

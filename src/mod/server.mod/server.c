@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  *
- * $Id: server.c,v 1.120 2005/01/03 20:01:46 paladin Exp $
+ * $Id: server.c,v 1.121 2005/02/04 14:15:27 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -72,6 +72,8 @@ static int cycle_time;          /* cycle time till next server connect */
 static int default_port;        /* default IRC port */
 static char oldnick[NICKLEN];   /* previous nickname *before* rehash */
 static int trigger_on_ignore;   /* trigger bindings if user is ignored ? */
+static int exclusive_binds;     /* configures PUBM and MSGM binds to be
+                                 * exclusive of PUB and MSG binds. */
 static int answer_ctcp;         /* answer how many stacked ctcp's ? */
 static int lowercase_ctcp;      /* answer lowercase CTCP's (non-standard) */
 static int check_mode_r;        /* check for IRCnet +r modes */
@@ -1362,6 +1364,7 @@ static tcl_ints my_tcl_ints[] = {
   {"optimize-kicks",    &optimize_kicks,            0},
   {"isjuped",           &nick_juped,                0},
   {"stack-limit",       &stack_limit,               0},
+  {"exclusive-binds",   &exclusive_binds,           0},
   {NULL,                NULL,                       0}
 };
 
@@ -1825,10 +1828,11 @@ static Function server_table[] = {
   (Function) & H_ctcp,          /* p_tcl_bind_list                      */
   (Function) & H_ctcr,          /* p_tcl_bind_list                      */
   (Function) ctcp_reply,
-  /* 36 - 38 */
+  /* 36 - 39 */
   (Function) get_altbotnick,    /* char *                               */
   (Function) & nick_len,        /* int                                  */
-  (Function) check_tcl_notc
+  (Function) check_tcl_notc,
+  (Function) & exclusive_binds  /* int                                  */
 };
 
 char *server_start(Function *global_funcs)
@@ -1870,6 +1874,7 @@ char *server_start(Function *global_funcs)
   default_port = 6667;
   oldnick[0] = 0;
   trigger_on_ignore = 0;
+  exclusive_binds = 0;
   answer_ctcp = 1;
   lowercase_ctcp = 0;
   check_mode_r = 0;

@@ -2,7 +2,7 @@
  * tclegg.h
  *   stuff used by tcl.c and tclhash.c
  *
- * $Id: tclegg.h,v 1.26 2005/02/02 00:02:29 tothwolf Exp $
+ * $Id: tclegg.h,v 1.27 2005/02/04 14:15:26 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -32,23 +32,52 @@
 #  include "proto.h" /* This file needs this */
 #endif
 
-/* Match types for check_tcl_bind
+/*
+ * Match types for check_tcl_bind
  */
 #define MATCH_PARTIAL       0
 #define MATCH_EXACT         1
 #define MATCH_MASK          2
 #define MATCH_CASE          3
 
-/* Bitwise 'or' these:
+/*
+ * Bitwise 'or' these:
  */
-#define BIND_USE_ATTR       0x04        /* Check flags */
-#define BIND_STACKABLE      0x08        /* Stackable */
-#define BIND_HAS_BUILTINS   0x10        /* ??? Used for dcc, fil, msg, pub */
-#define BIND_WANTRET        0x20        /* Return tcl proc result */
-#define BIND_ALTER_ARGS     0x40        /* Use return value from tcl proc
-                                           as args for command */
 
-/* Return values
+/* Check flags; make sure the user has the flags required */
+#define BIND_USE_ATTR       0x04
+
+/* Bind is stackable; more than one bind can have the same name */
+#define BIND_STACKABLE      0x08
+
+/* Additional flag checking; check for +d, +k, etc.
+ * Currently used for dcc, fil, msg, and pub bind types.
+ * Note that this just causes the flag checking to use flagrec_ok()
+ * instead of flagrec_eq().
+ */
+/* FIXME: Should this really be used for the dcc and fil types since
+ *        they are only available to the partyline/filesys (+p/+x)?
+ *        Eggdrop's revenge code does not add default flags when
+ *        adding a user record for +d or +k flags. */
+#define BIND_HAS_BUILTINS   0x10
+
+/* Want return; we want to know if the proc returns 1
+ * Side effect: immediate return; don't do any further
+ * processing of stacked binds
+ */
+#define BIND_WANTRET        0x20
+
+/* Alternate args; replace args with the return result from the Tcl proc. */
+#define BIND_ALTER_ARGS     0x40
+
+/* Stacked return; we want to know if any proc returns 1,
+ * and also want to process all stacked binds
+ */
+#define BIND_STACKRET       0x80
+
+
+/*
+ * Return values
  */
 #define BIND_NOMATCH    0
 #define BIND_AMBIGUOUS  1

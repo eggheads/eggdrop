@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: tcl-commands.html,v 1.48 2005/02/02 15:32:54 tothwolf Exp $ -->
+<!-- $Id: tcl-commands.html,v 1.49 2005/02/04 14:15:26 tothwolf Exp $ -->
 
 <html>
   <head>
@@ -3702,7 +3702,11 @@
               <p><strong>Description:</strong> matches the entire line of
               text from a /msg with the mask. This is useful for binding
               Tcl procs to words or phrases spoken anywhere within a line
-              of text.</p>
+              of text. If the proc returns 1, Eggdrop will not log the
+              message that triggered this bind. MSGM binds are processed
+              before MSG binds. If the exclusive-binds setting is enabled,
+              MSG binds will not be trigged by text that a MSGM bind has
+              already handled.</p>
 
               <p><strong>Module:</strong> server</p>
             </li>
@@ -3719,8 +3723,11 @@
               it&#39;s triggered by things said on a channel instead of
               things /msg&#39;d to the bot. The mask is matched against
               the channel name followed by the text and can contain
-              wildcards. Also, if a line triggers a PUB bind, it will not
-              trigger a PUBM bind.</p>
+              wildcards. If the proc returns 1, Eggdrop will not log
+              the message that triggered this bind. PUBM binds are
+              processed before PUB binds. If the exclusive-binds setting
+              is enabled, PUB binds will not be trigged by text that a
+              PUBM bind has already handled.</p>
 
               <p><strong>Module:</strong> irc</p>
             </li>
@@ -3737,7 +3744,9 @@
               matched against the entire notice and can contain wildcards.
               It is considered a breach of protocol to respond to a /notice
               on IRC, so this is intended for internal use (logging, etc.)
-              only.Note that server notices do not trigger the NOTC bind.</p>
+              only. Note that server notices do not trigger the NOTC bind.
+              If the proc returns 1, Eggdrop will not log the message that
+              triggered this bind.</p>
 
               <p>New Tcl procs should be declared as</p>
 
@@ -4216,8 +4225,13 @@
               proc-name &lt;handle&gt; &lt;msg&gt;</strong></p>
 
               <p><strong>Description:</strong> when the bot receives a
-              wallops, it invokes this binding. flags are ignored; the
-              mask is matched against the text of the wallops msg.</p>
+              wallops, it invokes this binding. flags are ignored; the mask
+              is matched against the text of the wallops msg. Note that RFC
+              shows the server name as a source of the message, whereas many
+              IRCds send the nick!user@host of the actual sender, thus,
+              Eggdrop will not parse it at all, but simply pass it to bind
+              in its original form. If the proc returns 1, Eggdrop will not
+              log the message that triggered this bind.</p>
 
               <p><strong>Module:</strong> server</p>
             </li>
@@ -4644,11 +4658,8 @@
             <li>
               <p><strong>WALL</strong></p>
 
-              <p>Return 1 to make Eggdrop log the command as:</p>
-
-              <blockquote>
-                <p>!nick! msg</p>
-              </blockquote>
+              <p>Return 1 to make Eggdrop not log the message that
+              triggered this bind.</p>
             </li>
 
             <li>
@@ -4658,6 +4669,27 @@
               further. This includes stacked note bindings that would
               be processed after this one, as well as the built-in
               eggdrop note handling routines.</p>
+            </li>
+
+            <li>
+              <p><strong>MSGM</strong></p>
+
+              <p>Return 1 to make Eggdrop not log the message that
+              triggered this bind.</p>
+            </li>
+
+            <li>
+              <p><strong>PUBM</strong></p>
+
+              <p>Return 1 to make Eggdrop not log the message that
+              triggered this bind.</p>
+            </li>
+
+            <li>
+              <p><strong>NOTC</strong></p>
+
+              <p>Return 1 to make Eggdrop not log the message that
+              triggered this bind.</p>
             </li>
           </ol>
         </li>

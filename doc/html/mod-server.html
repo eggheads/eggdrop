@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: mod-server.html,v 1.33 2005/01/03 20:01:43 paladin Exp $ -->
+<!-- $Id: mod-server.html,v 1.34 2005/02/04 14:15:26 tothwolf Exp $ -->
 
 <html>
   <head>
@@ -281,6 +281,15 @@
           this to 1.</p>
         </dd>
 
+        <dt><strong>set exclusive-binds 0</strong></dt>
+        <dd>
+          <p>This setting configures PUBM and MSGM binds to be exclusive
+          of PUB and MSG binds. This means if a MSGM bind with the mask
+          &quot;*help*&quot; exists and is triggered, any MSG bindings
+          with &quot;help&quot; in their mask will not be triggered.
+          Don't enable this unless you know what you are doing!</p>
+        </dd>
+
         <dt><strong>set double-mode 0</strong></dt>
 
         <dd>
@@ -307,8 +316,8 @@
           <p>This enables Eggdrop&#39;s penalty calculation. Every command
           Eggdrop sends to the IRC server raises it&#39;s penalty points.
           If Eggdrop reaches a server limit, it gets disconnected with
-          "excess flood" message. Eggdrop is able to count internal those
-          penalty points, too and take measures against excess flooding.
+          &quot;excess flood&quot; message. Eggdrop is able to count internal
+          those penalty points, too and take measures against excess flooding.
           Note: it&#39;s highly advised to turn this on!</p>
         </dd>
 

@@ -1,7 +1,7 @@
 /*
  * server.h -- part of server.mod
  *
- * $Id: server.h,v 1.22 2005/01/03 20:01:46 paladin Exp $
+ * $Id: server.h,v 1.23 2005/02/04 14:15:27 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -49,31 +49,31 @@
 #define check_tcl_ctcpr ((int(*)(char*,char*,struct userrec*,char*,char*,char*,p_tcl_bind_list))server_funcs[17])
 #define detect_avalanche ((int(*)(char *))server_funcs[18])
 #define nuke_server ((void(*)(char *))server_funcs[19])
-/* 20 - 22 */
+/* 20 - 23 */
 #define newserver ((char *)(server_funcs[20]))
 #define newserverport (*(int *)(server_funcs[21]))
 #define newserverpass ((char *)(server_funcs[22]))
-/* 23 - 26 */
 #define cycle_time (*(int *)(server_funcs[23]))
+/* 24 - 27 */
 #define default_port (*(int *)(server_funcs[24]))
 #define server_online (*(int *)(server_funcs[25]))
 #define min_servs (*(int *)(server_funcs[26]))
-/* 27 - 30 */
 #define H_raw (*(p_tcl_bind_list *)(server_funcs[27]))
+/* 28 - 31 */
 #define H_wall (*(p_tcl_bind_list *)(server_funcs[28]))
 #define H_msg (*(p_tcl_bind_list *)(server_funcs[29]))
 #define H_msgm (*(p_tcl_bind_list *)(server_funcs[30]))
-/* 31 - 34 */
 #define H_notc (*(p_tcl_bind_list *)(server_funcs[31]))
+/* 32 - 35 */
 #define H_flud (*(p_tcl_bind_list *)(server_funcs[32]))
 #define H_ctcp (*(p_tcl_bind_list *)(server_funcs[33]))
 #define H_ctcr (*(p_tcl_bind_list *)(server_funcs[34]))
-/* 35 - 38 */
 #define ctcp_reply ((char *)(server_funcs[35]))
+/* 36 - 39 */
 #define get_altbotnick ((char *(*)(void))(server_funcs[36]))
 #define nick_len (*(int *)(server_funcs[37]))
 #define check_tcl_notc ((int (*)(char *,char *,struct userrec *,char *,char *))server_funcs[38])
-
+#define exclusive_binds (*(int *)(server_funcs[39]))
 #else /* MAKING_SERVER */
 
 /* Macros for commonly used commands. */

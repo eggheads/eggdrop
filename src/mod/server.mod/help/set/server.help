@@ -94,6 +94,12 @@ see also: set nick, set altnick
 ###  %bset trigger-on-ignore%b 0/1
    Enabling this will cause ignored users to trigger bindings anyway,
    normally and ignored user is just that, someone who is ignored.
+%{help=set exclusive-binds}%{+n}
+###  %bset exclusive-binds%b 0/1
+  This setting configures PUBM and MSGM binds to be exclusive of PUB
+  and MSG binds. This means if a MSGM bind with the mask "*help*" exists
+  and is triggered, any MSG bindings with "help" in their mask will not
+  be triggered. Don't enable this unless you know what you are doing!
 %{help=set answer-ctcp}%{+n}
 ###  %bset answer-ctcp%b 0/1
    This sets the maximum number of stacked CTCP's to answer from any
