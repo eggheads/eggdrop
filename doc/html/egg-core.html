@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: egg-core.html,v 1.19 2002/04/21 16:09:40 wcc Exp $ -->
+<!-- $Id: egg-core.html,v 1.20 2002/05/28 20:16:00 wcc Exp $ -->
 
 <html>
   <head>
@@ -341,14 +341,15 @@
 
         <dd>
           <p>The MOTD (Message Of The day) is displayed when people dcc chat
-          or telnet to the bot. Look at doc/settings.motd or type &#39;.help
-          set motd&#39; in DCC CHAT or telnet connection for options.</p>
+          or telnet to the bot. Look at doc/text-substitutions.doc for
+          options.</p>
         </dd>
 
         <dt><strong>set telnet-banner &quot;text/banner&quot;</strong></dt>
 
         <dd>
-          <p>This banner will be displayed on telnet connections.</p>
+          <p>This banner will be displayed on telnet connections. Look at
+          doc/text-substitutions.doc for options.</p>
         </dd>
 
         <dt><strong>set userfile-perm 0600</strong></dt>
@@ -454,8 +455,8 @@
 
         <dd>
           <p>This setting will drop telnet connections not matching a known
-          host. It greatly improves protection from IRCOps, but makes it
-          impossible for limbo bots to add hosts or have NEW as a valid
+          host. It greatly improves protection from IRCops, but makes it
+          impossible to add hosts on limbo (NOIRC) bots or have NEW as a valid
           login.</p>
         </dd>
 
