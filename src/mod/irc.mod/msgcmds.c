@@ -2,7 +2,7 @@
  * msgcmds.c -- part of irc.mod
  *   all commands entered via /MSG
  *
- * $Id: msgcmds.c,v 1.29 2002/06/13 20:43:08 wcc Exp $
+ * $Id: msgcmds.c,v 1.30 2002/06/13 21:22:47 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -557,10 +557,43 @@ static int msg_help(char *nick, char *host, struct userrec *u, char *par)
   return 1;
 }
 
-/* I guess just op them on every channel they're on, unless they specify
- * a parameter.
- */
 static int msg_op(char *nick, char *host, struct userrec *u, char *par)
+{
+  struct chanset_t *chan;
+  char *pass;
+  struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
+
+  if (match_my_nick(nick))
+    return 1;
+  pass = newsplit(&par);
+  if (u_pass_match(u, pass)) {
+    if (!u_pass_match(u, "-")) {
+      if (par[0]) {
+        chan = findchan_by_dname(par);
+        if (chan && channel_active(chan)) {
+          get_user_flagrec(u, &fr, par);
+          if (chan_op(fr) || (glob_op(fr) && !chan_deop(fr)))
+            add_mode(chan, '+', 'o', nick);
+          putlog(LOG_CMDS, "*", "(%s!%s) !%s! OP %s",
+			  nick, host, u->handle, par);
+          return 1;
+        }
+      } else {
+        for (chan = chanset; chan; chan = chan->next) {
+          get_user_flagrec(u, &fr, chan->dname);
+          if (chan_op(fr) || (glob_op(fr) && !chan_deop(fr)))
+            add_mode(chan, '+', 'o', nick);
+        }
+        putlog(LOG_CMDS, "*", "(%s!%s) !%s! OP", nick, host, u->handle);
+        return 1;
+      }
+    }
+  }
+  putlog(LOG_CMDS, "*", "(%s!%s) !*! failed OP", nick, host);
+  return 1;
+}
+
+static int msg_halfop(char *nick, char *host, struct userrec *u, char *par)
 {
   struct chanset_t *chan;
   char *pass;
