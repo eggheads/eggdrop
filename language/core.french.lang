@@ -1,7 +1,7 @@
 # core.french.lang
 #   core language messages for eggdrop
 #
-# $Id: core.french.lang,v 1.17 2001/01/31 05:32:31 guppy Exp $
+# $Id: core.french.lang,v 1.18 2001/02/11 17:57:30 guppy Exp $
 
 
 # General stuff
@@ -151,7 +151,7 @@ Faites un Telnet sur le bot et entrez 'NEW' comme surnom.
 0x604,Salut
 0x605,Au revoir
 0x606,Vous êtes banni, goober.
-0x607,Votre surnom est trop long pour l'ajouter maintenant.
+0x607,NOTICE %s :Ton nick était trop longue, j'ai du le changer à '%s'.\n
 0x608,Présenté à
 0x609,site public
 0x60a,NOTICE %s :Salut %s!  Je suis %s, un bot eggdrop.\n
