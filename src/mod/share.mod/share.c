@@ -16,8 +16,7 @@ static const int min_exemptinvite = 1032800; /* eggdrop 1.3.28 supports exempts
 static int private_owner = 1, private_global = 0, private_user = 0;
 static char private_globals[50];
 static int allow_resync = 0;
-static struct flag_record fr =
-{0, 0, 0, 0, 0, 0};
+static struct flag_record fr = {0, 0, 0, 0, 0, 0};
 static int resync_time = 900;
 static Function *global = NULL, *transfer_funcs = NULL, *channels_funcs = NULL;
 static void start_sending_users(int);

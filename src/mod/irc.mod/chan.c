@@ -318,10 +318,9 @@ static char *quickban(struct chanset_t *chan, char *uhost)
 static void kick_all(struct chanset_t *chan, char *hostmask, char *comment)
 {
   memberlist *m;
-  char kickchan[512], kicknick[512], s[UHOSTLEN];
+  char kicknick[512], s[UHOSTLEN];
 
-  struct flag_record fr =
-  {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
+  struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
   int k, l, flushed;
 
   context;
@@ -329,7 +328,6 @@ static void kick_all(struct chanset_t *chan, char *hostmask, char *comment)
     return;
   k = 0;
   flushed = 0;
-  kickchan[0] = 0;
   kicknick[0] = 0;
   m = chan->channel.member;
   while (m->nick[0]) {
@@ -348,35 +346,28 @@ static void kick_all(struct chanset_t *chan, char *hostmask, char *comment)
 	flushed += 1;
       }
       m->flags |= SENTKICK;	/* mark as pending kick */
-/*    if (kickchan[0])
-	strcat(kickchan, ",");
-      ^^^ un-needed, causes excess flood easier
-      commenting for now in case of incompatibilities
-      -poptix 926688959 *smirk*
- */
       if (kicknick[0])
 	strcat(kicknick, ",");
-      strcpy(kickchan, chan->name); /* changed this from strcat, see above */
       strcat(kicknick, m->nick);
       k += 1;
-      l = strlen(kickchan) + strlen(kicknick) + strlen(IRC_BANNED) + strlen(comment) + 5;
+      l = strlen(chan->name) + strlen(kicknick) + strlen(comment) + 5;
       if ((kick_method != 0 && k == kick_method) || (l > 480)) {
-	dprintf(DP_SERVER, "KICK %s %s :%s\n", kickchan, kicknick, comment);
+	dprintf(DP_SERVER, "KICK %s %s :%s\n", chan->name, kicknick, comment);
 	k = 0;
-	kickchan[0] = 0;
 	kicknick[0] = 0;
       }
     }
     m = m->next;
   }
   if (k > 0)
-    dprintf(DP_SERVER, "KICK %s %s :%s\n", kickchan, kicknick, comment);
+    dprintf(DP_SERVER, "KICK %s %s :%s\n", chan->name, kicknick, comment);
   context;
 }
 
 /* if any bans match this wildcard expression, refresh them on the channel */
 static void refresh_ban_kick(struct chanset_t *chan, char *user, char *nick)
 {
+  struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
   struct banrec *u;
   memberlist *m;
   char c[512];			/* the ban comment */
@@ -391,7 +382,9 @@ static void refresh_ban_kick(struct chanset_t *chan, char *user, char *nick)
     for (; u; u = u->next) {
       if (wild_match(u->banmask, user)) {
 	m = ismember(chan, nick);
-	if (m && chan_hasop(m)) {
+	get_user_flagrec(m->user, &fr, chan->name);
+	if (m && chan_hasop(m) &&
+	    !glob_friend(fr) && !chan_friend(fr)) {
 	  add_mode(chan, '-', 'o', nick);	/* guess it can't hurt */
 	  m->flags |= SENTDEOP;
         }
@@ -432,9 +425,9 @@ static void refresh_exempt (struct chanset_t * chan, char * user) {
               return;
             }
           }
-	      b = b->next;
-		}
-	  }
+	  b = b->next;
+	}
+      }
     }
   }
 }
@@ -451,10 +444,10 @@ static void refresh_invite (struct chanset_t * chan, char * user) {
       if (wild_match(i->invitemask,user) && 
 	      (i->flags & INVITEREC_STICKY || (chan->channel.mode & CHANINV))) {
         if (i->lastactive < now - 60 && !isinvited(chan,i->invitemask)) {
-	      do_invite(chan, i->invitemask);
-	      i->lastactive = now;
-	      return;
-	    }
+	  do_invite(chan, i->invitemask);
+	  i->lastactive = now;
+	  return;
+        }
       }
     }
   }
