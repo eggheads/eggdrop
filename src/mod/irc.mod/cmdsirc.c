@@ -2,7 +2,7 @@
  * chancmds.c -- part of irc.mod
  *   handles commands directly relating to channel interaction
  *
- * $Id: cmdsirc.c,v 1.54 2003/05/08 00:20:09 stdarg Exp $
+ * $Id: cmdsirc.c,v 1.55 2003/05/08 01:51:39 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1178,6 +1178,6 @@ static cmd_t irc_dcc[] = {
   {"kickban",      "lo|lo", (Function) cmd_kickban,      NULL},
   {"msg",          "o",     (Function) cmd_msg,          NULL},
   {"say",          "o|o",   (Function) cmd_say,          NULL},
-  {"topic",        "o|o",   (Function) cmd_topic,        NULL},
+  {"topic",        "lo|lo",   (Function) cmd_topic,        NULL},
   {NULL,           NULL,    NULL,                        NULL}
 };
