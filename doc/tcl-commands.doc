@@ -904,6 +904,9 @@ specific commands, see later.
 |   additional parameters (called arg1, arg2 and argn above) get appended
 |   to the proc's other parameters.
 
+| md5 <string>
+|   returns: the 128 bits MD5 "message-digest" of the specified string.
+
 GLOBAL VARIABLES:
   (All config-file variables are global, too.  But these variables
   are set by the bot.)
@@ -940,8 +943,8 @@ GLOBAL VARIABLES:
     The last command binding which triggered.   This allows you to
     identify which command triggered a tcl routine.
 
-| md5 <string>
-|   returns: the 128 bits MD5 "message-digest" of the specified string.
+| isjuped
+|   value is 1 if bots nick is juped(437) 0 otherwise.
 
 COMMAND EXTENSION:
 
