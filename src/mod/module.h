@@ -1,7 +1,7 @@
 /* 
  * module.h
  * 
- * $Id: module.h,v 1.30 2000/06/03 12:14:41 fabian Exp $
+ * $Id: module.h,v 1.31 2000/08/11 22:44:14 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -419,6 +419,9 @@
 #define egg_strncasecmp ((int (*)(const char *, const char *, size_t))global[256])
 #define is_file ((int (*)(const char *))global[257])
 #define must_be_owner (*(int *)(global[258]))
+#define tandbot (*(tand_t **)(global[259]))
+/* 260 - 263 */
+#define party (*(party_t **)(global[260]))
 
 
 /* This is for blowfish module, couldnt be bothereed making a whole new .h
