@@ -1,7 +1,7 @@
 /*
  * tclirc.c -- part of irc.mod
  *
- * $Id: tclirc.c,v 1.28 2001/12/20 18:52:11 guppy Exp $
+ * $Id: tclirc.c,v 1.29 2001/12/20 21:05:13 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -71,10 +71,10 @@ static int tcl_botisop STDVAR
 
   BADARGS(1, 2, " ?channel?");
   if (argc > 2) {
-    chan = findchan_by_dname(argv[2]);
+    chan = findchan_by_dname(argv[1]);
     thechan = chan;
     if (!thechan) {
-      Tcl_AppendResult(irp, "illegal channel: ", argv[2], NULL);
+      Tcl_AppendResult(irp, "illegal channel: ", argv[1], NULL);
       return TCL_ERROR;
     }
   } else
@@ -115,10 +115,10 @@ static int tcl_botisvoice STDVAR
 
   BADARGS(1, 2, " ?channel?");
   if (argc > 2) {
-    chan = findchan_by_dname(argv[2]);
+    chan = findchan_by_dname(argv[1]);
     thechan = chan;
     if (!thechan) {
-      Tcl_AppendResult(irp, "illegal channel: ", argv[2], NULL);
+      Tcl_AppendResult(irp, "illegal channel: ", argv[1], NULL);
       return TCL_ERROR;
     }
   } else
@@ -141,10 +141,10 @@ static int tcl_botonchan STDVAR
 
   BADARGS(1, 2, " ?channel?");
   if (argc > 2) {
-    chan = findchan_by_dname(argv[2]);
+    chan = findchan_by_dname(argv[1]);
     thechan = chan;
     if (!thechan) {
-      Tcl_AppendResult(irp, "illegal channel: ", argv[2], NULL);
+      Tcl_AppendResult(irp, "illegal channel: ", argv[1], NULL);
       return TCL_ERROR;
     }
   } else
