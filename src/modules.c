@@ -4,7 +4,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: modules.c,v 1.28 2000/01/08 21:23:14 per Exp $
+ * $Id: modules.c,v 1.29 2000/05/23 21:06:16 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -477,6 +477,7 @@ Function global_table[] =
   (Function) & protect_readonly, /* int */
   (Function) del_lang_section,
   /* 236 - 239 */
+  (Function) check_tcl_event,
 };
 
 void init_modules(void)

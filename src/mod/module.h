@@ -1,7 +1,7 @@
 /* 
  * module.h
  * 
- * $Id: module.h,v 1.25 2000/01/08 22:38:19 per Exp $
+ * $Id: module.h,v 1.26 2000/05/23 21:06:16 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -371,7 +371,7 @@
 #define protect_readonly (*(int *)(global[234]))
 #define del_lang_section ((int(*)(char *))global[235])
 /* 236 - 239 */
-
+#define check_tcl_event ((void * (*) (char *))global[236])
 /* this is for blowfish module, couldnt be bothereed making a whole new .h
  * file for it ;) */
 #ifndef MAKING_BLOWFISH

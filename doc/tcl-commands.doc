@@ -1307,6 +1307,10 @@ for the msg-command "stop", use "unbind msg - stop msg_stop".
 |        rehash            (called just after a rehash)
 |        prerehash         (called just before a rehash)
 |        logfile           (called when the logs are switched daily)
+|
+|        connect-server    (called just before we connect to an irc server)
+|        init-server       (called when we actually get on our irc server)
+|        disconnect-server (called when we disconnect from our irc server)
 
 (A) RETURN VALUES
 

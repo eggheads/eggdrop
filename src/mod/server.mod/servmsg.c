@@ -1,7 +1,7 @@
 /* 
  * servmsg.c -- part of server.mod
  * 
- * $Id: servmsg.c,v 1.30 2000/05/02 00:42:42 guppy Exp $
+ * $Id: servmsg.c,v 1.31 2000/05/23 21:06:16 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -254,6 +254,7 @@ static int got001(char *from, char *msg)
   /* init-server */
   if (initserver[0])
     do_tcl("init-server", initserver);
+  check_tcl_event("init-server");
   x = serverlist;
   if (x == NULL)
     return 0;			/* uh, no server list */
@@ -329,8 +330,6 @@ static void nuke_server(char *reason)
 {
   if (serv >= 0) {
     int servidx = findanyidx(serv);
-
-    server_online = 0;
     if (reason && (servidx > 0))
       dprintf(servidx, "QUIT :%s\n", reason);
     disconnect_server(servidx);
@@ -980,6 +979,8 @@ static int gotmode(char *from, char *msg)
 
 static void disconnect_server(int idx)
 {
+  if (server_online > 0)
+    check_tcl_event("disconnect-server");
   server_online = 0;
   if (dcc[idx].sock >= 0)
     killsock(dcc[idx].sock);
@@ -1130,6 +1131,7 @@ static void connect_server(void)
   if (!cycle_time) {
     if (connectserver[0])	/* drummer */
       do_tcl("connect-server", connectserver);
+    check_tcl_event("connect-server");
     next_server(&curserv, botserver, &botserverport, pass);
     putlog(LOG_SERV, "*", "%s %s:%d", IRC_SERVERTRY, botserver, botserverport);
     serv = open_telnet(botserver, botserverport);
