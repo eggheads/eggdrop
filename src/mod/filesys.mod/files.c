@@ -2,7 +2,7 @@
  * files.c - part of filesys.mod
  *   handles all file system commands
  *
- * $Id: files.c,v 1.45 2003/12/14 06:08:15 stdarg Exp $
+ * $Id: files.c,v 1.46 2003/12/14 06:26:11 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1191,7 +1191,6 @@ static void cmd_mv_cp(int idx, char *par, int copy)
 	   * then we check for multiple source files and if they are there,
 	   * abort. Otherwise, proceed. */
 	  filedb_entry *check_for_more;
-	  putlog(LOG_MISC, "*", "Checking for multifiles");
 	  check_for_more = filedb_matchfile(fdb_old, ftell(fdb_old), fn);
 	  if (check_for_more) {
 		  dprintf(idx, FILES_ILLDEST);
