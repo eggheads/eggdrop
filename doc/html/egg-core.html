@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: egg-core.html,v 1.26 2002/12/24 02:30:02 wcc Exp $ -->
+<!-- $Id: egg-core.html,v 1.27 2003/01/28 23:14:50 wcc Exp $ -->
 
 <html>
   <head>
@@ -192,25 +192,165 @@
           <p>This setting tells the bot what should be logged, from where,
           and to which file.</p>
 
-          <p>The most common log file flags are:</p>
+          <p>Logfile flags:</p>
+          
+          <blockquote>
+            <table>
+              <tr valign="top">
+                <td>
+                  <p><strong>b</strong></p>
+                </td>
 
-          <p>m private msgs/ctcps to the bot<br>
-           k kicks, bans, mode changes on the channel<br>
-           j joins, parts, netsplits on the channel<br>
-           p public chatter on the channel<br>
-           s server connects/disconnects/notices<br>
-           b information about bot linking and userfile sharing<br>
-           c commands people use (via msg or dcc)<br>
-           x file transfers and file-area commands<br>
-           r (if use-console-r enabled) EVERYTHING sent to the bot by the
-          server<br>
-           o other: misc info, errors -- IMPORTANT STUFF<br>
-           w wallops: msgs between IRCops (be sure to set the bot +w in
-          init-server)</p>
+                <td>
+                  <p>information about bot linking and userfile sharing</p>
+                </td>
+              </tr>
 
-          <p>There are others, but you probably shouldn&#39;t log them,
-          it&#39;d be rather unethical ;). There are also eight user-defined
-          levels (1-8) which are used by Tcl scripts.</p>
+              <tr valign="top">
+                <td>
+                  <p><strong>c</strong></p>
+                </td>
+
+                <td>
+                  <p>commands</p>
+                </td>
+              </tr>
+
+              <tr valign="top">
+                <td>
+                  <p><strong>d</strong></p>
+                </td>
+
+                <td>
+                  <p>misc debug information</p>
+                </td>
+              </tr>
+
+              <tr valign="top">
+                <td>
+                  <p><strong>h</strong></p>
+                </td>
+
+                <td>
+                  <p>raw share traffic</p>
+                </td>
+              </tr>
+
+              <tr valign="top">
+                <td>
+                  <p><strong>j</strong></p>
+                </td>
+
+                <td>
+                  <p>joins, parts, quits, and netsplits on the channel</p>
+                </td>
+              </tr>
+
+              <tr valign="top">
+                <td>
+                  <p><strong>k</strong></p>
+                </td>
+
+                <td>
+                  <p>kicks, bans, and mode changes on the channel</p>
+                </td>
+              </tr>
+
+              <tr valign="top">
+                <td>
+                  <p><strong>m</strong></p>
+                </td>
+
+                <td>
+                  <p>private msgs, notices and ctcps to the bot</p>
+                </td>
+              </tr>
+
+              <tr valign="top">
+                <td>
+                  <p><strong>o</strong></p>
+                </td>
+
+                <td>
+                  <p>misc info, errors, etc (IMPORTANT STUFF)</p>
+                </td>
+              </tr>
+
+              <tr valign="top">
+                <td>
+                  <p><strong>p</strong></p>
+                </td>
+
+                <td>
+                  <p>public text on the channel</p>
+                </td>
+              </tr>
+
+              <tr valign="top">
+                <td>
+                  <p><strong>r</strong></p>
+                </td>
+
+                <td>
+                  <p>raw incoming server traffic</p>
+                </td>
+              </tr>
+
+              <tr valign="top">
+                <td>
+                  <p><strong>s</strong></p>
+                </td>
+
+                <td>
+                  <p>server connects, disconnects, and notices</p>
+                </td>
+              </tr>
+
+              <tr valign="top">
+                <td>
+                  <p><strong>t</strong></p>
+                </td>
+
+                <td>
+                  <p>raw botnet traffic</p>
+                </td>
+              </tr>
+
+              <tr valign="top">
+                <td>
+                  <p><strong>v</strong></p>
+                </td>
+
+                <td>
+                  <p>raw outgoing server traffic</p>
+                </td>
+              </tr>
+
+              <tr valign="top">
+                <td>
+                  <p><strong>w</strong></p>
+                </td>
+
+                <td>
+                  <p>wallops (make sure the bot sets +w in init-server)</p>
+                </td>
+              </tr>
+
+              <tr valign="top">
+                <td>
+                  <p><strong>x</strong></p>
+                </td>
+
+                <td>
+                  <p>file transfers and file-area commands</p>
+                </td>
+              </tr>
+            </table>
+          </blockquote>
+          
+          <p>Note that modes d, h, r, t, and v can fill disk quotas quickly.
+          There are also eight user-defined levels (1-8) which can be used by
+          Tcl scripts.</p>
 
           <p>Each logfile belongs to a certain channel. Events of type
           &#39;k&#39;, &#39;j&#39;, and &#39;p&#39; are logged to whatever

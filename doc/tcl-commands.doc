@@ -1273,6 +1273,23 @@ marked with vertical bars (|) on the left.
       logfiles will be returned. "*" indicates all channels. You can also
       change the modes and channel of an existing logfile with this command.
       Entering a blank mode and channel ("") makes the bot stop logging there.
+
+      Logfile flags:
+        b - information about bot linking and userfile sharing
+        c - commands
+        d - misc debug information
+        h - raw share traffic
+        j - joins, parts, quits, and netsplits on the channel
+        k - kicks, bans, and mode changes on the channel
+        m - private msgs, notices and ctcps to the bot
+        o - misc info, errors, etc (IMPORTANT STUFF)
+        p - public text on the channel
+        r - raw incoming server traffic
+        s - server connects, disconnects, and notices
+        t - raw botnet traffic
+        v - raw outgoing server traffic
+        w - wallops (make sure the bot sets +w in init-server)
+        x - file transfers and file-area commands
     Returns: filename of logfile created, or, if no logfile is specified, a
       list of logfiles such as: {mco * eggdrop.log} {jp #lame lame.log}
     Module: core

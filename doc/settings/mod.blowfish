@@ -1,5 +1,5 @@
 Blowfish Module
-Last revised: January 1, 2002
+Last revised: January 28, 2003
      _________________________________________________________________
 
                              Blowfish Module
@@ -15,10 +15,7 @@ This module requires: none
 Put this line into your Eggdrop configuration file to load the blowfish 
 module:
 
-  checkmodule blowfish
-
-  This is checkmodule because during .restart the module will already
-  be loaded.
+  loadmodule blowfish
 
      _________________________________________________________________
 

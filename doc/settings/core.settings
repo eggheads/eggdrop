@@ -1,5 +1,5 @@
 Eggdrop Core Settings
-Last revised: May 24, 2002
+Last revised: January 28, 2003
      _________________________________________________________________
 
                            Eggdrop Core Settings
@@ -113,22 +113,25 @@ logfile <logflags> <channel> "logs/logfile"
     This setting tells the bot what should be logged, from where, and to
     which file.
 
-    The most common log file flags are:
-      m  private msgs/ctcps to the bot
-      k  kicks, bans, mode changes on the channel
-      j  joins, parts, netsplits on the channel
-      p  public chatter on the channel
-      s  server connects/disconnects/notices
-      b  information about bot linking and userfile sharing
-      c  commands people use (via msg or dcc)
-      x  file transfers and file-area commands
-      r  (if use-console-r enabled) EVERYTHING sent to the bot by the server
-      o  other: misc info, errors -- IMPORTANT STUFF
-      w  wallops: msgs between IRCops (be sure to set the bot +w in init-server)
+    Logfile flags:
+      b - information about bot linking and userfile sharing
+      c - commands
+      d - misc debug information
+      h - raw share traffic
+      j - joins, parts, quits, and netsplits on the channel
+      k - kicks, bans, and mode changes on the channel
+      m - private msgs, notices and ctcps to the bot
+      o - misc info, errors, etc (IMPORTANT STUFF)
+      p - public text on the channel
+      r - raw incoming server traffic
+      s - server connects, disconnects, and notices
+      t - raw botnet traffic
+      v - raw outgoing server traffic
+      w - wallops (make sure the bot sets +w in init-server)
+      x - file transfers and file-area commands
 
-    There are others, but you probably shouldn't log them, it'd be rather 
-    unethical ;). There are also eight user-defined levels (1-8) which are
-    used by Tcl scripts.
+    Note that modes d, h, r, t, and v can fill disk quotas quickly. There are
+    also eight user-defined levels (1-8) which can be used by Tcl scripts.
 
     Each logfile belongs to a certain channel. Events of type 'k', 'j', and 'p'
     are logged to whatever channel they happened on. Most other events are
