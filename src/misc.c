@@ -10,7 +10,7 @@
  * 
  * dprintf'ized, 12dec1995
  * 
- * $Id: misc.c,v 1.26 2000/01/17 16:14:45 per Exp $
+ * $Id: misc.c,v 1.27 2000/02/02 12:09:13 per Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -205,6 +205,7 @@ void maskhost(char *s, char *nw)
   p = (q = strchr(s, '!')) ? q + 1 : s;
   /* strip of any nick, if a username is found, use last 8 chars */
   if ((q = strchr(p, '@'))) {
+    int fl = 0;
     if ((q - p) > 9) {
       nw[0] = '*';
       p = q - 7;
@@ -212,13 +213,14 @@ void maskhost(char *s, char *nw)
     } else
       i = 0;
     while (*p != '@') {
-      if (strchr("~+-^=", *p))
+      if (!fl && strchr("~+-^=", *p))
         if (strict_host)
 	  nw[i] = '?';
 	else
 	  i--; 
       else
 	nw[i] = *p;
+      fl++;
       p++;
       i++;
     }
