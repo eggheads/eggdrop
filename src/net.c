@@ -2,7 +2,7 @@
  * net.c -- handles:
  *   all raw network i/o
  * 
- * $Id: net.c,v 1.25 2000/10/27 19:35:51 fabian Exp $
+ * $Id: net.c,v 1.26 2000/10/30 20:49:46 fabian Exp $
  */
 /* 
  * This is hereby released into the public domain.
@@ -312,13 +312,13 @@ static int proxy_connect(int sock, char *host, int port, int proxy)
 {
   unsigned char x[10];
   struct hostent *hp;
-  char s[30];
+  char s[256];
   int i;
 
   /* socks proxy */
   if (proxy == PROXY_SOCKS) {
     /* numeric IP? */
-    if ((host[strlen(host) - 1] >= '0') && (host[strlen(host) - 1] <= '9')) {
+    if (host[strlen(host) - 1] >= '0' && host[strlen(host) - 1] <= '9') {
       IP ip = ((IP) inet_addr(host)); /* drummer */      
       egg_memcpy(x, &ip, 4);	/* Beige@Efnet */
     } else {
@@ -336,15 +336,14 @@ static int proxy_connect(int sock, char *host, int port, int proxy)
       }
       egg_memcpy(x, hp->h_addr, hp->h_length);
     }
-    for (i = 0; i < MAXSOCKS; i++) {
-      if (!(socklist[i].flags & SOCK_UNUSED) && (socklist[i].sock == sock))
+    for (i = 0; i < MAXSOCKS; i++)
+      if (!(socklist[i].flags & SOCK_UNUSED) && socklist[i].sock == sock)
 	socklist[i].flags |= SOCK_PROXYWAIT; /* drummer */
-    }
-    sprintf(s, "\004\001%c%c%c%c%c%c%s", (port >> 8) % 256, (port % 256),
-	    x[0], x[1], x[2], x[3], botuser);
+    egg_snprintf(s, sizeof s, "\004\001%c%c%c%c%c%c%s", (port >> 8) % 256,
+		 (port % 256), x[0], x[1], x[2], x[3], botuser);
     tputs(sock, s, strlen(botuser) + 9); /* drummer */
   } else if (proxy == PROXY_SUN) {
-    sprintf(s, "%s %d\n", host, port);
+    egg_snprintf(s, sizeof s, "%s %d\n", host, port);
     tputs(sock, s, strlen(s)); /* drummer */
   }
   return sock;
