@@ -4,7 +4,7 @@
  *
  * Rewritten by Fabian Knittel <fknittel@gmx.de>
  *
- * $Id: filedb3.c,v 1.27 2003/03/12 08:42:00 wcc Exp $
+ * $Id: filedb3.c,v 1.28 2003/11/26 16:01:10 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1103,8 +1103,10 @@ static void filedb_getdesc(char *dir, char *fn, char **desc)
 
   fdbe = filedb_getentry(dir, fn);
   if (fdbe) {
-    *desc = nmalloc(strlen(fdbe->desc) + 1);
-    strcpy(*desc, fdbe->desc);
+    if (fdbe->desc) {
+      *desc = nmalloc(strlen(fdbe->desc) + 1);
+      strcpy(*desc, fdbe->desc);
+    }
     free_fdbe(&fdbe);
   } else
     *desc = NULL;
