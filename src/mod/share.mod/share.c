@@ -524,7 +524,7 @@ static void share_mns_ban(int idx, char *par)
 
 static void share_mns_exempt (int idx, char * par) {
   if (dcc[idx].status & STAT_SHARE) {
-    shareout_but(NULL,idx, "-b %s\n", par);
+    shareout_but(NULL,idx, "-e %s\n", par);
     putlog(LOG_CMDS, "*", "%s: cancel exempt %s", dcc[idx].nick, par);
     noshare = 1;
     u_delexempt(NULL,par,1);
@@ -534,7 +534,7 @@ static void share_mns_exempt (int idx, char * par) {
 
 static void share_mns_invite (int idx, char * par) {
   if (dcc[idx].status & STAT_SHARE) {
-    shareout_but(NULL,idx, "-b %s\n", par);
+    shareout_but(NULL,idx, "-Inv %s\n", par);
     putlog(LOG_CMDS, "*", "%s: cancel invite %s", dcc[idx].nick, par);
     noshare = 1;
     u_delinvite(NULL,par,1);
