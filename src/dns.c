@@ -4,7 +4,7 @@
  *   provides the code used by the bot if the DNS module is not loaded
  *   DNS Tcl commands
  * 
- * $Id: dns.c,v 1.19 2000/12/10 15:10:27 guppy Exp $
+ * $Id: dns.c,v 1.20 2001/03/10 22:44:47 guppy Exp $
  */
 /* 
  * Written by Fabian Knittel <fknittel@gmx.de>
@@ -57,7 +57,7 @@ void dcc_dnswait(int idx, char *buf, int len)
 void eof_dcc_dnswait(int idx)
 {
   putlog(LOG_MISC, "*", "Lost connection while resolving hostname [%s/%d]",
-	 iptostr(dcc[idx].addr), dcc[idx].port);
+	 iptostr(htonl(dcc[idx].addr)), dcc[idx].port);
   killsock(dcc[idx].sock);
   lostdcc(idx);
 }
