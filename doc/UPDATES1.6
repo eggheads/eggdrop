@@ -1,4 +1,4 @@
-$Id: UPDATES1.6,v 1.544 2004/04/05 23:35:19 wcc Exp $
+$Id: UPDATES1.6,v 1.545 2004/04/06 06:50:11 wcc Exp $
 
 Eggdrop Changes (since v1.6.0)
      _________________________________________________________________
@@ -21,12 +21,12 @@ Eggdrop Changes (since v1.6.0)
     * Patch by: daimonic
 
     - Various crash fixes:
-      * Fixed _wild_match() to not try to read before the beginning of the
+      - Fixed _wild_match() to not try to read before the beginning of the
         mask.
-      * Small fix to correct_handle().
-      * queue_server() wasn't adding messages to the queue correctly.
-      * Fixed errors reported by valgrind in n_free() and notes module.
-      * Fixed crash in dcc_chat regarding the filt bind.
+      - Small fix to correct_handle().
+      - queue_server() wasn't adding messages to the queue correctly.
+      - Fixed errors reported by valgrind in n_free() and notes module.
+      - Fixed crash in dcc_chat regarding the filt bind.
     * Patch by: stdarg
 
     - Don't always set SHARE_OFFERED status in check_expired_tbufs().

@@ -1,4 +1,4 @@
-$Id: COMPILING-FAQ,v 1.5 2004/04/05 23:35:19 wcc Exp $
+$Id: COMPILING-FAQ,v 1.6 2004/04/06 06:50:11 wcc Exp $
 
 Compiling FAQ
 Last revised: January 15, 2004
@@ -20,10 +20,9 @@ Last revised: January 15, 2004
   Contents:
     Compile Guide:
       A. Standard compile process (32-bit Linux, FreeBSD, NetBSD, OpenBSD, etc)
-      B. HP-UX B.11.00
+      B. HP-UX B.11.*
       C. Ultrix
       D. Cygwin / Windows
-
       E. Tcl Detection and Installation
 
     Frequently Asked Questions:
@@ -36,7 +35,6 @@ Last revised: January 15, 2004
       7. Compile stops at the last minute with "ld fatal signal 11"! (Linux)
       8. Undefined references in net.o (Sun OS)
       9. I experience problems starting the configure script (AIX/various)
-      10. The bot crashes at startup in "net.c/708", for example.
 
 
   Compile Guide
@@ -53,7 +51,6 @@ Last revised: January 15, 2004
     B. HP-UX B.11.*
     C. Ultrix
     D. Cygwin / Windows
-
     E. Tcl Detection and Installation
 
     A. Standard compile process (32-bit Linux, FreeBSD, NetBSD, OpenBSD, etc.)
@@ -102,19 +99,19 @@ Last revised: January 15, 2004
 
            make install DEST=/home/user/otherdir
 
-    B.HP-UX B.11.*
+    B. HP-UX B.11.*
 
       Dynamic module support is not currently working properly with HP-UX 11.*.
       During a linking in a dynamic build, you may experience an error such as:
 
         gcc -pipe -fPIC -shared -o ../eggdrop bg.o botcmd.o botmsg.o botnet.o
-	chanprog.o cmds.o dcc.o dccutil.o dns.o flags.o language.o match.o
-	main.o mem.o misc.o misc_file.o modules.o net.o rfc1459.o tcl.o
-	tcldcc.o tclhash.o tclmisc.o tcluser.o userent.o userrec.o users.o
-	-L/usr/local/lib -ltcl8.4 -lm -ldld -lnsl md5/md5c.o compat/*.o `cat
-	mod/mod.xlibs`
+        chanprog.o cmds.o dcc.o dccutil.o dns.o flags.o language.o match.o
+        main.o mem.o misc.o misc_file.o modules.o net.o rfc1459.o tcl.o
+        tcldcc.o tclhash.o tclmisc.o tcluser.o userent.o userrec.o users.o
+        -L/usr/local/lib -ltcl8.4 -lm -ldld -lnsl md5/md5c.o compat/*.o `cat
+        mod/mod.xlibs`
         /usr/ccs/bin/ld: DP relative code in file bg.o - shared library must be
-	position independent. Use +z or +Z to recompile.
+        position independent. Use +z or +Z to recompile.
         collect2: ld returned 1 exit status
         *** Error exit code 1
 
@@ -148,10 +145,10 @@ Last revised: January 15, 2004
              building modules, try using 'gmake static', for a static build,
              instead.
 
-	  5. To install Eggdrop, type 'gmake install'.
+          5. To install Eggdrop, type 'gmake install'.
 
              This will install the Eggdrop in your home directory in a
-	     directory called 'eggdrop' (i.e. /home/user/eggdrop).
+             directory called 'eggdrop' (i.e. /home/user/eggdrop).
 
              If you want to install to a different directory, use:
 
@@ -167,53 +164,53 @@ Last revised: January 15, 2004
       below.
 
         1. Download and install Cygwin (www.cygwin.com). Make sure to install
-	   things like GCC, zlib, minires, autoconf, and automake. DO NOT
-	   install the Tcl provided by Cygwin's installer. After installing,
-	   open the Cygwin bash prompt.
+           things like GCC, zlib, minires, autoconf, and automake. DO NOT
+           install the Tcl provided by Cygwin's installer. After installing,
+           open the Cygwin bash prompt.
 
         2. Download and install TCL 8.4.1. You can get Tcl for Cygwin at
-	   http://prdownloads.sourceforge.net/windrop/tcl-8.4.1.tar.gz.
-	   Extract this to the Cygwin root directory:
+           http://prdownloads.sourceforge.net/windrop/tcl-8.4.1.tar.gz.
+           Extract this to the Cygwin root directory:
 
              cd /
              tar -zxf tcl-8.4.1.tar.gz
 
-	3. Download Eggdrop from www.geteggdrop.com to your home directory.
-	   This is usually something like 'C:\cygwin\home\<username>\'. After
-	   downloading, extract the Eggdrop tarball:
+        3. Download Eggdrop from www.geteggdrop.com to your home directory.
+           This is usually something like 'C:\cygwin\home\<username>\'. After
+           downloading, extract the Eggdrop tarball:
 
-	     tar -zxf eggdrop1.6.16.tar.gz
+             tar -zxf eggdrop1.6.16.tar.gz
 
-	4. Run './configure --enable-strip'. Debugging information under
-	   Windows is basically useless to the development team, and this will
-	   reduce the size of your Eggdrop binary.
+        4. Run './configure --enable-strip'. Debugging information under
+           Windows is basically useless to the development team, and this will
+           reduce the size of your Eggdrop binary.
 
-	5. Type either 'make config', or 'make iconfig' to determine which
+        5. Type either 'make config', or 'make iconfig' to determine which
            modules will be compiled.
 
-	6. Compile the bot using 'make eggdrop'.
+        6. Compile the bot using 'make eggdrop'.
 
-	7. Install the bot by typing 'make install DEST=<install path>'.
-	   For example:
+        7. Install the bot by typing 'make install DEST=<install path>'.
+           For example:
 
-	     make install DEST='C:/eggdrop/'
+             make install DEST='C:/eggdrop/'
 
-	   Make sure to enclose the destination directory/folder in single
-	   quotes (''), especially if it contains spaces.
+           Make sure to enclose the destination directory/folder in single
+           quotes (''), especially if it contains spaces.
 
-	8. Preform the following commands:
+        8. Preform the following commands:
 
-	     cd 'C:/<install path>/' (example: cd 'C:/eggdrop')
+             cd 'C:/<install path>/' (example: cd 'C:/eggdrop')
              rm modules
              rm eggdrop.exe
              mv eggdrop.exe-1.6.16 eggdrop.exe
              mv modules-1.6.16 modules
 
-	9. Create a 'lib' directory and copy needed libraries using the
-	   following commands. This assumes that you installed your Eggdrop in
-	   'C:\eggdrop'. If you chose a different installation path, replace
-	   'C:/eggdrop' in the following steps with your installation
-	   directory, replacing all '\'s with '/'s.
+        9. Create a 'lib' directory and copy needed libraries using the
+           following commands. This assumes that you installed your Eggdrop in
+           'C:\eggdrop'. If you chose a different installation path, replace
+           'C:/eggdrop' in the following steps with your installation
+           directory, replacing all '\'s with '/'s.
 
              cp /bin/cygwin1.dll 'C:/eggdrop'
              cp /usr/local/bin/tcl84.dll 'C:/eggdrop'
@@ -269,15 +266,7 @@ Last revised: January 15, 2004
       (as described in doc/PATCH_HOWTO). Thanks.
 
 
-    2. The bot crashes at startup in "net.c/708", for example
-
-      This problem has been fixed (we think). Previously, on some non-IA32
-      systems, the gcc options -O2 and -O3 could cause this. If you experience
-      this problem, try removing the -O2 and -O3 flags from your Makefiles, and
-      contact the development team at bugs@eggheads.org.
-
-
-    3. I get a 'strip terminated with signal 6' error during compile/install.
+    2. I get a 'strip terminated with signal 6' error during compile/install.
 
       collect2: strip terminated with signal 6 [IOT/Abort trap]
       *** Exit 1
@@ -288,7 +277,7 @@ Last revised: January 15, 2004
       Don't use the --enable-strip ./configure option.
 
 
-    4. 'DIR' undeclared (and a whole bunch of others) (AIX 4)
+    3. 'DIR' undeclared (and a whole bunch of others) (AIX 4)
 
       gcc -c -O2 -fno-strength-reduce -I.. -DHAVE_CONFIG_H  filedb.c
       filedb.c: In function `filedb_update':
@@ -320,7 +309,7 @@ Last revised: January 15, 2004
         CFLGS = -DHAVE_DIRENT_H -DHAVE_SYS_DIR_H
 
 
-    5. 'fd_set' undeclared (and a whole bunch of others) (AIX 4)
+    4. 'fd_set' undeclared (and a whole bunch of others) (AIX 4)
 
       gcc -c -O2 -fno-strength-reduce -I.. -DHAVE_CONFIG_H -DHAVE_DIRENT_H -DHAVE_SYS_DIR_H net.c
       net.c: In function `sockread':
@@ -339,7 +328,7 @@ Last revised: January 15, 2004
         CFLGS = -DHAVE_DIRENT_H -DHAVE_SYS_DIR_H -DHAVE_SYS_SELECT_H
 
 
-    6. Unresolved or undefined symbols: ldclose, ldopen, ldnshread (AIX 3)
+    5. Unresolved or undefined symbols: ldclose, ldopen, ldnshread (AIX 3)
 
       cc -s -o eggdrop chan.o chanprog.o chanset.o cmds.o dcc.o dccutil.o
       filedb.o fileq.o files.o gotdcc.o hash.o main.o match.o mem.o misc.o
@@ -371,7 +360,7 @@ Last revised: January 15, 2004
                 'TCLLIB=${TCLLIB}' 'RANLIB=ranlib' 'STRIP=-s'
 
 
-    7. Unsatisfied symbols 'shl_findsym' and 'shl_load' (HP-UX 9)
+    6. Unsatisfied symbols 'shl_findsym' and 'shl_load' (HP-UX 9)
 
       gcc -s -o eggdrop chan.o chanprog.o chanset.o cmds.o dcc.o
       dccutil.o filedb.o fileq.o files.o gotdcc.o hash.o main.o match.o
@@ -392,14 +381,14 @@ Last revised: January 15, 2004
                 'CFLAGS=${CFLAGS}' 'XREQ=${XREQ}' 'XLIBS= -L/usr/local/lib -ltcl7.5 -lm'\
                 'TCLLIB=${TCLLIB}' 'RANLIB=:' 'STRIP='
 
-      Add in -lld into the XLIBS assignment, like this:
+      Add in -ldl into the XLIBS assignment, like this:
 
         GMAKE = ${MAKE} 'CC=gcc' 'AWK=awk' 'OBJS=${OBJS}' 'TCLLIBFN=tcl7.5.a'\
                 'CFLAGS=${CFLAGS}' 'XREQ=${XREQ}' 'XLIBS=-ldl -L/usr/local/lib -ltcl7.5 -lm'\
                 'TCLLIB=${TCLLIB}' 'RANLIB=:' 'STRIP='
 
 
-    8. Compile stops at the last minute with "ld fatal signal 11"! (Linux)
+    7. Compile stops at the last minute with "ld fatal signal 11"! (Linux)
 
       This seems to be caused by a non-ELF Tcl library binary, and the compiler
       doesn't seem to like it. Download and install Tcl in your home directory
@@ -407,7 +396,7 @@ Last revised: January 15, 2004
       Guide above.
 
 
-    9. Undefined references in net.o (SunOS)
+    8. Undefined references in net.o (SunOS)
 
                      First
       Undefined    Referenced
@@ -444,7 +433,7 @@ Last revised: January 15, 2004
       will resolve the net.o errors.
 
 
-    10. I experience problems starting the configure script (AIX/various)
+    9. I experience problems starting the configure script (AIX/various)
 
       If you receive file descriptor or bad interpreter errors when attempting
       to run the configure script, try running 'sh configure' or 'bash configure'
