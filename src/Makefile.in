@@ -1,5 +1,10 @@
 # Makefile for src/
 
+INSTALL = @INSTALL@
+INSTALL_PROGRAM = @INSTALL_PROGRAM@
+INSTALL_DATA = @INSTALL_DATA@
+INSTALL_SCRIPT = @INSTALL_SCRIPT@
+
 OBJS = botcmd.o botmsg.o botnet.o chanprog.o cmds.o dcc.o \
 	dccutil.o flags.o language.o main.o mem.o misc.o \
 	modules.o net.o rfc1459.o tcl.o tcldcc.o tclhash.o \
@@ -31,7 +36,7 @@ static: $(OBJS) $(XREQ)
 
 memegg: $(OBJS) $(XREQ)
 	@echo ""
-	@echo "Linking eggdrop... (debug versrion)"
+	@echo "Linking eggdrop... (debug version)"
 	@echo ""
 	$(LD) -g -o ../$(EGGEXEC) $(OBJS) $(XLIBS)
 	@echo "Successful compile: $(EGGEXEC)"

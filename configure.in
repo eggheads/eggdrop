@@ -824,7 +824,7 @@ AC_SUBST(SHLIB_CC)
 AC_SUBST(SHLIB_STRIP)
 AC_SUBST(DEFAULT_MAKE)
 AC_SUBST(EGGEXEC)
-AC_OUTPUT(Makefile lush.h)
+AC_OUTPUT(Makefile doc/Makefile scripts/Makefile src/Makefile src/mod/Makefile lush.h)
 
 AC_MSG_RESULT()
 AC_MSG_RESULT(Configure is done.)

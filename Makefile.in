@@ -83,9 +83,7 @@ MAKE_MEMEGG = $(MAKE) 'CC=$(MOD_CC)' 'LD=$(MOD_LD)' 'STRIP=touch' \
 MAKE_DEBMODULES = $(MAKE) 'CC=$(SHLIB_CC)' 'LD=$(SHLIB_LD)' \
 'STRIP=touch' 'CFLAGS=-g3 $(CFLAGS) -DEBUG_MEM'
 
-MAKE_INSTALL = $(MAKE) 'DEST=$(DEST)' 'INSTALL=$(INSTALL)' \
-'INSTALL_PROGRAM=$(INSTALL_PROGRAM)' 'INSTALL_DATA=$(INSTALL_DATA)' \
-'INSTALL_SCRIPT=$(INSTALL_SCRIPT)'
+MAKE_INSTALL = $(MAKE) 'DEST=$(DEST)'
 
 all: @DEFAULT_MAKE@
 
@@ -96,7 +94,8 @@ clean:
 	@cd src/mod; $(MAKE) clean
 
 distclean: clean
-	@rm -f Makefile config.cache config.log config.status config.h lush.h
+	@rm -f Makefile doc/Makefile scripts/Makefile src/Makefile src/mod/Makefile
+	@rm -f config.cache config.log config.status config.h lush.h
 
 distrib: distclean Makefile.in
 	@rm -f `find . \( -name '*~' -o -name '*#' -o -name '*.orig' \
@@ -191,7 +190,7 @@ dinstall: eggdrop ainstall
 sinstall: static ainstall
 
 ainstall: install-start install-bin install-modules install-data \
-	install-language install-help install-filesys install-doc \
+	install-help install-language install-filesys install-doc \
 	install-scripts install-end
 
 install-start:
@@ -261,19 +260,8 @@ install-data:
 		$(INSTALL_DATA) telnet-banner $(DEST); \
 	fi
 
-install-language:
-	@if test ! "x`echo language/*.lang`" = "xlanguage/*.lang"; then \
-		if test ! -d $(DEST)/language; then \
-			echo "Creating 'language' subdirectory."; \
-			$(INSTALL) -d $(DEST)/language; \
-		fi; \
-		for i in language/*.lang; do \
-			$(INSTALL_DATA) $$i $(DEST)/language/; \
-		done; \
-	fi
-	@cd src/mod/; $(MAKE_INSTALL) install-language
-
 install-help:
+	@echo "Copying help files."
 	@if test ! "x`echo help/*.help`" = "xhelp/*.help"; then \
 		if test ! -d $(DEST)/help; then \
 			echo "Creating 'help' subdirectory."; \
@@ -302,6 +290,19 @@ install-help:
 		done; \
 	fi
 	@cd src/mod/; $(MAKE_INSTALL) install-help
+
+install-language:
+	@echo "Copying language files."
+	@if test ! "x`echo language/*.lang`" = "xlanguage/*.lang"; then \
+		if test ! -d $(DEST)/language; then \
+			echo "Creating 'language' subdirectory."; \
+			$(INSTALL) -d $(DEST)/language; \
+		fi; \
+		for i in language/*.lang; do \
+			$(INSTALL_DATA) $$i $(DEST)/language/; \
+		done; \
+	fi
+	@cd src/mod/; $(MAKE_INSTALL) install-language
 
 install-filesys:
 	@if test ! -d $(DEST)/filesys; then \

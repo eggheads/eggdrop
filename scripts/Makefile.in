@@ -1,5 +1,10 @@
 # Makefile for scripts/
 
+INSTALL = @INSTALL@
+INSTALL_PROGRAM = @INSTALL_PROGRAM@
+INSTALL_DATA = @INSTALL_DATA@
+INSTALL_SCRIPT = @INSTALL_SCRIPT@
+
 SCRIPTS = action.fix.tcl alltools.tcl compat.tcl getops-2.2d.tcl \
 	klined.tcl notes2.tcl ques5.tcl sentinel1.54.tcl userinfo1.0.tcl
 

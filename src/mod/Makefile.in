@@ -1,5 +1,10 @@
 # Makefile for src/mod/
 
+INSTALL = @INSTALL@
+INSTALL_PROGRAM = @INSTALL_PROGRAM@
+INSTALL_DATA = @INSTALL_DATA@
+INSTALL_SCRIPT = @INSTALL_SCRIPT@
+
 MAKE_MOD = $(MAKE) 'MAKE=$(MAKE)' 'CC=$(CC)' 'LD=$(LD)' \
 'STRIP=$(STRIP)' 'CFLAGS=$(CFLAGS)' 
 
@@ -20,20 +25,10 @@ static:
 	@./buildstatic
 	@for i in *.mod; do cd $$i; $(MAKE_MOD) static; cd ..; done
 
-install: install-language install-help
-
-install-language:
-	@if test ! "x`echo *.mod/language/*.lang`" = "x*.mod/language/*.lang"; then \
-		if test ! -d $(DEST)/language; then \
-			echo "Creating 'language' subdirectory."; \
-			$(INSTALL) -d $(DEST)/language; \
-		fi; \
-		for i in *.mod/language/*.lang; do \
-			$(INSTALL_DATA) $$i $(DEST)/language/; \
-		done; \
-	fi
+install: install-help install-language
 
 install-help:
+	@echo "Copying module help files."
 	@if test ! "x`echo *.mod/help/*.help`" = "x*.mod/help/*.help"; then \
 		if test ! -d $(DEST)/help; then \
 			echo "Creating 'help' subdirectory."; \
@@ -59,6 +54,18 @@ install-help:
 		fi; \
 		for i in *.mod/help/set/*.help; do \
 			$(INSTALL_DATA) $$i $(DEST)/help/set/; \
+		done; \
+	fi
+
+install-language:
+	@echo "Copying module language files."
+	@if test ! "x`echo *.mod/language/*.lang`" = "x*.mod/language/*.lang"; then \
+		if test ! -d $(DEST)/language; then \
+			echo "Creating 'language' subdirectory."; \
+			$(INSTALL) -d $(DEST)/language; \
+		fi; \
+		for i in *.mod/language/*.lang; do \
+			$(INSTALL_DATA) $$i $(DEST)/language/; \
 		done; \
 	fi
 

@@ -13,18 +13,3 @@
 0xa008,hat den heissen Draht verlassen.
 0xa009,WIRE-modul wird entfernt.
 0xa00a,Das WIRE-modul kann nicht mit Eggdrops vor Version 1.2.2 geladen werden
-# Copyright (c) 1999 by eggheads
-# translated by rtc
-# Language messages for modules `wire'
-
-0xa000,Du bist nicht auf dem heissen Draht.
-0xa001,Gerade auf dem heissen Draht
-0xa002,Du bist ab sofort nicht mehr auf den heissen Draht.
-0xa003,Codierungsschluessel des heissen Drahtes wird geaendert auf
-0xa004,Text, der mit ; beginnt geht ab sofort ueber den heissen Draht.
-0xa005,Gib '.wire' ein um zu sehen, wer bei Dir auf dem heissen Draht ist.
-0xa006,Gib '.wire off' ein, wenn Du aufhoeren willst.
-0xa007,hat den heissen Draht betreten
-0xa008,hat den heissen Draht verlassen.
-0xa009,WIRE-modul wird entfernt.
-0xa00a,Das WIRE-modul kann nicht mit Eggdrops vor Version 1.2.2 geladen werden
