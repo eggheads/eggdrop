@@ -5,49 +5,52 @@
  * acconfig.h
  *   template file autoheader uses when building config.h.in
  * 
- * $Id: acconfig.h,v 1.11 2003/02/27 10:18:40 tothwolf Exp $
+ * $Id: acconfig.h,v 1.12 2003/02/28 04:01:36 wcc Exp $
  */
 
-/* Define if modules will work on your system  */
+/* Define if modules will work on your system. */
 #undef MODULES_OK
 
-/* Define if running on hpux that supports dynamic linking  */
+/* Define if running on HPUX that supports dynamic linking. */
 #undef HPUX_HACKS
 
-/* Define if running on hpux 10.x  */
+/* Define if running on HPUX 10.x. */
 #undef HPUX10_HACKS
 
-/* Define if running on OSF/1 platform.  */
+/* Define if running on OSF/1 platform. */
 #undef OSF1_HACKS
 
-/* Define if running on OSF/1 platform.  */
+/* Define to use Eggdrop's snprintf functions without regard to HAVE_SNPRINTF. */
+#undef DONT_USE_SNPRINTFS
+
+/* Define if running on OSF/1 platform. */
 #undef STOP_UAC
 
-/* Define if running on sunos 4.0 *sigh*  */
+/* Define if running on SunOS 4.0. */
 #undef DLOPEN_1
 
-/* Define if running on NeXT Step  */
+/* Define if running on NeXT Step.  */
 #undef BORGCUBES
 
-/* Define if running under cygwin  */
+/* Define if running under Cygwin.  */
 #undef CYGWIN_HACKS
 
-/* Define if you have a version of libsafe with a broken sscanf */
+/* Define if you have a version of libsafe with a broken sscanf(). */
 #undef LIBSAFE_HACKS
 
-/* Define if we need dlopen (for module support)  */
+/* Define if we need dlopen() (for module support).  */
 #undef HAVE_DLOPEN
 
-/* Define for Tcl that has Tcl_Free() (7.5p1 and later)  */
+/* Define for Tcl that has Tcl_Free() (7.5p1 and later).  */
 #undef HAVE_TCL_FREE
 
-/* Define for Tcl that has threads  */
+/* Define for Tcl that has threads.  */
 #undef HAVE_TCL_THREADS
 
-/* Defines the current eggdrop version  */
+/* Defines the current Eggdrop version.  */
 #undef EGG_VERSION
 
-/* Defines extension of eggdrop modules  */
+/* Defines extension of Eggdrop modules.  */
 #undef EGG_MOD_EXT
 
 @BOTTOM@

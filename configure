@@ -3546,6 +3546,9 @@ _ACEOF
     cat >>confdefs.h <<\_ACEOF
 #define STOP_UAC 1
 _ACEOF
+    cat >>confdefs.h <<\_ACEOF
+#define DONT_USE_SNPRINTFS 1
+_ACEOF
   ;;
   SunOS)
     if test "`echo $egg_cv_var_system_release | cut -d . -f 1`" = "5"
