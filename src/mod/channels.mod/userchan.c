@@ -1244,7 +1244,7 @@ static int write_invites (FILE * f, int idx)
       else
 	fr.chan = BOT_SHARE;
       if (fr.chan & BOT_SHARE) {
-	if (fprintf(f, "||%s invites\n", chan->name) == EOF)
+	if (fprintf(f, "$$%s invites\n", chan->name) == EOF)
 	  return 0;
 	for (ir = chan->invites;ir;ir=ir->next) 
 	  if (fprintf(f,"@ %s:%s%lu%s:+%lu:%lu:%s:%s\n",ir->invitemask,
