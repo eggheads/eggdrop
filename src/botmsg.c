@@ -5,7 +5,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: botmsg.c,v 1.18 2001/01/16 17:13:20 guppy Exp $
+ * $Id: botmsg.c,v 1.19 2001/03/10 06:36:20 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -44,21 +44,28 @@ static char	OBUF[1024];
  */
 void tandout_but EGG_VARARGS_DEF(int, arg1)
 {
-  int i, x, l;
+  int i, x, len;
   char *format;
   char s[601];
   va_list va;
 
   x = EGG_VARARGS_START(int, arg1, va);
   format = va_arg(va, char *);
-
-  if ((l = egg_vsnprintf(s, 511, format, va)) < 0)
-    s[l = 511] = 0;
+  egg_vsnprintf(s, 511, format, va);      
   va_end(va);
+  len = strlen(s);
+  if (len > 511)
+    len = 511;
+  s[len + 1] = 0;  
+
+#if TCL_MAJOR_VERSION >= 8 && TCL_MINOR_VERSION >= 1
+  len = str_utf8tounicode(s);
+#endif    
+
   for (i = 0; i < dcc_total; i++)
     if ((dcc[i].type == &DCC_BOT) && (i != x) &&
-	(b_numver(i) < NEAT_BOTNET))
-      tputs(dcc[i].sock, s, l);
+        (b_numver(i) < NEAT_BOTNET))
+      tputs(dcc[i].sock, s, len);
 }
 #endif
 
@@ -287,7 +294,7 @@ void botnet_send_pong(int idx)
 
 void botnet_send_priv EGG_VARARGS_DEF(int, arg1)
 {
-  int idx, l;
+  int idx, l, len;
   char *from, *to, *tobot, *format;
   char tbuf[1024];
   va_list va;
@@ -297,10 +304,18 @@ void botnet_send_priv EGG_VARARGS_DEF(int, arg1)
   to = va_arg(va, char *);
   tobot = va_arg(va, char *);
   format = va_arg(va, char *);
-
-  if (egg_vsnprintf(tbuf, 450, format, va) < 0)
-    tbuf[450] = 0;
+  egg_vsnprintf(tbuf, 450, format, va);    
   va_end(va);
+  
+  len = strlen(tbuf);
+  if (len > 450)
+    len = 450;
+  tbuf[len + 1] = 0;    
+
+#if TCL_MAJOR_VERSION >= 8 && TCL_MINOR_VERSION >= 1
+  len = str_utf8tounicode(tbuf);
+#endif    
+
   if (tobot) {
 #ifndef NO_OLD_BOTNET
     if (b_numver(idx) < NEAT_BOTNET)

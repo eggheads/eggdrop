@@ -4,7 +4,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: modules.c,v 1.45 2001/02/27 03:18:23 guppy Exp $
+ * $Id: modules.c,v 1.46 2001/03/10 06:36:20 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -527,7 +527,8 @@ Function global_table[] =
   /* 264 - 267 */
   (Function) str_unescape,
   (Function) egg_strcatn,
-  (Function) clear_chanlist_member
+  (Function) clear_chanlist_member,
+  (Function) str_utf8tounicode
 };
 
 void init_modules(void)

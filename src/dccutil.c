@@ -6,7 +6,7 @@
  *   memory management for dcc structures
  *   timeout checking for dcc connections
  * 
- * $Id: dccutil.c,v 1.27 2001/01/27 06:26:40 tothwolf Exp $
+ * $Id: dccutil.c,v 1.28 2001/03/10 06:36:20 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -39,6 +39,7 @@ extern int		 dcc_total, max_dcc, dcc_flood_thr, backgrd, MAXSOCKS;
 extern char		 botnetnick[], spaces[], version[];
 extern time_t		 now;
 extern sock_list	*socklist;
+extern Tcl_Interp	*interp;
 
 char	motdfile[121] = "text/motd";	/* File where the motd is stored */
 int	connect_timeout = 15;		/* How long to wait before a telnet
@@ -81,7 +82,6 @@ int expmem_dccutil()
   return tot;
 }
 
-static char SBUF[1024];
 
 /* Replace \n with \r\n */
 char *add_cr(char *buf)
@@ -102,27 +102,41 @@ extern void (*qserver) (int, char *, int);
 
 void dprintf EGG_VARARGS_DEF(int, arg1)
 {
+  static char buf[1024];
   char *format;
   int idx, len;
   va_list va;
 
   idx = EGG_VARARGS_START(int, arg1, va);
   format = va_arg(va, char *);
-  if ((len = egg_vsnprintf(SBUF, 1023, format, va)) < 0)
-    SBUF[len = 1023] = 0;
+  egg_vsnprintf(buf, 1023, format, va);
   va_end(va);
+  /* We can not use the return value vsnprintf() to determine where
+   * to null terminate. The C99 standard specifies that vsnprintf()
+   * shall return the number of bytes that would be written if the
+   * buffer had been large enough, rather then -1.
+   */
+  len = strlen(buf);
+  if (len > 1023)
+    len = 1023;
+  buf[len + 1] = 0;
+
+#if TCL_MAJOR_VERSION >= 8 && TCL_MINOR_VERSION >= 1
+  len = str_utf8tounicode(buf);
+#endif
+
   if (idx < 0) {
-    tputs(-idx, SBUF, len);
+    tputs(-idx, buf, len);
   } else if (idx > 0x7FF0) {
     switch (idx) {
     case DP_LOG:
-      putlog(LOG_MISC, "*", "%s", SBUF);
+      putlog(LOG_MISC, "*", "%s", buf);
       break;
     case DP_STDOUT:
-      tputs(STDOUT, SBUF, len);
+      tputs(STDOUT, buf, len);
       break;
     case DP_STDERR:
-      tputs(STDERR, SBUF, len);
+      tputs(STDERR, buf, len);
       break;
     case DP_SERVER:
     case DP_HELP:
@@ -130,49 +144,58 @@ void dprintf EGG_VARARGS_DEF(int, arg1)
     case DP_MODE_NEXT:
     case DP_SERVER_NEXT:
     case DP_HELP_NEXT:
-      qserver(idx, SBUF, len);
+      qserver(idx, buf, len);
       break;
     }
     return;
   } else {
     if (len > 500) {		/* Truncate to fit */
-      SBUF[500] = 0;
-      strcat(SBUF, "\n");
+      buf[500] = 0;
+      strcat(buf, "\n");
       len = 501;
     }
     if (dcc[idx].type && ((long) (dcc[idx].type->output) == 1)) {
-      char *p = add_cr(SBUF);
+      char *p = add_cr(buf);
 
       tputs(dcc[idx].sock, p, strlen(p));
     } else if (dcc[idx].type && dcc[idx].type->output) {
-      dcc[idx].type->output(idx, SBUF, dcc[idx].u.other);
+      dcc[idx].type->output(idx, buf, dcc[idx].u.other);
     } else
-      tputs(dcc[idx].sock, SBUF, len);
+      tputs(dcc[idx].sock, buf, len);
   }
 }
 
 void chatout EGG_VARARGS_DEF(char *, arg1)
 {
-  int i;
+  int i, len;
   char *format;
   char s[601];
   va_list va;
 
   format = EGG_VARARGS_START(char *, arg1, va);
-  if (egg_vsnprintf(s, 511, format, va) < 0)
-    s[511] = 0;
+  egg_vsnprintf(s, 511, format, va);
+  va_end(va);
+  len = strlen(s);
+  if (len > 511)
+    len = 511;
+  s[len + 1] = 0;    
+
+#if TCL_MAJOR_VERSION >= 8 && TCL_MINOR_VERSION >= 1
+  len = str_utf8tounicode(s);
+#endif
+
   for (i = 0; i < dcc_total; i++)
     if (dcc[i].type == &DCC_CHAT)
       if (dcc[i].u.chat->channel >= 0)
-	dprintf(i, "%s", s);
-  va_end(va);
+        dprintf(i, "%s", s);
+  
 }
 
 /* Print to all on this channel but one.
  */
 void chanout_but EGG_VARARGS_DEF(int, arg1)
 {
-  int i, x, chan;
+  int i, x, chan, len;
   char *format;
   char s[601];
   va_list va;
@@ -180,13 +203,22 @@ void chanout_but EGG_VARARGS_DEF(int, arg1)
   x = EGG_VARARGS_START(int, arg1, va);
   chan = va_arg(va, int);
   format = va_arg(va, char *);
-  if (egg_vsnprintf(s, 511, format, va) < 0)
-    s[511] = 0;
+  egg_vsnprintf(s, 511, format, va);
+  va_end(va);
+  len = strlen(s);
+  if (len > 511)
+    len = 511;
+  s[len + 1] = 0; 
+    
+#if TCL_MAJOR_VERSION >= 8 && TCL_MINOR_VERSION >= 1
+  len = str_utf8tounicode(s);
+#endif  
+
   for (i = 0; i < dcc_total; i++)
     if ((dcc[i].type == &DCC_CHAT) && (i != x))
       if (dcc[i].u.chat->channel == chan)
-	dprintf(i, "%s", s);
-  va_end(va);
+        dprintf(i, "%s", s);
+  
 }
 
 void dcc_chatter(int idx)

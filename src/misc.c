@@ -7,7 +7,7 @@
  *   help system
  *   motd display and %var substitution
  * 
- * $Id: misc.c,v 1.35 2001/01/26 21:18:22 guppy Exp $
+ * $Id: misc.c,v 1.36 2001/03/10 06:36:20 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -370,12 +370,51 @@ void maskhost(const char *s, char *nw)
   }
 }
 
+#if TCL_MAJOR_VERSION >= 8 && TCL_MINOR_VERSION >= 1
+/* Converts an UTF-8 string to unicode safe string,
+ * returns the length of the unicode string
+ */
+int str_utf8tounicode(char *str)
+{
+  Tcl_DString       ds_conversion;
+  Tcl_SavedResult   sr_oldresult;
+
+  /* Don't call this before calling init_tcl() */
+  if (interp) {
+    Tcl_DStringInit(&ds_conversion);
+
+    /* save our old result */
+    Tcl_SaveResult(interp, &sr_oldresult);
+
+    /* clear any previous interp->result */
+    Tcl_ResetResult(interp);
+
+    /* convert UTF-8 to unicode */
+    Tcl_UtfToExternalDString(NULL, str, -1, &ds_conversion);
+    Tcl_DStringResult(interp, &ds_conversion);
+    strncpyz(str, interp->result, strlen(str) + 1);
+
+    /* restore our old result */
+    Tcl_RestoreResult(interp, &sr_oldresult);
+
+    /* free our DString buffers */
+    Tcl_DStringFree(&ds_conversion);
+  }
+
+  return strlen(str);
+}
+#endif
+
 /* Dump a potentially super-long string of text.
  */
 void dumplots(int idx, const char *prefix, char *data)
 {
   char		*p = data, *q, *n, c;
   const int	 max_data_len = 500 - strlen(prefix);
+  
+#if TCL_MAJOR_VERSION >= 8 && TCL_MINOR_VERSION >= 1
+  str_utf8tounicode(p);
+#endif
 
   if (!*data) {
     dprintf(idx, "%s\n", prefix);
