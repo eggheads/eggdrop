@@ -3,11 +3,13 @@
 #  You should never need to edit this.
 #
 
+SHELL = /bin/sh
+
 prefix = @prefix@
 DEST = @DEST@
-NEWVERSION = `grep 'char egg_version' src/main.c | @AWK@ '{gsub(/(\"|\;)/, "", $$4); print $$4}'`
+EGGEXEC = @EGGEXEC@
 
-SHELL = /bin/sh
+NEWVERSION = `grep 'char egg_version' src/main.c | @AWK@ '{gsub(/(\"|\;)/, "", $$4); print $$4}'`
 
 # things you can put here:
 #   -Wall            if you're using gcc and it supports it (configure
@@ -20,61 +22,85 @@ CFLGS =
 # to compile .. if you do...let the devel-team know the working settings
 # btw to turn STRIP off, do 'STRIP = touch' not 'STRIP ='
 
+# defaults
 CC = @CC@
 LD = @CC@
+STRIP = @STRIP@
+RANLIB = @RANLIB@
 
-#making eggmod
-MOD_CC = @BEL_MOD_CC@
-MOD_LD = @BEL_MOD_LD@
-MOD_STRIP = @BEL_MOD_STRIP@
-DLFLAGS = @DLFLAGS@
+# make eggmod
+MOD_CC = @MOD_CC@
+MOD_LD = @MOD_LD@
+MOD_STRIP = @MOD_STRIP@
 
-#making modules
+# make modules
 SHLIB_CC = @SHLIB_CC@
 SHLIB_LD = @SHLIB_LD@
 SHLIB_STRIP = @SHLIB_STRIP@
 
-# configure SHOULD set these properly if not, modify them appropriately
-# these are the cp commands that make install uses
-CP1 = @CP1@
-CP2 = @CP2@
-CP3 = @CP3@
-
-# With any luck this won't burst into flames or cause sterility
+# programs make install uses
 LN_S = @LN_S@
+INSTALL = @INSTALL@
+INSTALL_PROGRAM = @INSTALL_PROGRAM@
+INSTALL_DATA = @INSTALL_DATA@
+INSTALL_SCRIPT = @INSTALL_SCRIPT@
 
 # STOP STOP STOP STOP STOP STOP STOP STOP STOP STOP STOP STOP STOP STOP #
 # - - - - - - - - do not edit anything below this line. - - - - - - - - #
 # - - - - - - - - -  it's all done by configure now.  - - - - - - - - - #
 # STOP STOP STOP STOP STOP STOP STOP STOP STOP STOP STOP STOP STOP STOP #
 
-
 # stuff for Tcl
 XREQ = @TCL_REQS@
 TCLLIB = @TCLLIB@
-CFLAGS = -c @CFLAGS@ -I.. @DEFS@ ${CFLGS}
+
+CFLAGS = @CFLAGS@ -I.. @DEFS@ $(CFLGS)
 @SET_MAKE@
 
-all:    @DEFAULT_MAKE@
+MAKE_STATIC = $(MAKE) 'CC=$(CC)' 'LD=$(LD)' 'STRIP=$(STRIP)' \
+'RANLIB=$(RANLIB)' 'CFLAGS=$(CFLAGS) -DSTATIC' \
+'EGGEXEC=$(EGGEXEC)' 'TCLLIB=$(TCLLIB)' \
+'XREQ=$(XREQ)' 'XLIBS=@TCL_LIBS@ @LIBS@'
 
-help:
-	@echo "To make eggdrop :"
-	@echo "   % make "
+MAKE_MODEGG = $(MAKE) 'CC=$(MOD_CC)' 'LD=$(MOD_LD)' 'STRIP=$(MOD_STRIP)' \
+'RANLIB=$(RANLIB)' 'CFLAGS=$(CFLAGS)' \
+'EGGEXEC=$(EGGEXEC)' 'TCLLIB=$(TCLLIB)' \
+'XREQ=$(XREQ)' 'XLIBS=@TCL_LIBS@ @LIBS@'
 
-cleanmods:
-	@cd src/mod; ${MAKE} clean 'MAKE=${MAKE}'
+MAKE_MODULES = $(MAKE) 'CC=$(SHLIB_CC)' 'LD=$(SHLIB_LD)' \
+'STRIP=$(SHLIB_STRIP)' 'CFLAGS=$(CFLAGS)'
 
-clean: cleanmods
-	@rm -f eggdrop egg core DEBUG *.o *.a *.so *.stamp
-	@cd src; rm -f eggdrop egg core DEBUG *.o *.a
-	@cd src/md5; ${MAKE} clean
- 
+MAKE_SDEBUG = $(MAKE) 'CC=$(CC)' 'LD=$(LD)' 'STRIP=touch' \
+'RANLIB=$(RANLIB)' 'CFLAGS=-g3 $(CFLAGS) -DSTATIC -DEBUG_MEM' \
+'EGGEXEC=$(EGGEXEC)' 'TCLLIB=$(TCLLIB)' \
+'XREQ=$(XREQ)' 'XLIBS=@TCL_LIBS@ @LIBS@'
+
+MAKE_MEMEGG = $(MAKE) 'CC=$(MOD_CC)' 'LD=$(MOD_LD)' 'STRIP=touch' \
+'RANLIB=$(RANLIB)' 'CFLAGS=-g3 $(CFLAGS) -DEBUG_MEM' \
+'EGGEXEC=$(EGGEXEC)' 'TCLLIB=$(TCLLIB)' \
+'XREQ=$(XREQ)' 'XLIBS=@TCL_LIBS@ @LIBS@'
+
+MAKE_DEBMODULES = $(MAKE) 'CC=$(SHLIB_CC)' 'LD=$(SHLIB_LD)' \
+'STRIP=touch' 'CFLAGS=-g3 $(CFLAGS) -DEBUG_MEM'
+
+MAKE_INSTALL = $(MAKE) 'DEST=$(DEST)' 'INSTALL=$(INSTALL)' \
+'INSTALL_PROGRAM=$(INSTALL_PROGRAM)' 'INSTALL_DATA=$(INSTALL_DATA)' \
+'INSTALL_SCRIPT=$(INSTALL_SCRIPT)'
+
+all: @DEFAULT_MAKE@
+
+clean:
+	@rm -f $(EGGEXEC) *.so *.stamp core DEBUG *~
+	@cd src; $(MAKE) clean
+	@cd src/md5; $(MAKE) clean
+	@cd src/mod; $(MAKE) clean
+
 distclean: clean
 	@rm -f Makefile config.cache config.log config.status config.h lush.h
+
+distrib: distclean Makefile.in
 	@rm -f `find . \( -name '*~' -o -name '*#' -o -name '*.orig' \
 		-o -name '*.rej' -o -name '*.bak' \) -print`
- 
-distrib: distclean Makefile.in
 	@rm -rf `find . \( -name "CVS" \) -print`
 	@(echo "all:"; \
 	echo "  @echo \"\""; \
@@ -86,90 +112,75 @@ distrib: distclean Makefile.in
 
 eggdrop: modegg modules
 
-debugmem: memegg debmodules
+modegg: modtest
+	@cd src; $(MAKE_MODEGG) modegg
+	@echo ""
+	@./$(EGGEXEC) -v
+	@ls -l $(EGGEXEC)
 
-eggdrop.h:
-	@echo You do not have the eggdrop source!
-	@exit 1
-
-OBJS =	botcmd.o botmsg.o botnet.o chanprog.o cmds.o dcc.o \
-	dccutil.o flags.o language.o main.o mem.o misc.o \
-	modules.o net.o rfc1459.o tcl.o tcldcc.o tclhash.o \
-	tclmisc.o tcluser.o userent.o userrec.o users.o md5/md5c.o
-
-GMAKE_STATIC = ${MAKE} 'CC=${CC}' 'LD=${LD}' 'OBJS=${OBJS}'\
-'STRIP=${MOD_STRIP}' 'CFLAGS=${CFLAGS} -DSTATIC' 'XLIBS=@TCL_LIBS@ @LIBS@'
-
-GMAKE_SHLIB = ${MAKE} 'CC=${SHLIB_CC}' 'LD=${SHLIB_LD}' \
-'STRIP=${SHLIB_STRIP}' 'CFLAGS=${CFLAGS}'
-
-GMAKE_MOD = ${MAKE} 'CC=${MOD_CC}' 'LD=${MOD_LD}' 'OBJS=${OBJS}'\
-'CFLAGS=${CFLAGS}' 'XREQ=${XREQ}' \
-'TCLLIB=${TCLLIB}' 'STRIP=${MOD_STRIP}' 'RANLIB=@RANLIB@' \
-'XLIBS=@TCL_LIBS@ @LIBS@'
-
-DMAKE_MEM = ${MAKE} 'CC=${MOD_CC}' 'LD=${MOD_LD}' \
-'OBJS=${OBJS}' 'CFLAGS=-g3 ${CFLAGS} -DEBUG_MEM' 'XREQ=${XREQ}' \
-'TCLLIB=${TCLLIB}' 'STRIP=touch' 'RANLIB=@RANLIB@' \
-'XLIBS=@TCL_LIBS@ @LIBS@'
-
-DMAKE_SHLIB = ${MAKE} 'CC=${SHLIB_CC}' 'LD=${SHLIB_LD}' \
-'STRIP=touch' 'CFLAGS=-g3 ${CFLAGS} -DEBUG_MEM'
+modules: modtest
+	@cd src/mod; $(MAKE_MODULES) modules
+	@echo ""
+	@echo "modules made:"
+	@ls -l *.so
 
 static: eggtest
 	@echo ""
 	@echo "Making module objects for static linking..."
 	@echo ""
-	@rm -f src/main.o
-	@cd src/mod; ${GMAKE_STATIC} static
+	@cd src/mod; $(MAKE_STATIC) static
 	@echo ""
 	@echo "Making core eggdrop for static linking..."
 	@echo ""
-	@cd src; ${GMAKE_STATIC} static
+	@cd src; $(MAKE_STATIC) static
+	@./$(EGGEXEC) -v
+	@ls -l $(EGGEXEC)
 
-modegg: modtest
-	@cd src; ${GMAKE_MOD} eggdrop
-	@echo
-	@./eggdrop -v
-	@ls -la eggdrop
-	
-modules:  modtest
-	@cd src/mod; ${GMAKE_SHLIB} modules
-	@echo
+debugmem: memegg debmodules
+
+memegg: modtest
+	@cd src; $(MAKE_MEMEGG) memegg
+	@echo ""
+	@./$(EGGEXEC) -v
+	@ls -l $(EGGEXEC)
+
+debmodules: modtest
+	@cd src/mod; $(MAKE_DEBMODULES) modules
+	@echo ""
 	@echo "modules made:"
-	@ls -la *.so
+	@ls -l *.so
 
-debmodules:  modtest
-	@cd src/mod; ${DMAKE_SHLIB} modules
-	@echo
-	@echo "modules made:"
-	@ls -la *.so
-
-memegg:  modtest
-	@cd src; ${DMAKE_MEM} eggdrop
-	@echo
-	@./eggdrop -v
-	@ls -la eggdrop
+sdebug: eggtest
+	@echo ""
+	@echo "Making module objects for static linking..."
+	@echo ""
+	@cd src/mod; $(MAKE_SDEBUG) static
+	@echo ""
+	@echo "Making core eggdrop for static linking..."
+	@echo ""
+	@cd src; $(MAKE_SDEBUG) sdebug
+	@./$(EGGEXEC) -v
+	@ls -l $(EGGEXEC)
 
 eggtest:
 	@if [ -f EGGMOD.stamp ]; then \
-		echo You\'re trying to do a STATIC build of eggdrop when you\'ve;\
-		echo already run \'make\' for a module build.;\
-		echo You must first type \"make clean\" before you can build;\
-		echo a static version.;\
+		echo "You're trying to do a STATIC build of eggdrop when you've";\
+		echo "already run 'make' for a module build.";\
+		echo "You must first type \"make clean\" before you can build";\
+		echo "a static version.";\
 		exit 1;\
 	fi
-	@date >EGGDROP.stamp
+	@echo "stamp" >EGGDROP.stamp
 
 modtest:
 	@if [ -f EGGDROP.stamp ]; then \
-		echo You\'re trying to do a MODULE build of eggdrop when you\'ve;\
-		echo already run \'make\' for a static build.;\
-		echo You must first type \"make clean\" before you can build;\
-		echo a module version.;\
+		echo "You're trying to do a MODULE build of eggdrop when you've";\
+		echo "already run 'make' for a static build.";\
+		echo "You must first type \"make clean\" before you can build";\
+		echo "a module version.";\
 		exit 1;\
 	fi
-	@date >EGGMOD.stamp
+	@echo "stamp" >EGGMOD.stamp
 
 install: @DEFAULT_MAKE@ ainstall
 
@@ -177,100 +188,136 @@ dinstall: eggdrop ainstall
 
 sinstall: static ainstall
 
-ainstall:
-	@if test X$(DEST) = X; then \
+ainstall: install-start install-bin install-modules install-data \
+	install-language install-help install-filesys install-doc \
+	install-scripts install-end
+
+install-start:
+	@if test "x$(DEST)" = "x"; then \
 		echo "You must specify a destination directory with DEST="; \
 		exit 1; \
 	fi
-	@if test ! -f eggdrop; then \
+	@if test ! -f $(EGGEXEC); then \
 		echo "You haven't compiled eggdrop yet."; \
 		exit 1; \
 	fi
-	@./eggdrop -v
+	@./$(EGGEXEC) -v
 	@echo
-	@echo Installing in directory: $(DEST).
+	@echo "Installing in directory: '$(DEST)'."
 	@echo
 	@if test ! -d $(DEST); then \
-		echo Creating directory: $(DEST).; \
-		mkdir $(DEST); \
+		echo "Creating directory: $(DEST)."; \
+		$(INSTALL) -d $(DEST); \
 	fi
-	@$(CP1) README $(DEST)/
-	@$(CP1) eggdrop.conf.dist $(DEST)/
-	@if test ! -d $(DEST)/language; then \
-		echo Creating language subdirectory.; \
-		mkdir $(DEST)/language; \
+
+install-bin:
+	@if test -f $(DEST)/$(EGGEXEC); then \
+		rm -f $(DEST)/o$(EGGEXEC); \
 	fi
-	@$(CP2) language/* src/mod/*.mod/*.lang $(DEST)/language/
-	@if test -f $(DEST)/eggdrop; then \
-		rm -f $(DEST)/oeggdrop; \
+	@if test -h $(DEST)/$(EGGEXEC); then \
+		echo "Removing symlink to archival eggdrop binary."; \
+		rm -f $(DEST)/$(EGGEXEC); \
 	fi
-	@if test ! -f $(DEST)/motd; then \
-		$(CP1) motd $(DEST)/; \
+	@if test -f $(DEST)/$(EGGEXEC); then \
+		echo "Renamed the old '$(EGGEXEC)' executable to 'o$(EGGEXEC)'."; \
+		mv -f $(DEST)/$(EGGEXEC) $(DEST)/o$(EGGEXEC); \
 	fi
-	@if test ! -f $(DEST)/telnet-banner; then \
-		$(CP1) telnet-banner $(DEST)/; \
-	fi
+	@echo "Copying new '$(EGGEXEC)' executable and creating symlink."
+	@$(INSTALL_PROGRAM) $(EGGEXEC) $(DEST)/$(EGGEXEC)-$(NEWVERSION)
+	@$(LN_S) $(EGGEXEC)-$(NEWVERSION) $(DEST)/$(EGGEXEC)
+
+install-modules:
 	@if test -h $(DEST)/modules; then \
-		echo Removing symlink to archival modules directory.; \
+		echo "Removing symlink to archival modules directory."; \
 		rm -f $(DEST)/modules; \
 	fi
-	@if test -d $(DEST)/modules/; then \
-		echo Moving old modules into \'modules.old\' directory.; \
+	@if test -d $(DEST)/modules; then \
+		echo "Moving old modules into 'modules.old' directory."; \
 		rm -rf $(DEST)/modules.old; \
 		mv -f $(DEST)/modules $(DEST)/modules.old; \
 	fi
-	@if test ! -d $(DEST)/modules\-${NEWVERSION}/; then \
-		echo Creating modules\-${NEWVERSION} directory and symlink.; \
-		mkdir $(DEST)/modules\-${NEWVERSION}; \
+	@if test ! "x`echo *.so`" = "x*.so"; then \
+		if test ! -d $(DEST)/modules-$(NEWVERSION); then \
+			echo "Creating modules-$(NEWVERSION) directory and symlink."; \
+			$(INSTALL) -d $(DEST)/modules-$(NEWVERSION); \
+		fi; \
+		$(LN_S) modules-$(NEWVERSION) $(DEST)/modules; \
+		echo "Copying new modules."; \
+		for i in *.so; do \
+			$(INSTALL_PROGRAM) $$i $(DEST)/modules-$(NEWVERSION)/; \
+		done; \
 	fi
-	@$(LN_S) modules\-${NEWVERSION} $(DEST)/modules
-	@if test -f assoc.so; then \
-		echo Copying new modules.; \
-		$(CP3) *.so $(DEST)/modules/; \
-	fi
-	@if test -h $(DEST)/eggdrop; then \
-		echo Removing symlink to archival eggdrop binary.; \
-		rm -f $(DEST)/eggdrop; \
-	fi
-	@if test -f $(DEST)/eggdrop; then \
-		echo Renamed the old \'eggdrop\' executable to \'oeggdrop\'.; \
-		mv -f $(DEST)/eggdrop $(DEST)/oeggdrop; \
-	fi
-	@echo Copying new \'eggdrop\' executable and creating symlink.
-	@$(CP1) eggdrop $(DEST)/eggdrop\-${NEWVERSION}
-	@$(LN_S) eggdrop\-${NEWVERSION} $(DEST)/eggdrop
-	@if test ! -d $(DEST)/doc; then \
-		echo Creating \'doc\' subdirectory.; \
-		mkdir $(DEST)/doc; \
-	fi
-	@echo Copying \'doc\' files.
-	@$(CP2) doc/* $(DEST)/doc/
-	@if test ! -d $(DEST)/help; then \
-		echo Creating \'help\' subdirectory.; \
-		mkdir $(DEST)/help; \
-	fi
-	@$(CP2) help/* $(DEST)/help/
-	@if test ! -d $(DEST)/filesys; then \
-		echo Creating a skeletal \'filesys\' subdirectory.; \
-		mkdir $(DEST)/filesys; \
-		mkdir $(DEST)/filesys/incoming; \
-	fi
-	@if test ! -d $(DEST)/scripts; then \
-		echo Creating a \'scripts\' subdirectory.; \
-		mkdir $(DEST)/scripts; \
-		echo Copying scripts.; \
-		$(CP2) scripts/* $(DEST)/scripts; \
-	fi
-	@echo
-	@${MAKE} REALDEST=`cd $(DEST); pwd` install2
-	@echo
-	@echo Installation completed.
-	@echo You MUST ensure that you edit/verify your configuration file.
-	@echo \'eggdrop.conf.dist\' lists current options.
-	@echo Remember to change directory to $(DEST) before you proceed.
 
-install2:
-	@echo Installing mods -- DEST = $(REALDEST)
-	@cd src/mod; ${MAKE} REALDEST=$(REALDEST) install CP1='${CP1}'; cd ../..
+install-data:
+	@$(INSTALL_DATA) README $(DEST)
+	@$(INSTALL_DATA) eggdrop.conf.dist $(DEST)
+	@if test ! -f $(DEST)/motd; then \
+		$(INSTALL_DATA) motd $(DEST); \
+	fi
+	@if test ! -f $(DEST)/telnet-banner; then \
+		$(INSTALL_DATA) telnet-banner $(DEST); \
+	fi
+
+install-language:
+	@if test ! "x`echo language/*.lang`" = "xlanguage/*.lang"; then \
+		if test ! -d $(DEST)/language; then \
+			echo "Creating 'language' subdirectory."; \
+			$(INSTALL) -d $(DEST)/language; \
+		fi; \
+		for i in language/*.lang; do \
+			$(INSTALL_DATA) $$i $(DEST)/language/; \
+		done; \
+	fi
+	@cd src/mod/; $(MAKE_INSTALL) install-language
+
+install-help:
+	@if test ! "x`echo help/*.help`" = "xhelp/*.help"; then \
+		if test ! -d $(DEST)/help; then \
+			echo "Creating 'help' subdirectory."; \
+			$(INSTALL) -d $(DEST)/help; \
+		fi; \
+		for i in help/*.help; do \
+			$(INSTALL_DATA) $$i $(DEST)/help/; \
+		done; \
+	fi
+	@if test ! "x`echo help/msg/*.help`" = "xhelp/msg/*.help"; then \
+		if test ! -d $(DEST)/help/msg; then \
+			echo "Creating 'help/msg' subdirectory."; \
+			$(INSTALL) -d $(DEST)/help/msg; \
+		fi; \
+		for i in help/msg/*.help; do \
+			$(INSTALL_DATA) $$i $(DEST)/help/msg/; \
+		done; \
+	fi
+	@if test ! "x`echo help/set/*.help`" = "xhelp/set/*.help"; then \
+		if test ! -d $(DEST)/help/set; then \
+			echo "Creating 'help/set' subdirectory."; \
+			$(INSTALL) -d $(DEST)/help/set; \
+		fi; \
+		for i in help/set/*.help; do \
+			$(INSTALL_DATA) $$i $(DEST)/help/set/; \
+		done; \
+	fi
+	@cd src/mod/; $(MAKE_INSTALL) install-help
+
+install-filesys:
+	@if test ! -d $(DEST)/filesys; then \
+		echo "Creating a skeletal filesys subdirectory."; \
+		$(INSTALL) -d $(DEST)/filesys; \
+		$(INSTALL) -d $(DEST)/filesys/incoming; \
+	fi
+
+install-doc:
+	@cd doc/; $(MAKE_INSTALL) install
+
+install-scripts:
+	@cd scripts/; $(MAKE_INSTALL) install
+
+install-end:
+	@echo
+	@echo "Installation completed."
+	@echo "You MUST ensure that you edit/verify your configuration file."
+	@echo "'eggdrop.conf.dist' lists current options."
+	@echo "Remember to change directory to $(DEST) before you proceed."
 
 #safety hash

@@ -1,23 +1,65 @@
-# Source-make
+# Makefile for src/mod/
 
-GMAKE=${MAKE} 'LD=${LD}' 'STRIP=${STRIP}' 'CC=${CC}' 'CFLAGS=${CFLAGS}'
+MAKE_MOD = $(MAKE) 'MAKE=$(MAKE)' 'CC=$(CC)' 'LD=$(LD)' \
+'STRIP=$(STRIP)' 'CFLAGS=$(CFLAGS)' 
 
 doofus:
 	@echo ""
 	@echo "Let's try this from the right directory..."
 	@echo ""
-	@cd ../..;make
-	
+	@cd ../..; make
+
 clean:
-	@for x in *.mod; do cd $$x;${MAKE} clean;cd ..;done
 	@rm -f *.o *~ static.h
-	
+	@for i in *.mod; do cd $$i; $(MAKE) 'MAKE=$(MAKE)' clean; cd ..; done
+
 modules:
-	for x in *.mod; do cd $$x;${GMAKE} modules;cd ..; done
+	@for i in *.mod; do cd $$i; $(MAKE_MOD) modules; cd ..; done
 
 static:
 	@./buildstatic
-	@for x in *.mod; do cd $$x;${GMAKE} static;cd ..; done
-	
-install:
-	@for x in *.mod; do cd $$x;${GMAKE} install; cd ..; done
+	@for i in *.mod; do cd $$i; $(MAKE_MOD) static; cd ..; done
+
+install: install-language install-help
+
+install-language:
+	@if test ! "x`echo *.mod/language/*.lang`" = "x*.mod/language/*.lang"; then \
+		if test ! -d $(DEST)/language; then \
+			echo "Creating 'language' subdirectory."; \
+			$(INSTALL) -d $(DEST)/language; \
+		fi; \
+		for i in *.mod/language/*.lang; do \
+			$(INSTALL_DATA) $$i $(DEST)/language/; \
+		done; \
+	fi
+
+install-help:
+	@if test ! "x`echo *.mod/help/*.help`" = "x*.mod/help/*.help"; then \
+		if test ! -d $(DEST)/help; then \
+			echo "Creating 'help' subdirectory."; \
+			$(INSTALL) -d $(DEST)/help; \
+		fi; \
+		for i in *.mod/help/*.help; do \
+			$(INSTALL_DATA) $$i $(DEST)/help/; \
+		done; \
+	fi
+	@if test ! "x`echo *.mod/help/msg/*.help`" = "x*.mod/help/msg/*.help"; then \
+		if test ! -d $(DEST)/help/msg; then \
+			echo "Creating 'help/msg' subdirectory."; \
+			$(INSTALL) -d $(DEST)/help/msg; \
+		fi; \
+		for i in *.mod/help/msg/*.help; do \
+			$(INSTALL_DATA) $$i $(DEST)/help/msg/; \
+		done; \
+	fi
+	@if test ! "x`echo *.mod/help/set/*.help`" = "x*.mod/help/set/*.help"; then \
+		if test ! -d $(DEST)/help/set; then \
+			echo "Creating 'help/set' subdirectory."; \
+			$(INSTALL) -d $(DEST)/help/set; \
+		fi; \
+		for i in *.mod/help/set/*.help; do \
+			$(INSTALL_DATA) $$i $(DEST)/help/set/; \
+		done; \
+	fi
+
+#safety hash

@@ -593,11 +593,11 @@ const char *module_load(char *name)
     return "Can't load module.";
 #else
 #ifdef OSF1_HACKS
-#if ((TCL_MAJOR_VERSION == 7) && (TCL_MINOR_VERSION >= 5)) || (TCL_MAJOR_VERSION >= 8)
+#ifndef HAVE_OLD_TCL
   hand = (Tcl_PackageInitProc *) load(workbuf, LDR_NOFLAGS);
   if (hand == LDR_NULL_MODULE)
     return "Can't load module.";
-#endif				/* TCL */
+#endif
 #else
   context;
   hand = dlopen(workbuf, DLFLAGS);

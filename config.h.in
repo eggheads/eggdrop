@@ -135,7 +135,7 @@
 #define SIZEOF_INT 0
 #define SIZEOF_LONG 0
 
-/*define for the system uname*/
+/* define for the system uname */
 #undef HAVE_UNAME
 
 /* have vsnpritf to use */
@@ -143,3 +143,12 @@
 
 /* running on NeXT Step */
 #undef BORGCUBES
+
+/* for pre Tcl 7.5 compat */
+#undef HAVE_OLD_TCL
+
+/* for buggy Tcl 8.1 threads */
+#undef HAVE_BUGGY_TCL_THREADS
+
+/* running under cygwin */
+#undef CYGWIN_HACKS

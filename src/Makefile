@@ -1,222 +1,116 @@
-# Source-make
+# Makefile for src/
 
-GMAKE = ${MAKE} 'CC=${CC}' 'CFLAGS=${CFLAGS}' 
+OBJS = botcmd.o botmsg.o botnet.o chanprog.o cmds.o dcc.o \
+	dccutil.o flags.o language.o main.o mem.o misc.o \
+	modules.o net.o rfc1459.o tcl.o tcldcc.o tclhash.o \
+	tclmisc.o tcluser.o userent.o userrec.o users.o md5/md5c.o
+
+MOD_OBJS = mod/assoc.o mod/blowfish.o mod/channels.o mod/console.o \
+	mod/ctcp.o mod/filesys.o mod/irc.o mod/notes.o mod/seen.o \
+	mod/server.o mod/share.o mod/transfer.o mod/wire.o mod/woobie.o
 
 doofus:
 	@echo ""
 	@echo "Let's try this from the right directory..."
 	@echo ""
-	@cd ..;make
+	@cd ../; make
 
-../eggdrop:  ${OBJS} ${XREQ} eggdrop.h
+modegg: $(OBJS) $(XREQ)
 	@echo ""
 	@echo "Linking eggdrop..."
 	@echo ""
-	${LD} -o ../eggdrop ${OBJS} ${XLIBS}
-	${STRIP} ../eggdrop
-	@echo "Successful compile: eggdrop"
+	$(LD) -o ../$(EGGEXEC) $(OBJS) $(XLIBS)
+	$(STRIP) ../$(EGGEXEC)
+	@echo "Successful compile: $(EGGEXEC)"
 	@echo ""
 	
-eggdrop: ../eggdrop
-
-eggdrop.h: 
-	@touch eggdrop.h
-
-static: ${OBJS} ${XREQ}
+static: $(OBJS) $(XREQ)
 	@echo ""
-	@echo "Linking eggdrop...(statically)"
+	@echo "Linking eggdrop... (static version)"
 	@echo ""
-	${LD} -o ../eggdrop ${OBJS} ${XLIBS} mod/*.o
-	${STRIP} ../eggdrop
-	@echo "Successful compile: eggdrop"
+	$(LD) -o ../$(EGGEXEC) $(OBJS) $(MOD_OBJS) $(XLIBS)
+	$(STRIP) ../$(EGGEXEC)
+	@echo "Successful compile: $(EGGEXEC)"
 	@echo ""
 
-debug: ${OBJS} ${XREQ}
+memegg: $(OBJS) $(XREQ)
 	@echo ""
-	@echo "Linking eggdrop (debug version)..."
+	@echo "Linking eggdrop... (debug versrion)"
 	@echo ""
-	${LD} -g -o ../eggdrop ${OBJS} ${XLIBS}
-	@echo "Successful compile: eggdrop (debug version)"
+	$(LD) -g -o ../$(EGGEXEC) $(OBJS) $(XLIBS)
+	@echo "Successful compile: $(EGGEXEC)"
+	@echo ""
+	
+sdebug: $(OBJS) $(XREQ)
+	@echo ""
+	@echo "Linking eggdrop... (static and debug version)"
+	@echo ""
+	$(LD) -g -o ../$(EGGEXEC) $(OBJS) $(MOD_OBJS) $(XLIBS)
+	@echo "Successful compile: $(EGGEXEC)"
 	@echo ""
 
-botcmd.o: botcmd.c
+clean:
+	@rm -f *.o *.a *~
+
+botcmd.o:
 	@echo "(This will take a while. Go make a pizza or something.)"
-	${CC} ${CFLAGS} botcmd.c
+	$(CC) $(CFLAGS) $(CPPFLAGS) -c botcmd.c
 
-botmsg.o: botmsg.c
-	${CC} ${CFLAGS} botmsg.c
-
-botnet.o: botnet.c
-	${CC} ${CFLAGS} botnet.c
-	
-chanprog.o: chanprog.c
-	${CC} ${CFLAGS} chanprog.c
-	
-cmds.o: cmds.c
-	${CC} ${CFLAGS} cmds.c
-
-dcc.o: dcc.c
-	${CC} ${CFLAGS} dcc.c
-	
-dccutil.o: dccutil.c
-	${CC} ${CFLAGS} dccutil.c
-
-flags.o: flags.c
-	${CC} ${CFLAGS} flags.c
-
-language.o: language.c 
-	${CC} ${CFLAGS} language.c
-
-main.o: main.c patch.h 
-	${CC} ${CFLAGS} \
-	'-DCCFLAGS="${CC} ${CFLAGS}"' \
-	'-DLDFLAGS="${LD}"' \
-	'-DSTRIPFLAGS="${STRIP}"' main.c
-
-mem.o: mem.c
-	${CC} ${CFLAGS} mem.c
-	
-misc.o: misc.c
-	${CC} ${CFLAGS} misc.c
-
-modules.o: modules.c
-	${CC} ${CFLAGS} modules.c
-
-net.o: net.c
-	${CC} ${CFLAGS} net.c
-
-rfc1459.o: rfc1459.c
-	${CC} ${CFLAGS} rfc1459.c
-
-tcl.o: tcl.c
-	${CC} ${CFLAGS} tcl.c
-	
-tcldcc.o: tcldcc.c
-	${CC} ${CFLAGS} tcldcc.c
-
-tclhash.o: tclhash.c
-	${CC} ${CFLAGS} tclhash.c
-	
-tclmisc.o: tclmisc.c
-	${CC} ${CFLAGS} tclmisc.c
-
-tcluser.o: tcluser.c
-	${CC} ${CFLAGS} tcluser.c
-
-userent.o: userent.c
-	${CC} ${CFLAGS} userent.c
-
-userrec.o: userrec.c
-	${CC} ${CFLAGS} userrec.c
-
-users.o: users.c
-	${CC} ${CFLAGS} users.c
+main.o:
+	$(CC) $(CFLAGS) $(CPPFLAGS) \
+	'-DCCFLAGS="$(CC) $(CFLAGS) $(CPPFLAGS)"' \
+	'-DLDFLAGS="$(LD)"' \
+	'-DSTRIPFLAGS="$(STRIP)"' -c main.c
 
 md5/md5c.o:
-	@cd md5; ${GMAKE} md5
+	@cd md5; $(MAKE) 'MAKE=$(MAKE)' 'CC=$(CC)' 'LD=$(LD)' \
+	'STRIP=$(STRIP)' 'CFLAGS=$(CFLAGS)' md5
 	@echo "---------- Yeah! that's the compiling, now the linking! ----------"
 
-# I orginially had this in another file, but some lame make's can't cope :/ 
-botcmd.o: \
-   main.h \
-   tandem.h \
-   users.h \
-   chan.h \
-   modules.h
-botmsg.o: \
-   main.h \
-   tandem.h
-botnet.o: \
-   main.h \
-   tandem.h
-chanprog.o: \
-   main.h \
-   modules.h
-cmds.o: \
-   main.h \
-   tandem.h \
-   modules.h
-dcc.o: \
-   main.h \
-   modules.h \
-   tandem.h \
-   md5/global.h \
-   md5/md5.h
-dccutil.o: \
-   main.h \
-   chan.h \
-   modules.h \
-   tandem.h
-flags.o: \
-   main.h
-language.o: \
-   main.h
-main.o: \
-   main.h \
-   chan.h \
-   modules.h \
-   patch.h
-mem.o: \
-   mod/modvals.h
-misc.o: \
-   main.h \
-   chan.h
-modules.o: \
-   main.h \
-   modules.h \
-   users.h
-net.o: \
-   main.h
-rfc1459.o: \
-   main.h
-tcl.o: \
-   main.h
-tcldcc.o: \
-   main.h \
-   tandem.h
-tclhash.o: \
-   main.h \
-   chan.h \
-   users.h \
-   match.c
-tclmisc.o: \
-   main.h \
-   modules.h
-tcluser.o: \
-   main.h \
-   users.h \
-   chan.h \
-   tandem.h
-userent.o: \
-   main.h \
-   users.h
-userrec.o: \
-   main.h \
-   users.h \
-   chan.h \
-   modules.h \
-   tandem.h
-users.o: \
-   main.h \
-   users.h \
-   chan.h \
-   modules.h \
-   tandem.h
-main.h: \
-   lang.h \
-   eggdrop.h \
-   flags.h \
-   proto.h \
-   cmdt.h \
-   tclegg.h \
-   tclhash.h \
-   chan.h \
-   users.h
-	@touch main.h
-modules.h: \
-   mod/modvals.h
-	@touch modules.h
-tclegg.h: \
-   proto.h
-	@touch tclegg.h
+libtcle.a: $(TCLLIB)/lib$(TCLLIBFN)
+	@echo "[ Fixing lib$(TCLLIBFN) -> libtcle.a ]"
+	cp $(TCLLIB)/lib$(TCLLIBFN) ./libtcle.a
+	chmod u+rw libtcle.a
+	ar d ./libtcle.a tclMain.o
+	$(RANLIB) ./libtcle.a
+
+eggdrop.h:
+	@echo "You do not have the eggdrop source!"
+	@exit 1
+
+.SUFFIXES:
+.SUFFIXES: .c .h .o .a
+
+.c.o:
+	$(CC) $(CFLAGS) $(CPPFLAGS) -c $<
+
+botcmd.o: chan.h main.h modules.h tandem.h users.h
+botmsg.o: main.h tandem.h
+botnet.o: main.h tandem.h
+chanprog.o: main.h modules.h
+cmds.o: main.h modules.h tandem.h
+dcc.o: main.h md5/global.h md5/md5.h modules.h tandem.h
+dccutil.o: chan.h main.h modules.h tandem.h
+flags.o: main.h
+language.o: main.h
+main.o: chan.h main.h modules.h patch.h tandem.h
+mem.o: mod/modvals.h
+misc.o: chan.h main.h
+modules.o: main.h modules.h tandem.h users.h
+net.o: main.h
+rfc1459.o: main.h
+tcl.o: main.h
+tcldcc.o: main.h modules.h tandem.h
+tclhash.o: chan.h main.h match.c users.h
+tclmisc.o: main.h modules.h tandem.h
+tcluser.o: chan.h main.h tandem.h users.h
+userent.o: main.h users.h
+userrec.o: chan.h main.h modules.h tandem.h users.h
+users.o: chan.h main.h modules.h tandem.h users.h
+main.h: ../config.h chan.h cmdt.h eggdrop.h flags.h lang.h \
+	 proto.h tclegg.h tclhash.h users.h
+modules.h: mod/modvals.h
+proto.h: ../lush.h
+tclegg.h: ../lush.h proto.h
+
 #safety hash
