@@ -2,7 +2,7 @@
  * assoc.c -- part of assoc.mod
  *   the assoc code, moved here mainly from botnet.c for module work
  *
- * $Id: assoc.c,v 1.13 2001/04/12 02:39:44 guppy Exp $
+ * $Id: assoc.c,v 1.14 2001/04/13 06:33:23 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -387,6 +387,7 @@ static cmd_t mydcc[] =
 static cmd_t mybot[] =
 {
   {"assoc",	"",	(Function) zapf_assoc,	NULL},
+  {NULL,        NULL,   NULL,                   NULL}
 };
 
 static cmd_t mylink[] =
