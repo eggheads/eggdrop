@@ -2,7 +2,7 @@
  * tcldcc.c -- handles:
  *   Tcl stubs for the dcc commands
  * 
- * $Id: tcldcc.c,v 1.15 2000/03/23 23:17:56 fabian Exp $
+ * $Id: tcldcc.c,v 1.16 2000/04/05 19:22:33 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1033,16 +1033,18 @@ static int tcl_listen STDVAR
 
 static int tcl_boot STDVAR
 {
-  char who[512];
+  char who[NOTENAMELEN + 1];
   int i, ok = 0;
 
   Context;
   BADARGS(2, 3, " user@bot ?reason?");
-  strcpy(who, argv[1]);
+  strncpy(who, argv[1], NOTENAMELEN);
+  who[NOTENAMELEN] = 0;
   if (strchr(who, '@') != NULL) {
-    char whonick[161];
-     splitc(whonick, who, '@');
-     whonick[161] = 0;
+    char whonick[HANDLEN + 1];
+
+    splitc(whonick, who, '@');
+    whonick[HANDLEN] = 0;
     if (!egg_strcasecmp(who, botnetnick))
        strcpy(who, whonick);
     else if (remote_boots > 1) {
