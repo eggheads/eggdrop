@@ -299,7 +299,7 @@ set die-on-sigterm 0
 unbind dcc n tcl *dcc:tcl
 unbind dcc n set *dcc:set
 
-# [0/1] only let permanent owners use .tcl/.set if bound? then set it to 1
+# [0/1/2] only let permanent owners use .tcl/.set if bound? then set it to 1
 # moreover only let permanent owners use .dump? then set it to 2
 # (the people must set the $owner variable)
 set must-be-owner 0
@@ -1033,7 +1033,7 @@ loadmodule console
 # .store)
 set console-autosave 1
 
-# [0/1] if a user doesn't have any console settings saved, which channel
+# [0-99999] if a user doesn't have any console settings saved, which channel
 # do you want them automatically put on?
 set force-channel 0
 
