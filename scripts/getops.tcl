@@ -1,7 +1,7 @@
 
-# Getops 2.3a
+# Getops 2.3b
 
-# $Id: getops.tcl,v 1.13 2001/08/08 17:29:59 guppy Exp $
+# $Id: getops.tcl,v 1.14 2001/08/10 23:14:54 guppy Exp $
 
 # This script is used for bots to request and give ops to each other.
 # For this to work, you'll need:
@@ -21,6 +21,9 @@
 # hostmasks up-to-date).
 
 # -----------------------------------------------------------------------------
+
+# 2.3b by gregul <unknown>
+#  - small fix in getbot
 
 # 2.3a by guppy <guppy@eggheads.org>
 #  - fix for bind need
@@ -173,7 +176,7 @@ proc getbot {chan} {
     if {[lsearch $bns $bn] < 0} {
       if {[matchattr $bn o|o $chan]} {
 	set nick [hand2nick $bn $chan]
-        if {[onchan $nick $chan] && [isop nick $chan]} {
+        if {[onchan $nick $chan] && [isop $nick $chan]} {
           return $bn
           break
         }

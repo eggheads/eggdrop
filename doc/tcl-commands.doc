@@ -1290,13 +1290,16 @@ for the msg-command "stop", use 'unbind msg - stop msg_stop'.
        from the proc and continue parsing that
 
 | (29) NEED   (stackable)
-|      bind need <flags> <type/mask> <proc>
+|      bind need <flags> <mask> <proc>
 |      procname <channel> <type>
 |
 |      this bind is triggered on certain events, like when the bot needs
 |      operator status or the key for a channel; the types are: op, unban,
-|      invite, and key; <type/mask> can contain wildcards, and contains
-|      the channel and the type of need request; flags are ignored
+|      invite, and key; the <mask> in the bind is matched against 
+|      "#channel type" and can contain wildcards; flags are ignored
+|
+|      example: bind need - "% op" needop < handles only need op
+|               bind need - "*" needall   < handles all needs
 
   (30) FLUD   (stackable)
        bind flud <flags> <type> <proc>
