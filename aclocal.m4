@@ -1,7 +1,7 @@
 dnl aclocal.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: aclocal.m4,v 1.42 2001/07/03 16:47:14 guppy Exp $
+dnl $Id: aclocal.m4,v 1.43 2001/07/24 14:43:34 guppy Exp $
 dnl
 
 
@@ -257,6 +257,12 @@ case "$egg_cv_var_system_type" in
   Lynx)
     NEED_DL=0
     DEFAULT_MAKE=static
+    SHLIB_STRIP=strip
+  ;;
+  QNX)
+    NEED_DL=0
+    DEFAULT_MAKE=static
+    SHLIB_LD="ld -shared"
     SHLIB_STRIP=strip
   ;;
   OSF1)
