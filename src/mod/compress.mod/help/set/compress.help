@@ -1,0 +1,6 @@
+%{help=set share-compressed}%{+n}
+###  %bset share-compressed%b <0/1>
+  Specifies wether to allow compressed sending of user files.
+%{help=set share-compress-level}%{+n}
+###  %bset share-compress-level%b <0-9>
+  Defines the compression level used during share file compression.

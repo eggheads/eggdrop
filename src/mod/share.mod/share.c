@@ -1,7 +1,7 @@
 /* 
  * share.c -- part of share.mod
  * 
- * $Id: share.c,v 1.25 2000/02/18 22:27:54 fabian Exp $
+ * $Id: share.c,v 1.26 2000/03/01 17:54:37 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1617,6 +1617,18 @@ static void finish_share(int idx)
   if (j == -1)
     return;
 
+  if (dcc[j].status & STAT_UFF_COMPRESS) {
+    module_entry *me = module_find("compress", 1, 1);
+
+    if (!me || !me->funcs ||
+	!((me->funcs[SHAREUNCOMPRESS])(dcc[idx].u.xfer->filename))) {
+      putlog(LOG_BOTS, "*", "Uncompressing userfile failed!");
+      unlink(dcc[idx].u.xfer->filename);
+      return;
+    } else
+      debug1("NOTE: Uncompressed userfile from %s.", dcc[j].nick);
+  }
+  
   Context;
   if (dcc[j].status & STAT_UFF_OVERRIDE)
     debug1("NOTE: Sharing passively with %s, overriding local bots.",
@@ -1786,6 +1798,23 @@ static void start_sending_users(int idx)
   write_tmp_userfile(s, u, idx);
   Context;
   clear_userlist(u);
+
+  Context;
+  if (dcc[idx].status & STAT_UFF_COMPRESS) {
+    module_entry *me = module_find("compress", 1, 1);
+
+    /* Compress failed? (or compress module unloaded?) */
+    if (!me || !me->funcs || !((me->funcs[SHARECOMPRESS])(s))) {
+      Context;
+      unlink(s);
+      dprintf(idx, "s e %s\n", "Can't compress userfile");
+      putlog(LOG_BOTS, "*", "Can't compress userfile");
+      dcc[idx].status &= ~(STAT_SHARE | STAT_SENDING | STAT_AGGRESSIVE);
+      return;
+    } else
+      debug1("NOTE: Sending compressed userfile to %s", dcc[idx].nick);
+  }
+
   Context;
   if ((i = raw_dcc_send(s, "*users", "(users)", s)) > 0) {
     unlink(s);
@@ -2071,14 +2100,14 @@ static Function share_table[] =
   /* 8 - 11 */
 };
 
-char *share_start(Function * global_funcs)
+char *share_start(Function *global_funcs)
 {
   int i;
 
   global = global_funcs;
 
   Context;
-  module_register(MODULE_NAME, share_table, 2, 1);
+  module_register(MODULE_NAME, share_table, 2, 2);
   if (!module_depend(MODULE_NAME, "eggdrop", 105, 0))
     return "You need an eggdrop of at least v1.5.0 to use this share module.";
   if (!(transfer_funcs = module_depend(MODULE_NAME, "transfer", 2, 0))) {

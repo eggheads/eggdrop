@@ -1,0 +1,39 @@
+# Makefile.in for src/mod/compress.mod/
+# $Id: Makefile.in,v 1.1 2000/03/01 17:54:37 fabian Exp $
+
+ZLIB = @ZLIB@
+
+doofus:
+	@echo ""
+	@echo "Let's try this from the right directory..."
+	@echo ""
+	@cd ../../../; make
+
+static: ../compress.o
+	@echo "$(ZLIB)" >> ../mod.xlibs
+
+modules: ../../../compress.so
+
+../compress.o:
+	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c compress.c
+	rm -f ../compress.o
+	mv compress.o ../
+
+../../../compress.so: ../compress.o
+	$(LD) -o ../../../compress.so ../compress.o $(ZLIB)
+	$(STRIP) ../../../compress.so
+
+depend:
+	$(CC) $(CFLAGS) $(CPPFLAGS) -MM *.c > .depend
+
+clean:
+	@rm -f .depend *.o *.so *~
+
+distclean: clean
+	@rm -f Makefile config.cache config.log config.status
+
+#safety hash
+../compress.o: compress.c compress.h ../share.mod/share.h \
+ ../module.h ../../../config.h ../../main.h ../../lang.h ../../eggdrop.h \
+ ../../flags.h ../../proto.h ../../../lush.h ../../cmdt.h ../../tclegg.h \
+ ../../tclhash.h ../../chan.h ../../users.h  ../modvals.h ../../tandem.h

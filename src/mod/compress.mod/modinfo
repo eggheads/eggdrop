@@ -1,0 +1,8 @@
+DESC:The compress module provides support for file compression. This
+DESC:allows the bot to transfer compressed user files and therefore
+DESC:saves a significant amount of bandwidth, especially on very active
+DESC:hubs.  The module depends on the zlib library.
+DESC:
+DESC:You will want to ENABLE this module if you have enough CPU time
+DESC:to spare.
+DEPENDS:share

@@ -907,6 +907,17 @@ specific commands, see later.
 | md5 <string>
 |   returns: the 128 bits MD5 "message-digest" of the specified string.
 
+| compresstofile   <src-file> <target-file> <mode>
+| uncompresstofile <src-file> <target-file>
+| compressfile     <file> <mode>
+| uncompressfile   <file>
+|   Compress or uncompress files. The file is either overwritten with the
+|   un-/compressed file (un-/compressfile commands) or saved to a new
+|   location (un-/compresstofile commands).  The <mode> specifies the
+|   compression mode to use. Available modes are from 0 (least CPU usage,
+|   least compression) upto 9 (maximal CPU usage, maximal compression).
+
+
 GLOBAL VARIABLES:
   (All config-file variables are global, too.  But these variables
   are set by the bot.)

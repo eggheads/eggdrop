@@ -1,7 +1,7 @@
 #! /path/to/eggdrop
 # ^- set that to the directory eggdrop is in ie "#! /users/lamest/egg/eggdrop"
 #
-# $Id: eggdrop.conf.dist,v 1.21 2000/02/03 21:58:28 fabian Exp $
+# $Id: eggdrop.conf.dist,v 1.22 2000/03/01 17:54:36 fabian Exp $
 #
 # This is a sample configuration file for your bot.  You will definitely
 # want to edit this, to set up your bot.  Right now it creates a bot called
@@ -1082,6 +1082,20 @@ set xfer-timeout 30
 # the ones sent by the hub. Note: This only works with hubs that are v1.5.1
 # _or higher_.
 #set override-bots 0
+
+
+##### COMPRESS MODULE #####
+
+# The compress module provides support for file compression. This allows the
+# bot to transfer compressed user files and therefore save a significant
+# amount of bandwidth, especially on very active hubs.
+#loadmodule compress
+
+# [0/1] allow compressed sending of user files.
+#set share-compressed 1
+
+# [0-9] compression level used during share file compression
+#set share-compress-level 9
 
 
 ##### FILESYSTEM MODULE #####
