@@ -1,7 +1,7 @@
 /*
  * tclchan.c -- part of channels.mod
  *
- * $Id: tclchan.c,v 1.87 2004/01/09 05:56:37 wcc Exp $
+ * $Id: tclchan.c,v 1.88 2004/04/08 00:54:40 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1577,7 +1577,7 @@ static int tcl_savechannels STDVAR
   BADARGS(1, 1, "");
 
   if (!chanfile[0]) {
-    Tcl_AppendResult(irp, "no channel file");
+    Tcl_AppendResult(irp, "no channel file", NULL);
     return TCL_ERROR;
   }
   write_channels();
@@ -1589,7 +1589,7 @@ static int tcl_loadchannels STDVAR
   BADARGS(1, 1, "");
 
   if (!chanfile[0]) {
-    Tcl_AppendResult(irp, "no channel file");
+    Tcl_AppendResult(irp, "no channel file", NULL);
     return TCL_ERROR;
   }
   setstatic = 0;
