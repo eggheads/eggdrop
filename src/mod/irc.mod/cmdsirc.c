@@ -2,7 +2,7 @@
  * chancmds.c -- part of irc.mod
  *   handles commands directly relating to channel interaction
  *
- * $Id: cmdsirc.c,v 1.36 2002/07/09 05:46:35 guppy Exp $
+ * $Id: cmdsirc.c,v 1.37 2002/07/22 05:43:28 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -192,8 +192,8 @@ static void cmd_kickban(struct userrec *u, int idx, char *par)
     return;
   }
   if (!me_op(chan) && !me_halfop(chan)) {
-    dprintf(idx, "I can't help you now because I'm not a channel op or halfop %s",
-	    "on %s.\n", chan->dname);
+    dprintf(idx, "I can't help you now because I'm not a channel op or halfop on %s.\n",
+	    chan->dname);
     return;
   }
   putlog(LOG_CMDS, "*", "#%s# (%s) kickban %s", dcc[idx].nick,
@@ -206,15 +206,14 @@ static void cmd_kickban(struct userrec *u, int idx, char *par)
   if (match_my_nick(nick)) {
     dprintf(idx, "I'm not going to kickban myself.\n");
     return;
-  } else {
-    m = ismember(chan, nick);
-    if (!m)
-      dprintf(idx, "%s is not on %s\n", nick, chan->dname);
+  }
+  m = ismember(chan, nick);
+  if (!m) {
+    dprintf(idx, "%s is not on %s\n", nick, chan->dname);
     return;
   }
   if (!me_op(chan) && chan_hasop(m)) {
-    dprintf(idx, "I can't help you now because halfops cannot kick ops.\n",
-	    chan->dname);
+    dprintf(idx, "I can't help you now because halfops cannot kick ops.\n");
     return;
   }
   egg_snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
