@@ -256,7 +256,7 @@ logfile <logflags> <channel> "logs/logfile"
 ##### BOTNET, DCC AND NETWORK #####
 
 Settings in this section should be unimportant for you until you deal with
-botnets (multiple eggdrops connected together to maximize efficiency). You 
+botnets (multiple Eggdrops connected together to maximize efficiency). You 
 should read doc/BOTNET before modifying these settings.
 
 
@@ -371,7 +371,7 @@ should read doc/BOTNET before modifying these settings.
 ##### MORE ADVANCED SETTINGS #####
 
   set firewall "!sun-barr.ebay:3666"
-    Set this to your socks host if your eggdrop sits behind a firewall. If 
+    Set this to your socks host if your Eggdrop sits behind a firewall. If 
     you use a Sun "telnet passthru" firewall, prefix the host with a "!".
 
 
@@ -397,7 +397,7 @@ should read doc/BOTNET before modifying these settings.
 
   set hourly-updates 00
     Define here what Eggdrop considers 'hourly'. All calls to it, including such
-    things as note notifying or userfile saving are affected by this.
+    things as note notifying or userfile saving, are affected by this.
 
     Example:
 

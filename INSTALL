@@ -3,14 +3,14 @@ Last revised: March 08, 2002
   ________________________________________________________________________
 
 This is the quick install guide; if you have had little or no experience
-with unix or eggdrop, READ THE README FILE NOW! This file is only for
+with unix or Eggdrop, READ THE README FILE NOW! This file is only for
 experienced users.
 
 (1) WHAT IS EGGDROP?
 
      Please, read the README file before attempting to set up this bot.
      This file is a quick setup guide, not a miracle worker. If you enter
-     this file without basic eggdrop knowledge, you will NOT leave with a
+     this file without basic Eggdrop knowledge, you will NOT leave with a
      working bot! Before asking ANY questions, READ THE README FILE OR YOU
      WILL BE BURNED TO A HORRIBLE DEATH! IF YOU DO NOT READ THAT FILE I WILL
      PERSONALLY WALK TO YOUR TERMINAL AND BEAT IT WITH A SMELLY SNEAKER! By
@@ -20,9 +20,9 @@ experienced users.
 
      Eggdrop uses the GNU autoconfigure scripts to make things easier.
 
-     1. Type './configure' from the eggdrop directory. The configure script
+     1. Type './configure' from the Eggdrop directory. The configure script
         will determine how your system is set up and figure out how to
-        correctly compile eggdrop. It will also try to find Tcl, which is
+        correctly compile Eggdrop. It will also try to find Tcl, which is
         required to compile.
 
      2. Type either 'make config' or 'make iconfig' to determine which
@@ -30,7 +30,7 @@ experienced users.
         (everything but woobie.mod). If you want to choose which modules to
         compile, use 'make iconfig'.
 
-     3. Type 'make' from the eggdrop directory, or to force a statically
+     3. Type 'make' from the Eggdrop directory, or to force a statically
         linked module bot, type 'make static'. Otherwise, the Makefile will
         compile whatever type of bot the configure script determined your
         system will support. Dynamic is always the better way to go if
@@ -39,15 +39,15 @@ experienced users.
         crash. This will help the devteam track down the crash and fix the
         bug. Debug and sdebug will take a little longer to compile and will
         enlarge the binary a bit, but it's worth it if you want to support
-        eggdrop development.
+        Eggdrop development.
 
      4. Eggdrop must be installed in a directory somewhere.  This is
         accomplished by entering the unix command:
 
           make install
 
-        This will install the eggdrop in your home directory in a directory
-        called eggdrop (i.e. /home/user/eggdrop).
+        This will install the Eggdrop in your home directory in a directory
+        called 'eggdrop' (i.e. /home/user/eggdrop).
 
         If you want to install to a different directory, use:
 
@@ -102,7 +102,7 @@ experienced users.
      them to the bot by placing them in the /src/mod directory with a mod
      extension. They will be automatically compiled during make for you.
      They must have a valid Makefile and, of course, be compatible with
-     the rest of the eggdrop source.
+     the rest of the Eggdrop source.
 
      If you wish to add a module at a later time, follow the same steps in
      paragraph 2. After you have moved the appropriate files, you will only

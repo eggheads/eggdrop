@@ -1,4 +1,4 @@
-One (1) eggdrop bot (n.)  Functional on many UNIX platforms. README is
+One (1) Eggdrop bot (n.)  Functional on many UNIX platforms. README is
    included for you (human) to read (please). Helpful stuff.
 
 "What are all these files for?"
@@ -7,7 +7,7 @@ COPYING
    Eggdrop legal information is contained in this file.
 
 FEATURES
-   This tells you what eggdrop can do -- a kind of advertisement.
+   This tells you what Eggdrop can do -- a kind of advertisement.
 
 Makefile
 Makefile.in
@@ -17,7 +17,7 @@ NEWS
    This lists significant differences with previous versions.
 
 README
-   You should read this file before even trying to compile eggdrop.
+   You should read this file before even trying to compile Eggdrop.
 
 config*
    These are scripts for automatic configure of the bot.
@@ -50,7 +50,7 @@ text/
    This contains the motd and banner files.
 
 scripts/
-   Tcl scripts included with eggdrop are contained in this directory.
+   Tcl scripts included with Eggdrop are contained in this directory.
 
 src/
-   This is the eggdrop source.
+   This is the Eggdrop source.

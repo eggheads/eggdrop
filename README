@@ -72,7 +72,7 @@ Last revised: March 08, 2002
           from abuse, allowing privileged users to gain op or voice status,
           logging channel events, providing information, hosting games, etc.
 
-          One of the features that makes eggdrop stand out from other bots
+          One of the features that makes Eggdrop stand out from other bots
           is module and Tcl scripting support. With scripts and modules,
           you can make the bot preform almost any task you want. They can
           do anything from preventing floods to greeting users and banning

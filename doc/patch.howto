@@ -1,87 +1,85 @@
-PATCH HOWTO v1.3                                          18 Dec 2001
+Patch Howto
+Last revised: June 4, 2002
+     _________________________________________________________________
 
+                               Patch Howto
 
-INDEX
-
-I.   ABOUT THIS DOCUMENT
-II.  TERMS USED
-III. APPLYING A PATCH
-IV.  CREATING AND SUBMITTING A PATCH
-V.   DOWNLOADING A PATCH
-
-
-
-
-
-I. ABOUT THIS DOCUMENT
 
   The purpose of this document is to show you what a patch is and how you
-  can apply a patch.
+  can create, apply, download, and submit a patch.
+
+  Contents:
+    1. Terms
+    2. Applying a patch
+    3. Creating and submitting a patch
+    4. Downloading a patch
 
 
-II. TERMS USED
+  1. Terms
 
-  The following are some common terms used in this document.
-  If applicable, there is also the associated command named.
+    The following are some common terms used in this document:
 
-   patch
-    A patch is an update for a sourcecode of a program (here Eggdrop). Be
-    careful, every patch is designed for a special Eggdrop version and
-    cannot be applied on every bot!
-
-
-III. APPLYING A PATCH
-
-  To apply a patch to an Eggdrop, you have to first obtain the Eggdrop
-  sourcecode. You should always keep a tar.gz archive with the source of
-  your current Eggdrop on your shell. In the next step, you have to change
-  to your source directory (i.e.: /home/user/eggdrop1.6.0/) and type
-  the following command:
-
-  patch -p1 < ../path.to.the/patch
-
-  Once this is complete, execute the following command:
-
-  find . -name "*.rej" -print
-
-  If it returns a list with filenames ending with .rej extension, then the
-  patch didn't apply properly. Ensure that the patch is intended for your
-  version and that you have the original source. You should also try to
-  re-download the patch to ensure that the patch is not corrupted.
-
-  If the patch applied properly, the only thing left to do is to recompile
-  your Eggdrop and install the new modules and binaries.
+      Patch
+        A patch is an update to the sourcecode of a program (here Eggdrop).
+        Be careful, every patch is designed for a special Eggdrop version
+        and cannot be applied on every bot!
 
 
-IV. CREATING AND SUBMITTING A PATCH
+  2. Applying a patch
 
-  If you fixed a bug and changed something in Eggdrop's source code, it would
-  be really nice to let the dev team know about it, so they can possibly apply
-  it to next release of Eggdrop.
+    To apply a patch to an Eggdrop, you have to first obtain the Eggdrop
+    sourcecode. You should always keep a tar.gz archive with the source of
+    your current Eggdrop on your shell. In the next step, you have to change
+    to your source directory (i.e.: /home/user/eggdrop1.6.0/) and type
+    the following command:
 
-  There are several steps to submit a patch to the eggdev team:
+      patch -p1 < ../path.to.the/patch
 
-  1. Create a directory with original source tree and one with modified source tree.
+    Once this is complete, execute the following command:
 
-  2. Run 'diff -bur eggdrop1.6.original eggdrop1.6.modified > patchname.patch'. If
-     your changes created any new files, use 'diff -burN' instead.
+      find . -name "*.rej" -print
 
-  3. Send an email to patches@eggheads.org with the patch attached. The body should
-     contain a detailed description of what you changed and why you changed it. Don't
-     forget to include the botversion for which your patch was made. Also, please send
-     a second email with same info to eggdev@eggheads.org, this time without the patch
-     attached.
+    If it returns a list with filenames ending with .rej extension, then the
+    patch didn't apply properly. Ensure that the patch is intended for your
+    version and that you have the original source. You should also try to
+    re-download the patch to ensure that the patch is not corrupted.
 
-
-  Please, never patch src/patch.h or one of the UPDATES files. We will do it.
-  Thank you.
+    If the patch applied properly, the only thing left to do is to recompile
+    your Eggdrop and install the new modules and binaries.
 
 
-V. DOWNLOADING A PATCH
+  3. Creating and submitting a patch
 
-All patches for eggdrop1.6.x can be found at the following location:
+    If you fixed a bug and/or changed something in Eggdrop's source code,
+    it would be really nice to let the dev team know about it, so they can
+    possibly apply it to next release of Eggdrop.
 
-ftp.eggheads.org/pub/eggdrop/patches/1.6
+    There are several steps to submit a patch to the eggdev team:
+
+      1. Create a directory with original source tree and one with modified
+         source tree.
+
+      2. Run the following:
+
+           diff -bur eggdrop1.6.original eggdrop1.6.modified > patchname.patch
+
+         If your changes created any new files, use 'diff -burN' instead.
+
+      3. Send an email to patches@eggheads.org with the patch attached. The
+         body should contain a detailed description of what you changed and
+         why you changed it. Don't forget to include the botversion for which
+         your patch was made. Also, please send a second email with same info
+         to eggdev@eggheads.org, this time without the patch attached.
+
+    Please, never patch src/patch.h or one of the UPDATES files. We will do
+    it. Thank you.
+
+
+  4. Downloading a patch
+
+    Many patches for eggdrop1.6.x can be found at the following location:
+
+      ftp://ftp.eggheads.org/pub/eggdrop/patches/1.6
      _________________________________________________________________
 
    Copyright (C) 1999, 2000, 2001, 2002 Eggheads Development Team

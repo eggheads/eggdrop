@@ -77,7 +77,7 @@ The base loadable modules distributed with this Eggdrop version are:
    * blowfish The standard Eggdrop encrypting routines for passwords and
      other encryption. This can be replaced with a user-written module to
      perform their own encrypting algorithms.
-   * channels This allows eggdrop to have channel info stored and used on
+   * channels This allows Eggdrop to have channel info stored and used on
      that server that you allowed for with the server module
    * compress This allows compression of the userfile saving diskspace, and
      bandwidth when sending large userfiles to share bots..
@@ -96,7 +96,7 @@ The base loadable modules distributed with this Eggdrop version are:
      user->user notes are built-in.
    * seen This provides seen commands via msg, on channel or via dcc,
      similar to the various scripts.
-   * server This allows eggdrop to connect to a server, but that's about
+   * server This allows Eggdrop to connect to a server, but that's about
      it.
    * share This provides the userfile sharing support (this requires the
      channels & transfer modules).

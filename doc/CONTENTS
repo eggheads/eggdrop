@@ -11,7 +11,7 @@ settings/
   settings.
 
 ABOUT
-  Information about eggdrop and a brief history can be found in this file.
+  Information about Eggdrop and a brief history can be found in this file.
 
 AUTHORS
   A list of Eggdrop developers and contributors is in this file.
@@ -24,8 +24,7 @@ BUG-REPORT
   in Eggdrop.
 
 compiling.FAQ
-  If you have trouble compiling your Eggdrop, take a look
-  in this file.
+  If you have trouble compiling your Eggdrop, take a look in this file.
 
 first_script.txt
   This document will help get you started with Tcl scripting for Eggdrop.
@@ -44,11 +43,11 @@ patch.howto
    This is a how-to on applying and creating Eggdrop patches.
 
 tcl-commands.doc
-   Documentation on Eggdrop Tcl commands available to scripters can be
-   found here.
+   Documentation on Eggdrop Tcl commands available to scripters can be found
+   here.
 
 text-substitutions.doc
-   This contains documentation on %-variables that can be used in help, MOTS,
+   This contains documentation on %-variables that can be used in help, MOTD,
    and BANNER files.
 
 tricks

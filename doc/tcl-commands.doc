@@ -11,7 +11,7 @@ This list is accurate for Eggdrop v1.6.11. Scripts written for v1.3/v1.4
 series of Eggdrop should probably work with a few minor modifications
 depending on the script. Scripts which were written for  v0.9, v1.0, v1.1
 or v1.2 will probably not work without modification. Commands which have
-been changed in this version of eggdrop (or are just new commands) are
+been changed in this version of Eggdrop (or are just new commands) are
 marked with vertical bars (|) on the left.
 
 
@@ -1518,7 +1518,7 @@ marked with vertical bars (|) on the left.
     Module: core
 
   config
-    Value: the filename of the config file eggdrop is currently using
+    Value: the filename of the config file Eggdrop is currently using
     Module: core
 
 *** BIND ***

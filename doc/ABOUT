@@ -4,6 +4,7 @@ Last revised: January 12, 2002
 
                               About Eggdrop
 
+
     Eggdrop was created around December 1993 to help stop the incessant
     wars on #gayteen. It spawned from another bot that was in the process of
     being written at the time called "Unrest". The purpose of Unrest was to
@@ -22,7 +23,7 @@ Last revised: January 12, 2002
     allowing privileged users to gain op or voice status, logging channel
     events, providing information, hosting games, etc.
 
-    One of the features that makes eggdrop stand out from other bots is
+    One of the features that makes Eggdrop stand out from other bots is
     module and Tcl scripting support. With scripts and modules, you can make
     the bot preform almost any task you want. They can do anything from
     preventing floods to greeting users and banning advertisers from channels.
@@ -50,7 +51,7 @@ Last revised: January 12, 2002
        compile programs, how to read, and what DCC chat is, at absolute
        minimum.
 
-      * About 5-7 MB of disk space. The eggdrop tarball is about 4.8 MB
+      * About 5-7 MB of disk space. The Eggdrop tarball is about 4.8 MB
         unpacked.
 
       * Tcl -- Eggdrop cannot compile without Tcl installed on your
