@@ -1,0 +1,7 @@
+/* compress_config.h.in.  Generated automatically from configure.in by autoheader.  */
+
+/* Define if you have a working `mmap' system call.  */
+#undef HAVE_MMAP
+
+/* Define if you have the getpagesize function.  */
+#undef HAVE_GETPAGESIZE

@@ -1,6 +1,6 @@
 dnl Eggdrop compile-time configuration file for src/mod/compress.mod
 dnl
-dnl $Id: configure.in,v 1.1 2000/03/01 17:54:37 fabian Exp $
+dnl $Id: configure.in,v 1.2 2000/03/04 20:49:45 fabian Exp $
 
 dnl This file is based on the autoconf m4 macros. Special eggdrop
 dnl macros are used to optimise the size of the resulting configure
@@ -12,6 +12,7 @@ dnl though.
 dnl Instead of AC_INIT, we call EGG_INIT().
 sinclude(../eggmod.m4)
 EGG_INIT(compress.c)
+AC_CONFIG_HEADER(compress_config.h)
 
 AC_CHECK_LIB(z, gzopen, ZLIB="-lz", )
 AC_CHECK_HEADER(zlib.h)
@@ -39,6 +40,7 @@ EOF
     EGG_REMOVE_MOD(compress)
   fi
 fi
+AC_FUNC_MMAP
 AC_SUBST(ZLIB)
 
 AC_OUTPUT(Makefile)

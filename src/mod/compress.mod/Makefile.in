@@ -1,5 +1,5 @@
 # Makefile.in for src/mod/compress.mod/
-# $Id: Makefile.in,v 1.1 2000/03/01 17:54:37 fabian Exp $
+# $Id: Makefile.in,v 1.2 2000/03/04 20:49:45 fabian Exp $
 
 ZLIB = @ZLIB@
 
@@ -30,7 +30,7 @@ clean:
 	@rm -f .depend *.o *.so *~
 
 distclean: clean
-	@rm -f Makefile config.cache config.log config.status
+	@rm -f Makefile config.cache config.log config.status config.h
 
 #safety hash
 ../compress.o: compress.c compress.h ../share.mod/share.h \

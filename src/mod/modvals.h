@@ -1,7 +1,7 @@
 /* 
  * modvals.h
  * 
- * $Id: modvals.h,v 1.11 2000/03/01 17:54:37 fabian Exp $
+ * $Id: modvals.h,v 1.12 2000/03/04 20:49:45 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -75,9 +75,6 @@
 #define NOTES_CMD_NOTE		  4
 /* Console */
 #define CONSOLE_DOSTORE		  4
-/* Compress */
-#define SHARECOMPRESS		  8
-#define SHAREUNCOMPRESS		  9
  
 #ifdef HPUX_HACKS
 #  include <dl.h>

@@ -1,7 +1,7 @@
 /* 
  * uf_features.c -- part of share.mod
  * 
- * $Id: uf_features.c,v 1.1 2000/01/22 23:04:04 fabian Exp $
+ * $Id: uf_features.c,v 1.2 2000/03/04 20:49:45 fabian Exp $
  */
 /* 
  * Copyright (C) 2000  Eggheads
@@ -32,7 +32,7 @@
  *	it supports / wants to use
  *	and then dumps those. The
  *	list is appended to the
- *	userfile send ack.
+ *	user file send ack.
  *
  *	"s uy <features>"   --+
  *			      |
@@ -43,7 +43,7 @@
  *					accept/use. Those features are then
  *					locally set:
  *
- *					dcc[idx].status |= STAT_UFF_<feature>
+ *					dcc[idx].u.bot->uff_flags |= <feature_flag>
  *
  *					and sent back to the LEAF:
  *
@@ -55,24 +55,35 @@
  *	by us. If they are, we set
  *	the flags locally:
  *
- *	dcc[idx].status |= STAT_UFF_<feature>
+ *	dcc[idx].u.bot->uff_flags |= <feature_flag>
  */
 
 
 typedef struct uff_list_struct {
   struct uff_list_struct *next;	/* Pointer to next entry		*/
+  struct uff_list_struct *prev;	/* Pointer to previous entry		*/
   uff_table_t *entry;		/* Pointer to entry in table. This is
 				   not copied or anything, we just refer
 				   to the original table entry.		*/
 } uff_list_t;
 
-uff_list_t *uff_list = NULL;
-static char uff_sbuf[512];
+typedef struct {
+  uff_list_t		*start;
+  uff_list_t		*end;
+} uff_head_t;
+
+static uff_head_t	uff_list;
+static char		uff_sbuf[512];
 
 
 /*
  *    Userfile features management functions
  */
+
+static void uff_init(void)
+{
+  memset(&uff_list, 0, sizeof(uff_head_t));
+}
 
 /* Calculate memory used for list.
  */
@@ -81,36 +92,107 @@ static int uff_expmem(void)
   uff_list_t *ul;
   int tot = 0;
 
-  for (ul = uff_list; ul; ul = ul->next)
+  Context;
+  for (ul = uff_list.start; ul; ul = ul->next)
     tot += sizeof(uff_list_t);
   return tot;
+}
+
+/* Search for a feature in the uff feature list that matches a supplied
+ * feature flag. Returns a pointer to the entry in the list or NULL if
+ * no feature uses the flag.
+ */
+static uff_list_t *uff_findentry_byflag(int flag)
+{
+  uff_list_t *ul;
+
+  Context;
+  for (ul = uff_list.start; ul; ul = ul->next)
+    if (ul->entry->flag & flag)
+      return ul;
+  return NULL;
 }
 
 /* Search for a feature in the uff feature list. Returns a pointer to the
  * entry in the list or NULL if no such feature exists.
  */
-static uff_list_t *uff_findentry(char *feature)
+static uff_list_t *uff_findentry_byname(char *feature)
 {
   uff_list_t *ul;
 
-  for (ul = uff_list; ul; ul = ul->next)
+  Context;
+  for (ul = uff_list.start; ul; ul = ul->next)
     if (!strcmp(ul->entry->feature, feature))
       return ul;
   return NULL;
+}
+
+/* Insert entry into sorted list.
+ */
+static void uff_insert_entry(uff_list_t *nul)
+{
+  uff_list_t	*ul, *lul = NULL;
+
+  Context;
+  ul = uff_list.start;
+  while (ul && ul->entry->priority < nul->entry->priority) {
+    lul = ul;
+    ul = ul->next;
+  }
+
+  nul->prev = NULL;
+  nul->next = NULL;
+  if (lul) {
+    nul->next = lul->next;
+    nul->prev = lul;
+    lul->next = nul;
+  } else if (ul) {
+    uff_list.start->prev = nul;
+    nul->next = uff_list.start;
+    uff_list.start = nul;
+  } else
+    uff_list.start = nul;
+  if (!nul->next)
+    uff_list.end = nul;
+  Context;
+}
+
+/* Remove entry from sorted list.
+ */
+static void uff_remove_entry(uff_list_t *ul)
+{
+  Context;
+  if (!ul->next)
+    uff_list.end = ul->prev;
+  else
+    ul->next->prev = ul->prev;
+  if (!ul->prev)
+    uff_list.start = ul->next;
+  else
+    ul->prev->next = ul->next;
 }
 
 /* Add a single feature to the list.
  */
 static void uff_addfeature(uff_table_t *ut)
 {
-  uff_list_t *ul;
+  uff_list_t	*ul;
 
-  if (uff_findentry(ut->feature))
+  Context;
+  if (uff_findentry_byname(ut->feature)) {
+    putlog(LOG_MISC, "*", "(!) share: same feature name used twice: %s",
+	   ut->feature);
     return;
+  }
+  ul = uff_findentry_byflag(ut->flag);
+  if (ul) {
+    putlog(LOG_MISC, "*", "(!) share: feature flag %d used twice by %s and %s",
+	   ut->flag, ut->feature, ul->entry->feature);
+    return;
+  }
   ul = nmalloc(sizeof(uff_list_t));
-  ul->next = uff_list;
-  uff_list = ul;
   ul->entry = ut;
+  uff_insert_entry(ul);
 }
 
 /* Add a complete table to the list.
@@ -127,14 +209,12 @@ static void uff_addtable(uff_table_t *ut)
  */
 static int uff_delfeature(uff_table_t *ut)
 {
-  uff_list_t *ul, *oul;
+  uff_list_t *ul;
 
-  for (ul = uff_list, oul = NULL; ul; oul = ul, ul = ul->next)
+  Context;
+  for (ul = uff_list.start; ul; ul = ul->next)
     if (!strcmp(ul->entry->feature, ut->feature)) {
-      if (!oul)
-	uff_list = ul->next;
-      else
-	oul->next = ul->next;
+      uff_remove_entry(ul);
       nfree(ul);
       return 1;
     }
@@ -156,16 +236,6 @@ static void uff_deltable(uff_table_t *ut)
  *    Userfile feature parsing functions
  */
 
-/* Clear all flags.
- */
-static void uff_clear(int idx)
-{
-  uff_list_t *ul;
-
-  for (ul = uff_list; ul; ul = ul->next)
-    dcc[idx].status &= ~ul->entry->flag;
-}
-
 /* Parse the given features string, set internal flags apropriately and
  * eventually respond with all features we will use.
  */
@@ -174,22 +244,23 @@ static void uf_features_parse(int idx, char *par)
   char *buf, *s, *p;
   uff_list_t *ul;
 
+  Context;
   uff_sbuf[0] = 0;				/* Reset static buffer	*/
   p = s = buf = nmalloc(strlen(par) + 1);	/* Allocate temp buffer	*/
   strcpy(buf, par);
 
   /* Clear all currently set features. */
-  uff_clear(idx);
+  dcc[idx].u.bot->uff_flags = 0;
 
   /* Parse string */
   while ((s = strchr(s, ' ')) != NULL) {
     *s = '\0';
 
     /* Is the feature available and active? */
-    ul = uff_findentry(p);
+    ul = uff_findentry_byname(p);
     if (ul && ul->entry->ask_func(idx)) {
-      dcc[idx].status |= ul->entry->flag;	/* Set flag		*/
-      strcat(uff_sbuf, ul->entry->feature);	/* Add feature to list	*/
+      dcc[idx].u.bot->uff_flags |= ul->entry->flag; /* Set flag	*/
+      strcat(uff_sbuf, ul->entry->feature);	 /* Add feature to list	*/
       strcat(uff_sbuf, " ");
     }
     p = ++s;
@@ -207,8 +278,9 @@ static char *uf_features_dump(int idx)
 {
   uff_list_t *ul;
 
+  Context;
   uff_sbuf[0] = 0;
-  for (ul = uff_list; ul; ul = ul->next)
+  for (ul = uff_list.start; ul; ul = ul->next)
     if (ul->entry->ask_func(idx)) {
       strcat(uff_sbuf, ul->entry->feature);	/* Add feature to list	*/
       strcat(uff_sbuf, " ");
@@ -221,28 +293,29 @@ static int uf_features_check(int idx, char *par)
   char *buf, *s, *p;
   uff_list_t *ul;
 
+  Context;
   uff_sbuf[0] = 0;				/* Reset static buffer	*/
   p = s = buf = nmalloc(strlen(par) + 1);	/* Allocate temp buffer	*/
   strcpy(buf, par);
 
   /* Clear all currently set features. */
-  uff_clear(idx);
+  dcc[idx].u.bot->uff_flags = 0;
 
   /* Parse string */
   while ((s = strchr(s, ' ')) != NULL) {
     *s = '\0';
 
     /* Is the feature available and active? */
-    ul = uff_findentry(p);
+    ul = uff_findentry_byname(p);
     if (ul && ul->entry->ask_func(idx))
-      dcc[idx].status |= ul->entry->flag;	/* Set flag		*/
+      dcc[idx].u.bot->uff_flags |= ul->entry->flag; /* Set flag	*/
     else {
       /* It isn't, and our hub wants to use it! This either happens
        * because the hub doesn't look at the features we suggested to
        * use or because our admin changed the flags, so that formerly
        * active features are now deactivated.
        *
-       * In any case, we abort userfile sharing.
+       * In any case, we abort user file sharing.
        */
       putlog(LOG_BOTS, "*", "Bot %s tried unsupported feature!");
       dprintf(idx, "s e Attempt to use an unsupported feature\n");
@@ -254,6 +327,39 @@ static int uf_features_check(int idx, char *par)
     p = ++s;
   }
   nfree(buf);
+  return 1;
+}
+
+/* Call all active feature functions, sorted by their priority. This
+ * should be called when we're about to send a user file.
+ */
+static int uff_call_sending(int idx, char *user_file)
+{
+  uff_list_t *ul;
+
+  Context;
+  for (ul = uff_list.start; ul; ul = ul->next)
+    if (ul->entry && ul->entry->snd &&
+	(dcc[idx].u.bot->uff_flags & ul->entry->flag))
+      if (!(ul->entry->snd(idx, user_file)))
+	return 0;	/* Failed! */
+  return 1;
+}
+
+/* Call all active feature functions, sorted by their priority. This
+ * should be called when we've received a user file and are about to
+ * parse it.
+ */
+static int uff_call_receiving(int idx, char *user_file)
+{
+  uff_list_t *ul;
+
+  Context;
+  for (ul = uff_list.end; ul; ul = ul->prev)
+    if (ul->entry && ul->entry->rcv &&
+	(dcc[idx].u.bot->uff_flags & ul->entry->flag))
+      if (!(ul->entry->rcv(idx, user_file)))
+	return 0;	/* Failed! */
   return 1;
 }
 
@@ -294,12 +400,12 @@ static int uff_ask_exempt(int idx)
 
 
 /*
- *     Internal userfile feature table
+ *     Internal user file feature table
  */
 
 static uff_table_t internal_uff_table[] = {
-  {"overbots",		STAT_UFF_OVERRIDE,	uff_ask_override_bots},
-  {"invites",		STAT_UFF_INVITE,	uff_ask_invite},
-  {"exempts",		STAT_UFF_EXEMPT,	uff_ask_exempt},
-  {NULL,		0,			NULL}
+  {"overbots",	UFF_OVERRIDE,	uff_ask_override_bots,	0, NULL, NULL},
+  {"invites",	UFF_INVITE,	uff_ask_invite,		0, NULL, NULL},
+  {"exempts",	UFF_EXEMPT,	uff_ask_exempt,		0, NULL, NULL},
+  {NULL,	0,		NULL,			0, NULL, NULL}
 };

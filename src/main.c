@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  * 
- * $Id: main.c,v 1.30 2000/02/18 22:36:12 fabian Exp $
+ * $Id: main.c,v 1.31 2000/03/04 20:49:44 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -669,7 +669,10 @@ int main(int argc, char **argv)
 
     cdlim.rlim_cur = RLIM_INFINITY;
     cdlim.rlim_max = RLIM_INFINITY;
-    setrlimit(RLIMIT_CORE, &cdlim);
+    if (!setrlimit(RLIMIT_CORE, &cdlim))
+      printf("setrlimit failed: %s\n", strerror(errno));
+    else
+      printf("setrlimit succeeded.\n");
   }
 #endif
 

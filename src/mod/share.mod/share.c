@@ -1,7 +1,7 @@
 /* 
  * share.c -- part of share.mod
  * 
- * $Id: share.c,v 1.27 2000/03/04 20:31:10 fabian Exp $
+ * $Id: share.c,v 1.28 2000/03/04 20:49:45 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -937,18 +937,6 @@ static void share_ufyes(int idx, char *par)
   }
 }
 
-/* TODO: Remove this compability function. It was only used in
- *       1.5.1 and is now obsoleted by the userfile feature interface.
- */
-static void share_ufyes_override(int idx, char *par)
-{
-  Context;
-  if (dcc[idx].status & STAT_OFFERED) {
-    dcc[idx].status |= STAT_UFF_OVERRIDE;
-    share_ufyes(idx, par);
-  }
-}
-
 static void share_userfileq(int idx, char *par)
 {
   int ok = 1, i, bfl = bot_flags(dcc[idx].user);
@@ -1087,7 +1075,8 @@ static void share_version(int idx, char *par)
 {
   /* Cleanup any share flags */
   dcc[idx].status &= ~(STAT_SHARE | STAT_GETTING | STAT_SENDING |
-		       STAT_OFFERED | STAT_AGGRESSIVE | STAT_UFF_OVERRIDE);
+		       STAT_OFFERED | STAT_AGGRESSIVE);
+  dcc[idx].u.bot->uff_flags = 0;
   if ((dcc[idx].u.bot->numver >= min_share)
       && (bot_flags(dcc[idx].user) & BOT_AGGRESSIVE)) {
     if (can_resync(dcc[idx].nick))
@@ -1127,7 +1116,8 @@ static void share_end(int idx, char *par)
   putlog(LOG_BOTS, "*", "Ending sharing with %s, (%s).", dcc[idx].nick, par);
   cancel_user_xfer(-idx, 0);
   dcc[idx].status &= ~(STAT_SHARE | STAT_GETTING | STAT_SENDING |
-		       STAT_OFFERED | STAT_AGGRESSIVE | STAT_UFF_OVERRIDE);
+		       STAT_OFFERED | STAT_AGGRESSIVE);
+  dcc[idx].u.bot->uff_flags = 0;
 }
 
 static void share_feats(int idx, char *par)
@@ -1177,7 +1167,6 @@ static botcmd_t C_share[] =
   {"un",	(Function) share_ufno},
   {"us",	(Function) share_ufsend},
   {"uy",	(Function) share_ufyes},
-  {"uyo",	(Function) share_ufyes_override},	/* TODO: REMOVE! */
   {"v",		(Function) share_version},
   {NULL,	NULL}
 };
@@ -1500,10 +1489,10 @@ static int write_tmp_userfile(char *fn, struct userrec *bu, int idx)
      * UFF isn't supported, but +I/+e is supported, we just share.
      */
     if (dcc[idx].u.bot->numver >= min_exemptinvite) {
-      if ((dcc[idx].status & STAT_UFF_EXEMPT) ||
+      if ((dcc[idx].u.bot->uff_flags & UFF_EXEMPT) ||
 	  (dcc[idx].u.bot->numver < min_uffeature))
 	ok = write_exempts(f, idx);
-      if ((dcc[idx].status & STAT_UFF_INVITE) ||
+      if ((dcc[idx].u.bot->uff_flags & UFF_INVITE) ||
 	  (dcc[idx].u.bot->numver < min_uffeature))
 	ok = write_invites(f, idx);
     } else
@@ -1616,20 +1605,14 @@ static void finish_share(int idx)
   if (j == -1)
     return;
 
-  if (dcc[j].status & STAT_UFF_COMPRESS) {
-    module_entry *me = module_find("compress", 1, 1);
-
-    if (!me || !me->funcs ||
-	!((me->funcs[SHAREUNCOMPRESS])(dcc[idx].u.xfer->filename))) {
-      putlog(LOG_BOTS, "*", "Uncompressing userfile failed!");
-      unlink(dcc[idx].u.xfer->filename);
-      return;
-    } else
-      debug1("NOTE: Uncompressed userfile from %s.", dcc[j].nick);
+  if (!uff_call_receiving(j, dcc[idx].u.xfer->filename)) {
+    putlog(LOG_BOTS, "*", "Uncompressing userfile failed!");
+    unlink(dcc[idx].u.xfer->filename);
+    return;
   }
   
   Context;
-  if (dcc[j].status & STAT_UFF_OVERRIDE)
+  if (dcc[j].u.bot->uff_flags & UFF_OVERRIDE)
     debug1("NOTE: Sharing passively with %s, overriding local bots.",
 	   dcc[j].nick);
   else
@@ -1702,11 +1685,13 @@ static void finish_share(int idx)
   for (u = userlist; u; u = u->next) {
     struct userrec *u2 = get_user_by_handle(ou, u->handle);
 
-    if ((dcc[j].status & STAT_UFF_OVERRIDE) && u2 && (u2->flags & USER_BOT)) {
+    if ((dcc[j].u.bot->uff_flags & UFF_OVERRIDE) &&
+	u2 && (u2->flags & USER_BOT)) {
       /* We knew this bot before, copy flags and the password back over. */
       set_user(&USERENTRY_BOTFL, u, get_user(&USERENTRY_BOTFL, u2));
       set_user(&USERENTRY_PASS, u, get_user(&USERENTRY_PASS, u2));
-    } else if ((dcc[j].status & STAT_UFF_OVERRIDE) && (u->flags & USER_BOT)) {
+    } else if ((dcc[j].u.bot->uff_flags & UFF_OVERRIDE) &&
+	       (u->flags & USER_BOT)) {
       /* This bot was unknown to us, reset it's flags and password. */
       set_user(&USERENTRY_BOTFL, u, NULL);
       set_user(&USERENTRY_PASS, u, NULL);
@@ -1788,7 +1773,7 @@ static void start_sending_users(int idx)
   Context;
   sprintf(s, ".share.%s.%lu", dcc[idx].nick, now);
   Context;
-  if (dcc[idx].status & STAT_UFF_OVERRIDE) {
+  if (dcc[idx].u.bot->uff_flags & UFF_OVERRIDE) {
     debug1("NOTE: Sharing aggressively with %s, overriding its local bots.",
 	   dcc[idx].nick);
     u = dup_userlist(2);		/* All entries		*/
@@ -1799,19 +1784,13 @@ static void start_sending_users(int idx)
   clear_userlist(u);
 
   Context;
-  if (dcc[idx].status & STAT_UFF_COMPRESS) {
-    module_entry *me = module_find("compress", 1, 1);
-
-    /* Compress failed? (or compress module unloaded?) */
-    if (!me || !me->funcs || !((me->funcs[SHARECOMPRESS])(s))) {
-      Context;
-      unlink(s);
-      dprintf(idx, "s e %s\n", "Can't compress userfile");
-      putlog(LOG_BOTS, "*", "Can't compress userfile");
-      dcc[idx].status &= ~(STAT_SHARE | STAT_SENDING | STAT_AGGRESSIVE);
-      return;
-    } else
-      debug1("NOTE: Sending compressed userfile to %s", dcc[idx].nick);
+  if (!uff_call_sending(idx, s)) {
+    Context;
+    unlink(s);
+    dprintf(idx, "s e %s\n", "uff parsing failed");
+    putlog(LOG_BOTS, "*", "uff parsing failed");
+    dcc[idx].status &= ~(STAT_SHARE | STAT_SENDING | STAT_AGGRESSIVE);
+    return;
   }
 
   Context;
@@ -1843,7 +1822,7 @@ static void start_sending_users(int idx)
     /* Immediately, queue bot hostmasks & addresses (jump-start) - if we
      * don't override the leaf's local bots.
      */
-    if (!(dcc[idx].status & STAT_UFF_OVERRIDE)) {
+    if (!(dcc[idx].u.bot->uff_flags & UFF_OVERRIDE)) {
       for (u = userlist; u; u = u->next) {
         if ((u->flags & USER_BOT) && !(u->flags & USER_UNSHARED)) {
 	  struct bot_addr *bi = get_user(&USERENTRY_BOTADDR, u);
@@ -1998,7 +1977,8 @@ static char *share_close()
       cancel_user_xfer(-i, 0);
       updatebot(-1, dcc[i].nick, '-', 0);
       dcc[i].status &= ~(STAT_SHARE | STAT_GETTING | STAT_SENDING |
-			 STAT_OFFERED | STAT_AGGRESSIVE | STAT_UFF_OVERRIDE);
+			 STAT_OFFERED | STAT_AGGRESSIVE);
+      dcc[i].u.bot->uff_flags = 0;
     }
   del_hook(HOOK_SHAREOUT, (Function) shareout_mod);
   del_hook(HOOK_SHAREIN, (Function) sharein_mod);
@@ -2106,7 +2086,7 @@ char *share_start(Function *global_funcs)
   global = global_funcs;
 
   Context;
-  module_register(MODULE_NAME, share_table, 2, 2);
+  module_register(MODULE_NAME, share_table, 2, 3);
   if (!module_depend(MODULE_NAME, "eggdrop", 105, 0))
     return "You need an eggdrop of at least v1.5.0 to use this share module.";
   if (!(transfer_funcs = module_depend(MODULE_NAME, "transfer", 2, 0))) {
@@ -2131,6 +2111,7 @@ char *share_start(Function *global_funcs)
   add_tcl_ints(my_ints);
   add_tcl_strings(my_strings);
   add_builtins(H_dcc, my_cmds);
+  uff_init();
   uff_addtable(internal_uff_table);
 
   Context;

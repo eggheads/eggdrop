@@ -4,7 +4,7 @@
  * 
  *   IF YOU ALTER THIS FILE, YOU NEED TO RECOMPILE THE BOT.
  * 
- * $Id: eggdrop.h,v 1.24 2000/01/30 19:26:20 fabian Exp $
+ * $Id: eggdrop.h,v 1.25 2000/03/04 20:49:44 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -333,8 +333,9 @@ enum {				/* transfer connection handling a ...	*/
 struct bot_info {
   char version[121];		/* channel/version info			*/
   char linker[NOTENAMELEN + 1];	/* who requested this link		*/
-  int numver;
-  int port;			/* base port				*/
+  int  numver;
+  int  port;			/* base port				*/
+  int  uff_flags;		/* user file feature flags		*/
 };
 
 struct relay_info {
@@ -432,11 +433,6 @@ struct dupwait_info {
 #define STAT_LINKING 0x00100	/* the bot is currently going through
 				   the linking stage			 */
 #define STAT_AGGRESSIVE   0x200	/* aggressively sharing with this bot	 */
-#define STAT_UFF_OVERRIDE 0x400	/* overriding existing bot entries	 */
-#define STAT_UFF_COMPRESS 0x800	/* compress the userfile when sending	 */
-#define STAT_UFF_ENCRYPT 0x1000	/* encrypt the userfile	when sending	 */
-#define STAT_UFF_INVITE  0x2000	/* send invites in userfile		 */
-#define STAT_UFF_EXEMPT  0x4000	/* send exempts in userfile		 */
 
 /* Flags for listening sockets
  */

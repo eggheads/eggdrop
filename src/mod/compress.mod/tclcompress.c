@@ -4,7 +4,7 @@
  * 
  * Written by Fabian Knittel <fknittel@gmx.de>
  * 
- * $Id: tclcompress.c,v 1.1 2000/03/01 17:54:37 fabian Exp $
+ * $Id: tclcompress.c,v 1.2 2000/03/04 20:49:45 fabian Exp $
  */
 /* 
  * Copyright (C) 2000  Eggheads
@@ -27,16 +27,12 @@
 
 static int tcl_compress_to_file STDVAR
 {
-  int	 mode_num = 9;
-  char	 mode[5];
+  int	 mode_num = compress_level;
 
   BADARGS(3, 4, " src-file target-file ?mode?");
   if (argc == 4)
     mode_num = atoi(argv[3]);
-  adjust_mode_num(&mode_num);
-  sprintf(mode, "wb%d", mode_num);
-
-  if (compress_to_file(argv[1], argv[2], mode))
+  if (compress_to_file(argv[1], argv[2], mode_num))
     Tcl_AppendResult(irp, "1", NULL);
   else
     Tcl_AppendResult(irp, "0", NULL);
@@ -46,15 +42,11 @@ static int tcl_compress_to_file STDVAR
 static int tcl_compress_file STDVAR
 {
   int	 mode_num = 9;
-  char	 mode[5];
 
   BADARGS(2, 3, " file ?mode?");
   if (argc == 3)
     mode_num = atoi(argv[2]);
-  adjust_mode_num(&mode_num);
-  sprintf(mode, "wb%d", mode_num);
-
-  if (compress_file(argv[1], mode))
+  if (compress_file(argv[1], mode_num))
     Tcl_AppendResult(irp, "1", NULL);
   else
     Tcl_AppendResult(irp, "0", NULL);
