@@ -2,7 +2,7 @@
  * main.h
  *   include file to include most other include files
  * 
- * $Id: main.h,v 1.16 2000/11/03 17:06:35 fabian Exp $
+ * $Id: main.h,v 1.17 2001/01/31 05:32:31 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -49,11 +49,6 @@
 #  define EGG_VARARGS_START(type, name, list) (va_start(list), va_arg(list,type))
 #endif
 
-/* For pre Tcl7.5p1 versions */
-#ifndef HAVE_TCL_FREE
-#  define Tcl_Free(x) n_free(x, "", 0)
-#endif
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -61,6 +56,7 @@
 #  include <strings.h>
 #endif
 #include <sys/types.h>
+#include "lush.h"
 #include "lang.h"
 #include "eggdrop.h"
 #include "flags.h"
@@ -73,6 +69,16 @@
 #include "chan.h"
 #include "users.h"
 #include "compat/compat.h"
+
+/* For pre Tcl7.5p1 versions */
+#ifndef HAVE_TCL_FREE
+#  define Tcl_Free(x) n_free(x, "", 0)
+#endif
+
+/* For pre7.6 Tcl versions */
+#ifndef TCL_PATCH_LEVEL
+#  define TCL_PATCH_LEVEL Tcl_GetVar(interp, "tcl_patchLevel", TCL_GLOBAL_ONLY)
+#endif
 
 #ifndef MAKING_MODS
 extern struct dcc_table DCC_CHAT, DCC_BOT, DCC_LOST, DCC_SCRIPT, DCC_BOT_NEW,

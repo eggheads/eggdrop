@@ -7,7 +7,7 @@
  *   telling the current programmed settings
  *   initializing a lot of stuff and loading the tcl scripts
  * 
- * $Id: chanprog.c,v 1.20 2000/12/10 15:10:26 guppy Exp $
+ * $Id: chanprog.c,v 1.21 2001/01/31 05:32:31 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -333,8 +333,22 @@ void tell_verbose_status(int idx)
   dprintf(idx, "%s %s  (%s)  %s  %s %4.1f%%\n", MISC_ONLINEFOR,
 	  s, s1, s2, MISC_CACHEHIT,
 	  100.0 * ((float) cache_hit) / ((float) (cache_hit + cache_miss)));
-  if ((interp) && (Tcl_Eval(interp, "info library") == TCL_OK))
-    dprintf(idx, "%s %s\n", MISC_TCLLIBVER, interp->result);
+
+  /* info library */
+  dprintf(idx, "%s %s\n", MISC_TCLLIBRARY,
+	  ((interp) && (Tcl_Eval(interp, "info library") == TCL_OK)) ?
+	  interp->result : "*unknown*");
+
+  /* info tclversion */
+  dprintf(idx, "%s %s (%s %s)\n", MISC_TCLVERSION,
+	  ((interp) && (Tcl_Eval(interp, "info tclversion") == TCL_OK)) ?
+	  interp->result : "*unknown*", MISC_TCLHVERSION, TCL_VERSION);
+
+  /* info patchlevel */
+  dprintf(idx, "%s %s (%s %s)\n", MISC_TCLPATCHLEVEL,
+	  ((interp) && (Tcl_Eval(interp, "info patchlevel") == TCL_OK)) ?
+	  interp->result : "*unknown*", MISC_TCLHPATCHLEVEL,
+	  TCL_PATCH_LEVEL ? TCL_PATCH_LEVEL : "*unknown*");
 }
 
 /* Show all internal state variables

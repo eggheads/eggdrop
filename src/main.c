@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  * 
- * $Id: main.c,v 1.50 2001/01/15 03:28:10 guppy Exp $
+ * $Id: main.c,v 1.51 2001/01/31 05:32:31 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -258,12 +258,33 @@ void write_debug()
 #ifdef STATIC
     dprintf(-x, "STATICALLY LINKED\n");
 #endif
-    if (interp && (Tcl_Eval(interp, "info library") == TCL_OK))
-      dprintf(-x, "Using tcl library: %s (header version %s)\n",
-	      interp->result, TCL_VERSION);
+
+    /* info library */
+    dprintf(-x, "Tcl library: %s\n",
+	    ((interp) && (Tcl_Eval(interp, "info library") == TCL_OK)) ?
+	    interp->result : "*unknown*");
+
+    /* info tclversion */
+    dprintf(-x, "Tcl version: %s (header version %s)\n",
+	    ((interp) && (Tcl_Eval(interp, "info tclversion") == TCL_OK)) ?
+	    interp->result : "*unknown*", TCL_VERSION);
+
+    /* info patchlevel */
+    dprintf(-x, "Tcl patchlevel: %s (header patchlevel %s)\n",
+	    ((interp) && (Tcl_Eval(interp, "info patchlevel") == TCL_OK)) ?
+	    interp->result : "*unknown*",
+	    TCL_PATCH_LEVEL ? TCL_PATCH_LEVEL : "*unknown*");
+
+#ifdef CCFLAGS
     dprintf(-x, "Compile flags: %s\n", CCFLAGS);
+#endif
+#ifdef LDFLAGS
     dprintf(-x, "Link flags   : %s\n", LDFLAGS);
+#endif
+#ifdef STRIPFLAGS
     dprintf(-x, "Strip flags  : %s\n", STRIPFLAGS);
+#endif
+
     dprintf(-x, "Context: ");
     cx_ptr = cx_ptr & 15;
     for (y = ((cx_ptr + 1) & 15); y != cx_ptr; y = ((y + 1) & 15))

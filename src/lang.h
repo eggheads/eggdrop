@@ -2,7 +2,7 @@
  * lang.h
  *   Conversion definitions for language support
  * 
- * $Id: lang.h,v 1.19 2000/11/29 02:52:05 guppy Exp $
+ * $Id: lang.h,v 1.20 2001/01/31 05:32:31 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -104,7 +104,7 @@
 #define MISC_LOGMODE		get_language(0x52c)
 #define MISC_ONLINEFOR		get_language(0x52d)
 #define MISC_CACHEHIT		get_language(0x52e)
-#define MISC_TCLLIBVER		get_language(0x52f)
+#define MISC_TCLLIBRARY		get_language(0x52f)
 #define MISC_NEWUSERFLAGS	get_language(0x530)
 #define MISC_NOTIFY		get_language(0x531)
 #define MISC_PERMOWNER		get_language(0x532)
@@ -125,6 +125,10 @@
 #define MISC_LOGREPEAT		get_language(0x541)
 #define MISC_JUPED		get_language(0x542)
 #define MISC_NOFREESOCK		get_language(0x543)
+#define MISC_TCLVERSION		get_language(0x544)
+#define MISC_TCLHVERSION	get_language(0x545)
+#define MISC_TCLPATCHLEVEL	get_language(0x546)
+#define MISC_TCLHPATCHLEVEL	get_language(0x547)
 
 /* IRC */
 #define IRC_BANNED		get_language(0x600)

@@ -1,7 +1,7 @@
 # core.french.lang
 #   core language messages for eggdrop
 #
-# $Id: core.french.lang,v 1.16 2000/11/29 02:52:05 guppy Exp $
+# $Id: core.french.lang,v 1.17 2001/01/31 05:32:31 guppy Exp $
 
 
 # General stuff
@@ -117,7 +117,7 @@ consultez le ficher de configuration initiale pour plus de renseignements.\n
 0x52c,mode log
 0x52d,En ligne depuis
 0x52e,cache hit
-0x52f,Utilisation de la librairie TCL:
+0x52f,Utilisation de la librairie Tcl:
 0x530,Les nouveaux utilisateurs obtiennent les drapeaux
 0x531,annonce
 0x532,Proprietaire(s) permanent(s)
@@ -137,6 +137,11 @@ Faites un Telnet sur le bot et entrez 'NEW' comme surnom.
 0x540,\nSurnom.\n
 0x541,Dernier message repété %d fois.\n
 0x542,bloqué
+0x543,No free sockets available.
+0x544,Tcl version:
+0x545,header version
+0x546,Tcl patchlevel:
+0x547,header patchlevel
 
 # IRC_
 0x600,Banni
