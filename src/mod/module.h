@@ -1,7 +1,7 @@
 /*
  * module.h
  *
- * $Id: module.h,v 1.50 2001/07/18 06:03:29 tothwolf Exp $
+ * $Id: module.h,v 1.51 2001/07/29 06:08:04 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -440,7 +440,7 @@
 #if (TCL_MAJOR_VERSION >= 8 && TCL_MINOR_VERSION >= 1) || (TCL_MAJOR_VERSION >= 9)
 #define str_nutf8tounicode ((int (*)(char *str, int len))global[267])
 #endif
-/* 168 - 270 */
+/* 168 - 271 */
 /* Please don't modify socklist directly, unless there's no other way.
  * Its structure might be changed, or it might be completely removed,
  * so you can't rely on it without a version-check.
@@ -448,6 +448,9 @@
 #define socklist (*(struct sock_list **)global[268])
 #define sockoptions ((int (*)(int, int, int))global[269])
 #define flush_inbuf ((int (*)(int))global[270])
+#define kill_bot ((void (*)(char *, char *))global[271])
+/* 272 - 275 */
+#define quit_msg ((char *)(global[272]))
 
 /* This is for blowfish module, couldnt be bothered making a whole new .h
  * file for it ;)

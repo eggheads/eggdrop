@@ -3,7 +3,7 @@
  *   Tcl stubs for file system commands
  *   Tcl stubs for everything else
  *
- * $Id: tclmisc.c,v 1.22 2001/07/26 03:59:45 guppy Exp $
+ * $Id: tclmisc.c,v 1.23 2001/07/29 06:08:04 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -36,7 +36,7 @@
 extern p_tcl_bind_list	 bind_table_list;
 extern tcl_timer_t	*timer, *utimer;
 extern struct dcc_t	*dcc;
-extern char		 origbotname[], botnetnick[];
+extern char		 origbotname[], botnetnick[], quit_msg[];
 extern struct userrec	*userlist;
 extern time_t		 now;
 extern module_entry	*module_list;
@@ -374,22 +374,17 @@ static int tcl_backup STDVAR
 
 static int tcl_die STDVAR
 {
-  char s[501];
-  char g[501];
+  char s[1024];
 
   BADARGS(1, 2, " ?reason?");
   if (argc == 2) {
     egg_snprintf(s, sizeof s, "BOT SHUTDOWN (%s)", argv[1]);
-    egg_snprintf(g, sizeof g, "%s", argv[1]);
+    strncpyz(quit_msg, argv[1], 1024);
   } else {
-    egg_snprintf(s, sizeof s, "BOT SHUTDOWN (aboot time -- eh?)");
-    egg_snprintf(g, sizeof g, "EXIT");
+    strncpyz(s, "BOT SHUTDOWN (No reason)", sizeof s);
+    quit_msg[0] = 0;
   }
-  chatout("*** %s\n", s);
-  botnet_send_chat(-1, botnetnick, s);
-  botnet_send_bye();
-  write_userfile(-1);
-  fatal(g, 0);
+  kill_bot(s, quit_msg[0] ? quit_msg : "EXIT");
   return TCL_OK;
 }
 

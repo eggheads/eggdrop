@@ -7,7 +7,7 @@
  *   help system
  *   motd display and %var substitution
  *
- * $Id: misc.c,v 1.42 2001/07/16 14:54:01 guppy Exp $
+ * $Id: misc.c,v 1.43 2001/07/29 06:08:04 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -33,6 +33,8 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include "chan.h"
+#include "tandem.h"
+#include "modules.h"
 #ifdef HAVE_UNAME
 #  include <sys/utsname.h>
 #endif
@@ -1505,4 +1507,17 @@ char *strchr_unescape(char *str, const char div, register const char esc_char)
 void str_unescape(char *str, register const char esc_char)
 {
   (void) strchr_unescape(str, 0, esc_char);
+}
+
+/* Kills the bot. s1 is the reason shown to other bots, 
+ * s2 the reason shown on the partyline. (Sup 25Jul2001)
+ */
+void kill_bot(char *s1, char *s2)
+{
+  call_hook(HOOK_DIE);
+  chatout("*** %s\n", s1);
+  botnet_send_chat(-1, botnetnick, s1);
+  botnet_send_bye();
+  write_userfile(-1);
+  fatal(s2, 0);
 }

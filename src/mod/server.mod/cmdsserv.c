@@ -2,7 +2,7 @@
  * cmdsserv.c -- part of server.mod
  *   handles commands from a user via dcc that cause server interaction
  *
- * $Id: cmdsserv.c,v 1.9 2001/06/30 06:29:56 guppy Exp $
+ * $Id: cmdsserv.c,v 1.10 2001/07/29 06:08:04 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -124,20 +124,6 @@ static void cmd_clearqueue(struct userrec *u, int idx, char *par)
   putlog(LOG_CMDS, "*", "#%s# clearqueue %s", dcc[idx].nick, par);
 }
 
-/* This overrides the default die, handling extra server stuff.
- * Send a QUIT if on the server.
- */
-static void my_cmd_die(struct userrec *u, int idx, char *par)
-{
-  cycle_time = 100;
-  if (server_online) {
-    dprintf(-serv, "QUIT :%s\n", par[0] ? par : dcc[idx].nick);
-    sleep(3);			/* Give the server time to understand */
-  }
-  nuke_server(NULL);
-  cmd_die(u, idx, par);
-}
-
 /* Function call should be:
  *   int cmd_whatever(idx,"parameters");
  *
@@ -145,7 +131,6 @@ static void my_cmd_die(struct userrec *u, int idx, char *par)
  */
 static cmd_t C_dcc_serv[] =
 {
-  {"die",		"n",	(Function) my_cmd_die,		"server:die"},
   {"dump",		"m",	(Function) cmd_dump,		NULL},
   {"jump",		"m",	(Function) cmd_jump,		NULL},
   {"servers",		"o",	(Function) cmd_servers,		NULL},

@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  *
- * $Id: server.c,v 1.68 2001/07/17 19:53:42 guppy Exp $
+ * $Id: server.c,v 1.69 2001/07/29 06:08:04 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1543,6 +1543,16 @@ static void server_postrehash()
     do_tcl("init-server", initserver);
 }
 
+static void server_die()
+{
+  cycle_time = 100;
+  if (server_online) {
+    dprintf(-serv, "QUIT :%s\n", quit_msg[0] ? quit_msg : "");
+    sleep(3); /* Give the server time to understand */
+  }
+  nuke_server(NULL);
+}
+
 /* A report on the module status.
  */
 static void server_report(int idx, int details)
@@ -1673,14 +1683,6 @@ static cmd_t my_ctcps[] =
 
 static char *server_close()
 {
-  /* FIXME - I'm an ugly hack. */
-  cmd_t C_t[] =
-  {
-    {"die",	"m",	NULL /* Inserted below. */,	NULL},
-    {NULL,	NULL,	NULL,				NULL}
-  };
-  C_t[0].func = (Function) cmd_die;
-
   cycle_time = 100;
   nuke_server("Connection reset by peer");
   clearq(serverlist);
@@ -1688,7 +1690,6 @@ static char *server_close()
   rem_builtins(H_raw, my_raw_binds);
   rem_builtins(H_ctcp, my_ctcps);
   /* Restore original commands. */
-  add_builtins(H_dcc, C_t);
   del_bind_table(H_wall);
   del_bind_table(H_raw);
   del_bind_table(H_notc);
@@ -1727,6 +1728,7 @@ static char *server_close()
   del_hook(HOOK_MINUTELY, (Function) minutely_checks);
   del_hook(HOOK_PRE_REHASH, (Function) server_prerehash);
   del_hook(HOOK_REHASH, (Function) server_postrehash);
+  del_hook(HOOK_DIE, (Function) server_die);
   module_undepend(MODULE_NAME);
   return NULL;
 }
@@ -1848,10 +1850,10 @@ char *server_start(Function *global_funcs)
   optimize_kicks = 0;
 
   server_table[4] = (Function) botname;
-  module_register(MODULE_NAME, server_table, 1, 1);
-  if (!module_depend(MODULE_NAME, "eggdrop", 106, 0)) {
+  module_register(MODULE_NAME, server_table, 1, 2);
+  if (!module_depend(MODULE_NAME, "eggdrop", 106, 7)) {
     module_undepend(MODULE_NAME);
-    return "This module requires eggdrop1.6.0 or later";
+    return "This module requires eggdrop1.6.7 or later";
   }
 
   /* Fool bot in reading the values. */
@@ -1902,6 +1904,7 @@ char *server_start(Function *global_funcs)
   add_hook(HOOK_QSERV, (Function) queue_server);
   add_hook(HOOK_PRE_REHASH, (Function) server_prerehash);
   add_hook(HOOK_REHASH, (Function) server_postrehash);
+  add_hook(HOOK_DIE, (Function) server_die);
   mq.head = hq.head = modeq.head = NULL;
   mq.last = hq.last = modeq.last = NULL;
   mq.tot = hq.tot = modeq.tot = 0;
