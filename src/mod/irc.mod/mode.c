@@ -4,7 +4,7 @@
  *   channel mode changes and the bot's reaction to them
  *   setting and getting the current wanted channel modes
  *
- * $Id: mode.c,v 1.64 2002/08/09 19:26:43 wcc Exp $
+ * $Id: mode.c,v 1.65 2002/08/10 02:24:49 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -723,7 +723,6 @@ static void got_dehalfop(struct chanset_t *chan, char *nick, char *from,
 static void got_ban(struct chanset_t *chan, char *nick, char *from, char *who)
 {
   char me[UHOSTLEN], s[UHOSTLEN], s1[UHOSTLEN];
-  int check = 1;
   memberlist *m;
   struct userrec *u;
 
@@ -751,8 +750,8 @@ static void got_ban(struct chanset_t *chan, char *nick, char *from, char *who)
         u = get_user_by_host(s1);
         if (u) {
           get_user_flagrec(u, &victim, chan->dname);
-          if (glob_friend(victim) || (glob_op(victim) && !chan_deop(victim)) ||
-              chan_friend(victim) || chan_op(victim) && !glob_master(user) &&
+          if ((glob_friend(victim) || (glob_op(victim) && !chan_deop(victim)) ||
+              chan_friend(victim) || chan_op(victim)) && !glob_master(user) &&
               !glob_bot(user) && !chan_master(user) && !isexempted(chan, s1)) {
             add_mode(chan, '-', 'b', who);
 	    return;
