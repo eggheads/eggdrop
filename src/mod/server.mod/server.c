@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  *
- * $Id: server.c,v 1.69 2001/07/29 06:08:04 guppy Exp $
+ * $Id: server.c,v 1.70 2001/07/29 06:15:57 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -90,6 +90,7 @@ static int double_help;
 static int double_warned;
 static int lastpingtime;	/* IRCNet LAGmeter support -- drummer */
 static char stackablecmds[511];
+static char stackable2cmds[511];
 static time_t last_time;
 static int use_penalties;
 static int use_fastdeq;
@@ -395,7 +396,7 @@ static int fast_deq(int which)
   struct msgq *m, *nm;
   char msgstr[511], nextmsgstr[511], tosend[511], victims[511], stackable[511],
        *msg, *nextmsg, *cmd, *nextcmd, *to, *nextto, *stckbl;
-  int len, doit = 0, found = 0, who_count =0;
+  int len, doit = 0, found = 0, who_count =0, stack_method = 1;
 
   if (!use_fastdeq)
     return 0;
@@ -432,6 +433,14 @@ static int fast_deq(int which)
      */
     if (use_fastdeq == 3 && found)
       return 0;
+    /* we check for the stacking method (default=1) */
+    strncpyz(stackable, stackable2cmds, sizeof stackable);
+    stckbl = stackable;
+    while (strlen(stckbl) > 0)
+      if (!egg_strcasecmp(newsplit(&stckbl), cmd)) {
+        stack_method = 2;
+        break;
+      }    
   }
   to = newsplit(&msg);
   len = strlen(to);
@@ -449,13 +458,17 @@ static int fast_deq(int which)
     len = strlen(nextto);
     if (nextto[len - 1] == '\n')
       nextto[len - 1] = 0;
-    if (!strcmp(cmd, nextcmd) && !strcmp(msg, nextmsg)
+    if ( strcmp(to, nextto) /* we don't stack to the same recipients */
+        && !strcmp(cmd, nextcmd) && !strcmp(msg, nextmsg)
         && ((strlen(cmd) + strlen(victims) + strlen(nextto)
 	     + strlen(msg) + 2) < 510)
         && (egg_strcasecmp(cmd, "WHO") || who_count < MAXPENALTY - 1)) {
       if (!egg_strcasecmp(cmd, "WHO"))
         who_count++;
-      simple_sprintf(victims, "%s,%s", victims, nextto);
+      if (stack_method == 1)
+      	simple_sprintf(victims, "%s,%s", victims, nextto);
+      else
+      	simple_sprintf(victims, "%s %s", victims, nextto);
       doit = 1;
       m->next = nm->next;
       if (!nm->next)
@@ -1217,6 +1230,7 @@ static void do_nettype(void)
     use_fastdeq = 2;
     nick_len = 9;
     simple_sprintf(stackablecmds, "PRIVMSG NOTICE TOPIC PART WHOIS");
+    simple_sprintf(stackable2cmds, "USERHOST USERIP");
     break;
   case NETT_DALNET:
     check_mode_r = 0;
@@ -1268,6 +1282,7 @@ static tcl_strings my_tcl_strings[] =
   {"init-server",		initserver,	120,		0},
   {"connect-server",		connectserver,	120,		0},
   {"stackable-commands",	stackablecmds,	510,		0},
+  {"stackable2-commands",	stackable2cmds,	510,		0},
   {NULL,			NULL,		0,		0}
 };
 
@@ -1842,6 +1857,7 @@ char *server_start(Function *global_funcs)
   use_penalties = 0;
   use_fastdeq = 0;
   stackablecmds[0] = 0;
+  strcpy(stackable2cmds, "USERHOST");
   resolvserv = 0;
   lastpingtime = 0;
   last_time = 0;
