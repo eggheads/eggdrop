@@ -1,0 +1,47 @@
+toth!
+About Eggdrop
+Last revised: December 31, 2001
+   ________________________________________________________________________
+   
+                                About Eggdrop
+
+    Eggdrop was created around December 1993 to help stop the incessant
+    wars on #gayteen. It spawned from another bot that was in the process of
+    being written at the time called "Unrest". The purpose of Unrest was to
+    answer help requests from other bots. The first public release was v0.6,
+    and since then, it has grown into what you have before you.
+
+    To use Eggdrop, you need:
+
+      * Some sort of Unix account
+
+      * A pretty good knowledge of IRC and Unix, including how to 
+       compile programs, how to read, and what DCC chat is, at absolute
+       minimum.
+
+      * About 4-6 MB of disk space. The eggdrop tarball is about 4.8 MB
+        unpacked.
+
+      * Tcl -- Eggdrop cannot compile without Tcl installed on your
+        shell.
+
+    Before starting, ask yourself if you really need a bot. Most IRC
+    servers allow only a handful of bots, and some forbid them outright. 
+    The reason? Too many people run bots as "toys" or as a means of 
+    destruction. If you want to use Eggdrop for destructive purposes, go
+    ahead and erase this directory now. It's almost impossible to do 
+    what you want with this bot.
+
+    You should try to find at least one server that will allow you to run
+    a bot. If you use an ISP (Internet Service Provider) that runs its own
+    IRC server, check to make sure that bots are okay. If you're going to
+    use a server somewhere else, read the MOTD (Message Of The Day) and find
+    out what their bot policy is. Following the rules will go a long way
+    toward making your bot accepted.
+
+    Bots CANNOT provide absolute protection. Nothing can. Eggdrop will try its
+    hardest, but there are no guarantees.
+
+   ________________________________________________________________________
+
+Copyright (C) 2002 Eggheads Development Team
