@@ -2,7 +2,7 @@
  * irc.c -- part of irc.mod
  *   support for channels withing the bot 
  * 
- * $Id: irc.c,v 1.8 1999/12/22 12:11:03 fabian Exp $
+ * $Id: irc.c,v 1.9 1999/12/22 12:21:43 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -71,7 +71,6 @@ static int kick_bogus = 0;
 static int ban_bogus = 0;
 static int kick_fun = 0;
 static int ban_fun = 0;
-static int allow_desync = 0;
 static int keepnick = 1;	/* keepnick */
 static int prevent_mixing=1; /* to prevent mixing old/new modes */
 static int revenge_mode = 1;	/* 0 = deop, 1 = and +d, 2 = and kick,
@@ -918,7 +917,6 @@ static tcl_ints myints[] =
   {"kick-fun", &kick_fun, 0},
   {"ban-fun", &ban_fun, 0},
   {"invite-key", &invite_key, 0},
-  {"allow-desync", &allow_desync, 0},
   {"no-chanrec-info", &no_chanrec_info, 0},
   {"max-bans", &max_bans, 0},
   {"max-exempts", &max_exempts, 0},

@@ -1,7 +1,7 @@
 #! /path/to/eggdrop
 # ^- set that to the directory eggdrop is in ie "#! /users/lamest/egg/eggdrop"
 #
-# $Id: eggdrop.conf.dist,v 1.14 1999/12/22 12:11:01 fabian Exp $
+# $Id: eggdrop.conf.dist,v 1.15 1999/12/22 12:21:41 fabian Exp $
 #
 # This is a sample configuration file for your bot.  You will definitely
 # want to edit this, to set up your bot.  Right now it creates a bot called
@@ -626,6 +626,10 @@ channel set #lamest -inactive
 #   respond to seen requests in the channel?  (seen module must be loaded)
 channel set #lamest -seen
 
+#   allow non-ops to perform channel modes?  (Stops bot from
+#   fighting with services such as ChanServ)
+channel set #lamest +nodesynch
+
 # here's a shorter example:
 channel add #botcentral {
   chanmode "+mntisl 1"
@@ -819,10 +823,6 @@ set max-bans 20
 # There is a global limit for +b/+e/+I modes. This limit is set to 30 on
 # 2.10 irc servers.
 set max-modes 30
-
-# [0/1] define this to allow modes from non-op users (ChanServ)
-# or if you use services like X/W to avoid fake op messages
-set allow-desync 0
 
 # [0/1] Do you want the bot to kick bogus usernames?
 # Remember that if it does, as it won't ban them, it can be at the origin

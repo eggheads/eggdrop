@@ -8,7 +8,7 @@
  * multi-channel, 6feb1996
  * stopped the bot deopping masters and bots in bitch mode, pteron 23Mar1997
  * 
- * $Id: mode.c,v 1.13 1999/12/21 17:35:30 fabian Exp $
+ * $Id: mode.c,v 1.14 1999/12/22 12:21:43 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -977,8 +977,7 @@ static void gotmode(char *from, char *msg)
       m = ismember(chan, nick);
       if (m)
 	m->last = now;
-      if ((allow_desync == 0) &&	/* arthur2: added flag tests */
-	  !(glob_friend(user) || chan_friend(user) ||
+      if (!(glob_friend(user) || chan_friend(user) ||
 	    (channel_dontkickops(chan) &&
 	     (chan_op(user) || (glob_op(user) && !chan_deop(user)))))) {
 	if (m && me_op(chan)) {
@@ -988,7 +987,7 @@ static void gotmode(char *from, char *msg)
 		    CHAN_FAKEMODE_KICK);
 	    m->flags |= SENTKICK;
 	    reversing = 1;
-	  } else if (!chan_hasop(m)) {
+	  } else if (!chan_hasop(m) && !channel_nodesynch(chan)) {
 	    putlog(LOG_MODES, ch, CHAN_DESYNCMODE, ch);
 	    dprintf(DP_MODE, "KICK %s %s :%s\n", ch, nick,
 		    CHAN_DESYNCMODE_KICK);

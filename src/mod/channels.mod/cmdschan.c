@@ -2,7 +2,7 @@
  * cmdschan.c -- part of channels.mod
  *   commands from a user via dcc that cause server interaction
  * 
- * $Id: cmdschan.c,v 1.13 1999/12/21 17:35:11 fabian Exp $
+ * $Id: cmdschan.c,v 1.14 1999/12/22 12:21:42 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1257,9 +1257,10 @@ static void cmd_chaninfo(struct userrec *u, int idx, char *par)
     dprintf(idx, "     %cdynamicinvites           %cuserinvites\n",
 	    (chan->ircnet_status & CHAN_DYNAMICINVITES) ? '+' : '-',
 	    (chan->ircnet_status & CHAN_NOUSERINVITES) ? '-' : '+');
-    dprintf(idx, "     %cprotectfriends           %crevengebot\n",
+    dprintf(idx, "     %cprotectfriends           %crevengebot   %cnodesynch\n",
             (chan->status & CHAN_PROTECTFRIENDS) ? '+' : '-',
-	    (chan->status & CHAN_REVENGEBOT) ? '+' : '-');
+	    (chan->status & CHAN_REVENGEBOT) ? '+' : '-',
+	    (chan->status & CHAN_NODESYNCH) ? '+' : '-');
     simple_sprintf(work, "    ");
     ii = 1;
     tmp = 0;

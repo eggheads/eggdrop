@@ -1,7 +1,7 @@
 /* 
  * tclchan.c -- part of channels.mod
  * 
- * $Id: tclchan.c,v 1.17 1999/12/21 17:35:13 fabian Exp $
+ * $Id: tclchan.c,v 1.18 1999/12/22 12:21:42 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -858,6 +858,10 @@ static int tcl_channel_info(Tcl_Interp * irp, struct chanset_t *chan)
     Tcl_AppendElement(irp, "-userinvites");
   else
     Tcl_AppendElement(irp, "+userinvites");
+  if (chan->status & CHAN_NODESYNCH)
+    Tcl_AppendElement(irp, "-nodesynch");
+  else
+    Tcl_AppendElement(irp, "+nodesynch");
   while (ul) {
     if (ul->defined && ul->name) {
       if (ul->type == UDEF_FLAG) {
@@ -1026,6 +1030,10 @@ static int tcl_channel_modify(Tcl_Interp * irp, struct chanset_t *chan,
       chan->status |= CHAN_BITCH;
     else if (!strcmp(item[i], "-bitch"))
       chan->status &= ~CHAN_BITCH;
+    else if (!strcmp(item[i], "+nodesynch"))
+      chan->status &= ~CHAN_NODESYNCH;
+    else if (!strcmp(item[i], "-nodesynch"))
+      chan->status |= CHAN_NODESYNCH;
     else if (!strcmp(item[i], "+greet"))
       chan->status |= CHAN_GREET;
     else if (!strcmp(item[i], "-greet"))

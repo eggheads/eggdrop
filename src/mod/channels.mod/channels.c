@@ -2,7 +2,7 @@
  * channels.c -- part of channels.mod
  *   support for channels within the bot
  * 
- * $Id: channels.c,v 1.15 1999/12/21 17:35:11 fabian Exp $
+ * $Id: channels.c,v 1.16 1999/12/22 12:21:42 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -44,7 +44,8 @@ static char glob_chanset[512] = "\
 -clearbans -enforcebans +dynamicbans +userbans -autoop -bitch +greet \
 +protectops +statuslog +stopnethack -revenge -secret -autovoice +cycle \
 +dontkickops -wasoptest -inactive -protectfriends +shared -seen \
-+userexempts +dynamicexempts +userinvites +dynamicinvites -revengebot ";
++userexempts +dynamicexempts +userinvites +dynamicinvites -revengebot \
+-nodesynch ";
 /* DO NOT remove the extra space at the end of the string! */
 
 /* default chanmode (drummer,990731) */
@@ -535,7 +536,7 @@ flood-kick %d:%d flood-deop %d:%d \
 %cgreet %cprotectops %cprotectfriends %cdontkickops %cwasoptest \
 %cstatuslog %cstopnethack %crevenge %crevengebot %cautovoice %csecret \
 %cshared %ccycle %cseen %cinactive %cdynamicexempts %cuserexempts \
-%cdynamicinvites %cuserinvites ",
+%cdynamicinvites %cuserinvites %cnodesynch%s ",
 	channel_static(chan) ? "set" : "add",
 	name,
 	channel_static(chan) ? " " : " { ",
@@ -576,6 +577,7 @@ flood-kick %d:%d flood-deop %d:%d \
         PLSMNS(!channel_nouserexempts(chan)),
  	PLSMNS(channel_dynamicinvites(chan)),
         PLSMNS(!channel_nouserinvites(chan)));
+	PLSMNS(channel_nodesynch(chan)),
     for (ul = udef; ul; ul = ul->next) {
       if (ul->defined && ul->name) {
 	if (ul->type == UDEF_FLAG)
@@ -775,6 +777,8 @@ static void channels_report(int idx, int details)
 	  i += my_strcpy(s + i, "forbid-user-invites ");
 	if (channel_inactive(chan))
 	  i += my_strcpy(s + i, "inactive ");
+	if (channel_nodesynch(chan))
+	  i += my_strcpy(s + i, "nodesynch ");
 	dprintf(idx, "      Options: %s\n", s);
 	if (chan->need_op[0])
 	  dprintf(idx, "      To get ops I do: %s\n", chan->need_op);

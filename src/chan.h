@@ -3,7 +3,7 @@
  *   stuff common to chan.c and mode.c
  *   users.h needs to be loaded too
  * 
- * $Id: chan.h,v 1.5 1999/12/21 17:35:08 fabian Exp $
+ * $Id: chan.h,v 1.6 1999/12/22 12:21:42 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -214,6 +214,7 @@ struct chanset_t {
 #define CHAN_NOUSEREXEMPTS  0x0008
 #define CHAN_DYNAMICINVITES 0x0010
 #define CHAN_NOUSERINVITES  0x0020
+#define CHAN_NODESYNCH      0x0040
 
 /* prototypes */
 memberlist *ismember(struct chanset_t *, char *);
@@ -227,6 +228,7 @@ struct chanset_t *findchan_by_dname(char *name);
 #define channel_active(chan)  (chan->status & CHAN_ACTIVE)
 #define channel_pending(chan)  (chan->status & CHAN_PEND)
 #define channel_bitch(chan) (chan->status & CHAN_BITCH)
+#define channel_nodesynch(chan) (chan->status & CHAN_NODESYNCH)
 #define channel_autoop(chan) (chan->status & CHAN_OPONJOIN)
 #define channel_wasoptest(chan) (chan->status & CHAN_WASOPTEST)
 #define channel_autovoice(chan) (chan->status & CHAN_AUTOVOICE)
