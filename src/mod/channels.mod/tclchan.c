@@ -877,7 +877,8 @@ static int tcl_channel STDVAR
       Tcl_AppendResult(irp, "no such channel record", NULL);
       return TCL_ERROR;
     }
-    dprintf(DP_SERVER, "PART %s\n", chan->name);
+    if (!channel_inactive(chan))
+      dprintf(DP_SERVER, "PART %s\n", chan->name);
     remove_channel(chan);
     return TCL_OK;
   }
