@@ -1,7 +1,7 @@
 /*
  * tclserv.c -- part of server.mod
  *
- * $Id: tclserv.c,v 1.14 2003/01/30 07:15:15 wcc Exp $
+ * $Id: tclserv.c,v 1.15 2003/02/27 10:18:40 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -94,6 +94,7 @@ static int tcl_puthelp STDVAR
   char s[511], *p;
 
   BADARGS(2, 3, " text ?options?");
+
   if ((argc == 3) && egg_strcasecmp(argv[2], "-next") &&
       egg_strcasecmp(argv[2], "-normal")) {
     Tcl_AppendResult(irp, "unknown puthelp option: should be one of: ",

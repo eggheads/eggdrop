@@ -1,7 +1,7 @@
 dnl aclocal.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: aclocal.m4,v 1.60 2002/12/24 03:10:21 wcc Exp $
+dnl $Id: aclocal.m4,v 1.61 2003/02/27 10:18:40 tothwolf Exp $
 dnl
 
 
@@ -936,18 +936,6 @@ configure: error:
 
 EOF
   exit 1
-fi
-])dnl
-
-
-dnl  EGG_TCL_CHECK_PRE75()
-dnl
-AC_DEFUN(EGG_TCL_CHECK_PRE75, [dnl
-# Are we using a pre 7.5 Tcl version ?
-TCL_VER_PRE75=`echo $egg_cv_var_tcl_version | $AWK '{split([$]1, i, "."); if (((i[[1]] == 7) && (i[[2]] < 5)) || (i[[1]] < 7)) print "yes"; else print "no"}'`
-if test "$TCL_VER_PRE75" = "yes"
-then
-  AC_DEFINE(HAVE_PRE7_5_TCL)dnl
 fi
 ])dnl
 

@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  *
- * $Id: server.c,v 1.93 2003/02/18 00:47:58 wcc Exp $
+ * $Id: server.c,v 1.94 2003/02/27 10:18:40 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1116,17 +1116,11 @@ static int server_raw STDVAR
 
 /* Read/write normal string variable.
  */
-#if (((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 4)) || (TCL_MAJOR_VERSION > 8))
-static char *nick_change(ClientData cdata, Tcl_Interp *irp, CONST char *name1,
-                         CONST char *name2, int flags)
+static char *nick_change(ClientData cdata, Tcl_Interp *irp,
+                         EGG_CONST char *name1,
+                         EGG_CONST char *name2, int flags)
 {
-  CONST char *new;
-#else
-static char *nick_change(ClientData cdata, Tcl_Interp *irp, char *name1,
-                         char *name2, int flags)
-{
-  char *new;
-#endif
+  EGG_CONST char *new;
 
   if (flags & (TCL_TRACE_READS | TCL_TRACE_UNSETS)) {
     Tcl_SetVar2(interp, name1, name2, origbotname, TCL_GLOBAL_ONLY);
@@ -1175,27 +1169,18 @@ static char *get_altbotnick(void)
     return altnick;
 }
 
-#if (((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 4)) || (TCL_MAJOR_VERSION > 8))
 static char *altnick_change(ClientData cdata, Tcl_Interp *irp,
-                            CONST char *name1, CONST char *name2, int flags)
-#else
-static char *altnick_change(ClientData cdata, Tcl_Interp *irp, char *name1,
-                            char *name2, int flags)
-#endif
+                            EGG_CONST char *name1,
+                            EGG_CONST char *name2, int flags)
 {
   /* Always unset raltnick. Will be regenerated when needed. */
   raltnick[0] = 0;
   return NULL;
 }
 
-#if (((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 4)) || (TCL_MAJOR_VERSION > 8))
 static char *traced_serveraddress(ClientData cdata, Tcl_Interp *irp,
-                                  CONST char *name1, CONST char *name2,
-                                  int flags)
-#else
-static char *traced_serveraddress(ClientData cdata, Tcl_Interp *irp,
-                                  char *name1, char *name2, int flags)
-#endif
+                                  EGG_CONST char *name1,
+                                  EGG_CONST char *name2, int flags)
 {
   char s[1024];
 
@@ -1212,13 +1197,9 @@ static char *traced_serveraddress(ClientData cdata, Tcl_Interp *irp,
   return NULL;
 }
 
-#if (((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 4)) || (TCL_MAJOR_VERSION > 8))
 static char *traced_server(ClientData cdata, Tcl_Interp *irp,
-                           CONST char *name1, CONST char *name2, int flags)
-#else
-static char *traced_server(ClientData cdata, Tcl_Interp *irp, char *name1,
-                           char *name2, int flags)
-#endif
+                           EGG_CONST char *name1,
+                           EGG_CONST char *name2, int flags)
 {
   char s[1024];
 
@@ -1240,13 +1221,9 @@ static char *traced_server(ClientData cdata, Tcl_Interp *irp, char *name1,
   return NULL;
 }
 
-#if (((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 4)) || (TCL_MAJOR_VERSION > 8))
 static char *traced_botname(ClientData cdata, Tcl_Interp *irp,
-                            CONST char *name1, CONST char *name2, int flags)
-#else
-static char *traced_botname(ClientData cdata, Tcl_Interp *irp, char *name1,
-                            char *name2, int flags)
-#endif
+                            EGG_CONST char *name1,
+                            EGG_CONST char *name2, int flags)
 {
   char s[1024];
 
@@ -1297,25 +1274,17 @@ static void do_nettype(void)
   }
 }
 
-#if (((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 4)) || (TCL_MAJOR_VERSION > 8))
 static char *traced_nettype(ClientData cdata, Tcl_Interp *irp,
-                            CONST char *name1, CONST char *name2, int flags)
-#else
-static char *traced_nettype(ClientData cdata, Tcl_Interp *irp, char *name1,
-                            char *name2, int flags)
-#endif
+                            EGG_CONST char *name1,
+                            EGG_CONST char *name2, int flags)
 {
   do_nettype();
   return NULL;
 }
 
-#if (((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 4)) || (TCL_MAJOR_VERSION > 8))
 static char *traced_nicklen(ClientData cdata, Tcl_Interp *irp,
-                            CONST char *name1, CONST char *name2, int flags)
-#else
-static char *traced_nicklen(ClientData cdata, Tcl_Interp *irp, char *name1,
-                            char *name2, int flags)
-#endif
+                            EGG_CONST char *name1,
+                            EGG_CONST char *name2, int flags)
 {
   if (flags & (TCL_TRACE_READS | TCL_TRACE_UNSETS)) {
     char s[40];
@@ -1326,11 +1295,7 @@ static char *traced_nicklen(ClientData cdata, Tcl_Interp *irp, char *name1,
       Tcl_TraceVar(irp, name1, TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
                    traced_nicklen, cdata);
   } else {
-#if (((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 4)) || (TCL_MAJOR_VERSION > 8))
-    CONST char *cval = Tcl_GetVar2(interp, name1, name2, TCL_GLOBAL_ONLY);
-#else
-    char *cval = Tcl_GetVar2(interp, name1, name2, TCL_GLOBAL_ONLY);
-#endif
+    EGG_CONST char *cval = Tcl_GetVar2(interp, name1, name2, TCL_GLOBAL_ONLY);
     long lval = 0;
 
     if (cval && Tcl_ExprLong(interp, cval, &lval) != TCL_ERROR) {
@@ -1397,24 +1362,15 @@ static tcl_ints my_tcl_ints[] = {
 /* Read or write the server list.
  */
 
-#if (((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 4)) || (TCL_MAJOR_VERSION > 8))
 static char *tcl_eggserver(ClientData cdata, Tcl_Interp *irp,
-                           CONST char *name1, CONST char *name2, int flags)
-#else
-static char *tcl_eggserver(ClientData cdata, Tcl_Interp *irp, char *name1,
-                           char *name2, int flags)
-#endif
+                           EGG_CONST char *name1,
+                           EGG_CONST char *name2, int flags)
 {
-  Tcl_DString ds;
-  char x[1024];
-  struct server_list *q;
   int lc, code, i;
-
-#if (((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 4)) || (TCL_MAJOR_VERSION > 8))
-  CONST char **list, *slist;
-#else
-  char **list, *slist;
-#endif
+  char x[1024];
+  EGG_CONST char **list, *slist;
+  struct server_list *q;
+  Tcl_DString ds;
 
   if (flags & (TCL_TRACE_READS | TCL_TRACE_UNSETS)) {
     /* Create server list */
@@ -1854,11 +1810,7 @@ static Function server_table[] = {
 
 char *server_start(Function *global_funcs)
 {
-#if (((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 4)) || (TCL_MAJOR_VERSION > 8))
-  CONST char *s;
-#else
-  char *s;
-#endif
+  EGG_CONST char *s;
 
   global = global_funcs;
 

@@ -2,7 +2,7 @@
  * tclmisc.c -- handles:
  *   Tcl stubs for everything else
  *
- * $Id: tclmisc.c,v 1.38 2003/02/26 06:16:53 tothwolf Exp $
+ * $Id: tclmisc.c,v 1.39 2003/02/27 10:18:40 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -189,16 +189,12 @@ static int tcl_putloglev STDVAR
 
 static int tcl_binds STDVAR
 {
+  int matching = 0;
+  char *g, flg[100], hits[11];
+  EGG_CONST char *list[5];
   tcl_bind_list_t *tl, *tl_kind;
   tcl_bind_mask_t *tm;
   tcl_cmd_t *tc;
-  char *g, flg[100], hits[11];
-  int matching = 0;
-#if (((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 4)) || (TCL_MAJOR_VERSION > 8))
-  CONST char *list[5];
-#else
-  char *list[5];
-#endif
 
   BADARGS(1, 2, " ?type/mask?");
 
@@ -245,6 +241,7 @@ static int tcl_timer STDVAR
   char s[16];
 
   BADARGS(3, 3, " minutes command");
+
   if (atoi(argv[1]) < 0) {
     Tcl_AppendResult(irp, "time value must be positive", NULL);
     return TCL_ERROR;
@@ -529,6 +526,7 @@ static int tcl_loadmodule STDVAR
 static int tcl_unloadmodule STDVAR
 {
   BADARGS(2, 2, " module-name");
+
   Tcl_AppendResult(irp, module_unload(argv[1], botnetnick), NULL);
   return TCL_OK;
 }
@@ -555,15 +553,11 @@ static int tcl_unames STDVAR
 
 static int tcl_modules STDVAR
 {
-  module_entry *current;
-  dependancy *dep;
-  char *p, s[24], s2[24];
   int i;
-#if (((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 4)) || (TCL_MAJOR_VERSION > 8))
-  CONST char *list[100], *list2[2];
-#else
-  char *list[100], *list2[2];
-#endif
+  char *p, s[24], s2[24];
+  EGG_CONST char *list[100], *list2[2];
+  dependancy *dep;
+  module_entry *current;
 
   BADARGS(1, 1, "");
 
@@ -624,39 +618,38 @@ static int tcl_callevent STDVAR
   return TCL_OK;
 }
 
-#if (TCL_MAJOR_VERSION >= 8)
+#ifdef USE_TCL_OBJ
 static int tcl_md5(cd, irp, objc, objv)
 ClientData cd;
 Tcl_Interp *irp;
 int objc;
-Tcl_Obj *CONST objv[];
+Tcl_Obj *EGG_CONST objv[];
 {
 #else
 static int tcl_md5 STDVAR
 {
-#endif
+#endif				/* USE_TCL_OBJ */
   MD5_CTX md5context;
   char digest_string[33], *string;
   unsigned char digest[16];
   int i, len;
 
-#if (TCL_MAJOR_VERSION >= 8)
+#ifdef USE_TCL_OBJ
   if (objc != 2) {
     Tcl_WrongNumArgs(irp, 1, objv, "string");
     return TCL_ERROR;
   }
-#if ((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION < 1))
-  string = Tcl_GetStringFromObj(objv[1], &len);
-#else
+# ifdef USE_TCL_BYTE_ARRAYS
   string = Tcl_GetByteArrayFromObj(objv[1], &len);
-#endif
-
-#else
+# else
+  string = Tcl_GetStringFromObj(objv[1], &len);
+# endif				/* USE_TCL_BYTE_ARRAYS */
+#else				/* USE_TCL_OBJ */
   BADARGS(2, 2, " string");
   
   string = argv[1];
   len = strlen(argv[1]);
-#endif
+#endif				/* USE_TCL_OBJ */
 
   MD5_Init(&md5context);
   MD5_Update(&md5context, (unsigned char *) string, len);
@@ -668,9 +661,9 @@ static int tcl_md5 STDVAR
 }
 
 tcl_cmds tclmisc_objcmds[] = {
-#if (TCL_MAJOR_VERSION >= 8)
+#ifdef USE_TCL_OBJ
   {"md5", tcl_md5},
-#endif
+#endif				/* USE_TCL_OBJ */
   {NULL,     NULL}
 };
 
@@ -706,9 +699,9 @@ tcl_cmds tclmisc_cmds[] = {
   {"unloadhelp",     tcl_unloadhelp},
   {"reloadhelp",     tcl_reloadhelp},
   {"duration",         tcl_duration},
-#if (TCL_MAJOR_VERSION < 8)
+#ifndef USE_TCL_OBJ
   {"md5",                   tcl_md5},
-#endif
+#endif				/* USE_TCL_OBJ */
   {"binds",               tcl_binds},
   {"callevent",       tcl_callevent},
   {NULL,                       NULL}

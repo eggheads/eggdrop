@@ -2,7 +2,7 @@
  * tcldcc.c -- handles:
  *   Tcl stubs for the dcc commands
  *
- * $Id: tcldcc.c,v 1.43 2003/01/31 11:50:03 tothwolf Exp $
+ * $Id: tcldcc.c,v 1.44 2003/02/27 10:18:40 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -586,13 +586,9 @@ static int tcl_bots STDVAR
 
 static int tcl_botlist STDVAR
 {
-  tand_t *bot;
   char *p, sh[2], string[20];
-#if (((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 4)) || (TCL_MAJOR_VERSION > 8))
-  CONST char *list[4];
-#else
-  char *list[4];
-#endif
+  EGG_CONST char *list[4];
+  tand_t *bot;
 
   BADARGS(1, 1, "");
 
@@ -615,11 +611,7 @@ static int tcl_dcclist STDVAR
 {
   int i;
   char idxstr[10], timestamp[11], *p, other[160];
-#if (((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 4)) || (TCL_MAJOR_VERSION > 8))
-  CONST char *list[6];
-#else
-  char *list[6];
-#endif
+  EGG_CONST char *list[6];
 
   BADARGS(1, 2, " ?type?");
 
@@ -651,13 +643,9 @@ static int tcl_dcclist STDVAR
 
 static int tcl_whom STDVAR
 {
-  char c[2], idle[11], work[20], *p;
   int chan, i;
-#if (((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 4)) || (TCL_MAJOR_VERSION > 8))
-  CONST char *list[7];
-#else
-  char *list[7];
-#endif
+  char c[2], idle[11], work[20], *p;
+  EGG_CONST char *list[7];
 
   BADARGS(2, 2, " chan");
 
@@ -1041,7 +1029,6 @@ static int tcl_boot STDVAR
 
 static int tcl_rehash STDVAR
 {
-
   BADARGS(1, 1, " ");
 
   if (make_userfile) {

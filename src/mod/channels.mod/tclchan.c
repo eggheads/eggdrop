@@ -1,7 +1,7 @@
 /*
  * tclchan.c -- part of channels.mod
  *
- * $Id: tclchan.c,v 1.75 2003/02/02 09:22:55 wcc Exp $
+ * $Id: tclchan.c,v 1.76 2003/02/27 10:18:40 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -27,6 +27,7 @@ static int tcl_killban STDVAR
   struct chanset_t *chan;
 
   BADARGS(2, 2, " ban");
+
   if (u_delban(NULL, argv[1], 1) > 0) {
     for (chan = chanset; chan; chan = chan->next)
       add_mode(chan, '-', 'b', argv[1]);
@@ -41,6 +42,7 @@ static int tcl_killchanban STDVAR
   struct chanset_t *chan;
 
   BADARGS(3, 3, " channel ban");
+
   chan = findchan_by_dname(argv[1]);
   if (!chan) {
     Tcl_AppendResult(irp, "invalid channel: ", argv[1], NULL);
@@ -59,6 +61,7 @@ static int tcl_killexempt STDVAR
   struct chanset_t *chan;
 
   BADARGS(2, 2, " exempt");
+
   if (u_delexempt(NULL, argv[1], 1) > 0) {
     for (chan = chanset; chan; chan = chan->next)
       add_mode(chan, '-', 'e', argv[1]);
@@ -73,6 +76,7 @@ static int tcl_killchanexempt STDVAR
   struct chanset_t *chan;
 
   BADARGS(3, 3, " channel exempt");
+
   chan = findchan_by_dname(argv[1]);
   if (!chan) {
     Tcl_AppendResult(irp, "invalid channel: ", argv[1], NULL);
@@ -91,6 +95,7 @@ static int tcl_killinvite STDVAR
   struct chanset_t *chan;
 
   BADARGS(2, 2, " invite");
+
   if (u_delinvite(NULL, argv[1], 1) > 0) {
     for (chan = chanset; chan; chan = chan->next)
       add_mode(chan, '-', 'I', argv[1]);
@@ -105,6 +110,7 @@ static int tcl_killchaninvite STDVAR
   struct chanset_t *chan;
 
   BADARGS(3, 3, " channel invite");
+
   chan = findchan_by_dname(argv[1]);
   if (!chan) {
     Tcl_AppendResult(irp, "invalid channel: ", argv[1], NULL);
@@ -124,6 +130,7 @@ static int tcl_stick STDVAR
   int ok = 0;
 
   BADARGS(2, 3, " ban ?channel?");
+
   if (argc == 3) {
     chan = findchan_by_dname(argv[2]);
     if (!chan) {
@@ -149,6 +156,7 @@ static int tcl_stickinvite STDVAR
   int ok = 0;
 
   BADARGS(2, 3, " ban ?channel?");
+
   if (argc == 3) {
     chan = findchan_by_dname(argv[2]);
     if (!chan) {
@@ -174,6 +182,7 @@ static int tcl_stickexempt STDVAR
   int ok = 0;
 
   BADARGS(2, 3, " ban ?channel?");
+
   if (argc == 3) {
     chan = findchan_by_dname(argv[2]);
     if (!chan) {
@@ -199,6 +208,7 @@ static int tcl_isban STDVAR
   int ok = 0;
 
   BADARGS(2, 3, " ban ?channel?");
+
   if (argc == 3) {
     chan = findchan_by_dname(argv[2]);
     if (!chan) {
@@ -223,6 +233,7 @@ static int tcl_isexempt STDVAR
   int ok = 0;
 
   BADARGS(2, 3, " exempt ?channel?");
+
   if (argc == 3) {
     chan = findchan_by_dname(argv[2]);
     if (!chan) {
@@ -247,6 +258,7 @@ static int tcl_isinvite STDVAR
   int ok = 0;
 
   BADARGS(2, 3, " invite ?channel?");
+
   if (argc == 3) {
     chan = findchan_by_dname(argv[2]);
     if (!chan) {
@@ -272,6 +284,7 @@ static int tcl_isbansticky STDVAR
   int ok = 0;
 
   BADARGS(2, 3, " ban ?channel?");
+
   if (argc == 3) {
     chan = findchan_by_dname(argv[2]);
     if (!chan) {
@@ -296,6 +309,7 @@ static int tcl_isexemptsticky STDVAR
   int ok = 0;
 
   BADARGS(2, 3, " exempt ?channel?");
+
   if (argc == 3) {
     chan = findchan_by_dname(argv[2]);
     if (!chan) {
@@ -320,6 +334,7 @@ static int tcl_isinvitesticky STDVAR
   int ok = 0;
 
   BADARGS(2, 3, " invite ?channel?");
+
   if (argc == 3) {
     chan = findchan_by_dname(argv[2]);
     if (!chan) {
@@ -344,6 +359,7 @@ static int tcl_ispermban STDVAR
   int ok = 0;
 
   BADARGS(2, 3, " ban ?channel?");
+
   if (argc == 3) {
     chan = findchan_by_dname(argv[2]);
     if (chan == NULL) {
@@ -368,6 +384,7 @@ static int tcl_ispermexempt STDVAR
   int ok = 0;
 
   BADARGS(2, 3, " exempt ?channel?");
+
   if (argc == 3) {
     chan = findchan_by_dname(argv[2]);
     if (chan == NULL) {
@@ -392,6 +409,7 @@ static int tcl_isperminvite STDVAR
   int ok = 0;
 
   BADARGS(2, 3, " invite ?channel?");
+
   if (argc == 3) {
     chan = findchan_by_dname(argv[2]);
     if (chan == NULL) {
@@ -416,6 +434,7 @@ static int tcl_matchban STDVAR
   int ok = 0;
 
   BADARGS(2, 3, " user!nick@host ?channel?");
+
   if (argc == 3) {
     chan = findchan_by_dname(argv[2]);
     if (chan == NULL) {
@@ -440,6 +459,7 @@ static int tcl_matchexempt STDVAR
   int ok = 0;
 
   BADARGS(2, 3, " user!nick@host ?channel?");
+
   if (argc == 3) {
     chan = findchan_by_dname(argv[2]);
     if (chan == NULL) {
@@ -464,6 +484,7 @@ static int tcl_matchinvite STDVAR
   int ok = 0;
 
   BADARGS(2, 3, " user!nick@host ?channel?");
+
   if (argc == 3) {
     chan = findchan_by_dname(argv[2]);
     if (chan == NULL) {
@@ -491,6 +512,7 @@ static int tcl_newchanban STDVAR
   module_entry *me;
 
   BADARGS(5, 7, " channel ban creator comment ?lifetime? ?options?");
+
   chan = findchan_by_dname(argv[1]);
   if (chan == NULL) {
     Tcl_AppendResult(irp, "invalid channel: ", argv[1], NULL);
@@ -535,6 +557,7 @@ static int tcl_newban STDVAR
   module_entry *me;
 
   BADARGS(4, 6, " ban creator comment ?lifetime? ?options?");
+
   if (argc == 6) {
     if (!egg_strcasecmp(argv[5], "none"));
     else if (!egg_strcasecmp(argv[5], "sticky"))
@@ -574,6 +597,7 @@ static int tcl_newchanexempt STDVAR
   int sticky = 0;
 
   BADARGS(5, 7, " channel exempt creator comment ?lifetime? ?options?");
+
   chan = findchan_by_dname(argv[1]);
   if (chan == NULL) {
     Tcl_AppendResult(irp, "invalid channel: ", argv[1], NULL);
@@ -616,6 +640,7 @@ static int tcl_newexempt STDVAR
   int sticky = 0;
 
   BADARGS(4, 6, " exempt creator comment ?lifetime? ?options?");
+
   if (argc == 6) {
     if (!egg_strcasecmp(argv[5], "none"));
     else if (!egg_strcasecmp(argv[5], "sticky"))
@@ -654,6 +679,7 @@ static int tcl_newchaninvite STDVAR
   int sticky = 0;
 
   BADARGS(5, 7, " channel invite creator comment ?lifetime? ?options?");
+
   chan = findchan_by_dname(argv[1]);
   if (chan == NULL) {
     Tcl_AppendResult(irp, "invalid channel: ", argv[1], NULL);
@@ -696,6 +722,7 @@ static int tcl_newinvite STDVAR
   int sticky = 0;
 
   BADARGS(4, 6, " invite creator comment ?lifetime? ?options?");
+
   if (argc == 6) {
     if (!egg_strcasecmp(argv[5], "none"));
     else if (!egg_strcasecmp(argv[5], "sticky"))
@@ -729,12 +756,7 @@ static int tcl_newinvite STDVAR
 static int tcl_channel_info(Tcl_Interp *irp, struct chanset_t *chan)
 {
   char a[121], b[121], s[121];
-
-#if (((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 4)) || (TCL_MAJOR_VERSION > 8))
-  CONST char *args[2];
-#else
-  char *args[2];
-#endif
+  EGG_CONST char *args[2];
   struct udef_struct *ul;
 
   get_mode_protect(chan, s);
@@ -1009,14 +1031,17 @@ static int tcl_channel STDVAR
   struct chanset_t *chan;
 
   BADARGS(2, 999, " command ?options?");
+
   if (!strcmp(argv[1], "add")) {
     BADARGS(3, 4, " add channel-name ?options-list?");
+
     if (argc == 3)
       return tcl_channel_add(irp, argv[2], "");
     return tcl_channel_add(irp, argv[2], argv[3]);
   }
   if (!strcmp(argv[1], "set")) {
     BADARGS(3, 999, " set channel-name ?options?");
+
     chan = findchan_by_dname(argv[2]);
     if (chan == NULL) {
       if (chan_hack == 1)
@@ -1030,6 +1055,7 @@ static int tcl_channel STDVAR
   }
   if (!strcmp(argv[1], "get")) {
     BADARGS(4, 4, " get channel-name setting-name");
+
     chan = findchan_by_dname(argv[2]);
     if (chan == NULL) {
       Tcl_AppendResult(irp, "no such channel record", NULL);
@@ -1039,6 +1065,7 @@ static int tcl_channel STDVAR
   }
   if (!strcmp(argv[1], "info")) {
     BADARGS(3, 3, " info channel-name");
+
     chan = findchan_by_dname(argv[2]);
     if (chan == NULL) {
       Tcl_AppendResult(irp, "no such channel record", NULL);
@@ -1048,6 +1075,7 @@ static int tcl_channel STDVAR
   }
   if (!strcmp(argv[1], "remove")) {
     BADARGS(3, 3, " remove channel-name");
+
     chan = findchan_by_dname(argv[2]);
     if (chan == NULL) {
       Tcl_AppendResult(irp, "no such channel record", NULL);
@@ -1445,12 +1473,7 @@ static int tcl_channel_modify(Tcl_Interp *irp, struct chanset_t *chan,
 static int tcl_do_masklist(maskrec *m, Tcl_Interp *irp)
 {
   char ts[21], ts1[21], ts2[21], *p;
-
-#if (((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 4)) || (TCL_MAJOR_VERSION > 8))
-  CONST char *list[6];
-#else
-  char *list[6];
-#endif
+  EGG_CONST char *list[6];
 
   for (; m; m = m->next) {
     list[0] = m->mask;
@@ -1474,6 +1497,7 @@ static int tcl_banlist STDVAR
   struct chanset_t *chan;
 
   BADARGS(1, 2, " ?channel?");
+
   if (argc == 2) {
     chan = findchan_by_dname(argv[1]);
     if (chan == NULL) {
@@ -1491,6 +1515,7 @@ static int tcl_exemptlist STDVAR
   struct chanset_t *chan;
 
   BADARGS(1, 2, " ?channel?");
+
   if (argc == 2) {
     chan = findchan_by_dname(argv[1]);
     if (chan == NULL) {
@@ -1508,6 +1533,7 @@ static int tcl_invitelist STDVAR
   struct chanset_t *chan;
 
   BADARGS(1, 2, " ?channel?");
+
   if (argc == 2) {
     chan = findchan_by_dname(argv[1]);
     if (chan == NULL) {
@@ -1524,6 +1550,7 @@ static int tcl_channels STDVAR
   struct chanset_t *chan;
 
   BADARGS(1, 1, "");
+
   for (chan = chanset; chan; chan = chan->next)
     Tcl_AppendElement(irp, chan->dname);
   return TCL_OK;
@@ -1532,6 +1559,7 @@ static int tcl_channels STDVAR
 static int tcl_savechannels STDVAR
 {
   BADARGS(1, 1, "");
+
   if (!chanfile[0]) {
     Tcl_AppendResult(irp, "no channel file");
     return TCL_ERROR;
@@ -1543,6 +1571,7 @@ static int tcl_savechannels STDVAR
 static int tcl_loadchannels STDVAR
 {
   BADARGS(1, 1, "");
+
   if (!chanfile[0]) {
     Tcl_AppendResult(irp, "no channel file");
     return TCL_ERROR;
@@ -1557,6 +1586,7 @@ static int tcl_validchan STDVAR
   struct chanset_t *chan;
 
   BADARGS(2, 2, " channel");
+
   chan = findchan_by_dname(argv[1]);
   if (chan == NULL)
     Tcl_AppendResult(irp, "0", NULL);
@@ -1570,6 +1600,7 @@ static int tcl_isdynamic STDVAR
   struct chanset_t *chan;
 
   BADARGS(2, 2, " channel");
+
   chan = findchan_by_dname(argv[1]);
   if (chan != NULL)
     if (!channel_static(chan)) {
@@ -1586,6 +1617,7 @@ static int tcl_getchaninfo STDVAR
   struct userrec *u;
 
   BADARGS(3, 3, " handle channel");
+
   u = get_user_by_handle(userlist, argv[1]);
   if (!u || (u->flags & USER_BOT))
     return TCL_OK;
@@ -1599,6 +1631,7 @@ static int tcl_setchaninfo STDVAR
   struct chanset_t *chan;
 
   BADARGS(4, 4, " handle channel info");
+
   chan = findchan_by_dname(argv[2]);
   if (chan == NULL) {
     Tcl_AppendResult(irp, "illegal channel: ", argv[2], NULL);
@@ -1618,6 +1651,7 @@ static int tcl_setlaston STDVAR
   struct userrec *u;
 
   BADARGS(2, 4, " handle ?channel? ?timestamp?");
+
   u = get_user_by_handle(userlist, argv[1]);
   if (!u) {
     Tcl_AppendResult(irp, "No such user: ", argv[1], NULL);
@@ -1639,6 +1673,7 @@ static int tcl_addchanrec STDVAR
   struct userrec *u;
 
   BADARGS(3, 3, " handle channel");
+
   u = get_user_by_handle(userlist, argv[1]);
   if (!u) {
     Tcl_AppendResult(irp, "0", NULL);
@@ -1662,6 +1697,7 @@ static int tcl_delchanrec STDVAR
   struct userrec *u;
 
   BADARGS(3, 3, " handle channel");
+
   u = get_user_by_handle(userlist, argv[1]);
   if (!u) {
     Tcl_AppendResult(irp, "0", NULL);
@@ -1780,17 +1816,12 @@ static void clear_channel(struct chanset_t *chan, int reset)
  */
 static int tcl_channel_add(Tcl_Interp *irp, char *newname, char *options)
 {
-  struct chanset_t *chan;
   int items;
   int ret = TCL_OK;
   int join = 0;
   char buf[2048], buf2[256];
-
-#if (((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 4)) || (TCL_MAJOR_VERSION > 8))
-  CONST char **item;
-#else
-  char **item;
-#endif
+  EGG_CONST char **item;
+  struct chanset_t *chan;
 
   if (!newname || !newname[0] || !strchr(CHANMETA, newname[0])) {
     if (irp)
@@ -1864,12 +1895,8 @@ static int tcl_channel_add(Tcl_Interp *irp, char *newname, char *options)
    * if a user goes back to an eggdrop that no-longer supports certain
    * (channel) options.
    */
-#if (((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 4)) || (TCL_MAJOR_VERSION > 8))
   if ((tcl_channel_modify(irp, chan, items, (char **) item) != TCL_OK) &&
       !chan_hack) {
-#else
-  if ((tcl_channel_modify(irp, chan, items, item) != TCL_OK) && !chan_hack) {
-#endif
     ret = TCL_ERROR;
   }
   Tcl_Free((char *) item);
@@ -1883,6 +1910,7 @@ static int tcl_setudef STDVAR
   int type;
 
   BADARGS(3, 3, " type name");
+
   if (!egg_strcasecmp(argv[1], "flag"))
     type = UDEF_FLAG;
   else if (!egg_strcasecmp(argv[1], "int"))
@@ -1904,6 +1932,7 @@ static int tcl_renudef STDVAR
   int type, found = 0;
 
   BADARGS(4, 4, " type oldname newname");
+
   if (!egg_strcasecmp(argv[1], "flag"))
     type = UDEF_FLAG;
   else if (!egg_strcasecmp(argv[1], "int"))
@@ -1936,6 +1965,7 @@ static int tcl_deludef STDVAR
   int type, found = 0;
 
   BADARGS(3, 3, " type name");
+
   if (!egg_strcasecmp(argv[1], "flag"))
     type = UDEF_FLAG;
   else if (!egg_strcasecmp(argv[1], "int"))

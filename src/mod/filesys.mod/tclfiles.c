@@ -2,7 +2,7 @@
  * tclfiles.c -- part of filesys.mod
  *   Tcl stubs for file system commands moved here to support modules
  *
- * $Id: tclfiles.c,v 1.20 2003/01/30 10:38:31 wcc Exp $
+ * $Id: tclfiles.c,v 1.21 2003/02/27 10:18:40 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -442,6 +442,7 @@ static int tcl_mv_cp(Tcl_Interp *irp, int argc, char **argv, int copy)
   long where;
 
   BADARGS(3, 3, " oldfilepath newfilepath");
+
   malloc_strcpy(fn, argv[1]);
   p = strrchr(fn, '/');
   if (p != NULL) {
@@ -629,6 +630,7 @@ static int tcl_fileresend_send(ClientData cd, Tcl_Interp *irp, int argc,
   char s[21];
 
   BADARGS(3, 4, " idx filename ?nick?");
+
   i = atoi(argv[1]);
   idx = findanyidx(i);
   if (idx < 0 || dcc[idx].type != &DCC_FILES) {

@@ -4,7 +4,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: modules.c,v 1.79 2003/02/04 11:07:55 wcc Exp $
+ * $Id: modules.c,v 1.80 2003/02/27 10:18:40 tothwolf Exp $
  */
 /* 
  * Copyright (C) 1997 Robey Pointer
@@ -662,11 +662,11 @@ const char *module_load(char *name)
     return "Can't load module.";
 #  else
 #    ifdef OSF1_HACKS
-#      ifndef HAVE_PRE7_5_TCL
+#      ifdef USE_TCL_PACKAGE
   hand = (Tcl_PackageInitProc *) load(workbuf, LDR_NOFLAGS);
   if (hand == LDR_NULL_MODULE)
     return "Can't load module.";
-#      endif
+#      endif			/* USE_TCL_PACKAGE */
 #    else
   hand = dlopen(workbuf, DLFLAGS);
   if (!hand)

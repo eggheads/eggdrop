@@ -2,7 +2,7 @@
  * userent.c -- handles:
  *   user-entry handling, new stylem more versatile.
  *
- * $Id: userent.c,v 1.28 2003/01/30 07:15:14 wcc Exp $
+ * $Id: userent.c,v 1.29 2003/02/27 10:18:40 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -170,6 +170,7 @@ int def_tcl_set(Tcl_Interp * irp, struct userrec *u,
                 struct user_entry *e, int argc, char **argv)
 {
   BADARGS(4, 4, " handle type setting");
+
   e->type->set(u, e, argv[3]);
   return TCL_OK;
 }
@@ -264,6 +265,7 @@ static int pass_tcl_set(Tcl_Interp * irp, struct userrec *u,
                         struct user_entry *e, int argc, char **argv)
 {
   BADARGS(3, 4, " handle PASS ?newpass?");
+
   pass_set(u, e, argc == 3 ? NULL : argv[3]);
   return TCL_OK;
 }
@@ -364,6 +366,7 @@ static int laston_tcl_get(Tcl_Interp * irp, struct userrec *u,
   struct chanuserrec *cr;
 
   BADARGS(3, 4, " handle LASTON ?channel?");
+
   if (argc == 4) {
     for (cr = u->chanrec; cr; cr = cr->next)
       if (!rfc_casecmp(cr->channel, argv[3])) {
@@ -553,6 +556,7 @@ static int botaddr_tcl_set(Tcl_Interp * irp, struct userrec *u,
   register struct bot_addr *bi = (struct bot_addr *) e->u.extra;
 
   BADARGS(4, 6, " handle type address ?telnetport ?relayport??");
+
   if (u->flags & USER_BOT) {
     /* Silently ignore for users */
     if (!bi) {
@@ -698,6 +702,7 @@ static int xtra_tcl_set(Tcl_Interp * irp, struct userrec *u,
   int l;
 
   BADARGS(4, 5, " handle type key ?value?");
+
   xk = user_malloc(sizeof(struct xtra_key));
   l = strlen(argv[3]);
   egg_bzero(xk, sizeof(struct xtra_key));
@@ -768,13 +773,8 @@ static int xtra_pack(struct userrec *u, struct user_entry *e)
 static void xtra_display(int idx, struct user_entry *e)
 {
   int code, lc, j;
+  EGG_CONST char **list;
   struct xtra_key *xk;
-
-#if (((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 4)) || (TCL_MAJOR_VERSION > 8))
-  CONST char **list;
-#else
-  char **list;
-#endif
 
   code = Tcl_SplitList(interp, whois_fields, &lc, &list);
   if (code == TCL_ERROR)
@@ -869,6 +869,7 @@ static int xtra_tcl_get(Tcl_Interp * irp, struct userrec *u,
   struct xtra_key *x;
 
   BADARGS(3, 4, " handle XTRA ?key?");
+
   if (argc == 4) {
     for (x = e->u.extra; x; x = x->next)
       if (!egg_strcasecmp(argv[3], x->key)) {
@@ -879,12 +880,7 @@ static int xtra_tcl_get(Tcl_Interp * irp, struct userrec *u,
   }
   for (x = e->u.extra; x; x = x->next) {
     char *p;
-
-#if (((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 4)) || (TCL_MAJOR_VERSION > 8))
-    CONST char *list[2];
-#else
-    char *list[2];
-#endif
+    EGG_CONST char *list[2];
 
     list[0] = x->key;
     list[1] = x->data;
@@ -1036,6 +1032,7 @@ static int hosts_tcl_get(Tcl_Interp * irp, struct userrec *u,
   struct list_type *x;
 
   BADARGS(3, 3, " handle HOSTS");
+
   for (x = e->u.list; x; x = x->next)
     Tcl_AppendElement(irp, x->extra);
   return TCL_OK;
@@ -1045,6 +1042,7 @@ static int hosts_tcl_set(Tcl_Interp * irp, struct userrec *u,
                          struct user_entry *e, int argc, char **argv)
 {
   BADARGS(3, 4, " handle HOSTS ?host?");
+
   if (argc == 4)
     addhost_by_handle(u->handle, argv[3]);
   else

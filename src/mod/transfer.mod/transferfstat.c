@@ -1,7 +1,7 @@
 /*
  * transferfstat.c -- part of transfer.mod
  *
- * $Id: transferfstat.c,v 1.3 2003/01/30 07:15:15 wcc Exp $
+ * $Id: transferfstat.c,v 1.4 2003/02/27 10:18:40 tothwolf Exp $
  *
  * Copyright (C) 2003 Eggheads Development Team
  *
@@ -122,6 +122,7 @@ static int fstat_tcl_get(Tcl_Interp *irp, struct userrec *u,
   char d[50];
 
   BADARGS(3, 4, " handle FSTAT ?u/d?");
+
   fs = e->u.extra;
   if (argc == 3)
     egg_snprintf(d, sizeof d, "%u %u %u %u", fs->uploads, fs->upload_ks,
@@ -280,6 +281,7 @@ static int fstat_tcl_set(Tcl_Interp *irp, struct userrec *u,
   int f = 0, k = 0;
 
   BADARGS(4, 6, " handle FSTAT u/d ?files ?ks??");
+
   if (argc > 4)
     f = atoi(argv[4]);
   if (argc > 5)

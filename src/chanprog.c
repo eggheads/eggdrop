@@ -7,7 +7,7 @@
  *   telling the current programmed settings
  *   initializing a lot of stuff and loading the tcl scripts
  *
- * $Id: chanprog.c,v 1.40 2003/01/30 07:15:13 wcc Exp $
+ * $Id: chanprog.c,v 1.41 2003/02/27 10:18:40 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -627,14 +627,10 @@ void wipe_timers(Tcl_Interp *irp, tcl_timer_t **stack)
  */
 void list_timers(Tcl_Interp *irp, tcl_timer_t *stack)
 {
-  tcl_timer_t *mark;
   char mins[10], id[16], *x;
+  EGG_CONST char *argv[3];
+  tcl_timer_t *mark;
 
-#if (((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 4)) || (TCL_MAJOR_VERSION > 8))
-  CONST char *argv[3];
-#else
-  char *argv[3];
-#endif
   for (mark = stack; mark; mark = mark->next) {
     egg_snprintf(mins, sizeof mins, "%u", mark->mins);
     egg_snprintf(id, sizeof id, "timer%lu", mark->id);

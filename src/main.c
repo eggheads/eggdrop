@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  *
- * $Id: main.c,v 1.94 2003/01/30 07:15:14 wcc Exp $
+ * $Id: main.c,v 1.95 2003/02/27 10:18:40 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -934,10 +934,10 @@ int main(int argc, char **argv)
   while (1) {
     int socket_cleanup = 0;
 
-#if !defined(HAVE_PRE7_5_TCL)
+#ifdef USE_TCL_EVENTS
     /* Process a single tcl event */
     Tcl_DoOneEvent(TCL_ALL_EVENTS | TCL_DONT_WAIT);
-#endif
+#endif				/* USE_TCL_EVENTS */
 
     /* Lets move some of this here, reducing the numer of actual
      * calls to periodic_timers

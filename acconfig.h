@@ -5,7 +5,7 @@
  * acconfig.h
  *   template file autoheader uses when building config.h.in
  * 
- * $Id: acconfig.h,v 1.10 2001/11/11 20:24:44 guppy Exp $
+ * $Id: acconfig.h,v 1.11 2003/02/27 10:18:40 tothwolf Exp $
  */
 
 /* Define if modules will work on your system  */
@@ -37,9 +37,6 @@
 
 /* Define if we need dlopen (for module support)  */
 #undef HAVE_DLOPEN
-
-/* Define for pre Tcl 7.5 compat  */
-#undef HAVE_PRE7_5_TCL
 
 /* Define for Tcl that has Tcl_Free() (7.5p1 and later)  */
 #undef HAVE_TCL_FREE

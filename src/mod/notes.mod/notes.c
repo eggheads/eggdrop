@@ -5,7 +5,7 @@
  *   note cmds
  *   note ignores
  *
- * $Id: notes.c,v 1.44 2003/01/30 07:15:15 wcc Exp $
+ * $Id: notes.c,v 1.45 2003/02/27 10:18:40 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -660,14 +660,10 @@ static void notes_del(char *hand, char *nick, char *sdl, int idx)
 
 static int tcl_notes STDVAR
 {
-  FILE *f;
-  char s[601], *to, *from, *dt, *s1, *p;
   int count, read, nl[128]; /* Is it enough? */
-#if (((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 4)) || (TCL_MAJOR_VERSION > 8))
-  CONST char *list[3];
-#else
-  char *list[3];
-#endif
+  char s[601], *to, *from, *dt, *s1, *p;
+  EGG_CONST char *list[3];
+  FILE *f;
 
   BADARGS(2, 3, " handle ?noteslist#?");
 

@@ -2,7 +2,7 @@
  * irc.c -- part of irc.mod
  *   support for channels within the bot
  *
- * $Id: irc.c,v 1.89 2003/02/04 11:07:55 wcc Exp $
+ * $Id: irc.c,v 1.90 2003/02/27 10:18:40 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1033,26 +1033,17 @@ static void do_nettype()
   add_hook(HOOK_RFC_CASECMP, (Function) rfc_compliant);
 }
 
-#if (((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 4)) || (TCL_MAJOR_VERSION > 8))
 static char *traced_nettype(ClientData cdata, Tcl_Interp *irp,
-                            CONST char *name1, CONST char *name2, int flags)
-#else
-static char *traced_nettype(ClientData cdata, Tcl_Interp *irp, char *name1,
-                            char *name2, int flags)
-#endif
+                            EGG_CONST char *name1,
+                            EGG_CONST char *name2, int flags)
 {
   do_nettype();
   return NULL;
 }
 
-#if (((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 4)) || (TCL_MAJOR_VERSION > 8))
 static char *traced_rfccompliant(ClientData cdata, Tcl_Interp *irp,
-                                 CONST char *name1, CONST char *name2,
-                                 int flags)
-#else
-static char *traced_rfccompliant(ClientData cdata, Tcl_Interp *irp,
-                                 char *name1, char *name2, int flags)
-#endif
+                                 EGG_CONST char *name1,
+                                 EGG_CONST char *name2, int flags)
 {
   /* This hook forces eggdrop core to change the rfc_ match function
    * links to point to the rfc compliant versions if rfc_compliant

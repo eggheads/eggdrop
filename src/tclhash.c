@@ -7,7 +7,7 @@
  *   (non-Tcl) procedure lookups for msg/dcc/file commands
  *   (Tcl) binding internal procedures to msg/dcc/file commands
  *
- * $Id: tclhash.c,v 1.42 2003/01/30 07:15:14 wcc Exp $
+ * $Id: tclhash.c,v 1.43 2003/02/27 10:18:40 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -460,6 +460,7 @@ static int tcl_bind STDVAR
   /* cd defines what tcl_bind is supposed do: 0 = bind, 1 = unbind. */
   if ((long int) cd == 1)
     BADARGS(5, 5, " type flags cmd/mask procname");
+
   else
     BADARGS(4, 5, " type flags cmd/mask ?procname?");
 

@@ -4,7 +4,7 @@
  *   Tcl initialization
  *   getting and setting Tcl/eggdrop variables
  *
- * $Id: tcl.c,v 1.63 2003/02/26 06:16:53 tothwolf Exp $
+ * $Id: tcl.c,v 1.64 2003/02/27 10:18:40 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -28,10 +28,6 @@
 #include <stdlib.h>             /* getenv()                             */
 #include <locale.h>             /* setlocale()                          */
 #include "main.h"
-
-#if (((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 1)) || (TCL_MAJOR_VERSION > 8))
-# define USE_BYTE_ARRAYS
-#endif
 
 /* Used for read/write to internal strings */
 typedef struct {
@@ -141,13 +137,9 @@ typedef struct {
 } coupletinfo;
 
 /* Read/write integer couplets (int1:int2) */
-#if (((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 4)) || (TCL_MAJOR_VERSION > 8))
 static char *tcl_eggcouplet(ClientData cdata, Tcl_Interp *irp,
-                            CONST char *name1, CONST char *name2, int flags)
-#else
-static char *tcl_eggcouplet(ClientData cdata, Tcl_Interp *irp, char *name1,
-                            char *name2, int flags)
-#endif
+                            EGG_CONST char *name1,
+                            EGG_CONST char *name2, int flags)
 {
   char *s, s1[41];
   coupletinfo *cp = (coupletinfo *) cdata;
@@ -176,13 +168,9 @@ static char *tcl_eggcouplet(ClientData cdata, Tcl_Interp *irp, char *name1,
 
 /* Read or write normal integer.
  */
-#if (((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 4)) || (TCL_MAJOR_VERSION > 8))
-static char *tcl_eggint(ClientData cdata, Tcl_Interp *irp, CONST char *name1,
-                        CONST char *name2, int flags)
-#else
-static char *tcl_eggint(ClientData cdata, Tcl_Interp *irp, char *name1,
-                        char *name2, int flags)
-#endif
+static char *tcl_eggint(ClientData cdata, Tcl_Interp *irp,
+                        EGG_CONST char *name1,
+                        EGG_CONST char *name2, int flags)
 {
   char *s, s1[40];
   long l;
@@ -254,13 +242,9 @@ static char *tcl_eggint(ClientData cdata, Tcl_Interp *irp, char *name1,
 
 /* Read/write normal string variable
  */
-#if (((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 4)) || (TCL_MAJOR_VERSION > 8))
-static char *tcl_eggstr(ClientData cdata, Tcl_Interp *irp, CONST char *name1,
-                        CONST char *name2, int flags)
-#else
-static char *tcl_eggstr(ClientData cdata, Tcl_Interp *irp, char *name1,
-                        char *name2, int flags)
-#endif
+static char *tcl_eggstr(ClientData cdata, Tcl_Interp *irp,
+                        EGG_CONST char *name1,
+                        EGG_CONST char *name2, int flags)
 {
   char *s;
   strinfo *st = (strinfo *) cdata;
@@ -285,7 +269,7 @@ static char *tcl_eggstr(ClientData cdata, Tcl_Interp *irp, char *name1,
       Tcl_SetVar2(interp, name1, name2, st->str, TCL_GLOBAL_ONLY);
       return "read-only variable";
     }
-#ifdef USE_BYTE_ARRAYS
+#ifdef USE_TCL_BYTE_ARRAYS
 #undef malloc
 #undef free
     {
@@ -306,7 +290,7 @@ static char *tcl_eggstr(ClientData cdata, Tcl_Interp *irp, char *name1,
     }
 #else
     s = (char *) Tcl_GetVar2(interp, name1, name2, 0);
-#endif
+#endif				/* USE_TCL_BYTE_ARRAYS */
     if (s != NULL) {
       if (strlen(s) > abs(st->max))
         s[abs(st->max)] = 0;
@@ -326,9 +310,9 @@ static char *tcl_eggstr(ClientData cdata, Tcl_Interp *irp, char *name1,
         if (st->str[strlen(st->str) - 1] != '/')
           strcat(st->str, "/");
       }
-#ifdef USE_BYTE_ARRAYS
+#ifdef USE_TCL_BYTE_ARRAYS
       free(s);
-#endif
+#endif				/* USE_TCL_BYTE_ARRAYS */
     }
     return NULL;
   }
@@ -337,10 +321,10 @@ static char *tcl_eggstr(ClientData cdata, Tcl_Interp *irp, char *name1,
 /* Add/remove tcl commands
  */
 
-#ifdef USE_BYTE_ARRAYS
+#ifdef USE_TCL_BYTE_ARRAYS
 
 static int utf_converter(ClientData cdata, Tcl_Interp *myinterp, int objc,
-                         Tcl_Obj *CONST objv[])
+                         Tcl_Obj *EGG_CONST objv[])
 {
   char **strings, *byteptr;
   int i, len, retval, diff;
@@ -409,7 +393,7 @@ void add_cd_tcl_cmds(cd_tcl_cmd *table)
   }
 }
 
-#else
+#else				/* USE_TCL_BYTE_ARRAYS */
 
 void add_tcl_commands(tcl_cmds *table)
 {
@@ -428,7 +412,7 @@ void add_cd_tcl_cmds(cd_tcl_cmd *table)
   }
 }
 
-#endif
+#endif				/* USE_TCL_BYTE_ARRAYS */
 
 void rem_tcl_commands(tcl_cmds *table)
 {
@@ -448,13 +432,13 @@ void rem_cd_tcl_cmds(cd_tcl_cmd *table)
 
 void add_tcl_objcommands(tcl_cmds *table)
 {
-#if (TCL_MAJOR_VERSION >= 8)
+#ifdef USE_TCL_OBJ
   int i;
 
   for (i = 0; table[i].name; i++)
     Tcl_CreateObjCommand(interp, table[i].name, table[i].func, (ClientData) 0,
                          NULL);
-#endif
+#endif				/* USE_TCL_OBJ */
 }
 
 static tcl_strings def_tcl_strings[] = {
@@ -565,26 +549,26 @@ extern tcl_cmds tcluser_cmds[], tcldcc_cmds[], tclmisc_cmds[],
  */
 void init_tcl(int argc, char **argv)
 {
-#if (((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 1)) || (TCL_MAJOR_VERSION > 8))
+#ifdef USE_TCL_ENCODING
   const char *encoding;
   int i;
   char *langEnv;
-#endif
-#ifndef HAVE_PRE7_5_TCL
+#endif				/* USE_TCL_ENCODING */
+#ifdef USE_TCL_PACKAGE
   int j;
   char pver[1024] = "";
-#endif
+#endif				/* USE_TCL_PACKAGE */
 
 /* This must be done *BEFORE* Tcl_SetSystemEncoding(),
  * or Tcl_SetSystemEncoding() will cause a segfault.
  */
-#ifndef HAVE_PRE7_5_TCL
+#ifdef USE_TCL_FINDEXEC
   /* This is used for 'info nameofexecutable'.
    * The filename in argv[0] must exist in a directory listed in
    * the environment variable PATH for it to register anything.
    */
   Tcl_FindExecutable(argv[0]);
-#endif
+#endif				/* USE_TCL_FINDEXEC */
 
   /* Initialize the interpreter */
   interp = Tcl_CreateInterp();
@@ -601,7 +585,7 @@ void init_tcl(int argc, char **argv)
   Tcl_Init(interp);
 
 /* Code based on Tcl's TclpSetInitialEncodings() */
-#if (((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 1)) || (TCL_MAJOR_VERSION > 8))
+#ifdef USE_TCL_ENCODING
   /* Determine the current encoding from the LC_* or LANG environment
    * variables.
    */
@@ -672,9 +656,9 @@ resetPath:
   /* Keep the iso8859-1 encoding preloaded.  The IO package uses it for
    * gets on a binary channel. */
   Tcl_GetEncoding(NULL, "iso8859-1");
-#endif
+#endif				/* USE_TCL_ENCODING */
 
-#ifndef HAVE_PRE7_5_TCL
+#ifdef USE_TCL_PACKAGE
   /* Add eggdrop to Tcl's package list */
   for (j = 0; j <= strlen(egg_version); j++) {
     if ((egg_version[j] == ' ') || (egg_version[j] == '+'))
@@ -682,7 +666,7 @@ resetPath:
     pver[strlen(pver)] = egg_version[j];
   }
   Tcl_PkgProvide(interp, "eggdrop", pver);
-#endif
+#endif				/* USE_TCL_PACKAGE */
 
   /* Initialize binds and traces */
   init_bind();

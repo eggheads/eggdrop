@@ -2,7 +2,7 @@
  * main.h
  *   include file to include most other include files
  *
- * $Id: main.h,v 1.22 2003/01/29 05:48:40 wcc Exp $
+ * $Id: main.h,v 1.23 2003/02/27 10:18:40 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -30,8 +30,14 @@
 #  include "config.h"
 #endif
 
+#include "lush.h"	/* We seem to need this everywhere... */
+
+#if (((TCL_MAJOR_VERSION == 7) && (TCL_MINOR_VERSION >= 5)) || (TCL_MAJOR_VERSION > 7))
+# define USE_TCL_VARARGS
+#endif
+
 /* UGH! Why couldn't Tcl pick a standard? */
-#if !defined(HAVE_PRE7_5_TCL) && defined(__STDC__)
+#if defined(USE_TCL_VARARGS) && (defined(__STDC__) || defined(HAS_STDARG))
 #  ifdef HAVE_STDARG_H
 #    include <stdarg.h>
 #  else

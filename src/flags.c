@@ -2,7 +2,7 @@
  * flags.c -- handles:
  *   all the flag matching/conversion functions in one neat package :)
  *
- * $Id: flags.c,v 1.24 2003/02/02 10:19:33 wcc Exp $
+ * $Id: flags.c,v 1.25 2003/02/27 10:18:40 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -792,6 +792,7 @@ static int botfl_tcl_set(Tcl_Interp *irp, struct userrec *u,
   struct flag_record fr = { FR_BOT, 0, 0, 0, 0, 0 };
 
   BADARGS(4, 4, " handle BOTFL flags");
+
   if (u->flags & USER_BOT) {
     /* Silently ignore for users */
     break_down_flags(argv[3], &fr, NULL);

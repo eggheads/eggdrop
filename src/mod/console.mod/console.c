@@ -3,7 +3,7 @@
  *   saved console settings based on console.tcl
  *   by cmwagner/billyjoe/D. Senso
  *
- * $Id: console.c,v 1.28 2003/01/30 07:15:14 wcc Exp $
+ * $Id: console.c,v 1.29 2003/02/27 10:18:40 tothwolf Exp $
  */
 /*
  * Copyright (C) 1999, 2000, 2001, 2002, 2003 Eggheads Development Team
@@ -156,6 +156,7 @@ static int console_tcl_set(Tcl_Interp *irp, struct userrec *u,
   int l;
 
   BADARGS(4, 9, " handle CONSOLE channel flags strip echo page conchan");
+
   if (!i) {
     i = user_malloc(sizeof(struct console_info));
     egg_bzero(i, sizeof(struct console_info));
