@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  *
- * $Id: cmds.c,v 1.110 2004/07/25 21:37:32 wcc Exp $
+ * $Id: cmds.c,v 1.111 2004/08/04 19:57:13 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -788,48 +788,60 @@ static void cmd_pls_bot(struct userrec *u, int idx, char *par)
   if (strlen(handle) > HANDLEN)
     handle[HANDLEN] = 0;
 
-  if (get_user_by_handle(userlist, handle))
+  if (get_user_by_handle(userlist, handle)) {
     dprintf(idx, "Someone already exists by that name.\n");
-  else if (strchr(BADHANDCHARS, handle[0]) != NULL)
-    dprintf(idx, "You can't start a botnick with '%c'.\n", handle[0]);
-  else {
-    if (strlen(addr) > 60)
-      addr[60] = 0;
-    putlog(LOG_CMDS, "*", "#%s# +bot %s%s%s%s%s", dcc[idx].nick, handle,
-           addr[0] ? " " : "", addr, host[0] ? " " : "", host);
-    userlist = adduser(userlist, handle, "none", "-", USER_BOT);
-    u1 = get_user_by_handle(userlist, handle);
-    bi = user_malloc(sizeof(struct bot_addr));
+    return;
+  }
 
-    q = strchr(addr, ':');
+  if (strchr(BADHANDCHARS, handle[0]) != NULL) {
+    dprintf(idx, "You can't start a botnick with '%c'.\n", handle[0]);
+    return;
+  }
+
+  if (strlen(addr) > 60)
+    addr[60] = 0;
+
+  putlog(LOG_CMDS, "*", "#%s# +bot %s%s%s%s%s", dcc[idx].nick, handle,
+         addr[0] ? " " : "", addr, host[0] ? " " : "", host);
+  userlist = adduser(userlist, handle, "none", "-", USER_BOT);
+  u1 = get_user_by_handle(userlist, handle);
+  bi = user_malloc(sizeof(struct bot_addr));
+
+  q = strchr(addr, ':');
+  if (!q) {
+    bi->address = user_malloc(strlen(addr) + 1);
+    strcpy(bi->address, addr);
+    bi->telnet_port = 3333;
+    bi->relay_port = 3333;
+  } else {
+    bi->address = user_malloc(q - addr + 1);
+    strncpy(bi->address, addr, q - addr);
+    bi->address[q - addr] = 0;
+    p = q + 1;
+    bi->telnet_port = atoi(p);
+    q = strchr(p, '/');
     if (!q) {
-      bi->address = user_malloc(strlen(addr) + 1);
-      strcpy(bi->address, addr);
-      bi->telnet_port = 3333;
-      bi->relay_port = 3333;
-    } else {
-      bi->address = user_malloc(q - addr + 1);
-      strncpy(bi->address, addr, q - addr);
-      bi->address[q - addr] = 0;
-      p = q + 1;
-      bi->telnet_port = atoi(p);
-      q = strchr(p, '/');
-      if (!q)
-        bi->relay_port = bi->telnet_port;
-      else
-        bi->relay_port = atoi(q + 1);
+      bi->relay_port = bi->telnet_port;
+    } else  {
+      bi->relay_port = atoi(q + 1);
     }
-    set_user(&USERENTRY_BOTADDR, u1, bi);
-    dprintf(idx, "Added bot '%s' with %s%s%s%s and %s%s%s%s.\n", handle,
-            addr[0] ? "address " : "no address ", addr[0] ? "'" : "",
-            addr[0] ? addr : "", addr[0] ? "'" : "",
-            host[0] ? "hostmask " : "no hostmask", addr[0] ? "'" : "",
-            host[0] ? host : "", addr[0] ? "'" : "");
-    if (host[0])
-      addhost_by_handle(handle, host);
-    else if (!add_bot_hostmask(idx, handle))
-      dprintf(idx, "You'll want to add a hostmask if this bot will ever %s",
-              "be on any channels that I'm on.\n");
+  }
+
+  set_user(&USERENTRY_BOTADDR, u1, bi);
+  if (addr[0]) {
+    dprintf(idx, "Added bot '%s' with address '%s' and %s%s%s.\n", handle,
+            addr, host[0] ? "hostmask '" : "no hostmask", host[0] ? host : "",
+            host[0] ? "'" : "");
+  } else{
+    dprintf(idx, "Added bot '%s' with no address and %s%s%s.\n", handle,
+            host[0] ? "hostmask '" : "no hostmask", host[0] ? host : "",
+            host[0] ? "'" : "");
+  }
+  if (host[0]) {
+    addhost_by_handle(handle, host);
+  } else if (!add_bot_hostmask(idx, handle)) {
+    dprintf(idx, "You'll want to add a hostmask if this bot will ever be on "
+            "any channels that I'm on.\n");
   }
 }
 
@@ -1002,10 +1014,11 @@ static void cmd_chaddr(struct userrec *u, int idx, char *par)
     p = q + 1;
     bi->telnet_port = atoi(p);
     q = strchr(p, '/');
-    if (!q)
+    if (!q) {
       bi->relay_port = bi->telnet_port;
-    else
+    } else {
       bi->relay_port = atoi(q + 1);
+    }
   }
   set_user(&USERENTRY_BOTADDR, u1, bi);
 }
