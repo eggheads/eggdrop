@@ -133,7 +133,7 @@ static void share_stick_invite (int idx, char * par) {
       if (u_setsticky_invite(NULL,host, yn) > 0) {
  	    putlog(LOG_CMDS, "*", "%s: stick %s %c", dcc[idx].nick, host,
  		   yn ? 'y' : 'n');
- 	    shareout_but(NULL,idx,"sI %s %d\n", host, yn);
+ 	    shareout_but(NULL,idx,"sInv %s %d\n", host, yn);
       }
     } else {
       struct chanset_t *chan = findchan(par);
@@ -146,7 +146,7 @@ static void share_stick_invite (int idx, char * par) {
 	if (u_setsticky_invite(chan, host, yn) > 0) {
 	  putlog(LOG_CMDS, "*", "%s: stick %s %c %s", dcc[idx].nick, host,
 		 yn ? 'y' : 'n', par);
-	  shareout_but(chan,idx,"sI %s %d %s\n", host, yn, chan->name);
+	  shareout_but(chan,idx,"sInv %s %d %s\n", host, yn, chan->name);
 	  noshare = 0;
 	  return;
 	}
@@ -599,7 +599,7 @@ static void share_mns_invitechan (int idx, char * par) {
     fr.match = (FR_CHAN | FR_BOT);
     get_user_flagrec(dcc[idx].user,&fr,chname);
     if (chan && (bot_chan(fr) || bot_global(fr))) {
-      shareout_but(chan,idx, "-Ic %s %s\n", chname, par);
+      shareout_but(chan,idx, "-Invc %s %s\n", chname, par);
       if (channel_shared(chan)) {
 	putlog(LOG_CMDS, "*", "%s: cancel invite %s on %s", dcc[idx].nick,
 	       par, chname);
@@ -760,7 +760,7 @@ static void share_pls_invite (int idx, char * par) {
   int flags = 0;
   
   if (dcc[idx].status & STAT_SHARE) {
-    shareout_but(NULL,idx, "+I %s\n", par);
+    shareout_but(NULL,idx, "+Inv %s\n", par);
     noshare = 1;
      invite = newsplit(&par);
      tm = newsplit(&par);
@@ -799,7 +799,7 @@ static void share_pls_invitechan (int idx, char * par) {
 	      "Channel invite %s on %s rejected - channel not shared.",
 	      invite, chname);
      else {
-       shareout_but(chan,idx, "+Ic %s %s %s %s\n", invite, tm, chname, par);
+       shareout_but(chan,idx, "+Invc %s %s %s %s\n", invite, tm, chname, par);
        from = newsplit(&par);
        if (strchr(from,'s'))
 	 flags |= INVITEREC_STICKY;
@@ -1046,8 +1046,8 @@ static botcmd_t C_share[] =
   {"+bc", (Function) share_pls_banchan},
   {"+e", (Function) share_pls_exempt },
   {"+ec", (Function) share_pls_exemptchan },
-  {"+I", (Function) share_pls_invite },
-  {"+Ic", (Function) share_pls_invitechan },
+  {"+Inv", (Function) share_pls_invite },
+  {"+Invc", (Function) share_pls_invitechan },
   {"+bh", (Function) share_pls_bothost},
   {"+cr", (Function) share_pls_chrec},
   {"+h", (Function) share_pls_host},
@@ -1056,8 +1056,8 @@ static botcmd_t C_share[] =
   {"-bc", (Function) share_mns_banchan},
   {"-e", (Function) share_mns_exempt },
   {"-ec", (Function) share_mns_exemptchan },
-  {"-I", (Function) share_mns_invite },
-  {"-Ic", (Function) share_mns_invitechan },
+  {"-Inv", (Function) share_mns_invite },
+  {"-Invc", (Function) share_mns_invitechan },
   {"-cr", (Function) share_mns_chrec},
   {"-h", (Function) share_mns_host},
   {"-i", (Function) share_mns_ignore},
@@ -1073,7 +1073,7 @@ static botcmd_t C_share[] =
   {"rn", (Function) share_resync_no},
   {"s", (Function) share_stick_ban },
   {"se", (Function) share_stick_exempt },
-  {"sI", (Function) share_stick_invite },
+  {"sInv", (Function) share_stick_invite },
   {"u?", (Function) share_userfileq},
   {"un", (Function) share_ufno},
   {"us", (Function) share_ufsend},
