@@ -4,7 +4,7 @@
  *   Tcl initialization
  *   getting and setting Tcl/eggdrop variables
  * 
- * $Id: tcl.c,v 1.28 2001/01/22 23:47:33 guppy Exp $
+ * $Id: tcl.c,v 1.29 2001/01/24 13:43:36 tothwolf Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -505,6 +505,14 @@ void init_tcl(int argc, char **argv)
   char pver[1024] = "";
 #endif
 
+#ifndef HAVE_PRE7_5_TCL 
+  /* This is used for 'info nameofexecutable'.
+   * The filename in argv[0] must exist in a directory listed in
+   * the environment variable PATH for it to register anything.
+   */
+  Tcl_FindExecutable(argv[0]);
+#endif
+
 /* Code based on Tcl's TclpSetInitialEncodings() */
 #if TCL_MAJOR_VERSION >= 8 && TCL_MINOR_VERSION >= 1
   /* Determine the current encoding from the LC_* or LANG environment
@@ -576,14 +584,6 @@ void init_tcl(int argc, char **argv)
   /* Keep the iso8859-1 encoding preloaded.  The IO package uses it for
    * gets on a binary channel. */
   Tcl_GetEncoding(NULL, "iso8859-1");
-#endif
-
-#ifndef HAVE_PRE7_5_TCL 
-  /* This is used for 'info nameofexecutable'.
-   * The filename in argv[0] must exist in a directory listed in
-   * the environment variable PATH for it to register anything.
-   */
-  Tcl_FindExecutable(argv[0]);
 #endif
 
   /* Create Tcl interpreter */
