@@ -7,7 +7,7 @@
  * Sun Oct 03 18:34:41 1999  Fabian
  *     * Initial release
  * 
- * $Id: dns.c,v 1.5 1999/12/21 17:35:16 fabian Exp $
+ * $Id: dns.c,v 1.6 1999/12/24 14:21:53 fabian Exp $
  */
 /* 
  * Copyright (C) 1999  Eggheads
@@ -211,6 +211,7 @@ static char *dns_close()
       break;
     }
   }
+  dcc_remove_lost();		/* Remove lost dcc entries. */
 
   Context;
   dns_free_cache();

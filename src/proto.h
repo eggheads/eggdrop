@@ -7,7 +7,7 @@
  * because they use structures in those
  * (saves including those .h files EVERY time) - Beldin
  * 
- * $Id: proto.h,v 1.13 1999/12/22 12:11:02 fabian Exp $
+ * $Id: proto.h,v 1.14 1999/12/24 14:21:53 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -145,6 +145,7 @@ void tell_dcc(int);
 void not_away(int);
 void set_away(int, char *);
 void *_get_data_ptr(int, char *, int);
+void dcc_remove_lost(void);
 
 #define get_data_ptr(x) _get_data_ptr(x,__FILE__,__LINE__)
 void flush_lines(int, struct chat_info *);

@@ -2,7 +2,7 @@
  * filesys.c -- part of filesys.mod
  *   main file of the filesys eggdrop module
  * 
- * $Id: filesys.c,v 1.17 1999/12/21 17:35:16 fabian Exp $
+ * $Id: filesys.c,v 1.18 1999/12/24 14:21:53 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -941,6 +941,7 @@ static char *filesys_close()
       killsock(dcc[i].sock);
       lostdcc(i);
     }
+  dcc_remove_lost();			/* Remove lost dcc entries. */
   rem_tcl_commands(mytcls);
   rem_tcl_strings(mystrings);
   rem_tcl_ints(myints);

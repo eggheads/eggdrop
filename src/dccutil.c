@@ -8,7 +8,7 @@
  * 
  * dprintf'ized, 28aug1995
  * 
- * $Id: dccutil.c,v 1.11 1999/12/22 12:11:02 fabian Exp $
+ * $Id: dccutil.c,v 1.12 1999/12/24 14:21:53 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -284,6 +284,23 @@ void removedcc(int n)
 	      sizeof(struct dcc_t));
   else
     bzero(&dcc[n], sizeof(struct dcc_t)); /* drummer */
+}
+
+/* Clean up sockets that were just left for dead.
+ */
+void dcc_remove_lost(void)
+{
+  int i;
+
+  Context;
+  for (i = 0; i < dcc_total; i++) {
+    if (dcc[i].type == &DCC_LOST) {
+      dcc[i].type = (struct dcc_table *) (dcc[i].sock);
+      dcc[i].sock = (-1);
+      removedcc(i);
+      i--;
+    }
+  }
 }
 
 /* show list of current dcc's to a dcc-chatter */

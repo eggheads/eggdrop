@@ -7,7 +7,7 @@
  * 
  * dprintf'ized, 15nov1995
  * 
- * $Id: main.c,v 1.15 1999/12/22 12:11:02 fabian Exp $
+ * $Id: main.c,v 1.16 1999/12/24 14:21:53 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -892,15 +892,7 @@ int main(int argc, char **argv)
     Context;
     /* only do this every so often */
     if (!socket_cleanup) {
-      /* clean up sockets that were just left for dead */
-      for (i = 0; i < dcc_total; i++) {
-	if (dcc[i].type == &DCC_LOST) {
-	  dcc[i].type = (struct dcc_table *) (dcc[i].sock);
-	  dcc[i].sock = (-1);
-	  removedcc(i);
-	  i--;
-	}
-      }
+      dcc_remove_lost();
       /* check for server or dcc activity */
       dequeue_sockets();
       socket_cleanup = 5;
@@ -992,6 +984,7 @@ int main(int argc, char **argv)
 	Function x;
 	char xx[256];
 
+	dcc_remove_lost();
 	while (f) {
 	  f = 0;
 	  for (p = module_list; p != NULL; p = p->next) {
