@@ -3,7 +3,7 @@
  *   commands that comes across the botnet
  *   userfile transfer and update commands from sharebots
  *
- * $Id: botcmd.c,v 1.22 2001/12/16 14:40:17 guppy Exp $
+ * $Id: botcmd.c,v 1.23 2001/12/21 05:12:37 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -312,9 +312,15 @@ static void bot_bye(int idx, char *par)
 static void remote_tell_who(int idx, char *nick, int chan)
 {
   int i = 10, k, l, ok = 0;
-  char s[1024];
+  char s[1024], *realnick;
   struct chanset_t *c;
 
+  realnick = strchr(nick, ':');
+  if (realnick)
+    realnick++;
+  else
+    realnick = nick;
+  putlog(LOG_BOTS, "*", "#%s# who", realnick);
   strcpy(s, "Channels: ");
   for (c = chanset; c; c = c->next)
     if (!channel_secret(c)) {
