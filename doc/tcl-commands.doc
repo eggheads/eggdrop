@@ -770,6 +770,11 @@ specific commands, see later.
     removes a previously-made binding
     returns: name of the command that was removed
 
+| binds ?type/mask?
+|  returns: a list of tcl binds, each item in the list will be a sublist of
+|    five elements:
+|      {<type> <flags> <name> <hits> <proc>}
+
   logfile [<modes> <channel> <filename>]
     creates a new logfile, which will log the modes given for the channel
       listed -- or, if no logfile is specified, just returns a list of

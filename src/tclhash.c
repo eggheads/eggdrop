@@ -12,7 +12,7 @@
  * dprintf'ized, 15nov1995 (hash.c)
  * dprintf'ized, 4feb1996 (tclhash.c)
  * 
- * $Id: tclhash.c,v 1.17 2000/03/20 19:52:45 guppy Exp $
+ * $Id: tclhash.c,v 1.18 2000/08/02 05:05:41 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -44,7 +44,7 @@ extern struct userrec *userlist;
 extern int debug_tcl, dcc_total;
 extern time_t now;
 
-static p_tcl_bind_list bind_table_list;
+p_tcl_bind_list bind_table_list;
 p_tcl_bind_list H_chat, H_act, H_bcst, H_chon, H_chof;
 p_tcl_bind_list H_load, H_unld, H_link, H_disc, H_dcc, H_chjn, H_chpt;
 p_tcl_bind_list H_bot, H_time, H_nkch, H_away, H_note, H_filt, H_event;
