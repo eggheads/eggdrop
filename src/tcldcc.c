@@ -2,7 +2,7 @@
  * tcldcc.c -- handles:
  *   Tcl stubs for the dcc commands
  *
- * $Id: tcldcc.c,v 1.42 2003/01/31 08:02:08 wcc Exp $
+ * $Id: tcldcc.c,v 1.43 2003/01/31 11:50:03 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -109,10 +109,11 @@ static int tcl_putdccraw STDVAR
 
 static int tcl_dccsimul STDVAR
 {
-  int idx = findidx(atoi(argv[1]));
+  int idx;
 
   BADARGS(3, 3, " idx command");
   
+  idx = findidx(atoi(argv[1]));
   if (idx >= 0 && (dcc[idx].type->flags & DCT_SIMUL)) {
     int l = strlen(argv[2]);
 
