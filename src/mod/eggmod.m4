@@ -2,7 +2,7 @@ dnl eggmod.m4
 dnl   macros eggdrop modules should use instead of the original autoconf
 dnl   versions.
 dnl
-dnl $Id: eggmod.m4,v 1.5 2000/03/23 23:17:56 fabian Exp $
+dnl $Id: eggmod.m4,v 1.6 2003/12/09 22:21:47 wcc Exp $
 
 dnl
 dnl EGG_REMOVE_MOD(MODULE-NAME)
@@ -22,7 +22,9 @@ define(EGG_INIT,
 # Automatically created by src/mod/eggautoconf from `configure.in'
 #
 
-echo "running in eggdrop mode."
+echo "Running in eggdrop mode."
+echo ""
+
 # This tells the code in eggmod.sh to search for the file `$1'.
 # That way we can make sure we're started from the correct directory.
 ac_egg_uniquefile=$1

@@ -7,7 +7,7 @@
  *   help system
  *   motd display and %var substitution
  *
- * $Id: misc.c,v 1.66 2003/12/07 21:49:16 wcc Exp $
+ * $Id: misc.c,v 1.67 2003/12/09 22:21:46 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1492,7 +1492,7 @@ int str_isdigit(const char *str)
     return 0;
 
   for(; *str; ++str) {
-    if (!isdigit(*str))
+    if (!egg_isdigit(*str))
       return 0;
   }
   return 1;

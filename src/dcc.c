@@ -4,7 +4,7 @@
  *   disconnect on a dcc socket
  *   ...and that's it!  (but it's a LOT)
  *
- * $Id: dcc.c,v 1.70 2003/11/27 02:44:11 wcc Exp $
+ * $Id: dcc.c,v 1.71 2003/12/09 22:21:46 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -694,14 +694,14 @@ void strip_mirc_codes(int flags, char *text)
       break;
     case 3:                    /* mIRC colors? */
       if (flags & STRIP_COLOR) {
-        if (isdigit(text[1])) { /* Is the first char a number? */
+        if (egg_isdigit(text[1])) { /* Is the first char a number? */
           text += 2;            /* Skip over the ^C and the first digit */
-          if (isdigit(*text))
+          if (egg_isdigit(*text))
             text++;             /* Is this a double digit number? */
           if (*text == ',') {   /* Do we have a background color next? */
-            if (isdigit(text[1]))
+            if (egg_isdigit(text[1]))
               text += 2;        /* Skip over the first background digit */
-            if (isdigit(*text))
+            if (egg_isdigit(*text))
               text++;           /* Is it a double digit? */
           }
         } else
@@ -732,7 +732,7 @@ void strip_mirc_codes(int flags, char *text)
         text++;
         if (*text == '[') {
           text++;
-          while ((*text == ';') || isdigit(*text))
+          while ((*text == ';') || egg_isdigit(*text))
             text++;
           if (*text)
             text++;             /* also kill the following char */

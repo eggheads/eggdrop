@@ -5,7 +5,9 @@
 # Automatically created by src/mod/eggautoconf from `configure.in'
 #
 
-echo "running in eggdrop mode."
+echo "Running in eggdrop mode."
+echo ""
+
 # This tells the code in eggmod.sh to search for the file `compress.c'.
 # That way we can make sure we're started from the correct directory.
 ac_egg_uniquefile=compress.c

@@ -1,5 +1,5 @@
 # Makefile for scripts/
-# $Id: Makefile.in,v 1.11 2000/11/08 19:52:38 guppy Exp $
+# $Id: Makefile.in,v 1.12 2003/12/09 22:21:46 wcc Exp $
 
 SHELL = @SHELL@
 top_srcdir = @top_srcdir@
@@ -32,7 +32,7 @@ clean:
 
 install:
 	@if test ! -d $(DEST)/scripts; then \
-		echo "Creating a scripts subdirectory."; \
+		echo "Creating 'scripts' subdirectory."; \
 		$(top_srcdir)/misc/mkinstalldirs $(DEST)/scripts; \
 		echo "Copying scripts."; \
 		for i in $(DOCS); do \

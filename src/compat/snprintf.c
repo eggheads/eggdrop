@@ -1,7 +1,7 @@
 /*
  * snprintf.c - a portable implementation of snprintf and vsnprintf
  *
- * $Id: snprintf.c,v 1.17 2003/03/05 04:32:25 wcc Exp $
+ * $Id: snprintf.c,v 1.18 2003/12/09 22:21:46 wcc Exp $
  */
 /*
  * Portions Copyright (C) 2000, 2001, 2002, 2003 Eggheads Development Team
@@ -216,7 +216,7 @@ static void dopr(char *buffer, size_t maxlen, const char *format, va_list args)
       }
       break;
     case DP_S_MIN:
-      if (isdigit(ch)) {
+      if (egg_isdigit(ch)) {
         min = 10 * min + char_to_int(ch);
         ch = *format++;
       } else if (ch == '*') {
@@ -235,7 +235,7 @@ static void dopr(char *buffer, size_t maxlen, const char *format, va_list args)
         state = DP_S_MOD;
       break;
     case DP_S_MAX:
-      if (isdigit(ch)) {
+      if (egg_isdigit(ch)) {
         if (max < 0)
           max = 0;
         max = 10 * max + char_to_int(ch);

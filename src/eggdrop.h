@@ -4,7 +4,7 @@
  *
  *   IF YOU ALTER THIS FILE, YOU NEED TO RECOMPILE THE BOT.
  *
- * $Id: eggdrop.h,v 1.50 2003/11/27 02:44:12 wcc Exp $
+ * $Id: eggdrop.h,v 1.51 2003/12/09 22:21:46 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -225,6 +225,12 @@ typedef u_32bit_t IP;
 #define debug3(x,a1,a2,a3)    putlog(LOG_DEBUG,"*",x,a1,a2,a3)
 #define debug4(x,a1,a2,a3,a4) putlog(LOG_DEBUG,"*",x,a1,a2,a3,a4)
 
+/* These apparently are unsafe without recasting. */
+#define egg_isdigit(x)  isdigit((int)  (unsigned char) (x))
+#define egg_isxdigit(x) isxdigit((int) (unsigned char) (x))
+#define egg_isascii(x)  isascii((int)  (unsigned char) (x))
+#define egg_isspace(x)  isspace((int)  (unsigned char) (x))
+#define egg_islower(x)  islower((int)  (unsigned char) (x))
 /***********************************************************************/
 
 /* It's used in so many places, let's put it here */

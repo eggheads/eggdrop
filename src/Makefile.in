@@ -1,5 +1,5 @@
 # Makefile for src/
-# $Id: Makefile.in,v 1.18 2003/11/01 23:26:57 wcc Exp $
+# $Id: Makefile.in,v 1.19 2003/12/09 22:21:46 wcc Exp $
 
 SHELL = @SHELL@
 top_srcdir = @top_srcdir@
@@ -33,12 +33,12 @@ doofus:
 	@cd .. && $(MAKE)
 
 ../$(EGGEXEC): build_msg $(eggdrop_objs) $(XREQS) compile_md5 compatability
-	@echo ""
-	@echo "Linking eggdrop... $(EGGBUILD)"
+	@echo "Linking eggdrop: $(EGGBUILD)."
 	@echo ""
 	@touch mod/mod.xlibs
 	$(LD) -o ../$(EGGEXEC) $(eggdrop_objs) $(MODOBJS) $(XLIBS) md5/md5c.o compat/*.o `cat mod/mod.xlibs`
 	$(STRIP) ../$(EGGEXEC)
+	@echo ""
 	@echo "Successful compile: $(EGGEXEC)"
 	@echo ""
 
@@ -51,7 +51,8 @@ clean:
 	@rm -f .depend *.o *.a *~
 
 build_msg:
-	@echo "(This may take a while.  Go get some runts.)"
+	@echo "This may take a while. Go get some runts."
+	@echo ""
 
 main.o:
 	$(CC) $(CFLAGS) $(CPPFLAGS) \
@@ -61,7 +62,9 @@ main.o:
 
 compatability:
 	@cd compat && $(MAKE_GENERIC) compat
-	@echo "---------- Yeah! that's the compiling, now the linking! ----------"
+	@echo ""
+	@echo "---------- Yeah! That's the compiling, now the linking! ----------"
+	@echo ""
 
 compile_md5:
 	@cd md5 && $(MAKE_GENERIC) md5

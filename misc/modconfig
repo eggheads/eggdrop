@@ -19,7 +19,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #
-# $Id: modconfig,v 1.11 2002/12/24 02:30:04 wcc Exp $
+# $Id: modconfig,v 1.12 2003/12/09 22:21:46 wcc Exp $
 
 
 mc_pn=`echo $0 | sed -e 's/^.*\///'`
@@ -227,7 +227,7 @@ xdetect-modules)
 #  behaviour changes as soon as `.modules' already exists.
 #
 
-	echo ${mc_n} "detecting modules...${mc_c}" >&6
+	echo ${mc_n} "Detecting modules...${mc_c}" >&6
 
 	if ${mc_self_call} -q is-configured; then
 		mc_mods_configured=yes
@@ -297,7 +297,7 @@ xMakefile)
 #  Build `src/mod/Makefile'
 #
 
-	echo ${mc_n} "building ${mc_fMakefile}... ${mc_c}" 1>&6
+	echo ${mc_n} "Building ${mc_fMakefile}... ${mc_c}" 1>&6
 
 	#  Check for selected modules
 	if test -r ${mc_fmodules}; then
@@ -339,7 +339,7 @@ xstatic.h)
 #  Build `static.h'
 #
 
-	echo ${mc_n} "building static.h..." 1>&6
+	echo ${mc_n} "Building static.h..." 1>&6
 
 	#  Check for selected modules
 	if test ! -r ${mc_fmodules}; then
@@ -504,7 +504,7 @@ xupdate-depends)
 	mc_all_depends=
 	mc_missing=
 
-	echo ${mc_n} "calculating dependencies...${mc_c}" 1>&6
+	echo ${mc_n} "Calculating dependencies...${mc_c}" 1>&6
 
 	#  Check for selected modules
 	if test ! -r ${mc_fmodules}; then
@@ -576,7 +576,7 @@ EOF
 	fi
 
 	if test "x${mc_all_depends}" != x; then
-		echo ${mc_n} "adding modules needed to match dependencies... ${mc_c}" 1>&6
+		echo ${mc_n} "Adding modules needed to match dependencies... ${mc_c}" 1>&6
 		echo ${mc_all_depends} | sed -e 's/ /, /g' 1>&6
 
 		#  Add the modules
@@ -679,25 +679,25 @@ EOF
 			if (test "${mc_ask_response}" = e); then
 				#  Add it to the list.
 				mc_sel_modules="${mc_sel_modules} ${mc_mod}"
-				echo "Enabled module ${mc_modname}." 1>&6
+				echo "Enabled module '${mc_modname}'." 1>&6
 				break;
 			fi
 			if (test "${mc_ask_response}" = d); then
 				#  Remove module from list.
 				mc_sel_modules=`echo ${mc_sel_modules} | sed -e "s/ ${mc_mod}//g" -e "s/^${mc_mod}//g"`
-				echo "Disabled module ${mc_modname}." 1>&6
+				echo "Disabled module '${mc_modname}'." 1>&6
 				break;
 			fi
 		done
 		echo "" 1>&6
 	done
 
-	echo ${mc_n} "recreating list of active modules... ${mc_c}" 1>&6
+	echo ${mc_n} "Recreating list of active modules...${mc_c}" 1>&6
 	${mc_self_call} -q clear
 	if (${mc_self_call} -q add ${mc_sel_modules}); then
-		echo "done." 1>&6
+		echo " done." 1>&6
 	else
-		echo "failed!" 1>&6
+		echo " failed!" 1>&6
 		exit 1
 	fi
 ;;
@@ -724,7 +724,7 @@ xeggautoconf)
 
 		#  Remove directory information from name
 		mc_mod=`echo ${mc_modd} | sed -e 's/.*\///'`
-		echo "creating configure for module \`${mc_mod}'."
+		echo "Creating configure for module '${mc_mod}'."
 		(cd ${mc_modd} && ../eggautoconf)
 	done
 ;;
