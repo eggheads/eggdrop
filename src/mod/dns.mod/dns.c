@@ -4,7 +4,7 @@
  * 
  * Written by Fabian Knittel <fknittel@gmx.de>
  * 
- * $Id: dns.c,v 1.13 2000/03/23 23:17:57 fabian Exp $
+ * $Id: dns.c,v 1.14 2000/09/02 19:45:23 fabian Exp $
  */
 /* 
  * Copyright (C) 1999, 2000  Eggheads
@@ -142,30 +142,27 @@ static void cmd_resolve(struct userrec *u, int idx, char *par)
 
 static void dns_free_cache(void)
 {
-  struct resolve *rp = expireresolves, *rpnext;
+  struct resolve *rp, *rpnext;
 
   Context;
-  while (rp) {
+  for (rp = expireresolves; rp; rp = rpnext) {
     rpnext = rp->next;
     if (rp->hostn)
       nfree(rp->hostn);
     nfree(rp);
-    rp = rpnext;
   } 
   expireresolves = NULL;
 }
 
 static int dns_cache_expmem(void)
 {
-  struct resolve *rp = expireresolves;
+  struct resolve *rp;
   int size = 0;
 
-  Context;
-  while (rp) {
+  for (rp = expireresolves; rp; rp = rp->next) {
     size += sizeof(struct resolve);
     if (rp->hostn)
       size += strlen(rp->hostn) + 1;
-    rp = rp->next;
   } 
   return size;
 }
@@ -198,10 +195,9 @@ static char *dns_close()
   del_hook(HOOK_SECONDLY, (Function) dns_check_expires);
   rem_builtins(H_dcc, dns_dcc);
 
-  Context;
   for (i = 0; i < dcc_total; i++) {
-    if ((dcc[i].type == &DCC_DNS) &&
-	(dcc[i].sock == resfd)) {
+    if (dcc[i].type == &DCC_DNS &&
+	dcc[i].sock == resfd) {
       killsock(dcc[i].sock);
       lostdcc(i);
       break;

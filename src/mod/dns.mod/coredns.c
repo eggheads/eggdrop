@@ -5,7 +5,7 @@
  * 
  * Modified/written by Fabian Knittel <fknittel@gmx.de>
  * 
- * $Id: coredns.c,v 1.13 2000/08/27 19:21:32 fabian Exp $
+ * $Id: coredns.c,v 1.14 2000/09/02 19:45:23 fabian Exp $
  */
 /* 
  * Portions copyright (C) 1999, 2000  Eggheads
@@ -500,7 +500,8 @@ static void untieresolve(struct resolve *rp)
 static void unlinkresolve(struct resolve *rp)
 {
     Context;
-    untieresolve(rp);
+    untieresolve(rp);		/* Not really needed. Left in to be on the
+				   safe side. */
     unlinkresolveid(rp);
     unlinkresolveip(rp);
     if (rp->hostn)

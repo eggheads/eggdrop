@@ -2,7 +2,7 @@
  * filesys.c -- part of filesys.mod
  *   main file of the filesys eggdrop module
  * 
- * $Id: filesys.c,v 1.32 2000/08/31 18:11:40 fabian Exp $
+ * $Id: filesys.c,v 1.33 2000/09/02 19:45:23 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -697,8 +697,8 @@ static void filesys_dcc_send(char *nick, char *from, struct userrec *u,
       dcc[i].u.dns->ibuf = atoi(msg);
       dcc[i].u.dns->ip = dcc[i].addr;
       dcc[i].u.dns->dns_type = RES_HOSTBYIP;
-      dcc[i].u.dns->dns_success = (Function) filesys_dcc_send_hostresolved;
-      dcc[i].u.dns->dns_failure = (Function) filesys_dcc_send_hostresolved;
+      dcc[i].u.dns->dns_success = filesys_dcc_send_hostresolved;
+      dcc[i].u.dns->dns_failure = filesys_dcc_send_hostresolved;
       dcc[i].u.dns->type = &DCC_FORK_SEND;
       dcc_dnshostbyip(dcc[i].addr);
     }

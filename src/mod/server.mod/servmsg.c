@@ -1,7 +1,7 @@
 /* 
  * servmsg.c -- part of server.mod
  * 
- * $Id: servmsg.c,v 1.44 2000/08/31 18:10:10 fabian Exp $
+ * $Id: servmsg.c,v 1.45 2000/09/02 19:45:24 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1046,7 +1046,8 @@ static void kill_server(int idx, void *x)
     for (chan = chanset; chan; chan = chan->next)
       (me->funcs[CHANNEL_CLEAR]) (chan, 1);
   }
-  connect_server();
+  /* A new server connection will be automatically initiated in
+     about 2 seconds. */
 }
 
 static void timeout_server(int idx)
@@ -1251,8 +1252,8 @@ static void connect_server(void)
     strcpy(dcc[servidx].u.dns->host, dcc[servidx].host);
     dcc[servidx].u.dns->cbuf = get_data_ptr(strlen(pass) + 1);
     strcpy(dcc[servidx].u.dns->cbuf, pass);
-    dcc[servidx].u.dns->dns_success = (Function) server_resolve_success;
-    dcc[servidx].u.dns->dns_failure = (Function) server_resolve_failure;
+    dcc[servidx].u.dns->dns_success = server_resolve_success;
+    dcc[servidx].u.dns->dns_failure = server_resolve_failure;
     dcc[servidx].u.dns->dns_type = RES_IPBYHOST;
     dcc[servidx].u.dns->type = &SERVER_SOCKET;
 
@@ -1289,14 +1290,14 @@ static void server_resolve_success(int servidx)
   dcc[servidx].addr = dcc[servidx].u.dns->ip;
   strcpy(pass, dcc[servidx].u.dns->cbuf);
   changeover_dcc(servidx, &SERVER_SOCKET, 0);
-  serv = open_telnet(iptostr(my_htonl(dcc[servidx].addr)), dcc[servidx].port);
+  serv = open_telnet(iptostr(htonl(dcc[servidx].addr)), dcc[servidx].port);
   if (serv < 0) {
     neterror(s);
     putlog(LOG_SERV, "*", "%s %s (%s)", IRC_FAILEDCONNECT, dcc[servidx].host,
 	   s);
     lostdcc(servidx);
-      if ((oldserv == curserv) && !(never_give_up))
-	fatal("NO SERVERS WILL ACCEPT MY CONNECTION.", 0);
+    if (oldserv == curserv && !never_give_up)
+      fatal("NO SERVERS WILL ACCEPT MY CONNECTION.", 0);
   } else {
     dcc[servidx].sock = serv;
     /* Queue standard login */

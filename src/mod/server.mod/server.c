@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  * 
- * $Id: server.c,v 1.49 2000/08/31 18:10:10 fabian Exp $
+ * $Id: server.c,v 1.50 2000/09/02 19:45:24 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1431,8 +1431,8 @@ static int ctcp_DCC_CHAT(char *nick, char *from, char *handle,
     dcc[i].user = u;
     dcc[i].u.dns->ip = dcc[i].addr;
     dcc[i].u.dns->dns_type = RES_HOSTBYIP;
-    dcc[i].u.dns->dns_success = (Function) dcc_chat_hostresolved;
-    dcc[i].u.dns->dns_failure = (Function) dcc_chat_hostresolved;
+    dcc[i].u.dns->dns_success = dcc_chat_hostresolved;
+    dcc[i].u.dns->dns_failure = dcc_chat_hostresolved;
     dcc[i].u.dns->type = &DCC_CHAT_PASS;
     dcc_dnshostbyip(dcc[i].addr);
   }

@@ -7,7 +7,7 @@
  *   linking, unlinking, and relaying to another bot
  *   pinging the bots periodically and checking leaf status
  * 
- * $Id: botnet.c,v 1.28 2000/08/19 14:17:27 fabian Exp $
+ * $Id: botnet.c,v 1.29 2000/09/02 19:45:23 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1032,8 +1032,8 @@ int botlink(char *linker, int idx, char *nick)
       dcc[i].u.dns->cptr = linker;
       dcc[i].u.dns->host = get_data_ptr(strlen(dcc[i].host) + 1);
       strcpy(dcc[i].u.dns->host, dcc[i].host);
-      dcc[i].u.dns->dns_success = (Function) botlink_resolve_success;
-      dcc[i].u.dns->dns_failure = (Function) botlink_resolve_failure;
+      dcc[i].u.dns->dns_success = botlink_resolve_success;
+      dcc[i].u.dns->dns_failure = botlink_resolve_failure;
       dcc[i].u.dns->dns_type = RES_IPBYHOST;
       dcc[i].u.dns->type = &DCC_FORK_BOT;
       dcc_dnsipbyhost(bi->address);
@@ -1166,8 +1166,8 @@ void tandem_relay(int idx, char *nick, register int i)
   dcc[i].u.dns->ibuf = dcc[idx].sock;
   dcc[i].u.dns->host = get_data_ptr(strlen(bi->address) + 1);
   strcpy(dcc[i].u.dns->host, bi->address);
-  dcc[i].u.dns->dns_success = (Function) tandem_relay_resolve_success;
-  dcc[i].u.dns->dns_failure = (Function) tandem_relay_resolve_failure;
+  dcc[i].u.dns->dns_success = tandem_relay_resolve_success;
+  dcc[i].u.dns->dns_failure = tandem_relay_resolve_failure;
   dcc[i].u.dns->dns_type = RES_IPBYHOST;
   dcc[i].u.dns->type = &DCC_FORK_RELAY;
   dcc_dnsipbyhost(bi->address);

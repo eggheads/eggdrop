@@ -4,7 +4,7 @@
  * 
  *   IF YOU ALTER THIS FILE, YOU NEED TO RECOMPILE THE BOT.
  * 
- * $Id: eggdrop.h,v 1.31 2000/07/12 21:50:35 fabian Exp $
+ * $Id: eggdrop.h,v 1.32 2000/09/02 19:45:23 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -367,8 +367,8 @@ struct script_info {
 };
 
 struct dns_info {
-  Function dns_success;		/* is called if the dns request succeeds   */
-  Function dns_failure;		/* is called if it fails		   */
+  void (*dns_success)(int);	/* is called if the dns request succeeds   */
+  void (*dns_failure)(int);	/* is called if it fails		   */
   char *host;			/* hostname				   */
   char *cbuf;			/* temporary buffer. Memory will be free'd
 				   as soon as dns_info is free'd	   */

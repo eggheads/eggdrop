@@ -4,7 +4,7 @@
  *   disconnect on a dcc socket
  *   ...and that's it!  (but it's a LOT)
  * 
- * $Id: dcc.c,v 1.31 2000/07/12 21:45:29 fabian Exp $
+ * $Id: dcc.c,v 1.32 2000/09/02 19:45:23 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1151,8 +1151,8 @@ static void dcc_telnet(int idx, char *buf, int i)
   dcc[i].timeval = now;
   strcpy(dcc[i].nick, "*");
   dcc[i].u.dns->ip = ip;
-  dcc[i].u.dns->dns_success = (Function) dcc_telnet_hostresolved;
-  dcc[i].u.dns->dns_failure = (Function) dcc_telnet_hostresolved;
+  dcc[i].u.dns->dns_success = dcc_telnet_hostresolved;
+  dcc[i].u.dns->dns_failure = dcc_telnet_hostresolved;
   dcc[i].u.dns->dns_type = RES_HOSTBYIP;
   dcc[i].u.dns->ibuf = dcc[idx].sock;
   dcc[i].u.dns->type = &DCC_IDENTWAIT;
