@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  * 
- * $Id: server.c,v 1.36 2000/02/25 20:51:11 fabian Exp $
+ * $Id: server.c,v 1.37 2000/02/29 20:13:37 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -683,6 +683,8 @@ static void parse_q(struct msgq_head *q, char *oldnick, char *newnick)
       newnicks[0] = 0;
       strncpy(buf, m->msg, 510);
       buf[510] = 0;
+      if (buf[0] && (buf[strlen(buf)-1] == '\n'))
+        buf[strlen(buf)-1] = '\0';
       msg = buf;
       newsplit(&msg);
       chan = newsplit(&msg);
@@ -698,7 +700,7 @@ static void parse_q(struct msgq_head *q, char *oldnick, char *newnick)
         } else
           sprintf(newnicks, ",%s", nick);
       }
-      sprintf(newmsg, "KICK %s %s %s", chan, newnicks + 1, msg);
+      sprintf(newmsg, "KICK %s %s %s\n", chan, newnicks + 1, msg);
     } else if ((use_lagcheck == 2) && !strncasecmp(m->msg, "MODE ", 5)) {
       newnicks[0] = 0;
       strncpy(buf, m->msg, 510);
@@ -765,6 +767,8 @@ static void purge_kicks(struct msgq_head *q)
       changed = 0;
       strncpy(buf, m->msg, 510);
       buf[510] = 0;
+      if (buf[0] && (buf[strlen(buf)-1] == '\n'))
+        buf[strlen(buf)-1] = '\0';
       reason = buf;
       newsplit(&reason);
       chan = newsplit(&reason);
@@ -804,7 +808,7 @@ static void purge_kicks(struct msgq_head *q)
             q->last = 0;
         } else {
           nfree(m->msg);
-          sprintf(newmsg, "KICK %s %s %s", chan, newnicks + 1, reason);
+          sprintf(newmsg, "KICK %s %s %s\n", chan, newnicks + 1, reason);
           m->msg = nmalloc(strlen(newmsg) + 1);
           m->len = strlen(newmsg);
           strcpy(m->msg, newmsg);
@@ -873,6 +877,8 @@ static int deq_kick(int which)
       newnicks2[0] = 0;
       strncpy(buf2, m->msg, 510);
       buf2[510] = 0;
+      if (buf2[0] && (buf2[strlen(buf2)-1] == '\n'))
+        buf2[strlen(buf2)-1] = '\0';
       reason2 = buf2;
       newsplit(&reason2);
       chan2 = newsplit(&reason2);
@@ -904,7 +910,7 @@ static int deq_kick(int which)
             h->last = 0;
         } else {
           nfree(m->msg);
-          sprintf(newmsg, "KICK %s %s %s", chan2, newnicks2 + 1, reason);
+          sprintf(newmsg, "KICK %s %s %s\n", chan2, newnicks2 + 1, reason);
           m->msg = nmalloc(strlen(newmsg) + 1);
           m->len = strlen(newmsg);
           strcpy(m->msg, newmsg);
@@ -917,7 +923,7 @@ static int deq_kick(int which)
     else
       m = h->head->next;
   }
-  sprintf(newmsg, "KICK %s %s %s", chan, newnicks + 1, reason);
+  sprintf(newmsg, "KICK %s %s %s\n", chan, newnicks + 1, reason);
   tputs(serv, newmsg, strlen(newmsg));
   if (debug_output) {
     newmsg[strlen(newmsg) - 1] = 0;
