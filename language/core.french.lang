@@ -3,6 +3,10 @@
 # General stuff
 
 # Modifié et adapté à l'eggdrop 1.3.24i par arthur2
+# Modifié et adapté à l'eggdrop 1.3.29 par arthur2
+
+# Cette traduction est incomplète, merci de contacter
+# arthur2@demoniak.hay-france.com si vous voulez l'améliorer
 
 0x001,Utilisation
 0x002,A manqué.\n
@@ -464,7 +468,7 @@
 0xe0e,Bot perdu: %s
 0xe0f,Timeout: bot link to %s at %s:%d
 0xe10,Logged in: %s (%s/%d)
-0xe11,Bad Password: [%s]%s/%d
+0xe11,Mauvais mot de passe: [%s]%s/%d
 0xe12,Negative on that, Houston.\n
 0xe13,*** %s has joined the party line.\n
 0xe14,Connexion DCC perdue avec %s (%s/%d)
@@ -473,7 +477,7 @@
 0xe17,Failed TELNET incoming (%s)
 0xe18,Refus %s/%d (mauvais port source)
 0xe19,Refus %s/%d (IP invalide)
-0xe1a,Refused %s (bad hostname)
+0xe1a,Refus %s (mauvais nom d'host)
 0xe1b,Connexion telnet: %s/%d
 0xe1c,Ident failed for %s: %s
 0xe1d,(!) Listening port %d abruptly died.
