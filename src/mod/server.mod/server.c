@@ -85,6 +85,8 @@ char *splitnicks(char **);
 static time_t last_time = 0;
 static int use_penalties;
 #define MAXPENALTY 10
+static int use_fastdeq;
+static int fast_deq(int);
 
 #include "servmsg.c"
 
@@ -127,6 +129,10 @@ static void deq_msg()
   /* send upto 4 msgs to server if the *critical queue* has anything in it */
   if (modeq.head) {
     while (modeq.head && (burst < 4) && ((last_time - now) < MAXPENALTY)) {
+      if (fast_deq(DP_MODE)) {
+        burst++;
+        continue;
+      }
       tputs(serv, modeq.head->msg, modeq.head->len);
       if (debug_output) {
         putlog(LOG_SRVOUT, "*", "[m->] %s", modeq.head->msg);
@@ -148,6 +154,8 @@ static void deq_msg()
     return;
   if (mq.head) {
     burst++;
+    if (fast_deq(DP_SERVER))
+      return;
     tputs(serv, mq.head->msg, mq.head->len);
     if (debug_output) {
       putlog(LOG_SRVOUT, "*", "[s->] %s", mq.head->msg);
@@ -165,6 +173,8 @@ static void deq_msg()
   /* never send anything from the help queue unless everything else is
    * finished */
   if (!hq.head || burst || !ok)
+    return;
+  if (fast_deq(DP_HELP))
     return;
   tputs(serv, hq.head->msg, hq.head->len);
   if (debug_output) {
@@ -305,6 +315,98 @@ char *splitnicks(char **rest)
     *o++ = 0;
   *rest = o;
   return r;
+}
+
+static int fast_deq(int which)
+{
+  struct msgq_head *h;
+  struct msgq *m, *nm;
+  char msgstr[511], nextmsgstr[511], tosend[511], victims[511];
+  char *msg, *nextmsg, *cmd, *nextcmd, *to, *nextto;
+  int len, doit = 0;
+
+  context;
+  if (!use_fastdeq)
+    return 0;
+  switch (which) {
+    case DP_MODE:
+      h = &modeq;
+      break;
+    case DP_SERVER:
+      h = &mq;
+      break;
+    case DP_HELP:
+      h = &hq;
+      break;
+    default:  
+      return 0;
+  }
+  m = h->head;
+  strncpy(msgstr, m->msg, 510);
+  msgstr[510] = 0;
+  msg = msgstr;
+  cmd = newsplit(&msg);
+  to = newsplit(&msg);
+  len = strlen(to);
+  if (to[len - 1] == '\n')
+    to[len -1] = 0;
+  simple_sprintf(victims, "%s", to);
+  while (m) {
+    nm = m->next;
+    if (!nm)
+      break;
+    strncpy(nextmsgstr, nm->msg, 510);
+    nextmsgstr[510] = 0;
+    nextmsg = nextmsgstr;
+    nextcmd = newsplit(&nextmsg);
+    nextto = newsplit(&nextmsg);
+    len = strlen(nextto);
+    if (nextto[len-1] == '\n')
+      nextto[len-1] = 0;
+    if (!strcmp(cmd, nextcmd) && !strcmp(msg, nextmsg)
+        && ((strlen(cmd) + strlen(victims) + strlen(nextto) + strlen(msg) + 2) < 510)) {
+      simple_sprintf(victims, "%s,%s", victims, nextto);
+      doit = 1;
+      m->next = nm->next;
+      if (!nm->next)
+        h->last = m;
+      nfree(nm->msg);
+      nfree(nm);
+      h->tot--;
+    } else
+      m = m->next;
+  }
+  if (doit) {
+    simple_sprintf(tosend, "%s %s %s", cmd, victims, msg);
+    len = strlen(tosend);
+    tosend[len - 1] = '\n';
+    tputs(serv, tosend, len);
+    m = h->head->next;
+    nfree(h->head->msg);
+    nfree(h->head);
+    h->head = m;
+    if (!h->head)
+      h->last = 0;
+    h->tot--;
+    if (debug_output) {
+      tosend[len - 1] = 0;
+      switch (which) {
+        case DP_MODE:
+          putlog(LOG_SRVOUT, "*", "[m=>] %s", tosend);
+          break;
+        case DP_SERVER:
+          putlog(LOG_SRVOUT, "*", "[s=>] %s", tosend);
+          break;
+        case DP_HELP:
+          putlog(LOG_SRVOUT, "*", "[h=>] %s", tosend);
+          break;
+      }
+    }
+    last_time += calc_penalty(tosend);
+    return 1;
+  }
+  context;
+  return 0;
 }
 
 /* clean out the msg queues (like when changing servers) */
@@ -777,6 +879,7 @@ static tcl_ints my_tcl_ints[] =
   {"double-server", &double_server, 0},
   {"double-help", &double_help, 0},
   {"use-penalties", &use_penalties, 0},
+  {"use-fastdeq", &use_fastdeq, 0},
   {0, 0, 0}
 };
 
@@ -1537,6 +1640,7 @@ char *server_start(Function * global_funcs)
   double_server = 0;
   double_help = 0;
   use_penalties = 0;
+  use_fastdeq = 0;
   context;
   server_table[4] = (Function) botname;
   module_register(MODULE_NAME, server_table, 1, 0);
