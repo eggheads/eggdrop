@@ -4,6 +4,8 @@ Changes in eggdrop: (since v1.4.0)
 
 1.4.1
 Foundby   Fixedby   What....
+SuperS	  Fabian    compile time warnings related to wild_match_file
+LtGen     Fabian    unsynced tandem list caused crash when trying to reject
           Tothwolf  added GPL header and cvs id tag to source files
           Tothwolf  fixed/added many #ifndefs in various header files
           Tothwolf  changed 'Assert(ptr != NULL)' references to 'Assert(prt)'
@@ -24,7 +26,7 @@ flammable Fabian    unchecked fopen() return caused crash on failed open
           drummer   tcl_adduser doesn't require a hostmask anymore
 Dude      Fabian    bot now doesn't return "Can't link there" anymore if the
                     first botlink attempt failes
-Ehrenberg Fabian    crash in gotnotice for invalid channels as notice target
+LtGen     Fabian    crash in gotnotice for invalid channels as notice target
 SuperS    Tothwolf  --with-tclinc/tcllib were broken
           drummer   encryption/decryption functions now return plaintext
                     if the key is empty.

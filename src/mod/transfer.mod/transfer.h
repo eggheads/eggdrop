@@ -1,7 +1,7 @@
 /* 
  * transfer.h -- part of transfer.mod
  * 
- * $Id: transfer.h,v 1.3 1999/12/15 02:33:00 guppy Exp $
+ * $Id: transfer.h,v 1.4 1999/12/16 04:03:46 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -40,7 +40,7 @@
 #define queue_file(a,b,c,d) (((void (*)(char *,char *,char *,char *))transfer_funcs[8])(a,b,c,d))
 #define raw_dcc_send(a,b,c,d) (((int (*) (char *,char *,char *,char *))transfer_funcs[9])(a,b,c,d))
 #define show_queued_files(a) (((void (*) (int))transfer_funcs[10])(a))
-#define wild_match_file(a,b) (((int (*)(register unsigned char * m, register unsigned char * n))transfer_funcs[11])(a,b))
+#define wild_match_file(a,b) (((int (*)(register char * m, register char * n))transfer_funcs[11])(a,b))
 /* 12 - 15 */
 #define wipe_tmp_filename(a,b) (((void (*) (char *,int))transfer_funcs[12])(a,b))
 #define DCC_GET (*(struct dcc_table *)(transfer_funcs[13]))
