@@ -61,6 +61,7 @@ extern int use_console_r, ignore_time, debug_output, gban_total, make_userfile;
 extern int gexempt_total, ginvite_total;
 extern int default_flags, require_p, max_dcc, share_greet, password_timeout;
 extern int min_dcc_port, max_dcc_port;	/* dw */
+extern int use_invites, use_exempts; /* Jason/drummer */
 extern int do_restart;
 extern time_t now, online_since;
 extern struct chanset_t *chanset;
@@ -430,11 +431,14 @@ Function global_table[] =
   (Function) rfc_casecmp,
   (Function) rfc_ncasecmp,
  /* 220 - 223 */
-  (Function) &global_exempts,     /* struct exemptrec * */
-  (Function) &global_invites,      /* struct inviterec * */
-  (Function) &gexempt_total,      /* int */
-  (Function) &ginvite_total,      /* int */
+  (Function) &global_exempts,	/* struct exemptrec * */
+  (Function) &global_invites,	/* struct inviterec * */
+  (Function) &gexempt_total,	/* int */
+  (Function) &ginvite_total,	/* int */
+  /* 224 - 226 */
   (Function) & H_event,
+  (Function) & use_exempts,	/* int - drummer/Jason */
+  (Function) & use_invites,	/* int - drummer/Jason */
 };
 
 void init_modules(void)

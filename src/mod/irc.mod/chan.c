@@ -430,7 +430,6 @@ static void refresh_exempt (struct chanset_t * chan, char * user) {
   }
 }
 
-    
 static void refresh_invite (struct chanset_t * chan, char * user) {
   struct inviterec *i;
   int cycle;
@@ -441,7 +440,7 @@ static void refresh_invite (struct chanset_t * chan, char * user) {
       i = global_invites;
     for ( ; i; i = i->next) {
       if (wild_match(i->invitemask,user) && 
-	  (i->flags & INVITEREC_STICKY || ischaninviteonly(chan))) {
+	  (i->flags & INVITEREC_STICKY || (chan->channel.mode & CHANINV))) {
 	if (i->lastactive < now - 60) {
 	  do_invite(chan, i->invitemask);
 	  i->lastactive = now;
@@ -521,7 +520,7 @@ static void recheck_invite (struct chanset_t * chan) {
        * only) or invite is sticky */
       if (!isinvited(chan, ir->invitemask)  
 	  && ((!channel_dynamicinvites(chan) &&
-	       !ischaninviteonly(chan)) || ir->flags & INVITEREC_STICKY))
+	       !(chan->channel.mode & CHANINV)) || ir->flags & INVITEREC_STICKY))
 	add_mode(chan, '+', 'I', ir->invitemask);
 }
 

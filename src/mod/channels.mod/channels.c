@@ -19,8 +19,6 @@
 static int setstatic = 0;
 static int use_info = 1;
 static int ban_time = 60;
-static int use_exempts;
-static int use_invites;
 static int exempt_time = 0;	/* if exempt_time = 0, never remove them */
 static int invite_time = 0;	/* if invite_time = 0, never remove them */
 static char chanfile[121] = "chanfile";
@@ -711,8 +709,6 @@ static tcl_ints my_tcl_ints[] =
   {"share-greet", 0, 0},
   {"use-info", &use_info, 0},
   {"ban-time", &ban_time, 0},
-  {"use-exempts", &use_exempts, 0},
-  {"use-invites", &use_invites, 0},
   {"exempt-time", &exempt_time, 0},
   {"invite-time", &invite_time, 0},
   {"must-be-owner", &must_be_owner, 0},

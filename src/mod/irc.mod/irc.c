@@ -20,8 +20,6 @@ static Function *global = NULL, *channels_funcs = NULL, *server_funcs = NULL;
 static int ctcp_mode;
 static int net_type;
 static int strict_host;
-static int use_exempts;
-static int use_invites;
 
 /* time to wait for user to return for net-split */
 static int wait_split = 300;
@@ -463,26 +461,6 @@ static void check_lonely_channel(struct chanset_t *chan)
   }
 }
 
-/* Check to see if a channel is invite only */
-static int ischaninviteonly(struct chanset_t *chan)
-{
-  char s1[512], s2[512];
-  /* first of all get channel mode */
-  strcpy(s1, getchanmode(chan));
-  /* then check to see if a space in it. A space indicates either a +l or a
-   * +k mode. If there is a space then only want stuff before space */
-  if (strchr(s1, ' ') != NULL) {
-    splitc(s2, s1, ' ');
-  } else {
-    strcpy(s2,s1);
-  }
-  /* check channel modes looking for a i */
-  if (strchr(s2,'i') != NULL )
-    return 1;
-  else 
-    return 0;
-}
-
 static void check_expired_chanstuff()
 {
   banlist *b;
@@ -554,7 +532,7 @@ static void check_expired_chanstuff()
 	      (((now - inv->timer) > (60 * invite_time)) &&
 	       !u_sticky_invite(chan->invites, inv->invite) && 
 	       !u_sticky_invite(global_invites,inv->invite))) {
-	    if (ischaninviteonly(chan)) {
+	    if (chan->channel.mode & CHANINV) {
 	      /*Leave this extra logging in for now. Can be removed later
 	       * Jason */
 	      putlog(LOG_MODES, chan->name,
@@ -809,8 +787,6 @@ static tcl_ints myints[] =
   {"max-invites", &max_invites, 0},
   {"max-modes", &max_modes, 0},
   {"net-type", &net_type, 0},
-  {"use-exempts", &use_exempts, 0}, /* Jason */
-  {"use-invites", &use_invites, 0}, /* Jason */
   {"strict-host", &strict_host, 0},	/* arthur2 */
   {"ctcp-mode", &ctcp_mode, 0},	/* arthur2 */
   {"keep-nick", &keepnick, 0},	/* guppy */
@@ -878,12 +854,10 @@ static void irc_report(int idx, int details)
   }
 }
 
-static char *traced_nettype(ClientData cdata, Tcl_Interp * irp, char *name1,
-			    char *name2, int flags)
+static void do_nettype()
 {
-  char buf[5];
   switch (net_type) {
-  case 0:
+  case 0:		/* EfNet except new +e/+I hybrid */
     kick_method = 1;
     modesperline = 4;
     use_354 = 0;
@@ -891,7 +865,7 @@ static char *traced_nettype(ClientData cdata, Tcl_Interp * irp, char *name1,
     use_exempts = 0;
     use_invites = 0;
     break;
-  case 1:
+  case 1:		/* Ircnet */
     kick_method = 4;
     modesperline = 3;
     use_354 = 0;
@@ -899,7 +873,7 @@ static char *traced_nettype(ClientData cdata, Tcl_Interp * irp, char *name1,
     use_exempts = 1;
     use_invites = 1;
     break;
-  case 2:
+  case 2:		/* Undernet */
     kick_method = 1;
     modesperline = 6;
     use_354 = 1;
@@ -907,7 +881,7 @@ static char *traced_nettype(ClientData cdata, Tcl_Interp * irp, char *name1,
     use_exempts = 0;
     use_invites = 0;
     break;
-  case 3:
+  case 3:		/* Dalnet */
     kick_method = 1;
     modesperline = 6;
     use_354 = 0;
@@ -915,7 +889,7 @@ static char *traced_nettype(ClientData cdata, Tcl_Interp * irp, char *name1,
     use_exempts = 0;
     use_invites = 0;
     break;
-  case 4:
+  case 4:		/* new +e/+I Efnet hybrid */
     kick_method = 1;
     modesperline = 4;
     use_354 = 0;
@@ -926,10 +900,12 @@ static char *traced_nettype(ClientData cdata, Tcl_Interp * irp, char *name1,
   default:
     break;
   }
-  sprintf(buf,"%d", use_exempts);
-  Tcl_SetVar(interp, "use-exempts", buf, 0);
-  sprintf(buf,"%d", use_invites);
-  Tcl_SetVar(interp, "use-invites", buf, 0);
+}
+
+static char *traced_nettype(ClientData cdata, Tcl_Interp * irp, char *name1,
+			    char *name2, int flags)
+{
+  do_nettype();
   return NULL;
 }
 
@@ -1014,7 +990,6 @@ char *server_start();
 char *irc_start(Function * global_funcs)
 {
   struct chanset_t *chan;
-  char buf[5];
 
   global = global_funcs;
 
@@ -1062,45 +1037,7 @@ char *irc_start(Function * global_funcs)
   H_pubm = add_bind_table("pubm", HT_STACKABLE, channels_5char);
   H_pub = add_bind_table("pub", 0, channels_5char);
   context;
-  if (net_type == 0) {		/* EfNet except new +e/+I hybrid */
-    kick_method = 1;
-    modesperline = 4;
-    use_354 = 0;
-    use_exempts = 0;
-    use_invites = 0;
-  }
-  if (net_type == 1) {		/* Ircnet */
-    kick_method = 4;
-    modesperline = 3;
-    use_354 = 0;
-    use_exempts = 1;
-    use_invites = 1;
-  }
-  if (net_type == 2) {		/* Undernet */
-    kick_method = 1;
-    modesperline = 6;
-    use_354 = 1;
-    use_exempts = 0;
-    use_invites = 0;
-  }
-  if (net_type == 3) {		/* Dalnet */
-    kick_method = 1;
-    modesperline = 6;
-    use_354 = 0;
-    use_exempts = 0;
-    use_invites = 0;
-  }
-  if (net_type == 4) {		/* new +e/+I Efnet hybrid */
-    kick_method = 1;
-    modesperline = 4;
-    use_354 = 0;
-    use_exempts = 1;
-    use_invites = 1;
-  }
-  sprintf(buf,"%d", use_exempts);
-  Tcl_SetVar(interp, "use-exempts", buf, 0);
-  sprintf(buf,"%d", use_invites);
-  Tcl_SetVar(interp, "use-invites", buf, 0);
+  do_nettype();
   context;
   return NULL;
 }

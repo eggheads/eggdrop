@@ -60,6 +60,8 @@ extern char configfile[];
 int dcc_flood_thr = 3;
 int debug_tcl = 0;
 int use_silence = 0;
+int use_invites = 0; /* Jason/drummer */
+int use_exempts = 0; /* Jason/drummer */
 int remote_boots = 2;
 int allow_dk_cmds = 1;
 int must_be_owner = 1;
@@ -404,6 +406,8 @@ static tcl_ints def_tcl_ints[] =
   {"must-be-owner", &must_be_owner, 1},
   {"use-silence", &use_silence, 0},	/* arthur2 */
   {"paranoid-telnet-flood", &par_telnet_flood, 0},
+  {"use-exempts", &use_exempts, 0}, /* Jason/drummer */
+  {"use-invites", &use_invites, 0}, /* Jason/drummer */
   {0, 0, 0}			/* arthur2 */
 };
 
