@@ -218,7 +218,7 @@ set telnet-flood 5:60
 set paranoid-telnet-flood 1
 
 # how long should I wait (seconds) before giving up on hostname/address
-# lookup?
+# lookup? (you might want to increase this if you are on a slow network).
 set resolve-timeout 15
 
 #####  MORE ADVANCED STUFF  #####
