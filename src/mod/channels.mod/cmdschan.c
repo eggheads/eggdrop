@@ -2,7 +2,7 @@
  * cmdschan.c -- part of channels.mod
  *   commands from a user via dcc that cause server interaction
  * 
- * $Id: cmdschan.c,v 1.25 2000/08/06 14:53:54 fabian Exp $
+ * $Id: cmdschan.c,v 1.26 2000/08/11 22:43:07 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1024,7 +1024,7 @@ static void cmd_pls_chrec(struct userrec *u, int idx, char *par)
 
   Context;
   if (!par[0]) {
-    dprintf(idx, "Usage: +chrec <User> [channel]\n");
+    dprintf(idx, "Usage: +chrec <user> [channel]\n");
     return;
   }
   nick = newsplit(&par);
@@ -1071,7 +1071,7 @@ static void cmd_mns_chrec(struct userrec *u, int idx, char *par)
 
   Context;
   if (!par[0]) {
-    dprintf(idx, "Usage: -chrec <User> [channel]\n");
+    dprintf(idx, "Usage: -chrec <user> [channel]\n");
     return;
   }
   nick = newsplit(&par);
@@ -1107,7 +1107,7 @@ static void cmd_mns_chrec(struct userrec *u, int idx, char *par)
   }
   putlog(LOG_CMDS, "*", "#%s# -chrec %s %s", dcc[idx].nick, nick, chn);
   del_chanrec(u1, chn);
-  dprintf(idx, "Removed %s channel record for %s.\n", chn, nick);
+  dprintf(idx, "Removed %s channel record from %s.\n", chn, nick);
 }
 
 static void cmd_pls_chan(struct userrec *u, int idx, char *par)
