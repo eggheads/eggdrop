@@ -1159,7 +1159,7 @@ static void dcc_telnet_hostresolved(int i)
   context;
   changeover_dcc(i, &DCC_IDENTWAIT, 0);
   dcc[i].timeval = now;
-  dcc[i].u.ident_sock = dcc[j].sock;
+  dcc[i].u.ident_sock = dcc[idx].sock;
   sock = open_telnet(iptostr(my_htonl(dcc[i].addr)), 113);
   putlog(LOG_MISC, "*", DCC_TELCONN, dcc[i].host, dcc[i].port);
   s[0] = 0;
@@ -1224,8 +1224,7 @@ struct dcc_table DCC_TELNET =
 static void dcc_telnet_id(int idx, char *buf, int atr)
 {
   int ok = 0;
-  struct flag_record fr =
-  {FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0};
+  struct flag_record fr = {FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0};
 
   context;
   strip_telnet(dcc[idx].sock, buf, &atr);

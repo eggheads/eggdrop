@@ -87,6 +87,7 @@ static int use_penalties;
 #define MAXPENALTY 10
 static int use_fastdeq;
 static int fast_deq(int);
+static char stackablecmds[511];
 
 #include "servmsg.c"
 
@@ -321,11 +322,12 @@ static int fast_deq(int which)
 {
   struct msgq_head *h;
   struct msgq *m, *nm;
-  char msgstr[511], nextmsgstr[511], tosend[511], victims[511];
-  char *msg, *nextmsg, *cmd, *nextcmd, *to, *nextto;
-  int len, doit = 0;
+  char msgstr[511], nextmsgstr[511], tosend[511], victims[511], stackable[511];
+  char *msg, *nextmsg, *cmd, *nextcmd, *to, *nextto, *stckbl;
+  int len, doit , found;
 
   context;
+  doit = found = 0;
   if (!use_fastdeq)
     return 0;
   switch (which) {
@@ -346,6 +348,25 @@ static int fast_deq(int which)
   msgstr[510] = 0;
   msg = msgstr;
   cmd = newsplit(&msg);
+  if (use_fastdeq > 1) {
+    strncpy(stackable, stackablecmds, 510);
+    stackable[510] = 0;
+    stckbl = stackable;
+    while (strlen(stckbl) > 0) {
+      if (!strcasecmp(newsplit(&stckbl), cmd)) {
+        found = 1;
+        break;
+      }
+    }
+    /* if use_fastdeq is 2, only commands in the 
+    list should be stacked */
+    if ((use_fastdeq == 2) && !found)
+      return 0;
+    /* if use_fastdeq is 3, only commands that
+    are _not_ in the list should be stacked */
+    if ((use_fastdeq == 3) && found)
+      return 0;
+  }
   to = newsplit(&msg);
   len = strlen(to);
   if (to[len - 1] == '\n')
@@ -816,10 +837,14 @@ static char *traced_nettype(ClientData cdata, Tcl_Interp * irp, char *name1,
     use_silence = 0;
     check_mode_r = 1;
     use_penalties = 1;
+    use_fastdeq = 3;
+    simple_sprintf(stackablecmds, "INVITE AWAY VERSION NICK ISON");
     break;
   case 2:
     use_silence = 1;
     check_mode_r = 0;
+    use_fastdeq = 2;
+    simple_sprintf(stackablecmds, "PRIVMSG NOTICE TOPIC PART WHOIS");
     break;
   case 3:
     use_silence = 0;
@@ -842,6 +867,7 @@ static tcl_strings my_tcl_strings[] =
   {"realname", botrealname, 80, 0},
   {"init-server", initserver, 120, 0},
   {"connect-server", connectserver, 120, 0},
+  {"stackable-commands", stackablecmds, 510, 0},
   {0, 0, 0, 0}
 };
 
@@ -1643,6 +1669,7 @@ char *server_start(Function * global_funcs)
   double_help = 0;
   use_penalties = 0;
   use_fastdeq = 0;
+  stackablecmds[0] = 0;
   context;
   server_table[4] = (Function) botname;
   module_register(MODULE_NAME, server_table, 1, 0);
@@ -1722,10 +1749,14 @@ char *server_start(Function * global_funcs)
     use_silence = 0;
     check_mode_r = 1;
     use_penalties = 1;
+    use_fastdeq = 3;
+    simple_sprintf(stackablecmds, "INVITE AWAY VERSION NICK ISON");
   }
   if (net_type == 2) {		/* Undernet */
     use_silence = 1;
     check_mode_r = 0;
+    use_fastdeq = 2;
+    simple_sprintf(stackablecmds, "PRIVMSG NOTICE TOPIC PART WHOIS");
   }
   if (net_type == 3) {		/* Dalnet */
     use_silence = 0;

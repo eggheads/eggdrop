@@ -558,6 +558,18 @@ specific commands, see later.
   isdynamic <channel>
     returns: 1 if the channel is an existing dynamic channel, 0 if not
 
+  setudef <flag/int> <name>
+    initializes a user defined channel flag or integer setting. You can use it
+      like any other flag/setting.
+    IMPORTANT: Don't forget to reinitialize your flags/settings after a restart,
+      or it'll be lost.
+
+  renudef <flag/int> <oldname> <newname>
+    renames a user defined channel flag or integer setting.
+
+  deludef <flag/int> <name>
+    deletes a user defined channel flag or integer setting.
+
 *** DCC COMMANDS ***
 
   putdcc <idx> <text>

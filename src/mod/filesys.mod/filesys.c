@@ -63,10 +63,10 @@ static Function *transfer_funcs = NULL;
 static Function *global = NULL;
 
 /* root dcc directory */
-static char dccdir[121];
+static char dccdir[121] = "";
 
 /* directory to put incoming dcc's into */
-static char dccin[121];
+static char dccin[121] = "";
 
 /* let all uploads go to the user's current directory? */
 static int upload_to_cd = 0;
@@ -79,7 +79,7 @@ static int dcc_users = 0;
 
 /* where to put the filedb, if not in a hidden '.filedb' file in
  * each directory */
-static char filedb_path[121];
+static char filedb_path[121] = "";
 
 static int is_valid();
 
@@ -749,8 +749,7 @@ static void filesys_dcc_send_lookupsuccess(int i)
   dcc[i].u.xfer->filename = get_data_ptr(strlen(tempf) + 1);
   strcpy(dcc[i].u.xfer->filename, tempf);
   /* we don't need the temporary buffers anymore */
-  nfree(tempf);
-  nfree(param);
+  nfree2(tempf, param);
 
   if (upload_to_cd) {
     char *p = get_user(&USERENTRY_DCCDIR, dcc[i].user);
@@ -979,9 +978,6 @@ char *filesys_start(Function * global_funcs)
   global = global_funcs;
 
   context;
-  dccdir[0] = 0;
-  dccin[0] = 0;
-  filedb_path[0] = 0;
   module_register(MODULE_NAME, filesys_table, 2, 0);
   if (!(transfer_funcs = module_depend(MODULE_NAME, "transfer", 2, 0)))
     return "You need the transfer module to user the file system.";
@@ -1002,7 +998,7 @@ char *filesys_start(Function * global_funcs)
   USERENTRY_DCCDIR.got_share = 0;	/* we dont want it shared tho */
   add_entry_type(&USERENTRY_DCCDIR);
   DCC_FILES_PASS.timeout_val = &password_timeout;
-  add_lang_section("files");
+  add_lang_section("filesys");
   return NULL;
 }
 
