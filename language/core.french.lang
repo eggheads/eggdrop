@@ -120,7 +120,7 @@
 0x532,Proprietaire(s) permanent(s)
 0x533,ATTENTION! Vous exécutez Eggdrop en tant que root!
 0x534,FICHIER DE CONFIGURATION NON CHARGE (INTROUVABLE OU ERREUR)
-0x535,FICHIER USAGERS NON TROUVE!  (essayez 'eggdrop -m' pour en créer un)
+0x535,FICHIER USAGERS NON TROUVE!  (essayez './eggdrop -m' pour en créer un)
 0x536,JE DEMARRE LE BOT EN MODE CREATION DE FICHIER USAGERS. Faites un Telnet sur le bot et entrez 'NEW' comme nickname.
 0x537,OU Allez sur IRC et:  /msg %s hello\n
 0x538,Cela va faire que le bot vous reconnaitra comme maître.

@@ -145,7 +145,7 @@ module, please consult the default config file for info.\n
 0x532,Permanent owner(s)
 0x533,WARNING! You are running eggdrop as root!
 0x534,CONFIG FILE NOT LOADED (NOT FOUND, OR ERROR)
-0x535,USER FILE NOT FOUND!  (try 'eggdrop -m' to make one)
+0x535,USER FILE NOT FOUND!  (try './eggdrop -m' to make one)
 0x536,STARTING BOT IN USERFILE CREATION MODE.\n\
 Telnet to the bot and enter 'NEW' as your nickname.
 0x537,OR Go to IRC and:  /msg %s hello\n

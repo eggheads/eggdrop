@@ -122,7 +122,7 @@ schaue bitte in die Standard - Konfigurationsdatei für mehr Informationen.\n
 0x532,Ständige Botbesitzer
 0x533,WARNUNG! Du läßt Eggdrop als root laufen!
 0x534,KONFIGURATIONSDATEI NICHT GELADEN (NICHT GEFUNDEN ODER FEHLER)
-0x535,USERDATEI NICHT GEFUNDEN!  (versuche 'eggdrop -m', um eines zu erstellen)
+0x535,USERDATEI NICHT GEFUNDEN!  (versuche './eggdrop -m', um eines zu erstellen)
 0x536,STARTE DEN BOT IM USERDATEI-ERSTELLUNGS-MODUS.\n\
 Baue eine Telnetverbindung zu dem Bot auf und gib 'NEW' als deinen Nickname.
 0x537,ODER gehe ins IRC und:  /msg %s hello\n
