@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  *
- * $Id: server.c,v 1.79 2002/07/18 19:01:45 guppy Exp $
+ * $Id: server.c,v 1.80 2002/07/19 05:16:52 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -802,6 +802,11 @@ static void queue_server(int which, char *buf, int len)
     if (buf[1] == 'I' || buf[1] == 'i')
       lastpingtime = now;	/* lagmeter */
     tputs(serv, buf, len);
+    if (debug_output) {
+      if (buf[len - 1] == '\n')
+        buf[len - 1] = 0;
+      putlog(LOG_SRVOUT, "*", "[m->] %s", buf);
+    }
     return;
   }
 
