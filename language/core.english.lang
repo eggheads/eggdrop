@@ -1,7 +1,7 @@
 # core.english.lang
 #   core language messages for eggdrop
 #
-# $Id: core.english.lang,v 1.36 2003/03/11 01:22:25 wcc Exp $
+# $Id: core.english.lang,v 1.37 2003/05/04 22:04:32 wcc Exp $
 
 # General stuff
 0x001,Usage
@@ -205,7 +205,7 @@ Telnet to the bot and enter 'NEW' as your nickname.
 0x641,Trying server
 0x642,DNS lookup failed
 0x643,Failed connect to
-0x644,Server got stoned; jumping...
+0x644,Server got stoned; going for munchies...
 0x645,Disconnected from
 0x646,No server currently.
 0x647,Mode queue is at
