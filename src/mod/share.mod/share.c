@@ -1,7 +1,7 @@
 /*
  * share.c -- part of share.mod
  *
- * $Id: share.c,v 1.65 2002/08/25 05:13:33 wcc Exp $
+ * $Id: share.c,v 1.66 2002/08/25 05:21:08 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -214,7 +214,7 @@ static void share_stick_ban(int idx, char *par)
 	  return;
 	}
       putlog(LOG_CMDS, "*", "Rejecting invalid sticky ban: %s on %s%s",
-	     host, par, yn ? "" : "(unstick)");
+	     host, par, yn ? "" : " (unstick)");
     }
     noshare = 0;
   }
@@ -254,7 +254,7 @@ static void share_stick_exempt(int idx, char *par)
 	  return;
 	}
       putlog(LOG_CMDS, "*", "Rejecting invalid sticky exempt: %s on %s%s",
-	     host, par, yn ? "" : "(unstick)");
+	     host, par, yn ? "" : " (unstick)");
     }
     noshare = 0;
   }
@@ -293,7 +293,7 @@ static void share_stick_invite (int idx, char * par) {
 	  return;
 	}
       putlog(LOG_CMDS, "*", "Rejecting invalid sticky invite: %s on %s%s",
-	     host, par, yn ? "" : "(unstick)");
+	     host, par, yn ? "" : " (unstick)");
     }
     noshare = 0;
   }
