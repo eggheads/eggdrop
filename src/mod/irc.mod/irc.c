@@ -2,7 +2,7 @@
  * irc.c -- part of irc.mod
  *   support for channels within the bot
  *
- * $Id: irc.c,v 1.55 2001/07/24 14:48:13 guppy Exp $
+ * $Id: irc.c,v 1.56 2001/10/29 20:20:31 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -562,7 +562,7 @@ static void check_lonely_channel(struct chanset_t *chan)
 	break;
       }
     }
-    if (ok) {
+    if (ok && channel_cycle(chan)) {
       /* ALL bots!  make them LEAVE!!! */
       for (m = chan->channel.member; m && m->nick[0]; m = m->next)
 	if (!match_my_nick(m->nick))
