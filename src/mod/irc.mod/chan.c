@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  *
- * $Id: chan.c,v 1.92 2002/08/02 23:50:39 wcc Exp $
+ * $Id: chan.c,v 1.93 2002/08/08 06:57:59 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -974,18 +974,16 @@ static int got352or4(struct chanset_t *chan, char *user, char *host,
     strcpy(botuserhost, m->userhost);	/* Yes, save my own userhost */
     m->joined = now;		/* set this to keep the whining masses happy */
   }
-  if (strchr(flags, '@') != NULL)	/* Flags say he's opped? */
-    m->flags |= (CHANOP | WASOP);	/* Yes, so flag in my table */
+  if (strchr(flags, '@') != NULL)
+    m->flags |= (CHANOP | WASOP);
   else
     m->flags &= ~(CHANOP | WASOP);
-/*  Some ircds use % to mean things other than halfop.
- *  if (strchr(flags, '%') != NULL)
- *    m->flags |= (CHANHALFOP | WASHALFOP);
- *  else
- *   m->flags &= ~(CHANHALFOP | WASHALFOP);
- */
-  if (strchr(flags, '+') != NULL)	/* Flags say he's voiced? */
-    m->flags |= CHANVOICE;	/* Yes */
+  if (strchr(flags, '%') != NULL)
+    m->flags |= (CHANHALFOP | WASHALFOP);
+  else
+    m->flags &= ~(CHANHALFOP | WASHALFOP);
+  if (strchr(flags, '+') != NULL)
+    m->flags |= CHANVOICE;
   else
     m->flags &= ~CHANVOICE;
   if (!(m->flags & (CHANVOICE | CHANOP | CHANHALFOP)))
@@ -1016,53 +1014,6 @@ static int got352(char *from, char *msg)
     nick = newsplit(&msg);	/* Grab the nick */
     flags = newsplit(&msg);	/* Grab the flags */
     got352or4(chan, user, host, nick, flags);
-  }
-  return 0;
-}
-
-/* got a 353: names info!
- */
-static int got353(char *from, char *msg)
-{
-  char *nick, *chname, *oldstring, *newstring, *stripnick;
-  struct chanset_t *chan;
-  memberlist *m;
-
-  newsplit(&msg); /* Skip nick */
-  newsplit(&msg); /* Skip flag */
-  chname = newsplit(&msg); /* Grab the chan */
-  chan = findchan(chname); /* Are we on the channel? */
-  if (!chan)
-    return 0;
-  fixcolon(msg);
-  while ((nick = stripnick = newsplit(&msg))[0]) {
-    for (oldstring=newstring=stripnick;*oldstring;oldstring++) {
-      if (isalnum(*oldstring) || strchr(NICKVALID,*oldstring) != NULL)
-        *newstring++=*oldstring;
-    }
-    *newstring=0;
-    m = ismember(chan, stripnick); /* In my channel list? */
-    if (!m) {
-      m = newmember(chan);	/* Get a new channel entry */
-      m->joined = m->split = m->delay = 0L;	/* Don't know when he joined */
-      m->flags = 0; /* No flags for now */
-      m->last = now; /* Last time I saw him */
-    }
-    m->userhost[0] = 0; /* Store a zero-length userhost for the time being */
-    m->user = NULL; /* We'll get a handle in got352or4() */
-    if (strchr(nick, '@') != NULL)
-      m->flags |= (CHANOP | WASOP);
-    else
-      m->flags &= ~(CHANOP | WASOP);
-    if (strchr(nick, '%') != NULL)
-      m->flags |= (CHANHALFOP | WASHALFOP);
-    else
-      m->flags &= ~(CHANHALFOP | WASHALFOP);
-    if (strchr(nick, '+') != NULL)
-      m->flags |= CHANVOICE;
-    else
-      m->flags &= ~CHANVOICE;
-    strcpy(m->nick, stripnick); /* Store the nick in list */
   }
   return 0;
 }
@@ -2439,7 +2390,6 @@ static cmd_t irc_raw[] =
 {
   {"324",	"",	(Function) got324,	"irc:324"},
   {"352",	"",	(Function) got352,	"irc:352"},
-  {"353",	"",	(Function) got353,	"irc:353"},
   {"354",	"",	(Function) got354,	"irc:354"},
   {"315",	"",	(Function) got315,	"irc:315"},
   {"367",	"",	(Function) got367,	"irc:367"},
