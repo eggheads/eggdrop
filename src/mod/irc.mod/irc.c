@@ -375,7 +375,7 @@ static void reset_chan_info(struct chanset_t *chan)
   if (!channel_pending(chan)) {
     clear_channel(chan, 1);
     chan->status |= CHAN_PEND;
-    chan->status &= ~CHAN_ACTIVE;
+    chan->status &= ~(CHAN_ACTIVE | CHAN_ASKEDMODES);
     if (!(chan->status & CHAN_ASKEDBANS)) {
       chan->status |= CHAN_ASKEDBANS;
       dprintf(DP_MODE, "MODE %s +b\n", chan->name);

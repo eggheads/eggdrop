@@ -1106,9 +1106,8 @@ static int tcl_channel_modify(Tcl_Interp * irp, struct chanset_t *chan,
       dprintf(DP_SERVER, "JOIN %s %s\n", chan->name, chan->key_prot);
   }
   if ((oldstatus ^ chan->status) & (CHAN_ENFORCEBANS+CHAN_OPONJOIN+CHAN_BITCH+CHAN_AUTOVOICE)) {
-    if ((me = module_find("irc", 0, 0))) {
-      (me->funcs[15])(chan, 1);
-    }
+    if ((me = module_find("irc", 0, 0)))
+      (me->funcs[IRC_RECHECK_CHANNEL])(chan, 1);
   }
   if (x > 0) { return TCL_ERROR; }
   return TCL_OK;

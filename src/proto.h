@@ -77,7 +77,8 @@ int getparty(char *, int);
 int add_note(char *, char *, char *, int, int);
 int simple_sprintf VARARGS(char *, arg1);
 void tandout_but VARARGS(int, arg1);
-char *int_to_base10(unsigned int);
+char *int_to_base10(int);
+char *unsigned_int_to_base10(unsigned int);
 char *int_to_base64(unsigned int);
 extern int (*match_noterej) (struct userrec*, char *);
 

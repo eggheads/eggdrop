@@ -48,7 +48,6 @@ void *dlsym(void *, char *);
 extern struct dcc_t *dcc;
 
 #include "users.h"
-int cmd_note();
 
 /* from other areas */
 extern Tcl_Interp *interp;
@@ -377,7 +376,7 @@ Function global_table[] =
   (Function) in_chain,
   /* 164 - 167 */
   (Function) add_note,
-  (Function) cmd_note,
+  (Function) NULL,
   (Function) detect_dcc_flood,
   (Function) flush_lines,
   /* 168 - 171 */

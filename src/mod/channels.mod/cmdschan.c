@@ -114,7 +114,8 @@ static void cmd_pls_ban(struct userrec *u, int idx, char *par)
     else
       strcpy(s, who);
     if ((me = module_find("server", 0, 0)) && me->funcs)
-      simple_sprintf(s1, "%s!%s", me->funcs[4], me->funcs[5]);
+      simple_sprintf(s1, "%s!%s", me->funcs[SERVER_BOTNAME],
+	            me->funcs[SERVER_BOTUSERHOST]);
     else
       simple_sprintf(s1, "%s!%s@%s", origbotname, botuser, hostname);
     if (wild_match(s, s1)) {
@@ -257,7 +258,8 @@ static void cmd_pls_exempt (struct userrec * u, int idx, char * par)
     else
       strcpy(s, who);
     if ((me = module_find("server",0,0)) && me->funcs)
-      simple_sprintf(s1, "%s!%s", me->funcs[4], me->funcs[5]);
+      simple_sprintf(s1, "%s!%s", me->funcs[SERVER_BOTNAME],
+		     me->funcs[SERVER_BOTUSERHOST]);
     else
       simple_sprintf(s1, "%s!%s@%s", origbotname, botuser, hostname);
     
@@ -398,7 +400,8 @@ static void cmd_pls_invite (struct userrec * u, int idx, char * par)
     else
       strcpy(s, who);
     if ((me = module_find("server",0,0)) && me->funcs)
-      simple_sprintf(s1, "%s!%s", me->funcs[4], me->funcs[5]);
+      simple_sprintf(s1, "%s!%s", me->funcs[SERVER_BOTNAME],
+		     me->funcs[SERVER_BOTUSERHOST]);
     else
       simple_sprintf(s1, "%s!%s@%s", origbotname, botuser, hostname);
     

@@ -2,6 +2,8 @@
  * notes.mod -- module handles: (the old notes.c + extras)
  * reading and sending notes
  * killing old notes and changing the destinations
+ * note cmds
+ * note ignores
  *
  * dprintf'ized, 5aug1996
  */
@@ -1154,7 +1156,7 @@ static char *notes_close()
     rem_builtins(H_temp, notes_msgs, 1);
   if ((H_temp = find_bind_table("join")))
     rem_builtins(H_temp, notes_join, 1);
-  rem_builtins(H_dcc, notes_cmds, 5);
+  rem_builtins(H_dcc, notes_cmds, 6);
   rem_builtins(H_chon, notes_chon, 1);
   rem_builtins(H_away, notes_away, 1);
   rem_builtins(H_nkch, notes_nkch, 1);
@@ -1190,7 +1192,8 @@ static Function notes_table[] =
   (Function) notes_start,
   (Function) notes_close,
   (Function) notes_expmem,
-  (Function) notes_report
+  (Function) notes_report,
+  (Function) cmd_note,
 };
 
 char *notes_start(Function * global_funcs)
@@ -1200,7 +1203,7 @@ char *notes_start(Function * global_funcs)
 
   context;
   notefile[0] = 0;
-  module_register(MODULE_NAME, notes_table, 2, 0);
+  module_register(MODULE_NAME, notes_table, 2, 1);
   if (!module_depend(MODULE_NAME, "eggdrop", 103, 15))
     return "This module requires eggdrop1.3.15 or later";
   add_hook(HOOK_HOURLY, notes_hourly);
@@ -1208,7 +1211,7 @@ char *notes_start(Function * global_funcs)
   add_tcl_ints(notes_ints);
   add_tcl_strings(notes_strings);
   add_tcl_commands(notes_tcls);
-  add_builtins(H_dcc, notes_cmds, 5);
+  add_builtins(H_dcc, notes_cmds, 6);
   add_builtins(H_chon, notes_chon, 1);
   add_builtins(H_away, notes_away, 1);
   add_builtins(H_nkch, notes_nkch, 1);

@@ -40,6 +40,8 @@
 #     fixed --CONSOLE item not being included, creating "user" --CONSOLE
 # <Ernst 1apr98>:
 #     two more improper ocurrences of "lrange" removed
+# <rtc 20sep1999>:
+#     removed ancient way of determining the current time.
 #
 
 set exempt {*ban *ignore}
@@ -53,10 +55,7 @@ set stripops 0 ; set stripmasters 0 ; set weedlurkers 0
 set chanrem {}
 set convert 0
 
-set fd [open "/tmp/egg.timer." w]
-close $fd
-set CURRENT [file atime "/tmp/egg.timer."]
-exec rm -f /tmp/egg.timer.
+set CURRENT [clock seconds]
 
 if {$argc < 1} {
   puts stdout "\nUsage: weed <userfile> \[options\]"

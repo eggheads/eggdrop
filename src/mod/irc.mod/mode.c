@@ -1065,7 +1065,11 @@ static void gotmode(char *from, char *msg)
 	  }
 	  break;
 	case 'k':
-	  op = newsplit(&msg);
+ 	  if (ms2[0] == '+')
+	    chan->channel.mode |= CHANKEY;
+	  else
+            chan->channel.mode &= ~CHANKEY;
+          op = newsplit(&msg);
 	  fixcolon(op);
 	  if (op == '\0') {
 	    break;
@@ -1175,6 +1179,8 @@ static void gotmode(char *from, char *msg)
 	}
 	chg++;
       }
+      if (!me_op(chan) && !nick[0])
+        chan->status |= CHAN_ASKEDMODES;
     }
   }
 }

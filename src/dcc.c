@@ -1246,7 +1246,13 @@ putlog(LOG_BOTS, "*", DCC_BADNICK, dcc[idx].host);
     return;
   }
   if (glob_bot(fr)) {
-    if (in_chain(buf)) {
+    if (!strcasecmp(botnetnick, buf)) {
+      dprintf(idx, "error You cannot link using my botnetnick.\n");
+      putlog(LOG_BOTS, "*", DCC_MYBOTNETNICK, dcc[idx].host);
+      killsock(dcc[idx].sock);
+      lostdcc(idx);
+      return;
+    } else if (in_chain(buf)) {
       dprintf(idx, "error Already connected.\n");
       putlog(LOG_BOTS, "*", DCC_DUPLICATE,
 	     dcc[idx].host);
@@ -1329,7 +1335,7 @@ putlog(LOG_BOTS, "*", DCC_BADNICK, dcc[idx].host);
      *  same thing cant be done. Botnet passwords are always stored in
      *  cleartext, or at least something that can be reversed. <Cybah>
      */
-    dprintf(idx, "\nEnter your password.\377\373\001\n");
+    dprintf(idx, "\n%s\377\373\001\n",DCC_ENTERPASS);
     /* turn off remote telnet echo: IAC WILL ECHO */
   }
 }

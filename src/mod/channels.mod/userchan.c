@@ -397,7 +397,8 @@ static int u_addban(struct chanset_t *chan, char *ban, char *from, char *note,
     strcat(host, s);
   }
   if ((me = module_find("server", 0, 0)) && me->funcs)
-    simple_sprintf(s, "%s!%s", me->funcs[4], me->funcs[5]);
+    simple_sprintf(s, "%s!%s", me->funcs[SERVER_BOTNAME],
+		   me->funcs[SERVER_BOTUSERHOST]);
   else
     simple_sprintf(s, "%s!%s@%s", origbotname, botuser, hostname);
   if (wild_match(host, s)) {
@@ -467,7 +468,8 @@ static int u_addinvite (struct chanset_t * chan, char * invite, char * from,
     strcat(host, s);
   }
   if ((me = module_find("server",0,0)) && me->funcs)
-    simple_sprintf(s, "%s!%s", me->funcs[4], me->funcs[5]);
+    simple_sprintf(s, "%s!%s", me->funcs[SERVER_BOTNAME],
+		   me->funcs[SERVER_BOTUSERHOST]);
   else
     simple_sprintf(s, "%s!%s@%s", origbotname, botuser, hostname);
   
@@ -533,7 +535,8 @@ static int u_addexempt (struct chanset_t * chan, char * exempt, char * from,
     strcat(host, s);
   }
   if ((me = module_find("server",0,0)) && me->funcs)
-    simple_sprintf(s, "%s!%s", me->funcs[4], me->funcs[5]);
+    simple_sprintf(s, "%s!%s", me->funcs[SERVER_BOTNAME],
+		   me->funcs[SERVER_BOTUSERHOST]);
   else
     simple_sprintf(s, "%s!%s@%s", origbotname, botuser, hostname);
   

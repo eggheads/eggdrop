@@ -933,7 +933,7 @@ static void kill_server(int idx, void *x)
     struct chanset_t *chan;
 
     for (chan = chanset; chan; chan = chan->next)
-      (me->funcs[15]) (chan, 1);
+      (me->funcs[CHANNEL_CLEAR]) (chan, 1);
   }
   connect_server();
 }

@@ -19,10 +19,10 @@
 %{help=help}
 DCC COMMANDS for %B, %V:
 %b  who          away         quit         whom         me%b
-%b  whois        note         match        motd         bots%b
+%b  whois        page         match        motd         bots%b
 %b  addlog       newpass      bottree      console      chat%b
 %b  nick         echo         botinfo      strip        su%b
-%b  trace        fixcodes     page%b
+%b  trace        fixcodes%b
 %{+t}
 For botnet masters:
 %b  +bot         chattr       chnick       chpass       +host%b
@@ -167,10 +167,10 @@ telnet-flood
 %{help=all}
 ###  %bcore%b commands
 %b  who          away         quit         whom         me%b
-%b  whois        note         match        motd         bots%b
+%b  whois        page         match        motd         bots%b
 %b  addlog       newpass      bottree      console      chat%b
 %b  nick         echo         botinfo      strip        su%b
-%b  trace        fixcodes     page%b
+%b  trace        fixcodes%b
 %{+t}
 For botnet masters:
 %b  +bot         chattr       chnick       chpass       +host%b

@@ -67,8 +67,8 @@ static void link_assoc(char *bot, char *via)
       context;
       while (a != NULL) {
 	if (a->name[0]) {
-	  simple_sprintf(x, "assoc %D %s %s", a->channel, botnetnick,
-			 a->name);
+          simple_sprintf(x, "assoc %D %s %s", (int) a->channel, botnetnick,
+           		a->name);
 	  botnet_send_zapf(idx, botnetnick, dcc[idx].nick, x);
 	}
 	a = a->next;

@@ -79,7 +79,34 @@ char *int_to_base64(unsigned int val)
   return buf_base64 + i;
 }
 
-char *int_to_base10(unsigned int val)
+char *int_to_base10(int val)
+{
+  static char buf_base10[17];
+  int p = 0;
+  int i = 16;
+
+  buf_base10[16] = 0;
+  if (!val) {
+    buf_base10[15] = '0';
+    return buf_base10 + 15;
+  }
+  if (val < 0) {
+    p = 1;
+    val *= -1;
+  }
+  while (val) {
+    i--;
+    buf_base10[i] = '0' + (val % 10);
+    val /= 10;
+  }
+  if (p) {
+    i--;
+    buf_base10[i] = '-';
+  }
+  return buf_base10 + i;
+}
+
+char *unsigned_int_to_base10(unsigned int val)
 {
   static char buf_base10[16];
   int i = 15;
@@ -115,14 +142,20 @@ int simple_sprintf VARARGS_DEF(char *,arg1)
 
 	break;
       case 'd':
-	i = va_arg(va, unsigned int);
+      case 'i':
+	i = va_arg(va, int);
 
 	s = int_to_base10(i);
 	break;
       case 'D':
+	i = va_arg(va, int);
+
+	s = int_to_base64((unsigned int) i);
+	break;
+      case 'u':
 	i = va_arg(va, unsigned int);
 
-	s = int_to_base64(i);
+        s = unsigned_int_to_base10(i);
 	break;
       case '%':
 	buf[c++] = *format++;

@@ -94,7 +94,7 @@ struct chan_t {
 #define CHANTOPIC  0x0010	/* +t */
 #define CHANNOMSG  0x0020	/* +n */
 #define CHANLIMIT  0x0040	/* -l -- used only for protecting modes */
-#define CHANKEY    0x0080	/* -k -- used only for protecting modes */
+#define CHANKEY    0x0080	/* +k */
 #define CHANANON   0x0100	/* +a -- ircd 2.9 */
 #define CHANQUIET  0x0200	/* +q -- ircd 2.9 */
 
@@ -169,18 +169,20 @@ struct chanset_t {
 					 * when +stopnethack */
 #define CHAN_INACTIVE       0x10000	/* no irc support for this channel - drummer */
 #define CHAN_PROTECTFRIENDS 0x20000     /* re-op any +f people who get deop'd */
-/*			    0x40000 */
-/*			    0x80000 */
+#define CHAN_SHARED         0x40000	/* channel is being shared */
+#define CHAN_SEEN           0x80000
+#define CHAN_REVENGEBOT     0x100000	/* revenge on actions against the bot */
+/*			    0x200000 */
+/*			    0x400000 */
+/*			    0x800000 */
 #define CHAN_ACTIVE         0x1000000	/* like i'm actually on the channel
 					 * and stuff */
 #define CHAN_PEND           0x2000000	/* just joined; waiting for end of
 					 * WHO list */
 #define CHAN_FLAGGED        0x4000000	/* flagged during rehash for delete */
 #define CHAN_STATIC         0x8000000	/* channels that are NOT dynamic */
-#define CHAN_SHARED         0x10000000	/* channel is being shared */
-#define CHAN_ASKEDBANS      0x20000000
-#define CHAN_SEEN           0x40000000
-#define CHAN_REVENGEBOT     0x80000000	/* revenge on actions against the bot */
+#define CHAN_ASKEDBANS      0x10000000
+#define CHAN_ASKEDMODES     0x20000000  /* find out key-info on IRCu */
 
 #define CHAN_ASKED_EXEMPTS  0x0001
 #define CHAN_ASKED_INVITED  0x0002

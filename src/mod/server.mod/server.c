@@ -534,7 +534,7 @@ static char *traced_server(ClientData cdata, Tcl_Interp * irp, char *name1,
 
   if (server_online) {
     int servidx = findanyidx(serv);
-    simple_sprintf(s, "%s:%d", dcc[servidx].host, dcc[servidx].port);
+    simple_sprintf(s, "%s:%u", dcc[servidx].host, dcc[servidx].port);
   } else
     s[0] = 0;
   Tcl_SetVar2(interp, name1, name2, s, TCL_GLOBAL_ONLY);
@@ -1257,7 +1257,7 @@ static Function server_table[] =
   (Function) server_expmem,
   (Function) server_report,
   /* 4 - 7 */
-  (Function) 0,			/* char * */
+  (Function) 0,			/* char * (points to botname later on) */
   (Function) botuserhost,	/* char * */
   (Function) & quiet_reject,	/* int */
   (Function) & serv,

@@ -4,6 +4,17 @@ Changes in eggdrop: (since v1.3.0)
 
 1.3.29
 Foundby   Fixedby   What....
+          Fabian    moved .note into notes module
+          Fabian    added several exported module functions to modvals.h
+          rtc       fixed signed/unsigned integer mess up (aka .dccstat/
+                    tcl dcclist bug)
+          Eule      find out key-info on IRCu-based Server
+          rtc       updated weed script
+ZiMiaS    dw        dcc enter password wasnt using the lang file.
+rtc       guppy     cmd_chnick and cmd_nick were rewritten to not accept nicks
+                    with spaces in them ...
+rtc       guppy     if a bot tries to link using our botnetnick, its rejected,
+                    and logged.
 Wiktor    Fabian    removed tiny compile warning.
 charvel   Fabian    made the code check the ismember result everywhere now
 toot      Fabian    removed debug message in notes module

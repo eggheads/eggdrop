@@ -582,6 +582,6 @@
 #define DCC_EOFIDENT	get_language(0xe2f)
 #define DCC_LOSTIDENT	get_language(0xe30)
 #define DCC_NOACCESS	get_language(0xe31)
-
+#define DCC_MYBOTNETNICK get_language(0xe32)
 
 

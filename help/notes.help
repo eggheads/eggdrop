@@ -33,6 +33,7 @@ see also: note, whom, noteigns
 ###  commands for the %bnotes module%b
   for users:
     %bnotes       +noteign        -noteign        noteigns%b
+    %bnote%b
 %{+m}
   for admins:
     %bfwd%b
@@ -54,3 +55,15 @@ See also: +noteign noteigns
    ignore masks will be rejected.
 
 See also: +noteign -noteign
+%{help=note}
+###  %bnote%b <nickname[@bot]> <message>
+   sends a private note to a user on the party line.  if that user
+   is currently on the party line, and not marked as away, she will
+   receive the message immediately.  otherwise it may be stored
+   and displayed the next time that user joins the party line.  if
+   you join the channel, and have notes stored for you on the bot,
+   it will tell you.  to send a note to someone on a different bot,
+   use "nick@bot" for the nickname.
+   
+see also: whom, notes, noteigns
+

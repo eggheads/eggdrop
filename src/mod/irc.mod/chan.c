@@ -77,7 +77,7 @@ static char *getchanmode(struct chanset_t *chan)
     s[i++] = 'n';
   if (atr & CHANANON)
     s[i++] = 'a';
-  if (chan->channel.key[0])
+  if (atr & CHANKEY)
     s[i++] = 'k';
   if (chan->channel.maxmembers > -1)
     s[i++] = 'l';
@@ -633,54 +633,56 @@ static void recheck_channel(struct chanset_t *chan, int dobans)
   pls = chan->mode_pls_prot;
   mns = chan->mode_mns_prot;
   cur = chan->channel.mode;
-  if (pls & CHANINV && !(cur & CHANINV))
-    add_mode(chan, '+', 'i', "");
-  else if (mns & CHANINV && cur & CHANINV)
-    add_mode(chan, '-', 'i', "");
-  if (pls & CHANPRIV && !(cur & CHANPRIV))
-    add_mode(chan, '+', 'p', "");
-  else if (mns & CHANPRIV && cur & CHANPRIV)
-    add_mode(chan, '-', 'p', "");
-  if (pls & CHANSEC && !(cur & CHANSEC))
-    add_mode(chan, '+', 's', "");
-  else if (mns & CHANSEC && cur & CHANSEC)
-    add_mode(chan, '-', 's', "");
-  if (pls & CHANMODER && !(cur & CHANMODER))
-    add_mode(chan, '+', 'm', "");
-  else if (mns & CHANMODER && cur & CHANMODER)
-    add_mode(chan, '-', 'm', "");
-  if (pls & CHANTOPIC && !(cur & CHANTOPIC))
-    add_mode(chan, '+', 't', "");
-  else if (mns & CHANTOPIC && cur & CHANTOPIC)
-    add_mode(chan, '-', 't', "");
-  if (pls & CHANNOMSG && !(cur & CHANNOMSG))
-    add_mode(chan, '+', 'n', "");
-  else if ((mns & CHANNOMSG) && (cur & CHANNOMSG))
-    add_mode(chan, '-', 'n', "");
-  if ((pls & CHANANON) && !(cur & CHANANON))
-    add_mode(chan, '+', 'a', "");
-  else if ((mns & CHANANON) && (cur & CHANANON))
-    add_mode(chan, '-', 'a', "");
-  if ((pls & CHANQUIET) && !(cur & CHANQUIET))
-    add_mode(chan, '+', 'q', "");
-  else if ((mns & CHANQUIET) && (cur & CHANQUIET))
-    add_mode(chan, '-', 'q', "");
-  if ((chan->limit_prot != (-1)) && (chan->channel.maxmembers == -1)) {
-    sprintf(s, "%d", chan->limit_prot);
-    add_mode(chan, '+', 'l', s);
-  } else if ((mns & CHANLIMIT) && (chan->channel.maxmembers >= 0))
-    add_mode(chan, '-', 'l', "");
-  if (chan->key_prot[0]) {
-    if (rfc_casecmp(chan->channel.key, chan->key_prot) != 0) {
-      if (chan->channel.key[0]) {
-	add_mode(chan, '-', 'k', chan->channel.key);
+  if (!(chan->status & CHAN_ASKEDMODES)) {
+    if (pls & CHANINV && !(cur & CHANINV))
+      add_mode(chan, '+', 'i', "");
+    else if (mns & CHANINV && cur & CHANINV)
+      add_mode(chan, '-', 'i', "");
+    if (pls & CHANPRIV && !(cur & CHANPRIV))
+      add_mode(chan, '+', 'p', "");
+    else if (mns & CHANPRIV && cur & CHANPRIV)
+      add_mode(chan, '-', 'p', "");
+    if (pls & CHANSEC && !(cur & CHANSEC))
+      add_mode(chan, '+', 's', "");
+    else if (mns & CHANSEC && cur & CHANSEC)
+      add_mode(chan, '-', 's', "");
+    if (pls & CHANMODER && !(cur & CHANMODER))
+      add_mode(chan, '+', 'm', "");
+    else if (mns & CHANMODER && cur & CHANMODER)
+      add_mode(chan, '-', 'm', "");
+    if (pls & CHANTOPIC && !(cur & CHANTOPIC))
+      add_mode(chan, '+', 't', "");
+    else if (mns & CHANTOPIC && cur & CHANTOPIC)
+      add_mode(chan, '-', 't', "");
+    if (pls & CHANNOMSG && !(cur & CHANNOMSG))
+      add_mode(chan, '+', 'n', "");
+    else if ((mns & CHANNOMSG) && (cur & CHANNOMSG))
+      add_mode(chan, '-', 'n', "");
+    if ((pls & CHANANON) && !(cur & CHANANON))
+      add_mode(chan, '+', 'a', "");
+    else if ((mns & CHANANON) && (cur & CHANANON))
+      add_mode(chan, '-', 'a', "");
+    if ((pls & CHANQUIET) && !(cur & CHANQUIET))
+      add_mode(chan, '+', 'q', "");
+    else if ((mns & CHANQUIET) && (cur & CHANQUIET))
+      add_mode(chan, '-', 'q', "");
+    if ((chan->limit_prot != (-1)) && (chan->channel.maxmembers == -1)) {
+      sprintf(s, "%d", chan->limit_prot);
+      add_mode(chan, '+', 'l', s);
+    } else if ((mns & CHANLIMIT) && (chan->channel.maxmembers >= 0))
+      add_mode(chan, '-', 'l', "");
+    if (chan->key_prot[0]) {
+      if (rfc_casecmp(chan->channel.key, chan->key_prot) != 0) {
+        if (chan->channel.key[0])
+	  add_mode(chan, '-', 'k', chan->channel.key);
+        add_mode(chan, '+', 'k', chan->key_prot);
       }
-      add_mode(chan, '+', 'k', chan->key_prot);
-    }
-  } else if ((mns & CHANKEY) && (chan->channel.key))
-    add_mode(chan, '-', 'k', chan->channel.key);
-  if (dobans && !channel_inactive(chan)) /* spot on guppy, this just keeps the
-				 * checking sane */
+    } else if ((mns & CHANKEY) && (chan->channel.key))
+      add_mode(chan, '-', 'k', chan->channel.key);
+  }
+  if ((chan->status & CHAN_ASKEDMODES) && dobans &&
+     !channel_inactive(chan)) /* spot on guppy, this just keeps the
+ 	                       * checking sane */
     dprintf(DP_SERVER, "MODE %s\n", chan->name);
   stacking--;
 }
@@ -689,7 +691,7 @@ static void recheck_channel(struct chanset_t *chan, int dobans)
 /* <server> 324 <to> <channel> <mode> */
 static int got324(char *from, char *msg)
 {
-  int i = 1;
+  int i = 1, ok =0;
   char *p, *q, *chname;
   struct chanset_t *chan;
 
@@ -701,6 +703,9 @@ static int got324(char *from, char *msg)
     dprintf(DP_SERVER, "PART %s\n", chname);
     return 0;
   }
+  if (chan->status & CHAN_ASKEDMODES)
+     ok = 1;
+  chan->status &= ~CHAN_ASKEDMODES;
   chan->channel.mode = 0;
   while (msg[i] != 0) {
     if (msg[i] == 'i')
@@ -720,6 +725,7 @@ static int got324(char *from, char *msg)
     if (msg[i] == 'q')
       chan->channel.mode |= CHANQUIET;
     if (msg[i] == 'k') {
+      chan->channel.mode |= CHANKEY;
       p = strchr(msg, ' ');
       if (p != NULL) {		/* test for null key assignment */
 	p++;
@@ -733,6 +739,8 @@ static int got324(char *from, char *msg)
 	  *p = 0;
 	}
       }
+      if ((chan->channel.mode & CHANKEY) && !(chan->channel.key[0])) 
+        chan->status |= CHAN_ASKEDMODES;
     }
     if (msg[i] == 'l') {
       p = strchr(msg, ' ');
@@ -751,7 +759,8 @@ static int got324(char *from, char *msg)
     }
     i++;
   }
-  recheck_channel(chan, 0);
+  if (ok)
+    recheck_channel(chan, 0);
   return 0;
 }
 

@@ -201,6 +201,31 @@ static void cmd_notes(struct userrec *u, int idx, char *par)
   putlog(LOG_CMDS, "*", "#%s# notes %s %s", dcc[idx].nick, fcn, par);
 }
 
+void cmd_note(struct userrec *u, int idx, char *par)
+{
+  char handle[512], *p;
+  int echo;
+
+  if (!par[0]) {
+    dprintf(idx, "Usage: note <to-whom> <message>\n");
+    return;
+  }
+  /* could be file system user */
+  p = newsplit(&par);
+  while ((*par == ' ') || (*par == '<') || (*par == '>'))
+    par++;			/* these are now illegal *starting* notes
+				 * characters */
+  echo = (dcc[idx].status & STAT_ECHO);
+  splitc(handle, p, ',');
+  while (handle[0]) {
+    rmspace(handle);
+    add_note(handle, dcc[idx].nick, par, idx, echo);
+    splitc(handle, p, ',');
+  }
+  rmspace(p);
+  add_note(p, dcc[idx].nick, par, idx, echo);
+}
+
 cmd_t notes_cmds[] =
 {
   {"fwd", "m", (Function) cmd_fwd, NULL},
@@ -208,4 +233,5 @@ cmd_t notes_cmds[] =
   {"+noteign", "", (Function) cmd_pls_noteign, NULL},
   {"-noteign", "", (Function) cmd_mns_noteign, NULL},
   {"noteigns", "", (Function) cmd_noteigns, NULL},
+  {"note", "", (Function) cmd_note, NULL},
 };

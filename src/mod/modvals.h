@@ -20,7 +20,7 @@
 #define HOOK_ADD_MODE            109
 #define HOOK_MATCH_NOTEREJ	 110
 
-/* these are FIXED once they are in a relase they STAY
+/* these are FIXED once they are in a release they STAY
  * well, unless im feeling grumpy ;) */
 #define MODCALL_START  0
 #define MODCALL_CLOSE  1
@@ -34,7 +34,16 @@
 /* share */
 #define SHARE_FINISH       4
 #define SHARE_DUMP_RESYNC  5
-
+/* channels */
+#define CHANNEL_CLEAR     15
+/* server */
+#define SERVER_BOTNAME       4
+#define SERVER_BOTUSERHOST   5
+/* irc */
+#define IRC_RECHECK_CHANNEL 15
+/* notes */
+#define NOTES_CMD_NOTE       4
+ 
 #ifdef HPUX_HACKS
 #include <dl.h>
 #endif

@@ -351,31 +351,6 @@ static void cmd_motd(struct userrec *u, int idx, char *par)
   }
 }
 
-void cmd_note(struct userrec *u, int idx, char *par)
-{
-  char handle[512], *p;
-  int echo;
-
-  if (!par[0]) {
-    dprintf(idx, "Usage: note <to-whom> <message>\n");
-    return;
-  }
-  /* could be file system user */
-  p = newsplit(&par);
-  while ((*par == ' ') || (*par == '<') || (*par == '>'))
-    par++;			/* these are now illegal *starting* notes
-				 * characters */
-  echo = (dcc[idx].status & STAT_ECHO);
-  splitc(handle, p, ',');
-  while (handle[0]) {
-    rmspace(handle);
-    add_note(handle, dcc[idx].nick, par, idx, echo);
-    splitc(handle, p, ',');
-  }
-  rmspace(p);
-  add_note(p, dcc[idx].nick, par, idx, echo);
-}
-
 static void cmd_away(struct userrec *u, int idx, char *par)
 {
   if (strlen(par) > 60)
@@ -806,65 +781,62 @@ static void cmd_pls_bot(struct userrec *u, int idx, char *par)
 
 static void cmd_chnick(struct userrec *u, int idx, char *par)
 {
-  char *hand, *newhand;
+  char hand[HANDLEN + 1], newhand[HANDLEN + 1];
   int i, atr = u ? u->flags : 0, atr2;
   struct userrec *u2;
 
-  hand = newsplit(&par);
-  if (!hand[0] || !par[0])
+  strncpy(hand, newsplit(&par), sizeof(hand));
+  strncpy(newhand, newsplit(&par), sizeof(newhand));
+
+  if (!hand[0] || !newhand[0]) {
     dprintf(idx, "Usage: chnick <oldnick> <newnick>\n");
+    return;
+  }
+  for (i = 0; i < strlen(newhand); i++)
+    if ((newhand[i] <= 32) || (newhand[i] >= 127) || (newhand[i] == '@'))
+      newhand[i] = '?';
+  if (strchr(BADNICKCHARS, newhand[0]) != NULL)
+    dprintf(idx, "Bizarre quantum forces prevent nicknames from starting with %c\n",
+           newhand[0]);
+  else if (get_user_by_handle(userlist, newhand) &&
+          strcasecmp(hand, newhand))
+    dprintf(idx, "Somebody is already using %s.\n", newhand);
+  else if (!strcasecmp(newhand, botnetnick))
+    dprintf(idx, "Hey! That's MY name!\n");
   else {
-    newhand = newsplit(&par);
-    if (strlen(newhand) > HANDLEN)
-      newhand[HANDLEN] = 0;
-    for (i = 0; i < strlen(newhand); i++)
-      if ((newhand[i] <= 32) || (newhand[i] >= 127) || (newhand[i] == '@'))
-	newhand[i] = '?';
-    if (strchr(BADNICKCHARS, newhand[0]) != NULL)
-      dprintf(idx, "Bizarre quantum forces prevent nicknames from starting with %c\n",
-	      newhand[0]);
-    else if (get_user_by_handle(userlist, newhand) &&
-	     strcasecmp(hand, newhand))
-      dprintf(idx, "Already a user %s.\n", newhand);
-    else if (!strcasecmp(newhand, origbotname) ||
-	     !strcasecmp(newhand, botnetnick))
-      dprintf(idx, "Hey! That's MY name!\n", newhand);
-    else {
-      u2 = get_user_by_handle(userlist, hand);
-      atr2 = u2 ? u2->flags : 0;
-      if ((atr & USER_BOTMAST) && !(atr & USER_MASTER) &&
-	  !(atr2 & USER_BOT))
-	dprintf(idx, "You can't change nick for non-bots.\n");
-      else if ((bot_flags(u2) & BOT_SHARE) && !(atr & USER_OWNER))
-	dprintf(idx, "You can't change shared bot's nick.\n");
-      else if ((atr2 & USER_OWNER) && !(atr & USER_OWNER) &&
-	       strcasecmp(dcc[idx].nick, hand))
-	dprintf(idx, "Can't change the bot owner's handle.\n");
-      else if (isowner(hand) && strcasecmp(dcc[idx].nick, hand))
-	dprintf(idx, "Can't change the permanent bot owner's handle.\n");
-      else if (change_handle(u2, newhand)) {
-	putlog(LOG_CMDS, "*", "#%s# chnick %s %s", dcc[idx].nick,
-	       hand, newhand);
-	dprintf(idx, "Changed.\n");
-      } else
-	dprintf(idx, "Failed.\n");
-    }
+    u2 = get_user_by_handle(userlist, hand);
+    atr2 = u2 ? u2->flags : 0;
+    if ((atr & USER_BOTMAST) && !(atr & USER_MASTER) &&
+       !(atr2 & USER_BOT))
+      dprintf(idx, "You can't change nick for non-bots.\n");
+    else if ((bot_flags(u2) & BOT_SHARE) && !(atr & USER_OWNER))
+      dprintf(idx, "You can't change shared bot's nick.\n");
+    else if ((atr2 & USER_OWNER) && !(atr & USER_OWNER) &&
+            strcasecmp(dcc[idx].nick, hand))
+      dprintf(idx, "Can't change the bot owner's handle.\n");
+    else if (isowner(hand) && strcasecmp(dcc[idx].nick, hand))
+      dprintf(idx, "Can't change the permanent bot owner's handle.\n");
+    else if (change_handle(u2, newhand)) {
+      putlog(LOG_CMDS, "*", "#%s# chnick %s %s", dcc[idx].nick,
+            hand, newhand);
+      dprintf(idx, "Changed.\n");
+    } else
+      dprintf(idx, "Failed.\n");
   }
 }
 
 static void cmd_nick(struct userrec *u, int idx, char *par)
 {
-  int i, len = strlen(par);
-  char oldnick[HANDLEN + 1], *newnick;
+  char oldnick[HANDLEN + 1], newnick[HANDLEN + 1];
+  int i;
 
-  if (!len) {
+  strncpy(newnick, newsplit(&par), sizeof(newnick));
+
+  if (!newnick[0]) {
     dprintf(idx, "Usage: nick <new-handle>\n");
     return;
   }
-  newnick = newsplit(&par);
-  if (len > HANDLEN)
-    newnick[len = HANDLEN] = 0;
-  for (i = 0; i < len; i++)
+  for (i = 0; i < strlen(newnick); i++)
     if ((newnick[i] <= 32) || (newnick[i] >= 127) || (newnick[i] == '@'))
       newnick[i] = '?';
   if (strchr(BADNICKCHARS, newnick[0]) != NULL) {
@@ -873,11 +845,10 @@ static void cmd_nick(struct userrec *u, int idx, char *par)
   } else if (get_user_by_handle(userlist, newnick) &&
 	     strcasecmp(dcc[idx].nick, newnick)) {
     dprintf(idx, "Somebody is already using %s.\n", newnick);
-  } else if (!strcasecmp(newnick, origbotname) ||
-	     !strcasecmp(newnick, botnetnick)) {
-    dprintf(idx, "Hey!  That's MY name!\n", par);
+  } else if (!strcasecmp(newnick, botnetnick)) {
+    dprintf(idx, "Hey!  That's MY name!\n");
   } else {
-    strcpy(oldnick, dcc[idx].nick);
+    strncpy(oldnick, dcc[idx].nick, sizeof(oldnick));
     if (change_handle(u, newnick)) {
       putlog(LOG_CMDS, "*", "#%s# nick %s", oldnick, newnick);
       dprintf(idx, "Okay, changed.\n");
@@ -906,6 +877,8 @@ static void cmd_chpass(struct userrec *u, int idx, char *par)
     else if ((u->flags & USER_OWNER) && !(atr & USER_OWNER) &&
 	     strcasecmp(handle, dcc[idx].nick))
       dprintf(idx, "Can't change the bot owner's password.\n");
+    else if (isowner(handle) && strcasecmp(dcc[idx].nick, handle))
+      dprintf(idx, "Can't change the permanent bot owner's handle.\n");
     else if (!par[0]) {
       putlog(LOG_CMDS, "*", "#%s# chpass %s [nothing]", dcc[idx].nick,
 	     handle);
@@ -2413,7 +2386,7 @@ static void cmd_modules(struct userrec *u, int idx, char *par)
  * int cmd_whatever(idx,"parameters");
  * as with msg commands, function is responsible for any logging
  */
-cmd_t C_dcc[65] =
+cmd_t C_dcc[64] =
 {
   {"+bot", "t", (Function) cmd_pls_bot, NULL},
   {"+host", "tm|m", (Function) cmd_pls_host, NULL},
@@ -2457,7 +2430,6 @@ cmd_t C_dcc[65] =
   {"motd", "", (Function) cmd_motd, NULL},
   {"newpass", "", (Function) cmd_newpass, NULL},
   {"nick", "", (Function) cmd_nick, NULL},
-  {"note", "", (Function) cmd_note, NULL},
   {"page", "", (Function) cmd_page, NULL},
   {"quit", "", (Function) 0, NULL},
   {"rehash", "m", (Function) cmd_rehash, NULL},
