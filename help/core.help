@@ -22,12 +22,12 @@ DCC COMMANDS for %B, %V:
 %b  whois        page         match        motd         bots%b
 %b  addlog       newpass      console      chat         handle%b
 %b  echo         strip        su           trace        fixcodes%b
-%b  info%b
+%b  info         bottree      botinfo      relay%b
 %{+t}
 For botnet masters:
 %b  +bot         botattr      chhandle     chpass       +host%b
-%b  -bot         link         chaddr       relay        -host%b
-%b  unlink       boot         bottree      botinfo%b
+%b  -bot         link         chaddr       boot         -host%b
+%b  unlink%b
 %{+m|m}
 For masters:
 %b  chattr       save         backup       reload       status%b
@@ -177,11 +177,12 @@ telnet-flood
 %b  whois        page         match        motd         bots%b
 %b  addlog       newpass      console      chat         handle%b
 %b  echo         strip        su           trace        fixcodes%b
+%b  bottree      botinfo      relay%b
 %{+t}
 For botnet masters:
 %b  +bot         botattr      chhandle     chpass       +host%b
-%b  -bot         link         chaddr       relay        -host%b
-%b  unlink       boot         bottree      botinfo%b
+%b  -bot         link         chaddr       boot         -host%b
+%b  unlink%b
 %{+m|m}
 For masters:
 %b  chattr       save         backup       reload       status%b

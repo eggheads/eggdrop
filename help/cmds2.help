@@ -137,7 +137,7 @@ see also: save, reload, restart
 ###  %brehelp%b
    This command gets the bot to recheck all it's help files for new
    commands that have been added.
-%{help=relay}%{+t}
+%{help=relay}%{+o}
 ###  %brelay%b <botname>
    will relay you via telnet to another bot that your bot knows of,
    whether or not they are currently connected.  your dcc-chat/telnet

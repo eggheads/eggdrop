@@ -124,7 +124,7 @@ See also:  +user, +bot, -bot
    linked to your bot at the current moment.
 
 See also: whois, chattr
-%{help=botinfo}%{+t}
+%{help=botinfo}
 ###  %bbotinfo%b
    Requests information from every bot currently in the botnet.
    Each bot should eventually send you one line listing its version
@@ -135,7 +135,7 @@ See also: whois, chattr
       Bots: cEvin, ruthie, Killa1
    There is no indication of which bots are directly connected to
    this one.  Use %b'who'%b %{+t}or %b'bottree'%b%{-} for that information.
-%{help=bottree}%{+t}
+%{help=bottree}
 ###  %b[v]bottree%b
    Shows a tree-format diagram of the bots currently in the botnet.
    It's just a nice way to get a feel for how the bots are connected
