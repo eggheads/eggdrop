@@ -1,19 +1,7 @@
 # core.french.lang
 #   core language messages for eggdrop
 #
-# Traduit de l'anglais par TiTi <TiTi_1st@hotmail.com>
-# Pour Eggdrop 1.3.17
-#
-# Modifié et adapté à l'eggdrop 1.3.24i par arthur2
-# Modifié et adapté à l'eggdrop 1.4.0 par arthur2
-# Modifié et adapté à l'eggdrop 1.4.1 par Fraggle
-#
-# Cette traduction est incomplète, merci de contacter
-# arthur2@demoniak.hay-france.com ou benoit_jerome@penguinpowered.com
-# si vous voulez l'améliorer
-#
-# $Id: core.french.lang,v 1.16 2000/06/17 19:55:13 guppy Exp $
-
+# $Id: core.french.lang,v 1.17 2000/07/16 08:36:05 guppy Exp $
 
 # General stuff
 0x001,Utilisation
@@ -26,25 +14,25 @@
 0x133,placé par
 0x135,non actif sur
 0x137,non actif
-0x138,n'a pas été placé par le bot
+0x138,non placé par le bot
 
 # BANS_
-0x104,Interdictions globales
-0x106,Interdictions spécifiques au canal pour
+0x104,Bans globaux
+0x106,Bans spécifiques au canal
 0x109,Utilisez '.bans all' pour voir la liste complète
-0x10A,Arrêt de l'interdiction
+0x10A,Annulation du ban
 
 # EXEMPTS_
 0x114,Exceptions globales
-0x116,Exceptions spécifiques au canal pour
+0x116,Exceptions spécifiques au canal
 0x119,Utilisez '.exempts all' pour voir la liste complète
-0x11A,Arrêt de l'exception
+0x11A,Annulation de l'exception
 
 # INVITES_
 0x124,Invitations globales
-0x126,Invitations spécifiques au canal pour
+0x126,Invitations spécifiques au canal
 0x129,Utilisez '.invites all' pour voir la liste complète
-0x12A,Arrêt de l'invitation
+0x12A,Annulation de l'invitation
 
 # MOD_
 0x200,Déjà chargé.
@@ -53,39 +41,40 @@
 0x204,Requis par un autre module
 0x205,Aucune fonction de fermeture
 0x206,Module déchargé:
-0x207,Aucun module de ce type
+0x207,Aucun module de ce nom
 0x208,Aucune information pour le module:
 0x209,Erreur pendant le chargement du module:
 0x20A,Erreur pendant le déchargement du module:
 0x20B,Ne peut pas charger les modules
-0x20C,Module stagnant; il va y avoir des fuites mémoire!
+0x20C,Module stagnant; il va y avoir perte de mémoire!
 0x20D,Vous avez installé des modules, mais n'avez pas choisi de module de cryptage,\n\
-consultez s'il vous plaît le ficher de configuration initiale pour plus de renseignements.\n
-0x20E,Module filesys non chargé.
-0x20F,Module chargé: %s\t\t(avec support linguiste)
+consultez le ficher de configuration initiale pour plus de renseignements.\n
+0x20E,Module Filesys non chargé.
+0x20F,Module chargé: %s\t\t(avec support internationnal)
 0x210,Module chargé: %s
+
 # USERF_
-0x400,Transfert de la liste utilisateurs terminé; utilisation de la liste
+0x400,Transfert de la liste utilisateurs terminé; liste prise en compte
 0x401,Ne peut pas ouvrir la liste utilisateurs pour relire les données du canal
 0x402,NE PEUT PAS LIRE LA NOUVELLE LISTE UTILISATEURS
 0x403,Ne peut vous envoyer la liste utilisateurs (erreur interne)
-0x404,Personne ne correspond à ces critères
-0x405,Vieille liste utilisateurs, utilisez 'tclsh scripts/weed <fichier-usagers> c' pour la convertir
+0x405,Ancienne liste utilisateurs, utilisez 'tclsh scripts/weed <fichier-usagers> c' pour la convertir
+0x406,Format de liste utilisateurs invalide.
 0x406,Format de la liste utilisateurs invalide.
 0x407,Enregistrement utilisateur corrompu
 0x408,Enregistrement utilisateur en double
 0x409,Mot de passe corrompu pour:
-0x40a,Interdiction(s) ignorée(s) pour le(s) canal(aux):
+0x40a,0x40a,Ban(s) ignoré(s) pour le(s) canal(aux):
 0x40b,Ecriture de la liste utilisateurs...
 0x40c,ERREUR pendant l'écriture de la liste utilisateurs.
 0x40d,ERREUR pendant l'écriture de la liste utilisateurs à transférer.
-0x40e,Création de la liste utilisateurs inutile--sautée
-0x40f,Rafraîchissement des données...
+0x40e,Création de la liste utilisateurs inutile--ignorée
+0x40f,Relecture de la configuration...
 0x410,Je ne connais personne de ce nom.\n
 0x411,Aucun enregistrement pour cet utilisateur.
 0x412,Sauvegarde de la liste utilisateurs...
 0x413,Echec de la connexion; interruption du transfert de la liste utilisateurs.
-0x414,Demande de partage à l'ancienne norme par
+0x414,Demande de partage (ancienne version) par
 0x415,Demande de partage désuète
 0x416,Liste utilisateurs rejetée par
 
@@ -100,11 +89,11 @@ consultez s'il vous plaît le ficher de configuration initiale pour plus de rense
 0x507,(plus de %d résultats; liste tronquée)\n
 0x508,--- Trouvé %d résultat%s.\n
 0x509,Commande ambiguë.\n
-0x50a,Quoi? Utilisez '.help'\n
-0x50b,Attaches de commande:\n
+0x50a,Quoi? Essayez '.help'\n
+0x50b,Liaisons de commande:\n
 0x50c,Redémarrage...
-0x50d,Tentative de chargement de module sur eggdrop non-modulaire.
-0x50e,Changement de fichiers de log...
+0x50d,Tentative de chargement de module sur eggdrop non modularisé.
+0x50e,Rotation des fichiers de log...
 0x50f,propriétaire
 0x510,maître
 0x511,op
@@ -133,8 +122,8 @@ consultez s'il vous plaît le ficher de configuration initiale pour plus de rense
 0x528,caché
 0x529,arrière plan
 0x52a,mode terminal
-0x52b,mode status
-0x52c,log dump mode
+0x52b,mode statut
+0x52c,mode log
 0x52d,En ligne depuis
 0x52e,cache hit
 0x52f,Utilisation de la librairie TCL:
@@ -144,75 +133,75 @@ consultez s'il vous plaît le ficher de configuration initiale pour plus de rense
 0x533,ATTENTION! Vous exécutez eggdrop en tant que root!
 0x534,FICHIER DE CONFIGURATION NON CHARGE (INTROUVABLE OU ERREUR)
 0x535,LISTE UTILISATEURS NON TROUVEE!  (essayez './eggdrop -m' pour en créer une)
-0x536,DEMARRAGE DU BOT EN MODE CREATION DE LA LISTE UTILISATEUR.\n\
+0x536,DEMARRAGE DU BOT EN MODE CREATION DE LISTE UTILISATEURS.\n\
 Faites un Telnet sur le bot et entrez 'NEW' comme surnom.
 0x537,OU Allez sur IRC et:  /msg %s hello\n
-0x538,Celà fera que le bot vous reconnaitra comme maître.
+0x538,Le bot vous reconnaitra alors comme maître.
 0x539,LA LISTE UTILISATEURS EXISTE DEJA (enlevez le '-m')
 0x53a,NE PEUT PAS ECRIRE DANS LE REPERTOIRE TEMPORAIRE
-0x53b,ne peut pas recharger la liste utilisateurs!
-0x53c,La liste utilisateurs est manquante!
+0x53b,Ne peut pas recharger la liste utilisateurs!
+0x53c,La liste utilisateurs est innexistante!
 0x53d,Bots connectés
-0x53e,%B  (%E)\n\nEntrez votre surnom\n
-0x53f,Rotation du fichier de log %s, taille maximale depassée (%d)
+0x53e,%B  (%E)\n\nEntrez votre surnom.\n
+0x53f,Rotation du fichier log %s, taille maximale depassée (%d)
 0x540,\nSurnom.\n
 0x541,Dernier message repété %d fois.\n
 
 # IRC_
-0x600,Interdit
-0x601,Vous êtes interdit
-0x602,Interdiction sur moi-même--déviée.
+0x600,Banni
+0x601,Vous êtes banni
+0x602,Tentative de Ban sur moi-même--évitée.
 0x603,c'était drôle, refaites-le encore une fois!
 0x604,Salut
 0x605,Au revoir
-0x606,Vous êtes interdit, goober.
+0x606,Vous êtes banni, goober.
 0x607,Votre surnom est trop long pour l'ajouter maintenant.
 0x608,Présenté à
-0x609,site commun
+0x609,site public
 0x60a,NOTICE %s :Salut %s!  Je suis %s, un bot eggdrop.\n
 0x60b,NOTICE %s :Je vais vous reconnaître par votre hostmask '%s' à partir de maintenant.\n
-0x60c,Etant donné que vous venez d'un site IRC commun, vous devriez
+0x60c,Etant donné que vous venez d'un site IRC public, vous devriez
 0x60d,toujours utiliser ce surnom quand vous me parlez.
 0x60e,VOUS ETES MAINTENANT LE PROPRIETAIRE DE CE BOT
-0x60f,Installation du bot complète, le premier maître est %s
+0x60f,Installation du bot terminée, le premier maître est %s
 0x610,Bienvenue sur Eggdrop! =]
 0x611,présenté à %s de %s
 0x612,Vous avez un mot de passe de défini.
 0x613,Vous n'avez pas de mot de passe de défini.
 0x614,(VOUS N'AVEZ PAS DE MOT DE PASSE DE DEFINI)\n
 0x615,Vous avez déjà un mot de passe de défini.
-0x616,Employez s'il vous plaît au moins 6 caractères.
+0x616,Employez au moins 6 caractères.
 0x617,Mot de passe défini:
 0x618,Mot de passe incorrect.
-0x619,Mot de passe changé en:
-0x61a,Vous êtes sur un site commun; N'utilisez PAS ident.
+0x619,Nouveau mot de passe:
+0x61a,Vous êtes sur un site public; vous n'avez pas accès à IDENT.
 0x61b,NOTICE %s :Vous n'êtes pas %s, vous êtes %s.\n
-0x61c,Accès interdit.
+0x61c,Accès refusé.
 0x61d,Je vous reconnais là.
 0x61e,Hostmask ajouté
 0x61f,Retrait de votre adresse email.
 0x620,Actuellement:
 0x621,Maintenant:
 0x622,Pour l'enlever:
-0x623,Vous n'avez pas d'adresse Email définie.
+0x623,Vous n'avez pas d'adresse email définie.
 0x624,Votre ligne de renseignements est verrouillée
 0x625,Retrait de votre ligne de renseignements sur
 0x626,Retrait de votre ligne de renseignements.
 0x627,Vous n'avez aucuns renseignements sur
 0x628,Vous n'avez aucuns renseignements.
 0x629,Je ne contrôle pas ce canal.
-0x62a,Redéfinition des renseignements du canal.
+0x62a,Reinitialisation des renseignements du canal.
 0x62b,Changement de serveur...
 0x62c,Le canal est actuellement caché.
 0x62d,Maintenant sur le canal
 0x62e,N'est jamais venu sur l'un de mes canaux.
-0x62f,Vu pour la dernière fois à
-0x630,Je ne parle pas aux étrangers; s'il vous plaît présentez vous d'abord.
+0x62f,Vu la dernière fois à
+0x630,Vous n'êtes pas enregistré ; présentez vous d'abord.
 0x631,Aucune aide.
 0x632,Aucune aide disponible là-dessus.
 0x633,n'est pas un fichier normal!
 0x634,Pas sur ce canal en ce moment.
-0x635,Changement de mon surnom en %s
+0x635,Je récupère mon surnom (%s)
 0x636,Le serveur me dit que mon surnom est invalide.
 0x637,SURNOM EN UTILISATION: Essai de '%s'
 0x638,Ne peut pas changer de surnom sur %s.  Mon surnom est-il interdit?
@@ -220,12 +209,12 @@ Faites un Telnet sur le bot et entrez 'NEW' comme surnom.
 0x63a,Le canal %s est bloqué. :(
 0x63b,%s dit que je ne suis pas enregistré, essai du suivant.
 0x63c,Vous avez un serveur incorrect.
-0x63d,Avalanche de @%s!  Placement en ignorance!
-0x63e,Avalanche de CTCP de @%s!  Placement en ignorance!
-0x63f,Avalanche de JOIN de @%s!  Interdiction.
-0x640,Avalanche de canal de %s -- je le kick
+0x63d,Flood de @%s!  Placement en ignorance!
+0x63e,Flood de CTCP de @%s!  Placement en ignorance!
+0x63f,Flood de JOIN de @%s!  Interdiction.
+0x640,Flood de canal de %s -- je le kick
 0x641,Essai du serveur
-0x642,La consultation du DNS a échoué
+0x642,La requête DNS a échoué
 0x643,Echec de la connexion à
 0x644,Le serveur ne répond plus; changement...
 0x645,Déconnecté de
@@ -245,34 +234,34 @@ Faites un Telnet sur le bot et entrez 'NEW' comme surnom.
 0x653,FAUX OPERATEUR DONNE PAR LE SERVEUR
 0x654,Fin de renseigements du canal.
 0x655,Kick massif, va t'asseoir dans un coin
-0x656,Interdiction enlevée
-0x657,Hmm, renseignements sur les modes d'un canal sur lequel je ne suis pas
+0x656,Ban annulé
+0x657,Hmm, info sur les modes d'un canal sur lequel je ne suis pas
 0x658,...et merci d'avoir joué.
 0x659,Changement de serveur (j'ai besoin de %d serveurs, je n'en ai que %d)
 0x65a,changement de serveur
 0x65b,Je suis sur trop de canaux--ne peut rejoindre: %s
 0x65c,Le canal est plein--ne peut rejoindre: %s
 0x65d,Le canal est réservé aux invités--ne peut rejoindre: %s
-0x65e,Interdit sur le canal--ne peut rejoindre: %s
+0x65e,Banni sur le canal--ne peut rejoindre: %s
 0x65f,Le serveur dit que je ne suis pas sur le canal: %s
 0x660,Mauvaise clé--ne peut rejoindre: %s
 0x661,NOTICE %s :Toutes les commandes sont accessibles par /MSG. Pour la liste complète, /MSG %s help   Cya!\n
 0x662,NOTICE %s :Je ne vous reconnais pas de cet hôte.\n
 0x663,NOTICE %s :Soit vous utilisez le nick de quelqu'un d'autre, soit vous devez taper: /MSG %s IDENT (mot de passe)\n
 0x664,NOTICE %s :En tant que maître, vous devez vraiment définir un mot de passe: avec /MSG %s pass <le-mot-de-passe-que-vous-avez-choisi>.\n
-0x665,NOTICE %s :La majorité des commandes est accessible en DCC chat. Dorénavant, vous n'avez plus besoin de l'option -m quand vous démarrez le bot.  Enjoy !!!\n
-0x666,C'est l'interface telnet de %s, un bot eggdrop.\nN'en abusez pas, et elle sera ouverte également à tous vos amis.\n
+0x665,NOTICE %s :La majorité des commandes est accessible en DCC chat. Dorénavant, vous n'avez plus besoin de l'option -m quand vous démarrez le bot. Amusez-vous bien !!\n
+0x666,Ceci est l'interface telnet de %s, un bot eggdrop.\nN'en abusez pas, et elle sera ouverte également à tous vos amis.\n
 0x667,Maintenant vous devez trouver un nick à utiliser sur le bot,\net un mot de passe, ainsi personne ne peut prétendre être vous.\nRetenez les!
-0x668,Dorénavant, vous n'avez plus besoin d'utiliser l'option -m pour démarrer le bot.\nEnjoy !!
-0x669,Avalanche de connexions telnet de %s!  Placement en ignorance!
-0x66a,interdit: 
+0x668,Dorénavant, vous n'avez plus besoin d'utiliser l'option -m pour démarrer le bot.\nAmusez-vous bien !!
+0x669,Flood de connexions telnet de %s!  On ignore!
+0x66a,banni: 
 0x66b,avalanche de surnom
 0x66c,touches pas à mon pote
 0x66d,...pas la peine de revenir.
 0x66e,Retour au surnom alternatif %s
 0x670,Exception enlevée
 0x671,Invitation enlevée
-0x672,Avalanche de SURNOM de @%s!  Interdiction.
+0x672,Flood de SURNOM de @%s! Banni.
 
 # EGG_
 0x700,Arguments de la ligne de commande:\n\
@@ -282,9 +271,9 @@ Faites un Telnet sur le bot et entrez 'NEW' comme surnom.
   -c   (avec -n) affichage des statistiques du canal toutes les 10 secondes\n\
   -t   (avec -n) utilise un terminal pour simuler un DCC-CHAT\n\
   -m   mode de création de la liste utilisateurs\n\
-  nom du fichier de configuration (optionnel) (par défaut 'egg.config')\n
+  nom du fichier de configuration (optionnel) (par défaut 'eggdrop.conf')\n
 
-0x701,Je détecte que %s est déjà en train de s'exécuter depuis ce répertoire.\n
+0x701,Je détecte que %s est s'exécute déjà depuis ce répertoire.\n
 0x702,Si ce n'est pas le cas, supprimez '%s'\n
 0x703,* Attention! Impossible d'écrire le fichier %s!\n
 
@@ -294,24 +283,24 @@ Faites un Telnet sur le bot et entrez 'NEW' comme surnom.
 0x802,  (est un maître)
 
 # CHAN_
-0x900,Aucun canal de ce type défini
+0x900,Aucun canal de ce nom défini
 0x901,Clé du canal incorrecte
 0x902,* Changement de mode sur %s pour le non-existant %s!
 0x903,Deop en masse sur %s par %s
 0x904,Deop en masse.  Va t'asseoir dans un coin.
 0x905,Interdiction incorrecte.
-0x907,Oops.   Quelqu'un m'a fait rejoindre %s... départ...
+0x907,Oops. Quelqu'un m'a fait rejoindre %s... j'en pars...
 0x908,Changement de mode par un faux op sur %s!  Annulation...
 0x909,Abus d'un op mal gagné par serveur
 0x90a,Changement de mode par un non-op sur %s!  Annulation...
 0x90b,Abus d'une désynchronisation
-0x90c,avalanche
-0x90d,interdiction incorrecte
+0x90c,flood
+0x90d,ban incorrect
 0x90e,nom d'utilisateur incorrect
 0x90f,exception incorrecte
 0x910,invitation incorrecte
 
-0xa00,Aucune ignorance
+0xa00,Aucun ignoré
 0xa01,Actuellement, j'ignore
 0xa02,Je n'ignore plus
 
@@ -321,7 +310,7 @@ Faites un Telnet sur le bot et entrez 'NEW' comme surnom.
 0xb03,Les notes ne sont pas supportées par ce bot.\n
 0xb04,Désolé, cet utilisateur a déjà trop de notes.\n
 0xb05,Création du fichier de notes impossible.  Désolé.\n
-0xb06,Fichier de notes injoignable!
+0xb06,Fichier de notes introuvable!
 0xb07,Une note est arrivée pour vous
 0xb08,Message stocké
 0xb09,Note envoyée.
@@ -339,8 +328,8 @@ Faites un Telnet sur le bot et entrez 'NEW' comme surnom.
 0xb15,Pour une liste:
 0xb16,### Vous avez %d note%s en attente.\n
 0xb17,### Utilisez '.notes read' pour les lire.\n
-0xb18,L'extinction du bot commence....
-0xb19,Aucun utilisateur de ce type
+0xb18,L'arrêt du bot commence....
+0xb19,Aucun utilisateur de ce nom
 0xb1a,Aucuns canaux
 0xb1b,Membres de la party line:
 0xb1c,Bots connectés
@@ -366,7 +355,7 @@ Faites un Telnet sur le bot et entrez 'NEW' comme surnom.
 0xb30,Vieux bot détecté (non-supporté)
 0xb31,Résultat de trace
 0xb32,n'existe pas
-0xb33,Les boots externes ne sont pas autorisés.
+0xb33,Les boots distants ne sont pas autorisés.
 0xb34,Je ne peux virer le propriétaire du bot.
 0xb35,TRANSFERT DE FICHIER REJETE
 0xb36,Je n'ai pas de système de fichiers d'où prendre les fichiers.
@@ -378,16 +367,16 @@ Faites un Telnet sur le bot et entrez 'NEW' comme surnom.
 0xb3c,Aucunes informations de trace:
 0xb3d,L'arborescence est trop complexe!
 0xb3e,Déconnexion de tous les bots...
-0xb3f,Tentative de tuer le lien à
+0xb3f,Tentative de terminer le lien à
 0xb40,Plus aucun essai de lien avec:
-0xb41,Cassage du avec
+0xb41,Dénouage du lien avec
 0xb42,Délié de:
 0xb43,Non connecté à ce bot.
-0xb44,Smooshing bot tables and assocs...
+0xb44,Vidange de la table des bots et des assocs...
 0xb45,n'est pas un bot connu.
 0xb46,Me relier à moi même?  Heh mon garcon, un grand jour pour Freud.
 0xb47,Ce bot est déja connecté.
-0xb48,Adresse de port telnet invalide:port stocké pour
+0xb48,Adresse de port telnet invalide:port enregistré pour
 0xb49,Liaison avec
 0xb4a,Ne peut trouver d'utilisateur à relayer!
 0xb4b,Liaison impossible avec
@@ -397,18 +386,18 @@ Faites un Telnet sur le bot et entrez 'NEW' comme surnom.
 0xb4f,Abandon de la tentative de relais à
 0xb50,Vous êtes maintenant de retour sur
 0xb51,Relais abandonné:
-0xb52,vient d'arriver sur la party line.
+0xb52,a rejoint la party line.
 0xb53,Perte de la connexion DCC avec
 0xb54,Abandon de la tentative de relais à
-0xb55,Succès!\n\nMAINTENANT CONNECTE AU BOT DE RELAIS
+0xb55,Succès!\n\nMAINTENANT CONNECTE AU BOT RELAIS
 0xb56,(Vous pouvez taper *BYE* pour fermer la connexion prématurément.)
-0xb57,Liaison de relais:
+0xb57,Liaison relais:
 0xb58,a quitté la party line.
-0xb59,Liaison de relais terminé
+0xb59,Liaison relais terminée
 0xb5a,ABANDON DE LA CONNEXION RELAIS.\nVous êtes de retour sur
 0xb5b,a rejoint la party line.
 0xb5c,Abandon de la liaison de relais à
-0xb5d,Cassage la connexion à
+0xb5d,Arrêt de la connexion à
 0xb5e,Relais cassé
 0xb5f,Ping timeout
 0xb60,celà ne ressemble pas à un comportement de leaf
@@ -423,7 +412,7 @@ Faites un Telnet sur le bot et entrez 'NEW' comme surnom.
 0xc05,DCC chat refusé (+x mais pas de système de fichiers)
 0xc06,DCC chat refusé (système de fichiers plein)
 0xc07,Trop de personnes sont dans le système de fichier pour l'instant.
-0xc08,S'il vous plaît, réessayez plus tard.
+0xc08,Réessayez plus tard.
 0xc09,Connexion tandem à %s refusée (dupliquée)
 0xc0a,Je n'accepte pas de fichiers des étrangers.
 0xc0b,DCC SEND refusé %s (aucun accès): %s!%s
@@ -432,7 +421,7 @@ Faites un Telnet sur le bot et entrez 'NEW' comme surnom.
 0xc0e,Les tranferts de fichiers par DCC ne sont pas supportés.
 0xc0f,DCC send refusé de %s de la part de %s!%s
 0xc10,Les noms de fichiers ne peuvent comporter de '/'...
-0xc11,Désolé, l'information taille du fichier doit être incluse.
+0xc11,Désolé, la taille du fichier doit être incluse.
 0xc12,Ce fichier existe déjà.
 0xc13,Ne peut créer ce fichier (erreur du répertoire temporaire)
 0xc14,Ce fichier est déja en train d'être envoyé.
@@ -444,14 +433,14 @@ Faites un Telnet sur le bot et entrez 'NEW' comme surnom.
 0xc1a,Echec de la connexion DCC
 0xc1b,Le système de fichiers est cassé.
 0xc1c,Entrez votre mot de passe.
-0xc1d,%s a été enlevé de force pour avalanche.\n
+0xc1d,%s a été enlevé de force pour flood.\n
 0xc1e,-=- poof -=-\n
 0xc1f,Vous avez été viré de %s par %s%s%s\n
 0xc20,%s viré %s de la party line%s%s\n
 0xc21,DCC chat refusé (port invalide)
 0xc22,DCC port invalide
 
-0xd00,Je plane (pas d'interaction avec IRC)
+0xd00,Pas d'interaction avec IRC.
 
 # BOTNET
 0xe00,Faux message rejeté
@@ -472,7 +461,7 @@ Faites un Telnet sur le bot et entrez 'NEW' comme surnom.
 0xe0d,ERREUR lors de la liaison avec %s: %s
 0xe0e,Bot perdu: %s
 0xe0f,Timeout: liaison au bot %s à %s:%d
-0xe10,Logué dans: %s (%s/%d)
+0xe10,connecté: %s (%s/%d)
 0xe11,Mot de passe incorrect: [%s]%s/%d
 0xe12,Négatif, Houston.\n
 0xe13,*** %s a rejoint la party line.\n
