@@ -110,7 +110,7 @@ Last revised: June 5, 2002
     and you can type "exit" to exit the program. This means Tcl is installed
     on your system. If tclsh doesn't load, then Tcl probably isn't on your
     system, and you will need to install it. The best ftp site for Tcl is
-    ftp://ftp.scriptics.com/pub/tcl.
+    ftp://tcl.activestate.com/pub/tcl/.
 
     Tcl comes with the most distributions of Linux. HOWEVER, the one that comes
     on Slackware 3.0 is goofed up and you'll have to re-install it for yourself

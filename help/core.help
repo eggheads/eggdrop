@@ -117,7 +117,7 @@ everyone on the party line.
    executes the command using Tcl.
 
    See doc/tcl-commands.doc for details on Tcl commands added to eggdrop
-   and visit http://dev.scriptics.com/ for more information on Tcl.
+   and visit http://tcl.activestate.com/ for more information on Tcl.
 %{help=set}%{+n}
 ###  %bset%b <variable> [value]
    changes the values of internal settings of the bot, or, if used

@@ -480,7 +480,7 @@ B. Tcl Related Questions
 
     If there's really no Tcl installed on your shell, you can install
     it temporarily in /tmp or your /home. Get the latest version of Tcl from
-    ftp://ftp.scriptics.com/pub/tcl/ and follow the installation steps in its
+    ftp://tcl.activestate.com/pub/tcl/ and follow the installation steps in its
     README file. After you've installed Tcl, you have to make configure detect
     Tcl. To achieve this, you have to set either environmental variables:
 
