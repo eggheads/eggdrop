@@ -2,7 +2,7 @@
  * dns.h
  *   stuff used by dns.c
  * 
- * $Id: dns.h,v 1.4 2000/01/17 22:36:06 fabian Exp $
+ * $Id: dns.h,v 1.5 2000/09/09 11:39:09 fabian Exp $
  */
 /* 
  * Written by Fabian Knittel <fknittel@gmx.de>
@@ -41,7 +41,7 @@ typedef struct {
 typedef struct devent_str {
   struct devent_str *next;	/* Pointer to next dns_event	  */
   devent_type	*type;
-  byte		lookup;		/* RES_IPBYHOST or RES_HOSTBYIP	  */
+  u_8bit_t	lookup;		/* RES_IPBYHOST or RES_HOSTBYIP	  */
   union {
     IP		ip_addr;	/* IP address			  */
     char	*hostname; 	/* Hostname			  */

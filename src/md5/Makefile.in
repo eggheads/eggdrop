@@ -1,5 +1,5 @@
 # Makefile for src/md5/
-# $Id: Makefile.in,v 1.7 2000/07/23 20:47:13 fabian Exp $
+# $Id: Makefile.in,v 1.8 2000/09/09 11:39:10 fabian Exp $
 
 SHELL = @SHELL@
 top_srcdir = @top_srcdir@
@@ -47,5 +47,4 @@ md5c.o: ./md5c.c ../../src/main.h ../../src/lang.h ../../src/eggdrop.h \
  ../../src/tclhash.h ../../src/chan.h ../../src/users.h \
  ../../src/compat/compat.h ../../src/compat/inet_aton.h \
  ../../src/compat/snprintf.h ../../src/compat/memset.h \
- ../../src/compat/memcpy.h ../../src/compat/strcasecmp.h global.h \
- md5.h
+ ../../src/compat/memcpy.h ../../src/compat/strcasecmp.h md5.h

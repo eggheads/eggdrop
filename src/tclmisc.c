@@ -3,7 +3,7 @@
  *   Tcl stubs for file system commands
  *   Tcl stubs for everything else
  * 
- * $Id: tclmisc.c,v 1.12 2000/08/03 21:51:33 fabian Exp $
+ * $Id: tclmisc.c,v 1.13 2000/09/09 11:39:09 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -33,7 +33,6 @@
 #endif
 
 /* Includes for the tcl_md5 function <Olrick> */
-#include "md5/global.h"
 #include "md5/md5.h"
 
 extern p_tcl_bind_list	 bind_table_list;
@@ -331,7 +330,8 @@ static int tcl_rand STDVAR
   return TCL_OK;
 }
 
-static int tcl_sendnote STDVAR {
+static int tcl_sendnote STDVAR
+{
   char s[5], from[NOTENAMELEN + 1], to[NOTENAMELEN + 1], msg[451];
 
   Context;
@@ -342,7 +342,7 @@ static int tcl_sendnote STDVAR {
   to[NOTENAMELEN] = 0;
   strncpy(msg, argv[3], 450);
   msg[450] = 0;
-  sprintf(s, "%d", add_note(to, from, msg, -1, 0));
+  egg_snprintf(s, sizeof s, "%d", add_note(to, from, msg, -1, 0));
   Tcl_AppendResult(irp, s, NULL);
   return TCL_OK;
 }

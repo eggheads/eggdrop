@@ -4,7 +4,7 @@
  *   disconnect on a dcc socket
  *   ...and that's it!  (but it's a LOT)
  * 
- * $Id: dcc.c,v 1.33 2000/09/05 15:59:42 fabian Exp $
+ * $Id: dcc.c,v 1.34 2000/09/09 11:39:09 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -32,7 +32,6 @@
 #include "tandem.h"
 
 /* Includes for botnet md5 challenge/response code <cybah> */
-#include "md5/global.h"
 #include "md5/md5.h"
 
 extern struct userrec	*userlist;
@@ -239,7 +238,7 @@ void failed_link(int idx)
   dcc[idx].port++;
   dcc[idx].timeval = now;
   if (open_telnet_raw(dcc[idx].sock, dcc[idx].addr ?
-		      iptostr(my_htonl(dcc[idx].addr)) : dcc[idx].host,
+		      iptostr(htonl(dcc[idx].addr)) : dcc[idx].host,
 		      dcc[idx].port) < 0) {
     failed_link(idx);
   }
@@ -1201,7 +1200,7 @@ static void dcc_telnet_hostresolved(int i)
   changeover_dcc(i, &DCC_IDENTWAIT, 0);
   dcc[i].timeval = now;
   dcc[i].u.ident_sock = dcc[idx].sock;
-  sock = open_telnet(iptostr(my_htonl(dcc[i].addr)), 113);
+  sock = open_telnet(iptostr(htonl(dcc[i].addr)), 113);
   putlog(LOG_MISC, "*", DCC_TELCONN, dcc[i].host, dcc[i].port);
   s[0] = 0;
   Context;

@@ -4,7 +4,7 @@
  * 
  * Written by Fabian Knittel <fknittel@gmx.de>
  * 
- * $Id: dns.c,v 1.15 2000/09/09 11:37:53 fabian Exp $
+ * $Id: dns.c,v 1.16 2000/09/09 11:39:10 fabian Exp $
  */
 /* 
  * Copyright (C) 1999, 2000  Eggheads
@@ -50,10 +50,10 @@ static void dns_event_success(struct resolve *rp, int type)
   Context;
   if (type == T_PTR) {
     debug2("DNS resolved %s to %s", iptostr(rp->ip), rp->hostn);
-    call_hostbyip(my_ntohl(rp->ip), rp->hostn, 1);
+    call_hostbyip(ntohl(rp->ip), rp->hostn, 1);
   } else if (type == T_A) {
     debug2("DNS resolved %s to %s", rp->hostn, iptostr(rp->ip));
-    call_ipbyhost(rp->hostn, my_ntohl(rp->ip), 1);
+    call_ipbyhost(rp->hostn, ntohl(rp->ip), 1);
   }
 }
 
@@ -69,7 +69,7 @@ static void dns_event_failure(struct resolve *rp)
 
     debug1("DNS resolve failed for %s", iptostr(rp->ip));
     strcpy(s, iptostr(rp->ip));
-    call_hostbyip(my_ntohl(rp->ip), s, 0);
+    call_hostbyip(ntohl(rp->ip), s, 0);
   }  
   /* T_A */
   else if (rp->hostn) {
@@ -133,7 +133,7 @@ static void cmd_resolve(struct userrec *u, int idx, char *par)
 
   Context;
   if (egg_inet_aton(par, &inaddr))
-    dns_lookup(my_ntohl(inaddr.s_addr));
+    dns_lookup(ntohl(inaddr.s_addr));
   else
     dns_forward(par);
   return;

@@ -2,7 +2,7 @@
  * main.h
  *   include file to include most other include files
  * 
- * $Id: main.h,v 1.13 2000/03/23 23:17:55 fabian Exp $
+ * $Id: main.h,v 1.14 2000/09/09 11:39:09 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -82,31 +82,14 @@ extern struct dcc_table DCC_CHAT, DCC_BOT, DCC_LOST, DCC_SCRIPT, DCC_BOT_NEW,
 
 #endif
 
-
-/* Our own byte swappers
- */
-#ifdef WORDS_BIGENDIAN
-#  define swap_short(sh)	(sh)
-#  define swap_long(ln)		(ln)
-#else
-#  define swap_short(sh)	((((sh) & 0xff00) >> 8) |		 \
-				 (((sh) & 0x00ff) << 8))
-#  define swap_long(ln)		(swap_short(((ln) & 0xffff0000) >> 16) | \
-				 (swap_short((ln) & 0x0000ffff) << 16))
-#endif
-
 #define iptolong(a)		(0xffffffff & 				\
-				 (long) (swap_long((unsigned long) a)))
-#define fixcolon(x)		if ((x)[0] == ':') { 			\
-					(x)++;				\
-				} else {				\
-					(x) = newsplit(&(x));		\
-				}
-
-#define my_ntohs(sh)	swap_short(sh)
-#define my_htons(sh)	swap_short(sh)
-#define my_ntohl(ln)	swap_long(ln)
-#define my_htonl(ln)	swap_long(ln)
+				 (long) (htonl((unsigned long) a)))
+#define fixcolon(x)		do {					\
+	if ((x)[0] == ':')			 			\
+		(x)++;							\
+	else								\
+		(x) = newsplit(&(x));					\
+} while (0)
 
 #ifdef BORGCUBES
 

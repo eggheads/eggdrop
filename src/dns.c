@@ -4,7 +4,7 @@
  *   provides the code used by the bot if the DNS module is not loaded
  *   DNS Tcl commands
  * 
- * $Id: dns.c,v 1.17 2000/05/06 22:00:31 fabian Exp $
+ * $Id: dns.c,v 1.18 2000/09/09 11:39:09 fabian Exp $
  */
 /* 
  * Written by Fabian Knittel <fknittel@gmx.de>
@@ -252,7 +252,7 @@ static void dns_tcl_iporhostres(IP ip, char *hostn, int ok, void *other)
   devent_tclinfo_t *tclinfo = (devent_tclinfo_t *) other;
   
   Context;
-  if (Tcl_VarEval(interp, tclinfo->proc, " ", iptostr(my_htonl(ip)), " ",
+  if (Tcl_VarEval(interp, tclinfo->proc, " ", iptostr(htonl(ip)), " ",
 		  hostn, ok ? " 1" : " 0", tclinfo->paras, NULL) == TCL_ERROR)
     putlog(LOG_MISC, "*", DCC_TCLERROR, tclinfo->proc, interp->result);
 
@@ -447,7 +447,7 @@ void call_ipbyhost(char *hostn, IP ip, int ok)
 void block_dns_hostbyip(IP ip)
 {
   struct hostent *hp;
-  unsigned long addr = my_htonl(ip);
+  unsigned long addr = htonl(ip);
   static char s[UHOSTLEN];
 
   Context;
@@ -477,7 +477,7 @@ void block_dns_ipbyhost(char *host)
   /* Check if someone passed us an IP address as hostname 
    * and return it straight away */
   if (egg_inet_aton(host, &inaddr)) {
-    call_ipbyhost(host, my_ntohl(inaddr.s_addr), 1);
+    call_ipbyhost(host, ntohl(inaddr.s_addr), 1);
     return;
   }
   if (!setjmp(alarmret)) {
@@ -492,7 +492,7 @@ void block_dns_ipbyhost(char *host)
     if (hp) {
       in = (struct in_addr *) (hp->h_addr_list[0]);
       ip = (IP) (in->s_addr);
-      call_ipbyhost(host, my_ntohl(ip), 1);
+      call_ipbyhost(host, ntohl(ip), 1);
       return;
     }
     /* Fall through. */

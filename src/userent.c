@@ -2,7 +2,7 @@
  * userent.c -- handles:
  *   user-entry handling, new stylem more versatile.
  * 
- * $Id: userent.c,v 1.15 2000/05/06 22:02:27 fabian Exp $
+ * $Id: userent.c,v 1.16 2000/09/09 11:39:09 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -124,8 +124,8 @@ void *def_get(struct userrec *u, struct user_entry *e)
 int def_set(struct userrec *u, struct user_entry *e, void *buf)
 {
   char *string = (char *) buf;
-  ContextNote("drummer's bug?");
 
+  ContextNote("drummer's bug?");
   if (string && !string[0])
     string = NULL;
   if (!string && !e->u.string)

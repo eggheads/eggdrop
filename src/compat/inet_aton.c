@@ -1,7 +1,7 @@
 /*
  * inet_aton.c -- provides inet_aton() if necessary.
  *
- * $Id: inet_aton.c,v 1.3 2000/03/24 23:00:25 fabian Exp $
+ * $Id: inet_aton.c,v 1.4 2000/09/09 11:39:10 fabian Exp $
  */
 /* Portions Copyright (C) 2000  Eggheads
  *
@@ -176,7 +176,7 @@ egg_inet_aton(cp, addr)
 	val |= (parts[0] << 24) | (parts[1] << 16) | (parts[2] << 8);
 
 	if (addr)
-		addr->s_addr = my_htonl(val);
+		addr->s_addr = htonl(val);
 	return (1);
 
 ret_0:

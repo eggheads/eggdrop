@@ -1,7 +1,7 @@
 /* 
  * servmsg.c -- part of server.mod
  * 
- * $Id: servmsg.c,v 1.45 2000/09/02 19:45:24 fabian Exp $
+ * $Id: servmsg.c,v 1.46 2000/09/09 11:39:11 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -747,12 +747,11 @@ static void minutely_checks()
   }
   if (min_servs == 0)
     return;
-  chan = chanset;
-  while (chan != NULL) {
-    if (channel_active(chan) && (chan->channel.members == 1))
+  for (chan = chanset; chan; chan = chan->next)
+    if (channel_active(chan) && chan->channel.members == 1) {
       ok = 1;
-    chan = chan->next;
-  }
+      break;
+    }
   if (!ok)
     return;
   count++;

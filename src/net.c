@@ -2,7 +2,7 @@
  * net.c -- handles:
  *   all raw network i/o
  * 
- * $Id: net.c,v 1.20 2000/09/05 15:59:43 fabian Exp $
+ * $Id: net.c,v 1.21 2000/09/09 11:39:09 fabian Exp $
  */
 /* 
  * This is hereby released into the public domain.
@@ -365,7 +365,7 @@ int open_telnet_raw(int sock, char *server, int sport)
   egg_bzero((char *) &name, sizeof(struct sockaddr_in));
 
   name.sin_family = AF_INET;
-  name.sin_port = my_htons(port);
+  name.sin_port = htons(port);
   /* Numeric IP? */
   if ((host[strlen(host) - 1] >= '0') && (host[strlen(host) - 1] <= '9'))
     name.sin_addr.s_addr = inet_addr(host);
@@ -525,10 +525,10 @@ int answer(int sock, char *caller, unsigned long *ip, unsigned short *port,
      */
     strncpy(caller, iptostr(*ip), 120);
     caller[120] = 0;
-    *ip = my_ntohl(*ip);
+    *ip = ntohl(*ip);
   }
   if (port != NULL)
-    *port = my_ntohs(from.sin_port);
+    *port = ntohs(from.sin_port);
   /* Set up all the normal socket crap */
   setsock(new_sock, (binary ? SOCK_BINARY : 0));
   return new_sock;

@@ -4,7 +4,7 @@
  * 
  * Written by Fabian Knittel <fknittel@gmx.de>
  * 
- * $Id: dns.h,v 1.6 2000/01/17 22:36:08 fabian Exp $
+ * $Id: dns.h,v 1.7 2000/09/09 11:39:10 fabian Exp $
  */
 /* 
  * Copyright (C) 1999, 2000  Eggheads
@@ -49,9 +49,9 @@ struct resolve {
     time_t		expiretime;
     char		*hostn;
     IP			ip;
-    word		id;
-    byte		state;
-    byte		sends;
+    u_16bit_t		id;
+    u_8bit_t		state;
+    u_8bit_t		sends;
 };
 
 enum resolve_states {

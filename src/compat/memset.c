@@ -1,7 +1,7 @@
 /*
  * memset.c -- provides memset() if necessary.
  *
- * $Id: memset.c,v 1.1 2000/03/23 23:20:07 fabian Exp $
+ * $Id: memset.c,v 1.2 2000/09/09 11:39:10 fabian Exp $
  */
 /* Copyright (C) 1997  Robey Pointer
  * Copyright (C) 1999, 2000  Eggheads
@@ -28,7 +28,7 @@
 void *egg_memset(void *dest, int c, size_t n)
 {
   while (n--)
-    *((char *) dest)++ = c;
+    *((u_8bit_t *) dest)++ = c;
   return dest;
 }
 #endif /* !HAVE_MEMSET */

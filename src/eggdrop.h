@@ -4,7 +4,7 @@
  * 
  *   IF YOU ALTER THIS FILE, YOU NEED TO RECOMPILE THE BOT.
  * 
- * $Id: eggdrop.h,v 1.32 2000/09/02 19:45:23 fabian Exp $
+ * $Id: eggdrop.h,v 1.33 2000/09/09 11:39:09 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -197,33 +197,20 @@
 
 /* 32 bit type */
 #if (SIZEOF_INT == 4)
-typedef unsigned int u_32bit_t;
+typedef unsigned int		u_32bit_t;
 #else
 #  if (SIZEOF_LONG == 4)
-typedef unsigned long u_32bit_t;
+typedef unsigned long		u_32bit_t;
 #  else
 #    include "cant/find/32bit/type"
 #  endif
 #endif
 
-#if (SIZEOF_SHORT_INT == 2)
-typedef unsigned short int u_16bit_t;
-#else
-#  include "cant/find/16bit/type"
-#endif
-
-#if (SIZEOF_CHAR == 1)
-typedef unsigned char u_8bit_t;
-#else
-#  include "cant/find/8bit/type"
-#endif
-
-typedef u_8bit_t	byte;
-typedef u_16bit_t	word;
-typedef u_32bit_t	dword;
+typedef unsigned short int	u_16bit_t;
+typedef unsigned char		u_8bit_t;
 
 /* IP type */
-typedef u_32bit_t	IP;
+typedef u_32bit_t		IP;
 
 #define debug0(x)		putlog(LOG_DEBUG,"*",x)
 #define debug1(x,a1)		putlog(LOG_DEBUG,"*",x,a1)

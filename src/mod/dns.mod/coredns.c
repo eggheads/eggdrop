@@ -5,7 +5,7 @@
  * 
  * Modified/written by Fabian Knittel <fknittel@gmx.de>
  * 
- * $Id: coredns.c,v 1.15 2000/09/09 11:37:53 fabian Exp $
+ * $Id: coredns.c,v 1.16 2000/09/09 11:39:10 fabian Exp $
  */
 /* 
  * Portions copyright (C) 1999, 2000  Eggheads
@@ -117,24 +117,24 @@ static const char *classtypes[CLASSTYPES_COUNT + 1] = {
 #endif /* DEBUG_DNS */
 
 typedef struct {
-    word id;			/* Packet id */
-    byte databyte_a;
-    /* rd:1           recursion desired
-     * tc:1           truncated message
-     * aa:1           authoritive answer
-     * opcode:4       purpose of message
-     * qr:1           response flag
+    u_16bit_t	id;			/* Packet id */
+    u_8bit_t	databyte_a;
+    /* rd:1				recursion desired
+     * tc:1				truncated message
+     * aa:1				authoritive answer
+     * opcode:4				purpose of message
+     * qr:1				response flag
      */
-    byte databyte_b;
-    /* rcode:4        response code
-     * unassigned:2   unassigned bits
-     * pr:1           primary server required (non standard)
-     * ra:1           recursion available
+    u_8bit_t	databyte_b;
+    /* rcode:4				response code
+     * unassigned:2			unassigned bits
+     * pr:1				primary server required (non standard)
+     * ra:1				recursion available
      */
-    word qdcount;		/* Query record count */
-    word ancount;		/* Answer record count */
-    word nscount;		/* Authority reference record count */
-    word arcount;		/* Resource reference record count */
+    u_16bit_t	qdcount;		/* Query record count */
+    u_16bit_t	ancount;		/* Answer record count */
+    u_16bit_t	nscount;		/* Authority reference record count */
+    u_16bit_t	arcount;		/* Resource reference record count */
 } packetheader;
 
 #ifndef HFIXEDSZ
@@ -153,7 +153,7 @@ typedef struct {
 #define getheader_pr(x) ((x->databyte_b >> 6) & 1)
 #define getheader_ra(x) (x->databyte_b >> 7)
 
-#define sucknetword(x)  ((x)+=2,((word)  (((x)[-2] <<  8) | ((x)[-1] <<  0))))
+#define sucknetword(x)  ((x)+=2,((u_16bit_t)  (((x)[-2] <<  8) | ((x)[-1] <<  0))))
 #define sucknetshort(x) ((x)+=2,((short) (((x)[-2] <<  8) | ((x)[-1] <<  0))))
 #define sucknetdword(x) ((x)+=4,((dword) (((x)[-4] << 24) | ((x)[-3] << 16) | \
                                           ((x)[-2] <<  8) | ((x)[-1] <<  0))))
@@ -161,7 +161,7 @@ typedef struct {
                                           ((x)[-2] <<  8) | ((x)[-1] <<  0))))
 
 
-static dword resrecvbuf[(MAX_PACKETSIZE + 7) >> 2];	/* MUST BE DWORD ALIGNED */
+static u_32bit_t resrecvbuf[(MAX_PACKETSIZE + 7) >> 2];	/* MUST BE DWORD ALIGNED */
 
 static struct resolve *idbash[BASH_SIZE];
 static struct resolve *ipbash[BASH_SIZE];
@@ -195,8 +195,8 @@ static const char nullstring[] = "";
  */
 static char *strtdiff(char *d, long signeddiff)
 {
-    dword diff;
-    dword seconds, minutes, hours;
+    u_32bit_t diff;
+    u_32bit_t seconds, minutes, hours;
     long day;
 
     Context;
@@ -241,23 +241,23 @@ static struct resolve *allocresolve()
 
 /* Return the hash bucket number for id.
  */
-inline static dword getidbash(word id)
+inline static u_32bit_t getidbash(u_16bit_t id)
 {
-    return (dword) BASH_MODULO(id);
+    return (u_32bit_t) BASH_MODULO(id);
 }
 
 /* Return the hash bucket number for ip.
  */
-inline static dword getipbash(IP ip)
+inline static u_32bit_t getipbash(IP ip)
 {
-    return (dword) BASH_MODULO(ip);
+    return (u_32bit_t) BASH_MODULO(ip);
 }
 
 /* Return the hash bucket number for host.
  */
-static dword gethostbash(char *host)
+static u_32bit_t gethostbash(char *host)
 {
-    dword bashvalue = 0;
+    u_32bit_t bashvalue = 0;
 
     for (; *host; host++) {
 	bashvalue ^= *host;
@@ -271,7 +271,7 @@ static dword gethostbash(char *host)
 static void linkresolveid(struct resolve *addrp)
 {
     struct resolve *rp;
-    dword bashnum;
+    u_32bit_t bashnum;
 
     Context;
     bashnum = getidbash(addrp->id);
@@ -304,7 +304,7 @@ static void linkresolveid(struct resolve *addrp)
  */
 static void unlinkresolveid(struct resolve *rp)
 {
-    dword bashnum;
+    u_32bit_t bashnum;
 
     Context;
     bashnum = getidbash(rp->id);
@@ -325,7 +325,7 @@ static void unlinkresolveid(struct resolve *rp)
 static void linkresolvehost(struct resolve *addrp)
 {
     struct resolve *rp;
-    dword bashnum;
+    u_32bit_t bashnum;
     int ret;
 
     Context;
@@ -362,7 +362,7 @@ static void linkresolvehost(struct resolve *addrp)
  */
 static void unlinkresolvehost(struct resolve *rp)
 {
-    dword bashnum;
+    u_32bit_t bashnum;
 
     Context;
     bashnum = gethostbash(rp->hostn);
@@ -384,7 +384,7 @@ static void unlinkresolvehost(struct resolve *rp)
 static void linkresolveip(struct resolve *addrp)
 {
     struct resolve *rp;
-    dword bashnum;
+    u_32bit_t bashnum;
 
     Context;
     bashnum = getipbash(addrp->ip);
@@ -417,7 +417,7 @@ static void linkresolveip(struct resolve *addrp)
  */
 static void unlinkresolveip(struct resolve *rp)
 {
-    dword bashnum;
+    u_32bit_t bashnum;
 
     Context;
     bashnum = getipbash(rp->ip);
@@ -496,7 +496,7 @@ static void unlinkresolve(struct resolve *rp)
 
 /* Find request structure using the id.
  */
-static struct resolve *findid(word id)
+static struct resolve *findid(u_16bit_t id)
 {
     struct resolve *rp;
     int bashnum;
@@ -550,7 +550,7 @@ static struct resolve *findhost(char *hostn)
 static struct resolve *findip(IP ip)
 {
     struct resolve *rp;
-    dword bashnum;
+    u_32bit_t bashnum;
 
     Context;
     bashnum = getipbash(ip);
@@ -576,7 +576,7 @@ static struct resolve *findip(IP ip)
 
 /* Create packet for the request and send it to all available nameservers.
  */
-static void dorequest(char *s, int type, word id)
+static void dorequest(char *s, int type, u_16bit_t id)
 {
     packetheader *hp;
     int r, i;
@@ -590,7 +590,7 @@ static void dorequest(char *s, int type, word id)
 	return;
     }
     hp = (packetheader *) buf;
-    hp->id = id;	/* my_htons() deliberately left out (redundant) */
+    hp->id = id;	/* htons() deliberately left out (redundant) */
     for (i = 0; i < _res.nscount; i++)
 	(void) sendto(resfd, buf, r, 0,
 		      (struct sockaddr *) &_res.nsaddr_list[i],
@@ -614,9 +614,9 @@ static void resendrequest(struct resolve *rp, int type)
 		rp->hostn);
     } else if (type == T_PTR) {
 	sprintf(tempstring, "%u.%u.%u.%u.in-addr.arpa",
-		((byte *) & rp->ip)[3],
-		((byte *) & rp->ip)[2],
-		((byte *) & rp->ip)[1], ((byte *) & rp->ip)[0]);
+		((u_8bit_t *) & rp->ip)[3],
+		((u_8bit_t *) & rp->ip)[2],
+		((u_8bit_t *) & rp->ip)[1], ((u_8bit_t *) & rp->ip)[0]);
 	dorequest(tempstring, type, rp->id);
 	ddebug1(RES_MSG "Sent domain lookup request for \"%s\".",
 		iptostr(rp->ip));
@@ -633,7 +633,7 @@ static void sendrequest(struct resolve *rp, int type)
 	idseed = (((idseed + idseed) | (long) time(NULL))
 		  + idseed - 0x54bad4a) ^ aseed;
 	aseed ^= idseed;
-	rp->id = (word) idseed;
+	rp->id = (u_16bit_t) idseed;
     } while (findid(rp->id));
     linkresolveid(rp);		/* Add id to id hash table */
     resendrequest(rp, type);	/* Send request */
@@ -682,16 +682,16 @@ static void passrp(struct resolve *rp, long ttl, int type)
 
 /* Parses the response packets received.
  */
-static void parserespacket(byte *s, int l)
+static void parserespacket(u_8bit_t *s, int l)
 {
     struct resolve *rp;
     packetheader *hp;
-    byte *eob;
-    byte *c;
+    u_8bit_t *eob;
+    u_8bit_t *c;
     long ttl;
     int r, usefulanswer;
-    word rr, datatype, class, qdatatype, qclass;
-    byte rdatalength;
+    u_16bit_t rr, datatype, class, qdatatype, qclass;
+    u_8bit_t rdatalength;
 
     Context;
     if (l < sizeof(packetheader)) {
@@ -713,10 +713,10 @@ static void parserespacket(byte *s, int l)
 	return;
     if ((rp->state == STATE_FINISHED) || (rp->state == STATE_FAILED))
 	return;
-    hp->qdcount = my_ntohs(hp->qdcount);
-    hp->ancount = my_ntohs(hp->ancount);
-    hp->nscount = my_ntohs(hp->nscount);
-    hp->arcount = my_ntohs(hp->arcount);
+    hp->qdcount = ntohs(hp->qdcount);
+    hp->ancount = ntohs(hp->ancount);
+    hp->nscount = ntohs(hp->nscount);
+    hp->arcount = ntohs(hp->arcount);
     if (getheader_tc(hp)) {	/* Packet truncated */
 	ddebug0(RES_ERR "Nameserver packet truncated.");
 	return;
@@ -751,9 +751,9 @@ static void parserespacket(byte *s, int l)
 	    case STATE_PTRREQ:
 		sprintf(stackstring,
 			"%u.%u.%u.%u.in-addr.arpa",
-			((byte *) & rp->ip)[3],
-			((byte *) & rp->ip)[2],
-			((byte *) & rp->ip)[1], ((byte *) & rp->ip)[0]);
+			((u_8bit_t *) & rp->ip)[3],
+			((u_8bit_t *) & rp->ip)[2],
+			((u_8bit_t *) & rp->ip)[1], ((u_8bit_t *) & rp->ip)[0]);
 		break;
 	    case STATE_AREQ:
 		strncpy(stackstring, rp->hostn, 1024);
@@ -948,7 +948,7 @@ static void dns_ack(void)
     int r, i;
 
     Context;
-    r =	recvfrom(resfd, (byte *) resrecvbuf, MAX_PACKETSIZE, 0,
+    r =	recvfrom(resfd, (u_8bit_t *) resrecvbuf, MAX_PACKETSIZE, 0,
 		 (struct sockaddr *) &from, &fromlen);
     if (r <= 0) {
 	ddebug1(RES_MSG "Socket error: %s", strerror(errno));
@@ -970,7 +970,7 @@ static void dns_ack(void)
         ddebug1(RES_ERR "Received reply from unknown source: %s",
 	       iptostr(from.sin_addr.s_addr));
     } else
-        parserespacket((byte *) resrecvbuf, r);
+        parserespacket((u_8bit_t *) resrecvbuf, r);
     Context;
 }
 
@@ -1031,7 +1031,7 @@ static void dns_lookup(IP ip)
     struct resolve *rp;
     
     Context;
-    ip = my_htonl(ip);
+    ip = htonl(ip);
     if ((rp = findip(ip))) {
 	if ((rp->state == STATE_FINISHED)
 	    || (rp->state == STATE_FAILED)) {
@@ -1070,7 +1070,7 @@ static void dns_forward(char *hostn)
      * and return it straight away.
      */
     if (egg_inet_aton(hostn, &inaddr)) {
-      call_ipbyhost(hostn, my_ntohl(inaddr.s_addr), 1);
+      call_ipbyhost(hostn, ntohl(inaddr.s_addr), 1);
       return;
     }
     Context;
@@ -1153,7 +1153,7 @@ static int init_dns_core(void)
 	return 0;
 
     /* Initialise the hash tables. */
-    aseed = time(NULL) ^ (time(NULL) << 3) ^ (dword) getpid();
+    aseed = time(NULL) ^ (time(NULL) << 3) ^ (u_32bit_t) getpid();
     for (i = 0; i < BASH_SIZE; i++) {
 	idbash[i] = NULL;
 	ipbash[i] = NULL;

@@ -7,7 +7,7 @@
  *   linking, unlinking, and relaying to another bot
  *   pinging the bots periodically and checking leaf status
  * 
- * $Id: botnet.c,v 1.29 2000/09/02 19:45:23 fabian Exp $
+ * $Id: botnet.c,v 1.30 2000/09/09 11:39:09 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1066,7 +1066,7 @@ static void botlink_resolve_success(int i)
   dcc[i].u.bot->numver = idx;
   dcc[i].u.bot->port = dcc[i].port;		/* Remember where i started */
   dcc[i].sock = getsock(SOCK_STRONGCONN);
-  if (open_telnet_raw(dcc[i].sock, iptostr(my_htonl(dcc[i].addr)),
+  if (open_telnet_raw(dcc[i].sock, iptostr(htonl(dcc[i].addr)),
 		      dcc[i].port) < 0)
     failed_link(i);
 }
@@ -1105,7 +1105,7 @@ static void failed_tandem_relay(int idx)
   dcc[idx].port++;
   dcc[idx].timeval = now;
   if (open_telnet_raw(dcc[idx].sock, dcc[idx].addr ?
-				     iptostr(my_htonl(dcc[idx].addr)) :
+				     iptostr(htonl(dcc[idx].addr)) :
 				     dcc[idx].host, dcc[idx].port) < 0)
     failed_tandem_relay(idx);
 }
@@ -1222,7 +1222,7 @@ static void tandem_relay_resolve_success(int i)
   dcc[i].u.relay->chat->line_count = 0;
   dcc[i].u.relay->chat->current_lines = 0;
   dcc[i].timeval = now;
-  if (open_telnet_raw(dcc[i].sock, iptostr(my_htonl(dcc[i].addr)),
+  if (open_telnet_raw(dcc[i].sock, iptostr(htonl(dcc[i].addr)),
 		      dcc[i].port) < 0)
     failed_tandem_relay(i);
 }

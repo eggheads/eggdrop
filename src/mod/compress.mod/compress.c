@@ -6,7 +6,7 @@
  * Written by Fabian Knittel <fknittel@gmx.de>. Based on zlib examples
  * by Jean-loup Gailly and Miguel Albrecht.
  * 
- * $Id: compress.c,v 1.4 2000/04/05 19:51:54 fabian Exp $
+ * $Id: compress.c,v 1.5 2000/09/09 11:39:10 fabian Exp $
  */
 /* 
  * Copyright (C) 2000  Eggheads
@@ -228,7 +228,7 @@ static int compress_to_file(char *f_src, char *f_target, int mode_num)
 
   Context;
   adjust_mode_num(&mode_num);
-  sprintf(mode, "wb%d", mode_num);
+  egg_snprintf(mode, sizeof mode, "wb%d", mode_num);
 
   if (!is_file(f_src)) {
     putlog(LOG_MISC, "*", "Failed to compress file `%s': not a file.",
