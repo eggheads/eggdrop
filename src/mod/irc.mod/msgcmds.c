@@ -4,11 +4,11 @@
  * 
  * dprintf'ized, 4feb1996
  * 
- * $Id: msgcmds.c,v 1.17 1999/12/15 02:32:59 guppy Exp $
+ * $Id: msgcmds.c,v 1.18 2000/01/08 21:23:16 per Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
- * Copyright (C) 1999  Eggheads
+ * Copyright (C) 1999, 2000  Eggheads
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

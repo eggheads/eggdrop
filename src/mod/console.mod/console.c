@@ -3,10 +3,10 @@
  *   saved console settings based on console.tcl
  *   by cmwagner/billyjoe/D. Senso
  * 
- * $Id: console.c,v 1.14 1999/12/22 20:30:04 guppy Exp $
+ * $Id: console.c,v 1.15 2000/01/08 21:23:15 per Exp $
  */
 /* 
- * Copyright (C) 1999  Eggheads
+ * Copyright (C) 1999, 2000  Eggheads
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

@@ -2,11 +2,11 @@
  * assoc.c -- part of assoc.mod
  *   the assoc code, moved here mainly from botnet.c for module work
  * 
- * $Id: assoc.c,v 1.8 1999/12/15 02:32:58 guppy Exp $
+ * $Id: assoc.c,v 1.9 2000/01/08 21:23:15 per Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
- * Copyright (C) 1999  Eggheads
+ * Copyright (C) 1999, 2000  Eggheads
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

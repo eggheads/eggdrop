@@ -2,11 +2,11 @@
  * ctcp.h -- part of ctcp.mod
  *   all the defines for ctcp.c
  * 
- * $Id: ctcp.h,v 1.3 1999/12/22 20:30:04 guppy Exp $
+ * $Id: ctcp.h,v 1.4 2000/01/08 21:23:15 per Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
- * Copyright (C) 1999  Eggheads
+ * Copyright (C) 1999, 2000  Eggheads
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

@@ -15,10 +15,10 @@
  * 1.4       1997-11-25      1.2.2.0         Added language addition  Kirk
  * 1.5       1998-07-12      1.3.0.0         Fixed ;me and updated    BB
  * 
- * $Id: wire.c,v 1.9 1999/12/22 20:30:05 guppy Exp $
+ * $Id: wire.c,v 1.10 2000/01/08 21:23:17 per Exp $
  */
 /* 
- * Copyright (C) 1999  Eggheads
+ * Copyright (C) 1999, 2000  Eggheads
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

@@ -2,11 +2,11 @@
  * cmdsserv.c -- part of server.mod
  *   handles commands from a user via dcc that cause server interaction
  * 
- * $Id: cmdsserv.c,v 1.4 1999/12/15 02:33:00 guppy Exp $
+ * $Id: cmdsserv.c,v 1.5 2000/01/08 21:23:17 per Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
- * Copyright (C) 1999  Eggheads
+ * Copyright (C) 1999, 2000  Eggheads
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

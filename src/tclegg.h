@@ -2,11 +2,11 @@
  * tclegg.h
  *   stuff used by tcl.c and tclhash.c
  * 
- * $Id: tclegg.h,v 1.5 2000/01/06 21:03:45 guppy Exp $
+ * $Id: tclegg.h,v 1.6 2000/01/08 21:23:14 per Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
- * Copyright (C) 1999  Eggheads
+ * Copyright (C) 1999, 2000  Eggheads
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

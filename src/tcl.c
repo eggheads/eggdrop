@@ -6,11 +6,11 @@
  * 
  * dprintf'ized, 4feb1996
  * 
- * $Id: tcl.c,v 1.25 1999/12/28 01:46:26 guppy Exp $
+ * $Id: tcl.c,v 1.26 2000/01/08 21:23:14 per Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
- * Copyright (C) 1999  Eggheads
+ * Copyright (C) 1999, 2000  Eggheads
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

@@ -1,5 +1,5 @@
 #
-# quesedilla, (c) 1995 Robey Pointer (c) 1999 Eggheads
+# quesedilla, (c) 1995 Robey Pointer (c) 1999, 2000 Eggheads
 # v1 -- 20aug95
 # v2 -- 2oct95   [improved it]
 # v3 -- 17mar96  [fixed it up for 1.0 multi-channel]
@@ -7,7 +7,7 @@
 # v4.00001 nov97 [blurgh]
 # v5-BETA1 -- 26sep99 by rtc
 #
-# $Id: ques5.tcl,v 1.2 1999/12/15 02:32:57 guppy Exp $
+# $Id: ques5.tcl,v 1.3 2000/01/08 21:23:13 per Exp $
 #
 # o clean webfile var removal
 # o using timezone variable from config file

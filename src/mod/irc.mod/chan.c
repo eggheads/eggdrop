@@ -9,11 +9,11 @@
  * dprintf'ized, 27oct1995
  * multi-channel, 8feb1996
  * 
- * $Id: chan.c,v 1.51 2000/01/06 19:22:49 arthur2 Exp $
+ * $Id: chan.c,v 1.52 2000/01/08 21:23:16 per Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
- * Copyright (C) 1999  Eggheads
+ * Copyright (C) 1999, 2000  Eggheads
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
