@@ -1,5 +1,5 @@
 # Makefile for src/mod/uptime.mod/
-
+# $Id: Makefile,v 1.2 2001/06/12 17:44:42 poptix Exp $
 srcdir = .
 
 

@@ -1,5 +1,4 @@
-/*
- * uptime.mod
+/* Original Copyright (c) 2000-2001 proton
  * 
  * Borrowed from Emech, reports to http://uptime.energymech.net, feel free to opt out if you
  * dont like it by not loading the module.
@@ -7,7 +6,7 @@
  *				-poptix (poptix@poptix.net) 6June2001
  */
 /*
- * Copyright (C) 1999, 2000, 2001 Eggheads Development Team
+ * Eggdrop modifications Copyright (C) 1999, 2000, 2001 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
