@@ -1,4 +1,4 @@
-$Id: UPDATES1.6,v 1.606 2005/02/08 01:08:19 tothwolf Exp $
+$Id: UPDATES1.6,v 1.607 2005/02/08 16:13:11 tothwolf Exp $
 
 Eggdrop Changes (since v1.6.0)
     _____________________________________________________________________
@@ -12,6 +12,10 @@ Eggdrop Changes (since v1.6.0)
 
 
   1.6.18:
+    - Fixed remote note bug in add_note() that was introduced in 1.6.17.
+      Fixes Bugzilla Bug # 433 "Remote Notes Always Say User is Offline"
+    * Found by: alex323 - Patch by: Tothwolf
+
     - Completely rewrote check_tcl_bind().
     - Added inline check_bind_flags() for flag checking for check_tcl_bind().
     - Added inline check_bind_match() for match checking for check_tcl_bind().
