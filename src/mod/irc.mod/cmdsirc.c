@@ -2,7 +2,7 @@
  * chancmds.c -- part of irc.mod
  *   handles commands directly relating to channel interaction
  *
- * $Id: cmdsirc.c,v 1.50 2003/03/11 01:22:25 wcc Exp $
+ * $Id: cmdsirc.c,v 1.51 2003/03/11 06:12:42 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -386,7 +386,7 @@ static void cmd_halfop(struct userrec *u, int idx, char *par)
   }
 
   get_user_flagrec(dcc[idx].user, &user, chan->dname);
-  if (!chan_op(user) && (!glob_op(user) ||chan_deop(user))) {
+  if (!chan_op(user) && (!glob_op(user) || chan_deop(user))) {
     dprintf(idx, "You are not a channel op on %s.\n", chan->dname);
     return;
   }
@@ -457,7 +457,7 @@ static void cmd_dehalfop(struct userrec *u, int idx, char *par)
   }
 
   get_user_flagrec(dcc[idx].user, &user, chan->dname);
-  if (!chan_op(user) && (!glob_op(user) ||chan_deop(user))) {
+  if (!chan_op(user) && (!glob_op(user) || chan_deop(user))) {
     dprintf(idx, "You are not a channel op on %s.\n", chan->dname);
     return;
   }
