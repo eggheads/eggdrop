@@ -4,7 +4,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: modules.c,v 1.52 2001/07/16 14:54:01 guppy Exp $
+ * $Id: modules.c,v 1.53 2001/07/24 14:22:32 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -691,7 +691,7 @@ const char *module_load(char *name)
 #  else
   for (sl = static_modules; sl && egg_strcasecmp(sl->name, name); sl = sl->next);
   if (!sl)
-    return "Unkown module.";
+    return "Unknown module.";
   f = (Function) sl->func;
 #endif
   p = nmalloc(sizeof(module_entry));
