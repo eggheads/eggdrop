@@ -4,7 +4,7 @@
  *
  * Rewritten by Fabian Knittel <fknittel@gmx.de>
  *
- * $Id: filedb3.c,v 1.20 2002/01/02 03:46:38 guppy Exp $
+ * $Id: filedb3.c,v 1.21 2002/01/02 03:55:20 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1019,7 +1019,7 @@ static void filedb_ls(FILE *fdb, int idx, char *mask, int showall)
   else {
     filelist_sort(flist);
     filelist_idxshow(flist, idx);
-    dprintf(idx, "--- %d file%s.\n", cnt, cnt > 1 ? "s" : "");
+    dprintf(idx, "--- %d file%s.\n", cnt, cnt != 1 ? "s" : "");
   }
   filelist_free(flist);
 }

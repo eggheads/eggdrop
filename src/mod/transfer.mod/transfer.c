@@ -1,7 +1,7 @@
 /*
  * transfer.c -- part of transfer.mod
  *
- * $Id: transfer.c,v 1.48 2002/01/02 03:46:40 guppy Exp $
+ * $Id: transfer.c,v 1.49 2002/01/02 03:55:20 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -540,7 +540,7 @@ static void fileq_cancel(int idx, char *par)
   if (!matches)
     dprintf(idx,TRANSFER_NO_MATCHES);
   else
-    dprintf(idx, TRANSFER_CANCELLED_FILE, matches, matches > 1 ? "s" : "");
+    dprintf(idx, TRANSFER_CANCELLED_FILE, matches, (matches != 1) ? "s" : "");
   for (i = 0; i < atot; i++)
     if (!at_limit(dcc[idx].nick))
       send_next_file(dcc[idx].nick);

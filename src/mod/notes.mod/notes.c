@@ -5,7 +5,7 @@
  *   note cmds
  *   note ignores
  *
- * $Id: notes.c,v 1.35 2002/01/02 03:46:39 guppy Exp $
+ * $Id: notes.c,v 1.36 2002/01/02 03:55:20 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -651,10 +651,10 @@ static void notes_del(char *hand, char *nick, char *sdl, int idx)
     } else {
       if (idx >= 0)
 	dprintf(idx, "%s %d note%s; %d %s.\n", NOTES_ERASED, er,
-		er > 1 ? "s" : "", in - 1 - er, NOTES_LEFT);
+		(er != 1) ? "s" : "", in - 1 - er, NOTES_LEFT);
       else
 	dprintf(DP_HELP, "NOTICE %s :%s %d note%s; %d %s.\n", nick, MISC_ERASED,
-		er, (er > 1) ? "s" : "", in - 1 - er, NOTES_LEFT);
+		er, (er != 1) ? "s" : "", in - 1 - er, NOTES_LEFT);
     }
   }
 }

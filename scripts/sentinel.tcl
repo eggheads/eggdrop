@@ -1,9 +1,7 @@
-# sentinel.tcl v2.50 (19 February 2001)
-# copyright (c) 1998-2001 by slennox <slennox@egghelp.org>
+# sentinel.tcl v2.60 (29 March 2001)
+# Copyright 1998-2001 by slennox <slennox@egghelp.org>
 # slennox's eggdrop page - http://www.egghelp.org/
-#
-# $Id: sentinel.tcl,v 1.2 2001/02/25 07:05:04 guppy Exp $
-#
+
 # Flood protection system for eggdrop, with integrated BitchX CTCP
 # simulation. This script is designed to provide strong protection for your
 # bot and channels against large floodnets and proxy floods.
@@ -24,6 +22,12 @@
 #         Removed unnecessary botonchan checks throughout components where
 #         botisop already checks for that.
 #         Removed all unnecessary use of parentheses.
+# v2.60 - Modified putquick compatibility proc.
+#         Added sl_wideban option to make domain/ident bans optional.
+#         Fixed typos in various ban-related functions.
+#         Unused procs are now unloaded.
+#         Wildcard bans covering domains/idents were not doing proper
+#         checks on join-part flooders.
 #
 # sentinel.tcl is centered around its channel lock mechanism. It sets the
 # channel +mi (moderated and invite-only) whenever a substantial flood on
@@ -135,8 +139,9 @@ set sl_tsunami 10
 # Valid settings: 0 to disable, otherwise 1 or higher.
 
 # Length of time in minutes to ban channel flooders. This makes the bot
-# perform kicks and bans on flooders after the channel lock. For the most
-# effective protection, you should disable this on at least one bot.
+# perform kicks and bans on flooders after the channel lock. Because of the
+# reactive nature of automatic bans, you should disable this on at least
+# one bot for the most effective protection.
 set sl_ban 1440
 # Valid settings: 0 to disable, otherwise 1 or higher.
 
@@ -148,6 +153,17 @@ set sl_boban 1440
 # Set global bans on channel flooders and bogus usernames?
 set sl_globalban 0
 # Valid settings: 1 for global bans, 0 for channel-specific bans.
+
+# When processing a list of flooders, sentinel.tcl compares the hosts to
+# see if multiple flooders are coming from a particular domain/IP or using
+# the same ident (e.g. different vhosts on a single user account). If
+# multiple flooders come from the same domain/IP, or if multiple flooders
+# have the same ident, then the whole domain/IP (i.e. *!*@*.domain.com or
+# *!*@555.555.555.*) or ident (i.e. *!*username@*) is banned. If you
+# disable this option, all bans will be in *!*@machine.domain.com and
+# *!*@555.555.555.555 format.
+set sl_wideban 1
+# Valid settings: 1 to enable, 0 to disable.
 
 # Maximum number of bans allowed in the bot's ban list before sentinel will
 # stop adding new bans. This prevents the bot from adding hundreds of bans
@@ -228,7 +244,7 @@ if {$numversion < 1032400} {
     }
     return 1
   }
-  proc putquick {text} {
+  proc putquick {text args} {
     putserv $text
   }
 }
@@ -443,11 +459,11 @@ proc sl_nkflood {nick uhost hand chan newnick} {
     if {$sl_ban} {
       set bhost *!*[string tolower [string range $uhost [string first @ $uhost] end]]
       if {$sl_globalban} {
-        if {[llength [banlist]] < $sl_banmax && ![isban $bhost] && ![matchban *!$bhost]} {
+        if {[llength [banlist]] < $sl_banmax && ![isban $bhost] && ![matchban $bhost]} {
           newban $bhost sentinel "NICK flooder" $sl_ban
         }
       } else {
-        if {[llength [banlist $chan]] < $sl_banmax && ![isban $bhost $chan] && ![matchban *!$bhost $chan]} {
+        if {[llength [banlist $chan]] < $sl_banmax && ![isban $bhost $chan] && ![matchban $bhost $chan]} {
           newchanban $chan $bhost sentinel "NICK flooder" $sl_ban
         }
       }
@@ -480,11 +496,11 @@ proc sl_jflood {nick uhost hand chan} {
         if {$sl_boban && [botisop $chan] && !$sl_flooded($chan)} {
           putserv "KICK $chan $nick :BOGUS username"
           if {$sl_globalban} {
-            if {[llength [banlist]] < $sl_banmax && ![isban $bhost] && ![matchban *!$bhost]} {
+            if {[llength [banlist]] < $sl_banmax && ![isban $bhost] && ![matchban $bhost]} {
               newban $bhost sentinel "BOGUS username" $sl_boban
             }
           } else {
-            if {[llength [banlist $chan]] < $sl_banmax && ![isban $bhost $chan] && ![matchban *!$bhost $chan]} {
+            if {[llength [banlist $chan]] < $sl_banmax && ![isban $bhost $chan] && ![matchban $bhost $chan]} {
               newchanban $chan $bhost sentinel "BOGUS username" $sl_boban
             }
           }
@@ -717,7 +733,7 @@ proc sl_kick {chan klist reason} {
 }
 
 proc sl_setbans {chan} {
-  global sl_avbanhost sl_bobanhost sl_ccbanhost sl_kflooders sl_jbanhost sl_nkbanhost sl_pbanhost sl_shortlock sl_unlocked
+  global sl_avbanhost sl_bobanhost sl_ccbanhost sl_kflooders sl_jbanhost sl_nkbanhost sl_pbanhost sl_shortlock sl_unlocked sl_wideban
   if {![botonchan $chan]} {return 0}
   set sl_ccbanhost($chan) [sl_dfilter $sl_ccbanhost($chan)]
   set sl_avbanhost($chan) [sl_dfilter $sl_avbanhost($chan)]
@@ -725,21 +741,23 @@ proc sl_setbans {chan} {
   set sl_bobanhost($chan) [sl_dfilter $sl_bobanhost($chan)]
   set sl_jbanhost($chan) [sl_dfilter $sl_jbanhost($chan)]
   set sl_pbanhost($chan) [sl_dfilter $sl_pbanhost($chan)]
-  set allbans [sl_dfilter [concat $sl_ccbanhost($chan) $sl_avbanhost($chan) $sl_nkbanhost($chan) $sl_bobanhost($chan) $sl_jbanhost($chan) $sl_pbanhost($chan)]]
-  sl_ban $chan [sl_dcheck $allbans] "IDENT/HOST flooders"
-  sl_ban $chan $sl_ccbanhost($chan) "CTCP flooder" ; set sl_ccbanhost($chan) ""
-  sl_ban $chan $sl_avbanhost($chan) "AVALANCHE/TSUNAMI flooder" ; set sl_avbanhost($chan) ""
-  sl_ban $chan $sl_nkbanhost($chan) "NICK flooder" ; set sl_nkbanhost($chan) ""
-  sl_ban $chan $sl_bobanhost($chan) "BOGUS username" ; set sl_bobanhost($chan) ""
+  set blist ""
   if {$sl_jbanhost($chan) != "" && $sl_pbanhost($chan) != ""} {
-    set blist ""
     foreach bhost $sl_jbanhost($chan) {
       if {[lsearch -exact $sl_pbanhost($chan) $bhost] != -1} {
         lappend blist $bhost
       }
     }
-    sl_ban $chan $blist "JOIN-PART flooder"
   }
+  if {$sl_wideban} {
+    set allbans [sl_dfilter [concat $sl_ccbanhost($chan) $sl_avbanhost($chan) $sl_nkbanhost($chan) $sl_bobanhost($chan) $blist]]
+    sl_ban $chan [sl_dcheck $allbans] "MULTIPLE IDENT/HOST flooders"
+  }
+  sl_ban $chan $sl_ccbanhost($chan) "CTCP flooder" ; set sl_ccbanhost($chan) ""
+  sl_ban $chan $sl_avbanhost($chan) "AVALANCHE/TSUNAMI flooder" ; set sl_avbanhost($chan) ""
+  sl_ban $chan $sl_nkbanhost($chan) "NICK flooder" ; set sl_nkbanhost($chan) ""
+  sl_ban $chan $sl_bobanhost($chan) "BOGUS username" ; set sl_bobanhost($chan) ""
+  sl_ban $chan $blist "JOIN-PART flooder"
   set sl_jbanhost($chan) "" ; set sl_pbanhost($chan) ""
   if {$sl_shortlock && $sl_kflooders <= 2 && [llength $allbans] <= 2 && [expr [unixtime] - $sl_unlocked($chan)] > 120} {
     sl_killutimer "sl_unlock $chan *"
@@ -776,7 +794,7 @@ proc sl_dcheck {bhosts} {
   }  
   foreach baddr [array names baddrs] {
     if {$baddrs($baddr) >= 2} {
-      lappend blist *!@$baddr
+      lappend blist *!*@$baddr
     }
   }
   foreach bident [array names bidents] {
@@ -1344,7 +1362,9 @@ bind dcc $sl_lockflags|$sl_lockflags lock sl_dcclc
 bind dcc $sl_lockflags|$sl_lockflags unlock sl_dccuc
 if {!$sl_lockcmds} {
   unbind pub $sl_lockflags|$sl_lockflags lc sl_lc
+  rename sl_lc ""
   unbind pub $sl_lockflags|$sl_lockflags uc sl_uc
+  rename sl_uc ""
 }
 bind dcc m|m sentinel sl_dcc
 bind raw - NOTICE sl_avflood
@@ -1352,6 +1372,7 @@ bind raw - PRIVMSG sl_avflood
 if {[lsearch -exact $sl_avflood 0] != -1 && [lsearch -exact $sl_txflood 0] != -1} {
   unbind raw - NOTICE sl_avflood
   unbind raw - PRIVMSG sl_avflood
+  rename sl_avflood ""
 }
 bind ctcp - CLIENTINFO sl_ctcp
 bind ctcp - USERINFO sl_ctcp
@@ -1367,15 +1388,21 @@ bind ctcp - UNBAN sl_ctcp
 bind ctcp - PING sl_ctcp
 bind ctcp - TIME sl_ctcp
 bind msgm - * sl_bmflood
-if {[lsearch -exact $sl_bmflood 0] != -1} {unbind msgm - * sl_bmflood}
+if {[lsearch -exact $sl_bmflood 0] != -1} {
+  unbind msgm - * sl_bmflood
+  rename sl_bmflood ""
+}
 bind nick - * sl_nkflood
-if {[lsearch -exact $sl_nkflood 0] != -1} {unbind nick - * sl_nkflood}
+if {[lsearch -exact $sl_nkflood 0] != -1} {
+  unbind nick - * sl_nkflood
+  rename sl_nkflood ""
+}
 bind join - * sl_jflood
 bind part - * sl_pflood
 bind kick - * sl_pfloodk
 bind flud - * sl_flud
 bind mode - * sl_mode
 
-putlog "Loaded sentinel.tcl v2.50 by slennox"
+putlog "Loaded sentinel.tcl v2.60 by slennox"
 
 return
