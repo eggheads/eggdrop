@@ -12,7 +12,7 @@
 # arthur2@demoniak.hay-france.com ou benoit_jerome@penguinpowered.com
 # si vous voulez l'améliorer
 #
-# $Id: core.french.lang,v 1.13 1999/12/15 02:32:57 guppy Exp $
+# $Id: core.french.lang,v 1.14 2000/01/22 23:28:20 per Exp $
 
 
 # General stuff
@@ -265,7 +265,7 @@ Faites un Telnet sur le bot et entrez 'NEW' comme surnom.
 0x667,Maintenant vous devez trouver un nick à utiliser sur le bot,\net un mot de passe, ainsi personne ne peut prétendre être vous.\nRetenez les!
 0x668,Dorénavant, vous n'avez plus besoin d'utiliser l'option -m pour démarrer le bot.\nEnjoy !!
 0x669,Avalanche de connexions telnet de %s!  Placement en ignorance!
-0x66a,interdit
+0x66a,interdit: 
 0x66b,avalanche de surnom
 0x66c,touches pas à mon pote
 0x66d,...pas la peine de revenir.

@@ -9,7 +9,7 @@
  * dprintf'ized, 27oct1995
  * multi-channel, 8feb1996
  * 
- * $Id: chan.c,v 1.53 2000/01/14 12:15:30 per Exp $
+ * $Id: chan.c,v 1.54 2000/01/22 23:28:20 per Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -394,7 +394,7 @@ static void refresh_ban_kick(struct chanset_t *chan, char *user, char *nick)
 	c[0] = 0;
 	if (u->desc && (u->desc[0] != '@')) {
 	  if (strcmp(IRC_PREBANNED, ""))
-	    sprintf(c, "%s: %s", IRC_PREBANNED, u->desc);
+	    sprintf(c, "%s%s", IRC_PREBANNED, u->desc);
 	  else
 	    sprintf(c, "%s", u->desc);
 	}
