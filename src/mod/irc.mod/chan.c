@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  *
- * $Id: chan.c,v 1.91 2002/07/25 17:40:18 guppy Exp $
+ * $Id: chan.c,v 1.92 2002/08/02 23:50:39 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -292,7 +292,7 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
       else
 	putlog(LOG_MISC | LOG_JOIN, chan->dname, IRC_FLOODIGNORE4, p);
       strcpy(ftype + 4, " flood");
-      u_addban(chan, h, botnetnick, ftype, now + (60 * ban_time), 0);
+      u_addban(chan, h, botnetnick, ftype, now + (60 * chan->ban_time), 0);
       if (!channel_enforcebans(chan) && (me_op(chan) || me_halfop(chan))) {
 	  char s[UHOSTLEN];
 	  for (m = chan->channel.member; m && m->nick[0]; m = m->next) {	  
@@ -2203,7 +2203,7 @@ static int gotmsg(char *from, char *msg)
       if (ban_fun) {
 	check_exemptlist(chan, from);
 	u_addban(chan, quickban(chan, uhost), botnetnick,
-		IRC_FUNKICK, now + (60 * ban_time), 0);
+		IRC_FUNKICK, now + (60 * chan->ban_time), 0);
       }
       if (kick_fun) {
 	/* This can induce kickflood - arthur2 */
@@ -2360,7 +2360,7 @@ static int gotnotice(char *from, char *msg)
       if (ban_fun) {
 	check_exemptlist(chan, from);
 	u_addban(chan, quickban(chan, uhost), botnetnick,
-		IRC_FUNKICK, now + (60 * ban_time), 0);
+		IRC_FUNKICK, now + (60 * chan->ban_time), 0);
       }
       if (kick_fun) {
 	/* This can induce kickflood - arthur2 */

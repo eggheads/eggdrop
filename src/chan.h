@@ -3,7 +3,7 @@
  *   stuff common to chan.c and mode.c
  *   users.h needs to be loaded too
  *
- * $Id: chan.h,v 1.29 2002/06/19 21:13:38 wcc Exp $
+ * $Id: chan.h,v 1.30 2002/08/02 23:50:38 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -164,6 +164,9 @@ struct chanset_t {
   int idle_kick;
   int stopnethack_mode;
   int revenge_mode;
+  int ban_time;
+  int invite_time;
+  int exempt_time;
   maskrec *bans,		/* temporary channel bans		*/
           *exempts,		/* temporary channel exempts		*/
           *invites;		/* temporary channel invites		*/

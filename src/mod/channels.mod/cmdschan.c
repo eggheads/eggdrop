@@ -2,7 +2,7 @@
  * cmdschan.c -- part of channels.mod
  *   commands from a user via dcc that cause server interaction
  *
- * $Id: cmdschan.c,v 1.56 2002/07/22 05:48:53 guppy Exp $
+ * $Id: cmdschan.c,v 1.57 2002/08/02 23:50:38 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1212,6 +1212,18 @@ static void cmd_chaninfo(struct userrec *u, int idx, char *par)
       dprintf(idx, "revenge-mode: %d\n", chan->revenge_mode);
     else
       dprintf(idx, "revenge-mode: 0\n");
+    if (chan->ban_time)
+      dprintf(idx, "ban-time: %d\n", chan->ban_time);
+    else
+      dprintf(idx, "ban-time: 0\n");
+    if (chan->exempt_time)
+      dprintf(idx, "exempt-time: %d\n", chan->exempt_time);
+    else
+      dprintf(idx, "exempt-time: 0\n");
+    if (chan->invite_time)
+      dprintf(idx, "invite-time: %d\n", chan->invite_time);
+    else
+      dprintf(idx, "invite-time: 0\n");
     /* Only bot owners can see/change these (they're TCL commands) */
     if (u->flags & USER_OWNER) {
       if (chan->need_op[0])
