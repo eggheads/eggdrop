@@ -4,7 +4,7 @@
  *   a bunch of functions to find and change user records
  *   change and check user (and channel-specific) flags
  *
- * $Id: userrec.c,v 1.49 2004/06/11 05:53:03 wcc Exp $
+ * $Id: userrec.c,v 1.50 2004/06/12 01:24:57 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -163,29 +163,26 @@ int count_users(struct userrec *bu)
   return tot;
 }
 
-/* Convert "nick!~user@host", "nick!+user@host" and "nick!-user@host"
- * to "nick!user@host" if necessary. (drummer)
+/* Removes a username prefix (~+-^=) from a userhost.
+ * e.g, "nick!~user@host" -> "nick!user@host"
  */
 char *fixfrom(char *s)
 {
-  char *p;
-  static char buf[512];
+  char *p = NULL;
 
-  if (s == NULL)
-    return NULL;
-  strncpyz(buf, s, sizeof buf);
-  if (strict_host)
-    return buf;
-  if ((p = strchr(buf, '!')))
-    p++;
-  else
-    p = s;                      /* Sometimes we get passed just a
-                                 * user@host here... */
-  /* These are ludicrous. */
-  if (strchr("~+-^=", *p) && (p[1] != '@'))     /* added check for @ - drummer */
-    strcpy(p, p + 1);
-  /* Bug was: n!~@host -> n!@host  now: n!~@host */
-  return buf;
+  if (!s || !*s || strict_host)
+    return s;
+
+  if ((p = strchr(s, '!'))) {
+    if (!*(++p))
+      return s;	/* There's nothing following "!". */
+  } else
+    p = s; 	/* There's no nick. */
+
+  if (strchr("~+-^=", *p) && *(p + 1) != '@')
+    memmove(p, p + 1, strlen(p)); /* NUL is included without +1. */
+
+  return p;
 }
 
 struct userrec *check_dcclist_hand(char *handle)
@@ -326,7 +323,7 @@ struct userrec *get_user_by_host(char *host)
   }
   cache_miss++;
   strncpyz(host2, host, sizeof host2);
-  host = fixfrom(host);
+  fixfrom(host);
   for (u = userlist; u; u = u->next) {
     q = get_user(&USERENTRY_HOSTS, u);
     for (; q; q = q->next) {
@@ -653,9 +650,9 @@ struct userrec *adduser(struct userrec *bu, char *handle, char *host,
      *   but its much easier to use here...  (drummer)
      *   Only use it if we have a host :) (dw)
      */
-    host = fixfrom(host);
+    fixfrom(host);
+    
     p = strchr(host, ',');
-
     while (p != NULL) {
       *p = '?';
       p = strchr(host, ',');

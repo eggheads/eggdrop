@@ -7,7 +7,7 @@
  *   telling the current programmed settings
  *   initializing a lot of stuff and loading the tcl scripts
  *
- * $Id: chanprog.c,v 1.52 2004/06/11 05:53:03 wcc Exp $
+ * $Id: chanprog.c,v 1.53 2004/06/12 01:24:57 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -60,30 +60,24 @@ char origbotname[NICKLEN + 1];
 char botname[NICKLEN + 1];         /* Primary botname              */
 
 
-/* Remove space characters from beginning and end of string
- * (more efficent by Fred1)
+/* Remove leading and trailing whitespaces.
  */
 void rmspace(char *s)
 {
-#define whitespace(c) (((c) == 32) || ((c) == 9) || ((c) == 13) || ((c) == 10))
-  char *p, *end;
-  int len;
+  char *p = NULL;
 
-  if (!*s)
+  if (!s || !*s)
     return;
 
-  /* Wipe end of string */
-  end = s + strlen(s) - 1;
-  for (p = end; ((whitespace(*p)) && (p >= s)); p--);
-  if (p != end) *(p + 1) = 0;
-  len = p+1 - s;
-  for (p = s; ((whitespace(*p)) && (*p)); p++);
-  len -= (p - s);
-  if (p != s) {
-    /* +1 to include the null in the copy */
-    memmove(s, p, len + 1);
-  }
+  /* Remove trailing whitespaces. */
+  for (p = s + strlen(s) - 1; p >= s && egg_isspace(*p); p--);
+  *(p + 1) = 0;
+
+  /* Remove leading whitespaces. */
+  for (p = s; egg_isspace(*p); p++);
+  memmove(s, p, strlen(p) + 1); /* +1 to include NUL. */
 }
+
 
 /* Returns memberfields if the nick is in the member list.
  */
@@ -431,17 +425,22 @@ void chanprog()
 {
   int i;
 
-  admin[0] = 0;
+  admin[0]   = 0;
   helpdir[0] = 0;
   tempdir[0] = 0;
+
   for (i = 0; i < max_logs; i++)
     logs[i].flags |= LF_EXPIRING;
+
   conmask = 0;
+
   /* Turn off read-only variables (make them write-able) for rehash */
   protect_readonly = 0;
+
   /* Now read it */
   if (!readtclprog(configfile))
     fatal(MISC_NOCONFIGFILE, 0);
+
   for (i = 0; i < max_logs; i++) {
     if (logs[i].flags & LF_EXPIRING) {
       if (logs[i].filename != NULL) {
@@ -460,6 +459,7 @@ void chanprog()
       logs[i].flags = 0;
     }
   }
+
   /* We should be safe now */
   call_hook(HOOK_REHASH);
   protect_readonly = 1;

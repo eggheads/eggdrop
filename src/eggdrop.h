@@ -4,7 +4,7 @@
  *
  *   IF YOU ALTER THIS FILE, YOU NEED TO RECOMPILE THE BOT.
  *
- * $Id: eggdrop.h,v 1.58 2004/06/04 14:07:48 wcc Exp $
+ * $Id: eggdrop.h,v 1.59 2004/06/12 01:24:57 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -217,7 +217,7 @@ typedef unsigned int u_32bit_t;
 #  if (SIZEOF_LONG == 4)
 typedef unsigned long u_32bit_t;
 #  else
-#    include "cant/find/32bit/type"
+#    include "Error: Can't find 32bit type."
 #  endif
 #endif
 
