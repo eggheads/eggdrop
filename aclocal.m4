@@ -1,7 +1,7 @@
 dnl aclocal.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: aclocal.m4,v 1.46 2001/09/23 19:54:06 guppy Exp $
+dnl $Id: aclocal.m4,v 1.47 2001/09/30 05:06:33 tothwolf Exp $
 dnl
 
 
@@ -181,8 +181,8 @@ case "$egg_cv_var_system_type" in
       1.*)
         NEED_DL=0
         SHLIB_LD="$CC -shared"
-	AC_PROG_CC_WIN32
-	CC="$CC $WIN32FLAGS"
+        AC_PROG_CC_WIN32
+        CC="$CC $WIN32FLAGS"
         MOD_CC="$CC"
         MOD_LD="$CC"
         AC_MSG_CHECKING(for /usr/lib/binmode.o)
@@ -301,17 +301,24 @@ case "$egg_cv_var_system_type" in
     AC_DEFINE(STOP_UAC)dnl
   ;;
   SunOS)
-    if test "`echo $egg_cv_var_system_release | cut -d . -f 1`" = "x5"
+    if test "`echo $egg_cv_var_system_release | cut -d . -f 1`" = "5"
     then
-      SHLIB_LD="/usr/ccs/bin/ld -G -z text"
+      # Solaris
+      if test -n "$GCC"
+      then
+        SHLIB_CC="$CC -fPIC"
+        SHLIB_LD="$CC"
+      else
+        SHLIB_CC="$CC -KPIC"
+        SHLIB_LD="$CC -G -z text"
+      fi
     else
+      # SunOS 4
       SUNOS=yes
       SHLIB_LD=ld
-      SHLIB_STRIP=touch
+      SHLIB_CC="$CC -PIC"
       AC_DEFINE(DLOPEN_1)dnl
     fi
-    MOD_CC="${CC} -fPIC"
-    SHLIB_CC="${CC} -fPIC"
     AC_DEFINE(MODULES_OK)dnl
   ;;
   *BSD)
@@ -1238,6 +1245,7 @@ AC_DEFUN(EGG_SAVE_PARAMETERS, [dnl
   AC_DIVERT_POP()dnl to NORMAL
   AC_SUBST(egg_ac_parameters)dnl
 ])dnl
+
 
 AC_DEFUN([AC_PROG_CC_WIN32], [
 AC_MSG_CHECKING([how to access the Win32 API])
