@@ -1,7 +1,7 @@
 # core.english.lang
 #   core language messages for eggdrop
 #
-# $Id: core.english.lang,v 1.39 2003/11/27 03:20:24 wcc Exp $
+# $Id: core.english.lang,v 1.40 2003/11/27 05:10:30 wcc Exp $
 
 # General stuff
 0x001,Usage
@@ -69,7 +69,7 @@ module, please consult the default config file for info.\n
 0x40e,Userfile creation not necessary--skipping
 0x40f,Rehashing...
 0x410,I don't know anyone by that name.\n
-0x411,No user record.
+0x411,No such user record.
 0x412,Backing up user file...
 0x413,Failed connection; aborted userfile transfer.
 0x414,Old style share request by
@@ -106,7 +106,7 @@ module, please consult the default config file for info.\n
 0x521,Use:
 0x522,<address>:<port#>[/<relay-port#>]
 0x526,pending
-0x527,want ops
+0x527,need ops
 0x528,lurking
 0x529,background
 0x52a,terminal mode
@@ -181,7 +181,7 @@ Telnet to the bot and enter 'NEW' as your nickname.
 0x62b,Jumping servers...
 0x62c,Channel is currently hidden.
 0x62d,Now on channel
-0x62e,Never joined one of my channels.
+0x62e,Never seen on channel.
 0x62f,Last seen at
 0x630,I don't know you; please introduce yourself first.
 0x631,No help.

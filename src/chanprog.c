@@ -7,7 +7,7 @@
  *   telling the current programmed settings
  *   initializing a lot of stuff and loading the tcl scripts
  *
- * $Id: chanprog.c,v 1.43 2003/11/27 03:25:10 wcc Exp $
+ * $Id: chanprog.c,v 1.44 2003/11/27 05:10:30 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -262,7 +262,7 @@ void tell_verbose_status(int idx)
   char s[256], s1[121], s2[81];
   char *vers_t, *uni_t;
   int i;
-  time_t now2, hr, min;
+  time_t now2 = now - online_since, hr, min;
 
 #if HAVE_GETRUSAGE
   struct rusage ru;
@@ -286,11 +286,10 @@ void tell_verbose_status(int idx)
 #endif
 
   i = count_users(userlist);
-  dprintf(idx, "I am %s, running %s: %d user%s (mem: %uk)\n",
+  dprintf(idx, "I am %s, running %s: %d user%s (mem: %uk).\n",
           botnetnick, ver, i, i == 1 ? "" : "s",
           (int) (expected_memory() / 1024));
 
-  now2 = now - online_since;
   s[0] = 0;
   if (now2 > 86400) {
     /* days */
@@ -353,7 +352,7 @@ void tell_verbose_status(int idx)
           TCL_PATCH_LEVEL ? TCL_PATCH_LEVEL : "*unknown*");
 
 #if HAVE_TCL_THREADS
-  dprintf(idx, "Tcl is threaded\n");
+  dprintf(idx, "Tcl is threaded.\n");
 #endif
 
 }
@@ -372,10 +371,13 @@ void tell_settings(int idx)
   dprintf(idx, "Userfile: %s\n", userfile);
   dprintf(idx, "Motd: %s\n",  motdfile);
   dprintf(idx, "Directories:\n");
-  dprintf(idx, "  Help    : %s\n", helpdir);
-  dprintf(idx, "  Temp    : %s\n", tempdir);
 #ifndef STATIC
-  dprintf(idx, "  Modules : %s\n", moddir);
+  dprintf(idx, "  Help   : %s\n", helpdir);
+  dprintf(idx, "  Temp   : %s\n", tempdir);
+  dprintf(idx, "  Modules: %s\n", moddir);
+#else
+  dprintf(idx, "  Help: %s\n", helpdir);
+  dprintf(idx, "  Temp: %s\n", tempdir);
 #endif
   fr.global = default_flags;
 
@@ -390,7 +392,7 @@ void tell_settings(int idx)
               logs[i].filename, logs[i].chname,
               masktype(logs[i].mask), maskname(logs[i].mask));
     }
-  dprintf(idx, "Ignores last %d minute%s\n", ignore_time,
+  dprintf(idx, "Ignores last %d minute%s.\n", ignore_time,
           (ignore_time != 1) ? "s" : "");
 }
 
