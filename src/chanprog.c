@@ -7,7 +7,7 @@
  *   telling the current programmed settings
  *   initializing a lot of stuff and loading the tcl scripts
  * 
- * $Id: chanprog.c,v 1.16 2000/10/01 19:11:43 fabian Exp $
+ * $Id: chanprog.c,v 1.17 2000/10/02 22:35:42 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -89,7 +89,7 @@ memberlist *ismember(struct chanset_t *chan, char *nick)
   register memberlist	*x;
 
   for (x = chan->channel.member; x && x->nick[0]; x = x->next)
-    if (rfc_casecmp(x->nick, nick))
+    if (!rfc_casecmp(x->nick, nick))
       return x;
   return NULL;
 }
