@@ -4,7 +4,7 @@
  *   provides the code used by the bot if the DNS module is not loaded
  *   DNS Tcl commands
  *
- * $Id: dns.c,v 1.22 2001/06/30 06:29:55 guppy Exp $
+ * $Id: dns.c,v 1.23 2001/10/31 17:46:41 poptix Exp $
  */
 /*
  * Written by Fabian Knittel <fknittel@gmx.de>
@@ -500,6 +500,7 @@ static int tcl_dnslookup STDVAR
   struct in_addr inaddr;
   char *paras = NULL;
 
+  /* This function should be using BADARGS, FIXME -poptix */
   if (argc < 3) {
     Tcl_AppendResult(irp, "wrong # args: should be \"", argv[0],
 		     " ip-address/hostname proc ?args...?\"", NULL);
