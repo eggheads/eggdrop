@@ -1,7 +1,7 @@
 
 # Getops 2.3
 
-# $Id: getops.tcl,v 1.11 2001/06/29 13:58:53 guppy Exp $
+# $Id: getops.tcl,v 1.12 2001/07/15 05:26:41 guppy Exp $
 
 # This script is used for bots to request and give ops to each other.
 # For this to work, you'll need:
@@ -193,7 +193,7 @@ proc botnet_request {bot com args} {
  set idchan [chandname2name $chan]
  set nick [lindex $args 2]
 
- if {![botonchan $chan]} {
+ if {$subcom != "takekey" && ![botonchan $chan]} {
   putbot $bot "gop_resp I am not on $chan."
   return 0
  }
