@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  * 
- * $Id: cmds.c,v 1.35 2000/07/09 13:51:56 fabian Exp $
+ * $Id: cmds.c,v 1.36 2000/07/12 21:52:13 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -59,29 +59,28 @@ static char	*btos(int);
 static int add_bot_hostmask(int idx, char *nick)
 {
   struct chanset_t *chan;
-  memberlist *m;
-  char s[UHOSTLEN];
 
-  for (chan = chanset; chan; chan = chan->next) {
+  for (chan = chanset; chan; chan = chan->next)
     if (channel_active(chan)) {
-      m = ismember(chan, nick);
+      memberlist *m = ismember(chan, nick);
+
       if (m) {
+	char s[UHOSTLEN], s1[UHOSTLEN];
 	struct userrec *u;
 
-	simple_sprintf(s, "%s!%s", m->nick, m->userhost);
+	egg_snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
 	u = get_user_by_host(s);
 	if (u) {
 	  dprintf(idx, "(Can't add userhost for %s because it matches %s)\n",
 		  nick, u->handle);
 	  return 0;
 	}
-	simple_sprintf(s, "*!%s", m->userhost);
+	maskhost(s, s1);
 	dprintf(idx, "(Added hostmask for %s from %s)\n", nick, chan->dname);
-	addhost_by_handle(nick, s);
+	addhost_by_handle(nick, s1);
 	return 1;
       }
     }
-  }
   return 0;
 }
 
