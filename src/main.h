@@ -57,10 +57,9 @@ extern struct dcc_table DCC_CHAT, DCC_BOT, DCC_LOST, DCC_SCRIPT, DCC_BOT_NEW,
 #define swap_long(ln) (ln)
 #else
 #define swap_short(sh) ((((sh) & 0xff00) >> 8) | (((sh) & 0x00ff) << 8))
-#define swap_long(ln) (swap_short(((ln)&0xffff0000)>>16) | \
-                       (swap_short((ln)&0x0000ffff)<<16))
+#define swap_long(ln) (swap_short(((ln)&0xffff0000)>>16) | (swap_short((ln)&0x0000ffff)<<16))
 #endif
-#define iptolong(a) swap_long((unsigned long)a)
+#define iptolong(a) (0xffffffff & (long)(swap_long((unsigned long)a)))
 #define fixcolon(x) if (x[0]==':') {x++;} else {x=newsplit(&x);}
 
 /* Stupid Borg Cube crap ;p */
