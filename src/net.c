@@ -2,7 +2,7 @@
  * net.c -- handles:
  *   all raw network i/o
  *
- * $Id: net.c,v 1.69 2004/06/14 01:14:06 wcc Exp $
+ * $Id: net.c,v 1.70 2004/06/21 05:57:24 wcc Exp $
  */
 /*
  * This is hereby released into the public domain.
@@ -286,6 +286,7 @@ void killsock(register int sock)
   /* Ignore invalid sockets.  */
   if (sock < 0)
     return;
+
   for (i = 0; i < MAXSOCKS; i++) {
     if ((socklist[i].sock == sock) && !(socklist[i].flags & SOCK_UNUSED)) {
       close(socklist[i].sock);
@@ -302,7 +303,7 @@ void killsock(register int sock)
       return;
     }
   }
-  putlog(LOG_MISC, "*", "Attempt to kill un-allocated socket %d !!", sock);
+  putlog(LOG_MISC, "*", "Warning: Attempt to kill un-allocated socket %d!", sock);
 }
 
 /* Send connection request to proxy
@@ -432,8 +433,6 @@ int open_telnet(char *server, int port)
 {
   int sock = getsock(0), ret = open_telnet_raw(sock, server, port);
 
-  if (ret < 0)
-    killsock(sock);
   return ret;
 }
 
