@@ -1,7 +1,7 @@
 
 # Getops 2.2f
 
-# $Id: getops.tcl,v 1.9 2001/05/23 07:00:41 poptix Exp $
+# $Id: getops.tcl,v 1.10 2001/06/01 22:07:32 poptix Exp $
 
 # This script is used for bots to request and give ops to each other.
 # For this to work, you'll need:
@@ -21,6 +21,9 @@
 # hostmasks up-to-date).
 
 # -----------------------------------------------------------------------------
+
+# 2.2g by poptix <poptix@poptix.net>
+#  - Fabian's 2.2e broke the script, fixed.
 
 # 2.2f by Eule <eule@berlin.snafu.de>
 #  - removed key work-around added in 2.2d as eggdrop now handles this
@@ -75,6 +78,8 @@
 #   annoying mode floods, and it's more secure that way
 # - I also took that annoying wallop and resynch stuff out :P
 # - And I guess this will with with 1.3.x too
+
+# Previously by The_O, dtM.
 
 # Originial incarnation by poptix (poptix@poptix.net)
 
@@ -172,24 +177,24 @@ proc botnet_request {bot com args} {
  set args [lindex $args 0]
  set subcom [lindex $args 0]
  set chan [string tolower [lindex $args 1]]
+ if {[validchan $chan] == 0} {
+   putbot $bot "gop_resp I don't monitor $chan."
+   return 0
+ }
+ # Please note, 'chandname2name' will cause an error if it is not a valid channel
+ # Thus, we make sure $chan is a valid channel -before- using it. -poptix
  set idchan [chandname2name $chan]
  set nick [lindex $args 2]
 
+ if {[onchan $botnick $chan] == 0} {
+  putbot $bot "gop_resp I am not on $chan."
+  return 0
+ }
  if {[matchattr $bot b] == 0} {
   if { $go_bot_unknown == 1} {
    putlog "GetOps: Request ($subcom) from $bot - unknown bot (IGNORED)"
   }
   return 0
- }
- if {$subcom != "takekey"} {
-  if {[validchan $chan] == 0} {
-   putbot $bot "gop_resp I don't monitor $chan."
-   return 0
-  }
-  if {[onchan $botnick $chan] == 0} {
-   putbot $bot "gop_resp I am not on $chan."
-   return 0
-  }
  }
 
  switch -exact $subcom {
@@ -367,4 +372,4 @@ proc gop_join { nick uhost hand chan } {
 
 set getops_loaded 1
 
-putlog "GetOps v2.2f by brainsick, Progfou, Cron@irc.pl, dtM, The_O, DarkDruid & Ernst loaded."
+putlog "GetOps v2.2g loaded."
