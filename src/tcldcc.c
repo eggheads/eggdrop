@@ -2,7 +2,7 @@
  * tcldcc.c -- handles:
  *   Tcl stubs for the dcc commands
  *
- * $Id: tcldcc.c,v 1.28 2001/05/14 16:17:00 guppy Exp $
+ * $Id: tcldcc.c,v 1.29 2001/10/31 16:54:07 poptix Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -594,7 +594,7 @@ static int tcl_dcclist STDVAR
   BADARGS(1, 2, " ?type?");
   for (i = 0; i < dcc_total; i++) {
     if (argc == 1 ||
-	(dcc[i].type && !egg_strcasecmp(dcc[i].type->name, argv[1]))) {
+	((argc == 2) && (dcc[i].type && !egg_strcasecmp(dcc[i].type->name, argv[1])))) {
       egg_snprintf(idxstr, sizeof idxstr, "%ld", dcc[i].sock);
       egg_snprintf(timestamp, sizeof timestamp, "%ld", dcc[i].timeval);
       if (dcc[i].type && dcc[i].type->display)
@@ -763,9 +763,7 @@ static int tcl_link STDVAR
 
   BADARGS(2, 3, " ?via-bot? bot");
   strncpyz(bot, argv[1], sizeof bot);
-  if (argc == 2)
-     x = botlink("", -2, bot);
-  else {
+  if (argc == 3)
     x = 1;
     strncpyz(bot2, argv[2], sizeof bot2);
     i = nextbot(bot);
@@ -773,6 +771,8 @@ static int tcl_link STDVAR
       x = 0;
     else
       botnet_send_link(i, botnetnick, bot, bot2);
+  else {
+     x = botlink("", -2, bot);
   }
   egg_snprintf(bot, sizeof bot, "%d", x);
   Tcl_AppendResult(irp, bot, NULL);
