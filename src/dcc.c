@@ -6,7 +6,7 @@
  * 
  * dprintf'ized, 27oct1995
  * 
- * $Id: dcc.c,v 1.20 2000/01/17 22:36:06 fabian Exp $
+ * $Id: dcc.c,v 1.21 2000/01/22 23:30:54 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -125,8 +125,7 @@ static void greet_new_bot(int idx)
   dcc[idx].u.bot->numver = 0;
   if (bfl & BOT_REJECT) {
     putlog(LOG_BOTS, "*", DCC_REJECT, dcc[idx].nick);
-    dprintf(idx, "error You are being rejected.\n");
-    dprintf(idx, "bye\n");
+    dprintf(idx, "bye %s\n", "rejected");
     killsock(dcc[idx].sock);
     lostdcc(idx);
     return;
@@ -166,7 +165,7 @@ static void bot_version(int idx, char *par)
 #if HANDLEN != 9
     dprintf(idx, "error Non-matching handle length: mine %d, yours 9\n",
 	    HANDLEN);
-    dprintf(idx, "bye\n");
+    dprintf(idx, "bye %s\n", "bad handlen");
     killsock(dcc[idx].sock);
     lostdcc(idx);
     return;
@@ -180,7 +179,7 @@ static void bot_version(int idx, char *par)
     if (l != HANDLEN) {
       dprintf(idx, "error Non-matching handle length: mine %d, yours %d\n",
 	      HANDLEN, l);
-      dprintf(idx, "bye\n");
+      dprintf(idx, "bye %s\n", "bad handlen");
       killsock(dcc[idx].sock);
       lostdcc(idx);
       return;
@@ -258,7 +257,7 @@ static void cont_link(int idx, char *buf, int i)
 	simple_sprintf(x, "Unlinked %s (restructure)", dcc[i].nick);
 	chatout("*** %s\n", x);
 	botnet_send_unlinked(i, dcc[i].nick, x);
-	dprintf(i, "bye\n");
+	dprintf(i, "bye %s\n", "restructure");
 	killsock(dcc[i].sock);
 	lostdcc(i);
       }

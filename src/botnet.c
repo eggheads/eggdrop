@@ -9,7 +9,7 @@
  * 
  * dprintf'ized, 28nov1995
  * 
- * $Id: botnet.c,v 1.16 2000/01/17 22:36:06 fabian Exp $
+ * $Id: botnet.c,v 1.17 2000/01/22 23:30:54 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -847,12 +847,13 @@ int botunlink(int idx, char *nick, char *reason)
 	  dprintf(idx, "%s %s.\n", BOT_BREAKLINK, dcc[i].nick);
 	else if ((idx == -3) && (b_status(i) & STAT_SHARE) && !share_unlinks)
 	  return -1;
-	dprintf(i, "bye\n");
 	if (reason && reason[0]) {
 	  simple_sprintf(s, "%s %s (%s)", BOT_UNLINKEDFROM,
 			 dcc[i].nick, reason);
+	  dprintf(i, "bye %s\n", reason);
 	} else {
 	  simple_sprintf(s, "%s %s", BOT_UNLINKEDFROM, dcc[i].nick);
+	  dprintf(i, "bye No reason\n");
 	}
 	chatout("*** %s\n", s);
 	botnet_send_unlinked(i, dcc[i].nick, s);
@@ -1535,7 +1536,7 @@ void check_botnet_pings()
 
 	    putlog(LOG_BOTS, "*", "%s %s (%s).", BOT_DISCONNECTED,
 		   dcc[i].nick, BOT_BOTNOTLEAFLIKE);
-	    dprintf(i, "bye\n");
+	    dprintf(i, "bye %s\n", BOT_BOTNOTLEAFLIKE);
 	    simple_sprintf(s, "%s %s (%s)", BOT_DISCONNECTED, dcc[i].nick,
 			   BOT_BOTNOTLEAFLIKE);
 	    chatout("*** %s\n", s);

@@ -10,7 +10,7 @@
  * 
  * dprintf'ized, 9nov1995
  * 
- * $Id: users.c,v 1.11 2000/01/17 22:36:07 fabian Exp $
+ * $Id: users.c,v 1.12 2000/01/22 23:30:54 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1107,7 +1107,7 @@ void autolink_cycle(char *start)
 	    putlog(LOG_BOTS, "*", "%s %s", BOT_REJECTING, dcc[i].nick);
 	    chatout("*** %s bot %s\n", p, dcc[i].nick);
 	    botnet_send_unlinked(i, dcc[i].nick, p);
-	    dprintf(i, "bye\n");
+	    dprintf(i, "bye %s\n", BOT_REJECTING);
 	    killsock(dcc[i].sock);
 	    lostdcc(i);
 	  } else if (i < 0) {

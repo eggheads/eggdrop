@@ -5,7 +5,7 @@
  * 
  * dprintf'ized, 10nov1995
  * 
- * $Id: botcmd.c,v 1.10 2000/01/17 22:36:05 fabian Exp $
+ * $Id: botcmd.c,v 1.11 2000/01/22 23:30:53 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -289,7 +289,8 @@ static void bot_bye(int idx, char *par)
   char s[1024];
 
   Context;
-  simple_sprintf(s, "%s %s. %s", BOT_DISCONNECTED, dcc[idx].nick, par);
+  simple_sprintf(s, "%s %s (%s)", BOT_DISCONNECTED, dcc[idx].nick, par[0] ?
+		 par : "No reason");
   putlog(LOG_BOTS, "*", "%s", s);
   chatout("*** %s\n", s);
   botnet_send_unlinked(idx, dcc[idx].nick, s);
@@ -672,7 +673,7 @@ static void bot_nlinked(int idx, char *par)
   if (s[0]) {
     chatout("*** %s\n", s);
     botnet_send_unlinked(idx, dcc[idx].nick, s);
-    dprintf(idx, "bye\n");
+    dprintf(idx, "bye %s\n", BOT_ILLEGALLINK);
     killsock(dcc[idx].sock);
     lostdcc(idx);
     return;
@@ -839,7 +840,7 @@ static void bot_reject(int idx, char *par)
 
       /* i'm the connection to the rejected bot */
       putlog(LOG_BOTS, "*", "%s %s %s", from, MISC_REJECTED, dcc[i].nick);
-      dprintf(i, "bye\n");
+      dprintf(i, "bye %s\n", par[0] ? par : MISC_REJECTED);
       simple_sprintf(s, "%s %s (%s: %s)",
 		     MISC_DISCONNECTED, dcc[i].nick, from,
 		     par[0] ? par : MISC_REJECTED);
@@ -901,7 +902,7 @@ static void bot_thisbot(int idx, char *par)
     char s[1024];
 
     putlog(LOG_BOTS, "*", NET_WRONGBOT, dcc[idx].nick, par);
-    dprintf(idx, "bye\n");
+    dprintf(idx, "bye %s\n", MISC_IMPOSTER);
     simple_sprintf(s, "%s %s (%s)", MISC_DISCONNECTED, dcc[idx].nick,
 		   MISC_IMPOSTER);
     chatout("*** %s\n", s);
