@@ -7,7 +7,7 @@
  * because they use structures in those
  * (saves including those .h files EVERY time) - Beldin
  * 
- * $Id: proto.h,v 1.16 2000/01/01 19:42:29 fabian Exp $
+ * $Id: proto.h,v 1.17 2000/01/06 19:46:54 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -228,6 +228,7 @@ void remove_gunk(char *);
 char *extracthostname(char *);
 void show_banner(int i);
 void make_rand_str(char *, int);
+int oatoi(const char *);
 
 /* net.c */
 void my_memcpy(char *, char *, int);

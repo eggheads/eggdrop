@@ -6,7 +6,7 @@
  * 
  * dprintf'ized, 4feb1996
  * 
- * $Id: tcl.c,v 1.13 1999/12/27 20:39:23 fabian Exp $
+ * $Id: tcl.c,v 1.14 2000/01/06 19:46:54 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -42,10 +42,6 @@ typedef struct {
   int ro;
 } intinfo;
 
-int protect_readonly = 0;	/* turn on/off readonly protection */
-char whois_fields[121] = "";	/* fields to display in a .whois */
-Tcl_Interp *interp;		/* eggdrop always uses the same interpreter */
-
 extern int backgrd, flood_telnet_thr, flood_telnet_time;
 extern int shtime, share_greet, require_p, keep_all_logs;
 extern int allow_new_telnets, stealth_telnets, use_telnet_banner;
@@ -68,17 +64,20 @@ extern log_t *logs;
 extern int tands;
 extern int resolve_timeout;
 extern char natip[];
-extern int default_uflags; /* drummer */
+extern int default_uflags;	/* drummer */
 extern int strict_host;
+extern int userfile_perm;
+extern char configfile[];	/* confvar patch by aaronwl */
 
-/* confvar patch by aaronwl */
-extern char configfile[];
+int protect_readonly = 0;	/* turn on/off readonly protection */
+char whois_fields[121] = "";	/* fields to display in a .whois */
+Tcl_Interp *interp;		/* eggdrop always uses the same interpreter */
 int dcc_flood_thr = 3;
 int debug_tcl = 0;
 int use_silence = 0;
-int use_invites = 0; /* Jason/drummer */
-int use_exempts = 0; /* Jason/drummer */
-int force_expire = 0; /* Rufus */
+int use_invites = 0;		/* Jason/drummer */
+int use_exempts = 0;		/* Jason/drummer */
+int force_expire = 0;		/* Rufus */
 int remote_boots = 2;
 int allow_dk_cmds = 1;
 int must_be_owner = 1;
@@ -90,10 +89,10 @@ int quick_logs = 0;		/* quick write logs?
 				 * flush em every min instead of every 5 */
 int par_telnet_flood = 1;       /* trigger telnet flood for +f ppl? - dw */
 int quiet_save = 0;             /* quiet-save patch by Lucas */
-
-/* prototypes for tcl */
-Tcl_Interp *Tcl_CreateInterp();
 int strtot = 0;
+
+/* Prototypes for tcl */
+Tcl_Interp *Tcl_CreateInterp();
 
 int expmem_tcl()
 {
@@ -239,7 +238,8 @@ static char *tcl_eggcouplet(ClientData cdata, Tcl_Interp * irp, char *name1,
   return NULL;
 }
 
-/* read/write normal integer */
+/* Read or write normal integer.
+ */
 static char *tcl_eggint(ClientData cdata, Tcl_Interp * irp, char *name1,
 			char *name2, int flags)
 {
@@ -248,15 +248,16 @@ static char *tcl_eggint(ClientData cdata, Tcl_Interp * irp, char *name1,
   intinfo *ii = (intinfo *) cdata;
 
   if (flags & (TCL_TRACE_READS | TCL_TRACE_UNSETS)) {
-    /* special cases */
+    /* Special cases */
     if ((int *) ii->var == &conmask)
       strcpy(s1, masktype(conmask));
     else if ((int *) ii->var == &default_flags) {
-      struct flag_record fr =
-      {FR_GLOBAL, 0, 0, 0, 0, 0};
+      struct flag_record fr = {FR_GLOBAL, 0, 0, 0, 0, 0};
       fr.global = default_flags;
       fr.udef_global = default_uflags;
       build_flags(s1, &fr, 0);
+    } else if ((int *) ii->var == &userfile_perm) {
+      sprintf(s1, "0%o", userfile_perm);
     } else
       sprintf(s1, "%d", *(int *) ii->var);
     Tcl_SetVar2(interp, name1, name2, s1, TCL_GLOBAL_ONLY);
@@ -265,7 +266,7 @@ static char *tcl_eggint(ClientData cdata, Tcl_Interp * irp, char *name1,
 		   TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
 		   tcl_eggint, cdata);
     return NULL;
-  } else {			/* writes */
+  } else {			/* Writes */
     s = Tcl_GetVar2(interp, name1, name2, TCL_GLOBAL_ONLY);
     if (s != NULL) {
       if ((int *) ii->var == &conmask) {
@@ -274,12 +275,17 @@ static char *tcl_eggint(ClientData cdata, Tcl_Interp * irp, char *name1,
 	else
 	  conmask = LOG_MODES | LOG_MISC | LOG_CMDS;
       } else if ((int *) ii->var == &default_flags) {
-	struct flag_record fr =
-	{FR_GLOBAL, 0, 0, 0, 0, 0};
+	struct flag_record fr = {FR_GLOBAL, 0, 0, 0, 0, 0};
 
 	break_down_flags(s, &fr, 0);
 	default_flags = sanity_check(fr.global); /* drummer */
 	default_uflags = fr.udef_global;
+      } else if ((int *) ii->var == &userfile_perm) {
+	int p = oatoi(s);
+
+	if (p <= 0)
+	  return "invalid userfile permissions";
+	userfile_perm = p;
       } else if ((ii->ro == 2) || ((ii->ro == 1) && protect_readonly)) {
 	return "read-only variable";
       } else {
@@ -445,6 +451,7 @@ static tcl_ints def_tcl_ints[] =
   {"force-expire", &force_expire, 0},			/* Rufus */
   {"dupwait-timeout", &dupwait_timeout, 0},
   {"strict-host", &strict_host, 0}, 			/* drummer */
+  {"userfile-perm", &userfile_perm, 0},
   {0, 0, 0}						/* arthur2 */
 };
 
@@ -455,8 +462,9 @@ static tcl_coups def_tcl_coups[] =
   {0, 0, 0}
 };
 
-/* set up Tcl variables that will hook into eggdrop internal vars via */
-/* trace callbacks */
+/* Set up Tcl variables that will hook into eggdrop internal vars via
+ * trace callbacks.
+ */
 static void init_traces()
 {
   add_tcl_coups(def_tcl_coups);

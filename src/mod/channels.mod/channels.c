@@ -2,7 +2,7 @@
  * channels.c -- part of channels.mod
  *   support for channels within the bot
  * 
- * $Id: channels.c,v 1.19 2000/01/06 19:45:03 fabian Exp $
+ * $Id: channels.c,v 1.20 2000/01/06 19:46:55 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -358,7 +358,7 @@ static void write_channels()
     return;
   sprintf(s, "%s~new", chanfile);
   f = fopen(s, "w");
-  chmod(s, 0600);
+  chmod(s, userfile_perm);
   if (f == NULL) {
     putlog(LOG_MISC, "*", "ERROR writing channel file.");
     return;

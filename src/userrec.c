@@ -6,7 +6,7 @@
  * 
  * dprintf'ized, 10nov1995
  * 
- * $Id: userrec.c,v 1.12 2000/01/06 19:45:03 fabian Exp $
+ * $Id: userrec.c,v 1.13 2000/01/06 19:46:54 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -55,6 +55,7 @@ maskrec *global_bans = NULL,
 struct igrec *global_ign = NULL;
 int cache_hit = 0, cache_miss = 0;	/* temporary cache accounting */
 int strict_host = 1;
+int userfile_perm = 0600;	/* Userfile permissions, default rw------- */
 
 #ifdef DEBUG_MEM
 void *_user_malloc(int size, char *file, int line)
@@ -542,7 +543,7 @@ void write_userfile(int idx)
     return;			/* no point in saving userfile */
   sprintf(s, "%s~new", userfile);
   f = fopen(s, "w");
-  chmod(s, 0600);		/* make it -rw------- */
+  chmod(s, userfile_perm);
   if (f == NULL) {
     putlog(LOG_MISC, "*", USERF_ERRWRITE);
     return;

@@ -1,7 +1,7 @@
 #! /path/to/eggdrop
 # ^- set that to the directory eggdrop is in ie "#! /users/lamest/egg/eggdrop"
 #
-# $Id: eggdrop.conf.dist,v 1.16 2000/01/01 19:08:46 fabian Exp $
+# $Id: eggdrop.conf.dist,v 1.17 2000/01/06 19:46:54 fabian Exp $
 #
 # This is a sample configuration file for your bot.  You will definitely
 # want to edit this, to set up your bot.  Right now it creates a bot called
@@ -173,6 +173,17 @@ set motd "text/motd"
 # holds the banner displayed on telnet connections
 set telnet-banner "text/banner"
 
+# Specifies what permissions the user, channel and notes files should be set
+# to.  The octal values are the same as for the chmod system command.
+#
+#          u  g  o           u  g  o           u  g  o
+#    0600  rw-------   0400  r--------   0200  -w-------    u - user
+#    0660  rw-rw----   0440  r--r-----   0220  -w--w----    g - group
+#    0666  rw-rw-rw-   0444  r--r--r--   0222  -w--w--w-    o - others
+#
+# Most users will want to leave the permissions set to 0600, to ensure
+# maximum security.
+set userfile-perm 0600
 
 ##### BOTNET #####
 

@@ -10,7 +10,7 @@
  * 
  * dprintf'ized, 12dec1995
  * 
- * $Id: misc.c,v 1.10 2000/01/06 19:45:02 fabian Exp $
+ * $Id: misc.c,v 1.11 2000/01/06 19:46:54 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1353,4 +1353,20 @@ void make_rand_str(char *s, int len)
       s[j] = 'a' + (random() % 26);
   }
   s[len] = 0;
+}
+
+/* Convert an octal string into a decimal integer value.  If the string
+ * is empty or contains non-octal characters, -1 is returned.
+ */
+int oatoi(const char *octal)
+{
+  register int i;
+
+  if (!*octal)
+    return -1;
+  for (i = 0; ((*octal >= '0') && (*octal <= '7')); octal++)
+    i = (i * 8) + (*octal - '0');
+  if (*octal)
+    return -1;
+  return i;
 }

@@ -143,3 +143,10 @@ see also: set firewall
    Some say +d/+k users should be able to use all the any-user commands,
    Some say they shouldn't, WHO CARES :) this little setting lets you
    decide for yourself, I'm too weak to decide for you.
+%{help=set userfile-perm}%{+n}
+###  %bset userfile-perm%b <#>
+   Specifies what permissions the user, channel and notes
+   files should be set to.  The octal values are the same
+   as for the chmod system command.  Most users will want
+   to leave the permissions set to %b0600%b, to ensure maximum
+   security.

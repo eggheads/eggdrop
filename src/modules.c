@@ -4,7 +4,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: modules.c,v 1.19 2000/01/06 19:45:03 fabian Exp $
+ * $Id: modules.c,v 1.20 2000/01/06 19:46:54 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -82,6 +82,8 @@ extern int do_restart;
 extern time_t now, online_since;
 extern struct chanset_t *chanset;
 extern int protect_readonly;
+extern int userfile_perm;
+
 int cmd_die(), xtra_kill(), xtra_unpack();
 static int module_rename(char *name, char *newname);
 
@@ -490,6 +492,7 @@ Function global_table[] =
   (Function) removedcc,
   (Function) dcc_remove_lost,
   /* 248 - 251 */
+  (Function) & userfile_perm,	/* int */
 };
 
 void init_modules(void)

@@ -5,7 +5,7 @@
  *   note cmds
  *   note ignores
  * 
- * $Id: notes.c,v 1.11 2000/01/06 19:45:05 fabian Exp $
+ * $Id: notes.c,v 1.12 2000/01/06 19:46:55 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -125,7 +125,7 @@ static void notes_change(char *oldnick, char *newnick)
     fclose(f);
     return;
   }
-  chmod(s, 0600);
+  chmod(s, userfile_perm);	/* Use userfile permissions. */
   while (!feof(f)) {
     fgets(s, 512, f);
     if (!feof(f)) {
@@ -172,7 +172,7 @@ static void expire_notes()
     fclose(f);
     return;
   }
-  chmod(s, 0600);
+  chmod(s, userfile_perm);	/* Use userfile permissions. */
   while (!feof(f)) {
     fgets(s, 512, f);
     if (!feof(f)) {
@@ -303,7 +303,7 @@ static int tcl_storenote STDVAR
 	char *p, *from = argv[1];
 	int l = 0;
 
-	chmod(notefile, 0600);
+	chmod(notefile, userfile_perm);	/* Use userfile permissions. */
 	while ((argv[3][0] == '<') || (argv[3][0] == '>')) {
 	  p = newsplit(&(argv[3]));
 	  if (*p == '<')
@@ -399,7 +399,7 @@ static int tcl_erasenotes STDVAR
     Tcl_AppendResult(irp, "-2", NULL);
     return TCL_OK;
   }
-  chmod(s, 0600);
+  chmod(s, userfile_perm);	/* Use userfile permissions. */
   read = 0;
   erased = 0;
   notes_parse(nl, (argv[2][0] == 0) ? "-" : argv[2]);
@@ -609,7 +609,7 @@ static void notes_del(char *hand, char *nick, char *sdl, int idx)
     fclose(f);
     return;
   }
-  chmod(s, 0600);
+  chmod(s, userfile_perm);	/* Use userfile permissions. */
   notes_parse(dl, sdl);
   while (!feof(f)) {
     fgets(s, 512, f);
@@ -815,7 +815,7 @@ static int msg_notes(char *nick, char *host, struct userrec *u, char *par)
       putlog(LOG_MISC, "*", "* %s", BOT_NOTESERROR2);
       return 1;
     }
-    chmod(notefile, 0600);
+    chmod(notefile, userfile_perm);	/* Use userfile permissions. */
     fprintf(f, "%s %s %lu %s\n", to, u->handle, now, par);
     fclose(f);
     dprintf(DP_HELP, "NOTICE %s :%s\n", nick, BOT_NOTEDELIV);
