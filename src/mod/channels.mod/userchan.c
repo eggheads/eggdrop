@@ -1,7 +1,7 @@
 /*
  * userchan.c -- part of channels.mod
  *
- * $Id: userchan.c,v 1.42 2003/12/11 00:37:00 wcc Exp $
+ * $Id: userchan.c,v 1.43 2003/12/11 01:30:20 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1126,7 +1126,7 @@ static int write_exempts(FILE *f, int idx)
   for (e = global_exempts; e; e = e->next) {
     mask = str_escape(e->mask, ':', '\\');
     if (!mask ||
-        fprintf(f, "%s %s:%s%lu%s:+%lu:%lu:%s:%s\n", "%", e->mask,
+        fprintf(f, "%s %s:%s%lu%s:+%lu:%lu:%s:%s\n", "%", mask,
                 (e->flags & MASKREC_PERM) ? "+" : "", e->expire,
                 (e->flags & MASKREC_STICKY) ? "*" : "", e->added,
                 e->lastactive, e->user ? e->user : botnetnick,
@@ -1151,7 +1151,7 @@ static int write_exempts(FILE *f, int idx)
         for (e = chan->exempts; e; e = e->next) {
           mask = str_escape(e->mask, ':', '\\');
           if (!mask ||
-              fprintf(f, "%s %s:%s%lu%s:+%lu:%lu:%s:%s\n", "%", e->mask,
+              fprintf(f, "%s %s:%s%lu%s:+%lu:%lu:%s:%s\n", "%", mask,
                       (e->flags & MASKREC_PERM) ? "+" : "", e->expire,
                       (e->flags & MASKREC_STICKY) ? "*" : "", e->added,
                       e->lastactive, e->user ? e->user : botnetnick,
@@ -1181,7 +1181,7 @@ static int write_invites(FILE *f, int idx)
   for (ir = global_invites; ir; ir = ir->next) {
     mask = str_escape(ir->mask, ':', '\\');
     if (!mask ||
-        fprintf(f, "@ %s:%s%lu%s:+%lu:%lu:%s:%s\n", ir->mask,
+        fprintf(f, "@ %s:%s%lu%s:+%lu:%lu:%s:%s\n", mask,
                 (ir->flags & MASKREC_PERM) ? "+" : "", ir->expire,
                 (ir->flags & MASKREC_STICKY) ? "*" : "", ir->added,
                 ir->lastactive, ir->user ? ir->user : botnetnick,
@@ -1206,7 +1206,7 @@ static int write_invites(FILE *f, int idx)
         for (ir = chan->invites; ir; ir = ir->next) {
           mask = str_escape(ir->mask, ':', '\\');
           if (!mask ||
-              fprintf(f, "@ %s:%s%lu%s:+%lu:%lu:%s:%s\n", ir->mask,
+              fprintf(f, "@ %s:%s%lu%s:+%lu:%lu:%s:%s\n", mask,
                       (ir->flags & MASKREC_PERM) ? "+" : "", ir->expire,
                       (ir->flags & MASKREC_STICKY) ? "*" : "", ir->added,
                       ir->lastactive, ir->user ? ir->user : botnetnick,
