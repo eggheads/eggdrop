@@ -1,7 +1,7 @@
 /*
  * tclchan.c -- part of channels.mod
  *
- * $Id: tclchan.c,v 1.51 2001/11/29 05:48:38 guppy Exp $
+ * $Id: tclchan.c,v 1.52 2001/12/03 02:31:04 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -554,10 +554,9 @@ static int tcl_newban STDVAR
       expire_time = now + (atoi(argv[4]) * 60);
   }
   u_addban(NULL, ban, from, cmt, expire_time, sticky);
-  for (chan = chanset; chan; chan = chan->next)
-    if ((me = module_find("irc", 0, 0)))
-      for (chan = chanset; chan != NULL; chan = chan->next)
-	(me->funcs[IRC_CHECK_THIS_BAN])(chan, ban, sticky);
+  if ((me = module_find("irc", 0, 0)))
+    for (chan = chanset; chan != NULL; chan = chan->next)
+      (me->funcs[IRC_CHECK_THIS_BAN])(chan, ban, sticky);
   return TCL_OK;
 }
 
