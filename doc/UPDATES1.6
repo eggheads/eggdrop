@@ -1,18 +1,25 @@
-$Id: UPDATES1.6,v 1.506 2003/08/16 23:22:32 wcc Exp $
+$Id: UPDATES1.6,v 1.507 2003/08/18 03:27:05 wcc Exp $
 
 Changes in Eggdrop: (since v1.6.0)
 ----------------------------------
 
 1.6.16
 Found by  Fixed by  What...
+          Wcc       made appropriate changes to accommodate for EFnet's
+	            implementation of exempts and invites
 |SmAsH|   Wcc       bind documentation updates
 BarkerJr  Wcc       exported strip_mirc_codes() and check_ansi() from dcc.c
           Paul E./  H_notc used wrong handler
           stdarg
 fbs       stdarg    check to make sure file we want to send exists when
                     resuming a transfer
+          Paladin   fixed exporting of MD5 functions to modules
+various   stdarg    the binary is no longer stripped unless ./configure
+                    --enable-strip is used
           tchaika   small fix to n_realloc()
 Wanderer| Wcc       fixed output of tcl_duration to not return extra spaces
+          stdarg    cmd_topic works for halfops now
+various   stdarg    fixed cmd_(de)voice logic
 paladinz  Wcc       don't compile inet_ntop compatability code unless USE_IPV6
                     is defined
 KuNgFo0   Wcc       typedef socklen_t to int if non-existant

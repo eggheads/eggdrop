@@ -2,7 +2,7 @@
  * irc.c -- part of irc.mod
  *   support for channels within the bot
  *
- * $Id: irc.c,v 1.92 2003/03/08 04:29:44 wcc Exp $
+ * $Id: irc.c,v 1.93 2003/08/18 03:27:06 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -35,16 +35,16 @@
 
 static p_tcl_bind_list H_topc, H_splt, H_sign, H_rejn, H_part, H_pub, H_pubm;
 static p_tcl_bind_list H_nick, H_mode, H_kick, H_join, H_need;
+
 static Function *global = NULL, *channels_funcs = NULL, *server_funcs = NULL;
 
 static int ctcp_mode;
 static int net_type;
 static int strict_host;
-static int wait_split = 300;    /* Time to wait for user to return from
-                                 * net-split. */
+static int wait_split = 300;    /* Time to wait for user to return from net-split. */
 static int max_bans = 20;       /* Modified by net-type 1-4 */
-static int max_exempts = 20;
-static int max_invites = 20;
+static int max_exempts = 20;    /* Modified by net-type 1-4 */
+static int max_invites = 20;    /* Modified by net-type 1-4 */
 static int max_modes = 20;      /* Modified by net-type 1-4 */
 static int bounce_bans = 1;
 static int bounce_exempts = 0;
@@ -72,7 +72,6 @@ static int include_lk = 1;      /* For correct calculation in real_add_mode. */
 #include "cmdsirc.c"
 #include "msgcmds.c"
 #include "tclirc.c"
-
 
 /* Contains the logic to decide wether we want to punish someone. Returns
  * true (1) if we want to, false (0) if not.
@@ -965,57 +964,67 @@ static void irc_report(int idx, int details)
 static void do_nettype()
 {
   switch (net_type) {
-  case 0:                      /* EFnet */
+  case 0: /* EFnet */
     kick_method = 1;
     modesperline = 4;
     use_354 = 0;
-    use_exempts = 0;
-    use_invites = 0;
-    max_bans = 25;
-    max_modes = 25;
+    use_exempts = 1;
+    use_invites = 1;
+    max_bans = 100;
+    max_exempts = 100;
+    max_invites = 100;
+    max_modes = 100;
     rfc_compliant = 1;
     include_lk = 0;
     break;
-  case 1:                      /* IRCnet */
+  case 1: /* IRCnet */
     kick_method = 4;
     modesperline = 3;
     use_354 = 0;
     use_exempts = 1;
     use_invites = 1;
     max_bans = 30;
+    max_exempts = 30;
+    max_invites = 30;
     max_modes = 30;
     rfc_compliant = 1;
     include_lk = 1;
     break;
-  case 2:                      /* UnderNet */
+  case 2: /* UnderNet */
     kick_method = 1;
     modesperline = 6;
     use_354 = 1;
     use_exempts = 0;
     use_invites = 0;
     max_bans = 45;
+    max_exempts = 45;
+    max_invites = 45;
     max_modes = 45;
     rfc_compliant = 1;
     include_lk = 1;
     break;
-  case 3:                      /* DALnet */
+  case 3: /* DALnet */
     kick_method = 1;
     modesperline = 6;
     use_354 = 0;
     use_exempts = 0;
     use_invites = 0;
     max_bans = 100;
+    max_exempts = 100;
+    max_invites = 100;
     max_modes = 100;
     rfc_compliant = 0;
     include_lk = 1;
     break;
-  case 4:                      /* Hybrid-6+ */
+  case 4: /* Hybrid-6+ */
     kick_method = 1;
     modesperline = 4;
     use_354 = 0;
     use_exempts = 1;
-    use_invites = 0;
+    use_invites = 1;
     max_bans = 20;
+    max_exempts = 20;
+    max_invites = 20;
     max_modes = 20;
     rfc_compliant = 1;
     include_lk = 0;

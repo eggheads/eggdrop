@@ -31,10 +31,10 @@ There are also some variables you can set in your config file:
      the same value as max-bans for networks that do not support +e/+I.
 
 
-   set max-bans 20
+   set max-bans 30
      Set here the maximum number of bans you want the bot to set on a channel.
      Eggdrop will not place any more bans if this limit is reached. Undernet
-     currently allows 45 bans, IRCnet allows 30, EFnet allows 25, and DALnet
+     currently allows 45 bans, IRCnet allows 30, EFnet allows 100, and DALnet
      allows 100.
 
 

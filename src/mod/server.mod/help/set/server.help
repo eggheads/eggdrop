@@ -165,8 +165,8 @@ see also: default-port
    This read-only variable returns the current server of the bot.
 %{help=set net-type}%{+n}
 ###  %bset net-type%b
-   Defines the network the bot uses. 0 = EFnet, 1 = IRCnet, 2 = UnderNet,
-   3 = DALnet, 4 = EFnet +e/+I hybrid, 5 = Others.
+   Define the network the bot uses. 0 = EFnet, 1 = IRCnet, 2 = UnderNet,
+   3 = DALnet, 4 = EFnet +e/+I/max-bans 20 Hybrid, 5 = Others.
 %{help=server settings}%{+n}
 ###  Settings for the %bserver module%b
    This is a list of the Tcl variables the can be used to setup
