@@ -174,7 +174,7 @@ static void cmd_pls_exempt (struct userrec * u, int idx, char * par)
   unsigned long int expire_time = 0, expire_foo;
   char * p_expire;
   if (!use_exempts) {
-    dprintf(idx, "This command can only be used on IRCnet or hybrid EFnet.\n");
+    dprintf(idx, "This command can only be used on IRCnet.\n");
     return;
   }
   if (!par[0]) {
@@ -542,7 +542,7 @@ static void cmd_mns_exempt (struct userrec * u, int idx, char * par)
   char s[UHOSTLEN + 1], *exempt, *chname;
   masklist *e;
   if (!use_exempts) {
-    dprintf(idx, "This command can only be used on IRCnet or hybrid EFnet.\n");
+    dprintf(idx, "This command can only be used on IRCnet.\n");
     return;
   }   
   if (!par[0]) {
@@ -734,7 +734,7 @@ static void cmd_bans(struct userrec *u, int idx, char *par)
 static void cmd_exempts (struct userrec * u, int idx, char * par)
 {
   if (!use_exempts) {
-    dprintf(idx, "This command can only be used on IRCnet or hybrid EFnet.\n");
+    dprintf(idx, "This command can only be used on IRCnet.\n");
     return;
   }
   if (!strcasecmp(par, "all")) {

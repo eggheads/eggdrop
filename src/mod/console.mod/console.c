@@ -175,8 +175,8 @@ void console_display(int idx, struct user_entry *e)
     dprintf(idx, "    Console flags: %s, Strip flags: %s, Echo: %s\n",
 	    masktype(i->conflags), stripmasktype(i->stripflags),
 	    i->echoflags ? "yes" : "no");
-    dprintf(idx, "    Page setting: %d, Console channel: %d\n",
-	    i->page, i->conchan);
+    dprintf(idx, "    Page setting: %d, Console channel: %s%d\n",
+	    i->page, (i->conchan < 100000) ? "" : "*", i->conchan % 100000);
   }
 }
 

@@ -1656,13 +1656,35 @@ static void cmd_botattr(struct userrec *u, int idx, char *par)
 
 static void cmd_chat(struct userrec *u, int idx, char *par)
 {
+  char *arg;
   int newchan, oldchan;
+  module_entry *me;
 
-  if (!strcasecmp(par, "off")) {
+  if (!par[0]) {
+    oldchan = dcc[idx].u.chat->channel;
+    switch (oldchan) {
+    case -1:
+      dprintf(idx, "You're currently not in chat mode\n");
+      break;
+    case 0:
+      dprintf(idx, "You're currently on the party line\n");
+      break;
+    default:
+      dprintf(idx, "You're currently on channel %s%d!\n",
+              (oldchan < 100000) ? "" : "*", oldchan % 100000);
+      break;
+    }
+    return;
+  }
+
+  arg = newsplit(&par);
+
+  if (!strcasecmp(arg, "off")) {
     /* turn chat off */
-    if (dcc[idx].u.chat->channel < 0)
+    if (dcc[idx].u.chat->channel < 0) {
       dprintf(idx, "You weren't in chat anyway!\n");
-    else {
+      return;
+    }  else {
       dprintf(idx, "Leaving chat mode...\n");
       check_tcl_chpt(botnetnick, dcc[idx].nick, dcc[idx].sock,
 		     dcc[idx].u.chat->channel);
@@ -1675,12 +1697,12 @@ static void cmd_chat(struct userrec *u, int idx, char *par)
     }
     dcc[idx].u.chat->channel = (-1);
   } else {
-    if (par[0] == '*') {
-      if (((par[1] < '0') || (par[1] > '9'))) {
-	if (par[1] == 0)
-	  newchan = 0;
+    if (arg[0] == '*') {
+      if (((arg[1] < '0') || (arg[1] > '9'))) {
+	if (arg[1] == 0)
+ 	  newchan = 0;
 	else {
-	  Tcl_SetVar(interp, "chan", par, 0);
+	  Tcl_SetVar(interp, "chan", arg, 0);
 	  if ((Tcl_VarEval(interp, "assoc ", "$chan", NULL) == TCL_OK) &&
 	      interp->result[0])
 	    newchan = atoi(interp->result);
@@ -1692,17 +1714,17 @@ static void cmd_chat(struct userrec *u, int idx, char *par)
 	  return;
 	}
       } else
-	newchan = 100000 + atoi(par + 1);
+	newchan = 100000 + atoi(arg + 1);
       if (newchan < 100000 || newchan > 199999) {
 	dprintf(idx, "Channel # out of range: local channels must be *0-*99999\n");
 	return;
       }
     } else {
-      if (((par[0] < '0') || (par[0] > '9')) && (par[0])) {
-	if (!strcasecmp(par, "on"))
+      if (((arg[0] < '0') || (arg[0] > '9')) && (arg[0])) {
+	if (!strcasecmp(arg, "on"))
 	  newchan = 0;
 	else {
-	  Tcl_SetVar(interp, "chan", par, 0);
+	  Tcl_SetVar(interp, "chan", arg, 0);
 	  if ((Tcl_VarEval(interp, "assoc ", "$chan", NULL) == TCL_OK) &&
 	      interp->result[0])
 	    newchan = atoi(interp->result);
@@ -1714,7 +1736,7 @@ static void cmd_chat(struct userrec *u, int idx, char *par)
 	  return;
 	}
       } else
-	newchan = atoi(par);
+	newchan = atoi(arg);
       if ((newchan < 0) || (newchan > 99999)) {
 	dprintf(idx, "Channel # out of range: must be between 0 and 99999.\n");
 	return;
@@ -1725,11 +1747,14 @@ static void cmd_chat(struct userrec *u, int idx, char *par)
     if ((dcc[idx].u.chat->channel < 0) && (dcc[idx].u.chat->away != NULL))
       not_away(idx);
     if (dcc[idx].u.chat->channel == newchan) {
-      if (newchan == 0)
+      if (newchan == 0) {
 	dprintf(idx, "You're already on the party line!\n");
-      else
+        return;
+      } else {
 	dprintf(idx, "You're already on channel %s%d!\n",
 		(newchan < 100000) ? "" : "*", newchan % 100000);
+        return;
+      }
     } else {
       oldchan = dcc[idx].u.chat->channel;
       if (oldchan >= 0)
@@ -1747,7 +1772,7 @@ static void cmd_chat(struct userrec *u, int idx, char *par)
 	chanout_but(-1, 0, "*** %s joined the party line.\n", dcc[idx].nick);
 	context;
       } else {
-	dprintf(idx, "Joining channel '%s'...\n", par);
+	dprintf(idx, "Joining channel '%s'...\n", arg);
 	chanout_but(-1, newchan, "*** %s joined the channel.\n", dcc[idx].nick);
 	context;
       }
@@ -1759,10 +1784,17 @@ static void cmd_chat(struct userrec *u, int idx, char *par)
 	botnet_send_part_idx(idx, "");
     }
   }
+  /* new style autosave here too -- rtc, 09/28/1999*/
+  if ((me = module_find("console", 1, 1))) {
+    Function *func = me->funcs;
+    (func[CONSOLE_DOSTORE]) (idx);
+  }
 }
 
 static void cmd_echo(struct userrec *u, int idx, char *par)
 {
+  module_entry *me;
+
   if (!par[0]) {
     dprintf(idx, "Echo is currently %s.\n", dcc[idx].status & STAT_ECHO ?
 	    "on" : "off");
@@ -1771,14 +1803,18 @@ static void cmd_echo(struct userrec *u, int idx, char *par)
   if (!strcasecmp(par, "on")) {
     dprintf(idx, "Echo turned on.\n");
     dcc[idx].status |= STAT_ECHO;
-    return;
-  }
-  if (!strcasecmp(par, "off")) {
+  } else if (!strcasecmp(par, "off")) {
     dprintf(idx, "Echo turned off.\n");
     dcc[idx].status &= ~STAT_ECHO;
+  } else {
+    dprintf(idx, "Usage: echo <on/off>\n");
     return;
   }
-  dprintf(idx, "Usage: echo <on/off>\n");
+  /* new style autosave here too -- rtc, 09/28/1999*/
+  if ((me = module_find("console", 1, 1))) {
+    Function *func = me->funcs;
+    (func[CONSOLE_DOSTORE]) (idx);
+  }
 }
 
 int stripmodes(char *s)
@@ -1864,6 +1900,7 @@ static void cmd_strip(struct userrec *u, int idx, char *par)
 {
   char *nick, *changes, s[2];
   int dest = 0, i, pls, md, ok = 0;
+  module_entry *me;
 
   if (!par[0]) {
     dprintf(idx, "Your current strip settings are: %s (%s)\n",
@@ -1922,6 +1959,11 @@ static void cmd_strip(struct userrec *u, int idx, char *par)
     dprintf(dest, "%s set your strip settings to: %s (%s)\n", dcc[idx].nick,
 	    stripmasktype(dcc[dest].u.chat->strip_flags),
 	    stripmaskname(dcc[dest].u.chat->strip_flags));
+  }
+  /* new style autosave here too -- rtc, 09/28/1999*/
+  if ((me = module_find("console", 1, 1))) {
+    Function *func = me->funcs;
+    (func[CONSOLE_DOSTORE]) (dest);
   }
 }
 
@@ -2014,6 +2056,7 @@ static void cmd_fixcodes(struct userrec *u, int idx, char *par)
 static void cmd_page(struct userrec *u, int idx, char *par)
 {
   int a;
+  module_entry *me;
 
   if (!par[0]) {
     if (dcc[idx].status & STAT_PAGE) {
@@ -2031,9 +2074,7 @@ static void cmd_page(struct userrec *u, int idx, char *par)
       flush_lines(idx, dcc[idx].u.chat);
     dprintf(idx, "Paging turned off.\n");
     putlog(LOG_CMDS, "*", "#%s# page off", dcc[idx].nick);
-    return;
-  }
-  if (a > 0) {
+  } else if (a > 0) {
     dprintf(idx, "Paging turned on, stopping every %d lines.\n", a);
     dcc[idx].status |= STAT_PAGE;
     dcc[idx].u.chat->max_line = a;
@@ -2041,8 +2082,15 @@ static void cmd_page(struct userrec *u, int idx, char *par)
     dcc[idx].u.chat->current_lines = 0;
     putlog(LOG_CMDS, "*", "#%s# page %d", dcc[idx].nick, a);
     return;
+  } else {
+    dprintf(idx, "Usage: page <off or #>\n");
+    return;
   }
-  dprintf(idx, "Usage: page <off or #>\n");
+  /* new style autosave here too -- rtc, 09/28/1999*/
+  if ((me = module_find("console", 1, 1))) {
+    Function *func = me->funcs;
+    (func[CONSOLE_DOSTORE]) (idx);
+  }
 }
 
 /* evaluate a Tcl command, send output to a dcc user */

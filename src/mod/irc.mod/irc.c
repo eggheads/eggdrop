@@ -975,13 +975,13 @@ static void do_nettype()
     use_exempts = 0;
     use_invites = 0;
     break;
-  case 4:		/* new +e Efnet hybrid */
+  case 4:		/* new +e/+I Efnet hybrid */
     kick_method = 1;
     modesperline = 4;
     use_354 = 0;
     use_silence = 0;
     use_exempts = 1;
-    use_invites = 0;
+    use_invites = 1;
     break;
   default:
     break;

@@ -854,7 +854,7 @@ set no-chanrec-info 0
 
 # [0/1/2/3] Defines how the bot should punish bad users when revenging.
 # 0 for deop - 1 for deop and +d - 2 for deop, +d and kick - 3 for deop,
-# kick and ban. Default is 1.
+# chattr +d, kick and ban. Default is 1.
 set revenge-mode 1
 
 
@@ -907,9 +907,11 @@ set kick-bogus-invites 0
 # [0/1] Do you want to use invites?
 # set use-invites 0
 
-# Only ircnet! prevent mixing old- and newmodes (I/e)?
-# Still allow the Server these mixes not. [set to 1]
-# IRCnetserver allows mixing old- and newmodes in the future.
+# [0/1] Prevent mixing normal modes and +I/+e invite modes?
+# At the moment (Sep/1999), IRCnet servers do not allow mixing those modes,
+# so leave this flag set to 1. The servers will probably change their
+# behaviour in the future, so you should first check before accepting the
+# default.
 set prevent-mixing 1 
 
 ##### IRC MODULE - net-type 5 specific features (other networks) #####

@@ -4,10 +4,18 @@ Changes in eggdrop: (since v1.3.0)
 
 1.3.29
 Foundby   Fixedby   What....
+          dw        moved 'msg already queued. skipping...' to a debug
+                    message and added what it skips for debugging reasons.
+Ben	  Fabian    minor doc changes to eggdrop.conf.dist
+          rtc       fixed .whois to properly display local channels in 
+                    console records
+          rtc       .chat should only care about the first argument and
+                    tell the user's current channel if not given one
+          rtc       save console settings on '.page', '.chat', '.echo' and
+                    '.strip', not on '.quit' and dcc disconnect.
           drummer   misc blowfish bug fixes
           rtc       tweaked the nick regain code some more
 L0RE      Fabian    console settings are saved on '.quit' and dcc disconnect
-          toot      efnet hybrid shouldn't allow +I mode commands
 Fabian/   rtc       SEGV with sharing bug track debug messages could
 rtc                 cause SEGV in some cases ;)
 DVS01     DVS01/    the dcc_tables in transfer.mod were missing DCT_VALIDIDX
