@@ -2,7 +2,7 @@
  * filesys.c -- part of filesys.mod
  *   main file of the filesys eggdrop module
  * 
- * $Id: filesys.c,v 1.29 2000/05/07 00:08:03 fabian Exp $
+ * $Id: filesys.c,v 1.30 2000/08/06 14:50:45 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -846,11 +846,11 @@ static int filesys_DCC_CHAT(char *nick, char *from, char *handle,
     return 0;			/* Allow ctcp.so to pick up the chat */
   else if (!glob_xfer(fr)) {
     if (!quiet_reject)
-      dprintf(DP_HELP, "NOTICE %s :.\n", nick, DCC_REFUSED3);
+      dprintf(DP_HELP, "NOTICE %s :%s\n", nick, DCC_REFUSED2);
     putlog(LOG_MISC, "*", "%s: %s!%s", DCC_REFUSED, nick, from);
   } else if (u_pass_match(u, "-")) {
     if (!quiet_reject)
-      dprintf(DP_HELP, "NOTICE %s :%s.\n", nick, DCC_REFUSED3);
+      dprintf(DP_HELP, "NOTICE %s :%s\n", nick, DCC_REFUSED3);
     putlog(LOG_MISC, "*", "%s: %s!%s", DCC_REFUSED4, nick, from);
   } else if (!dccdir[0]) {
     putlog(LOG_MISC, "*", "%s: %s!%s", DCC_REFUSED5, nick, from);

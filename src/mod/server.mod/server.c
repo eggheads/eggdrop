@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  * 
- * $Id: server.c,v 1.46 2000/07/12 21:49:40 fabian Exp $
+ * $Id: server.c,v 1.47 2000/08/06 14:50:45 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1567,11 +1567,11 @@ static int ctcp_DCC_CHAT(char *nick, char *from, char *handle,
     if (glob_xfer(fr))
       return 0;			/* Allow filesys to pick up the chat */
     if (!quiet_reject)
-      dprintf(DP_HELP, "NOTICE %s :%s.\n", nick, DCC_REFUSED2);
+      dprintf(DP_HELP, "NOTICE %s :%s\n", nick, DCC_REFUSED2);
     putlog(LOG_MISC, "*", "%s: %s!%s", DCC_REFUSED, nick, from);
   } else if (u_pass_match(u, "-")) {
     if (!quiet_reject)
-      dprintf(DP_HELP, "NOTICE %s :%s.\n", nick, DCC_REFUSED3);
+      dprintf(DP_HELP, "NOTICE %s :%s\n", nick, DCC_REFUSED3);
     putlog(LOG_MISC, "*", "%s: %s!%s", DCC_REFUSED4, nick, from);
   } else if ((atoi(prt) < min_dcc_port) || (atoi(prt) > max_dcc_port)) {
     /* Invalid port range. */
