@@ -2,7 +2,7 @@
  * tclfiles.c -- part of filesys.mod
  *   Tcl stubs for file system commands moved here to support modules
  *
- * $Id: tclfiles.c,v 1.23 2004/06/04 16:41:08 wcc Exp $
+ * $Id: tclfiles.c,v 1.24 2004/06/04 17:25:17 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -28,7 +28,7 @@ static int tcl_getdesc STDVAR
   char *s = NULL;
 
   BADARGS(3, 3, " dir file");
-  
+
   filedb_getdesc(argv[1], argv[2], &s);
   if (s) {
     Tcl_AppendResult(irp, s, NULL);
@@ -53,7 +53,7 @@ static int tcl_getowner STDVAR
   char *s = NULL;
 
   BADARGS(3, 3, " dir file");
-  
+
   filedb_getowner(argv[1], argv[2], &s);
   if (s) {
     Tcl_AppendResult(irp, s, NULL);
@@ -99,7 +99,7 @@ static int tcl_getlink STDVAR
   char *s = NULL;
 
   BADARGS(3, 3, " dir file");
-  
+
   filedb_getlink(argv[1], argv[2], &s);
   if (s) {
     Tcl_AppendResult(irp, s, NULL);
@@ -115,7 +115,7 @@ static int tcl_setpwd STDVAR
   int i, idx;
 
   BADARGS(3, 3, " idx dir");
-  
+
   i = atoi(argv[1]);
   idx = findanyidx(i);
   if ((idx < 0) || (dcc[idx].type != &DCC_FILES)) {
@@ -132,7 +132,7 @@ static int tcl_getpwd STDVAR
   int i, idx;
 
   BADARGS(2, 2, " idx");
-  
+
   i = atoi(argv[1]);
   idx = findanyidx(i);
   if ((idx < 0) || (dcc[idx].type != &DCC_FILES)) {
@@ -147,7 +147,7 @@ static int tcl_getpwd STDVAR
 static int tcl_getfiles STDVAR
 {
   BADARGS(2, 2, " dir");
-  
+
   filedb_getfiles(irp, argv[1]);
   return TCL_OK;
 }
@@ -155,7 +155,7 @@ static int tcl_getfiles STDVAR
 static int tcl_getdirs STDVAR
 {
   BADARGS(2, 2, " dir");
-  
+
   filedb_getdirs(irp, argv[1]);
   return TCL_OK;
 }
@@ -163,7 +163,7 @@ static int tcl_getdirs STDVAR
 static int tcl_hide STDVAR
 {
   BADARGS(3, 3, " dir file");
-  
+
   filedb_change(argv[1], argv[2], FILEDB_HIDE);
   return TCL_OK;
 }
@@ -171,7 +171,7 @@ static int tcl_hide STDVAR
 static int tcl_unhide STDVAR
 {
   BADARGS(3, 3, " dir file");
-  
+
   filedb_change(argv[1], argv[2], FILEDB_UNHIDE);
   return TCL_OK;
 }
@@ -179,7 +179,7 @@ static int tcl_unhide STDVAR
 static int tcl_share STDVAR
 {
   BADARGS(3, 3, " dir file");
-  
+
   filedb_change(argv[1], argv[2], FILEDB_SHARE);
   return TCL_OK;
 }
@@ -187,7 +187,7 @@ static int tcl_share STDVAR
 static int tcl_unshare STDVAR
 {
   BADARGS(3, 3, " dir file");
-  
+
   filedb_change(argv[1], argv[2], FILEDB_UNSHARE);
   return TCL_OK;
 }
@@ -199,7 +199,7 @@ static int tcl_setflags STDVAR
   char *s = NULL, *p, *d;
 
   BADARGS(3, 4, " dir ?flags ?channel??");
- 
+
   malloc_strcpy(s, argv[1]);
   if (s[strlen(s) - 1] == '/')
     s[strlen(s) - 1] = 0;
@@ -256,7 +256,7 @@ static int tcl_getflags STDVAR
   char *s = NULL, *p, *d;
 
   BADARGS(2, 2, " dir");
- 
+
   malloc_strcpy(s, argv[1]);
   if (s[strlen(s) - 1] == '/')
     s[strlen(s) - 1] = 0;
@@ -301,8 +301,10 @@ static int tcl_mkdir STDVAR
   BADARGS(2, 4, " dir ?required-flags ?channel??");
 
   malloc_strcpy(s, argv[1]);
+
   if (s[strlen(s) - 1] == '/')
     s[strlen(s) - 1] = 0;
+
   p = strrchr(s, '/');
   if (p == NULL) {
     p = s;
@@ -374,7 +376,7 @@ static int tcl_rmdir STDVAR
   char *s = NULL, *t, *d, *p;
 
   BADARGS(2, 2, " dir");
-  
+
   malloc_strcpy(s, argv[1]);
   if (s[strlen(s) - 1] == '/')
     s[strlen(s) - 1] = 0;

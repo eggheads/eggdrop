@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: tcl-commands.html,v 1.40 2004/06/02 06:58:59 wcc Exp $ -->
+<!-- $Id: tcl-commands.html,v 1.41 2004/06/04 17:25:16 wcc Exp $ -->
 
 <html>
   <head>
@@ -2613,6 +2613,16 @@
                   <p>directory exists but is not a directory</p>
                 </td>
               </tr>
+
+              <tr valign="top">
+                <td>
+                  <p><strong>-3</strong></p>
+                </td>
+
+                <td>
+                  <p>could not open filedb</p>
+                </td>
+              </tr>
             </table>
           </blockquote>
 
@@ -2762,7 +2772,7 @@
           <p><strong>Description:</strong> sets the flags required to
           access a directory</p>
 
-          <p><strong>Returns:</strong> 0 on success; -1 on failure</p>
+          <p><strong>Returns:</strong> 0 on success; -1 or -3 on failure</p>
 
           <p><strong>Module:</strong> filesys</p>
         </dd>

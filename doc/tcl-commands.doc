@@ -1,4 +1,4 @@
-$Id: tcl-commands.doc,v 1.111 2004/06/02 06:58:58 wcc Exp $
+$Id: tcl-commands.doc,v 1.112 2004/06/04 17:25:16 wcc Exp $
 
 Eggdrop Tcl Commands
 Last revised: January 12, 2004
@@ -1209,6 +1209,7 @@ marked with vertical bars (|) on the left.
       0 success
       1 can't create directory
       2 directory exists but is not a directory
+     -3 could not open filedb
     Module: filesys
 
   rmdir <directory>
@@ -1246,7 +1247,7 @@ marked with vertical bars (|) on the left.
 
   setflags <dir> [<flags> [channel]]
     Description: sets the flags required to access a directory
-    Returns: 0 on success; -1 on failure
+    Returns: 0 on success; -1 or -3 on failure
     Module: filesys
 
 
