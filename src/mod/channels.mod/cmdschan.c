@@ -2,7 +2,7 @@
  * cmdschan.c -- part of channels.mod
  *   commands from a user via dcc that cause server interaction
  *
- * $Id: cmdschan.c,v 1.62 2003/02/02 09:22:55 wcc Exp $
+ * $Id: cmdschan.c,v 1.63 2003/03/04 08:51:45 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1159,9 +1159,8 @@ static void cmd_mns_chan(struct userrec *u, int idx, char *par)
   for (i = 0; i < dcc_total; i++)
     if ((dcc[i].type->flags & DCT_CHAT) &&
         !rfc_casecmp(dcc[i].u.chat->con_chan, chan->dname)) {
-      dprintf(i,
-              "%s is no longer a valid channel, changing your console to '*'\n",
-              chname);
+      dprintf(i, "%s is no longer a valid channel, changing your console "
+              "to '*'\n", chname);
       strcpy(dcc[i].u.chat->con_chan, "*");
     }
   remove_channel(chan);

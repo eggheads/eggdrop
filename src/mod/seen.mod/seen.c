@@ -10,7 +10,7 @@
  * 1.2     1997-08-20      Minor fixes. [BB]
  * 1.2a    1997-08-24      Minor fixes. [BB]
  *
- * $Id: seen.c,v 1.30 2003/01/30 07:15:15 wcc Exp $
+ * $Id: seen.c,v 1.31 2003/03/04 08:51:45 wcc Exp $
  */
 /*
  * Copyright (C) 1999, 2000, 2001, 2002, 2003 Eggheads Development Team
@@ -290,14 +290,13 @@ static void do_seen(int idx, char *prefix, char *nick, char *hand,
         sprintf(whoredirect, "%s, your girlfriend is %s, and ",
                 nick, whotarget);
       } else {
-        dprintf(idx,
-                "%sI didn't know you had a girlfriend, %s\n", prefix, nick);
+        dprintf(idx, "%sI didn't know you had a girlfriend, %s\n", prefix,
+                nick);
         return;
       }
     } else {
-      dprintf(idx,
-              "%sI don't know anything about your %s, %s.\n",
-              prefix, word1, nick);
+      dprintf(idx, "%sI don't know anything about your %s, %s.\n", prefix,
+              word1, nick);
       return;
     }
   }

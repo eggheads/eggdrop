@@ -7,7 +7,7 @@
  *   (non-Tcl) procedure lookups for msg/dcc/file commands
  *   (Tcl) binding internal procedures to msg/dcc/file commands
  *
- * $Id: tclhash.c,v 1.43 2003/02/27 10:18:40 tothwolf Exp $
+ * $Id: tclhash.c,v 1.44 2003/03/04 08:51:45 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -141,8 +141,7 @@ inline void garbage_collect_tclhash(void)
           }
         }
 
-        /* Delete the bind when it's marked as deleted or
-         * when it's empty. */
+        /* Delete the bind when it's marked as deleted or when it's empty. */
         if ((tm->flags & TBM_DELETED) || tm->first == NULL) {
           if (tm_prev)
             tm_prev->next = tm->next;

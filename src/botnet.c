@@ -7,7 +7,7 @@
  *   linking, unlinking, and relaying to another bot
  *   pinging the bots periodically and checking leaf status
  *
- * $Id: botnet.c,v 1.49 2003/02/06 20:15:19 wcc Exp $
+ * $Id: botnet.c,v 1.50 2003/03/04 08:51:44 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -37,16 +37,13 @@ extern struct dcc_t *dcc;
 extern time_t now;
 extern Tcl_Interp *interp;
 
-tand_t *tandbot;                /* Keep track of tandem bots on the
-                                 * botnet */
-party_t *party;                 /* Keep track of people on the botnet */
-static int maxparty = 50;       /* Maximum space for party line members
-                                 * currently */
-int tands = 0;                  /* Number of bots on the botnet */
-int parties = 0;                /* Number of people on the botnet */
-char botnetnick[HANDLEN + 1] = "";      /* Botnet nickname */
-int share_unlinks = 0;          /* Allow remote unlinks of my
-                                 * sharebots? */
+tand_t *tandbot;                   /* Keep track of tandem bots on the botnet */
+party_t *party;                    /* Keep track of people on the botnet */
+static int maxparty = 50;          /* Maximum space for party line members */
+int tands = 0;                     /* Number of bots on the botnet */
+int parties = 0;                   /* Number of people on the botnet */
+char botnetnick[HANDLEN + 1] = ""; /* Botnet nickname */
+int share_unlinks = 0;             /* Allow remote unlinks of my sharebots? */
 
 
 int expmem_botnet()

@@ -2,7 +2,7 @@
  * msgcmds.c -- part of irc.mod
  *   all commands entered via /MSG
  *
- * $Id: msgcmds.c,v 1.40 2003/01/30 07:15:15 wcc Exp $
+ * $Id: msgcmds.c,v 1.41 2003/03/04 08:51:45 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -123,12 +123,9 @@ static int msg_pass(char *nick, char *host, struct userrec *u, char *par)
 {
   char *old, *new;
 
-  if (match_my_nick(nick))
+  if (!u || match_my_nick(nick) || (u->flags & (USER_BOT | USER_COMMON)))
     return 1;
-  if (!u)
-    return 1;
-  if (u->flags & (USER_BOT | USER_COMMON))
-    return 1;
+
   if (!par[0]) {
     dprintf(DP_HELP, "NOTICE %s :%s\n", nick,
             u_pass_match(u, "-") ? IRC_NOPASS : IRC_PASS);
@@ -166,10 +163,9 @@ static int msg_ident(char *nick, char *host, struct userrec *u, char *par)
   char s[UHOSTLEN], s1[UHOSTLEN], *pass, who[NICKLEN];
   struct userrec *u2;
 
-  if (match_my_nick(nick))
+  if (match_my_nick(nick) || (u && (u->flags & USER_BOT)))
     return 1;
-  if (u && (u->flags & USER_BOT))
-    return 1;
+
   if (u && (u->flags & USER_COMMON)) {
     if (!quiet_reject)
       dprintf(DP_HELP, "NOTICE %s :%s\n", nick, IRC_FAILCOMMON);
@@ -221,10 +217,9 @@ static int msg_addhost(char *nick, char *host, struct userrec *u, char *par)
 {
   char *pass;
 
-  if (match_my_nick(nick))
+  if (match_my_nick(nick) || !u || (u->flags & USER_BOT))
     return 1;
-  if (!u || (u->flags & USER_BOT))
-    return 1;
+
   if (u->flags & USER_COMMON) {
     if (!quiet_reject)
       dprintf(DP_HELP, "NOTICE %s :%s\n", nick, IRC_FAILCOMMON);
@@ -263,14 +258,15 @@ static int msg_info(char *nick, char *host, struct userrec *u, char *par)
   char s[121], *pass, *chname, *p;
   int locked = 0;
 
-  if (match_my_nick(nick))
+  if (!use_info || match_my_nick(nick))
     return 1;
-  if (!use_info)
-    return 1;
+
   if (!u)
     return 0;
+
   if (u->flags & (USER_COMMON | USER_BOT))
     return 1;
+
   if (!u_pass_match(u, "-")) {
     pass = newsplit(&par);
     if (!u_pass_match(u, pass)) {
@@ -361,12 +357,12 @@ static int msg_who(char *nick, char *host, struct userrec *u, char *par)
   char s[UHOSTLEN], also[512], *info;
   int i;
 
-  if (match_my_nick(nick))
+  if (!use_info || match_my_nick(nick))
     return 1;
+
   if (!u)
     return 0;
-  if (!use_info)
-    return 1;
+
   if (!par[0]) {
     dprintf(DP_HELP, "NOTICE %s :%s: /msg %s who <channel>\n", nick,
             MISC_USAGE, botname);
@@ -450,8 +446,10 @@ static int msg_whois(char *nick, char *host, struct userrec *u, char *par)
 
   if (match_my_nick(nick))
     return 1;
+
   if (!u)
     return 0;
+
   if (!par[0]) {
     dprintf(DP_HELP, "NOTICE %s :%s: /msg %s whois <handle>\n", nick,
             MISC_USAGE, botname);
@@ -568,6 +566,7 @@ static int msg_op(char *nick, char *host, struct userrec *u, char *par)
 
   if (match_my_nick(nick))
     return 1;
+
   pass = newsplit(&par);
   if (u_pass_match(u, pass)) {
     if (!u_pass_match(u, "-")) {
@@ -604,6 +603,7 @@ static int msg_halfop(char *nick, char *host, struct userrec *u, char *par)
 
   if (match_my_nick(nick))
     return 1;
+
   pass = newsplit(&par);
   if (u_pass_match(u, pass)) {
     if (!u_pass_match(u, "-")) {
@@ -642,6 +642,7 @@ static int msg_key(char *nick, char *host, struct userrec *u, char *par)
 
   if (match_my_nick(nick))
     return 1;
+
   pass = newsplit(&par);
   if (u_pass_match(u, pass)) {
     /* Prevent people from getting key with no pass set */
@@ -695,6 +696,7 @@ static int msg_voice(char *nick, char *host, struct userrec *u, char *par)
 
   if (match_my_nick(nick))
     return 1;
+
   pass = newsplit(&par);
   if (u_pass_match(u, pass)) {
     if (!u_pass_match(u, "-")) {
@@ -735,6 +737,7 @@ static int msg_invite(char *nick, char *host, struct userrec *u, char *par)
 
   if (match_my_nick(nick))
     return 1;
+
   pass = newsplit(&par);
   if (u_pass_match(u, pass) && !u_pass_match(u, "-")) {
     if (par[0] == '*') {
@@ -796,6 +799,7 @@ static int msg_status(char *nick, char *host, struct userrec *u, char *par)
 
   if (match_my_nick(nick))
     return 1;
+
   if (!u_pass_match(u, "-")) {
     pass = newsplit(&par);
     if (!u_pass_match(u, pass)) {
@@ -856,6 +860,7 @@ static int msg_memory(char *nick, char *host, struct userrec *u, char *par)
 
   if (match_my_nick(nick))
     return 1;
+
   if (!u_pass_match(u, "-")) {
     pass = newsplit(&par);
     if (!u_pass_match(u, pass)) {
@@ -881,6 +886,7 @@ static int msg_die(char *nick, char *host, struct userrec *u, char *par)
 
   if (match_my_nick(nick))
     return 1;
+
   if (!u_pass_match(u, "-")) {
     pass = newsplit(&par);
     if (!u_pass_match(u, pass)) {
@@ -917,6 +923,7 @@ static int msg_rehash(char *nick, char *host, struct userrec *u, char *par)
 {
   if (match_my_nick(nick))
     return 1;
+
   if (u_pass_match(u, par)) {
     putlog(LOG_CMDS, "*", "(%s!%s) !%s! REHASH", nick, host, u->handle);
     dprintf(DP_HELP, "NOTICE %s :%s\n", nick, USERF_REHASHING);
@@ -934,6 +941,7 @@ static int msg_save(char *nick, char *host, struct userrec *u, char *par)
 {
   if (match_my_nick(nick))
     return 1;
+
   if (u_pass_match(u, par)) {
     putlog(LOG_CMDS, "*", "(%s!%s) !%s! SAVE", nick, host, u->handle);
     dprintf(DP_HELP, "NOTICE %s :Saving user file...\n", nick);
@@ -951,10 +959,12 @@ static int msg_reset(char *nick, char *host, struct userrec *u, char *par)
 
   if (match_my_nick(nick))
     return 1;
+
   if (!u_pass_match(u, "-")) {
     pass = newsplit(&par);
     if (!u_pass_match(u, pass)) {
-      putlog(LOG_CMDS, "*", "(%s!%s) !%s! failed RESET", nick, host, u->handle);
+      putlog(LOG_CMDS, "*", "(%s!%s) !%s! failed RESET", nick, host,
+             u->handle);
       return 1;
     }
   } else {
@@ -989,8 +999,10 @@ static int msg_go(char *nick, char *host, struct userrec *u, char *par)
 
   if (match_my_nick(nick))
     return 1;
+
   if (!u)
     return 0;
+
   if (par[0]) {
     chan = findchan_by_dname(par);
     if (!chan)
@@ -1047,6 +1059,7 @@ static int msg_jump(char *nick, char *host, struct userrec *u, char *par)
 
   if (match_my_nick(nick))
     return 1;
+
   if (u_pass_match(u, "-")) {
     putlog(LOG_CMDS, "*", "(%s!%s) !%s! failed JUMP", nick, host, u->handle);
     if (!quiet_reject)

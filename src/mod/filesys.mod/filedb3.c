@@ -4,7 +4,7 @@
  *
  * Rewritten by Fabian Knittel <fknittel@gmx.de>
  *
- * $Id: filedb3.c,v 1.25 2003/01/30 07:15:14 wcc Exp $
+ * $Id: filedb3.c,v 1.26 2003/03/04 08:51:45 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -401,8 +401,7 @@ static int _filedb_movefile(FILE *fdb, long pos, filedb_entry *fdbe,
 
 /* Adds a completely new file.
  */
-static int _filedb_addfile(FILE *fdb, filedb_entry *fdbe, char *file,
-                           int line)
+static int _filedb_addfile(FILE *fdb, filedb_entry *fdbe, char *file, int line)
 {
   fdbe->_type = TYPE_NEW;
   _filedb_updatefile(fdb, POS_NEW, fdbe, UPDATE_ALL, file, line);

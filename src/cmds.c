@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  *
- * $Id: cmds.c,v 1.94 2003/02/13 23:39:21 wcc Exp $
+ * $Id: cmds.c,v 1.95 2003/03/04 08:51:44 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -840,9 +840,8 @@ static void cmd_chhandle(struct userrec *u, int idx, char *par)
     if ((newhand[i] <= 32) || (newhand[i] >= 127) || (newhand[i] == '@'))
       newhand[i] = '?';
   if (strchr(BADHANDCHARS, newhand[0]) != NULL)
-    dprintf(idx,
-            "Bizarre quantum forces prevent nicknames from starting with '%c'.\n",
-            newhand[0]);
+    dprintf(idx, "Bizarre quantum forces prevent nicknames from starting with "
+            "'%c'.\n", newhand[0]);
   else if (get_user_by_handle(userlist, newhand) &&
            egg_strcasecmp(hand, newhand))
     dprintf(idx, "Somebody is already using %s.\n", newhand);
@@ -954,8 +953,8 @@ static void cmd_chaddr(struct userrec *u, int idx, char *par)
 
   handle = newsplit(&par);
   if (!par[0]) {
-    dprintf(idx,
-            "Usage: chaddr <botname> <address[:telnet-port[/relay-port]]>\n");
+    dprintf(idx, "Usage: chaddr <botname> "
+            "<address[:telnet-port[/relay-port]]>\n");
     return;
   }
   addr = newsplit(&par);
@@ -1797,8 +1796,8 @@ static void cmd_chat(struct userrec *u, int idx, char *par)
       } else
         newchan = GLOBAL_CHANS + atoi(arg + 1);
       if (newchan < GLOBAL_CHANS || newchan > 199999) {
-        dprintf(idx,
-                "Channel number out of range: local channels must be *0-*99999.\n");
+        dprintf(idx, "Channel number out of range: local channels must be "
+                "*0-*99999.\n");
         return;
       }
     } else {

@@ -6,7 +6,7 @@
  * Written by Fabian Knittel <fknittel@gmx.de>. Based on zlib examples
  * by Jean-loup Gailly and Miguel Albrecht.
  *
- * $Id: compress.c,v 1.18 2003/01/30 07:15:14 wcc Exp $
+ * $Id: compress.c,v 1.19 2003/03/04 08:51:45 wcc Exp $
  */
 /*
  * Copyright (C) 2000, 2001, 2002, 2003 Eggheads Development Team
@@ -151,9 +151,8 @@ static int uncompress_to_file(char *f_src, char *f_target)
     if (!len)
       break;
     if ((int) fwrite(buf, 1, (unsigned int) len, fout) != len) {
-      putlog(LOG_MISC, "*",
-             "Failed to uncompress file `%s': fwrite failed: %s.", f_src,
-             strerror(errno));
+      putlog(LOG_MISC, "*", "Failed to uncompress file `%s': fwrite "
+             "failed: %s.", f_src, strerror(errno));
       return COMPF_ERROR;
     }
   }

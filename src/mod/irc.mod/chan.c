@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  *
- * $Id: chan.c,v 1.109 2003/02/27 02:36:07 wcc Exp $
+ * $Id: chan.c,v 1.110 2003/03/04 08:51:45 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -137,12 +137,12 @@ static void check_exemptlist(struct chanset_t *chan, char *from)
  * Moved all do_ban(), do_exempt() and do_invite() into this single function
  * as the code bloat is starting to get rediculous <cybah>
  */
-static void do_mask(struct chanset_t *chan, masklist *m, char *mask, char Mode)
+static void do_mask(struct chanset_t *chan, masklist *m, char *mask, char mode)
 {
   for (; m && m->mask[0]; m = m->next)
     if (wild_match(mask, m->mask) && rfc_casecmp(mask, m->mask))
-      add_mode(chan, '-', Mode, m->mask);
-  add_mode(chan, '+', Mode, mask);
+      add_mode(chan, '-', mode, m->mask);
+  add_mode(chan, '+', mode, mask);
   flush_mode(chan, QUICK);
 }
 
@@ -357,6 +357,7 @@ static void kick_all(struct chanset_t *chan, char *hostmask, char *comment,
 
   if (!me_op(chan) && !me_halfop(chan))
     return;
+
   k = 0;
   flushed = 0;
   kicknick[0] = 0;
@@ -403,6 +404,7 @@ static void refresh_ban_kick(struct chanset_t *chan, char *user, char *nick)
   m = ismember(chan, nick);
   if (!m || chan_sentkick(m))
     return;
+
   /* Check global bans in first cycle and channel bans in second cycle. */
   for (cycle = 0; cycle < 2; cycle++) {
     for (b = cycle ? chan->bans : global_bans; b; b = b->next) {
@@ -440,8 +442,7 @@ static void refresh_exempt(struct chanset_t *chan, char *user)
   masklist *b;
   int cycle;
 
-  /* Check global exempts in first cycle and channel exempts
-   * in second cycle. */
+  /* Check global exempts in first cycle and channel exempts in second cycle. */
   for (cycle = 0; cycle < 2; cycle++) {
     for (e = cycle ? chan->exempts : global_exempts; e; e = e->next) {
       if (wild_match(user, e->mask) || wild_match(e->mask, user)) {
@@ -463,8 +464,7 @@ static void refresh_invite(struct chanset_t *chan, char *user)
   maskrec *i;
   int cycle;
 
-  /* Check global invites in first cycle and channel invites
-   * in second cycle. */
+  /* Check global invites in first cycle and channel invites in second cycle. */
   for (cycle = 0; cycle < 2; cycle++) {
     for (i = cycle ? chan->invites : global_invites; i; i = i->next) {
       if (wild_match(i->mask, user) &&
@@ -486,8 +486,9 @@ static void enforce_bans(struct chanset_t *chan)
   char me[UHOSTLEN];
   masklist *b;
 
-  if (!me_op(chan) && !me_halfop(chan))
-    return;                     /* Can't do it :( */
+  if (HALFOP_CANTDOMODE('b'))
+    return;
+
   simple_sprintf(me, "%s!%s", botname, botuserhost);
   /* Go through all bans, kicking the users. */
   for (b = chan->channel.ban; b && b->mask[0]; b = b->next) {
@@ -527,8 +528,7 @@ static void recheck_exempts(struct chanset_t *chan)
   masklist *b;
   int cycle;
 
-  /* Check global exempts in first cycle and channel exempts
-   * in second cycle. */
+  /* Check global exempts in first cycle and channel exempts in second cycle. */
   for (cycle = 0; cycle < 2; cycle++) {
     for (e = cycle ? chan->exempts : global_exempts; e; e = e->next) {
       if (!isexempted(chan, e->mask) &&
@@ -554,8 +554,7 @@ static void recheck_invites(struct chanset_t *chan)
   maskrec *ir;
   int cycle;
 
-  /* Check global invites in first cycle and channel invites
-   * in second cycle. */
+  /* Check global invites in first cycle and channel invites in second cycle. */
   for (cycle = 0; cycle < 2; cycle++) {
     for (ir = cycle ? chan->invites : global_invites; ir; ir = ir->next) {
       /* If invite isn't set and (channel is not dynamic invites and not invite
@@ -574,8 +573,11 @@ static void recheck_invites(struct chanset_t *chan)
 static void resetmasks(struct chanset_t *chan, masklist *m, maskrec *mrec,
                        maskrec *global_masks, char mode)
 {
-  if (!me_op(chan) && !me_halfop(chan))
-    return;                     /* Can't do it */
+  if (!me_op(chan) && (!me_halfop(chan) ||
+      (strchr(NOHALFOPS_MODES, 'b') != NULL) ||
+      (strchr(NOHALFOPS_MODES, 'e') != NULL) ||
+      (strchr(NOHALFOPS_MODES, 'I') != NULL)))
+    return;
 
   /* Remove masks we didn't put there */
   for (; m && m->mask[0]; m = m->next) {
@@ -604,8 +606,9 @@ static void check_this_ban(struct chanset_t *chan, char *banmask, int sticky)
   memberlist *m;
   char user[UHOSTLEN];
 
-  if (!me_op(chan) && !me_halfop(chan))
+  if (HALFOP_CANTDOMODE('b'))
     return;
+
   for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
     sprintf(user, "%s!%s", m->nick, m->userhost);
     if (wild_match(banmask, user) &&
@@ -704,17 +707,18 @@ static void check_this_member(struct chanset_t *chan, char *nick,
   if (!m || match_my_nick(nick) || (!me_op(chan) && !me_halfop(chan)))
     return;
 
+
+#ifdef NO_HALFOP_CHANMODES
+  if (me_op(chan)) {
+#else
   if (me_op(chan) || me_halfop(chan)) {
-    if (me_op(chan)) {
+#endif
+    if (HALFOP_CANDOMODE('o')) {
       if (chan_hasop(m) && ((chan_deop(*fr) || (glob_deop(*fr) &&
           !chan_op(*fr))) || (channel_bitch(chan) && (!chan_op(*fr) &&
           !(glob_op(*fr) && !chan_deop(*fr)))))) {
         add_mode(chan, '-', 'o', m->nick);
       }
-      if (chan_hashalfop(m) && ((chan_dehalfop(*fr) || (glob_dehalfop(*fr) &&
-          !chan_halfop(*fr)) || (channel_bitch(chan) && (!chan_halfop(*fr) &&
-          !(glob_halfop(*fr) && !chan_dehalfop(*fr)))))))
-        add_mode(chan, '-', 'h', m->nick);
       if (!chan_hasop(m) && (chan_op(*fr) || (glob_op(*fr) &&
           !chan_deop(*fr))) && (channel_autoop(chan) || glob_autoop(*fr) ||
           chan_autoop(*fr))) {
@@ -724,10 +728,18 @@ static void check_this_member(struct chanset_t *chan, char *nick,
           set_delay(chan, m->nick);
           m->flags |= SENTOP;
         }
-      } else if (!chan_hasop(m) && !chan_hashalfop(m) && (chan_halfop(*fr) ||
-               (glob_halfop(*fr) && !chan_dehalfop(*fr))) &&
-               (channel_autohalfop(chan) || glob_autohalfop(*fr) ||
-               chan_autohalfop(*fr))) {
+      }
+    }
+
+    if (HALFOP_CANDOMODE('h')) {
+      if (chan_hashalfop(m) && ((chan_dehalfop(*fr) || (glob_dehalfop(*fr) &&
+          !chan_halfop(*fr)) || (channel_bitch(chan) && (!chan_halfop(*fr) &&
+          !(glob_halfop(*fr) && !chan_dehalfop(*fr)))))))
+        add_mode(chan, '-', 'h', m->nick);
+      if (!chan_sentop(m) && !chan_hasop(m) && !chan_hashalfop(m) &&
+          (chan_halfop(*fr) || (glob_halfop(*fr) && !chan_dehalfop(*fr))) &&
+          (channel_autohalfop(chan) || glob_autohalfop(*fr) ||
+          chan_autohalfop(*fr))) {
         if (!chan->aop_min)
           add_mode(chan, '+', 'h', m->nick);
         else {
@@ -736,20 +748,29 @@ static void check_this_member(struct chanset_t *chan, char *nick,
         }
       }
     }
-    if (chan_hasvoice(m) && (chan_quiet(*fr) || (glob_quiet(*fr) &&
-        !chan_voice(*fr))))
-      add_mode(chan, '-', 'v', m->nick);
-    if (!chan_hasvoice(m) && !chan_hasop(m) && !chan_hashalfop(m) &&
-        (chan_voice(*fr) || (glob_voice(*fr) && !chan_quiet(*fr))) &&
-        (channel_autovoice(chan) || glob_gvoice(*fr) || chan_gvoice(*fr))) {
-      if (!chan->aop_min)
-        add_mode(chan, '+', 'v', m->nick);
-      else {
-        set_delay(chan, m->nick);
-        m->flags |= SENTVOICE;
+
+    if (HALFOP_CANDOMODE('v')) {
+      if (chan_hasvoice(m) && (chan_quiet(*fr) || (glob_quiet(*fr) &&
+          !chan_voice(*fr))))
+        add_mode(chan, '-', 'v', m->nick);
+      if (!chan_hasvoice(m) && !chan_hasop(m) && !chan_hashalfop(m) &&
+          (chan_voice(*fr) || (glob_voice(*fr) && !chan_quiet(*fr))) &&
+          (channel_autovoice(chan) || glob_gvoice(*fr) || chan_gvoice(*fr))) {
+        if (!chan->aop_min)
+          add_mode(chan, '+', 'v', m->nick);
+        else {
+          set_delay(chan, m->nick);
+          m->flags |= SENTVOICE;
+        }
       }
     }
   }
+
+  if (!me_op(chan) && (!me_halfop(chan) ||
+      (strchr(NOHALFOPS_MODES, 'b') != NULL) ||
+      (strchr(NOHALFOPS_MODES, 'e') != NULL) ||
+      (strchr(NOHALFOPS_MODES, 'I') != NULL)))
+    return;
 
   sprintf(s, "%s!%s", m->nick, m->userhost);
   if (use_invites && (u_match_mask(global_invites, s) ||
@@ -802,10 +823,9 @@ static void recheck_channel(struct chanset_t *chan, int dobans)
   static int stacking = 0;
   int stop_reset = 0;
 
-  if (stacking)
-    return;                     /* wewps */
-  if (!userlist)                /* Bot doesnt know anybody */
-    return;                     /* ... it's better not to deop everybody */
+  if (stacking || !userlist)
+    return;
+
   stacking++;
   /* Okay, sort through who needs to be deopped. */
   for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
@@ -817,6 +837,9 @@ static void recheck_channel(struct chanset_t *chan, int dobans)
     get_user_flagrec(m->user, &fr, chan->dname);
     if (glob_bot(fr) && chan_hasop(m) && !match_my_nick(m->nick))
       stop_reset = 1;
+    /* Perhaps we were halfop and tried to halfop/kick the user earlier but
+     * the server rejected the request, so let's try again. */
+    m->flags &= ~(SENTHALFOP | SENTKICK);
     check_this_member(chan, m->nick, &fr);
   }
   if (dobans) {
@@ -1042,14 +1065,12 @@ static int got315(char *from, char *msg)
   newsplit(&msg);
   chname = newsplit(&msg);
   chan = findchan(chname);
-  /* May have left the channel before the who info came in */
-  if (!chan || !channel_pending(chan))
+  if (!chan || !channel_pending(chan)) /* Left channel before we got a 315? */
     return 0;
-  /* Finished getting who list, can now be considered officially ON CHANNEL */
+
   chan->status |= CHAN_ACTIVE;
   chan->status &= ~CHAN_PEND;
-  /* Am *I* on the channel now? if not, well d0h. */
-  if (!ismember(chan, botname)) {
+  if (!ismember(chan, botname)) {      /* Am I on the channel now?          */
     putlog(LOG_MISC | LOG_JOIN, chan->dname, "Oops, I'm not really on %s.",
            chan->dname);
     clear_channel(chan, 1);
@@ -1061,8 +1082,7 @@ static int got315(char *from, char *msg)
     recheck_channel(chan, 1);
   else if (chan->channel.members == 1)
     chan->status |= CHAN_STOP_CYCLE;
-  /* do not check for i-lines here. */
-  return 0;
+  return 0;                            /* Don't check for I-Lines here.     */
 }
 
 /* got 367: ban info
@@ -1646,7 +1666,7 @@ static int gotjoin(char *from, char *chname)
         m->split = 0;
         m->last = now;
         m->delay = 0L;
-        m->flags = (chan_hasop(m) ? WASOP : 0);
+        m->flags = (chan_hasop(m) ? WASOP : 0) | (chan_hashalfop(m) ? WASHALFOP : 0);
         m->user = u;
         set_handle_laston(chan->dname, u, now);
         m->flags |= STOPWHO;
@@ -1744,21 +1764,22 @@ static int gotjoin(char *from, char *chname)
           set_handle_laston(chan->dname, u, now);
         }
       }
-      /* ok, the op-on-join,etc, tests...first only both if Im opped */
       if (me_op(chan) || me_halfop(chan)) {
         /* Check for and reset exempts and invites.
          *
          * This will require further checking to account for when to use the
          * various modes.
          */
-        if (u_match_mask(global_invites, from) ||
-            u_match_mask(chan->invites, from))
+        if ((me_op(chan) || (strchr(NOHALFOPS_MODES, 'I') == NULL)) &&
+            (u_match_mask(global_invites, from) ||
+            u_match_mask(chan->invites, from)))
           refresh_invite(chan, from);
-        if (!(use_exempts && (u_match_mask(global_exempts, from) ||
-            u_match_mask(chan->exempts, from)))) {
+        if ((me_op(chan) || (strchr(NOHALFOPS_MODES, 'b') == NULL)) &&
+            (!use_exempts || (!u_match_mask(global_exempts, from) &&
+            !u_match_mask(chan->exempts, from)))) {
           if (channel_enforcebans(chan) && !chan_op(fr) && !glob_op(fr) &&
               !glob_friend(fr) && !chan_friend(fr) && !chan_sentkick(m) &&
-              !(use_exempts && isexempted(chan, from)) && (me_op(chan) ||
+              (!use_exempts || !isexempted(chan, from)) && (me_op(chan) ||
               (me_halfop(chan) && !chan_hasop(m)))) {
             for (b = chan->channel.ban; b->mask[0]; b = b->next) {
               if (wild_match(b->mask, from)) {
@@ -1782,7 +1803,11 @@ static int gotjoin(char *from, char *chname)
             m->flags |= SENTKICK;
           }
         }
-        if ((chan_op(fr) || (glob_op(fr) && !chan_deop(fr))) &&
+#ifdef NO_HALFOP_CHANMODES
+        if (me_op(chan)) {
+#endif
+        if ((me_op(chan) || (strchr(NOHALFOPS_MODES, 'o') == NULL)) &&
+            (chan_op(fr) || (glob_op(fr) && !chan_deop(fr))) &&
             (channel_autoop(chan) || glob_autoop(fr) || chan_autoop(fr))) {
           if (!chan->aop_min)
             add_mode(chan, '+', 'o', nick);
@@ -1790,18 +1815,21 @@ static int gotjoin(char *from, char *chname)
             set_delay(chan, nick);
             m->flags |= SENTOP;
           }
-        } else if ((chan_halfop(fr) || (glob_halfop(fr) &&
-                 !chan_dehalfop(fr))) && (channel_autohalfop(chan) ||
-                 glob_autohalfop(fr) || chan_autohalfop(fr))) {
+        } else if ((me_op(chan) || (strchr(NOHALFOPS_MODES, 'h') == NULL)) &&
+                   (chan_halfop(fr) || (glob_halfop(fr) &&
+                   !chan_dehalfop(fr))) && (channel_autohalfop(chan) ||
+                   glob_autohalfop(fr) || chan_autohalfop(fr))) {
           if (!chan->aop_min)
             add_mode(chan, '+', 'h', nick);
           else {
             set_delay(chan, nick);
             m->flags |= SENTHALFOP;
           }
-        } else if ((channel_autovoice(chan) && (chan_voice(fr) ||
-                 (glob_voice(fr) && !chan_quiet(fr)))) || ((glob_gvoice(fr) ||
-                 chan_gvoice(fr)) && !chan_quiet(fr))) {
+        } else if ((me_op(chan) || (strchr(NOHALFOPS_MODES, 'v') == NULL)) &&
+                   ((channel_autovoice(chan) && (chan_voice(fr) ||
+                   (glob_voice(fr) && !chan_quiet(fr)))) ||
+                   ((glob_gvoice(fr) || chan_gvoice(fr)) &&
+                   !chan_quiet(fr)))) {
           if (!chan->aop_min)
             add_mode(chan, '+', 'v', nick);
           else {
@@ -1809,6 +1837,9 @@ static int gotjoin(char *from, char *chname)
             m->flags |= SENTVOICE;
           }
         }
+#ifdef NO_HALFOP_CHANMODES
+        }
+#endif
       }
     }
   }

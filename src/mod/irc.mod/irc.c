@@ -2,7 +2,7 @@
  * irc.c -- part of irc.mod
  *   support for channels within the bot
  *
- * $Id: irc.c,v 1.90 2003/02/27 10:18:40 tothwolf Exp $
+ * $Id: irc.c,v 1.91 2003/03/04 08:51:45 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -56,20 +56,16 @@ static int invite_key = 1;
 static int no_chanrec_info = 0;
 static int modesperline = 3;    /* Number of modes per line to send. */
 static int mode_buf_len = 200;  /* Maximum bytes to send in 1 mode. */
-static int use_354 = 0;         /* Use ircu's short 354 /who
-                                 * responses. */
-static int kick_method = 1;     /* How many kicks does the irc network
-                                 * support at once?
-                                 * 0 = as many as possible.
+static int use_354 = 0;         /* Use ircu's short 354 /who responses. */
+static int kick_method = 1;     /* How many kicks does the IRC network support
+                                 * at once? Use 0 for as many as possible.
                                  * (Ernst 18/3/1998) */
 static int kick_fun = 0;
 static int ban_fun = 0;
 static int keepnick = 1;        /* Keep nick */
-static int prevent_mixing = 1;  /* To prevent mixing old/new modes */
-static int rfc_compliant = 1;   /* net-type changing modifies this */
-
-static int include_lk = 1;      /* For correct calculation
-                                 * in real_add_mode. */
+static int prevent_mixing = 1;  /* Prevent mixing old/new modes */
+static int rfc_compliant = 1;   /* Value depends on net-type. */
+static int include_lk = 1;      /* For correct calculation in real_add_mode. */
 
 #include "chan.c"
 #include "mode.c"
@@ -213,16 +209,16 @@ static void punish_badguy(struct chanset_t *chan, char *whobad,
     maskban(whobad, s1);
     simple_sprintf(s, "(%s) %s", ct, reason);
     u_addban(chan, s1, botnetnick, s, now + (60 * chan->ban_time), 0);
-    if (!mevictim && (me_op(chan) || me_halfop(chan))) {
+    if (!mevictim && HALFOP_CANDOMODE('b')) {
       add_mode(chan, '+', 'b', s1);
       flush_mode(chan, QUICK);
     }
   }
   /* Kick the offender */
-  if ((chan->revenge_mode > 1) && (!channel_dontkickops(chan) ||
-      !(chan_op(fr) || (glob_op(fr) && !chan_deop(fr)))) &&
+  if (!mevictim && (chan->revenge_mode > 1) && (!channel_dontkickops(chan) ||
+      (!chan_op(fr) && (!glob_op(fr) || chan_deop(fr)))) &&
       !chan_sentkick(m) && (me_op(chan) || (me_halfop(chan) &&
-      !chan_hasop(m))) && !mevictim) {
+      !chan_hasop(m) && (strchr(NOHALFOPS_MODES, 'b') == NULL)))) {
     dprintf(DP_MODE, "KICK %s %s :%s\n", chan->name, badnick, kick_msg);
     m->flags |= SENTKICK;
   }
@@ -251,11 +247,8 @@ static void maybe_revenge(struct chanset_t *chan, char *whobad,
   mevictim = match_my_nick(victim);
 
   /* Do we want to revenge? */
-  if (!want_to_revenge(chan, u, u2, badnick, victim, mevictim))
-    return;                     /* No, leave them alone ... */
-
-  /* Haha! Do the vengeful thing ... */
-  punish_badguy(chan, whobad, u, badnick, victim, mevictim, type);
+  if (want_to_revenge(chan, u, u2, badnick, victim, mevictim)) 
+    punish_badguy(chan, whobad, u, badnick, victim, mevictim, type);
 }
 
 /* Set the key.
@@ -905,6 +898,7 @@ static void flush_modes()
 
   if (modesperline > MODES_PER_LINE_MAX)
     modesperline = MODES_PER_LINE_MAX;
+
   for (chan = chanset; chan; chan = chan->next) {
     for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
       if (m->delay && m->delay <= now) {

@@ -4,7 +4,7 @@
  *   disconnect on a dcc socket
  *   ...and that's it!  (but it's a LOT)
  *
- * $Id: dcc.c,v 1.62 2003/02/02 10:19:33 wcc Exp $
+ * $Id: dcc.c,v 1.63 2003/03/04 08:51:44 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -170,9 +170,8 @@ static void bot_version(int idx, char *par)
 #ifndef NO_OLD_BOTNET
   if (b_numver(idx) < NEAT_BOTNET) {
 #if HANDLEN != 9
-    putlog(LOG_BOTS, "*",
-           "Non-matching handle lengths with %s, they use 9 characters.",
-           dcc[idx].nick);
+    putlog(LOG_BOTS, "*", "Non-matching handle lengths with %s, they use 9 "
+           "characters.", dcc[idx].nick);
     dprintf(idx, "error Non-matching handle length: mine %d, yours 9\n",
             HANDLEN);
     dprintf(idx, "bye %s\n", "bad handlen");
@@ -187,9 +186,8 @@ static void bot_version(int idx, char *par)
     dprintf(idx, "tb %s\n", botnetnick);
     l = atoi(newsplit(&par));
     if (l != HANDLEN) {
-      putlog(LOG_BOTS, "*",
-             "Non-matching handle lengths with %s, they use %d characters.",
-             dcc[idx].nick, l);
+      putlog(LOG_BOTS, "*", "Non-matching handle lengths with %s, they use %d "
+             "characters.", dcc[idx].nick, l);
       dprintf(idx, "error Non-matching handle length: mine %d, yours %d\n",
               HANDLEN, l);
       dprintf(idx, "bye %s\n", "bad handlen");

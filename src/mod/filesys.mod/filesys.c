@@ -2,7 +2,7 @@
  * filesys.c -- part of filesys.mod
  *   main file of the filesys eggdrop module
  *
- * $Id: filesys.c,v 1.57 2003/01/30 07:15:15 wcc Exp $
+ * $Id: filesys.c,v 1.58 2003/03/04 08:51:45 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -345,7 +345,8 @@ static int cmd_files(struct userrec *u, int idx, char *par)
   return 0;
 }
 
-static int _dcc_send(int idx, char *filename, char *nick, char *dir, int resend)
+static int _dcc_send(int idx, char *filename, char *nick, char *dir,
+                     int resend)
 {
   int x;
   char *nfn, *buf = NULL;
@@ -913,13 +914,13 @@ static char *filesys_close()
   int i;
   p_tcl_bind_list H_ctcp;
 
-  putlog(LOG_MISC, "*",
-         "Unloading filesystem; killing all filesystem connections.");
+  putlog(LOG_MISC, "*", "Unloading filesystem; killing all filesystem "
+         "connections.");
   for (i = 0; i < dcc_total; i++)
     if (dcc[i].type == &DCC_FILES) {
       dprintf(i, DCC_BOOTED1);
-      dprintf(i,
-              "You have been booted from the filesystem, module unloaded.\n");
+      dprintf(i, "You have been booted from the filesystem, module "
+              "unloaded.\n");
       killsock(dcc[i].sock);
       lostdcc(i);
     } else if (dcc[i].type == &DCC_FILES_PASS) {

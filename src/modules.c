@@ -4,7 +4,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: modules.c,v 1.80 2003/02/27 10:18:40 tothwolf Exp $
+ * $Id: modules.c,v 1.81 2003/03/04 08:51:45 wcc Exp $
  */
 /* 
  * Copyright (C) 1997 Robey Pointer
@@ -169,7 +169,7 @@ void (*sharein) (int, char *) = null_share;
 void (*qserver) (int, char *, int) = (void (*)(int, char *, int)) null_func;
 void (*add_mode) () = null_func;
 int (*match_noterej) (struct userrec *, char *) =
-  (int (*)(struct userrec *, char *)) false_func;
+    (int (*)(struct userrec *, char *)) false_func;
 int (*rfc_casecmp) (const char *, const char *) = _rfc_casecmp;
 int (*rfc_ncasecmp) (const char *, const char *, int) = _rfc_ncasecmp;
 int (*rfc_toupper) (int) = _rfc_toupper;

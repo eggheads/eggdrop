@@ -1,7 +1,7 @@
 /*
  * tclchan.c -- part of channels.mod
  *
- * $Id: tclchan.c,v 1.77 2003/02/28 12:45:49 wcc Exp $
+ * $Id: tclchan.c,v 1.78 2003/03/04 08:51:45 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1395,8 +1395,8 @@ static int tcl_channel_modify(Tcl_Interp *irp, struct chanset_t *chan,
           found = 1;
           break;
         } else if (ul->type == UDEF_INT && (!egg_strcasecmp(item[i], ul->name) ||
-                 (!strncmp(item[i], "udef-int-", 9) &&
-                 !egg_strcasecmp(item[i] + 9, ul->name)))) {
+                   (!strncmp(item[i], "udef-int-", 9) &&
+                   !egg_strcasecmp(item[i] + 9, ul->name)))) {
           i++;
           if (i >= items) {
             if (irp)

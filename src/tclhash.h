@@ -1,7 +1,7 @@
 /*
  * tclhash.h
  *
- * $Id: tclhash.h,v 1.12 2003/01/29 05:48:41 wcc Exp $
+ * $Id: tclhash.h,v 1.13 2003/03/04 08:51:45 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -26,35 +26,32 @@
 #define _EGG_TCLHASH_H
 
 
-#define TC_DELETED   0x0001  /* This command/trigger was deleted.    */
+#define TC_DELETED   0x0001     /* This command/trigger was deleted. */
 
 typedef struct tcl_cmd_b {
   struct tcl_cmd_b *next;
 
   struct flag_record flags;
-  char *func_name;              /* Proc name.                   */
-  int hits;                     /* Number of times this proc
-                                 * was triggered.               */
-  u_8bit_t attributes;          /* Flags for this entry. TC_*   */
+  char *func_name;              /* Proc name. */
+  int hits;                     /* Number of times this proc was triggered. */
+  u_8bit_t attributes;          /* Flags for this entry. TC_* */
 } tcl_cmd_t;
 
 
-#define TBM_DELETED  0x0001  /* This mask was deleted.               */
+#define TBM_DELETED  0x0001     /* This mask was deleted. */
 
 typedef struct tcl_bind_mask_b {
   struct tcl_bind_mask_b *next;
 
-  tcl_cmd_t *first;             /* List of commands registered
-                                 * for this bind.               */
+  tcl_cmd_t *first;             /* List of commands registered for this bind. */
   char *mask;
   u_8bit_t flags;               /* Flags for this entry. TBM_*  */
 } tcl_bind_mask_t;
 
 
-#define HT_STACKABLE 0x0001  /* Triggers in this bind list may be
-                              * stacked.                             */
-#define HT_DELETED   0x0002  /* This bind list was already deleted.
-                              * Do not use it anymore.               */
+#define HT_STACKABLE 0x0001     /* Triggers in this bind list may be stacked. */
+#define HT_DELETED   0x0002     /* This bind list was already deleted. Do not
+                                 * use it anymore. */
 
 typedef struct tcl_bind_list_b {
   struct tcl_bind_list_b *next;
@@ -63,10 +60,8 @@ typedef struct tcl_bind_list_b {
                                  * for this list.               */
   char name[5];                 /* Name of the bind.            */
   u_8bit_t flags;               /* Flags for this element. HT_* */
-  Function func;                /* Function used as the Tcl
-                                 * calling interface for procs
-                                 * actually representing C
-                                 * functions.                   */
+  Function func;                /* Function used as the Tcl calling interface
+                                 * for procs actually representing C functions. */
 } tcl_bind_list_t, *p_tcl_bind_list;
 
 

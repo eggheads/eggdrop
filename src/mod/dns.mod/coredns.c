@@ -5,7 +5,7 @@
  *
  * Modified/written by Fabian Knittel <fknittel@gmx.de>
  *
- * $Id: coredns.c,v 1.25 2003/01/30 07:15:14 wcc Exp $
+ * $Id: coredns.c,v 1.26 2003/03/04 08:51:45 wcc Exp $
  */
 /*
  * Portions Copyright (C) 1999, 2000, 2001, 2002, 2003 Eggheads Development Team
@@ -699,8 +699,8 @@ static void parserespacket(u_8bit_t *s, int l)
     return;
   }
   if (!getheader_qr(hp)) {      /* Not a reply */
-    ddebug0(RES_ERR
-            "Query packet received on nameserver communication socket.");
+    ddebug0(RES_ERR "Query packet received on nameserver communication "
+            "socket.");
     return;
   }
   if (getheader_opcode(hp)) {   /* Not opcode 0 (standard query) */
@@ -712,8 +712,7 @@ static void parserespacket(u_8bit_t *s, int l)
   switch (getheader_rcode(hp)) {
   case NOERROR:
     if (hp->ancount) {
-      ddebug4(RES_MSG
-              "Received nameserver reply. (qd:%u an:%u ns:%u ar:%u)",
+      ddebug4(RES_MSG "Received nameserver reply. (qd:%u an:%u ns:%u ar:%u)",
               hp->qdcount, hp->ancount, hp->nscount, hp->arcount);
       if (hp->qdcount != 1) {
         ddebug0(RES_ERR "Reply does not contain one query.");
@@ -742,9 +741,8 @@ static void parserespacket(u_8bit_t *s, int l)
       }
       namestring[strlen(stackstring)] = '\0';
       if (egg_strcasecmp(stackstring, namestring)) {
-        ddebug2(RES_MSG
-                "Unknown query packet dropped. (\"%s\" does not match \"%s\")",
-                stackstring, namestring);
+        ddebug2(RES_MSG "Unknown query packet dropped. (\"%s\" does not "
+                "match \"%s\")", stackstring, namestring);
         return;
       }
       ddebug1(RES_MSG "Queried domain name: \"%s\"", namestring);
@@ -757,34 +755,33 @@ static void parserespacket(u_8bit_t *s, int l)
       qclass = sucknetword(c);
       if (qclass != C_IN) {
         ddebug2(RES_ERR "Received unsupported query class: %u (%s)",
-                qclass, qclass < CLASSTYPES_COUNT ?
+                qclass, (qclass < CLASSTYPES_COUNT) ?
                 classtypes[qclass] : classtypes[CLASSTYPES_COUNT]);
       }
       switch (qdatatype) {
       case T_PTR:
         if (!IS_PTR(rp)) {
-          ddebug0(RES_WRN
-                  "Ignoring response with unexpected query type \"PTR\".");
+          ddebug0(RES_WRN "Ignoring response with unexpected query type "
+                  "\"PTR\".");
           return;
         }
         break;
       case T_A:
         if (!IS_A(rp)) {
-          ddebug0(RES_WRN
-                  "Ignoring response with unexpected query type \"PTR\".");
+          ddebug0(RES_WRN "Ignoring response with unexpected query type "
+                  "\"PTR\".");
           return;
         }
         break;
       default:
         ddebug2(RES_ERR "Received unimplemented query type: %u (%s)",
-                qdatatype,
-                qdatatype < RESOURCETYPES_COUNT ?
+                qdatatype, (qdatatype < RESOURCETYPES_COUNT) ?
                 resourcetypes[qdatatype] : resourcetypes[RESOURCETYPES_COUNT]);
       }
       for (rr = hp->ancount + hp->nscount + hp->arcount; rr; rr--) {
         if (c > eob) {
-          ddebug0(RES_ERR
-                  "Packet does not contain all specified resouce records.");
+          ddebug0(RES_ERR "Packet does not contain all specified resouce "
+                  "records.");
           return;
         }
         *namestring = '\0';
@@ -810,11 +807,10 @@ static void parserespacket(u_8bit_t *s, int l)
         rdatalength = sucknetword(c);
         if (class != qclass) {
           ddebug2(RES_MSG "query class: %u (%s)",
-                  qclass,
-                  qclass < CLASSTYPES_COUNT ?
+                  qclass, (qclass < CLASSTYPES_COUNT) ?
                   classtypes[qclass] : classtypes[CLASSTYPES_COUNT]);
           ddebug2(RES_MSG "rr class: %u (%s)", class,
-                  class < CLASSTYPES_COUNT ?
+                  (class < CLASSTYPES_COUNT) ?
                   classtypes[class] : classtypes[CLASSTYPES_COUNT]);
           ddebug0(RES_ERR "Answered class does not match queried class.");
           return;
@@ -829,16 +825,15 @@ static void parserespacket(u_8bit_t *s, int l)
         }
         if (datatype == qdatatype) {
           ddebug1(RES_MSG "TTL: %s", strtdiff(sendstring, ttl));
-          ddebug1(RES_MSG "TYPE: %s", datatype < RESOURCETYPES_COUNT ?
+          ddebug1(RES_MSG "TYPE: %s", (datatype < RESOURCETYPES_COUNT) ?
                   resourcetypes[datatype] :
                   resourcetypes[RESOURCETYPES_COUNT]);
           if (usefulanswer)
             switch (datatype) {
             case T_A:
               if (rdatalength != 4) {
-                ddebug1(RES_ERR
-                        "Unsupported rdata format for \"A\" type. (%u bytes)",
-                        rdatalength);
+                ddebug1(RES_ERR "Unsupported rdata format for \"A\" type. "
+                        "(%u bytes)", rdatalength);
                 return;
               }
               my_memcpy(&rp->ip, (IP *) c, sizeof(IP));
@@ -849,8 +844,8 @@ static void parserespacket(u_8bit_t *s, int l)
               *namestring = '\0';
               r = dn_expand(s, s + l, c, namestring, MAXDNAME);
               if (r == -1) {
-                ddebug0(RES_ERR
-                        "dn_expand() failed while expanding domain in rdata.");
+                ddebug0(RES_ERR "dn_expand() failed while expanding domain in "
+                        "rdata.");
                 return;
               }
               ddebug1(RES_MSG "Answered domain: \"%s\"", namestring);
@@ -869,8 +864,7 @@ static void parserespacket(u_8bit_t *s, int l)
               break;
             default:
               ddebug2(RES_ERR "Received unimplemented data type: %u (%s)",
-                      datatype,
-                      datatype < RESOURCETYPES_COUNT ?
+                      datatype, (datatype < RESOURCETYPES_COUNT) ?
                       resourcetypes[datatype] :
                       resourcetypes[RESOURCETYPES_COUNT]);
             }
@@ -878,8 +872,8 @@ static void parserespacket(u_8bit_t *s, int l)
           *namestring = '\0';
           r = dn_expand(s, s + l, c, namestring, MAXDNAME);
           if (r == -1) {
-            ddebug0(RES_ERR
-                    "dn_expand() failed while expanding domain in rdata.");
+            ddebug0(RES_ERR "dn_expand() failed while expanding domain in "
+                    "rdata.");
             return;
           }
           ddebug1(RES_MSG "answered domain is CNAME for: %s", namestring);
@@ -890,7 +884,7 @@ static void parserespacket(u_8bit_t *s, int l)
           strncpy(stackstring, namestring, 1024);
         } else {
           ddebug2(RES_MSG "Ignoring resource type %u. (%s)",
-                  datatype, datatype < RESOURCETYPES_COUNT ?
+                  datatype, (datatype < RESOURCETYPES_COUNT) ?
                   resourcetypes[datatype] :
                   resourcetypes[RESOURCETYPES_COUNT]);
         }
@@ -915,8 +909,7 @@ static void parserespacket(u_8bit_t *s, int l)
     break;
   default:
     ddebug2(RES_MSG "Received error response %u. (%s)",
-            getheader_rcode(hp),
-            getheader_rcode(hp) < RESPONSECODES_COUNT ?
+            getheader_rcode(hp), (getheader_rcode(hp) < RESPONSECODES_COUNT) ?
             responsecodes[getheader_rcode(hp)] :
             responsecodes[RESPONSECODES_COUNT]);
   }

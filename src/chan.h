@@ -3,7 +3,7 @@
  *   stuff common to chan.c and mode.c
  *   users.h needs to be loaded too
  *
- * $Id: chan.h,v 1.36 2003/03/01 08:31:49 wcc Exp $
+ * $Id: chan.h,v 1.37 2003/03/04 08:51:44 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -27,6 +27,22 @@
 #ifndef _EGG_CHAN_H
 #define _EGG_CHAN_H
 
+/* Valid channel prefixes. */
+#define CHANMETA "#&!+"
+
+/* Modes the bot cannot set as halfop. You can add +b, +e, and +I to this to
+ * prevent them from being set as halfop. */
+#define NOHALFOPS_MODES "ahoq"
+
+/* Only send modes as op (b, e, and I excluded)? */
+#undef NO_HALFOP_CHANMODES
+
+/* Hard limit of modes per line. */
+#define MODES_PER_LINE_MAX 6
+
+#define HALFOP_CANTDOMODE(_a) (!me_op(chan) && (!me_halfop(chan) || (strchr(NOHALFOPS_MODES, _a) != NULL)))
+#define HALFOP_CANDOMODE(_a)  (me_op(chan) || (me_halfop(chan) && (strchr(NOHALFOPS_MODES, _a) == NULL)))
+
 typedef struct memstruct {
   char nick[NICKLEN];
   char userhost[UHOSTLEN];
@@ -39,9 +55,6 @@ typedef struct memstruct {
   int tried_getuser;
   struct memstruct *next;
 } memberlist;
-
-#define CHANMETA "#&!+"
-#define NICKVALID "[{}]^`|\\_-"
 
 #define CHANOP       0x00001 /* channel +o                                   */
 #define CHANVOICE    0x00002 /* channel +v                                   */
@@ -132,8 +145,6 @@ struct chan_t {
 #define CHANMODREG 0x1000  /* M - Bahamut              */
 #define CHANNOCTCP 0x2000  /* C - QuakeNet's ircu 2.10 */
 #define CHANLONLY  0x4000  /* r - ircu 2.10.11         */
-
-#define MODES_PER_LINE_MAX 6
 
 struct chanset_t {
   struct chanset_t *next;

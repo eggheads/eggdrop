@@ -2,7 +2,7 @@
  * net.c -- handles:
  *   all raw network i/o
  * 
- * $Id: net.c,v 1.54 2003/01/30 07:15:14 wcc Exp $
+ * $Id: net.c,v 1.55 2003/03/04 08:51:45 wcc Exp $
  */
 /* 
  * This is hereby released into the public domain.
@@ -417,7 +417,8 @@ int open_telnet_raw(int sock, char *server, int sport)
     if (!(socklist[i].flags & SOCK_UNUSED) && (socklist[i].sock == sock))
       socklist[i].flags = (socklist[i].flags & ~SOCK_VIRTUAL) | SOCK_CONNECT;
   }
-  if (connect(sock, (struct sockaddr *) &name, sizeof(struct sockaddr_in)) < 0) {
+  if (connect(sock, (struct sockaddr *) &name,
+      sizeof(struct sockaddr_in)) < 0) {
     if (errno == EINPROGRESS) {
       /* Firewall?  announce connect attempt to proxy */
       if (firewall[0])
@@ -453,8 +454,8 @@ int open_address_listen(IP addr, int *port)
 
   if (firewall[0]) {
     /* FIXME: can't do listen port thru firewall yet */
-    putlog(LOG_MISC, "*",
-           "!! Cant open a listen port (you are using a firewall)");
+    putlog(LOG_MISC, "*", "!! Cant open a listen port (you are using a "
+           "firewall)");
     return -1;
   }
 
@@ -880,8 +881,7 @@ int sockgets(char *s, int *len)
     strcpy(xx, p + 1);
     if (s[strlen(s) - 1] == '\r')
       s[strlen(s) - 1] = 0;
-    data = 1;                   /* DCC_CHAT may now need to process a
-                                 * blank line */
+    data = 1; /* DCC_CHAT may now need to process a blank line */
 /* NO! */
 /* if (!s[0]) strcpy(s," ");  */
   } else {

@@ -4,7 +4,7 @@
  *
  * Written for filedb3 by Fabian Knittel <fknittel@gmx.de>
  *
- * $Id: dbcompat.c,v 1.15 2003/01/30 07:15:14 wcc Exp $
+ * $Id: dbcompat.c,v 1.16 2003/03/04 08:51:45 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -238,7 +238,8 @@ static int convert_old_db(FILE ** fdb_s, char *filedb)
   if (fdbt.version > 0 && fdbt.version < FILEDB_VERSION3) {
     char *tempdb;
 
-    putlog(LOG_MISC, "*", "Converting old filedb %s to newest format.", filedb);
+    putlog(LOG_MISC, "*", "Converting old filedb %s to newest format.",
+           filedb);
     /* Create temp DB name */
     tempdb = nmalloc(strlen(filedb) + 5);
     simple_sprintf(tempdb, "%s-tmp", filedb);

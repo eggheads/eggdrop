@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  *
- * $Id: server.c,v 1.94 2003/02/27 10:18:40 tothwolf Exp $
+ * $Id: server.c,v 1.95 2003/03/04 08:51:45 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -307,7 +307,8 @@ static int calc_penalty(char *msg)
         penalty += 2;
       }
     }
-  } else if (!egg_strcasecmp(cmd, "PRIVMSG") || !egg_strcasecmp(cmd, "NOTICE")) {
+  } else if (!egg_strcasecmp(cmd, "PRIVMSG") ||
+             !egg_strcasecmp(cmd, "NOTICE")) {
     par1 = newsplit(&msg);      /* channel(s)/nick(s) */
     /* Add one sec penalty for each recipient */
     while (strlen(par1) > 0) {

@@ -2,7 +2,7 @@
  * tcldcc.c -- handles:
  *   Tcl stubs for the dcc commands
  *
- * $Id: tcldcc.c,v 1.44 2003/02/27 10:18:40 tothwolf Exp $
+ * $Id: tcldcc.c,v 1.45 2003/03/04 08:51:45 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -610,7 +610,7 @@ static int tcl_botlist STDVAR
 static int tcl_dcclist STDVAR
 {
   int i;
-  char idxstr[10], timestamp[11], *p, other[160];
+  char *p, idxstr[10], timestamp[11], other[160];
   EGG_CONST char *list[6];
 
   BADARGS(1, 2, " ?type?");
