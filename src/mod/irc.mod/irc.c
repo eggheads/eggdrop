@@ -2,7 +2,7 @@
  * irc.c -- part of irc.mod
  *   support for channels within the bot 
  * 
- * $Id: irc.c,v 1.17 2000/02/18 22:27:53 fabian Exp $
+ * $Id: irc.c,v 1.18 2000/02/18 22:45:20 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -653,7 +653,7 @@ static void check_expired_chanstuff()
 	       */
 	      if (match) {
 	        putlog(LOG_MODES, chan->dname,
-		       "(%s) Channel exemption %s NOT expired. Ban still set!",
+		       "(%s) Channel exemption %s NOT expired. Exempt still set!",
 		       chan->dname, e->mask);
 	      } else {
 	        putlog(LOG_MODES, chan->dname,
@@ -689,7 +689,7 @@ static void check_expired_chanstuff()
 	         * Jason
 		 */
 	        putlog(LOG_MODES, chan->dname,
-                   "(%s) Channel invitation %s NOT expired. i mode still set!",
+                   "(%s) Channel invitation %s NOT expired. Invite still set!",
 		       chan->dname, b->mask);
 	      } else {
 	        putlog(LOG_MODES, chan->dname,

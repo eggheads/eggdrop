@@ -1,13 +1,14 @@
-PATCH HOWTO v1.1			                  03 Jun 1999
+PATCH HOWTO v1.2			                  18 Feb 2000
 
 
 
 INDEX
 
-I	ABOUT THIS DOCUMENT
-II	TERMS USED
-III	APPLYING A PATCH
-IV	DOWNLOADING A PATCH
+I.	    ABOUT THIS DOCUMENT
+II.	    TERMS USED
+III.	APPLYING A PATCH
+IV.	    DOING AND SUBMITTING PATCH
+V.  	DOWNLOADING A PATCH
 
 
 
@@ -18,6 +19,7 @@ I. ABOUT THIS DOCUMENT
 
 The purpose of this document is to show you what a patch is and how you
 can apply a patch.
+
 
 
 
@@ -37,12 +39,12 @@ If applicable, there is also the associated command named.
 
 
 
-III	APPLYING A PATCH
+III.	APPLYING A PATCH
 
 To apply a patch to an eggdrop you have to get first the sourcecode of
 it (you should always keep a tar.gz archieve with the source of your
 current eggdrop on your shell). In the next step you have to change to
-your current source directory (i.e.: /home/user/eggdrop1.3.27/) and type
+your current source directory (i.e.: /home/user/eggdrop1.5.3/) and type
 the following command:
 
 patch -p1 < ../path.to.the/patch
@@ -62,13 +64,28 @@ your eggdrop and install the new modules and binaries.
 
 
 
-IV	DOWNLOADING A PATCH
 
-All patches for eggdrop1.4.x can be found on ftp.eggheads.org in /pub/eggdrop/patches1.4.
+IV.     DOING AND SUBMITTING PATCH
+
+If you fixed a bug and changed something in eggdrop's source code it would
+be really nice to let the dev team know about it, so they can apply it to next
+eggdrop release.
+There are several steps to submit a patch to the eggdev team:
+
+1. make a directory with orig. source tree and one with modified source tree
+2. do a 'diff -bur eggdrop1.5.original eggdrop1.5.modified > myfirst.patch'
+3. send an email to patches@eggheads.org with the patch attached and a detailed
+   description of what you changed and why you changed it. Don't forget to write
+   for which botversion your patch was made.
+
+
+
+
+
+V.      DOWNLOADING A PATCH
+
+All patches for eggdrop1.5.x can be found on ftp.eggheads.org in /pub/eggdrop/GNU/patches1.5.
 
 
 
 Hope that this document helped you in some way...
-
-Johoho@IRCNET
-comments: wodecki@gmx.de
