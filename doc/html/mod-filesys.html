@@ -1,104 +1,133 @@
-<!-- saved from url=(0022)http://internet.e-mail -->
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<HTML>
-<HEAD>
-<TITLE>Eggdrop Documentation: Filesys Module</TITLE>
-<META content="text/html; charset=iso-8859-1" http-equiv=Content-Type>
-<META content="MSHTML 5.00.3013.2600" name=GENERATOR>
-</HEAD>
-<BODY aLink=#3333ff bgColor=#ffffff link=#3333ff text=#000000 vLink=#3333ff>
-<B>
-<FONT color=#ff0000 face="Arial, Helvetica" size=-1>FILESYS MODULE Last modified 05 April 2000</FONT>
-</B> <BR>
-<HR>
-<BR>
-<FONT color=#000000 face="Arial, Helvetica" size=-1>
-This module provides an area withing the bot where users can store files. With this module the bot is useable as a fileserver.
-<BLOCKQUOTE>
-<A href="#config">Config file settings</A><BR>
-<A href="#binds">TCL bindings</A><BR>
-</BLOCKQUOTE>
-</FONT>
-<HR>
-<A name=config>
-</A>
-<B><FONT color=#ff0000 face="Arial, Helvetica" size=-1>Config file settings</FONT></B>
-<BR>
-<FONT color=#000000 face="Arial, Helvetica" size=-1>
-<BR>Lines in bold are the lines that need to be included in the eggdrop 
-config file if you want to use the FILESYS module.
-<BR>Lines in bold italics are 
-optional and only required if you wish to change the default behaviour for that 
-particular feature. <BR>
-<BR>
-<BLOCKQUOTE>
-<FONT color=#ff0000>##### FILESYS MODULE #####</FONT>
-<BR>
-<BR>This module provides the filesys support. You have to load this if you want your users to upload and download files from your bot.<BR>
-<BR>Put this line into your eggdrop.conf.dist file to load filesys module:<BR>
-<BR>
-<B>loadmodule filesys</B>
-<BR>
-<BR>There are also some variables you can to set in your config file:<BR>
-<BR>
-<B><I>set files-path "/home/mydir/eggdrop/filesys"</I></B> 
-<BLOCKQUOTE>
-Set here hie 'root' directory for the file system
-</BLOCKQUOTE>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<!-- $Id: mod-filesys.html,v 1.2 2000/04/13 11:21:24 tothwolf Exp $ -->
 
-<B><I>set incoming-path "/home/mydir/eggdrop/filesys/incoming"</I></B> 
-<BLOCKQUOTE>
-If you want to allow uploads, set this to the directory uploads should be put into.<br>
-Set this to "" if you don't want people to upload files to your bot.
-</BLOCKQUOTE>
+<html>
+  <head>
+    <title>Eggdrop Documentation: Filesys module</title>
+  </head>
 
-<B><I>set upload-to-pwd 0</I></B> 
-<BLOCKQUOTE>
-If you don't want to have a central incoming directoy but uploads should go to the current directory that a user is in, use this setting.
-<BR>Valid settings: 1 to enable, 0 to disable.
-</BLOCKQUOTE>
+  <body>
+    <div align="center">
+      <p><strong>Filesys module</strong></p>
+    </div>
+    <hr>
 
-<B><I>set filedb-path ""</I></B> 
-<BLOCKQUOTE>
-Eggdrop creates a '.filedb' file in each subdirectory of your dcc area, to keep track of its own file system info -- if you can't do that (like if the dcc path isn't owned by yours) or you just don't want it to do that, specify a path here where you'd like all the database files to be stored instead (otherwise, just leave it blank)
-</BLOCKQUOTE>
+    <p>This module provides an area withing the bot where users can store
+    files. With this module the bot is useable as a fileserver.</p>
 
-<B><I>set max-file-users 20</I></B> 
-<BLOCKQUOTE>
-Set here maximum number of people that can be in the file area at once.<br>
-Set it to 0 to make it effectively infinite.
-</BLOCKQUOTE>
+    <blockquote>
+      <ol>
+        <li><a href="#config">Config file settings</a></li>
 
-<B><I>set max-filesize 1024</I></B> 
-<BLOCKQUOTE>
-Set here the maximum allowable file size that will be received, in K (default is 1024K = 1M)
-</BLOCKQUOTE>
-</blockquote>
-</FONT>
-<A name=binds></A>
-<HR>
-<B>
-<FONT color=#ff0000 face="Arial, Helvetica" size=-1>BINDING(S) 
-TABLE(S):</FONT>
-</B> 
-<BLOCKQUOTE>
-<B><FONT face="Arial, Helvetica" size=-1>FIL</FONT></B> 
-<BLOCKQUOTE>
-<FONT face="Arial, Helvetica" size=-1>bind fild &lt;flags&gt; &lt;command&gt; &lt;proc&gt;</FONT> <BR>
-<FONT face="Arial, Helvetica" size=-1>proc-name &lt;handle&gt; &lt;idx&gt; &lt;arg&gt;</FONT>
-</BLOCKQUOTE>
-<FONT face="Arial, Helvetica" size=-1>
-Used for commands from a filesys connection on the party line; as in MSG and DCC, the command is the first word and everything else is the argument string; The idx is valid until the user disconnects; after that it may be reused, to be careful about storing an idx for long periods of time
-</FONT> 
-</blockquote>
-  <P>
-<HR>
-<I>
-<FONT face="Arial, Helvetica" size=-1>&copy; 1997 Robey Pointer</FONT>
-</I> 
-<BR>
-<I>
-<FONT face="Arial, Helvetica" size=-1>&copy; 1999,2000 Eggheads Development 
-Team</FONT>
-</I> </BODY>
-</HTML>
+        <li><a href="#tclbinds">Tcl bindings</a></li>
+      </ol>
+    </blockquote>
+    <hr>
+
+    <p><a name="config"></a>1. <strong>Config file settings</strong></p>
+
+    <blockquote>
+      <p>Lines in <strong>bold</strong> are the lines that need to be
+      included in the eggdrop config file if you want to use the share
+      module.<br>
+       Lines in bold <strong><em>italics</em></strong> are optional and only
+      required if you wish to change the default behaviour for that
+      particular feature.</p>
+
+      <p>This module provides the filesys support. You have to load this if
+      you want your users to upload and download files from your bot.</p>
+
+      <p>Put this line into your eggdrop.conf file to load filesys
+      module:</p>
+
+      <p><strong>loadmodule filesys</strong></p>
+
+      <p>There are also some variables you can to set in your config
+      file:</p>
+    </blockquote>
+
+    <blockquote>
+      <dl>
+        <dt><strong><em>set files-path
+        &quot;/home/mydir/eggdrop/filesys&quot;</em></strong></dt>
+
+        <dd>
+          <p>Set here the &#39;root&#39; directory for the file system</p>
+        </dd>
+
+        <dt><strong> <em>set incoming-path
+        &quot;/home/mydir/eggdrop/filesys/incoming&quot;</em></strong></dt>
+
+        <dd>
+          <p>If you want to allow uploads, set this to the directory uploads
+          should be put into.</p>
+
+          <p>Set this to &quot;&quot; if you don&#39;t want people to upload
+          files to your bot.</p>
+        </dd>
+
+        <dt><strong><em>set upload-to-pwd 0</em></strong></dt>
+
+        <dd>
+          <p>If you don&#39;t want to have a central incoming directoy but
+          uploads should go to the current directory that a user is in, use
+          this setting.</p>
+
+          <p>Valid settings: 1 to enable, 0 to disable.</p>
+        </dd>
+
+        <dt><strong><em>set filedb-path &quot;&quot;</em></strong></dt>
+
+        <dd>
+          <p>Eggdrop creates a &#39;.filedb&#39; file in each subdirectory of
+          your dcc area, to keep track of its own file system info -- if you
+          can&#39;t do that (like if the dcc path isn&#39;t owned by you) or
+          you just don&#39;t want it to do that, specify a path here where
+          you&#39;d like all the database files to be stored instead<br>
+           (otherwise, just leave it blank)</p>
+        </dd>
+
+        <dt><strong><em>set max-file-users 20</em></strong></dt>
+
+        <dd>
+          <p>Set here maximum number of people that can be in the file area
+          at once.</p>
+
+          <p>Set it to 0 to make it effectively infinite.</p>
+        </dd>
+
+        <dt><strong><em>set max-filesize 1024</em></strong></dt>
+
+        <dd>
+          <p>Set here the maximum allowable file size that will be received,
+          in K (default is 1024K = 1M)</p>
+        </dd>
+      </dl>
+    </blockquote>
+    <hr>
+
+    <p><a name="tclbinds"></a>2. <strong>Tcl bindings</strong></p>
+
+    <blockquote>
+      <dl>
+        <dt><strong>FIL</strong></dt>
+
+        <dd>
+          <p>bind fild &lt;flags&gt; &lt;command&gt; &lt;proc&gt;<br>
+           proc-name &lt;handle&gt; &lt;idx&gt; &lt;arg&gt;</p>
+
+          <p>Used for commands from a filesys connection on the party line;
+          as in MSG and DCC, the command is the first word and everything
+          else is the argument string; The idx is valid until the user
+          disconnects; after that it may be reused, to be careful about
+          storing an idx for long periods of time</p>
+        </dd>
+      </dl>
+    </blockquote>
+    <hr>
+
+    <p><em>© 1997 Robey Pointer<br>
+     © 1999,2000 Eggheads Development Team</em></p>
+  </body>
+</html>
+

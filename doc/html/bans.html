@@ -1,172 +1,165 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<!-- $Id: bans.html,v 1.2 2000/04/13 11:21:24 tothwolf Exp $ -->
 
-<HTML>
-  <HEAD>
-    <TITLE>Eggdrop Documentation: Bans And How They Work</TITLE>
-  </HEAD>
+<html>
+  <head>
+    <title>Eggdrop Documentation: Bans And How They Work</title>
+  </head>
 
-  <BODY text="#000000" bgcolor="#FFFFFF" link="#3333FF" vlink="#3333FF"
-  alink="#3333FF">
-    <STRONG><FONT face="Arial, Helvetica" size="-1" color="#FF0000">BANS, BAN
-    EXEMPTIONS &amp; INVITES AND HOW THEY WORK</FONT></STRONG> 
-    <HR>
+  <body>
+    <div align="center">
+      <p><strong>Bans And How They Work</strong></p>
+    </div>
+    <hr>
 
-    <BLOCKQUOTE>
-      <FONT face="Arial, Helvetica" size="-1">I assume that you know how bans
-      work on IRC. Eggdrop handles bans and the 2 new modes, exemptions and
-      invite in various ways, and this chapter is intended to help clarify
-      how these modes are treated within the bot</FONT> 
+    <p>I assume that you know how bans work on IRC. Eggdrop handles bans and
+    the 2 new modes, exemptions and invite in various ways, and this chapter
+    is intended to help clarify how these modes are treated within the
+    bot</p>
 
-      <P><STRONG><FONT face="Arial, Helvetica" size="-1" color="#FF0000">Ban
-      Exemption modes</FONT></STRONG></P>
+    <blockquote>
+      <dl>
+        <dt><strong>Ban Exemption modes</strong></dt>
 
-      <BLOCKQUOTE>
-        <FONT face="Arial, Helvetica size=" color="#000000" size="-1" >This type of mode
-        enables the person specified in the host mask to join the channel
-        even if there is a ban in place matching their hostmask. Normally
-        this is used if a domain ie. *.net is banned, and you want to enable
-        someone from that domain to join i.e. *.friend.net. This list can
-        only be viewed by channel ops.</FONT>
-      </BLOCKQUOTE>
-      <STRONG><FONT face="Arial, Helvetica" size="-1" color="#FF0000">Invite
-      modes</FONT></STRONG> 
+        <dd>
+          <p>This type of mode enables the person specified in the host mask
+          to join the channel even if there is a ban in place matching their
+          hostmask. Normally this is used if a domain ie. *.net is banned,
+          and you want to enable someone from that domain to join i.e.
+          *.friend.net. This list can only be viewed by channel ops.</p>
+        </dd>
 
-      <BLOCKQUOTE>
-        <FONT face="Arial, Helvetica size=" color="#000000" size="-1">This type of mode
-        enables the person specified in the hostmask to join a invite only
-        channel without an invite.</FONT>
-      </BLOCKQUOTE>
+        <dt><strong>Invite modes</strong></dt>
 
-      <P><BR>
-       <FONT face="Arial, Helvetica" size="-1">From here on &#39;mode&#39;
-      applies to all three modes (ban,exemption and invite) unless otherwise
-      specified. There are three types of modes, and two types of attribute
-      that can be placed on a &#39;mode&#39;:</FONT></P>
+        <dd>
+          <p>This type of mode enables the person specified in the hostmask
+          to join a invite only channel without an invite.</p>
+        </dd>
+      </dl>
+    </blockquote>
 
-      <P><STRONG><FONT face="Arial, Helvetica" size="-1">Types of
-      &#39;mode&#39;:</FONT></STRONG></P>
+    <p>From here on &#39;mode&#39; applies to all three modes (bans,
+    exemptions and invites) unless otherwise specified. There are three types
+    of modes, and two types of attribute that can be placed on a
+    &#39;mode&#39;:</p>
+    <hr>
 
-      <BLOCKQUOTE>
-        <UL>
-          <LI>
-            <P><FONT face="Arial, Helvetica" size="-1">global
-            modes</FONT></P>
+    <p><strong>Types of &#39;modes&#39;</strong></p>
 
-            <P><FONT face="Arial, Helvetica" size="-1">These modes will be
-            active on every channel the bot monitors. Some will
-            &quot;expire&quot; after a while (be removed automatically).
-            Others are considered &quot;permanent&quot; and can only be
-            removed by a master.</FONT></P>
-          </LI>
+    <blockquote>
+      <dl>
+        <dt><strong>global modes</strong></dt>
 
-          <LI>
-            <P><FONT face="Arial, Helvetica" size="-1"> channel-specific
-            modes</FONT></P>
+        <dd>
+          <p>These modes will be active on every channel the bot monitors.
+          Some will &quot;expire&quot; after a while (be removed
+          automatically). Others are considered &quot;permanent&quot; and can
+          only be removed by a master.</p>
+        </dd>
 
-            <P><FONT face="Arial, Helvetica" size="-1">These modes are active
-            only on one channel, and are almost always temporary modes that
-            expire after an hour or so (depending on how long you&#39;ve
-            specified in the config file). Usually they&#39;re created by a
-            Tcl script of some sort.</FONT></P>
-          </LI>
+        <dt><strong>channel-specific modes</strong></dt>
 
-          <LI>
-            <P><FONT face="Arial, Helvetica" size="-1">non-bot
-            modes</FONT></P>
+        <dd>
+          <p>These modes are active only on one channel, and are almost
+          always temporary modes that expire after an hour or so (depending
+          on how long you&#39;ve specified in the config file). Usually
+          they&#39;re created by a Tcl script of some sort.</p>
+        </dd>
 
-            <P><FONT face="Arial, Helvetica" size="-1">These are modes that
-            were not placed by the bot, and that the bot doesn&#39;t care
-            about. They can be removed by anyone on the channel. The other
-            two types of modes are generally protected by the bot, and have
-            to be removed via the bot.</FONT></P>
-          </LI>
-        </UL>
-      </BLOCKQUOTE>
-      <STRONG><FONT face="Arial, Helvetica" size=
-      "-1">Attributes:</FONT></STRONG> 
+        <dt><strong>non-bot modes</strong></dt>
 
-      <BLOCKQUOTE>
-        <UL>
-          <LI>
-            <P><FONT face="Arial, Helvetica" size="-1">unsticky
-            modes</FONT></P>
+        <dd>
+          <p>These are modes that were not placed by the bot, and that the
+          bot doesn&#39;t care about. They can be removed by anyone on the
+          channel. The other two types of modes are generally protected by
+          the bot, and have to be removed via the bot.</p>
+        </dd>
+      </dl>
+    </blockquote>
+    <hr>
 
-            <P><FONT face="Arial, Helvetica" size="-1">These modes are the
-            style that Eggdrop sets by default, when a user uses one of the
-            commands that results in a mode. This attribute means that the
-            ban will be removed if using dynamic modes after a certain time.
-            If a mode is <EM>&quot;sticky&quot;</EM> and you wish to set it
-            to be unsticky, use the <EM>&quot;.unstick&quot;</EM>
-            command.</FONT></P>
-          </LI>
+    <p><strong>Attributes</strong></p>
 
-          <LI>
-            <P><FONT face="Arial, Helvetica" size="-1">sticky
-            modes</FONT></P>
+    <blockquote>
+      <dl>
+        <dt><strong>unsticky modes</strong></dt>
 
-            <P><FONT face="Arial, Helvetica" size="-1">These modes are
-            usually set by a user using the <EM> &quot;.stick&quot;</EM>
-            command, modes with this attribute are attempted to be kept
-            active on the channel by the bot, even if the channel is set to
-            use dynamic modes. Obviously, if the channel isn&#39;t set to use
-            dynamic modes, this won&#39;t have any effect.</FONT></P>
-          </LI>
-        </UL>
-      </BLOCKQUOTE>
-      <STRONG><FONT face="Arial, Helvetica" size=
-      "-1">Behavior</FONT></STRONG> 
+        <dd>
+          <p>These modes are the style that Eggdrop sets by default, when a
+          user uses one of the commands that results in a mode. This
+          attribute means that the ban will be removed if using dynamic modes
+          after a certain time. If a mode is <em>&quot;sticky&quot;</em> and
+          you wish to set it to be unsticky, use the <em>
+          &quot;.unstick&quot;</em> command.</p>
+        </dd>
 
-      <BLOCKQUOTE>
-        <FONT face="Arial, Helvetica" size="-1">The different type of mode
-        behave differently depending on the channel settings</FONT> 
+        <dt><strong>sticky modes</strong></dt>
 
-        <P><STRONG><FONT face="Arial, Helvetica" size="-1">
-        Bans</FONT></STRONG></P>
+        <dd>
+          <p>These modes are usually set by a user using the <em>
+          &quot;.stick&quot;</em> command, modes with this attribute are
+          attempted to be kept active on the channel by the bot, even if the
+          channel is set to use dynamic modes. Obviously, if the channel
+          isn&#39;t set to use dynamic modes, this won&#39;t have any
+          effect.</p>
+        </dd>
+      </dl>
+    </blockquote>
+    <hr>
 
-        <BLOCKQUOTE>
-          <FONT face="Arial, Helvetica" size="-1">If the channel is
-          supporting dynamic bans then the ban is set when the user joins the
-          channel otherwise the modes are permanently set. On a channel with
-          dynamic bans the ban expires after ban-time minutes which is
-          specified in the config file.</FONT>
-        </BLOCKQUOTE>
-        <STRONG><FONT face="Arial, Helvetica" size=
-        "-1">Exemptions</FONT></STRONG> 
+    <p><strong>Behavior</strong></p>
 
-        <BLOCKQUOTE>
-          <FONT face="Arial, Helvetica" size="-1">If the channel is not
-          supporting dynamic exempts then they are set the entire time.
-          Otherwise the exemption is set when a ban is placed whose host
-          includes that covered by the exemption. The exemption will remain
-          in place for at least exempt-time minutes (defined in config file)
-          or until after the corresponding ban has been removed, whichever is
-          the longer.</FONT>
-        </BLOCKQUOTE>
-        <STRONG><FONT face="Arial, Helvetica" size=
-        "-1">Invites</FONT></STRONG> 
+    <blockquote>
+      <p>The different type of mode behave differently depending on the
+      channel settings.</p>
+    </blockquote>
 
-        <BLOCKQUOTE>
-          <FONT face="Arial, Helvetica" size="-1">If the channel does not
-          support dynamic invites then they are set permanently. Otherwise
-          the invite is set when the channel is +i and a user requests an
-          invite onto the channel. The invite then remains set for
-          invite-time minutes (defined in config file) or until the channel
-          goes -i again, whichever is the longer.</FONT>
-        </BLOCKQUOTE>
-      </BLOCKQUOTE>
+    <blockquote>
+      <dl>
+        <dt><strong>Bans</strong></dt>
 
-      <P><BR>
-       <FONT face="Arial, Helvetica" size="-1">The party-line command <EM>
-      &quot;.+&lt;ban/exempt/invite&gt;&quot;</EM> can add a global ban or
-      channel specific ban depending on the parameters that are passed to it.
-      <EM> &quot;.kickban&quot;</EM> will add a channel-specific ban. <EM>
-      &quot;.&lt;ban/exempt/invite&gt;s&quot;</EM> will list them all,
-      according to their category. Be sure to check out the help pages for
-      those commands for more info.</FONT></P>
-    </BLOCKQUOTE>
-    <HR>
-    <EM><FONT face="Arial, Helvetica" size="-1">&copy; 1997 Robey Pointer<BR>
-     &copy; 1999,2000 Eggheads Development Team</FONT></EM>
-  </BODY>
-</HTML>
+        <dd>
+          <p>If the channel is supporting dynamic bans then the ban is set
+          when the user joins the channel otherwise the modes are permanently
+          set. On a channel with dynamic bans the ban expires after ban-time
+          minutes which is specified in the config file.</p>
+        </dd>
+
+        <dt><strong>Exemptions</strong></dt>
+
+        <dd>
+          <p>If the channel is not supporting dynamic exempts then they are
+          set the entire time. Otherwise the exemption is set when a ban is
+          placed whose host includes that covered by the exemption. The
+          exemption will remain in place for at least exempt-time minutes
+          (defined in config file) or until after the corresponding ban has
+          been removed, whichever is the longer.</p>
+        </dd>
+
+        <dt><strong>Invites</strong></dt>
+
+        <dd>
+          <p>If the channel does not support dynamic invites then they are
+          set permanently. Otherwise the invite is set when the channel is +i
+          and a user requests an invite onto the channel. The invite then
+          remains set for invite-time minutes (defined in config file) or
+          until the channel goes -i again, whichever is the longer.</p>
+        </dd>
+      </dl>
+    </blockquote>
+    <hr>
+
+    <p>The party-line command <em>
+    &quot;.+&lt;ban/exempt/invite&gt;&quot;</em> can add a global ban or
+    channel specific ban depending on the parameters that are passed to it.
+    <em>&quot;.kickban&quot;</em> will add a channel-specific ban. <em>
+    &quot;.&lt;ban/exempt/invite&gt;s&quot;</em> will list them all,
+    according to their category. Be sure to check out the help pages for
+    those commands for more info.</p>
+    <hr>
+
+    <p><em>© 1997 Robey Pointer<br>
+     © 1999,2000 Eggheads Development Team</em></p>
+  </body>
+</html>
 

@@ -1,241 +1,287 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<!-- $Id: features.html,v 1.2 2000/04/13 11:21:24 tothwolf Exp $ -->
 
-<HTML>
-  <HEAD>
-    <TITLE>Features of Eggdrop 1.5</TITLE>
-  </HEAD>
+<html>
+  <head>
+    <title>Eggdrop Documentation: Features</title>
+  </head>
 
-  <BODY>
-    <STRONG><FONT face="Arial, Helvetica" size="-1" color="#FF0000">Features
-    of Eggdrop 1.5.X</FONT></STRONG> 
-    <HR>
-    <BR>
-     EGGDROP -- AN IRC BOT 
+  <body>
+    <div align="center">
+      <p><strong>Features</strong></p>
+    </div>
+    <hr>
 
-    <P>Eggdrop is the most advanced IRC robot available. It has been under
-    development since December 1993, and, unlike most other bots, it is still
-    regularly updated. Its features include:<BR>
-     &nbsp;</P>
+    <div align="center">
+      <p><strong><em>Eggdrop -- an IRC (ro)bot</em></strong></p>
+    </div>
 
-    <UL>
-      <LI>completely different channel user lists like having a separate bot
-      for each channel.</LI>
+    <p>Eggdrop is the most advanced IRC robot available. It has been under
+    development since December 1993, and unlike most other bots, it is still
+    regularly updated. Its features include:</p>
 
-      <LI>complete channel protection, customizable via config file:
-      permanently store a ban list with comments, etc</LI>
+    <blockquote>
+      <ul>
+        <li>completely different channel user lists like having a separate
+        bot for each channel.</li>
 
-      <LI>user records saved on disk and alterable via dcc chat: each user
-      can have a password (encrypted), a list of valid hostmasks, a set of
-      access flags, etc</LI>
+        <li>complete channel protection, customizable via config file:
+        permanently store a ban list with comments, etc</li>
 
-      <LI>the ability to &quot;learn&quot; new users (if you choose to have
-      the bot do so) by letting users /MSG the bot &quot;hello&quot; and
-      granting them automatic access of whatever type you specify (or even no
-      access at all)</LI>
+        <li>user records saved on disk and alterable via dcc chat: each user
+        can have a password (encrypted), a list of valid hostmasks, a set of
+        access flags, etc</li>
 
-      <LI>a &quot;party line&quot; available through dcc chat or telnet, with
-      multiple channels, giving you the ability to talk to people without
-      being affected by netsplits</LI>
+        <li>the ability to &quot;learn&quot; new users (if you choose to have
+        the bot do so) by letting users /MSG the bot &quot;hello&quot; and
+        granting them automatic access of whatever type you specify (or even
+        no access at all)</li>
 
-      <LI>console mode: you can view each channel through dcc chat or telnet,
-      selectively looking at mode changes, joins and parts, channel talk, or
-      any combination of the above</LI>
+        <li>a &quot;party line&quot; available through dcc chat or telnet,
+        with multiple channels, giving you the ability to talk to people
+        without being affected by netsplits</li>
 
-      <LI>a file system where people can upload and download files, in an
-      environment that looks and acts (for the most part) like a typical Unix
-      system -- plus the ability to mark directories as hidden / unaccessible
-      to people without certain user flags</LI>
+        <li>console mode: you can view each channel through dcc chat or
+        telnet, selectively looking at mode changes, joins and parts, channel
+        talk, or any combination of the above</li>
 
-      <LI>bot network: link two or more bots together for a party line that
-      can stretch not only across channels, but across IRC networks (one bot
-      on EFnet, one bot on Undernet, etc)</LI>
+        <li>a file system where people can upload and download files, in an
+        environment that looks and acts (for the most part) like a typical
+        Unix system -- plus the ability to mark directories as hidden /
+        unaccessible to people without certain user flags</li>
 
-      <LI>script language: commands and features can be added to the bot on
-      the fly, by means of the TCL script language, giving you the power of
-      TOTAL customization of your bot -- similar to ircII script</LI>
-    </UL>
+        <li>bot network: link two or more bots together for a party line that
+        can stretch not only across channels, but across IRC networks (one
+        bot on EFnet, one bot on Undernet, etc)</li>
 
-    <P><BR>
-     !!! WARNING !!!</P>
+        <li>script language: commands and features can be added to the bot on
+        the fly, by means of the TCL script language, giving you the power of
+        TOTAL customization of your bot -- similar to ircII script</li>
+      </ul>
+    </blockquote>
 
-    <P>Eggdrop is NOT a simple bot to use. It is an advanced bot for people
-    who know IRC and know what they&#39;re doing. If you don&#39;t know what
-    DCC CHAT is or how to use it -- if you don&#39;t know the difference
-    between #channels and &amp;channels -- if you don&#39;t know what a clone
-    bot or CTCP avalanche is -- then this bot is not for you. Choose a
-    simpler bot like Vladbot or Baloobot or ComBot, or find one of the many
-    scriptbots to use.</P>
+    <p><strong>WARNING</strong></p>
 
-    <P>This is the 1.5.xx branch of the Eggdrop Bot.</P>
+    <blockquote>
+      <p>Eggdrop is <strong>NOT</strong> a simple bot to use. It is an
+      <strong>advanced bot</strong> for people who know IRC and know what
+      they&#39;re doing. If you don&#39;t know what DCC CHAT is or how to use
+      it -- if you don&#39;t know the difference between <strong>
+      #channels</strong> and <strong>&amp;channels</strong> -- if you
+      don&#39;t know what a <strong>clone bot</strong> or <strong>CTCP
+      avalanche</strong> is -- then <strong>this bot is not for you</strong>.
+      Choose a simpler bot like <strong>Vladbot</strong>, <strong>
+      Baloobot</strong>, <strong>ComBot</strong>, or find one of the many
+      <strong>scriptbots</strong> to use.</p>
 
-    <P>*** NOTE:</P>
+      <p>This is the 1.5.xx branch of the Eggdrop Bot.</p>
+    </blockquote>
 
-    <P>This bot is NOT intended for users of very limited MEMORY or DISK
-    shell accounts. The development of this latest design of Eggdrop is
-    geared towards features and flexibility. If you have restraints on the
-    resources allowed to run your bot, then you should instead consider the
-    1.0 Eggdrop version.</P>
+    <p><strong>NOTE</strong></p>
 
-    <P>***</P>
+    <blockquote>
+      <p>This bot is <strong>NOT</strong> intended for users of very limited
+      <strong>MEMORY</strong> or <strong>DISK</strong> shell accounts. The
+      development of this latest design of Eggdrop is geared towards features
+      and flexibility. If you have restraints on the resources allowed to run
+      your bot, then you should instead consider the 1.0 Eggdrop version.</p>
+    </blockquote>
 
-    <P>This latest development of Eggdrop is now compilable in either of two
-    configurations:</P>
+    <p>Eggdrop now has two compile time configurations for modules:</p>
 
-    <P>MODULE - dynamic</P>
+    <p><strong>Modular</strong></p>
 
-    <P>The MODULE version of Eggdrop 1.5.xx provides for the on-the-fly
-    loading of extensions to the bot code without having to recompile the
-    entire bot. This is available on OS platforms which support dynamically
-    linked/shared libraries in their run-time and TCL libraries. It allows
-    for functionality of the bot to be loaded and unloaded at any time.</P>
+    <blockquote>
+      <p>The <strong>modular</strong> version of Eggdrop 1.5.xx provides for
+      the on-the-fly loading of extensions to the bot code without having to
+      recompile the entire bot. This is available on OS platforms which
+      support dynamically linked/shared libraries in their run-time and TCL
+      libraries. It allows for functionality of the bot to be loaded and
+      unloaded at any time.</p>
+    </blockquote>
 
-    <P>The base loadable modules distributed with this Eggdrop version
-    are:<BR>
-     &nbsp;</P>
+    <p>The base loadable modules distributed with this Eggdrop version
+    are:</p>
 
-    <UL>
-      <LI><STRONG>assoc</STRONG> This is the functionality of the `assoc&#39;
-      command for naming party `chat&#39; lines. It also serves as an example
-      for writing your own modules.</LI>
+    <blockquote>
+      <ul>
+        <li><strong>assoc</strong> This is the functionality of the
+        `assoc&#39; command for naming party `chat&#39; lines. It also serves
+        as an example for writing your own modules.</li>
 
-      <LI><STRONG>blowfish</STRONG> The standard Eggdrop encrypting routines
-      for passwords and other encryptions. This can be replaced with a
-      user-written module to perform their own encrypting algorithms.</LI>
+        <li><strong>blowfish</strong> The standard Eggdrop encrypting
+        routines for passwords and other encryptions. This can be replaced
+        with a user-written module to perform their own encrypting
+        algorithms.</li>
 
-      <LI><STRONG>channels</STRONG> This allows Eggdrop to have channel info
-      stored and used on that server that you allowed for with the server
-      module</LI>
+        <li><strong>channels</strong> This allows Eggdrop to have channel
+        info stored and used on that server that you allowed for with the
+        server module</li>
 
-      <LI><STRONG>compress</STRONG> This allows compression of the userfile
-      saving disk space, and bandwidth when sending large userfiles to share
-      bots..</LI>
+        <li><strong>compress</strong> This allows compression of the userfile
+        saving disk space, and bandwidth when sending large userfiles to
+        share bots..</li>
 
-      <LI><STRONG>console</STRONG> This provides storage of console settings
-      when you exit the bot (or .store).</LI>
+        <li><strong>console</strong> This provides storage of console
+        settings when you exit the bot (or .store).</li>
 
-      <LI><STRONG>dns</STRONG> This provides asynchronous DNS lookups,
-      avoiding the problem of the bot stalling while dns lookups are
-      performed.</LI>
+        <li><strong>dns</strong> This provides asynchronous DNS lookups,
+        avoiding the problem of the bot stalling while dns lookups are
+        performed.</li>
 
-      <LI><STRONG>ctcp</STRONG> This provides the normal ctcp replies that
-      you&#39;d expect.</LI>
+        <li><strong>ctcp</strong> This provides the normal ctcp replies that
+        you&#39;d expect.</li>
 
-      <LI><STRONG>filesys</STRONG> This module performs the file-system
-      operation for DCC file transfers to and from the BOT over via IRC DCC
-      commands.</LI>
+        <li><strong>filesys</strong> This module performs the file-system
+        operation for DCC file transfers to and from the BOT over via IRC DCC
+        commands.</li>
 
-      <LI><STRONG>irc</STRONG> This controls all other IRC related stuff. Not
-      loading it is the equivalent of the old NO_IRC setting.</LI>
+        <li><strong>irc</strong> This controls all other IRC related stuff.
+        Not loading it is the equivalent of the old NO_IRC setting.</li>
 
-      <LI><STRONG>notes</STRONG> This provides support for storing of notes
-      for users from each other. Notes between currently online users is
-      supported in the core, this is only for storing the notes for later
-      retrieval, direct user-&gt;user notes are built-in.</LI>
+        <li><strong>notes</strong> This provides support for storing of notes
+        for users from each other. Notes between currently online users is
+        supported in the core, this is only for storing the notes for later
+        retrieval, direct user-&gt;user notes are built-in.</li>
 
-      <LI><STRONG>seen</STRONG> This provides seen commands via msg, on
-      channel or via dcc, similar to the various scripts.</LI>
+        <li><strong>seen</strong> This provides seen commands via msg, on
+        channel or via dcc, similar to the various scripts.</li>
 
-      <LI><STRONG>server</STRONG> This allows Eggdrop to connect to a server,
-      but that&#39;s about it.</LI>
+        <li><strong>server</strong> This allows Eggdrop to connect to a
+        server, but that&#39;s about it.</li>
 
-      <LI><STRONG>share</STRONG> This provides the userfile sharing support
-      (this requires the channels &amp; transfer modules).</LI>
+        <li><strong>share</strong> This provides the userfile sharing support
+        (this requires the channels &amp; transfer modules).</li>
 
-      <LI><STRONG>transfer</STRONG> This module performs the bot-to-bot
-      userfile sharing necessary for share bots. It is loaded automatically
-      when filesys is loaded.</LI>
+        <li><strong>transfer</strong> This module performs the bot-to-bot
+        userfile sharing necessary for share bots. It is loaded automatically
+        when filesys is loaded.</li>
 
-      <LI><STRONG>wire</STRONG> This provides an encrypted party line
-      communication.</LI>
+        <li><strong>wire</strong> This provides an encrypted party line
+        communication.</li>
 
-      <LI><STRONG>woobie</STRONG> This is a example/skeletal module for
-      writing your own module.</LI>
-    </UL>
+        <li><strong>woobie</strong> This is a example/skeletal module for
+        writing your own module.</li>
+      </ul>
+    </blockquote>
 
-    <P><BR>
-     MODULE - static</P>
+    <p><strong>Static</strong></p>
 
-    <P>The STATIC-MODULE version of Eggdrop 1.5.xx is pretty much the same as
-    the module bot, except each individual module is linked into the
-    executable. You still need to &#39;loadmodule &lt;module&gt;&#39; to turn
-    them on.</P>
+    <blockquote>
+      <p>The <strong>static</strong> version of Eggdrop 1.5.xx is pretty much
+      the same as the module bot, except each individual module is linked
+      into the executable. You still need to &#39;loadmodule
+      &lt;module&gt;&#39; to turn them on.</p>
 
-    <P>See the file MODULES for more specific MODULE information.<BR>
-     New to 1.5.xx (applies to 1.4.xx also):</P>
+      <p>See the file MODULES for more specific MODULE information.<br>
+       New to 1.5.xx (applies to 1.4.xx also):</p>
+    </blockquote>
 
-    <P>**** BOTNET</P>
+    <p><strong>Botnet</strong></p>
 
-    <P>Major protocol changes, lots less messages &amp; bytes used.</P>
+    <blockquote>
+      <p>Major protocol changes, lots less messages &amp; bytes used.</p>
 
-    <P>You WILL get double messages if you link
-    OLD&lt;-&gt;NEW&lt;-&gt;NEW&lt;-&gt;OLD (or any number of NEW&#39;s
-    between them).<BR>
-     To prevent this, have all your new bots on 1 side of the botnet, and all
-    the old ones on the other (although OLD&lt;-&gt;NEW&lt;-&gt;OLD should be
-    ok).</P>
+      <p>You WILL get double messages if you link
+      OLD&lt;-&gt;NEW&lt;-&gt;NEW&lt;-&gt;OLD (or any number of NEW&#39;s
+      between them).<br>
+       To prevent this, have all your new bots on 1 side of the botnet, and
+      all the old ones on the other (although OLD&lt;-&gt;NEW&lt;-&gt;OLD
+      should be ok).</p>
 
-    <P>The order of the version and handshake messages has reversed this
-    means on a new botlink between an OLD &amp; a NEW, but you must .link
-    from the OLD or the NEW wont know the password.</P>
+      <p>The order of the version and handshake messages has reversed this
+      means on a new botlink between an OLD &amp; a NEW, but you must .link
+      from the OLD or the NEW wont know the password.</p>
+    </blockquote>
 
-    <P>**** USERLIST</P>
+    <p><strong>Userlist</strong></p>
 
-    <P>If you want to have the option of going back to an old version SAVE
-    your userlist!! This is a new version userlist, and it&#39;s not
-    backwards compatible once written (it can still READ old userlists take
-    note).</P>
+    <blockquote>
+      <p>If you want to have the option of going back to an old version SAVE
+      your userlist!! This is a new version userlist, and it&#39;s not
+      backwards compatible once written (it can still READ old userlists take
+      note).</p>
+    </blockquote>
 
-    <P>**** FLAGS</P>
+    <p><strong>Flags</strong></p>
 
-    <P>Flags have multiplied &amp; split up: normal user/channel flags still
-    exist and are setable by .chattr. You can also now use .chattr +o|-o
-    #channel. New are the &quot;user-defined&quot; flags which are all of A-Z
-    for users &amp; channels. Also, bot attributes are separated now and are
-    set using .botattr. Bots have &quot;user-defined&quot; flags 0-9. The old
-    0-9 user defined flags will be converted to A-J when you upgrade your
-    userfile.</P>
+    <blockquote>
+      <p>Flags have multiplied &amp; split up: normal user/channel flags
+      still exist and are setable by .chattr. You can also now use .chattr
+      +o|-o #channel. New are the &quot;user-defined&quot; flags which are
+      all of A-Z for users &amp; channels. Also, bot attributes are separated
+      now and are set using .botattr. Bots have &quot;user-defined&quot;
+      flags 0-9. The old 0-9 user defined flags will be converted to A-J when
+      you upgrade your userfile.</p>
+    </blockquote>
 
-    <P>**** SHARING</P>
+    <p><strong>Sharing</strong></p>
 
-    <P>*BIG CHANGE* well, big in use, small in code ;)</P>
+    <blockquote>
+      <p><strong>BIG CHANGE</strong> well, big in use, small in code ;)</p>
 
-    <P>There are now 2 sharing flags, +p = passive share, +s = aggressive
-    share. Your bot will only accept sharing with passively with 1 bot at a
-    time, although any number of aggressive shares is fine.</P>
+      <p>There are now 2 sharing flags, +p = passive share, +s = aggressive
+      share. Your bot will only accept sharing with passively with 1 bot at a
+      time, although any number of aggressive shares is fine.</p>
 
-    <P>Consider the botnet:</P>
+      <p>Consider the botnet:</p>
 
-    <P>HubBotA<BR>
-     |-+LeafBotA<BR>
-     `-+HubBotB<BR>
-     |-+LeafBotB<BR>
-     `-or `-+LeafBotC</P>
+      <p>HubBotA<br>
+       |-+LeafBotA<br>
+       `-+HubBotB<br>
+       |-+LeafBotB<br>
+       `-or `-+LeafBotC</p>
 
-    <P>Flags would be set as such:</P>
+      <p>Flags would be set as such:</p>
 
-    <P>HubBotA has:<BR>
-     LeafBotA: +sl<BR>
-     HubBotB : +s<BR>
-     LeafBotC: +sl<BR>
-     LeafBotA has:<BR>
-     HubBotA : +ph<BR>
-     HubBotB has:<BR>
-     LeafBotB: +sl<BR>
-     LeafBotC: +sl<BR>
-     LeafBotB has:<BR>
-     HubBotB : +ph<BR>
-     LeafBotC has:<BR>
-     HubBotB : +ph<BR>
-     HubBotA : +ph</P>
+      <dl>
+        <dt>HubBotA has:</dt>
 
-    <P>how&#39;s that look? :)</P>
+        <dd>
+          <p>LeafBotA: +sl<br>
+           HubBotB: +s<br>
+           LeafBotC: +sl</p>
+        </dd>
 
-    <P>**** Installation</P>
+        <dt>LeafBotA has:</dt>
 
-    <P>make install DEST=&lt;directory&gt;</P>
-    <HR>
-    <EM><FONT face="Arial, Helvetica" size="-1">&copy; 1997 Robey Pointer<BR>
-     &copy; 1999,2000 Eggheads Development Team</FONT></EM>
-  </BODY>
-</HTML>
+        <dd>
+          <p>HubBotA: +ph</p>
+        </dd>
+
+        <dt>HubBotB has:</dt>
+
+        <dd>
+          <p>LeafBotB: +sl<br>
+           LeafBotC: +sl</p>
+        </dd>
+
+        <dt>LeafBotB has:</dt>
+
+        <dd>
+          <p>HubBotB: +ph</p>
+        </dd>
+
+        <dt>LeafBotC has:</dt>
+
+        <dd>
+          <p>HubBotB: +ph<br>
+           HubBotA: +ph</p>
+        </dd>
+      </dl>
+
+      <p>how&#39;s that look? :)</p>
+    </blockquote>
+
+    <p><strong>Installation</strong></p>
+
+    <blockquote>
+      <p>make DEST=&quot;directory&quot; install</p>
+    </blockquote>
+    <hr>
+
+    <p><em>© 1997 Robey Pointer<br>
+     © 1999,2000 Eggheads Development Team</em></p>
+  </body>
+</html>
 

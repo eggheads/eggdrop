@@ -1,178 +1,312 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<!-- $Id: faqs.html,v 1.2 2000/04/13 11:21:24 tothwolf Exp $ -->
+
 <html>
-<head>
-<title>Eggdrop Documentation: Frequently Asked Questions</title>
-</head>
-<body text="#000000" bgcolor="#FFFFFF" link="#3333FF" vlink="#3333FF" alink="#3333FF">
-<strong><font face="Arial, Helvetica" size="-1" color="#FF0000">Frequently Asked Questions</font></strong> 
+  <head>
+    <title>Eggdrop Documentation: Frequently Asked Questions</title>
+  </head>
 
-<hr>
-<p><font face="Arial, Helvetica" size="-1">1.&nbsp;&nbsp;&nbsp;<a href="#faq1">What do I do if I get the Error "User file not found"?</a><br>
- 2.&nbsp;&nbsp;&nbsp;<a href="#faq2">My Eggdrop won't run; It just says "Can't find your hostname!"</a><br>
- 3.&nbsp;&nbsp;&nbsp;<a href="#faq3">What the Heck is TCL?</a><br>
- 4.&nbsp;&nbsp;&nbsp;<a href="#faq4">My bot dies and the last entry in the logfile is "Received terminate signal". What does that mean and can I prevent it?</a><br>
- 5.&nbsp;&nbsp;&nbsp;<a href="#faq5">My compile dies at the last minute with "LD fatal signal 11"!</a><br>
- 6.&nbsp;&nbsp;&nbsp;<a href="#faq6">Someone else set up a bot I don't like. Are there any backdoors I can use to take their bot down?</a><br>
- 7.&nbsp;&nbsp;&nbsp;<a href="#faq7">What are modules?</a><br>
- 8.&nbsp;&nbsp;&nbsp;<a href="#faq8">Can I compile Eggdrop without dynamic modules?</a><br>
- 8.1.&nbsp;<a href="#faq8.1">Do I still need to "loadmodule modules"???</a><br>
- 9.&nbsp;&nbsp;&nbsp;<a href="#faq9">Where can I get a precompiled Eggdrop for my computer?</a><br>
- 10.&nbsp;&nbsp;<a href="#faq10">I get "Makefile:3 : invalid operator" of some such thing When I try to "make"</a><br>
- 11.&nbsp;&nbsp;<a href="#faq11">When I "tclsh scripts/weed &lt;userfile&gt; c" It barfs chunks at me and dies.</a><br>
- 12.&nbsp;&nbsp;<a href="#faq12">I get "ld-elf.so.1: Shared object "libtcl80.so.1" not found" or "eggdrop: error in loading shared libraries / libtcl8.1.so: cannot open shared object file: No such
-file or directory" when I try to start my bot.</a><br>
- 13.&nbsp;&nbsp;<a href="#faq13">I get a whole pile of "unresolved symbol 'Tcl_AppendResult'" (or some other symbol) when I try to load a module.</a><br>
-</font></p>
+  <body>
+    <div align="center">
+      <p><strong>Frequently Asked Questions</strong></p>
+    </div>
+    <hr>
 
-<div>
-<blockquote><font face="Arial, Helvetica" size="-1"><a name="faq1"></a> <strong><font face="Arial, Helvetica" size="-1" color="#FF0000">1. WHAT DO I DO IF I GET THE ERROR "USER FILE NOT
-FOUND"?</font></strong></font> 
+    <p><strong>Contents</strong></p>
 
-<blockquote><font face="Arial, Helvetica" size="-1">(1) Run Eggdrop with the "-m" option (i.e., "eggdrop -m mybot").</font><br>
- <font face="Arial, Helvetica" size="-1">(2) Go to IRC and send "hello" to your bot (i.e., "/msg mybot hello").</font><br>
- <font face="Arial, Helvetica" size="-1">(3) You will become an owner on your bot. You can leave the bot running (nobody else will become a master if they say "hello"), but in the future, don't use
-the "-m" option when running the bot.</font></blockquote>
+    <blockquote>
+      <ol>
+        <li><a href="#sect1">What do I do if I get the Error &quot;User file
+        not found&quot;?</a></li>
 
-<font face="Arial, Helvetica" size="-1"><a name="faq2"></a> <strong><font face="Arial, Helvetica" size="-1" color="#FF0000">2. MY EGGDROP WON'T RUN; IT JUST SAYS "CAN'T FIND YOUR
-HOSTNAME!"</font></strong></font> 
+        <li><a href="#sect2">My Eggdrop won&#39;t run; It just says
+        &quot;Can&#39;t find your hostname!&quot;</a></li>
 
-<blockquote><font face="Arial, Helvetica" size="-1"><font face="Arial, Helvetica" size="-1">Your machine is set up strangely, and Eggdrop can't figure out its network hostname. You can get around
-this by setting an environment variable called HOSTNAME.</font></font> 
+        <li><a href="#sect3">What the Heck is TCL?</a></li>
 
-<p><font face="Arial, Helvetica" size="-1"><font face="Arial, Helvetica" size="-1">In sh or ksh:</font></font></p>
+        <li><a href="#sect4">My bot dies and the last entry in the logfile is
+        &quot;Received terminate signal&quot;. What does that mean and can I
+        prevent it?</a></li>
 
-<blockquote><font face="Arial, Helvetica" size="-1"><font face="Arial, Helvetica" size="-1">$ HOSTNAME=myhost.domain.edu</font><br>
- <font face="Arial, Helvetica" size="-1">$ export HOSTNAME</font></font></blockquote>
+        <li><a href="#sect5">My compile dies at the last minute with &quot;LD
+        fatal signal 11&quot;!</a></li>
 
-<font face="Arial, Helvetica" size="-1"><font face="Arial, Helvetica" size="-1">In csh or tcsh:</font></font> 
+        <li><a href="#sect6">Someone else set up a bot I don&#39;t like. Are
+        there any backdoors I can use to take their bot down?</a></li>
 
-<blockquote><font face="Arial, Helvetica" size="-1"><font face="Arial, Helvetica" size="-1">% setenv HOSTNAME myhost.domain.edu</font></font></blockquote>
+        <li><a href="#sect7">What are modules?</a></li>
 
-<font face="Arial, Helvetica" size="-1"><font face="Arial, Helvetica" size="-1">It should work after that. You may want to bug your system administrator to set up her /etc/hosts file correctly, or
-add those above commands to your '.login' file (sh or ksh: '.profile').</font></font></blockquote>
+        <li>
+          <a href="#sect8">Can I compile Eggdrop without dynamic modules?</a>
+          
 
-<p><font face="Arial, Helvetica" size="-1"><br>
- <a name="faq3"></a><strong><font face="Arial, Helvetica" size="-1" color="#FF0000">3. WHAT THE HECK IS TCL?</font></strong></font></p>
+          <ol type="a">
+            <li><a href="#sect8a">Do I still need to &quot;loadmodule
+            modules&quot;?</a></li>
+          </ol>
+        </li>
 
-<blockquote><font face="Arial, Helvetica" size="-1"><font face="Arial, Helvetica" size="-1">Tcl is a scripting language written by John Ousterhout. It's much better than most "in-built" script
-languages (like the one in ircII) and is meant to be linked with anything needing a script language. So I linked it with Eggdrop. The file "tcl-commands.doc" in the Eggdrop directory contains a list
-of the commands added to Tcl by Eggdrop. There are also several example scripts in the scripts/ directory, and there are gobs of scripts floating around on the ftp sites if you like working by
-example (which is typically the best way).</font></font></blockquote>
+        <li><a href="#sect9">Where can I get a precompiled Eggdrop for my
+        computer?</a></li>
 
-<p><font face="Arial, Helvetica" size="-1"><br>
- <a name="faq4"></a><strong><font face="Arial, Helvetica" size="-1" color="#FF0000">4. MY BOT DIES AND THE LAST ENTRY IN THE LOGFILE IS "RECEIVED TERMINATE SIGNAL". WHAT DOES THAT MEAN AND CAN I
-PREVENT IT?</font></strong></font></p>
+        <li><a href="#sect10">I get &quot;Makefile:3 : invalid operator&quot;
+        of some such thing When I try to &quot;make&quot;</a></li>
 
-<blockquote><font face="Arial, Helvetica" size="-1"><font face="Arial, Helvetica" size="-1">There's nothing you can do to prevent it. It means the system administrator is killing the Eggdrop process.
-Most of the time, it's an automatic thing that happens when the system is being rebooted, so it's harmless. If you have a crontab running, the bot will get restarted when the system is back online.
-Occasionally the system administrator will kill the bot manually -- for example, if he/she doesn't want bots running on the system.</font></font></blockquote>
+        <li><a href="#sect11">When I &quot;tclsh scripts/weed
+        &lt;userfile&gt; c&quot; It barfs chunks at me and dies.</a></li>
 
-<p><font face="Arial, Helvetica" size="-1"><br>
- <a name="faq5"></a><strong><font face="Arial, Helvetica" size="-1" color="#FF0000">5. MY COMPILE DIES AT THE LAST MINUTE WITH "LD FATAL SIGNAL 11"!</font></strong></font></p>
+        <li><a href="#sect12">I get &quot;ld-elf.so.1: Shared object
+        &quot;libtcl80.so.1&quot; not found&quot; or &quot;eggdrop: error in
+        loading shared libraries / libtcl8.1.so: cannot open shared object
+        file: No such file or directory&quot; when I try to start my
+        bot.</a></li>
 
-<blockquote><font face="Arial, Helvetica" size="-1"><font face="Arial, Helvetica" size="-1">This happens on Linux machines that have recently been converted to ELF by upgrading to Slackware 3.0.
-Apparently Slackware 3.0 comes with a non-ELF (a.out) Tcl library, and the compiler doesn't handle that well. (It should give you an error; instead it barfs.) Fixing it is tricky because even if you
-recompile libtcl.a, the linker will most likely find the "bad" one first, and your work will be in vain.</font></font> 
+        <li><a href="#sect13">I get a whole pile of &quot;unresolved symbol
+        &#39;Tcl_AppendResult&#39;&quot; (or some other symbol) when I try to
+        load a module.</a></li>
+      </ol>
+    </blockquote>
 
-<p><font face="Arial, Helvetica" size="-1"><font face="Arial, Helvetica" size="-1">Here's a fix that's been floating around on the Eggdrop list:</font></font></p>
+    <p><a name="sect1"></a>1.<strong> What do I do if I get the error
+    &quot;User file not found&quot;?</strong></p>
 
-<blockquote><font face="Arial, Helvetica" size="-1"><font face="Arial, Helvetica" size="-1">1. Recompile 'libtcl.a' for yourself, to make sure an ELF librar is created.</font><br>
- <font face="Arial, Helvetica" size="-1">2. Copy it into your eggdrop/src directory, naming it 'libtcl2.a'.</font><br>
- <font face="Arial, Helvetica" size="-1">3. Edit the Makefile and change the line that says '-L/usr/lib -ltcl' to '-L. -ltcl2'.</font><br>
- <font face="Arial, Helvetica" size="-1">4. Recompile Eggdrop.</font></font></blockquote>
+    <blockquote>
+      <ul>
+        <li>Run Eggdrop with the &quot;-m&quot; option (i.e., &quot;eggdrop
+        -m mybot&quot;).</li>
 
-<font face="Arial, Helvetica" size="-1"><font face="Arial, Helvetica" size="-1">Also send hate-mail to the Slackware guy telling him to stop messing up the libraries. He seemed to assume that
-everyone would still want to compile old-style (a.out) binaries.</font></font></blockquote>
+        <li>Go to IRC and send &quot;hello&quot; to your bot (i.e.,
+        &quot;/msg mybot hello&quot;).</li>
 
-<font face="Arial, Helvetica" size="-1"><a name="faq6"></a> <strong><font face="Arial, Helvetica" size="-1" color="#FF0000">6. SOMEONE ELSE SET UP A BOT I DON'T LIKE. ARE THERE ANY BACKDOORS I CAN
-USE TO TAKE THEIR BOT DOWN?</font></strong></font> 
+        <li>You will become an owner on your bot. You can leave the bot
+        running (nobody else will become a master if they say
+        &quot;hello&quot;), but in the future, don&#39;t use the
+        &quot;-m&quot; option when running the bot.</li>
+      </ul>
+    </blockquote>
 
-<blockquote><font face="Arial, Helvetica" size="-1"><font face="Arial, Helvetica" size="-1">No, there have never been any backdoors and there never will be, so please stop asking. Every once in a
-while, someone finds a way to exploit a bug in Eggdrop, but we fix these bugs as soon as we find out about them. If you want to bring down someone else's bot, you will not have my/our
-help.</font></font></blockquote>
+    <p><a name="sect2"></a>2. <strong>My Eggdrop won&#39;t run; it just says
+    &quot;can&#39;t find your hostname!&quot;</strong></p>
 
-<font face="Arial, Helvetica" size="-1"><a name="faq7"></a> <strong><font face="Arial, Helvetica" size="-1" color="#FF0000">7. WHAT ARE MODULES?</font></strong></font> 
+    <blockquote>
+      Your machine is set up strangely, and Eggdrop can&#39;t figure out its
+      network hostname. You can get around this by setting an environment
+      variable called HOSTNAME. 
 
-<blockquote><font face="Arial, Helvetica" size="-1"><font face="Arial, Helvetica" size="-1">Modules are a way of adding extra C code from the bot, much like Tcl scripts, without requiring the bot
-recompiling, see doc/MODULES for more info.</font></font></blockquote>
+      <p>In sh or ksh:<br>
+       $ HOSTNAME=myhost.domain.edu<br>
+       $ export HOSTNAME</p>
 
-<font face="Arial, Helvetica" size="-1"><a name="faq8"></a> <strong><font face="Arial, Helvetica" size="-1" color="#FF0000">8. CAN I COMPILE EGGDROP WITHOUT DYNAMIC MODULES?</font></strong></font> 
+      <p>In csh or tcsh:<br>
+       % setenv HOSTNAME myhost.domain.edu</p>
 
-<blockquote><font face="Arial, Helvetica" size="-1"><font face="Arial, Helvetica" size="-1">Yes, you can, if ./configure detects that your system CAN'T run modules it will setup 'make' to link the
-modules in statically for you, you can also choose this option if you can do dynamic modules by typing 'make static'. You can also try to compile dynamic modules on a static-only system by typing
-'make eggdrop'.</font></font> 
+      <p>It should work after that. You may want to bug your system
+      administrator to set up her /etc/hosts file correctly, or add those
+      above commands to your &#39;.login&#39; file (sh or ksh:
+      &#39;.profile&#39;).</p>
+    </blockquote>
 
-<p><font face="Arial, Helvetica" size="-1"><a name="faq8.1"></a> <strong><font face="Arial, Helvetica" size="-1" color="#FF0000">8.1 DO I STILL NEED TO 'loadmodule modules'
-???</font></strong></font></p>
+    <p><a name="sect3"></a>3. <strong>What the heck is Tcl?</strong></p>
 
-<blockquote><font face="Arial, Helvetica" size="-1"><font face="Arial, Helvetica" size="-1" color="#000000">YES, when you compile statically, all the modules are linked into the main executable *but*
-they are not enabled until you use loadmodule to enable then, hence you get nearly the same functionality with static modules as dynamic modules.</font></font></blockquote>
-</blockquote>
+    <blockquote>
+      <p>Tcl is a scripting language written by John Ousterhout. It&#39;s
+      much better than most &quot;in-built&quot; script languages (like the
+      one in ircII) and is meant to be linked with anything needing a script
+      language. So I linked it with Eggdrop. The file
+      &quot;tcl-commands.doc&quot; in the Eggdrop directory contains a list
+      of the commands added to Tcl by Eggdrop. There are also several example
+      scripts in the scripts/ directory, and there are gobs of scripts
+      floating around on the ftp sites if you like working by example (which
+      is typically the best way).</p>
+    </blockquote>
 
-<font face="Arial, Helvetica" size="-1"><a name="faq9"></a> <strong><font face="Arial, Helvetica" size="-1" color="#FF0000">9. WHERE CAN I GET A PRECOMPILED EGGDROP FOR MY
-COMPUTER?</font></strong></font> 
+    <p><a name="sect4"></a>4. <strong>My bot dies and the last entry in the
+    logfile is &quot;received terminate signal&quot;. What does that mean and
+    can i prevent it?</strong></p>
 
-<blockquote><font face="Arial, Helvetica" size="-1"><font face="Arial, Helvetica" size="-1">It is <strong>HIGHLY</strong> recommended <strong>AGAINST</strong> using precompiled Eggdrops from
-untrusted sources. Eggdrop has been a regular target for hacking and crashing. Distribution of precompiled (binary) versions of Eggdrop are the easiest way of hackers to provide you with the easiest
-(and most dangerous) way of gaining access to not only your bot, but to your computer account directly. Don't advertise your precompiled Eggdrop binary sites on the Eggdrop list either
-=P</font></font></blockquote>
+    <blockquote>
+      <p>There&#39;s nothing you can do to prevent it. It means the system
+      administrator is killing the Eggdrop process. Most of the time,
+      it&#39;s an automatic thing that happens when the system is being
+      rebooted, so it&#39;s harmless. If you have a crontab running, the bot
+      will get restarted when the system is back online. Occasionally the
+      system administrator will kill the bot manually -- for example, if
+      he/she doesn&#39;t want bots running on the system.</p>
+    </blockquote>
 
-<font face="Arial, Helvetica" size="-1"><a name="faq10"></a> <strong><font face="Arial, Helvetica" size="-1" color="#FF0000">10. I GET 'Makefile:3 :invalid operator' OR SOME-SUCH-THING WHEN I TRY TO
-'make'</font></strong></font> 
+    <p><a name="sect5"></a>5. <strong>My compile dies at the last minute with
+    &quot;ld fatal signal 11&quot;!</strong></p>
 
-<blockquote><font face="Arial, Helvetica" size="-1"><font face="Arial, Helvetica" size="-1">Try 'gmake'</font></font></blockquote>
+    <blockquote>
+      <p>This happens on Linux machines that have recently been converted to
+      ELF by upgrading to Slackware 3.0. Apparently Slackware 3.0 comes with
+      a non-ELF (a.out) Tcl library, and the compiler doesn&#39;t handle that
+      well. (It should give you an error; instead it barfs.) Fixing it is
+      tricky because even if you recompile libtcl.a, the linker will most
+      likely find the &quot;bad&quot; one first, and your work will be in
+      vain.</p>
 
-<font face="Arial, Helvetica" size="-1"><a name="faq11"></a> <strong><font face="Arial, Helvetica" size="-1" color="#FF0000">11. WHEN I 'tclsh scripts/weed &lt;userfile&gt; c' IT BARFS CHUNKS AT ME
-AND DIES :(</font></strong></font> 
+      <p>Here&#39;s a fix that&#39;s been floating around on the Eggdrop
+      list:</p>
 
-<blockquote><font face="Arial, Helvetica" size="-1"><font face="Arial, Helvetica" size="-1">UPGRADE YOUR TCL, you are probably using Tcl 7.5 or earlier, some of the commands in weed require tcl7.6 to
-run, so either upgrade it, or removing the offending lines from you userfile (those starting with '.' generally) and accept the loss of that data.</font></font></blockquote>
+      <ol>
+        <li>Recompile &#39;libtcl.a&#39; for yourself, to make sure an ELF
+        librar is created.</li>
 
-<font face="Arial, Helvetica" size="-1"><a name="faq12"></a> <strong><font face="Arial, Helvetica" size="-1" color="#FF0000">12. I get "ld-elf.so.1: Shared object "libtcl80.so.1" not found" or
-"eggdrop: error in loading shared libraries / libtcl8.1.so: cannot open shared object file: No such file or directory" when I try to start my bot.</font></strong></font> 
+        <li>Copy it into your eggdrop/src directory, naming it
+        &#39;libtcl2.a&#39;.</li>
 
-<blockquote><font face="Arial, Helvetica" size="-1"><font face="Arial, Helvetica" size="-1">'./configure' is looking in the wrong place for Tcl; it looks like it compiled with one version of Tcl and
-tries to load another. Maybe your sysadmin upgraded Tcl and didn't tell you. In that case, you should just need to recompile your bot.</font></font> 
+        <li>Edit the Makefile and change the line that says &#39;-L/usr/lib
+        -ltcl&#39; to &#39;-L. -ltcl2&#39;.</li>
 
-<p><font face="Arial, Helvetica" size="-1"><font face="Arial, Helvetica" size="-1">Or maybe when upgrading he didn't clean the old version of Tcl, and './configure' is looking for the files in the
-wrong places, or trying to use different versions of tcl.h and libtcl*. Smack your admin and have him install Tcl properly ;) Or try to:</font></font></p>
+        <li>Recompile Eggdrop.</li>
+      </ol>
 
-<p><font face="Arial, Helvetica" size="-1"><font face="Arial, Helvetica" size="-1">./configure --with-tcllib=&lt;path-to-tcl-lib&gt;&nbsp; --with-tclinc=&lt;path-to-tcl-inc&gt;</font></font></p>
+      <p>Also send hate-mail to the Slackware guy telling him to stop f***ing
+      up the libraries. He seemed to assume that everyone would still want to
+      compile old-style (a.out) binaries.</p>
+    </blockquote>
 
-<p><font face="Arial, Helvetica" size="-1"><font face="Arial, Helvetica" size="-1">tell configure where to look for the Tcl files. try to look for them like:</font><br>
- <font face="Arial, Helvetica" size="-1">for libtcl:</font></font></p>
+    <p><a name="sect6"></a>6. <strong>Someone else set up a bot I don&#39;t
+    like. Are there any backdoors I can use to take their bot
+    down?</strong></p>
 
-<blockquote><font face="Arial, Helvetica" size="-1"><font face="Arial, Helvetica" size="-1">ls /usr/lib/libtcl*</font><br>
- <font face="Arial, Helvetica" size="-1">ls /usr/local/lib/libtcl*</font></font></blockquote>
+    <blockquote>
+      <p>No, there have never been any backdoors and there never will be, so
+      please stop asking. Every once in a while, someone finds a way to
+      exploit a bug in Eggdrop, but we fix these bugs as soon as we find out
+      about them. If you want to bring down someone else&#39;s bot, you will
+      not have my/our help.</p>
+    </blockquote>
 
-<font face="Arial, Helvetica" size="-1"><font face="Arial, Helvetica" size="-1">for tcl.h:</font></font> 
+    <p><a name="sect7"></a>7. <strong>What are modules?</strong></p>
 
-<blockquote><font face="Arial, Helvetica" size="-1"><font face="Arial, Helvetica" size="-1">ls /usr/include/tcl.h</font><br>
- <font face="Arial, Helvetica" size="-1">ls /usr/local/include/tcl.h</font></font></blockquote>
+    <blockquote>
+      <p>Modules are a way of adding extra C code from the bot, much like Tcl
+      scripts, without requiring the bot recompiling, see doc/MODULES for
+      more info.</p>
+    </blockquote>
 
-<font face="Arial, Helvetica" size="-1"><font face="Arial, Helvetica" size="-1">If everything else fails, try to install Tcl to your home dir ;) (Suggested by dw@Undernet,
-dw@lixom.nu)</font></font></blockquote>
+    <p><a name="sect8"></a>8. <strong>Can I compile eggdrop without dynamic
+    modules?</strong></p>
 
- <font face="Arial, Helvetica" size="-1"><a name="faq13"></a> <strong><font face="Arial, Helvetica" size="-1" color="#FF0000">13. I get a whole pile of "Unresolved symbol 'Tcl_AppendResult'" (or some
-other symbol) when I try to load a modules.</font></strong> <font face="Arial, Helvetica" size="-1">POSSIBILITY A: see 12.</font></font> 
+    <blockquote>
+      <p>Yes, you can, if ./configure detects that your system CAN&#39;T run
+      modules it will setup &#39;make&#39; to link the modules in statically
+      for you, you can also choose this option if you can do dynamic modules
+      by typing &#39;make static&#39;. You can also try to compile dynamic
+      modules on a static-only system by typing &#39;make eggdrop&#39;.</p>
+    </blockquote>
 
-<blockquote>
-<p><font face="Arial, Helvetica" size="-1"><font face="Arial, Helvetica" size="-1">POSSIBILITY B:</font></font></p>
+    <p><a name="sect8a"></a>8a. <strong>Do I still need to &#39;loadmodule
+    modules&#39;?</strong></p>
 
-<p><font face="Arial, Helvetica" size="-1"><font face="Arial, Helvetica" size="-1">Some of the standard libraries have been compiled for static linking only on your machine, you have 3
-options:</font></font></p>
+    <blockquote>
+      <p>YES, when you compile statically, all the modules are linked into
+      the main executable *but* they are not enabled until you use loadmodule
+      to enable then, hence you get nearly the same functionality with static
+      modules as dynamic modules.</p>
+    </blockquote>
 
-<p><font face="Arial, Helvetica" size="-1"><font face="Arial, Helvetica" size="-1">(1) if it's your own machine, recompile TCL using dynamic linking by using './configure --enable-shared' when you
-configure TCL (not the bot) and then remake, &mp; reinstall</font><br>
- <font face="Arial, Helvetica" size="-1">(2) if it's not you machine, you make have to resort to 'make static' and 'make sinstall DESTDIR=&lt;dir&gt;' to make and install your bot.</font><br>
- <font face="Arial, Helvetica" size="-1">(3) if you are of a more aggressive sense of mind, go beat the stuffing out of your admin for have lame static libraries :)</font></font></p>
-</blockquote>
-</blockquote>
-</div>
+    <p><a name="sect9"></a>9. <strong>Where can i get a precompiled eggdrop
+    for my computer?</strong></p>
 
-<hr>
-<font face="Arial, Helvetica" size="-1"><em><font face="Arial, Helvetica" size="-1">&copy; 1997 Robey Pointer<br>
- &copy; 1999,2000 Eggheads Development Team</font></em></font>
-</body>
+    <blockquote>
+      <p>It is <strong>HIGHLY</strong> recommended <strong>AGAINST</strong>
+      using precompiled Eggdrops from untrusted sources. Eggdrop has been a
+      regular target for hacking and crashing. Distribution of precompiled
+      (binary) versions of Eggdrop are the easiest way of hackers to provide
+      you with the easiest (and most dangerous) way of gaining access to not
+      only your bot, but to your computer account directly. Don&#39;t
+      advertise your precompiled Eggdrop binary sites on the Eggdrop list
+      either =P</p>
+    </blockquote>
+
+    <p><a name="sect10"></a>10. <strong>I get &#39;Makefile:3 :invalid
+    operator&#39; or some-such-thing when I try to
+    &#39;make&#39;</strong></p>
+
+    <blockquote>
+      <p>Try &#39;gmake&#39;</p>
+    </blockquote>
+
+    <p><a name="sect11"></a>11. <strong>When I &#39;tclsh scripts/weed
+    &lt;userfile&gt; c&#39; it barfs chunks at me and dies :(</strong></p>
+
+    <blockquote>
+      <p>UPGRADE YOUR TCL, you are probably using Tcl 7.5 or earlier, some of
+      the commands in weed require tcl7.6 to run, so either upgrade it, or
+      removing the offending lines from you userfile (those starting with
+      &#39;.&#39; generally) and accept the loss of that data.</p>
+    </blockquote>
+
+    <p><a name="sect12"></a>12. <strong>I get &quot;ld-elf.so.1: Shared
+    object &quot;libtcl80.so.1&quot; not found&quot; or &quot;eggdrop: error
+    in loading shared libraries / libtcl8.1.so: cannot open shared object
+    file: No such file or directory&quot; when I try to start my
+    bot.</strong></p>
+
+    <blockquote>
+      <p>&#39;./configure&#39; is looking in the wrong place for Tcl; it
+      looks like it compiled with one version of Tcl and tries to load
+      another. Maybe your sysadmin upgraded Tcl and didn&#39;t tell you. In
+      that case, you should just need to recompile your bot.</p>
+
+      <p>Or maybe when upgrading he didn&#39;t clean the old version of Tcl,
+      and &#39;./configure&#39; is looking for the files in the wrong places,
+      or trying to use different versions of tcl.h and libtcl*. Smack your
+      admin and have him install Tcl properly ;) Or try to:</p>
+
+      <p><em>./configure --with-tcllib=&lt;path-to-tcl-lib&gt;
+      --with-tclinc=&lt;path-to-tcl-inc&gt;</em></p>
+
+      <p>Tell configure where to look for the Tcl files.</p>
+
+      <p>Try looking for libtcl by:<br>
+       ls /usr/lib/libtcl*<br>
+       ls /usr/local/lib/libtcl*</p>
+
+      <p>Try looking for tcl.h by:<br>
+       ls /usr/include/*/tcl.h<br>
+       ls /usr/local/include/*/tcl.h</p>
+
+      <p>If everything else fails, try to install Tcl to your home dir ;)
+      (Suggested by dw@Undernet, dw@lixom.nu)</p>
+    </blockquote>
+
+    <p><a name="sect13"></a>13. <strong>I get a whole pile of
+    &quot;Unresolved symbol &#39;Tcl_AppendResult&#39;&quot; (or some other
+    symbol) when I try to load a modules.</strong></p>
+
+    <blockquote>
+      <p>Possibility A: see 12.</p>
+    </blockquote>
+
+    <blockquote>
+      <p>Possibility B:</p>
+
+      <p>Some of the standard libraries have been compiled for static linking
+      only on your machine, you have 3 options:</p>
+    </blockquote>
+
+    <blockquote>
+      <ol>
+        <li>If it&#39;s your own machine, recompile TCL using dynamic linking
+        by using &#39;./configure --enable-shared&#39; when you configure TCL
+        (not the bot) and then remake, &amp; reinstall</li>
+
+        <li>If it&#39;s not you machine, you make have to resort to &#39;make
+        static&#39; and &#39;make DEST=&quot;path&quot; install&#39; to make
+        and install your bot.</li>
+
+        <li>If you are of a more aggressive sense of mind, go beat the
+        stuffing out of your admin for have lame static libraries :)</li>
+      </ol>
+    </blockquote>
+    <hr>
+
+    <p><em>© 1997 Robey Pointer<br>
+     © 1999,2000 Eggheads Development Team</em></p>
+  </body>
 </html>
 

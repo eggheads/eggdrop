@@ -1,41 +1,48 @@
-<!-- saved from url=(0022)http://internet.e-mail -->
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<HTML>
-<HEAD>
-<TITLE>Eggdrop Documentation: BLOWFISH Module</TITLE>
-</HEAD>
-<BODY aLink=#3333ff bgColor=#ffffff link=#3333ff text=#000000 vLink=#3333ff>
-<FONT face="Arial, Helvetica" color=#000000 size=-1>
-<B><FONT color=#ff0000>BLOWFISH MODULE&nbsp;&nbsp;&nbsp;&nbsp; Last modified 24th March 2000</FONT></B> 
-<HR>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<!-- $Id: mod-blowfish.html,v 1.2 2000/04/13 11:21:24 tothwolf Exp $ -->
 
-<P>Eggdrop can encrypt your userfile, so users can have secure passwords. Please note, that when you change your encryption method later (i.e. using other modules like a md5 module) you can't use your current userfile anymore.<br>
-Attention, eggdrop will not start without a chosen encryption method.
-<BR>
-&nbsp; 
+<html>
+  <head>
+    <title>Eggdrop Documentation: Blowfish module</title>
+  </head>
 
-<BLOCKQUOTE>
-<A href="#config">Config file settings</A>
-</BLOCKQUOTE>
-<HR width="100%">
+  <body>
+    <div align="center">
+      <p><strong>Blowfish module</strong></p>
+    </div>
+    <hr>
 
-<BR>
-<A name=config><B><FONT color=#ff0000>Config file settings</font></B></A>
-<P>
+    <p>Eggdrop uses the blowfish module to encrypt user&#39;s passwords.
+    Please note, that when you change your encryption method later (i.e.
+    using other modules like a md5 module) you can&#39;t use your current
+    userfile anymore. Eggdrop can&#39;t start without an encryption
+    module.</p>
 
+    <blockquote>
+      <ol>
+        <li><a href="#config">Config file settings</a></li>
+      </ol>
+    </blockquote>
+    <hr>
 
-Lines in bold are the lines that need to be included in the eggdrop config file if you want to use the dns module.<BR>
-Lines in bold italics are optional and only required if you wish to change the default behaviour for that particular feature.<BR>&nbsp;
+    <p><a name="config"></a>1. <strong>Config file settings</strong></p>
 
-<BLOCKQUOTE>
-<FONT color=#ff0000>##### BLOWFISH MODULE #####</font><P>
-Put this line into your config file to load blowfish module:<P>
+    <blockquote>
+      <p>Lines in <strong>bold</strong> are the lines that need to be
+      included in the eggdrop config file if you want to use the share
+      module.<br>
+       Lines in bold <strong><em>italics</em></strong> are optional and only
+      required if you wish to change the default behaviour for that
+      particular feature.</p>
 
-<B>checkmodule blowfish</B><p>
-</BLOCKQUOTE>
+      <p>Put this line into your config file to load blowfish module:</p>
 
-<HR>
-&copy;<I>1997 Robey Pointer</I><BR>
-&copy;<I>1999,2000 Eggheads Development Team</I>
-</BODY>
-</HTML>
+      <p><strong>checkmodule blowfish</strong></p>
+    </blockquote>
+    <hr>
+
+    <p><em>© 1997 Robey Pointer<br>
+     © 1999,2000 Eggheads Development Team</em></p>
+  </body>
+</html>
+

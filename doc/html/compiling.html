@@ -1,858 +1,675 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-
-<HTML>
-  <HEAD>
-    <TITLE>Compiling : Frequently asked Questions</TITLE>
-  </HEAD>
-
-  <BODY>
-    <STRONG><FONT face="Arial, Helvetica" size="-1" color="#FF0000">Compiling
-    FAQ</FONT></STRONG> 
-    <HR>
-    <BR>
-     <STRONG><FONT face="Arial, Helvetica" size="-1" color="#FF0000">EGGDROP
-    AND TCL COMPILING ERRORS AND RESOLUTION FAQ</FONT></STRONG> <BR>
-     <FONT face="Arial, Helvetica" size="-1">(in other words, maybe this FAQ
-    will help you get Eggdrop compiled). by various contributors. If you
-    think something should be added, please send en E-Mail to
-    eggheads@eggheads.org!</FONT> <BR>
-     <FONT face="Arial, Helvetica" size="-1">Last revised: March 21
-    2000</FONT> 
-
-    <P><A href="#egg"><FONT color="#000000">Eggdrop related
-    Questions</FONT></A></P>
-
-    <BLOCKQUOTE>
-      <OL>
-        <LI><A href="#faq1"><FONT color="#000000">UNDEFINED REFERENCES IN
-        NET.O&nbsp; (Sun OS)</FONT></A></LI>
-
-        <LI><A href="#faq2">COMPILE STOPS AT THE LAST MINUTE WITH &quot;LD
-        FATAL SIGNAL 11&quot;!&nbsp; (Linux)</A></LI>
-
-        <LI><A href="#faq3">LD: -ltcl7.4: EXPECTED
-        LIBX.SO(.MAJOR.MINOR.XXX)&nbsp; (various)</A></LI>
-
-        <LI><A href="#faq4">STRIP TERMINATED WITH SIGNAL 6&nbsp;
-        (various)</A></LI>
-
-        <LI><A href="#faq5">&#39;DIR&#39; UNDECLARED (AND A WHOLE BUNCH OF
-        OTHERS)&nbsp;&nbsp; (AIX 4)</A></LI>
-
-        <LI><A href="#faq6">&#39;FD_SET&#39; UNDECLARED (AND A WHOLE BUNCH OF
-        OTHERS)&nbsp;&nbsp; (AIX 4)</A></LI>
-
-        <LI><A href="#faq7">UNRESOLVED OR UNDEFINED SYMBOLS: ldclose, ldopen,
-        ldnshread&nbsp; (AIX 3)</A></LI>
-
-        <LI><A href="#faq8">UNSATISFIED SYMBOLS &#39;shl_findsym&#39; and
-        &#39;shl_load&#39;&nbsp; (HP-UX 9)</A></LI>
-      </OL>
-    </BLOCKQUOTE>
-    <A href="#tcl">Tcl related questions</A> 
-
-    <BLOCKQUOTE>
-      <OL>
-        <LI><A href="#faqb1">REDECLARATION IN COMPAT/UNISTD.H&nbsp;&nbsp;
-        (Tcl 7.4/AIX 4)</A></LI>
-
-        <LI><A href="#faqb2">CONFLICTING TYPES FOR
-        &#39;waitpid&#39;&nbsp;&nbsp; (Tcl 7.5/SunOS 5.4)</A></LI>
-
-        <LI><A href="#faqb3">UNDEFINED SYMBOLS IN tclUnixChan.o -- AND MANY
-        OTHERS&nbsp;&nbsp; (Tcl 7.5/SunOS 5.4)</A></LI>
-
-        <LI><A href="#faqb4">UNDEFINED SYMBOL &#39;getwd&#39; IN
-        getcwd.o&nbsp;&nbsp; (Tcl 7.5/SunOS 5.4)</A></LI>
-
-        <LI><A href="#faqb5">There&#39;s no TCL installed on your
-        shell</A></LI>
-      </OL>
-    </BLOCKQUOTE>
-    <HR width="100%">
-    <BR>
-     <A name="egg"></A><STRONG><FONT face="Arial, Helvetica" size="-1" color= 
-    "#FF0000">A. EGGDROP</FONT></STRONG> <BR>
-     <A name="faq1"></A><STRONG><FONT face="Arial, Helvetica" size="-1"
-    color="#FF0000">1. UNDEFINED REFERENCES IN NET.O&nbsp; (Sun
-    OS)</FONT></STRONG> 
-
-    <DIV>
-      &nbsp; 
-
-      <TABLE cellspacing="0" cellpadding="0" width="198" height="100">
-        <TR>
-          <TD align="CENTER" valign="TOP"><FONT face="Arial, Helvetica" size= 
-          "-1">Undefined symbol&nbsp;</FONT></TD>
-
-          <TD align="CENTER" valign="CENTER"><FONT face="Arial, Helvetica"
-          size="-1">first referenced in file</FONT></TD>
-        </TR>
-
-        <TR>
-          <TD><FONT face="Arial, Helvetica" size="-1"> socket</FONT></TD>
-
-          <TD><FONT face="Arial, Helvetica" size="-1"> net.o</FONT></TD>
-        </TR>
-
-        <TR>
-          <TD><FONT face="Arial, Helvetica" size="-1">
-          gethostbyname</FONT></TD>
-
-          <TD><FONT face="Arial, Helvetica" size="-1"> net.o</FONT></TD>
-        </TR>
-
-        <TR>
-          <TD><FONT face="Arial, Helvetica" size="-1"> accept</FONT></TD>
-
-          <TD><FONT face="Arial, Helvetica" size="-1"> net.o</FONT></TD>
-        </TR>
-
-        <TR>
-          <TD><FONT face="Arial, Helvetica" size="-1"> bind</FONT></TD>
-
-          <TD><FONT face="Arial, Helvetica" size="-1"> net.o</FONT></TD>
-        </TR>
-
-        <TR>
-          <TD><FONT face="Arial, Helvetica" size="-1"> setsockopt</FONT></TD>
-
-          <TD><FONT face="Arial, Helvetica" size="-1"> net.o</FONT></TD>
-        </TR>
-
-        <TR>
-          <TD><FONT face="Arial, Helvetica" size="-1">
-          gethostbyaddr</FONT></TD>
-
-          <TD><FONT face="Arial, Helvetica" size="-1"> net.o</FONT></TD>
-        </TR>
-
-        <TR>
-          <TD><FONT face="Arial, Helvetica" size="-1">
-          getsockname</FONT></TD>
-
-          <TD><FONT face="Arial, Helvetica" size="-1"> net.o</FONT></TD>
-        </TR>
-
-        <TR>
-          <TD><FONT face="Arial, Helvetica" size="-1">
-          gethostname</FONT></TD>
-
-          <TD align="LEFT" valign="CENTER"><FONT face="Arial, Helvetica"
-          size="-1">net.o</FONT></TD>
-        </TR>
-
-        <TR>
-          <TD><FONT face="Arial, Helvetica" size="-1"> listen</FONT></TD>
-
-          <TD><FONT face="Arial, Helvetica" size="-1"> net.o</FONT></TD>
-        </TR>
-
-        <TR>
-          <TD><FONT face="Arial, Helvetica" size="-1"> connect</FONT></TD>
-
-          <TD><FONT face="Arial, Helvetica" size="-1"> net.o</FONT></TD>
-        </TR>
-      </TABLE>
-      <FONT face="Arial, Helvetica" size="-1">ld: fatal: Symbol referencing
-      errors. No output written to eggdrop</FONT> 
-
-      <P><FONT face="Arial, Helvetica" size="-1">This seems to be caused by a
-      few libraries not being detected by the</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">auto-configure program, it is
-      relatively easy to fix.&nbsp; Edit your Makefile,</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">note that yours may be
-      slightly different than this one when it comes to</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">the Tcl library, but here is
-      the way it probably is:</FONT></P>
-
-      <P><FONT face="Arial, Helvetica" size="-1">GMAKE = ${MAKE}
-      &#39;CC=gcc&#39; &#39;AWK=awk&#39; &#39;OBJS=${OBJS}&#39;
-      &#39;TCLLIBFN=tcl.a&#39;\</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &#39;CFLAGS=${CFLAGS}&#39;
-      &#39;XREQ=${XREQ}&#39; &#39;XLIBS= -L/usr/local/lib -ltcl
-      -lm&#39;\</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &#39;TCLLIB=${TCLLIB}&#39;
-      &#39;RANLIB=:&#39; &#39;STRIP=&#39;</FONT></P>
-
-      <P><FONT face="Arial, Helvetica" size="-1">And here is what you need to
-      change:</FONT></P>
-
-      <P><FONT face="Arial, Helvetica" size="-1">GMAKE = ${MAKE}
-      &#39;CC=gcc&#39; &#39;AWK=awk&#39; &#39;OBJS=${OBJS}&#39;
-      &#39;TCLLIBFN=tcl.a&#39;\</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &#39;CFLAGS=${CFLAGS}&#39;
-      &#39;XREQ=${XREQ}&#39; &#39;XLIBS=-lsocket -ldl -lnsl -L/usr/local/lib
-      -ltcl -lm&#39;\</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &#39;TCLLIB=${TCLLIB}&#39;
-      &#39;RANLIB=:&#39; &#39;STRIP=&#39;</FONT></P>
-
-      <P><FONT face="Arial, Helvetica" size="-1">You are adding in three
-      libraries to be linked in, socket, dl, and nsl.&nbsp; This</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">will resolve the net.o
-      errors.</FONT></P>
-    </DIV>
-    <A name="faq2"></A><STRONG><FONT face="Arial, Helvetica" size="-1" color= 
-    "#FF0000">2. COMPILE STOPS AT THE LAST MINUTE WITH &quot;LD FATAL SIGNAL
-    11&quot;!&nbsp; (Linux)</FONT></STRONG> 
-
-    <DIV>
-      <FONT face="Arial, Helvetica" size="-1">This seems to be caused by a
-      non-ELF Tcl library binary, and the compiler doesn&#39;t seem to like
-      it.&nbsp; The first thing you want to do is download and compile Tcl
-      yourself.&nbsp; And then follow this set of commands to help you
-      reconfigure Eggdrop using the newly compiled Tcl library (all of this
-      should be done from your home directory):</FONT> 
-
-      <P><FONT face="Arial, Helvetica" size="-1">cd</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">mkdir lib</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">mkdir include</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">find . -name
-      libtcl*</FONT></P>
-
-      <P><FONT face="Arial, Helvetica" size="-1">The output from the find
-      command should give you the location of the library, take the output of
-      that and do the next command with the output of find replacing
-      $$find$$:</FONT></P>
-
-      <P><FONT face="Arial, Helvetica" size="-1">mv $$find$$
-      lib/libtcl.a</FONT></P>
-
-      <P><FONT face="Arial, Helvetica" size="-1">Now we continue with another
-      find to help us locate tcl.h:</FONT></P>
-
-      <P><FONT face="Arial, Helvetica" size="-1">find . -name
-      tcl.h</FONT></P>
-
-      <P><FONT face="Arial, Helvetica" size="-1">The output from the find
-      command should give you the location of the header file, take the
-      output of that and do the next command with the output of find
-      replacing $$find$$:</FONT></P>
-
-      <P><FONT face="Arial, Helvetica" size="-1">mv $$find$$
-      include</FONT></P>
-
-      <P><FONT face="Arial, Helvetica" size="-1">Hopefully you know what
-      shell you are using and can pick out which commands to use, if the
-      first two setenv commands give command not found then use the next two,
-      if not then don&#39;t use the next two.&nbsp; First set are for
-      csh/tcsh users, following set is for bash/ksh users.</FONT></P>
-
-      <P><FONT face="Arial, Helvetica" size="-1"> csh/tcsh:</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">setenv TCLLIB
-      &#39;$HOME/lib&#39;</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">setenv TCLINC
-      &#39;$HOME/include&#39;</FONT></P>
-
-      <P><FONT face="Arial, Helvetica" size="-1"> bash/ksh:</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">export
-      TCLLIB=&#39;$HOME/lib&#39;</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">export
-      TCLINC=&#39;$HOME/include&#39;</FONT></P>
-
-      <P><FONT face="Arial, Helvetica" size="-1">And then finally run
-      configure again for Eggdrop and then make, and hopefully it will
-      work.</FONT></P>
-    </DIV>
-    <A name="faq3"></A><STRONG><FONT face="Arial, Helvetica" size="-1" color= 
-    "#FF0000">3. LD: -ltcl7.4: EXPECTED LIBX.SO(.MAJOR.MINOR.XXX)&nbsp;
-    (various)</FONT></STRONG> 
-
-    <DIV>
-      <FONT face="Arial, Helvetica" size="-1">&nbsp;&nbsp; ld: -ltcl7.4:
-      expected libx.so(.major.minor.xxx)</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">&nbsp;&nbsp; collect2: ld
-      returned 4 exit status</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">&nbsp;&nbsp; *** Error code
-      1</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">&nbsp;&nbsp; make: Fatal
-      error: Command failed for target `eggdrop&#39;</FONT><BR>
-       &nbsp; 
-
-      <P><FONT face="Arial, Helvetica" size="-1">On some Unix boxes this
-      seems to be caused by the linker, it is expecting a specific filename
-      format and when it doesn&#39;t live up to it&#39;s expectations it
-      usually barfs.&nbsp; I always see this caused by when the library for
-      Tcl is called libtcl7.4.a or libtcl7.5.a, rename it to simply libtcl.a
-      if you installed Tcl yourself, if you didn&#39;t and your using the Tcl
-      that the system installed then do this:</FONT></P>
-
-      <P><FONT face="Arial, Helvetica" size="-1">View your Makefile, look for
-      the line (should be close to the top) that says</FONT></P>
-
-      <P><FONT face="Arial, Helvetica" size="-1">XREQ =
-      /usr/local/lib/libtcl7.4.a</FONT></P>
-
-      <P><FONT face="Arial, Helvetica" size="-1">And remember that FULL
-      pathname.&nbsp; Go to your home directory, and do the
-      following:</FONT></P>
-
-      <P><FONT face="Arial, Helvetica" size="-1">mkdir lib</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">cd lib</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">ln -s $$xreq$$
-      libtcl.a</FONT></P>
-
-      <P><FONT face="Arial, Helvetica" size="-1">Replace $$xreq$$ with the
-      full pathname from the XREQ line from the Makefile.</FONT></P>
-
-      <P><FONT face="Arial, Helvetica" size="-1">And finally the next thing
-      you want to do depending on what shell your using is: (try the first
-      one, if it gives bad command then use the second)</FONT></P>
-
-      <P><FONT face="Arial, Helvetica" size="-1"> csh/tcsh:</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">setenv TCLLIB
-      &#39;$HOME/lib&#39;</FONT></P>
-
-      <P><FONT face="Arial, Helvetica" size="-1"> bash/ksh:</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">export
-      TCLLIB=&#39;$HOME/lib&#39;</FONT></P>
-
-      <P><FONT face="Arial, Helvetica" size="-1">Did I say finally?&nbsp;
-      Heh, finally run configure and then make again.</FONT></P>
-    </DIV>
-    <A name="faq4"></A><STRONG><FONT face="Arial, Helvetica" size="-1" color= 
-    "#FF0000">4. STRIP TERMINATED WITH SIGNAL 6&nbsp;
-    (various)</FONT></STRONG> 
-
-    <DIV>
-      <FONT face="Arial, Helvetica" size="-1">&nbsp;&nbsp; collect2: strip
-      terminated with signal 6 [IOT/Abort trap]</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">&nbsp;&nbsp; *** Exit
-      1</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">&nbsp;&nbsp; Stop.</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">&nbsp;&nbsp; *** Exit
-      1</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">&nbsp;&nbsp; Stop.</FONT> 
-
-      <P><FONT face="Arial, Helvetica" size="-1">I don&#39;t really know what
-      the hell is causing this, but I find that if you</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">don&#39;t strip the binary you
-      cut out the problem (obviously), edit your</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">Makefile and change this line
-      from:</FONT></P>
-
-      <P><FONT face="Arial, Helvetica" size="-1">GMAKE = ${MAKE}
-      &#39;CC=gcc&#39; &#39;AWK=awk&#39; &#39;OBJS=${OBJS}&#39;
-      &#39;TCLLIBFN=tcl.a&#39;\</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &#39;CFLAGS=${CFLAGS}&#39;
-      &#39;XREQ=${XREQ}&#39; &#39;XLIBS= -L/usr/local/lib -ltcl -lm&#39;
-      \</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &#39;TCLLIB=${TCLLIB}&#39;
-      &#39;RANLIB=ranlib&#39; &#39;STRIP=-s&#39;</FONT></P>
-
-      <P><FONT face="Arial, Helvetica" size="-1">To this line below:&nbsp;
-      (your lines may differ, but what you are doing is</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">changing &#39;STRIP=-s&#39; to
-      &#39;STRIP=&#39;)</FONT></P>
-
-      <P><FONT face="Arial, Helvetica" size="-1">GMAKE = ${MAKE}
-      &#39;CC=gcc&#39; &#39;AWK=awk&#39; &#39;OBJS=${OBJS}&#39;
-      &#39;TCLLIBFN=tcl.a&#39;\</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &#39;CFLAGS=${CFLAGS}&#39;
-      &#39;XREQ=${XREQ}&#39; &#39;XLIBS= -L/usr/local/lib -ltcl -lm&#39;
-      \</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &#39;TCLLIB=${TCLLIB}&#39;
-      &#39;RANLIB=ranlib&#39; &#39;STRIP=&#39;</FONT></P>
-    </DIV>
-    <A name="faq5"></A><STRONG><FONT face="Arial, Helvetica" size="-1" color= 
-    "#FF0000">5. &#39;DIR&#39; UNDECLARED (AND A WHOLE BUNCH OF
-    OTHERS)&nbsp;&nbsp; (AIX 4)</FONT></STRONG> 
-
-    <DIV>
-      <FONT face="Arial, Helvetica" size="-1">&nbsp;&nbsp; gcc -c -O2
-      -fno-strength-reduce -I.. -DHAVE_CONFIG_H&nbsp; filedb.c</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">&nbsp;&nbsp; filedb.c: In
-      function `filedb_update&#39;:</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">&nbsp;&nbsp; filedb.c:209:
-      `DIR&#39; undeclared (first use this function)</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">&nbsp;&nbsp; filedb.c:209:
-      (Each undeclared identifier is reported only once</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">&nbsp;&nbsp; filedb.c:209: for
-      each function it appears in.)</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">&nbsp;&nbsp; filedb.c:209:
-      `dir&#39; undeclared (first use this function)</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">&nbsp;&nbsp; filedb.c:209:
-      parse error before `*&#39;</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">&nbsp;&nbsp; filedb.c:217:
-      warning: assignment makes pointer from integer without a
-      cast</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">&nbsp;&nbsp; filedb.c:218:
-      `name&#39; undeclared (first use this function)</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">&nbsp;&nbsp; filedb.c:218:
-      dereferencing pointer to incomplete type</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">&nbsp;&nbsp; filedb.c:220:
-      dereferencing pointer to incomplete type</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">&nbsp;&nbsp; filedb.c:220:
-      dereferencing pointer to incomplete type</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">&nbsp;&nbsp; filedb.c:224:
-      dereferencing pointer to incomplete type</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">&nbsp;&nbsp; filedb.c:224:
-      dereferencing pointer to incomplete type</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">&nbsp;&nbsp; filedb.c:225:
-      dereferencing pointer to incomplete type</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">&nbsp;&nbsp; filedb.c:230:
-      `s&#39; undeclared (first use this function)</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">&nbsp;&nbsp; filedb.c:231:
-      `st&#39; undeclared (first use this function)</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">&nbsp;&nbsp; filedb.c:232:
-      `fdb&#39; undeclared (first use this function)</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">&nbsp;&nbsp; filedb.c:232:
-      `where&#39; undeclared (first use this function)</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">&nbsp;&nbsp; filedb.c:237:
-      `fdb1&#39; undeclared (first use this function)</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">&nbsp;&nbsp; filedb.c:253:
-      warning: assignment makes pointer from integer without a
-      cast</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">&nbsp;&nbsp; make: The error
-      code from the last command is 1.</FONT> 
-
-      <P><FONT face="Arial, Helvetica" size="-1">This seems like one of the
-      components of configure was broken, because what apparently happened
-      was it didn&#39;t detect that this particular system had dirent.h and
-      sys/dir.h, solution was to add -DHAVE_DIRENT_H -DHAVE_SYS_DIR_H to the
-      Makefile&#39;s CFLGS line...</FONT></P>
-
-      <P><FONT face="Arial, Helvetica" size="-1">CFLGS = -DHAVE_DIRENT_H
-      -DHAVE_SYS_DIR_H</FONT></P>
-    </DIV>
-    <A name="faq6"></A><STRONG><FONT face="Arial, Helvetica" size="-1" color= 
-    "#FF0000">6. &#39;FD_SET&#39; UNDECLARED (AND A WHOLE BUNCH OF
-    OTHERS)&nbsp;&nbsp; (AIX 4)</FONT></STRONG> 
-
-    <DIV>
-      <FONT face="Arial, Helvetica" size="-1">&nbsp;&nbsp; gcc -c -O2
-      -fno-strength-reduce -I.. -DHAVE_CONFIG_H -DHAVE_DIRENT_H
-      -DHAVE_SYS_DIR_H net.c</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">&nbsp;&nbsp; net.c: In
-      function `sockread&#39;:</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">&nbsp;&nbsp; net.c:390:
-      `fd_set&#39; undeclared (first use this function)</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">&nbsp;&nbsp; net.c:390: (Each
-      undeclared identifier is reported only once</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">&nbsp;&nbsp; net.c:390: for
-      each function it appears in.)</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">&nbsp;&nbsp; net.c:390: parse
-      error before `fd&#39;</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">&nbsp;&nbsp; net.c:396:
-      `fd&#39; undeclared (first use this function)</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">&nbsp;&nbsp; make: The error
-      code from the last command is 1.</FONT> 
-
-      <P><FONT face="Arial, Helvetica" size="-1">Again, this seems that one
-      of configure&#39;s components (sed, awk, or something along those
-      lines) was broken, and it failed to detect that this system needed
-      sys/select.h, solution was to add -DHAVE_SYS_SELECT_H to the
-      Makefile&#39;s CFLGS</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">line...</FONT></P>
-
-      <P><FONT face="Arial, Helvetica" size="-1">CFLGS = -DHAVE_DIRENT_H
-      -DHAVE_SYS_DIR_H -DHAVE_SYS_SELECT_H</FONT></P>
-
-      <P><FONT face="Arial, Helvetica" size="-1">(I suppose they thought a
-      minor error would deter anyone from continuing onward, but I am not
-      just anyone, I am a blockhead... &lt;grin&gt;)</FONT></P>
-    </DIV>
-    <A name="faq7"></A><STRONG><FONT face="Arial, Helvetica" size="-1" color= 
-    "#FF0000">7. UNRESOLVED OR UNDEFINED SYMBOLS: ldclose, ldopen,
-    ldnshread&nbsp; (AIX 3)</FONT></STRONG> 
-
-    <DIV>
-      <FONT face="Arial, Helvetica" size="-1">cc -s -o eggdrop chan.o
-      chanprog.o chanset.o cmds.o dcc.o dccutil.o filedb.o fileq.o files.o
-      gotdcc.o hash.o main.o match.o mem.o misc.o mode.o msgcmds.o
-      msgnotice.o net.o tandcmd.o tandem.o tcl.o tclhash.o userrec.o users.o
-      -L/home2/f/foster/lib -ltcl7.5 -lm</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">&nbsp;&nbsp; 0706-317 ERROR:
-      Unresolved or undefined symbols detected:</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      Symbols in error (followed by references) are dumped to the load
-      map.</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      The -bloadmap:&lt;filename&gt; option will create a load
-      map.</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">&nbsp;&nbsp;
-      .ldclose</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">&nbsp;&nbsp;
-      .ldopen</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">&nbsp;&nbsp;
-      .ldnshread</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">&nbsp;&nbsp; make: 1254-004
-      The error code from the last command is 8.</FONT> 
-
-      <P><FONT face="Arial, Helvetica" size="-1">Apparently what is happening
-      is a library called ld is required, and either configure doesn&#39;t
-      know it is needed or it simple can&#39;t find it, or maybe this is a
-      unique case, solution was to have ld linked in with the final
-      binary.</FONT></P>
-
-      <P><FONT face="Arial, Helvetica" size="-1">Edit your Makefile and find
-      the line that looks something like this:</FONT></P>
-
-      <P><FONT face="Arial, Helvetica" size="-1">GMAKE = ${MAKE}
-      &#39;CC=cc&#39; &#39;AWK=awk&#39; &#39;OBJS=${OBJS}&#39;
-      &#39;TCLLIBFN=tcl7.5.a&#39;\</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &#39;CFLAGS=${CFLAGS}&#39;
-      &#39;XREQ=${XREQ}&#39; &#39;XLIBS= -L/home2/f/foster/lib -ltcl7.5
-      -lm&#39;\</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &#39;TCLLIB=${TCLLIB}&#39;
-      &#39;RANLIB=ranlib&#39; &#39;STRIP=-s&#39;</FONT></P>
-
-      <P><FONT face="Arial, Helvetica" size="-1">And add in -lld into the
-      XLIBS assignment, like this...</FONT></P>
-
-      <P><FONT face="Arial, Helvetica" size="-1">GMAKE = ${MAKE}
-      &#39;CC=cc&#39; &#39;AWK=awk&#39; &#39;OBJS=${OBJS}&#39;
-      &#39;TCLLIBFN=tcl7.5.a&#39;\</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &#39;CFLAGS=${CFLAGS}&#39;
-      &#39;XREQ=${XREQ}&#39; &#39;XLIBS=-lld -L/home2/f/foster/lib -ltcl7.5
-      -lm&#39;\</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &#39;TCLLIB=${TCLLIB}&#39;
-      &#39;RANLIB=ranlib&#39; &#39;STRIP=-s&#39;</FONT></P>
-    </DIV>
-    <A name="faq8"></A><STRONG><FONT face="Arial, Helvetica" size="-1" color= 
-    "#FF0000">8. UNSATISFIED SYMBOLS &#39;shl_findsym&#39; and
-    &#39;shl_load&#39;&nbsp; (HP-UX 9)</FONT></STRONG> 
-
-    <DIV>
-      <FONT face="Arial, Helvetica" size="-1">&nbsp;&nbsp; gcc -s -o eggdrop
-      chan.o chanprog.o chanset.o cmds.o dcc.o dccutil.o filedb.o fileq.o
-      files.o gotdcc.o hash.o main.o match.o mem.o misc.o mode.o msgcmds.o
-      msgnotice.o net.o tandcmd.o tandem.o tcl.o tclhash.o userrec.o users.o
-      -L/home/hltran/tcl/lib -lt</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">cl7.5 -lm</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">&nbsp;&nbsp; /bin/ld:
-      Unsatisfied symbols:</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; shl_findsym (code)</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; shl_load (code)</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">&nbsp;&nbsp; collect2: ld
-      returned 1 exit status</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">&nbsp;&nbsp; *** Error code
-      1</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">&nbsp;&nbsp; Stop.</FONT> 
-
-      <P><FONT face="Arial, Helvetica" size="-1">I forwarded this one to
-      Robey and he said that Tcl 7.5 the dl library, and that</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">apparently configure
-      couldn&#39;t detect that this was required in this case.&nbsp;
-      So</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">try this fix, and if it works,
-      great, if not then use Tcl 7.4, I hear this</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">works.&nbsp; :)</FONT></P>
-
-      <P><FONT face="Arial, Helvetica" size="-1">GMAKE = ${MAKE}
-      &#39;CC=gcc&#39; &#39;AWK=awk&#39; &#39;OBJS=${OBJS}&#39;
-      &#39;TCLLIBFN=tcl7.5.a&#39;\</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &#39;CFLAGS=${CFLAGS}&#39;
-      &#39;XREQ=${XREQ}&#39; &#39;XLIBS= -L/usr/local/lib -ltcl7.5
-      -lm&#39;\</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &#39;TCLLIB=${TCLLIB}&#39;
-      &#39;RANLIB=:&#39; &#39;STRIP=&#39;</FONT></P>
-
-      <P><FONT face="Arial, Helvetica" size="-1">And here is what you need to
-      change:</FONT></P>
-
-      <P><FONT face="Arial, Helvetica" size="-1">GMAKE = ${MAKE}
-      &#39;CC=gcc&#39; &#39;AWK=awk&#39; &#39;OBJS=${OBJS}&#39;
-      &#39;TCLLIBFN=tcl7.5.a&#39;\</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &#39;CFLAGS=${CFLAGS}&#39;
-      &#39;XREQ=${XREQ}&#39; &#39;XLIBS=-ldl -L/usr/local/lib -ltcl7.5
-      -lm&#39;\</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &#39;TCLLIB=${TCLLIB}&#39;
-      &#39;RANLIB=:&#39; &#39;STRIP=&#39;</FONT></P>
-
-      <P><FONT face="Arial, Helvetica" size="-1">Basically what you are doing
-      is adding in -ldl to the XLIBS declaration,</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">essentially at link time you
-      are tell it to also link in the dl library which</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">apparently resolves this
-      problem.</FONT></P>
-    </DIV>
-    <HR width="100%">
-    <BR>
-     <A name="tcl"></A><STRONG><FONT face="Arial, Helvetica" size="-1" color= 
-    "#FF0000">B. TCL</FONT></STRONG> 
-
-    <P><A name="faqb1"></A><STRONG><FONT face="Arial, Helvetica" size="-1"
-    color="#FF0000">1. REDECLARATION IN COMPAT/UNISTD.H&nbsp;&nbsp; (Tcl
-    7.4/AIX 4)</FONT></STRONG></P>
-
-    <DIV>
-      <FONT face="Arial, Helvetica" size="-1">&nbsp;&nbsp; cc -c -O -I. -I.
-      -DHAVE_________=1 -DSTDC_HEADERS=1 -DNO_UNION_WAIT=1 -DNEED_MATHERR=1
-      -Dvfork=fork -DTCL_LIBRARY=\&quot;/usr/local/lib/tcl7.4\&quot;
-      regexp.c</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">&nbsp;&nbsp;
-      &quot;compat/unistd.h&quot;, line 42.12: 1506-343 (S) Redeclaration of
-      execl differs from previous declaration on line 121 of
-      &quot;/usr/include/unistd.h&quot;.</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">&nbsp;&nbsp;
-      &quot;compat/unistd.h&quot;, line 42.12: 1506-378 (I) Prototype for
-      function execl cannot contain &quot;...&quot; when mixed with a
-      nonprototype declaration.</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">&nbsp;&nbsp;
-      &quot;compat/unistd.h&quot;, line 43.12: 1506-343 (S) Redeclaration of
-      execle differs from previous declaration on line 123 of
-      &quot;/usr/include/unistd.h&quot;.</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">&nbsp;&nbsp;
-      &quot;compat/unistd.h&quot;, line 43.12: 1506-378 (I) Prototype for
-      function execle cannot contain &quot;...&quot; when mixed with a
-      nonprototype declaration.</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">&nbsp;&nbsp;
-      &quot;compat/unistd.h&quot;, line 44.12: 1506-343 (S) Redeclaration of
-      execlp differs from previous declaration on line 125 of
-      &quot;/usr/include/unistd.h&quot;.</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">&nbsp;&nbsp;
-      &quot;compat/unistd.h&quot;, line 44.12: 1506-378 (I) Prototype for
-      function execlp cannot contain &quot;...&quot; when mixed with a
-      nonprototype declaration.</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">&nbsp;&nbsp; make: The error
-      code from the last command is 1.</FONT> 
-
-      <P><FONT face="Arial, Helvetica" size="-1">Seems that configure had a
-      brain fart...&nbsp; Would you believe this was the same system as in
-      A.6 and A.7, heh, it was.&nbsp; Apparently it thought this system
-      didn&#39;t have unistd.h, and was using it&#39;s compatible header,
-      solution was to edit Makefile and change this line:</FONT></P>
-
-      <P><FONT face="Arial, Helvetica" size="-1">AC_FLAGS = -DHAVE_________=1
-      -DSTDC_HEADERS=1 -DNO_UNION_WAIT=1 -DNEED_MATHERR=1
-      -Dvfork=fork</FONT></P>
-
-      <P><FONT face="Arial, Helvetica" size="-1">to the following:</FONT></P>
-
-      <P><FONT face="Arial, Helvetica" size="-1">AC_FLAGS = -DHAVE_UNISTD_H=1
-      -DSTDC_HEADERS=1 -DNO_UNION_WAIT=1 -DNEED_MATHERR=1
-      -Dvfork=fork</FONT></P>
-    </DIV>
-    <A name="faqb2"></A><STRONG><FONT face="Arial, Helvetica" size="-1"
-    color="#FF0000">2. CONFLICTING TYPES FOR &#39;waitpid&#39;&nbsp;&nbsp;
-    (Tcl 7.5/SunOS 5.4)</FONT></STRONG> 
-
-    <DIV>
-      <FONT face="Arial, Helvetica" size="-1">&nbsp;&nbsp; cc -c -O&nbsp;
-      -I./../generic -I. -DNO_STRERROR=1 -DNO_GETWD=1 -DNO_WAIT3=1
-      -DNO_UNAME=1 -DNO_DIRENT_H=1 -DHAVE_UNISTD_H=1 -DHAVE_SYS_TIME_H=1
-      -DTIME_WITH_SYS_TIME=1 -DHAVE_TIMEZONE_VAR=1 -DUSE_DIRENT2_H=1
-      -DNO_UNION_WAIT=1 -DNEED_MATHERR=1 -Dvfork=fork -DN</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">O_GETTOD=1
-      -DGETTOD_NOT_DECLARED=1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      -DTCL_SHLIB_EXT=\&quot;.so\&quot;</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">&nbsp;&nbsp;
-      ./../compat/waitpid.c</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">&nbsp;&nbsp;
-      ./../compat/waitpid.c:69: conflicting types for
-      `waitpid&#39;</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">&nbsp;&nbsp;
-      /usr/include/sys/wait.h:80: previous declaration of
-      `waitpid&#39;</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">&nbsp;&nbsp; make: ***
-      [waitpid.o] Error 1</FONT> 
-
-      <P><FONT face="Arial, Helvetica" size="-1">Configure apparently
-      couldn&#39;t figure this one out, probably because the system it was
-      configured on sucks badly.&nbsp; Change the following line in
-      Makefile:</FONT></P>
-
-      <P><FONT face="Arial, Helvetica" size="-1">COMPAT_OBJS
-      =&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; getcwd.o
-      opendir.o strstr.o strtol.o tmpnam.o waitpid.o strstr.o strtoul.o
-      strtod.o strncasecmp.o</FONT></P>
-
-      <P><FONT face="Arial, Helvetica" size="-1">To the following</FONT></P>
-
-      <P><FONT face="Arial, Helvetica" size="-1">COMPAT_OBJS
-      =&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; getcwd.o
-      opendir.o strstr.o strtol.o tmpnam.o strstr.o strtoul.o strtod.o
-      strncasecmp.o</FONT></P>
-
-      <P><FONT face="Arial, Helvetica" size="-1">We are deleting the
-      waitpid.o object file.&nbsp; The problem was that configure didn&#39;t
-      detect that waitpid() wasn&#39;t necessary, so it caused a compatible
-      waitpid() function to be compiled.</FONT></P>
-    </DIV>
-    <A name="faqb3"></A><STRONG><FONT face="Arial, Helvetica" size="-1"
-    color="#FF0000">3. UNDEFINED SYMBOLS IN tclUnixChan.o -- AND MANY
-    OTHERS&nbsp;&nbsp; (Tcl 7.5/SunOS 5.4)</FONT></STRONG> 
-
-    <DIV>
-      <FONT face="Arial, Helvetica" size="-1">&nbsp;&nbsp; gcc&nbsp;
-      tclAppInit.o -L/export/home/rewt/tcl7.5/unix -ltcl7.5 -ldl&nbsp; -lm
-      -lc \</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -o
-      tclsh</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">&nbsp;&nbsp;
-      Undefined&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      first referenced</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">&nbsp;&nbsp;&nbsp;
-      symbol&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      in file</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">&nbsp;&nbsp;
-      socket&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      /export/home/rewt/tcl7.5/unix/libtcl7.5.a(tclUnixChan.o)</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">&nbsp;&nbsp;
-      getpeername&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      /export/home/rewt/tcl7.5/unix/libtcl7.5.a(tclUnixChan.o)</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">&nbsp;&nbsp;
-      recv&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      /export/home/rewt/tcl7.5/unix/libtcl7.5.a(tclUnixChan.o)</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">&nbsp;&nbsp;
-      gethostbyname&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      /export/home/rewt/tcl7.5/unix/libtcl7.5.a(tclUnixChan.o)</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">&nbsp;&nbsp;
-      accept&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      /export/home/rewt/tcl7.5/unix/libtcl7.5.a(tclUnixChan.o)</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">&nbsp;&nbsp;
-      send&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      /export/home/rewt/tcl7.5/unix/libtcl7.5.a(tclUnixChan.o)</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">&nbsp;&nbsp;
-      bind&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      /export/home/rewt/tcl7.5/unix/libtcl7.5.a(tclUnixChan.o)</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">&nbsp;&nbsp;
-      setsockopt&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      /export/home/rewt/tcl7.5/unix/libtcl7.5.a(tclUnixChan.o)</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">&nbsp;&nbsp;
-      getwd&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      /export/home/rewt/tcl7.5/unix/libtcl7.5.a(getcwd.o)</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">&nbsp;&nbsp;
-      getservbyname&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      /export/home/rewt/tcl7.5/unix/libtcl7.5.a(tclIOSock.o)</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">&nbsp;&nbsp;
-      gethostbyaddr&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      /export/home/rewt/tcl7.5/unix/libtcl7.5.a(tclUnixChan.o)</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">&nbsp;&nbsp;
-      getsockopt&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      /export/home/rewt/tcl7.5/unix/libtcl7.5.a(tclIOSock.o)</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">&nbsp;&nbsp;
-      inet_addr&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      /export/home/rewt/tcl7.5/unix/libtcl7.5.a(tclUnixChan.o)</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">&nbsp;&nbsp;
-      inet_ntoa&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      /export/home/rewt/tcl7.5/unix/libtcl7.5.a(tclUnixChan.o)</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">&nbsp;&nbsp;
-      getsockname&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      /export/home/rewt/tcl7.5/unix/libtcl7.5.a(tclUnixChan.o)</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">&nbsp;&nbsp;
-      listen&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      /export/home/rewt/tcl7.5/unix/libtcl7.5.a(tclUnixChan.o)</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">&nbsp;&nbsp;
-      connect&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      /export/home/rewt/tcl7.5/unix/libtcl7.5.a(tclUnixChan.o)</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">&nbsp;&nbsp; ld: fatal: Symbol
-      referencing errors. No output written to tclsh</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">&nbsp;&nbsp; make: *** [tclsh]
-      Error 1</FONT> 
-
-      <P><FONT face="Arial, Helvetica" size="-1">Configure couldn&#39;t find
-      or detect that nsl and socket libraries were required, so we have to
-      force it to use them.&nbsp; The solution is to edit Makefile and change
-      the following line:</FONT></P>
-
-      <P><FONT face="Arial, Helvetica" size="-1">LIBS = -ldl</FONT></P>
-
-      <P><FONT face="Arial, Helvetica" size="-1">To the following:</FONT></P>
-
-      <P><FONT face="Arial, Helvetica" size="-1">LIBS = -ldl -lnsl
-      -lsocket</FONT></P>
-    </DIV>
-    <A name="faqb4"></A><STRONG><FONT face="Arial, Helvetica" size="-1"
-    color="#FF0000">4. UNDEFINED SYMBOL &#39;getwd&#39; IN
-    getcwd.o&nbsp;&nbsp; (Tcl 7.5/SunOS 5.4)</FONT></STRONG> 
-
-    <DIV>
-      <FONT face="Arial, Helvetica" size="-1">&nbsp;&nbsp; gcc&nbsp;
-      tclAppInit.o -L/export/home/rewt/tcl7.5/unix -ltcl7.5 -ldl -lnsl
-      -lsocket -lm -lc \</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -o
-      tclsh</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">&nbsp;&nbsp;
-      Undefined&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      first referenced</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">&nbsp;&nbsp;&nbsp;
-      symbol&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      in file</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">&nbsp;&nbsp;
-      getwd&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      /export/home/rewt/tcl7.5/unix/libtcl7.5.a(getcwd.o)</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">&nbsp;&nbsp; ld: fatal: Symbol
-      referencing errors. No output written to tclsh</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">&nbsp;&nbsp; make: *** [tclsh]
-      Error 1</FONT><BR>
-       &nbsp; 
-
-      <P><FONT face="Arial, Helvetica" size="-1">Configure apparently
-      couldn&#39;t figure this one out, probably because the system it was
-      configured on sucks badly.&nbsp; Change the following line in
-      Makefile:</FONT></P>
-
-      <P><FONT face="Arial, Helvetica" size="-1">COMPAT_OBJS
-      =&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; getcwd.o
-      opendir.o strstr.o strtol.o tmpnam.o strstr.o strtoul.o strtod.o
-      strncasecmp.o</FONT></P>
-
-      <P><FONT face="Arial, Helvetica" size="-1">To the following</FONT></P>
-
-      <P><FONT face="Arial, Helvetica" size="-1">COMPAT_OBJS
-      =&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; opendir.o
-      strstr.o strtol.o tmpnam.o strstr.o strtoul.o strtod.o
-      strncasecmp.o</FONT></P>
-
-      <P><FONT face="Arial, Helvetica" size="-1">We are deleting the getcwd.o
-      object file.&nbsp; The problem was that configure didn&#39;t detect
-      that getcwd() wasn&#39;t necessary, so it caused a compatible getcwd()
-      function to be compiled.</FONT></P>
-    </DIV>
-    <A name="faqb5"></A><STRONG><FONT face="Arial, Helvetica" size="-1"
-    color="#FF0000">5. There&#39;s no TCL installed on your
-    shell</FONT></STRONG> 
-
-    <DIV>
-      <FONT face="Arial, Helvetica" size="-1">If there&#39;s really no TCL
-      installed on your shell, you can install it temporary in /tmp or your
-      home. Get the newest version of TCL from ftp.eggheads.org/pub/tcl/
-      (anything above TCL 8.2 should be fine) and follow the installation
-      steps in the README. After you&#39;ve installed Tcl, you have to make
-      configure detect Tcl. To achieve this, you have to set either
-      environmental variables:</FONT> 
-
-      <P><FONT face="Arial, Helvetica" size="-1"> &nbsp;&nbsp;&nbsp; export
-      TCLLIB=/path/to/tcl/lib</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">&nbsp;&nbsp;&nbsp; export
-      TCLINC=/path/to/tcl/include</FONT></P>
-
-      <P><FONT face="Arial, Helvetica" size="-1">Please note that on some
-      Unix machines export doesn&#39;t work and you have to use
-      &#39;setenv&#39; instead or to pass configure the full qualified path
-      to Tcl:</FONT></P>
-
-      <P><FONT face="Arial, Helvetica" size="-1">./configure
-      --with-tcllib=/path/to/libtclx.x.so
-      --with-tclinc=/path/to/tcl.h</FONT></P>
-    </DIV>
-    <HR>
-    <EM><FONT face="Arial, Helvetica" size="-1">&copy; 1997 Robey Pointer<BR>
-     &copy; 1999,2000 Eggheads Development Team</FONT></EM>
-  </BODY>
-</HTML>
+<!-- $Id: compiling.html,v 1.2 2000/04/13 11:21:24 tothwolf Exp $ -->
+
+<html>
+  <head>
+    <title>Eggdrop Documentation: Compiling FAQ</title>
+  </head>
+
+  <body>
+    <div align="center">
+      <p><strong>Compiling FAQ</strong></p>
+    </div>
+    <hr>
+
+    <p><strong>Eggdrop and Tcl compiling errors and resolution
+    faq</strong><br>
+     (in other words, maybe this FAQ will help you get Eggdrop compiled).
+    Suggestions by various contributors. If you think something should be
+    added, please send en E-Mail to eggheads@eggheads.org!</p>
+
+    <p>Last revised: March 21 2000</p>
+    <hr>
+
+    <p><a href="#egg">Eggdrop related questions</a></p>
+
+    <blockquote>
+      <ol>
+        <li><a href="#egg1">Undefined references in net.o (Sun OS)</a></li>
+
+        <li><a href="#egg2">Compile stops at the last minute with &quot;ld
+        fatal signal 11&quot;! (Linux)</a></li>
+
+        <li><a href="#egg3">ld: -ltcl7.4: Expected libx.so(.major.minor.xxx)
+        (various)</a></li>
+
+        <li><a href="#egg4">Strip terminated with signal (various)</a></li>
+
+        <li><a href="#egg5">&#39;dir&#39; undeclared (and a whole bunch of
+        others) (AIX 4)</a></li>
+
+        <li><a href="#egg6">&#39;fd_set&#39; undeclared (and a whole bunch of
+        others) (AIX 4)</a></li>
+
+        <li><a href="#egg7">Unresolved or undefined symbols: ldclose, ldopen,
+        ldnshread (AIX 3)</a></li>
+
+        <li><a href="#egg8">Unsatisfied symbols &#39;shl_findsym&#39; and
+        &#39;shl_load&#39; (HP-UX 9)</a></li>
+      </ol>
+    </blockquote>
+
+    <p><a href="#tcl">Tcl related questions</a></p>
+
+    <blockquote>
+      <ol>
+        <li><a href="#tcl1">Redeclaration in compat/unistd.h (Tcl 7.4/AIX
+        4)</a></li>
+
+        <li><a href="#tcl2">Conflicting types for &#39;waitpid&#39; (Tcl
+        7.5/SunOS 5.4)</a></li>
+
+        <li><a href="#tcl3">Undefined symbols in tclUnixChan.o -- and many
+        others (Tcl 7.5/SunOS 5.4)</a></li>
+
+        <li><a href="#tcl4">Undefined symbol &#39;getwd&#39; in getcwd.o (Tcl
+        7.5/SunOS 5.4)</a></li>
+
+        <li><a href="#tcl5">There&#39;s no Tcl installed on your
+        shell</a></li>
+      </ol>
+    </blockquote>
+    <hr>
+
+    <p><a name="egg"><strong>Eggdrop related questions</strong></a></p>
+
+    <p><a name="egg1">1. <strong>Undefined references in net.o (Sun
+    OS)</strong></a></p>
+
+    <blockquote>
+<pre>
+       Undefined      first
+        symbol     referenced
+                     in file
+     socket        net.o
+     gethostbyname net.o
+     accept        net.o
+     bind          net.o
+     setsockopt    net.o
+     gethostbyaddr net.o
+     getsockname   net.o
+     gethostname   net.o
+     listen        net.o
+     connect       net.o
+     ld: fatal: Symbol referencing errors. No output written to eggdrop
+</pre>
+    </blockquote>
+
+    <p>This seems to be caused by a few libraries not being detected by the
+    auto-configure program, it is relatively easy to fix. Edit your Makefile,
+    note that yours may be slightly different than this one when it comes to
+    the Tcl library, but here is the way it probably is:</p>
+
+    <blockquote>
+<pre>
+     GMAKE = ${MAKE} &#39;CC=gcc&#39; &#39;AWK=awk&#39; &#39;OBJS=${OBJS}&#39; &#39;TCLLIBFN=tcl.a&#39;\
+             &#39;CFLAGS=${CFLAGS}&#39; &#39;XREQ=${XREQ}&#39; &#39;XLIBS= -L/usr/local/lib -ltcl -lm&#39;\
+             &#39;TCLLIB=${TCLLIB}&#39; &#39;RANLIB=:&#39; &#39;STRIP=&#39;
+</pre>
+    </blockquote>
+
+    <p>And here is what you need to change:</p>
+
+    <blockquote>
+<pre>
+     GMAKE = ${MAKE} &#39;CC=gcc&#39; &#39;AWK=awk&#39; &#39;OBJS=${OBJS}&#39; &#39;TCLLIBFN=tcl.a&#39;\
+             &#39;CFLAGS=${CFLAGS}&#39; &#39;XREQ=${XREQ}&#39; &#39;XLIBS=-lsocket -ldl -lnsl -L/usr/local/lib -ltcl -lm&#39;\
+             &#39;TCLLIB=${TCLLIB}&#39; &#39;RANLIB=:&#39; &#39;STRIP=&#39;
+</pre>
+    </blockquote>
+
+    <p>You are adding in three libraries to be linked in, socket, dl, and
+    nsl. This will resolve the net.o errors.</p>
+
+    <p><a name="egg2">2. <strong>Compile stops at the last minute with
+    &quot;ld fatal signal 11&quot;! (Linux)</strong></a></p>
+
+    <p>This seems to be caused by a non-ELF Tcl library binary, and the
+    compiler doesn&#39;t seem to like it. The first thing you want to do is
+    download and compile Tcl yourself. And then follow this set of commands
+    to help you reconfigure Eggdrop using the newly compiled Tcl library (all
+    of this should be done from your home directory):</p>
+
+    <blockquote>
+      <p>cd<br>
+       mkdir lib<br>
+       mkdir include<br>
+       find . -name libtcl*</p>
+    </blockquote>
+
+    <p>The output from the find command should give you the location of the
+    library, take the output of that and do the next command with the output
+    of find replacing $$find$$:</p>
+
+    <blockquote>
+      <p>mv $$find$$ lib/libtcl.a</p>
+    </blockquote>
+
+    <p>Now we continue with another find to help us locate tcl.h:</p>
+
+    <blockquote>
+      <p>find . -name tcl.h</p>
+    </blockquote>
+
+    <p>The output from the find command should give you the location of the
+    header file, take the output of that and do the next command with the
+    output of find replacing $$find$$:</p>
+
+    <blockquote>
+      <p>mv $$find$$ include</p>
+    </blockquote>
+
+    <p>Hopefully you know what shell you are using and can pick out which
+    commands to use, if the first two setenv commands give command not found
+    then use the next two, if not then don&#39;t use the next two. First set
+    are for csh/tcsh users, following set is for bash/ksh users.</p>
+
+    <blockquote>
+      <dl>
+        <dt>csh/tcsh:</dt>
+
+        <dd>
+          <p>setenv TCLLIB &#39;$HOME/lib&#39;<br>
+           setenv TCLINC &#39;$HOME/include&#39;</p>
+        </dd>
+
+        <dt>bash/ksh:</dt>
+
+        <dd>
+          <p>export TCLLIB=&#39;$HOME/lib&#39;<br>
+           export TCLINC=&#39;$HOME/include&#39;</p>
+        </dd>
+      </dl>
+    </blockquote>
+
+    <p>And then finally run configure again for Eggdrop and then make, and
+    hopefully it will work.</p>
+
+    <p><a name="egg3">3. <strong>ld: -ltcl7.4: Expected
+    libx.so(.major.minor.xxx) (various)</strong></a></p>
+
+    <blockquote>
+<pre>
+        ld: -ltcl7.4: expected libx.so(.major.minor.xxx)
+        collect2: ld returned 4 exit status
+        *** Error code 1
+        make: Fatal error: Command failed for target `eggdrop&#39;
+</pre>
+    </blockquote>
+
+    <p>On some Unix boxes this seems to be caused by the linker, it is
+    expecting a specific filename format and when it doesn&#39;t live up to
+    it&#39;s expectations it usually barfs. I always see this caused by when
+    the library for Tcl is called libtcl7.4.a or libtcl7.5.a, rename it to
+    simply libtcl.a if you installed Tcl yourself, if you didn&#39;t and your
+    using the Tcl that the system installed then do this:</p>
+
+    <p>View your Makefile, look for the line (should be close to the top)
+    that says</p>
+
+    <blockquote>
+      <p>XREQ = /usr/local/lib/libtcl7.4.a</p>
+    </blockquote>
+
+    <p>And remember that FULL pathname. Go to your home directory, and do the
+    following:</p>
+
+    <blockquote>
+      <p>mkdir lib<br>
+       cd lib<br>
+       ln -s $$xreq$$ libtcl.a</p>
+    </blockquote>
+
+    <p>Replace $$xreq$$ with the full pathname from the XREQ line from the
+    Makefile.</p>
+
+    <p>And finally the next thing you want to do depending on what shell your
+    using is: (try the first one, if it gives bad command then use the
+    second)</p>
+
+    <blockquote>
+      <dl>
+        <dt>csh/tcsh:</dt>
+
+        <dd>
+          <p>setenv TCLLIB &#39;$HOME/lib&#39;</p>
+        </dd>
+
+        <dt>bash/ksh:</dt>
+
+        <dd>
+          <p>export TCLLIB=&#39;$HOME/lib&#39;</p>
+        </dd>
+      </dl>
+    </blockquote>
+
+    <p>Did I say finally? Heh, finally run configure and then make again.</p>
+
+    <p><a name="egg4">4. <strong>Strip terminated with signal
+    (various)</strong></a></p>
+
+    <blockquote>
+<pre>
+        collect2: strip terminated with signal 6 [IOT/Abort trap]
+        *** Exit 1
+        Stop.
+        *** Exit 1
+        Stop.
+</pre>
+    </blockquote>
+
+    <p>I don&#39;t really know what the hell is causing this, but I find that
+    if you don&#39;t strip the binary you cut out the problem (obviously),
+    edit your Makefile and change this line from:</p>
+
+    <blockquote>
+<pre>
+     GMAKE = ${MAKE} &#39;CC=gcc&#39; &#39;AWK=awk&#39; &#39;OBJS=${OBJS}&#39; &#39;TCLLIBFN=tcl.a&#39;\
+             &#39;CFLAGS=${CFLAGS}&#39; &#39;XREQ=${XREQ}&#39; &#39;XLIBS= -L/usr/local/lib -ltcl -lm&#39; \
+             &#39;TCLLIB=${TCLLIB}&#39; &#39;RANLIB=ranlib&#39; &#39;STRIP=-s&#39;
+</pre>
+    </blockquote>
+
+    <p>To this line below: (your lines may differ, but what you are doing is
+    changing &#39;STRIP=-s&#39; to &#39;STRIP=&#39;)</p>
+
+    <blockquote>
+<pre>
+     GMAKE = ${MAKE} &#39;CC=gcc&#39; &#39;AWK=awk&#39; &#39;OBJS=${OBJS}&#39; &#39;TCLLIBFN=tcl.a&#39;\
+             &#39;CFLAGS=${CFLAGS}&#39; &#39;XREQ=${XREQ}&#39; &#39;XLIBS= -L/usr/local/lib -ltcl -lm&#39; \
+             &#39;TCLLIB=${TCLLIB}&#39; &#39;RANLIB=ranlib&#39; &#39;STRIP=&#39;
+</pre>
+    </blockquote>
+
+    <p><a name="egg5">5. <strong>&#39;dir&#39; undeclared (and a whole bunch
+    of others) (AIX 4)</strong></a></p>
+
+    <blockquote>
+<pre>
+        gcc -c -O2 -fno-strength-reduce -I.. -DHAVE_CONFIG_H  filedb.c
+        filedb.c: In function `filedb_update&#39;:
+        filedb.c:209: `DIR&#39; undeclared (first use this function)
+        filedb.c:209: (Each undeclared identifier is reported only once
+        filedb.c:209: for each function it appears in.)
+        filedb.c:209: `dir&#39; undeclared (first use this function)
+        filedb.c:209: parse error before `*&#39;
+        filedb.c:217: warning: assignment makes pointer from integer without a cast
+        filedb.c:218: `name&#39; undeclared (first use this function)
+        filedb.c:218: dereferencing pointer to incomplete type
+        filedb.c:220: dereferencing pointer to incomplete type
+        filedb.c:220: dereferencing pointer to incomplete type
+        filedb.c:224: dereferencing pointer to incomplete type
+        filedb.c:224: dereferencing pointer to incomplete type
+        filedb.c:225: dereferencing pointer to incomplete type
+        filedb.c:230: `s&#39; undeclared (first use this function)
+        filedb.c:231: `st&#39; undeclared (first use this function)
+        filedb.c:232: `fdb&#39; undeclared (first use this function)
+        filedb.c:232: `where&#39; undeclared (first use this function)
+        filedb.c:237: `fdb1&#39; undeclared (first use this function)
+        filedb.c:253: warning: assignment makes pointer from integer without a cast
+        make: The error code from the last command is 1.
+</pre>
+    </blockquote>
+
+    <p>This seems like one of the components of configure was broken, because
+    what apparently happened was it didn&#39;t detect that this particular
+    system had dirent.h and sys/dir.h, solution was to add -DHAVE_DIRENT_H
+    -DHAVE_SYS_DIR_H to the Makefile&#39;s CFLGS line...</p>
+
+    <blockquote>
+      <p>CFLGS = -DHAVE_DIRENT_H -DHAVE_SYS_DIR_H</p>
+    </blockquote>
+
+    <p><a name="egg6">6. <strong>&#39;fd_set&#39; undeclared (and a whole
+    bunch of others) (AIX 4)</strong></a></p>
+
+    <blockquote>
+<pre>
+        gcc -c -O2 -fno-strength-reduce -I.. -DHAVE_CONFIG_H -DHAVE_DIRENT_H -DHAVE_SYS_DIR_H net.c
+        net.c: In function `sockread&#39;:
+        net.c:390: `fd_set&#39; undeclared (first use this function)
+        net.c:390: (Each undeclared identifier is reported only once
+        net.c:390: for each function it appears in.)
+        net.c:390: parse error before `fd&#39;
+        net.c:396: `fd&#39; undeclared (first use this function)
+        make: The error code from the last command is 1.
+</pre>
+    </blockquote>
+
+    <p>Again, this seems that one of configure&#39;s components (sed, awk, or
+    something along those lines) was broken, and it failed to detect that
+    this system needed sys/select.h, solution was to add -DHAVE_SYS_SELECT_H
+    to the Makefile&#39;s CFLGS line...</p>
+
+    <blockquote>
+      <p>CFLGS = -DHAVE_DIRENT_H -DHAVE_SYS_DIR_H -DHAVE_SYS_SELECT_H</p>
+    </blockquote>
+
+    <p>(I suppose they thought a minor error would deter anyone from
+    continuing onward, but I am not just anyone, I am a blockhead...
+    &lt;grin&gt;)</p>
+
+    <p><a name="egg7">7. <strong>Unresolved or undefined symbols: ldclose,
+    ldopen, ldnshread (AIX 3)</strong></a></p>
+
+    <blockquote>
+<pre>
+     cc -s -o eggdrop chan.o chanprog.o chanset.o cmds.o dcc.o dccutil.o
+     filedb.o fileq.o files.o gotdcc.o hash.o main.o match.o mem.o misc.o
+     mode.o msgcmds.o msgnotice.o net.o tandcmd.o tandem.o tcl.o tclhash.o
+     userrec.o users.o -L/home2/f/foster/lib -ltcl7.5 -lm
+        0706-317 ERROR: Unresolved or undefined symbols detected:
+                         Symbols in error (followed by references) are dumped to the load map.
+                         The -bloadmap:&lt;filename&gt; option will create a load map.
+        .ldclose
+        .ldopen
+        .ldnshread
+        make: 1254-004 The error code from the last command is 8.
+</pre>
+    </blockquote>
+
+    <p>Apparently what is happening is a library called ld is required, and
+    either configure doesn&#39;t know it is needed or it simple can&#39;t
+    find it, or maybe this is a unique case, solution was to have ld linked
+    in with the final binary.</p>
+
+    <p>Edit your Makefile and find the line that looks something like
+    this:</p>
+
+    <blockquote>
+<pre>
+     GMAKE = ${MAKE} &#39;CC=cc&#39; &#39;AWK=awk&#39; &#39;OBJS=${OBJS}&#39; &#39;TCLLIBFN=tcl7.5.a&#39;\
+             &#39;CFLAGS=${CFLAGS}&#39; &#39;XREQ=${XREQ}&#39; &#39;XLIBS=
+     -L/home2/f/foster/lib -ltcl7.5 -lm&#39;\
+             &#39;TCLLIB=${TCLLIB}&#39; &#39;RANLIB=ranlib&#39; &#39;STRIP=-s&#39;
+</pre>
+    </blockquote>
+
+    <p>And add in -lld into the XLIBS assignment, like this...</p>
+
+    <blockquote>
+<pre>
+     GMAKE = ${MAKE} &#39;CC=cc&#39; &#39;AWK=awk&#39; &#39;OBJS=${OBJS}&#39; &#39;TCLLIBFN=tcl7.5.a&#39;\
+             &#39;CFLAGS=${CFLAGS}&#39; &#39;XREQ=${XREQ}&#39; &#39;XLIBS=-lld
+     -L/home2/f/foster/lib -ltcl7.5 -lm&#39;\
+             &#39;TCLLIB=${TCLLIB}&#39; &#39;RANLIB=ranlib&#39; &#39;STRIP=-s&#39;
+</pre>
+    </blockquote>
+
+    <p><a name="egg8">8. <strong>Unsatisfied symbols &#39;shl_findsym&#39;
+    and &#39;shl_load&#39; (HP-UX 9)</strong></a></p>
+
+    <blockquote>
+<pre>
+        gcc -s -o eggdrop chan.o chanprog.o chanset.o cmds.o dcc.o
+     dccutil.o filedb.o fileq.o files.o gotdcc.o hash.o main.o match.o
+     mem.o misc.o mode.o msgcmds.o msgnotice.o net.o tandcmd.o tandem.o
+     tcl.o tclhash.o userrec.o users.o -L/home/hltran/tcl/lib -lt
+     cl7.5 -lm
+        /bin/ld: Unsatisfied symbols:
+           shl_findsym (code)
+           shl_load (code)
+        collect2: ld returned 1 exit status
+        *** Error code 1
+        Stop.
+</pre>
+    </blockquote>
+
+    <p>I forwarded this one to Robey and he said that Tcl 7.5 the dl library,
+    and that apparently configure couldn&#39;t detect that this was required
+    in this case. So try this fix, and if it works, great, if not then use
+    Tcl 7.4, I hear this works. :)</p>
+
+    <blockquote>
+<pre>
+     GMAKE = ${MAKE} &#39;CC=gcc&#39; &#39;AWK=awk&#39; &#39;OBJS=${OBJS}&#39; &#39;TCLLIBFN=tcl7.5.a&#39;\
+             &#39;CFLAGS=${CFLAGS}&#39; &#39;XREQ=${XREQ}&#39; &#39;XLIBS= -L/usr/local/lib -ltcl7.5 -lm&#39;\
+             &#39;TCLLIB=${TCLLIB}&#39; &#39;RANLIB=:&#39; &#39;STRIP=&#39;
+</pre>
+    </blockquote>
+
+    <p>And here is what you need to change:</p>
+
+    <blockquote>
+<pre>
+     GMAKE = ${MAKE} &#39;CC=gcc&#39; &#39;AWK=awk&#39; &#39;OBJS=${OBJS}&#39; &#39;TCLLIBFN=tcl7.5.a&#39;\
+             &#39;CFLAGS=${CFLAGS}&#39; &#39;XREQ=${XREQ}&#39; &#39;XLIBS=-ldl -L/usr/local/lib -ltcl7.5 -lm&#39;\
+             &#39;TCLLIB=${TCLLIB}&#39; &#39;RANLIB=:&#39; &#39;STRIP=&#39;
+</pre>
+    </blockquote>
+
+    <p>Basically what you are doing is adding in -ldl to the XLIBS
+    declaration, essentially at link time you are tell it to also link in the
+    dl library which apparently resolves this problem.</p>
+    <hr>
+
+    <p><a name="tcl"><strong>Tcl related questions</strong></a></p>
+
+    <p><a name="tcl1">1. <strong>Redeclaration in compat/unistd.h (Tcl
+    7.4/AIX 4)</strong></a></p>
+
+    <blockquote>
+<pre>
+        cc -c -O -I. -I. -DHAVE_________=1 -DSTDC_HEADERS=1
+     -DNO_UNION_WAIT=1 -DNEED_MATHERR=1 -Dvfork=fork
+     -DTCL_LIBRARY=\&quot;/usr/local/lib/tcl7.4\&quot; regexp.c
+        &quot;compat/unistd.h&quot;, line 42.12: 1506-343 (S) Redeclaration of execl
+     differs from previous declaration on line 121 of
+     &quot;/usr/include/unistd.h&quot;.
+        &quot;compat/unistd.h&quot;, line 42.12: 1506-378 (I) Prototype for function
+     execl cannot contain &quot;...&quot; when mixed with a nonprototype declaration.
+
+        &quot;compat/unistd.h&quot;, line 43.12: 1506-343 (S) Redeclaration of execle
+     differs from previous declaration on line 123 of
+     &quot;/usr/include/unistd.h&quot;.
+        &quot;compat/unistd.h&quot;, line 43.12: 1506-378 (I) Prototype for function
+     execle cannot contain &quot;...&quot; when mixed with a nonprototype
+     declaration.
+        &quot;compat/unistd.h&quot;, line 44.12: 1506-343 (S) Redeclaration of execlp
+     differs from previous declaration on line 125 of
+     &quot;/usr/include/unistd.h&quot;.
+        &quot;compat/unistd.h&quot;, line 44.12: 1506-378 (I) Prototype for function
+     execlp cannot contain &quot;...&quot; when mixed with a nonprototype
+     declaration.
+        make: The error code from the last command is 1.
+</pre>
+    </blockquote>
+
+    <p>Seems that configure had a brain fart... Would you believe this was
+    the same system as in A.6 and A.7, heh, it was. Apparently it thought
+    this system didn&#39;t have unistd.h, and was using it&#39;s compatible
+    header, solution was to edit Makefile and change this line:</p>
+
+    <blockquote>
+      <p>AC_FLAGS = -DHAVE_________=1 -DSTDC_HEADERS=1 -DNO_UNION_WAIT=1
+      -DNEED_MATHERR=1 -Dvfork=fork</p>
+    </blockquote>
+
+    <p>To the following:</p>
+
+    <blockquote>
+      <p>AC_FLAGS = -DHAVE_UNISTD_H=1 -DSTDC_HEADERS=1 -DNO_UNION_WAIT=1
+      -DNEED_MATHERR=1 -Dvfork=fork</p>
+    </blockquote>
+
+    <p><a name="tcl2">2. <strong>Conflicting types for &#39;waitpid&#39; (Tcl
+    7.5/SunOS 5.4)</strong></a></p>
+
+    <blockquote>
+<pre>
+        cc -c -O  -I./../generic -I. -DNO_STRERROR=1 -DNO_GETWD=1
+     -DNO_WAIT3=1 -DNO_UNAME=1 -DNO_DIRENT_H=1 -DHAVE_UNISTD_H=1
+     -DHAVE_SYS_TIME_H=1 -DTIME_WITH_SYS_TIME=1 -DHAVE_TIMEZONE_VAR=1
+     -DUSE_DIRENT2_H=1 -DNO_UNION_WAIT=1 -DNEED_MATHERR=1 -Dvfork=fork -DN
+     O_GETTOD=1 -DGETTOD_NOT_DECLARED=1       -DTCL_SHLIB_EXT=\&quot;.so\&quot;
+        ./../compat/waitpid.c
+        ./../compat/waitpid.c:69: conflicting types for `waitpid&#39;
+        /usr/include/sys/wait.h:80: previous declaration of `waitpid&#39;
+        make: *** [waitpid.o] Error 1
+</pre>
+    </blockquote>
+
+    <p>Configure apparently couldn&#39;t figure this one out, probably
+    because the system it was configured on sucks badly. Change the following
+    line in Makefile:</p>
+
+    <blockquote>
+<pre>
+     COMPAT_OBJS =          getcwd.o opendir.o strstr.o strtol.o tmpnam.o
+     waitpid.o strstr.o strtoul.o strtod.o strncasecmp.o
+</pre>
+    </blockquote>
+
+    <p>To the following:</p>
+
+    <blockquote>
+<pre>
+     COMPAT_OBJS =          getcwd.o opendir.o strstr.o strtol.o tmpnam.o
+     strstr.o strtoul.o strtod.o strncasecmp.o
+</pre>
+    </blockquote>
+
+    <p>We are deleting the waitpid.o object file. The problem was that
+    configure didn&#39;t detect that waitpid() wasn&#39;t necessary, so it
+    caused a compatible waitpid() function to be compiled.</p>
+
+    <p><a name="tcl3">3. <strong>Undefined symbols in tclUnixChan.o -- and
+    many others (Tcl 7.5/SunOS 5.4)</strong></a></p>
+
+    <blockquote>
+<pre>
+        gcc  tclAppInit.o -L/export/home/rewt/tcl7.5/unix -ltcl7.5 -ldl -lm -lc \
+                 -o tclsh
+        Undefined                       first referenced
+         symbol                             in file
+        socket
+     /export/home/rewt/tcl7.5/unix/libtcl7.5.a(tclUnixChan.o)
+        getpeername
+     /export/home/rewt/tcl7.5/unix/libtcl7.5.a(tclUnixChan.o)
+        recv
+     /export/home/rewt/tcl7.5/unix/libtcl7.5.a(tclUnixChan.o)
+        gethostbyname
+     /export/home/rewt/tcl7.5/unix/libtcl7.5.a(tclUnixChan.o)
+        accept
+     /export/home/rewt/tcl7.5/unix/libtcl7.5.a(tclUnixChan.o)
+        send
+     /export/home/rewt/tcl7.5/unix/libtcl7.5.a(tclUnixChan.o)
+        bind
+     /export/home/rewt/tcl7.5/unix/libtcl7.5.a(tclUnixChan.o)
+        setsockopt
+     /export/home/rewt/tcl7.5/unix/libtcl7.5.a(tclUnixChan.o)
+        getwd
+     /export/home/rewt/tcl7.5/unix/libtcl7.5.a(getcwd.o)
+        getservbyname
+     /export/home/rewt/tcl7.5/unix/libtcl7.5.a(tclIOSock.o)
+        gethostbyaddr
+     /export/home/rewt/tcl7.5/unix/libtcl7.5.a(tclUnixChan.o)
+        getsockopt
+     /export/home/rewt/tcl7.5/unix/libtcl7.5.a(tclIOSock.o)
+        inet_addr
+     /export/home/rewt/tcl7.5/unix/libtcl7.5.a(tclUnixChan.o)
+        inet_ntoa
+     /export/home/rewt/tcl7.5/unix/libtcl7.5.a(tclUnixChan.o)
+        getsockname
+     /export/home/rewt/tcl7.5/unix/libtcl7.5.a(tclUnixChan.o)
+        listen
+     /export/home/rewt/tcl7.5/unix/libtcl7.5.a(tclUnixChan.o)
+        connect
+     /export/home/rewt/tcl7.5/unix/libtcl7.5.a(tclUnixChan.o)
+        ld: fatal: Symbol referencing errors. No output written to tclsh
+        make: *** [tclsh] Error 1
+</pre>
+    </blockquote>
+
+    <p>Configure couldn&#39;t find or detect that nsl and socket libraries
+    were required, so we have to force it to use them. The solution is to
+    edit Makefile and change the following line:</p>
+
+    <blockquote>
+      <p>LIBS = -ldl</p>
+    </blockquote>
+
+    <p>To the following:</p>
+
+    <blockquote>
+      <p>LIBS = -ldl -lnsl -lsocket</p>
+    </blockquote>
+
+    <p><a name="tcl4">4. <strong>Undefined symbol &#39;getwd&#39; in getcwd.o
+    (Tcl 7.5/SunOS 5.4)</strong></a></p>
+
+    <blockquote>
+<pre>
+        gcc  tclAppInit.o -L/export/home/rewt/tcl7.5/unix -ltcl7.5 -ldl -lnsl -lsocket -lm -lc \
+                 -o tclsh
+        Undefined                       first referenced
+         symbol                             in file
+        getwd
+     /export/home/rewt/tcl7.5/unix/libtcl7.5.a(getcwd.o)
+        ld: fatal: Symbol referencing errors. No output written to tclsh
+        make: *** [tclsh] Error 1
+</pre>
+    </blockquote>
+
+    <p>Configure apparently couldn&#39;t figure this one out, probably
+    because the system it was configured on sucks badly. Change the following
+    line in Makefile:</p>
+
+    <blockquote>
+<pre>
+     COMPAT_OBJS =          getcwd.o opendir.o strstr.o strtol.o tmpnam.o
+     strstr.o strtoul.o strtod.o strncasecmp.o
+</pre>
+    </blockquote>
+
+    <p>To the following:</p>
+
+    <blockquote>
+<pre>
+     COMPAT_OBJS =          opendir.o strstr.o strtol.o tmpnam.o strstr.o
+     strtoul.o strtod.o strncasecmp.o
+</pre>
+    </blockquote>
+
+    <p>We are deleting the getcwd.o object file. The problem was that
+    configure didn&#39;t detect that getcwd() wasn&#39;t necessary, so it
+    caused a compatible getcwd() function to be compiled.</p>
+
+    <p><a name="tcl5">5. <strong>There&#39;s no Tcl installed on your
+    shell</strong></a></p>
+
+    <p>If there&#39;s really no TCL installed on your shell, you can install
+    it temporary in /tmp or your home. Get the latest version of TCL from <a
+    href="ftp://ftp.scriptics.com/pub/tcl/">
+    ftp://ftp.scriptics.com/pub/tcl/</a> and follow the installation steps in
+    it&#39;s README file. After you&#39;ve installed Tcl, you have to make
+    configure detect Tcl. To achieve this, you have to set either
+    environmental variables:</p>
+
+    <blockquote>
+      <dl>
+        <dt>csh/tcsh:</dt>
+
+        <dd>
+          <p>setenv TCLLIB &#39;/path/to/tcl/lib&#39;<br>
+           setenv TCLINC &#39;/path/to/tcl/include&#39;</p>
+        </dd>
+
+        <dt>bash/ksh:</dt>
+
+        <dd>
+          <p>export TCLLIB=&#39;/path/to/tcl/lib&#39;<br>
+           export TCLINC=&#39;/path/to/tcl/include&#39;</p>
+        </dd>
+      </dl>
+
+      <p>./configure --with-tcllib=&#39;/path/to/libtclx.x.so&#39;
+      --with-tclinc=&#39;/path/to/tcl.h&#39;</p>
+    </blockquote>
+    <hr>
+
+    <p><em>© 1997 Robey Pointer<br>
+     © 1999,2000 Eggheads Development Team</em></p>
+  </body>
+</html>
 

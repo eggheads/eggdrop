@@ -1,140 +1,154 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<!-- $Id: starting.html,v 1.2 2000/04/13 11:21:24 tothwolf Exp $ -->
 
-<HTML>
-  <HEAD>
-    <TITLE>Eggdrop Documentation: Starting Out</TITLE>
-  </HEAD>
+<html>
+  <head>
+    <title>Eggdrop Documentation: Starting Out</title>
+  </head>
 
-  <BODY text="#000000" bgcolor="#FFFFFF" link="#3333FF" vlink="#3333FF"
-  alink="#3333FF">
-    <STRONG><FONT face="Arial, Helvetica" size="-1" color="#FF0000">STARTING
-    OUT</FONT></STRONG> 
-    <HR>
+  <body>
+    <div align="center">
+      <p><strong>Starting Out</strong></p>
+    </div>
+    <hr>
 
-    <BLOCKQUOTE>
-      <FONT face="Arial, Helvetica" size="-1">Obviously the first thing you
-      want to do is compile the bot. The README file tells you what to do and
-      answers some frequently-asked questions about compiling. If you&#39;re
-      in a rush and you know what you&#39;re doing, you don&#39;t have to
-      read this at all -- the README file tells you how to quickly compile
-      and start up the bot.</FONT> 
+    <p>Obviously the first thing you want to do is compile the bot. The
+    README file tells you what to do and answers some frequently-asked
+    questions about compiling. If you&#39;re in a rush and you know what
+    you&#39;re doing, you don&#39;t have to read this at all -- the README
+    file tells you how to quickly compile and start up the bot.</p>
 
-      <P><FONT face="Arial, Helvetica" size="-1">If you&#39;ve read this far,
-      then, I&#39;ll assume you have successfully compiled Eggdrop and edited
-      the config file.</FONT></P>
+    <p>If you&#39;ve read this far, then, I&#39;ll assume you have
+    successfully compiled Eggdrop and edited the config file.</p>
 
-      <P><FONT face="Arial, Helvetica" size="-1">First of all, Eggdrop has
-      some command-line options -- not many, because most things should be
-      defined through the config file. However sometimes you may want to
-      start up the bot in a different mode, and the command-line options let
-      you do that. Basically, the command line for Eggdrop is:</FONT></P>
+    <p>First of all, Eggdrop has some command-line options -- not many,
+    because most things should be defined through the config file. However
+    sometimes you may want to start up the bot in a different mode, and the
+    command-line options let you do that. Basically, the command line for
+    Eggdrop is:</p>
 
-      <BLOCKQUOTE>
-        <EM><FONT face="Arial, Helvetica" size="-1">% eggdrop &lt;options&gt;
-        &lt;config-file&gt;</FONT></EM>
-      </BLOCKQUOTE>
-      <FONT face="Arial, Helvetica" size="-1">The options available
-      are:</FONT> 
+    <blockquote>
+      <p><em>% eggdrop &lt;options&gt; &lt;config-file&gt;</em></p>
+    </blockquote>
 
-      <P><FONT face="Arial, Helvetica" size="-1">-n Don&#39;t background.
-      Normally Eggdrop will move itself into the background when you start it
-      up, meaning you&#39;ll get another shell prompt and you can do other
-      things while the bot is going. With -n, you won&#39;t return to the
-      shell prompt until the bot exits (which won&#39;t normally happen until
-      it&#39;s killed). By default, -n will send all log entries to the
-      console.</FONT></P>
+    <p>The options available are:</p>
 
-      <P><FONT face="Arial, Helvetica" size="-1">-nt Don&#39;t background,
-      use terminal. This is just like -n, except that instead of seeing log
-      entries, your console will simulate a DCC chat with the bot.</FONT></P>
+    <blockquote>
+      <dl>
+        <dt><strong>-n</strong></dt>
 
-      <P><FONT face="Arial, Helvetica" size="-1">-nc Don&#39;t background,
-      show channel info. This is just like -n, except that instead of seeing
-      log entries, every 10 seconds your screen will clear and you will see
-      the current channel status, sort of like &quot;top&quot;.</FONT></P>
+        <dd>
+          <p>Don&#39;t background. Normally Eggdrop will move itself into the
+          background when you start it up, meaning you&#39;ll get another
+          shell prompt and you can do other things while the bot is going.
+          With -n, you won&#39;t return to the shell prompt until the bot
+          exits (which won&#39;t normally happen until it&#39;s killed). By
+          default, -n will send all log entries to the console.</p>
+        </dd>
 
-      <P><FONT face="Arial, Helvetica" size="-1">-m Create userfile. If you
-      don&#39;t have a userfile, this will make Eggdrop create one, and give
-      master/owner status to the first person that introduces himself or
-      herself to it. You&#39;ll need to do this when you first set up your
-      bot, and never again.</FONT></P>
+        <dt><strong>-nt</strong></dt>
 
-      <P><FONT face="Arial, Helvetica" size="-1">-v Show version info, then
-      quit.</FONT></P>
+        <dd>
+          <p>Don&#39;t background, use terminal. This is just like -n, except
+          that instead of seeing log entries, your console will simulate a
+          DCC chat with the bot.</p>
+        </dd>
 
-      <P><FONT face="Arial, Helvetica" size="-1">Most people never use any of
-      the options except -m, and you only need to use that once.</FONT></P>
+        <dt><strong>-nc</strong></dt>
 
-      <P><FONT face="Arial, Helvetica" size="-1">It&#39;s <STRONG>
-      STRONGLY</STRONG> recommended to run your bot from its own directory.
-      That way upgrading to a new version is somewhat painless, and you
-      won&#39;t have any troubles from language files and the like being in
-      the wrong location. You can put your config file and user file in that
-      directory, and then when you compile a new version of Eggdrop, you just
-      have to do:</FONT></P>
+        <dd>
+          <p>Don&#39;t background, show channel info. This is just like -n,
+          except that instead of seeing log entries, every 10 seconds your
+          screen will clear and you will see the current channel status, sort
+          of like &quot;top&quot;.</p>
+        </dd>
 
-      <BLOCKQUOTE>
-        <EM><FONT face="Arial, Helvetica" size="-1">make install=DEST
-        &lt;directory&gt;</FONT></EM>
-      </BLOCKQUOTE>
-      <FONT face="Arial, Helvetica" size="-1">and it will copy all the
-      necessary files.</FONT> 
+        <dt><strong>-m</strong></dt>
 
-      <P><FONT face="Arial, Helvetica" size="-1">The config file that comes
-      with Eggdrop is called &quot;eggdrop.conf.dist&quot;. You need to edit
-      that file and change almost everything. It specifies the bot&#39;s
-      nickname, server list, and pretty much everything else about how your
-      bot will work. You should also rename it from &quot;eggdrop.conf&quot;
-      to something resembling your bot&#39;s name, for convenience. I call
-      mine &quot;sisko&quot; since my bot is &quot;Sisko&quot;.</FONT></P>
+        <dd>
+          <p>Create userfile. If you don&#39;t have a userfile, this will
+          make Eggdrop create one, and give master/owner status to the first
+          person that introduces himself or herself to it. You&#39;ll need to
+          do this when you first set up your bot, and never again.</p>
+        </dd>
 
-      <P><FONT face="Arial, Helvetica" size="-1">You can execute the script
-      to start the bot. For example, I use:</FONT></P>
+        <dt><strong>-v</strong></dt>
 
-      <BLOCKQUOTE>
-        <EM><FONT face="Arial, Helvetica" size="-1">chmod u+x
-        sisko</FONT></EM>
-      </BLOCKQUOTE>
-      <FONT face="Arial, Helvetica" size="-1">to make the &quot;sisko&quot;
-      script executable. Then I edited the first line of the script to
-      say:</FONT> 
+        <dd>
+          <p>Show version info, then quit.</p>
+        </dd>
+      </dl>
+    </blockquote>
 
-      <BLOCKQUOTE>
-        <EM><FONT face="Arial, Helvetica" size="-1"> #!./eggdrop</FONT></EM>
-      </BLOCKQUOTE>
-      <FONT face="Arial, Helvetica" size="-1">which tells the operating
-      system which program to run when executing this script. (Obviously, it
-      needs to run Eggdrop.) If you&#39;re too lazy to do this, or just
-      don&#39;t feel like it, you can still start up your bot this
-      way:</FONT> 
+    <p>Most people never use any of the options except -m, and you only need
+    to use that once.</p>
 
-      <BLOCKQUOTE>
-        <EM><FONT face="Arial, Helvetica" size="-1">eggdrop &lt;options&gt;
-        &lt;config-file&gt;</FONT></EM>
-      </BLOCKQUOTE>
-      <FONT face="Arial, Helvetica" size="-1">For example:</FONT> 
+    <p>It&#39;s <strong> STRONGLY</strong> recommended to run your bot from
+    its own directory. That way upgrading to a new version is somewhat
+    painless, and you won&#39;t have any troubles from language files and the
+    like being in the wrong location. You can put your config file and user
+    file in that directory, and then when you compile a new version of
+    Eggdrop, you just have to do:</p>
 
-      <BLOCKQUOTE>
-        <EM><FONT face="Arial, Helvetica" size="-1">eggdrop -nt
-        sisko</FONT></EM>
-      </BLOCKQUOTE>
-      <FONT face="Arial, Helvetica" size="-1">After you&#39;ve edited your
-      config file and set the directories up the way you want them, start the
-      bot with the -m option. That will make it create a user file. As soon
-      as you&#39;ve started up the bot, you need to go to IRC and introduce
-      yourself to the bot. Typically this is done by sending it the /msg
-      &quot;hello&quot;, although many people change that greeting to
-      something else (read the config file for more info about that).</FONT> 
+    <blockquote>
+      <p><em>make DEST=&quot;directory&quot; install</em></p>
+    </blockquote>
 
-      <P><FONT face="Arial, Helvetica" size="-1">When started with the -m
-      option, the first person to introduce themselves to the bot will become
-      the master/owner. You want to be that person. Once you are recognized
-      as the owner, you have full access to the commands and abilities of the
-      bot.</FONT></P>
-    </BLOCKQUOTE>
-    <HR>
-    <EM><FONT face="Arial, Helvetica" size="-1">&copy; 1997 Robey Pointer<BR>
-     &copy; 1999,2000 Eggheads Development Team</FONT></EM>
-  </BODY>
-</HTML>
+    <p>and it will copy all the necessary files.</p>
+
+    <p>The config file that comes with Eggdrop is called
+    &quot;eggdrop.conf.dist&quot;. You need to copy this file to
+    &quot;eggdrop.conf&quot; and edit that file and change almost everything.
+    It specifies the bot&#39;s nickname, server list, and pretty much
+    everything else about how your bot will work. You should also rename it
+    from &quot;eggdrop.conf&quot; to something resembling your bot&#39;s
+    name, for convenience. I call mine &quot;sisko&quot; since my bot is
+    &quot;Sisko&quot;.</p>
+
+    <p>You can execute the script to start the bot. For example, I use:</p>
+
+    <blockquote>
+      <p><em>chmod u+x sisko</em></p>
+    </blockquote>
+
+    <p>to make the &quot;sisko&quot; script executable. Then I edited the
+    first line of the script to say:</p>
+
+    <blockquote>
+      <p><em> #!./eggdrop</em></p>
+    </blockquote>
+
+    <p>which tells the operating system which program to run when executing
+    this script. (Obviously, it needs to run Eggdrop.) If you&#39;re too lazy
+    to do this, or just don&#39;t feel like it, you can still start up your
+    bot this way:</p>
+
+    <blockquote>
+      <p><em>eggdrop &lt;options&gt; &lt;config-file&gt;</em></p>
+    </blockquote>
+
+    <p>For example:</p>
+
+    <blockquote>
+      <em>eggdrop -nt sisko</em>
+    </blockquote>
+
+    <p>After you&#39;ve edited your config file and set the directories up
+    the way you want them, start the bot with the -m option. That will make
+    it create a user file. As soon as you&#39;ve started up the bot, you need
+    to go to IRC and introduce yourself to the bot. Typically this is done by
+    sending it the /msg &quot;hello&quot;, although many people change that
+    greeting to something else (read the config file for more info about
+    that).</p>
+
+    <p>When started with the -m option, the first person to introduce
+    themselves to the bot will become the master/owner. You want to be that
+    person. Once you are recognized as the owner, you have full access to the
+    commands and abilities of the bot.</p>
+    <hr>
+
+    <p><em>© 1997 Robey Pointer<br>
+     © 1999,2000 Eggheads Development Team</em></p>
+  </body>
+</html>
 

@@ -1,73 +1,68 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<!-- $Id: sharing.html,v 1.2 2000/04/13 11:21:24 tothwolf Exp $ -->
 
-<HTML>
-  <HEAD>
-    <TITLE>Eggdrop Documentation: Userfile Sharing</TITLE>
-  </HEAD>
+<html>
+  <head>
+    <title>Eggdrop Documentation: Userfile Sharing</title>
+  </head>
 
-  <BODY text="#000000" bgcolor="#FFFFFF" link="#3333FF" vlink="#3333FF"
-  alink="#3333FF">
-    <STRONG><FONT face="Arial, Helvetica" size="-1" color="#FF0000">USERFILE
-    SHARING</FONT></STRONG> 
-    <HR>
+  <body>
+    <div align="center">
+      <p><strong>Userfile Sharing</strong></p>
+    </div>
+    <hr>
 
-    <BLOCKQUOTE>
-      <FONT face="Arial, Helvetica" size="-1">One of the more interesting
-      things you can do when you link two bots, is to make them share
-      userfiles. BE CAREFUL before you do this, though! When you link, one
-      bot is going to lose its userfile! (It will be overwritten by the other
-      bot&#39;s userfile.)</FONT> 
+    <p>One of the more interesting things you can do when you link two bots,
+    is to make them share userfiles. <strong>BE CAREFUL</strong> before you
+    do this, though! When you link, one bot is going to lose its userfile!
+    (It will be overwritten by the other bot&#39;s userfile.)</p>
 
-      <P><FONT face="Arial, Helvetica" size="-1">To do userfile sharing, you
-      have to make sure the share module and transfer modules are loaded.
-      Otherwise, your bot will automatically reject all userfile share
-      attempts by other bots. (It&#39;s a safety feature.)</FONT></P>
+    <p>To do userfile sharing, you have to make sure the share module and
+    transfer modules are loaded. Otherwise, your bot will automatically
+    reject all userfile share attempts by other bots. (It&#39;s a safety
+    feature.)</p>
 
-      <P><FONT face="Arial, Helvetica" size="-1">Next you need to decide
-      which bot will be ACTIVE and which will be PASSIVE, the ACTIVE bot will
-      send its userfile and overwrite the PASSIVE&#39;s userfile, so be
-      careful. Once you&#39;ve decided, on the ACTIVE bot, you set the
-      PASSIVE bot +s, to indicate sharing, and on the PASSIVE you set the
-      ACTIVE +p to indicate passive sharing, the bot will only share
-      passively with 1 bot at once, but can share actively with any number of
-      bots.</FONT></P>
+    <p>Next you need to decide which bot will be ACTIVE and which will be
+    PASSIVE, the ACTIVE bot will send its userfile and overwrite the
+    PASSIVE&#39;s userfile, so be careful. Once you&#39;ve decided, on the
+    ACTIVE bot, you set the PASSIVE bot +s, to indicate sharing, and on the
+    PASSIVE you set the ACTIVE +p to indicate passive sharing, the bot will
+    only share passively with 1 bot at once, but can share actively with any
+    number of bots.</p>
 
-      <P><FONT face="Arial, Helvetica" size="-1">Next go through all the
-      channels you want shared between the 2 bots and make sure they are
-      +shared in the config file, and also that each bot has the other bot
-      make +s for each channel,</FONT></P>
+    <p>Next go through all the channels you want shared between the 2 bots
+    and make sure they are +shared in the config file, and also that each bot
+    has the other bot make +s for each channel,</p>
 
-      <BLOCKQUOTE>
-        <EM><FONT face="Arial, Helvetica" size="-1">e.g. on bot1: .botattr
-        bot2 |+s #channel</FONT></EM>
-      </BLOCKQUOTE>
-      <FONT face="Arial, Helvetica" size="-1">When two sharing bots first
-      connect, they will transfer the userfile. After that, when something in
-      the user records changes, the info will be passed to the other share
-      bot(s) so that as long as they are linked, they will stay in
-      sync.</FONT> 
+    <blockquote>
+      <p><em>e.g. on bot1: .botattr bot2 |+s #channel</em></p>
+    </blockquote>
 
-      <P><FONT face="Arial, Helvetica" size="-1">By default, if two sharing
-      bots get disconnected, when they reconnect the userfile will be
-      completely transferred again. However, there is an option to use resync
-      buffers. Resync buffers work by when the two sharing bots get
-      disconnected, they start up resync buffers for each other. If they are
-      reconnected within 15 minutes <EM>(default)</EM>, they can resync from
-      the buffers they have held, and not have to re-download the
-      userfile.</FONT></P>
+    <p>When two sharing bots first connect, they will transfer the userfile.
+    After that, when something in the user records changes, the info will be
+    passed to the other share bot(s) so that as long as they are linked, they
+    will stay in sync.</p>
 
-      <P><STRONG><FONT face="Arial, Helvetica" size="-1"> *WARNING* - The
-      resync option may not work reliably.</FONT></STRONG></P>
+    <p>By default, if two sharing bots get disconnected, when they reconnect
+    the userfile will be completely transferred again. However, there is an
+    option to use resync buffers. Resync buffers work by when the two sharing
+    bots get disconnected, they start up resync buffers for each other. If
+    they are reconnected within 15 minutes <em> (default)</em>, they can
+    resync from the buffers they have held, and not have to re-download the
+    userfile.</p>
 
-      <P><FONT face="Arial, Helvetica" size="-1">You can mark a bot both +s
-      and +a (share user files, but only link as an alternate). This is very
-      odd and should probably only be used as a backup when you have a lot of
-      bots sharing to one central hub. Only people who really know what
-      they&#39;re doing should try marking a bot +s and +a.</FONT></P>
-    </BLOCKQUOTE>
-    <HR>
-    <EM><FONT face="Arial, Helvetica" size="-1">&copy; 1997 Robey Pointer<BR>
-     &copy; 1999,2000 Eggheads Development Team</FONT></EM>
-  </BODY>
-</HTML>
+    <p><strong> *WARNING* - The resync option may not work
+    reliably.</strong></p>
+
+    <p>You can mark a bot both +s and +a (share user files, but only link as
+    an alternate). This is very odd and should probably only be used as a
+    backup when you have a lot of bots sharing to one central hub. Only
+    people who really know what they&#39;re doing should try marking a bot +s
+    and +a.</p>
+    <hr>
+
+    <p><em>© 1997 Robey Pointer<br>
+     © 1999,2000 Eggheads Development Team</em></p>
+  </body>
+</html>
 

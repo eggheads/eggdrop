@@ -1,55 +1,87 @@
-<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<!-- $Id: mod-assoc.html,v 1.2 2000/04/13 11:21:24 tothwolf Exp $ -->
+
 <html>
-<head>
-   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-   <meta name="GENERATOR" content="Mozilla/4.7 [en] (WinNT; U) [Netscape]">
-   <title>Eggdrop Documentation: Assoc Module</title>
-</head>
-<body text="#000000" bgcolor="#FFFFFF" link="#3333FF" vlink="#3333FF" alink="#3333FF">
-<b><font face="Arial, Helvetica" color="#FF0000" size=-1>ASSOC
-MODULE Last modified 06 April 2000</font></b>
-<hr>
-<br>
-<font face="Arial, Helvetica" color="#000000" size=-1>
-This module provides assoc support, i.e. naming channels on the botnet
-<blockquote>
-<a href="#config">Config file settings</a><br>
-<a href="#tcl">TCL commands</a><br>
-<a href="#tclvar">TCL variables</a>
-</blockquote>
-</font>
-<hr>
-<a name="config"></a>
-<b><font face="Arial, Helvetica" color="#FF0000" size=-1>Config file settings</font></b>
-<br><blockquote>
-<font face="Arial, Helvetica" color="#000000" size=-1>
-<font color="#ff0000">##### ASSOC MODULE #####</font><br><br>
-Put this line into your eggdrop.conf.dist file to load assoc module:<br><br>
-<b>loadmodule assoc</b>
-<br>
-</font>
-</blockquote>
-<hr><a name="tcl"></a><b><font face="Arial, Helvetica" color="#FF0000" size=-1>TCL COMMANDS:</font></b>
-<blockquote><b><font face="Arial, Helvetica" size=-1>assoc &lt;chan>
-[name]</font></b>
-<br><font face="Arial, Helvetica" size=-1>sets the name associated
-with a botnet channel, if you specify one</font>
-<br><i><font face="Arial, Helvetica" size=-1>returns: current name
-for that channel, if any</font></i>
-<p><b><font face="Arial, Helvetica" size=-1>killassoc &lt;chan></font></b>
-<br><font face="Arial, Helvetica" size=-1>removes the name associated
-with a botnet channel, if any exists, use 'killassoc &amp;' to kill all
-assocs.</font>
-<br><i><font face="Arial, Helvetica" size=-1>returns: nothing</font></i></blockquote>
+  <head>
+    <title>Eggdrop Documentation: Assoc module</title>
+  </head>
 
-<hr><b><a name="tclvar"></a><font face="Arial, Helvetica" color="#FF0000" size=-1>TCL
-VARIABLES:</font></b>
-<blockquote><b><font face="Arial, Helvetica" size=-1>assoc-length</font></b>
-<br><font face="Arial, Helvetica" size=-1>maximum length of assoc
-name to store.</font></blockquote>
+  <body>
+    <div align="center">
+      <p><strong>Assoc module</strong></p>
+    </div>
+    <hr>
 
-<hr><i><font face="Arial, Helvetica" size=-1>&copy; 1997 Robey Pointer</font></i>
-<br><i><font face="Arial, Helvetica" size=-1>&copy; 1999,2000 Eggheads Development
-Team</font></i>
-</body>
+    <p>This module provides assoc support, i.e. naming channels on the
+    botnet.</p>
+
+    <blockquote>
+      <ol>
+        <li><a href="#config">Config file settings</a></li>
+
+        <li><a href="#tclcmds">Tcl commands</a></li>
+
+        <li><a href="#tclvars">Tcl variables</a></li>
+      </ol>
+    </blockquote>
+    <hr>
+
+    <p><a name="config"></a>1. <strong>Config file settings</strong></p>
+
+    <blockquote>
+      <p>Lines in <strong>bold</strong> are the lines that need to be
+      included in the eggdrop config file if you want to use the share
+      module.<br>
+       Lines in bold <strong><em>italics</em></strong> are optional and only
+      required if you wish to change the default behaviour for that
+      particular feature.</p>
+
+      <p>Put this line into your eggdrop.conf file to load assoc module:</p>
+
+      <p><strong>loadmodule assoc</strong></p>
+    </blockquote>
+    <hr>
+
+    <p><a name="tclcmds"></a>2. <strong>Tcl commands</strong></p>
+
+    <blockquote>
+      <dl>
+        <dt><strong>assoc &lt;chan&gt; [name]</strong></dt>
+
+        <dd>
+          <p>sets the name associated with a botnet channel, if you specify
+          one</p>
+
+          <p>returns: current name for that channel, if any</p>
+        </dd>
+
+        <dt><strong>killassoc &lt;chan&gt;</strong></dt>
+
+        <dd>
+          <p>removes the name associated with a botnet channel, if any
+          exists, use &#39;killassoc &amp;&#39; to kill all assocs.</p>
+
+          <p>returns: nothing</p>
+        </dd>
+      </dl>
+    </blockquote>
+    <hr>
+
+    <p><a name="tclvars"></a>3. <strong>Tcl variables</strong></p>
+
+    <blockquote>
+      <dl>
+        <dt><strong>assoc-length</strong></dt>
+
+        <dd>
+          <p>maximum length of assoc name to store.</p>
+        </dd>
+      </dl>
+    </blockquote>
+    <hr>
+
+    <p><em>© 1997 Robey Pointer<br>
+     © 1999,2000 Eggheads Development Team</em></p>
+  </body>
 </html>
+

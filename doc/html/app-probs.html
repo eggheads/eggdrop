@@ -1,37 +1,39 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<!-- $Id: app-probs.html,v 1.2 2000/04/13 11:21:24 tothwolf Exp $ -->
 
-<HTML>
-  <HEAD>
-    <TITLE>Eggdrop Documentation: Known Problems</TITLE>
-  </HEAD>
+<html>
+  <head>
+    <title>Eggdrop Documentation: Known Problems</title>
+  </head>
 
-  <BODY text="#000000" bgcolor="#FFFFFF" link="#3333FF" vlink="#3333FF"
-  alink="#3333FF">
-    <STRONG><FONT face="Arial, Helvetica" size="-1" color="#FF0000">KNOWN
-    PROBLEMS</FONT></STRONG> 
-    <HR>
-    <BR>
-     <STRONG><U><FONT color="#FF0000">BUG REPORTS</FONT></U></STRONG> <BR>
-     (i.e. things that are broke, but aren&#39;t getting fixed anytime soon) 
+  <body>
+    <div align="center">
+      <p><strong>Known Problems</strong></p>
+    </div>
+    <hr>
 
-    <BLOCKQUOTE>
-      <UL>
-        <LI>Solve to non-working alarm(10) in Linux (calls to
-        gethostbyaddr/name() have blocked for long periods when bind/named
-        doesn&#39;t resolve quickly, and the alarm does not interrupt
-        it).</LI>
-      </UL>
+    <p><strong>Things that are broke, but aren&#39;t getting fixed anytime
+    soon</strong></p>
 
-      <UL>
-        <LI>High-bit characters are being filtered from channel names.This is
-        a fault of the TCL interpreter, and not Eggdrop.&nbsp; The TCL
-        interpreter filters the characters when it reads a file for
-        interpreting.</LI>
-      </UL>
-    </BLOCKQUOTE>
-    <HR>
-    <EM><FONT face="Arial, Helvetica" size="-1">&copy; 1997 Robey Pointer<BR>
-     &copy; 1999,2000 Eggheads Development Team</FONT></EM>
-  </BODY>
-</HTML>
+    <p>Solve to non-working alarm(10) in Linux (calls to gethostbyaddr/name()
+    have blocked for long periods when bind/named doesn&#39;t resolve
+    quickly, and the alarm does not interrupt it).</p>
+
+    <blockquote>
+      <p>Note: This should now work if you use the dns module.</p>
+    </blockquote>
+
+    <p>High-bit characters are being filtered from channel names. This is a
+    fault of the TCL interpreter, and not Eggdrop. The Tcl interpreter
+    filters the characters when it reads a file for interpreting.</p>
+
+    <blockquote>
+      <p>Note: This should now work if you use Tcl 8.1 or later.</p>
+    </blockquote>
+    <hr>
+
+    <p><em>© 1997 Robey Pointer<br>
+     © 1999,2000 Eggheads Development Team</em></p>
+  </body>
+</html>
 

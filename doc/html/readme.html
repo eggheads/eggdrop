@@ -1,587 +1,461 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-
-<HTML>
-  <HEAD>
-    <TITLE>Eggdrop Documentation: README file</TITLE>
-  </HEAD>
-
-  <BODY text="#000000" bgcolor="#FFFFFF" link="#3333FF" vlink="#3333FF"
-  alink="#3333FF">
-    <STRONG><FONT face="Arial, Helvetica" size="-1" color="#FF0000">
-    README</FONT></STRONG> 
-    <HR>
-
-    <DIV>
-      <FONT face="Arial, Helvetica" size="-1">Please at least <STRONG>
-      SKIM</STRONG> this document before asking questions. In fact, <STRONG>
-      READ IT</STRONG> if you&#39;ve never successfully set up an Eggdrop bot
-      before.<STRONG> PLEASE! READ IT!</STRONG> If you haven&#39;t read this
-      file, and ask for help expect to be told to <STRONG>READ</STRONG> the
-      README file first! or rotfm :)</FONT> 
-
-      <P><STRONG><FONT color="#FF0000">Contents</FONT></STRONG></P>
-
-      <P><FONT face="Arial, Helvetica" size="-1"> 0.&nbsp;&nbsp;&nbsp;<A
-      href="#item0">Important notice</A><BR>
-       1.&nbsp;&nbsp;&nbsp;<A href="#item1">What is Eggdrop?</A><BR>
-       2.&nbsp;&nbsp;&nbsp;<A href="#item2">How do I get Eggdrop</A><BR>
-       2a.&nbsp;&nbsp;<A href="#item2a">CVS usage</A><BR>
-       3.&nbsp;&nbsp;&nbsp;<A href="#item3">Quick startup</A><BR>
-       4.&nbsp;&nbsp;&nbsp;<A href="#item4">Upgrading</A><BR>
-       4a.&nbsp;&nbsp;<A href="#item4a">From a pre-1.3/1.4/1.5 version to
-      1.5</A><BR>
-       4b.&nbsp;&nbsp;<A href="#item4b">From an older 1.3/1.4/1.5 version to
-      a newer one</A><BR>
-       5.&nbsp;&nbsp;&nbsp;<A href="#item5">Setting up a crontab</A><BR>
-       5a.&nbsp;&nbsp;<A href="#item5a">Setting up a crontab using
-      autobotchk</A><BR>
-       6.&nbsp;&nbsp;&nbsp;<A href="#item6">Boring legal stuff</A><BR>
-       7.&nbsp;&nbsp;&nbsp;<A href="#item7">Mailing list</A><BR>
-       8.&nbsp;&nbsp;&nbsp;<A href="#item8">Documentation</A><BR>
-       9.&nbsp;&nbsp;&nbsp;<A href="#item9">Obtaining help</A><BR>
-      </FONT></P>
-      <HR>
-
-      <DIV>
-        <FONT face="Arial, Helvetica" size="-1"> <FONT face="Arial,
-        Helvetica" size="-1"> <A name="item0"></A> <STRONG><FONT face="Arial, 
-        Helvetica" size="-1" color="#FF0000">(0)
-        NOTICE</FONT></STRONG></FONT></FONT> 
-
-        <BLOCKQUOTE>
-          <FONT face="Arial, Helvetica" size="-1"> <FONT face="Arial, 
-          Helvetica" size="-1"> <FONT face="Arial, Helvetica" size="-1">
-          Please read this file carefully before trying to set up this bot.
-          Also, make <STRONG> SURE</STRONG> that you select your +n (owner)
-          users wisely! They have 100% access to your bot and
-          account!<STRONG> ONLY GIVE THIS POWER TO SOMEONE YOU TRUST
-          COMPLETELY!!</STRONG></FONT></FONT></FONT>
-        </BLOCKQUOTE>
-        <FONT face="Arial, Helvetica" size="-1"><FONT face="Arial, Helvetica"
-        size="-1"> <A name="item1"></A> <STRONG> <FONT face="Arial,
-        Helvetica" size="-1" color="#FF0000">(1) WHAT IS
-        EGGDROP?</FONT></STRONG></FONT></FONT> 
-
-        <BLOCKQUOTE>
-          <FONT face="Arial, Helvetica" size="-1"> <FONT face="Arial, 
-          Helvetica" size="-1"> <FONT face="Arial, Helvetica" size="-1">
-          Eggdrop is an IRC bot, written in C. If you don&#39;t know what IRC
-          is, this is probably not whatever you&#39;re looking for! Eggdrop,
-          being a bot, sits on a channel and takes protective measures: to
-          keep the channel from being taken over (in the few ways that
-          anything CAN), to recognize banished users or sites and reject
-          them, to recognize privileged users and let them gain ops,
-          etc.</FONT></FONT></FONT> 
-
-          <P><FONT face="Arial, Helvetica" size="-1"><FONT face="Arial, 
-          Helvetica" size="-1"><FONT face="Arial, Helvetica" size="-1">One of
-          the more unique features of Eggdrop is its &quot;party line&quot;,
-          accessible via DCC chat, which allows you to talk to other people
-          lag-free. Consider it a multi-way DCC chat, or a miniature IRC
-          (complete with channels). You can link up with other bots and
-          expand the party line until it actually becomes something very much
-          like IRC, in fact.</FONT></FONT></FONT></P>
-
-          <P><FONT face="Arial, Helvetica" size="-1"><FONT face="Arial, 
-          Helvetica" size="-1"><FONT face="Arial, Helvetica" size="-1">
-          Eggdrop is always being improved and adjusted because there are
-          bugs to be fixed and features to be added (if the users demand
-          them, and they make actually sense). In fact, it existed for
-          several years as v0.7 - v0.9 before finally going 1.0. This version
-          of Eggdrop is part of the 1.5 tree. A valiant effort has been made
-          to chase down and destroy bugs.</FONT></FONT></FONT></P>
-
-          <P><FONT face="Arial, Helvetica" size="-1"><FONT face="Arial, 
-          Helvetica" size="-1"><FONT face="Arial, Helvetica" size="-1">This
-          README file contains information about how to get Eggdrop, how to
-          quickly compile the bot, what you may need to do when upgrading
-          from older versions, a list of frequently asked questions about
-          compiling, how to set up a crontab, some boring legal stuff, info
-          about the mailing list (a great place to ask questions, and a good
-          place to report bugs also), some basics about CVS usage and some
-          channels where you might get help with
-          Eggdrop.</FONT></FONT></FONT></P>
-
-          <P><FONT face="Arial, Helvetica" size="-1"><FONT face="Arial, 
-          Helvetica" size="-1"><FONT face="Arial, Helvetica" size="-1">The
-          preliminary documentation is in &quot;eggdrop.doc&quot; and is
-          intended to be read after you have Eggdrop compiled and set
-          up.</FONT><BR>
-          </FONT></FONT></P>
-        </BLOCKQUOTE>
-        <FONT face="Arial, Helvetica" size="-1"><FONT face="Arial, Helvetica"
-        size="-1"> <A name="item2"></A><STRONG><FONT face="Arial, Helvetica"
-        size="-1" color="#FF0000">(2) HOW TO GET
-        EGGDROP</FONT></STRONG></FONT></FONT> 
-
-        <BLOCKQUOTE>
-          <FONT face="Arial, Helvetica" size="-1"> <FONT face="Arial, 
-          Helvetica" size="-1"> <FONT face="Arial, Helvetica" size="-1">
-          Before you can compile Eggdrop, you need to have Tcl installed on
-          your system. Most systems should have Tcl on them by now -- you can
-          check by trying the command &quot;tclsh&quot;. If it works, you
-          will be given a &quot;%&quot; prompt, and you can type
-          &quot;exit&quot; to exit the program. That means Tcl is on your
-          system. If tclsh doesn&#39;t load, then Tcl probably isn&#39;t on
-          your system, and you will need to ftp it. The best ftp site
-          is:</FONT></FONT></FONT> 
-
-          <CENTER>
-            <P><A href="ftp://ftp.scriptics.com/pub/tcl"><FONT face="Arial, 
-            Helvetica" size="-1"><FONT face="Arial, Helvetica" size="-1">
-            <FONT face="Arial, Helvetica">
-            ftp://ftp.scriptics.com/pub/tcl</FONT></FONT></FONT></A></P>
-          </CENTER>
-
-          <P><FONT face="Arial, Helvetica" size="-1"><FONT face="Arial, 
-          Helvetica" size="-1"><FONT face="Arial, Helvetica" size="-1">Tcl
-          comes with the Slackware distribution of Linux. HOWEVER, the one
-          that comes on Slackware 3.0 is goofed up and you&#39;ll have to
-          re-install it for yourself to get it
-          working.</FONT></FONT></FONT></P>
-
-          <P><FONT face="Arial, Helvetica" size="-1"><FONT face="Arial, 
-          Helvetica" size="-1"><FONT face="Arial, Helvetica" size="-1">
-          Currently, the 1.5 tree of Eggdrop is developed at eggheads.org.
-          You can get the latest version of Eggdrop from
-          ftp.eggheads.org.</FONT></FONT></FONT></P>
-
-          <P><FONT face="Arial, Helvetica" size="-1"><FONT face="Arial, 
-          Helvetica" size="-1"><FONT face="Arial, Helvetica" size="-1">You
-          might try www.eggheads.org for help and information.</FONT><BR>
-           &nbsp;</FONT></FONT></P>
-        </BLOCKQUOTE>
-        <FONT face="Arial, Helvetica" size="-1"><FONT face="Arial, Helvetica"
-        size="-1"> <A name="item2a"></A> <STRONG><FONT face="Arial,
-        Helvetica" size="-1" color="#FF0000">(2a) CVS
-        USAGE</FONT></STRONG></FONT></FONT> 
-
-        <BLOCKQUOTE>
-          <FONT face="Arial, Helvetica" size="-1"> <FONT face="Arial, 
-          Helvetica" size="-1"> <FONT face="Arial, Helvetica" size="-1">You
-          might obtain the *very latest* version of Eggdrop that is still
-          under development by using CVS. CVS means &#39;Concurrent Versions
-          System&#39; and is a tool for developers to always keep source code
-          up to date. Try &#39;man cvs&#39; on your shell for more
-          information about CVS ;-)</FONT></FONT></FONT> 
-
-          <P><FONT face="Arial, Helvetica" size="-1"><FONT face="Arial, 
-          Helvetica" size="-1"><FONT face="Arial, Helvetica" size="-1">This
-          intended only for users that know a fairly bit about Eggdrop. Be
-          aware that the versions of Eggdrop that you get by CVS are still
-          being developed, and may be buggy. The Eggheads devteam will in *NO
-          WAY* take any responsibility for whatever might happen to you or
-          your shell if you use a CVS version of
-          Eggdrop.</FONT></FONT></FONT></P>
-
-          <P><FONT face="Arial, Helvetica" size="-1"><FONT face="Arial, 
-          Helvetica" size="-1"><FONT face="Arial, Helvetica" size="-1">To
-          obtain Eggdrop via CVS, do as follows:</FONT></FONT></FONT></P>
-
-          <BLOCKQUOTE>
-            <FONT face="Arial, Helvetica" size="-1"> <FONT face="Arial, 
-            Helvetica" size="-1"> <FONT face="Arial, Helvetica" size="-1">(1)
-            log into your shell</FONT><BR>
-             <FONT face="Arial, Helvetica" size="-1">(2) type &#39;export
-            CVSROOT=:pserver:anonymous@cvs.eggheads.org:/usr/local/cvsroot&#39;</FONT><BR>
-
-             <FONT face="Arial, Helvetica" size="-1">(3) type &#39;cvs
-            login&#39;</FONT><BR>
-             <FONT face="Arial, Helvetica" size="-1">(4) press &lt;enter&gt;
-            when it asks for a password.</FONT><BR>
-             <FONT face="Arial, Helvetica" size="-1">(5) in your home dir,
-            type &#39;cvs checkout eggdrop1.5&#39;</FONT><BR>
-             <FONT face="Arial, Helvetica" size="-1">(6) in ~/eggdrop1.5, you
-            should have a copy of the latest CVS version of
-            Eggdrop.</FONT></FONT></FONT>
-          </BLOCKQUOTE>
-          <FONT face="Arial, Helvetica" size="-1"><FONT face="Arial,
-          Helvetica" size="-1"> <STRONG> <FONT face="Arial, Helvetica" size= 
-          "-1">Notes:</FONT></STRONG></FONT></FONT> 
-
-          <BLOCKQUOTE>
-            <FONT face="Arial, Helvetica" size="-1"> <FONT face="Arial, 
-            Helvetica" size="-1"> <FONT face="Arial, Helvetica" size="-1">(1)
-            you can &#39;cvs logout&#39;, but you don&#39;t need
-            to.</FONT><BR>
-             <FONT face="Arial, Helvetica" size="-1">(2) you don&#39;t need
-            to go through this whole process every time; if you want to get a
-            CVS version of Eggdrop at a later time, you can just &#39;cd
-            ~/eggdrop1.5&#39; and type &#39;cvs update -dAP&#39;.</FONT><BR>
-             <FONT face="Arial, Helvetica" size="-1">(3) if you experience
-            errors when using &#39;export&#39;, you might be using tclsh as a
-            shell. If so, try using the command &#39;setenv&#39; instead of
-            &#39;export&#39;: &#39;setenv CVSROOT
-            :pserver:anonymous@cvs.eggheads.org:/usr/local/cvsroot&#39;</FONT></FONT></FONT>
-          </BLOCKQUOTE>
-        </BLOCKQUOTE>
-        <FONT face="Arial, Helvetica" size="-1"><FONT face="Arial, Helvetica"
-        size="-1"> <A name="item3"></A> <STRONG> <FONT face="Arial,
-        Helvetica" size="-1" color="#FF0000">(3) QUICK
-        STARTUP</FONT></STRONG></FONT></FONT> 
-
-        <BLOCKQUOTE>
-          <CENTER>
-            <FONT face="Arial, Helvetica" size="-1"> <FONT face="Arial, 
-            Helvetica" size="-1"> <STRONG><FONT face="Arial, Helvetica" size= 
-            "+1"> #### NOW INCLUDED IN &#39;INSTALL&#39; - READ IT
-            *<U>AFTER</U>* FINISHING THIS ####</FONT></STRONG></FONT></FONT>
-          </CENTER>
-        </BLOCKQUOTE>
-        <FONT face="Arial, Helvetica" size="-1"><FONT face="Arial, Helvetica"
-        size="-1"> <A name="item4"></A> <STRONG> <FONT face="Arial,
-        Helvetica" size="-1" color="#FF0000">(4)
-        UPGRADING</FONT></STRONG></FONT></FONT> 
-
-        <BLOCKQUOTE>
-          <FONT face="Arial, Helvetica" size="-1"> <FONT face="Arial, 
-          Helvetica" size="-1"> <A name="item4a"></A> <STRONG><FONT face= 
-          "Arial, Helvetica" size="-1" color="#FF0000"> (4a) FROM A
-          PRE-1.3/1.4/1.5 VERSION TO 1.5</FONT></STRONG></FONT></FONT> 
-
-          <BLOCKQUOTE>
-            <FONT face="Arial, Helvetica" size="-1"> <FONT face="Arial, 
-            Helvetica" size="-1"> <FONT face="Arial, Helvetica" size="-1">
-            #### BACK UP YOUR USERFILE ####</FONT></FONT></FONT> 
-
-            <P><FONT face="Arial, Helvetica" size="-1"><FONT face="Arial, 
-            Helvetica" size="-1"><FONT face="Arial, Helvetica" size="-1">We
-            can&#39;t re-iterate this enough, if you are upgrading, and you
-            have even a slight possibility of downgrading again later you
-            will HAVE to back up your userfile, or you will lose it. v1.3 of
-            Eggdrop radically changed alot of
-            things.</FONT></FONT></FONT></P>
-
-            <P><FONT face="Arial, Helvetica" size="-1"><FONT face="Arial, 
-            Helvetica" size="-1"><FONT face="Arial, Helvetica" size="-1">
-            There are many major changes between v0.9, v1.0, v1.1 and
-            v1.3/1.4/1.5 so PAY ATTENTION to this part if you have a v0.9,
-            1.0 or 1.1 bot already. If you&#39;re just starting out, you can
-            skip this section.</FONT></FONT></FONT></P>
-
-            <P><FONT face="Arial, Helvetica" size="-1"><FONT face="Arial, 
-            Helvetica" size="-1"><FONT face="Arial, Helvetica" size="-1">to
-            1.3/1.4/1.5: * If you run share bots, you will need to upgrade
-            them all at the same time because of the new userfile format.
-            Older bots will be able to link in, but will not get or send a
-            userfile. 1.2&#39;s will also tend to refuse to share with
-            another pre1.2. MAKE A NEW CONFIG FILE from the example, there
-            are some radical extras.</FONT></FONT></FONT></P>
-
-            <P><FONT face="Arial, Helvetica" size="-1"><FONT face="Arial, 
-            Helvetica" size="-1"><FONT face="Arial, Helvetica" size="-1">from
-            0.9/1.0 to 1.3/1.4/1.5: * Just redo the whole thing, absolutely
-            everything has changed including the userfile and config file
-            formats.</FONT></FONT></FONT></P>
-
-            <P><FONT face="Arial, Helvetica" size="-1"><FONT face="Arial, 
-            Helvetica" size="-1"><FONT face="Arial, Helvetica" size="-1">from
-            1.1/1.2 to 1.3/1.4/1.5: * You will likely want to redo the config
-            file, as much as changed. BACK UP!! You will need to run
-            &#39;tclsh scripts/weed/&lt;userfile&gt; c&#39; to convert your
-            userfile from v3 (1.1/1.2) to v4
-            (1.3/1.4/1.5)</FONT></FONT></FONT></P>
-          </BLOCKQUOTE>
-          <FONT face="Arial, Helvetica" size="-1"><FONT face="Arial,
-          Helvetica" size="-1"><A name="item4b"></A><STRONG><FONT face= 
-          "Arial, Helvetica" size="-1" color="#FF0000">(4b) FROM AN OLDER
-          1.3/1.4/1.5 VERSION TO A NEWER ONE</FONT></STRONG></FONT></FONT> 
-
-          <BLOCKQUOTE>
-            <FONT face="Arial, Helvetica" size="-1"> <FONT face="Arial, 
-            Helvetica" size="-1"> <FONT face="Arial, Helvetica" size="-1">If
-            you followed the INSTALL file and did a &#39;make install&#39;
-            (or &#39;make install DEST=&lt;path&gt;&#39;) after
-            &#39;make&#39;, this will be pretty easy. Just upload the new
-            eggdrop1.5.xx.tar.gz file to the home dir of your shell, gunzip
-            and untar it, and type &#39;cd ~/eggdrop1.5.xx&#39;. Then, type
-            &#39;./configure&#39;, &#39;make&#39;, then kill the bot
-            (&#39;.die&#39; on the party line, or use &#39;kill&#39; on the
-            shell) and &#39;make install&#39; to the same directory your bot
-            is currently in. Then, you can just restart your
-            bot.</FONT></FONT></FONT>
-          </BLOCKQUOTE>
-        </BLOCKQUOTE>
-        <FONT face="Arial, Helvetica" size="-1"><FONT face="Arial, Helvetica"
-        size="-1"> <A name="item5"></A> <STRONG> <FONT face="Arial,
-        Helvetica" size="-1" color="#FF0000">(5) SETTING UP A
-        CRONTAB</FONT></STRONG></FONT></FONT> 
-
-        <BLOCKQUOTE>
-          <FONT face="Arial, Helvetica" size="-1"> <FONT face="Arial, 
-          Helvetica" size="-1"> <FONT face="Arial, Helvetica" size="-1">
-          Eggdrop has become more stable with time, thanks mostly to people
-          reporting bug details and helping find places where it crashes.
-          However, there are still a -few- places where things aren&#39;t
-          perfect. Few if any things in life are.</FONT></FONT></FONT> 
-
-          <P><FONT face="Arial, Helvetica" size="-1"><FONT face="Arial, 
-          Helvetica" size="-1"><FONT face="Arial, Helvetica" size="-1">Also,
-          most systems go down from time to time. These things cause your bot
-          to disappear from IRC, and you have to restart
-          it.</FONT></FONT></FONT></P>
-
-          <P><FONT face="Arial, Helvetica" size="-1"><FONT face="Arial, 
-          Helvetica" size="-1"><FONT face="Arial, Helvetica" size="-1">The
-          Eggdrop source file includes a shell script called &#39;botchk&#39;
-          that will help keep the bot online. It will make the machine check
-          every ten minutes to make sure your bot is still running. To use
-          it, you have to add a line to your crontab. First, edit
-          &#39;botchk&#39; and change the directory and command line
-          parameters so that it will be able to start up your bot. Then, add
-          this line to your crontab:</FONT></FONT></FONT></P>
-
-          <P><FONT face="Arial, Helvetica" size="-1"><FONT face="Arial, 
-          Helvetica" size="-1"><FONT face="Arial, Helvetica" size="-1">
-          0,10,20,30,40,50 * * * *
-          /home/mydir/botchk</FONT></FONT></FONT></P>
-
-          <P><FONT face="Arial, Helvetica" size="-1"><FONT face="Arial, 
-          Helvetica" size="-1"><FONT face="Arial, Helvetica" size="-1">If you
-          don&#39;t want to get emails from cron, put
-          this:</FONT></FONT></FONT></P>
-
-          <P><FONT face="Arial, Helvetica" size="-1"><FONT face="Arial, 
-          Helvetica" size="-1"><FONT face="Arial, Helvetica" size="-1">
-          0,10,20,30,40,50 * * * * /home/mydir/botchk &gt;/dev/null
-          2&gt;&amp;1</FONT></FONT></FONT></P>
-
-          <P><FONT face="Arial, Helvetica" size="-1"><FONT face="Arial, 
-          Helvetica" size="-1"><FONT face="Arial, Helvetica" size="-1">
-          Naturally, you need to change the path to the correct path for
-          botchk. If you&#39;ve never used crontab before, here is a simple
-          way to add that line: Create a new file called &#39;mycron&#39; and
-          put the above line into it. Then, from your shell prompt, type %
-          crontab mycron That will create a new crontab entry for you, with a
-          line that runs botchk every ten minutes. Botchk will then restart
-          the bot when necessary (and send you email informing
-          you).</FONT></FONT></FONT></P>
-        </BLOCKQUOTE>
-        <FONT face="Arial, Helvetica" size="-1"><FONT face="Arial, Helvetica"
-        size="-1"><A name="item5a"></A><STRONG><FONT face="Arial, Helvetica"
-        size="-1" color="#FF0000">(5a) SETTING UP A CRONTAB USING
-        AUTOBOTCHK</FONT></STRONG></FONT></FONT> 
-
-        <BLOCKQUOTE>
-          <FONT face="Arial, Helvetica" size="-1"> <FONT face="Arial, 
-          Helvetica" size="-1"> <FONT face="Arial, Helvetica" size="-1">
-          Included with your Eggdrop is a utility called
-          &#39;autobotchk&#39;. Using autobotchk is probably the fastest way
-          of creating your botchk and adding it to crontab with just a few
-          required steps.</FONT></FONT></FONT> 
-
-          <P><FONT face="Arial, Helvetica" size="-1"><FONT face="Arial, 
-          Helvetica" size="-1"><FONT face="Arial, Helvetica" size="-1">To
-          crontab your bot follow the following
-          steps:</FONT></FONT></FONT></P>
-
-          <P><FONT face="Arial, Helvetica" size="-1"><FONT face="Arial, 
-          Helvetica" size="-1"><FONT face="Arial, Helvetica" size="-1">(1)
-          type &#39;cp scripts/autobotchk ..&#39;</FONT><BR>
-           <FONT face="Arial, Helvetica" size="-1">(2) type &#39;./autobotchk
-          &lt;eggdrop config file&gt;&#39;</FONT></FONT></FONT></P>
-
-          <P><FONT face="Arial, Helvetica" size="-1"><FONT face="Arial, 
-          Helvetica" size="-1"><FONT face="Arial, Helvetica" size="-1">This
-          will hopefully crontab your bot using the default setup. If you
-          want a list of autobotchk options, type &#39;./autobotchk&#39;. An
-          example with options would be:</FONT></FONT></FONT></P>
-
-          <P><FONT face="Arial, Helvetica" size="-1"><FONT face="Arial, 
-          Helvetica" size="-1"><FONT face="Arial, Helvetica" size="-1">
-          ./autobotchk eggdrop.conf.dist -noemail -5</FONT></FONT></FONT></P>
-
-          <P><FONT face="Arial, Helvetica" size="-1"><FONT face="Arial, 
-          Helvetica" size="-1"><FONT face="Arial, Helvetica" size="-1">This
-          would setup crontab to run the botchk every 5 minutes and also to
-          not send you e-mail saying that it restarted your
-          bot.</FONT></FONT></FONT></P>
-        </BLOCKQUOTE>
-        <FONT face="Arial, Helvetica" size="-1"><FONT face="Arial, Helvetica"
-        size="-1"><A name="item6"></A><STRONG><FONT face="Arial, Helvetica"
-        size="-1" color="#FF0000">(6) BORING LEGAL
-        STUFF</FONT></STRONG></FONT></FONT> 
-
-        <BLOCKQUOTE>
-          <FONT face="Arial, Helvetica" size="-1"> <FONT face="Arial, 
-          Helvetica" size="-1"> <FONT face="Arial, Helvetica" size="-1">The
-          Eggdrop bot is copyright © by Robey Pointer. As of January 1997,
-          Eggdrop is distributed according to the GNU General Public License.
-          There should be a copy of this license in the file COPYING. If not,
-          write to the Free Software Foundation, Inc., 675 Mass Ave,
-          Cambridge, MA 02139, USA.</FONT></FONT></FONT> 
-
-          <P><FONT face="Arial, Helvetica" size="-1"><FONT face="Arial, 
-          Helvetica" size="-1"><FONT face="Arial, Helvetica" size="-1">As of
-          eggdrop1.3.28 all changes made by the Eggheads development team to
-          the Eggdrop source code and any related files are copyright © by
-          Eggheads. The source code will still be distributed according to
-          the GNU General Public License as Robey Pointer did in the
-          past.</FONT></FONT></FONT></P>
-
-          <P><FONT face="Arial, Helvetica" size="-1"><FONT face="Arial, 
-          Helvetica" size="-1"><FONT face="Arial, Helvetica" size="-1">
-          Releases previous to 1.0m were made using a different licensing
-          scheme. You may, at your option, use the GNU General Public License
-          on those versions (instead of the license packaged with them) with
-          my blessing. For any versions bearing a copyright date of 1997 or
-          later, you have no choice -- you must use the GNU General Public
-          License.</FONT></FONT></FONT></P>
-
-          <P><FONT face="Arial, Helvetica" size="-1"><FONT face="Arial, 
-          Helvetica" size="-1"><FONT face="Arial, Helvetica" size="-1">The
-          files &quot;match.c&quot;, &quot;net.c&quot;, and
-          &quot;blowfish.c&quot; are exempt from the above restrictions.
-          &quot;match.c&quot; is original code by Chris Fuller (email:
-          crf@cfox.bchs.uh.edu) and has been placed by him into the public
-          domain. &quot;net.c&quot; is by me and I [who?] also choose to
-          place it in the public domain. &quot;blowfish.c&quot; is by various
-          sources and is in the public domain. All 3 files contain useful
-          functions that could easily be ported to other applications -- the
-          other parts of the bot generally
-          don&#39;t.</FONT></FONT></FONT></P>
-
-          <P><FONT face="Arial, Helvetica" size="-1"><FONT face="Arial, 
-          Helvetica" size="-1"><FONT face="Arial, Helvetica" size="-1">Tcl is
-          by John Ousterhout and is in no way affiliated with Eggdrop, and
-          likely has its own set of copyrights and
-          whatnots.</FONT></FONT></FONT></P>
-
-          <P><FONT face="Arial, Helvetica" size="-1"><FONT face="Arial, 
-          Helvetica" size="-1"><FONT face="Arial, Helvetica" size="-1">There
-          is no warranty, implied or whatever. You use this software at your
-          own risk, no matter what purpose you put it
-          to.</FONT></FONT></FONT></P>
-
-          <P><FONT face="Arial, Helvetica" size="-1"><FONT face="Arial, 
-          Helvetica" size="-1"><FONT face="Arial, Helvetica" size="-1">You
-          didn&#39;t pay for it, so don&#39;t expect
-          magic.</FONT></FONT></FONT></P>
-        </BLOCKQUOTE>
-        <FONT face="Arial, Helvetica" size="-1"><FONT face="Arial, Helvetica"
-        size="-1"><A name="item7"></A><STRONG><FONT face="Arial, Helvetica"
-        size="-1" color="#FF0000">(7) MAILING
-        LIST</FONT></STRONG></FONT></FONT> 
-
-        <BLOCKQUOTE>
-          <FONT face="Arial, Helvetica" size="-1"> <FONT face="Arial, 
-          Helvetica" size="-1"> <FONT face="Arial, Helvetica" size="-1">There
-          are currently a couple of mailing lists about Eggdrop.
-          eggheads@eggdheads.org is the one relevant for posts about Eggdrop
-          1.4 &amp; 1.5 (and bug fixes, and suggestions,
-          etc).</FONT></FONT></FONT> 
-
-          <P><FONT face="Arial, Helvetica" size="-1"><FONT face="Arial, 
-          Helvetica" size="-1"><FONT face="Arial, Helvetica" size="-1">To
-          subscribe to the eggheads mailing list, send email to:
-          eggheads-request@eggheads.org In the body of the message, put
-          &quot;subscribe eggheads&quot;; or go to <A href= 
-          "http://www.eggheads.org/mailman/listinfo/eggheads">
-          http://www.eggheads.org/mailman/listinfo/eggheads</A></FONT></FONT></FONT></P>
-
-          <CENTER>
-            <P><FONT face="Arial, Helvetica" size="-1"><FONT face="Arial, 
-            Helvetica" size="-1"><STRONG><U><FONT face="Arial, Helvetica"
-            size="+1"> ### DO <FONT color="#FF0000"> NOT</FONT> SEND ROBEY
-            EMAIL ABOUT EGGDROP ###</FONT></U></STRONG></FONT></FONT></P>
-          </CENTER>
-
-          <P><FONT face="Arial, Helvetica" size="-1"><FONT face="Arial, 
-          Helvetica" size="-1"><FONT face="Arial, Helvetica" size="-1">Robey
-          is no longer developing the Eggdrop code (although he does put a
-          word in every now and then) so don&#39;t bother emailing him. If
-          you have a serious problem, email the Eggdrop mailing list and it
-          will get to the coders.</FONT></FONT></FONT></P>
-
-          <P><FONT face="Arial, Helvetica" size="-1"><FONT face="Arial, 
-          Helvetica" size="-1"><FONT face="Arial, Helvetica" size="-1">
-          Please, before posting to this list, see what things are like, and
-          when you do post, read over your post for readability, spelling,
-          and grammar mistakes. Obviously, we&#39;re all human (or are we?)
-          and we all make mistakes (heck, look at this document!
-          ;).</FONT></FONT></FONT></P>
-
-          <P><FONT face="Arial, Helvetica" size="-1"><FONT face="Arial, 
-          Helvetica" size="-1"><FONT face="Arial, Helvetica" size="-1">Open
-          discussion and debate is integral to change and progress. Don&#39;t
-          flame others over mere form (grammar and spelling), or even
-          substantive issues either for that matter. Please read and follow
-          the mailing list rules.</FONT></FONT></FONT></P>
-
-          <P><FONT face="Arial, Helvetica" size="-1"><FONT face="Arial, 
-          Helvetica" size="-1"><FONT face="Arial, Helvetica" size="-1">The
-          eggheads@eggheads.org maillist is not dedicated to those all too
-          common questions we have all seen on other lists... for
-          example:</FONT></FONT></FONT></P>
-
-          <P><FONT face="Arial, Helvetica" size="-1"><FONT face="Arial, 
-          Helvetica" size="-1"><FONT face="Arial, Helvetica" size="-1">
-          &quot;Why does my bot say this: Please edit your config
-          file.&quot;</FONT><BR>
-           <FONT face="Arial, Helvetica" size="-1">&quot;How do I telnet my
-          bot?&quot;</FONT><BR>
-           <FONT face="Arial, Helvetica" size="-1">&quot;Where do I get
-          Eggdrop for windows??????&quot;</FONT><BR>
-           <FONT face="Arial, Helvetica" size="-1">
-          etc..</FONT></FONT></FONT></P>
-
-          <P><FONT face="Arial, Helvetica" size="-1"><FONT face="Arial, 
-          Helvetica" size="-1"><FONT face="Arial, Helvetica" size="-1">Bug
-          reports, technical questions, your thoughts or suggestions on new
-          features being added to Eggdrop, things that should be removed or
-          fixed, amazing problems that even stump the guru&#39;s, etc... are
-          what we want to see here.</FONT></FONT></FONT></P>
-        </BLOCKQUOTE>
-        <FONT face="Arial, Helvetica" size="-1"><FONT face="Arial, Helvetica"
-        size="-1"><A name="item8"></A><STRONG><FONT face="Arial, Helvetica"
-        size="-1" color="#FF0000">(8)
-        DOCUMENTATION</FONT></STRONG></FONT></FONT> 
-
-        <BLOCKQUOTE>
-          <FONT face="Arial, Helvetica" size="-1"> <FONT face="Arial, 
-          Helvetica" size="-1"> <FONT face="Arial, Helvetica" size="-1">
-          We&#39;re trying to keep the documentation up to date. If you feel
-          that anything is missing here, or that anything should be added
-          etc, please email eggheads@eggheads.org about it, thank
-          you.</FONT></FONT></FONT>
-        </BLOCKQUOTE>
-        <FONT face="Arial, Helvetica" size="-1"><FONT face="Arial, Helvetica"
-        size="-1"> <A name="item9"></A> <STRONG> <FONT face="Arial,
-        Helvetica" size="-1" color="#FF0000">(9) OBTAINING
-        HELP</FONT></STRONG></FONT></FONT> 
-
-        <BLOCKQUOTE>
-          <FONT face="Arial, Helvetica" size="-1"> <FONT face="Arial, 
-          Helvetica" size="-1"> <FONT face="Arial, Helvetica" size="-1">There
-          is currently no uniform channel in existence to support Eggdrop. At
-          one time, such channels did exist, but they most often deteriorate
-          into a vanity channel, where no one is willing to
-          help.</FONT></FONT></FONT> 
-
-          <P><FONT face="Arial, Helvetica" size="-1"><FONT face="Arial, 
-          Helvetica" size="-1"><FONT face="Arial, Helvetica" size="-1">
-          However, we&#39;ll list a few places here where you *might* get
-          help. Note though that we are not responsible for those channels,
-          or necessarily run those channels
-          ourselves.</FONT></FONT></FONT></P>
-
-          <P><FONT face="Arial, Helvetica" size="-1"><FONT face="Arial, 
-          Helvetica" size="-1"><FONT face="Arial, Helvetica" size="-1">
-          Undernet - #eggdrop EFnet - #eggtcl, #eggheads IRCNet - #eggdrop,
-          #egghelp, #bothelp</FONT></FONT></FONT></P>
-
-          <P><FONT face="Arial, Helvetica" size="-1"><FONT face="Arial, 
-          Helvetica" size="-1"><FONT face="Arial, Helvetica" size="-1">If
-          there are any serious places that should be added, let us
-          know.</FONT></FONT></FONT></P>
-        </BLOCKQUOTE>
-      </DIV>
-      <HR>
-      <FONT face="Arial, Helvetica" size="-1"><FONT face="Arial, Helvetica"
-      size="-1"><EM><FONT face="Arial, Helvetica" size="-1">&copy; 1997 Robey
-      Pointer<BR>
-       &copy; 1999,2000 Eggheads Development Team</FONT></EM></FONT></FONT>
-    </DIV>
-  </BODY>
-</HTML>
+<!-- $Id: readme.html,v 1.2 2000/04/13 11:21:24 tothwolf Exp $ -->
+
+<html>
+  <head>
+    <title>Eggdrop Documentation: Readme</title>
+  </head>
+
+  <body>
+    <div align="center">
+      <p><strong>Readme</strong></p>
+    </div>
+    <hr>
+
+    <p>Please at least <strong>SKIM</strong> this document before asking
+    questions. In fact, <strong>READ IT</strong> if you&#39;ve never
+    successfully set up an Eggdrop bot before. <strong>PLEASE! READ
+    IT!</strong> If you haven&#39;t read this file, and ask for help expect
+    to be told to <strong>READ</strong> the README file first! or rotfm
+    :)</p>
+    <hr>
+
+    <p><strong>Contents</strong></p>
+
+    <p><a href="#notice">Important notice</a></p>
+
+    <blockquote>
+      <ol>
+        <li><a href="#sect1">What is Eggdrop?</a></li>
+
+        <li>
+          <a href="#sect2">How do I get Eggdrop</a> 
+
+          <ol type="a">
+            <li><a href="#sect2a">How to get the latest version of eggdrop
+            via CVS</a></li>
+          </ol>
+        </li>
+
+        <li><a href="#sect3">Quick startup</a></li>
+
+        <li>
+          <a href="#sect4">Upgrading</a> 
+
+          <ol type="a">
+            <li><a href="#sect4a">From a pre-1.3/1.4/1.5 version to
+            1.5</a></li>
+
+            <li><a href="#sect4b">From an older 1.3/1.4/1.5 version to a
+            newer one</a></li>
+          </ol>
+        </li>
+
+        <li>
+          <a href="#sect5">Setting up a crontab</a> 
+
+          <ol type="a">
+            <li><a href="#sect5a">Setting up a crontab using
+            autobotchk</a></li>
+          </ol>
+        </li>
+
+        <li><a href="#sect6">Boring legal stuff</a></li>
+
+        <li><a href="#sect7">Mailing list</a></li>
+
+        <li><a href="#sect8">Documentation</a></li>
+
+        <li><a href="#sect9">Obtaining help</a></li>
+      </ol>
+    </blockquote>
+    <hr>
+
+    <p><a name="notice"></a><strong>Notice</strong></p>
+
+    <blockquote>
+      <p>Please read this file carefully before trying to set up this bot.
+      Also, make <strong>SURE</strong> that you select your +n (owner) users
+      wisely! They have 100% access to your bot and account! <strong>ONLY
+      GIVE THIS POWER TO SOMEONE YOU TRUST COMPLETELY!!</strong></p>
+    </blockquote>
+
+    <p><a name="sect1"></a>1. <strong>What is Eggdrop?</strong></p>
+
+    <blockquote>
+      <p>Eggdrop is an IRC bot, written in C. If you don&#39;t know what IRC
+      is, this is probably not whatever you&#39;re looking for! Eggdrop,
+      being a bot, sits on a channel and takes protective measures: to keep
+      the channel from being taken over (in the few ways that anything CAN),
+      to recognize banished users or sites and reject them, to recognize
+      privileged users and let them gain ops, etc.</p>
+
+      <p>One of the more unique features of Eggdrop is its &quot;party
+      line&quot;, accessible via DCC chat, which allows you to talk to other
+      people lag-free. Consider it a multi-way DCC chat, or a miniature IRC
+      (complete with channels). You can link up with other bots and expand
+      the party line until it actually becomes something very much like IRC,
+      in fact.</p>
+
+      <p> Eggdrop is always being improved and adjusted because there are
+      bugs to be fixed and features to be added (if the users demand them,
+      and they make actually sense). In fact, it existed for several years as
+      v0.7 - v0.9 before finally going 1.0. This version of Eggdrop is part
+      of the 1.5 tree. A valiant effort has been made to chase down and
+      destroy bugs.</p>
+
+      <p>This README file contains information about how to get Eggdrop, how
+      to quickly compile the bot, what you may need to do when upgrading from
+      older versions, a list of frequently asked questions about compiling,
+      how to set up a crontab, some boring legal stuff, info about the
+      mailing list (a great place to ask questions, and a good place to
+      report bugs also), some basics about CVS usage and some channels where
+      you might get help with Eggdrop.</p>
+
+      <p>The preliminary documentation is in &quot;eggdrop.doc&quot; and is
+      intended to be read after you have Eggdrop compiled and set</p>
+    </blockquote>
+
+    <p><a name="sect2"></a>2. <strong>How to get Eggdrop</strong></p>
+
+    <blockquote>
+      <p>Before you can compile Eggdrop, you need to have Tcl installed on
+      your system. Most systems should have Tcl on them by now -- you can
+      check by trying the command &quot;tclsh&quot;. If it works, you will be
+      given a &quot;%&quot; prompt, and you can type &quot;exit&quot; to exit
+      the program. That means Tcl is on your system. If tclsh doesn&#39;t
+      load, then Tcl probably isn&#39;t on your system, and you will need to
+      ftp it.</p>
+
+      <p>The best ftp site for Tcl is:<br>
+       <a href="ftp://ftp.scriptics.com/pub/tcl/">
+      ftp://ftp.scriptics.com/pub/tcl/</a></p>
+
+      <p>Tcl comes with the Slackware distribution of Linux. HOWEVER, the one
+      that comes on Slackware 3.0 is goofed up and you&#39;ll have to
+      reinstall it for yourself to get it working.</p>
+
+      <p>Currently, the 1.5 tree of Eggdrop is developed at eggheads.org. You
+      can get the latest version of Eggdrop from <a href= 
+      "ftp://ftp.eggheads.org/pub/eggdrop/">
+      ftp.eggheads.org/pub/eggdrop/</a></p>
+
+      <p>You might also try <a href="http://www.eggheads.org/">
+      www.eggheads.org</a> for more help and information.</p>
+    </blockquote>
+
+    <p><a name="sect2a"></a>2a. <strong>How to get the latest version of
+    eggdrop via CVS</strong></p>
+
+    <blockquote>
+      <p>You may obtain the <strong>very latest</strong> version of Eggdrop
+      that is still under development by using CVS. CVS means &#39;Concurrent
+      Versions System&#39; and is a tool for developers to always keep source
+      code up to date. Try &#39;man cvs&#39; on your shell for more
+      information about CVS ;-)</p>
+
+      <p>This intended only for users that know a fairly bit about Eggdrop.
+      Be aware that the versions of Eggdrop that you get by CVS are still
+      being developed, and may be buggy. The Eggheads devteam will in *NO
+      WAY* take any responsibility for whatever might happen to you or your
+      shell if you use a CVS version of Eggdrop.</p>
+    </blockquote>
+
+    <p>To obtain Eggdrop via CVS:</p>
+
+    <blockquote>
+      <ol>
+        <li>log into your shell</li>
+
+        <li>type &#39;export
+        CVSROOT=:pserver:anonymous@cvs.eggheads.org:/usr/local/cvsroot&#39;</li>
+
+        <li>type &#39;cvs login&#39;</li>
+
+        <li>press &lt;enter&gt; when it asks for a password.</li>
+
+        <li>in your home dir, type &#39;cvs checkout eggdrop1.5&#39;</li>
+
+        <li>in ~/eggdrop1.5, you should have a copy of the latest CVS version
+        of Eggdrop.</li>
+      </ol>
+    </blockquote>
+
+    <p>Notes:</p>
+
+    <blockquote>
+      <ol>
+        <li>you can &#39;cvs logout&#39;, but you don&#39;t need to.</li>
+
+        <li>you don&#39;t need to go through this whole process every time;
+        if you want to get a CVS version of Eggdrop at a later time, you can
+        just &#39;cd ~/eggdrop1.5&#39; and type &#39;cvs update
+        -dAP&#39;.</li>
+
+        <li>if you experience errors when using &#39;export&#39;, you might
+        be using tclsh as a shell. If so, try using the command
+        &#39;setenv&#39; instead of &#39;export&#39;: &#39;setenv CVSROOT
+        :pserver:anonymous@cvs.eggheads.org:/usr/local/cvsroot&#39;</li>
+      </ol>
+    </blockquote>
+
+    <p><a name="sect3"></a>3. <strong>Quick startup</strong></p>
+
+    <blockquote>
+      <p>Please see the <a href="install.html">Installation file</a></p>
+    </blockquote>
+
+    <p><a name="sect4"></a>4. <strong>Upgrading</strong></p>
+
+    <p><a name="sect4a"></a>4a. <strong>from a pre-1.3/1.4/1.5 version to
+    1.5</strong></p>
+
+    <blockquote>
+      <p><strong>BACK UP YOUR USERFILE</strong></p>
+
+      <p>We can&#39;t stress this enough, if you are upgrading, and you have
+      even a slight possibility of downgrading again later you will HAVE to
+      back up your userfile, or you will lose it. v1.3 of Eggdrop radically
+      changed alot of things.</p>
+
+      <p> There are many major changes between v0.9, v1.0, v1.1 and
+      v1.3/1.4/1.5 so PAY ATTENTION to this part if you have a v0.9, 1.0 or
+      1.1 bot already. If you&#39;re just starting out, you can skip this
+      section.</p>
+
+      <p>to 1.3/1.4/1.5: * If you run share bots, you will need to upgrade
+      them all at the same time because of the new userfile format. Older
+      bots will be able to link in, but will not get or send a userfile.
+      1.2&#39;s will also tend to refuse to share with another pre1.2. MAKE A
+      NEW CONFIG FILE from the example, there are some radical extras.</p>
+
+      <p>from 0.9/1.0 to 1.3/1.4/1.5: * Just redo the whole thing, absolutely
+      everything has changed including the userfile and config file
+      formats.</p>
+
+      <p>from 1.1/1.2 to 1.3/1.4/1.5: * You will likely want to redo the
+      config file, as much as changed. BACK UP!! You will need to run
+      &#39;tclsh scripts/weed/&lt;userfile&gt; c&#39; to convert your
+      userfile from v3 (1.1/1.2) to v4 (1.3/1.4/1.5)</p>
+    </blockquote>
+
+    <p><a name="sect4b"></a>4b. <strong>from an older 1.3/1.4/1.5 version to
+    a newer one</strong></p>
+
+    <blockquote>
+      <p>If you followed the <a href="install.html">Installation file</a> and
+      did a &#39;make install&#39; (or &#39;make DEST=&quot;path&quot;
+      install&#39;) after &#39;make&#39;, this will be pretty easy. Just
+      upload the new eggdrop1.5.xx.tar.gz file to the home dir of your shell,
+      gunzip and untar it, and type &#39;cd ~/eggdrop1.5.xx&#39;. Then, type
+      &#39;./configure&#39;, &#39;make&#39;, then kill the bot
+      (&#39;.die&#39; on the party line, or use &#39;kill&#39; on the shell)
+      and &#39;make install&#39; to the same directory your bot is currently
+      in. Then, you can just restart your bot.</p>
+    </blockquote>
+
+    <p><a name="sect5"></a>5. <strong>Setting up a crontab</strong></p>
+
+    <blockquote>
+      <p>Eggdrop has become more stable with time, thanks mostly to people
+      reporting bug details and helping find places where it crashes.
+      However, there are still a -few- places where things aren&#39;t
+      perfect. Few if any things in life are.</p>
+
+      <p>Also, most systems go down from time to time. These things cause
+      your bot to disappear from IRC, and you have to restart it.</p>
+
+      <p>The Eggdrop source file includes a shell script called
+      &#39;botchk&#39; that will help keep the bot online. It will make the
+      machine check every ten minutes to make sure your bot is still running.
+      To use it, you have to add a line to your crontab. First, edit
+      &#39;botchk&#39; and change the directory and command line parameters
+      so that it will be able to start up your bot. Then, add this line to
+      your crontab:</p>
+
+      <p>0,10,20,30,40,50 * * * * /home/mydir/botchk</p>
+
+      <p>If you don&#39;t want to get emails from cron, put this:</p>
+
+      <p>0,10,20,30,40,50 * * * * /home/mydir/botchk &gt;/dev/null
+      2&gt;&amp;1</p>
+
+      <p> Naturally, you need to change the path to the correct path for
+      botchk. If you&#39;ve never used crontab before, here is a simple way
+      to add that line: Create a new file called &#39;mycron&#39; and put the
+      above line into it. Then, from your shell prompt, type % crontab mycron
+      That will create a new crontab entry for you, with a line that runs
+      botchk every ten minutes. Botchk will then restart the bot when
+      necessary (and send you email informing you).</p>
+    </blockquote>
+
+    <p><a name="sect5a"></a>5a. <strong>Setting up a crontab using
+    autobotchk</strong></p>
+
+    <blockquote>
+      <p>Included with your Eggdrop is a utility called &#39;autobotchk&#39;.
+      Using autobotchk is probably the fastest way of creating your botchk
+      and adding it to crontab with just a few required steps.</p>
+
+      <p>To crontab your bot follow the following steps:</p>
+
+      <p>(1) type &#39;cp scripts/autobotchk ..&#39;<br>
+       (2) type &#39;./autobotchk &lt;eggdrop config file&gt;&#39;</p>
+
+      <p>This will hopefully crontab your bot using the default setup. If you
+      want a list of autobotchk options, type &#39;./autobotchk&#39;. An
+      example with options would be:</p>
+
+      <p>./autobotchk eggdrop.conf -noemail -5</p>
+
+      <p>This would setup crontab to run the botchk every 5 minutes and also
+      to not send you e-mail saying that it restarted your bot.</p>
+    </blockquote>
+
+    <p><a name="sect6"></a>6. <strong>Boring legal stuff</strong></p>
+
+    <blockquote>
+      <p>The Eggdrop bot is copyright © by Robey Pointer. As of January 1997,
+      Eggdrop is distributed according to the GNU General Public License.
+      There should be a copy of this license in the file COPYING. If not,
+      write to the Free Software Foundation, Inc., 675 Mass Ave, Cambridge,
+      MA 02139, USA.</p>
+
+      <p>As of eggdrop1.3.28 all changes made by the Eggheads development
+      team to the Eggdrop source code and any related files are copyright ©
+      by Eggheads. The source code will still be distributed according to the
+      GNU General Public License as Robey Pointer did in the past.</p>
+
+      <p>Releases previous to 1.0m were made using a different licensing
+      scheme. You may, at your option, use the GNU General Public License on
+      those versions (instead of the license packaged with them) with my
+      blessing. For any versions bearing a copyright date of 1997 or later,
+      you have no choice -- you must use the GNU General Public License.</p>
+
+      <p>The files &quot;match.c&quot;, &quot;net.c&quot;, and
+      &quot;blowfish.c&quot; are exempt from the above restrictions.
+      &quot;match.c&quot; is original code by Chris Fuller (email:
+      crf@cfox.bchs.uh.edu) and has been placed by him into the public
+      domain. &quot;net.c&quot; is by me and I [who?] also choose to place it
+      in the public domain. &quot;blowfish.c&quot; is by various sources and
+      is in the public domain. All 3 files contain useful functions that
+      could easily be ported to other applications -- the other parts of the
+      bot generally don&#39;t.</p>
+
+      <p>Tcl is by John Ousterhout and is in no way affiliated with Eggdrop,
+      and likely has its own set of copyrights and whatnots.</p>
+
+      <p>There is no warranty, implied or whatever. You use this software at
+      your own risk, no matter what purpose you put it to.</p>
+
+      <p>You didn&#39;t pay for it, so don&#39;t expect magic.</p>
+    </blockquote>
+
+    <p><a name="sect7"></a>7. <strong>Mailing list</strong></p>
+
+    <blockquote>
+      <p>There are currently a couple of mailing lists about Eggdrop.
+      eggheads@eggdheads.org is the one relevant for posts about Eggdrop 1.4
+      &amp; 1.5 (and bug fixes, and suggestions, etc).</p>
+
+      <p>To subscribe to the eggheads mailing list, send email to:
+      eggheads-request@eggheads.org In the body of the message, put
+      &quot;subscribe eggheads&quot;; or go to <a href= 
+      "http://scrambled.eggheads.org/mailman/listinfo/eggheads">
+      http://scrambled.eggheads.org/mailman/listinfo/eggheads</a></p>
+
+      <p><strong>DO NOT SEND ROBEY EMAIL ABOUT EGGDROP</strong></p>
+
+      <p>Robey is no longer developing the Eggdrop code (although he does put
+      a word in every now and then) so don&#39;t bother emailing him. If you
+      have a serious problem, email the Eggdrop mailing list and it will get
+      to the coders.</p>
+
+      <p> Please, before posting to this list, see what things are like, and
+      when you do post, read over your post for readability, spelling, and
+      grammar mistakes. Obviously, we&#39;re all human (or are we?) and we
+      all make mistakes (heck, look at this document! ;).</p>
+
+      <p>Open discussion and debate is integral to change and progress.
+      Don&#39;t flame others over mere form (grammar and spelling), or even
+      substantive issues either for that matter. Please read and follow the
+      mailing list rules.</p>
+
+      <p>The eggheads@eggheads.org maillist is not dedicated to those all too
+      common questions we have all seen on other lists... for example:</p>
+
+      <p> &quot;Why does my bot say this: Please edit your config
+      file.&quot;<br>
+       &quot;How do I telnet my bot?&quot;<br>
+       &quot;Where do I get Eggdrop for windows??????&quot;<br>
+       etc...</p>
+
+      <p>Bug reports, technical questions, your thoughts or suggestions on
+      new features being added to Eggdrop, things that should be removed or
+      fixed, amazing problems that even stump the guru&#39;s, etc... are what
+      we want to see here.</p>
+    </blockquote>
+
+    <p><a name="sect8"></a>8. <strong>Documentation</strong></p>
+
+    <blockquote>
+      <p>We&#39;re trying to keep the documentation up to date. If you feel
+      that anything is missing here, or that anything should be added etc,
+      please email eggheads@eggheads.org about it, thank you.</p>
+    </blockquote>
+
+    <p><a name="sect9"></a>9. <strong>Obtaining help</strong></p>
+
+    <blockquote>
+      <p>There is currently no uniform IRC channel in existence to support
+      Eggdrop. At one time, such channels did exist, but they most often
+      deteriorate into a vanity channel, where no one is willing to help.</p>
+
+      <p>However, we&#39;ll list a few places here where you *might* get
+      help. Note though that we are not responsible for those channels, or
+      necessarily run those channels ourselves.</p>
+
+      <blockquote>
+        <ul>
+          <li>
+            Undernet 
+
+            <ul>
+              <li><a href="chat/undernet_eggdrop.chat">#eggdrop</a></li>
+            </ul>
+          </li>
+
+          <li>
+            EFnet 
+
+            <ul>
+              <li><a href="chat/efnet_eggheads.chat">#eggheads</a></li>
+
+              <li><a href="chat/efnet_eggtcl.chat">#eggtcl</a></li>
+            </ul>
+          </li>
+
+          <li>
+            IRCNet 
+
+            <ul>
+              <li><a href="chat/ircnet_eggdrop.chat">#eggdrop</a></li>
+
+              <li><a href="chat/ircnet_egghelp.chat">#egghelp</a></li>
+
+              <li><a href="chat/ircnet_bothelp.chat">#bothelp</a></li>
+            </ul>
+          </li>
+        </ul>
+      </blockquote>
+
+      <p>If there are any serious places that should be added, let us
+      know.</p>
+    </blockquote>
+    <hr>
+
+    <p><em>© 1997 Robey Pointer<br>
+     © 1999,2000 Eggheads Development Team</em></p>
+  </body>
+</html>
 

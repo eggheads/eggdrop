@@ -1,202 +1,199 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<!-- $Id: news.html,v 1.2 2000/04/13 11:21:24 tothwolf Exp $ -->
 
-<HTML>
-  <HEAD>
-    <TITLE>Latest news on Eggdrop 1.5</TITLE>
-  </HEAD>
+<html>
+  <head>
+    <title>Eggdrop Documentation: Latest news for Eggdrop 1.5</title>
+  </head>
 
-  <BODY>
-    <STRONG><FONT color="#FF0000">News - Updated 21 March
-    2000</FONT></STRONG> 
-    <HR>
+  <body>
+    <div align="center">
+      <p><strong>Latest news for Eggdrop 1.5</strong></p>
+    </div>
+    <hr>
 
-    <P><FONT face="Arial, Helvetica" size="-1">What&#39;s new, first read the
-    following documents:</FONT></P>
+    <p><strong>News - Updated 21 March 2000</strong></p>
 
-    <BLOCKQUOTE>
-      <FONT face="Arial, Helvetica" size="-1"> <A href="install.html">
-      INSTALL</A><BR>
-       <A href="readme.html">README</A><BR>
-       <A href="faqs.html">Faqs</A><BR>
-       <A href="botnet.html">BOTNET</A><BR>
-       UPDATES1.5<BR>
-       <A href="app-tcl-commands.html">tcl-commands</A></FONT>
-    </BLOCKQUOTE>
+    <p>What&#39;s new, first read the following documents:</p>
 
-    <P><BR>
-     <FONT face="Arial, Helvetica" size="-1">All of these documents combined
-    will fill you in on the latest changes to eggdrop in version 1.5.xx.
-    Further down the file is changes made from the 1.3.xx to the 1.4.xx
-    version of eggdrop.</FONT></P>
+    <blockquote>
+      <ul>
+        <li><a href="install.html">Install</a></li>
 
-    <P><FONT face="Arial, Helvetica" size="-1">Alot of things have changed in
-    this version so at a minimum read the UPDATES1.5 and <A href=
-    "botnet.html"> BOTNET</A> text files. UPDATES shows what&#39;s been added
-    and fixed along the way. BOTNET gives a comprehensive step by step guide
-    on linking bots and the new bot flags</FONT>.</P>
+        <li><a href="readme.html">Readme</a></li>
 
-    <P><STRONG><FONT color="#FF0000">CAUTION:</FONT></STRONG></P>
+        <li><a href="faqs.html">Faqs</a></li>
 
-    <BLOCKQUOTE>
-      <FONT face="Arial, Helvetica" size="-1">1. Before you start the bot for
-      the first time BACKUP your userfile if this is an upgrade from a
-      previous version.</FONT> 
+        <li><a href="botnet.html">Botnet</a></li>
 
-      <P><FONT face="Arial, Helvetica" size="-1">2. DON&#39;T USE YOUR OLD
-      CONFIG FILE.. MAKE A NEW ONE......</FONT>...</P>
-    </BLOCKQUOTE>
+        <li>UPDATES1.5</li>
+      </ul>
+    </blockquote>
 
-    <H2><STRONG>Changes made to Eggdrop 1.5.xx from
-    Eggdrop1.4.xx</STRONG></H2>
-    <STRONG><FONT face="Arial, Helvetica" size="-1" color=
-    "#FF0000">!CHANNELS</FONT></STRONG> 
+    <p>All of these documents combined will help fill you in on the latest
+    changes to eggdrop in version 1.5.xx. Further down the file is changes
+    made from the 1.3.xx to the 1.4.xx version of eggdrop.</p>
 
-    <BLOCKQUOTE>
-      <FONT face="Arial, Helvetica" size="-1">Support for IRCNET !channels
-      was added to eggdrop. Also this might be still a bit buggy, it should
-      work basically. We appreciate bug reports!</FONT>
-    </BLOCKQUOTE>
-    <STRONG><FONT face="Arial, Helvetica" size="-1" color=
-    "#FF0000">ASYNCHRONOUS DNS MODULE</FONT></STRONG> 
+    <p>Alot of things have changed in this version so at a minimum read the
+    UPDATES1.5 and <a href="botnet.html">Botnet</a> text files. UPDATES shows
+    what&#39;s been added and fixed along the way. BOTNET gives a
+    comprehensive step by step guide on linking bots and the new bot
+    flags.</p>
 
-    <BLOCKQUOTE>
-      <FONT face="Arial, Helvetica" size="-1">Eggdrop 1.5.1 is shipped with a
-      new module, the dns module. It replaces those old dns-lookups performed
-      by eggdrop which could halt the whole bot during a time-out. We also
-      added a new Tcl command &#39;dnslookup&#39;, so scripts can look up
-      IP&#39;s and hostname now asynchronously, too.</FONT>
-    </BLOCKQUOTE>
-    <STRONG><FONT face="Arial, Helvetica" size="-1" color=
-    "#FF0000">+/-NODESYNCH</FONT></STRONG> 
+    <p><strong>CAUTION:</strong></p>
 
-    <BLOCKQUOTE>
-      <FONT face="Arial, Helvetica" size="-1">This new channel setting
-      replaces the old &#39;allow-desync&#39; setting from global to channel
-      functionality. This setting is useful if you use some kind of chanserv
-      or if you don&#39;t care about your channel being desnych.</FONT>
-    </BLOCKQUOTE>
-    <STRONG><FONT face="Arial, Helvetica" size="-1" color="#FF0000">NICK
-    LENGTH</FONT></STRONG> 
+    <blockquote>
+      <ol>
+        <li>Before you start the bot for the first time BACKUP your userfile
+        if this is an upgrade from a previous version.</li>
 
-    <BLOCKQUOTE>
-      <FONT face="Arial, Helvetica" size="-1">To support longer nicknames as
-      some IRC servers do (dalnet I think) a settings was added for this one
-      (nick-len).</FONT>
-    </BLOCKQUOTE>
-    <STRONG><FONT face="Arial, Helvetica" size="-1" color="#FF0000">PENALTY
-    CALCULATION</FONT></STRONG> 
+        <li>DON&#39;T USE YOUR OLD CONFIG FILE... MAKE A NEW ONE!</li>
+      </ol>
+    </blockquote>
 
-    <BLOCKQUOTE>
-      <FONT face="Arial, Helvetica" size="-1">Eggdrop calculates penalty
-      points on IRCNET now, so it won&#39;t flood itself off anymore.</FONT>
-    </BLOCKQUOTE>
-    <STRONG><FONT face="Arial, Helvetica" size="-1" color="#FF0000">SHARE
-    MODULE</FONT></STRONG> 
+    <p><strong>Changes made to Eggdrop 1.5.xx from Eggdrop1.4.xx</strong></p>
 
-    <BLOCKQUOTE>
-      <FONT face="Arial, Helvetica" size="-1">Share module got a new setting
-      now (override-bots) which allows hub bots to override the leafs bot
-      setting (botadress, telnet port and password). Please note, that this
-      won&#39;t work with a 1.4 or even 1.3 bot.</FONT>
-    </BLOCKQUOTE>
-    <STRONG><FONT face="Arial, Helvetica" size="-1" color="#FF0000">TCL
-    COMMANDS</FONT></STRONG> 
+    <p><strong>!channels</strong></p>
 
-    <BLOCKQUOTE>
-      <FONT face="Arial, Helvetica" size="-1">* All three commands to add
-      stuff to the queues (puthelp, putserv and putquick) support the
-      &#39;-next&#39; parameter now which pushes data to the front of the
-      queues.</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">* An command to calculate md5
-      checksums was added (md5).</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">* To support the new asynch
-      dns module, the command &#39;dnslookup&#39; was added.</FONT>
-    </BLOCKQUOTE>
-    <STRONG><FONT face="Arial, Helvetica" size="-1" color="#FF0000">TRAFFIC
-    ACCOUNTING</FONT></STRONG> 
+    <blockquote>
+      <p>Support for IRCNET !channels was added to eggdrop. Also this might
+      be still a bit buggy, it should work basically. We appreciate bug
+      reports!</p>
+    </blockquote>
 
-    <BLOCKQUOTE>
-      <FONT face="Arial, Helvetica" size="-1">Eggdrop counts the whole
-      traffic which it generates and receives through IRC, botnet and dcc
-      now. You can access these statistics via the dcc command
-      &#39;.traffic&#39;. Please note, that the counter gets reset every time
-      a restart is done.</FONT>
-    </BLOCKQUOTE>
-    <STRONG><FONT face="Arial, Helvetica" size="-1" color="#FF0000">TRANSFER
-    / FILESYS MODULE</FONT></STRONG> 
+    <p><strong>Asynchronous dns module</strong></p>
 
-    <BLOCKQUOTE>
-      <FONT face="Arial, Helvetica" size="-1">The filesys and transfer
-      modules have changed completely. Both can handle now unlimited filename
-      lengths and description sizes. Incomplete downloads from the bot can be
-      resumed now.</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1">The db format of the filesys
-      module was also changed to remove the limits imposed by the old format.
-      There&#39;s nothing special for you to do as the old db is
-      automatically converted to the new format when you first access it. You
-      won&#39;t be able to downgrade to older versions after this though, so
-      maybe you&#39;ll want to make a backup first.</FONT>
-    </BLOCKQUOTE>
+    <blockquote>
+      <p>Eggdrop 1.5.1 is shipped with a new module, the dns module. It
+      replaces those old dns-lookups performed by eggdrop which could halt
+      the whole bot during a time-out. We also added a new Tcl command
+      &#39;dnslookup&#39;, so scripts can look up IP&#39;s and hostname now
+      asynchronously, too.</p>
+    </blockquote>
 
-    <H2><STRONG>Changes made to Eggdrop 1.4.xx from
-    Eggdrop1.3.xx</STRONG></H2>
-    <STRONG><FONT face="Arial, Helvetica" size="-1" color=
-    "#FF0000">SHARING</FONT></STRONG> 
+    <p><strong>+/-nodesynch</strong></p>
 
-    <BLOCKQUOTE>
-      <FONT face="Arial, Helvetica" size="-1">Sharing has changed a little.
-      You will notice that a resync buffer is kept for share bots when they
-      disconnect. This allows for them not to have to send the entire
-      userfile again when they reconnect. This is a much more efficient
-      approach to syncing the user files.</FONT>
-    </BLOCKQUOTE>
-    <STRONG><FONT face="Arial, Helvetica" size="-1" color=
-    "#FF0000">BOTFLAGS</FONT></STRONG> 
+    <blockquote>
+      <p>This new channel setting replaces the old &#39;allow-desync&#39;
+      setting from global to channel functionality. This setting is useful if
+      you use some kind of chanserv or if you don&#39;t care about your
+      channel being desnych.</p>
+    </blockquote>
 
-    <BLOCKQUOTE>
-      <FONT face="Arial, Helvetica" size="-1">Bot flags have changed. It is
-      recommended that you read the BOTNET document to learn more about
-      linking bots. Major changes in how you configure a passive and
-      aggressive bot.</FONT>
-    </BLOCKQUOTE>
-    <STRONG><FONT face="Arial, Helvetica" size="-1" color=
-    "#FF0000">USERFLAGS</FONT></STRONG> 
+    <p><strong>Nick length</strong></p>
 
-    <BLOCKQUOTE>
-      <FONT face="Arial, Helvetica" size="-1">User flags have changed. You
-      still have the basic flags but others have been added. Some changes to
-      this are that if someone has a global +n they will automatically be
-      given all the global flags available. You will also notice there are no
-      more capital letters; each flag has its own unique letter. An example
-      is the B flag, in previous versions, it stood for a botnet master. The
-      new flag is t. For more information on these changes, see the .help
-      whois for a list of all flags. 1.3.24 introduces a new flag for
-      +stopnethack procedure flexibility: +w.</FONT>
-    </BLOCKQUOTE>
-    <STRONG><FONT face="Arial, Helvetica" size="-1" color=
-    "#FF0000">LANGUAGES</FONT></STRONG> 
+    <blockquote>
+      <p>To support longer nicknames as some IRC servers do (dalnet I think)
+      a settings was added for this one (nick-len).</p>
+    </blockquote>
 
-    <BLOCKQUOTE>
-      <FONT face="Arial, Helvetica" size="-1">Almost everything the bot says
-      now is in language file. This should allow the bot to be more versatile
-      for other people that do not speak English. As soon as we start getting
-      the translations in there will be a directory on ftp.eggheads.org that
-      will contain ready to use language files. Look for it real soon.</FONT>
-    </BLOCKQUOTE>
-    <STRONG><FONT face="Arial, Helvetica" size="-1" color=
-    "#FF0000">COMMANDS</FONT></STRONG> 
+    <p><strong>Penalty calculation</strong></p>
 
-    <BLOCKQUOTE>
-      <FONT face="Arial, Helvetica" size="-1"><EM>.voice</EM> and <EM>
-      .devoice</EM> commands where added in dcc chat. This will voice a user
-      on a channel if the bot is oped. Likewise for the .devoice
-      command.</FONT><BR>
-       <FONT face="Arial, Helvetica" size="-1"><EM>.email</EM> is now support
-      in userinfo1.0.tcl so if you want emails to work, use this :)</FONT>
-    </BLOCKQUOTE>
-    <HR>
-    <EM><FONT face="Arial, Helvetica" size="-1">&copy; 1997 Robey Pointer<BR>
-     &copy; 1999,2000 Eggheads Development Team</FONT></EM>
-  </BODY>
-</HTML>
+    <blockquote>
+      <p>Eggdrop calculates penalty points on IRCNET now, so it won&#39;t
+      flood itself off anymore.</p>
+    </blockquote>
+
+    <p><strong>Share module</strong></p>
+
+    <blockquote>
+      <p>Share module has a new setting (override-bots) which allows hub bots
+      to override the leafs bot setting (botadress, telnet port and
+      password). Please note, that this won&#39;t work with a 1.4 or even 1.3
+      bot.</p>
+    </blockquote>
+
+    <p><strong>Tcl commands</strong></p>
+
+    <blockquote>
+      <ul>
+        <li>All three commands to add stuff to the queues (puthelp, putserv
+        and putquick) support the &#39;-next&#39; parameter now which pushes
+        data to the front of the queues.</li>
+
+        <li>An command to calculate md5 checksums was added (md5).</li>
+
+        <li>To support the new asynch dns module, the command
+        &#39;dnslookup&#39; was added.</li>
+      </ul>
+    </blockquote>
+
+    <p><strong>Traffic accounting</strong></p>
+
+    <blockquote>
+      <p>Eggdrop counts the whole traffic which it generates and receives
+      through IRC, botnet and dcc now. You can access these statistics via
+      the dcc command &#39;.traffic&#39;. Please note, that the counter gets
+      reset every time a restart is done.</p>
+    </blockquote>
+
+    <p><strong>Transfer / Filesys modules</strong></p>
+
+    <blockquote>
+      <p>The filesys and transfer modules have changed completely. Both can
+      handle now unlimited filename lengths and description sizes. Incomplete
+      downloads from the bot can be resumed now.<br>
+       The db format of the filesys module was also changed to remove the
+      limits imposed by the old format. There&#39;s nothing special for you
+      to do as the old db is automatically converted to the new format when
+      you first access it. You won&#39;t be able to downgrade to older
+      versions after this though, so maybe you&#39;ll want to make a backup
+      first.</p>
+    </blockquote>
+
+    <p><strong>Changes made to Eggdrop 1.4.xx from Eggdrop1.3.xx</strong></p>
+
+    <p><strong>Sharing</strong></p>
+
+    <blockquote>
+      <p>Sharing has changed a little. You will notice that a resync buffer
+      is kept for share bots when they disconnect. This allows for them not
+      to have to send the entire userfile again when they reconnect. This is
+      a much more efficient approach to syncing the user files.</p>
+    </blockquote>
+
+    <p><strong>Botflags</strong></p>
+
+    <blockquote>
+      <p>Bot flags have changed. It is recommended that you read the BOTNET
+      document to learn more about linking bots. Major changes in how you
+      configure a passive and aggressive bot.</p>
+    </blockquote>
+
+    <p><strong>Userflags</strong></p>
+
+    <blockquote>
+      <p>User flags have changed. You still have the basic flags but others
+      have been added. Some changes to this are that if someone has a global
+      +n they will automatically be given all the global flags available. You
+      will also notice there are no more capital letters; each flag has its
+      own unique letter. An example is the B flag, in previous versions, it
+      stood for a botnet master. The new flag is t. For more information on
+      these changes, see the .help whois for a list of all flags. 1.3.24
+      introduces a new flag (+w) for +stopnethack procedure flexibility.</p>
+    </blockquote>
+
+    <p><strong>Languages</strong></p>
+
+    <blockquote>
+      <p>Almost everything the bot says now is in language file. This should
+      allow the bot to be more versatile for other people that do not speak
+      English. As soon as we start getting the translations in there will be
+      a directory on ftp.eggheads.org that will contain ready to use language
+      files. Look for it real soon.</p>
+    </blockquote>
+
+    <p><strong>Commands</strong></p>
+
+    <blockquote>
+      <p><em>.voice</em> and <em> .devoice</em> commands where added in dcc
+      chat. This will voice a user on a channel if the bot is oped. Likewise
+      for the .devoice command.</p>
+    </blockquote>
+    <hr>
+
+    <p><em>© 1997 Robey Pointer<br>
+     © 1999,2000 Eggheads Development Team</em></p>
+  </body>
+</html>
 

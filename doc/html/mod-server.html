@@ -1,495 +1,695 @@
-<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<!-- $Id: mod-server.html,v 1.2 2000/04/13 11:21:24 tothwolf Exp $ -->
+
 <html>
-<head>
-   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-   <meta name="GENERATOR" content="Mozilla/4.7 [en] (WinNT; U) [Netscape]">
-   <title>Eggdrop Documentation: Server Module</title>
-</head>
-<body text="#000000" bgcolor="#FFFFFF" link="#3333FF" vlink="#3333FF" alink="#3333FF">
-<b><font face="Arial, Helvetica" color="#FF0000" size=-1>SERVER
-MODULE Last modified 05 April 2000</font></b>
-<br><hr><br>
-<font face="Arial, Helvetica" color="#000000" size=-1>
-The server module allows the bot to connect to an IRC server. Currently the bot cannot be run without this module loaded.
+  <head>
+    <title>Eggdrop Documentation: Server module</title>
+  </head>
 
-<blockquote>
-<a href="#config">Config file settings</a><br>
-<a href="#tcl">TCL commands</a><br>
-<a href="#tclvar">TCL variables</a><br>
-<a href="#binds">TCL bindings</a><br>
-</blockquote>
+  <body>
+    <div align="center">
+      <p><strong>Server module</strong></p>
+    </div>
+    <hr>
 
-</font>
-<hr>
-<a name="config"></a>
-<b><font face="Arial, Helvetica" color="#FF0000" size=-1>Config file settings</font></b><br>
-<font face="Arial, Helvetica" color="#000000" size=-1>
-<br>
-Lines in bold are the lines that need to be included in the eggdrop config file if you want to use
-the SERVER module.
-<br>Lines in bold italics are optional and only required if you wish to change the default behaviour
-for that particular feature.
-<br><br>
-<blockquote>
-<font color="#ff0000">##### SERVER MODULE #####</font><br>
-<br>
-This module provides the core server support. You have to load this
-if you want your bot to come on irc.<br>
-<br>
-Put this line into your eggdrop.conf.dist file to load server module:<br>
-<br>
-<b>loadmodule server</b><br>
-<br>
-There are also some variables you can to set in your config file:<br>
-<br>
+    <p>The server module allows the bot to connect to an IRC server.</p>
 
-<b>set net-type 0</b>
-<blockquote>
-    Define here the network you use. There are six settings:
-	<blockquote>
-     0 = Efnet (non +e/+I hybrid)<br>
-     1 = IRCnet<br>
-     2 = Undernet<br>
-     3 = Dalnet<br>
-     4 = Efnet +e/+I hybrid<br>
-     5 = Others<br>
-	 </blockquote>
-    Valid settings are 0-5
-</blockquote>
+    <blockquote>
+      <ol>
+        <li><a href="#config">Config file settings</a></li>
 
-<b>set nick "LamestBot"</b>
-<blockquote>
-    Set here the nick of the bot, that which it uses on IRC, and
-   on the botnet unless you specify a sperate botnet-nick
-</blockquote>
+        <li><a href="#tclcmds">Tcl commands</a></li>
 
-<b>set altnick "L?m?stB?t"</b>
-<blockquote>
-    Set here an alternative nick to use if the nick specified by 'nick'
-    is unavailable. All '?' characters will be replaced by a random number.
-</blockquote>
+        <li><a href="#tclvars">Tcl variables</a></li>
 
-<b><i>set keep-nick 1</i></b>
-<blockquote>
-    This setting makes the bot try to get his original nickname back (for
-    example, if the intended nickname is already in use).
-</blockquote>
+        <li><a href="#tclbinds">Tcl bindings</a></li>
+      </ol>
+    </blockquote>
+    <hr>
 
-<b>set realname "/msg LamestBot hello"</b>
-<blockquote>
-    Set here what to display in the real-name field for the bot
-</blockquote>
+    <p><a name="config"></a>1. <strong>Config file settings</strong></p>
 
-<b><i>set init-server { putserv "MODE $botnick +i-ws" }</i></b>
-<blockquote>
-    Set here a script to run (if any) when first connecting to a server
-</blockquote>
+    <blockquote>
+      <p>Lines in <strong>bold</strong> are the lines that need to be
+      included in the eggdrop config file if you want to use the share
+      module.<br>
+       Lines in bold <strong><em>italics</em></strong> are optional and only
+      required if you wish to change the default behaviour for that
+      particular feature.</p>
 
-<b>set servers { IRCSERVER1:PORT IRSERVER2:PORT ... }</b>
-<blockquote>
-    Set here the list of irc servers you want your bot to connect to. You can
-    add an optional port for the server.
-<br>
-    Example:<br>
-<blockquote>
-     <b>set servers {<br>
-       irc.netw.ork<br>
-       irc.krow.ten:6668<br>
-     }</b>
-</blockquote>
-    This will make the bot connect on startup to irc.netw.ork using
-    'default-port'. On deconnect or a '.jump' it will try to connect
-    to irc.kwor.ten on port 6668.
-</blockquote>
+      <p>This module provides the core server support. You have to load this
+      if you want your bot to come on irc.<br>
+      </p>
 
-<b>set default-port 6667</b>
-<blockquote>
-    Set the default port which should be used if no one is specified at
-    '.jump' or in 'server'
-</blockquote>
+      <p>Put this line into your eggdrop.conf file to load server
+      module:&lt;/&gt;</p>
 
-<b><i>set strict-servernames 0</i></b>
-<blockquote>
-    Often irc server call themself in another way then there dns is. If
-    you want eggdrop to replace your entry in the config file with this
-    name, set this to 1. If you turn this setting to 0, eggdrop will keep
-    a seperate list of the names irc servers call themselves<br>
-    Valid settings are 0 for OFF and 1 ON.
-</blockquote>
-<b>set server-cycle-wait 60</b>
-<blockquote>
-    This setting defines how long eggdrop should wait before moving from one
-    server to another on disconnect.<br>
-    If you set 0 here, eggdrop wont wait at all and connect instantly.
-    Please note, that a too low setting could result in k-line for your host,
-    since many ircops don't like being flooded with connects.<br>
-    Valid settings are 0-infinite
-</blockquote>
-<b>set never-give-up 1</b>
-<blockquote>
-    This settings makes the bot cycle forever and keep trying to connect to
-    all irc servers in it's current list if they're down.<br>
-    Valid settings are 0 for OFF and 1 ON.
-</blockquote>
+      <p><strong>loadmodule server</strong></p>
 
-<b>set server-timeout 15</b>
-<blockquote>
-    Set here the timeout how long eggdrop should wait for a response when
-    connecting to a server before giving up and moving on to next server
-    in list.
-</blockquote>
+      <p>There are also some variables you can set in your config file:</p>
+    </blockquote>
 
-<b>set servlimit 0</b>
-<blockquote>
-    If the number of servers on the net gets below this number, it will
-    jump to a new server (ie, it will assume it's on the losing end of
-    a netsplit) -- set to 0 to turn off<br>
-    Note that most irc networks use Time Stamping or Nick Delay now, so
-    it's to your advantage to turn this off.<br>
-    Valid settings are 0 for OFF and 1 ON.
-</blockquote>
+    <blockquote>
+      <dl>
+        <dt><strong>set net-type 0</strong></dt>
 
-<b><i>set check-stoned 1</i></b>
-<blockquote>
-    Set this to 1 if eggdrop should check for stoned servers? (i.e.
-    Where the server connection has died, but eggdrop hasn't been
-    notified yet).<br>
-    Valid settings are 0 for OFF and 1 ON.
-</blockquote>
+        <dd>
+          <p>Define here the network you use. There are six settings:</p>
 
-<b><i>set serverror-quit 1</i></b>
-<blockquote>
-    If you want your bot to exit the server if it receives a error msg set
-    this to 1<br>
-    Valid settings are 0 for OFF and 1 ON.
-</blockquote>
+          <p>0 = Efnet (non +e/+I hybrid)<br>
+           1 = IRCnet<br>
+           2 = Undernet<br>
+           3 = Dalnet<br>
+           4 = Efnet +e/+I hybrid<br>
+           5 = Others</p>
 
-<b><i>set use-ison 1</i></b>
-<blockquote>
-    This setting makes the bot not u se /trace but /ison to check if our
-    botnick is free or being used.<br>
-    Please note: some irc admins, look for excessive use of /trace<br>
-    Valid settings are 0 for OFF and 1 ON.
-</blockquote>
+          <p>Valid settings are 0-5</p>
+        </dd>
 
-<b>set max-queue-msg 300</b>
-<blockquote>
-    Set here the maximum number of lines to queue to the server. If you're
-    going to dump large chunks of text to people over irc, you will probably
-    want to raise this -- most people are fine at 300 though
-</blockquote>
+        <dt><strong>set nick &quot;LamestBot&quot;</strong></dt>
 
-<b><i>set use-console-r 0</i></b>
-<blockquote>
-    This setting allows you the logging of all information got from a server,
-    via console mode 'r'<br>
-    NOTE: This is a large security hole, allowing people to see passwords.
-    This is now restricted to +n users only. Please choose your owners with
-    care.<br>
-    Valid settings are 0 for OFF and 1 ON.
-</blockquote>
+        <dd>
+          <p>Set the nickname the bot will use on IRC here.</p>
 
-<b><i>set debug-output 0</i></b>
-<blockquote>
-    This setting allows you the logging of all information sent to a server,
-    via console mode 'v'<br>
-    NOTE: This is a large security hole, allowing people to see passwords.
-    This is now restricted to +n users only. Please choose your owners with
-    care.<br>
-    Valid settings are 0 for OFF and 1 ON.
-</blockquote>
+          <p>The bot will use the same nick for the botnet unless you specify
+          a separate botnet-nick.</p>
+        </dd>
 
-<b><i>set strict-host 0</i></b>
-<blockquote>
-    Set this to 1 if you don't want your the bot to strip a leading '~'
-    on user@hosts<br>
-    Valid settings are 0 for OFF and 1 ON.
-</blockquote>
+        <dt><strong>set altnick &quot;LamestBot&quot;</strong></dt>
 
-<b><i>set quiet-reject 1</i></b>
-<blockquote>
-    This setting makes the bot squelch the error message when rejecting a DCC
-    CHAT or SEND. Normally it tells the DCC user that the CHAT or SEND has
-    been rejected because they don't have access.<br>
-    Please note, sometimes IRC server operators detect bots that way.<br>
-    Valid settings are 0 for OFF and 1 ON.
-</blockquote>
+        <dd>
+          <p>Set the alternate nickname the bot will use on IRC here.</p>
 
-<b>set flood-msg 5:60</b>
-<blockquote>
-     Set here how many msgs in how many seconds from one host are
-     recognized as a flood. Not specifying or using number = 0
-     will not check against msg floods
-</blockquote>
-<b>set flood-ctcp 3:60</b>
-<blockquote>
-     Set here how many ctcps in how many seconds from one host are
-     recognized as a flood. Not specifying or using number = 0
-     will not check against ctcp floods
-</blockquote>
+          <p>If you include &#39;?&#39; characters in this setting, they will
+          be replaced by a random number.</p>
+        </dd>
 
-<b>set answer-ctcp 3</b>
-<blockquote>
-    Set how many ctcps should be answered at once
-</blockquote>
+        <dt><strong><em>set keep-nick 1</em></strong></dt>
 
-<b><i>set lowercase-ctcp 0</i></b>
-<blockquote>
-    If you want your bot to answer lower case ctcp request (non rfc
-    compliant) set this setting to 1.<br>
-    Please note: mIRC will do this, most other clients will not<br>
-    Valid settings are 0 for OFF and 1 ON.
-</blockquote>
+        <dd>
+          <p>This setting makes the bot try to get its original nickname back
+          (for example, if the intended nickname is already in use).</p>
+        </dd>
 
-<b><i>set trigger-on-ignore 0</i></b>
-<blockquote>
-    If you want eggdrop to trigger binds for ignored users, set this to 1<br>
-    Valid settings are 0 for OFF and 1 ON.
-</blockquote>
+        <dt><strong>set realname &quot;/msg LamestBot
+        hello&quot;</strong></dt>
 
-<b>set double-mode 0</b>
-<blockquote>
-    Allow a msg being twice in mode queue?<br>
-    Valid settings are 0 for OFF and 1 ON.
-</blockquote>
+        <dd>
+          <p>This setting tells the bot what to display in the realname field
+          that shows up on IRC</p>
+        </dd>
 
-<b>set double-server 0</b>
-<blockquote>
-    Allow a msg being twice in server queue?
-    Valid settings are 0 for OFF and 1 ON.
-</blockquote>
+        <dt><strong>set init-server { putserv &quot;MODE $botnick +i-ws&quot;
+        }</strong></dt>
 
-<b>set double-help 0</b>
-<blockquote>
-    Allow a msg being twice in help queue? <br>
-    Valid settings are 0 for OFF and 1 ON.
-</blockquote>
-<b>set use-penalties 1</b> (default on net-type 1)
-<blockquote>
-    This enables eggdrop's penalty calculation. Every command eggdrop sends to
-    the irc server raises it's penatly points. If eggdrop reaches a server limit,
-    it gets disconnected with "excess flood" message. Eggdrop is able to count
-    internal those penalty points, too and take measures against excess flooding.<br>
-    Note: it's highly adviced to turn this on!
-</blockquote>
+        <dd>
+          <p>This setting allows the bot to evaluate Tcl commands when it
+          first connects to a server.</p>
+        </dd>
 
-<b><i>set use-lagcheck 1</i></b>
-<blockquote>
-    Lag check makes the bot check after every command send to the server if it's
-    lagging or not. If it is, queues are stopped to prevent server flooding.<br>
-    There are three different options for this setting:
-	<blockquote>
-     0 = turn it off<br>
-     1 = enable lag check and optimize kicks<br>
-     2 = trace nick changes and channel parts and change the queues respectively.
-	 </blockquote>
-    Please note, this lagcheck has been optimized for IRCNET at the moment,
-    but it should work for other networks, too. If you experience any
-    problems on other nets eggdrop still excess floods) mail the eggdrop
-    development crew please.<br>
-    Valid settings are 0-2
-</blockquote>
+        <dt><strong>set servers { IRCSERVER1:PORT IRSERVER2:PORT ...
+        }</strong></dt>
 
-<b><i>set optimize-kicks 1</i></b>
-<blockquote>
-    Optimize kicks optimizes kick queue. It also traces nick changes and parts in
-    channel and changes the kick queue respectively.<br>
-    There are three different options for this setting:
-	<blockquote>
-     0 = turn it off<br>
-     1 = optimize kick queue by sumarizing kicks.<br>
-     2 = trace nick changes and channel parts and change the queue respectively. For
-         example, bot wont try to kick users who have already parted the channel.<br>
-	</blockquote>	 
-    Please note, this setting is not needed if you set 'use-lagcheck' to 1.<br>
-    Valid settings are 0-2
-</blockquote>
-<br>
-These were the core irc module settings. There are more settings for
-'net-type' 5.
-<br>
-<br>
-<font color="#ff0000">##### SERVER MODULE - net-type 5 specific features (other networks) #####</font>
-<br><br>
-Attention: Use this settings *<b>only</b>* if you set 'net-type' to 5!
-<br><br>
-<b><i>set use-silence 1</i></b>
-<blockquote>
-    This setting makes the bot use ircdu's SILENCE command. If your network
-    supports this, set this to 1.<br>
-    Please note, this setting is automatically set to 0 for net-type 0/1/3/4,
-    and set to 1 for net-type 2.<br>
-    Valid settings are 0 for OFF and 1 ON.
-</blockquote>
+        <dd>
+          <p>This setting tell the bot what servers it should use when
+          connecting to IRC. You may optionally specify a port for each
+          server.</p>
 
-<b><i>set check-mode-r 1</i></b>
-<blockquote>
-    This settings defines how umode +r is understood by eggdrop. Some
-    networks use +r to mean a restricted connection. If this is your
-    case, and you want your bot to leave restricted servers and jump
-    to the next one on his server list, then set it to 1.<br>
-    Please note, this setting is automatically set to 0 for net-type 0/2/3/4,
-    and set to 1 for net-type 1.<br>
-    Valid settings are 0 for OFF and 1 ON.
-</blockquote>
+          <p>For example:</p>
 
-<b><i>set nick-len 9</i></b>
-<blockquote>
-    This setting enables you to use different nick lengths then the ircd's
-    default 9 (Dalnet uses 32 imo). The maximum supported length by eggdrop is 32.<br>
-    Valid settings are 9-32
-	</blockquote>
-</blockquote>	
-</font>
+          <p>set servers {<br>
+           &nbsp; irc.netw.ork<br>
+           &nbsp; irc.krow.ten:6668<br>
+           }</p>
 
-<hr>
-<a name="tcl"></a>
-<b><font face="Arial, Helvetica" color="#FF0000" size=-1>TCL COMMANDS:</font></b>
-<blockquote><b><font face="Arial, Helvetica" size=-1>putserv &lt;text></font></b>
-<br><font face="Arial, Helvetica" size=-1>sends text to the server,
-like 'dump' (intended for direct server commands); output is queued so
-that you won't flood yourself off the server</font>
-<br><i><font face="Arial, Helvetica" size=-1>returns: nothing</font></i>
-<p><b><font face="Arial, Helvetica" font size=-1>putquick &lt;text></font></b>
-<br><font face="Arial, Helvetica" font size=-1>sends text to the server,
-like 'dump' (intended for direct server commands); output is queued so
-that you won't flood yourself off the server, using the MODE queue (should
-be alot faster)</font>
-<br><i><font face="Arial, Helvetica" font size=-1>returns: nothing</font></i>
-<p><b><font face="Arial, Helvetica" font size=-1>putkick &lt;channel> &lt;nick,nick,...>
-[reason]</font></b>
-<br><font face="Arial, Helvetica" font size=-1>sends kicks to the server
-and tries to put as many nicks into one kick command as possible.</font>
-<br><i><font face="Arial, Helvetica" font size=-1>returns: nothing</font></i>
-<p><b><font face="Arial, Helvetica" size=-1>puthelp &lt;text></font></b>
-<br><font face="Arial, Helvetica" size=-1>sends text to the server
-like 'putserv', but uses a different queue (intended for sending messages
-to channels or people)</font>
-<br><i><font face="Arial, Helvetica" size=-1>returns: nothing</font></i>
-<p><b><font face="Arial, Helvetica" font size=-1>queuesize [queue]</font></b>
-<br><i><font face="Arial, Helvetica" font size=-1>returns: the number of
-msgs in all queues. If a queue is specified, only the size of this queue
-is returned. valid queues are: mode, server help, or all.</font></i>
-<p><b><font face="Arial, Helvetica" font size=-1>clearqueue &lt;queue></font></b>
-<br><i><font face="Arial, Helvetica" font size=-1>returns: number of deleted
-lines from the specified queue</font></i>
-<p><b><font face="Arial, Helvetica" size=-1>dumpfile &lt;nick> &lt;filename></font></b>
-<br><font face="Arial, Helvetica" size=-1>dumps out a file from the
-help/text directory to a user on IRC via msg (one line per msg); the user
-has no flags, so the flag bindings won't work within the file.</font>
-<p><b><font face="Arial, Helvetica" size=-1>jump [server [port [password]]]</font></b>
-<br><font face="Arial, Helvetica" size=-1>jumps to the server specified,
-or (if none is specified) the next server in the list</font>
-<br><i><font face="Arial, Helvetica" size=-1>returns: nothing</font></i></blockquote>
-<a name="tclvar"></a>
-<hr><b><font face="Arial, Helvetica" color="#FF0000" size=-1>TCL
-VARIABLES:</font></b>
-<blockquote><b><font face="Arial, Helvetica" size=-1>botnick</font></b>
-<br><font face="Arial, Helvetica" size=-1>current nickname the bot
-is using, ie 'Sisko' or 'Sisko0', etc</font>
-<p><b><font face="Arial, Helvetica" size=-1>botname</font></b>
-<br><font face="Arial, Helvetica" size=-1>current nick!user@host
-that
-the server sees, ie 'Sisko!ikaney@uk.defiant.org'</font>
-<p><b>isjuped</b>
-<br>value is 1 if bots nick is juped(437) 0 otherwise.
-<p><b><font face="Arial, Helvetica" size=-1>server</font></b>
-<br><font face="Arial, Helvetica" size=-1>current server the bot
-is using, ie 'irc.math.ufl.edu:6667'</font><font face="Arial, Helvetica" size=-1></font>
-<p><b><font face="Arial, Helvetica" size=-1>server-online</font></b>
-<br><font face="Arial, Helvetica" size=-1>unixtime value for when
-the bot connected to its current server</font></blockquote>
-<a name="binds"></a>
-<hr><b><font face="Arial, Helvetica" color="#FF0000" size=-1>BINDING(S)
-TABLE(S):</font></b>
-<blockquote><b><font face="Arial, Helvetica" size=-1>MSG</font></b>
-<blockquote><font face="Arial, Helvetica" size=-1>bind msg &lt;flags>
-&lt;command> &lt;proc></font>
-<br><font face="Arial, Helvetica" size=-1>proc-name &lt;nick> &lt;user@host>
-&lt;handle> &lt;args></font></blockquote>
-<font face="Arial, Helvetica" size=-1>used for /msg commands; the
-first word of the user's msg is the command, and everything else becomes
-the argument string</font>
-<p><b><font face="Arial, Helvetica" size=-1>MSGM (stackable)</font></b>
-<blockquote><font face="Arial, Helvetica" size=-1>bind msgm &lt;flags>
-&lt;mask> &lt;proc></font>
-<br><font face="Arial, Helvetica" size=-1>proc-name &lt;nick> &lt;user@host>
-&lt;handle> &lt;text></font></blockquote>
-<font face="Arial, Helvetica" size=-1>matches the entire line of
-text from a /msg with the mask; this is more useful for binding Tcl procs
-to words or phrases spoken anywhere within a line of text</font>
-<p><b><font face="Arial, Helvetica" size=-1>NOTC (stackable)</font></b>
-<blockquote><font face="Arial, Helvetica" size=-1>bind notc &lt;flags>
-&lt;mask> &lt;proc></font>
-<br><font face="Arial, Helvetica" size=-1>proc-name &lt;nick> &lt;user@host>
-&lt;handle> &lt;text> &lt;dest></font></blockquote>
-<font face="Arial, Helvetica" size=-1>destination will be a nickname
-(the bot's nickname, obviously) or a channel name; matches the entire line
-of text from a /notice with the mask; it is considered a breach of protocol
-to respond to a&nbsp; /notice on IRC, so this is intended for internal
-use (ie, logging, etc) only</font><font face="Arial, Helvetica" size=-1></font>
-<p><font face="Arial, Helvetica" size=-1>new Tcl procs should be
-declared as</font>
-<blockquote><font face="Arial, Helvetica" size=-1>proc notcproc {nick
-uhost hand chan text {dest ""}} {</font>
-<br><font face="Arial, Helvetica" size=-1>&nbsp; global botnick;
-if {$dest==""} { set dest $botnick }</font>
-<br><font face="Arial, Helvetica" size=-1>&nbsp; ...</font>
-<br><font face="Arial, Helvetica" size=-1>}</font></blockquote>
-<font face="Arial, Helvetica" size=-1>for compatiblity</font>
-<p><b><font face="Arial, Helvetica" size=-1>CTCP</font></b>
-<blockquote><font face="Arial, Helvetica" size=-1>bind ctcp &lt;flags>
-&lt;keyword-mask> &lt;proc></font>
-<br><font face="Arial, Helvetica" size=-1>proc-name &lt;nick> &lt;user@host>
-&lt;handle> &lt;dest> &lt;keyword> &lt;args...></font></blockquote>
-<font face="Arial, Helvetica" size=-1>destination will be a nickname
-(the bot's nickname, obviously) or a channel name; keyword is the ctcp
-command and args may be empty; if the proc returns 0, the bot will attempt
-its own processing of the ctcp command</font>
-<p><b><font face="Arial, Helvetica" size=-1>CTCR</font></b>
-<blockquote><font face="Arial, Helvetica" size=-1>bind ctcr &lt;flags>
-&lt;keyword-mask> &lt;proc></font>
-<br><font face="Arial, Helvetica" size=-1>proc-name &lt;nick> &lt;user@host>
-&lt;handle> &lt;dest> &lt;keyword> &lt;args...></font></blockquote>
-<font face="Arial, Helvetica" size=-1>just like ctcp, but this is
-triggered for a ctcp-reply (ie, ctcp embedded in a notice instead of a
-privmsg)</font>
-<p><b><font face="Arial, Helvetica" size=-1>RAW (stackable)</font></b>
-<blockquote><font face="Arial, Helvetica" size=-1>bind raw &lt;flags>
-&lt;keyword-mask> &lt;proc></font>
-<br><font face="Arial, Helvetica" size=-1>proc-name &lt;from> &lt;keyword>
-&lt;args...></font></blockquote>
-<font face="Arial, Helvetica" size=-1>previous versions of eggdrop
-required a special compile option to enable this binding, but it's now
-standard; the mask is checked against the keyword (either a numeric like
-"368" or a keyword like "PRIVMSG"); from will be the server name or the
-source user (depending on the keyword); flags are ignored; the order of
-the arguments is identical to the order that the IRC server sends to the
-bot -- the pre-processing only splits it apart enough to determine the
-keyword; if the proc returns 1, eggdrop will not process the line any further
-<b>(THIS
-COULD CAUSE YOUR BOT TO BEHAVE ODDLY IN SOME CASES)</b></font>
-<p><b><font face="Arial, Helvetica" size=-1>FLUD (stackable)</font></b>
-<blockquote><font face="Arial, Helvetica" size=-1>bind flud &lt;flags>
-&lt;type> &lt;proc></font>
-<br><font face="Arial, Helvetica" size=-1>proc-name &lt;nick> &lt;user@host>
-&lt;handle> &lt;type> &lt;channel></font></blockquote>
-<font face="Arial, Helvetica" size=-1>any floods detected through
-the flood control settings (like 'flood-ctcp') are sent here before processing;
-if the proc returns 1, no further action is taken on the flood; if the
-proc returns 0, the bot will do its normal "punishment" for the flood;
-the flood type is "pub", "msg", "join", or "ctcp" (and can be masked to
-"*" for the bind); flags is ignored</font>
-<p><b><font face="Arial, Helvetica" size=-1>WALL (stackable)</font></b>
-<blockquote><font face="Arial, Helvetica" size=-1>bind wall &lt;flags>
-&lt;mask> &lt;proc></font>
-<br><font face="Arial, Helvetica" size=-1>proc-name &lt;nick> &lt;msg></font></blockquote>
-<font face="Arial, Helvetica" size=-1>when the bot receives a wallops,
-it invokes this binding; flags is ignored; the mask is checked against
-the text of the wallops msg</font></blockquote>
+          <p>This will make the bot connect on startup to irc.netw.ork using
+          &#39;default-port&#39;. On disconnect, or if someone uses the
+          &#39;.jump&#39; command, it will then try to connect to
+          irc.kwor.ten on port 6668.</p>
+        </dd>
 
-<hr><i><font face="Arial, Helvetica" size=-1>&copy; 1997 Robey Pointer</font></i>
-<br><i><font face="Arial, Helvetica" size=-1>&copy; 1999,2000 Eggheads Development
-Team</font></i>
-</body>
+        <dt><strong>set default-port 6667</strong></dt>
+
+        <dd>
+          <p>Eggdrop will use this port if none is specified in the server
+          list or given for the &#39;.jump&#39; command.</p>
+        </dd>
+
+        <dt><strong><em>set strict-servernames 0</em></strong></dt>
+
+        <dd>
+          <p>Often an irc server call itself somthing other then what its
+          real dns name is. If you want eggdrop to replace your server entry
+          in the config file with this name, set this to 1. If you turn this
+          setting to 0, eggdrop will keep this name separate from the server
+          list.</p>
+
+          <p>Valid settings are 0 and 1.</p>
+        </dd>
+
+        <dt><strong>set server-cycle-wait 60</strong></dt>
+
+        <dd>
+          <p>This setting defines how long eggdrop should wait before moving
+          from one server to another on disconnect.</p>
+
+          <p>If you set 0 here, eggdrop wont wait at all and reconnect
+          instantly. Please note, that a too low setting could result in
+          k-line for your host, since many ircops don&#39;t like being
+          flooded with connects.</p>
+
+          <p>Valid settings are 0-infinite</p>
+        </dd>
+
+        <dt><strong>set never-give-up 1</strong></dt>
+
+        <dd>
+          <p>This setting makes the bot cycle forever and keep trying to
+          connect to all irc servers in it&#39;s current list if they&#39;re
+          down.</p>
+
+          <p>Valid settings are 0 and 1.</p>
+        </dd>
+
+        <dt><strong>set server-timeout 15</strong></dt>
+
+        <dd>
+          <p>Set here the timeout how long eggdrop should wait for a response
+          when connecting to a server before giving up and moving on to next
+          server in list.</p>
+        </dd>
+
+        <dt><strong>set servlimit 0</strong></dt>
+
+        <dd>
+          <p>If the number of servers on the net gets below this number, it
+          will jump to a new server (ie, it will assume it&#39;s on the
+          losing end of a netsplit) -- set to 0 to turn off</p>
+
+          <p>Note that most irc networks use Time Stamping or Nick Delay now,
+          so it&#39;s to your advantage to turn this off.</p>
+
+          <p>Valid settings are 0 and 1.</p>
+        </dd>
+
+        <dt><strong><em>set check-stoned 1</em></strong></dt>
+
+        <dd>
+          <p>Set this to 1 if eggdrop should check for stoned servers? (i.e.
+          Where the server connection has died, but eggdrop hasn&#39;t been
+          notified yet).</p>
+
+          <p>Valid settings are 0 and 1.</p>
+        </dd>
+
+        <dt><strong><em>set serverror-quit 1</em></strong></dt>
+
+        <dd>
+          <p>If you want your bot to exit the server if it receives a error
+          msg set this to 1</p>
+
+          <p>Valid settings are 0 and 1.</p>
+        </dd>
+
+        <dt><strong><em>set use-ison 1</em></strong></dt>
+
+        <dd>
+          <p>This setting makes the bot not use /ison instead of /trace when
+          checking to see if its default nick or alternate nick is in use</p>
+
+          <p>Please note: some irc admins, look for excessive use of
+          /trace</p>
+
+          <p>Valid settings are 0 and 1.</p>
+        </dd>
+
+        <dt><strong>set max-queue-msg 300</strong></dt>
+
+        <dd>
+          <p>Set here the maximum number of lines to queue to the server. If
+          you&#39;re going to dump large chunks of text to people over irc,
+          you will probably want to raise this -- most people are fine at 300
+          though</p>
+        </dd>
+
+        <dt><strong><em>set use-console-r 0</em></strong></dt>
+
+        <dd>
+          <p>This setting allows you the logging of all information got from
+          a server, via console mode &#39;r&#39;</p>
+
+          <p>NOTE: This is a large security hole, allowing people to see
+          passwords. This is now restricted to +n users only. Please choose
+          your owners with care.</p>
+
+          <p>Valid settings are 0 and 1.</p>
+        </dd>
+
+        <dt><strong><em>set debug-output 0</em></strong></dt>
+
+        <dd>
+          <p>This setting allows you the logging of all information sent to a
+          server, via console mode &#39;v&#39;</p>
+
+          <p>NOTE: This is a large security hole, allowing people to see
+          passwords. This is now restricted to +n users only. Please choose
+          your owners with care.</p>
+
+          <p>Valid settings are 0 and 1.</p>
+        </dd>
+
+        <dt><strong><em>set strict-host 0</em></strong></dt>
+
+        <dd>
+          <p>Set this to 1 if you don&#39;t want your the bot to strip any
+          leading &#39;~&#39; on user@hosts</p>
+
+          <p>Valid settings are 0 and 1.</p>
+        </dd>
+
+        <dt><strong><em>set quiet-reject 1</em></strong></dt>
+
+        <dd>
+          <p>This setting makes the bot squelch the error message when
+          rejecting a DCC CHAT or SEND. Normally it tells the DCC user that
+          the CHAT or SEND has been rejected because they don&#39;t have
+          access.</p>
+
+          <p>Please note, sometimes IRC server operators detect bots that
+          way.</p>
+
+          <p>Valid settings are 0 and 1.</p>
+        </dd>
+
+        <dt><strong>set flood-msg 5:60</strong></dt>
+
+        <dd>
+          <p>Set here how many msgs in how many seconds from one host are
+          recognized as a flood. Not specifying or using number = 0 will not
+          check against msg floods</p>
+        </dd>
+
+        <dt><strong>set flood-ctcp 3:60</strong></dt>
+
+        <dd>
+          <p>Set here how many ctcps in how many seconds from one host are
+          recognized as a flood. Not specifying or using number = 0 will not
+          check against ctcp floods</p>
+        </dd>
+
+        <dt><strong>set answer-ctcp 3</strong></dt>
+
+        <dd>
+          <p>Set how many ctcps should be answered at once</p>
+        </dd>
+
+        <dt><strong><em>set lowercase-ctcp 0</em></strong></dt>
+
+        <dd>
+          <p>If you want your bot to answer lower case ctcp request (non rfc
+          compliant) set this setting to 1.</p>
+
+          <p>Please note: mIRC will do this, most other clients will not</p>
+
+          <p>Valid settings are 0 and 1.</p>
+        </dd>
+
+        <dt><strong><em>set trigger-on-ignore 0</em></strong></dt>
+
+        <dd>
+          <p>If you want eggdrop to trigger binds for ignored users, set this
+          to 1</p>
+
+          <p>Valid settings are 0 and 1.</p>
+        </dd>
+
+        <dt><strong>set double-mode 0</strong></dt>
+
+        <dd>
+          <p>Allow a message to be in the mode queue multiple times?</p>
+
+          <p>Valid settings are 0 and 1.</p>
+        </dd>
+
+        <dt><strong>set double-server 0</strong></dt>
+
+        <dd>
+          <p>Allow a message to be in the server queue multiple times?</p>
+
+          <p>Valid settings are 0 and 1.</p>
+        </dd>
+
+        <dt><strong>set double-help 0</strong></dt>
+
+        <dd>
+          <p>Allow a message to be in the help queue multiple times?</p>
+
+          <p>Valid settings are 0 and 1.</p>
+        </dd>
+
+        <dt><strong>set use-penalties 1</strong></dt>
+
+        <dt>(default on net-type 1)</dt>
+
+        <dd>
+          <p>This enables eggdrop&#39;s penalty calculation. Every command
+          eggdrop sends to the irc server raises it&#39;s penatly points. If
+          eggdrop reaches a server limit, it gets disconnected with
+          &quot;excess flood&quot; message. Eggdrop is able to count internal
+          those penalty points, too and take measures against excess
+          flooding.</p>
+
+          <p>Note: it&#39;s highly adviced to turn this on!</p>
+        </dd>
+
+        <dt><strong><em>set use-lagcheck 1</em></strong></dt>
+
+        <dd>
+          <p>Lag check makes the bot check after every command send to the
+          server if it&#39;s lagging or not. If it is, queues are stopped to
+          prevent server flooding.</p>
+
+          <p>There are three different options for this setting:<br>
+           0 = disable<br>
+           1 = enable lag check and optimize kicks<br>
+           2 = trace nick changes and channel parts and change the queues
+          respectively.</p>
+
+          <p>Please note, this lagcheck has been optimized for IRCNET at the
+          moment, but it should work for other networks, too. If you
+          experience any problems on other nets eggdrop still excess floods)
+          mail the eggdrop development crew please.</p>
+
+          <p>Valid settings are 0-2</p>
+        </dd>
+
+        <dt><strong><em>set optimize-kicks 1</em></strong></dt>
+
+        <dd>
+          <p>Optimize kicks optimizes kick queue. It also traces nick changes
+          and parts in channel and changes the kick queue respectively.</p>
+
+          <p>There are three different options for this setting:<br>
+           0 = disable<br>
+           1 = optimize kick queue by sumarizing kicks.<br>
+           2 = trace nick changes and channel parts and change the queue
+          respectively. For example, bot wont try to kick users who have
+          already parted the channel.</p>
+
+          <p>Please note, this setting is not needed if you set
+          &#39;use-lagcheck&#39; to 1.</p>
+
+          <p>Valid settings are 0-2</p>
+        </dd>
+      </dl>
+    </blockquote>
+
+    <blockquote>
+      <p>These were the core irc module settings. There are more settings for
+      &#39;net-type&#39; 5.</p>
+
+      <p><strong>Use this settings only if you set &#39;net-type&#39; to
+      5!</strong></p>
+    </blockquote>
+
+    <blockquote>
+      <dl>
+        <dt><strong><em>set use-silence 1</em></strong></dt>
+
+        <dd>
+          <p>This setting makes the bot use ircdu&#39;s SILENCE command. If
+          your network supports this, set this to 1.</p>
+
+          <p>Please note, this setting is automatically set to 0 for net-type
+          0/1/3/4, and set to 1 for net-type 2.</p>
+
+          <p>Valid settings are 0 and 1.</p>
+        </dd>
+
+        <dt><strong><em>set check-mode-r 1</em></strong></dt>
+
+        <dd>
+          <p>This settings defines how umode +r is understood by eggdrop.
+          Some networks use +r to mean a restricted connection. If this is
+          your case, and you want your bot to leave restricted servers and
+          jump to the next one on his server list, then set it to 1.</p>
+
+          <p>Please note, this setting is automatically set to 0 for net-type
+          0/2/3/4, and set to 1 for net-type 1.</p>
+
+          <p>Valid settings are 0 and 1.</p>
+        </dd>
+
+        <dt><strong><em>set nick-len 9</em></strong></dt>
+
+        <dd>
+          <p>This setting enables you to use different nick lengths then the
+          ircd&#39;s default 9 (Dalnet uses 32 imo). The maximum supported
+          length by eggdrop is 32.</p>
+
+          <p>Valid settings are 9-32</p>
+        </dd>
+      </dl>
+    </blockquote>
+    <hr>
+
+    <p><a name="tclcmds"></a>2. <strong>Tcl commands</strong></p>
+
+    <blockquote>
+      <dl>
+        <dt><strong>putserv &lt;text&gt;</strong></dt>
+
+        <dd>
+          <p>sends text to the server, like &#39;dump&#39; (intended for
+          direct server commands); output is queued so that you won&#39;t
+          flood yourself off the server<br>
+           returns: nothing</p>
+        </dd>
+
+        <dt><strong>putquick &lt;text&gt;</strong></dt>
+
+        <dd>
+          <p>sends text to the server, like &#39;dump&#39; (intended for
+          direct server commands); output is queued so that you won&#39;t
+          flood yourself off the server, using the MODE queue (should be alot
+          faster)<br>
+           returns: nothing</p>
+        </dd>
+
+        <dt><strong>putkick &lt;channel&gt; &lt;nick,nick,...&gt;
+        [reason]</strong></dt>
+
+        <dd>
+          <p>sends kicks to the server and tries to put as many nicks into
+          one kick command as possible.<br>
+           returns: nothing</p>
+        </dd>
+
+        <dt><strong>puthelp &lt;text&gt;</strong></dt>
+
+        <dd>
+          <p>sends text to the server like &#39;putserv&#39;, but uses a
+          different queue (intended for sending messages to channels or
+          people)<br>
+           returns: nothing</p>
+        </dd>
+
+        <dt><strong>queuesize [queue]</strong></dt>
+
+        <dd>
+          <p>returns: the number of msgs in all queues. If a queue is
+          specified, only the size of this queue is returned. valid queues
+          are: mode, server help, or all.</p>
+        </dd>
+
+        <dt><strong>clearqueue &lt;queue&gt;</strong></dt>
+
+        <dd>
+          <p>returns: number of deleted lines from the specified queue</p>
+        </dd>
+
+        <dt><strong>dumpfile &lt;nick&gt; &lt;filename&gt;</strong></dt>
+
+        <dd>
+          <p>dumps out a file from the help/text directory to a user on IRC
+          via msg (one line per msg); the user has no flags, so the flag
+          bindings won&#39;t work within the file.</p>
+        </dd>
+
+        <dt><strong>jump [server [port [password]]]</strong></dt>
+
+        <dd>
+          <p>jumps to the server specified, or (if none is specified) the
+          next server in the list<br>
+           returns: nothing</p>
+        </dd>
+      </dl>
+    </blockquote>
+
+    <p><a name="tclvars"></a>3. <strong>Tcl variables</strong></p>
+
+    <blockquote>
+      <dl>
+        <dt><strong>botnick</strong></dt>
+
+        <dd>
+          <p>current nickname the bot is using, ie &#39;Sisko&#39; or
+          &#39;Sisko0&#39;, etc</p>
+        </dd>
+
+        <dt><strong>botname</strong></dt>
+
+        <dd>
+          <p>current nick!user@host that the server sees, ie
+          &#39;Sisko!ikaney@uk.defiant.org&#39;</p>
+        </dd>
+
+        <dt><strong>isjuped</strong></dt>
+
+        <dd>
+          <p>value is 1 if bots nick is juped(437) 0 otherwise.</p>
+        </dd>
+
+        <dt><strong>server</strong></dt>
+
+        <dd>
+          <p>current server the bot is using, ie
+          &#39;irc.math.ufl.edu:6667&#39;</p>
+        </dd>
+
+        <dt><strong>server-online</strong></dt>
+
+        <dd>
+          <p>unixtime value for when the bot connected to its current
+          server</p>
+        </dd>
+      </dl>
+    </blockquote>
+    <hr>
+
+    <p><a name="tclbinds"></a>4. <strong>Tcl bindings</strong></p>
+
+    <blockquote>
+      <dl>
+        <dt><strong>MSG</strong></dt>
+
+        <dd>
+          <p>bind msg &lt;flags&gt; &lt;command&gt; &lt;proc&gt;<br>
+           proc-name &lt;nick&gt; &lt;user@host&gt; &lt;handle&gt;
+          &lt;args&gt;</p>
+
+          <p>used for /msg commands; the first word of the user&#39;s msg is
+          the command, and everything else becomes the argument string</p>
+        </dd>
+
+        <dt><strong>MSGM (stackable)</strong></dt>
+
+        <dd>
+          <p>bind msgm &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;<br>
+           proc-name &lt;nick&gt; &lt;user@host&gt; &lt;handle&gt;
+          &lt;text&gt;</p>
+
+          <p>matches the entire line of text from a /msg with the mask; this
+          is more useful for binding Tcl procs to words or phrases spoken
+          anywhere within a line of text</p>
+        </dd>
+
+        <dt><strong>NOTC (stackable)</strong></dt>
+
+        <dd>
+          <p>bind notc &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;<br>
+           proc-name &lt;nick&gt; &lt;user@host&gt; &lt;handle&gt;
+          &lt;text&gt; &lt;dest&gt;</p>
+
+          <p>destination will be a nickname (the bot&#39;s nickname,
+          obviously) or a channel name; matches the entire line of text from
+          a /notice with the mask; it is considered a breach of protocol to
+          respond to a /notice on IRC, so this is intended for internal use
+          (ie, logging, etc) only</p>
+
+          <p>new Tcl procs should be declared as:</p>
+
+          <p>proc notcproc {nick uhost hand chan text {dest $botnick}} {<br>
+           &nbsp; ...<br>
+           }</p>
+
+          <p>for compatiblity with older eggdrop versions</p>
+        </dd>
+
+        <dt><strong>CTCP</strong></dt>
+
+        <dd>
+          <p>bind ctcp &lt;flags&gt; &lt;keyword-mask&gt; &lt;proc&gt;<br>
+           proc-name &lt;nick&gt; &lt;user@host&gt; &lt;handle&gt;
+          &lt;dest&gt; &lt;keyword&gt; &lt;args...&gt;</p>
+
+          <p>destination will be a nickname (the bot&#39;s nickname,
+          obviously) or a channel name; keyword is the ctcp command and args
+          may be empty; if the proc returns 0, the bot will attempt its own
+          processing of the ctcp command</p>
+        </dd>
+
+        <dt><strong>CTCR</strong></dt>
+
+        <dd>
+          <p>bind ctcr &lt;flags&gt; &lt;keyword-mask&gt; &lt;proc&gt;<br>
+           proc-name &lt;nick&gt; &lt;user@host&gt; &lt;handle&gt;
+          &lt;dest&gt; &lt;keyword&gt; &lt;args...&gt;</p>
+
+          <p>just like ctcp, but this is triggered for a ctcp-reply (ie, ctcp
+          embedded in a notice instead of a privmsg)</p>
+        </dd>
+
+        <dt><strong>RAW (stackable)</strong></dt>
+
+        <dd>
+          <p>bind raw &lt;flags&gt; &lt;keyword-mask&gt; &lt;proc&gt;<br>
+           proc-name &lt;from&gt; &lt;keyword&gt; &lt;args...&gt;</p>
+
+          <p>previous versions of eggdrop required a special compile option
+          to enable this binding, but it&#39;s now standard; the mask is
+          checked against the keyword (either a numeric like &quot;368&quot;
+          or a keyword like &quot;PRIVMSG&quot;); from will be the server
+          name or the source user (depending on the keyword); flags are
+          ignored; the order of the arguments is identical to the order that
+          the IRC server sends to the bot -- the pre-processing only splits
+          it apart enough to determine the keyword; if the proc returns 1,
+          eggdrop will not process the line any further. <strong>This could
+          cause your bot to behave oddly in some cases.</strong></p>
+        </dd>
+
+        <dt><strong>FLUD (stackable)</strong></dt>
+
+        <dd>
+          <p>bind flud &lt;flags&gt; &lt;type&gt; &lt;proc&gt;<br>
+           proc-name &lt;nick&gt; &lt;user@host&gt; &lt;handle&gt;
+          &lt;type&gt; &lt;channel&gt;</p>
+
+          <p>any floods detected through the flood control settings (like
+          &#39;flood-ctcp&#39;) are sent here before processing; if the proc
+          returns 1, no further action is taken on the flood; if the proc
+          returns 0, the bot will do its normal &quot;punishment&quot; for
+          the flood; the flood type is &quot;pub&quot;, &quot;msg&quot;,
+          &quot;join&quot;, or &quot;ctcp&quot; (and can be masked to
+          &quot;*&quot; for the bind); flags are ignored</p>
+        </dd>
+
+        <dt><strong>WALL (stackable)</strong></dt>
+
+        <dd>
+          <p>bind wall &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;<br>
+           proc-name &lt;nick&gt; &lt;msg&gt;</p>
+
+          <p>when the bot receives a wallops, it invokes this binding; flags
+          are ignored; the mask is checked against the text of the wallops
+          msg</p>
+        </dd>
+      </dl>
+    </blockquote>
+    <hr>
+
+    <p><em>© 1997 Robey Pointer<br>
+     © 1999,2000 Eggheads Development Team</em></p>
+  </body>
 </html>
+

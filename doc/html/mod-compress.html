@@ -1,83 +1,110 @@
-<!-- saved from url=(0022)http://internet.e-mail -->
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<HTML>
-<HEAD>
-<TITLE>Eggdrop Documentation: COMPRESS Module</TITLE>
-</HEAD>
-<BODY aLink=#3333ff bgColor=#ffffff link=#3333ff text=#000000 vLink=#3333ff>
-<FONT face="Arial, Helvetica" color=#000000 size=-1>
-<B><FONT color=#ff0000>COMPRESS MODULE&nbsp;&nbsp;&nbsp;&nbsp; Last modified 24th March 2000</FONT></B> 
-<HR>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<!-- $Id: mod-compress.html,v 1.2 2000/04/13 11:21:24 tothwolf Exp $ -->
 
-<P>This module provides the bot with a zlib interface. It can be used to compress files via tcl or to transfer the userfile compressed during the share process.
-<BR>
-&nbsp; 
+<html>
+  <head>
+    <title>Eggdrop Documentation: Compress module</title>
+  </head>
 
-<BLOCKQUOTE>
-<A href="#config">Config file settings</A><br>
-<A href="#tcl">TCL commands</A>
-</BLOCKQUOTE>
-<HR width="100%">
+  <body>
+    <div align="center">
+      <p><strong>Compress module</strong></p>
+    </div>
+    <hr>
 
-<BR>
-<A name=config><B><FONT color=#ff0000>Config file settings</font></B></A>
-<P>
+    <p>This module provides the bot with a zlib interface. It can be used to
+    compress files via tcl or to transfer the userfile compressed during the
+    share process.</p>
 
+    <blockquote>
+      <ol>
+        <li><a href="#config">Config file settings</a></li>
 
-Lines in bold are the lines that need to be included in the eggdrop config file if you want to use the compress module.<BR>
-Lines in bold italics are optional and only required if you wish to change the default behaviour for that particular feature.<BR>&nbsp;
+        <li><a href="#tclcmds">Tcl commands</a></li>
+      </ol>
+    </blockquote>
+    <hr>
 
-<BLOCKQUOTE>
-<FONT color=#ff0000>##### COMPRESS MODULE #####</font><P>
-Put this line into your config file to load compress module:<P>
+    <p><a name="config"></a>1. <strong>Config file settings</strong></p>
 
-<B>loadmodule share</B><p>
+    <blockquote>
+      <p>Lines in <strong>bold</strong> are the lines that need to be
+      included in the eggdrop config file if you want to use the share
+      module.<br>
+       Lines in bold <strong><em>italics</em></strong> are optional and only
+      required if you wish to change the default behaviour for that
+      particular feature.</p>
 
-There are also some variables you can to set in your config file:<P>
+      <p>Put this line into your config file to load compress module:</p>
 
-<B><I>set share-compressed 1</I></B> 
-<BLOCKQUOTE>
-This setting makes the bot send the userfile during share transfer compressed.<BR>
-Valid settings: 1 to enable, 0 to disable.
-</BLOCKQUOTE>
+      <p><strong>loadmodule share</strong></p>
 
-<B><I>set compress-level 9</I></B> 
-<BLOCKQUOTE>
-Set here the gzip compression mode you want to use.<BR>
-Valid settings: 0 (least CPU usage, least compression) upto 9 (maximal CPU usage, maximal compression).
-</BLOCKQUOTE>
+      <p>There are also some variables you can to set in your config
+      file:</p>
+    </blockquote>
 
-</BLOCKQUOTE>
-<HR width="100%">
-<BR>
-<A name=tcl><B><FONT color=#ff0000>TCL commands:</FONT></B></A>
+    <blockquote>
+      <dl>
+        <dt><strong><em>set share-compressed 1</em></strong></dt>
 
-<BLOCKQUOTE>
-<B>compresstofile &lt;src-file&gt; &lt;target-file&gt; &lt;mode&gt;</B><BR>
-Compress src-file to target-file by using a compression mode from 0 (least CPU usage, least compression) upto 9 (maximal CPU usage, maximal compression).
-</BLOCKQUOTE>
-<P>
+        <dd>
+          <p>This setting makes the bot send the userfile during share
+          transfer compressed.</p>
 
-<BLOCKQUOTE>
-<B>uncompresstofile &lt;src-file&gt; &lt;target-file&gt;</B><BR>
-Uncompress src-file to target-file.
-</BLOCKQUOTE>
-<P>
+          <p>Valid settings: 1 to enable, 0 to disable.</p>
+        </dd>
 
-<BLOCKQUOTE>
-<B>compressfile &lt;file&gt; &lt;mode&gt;</B><BR>
-Compress file and overwrite it by using a compression mode from 0 (least CPU usage, least compression) upto 9 (maximal CPU usage, maximal compression).
-</BLOCKQUOTE>
-<P>
+        <dt><strong><em>set compress-level 9</em></strong></dt>
 
-<BLOCKQUOTE>
-<B>uncompressfile &lt;file&gt;</B><BR>
-Uncompress file and overwrite it.
-</BLOCKQUOTE>
-<P>
+        <dd>
+          <p>Set here the gzip compression mode you want to use.</p>
 
-<HR>
-&copy;<I>1997 Robey Pointer</I><BR>
-&copy;<I>1999,2000 Eggheads Development Team</I>
-</BODY>
-</HTML>
+          <p>Valid settings: 0 (least CPU usage, least compression) upto 9
+          (maximal CPU usage, maximal compression).</p>
+        </dd>
+      </dl>
+    </blockquote>
+    <hr>
+
+    <p><a name="tclcmds"></a>2. <strong>Tcl commands:</strong></p>
+
+    <blockquote>
+      <dl>
+        <dt><strong>compresstofile &lt;src-file&gt; &lt;target-file&gt;
+        &lt;mode&gt;</strong></dt>
+
+        <dd>
+          <p>Compress src-file to target-file by using a compression mode
+          from 0 (least CPU usage, least compression) upto 9 (maximal CPU
+          usage, maximal compression).</p>
+        </dd>
+
+        <dt><strong>uncompresstofile &lt;src-file&gt;
+        &lt;target-file&gt;</strong></dt>
+
+        <dd>
+          <p>Uncompress src-file to target-file.</p>
+        </dd>
+
+        <dt><strong>compressfile &lt;file&gt; &lt;mode&gt;</strong></dt>
+
+        <dd>
+          <p>Compress file and overwrite it by using a compression mode from
+          0 (least CPU usage, least compression) upto 9 (maximal CPU usage,
+          maximal compression).</p>
+        </dd>
+
+        <dt><strong>uncompressfile &lt;file&gt;</strong></dt>
+
+        <dd>
+          <p>Uncompress file and overwrite it.</p>
+        </dd>
+      </dl>
+    </blockquote>
+    <hr>
+
+    <p><em>© 1997 Robey Pointer<br>
+     © 1999,2000 Eggheads Development Team</em></p>
+  </body>
+</html>
+

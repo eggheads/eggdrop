@@ -1,144 +1,181 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<!-- $Id: flags.html,v 1.2 2000/04/13 11:21:24 tothwolf Exp $ -->
 
-<HTML>
-  <HEAD>
-    <TITLE>Eggdrop Documentation: Access Levels? No, Flags</TITLE>
-  </HEAD>
+<html>
+  <head>
+    <title>Eggdrop Documentation: Flags</title>
+  </head>
 
-  <BODY text="#000000" bgcolor="#FFFFFF" link="#3333FF" vlink="#3333FF"
-  alink="#3333FF">
-    <STRONG><FONT face="Arial, Helvetica" size="-1" color="#FF0000">ACCESS
-    LEVELS? NO, FLAGS</FONT></STRONG> 
-    <HR>
+  <body>
+    <div align="center">
+      <p><strong>Flags</strong></p>
+    </div>
+    <hr>
 
-    <BLOCKQUOTE>
-      <FONT face="Arial, Helvetica" size="-1">Eggdrop does not have access
-      levels like some bots. There are no meaningless numbers or titles.
-      Instead, each user has &quot;flags&quot; that entitle them to certain
-      privileges. Think of a flag as a badge. Any user can have any number of
-      flags -- you can have no flags, or you can have all of them. Some flags
-      are good, some are bad. Each flag is identified by a letter. The
-      standard global flags are:</FONT> 
+    <p>Eggdrop does not have access levels like some bots. There are no
+    meaningless numbers or titles. Instead, each user has &quot;flags&quot;
+    that entitle them to certain privileges. Think of a flag as a badge. Any
+    user can have any number of flags -- you can have no flags, or you can
+    have all of them. Some flags are good, some are bad. Each flag is
+    identified by a letter.</p>
 
-      <BLOCKQUOTE>
-        <STRONG><FONT face="Arial, Helvetica" size="-1">n
-        (owner):</FONT></STRONG><BR>
-         <FONT face="Arial, Helvetica" size="-1">Someone who has absolute
-        control -- you generally only want one or two people to have this
-        flag.</FONT> 
+    <p>The standard global flags are:</p>
 
-        <P><STRONG><FONT face="Arial, Helvetica" size="-1">m
-        (master):</FONT></STRONG><BR>
-         <FONT face="Arial, Helvetica" size="-1">Someone who has access to
-        almost every feature of the bot.</FONT></P>
+    <blockquote>
+      <dl>
+        <dt><strong>n (owner):</strong></dt>
 
-        <P><STRONG><FONT face="Arial, Helvetica" size="-1">t
-        (botnet):</FONT></STRONG><BR>
-         <FONT face="Arial, Helvetica" size="-1">Someone who has access to
-        all features dealing with the botnet.</FONT></P>
+        <dd>
+          <p>Someone who has absolute control -- you generally only want one
+          or two people to have this flag.</p>
+        </dd>
 
-        <P><STRONG><FONT face="Arial, Helvetica" size="-1">x
-        (xfer):</FONT></STRONG><BR>
-         <FONT face="Arial, Helvetica" size="-1">Someone who has access to
-        the file transfer area of the bot (if it exists) and can send and
-        receive files to/from the bot.</FONT></P>
+        <dt><strong>m (master):</strong></dt>
 
-        <P><STRONG><FONT face="Arial, Helvetica" size="-1">j
-        (janitor):</FONT></STRONG><BR>
-         <FONT face="Arial, Helvetica" size="-1">Someone who can perform
-        maintenance in the file area of the bot (if it exists) -- like a
-        &quot;master&quot; of the file area.</FONT></P>
+        <dd>
+          <p>Someone who has access to almost every feature of the bot.</p>
+        </dd>
 
-        <P><STRONG><FONT face="Arial, Helvetica" size="-1">c
-        (common):</FONT></STRONG><BR>
-         <FONT face="Arial, Helvetica" size="-1">Marks a user who is really
-        just a public IRC site from which any number of people can use IRC,
-        making the user@host information useless.</FONT></P>
+        <dt><strong>t (botnet):</strong></dt>
 
-        <P><STRONG><FONT face="Arial, Helvetica" size="-1">p
-        (party):</FONT></STRONG><BR>
-         <FONT face="Arial, Helvetica" size="-1">Someone who has access to
-        the party line.</FONT></P>
+        <dd>
+          <p>Someone who has access to all features dealing with the
+          botnet.</p>
+        </dd>
 
-        <P><STRONG><FONT face="Arial, Helvetica" size="-1">b
-        (bot):</FONT></STRONG><BR>
-         <FONT face="Arial, Helvetica" size="-1">Marks a user that is really
-        a bot.</FONT></P>
+        <dt><strong>x (xfer):</strong></dt>
 
-        <P><STRONG><FONT face="Arial, Helvetica" size="-1">u
-        (unshare):</FONT></STRONG><BR>
-         <FONT face="Arial, Helvetica" size="-1">User record is not sent to
-        other bots</FONT></P>
+        <dd>
+          <p>Someone who has access to the file transfer area of the bot (if
+          it exists) and can send and receive files to/from the bot.</p>
+        </dd>
 
-        <P><STRONG><FONT face="Arial, Helvetica" size="-1">h
-        (hilite):</FONT></STRONG><BR>
-         <FONT face="Arial, Helvetica" size="-1">Use nice formatting codes,
-        bold, inverse, etc. in the help files</FONT></P>
-      </BLOCKQUOTE>
-      <FONT face="Arial, Helvetica" size="-1">Also, there are 26 user-defined
-      flags numbered A-Z (capitals). Bots can have specific flags which are
-      explained later on. The channel flags for the bot are: <EM>(these can
-      also be applied globally, or on a channel-specific basis)</EM></FONT> 
+        <dt><strong>j (janitor):</strong></dt>
 
-      <BLOCKQUOTE>
-        <STRONG><FONT face="Arial, Helvetica" size="-1">o
-        (op):</FONT></STRONG><BR>
-         <FONT face="Arial, Helvetica" size="-1">Someone who can ask for
-        channel op (+o) status on the channel at will.</FONT> 
+        <dd>
+          <p>Someone who can perform maintenance in the file area of the bot
+          (if it exists) -- like a &quot;master&quot; of the file area.</p>
+        </dd>
 
-        <P><STRONG><FONT face="Arial, Helvetica" size="-1">d
-        (deop):</FONT></STRONG><BR>
-         <FONT face="Arial, Helvetica" size="-1">Someone who is not permitted
-        to ever gain channel op status.</FONT></P>
+        <dt><strong>c (common):</strong></dt>
 
-        <P><STRONG><FONT face="Arial, Helvetica" size="-1">k
-        (kick):</FONT></STRONG><BR>
-         <FONT face="Arial, Helvetica" size="-1">Someone who should be kicked
-        if they ever attempt to join the channel.</FONT></P>
+        <dd>
+          <p>Marks a user who is really just a public IRC site from which any
+          number of people can use IRC, making the user@host information
+          useless.</p>
+        </dd>
 
-        <P><STRONG><FONT face="Arial, Helvetica" size="-1">f
-        (friend):</FONT></STRONG><BR>
-         <FONT face="Arial, Helvetica" size="-1">If revenge mode is on, the
-        bot won&#39;t take revenge on someone with this flag.</FONT></P>
+        <dt><strong>p (party):</strong></dt>
 
-        <P><STRONG><FONT face="Arial, Helvetica" size="-1">m
-        (master):</FONT></STRONG><BR>
-         <FONT face="Arial, Helvetica" size="-1">Someone who has the ability
-        to add/delete/modify users on the channel.</FONT></P>
+        <dd>
+          <p>Someone who has access to the party line.</p>
+        </dd>
 
-        <P><STRONG><FONT face="Arial, Helvetica" size="-1">n
-        (owner):</FONT></STRONG><BR>
-         <FONT face="Arial, Helvetica" size="-1">Someone who owns the channel
-        and has access to a reasonable amount of commands.</FONT></P>
+        <dt><strong>b (bot):</strong></dt>
 
-        <P><STRONG><FONT face="Arial, Helvetica" size="-1">a
-        (auto-op):</FONT></STRONG><BR>
-         <FONT face="Arial, Helvetica" size="-1">Automatically op the person
-        when they join the channel even if the channel isn&#39;t
-        +autoop.</FONT></P>
+        <dd>
+          <p>Marks a user that is really a bot.</p>
+        </dd>
 
-        <P><STRONG><FONT face="Arial, Helvetica" size="-1">v
-        (auto-voice):</FONT></STRONG><BR>
-         <FONT face="Arial, Helvetica" size="-1">Automatically give this
-        person a voice it they join a +autovoice channel.</FONT></P>
+        <dt><strong>u (unshare):</strong></dt>
 
-        <P><STRONG><FONT face="Arial, Helvetica" size="-1">
-        g(auto-voice):</FONT></STRONG><BR>
-         <FONT face="Arial, Helvetica" size="-1">Automatically give this
-        person a voice even if the channel is not autovoice. Works similar to
-        +a</FONT></P>
+        <dd>
+          <p>User record is not sent to other bots</p>
+        </dd>
 
-        <P><STRONG><FONT face="Arial, Helvetica" size="-1">q
-        (quiet):</FONT></STRONG><BR>
-         <FONT face="Arial, Helvetica" size="-1">Do not allow this person to
-        get a voice on a +autovoice channel.</FONT></P>
-      </BLOCKQUOTE>
-      <FONT face="Arial, Helvetica" size="-1">Once again there are 26
-      user-defined flags numbered A-Z, as channel flags.</FONT>
-    </BLOCKQUOTE>
-    <HR>
-    <EM><FONT face="Arial, Helvetica" size="-1">&copy; 1997 Robey Pointer<BR>
-     &copy; 1999,2000 Eggheads Development Team</FONT></EM>
-  </BODY>
-</HTML>
+        <dt><strong>h (hilite):</strong></dt>
+
+        <dd>
+          <p>Use nice formatting codes, bold, inverse, etc. in the help
+          files</p>
+        </dd>
+      </dl>
+    </blockquote>
+
+    <p>Also, there are 26 user-defined flags numbered A-Z (capitals). Bots
+    can have specific flags which are explained later on. The channel flags
+    for the bot are: <em>(these can also be applied globally, or on a
+    channel-specific basis)</em></p>
+
+    <blockquote>
+      <dl>
+        <dt><strong>o (op):</strong></dt>
+
+        <dd>
+          <p>Someone who can ask for channel op (+o) status on the channel at
+          will.</p>
+        </dd>
+
+        <dt><strong>d (deop):</strong></dt>
+
+        <dd>
+          <p>Someone who is not permitted to ever gain channel op status.</p>
+        </dd>
+
+        <dt><strong>k (kick):</strong></dt>
+
+        <dd>
+          <p>Someone who should be kicked if they ever attempt to join the
+          channel.</p>
+        </dd>
+
+        <dt><strong>f (friend):</strong></dt>
+
+        <dd>
+          <p>If revenge mode is on, the bot won&#39;t take revenge on someone
+          with this flag.</p>
+        </dd>
+
+        <dt><strong>m (master):</strong></dt>
+
+        <dd>
+          <p>Someone who has the ability to add/delete/modify users on the
+          channel.</p>
+        </dd>
+
+        <dt><strong>n (owner):</strong></dt>
+
+        <dd>
+          <p>Someone who owns the channel and has access to a reasonable
+          amount of commands.</p>
+        </dd>
+
+        <dt><strong>a (auto-op):</strong></dt>
+
+        <dd>
+          <p>Automatically op the person when they join the channel even if
+          the channel isn&#39;t +autoop.</p>
+        </dd>
+
+        <dt><strong>v (auto-voice):</strong></dt>
+
+        <dd>
+          <p>Automatically give this person a voice it they join a +autovoice
+          channel.</p>
+        </dd>
+
+        <dt><strong> g(auto-voice):</strong></dt>
+
+        <dd>
+          <p>Automatically give this person a voice even if the channel is
+          not autovoice. Works similar to +a</p>
+        </dd>
+
+        <dt><strong>q (quiet):</strong></dt>
+
+        <dd>
+          <p>Do not allow this person to get a voice on a +autovoice
+          channel.</p>
+        </dd>
+      </dl>
+    </blockquote>
+
+    <p>Once again there are 26 user-defined flags numbered A-Z, as channel
+    flags.</p>
+    <hr>
+
+    <p><em>© 1997 Robey Pointer<br>
+     © 1999,2000 Eggheads Development Team</em></p>
+  </body>
+</html>
 

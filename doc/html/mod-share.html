@@ -1,92 +1,138 @@
-<!-- saved from url=(0022)http://internet.e-mail -->
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<HTML>
-<HEAD>
-<TITLE>Eggdrop Documentation: SHARE Module</TITLE>
-</HEAD>
-<BODY aLink=#3333ff bgColor=#ffffff link=#3333ff text=#000000 vLink=#3333ff>
-<FONT face="Arial, Helvetica" color=#000000 size=-1>
-<B><FONT color=#ff0000>SHARE MODULE&nbsp;&nbsp;&nbsp;&nbsp; Last modified 24th March 2000</FONT></B> 
-<HR>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<!-- $Id: mod-share.html,v 1.2 2000/04/13 11:21:24 tothwolf Exp $ -->
 
-<P>This module provides share support for userfile data. You can share users, flags, passwords, greets, comments, etc. to a directly linked bot.
-<BR>
-&nbsp; 
+<html>
+  <head>
+    <title>Eggdrop Documentation: Share module</title>
+  </head>
 
-<BLOCKQUOTE>
-<A href="#config">Config file settings</A><br>
-<A href="#tcl">TCL commands</A>
-</BLOCKQUOTE>
-<HR width="100%">
+  <body>
+    <div align="center">
+      <p><strong>Share module</strong></p>
+    </div>
+    <hr>
 
-<BR>
-<A name=config><B><FONT color=#ff0000>Config file settings</font></B></A>
-<P>
+    <p>This module provides share support for userfile data. You can share
+    users, flags, passwords, greets, comments, etc. to a directly linked
+    bot.</p>
 
+    <blockquote>
+      <ol>
+        <li><a href="#config">Config file settings</a></li>
 
-Lines in bold are the lines that need to be included in the eggdrop config file if you want to use the share module.<BR>
-Lines in bold italics are optional and only required if you wish to change the default behaviour for that particular feature.<BR>&nbsp;
+        <li><a href="#tclcmd">Tcl commands</a></li>
+      </ol>
+    </blockquote>
+    <hr>
 
-<BLOCKQUOTE>
-<FONT color=#ff0000>##### SHARE MODULE #####</font><P>
-Put this line into your config file to load share module:<P>
+    <p><a name="config">1. <strong>Config file settings</strong></a></p>
 
-<B>loadmodule share</B><p>
+    <blockquote>
+      <p>Lines in <strong>bold</strong> are the lines that need to be
+      included in the eggdrop config file if you want to use the share
+      module.<br>
+       Lines in bold <strong><em>italics</em></strong> are optional and only
+      required if you wish to change the default behaviour for that
+      particular feature.</p>
 
-There are also some variables you can to set in your config file:<P>
+      <p>Put this line into your config file to load the share module:</p>
 
-<B><I>set allow-resync 0</I></B> 
-<BLOCKQUOTE>
-When two bots get disconnected this setting allows the hub to create a resync buffer which saves all changes done to the userfile during the disconnect. So, when they reconnect, they will not have to transfer the complete user file, but instead, just the resync buffer.<BR>
-NOTE: This feature is buggy at the moment and usage is not recommended.<BR>
-Valid settings: 1 to enable, 0 to disable.
-</BLOCKQUOTE>
+      <p><strong>loadmodule share</strong></p>
 
-<B><I>set resync-time 900</I></B> 
-<BLOCKQUOTE>
-This setting changes the time how long the bot holds another bots resync data before flushing it.<BR>
-Valid settings: 1 to enable, 0 to disable.
-</BLOCKQUOTE>
+      <p>There are also some variables you can to set in your config
+      file:</p>
+    </blockquote>
 
-<B><I>set private-global 0</I></B> 
-<BLOCKQUOTE>
-This setting makes your bot ignore all global flag changes from other bots.<BR>
-NOTE: The bot will still send any changes made on it, it just wont accept changes from other bot.<BR>
-Valid settings: 1 to enable, 0 to disable.
-</BLOCKQUOTE>
+    <blockquote>
+      <dl>
+        <dt><strong><em>set allow-resync 0</em></strong></dt>
 
-<B><I>set private-globals &quot;&quot;</I></B> 
-<BLOCKQUOTE>
-This setting makes your bot ignore all global flag changes you specify from other bots. It works similar to private-global, but allows you to strip just certain flags (ie. owner flag)
-</BLOCKQUOTE>
+        <dd>
+          <p>When two bots get disconnected this setting allows the hub to
+          create a resync buffer which saves all changes done to the userfile
+          during the disconnect. So, when they reconnect, they will not have
+          to transfer the complete user file, but instead, just the resync
+          buffer.</p>
 
-<B><I>set private-user 0</I></B> 
-<BLOCKQUOTE>
-This setting makes your bot ignore all changes to it's userfile done by other bots.<BR>
-NOTE: This setting can desynch your userfile between your share bots, since it forces all changes to be made from this bot.<BR>
-Valid settings: 1 to enable, 0 to disable.
-</BLOCKQUOTE>
+          <p>NOTE: This feature is buggy at the moment and usage is not
+          recommended.</p>
 
-<B><I>set override-bots 0</I></B> 
-<BLOCKQUOTE>
-This setting makes your bot discard it's own bot records in favor of the ones sent by the hub.<BR>
-NOTE: passwords and botflags don't get shared with this setting.<BR>
-Valid settings: 1 to enable, 0 to disable.
-</BLOCKQUOTE>
+          <p>Valid settings: 1 to enable, 0 to disable.</p>
+        </dd>
 
-</BLOCKQUOTE>
-<HR width="100%">
-<BR>
-<A name=tcl><B><FONT color=#ff0000>TCL commands:</FONT></B></A>
+        <dt><strong><em>set resync-time 900</em></strong></dt>
 
-<BLOCKQUOTE>
-<B>getting-users</B><BR>
-<I>returns: &quot;1&quot; if the bot is currently downloading a userfile from a sharebot (and hence, user records are about to drastically change); &quot;0&quot; otherwise</I> 
-</BLOCKQUOTE>
-<P>
+        <dd>
+          <p>This setting changes the time how long the bot holds another
+          bots resync data before flushing it.</p>
 
-<HR>
-&copy;<I>1997 Robey Pointer</I><BR>
-&copy;<I>1999,2000 Eggheads Development Team</I>
-</BODY>
-</HTML>
+          <p>Valid settings: 1 to enable, 0 to disable.</p>
+        </dd>
+
+        <dt><strong><em>set private-global 0</em></strong></dt>
+
+        <dd>
+          <p>This setting makes your bot ignore all global flag changes from
+          other bots.</p>
+
+          <p>NOTE: The bot will still send any changes made on it, it just
+          wont accept changes from other bot.</p>
+
+          <p>Valid settings: 1 to enable, 0 to disable.</p>
+        </dd>
+
+        <dt><strong><em>set private-globals &quot;&quot;</em></strong></dt>
+
+        <dd>
+          <p>This setting makes your bot ignore all global flag changes you
+          specify from other bots. It works similar to private-global, but
+          allows you to strip just certain flags (ie. owner flag)</p>
+        </dd>
+
+        <dt><strong><em>set private-user 0</em></strong></dt>
+
+        <dd>
+          <p>This setting makes your bot ignore all changes to it&#39;s
+          userfile done by other bots.</p>
+
+          <p>NOTE: This setting can desynch your userfile between your share
+          bots, since it forces all changes to be made from this bot.</p>
+
+          <p>Valid settings: 1 to enable, 0 to disable.</p>
+        </dd>
+
+        <dt><strong><em>set override-bots 0</em></strong></dt>
+
+        <dd>
+          <p>This setting makes your bot discard it&#39;s own bot records in
+          favor of the ones sent by the hub.</p>
+
+          <p>NOTE: passwords and botflags don&#39;t get shared with this
+          setting.</p>
+
+          <p>Valid settings: 1 to enable, 0 to disable.</p>
+        </dd>
+      </dl>
+    </blockquote>
+    <hr>
+
+    <p><a name="tclcmd">2. <strong>Tcl commands</strong></a></p>
+
+    <blockquote>
+      <dl>
+        <dt><strong>getting-users</strong></dt>
+
+        <dd>
+          <p>returns: <em>&quot;1&quot;</em> if the bot is currently
+          downloading a userfile from a sharebot (and hence, user records are
+          about to drastically change) <em>&quot;0&quot;</em> otherwise</p>
+        </dd>
+      </dl>
+    </blockquote>
+    <hr>
+
+    <p><em>© 1997 Robey Pointer<br>
+     © 1999,2000 Eggheads Development Team</em></p>
+  </body>
+</html>
+

@@ -1,60 +1,56 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<!-- $Id: users.html,v 1.2 2000/04/13 11:21:24 tothwolf Exp $ -->
 
-<HTML>
-  <HEAD>
-    <TITLE>Eggdrop Documentation: User Records</TITLE>
-  </HEAD>
+<html>
+  <head>
+    <title>Eggdrop Documentation: User records</title>
+  </head>
 
-  <BODY text="#000000" bgcolor="#FFFFFF" link="#3333FF" vlink="#3333FF"
-  alink="#3333FF">
-    <STRONG><FONT face="Arial, Helvetica" size="-1" color="#FF0000">USER
-    RECORDS</FONT></STRONG> 
-    <HR>
+  <body>
+    <div align="center">
+      <p><strong>User records</strong></p>
+    </div>
+    <hr>
 
-    <BLOCKQUOTE>
-      <FONT face="Arial, Helvetica" size="-1">People on IRC are recognized by
-      the bot according to their user@host. That is, if I am on IRC
-      as:</FONT> 
+    <p>People on IRC are recognized by the bot according to their user@host.
+    That is, if I am on IRC as:</p>
 
-      <BLOCKQUOTE>
-        <EM><FONT face="Arial, Helvetica" size="-1">*** [Kirk] is
-        ikaney@uk.defiant.org (Fortune favors the bold.)</FONT></EM>
-      </BLOCKQUOTE>
-      <FONT face="Arial, Helvetica" size="-1">then Eggdrop will identify me
-      according to &quot;ikaney@uk.defiant.org&quot; and not by my nickname.
-      I can change nicknames at will and it won&#39;t forget me.</FONT> 
+    <blockquote>
+      <p><em>*** [Kirk] is ikaney@uk.defiant.org (Fortune favors the
+      bold.)</em></p>
+    </blockquote>
 
-      <P><FONT face="Arial, Helvetica" size="-1">For convenience, it&#39;s
-      useful to have a &quot;handle&quot; which always identifies the same
-      person. Usually the &quot;handle&quot; is just whatever nickname some-
-      one was using when the bot first learned them. The nickname you had
-      when you first said &quot;hello&quot; to Eggdrop is the handle it will
-      know you by, regardless of whatever nickname you may be using at a
-      given time.</FONT></P>
+    <p>then Eggdrop will identify me according to
+    &quot;ikaney@uk.defiant.org&quot; and not by my nickname. I can change
+    nicknames at will and it won&#39;t forget me.</p>
 
-      <P><FONT face="Arial, Helvetica" size="-1">Because of this, only one
-      person can have a given handle on your bot. Masters can change it, and
-      anyone with party-line access can change their own handle, but it&#39;s
-      intended to be something stable -- unlike nicknames on IRC which are
-      about as stable as Jello.</FONT></P>
+    <p>For convenience, it&#39;s useful to have a &quot;handle&quot; which
+    always identifies the same person. Usually the &quot;handle&quot; is just
+    whatever nickname some- one was using when the bot first learned them.
+    The nickname you had when you first said &quot;hello&quot; to Eggdrop is
+    the handle it will know you by, regardless of whatever nickname you may
+    be using at a given time.</p>
 
-      <P><FONT face="Arial, Helvetica" size="-1">Eggdrop likes to store a lot
-      of information about each user. The most important thing stored is the
-      list of hostmasks that a user is recognized by. You can add a new
-      hostmask with the /msg &quot;ident&quot; command. Masters can add and
-      remove hostmasks with the party-line commands &quot;.adduser&quot;,
-      &quot;.+host&quot;, and &quot;.-host&quot;.</FONT></P>
+    <p>Because of this, only one person can have a given handle on your bot.
+    Masters can change it, and anyone with party-line access can change their
+    own handle, but it&#39;s intended to be something stable -- unlike
+    nicknames on IRC which are about as stable as Jello.</p>
 
-      <P><FONT face="Arial, Helvetica" size="-1">Other things that are stored
-      include the user&#39;s flags (see <STRONG> &quot;Access Levels? No,
-      Flags&quot;</STRONG> section), the last time he/she was on a channel,
-      an optional comment, their current directory in the file area, an info
-      line which can be displayed when they join a channel, and possibly even
-      some other things that Tcl scripts store.</FONT></P>
-    </BLOCKQUOTE>
-    <HR>
-    <EM><FONT face="Arial, Helvetica" size="-1">&copy; 1997 Robey Pointer<BR>
-     &copy; 1999,2000 Eggheads Development Team</FONT></EM>
-  </BODY>
-</HTML>
+    <p>Eggdrop likes to store a lot of information about each user. The most
+    important thing stored is the list of hostmasks that a user is recognized
+    by. You can add a new hostmask with the /msg &quot;ident&quot; command.
+    Masters can add and remove hostmasks with the party-line commands
+    &quot;.adduser&quot;, &quot;.+host&quot;, and &quot;.-host&quot;.</p>
+
+    <p>Other things that are stored include the user&#39;s flags (see <a
+    href="flags.html">Flags</a> section), the last time he/she was on a
+    channel, an optional comment, their current directory in the file area,
+    an info line which can be displayed when they join a channel, and
+    possibly even some other things that Tcl scripts store.</p>
+    <hr>
+
+    <p><em>© 1997 Robey Pointer<br>
+     © 1999,2000 Eggheads Development Team</em></p>
+  </body>
+</html>
 
