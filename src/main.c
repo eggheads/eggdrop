@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  * 
- * $Id: main.c,v 1.38 2000/05/13 20:20:29 fabian Exp $
+ * $Id: main.c,v 1.39 2000/06/02 17:46:06 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -367,13 +367,14 @@ static void got_ill(int z)
 /* Context */
 void eggContext(char *file, int line, char *module)
 {
-  char x[100];
+  char x[31], *p;
 
-  if (!module)
-    sprintf(x, "%s", file);
-  else
-    sprintf(x, "%s:%s", module, file);
-  x[30] = 0;
+  p = strrchr(file, '/');
+  if (!module) {
+    strncpy(x, p ? p + 1 : file, 30);
+    x[30] = 0;
+  } else
+    egg_snprintf(x, 31, "%s:%s", module, p ? p + 1 : file);
   cx_ptr = ((cx_ptr + 1) & 15);
   strcpy(cx_file[cx_ptr], x);
   cx_line[cx_ptr] = line;
@@ -384,13 +385,14 @@ void eggContext(char *file, int line, char *module)
  */
 void eggContextNote(char *file, int line, char *module, char *note)
 {
-  char x[100];
+  char x[31], *p;
 
-  if (!module)
-    sprintf(x, "%s", file);
-  else
-    sprintf(x, "%s:%s", module, file);
-  x[30] = 0;
+  p = strrchr(file, '/');
+  if (!module) {
+    strncpy(x, p ? p + 1 : file, 30);
+    x[30] = 0;
+  } else
+    egg_snprintf(x, 31, "%s:%s", module, p ? p + 1 : file);
   cx_ptr = ((cx_ptr + 1) & 15);
   strcpy(cx_file[cx_ptr], x);
   cx_line[cx_ptr] = line;
