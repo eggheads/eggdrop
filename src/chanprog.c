@@ -7,7 +7,7 @@
  *   telling the current programmed settings
  *   initializing a lot of stuff and loading the tcl scripts
  *
- * $Id: chanprog.c,v 1.53 2004/06/12 01:24:57 wcc Exp $
+ * $Id: chanprog.c,v 1.54 2004/06/12 19:54:04 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -64,18 +64,20 @@ char botname[NICKLEN + 1];         /* Primary botname              */
  */
 void rmspace(char *s)
 {
-  char *p = NULL;
+  register char *p = NULL, *q = NULL;
 
   if (!s || !*s)
     return;
 
   /* Remove trailing whitespaces. */
-  for (p = s + strlen(s) - 1; p >= s && egg_isspace(*p); p--);
-  *(p + 1) = 0;
+  for (q = s + strlen(s) - 1; q >= s && egg_isspace(*q); q--);
+  *(q + 1) = 0;
 
   /* Remove leading whitespaces. */
   for (p = s; egg_isspace(*p); p++);
-  memmove(s, p, strlen(p) + 1); /* +1 to include NUL. */
+
+  if (p != s)
+    memmove(s, p, p - q + 2);
 }
 
 
