@@ -1,7 +1,7 @@
 /*
  * channels.h -- part of channels.mod
  *
- * $Id: channels.h,v 1.16 2001/04/12 02:39:45 guppy Exp $
+ * $Id: channels.h,v 1.17 2001/06/28 19:01:14 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -126,18 +126,18 @@ inline static int chanset_unlink(struct chanset_t *chan);
 #define del_chanrec ((void (*)(struct userrec *, char *))channels_funcs[10])
 #define set_handle_chaninfo ((void (*)(struct userrec *, char *, char *, char *))channels_funcs[11])
 /* 12 - 15 */
-#define channel_malloc(x) ((void *(*)(int,char*,int))channels_funcs[12])(x,__FILE__,__LINE__)
-#define u_match_mask ((int(*)(maskrec *, char *))channels_funcs[13])
-#define u_equals_mask ((int(*)(maskrec *, char *))channels_funcs[14])
-#define clear_channel ((void(*)(struct chanset_t *,int))channels_funcs[15])
+#define channel_malloc(x) ((void *(*)(int, char *, int))channels_funcs[12])(x,__FILE__,__LINE__)
+#define u_match_mask ((int (*)(maskrec *, char *))channels_funcs[13])
+#define u_equals_mask ((int (*)(maskrec *, char *))channels_funcs[14])
+#define clear_channel ((void (*)(struct chanset_t *, int))channels_funcs[15])
 /* 16 - 19 */
 #define set_handle_laston ((void (*)(char *,struct userrec *,time_t))channels_funcs[16])
 #define ban_time (*(int *)(channels_funcs[17]))
 #define use_info (*(int *)(channels_funcs[18]))
 #define get_handle_chaninfo ((void (*)(char *, char *, char *))channels_funcs[19])
 /* 20 - 23 */
-#define u_sticky_mask ((int(*)(maskrec *, char *))channels_funcs[20])
-#define ismasked ((int(*)(masklist *, char *))channels_funcs[21])
+#define u_sticky_mask ((int (*)(maskrec *, char *))channels_funcs[20])
+#define ismasked ((int (*)(masklist *, char *))channels_funcs[21])
 #define add_chanrec_by_handle ((void (*)(struct userrec *, char *, char *))channels_funcs[22])
 /* *HOLE* channels_funcs[23] used to be isexempted() <cybah> */
 /* 24 - 27 */
@@ -157,8 +157,8 @@ inline static int chanset_unlink(struct chanset_t *chan);
 #define u_delinvite ((int (*)(struct chanset_t *, char *, int))channels_funcs[35])
 /* 36 - 39 */
 #define u_addinvite ((int (*)(struct chanset_t *, char *, char *, char *, time_t, int))channels_funcs[36])
-#define tcl_channel_add ((int (*)Tcl_Interp *, char *, char *))channels_funcs[37])
-#define tcl_channel_modify ((int (*)Tcl_Interp *, struct chanset_t *, int, char **))channels_funcs[38])
+#define tcl_channel_add ((int (*)(Tcl_Interp *, char *, char *))channels_funcs[37])
+#define tcl_channel_modify ((int (*)(Tcl_Interp *, struct chanset_t *, int, char **))channels_funcs[38])
 #define write_exempts ((int (*)(FILE *, int))channels_funcs[39])
 /* 40 - 43 */
 #define write_invites ((int (*)(FILE *, int))channels_funcs[40])
@@ -167,6 +167,7 @@ inline static int chanset_unlink(struct chanset_t *chan);
 #define ngetudef ((int(*)(char *, char *))channels_funcs[43])
 /* 44 - 47 */
 #define expired_mask ((int (*)(struct chanset_t *, char *))channels_funcs[44])
+#define remove_channel ((void (*)(struct chanset_t *))channels_funcs[45])
 
 #endif				/* MAKING_CHANNELS */
 

@@ -86,7 +86,7 @@ set never-give-up 1
     Valid settings are 0 for OFF and 1 ON.
 
 
-set server-timeout 15
+set server-timeout 60
     Set here the timeout how long eggdrop should wait for a response when
     connecting to a server before giving up and moving on to next server
     in list.

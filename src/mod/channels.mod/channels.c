@@ -2,7 +2,7 @@
  * channels.c -- part of channels.mod
  *   support for channels within the bot
  *
- * $Id: channels.c,v 1.48 2001/06/20 14:44:18 poptix Exp $
+ * $Id: channels.c,v 1.49 2001/06/28 19:01:14 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -870,6 +870,7 @@ static Function channels_table[] =
   (Function) ngetudef,
   /* 44 - 47 */
   (Function) expired_mask,
+  (Function) remove_channel,
 };
 
 char *channels_start(Function * global_funcs)
