@@ -5,9 +5,7 @@
  *   note cmds
  *   note ignores
  * 
- * dprintf'ized, 5aug1996
- * 
- * $Id: notes.c,v 1.8 1999/12/21 17:35:30 fabian Exp $
+ * $Id: notes.c,v 1.9 2000/01/01 19:24:38 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -39,11 +37,12 @@
 
 static int maxnotes = 50;	/* Maximum number of notes to allow stored
 				 * for each user */
-static int note_life = 60;	/* number of DAYS a note lives */
-static char notefile[121];	/* name of the notefile */
-static int allow_fwd = 0;	/* allow note forwarding */
-static int notify_users = 0;	/* notify users they have notes every hour? */
-static int notify_onjoin = 1;   /* notify users they have notes on join? - drummer */
+static int note_life = 60;	/* Number of DAYS a note lives */
+static char notefile[121];	/* Name of the notefile */
+static int allow_fwd = 0;	/* Allow note forwarding */
+static int notify_users = 0;	/* Notify users they have notes every hour? */
+static int notify_onjoin = 1;   /* Notify users they have notes on join?
+				   drummer */
 static Function *global = NULL;	/* DAMN fcntl.h */
 
 static struct user_entry_type USERENTRY_FWD =
@@ -74,7 +73,8 @@ static void fwd_display(int idx, struct user_entry *e)
     dprintf(idx, "  Forward notes to: %.70s\n", e->u.string);
 }
 
-/* determine how many notes are waiting for a user */
+/* Determine how many notes are waiting for a user.
+ */
 static int num_notes(char *user)
 {
   int tot = 0;
@@ -92,7 +92,7 @@ static int num_notes(char *user)
       if (s[strlen(s) - 1] == '\n')
 	s[strlen(s) - 1] = 0;
       rmspace(s);
-      if ((s[0]) && (s[0] != '#') && (s[0] != ';')) {	/* not comment */
+      if ((s[0]) && (s[0] != '#') && (s[0] != ';')) {	/* Not comment */
 	s1 = s;
 	to = newsplit(&s1);
 	if (!strcasecmp(to, user))
@@ -104,7 +104,8 @@ static int num_notes(char *user)
   return tot;
 }
 
-/* change someone's handle */
+/* Change someone's handle.
+ */
 static void notes_change(char *oldnick, char *newnick)
 {
   FILE *f, *g;
@@ -131,7 +132,7 @@ static void notes_change(char *oldnick, char *newnick)
       if (s[strlen(s) - 1] == '\n')
 	s[strlen(s) - 1] = 0;
       rmspace(s);
-      if ((s[0]) && (s[0] != '#') && (s[0] != ';')) {	/* not comment */
+      if ((s[0]) && (s[0] != '#') && (s[0] != ';')) {	/* Not comment */
 	s1 = s;
 	to = newsplit(&s1);
 	if (!strcasecmp(to, oldnick)) {
@@ -152,7 +153,8 @@ static void notes_change(char *oldnick, char *newnick)
 	 tot == 1 ? "" : "s", oldnick, newnick);
 }
 
-/* get rid of old useless notes */
+/* Get rid of old useless notes.
+ */
 static void expire_notes()
 {
   FILE *f, *g;
@@ -177,7 +179,7 @@ static void expire_notes()
       if (s[strlen(s) - 1] == '\n')
 	s[strlen(s) - 1] = 0;
       rmspace(s);
-      if ((s[0]) && (s[0] != '#') && (s[0] != ';')) {	/* not comment */
+      if ((s[0]) && (s[0] != '#') && (s[0] != ';')) {	/* Not comment */
 	s1 = s;
 	to = newsplit(&s1);
 	from = newsplit(&s1);
@@ -202,7 +204,8 @@ static void expire_notes()
     putlog(LOG_MISC, "*", "Expired %d note%s", tot, tot == 1 ? "" : "s");
 }
 
-/* add note to notefile */
+/* Add note to notefile.
+ */
 static int tcl_storenote STDVAR
 {
   FILE *f;
@@ -217,17 +220,17 @@ static int tcl_storenote STDVAR
   if (ur && allow_fwd && (f1 = get_user(&USERENTRY_FWD, ur))) {
     char fwd[161], fwd2[161], *f2, *p, *q, *r;
     int ok = 1;
-    /* user is valid & has a valid forwarding address */
-     strcpy(fwd, f1);		/* only 40 bytes are stored in the userfile */
+    /* User is valid & has a valid forwarding address */
+     strcpy(fwd, f1);		/* Only 40 bytes are stored in the userfile */
      p = strchr(fwd, '@');
     if (p && !strcasecmp(p + 1, botnetnick)) {
       *p = 0;
       if (!strcasecmp(fwd, argv[2]))
-	/* they're forward to themselves on the same bot, llama's */
+	/* They're forwarding to themselves on the same bot, llama's */
 	ok = 0;
       strcpy(fwd2, fwd);
       splitc(fwd2, fwd2, '@');
-      /* get the user record of the user that we're forwarding to locally */
+      /* Get the user record of the user that we're forwarding to locally */
       ur2 = get_user_by_handle(userlist, fwd2);
       if (!ur2)
 	ok = 0;
@@ -235,13 +238,13 @@ static int tcl_storenote STDVAR
 	strcpy(fwd2, f2);
 	splitc(fwd2, fwd2, '@');
 	if (!strcasecmp(fwd2, argv[2]))
-	/* they're forwarding to someone who forwards back to them! */
+	/* They're forwarding to someone who forwards back to them! */
 	ok = 0;
       }
       p = NULL;
     }
     if ((argv[1][0] != '@') && ((argv[3][0] == '<') || (argv[3][0] == '>')))
-       ok = 0;			/* probablly fake pre 1.3 hax0r */
+       ok = 0;			/* Probablly fake pre 1.3 hax0r */
 
     if (ok && (!p || in_chain(p + 1))) {
       if (p)
@@ -288,7 +291,7 @@ static int tcl_storenote STDVAR
     } else if (num_notes(to) >= maxnotes) {
       if (idx >= 0)
 	dprintf(idx, BOT_NOTES2MANY);
-    } else {			/* time to unpack it meaningfully */
+    } else {			/* Time to unpack it meaningfully */
       f = fopen(notefile, "a");
       if (f == NULL)
 	f = fopen(notefile, "w");
@@ -319,8 +322,9 @@ static int tcl_storenote STDVAR
   return TCL_OK;
 }
 
-/* convert a string like "2-4;8;16-"
- * in an array {2, 4, 8, 8, 16, maxnotes, -1} */
+/* Convert a string like "2-4;8;16-"
+ * in an array {2, 4, 8, 8, 16, maxnotes, -1}
+ */
 static void notes_parse(int dl[], char *s)
 {
   int i = 0;
@@ -338,7 +342,7 @@ static void notes_parse(int dl[], char *s)
       while ((s[i]) && (s[i] != '-') && (s[i] != ';'))
 	i++;
       if (s[i] == '-') {
-	dl[idl] = atoi(s + i + 1);	/* will be 0 if not a number */
+	dl[idl] = atoi(s + i + 1);	/* Will be 0 if not a number */
 	if (dl[idl] == 0)
 	  dl[idl] = maxnotes;
       } else
@@ -352,7 +356,8 @@ static void notes_parse(int dl[], char *s)
   dl[idl] = -1;
 }
 
-/* return true if 'in' is in intervals of 'dl' */
+/* Return true if 'in' is in intervals of 'dl'
+ */
 static int notes_in(int dl[], int in)
 {
   int i = 0;
@@ -370,7 +375,7 @@ static int tcl_erasenotes STDVAR
   FILE *f, *g;
   char s[601], *to, *s1;
   int read, erased;
-  int nl[128];			/* is it enough ? */
+  int nl[128];			/* Is it enough ? */
 
   Context;
   BADARGS(3, 3, " handle noteslist#");
@@ -404,7 +409,7 @@ static int tcl_erasenotes STDVAR
       s[strlen(s) - 1] = 0;
     if (!feof(f)) {
       rmspace(s);
-      if ((s[0]) && (s[0] != '#') && (s[0] != ';')) {	/* not comment */
+      if ((s[0]) && (s[0] != '#') && (s[0] != ';')) {	/* Not comment */
 	s1 = s;
 	to = newsplit(&s1);
 	if (!strcasecmp(to, argv[1])) {
@@ -433,7 +438,7 @@ static int tcl_erasenotes STDVAR
 static int tcl_listnotes STDVAR
 {
   int i, numnotes;
-  int ln[128];			/* is it enough ? */
+  int ln[128];			/* Is it enough? */
   char s[8];
 
   Context;
@@ -466,7 +471,7 @@ static void notes_read(char *hand, char *nick, char *srd, int idx)
   time_t tt;
   int ix = 1;
   int ir = 0;
-  int rd[128];			/* is it enough ? */
+  int rd[128];			/* Is it enough ? */
   int i;
 
   if (srd[0] == 0)
@@ -494,7 +499,7 @@ static void notes_read(char *hand, char *nick, char *srd, int idx)
       s[i - 1] = 0;
     if (!feof(f)) {
       rmspace(s);
-      if ((s[0]) && (s[0] != '#') && (s[0] != ';')) {	/* not comment */
+      if ((s[0]) && (s[0] != '#') && (s[0] != ';')) {	/* Not comment */
 	s1 = s;
 	to = newsplit(&s1);
 	if (!strcasecmp(to, hand)) {
@@ -575,7 +580,7 @@ static void notes_del(char *hand, char *nick, char *sdl, int idx)
   char s[513], *to, *s1;
   int in = 1;
   int er = 0;
-  int dl[128];			/* is it enough ? */
+  int dl[128];			/* Is it enough ? */
 
   if (sdl[0] == 0)
     sdl = "-";
@@ -612,7 +617,7 @@ static void notes_del(char *hand, char *nick, char *sdl, int idx)
       s[strlen(s) - 1] = 0;
     if (!feof(f)) {
       rmspace(s);
-      if ((s[0]) && (s[0] != '#') && (s[0] != ';')) {	/* not comment */
+      if ((s[0]) && (s[0] != '#') && (s[0] != ';')) {	/* Not comment */
 	s1 = s;
 	to = newsplit(&s1);
 	if (!strcasecmp(to, hand)) {
@@ -663,7 +668,7 @@ static int tcl_notes STDVAR
 {
   FILE *f;
   char s[601], *to, *from, *dt, *s1;
-  int count, read, nl[128];	/* is it enough */
+  int count, read, nl[128];	/* Is it enough? */
   char *list[3], *p;
 
   Context;
@@ -695,7 +700,7 @@ static int tcl_notes STDVAR
       s[strlen(s) - 1] = 0;
     if (!feof(f)) {
       rmspace(s);
-      if ((s[0]) && (s[0] != '#') && (s[0] != ';')) {	/* not comment */
+      if ((s[0]) && (s[0] != '#') && (s[0] != ';')) {	/* Not comment */
 	s1 = s;
 	to = newsplit(&s1);
 	if (!strcasecmp(to, argv[1])) {
@@ -722,7 +727,8 @@ static int tcl_notes STDVAR
 }
 
 
-/* notes <pass> <func> */
+/* notes <pass> <func>
+ */
 static int msg_notes(char *nick, char *host, struct userrec *u, char *par)
 {
   char *pwd, *fcn;
@@ -788,7 +794,7 @@ static int msg_notes(char *nick, char *host, struct userrec *u, char *par)
 	  if (dcc[i].u.chat->away != NULL)
 	    aok = 0;
 	if (!(dcc[i].type->flags & DCT_CHAT))
-	  aok = 0;		/* assume non dcc-chat == something weird, so
+	  aok = 0;		/* Assume non dcc-chat == something weird, so
 				 * store notes for later */
 	if (aok) {
 	  dprintf(i, "\007%s [%s]: %s\n", u->handle, BOT_NOTEOUTSIDE, par);
@@ -843,7 +849,7 @@ static void notes_hourly()
 	  for (l = 0; l < dcc_total; l++) {
 	    if ((dcc[l].type->flags & DCT_CHAT) &&
 		(!strcasecmp(dcc[l].nick, u->handle)))
-	      k = 0;		/* they already know they have notes */
+	      k = 0;		/* They already know they have notes */
 	  }
 	  if (k) {
 	    dprintf(DP_HELP, BOT_NOTESWAIT1, BOT_NOTESWAIT1_ARGS);
@@ -895,12 +901,12 @@ static void join_notes(char *nick, char *uhost, char *handle, char *par)
     for (j = 0; j < dcc_total; j++)
       if ((dcc[j].type->flags & DCT_CHAT)
 	  && (!strcasecmp(dcc[j].nick, handle))) {
-	return;			/* they already know they have notes */
+	return;			/* They already know they have notes */
       }
 
     while (!chan) {
       if (ismember(chan, nick))
-        return;			/* they already know they have notes */
+        return;			/* They already know they have notes */
       chan = chan->next;
     }
 
@@ -914,8 +920,9 @@ static void join_notes(char *nick, char *uhost, char *handle, char *par)
   }
 }
 
-/* return either NULL or a pointer to the xtra_key structure
-   where the not ignores are kept. */
+/* Return either NULL or a pointer to the xtra_key structure
+ * where the not ignores are kept.
+ */
 static struct xtra_key *getnotesentry(struct userrec *u)
 {
   struct user_entry *ue = find_user_entry(&USERENTRY_XTRA, u);
@@ -924,7 +931,7 @@ static struct xtra_key *getnotesentry(struct userrec *u)
   Context;
   if (!ue)
     return NULL;
-  /* search for the notes ignore list entry */
+  /* Search for the notes ignore list entry */
   for (xk = ue->u.extra; xk; xk = xk->next)
     if (xk->key && !strcasecmp(xk->key, NOTES_IGNKEY)) {
       nxk = xk;
@@ -935,8 +942,9 @@ static struct xtra_key *getnotesentry(struct userrec *u)
   return nxk;
 }
 
-/* parse the NOTES_IGNKEY xtra field. You must free the memory allocated
-   in here: the buffer 'ignores[0]' and the array 'ignores' */
+/* Parse the NOTES_IGNKEY xtra field. You must free the memory allocated
+ * in here: the buffer 'ignores[0]' and the array 'ignores'.
+ */
 int get_note_ignores(struct userrec *u, char ***ignores)
 {
   struct xtra_key *xk;
@@ -944,7 +952,7 @@ int get_note_ignores(struct userrec *u, char ***ignores)
   int ignoresn;
 
   Context;
-  /* hullo? sanity? */
+  /* Hullo? sanity? */
   if (!u)
     return 0;
   xk = getnotesentry(u);
@@ -956,7 +964,7 @@ int get_note_ignores(struct userrec *u, char ***ignores)
   strcpy(buf, xk->data);
   p = buf;
 
-  /* split up the string into small parts */
+  /* Split up the string into small parts */
   *ignores = nmalloc(sizeof(char *) + 100);
   **ignores = p;
   ignoresn = 1;
@@ -979,19 +987,20 @@ int add_note_ignore(struct userrec *u, char *mask)
   Context;
   ignoresn = get_note_ignores(u, &ignores);
   if (ignoresn > 0) {
-    /* search for existing mask */
+    /* Search for existing mask */
     for (i = 0; i < ignoresn; i++)
       if (!strcmp(ignores[i], mask)) {
-        nfree(ignores[0]); /* free the string buffer */
-        nfree(ignores); /* free the ptr array */
+        nfree(ignores[0]);	/* Free the string buffer	*/
+        nfree(ignores);		/* Free the ptr array		*/
+	/* The mask already exists, exit. */
         return 0;
       }
-    nfree(ignores[0]); /* free the string buffer */
-    nfree(ignores); /* free the ptr array */
+    nfree(ignores[0]);		/* Free the string buffer	*/
+    nfree(ignores);		/* Free the ptr array		*/
   }
 
   xk = getnotesentry(u);
-  /* first entry? */
+  /* First entry? */
   if (!xk) {
     struct xtra_key *mxk = user_malloc(sizeof(struct xtra_key));
     struct user_entry *ue = find_user_entry(&USERENTRY_XTRA, u);
@@ -1004,7 +1013,7 @@ int add_note_ignore(struct userrec *u, char *mask)
     mxk->key = user_malloc(strlen(NOTES_IGNKEY) + 1);
     strcpy(mxk->key, NOTES_IGNKEY);
     xtra_set(u, ue, mxk);
-  } else /* we already have other entries */ {
+  } else { /* ... else, we already have other entries. */
     xk->data = user_realloc(xk->data, strlen(xk->data) + strlen(mask) + 2);
     strcat(xk->data, " ");
     strcat(xk->data, mask);
@@ -1038,19 +1047,19 @@ int del_note_ignore(struct userrec *u, char *mask)
     } else
       foundit = 1;
   }
-  nfree(ignores[0]); /* free the string buffer */
-  nfree(ignores); /* free the ptr array */
-  /* entry not found */
+  nfree(ignores[0]);		/* Free the string buffer	*/
+  nfree(ignores);		/* Free the ptr array		*/
+  /* Entry not found */
   if (!foundit) {
     nfree(buf);
     return 0;
   }
 
   ue = find_user_entry(&USERENTRY_XTRA, u);
-  /* delete the entry if the buffer is empty */
+  /* Delete the entry if the buffer is empty */
   if (!buf[0]) {
     struct xtra_key xk = { 0, NOTES_IGNKEY, 0 };
-    nfree(buf); /* the allocated byte needs to be free'd too */
+    nfree(buf); /* The allocated byte needs to be free'd too */
     xtra_set(u, ue, &xk);
   } else {
     xk = user_malloc(sizeof(struct xtra_key));
@@ -1063,8 +1072,9 @@ int del_note_ignore(struct userrec *u, char *mask)
   return 1;
 }
 
-/* returns 1 if the user u has an note ignore which
-   matches from */
+/* Returns 1 if the user u has an note ignore which
+ * matches from
+ */
 int match_note_ignore(struct userrec *u, char *from)
 {
   char **ignores;
@@ -1080,65 +1090,65 @@ int match_note_ignore(struct userrec *u, char *from)
       nfree(ignores);
       return 1;
     }
-  nfree(ignores[0]); /* free the string buffer */
-  nfree(ignores); /* free the ptr array */
+  nfree(ignores[0]);		/* Free the string buffer	*/
+  nfree(ignores);		/* Free the ptr array		*/
   return 0;
 }
 
 
 static cmd_t notes_join[] =
 {
-  {"*", "", (Function) join_notes, "notes"},
-  {0, 0, 0, 0}
+  {"*",		"",	(Function) join_notes,		"notes"},
+  {NULL,	NULL,	NULL,				NULL}
 };
 
 static cmd_t notes_nkch[] =
 {
-  {"*", "", (Function) notes_change, "notes"},
-  {0, 0, 0, 0}
+  {"*",		"",	(Function) notes_change,	"notes"},
+  {NULL,	NULL,	NULL,				NULL}
 };
 
 static cmd_t notes_away[] =
 {
-  {"*", "", (Function) away_notes, "notes"},
-  {0, 0, 0, 0}
+  {"*",		"",	(Function) away_notes,		"notes"},
+  {NULL,	NULL,	NULL,				NULL}
 };
 
 static cmd_t notes_chon[] =
 {
-  {"*", "", (Function) chon_notes, "notes"},
-  {0, 0, 0, 0}
+  {"*",		"",	(Function) chon_notes,		"notes"},
+  {NULL,	NULL,	NULL,				NULL}
 };
 
 static cmd_t notes_msgs[] =
 {
-  {"notes", "", (Function) msg_notes, NULL},
-  {0, 0, 0, 0}
+  {"notes",	"",	(Function) msg_notes,		NULL},
+  {NULL,	NULL,	NULL,				NULL}
 };
 
 static tcl_ints notes_ints[] =
 {
-  {"note-life", &note_life},
-  {"max-notes", &maxnotes},
-  {"allow-fwd", &allow_fwd},
-  {"notify-users", &notify_users},
-  {"notify-onjoin", &notify_onjoin},
-  {0, 0}
+  {"note-life",		&note_life},
+  {"max-notes",		&maxnotes},
+  {"allow-fwd",		&allow_fwd},
+  {"notify-users",	&notify_users},
+  {"notify-onjoin",	&notify_onjoin},
+  {NULL,		NULL}
 };
 
 static tcl_strings notes_strings[] =
 {
-  {"notefile", notefile, 120, 0},
-  {0, 0, 0, 0}
+  {"notefile",		notefile,		120,	0},
+  {NULL,		NULL,			0,	0}
 };
 
 static tcl_cmds notes_tcls[] =
 {
-  {"notes", tcl_notes},
-  {"erasenotes", tcl_erasenotes},
-  {"listnotes", tcl_listnotes},
-  {"storenote", tcl_storenote},
-  {0, 0}
+  {"notes",		tcl_notes},
+  {"erasenotes",	tcl_erasenotes},
+  {"listnotes",		tcl_listnotes},
+  {"storenote",		tcl_storenote},
+  {NULL,		NULL}
 };
 
 static int notes_irc_setup(char *mod)
@@ -1161,9 +1171,9 @@ static int notes_server_setup(char *mod)
 
 static cmd_t notes_load[] =
 {
-  {"server", "", notes_server_setup, "notes:server"},
-  {"irc", "", notes_irc_setup, "notes:irc"},
-  {0, 0, 0, 0}
+  {"server",	"",	notes_server_setup,		"notes:server"},
+  {"irc",	"",	notes_irc_setup,		"notes:irc"},
+  {NULL,	NULL,	NULL,				NULL}
 };
 
 static char *notes_close()
@@ -1197,7 +1207,6 @@ static int notes_expmem()
 
 static void notes_report(int idx, int details)
 {
-
   if (details) {
     if (notefile[0])
       dprintf(idx, "    Notes can be stored, in: %s\n", notefile);
@@ -1241,7 +1250,6 @@ char *notes_start(Function * global_funcs)
   notes_server_setup(0);
   notes_irc_setup(0);
   my_memcpy(&USERENTRY_FWD, &USERENTRY_INFO, sizeof(void *) * 12);
-
   add_entry_type(&USERENTRY_FWD);
   Context;
   return NULL;

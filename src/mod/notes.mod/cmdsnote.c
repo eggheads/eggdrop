@@ -2,7 +2,7 @@
  * cmdsnote.c -- part of notes.mod
  *   handles all notes interaction over the party line
  * 
- * $Id: cmdsnote.c,v 1.3 1999/12/21 17:35:30 fabian Exp $
+ * $Id: cmdsnote.c,v 1.4 2000/01/01 19:24:38 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -145,8 +145,8 @@ static void cmd_noteigns(struct userrec *u, int idx, char *par)
     dprintf(idx, " %s", ignores[i]);
   dprintf(idx, "\n");
   Context;
-  nfree(ignores[0]); /* free the string buffer */
-  nfree(ignores); /* free the ptr array */
+  nfree(ignores[0]);		/* Free the string buffer	*/
+  nfree(ignores);		/* Free the ptr array		*/
 }
 
 static void cmd_fwd(struct userrec *u, int idx, char *par)
@@ -174,7 +174,7 @@ static void cmd_fwd(struct userrec *u, int idx, char *par)
     set_user(&USERENTRY_FWD, u1, NULL);
     return;
   }
-  /* thanks to vertex & dw */
+  /* Thanks to vertex & dw */
   if (strchr(par, '@') == NULL) {
     dprintf(idx, "You must supply a botname to forward to.\n");
     return;
@@ -225,10 +225,10 @@ void cmd_note(struct userrec *u, int idx, char *par)
     dprintf(idx, "Usage: note <to-whom> <message>\n");
     return;
   }
-  /* could be file system user */
+  /* Could be file system user */
   p = newsplit(&par);
   while ((*par == ' ') || (*par == '<') || (*par == '>'))
-    par++;			/* these are now illegal *starting* notes
+    par++;			/* These are now illegal *starting* notes
 				 * characters */
   echo = (dcc[idx].status & STAT_ECHO);
   splitc(handle, p, ',');
@@ -243,11 +243,11 @@ void cmd_note(struct userrec *u, int idx, char *par)
 
 cmd_t notes_cmds[] =
 {
-  {"fwd", "m", (Function) cmd_fwd, NULL},
-  {"notes", "", (Function) cmd_notes, NULL},
-  {"+noteign", "", (Function) cmd_pls_noteign, NULL},
-  {"-noteign", "", (Function) cmd_mns_noteign, NULL},
-  {"noteigns", "", (Function) cmd_noteigns, NULL},
-  {"note", "", (Function) cmd_note, NULL},
-  {0, 0, 0, 0}
+  {"fwd",	"m",	(Function) cmd_fwd,		NULL},
+  {"notes",	"",	(Function) cmd_notes,		NULL},
+  {"+noteign",	"",	(Function) cmd_pls_noteign,	NULL},
+  {"-noteign",	"",	(Function) cmd_mns_noteign,	NULL},
+  {"noteigns",	"",	(Function) cmd_noteigns,	NULL},
+  {"note",	"",	(Function) cmd_note,		NULL},
+  {NULL,	NULL,	NULL,				NULL}
 };

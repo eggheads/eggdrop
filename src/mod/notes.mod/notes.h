@@ -1,7 +1,7 @@
 /* 
  * notes.h -- part of notes.mod
  * 
- * $Id: notes.h,v 1.2 1999/12/21 17:35:30 fabian Exp $
+ * $Id: notes.h,v 1.3 2000/01/01 19:24:38 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -35,7 +35,6 @@ static int match_note_ignore(struct userrec *, char *);
 static void notes_read(char *, char *, char *, int);
 static void notes_del(char *, char *, char *, int);
 static void fwd_display(int, struct user_entry *);
-
 #endif				/* MAKING_NOTES */
 
 #endif				/* _EGG_MOD_NOTES_H */
