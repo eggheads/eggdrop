@@ -1,14 +1,14 @@
-This is an exhaustive list of all the Tcl commands added to eggdrop.  All
-of the normal Tcl built-in commands are still there, of course.  But you
-can also use these to manipulate features of the bot.  They are listed
+This is an exhaustive list of all the Tcl commands added to eggdrop. All
+of the normal Tcl built-in commands are still there, of course. But you
+can also use these to manipulate features of the bot. They are listed
 according to category.
 
-NOTICE:  This list is accurate for eggdrop v1.6.0! Scripts written for
+NOTICE: This list is accurate for eggdrop v1.6.0! Scripts written for
   v1.3/v1.4 series of eggdrop should probably work with a few minor
   modifications depending on the script.
 
-SCRIPTS WHICH WERE WRITTEN FOR v0.9, v1.0, v1.1 or v1.2 WILL PROBABLY NOT WORK
-WITHOUT MODIFICATION.  Commands which have been changed in the v1.6 series
+Scripts which were written for v0.9, v1.0, v1.1 or v1.2 will probably not work
+without modification. Commands which have been changed in the v1.6 series
 (or are just new commands) are marked with vertical bars on the left.
 
 ***### CORE EGGDROP COMMANDS ###***
@@ -24,14 +24,14 @@ specific commands, see later.
       commands); output is queued so that you won't flood yourself off
       the server
     options are:
-        -next     push messages to the front of the queue
+      -next     push messages to the front of the queue
     returns: nothing
 
   puthelp <text> [options]
     sends text to the server like 'putserv', but uses a different queue
       (intended for sending messages to channels or people)
     options are:
-        -next     push messages to the front of the queue
+      -next     push messages to the front of the queue
     returns: nothing
 
   putquick <text> [options]
@@ -39,7 +39,7 @@ specific commands, see later.
     commands); output is queued so that you won't flood yourself off
     the server, using the MODE queue (should be alot faster)
     options are:
-        -next     push messages to the front of the queue
+      -next     push messages to the front of the queue
     returns: nothing
 
   putkick <channel> <nick,nick,...> [reason]
@@ -84,7 +84,7 @@ specific commands, see later.
     returns: number of users in the bot's database
 
   validuser <handle>
-    returns: "1" if a user by that name exists; '0' otherwise
+    returns: "1" if a user by that name exists; "0" otherwise
 
   finduser <nick!user@host>
     finds the user record which most closely matches the given user@host
@@ -100,7 +100,7 @@ specific commands, see later.
 
   passwdok <handle> <pass>
     checks the password given against the user's password
-    check against the password "" (a blank string) or "-" to find out
+    check against the password "" (a blank string) or '-' to find out
     if a user has no password set.
     returns: "1" if password matches for that user; "0" if not
 
@@ -110,7 +110,7 @@ specific commands, see later.
       BOTFL   - returns the current bot-specific flags for the user
                 (if it's a bot :)
       BOTADDR - (another bot-only thing :) returns a list containing
-                the bots address, the bots telnet port, and it's relay port.
+                the bot's address, the bot's telnet port, and its relay port.
       HOSTS   - returns a list of the host for the user
       LASTON  - returns a list containing the unixtime last seen,
                 and the last seen place.
@@ -145,7 +145,7 @@ specific commands, see later.
 
   chattr <handle> [changes [channel]]
     changes the attributes for a user record, if you include any -- changes
-      are of the form "+f", "-o", "+dk", "-o+d", etc; if a channel is
+      are of the form '+f', '-o', '+dk', '-o+d', etc; if a channel is
       specified, the channel-specific flags for that channel are altered
       you can now use the +o|-o #channel format here too.
     returns: new flags for the user (if you made no changes, returns current
@@ -163,8 +163,8 @@ specific commands, see later.
     (using the new matching system)
 
   adduser <handle> <hostmask>
-    creates a new user entry with the handle and hostmask given (with no pass-
-      word, and the default flags)
+    creates a new user entry with the handle and hostmask given (with no
+      password, and the default flags)
     returns: "1" if successful, "0" if it already existed
 
   addbot <handle> <address>
@@ -403,7 +403,7 @@ specific commands, see later.
     returns: nothing
 
   reload
-    loads the userfile from disk (replacing whatever's in memory)
+    loads the userfile from disk (replacing whatever is in memory)
     returns: nothing
 
   backup
@@ -419,13 +419,13 @@ specific commands, see later.
 
   channel add <name> <option-list>
     adds a channel record for the bot to monitor; the full list of possible
-      options is given in the "eggdrop.complete.conf" sample config file; note
+      options are given in the eggdrop.complete.conf sample config file; note
       that the channel options must be in a list (enclosed in {})
     returns: nothing
 
   channel set <name> <options...>
     sets options for the channel specified; the full list of possible
-      options is given in the "eggdrop.conf" sample config file
+      options are given in the eggdrop.complete.conf sample config file
     returns: nothing
 
   channel info <name>
@@ -453,10 +453,10 @@ specific commands, see later.
 | chandname2name <channel-dname>
 |   These two functions are important to correctly support !channels. The
 |   bot differentiates between channel description names (chan dnames) and
-|   real channel names (chan names).  The chan dnames are what you would
-|   normally call the channel, e.g. `!channel'.  The chan names are what
-|   the IRC server uses to identify the channel, they consist of the chan
-|   dname prefixed with an ID, e.g. `!ABCDEchannel'.
+|   real channel names (chan names). The chan dnames are what you would
+|   normally call the channel; "!channel". The chan names are what the
+|   IRC server uses to identify the channel, they consist of the chan dname
+|   prefixed with an ID; "!ABCDEchannel".
 |
 |   For bot functions like isop, isvoice, etc. you need to know the chan
 |   dnames. If you communicate with the server, you usually get the chan
@@ -524,21 +524,21 @@ specific commands, see later.
 
   chanbans <channel>
     returns: a list of the current bans on the channel, each element is
-     of the form {ban bywho age} age is seconds from the bots POV
+     of the form {ban bywho age} age is seconds from the bot's POV
 
   chanexempts <channel>
     returns: a list of the current exemptions (+e mode) on the channel,
       each element is of the form {exemption bywho age} age is seconds
-      from the bots POV. this is only useful on networks that support +e
+      from the bot's POV. this is only useful on networks that support +e
 
   chaninvites <channel>
     returns: a list of the current invitations (+I modes) on the channel,
       each element is of the form {invitation bywho age} age is seconds
-      from the bots POV. this is only useful on networks that support +I
+      from the bot's POV. this is only useful on networks that support +I
 
   resetbans <channel>
-    removes all bans on the channel that aren't in the bot's ban list, and
-      refreshes any bans that should be on the channel but aren't
+    removes all bans on the channel that aren't in the bot's ban list,
+      and refreshes any bans that should be on the channel but aren't.
     returns: nothing
 
   resetexempts <channel>
@@ -564,7 +564,7 @@ specific commands, see later.
 
   chanlist <channel> [flags[&chanflags]]
     flags are any flags that are global flags, the '&' denotes to look for
-    channel specific flags.  Examples:
+    channel specific flags. Examples:
        n         (Botowner)
        &n        (Channel owner)
        o&m       (Global op, Channel master)
@@ -578,8 +578,8 @@ specific commands, see later.
 
 
   getchanidle <nickname> <channel>
-    returns: number of minutes that person has been idle; "0" if the speci-
-      fied user isn't even on the channel
+    returns: number of minutes that person has been idle; "0" if the
+      specified user isn't even on the channel
 
   getchanmode <channel>
     returns: string of the type "+ntik key" for the channel specified
@@ -638,17 +638,17 @@ specific commands, see later.
     returns: nothing
 
   boot <user@bot> [reason]
-     boot's a user from the partyline
+     boots a user from the partyline
      returns: nothing
 
   restart
-    rehash's the bot and kills all timers
+    rehashes the bot and kills all timers
     note that as this will also unload and reload all the modules, your bot
       will also jump servers.
     returns: nothing
 
   rehash
-    rehash's the bot
+    rehashes the bot
     returns: nothing
 
   dccsimul <idx> <text...>
@@ -671,7 +671,7 @@ specific commands, see later.
     returns: "1" if the idx currently exists; "0" if not
 
   getchan <idx>
-    returns: the current party line channel for a user on the party line --
+    returns: the current party line channel for a user on the party line;
       "0" indicates he's on the group party line, "-1" means he has chat off,
       and a value from 1 to 99999 is a private channel
 
@@ -807,7 +807,7 @@ specific commands, see later.
       a list of the current bindings is returned)
       yes, you can use the new flag binding method here too, and this is
       where it becomes truely phearfull since you may never need to check
-      attr's inside functions again...imagine:
+      attributes inside functions again...imagine:
         bind pub -o&+o command command_proc
       to only allow channel-spec ops to use it! no problem! works fine!
     returns: name of the command that was added, or (if proc-name was omitted),
@@ -826,8 +826,8 @@ specific commands, see later.
     creates a new logfile, which will log the modes given for the channel
       listed -- or, if no logfile is specified, just returns a list of
       logfiles; "*" can be used to mean all channels; you can also change
-      the modes and channel of an existing logfile with this command --
-      entering a blank mode and channel makes the bot stop logging there
+      the modes and channel of an existing logfile with this command.
+      Entering a blank mode and channel makes the bot stop logging there.
     returns: filename of logfile created, or (if no logfile is specified) a
       list of logfiles like: "{mco * eggdrop.log} {jp #lame lame.log}"
 
@@ -865,16 +865,16 @@ specific commands, see later.
 
   duration <seconds>
     returns: the number of seconds converted into years, weeks, days, hours,
-      minutes, and seconds (ie: 804600secs is turned into 1wk 2days 7hrs
-      30mins).
+      minutes, and seconds. 804600 seconds is turned into 1 week 2 days
+      7 hours 30 minutes.
 
   strftime <formatstring> [time]
     returns: a formatted string of time using standard strftime
       format, uses the value of time, or now if no time specified
 
   ctime <unixtime>
-    returns: a string of the date/time represented by the unix time given
-      (ie "Fri Aug  3 11:34:55 1973")
+    returns: a formatted date/time string based on the current locale
+    settings, from the unix time string given; "Fri Aug  3 11:34:55 1973"
 
   myip
     returns: a long number representing the bot's IP address, as it might
@@ -891,7 +891,7 @@ specific commands, see later.
       the user back to the bot; the idx must be for a user in the party line
       area or the file area; if the input text is blank (""), it indicates
       that the dcc user has dropped connection. Also, if the input text is
-      blank, never call killdcc on it, it will fail with 'invalid idx'.
+      blank, never call killdcc on it, it will fail with "invalid idx".
     returns: nothing
 
   sendnote <from> <to> <message>
@@ -939,32 +939,32 @@ specific commands, see later.
     to the proc's other parameters.
 
   md5 <string>
-    returns: the 128 bits MD5 "message-digest" of the specified string.
+    returns: the 128 bit MD5 message-digest of the specified string.
 
 | callevent <event>
 |   Triggers the evnt bind manually for a certain event. For example:
-|     callevent "rehash"
+|     callevent rehash
 
 GLOBAL VARIABLES:
-  (All config-file variables are global, too.  But these variables
+  (All config-file variables are global, too. But these variables
   are set by the bot.)
 
   botnick
-    current nickname the bot is using, ie 'Valis' or 'Valis0', etc
+    current nickname the bot is using; "Valis", "Valis0", etc
 
   botname
-    current nick!user@host that the server sees, ie 'Valis!valis@crappy.com'
+    current nick!user@host that the server sees; "Valis!valis@crappy.com"
 
   server
-    current server the bot is using, ie 'irc.math.ufl.edu:6667'
+    current server the bot is using; "irc.math.ufl.edu:6667"
 
   version
-    current bot version (ie: "1.1.2+pl1 1010201 pl1");
+    current bot version "1.1.2+pl1 1010201 pl1";
       first item is the text version, second item is a numerical version,
       and any following items are the names of patches that have been added
 
   numversion
-    current numeric bot version (ie: "1010201");
+    current numeric bot version "1010201";
       Numerical version is "MNNRRPP" where:
         M  is the Major release number
         NN is the Minor release number
@@ -978,31 +978,31 @@ GLOBAL VARIABLES:
      unixtime value for when the bot connected to its current server
 
   lastbind
-    The last command binding which triggered.   This allows you to
+    The last command binding which triggered. This allows you to
     identify which command triggered a tcl routine.
 
 | isjuped
-|   value is 1 if bots nick is juped(437) 0 otherwise.
+|   value is 1 if bot's nick is juped(437) 0 otherwise.
 
 COMMAND EXTENSION:
 
 You can use the 'bind' command to attach Tcl procedures to certain events.
 For example, you can write a Tcl procedure that gets called every time a
-user says "danger" on the channel.  The following is a list of the types of
-bindings, and how they work.  Under each binding type is the format of the
+user says "danger" on the channel. The following is a list of the types of
+bindings, and how they work. Under each binding type is the format of the
 bind command, the list of arguments sent to the Tcl proc, and an explanation.
 
-Some bindings are marked as "stackable".  That means that you can bind
-multiple commands to the same trigger.  Normally, for example, a binding
-of "bind msg - stop msg_stop" (which makes a msg-command "stop" call the
+Some bindings are marked as "stackable". That means that you can bind
+multiple commands to the same trigger. Normally, for example, a binding
+of 'bind msg - stop msg_stop' (which makes a msg-command "stop" call the
 Tcl proc "msg_stop") will overwrite any previous binding you had for the
-msg-command "stop".  With stackable bindings, like 'msgm' for example,
-you can bind to the same command or mask again and again.  When the
+msg-command "stop". With stackable bindings, like 'msgm' for example,
+you can bind to the same command or mask again and again. When the
 binding is triggered, ALL the Tcl procs that are bound to it will be
 called, one after another.
 
-To remove a binding, use "unbind".  For example, to remove that binding
-for the msg-command "stop", use "unbind msg - stop msg_stop".
+To remove a binding, use 'unbind'. For example, to remove that binding
+for the msg-command "stop", use 'unbind msg - stop msg_stop'.
 
 
   (1)  MSG
@@ -1027,7 +1027,7 @@ for the msg-command "stop", use "unbind msg - stop msg_stop".
 
        the same as DCC, except this is triggered if the user is in the file
        area instead of the party line
-       (THIS IS ONLY AVALIABLE WHEN THE filesys.so MODULE IS LOADED)
+       (This is only avaliable when the 'filesys' module is loaded.)
 
   (4)  PUB
        bind pub <flags> <command> <proc>
@@ -1050,7 +1050,7 @@ for the msg-command "stop", use "unbind msg - stop msg_stop".
 
        just like MSGM, except it's triggered by things said on a channel
        instead of things /msg'd to the bot; the mask is matched against
-       the channel name followed by the text, ie, "#nowhere hello there!",
+       the channel name followed by the text, "#nowhere hello there!",
        and can contain wildcards
 
   (7)  NOTC   (stackable)
@@ -1060,12 +1060,12 @@ for the msg-command "stop", use "unbind msg - stop msg_stop".
 |      destination will be a nickname (the bot's nickname, obviously) or
 |      a channel name; matches the entire line of text from a /notice with
        the mask; it is considered a breach of protocol to respond to a
-       /notice on IRC, so this is intended for internal use (ie, logging, etc)
+       /notice on IRC, so this is intended for internal use (logging, etc)
        only
 
 |      new Tcl procs should be declared as
 |      proc notcproc {nick uhost hand text {dest ""}} {
-|        global botnick; if {$dest==""} { set dest $botnick }
+|        global botnick; if {$dest == ""} {set dest $botnick}
 |        ...
 |      }
 |      for compatiblity
@@ -1132,7 +1132,7 @@ for the msg-command "stop", use "unbind msg - stop msg_stop".
        "+m" or "-o" and victim will show the value of the mode change
        (for o/v/b) otherwise ""; flags are ignored; the bot's automatic
        response to a mode change will happen AFTER all matching Tcl procs
-       are called; the <mask> will have the channel prefixed (ie, "#turtle +m")
+       are called; the <mask> will have the channel prefixed ("#turtle +m")
 
        if it is a server mode <nick> will be "", <user@host> is the server
        address and handle is *
@@ -1148,7 +1148,7 @@ for the msg-command "stop", use "unbind msg - stop msg_stop".
        To make it work with 1.3.23+ and stay compatible with older bots, do:
        bind mode - * mode_proc_fix
        proc mode_proc_fix {nick uhost hand chan mc {victim ""}} {
-         if {$victim != ""} { append mc " $victim" }
+         if {$victim != ""} {append mc " $victim"}
          mode_proc $nick $uhost $hand $chan $mc
        }
        proc mode_proc {nick uhost hand chan mc} { ... }
@@ -1167,7 +1167,7 @@ for the msg-command "stop", use "unbind msg - stop msg_stop".
        bind ctcr <flags> <keyword-mask> <proc>
        proc-name <nick> <user@host> <handle> <dest> <keyword> <arg...>
 
-       just like ctcp, but this is triggered for a ctcp-reply (ie, ctcp
+       just like ctcp, but this is triggered for a ctcp-reply (ctcp
        embedded in a notice instead of a privmsg)
 
   (17) RAW   (stackable)
@@ -1182,7 +1182,7 @@ for the msg-command "stop", use "unbind msg - stop msg_stop".
        identical to the order that the IRC server sends to the bot -- the
        pre-processing only splits it apart enough to determine the keyword;
        if the proc returns 1, eggdrop will not process the line any further
-       (THIS COULD CAUSE YOUR BOT TO BEHAVE ODDLY IN SOME CASES)
+       (This could cause your bot to behave oddly in some cases.)
 
   (18) BOT
        bind bot <flags> <command> <proc>
@@ -1221,7 +1221,7 @@ for the msg-command "stop", use "unbind msg - stop msg_stop".
        the file; the path is relative to the dcc directory (unless the file
        transfer was started by a script call to 'dccsend', in which case the
        path is the exact path given in the call to 'dccsend')
-       (THIS IS ONLY AVALIABLE WHEN THE transfer.so MODULE IS LOADED)
+       (This is only avaliable when the 'transfer' module is loaded.)
 
   (22) RCVD   (stackable)
        bind rcvd <flags> <mask> <proc>
@@ -1231,15 +1231,15 @@ for the msg-command "stop", use "unbind msg - stop msg_stop".
        against the user's handle; nick is the nickname on IRC that the file
        transfer originated from; the path is where the file ended up,
        relative to the dcc directory (usually this is your incoming dir)
-       (THIS IS ONLY AVALIABLE WHEN THE transfer.so MODULE IS LOADED)
+       (This is only avaliable when the 'transfer' module is loaded.)
 
   (23) CHAT   (stackable)
        bind chat <flags> <mask> <proc>
        proc-name <handle> <channel#> <text>
 
        when someone says something on the botnet, it invokes this binding;
-       flags are ignored; handle could be a user on this bot (ie "DronePup")
-       or on another bot (ie "Eden@Wilde") and therefore you can't rely on
+       flags are ignored; handle could be a user on this bot ("DronePup")
+       or on another bot ("Eden@Wilde") and therefore you can't rely on
        a local user record; the mask is checked against the text
 
   (24) LINK   (stackable)
@@ -1311,8 +1311,8 @@ for the msg-command "stop", use "unbind msg - stop msg_stop".
        incoming notes (either from the party line, someone on IRC, or
        someone on another bot on the botnet) are checked against these
        binds before being process; if a bind exists, the bot will not
-       deliver the note; the handle must be an exact match (no wild-
-       cards), but it is not case sensitive; flags are ignored
+       deliver the note; the handle must be an exact match (no wildcards),
+       but it is not case sensitive; flags are ignored
 
   (32) ACT   (stackable)
        bind act <flags> <mask> <proc>
@@ -1352,13 +1352,13 @@ for the msg-command "stop", use "unbind msg - stop msg_stop".
 
   (37) TIME   (stackable)
        bind time - <mask> <proc>
-       proc-name <min> <hour> <day> <month> <year>
+       proc-name <minute> <hour> <day> <month> <year>
 
        allows you to schedule procedure calls at certain times,
        mask matches 5 space seperated integers of the form:
-       "min hour day month year"
+       "minute hour day month year"
 
-       min, hour, day, month have a zero padding so they are
+       minute, hour, day, month have a zero padding so they are
        exactly two characters long, year is extended to four characters
        in the same way if needed ;)
 
@@ -1411,10 +1411,10 @@ for the msg-command "stop", use "unbind msg - stop msg_stop".
 |      bind lost <flags> <mask> <proc>
 |      proc-name <handle> <nick> <path> <bytes-transferred> <length-of-file>
 |
-|      Triggered when a DCC SEND transfer gets lost, i.e. the connection is
-|      terminated before all data was successfully sent/received. This is
-|      typically caused by a user abort.
-|      (THIS IS ONLY AVALIABLE WHEN THE transfer MODULE IS LOADED)
+|      Triggered when a DCC SEND transfer gets lost, such as when the
+|      connection is terminated before all data was successfully
+|      sent/received. This is typically caused by a user abort.
+|      (This is only avaliable when the 'transfer' module is loaded.)
 
 | (44) TOUT   (stackable)
 |      bind tout <flags> <mask> <proc>
@@ -1423,15 +1423,18 @@ for the msg-command "stop", use "unbind msg - stop msg_stop".
 |      Triggered when a DCC SEND transfer times out. This may either happen
 |      because the dcc connection was not accepted or because the data
 |      transfer stalled for some reason.
-|      (THIS IS ONLY AVALIABLE WHEN THE transfer MODULE IS LOADED)
+|      (This is only avaliable when the 'transfer' module is loaded.)
 
 
 
 (A) RETURN VALUES
 
     Several bindings pay attention to the value you return from the proc
-    (using "return $value").  Usually they expect a 0 or 1, and failing
-    to return any value is interpreted as a 0.
+    (using 'return $value'). Usually they expect a 0 or 1, and returning an
+    empty return any value is interpreted as a 0. Be aware if you omit the
+    return statement, the result of the last Tcl command executed will be
+    returned by the proc. This will not likely produce the results you
+    intended (this is a "feature" of Tcl).
 
     Here's a list of the bindings that use the return value from procs
     they trigger:
@@ -1449,18 +1452,18 @@ for the msg-command "stop", use "unbind msg - stop msg_stop".
           <<nick>> !handle! command
 
     CTCP  Return 1 to ask the bot not to process the CTCP command on its
-          own.  Otherwise it would send its own response to the CTCP
+          own. Otherwise it would send its own response to the CTCP
           (possibly an error message if it doesn't know how to deal with
           it).
 
     FILT  Return 1 to indicate the text has been processed, and the bot
-          should just ignore it.  Otherwise it will treat the text like
+          should just ignore it. Otherwise it will treat the text like
           any other.
 
     FLUD  Return 1 to ask the bot not to take action on the flood.
           Otherwise it will do its normal punishment.
 
-    RAW   Return 1 to ask the bot not to process the server text.  This
+    RAW   Return 1 to ask the bot not to process the server text. This
           can affect the bot's performance (by causing it to miss things
           that it would normally act on) -- you have been warned.
 
@@ -1474,46 +1477,46 @@ for the msg-command "stop", use "unbind msg - stop msg_stop".
 (B) CONTROL PROCEDURES
 
     Using the 'control' command you can put a DCC connection (or outgoing
-    TCP connection) in control of a script.  All text that comes in on
-    the connection is sent to the proc you specify.  All outgoing text
+    TCP connection) in control of a script. All text that comes in on
+    the connection is sent to the proc you specify. All outgoing text
     should be sent with 'putdcc'.
 
     The control procedure is called with these parameters:
        procname <idx> <input-text>
-    This allows you to use the same proc for several connections.  The
+    This allows you to use the same proc for several connections. The
     idx will stay the same until the connection is dropped -- after that,
     it will probably get reused for a later connection.
 
     To indicate that the connection has closed, your control procedure
-    will be called with blank text (the input-text will be "").  This
+    will be called with blank text (the input-text will be ""). This
     is the only time it will ever be called with "" as the text, and it
     is the last time your proc will be called for that connection. Dont call
     killdcc on the idx when text is blank, it will always fail with
-    'invalid idx'.
+    "invalid idx".
 
     If you want to hand control of your connection back to eggdrop, your
-    proc should return 1.  Otherwise, return 0 to retain control.
+    proc should return 1. Otherwise, return 0 to retain control.
 
 
 (C) TCP CONNECTIONS
 
     Eggdrop allows you to make two types of TCP ("telnet") connections:
-    outgoing and incoming.  For an outgoing connection, you specify the
-    remote host and port to connect to.  For an incoming connection,
+    outgoing and incoming. For an outgoing connection, you specify the
+    remote host and port to connect to. For an incoming connection,
     you specify a port to listen at.
 
-    All of the connections are *event driven*.  This means that the bot
+    All of the connections are *event driven*. This means that the bot
     will trigger your procs when something happens on the connection,
-    and your proc is expected to return as soon as possible.  Waiting
+    and your proc is expected to return as soon as possible. Waiting
     in a proc for more input is a no-no.
 
     To initiate an outgoing connection, use:
-       set idx [connect "hostname.goes.here" 3333]
-    (as an example).  $idx now contains a new DCC entry for the outgoing
+       set idx [connect hostname.goes.here 3333]
+    (as an example). $idx now contains a new DCC entry for the outgoing
     connection.
 
     All connections use non-blocking (commonly called "asynchronous",
-    which is a misnomer) I/O.  Without going into a big song and dance
+    which is a misnomer) I/O. Without going into a big song and dance
     about asynchronous I/O, what this means to you is:
 
     * assume the connection succeeded immediately
@@ -1521,18 +1524,18 @@ for the msg-command "stop", use "unbind msg - stop msg_stop".
 
     The only time a 'connect' call will return an error is if you gave
     a hostname and it couldn't find the IP for that hostname (this is
-    considered a "DNS error").  Otherwise it will appear to have succeeded,
+    considered a "DNS error"). Otherwise it will appear to have succeeded,
     and if the connection failed, you will immediately get an EOF.
 
     Right after doing a 'connect' call, you should set up a 'control' for
-    the new idx (see the section above).  From then on, the connection
+    the new idx (see the section above). From then on, the connection
     will act just like a normal DCC connection that has been put under
-    the control of a script.  If you ever return "1" from the control
+    the control of a script. If you ever return "1" from the control
     proc (indicating that you want control to return to eggdrop), the bot
-    will just close the connection and dispose of it.  Other commands
+    will just close the connection and dispose of it. Other commands
     that work on normal DCC connections, like 'killdcc' and 'putdcc',
-    will work on this idx too. 'killdcc' will fail with 'invalid idx' if you
-    attempt to use it on a closed socket, ie when text is blank.
+    will work on this idx too. 'killdcc' will fail with "invalid idx" if
+    you attempt to use it on a closed socket, such as when text is blank.
 
     To create a listening port, use:
        listen 6667 script grabproc
@@ -1540,7 +1543,7 @@ for the msg-command "stop", use "unbind msg - stop msg_stop".
     script 'grabproc'.
 
     When a new connection arrives, eggdrop will connect it up and create
-    a new idx for the connection.  That idx is sent to 'grabproc'.  The
+    a new idx for the connection. That idx is sent to 'grabproc'. The
     proc will generally want to immediately put this idx under control:
        proc grabproc {newidx} {
          control $newidx my_control
@@ -1549,13 +1552,13 @@ for the msg-command "stop", use "unbind msg - stop msg_stop".
     outgoing connection would.
 
     The best way to learn how to use these commands is to find a script
-    that uses them and follow it carefully.  Hopefully this has given you
+    that uses them and follow it carefully. Hopefully this has given you
     a good start though.
 
 
 (D) MATCH CHARACTERS
 
-    Many of the bindings allow match characters in the arguments.  Here
+    Many of the bindings allow match characters in the arguments. Here
     are the four special characters:
 
     ?  matches any single character
@@ -1578,7 +1581,7 @@ users to read later
              -1 if no such user, -2 if notefile failure, 0 if no
              such note. Each note of the list is also a list: first
              element from, 2nd element timestamp, 3rd element the
-             note itself. (ex: 'notes mynick "2-4;8;16-"')
+             note itself. ('notes mynick "2-4;8;16-"')
 
   erasenotes <user> <numberlist>
     erases some or all stored notes for a user
@@ -1626,8 +1629,8 @@ users to read later
 
   setpwd <idx> <dir>
     changes the directory of a file system user, in exactly the same way
-      as a 'cd' command would (ie, the directory can be specified relative
-      or absolute)
+      as a 'cd' command would. The directory can be specified relative
+      or absolute.
     returns: nothing
 
   getpwd <idx>
@@ -1642,13 +1645,14 @@ users to read later
       is relative to dcc-path
 
   dccsend <filename> <ircnick>
-    attempts to start a dcc file transfer to the given nick; the filename must
-      be specified either by full pathname or in relation to the bot's startup
-      directory
-    returns: "0" on success, "1" if the dcc table is full (too many con-
-      nections), "2" if it can't open a socket for the transfer, "3" if the
-      file doesn't exist, and "4" if the file was queued for later transfer
-      (which means that person has too many file transfers going right now)
+    attempts to start a dcc file transfer to the given nick; the filename
+      must be specified either by full pathname or in relation to the bot's
+      startup directory
+    returns: "0" on success, "1" if the dcc table is full (too many
+      connections), "2" if it can't open a socket for the transfer, "3" if
+      the file doesn't exist, and "4" if the file was queued for later
+      transfer (which means that person has too many file transfers going
+      right now)
 
   filesend <idx> <filename> [ircnick]
     like dccsend, except it operates for a current filesystem user, and
