@@ -2,7 +2,7 @@
  * channels.c -- part of channels.mod
  *   support for channels within the bot
  * 
- * $Id: channels.c,v 1.43 2000/11/21 05:18:04 guppy Exp $
+ * $Id: channels.c,v 1.44 2000/11/21 22:30:24 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -684,7 +684,7 @@ static int expmem_masklist(masklist *m)
 
 static int channels_expmem()
 {
-  int tot = 0;
+  int tot = 0, i;
   struct chanset_t *chan = chanset;
 
   Context;
@@ -699,6 +699,13 @@ static int channels_expmem()
     tot += expmem_masklist(chan->channel.ban);
     tot += expmem_masklist(chan->channel.exempt);
     tot += expmem_masklist(chan->channel.invite);
+
+    for (i = 0; i < 6 && chan->cmode[i].op; i++)
+      tot += strlen(chan->cmode[i].op) + 1;
+    if (chan->key)
+      tot += strlen(chan->key) + 1;
+    if (chan->rmkey)
+      tot += strlen(chan->rmkey) + 1;
 
     chan = chan->next;
   }

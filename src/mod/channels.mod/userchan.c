@@ -1,7 +1,7 @@
 /* 
  * userchan.c -- part of channels.mod
  * 
- * $Id: userchan.c,v 1.19 2000/11/21 04:38:36 guppy Exp $
+ * $Id: userchan.c,v 1.20 2000/11/21 22:30:24 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -323,6 +323,7 @@ static int u_delexempt (struct chanset_t * c, char * who, int doit)
 	  shareout(c, "-ec %s %s\n", c->dname, mask);
 	else 
 	  shareout(NULL, "-e %s\n", mask);
+	nfree(mask);
       }
     }
     if (!c)
@@ -373,6 +374,7 @@ static int u_delinvite(struct chanset_t *c, char *who, int doit)
 	  shareout(c, "-invc %s %s\n", c->dname, mask);
 	else 
 	  shareout(NULL, "-inv %s\n", mask);
+	nfree(mask);
       }
     }
     if (!c)
@@ -1293,42 +1295,44 @@ static int expired_mask(struct chanset_t *chan, char *who)
  */
 static void check_expired_bans(void)
 {
-  maskrec **u;
+  maskrec *u, *u2;
   struct chanset_t *chan;
   masklist *b;
 
-  u = &global_bans;
-  while (*u) {
-    if (!((*u)->flags & MASKREC_PERM) && (now >= (*u)->expire)) {
+  u = global_bans;
+  while (u) {
+    u2 = u->next;
+    if (!(u->flags & MASKREC_PERM) && (now >= u->expire)) {
       putlog(LOG_MISC, "*", "%s %s (%s)", BANS_NOLONGER,
-	     (*u)->mask, MISC_EXPIRED);
+	     u->mask, MISC_EXPIRED);
       for (chan = chanset; chan; chan = chan->next)
 	for (b = chan->channel.ban; b->mask[0]; b = b->next)
-	  if (!rfc_casecmp(b->mask, (*u)->mask) &&
+	  if (!rfc_casecmp(b->mask, u->mask) &&
 	      expired_mask(chan, b->who) && b->timer != now) {
-	    add_mode(chan, '-', 'b', (*u)->mask);
+	    add_mode(chan, '-', 'b', u->mask);
 	    b->timer = now;
 	  }
-      u_delban(NULL, (*u)->mask, 1);
-    } else
-      u = &((*u)->next);
+      u_delban(NULL, u->mask, 1);
+    }
+    u = u2;
   }
   /* Check for specific channel-domain bans expiring */
   for (chan = chanset; chan; chan = chan->next) {
-    u = &chan->bans;
-    while (*u) {
-      if (!((*u)->flags & MASKREC_PERM) && (now >= (*u)->expire)) {
+    u = chan->bans;
+    while (u) {
+      u2 = u->next;
+      if (!(u->flags & MASKREC_PERM) && (now >= u->expire)) {
 	putlog(LOG_MISC, "*", "%s %s %s %s (%s)", BANS_NOLONGER,
-	       (*u)->mask, MISC_ONLOCALE, chan->dname, MISC_EXPIRED);
+	       u->mask, MISC_ONLOCALE, chan->dname, MISC_EXPIRED);
 	for (b = chan->channel.ban; b->mask[0]; b = b->next)
-	  if (!rfc_casecmp(b->mask, (*u)->mask) &&
+	  if (!rfc_casecmp(b->mask, u->mask) &&
 	      expired_mask(chan, b->who) && b->timer != now) {
-	    add_mode(chan, '-', 'b', (*u)->mask);
+	    add_mode(chan, '-', 'b', u->mask);
 	    b->timer = now;
 	  }
-	u_delban(chan, (*u)->mask, 1);
-      } else
-	u = &((*u)->next);
+	u_delban(chan, u->mask, 1);
+      }
+      u = u2;
     }
   }
 }
@@ -1337,24 +1341,25 @@ static void check_expired_bans(void)
  */
 static void check_expired_exempts(void)
 {
-  maskrec **u;
+  maskrec *u, *u2;
   struct chanset_t *chan;
   masklist *b, *e;
   int match;
   
   if (!use_exempts)
     return;
-  u = &global_exempts;
-  while (*u) {
-    if (!((*u)->flags & MASKREC_PERM) && (now >= (*u)->expire)) {
+  u = global_exempts;
+  while (u) {
+    u2 = u->next;
+    if (!(u->flags & MASKREC_PERM) && (now >= u->expire)) {
       putlog(LOG_MISC, "*", "%s %s (%s)", EXEMPTS_NOLONGER,
-	     (*u)->mask, MISC_EXPIRED);
+	     u->mask, MISC_EXPIRED);
       for (chan = chanset; chan; chan = chan->next) {
         match = 0;
         b = chan->channel.ban;
         while (b->mask[0] && !match) {
-          if (wild_match(b->mask, (*u)->mask) ||
-            wild_match((*u)->mask,b->mask))
+          if (wild_match(b->mask, u->mask) ||
+            wild_match(u->mask, b->mask))
             match = 1;
           else
             b = b->next;
@@ -1365,26 +1370,27 @@ static void check_expired_exempts(void)
             chan->dname);
 	else
 	  for (e = chan->channel.exempt; e->mask[0]; e = e->next)
-	    if (!rfc_casecmp(e->mask, (*u)->mask) &&
+	    if (!rfc_casecmp(e->mask, u->mask) &&
 		expired_mask(chan, e->who) && e->timer != now) {
-	      add_mode(chan, '-', 'e', (*u)->mask);
+	      add_mode(chan, '-', 'e', u->mask);
 	      e->timer = now;
 	    }
       }
-      u_delexempt(NULL,(*u)->mask,1);
-    } else
-      u = &((*u)->next);
+      u_delexempt(NULL, u->mask,1);
+    }
+    u = u2;
   }
   /* Check for specific channel-domain exempts expiring */
   for (chan = chanset; chan; chan = chan->next) {
-    u = &chan->exempts;
-    while (*u) {
-      if (!((*u)->flags & MASKREC_PERM) && (now >= (*u)->expire)) {
+    u = chan->exempts;
+    while (u) {
+      u2 = u->next;
+      if (!(u->flags & MASKREC_PERM) && (now >= u->expire)) {
         match=0;
         b = chan->channel.ban;
         while (b->mask[0] && !match) {
-          if (wild_match(b->mask, (*u)->mask) ||
-            wild_match((*u)->mask,b->mask))
+          if (wild_match(b->mask, u->mask) ||
+            wild_match(u->mask, b->mask))
             match=1;
           else
             b = b->next;
@@ -1395,17 +1401,17 @@ static void check_expired_exempts(void)
             chan->dname);
         else {
           putlog(LOG_MISC, "*", "%s %s %s %s (%s)", EXEMPTS_NOLONGER,
-		 (*u)->mask, MISC_ONLOCALE, chan->dname, MISC_EXPIRED);
+		 u->mask, MISC_ONLOCALE, chan->dname, MISC_EXPIRED);
 	  for (e = chan->channel.exempt; e->mask[0]; e = e->next)
-	    if (!rfc_casecmp(e->mask, (*u)->mask) &&
+	    if (!rfc_casecmp(e->mask, u->mask) &&
 		expired_mask(chan, e->who) && e->timer != now) {
-	      add_mode(chan, '-', 'e', (*u)->mask);
+	      add_mode(chan, '-', 'e', u->mask);
 	      e->timer = now;
 	    }
-          u_delexempt(chan,(*u)->mask,1);
+          u_delexempt(chan, u->mask, 1);
         }
       }
-      u = &((*u)->next);
+      u = u2;
     }
   }
 }
@@ -1414,46 +1420,48 @@ static void check_expired_exempts(void)
  */
 static void check_expired_invites(void)
 {
-  maskrec **u;
+  maskrec *u, *u2;
   struct chanset_t *chan;
   masklist *b;
 
   if (!use_invites)
     return;
-  u = &global_invites;
-  while (*u) {
-    if (!((*u)->flags & MASKREC_PERM) && (now >= (*u)->expire)) {
+  u = global_invites;
+  while (u) {
+    u2 = u->next;
+    if (!(u->flags & MASKREC_PERM) && (now >= u->expire)) {
       putlog(LOG_MISC, "*", "%s %s (%s)", INVITES_NOLONGER,
-	     (*u)->mask, MISC_EXPIRED);
+	     u->mask, MISC_EXPIRED);
       for (chan = chanset; chan; chan = chan->next)
 	if (!(chan->channel.mode & CHANINV))
 	  for (b = chan->channel.invite; b->mask[0]; b = b->next)
-	    if (!rfc_casecmp(b->mask, (*u)->mask) &&
+	    if (!rfc_casecmp(b->mask, u->mask) &&
 		expired_mask(chan, b->who) && b->timer != now) {
-	      add_mode(chan, '-', 'I', (*u)->mask);
+	      add_mode(chan, '-', 'I', u->mask);
 	      b->timer = now;
 	    }
-      u_delinvite(NULL,(*u)->mask,1);
-    } else
-      u = &((*u)->next);
+      u_delinvite(NULL, u->mask,1);
+    }
+    u = u2;
   }
   /* Check for specific channel-domain invites expiring */
   for (chan = chanset; chan; chan = chan->next) {
-    u = &chan->invites;
-    while (*u) {
-      if (!((*u)->flags & MASKREC_PERM) && (now >= (*u)->expire)) {
+    u = chan->invites;
+    while (u) {
+      u2 = u->next;
+      if (!(u->flags & MASKREC_PERM) && (now >= u->expire)) {
 	putlog(LOG_MISC, "*", "%s %s %s %s (%s)", INVITES_NOLONGER,
-	       (*u)->mask, MISC_ONLOCALE, chan->dname, MISC_EXPIRED);
+	       u->mask, MISC_ONLOCALE, chan->dname, MISC_EXPIRED);
 	if (!(chan->channel.mode & CHANINV))
 	  for (b = chan->channel.invite; b->mask[0]; b = b->next)
-	    if (!rfc_casecmp(b->mask, (*u)->mask) &&
+	    if (!rfc_casecmp(b->mask, u->mask) &&
 		expired_mask(chan, b->who) && b->timer != now) {
-	      add_mode(chan, '-', 'I', (*u)->mask);
+	      add_mode(chan, '-', 'I', u->mask);
 	      b->timer = now;
 	    }
-	u_delinvite(chan, (*u)->mask,1);
-      } else
-	u = &((*u)->next);
+	u_delinvite(chan, u->mask, 1);
+      }
+      u = u2;
     }
   }
 }
