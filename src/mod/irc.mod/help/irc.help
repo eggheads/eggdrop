@@ -164,7 +164,7 @@ see also: +ban, bans, stick
    actively deopped by the bot.
 
 see also: deop, console
-%{help=op}%{+o|o}
+%{help=halfop}%{+o|o}
 ###  %bhalfop%b <nickname> [channel]
    will grant halfop to the person you specify, so long as the bot
    is opped on that channel, and the person you specify isn't being
