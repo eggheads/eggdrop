@@ -1,7 +1,7 @@
 /*
  * tclirc.c -- part of irc.mod
  *
- * $Id: tclirc.c,v 1.24 2001/10/07 14:09:12 poptix Exp $
+ * $Id: tclirc.c,v 1.25 2001/12/18 16:40:58 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -600,10 +600,10 @@ static int tcl_topic STDVAR
 static int tcl_hand2nick STDVAR
 {
   memberlist *m;
-  char s[161];
-  struct chanset_t *chan;
-  struct chanset_t *thechan = NULL;
+  char nuh[161];
+  struct chanset_t *chan, *thechan = NULL;
   struct userrec *u;
+  struct list_type *orig, *q;
 
   BADARGS(2, 3, " handle ?channel?");	/* drummer */
   if (argc > 2) {
@@ -613,21 +613,29 @@ static int tcl_hand2nick STDVAR
       Tcl_AppendResult(irp, "invalid channel: ", argv[2], NULL);
       return TCL_ERROR;
     }
-  } else {
+  } else
     chan = chanset;
-  }
-  while ((chan != NULL) && ((thechan == NULL) || (thechan == chan))) {
+
+  u = get_user_by_handle(userlist, argv[1]);
+
+  if (!u)
+    return TCL_OK;
+
+  orig = get_user(&USERENTRY_HOSTS, u);
+
+  while (chan && (thechan == NULL || thechan == chan)) {
     for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
-      simple_sprintf(s, "%s!%s", m->nick, m->userhost);
-      u = get_user_by_host(s);
-      if (u && !egg_strcasecmp(u->handle, argv[1])) {
-	Tcl_AppendResult(irp, m->nick, NULL);
-	return TCL_OK;
+      simple_sprintf(nuh, "%s!%s", m->nick, m->userhost);
+      for (q = orig; q; q = q->next) {
+	if (wild_match(q->extra, nuh)) {
+	  Tcl_AppendResult(irp, m->nick, NULL);
+	  return TCL_OK;
+	}
       }
     }
     chan = chan->next;
   }
-  return TCL_OK;		/* blank */
+  return TCL_OK;
 }
 
 static int tcl_nick2hand STDVAR
