@@ -2,7 +2,7 @@
  * net.c -- handles:
  *   all raw network i/o
  * 
- * $Id: net.c,v 1.44 2002/09/21 20:55:25 wcc Exp $
+ * $Id: net.c,v 1.45 2002/09/22 04:11:08 wcc Exp $
  */
 /* 
  * This is hereby released into the public domain.
@@ -199,32 +199,6 @@ void neterror(char *s)
   }
 }
 
-/* copy of strip_telnet but just for any defined text */
-static void strip_telnet_codes(char *buf, int *len)
-{
-  unsigned char *p = (unsigned char *) buf, *o = (unsigned char *) buf;
-  int mark;
-        
-  while (*p != 0) {
-    while ((*p != TLN_IAC) && (*p != 0))
-      *o++ = *p++;
-    if (*p == TLN_IAC) {
-      p++;
-      mark = 2;
-      if (!*p)
-        mark = 1;               /* bogus */
-      if ((*p >= TLN_WILL) && (*p <= TLN_DONT)) {
-        mark = 3;
-        if (!*(p + 1))
-          mark = 2;             /* bogus */
-      }
-      p += mark - 1;
-      *len = *len - mark;
-    }
-  }
-  *o = *p;
-}
-
 /* Sets/Unsets options for a specific socket.
  * 
  * Returns:  0   - on success
@@ -329,6 +303,18 @@ void killsock(register int sock)
     }
   }
   putlog(LOG_MISC, "*", "Attempt to kill un-allocated socket %d !!", sock);
+}
+
+/* convert a socklist sock idx to dcc idx
+*/
+static int sock_to_dcc(int sock)
+{
+  int i;
+  
+  for (i = 0; i < dcc_total; i++)
+    if (sock == dcc[i].sock)
+      return i;
+  return -1;
 }
 
 /* Send connection request to proxy
@@ -773,11 +759,11 @@ static int sockread(char *s, int *len)
 int sockgets(char *s, int *len)
 {
   char xx[514], *p, *px;
-  char tmps[514];
-  int ret, i, data = 0;
-  int atra = 0, chk = 0;
+  int ret, i, j, data = 0;
+  int chk = 0;
 
   for (i = 0; i < MAXSOCKS; i++) {
+    j = sock_to_dcc(socklist[i].sock);
     /* Check for stored-up data waiting to be processed */
     if (!(socklist[i].flags & SOCK_UNUSED) &&
 	!(socklist[i].flags & SOCK_BUFFER) && (socklist[i].inbuf != NULL)) {
@@ -804,9 +790,10 @@ int sockgets(char *s, int *len)
 	    /* Strip CR if this was CR/LF combo */
 	    if (s[strlen(s) - 1] == '\r')
 	      s[strlen(s) - 1] = 0;
-            /* if s is null, we can't use it... */
-	    if (((s[0] == 0) || (s == NULL)) && (socklist[i].inbuf == NULL)) {
-              return -3;
+            /* if s is null, we can't use it for connect/control...-sL */
+            if ((j != -1) && (dcc[j].type == &DCC_SCRIPT) && ((s == NULL) || (s[0] == 0))) {
+              if (socklist[i].inbuf == NULL)
+                chk = 1;
             } else
               chk = 1;
             if (chk) {
@@ -814,19 +801,15 @@ int sockgets(char *s, int *len)
        	      return socklist[i].sock;
   	    }
           } else {
- 	    if (((s[0] == 0) || (s == NULL)) && (socklist[i].inbuf != NULL)) {
-              if (strlen(socklist[i].inbuf) > 510)
-                socklist[i].inbuf[510] = 0;
-              *len = socklist[i].inbuflen;
-	      strcpy(s, socklist[i].inbuf);
-              nfree(socklist[i].inbuf);
-              socklist[i].inbuf = NULL;
-              socklist[i].inbuflen = 0;
-	      strcpy(tmps, s);
-	      strip_telnet_codes(tmps, &atra);
-	      if ((tmps[0] == 0) || (tmps == NULL))
-		return -3;
-              return socklist[i].sock;
+            if ((j != -1) && (dcc[j].type == &DCC_SCRIPT) && ((s == NULL) || (s[0] == 0))) {
+              if (socklist[i].inbuf != NULL) {
+                strcpy(s, socklist[i].inbuf);
+                *len = strlen(s);
+                nfree(socklist[i].inbuf);
+                socklist[i].inbuf = NULL;
+                socklist[i].inbuflen = 0;
+                return socklist[i].sock;
+              }
             }
             chk = 1;
           }
@@ -846,7 +829,7 @@ int sockgets(char *s, int *len)
 	  egg_memcpy(socklist[i].inbuf, socklist[i].inbuf + *len, *len);
 	  socklist[i].inbuflen -= *len;
 	  socklist[i].inbuf = nrealloc(socklist[i].inbuf,
-				       socklist[i].inbuflen + 1);
+				       socklist[i].inbuflen);
 	}
 	return socklist[i].sock;
       }
@@ -947,12 +930,13 @@ int sockgets(char *s, int *len)
   *len = strlen(s);
   /* Anything left that needs to be saved? */
   if (!xx[0]) {
-    if (data) {
+    if (data)
       return socklist[ret].sock;
-    } else
+    else
       return -3;
   }
   /* Prepend old data back */
+  j = sock_to_dcc(socklist[ret].sock);
   if (socklist[ret].inbuf != NULL) {
     p = socklist[ret].inbuf;
     socklist[ret].inbuflen = strlen(p) + strlen(xx);
@@ -961,25 +945,21 @@ int sockgets(char *s, int *len)
     strcat(socklist[ret].inbuf, p);
     nfree(p);
   } else {
-    if (xx[0] && (data != 1))
+    if ((dcc[j].type == &DCC_SCRIPT) && (xx[0] || xx[1]) && (data != 1))
       data = 1;
     socklist[ret].inbuflen = strlen(xx);
     socklist[ret].inbuf = (char *) nmalloc(socklist[ret].inbuflen + 1);
     strcpy(socklist[ret].inbuf, xx);
   }
   if (data) {
-    if (((s[0] == 0) || (s == NULL)) && (socklist[ret].inbuf != NULL)) {
-      if (strlen(socklist[ret].inbuf) > 510)
-        socklist[ret].inbuf[510] = 0;
-      *len = socklist[ret].inbuflen;
-      strcpy(s, socklist[ret].inbuf);
-      nfree(socklist[ret].inbuf);
-      socklist[ret].inbuf = NULL;
-      socklist[ret].inbuflen = 0;
-      strcpy(tmps, s);
-      strip_telnet_codes(tmps, &atra);
-      if ((tmps[0] == 0) || (tmps == NULL))
-        return -3;
+    if ((j != -1) && (dcc[j].type == &DCC_SCRIPT) && ((s == NULL) || (s[0] == 0))) {
+      if (socklist[ret].inbuf != NULL) {
+        strcpy(s, socklist[ret].inbuf);
+        *len = strlen(s);
+        nfree(socklist[ret].inbuf);
+        socklist[ret].inbuf = NULL;
+        socklist[ret].inbuflen = 0;
+      }
     }
     return socklist[ret].sock;
   } else {

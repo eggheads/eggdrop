@@ -4,7 +4,7 @@
  *   disconnect on a dcc socket
  *   ...and that's it!  (but it's a LOT)
  *
- * $Id: dcc.c,v 1.56 2002/09/21 20:55:24 wcc Exp $
+ * $Id: dcc.c,v 1.57 2002/09/22 04:11:08 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -544,7 +544,7 @@ static void dcc_chat_pass(int idx, char *buf, int atr)
 
   strip_telnet(dcc[idx].sock, buf, &atr);
 
-  if (buf[0] == 0 || buf == NULL)
+  if (buf == NULL || buf[0] == 0)
     return;
 
 
