@@ -20,9 +20,9 @@ try %b.help set motd%b (please edit the %bmotd%b file in your bot's directory)
 If you need help with this eggdrop you can go
 to the following help channels:
 
-  Undernet - #eggdrop
-  EFNet - #eggheads, #eggtcl
-  IRCNet - #eggdrop, #bothelp
+  Undernet - #eggdrop, #eggheads
+  EFNet - #egghelp
+  IRCNet - #eggdrop
 
 try %.help% to get help
     %.help all% to get the full command list
