@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  *
- * $Id: chan.c,v 1.103 2003/01/15 00:35:01 wcc Exp $
+ * $Id: chan.c,v 1.104 2003/01/21 00:53:27 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -231,8 +231,8 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
       return 0;
   }
   if (rfc_casecmp(chan->floodwho[which], p)) {	/* new */
-    strncpy(chan->floodwho[which], p, 81);
-    chan->floodwho[which][81] = 0;
+    strncpy(chan->floodwho[which], p, 80);
+    chan->floodwho[which][80] = 0;
     chan->floodtime[which] = now;
     chan->floodnum[which] = 1;
     return 0;

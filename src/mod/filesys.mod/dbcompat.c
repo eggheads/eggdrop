@@ -4,7 +4,7 @@
  *
  * Written for filedb3 by Fabian Knittel <fknittel@gmx.de>
  *
- * $Id: dbcompat.c,v 1.12 2002/12/24 02:30:07 wcc Exp $
+ * $Id: dbcompat.c,v 1.13 2003/01/21 00:53:27 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -147,12 +147,10 @@ static int convert_old_files(char *path, char *newfiledb)
  */
 static void convert_version1(FILE *fdb_s, FILE *fdb_t)
 {
-  long where;
   filedb1 fdb1;
 
   fseek(fdb_s, 0L, SEEK_SET);
   while (!feof(fdb_s)) {
-    where = ftell(fdb_s);
     fread(&fdb1, sizeof(filedb1), 1, fdb_s);
     if (!feof(fdb_s)) {
       if (!(fdb1.stat & FILE_UNUSED)) {
@@ -184,12 +182,10 @@ static void convert_version1(FILE *fdb_s, FILE *fdb_t)
  */
 static void convert_version2(FILE *fdb_s, FILE *fdb_t)
 {
-  long where;
   filedb2 fdb2;
 
   fseek(fdb_s, 0L, SEEK_SET);
   while (!feof(fdb_s)) {
-    where = ftell(fdb_s);
     fread(&fdb2, sizeof(filedb2), 1, fdb_s);
     if (!feof(fdb_s)) {
       if (!(fdb2.stat & FILE_UNUSED)) {

@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  *
- * $Id: server.c,v 1.86 2003/01/15 01:03:05 wcc Exp $
+ * $Id: server.c,v 1.87 2003/01/21 00:53:27 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -32,7 +32,6 @@ static Function *global = NULL;
 
 static int ctcp_mode;
 static int serv;		/* sock # of server currently */
-static int strict_host;		/* strict masking of hosts ? */
 static char newserver[121];	/* new server? */
 static int newserverport;	/* new server port? */
 static char newserverpass[121];	/* new server password? */
@@ -1878,7 +1877,6 @@ char *server_start(Function *global_funcs)
    * globally.
    */
   serv = -1;
-  strict_host = 1;
   botname[0] = 0;
   trying_server = 0L;
   server_lag = 0;

@@ -4,7 +4,7 @@
  *   Tcl initialization
  *   getting and setting Tcl/eggdrop variables
  *
- * $Id: tcl.c,v 1.55 2003/01/21 00:11:29 wcc Exp $
+ * $Id: tcl.c,v 1.56 2003/01/21 00:53:27 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -743,6 +743,7 @@ void add_tcl_strings(tcl_strings *list)
     tmp = protect_readonly;
     protect_readonly = 0;
     tcl_eggstr((ClientData) st, interp, list[i].name, NULL, TCL_TRACE_WRITES);
+    protect_readonly = tmp;
     tcl_eggstr((ClientData) st, interp, list[i].name, NULL, TCL_TRACE_READS);
     Tcl_TraceVar(interp, list[i].name, TCL_TRACE_READS | TCL_TRACE_WRITES |
 		 TCL_TRACE_UNSETS, tcl_eggstr, (ClientData) st);

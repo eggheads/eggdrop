@@ -15,7 +15,7 @@
  * 1.4       1997-11-25      1.2.2.0         Added language addition  Kirk
  * 1.5       1998-07-12      1.3.0.0         Fixed ;me and updated    BB
  *
- * $Id: wire.c,v 1.23 2002/12/24 02:30:09 wcc Exp $
+ * $Id: wire.c,v 1.24 2003/01/21 00:53:27 wcc Exp $
  */
 /*
  * Copyright (C) 1999, 2000, 2001, 2002, 2003 Eggheads Development Team
@@ -125,11 +125,11 @@ static void wire_filter(char *from, char *cmd, char *param)
 	  mins = ((now2 - dcc[idx].timeval) -
 		  (hrs * 3600)) / 60;
 	  if (Days > 0)
-	    sprintf(idle, " \[%s %lud%luh]", WIRE_IDLE, Days, hrs);
+	    sprintf(idle, " [%s %lud%luh]", WIRE_IDLE, Days, hrs);
 	  else if (hrs > 0)
-	    sprintf(idle, " \[%s %luh%lum]", WIRE_IDLE, hrs, mins);
+	    sprintf(idle, " [%s %luh%lum]", WIRE_IDLE, hrs, mins);
 	  else
-	    sprintf(idle, " \[%s %lum]", WIRE_IDLE, mins);
+	    sprintf(idle, " [%s %lum]", WIRE_IDLE, mins);
 	} else
 	  idle[0] = 0;
 	sprintf(wirereq, "----- %c%-9s %-9s  %s%s",
@@ -254,11 +254,11 @@ static int cmd_onwire(struct userrec *u, int idx, char *par)
 	hrs = ((now2 - dcc[idx2].timeval) - (Days * 86400)) / 3600;
 	mins = ((now2 - dcc[idx2].timeval) - (hrs * 3600)) / 60;
 	if (Days > 0)
-	  sprintf(idle, " \[%s %lud%luh]", WIRE_IDLE, Days, hrs);
+	  sprintf(idle, " [%s %lud%luh]", WIRE_IDLE, Days, hrs);
 	else if (hrs > 0)
-	  sprintf(idle, " \[%s %luh%lum]", WIRE_IDLE, hrs, mins);
+	  sprintf(idle, " [%s %luh%lum]", WIRE_IDLE, hrs, mins);
 	else
-	  sprintf(idle, " \[%s %lum]", WIRE_IDLE, mins);
+	  sprintf(idle, " [%s %lum]", WIRE_IDLE, mins);
       } else
 	idle[0] = 0;
       dprintf(idx, "----- %c%-9s %-9s  %s%s\n",
@@ -591,7 +591,7 @@ static Function wire_table[] =
 
 char *wire_start(Function * global_funcs)
 {
-  p_tcl_bind_list H_temp;
+  p_tcl_bind_list H_temp; /* variable "H_temp" was set but never used */
 
   global = global_funcs;
 

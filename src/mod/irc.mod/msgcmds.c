@@ -2,7 +2,7 @@
  * msgcmds.c -- part of irc.mod
  *   all commands entered via /MSG
  *
- * $Id: msgcmds.c,v 1.34 2002/12/24 02:30:08 wcc Exp $
+ * $Id: msgcmds.c,v 1.35 2003/01/21 00:53:27 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -30,7 +30,6 @@ static int msg_hello(char *nick, char *h, struct userrec *u, char *p)
   int common = 0;
   int atr = 0;
   struct chanset_t *chan;
-  struct flag_record fr = {FR_GLOBAL, 0, 0, 0, 0, 0};
 
   if (!learn_users && !make_userfile)
     return 0;
@@ -44,9 +43,6 @@ static int msg_hello(char *nick, char *h, struct userrec *u, char *p)
   }
   strncpyz(handle, nick, sizeof(handle));
   if (get_user_by_handle(userlist, handle)) {
-    struct flag_record fr = {FR_GLOBAL, 0, 0, 0, 0, 0};
-    fr.global = atr;
-
     dprintf(DP_HELP, IRC_BADHOST1, nick);
     dprintf(DP_HELP, IRC_BADHOST2, nick, botname);
     return 1;
@@ -86,8 +82,6 @@ static int msg_hello(char *nick, char *h, struct userrec *u, char *p)
     dprintf(DP_HELP, "NOTICE %s :%s\n", nick, IRC_SALUT2B);
   }
   if (make_userfile) {
-    fr.global = sanity_check(default_flags | USER_OWNER);
-
     dprintf(DP_HELP, "NOTICE %s :%s\n", nick, IRC_INITOWNER1);
     dprintf(DP_HELP, IRC_NEWBOT1, nick, botname);
     dprintf(DP_HELP, IRC_NEWBOT2, nick);
@@ -96,8 +90,6 @@ static int msg_hello(char *nick, char *h, struct userrec *u, char *p)
     write_userfile(-1);
     add_note(handle, botnetnick, IRC_INITNOTE, -1, 0);
   } else {
-    fr.global = default_flags;
-
     dprintf(DP_HELP, IRC_INTRO1, nick, botname);
   }
   if (strlen(nick) > HANDLEN)

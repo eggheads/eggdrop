@@ -7,7 +7,7 @@
  *   (non-Tcl) procedure lookups for msg/dcc/file commands
  *   (Tcl) binding internal procedures to msg/dcc/file commands
  *
- * $Id: tclhash.c,v 1.38 2002/12/26 02:21:53 wcc Exp $
+ * $Id: tclhash.c,v 1.39 2003/01/21 00:53:27 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -375,10 +375,10 @@ static int bind_bind_entry(tcl_bind_list_t *tl, const char *flags,
 			   const char *cmd, const char *proc)
 {
   tcl_cmd_t		*tc;
-  tcl_bind_mask_t	*tm, *tm_last;
+  tcl_bind_mask_t	*tm;
 
   /* Search for matching bind in bind list. */
-  for (tm = tl->first, tm_last = NULL; tm; tm_last = tm, tm = tm->next) {
+  for (tm = tl->first; tm; tm = tm->next) {
     if (tm->flags & TBM_DELETED)
       continue;
     if (!strcmp(cmd, tm->mask))

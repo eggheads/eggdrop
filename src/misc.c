@@ -7,7 +7,7 @@
  *   help system
  *   motd display and %var substitution
  *
- * $Id: misc.c,v 1.55 2003/01/18 04:34:25 wcc Exp $
+ * $Id: misc.c,v 1.56 2003/01/21 00:53:27 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1455,7 +1455,7 @@ char *strchr_unescape(char *str, const char div, register const char esc_char)
   char		 buf[3];
   register char	*s, *p;
 
-  buf[3] = 0;
+  buf[2] = 0;
   for (s = p = str; *s; s++, p++) {
     if (*s == esc_char) {	/* Found escape character.		*/
       /* Convert code to character. */

@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  *
- * $Id: main.c,v 1.90 2002/12/24 02:30:04 wcc Exp $
+ * $Id: main.c,v 1.91 2003/01/21 00:53:27 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1001,7 +1001,7 @@ int main(int argc, char **argv)
     } else if (xx == -2 && errno != EINTR) {	/* select() error */
       putlog(LOG_MISC, "*", "* Socket error #%d; recovering.", errno);
       for (i = 0; i < dcc_total; i++) {
-	if ((fcntl(dcc[i].sock, F_GETFD, 0) == -1) && (errno = EBADF)) {
+	if ((fcntl(dcc[i].sock, F_GETFD, 0) == -1) && (errno == EBADF)) {
 	  putlog(LOG_MISC, "*",
 		 "DCC socket %d (type %d, name '%s') expired -- pfft",
 		 dcc[i].sock, dcc[i].type, dcc[i].nick);

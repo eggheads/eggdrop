@@ -2,7 +2,7 @@
  * channels.c -- part of channels.mod
  *   support for channels within the bot
  *
- * $Id: channels.c,v 1.75 2002/12/27 20:27:40 wcc Exp $
+ * $Id: channels.c,v 1.76 2003/01/21 00:53:27 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -177,11 +177,10 @@ static void set_mode_protect(struct chanset_t *chan, char *set)
 static void get_mode_protect(struct chanset_t *chan, char *s)
 {
   char *p = s, s1[121];
-  int ok = 0, i, tst;
+  int i, tst;
 
   s1[0] = 0;
   for (i = 0; i < 2; i++) {
-    ok = 0;
     if (i == 0) {
       tst = chan->mode_pls_prot;
       if ((tst) || (chan->limit_prot != 0) || (chan->key_prot[0]))

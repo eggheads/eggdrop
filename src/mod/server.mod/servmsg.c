@@ -1,7 +1,7 @@
 /*
  * servmsg.c -- part of server.mod
  *
- * $Id: servmsg.c,v 1.67 2003/01/15 01:03:05 wcc Exp $
+ * $Id: servmsg.c,v 1.68 2003/01/21 00:53:27 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -889,9 +889,7 @@ static int goterror(char *from, char *msg)
 static int gotnick(char *from, char *msg)
 {
   char *nick, *alt = get_altbotnick();
-  struct userrec *u;
 
-  u = get_user_by_host(from);
   nick = splitnick(&from);
   fixcolon(msg);
   check_queues(nick, msg);
