@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  *
- * $Id: server.c,v 1.114 2004/05/20 22:39:20 wcc Exp $
+ * $Id: server.c,v 1.115 2004/05/24 19:14:38 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1264,7 +1264,7 @@ static void do_nettype(void)
   case NETT_UNDERNET:
     check_mode_r = 0;
     use_fastdeq = 2;
-    nick_len = 9;
+    nick_len = 12;
     simple_sprintf(stackablecmds,
                    "PRIVMSG NOTICE TOPIC PART WHOIS USERHOST USERIP ISON");
     simple_sprintf(stackable2cmds, "USERHOST USERIP ISON");
