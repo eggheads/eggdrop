@@ -10,7 +10,7 @@
  * statement, leave the rest of the file alone, this allows better
  * overlapping patches.
  * 
- * $Id: patch.h,v 1.446 2001/03/18 23:00:31 guppy Exp $
+ * $Id: patch.h,v 1.447 2001/04/01 17:42:55 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -41,12 +41,12 @@ patch("CVS");			/* CVS version */
  *
  *
  */
-patch("984957177");		/* current unixtime */
+patch("986147718");		/* current unixtime */
 /*
  *
  *
  */
-patch("strfix");
+patch("removecygwinhacks");
 /*
  *
  *
