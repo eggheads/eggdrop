@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  * 
- * $Id: server.c,v 1.43 2000/06/03 12:14:41 fabian Exp $
+ * $Id: server.c,v 1.44 2000/06/10 00:59:06 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -252,7 +252,6 @@ static void check_lag(char *buf)
 {
   char msgstr[511], *msg, *cmd, *chans, *nicks, *nick, *ch, *par, pm, mode, *modes;
   struct chanset_t *cs;
-  int found;
 
   if (lagged || !use_lagcheck)
     return;
@@ -277,22 +276,6 @@ static void check_lag(char *buf)
     nick = nicks;
     while (strlen(nicks) > 0)
       nick = splitnicks(&nicks);
-    found = 0;
-    while (strlen(chans) > 0) {
-      ch = splitnicks(&chans);
-      cs = findchan(ch);
-      if (!cs)
-        continue;
-      if (ismember(cs, nick)) {
-        found = 1;
-        break;
-      }
-    }
-    if (!found) {
-      debug0("member not on target chans, aborting lagcheck");
-      lagged = 0;
-      return;
-    }
     lagcheckstring = nmalloc(strlen(nick) + 1);
     lagcheckstring2 = nmalloc(strlen(nick) + 1);
     strcpy(lagcheckstring2, nick);
@@ -301,8 +284,8 @@ static void check_lag(char *buf)
     lagchecktype = LC_KICK;
     debug2("Starting lagcheck using KICK %s (%s)", nick, buf);
   } else if (!egg_strcasecmp(cmd, "MODE")) {
-    if ((net_type == 0) ||(net_type == 2) || (net_type == 4))
-      return; /* Undernet and Efnet do not reply to every MODE */
+    if (net_type != 1)
+      return; /* MODE-lagcheck is only usable on IRCNet */
     chans = newsplit(&msg);
     modes = newsplit(&msg);
     par = newsplit(&msg);
@@ -320,6 +303,11 @@ static void check_lag(char *buf)
     }
     mode = modes[1];
     if (strchr("ov", mode)) {
+      if (match_my_nick(par)) {
+        debug0("I'm the target, aborting lagcheck.");
+        lagged = 0;
+        return;
+      }
       if (!ismember(cs, par)) {
         debug0("Target vor o/v mode not on channel, aborting lagcheck.");
         lagged = 0;
@@ -350,10 +338,6 @@ static void check_notlagged(char *buf)
   debug1("check_notlagged: %s", buf);
   if (!lagcheckstring) {
     lagged = 0;
-    return;
-  }
-  if (lagchecktype == LC_KICK) {
-    debug1("LC_KICK should not appear here", lagcheckstring);
     return;
   }
   if ((buf[0] == '+') || (buf[0] == '-')) {
