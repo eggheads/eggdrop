@@ -8,8 +8,7 @@ SHELL = /bin/sh
 prefix = @prefix@
 DEST = @DEST@
 EGGEXEC = @EGGEXEC@
-
-NEWVERSION = `grep 'char egg_version' src/main.c | @AWK@ '{gsub(/(\"|\;)/, "", $$4); print $$4}'`
+EGGVERSION = @EGGVERSION@
 
 # things you can put here:
 #   -Wall            if you're using gcc and it supports it (configure
@@ -94,7 +93,7 @@ clean:
 	@cd src/mod; $(MAKE) clean
 
 distclean: clean
-	@rm -f Makefile doc/Makefile scripts/Makefile src/Makefile src/mod/Makefile
+	@rm -f Makefile doc/Makefile scripts/Makefile src/Makefile src/md5/Makefile src/mod/Makefile
 	@rm -f config.cache config.log config.status config.h lush.h
 
 distrib: distclean Makefile.in
@@ -183,7 +182,7 @@ modtest:
 	fi
 	@echo "stamp" >EGGMOD.stamp
 
-install: @DEFAULT_MAKE@ ainstall
+install: ainstall
 
 dinstall: eggdrop ainstall
 
@@ -194,12 +193,12 @@ ainstall: install-start install-bin install-modules install-data \
 	install-scripts install-end
 
 install-start:
-	@if test "x$(DEST)" = "x"; then \
-		echo "You must specify a destination directory with DEST="; \
-		exit 1; \
-	fi
 	@if test ! -f $(EGGEXEC); then \
 		echo "You haven't compiled eggdrop yet."; \
+		exit 1; \
+	fi
+	@if test "x$(DEST)" = "x"; then \
+		echo "You must specify a destination directory with DEST="; \
 		exit 1; \
 	fi
 	@echo ""
@@ -225,8 +224,8 @@ install-bin:
 		mv -f $(DEST)/$(EGGEXEC) $(DEST)/o$(EGGEXEC); \
 	fi
 	@echo "Copying new '$(EGGEXEC)' executable and creating symlink."
-	@$(INSTALL_PROGRAM) $(EGGEXEC) $(DEST)/$(EGGEXEC)-$(NEWVERSION)
-	@$(LN_S) $(EGGEXEC)-$(NEWVERSION) $(DEST)/$(EGGEXEC)
+	@$(INSTALL_PROGRAM) $(EGGEXEC) $(DEST)/$(EGGEXEC)-$(EGGVERSION)
+	@(cd $(DEST) && $(LN_S) $(EGGEXEC)-$(EGGVERSION) $(EGGEXEC))
 
 install-modules:
 	@if test -h $(DEST)/modules; then \
@@ -239,14 +238,14 @@ install-modules:
 		mv -f $(DEST)/modules $(DEST)/modules.old; \
 	fi
 	@if test ! "x`echo *.so`" = "x*.so"; then \
-		if test ! -d $(DEST)/modules-$(NEWVERSION); then \
-			echo "Creating modules-$(NEWVERSION) directory and symlink."; \
-			$(INSTALL) -d $(DEST)/modules-$(NEWVERSION); \
+		if test ! -d $(DEST)/modules-$(EGGVERSION); then \
+			echo "Creating modules-$(EGGVERSION) directory and symlink."; \
+			$(INSTALL) -d $(DEST)/modules-$(EGGVERSION); \
 		fi; \
-		$(LN_S) modules-$(NEWVERSION) $(DEST)/modules; \
+		(cd $(DEST) && $(LN_S) modules-$(EGGVERSION) modules); \
 		echo "Copying new modules."; \
 		for i in *.so; do \
-			$(INSTALL_PROGRAM) $$i $(DEST)/modules-$(NEWVERSION)/; \
+			$(INSTALL_PROGRAM) $$i $(DEST)/modules-$(EGGVERSION)/; \
 		done; \
 	fi
 

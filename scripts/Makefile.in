@@ -1,5 +1,7 @@
 # Makefile for scripts/
 
+top_srcdir = @top_srcdir@
+@SET_MAKE@
 INSTALL = @INSTALL@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_DATA = @INSTALL_DATA@
@@ -9,6 +11,12 @@ SCRIPTS = action.fix.tcl alltools.tcl compat.tcl getops-2.2d.tcl \
 	klined.tcl notes2.tcl ques5.tcl sentinel1.54.tcl userinfo1.0.tcl
 
 EXESCRIPTS = autobotchk botchk weed
+
+doofus:
+	@echo ""
+	@echo "Let's try this from the right directory..."
+	@echo ""
+	@cd $(top_srcdir); $(MAKE)
 
 all: $(SCRIPTS) $(EXESCRIPTS)
 

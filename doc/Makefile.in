@@ -1,5 +1,7 @@
 # Makefile for doc/
 
+top_srcdir = @top_srcdir@
+@SET_MAKE@
 INSTALL = @INSTALL@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_DATA = @INSTALL_DATA@
@@ -11,6 +13,12 @@ DOCS = BOTNET BUG-REPORT CONTENTS KNOWN-PROBLEMS \
 	tcl-commands.doc tricks
 
 MAN1 = man1/eggdrop.1
+
+doofus:
+	@echo ""
+	@echo "Let's try this from the right directory..."
+	@echo ""
+	@cd $(top_srcdir); $(MAKE)
 
 all: $(DOCS) $(MAN1)
 

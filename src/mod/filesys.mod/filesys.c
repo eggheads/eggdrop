@@ -873,7 +873,7 @@ char *filesys_start(Function * global_funcs)
   USERENTRY_DCCDIR.got_share = 0;	/* we dont want it shared tho */
   add_entry_type(&USERENTRY_DCCDIR);
   DCC_FILES_PASS.timeout_val = &password_timeout;
-  add_lang_section("files");
+  add_lang_section("filesys");
   return NULL;
 }
 

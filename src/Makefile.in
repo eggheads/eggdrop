@@ -1,5 +1,7 @@
 # Makefile for src/
 
+top_srcdir = @top_srcdir@
+@SET_MAKE@
 INSTALL = @INSTALL@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_DATA = @INSTALL_DATA@
@@ -14,7 +16,7 @@ doofus:
 	@echo ""
 	@echo "Let's try this from the right directory..."
 	@echo ""
-	@cd ../; make
+	@cd $(top_srcdir); $(MAKE)
 
 modegg: $(OBJS) $(XREQ)
 	@echo ""
