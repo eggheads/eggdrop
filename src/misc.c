@@ -1264,8 +1264,7 @@ void show_motd(int idx)
 /* remove :'s from ignores and bans */
 void remove_gunk(char *par)
 {
-  char *q, *p;
-  char WBUF[strlen(par) + 1];
+  char *q, *p, *WBUF = nmalloc(strlen(par) + 1);
 
   for (p = par, q = WBUF; *p; p++, q++) {
     if (*p == ':')
@@ -1275,6 +1274,7 @@ void remove_gunk(char *par)
   }
   *q = *p;
   strcpy(par, WBUF);
+  nfree(WBUF);
 }
 
 /* This will return a pointer to the first character after the @ in the
