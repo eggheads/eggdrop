@@ -1382,6 +1382,8 @@ static int write_tmp_userfile(char *fn, struct userrec *bu, int idx)
     for (u = bu; u && ok; u = u->next)
       ok = write_user(u, f, idx);
     ok = write_bans(f, idx);
+    ok = write_exempts(f, idx); /* we share these now */
+    ok = write_invites(f, idx); /* we share these now */
     fclose(f);
     if (!ok)
       putlog(LOG_MISC, "*", USERF_ERRWRITE2);
@@ -1468,6 +1470,8 @@ static struct userrec *dup_userlist(int t)
 static void finish_share(int idx)
 {
   struct userrec *u, *ou;
+  struct chanset_t *chan;
+
   int i, j = -1;
 
   for (i = 0; i < dcc_total; i++)
@@ -1479,12 +1483,27 @@ static void finish_share(int idx)
     context;
     u = dup_userlist(1);
     context;
-    /* remove global bans & ignores in anticipation of replacement */
     noshare = 1;
+
+    /* this is where we remove all global and channel bans/exempts/invites and
+     * ignores since they will be replaced by what our hub gives us. */
+
     while (global_bans)
       u_delban(NULL, global_bans->banmask, 1);
     while (global_ign)
       delignore(global_ign->igmask);
+    while (global_invites)
+      u_delinvite(NULL, global_invites->invitemask, 1);
+    while (global_exempts)
+      u_delexempt(NULL, global_exempts->exemptmask, 1);
+    for (chan = chanset;chan;chan=chan->next) {
+      while (chan->bans)
+	    u_delban(chan, chan->bans->banmask, 1);
+      while (chan->exempts)
+	    u_delexempt(chan,chan->exempts->exemptmask,1);
+      while (chan->invites)
+        u_delinvite(chan,chan->invites->invitemask,1);
+    }
     noshare = 0;
     ou = userlist;
     userlist = NULL;		/* do this to prevent .user messups */
