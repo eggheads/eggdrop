@@ -1,5 +1,5 @@
 /*
- * $Id: uptime.c,v 1.18 2002/05/04 06:47:38 guppy Exp $
+ * $Id: uptime.c,v 1.19 2002/05/04 06:55:31 guppy Exp $
  *
  * This module reports uptime information about your bot to http://uptime.eggheads.org. The
  * purpose for this is to see how your bot rates against many others (including EnergyMechs
@@ -61,7 +61,7 @@ typedef struct PackUp
 
 PackUp upPack;
 
-static Function *global = NULL, *server_funcs = NULL;
+static Function *global = NULL;
 
 static int hours = 0;
 static int uptimesock;
@@ -152,7 +152,7 @@ int send_uptime(void)
   upPack.ontime = 0;
 
   if ((me = module_find("server", 1, 0))) {
-    server_funcs = me->funcs;
+    Function *server_funcs = me->funcs;
     if (server_online) {
       servidx = findanyidx(serv);
       strncpyz(servhost, dcc[servidx].host, sizeof servhost);
