@@ -1,7 +1,7 @@
 dnl aclocal.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: aclocal.m4,v 1.49 2001/11/30 01:34:24 guppy Exp $
+dnl $Id: aclocal.m4,v 1.50 2001/12/04 20:12:54 guppy Exp $
 dnl
 
 
@@ -126,6 +126,16 @@ EOF
 fi
 ])dnl
 
+
+dnl  EGG_DISABLE_CC_OPTIMISATION()
+dnl
+dnl check if user requested to remove -O2 cflag 
+dnl would be usefull on some weird *nix
+AC_DEFUN(EGG_DISABLE_CC_OPTIMIZATION, [dnl
+ AC_ARG_ENABLE(cc-optimization,
+   [  --disable-cc-optimization   disable -O2 cflag],  
+   CFLAGS=`echo $CFLAGS | sed 's/\-O2//'`)
+])dnl
 
 dnl  EGG_CHECK_OS()
 dnl

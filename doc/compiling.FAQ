@@ -337,9 +337,12 @@ A. EGGDROP
 
 10. Bot crashes at startup with msg "net.c/708" for example
 
-     On some not IA32 systems the gcc options -O2 and -O3 cause that. We don't
+     On some non IA32 systems the gcc options -O2 and -O3 cause that. We don't
      know why this happens but sometimes it helps to remove those options from
-     the Makefile. Just give it a try.
+     the Makefile. To disable them use:
+
+        ./configure --disable-cc-optimization
+
      Ah well, drop us a note if you know why, so we can extend the info here.
 
 11. I get lot's of warnings
