@@ -4,6 +4,7 @@ Last revised: January 1, 2002
 
                                Share Module
 
+
 This module provides userfile sharing support between two directly
 linked bots.
 
@@ -31,7 +32,7 @@ There are also some variables you can set in your config file:
   
   set private-global 0
     When sharing user lists, DON'T ACCEPT global flag changes from other bots?
-    NOTE: The bot will still send changes made on the bot, it just wont accept
+    NOTE: The bot will still send changes made on the bot, it just won't accept
     any global flag changes from other bots.
   
   
@@ -53,11 +54,6 @@ There are also some variables you can set in your config file:
     address are added to sharing procedure. This only works with hubs that
     are v1.5.1 or higher.
 
-Tcl commands provided by the share module:
-
-See doc/tcl-commands.doc for information on each command.
-
-  * getting-users 
      _________________________________________________________________
 
    Copyright (C) 2000, 2001, 2002 Eggheads Development Team

@@ -4,6 +4,7 @@ Last revised: January 1, 2002
 
                               Server Module
 
+
 This module provides the core server support. You have to load this
 if you want your bot to come on IRC. Not loading this is equivalent
 to the old NO_IRC define.
@@ -218,23 +219,6 @@ Attention: Use this settings *only* if you set 'net-type' to 5!
     your network. The default setting is 9. The maximum supported length by
     Eggdrop is 32.
 
-Tcl commands provided by the server module:
-
-See doc/tcl-commands.doc for information on each command.
-
-  * putserv <text> 
-
-  * putquick <text> 
-
-  * puthelp <text> 
-
-  * queuesize [queue] 
-
-  * clearqueue <queue> 
-
-  * dumpfile <nick> <filename> 
-
-  * jump [server [port [password]]] 
      _________________________________________________________________
 
    Copyright (C) 2000, 2001, 2002 Eggheads Development Team

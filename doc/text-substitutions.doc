@@ -15,7 +15,7 @@ There are four variables that can be used to format text:
 
  %_   display underline
 
- %f   display flashing via telnet; bold underline via irc
+ %f   display flashing via telnet; bold underline via IRC
 
 These variables will be interpreted by Eggdrop and replaced by their 
 respective values:

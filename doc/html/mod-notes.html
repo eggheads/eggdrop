@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: mod-notes.html,v 1.11 2002/01/03 01:05:43 guppy Exp $ -->
+<!-- $Id: mod-notes.html,v 1.12 2002/02/28 05:13:56 wcc Exp $ -->
 
 <html>
   <head>
@@ -20,8 +20,6 @@
     <blockquote>
       <ol>
         <li><a href="#config">Config file settings</a></li>
-
-        <li><a href="#tclcmds">Tcl commands</a></li>
       </ol>
     </blockquote>
     <hr>
@@ -29,12 +27,6 @@
     <p><a name="config">1.</a> <strong>Config file settings</strong></p>
 
     <blockquote>
-      <p>Lines in <strong>bold</strong> are the lines that need to be
-      included in the Eggdrop config file if you want to use the share
-      module. Lines in <strong><em>bold italics</em></strong> are optional
-      and only required if you wish to change the default behaviour for 
-      that particular feature.</p>
-
       <p>Put this line into your Eggdrop configuration file to load the 
       notes module:</p>
 
@@ -53,60 +45,41 @@
           stored.</p>
         </dd>
 
-        <dt><strong><em>set max-notes 50</em></strong></dt>
+        <dt><strong>set max-notes 50</strong></dt>
 
         <dd>
           <p>Set here the maximum number of notes to allow to be stored for
           each user (to prevent flooding).</p>
         </dd>
 
-        <dt><strong><em>set note-life 60</em></strong></dt>
+        <dt><strong>set note-life 60</strong></dt>
 
         <dd>
           <p>Set here how long (in days) to store notes before expiring 
           them.</p>
         </dd>
 
-        <dt><strong><em>set allow-fwd 0</em></strong></dt>
+        <dt><strong>set allow-fwd 0</strong></dt>
 
         <dd>
           <p>Set this to 1 if you want to allow users to specify a forwarding
           address for forwarding notes to another account on another bot.</p>
         </dd>
 
-        <dt><strong><em>set notify-users 1</em></strong></dt>
+        <dt><strong>set notify-users 1</strong></dt>
 
         <dd>
           <p>Set this to 1 if you want the bot to let people know hourly if 
           they have any notes.</p>
         </dd>
 
-        <dt><strong><em>set notify-onjoin 1</em></strong></dt>
+        <dt><strong>set notify-onjoin 1</strong></dt>
 
         <dd>
           <p>Set this to 1 if you want the bot to let people know on join 
           if they have any notes.</p>
         </dd>
       </dl>
-    </blockquote>
-    <hr>
-
-    <p><a name="tclcmds"></a>2. <strong> Tcl commands</strong></p>
-
-    <p>See doc/tcl-commands.doc for information on each of these 
-    commands.</p>
-
-    <blockquote>
-      <ul>
-        <li><strong>notes &lt;user&gt; [numberlist]</strong></li>
-
-        <li><strong>erasenotes &lt;user&gt; &lt;numberlist&gt;</strong></li>
-
-        <li><strong>listnotes &lt;user&gt; &lt;numberlist&gt;</strong></li>
-
-        <li><strong>storenote &lt;from&gt; &lt;to&gt; &lt;msg&gt;
-        &lt;idx&gt;</strong></li>
-      </ul>
     </blockquote>
     <hr>
 

@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: mod-channels.html,v 1.13 2002/01/03 03:25:42 guppy Exp $ -->
+<!-- $Id: mod-channels.html,v 1.14 2002/02/28 05:13:55 wcc Exp $ -->
 
 <html>
   <head>
@@ -13,14 +13,12 @@
     <hr>
 
     <p>This module provides channel related support for the bot. Without 
-    it, you wont be able to make the bot join a channel or save channel
+    it, you won&#39;t be able to make the bot join a channel or save channel
     specific userfile information.</p>
 
     <blockquote>
       <ol>
         <li><a href="#config">Config file settings</a></li>
-
-        <li><a href="#tclcmds">Tcl commands</a></li>
       </ol>
     </blockquote>
     <hr>
@@ -28,12 +26,6 @@
     <p><a name="config"></a>1. <strong>Config file settings</strong></p>
 
     <blockquote>
-      <p>Lines in <strong>bold</strong> are the lines that need to be
-      included in the Eggdrop config file if you want to use the share
-      module. Lines in <strong><em>bold italics</em></strong> are optional
-      and only required if you wish to change the default behavior for 
-      that particular feature.</p>
-
       <p>Put this line into your Eggdrop configuration file to load the 
       channels module:</p>
 
@@ -45,22 +37,21 @@
 
     <blockquote>
       <dl>
-        <dt><strong><em>set chanfile
-        &quot;LamestBot.chan&quot;</em></strong></dt>
+        <dt><strong>set chanfile&quot;LamestBot.chan&quot;</strong></dt>
 
         <dd>
           <p>Enter here the filename where dynamic channel settings are 
           stored.</p>
         </dd>
 
-        <dt><strong><em>set ban-time 120</em></strong></dt>
+        <dt><strong>set ban-time 120</strong></dt>
 
         <dd>
           <p>Set here how long temporary bans will last (in minutes). If you
           set this setting to 0, the bot will never remove them.</p>
         </dd>
 
-        <dt><strong><em>set exempt-time 60</em></strong></dt>
+        <dt><strong>set exempt-time 60</strong></dt>
 
         <dd>
           <p>Set here how long temporary exempts will last (in minutes). If 
@@ -73,7 +64,7 @@
           <p>Please note that this is an IRCnet feature.</p>
         </dd>
 
-        <dt><strong><em>set invite-time 60</em></strong></dt>
+        <dt><strong>set invite-time 60</strong></dt>
 
         <dd>
           <p>Set here how long temporary invites will last (in minutes). 
@@ -86,28 +77,28 @@
           <p>Please note that this is an IRCnet feature.</p>
         </dd>
 
-        <dt><strong><em>set force-expire 0</em></strong></dt>
+        <dt><strong>set force-expire 0</strong></dt>
 
         <dd>
           <p>Set this setting to 1 if you want your bot to expire 
           bans/exempts/invites set by other opped bots on the channel.</p>
         </dd>
 
-        <dt><strong><em>set share-greet 0</em></strong></dt>
+        <dt><strong>set share-greet 0</strong></dt>
 
         <dd>
           <p>Set this setting to 1 if you want your bot to share user greets 
           with other bots on the channel if sharing user data.</p>
         </dd>
 
-        <dt><strong><em>set use-info 1</em></strong></dt>
+        <dt><strong>set use-info 1</strong></dt>
 
         <dd>
           <p>Set this setting to 1 if you want to allow users to store an 
           info line.</p>
         </dd>
 
-        <dt><strong><em>channel add #channel { SETTINGS }</em></strong></dt>
+        <dt><strong>channel add #channel { SETTINGS }</strong></dt>
 
         <dd>
           <p>Add each static channel you want your bot to sit in using this 
@@ -116,7 +107,7 @@
 
           <blockquote>
             <dl>
-              <dt><strong><em>chanmode +/-&lt;modes&gt;</em></strong></dt>
+              <dt><strong>chanmode +/-&lt;modes&gt;</strong></dt>
 
               <dd>
                 <p>This setting makes the bot enforce channel modes. It will 
@@ -124,14 +115,14 @@
                 modes.</p>
               </dd>
 
-              <dt><strong><em>idle-kick 0</em></strong></dt>
+              <dt><strong>idle-kick 0</strong></dt>
 
               <dd>
                 <p>This setting will make the bot check every minute for idle
                users. Set this to 0 to disable idle check.</p>
               </dd>
 
-              <dt><strong><em>stopnethack-mode 0</em></strong></dt>
+              <dt><strong>stopnethack-mode 0</strong></dt>
 
               <dd>
                 <p>This setting will make the bot de-op anyone who enters 
@@ -186,8 +177,8 @@
                 </table>
               </dd>
 
-              <dt><strong><em>need-op { putserv &quot;PRIVMSG #lamest :op me
-              cos i&#39;m lame!&quot; }</em></strong></dt>
+              <dt><strong>need-op { putserv &quot;PRIVMSG #lamest :op me
+              cos i&#39;m lame!&quot; }</strong></dt>
 
               <dd>
                 <p>This setting will make the bot run the script enclosed in
@@ -196,8 +187,8 @@
                 botnetop.tcl, you don&#39;t need to set this setting.</p>
               </dd>
 
-              <dt><strong><em>need-invite { putserv &quot;PRIVMSG #lamest
-              :let me in!&quot; }</em></strong></dt>
+              <dt><strong>need-invite { putserv &quot;PRIVMSG #lamest
+              :let me in!&quot; }</strong></dt>
 
               <dd>
                 <p>This setting will make the bot run the script enclosed in 
@@ -207,8 +198,8 @@
                 setting.</p>
               </dd>
 
-              <dt><strong><em>need-key { putserv &quot;PRIVMSG #lamest :let
-              me in!&quot; }</em></strong></dt>
+              <dt><strong>need-key { putserv &quot;PRIVMSG #lamest :let
+              me in!&quot; }</strong></dt>
 
               <dd>
                 <p>This setting will make the bot run the script enclosed in
@@ -218,8 +209,8 @@
                 setting.</p>
               </dd>
 
-              <dt><strong><em>need-unban { putserv &quot;PRIVMSG #lamest :let
-              me in!&quot; }</em></strong></dt>
+              <dt><strong>need-unban { putserv &quot;PRIVMSG #lamest :let
+              me in!&quot; }</strong></dt>
 
               <dd>
                 <p>This setting will make the bot run the script enclosed in 
@@ -229,8 +220,8 @@
                 setting.</p>
               </dd>
 
-              <dt><strong><em>need-limit { putserv &quot;PRIVMSG #lamest :let
-              me in!&quot; }</em></strong></dt>
+              <dt><strong>need-limit { putserv &quot;PRIVMSG #lamest :let
+              me in!&quot; }</strong></dt>
 
               <dd>
                 <p>This setting will make the bot run the script enclosed in
@@ -240,7 +231,7 @@
                 this setting.</p>
               </dd>
 
-              <dt><strong><em>flood-chan 10:60</em></strong></dt>
+              <dt><strong>flood-chan 10:60</strong></dt>
 
               <dd>
                 <p>Set here how many channel messages in how many seconds 
@@ -248,7 +239,7 @@
                 disables text flood protection for the channel.</p>
               </dd>
 
-              <dt><strong><em>flood-deop 3:10</em></strong></dt>
+              <dt><strong>flood-deop 3:10</strong></dt>
 
               <dd>
                 <p>Set here how many deops in how many seconds from one host
@@ -256,7 +247,7 @@
                 flood protection for the channel.</p>
               </dd>
 
-              <dt><strong><em>flood-kick 3:10</em></strong></dt>
+              <dt><strong>flood-kick 3:10</strong></dt>
 
               <dd>
                 <p>Set here how many kicks in how many seconds from one host
@@ -264,7 +255,7 @@
                 flood protection for the channel.</p>
               </dd>
 
-              <dt><strong><em>flood-join 5:60</em></strong></dt>
+              <dt><strong>flood-join 5:60</strong></dt>
 
               <dd>
                 <p>Set here how many joins in how many seconds from one host
@@ -272,7 +263,7 @@
                 flood protection for the channel.</p>
               </dd>
 
-              <dt><strong><em>flood-ctcp 3:60</em></strong></dt>
+              <dt><strong>flood-ctcp 3:60</strong></dt>
 
               <dd>
                 <p>Set here how many channel ctcps in how many seconds from 
@@ -280,7 +271,7 @@
                 disables ctcp flood  protection for the channel.</p>
               </dd>
 
-              <dt><strong><em>flood-nick 5:60</em></strong></dt>
+              <dt><strong>flood-nick 5:60</strong></dt>
 
               <dd>
                 <p>Set here how many nick changes in how many seconds from 
@@ -291,7 +282,7 @@
           </blockquote>
         </dd>
 
-        <dt><strong><em>channel set &lt;chan&gt; +/-&lt;setting&gt;</em>
+        <dt><strong>channel set &lt;chan&gt; +/-&lt;setting&gt;
         </strong></dt>
 
         <dd>
@@ -496,18 +487,18 @@
       #chan or .tcl channel add #chan. Look in the section above for
       explanation of every option.</p>
 
-      <p><strong><em>set global-flood-chan 10:60</em></strong><br>
-      <strong><em>set global-flood-deop 3:10</em></strong><br>
-      <strong><em>set global-flood-kick 3:10</em></strong><br>
-      <strong><em>set global-flood-join 5:60</em></strong><br>
-      <strong><em>set global-flood-ctcp 3:60</em></strong><br>
-      <strong><em>set global-flood-nick 5:60</em></strong></p>
+      <p><strong>set global-flood-chan 10:60</strong><br>
+      <strong>set global-flood-deop 3:10</strong><br>
+      <strong>set global-flood-kick 3:10</strong><br>
+      <strong>set global-flood-join 5:60</strong><br>
+      <strong>set global-flood-ctcp 3:60</strong><br>
+      <strong>set global-flood-nick 5:60</strong></p>
 
-      <p><strong><em>set global-chanmode &quot;nt-likm&quot;</em></strong><br>
-      <strong><em>set global-stopnethack-mode 0</em></strong><br>
-      <strong><em>set global-revenge-mode 1</em></strong></p>
+      <p><strong>set global-chanmode &quot;nt-likm&quot;</strong><br>
+      <strong>set global-stopnethack-mode 0</strong><br>
+      <strong>set global-revenge-mode 1</strong></p>
 
-      <p><strong><em>set global-chanset {</em></strong></p>
+      <p><strong>set global-chanset {</strong></p>
 <pre>
   -nodesynch -enforcebans
   +dynamicbans +userbans
@@ -521,123 +512,7 @@
   +userexempts +dynamicexempts
   +userinvites +dynamicinvites
 </pre>
-      <p><strong><em>}</em></strong></p>
-    </blockquote>
-    <hr>
-
-    <p><a name="tclcmds"></a>2. <strong>Tcl commands</strong></p>
-    
-    <p>See doc/tcl-commands.doc for information on each of these 
-    commands.</p>
-
-    <blockquote>
-      <ul>
-        <li><strong>channel add &lt;name&gt; &lt;option-list&gt;</strong>
-        </li>
-
-        <li><strong>channel set &lt;name&gt; &lt;options&gt;</strong></li>
-
-        <li><strong>channel info &lt;name&gt;</strong></li>
-
-        <li><strong>channel remove &lt;name&gt;</strong></li>
-
-        <li><strong>savechannels</strong></li>
-
-        <li><strong>loadchannels</strong></li>
-
-        <li><strong>channels</strong></li>
-
-        <li><strong>validchan &lt;channel&gt;</strong></li>
-
-        <li><strong>isdynamic &lt;channel&gt;</strong></li>
-
-        <li><strong>newchanban &lt;channel&gt; &lt;ban&gt; &lt;creator&gt;
-        &lt;comment&gt; [lifetime] [options]</strong></li>
-
-        <li><strong>newban &lt;ban&gt; &lt;creator&gt; &lt;comment&gt;
-        [lifetime] [options]</strong></li>
-
-        <li><strong>killchanban &lt;channel&gt; &lt;ban&gt;</strong></li>
-
-        <li><strong>killban &lt;ban&gt;</strong></li>
-
-        <li><strong>isban &lt;ban&gt; [channel]</strong></li>
-
-        <li><strong>ispermban &lt;ban&gt; [channel]</strong></li>
-
-        <li><strong>matchban &lt;nick!user@host&gt; [channel]</strong></li>
-
-        <li><strong>banlist [channel]</strong></li>
-      
-        <li><strong>newchanexempt &lt;channel&gt; &lt;exempt&gt;
-        &lt;creator&gt; &lt;comment&gt; [lifetime] [options]</strong></li>
-
-        <li><strong>newexempt &lt;exempt&gt; &lt;creator&gt; &lt;comment&gt;
-        [lifetime] [options]</strong></li>
-
-        <li><strong>killchanexempt &lt;channel&gt; &lt;exempt&gt;</strong>
-        </li>
-
-        <li><strong>killexempt &lt;exempt&gt;</strong></li>
-
-        <li><strong>isexempt &lt;exempt&gt; [channel]</strong></li>
-
-        <li><strong>ispermexempt &lt;exempt&gt; [channel]</strong></li>
-
-        <li><strong>matchexempt &lt;nick!user@host&gt; [channel]</strong> </li>
-
-        <li><strong>exemptlist [channel]</strong></li>
-
-        <li><strong>newchaninvite &lt;channel&gt; &lt;invite&gt;
-        &lt;creator&gt; &lt;comment&gt; [lifetime] [options]</strong></li>
-
-        <li><strong>newinvite &lt;invite&gt; &lt;creator&gt; &lt;comment&gt;
-        [lifetime] [options]</strong></li>
-
-        <li><strong>killchaninvite &lt;channel&gt; &lt;invite&gt;</strong></li>
-
-        <li><strong>killinvite &lt;invite&gt;</strong></li>
-
-        <li><strong>isinvite &lt;invite&gt; [channel]</strong></li>
-
-        <li><strong>isperminvite &lt;invite&gt; [channel]</strong></li>
-
-        <li><strong>matchinvite &lt;nick!user@host&gt; [channel]</strong></li>
-
-        <li><strong>invitelist [channel]</strong></li>
-
-        <li><strong>setlaston &lt;handle&gt; [channel] [time]</strong></li>
-
-        <li><strong>getchaninfo &lt;handle&gt; &lt;channel&gt;</strong></li>
-
-        <li><strong>setchaninfo &lt;handle&gt; &lt;channel&gt;
-        &lt;info&gt;</strong></li>
-
-        <li><strong>addchanrec &lt;handle&gt; &lt;channel&gt;</strong></li>
-
-        <li><strong>delchanrec &lt;handle&gt; &lt;channel&gt;</strong></li>
-
-        <li><strong>stick &lt;banmask&gt; [channel]</strong></li>
-
-        <li><strong>unstick &lt;banmask&gt; [channel]</strong></li>
-
-        <li><strong>stickexempt &lt;exemptmask&gt; [channel]</strong></li>
-
-        <li><strong>unstickexempt &lt;exemptmask&gt; [channel]</strong></li>
-
-        <li><strong>stickinvite &lt;invitemask&gt; [channel]</strong></li>
-
-        <li><strong>unstickinvite &lt;invitemask&gt; [channel]</strong></li>
-
-        <li><strong>setudef &lt;flag/int&gt; &lt;name&gt;</strong></li>
-
-        <li><strong>renudef &lt;flag/int&gt; &lt;oldname&gt; &lt;newname&gt;
-        </strong></li>
-
-        <li><strong>deludef &lt;flag/int&gt; &lt;name&gt;</strong></li>
-
-        <li><strong>haschanrec &lt;handle&gt; &lt;channel&gt;</strong></li>
-      </ul>
+      <p><strong>}</strong></p>
     </blockquote>
     <hr>
 

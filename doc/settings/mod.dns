@@ -4,6 +4,7 @@ Last revised: January 1, 2002
 
                                 DNS Module
 
+
 This module provides asynchronous dns support. This will avoid long
 periods where the bot just hangs there, waiting for a hostname to
 resolve, which will often let it timeout on all other connections.
@@ -20,11 +21,6 @@ module:
   
   loadmodule dns
 
-Tcl commands provided by the DNS module:
-
-See doc/tcl-commands.doc for information on each command.
-
-  * dnslookup <ip-address/hostname> <proc> [[arg1] [arg2] ... [argN]]
      _________________________________________________________________
 
    Copyright (C) 2000, 2001, 2002 Eggheads Development Team

@@ -4,6 +4,7 @@ Last revised: January 1, 2002
 
                               Filesys Module
 
+
 This module provides an area within the bot where users can store
 files. With this module, the bot is usable as a file server.
 
@@ -48,52 +49,6 @@ There are also some variables you can set in your config file:
   set max-filesize 1024
     Set here the maximum allowable file size that will be received (in kb).
     Setting this to 0 makes it effectively infinite.
-      
-Tcl commands provided by the filesys module:
-
-See doc/tcl-commands.doc for information on each command.
-
-  * setpwd <idx> <dir> 
-
-  * getpwd <idx> 
-
-  * getfiles <dir> 
-
-  * getdirs <dir> 
-
-  * dccsend <filename> <ircnick>
-
-  * filesend <idx> <filename> [ircnick] 
-
-  * fileresend <idx> <filename> [ircnick] 
-
-  * setdesc <dir> <file> <desc> 
-
-  * getdesc <dir> <file> 
-
-  * setowner <dir> <file> <handle> 
-
-  * getowner <dir> <file> 
-
-  * setlink <dir> <file> <link> 
-
-  * getlink <dir> <file> 
-
-  * getfileq <handle> 
-
-  * getfilesendtime <idx> 
-
-  * mkdir <directory> [<required-flags> [channel]] 
-
-  * rmdir <directory> 
-
-  * mv <file> <destination> 
-
-  * cp <file> <destination> 
-
-  * getflags <dir> 
-
-  * setflags <dir> [<flags> [channel]] 
 
      _________________________________________________________________
 

@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: mod-share.html,v 1.11 2002/01/03 01:05:43 guppy Exp $ -->
+<!-- $Id: mod-share.html,v 1.12 2002/02/28 05:13:56 wcc Exp $ -->
 
 <html>
   <head>
@@ -18,8 +18,6 @@
     <blockquote>
       <ol>
         <li><a href="#config">Config file settings</a></li>
-
-        <li><a href="#tclcmd">Tcl commands</a></li>
       </ol>
     </blockquote>
     <hr>
@@ -27,12 +25,6 @@
     <p><a name="config">1. <strong>Config file settings</strong></a></p>
 
     <blockquote>
-      <p>Lines in <strong>bold</strong> are the lines that need to be
-      included in the Eggdrop config file if you want to use the share
-      module. Lines in <strong><em>bold italics</em></strong> are optional
-      and only required if you wish to change the default behaviour for 
-      that particular feature.</p>
-
       <p>Put this line into your Eggdrop configuration file to load the
       share module:</p>
 
@@ -44,7 +36,7 @@
 
     <blockquote>
       <dl>
-        <dt><strong><em>set allow-resync 0</em></strong></dt>
+        <dt><strong>set allow-resync 0</strong></dt>
 
         <dd>
           <p>When two bots get disconnected, this setting allows them
@@ -54,30 +46,30 @@
           send the resync buffer.</p>
         </dd>
 
-        <dt><strong><em>set resync-time 900</em></strong></dt>
+        <dt><strong>set resync-time 900</strong></dt>
 
         <dd>
           <p>This setting specifies how long to hold another bots resync data
           before flushing it. This is a setting for allow-resync.</p>
         </dd>
 
-        <dt><strong><em>set private-global 0</em></strong></dt>
+        <dt><strong>set private-global 0</strong></dt>
 
         <dd>
           <p>When sharing user lists, DON&#39;T ACCEPT global flag changes from
           other bots? <strong>NOTE:</strong> The bot will still send changes
-          made on the bot, it just wont accept any global flag changes from
+          made on the bot, it just won&#39;t accept any global flag changes from
           other bots.</p>
         </dd>
 
-        <dt><strong><em>set private-globals &quot;&quot;</em></strong></dt>
+        <dt><strong>set private-globals &quot;&quot;</strong></dt>
 
         <dd>
           <p>When sharing user lists, if private-global isn&#39;t set, which 
           global flag changes from other bots should be ignored?</p>
         </dd>
 
-        <dt><strong><em>set private-user 0</em></strong></dt>
+        <dt><strong>set private-user 0</strong></dt>
 
         <dd>
           <p>When sharing user lists, don&#39;t accept ANY userfile changes
@@ -86,7 +78,7 @@
           hub.</p>
         </dd>
 
-        <dt><strong><em>set override-bots 0</em></strong></dt>
+        <dt><strong>set override-bots 0</strong></dt>
 
         <dd>
           <p>This setting makes the bot discard it&#39;s own bot records in
@@ -96,18 +88,6 @@
           are v1.5.1 or higher.</p>
         </dd>
       </dl>
-    </blockquote>
-    <hr>
-
-    <p><a name="tclcmd">2. <strong>Tcl commands</strong></a></p>
-
-    <p>See doc/tcl-commands.doc for information on each of these 
-    commands.</p>
-
-    <blockquote>
-      <ul>
-        <li><strong>getting-users</strong></li>
-      </ul>
     </blockquote>
     <hr>
 

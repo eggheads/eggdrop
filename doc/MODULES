@@ -68,7 +68,7 @@ IV. MODULES INCLUDED WITH EGGDROP
               start without an encryption module.
 
   channels    This module provides channel related support for the bot. 
-              Without it, you wont be able to make the bot join a channel 
+              Without it, you won't be able to make the bot join a channel 
               or save channel specific userfile information.
 
   compress    This module provides provides support for file compression. 
@@ -173,7 +173,7 @@ V. PROGRAMMING MODULES
        (v)  Function *global;
 
              This variable provides access to all the Eggdrop functions; without
-             it, you can't call any Eggdrop functions (heck, the module wont even 
+             it, you can't call any Eggdrop functions (heck, the module won't even 
              load).
 
      (2) CORE functions every module needs.

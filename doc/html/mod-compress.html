@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: mod-compress.html,v 1.11 2002/01/03 01:05:43 guppy Exp $ -->
+<!-- $Id: mod-compress.html,v 1.12 2002/02/28 05:13:56 wcc Exp $ -->
 
 <html>
   <head>
@@ -19,8 +19,6 @@
     <blockquote>
       <ol>
         <li><a href="#config">Config file settings</a></li>
-
-        <li><a href="#tclcmds">Tcl commands</a></li>
       </ol>
     </blockquote>
     <hr>
@@ -28,12 +26,6 @@
     <p><a name="config"></a>1. <strong>Config file settings</strong></p>
 
     <blockquote>
-      <p>Lines in <strong>bold</strong> are the lines that need to be
-        included in the Eggdrop config file if you want to use the share
-        module. Lines in <strong><em>bold italics</em></strong> are optional
-        and only required if you wish to change the default behaviour for 
-        that particular feature.</p>
-
       <p>Put this line into your Eggdrop configuration file to load the 
       compress module:</p>
   
@@ -45,37 +37,20 @@
 
     <blockquote>
       <dl>
-        <dt><strong><em>set share-compressed 1</em></strong></dt>
+        <dt><strong>set share-compressed 1</strong></dt>
 
         <dd>
           <p>Allow compressed sending of user files? The user files are
           compressed with the compression level defined in 
           &#39;compress-level&#39;.</p>
-
-          <p>Valid settings: 1 to enable, 0 to disable.</p>
         </dd>
 
-        <dt><strong><em>set compress-level 9</em></strong></dt>
+        <dt><strong>set compress-level 9</strong></dt>
 
         <dd>
           <p>This is the default compression level used.</p>
         </dd>
       </dl>
-    </blockquote>
-    <hr>
-
-    <p><a name="tclcmds"></a>2. <strong>Tcl commands:</strong></p>
-
-    <p>See doc/tcl-commands.doc for information on each of these 
-    commands.</p>
-  
-    <blockquote>
-      <ul>
-        <li><strong>compressfile [-level &lt;level&gt;] &lt;src-file&gt; 
-        [target-file]</strong></li>
-  
-        <li><strong>uncompressfile &lt;src-file&gt; [target-file]</strong>
-        </li>
     </blockquote>
     <hr>
 

@@ -91,7 +91,7 @@ DCC COMMANDS
        old command will still be kept up to version 1.8.
 
      * Eggdrop now counts all of the traffic which it generates and receives
-     through irc, botnet, scripts, and dcc. You can access these statistics
+     through IRC, botnet, scripts, and dcc. You can access these statistics
      via the dcc command '.traffic'. Please note that the counter gets reset
      every time a restart is done.
 
@@ -116,7 +116,7 @@ CONFIG FILES
        goes more into detail, and eggdrop.complete.conf contains all possible
        settings.
 
-     * To support longer nicknames, as some irc servers do, a new 'nick-len'
+     * To support longer nicknames, as some IRC servers do, a new 'nick-len'
        setting was added.
 
      * Eggdrop uses strftime now to support different logfile suffixes. The
@@ -185,7 +185,7 @@ TCL COMMANDS
 TRAFFIC ACCOUNTING
 
      Eggdrop now counts all of the traffic which it generates and receives
-     through irc, botnet, scripts, and dcc. You can access these statistics
+     through IRC, botnet, scripts, and dcc. You can access these statistics
      via the dcc command '.traffic'. Please note that the counter gets reset
      every time a restart is done.
   ________________________________________________________________________

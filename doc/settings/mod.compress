@@ -4,6 +4,7 @@ Last revised: January 1, 2002
 
                              Compress Module
 
+
 This module provides provides support for file compression. It can be used to
 compress files via Tcl or to transfer the userfile compressed during the
 share process, saving bandwidth.
@@ -24,13 +25,6 @@ There are also some variables you can set in your config file:
   set compress-level 9
      This is the default compression level used.
 
-Tcl commands provided by the compress module:
-
-See doc/tcl-commands.doc for information on each command.
-
-  * compressfile [-level <level>] <src-file> [target-file]
-
-  * uncompressfile <src-file> [target-file]
      _________________________________________________________________
 
    Copyright (C) 2000, 2001, 2002 Eggheads Development Team

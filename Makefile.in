@@ -1,8 +1,8 @@
 #
-#  This is the Makefile for EGGDROP (the irc bot)
+#  This is the Makefile for EGGDROP (the IRC bot)
 #  You should never need to edit this.
 #
-# $Id: Makefile.in,v 1.29 2001/12/20 00:10:42 guppy Exp $
+# $Id: Makefile.in,v 1.30 2002/02/28 05:13:54 wcc Exp $
 
 SHELL = @SHELL@
 top_srcdir = @top_srcdir@

@@ -4,6 +4,7 @@ Last revised: January 1, 2002
 
                                Notes Module
 
+
 This module provides support for storing of notes for users from each
 other. Note sending between currently online users is supported in the core,
 this is only for storing the notes for later retrieval.
@@ -44,17 +45,6 @@ There are also some variables you can set in your config file:
     Set this to 1 if you want the bot to let people know on join if they
     have any notes.
 
-Tcl commands provided by the notes module:
-
-See doc/tcl-commands.doc for information on each command.
-
-  * notes <user> [numberlist] 
-
-  * erasenotes <user> <numberlist> 
-
-  * listnotes <user> <numberlist> 
-
-  * storenote <from> <to> <msg> <idx> 
      _________________________________________________________________
 
    Copyright (C) 2000, 2001, 2002 Eggheads Development Team

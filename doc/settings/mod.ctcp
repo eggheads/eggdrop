@@ -4,6 +4,7 @@ Last revised: January 1, 2002
 
                                CTCP Module
 
+
 This module provides the normal ctcp replies that you would expect.
 Without it loaded, CTCP CHAT will not work.
   
@@ -28,6 +29,7 @@ There are also some variables you can set in your config file:
   There are also several variables to help make your bot less noticeable.
   They are: ctcp-version, ctcp-finger, and ctcp-userinfo. You can use set to 
   set them to values you'd like.
+
      _________________________________________________________________
 
    Copyright (C) 2000, 2001, 2002 Eggheads Development Team

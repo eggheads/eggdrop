@@ -164,8 +164,8 @@ e-mail to eggheads@eggheads.org (after subscribing). Thanks.
 
 (3) USER RECORDS
 
-    People on irc are recognized by the bot according to their user@host.
-    That is, if I am on irc as:
+    People on IRC are recognized by the bot according to their user@host.
+    That is, if I am on IRC as:
        *** Robey is robey@hubcap.clemson.edu (i hate milk)
     then Eggdrop will identify me according to "robey@hubcap.clemson.edu"
     and not by my nickname.  I can change nicknames at will and it won't
@@ -180,7 +180,7 @@ e-mail to eggheads@eggheads.org (after subscribing). Thanks.
     Because of this, only one person can have a given handle on your bot.
     Masters can change it, and anyone with party-line access can change
     their own handle, but it's intended to be something stable -- unlike
-    nicknames on irc which are about as stable as jello.
+    nicknames on IRC which are about as stable as jello.
 
     Eggdrop likes to store a lot of information about each user.  The
     most important thing stored is the list of hostmasks that a user is
@@ -221,8 +221,8 @@ e-mail to eggheads@eggheads.org (after subscribing). Thanks.
                  the bot (if it exists) -- like a "master" of the file
                  area
 
-    c  (common)  marks a user who is really just a public irc site from
-                 which any number of people can use irc, making the
+    c  (common)  marks a user who is really just a public IRC site from
+                 which any number of people can use IRC, making the
                  user@host information useless
 
     p  (party)   someone who has access to the party line
@@ -275,7 +275,7 @@ e-mail to eggheads@eggheads.org (after subscribing). Thanks.
 
     The most important way you will communicate with your bot is through
     the party line.  The party line is accessible via DCC chat or telnet.
-    It's pretty much just a miniature lagless irc (see "Botnet" below),
+    It's pretty much just a miniature lagless IRC (see "Botnet" below),
     but it also consists of a console through which you can watch channel
     activity and give commands.
 
@@ -286,7 +286,7 @@ e-mail to eggheads@eggheads.org (after subscribing). Thanks.
 
     The party line is actually split up into 200,000 "channels".  The
     console is available from each channel, but you can only talk to
-    people who are on your current channel (just like irc).  Channel 0
+    people who are on your current channel (just like IRC).  Channel 0
     is the main party line, while others are typically reserved for private
     conversations. Channels 1-99,999 are botnet wide chat channels and any
     user joining that channel anywhere on the botnet will be able to chat
@@ -294,7 +294,7 @@ e-mail to eggheads@eggheads.org (after subscribing). Thanks.
     on the current bot you are on can chat to you on there channels.
 
     Commands for the console start with a dot (.), similar to the slash (/)
-    used for irc.  At any time you can type ".help" to get a list of the
+    used for IRC.  At any time you can type ".help" to get a list of the
     possible commands.  To find out what a command does, use ".help
     <command>" -- for example, ".help channel".  This documentation won't
     list every command and what it does, because the online help files are
@@ -311,7 +311,7 @@ e-mail to eggheads@eggheads.org (after subscribing). Thanks.
     People starting up an Eggdrop bot for the first time are usually confused
     about the "botnet" support -- ie, the ability to link two or more bots
     together and have them merge party lines, and form a sort of miniature
-    irc.
+    IRC.
 
     In order to link to other bots, your bot needs to have a telnet port
     defined in the config file.  The default is usually something like 2222
@@ -381,7 +381,7 @@ e-mail to eggheads@eggheads.org (after subscribing). Thanks.
 
     r  (reject)     Any bot that has this flag will not be permitted on the
                     botnet at all, no matter where it connects.  This is
-                    equivalent to irc's "Q-line".
+                    equivalent to IRC's "Q-line".
 
     There are also 10 user-defined flags (0-9) available for use with
     bots only.

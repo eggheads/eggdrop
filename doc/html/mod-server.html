@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: mod-server.html,v 1.17 2002/01/03 01:05:43 guppy Exp $ -->
+<!-- $Id: mod-server.html,v 1.18 2002/02/28 05:13:56 wcc Exp $ -->
 
 <html>
   <head>
@@ -17,10 +17,6 @@
     <blockquote>
       <ol>
         <li><a href="#config">Config file settings</a></li>
-
-        <li><a href="#tclcmds">Tcl commands</a></li>
-
-        <li><a href="#tclvars">Tcl variables</a></li>
       </ol>
     </blockquote>
     <hr>
@@ -28,14 +24,8 @@
     <p><a name="config"></a>1. <strong>Config file settings</strong></p>
 
     <blockquote>
-      <p>Lines in <strong>bold</strong> are the lines that need to be
-      included in the Eggdrop config file if you want to use the share
-      module. Lines in <strong><em>bold italics</em></strong> are optional
-      and only required if you wish to change the default behaviour for 
-      that particular feature.</p>
-
       <p>This module provides the core server support. You have to load this
-      if you want your bot to come on irc.<br>
+      if you want your bot to come on IRC.<br>
       </p>
 
       <p>Put this line into your Eggdrop configuration file to load the
@@ -77,7 +67,7 @@
           characters will be replaced by random numbers.</p>
         </dd>
 
-        <dt><strong><em>set keep-nick 1</em></strong></dt>
+        <dt><strong>set keep-nick 1</strong></dt>
 
         <dd>
           <p>This setting makes the bot try to get his original nickname back
@@ -128,7 +118,7 @@
           with &#39;.jump&#39; or in &#39;set servers&#39;.</p>
         </dd>
 
-        <dt><strong><em>set strict-servernames 0</em></strong></dt>
+        <dt><strong>set strict-servernames 0</strong></dt>
 
         <dd>
           <p>Often, IRC servers call themselves a name other than their
@@ -172,7 +162,7 @@
           be turned off.</p>
         </dd>
 
-        <dt><strong><em>set check-stoned 1</em></strong></dt>
+        <dt><strong>set check-stoned 1</strong></dt>
 
         <dd>
           <p>Set this to 1 if Eggdrop should check for stoned servers? (where
@@ -180,7 +170,7 @@
           yet).</p>
         </dd>
 
-        <dt><strong><em>set serverror-quit 1</em></strong></dt>
+        <dt><strong>set serverror-quit 1</strong></dt>
 
         <dd>
           <p>If you want your bot to exit the server if it receives an 
@@ -196,7 +186,7 @@
           though.</p>
         </dd>
 
-        <dt><strong><em>set use-console-r 0</em></strong></dt>
+        <dt><strong>set use-console-r 0</strong></dt>
 
         <dd>
           <p>This setting allows you the logging of all information received
@@ -206,7 +196,7 @@
           with care.</p>
         </dd>
 
-        <dt><strong><em>set debug-output 0</em></strong></dt>
+        <dt><strong>set debug-output 0</strong></dt>
 
         <dd>
           <p>This setting allows you the logging of all information sent 
@@ -216,14 +206,14 @@
           with care.</p>
         </dd>
 
-        <dt><strong><em>set strict-host 0</em></strong></dt>
+        <dt><strong>set strict-host 0</strong></dt>
 
         <dd>
           <p>Set this to 1 if you don&#39;t want your the bot to strip a 
           leading &#39;~&#39;on user@hosts.</p>
         </dd>
 
-        <dt><strong><em>set quiet-reject 1</em></strong></dt>
+        <dt><strong>set quiet-reject 1</strong></dt>
 
         <dd>
           <p>This setting makes the bot squelch the error message when 
@@ -255,7 +245,7 @@
           <p>Set how many ctcps should be answered at once here.</p>
         </dd>
 
-        <dt><strong><em>set lowercase-ctcp 0</em></strong></dt>
+        <dt><strong>set lowercase-ctcp 0</strong></dt>
 
         <dd>
           <p>If you want your bot to answer lower case ctcp requests (non 
@@ -263,7 +253,7 @@
           other clients will not.</p>
         </dd>
 
-        <dt><strong><em>set trigger-on-ignore 0</em></strong></dt>
+        <dt><strong>set trigger-on-ignore 0</strong></dt>
 
         <dd>
           <p>If you want Eggdrop to trigger binds for ignored users, set 
@@ -301,7 +291,7 @@
           Note: it&#39;s highly advised to turn this on!</p>
         </dd>
 
-        <dt><strong><em>set optimize-kicks 1</em></strong></dt>
+        <dt><strong>set optimize-kicks 1</strong></dt>
 
         <dd>
           <p>This optimizes the kick queue. It also traces nick changes 
@@ -326,7 +316,7 @@
 
     <blockquote>
       <dl>
-        <dt><strong><em>set check-mode-r 1</em></strong></dt>
+        <dt><strong>set check-mode-r 1</strong></dt>
 
         <dd>
           <p>This settings defines how umode +r is understood by Eggdrop.
@@ -337,77 +327,12 @@
           and set to 1 for net-type 1.</p>
         </dd>
 
-        <dt><strong><em>set nick-len 9</em></strong></dt>
+        <dt><strong>set nick-len 9</strong></dt>
 
         <dd>
           <p>This setting allows you to specify the maximum nick-length
           supported by your network. The default setting is 9. The 
           maximum supported length by Eggdrop is 32.</p>
-        </dd>
-      </dl>
-    </blockquote>
-    <hr>
-
-    <p><a name="tclcmds"></a>2. <strong>Tcl commands</strong></p>
-
-    <p>See doc/tcl-commands.doc for information on each of these 
-       commands.</p>
-
-    <blockquote>
-      <ul>
-        <li><strong>putserv &lt;text&gt;</strong></li>
-
-        <li><strong>putquick &lt;text&gt;</strong></li>
-
-        <li><strong>puthelp &lt;text&gt;</strong></li>
-
-        <li><strong>queuesize [queue]</strong></li>
-
-        <li><strong>clearqueue &lt;queue&gt;</strong></li>
-
-        <li><strong>dumpfile &lt;nick&gt; &lt;filename&gt;</strong></li>
-
-        <li><strong>jump [server [port [password]]]</strong></li>
-      </ul>
-    </blockquote>
-
-    <p><a name="tclvars"></a>3. <strong>Tcl variables</strong></p>
-
-    <blockquote>
-      <dl>
-        <dt><strong>botnick</strong></dt>
-
-        <dd>
-          <p>This is the current nickname the bot is using, i.e. 
-          &#39;Sisko&#39; or &#39;Sisko0&#39;, etc.</p>
-        </dd>
-
-        <dt><strong>botname</strong></dt>
-
-        <dd>
-          <p>This is the current nick!user@host that the server sees, i.e.
-          &#39;Sisko!ikaney@uk.defiant.org&#39;.</p>
-        </dd>
-
-        <dt><strong>isjuped</strong></dt>
-
-        <dd>
-          <p>The value of this variable is 1 if bots nick is juped(437); 0 
-          otherwise.</p>
-        </dd>
-
-        <dt><strong>server</strong></dt>
-
-        <dd>
-          <p>This is the current server the bot is using, i.e.
-          &#39;irc.math.ufl.edu:6667&#39;.</p>
-        </dd>
-
-        <dt><strong>server-online</strong></dt>
-
-        <dd>
-          <p>This is the uunixtime value for when the bot connected to its
-          current server.</p>
         </dd>
       </dl>
     </blockquote>

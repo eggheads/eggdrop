@@ -4,6 +4,7 @@ Last revised: January 1, 2002
 
                                Assoc Module
 
+
 This module provides assoc support, i.e. naming channels on the botnet.
 
 This module requires: none
@@ -13,13 +14,6 @@ module:
 
   loadmodule assoc
 
-Tcl commands provided by the assoc module:
-
-See doc/tcl-commands.doc for information on each command.
- 
-  * assoc <chan> [name]
- 
-  * killassoc <chan>
      _________________________________________________________________
 
    Copyright (C) 2000, 2001, 2002 Eggheads Development Team

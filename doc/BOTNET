@@ -231,7 +231,7 @@ VI. MAKING BOTS SHARE USER RECORDS
 
   First off, let's say we have two bots we want to link. We will
   call one Lamestbot, and the other Lameshare. The first thing that needs
-  to be done is each bot needs the other bot added to it's user record.
+  to be done is each bot needs the other bot added to its user record.
   Your botnet should have a hub bot. This will have them connect
   automatically whenever they are started. Without a hub, you would have to
   manually link them with the .link command. For this situation we will

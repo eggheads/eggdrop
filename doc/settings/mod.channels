@@ -4,8 +4,9 @@ Last revised: January 1, 2002
 
                              Channels Module
 
+
 This module provides channel related support for the bot. Without it,
-you wont be able to make the bot join a channel or save channel
+you won't be able to make the bot join a channel or save channel
 specific userfile information.
 
 This module requires: none
@@ -85,7 +86,6 @@ There are also some variables you can set in your config file:
            If the channel is +bitch, see stopnethack-mode 1
          6 If the channel is -bitch, see stopnethack-mode 2
            If the channel is +bitch, see stopnethack-mode 4
-       Valid settings are 0-6.
 
    revenge-mode 1
       This settings defines how the bot should punish bad users when
@@ -94,7 +94,6 @@ There are also some variables you can set in your config file:
         1 Deop the user and give them the +d flag for the channel.
         2 Deop the user, give them the +d flag for the channel, and kick them.
         3 Deop the user, give them the +d flag for the channel, kick, and ban them.
-      Valid settings are 0-3.
 
    aop-delay (minimum:maximum)
        This is used for autoop and autovoice. If an op or voice joins a channel
@@ -304,105 +303,6 @@ There are also some variables you can set in your config file:
         +userinvites
   }
 
-Tcl commands provided by the channels module:
-+ 
-See doc/tcl-commands.doc for information on each command.
-
-  * channel add <name> <option-list>
-
-  * channel set <name> <options>
-
-  * channel info <name>
-
-  * channel remove <name>
-
-  * savechannels
-
-  * loadchannels
-
-  * channels
-
-  * validchan <channel>
-
-  * isdynamic <channel>
-
-  * newchanban <channel> <ban> <creator> <comment> [lifetime] [options]
-
-  * newban <ban> <creator> <comment> [lifetime] [options]
-
-  * killchanban <channel> <ban>
-
-  * killban <ban>
-
-  * isban <ban> [channel]
-
-  * ispermban <ban> [channel]
-
-  * matchban <nick!user@host> [channel]
-
-  * banlist [channel]
-      
-  * newchanexempt <channel> <exempt> <creator> <comment> [lifetime] [options]
-
-  * newexempt <exempt> <creator> <comment> [lifetime] [options]
-
-  * killchanexempt <channel> <exempt> 
-
-  * killexempt <exempt>
-
-  * isexempt <exempt> [channel]
-
-  * ispermexempt <exempt> [channel]
-
-  * matchexempt <nick!user@host> [channel]
-
-  * exemptlist [channel]
-
-  * newchaninvite <channel> <invite> <creator> <comment> [lifetime] [options]
-
-  * newinvite <invite> <creator> <comment> [lifetime] [options]
-
-  * killchaninvite <channel> <invite>
-
-  * killinvite <invite>
-
-  * isinvite <invite> [channel]
-
-  * isperminvite <invite> [channel]
-
-  * matchinvite <nick!user@host> [channel]
-
-  * invitelist [channel]
-
-  * setlaston <handle> [channel] [time]
-
-  * addchanrec <handle> <channel>
-
-  * delchanrec <handle> <channel>
-
-  * getchaninfo <handle> <channel>
-
-  * setchaninfo <handle> <channel> <info>
-
-  * setudef <flag/int> <name>
-
-  * renudef <flag/int> <oldname> <newname>
-
-  * deludef <flag/int> <name>
-
-  * haschanrec <handle> <channel>
-
-  * stick <banmask> [channel]
-
-  * unstick <banmask> [channel]
-
-  * stickexempt <exemptmask> [channel]
-
-  * unstickexempt <exemptmask> [channel]
-
-  * stickinvite <invitemask> [channel]
-
-  * unstickinvite <invitemask> [channel]
      _________________________________________________________________
 
    Copyright (C) 2000, 2001, 2002 Eggheads Development Team

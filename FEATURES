@@ -30,7 +30,7 @@ regularly updated. Its features include:
      unix system -- plus the ability to mark directories as hidden /
      unaccessible to people without certain user flags
    * bot network: link two or more bots together for a party line that can
-     stretch not only across channels, but across irc networks (one bot on
+     stretch not only across channels, but across IRC networks (one bot on
      EFnet, one bot on Undernet, etc)
    * script language: commands and features can be added to the bot on the
      fly, by means of the Tcl script language, giving you the power of
@@ -126,7 +126,7 @@ the old ones on the other (although OLD<->NEW<->OLD should be ok).
 
 The order of the version and handshake messages has reversed this means on
 a new botlink between an OLD & a NEW, but you must .link from the OLD or
-the NEW wont know the password.
+the NEW won't know the password.
 
 **** USERLIST
 

@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: mod-filesys.html,v 1.11 2002/01/03 01:05:43 guppy Exp $ -->
+<!-- $Id: mod-filesys.html,v 1.12 2002/02/28 05:13:56 wcc Exp $ -->
 
 <html>
   <head>
@@ -18,8 +18,6 @@
     <blockquote>
       <ol>
         <li><a href="#config">Config file settings</a></li>
-
-        <li><a href="#tclcmds">Tcl commands</a></li>
       </ol>
     </blockquote>
     <hr>
@@ -27,12 +25,6 @@
     <p><a name="config"></a>1. <strong>Config file settings</strong></p>
 
     <blockquote>
-      <p>Lines in <strong>bold</strong> are the lines that need to be
-      included in the Eggdrop config file if you want to use the share
-      module. Lines in <strong><em>bold italics</em></strong> are optional
-      and only required if you wish to change the default behaviour for 
-      that particular feature.</p>
-
       <p>This module provides the filesys support. You have to load this if
       you want your users to upload and download files from your bot.</p>
 
@@ -47,15 +39,15 @@
 
     <blockquote>
       <dl>
-        <dt><strong><em>set files-path
-        &quot;/home/mydir/eggdrop/filesys&quot;</em></strong></dt>
+        <dt><strong>set files-path &quot;/home/mydir/eggdrop/filesys&quot;
+        </strong></dt>
 
         <dd>
           <p>Set here the &#39;root&#39; directory for the file system.</p>
         </dd>
 
-        <dt><strong> <em>set incoming-path
-        &quot;/home/mydir/eggdrop/filesys/incoming&quot;</em></strong></dt>
+        <dt><strong>set incoming-path
+        &quot;/home/mydir/eggdrop/filesys/incoming&quot;</strong></dt>
 
         <dd>
           <p>If you want to allow uploads, set this to the directory uploads
@@ -63,7 +55,7 @@
           people to upload files to your bot.</p>
         </dd>
 
-        <dt><strong><em>set upload-to-pwd 0</em></strong></dt>
+        <dt><strong>set upload-to-pwd 0</strong></dt>
 
         <dd>
           <p>If you don&#39;t want to have a central incoming directory, 
@@ -71,7 +63,7 @@
           user is in, set this setting to 1.</p>
         </dd>
 
-        <dt><strong><em>set filedb-path &quot;&quot;</em></strong></dt>
+        <dt><strong>set filedb-path &quot;&quot;</strong></dt>
 
         <dd>
           <p>Eggdrop creates a &#39;.filedb&#39; file in each subdirectory
@@ -82,79 +74,20 @@
           stored instead.</p>
         </dd>
 
-        <dt><strong><em>set max-file-users 20</em></strong></dt>
+        <dt><strong>set max-file-users 20</strong></dt>
 
         <dd>
           <p>Set here the maximum number of people that can be in the file 
           area at once. Setting this to 0 makes it effectively infinite.</p>
         </dd>
 
-        <dt><strong><em>set max-filesize 1024</em></strong></dt>
+        <dt><strong>set max-filesize 1024</strong></dt>
 
         <dd>
           <p>Set here the maximum allowable file size that will be received 
           (in kb). Setting this to 0 makes it effectively infinite.</p>
         </dd>
       </dl>
-    </blockquote>
-    <hr>
-
-    <p><a name="tclcmds"></a>2. <strong>Tcl commands</strong></p>
-
-    <p>See doc/tcl-commands.doc for information on each of these 
-    commands.</p>
-
-    <blockquote>
-      <ul>
-        <li><strong>setpwd &lt;idx&gt; &lt;dir&gt;</strong></li>
-
-        <li><strong>getpwd &lt;idx&gt;</strong></li>
-
-        <li><strong>getfiles &lt;dir&gt;</strong></li>
-
-        <li><strong>getdirs &lt;dir&gt;</strong></li>
-
-        <li><strong>dccsend &lt;filename&gt; &lt;ircnick&gt;</strong></li>
-
-        <li><strong>filesend &lt;idx&gt; &lt;filename&gt; [ircnick]</strong>
-        </li>
-
-        <li><strong>fileresend &lt;idx&gt; &lt;filename&gt; [ircnick]</strong>
-        </li>
-
-        <li><strong>setdesc &lt;dir&gt; &lt;file&gt; &lt;desc&gt;</strong>
-        </li>
-
-        <li><strong>getdesc &lt;dir&gt; &lt;file&gt;</strong></li>
-
-        <li><strong>setowner &lt;dir&gt; &lt;file&gt; &lt;handle&gt;</strong>
-        </li>
-
-        <li><strong>getowner &lt;dir&gt; &lt;file&gt;</strong></li>
-
-        <li><strong>setlink &lt;dir&gt; &lt;file&gt; &lt;link&gt;</strong>
-        </li>
-
-        <li><strong>getlink &lt;dir&gt; &lt;file&gt;</strong></li>
-
-        <li><strong>getfileq &lt;handle&gt;</strong></li>
-
-        <li><strong>getfilesendtime &lt;idx&gt;</strong></li>
-
-        <li><strong>mkdir &lt;directory&gt; [&lt;required-flags&gt; 
-        [channel]]</strong></li>
-
-        <li><strong>rmdir &lt;directory&gt;</strong></li>
-
-        <li><strong>mv &lt;file&gt; &lt;destination&gt;</strong></li>
-
-        <li><strong>cp &lt;file&gt; &lt;destination&gt;</strong></li>
-
-        <li><strong>getflags &lt;dir&gt;</strong></li>
-
-        <li><strong>setflags &lt;dir&gt; [&lt;flags&gt; [channel]]</strong>
-        </li>
-      </ul>
     </blockquote>
     <hr>
 

@@ -5,7 +5,7 @@ begin. This file will give you a very basic idea about what Eggdrop scripting
 is like. There are far too many topics to be covered all at once, but this may
 help you get started with your own scripts.
 
-This guide assumes you know a bit about Eggdrops and irc. You should have
+This guide assumes you know a bit about Eggdrops and IRC. You should have
 already installed Eggdrop. The bot should not be on any important or busy
 channels (development bots can be annoying if your script has bugs). If you
 plan on doing a lot of development, enable the .tcl and .set commands, and
@@ -22,7 +22,7 @@ the .tcl command enabled, you can type '.tcl source scripts/yourfile.tcl' to
 load it. Otherwise, add it to your config file like normal and '.rehash' or
 '.restart' your bot.
 
-From your own irc client, join the bot's channel and type some lines that start
+From your own IRC client, join the bot's channel and type some lines that start
 with "hello". Example: hello I love you won't you tell me your name
 
 After your thrill abates, try playing around with your copy of the script. Get
@@ -48,7 +48,7 @@ set our_chan "#baa"
 # most frequently, creating our Eggdrop binds.
 #
 # A bind lets you attach your script to events that Eggdrop encounters. Events
-# include irc events (someone joining a channel, talking, etc), botnet events,
+# include IRC events (someone joining a channel, talking, etc), botnet events,
 # and internal events (like receiving signals via the kill command).
 #
 

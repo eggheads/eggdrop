@@ -4,6 +4,7 @@ Last revised: January 1, 2002
 
                              Blowfish Module
 
+
 Eggdrop can encrypt your userfile, so users can have secure passwords.
 Please note that when you change your encryption method later (i.e.
 using other modules like a md5 module), you can't use your current
@@ -19,15 +20,6 @@ module:
   This is checkmodule because during .restart the module will already
   be loaded.
 
-Tcl commands provided by the blowfish module:
-
-See doc/tcl-commands.doc for information on each command.
- 
-  * encrypt <key> <string>
-
-  * decrypt <key> <string>
- 
-  * encpass <string>
      _________________________________________________________________
 
    Copyright (C) 2000, 2001, 2002 Eggheads Development Team
