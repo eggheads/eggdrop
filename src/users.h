@@ -2,7 +2,7 @@
  * users.h
  *   structures and definitions used by users.c and userrec.c
  * 
- * $Id: users.h,v 1.5 2000/01/30 19:26:21 fabian Exp $
+ * $Id: users.h,v 1.6 2000/08/20 11:17:38 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -67,9 +67,9 @@ struct user_entry_type {
 
 
 #ifndef MAKING_MODS
-extern struct user_entry_type USERENTRY_EMAIL, USERENTRY_COMMENT,
- USERENTRY_LASTON, USERENTRY_XTRA, USERENTRY_INFO, USERENTRY_BOTADDR,
- USERENTRY_HOSTS, USERENTRY_PASS, USERENTRY_BOTFL, USERENTRY_URL;
+extern struct user_entry_type USERENTRY_COMMENT, USERENTRY_LASTON,
+ USERENTRY_XTRA, USERENTRY_INFO, USERENTRY_BOTADDR, USERENTRY_HOSTS,
+ USERENTRY_PASS, USERENTRY_BOTFL;
 #endif
 
 
