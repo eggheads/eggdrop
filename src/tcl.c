@@ -4,7 +4,7 @@
  *   Tcl initialization
  *   getting and setting Tcl/eggdrop variables
  *
- * $Id: tcl.c,v 1.45 2002/01/16 03:24:17 guppy Exp $
+ * $Id: tcl.c,v 1.46 2002/03/11 19:22:30 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -296,7 +296,8 @@ static int utf_converter(ClientData cdata, Tcl_Interp *myinterp, int objc,
 			 Tcl_Obj *CONST objv[])
 {
   char **strings, *byteptr;
-  int i, len, retval, *intarray, diff;
+  int i, len, retval, diff;
+  void **callback_data;
   Function func;
   ClientData cd;
 
@@ -313,9 +314,9 @@ static int utf_converter(ClientData cdata, Tcl_Interp *myinterp, int objc,
     strncpy(strings[i], byteptr, len);
     strings[i][len] = 0;
   }
-  intarray = (int *)cdata;
-  func = (Function) intarray[0];
-  cd = (ClientData) intarray[1];
+  callback_data = (void **)cdata;
+  func = (Function) callback_data[0];
+  cd = (ClientData) callback_data[1];
   diff -= utftot;
   retval = func(cd, myinterp, objc, strings);
   for (i = 0; i < objc; i++) nfree(strings[i]);
@@ -327,18 +328,18 @@ static int utf_converter(ClientData cdata, Tcl_Interp *myinterp, int objc,
 void cmd_delete_callback(ClientData cdata)
 {
   nfree(cdata);
-  clientdata_stuff -= sizeof(int) * 2;
+  clientdata_stuff -= sizeof(void *) * 2;
 }
 
 void add_tcl_commands(tcl_cmds *table)
 {
-  int *cdata;
+  void **cdata;
 
   while (table->name) {
-    cdata = (int *)nmalloc(sizeof(int) * 2);
-    clientdata_stuff += sizeof(int) * 2;
-    cdata[0] = (int) table->func;
-    cdata[1] = (int) NULL;
+    cdata = (void **)nmalloc(sizeof(void *) * 2);
+    clientdata_stuff += sizeof(void *) * 2;
+    cdata[0] = table->func;
+    cdata[1] = NULL;
     Tcl_CreateObjCommand(interp, table->name, utf_converter, (ClientData) cdata,
 			 cmd_delete_callback);
     table++;
@@ -347,13 +348,13 @@ void add_tcl_commands(tcl_cmds *table)
 
 void add_cd_tcl_cmds(cd_tcl_cmd *table)
 {
-  int *cdata;
+  void **cdata;
 
   while (table->name) {
-    cdata = (int *)nmalloc(sizeof(int) * 2);
-    clientdata_stuff += sizeof(int) * 2;
-    cdata[0] = (int) table->callback;
-    cdata[1] = (int) table->cdata;
+    cdata = (void **)nmalloc(sizeof(void *) * 2);
+    clientdata_stuff += sizeof(void *) * 2;
+    cdata[0] = table->callback;
+    cdata[1] = table->cdata;
     Tcl_CreateObjCommand(interp, table->name, utf_converter, (ClientData) cdata, 
 			 cmd_delete_callback);
     table++;
