@@ -3,7 +3,7 @@
  *   stuff common to chan.c and mode.c
  *   users.h needs to be loaded too
  *
- * $Id: chan.h,v 1.28 2002/06/13 20:43:07 wcc Exp $
+ * $Id: chan.h,v 1.29 2002/06/19 21:13:38 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -40,6 +40,7 @@ typedef struct memstruct {
 } memberlist;
 
 #define CHANMETA "#&!+"
+#define NICKVALID "[{}]^`|\\_-"
 
 #define CHANOP       0x00001 /* channel +o                                   */
 #define CHANVOICE    0x00002 /* channel +v                                   */

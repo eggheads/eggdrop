@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  *
- * $Id: chan.c,v 1.89 2002/06/15 19:33:36 wcc Exp $
+ * $Id: chan.c,v 1.90 2002/06/19 21:13:39 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1024,7 +1024,7 @@ static int got352(char *from, char *msg)
  */
 static int got353(char *from, char *msg)
 {
-  char *nick, *chname, *rd, *wr;
+  char *nick, *chname, *oldstring, *newstring, *stripnick;
   struct chanset_t *chan;
   memberlist *m;
 
@@ -1035,8 +1035,13 @@ static int got353(char *from, char *msg)
   if (!chan)
     return 0;
   fixcolon(msg);
-  while ((nick = newsplit(&msg))[0]) {
-    m = ismember(chan, nick); /* In my channel list? */
+  while ((nick = stripnick = newsplit(&msg))[0]) {
+    for (oldstring=newstring=stripnick;*oldstring;oldstring++) {
+      if (isalnum(*oldstring) || strchr(NICKVALID,*oldstring) != NULL)
+        *newstring++=*oldstring;
+    }
+    *newstring=0;
+    m = ismember(chan, stripnick); /* In my channel list? */
     if (!m) {
       m = newmember(chan);	/* Get a new channel entry */
       m->joined = m->split = m->delay = 0L;	/* Don't know when he joined */
@@ -1046,35 +1051,18 @@ static int got353(char *from, char *msg)
     m->userhost[0] = 0; /* Store a zero-length userhost for the time being */
     m->user = NULL; /* We'll get a handle in got352or4() */
     if (strchr(nick, '@') != NULL)
-    {
       m->flags |= (CHANOP | WASOP);
-      nick++;
-    }
     else
       m->flags &= ~(CHANOP | WASOP);
     if (strchr(nick, '%') != NULL)
-    {
       m->flags |= (CHANHALFOP | WASHALFOP);
-      nick++;
-    }
     else
       m->flags &= ~(CHANHALFOP | WASHALFOP);
     if (strchr(nick, '+') != NULL)
-    {
       m->flags |= CHANVOICE;
-      nick++;
-    }
     else
       m->flags &= ~CHANVOICE;
-    /* Even if we don't use the flags, strip them anyway to avoid memberlist
-     * problems.
-     */
-    for (rd=wr=nick;*rd;rd++){
-      if (isalnum(*rd) || strchr("[{}]^`|\\",*rd) != NULL)
-        *wr++=*rd;
-    }
-    *wr=0;
-    strcpy(m->nick, nick); /* Store the nick in list */
+    strcpy(m->nick, stripnick); /* Store the nick in list */
   }
   return 0;
 }
