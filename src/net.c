@@ -786,23 +786,23 @@ int sockgets(char *s, int *len)
   context;
   /* prepend old data back */
   if (socklist[ret].inbuf != NULL) {
-    contextnote("dw's bug");
+    context;
     p = socklist[ret].inbuf;
     socklist[ret].inbuf = (char *) nmalloc(strlen(p) + strlen(xx) + 1);
     strcpy(socklist[ret].inbuf, xx);
     strcat(socklist[ret].inbuf, p);
     nfree(p);
   } else {
-    contextnote("dw's bug");
+    context;
     socklist[ret].inbuf = (char *) nmalloc(strlen(xx) + 1);
     strcpy(socklist[ret].inbuf, xx);
   }
-  contextnote("dw's bug");
+  context;
   if (data) {
-    contextnote("dw's bug");
+    context;
     return socklist[ret].sock;
   } else {
-    contextnote("dw's bug");
+    context;
     return -3;
   }
 }
