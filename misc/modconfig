@@ -19,7 +19,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-# $Id: modconfig,v 1.9 2002/02/24 07:37:01 guppy Exp $
+# $Id: modconfig,v 1.10 2002/09/09 23:14:23 wcc Exp $
 
 
 mc_pn=`echo $0 | sed -e 's/^.*\///'`
@@ -258,12 +258,12 @@ xdetect-modules)
 		#  Do we have an existing configuration?
 		if (test "${mc_mods_configured}" = yes); then
 			#  Is the module active?
-			if (grep "^${mc_mod}.mod\$" ${mc_fmodules} 1>&7 2>&1)
+			if (grep "^${mc_mod}\.mod\$" ${mc_fmodules} 1>&7 2>&1)
 			then
 				mc_new_mod_state=enabled
 			else
 				#  Was it configured before?
-				if (grep "^${mc_mod}.mod\$" ${mc_fknownmods} 1>&7 2>&1); then
+				if (grep "^${mc_mod}\.mod\$" ${mc_fknownmods} 1>&7 2>&1); then
 					:
 				else
 					mc_new_mod_state=enabled
@@ -309,8 +309,8 @@ xMakefile)
 		exit 1
 	fi
 
-	mc_mod_objs=`echo ${mc_sel_modules} | sed -e 's/.mod/.mod_o/g'`
-	mc_mod_libs=`echo ${mc_sel_modules} | sed -e 's/.mod/.mod_so/g'`
+	mc_mod_objs=`echo ${mc_sel_modules} | sed -e 's/\.mod/.mod_o/g'`
+	mc_mod_libs=`echo ${mc_sel_modules} | sed -e 's/\.mod/.mod_so/g'`
 
 	if test ! -f ${mc_fMakefile}; then
 		echo "failed." 1>&6
@@ -347,7 +347,7 @@ xstatic.h)
 		echo "${mc_pn}: error: no modules selected. You did not run \`make config' yet." 1>&2;
 		exit 1
 	fi
-	mc_sel_modules=`cat ${mc_fmodules} | sed -e 's/.mod//g'`
+	mc_sel_modules=`cat ${mc_fmodules} | sed -e 's/\.mod//g'`
 
 
 	#  Note:  All data is written to `src/mod/static.h' which is
@@ -402,16 +402,16 @@ xdel)
 	mc_nfmodules="${mc_fmodules}_new"
 
 	#  Remove trailing `.mod'
-	mc_mods=`echo ${mc_paras} | sed -e 's/.mod//g'`
+	mc_mods=`echo ${mc_paras} | sed -e 's/\.mod//g'`
 	for mc_mod in ${mc_mods}; do
 		#  Remove any path information
 		mc_mod=`echo ${mc_mod} | sed -e 's/.*\///'`
 		echo "${mc_pn}: disabling eggdrop module: ${mc_mod}" 1>&6
 
 		#  Add module to the list of known modules.
-		if grep "^${mc_mod}.mod$" ${mc_fknownmods} 1>&7 2>&7; then
+		if grep "^${mc_mod}\.mod$" ${mc_fknownmods} 1>&7 2>&7; then
 			if test ! -d ${mc_mod_dir}/${mc_mod}.mod; then
-				grep -v "^${mc_mod}.mod$" ${mc_fknownmods} \
+				grep -v "^${mc_mod}\.mod$" ${mc_fknownmods} \
 					> ${mc_fknownmods}_new
 				mv ${mc_fknownmods}_new ${mc_fknownmods}
 			fi
@@ -426,7 +426,7 @@ xdel)
 		# In case there are any active modules ...
 		if test -r ${mc_fmodules}; then
 			#  Remove module from list of active modules.
-			if grep -v "^${mc_mod}.mod$" ${mc_fmodules} \
+			if grep -v "^${mc_mod}\.mod$" ${mc_fmodules} \
 				1> ${mc_nfmodules}
 			then
 				:
@@ -451,15 +451,15 @@ xadd)
 	fi
 
 	#  Remove trailing `.mod'
-	mc_mods=`echo ${mc_paras} | sed -e 's/.mod//g'`
+	mc_mods=`echo ${mc_paras} | sed -e 's/\.mod//g'`
 	for mc_mod in ${mc_mods}; do
 		#  Remove any path information
 		mc_mod=`echo ${mc_mod} | sed -e 's/.*\///'`
 
 		#  Add module to the list of known modules.
-		if grep "^${mc_mod}.mod$" ${mc_fknownmods} 1>&7 2>&7; then
+		if grep "^${mc_mod}\.mod$" ${mc_fknownmods} 1>&7 2>&7; then
 			if test ! -d ${mc_mod_dir}/${mc_mod}.mod; then
-				grep -v "^${mc_mod}.mod$" ${mc_fknownmods} \
+				grep -v "^${mc_mod}\.mod$" ${mc_fknownmods} \
 					> ${mc_fknownmods}_new
 				mv ${mc_fknownmods}_new ${mc_fknownmods}
 			fi
@@ -472,7 +472,7 @@ xadd)
 		fi
 
 		#  Add module to the list of active modules.
-		if grep "^${mc_mod}.mod$" ${mc_fmodules} 1>&7 2>&7; then
+		if grep "^${mc_mod}\.mod$" ${mc_fmodules} 1>&7 2>&7; then
 			:
 		else
 			if test ! -d ${mc_mod_dir}/${mc_mod}.mod; then
@@ -629,7 +629,7 @@ EOF
 		fi
 
 		#  Remove .mod ending
-		mc_modname=`echo ${mc_mod} | sed -e 's/.mod//g'`
+		mc_modname=`echo ${mc_mod} | sed -e 's/\.mod//g'`
 
 		#  Note: We need to make sure that we only catch module names
 		#        that match _exactly_. e.g. don't mix bseen and seen.

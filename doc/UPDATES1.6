@@ -1,15 +1,16 @@
-$Id: UPDATES1.6,v 1.403 2002/09/01 05:17:39 wcc Exp $
+$Id: UPDATES1.6,v 1.404 2002/09/09 23:14:23 wcc Exp $
 
 Changes in Eggdrop: (since v1.6.0)
 ----------------------------------
 
 1.6.13
 Found by  Fixed by  What...
+          darko``   fixed a missing escape in some regexps in misc/modconfig
 [sL]      Wcc       channel set #chan chanmode $var corrupted $var in Tcl8.x
           blaster^  don't log "joined #chan but didn't want to" in certain cases where
                     the channel was newly removed or set inactive
           Wcc       cosmetic changes to share_stick_[exempt/invite/ban]
-          TaKeDa    msg_key and msg_invite did not work properly for !channels
+J Lehto   TaKeDa    msg_key and msg_invite did not work properly for !channels
           BarkerJr  show the number of hops in .trace's output
           Mo-Ize    use the proper dynamic lib extention on Mac OSX
           Wiktor    return 5 from dccsend if the file exists in the temp directory and
