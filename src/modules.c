@@ -4,7 +4,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: modules.c,v 1.67 2002/09/27 22:55:20 wcc Exp $
+ * $Id: modules.c,v 1.68 2002/11/29 05:43:33 wcc Exp $
  */
 /* 
  * Copyright (C) 1997 Robey Pointer
@@ -539,8 +539,11 @@ Function global_table[] =
   (Function) module_load,
   (Function) module_unload,
   (Function) & parties,	/* int					*/
-  /* 276 */
-  (Function) tell_bottree
+  /* 276 - 279 */
+  (Function) tell_bottree,
+  (Function) MD5_Init,
+  (Function) MD5_Update,
+  (Function) MD5_Final
 };
 
 void init_modules(void)

@@ -1,7 +1,7 @@
 /*
  * module.h
  *
- * $Id: module.h,v 1.59 2002/09/27 22:55:20 wcc Exp $
+ * $Id: module.h,v 1.60 2002/11/29 05:43:33 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -452,8 +452,11 @@
 #define module_load ((char *(*)(char *))global[273])
 #define module_unload ((char *(*)(char *, char *))global[274])
 #define parties (*(int *)global[275])
-/* 276 */
+/* 276 - 279 */
 #define tell_bottree ((void (*)(int, int))global[276])
+#define MD5_Init ((void (*)(int, int))global[277])
+#define MD5_Update ((void (*)(int, int))global[278])
+#define MD5_Final ((void (*)(int, int))global[279])
 
 /* This is for blowfish module, couldnt be bothered making a whole new .h
  * file for it ;)
