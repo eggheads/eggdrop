@@ -1,7 +1,7 @@
 
-# Getops 2.2d
+# Getops 2.2e
 
-# $Id: getops-2.2d.tcl,v 1.2 1999/12/21 17:35:08 fabian Exp $
+# $Id: getops.tcl,v 1.1 2000/06/20 20:37:31 fabian Exp $
 
 # This script is used for bots to request and give ops to each other. 
 # For this to work, you'll need:
@@ -21,6 +21,10 @@
 # hostmasks up-to-date).
 
 # -----------------------------------------------------------------------------
+
+# 2.2e by Fabian <fknittel@gmx.de>
+#  - added support for !channels (so-called ID-channels), using chandname2name
+#    functions. This makes it eggdrop 1.5 specific.
 
 # 2.2d by brainsick <brnsck@mail.earthlink.net>
 #  - Undernet now handles keys differently.  It no longer gives the key on a
@@ -131,7 +135,7 @@ proc gain_entrance {what chan} {
     }
    } {
     if {$go_cycle} {
-     putserv "NOTICE $chan :$go_cycle_msg"
+     putserv "NOTICE [chandname2name $chan] :$go_cycle_msg"
     }
    }
   }
@@ -164,6 +168,7 @@ proc botnet_request {bot com args} {
  set args [lindex $args 0]
  set subcom [lindex $args 0]
  set chan [string tolower [lindex $args 1]]
+ set idchan [chandname2name $chan]
  set nick [lindex $args 2]
 
  if {[matchattr $bot b] == 0} {
@@ -232,7 +237,7 @@ proc botnet_request {bot com args} {
   }
   "invite" {
    putlog "GetOps: $bot asked for an invite to $chan."
-   putserv "invite $nick $chan"
+   putserv "invite $nick $idchan"
    return 1
   }
   "limit" {
@@ -253,7 +258,7 @@ proc botnet_request {bot com args} {
    putlog "GetOps: $bot gave me the key to $chan! ($nick)"
    foreach channel [string tolower [channels]] {
     if {$chan == $channel} {
-     putserv "JOIN $channel $nick"
+     putserv "JOIN $idchan $nick"
      return 1
     }
    }
@@ -329,7 +334,7 @@ bind mode - "* +o" get_key
 proc get_key { nick uhost hand chan mode whom } {
  global botnick
  if {$botnick == $whom} {
-  puthelp "MODE $chan"
+  puthelp "MODE [chandname2name $chan]"
  }
  return 0
 }
@@ -365,4 +370,4 @@ proc gop_join { nick uhost hand chan } {
 
 set getops_loaded 1
 
-putlog "GetOps v2.2d by brainsick, Progfou, Cron@irc.pl, dtM, The_O, DarkDruid & Ernst loaded."
+putlog "GetOps v2.2e by Fabian, brainsick, Progfou, Cron@irc.pl, dtM, The_O, DarkDruid & Ernst loaded."
