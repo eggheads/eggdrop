@@ -1,7 +1,7 @@
 /* 
  * userchan.c -- part of channels.mod
  * 
- * $Id: userchan.c,v 1.18 2000/10/27 19:26:49 fabian Exp $
+ * $Id: userchan.c,v 1.19 2000/11/21 04:38:36 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1234,19 +1234,33 @@ static void channels_writeuserfile(void)
   write_channels();
 }
 
+/* Expire mask originally set by `who' on `chan'?
+ *
+ * We might not want to expire masks in all cases, as other bots
+ * often tend to immediately reset masks they've listed in their
+ * internal ban list, making it quite senseless for us to remove
+ * them in the first place.
+ *
+ * Returns 1 if a mask on `chan' by `who' may be expired and 0 if
+ * not.
+ */
 static int expired_mask(struct chanset_t *chan, char *who)
 {
-  memberlist *m, *m2;
-  char s[UHOSTLEN], *snick, *sfrom;
-  struct userrec *u;
+  memberlist		*m, *m2;
+  char			 buf[UHOSTLEN], *snick, *sfrom;
+  struct userrec	*u;
 
-  strcpy(s, who);
-  sfrom = s;
-  snick = splitnick(&sfrom);
-	  
-  if (force_expire || !snick[0])
+  /* Always expire masks, regardless of who set it? */ 
+  if (force_expire)
     return 1;
-  
+
+  strcpy(buf, who);
+  sfrom = buf;
+  snick = splitnick(&sfrom);
+
+  if (!snick[0])
+    return 1;
+
   m = ismember(chan, snick);
   if (!m)
     for (m2 = chan->channel.member; m2 && m2->nick[0]; m2 = m2->next)
@@ -1258,13 +1272,18 @@ static int expired_mask(struct chanset_t *chan, char *who)
   if (!m || !chan_hasop(m) || !rfc_casecmp(m->nick, botname))
     return 1;
 
+  /* At this point we now the person/bot who set the mask is currently
+   * present in the channel and has op.
+   */
+
   if (m->user)
     u = m->user;
   else {
-    simple_sprintf(s, "%s!%s", m->nick, m->userhost);
-    u = get_user_by_host(s);
+    simple_sprintf(buf, "%s!%s", m->nick, m->userhost);
+    u = get_user_by_host(buf);
   }
-  if (u->flags & USER_BOT)
+  /* Do not expire masks set by bots. */
+  if (u && u->flags & USER_BOT)
     return 0;
   else
     return 1;
