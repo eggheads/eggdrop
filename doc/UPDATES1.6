@@ -1,4 +1,4 @@
-$Id: UPDATES1.6,v 1.599 2005/01/20 21:03:37 wcc Exp $
+$Id: UPDATES1.6,v 1.600 2005/01/22 07:22:02 wcc Exp $
 
 Eggdrop Changes (since v1.6.0)
     _____________________________________________________________________
@@ -10,7 +10,12 @@ Eggdrop Changes (since v1.6.0)
 
     ftp://ftp.eggheads.org/pub/eggdrop/UPDATES/
 
+
   1.6.18:
+    - Fix for problems created when loading long user-defined channel setting
+      names from the channel file.
+    * Patch by: Shrike
+
     - Help file update related to sharing.
     * Patch by: Shawn888, slennox
 
@@ -29,6 +34,7 @@ Eggdrop Changes (since v1.6.0)
     - Corrected the order of our search paths for Tcl. This should help stop
       version mismatches between the headers and libraries.
     * Patch by: CoderX2
+
 
   1.6.17 (22 August 2004):
     + Final released on August 22nd, 2004.
@@ -132,6 +138,7 @@ Eggdrop Changes (since v1.6.0)
     - Suppress configure warnings on systems that use newer versions of GNU
       coreutils.
     * Patch by: Wcc
+
 
   1.6.16 (31 May 2004):
     + Final released on May 31, 2004.
@@ -338,9 +345,11 @@ Eggdrop Changes (since v1.6.0)
       less wrapping of description.
     * Patch by: Wcc
 
+
 1.6.15 (04 May 2003)
 Found by  Fixed by  What...
 MORA      Wcc       fixed a patch.h compile error
+
 
 1.6.14 (04 May 2003)
 Found by  Fixed by  What...
@@ -443,6 +452,7 @@ Paladin   Wcc       exported MD5 functions to modules
           Wcc       .say and .act now allow you to send a message to a moderated
                     channel when the bot has halfop status
 
+
 1.6.13 (22 November 2002)
 Found by  Fixed by  What...
           BarkerJr  doc/MODULES updates
@@ -496,9 +506,11 @@ ble       Wcc       fixed a broken dprintf in cmd_kick()
           Wcc       made [ban/invite/exempt]-time a channel int
           BarkerJr  documentation updates related to the PUBM bind
 
+
 1.6.12 (26 July 2002)
 Found by  Fixed by  What...
 Segfault            reverted the sockfix patches from 1.6.11
+
 
 1.6.11 (26 July 2002)
 Found by  Fixed by  What...
@@ -540,6 +552,7 @@ guppy     Wcc       added support for +r on Undernet's ircu 2.10.11
           upstream  fixed a crash in seen.mod with long channel names
           slug      added support for the +C channel mode (noctcp) on QuakeNet's ircu
 
+
 1.6.10 (29 March 2002)
 Found by  Fixed by  What...
 (^Baron^) Eule      protect(ops|friends) works with +bitch now
@@ -555,6 +568,7 @@ Paladin   Wcc       chattr's description in tcl-commands.doc was unclear relatin
 MC_8      Wcc       more tcl-commands.doc fixes
 MC_8      Wcc       added some missing command options to tcl-commands.doc
           Uwe       cd_cmd_table was missing a null entry at the end of the list
+
 
 1.6.9 (10 March 2002)
 Found by  Fixed by  What...
@@ -634,6 +648,7 @@ jedis     guppy     some more remote boot fixes
 |^Raven^| stdarg/   hand2nick, nick2hand, handonchan, and chanlist might not always return
           guppy     that a user is known even if we know they are -- this has been fixed
 
+
 1.6.8 (2 January 2002)
 Found by  Fixed by  What...
 PPSlim    guppy     removed a legacy tcl hack that probably no one but old eggdrop users
@@ -705,6 +720,7 @@ RandomAPB Wcc       show the user port as users instead of telnet and the bot po
                     as a bot port instead of a relay port
 various   stdarg    small fix to the notes module
           BarkerJr  updated the uptime url
+
 
 1.6.7 (7 December 2001)
 Found by  Fixed by  What...
@@ -811,6 +827,7 @@ Noyga     Sup       Bot sent a useless TOPIC command to the server
 Abraham   Noyga     the channel file is now backed up
 various   strolchi  small fix for binds and unicode characters
 
+
 1.6.6 (20 July 2001)
 Found by  Fixed by  What...
           Paladin   a few minor doc updates
@@ -820,6 +837,7 @@ various   ITE       fixed a slight problem with how we export modules
 [joco]    Sup       fixed a small buffer overflow in cmd_whois
           LethalWP  fixed a small getops bug
           ITE       .conf cleanups, added TCL threaded info in DEBUG
+
 
 1.6.5 (10 July 2001)
 Found by  Fixed by  What...
@@ -907,6 +925,7 @@ slennox   Sup       Updated the help channels in the docs.
           Eugene    fixed various formatting mistakes
           SuperS    made the IRIX5,6 and 6-64bit OS detection into one check
 
+
 1.6.4 (13 April 2001)
 Found by  Fixed by  What...
           Sup       Minor fixes to write_debug() function.
@@ -940,6 +959,7 @@ Darude    Darude/   encrypt/decrypt with highbit character messed up the
 KingBob   Tothwolf/ Fixed rest of the problems with utf8 characters.
           Wingman
 
+
 1.6.3 (27 February 2001)
 Found by  Fixed by  What...
           guppy     made blowfish.mod a bit more friendly with other
@@ -968,6 +988,7 @@ GregMo    Sup       `.note' wasn't correctly requiring a message parameter.
                     thus circumvent auto-kick or deop
 GregMo    guppy     fixed cmd_binds when called with no argument
           guppy     cleaned up Context and Assert usage in the modules
+
 
 1.6.2 (January 14, 2001)
 Found by  Fixed by  What...
@@ -1005,6 +1026,7 @@ fabulous  Fabian    Two calls to fclose() were missing in transfer.mod,
           ITE/      added '--disable-tcl-threads' to configure
           Tothwolf
 
+
 1.6.1 (November 22, 2000)
 Found by  Fixed by  What...
           Wiktor    updated KNOWN-PROBLEMS
@@ -1024,6 +1046,7 @@ various   Fabian    Channel masks for unsupported channels weren't properly
                     than 500 characters and doesn't contain spaces.
 paran0id  Fabian    Fixed crash in expired_mask() when checking ops not
                     present in the user-list.
+
 
 1.6.0 (November 15, 2000)
 Found by  Fixed by  What...

@@ -2,7 +2,7 @@
  * channels.c -- part of channels.mod
  *   support for channels within the bot
  *
- * $Id: channels.c,v 1.90 2005/01/03 20:01:45 paladin Exp $
+ * $Id: channels.c,v 1.91 2005/01/22 07:22:03 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -452,13 +452,14 @@ invite-time %d %cenforcebans %cdynamicbans %cuserbans %cautoop %cautohalfop \
             PLSMNS(channel_dynamicinvites(chan)),
             PLSMNS(!channel_nouserinvites(chan)),
             PLSMNS(channel_nodesynch(chan)));
+    fprintf(f, "%s\n", channel_static(chan) ? "" : "}");
     for (ul = udef; ul; ul = ul->next) {
       if (ul->defined && ul->name) {
         if (ul->type == UDEF_FLAG)
-          fprintf(f, "%c%s%s ", getudef(ul->values, chan->dname) ? '+' : '-',
+          fprintf(f, "channel set %s %c%s%s\n", name, getudef(ul->values, chan->dname) ? '+' : '-',
                   "udef-flag-", ul->name);
         else if (ul->type == UDEF_INT)
-          fprintf(f, "%s%s %d ", "udef-int-", ul->name, getudef(ul->values,
+          fprintf(f, "channel set %s %s%s %d\n", name, "udef-int-", ul->name, getudef(ul->values,
                   chan->dname));
         else if (ul->type == UDEF_STR) {
           char *p = (char *) getudef(ul->values, chan->dname);
@@ -466,12 +467,11 @@ invite-time %d %cenforcebans %cdynamicbans %cuserbans %cautoop %cautohalfop \
           if (!p)
             p = "{}";
 
-          fprintf(f, "udef-str-%s %s ", ul->name, p);
+          fprintf(f, "channel set %s udef-str-%s %s\n", name, ul->name, p);
         } else
           debug1("UDEF-ERROR: unknown type %d", ul->type);
       }
     }
-    fprintf(f, "%s\n", channel_static(chan) ? "" : "}");
     if (fflush(f)) {
       putlog(LOG_MISC, "*", "ERROR writing channel file.");
       fclose(f);
