@@ -6,14 +6,11 @@ doofus:
 	@echo ""
 	@cd ../../../; make
 
-clean:
-	@rm -f *.o *.so *~
-
 static: ../share.o
 
 modules: ../../../share.so
 
-../share.o: share.c
+../share.o:
 	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c share.c
 	rm -f ../share.o
 	mv share.o ../
@@ -22,7 +19,15 @@ modules: ../../../share.so
 	$(LD) -o ../../../share.so ../share.o
 	$(STRIP) ../../../share.so
 
-share.c: ../../chan.h ../../users.h ../channels.mod/channels.h \
-../transfer.mod/transfer.h ../module.h ../modvals.h ../../eggdrop.h
+depend:
+	$(CC) $(CFLAGS) $(CPPFLAGS) -MM *.c > .depend
+
+clean:
+	@rm -f .depend *.o *.so *~
 
 #safety hash
+../share.o: share.c ../module.h ../../../config.h ../../main.h \
+ ../../lang.h ../../eggdrop.h ../../flags.h ../../proto.h \
+ ../../../lush.h ../../cmdt.h ../../tclegg.h ../../tclhash.h \
+ ../../chan.h ../../users.h ../modvals.h ../../tandem.h \
+ ../transfer.mod/transfer.h ../channels.mod/channels.h

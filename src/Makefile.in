@@ -34,8 +34,11 @@ doofus:
 
 $(EGGEXEC): ../$(EGGEXEC)
 
+depend:
+	$(CC) $(CFLAGS) $(CPPFLAGS) -MM *.c > .depend
+
 clean:
-	@rm -f *.o *.a *~
+	@rm -f .depend *.o *.a *~
 
 botcmd.o:
 	@echo "(This will take a while. Go make a pizza or something.)"
@@ -68,33 +71,61 @@ eggdrop.h:
 .c.o:
 	$(CC) $(CFLAGS) $(CPPFLAGS) -c $<
 
-botcmd.c: chan.h main.h modules.h tandem.h users.h
-botmsg.c: main.h tandem.h
-botnet.c: main.h tandem.h
-chanprog.c: main.h modules.h
-cmds.c: main.h modules.h tandem.h
-dcc.c: main.h md5/global.h md5/md5.h modules.h tandem.h
-dccutil.c: chan.h main.h modules.h tandem.h
-flags.c: main.h
-language.c: main.h
-main.c: chan.h main.h modules.h patch.h tandem.h
-mem.c: mod/modvals.h
-misc.c: chan.h main.h
-modules.c: main.h modules.h tandem.h users.h
-net.c: main.h
-rfc1459.c: main.h
-tcl.c: main.h
-tcldcc.c: main.h modules.h tandem.h
-tclhash.c: match.c chan.h main.h users.h
-tclmisc.c: main.h modules.h tandem.h
-tcluser.c: chan.h main.h tandem.h users.h
-userent.c: main.h users.h
-userrec.c: chan.h main.h modules.h tandem.h users.h
-users.c: chan.h main.h modules.h tandem.h users.h
-main.h: ../config.h chan.h cmdt.h eggdrop.h flags.h lang.h \
-proto.h tclegg.h tclhash.h users.h
-modules.h: mod/modvals.h
-proto.h: ../lush.h
-tclegg.h: ../lush.h proto.h
-
 #safety hash
+botcmd.o: botcmd.c main.h lang.h eggdrop.h flags.h proto.h ../lush.h \
+ cmdt.h tclegg.h tclhash.h chan.h users.h tandem.h modules.h \
+ mod/modvals.h
+botmsg.o: botmsg.c main.h lang.h eggdrop.h flags.h proto.h ../lush.h \
+ cmdt.h tclegg.h tclhash.h chan.h users.h tandem.h
+botnet.o: botnet.c main.h lang.h eggdrop.h flags.h proto.h ../lush.h \
+ cmdt.h tclegg.h tclhash.h chan.h users.h tandem.h
+chanprog.o: chanprog.c main.h lang.h eggdrop.h flags.h proto.h \
+ ../lush.h cmdt.h tclegg.h tclhash.h chan.h users.h modules.h \
+ mod/modvals.h
+cmds.o: cmds.c main.h lang.h eggdrop.h flags.h proto.h ../lush.h \
+ cmdt.h tclegg.h tclhash.h chan.h users.h tandem.h modules.h \
+ mod/modvals.h
+dcc.o: dcc.c main.h lang.h eggdrop.h flags.h proto.h ../lush.h cmdt.h \
+ tclegg.h tclhash.h chan.h users.h modules.h mod/modvals.h tandem.h \
+ md5/global.h md5/md5.h
+dccutil.o: dccutil.c main.h lang.h eggdrop.h flags.h proto.h ../lush.h \
+ cmdt.h tclegg.h tclhash.h chan.h users.h modules.h mod/modvals.h \
+ tandem.h
+flags.o: flags.c main.h lang.h eggdrop.h flags.h proto.h ../lush.h \
+ cmdt.h tclegg.h tclhash.h chan.h users.h
+language.o: language.c main.h lang.h eggdrop.h flags.h proto.h \
+ ../lush.h cmdt.h tclegg.h tclhash.h chan.h users.h
+main.o: main.c main.h lang.h eggdrop.h flags.h proto.h ../lush.h \
+ cmdt.h tclegg.h tclhash.h chan.h users.h modules.h mod/modvals.h \
+ tandem.h patch.h
+match.o: match.c
+mem.o: mem.c mod/modvals.h
+misc.o: misc.c main.h lang.h eggdrop.h flags.h proto.h ../lush.h \
+ cmdt.h tclegg.h tclhash.h chan.h users.h
+modules.o: modules.c main.h lang.h eggdrop.h flags.h proto.h ../lush.h \
+ cmdt.h tclegg.h tclhash.h chan.h users.h modules.h mod/modvals.h \
+ tandem.h
+net.o: net.c main.h lang.h eggdrop.h flags.h proto.h ../lush.h cmdt.h \
+ tclegg.h tclhash.h chan.h users.h
+rfc1459.o: rfc1459.c main.h lang.h eggdrop.h flags.h proto.h ../lush.h \
+ cmdt.h tclegg.h tclhash.h chan.h users.h
+tcl.o: tcl.c main.h lang.h eggdrop.h flags.h proto.h ../lush.h cmdt.h \
+ tclegg.h tclhash.h chan.h users.h
+tcldcc.o: tcldcc.c main.h lang.h eggdrop.h flags.h proto.h ../lush.h \
+ cmdt.h tclegg.h tclhash.h chan.h users.h tandem.h modules.h \
+ mod/modvals.h
+tclhash.o: tclhash.c main.h lang.h eggdrop.h flags.h proto.h ../lush.h \
+ cmdt.h tclegg.h tclhash.h chan.h users.h match.c
+tclmisc.o: tclmisc.c main.h lang.h eggdrop.h flags.h proto.h ../lush.h \
+ cmdt.h tclegg.h tclhash.h chan.h users.h modules.h mod/modvals.h \
+ tandem.h
+tcluser.o: tcluser.c main.h lang.h eggdrop.h flags.h proto.h ../lush.h \
+ cmdt.h tclegg.h tclhash.h chan.h users.h tandem.h
+userent.o: userent.c main.h lang.h eggdrop.h flags.h proto.h ../lush.h \
+ cmdt.h tclegg.h tclhash.h chan.h users.h
+userrec.o: userrec.c main.h lang.h eggdrop.h flags.h proto.h ../lush.h \
+ cmdt.h tclegg.h tclhash.h chan.h users.h modules.h mod/modvals.h \
+ tandem.h
+users.o: users.c main.h lang.h eggdrop.h flags.h proto.h ../lush.h \
+ cmdt.h tclegg.h tclhash.h chan.h users.h modules.h mod/modvals.h \
+ tandem.h

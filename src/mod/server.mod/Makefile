@@ -6,14 +6,11 @@ doofus:
 	@echo ""
 	@cd ../../../; make
 
-clean:
-	@rm -f *.o *.so *~
-
 static: ../server.o
 
 modules: ../../../server.so
 
-../server.o: server.c
+../server.o:
 	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c server.c
 	rm -f ../server.o
 	mv server.o ../
@@ -22,7 +19,15 @@ modules: ../../../server.so
 	$(LD) -o ../../../server.so ../server.o
 	$(STRIP) ../../../server.so
 
-server.c: servmsg.c cmdsserv.c server.h \
-../module.h ../modvals.h ../../eggdrop.h
+depend:
+	$(CC) $(CFLAGS) $(CPPFLAGS) -MM *.c > .depend
+
+clean:
+	@rm -f .depend *.o *.so *~
 
 #safety hash
+../server.o: server.c ../module.h ../../../config.h ../../main.h \
+ ../../lang.h ../../eggdrop.h ../../flags.h ../../proto.h \
+ ../../../lush.h ../../cmdt.h ../../tclegg.h ../../tclhash.h \
+ ../../chan.h ../../users.h ../modvals.h ../../tandem.h server.h \
+ servmsg.c cmdsserv.c

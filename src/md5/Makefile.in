@@ -10,7 +10,6 @@ INSTALL_DATA = @INSTALL_DATA@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
 
 OBJS = md5c.o
-HDRS = global.h md5.h
 
 doofus:
 	@echo ""
@@ -18,10 +17,11 @@ doofus:
 	@echo ""
 	@cd $(top_srcdir); $(MAKE)
 
-clean:
-	@rm -f *.o *~
+depend:
+	$(CC) $(CFLAGS) $(CPPFLAGS) -MM *.c > .depend
 
-$(OBJS): $(HDRS)
+clean:
+	@rm -f .depend *.o *~
 
 md5: $(OBJS)
 
@@ -32,3 +32,4 @@ md5: $(OBJS)
 	$(CC) $(CFLAGS) $(CPPFLAGS) -c $<
 
 #safety hash
+md5c.o: md5c.c global.h md5.h

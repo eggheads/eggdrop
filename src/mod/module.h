@@ -24,6 +24,11 @@
 #undef context
 #undef contextnote
 #undef feof
+#undef user_malloc
+#undef dprintf
+#undef get_data_ptr
+#undef wild_match
+#undef user_realloc
 #undef ASSERT
 
 /* redefine for module-relevance */

@@ -6,14 +6,11 @@ doofus:
 	@echo ""
 	@cd ../../../; make
 
-clean:
-	@rm -f *.o *.so *~
-
 static: ../blowfish.o
 
 modules: ../../../blowfish.so
 
-../blowfish.o: blowfish.c
+../blowfish.o:
 	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c blowfish.c
 	rm -f ../blowfish.o
 	mv blowfish.o ../
@@ -22,6 +19,15 @@ modules: ../../../blowfish.so
 	$(LD) -o ../../../blowfish.so ../blowfish.o
 	$(STRIP) ../../../blowfish.so
 
-blowfish.c: blowfish.h bf_tab.h ../module.h ../modvals.h ../../eggdrop.h
+depend:
+	$(CC) $(CFLAGS) $(CPPFLAGS) -MM *.c > .depend
+
+clean:
+	@rm -f .depend *.o *.so *~
 
 #safety hash
+../blowfish.o: blowfish.c ../module.h ../../../config.h ../../main.h \
+ ../../lang.h ../../eggdrop.h ../../flags.h ../../proto.h \
+ ../../../lush.h ../../cmdt.h ../../tclegg.h ../../tclhash.h \
+ ../../chan.h ../../users.h ../modvals.h ../../tandem.h blowfish.h \
+ bf_tab.h

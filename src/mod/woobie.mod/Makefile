@@ -6,14 +6,11 @@ doofus:
 	@echo ""
 	@cd ../../../; make
 
-clean:
-	@rm -f *.o *.so *~
-
 static: ../woobie.o
 
 modules: ../../../woobie.so
 
-../woobie.o: woobie.c
+../woobie.o:
 	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c woobie.c
 	rm -f ../woobie.o
 	mv woobie.o ../
@@ -22,6 +19,14 @@ modules: ../../../woobie.so
 	$(LD) -o ../../../woobie.so ../woobie.o
 	$(STRIP) ../../../woobie.so
 
-woobie.c: ../module.h ../modvals.h ../../eggdrop.h
+depend:
+	$(CC) $(CFLAGS) $(CPPFLAGS) -MM *.c > .depend
+
+clean:
+	@rm -f .depend *.o *.so *~
 
 #safety hash
+../woobie.o: woobie.c ../module.h ../../../config.h ../../main.h \
+ ../../lang.h ../../eggdrop.h ../../flags.h ../../proto.h \
+ ../../../lush.h ../../cmdt.h ../../tclegg.h ../../tclhash.h \
+ ../../chan.h ../../users.h ../modvals.h ../../tandem.h

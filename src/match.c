@@ -28,7 +28,7 @@
  * derivatives now. */
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#  include <config.h>
 #endif
 
 /* Remove the next line to use this in IrcII */

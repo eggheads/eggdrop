@@ -6,14 +6,11 @@ doofus:
 	@echo ""
 	@cd ../../../; make
 
-clean:
-	@rm -f *.o *.so *~
-
 static: ../assoc.o
 
 modules: ../../../assoc.so
 
-../assoc.o: assoc.c
+../assoc.o:
 	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c assoc.c
 	rm -f ../assoc.o
 	mv assoc.o ../
@@ -22,6 +19,14 @@ modules: ../../../assoc.so
 	$(LD) -o ../../../assoc.so ../assoc.o
 	$(STRIP) ../../../assoc.so
 
-assoc.c: ../../tandem.h ../module.h ../modvals.h ../../eggdrop.h
+depend:
+	$(CC) $(CFLAGS) $(CPPFLAGS) -MM *.c > .depend
+
+clean:
+	@rm -f .depend *.o *.so *~
 
 #safety hash
+../assoc.o: assoc.c ../module.h ../../../config.h ../../main.h \
+ ../../lang.h ../../eggdrop.h ../../flags.h ../../proto.h \
+ ../../../lush.h ../../cmdt.h ../../tclegg.h ../../tclhash.h \
+ ../../chan.h ../../users.h ../modvals.h ../../tandem.h

@@ -6,14 +6,11 @@ doofus:
 	@echo ""
 	@cd ../../../; make
 
-clean:
-	@rm -f *.o *.so *~
-
 static: ../filesys.o
 
 modules: ../../../filesys.so
 
-../filesys.o: filesys.c
+../filesys.o:
 	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c filesys.c
 	rm -f ../filesys.o
 	mv filesys.o ../
@@ -22,9 +19,15 @@ modules: ../../../filesys.so
 	$(LD) -o ../../../filesys.so ../filesys.o
 	$(STRIP) ../../../filesys.so
 
-filesys.c: filedb.c files.c tclfiles.c files.h filesys.h \
-../../tandem.h ../module.h ../modvals.h ../../eggdrop.h
+depend:
+	$(CC) $(CFLAGS) $(CPPFLAGS) -MM *.c > .depend
 
-filesys.h: ../transfer.mod/transfer.h ../../lang.h
+clean:
+	@rm -f .depend *.o *.so *~
 
 #safety hash
+../filesys.o: filesys.c ../../../config.h ../module.h ../../main.h \
+ ../../lang.h ../../eggdrop.h ../../flags.h ../../proto.h \
+ ../../../lush.h ../../cmdt.h ../../tclegg.h ../../tclhash.h \
+ ../../chan.h ../../users.h ../modvals.h ../../tandem.h filesys.h \
+ ../transfer.mod/transfer.h files.h filedb.c files.c tclfiles.c

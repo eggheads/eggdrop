@@ -6,14 +6,11 @@ doofus:
 	@echo ""
 	@cd ../../../; make
 
-clean:
-	@rm -f *.o *.so *~
-
 static: ../console.o
 
 modules: ../../../console.so
 
-../console.o: console.c
+../console.o:
 	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c console.c
 	rm -f ../console.o
 	mv console.o ../
@@ -22,6 +19,14 @@ modules: ../../../console.so
 	$(LD) -o ../../../console.so ../console.o
 	$(STRIP) ../../../console.so
 
-console.c: ../module.h ../modvals.h ../../eggdrop.h
+depend:
+	$(CC) $(CFLAGS) $(CPPFLAGS) -MM *.c > .depend
+
+clean:
+	@rm -f .depend *.o *.so *~
 
 #safety hash
+../console.o: console.c ../module.h ../../../config.h ../../main.h \
+ ../../lang.h ../../eggdrop.h ../../flags.h ../../proto.h \
+ ../../../lush.h ../../cmdt.h ../../tclegg.h ../../tclhash.h \
+ ../../chan.h ../../users.h ../modvals.h ../../tandem.h

@@ -6,14 +6,11 @@ doofus:
 	@echo ""
 	@cd ../../../; make
 
-clean:
-	@rm -f *.o *.so *~
-
 static: ../seen.o
 
 modules: ../../../seen.so
 
-../seen.o: seen.c
+../seen.o:
 	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c seen.c
 	rm -f ../seen.o
 	mv seen.o ../
@@ -22,7 +19,14 @@ modules: ../../../seen.so
 	$(LD) -o ../../../seen.so ../seen.o
 	$(STRIP) ../../../seen.so
 
-seen.c: ../channels.mod/channels.h ../../chan.h ../../users.h \
-../module.h ../modvals.h ../../eggdrop.h
+depend:
+	$(CC) $(CFLAGS) $(CPPFLAGS) -MM *.c > .depend
+
+clean:
+	@rm -f .depend *.o *.so *~
 
 #safety hash
+../seen.o: seen.c ../module.h ../../../config.h ../../main.h ../../lang.h \
+ ../../eggdrop.h ../../flags.h ../../proto.h ../../../lush.h \
+ ../../cmdt.h ../../tclegg.h ../../tclhash.h ../../chan.h \
+ ../../users.h ../modvals.h ../../tandem.h ../channels.mod/channels.h
