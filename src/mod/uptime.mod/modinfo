@@ -1,0 +1,4 @@
+DESC:This ranks your bot in the uptimes list soon to be setup.
+DESC:
+DESC:Enabling this module is recommended for bots active on IRC.
+DEPENDS:server
