@@ -1,7 +1,7 @@
 /* 
  * transfer.h -- part of transfer.mod
  * 
- * $Id: transfer.h,v 1.9 2000/01/17 22:36:10 fabian Exp $
+ * $Id: transfer.h,v 1.10 2000/07/12 21:50:35 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -53,6 +53,9 @@ enum dccsend_types {
 #define USERENTRY_FSTAT (*(struct user_entry_type *)(transfer_funcs[16]))
 #define quiet_reject (*(int *)(transfer_funcs[17]))
 #define raw_dcc_resend(a,b,c,d) (((int (*) (char *,char *,char *,char *))transfer_funcs[18])(a,b,c,d))
+#define H_lost (*(p_tcl_bind_list*)(transfer_funcs[19]))
+/* 20 - 23 */
+#define H_tout (*(p_tcl_bind_list*)(transfer_funcs[20]))   
 
 #else	/* MAKING_TRANSFER */
 

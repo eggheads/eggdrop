@@ -1399,6 +1399,26 @@ for the msg-command "stop", use "unbind msg - stop msg_stop".
 |        init-server       (called when we actually get on our irc server)
 |        disconnect-server (called when we disconnect from our irc server)
 
+| (41) LOST   (stackable)
+|      bind lost <flags> <mask> <proc>
+|      proc-name <handle> <nick> <path> <bytes-transferred> <length-of-file>
+|
+|      Triggered when a DCC SEND transfer gets lost, i.e. the connection is
+|      terminated before all data was successfully sent/received. This is
+|      typically caused by a user abort.
+|      (THIS IS ONLY AVALIABLE WHEN THE transfer MODULE IS LOADED)
+
+| (42) TOUT   (stackable)
+|      bind tout <flags> <mask> <proc>
+|      proc-name <handle> <nick> <path> <bytes-transferred> <length-of-file>
+|
+|      Triggered when a DCC SEND transfer times out. This may either happen
+|      because the dcc connection was not accepted or because the data
+|      transfer stalled for some reason.
+|      (THIS IS ONLY AVALIABLE WHEN THE transfer MODULE IS LOADED)
+
+
+
 (A) RETURN VALUES
 
     Several bindings pay attention to the value you return from the proc
@@ -1650,6 +1670,12 @@ users to read later
     returns: list of files queued by someone; each item in the list will be
       a sublist with two elements: nickname the file is being sent to, and
       the filename
+
+  getfilesendtime <idx>
+    lets you figure out the unix time when a file transfer started.
+    returns: "-1" when no matching transfer with the specified idx is found,
+      "-2" if the idx matches an entry which is not a file transfer and the
+      unix start-time of the file-transfer in all other cases.
 
   mkdir <directory> [required-flags]
     creates a directory in the files system, only users with the

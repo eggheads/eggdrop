@@ -1,7 +1,7 @@
 /* 
  * tclhash.h
  * 
- * $Id: tclhash.h,v 1.5 2000/01/30 19:26:21 fabian Exp $
+ * $Id: tclhash.h,v 1.6 2000/07/12 21:50:35 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -100,11 +100,12 @@ extern p_tcl_bind_list H_away, H_nkch, H_filt, H_disc, H_event;
 #endif
 
 
-#define CHECKVALIDITY(a)						\
+#define CHECKVALIDITY(a)	do {					\
 	if (!check_validity(argv[0], (a))) {				\
 		Tcl_AppendResult(irp, "bad builtin command call!",	\
 				 NULL);					\
 		return TCL_ERROR;					\
-	}
+	}								\
+} while (0)
 
 #endif				/* _EGG_TCLHASH_H */

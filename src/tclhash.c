@@ -7,7 +7,7 @@
  *   (non-Tcl) procedure lookups for msg/dcc/file commands
  *   (Tcl) binding internal procedures to msg/dcc/file commands
  * 
- * $Id: tclhash.c,v 1.15 2000/05/06 22:02:27 fabian Exp $
+ * $Id: tclhash.c,v 1.16 2000/07/12 21:50:35 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -345,11 +345,10 @@ static int tcl_bind STDVAR
 {
   p_tcl_bind_list tp;
 
-  if ((long int) cd == 1) {
-    BADARGS(5, 5, " type flags cmd/mask procname")
-  } else {
-    BADARGS(4, 5, " type flags cmd/mask ?procname?")
-  }
+  if ((long int) cd == 1)
+    BADARGS(5, 5, " type flags cmd/mask procname");
+  else
+    BADARGS(4, 5, " type flags cmd/mask ?procname?");
   tp = find_bind_table(argv[1]);
   if (!tp) {
     Tcl_AppendResult(irp, "bad type, should be one of: ", NULL);
@@ -359,9 +358,8 @@ static int tcl_bind STDVAR
   if ((long int) cd == 1) {
     if (!unbind_bind_entry(tp, argv[2], argv[3], argv[4])) {
       /* Don't error if trying to re-unbind a builtin */
-      if ((argv[4][0] != '*') || (argv[4][4] != ':') ||
-          (strcmp(argv[3], &argv[4][5])) ||
-	      (strncmp(argv[1], &argv[4][1], 3))) {
+      if (argv[4][0] != '*' || argv[4][4] != ':' ||
+	  strcmp(argv[3], &argv[4][5]) || strncmp(argv[1], &argv[4][1], 3)) {
 	Tcl_AppendResult(irp, "no such binding", NULL);
 	return TCL_ERROR;
       }

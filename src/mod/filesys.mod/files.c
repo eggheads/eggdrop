@@ -2,7 +2,7 @@
  * files.c - part of filesys.mod
  *   handles all file system commands
  * 
- * $Id: files.c,v 1.23 2000/06/21 22:28:13 fabian Exp $
+ * $Id: files.c,v 1.24 2000/07/12 21:50:35 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -462,7 +462,6 @@ static void cmd_reget_get(int idx, char *par, int resend)
   if (!fdb)
     return;
   filedb_readtop(fdb, NULL);
-  debug1("what: '%s'", what);
   fdbe = filedb_matchfile(fdb, ftell(fdb), what);
   if (!fdbe) {
     filedb_close(fdb);

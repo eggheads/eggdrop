@@ -4,7 +4,7 @@
  * 
  *   IF YOU ALTER THIS FILE, YOU NEED TO RECOMPILE THE BOT.
  * 
- * $Id: eggdrop.h,v 1.30 2000/06/20 19:54:54 fabian Exp $
+ * $Id: eggdrop.h,v 1.31 2000/07/12 21:50:35 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -321,7 +321,8 @@ struct xfer_info {
   unsigned int type;		/* xfer connection type, see enum below	   */
   unsigned short ack_type;	/* type of ack				   */
   unsigned long offset;		/* offset from beginning of file, during
-				   resend				   */
+				   resend.				   */
+  time_t start_time;		/* Time when a xfer was started.	   */
 };
 
 enum {				/* transfer connection handling a ...	*/

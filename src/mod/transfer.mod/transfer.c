@@ -1,7 +1,7 @@
 /* 
  * transfer.c -- part of transfer.mod
  * 
- * $Id: transfer.c,v 1.27 2000/06/10 01:03:44 fabian Exp $
+ * $Id: transfer.c,v 1.28 2000/07/12 21:50:35 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -28,7 +28,6 @@
 
 #define MODULE_NAME "transfer"
 #define MAKING_TRANSFER
-#define MOD_FILESYS
 
 /* sigh sunos */
 #include <sys/types.h>
@@ -47,7 +46,7 @@ static Function *global = NULL;
 
 static int copy_to_tmp = 1;	/* Copy files to /tmp before transmitting? */
 static int wait_dcc_xfer = 300;	/* Timeout time on DCC xfers */
-static p_tcl_bind_list H_rcvd, H_sent;
+static p_tcl_bind_list H_rcvd, H_sent, H_lost, H_tout;
 static int dcc_limit = 3;	/* Maximum number of simultaneous file
 				   downloads allowed */
 static int dcc_block = 1024;	/* Size of one dcc block */
@@ -160,7 +159,7 @@ static void wipe_tmp_filename(char *fn, int idx)
     return;
   for (i = 0; i < dcc_total; i++)
     if (i != idx)
-      if ((dcc[i].type == &DCC_GET) || (dcc[i].type == &DCC_GET_PENDING))
+      if (dcc[i].type == &DCC_GET || dcc[i].type == &DCC_GET_PENDING)
 	if (!strcmp(dcc[i].u.xfer->filename, fn))
 	  ok = 0;
   if (ok)
@@ -174,7 +173,7 @@ static int at_limit(char *nick)
   int i, x = 0;
 
   for (i = 0; i < dcc_total; i++)
-    if ((dcc[i].type == &DCC_GET) || (dcc[i].type == &DCC_GET_PENDING))
+    if (dcc[i].type == &DCC_GET || dcc[i].type == &DCC_GET_PENDING)
       if (!egg_strcasecmp(dcc[i].nick, nick))
 	x++;
   return (x >= dcc_limit);
@@ -196,26 +195,34 @@ static char *replace_spaces(char *fn)
 
 
 /* 
- *    Tcl sent and rcvd functions
+ *    Tcl sent, rcvd, tout and lost functions
  */
 
-static int builtin_sentrcvd STDVAR {
+static int builtin_sentrcvd STDVAR
+{
   Function F = (Function) cd;
 
   BADARGS(4, 4, " hand nick path");
-  if (!check_validity(argv[0], builtin_sentrcvd)) {
-    Tcl_AppendResult(irp, "bad builtin command call!", NULL);
-    return TCL_ERROR;
-  }
+  CHECKVALIDITY(builtin_sentrcvd);
   F(argv[1], argv[2], argv[3]);
   return TCL_OK;
 }
 
+static int builtin_toutlost STDVAR
+{
+  Function F = (Function) cd;
+ 
+  BADARGS(6, 6, " hand nick path acked length");
+  CHECKVALIDITY(builtin_toutlost);
+  F(argv[1], argv[2], argv[3], argv[4], argv[5]);
+  return TCL_OK;
+}
+ 
 static void check_tcl_sentrcvd(struct userrec *u, char *nick, char *path,
 			       p_tcl_bind_list h)
 {
   struct flag_record fr = {FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0};
-  char *hand = u ? u->handle : "*";
+  char *hand = u ? u->handle : "*";	/* u might be NULL. */
 
   Context;
   get_user_flagrec(u, &fr, NULL);
@@ -227,6 +234,27 @@ static void check_tcl_sentrcvd(struct userrec *u, char *nick, char *path,
   Context;
 }
 
+static void check_tcl_toutlost(struct userrec *u, char *nick, char *path,
+			       unsigned long acked, unsigned long length,
+                               p_tcl_bind_list h)
+{
+  struct flag_record fr = {FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0};
+  char *hand = u ? u->handle : "*";	/* u might be NULL. */
+  char s[15];
+ 
+  Context;
+  get_user_flagrec(u, &fr, NULL);
+  Tcl_SetVar(interp, "_sr1", hand, 0);
+  Tcl_SetVar(interp, "_sr2", nick, 0);
+  Tcl_SetVar(interp, "_sr3", path, 0);
+  egg_snprintf(s, sizeof s, "%lu", acked);
+  Tcl_SetVar(interp, "_sr4", s, 0);
+  egg_snprintf(s, sizeof s, "%lu", length);
+  Tcl_SetVar(interp, "_sr5", s, 0);
+  check_tcl_bind(h, hand, &fr, " $_sr1 $_sr2 $_sr3 $_sr4 $_sr5",
+		 MATCH_MASK | BIND_USE_ATTR | BIND_STACKABLE);
+  Context;
+}                                                                     
 
 /* 
  *    File queue functions
@@ -259,11 +287,11 @@ static void queue_file(char *dir, char *file, char *from, char *to)
   strcpy(fileq->to, to);
 }
 
-static void deq_this(fileq_t * this)
+static void deq_this(fileq_t *this)
 {
   fileq_t *q = fileq, *last = NULL;
 
-  while (q && (q != this)) {
+  while (q && q != this) {
     last = q;
     q = q->next;
   }
@@ -420,9 +448,9 @@ static void show_queued_files(int idx)
     q = q->next;
   }
   for (i = 0; i < dcc_total; i++) {
-    if (((dcc[i].type == &DCC_GET_PENDING) || (dcc[i].type == &DCC_GET)) &&
-	((!egg_strcasecmp(dcc[i].nick, dcc[idx].nick)) ||
-	 (!egg_strcasecmp(dcc[i].u.xfer->from, dcc[idx].nick)))) {
+    if ((dcc[i].type == &DCC_GET_PENDING || dcc[i].type == &DCC_GET) &&
+	(!egg_strcasecmp(dcc[i].nick, dcc[idx].nick) ||
+	 !egg_strcasecmp(dcc[i].u.xfer->from, dcc[idx].nick))) {
       char *nfn;
 
       if (!cnt) {
@@ -477,7 +505,7 @@ static void fileq_cancel(int idx, char *par)
 	  q = NULL;
 	  matches++;
 	}
-	if ((!fnd) && (wild_match_file(par, q->file))) {
+	if (!fnd && wild_match_file(par, q->file)) {
 	  dprintf(idx, "Cancelled: %s to %s\n", s, q->to);
 	  fnd = 1;
 	  deq_this(q);
@@ -492,9 +520,9 @@ static void fileq_cancel(int idx, char *par)
   if (s)
     nfree(s);
   for (i = 0; i < dcc_total; i++) {
-    if (((dcc[i].type == &DCC_GET_PENDING) || (dcc[i].type == &DCC_GET)) &&
-	((!egg_strcasecmp(dcc[i].nick, dcc[idx].nick)) ||
-	 (!egg_strcasecmp(dcc[i].u.xfer->from, dcc[idx].nick)))) {
+    if ((dcc[i].type == &DCC_GET_PENDING || dcc[i].type == &DCC_GET) &&
+	(!egg_strcasecmp(dcc[i].nick, dcc[idx].nick) ||
+	 !egg_strcasecmp(dcc[i].u.xfer->from, dcc[idx].nick))) {
       char *nfn = strrchr(dcc[i].u.xfer->origname, '/');
 
       if (nfn == NULL)
@@ -555,7 +583,7 @@ static int tcl_getfileq STDVAR
 
 static int tcl_dccsend STDVAR
 {
-  char s[5], *sys, *nfn;
+  char s[10], *sys, *nfn;
   int i;
   FILE *f;
 
@@ -599,9 +627,33 @@ static int tcl_dccsend STDVAR
   i = raw_dcc_send(sys, argv[2], "*", argv[1]);
   if (i > 0)
     wipe_tmp_filename(sys, -1);
-  sprintf(s, "%d", i);
+  egg_snprintf(s, sizeof s, "%d", i);
   Tcl_AppendResult(irp, s, NULL);
   nfree(sys);
+  return TCL_OK;
+}
+
+static int tcl_getfilesendtime STDVAR
+{
+  int	sock, i;
+  char	s[15];
+ 
+  BADARGS(2, 2, " idx");
+  /* Btw, what the tcl interface refers to as `idx' is the socket number
+     for the C part. */
+  sock = atoi(argv[1]);
+
+  for (i = 0; i < dcc_total; i++)
+    if (dcc[i].sock == sock) {
+      if (dcc[i].type == &DCC_SEND || dcc[i].type == &DCC_GET) {
+	egg_snprintf(s, sizeof s, "%lu", dcc[i].u.xfer->start_time);
+	Tcl_AppendResult(irp, s, NULL);
+      } else
+	Tcl_AppendResult(irp, "-2", NULL);  /* Not a valid file transfer,
+					       honey. */
+      return TCL_OK;
+    }
+  Tcl_AppendResult(irp, "-1", NULL);	/* No matching entry found.	*/
   return TCL_OK;
 }
 
@@ -609,6 +661,7 @@ static tcl_cmds mytcls[] =
 {
   {"dccsend",		tcl_dccsend},
   {"getfileq",		tcl_getfileq},
+  {"getfilesendtime", 	tcl_getfilesendtime},
   {NULL,		NULL}
 };
 
@@ -683,7 +736,7 @@ static void eof_dcc_send(int idx)
     }
     putlog(LOG_FILES, "*", "Completed dcc send %s from %s!%s",
 	   dcc[idx].u.xfer->origname, dcc[idx].nick, dcc[idx].host);
-    simple_sprintf(s, "%s!%s", dcc[idx].nick, dcc[idx].host);
+    egg_snprintf(s, sizeof s, "%s!%s", dcc[idx].nick, dcc[idx].host);
     u = get_user_by_host(s);
     hand = u ? u->handle : "*";
 
@@ -706,9 +759,8 @@ static void eof_dcc_send(int idx)
     ofn = nmalloc(strlen(tempdir) + strlen(dcc[idx].u.xfer->filename) + 1);
     nfn = nmalloc(strlen(dcc[idx].u.xfer->dir)
 		  + strlen(dcc[idx].u.xfer->origname) + 1);
-    simple_sprintf(ofn, "%s%s", tempdir, dcc[idx].u.xfer->filename);
-    simple_sprintf(nfn, "%s%s", dcc[idx].u.xfer->dir,
-		   dcc[idx].u.xfer->origname);
+    sprintf(ofn, "%s%s", tempdir, dcc[idx].u.xfer->filename);
+    sprintf(nfn, "%s%s", dcc[idx].u.xfer->dir, dcc[idx].u.xfer->origname);
     if (movefile(ofn, nfn))
       putlog(LOG_MISC | LOG_FILES, "*",
 	     "FAILED move `%s' from `%s'! File lost!", nfn, ofn);
@@ -755,8 +807,8 @@ static void eof_dcc_send(int idx)
       unlink(dcc[idx].u.xfer->filename);
       /* Drop that bot */
       dprintf(y, "bye\n");
-      simple_sprintf(s, "Disconnected %s (aborted userfile transfer)",
-		     dcc[y].nick);
+      egg_snprintf(s, sizeof s, "Disconnected %s (aborted userfile transfer)",
+		   dcc[y].nick);
       botnet_send_unlinked(y, dcc[y].nick, s);
       chatout("*** %s\n", dcc[y].nick, s);
       if (y < idx) {
@@ -836,8 +888,8 @@ static void dcc_get(int idx, char *buf, int len)
   /* Add bytes to our buffer if we don't have a complete response yet.
    * This is either a 4 bit ack or the 8 bit reget packet.
    */
-  if ((w < 4) ||
-      ((w < 8) && (dcc[idx].u.xfer->type == XFER_RESEND_PEND))) {
+  if (w < 4 ||
+      (w < 8 && dcc[idx].u.xfer->type == XFER_RESEND_PEND)) {
     my_memcpy(&(dcc[idx].u.xfer->buf[dcc[idx].u.xfer->sofar]), buf, len);
     dcc[idx].u.xfer->sofar += len;
     return;
@@ -879,12 +931,12 @@ static void dcc_get(int idx, char *buf, int len)
   }
 
   dcc[idx].u.xfer->sofar = 0;
-  if ((cmp > dcc[idx].u.xfer->length) && (cmp > dcc[idx].status)) {
+  if (cmp > dcc[idx].u.xfer->length && cmp > dcc[idx].status) {
     /* Attempt to resume, but file is not as long as requested... */
     putlog(LOG_FILES, "*",
 	   "!! Resuming file transfer behind file end for %s to %s",
 	   dcc[idx].u.xfer->origname, dcc[idx].nick);
-  } else if ((cmp > dcc[idx].status)) {
+  } else if (cmp > dcc[idx].status) {
     /* Attempt to resume */
     if (!strcmp(dcc[idx].nick, "*users"))
       putlog(LOG_BOTS, "*", "!!! Trying to skip ahead on userfile transfer");
@@ -922,7 +974,7 @@ static void dcc_get(int idx, char *buf, int len)
       int x, y = 0;
 
       for (x = 0; x < dcc_total; x++)
-	if ((!egg_strcasecmp(dcc[x].nick, dcc[idx].host)) &&
+	if (!egg_strcasecmp(dcc[x].nick, dcc[idx].host) &&
 	    (dcc[x].type->flags & DCT_BOT))
 	  y = x;
       if (y != 0)
@@ -966,7 +1018,7 @@ static void dcc_get(int idx, char *buf, int len)
    *        the last run.
    */
   l = dcc_block;
-  if ((l == 0) || (dcc[idx].status + l > dcc[idx].u.xfer->length))
+  if (l == 0 || dcc[idx].status + l > dcc[idx].u.xfer->length)
     l = dcc[idx].u.xfer->length - dcc[idx].status;
   bf = (char *) nmalloc(l + 1);
   fread(bf, l, 1, dcc[idx].u.xfer->f);
@@ -985,7 +1037,7 @@ static void eof_dcc_get(int idx)
     int x, y = 0;
 
     for (x = 0; x < dcc_total; x++)
-      if ((!egg_strcasecmp(dcc[x].nick, dcc[idx].host)) &&
+      if (!egg_strcasecmp(dcc[x].nick, dcc[idx].host) &&
 	  (dcc[x].type->flags & DCT_BOT))
 	y = x;
     putlog(LOG_BOTS, "*", "Lost userfile transfer; aborting.");
@@ -993,8 +1045,8 @@ static void eof_dcc_get(int idx)
     xnick[0] = 0;
     /* Drop that bot */
     dprintf(-dcc[y].sock, "bye\n");
-    simple_sprintf(s, "Disconnected %s (aborted userfile transfer)",
-		   dcc[y].nick);
+    egg_snprintf(s, sizeof s, "Disconnected %s (aborted userfile transfer)",
+		 dcc[y].nick);
     botnet_send_unlinked(y, dcc[y].nick, s);
     chatout("*** %s\n", s);
     if (y < idx) {
@@ -1007,6 +1059,16 @@ static void eof_dcc_get(int idx)
     lostdcc(y);
     return;
   } else {
+    struct userrec *u;
+
+    /* Call `lost' DCC trigger now.
+     */
+    egg_snprintf(s, sizeof s, "%s!%s", dcc[idx].nick, dcc[idx].host);
+    u = get_user_by_host(s);
+    check_tcl_toutlost(u, dcc[idx].nick, dcc[idx].u.xfer->dir,
+		       dcc[idx].u.xfer->acked, dcc[idx].u.xfer->length,
+		       H_lost);
+ 
     putlog(LOG_FILES, "*", "Lost dcc get %s from %s!%s",
 	   dcc[idx].u.xfer->origname, dcc[idx].nick, dcc[idx].host);
     wipe_tmp_filename(dcc[idx].u.xfer->filename, idx);
@@ -1036,8 +1098,8 @@ static void dcc_send(int idx, char *buf, int len)
   s[3] = (sent % (1 << 8));
   tputs(dcc[idx].sock, s, 4);
   dcc[idx].timeval = now;
-  if ((dcc[idx].status > dcc[idx].u.xfer->length) &&
-      (dcc[idx].u.xfer->length > 0)) {
+  if (dcc[idx].status > dcc[idx].u.xfer->length &&
+      dcc[idx].u.xfer->length > 0) {
     dprintf(DP_HELP, "NOTICE %s :Bogus file length.\n", dcc[idx].nick);
     putlog(LOG_FILES, "*",
 	   "File too long: dropping dcc send %s from %s!%s",
@@ -1057,7 +1119,7 @@ static void transfer_get_timeout(int i)
   char xx[1024];
 
   Context;
-  if (!strcmp(dcc[i].nick, "*users")) {
+  if (strcmp(dcc[i].nick, "*users") == 0) {
     int x, y = 0;
 
     for (x = 0; x < dcc_total; x++)
@@ -1071,8 +1133,8 @@ static void transfer_get_timeout(int i)
     unlink(dcc[i].u.xfer->filename);
     putlog(LOG_BOTS, "*", "Timeout on userfile transfer.");
     dprintf(y, "bye\n");
-    simple_sprintf(xx, "Disconnected %s (timed-out userfile transfer)",
-		   dcc[y].nick);
+    egg_snprintf(xx, sizeof xx, "Disconnected %s (timed-out userfile transfer)",
+		 dcc[y].nick);
     botnet_send_unlinked(y, dcc[y].nick, xx);
     chatout("*** %s\n", xx);
     if (y < i) {
@@ -1086,10 +1148,19 @@ static void transfer_get_timeout(int i)
     xx[0] = 0;
   } else {
     char *p;
+    struct userrec *u;
 
     p = strrchr(dcc[i].u.xfer->origname, '/');
     dprintf(DP_HELP, "NOTICE %s :Timeout during transfer, aborting %s.\n",
 	    dcc[i].nick, p ? p + 1 : dcc[i].u.xfer->origname);
+
+    /* Call DCC `timeout' trigger now.
+     */
+    egg_snprintf(xx, sizeof xx, "%s!%s", dcc[i].nick, dcc[i].host);
+    u = get_user_by_host(xx);
+    check_tcl_toutlost(u, dcc[i].nick, dcc[i].u.xfer->dir, 
+		       dcc[i].u.xfer->acked, dcc[i].u.xfer->length, H_tout);
+
     putlog(LOG_FILES, "*", "DCC timeout: GET %s (%s) at %lu/%lu",
 	   p ? p + 1 : dcc[i].u.xfer->origname, dcc[i].nick, dcc[i].status,
 	   dcc[i].u.xfer->length);
@@ -1108,7 +1179,7 @@ static void tout_dcc_send(int idx)
     int x, y = 0;
 
     for (x = 0; x < dcc_total; x++)
-      if ((!egg_strcasecmp(dcc[x].nick, dcc[idx].host)) &&
+      if (!egg_strcasecmp(dcc[x].nick, dcc[idx].host) &&
 	  (dcc[x].type->flags & DCT_BOT))
 	y = x;
     if (y != 0) {
@@ -1146,7 +1217,7 @@ static void display_dcc_get(int idx, char *buf)
 
 static void display_dcc_get_p(int idx, char *buf)
 {
-  sprintf(buf, "send  waited %lus    Filename: %s\n", now - dcc[idx].timeval,
+  sprintf(buf, "send  waited %lus\n    Filename: %s\n", now - dcc[idx].timeval,
 	  dcc[idx].u.xfer->origname);
 }
 
@@ -1172,7 +1243,7 @@ static int expmem_dcc_xfer(void *x)
   /* We need to check if origname points to filename before
    * accounting for the memory.
    */
-  if (p->origname && (p->filename != p->origname))
+  if (p->origname && p->filename != p->origname)
     tot += strlen(p->origname) + 1;
   return tot;
 }
@@ -1186,7 +1257,7 @@ static void kill_dcc_xfer(int idx, void *x)
   /* We need to check if origname points to filename before
    * attempting to free the memory.
    */
-  if (p->origname && (p->origname != p->filename))
+  if (p->origname && p->origname != p->filename)
     nfree(p->origname);
   nfree(x);
 }
@@ -1232,12 +1303,11 @@ static void dcc_fork_send(int idx, char *x, int y)
   if (dcc[idx].type != &DCC_FORK_SEND)
     return;
   dcc[idx].type = &DCC_SEND;
-  sprintf(s1, "%s!%s", dcc[idx].nick, dcc[idx].host);
-  if (strcmp(dcc[idx].nick, "*users")) {
+  dcc[idx].u.xfer->start_time = now;
+  egg_snprintf(s1, sizeof s1, "%s!%s", dcc[idx].nick, dcc[idx].host);
+  if (strcmp(dcc[idx].nick, "*users"))
     putlog(LOG_MISC, "*", "DCC connection: SEND %s (%s)",
-	   dcc[idx].type == &DCC_SEND ?
-	   dcc[idx].u.xfer->origname : "", s1);
-  }
+	   dcc[idx].u.xfer->origname, s1);
 }
 
 static struct dcc_table DCC_GET =
@@ -1302,7 +1372,7 @@ static void dcc_get_pending(int idx, char *buf, int len)
   if (dcc[idx].u.xfer->type == XFER_RESUME_PEND) {
     int l;
 
-    if ((dcc_block == 0) || (dcc[idx].u.xfer->length < dcc_block)) {
+    if (dcc_block == 0 || dcc[idx].u.xfer->length < dcc_block) {
       l = dcc[idx].u.xfer->length - dcc[idx].u.xfer->offset;
       dcc[idx].status = dcc[idx].u.xfer->length;
     } else {
@@ -1324,7 +1394,7 @@ static void dcc_get_pending(int idx, char *buf, int len)
      * before sending anything ourself.
      */
     if (dcc[idx].u.xfer->type != XFER_RESEND_PEND) {
-      if ((dcc_block == 0) || (dcc[idx].u.xfer->length < dcc_block))
+      if (dcc_block == 0 || dcc[idx].u.xfer->length < dcc_block)
         dcc[idx].status = dcc[idx].u.xfer->length;
       else
         dcc[idx].status = dcc_block;
@@ -1336,7 +1406,7 @@ static void dcc_get_pending(int idx, char *buf, int len)
       dcc[idx].status = 0;
   }
 
-  dcc[idx].timeval = now;
+  dcc[idx].timeval = dcc[idx].u.xfer->start_time = now;
 }
 
 /* Starts a new DCC SEND or DCC RESEND connection to `nick', transferring
@@ -1471,7 +1541,7 @@ static int fstat_pack(struct userrec *u, struct user_entry *e)
   /* If you set it in the declaration, the Assert will be useless. -- rtc */
 
   l->extra = user_malloc(41);
-  sprintf(l->extra, "%09u %09u %09u %09u",
+  egg_snprintf(l->extra, 41, "%09u %09u %09u %09u",
           fs->uploads, fs->upload_ks, fs->dnloads, fs->dnload_ks);
   l->next = NULL;
   e->u.list = l;
@@ -1479,7 +1549,7 @@ static int fstat_pack(struct userrec *u, struct user_entry *e)
   return 1;
 }
 
-static int fstat_write_userfile(FILE * f, struct userrec *u,
+static int fstat_write_userfile(FILE *f, struct userrec *u,
 				struct user_entry *e)
 {
   register struct filesys_stats *fs;
@@ -1529,7 +1599,7 @@ static int fstat_set(struct userrec *u, struct user_entry *e, void *buf)
   return 1;
 }
 
-static int fstat_tcl_get(Tcl_Interp * irp, struct userrec *u,
+static int fstat_tcl_get(Tcl_Interp *irp, struct userrec *u,
 			 struct user_entry *e, int argc, char **argv)
 {
   register struct filesys_stats *fs;
@@ -1540,15 +1610,15 @@ static int fstat_tcl_get(Tcl_Interp * irp, struct userrec *u,
   BADARGS(3, 4, " handle FSTAT ?u/d?");
   fs = e->u.extra;
   if (argc == 3)
-    simple_sprintf(d, "%u %u %u %u", fs->uploads, fs->upload_ks,
-                   fs->dnloads, fs->dnload_ks);
+    egg_snprintf(d, sizeof d, "%u %u %u %u", fs->uploads, fs->upload_ks,
+                 fs->dnloads, fs->dnload_ks);
   else
     switch (argv[3][0]) {
     case 'u':
-      simple_sprintf(d, "%u %u", fs->uploads, fs->upload_ks);
+      egg_snprintf(d, sizeof d, "%u %u", fs->uploads, fs->upload_ks);
       break;
     case 'd':
-      simple_sprintf(d, "%u %u", fs->dnloads, fs->dnload_ks);
+      egg_snprintf(d, sizeof d, "%u %u", fs->dnloads, fs->dnload_ks);
       break;
     }
 
@@ -1589,7 +1659,7 @@ static int fstat_dupuser(struct userrec *u, struct userrec *o,
 			 struct user_entry *e);
 static void stats_add_dnload(struct userrec *u, unsigned long bytes);
 static void stats_add_upload(struct userrec *u, unsigned long bytes);
-static int fstat_tcl_set(Tcl_Interp * irp, struct userrec *u,
+static int fstat_tcl_set(Tcl_Interp *irp, struct userrec *u,
 			 struct user_entry *e, int argc, char **argv);
 
 static struct user_entry_type USERENTRY_FSTAT =
@@ -1701,7 +1771,7 @@ static void stats_add_upload(struct userrec *u, unsigned long bytes)
   }
 }
 
-static int fstat_tcl_set(Tcl_Interp * irp, struct userrec *u,
+static int fstat_tcl_set(Tcl_Interp *irp, struct userrec *u,
 			 struct user_entry *e, int argc, char **argv)
 {
   register struct filesys_stats *fs;
@@ -1747,7 +1817,7 @@ static int fstat_tcl_set(Tcl_Interp * irp, struct userrec *u,
 /* This handles DCC RESUME requests.
  */
 static int ctcp_DCC_RESUME(char *nick, char *from, char *handle,
-                         char *object, char *keyword, char *text)
+			   char *object, char *keyword, char *text)
 {
   char *action, *fn, buf[512], *msg = buf;
   int i, port;
@@ -1831,6 +1901,8 @@ static char *transfer_close()
   del_entry_type(&USERENTRY_FSTAT);
   del_bind_table(H_rcvd);
   del_bind_table(H_sent);
+  del_bind_table(H_lost);
+  del_bind_table(H_tout);
   rem_builtins(H_load, transfer_load);
   /* Try to remove our CTCP bindings */
   if ((H_ctcp = find_bind_table("ctcp")))
@@ -1882,17 +1954,20 @@ static Function transfer_table[] =
   /* 16 - 19 */
   (Function) & USERENTRY_FSTAT,		/* struct user_entry_type	*/
   (Function) & quiet_reject,		/* int				*/
-  (Function) & raw_dcc_resend,
+  (Function) raw_dcc_resend,
+  (Function) & H_lost,			/* p_tcl_bind_list		*/
+  /* 20 - 23 */
+  (Function) & H_tout,			/* p_tcl_bind_list		*/
 };
 
-char *transfer_start(Function * global_funcs)
+char *transfer_start(Function *global_funcs)
 {
   global = global_funcs;
 
   Context;
   fileq = NULL;
-  module_register(MODULE_NAME, transfer_table, 2, 1);
-  if (!module_depend(MODULE_NAME, "eggdrop", 105, 3)) {
+  module_register(MODULE_NAME, transfer_table, 2, 2);
+  if (!module_depend(MODULE_NAME, "eggdrop", 105, 4)) {
     module_undepend(MODULE_NAME);
     return "This module requires eggdrop1.5.3 or later";
   }
@@ -1904,6 +1979,9 @@ char *transfer_start(Function * global_funcs)
   add_help_reference("transfer.help");
   H_rcvd = add_bind_table("rcvd", HT_STACKABLE, builtin_sentrcvd);
   H_sent = add_bind_table("sent", HT_STACKABLE, builtin_sentrcvd);
+  H_lost = add_bind_table("lost", HT_STACKABLE, builtin_toutlost);
+  H_tout = add_bind_table("tout", HT_STACKABLE, builtin_toutlost);
+
   USERENTRY_FSTAT.get = def_get;
   add_entry_type(&USERENTRY_FSTAT);
   return NULL;
