@@ -2,7 +2,7 @@
  * net.c -- handles:
  *   all raw network i/o
  * 
- * $Id: net.c,v 1.18 2000/03/23 23:17:55 fabian Exp $
+ * $Id: net.c,v 1.19 2000/08/18 00:25:09 fabian Exp $
  */
 /* 
  * This is hereby released into the public domain.
@@ -417,9 +417,9 @@ int open_telnet(char *server, int port)
 }
 
 /* Returns a socket number for a listening socket that will accept any
- * connection -- port # is returned in port
+ * connection on a certain address -- port # is returned in port
  */
-int open_listen(int *port)
+int open_address_listen(IP addr, int *port)
 {
   int sock;
   unsigned int addrlen;
@@ -434,8 +434,8 @@ int open_listen(int *port)
   egg_bzero((char *) &name, sizeof(struct sockaddr_in));
 
   name.sin_family = AF_INET;
-  name.sin_port = my_htons(*port);	/* 0 = just assign us a port */
-  name.sin_addr.s_addr = (myip[0] ? getmyip() : INADDR_ANY);
+  name.sin_port = htons(*port);	/* 0 = just assign us a port */
+  name.sin_addr.s_addr = addr;
   if (bind(sock, (struct sockaddr *) &name, sizeof(name)) < 0) {
     killsock(sock);
     return -1;
@@ -446,12 +446,20 @@ int open_listen(int *port)
     killsock(sock);
     return -1;
   }
-  *port = my_ntohs(name.sin_port);
+  *port = ntohs(name.sin_port);
   if (listen(sock, 1) < 0) {
     killsock(sock);
     return -1;
   }
   return sock;
+}
+
+/* Returns a socket number for a listening socket that will accept any
+ * connection -- port # is returned in port
+ */
+inline int open_listen(int *port)
+{
+  return open_address_listen(myip[0] ? getmyip() : INADDR_ANY, port);
 }
 
 /* Given a network-style IP address, returns the hostname. The hostname

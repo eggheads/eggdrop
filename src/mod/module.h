@@ -1,7 +1,7 @@
 /* 
  * module.h
  * 
- * $Id: module.h,v 1.31 2000/08/11 22:44:14 fabian Exp $
+ * $Id: module.h,v 1.32 2000/08/18 00:25:10 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -422,6 +422,7 @@
 #define tandbot (*(tand_t **)(global[259]))
 /* 260 - 263 */
 #define party (*(party_t **)(global[260]))
+#define open_address_listen ((int (*)(IP addr, int *port))global[261])
 
 
 /* This is for blowfish module, couldnt be bothereed making a whole new .h

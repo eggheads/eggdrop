@@ -4,7 +4,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: modules.c,v 1.37 2000/08/11 22:44:14 fabian Exp $
+ * $Id: modules.c,v 1.38 2000/08/18 00:25:09 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -519,6 +519,7 @@ Function global_table[] =
   (Function) & tandbot,		/* tand_t *				*/
   /* 260 - 263 */
   (Function) & party,		/* party_t *				*/
+  (Function) open_address_listen,
 };
 
 void init_modules(void)
