@@ -1,7 +1,7 @@
 dnl aclocal.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: aclocal.m4,v 1.70 2003/06/10 04:27:19 stdarg Exp $
+dnl $Id: aclocal.m4,v 1.71 2003/06/10 15:16:07 stdarg Exp $
 dnl
 
 
@@ -167,6 +167,7 @@ if test "${STRIP-x}" = "x"
 then
   STRIP=touch
 else
+  AC_DEFINE(ENABLE_STRIP)
   cat << 'EOF' >&2
 configure: warning:
 

@@ -3291,6 +3291,10 @@ if test "${STRIP-x}" = "x"
 then
   STRIP=touch
 else
+  cat >>confdefs.h <<\_ACEOF
+#define ENABLE_STRIP 1
+_ACEOF
+
   cat << 'EOF' >&2
 configure: warning:
 

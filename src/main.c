@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  *
- * $Id: main.c,v 1.99 2003/05/05 00:22:31 wcc Exp $
+ * $Id: main.c,v 1.100 2003/06/10 15:16:08 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -721,7 +721,7 @@ int main(int argc, char **argv)
   struct sigaction sv;
   struct chanset_t *chan;
 
-#ifdef DEBUG_MEM
+#ifndef ENABLE_STRIP
   /* Make sure it can write core, if you make debug. Else it's pretty
    * useless (dw)
    */
