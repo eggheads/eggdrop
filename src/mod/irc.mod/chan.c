@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  *
- * $Id: chan.c,v 1.102 2002/12/24 02:30:08 wcc Exp $
+ * $Id: chan.c,v 1.103 2003/01/15 00:35:01 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1970,6 +1970,7 @@ static int gotkick(char *from, char *origmsg)
 static int gotnick(char *from, char *msg)
 {
   char *nick, *chname, s1[UHOSTLEN], buf[UHOSTLEN], *uhost = buf;
+  unsigned char found = 0;
   memberlist *m, *mm;
   struct chanset_t *chan, *oldchan = NULL;
   struct userrec *u;
@@ -2027,6 +2028,7 @@ static int gotnick(char *from, char *msg)
       }
       u = get_user_by_host(from); /* make sure this is in the loop, someone could have changed the record
                                      in an earlier iteration of the loop */
+      found = 1;
       check_tcl_nick(nick, uhost, u, chan->dname, msg);
     
       if (!findchan_by_dname(chname)) {
@@ -2034,6 +2036,13 @@ static int gotnick(char *from, char *msg)
         continue;
       }
     }
+  }
+  if (!found)
+  {
+    u = get_user_by_host(from);
+    s1[0] = '*';
+    s1[1] = 0;
+    check_tcl_nick(nick, uhost, u, s1, msg);
   }
   return 0;
 }

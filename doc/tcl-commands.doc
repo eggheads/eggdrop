@@ -1700,6 +1700,8 @@ marked with vertical bars (|) on the left.
 
          Description: triggered when someone changes nicknames. The mask
            is matched against '#channel newnick' and can contain wildcards.
+|          Channel is "*" if the user isn't on a channel (usually the bot not
+|          yet in a channel).
          Module: irc
 
     (14) MODE   (stackable)

@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: tcl-commands.html,v 1.23 2003/01/02 02:42:53 wcc Exp $ -->
+<!-- $Id: tcl-commands.html,v 1.24 2003/01/15 00:35:01 wcc Exp $ -->
 
 <html>
   <head>
@@ -3676,7 +3676,7 @@
             </li>
 
             <li>
-              <p><strong>NICK (stackable)</strong></p>
+              <p><strong>* NICK (stackable)</strong></p>
 
               <p><strong>bind nick &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;<br>
               procname &lt;nick&gt; &lt;user@host&gt; &lt;handle&gt;
@@ -3684,7 +3684,8 @@
 
               <p><strong>Description:</strong> triggered when someone changes
               nicknames. The mask is matched against &#39;#channel
-              newnick&#39; and can contain wildcards.</p>
+              newnick&#39; and can contain wildcards. Channel is "*" if the user
+              isn't on a channel (usually the bot not yet in a channel).</p>
 
               <p><strong>Module:</strong> irc</p>
             </li>
