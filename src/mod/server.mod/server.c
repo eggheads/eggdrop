@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  * 
- * $Id: server.c,v 1.26 1999/12/27 20:39:24 fabian Exp $
+ * $Id: server.c,v 1.27 2000/01/01 19:34:13 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1132,7 +1132,7 @@ static void dcc_chat_hostresolved(int i)
   sprintf(buf, "%d", dcc[i].port);
   if (!hostsanitycheck_dcc(dcc[i].nick, dcc[i].host, dcc[i].addr,
 			  dcc[i].u.dns->host, buf)) {
-    removedcc(i);
+    lostdcc(i);
     return;
   }
   dcc[i].sock = getsock(0);
@@ -1146,7 +1146,7 @@ static void dcc_chat_hostresolved(int i)
 	   dcc[i].nick, dcc[i].host);
     putlog(LOG_MISC, "*", "    (%s)", buf);
     killsock(dcc[i].sock);
-    removedcc(i);
+    lostdcc(i);
   } else {
     changeover_dcc(i, &DCC_CHAT_PASS, sizeof(struct chat_info));
     dcc[i].status = STAT_ECHO;
@@ -1181,7 +1181,7 @@ static void server_5minutely()
       int servidx = findanyidx(serv);
 
       disconnect_server(servidx);
-      removedcc(servidx);
+      lostdcc(servidx);
       putlog(LOG_SERV, "*", IRC_SERVERSTONED);
     } else if (!trying_server) {
       /* check for server being stoned */

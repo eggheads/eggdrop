@@ -7,7 +7,7 @@
  * 
  * dprintf'ized, 15nov1995
  * 
- * $Id: main.c,v 1.18 2000/01/01 19:23:47 fabian Exp $
+ * $Id: main.c,v 1.19 2000/01/01 19:34:13 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -158,7 +158,7 @@ void fatal(char *s, int recoverable)
   putlog(LOG_MISC, "*", "* %s", s);
   flushlogs();
   for (i = 0; i < dcc_total; i++)
-    if (dcc[i].type != &DCC_LOST)
+    if (dcc[i].sock >= 0)
       killsock(dcc[i].sock);
   unlink(pid_file);
   if (!recoverable)
@@ -960,8 +960,6 @@ int main(int argc, char **argv)
       putlog(LOG_MISC, "*", "* Socket error #%d; recovering.", errno);
       for (i = 0; i < dcc_total; i++) {
 	if ((fcntl(dcc[i].sock, F_GETFD, 0) == -1) && (errno = EBADF)) {
-	  if (dcc[i].type == &DCC_LOST)
-	    dcc[i].type = (struct dcc_table *) (dcc[i].sock);
 	  putlog(LOG_MISC, "*",
 		 "DCC socket %d (type %d, name '%s') expired -- pfft",
 		 dcc[i].sock, dcc[i].type, dcc[i].nick);

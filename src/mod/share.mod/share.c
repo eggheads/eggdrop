@@ -1,7 +1,7 @@
 /* 
  * share.c -- part of share.mod
  * 
- * $Id: share.c,v 1.14 1999/12/22 12:11:04 fabian Exp $
+ * $Id: share.c,v 1.15 2000/01/01 19:34:14 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1846,8 +1846,8 @@ static void cancel_user_xfer(int idx, void *x)
 	  j = i;
       if (j != 0) {
 	killsock(dcc[j].sock);
-	lostdcc(j);
 	unlink(dcc[j].u.xfer->filename);
+	lostdcc(j);
       }
       putlog(LOG_BOTS, "*", "(Userlist download aborted.)");
     }
@@ -1860,8 +1860,8 @@ static void cancel_user_xfer(int idx, void *x)
 	  j = i;
       if (j != 0) {
 	killsock(dcc[j].sock);
-	lostdcc(j);
 	unlink(dcc[j].u.xfer->filename);
+	lostdcc(j);
       }
       putlog(LOG_BOTS, "*", "(Userlist transmit aborted.)");
     }

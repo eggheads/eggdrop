@@ -6,7 +6,7 @@
  * 
  * dprintf'ized, 27oct1995
  * 
- * $Id: dcc.c,v 1.17 2000/01/01 19:28:24 fabian Exp $
+ * $Id: dcc.c,v 1.18 2000/01/01 19:34:13 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -143,7 +143,6 @@ static void greet_new_bot(int idx)
     if (dcc[i].type == &DCC_FORK_BOT) {
       killsock(dcc[i].sock);
       lostdcc(i);
-      i--;
     }
 }
 

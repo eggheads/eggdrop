@@ -1,7 +1,7 @@
 /* 
  * transfer.c -- part of transfer.mod
  * 
- * $Id: transfer.c,v 1.14 2000/01/01 19:12:19 fabian Exp $
+ * $Id: transfer.c,v 1.15 2000/01/01 19:34:14 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -492,7 +492,6 @@ static void fileq_cancel(int idx, char *par)
 	matches++;
 	killsock(dcc[i].sock);
 	lostdcc(i);
-	i--;
       }
     }
   }

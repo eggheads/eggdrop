@@ -9,7 +9,7 @@
  * 
  * dprintf'ized, 28nov1995
  * 
- * $Id: botnet.c,v 1.13 1999/12/25 00:07:50 fabian Exp $
+ * $Id: botnet.c,v 1.14 2000/01/01 19:34:13 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -701,7 +701,7 @@ void tell_bottree(int idx, int showver)
 /* dump list of links to a new bot */
 void dump_links(int z)
 {
-  int i, l;
+  register int i, l;
   char x[1024];
   tand_t *bot;
 
@@ -811,7 +811,7 @@ int in_chain(char *who)
 int botunlink(int idx, char *nick, char *reason)
 {
   char s[20];
-  int i;
+  register int i;
 
   Context;
   if (nick[0] == '*')
@@ -897,7 +897,7 @@ int botlink(char *linker, int idx, char *nick)
 {
   struct bot_addr *bi;
   struct userrec *u;
-  int i;
+  register int i;
 
   Context;
   u = get_user_by_handle(userlist, nick);
@@ -1031,7 +1031,7 @@ static void tandem_relay_resolve_failure(int);
 static void tandem_relay_resolve_success(int);
 
 /* relay to another tandembot */
-void tandem_relay(int idx, char *nick, int i)
+void tandem_relay(int idx, char *nick, register int i)
 {
   struct userrec *u;
   struct bot_addr *bi;
@@ -1092,7 +1092,7 @@ void tandem_relay(int idx, char *nick, int i)
 static void tandem_relay_resolve_failure(int idx)
 {
   struct chat_info *ci;
-  int uidx = (-1), i;
+  register int uidx = (-1), i;
 
   Context;
   for (i = 0; i < dcc_total; i++)
@@ -1145,9 +1145,9 @@ static void tandem_relay_resolve_success(int i)
 }
 
 /* input from user before connect is ready */
-static void pre_relay(int idx, char *buf, int i)
+static void pre_relay(int idx, char *buf, register int i)
 {
-  int tidx = (-1);
+  register int tidx = (-1);
 
   Context;
   for (i = 0; i < dcc_total; i++)
@@ -1194,7 +1194,7 @@ static void pre_relay(int idx, char *buf, int i)
 /* user disconnected before her relay had finished connecting */
 static void failed_pre_relay(int idx)
 {
-  int tidx = (-1), i;
+  register int tidx = (-1), i;
 
   Context;
   for (i = 0; i < dcc_total; i++)
@@ -1238,9 +1238,9 @@ static void failed_pre_relay(int idx)
   lostdcc(idx);
 }
 
-static void cont_tandem_relay(int idx, char *buf, int i)
+static void cont_tandem_relay(int idx, char *buf, register int i)
 {
-  int uidx = (-1);
+  register int uidx = (-1);
   struct relay_info *ri;
 
   Context;
@@ -1280,7 +1280,7 @@ static void cont_tandem_relay(int idx, char *buf, int i)
 
 static void eof_dcc_relay(int idx)
 {
-  int j;
+  register int j;
   struct chat_info *ci;
 
   for (j = 0; dcc[j].sock != dcc[idx].u.relay->sock; j++);
@@ -1311,14 +1311,13 @@ static void eof_dcc_relay(int idx)
 
 static void eof_dcc_relaying(int idx)
 {
-  int j, x = dcc[idx].u.relay->sock;
+  register int j, x = dcc[idx].u.relay->sock;
 
   putlog(LOG_MISC, "*", "%s [%s]%s/%d", BOT_LOSTDCCUSER, dcc[idx].nick,
 	 dcc[idx].host, dcc[idx].port);
   killsock(dcc[idx].sock);
   lostdcc(idx);
-  for (j = 0; (dcc[j].sock != x) || (dcc[j].type == &DCC_FORK_RELAY) ||
-       (dcc[j].type == &DCC_LOST); j++);
+  for (j = 0; (dcc[j].sock != x) || (dcc[j].type == &DCC_FORK_RELAY); j++);
   putlog(LOG_MISC, "*", "(%s %s)", BOT_DROPPEDRELAY, dcc[j].nick);
   killsock(dcc[j].sock);
   lostdcc(j);			/* drop connection to the bot */
