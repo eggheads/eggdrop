@@ -1,7 +1,7 @@
 /*
  * userchan.c -- part of channels.mod
  *
- * $Id: userchan.c,v 1.37 2003/03/11 01:22:25 wcc Exp $
+ * $Id: userchan.c,v 1.38 2003/03/19 23:44:49 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -271,7 +271,9 @@ static int u_delban(struct chanset_t *c, char *who, int doit)
     }
     if (lastdeletedmask)
       nfree(lastdeletedmask);
-    lastdeletedmask = (*u)->mask;
+    lastdeletedmask = nmalloc(strlen((*u)->mask) + 1);
+    strcpy(lastdeletedmask, (*u)->mask);
+    nfree((*u)->mask);
     if ((*u)->desc)
       nfree((*u)->desc);
     if ((*u)->user)
@@ -323,7 +325,9 @@ static int u_delexempt(struct chanset_t *c, char *who, int doit)
     }
     if (lastdeletedmask)
       nfree(lastdeletedmask);
-    lastdeletedmask = (*u)->mask;
+    lastdeletedmask = nmalloc(strlen((*u)->mask) + 1);
+    strcpy(lastdeletedmask, (*u)->mask);
+    nfree((*u)->mask);
     if ((*u)->desc)
       nfree((*u)->desc);
     if ((*u)->user)
@@ -376,7 +380,9 @@ static int u_delinvite(struct chanset_t *c, char *who, int doit)
     }
     if (lastdeletedmask)
       nfree(lastdeletedmask);
-    lastdeletedmask = (*u)->mask;
+    lastdeletedmask = nmalloc(strlen((*u)->mask) + 1);
+    strcpy(lastdeletedmask, (*u)->mask);
+    nfree((*u)->mask);
     if ((*u)->desc)
       nfree((*u)->desc);
     if ((*u)->user)

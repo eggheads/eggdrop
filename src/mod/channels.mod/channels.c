@@ -2,7 +2,7 @@
  * channels.c -- part of channels.mod
  *   support for channels within the bot
  *
- * $Id: channels.c,v 1.83 2003/03/10 05:57:10 wcc Exp $
+ * $Id: channels.c,v 1.84 2003/03/19 23:44:49 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -717,7 +717,7 @@ static int channels_expmem()
   }
   tot += expmem_udef(udef);
   if (lastdeletedmask)
-    tot += strlen(lastdeletedmask);
+    tot += strlen(lastdeletedmask) + 1;
   return tot;
 }
 
