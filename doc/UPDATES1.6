@@ -1,4 +1,4 @@
-$Id: UPDATES1.6,v 1.467 2003/02/16 08:59:57 wcc Exp $
+$Id: UPDATES1.6,v 1.468 2003/02/16 09:03:22 wcc Exp $
 
 Changes in Eggdrop: (since v1.6.0)
 ----------------------------------
@@ -6,6 +6,9 @@ Changes in Eggdrop: (since v1.6.0)
 1.6.14
 Found by  Fixed by  What...
           TheAvatar added a set of Danish language files
+          Wcc       fixed an out-of-bounds error in delignore()
+Tothwolf  Wcc       argument checking for cmd_comment() and cmd_botaddr() was
+                    incorrect
           Wcc       GLOBAL_CHANS is now used where it should be to make
                     changing the number of botnet channels easier
           Wcc       fixed a logic problem when reversing in got_[op|halfop]()
