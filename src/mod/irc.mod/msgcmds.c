@@ -2,7 +2,7 @@
  * msgcmds.c -- part of irc.mod
  *   all commands entered via /MSG
  *
- * $Id: msgcmds.c,v 1.32 2002/07/09 05:43:27 guppy Exp $
+ * $Id: msgcmds.c,v 1.33 2002/08/25 04:44:44 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -667,7 +667,7 @@ static int msg_key(char *nick, char *host, struct userrec *u, char *par)
 	    dprintf(DP_SERVER, "NOTICE %s :%s: key is %s\n", nick, par,
 		    chan->channel.key);
 	    if (invite_key && (chan->channel.mode & CHANINV)) {
-	      dprintf(DP_SERVER, "INVITE %s %s\n", nick, par);
+	      dprintf(DP_SERVER, "INVITE %s %s\n", nick, chan->name);
 	      putlog(LOG_CMDS, "*", "(%s!%s) !%s! KEY %s",
 		     nick, host, u->handle, par);
 	    }
@@ -766,7 +766,7 @@ static int msg_invite(char *nick, char *host, struct userrec *u, char *par)
     get_user_flagrec(u, &fr, par);
     if (chan_op(fr) || chan_halfop(fr) || (glob_op(fr) && !chan_deop(fr)) ||
 	(glob_halfop(fr) && !chan_dehalfop(fr))) {
-      dprintf(DP_SERVER, "INVITE %s %s\n", nick, par);
+      dprintf(DP_SERVER, "INVITE %s %s\n", nick, chan->name);
       putlog(LOG_CMDS, "*", "(%s!%s) !%s! INVITE %s", nick, host,
 	     u->handle, par);
       return 1;
