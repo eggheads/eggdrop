@@ -1,5 +1,5 @@
 /*
- * $Id: uptime.c,v 1.20 2002/05/04 18:33:10 guppy Exp $
+ * $Id: uptime.c,v 1.21 2002/05/05 17:34:19 guppy Exp $
  *
  * This module reports uptime information about your bot to http://uptime.eggheads.org. The
  * purpose for this is to see how your bot rates against many others (including EnergyMechs
@@ -110,10 +110,10 @@ int init_uptime(void)
   struct  sockaddr_in sai;
   char temp[50]="";
   upPack.regnr = 0; /* unused */
-  upPack.pid = 0;
+  upPack.pid = 0; /* must set this later */
   upPack.type = htonl(uptime_type);
   upPack.cookie = 0; /* unused */
-  upPack.uptime = htonl(online_since);
+  upPack.uptime = 0; /* must set this later */
   uptimecount = 0;
   uptimeip = -1;
 
@@ -122,7 +122,7 @@ int init_uptime(void)
   strncpyz(uptime_version,temp, sizeof uptime_version);
 
   if ((uptimesock = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
-    putlog(LOG_DEBUG, "*", "init_uptime socket returned <0 %d",uptimesock);
+    putlog(LOG_DEBUG, "*", "init_uptime socket returned < 0 %d",uptimesock);
     return((uptimesock = -1));
   }
   memset(&sai, 0, sizeof(sai));
@@ -167,6 +167,9 @@ int send_uptime(void)
 
   if (!upPack.pid)
     upPack.pid = htonl(getpid());
+
+  if (!upPack.uptime)
+    upPack.uptime = htonl(online_since);
 
   if (stat("/proc", &st) < 0)
     upPack.sysup = 0;
