@@ -2,7 +2,7 @@
  * match.c
  *   wildcard matching functions
  *
- * $Id: match.c,v 1.8 2003/01/28 06:37:24 wcc Exp $
+ * $Id: match.c,v 1.9 2004/02/04 02:40:42 stdarg Exp $
  *
  * Once this code was working, I added support for % so that I could
  * use the same code both in Eggdrop and in my IrcII client.
@@ -145,6 +145,18 @@ int _wild_match(register unsigned char *m, register unsigned char *n)
   n--;
 
   while (n >= na) {
+    /* If the mask runs out of chars before the string, fall back on
+     * a wildcard or fail. */
+    if (m < ma) {
+      if (lsm) {
+        n = --lsn;
+        m = lsm;
+        if (n < na) lsm = 0;
+        sofar = 0;
+      }
+      else return NOMATCH;
+    }
+
     switch (*m) {
     case WILDS:                /* Matches anything */
       do
@@ -154,6 +166,7 @@ int _wild_match(register unsigned char *m, register unsigned char *n)
       lsn = n;
       match += sofar;
       sofar = 0;                /* Update fallback pos */
+      if (m < ma) return MATCH;
       continue;                 /* Next char, please */
     case WILDQ:
       m--;

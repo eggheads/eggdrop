@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  *
- * $Id: server.c,v 1.111 2004/01/10 08:41:38 wcc Exp $
+ * $Id: server.c,v 1.112 2004/02/04 02:40:42 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -861,24 +861,24 @@ static void queue_server(int which, char *buf, int len)
     }
 
     q = nmalloc(sizeof(struct msgq));
-    if (qnext)
+
+    /* Insert into queue. */
+    if (qnext) {
       q->next = h->head;
-    else
+      h->head = q;
+      if (!h->last) h->last = q;
+    }
+    else {
       q->next = NULL;
+      if (h->last) h->last->next = q;
+      else h->head = q;
+      h->last = q;
+    }
 
-    if (h->head) {
-      if (!qnext)
-        h->last->next = q;
-    } else
-      h->head = q;
-
-    if (qnext)
-      h->head = q;
-
-    h->last = q;
     q->len = len;
     q->msg = nmalloc(len + 1);
-    strncpyz(q->msg, buf, len);
+    memcpy(q->msg, buf, len);
+    q->msg[len] = 0;
     h->tot++;
     h->warned = 0;
     double_warned = 0;

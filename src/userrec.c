@@ -4,7 +4,7 @@
  *   a bunch of functions to find and change user records
  *   change and check user (and channel-specific) flags
  *
- * $Id: userrec.c,v 1.47 2004/01/09 05:56:37 wcc Exp $
+ * $Id: userrec.c,v 1.48 2004/02/04 02:40:42 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -241,7 +241,7 @@ void correct_handle(char *handle)
   struct userrec *u;
 
   u = get_user_by_handle(userlist, handle);
-  if (u == NULL)
+  if (u == NULL || handle == u->handle)
     return;
   strcpy(handle, u->handle);
 }
