@@ -2,7 +2,7 @@
  * cmdschan.c -- part of channels.mod
  *   commands from a user via dcc that cause server interaction
  *
- * $Id: cmdschan.c,v 1.34 2000/08/26 14:13:26 guppy Exp $
+ * $Id: cmdschan.c,v 1.35 2000/12/01 20:46:20 guppy Exp $
  */
 /*
  * Copyright (C) 1997  Robey Pointer
@@ -144,14 +144,18 @@ static void cmd_pls_ban(struct userrec *u, int idx, char *par)
 		 dcc[idx].u.chat->con_chan, s, chan->name, par);
 	  dprintf(idx, "New %s ban: %s (%s)\n", chan->name, s, par);
 	}
-	add_mode(chan, '+', 'b', s);
+	/* Avoid unnesessary modes if you got +dynamicbans, and there is
+	 * no reason to set mode if irc.mod aint loaded. (dw 001120)
+	 */
+	if ((me = module_find("irc", 0, 0)))
+	  (me->funcs[IRC_RECHECK_CHANNEL])(chan, 1);
       } else {
 	u_addban(NULL, s, dcc[idx].nick, par,
 		 expire_time ? now + expire_time : 0, 0);
 	if (par[0] == '*') {
 	  par++;
-	  putlog(LOG_CMDS, "*", "#%s# (GLOBAL) +ban %s (%s) (sticky)", dcc[idx].nick,
-		 s, par);
+	  putlog(LOG_CMDS, "*", "#%s# (GLOBAL) +ban %s (%s) (sticky)",
+		 dcc[idx].nick, s, par);
 	  dprintf(idx, "New sticky ban: %s (%s)\n", s, par);
 	} else {
 	  putlog(LOG_CMDS, "*", "#%s# (GLOBAL) +ban %s (%s)", dcc[idx].nick,
@@ -159,10 +163,11 @@ static void cmd_pls_ban(struct userrec *u, int idx, char *par)
 	  dprintf(idx, "New ban: %s (%s)\n", s, par);
 	}
 	chan = chanset;
-	while (chan != NULL) {
-	  add_mode(chan, '+', 'b', s);
-	  chan = chan->next;
-	}
+	if ((me = module_find("irc", 0, 0)))
+	  while (chan != NULL) {
+	    (me->funcs[IRC_RECHECK_CHANNEL])(chan, 1);
+	    chan = chan->next;
+	  }
       }
     }
   }
