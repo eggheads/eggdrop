@@ -3,7 +3,7 @@
 #                     - a bind apart script from #TSF
 #                     - for eggdrop 1.3.15+
 #
-# $Id: notes2.tcl,v 1.4 2000/08/18 19:35:22 guppy Exp $
+# $Id: notes2.tcl,v 1.5 2001/03/17 23:20:57 guppy Exp $
 #
 ####
 #
@@ -152,7 +152,7 @@ proc *bot:notes2 {handle idx arg} {
 
 ########
 proc *bot:notes2reply {handle idx arg} {
-    # verify that idx is valid (older scripts does not provide idx)
+    # verify that idx is valid (older scripts do not provide idx)
     set idx [lindex $arg end]
     if {([valididx $idx]) && ([idx2hand $idx] == [lindex $arg 0])} {
 	set reply [lrange $arg 1 [expr [llength $arg]-2]]

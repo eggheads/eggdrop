@@ -9,7 +9,7 @@ BUG REPORTS:
   a fault of the TCL interpreter, and not eggdrop.  The TCL interpreter
   filters the characters when it reads a file for interpreting. Update
   your TCL version 8.1 or higher
-* Since version 8.1 TCl support unicode characters, like for example è.
+* Since version 8.1 TCL support unicode characters, like for example è.
   If those characters are handled in a script as text, you run into
   errors, eggdrop can't handle those at the moment.
 

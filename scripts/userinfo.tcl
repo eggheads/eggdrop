@@ -1,7 +1,7 @@
 # userinfo.tcl v1.06 for Eggdrop 1.4.3 and higher
 #           Scott G. Taylor -- ButchBub!staylor@mrynet.com
 #
-# $Id: userinfo.tcl,v 1.1 2000/06/20 20:37:31 fabian Exp $
+# $Id: userinfo.tcl,v 1.2 2001/03/17 23:20:57 guppy Exp $
 #
 # v1.00      ButchBub     14 July      1997 -Original release.  Based on
 #                                            whois.tcl "URL" commands.
@@ -78,7 +78,7 @@ if {![info exists numversion] || ($numversion < 1040300)} {
     return 0
 }
 
-# Make sure we don't bail because whois and/or userinfo-fields arn't set.
+# Make sure we don't bail because whois and/or userinfo-fields aren't set.
 
 if { ![info exists whois-fields]} { set whois-fields "" }
 if { ![info exists userinfo-fields]} { set userinfo-fields "" }
