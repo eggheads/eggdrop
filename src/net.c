@@ -2,7 +2,7 @@
  * net.c -- handles:
  *   all raw network i/o
  * 
- * $Id: net.c,v 1.42 2002/07/26 17:55:18 guppy Exp $
+ * $Id: net.c,v 1.43 2002/09/15 19:26:35 wcc Exp $
  */
 /* 
  * This is hereby released into the public domain.
@@ -119,7 +119,8 @@ IP getmyip()
     hp = gethostbyname(s);
   }
   if (hp == NULL)
-    fatal("Hostname self-lookup failed.", 0);
+    fatal("Hostname self-lookup failed. Please set 'my-ip' in the config "
+          "file.", 0);
   in = (struct in_addr *) (hp->h_addr_list[0]);
   ip = (IP) (in->s_addr);
   return ip;
