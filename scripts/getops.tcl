@@ -1,11 +1,11 @@
 
 # Getops 2.2f
-
-# $Id: getops.tcl,v 1.3 2000/08/06 14:52:25 fabian Exp $
-
+#
+# $Id: getops.tcl,v 1.4 2000/08/17 03:45:27 guppy Exp $
+#
 # This script is used for bots to request and give ops to each other. 
 # For this to work, you'll need:
-
+#
 # - Bots must be linked in a botnet
 # - Every bot that should be ops on your channels must load this script
 # - Add all bots you wanna op with this one using the .+bot nick address
@@ -13,7 +13,7 @@
 # - Add the hostmasks that uniquely identify this bot on IRC
 # - Add a global or channel +o flag on all bots to be opped
 # - Do exactly the same on all other bots
-
+#
 # The security of this relies on the fact that the bot which wants to have
 # ops must be 1) linked to the current botnet (which requires a password),
 # 2) have an entry with +o on the bot that he wants ops from and 3) must match
