@@ -138,7 +138,7 @@ static void set_mode_protect(struct chanset_t *chan, char *set)
     }
   }
   /* drummer: +s-p +p-s flood fixed. */
-  if (chan->mode_pls_prot && CHANSEC)
+  if (chan->mode_pls_prot & CHANSEC)
     chan->mode_pls_prot &= ~CHANPRIV;
   dprintf(DP_MODE, "MODE %s\n", chan->name);
 }
