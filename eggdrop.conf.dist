@@ -943,6 +943,11 @@ set prevent-mixing 1
 # Only use this if you set net-type 5
 #set use-354 0
 
+# [0/1] use rfc 1459 compliant string matching routines?
+# All networks apart from Dalnet comply with rfc 1459, so you should only
+# disable it on Dalnet or networks which use Dalnet's code.
+#set rfc-compliant 1
+
 
 
 ##### TRANSFER MODULE #####

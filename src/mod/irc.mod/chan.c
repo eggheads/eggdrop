@@ -1611,6 +1611,8 @@ static int gotkick(char *from, char *msg)
       set_handle_laston(chname, u2, now);
       maybe_revenge(chan, from, s1, REVENGE_KICK);
     }
+    putlog(LOG_MODES, chname, "%s kicked from %s by %s: %s", s1, chname,
+	   from, msg);
     /* kicked ME?!? the sods! */
     if (match_my_nick(nick)) {
       chan->status &= ~(CHAN_ACTIVE | CHAN_PEND);

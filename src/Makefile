@@ -167,6 +167,8 @@ modules.o: \
    users.h
 net.o: \
    main.h
+rfc1459.o: \
+   main.h
 tcl.o: \
    main.h
 tcldcc.o: \

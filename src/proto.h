@@ -39,8 +39,14 @@ struct tand_t_struct;
 extern void (*encrypt_pass) (char *, char *);
 extern char *(*encrypt_string) (char *, char *);
 extern char *(*decrypt_string) (char *, char *);
+extern int (*rfc_casecmp) (const char *, const char *);
+extern int (*rfc_ncasecmp) (const char *, const char *, int);
+extern int (*rfc_toupper) (int);
+extern int (*rfc_tolower) (int);
+extern int (*match_noterej) (struct userrec *, char *);
 
 #endif
+
 /* botcmd.c */
 void bot_share(int, char *);
 int base64_to_int(char *);
@@ -80,7 +86,6 @@ void tandout_but VARARGS(int, arg1);
 char *int_to_base10(int);
 char *unsigned_int_to_base10(unsigned int);
 char *int_to_base64(unsigned int);
-extern int (*match_noterej) (struct userrec*, char *);
 
 /* chanprog.c */
 void tell_verbose_uptime(int);
@@ -145,6 +150,7 @@ void add_lang_section(char *);
 void fatal(char *, int);
 int expected_memory();
 void backup_userfile();
+void assert_failed(const char *, const char *, const int);
 
 /* match.c */
 int _wild_match(register unsigned char *, register unsigned char *);
@@ -257,7 +263,9 @@ void tell_users_match(int, char *, int, int, int, char *);
 int readuserfile(char *, struct userrec **);
 
 /* rfc1459.c */
-int rfc_casecmp(char *, char *);
-int rfc_ncasecmp(char *, char *, int);
+int _rfc_casecmp(const char *, const char *);
+int _rfc_ncasecmp(const char *, const char *, int);
+int _rfc_toupper(int);
+int _rfc_tolower(int);
 
 #endif

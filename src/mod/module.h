@@ -24,6 +24,7 @@
 #undef context
 #undef contextnote
 #undef feof
+#undef ASSERT
 
 /* redefine for module-relevance */
 /* 0 - 3 */
@@ -301,8 +302,8 @@
 /* 216 - 219 */
 #define min_dcc_port (*(int *)(global[216]))	/* dcc-portrange dw/guppy */
 #define max_dcc_port (*(int *)(global[217]))
-#define rfc_casecmp ((int(*)(char *, char *))global[218])
-#define rfc_ncasecmp ((int(*)(char *, char *, int *))global[219])
+#define rfc_casecmp ((int(*)(char *, char *))(*(Function**)(global[218])))
+#define rfc_ncasecmp ((int(*)(char *, char *, int *))(*(Function**)(global[219])))
 /* 220 - 223 */
 #define global_exempts (*(maskrec **)(global[220]))
 #define global_invites (*(maskrec **)(global[221]))
@@ -318,9 +319,11 @@
 #define user_realloc(x,y) ((void *(*)(void *,int,char *,int))global[229])((x),(y),__FILE__,__LINE__)
 #define nrealloc(x,y) ((void *)(global[230]((x),(y),MODULE_NAME,__FILE__,__LINE__)))
 #define xtra_set ((int(*)(struct userrec *,struct user_entry *, void *))global[231])
+/* 232 - 235 */
+#define contextnote(note) (global[232](MODULE_NAME, __FILE__, __LINE__, note))
+#define assert_failed (global[233])
 
-/* time to let modules use contextnote <cybah> */
-#define contextnote(note) (global[230](MODULE_NAME, __FILE__, __LINE__, note))
+#define ASSERT(expr) { if (!(expr)) assert_failed (MODULE_NAME, __FILE__, __LINE__); }
 
 /* this is for blowfish module, couldnt be bothereed making a whole new .h
  * file for it ;) */

@@ -242,6 +242,18 @@ x = creat("DEBUG", 0644);
   }
 }
 
+void assert_failed (const char *module, const char *file, const int line)
+{
+  write_debug();
+  if (!module) {
+    putlog (LOG_MISC, "*", "* In file %s, line %u", file, line);
+  } else {
+    putlog (LOG_MISC, "*", "* In file %s:%s, line %u", module, file, line);
+  }
+  fatal ("ASSERT FAILED -- CRASHING!", 1);
+  exit (1);
+}
+
 static void got_bus(int z)
 {
   write_debug();
@@ -793,18 +805,17 @@ int main(int argc, char **argv)
 	  else {
 	    putlog(LOG_MISC, "*",
 		   "*** ATTENTION: DEAD SOCKET (%d) OF TYPE %s UNTRAPPED",
-		   xx, dcc[idx].type ? dcc[idx].type->name : "*UNKNOWN*");
-	    killsock(xx);
+		   i, dcc[idx].type ? dcc[idx].type->name : "*UNKNOWN*");
+	    killsock(i);
 	    lostdcc(idx);
 	  }
 	  idx = dcc_total + 1;
 	}
       if (idx == dcc_total) {
 	putlog(LOG_MISC, "*",
-	       "(@) EOF socket %d, not a dcc socket, not anything.",
-	       xx);
-	close(xx);
-	killsock(xx);
+	       "(@) EOF socket %d, not a dcc socket, not anything.", i);
+	close(i);
+	killsock(i);
       }
     } else if ((xx == -2) && (errno != EINTR)) {	/* select() error */
       context;

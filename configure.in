@@ -15,8 +15,16 @@ dnl crazy machines
 AC_AIX
 AC_ISC_POSIX
 AC_MINIX
-dnl no cross-compiling!
 
+dnl Checks for programs.
+AC_PROG_MAKE_SET
+AC_PROG_RANLIB
+AC_CHECK_PROG(STRIP,strip,strip)
+AC_CHECK_PROG(UNAME,uname,uname)
+AC_CHECK_PROG(BASENAME,basename,basename)
+AC_CHECK_PROG(DIRNAME,dirname,dirname)
+
+dnl no cross-compiling!
 if ! test "x${cross_compiling}" = "xno"
 then
   echo ""
@@ -25,13 +33,6 @@ then
   echo ""
   exit
 fi
-
-dnl Checks for programs.
-AC_PROG_MAKE_SET
-AC_CHECK_PROG(STRIP,strip,strip)
-AC_CHECK_PROG(UNAME,uname,uname)
-
-AC_PROG_RANLIB
 
 dnl stop putting -g in there!  @#$!#$%!
 if test "x${CFLAGS}" = "x"
@@ -98,7 +99,7 @@ case $system in
     DEFAULT_MAKE=debugmem
     ;;
   BSD/OS)
-    if test "x`uname -r | cut -d . -f 1`" = "x2"
+    if test "x`${UNAME} -r | cut -d . -f 1`" = "x2"
     then
       AC_MSG_RESULT(BSD/OS 2! statically linked modules are the only choice)
       need_dl=0
@@ -128,7 +129,7 @@ case $system in
     AC_DEFINE(MODULES_OK)
     ;;
   SunOS)
-    if test "x`uname -r | cut -d . -f 1`" = "x5"
+    if test "x`${UNAME} -r | cut -d . -f 1`" = "x5"
     then
       AC_MSG_RESULT(Solaris!)
       SHLIB_LD="/usr/ccs/bin/ld -G -z text"
@@ -143,7 +144,7 @@ case $system in
     ;;
   OSF1)
     AC_MSG_RESULT(OSF...)
-    case `uname -r | cut -d . -f 1` in
+    case `${UNAME} -r | cut -d . -f 1` in
       V*)
 	AC_MSG_RESULT(Digital OSF)
 	SHLIB_LD="ld -shared -expect_unresolved '*'"
@@ -176,7 +177,7 @@ case $system in
     AC_CHECK_LIB(dld,shl_load)
     AC_DEFINE(MODULES_OK)
     AC_DEFINE(HPUX_HACKS)
-    if test "x`uname -r | cut -d . -f 2`" = "x10"
+    if test "x`${UNAME} -r | cut -d . -f 2`" = "x10"
     then
        AC_DEFINE(HPUX10_HACKS)
     fi
@@ -220,7 +221,7 @@ else
   if test "x`${UNAME}`" = "xSunOS"
   then
     AC_MSG_CHECKING(for SunOS 4)
-    if test "x`uname -r | cut -d . -f 1`" = "x5"
+    if test "x`${UNAME} -r | cut -d . -f 1`" = "x5"
     then
       AC_MSG_RESULT(Solaris -- "*bollocks*" zarni )
     else
@@ -286,14 +287,10 @@ dnl where is tcl?  is it here?
 # ---------- begin robey's tcl thingies
 # (well, what used to be robey's tcl thingies...)
 
-
 tclnames="tcl tcl8.3 tcl83 tcl8.2 tcl82 tcl8.1 tcl81 \
 	tcl8.0 tcl80 tcl7.6 tcl76 tcl7.5 tcl75"
 
 tcllibextensions=".so .so.1 .so.1.0 .so.1.2 .a"
-
-tclshpaths="/usr/local/bin /usr/local/pkgs/tcl/bin \
-	/usr/bin /bin $HOME/bin $HOME/tcl/bin $HOME"
 
 tcllibpaths="/usr/local/lib /usr/local/pkgs/tcl/lib \
 	/usr/lib /lib /usr/i486-linuxaout/lib \
@@ -306,59 +303,12 @@ dnl oohh new configure --variables for those with multiple tcl libs
 AC_ARG_WITH(tcllib, [  --with-tcllib=PATH      full path to tcl library], tcllibname=$withval)
 AC_ARG_WITH(tclinc, [  --with-tclinc=PATH      full path to tcl header], tclincname=$withval)
 
-AC_CHECK_PROG(BASENAME,basename,basename)
-AC_CHECK_PROG(DIRNAME,dirname,dirname)
-
-# workaround if we don't have a basename or dirname command, but have tclsh
-if test "x${BASENAME}" = "x" || test "x${DIRNAME}" = "x"
-then
-  for i in $tclshpaths
-  do
-    for j in $tclnames
-    do
-      k=`echo $j | sed s/tcl/tclsh/`
-      if test -x "$i/$k"
-      then
-	if test "x${BASENAME}" = "x"
-	then
-	  echo "No 'basename' command, using a workaround..."
-	  cat > basename.tmp <<EOF
-#!$i/$k
-puts [file tail [lindex \$argv 0]]
-exit 0
-EOF
-	  chmod 755 basename.tmp
-	  BASENAME=./basename.tmp
-	fi
-	if test "x${DIRNAME}" = "x"
-	then
-	  echo "No 'dirname' command, using a workaround..."
-	  cat > dirname.tmp <<EOF
-#!$i/$k
-puts [file dirname [lindex \$argv 0]]
-exit 0
-EOF
-	  chmod 755 dirname.tmp
-	  DIRNAME=./dirname.tmp
-	fi
-	break 2
-      fi
-    done
-  done
-  if test "x${BASENAME}" = "x" || test "x${DIRNAME}" = "x"
-  then
-    echo "ack...no basename or dirname, we can't configure Tcl without them."
-    exit 1
-  fi
-fi
-
 if test -r "$tcllibname"
 then
   TCLLIB=`$DIRNAME $tcllibname`
-  TCLLIBFN=`$BASENAME $tcllibname | cut -c4-`
-dnl FIXME
-  TCLLIBEXT=""
-  echo "Using Tcl library: $TCLLIB/lib$TCLLIBFN"
+  TCLLIBEXT=".`echo $tcllibname | awk '{j=split($1, i, "."); k=i[[j]]; print k}'`"
+  TCLLIBFN=`$BASENAME $tcllibname $TCLLIBEXT | cut -c4-`
+  echo "Using Tcl library: $TCLLIB/lib$TCLLIBFN$TCLLIBEXT"
 else
 
   # look for libtcl: if TCLLIB is set, check there first
@@ -554,8 +504,6 @@ fi # test TCLLIB
 AC_SUBST(TCLINC)
 AC_SUBST(TCLLIB)
 AC_SUBST(TCLINCFN)
-dnl AC_SUBST(TCLLIBFN)
-dnl AC_SUBST(TCLLIBEXT)
 AC_SUBST(TCL_REQS)
 AC_SUBST(TCL_LIBS)
 
@@ -627,10 +575,6 @@ fi
 
 echo ""
 echo "Configure is done."
-echo ""
-echo "If your bot will be on Dalnet, or a network that uses their server"
-echo "code, please edit the Makefile and remove \"-DRFC_COMPLIANT\" from"
-echo "the \"CFLGS=\" line."
 echo ""
 echo "Type 'make' to create the bot"
 echo ""

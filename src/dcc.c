@@ -224,10 +224,8 @@ static void cont_link(int idx, char *buf, int i)
     /* disconnect all +a bots because we just got a hub */
     for (i = 0; i < dcc_total; i++) {
       if ((i != idx) && (bot_flags(dcc[i].user) & BOT_ALT)) {
-	if (dcc[i].type == &DCC_FORK_BOT) {
-	  killsock(dcc[i].sock);
-	  lostdcc(i);
-	} else if (dcc[i].type == &DCC_BOT_NEW) {
+	if ((dcc[i].type == &DCC_FORK_BOT) ||
+	    (dcc[i].type == &DCC_BOT_NEW)) {
 	  killsock(dcc[i].sock);
 	  lostdcc(i);
 	}
@@ -1755,8 +1753,10 @@ void eof_dcc_identwait(int idx)
   for (i = 0; i < dcc_total; i++)
     if ((dcc[i].type == &DCC_IDENT) &&
 	(dcc[i].u.ident_sock == dcc[idx].sock)) {
-      dcc[i].u.other = 0;
       killsock(dcc[i].sock);	/* cleanup ident socket */
+      dcc[i].u.other = 0;
+      lostdcc(i);
+      break;
     }
   killsock(dcc[idx].sock);	/* cleanup waiting socket */
   dcc[idx].u.other = 0;
@@ -1821,9 +1821,11 @@ void eof_dcc_ident(int idx)
       dcc_telnet_got_ident(i, buf);
     }
   idx = findanyidx(sock);	/* sanity */
-  killsock(dcc[idx].sock);
-  dcc[idx].u.other = 0;
-  lostdcc(idx);
+  if (idx >= 0) {
+    killsock(dcc[idx].sock);
+    dcc[idx].u.other = 0;
+    lostdcc(idx);
+  }
 }
 
 static void display_dcc_ident(int idx, char *buf)
@@ -1855,8 +1857,12 @@ void dcc_telnet_got_ident(int i, char *host)
 	(dcc[idx].sock == dcc[i].u.ident_sock))
       break;
   dcc[i].u.other = 0;
-  if (dcc_total == idx)
+  if (dcc_total == idx) {
     putlog(LOG_MISC, "*", DCC_LOSTIDENT);
+    killsock(dcc[i].sock);
+    lostdcc(i);
+    return;
+  }
   strncpy(dcc[i].host, host, UHOSTLEN);
   dcc[i].host[UHOSTLEN] = 0;
   simple_sprintf(x, "telnet!%s", dcc[i].host);

@@ -19,12 +19,9 @@
  * ===================================================================
  */
 
-#include "rfc1459.h"
-#include <string.h>
+#include "main.h"
 
-#ifdef RFC_COMPLIANT
-
-int rfc_casecmp(char *s1, char *s2)
+int _rfc_casecmp(const char *s1, const char *s2)
 {
   register unsigned char *str1 = (unsigned char *) s1;
   register unsigned char *str2 = (unsigned char *) s2;
@@ -39,7 +36,7 @@ int rfc_casecmp(char *s1, char *s2)
   return (res);
 }
 
-int rfc_ncasecmp(char *str1, char *str2, int n)
+int _rfc_ncasecmp(const char *str1, const char *str2, int n)
 {
   register unsigned char *s1 = (unsigned char *) str1;
   register unsigned char *s2 = (unsigned char *) str2;
@@ -53,6 +50,19 @@ int rfc_ncasecmp(char *str1, char *str2, int n)
       return 0;
   }
   return (res);
+}
+
+unsigned char rfc_tolowertab[];
+unsigned char rfc_touppertab[];
+
+int _rfc_tolower(int c)
+{
+  return rfc_tolowertab[(unsigned char)(c)];
+}
+
+int _rfc_toupper(int c)
+{
+  return rfc_touppertab[(unsigned char)(c)];
 }
 
 unsigned char rfc_tolowertab[] =
@@ -123,14 +133,3 @@ unsigned char rfc_touppertab[] =
  0xf0, 0xf1, 0xf2, 0xf3, 0xf4, 0xf5, 0xf6, 0xf7, 0xf8, 0xf9,
  0xfa, 0xfb, 0xfc, 0xfd, 0xfe, 0xff};
 
-#else				/* Dalnet?? */
-
-int rfc_casecmp(char *s1, char *s2) {
-  return strcasecmp(s1, s2);
-}
-
-int rfc_ncasecmp(char *s1, char *s2, int n) {
-  return strncasecmp(s1, s2, n);
-}
-
-#endif				/* RFC_COMPLIANT */

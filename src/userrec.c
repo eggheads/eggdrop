@@ -709,34 +709,45 @@ int deluser(char *handle)
 int delhost_by_handle(char *handle, char *host)
 {
   struct userrec *u;
-  struct list_type *q, *t = 0;
-  struct user_entry *e;
+  struct list_type *q, *qnext, *qprev;
+  struct user_entry *e = NULL;
   int i = 0;
 
   context;
   u = get_user_by_handle(userlist, handle);
-  if (u == NULL)
+  if (!u)
     return 0;
   q = get_user(&USERENTRY_HOSTS, u);
-  if (q && !rfc_casecmp(q->extra, host)) {
-    e = find_user_entry(&USERENTRY_HOSTS, u);
-    e->u.extra = t = q->next;
-    nfree(q->extra);
-    nfree(q);
-    i = 1;
-    q = t;
-  } else if (q)
-    while (q->next) {
-      if (!rfc_casecmp(q->next->extra, host)) {
-	t = q->next;
-	q->next = t->next;
-	nfree(t->extra);
-	nfree(t);
-	i = 1;
+  qprev = q;
+  if (q) {
+    if (!rfc_casecmp(q->extra, host)) {
+      e = find_user_entry(&USERENTRY_HOSTS, u);
+      e->u.extra = q->next;
+      nfree(q->extra);
+      nfree(q);
+      i++;
+      qprev = NULL;
+      q = e->u.extra;
+    } else
+      q = q->next;
+    while (q) {
+      qnext = q->next;
+      if (!rfc_casecmp(q->extra, host)) {
+	if (qprev)
+	  qprev->next = q->next;
+	else if (e) {
+	  e->u.extra = q->next;
+	  qprev = NULL;
+	}
+	nfree(q->extra);
+	nfree(q);
+	i++;
       } else
-	q = q->next;
+        qprev = q;
+      q = qnext;
     }
-  if (!q)
+  }
+  if (!qprev)
     set_user(&USERENTRY_HOSTS, u, "none");
   if (!noshare && i && !(u->flags & USER_UNSHARED))
     shareout(NULL, "-h %s %s\n", handle, host);

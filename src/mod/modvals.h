@@ -19,6 +19,7 @@
 #define HOOK_QSERV               108
 #define HOOK_ADD_MODE            109
 #define HOOK_MATCH_NOTEREJ	 110
+#define HOOK_RFC_CASECMP	 111
 
 /* these are FIXED once they are in a release they STAY
  * well, unless im feeling grumpy ;) */

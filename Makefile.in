@@ -5,7 +5,7 @@
 
 prefix = @prefix@
 DEST=@DEST@
-NEWVERSION=`grep 'char egg_version' src/main.c | awk '{print $4}' | sed s/\"//g | sed s/\;// | sed s/.\*=\ //`
+NEWVERSION=`grep 'char egg_version' src/main.c | awk '{gsub(/\"|\;/, "", $4); print $4}'`
 
 SHELL=/bin/sh
 
@@ -14,7 +14,7 @@ SHELL=/bin/sh
 #                      usually detects this anyway now)
 #   -DEBUG_MEM       to be able to debug memory allocation (.debug)
 # this can now be set by using 'make debugmem'
-CFLGS = -DRFC_COMPLIANT
+CFLGS =
 
 # configure SHOULD set these...you may need to tweak them to get modules
 # to compile .. if you do...let the devel-team know the working settings
@@ -71,7 +71,6 @@ clean: cleanmods
  
 distclean: clean
 	@rm -f Makefile config.cache config.log config.status config.h lush.h
-	@rm -f basename.tmp dirname.tmp
 	@rm -f `find . \( -name '*~' -o -name '*#' -o -name '*.orig' \
 		-o -name '*.rej' -o -name '*.bak' \) -print`
  

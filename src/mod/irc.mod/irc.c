@@ -56,6 +56,8 @@ static int keepnick = 1;	/* keepnick */
 static int prevent_mixing=1; /* to prevent mixing old/new modes */
 static int revenge_mode = 1;	/* 0 = deop, 1 = and +d, 2 = and kick,
 				 * 3 = and ban */
+static int rfc_compliant = 1; /* net-type changing modify this, but
+			       * requires ircmod reload. drummer/9/12/1999 */
 
 #include "chan.c"
 #include "mode.c"
@@ -882,6 +884,7 @@ static tcl_ints myints[] =
   {"keep-nick", &keepnick, 0},	/* guppy */
   {"prevent-mixing", &prevent_mixing, 0},
   {"revenge-mode", &revenge_mode, 0},
+  {"rfc-compliant", &rfc_compliant, 0},
   {0, 0, 0}			/* arthur2 */
 };
 
@@ -950,6 +953,7 @@ static void do_nettype()
     use_silence = 0;
     use_exempts = 0;
     use_invites = 0;
+    rfc_compliant = 1;
     break;
   case 1:		/* Ircnet */
     kick_method = 4;
@@ -958,6 +962,7 @@ static void do_nettype()
     use_silence = 0;
     use_exempts = 1;
     use_invites = 1;
+    rfc_compliant = 1;
     break;
   case 2:		/* Undernet */
     kick_method = 1;
@@ -966,6 +971,7 @@ static void do_nettype()
     use_silence = 1;
     use_exempts = 0;
     use_invites = 0;
+    rfc_compliant = 1;
     break;
   case 3:		/* Dalnet */
     kick_method = 1;
@@ -974,6 +980,7 @@ static void do_nettype()
     use_silence = 0;
     use_exempts = 0;
     use_invites = 0;
+    rfc_compliant = 0;
     break;
   case 4:		/* new +e/+I Efnet hybrid */
     kick_method = 1;
@@ -982,16 +989,29 @@ static void do_nettype()
     use_silence = 0;
     use_exempts = 1;
     use_invites = 1;
+    rfc_compliant = 1;
     break;
   default:
     break;
   }
+  /* Update all rfc_ function pointers */
+  add_hook(HOOK_RFC_CASECMP, (void *) rfc_compliant);
 }
 
 static char *traced_nettype(ClientData cdata, Tcl_Interp * irp, char *name1,
 			    char *name2, int flags)
 {
   do_nettype();
+  return NULL;
+}
+
+static char *traced_rfccompliant(ClientData cdata, Tcl_Interp * irp,
+				 char *name1, char *name2, int flags)
+{
+  /* This hook forces eggdrop core to change the rfc_ match function
+   * links to point to the rfc compliant versions if rfc_compliant
+   * is 1, or to the normal version if it's 0 */
+  add_hook(HOOK_RFC_CASECMP, (void *) rfc_compliant);
   return NULL;
 }
 
@@ -1033,6 +1053,9 @@ static char *irc_close()
   del_hook(HOOK_5MINUTELY, log_chans);
   del_hook(HOOK_ADD_MODE, real_add_mode);
   del_hook(HOOK_IDLE, flush_modes);
+  Tcl_UntraceVar(interp, "rfc-compliant",
+		 TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
+		 traced_rfccompliant, NULL);
   Tcl_UntraceVar(interp, "net-type",
 		 TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
 		 traced_nettype, NULL);
@@ -1101,6 +1124,9 @@ char *irc_start(Function * global_funcs)
   Tcl_TraceVar(interp, "net-type",
 	       TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
 	       traced_nettype, NULL);
+  Tcl_TraceVar(interp, "rfc-compliant",
+	       TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
+	       traced_rfccompliant, NULL);
   context;
   add_tcl_ints(myints);
   add_builtins(H_dcc, irc_dcc);

@@ -169,8 +169,8 @@ int simple_sprintf VARARGS_DEF(char *,arg1)
 	continue;
       }
       if (s)
-	while (*s)
-	  buf[c++] = *s++;
+      while (*s && (c < 1023))
+        buf[c++] = *s++;
       format++;
     } else
       buf[c++] = *format++;

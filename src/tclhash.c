@@ -119,8 +119,11 @@ p_tcl_bind_list add_bind_table(char *nme, int flg, Function f)
 {
   p_tcl_bind_list p = bind_table_list, o = NULL;
 
-  if (strlen(nme) > 4)
-    nme[4] = 0;
+  /* Do not allow coders to use bind table names longer than
+   * 4 characters.
+   */
+  ASSERT (strlen(nme) <= 4); 
+
   while (p) {
     int v = strcasecmp(p->name, nme);
 

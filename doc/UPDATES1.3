@@ -4,6 +4,13 @@ Changes in eggdrop: (since v1.3.0)
 
 1.3.29
 Foundby   Fixedby   What....
+          dw        kicks weren't being logged
+          rtc       added assert debugging feature
+	  Fabian    main() wasn't removing unknown sockets correctly
+          rtc       fixed buffer overrun in simple_sprintf.
+ 	  Fabian/   Changed RFC_COMPLIANT flag to dynamic variable setting
+	  drummer
+	  Fabian    probably fixes the "un-allocated socket" problem
 Ben       Fabian    eggdrop.conf.dist now talks positively about allow-resync
           rtc       fixed .console to not allow channels starting with '*'.
 SuperS	  Fabian    if run with '-n', eggdrop now only prints every line once

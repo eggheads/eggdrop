@@ -23,9 +23,9 @@
 
 /* This will get us around most of the mess and replace the chunk that
  * was removed from the middle of this file.   --+ Dagmar */
-/* You'll also want to grab the two rfc1459.* files to make this work
- * with ircII derivatives now, as if it weren't obvious already.  ;) */
-#include "rfc1459.h"
+/* You'll also want to grab the rfc1459.c file or change all rfc_*()
+ * calls to the standard library call to make this work with ircII
+ * derivatives now. */
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>

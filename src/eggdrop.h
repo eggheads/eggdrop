@@ -130,6 +130,8 @@
                               cx_line[cx_ptr]=__LINE__; \
                               strncpy(cx_note[cx_ptr],string,255); \
                               cx_note[cx_ptr][255] = 0; }
+#define ASSERT(expr) { if (!(expr)) assert_failed (NULL, __FILE__, __LINE__); }
+
 /* move these here, makes more sense to me :) */
 extern int cx_line[16];
 extern char cx_file[16][30];
