@@ -7,7 +7,7 @@
  *   help system
  *   motd display and %var substitution
  *
- * $Id: misc.c,v 1.63 2003/04/30 03:47:46 wcc Exp $
+ * $Id: misc.c,v 1.64 2003/05/03 04:36:38 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -483,8 +483,8 @@ void daysdur(time_t now, time_t then, char *out)
  */
 void putlog EGG_VARARGS_DEF(int, arg1)
 {
-  int i, type, tsl;
-  char *format, *chname, s[LOGLINELEN], s1[256], *out, ct[81], *s2, stamp[33];
+  int i, type, tsl = 0;
+  char *format, *chname, s[LOGLINELEN], s1[256], *out, ct[81], *s2, stamp[34];
   va_list va;
   time_t now2 = time(NULL);
   struct tm *t;
@@ -494,13 +494,15 @@ void putlog EGG_VARARGS_DEF(int, arg1)
   format = va_arg(va, char *);
 
   /* Create the timestamp */
-  t = localtime(&now2);
-  egg_strftime(&stamp[0], 32, LOG_TS, t);
-  sprintf(&stamp[0], "%s ", stamp);
-  tsl = strlen(stamp);
+  if (shtime) {
+    t = localtime(&now2);
+    egg_strftime(stamp, sizeof(stamp) - 2, LOG_TS, t);
+    strcat(stamp, " ");
+    tsl = strlen(stamp);
+  }
 
   /* Format log entry at offset 'tsl,' then i can prepend the timestamp */
-  out = &s[tsl];
+  out = s+tsl;
   /* No need to check if out should be null-terminated here,
    * just do it! <cybah>
    */
@@ -523,7 +525,7 @@ void putlog EGG_VARARGS_DEF(int, arg1)
   }
   /* Place the timestamp in the string to be printed */
   if ((out[0]) && (shtime)) {
-    strncpy(&s[0], stamp, tsl);
+    strncpy(s, stamp, tsl);
     out = s;
   }
   strcat(out, "\n");
@@ -668,7 +670,7 @@ void flushlogs()
          */
         char stamp[33];
 
-        egg_strftime(&stamp[0], 32, LOG_TS, localtime(&now));
+        egg_strftime(stamp, sizeof(stamp) - 1, LOG_TS, localtime(&now));
         fprintf(logs[i].f, "%s ", stamp);
         fprintf(logs[i].f, MISC_LOGREPEAT, logs[i].repeats);
         /* Reset repeats */
