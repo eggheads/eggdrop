@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  * 
- * $Id: chan.c,v 1.32 2000/02/18 22:38:02 fabian Exp $
+ * $Id: chan.c,v 1.33 2000/02/25 21:36:33 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -432,7 +432,6 @@ static void refresh_exempt(struct chanset_t *chan, char *user)
             if (e->lastactive < now - 60 && !isexempted(chan, e->mask)) {
               do_mask(chan, chan->channel.exempt, e->mask, 'e');
               e->lastactive = now;
-              return;
             }
           }
           b = b->next;
