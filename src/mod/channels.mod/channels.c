@@ -2,7 +2,7 @@
  * channels.c -- part of channels.mod
  *   support for channels within the bot
  *
- * $Id: channels.c,v 1.50 2001/06/30 06:29:56 guppy Exp $
+ * $Id: channels.c,v 1.51 2001/07/01 07:06:30 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -573,10 +573,10 @@ static void channels_report(int idx, int details)
 	  }
 	} else {
 	  dprintf(idx, "    %-10s: (%s), enforcing \"%s\"  (%s)\n", chan->dname,
-		  channel_pending(chan) ? "pending" : "inactive", s2, s);
+		  channel_pending(chan) ? "pending" : "not on channel", s2, s);
 	}
       } else {
-	dprintf(idx, "    %-10s: no IRC support for this channel\n",
+	dprintf(idx, "    %-10s: channel is set +inactive\n",
 		chan->dname);
       }
       if (details) {
