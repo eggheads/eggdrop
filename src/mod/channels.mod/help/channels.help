@@ -41,7 +41,7 @@ See also: +chan, -chan, chanload, chanset, chaninfo
    
 See also: chattr
 %{help=-ban}%{+lo|lo}
-###  %b-ban%b <hostmask OR number>
+###  %b-ban%b <hostmask OR number> [channel]
    Removes the ban from the list of permanent bans stored on the
    bot -- you may reference the ban by the number shown in '.bans'.
    
