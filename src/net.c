@@ -2,7 +2,7 @@
  * net.c -- handles:
  *   all raw network i/o
  * 
- * $Id: net.c,v 1.38 2001/11/11 20:43:12 poptix Exp $
+ * $Id: net.c,v 1.39 2002/01/14 21:20:50 guppy Exp $
  */
 /* 
  * This is hereby released into the public domain.
@@ -602,7 +602,7 @@ int open_telnet_dcc(int sock, char *server, char *port)
 static int sockread(char *s, int *len)
 {
   fd_set fd;
-  int fds, i, x;
+  int fds, i, x, fdtmp;
   struct timeval t;
   int grab = 511;
 
@@ -619,9 +619,19 @@ static int sockread(char *s, int *len)
   for (i = 0; i < MAXSOCKS; i++)
     if (!(socklist[i].flags & (SOCK_UNUSED | SOCK_VIRTUAL))) {
       if ((socklist[i].sock == STDOUT) && !backgrd)
-	FD_SET(STDIN, &fd);
+	fdtmp = STDIN;
       else
-	FD_SET(socklist[i].sock, &fd);
+	fdtmp = socklist[i].sock;
+      /* 
+       * Looks like that having more than a call, in the same
+       * program, to the FD_SET macro, triggers a bug in gcc.
+       * SIGBUS crashing binaries used to be produced on a number
+       * (prolly all?) of 64 bits architectures.
+       * Make your best to avoid to make it happen again.
+       * 
+       * ITE
+       */
+      FD_SET(fdtmp , &fd);
     }
 #ifdef HPUX_HACKS
 #ifndef HPUX10_HACKS
