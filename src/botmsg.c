@@ -5,7 +5,7 @@
  *
  * by Darrin Smith (beldin@light.iinet.net.au)
  *
- * $Id: botmsg.c,v 1.22 2001/04/12 02:39:43 guppy Exp $
+ * $Id: botmsg.c,v 1.23 2001/06/20 14:48:34 poptix Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -53,14 +53,12 @@ void tandout_but EGG_VARARGS_DEF(int, arg1)
   format = va_arg(va, char *);
   egg_vsnprintf(s, 511, format, va);
   va_end(va);
-  len = strlen(s);
-  if (len > 511)
-    len = 511;
-  s[len + 1] = 0;
+  s[sizeof(s)-1] = 0;
 
 #if (TCL_MAJOR_VERSION >= 8 && TCL_MINOR_VERSION >= 1) || (TCL_MAJOR_VERSION >= 9)
   str_nutf8tounicode(s, sizeof s);
 #endif
+  len = strlen(s);
 
   for (i = 0; i < dcc_total; i++)
     if ((dcc[i].type == &DCC_BOT) && (i != x) &&
@@ -294,7 +292,7 @@ void botnet_send_pong(int idx)
 
 void botnet_send_priv EGG_VARARGS_DEF(int, arg1)
 {
-  int idx, l, len;
+  int idx, l;
   char *from, *to, *tobot, *format;
   char tbuf[1024];
   va_list va;
@@ -306,11 +304,7 @@ void botnet_send_priv EGG_VARARGS_DEF(int, arg1)
   format = va_arg(va, char *);
   egg_vsnprintf(tbuf, 450, format, va);
   va_end(va);
-
-  len = strlen(tbuf);
-  if (len > 450)
-    len = 450;
-  tbuf[len + 1] = 0;
+  tbuf[sizeof(tbuf)-1] = 0;
 
 #if (TCL_MAJOR_VERSION >= 8 && TCL_MINOR_VERSION >= 1) || (TCL_MAJOR_VERSION >= 9)
   str_nutf8tounicode(tbuf, sizeof tbuf);

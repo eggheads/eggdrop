@@ -6,7 +6,7 @@
  *   memory management for dcc structures
  *   timeout checking for dcc connections
  *
- * $Id: dccutil.c,v 1.31 2001/04/12 02:39:43 guppy Exp $
+ * $Id: dccutil.c,v 1.32 2001/06/20 14:48:34 poptix Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -116,14 +116,15 @@ void dprintf EGG_VARARGS_DEF(int, arg1)
    * shall return the number of bytes that would be written if the
    * buffer had been large enough, rather then -1.
    */
-  len = strlen(buf);
-  if (len > 1023)
-    len = 1023;
-  buf[len + 1] = 0;
+  /* We actually can, since if it's < 0 or >= sizeof(buf), we know it wrote
+   * sizeof(buf) bytes. But we're not doing that anyway.
+  */
+  buf[sizeof(buf)-1] = 0;
 
 #if (TCL_MAJOR_VERSION >= 8 && TCL_MINOR_VERSION >= 1) || (TCL_MAJOR_VERSION >= 9)
   str_nutf8tounicode(buf, sizeof buf);
 #endif
+  len = strlen(buf);
 
   if (idx < 0) {
     tputs(-idx, buf, len);
