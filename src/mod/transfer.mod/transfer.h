@@ -1,7 +1,7 @@
 /*
  * transfer.h -- part of transfer.mod
  *
- * $Id: transfer.h,v 1.20 2003/03/07 12:38:04 wcc Exp $
+ * $Id: transfer.h,v 1.21 2003/03/08 04:29:44 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -101,7 +101,6 @@ enum dccsend_types {
 #define TRANSFER_UNLOADING          get_language(0xf40)
 #define TRANSFER_STAT_1             get_language(0xf41)
 #define TRANSFER_STAT_2             get_language(0xf42)
-#define TRANSFER_STAT_MEMORY        get_language(0xf43)
 
 #ifndef MAKING_TRANSFER
 /* 4 - 7 */

@@ -1,7 +1,7 @@
 # transfer.danish.lang
 #   language messages for transfer module
 #
-# $Id: transfer.danish.lang,v 1.3 2003/03/07 21:32:52 wcc Exp $
+# $Id: transfer.danish.lang,v 1.4 2003/03/08 04:29:44 wcc Exp $
 
 0xf00,Afviste dcc get %s: kopi til %s FEJLEDE!
 0xf01,NOTICE %s :Filsystem fejl; fjerner filer fra køen.\n
@@ -63,4 +63,3 @@
 0xf40,Fjener overførsel (transfer) modul, dræber alle overførsel (transfer) forbindelser...
 0xf41,    DCC blok størrelse: %d%s\n
 0xf42,    Max samtidige downloads per bruger: %d\n
-0xf43,    Bruger %d bytes af hukommelse\n

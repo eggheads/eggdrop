@@ -7,7 +7,7 @@
  *   telling the current programmed settings
  *   initializing a lot of stuff and loading the tcl scripts
  *
- * $Id: chanprog.c,v 1.41 2003/02/27 10:18:40 tothwolf Exp $
+ * $Id: chanprog.c,v 1.42 2003/03/08 04:29:43 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -366,10 +366,11 @@ void tell_settings(int idx)
   int i;
   struct flag_record fr = { FR_GLOBAL, 0, 0, 0, 0, 0 };
 
-  dprintf(idx, "Botnet Nickname: %s\n", botnetnick);
+  dprintf(idx, "Botnet nickname: %s\n", botnetnick);
   if (firewall[0])
-    dprintf(idx, "Firewall: %s, port %d\n", firewall, firewallport);
-  dprintf(idx, "Userfile: %s   Motd: %s\n", userfile, motdfile);
+    dprintf(idx, "Firewall: %s:%d\n", firewall, firewallport);
+  dprintf(idx, "Userfile: %s\n", userfile);
+  dprintf(idx, "Motd: %s\n",  motdfile);
   dprintf(idx, "Directories:\n");
   dprintf(idx, "  Help    : %s\n", helpdir);
   dprintf(idx, "  Temp    : %s\n", tempdir);
@@ -389,7 +390,8 @@ void tell_settings(int idx)
               logs[i].filename, logs[i].chname,
               masktype(logs[i].mask), maskname(logs[i].mask));
     }
-  dprintf(idx, "Ignores last %d mins\n", ignore_time);
+  dprintf(idx, "Ignores last %d minute%s\n", ignore_time,
+          (ignore_time != 1) ? "s" : "");
 }
 
 void reaffirm_owners()

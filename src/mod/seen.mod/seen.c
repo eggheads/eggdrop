@@ -10,7 +10,7 @@
  * 1.2     1997-08-20      Minor fixes. [BB]
  * 1.2a    1997-08-24      Minor fixes. [BB]
  *
- * $Id: seen.c,v 1.31 2003/03/04 08:51:45 wcc Exp $
+ * $Id: seen.c,v 1.32 2003/03/08 04:29:44 wcc Exp $
  */
 /*
  * Copyright (C) 1999, 2000, 2001, 2002, 2003 Eggheads Development Team
@@ -117,9 +117,7 @@ static trig_data trigdata[] = {
 
 static int seen_expmem()
 {
-  int size = 0;
-
-  return size;
+  return 0;
 }
 
 /* PUB `seen' trigger. */
@@ -584,8 +582,12 @@ static void wordshift(char *first, char *rest)
 /* Report on current seen info for .modulestat. */
 static void seen_report(int idx, int details)
 {
-  if (details)
-    dprintf(idx, "    seen.so - PUB, DCC and MSG \"seen\" commands.\n");
+  if (details) {
+    int size = seen_expmem();
+
+    dprintf(idx, "    Using %d byte%s of memory\n", size,
+            (size != 1) ? "s" : "");
+  }
 }
 
 /* PUB channel builtin commands. */

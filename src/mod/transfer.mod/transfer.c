@@ -1,7 +1,7 @@
 /*
  * transfer.c -- part of transfer.mod
  *
- * $Id: transfer.c,v 1.63 2003/02/28 23:07:39 wcc Exp $
+ * $Id: transfer.c,v 1.64 2003/03/08 04:29:44 wcc Exp $
  *
  * Copyright (C) 1997 Robey Pointer
  * Copyright (C) 1999, 2000, 2001, 2002, 2003 Eggheads Development Team
@@ -1166,10 +1166,13 @@ static int transfer_expmem()
 static void transfer_report(int idx, int details)
 {
   if (details) {
+    int size = transfer_expmem();
+
     dprintf(idx, TRANSFER_STAT_1, dcc_block,
             (dcc_block == 0) ? " (turbo dcc)" : "");
     dprintf(idx, TRANSFER_STAT_2, dcc_limit);
-    dprintf(idx, TRANSFER_STAT_MEMORY, transfer_expmem());
+    dprintf(idx, "    Using %d byte%s of memory\n", size,
+            (size != 1) ? "s" : "");
   }
 }
 

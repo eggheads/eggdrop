@@ -1,5 +1,5 @@
 /*
- * $Id: uptime.c,v 1.28 2003/03/06 03:49:41 wcc Exp $
+ * $Id: uptime.c,v 1.29 2003/03/08 04:29:44 wcc Exp $
  *
  * This module reports uptime information about your bot to http://uptime.eggheads.org. The
  * purpose for this is to see how your bot rates against many others (including EnergyMechs
@@ -81,8 +81,12 @@ static int uptime_expmem()
 static void uptime_report(int idx, int details)
 {
   if (details) {
-    dprintf(idx, "   number of uptime packets sent: %d\n", uptimecount);
-    dprintf(idx, "   using %d bytes\n", uptime_expmem());
+    int size = uptime_expmem();
+
+    dprintf(idx, "    %d uptime packet%s sent\n", uptimecount,
+            (uptimecount != 1) ? "s" : "");
+    dprintf(idx, "    Using %d byte%s of memory\n", size,
+            (size != 1) ? "s" : "");
   }
 }
 

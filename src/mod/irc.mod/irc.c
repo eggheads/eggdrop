@@ -2,7 +2,7 @@
  * irc.c -- part of irc.mod
  *   support for channels within the bot
  *
- * $Id: irc.c,v 1.91 2003/03/04 08:51:45 wcc Exp $
+ * $Id: irc.c,v 1.92 2003/03/08 04:29:44 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -934,7 +934,7 @@ static void irc_report(int idx, int details)
   for (chan = chanset; chan; chan = chan->next) {
     if (idx != DP_STDOUT)
       get_user_flagrec(dcc[idx].user, &fr, chan->dname);
-    if (idx == DP_STDOUT || glob_master(fr) || chan_master(fr)) {
+    if ((idx == DP_STDOUT) || glob_master(fr) || chan_master(fr)) {
       p = NULL;
       if (!channel_inactive(chan)) {
         if (chan->status & CHAN_JUPED)
@@ -946,7 +946,7 @@ static void irc_report(int idx, int details)
         else if ((chan->dname[0] != '+') && !me_op(chan))
           p = MISC_WANTOPS;
       }
-      l = simple_sprintf(ch, "%s%s%s%s, ", chan->dname, p ? "(" : "",
+      l = simple_sprintf(ch, "%s%s%s%s, ", chan->dname, p ? " (" : "",
                          p ? p : "", p ? ")" : "");
       if ((k + l) > 70) {
         dprintf(idx, "   %s\n", q);
@@ -958,7 +958,7 @@ static void irc_report(int idx, int details)
   }
   if (k > 10) {
     q[k - 2] = 0;
-    dprintf(idx, "    %s\n", q);
+    dprintf(idx, "   %s\n", q);
   }
 }
 

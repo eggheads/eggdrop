@@ -6,7 +6,7 @@
  * Written by Fabian Knittel <fknittel@gmx.de>. Based on zlib examples
  * by Jean-loup Gailly and Miguel Albrecht.
  *
- * $Id: compress.c,v 1.19 2003/03/04 08:51:45 wcc Exp $
+ * $Id: compress.c,v 1.20 2003/03/08 04:29:43 wcc Exp $
  */
 /*
  * Copyright (C) 2000, 2001, 2002, 2003 Eggheads Development Team
@@ -379,9 +379,16 @@ static int compress_expmem(void)
 
 static int compress_report(int idx, int details)
 {
-  if (details)
-    dprintf(idx, "    Compressed %u file(s), uncompressed %u file(s).\n",
-            compressed_files, uncompressed_files);
+  if (details) {
+    int size = compress_expmem();
+
+    dprintf(idx, "    %u file%s compressed\n", compressed_files,
+            (compressed_files != 1) ? "s" : "");
+    dprintf(idx, "    %u file%s uncompressed\n", uncompressed_files,
+            (uncompressed_files != 1) ? "s" : "");
+    dprintf(idx, "    Using %d byte%s of memory\n", size,
+            (size != 1) ? "s" : "");
+  }
   return 0;
 }
 

@@ -2,7 +2,7 @@
  * filesys.c -- part of filesys.mod
  *   main file of the filesys eggdrop module
  *
- * $Id: filesys.c,v 1.58 2003/03/04 08:51:45 wcc Exp $
+ * $Id: filesys.c,v 1.59 2003/03/08 04:29:44 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -892,20 +892,26 @@ static int filesys_expmem()
 static void filesys_report(int idx, int details)
 {
   if (details) {
+    int size = filesys_expmem();
+
     if (dccdir[0]) {
       dprintf(idx, "    DCC file path: %s", dccdir);
       if (upload_to_cd)
-        dprintf(idx, "\n        incoming: (go to the current dir)\n");
+        dprintf(idx, "\n      Incoming: (user's current directory)\n");
       else if (dccin[0])
-        dprintf(idx, "\n        incoming: %s\n", dccin);
+        dprintf(idx, "\n      Incoming: %s\n", dccin);
       else
-        dprintf(idx, "    (no uploads)\n");
+        dprintf(idx, " (no uploads)\n");
+
       if (dcc_users)
-        dprintf(idx, "        max users is %d\n", dcc_users);
-      if ((upload_to_cd) || (dccin[0]))
-        dprintf(idx, "    DCC max file size: %dk\n", dcc_maxsize);
+        dprintf(idx, "    Max users: %d\n", dcc_users);
+      if (upload_to_cd || dccin[0])
+        dprintf(idx, "    Max upload file size: %dk\n", dcc_maxsize);
     } else
-      dprintf(idx, "  (Filesystem module loaded, but no active dcc path.)\n");
+      dprintf(idx, "    Filesystem module loaded, but no active dcc path "
+              "exists.\n");
+    dprintf(idx, "    Using %d byte%s of memory\n", size,
+            (size != 1) ? "s" : "");
   }
 }
 

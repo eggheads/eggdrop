@@ -4,7 +4,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: modules.c,v 1.81 2003/03/04 08:51:45 wcc Exp $
+ * $Id: modules.c,v 1.82 2003/03/08 04:29:43 wcc Exp $
  */
 /* 
  * Copyright (C) 1997 Robey Pointer
@@ -1071,7 +1071,7 @@ void do_module_report(int idx, int details, char *which)
       dependancy *d;
 
       if (details)
-        dprintf(idx, "Module: %s, v %d.%d\n", p->name ? p->name : "CORE",
+        dprintf(idx, "  Module: %s, v %d.%d\n", p->name ? p->name : "CORE",
                 p->major, p->minor);
       if (details > 1) {
         for (d = dependancy_list; d; d = d->next)

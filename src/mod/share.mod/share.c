@@ -1,7 +1,7 @@
 /*
  * share.c -- part of share.mod
  *
- * $Id: share.c,v 1.72 2003/01/30 07:15:15 wcc Exp $
+ * $Id: share.c,v 1.73 2003/03/08 04:29:44 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1577,7 +1577,7 @@ static void status_tbufs(int idx)
     }
   if (off) {
     s[off - 2] = 0;
-    dprintf(idx, "Pending sharebot buffers: %s\n", s);
+    dprintf(idx, "    Pending sharebot buffers: %s\n", s);
   }
 }
 
@@ -2109,14 +2109,14 @@ static int share_expmem()
 
 static void share_report(int idx, int details)
 {
-  int i, j;
-
   if (details) {
-    dprintf(idx, "    Share module, using %d bytes.\n", share_expmem());
-    dprintf(idx, "    Private owners: %3s   Allow resync: %3s\n",
-            (private_global || (private_globals_bitmask() & USER_OWNER)) ?
-            "yes" : "no", allow_resync ? "yes" : "no");
-    for (i = 0; i < dcc_total; i++)
+    int i, j, size = share_expmem();
+
+    dprintf(idx, "    Private owners: %s\n", (private_global ||
+            (private_globals_bitmask() & USER_OWNER)) ? "yes" : "no");
+    dprintf(idx, "    Allow resync: %s\n", allow_resync ? "yes" : "no");
+            
+    for (i = 0; i < dcc_total; i++) {
       if (dcc[i].type == &DCC_BOT) {
         if (dcc[i].status & STAT_GETTING) {
           int ok = 0;
@@ -2125,26 +2125,25 @@ static void share_report(int idx, int details)
             if (((dcc[j].type->flags & (DCT_FILETRAN | DCT_FILESEND)) ==
                 (DCT_FILETRAN | DCT_FILESEND)) &&
                 !egg_strcasecmp(dcc[j].host, dcc[i].nick)) {
-              dprintf(idx, "Downloading userlist from %s (%d%% done)\n",
+              dprintf(idx, "    Downloading userlist from %s (%d%% done)\n",
                       dcc[i].nick, (int) (100.0 * ((float) dcc[j].status) /
                       ((float) dcc[j].u.xfer->length)));
               ok = 1;
               break;
             }
           if (!ok)
-            dprintf(idx, "Download userlist from %s (negotiating "
+            dprintf(idx, "    Download userlist from %s (negotiating "
                     "botentries)\n", dcc[i].nick);
         } else if (dcc[i].status & STAT_SENDING) {
           for (j = 0; j < dcc_total; j++) {
             if (((dcc[j].type->flags & (DCT_FILETRAN | DCT_FILESEND)) ==
                 DCT_FILETRAN) && !egg_strcasecmp(dcc[j].host, dcc[i].nick)) {
               if (dcc[j].type == &DCC_GET)
-                dprintf(idx, "Sending userlist to %s (%d%% done)\n",
+                dprintf(idx, "    Sending userlist to %s (%d%% done)\n",
                         dcc[i].nick, (int) (100.0 * ((float) dcc[j].status) /
                         ((float) dcc[j].u.xfer->length)));
               else
-                dprintf(idx,
-                        "Sending userlist to %s (waiting for connect)\n",
+                dprintf(idx, "    Sending userlist to %s (waiting for connect)\n",
                         dcc[i].nick);
             }
           }
@@ -2154,7 +2153,10 @@ static void share_report(int idx, int details)
           dprintf(idx, "    Aggressively sharing with %s.\n", dcc[i].nick);
         }
       }
+    }
     status_tbufs(idx);
+    dprintf(idx, "    Using %d byte%s of memory\n", size,
+            (size != 1) ? "s" : "");
   }
 }
 

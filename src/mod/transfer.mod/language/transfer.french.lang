@@ -1,7 +1,7 @@
 # transfer.french.lang
 #   language messages for transfer module
 #
-# $Id: transfer.french.lang,v 1.3 2003/03/07 06:42:33 wcc Exp $
+# $Id: transfer.french.lang,v 1.4 2003/03/08 04:29:44 wcc Exp $
 
 0xf00,Refus de réception dcc %s : copie de %s IMPOSSIBLE !
 0xf01,NOTICE %s :Le système de fichier est H.S.; annulation des fichiers en attente.\n
@@ -63,4 +63,3 @@
 0xf40,Déchargement du module transfer, fermeture de tous les transferts...
 0xf41,    Taille de bloc DCC : %d%s, num max de d/ls simultanés : %d\n
 0xf42,    Telechargements simultanes maximum par utilisateur: %d\n
-0xf43,    Utilise %d octets mémoire\n

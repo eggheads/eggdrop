@@ -4,7 +4,7 @@
  *
  * Written by Fabian Knittel <fknittel@gmx.de>
  *
- * $Id: dns.c,v 1.30 2003/01/30 07:15:14 wcc Exp $
+ * $Id: dns.c,v 1.31 2003/03/08 04:29:43 wcc Exp $
  */
 /*
  * Copyright (C) 1999, 2000, 2001, 2002, 2003 Eggheads Development Team
@@ -156,8 +156,11 @@ static int dns_expmem(void)
 static int dns_report(int idx, int details)
 {
   if (details) {
-    dprintf(idx, "    (cache uses %d bytes of memory)\n", dns_cache_expmem());
-    dprintf(idx, "    DNS resolver is active.\n");
+    int size = dns_expmem();
+
+    dprintf(idx, "    Async DNS resolver is active.\n");
+    dprintf(idx, "    Using %d byte%s of memory\n", size,
+            (size != 1) ? "s" : "");
   }
   return 0;
 }

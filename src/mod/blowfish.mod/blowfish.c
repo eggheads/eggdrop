@@ -2,7 +2,7 @@
  * blowfish.c -- part of blowfish.mod
  *   encryption and decryption of passwords
  *
- * $Id: blowfish.c,v 1.26 2003/01/30 07:15:14 wcc Exp $
+ * $Id: blowfish.c,v 1.27 2003/03/08 04:29:43 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -138,19 +138,22 @@ static void blowfish_decipher(u_32bit_t *xl, u_32bit_t *xr)
 
 static void blowfish_report(int idx, int details)
 {
-  int i, tot = 0;
-
   if (details) {
+    int i, tot = 0, size = blowfish_expmem();
+
     for (i = 0; i < BOXES; i++)
       if (box[i].P != NULL)
         tot++;
+
     dprintf(idx, "    Blowfish encryption module:\n");
-    dprintf(idx, "    %d of %d boxes in use: ", tot, BOXES);
+    dprintf(idx, "      %d of %d boxes in use: ", tot, BOXES);
     for (i = 0; i < BOXES; i++)
       if (box[i].P != NULL) {
         dprintf(idx, "(age: %d) ", now - box[i].lastuse);
       }
     dprintf(idx, "\n");
+    dprintf(idx, "      Using %d byte%s of memory\n", size,
+            (size != 1) ? "s" : "");
   }
 }
 

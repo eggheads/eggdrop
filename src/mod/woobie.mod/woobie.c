@@ -5,7 +5,7 @@
  * Originally written by ButchBub         15 July     1997
  * Comments by Fabian Knittel             29 December 1999
  *
- * $Id: woobie.c,v 1.20 2003/01/29 05:48:42 wcc Exp $
+ * $Id: woobie.c,v 1.21 2003/03/08 04:29:44 wcc Exp $
  */
 /*
  * Copyright (C) 1999, 2000, 2001, 2002, 2003 Eggheads Development Team
@@ -70,12 +70,12 @@ static int cmd_woobie(struct userrec *u, int idx, char *par)
  */
 static void woobie_report(int idx, int details)
 {
-  int size;
+  if (details) {
+    int size = woobie_expmem();
 
-  Context;
-  size = woobie_expmem();
-  if (details)
-    dprintf(idx, "    0 woobies using %d bytes\n", size);
+    dprintf(idx, "    Using %d byte%s of memory\n", size,
+            (size != 1) ? "s" : "");
+  }
 }
 
 /* Note: The tcl-name is automatically created if you set it to NULL. In

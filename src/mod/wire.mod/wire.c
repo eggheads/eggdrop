@@ -15,7 +15,7 @@
  * 1.4       1997-11-25      1.2.2.0         Added language addition  Kirk
  * 1.5       1998-07-12      1.3.0.0         Fixed ;me and updated    BB
  *
- * $Id: wire.c,v 1.27 2003/01/30 07:15:15 wcc Exp $
+ * $Id: wire.c,v 1.28 2003/03/08 04:29:44 wcc Exp $
  */
 /*
  * Copyright (C) 1999, 2000, 2001, 2002, 2003 Eggheads Development Team
@@ -516,16 +516,19 @@ static char *cmd_putwire(int idx, char *message)
 /* a report on the module status */
 static void wire_report(int idx, int details)
 {
-  int wiretot = 0;
-  wire_list *w = wirelist;
+  if (details) {
+    int count = 0, size = wire_expmem();
+    wire_list *w = wirelist;
 
-  while (w) {
-    wiretot++;
-    w = w->next;
+    while (w) {
+      count++;
+      w = w->next;
+    }
+    
+    dprintf(idx, "    %d wire%s\n", count, (count != 1) ? "s" : "");
+    dprintf(idx, "    Using %d byte%s of memory\n", size,
+            (size != 1) ? "s" : "");
   }
-  if (details)
-    dprintf(idx, "   %d wire%s using %d bytes\n", wiretot,
-            wiretot == 1 ? "" : "s", wire_expmem());
 }
 
 static cmd_t wire_dcc[] = {

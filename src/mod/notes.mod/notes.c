@@ -5,7 +5,7 @@
  *   note cmds
  *   note ignores
  *
- * $Id: notes.c,v 1.45 2003/02/27 10:18:40 tothwolf Exp $
+ * $Id: notes.c,v 1.46 2003/03/08 04:29:44 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1186,10 +1186,14 @@ static int notes_expmem()
 static void notes_report(int idx, int details)
 {
   if (details) {
+    int size = notes_expmem();
+
     if (notefile[0])
-      dprintf(idx, "    Notes can be stored, in: %s\n", notefile);
+      dprintf(idx, "    Notes can be stored in: %s\n", notefile);
     else
       dprintf(idx, "    Notes can not be stored.\n");
+    dprintf(idx, "    Using %d byte%s of memory\n", size,
+            (size != 1) ? "s" : "");
   }
 }
 

@@ -2,7 +2,7 @@
  * channels.c -- part of channels.mod
  *   support for channels within the bot
  *
- * $Id: channels.c,v 1.81 2003/02/27 10:18:40 tothwolf Exp $
+ * $Id: channels.c,v 1.82 2003/03/08 04:29:43 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -647,27 +647,30 @@ static void channels_report(int idx, int details)
           i += my_strcpy(s + i, "nodesynch ");
         dprintf(idx, "      Options: %s\n", s);
         if (chan->need_op[0])
-          dprintf(idx, "      To get ops I do: %s\n", chan->need_op);
+          dprintf(idx, "      To get ops, I do: %s\n", chan->need_op);
         if (chan->need_invite[0])
-          dprintf(idx, "      To get invited I do: %s\n", chan->need_invite);
+          dprintf(idx, "      To get invited, I do: %s\n", chan->need_invite);
         if (chan->need_limit[0])
-          dprintf(idx, "      To get the channel limit up'd I do: %s\n",
+          dprintf(idx, "      To get the channel limit raised, I do: %s\n",
                   chan->need_limit);
         if (chan->need_unban[0])
-          dprintf(idx, "      To get unbanned I do: %s\n", chan->need_unban);
+          dprintf(idx, "      To get unbanned, I do: %s\n", chan->need_unban);
         if (chan->need_key[0])
-          dprintf(idx, "      To get the channel key I do: %s\n",
+          dprintf(idx, "      To get the channel key, I do: %s\n",
                   chan->need_key);
         if (chan->idle_kick)
-          dprintf(idx, "      Kicking idle users after %d min\n",
-                  chan->idle_kick);
+          dprintf(idx, "      Kicking idle users after %d minute%s\n",
+                  chan->idle_kick, (chan->idle_kick != 1) ? "s" : "");
         if (chan->stopnethack_mode)
-          dprintf(idx, "      stopnethack-mode %d\n", chan->stopnethack_mode);
+          dprintf(idx, "      stopnethack-mode: %d\n", chan->stopnethack_mode);
         if (chan->revenge_mode)
-          dprintf(idx, "      revenge-mode %d\n", chan->revenge_mode);
-        dprintf(idx, "    Bans last %d mins.\n", chan->ban_time);
-        dprintf(idx, "    Exemptions last %d mins.\n", chan->exempt_time);
-        dprintf(idx, "    Invitations last %d mins.\n", chan->invite_time);
+          dprintf(idx, "      revenge-mode: %d\n", chan->revenge_mode);
+        dprintf(idx, "      Bans last %d minute%s.\n", chan->ban_time,
+                 (chan->ban_time != 1) ? "s" : "");
+        dprintf(idx, "      Exemptions last %d minute%s.\n", chan->exempt_time,
+                 (chan->exempt_time != 1) ? "s" : "");
+        dprintf(idx, "      Invitations last %d minute%s.\n", chan->invite_time,
+                 (chan->invite_time != 1) ? "s" : "");
       }
     }
   }

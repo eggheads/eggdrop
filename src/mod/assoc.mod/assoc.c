@@ -2,7 +2,7 @@
  * assoc.c -- part of assoc.mod
  *   the assoc code, moved here mainly from botnet.c for module work
  *
- * $Id: assoc.c,v 1.26 2003/02/06 20:15:19 wcc Exp $
+ * $Id: assoc.c,v 1.27 2003/03/08 04:29:43 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -343,19 +343,21 @@ static void zapf_assoc(char *botnick, char *code, char *par)
   }
 }
 
-/* A report on the module status.
- */
 static void assoc_report(int idx, int details)
 {
-  assoc_t *a;
-  int size = 0, count = 0;;
-
   if (details) {
+    assoc_t *a;
+    int size = 0, count = 0;
+  
     for (a = assoc; a; a = a->next) {
       count++;
       size += sizeof(assoc_t);
     }
-    dprintf(idx, "    %d assocs using %d bytes\n", count, size);
+
+    dprintf(idx, "    %d current association%s\n", count,
+            (count != 1) ? "s" : "");
+    dprintf(idx, "    Using %d byte%s of memory\n", size,
+            (size != 1) ? "s" : "");
   }
 }
 
