@@ -4,7 +4,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: modules.c,v 1.64 2002/01/14 15:41:05 stdarg Exp $
+ * $Id: modules.c,v 1.65 2002/01/14 15:47:42 stdarg Exp $
  */
 /* 
  * Copyright (C) 1997 Robey Pointer
@@ -81,6 +81,7 @@ extern time_t now, online_since;
 extern struct chanset_t *chanset;
 extern tand_t *tandbot;
 extern party_t *party;
+extern int parties;
 extern sock_list        *socklist;
 
 
@@ -538,6 +539,7 @@ Function global_table[] =
   (Function) quit_msg,		/* char *				*/
   (Function) module_load,
   (Function) module_unload,
+  (Function) & parties		/* int					*/
 };
 
 void init_modules(void)
