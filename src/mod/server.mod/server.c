@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  * 
- * $Id: server.c,v 1.42 2000/05/28 17:32:44 fabian Exp $
+ * $Id: server.c,v 1.43 2000/06/03 12:14:41 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1405,12 +1405,10 @@ static void do_nettype(void)
 {
   switch (net_type) {
   case 0:	/* EfNet except new +e/+I hybrid */
-    use_silence = 0;
     check_mode_r = 0;
     nick_len = 9;
     break;
   case 1:	/* Ircnet */
-    use_silence = 0;
     check_mode_r = 1;
     use_penalties = 1;
     use_fastdeq = 3;
@@ -1419,19 +1417,16 @@ static void do_nettype(void)
     kick_method = 4;
     break;
   case 2:	/* Undernet */
-    use_silence = 1;
     check_mode_r = 0;
     use_fastdeq = 2;
     nick_len = 9;
     simple_sprintf(stackablecmds, "PRIVMSG NOTICE TOPIC PART WHOIS");
     break;
   case 3:	/* Dalnet */
-    use_silence = 0;
     check_mode_r = 0;
     nick_len = 32;
     break;
   case 4:	/* new +e/+I Efnet hybrid */
-    use_silence = 0;
     check_mode_r = 0;
     nick_len = 9;
     break;
@@ -1491,7 +1486,6 @@ static tcl_coups my_tcl_coups[] =
 
 static tcl_ints my_tcl_ints[] =
 {
-  {"use-silence",		NULL,				0},
   {"use-console-r",		NULL,				1},
   {"servlimit",			&min_servs,			0},
   {"server-timeout",		&server_timeout,		0},
@@ -2145,8 +2139,7 @@ char *server_start(Function * global_funcs)
   Context;
   my_tcl_strings[0].buf = botname;
   add_tcl_strings(my_tcl_strings);
-  my_tcl_ints[0].val = &use_silence;
-  my_tcl_ints[1].val = &use_console_r;
+  my_tcl_ints[0].val = &use_console_r;
   add_tcl_ints(my_tcl_ints);
   add_tcl_commands(my_tcl_cmds);
   add_tcl_coups(my_tcl_coups);

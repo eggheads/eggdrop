@@ -1,7 +1,7 @@
 /* 
  * tclirc.c -- part of irc.mod
  * 
- * $Id: tclirc.c,v 1.14 2000/03/23 23:17:58 fabian Exp $
+ * $Id: tclirc.c,v 1.15 2000/06/03 12:14:41 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -456,6 +456,38 @@ static int tcl_getchanjoin STDVAR
   return TCL_OK;
 }
 
+static int tcl_channame2dname STDVAR
+{
+  struct chanset_t *chan;
+
+  Context;
+  BADARGS(2, 2, " channel-name");
+  chan = findchan(argv[1]);
+  if (chan) {
+      Tcl_AppendResult(irp, chan->dname, NULL);
+      return TCL_OK;
+  } else {
+      Tcl_AppendResult(irp, "invalid channel-name: ", argv[1], NULL);
+      return TCL_ERROR;
+  }
+}
+
+static int tcl_chandname2name STDVAR
+{
+  struct chanset_t *chan;
+
+  Context;
+  BADARGS(2, 2, " channel-dname");
+  chan = findchan_by_dname(argv[1]);
+  if (chan) {
+      Tcl_AppendResult(irp, chan->name, NULL);
+      return TCL_OK;
+  } else {
+      Tcl_AppendResult(irp, "invalid channel-dname: ", argv[1], NULL);
+      return TCL_ERROR;
+  }
+}
+
 /* flushmode <chan> */
 static int tcl_flushmode STDVAR
 {
@@ -747,5 +779,7 @@ static tcl_cmds tclchan_cmds[] =
   {"topic",		tcl_topic},
   {"botonchan",		tcl_botonchan},
   {"putkick",		tcl_putkick},
+  {"channame2dname",	tcl_channame2dname},
+  {"chandname2name",	tcl_chandname2name},
   {NULL,		NULL}
 };

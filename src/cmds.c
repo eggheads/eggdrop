@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  * 
- * $Id: cmds.c,v 1.29 2000/05/06 22:02:27 fabian Exp $
+ * $Id: cmds.c,v 1.30 2000/06/03 12:14:40 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -34,8 +34,7 @@ extern struct dcc_t	*dcc;
 extern struct userrec	*userlist;
 extern tcl_timer_t	*timer, *utimer;
 extern int		 dcc_total, remote_boots, backgrd, make_userfile,
-			 do_restart, conmask, require_p, must_be_owner,
-			 use_silence;
+			 do_restart, conmask, require_p, must_be_owner;
 extern unsigned long	 otraffic_irc, otraffic_irc_today,
 			 itraffic_irc, itraffic_irc_today,
 			 otraffic_bn, otraffic_bn_today,
@@ -2339,9 +2338,7 @@ static void cmd_pls_ignore(struct userrec *u, int idx, char *par)
     dprintf(idx, "That already matches an existing ignore.\n");
     return;
   }
-  dprintf(idx, "Now ignoring: %s (%s)%s\n", s, par, use_silence == 0 ? "" : " (added to silence list)");
-  if (use_silence)
-	dprintf(DP_SERVER, "SILENCE +%s\n", s);
+  dprintf(idx, "Now ignoring: %s (%s)\n", s, par);
   addignore(s, dcc[idx].nick, par, 0L);
   putlog(LOG_CMDS, "*", "#%s# +ignore %s %s", dcc[idx].nick, s, par);
 }
@@ -2357,10 +2354,8 @@ static void cmd_mns_ignore(struct userrec *u, int idx, char *par)
   strncpy(buf, par, UHOSTMAX);
   buf[UHOSTMAX] = 0;
   if (delignore(buf)) {
-    if (use_silence)
-      dprintf(DP_SERVER, "SILENCE -%s\n", buf);
     putlog(LOG_CMDS, "*", "#%s# -ignore %s", dcc[idx].nick, buf);
-    dprintf(idx, "No longer ignoring: %s%s\n", buf, use_silence == 0 ? "" : " (removed from silence list)");
+    dprintf(idx, "No longer ignoring: %s\n", buf);
   } else
     dprintf(idx, "Can't find that ignore.\n");
 }

@@ -23,10 +23,6 @@ see also: set username
 %{help=set botnick}%{+n}
 ###  %bset botnick%b
    this read-only variable returns the bots current nickname on irc.
-%{help=set use-silence}%{+n}
-###  %bset use-silence%b 0/1
-   This setting enbables the ircu SILENCE command for users being
-   ignored.
 %{help=set servlimit}%{+n}
 ###  %bset servlimit%b <#>
    specifies the minimum number of servers the bot should accept.
@@ -188,9 +184,8 @@ see also: default-port
      %bnever-give-up%b        %bflood-ctcp%b     %bserver%b
      %bmax-queue-msg%b        %bstrict-host%b    %bbotnick%b
      %bserver-timeout%b       %binit-server%b    %bservers%b
-     %blowercase-ctcp%b       %buse-silence%b    %bbotname%b
+     %blowercase-ctcp%b       %bnet-type%b       %bbotname%b
      %bserverror-quit%b       %banswer-ctcp%b    %baltnick%b
      %btrigger-on-ignore%b    %bdefault-port%b   %brealname%b
      %bserver-cycle-wait%b    %bcheck-stoned%b   %bflood-msg%b
-     %bstrict-servernames%b   %bquiet-reject%b   %bkeep-nick%b
-     %bnet-type
+     %bstrict-servernames%b   %bquiet-reject%b   %bkeep-nick

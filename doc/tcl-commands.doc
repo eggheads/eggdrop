@@ -449,6 +449,25 @@ specific commands, see later.
   channels
     returns: list of the channels the bot is monitoring (or trying to)
 
+| channame2dname <channel-name>
+| chandname2name <channel-dname>
+|   These two functions are important to correctly support !channels. The
+|   bot differentiates between channel description names (chan dnames) and
+|   real channel names (chan names).  The chan dnames are what you would
+|   normally call the channel, e.g. `!channel'.  The chan names are what
+|   the IRC server uses to identify the channel, they consist of the chan
+|   dname prefixed with an ID, e.g. `!ABCDEchannel'.
+|
+|   For bot functions like isop, isvoice, etc. you need to know the chan
+|   dnames. If you communicate with the server, you usually get the chan
+|   name though. That's what you need the channame2dname function for.
+|
+|   If you only have the chan dname and want to directly send raw server
+|   commands, you need the chan name. Use the chandname2name function for
+|   that case.
+|
+|   NOTE: For non-!channels, chan dname and chan name are the same.
+
   isbotnick <nick>
     returns: "1" if the nick matches the botnick; "0" otherwise
 

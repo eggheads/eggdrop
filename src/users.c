@@ -10,7 +10,7 @@
  * 
  * dprintf'ized, 9nov1995
  * 
- * $Id: users.c,v 1.15 2000/05/06 22:02:27 fabian Exp $
+ * $Id: users.c,v 1.16 2000/06/03 12:14:40 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -46,7 +46,7 @@ char spaces2[33] = "                                 ";
 extern struct dcc_t *dcc;
 extern struct userrec *userlist, *lastuser;
 extern struct chanset_t *chanset;
-extern int dcc_total, noshare, use_silence;
+extern int dcc_total, noshare;
 extern char botnetnick[];
 extern Tcl_Interp *interp;
 extern time_t now;
@@ -208,17 +208,6 @@ void check_expired_ignores()
     if (!((*u)->flags & IGREC_PERM) && (now >= (*u)->expire)) {
       putlog(LOG_MISC, "*", "%s %s (%s)", IGN_NOLONGER, (*u)->igmask,
 	     MISC_EXPIRED);
-      if (use_silence) {
-	char *p;
-
-	/* possibly an ircu silence was added for this user */
-	p = strchr((*u)->igmask, '!');
-	if (p == NULL)
-	  p = (*u)->igmask;
-	else
-	  p++;
-	dprintf(DP_SERVER, "SILENCE -%s\n", p);
-      }
       delignore((*u)->igmask);
     } else {
       u = &((*u)->next);

@@ -4,7 +4,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: modules.c,v 1.33 2000/06/02 16:56:52 fabian Exp $
+ * $Id: modules.c,v 1.34 2000/06/03 12:14:40 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -71,13 +71,13 @@ extern char		 tempdir[], botnetnick[], botname[], natip[],
 			 userfile[], ver[], notify_new[], helpdir[],
 			 version[];
 extern int		 reserved_port, noshare, dcc_total, egg_numver,
-			 use_silence, use_console_r, ignore_time,
+			 use_console_r, ignore_time, must_be_owner,
 			 debug_output, gban_total, make_userfile,
 			 gexempt_total, ginvite_total, default_flags,
 			 require_p, max_dcc, share_greet, password_timeout,
 			 min_dcc_port, max_dcc_port, use_invites, use_exempts,
 			 force_expire, do_restart, protect_readonly,
-			 userfile_perm, must_be_owner;
+			 userfile_perm;
 extern time_t now, online_since;
 extern struct chanset_t *chanset;
 
@@ -310,7 +310,7 @@ Function global_table[] =
   /* 100 - 103 */
   (Function) & max_dcc,		/* int */
   (Function) & require_p,	/* int */
-  (Function) & use_silence,	/* int */
+  (Function) 0,                 /* this was use_silence */
   (Function) & use_console_r,	/* int */
   /* 104 - 107 */
   (Function) & ignore_time,	/* int */

@@ -4,7 +4,7 @@
  *   Tcl initialization
  *   getting and setting Tcl/eggdrop variables
  * 
- * $Id: tcl.c,v 1.20 2000/05/06 22:04:55 fabian Exp $
+ * $Id: tcl.c,v 1.21 2000/06/03 12:14:40 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -68,7 +68,6 @@ Tcl_Interp *interp;			/* eggdrop always uses the same
 					   interpreter */
 int	    dcc_flood_thr = 3;
 int	    debug_tcl = 0;
-int	    use_silence = 0;
 int	    use_invites = 0;		/* Jason/drummer */
 int	    use_exempts = 0;		/* Jason/drummer */
 int	    force_expire = 0;		/* Rufus */
@@ -452,7 +451,6 @@ static tcl_ints def_tcl_ints[] =
   {"allow-dk-cmds",		&allow_dk_cmds,		0},
   {"resolve-timeout",		&resolve_timeout,	0},
   {"must-be-owner",		&must_be_owner,		1},
-  {"use-silence",		&use_silence,		0},			/* arthur2 */
   {"paranoid-telnet-flood",	&par_telnet_flood,	0},
   {"use-exempts",		&use_exempts,		0},			/* Jason/drummer */
   {"use-invites",		&use_invites,		0},			/* Jason/drummer */

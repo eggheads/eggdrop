@@ -1,7 +1,7 @@
 /* 
  * servmsg.c -- part of server.mod
  * 
- * $Id: servmsg.c,v 1.36 2000/05/28 17:32:44 fabian Exp $
+ * $Id: servmsg.c,v 1.37 2000/06/03 12:14:41 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -247,7 +247,6 @@ static int match_my_nick(char *nick)
 static int got001(char *from, char *msg)
 {
   struct server_list *x;
-  struct igrec *u;
   int i, servidx = findanyidx(serv);
   struct chanset_t *chan;
 
@@ -272,9 +271,6 @@ static int got001(char *from, char *msg)
 	dprintf(DP_SERVER, "JOIN %s %s\n",
 	        (chan->name[0]) ? chan->name : chan->dname, chan->key_prot);
     }
-  if (use_silence && global_ign)
-      for (u = global_ign; u; u = u->next)
-	dprintf(DP_SERVER, "SILENCE +%s", u->igmask);
   if (egg_strcasecmp(from, dcc[servidx].host)) {
     putlog(LOG_MISC, "*", "(%s claims to be %s; updating server list)",
 	   dcc[servidx].host, from);
@@ -420,9 +416,6 @@ static int detect_flood(char *floodnick, char *floodhost, char *from, int which)
     putlog(LOG_MISC, "*", IRC_FLOODIGNORE1, p);
     addignore(h, origbotname, (which == FLOOD_CTCP) ? "CTCP flood" :
 	      "MSG/NOTICE flood", now + (60 * ignore_time));
-    if (use_silence)
-      /* Attempt to use ircdu's SILENCE command */
-      dprintf(DP_MODE, "SILENCE +*@%s\n", p);
   }
   return 0;
 }

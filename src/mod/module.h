@@ -1,7 +1,7 @@
 /* 
  * module.h
  * 
- * $Id: module.h,v 1.29 2000/05/28 17:32:44 fabian Exp $
+ * $Id: module.h,v 1.30 2000/06/03 12:14:41 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -214,7 +214,7 @@
 /* 100 - 103 */
 #define max_dcc (*(int *)global[100])
 #define require_p (*(int *)global[101])
-#define use_silence (*(int *)(global[102]))
+/* this was use_silence */
 #define use_console_r (*(int *)(global[103]))
 /* 104 - 107 */
 #define ignore_time (*(int *)(global[104]))

@@ -2,7 +2,7 @@
  * irc.c -- part of irc.mod
  *   support for channels within the bot 
  * 
- * $Id: irc.c,v 1.24 2000/06/02 17:54:20 fabian Exp $
+ * $Id: irc.c,v 1.25 2000/06/03 12:14:41 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1053,7 +1053,6 @@ static void do_nettype()
     kick_method = 1;
     modesperline = 4;
     use_354 = 0;
-    use_silence = 0;
     use_exempts = 0;
     use_invites = 0;
     rfc_compliant = 1;
@@ -1062,7 +1061,6 @@ static void do_nettype()
     kick_method = 4;
     modesperline = 3;
     use_354 = 0;
-    use_silence = 0;
     use_exempts = 1;
     use_invites = 1;
     rfc_compliant = 1;
@@ -1071,7 +1069,6 @@ static void do_nettype()
     kick_method = 1;
     modesperline = 6;
     use_354 = 1;
-    use_silence = 1;
     use_exempts = 0;
     use_invites = 0;
     rfc_compliant = 1;
@@ -1080,7 +1077,6 @@ static void do_nettype()
     kick_method = 1;
     modesperline = 6;
     use_354 = 0;
-    use_silence = 0;
     use_exempts = 0;
     use_invites = 0;
     rfc_compliant = 0;
@@ -1089,7 +1085,6 @@ static void do_nettype()
     kick_method = 1;
     modesperline = 4;
     use_354 = 0;
-    use_silence = 0;
     use_exempts = 1;
     use_invites = 0;
     rfc_compliant = 1;
