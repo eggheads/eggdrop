@@ -60,7 +60,7 @@ exec tclsh$lastver "$0" "$@"
 #   15Apr2003: cleaned up a few things, fixed a few bugs, and made a little
 #              love! j/k
 #
-# $Id: autobotchk,v 1.10 2003/04/15 17:37:33 guppy Exp $
+# $Id: autobotchk,v 1.11 2003/04/15 17:41:57 guppy Exp $
 #
 
 if {$argc == 0} {
@@ -130,6 +130,7 @@ while {[set opt [newsplit argv]] != ""} {
 
 switch -- $delay {
   "30" { set minutes "0,30" }
+  "20" { set minutes "0,20,40" }
   "15" { set minutes "0,15,30,45" }
   "5" { set minutes "0,5,10,15,20,25,30,35,40,45,50,55" }
   "1" { set minutes "*" }
