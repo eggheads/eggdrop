@@ -815,8 +815,6 @@ static int got437(char *from, char *msg)
 }
 
 /* 438 : nick change too fast */
-/* Arlington.VA.US.Undernet.Org 438 Guppy guppy :Nick change too fast. Please wait 26 seconds. */
-/* Arlington.VA.US.Undernet.Org 433 Fred guppy :Nickname is already in use. */
 static int got438(char *from, char *msg)
 {
   context;
