@@ -4,7 +4,7 @@
  *   a bunch of functions to find and change user records
  *   change and check user (and channel-specific) flags
  *
- * $Id: userrec.c,v 1.45 2003/01/30 07:15:14 wcc Exp $
+ * $Id: userrec.c,v 1.46 2003/12/23 22:13:44 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -376,8 +376,8 @@ int u_pass_match(struct userrec *u, char *pass)
     if (!strcmp(cmp, pass))
       return 1;
   } else {
-    if (strlen(pass) > 15)
-      pass[15] = 0;
+    if (strlen(pass) > 30)
+      pass[30] = 0;
     encrypt_pass(pass, new);
     if (!strcmp(cmp, new))
       return 1;

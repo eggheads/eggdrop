@@ -2,7 +2,7 @@
  * userent.c -- handles:
  *   user-entry handling, new stylem more versatile.
  *
- * $Id: userent.c,v 1.29 2003/02/27 10:18:40 tothwolf Exp $
+ * $Id: userent.c,v 1.30 2003/12/23 22:13:44 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -242,8 +242,8 @@ int pass_set(struct userrec *u, struct user_entry *e, void *buf)
   else {
     unsigned char *p = (unsigned char *) pass;
 
-    if (strlen(pass) > 15)
-      pass[15] = 0;
+    if (strlen(pass) > 30)
+      pass[30] = 0;
     while (*p) {
       if ((*p <= 32) || (*p == 127))
         *p = '?';
