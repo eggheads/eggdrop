@@ -123,7 +123,7 @@ There may also be additional commands provided by other modules.
    This will show you a list of who's on that channel right
    now, and each person's info line (if they have one).
 %{help=whois}
-%b/MSG%b %B %bWHOIS%b <nick>
+%b/MSG%b %B %bWHOIS%b <hand>
    This will give you information about someone else I
    know, including his or her default info line, email
    address, when they were last on the channel, and

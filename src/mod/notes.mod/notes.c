@@ -5,7 +5,7 @@
  *   note cmds
  *   note ignores
  * 
- * $Id: notes.c,v 1.16 2000/03/23 23:17:58 fabian Exp $
+ * $Id: notes.c,v 1.17 2000/06/14 11:18:09 johoho Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -739,7 +739,7 @@ static int msg_notes(char *nick, char *host, struct userrec *u, char *par)
     return 1;
   if (!par[0]) {
     dprintf(DP_HELP, "NOTICE %s :%s: NOTES [pass] INDEX\n", nick, USAGE);
-    dprintf(DP_HELP, "NOTICE %s :       NOTES [pass] TO <nick> <msg>\n", nick);
+    dprintf(DP_HELP, "NOTICE %s :       NOTES [pass] TO <hand> <msg>\n", nick);
     dprintf(DP_HELP, "NOTICE %s :       NOTES [pass] READ <# or ALL>\n", nick);
     dprintf(DP_HELP, "NOTICE %s :       NOTES [pass] ERASE <# or ALL>\n", nick);
     dprintf(DP_HELP, "NOTICE %s :       # may be numbers and/or intervals separated by ;\n", nick);
@@ -773,7 +773,7 @@ static int msg_notes(char *nick, char *host, struct userrec *u, char *par)
 
     to = newsplit(&par);
     if (!par[0]) {
-      dprintf(DP_HELP, "NOTICE %s :%s: NOTES [pass] TO <nick> <message>\n",
+      dprintf(DP_HELP, "NOTICE %s :%s: NOTES [pass] TO <hand> <message>\n",
 	      nick, USAGE);
       return 0;
     }

@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  * 
- * $Id: cmds.c,v 1.31 2000/06/10 00:54:07 fabian Exp $
+ * $Id: cmds.c,v 1.32 2000/06/14 11:18:08 johoho Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1100,7 +1100,7 @@ static void cmd_simul(struct userrec *u, int idx, char *par)
 
   nick = newsplit(&par);
   if (!par[0]) {
-    dprintf(idx, "Usage: simul <nick> <text>\n");
+    dprintf(idx, "Usage: simul <hand> <text>\n");
     return;
   }
   if (isowner(nick)) {
@@ -2397,7 +2397,7 @@ static void cmd_mns_user(struct userrec *u, int idx, char *par)
   struct userrec *u2;
 
   if (!par[0]) {
-    dprintf(idx, "Usage: -user <nick>\n");
+    dprintf(idx, "Usage: -user <hand>\n");
     return;
   }
   handle = newsplit(&par);
