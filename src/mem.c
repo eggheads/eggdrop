@@ -3,7 +3,7 @@
  *   memory allocation and deallocation
  *   keeping track of what memory is being used by whom
  *
- * $Id: mem.c,v 1.15 2001/04/12 02:39:43 guppy Exp $
+ * $Id: mem.c,v 1.16 2001/09/29 06:33:20 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -60,6 +60,7 @@ int expmem_dccutil();
 int expmem_botnet();
 int expmem_tcl();
 int expmem_tclhash();
+int expmem_tclmisc();
 int expmem_net();
 int expmem_modules();
 int expmem_language();
@@ -116,7 +117,7 @@ void tell_mem_status_dcc(int idx)
 void debug_mem_to_dcc(int idx)
 {
 #ifdef DEBUG_MEM
-#define MAX_MEM 12
+#define MAX_MEM 13
   unsigned long exp[MAX_MEM], use[MAX_MEM], l;
   int i, j;
   char fn[20], sofar[81];
@@ -132,9 +133,10 @@ void debug_mem_to_dcc(int idx)
   exp[6] = expmem_botnet();
   exp[7] = expmem_tcl();
   exp[8] = expmem_tclhash();
-  exp[9] = expmem_modules(1);
-  exp[10] = expmem_tcldcc();
-  exp[11] = expmem_dns();
+  exp[9] = expmem_tclmisc();
+  exp[10] = expmem_modules(1);
+  exp[11] = expmem_tcldcc();
+  exp[12] = expmem_dns();
   for (me = module_list; me; me = me->next)
     me->mem_work = 0;
   for (i = 0; i < MAX_MEM; i++)
@@ -163,12 +165,14 @@ void debug_mem_to_dcc(int idx)
       use[7] += l;
     else if (!strcmp(fn, "tclhash.c"))
       use[8] += l;
-    else if (!strcmp(fn, "modules.c"))
+    else if (!strcmp(fn, "tclmisc.c"))
       use[9] += l;
-    else if (!strcmp(fn, "tcldcc.c"))
+    else if (!strcmp(fn, "modules.c"))
       use[10] += l;
-    else if (!strcmp(fn, "dns.c"))
+    else if (!strcmp(fn, "tcldcc.c"))
       use[11] += l;
+    else if (!strcmp(fn, "dns.c"))
+      use[12] += l;
     else if (p) {
       for (me = module_list; me; me = me->next)
 	if (!strcmp(fn, me->name))
@@ -206,12 +210,15 @@ void debug_mem_to_dcc(int idx)
       strcpy(fn, "tclhash.c");
       break;
     case 9:
-      strcpy(fn, "modules.c");
+      strcpy(fn, "tclmisc.c");
       break;
     case 10:
-      strcpy(fn, "tcldcc.c");
+      strcpy(fn, "modules.c");
       break;
     case 11:
+      strcpy(fn, "tcldcc.c");
+      break;
+    case 12:
       strcpy(fn, "dns.c");
       break;
     }

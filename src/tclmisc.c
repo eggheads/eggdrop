@@ -3,7 +3,7 @@
  *   Tcl stubs for file system commands
  *   Tcl stubs for everything else
  *
- * $Id: tclmisc.c,v 1.25 2001/09/25 23:21:44 guppy Exp $
+ * $Id: tclmisc.c,v 1.26 2001/09/29 06:33:21 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -43,6 +43,18 @@ extern module_entry	*module_list;
 extern int max_logs;
 extern log_t *logs;
 extern Tcl_Interp *interp;
+
+int expmem_tclmisc()
+{
+  int i, tot = 0;
+
+  for (i = 0; i < max_logs; i++)
+    if (logs[i].filename != NULL) {
+      tot += strlen(logs[i].filename) + 1;
+      tot += strlen(logs[i].chname) + 1;
+    }
+  return tot;
+}
 
 /*
  *      Logging
