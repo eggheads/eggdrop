@@ -80,6 +80,11 @@ static p_tcl_bind_list H_wall, H_raw, H_notc, H_msgm, H_msg, H_flud,
 static void empty_msgq(void);
 static void next_server(int *, char *, int *, char *);
 static char *get_altbotnick(void);
+static int calc_penalty(char *);
+char *splitnicks(char **);
+static time_t last_time = 0;
+static int use_penalties;
+#define MAXPENALTY 10
 
 #include "servmsg.c"
 
@@ -108,11 +113,10 @@ static int burst;
 static void deq_msg()
 {
   struct msgq *q;
-  static time_t last_time = 0;
   int ok = 0;
 
   /* now < last_time tested 'cause clock adjustments could mess it up */
-  if (((now - last_time) >= msgrate) || (now < last_time)) {
+  if (((now - last_time) >= msgrate) || (now < (last_time - 90))) {
     last_time = now;
     if (burst > 0)
       burst--;
@@ -122,9 +126,13 @@ static void deq_msg()
     return;
   /* send upto 4 msgs to server if the *critical queue* has anything in it */
   if (modeq.head) {
-    while (modeq.head && (burst < 4)) {
+    while (modeq.head && (burst < 4) && ((last_time - now) < MAXPENALTY)) {
       tputs(serv, modeq.head->msg, modeq.head->len);
+      if (debug_output) {
+        putlog(LOG_SRVOUT, "*", "[m->] %s", modeq.head->msg);
+      }
       modeq.tot--;
+      last_time += calc_penalty(modeq.head->msg);
       q = modeq.head->next;
       nfree(modeq.head->msg);
       nfree(modeq.head);
@@ -141,7 +149,11 @@ static void deq_msg()
   if (mq.head) {
     burst++;
     tputs(serv, mq.head->msg, mq.head->len);
+    if (debug_output) {
+      putlog(LOG_SRVOUT, "*", "[s->] %s", mq.head->msg);
+    }
     mq.tot--;
+    last_time += calc_penalty(mq.head->msg);
     q = mq.head->next;
     nfree(mq.head->msg);
     nfree(mq.head);
@@ -155,13 +167,144 @@ static void deq_msg()
   if (!hq.head || burst || !ok)
     return;
   tputs(serv, hq.head->msg, hq.head->len);
+  if (debug_output) {
+    putlog(LOG_SRVOUT, "*", "[h->] %s", hq.head->msg);
+  }
   hq.tot--;
+  last_time += calc_penalty(hq.head->msg);
   q = hq.head->next;
   nfree(hq.head->msg);
   nfree(hq.head);
   hq.head = q;
   if (!hq.head)
     hq.last = 0;
+}
+
+static int calc_penalty(char * msg)
+{
+  char * cmd;
+  char * par1;
+  char * par2;
+  char * par3;
+  int penalty, i, ii;
+  
+  context;
+  if (!use_penalties)
+    return 0;
+  penalty = 0;
+  if (msg[strlen(msg) - 1] == '\n')
+    msg[strlen(msg) - 1] = '\0';
+  cmd = newsplit(&msg);
+  if (!strcasecmp(cmd, "KICK")) {
+    par1 = newsplit(&msg); /* channel */
+    par2 = newsplit(&msg); /* victim(s) */
+    par3 = splitnicks(&par2);
+    penalty++;
+    while (strlen(par3) > 0) {
+      par3 = splitnicks(&par2);
+      penalty++;
+    }
+    ii = penalty;
+    par3 = splitnicks(&par1);
+    while (strlen(par1) > 0) {
+      par3 = splitnicks(&par1);
+      penalty += ii;
+    }
+  } else if (!strcasecmp(cmd, "MODE")) {
+    par1 = newsplit(&msg); /* channel */
+    par2 = newsplit(&msg); /* mode(s) */
+    par3 = newsplit(&msg); /* victim(s) */
+    if (strlen(par3) < 1) /* ban/exempt/invite list query */
+      penalty++;
+    else {
+      for (i = 0; i < strlen(par2); i++) {
+        if (!strchr("+-", par2[i]))
+          penalty += 3;
+      }
+    }
+    ii = penalty;
+    par3 = splitnicks(&par1);
+    while (strlen(par1) > 0) {
+      par3 = splitnicks(&par1);
+      penalty += ii;
+    }
+  } else if (!strcasecmp(cmd, "TOPIC")) {
+    penalty++;
+    par1 = newsplit(&msg); /* channel */
+    par2 = newsplit(&msg); /* topic */
+    if (strlen(par2) > 0) {  /* topic manipulation => 2 penalty points */
+      penalty += 2;
+      par3 = splitnicks(&par1);
+      while (strlen(par1) > 0) {
+        par3 = splitnicks(&par1);
+        penalty += 2;
+      }
+    }
+  } else if (!strcasecmp(cmd, "PRIVMSG") || !strcasecmp(cmd, "NOTICE")) {
+    par1 = newsplit(&msg); /* channel(s)/nick(s) */
+    par2 = par1;
+    while (strlen(par1) > 0) {              /* one penalty point for each additional recipient */
+      par2 = splitnicks(&par1);
+      if (strlen(par1) > 0) penalty++;
+    }
+  } else if (!strcasecmp(cmd, "WHO")) {
+    par1 = newsplit(&msg); /* masks */
+    par2 = par1;
+    while (strlen(par1) > 0) {
+      par2 = splitnicks(&par1);
+      if (strlen(par2) > 4)   /* long WHO-masks receive less penalty */
+        penalty += 3;
+      else
+        penalty += 5;
+    }
+  } else if (!strcasecmp(cmd, "AWAY")) {
+    if (strlen(msg) > 0)
+      penalty += 2;
+    else
+      penalty += 1;
+  } else if (!strcasecmp(cmd, "INVITE")) {
+    penalty += 3; /* successful invite receives 2 or 3 penalty points. Let's go with the maximum */
+  } else if (!strcasecmp(cmd, "JOIN")) {
+    penalty += 2;
+  } else if (!strcasecmp(cmd, "PART")) {
+    penalty += 4;
+  } else if (!strcasecmp(cmd, "VERSION")) {
+    penalty += 2;
+  } else if (!strcasecmp(cmd, "TIME")) {
+    penalty += 2;
+  } else if (!strcasecmp(cmd, "TRACE")) {
+    penalty += 2;
+  } else if (!strcasecmp(cmd, "NICK")) {
+    penalty += 3;
+  } else if (!strcasecmp(cmd, "ISON")) {
+    penalty += 1;
+  } else if (!strcasecmp(cmd, "WHOIS")) {
+    penalty += 2;
+  } else if (!strcasecmp(cmd, "DNS")) {
+    penalty += 2;
+  }
+  if (penalty > 90) penalty = 90; /* shouldn't happen, but you never know... */
+  if (debug_output && (penalty != 0))
+    putlog(LOG_SRVOUT, "*", "Adding penalty: %i", penalty);
+  return penalty;
+}
+
+char *splitnicks(char **rest)
+{
+  register char *o, *r;
+
+  if (!rest)
+    return *rest = "";
+  o = *rest;
+  while (*o == ' ')
+    o++;
+  r = o;
+  while (*o && (*o != ','))
+    o++;
+  if (*o)
+    *o++ = 0;
+  *rest = o;
+  return r;
 }
 
 /* clean out the msg queues (like when changing servers) */
@@ -567,6 +710,7 @@ static char *traced_nettype(ClientData cdata, Tcl_Interp * irp, char *name1,
   case 1:
     use_silence = 0;
     check_mode_r = 1;
+    use_penalties = 1;
     break;
   case 2:
     use_silence = 1;
@@ -631,6 +775,7 @@ static tcl_ints my_tcl_ints[] =
   {"double-mode", &double_mode, 0}, /* G`Quann */
   {"double-server", &double_server, 0},
   {"double-help", &double_help, 0},
+  {"use-penalties", &use_penalties, 0},
   {0, 0, 0}
 };
 
@@ -1390,6 +1535,7 @@ char *server_start(Function * global_funcs)
   double_mode = 0;
   double_server = 0;
   double_help = 0;
+  use_penalties = 0;
   context;
   server_table[4] = (Function) botname;
   module_register(MODULE_NAME, server_table, 1, 0);
@@ -1468,6 +1614,7 @@ char *server_start(Function * global_funcs)
   if (net_type == 1) {		/* Ircnet */
     use_silence = 0;
     check_mode_r = 1;
+    use_penalties = 1;
   }
   if (net_type == 2) {		/* Undernet */
     use_silence = 1;

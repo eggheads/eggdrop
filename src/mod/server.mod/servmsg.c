@@ -1016,6 +1016,64 @@ static int gotping(char *from, char *msg)
   return 0;
 }
 
+/* 2sec penalty for each successful kick */
+static int kickpenalty(char *from, char *msg)
+{
+  char buf[UHOSTLEN], *nick, *uhost = buf;
+  
+  if (!use_penalties)
+    return 0;
+  strcpy(uhost, from);
+  nick = splitnick(&uhost);
+  if (!strcmp(nick,botname)) {
+    last_time += 2;
+    if (debug_output)
+      putlog(LOG_SRVOUT, "*", "adding 2secs penalty (successful kick)");
+  }
+  return 0;
+}
+
+/* additional 3sec penalty if a link was traced */
+static int tracepenalty(char *from, char *msg)
+{
+  if (use_penalties) {
+    last_time += 3;
+    if (debug_output)
+      putlog(LOG_SRVOUT, "*", "adding 3secs penalty (traced link)");
+  }
+  return 0;
+}
+
+/* another sec penalty if bot did a whois on another server */
+static int whoispenalty(char *from, char *msg)
+{
+  struct server_list *x = serverlist;
+  int i, ii;
+
+  if (x && use_penalties) {
+    i = ii = 0;
+    while (x != NULL) {
+      if (i == curserv) {
+        if (strict_servernames == 1) {
+          if (strcmp(x->name, from))
+            ii = 1;
+        } else {
+          if (strcmp(x->realname, from))
+            ii = 1;
+        }
+      }
+      x = x->next;
+      i++;
+    }
+    if (ii) {
+      last_time += 1;
+      if (debug_output)
+        putlog(LOG_SRVOUT, "*", "adding 1sec penalty (remote whois)");
+    }
+  }
+  return 0;
+}
+
 /* update the add/rem_builtins in server.c if you add to this list!! */
 static cmd_t my_raw_binds[] =
 {
@@ -1038,6 +1096,9 @@ static cmd_t my_raw_binds[] =
   {"451", "", (Function) got451, NULL},
   {"NICK", "", (Function) gotnick, NULL},
   {"ERROR", "", (Function) goterror, NULL},
+  {"KICK", "", (Function) kickpenalty, NULL},
+  {"200", "", (Function) tracepenalty, NULL},
+  {"318", "", (Function) whoispenalty, NULL},
   {0, 0, 0, 0}
 };
 
