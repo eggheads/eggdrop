@@ -1,0 +1,95 @@
+=====================================================================
+              Eggheads Eggdrop 1.3 Bug Report Form
+=====================================================================
+
+By reporting bugs you help to improve the quality of eggdrop which
+naturally results in a more stable bot. The more information you
+provide, the easier and more likely it is for the dev team to fix the
+bug. So please try to add everything you think is important, in
+addition to the information asked for in this form. Thanks.
+
+Note: First check http://www.eggheads.org/bugs.html to see if the bug
+      you want to report is already fixed.
+
+Instructions:
+1]  Please try to fill in as many fields as possible.
+2]  Email the completed report to: eggheads@eggheads.org
+
+=====================================================================
+1) INFORMATION ABOUT YOUR USED EGGDROP
+
+1.1) version:
+     1.3.__
+
+1.2) make type:
+     ( ) dynamic  (default)
+     ( ) static
+     ( ) debugmem
+
+=====================================================================
+2) INFORMATION ABOUT TCL
+
+2.1) TCL library version:
+     ( ) 7.62p
+     ( ) 8.0
+     ( ) 8.1
+     ( ) 8.2
+     ( ) Other - Which? ____
+
+2.2) TCLs used:
+     [ ] Alltools.tcl
+     [ ] sentinel.tcl
+     [ ] getops.tcl
+     [ ] others. Please mention all others:
+
+=====================================================================
+3) INFORMATION ABOUT THE OS
+
+3.1) OS type:
+     ( ) Linux
+     ( ) FreeBSD
+     ( ) OpenBSD
+     ( ) Solaris
+     ( ) Sun
+     ( ) Hp-IX
+     ( ) Other - Which? _____________
+
+3.2) OS Version/Release:
+     _____________
+
+=====================================================================
+4) BUG DETAILS
+
+4.1) The logged last context (example: Last context: userent.c/973 []):
+
+4.2) If the bot wrote to the file DEBUG, copy the text -contents- of
+     that file here (NOTE: It should be about 20 lines of info, could
+     be a few lines more):
+
+4.3) Your comments and a description of the bug:
+
+4.4) Can you cause the bug condition to repeat? If so, please outline
+     step by step what causes the error:
+
+4.5) Do you have ideas on what is wrong that causes this error?
+     Please list them:
+
+4.6) Do you have ideas on how to correct it?  Please list them:
+
+4.7) Other comments?
+
+4.8) For advanced users: If you compiled the bot using the debugmem
+     option and it dumped a "core" file when it crashed, it would be
+     *very* useful if you could paste gdb's output during the
+     following steps:
+     First call gdb
+         $ gdb eggdrop -c core
+     and then enter 'bt' on gdb's command line:
+         (gdb) bt
+     Keep your core file for at least one week, so that the dev team
+     can ask for further information if needed.
+
+=====================================================================
+
+End of bug report form - Thank you for helping to improve the Eggdrop
+
