@@ -4,11 +4,11 @@
  *   Tcl initialization
  *   getting and setting Tcl/eggdrop variables
  *
- * $Id: tcl.c,v 1.74 2003/11/01 23:26:57 wcc Exp $
+ * $Id: tcl.c,v 1.75 2004/01/09 05:56:37 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999, 2000, 2001, 2002, 2003 Eggheads Development Team
+ * Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

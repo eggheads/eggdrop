@@ -4,11 +4,11 @@
  *   a bunch of functions to find and change user records
  *   change and check user (and channel-specific) flags
  *
- * $Id: userrec.c,v 1.46 2003/12/23 22:13:44 wcc Exp $
+ * $Id: userrec.c,v 1.47 2004/01/09 05:56:37 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999, 2000, 2001, 2002, 2003 Eggheads Development Team
+ * Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

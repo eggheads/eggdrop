@@ -2,12 +2,12 @@
  * dns.h
  *   stuff used by dns.c
  *
- * $Id: dns.h,v 1.9 2003/01/28 06:37:24 wcc Exp $
+ * $Id: dns.h,v 1.10 2004/01/09 05:56:36 wcc Exp $
  */
 /*
  * Written by Fabian Knittel <fknittel@gmx.de>
  *
- * Copyright (C) 1999, 2000, 2001, 2002, 2003 Eggheads Development Team
+ * Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

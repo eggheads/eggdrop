@@ -7,11 +7,11 @@
  *   help system
  *   motd display and %var substitution
  *
- * $Id: misc.c,v 1.67 2003/12/09 22:21:46 wcc Exp $
+ * $Id: misc.c,v 1.68 2004/01/09 05:56:37 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999, 2000, 2001, 2002, 2003 Eggheads Development Team
+ * Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

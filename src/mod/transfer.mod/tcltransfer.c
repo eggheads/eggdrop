@@ -1,9 +1,9 @@
 /*
  * tcltransfer.c -- part of transfer.mod
  *
- * $Id: tcltransfer.c,v 1.3 2003/01/30 07:15:15 wcc Exp $
+ * $Id: tcltransfer.c,v 1.4 2004/01/09 05:56:39 wcc Exp $
  *
- * Copyright (C) 2003 Eggheads Development Team
+ * Copyright (C) 2003, 2004 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

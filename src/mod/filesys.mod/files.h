@@ -1,11 +1,11 @@
 /*
  * files.h -- part of filesys.mod
  *
- * $Id: files.h,v 1.9 2003/01/28 06:37:26 wcc Exp $
+ * $Id: files.h,v 1.10 2004/01/09 05:56:38 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999, 2000, 2001, 2002, 2003 Eggheads Development Team
+ * Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

@@ -3,14 +3,14 @@
 #   use this is you are to lazy to get of your butt and update your scripts :D
 #   by the way it binds some old command to the new ones
 #
-# Copyright (C) 2002, 2003 Eggheads Development Team
+# Copyright (C) 2002, 2003, 2004 Eggheads Development Team
 #
 # Wiktor    31Mar2000: added binds and chnick proc
 # Tothwolf  25May1999: cleanup
 # Tothwolf  06Oct1999: optimized
 # rtc       10Oct1999: added [set|get][dn|up]loads functions
 #
-# $Id: compat.tcl,v 1.10 2003/02/04 10:21:03 wcc Exp $
+# $Id: compat.tcl,v 1.11 2004/01/09 05:56:36 wcc Exp $
 
 proc gethosts {hand} {
   getuser $hand HOSTS

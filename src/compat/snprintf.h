@@ -2,10 +2,10 @@
  * snprintf.h
  *   header file for snprintf.c
  *
- * $Id: snprintf.h,v 1.16 2003/03/05 04:32:25 wcc Exp $
+ * $Id: snprintf.h,v 1.17 2004/01/09 05:56:37 wcc Exp $
  */
 /*
- * Copyright (C) 2000, 2001, 2002, 2003 Eggheads Development Team
+ * Copyright (C) 2000, 2001, 2002, 2003, 2004 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

@@ -4,9 +4,9 @@
 #                GNU autoconf scripts with the help of special eggdrop
 #                m4 macros.
 #
-# $Id: eggautoconf,v 1.6 2003/04/01 05:33:40 wcc Exp $
+# $Id: eggautoconf,v 1.7 2004/01/09 05:56:37 wcc Exp $
 #
-# Copyright (C) 2000, 2001, 2002, 2003 Eggheads Development Team
+# Copyright (C) 2000, 2001, 2002, 2003, 2004 Eggheads Development Team
 # Written by Fabian Knittel
 
 set -e

@@ -2,11 +2,11 @@
  * files.c - part of filesys.mod
  *   handles all file system commands
  *
- * $Id: files.c,v 1.47 2003/12/14 06:44:25 wcc Exp $
+ * $Id: files.c,v 1.48 2004/01/09 05:56:38 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999, 2000, 2001, 2002, 2003 Eggheads Development Team
+ * Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

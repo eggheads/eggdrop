@@ -5,11 +5,11 @@
  *   command line arguments
  *   context and assert debugging
  *
- * $Id: main.c,v 1.103 2003/12/20 22:29:51 wcc Exp $
+ * $Id: main.c,v 1.104 2004/01/09 05:56:37 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999, 2000, 2001, 2002, 2003 Eggheads Development Team
+ * Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -729,7 +729,7 @@ int main(int argc, char **argv)
   /* Version info! */
   egg_snprintf(ver, sizeof ver, "eggdrop v%s", egg_version);
   egg_snprintf(version, sizeof version,
-               "Eggdrop v%s (C) 1997 Robey Pointer (C) 2003 Eggheads",
+               "Eggdrop v%s (C) 1997 Robey Pointer (C) 2004 Eggheads Development Team",
                egg_version);
   /* Now add on the patchlevel (for Tcl) */
   sprintf(&egg_version[strlen(egg_version)], " %u", egg_numver);
