@@ -1,5 +1,5 @@
 /*
- * $Id: uptime.c,v 1.19 2002/05/04 06:55:31 guppy Exp $
+ * $Id: uptime.c,v 1.20 2002/05/04 18:33:10 guppy Exp $
  *
  * This module reports uptime information about your bot to http://uptime.eggheads.org. The
  * purpose for this is to see how your bot rates against many others (including EnergyMechs
@@ -46,6 +46,11 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
+/*
+ * both regnr and cookie are unused; however, they both must be here inorder for
+ * us to create a proper struct for the uptime server. 
+ */
+
 typedef struct PackUp
 {
   int     regnr;
@@ -67,7 +72,6 @@ static int hours = 0;
 static int uptimesock;
 static int uptimecount;
 static unsigned long uptimeip;
-static time_t uptimelast;
 static char uptime_version[50]="";
 
 static int uptime_expmem() {
@@ -76,10 +80,11 @@ static int uptime_expmem() {
 
 static void uptime_report(int idx, int details)
 {
-  if (details)
+  if (details) {
+    dprintf(idx, "   number of uptime packets sent: %d\n", uptimecount);
     dprintf(idx, "   using %d bytes\n", uptime_expmem());
+  }
 }
-	
 
 unsigned long get_ip()
 {
@@ -110,25 +115,24 @@ int init_uptime(void)
   upPack.cookie = 0; /* unused */
   upPack.uptime = htonl(online_since);
   uptimecount = 0;
-  uptimelast = 0;
   uptimeip = -1;
 
   strncpyz(temp, ver, sizeof temp);
   splitc(uptime_version,temp,' ');
   strncpyz(uptime_version,temp, sizeof uptime_version);
 
-  if ((uptimesock = socket(AF_INET,SOCK_DGRAM,0)) < 0) {
+  if ((uptimesock = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
     putlog(LOG_DEBUG, "*", "init_uptime socket returned <0 %d",uptimesock);
     return((uptimesock = -1));
   }
-  memset(&sai,0,sizeof(sai));
+  memset(&sai, 0, sizeof(sai));
   sai.sin_addr.s_addr = INADDR_ANY;
   sai.sin_family = AF_INET;
-  if (bind(uptimesock,(struct sockaddr*)&sai,sizeof(sai)) < 0) {
+  if (bind(uptimesock, (struct sockaddr*)&sai, sizeof(sai)) < 0) {
     close(uptimesock);
     return((uptimesock = -1));
   }
-  fcntl(uptimesock,F_SETFL,O_NONBLOCK | fcntl(uptimesock,F_GETFL));
+  fcntl(uptimesock, F_SETFL, O_NONBLOCK | fcntl(uptimesock, F_GETFL));
   return(0);
 }
 
@@ -148,6 +152,7 @@ int send_uptime(void)
       return -2;
   }
 
+  uptimecount++;
   upPack.now2 = htonl(time(NULL));
   upPack.ontime = 0;
 
@@ -163,22 +168,20 @@ int send_uptime(void)
   if (!upPack.pid)
     upPack.pid = htonl(getpid());
 
-  if (stat("/proc",&st) < 0)
+  if (stat("/proc", &st) < 0)
     upPack.sysup = 0;
   else
     upPack.sysup = htonl(st.st_ctime);
 
-  uptimecount++;
-
   len = sizeof(upPack) + strlen(botnetnick) + strlen(servhost) + strlen(uptime_version);
   mem = (PackUp*)nmalloc(len);
-  memcpy(mem,&upPack,sizeof(upPack));
-  sprintf(mem->string,"%s %s %s",botnetnick,servhost,uptime_version);
-  memset(&sai,0,sizeof(sai));
+  memcpy(mem, &upPack, sizeof(upPack));
+  sprintf(mem->string,"%s %s %s", botnetnick, servhost, uptime_version);
+  memset(&sai, 0, sizeof(sai));
   sai.sin_family = AF_INET;
   sai.sin_addr.s_addr = uptimeip;
   sai.sin_port = htons(uptime_port);
-  len = sendto(uptimesock,(void*)mem,len,0,(struct sockaddr*)&sai,sizeof(sai));
+  len = sendto(uptimesock, (void*)mem, len, 0, (struct sockaddr*)&sai, sizeof(sai));
   nfree(mem);
   return len;
 }
