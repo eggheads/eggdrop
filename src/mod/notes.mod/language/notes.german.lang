@@ -1,7 +1,7 @@
 # notes.german.lang
 #   language messages for the notes module
 #
-# $Id: notes.german.lang,v 1.4 2004/02/01 06:13:03 wcc Exp $
+# $Id: notes.german.lang,v 1.5 2004/04/09 18:00:31 wcc Exp $
 
 0xc000,  Befoerdere Nachrichten weiter an: %.70s\n
 0xc001,%d note%s von %s an %s uebermittelt.
@@ -17,7 +17,7 @@
 0xc00b, -- VERFAELLT IN %d TAGEN%s
 0xc00c,Die folgenden Nachricht(en) warten auf Dich
 0xc00d,Du hast nicht so viele Nachrichten
-0xc00e,Benutze '.notes read' um sie zu lesen.
+0xc00e,Benutze '.notes read' um sie zu lesen.\n
 0xc00f,Kann Nachrichten-Datei nicht modifizieren
 0xc010,Alle Nachrichten geloescht
 0xc011,Geloescht
