@@ -1,7 +1,7 @@
 /* 
  * module.h
  * 
- * $Id: module.h,v 1.26 2000/05/23 21:06:16 guppy Exp $
+ * $Id: module.h,v 1.27 2000/12/21 20:03:49 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -253,8 +253,8 @@
 #define movefile ((int (*) (char *, char *))global[146])
 #define copyfile ((int (*) (char *, char *))global[147])
 /* 148 - 151 */
-#define do_tcl ((void (*)(char *,char*))global[148])
-#define readtclprog ((int (*)(char *))global[149])
+#define do_tcl ((void (*)(char *, char *))global[148])
+#define readtclprog ((int (*)(const char *))global[149])
 #define get_language ((char *(*)(int))global[150])
 #define def_get ((void *(*)(struct userrec *, struct user_entry *))global[151])
 /* 152 - 155 */
@@ -263,8 +263,8 @@
 #define maskhost ((void(*)(char *,char*))global[154])
 #define show_motd ((void(*)(int))global[155])
 /* 156 - 159 */
-#define tellhelp ((void(*)(int,char *,struct flag_record *,int))global[156])
-#define showhelp ((void(*)(char *,char *,struct flag_record *,int))global[157])
+#define tellhelp ((void(*)(int, char *, struct flag_record *, int))global[156])
+#define showhelp ((void(*)(char *, char *, struct flag_record *, int))global[157])
 #define add_help_reference ((void(*)(char *))global[158])
 #define rem_help_reference ((void(*)(char *))global[159])
 /* 160 - 163 */
