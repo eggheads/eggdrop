@@ -5,12 +5,7 @@
  * 
  * Modified/written by Fabian Knittel <fknittel@gmx.de>
  * 
- * Sun Oct 03 18:34:41 1999  Fabian
- *     * Initial release
- * Tue Oct 05 21:52:03 1999  Fabian
- *     * #include tweaking
- * 
- * $Id: coredns.c,v 1.5 1999/12/21 17:35:15 fabian Exp $
+ * $Id: coredns.c,v 1.6 1999/12/26 12:29:36 fabian Exp $
  */
 /* 
  * Portions copyright (C) 1999  Eggheads
@@ -441,7 +436,8 @@ static void unlinkresolveip(struct resolve *rp)
 }
 
 /* Add request structure rp to the expireresolves list. Entries are sorted
- * by expire time. */
+ * by expire time.
+ */
 static void linkresolve(struct resolve *rp)
 {
     struct resolve *irp;
@@ -484,7 +480,8 @@ static void untieresolve(struct resolve *rp)
 }
 
 /* Remove request structure rp from all lists and hash tables and
- * then delete and free the structure */
+ * then delete and free the structure
+ */
 static void unlinkresolve(struct resolve *rp)
 {
     Context;
@@ -534,7 +531,7 @@ static struct resolve *findhost(char *hostn)
 	       && (strcasecmp(hostn, rp->nexthost->hostn) >= 0))
 	    rp = rp->nexthost;
 	while ((rp->previoushost)
-	       && (strcasecmp(hostn, rp->nexthost->hostn) <= 0))
+	       && (strcasecmp(hostn, rp->previoushost->hostn) <= 0))
 	    rp = rp->previoushost;
 	if (strcasecmp(hostn, rp->hostn))
 	    return NULL;
@@ -637,7 +634,8 @@ static void sendrequest(struct resolve *rp, int type)
 }
 
 /* Gets called as soon as the request turns out to have failed . Calls
- * the eggdrop hook. */
+ * the eggdrop hook.
+ */
 static void failrp(struct resolve *rp)
 {
     Context;
@@ -655,7 +653,8 @@ static void failrp(struct resolve *rp)
 }
 
 /* Gets called as soon as the request turns out to be successful. Calls
- * the eggdrop hook. */
+ * the eggdrop hook.
+ */
 static void passrp(struct resolve *rp, long ttl, int type)
 {
     Context;
@@ -930,7 +929,8 @@ static void parserespacket(byte * s, int l)
 }
 
 /* Read data received on our dns socket. This function should be called
- * as soon as traffic is detected. */
+ * as soon as traffic is detected.
+ */
 static void dns_ack(void)
 {
     struct sockaddr_in from;
@@ -1140,8 +1140,10 @@ static int dns_open(void)
     aseed = time(NULL) ^ (time(NULL) << 3) ^ (dword) getpid();
     for (i = 0; i < BASH_SIZE; i++) {
 	idbash[i] = NULL;
+	ipbash[i] = NULL;
 	hostbash[i] = NULL;
     }
+    expireresolves = NULL;
     Context;
     return 1;
 }
