@@ -2,7 +2,7 @@
  * userent.c -- handles:
  *   user-entry handling, new stylem more versatile.
  * 
- * $Id: userent.c,v 1.18 2000/12/19 21:56:40 guppy Exp $
+ * $Id: userent.c,v 1.19 2001/02/26 03:56:18 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -693,11 +693,11 @@ int xtra_set(struct userrec *u, struct user_entry *e, void *buf)
   if (old != new && new->data) {
     if (new->data[0])
       list_insert((&e->u.extra), new) /* do not add a ';' here */
-    else {
+  } else {
+    if (new->data)
       nfree(new->data);
-      nfree(new->key);
-      nfree(new);
-    }
+    nfree(new->key);
+    nfree(new);
   }
   return TCL_OK;
 }
