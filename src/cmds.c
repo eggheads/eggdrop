@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  *
- * $Id: cmds.c,v 1.101 2003/11/01 23:26:57 wcc Exp $
+ * $Id: cmds.c,v 1.102 2003/11/27 03:20:24 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -90,23 +90,21 @@ static void tell_who(struct userrec *u, int idx, int chan)
   int i, k, ok = 0, atr = u ? u->flags : 0;
   int nicklen;
   char format[81];
-  char s[1024];                 /* temp fix - 1.4 has a better one */
+  char s[1024]; /* temp fix - 1.4 has a better one */
 
   if (!chan)
-    dprintf(idx, "%s  (* = %s, + = %s, @ = %s)\n",
-            BOT_PARTYMEMBS, MISC_OWNER, MISC_MASTER, MISC_OP);
+    dprintf(idx, "%s (* = owner, + = master, %% = botmaster, @ = op, "
+            "^ = halfop)\n", BOT_PARTYMEMBS);
   else {
     simple_sprintf(s, "assoc %d", chan);
     if ((Tcl_Eval(interp, s) != TCL_OK) || !interp->result[0])
-      dprintf(idx, "%s %s%d:  (* = %s, + = %s, @ = %s)\n",
-              BOT_PEOPLEONCHAN,
-              (chan < GLOBAL_CHANS) ? "" : "*",
-              chan % GLOBAL_CHANS, MISC_OWNER, MISC_MASTER, MISC_OP);
+      dprintf(idx, "%s %s%d: (* = owner, + = master, %% = botmaster, @ = op, "
+              "^ = halfop)\n", BOT_PEOPLEONCHAN, (chan < GLOBAL_CHANS) ? "" :
+              "*", chan % GLOBAL_CHANS);
     else
-      dprintf(idx, "%s '%s' (%s%d):  (* = %s, + = %s, @ = %s)\n",
-              BOT_PEOPLEONCHAN, interp->result,
-              (chan < GLOBAL_CHANS) ? "" : "*",
-              chan % GLOBAL_CHANS, MISC_OWNER, MISC_MASTER, MISC_OP);
+      dprintf(idx, "%s '%s' (%s%d): (* = owner, + = master, %% = botmaster, @ = op, "
+              "^ = halfop)\n", BOT_PEOPLEONCHAN, interp->result,
+              (chan < GLOBAL_CHANS) ? "" : "*", chan % GLOBAL_CHANS);
   }
 
   /* calculate max nicklen */

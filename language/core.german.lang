@@ -6,7 +6,7 @@
 # Modified by Michael for 1.3.25.
 # Modified by rtc for 1.4.0
 #
-# $Id: core.german.lang,v 1.32 2003/03/11 01:22:25 wcc Exp $
+# $Id: core.german.lang,v 1.33 2003/11/27 03:20:24 wcc Exp $
 
 # General stuff
 0x001,Gebrauch
@@ -98,9 +98,6 @@ die mitgelieferte Konfigurationsdatei.\n
 0x50c,Starte neu...
 0x50d,es
 0x50e,Wechsle Logdateien...
-0x50f,Besitzer
-0x510,Master
-0x511,Op
 0x512,untaetig
 0x513,ABWESEND
 # Ueberarbeiten, brauche kontext:

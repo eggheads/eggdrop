@@ -2,7 +2,7 @@
  * flags.c -- handles:
  *   all the flag matching/conversion functions in one neat package :)
  *
- * $Id: flags.c,v 1.25 2003/02/27 10:18:40 tothwolf Exp $
+ * $Id: flags.c,v 1.26 2003/11/27 03:20:24 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -322,15 +322,15 @@ char geticon(int idx)
   if (!dcc[idx].user)
     return '-';
   get_user_flagrec(dcc[idx].user, &fr, 0);
-  if (chan_owner(fr))
+  if (glob_owner(fr) || chan_owner(fr))
     return '*';
-  if (chan_master(fr))
+  if (glob_master(fr) || chan_master(fr))
     return '+';
   if (glob_botmast(fr))
     return '%';
-  if (chan_op(fr))
+  if (glob_op(fr) || chan_op(fr))
     return '@';
-  if (chan_halfop(fr))
+  if (glob_halfop(fr) || chan_halfop(fr))
     return '^';
   return '-';
 }

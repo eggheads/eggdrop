@@ -2,7 +2,7 @@
  * lang.h
  *   Conversion definitions for language support
  *
- * $Id: lang.h,v 1.31 2003/03/11 01:22:25 wcc Exp $
+ * $Id: lang.h,v 1.32 2003/11/27 03:20:24 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -70,9 +70,9 @@
 #define MISC_RESTARTING         get_language(0x50c)
 #define MISC_MATCH_PLURAL       get_language(0x50d)
 #define MISC_LOGSWITCH          get_language(0x50e)
-#define MISC_OWNER              get_language(0x50f)
-#define MISC_MASTER             get_language(0x510)
-#define MISC_OP                 get_language(0x511)
+/* was: MISC_OWNER              0x50f            */
+/* was: MISC_MASTER             0x510            */
+/* was: MISC_OP                 0x511            */
 #define MISC_IDLE               get_language(0x512)
 #define MISC_AWAY               get_language(0x513)
 /* was: MISC_IGNORING           0x514            */

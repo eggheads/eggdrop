@@ -3,7 +3,7 @@
  *   commands that comes across the botnet
  *   userfile transfer and update commands from sharebots
  *
- * $Id: botcmd.c,v 1.38 2003/03/10 05:26:41 wcc Exp $
+ * $Id: botcmd.c,v 1.39 2003/11/27 03:20:24 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -331,36 +331,32 @@ static void remote_tell_who(int idx, char *nick, int chan)
       }
     }
   if (i > 10) {
-    botnet_send_priv(idx, botnetnick, nick, NULL, "%s  (%s)", s, ver);
+    botnet_send_priv(idx, botnetnick, nick, NULL, "%s (%s)", s, ver);
   } else
-    botnet_send_priv(idx, botnetnick, nick, NULL, "%s  (%s)", BOT_NOCHANNELS,
+    botnet_send_priv(idx, botnetnick, nick, NULL, "%s (%s)", BOT_NOCHANNELS,
                      ver);
   if (admin[0])
     botnet_send_priv(idx, botnetnick, nick, NULL, "Admin: %s", admin);
   if (chan == 0)
-    botnet_send_priv(idx, botnetnick, nick, NULL,
-                     "%s  (* = %s, + = %s, @ = %s)",
-                     BOT_PARTYMEMBS, MISC_OWNER, MISC_MASTER, MISC_OP);
+    botnet_send_priv(idx, botnetnick, nick, NULL, "%s (* = owner, + = master,"
+                     " %% = botmaster, @ = op, ^ = halfop)", BOT_PARTYMEMBS);
   else {
     simple_sprintf(s, "assoc %d", chan);
     if ((Tcl_Eval(interp, s) != TCL_OK) || !interp->result[0])
-      botnet_send_priv(idx, botnetnick, nick, NULL,
-                       "%s %s%d:  (* = %s, + = %s, @ = %s)\n",
-                       BOT_PEOPLEONCHAN,
-                       (chan < GLOBAL_CHANS) ? "" : "*",
-                       chan % GLOBAL_CHANS, MISC_OWNER, MISC_MASTER, MISC_OP);
+      botnet_send_priv(idx, botnetnick, nick, NULL, "%s %s%d: (* = owner, + ="
+                       " master, %% = botmaster, @ = op, ^ = halfop)\n",
+                       BOT_PEOPLEONCHAN, (chan < GLOBAL_CHANS) ? "" : "*",
+                       chan % GLOBAL_CHANS);
     else
-      botnet_send_priv(idx, botnetnick, nick, NULL,
-                       "%s '%s' (%s%d):  (* = %s, + = %s, @ = %s)\n",
-                       BOT_PEOPLEONCHAN, interp->result,
-                       (chan < GLOBAL_CHANS) ? "" : "*",
-                       chan % GLOBAL_CHANS, MISC_OWNER, MISC_MASTER, MISC_OP);
+      botnet_send_priv(idx, botnetnick, nick, NULL, "%s '%s' (%s%d): (* = "
+                       "owner, + = master, %% = botmaster, @ = op, ^ = halfop)\n",
+                       BOT_PEOPLEONCHAN, interp->result, (chan < GLOBAL_CHANS) ?
+                       "" : "*", chan % GLOBAL_CHANS);
   }
   for (i = 0; i < dcc_total; i++)
     if (dcc[i].type->flags & DCT_REMOTEWHO)
       if (dcc[i].u.chat->channel == chan) {
-        k = sprintf(s, "  %c%-15s %s",
-                    (geticon(i) == '-' ? ' ' : geticon(i)),
+        k = sprintf(s, "  %c%-15s %s", (geticon(i) == '-' ? ' ' : geticon(i)),
                     dcc[i].nick, dcc[i].host);
         if (now - dcc[i].timeval > 300) {
           unsigned long days, hrs, mins;
