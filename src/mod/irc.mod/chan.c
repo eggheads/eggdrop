@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  *
- * $Id: chan.c,v 1.96 2002/09/22 08:12:30 wcc Exp $
+ * $Id: chan.c,v 1.97 2002/09/22 09:22:10 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -726,36 +726,38 @@ static void check_this_member(struct chanset_t *chan, char *nick, struct flag_re
         add_mode(chan, '-', 'h', m->nick);
       if (!chan_hasop(m) && (chan_op(*fr) || (glob_op(*fr) &&
           !chan_deop(*fr))) && (channel_autoop(chan) || glob_autoop(*fr) ||
-          chan_autoop(*fr)))
+          chan_autoop(*fr))) {
         if (!chan->aop_min)
           add_mode(chan, '+', 'o', m->nick);
         else {
           set_delay(chan, m->nick);
           m->flags |= SENTOP;
 	}
-      else if (!chan_hasop(m) && !chan_hashalfop(m) && (chan_halfop(*fr) ||
+      } else if (!chan_hasop(m) && !chan_hashalfop(m) && (chan_halfop(*fr) ||
                (glob_halfop(*fr) && !chan_dehalfop(*fr))) &&
                (channel_autohalfop(chan) || glob_autohalfop(*fr) ||
-               chan_autohalfop(*fr)))
+               chan_autohalfop(*fr))) {
         if (!chan->aop_min)
           add_mode(chan, '+', 'h', m->nick);
         else {
           set_delay(chan, m->nick);
           m->flags |= SENTHALFOP;
 	}
+      }
     }
     if (chan_hasvoice(m) && (chan_quiet(*fr) || (glob_quiet(*fr) &&
         !chan_voice(*fr))))
       add_mode(chan, '-', 'v', m->nick);
     if (!chan_hasvoice(m) && !chan_hasop(m) && !chan_hashalfop(m) &&
         (chan_voice(*fr) || (glob_voice(*fr) && !chan_quiet(*fr))) &&
-        (channel_autovoice(chan) || glob_gvoice(*fr) || chan_gvoice(*fr)))
+        (channel_autovoice(chan) || glob_gvoice(*fr) || chan_gvoice(*fr))) {
       if (!chan->aop_min)
         add_mode(chan, '+', 'v', m->nick);
       else {
         set_delay(chan, m->nick);
         m->flags |= SENTVOICE;
       }
+    }
   }
 
   sprintf(s, "%s!%s", m->nick, m->userhost);
