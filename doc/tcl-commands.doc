@@ -393,7 +393,7 @@ specific commands, see later.
   ignorelist
     returns: list of ignores; each entry is itself a list, containing:
       hostmask, comment, expiration timestamp, time added, and creator
-      (the three timestamps are in unixtime format)
+      (the timestamps are in unixtime format)
 
   isignore <hostmask>
     returns: "1" if the ignore is in the list, "0" otherwise
