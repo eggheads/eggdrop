@@ -1,7 +1,7 @@
 /*
  * tclchan.c -- part of channels.mod
  *
- * $Id: tclchan.c,v 1.62 2002/08/02 23:50:38 wcc Exp $
+ * $Id: tclchan.c,v 1.63 2002/09/01 05:07:51 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1018,6 +1018,7 @@ static int tcl_channel_modify(Tcl_Interp * irp, struct chanset_t *chan,
       old_mode_mns_prot = chan->mode_mns_prot,
       old_mode_pls_prot = chan->mode_pls_prot;
   struct udef_struct *ul = udef;
+  char s[121];
   module_entry *me;
 
   for (i = 0; i < items; i++) {
@@ -1073,9 +1074,9 @@ static int tcl_channel_modify(Tcl_Interp * irp, struct chanset_t *chan,
 	  Tcl_AppendResult(irp, "channel chanmode needs argument", NULL);
 	return TCL_ERROR;
       }
-      if (strlen(item[i]) > 120)
-	item[i][120] = 0;
-      set_mode_protect(chan, item[i]);
+      strncpy(s, item[i], 120);
+      s[120] = 0;
+      set_mode_protect(chan, s);
     } else if (!strcmp(item[i], "idle-kick")) {
       i++;
       if (i >= items) {
