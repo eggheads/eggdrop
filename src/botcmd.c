@@ -216,8 +216,6 @@ static void bot_priv(int idx, char *par)
   tobot = newsplit(&par);
   splitc(to, tobot, '@');
   p = strchr(from, '@');
-  if ((to[0] == '!') || (to[0] == '#'))
-    to++;
   if (p != NULL)
     p++;
   else
