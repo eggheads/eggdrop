@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  *
- * $Id: server.c,v 1.70 2001/07/29 06:15:57 guppy Exp $
+ * $Id: server.c,v 1.71 2001/08/07 13:42:13 poptix Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1222,19 +1222,22 @@ static void do_nettype(void)
     use_penalties = 1;
     use_fastdeq = 3;
     nick_len = 9;
-    simple_sprintf(stackablecmds, "INVITE AWAY VERSION NICK ISON");
+    simple_sprintf(stackablecmds, "INVITE AWAY VERSION NICK");
     kick_method = 4;
     break;
   case NETT_UNDERNET:
     check_mode_r = 0;
     use_fastdeq = 2;
     nick_len = 9;
-    simple_sprintf(stackablecmds, "PRIVMSG NOTICE TOPIC PART WHOIS");
-    simple_sprintf(stackable2cmds, "USERHOST USERIP");
+    simple_sprintf(stackablecmds, "PRIVMSG NOTICE TOPIC PART WHOIS USERHOST USERIP ISON");
+    simple_sprintf(stackable2cmds, "USERHOST USERIP ISON");
     break;
   case NETT_DALNET:
     check_mode_r = 0;
+    use_fastdeq = 2;
     nick_len = 32;
+    simple_sprintf(stackablecmds, "PRIVMSG NOTICE PART WHOIS WHOWAS USERHOST ISON WATCH DCCALLOW");
+    simple_sprintf(stackable2cmds, "USERHOST ISON WATCH");
     break;
   case NETT_HYBRID_EFNET:
     check_mode_r = 0;
@@ -1857,7 +1860,7 @@ char *server_start(Function *global_funcs)
   use_penalties = 0;
   use_fastdeq = 0;
   stackablecmds[0] = 0;
-  strcpy(stackable2cmds, "USERHOST");
+  strcpy(stackable2cmds, "USERHOST ISON");
   resolvserv = 0;
   lastpingtime = 0;
   last_time = 0;
