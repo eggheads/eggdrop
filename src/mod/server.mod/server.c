@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  *
- * $Id: server.c,v 1.80 2002/07/19 05:16:52 wcc Exp $
+ * $Id: server.c,v 1.81 2002/07/19 05:25:33 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -906,7 +906,7 @@ static void queue_server(int which, char *buf, int len)
     h->warned = 1;
   }
 
-  if (debug_output) {
+  if (debug_output && !h->warned) {
     if (buf[len - 1] == '\n')
       buf[len - 1] = 0;
     switch (which) {
