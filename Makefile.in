@@ -71,6 +71,7 @@ clean: cleanmods
  
 distclean: clean
 	@rm -f Makefile config.cache config.log config.status config.h lush.h
+	@rm -f basename.tmp dirname.tmp
 	@rm -f `find . \( -name '*~' -o -name '*#' -o -name '*.orig' \
 		-o -name '*.rej' -o -name '*.bak' \) -print`
  
