@@ -4,7 +4,7 @@
  *   channel mode changes and the bot's reaction to them
  *   setting and getting the current wanted channel modes
  *
- * $Id: mode.c,v 1.72 2003/03/16 05:01:21 wcc Exp $
+ * $Id: mode.c,v 1.73 2003/03/16 05:04:33 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -67,7 +67,7 @@ static void flush_mode(struct chanset_t *chan, int pri)
   chan->compat = 0;
 
   /* +k or +l ? */
-  if (chan->key) {
+  if (chan->key && !chan->rmkey) {
     if (plus != 1) {
       *p++ = '+', plus = 1;
     }
