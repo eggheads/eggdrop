@@ -1,7 +1,7 @@
 dnl aclocal.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: aclocal.m4,v 1.57 2002/03/12 19:11:32 guppy Exp $
+dnl $Id: aclocal.m4,v 1.58 2002/08/15 00:00:59 wcc Exp $
 dnl
 
 
@@ -88,6 +88,44 @@ then
 fi
 ])dnl
 
+dnl  EGG_FIX_TCL_RPATH()
+dnl 
+dnl  Should eliminate the need to set $LD_LIBRARY_PATH on systems
+dnl  where Tcl is not installed to a system-wide libdir
+AC_DEFUN(EGG_FIX_TCL_RPATH, [dnl
+# this should do the trick...
+
+TCL_RPATH=""
+TCL_BSDPFX=""
+
+AC_MSG_CHECKING(whether setting of LD_LIBRARY_PATH can be avoided)
+
+if test "$LINUX" = "yes"
+then
+   TCL_RPATH="-Wl,--rpath=$TCLLIB"
+   AC_MSG_RESULT(yes)
+elif test "$SOLARIS" = "yes"
+then
+   AC_MSG_RESULT(yes)
+   if test -n "$GCC"
+   then
+      TCL_RPATH="-Wl,--rpath=$TCLLIB"
+   else
+      TCL_RPATH="-R${TCLLIB}"
+   fi
+elif test "$XBSD" = "yes"
+then
+   TCL_BSDPFX="-Wl,"
+   TCL_RPATH="--rpath=$TCLLIB"
+   AC_MSG_RESULT(yes)
+else
+   AC_MSG_RESULT(no)
+fi
+
+AC_SUBST(TCL_BSDPFX)
+AC_SUBST(TCL_RPATH)
+])dnl
+
 
 dnl  EGG_PROG_AWK()
 dnl
@@ -147,7 +185,9 @@ AC_DEFUN(EGG_CHECK_OS, [dnl
 LINUX=no
 IRIX=no
 SUNOS=no
+SOLARIS=no
 HPUX=no
+XBSD=no
 EGG_CYGWIN=no
 MOD_CC="$CC"
 MOD_LD="$CC"
@@ -317,6 +357,7 @@ case "$egg_cv_var_system_type" in
     if test "`echo $egg_cv_var_system_release | cut -d . -f 1`" = "5"
     then
       # Solaris
+      SOLARIS="yes"
       if test -n "$GCC"
       then
         SHLIB_CC="$CC -fPIC"
@@ -336,6 +377,7 @@ case "$egg_cv_var_system_type" in
   ;;
   *BSD)
     # FreeBSD/OpenBSD/NetBSD
+    XBSD=yes
     SHLIB_CC="$CC -fPIC"
     SHLIB_LD="ld -Bshareable -x"
     AC_DEFINE(MODULES_OK)dnl
@@ -454,6 +496,43 @@ EOF
 fi
 ])dnl
 
+dnl  EGG_CHECK_TCLVERSION_MATCHES()
+dnl
+AC_DEFUN(EGG_CHECK_TCLVERSION_MATCHES, [dnl
+AC_MSG_CHECKING(if Tcl header version matches library version)
+LIBSOLD="$LIBS"
+LIBS="$TCL_LIBS $LIBS"
+CFLAGSOLD="$CFLAGS"
+if test "$XBSD" = "yes"
+then
+   CFLAGS="$CFLAGS -Wl,${TCL_RPATH} -I${TCLINC}"
+else
+   CFLAGS="$CFLAGS $TCL_RPATH -I${TCLINC}"
+fi
+
+AC_TRY_RUN([
+`cat misc/check_tclversion.c`
+], egg_cv_var_tclversion_matches="yes", egg_cv_var_tclversion_matches="no",
+egg_cv_var_tclversion_matches="no")
+
+if test "$egg_cv_var_tclversion_matches" = "yes"
+then
+  AC_MSG_RESULT(yes)
+  LIBS="$LIBSOLD"
+  CFLAGS="$CFLAGSOLD"
+else
+  AC_MSG_RESULT(no)
+  cat << 'EOF' >&2
+configure: error:
+
+   Your system's Tcl headers and Tcl libraries are not in sync
+   with each other, or the Tcl library has serious issues. The 
+   most common problem is a version mismatch. Ensure that the
+   Tcl library and header that you specified match!
+EOF
+  exit 1
+fi
+])dnl
 
 dnl  EGG_CHECK_LIBSAFE_SSCANF()
 dnl

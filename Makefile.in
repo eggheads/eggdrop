@@ -2,7 +2,7 @@
 #  This is the Makefile for EGGDROP (the IRC bot)
 #  You should never need to edit this.
 #
-# $Id: Makefile.in,v 1.30 2002/02/28 05:13:54 wcc Exp $
+# $Id: Makefile.in,v 1.31 2002/08/15 00:00:58 wcc Exp $
 
 SHELL = @SHELL@
 top_srcdir = @top_srcdir@
@@ -31,18 +31,18 @@ CFLGS =
 
 # defaults
 CC = @CC@
-LD = @CC@
+LD = @CC@ @TCL_BSDPFX@@TCL_RPATH@
 STRIP = @STRIP@
 RANLIB = @RANLIB@
 
 # make eggmod
 MOD_CC = @MOD_CC@
-MOD_LD = @MOD_LD@
+MOD_LD = @MOD_LD@ @TCL_BSDPFX@@TCL_RPATH@
 MOD_STRIP = @MOD_STRIP@
 
 # make modules
 SHLIB_CC = @SHLIB_CC@
-SHLIB_LD = @SHLIB_LD@
+SHLIB_LD = @SHLIB_LD@ @TCL_RPATH@
 SHLIB_STRIP = @SHLIB_STRIP@
 MOD_EXT = @MOD_EXT@
 
