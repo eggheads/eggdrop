@@ -9,7 +9,7 @@
  * dprintf'ized, 27oct1995
  * multi-channel, 8feb1996
  * 
- * $Id: chan.c,v 1.54 2000/01/22 23:28:20 per Exp $
+ * $Id: chan.c,v 1.55 2000/01/22 23:31:54 per Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1337,7 +1337,7 @@ static void do_embedded_mode(struct chanset_t *chan, char *nick,
     switch (*mode) {
     case 'o':
       check_tcl_mode(dcc[servidx].host, "", NULL, chan->name, "+o", nick);
-      got_op(chan, "", dcc[servidx].host, nick, &fr);
+      got_op(chan, "", dcc[servidx].host, nick, NULL, &fr);
       break;
     case 'v':
       check_tcl_mode(dcc[servidx].host, "", NULL, chan->name, "+v", nick);

@@ -1,7 +1,7 @@
 /* 
  * irc.h -- part of irc.mod
  * 
- * $Id: irc.h,v 1.9 2000/01/08 21:23:16 per Exp $
+ * $Id: irc.h,v 1.10 2000/01/22 23:31:54 per Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -67,7 +67,7 @@ static int detect_chan_flood(char *, char *, char *, struct chanset_t *, int, ch
 static void newmask(masklist *, char *, char *);
 static char *quickban(struct chanset_t *, char *);
 static void got_op(struct chanset_t *chan, char *nick, char *from,
-		   char *who, struct flag_record *opper);
+		   char *who, struct userrec *opu, struct flag_record *opper);
 static int killmember(struct chanset_t *chan, char *nick);
 static void check_lonely_channel(struct chanset_t *chan);
 static void gotmode(char *, char *);

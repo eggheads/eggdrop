@@ -1050,6 +1050,9 @@ for the msg-command "stop", use "unbind msg - stop msg_stop".
        response to a mode change will happen AFTER all matching Tcl procs
        are called; the <mask> will have the channel prefixed (ie, "#turtle +m")
 
+|      if it is a server mode <nick> will be "", <user@host> is the server
+|      address and handle is *
+|
 |      note that "victim" was added in 1.3.23 and that this will break
 |      tcl scripts that were written for pre-1.3.23 versions and use this
 |      binding. An easy fix (by guppy) is as follows (example):
