@@ -2,7 +2,7 @@
  * tcluser.c -- handles:
  *   Tcl stubs for the user-record-oriented commands
  *
- * $Id: tcluser.c,v 1.23 2001/10/17 01:58:35 poptix Exp $
+ * $Id: tcluser.c,v 1.24 2001/10/31 02:20:56 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -113,7 +113,7 @@ static int tcl_chattr STDVAR
   } else {
     user.match = FR_GLOBAL;
     chan = NULL;
-    chg = argv[2];
+    chg = NULL;
   }
   if (chan && !findchan_by_dname(chan)) {
     Tcl_AppendResult(irp, "no such channel", NULL);
