@@ -1,7 +1,7 @@
 # transfer.danish.lang
 #   language messages for transfer module
 #
-# $Id
+# $Id: transfer.danish.lang,v 1.6 2003/03/21 22:56:29 wcc Exp $
 
 0xf00,Afviste dcc get %s: kopi til %s FEJLEDE!
 0xf01,NOTICE %s :Filsystem fejl; fjerner filer fra køen.\n
