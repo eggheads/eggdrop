@@ -34,7 +34,6 @@ Problem status:
        32:      no-one
        36:      no-one
        37:      drummer submitted a patch to eggdev
-       38:      drummer submitted a patch to eggdev
        39:      drummer
        41:      no-one
        42:      no-one
@@ -405,12 +404,6 @@ Status: drummer submitted a patch to eggdev
 
 Note: this seems to be a bug with tcl 8.0 (it seems the problem doesn't
 occur with tcl 7.5, 7.6, 7.6p2 and 8.1b3)
-
---
-38. If you set userdefined flags in DEFAULT_FLAGS variable they are
-    ignored (reported by /WiNGE).
-
-Status: drummer submitted a patch to eggdev
 
 --
 39. .+ban *!*user@*.host.com #channel *comment
