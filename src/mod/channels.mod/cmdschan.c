@@ -2,7 +2,7 @@
  * cmdschan.c -- part of channels.mod
  *   commands from a user via dcc that cause server interaction
  * 
- * $Id: cmdschan.c,v 1.18 2000/01/17 22:36:08 fabian Exp $
+ * $Id: cmdschan.c,v 1.19 2000/02/01 20:17:36 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -862,8 +862,8 @@ static void cmd_chinfo(struct userrec *u, int idx, char *par)
     }
   } else
     chname = 0;
-  if (u1->flags & USER_BOT) {
-    dprintf(idx, "Useful only for users.\n");
+  if ((u1->flags & USER_BOT) && !(u->flags & USER_MASTER)) {
+    dprintf(idx, "You have to be master to change bots info.\n");
     return;
   }
   if ((u1->flags & USER_OWNER) && !(u->flags & USER_OWNER)) {

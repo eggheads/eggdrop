@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  * 
- * $Id: chan.c,v 1.28 2000/01/31 22:56:00 fabian Exp $
+ * $Id: chan.c,v 1.29 2000/02/01 20:17:36 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -640,11 +640,11 @@ static void recheck_channel(struct chanset_t *chan, int dobans)
 	refresh_ban_kick(chan, s, m->nick);
       }
       /* ^ will use the ban comment */
-      if (u_match_mask(global_exempts,s) || u_match_mask(chan->exempts, s)){
+      if (use_exempts && (u_match_mask(global_exempts,s) || u_match_mask(chan->exempts, s))){
 	refresh_exempt(chan, s);
       }      
       /* check vs invites */
-      if (u_match_mask(global_invites,s) || u_match_mask(chan->invites, s))
+      if (use_invites && (u_match_mask(global_invites,s) || u_match_mask(chan->invites, s)))
 	refresh_invite(chan, s);
       /* are they +k ? */
       if (chan_kick(fr) || glob_kick(fr)) {
@@ -672,8 +672,10 @@ static void recheck_channel(struct chanset_t *chan, int dobans)
   }
   if (dobans) {
     recheck_bans(chan);
-    recheck_invites(chan);
-    recheck_exempts(chan);
+    if (use_invites)
+      recheck_invites(chan);
+    if (use_exempts)
+      recheck_exempts(chan);
   }
   if (dobans && channel_enforcebans(chan))
     enforce_bans(chan);

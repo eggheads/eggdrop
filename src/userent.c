@@ -2,7 +2,7 @@
  * userent.c -- handles:
  *   user-entry handling, new stylem more versatile.
  * 
- * $Id: userent.c,v 1.12 2000/01/30 19:26:21 fabian Exp $
+ * $Id: userent.c,v 1.13 2000/02/01 20:17:36 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -149,7 +149,7 @@ int def_set(struct userrec *u, struct user_entry *e, void *buf)
       /* Allow bold, inverse, underline, color text here... 
        * But never add cr or lf!! --rtc
        */
-      if (*i < 32 && !strchr ("\002\003\026\037", *i))
+     if ((unsigned int) *i < 32 && !strchr ("\002\003\026\037", *i)) 
         *i = '?';
   } else { /* string == NULL && e->u.string != NULL */
     nfree(e->u.string);
