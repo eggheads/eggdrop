@@ -2,7 +2,7 @@
  * net.c -- handles:
  *   all raw network i/o
  * 
- * $Id: net.c,v 1.48 2002/11/02 00:23:21 wcc Exp $
+ * $Id: net.c,v 1.49 2002/11/06 03:56:43 wcc Exp $
  */
 /* 
  * This is hereby released into the public domain.
@@ -188,6 +188,11 @@ void neterror(char *s)
 #ifdef EACCES
   case EACCES:
     strcpy(s, "Permission denied");
+    break;
+#endif
+#ifdef EMFILE
+  case EMFILE:
+    strcpy(s, "Too many open files");
     break;
 #endif
   case 0:
