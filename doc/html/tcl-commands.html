@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: tcl-commands.html,v 1.45 2005/01/03 20:01:43 paladin Exp $ -->
+<!-- $Id: tcl-commands.html,v 1.46 2005/01/07 02:25:05 tothwolf Exp $ -->
 
 <html>
   <head>
@@ -3859,12 +3859,12 @@
 
               <p><strong>bind mode &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;<br>
               proc-name &lt;nick&gt; &lt;user@host&gt; &lt;handle&gt;
-              &lt;channel&gt; &lt;mode-change&gt; &lt;victim&gt;</strong></p>
+              &lt;channel&gt; &lt;mode-change&gt; &lt;target&gt;</strong></p>
 
               <p><strong>Description:</strong> mode changes are broken down
               into their component parts before being sent here, so the
               &lt;mode-change&gt; will always be a single mode, such as
-              &quot;+m&quot; or &quot;-o&quot;. victim will show the argument
+              &quot;+m&quot; or &quot;-o&quot;. target will show the argument
               of the mode change (for o/v/b/e/I) or &quot;&quot; if the set
               mode does not take an argument. Flags are ignored. The
               bot&#39;s automatic response to a mode change will happen
@@ -3875,28 +3875,33 @@
               <p>If it is a server mode, nick will be &quot;&quot;, user@host
               is the server name, and handle is *.</p>
 
-              <p>Note that &quot;victim&quot; was added in 1.3.23 and that
-              this will break Tcl scripts that were written for pre-1.3.23
-              versions and use this binding. An easy fix (by guppy) is as
-              follows (example):</p>
+              <p>Note that &quot;target&quot; was added in 1.3.17 and that
+              this will break Tcl scripts that were written for pre-1.3.17
+              Eggdrop that use the mode binding. Also, due to a typo, mode
+              binds were broken completely in 1.3.17 but were fixed in
+              1.3.18. Mode bindings are not triggered at all in 1.3.17.</p>
+
+              <p>One easy example (from guppy) of how to support the
+              &quot;target&quot; parameter in 1.3.18 and later and still
+              remain compatible with older Eggdrop versions is:</p>
 
               <p>Old script looks as follows:</p>
 
 <pre>
   bind mode - * mode_proc
-  proc mode_proc {nick uhost hand chan mc} { ... }
+  proc mode_proc {nick uhost hand chan mode} { ... }
 </pre>
 
-              <p>To make it work with 1.3.23+ and stay compatible with older
+              <p>To make it work with 1.3.18+ and stay compatible with older
               bots, do:</p>
 
 <pre>
   bind mode - * mode_proc_fix
-  proc mode_proc_fix {nick uhost hand chan mc {victim &quot;&quot;}} {
-    if {$victim != &quot;&quot;} {append mc &quot; $victim&quot;}
-    mode_proc $nick $uhost $hand $chan $mc
+  proc mode_proc_fix {nick uhost hand chan mode {target &quot;&quot;}} {
+    if {$target != &quot;&quot;} {append mode &quot; $target&quot;}
+    mode_proc $nick $uhost $hand $chan $mode
   }
-  proc mode_proc {nick uhost hand chan mc} { ... }
+  proc mode_proc {nick uhost hand chan mode} { ... }
 </pre>
 
               <p><strong>Module:</strong> irc</p>

@@ -1,4 +1,4 @@
-$Id: tcl-commands.doc,v 1.117 2005/01/03 20:01:43 paladin Exp $
+$Id: tcl-commands.doc,v 1.118 2005/01/07 02:25:05 tothwolf Exp $
 
 Eggdrop Tcl Commands
 Last revised: August 02, 2004
@@ -1759,11 +1759,11 @@ marked with vertical bars (|) on the left.
 
     (14) MODE   (stackable)
          bind mode <flags> <mask> <proc>
-         proc-name <nick> <user@host> <handle> <channel> <mode-change> <victim>
+         proc-name <nick> <user@host> <handle> <channel> <mode-change> <target>
 
          Description: mode changes are broken down into their component
            parts before being sent here, so the <mode-change> will always
-           be a single mode, such as "+m" or "-o". victim will show the
+           be a single mode, such as "+m" or "-o". target will show the
            argument of the mode change (for o/v/b/e/I) or "" if the set
            mode does not take an argument. Flags are ignored. The bot's
            automatic response to a mode change will happen AFTER all
@@ -1773,21 +1773,27 @@ marked with vertical bars (|) on the left.
            If it is a server mode, nick will be "", user@host is the server
            name, and handle is *.
 
-           Note that "victim" was added in 1.3.23 and that this will break
-           Tcl scripts that were written for pre-1.3.23 versions and use this
-           binding. An easy fix (by guppy) is as follows (example):
+           Note that "target" was added in 1.3.17 and that this will break
+           Tcl scripts that were written for pre-1.3.17 Eggdrop that use the
+           mode binding. Also, due to a typo, mode binds were broken
+           completely in 1.3.17 but were fixed in 1.3.18. Mode bindings are
+           not triggered at all in 1.3.17.
+
+           One easy example (from guppy) of how to support the "target"
+           parameter in 1.3.18 and later and still remain compatible with
+           older Eggdrop versions is:
 
            Old script looks as follows:
              bind mode - * mode_proc
-             proc mode_proc {nick uhost hand chan mc} { ... }
+             proc mode_proc {nick uhost hand chan mode} { ... }
 
-           To make it work with 1.3.23+ and stay compatible with older bots, do:
+           To make it work with 1.3.18+ and stay compatible with older bots, do:
              bind mode - * mode_proc_fix
-             proc mode_proc_fix {nick uhost hand chan mc {victim ""}} {
-               if {$victim != ""} {append mc " $victim"}
-               mode_proc $nick $uhost $hand $chan $mc
+             proc mode_proc_fix {nick uhost hand chan mode {target ""}} {
+               if {$target != ""} {append mode " $target"}
+               mode_proc $nick $uhost $hand $chan $mode
              }
-             proc mode_proc {nick uhost hand chan mc} { ... }
+             proc mode_proc {nick uhost hand chan mode} { ... }
          Module: irc
 
 
