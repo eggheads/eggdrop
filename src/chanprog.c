@@ -7,7 +7,7 @@
  *   telling the current programmed settings
  *   initializing a lot of stuff and loading the tcl scripts
  *
- * $Id: chanprog.c,v 1.31 2002/07/18 19:01:44 guppy Exp $
+ * $Id: chanprog.c,v 1.32 2002/07/18 20:28:32 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -631,7 +631,7 @@ void list_timers(Tcl_Interp *irp, tcl_timer_t *stack)
   tcl_timer_t *mark;
   char mins[10], id[16], *x;
 #if ((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 4))
-  const char *argv[3];
+  CONST char *argv[3];
 #else
   char *argv[3];
 #endif

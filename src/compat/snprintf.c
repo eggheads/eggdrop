@@ -1,7 +1,7 @@
 /*
  * snprintf.c - a portable implementation of snprintf and vsnprintf
  *
- * $Id: snprintf.c,v 1.5 2002/01/02 03:46:36 guppy Exp $
+ * $Id: snprintf.c,v 1.6 2002/07/18 20:28:32 guppy Exp $
  */
 /*
  * Portions Copyright (C) 2000, 2001, 2002 Eggheads Development Team
@@ -98,7 +98,6 @@
 #      include <std_args.h>
 #    endif
 #  endif
-#  include <stdarg.h>
 #  define HAVE_STDARGS		/* let's hope that works everywhere (mj) */
 #  define VA_LOCAL_DECL	va_list ap
 #  define VA_START(f)	va_start(ap, f)
