@@ -280,6 +280,8 @@ HOOK_PRE_REHASH    - called just *before* rehash
 HOOK_REHASH        - called just after rehash
 HOOK_IDLE          - called whenever the dcc connections have been idle
                      for a whole second
+HOOK_BACKUP        - called when a user/channel file backup is done
+HOOK_LOADED        - called when eggdrop is first loaded
 
 char *module_load ( char *module_name );  tries to load the given module,
    returns 0 on success, or an error msg

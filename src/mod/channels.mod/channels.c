@@ -2,7 +2,7 @@
  * channels.c -- part of channels.mod
  *   support for channels within the bot
  *
- * $Id: channels.c,v 1.52 2001/07/17 19:53:40 guppy Exp $
+ * $Id: channels.c,v 1.53 2001/07/24 14:19:19 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -496,6 +496,15 @@ static void read_channels(int create)
   }
 }
 
+static void backup_chanfile()
+{
+  char s[125];
+
+  putlog(LOG_MISC, "*", "Backing up channel file...");
+  egg_snprintf(s, sizeof s, "%s~bak", chanfile);
+  copyfile(chanfile, s);
+}
+
 static void channels_prerehash()
 {
   struct chanset_t *chan;
@@ -786,6 +795,7 @@ static char *channels_close()
   rem_tcl_ints(my_tcl_ints);
   rem_tcl_coups(mychan_tcl_coups);
   del_hook(HOOK_USERFILE, (Function) channels_writeuserfile);
+  del_hook(HOOK_BACKUP, (Function) backup_chanfile);
   del_hook(HOOK_REHASH, (Function) channels_rehash);
   del_hook(HOOK_PRE_REHASH, (Function) channels_prerehash);
   del_hook(HOOK_MINUTELY, (Function) check_expired_bans);
@@ -908,6 +918,7 @@ char *channels_start(Function * global_funcs)
   add_hook(HOOK_MINUTELY, (Function) check_expired_exempts);
   add_hook(HOOK_MINUTELY, (Function) check_expired_invites);
   add_hook(HOOK_USERFILE, (Function) channels_writeuserfile);
+  add_hook(HOOK_BACKUP, (Function) backup_chanfile);
   add_hook(HOOK_REHASH, (Function) channels_rehash);
   add_hook(HOOK_PRE_REHASH, (Function) channels_prerehash);
   Tcl_TraceVar(interp, "global-chanset",

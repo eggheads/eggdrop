@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  *
- * $Id: main.c,v 1.68 2001/07/24 14:05:18 guppy Exp $
+ * $Id: main.c,v 1.69 2001/07/24 14:19:19 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -560,7 +560,7 @@ static void core_secondly()
 
 	strncpyz(s, ctime(&now), sizeof s);
 	putlog(LOG_ALL, "*", "--- %.11s%s", s, s + 20);
-	backup_userfile();
+	call_hook(HOOK_BACKUP);
 	for (j = 0; j < max_logs; j++) {
 	  if (logs[j].filename != NULL && logs[j].f != NULL) {
 	    fclose(logs[j].f);
@@ -904,6 +904,7 @@ int main(int argc, char **argv)
   add_hook(HOOK_REHASH, (Function) event_rehash);
   add_hook(HOOK_PRE_REHASH, (Function) event_prerehash);
   add_hook(HOOK_USERFILE, (Function) event_save);
+  add_hook(HOOK_BACKUP, (Function) backup_userfile);
   add_hook(HOOK_DAILY, (Function) event_logfile);
   add_hook(HOOK_DAILY, (Function) event_resettraffic);
   add_hook(HOOK_LOADED, (Function) event_loaded);

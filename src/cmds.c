@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  *
- * $Id: cmds.c,v 1.59 2001/07/14 12:37:08 poptix Exp $
+ * $Id: cmds.c,v 1.60 2001/07/24 14:19:19 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1189,8 +1189,8 @@ static void cmd_save(struct userrec *u, int idx, char *par)
 static void cmd_backup(struct userrec *u, int idx, char *par)
 {
   putlog(LOG_CMDS, "*", "#%s# backup", dcc[idx].nick);
-  dprintf(idx, "Backing up the user file...\n");
-  backup_userfile();
+  dprintf(idx, "Backing up the channel & user file...\n");
+  call_hook(HOOK_BACKUP);
 }
 
 static void cmd_trace(struct userrec *u, int idx, char *par)

@@ -1,7 +1,7 @@
 /*
  * modvals.h
  *
- * $Id: modvals.h,v 1.18 2001/06/01 21:56:41 guppy Exp $
+ * $Id: modvals.h,v 1.19 2001/07/24 14:19:19 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -39,7 +39,8 @@
 #define HOOK_IDLE		 11
 #define HOOK_5MINUTELY		 12
 #define HOOK_LOADED		 13
-#define REAL_HOOKS		 14
+#define HOOK_BACKUP     	 14
+#define REAL_HOOKS		 15
 #define HOOK_SHAREOUT		105
 #define HOOK_SHAREIN		106
 #define HOOK_ENCRYPT_PASS	107

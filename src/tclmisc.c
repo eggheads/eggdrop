@@ -3,7 +3,7 @@
  *   Tcl stubs for file system commands
  *   Tcl stubs for everything else
  *
- * $Id: tclmisc.c,v 1.20 2001/05/19 22:19:02 guppy Exp $
+ * $Id: tclmisc.c,v 1.21 2001/07/24 14:19:19 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -368,7 +368,7 @@ static int tcl_dccdumpfile STDVAR
 static int tcl_backup STDVAR
 {
   BADARGS(1, 1, "");
-  backup_userfile();
+  call_hook(HOOK_BACKUP);
   return TCL_OK;
 }
 

@@ -182,7 +182,10 @@ see also: reload, rehash
 %{help=backup}%{+m|m}
 ###  %bbackup%b
    makes the bot write a backup of its entire user list to the disk.
-   this is useful if you feel the need to backup the user list.
+   if the channels module is loaded, this also write a backup of the
+   channels file.
+   this is useful if you feel the need to backup the user list and
+   the channels settings.
    
 see also: reload, rehash
 %{help=simul}%{+n}

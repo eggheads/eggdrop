@@ -411,6 +411,8 @@ specific commands, see later.
 
   backup
     makes a simple backup of the userfile that's on disk
+|   if the channels module is loaded, this also makes a simple backup of
+|   the channel file.
     returns: nothing
 
   getting-users
