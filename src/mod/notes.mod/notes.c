@@ -5,7 +5,7 @@
  *   note cmds
  *   note ignores
  *
- * $Id: notes.c,v 1.48 2004/02/01 06:13:02 wcc Exp $
+ * $Id: notes.c,v 1.49 2004/02/06 22:36:28 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -492,7 +492,7 @@ static void notes_read(char *hand, char *nick, char *srd, int idx)
   while (!feof(f)) {
     fgets(s, 600, f);
     i = strlen(s);
-    if (i && s[i - 1] == '\n')
+    if (i > 0 && s[i - 1] == '\n')
       s[i - 1] = 0;
     if (!feof(f)) {
       rmspace(s);

@@ -3,7 +3,7 @@
  *   memory allocation and deallocation
  *   keeping track of what memory is being used by whom
  *
- * $Id: mem.c,v 1.22 2004/01/09 05:56:37 wcc Exp $
+ * $Id: mem.c,v 1.23 2004/02/06 22:36:28 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -389,10 +389,13 @@ void n_free(void *ptr, const char *file, int line)
     }
     memused -= memtbl[i].size;
     lastused--;
-    memtbl[i].ptr = memtbl[lastused].ptr;
-    memtbl[i].size = memtbl[lastused].size;
-    memtbl[i].line = memtbl[lastused].line;
-    strcpy(memtbl[i].file, memtbl[lastused].file);
+    /* We don't want any holes, so if this wasn't the last entry, swap it. */
+    if (i != lastused) {
+      memtbl[i].ptr = memtbl[lastused].ptr;
+      memtbl[i].size = memtbl[lastused].size;
+      memtbl[i].line = memtbl[lastused].line;
+      strcpy(memtbl[i].file, memtbl[lastused].file);
+    }
   }
 #endif
   free(ptr);

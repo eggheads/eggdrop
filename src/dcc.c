@@ -4,7 +4,7 @@
  *   disconnect on a dcc socket
  *   ...and that's it!  (but it's a LOT)
  *
- * $Id: dcc.c,v 1.74 2004/01/09 05:56:36 wcc Exp $
+ * $Id: dcc.c,v 1.75 2004/02/06 22:36:28 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -855,15 +855,20 @@ static void eof_dcc_chat(int idx)
 static void dcc_chat(int idx, char *buf, int i)
 {
   int nathan = 0, doron = 0, fixed = 0;
-  char *v, *d;
+  char *v, *d, filtbuf[2048];
 
   strip_telnet(dcc[idx].sock, buf, &i);
   if (buf[0] && (buf[0] != '.') &&
       detect_dcc_flood(&dcc[idx].timeval, dcc[idx].u.chat, idx))
     return;
   dcc[idx].timeval = now;
-  if (buf[0])
-    strcpy(buf, check_tcl_filt(idx, buf));
+  if (buf[0]) {
+    const char *filt = check_tcl_filt(idx, buf);
+    if (filt != buf) {
+      strncpyz(filtbuf, filt, sizeof(filtbuf));
+      buf = filtbuf;
+    }
+  }
   if (buf[0]) {
     /* Check for beeps and cancel annoying ones */
     v = buf;
