@@ -1,5 +1,5 @@
 # Makefile for doc/
-# $Id: Makefile.in,v 1.13 2000/11/06 04:06:41 guppy Exp $
+# $Id: Makefile.in,v 1.14 2000/11/08 02:42:45 guppy Exp $
 
 SHELL = @SHELL@
 top_srcdir = @top_srcdir@
@@ -13,7 +13,7 @@ INSTALL_DATA = @INSTALL_DATA@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
 
 DOCS = BOTNET BUG-REPORT CONTENTS KNOWN-PROBLEMS MODULES \
-UPDATES1.4 UPDATES1.5 UPDATES1.6 compiling.FAQ eggdrop.doc \
+UPDATES.pre1.5 UPDATES1.5 UPDATES1.6 compiling.FAQ eggdrop.doc \
 patch.howto tcl-commands.doc tricks text-substitutions.doc
 
 MAN1 = man1/eggdrop.1
