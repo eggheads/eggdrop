@@ -103,7 +103,7 @@ static int expmem_udef (struct udef_struct *ul)
 
   while (ul) {
     i += sizeof(struct udef_struct);
-    i += strlen(ul->name);
+    i += strlen(ul->name) + 1;
     i += expmem_udef_chans(ul->values);
     ul = ul->next;
   }
@@ -116,7 +116,7 @@ static int expmem_udef_chans (struct udef_chans *ul)
   
   while (ul) {
     i += sizeof(struct udef_chans);
-    i += strlen(ul->chan);
+    i += strlen(ul->chan) + 1;
     ul = ul->next;
   }
   return i;
@@ -191,7 +191,7 @@ static void initudef(int type, char *name, int defined)
     while (ull && ull->next)
       ull = ull->next;
     ul = nmalloc(sizeof(struct udef_struct));
-    ul->name = nmalloc(strlen(name));
+    ul->name = nmalloc(strlen(name) + 1);
     strcpy(ul->name, name);
     if (defined)
       ul->defined = 1;
