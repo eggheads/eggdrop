@@ -41,6 +41,7 @@ int protect_telnet = 1;		/* even bother with ident lookups :) */
 int flood_telnet_thr = 5;	/* number of telnet connections to be considered a flood */
 int flood_telnet_time = 60;	/* in how many seconds? */
 extern int min_dcc_port, max_dcc_port;	/* valid portrange for telnets */
+extern int par_telnet_flood;    /* trigger telnet flood for +f ppl? */
 
 static void strip_telnet(int sock, char *buf, int *len)
 {
@@ -919,8 +920,12 @@ static time_t lasttelnettime;
 /* a modified detect_flood for incoming telnet flood protection */
 static int detect_telnet_flood(char *floodhost)
 {
+  struct flag_record fr =
+     {FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0};
   context;
-  if (flood_telnet_thr == 0)
+  get_user_flagrec(get_user_by_host(floodhost), &fr, NULL);
+  context;
+  if (flood_telnet_thr == 0 || (glob_friend(fr) && !par_telnet_flood))
     return 0;			/* no flood protection */
   if (strcasecmp(lasttelnethost, floodhost) != 0) {	/* new */
     strcpy(lasttelnethost, floodhost);

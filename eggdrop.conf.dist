@@ -202,6 +202,10 @@ set dcc-flood-thr 3
 # host constitutes a flood?
 set telnet-flood 5:60
 
+# apply telnet flood protection for everyone?
+# set this to 0 to override telnet flood prot for +f users
+set paranoid-telnet-flood 1
+
 # how long should I wait (seconds) before giving up on hostname/address
 # lookup?
 set resolve-timeout 15

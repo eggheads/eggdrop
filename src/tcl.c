@@ -70,6 +70,8 @@ int min_dcc_port = 1024;	/* dcc-portrange, min port - dw/guppy */
 int max_dcc_port = 65535;	/* dcc-portrange, max port - dw/guppy */
 int quick_logs = 0;		/* quick write logs?
 				 * flush em every min instead of every 5 */
+int par_telnet_flood = 1;       /* trigger telnet flood for +f ppl? - dw */
+
 /* prototypes for tcl */
 Tcl_Interp *Tcl_CreateInterp();
 int strtot = 0;
@@ -400,6 +402,7 @@ static tcl_ints def_tcl_ints[] =
   {"resolve-timeout", &resolve_timeout, 0},
   {"must-be-owner", &must_be_owner, 1},
   {"use-silence", &use_silence, 0},	/* arthur2 */
+  {"paranoid-telnet-flood", &par_telnet_flood, 0},
   {0, 0, 0}			/* arthur2 */
 };
 
