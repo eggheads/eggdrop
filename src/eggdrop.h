@@ -144,7 +144,7 @@
 #ifdef DEBUG
 #  define Context eggContext(__FILE__, __LINE__, NULL)
 #  define ContextNote(note) eggContextNote(__FILE__, __LINE__, NULL, note)
-#  define Assert(expr) eggAssert(__FILE__, __LINE__, NULL, expr)
+#  define Assert(expr) eggAssert(__FILE__, __LINE__, NULL, (int)(expr))
 #else
 #  define Context {}
 #  define ContextNote(note) {}
