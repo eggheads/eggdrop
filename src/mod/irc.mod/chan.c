@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  *
- * $Id: chan.c,v 1.87 2002/06/13 20:43:08 wcc Exp $
+ * $Id: chan.c,v 1.88 2002/06/15 17:33:48 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1043,21 +1043,30 @@ static int got353(char *from, char *msg)
       m->flags = 0; /* No flags for now */
       m->last = now; /* Last time I saw him */
     }
-    strcpy(m->nick, nick); /* Store the nick in list */
     m->userhost[0] = 0; /* Store a zero-length userhost for the time being */
     m->user = NULL; /* We'll get a handle in got352or4() */
     if (strchr(nick, '@') != NULL)
+    {
       m->flags |= (CHANOP | WASOP);
+      nick++;
+    }
     else
       m->flags &= ~(CHANOP | WASOP);
     if (strchr(nick, '%') != NULL)
+    {
       m->flags |= (CHANHALFOP | WASHALFOP);
+      nick++;
+    }
     else
       m->flags &= ~(CHANHALFOP | WASHALFOP);
     if (strchr(nick, '+') != NULL)
+    {
       m->flags |= CHANVOICE;
+      nick++;
+    }
     else
       m->flags &= ~CHANVOICE;
+    strcpy(m->nick, nick); /* Store the nick in list */
   }
   return 0;
 }
