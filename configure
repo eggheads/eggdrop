@@ -2596,7 +2596,7 @@ EOF
 
 
 # Checks for library functions
-for ac_func in clock getrusage setpgid uname sigaction sigemptyset rename strcasecmp strncasecmp getdtablesize memset random srandom dlopen dprintf snprintf vsnprintf isascii inet_aton memcpy strftime
+for ac_func in clock getrusage setpgid uname sigaction sigemptyset rename strcasecmp strncasecmp getdtablesize memset random srandom dlopen dprintf snprintf vsnprintf isascii inet_aton memcpy
 do
 echo $ac_n "checking for $ac_func""... $ac_c" 1>&6
 echo "configure:2603: checking for $ac_func" >&5

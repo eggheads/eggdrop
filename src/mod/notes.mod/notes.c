@@ -5,7 +5,7 @@
  *   note cmds
  *   note ignores
  * 
- * $Id: notes.c,v 1.19 2000/07/09 13:51:56 fabian Exp $
+ * $Id: notes.c,v 1.20 2000/08/06 14:51:39 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -467,7 +467,7 @@ static int tcl_listnotes STDVAR
 static void notes_read(char *hand, char *nick, char *srd, int idx)
 {
   FILE *f;
-  char s[601], *to, *dt, *from, *s1, wt[100];
+  char s[601], *to, *dt, *from, *s1;
   time_t tt;
   int ix = 1;
   int ir = 0;
@@ -508,9 +508,7 @@ static void notes_read(char *hand, char *nick, char *srd, int idx)
 	  from = newsplit(&s1);
 	  dt = newsplit(&s1);
 	  tt = atoi(dt);
-	  strcpy(wt, ctime(&tt));
-	  wt[16] = 0;
-	  dt = wt + 4;
+	  strftime(dt, 14, "%b %d %H:%M", localtime(&tt));
 	  lapse = (int) ((now - tt) / 86400);
 	  if (lapse > note_life - 7) {
 	    if (lapse >= note_life)

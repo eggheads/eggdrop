@@ -7,7 +7,7 @@
  *   help system
  *   motd display and %var substitution
  * 
- * $Id: misc.c,v 1.23 2000/06/10 01:00:22 fabian Exp $
+ * $Id: misc.c,v 1.24 2000/08/06 14:51:38 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -317,17 +317,13 @@ void dumplots(int idx, char *prefix, char *data)
  */
 void daysago(time_t now, time_t then, char *out)
 {
-  char s[81];
-
   if (now - then > 86400) {
     int days = (now - then) / 86400;
 
     sprintf(out, "%d day%s ago", days, (days == 1) ? "" : "s");
     return;
   }
-  strcpy(s, ctime(&then));
-  s[16] = 0;
-  strcpy(out, &s[11]);
+  strftime(out, 6, "%H:%M", localtime(&then));
 }
 
 /* Convert an interval (in seconds) to one of:
@@ -335,18 +331,13 @@ void daysago(time_t now, time_t then, char *out)
  */
 void days(time_t now, time_t then, char *out)
 {
-  char s[81];
-
   if (now - then > 86400) {
     int days = (now - then) / 86400;
 
     sprintf(out, "in %d day%s", days, (days == 1) ? "" : "s");
     return;
   }
-  strcpy(out, "at ");
-  strcpy(s, ctime(&now));
-  s[16] = 0;
-  strcpy(&out[3], &s[11]);
+  strftime(out, 9, "at %H:%M", localtime(&now));
 }
 
 /* Convert an interval (in seconds) to one of:
@@ -401,37 +392,24 @@ void putlog EGG_VARARGS_DEF(int, arg1)
   out[LOGLINEMAX - 8] = 0;
   tt = now;
   if (keep_all_logs) {
-#ifndef HAVE_STRFTIME
-    strcpy(ct, ctime(&tt));
-    ct[10] = 0;
-    strcpy(ct, &ct[8]);
-    ct[7] = 0;
-    strcpy(&ct[2], &ct[4]);
-    ct[24] = 0;
-    strcpy(&ct[5], &ct[20]);
-    if (ct[0] == ' ')
-      ct[0] = '0';
-#else
-    strftime(ct, 80, logfile_suffix, localtime(&tt));
-    ct[80] = 0;
-    s2 = ct;
-    /* replace spaces by underscores */
-    while (s2[0]) {
-      if (s2[0] == ' ')
-        s2[0] = '_';
-      s2++;
+    if (!logfile_suffix[0])
+      strftime(ct, 12, ".%d%b%Y", localtime(&tt));
+    else {
+      strftime(ct, 80, logfile_suffix, localtime(&tt));
+      ct[80] = 0;
+      s2 = ct;
+      /* replace spaces by underscores */
+      while (s2[0]) {
+	if (s2[0] == ' ')
+	  s2[0] = '_';
+	s2++;
+      }
     }
-#endif
   }
   if ((out[0]) && (shtime)) {
-    strcpy(s1, ctime(&tt));
-    strcpy(s1, &s1[11]);
-    s1[5] = 0;
+    strftime(s1, 9, "[%H:%M] ", localtime(&tt));
+    strncpy(&s[0], s1, 8);
     out = s;
-    s[0] = '[';
-    strncpy(&s[1], s1, 5);
-    s[6] = ']';
-    s[7] = ' ';
   }
   strcat(out, "\n");
   if (!use_stderr) {
@@ -442,11 +420,7 @@ void putlog EGG_VARARGS_DEF(int, arg1)
 	if (logs[i].f == NULL) {
 	  /* Open this logfile */
 	  if (keep_all_logs) {
-#ifndef HAVE_STRFTIME
-	    egg_snprintf(s1, 256, "%s.%s", logs[i].filename, ct);
-#else
 	    egg_snprintf(s1, 256, "%s%s", logs[i].filename, ct);
-#endif
 	    logs[i].f = fopen(s1, "a+");
 	  } else
 	    logs[i].f = fopen(logs[i].filename, "a+");
@@ -816,9 +790,8 @@ void help_subst(char *s, char *nick, struct flag_record *flags,
       towrite = admin;
       break;
     case 'T':
-      strcpy(sub, ctime(&now));
-      sub[16] = 0;
-      towrite = sub + 11;
+      strftime(sub, 6, "%H:%M", localtime(&now));
+      towrite = sub;
       break;
     case 'N':
       towrite = strchr(nick, ':');

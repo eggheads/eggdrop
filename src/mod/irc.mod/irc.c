@@ -2,7 +2,7 @@
  * irc.c -- part of irc.mod
  *   support for channels within the bot 
  * 
- * $Id: irc.c,v 1.28 2000/08/03 21:51:33 fabian Exp $
+ * $Id: irc.c,v 1.29 2000/08/06 14:51:38 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -129,7 +129,6 @@ static void punish_badguy(struct chanset_t *chan, char *whobad,
 {
   char reason[1024], ct[81], *kick_msg;
   memberlist *m;
-  time_t tm;
   struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
 
   m = ismember(chan, badnick);
@@ -139,14 +138,8 @@ static void punish_badguy(struct chanset_t *chan, char *whobad,
 
   Context;
   /* Get current time into a string */
-  tm = now;
-  strcpy(ct, ctime(&tm));
-  ct[10] = 0;
-  ct[16] = 0;
-  strcpy(ct, &ct[8]);
-  strcpy(&ct[2], &ct[3]);
-  strcpy(&ct[7], &ct[10]);
-  
+  strftime(ct, 7, "%d %b", localtime(&now));
+
   /* Put together log and kick messages */
   reason[0] = 0;
   switch (type) {
