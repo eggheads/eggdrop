@@ -1,7 +1,7 @@
 /*
  * userchan.c -- part of channels.mod
  *
- * $Id: userchan.c,v 1.26 2002/01/02 03:46:37 guppy Exp $
+ * $Id: userchan.c,v 1.27 2002/01/14 21:18:35 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -389,7 +389,7 @@ static int u_addban(struct chanset_t *chan, char *ban, char *from, char *note,
 		    time_t expire_time, int flags)
 {
   char host[1024], s[1024];
-  maskrec *p, **u = chan ? &chan->bans : &global_bans;
+  maskrec *p = NULL, *l, **u = chan ? &chan->bans : &global_bans;
   module_entry *me;
 
   strcpy(host, ban);
@@ -417,8 +417,13 @@ static int u_addban(struct chanset_t *chan, char *ban, char *from, char *note,
   }
   if (expire_time == now)
     return 1;
-  if (u_equals_mask(*u, host))
-    u_delban(chan, host, 1);	/* Remove old ban */
+
+  for (l = *u; l; l = l->next)
+    if (!rfc_casecmp(l->mask, host)) {
+      p = l;
+      break;
+    }
+    
   /* It shouldn't expire and be sticky also */
   if (note[0] == '*') {
     flags |= MASKREC_STICKY;
@@ -429,9 +434,16 @@ static int u_addban(struct chanset_t *chan, char *ban, char *from, char *note,
     expire_time = 0L;
   }
 
+  if (p == NULL) {
   p = user_malloc(sizeof(maskrec));
   p->next = *u;
   *u = p;
+  }
+  else {
+    nfree( p->mask );
+    nfree( p->user );
+    nfree( p->desc );
+  }
   p->expire = expire_time;
   p->added = now;
   p->lastactive = 0;
@@ -466,7 +478,7 @@ static int u_addinvite(struct chanset_t *chan, char *invite, char *from,
 		       char *note, time_t expire_time, int flags)
 {
   char host[1024], s[1024];
-  maskrec *p, **u = chan ? &chan->invites : &global_invites;
+  maskrec *p = NULL, *l, **u = chan ? &chan->invites : &global_invites;
   module_entry *me;
 
   strcpy(host, invite);
@@ -488,8 +500,12 @@ static int u_addinvite(struct chanset_t *chan, char *invite, char *from,
   else
     simple_sprintf(s, "%s!%s@%s", origbotname, botuser, hostname);
 
-  if (u_equals_mask(*u, host))
-    u_delinvite(chan, host,1);	/* Remove old invite */
+  for (l = *u; l; l = l->next)
+    if (!rfc_casecmp(l->mask, host)) {
+      p = l;
+      break;
+    }  
+
   /* It shouldn't expire and be sticky also */
   if (note[0] == '*') {
     flags |= MASKREC_STICKY;
@@ -500,9 +516,16 @@ static int u_addinvite(struct chanset_t *chan, char *invite, char *from,
     expire_time = 0L;
   }
 
+  if (p == NULL) {  
   p = user_malloc(sizeof(maskrec));
   p->next = *u;
   *u = p;
+  }
+  else {
+    nfree( p->mask );
+    nfree( p->user );
+    nfree( p->desc );
+  }
   p->expire = expire_time;
   p->added = now;
   p->lastactive = 0;
@@ -537,7 +560,7 @@ static int u_addexempt(struct chanset_t *chan, char *exempt, char *from,
 		       char *note, time_t expire_time, int flags)
 {
   char host[1024], s[1024];
-  maskrec *p, **u = chan ? &chan->exempts : &global_exempts;
+  maskrec *p = NULL, *l, **u = chan ? &chan->exempts : &global_exempts;
   module_entry *me;
 
   strcpy(host, exempt);
@@ -559,8 +582,12 @@ static int u_addexempt(struct chanset_t *chan, char *exempt, char *from,
   else
     simple_sprintf(s, "%s!%s@%s", origbotname, botuser, hostname);
 
-  if (u_equals_mask(*u, host))
-    u_delexempt(chan, host,1);	/* Remove old exempt */
+  for (l = *u; l; l = l->next)
+    if (!rfc_casecmp(l->mask, host)) {
+      p = l;
+      break;
+    }  
+
   /* It shouldn't expire and be sticky also */
   if (note[0] == '*') {
     flags |= MASKREC_STICKY;
@@ -571,9 +598,16 @@ static int u_addexempt(struct chanset_t *chan, char *exempt, char *from,
     expire_time = 0L;
   }
 
+  if (p == NULL) {  
   p = user_malloc(sizeof(maskrec));
   p->next = *u;
   *u = p;
+  }
+  else {
+    nfree( p->mask );
+    nfree( p->user );
+    nfree( p->desc );
+  }
   p->expire = expire_time;
   p->added = now;
   p->lastactive = 0;
