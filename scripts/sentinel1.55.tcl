@@ -1,7 +1,7 @@
-# sentinel.tcl v1.54 (10 April 1999) by slennox <slenny@ozemail.com.au>
+# sentinel.tcl v1.55 (26 Febr 2000) by slennox <slenny@ozemail.com.au>
 # Latest versions can be found at www.ozemail.com.au/~slenny/eggdrop/
 #
-# $Id: sentinel1.54.tcl,v 1.2 1999/12/21 17:35:08 fabian Exp $
+# $Id: sentinel1.55.tcl,v 1.1 2000/06/02 17:44:16 fabian Exp $
 #
 # Flood protection system for eggdrop 1.3.17 and later, with integrated
 # BitchX CTCP simulation. This script is designed to provide strong
@@ -127,6 +127,7 @@
 # replies, fixed problems with channels containing []{}\?*" characters
 # v1.54 - Fixed problem with +i not being removed if sl_bfmaxbans is set to
 # 0 (found by upstream)
+# v1.55 - eggdrop1.5 compatible (drummer)
 
 ## Configuration - please set the options below ##
 
@@ -482,7 +483,7 @@ proc sl_checkbogus {ident} {
   return 0
 }
 
-proc sl_pflood {nick uhost hand chan} {
+proc sl_pflood {nick uhost hand chan {msg ""}} {
   global botnick sl_ban sl_flooded sl_jflood sl_pbanhost sl_pbannick sl_pqueue
   if {[lindex $sl_jflood 0] == 0} {return 0}
   if {$nick == $botnick} {return 0}
@@ -1004,7 +1005,7 @@ if {$numversion >= 1032500} {
   set ctcp-mode 0
 }
 
-set sl_ver "v1.54"
+set sl_ver "v1.55"
 
 bind pub $sl_lockflag|$sl_lockflag lc sl_lc
 bind pub $sl_lockflag|$sl_lockflag uc sl_uc
