@@ -4,7 +4,7 @@
  *   a bunch of functions to find and change user records
  *   change and check user (and channel-specific) flags
  *
- * $Id: userrec.c,v 1.43 2003/01/28 06:37:24 wcc Exp $
+ * $Id: userrec.c,v 1.44 2003/01/29 07:24:32 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -569,7 +569,8 @@ void write_userfile(int idx)
   fprintf(f, "#4v: %s -- %s -- written %s", ver, botnetnick, s1);
   ok = 1;
   for (u = userlist; u && ok; u = u->next)
-    ok = write_user(u, f, idx);
+    if (!write_user(u, f, idx))
+      ok = 0;
   if (!ok || !write_ignores(f, -1) || fflush(f)) {
     putlog(LOG_MISC, "*", "%s (%s)", USERF_ERRWRITE, strerror(ferror(f)));
     fclose(f);

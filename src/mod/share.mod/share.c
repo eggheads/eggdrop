@@ -1,7 +1,7 @@
 /*
  * share.c -- part of share.mod
  *
- * $Id: share.c,v 1.70 2003/01/29 05:48:42 wcc Exp $
+ * $Id: share.c,v 1.71 2003/01/29 07:24:32 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1606,7 +1606,8 @@ static int write_tmp_userfile(char *fn, struct userrec *bu, int idx)
     fprintf(f, "#4v: %s -- %s -- transmit\n", ver, botnetnick);
     ok = 1;
     for (u = bu; u && ok; u = u->next)
-      ok = write_user(u, f, idx);
+      if (!write_user(u, f, idx))
+        ok = 0;
     if (!write_ignores(f, idx))
       ok = 0;
     if (!write_bans(f, idx))
