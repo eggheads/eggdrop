@@ -1,7 +1,7 @@
 /*
  * servmsg.c -- part of server.mod
  *
- * $Id: servmsg.c,v 1.82 2004/05/26 00:20:19 wcc Exp $
+ * $Id: servmsg.c,v 1.83 2004/07/25 20:39:01 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -226,15 +226,19 @@ static int got001(char *from, char *msg)
   int i;
   struct chanset_t *chan;
 
+  /* FIXME - x should never be NULL anywhere in this function, but
+   * apparently it sometimes is. */
   if (x) {
     for (i = curserv; i > 0 && x; i--)
       x = x->next;
-    if (!x)
+    if (!x) {
       putlog(LOG_MISC, "*", "Invalid server list!");
-    if (x->realname)
-      nfree(x->realname);
-    x->realname = nmalloc(strlen(from) + 1);
-    strcpy(x->realname, from);
+    } else {
+      if (x->realname)
+        nfree(x->realname);
+      x->realname = nmalloc(strlen(from) + 1);
+      strcpy(x->realname, from);
+    }
     if (realservername)
       nfree(realservername);
     realservername = nmalloc(strlen(from) + 1);
@@ -264,6 +268,7 @@ static int got001(char *from, char *msg)
       }
     }
   }
+
   return 0;
 }
 
