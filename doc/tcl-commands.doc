@@ -37,7 +37,7 @@ specific commands, see later.
   putquick <text> [options]
     sends text to the server, like 'dump' (intended for direct server
     commands); output is queued so that you won't flood yourself off
-    the server, using the MODE queue (should be alot faster)
+    the server, using the MODE queue (should be a lot faster)
     options are:
       -next     push messages to the front of the queue
     returns: nothing
@@ -94,9 +94,9 @@ specific commands, see later.
     returns: a list of the handles of users on the bot
       you can use the new flag matching system here,
       usage: [global]{&/|}[chan]{&/|}[bot]
-      matchs the flags relvantly, (chan matches vs anywhere), & specifies
-      and when match, | specifies or, only the first of these is relevant
-      the default is or.
+      matches the flags relevantly, (chan matches vs anywhere), &
+      specifies and when match, | specifies or. only the first of these is
+      relevant, the default is or.
 
   passwdok <handle> <pass>
     checks the password given against the user's password
@@ -596,7 +596,7 @@ specific commands, see later.
 
   pushmode <channel> <mode> [arg]
     sends out a channel mode change (ex: pushmode #lame +o goober) through
-      the bot's queueing system; all the mode changes will be sent out at
+      the bot's queuing system; all the mode changes will be sent out at
       once (combined into one line as much as possible) after the script
       finishes, or when 'flushmode' is called
 
@@ -639,7 +639,8 @@ specific commands, see later.
 
   dccputchan <channel> <message>
     sends your message to everyone on a certain channel on the bot net, in
-      a form exactly like dccbroadcast does -- valid channels are 0 thru 99999
+      a form exactly like dccbroadcast does -- valid channels are 0
+      through 99999
     returns: nothing
 
   boot <user@bot> [reason]
@@ -648,8 +649,8 @@ specific commands, see later.
 
   restart
     rehashes the bot and kills all timers
-    note that as this will also unload and reload all the modules, your bot
-      will also jump servers.
+      note that as this will also unload and reload all the modules, your
+      bot will also jump servers.
     returns: nothing
 
   rehash
@@ -811,7 +812,7 @@ specific commands, see later.
       is added -- instead, the current binding is returned (if it's stackable,
       a list of the current bindings is returned)
       yes, you can use the new flag binding method here too, and this is
-      where it becomes truely phearfull since you may never need to check
+      where it becomes truly phearfull since you may never need to check
       attributes inside functions again...imagine:
         bind pub -o&+o command command_proc
       to only allow channel-spec ops to use it! no problem! works fine!
@@ -1032,7 +1033,7 @@ for the msg-command "stop", use 'unbind msg - stop msg_stop'.
 
        the same as DCC, except this is triggered if the user is in the file
        area instead of the party line
-       (This is only avaliable when the 'filesys' module is loaded.)
+       (This is only available when the 'filesys' module is loaded.)
 
   (4)  PUB
        bind pub <flags> <command> <proc>
@@ -1073,7 +1074,7 @@ for the msg-command "stop", use 'unbind msg - stop msg_stop'.
 |        global botnick; if {$dest == ""} {set dest $botnick}
 |        ...
 |      }
-|      for compatiblity
+|      for compatibility
 
   (8)  JOIN   (stackable)
        bind join <flags> <mask> <proc>
@@ -1093,7 +1094,7 @@ for the msg-command "stop", use 'unbind msg - stop msg_stop'.
 
 |      new Tcl procs should be declared as
 |      proc partproc {nick uhost hand chan {msg ""}} { ... }
-|      for compatiblity
+|      for compatibility
 
   (10) SIGN   (stackable)
        bind sign <flags> <mask> <proc>
@@ -1226,7 +1227,7 @@ for the msg-command "stop", use 'unbind msg - stop msg_stop'.
        the file; the path is relative to the dcc directory (unless the file
        transfer was started by a script call to 'dccsend', in which case the
        path is the exact path given in the call to 'dccsend')
-       (This is only avaliable when the 'transfer' module is loaded.)
+       (This is only available when the 'transfer' module is loaded.)
 
   (22) RCVD   (stackable)
        bind rcvd <flags> <mask> <proc>
@@ -1236,7 +1237,7 @@ for the msg-command "stop", use 'unbind msg - stop msg_stop'.
        against the user's handle; nick is the nickname on IRC that the file
        transfer originated from; the path is where the file ended up,
        relative to the dcc directory (usually this is your incoming dir)
-       (This is only avaliable when the 'transfer' module is loaded.)
+       (This is only available when the 'transfer' module is loaded.)
 
   (23) CHAT   (stackable)
        bind chat <flags> <mask> <proc>
@@ -1363,7 +1364,7 @@ for the msg-command "stop", use 'unbind msg - stop msg_stop'.
        proc-name <minute> <hour> <day> <month> <year>
 
        allows you to schedule procedure calls at certain times,
-       mask matches 5 space seperated integers of the form:
+       mask matches 5 space separated integers of the form:
        "minute hour day month year"
 
        minute, hour, day, month have a zero padding so they are
@@ -1422,7 +1423,7 @@ for the msg-command "stop", use 'unbind msg - stop msg_stop'.
 |      Triggered when a DCC SEND transfer gets lost, such as when the
 |      connection is terminated before all data was successfully
 |      sent/received. This is typically caused by a user abort.
-|      (This is only avaliable when the 'transfer' module is loaded.)
+|      (This is only available when the 'transfer' module is loaded.)
 
 | (44) TOUT   (stackable)
 |      bind tout <flags> <mask> <proc>
@@ -1431,7 +1432,7 @@ for the msg-command "stop", use 'unbind msg - stop msg_stop'.
 |      Triggered when a DCC SEND transfer times out. This may either happen
 |      because the dcc connection was not accepted or because the data
 |      transfer stalled for some reason.
-|      (This is only avaliable when the 'transfer' module is loaded.)
+|      (This is only available when the 'transfer' module is loaded.)
 
 
 
@@ -1498,7 +1499,8 @@ for the msg-command "stop", use 'unbind msg - stop msg_stop'.
     To indicate that the connection has closed, your control procedure
     will be called with blank text (the input-text will be ""). This
     is the only time it will ever be called with "" as the text, and it
-    is the last time your proc will be called for that connection. Dont call
+    is the last time your proc will be called for that connection. Don't
+call
     killdcc on the idx when text is blank, it will always fail with
     "invalid idx".
 
@@ -1726,15 +1728,15 @@ users to read later
 
   mv <file> <destination>
     moves the file from it's source to the given destination, file
-    can also be a mask, eg /incoming/* provided the destination is
+    can also be a mask, e.g. /incoming/* provided the destination is
     a directory
     returns: number of files copied on success or negative numbers
-      to indicat errors: -1 = invalid source file, -2 = invalid desto
-      -3 = you're trying to copy onto itself (duh!) -4 = no matchs found
+      to indicate errors: -1 = invalid source file, -2 = invalid desto
+      -3 = you're trying to copy onto itself (duh!) -4 = no matches found
 
   cp <file> <destination>
     exactly the same as mv except it leaves the original file there
-    aswell
+    as well
     returns: same as mv
 
   getflags <dir>

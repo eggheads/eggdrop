@@ -2,7 +2,7 @@
  * tcluser.c -- handles:
  *   Tcl stubs for the user-record-oriented commands
  *
- * $Id: tcluser.c,v 1.25 2001/10/31 15:22:48 poptix Exp $
+ * $Id: tcluser.c,v 1.26 2001/11/03 21:58:18 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -249,7 +249,7 @@ static int tcl_matchattr STDVAR
 
 static int tcl_adduser STDVAR
 {
-  BADARGS(3, 3, " handle ?hostmask?");
+  BADARGS(2, 3, " handle ?hostmask?");
   if (strlen(argv[1]) > HANDLEN)
     argv[1][HANDLEN] = 0;
   if ((argv[1][0] == '*') || get_user_by_handle(userlist, argv[1]))

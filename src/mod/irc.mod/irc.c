@@ -2,7 +2,7 @@
  * irc.c -- part of irc.mod
  *   support for channels within the bot
  *
- * $Id: irc.c,v 1.56 2001/10/29 20:20:31 guppy Exp $
+ * $Id: irc.c,v 1.57 2001/11/03 21:58:18 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -550,7 +550,7 @@ static void check_lonely_channel(struct chanset_t *chan)
       /* + is opless. Complaining about no ops when without special
        * help(services), we cant get them - Raist
        */
-      if (chan->name[0] != '+')
+      if (chan->name[0] != '+' && channel_logstatus(chan))
 	putlog(LOG_MISC, "*", "%s is active but has no ops :(", chan->dname);
       whined = 1;
     }
