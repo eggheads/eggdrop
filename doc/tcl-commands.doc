@@ -900,6 +900,12 @@ marked with vertical bars (|) on the left.
       was omitted)
     Module: core
 
+  strip <idx> [+/-strip-flags]
+    Description: modifies the strip-flags for a user
+    Returns: new strip-flags for the specified user (or the current
+      flags, if strip-flags was omitted)
+    Module: core
+
   putbot <bot-nick> <message>
     Description: sends a message across the botnet to another bot. If no
       script intercepts the message on the other end, the message is
@@ -1621,7 +1627,8 @@ marked with vertical bars (|) on the left.
            obviously) or a channel name. mask is matched against the entire
            notice and can contain wildcards. It is considered a breach of
            protocol to respond to a /notice on IRC, so this is intended for
-           internal use (logging, etc.) only.
+           internal use (logging, etc.) only. Note that server notices do not
+           trigger the NOTC bind.
 
            New Tcl procs should be declared as
              proc notcproc {nick uhost hand text {dest ""}} {

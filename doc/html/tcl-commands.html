@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: tcl-commands.html,v 1.16 2002/07/10 00:37:36 wcc Exp $ -->
+<!-- $Id: tcl-commands.html,v 1.17 2002/07/17 19:18:29 wcc Exp $ -->
 
 <html>
   <head>
@@ -1893,6 +1893,18 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
+        <dt><strong>strip &lt;idx&gt; [+/-strip-flags]</strong></dt>
+
+        <dd>
+          <p><strong>Description:</strong> modifies the strip-flags for a
+          user</p>
+
+          <p><strong>Returns:</strong> new strip-flags for the specified user
+          (or the current flags, if strip-flags was omitted)</p>
+
+          <p><strong>Module:</strong> core</p>
+        </dd>
+
         <dt><strong>putbot &lt;bot-nick&gt; &lt;message&gt;</strong></dt>
 
         <dd>
@@ -3549,7 +3561,7 @@
               matched against the entire notice and can contain wildcards.
               It is considered a breach of protocol to respond to a /notice
               on IRC, so this is intended for internal use (logging, etc.)
-              only.</p>
+              only.Note that server notices do not trigger the NOTC bind.</p>
 
               <p>New Tcl procs should be declared as</p>
 
