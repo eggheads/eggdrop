@@ -4,7 +4,7 @@
  *
  *   IF YOU ALTER THIS FILE, YOU NEED TO RECOMPILE THE BOT.
  *
- * $Id: eggdrop.h,v 1.39 2002/09/10 02:22:01 wcc Exp $
+ * $Id: eggdrop.h,v 1.40 2002/09/21 21:32:05 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -39,6 +39,13 @@
  * WARNING: DO NOT send in bug reports if you undefine this!
  */
 #define DEBUG_CONTEXT
+
+/*
+ * Set the following to the timestamp for the logfile entries.
+ * Popular times might be "[%H:%M]" (hour, min), or "[%H:%M:%S]" (hour, min, sec)
+ * Read `man strftime' for more formatting options.  Keep it below 32 chars.
+ */
+#define LOG_TS "[%H:%M]"
 
 /*
  * HANDLEN note:
