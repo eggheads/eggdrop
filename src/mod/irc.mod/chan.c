@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  * 
- * $Id: chan.c,v 1.34 2000/02/29 20:10:11 fabian Exp $
+ * $Id: chan.c,v 1.35 2000/03/04 21:23:33 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1006,7 +1006,6 @@ static int got368(char *from, char *msg)
 	    add_mode(chan, '-', 'b', b->mask);
 	  b = b->next;
 	}
-      recheck_bans(chan);
     }
   }
   /* If i sent a mode -b on myself (deban) in got367, either
@@ -1074,7 +1073,6 @@ static int got349(char *from, char *msg)
 	      add_mode(chan, '-', 'e', e->mask);
 	    e = e->next;
 	  }
-	recheck_exempts(chan);
       }
     }  
     
@@ -1141,7 +1139,6 @@ static int got347(char *from, char *msg)
 	      add_mode(chan, '-', 'I', inv->mask);
 	    inv = inv->next;
 	  }
-	recheck_invites(chan);
       }
     }
   }
