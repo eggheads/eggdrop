@@ -133,7 +133,7 @@ marked with vertical bars (|) on the left.
                   last seen place. LASTON #channel returns the time last
                   seen time for the channel or 0 if no info exists.
         INFO    - returns the user's global info line
-        XTRA    - returns the user's xtra info
+        XTRA    - returns the user's XTRA info
         COMMENT - returns the master-visible only comment for the user
         EMAIL   - returns the user's e-mail address
         URL     - returns the user's url
@@ -149,11 +149,11 @@ marked with vertical bars (|) on the left.
         PASS    - sets a users password (no third arg will clear it)
         HOSTS   - if used with no third arg, all hosts for the user will be
                   be cleared. Otherwise, *1* hostmask is added :P
-        LASTON  - This setting has 3 forms. "setuser <handle> laston
-                  <unixtime> <place>" sets global laston time, "setuser
-                  <handle> laston <unixtime>" sets global laston time
+        LASTON  - This setting has 3 forms. "setuser <handle> LASTON
+                  <unixtime> <place>" sets global LASTON time, "setuser
+                  <handle> LASTON <unixtime>" sets global LASTON time
                   (leaving the place field empty), and "setuser <handle>
-                  laston <unixtime> <channel>" sets a users laston time for
+                  LASTON <unixtime> <channel>" sets a users LASTON time for
                   a channel (if it is a  valid channel).
     Returns: nothing
     Module: core
@@ -392,73 +392,73 @@ marked with vertical bars (|) on the left.
 
   isban <ban> [channel]
     Returns: 1 if the specified ban is in the global ban list; 0 otherwise.
-      If a channel is specified, that channel's ban list is checked instead.
+      If a channel is specified, that channel's ban list is checked as well.
     Module: channels
 
   ispermban <ban> [channel]
     Returns: 1 if the specified ban is in the global ban list AND is marked
       as permanent; 0 otherwise. If a channel is specified, that channel's
-      ban list is checked instead.
+      ban list is checked as well.
     Module: channels
 
   isexempt <exempt> [channel]
     Returns: 1 if the specified exempt is in the global exempt list; 0
       otherwise. If a channel is specified, that channel's exempt list is
-      checked instead.
+      checked as well.
     Module: channels
 
   ispermexempt <exempt> [channel]
     Returns: 1 if the specified exempt is in the global exempt list AND is
       marked as permanent; 0 otherwise. If a channel is specified, that
-      channel's exempt list is checked instead.
+      channel's exempt list is checked as well.
     Module: channels
 
   isinvite <invite> [channel]
     Returns: 1 if the specified invite is in the global invite list; 0
       otherwise. If a channel is specified, that channel's invite list is
-      checked instead.
+      checked as well.
     Module: channels
 
   isperminvite <invite> [channel]
     Returns: 1 if the specified invite is in the global invite list AND is
       marked as permanent; 0 otherwise. If a channel is specified, that
-      channel's invite list is checked instead.
+      channel's invite list is checked as well.
     Module: channels
 
   isbansticky <ban> [channel]
     Returns: 1 if the specified ban is marked as sticky in the global ban
       list; 0 otherwise. If a channel is specified, that channel's ban list
-      is checked instead.
+      is checked as well.
     Module: channels
 
   isexemptsticky <exempt> [channel]
     Returns: 1 if the specified exempt is marked as sticky in the global
       exempt list; 0 otherwise. If a channel is specified, that channel's
-      exempt list is checked instead.
+      exempt list is checked as well.
     Module: channels
 
   isinvitesticky <invite> [channel]
     Returns: 1 if the specified invite is marked as sticky in the global
       invite list; 0 otherwise. If a channel is specified, that channel's
-      invite list is checked instead.
+      invite list is checked as well.
     Module: channels
 
   matchban <nick!user@host> [channel]
     Returns: 1 if the specified nick!user@host matches a ban in the global
       ban list; 0 otherwise. If a channel is specified, that channel's ban
-      list is checked instead.
+      list is checked as well.
     Module: channels
 
   matchexempt <nick!user@host> [channel]
     Returns: 1 if the specified nick!user@host matches an exempt in the
       global exempt list; 0 otherwise. If a channel is specified, that
-      channel's exempt list is checked instead.
+      channel's exempt list is checked as well.
     Module: channels
 
   matchinvite <nick!user@host> [channel]
     Returns: 1 if the specified nick!user@host matches an invite in the
       global invite list; 0 otherwise. If a channel is specified, that
-      channel's invite list is checked instead.
+      channel's invite list is checked as well.
     Module: channels
 
   banlist [channel]
@@ -696,7 +696,7 @@ marked with vertical bars (|) on the left.
     Module: irc
 
   resetinvites <channel>
-    Description: removes all invite on the channel that aren't in the bot's
+    Description: removes all invites on the channel that aren't in the bot's
       invite list and refreshes any invites that should be on the channel
       but aren't
     Returns: nothing
@@ -1365,7 +1365,7 @@ marked with vertical bars (|) on the left.
 
   encrypt <key> <string>
     Returns: encrypted string (using the currently loaded encryption module),
-      encoded into ascii using base-64
+      encoded into ASCII using base-64
     Module: encryption
 
   decrypt <key> <encrypted-base64-string>
@@ -1681,7 +1681,7 @@ marked with vertical bars (|) on the left.
            mode does not take an argument. Flags are ignored. The bot's
            automatic response to a mode change will happen AFTER all
            matching Tcl procs are called. The mask will be matched against
-           '#channel nick!user@host' and can contain wildcards.
+           '#channel +/-modes' and can contain wildcards.
 
            If it is a server mode, nick will be "", user@host is the server
            name, and handle is *.
