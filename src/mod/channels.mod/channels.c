@@ -2,7 +2,7 @@
  * channels.c -- part of channels.mod
  *   support for channels within the bot
  *
- * $Id: channels.c,v 1.65 2002/06/14 04:10:46 wcc Exp $
+ * $Id: channels.c,v 1.66 2002/06/14 05:30:31 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -951,7 +951,7 @@ char *channels_start(Function * global_funcs)
 	 "-revengebot "
 	 "-protecthalfops "
 	 "-autohalfop "
-	 "-nodesync ");
+	 "-nodesynch ");
   module_register(MODULE_NAME, channels_table, 1, 0);
   if (!module_depend(MODULE_NAME, "eggdrop", 106, 7)) {
     module_undepend(MODULE_NAME);
