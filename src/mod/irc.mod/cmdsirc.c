@@ -2,7 +2,7 @@
  * chancmds.c -- part of irc.mod
  *   handles commands directly relating to channel interaction
  *
- * $Id: cmdsirc.c,v 1.39 2002/08/05 01:56:12 wcc Exp $
+ * $Id: cmdsirc.c,v 1.40 2002/08/07 22:05:49 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -193,7 +193,7 @@ static void cmd_kickban(struct userrec *u, int idx, char *par)
   }
   if (!me_op(chan) && !me_halfop(chan)) {
     dprintf(idx, "I can't help you now because I'm not a channel op or halfop"
-	    "on %s.\n", chan->dname);
+	    " on %s.\n", chan->dname);
     return;
   }
   putlog(LOG_CMDS, "*", "#%s# (%s) kickban %s", dcc[idx].nick,
@@ -288,8 +288,8 @@ static void cmd_voice(struct userrec *u, int idx, char *par)
     return;
   }
   if (!me_op(chan) && !me_halfop(chan)) {
-    dprintf(idx, "I can't help you now because I'm not a chan op or halfop %s",
-	    "on %s.\n", chan->dname);
+    dprintf(idx, "I can't help you now because I'm not a chan op or halfop on"
+	    " %s.\n", chan->dname);
     return;
   }
   putlog(LOG_CMDS, "*", "#%s# (%s) voice %s %s", dcc[idx].nick,
@@ -323,8 +323,8 @@ static void cmd_devoice(struct userrec *u, int idx, char *par)
     return;
   }
   if (!me_op(chan) && !me_halfop(chan)) {
-    dprintf(idx, "I can't do that right now I'm not a chan op or halfop on %s",
-	    "%s.\n", chan->dname);
+    dprintf(idx, "I can't do that right now I'm not a chan op or halfop on"
+	    " %s.\n", chan->dname);
     return;
   }
   putlog(LOG_CMDS, "*", "#%s# (%s) devoice %s %s", dcc[idx].nick,
@@ -562,7 +562,7 @@ static void cmd_kick(struct userrec *u, int idx, char *par)
   }
   if (!me_op(chan) && !me_halfop(chan)) {
     dprintf(idx, "I can't help you now because I'm not a channel op or halfop"
-	    "on %s.\n", chan->dname);
+	    " on %s.\n", chan->dname);
     return;
   }
   putlog(LOG_CMDS, "*", "#%s# (%s) kick %s", dcc[idx].nick,
@@ -843,8 +843,8 @@ static void cmd_topic(struct userrec *u, int idx, char *par)
 	dprintf(idx, "No topic is set for %s\n", chan->dname);
       }
     } else if (channel_optopic(chan) && !me_op(chan) && !me_halfop(chan)) {
-      dprintf(idx, "I'm not a channel op or halfop on %s and the channel %s",
-		  "is +t.\n", chan->dname);
+      dprintf(idx, "I'm not a channel op or halfop on %s and the channel is"
+		  " +t.\n", chan->dname);
     } else {
       dprintf(DP_SERVER, "TOPIC %s :%s\n", chan->name, par);
       dprintf(idx, "Changing topic...\n");
