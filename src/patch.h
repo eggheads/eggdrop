@@ -17,12 +17,12 @@ PATCH("CVS");    /* CVS beta */
  *
  *
  */
-PATCH("935482937"); /* current "unix" time */
+PATCH("935684717"); /* current "unix" time */
 /*
  *
  *
  */
-PATCH("randombotnick"); /* last patch added */ 
+PATCH("dude-makefile"); /* last patch added */ 
 /*
  *
  *
