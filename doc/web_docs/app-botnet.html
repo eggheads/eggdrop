@@ -1,0 +1,180 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.7 [en] (WinNT; U) [Netscape]">
+   <title>Eggdrop Documentation: Botnet Sharing and Linking</title>
+</head>
+<body text="#000000" bgcolor="#FFFFFF" link="#3333FF" vlink="#3333FF" alink="#3333FF">
+<b><font face="Arial, Helvetica"><font color="#FF0000"><font size=-1>BOTNET
+SHARING AND LINKING</font></font></font></b>
+<hr>
+<p><font face="Arial,Helvetica"><font size=-1>This document is designed
+to help you with a working knowledge of botnets.</font></font>
+<p><font face="Arial,Helvetica"><font size=-1>This document includes bot
+flags, sharing and linking bots.&nbsp; This only covers the&nbsp; 1.4.X
+version of eggdrop.&nbsp; Many things have changed in the way flags are
+handled and the way user-files are shared.&nbsp; The code has been stream-lined
+and made more efficient.&nbsp; Even if you have used previous version you
+should still glance over this document to find out what changes have been
+made.&nbsp; It will take some time to get used to but you will see its
+all for the better.</font></font>
+<p><b><font face="Arial,Helvetica"><font color="#FF0000"><font size=-1>TERMS</font></font></font></b>
+<br>&nbsp;
+<blockquote><font face="Arial,Helvetica"><font size=-1>The following are
+some common terms that will be used in this document.</font></font>
+<br><font face="Arial,Helvetica"><font size=-1>Also the associated command(s)
+if applicable.</font></font>
+<p><font face="Arial,Helvetica"><font size=-1><b>Botnet</b>:- The term
+used to describe multiple bots connected together.</font></font>
+<p><font face="Arial,Helvetica"><font size=-1><b>Link</b>:-&nbsp;&nbsp;
+The term that means the actual linking of more than one bot</font></font>
+<br><font face="Arial,Helvetica"><font size=-1>(.link .unlink)</font></font>
+<p><font face="Arial,Helvetica"><font size=-1><b>Flags</b>:-&nbsp; Flags
+are attributes that determine what a bot can and can't do. Flags can be
+either global or channel specific.&nbsp; The main ones that affect a botnet
+are +h(hub), +a(alt hub) +s(passive share), +s (channel share), +p (passive
+share), +g (global share).</font></font>
+<br><font face="Arial,Helvetica"><font size=-1>(.chattr, .botattr).</font></font>
+<p><font face="Arial,Helvetica"><font size=-1><b>Share</b>:-&nbsp; The
+term used to describe two bots that share user records.</font></font>
+<blockquote><font face="Arial,Helvetica"><font size=-1><b>Aggressive Share</b>:&nbsp;&nbsp;&nbsp;
+Term used to describe the method of sharing user-files.&nbsp; Aggressive
+share bot will only receive users from a passive bot.</font></font>
+<br><font face="Arial,Helvetica"><font size=-1><b>Passive Share</b>:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Term used to describe the method of sharing user-files. Passive share bots
+will only send users to another bot.</font></font></blockquote>
+
+<p><br><font face="Arial,Helvetica"><font size=-1><b>Address</b>:- The
+physical address of the bot, i.e. the host address "eggdrop.com:3333"&nbsp;
+contains the port address of the bot also.</font></font>
+<br><font face="Arial,Helvetica"><font size=-1>(.chaddr)</font></font>
+<p><font face="Arial,Helvetica"><font size=-1><b>Relay</b>:-&nbsp; The
+relay port number of the bot, if defined in the config file.&nbsp; If defined
+in the config file the bot will use toseparate ports.&nbsp; One for telnet
+connections to other bots and one for relay connections.&nbsp; A relay
+connection is used to relay (jump) to another bot in DCC chat.&nbsp; You
+can still relay to another bot even if this is not defined in the config
+file.</font></font>
+<br><font face="Arial,Helvetica"><font size=-1>(.relay)</font></font>
+<p><font face="Arial,Helvetica"><font size=-1><b>Port</b>:-&nbsp;&nbsp;
+The telnet port the bot uses to communicate with other bots.</font></font></blockquote>
+<b><font face="Arial,Helvetica"><font color="#FF0000"><font size=-1>ADDING
+BOTS</font></font></font></b>
+<blockquote><font face="Arial,Helvetica"><font size=-1>With the common
+terms out of the way we can start with the process of adding a bot so you
+may connect them together.&nbsp; Before you start you will need to decide
+or know the following:</font></font>
+<ol>
+<li>
+<font face="Arial,Helvetica"><font size=-1>Will it be a share bot?</font></font></li>
+
+<li>
+<font face="Arial,Helvetica"><font size=-1>Which bot is the hub (+h) bot?</font></font></li>
+
+<li>
+<font face="Arial,Helvetica"><font size=-1>Will there be a alternate hub
+(+a) bot?</font></font></li>
+
+<li>
+<font face="Arial,Helvetica"><font size=-1>If sharing who gets what from
+whom?</font></font></li>
+
+<li>
+<font face="Arial,Helvetica"><font size=-1>What are the domains and ports
+of the bots.</font></font></li>
+</ol>
+<font face="Arial,Helvetica"><font size=-1>*NOTE*:&nbsp; For sharing to
+work modules: transfer, share, filesys must be&nbsp; loaded on all the
+bots, and the channel specific +s should be set for all channels to be
+shared.</font></font>
+<p><font face="Arial,Helvetica"><font size=-1>First off, let's say we have
+two bots we want to link.&nbsp; We will call one Lamestbot, and the other
+LameShare.&nbsp; The first thing that needs to be done is each bot needs
+the other bot added to it's user record.&nbsp; Your botnet should have
+a hub bot.&nbsp; This will have them connect automatically whenever they
+are started.&nbsp; Without a hub you would have to manually link them with
+the .link command.&nbsp; For this situation we will make Lamestbot the
+hub for our small botnet. Let's also use a channel called #eggdrop as the
+one we want to share user channel flags with.&nbsp; Do the following:</font></font>
+<p><font face="Arial,Helvetica"><font size=-1>On Lamestbot:</font></font>
+<blockquote><font face="Arial,Helvetica"><font size=-1>.+bot LameShare
+eggdrop.com:3333 (This command adds a user record to Lamestbot for LameShare.&nbsp;
+LameShare is running from eggdrop.com and is on port 3333. If LameShare
+were to have a seperate port for users/relays we would just add a '/' and
+the port number i.e. 3333/5555)</font></font><font face="Arial,Helvetica"><font size=-1></font></font>
+<p><font face="Arial,Helvetica"><font size=-1>.botattr LameShare +s (this
+tells us that Lamestbot will only send user files to LameShare, LameShare
+will not send them to it)</font></font><font face="Arial,Helvetica"><font size=-1></font></font>
+<p><font face="Arial,Helvetica"><font size=-1>.botattr LameShare |s #eggdrop
+(this sets up sharing of the channel flags for #eggdrop between the bots.
+Without this they will not share channel flags only global flags for the
+users.)</font></font></blockquote>
+<font face="Arial,Helvetica"><font size=-1>On LameShare:</font></font>
+<blockquote><font face="Arial,Helvetica"><font size=-1>.+bot Lamestbot
+best.com:3333/5555 (Again this will add a user on LameShare called Lamestbot
+with the domain of best.com.&nbsp; The bot has two ports, 3333 for bot
+communications and 5555 for users/relays)</font></font><font face="Arial,Helvetica"><font size=-1></font></font>
+<p><font face="Arial,Helvetica"><font size=-1>.botattr Lamestbot +hp (this
+command sets Lamestbot as the hub and also as a passive share which means
+LameShare will accept user files from Lamestbot.</font></font><font face="Arial,Helvetica"><font size=-1></font></font>
+<p><font face="Arial,Helvetica"><font size=-1>.botattr Lamestbot |+s #eggdrop
+(again sets #eggdrop as a share channel and that channel flags will be
+passed to LameShare from Lamestbot)</font></font></blockquote>
+<font face="Arial,Helvetica"><font size=-1>At this point the bots should
+be auto-connecting and sharing between themselves.&nbsp; HINT: don't assign
+the +h flag until you are ready for them to link.&nbsp; Depending on the
+speed of the box they may connect prematurely before you have all the flags
+set.</font></font>
+<p><font face="Arial,Helvetica"><font size=-1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+LamestBot (hub)</font></font>
+<br><font face="Arial,Helvetica"><font size=-1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+|</font></font>
+<br><font face="Arial,Helvetica"><font size=-1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+|</font></font>
+<br><font face="Arial,Helvetica"><font size=-1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+|</font></font>
+<br><font face="Arial,Helvetica"><font size=-1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+LameShare</font></font>
+<p><font face="Arial,Helvetica"><font size=-1>Let's add a third bot called
+beldin to this scenario:</font></font>
+<p><font face="Arial,Helvetica"><font size=-1>On Lamestbot:</font></font>
+<blockquote><font face="Arial,Helvetica"><font size=-1>.+bot beldin llama.com:3333</font></font><font face="Arial,Helvetica"><font size=-1></font></font>
+<p><font face="Arial,Helvetica"><font size=-1>.botattr beldin s|s #eggdrop
+(notice how i piped (the | character) the channel flag also saving time.)</font></font></blockquote>
+<font face="Arial,Helvetica"><font size=-1>Also note that you don't have
+to add beldin on LamestShare since they are already sharing it was added
+automatically.&nbsp; The one thing that you should note though is that
+no bot flags will be shared.&nbsp; Meaning that if you set beldin as +s
+(Aggressive share) on the hub (LamestBot) he will not be set on the other
+bots as that.&nbsp; The same with the channel +s flag.&nbsp; All other
+flags will be shared such as the o f etc..</font></font>
+<br><font face="Arial,Helvetica"><font size=-1>Now that we have three bots
+we can also set up one as an alternate hub.</font></font>
+<br><font face="Arial,Helvetica"><font size=-1>The alternate hub is the
+bot that the bots will auto-connect to in the event the hub goes down and
+is unreachable.</font></font>
+<p><font face="Arial,Helvetica"><font size=-1>Let's make beldin an alternate
+hub for our little botnet</font></font>
+<p><font face="Arial,Helvetica"><font size=-1>On LameShare:</font></font>
+<blockquote><font face="Arial,Helvetica"><font size=-1>.botattr beldin
++a</font></font></blockquote>
+<font face="Arial,Helvetica"><font size=-1>That's all there is to it.&nbsp;
+Again since bot flags are not shared you would have to add the botflag
++a for beldin on them all.&nbsp; The only ones you would not have to do
+this on are beldin, and the hub (Lamestbot).&nbsp; Of course if you had
+more bots you would have to add beldin as a +a to them but you would not
+do it on the hub or beldin.</font></font>
+<p><font face="Arial,Helvetica"><font size=-1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+LamestBot (hub)___&lt; >____LameShare</font></font>
+<br><font face="Arial,Helvetica"><font size=-1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+|_____&lt; >______beldin</font></font>
+<p><font face="Arial,Helvetica"><font size=-1>That's about it for sharing,
+again you could add subsequent bots the same way you added beldin.</font></font>
+<br>&nbsp;</blockquote>
+
+<hr><i><font face="Arial, Helvetica"><font size=-1>(c) 1997 Robey Pointer</font></font></i>
+<br><i><font face="Arial, Helvetica"><font size=-1>(c) 2000 Eggheads Development
+Team</font></font></i>
+</body>
+</html>

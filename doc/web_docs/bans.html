@@ -1,0 +1,111 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.7 [en] (WinNT; U) [Netscape]">
+   <title>Eggdrop Documentation: Bans And How They Work</title>
+</head>
+<body text="#000000" bgcolor="#FFFFFF" link="#3333FF" vlink="#3333FF" alink="#3333FF">
+<b><font face="Arial, Helvetica"><font color="#FF0000"><font size=-1>BANS,
+BAN EXEMPTIONS &amp; INVITES AND HOW THEY WORK</font></font></font></b>
+<hr>
+<blockquote><font face="Arial, Helvetica"><font size=-1>I assume that you
+know how bans work on IRC. Eggdrop handles bans and the 2 new modes, exemptions
+and invite in various ways, and this chapter is intended to help clarify
+how these modes are treated within the bot</font></font><font face="Arial, Helvetica"><font size=-1></font></font>
+<p><b><font face="Arial, Helvetica"><font color="#FF0000"><font size=-1>Ban
+Exemption modes</font></font></font></b>
+<blockquote><font face="Arial, Helvetica"><font color="#000000"><font size=-1>This
+type of mode enables the person specified in the host mask to join the
+channel even if there is a ban in place matching their hostmask. Normally
+this is used if a domain ie. *.net is banned, and you want to enable someone
+from that domain to join i.e. *.friend.net. This list can only be viewed
+by channel ops.</font></font></font></blockquote>
+<b><font face="Arial, Helvetica"><font color="#FF0000"><font size=-1>Invite
+modes</font></font></font></b>
+<blockquote><font face="Arial, Helvetica"><font color="#000000"><font size=-1>This
+type of mode enables the person specified in the hostmask to join a invite
+only channel without an invite.</font></font></font></blockquote>
+<font face="Arial, Helvetica"><font size=-1></font></font>
+<p><br><font face="Arial, Helvetica"><font size=-1>From here on 'mode'
+applies to all three modes (ban,exemption and invite) unless otherwise
+specified. There are three types of modes, and two types of attribute that
+can be placed on a 'mode':</font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>Types of 'mode':</font></font></b>
+<blockquote>
+<li>
+<font face="Arial, Helvetica"><font size=-1>global modes</font></font></li>
+
+<br><font face="Arial, Helvetica"><font size=-1>These modes will be active
+on every channel the bot monitors. Some will "expire" after a while (be
+removed automatically). Others are considered "permanent" and can only
+be removed by a master.</font></font>
+<li>
+<font face="Arial, Helvetica"><font size=-1>channel-specific modes</font></font></li>
+
+<br><font face="Arial, Helvetica"><font size=-1>These modes are active
+only on one channel, and are almost always temporary modes that expire
+after an hour or so (depending on how long you've specified in the config
+file). Usually they're created by a Tcl script of some sort.</font></font>
+<li>
+<font face="Arial, Helvetica"><font size=-1>non-bot modes</font></font></li>
+
+<br><font face="Arial, Helvetica"><font size=-1>These are modes that were
+not placed by the bot, and that the bot doesn't care about. They can be
+removed by anyone on the channel. The other two types of modes are generally
+protected by the bot, and have to be removed via the bot.</font></font></blockquote>
+<b><font face="Arial, Helvetica"><font size=-1>Attributes:</font></font></b>
+<blockquote>
+<li>
+<font face="Arial, Helvetica"><font size=-1>unsticky modes</font></font></li>
+
+<br><font face="Arial, Helvetica"><font size=-1>These modes are the style
+that eggdrop sets by default, when a user uses one of the commands that
+results in a mode. This attribute means that the ban will be removed if
+using dynamic modes after a certain time. If a mode is <i>"sticky"</i>
+and you wish to set it to be unsticky, use the <i>".unstick"</i> command.</font></font>
+<li>
+<font face="Arial, Helvetica"><font size=-1>sticky modes</font></font></li>
+
+<br><font face="Arial, Helvetica"><font size=-1>These modes are usually
+set by a user using the <i>".stick"</i> command, modes with this attribute
+are attempted to be kept active on the channel by the bot, even if the
+channel is set to use dynamic modes. Obviously, if the channel isn't set
+to use dynamic modes, this won't have any effect.</font></font></blockquote>
+<b><font face="Arial, Helvetica"><font size=-1>Behaviour</font></font></b>
+<blockquote><font face="Arial, Helvetica"><font size=-1>The diffierent
+type of mode behave differently depending on the channel settings</font></font><font face="Arial, Helvetica"><font size=-1></font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>Bans</font></font></b>
+<blockquote><font face="Arial, Helvetica"><font size=-1>If the channel
+is supporting dynamic bans then the ban is set when the user joins the
+channel otherwise the modes are permanently set. On a channel with dynamic
+bans the ban expires after ban-time minutes which is specified in the config
+file.</font></font></blockquote>
+<b><font face="Arial, Helvetica"><font size=-1>Exemptions</font></font></b>
+<blockquote><font face="Arial, Helvetica"><font size=-1>If the channel
+is not supporting dynamic exempts then they are set the entire time. Otherwise
+the exemption is set when a ban is placed whose host includes that covered
+by the exemption. The exemption will remain in place for at least exempt-time
+minutes (defined in config file) or until after the corresponding ban has
+been removed, whichever is the longer.</font></font></blockquote>
+<b><font face="Arial, Helvetica"><font size=-1>Invites</font></font></b>
+<blockquote><font face="Arial, Helvetica"><font size=-1>If the channelis
+not supporting dynamic invites then they are set permenantly. Otherwise
+the invite is set when the channel is +i and a user requests an invite
+onto the channel. The invite then remains set for invite-time minutes (defined
+in config file) or until the channel goes -i again, whichever is the longer.</font></font></blockquote>
+</blockquote>
+<font face="Arial, Helvetica"><font size=-1></font></font>
+<p><br><font face="Arial, Helvetica"><font size=-1>The party-line command
+<i>".+&lt;ban/exempt/invite>"</i> can add a global ban or channel specific
+ban depending on the parameters that are passed to it. <i>".kickban"</i>
+will add a channel-specific ban.
+<i>".&lt;ban/exempt/invite>s"</i> will
+list them all, according to their category. Be sure to check out the help
+pages for those commands for more info.</font></font></blockquote>
+
+<hr><i><font face="Arial, Helvetica"><font size=-1>(c) 1997 Robey Pointer</font></font></i>
+<br><i><font face="Arial, Helvetica"><font size=-1>(c) 2000 Eggheads Development
+Team</font></font></i>
+</body>
+</html>

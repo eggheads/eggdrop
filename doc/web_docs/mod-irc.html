@@ -1,0 +1,243 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.7 [en] (WinNT; U) [Netscape]">
+   <title>Eggdrop Documentation: IRC Module</title>
+</head>
+<body text="#000000" bgcolor="#FFFFFF" link="#3333FF" vlink="#3333FF" alink="#3333FF">
+<b><font face="Arial, Helvetica"><font color="#FF0000"><font size=-1>IRC
+MODULE
+<hr>TCL COMMANDS:</font></font></font></b>
+<blockquote><b><font face="Arial, Helvetica"><font size=-1>botisop &lt;channel></font></font></b>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: "1" if the
+bot is an op on that channel; "0" otherwise</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>isop &lt;nickname> &lt;channel></font></font></b>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: "1" if someone
+by that nickname is on the channel and has chop; "0" otherwise</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>isvoice &lt;nickname>
+&lt;channel></font></font></b>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: "1" if someone
+by that nickname is on the channel and has voice (+v); "0" otherwise</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>onchan &lt;nickname>
+&lt;channel></font></font></b>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: "1" if someone
+by that nickname is on the bot's channel; "0" otherwise</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>nick2hand &lt;nickname>
+&lt;channel></font></font></b>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: handle of the
+person on the channel with that nickname, if someone by that nickname is
+on the channel; "" otherwise</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>handonchan &lt;handle>
+&lt;channel></font></font></b>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: "1" if the
+the user@host for someone on the channel matches for the handle given;
+"0" otherwise</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>hand2nick &lt;handle>
+&lt;channel></font></font></b>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: nickname of
+the first person on the channel whose user@host matches that handle, if
+there is one; "" otherwise</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>chanbans &lt;channel></font></font></b>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: a list of the
+current bans on the channel, each element is of the form {ban bywho age}
+age is seconds from the bots POV</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>ischanban &lt;ban> &lt;channel></font></font></b>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: "1" if that
+is a ban on the bot's channel</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>resetbans &lt;channel></font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>removes all bans on the
+channel that aren't in the bot's ban list, and refreshes any bans that
+should be on the channel but aren't</font></font>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: nothing</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>chanexempts &lt;channel></font></font></b>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: a list of the
+current exempts on the channel, each element is of the form {exempt bywho
+age} age is seconds from the bots POV</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>ischanexempt &lt;exempt>
+&lt;channel></font></font></b>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: "1" if that
+is a exempt on the bot's channel</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>resetexempts &lt;channel></font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>removes all exempts on
+the channel that aren't in the bot's exempt list, and refreshes any exempts
+that should be on the channel but aren't</font></font>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: nothing</font></font></i><i><font face="Arial, Helvetica"><font size=-1></font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>chaninvites &lt;channel></font></font></b>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: a list of the
+current invites on the channel, each element is of the form {invite bywho
+age} age is seconds from the bots POV</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>ischaninvite &lt;invite>
+&lt;channel></font></font></b>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: "1" if that
+is a invite on the bot's channel</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>resetinvites &lt;channel></font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>removes all invites on
+the channel that aren't in the bot's invite list, and refreshes any invites
+that should be on the channel but aren't</font></font>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: nothing</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>resetchan &lt;channel></font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>rereads in the channel
+info from the server</font></font>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: nothing</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>getchanhost &lt;nickname>
+&lt;channel></font></font></b>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: user@host of
+that person if they are on the channel; {} otherwise</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>getchanjoin &lt;nickname>
+&lt;channel></font></font></b>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: timestamp of
+when that person joined the channel</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>onchansplit &lt;nick>
+&lt;channel></font></font></b>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: "1" if that
+nick is split from the channel; "0" otherwise</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>chanlist &lt;channel>
+[flags[&amp;chanflags]]</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>flags are any flags that
+are global flags, the '&amp;' denotes to look for channel specific flags.
+Examples:</font></font>
+<blockquote><font face="Arial, Helvetica"><font size=-1>n (Botowner)</font></font>
+<br><font face="Arial, Helvetica"><font size=-1>&amp;n (Channel owner)</font></font>
+<br><font face="Arial, Helvetica"><font size=-1>o&amp;m (Global op, Channel
+master)</font></font></blockquote>
+<font face="Arial, Helvetica"><font size=-1>now you can use even more complex
+matching of flags, including +&amp;- flags and &amp; or | (and or or) matching</font></font>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: list of nicknames
+currently on the bot's channel that have all of the flags specified; if
+no flags are given, all of the nicknames are returned</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>getchanidle &lt;nickname>
+&lt;channel></font></font></b>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: number of minutes
+that person has been idle; "0" if the specified user isn't even on the
+channel</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>getchanmode &lt;channel></font></font></b>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: string of the
+type "+ntik key" for the channel specified</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>pushmode &lt;channel>
+&lt;mode> [arg]</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>sends out a channel mode
+change (ex: pushmode #lame +o goober) through the bot's queueing system;
+all the mode changes will be sent out at once (combined into one line as
+much as possible) after the script finishes, or when 'flushmode' is called</font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>flushmode &lt;channel></font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>forces all previously pushed
+channel mode changes to go out right now, instead of when the script is
+done (just for the channel specified)</font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>topic &lt;channel></font></font></b>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: string of the
+current topic on the specified channel</font></font></i></blockquote>
+
+<hr><b><font face="Arial, Helvetica"><font color="#FF0000"><font size=-1>BINDING(S)
+TABLE(S):</font></font></font></b>
+<blockquote><b><font face="Arial, Helvetica"><font size=-1>PUB</font></font></b>
+<blockquote><font face="Arial, Helvetica"><font size=-1>bind pub &lt;flags>
+&lt;command> &lt;proc></font></font>
+<br><font face="Arial, Helvetica"><font size=-1>proc-name &lt;nick> &lt;user@host>
+&lt;handle> &lt;channel> &lt;args></font></font></blockquote>
+<font face="Arial, Helvetica"><font size=-1>used for commands given on
+a channel; just like MSG, the first word becomes the command and everything
+else is the argument string</font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>PUBM (stackable)</font></font></b>
+<blockquote><font face="Arial, Helvetica"><font size=-1>bind pubm &lt;flags>
+&lt;mask> &lt;proc></font></font>
+<br><font face="Arial, Helvetica"><font size=-1>proc-name &lt;nick> &lt;user@host>
+&lt;handle> &lt;channel> &lt;text></font></font></blockquote>
+<font face="Arial, Helvetica"><font size=-1>just like MSGM, except it's
+triggered by things said on a channel instead of things /msg'd to the bot;
+the mask is matched against the channel name followed by the text, i.e.,
+"#nowhere hello there!", and can contain wildcards</font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>JOIN (stackable)</font></font></b>
+<blockquote><font face="Arial, Helvetica"><font size=-1>bind join &lt;flags>
+&lt;mask> &lt;proc></font></font>
+<br><font face="Arial, Helvetica"><font size=-1>proc-name &lt;nick> &lt;user@host>
+&lt;handle> &lt;channel></font></font></blockquote>
+<font face="Arial, Helvetica"><font size=-1>triggered by someone joining
+the channel; the &lt;mask> in the bind is matched against "#channel nick!user@host"
+and can contain wildcards</font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>PART (stackable)</font></font></b>
+<blockquote><font face="Arial, Helvetica"><font size=-1>bind part &lt;flags>
+&lt;mask> &lt;proc></font></font>
+<br><font face="Arial, Helvetica"><font size=-1>proc-name &lt;nick> &lt;user@host>
+&lt;handle> &lt;channel></font></font></blockquote>
+<font face="Arial, Helvetica"><font size=-1>triggered by someone leaving
+the channel; as in JOIN, the &lt;mask> is matched against "#channel nick!user@host"
+and can contain wildcards</font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>SIGN (stackable)</font></font></b>
+<blockquote><font face="Arial, Helvetica"><font size=-1>bind sign &lt;flags>
+&lt;mask> &lt;proc></font></font>
+<br><font face="Arial, Helvetica"><font size=-1>proc-name &lt;nick> &lt;user@host>
+&lt;handle> &lt;channel> &lt;reason></font></font></blockquote>
+<font face="Arial, Helvetica"><font size=-1>triggered by a signoff, or
+possibly by someone who got netsplit and never returned; the signoff message
+is the last argument to the proc; wildcards can be used in &lt;mask>, which
+contains the channel name</font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>TOPC (stackable)</font></font></b>
+<blockquote><font face="Arial, Helvetica"><font size=-1>bind topc &lt;flags>
+&lt;mask> &lt;proc></font></font>
+<br><font face="Arial, Helvetica"><font size=-1>proc-name &lt;nick> &lt;user@host>
+&lt;handle> &lt;channel> &lt;topic></font></font></blockquote>
+<font face="Arial, Helvetica"><font size=-1>triggered by a topic change;
+can use wildcards in &lt;mask>, which is matched against the channel name
+and new topic</font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>KICK (stackable)</font></font></b>
+<blockquote><font face="Arial, Helvetica"><font size=-1>bind kick &lt;flags>
+&lt;mask> &lt;proc></font></font>
+<br><font face="Arial, Helvetica"><font size=-1>proc-name &lt;nick> &lt;user@host>
+&lt;handle> &lt;channel> &lt;kicked-nick> &lt;reason></font></font></blockquote>
+<font face="Arial, Helvetica"><font size=-1>triggered when someone is kicked
+off the channel; the &lt;mask> is matched against "#channel nick" where
+the nickname is of the person who got kicked off (can use wildcards); the
+proc is called with the nick, user@host, and handle of the kicker, plus
+the channel, the nickname of the person who was kicked, and the reason;
+&lt;flags> is unused here</font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>NICK (stackable)</font></font></b>
+<blockquote><font face="Arial, Helvetica"><font size=-1>bind nick &lt;flags>
+&lt;mask> &lt;proc></font></font>
+<br><font face="Arial, Helvetica"><font size=-1>proc-name &lt;nick> &lt;user@host>
+&lt;handle> &lt;channel> &lt;newnick></font></font></blockquote>
+<font face="Arial, Helvetica"><font size=-1>triggered when someone changes
+nicknames; wildcards are allowed; the mask is matched against "#channel
+newnick"</font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>MODE (stackable)</font></font></b>
+<blockquote><font face="Arial, Helvetica"><font size=-1>bind mode &lt;flags>
+&lt;mask> &lt;proc></font></font>
+<br><font face="Arial, Helvetica"><font size=-1>proc-name &lt;nick> &lt;user@host>
+&lt;handle> &lt;channel> &lt;mode-change></font></font></blockquote>
+<font face="Arial, Helvetica"><font size=-1>mode changes are broken down
+into their component parts before being sent here, so the &lt;mode-change>
+will always be a single mode, like "+m" or "-o snowbot"; flags are ignored;
+the bot's automatic response to a mode change will happen AFTER all matching
+Tcl procs are called; the &lt;mask> will have the channel prefixed (i.e.,
+"#turtle +m")</font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>SPLT (stackable)</font></font></b>
+<blockquote><font face="Arial, Helvetica"><font size=-1>bind splt &lt;flags>
+&lt;mask> &lt;proc></font></font>
+<br><font face="Arial, Helvetica"><font size=-1>proc-name &lt;nick> &lt;user@host>
+&lt;handle> &lt;channel></font></font></blockquote>
+<font face="Arial, Helvetica"><font size=-1>triggered when someone gets
+netsplit on the channel; be aware that this may be a false alarm (it's
+easy to fake a netsplit signoff message); &lt;mask> may contain wildcards,
+and is matched against the channel and nick!user@host just like join; anyone
+who is SPLT will trigger a REJN or SIGN within the next 15 minutes</font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>REJN (stackable)</font></font></b>
+<blockquote><font face="Arial, Helvetica"><font size=-1>bind rejn &lt;flags>
+&lt;nick!user@host> &lt;proc></font></font>
+<br><font face="Arial, Helvetica"><font size=-1>proc-name &lt;nick> &lt;user@host>
+&lt;handle> &lt;channel></font></font></blockquote>
+<font face="Arial, Helvetica"><font size=-1>someone who was split has rejoined;
+&lt;mask> can contain wildcards, and contains channel and nick!user@host
+just like join</font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>NEED (stackable)</font></font></b>
+<blockquote><font face="Arial, Helvetica"><font size=-1>bind need &lt;flags>
+&lt;op/voice/unban/limit/invite> &lt;proc></font></font>
+<br><font face="Arial, Helvetica"><font size=-1>proc-name &lt;channel>
+&lt;which></font></font></blockquote>
+<font face="Arial, Helvetica"><font size=-1>when the bot needs one of the
+listed things, on a channel, this binding is called to allow resolving</font></font></blockquote>
+
+<hr><i><font face="Arial, Helvetica"><font size=-1>(c) 1997 Robey Pointer</font></font></i>
+<br><i><font face="Arial, Helvetica"><font size=-1>(c) 2000 Eggheads Development
+Team</font></font></i>
+</body>
+</html>

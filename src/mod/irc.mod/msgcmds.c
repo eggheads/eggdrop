@@ -2,7 +2,7 @@
  * msgcmds.c -- part of irc.mod
  *   all commands entered via /MSG
  * 
- * $Id: msgcmds.c,v 1.10 2000/03/05 23:48:04 fabian Exp $
+ * $Id: msgcmds.c,v 1.11 2000/03/19 23:32:09 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -39,7 +39,7 @@ static int msg_hello(char *nick, char *h, struct userrec *u, char *p)
   if (u)
     atr = u->flags;
   if (u && !(atr & USER_COMMON)) {
-    dprintf(DP_HELP, "NOTICE %s :%s, %s.\n", IRC_HI, nick, u->handle);
+    dprintf(DP_HELP, "NOTICE %s :%s, %s.\n", nick, IRC_HI, u->handle);
     return 1;
   }
   if (get_user_by_handle(userlist, nick)) {

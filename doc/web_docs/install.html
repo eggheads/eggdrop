@@ -1,0 +1,166 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.7 [en] (WinNT; U) [Netscape]">
+   <meta name="Author" content="Jason Ede">
+   <title>Eggdrop Documentation: Compilation and installation of eggdrop</title>
+</head>
+<body text="#000000" bgcolor="#FFFFFF" link="#3333FF" vlink="#3333FF" alink="#3333FF">
+<b><font face="Arial, Helvetica"><font color="#FF0000"><font size=-1>Compilation
+and Installation of Eggdrop</font></font></font></b>
+<hr>
+<br><font face="Arial, Helvetica"><font size=-1>This is the quick install
+guide, if you have had little or no experience with unix or eggdrop, <b>READ
+THE README FILE NOW!</b> This file is only for experienced users.</font></font>
+<p><b><font face="Arial, Helvetica"><font color="#FF0000"><font size=-1>(1)
+WHAT IS EGGDROP?</font></font></font></b>
+<blockquote><font face="Arial, Helvetica"><font size=-1>Please, read the
+file <a href="readme.html">README</a> before attempting to set up this
+bot. It is <b>NOT</b> easy to use! This file is a quick setup guide, not
+a miracle worker. If you enter this file without basic eggdrop knowledge,
+you will <b>NOT</b> leave with a working bot! Before asking ANY questions,
+<b>READ THE README FILE OR YOU WILL BE BURNED TO A HORRIBLE DEATH! IF YOU
+DO NOT READ THAT FILE I WILL PERSONALLY WALK TO YOUR TERMINAL AND BEAT
+IT WITH A SMELLY SNEAKER!</b> By the way, read <a href="readme.html">README</a>.</font></font></blockquote>
+
+<p><br><b><font face="Arial, Helvetica"><font color="#FF0000"><font size=-1>(2)
+QUICK STARTUP</font></font></font></b>
+<blockquote><font face="Arial, Helvetica"><font size=-1>Eggdrop uses the
+GNU autoconfigure scripts, to make things easier.</font></font></blockquote>
+
+<ol>
+<li>
+<font face="Arial, Helvetica"><font size=-1>Type './configure' from the
+eggdrop directory.&nbsp; That script will determine how your system is
+set up, and figure out how to compile eggdrop.&nbsp; It will also try to
+find Tcl, which is required to compile.</font></font></li>
+
+<br><font face="Arial, Helvetica"><font size=-1></font></font>&nbsp;
+<li>
+<font face="Arial, Helvetica"><font size=-1>Type 'make' from the eggdrop
+directory.&nbsp; Or to force a statically linked module bot type 'make
+static'.&nbsp; Otherwise the Makefile will determin which type of bot your
+system will support.&nbsp; Dynamic isalways the better way to go if possible.
+There're also the options debug and sdebug (static-debug) which will give
+more detailed output on (a highly unlikely :) crash. This might help the
+devteam to track down the crash and fix the bug. Debug and sdebug will
+take a little longer to compile and will enlarge the binary a bit, but
+it's worth if you want to support eggdrop development.</font></font></li>
+
+<br><font face="Arial, Helvetica"><font size=-1></font></font>&nbsp;
+<li>
+<font face="Arial, Helvetica"><font size=-1>Eggdrop must be installed in
+a directory somewhere.&nbsp; This is accomplished by entering the unix
+command:</font></font></li>
+
+<ol><font face="Arial, Helvetica"><font size=-1></font></font>&nbsp;</ol>
+<font face="Arial, Helvetica"><font size=-1>make install DEST=&lt;directory></font></font>
+<br><font face="Arial, Helvetica"><font size=-1>example make install DEST=/home/egguser/eggdrop</font></font>
+<br><font face="Arial, Helvetica"><font size=-1>(note you must use full
+path for every file to be correctly installed)</font></font>
+<ol>&nbsp;</ol>
+<font face="Arial, Helvetica"><font size=-1>[The following is performed
+from the directory installed above]</font></font>
+<ol><font face="Arial, Helvetica"><font size=-1></font></font>&nbsp;</ol>
+
+<li>
+<font face="Arial, Helvetica"><font size=-1>Copy the file 'eggdrop.conf.dist'
+to a new file, usually the same name as the bot that will use it, e.g.
+"LamestBot".</font></font></li>
+
+<br><font face="Arial, Helvetica"><font size=-1></font></font>&nbsp;
+<li>
+<font face="Arial, Helvetica"><font size=-1>Edit your config file LamestBot
+completely.</font></font></li>
+
+<br><font face="Arial, Helvetica"><font size=-1></font></font>&nbsp;
+<li>
+<font face="Arial, Helvetica"><font size=-1>Start the bot with the "-m"
+option to create a user file, ie 'eggdrop -m LamestBot'.</font></font></li>
+
+<br><font face="Arial, Helvetica"><font size=-1></font></font>&nbsp;
+<li>
+<font face="Arial, Helvetica"><font size=-1>When starting the bot in the
+future, drop the "-m".&nbsp; If you have edited your bot script correctly,
+you can type:</font></font></li>
+
+<br><font face="Arial, Helvetica"><font size=-1>chmod u+x &lt;my-bot-script-name></font></font>
+<br><font face="Arial, Helvetica"><font size=-1>e.g.</font></font>
+<br><font face="Arial, Helvetica"><font size=-1>chmod u+x LamestBot</font></font><font face="Arial, Helvetica"><font size=-1></font></font>
+<p><font face="Arial, Helvetica"><font size=-1>and from then on, you will
+be able to run your bot directly from the script.&nbsp; So you can just
+type "LamestBot" from your shell prompt to start up your bot.&nbsp; For
+this to work, the top line of your script MUST contain the correct path
+to eggdrop.</font></font>
+<br><font face="Arial, Helvetica"><font size=-1></font></font>&nbsp;
+<li>
+<font face="Arial, Helvetica"><font size=-1>It's advisable to run your
+bot via crontab so that it will automatically restart if the machine goes
+down or (heaven forbid) the bot should crash. Look at the file 'scripts/botchk'
+and 'scripts/autobotchk' for a great start with crontabbing the bot.</font></font></li>
+
+<br><font face="Arial, Helvetica"><font size=-1></font></font>&nbsp;
+<li>
+<font face="Arial, Helvetica"><font size=-1>Smile, and if you haven't already
+read the README file in its entirety, go take a long walk off a short pier.</font></font></li>
+</ol>
+<b><font face="Arial, Helvetica"><font color="#FF0000"><font size=-1>(3)
+MODULES</font></font></font></b>
+<ol>
+<li>
+<font face="Arial, Helvetica"><font size=-1>Modules are small pieces of
+code that can either be compiled into the binary or can be compiled seperatly
+in a file.&nbsp; This allows for a much smaller binary and a way of choosing
+which options you want installed in the bot.&nbsp; Before you compile the
+bot you can remove any *.mod directory in the src/mod that you dont wish
+to be compiled.&nbsp; Use caution though most of the modules that come
+with eggdrop the are required.&nbsp; The exception is woobie.mod and seen.mod.&nbsp;
+If you do not want these modules it is safe to delete those directories.</font></font></li>
+
+<br><font face="Arial, Helvetica"><font size=-1></font></font>&nbsp;
+<li>
+<font face="Arial, Helvetica"><font size=-1>If there are any personal modules
+that you have made or downloaded you can add them to the bot by placing
+them in the /src/mod directory with a mod extension.&nbsp; They will be
+automatically compiled during the make for you.&nbsp; They must have a
+valid make file and of course be compatiable with the rest of the eggdrop
+source.</font></font></li>
+
+<br><font face="Arial, Helvetica"><font size=-1></font></font>&nbsp;
+<li>
+<font face="Arial, Helvetica"><font size=-1>If you wish to add a module
+at a latter time follow the same steps in paragraph 2.&nbsp; After you
+have moved the appropriate files you will only need to type make modules
+to compile only the modules portion of the bot.</font></font></li>
+</ol>
+<b><font face="Arial, Helvetica"><font color="#FF0000"><font size=-1>(3)
+FREQUENTLY ASKED QUESTIONS</font></font></font></b>
+<ol>
+<li>
+<font face="Arial, Helvetica"><font size=-1>WHAT DO I DO IF...?</font></font></li>
+
+<br><font face="Arial, Helvetica"><font size=-1>READ THE README FILE!</font></font>
+<br><font face="Arial, Helvetica"><font size=-1></font></font>&nbsp;
+<li>
+<font face="Arial, Helvetica"><font size=-1>THE README DOES NOT ANSWER...!</font></font></li>
+
+<br><font face="Arial, Helvetica"><font size=-1>READ THE README FILE AGAIN!</font></font>
+<br><font face="Arial, Helvetica"><font size=-1></font></font>&nbsp;
+<li>
+<font face="Arial, Helvetica"><font size=-1>I still don't know how to....</font></font></li>
+
+<br><font face="Arial, Helvetica"><font size=-1>Well, go to www.egghelp.org
+or www.eggheads.org and see if you can find there what you're looking for.
+There're also lots of IRC help channels (usually #eggdrop) and various
+mailinglists. Try Eggheads mailinglist http://scrambled.eggheads.org/mailman/listinfo/eggheads</font></font></ol>
+<font face="Arial, Helvetica"><font size=-1>This is the end. If you read
+to this point, hopefully you have also read the README file. If not, then
+READ IT!&amp;@#%@!</font></font>
+<p><font face="Arial, Helvetica"><font size=-1>Have fun with Eggdrop!</font></font>
+<p>
+<hr><i><font face="Arial, Helvetica"><font size=-1>(c) 1997 Robey Pointer</font></font></i>
+<br><i><font face="Arial, Helvetica"><font size=-1>(c) 2000 Eggheads Development
+Team</font></font></i>
+</body>
+</html>

@@ -1,0 +1,34 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.7 [en] (WinNT; U) [Netscape]">
+   <title>Eggdrop Documentation: Known Problems</title>
+</head>
+<body text="#000000" bgcolor="#FFFFFF" link="#3333FF" vlink="#3333FF" alink="#3333FF">
+<b><font face="Arial, Helvetica"><font color="#FF0000"><font size=-1>KNOWN
+PROBLEMS</font></font></font></b>
+<hr>
+<br><b><u><font color="#FF0000">BUG REPORTS</font></u></b>
+<br>(i.e. things that are broke, but aren't getting fixed anytime soon)
+<blockquote>
+<ul>
+<li>
+Solve to non-working alarm(10) in linux (calls to gethostbyaddr/name()
+have blocked for long periods when bind/named doesn't resolve quickly,
+and the alarm does not interrupt it).</li>
+</ul>
+
+<ul>
+<li>
+High-bit characters are being filtered from channel names.This is a fault
+of the TCL interpreter, and not eggdrop.&nbsp; The TCL interpreter filters
+the characters when it reads a file for interpreting.</li>
+</ul>
+</blockquote>
+
+<hr><i><font face="Arial, Helvetica"><font size=-1>(c) 1997 Robey Pointer</font></font></i>
+<br><i><font face="Arial, Helvetica"><font size=-1>(c) 2000 Eggheads Development
+Team</font></font></i>
+</body>
+</html>

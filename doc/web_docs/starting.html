@@ -1,0 +1,97 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.7 [en] (WinNT; U) [Netscape]">
+   <title>Eggdrop Documentation: Starting Out</title>
+</head>
+<body text="#000000" bgcolor="#FFFFFF" link="#3333FF" vlink="#3333FF" alink="#3333FF">
+<b><font face="Arial, Helvetica"><font color="#FF0000"><font size=-1>STARTING
+OUT</font></font></font></b>
+<hr>
+<blockquote><font face="Arial, Helvetica"><font size=-1>Obviously the first
+thing you want to do is compile the bot. The README file tells you what
+to do and answers some frequently-asked questions about compiling. If you're
+in a rush and you know what you're doing, you don't have to read this at
+all -- the README file tells you how to quickly compile and start up the
+bot.</font></font>
+<p><font face="Arial, Helvetica"><font size=-1>If you've read this far,
+then, I'll assume you have successfully compiled eggdrop and edited the
+config file.</font></font>
+<p><font face="Arial, Helvetica"><font size=-1>First of all, eggdrop has
+some command-line options -- not many, because most things should be defined
+through the config file. However sometimes you may want to start up the
+bot in a different mode, and the command-line options let you do that.
+Basically, the command line for eggdrop is:</font></font>
+<blockquote><i><font face="Arial, Helvetica"><font size=-1>% eggdrop &lt;options>
+&lt;config-file></font></font></i></blockquote>
+<font face="Arial, Helvetica"><font size=-1>The options available are:</font></font>
+<p><font face="Arial, Helvetica"><font size=-1>-n Don't background. Normally
+eggdrop will move itself into the background when you start it up, meaning
+you'll get another shell prompt and you can do other things while the bot
+is going. With -n, you won't return to the shell prompt until the bot exits
+(which won't normally happen until it's killed). By default, -n will send
+all log entries to the console.</font></font>
+<p><font face="Arial, Helvetica"><font size=-1>-nt Don't background, use
+terminal. This is just like -n, except that instead of seeing log entries,
+your console will simulate a DCC chat with the bot.</font></font>
+<p><font face="Arial, Helvetica"><font size=-1>-nc Don't background, show
+channel info. This is just like -n, except that instead of seeing log entries,
+every 10 seconds your screen will clear and you will see the current channel
+status, sort of like "top".</font></font>
+<p><font face="Arial, Helvetica"><font size=-1>-m Create userfile. If you
+don't have a userfile, this will make eggdrop create one, and give master/owner
+status to the first person that introduces himself or herself to it. You'll
+need to do this when you first set up your bot, and never again.</font></font>
+<p><font face="Arial, Helvetica"><font size=-1>-v Show version info, then
+quit.</font></font>
+<p><font face="Arial, Helvetica"><font size=-1>Most people never use any
+of the options except -m, and you only need to use that once.</font></font>
+<p><font face="Arial, Helvetica"><font size=-1>It's <b>STRONGLY</b> recommended
+to run your bot from its own directory. That way upgrading to a new version
+is somewhat painless, and you won't have any troubles from language files
+and the like being in the wrong location. You can put your config file
+and user file in that directory, and then when you compile a new version
+of eggdrop, you just have to do:</font></font>
+<blockquote><i><font face="Arial, Helvetica"><font size=-1>make install=DEST
+&lt;directory></font></font></i></blockquote>
+<font face="Arial, Helvetica"><font size=-1>and it will copy all the necessary
+files.</font></font>
+<p><font face="Arial, Helvetica"><font size=-1>The config file that comes
+with eggdrop is called "eggdrop.conf.dist". You need to edit that file
+and change almost everything. It specifies the bot's nickname, server list,
+and pretty much everything else about how your bot will work. You should
+also rename it from "eggdrop.conf" to something resembling your bot's name,
+for convenience. I call mine "sisko" since my bot is "Sisko".</font></font>
+<p><font face="Arial, Helvetica"><font size=-1>You can execute the script
+to start the bot. For example, I use:</font></font>
+<blockquote><i><font face="Arial, Helvetica"><font size=-1>chmod u+x sisko</font></font></i></blockquote>
+<font face="Arial, Helvetica"><font size=-1>to make the "sisko" script
+executable. Then I edited the first line of the script to say:</font></font>
+<blockquote><i><font face="Arial, Helvetica"><font size=-1>#!./eggdrop</font></font></i></blockquote>
+<font face="Arial, Helvetica"><font size=-1>which tells the operating system
+which program to run when executing this script. (Obviously, it needs to
+run eggdrop.) If you're too lazy to do this, or just don't feel like it,
+you can still start up your bot this way:</font></font>
+<blockquote><i><font face="Arial, Helvetica"><font size=-1>eggdrop &lt;options>
+&lt;config-file></font></font></i></blockquote>
+<font face="Arial, Helvetica"><font size=-1>For example:</font></font>
+<blockquote><i><font face="Arial, Helvetica"><font size=-1>eggdrop -nt
+sisko</font></font></i></blockquote>
+<font face="Arial, Helvetica"><font size=-1>After you've edited your config
+file and set the directories up the way you want them, start the bot with
+the -m option. That will make it create a user file. As soon as you've
+started up the bot, you need to go to IRC and introduce yourself to the
+bot. Typically this is done by sending it the /msg "hello", although many
+people change that greeting to something else (read the config file for
+more info about that).</font></font>
+<p><font face="Arial, Helvetica"><font size=-1>When started with the -m
+option, the first person to introduce themselves to the bot will become
+the master/owner. You want to be that person. Once you are recognized as
+the owner, you have full access to the commands and abilities of the bot.</font></font></blockquote>
+
+<hr><i><font face="Arial, Helvetica"><font size=-1>(c) 1997 Robey Pointer</font></font></i>
+<br><i><font face="Arial, Helvetica"><font size=-1>(c) 2000 Eggheads Development
+Team</font></font></i>
+</body>
+</html>

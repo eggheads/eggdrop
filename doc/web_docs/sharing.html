@@ -1,0 +1,57 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.7 [en] (WinNT; U) [Netscape]">
+   <title>Eggdrop Documentation: Userfile Sharing</title>
+</head>
+<body text="#000000" bgcolor="#FFFFFF" link="#3333FF" vlink="#3333FF" alink="#3333FF">
+<b><font face="Arial, Helvetica"><font color="#FF0000"><font size=-1>USERFILE
+SHARING</font></font></font></b>
+<hr>
+<blockquote><font face="Arial, Helvetica"><font size=-1>One of the more
+interesting things you can do when you link two bots, is to make them share
+userfiles. BE CAREFUL before you do this, though! When you link, one bot
+is going to lose its userfile! (It will be overwritten by the other bot's
+userfile.)</font></font>
+<p><font face="Arial, Helvetica"><font size=-1>To do userfile sharing,
+you have to make sure the share module and transfer modules are loaded.
+Otherwise, your bot will automatically reject all userfile share attempts
+by other bots. (It's a safety feature.)</font></font>
+<p><font face="Arial, Helvetica"><font size=-1>Next you need to decide
+which bot will be ACTIVE and which will be PASSIVE, the ACTIVE bot will
+send its userfile and overwrite the PASSIVE's userfile, so be careful.
+Once you've decided, on the ACTIVE bot, you set the PASSIVE bot +s, to
+indicate sharing, and on the PASSIVE you set the ACTIVE +p to indicate
+passive sharing, the bot will only share passively with 1 bot at once,
+but can share actively with any number of bots.</font></font>
+<p><font face="Arial, Helvetica"><font size=-1>Next go through all the
+channels you want shared between the 2 bots and make sure they are +shared
+in the config file, and also that each bot has the other bot make +s for
+each channel,</font></font>
+<blockquote><i><font face="Arial, Helvetica"><font size=-1>e.g. on bot1:
+.botattr bot2 |+s #channel</font></font></i></blockquote>
+<font face="Arial, Helvetica"><font size=-1>When two sharing bots first
+connect, they will transfer the userfile. After that, when something in
+the user records changes, the info will be passed to the other share bot(s)
+so that as long as they are linked, they will stay in sync.</font></font>
+<p><font face="Arial, Helvetica"><font size=-1>By default, if two sharing
+bots get disconnected, when they reconnect the userfile will be completely
+transferred again. However, there is an option to use resync buffers. Resync
+buffers work by when the two sharing bots get disconnected, they start
+up resync buffers for each other. If they are reconnected within 15 minutes
+<i>(default)</i>, they can resync from the buffers they have held, and
+not have to re-download the userfile.</font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>*WARNING* - The resync
+option may not work reliably.</font></font></b>
+<p><font face="Arial, Helvetica"><font size=-1>You can mark a bot both
++s and +a (share user files, but only link as an alternate). This is very
+odd and should probably only be used as a backup when you have a lot of
+bots sharing to one central hub. Only people who really know what they're
+doing should try marking a bot +s and +a.</font></font></blockquote>
+
+<hr><i><font face="Arial, Helvetica"><font size=-1>(c) 1997 Robey Pointer</font></font></i>
+<br><i><font face="Arial, Helvetica"><font size=-1>(c) 2000 Eggheads Development
+Team</font></font></i>
+</body>
+</html>

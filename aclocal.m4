@@ -1,7 +1,7 @@
 dnl aclocal.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: aclocal.m4,v 1.13 2000/03/06 18:54:07 fabian Exp $
+dnl $Id: aclocal.m4,v 1.14 2000/03/19 23:32:08 fabian Exp $
 dnl
 
 
@@ -128,20 +128,31 @@ fi
 
 case "$egg_cv_var_system" in
   BSD/OS)
-    if test "x`${UNAME} -r | cut -d . -f 1`" = "x2"
-    then
-      AC_MSG_RESULT(BSD/OS 2! statically linked modules are the only choice)
-      NEED_DL=0
-      DEFAULT_MAKE=static
-    else
-      AC_MSG_RESULT(BSD/OS 3+! ok I spose)
-      MOD_CC=shlicc
-      MOD_LD=shlicc
-      MOD_STRIP="${STRIP} -d"
-      SHLIB_LD="shlicc -r"
-      SHLIB_STRIP=touch
-      AC_DEFINE(MODULES_OK)dnl
-    fi
+    bsd_version=`${UNAME} -r | cut -d . -f 1`
+    case "$bsd_version" in
+      2)
+        AC_MSG_RESULT(BSD/OS 2! statically linked modules are the only choice)
+        NEED_DL=0
+        DEFAULT_MAKE=static
+      ;;
+      3)
+        AC_MSG_RESULT(BSD/OS 3! stuck with an old OS ...)
+        MOD_CC=shlicc
+        MOD_LD=shlicc
+        MOD_STRIP="${STRIP} -d"
+        SHLIB_LD="shlicc -r"
+        SHLIB_STRIP=touch
+        AC_DEFINE(MODULES_OK)dnl
+      ;;
+      *)
+        AC_MSG_RESULT(BSD/OS 4+! ok I spose)
+        CFLAGS="$CFLAGS -Wall"
+        MOD_LD="${CC} "
+        MOD_STRIP="${STRIP} -d"
+        SHLIB_LD="${CC} -shared -nostartfiles"
+        AC_DEFINE(MODULES_OK)dnl
+      ;;
+    esac
     ;;
   CYGWIN*)
     AC_MSG_RESULT(Cygwin)
