@@ -61,11 +61,11 @@
  **************************************************************/
 
 #ifndef lint
-static const char rcsid[] = "$Id: snprintf.c,v 1.14 2003/03/04 22:14:03 wcc Exp $";
+static const char rcsid[] = "$Id: snprintf.c,v 1.15 2003/03/05 03:15:36 stdarg Exp $";
 #endif
 
 /* These are ugly... */
-#include "main.h"
+#include <ctype.h>
 #include "snprintf.h"
 
 #ifdef HAVE_CONFIG_H
