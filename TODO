@@ -15,7 +15,6 @@ Problem status:
         4:      SegFault
         6:      no-one (changed task, please read again!)
         7:      no-one
-       10:      no-one
        11:      no-one
        12:      no-one
        14:      no-one
@@ -109,15 +108,6 @@ A. its the new stupid way .help works hides lots of stuff
 --
 7. ./configure not detecting static tcl being incompatible with modules in
     some situations (ask details to Tothwolf).
-
-Status: noone is working on this
-
---
-10. should ignore invalid channel options instead of droping the
-    channel when loading the chanfile. Now works, but...
-    channel set #chan +bitch -stopnethack +invalidflagsuxx +autoop
-    you wont get error, but channel wont be +autoop, it's too hard to
-    process valid params (+autoop) after an invalid param (+invalidflagsuxx).
 
 Status: noone is working on this
 
