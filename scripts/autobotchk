@@ -1,6 +1,33 @@
 #! /bin/sh
-# ^-- little trick to restart using tclsh \
-exec tclsh "$0" "$@"
+# This trick is borrowed from Tothwolf's Wolfpack \
+# Search for tclsh[0-9].[0-9] in each valid dir in PATH \
+for dir in $(echo $PATH | sed 's/:/ /g'); \
+do \
+  if test -d $dir; \
+  then \
+    files=$(/bin/ls $dir | egrep '^tclsh[0-9]\.[0-9]$'); \
+    if test "$files" != ""; \
+    then \
+      versions="${versions:+$versions }$(echo $files | sed 's/tclsh//g')"; \
+    fi; \
+  fi; \
+done; \
+for ver in $versions; \
+do \
+  tmpver=$(echo $ver | sed 's/\.//g'); \
+  if test "$lasttmpver" != ""; \
+  then \
+    if test "$tmpver" -gt "$lasttmpver"; \
+    then \
+      lastver=$ver; \
+      lasttmpver=$tmpver; \
+    fi; \
+  else \
+    lastver=$ver; \
+    lasttmpver=$tmpver; \
+  fi; \
+done; \
+exec tclsh$lastver "$0" "$@"
 #
 # AutoBotchk, (C)1999 Jeff Fisher (guppy@eggheads.org)
 #
@@ -16,8 +43,10 @@ exec tclsh "$0" "$@"
 #  10May99: to be compatible, don't use */XX's, etc (Ernst)
 #  23Oct99: updated the internal botchk to reflect Tothwolf's
 #           changes in the eggdrop copy.
+#  13Apr01: borrowed code from Tothwolf's Wolfpack to find tclsh
+#           better
 #
-# $Id: autobotchk,v 1.4 1999/12/21 17:35:07 fabian Exp $
+# $Id: autobotchk,v 1.5 2001/04/13 19:19:14 guppy Exp $
 #
 # how to use
 # ----------
@@ -56,7 +85,7 @@ if {$argc == 0} {
  puts " -30      (30 minute checks)\n\n"
  exit
 } {
- puts "\nAutoBotchk 1.07, (C)1999 Jeff Fisher (guppy@eggheads.org)"
+ puts "\nAutoBotchk 1.08, (C)1999 Jeff Fisher (guppy@eggheads.org)"
  puts "----------------------------------------------------------"
 
  set x [join [lindex [split $argv] 0]]
@@ -149,7 +178,7 @@ if {$argc == 0} {
 # new botchk  (for eggdrop 1.1+)
 #
 # Created on: [clock format [clock seconds] -format "%B %d, %Y @ %I:%M%p"]
-# Created by: AutoBotchk 1.07 (C)1999 Jeff Fisher
+# Created by: AutoBotchk 1.08 (C)1999 Jeff Fisher
 #
 # This is a script suitable for use in a crontab.  It checks to make sure
 # your bot is running.  YOU NEED A SEPARATE CRON JOB FOR EACH BOT.  If your

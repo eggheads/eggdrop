@@ -1,8 +1,35 @@
 #! /bin/sh
-# ^-- little trick to restart using tclsh \
-exec tclsh "$0" "$@"
+# This trick is borrowed from Tothwolf's Wolfpack \
+# Search for tclsh[0-9].[0-9] in each valid dir in PATH \
+for dir in $(echo $PATH | sed 's/:/ /g'); \
+do \
+  if test -d $dir; \
+  then \
+    files=$(/bin/ls $dir | egrep '^tclsh[0-9]\.[0-9]$'); \
+    if test "$files" != ""; \
+    then \
+      versions="${versions:+$versions }$(echo $files | sed 's/tclsh//g')"; \
+    fi; \
+  fi; \
+done; \
+for ver in $versions; \
+do \
+  tmpver=$(echo $ver | sed 's/\.//g'); \
+  if test "$lasttmpver" != ""; \
+  then \
+    if test "$tmpver" -gt "$lasttmpver"; \
+    then \
+      lastver=$ver; \
+      lasttmpver=$tmpver; \
+    fi; \
+  else \
+    lastver=$ver; \
+    lasttmpver=$tmpver; \
+  fi; \
+done; \
+exec tclsh$lastver "$0" "$@"
 #
-# $Id: weed,v 1.5 1999/12/21 17:35:08 fabian Exp $
+# $Id: weed,v 1.6 2001/04/13 19:19:14 guppy Exp $
 #
 # weed out certain undesirables from an eggdrop userlist
 # try just typing 'tclsh weed' to find out the options
@@ -46,8 +73,10 @@ exec tclsh "$0" "$@"
 #     two more improper ocurrences of "lrange" removed
 # <rtc 20sep1999>:
 #     removed ancient way of determining the current time.
-# <Tothwolf 21oct1999
+# <Tothwolf 21oct1999>:
 #     [clock] isn't in all versions of Tcl...
+# <guppy 12Apr2001>:
+#     borrowed code from Tothwolf's Wolfpack to find tclsh better
 #
 
 set exempt {*ban *ignore}
@@ -295,7 +324,7 @@ proc loadUserFile {fname} {
         lappend Hostmask($oldhandle) [string trim $hmList]
       } elseif {$handle == "-"} {
         # hostmask
-        set hmList [lindex $line 1]
+        set hmList [join [lrange $line 1 end]]
         lappend Hostmask($oldhandle) [string trim $hmList]
       } elseif {$handle == "!"} {
         # channel
