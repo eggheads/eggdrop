@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  *
- * $Id: main.c,v 1.59 2001/05/19 22:19:02 guppy Exp $
+ * $Id: main.c,v 1.60 2001/05/20 00:25:58 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -28,7 +28,7 @@
 /*
  * The author (Robey Pointer) can be reached at:  robey@netcom.com
  * NOTE: Robey is no long working on this code, there is a discussion
- * list avaliable at eggheads@eggheads.org.
+ * list available at eggheads@eggheads.org.
  */
 
 #include "main.h"
@@ -223,7 +223,7 @@ void write_debug()
     if (x >= 0) {
       strncpyz(s, ctime(&now), sizeof s);
       dprintf(-x, "Debug (%s) written %s\n", ver, s);
-      dprintf(-x, "Please report problem to eggheads@eggheads.org\n");
+      dprintf(-x, "Please report problem to bugs@eggheads.org\n");
       dprintf(-x, "after a visit to http://www.eggheads.org/bugzilla/\n");
       dprintf(-x, "Full Patch List: %s\n", egg_xtra);
       dprintf(-x, "Context: ");

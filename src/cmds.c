@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  *
- * $Id: cmds.c,v 1.49 2001/04/12 02:39:43 guppy Exp $
+ * $Id: cmds.c,v 1.50 2001/05/20 00:25:58 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1226,7 +1226,7 @@ static void cmd_banner(struct userrec *u, int idx, char *par)
     dprintf(idx, "Usage: banner <message>\n");
     return;
   }
-  simple_sprintf(s, "\007\007### Botwide:[%s] %s\n", dcc[idx].nick, par);
+  simple_sprintf(s, "\007### Botwide: [%s] %s\n", dcc[idx].nick, par);
   for (i = 0; i < dcc_total; i++)
     if (dcc[i].type->flags & DCT_MASTER)
       dprintf(i, "%s", s);
