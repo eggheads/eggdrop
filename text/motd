@@ -13,14 +13,6 @@ You are an owner of this bot. Only +n users can see this! For more info,
 see %b.help set motd%b. Please edit the %bmotd%b file in your bot's 'text'
 directory.
 %{-}
-If you need help with this eggdrop, you can go
-to one of the following help channels:
-
-  Undernet - #eggdrop, #eggheads
-  EFnet - #egghelp, #eggfaq
-  IRCnet - #eggdrop
-  DALnet - #eggdrop
-
 Use %b.help%b for basic help.
 Use %b.help <command>%b for help on a specific command.
 Use %b.help all%b to get a full command list.
