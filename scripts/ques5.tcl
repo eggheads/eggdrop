@@ -7,11 +7,11 @@
 # v4.00001 nov97 [blurgh]
 # v5-BETA1 -- 26sep99 by rtc
 #
-# $Id: ques5.tcl,v 1.3 2000/01/17 22:36:05 fabian Exp $
+# $Id: ques5.tcl,v 1.4 2001/04/06 22:31:03 guppy Exp $
 #
 # o clean webfile var removal
 # o using timezone variable from config file
-# o unified options and removed unneccessary ones.
+# o unified options and removed unnecessary ones.
 # o convert urls, nicks etc. to HTML before we put them into the page.
 # o nice html source indenting
 # o replace the old file after the new one has completely written to
