@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: tcl-commands.html,v 1.9 2002/03/23 17:27:52 wcc Exp $ -->
+<!-- $Id: tcl-commands.html,v 1.10 2002/05/18 02:08:04 wcc Exp $ -->
 
 <html>
   <head>
@@ -17,7 +17,7 @@
     you can also use these to manipulate features of the bot. They are listed
     according to category.</p>
 
-    <p>This list is accurate for Eggdrop v1.6.9. Scripts written for
+    <p>This list is accurate for Eggdrop v1.6.11. Scripts written for
     v1.3/v1.4 series of Eggdrop should probably work with a few minor
     modifications depending on the script. Scripts which were written for
     v0.9, v1.0, v1.1 or v1.2 will probably not work without modification.
@@ -1200,6 +1200,25 @@
           doc/settings.mod.channels.</p>
 
           <p><strong>Returns:</strong> nothing</p>
+
+          <p><strong>Module:</strong> channels</p>
+        </dd>
+
+        <dt><strong>channel info &lt;name&gt;</strong></dt>
+
+        <dd>
+          <p><strong>Returns:</strong> a list of info about the specified
+          channel's settings.</p>
+
+          <p><strong>Module:</strong> channels</p>
+        </dd>
+
+        <dt><strong>* channel get &lt;name&gt; &lt;setting&gt;</strong></dt>
+
+        <dd>
+          <p><strong>Returns:</strong> The value of the setting you specify.
+          For flags, a value of 0 means it is disabled (-), and non-zero means
+          enabled (+).</p>
 
           <p><strong>Module:</strong> channels</p>
         </dd>
