@@ -1,7 +1,7 @@
 /*
  * module.h
  *
- * $Id: module.h,v 1.74 2003/04/01 05:33:40 wcc Exp $
+ * $Id: module.h,v 1.75 2003/04/17 01:55:57 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -205,7 +205,7 @@
 #  define getsock ((int (*) (int,int))global[82])
 #else
 #  define getsock ((int (*) (int))global[82])
-#endif
+#endif /* USE_IPV6 */
 #define killsock ((void (*) (int))global[83])
 /* 84 - 87 */
 #define open_listen ((int (*) (int *))global[84])

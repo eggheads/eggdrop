@@ -1,7 +1,7 @@
 /*
  * transfer.c -- part of transfer.mod
  *
- * $Id: transfer.c,v 1.65 2003/04/01 05:33:41 wcc Exp $
+ * $Id: transfer.c,v 1.66 2003/04/17 01:55:57 wcc Exp $
  *
  * Copyright (C) 1997 Robey Pointer
  * Copyright (C) 1999, 2000, 2001, 2002, 2003 Eggheads Development Team
@@ -996,7 +996,7 @@ static int raw_dcc_resend_send(char *filename, char *nick, char *from,
       if ((zz = open_listen_by_af(&port, AF_INET6)) != -1) /* no idea how we want to handle this -poptix 02/03/03 */
 #else
       if ((zz = open_listen(&port)) != -1)
-#endif
+#endif /* USE_IPV6 */
         break;
   } else {
     port = reserved_port_min;
@@ -1004,7 +1004,7 @@ static int raw_dcc_resend_send(char *filename, char *nick, char *from,
     zz = open_listen_by_af(&port, AF_INET6);
 #else
     zz = open_listen(&port);
-#endif
+#endif /* USE_IPV6 */
   }
 
   if (zz == -1)

@@ -4,7 +4,7 @@
  *
  *   IF YOU ALTER THIS FILE, YOU NEED TO RECOMPILE THE BOT.
  *
- * $Id: eggdrop.h,v 1.46 2003/04/01 05:33:40 wcc Exp $
+ * $Id: eggdrop.h,v 1.47 2003/04/17 01:55:57 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -282,22 +282,19 @@ struct dcc_table {
 struct userrec;
 
 struct dcc_t {
-  long sock;                    /* This should be a long to keep 64-bit
-                                 * machines sane                         */
-  IP addr;                      /* IP address in host byte order         */
+  long sock;                    /* This should be a long to keep 64-bit machines sane */
+  IP addr;                      /* IP address in host byte order */
 #ifdef USE_IPV6
-  char addr6[121];		/* easier.. ipv6 address in regular notation (3ffe:80c0:225::) */
-  int af_type;			/* AF_INET or AF_INET6 */
-#endif
+  char addr6[121];              /* easier.. ipv6 address in regular notation (3ffe:80c0:225::) */
+  int af_type;                  /* AF_INET or AF_INET6 */
+#endif /* USE_IPV6 */
   unsigned int port;
   struct userrec *user;
   char nick[NICKLEN];
   char host[UHOSTLEN];
   struct dcc_table *type;
-  time_t timeval;               /* Use for any timing stuff
-                                 * - this is used for timeout checking  */
-  unsigned long status;         /* A LOT of dcc types have status
-                                 * thingos, this makes it more avaliabe */
+  time_t timeval;               /* This is used for timeout checking  */
+  unsigned long status;         /* A LOT of dcc types have status things; makes it more avaliabe */
   union {
     struct chat_info *chat;
     struct file_info *file;
@@ -606,7 +603,7 @@ typedef struct {
   unsigned long inbuflen;       /* Inbuf could be binary data   */
 #ifdef USE_IPV6
   unsigned int af;
-#endif
+#endif /* USE_IPV6 */
 } sock_list;
 
 enum {

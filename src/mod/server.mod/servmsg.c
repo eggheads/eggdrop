@@ -1,7 +1,7 @@
 /*
  * servmsg.c -- part of server.mod
  *
- * $Id: servmsg.c,v 1.78 2003/04/01 05:33:41 wcc Exp $
+ * $Id: servmsg.c,v 1.79 2003/04/17 01:55:57 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1206,7 +1206,7 @@ static void connect_server(void)
     server_resolve_success(servidx);
 #else
     dcc_dnsipbyhost(dcc[servidx].host);
-#endif
+#endif /* USE_IPV6 */
   }
 }
 
@@ -1232,7 +1232,7 @@ static void server_resolve_success(int servidx)
   serv = open_telnet(dcc[servidx].host, dcc[servidx].port);
 #else
   serv = open_telnet(iptostr(htonl(dcc[servidx].addr)), dcc[servidx].port);
-#endif
+#endif /* USE_IPV6 */
   if (serv < 0) {
     neterror(s);
     putlog(LOG_SERV, "*", "%s %s (%s)", IRC_FAILEDCONNECT, dcc[servidx].host,

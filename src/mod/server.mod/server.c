@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  *
- * $Id: server.c,v 1.102 2003/04/16 21:25:16 wcc Exp $
+ * $Id: server.c,v 1.103 2003/04/17 01:55:57 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -933,7 +933,12 @@ static void queue_server(int which, char *buf, int len)
 static void add_server(char *ss)
 {
   struct server_list *x, *z;
+#ifdef USE_IPV6
   char *p, *q, *r;
+#else
+  char *p, *q;
+#endif /* USE_IPV6 */
+
   for (z = serverlist; z && z->next; z = z->next);
   while (ss) {
     p = strchr(ss, ',');
@@ -956,14 +961,16 @@ static void add_server(char *ss)
       x->name = nmalloc(strlen(ss) + 1);
       strcpy(x->name, ss);
     } else {
+#ifdef USE_IPV6
       if (ss[0] == '[') {
         *ss++;
         q = strchr(ss, ']');
         *q++ = 0; /* intentional */
         r = strchr(q, ':');
-	if (!r)
+        if (!r)
           x->port = default_port;
       }
+#endif /* USE_IPV6 */
       *q++ = 0;
       x->name = nmalloc(q - ss);
       strcpy(x->name, ss);
@@ -976,9 +983,13 @@ static void add_server(char *ss)
         x->pass = nmalloc(strlen(q) + 1);
         strcpy(x->pass, q);
       }
+#ifdef USE_IPV6
       if (!x->port) {
         x->port = atoi(ss);
       }
+#else
+      x->port = atoi(ss);
+#endif /* USE_IPV6 */
     }
     ss = p;
   }
@@ -1476,10 +1487,8 @@ static int ctcp_DCC_CHAT(char *nick, char *from, char *handle,
               DCC_CONNECTFAILED1);
     putlog(LOG_MISC, "*", "%s: CHAT (%s!%s)", DCC_CONNECTFAILED3, nick, from);
   } else {
-#ifndef USE_IPV6 /* Don't bother.. */
     if (!sanitycheck_dcc(nick, from, ip, prt))
       return 1;
-#endif
     i = new_dcc(&DCC_DNSWAIT, sizeof(struct dns_info));
     if (i < 0) {
       putlog(LOG_MISC, "*", "DCC connection: CHAT (%s!%s)", dcc[i].nick, ip);
@@ -1492,11 +1501,11 @@ static int ctcp_DCC_CHAT(char *nick, char *from, char *handle,
       debug1("ipv6 addr: %s",dcc[i].addr6);
       dcc[i].af_type = AF_INET6;
     } else {
-#endif
       dcc[i].addr = my_atoul(ip);
-#ifdef USE_IPV6
     }
-#endif
+#else
+    dcc[i].addr = my_atoul(ip);
+#endif /* USE_IPV6 */
     dcc[i].port = atoi(prt);
     dcc[i].sock = -1;
     strcpy(dcc[i].nick, u->handle);
@@ -1505,7 +1514,7 @@ static int ctcp_DCC_CHAT(char *nick, char *from, char *handle,
     dcc[i].user = u;
 #ifdef USE_IPV6
     if (dcc[i].af_type != AF_INET6) {
-#endif
+#endif /* USE_IPV6 */
 /* remove me? */
       dcc[i].addr = my_atoul(ip);
       dcc[i].u.dns->ip = dcc[i].addr;
@@ -1517,7 +1526,7 @@ static int ctcp_DCC_CHAT(char *nick, char *from, char *handle,
 #ifdef USE_IPV6
     } else
       dcc_chat_hostresolved(i); /* Don't try to look it up */
-#endif
+#endif /* USE_IPV6 */
   }
   return 1;
 }
@@ -1530,7 +1539,7 @@ static void dcc_chat_hostresolved(int i)
   egg_snprintf(buf, sizeof buf, "%d", dcc[i].port);
 #ifndef USE_IPV6
   if (!hostsanitycheck_dcc(dcc[i].nick, dcc[i].host, dcc[i].addr,
-      dcc[i].u.dns->host, buf)) {
+                           dcc[i].u.dns->host, buf)) {
     lostdcc(i);
     return;
   }
@@ -1539,24 +1548,26 @@ static void dcc_chat_hostresolved(int i)
     strcpy(ip,dcc[i].addr6); /* safe, addr6 is 121 */
     debug0("afinet6, af_type, strcpy");
   } else
-#endif
+#endif /* !USE_IPV6 */
     egg_snprintf(ip, sizeof ip, "%lu", iptolong(htonl(dcc[i].addr)));
 #ifdef USE_IPV6
   if (dcc[i].af_type == AF_INET6) {
-#ifdef IPV6_DEBUG
+#  ifdef IPV6_DEBUG
     debug2("af_inet6 %s / %s", dcc[i].addr6, ip);
-#endif
+#  endif /* IPV6_DEBUG */
     dcc[i].sock = getsock(0, AF_INET6);
   } else {
-#ifdef IPV6_DEBUG
+#  ifdef IPV6_DEBUG
     debug0("af_inet");
-#endif
+#  endif /* IPV6_DEBUG */
     dcc[i].sock = getsock(0, AF_INET);
   }
 #else
   dcc[i].sock = getsock(0);
+#  ifdef IPV6_DEBUG
   debug2("sock: %d %s", dcc[i].sock, ip);
-#endif
+#  endif /* IPV6_DEBUG */
+#endif /* USE_IPV6 */
   if (dcc[i].sock < 0 || open_telnet_dcc(dcc[i].sock, ip, buf) < 0) {
     neterror(buf);
     if (!quiet_reject)

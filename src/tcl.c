@@ -4,7 +4,7 @@
  *   Tcl initialization
  *   getting and setting Tcl/eggdrop variables
  *
- * $Id: tcl.c,v 1.71 2003/04/01 05:33:40 wcc Exp $
+ * $Id: tcl.c,v 1.72 2003/04/17 01:55:57 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -53,7 +53,8 @@ extern char origbotname[], botuser[], motdfile[], admin[], userfile[],
             pid_file[], hostname6[];
 #else
             pid_file[];
-#endif
+#endif /* USE_IPV6 */
+
 extern int backgrd, flood_telnet_thr, flood_telnet_time, shtime, share_greet,
            require_p, keep_all_logs, allow_new_telnets, stealth_telnets,
            use_telnet_banner, default_flags, conmask, switch_logfiles_at,
@@ -297,7 +298,7 @@ static char *tcl_eggstr(ClientData cdata, Tcl_Interp *irp,
     }
 #else
     s = (char *) Tcl_GetVar2(interp, name1, name2, 0);
-#endif				/* USE_TCL_BYTE_ARRAYS */
+#endif /* USE_TCL_BYTE_ARRAYS */
     if (s != NULL) {
       if (strlen(s) > abs(st->max))
         s[abs(st->max)] = 0;
@@ -319,7 +320,7 @@ static char *tcl_eggstr(ClientData cdata, Tcl_Interp *irp,
       }
 #ifdef USE_TCL_BYTE_ARRAYS
       free(s);
-#endif				/* USE_TCL_BYTE_ARRAYS */
+#endif /* USE_TCL_BYTE_ARRAYS */
     }
     return NULL;
   }
@@ -400,7 +401,7 @@ void add_cd_tcl_cmds(cd_tcl_cmd *table)
   }
 }
 
-#else				/* USE_TCL_BYTE_ARRAYS */
+#else /* USE_TCL_BYTE_ARRAYS */
 
 void add_tcl_commands(tcl_cmds *table)
 {
@@ -419,7 +420,7 @@ void add_cd_tcl_cmds(cd_tcl_cmd *table)
   }
 }
 
-#endif				/* USE_TCL_BYTE_ARRAYS */
+#endif /* USE_TCL_BYTE_ARRAYS */
 
 void rem_tcl_commands(tcl_cmds *table)
 {
@@ -445,7 +446,7 @@ void add_tcl_objcommands(tcl_cmds *table)
   for (i = 0; table[i].name; i++)
     Tcl_CreateObjCommand(interp, table[i].name, table[i].func, (ClientData) 0,
                          NULL);
-#endif				/* USE_TCL_OBJ */
+#endif /* USE_TCL_OBJ */
 }
 
 static tcl_strings def_tcl_strings[] = {
@@ -466,7 +467,7 @@ static tcl_strings def_tcl_strings[] = {
 #ifdef USE_IPV6
   {"my-ip6",          myip6,          120,                     0},
   {"my-hostname6",    hostname6,      120,                     0},
-#endif
+#endif /* USE_IPV6 */
   {"network",         network,        40,                      0},
   {"whois-fields",    whois_fields,   1024,                    0},
   {"nat-ip",          natip,          120,                     0},
@@ -568,11 +569,11 @@ void init_tcl(int argc, char **argv)
   const char *encoding;
   int i;
   char *langEnv;
-#endif				/* USE_TCL_ENCODING */
+#endif /* USE_TCL_ENCODING */
 #ifdef USE_TCL_PACKAGE
   int j;
   char pver[1024] = "";
-#endif				/* USE_TCL_PACKAGE */
+#endif /* USE_TCL_PACKAGE */
 
 /* This must be done *BEFORE* Tcl_SetSystemEncoding(),
  * or Tcl_SetSystemEncoding() will cause a segfault.
@@ -583,7 +584,7 @@ void init_tcl(int argc, char **argv)
    * the environment variable PATH for it to register anything.
    */
   Tcl_FindExecutable(argv[0]);
-#endif				/* USE_TCL_FINDEXEC */
+#endif /* USE_TCL_FINDEXEC */
 
   /* Initialize the interpreter */
   interp = Tcl_CreateInterp();
@@ -671,7 +672,7 @@ resetPath:
   /* Keep the iso8859-1 encoding preloaded.  The IO package uses it for
    * gets on a binary channel. */
   Tcl_GetEncoding(NULL, "iso8859-1");
-#endif				/* USE_TCL_ENCODING */
+#endif /* USE_TCL_ENCODING */
 
 #ifdef USE_TCL_PACKAGE
   /* Add eggdrop to Tcl's package list */
@@ -681,7 +682,7 @@ resetPath:
     pver[strlen(pver)] = egg_version[j];
   }
   Tcl_PkgProvide(interp, "eggdrop", pver);
-#endif				/* USE_TCL_PACKAGE */
+#endif /* USE_TCL_PACKAGE */
 
   /* Initialize binds and traces */
   init_bind();

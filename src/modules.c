@@ -4,7 +4,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: modules.c,v 1.83 2003/04/01 05:33:40 wcc Exp $
+ * $Id: modules.c,v 1.84 2003/04/17 01:55:57 wcc Exp $
  */
 /* 
  * Copyright (C) 1997 Robey Pointer
@@ -76,7 +76,8 @@ extern char tempdir[], botnetnick[], botname[], natip[], hostname[],
             helpdir[], version[], quit_msg[], hostname6[];
 #else
             helpdir[], version[], quit_msg[];
-#endif
+#endif /* USE_IPV6 */
+
 extern int parties, noshare, dcc_total, egg_numver, userfile_perm, do_restart,
            ignore_time, must_be_owner, raw_log, max_dcc, make_userfile,
            default_flags, require_p, share_greet, use_invites, use_exempts,
@@ -673,7 +674,7 @@ const char *module_load(char *name)
   hand = (Tcl_PackageInitProc *) load(workbuf, LDR_NOFLAGS);
   if (hand == LDR_NULL_MODULE)
     return "Can't load module.";
-#      endif			/* USE_TCL_PACKAGE */
+#      endif /* USE_TCL_PACKAGE */
 #    else
   hand = dlopen(workbuf, DLFLAGS);
   if (!hand)

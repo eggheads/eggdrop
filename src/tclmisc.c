@@ -2,7 +2,7 @@
  * tclmisc.c -- handles:
  *   Tcl stubs for everything else
  *
- * $Id: tclmisc.c,v 1.42 2003/04/01 05:33:40 wcc Exp $
+ * $Id: tclmisc.c,v 1.43 2003/04/17 01:55:57 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -52,6 +52,7 @@ extern module_entry *module_list;
 extern int max_logs;
 extern log_t *logs;
 extern Tcl_Interp *interp;
+
 #ifdef USE_IPV6
 extern char myipv6host[120];
 
@@ -69,7 +70,7 @@ static int tcl_myip6 STDVAR
   Tcl_AppendResult(irp, s, NULL);
   return TCL_OK;
 }
-#endif
+#endif /* USE_IPV6 */
 
 int expmem_tclmisc()
 {
@@ -657,17 +658,17 @@ static int tcl_md5 STDVAR
     Tcl_WrongNumArgs(irp, 1, objv, "string");
     return TCL_ERROR;
   }
-# ifdef USE_TCL_BYTE_ARRAYS
+#  ifdef USE_TCL_BYTE_ARRAYS
   string = Tcl_GetByteArrayFromObj(objv[1], &len);
-# else
+#  else
   string = Tcl_GetStringFromObj(objv[1], &len);
-# endif				/* USE_TCL_BYTE_ARRAYS */
-#else				/* USE_TCL_OBJ */
+#  endif /* USE_TCL_BYTE_ARRAYS */
+#else /* USE_TCL_OBJ */
   BADARGS(2, 2, " string");
   
   string = argv[1];
   len = strlen(argv[1]);
-#endif				/* USE_TCL_OBJ */
+#endif /* USE_TCL_OBJ */
 
   MD5_Init(&md5context);
   MD5_Update(&md5context, (unsigned char *) string, len);
@@ -681,7 +682,7 @@ static int tcl_md5 STDVAR
 tcl_cmds tclmisc_objcmds[] = {
 #ifdef USE_TCL_OBJ
   {"md5", tcl_md5},
-#endif				/* USE_TCL_OBJ */
+#endif /* USE_TCL_OBJ */
   {NULL,     NULL}
 };
 
@@ -703,7 +704,7 @@ tcl_cmds tclmisc_cmds[] = {
   {"myip",                 tcl_myip},
 #ifdef USE_IPV6
   {"myip6",               tcl_myip6},
-#endif
+#endif /* USE_IPV6 */
   {"rand",                 tcl_rand},
   {"sendnote",         tcl_sendnote},
   {"dumpfile",         tcl_dumpfile},
@@ -722,7 +723,7 @@ tcl_cmds tclmisc_cmds[] = {
   {"duration",         tcl_duration},
 #ifndef USE_TCL_OBJ
   {"md5",                   tcl_md5},
-#endif				/* USE_TCL_OBJ */
+#endif /* USE_TCL_OBJ */
   {"binds",               tcl_binds},
   {"callevent",       tcl_callevent},
   {NULL,                       NULL}

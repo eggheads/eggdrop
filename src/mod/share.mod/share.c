@@ -1,7 +1,7 @@
 /*
  * share.c -- part of share.mod
  *
- * $Id: share.c,v 1.74 2003/04/01 05:33:41 wcc Exp $
+ * $Id: share.c,v 1.75 2003/04/17 01:55:57 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1132,7 +1132,7 @@ static void share_ufsend(int idx, char *par)
     sock = getsock(SOCK_BINARY, getprotocol(ip)); /* Don't buffer this -> mark binary. */
 #else
     sock = getsock(SOCK_BINARY); /* Don't buffer this -> mark binary. */
-#endif
+#endif /* USE_IPV6 */
     if (sock < 0 || open_telnet_dcc(sock, ip, port) < 0) {
       killsock(sock);
       putlog(LOG_BOTS, "*", "Asynchronous connection failed!");

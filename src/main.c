@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  *
- * $Id: main.c,v 1.96 2003/04/01 05:33:40 wcc Exp $
+ * $Id: main.c,v 1.97 2003/04/17 01:55:57 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -245,7 +245,7 @@ void write_debug()
     setsock(x, SOCK_NONSOCK, AF_INET);
 #else
     setsock(x, SOCK_NONSOCK);
-#endif
+#endif /* USE_IPV6 */
     if (x >= 0) {
       strncpyz(s, ctime(&now), sizeof s);
       dprintf(-x, "Debug (%s) written %s\n", ver, s);
@@ -274,7 +274,7 @@ void write_debug()
   setsock(x, SOCK_NONSOCK, AF_INET);
 #else
   setsock(x, SOCK_NONSOCK);
-#endif
+#endif /* USE_IPV6 */
   if (x < 0) {
     putlog(LOG_MISC, "*", "* Failed to write DEBUG");
   } else {
@@ -918,7 +918,7 @@ int main(int argc, char **argv)
     setsock(STDOUT, 0, AF_INET); /* Entry in net table */
 #else
     setsock(STDOUT, 0);          /* Entry in net table */
-#endif
+#endif /* USE_IPV6 */
     dprintf(n, "\n### ENTERING DCC CHAT SIMULATION ###\n\n");
     dcc_chatter(n);
   }
@@ -949,7 +949,7 @@ int main(int argc, char **argv)
 #ifdef USE_TCL_EVENTS
     /* Process a single tcl event */
     Tcl_DoOneEvent(TCL_ALL_EVENTS | TCL_DONT_WAIT);
-#endif				/* USE_TCL_EVENTS */
+#endif /* USE_TCL_EVENTS */
 
     /* Lets move some of this here, reducing the numer of actual
      * calls to periodic_timers

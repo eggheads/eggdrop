@@ -2,7 +2,7 @@
  * net.c -- handles:
  *   all raw network i/o
  *
- * $Id: net.c,v 1.56 2003/04/01 05:33:40 wcc Exp $
+ * $Id: net.c,v 1.57 2003/04/17 01:55:57 wcc Exp $
  */
 /*
  * This is hereby released into the public domain.
@@ -46,7 +46,7 @@ char myip[121] = "";          /* IP can be specified in the config file       */
 #ifdef USE_IPV6
 char myip6[121] = "";         /* IP can be specified in the config file       */
 char hostname6[121] = "";     /* Hostname can be specified in the config file */
-#endif
+#endif /* USE_IPV6 */
 
 char firewall[121] = "";      /* Socks server for firewall                    */
 int firewallport = 1080;      /* Default port of Sock4/5 firewalls            */
@@ -61,7 +61,7 @@ jmp_buf alarmret;             /* Env buffer for alarm() returns               */
 struct hostent *myipv6he;
 char myipv6host[120];
 unsigned long notalloc = 0;
-#endif
+#endif /* USE_IPV6 */
 
 /* Types of proxy */
 #define PROXY_SOCKS   1
@@ -86,18 +86,18 @@ int getprotocol(char *host)
 {
 #ifdef USE_IPV6
   struct hostent *he;
-#ifndef HAVE_GETHOSTBYNAME2
+#  ifndef HAVE_GETHOSTBYNAME2
   int error_num;
-#endif
+#  endif /* !HAVE_GETHOSTBYNAME2 */
 
   if (!setjmp(alarmret)) {
     alarm(resolve_timeout);
 
-#ifdef HAVE_GETHOSTBYNAME2
+#  ifdef HAVE_GETHOSTBYNAME2
     he = gethostbyname2(host, AF_INET6);
-#else
+#  else
     he = getipnodebyname(host, AF_INET6, AI_DEFAULT, &error_num);
-#endif
+#  endif /* HAVE_GETHOSTBYNAME2 */
     alarm(0);
   } else
     he = NULL;
@@ -106,7 +106,7 @@ int getprotocol(char *host)
   return AF_INET6;
 #else
   return 0;
-#endif
+#endif /* USE_IPV6 */
 }
 
 /* Initialize the socklist
@@ -145,17 +145,17 @@ IP getmyip()
   struct in_addr *in;
 #if defined(USE_IPV6) && !defined(HAVE_GETHOSTBYNAME2)
   int error_num;
-#endif
+#endif /* USE_IPV6 && !HAVE_GETHOSTBYNAME2 */
 
 #ifdef USE_IPV6
   myipv6he = NULL;
   /* Could be pre-defined */
   if (myip6[0]) {
-#ifdef HAVE_GETHOSTBYNAME2
+#  ifdef HAVE_GETHOSTBYNAME2
     myipv6he = gethostbyname2(myip6, AF_INET6);
-#else
+#  else
     myipv6he = getipnodebyname(myip6, AF_INET6, AI_DEFAULT, &error_num);
-#endif
+#  endif /* !HAVE_GETHOSTBYNAME2 */
     if (myipv6he == NULL)
       fatal("Hostname IPV6 self-lookup failed.", 0);
   }
@@ -166,7 +166,7 @@ IP getmyip()
   }
   if (myipv6he != NULL)
     egg_inet_ntop(AF_INET6, &myipv6he, myipv6host, 119);
-#endif
+#endif /* USE_IPV6 */
   if (myip[0]) {
     if ((myip[strlen(myip) - 1] >= '0') && (myip[strlen(myip) - 1] <= '9'))
       return (IP) inet_addr(myip);
@@ -179,16 +179,16 @@ IP getmyip()
     hp = gethostbyname(s);
   }
 #ifdef USE_IPV6
-  if (hp == NULL && myipv6he==NULL)
+  if (hp == NULL && myipv6he == NULL)
 #else
   if (hp == NULL)
-#endif
+#endif /* USE_IPV6 */
     fatal("Hostname self-lookup failed. Please set 'my-ip' in the config "
           "file.", 0);
 #ifdef USE_IPV6
   if(hp == NULL)
     return 0;
-#endif
+#endif /* USE_IPV6 */
   in = (struct in_addr *) (hp->h_addr_list[0]);
   ip = (IP) (in->s_addr);
   return ip;
@@ -301,7 +301,7 @@ int sockoptions(int sock, int operation, int sock_options)
 int allocsock(int sock, int options, int af_ty)
 #else
 int allocsock(int sock, int options)
-#endif
+#endif /* USE_IPV6 */
 {
   int i;
 
@@ -314,7 +314,7 @@ int allocsock(int sock, int options)
       socklist[i].sock = sock;
 #ifdef USE_IPV6
       socklist[i].af = af_ty;
-#endif
+#endif /* USE_IPV6 */
       return i;
     }
   }
@@ -332,7 +332,7 @@ void setsock(int sock, int options, int af_ty)
 void setsock(int sock, int options)
 {
   int i = allocsock(sock, options), parm;
-#endif
+#endif /* USE_IPV6 */
 
   if (((sock != STDOUT) || backgrd) && !(socklist[i].flags & SOCK_NONSOCK)) {
     parm = 1;
@@ -358,14 +358,14 @@ int getsock(int options, int af_def)
 int getsock(int options)
 {
   int sock = socket(AF_INET, SOCK_STREAM, 0);
-#endif
+#endif /* USE_IPV6 */
 
   if (sock >= 0)
 #ifdef USE_IPV6
     setsock(sock, options, af_def);
 #else
     setsock(sock, options);
-#endif
+#endif /* USE_IPV6 */
   else
     putlog(LOG_MISC, "*", "Warning: Can't create new socket!");
   return sock;
@@ -408,14 +408,14 @@ static int proxy_connect(int sock, char *host, int port, int proxy)
   int af_ty;
 #else
   unsigned char x[10];
-#endif
+#endif /* USE_IPV6 */
   struct hostent *hp;
   char s[256];
   int i;
 
 #ifdef USE_IPV6
   af_ty = getprotocol(host);
-#endif
+#endif /* USE_IPV6 */
   /* socks proxy */
   if (proxy == PROXY_SOCKS) {
     /* numeric IP? */
@@ -423,7 +423,7 @@ static int proxy_connect(int sock, char *host, int port, int proxy)
     if ((host[strlen(host) - 1] >= '0' && host[strlen(host) - 1] <= '9') && af_ty != AF_INET6) {
 #else
     if (host[strlen(host) - 1] >= '0' && host[strlen(host) - 1] <= '9') {
-#endif
+#endif /* USE_IPV6 */
       IP ip = ((IP) inet_addr(host)); /* drummer */
       egg_memcpy(x, &ip, 4);  /* Beige@Efnet */
     } else {
@@ -434,11 +434,11 @@ static int proxy_connect(int sock, char *host, int port, int proxy)
         if (af_ty == AF_INET6)
           hp = gethostbyname(host);
         else
-#endif
+#endif /* USE_IPV6 */
           hp = gethostbyname(host);
 #ifdef USE_IPV6
         alarm(0);
-#endif
+#endif /* USE_IPV6 */
       } else
         hp = NULL;
       if (hp == NULL) {
@@ -458,7 +458,7 @@ static int proxy_connect(int sock, char *host, int port, int proxy)
                    x[4], x[5], x[6], x[7], x[9], x[9], x[10], x[11],  x[12],
                    x[13], x[14], x[15], botuser);
     else
-#endif
+#endif /* USE_IPV6 */
       egg_snprintf(s, sizeof s, "\004\001%c%c%c%c%c%c%s", (port >> 8) % 256,
                    (port % 256), x[0], x[1], x[2], x[3], botuser);
     tputs(sock, s, strlen(botuser) + 9);        /* drummer */
@@ -483,7 +483,7 @@ int getsockproto(int sock)
   return AF_INET;
 #else
   return 0;
-#endif
+#endif /* USE_IPV6 */
 }
 
 
@@ -504,10 +504,10 @@ int open_telnet_raw(int sock, char *server, int sport)
   struct sockaddr_in6 name6;
   unsigned long succ;
   int af_ty;
-#ifndef HAVE_GETHOSTBYNAME2
+#  ifndef HAVE_GETHOSTBYNAME2
   int error_num;
-#endif
-#endif
+#  endif /* !HAVE_GETHOSTBYNAME2 */
+#endif /* USE_IPV6 */
   struct hostent *hp;
   char host[121];
   int i, port, rc;
@@ -550,11 +550,11 @@ int open_telnet_raw(int sock, char *server, int sport)
     name6.sin6_port = htons(port);
     if (!setjmp(alarmret)) {
       alarm(resolve_timeout);
-#ifdef HAVE_GETHOSTBYNAME2
+#  ifdef HAVE_GETHOSTBYNAME2
       hp = gethostbyname2(host, AF_INET6);
-#else
+#  else
       hp = getipnodebyname(host, AF_INET6, AI_DEFAULT, &error_num);
-#endif
+#  endif /* HAVE_GETHOSTBYNAME2 */
       alarm(0);
     } else
       hp = NULL;
@@ -564,11 +564,11 @@ int open_telnet_raw(int sock, char *server, int sport)
     }
     egg_memcpy((char *) &name6.sin6_addr, hp->h_addr, hp->h_length);
     name6.sin6_family = hp->h_addrtype;
-#ifndef HAVE_GETHOSTBYNAME2
+#  ifndef HAVE_GETHOSTBYNAME2
     freehostent(myipv6he);
-#endif
+#  endif /* !HAVE_GETHOSTBYNAME2 */
   } else {
-#endif
+#endif /* USE_IPV6 */
     egg_bzero((char *) &name, sizeof(struct sockaddr_in));
 
     name.sin_family = AF_INET;
@@ -598,7 +598,7 @@ int open_telnet_raw(int sock, char *server, int sport)
     }
 #ifdef USE_IPV6
   }
-#endif
+#endif /* USE_IPV6 */
   for (i = 0; i < MAXSOCKS; i++) {
     if (!(socklist[i].flags & SOCK_UNUSED) && (socklist[i].sock == sock))
       socklist[i].flags = (socklist[i].flags & ~SOCK_VIRTUAL) | SOCK_CONNECT;
@@ -608,7 +608,7 @@ int open_telnet_raw(int sock, char *server, int sport)
     rc = connect(sock, (struct sockaddr *) &name6,
                  sizeof(struct sockaddr_in6));
   else
-#endif
+#endif /* USE_IPV6 */
     rc = connect(sock, (struct sockaddr *) &name,
                  sizeof(struct sockaddr_in));
   if (rc < 0) {    if (errno == EINPROGRESS) {
@@ -632,7 +632,7 @@ int open_telnet(char *server, int port)
   int sock = getsock(0, getprotocol(server)), ret = open_telnet_raw(sock, server, port);
 #else
   int sock = getsock(0), ret = open_telnet_raw(sock, server, port);
-#endif
+#endif /* USE_IPV6 */
 
   if (ret < 0)
     killsock(sock);
@@ -648,14 +648,14 @@ int open_telnet(char *server, int port)
 int open_address_listen(IP addr, int af_def, int *port)
 #else
 int open_address_listen(IP addr, int *port)
-#endif
+#endif /* USE_IPV6 */
  {
   int sock = 0;
   unsigned int addrlen;
 #ifdef USE_IPV6
   unsigned long ipp;
   struct sockaddr_in6 name6;
-#endif
+#endif /* USE_IPV6 */
   struct sockaddr_in name;
 
   if (firewall[0]) {
@@ -691,13 +691,13 @@ int open_address_listen(IP addr, int *port)
       }
     }
   } else {
-#endif
+#endif /* USE_IPV6 */
     if(getmyip() > 0) {
 #ifdef USE_IPV6
       sock = getsock(SOCK_LISTEN, AF_INET);
 #else
       sock = getsock(SOCK_LISTEN);
-#endif
+#endif /* USE_IPV6 */
       if (sock < 1)
         return -1;
 
@@ -707,7 +707,7 @@ int open_address_listen(IP addr, int *port)
       name.sin_addr.s_addr = addr;
       if (bind(sock, (struct sockaddr *) &name, sizeof(name)) < 0) {
         killsock(sock);
-	return -1;
+        return -1;
       }
       /* what port are we on? */
       addrlen = sizeof(name);
@@ -718,12 +718,12 @@ int open_address_listen(IP addr, int *port)
       *port = ntohs(name.sin_port);
       if (listen(sock, 1) < 0) {
         killsock(sock);
-	return -1;
+        return -1;
       }
     }
 #ifdef USE_IPV6
   }
-#endif
+#endif /* USE_IPV6 */
   return sock;
 }
 
@@ -736,7 +736,7 @@ inline int open_listen(int *port)
   return open_address_listen(myip[0] ? getmyip() : INADDR_ANY, AF_INET, port);
 #else
   return open_address_listen(myip[0] ? getmyip() : INADDR_ANY, port);
-#endif
+#endif /* USE_IPV6 */
 }
 
 /* Same as above, except this one can be called with an AF_ type
@@ -749,7 +749,7 @@ inline int open_listen_by_af(int *port, int af_def)
   return open_address_listen(myip[0] ? getmyip() : INADDR_ANY, af_def, port);
 #else
   return 0;
-#endif
+#endif /* USE_IPV6 */
 }
 
 /* Given a network-style IP address, returns the hostname. The hostname
@@ -810,12 +810,12 @@ int answer(int sock, char *caller, unsigned long *ip, unsigned short *port,
     addrlen = sizeof(from6);
     new_sock = accept(sock, (struct sockaddr *) &from6, &addrlen);
   } else {
-#endif
+#endif /* USE_IPV6 */
     addrlen = sizeof(struct sockaddr);
     new_sock = accept(sock, (struct sockaddr *) &from, &addrlen);
 #ifdef USE_IPV6
   }
-#endif
+#endif /* USE_IPV6 */
 
   if (new_sock < 0)
     return -1;
@@ -826,7 +826,7 @@ int answer(int sock, char *caller, unsigned long *ip, unsigned short *port,
       egg_inet_ntop(AF_INET6, &from6, caller, 119);
       caller[120] = 0;
     } else {
-#endif
+#endif /* USE_IPV6 */
       *ip = from.sin_addr.s_addr;
       /* This is now done asynchronously. We now only provide the IP address.
        *
@@ -836,14 +836,14 @@ int answer(int sock, char *caller, unsigned long *ip, unsigned short *port,
       *ip = ntohl(*ip);
 #ifdef USE_IPV6
     }
-#endif
+#endif /* USE_IPV6 */
   }
   if (port != NULL) {
 #ifdef USE_IPV6
       if (af_ty == AF_INET6)
         *port = ntohs(from6.sin6_port);
       else
-#endif
+#endif /* USE_IPV6 */
         *port = ntohs(from.sin_port);
     }
   /* Set up all the normal socket crap */
@@ -851,7 +851,7 @@ int answer(int sock, char *caller, unsigned long *ip, unsigned short *port,
   setsock(new_sock, (binary ? SOCK_BINARY : 0), af_ty);
 #else
   setsock(new_sock, (binary ? SOCK_BINARY : 0));
-#endif
+#endif /* USE_IPV6 */
   return new_sock;
 }
 
@@ -861,7 +861,7 @@ int open_telnet_dcc(int sock, char *server, char *port)
 {
 #ifdef DEBUG_IPV6
   debug1("open_telnet_dcc %s", server);
-#endif
+#endif /* DEBUG_IPV6 */
   int p;
   unsigned long addr;
   char sv[500];
@@ -874,11 +874,11 @@ int open_telnet_dcc(int sock, char *server, char *port)
   if (getprotocol(server) == AF_INET6) {
 #ifdef DEBUG_IPV6
     debug0("open_telnet_dcc, af_inet6!");
-#endif
+#endif /* DEBUG_IPV6 */
     strncpyz(sv, server, sizeof sv);
     debug2("%s should be %s",sv,server);
   } else {
-#endif
+#endif /* USE_IPV6 */
     if (server != NULL)
       addr = my_atoul(server);
     else
@@ -893,10 +893,10 @@ int open_telnet_dcc(int sock, char *server, char *port)
 #ifdef USE_IPV6
     }
   /* strcpy(sv,hostnamefromip(addr)); */
-#ifdef DEBUG_IPV6
+#  ifdef DEBUG_IPV6
   debug3("open_telnet_raw %s %d %d", sv, sock,p);
-#endif
-#endif
+#  endif /* DEBUG_IPV6 */
+#endif /* USE_IPV6 */
   p = open_telnet_raw(sock, sv, p);
   return p;
 }
@@ -1462,7 +1462,7 @@ int sanitycheck_dcc(char *nick, char *from, char *ipaddy, char *port)
 #ifdef USE_IPV6
   if (getprotocol(ipaddy) == AF_INET6)
     return 1;
-#endif
+#endif /* USE_IPV6 */
 
   if (prt < 1) {
     putlog(LOG_MISC, "*", "ALERT: (%s!%s) specified an impossible port of %u!",
