@@ -7,7 +7,7 @@
  *   help system
  *   motd display and %var substitution
  * 
- * $Id: misc.c,v 1.22 2000/05/06 22:04:55 fabian Exp $
+ * $Id: misc.c,v 1.23 2000/06/10 01:00:22 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -384,7 +384,7 @@ void putlog EGG_VARARGS_DEF(int, arg1)
   int i, type;
   char *format, *chname, s[LOGLINELEN], s1[256], *out;
   time_t tt;
-  char ct[81];
+  char ct[81], *s2;
   struct tm *t = localtime(&now);
 
   va_list va;
@@ -414,6 +414,13 @@ void putlog EGG_VARARGS_DEF(int, arg1)
 #else
     strftime(ct, 80, logfile_suffix, localtime(&tt));
     ct[80] = 0;
+    s2 = ct;
+    /* replace spaces by underscores */
+    while (s2[0]) {
+      if (s2[0] == ' ')
+        s2[0] = '_';
+      s2++;
+    }
 #endif
   }
   if ((out[0]) && (shtime)) {
@@ -436,9 +443,9 @@ void putlog EGG_VARARGS_DEF(int, arg1)
 	  /* Open this logfile */
 	  if (keep_all_logs) {
 #ifndef HAVE_STRFTIME
-	    sprintf(s1, "%s.%s", logs[i].filename, ct);
+	    egg_snprintf(s1, 256, "%s.%s", logs[i].filename, ct);
 #else
-	    sprintf(s1, "%s%s", logs[i].filename, ct);
+	    egg_snprintf(s1, 256, "%s%s", logs[i].filename, ct);
 #endif
 	    logs[i].f = fopen(s1, "a+");
 	  } else
@@ -496,12 +503,22 @@ void putlog EGG_VARARGS_DEF(int, arg1)
   va_end(va);
 }
 
-void logsuffix_change()
+/* Called as soon as the logfile suffix changes. All logs are closed
+ * and the new suffix is stored in `logfile_suffix'.
+ */
+void logsuffix_change(char *s)
 {
-  int i;
+  int	 i;
+  char	*s2 = logfile_suffix;
 
   Context;
   debug0("Logfile suffix changed. Closing all open logs.");
+  strcpy(logfile_suffix, s);
+  while (s2[0]) {
+    if (s2[0] == ' ')
+      s2[0] = '_';
+    s2++;
+  }
   for (i = 0; i < max_logs; i++) {
     if (logs[i].f) {
       fflush(logs[i].f);

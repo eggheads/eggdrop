@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  * 
- * $Id: main.c,v 1.39 2000/06/02 17:46:06 fabian Exp $
+ * $Id: main.c,v 1.40 2000/06/10 01:00:22 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -97,7 +97,7 @@ char	helpdir[121];		/* Directory of help files (if used) */
 char	textdir[121] = "";	/* Directory for text files that get dumped */
 int	keep_all_logs = 0;	/* Never erase logfiles, no matter how old
 				   they are? */
-char logfile_suffix[21] = "%d%b%y"; /* format of logfile suffix */
+char	logfile_suffix[21] = ".%d%b%Y"; /* Format of logfile suffix. */
 time_t	online_since;		/* Unix-time that the bot loaded up */
 int	make_userfile = 0;	/* Using bot in make-userfile mode? (first
 				   user to 'hello' becomes master) */

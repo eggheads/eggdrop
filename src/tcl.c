@@ -4,7 +4,7 @@
  *   Tcl initialization
  *   getting and setting Tcl/eggdrop variables
  * 
- * $Id: tcl.c,v 1.21 2000/06/03 12:14:40 fabian Exp $
+ * $Id: tcl.c,v 1.22 2000/06/10 01:00:22 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -345,10 +345,9 @@ static char *tcl_eggstr(ClientData cdata, Tcl_Interp *irp, char *name1,
 	s[abs(st->max)] = 0;
       if (st->str == botnetnick)
 	botnet_change(s);
-      else if (st->str == logfile_suffix) {
-	logsuffix_change();
-	strcpy(logfile_suffix, s);
-      } else if (st->str == firewall) {
+      else if (st->str == logfile_suffix)
+	logsuffix_change(s);
+      else if (st->str == firewall) {
 	splitc(firewall, s, ':');
 	if (!firewall[0])
 	  strcpy(firewall, s);
