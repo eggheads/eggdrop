@@ -5,7 +5,7 @@
  * 
  * dprintf'ized, 3nov1995
  * 
- * $Id: cmds.c,v 1.36 2000/06/10 07:03:31 guppy Exp $
+ * $Id: cmds.c,v 1.37 2000/06/22 03:45:05 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1629,7 +1629,8 @@ static void cmd_botattr(struct userrec *u, int idx, char *par)
     return;
   }
   for (idx2 = 0; idx2 < dcc_total; idx2++)
-    if ((dcc[idx2].type != &DCC_RELAY) && !strcasecmp(dcc[idx2].nick, hand))
+    if ((dcc[idx2].type != &DCC_RELAY) && (dcc[idx2].type != &DCC_FORK_BOT) &&
+    !strcasecmp(dcc[idx2].nick, hand))
       break;
   if (idx2 != dcc_total) {
     dprintf(idx, "You may not change the attributes of a directly linked bot.\n");
@@ -2241,7 +2242,7 @@ static void cmd_loadmod(struct userrec *u, int idx, char *par)
      }
   Context;
   if (!par[0]) {
-    dprintf(idx, "%s: loadmod <module>\n", USAGE);
+    dprintf(idx, "%s: loadmod <module>\n", MISC_USAGE);
   } else {
     p = module_load(par);
     if (p)
@@ -2264,7 +2265,7 @@ static void cmd_unloadmod(struct userrec *u, int idx, char *par)
      }
   Context;
   if (!par[0]) {
-    dprintf(idx, "%s: unloadmod <module>\n", USAGE);
+    dprintf(idx, "%s: unloadmod <module>\n", MISC_USAGE);
   } else {
     p = module_unload(par, dcc[idx].nick);
     if (p)

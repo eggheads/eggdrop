@@ -4,8 +4,15 @@ Changes in eggdrop: (since v1.4.0)
 
 1.4.4
 Foundby   Fixedby   What....
+          RebuM/    Prefixed `USAGE' and `FAILED' language defines with `MISC_'.
+          Tothwolf
           guppy/    removed CHAN_PERMBANNED and reworked a tiny bit of sloppy
-          |^Raven^|   code
+          |^Raven^|   code.
+          Sup       Added various sanity checks for inactive channels.
+          Sup       `.msg' was not correctly requiring a message parameter.
+Charvel   Fabian    Telnet status was dropped during relay connections.
+Ben       Eule      new in u_addban: if (expire_time==now) return 1;
+Tothwolf  Eule      added for cmd_botattr DCC_FORK_BOT-check.
           Eule      Added further bot-link check to securely avoid loops at   
                       an earlier stage.
 Wiktor    Fabian    `.su' was requesting passwords from non-perm-owners.

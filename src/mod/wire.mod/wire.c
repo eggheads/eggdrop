@@ -15,7 +15,7 @@
  * 1.4       1997-11-25      1.2.2.0         Added language addition  Kirk
  * 1.5       1998-07-12      1.3.0.0         Fixed ;me and updated    BB
  * 
- * $Id: wire.c,v 1.11 2000/01/11 13:43:11 per Exp $
+ * $Id: wire.c,v 1.12 2000/06/22 03:45:05 guppy Exp $
  */
 /* 
  * Copyright (C) 1999, 2000  Eggheads
@@ -288,7 +288,7 @@ static int cmd_wire(struct userrec *u, int idx, char *par)
 
   Context;
   if (!par[0]) {
-    dprintf(idx, "%s: .wire [<encrypt-key>|OFF|info]\n", USAGE);
+    dprintf(idx, "%s: .wire [<encrypt-key>|OFF|info]\n", MISC_USAGE);
     return 0;
   }
   while (w) {
