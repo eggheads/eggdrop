@@ -1,7 +1,7 @@
 /* 
  * uf_features.c -- part of share.mod
  * 
- * $Id: uf_features.c,v 1.4 2000/09/18 20:01:43 fabian Exp $
+ * $Id: uf_features.c,v 1.5 2000/12/14 04:11:54 guppy Exp $
  */
 /* 
  * Copyright (C) 2000  Eggheads
@@ -317,7 +317,7 @@ static int uf_features_check(int idx, char *par)
        *
        * In any case, we abort user file sharing.
        */
-      putlog(LOG_BOTS, "*", "Bot %s tried unsupported feature!");
+      putlog(LOG_BOTS, "*", "Bot %s tried unsupported feature!", dcc[idx].nick);
       dprintf(idx, "s e Attempt to use an unsupported feature\n");
       zapfbot(idx);
 

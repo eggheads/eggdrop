@@ -1,7 +1,7 @@
 /* 
  * transfer.c -- part of transfer.mod
  * 
- * $Id: transfer.c,v 1.32 2000/12/06 02:35:18 guppy Exp $
+ * $Id: transfer.c,v 1.33 2000/12/14 04:11:55 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -716,11 +716,15 @@ static void eof_dcc_fork_send(int idx)
 
     for (x = 0; x < dcc_total; x++)
       if ((!egg_strcasecmp(dcc[x].nick, dcc[idx].host)) &&
-	  (dcc[x].type->flags & DCT_BOT))
+	  (dcc[x].type->flags & DCT_BOT)) {
 	y = x;
+	break;
+      }
     if (y != 0) {
       dcc[y].status &= ~STAT_GETTING;
       dcc[y].status &= ~STAT_SHARE;
+      debug0("(!) Could not find bot responsible for sending us the userfile "
+	     "for which the transfer failed.");
     }
     putlog(LOG_BOTS, "*", USERF_FAILEDXFER);
     unlink(dcc[idx].u.xfer->filename);

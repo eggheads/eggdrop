@@ -1,7 +1,7 @@
 /* 
  * share.c -- part of share.mod
  * 
- * $Id: share.c,v 1.44 2000/11/06 04:06:44 guppy Exp $
+ * $Id: share.c,v 1.45 2000/12/14 04:11:54 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1027,7 +1027,7 @@ static void share_ufsend(int idx, char *par)
   } else {
     ip = newsplit(&par);
     port = newsplit(&par);
-    sock = getsock(SOCK_BINARY);
+    sock = getsock(SOCK_BINARY);	/* Don't buffer this -> mark binary. */
     if (sock < 0 || open_telnet_dcc(sock, ip, port) < 0) {
       killsock(sock);
       putlog(LOG_BOTS, "*", "Asynchronous connection failed!");
@@ -1037,18 +1037,16 @@ static void share_ufsend(int idx, char *par)
       i = new_dcc(&DCC_FORK_SEND, sizeof(struct xfer_info));
       dcc[i].addr = my_atoul(ip);
       dcc[i].port = atoi(port);
-      dcc[i].sock = (-1);
-      dcc[i].type = &DCC_FORK_SEND;
       strcpy(dcc[i].nick, "*users");
-      strcpy(dcc[i].host, dcc[idx].nick);
       dcc[i].u.xfer->filename = nmalloc(strlen(s) + 1);
       strcpy(dcc[i].u.xfer->filename, s);
       dcc[i].u.xfer->origname = dcc[i].u.xfer->filename;
       dcc[i].u.xfer->length = atoi(par);
-      dcc[idx].status |= STAT_GETTING;
       dcc[i].u.xfer->f = f;
-      /* Don't buffer this */
       dcc[i].sock = sock;
+      strcpy(dcc[i].host, dcc[idx].nick);
+
+      dcc[idx].status |= STAT_GETTING;
     }
   }
 }
@@ -2055,10 +2053,11 @@ static void share_report(int idx, int details)
 		      (int) (100.0 * ((float) dcc[j].status) /
 			     ((float) dcc[j].u.xfer->length)));
 	      ok = 1;
+	      break;
 	    }
 	  if (!ok)
-	    dprintf(idx,
-		 "Download userlist from %s (negotiating botentries)\n");
+	    dprintf(idx, "Download userlist from %s (negotiating "
+		    "botentries)\n", dcc[i].nick);
 	} else if (dcc[i].status & STAT_SENDING) {
 	  for (j = 0; j < dcc_total; j++) {
 	    if (((dcc[j].type->flags & (DCT_FILETRAN | DCT_FILESEND))
