@@ -1,7 +1,7 @@
 /* 
  * servmsg.c -- part of server.mod
  * 
- * $Id: servmsg.c,v 1.29 2000/02/03 22:54:17 fabian Exp $
+ * $Id: servmsg.c,v 1.30 2000/02/18 22:40:37 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1179,7 +1179,7 @@ static int lagcheck_notop(char *from, char *msg)
   return 0;
 }
 
-static int lagcheck_367 (char *from, char *msg)
+static int lagcheck_367(char *from, char *msg)
 {
   char buf[511], *mask;
 
@@ -1190,10 +1190,10 @@ static int lagcheck_367 (char *from, char *msg)
   mask = buf;
   newsplit(&mask);
   newsplit(&mask);
-  if (lagcheckstring) {
-    if (strcasecmp(lagcheckstring + 3, mask))
+  if (lagcheckstring)
+    if (!wild_match(mask, lagcheckstring + 3) &&
+    	!wild_match(lagcheckstring + 3, mask))
       return 0;
-  }
   lagged = 0;
   if (lagcheckstring) {
     nfree(lagcheckstring);

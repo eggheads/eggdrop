@@ -4,7 +4,7 @@
  *   disconnect on a dcc socket
  *   ...and that's it!  (but it's a LOT)
  * 
- * $Id: dcc.c,v 1.23 2000/01/31 23:03:01 fabian Exp $
+ * $Id: dcc.c,v 1.24 2000/02/18 22:40:36 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -262,9 +262,10 @@ static void cont_link(int idx, char *buf, int i)
       if (i > 0) {
 	bots = bots_in_subtree(findbot(dcc[idx].nick));
 	users = users_in_subtree(findbot(dcc[idx].nick));
-	simple_sprintf(x, "Unlinked %s (restructure) (lost %d bot%s and %d \
-	               user%s)", dcc[i].nick, bots, (bots != 1) ? "s" : "",
-		       users, (users != 1) ? "s" : "");
+	simple_sprintf(x,
+		      "Unlinked %s (restructure) (lost %d bot%s and %d user%s)",
+		      dcc[i].nick, bots, (bots != 1) ? "s" : "",
+		      users, (users != 1) ? "s" : "");
 	chatout("*** %s\n", x);
 	botnet_send_unlinked(i, dcc[i].nick, x);
 	dprintf(i, "bye %s\n", "restructure");
