@@ -316,7 +316,7 @@ should read doc/BOTNET before modifying these settings.
     have bogus information on the grounds that the user may have been trying
     to make the bot connect to somewhere that will get it into trouble, or
     that the user has a broken client (like mIRC tends to do), in which case
-    the connect wouldn't work anyway.  It's suggested that you turn this on.
+    the connect wouldn't work anyway. It's suggested that you turn this on.
 
 
   set ident-timeout 5
@@ -352,7 +352,7 @@ should read doc/BOTNET before modifying these settings.
 
   set dcc-flood-thr 3
     Specify here the number of lines to accept from a user on the partyline
-    within 10 seconds before they are considered to be flooding and therefore
+    within 1 second before they are considered to be flooding and therefore
     get booted.
 
 

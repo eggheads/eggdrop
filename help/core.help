@@ -55,37 +55,37 @@ using %b'.help all'%b.
 If you only remember a part of the command's name you are searching
 for, just use wildcards (e.g. %b'.help *bot*'%b) and all matching help
 texts will be displayed.
-%{help=+lang}%{+n}
+%{help=+lang
 ###  %b+lang%b <language>
    Adds a new language to the top of the language list. All sections
    are rechecked to test if there are language files supporting the language.
 
 See also: -lang, +lsec, -lsec, lstat, relang
-%{help=-lang}%{+n}
+%{help=-lang
 ###  %b-lang%b <language>
    Removes a language from the language list. All sections are checked if
    they are using the language and if so, try to load the next available
    language instead.
 
 See also: +lang, +lsec, -lsec, lstat, relang
-%{help=+lsec}%{+n}
+%{help=+lsec
 ###  %b+lsec%b <section>
    Adds a new section. The bot tries to load the section with the preferred
    language if possible.
 
 See also: +lang, -lang, -lsec, lstat, relang
-%{help=-lsec}%{+n}
+%{help=-lsec
 ###  %b-lsec%b <section>
    Removes a section. The language bindings are not removed though.
 
 See also: +lang, -lang, +lsec, lstat, relang
-%{help=lstat}%{+n}
+%{help=lstat
 ###  %blstat%b
    Shows the language statistics, all selected languages and a list of all
    language sections.
 
 See also: +lang, -lang, +lsec, -lsec, relang
-%{help=relang}%{+n}
+%{help=relang
 ###  %brelang%b
    Try to find language files with a more preferred language than right now.
 
@@ -112,62 +112,70 @@ The following commands are also available:
 %b%{+x}   files%{-}%b
 Anything you type that doesn't begin with a '.' goes out to
 everyone on the party line.
-%{help=tcl}%{+n}
+%{help=tcl
 ###  %btcl%b <command>
    executes the command using Tcl.
 
    See doc/tcl-commands.doc for details on Tcl commands added to eggdrop
    and visit http://dev.scriptics.com/ for more information on Tcl.
-%{help=set}%{+n}
+%{help=set
 ###  %bset%b <variable> [value]
    changes the values of internal settings of the bot, or, if used
    without a value parameter, shows the current value of a setting.
    the bot starts out with settings as given in the configuration
    file.  here are the variables eggdrop cares about:
 %{cols=4}
-mod-path
+botnet-nick
+userfile
+motd
+telnet-banner
+admin
+temp-path
+notify-newusers
+owner
+my-hostname
+my-ip
 nat-ip
+dcc-sanitycheck
+network
+whois-fields
+username
+version
+firewall
+telnet-flood
+paranoid-telnet-flood
+ignore-time
 dcc-flood-thr
+hourly-updates
+switch-logfiles-at
+connect-timeout
+resolve-timeout
+dupwait-timeout
+reserved-portrange
+require-p
+keep-all-logs
+open-telnets
+stealth-telnets
+use-telnet-banner
+handlen
+console
+default-flags
+log-time
+max-logsize
+quick-logs
+logfile-suffix
+quiet-save
+sort-users
 die-on-sighup
 die-on-sigterm
 remote-boots
 max-dcc
 max-logs
-enable-simul
 protect-telnet
 ident-timeout
 share-unlinks
 allow-dk-cmds
-botnet-nick
-help-path
-temp-path
-userfile
-motd
-notify-newusers
-admin
-owner
-my-hostname
-my-ip
-network
-save-users-at
-switch-logfiles-at
-connect-timeout
-reserved-portrange
-log-time
-require-p
-keep-all-logs
-open-telnets
-firewall
-console
-default-flags
-whois-fields
-hourly-updates
-username
-ignore-time
-uptime
-version
-numversion
-telnet-flood
+userfile-perm
 %{end}
    use %b'.help set <variable>'%b for more info on each variable.
 %{+n}

@@ -112,7 +112,7 @@ There may also be additional commands provided by other modules.
 %{help=reset}%{+m}
 %b/MSG%b %B %bRESET%b <password> [channel]
    This makes the me reset my channel information, in case
-   I'm out of sync with reality.  It isn't used much any
+   I'm out of sync with reality. It isn't used much any
    more.
 %{help=status}%{+m|m}
 %b/MSG%b %B %bSTATUS%b <password>
