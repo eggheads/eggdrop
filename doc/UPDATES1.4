@@ -3,6 +3,9 @@ Changes in eggdrop: (since v1.4.0)
 
 1.4.1
 Foundby   Fixedby   What....
+toot      drummer   share-greet was broken
+toot      Fabian    broken logic in xtra_set() caused invalid free() attempts
+flammable Fabian    unchecked fopen() return caused crash on failed open
           Tothwolf  began the cleanup for all the context/assert bloat
           drummer   fixed a small buffer overflow in set_chanlist
           drummer   tcl_adduser doesn't require a hostmask anymore

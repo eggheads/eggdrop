@@ -142,10 +142,9 @@ int def_set(struct userrec *u, struct user_entry *e, void *buf)
 
   Assert(u != NULL);
 
-  if (!noshare && (u->flags & (USER_BOT | USER_UNSHARED))) {
-    if (e->type == &USERENTRY_INFO && !share_greet)
-      return 1;
-    shareout(NULL, "c %s %s %s\n", e->type->name, u->handle, e->u.string ? e->u.string : "");
+  if (!noshare && !(u->flags & (USER_BOT | USER_UNSHARED))) { 
+    if (e->type != &USERENTRY_INFO || share_greet) 
+      shareout(NULL, "c %s %s %s\n", e->type->name, u->handle, e->u.string ? e->u.string : ""); 
   }
   Context;
   return 1;
@@ -721,12 +720,11 @@ int xtra_set(struct userrec *u, struct user_entry *e, void *buf)
     nfree(old->data);
     nfree(old);
   }
-  if (old != new) {
-    if (new->data && new->data[0])
+  if (old != new && new->data) {
+    if (new->data[0])
       list_insert((&e->u.extra), new) /* do not add a ';' here */
     else {
-      if (new->data)
-        nfree(new->data);
+      nfree(new->data);
       nfree(new->key);
       nfree(new);
     }

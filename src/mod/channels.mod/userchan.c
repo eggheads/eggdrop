@@ -1136,10 +1136,13 @@ static void channels_writeuserfile()
 
   simple_sprintf(s, "%s~new", userfile);
   f = fopen(s, "a");
-  write_bans(f, -1);
-  write_exempts(f,-1);
-  write_invites(f,-1);
-  fclose(f);
+  if (f) {
+    write_bans(f, -1);
+    write_exempts(f,-1);
+    write_invites(f,-1);
+    fclose(f);
+  } else
+    putlog(LOG_MISC, "*", USERF_ERRWRITE);
   write_channels();
 }
 
