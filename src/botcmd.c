@@ -3,7 +3,7 @@
  *   commands that comes across the botnet
  *   userfile transfer and update commands from sharebots
  *
- * $Id: botcmd.c,v 1.41 2004/01/09 05:56:36 wcc Exp $
+ * $Id: botcmd.c,v 1.42 2004/06/11 17:46:14 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -171,6 +171,7 @@ static void bot_chat(int idx, char *par)
   }
   chatout("*** (%s) %s\n", from, par);
   botnet_send_chat(idx, from, par);
+  check_tcl_bcst(from, -1, par);  
 }
 
 /* actchan <from> <chan> <text>

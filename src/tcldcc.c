@@ -2,7 +2,7 @@
  * tcldcc.c -- handles:
  *   Tcl stubs for the dcc commands
  *
- * $Id: tcldcc.c,v 1.51 2004/04/06 06:56:38 wcc Exp $
+ * $Id: tcldcc.c,v 1.52 2004/06/11 17:46:14 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -140,6 +140,7 @@ static int tcl_dccbroadcast STDVAR
   strncpyz(msg, argv[1], sizeof msg);
   chatout("*** %s\n", msg);
   botnet_send_chat(-1, botnetnick, msg);
+  check_tcl_bcst(botnetnick, -1, msg);
   return TCL_OK;
 }
 
