@@ -7,7 +7,7 @@
  *   help system
  *   motd display and %var substitution
  * 
- * $Id: misc.c,v 1.25 2000/08/25 13:14:28 fabian Exp $
+ * $Id: misc.c,v 1.26 2000/08/26 16:07:03 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -144,7 +144,7 @@ void splitc(char *first, char *rest, char divider)
 {
   char *p = strchr(rest, divider);
 
-  if (p) {
+  if (p == NULL) {
     if (first != rest && first)
       first[0] = 0;
     return;
@@ -175,7 +175,7 @@ void splitcn(char *first, char *rest, char divider, size_t max)
 {
   char *p = strchr(rest, divider);
 
-  if (!p) {
+  if (p == NULL) {
     if (first != rest && first)
       first[0] = 0;
     return;
