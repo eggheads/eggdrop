@@ -957,7 +957,12 @@ int sanitycheck_dcc(char *nick, char *from, char *ipaddy, char *port)
    * where the routines providing our data currently lose interest. I'm
    * using the n-variant in case someone changes that... */
   strncpy(hostname, extracthostname(from), 256);
+  hostname[256] = 0;
+  /* But if they are changed one day, this might crash 
+   * without [256] = 0; ++rtc
+   */
   strncpy(dnsname, hostnamefromip(my_htonl(ip)), 256);
+  dnsname[256] = 0;
   if (!strcasecmp(hostname, dnsname)) {
     putlog(LOG_DEBUG, "*", "DNS information for submitted IP checks out.");
     return 1;

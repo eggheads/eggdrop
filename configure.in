@@ -290,9 +290,9 @@ AC_CHECK_SIZEOF(long,0)
 AC_CHECK_SIZEOF(int,0)
 
 dnl Checks for library functions.
-AC_CHECK_FUNCS(rename getrusage getdtablesize srandom random sigaction)
-AC_CHECK_FUNCS(sigemptyset vsprintf strcasecmp setpgid clock dlopen)
-AC_CHECK_FUNCS(dprintf bzero uname vsnprintf)
+AC_CHECK_FUNCS(clock getrusage setpgid uname sigaction sigemptyset)
+AC_CHECK_FUNCS(rename strcasecmp getdtablesize bzero random srandom)
+AC_CHECK_FUNCS(dprintf snprintf vsprintf vsnprintf dlopen)
 
 if test "x${ac_cv_func_vsprintf}" = "xno"
 then

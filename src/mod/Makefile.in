@@ -17,15 +17,15 @@ doofus:
 	@cd $(top_srcdir); $(MAKE)
 
 clean:
-	@rm -f *.o *~ static.h
-	@for i in *.mod; do cd $$i; $(MAKE) 'MAKE=$(MAKE)' clean; cd ..; done
+	@rm -f *.o *.so *~ static.h
+	@for i in *.mod; do cd $$i; $(MAKE) 'MAKE=$(MAKE)' clean; cd ../; done
 
 modules:
-	@for i in *.mod; do cd $$i; $(MAKE_MOD) modules; cd ..; done
+	@for i in *.mod; do cd $$i; $(MAKE_MOD) modules; cd ../; done
 
 static:
 	@./buildstatic
-	@for i in *.mod; do cd $$i; $(MAKE_MOD) static; cd ..; done
+	@for i in *.mod; do cd $$i; $(MAKE_MOD) static; cd ../; done
 
 install: install-help install-language
 

@@ -88,6 +88,8 @@ all: @DEFAULT_MAKE@
 
 clean:
 	@rm -f $(EGGEXEC) *.so *.stamp core DEBUG *~
+	@cd doc; $(MAKE) clean
+	@cd scripts $(MAKE) clean
 	@cd src; $(MAKE) clean
 	@cd src/md5; $(MAKE) clean
 	@cd src/mod; $(MAKE) clean
@@ -96,7 +98,7 @@ distclean: clean
 	@rm -f Makefile doc/Makefile scripts/Makefile src/Makefile src/md5/Makefile src/mod/Makefile
 	@rm -f config.cache config.log config.status config.h lush.h
 
-distrib: distclean Makefile.in
+distrib: distclean
 	@rm -f `find . \( -name '*~' -o -name '*#' -o -name '*.orig' \
 		-o -name '*.rej' -o -name '*.bak' \) -print`
 	@rm -rf `find . \( -name "CVS" \) -print`

@@ -1044,7 +1044,7 @@ static cmd_t my_raw_binds[] =
 /* works a little differently now... async i/o is your friend */
 static void connect_server(void)
 {
-  char s[121], pass[121], botserver[UHOSTLEN + 1];
+  char s[121], pass[121], botserver[UHOSTLEN];
   static int oldserv = -1;
   int servidx, botserverport;
 
@@ -1084,8 +1084,8 @@ static void connect_server(void)
       dcc[servidx].sock = serv;
       dcc[servidx].port = botserverport;
       strcpy(dcc[servidx].nick, "(server)");
-      strncpy(dcc[servidx].host, botserver, UHOSTLEN);
-      dcc[servidx].host[UHOSTLEN] = 0;
+      strncpy(dcc[servidx].host, botserver, UHOSTMAX);
+      dcc[servidx].host[UHOSTMAX] = 0;
       dcc[servidx].timeval = now;
       SERVER_SOCKET.timeout_val = &server_timeout;
       strcpy(botname, origbotname);

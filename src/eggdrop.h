@@ -33,9 +33,10 @@
 /* handy string lengths */
 
 #define HANDLEN		9	/* valid values 9->NICKMAX */
+#define BADHANDCHARS  "-,+*=:!.@#;$%&"
 #define NICKMAX       15	/* valid values HANDLEN->32 */
-#define UHOSTLEN     161	/* reasonable, i think? */
-#define DIRLEN       256	/* paranoia */
+#define UHOSTMAX     160        /* reasonable, i think? */
+#define DIRMAX       256	/* paranoia */
 #define MAX_LOG_LINE 767	/* for misc.c/putlog() <cybah> */
 
 /* language stuff */
@@ -50,7 +51,10 @@
 /***********************************************************************/
 
 #define NICKLEN         NICKMAX + 1
+#define UHOSTLEN        UHOSTMAX + 1
+#define DIRLEN          DIRMAX + 1
 #define NOTENAMELEN     ((HANDLEN * 2) + 1)
+#define BADNICKCHARS "-,+*=:!.@#;$%&"
 
 /* have to use a weird way to make the compiler error out cos not all
  * compilers support #error or error */
@@ -207,7 +211,7 @@ struct dcc_t {
   unsigned int port;
   struct userrec *user;
   char nick[NICKLEN];
-  char host[UHOSTLEN + 1];	/* extra safety char ;) */
+  char host[UHOSTLEN];
   struct dcc_table *type;
   time_t timeval;		/* use for any timing stuff 
 				 * - this is used for timeout checking */

@@ -1,41 +1,36 @@
-.TH EGGDROP 1 "5 June, 1999"
-.UC 4
+.TH EGGDROP 1 "October 1999" "EGGDEV" "IRC goodies"
 .SH NAME
 eggdrop \- an IRC robot program
 .SH SYNOPSIS
 .B eggdrop
-[
-options
-]
-[
-config-file
-]
+.RB [ options ]
+.RB [ config-file ]
 .SH DESCRIPTION
 .I eggdrop
-is a fully-functional IRC robot program.  It is
-stand-alone, and does not require the ircII client.  It currently
-supports all known IRC nets, including EFnet and Undernet.
+is a fully-functional Internet Relay Chat robot program.  It 
+is stand-alone, and does not require the 
+.I ircII
+client.  It currently supports all known IRC nets, including EFnet, 
+IRCnet, Dalnet and Undernet.
 .PP
-By itself,
-.I eggdrop
-does nothing.  It needs a config file
-(usually named after your bot)
+By itself, 
+.I eggdrop 
+does nothing.  It needs a config file (usually named after your bot) 
 to tell it how to behave.  The
-config file is actually a script written in enhanced
-.I Tcl
-(Tcl
-with extra commands and variables defined by eggdrop).  A sample
-Tcl config file,
-.I eggdrop.conf
-, is given with the distribution.
+config file is actually a script written in
+.I "enhanced TCL"
+(TCL with extra commands and variables defined by eggdrop).  A sample 
+TCL config file with describing comments for each option, 
+.IR eggdrop.conf.dist , 
+is given with the distribution.
 .PP
 There is
 .B extensive
 online documentation.  Once you get the bot
 running, open a DCC chat with it, and send it a DCC message like:
-.PP
-   /msg =MyBot .help
-.PP
+.IP
+/msg =MyBot .help
+.SH OPTIONS
 .I eggdrop
 options include:
 .TP
@@ -47,7 +42,7 @@ displays the current version of eggdrop, as well as any patches that have
 been loaded.
 .TP
 .B \-n
-.I Eggdrop
+.I eggdrop
 normally automatically moves into the background upon loading.  This
 option makes it stay in the foreground and display console entries
 to the console terminal.
@@ -63,30 +58,65 @@ As above, the bot won't move into the background.  The console terminal
 simulates a local DCC chat which never ends (as long as the bot is
 running).  The nickname used for the DCC chat is "HQ" (a master).
 .TP
-.B \-s
-Console and log output will be "squelched".
-.TP
 .B \-m
 The first time you run
-.I eggdrop
-, you need to use the -m option, to
+.IR eggdrop ,
+you need to use the -m option, to
 put eggdrop in "userfile creation" mode.  Follow the directions
-and it will build a user record database, with you listed as a
-"master" (person who runs the bot).
+and it will build a user record database, with you listed as an
+'owner' (person who runs the bot).
+.SH SIGNALS
+.I eggdrop
+handles the following signals:
+.TP
+.B SIGCHLD
+This signal is ignored by 
+.I eggdrop
+and can be used to determine whether it's running or not.
+.TP
+.B SIGTERM
+Depending on die-on-sigterm being set to 0 or 1 in the config file, 
+.I eggdrop
+will save the user file or die.
+.TP
+.B SIGHUP
+Depending on die-on-sighup being set to 0 or 1 in the config file,
+.I eggdrop
+will rehash or die.
+.SH "ENVIRONMENT VARIABLES"
+.TP
+.B EGG_LANG
+This variable can be set to the language you want 
+.I eggdrop
+to speak to you. It defaults to english, but german and french are
+supported, too.
+.TP
+.B EGG_LANGDIR
+Specifies the directory where all your language files are stored.
+The default is ./language
 .SH FILES
-.ta 2i
-.br
-eggdrop.conf.dist    sample configuration file
-.br
-weed                 Tcl script to sort eggdrop userfiles
-.br
-botchk               shell script suitable for crontab job
-.br
-scripts/             some example Tcl-eggdrop scripts
+.TP
+.I eggdrop.conf.dist
+a sample configuration file
+.TP
+.I scripts/weed
+TCL script to sort eggdrop userfiles
+.TP
+.I scripts/botchk
+shell script suitable for crontab job
+.TP
+.I scripts/*.tcl
+some example TCL-eggdrop scripts
 .SH "SEE ALSO"
-ircII(1), tclsh(1)
-.SH AUTHOR
+irc(1),
+ircII(1),
+tclsh(1),
+ircd(8)
+.SH AUTHORS
 Robey Pointer 1997
-.SH BUGS
-If you find any, email to eggheads@eggheads.org !
+.br
+Eggheads 1999
+.SH "REPORTING BUGS"
+Report bugs to <eggheads@eggheads.org> if you find any.
+.\" end of man page
 

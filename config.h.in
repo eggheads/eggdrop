@@ -47,6 +47,9 @@
 /* Define if you have the dprintf function  */
 #undef HAVE_DPRINTF
 
+/* Define if you have the snprintf function  */
+#undef HAVE_SNPRINTF
+
 /* Define if you have the sigaction function.  */
 #undef HAVE_SIGACTION
 

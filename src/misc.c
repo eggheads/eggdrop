@@ -238,6 +238,7 @@ void maskhost(char *s, char *nw)
       while (*f != '.')
 	f--;
       strncpy(nw, q, f - q);
+      /* No need to nw[f-q]=0 here. */
       nw += (f - q);
       strcpy(nw, ".*");
     } else {			/* normal host >= 3 parts */
@@ -1225,7 +1226,8 @@ void sub_lang(int idx, char *text)
   get_user_flagrec(dcc[idx].user, &fr, dcc[idx].u.chat->con_chan);
   help_subst(NULL, NULL, 0,
 	     (dcc[idx].status & STAT_TELNET) ? 0 : HELP_IRC, NULL);
-  strncpy(s, text, 1024);
+  strncpy(s, text, 1023);
+  s[1023] = 0;
   if (s[strlen(s) - 1] == '\n')
     s[strlen(s) - 1] = 0;
   if (!s[0])

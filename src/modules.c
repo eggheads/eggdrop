@@ -157,7 +157,11 @@ void mod_context(char *module, char *file, int line)
 void mod_contextnote(char *module, char *file, int line, char *note)
 {
   cx_ptr=((cx_ptr + 1) & 15);
+#ifdef HAVE_SNPRINTF
   snprintf(cx_file[cx_ptr], 30, "%s:%s", module, file);
+#else
+  sprintf(cx_file[cx_ptr], "%s:%s", module, file);
+#endif
   cx_line[cx_ptr] = line;
   strncpy(cx_note[cx_ptr], note, 255);
   cx_note[cx_ptr][255] = 0;

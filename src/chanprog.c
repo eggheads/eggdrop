@@ -101,9 +101,9 @@ struct userrec *check_chanlist(char *host)
   memberlist *m;
   struct chanset_t *chan;
 
-  strncpy(buf, host, UHOSTLEN);
-  buf[UHOSTLEN - 1] = 0;	/* why is this case sanely done, when there
-				 * are so many others? */
+  strncpy(buf, host, UHOSTMAX);
+  buf[UHOSTMAX] = 0;	/* why is this case sanely done, when there
+			 * are so many others? */
   uhost = buf;
   nick = splitnick(&uhost);
   for (chan = chanset; chan; chan = chan->next) {

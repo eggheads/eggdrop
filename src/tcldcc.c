@@ -250,8 +250,8 @@ static int tcl_dccputchan STDVAR
     return TCL_ERROR;
   }
   strncpy(msg, argv[2], 400);
-
   msg[400] = 0;
+
   chanout_but(-1, chan, "*** %s\n", argv[2]);
   botnet_send_chan(-1, botnetnick, NULL, chan, argv[2]);
   check_tcl_bcst(botnetnick, chan, argv[2]);
@@ -536,8 +536,8 @@ static int tcl_putbot STDVAR
     return TCL_ERROR;
   }
   strncpy(msg, argv[2], 400);
-
   msg[400] = 0;
+
   botnet_send_zapf(i, botnetnick, argv[1], msg);
   return TCL_OK;
 }
@@ -886,8 +886,8 @@ static int tcl_connect STDVAR
   dcc[i].sock = sock;
   dcc[i].port = atoi(argv[2]);
   strcpy(dcc[i].nick, "*");
-  strncpy(dcc[i].host, argv[1], UHOSTLEN);
-  dcc[i].host[UHOSTLEN] = 0;
+  strncpy(dcc[i].host, argv[1], UHOSTMAX);
+  dcc[i].host[UHOSTMAX] = 0;
   sprintf(s, "%d", sock);
   Tcl_AppendResult(irp, s, NULL);
   return TCL_OK;
@@ -964,8 +964,8 @@ static int tcl_listen STDVAR
       dcc_total--;
       return TCL_ERROR;
     }
-    strncpy(dcc[idx].host, argv[3], UHOSTLEN - 1);
-    dcc[idx].host[UHOSTLEN - 1] = 0;
+    strncpy(dcc[idx].host, argv[3], UHOSTMAX);
+    dcc[idx].host[UHOSTMAX] = 0;
     sprintf(s, "%d", port);
     Tcl_AppendResult(irp, s, NULL);
     return TCL_OK;
@@ -985,8 +985,8 @@ static int tcl_listen STDVAR
     return TCL_ERROR;
   }
   if (argc == 4) {
-    strncpy(dcc[idx].host, argv[3], UHOSTLEN - 1);
-    dcc[idx].host[UHOSTLEN - 1] = 0;
+    strncpy(dcc[idx].host, argv[3], UHOSTMAX);
+    dcc[idx].host[UHOSTMAX] = 0;
   } else
     strcpy(dcc[idx].host, "*");
   sprintf(s, "%d", port);

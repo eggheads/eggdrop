@@ -5,7 +5,7 @@ for i in *.mod
 do
 y=`echo $i | sed s/.mod//`
 cat >> static.h << EOF
-char * ${y}_start();
+char *${y}_start();
 EOF
 done
 cat >> static.h << EOF
@@ -15,7 +15,7 @@ for i in *.mod
 do
 y=`echo $i | sed s/.mod//`
 cat >> static.h << EOF
-check_static("${y}",${y}_start);
+  check_static("${y}", ${y}_start);
 EOF
 done
 cat >> static.h << EOF

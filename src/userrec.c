@@ -543,7 +543,7 @@ int change_handle(struct userrec *u, char *newh)
   if (!u)
     return 0;
   /* nothing that will confuse the userfile */
-  if ((newh[1] == 0) && strchr("+*:=.-#&", newh[0]))
+  if ((newh[1] == 0) && strchr(BADHANDCHARS, newh[0]))
     return 0;
   check_tcl_nkch(u->handle, newh);
   /* yes, even send bot nick changes now: */

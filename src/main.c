@@ -329,8 +329,15 @@ static void got_alarm(int z)
 static void got_ill(int z)
 {
   check_tcl_event("sigill");
+  write_debug();
   putlog(LOG_MISC, "*", "* Context: %s/%d [%s]", cx_file[cx_ptr],
 	 cx_line[cx_ptr], (cx_note[cx_ptr][0]) ? cx_note[cx_ptr] : "");
+  fatal ("GOT ILL SIGNAL -- CRASHING!", 1);
+#ifdef SA_RESETHAND
+  kill(getpid(), SIGILL);
+#else
+  exit(1);
+#endif
 }
 
 static void do_arg(char *s)

@@ -1231,6 +1231,7 @@ static int gotinvite(char *from, char *msg)
   }
   putlog(LOG_MISC, "*", "%s!%s invited me to %s", nick, from, msg);
   strncpy(last_invchan, msg, 299);
+  last_invchan[299] = 0;
   last_invtime = now;
   chan = findchan(msg);
   if (chan && (channel_pending(chan) || channel_active(chan)))
@@ -1891,7 +1892,7 @@ static int gotnotice(char *from, char *msg)
   {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
   int ignoring;
 
-  if (!strchr("#&+@", *msg))
+  if (!strchr(CHANMETA "@", *msg))
     return 0;
   ignoring = match_ignore(from);
   to = newsplit(&msg);

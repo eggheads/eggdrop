@@ -509,6 +509,7 @@ static char *get_altbotnick(void)
   if (strchr(altnick, '?')) {
     if (!raltnick[0]) {
       strncpy(raltnick, altnick, NICKMAX);
+      raltnick[NICKMAX] = 0;
       rand_nick(raltnick);
     }
     return raltnick;

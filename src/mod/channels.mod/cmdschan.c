@@ -24,7 +24,7 @@ static struct flag_record victim =
 
 static void cmd_pls_ban(struct userrec *u, int idx, char *par)
 {
-  char *chname, *who, s[UHOSTLEN + 1], s1[UHOSTLEN + 1], *p;
+  char *chname, *who, s[UHOSTLEN], s1[UHOSTLEN], *p;
   struct chanset_t *chan = 0;
   int bogus = 0;
   module_entry *me;
@@ -101,8 +101,8 @@ static void cmd_pls_ban(struct userrec *u, int idx, char *par)
       par = "requested";
     else if (strlen(par) > 65)
       par[65] = 0;
-    if (strlen(who) > UHOSTLEN - 4)
-      who[UHOSTLEN - 4] = 0;
+    if (strlen(who) > UHOSTMAX - 4)
+      who[UHOSTMAX - 4] = 0;
     /* fix missing ! or @ BEFORE checking against myself */
     if (!strchr(who, '!')) {
       if (!strchr(who, '@'))
@@ -166,7 +166,7 @@ static void cmd_pls_ban(struct userrec *u, int idx, char *par)
 
 static void cmd_pls_exempt (struct userrec * u, int idx, char * par)
 {
-  char * chname, * who, s[UHOSTLEN + 1], s1[UHOSTLEN + 1], *p;
+  char * chname, * who, s[UHOSTLEN], s1[UHOSTLEN], *p;
   struct chanset_t *chan = 0;
   int bogus = 0;
   module_entry * me;   
@@ -245,8 +245,8 @@ static void cmd_pls_exempt (struct userrec * u, int idx, char * par)
       par = "requested";
     else if (strlen(par) > 65)
       par[65] = 0;
-    if (strlen(who) > UHOSTLEN - 4)
-      who[UHOSTLEN - 4] = 0;
+    if (strlen(who) > UHOSTMAX - 4)
+      who[UHOSTMAX - 4] = 0;
     /* fix missing ! or @ BEFORE checking against myself */
     if (!strchr(who, '!')) {
       if (!strchr(who, '@')) 
@@ -306,7 +306,7 @@ static void cmd_pls_exempt (struct userrec * u, int idx, char * par)
 
 static void cmd_pls_invite (struct userrec * u, int idx, char * par)
 {
-  char * chname, * who, s[UHOSTLEN + 1], s1[UHOSTLEN + 1], *p;
+  char * chname, * who, s[UHOSTLEN], s1[UHOSTLEN], *p;
   struct chanset_t *chan = 0;
   int bogus = 0;
   module_entry * me;   
@@ -387,8 +387,8 @@ static void cmd_pls_invite (struct userrec * u, int idx, char * par)
       par = "requested";
     else if (strlen(par) > 65)
       par[65] = 0;
-    if (strlen(who) > UHOSTLEN - 4)
-      who[UHOSTLEN - 4] = 0;
+    if (strlen(who) > UHOSTMAX - 4)
+      who[UHOSTMAX - 4] = 0;
     /* fix missing ! or @ BEFORE checking against myself */
     if (!strchr(who, '!')) {
       if (!strchr(who, '@')) 
@@ -450,7 +450,7 @@ static void cmd_mns_ban(struct userrec *u, int idx, char *par)
 {
   int i = 0, j;
   struct chanset_t *chan = 0;
-  char s[UHOSTLEN + 1], *ban, *chname;
+  char s[UHOSTLEN], *ban, *chname;
   masklist *b;
 
   if (!par[0]) {
@@ -469,8 +469,8 @@ static void cmd_mns_ban(struct userrec *u, int idx, char *par)
     if (!((glob_op(user) && !chan_deop(user)) || chan_op(user)))
       return;
   }
-  strncpy(s, ban, UHOSTLEN);
-  s[UHOSTLEN] = 0;
+  strncpy(s, ban, UHOSTMAX);
+  s[UHOSTMAX] = 0;
   i = u_delban(NULL, s, (u->flags & USER_MASTER));
   if (i > 0) {
     putlog(LOG_CMDS, "*", "#%s# -ban %s", dcc[idx].nick, s);
@@ -539,7 +539,7 @@ static void cmd_mns_exempt (struct userrec * u, int idx, char * par)
 {
   int i = 0, j;
   struct chanset_t *chan = 0;
-  char s[UHOSTLEN + 1], *exempt, *chname;
+  char s[UHOSTLEN], *exempt, *chname;
   masklist *e;
   if (!use_exempts) {
     dprintf(idx, "This command can only be used on IRCnet.\n");
@@ -561,8 +561,8 @@ static void cmd_mns_exempt (struct userrec * u, int idx, char * par)
     if (!((glob_op(user) && !chan_deop(user)) || chan_op(user)))
       return;
   }
-  strncpy(s,exempt, UHOSTLEN);
-  s[UHOSTLEN] = 0;
+  strncpy(s,exempt, UHOSTMAX);
+  s[UHOSTMAX] = 0;
   i = u_delexempt(NULL,s,(u->flags & USER_MASTER));
   if (i > 0) {
     putlog(LOG_CMDS, "*", "#%s# -exempt %s", dcc[idx].nick, s);
@@ -631,7 +631,7 @@ static void cmd_mns_invite (struct userrec * u, int idx, char * par)
 {
   int i = 0, j;
   struct chanset_t *chan = 0;
-  char s[UHOSTLEN + 1], *invite, *chname;
+  char s[UHOSTLEN], *invite, *chname;
   masklist *inv;
   
   if (!use_invites) {
@@ -654,8 +654,8 @@ static void cmd_mns_invite (struct userrec * u, int idx, char * par)
     if (!((glob_op(user) && !chan_deop(user)) || chan_op(user)))
       return;
   }
-  strncpy(s,invite, UHOSTLEN);
-  s[UHOSTLEN] = 0;
+  strncpy(s,invite, UHOSTMAX);
+  s[UHOSTMAX] = 0;
   i = u_delinvite(NULL,s,(u->flags & USER_MASTER));
   if (i > 0) {
     putlog(LOG_CMDS, "*", "#%s# -invite %s", dcc[idx].nick, s);
@@ -902,10 +902,10 @@ static void cmd_stick_yn(int idx, char *par, int yn)
 {
   int i, j;
   struct chanset_t *chan;
-  char s[UHOSTLEN + 1], * stick_type;
+  char s[UHOSTLEN], * stick_type;
   stick_type=newsplit(&par);
-  strncpy(s, par, UHOSTLEN);
-  s[UHOSTLEN] = 0;
+  strncpy(s, par, UHOSTMAX);
+  s[UHOSTMAX] = 0;
        
     /* now deal with exemptions */
   if (!strcasecmp(stick_type,"exempt")) {
@@ -963,8 +963,8 @@ static void cmd_stick_yn(int idx, char *par, int yn)
     return;
   }
   if (strcasecmp(stick_type,"ban")) {
-    strncpy(s, stick_type, UHOSTLEN);
-    s[UHOSTLEN] = 0;    
+    strncpy(s, stick_type, UHOSTMAX);
+    s[UHOSTMAX] = 0;    
   }
   i = u_setsticky_ban(NULL, s,
 		      (dcc[idx].user->flags & USER_MASTER) ? yn : -1);

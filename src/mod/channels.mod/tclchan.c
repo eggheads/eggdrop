@@ -508,8 +508,8 @@ static int tcl_newban STDVAR
       return TCL_ERROR;
     }
   }
-  strncpy(ban, argv[1], UHOSTLEN - 1);
-  ban[UHOSTLEN - 1] = 0;
+  strncpy(ban, argv[1], UHOSTMAX);
+  ban[UHOSTMAX] = 0;
   strncpy(from, argv[2], HANDLEN);
   from[HANDLEN] = 0;
   strncpy(cmt, argv[3], 65);
@@ -591,8 +591,8 @@ static int tcl_newexempt STDVAR
       return TCL_ERROR;
     }
   }
-  strncpy(exempt, argv[1], UHOSTLEN - 1);
-  exempt[UHOSTLEN - 1] = 0;
+  strncpy(exempt, argv[1], UHOSTMAX);
+  exempt[UHOSTMAX] = 0;
   strncpy(from, argv[2], HANDLEN);
   from[HANDLEN] = 0;
   strncpy(cmt, argv[3], 65);
@@ -674,8 +674,8 @@ static int tcl_newinvite STDVAR
       return TCL_ERROR;
     }
   }
-  strncpy(invite, argv[1], UHOSTLEN - 1);
-  invite[UHOSTLEN - 1] = 0;
+  strncpy(invite, argv[1], UHOSTMAX);
+  invite[UHOSTMAX] = 0;
   strncpy(from, argv[2], HANDLEN);
   from[HANDLEN] = 0;
   strncpy(cmt, argv[3], 65);
