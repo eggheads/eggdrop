@@ -125,7 +125,7 @@ static int welcome_to_files(int idx)
 
 static void cmd_sort(int idx, char *par)
 {
-  FILE *f;
+  FILE *fdb;
   struct userrec *u = get_user_by_handle(userlist, dcc[idx].nick);
   char *p;
 
@@ -133,15 +133,19 @@ static void cmd_sort(int idx, char *par)
   p = get_user(&USERENTRY_DCCDIR, u);
   /* does this dir even exist any more? */
   if (p) {
-    f = filedb_open(p, 1);
-    if (!f) {
+    fdb = filedb_open(p, 1);
+    if (!fdb) {
       set_user(&USERENTRY_DCCDIR, u, NULL);
       p = NULL;
     }
   }
   if (!p)
-    f = filedb_open("", 1);
-  filedb_close(f);
+    fdb = filedb_open("", 1);
+  if (!fdb) {
+    dprintf(idx, FILES_ILLDIR);
+    return;
+  }
+  filedb_close(fdb);
   dprintf(idx, "Current directory has been optimised.\n");
 }
 
@@ -378,6 +382,11 @@ static void files_ls(int idx, char *par, int showall)
     }
     nfree(s);
     fdb = filedb_open(destdir, 0);
+    if (!fdb) {
+      dprintf(idx, FILES_ILLDIR);
+      nfree2(destdir, mask);
+      return;
+    }
     filedb_ls(fdb, idx, mask, showall);
     filedb_close(fdb);
     nfree2(destdir, mask);

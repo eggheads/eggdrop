@@ -1107,9 +1107,9 @@ static void fileq_cancel(int idx, char *par)
       if (q != NULL)
 	q = q->next;
     }
-    if (s)
-      nfree(s);
   }
+  if (s)
+    nfree(s);
   for (i = 0; i < dcc_total; i++) {
     if (((dcc[i].type == &DCC_GET_PENDING) || (dcc[i].type == &DCC_GET)) &&
 	((!strcasecmp(dcc[i].nick, dcc[idx].nick)) ||

@@ -453,7 +453,7 @@ static int do_dcc_send(int idx, char *dir, char *nick)
     /* copy this file to /tmp, add a random prefix to the filename */
     s = nrealloc(s, strlen(dccdir) + strlen(dir) + strlen(fn) + 2); 
     sprintf(s, "%s%s%s%s", dccdir, dir, dir[0] ? "/" : "", fn);
-    s1 = nrealloc(s1, strlen(tempdir) + strlen(tempfn));
+    s1 = nrealloc(s1, strlen(tempdir) + strlen(tempfn) + 1);
     sprintf(s1, "%s%s", tempdir, tempfn);
     nfree(tempfn);
     if (copyfile(s, s1) != 0) {
