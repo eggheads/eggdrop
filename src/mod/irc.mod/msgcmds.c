@@ -2,7 +2,7 @@
  * msgcmds.c -- part of irc.mod
  *   all commands entered via /MSG
  *
- * $Id: msgcmds.c,v 1.22 2001/06/24 20:42:17 poptix Exp $
+ * $Id: msgcmds.c,v 1.23 2001/07/06 04:48:08 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -299,6 +299,11 @@ static int msg_info(char *nick, char *host, struct userrec *u, char *par)
       putlog(LOG_CMDS, "*", "(%s!%s) !%s! failed INFO", nick, host, u->handle);
       return 1;
     }
+  } else {
+    putlog(LOG_CMDS, "*", "(%s!%s) !%s! failed INFO", nick, host, u->handle);
+    if (!quiet_reject)
+      dprintf(DP_HELP, "NOTICE %s :%s\n", nick, IRC_NOPASS);
+    return 1;
   }
   if (par[0] && (strchr(CHANMETA, par[0]) != NULL)) {
     if (!findchan_by_dname(chname = newsplit(&par))) {
@@ -776,6 +781,11 @@ static int msg_status(char *nick, char *host, struct userrec *u, char *par)
 	     u->handle);
       return 1;
     }
+  } else {
+    putlog(LOG_CMDS, "*", "(%s!%s) !%s! failed STATUS", nick, host, u->handle);
+    if (!quiet_reject)
+      dprintf(DP_HELP, "NOTICE %s :%s\n", nick, IRC_NOPASS);
+    return 1;
   }
   putlog(LOG_CMDS, "*", "(%s!%s) !%s! STATUS", nick, host, u->handle);
   dprintf(DP_HELP, "NOTICE %s :I am %s, running %s.\n", nick, botnetnick,
@@ -832,6 +842,11 @@ static int msg_memory(char *nick, char *host, struct userrec *u, char *par)
 	     u->handle);
       return 1;
     }
+  } else {
+    putlog(LOG_CMDS, "*", "(%s!%s) !%s! failed MEMORY", nick, host, u->handle);
+    if (!quiet_reject)
+      dprintf(DP_HELP, "NOTICE %s :%s\n", nick, IRC_NOPASS);
+    return 1;
   }
   putlog(LOG_CMDS, "*", "(%s!%s) !%s! MEMORY", nick, host, u->handle);
   tell_mem_status(nick);

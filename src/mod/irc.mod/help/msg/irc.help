@@ -53,7 +53,7 @@ There may also be additional commands provided by other modules.
    than you were when you registered, you'll have to give
    your original nickname too.
 %{help=info}
-%b/MSG%b %B %bINFO%b [password] [channel] [an info line]
+%b/MSG%b %B %bINFO%b <password> [channel] [an info line]
    Whatever you set as your info line will be shown when
    you join the channel, as long as you haven't been there
    in the past three minutes.  It is also shown to people
