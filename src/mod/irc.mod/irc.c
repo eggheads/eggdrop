@@ -2,7 +2,7 @@
  * irc.c -- part of irc.mod
  *   support for channels within the bot 
  * 
- * $Id: irc.c,v 1.19 2000/02/25 20:51:10 fabian Exp $
+ * $Id: irc.c,v 1.20 2000/02/29 20:16:55 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -821,7 +821,7 @@ static void check_tcl_part(char *nick, char *uhost, struct userrec *u,
   Tcl_SetVar(interp, "_p2", uhost, 0);
   Tcl_SetVar(interp, "_p3", u ? u->handle : "*", 0);
   Tcl_SetVar(interp, "_p4", chname, 0);
-  Tcl_SetVar(interp, "_p5", text[0] ? text : "", 0);
+  Tcl_SetVar(interp, "_p5", text ? text : "", 0);
   Context;
   check_tcl_bind(H_part, args, &fr, " $_p1 $_p2 $_p3 $_p4 $_p5",
 		 MATCH_MASK | BIND_USE_ATTR | BIND_STACKABLE);

@@ -1017,12 +1017,19 @@ for the msg-command "stop", use "unbind msg - stop msg_stop".
 
   (7)  NOTC   (stackable)
        bind notc <flags> <mask> <proc>
-|      procname <nick> <user@host> <handle> <dest> <text>
+|      procname <nick> <user@host> <handle> <text> <dest>
 
 |      destination will be a nickname (the bot's nickname, obviously) or
 |      a channel name; matches the entire line of text from a /notice with
        the mask; it is considered a breach of protocol to respond to a
        /notice on IRC, so this is intended for internal use (ie, logging, etc) only
+
+|      new Tcl procs should be declared as
+|      proc notcproc {nick uhost hand chan text {dest ""}} {
+|        global botnick; if {$dest==""} { set dest $botnick }
+|        ...
+|      }
+|      for compatiblity
 
   (8)  JOIN   (stackable)
        bind join <flags> <mask> <proc>
@@ -1039,6 +1046,10 @@ for the msg-command "stop", use "unbind msg - stop msg_stop".
        triggered by someone leaving the channel; as in JOIN, the <mask>
        is matched against "#channel nick!user@host" and can contain
        wildcards. if no part message is specified msg will be set to "".
+       
+|      new Tcl procs should be declared as
+|      proc partproc {nick uhost hand chan {msg ""}} { ... }
+|      for compatiblity
 
   (10) SIGN   (stackable)
        bind sign <flags> <mask> <proc>

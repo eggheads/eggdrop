@@ -1,7 +1,7 @@
 /* 
  * servmsg.c -- part of server.mod
  * 
- * $Id: servmsg.c,v 1.30 2000/02/18 22:40:37 fabian Exp $
+ * $Id: servmsg.c,v 1.31 2000/02/29 20:16:55 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -127,8 +127,8 @@ static void check_tcl_notc(char *nick, char *uhost, struct userrec *u,
   Tcl_SetVar(interp, "_notc1", nick, 0);
   Tcl_SetVar(interp, "_notc2", uhost, 0);
   Tcl_SetVar(interp, "_notc3", u ? u->handle : "*", 0);
-  Tcl_SetVar(interp, "_notc4", dest, 0);
-  Tcl_SetVar(interp, "_notc5", arg, 0);
+  Tcl_SetVar(interp, "_notc4", arg, 0);
+  Tcl_SetVar(interp, "_notc5", dest, 0);
   Context;
   check_tcl_bind(H_notc, arg, &fr, " $_notc1 $_notc2 $_notc3 $_notc4 $_notc5",
 		 MATCH_MASK | BIND_USE_ATTR | BIND_STACKABLE);
