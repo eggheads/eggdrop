@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  *
- * $Id: chan.c,v 1.88 2002/06/15 17:33:48 wcc Exp $
+ * $Id: chan.c,v 1.89 2002/06/15 19:33:36 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1024,7 +1024,7 @@ static int got352(char *from, char *msg)
  */
 static int got353(char *from, char *msg)
 {
-  char *nick, *chname;
+  char *nick, *chname, *rd, *wr;
   struct chanset_t *chan;
   memberlist *m;
 
@@ -1066,6 +1066,14 @@ static int got353(char *from, char *msg)
     }
     else
       m->flags &= ~CHANVOICE;
+    /* Even if we don't use the flags, strip them anyway to avoid memberlist
+     * problems.
+     */
+    for (rd=wr=nick;*rd;rd++){
+      if (isalnum(*rd) || strchr("[{}]^`|\\",*rd) != NULL)
+        *wr++=*rd;
+    }
+    *wr=0;
     strcpy(m->nick, nick); /* Store the nick in list */
   }
   return 0;
