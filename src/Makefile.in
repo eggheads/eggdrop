@@ -1,5 +1,5 @@
 # Makefile for src/
-# $Id: Makefile.in,v 1.9 2000/07/17 21:03:07 guppy Exp $
+# $Id: Makefile.in,v 1.10 2000/12/09 17:30:35 tothwolf Exp $
 
 SHELL = @SHELL@
 top_srcdir = @top_srcdir@
@@ -42,7 +42,7 @@ clean:
 	@rm -f .depend *.o *.a *~
 
 botcmd.o:
-	@echo "(This will take a while. Go make a pizza or something.)"
+	@echo "(This may take a while.  Go get some runts.)"
 	$(CC) $(CFLAGS) $(CPPFLAGS) -c botcmd.c
 
 main.o:
