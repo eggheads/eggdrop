@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  * 
- * $Id: chan.c,v 1.31 2000/02/18 22:27:53 fabian Exp $
+ * $Id: chan.c,v 1.32 2000/02/18 22:38:02 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -31,6 +31,11 @@ static time_t last_ctcp = (time_t) 0L;
 static int    count_ctcp = 0;
 static time_t last_invtime = (time_t) 0L;
 static char   last_invchan[300] = "";
+
+/* ID length for !channels.
+ */
+#define CHANNEL_ID_LEN 5
+
 
 /* Returns a pointer to a new channel member structure.
  */
@@ -1246,7 +1251,17 @@ static int got471(char *from, char *msg)
 
   newsplit(&msg);
   chname = newsplit(&msg);
-  chan = findchan(chname);
+  /* !channel short names (also referred to as 'description names'
+   * can be received by skipping over the unique ID.
+   */
+  if ((chname[0] == '!') && (strlen(chname) > CHANNEL_ID_LEN)) {
+    chname += CHANNEL_ID_LEN;
+    chname[0] = '!';
+  }
+  /* We use dname because name is first set on JOIN and we might not
+   * have joined the channel yet.
+   */
+  chan = findchan_by_dname(chname);
   if (chan) {
     putlog(LOG_JOIN, chan->dname, IRC_CHANFULL, chan->dname);
     if (chan->need_limit[0])
@@ -1265,7 +1280,17 @@ static int got473(char *from, char *msg)
 
   newsplit(&msg);
   chname = newsplit(&msg);
-  chan = findchan(chname);
+  /* !channel short names (also referred to as 'description names'
+   * can be received by skipping over the unique ID.
+   */
+  if ((chname[0] == '!') && (strlen(chname) > CHANNEL_ID_LEN)) {
+    chname += CHANNEL_ID_LEN;
+    chname[0] = '!';
+  }
+  /* We use dname because name is first set on JOIN and we might not
+   * have joined the channel yet.
+   */
+  chan = findchan_by_dname(chname);
   if (chan) {
     putlog(LOG_JOIN, chan->dname, IRC_CHANINVITEONLY, chan->dname);
     if (chan->need_invite[0])
@@ -1284,7 +1309,17 @@ static int got474(char *from, char *msg)
 
   newsplit(&msg);
   chname = newsplit(&msg);
-  chan = findchan(chname);
+  /* !channel short names (also referred to as 'description names'
+   * can be received by skipping over the unique ID.
+   */
+  if ((chname[0] == '!') && (strlen(chname) > CHANNEL_ID_LEN)) {
+    chname += CHANNEL_ID_LEN;
+    chname[0] = '!';
+  }
+  /* We use dname because name is first set on JOIN and we might not
+   * have joined the channel yet.
+   */
+  chan = findchan_by_dname(chname);
   if (chan) {
     putlog(LOG_JOIN, chan->dname, IRC_BANNEDFROMCHAN, chan->dname);
     if (chan->need_unban[0])
@@ -1325,7 +1360,17 @@ static int got475(char *from, char *msg)
 
   newsplit(&msg);
   chname = newsplit(&msg);
-  chan = findchan(chname);
+  /* !channel short names (also referred to as 'description names'
+   * can be received by skipping over the unique ID.
+   */
+  if ((chname[0] == '!') && (strlen(chname) > CHANNEL_ID_LEN)) {
+    chname += CHANNEL_ID_LEN;
+    chname[0] = '!';
+  }
+  /* We use dname because name is first set on JOIN and we might not
+   * have joined the channel yet.
+   */
+  chan = findchan_by_dname(chname);
   if (chan) {
     putlog(LOG_JOIN, chan->dname, IRC_BADCHANKEY, chan->dname);
     if (chan->need_key[0])
