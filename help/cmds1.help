@@ -239,18 +239,19 @@ See also: chhandle
 
 %{+m}
    Masters only:
-      %bb%b  information about bot linking and userfile sharing
-      %bd%b  misc debug information
-      %bc%b  commands
-      %bo%b  misc info, errors, etc (IMPORTANT STUFF)
-      %bw%b  wallops (make sure the bot sets +w in init-server)
+     %bb%b  information about bot linking and userfile sharing
+     %bd%b  misc debug information
+     %bc%b  commands
+     %bo%b  misc info, errors, etc (IMPORTANT STUFF)
+     %bw%b  wallops (make sure the bot sets +w in init-server)
 
 %{+n}
    Owners only (these have to be enabled in the config file via "set raw-log"):
-      %bh%b  raw share traffic
-      %br%b  raw incoming server traffic
-      %bt%b  raw botnet traffic
-      %bv%b  raw outgoing server traffic
+     %bh%b  raw share traffic
+     %br%b  raw incoming server traffic
+     %bt%b  raw botnet traffic
+     %bv%b  raw outgoing server traffic
+
    There are also 8 user-defined console modes ('1' through '8').
 
 %{+o|o}
@@ -304,6 +305,7 @@ See also: chhandle
      %bT%b  telnet connection (instead of dcc chat)
      %bE%b  echo is on
      %bP%b  paging is on
+
    The flags for 'BOT' are:
      %bP%b  ping sent, waiting for reply
      %bU%b  user-file sharing is active
@@ -315,6 +317,7 @@ See also: chhandle
      %bL%b  leaf-only bot (not allowed to be a hub)
      %bI%b  bot is currently in the 'linking' stage
      %bA%b  bot is being aggressively shared with
+
    For 'CHAT' users, the party-line channel is also listed.
 %{help=debug}%{+m}
 ###  %bdebug%b
