@@ -1,7 +1,7 @@
 /* 
  * tclchan.c -- part of channels.mod
  * 
- * $Id: tclchan.c,v 1.34 2000/09/27 19:47:15 fabian Exp $
+ * $Id: tclchan.c,v 1.35 2000/10/19 16:30:32 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -768,10 +768,6 @@ static int tcl_channel_info(Tcl_Interp * irp, struct chanset_t *chan)
   Tcl_AppendElement(irp, s);
   simple_sprintf(s, "%d:%d", chan->flood_nick_thr, chan->flood_nick_time);
   Tcl_AppendElement(irp, s);
-  if (chan->status & CHAN_CLEARBANS)
-    Tcl_AppendElement(irp, "+clearbans");
-  else
-    Tcl_AppendElement(irp, "-clearbans");
   if (chan->status & CHAN_ENFORCEBANS)
     Tcl_AppendElement(irp, "+enforcebans");
   else
@@ -1018,10 +1014,6 @@ static int tcl_channel_modify(Tcl_Interp * irp, struct chanset_t *chan,
       }
       chan->stopnethack_mode = atoi(item[i]);
     }
-    else if (!strcmp(item[i], "+clearbans"))
-      chan->status |= CHAN_CLEARBANS;
-    else if (!strcmp(item[i], "-clearbans"))
-      chan->status &= ~CHAN_CLEARBANS;
     else if (!strcmp(item[i], "+enforcebans"))
       chan->status |= CHAN_ENFORCEBANS;
     else if (!strcmp(item[i], "-enforcebans"))
@@ -1114,11 +1106,14 @@ static int tcl_channel_modify(Tcl_Interp * irp, struct chanset_t *chan,
       chan->ircnet_status|= CHAN_NOUSERINVITES;
     else if (!strcmp(item[i], "+userinvites"))
       chan->ircnet_status&= ~CHAN_NOUSERINVITES;
-    /* ignore wasoptest and stopnethack in chanfile, remove these lines later */
+    /* ignore wasoptest, stopnethack and clearbans in chanfile, remove
+       this later */
     else if (!strcmp(item[i], "-stopnethack"))  ;
     else if (!strcmp(item[i], "+stopnethack"))  ;
     else if (!strcmp(item[i], "-wasoptest"))  ;
     else if (!strcmp(item[i], "+wasoptest"))  ;  /* Eule 01.2000 */
+    else if (!strcmp(item[i], "+clearbans"))  ;
+    else if (!strcmp(item[i], "-clearbans"))  ;
     else if (!strncmp(item[i], "flood-", 6)) {
       int *pthr = 0, *ptime;
       char *p;

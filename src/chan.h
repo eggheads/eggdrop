@@ -3,7 +3,7 @@
  *   stuff common to chan.c and mode.c
  *   users.h needs to be loaded too
  * 
- * $Id: chan.h,v 1.16 2000/10/01 19:11:43 fabian Exp $
+ * $Id: chan.h,v 1.17 2000/10/19 16:30:31 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -176,28 +176,27 @@ struct chanset_t {
 };
 
 /* behavior modes for the channel */
-#define CHAN_CLEARBANS      0x0001	/* clear bans on join		      */
-#define CHAN_ENFORCEBANS    0x0002	/* kick people who match channel bans */
-#define CHAN_DYNAMICBANS    0x0004	/* only activate bans when needed     */
-#define CHAN_NOUSERBANS     0x0008	/* don't let non-bots place bans      */
-#define CHAN_OPONJOIN       0x0010	/* op +o people as soon as they join  */
-#define CHAN_BITCH          0x0020	/* be a tightwad with ops	      */
-#define CHAN_GREET          0x0040	/* greet people with their info line  */
-#define CHAN_PROTECTOPS     0x0080	/* re-op any +o people who get deop'd */
-#define CHAN_LOGSTATUS      0x0100	/* log channel status every 5 mins    */
-#define CHAN_REVENGE        0x0200	/* get revenge on bad people	      */
-#define CHAN_SECRET         0x0400	/* don't advertise channel on botnet  */
-#define CHAN_AUTOVOICE      0x0800	/* dish out voice stuff automatically */
-#define CHAN_CYCLE          0x1000	/* cycle the channel if possible      */
-#define CHAN_DONTKICKOPS    0x2000	/* never kick +o flag people
+#define CHAN_ENFORCEBANS    0x0001	/* kick people who match channel bans */
+#define CHAN_DYNAMICBANS    0x0002	/* only activate bans when needed     */
+#define CHAN_NOUSERBANS     0x0004	/* don't let non-bots place bans      */
+#define CHAN_OPONJOIN       0x0008	/* op +o people as soon as they join  */
+#define CHAN_BITCH          0x0010	/* be a tightwad with ops	      */
+#define CHAN_GREET          0x0020	/* greet people with their info line  */
+#define CHAN_PROTECTOPS     0x0040	/* re-op any +o people who get deop'd */
+#define CHAN_LOGSTATUS      0x0080	/* log channel status every 5 mins    */
+#define CHAN_REVENGE        0x0100	/* get revenge on bad people	      */
+#define CHAN_SECRET         0x0200	/* don't advertise channel on botnet  */
+#define CHAN_AUTOVOICE      0x0400	/* dish out voice stuff automatically */
+#define CHAN_CYCLE          0x0800	/* cycle the channel if possible      */
+#define CHAN_DONTKICKOPS    0x1000	/* never kick +o flag people
 					   -arthur2			      */
-#define CHAN_INACTIVE       0x4000	/* no irc support for this channel
+#define CHAN_INACTIVE       0x2000	/* no irc support for this channel
 					   - drummer			      */
-#define CHAN_PROTECTFRIENDS 0x8000	/* re-op any +f people who get deop'd */
-#define CHAN_SHARED         0x10000	/* channel is being shared	      */
-#define CHAN_SEEN           0x20000
-#define CHAN_REVENGEBOT     0x40000	/* revenge on actions against the bot */
-#define CHAN_NODESYNCH      0x80000
+#define CHAN_PROTECTFRIENDS 0x4000	/* re-op any +f people who get deop'd */
+#define CHAN_SHARED         0x8000	/* channel is being shared	      */
+#define CHAN_SEEN           0x10000
+#define CHAN_REVENGEBOT     0x20000	/* revenge on actions against the bot */
+#define CHAN_NODESYNCH      0x40000
 /*			    0x100000 */
 #define CHAN_ACTIVE         0x1000000	/* like i'm actually on the channel
 					   and stuff			      */
@@ -235,7 +234,6 @@ struct chanset_t *findchan_by_dname(const char *name);
 #define channel_autovoice(chan) (chan->status & CHAN_AUTOVOICE)
 #define channel_greet(chan) (chan->status & CHAN_GREET)
 #define channel_logstatus(chan) (chan->status & CHAN_LOGSTATUS)
-#define channel_clearbans(chan) (chan->status & CHAN_CLEARBANS)
 #define channel_enforcebans(chan) (chan->status & CHAN_ENFORCEBANS)
 #define channel_revenge(chan) (chan->status & CHAN_REVENGE)
 #define channel_dynamicbans(chan) (chan->status & CHAN_DYNAMICBANS)

@@ -178,10 +178,6 @@ channel set <chan> +/-<setting>
     A complete list of all available channel settings:
 
 
-     clearbans
-      clear all channel bans when the bot joins?  (ie, force the
-      channel's ban list to match the bot's internal list)
-
      enforcebans
       when a ban is set, kick people who are on the channel and match
       the new ban?  (ie, they were on the channel before the ban)
@@ -295,18 +291,18 @@ set global-flood-ctcp 3:60
 set global-flood-nick 5:60
 
 set global-chanset {
-        -clearbans      -enforcebans
-        +dynamicbans    +userbans
-        -autoop         -bitch
-        +greet          +protectops
-        +statuslog      -revenge
-        -secret         -autovoice
-        +cycle          +dontkickops
-        -inactive       -protectfriends
-        +shared         -seen
-        +userexempts    +dynamicexempts
-        +userinvites    +dynamicinvites
-        -nodesynch
+        -autoop         -autovoice
+        -bitch          +cycle
+        +dontkickops    +dynamicbans
+        +dynamicexempts +dynamicinvites
+        -enforcebans    +greet
+        -inactive       -nodesynch
+        -protectfriends +protectops
+        -revenge        -revengebot
+        -secret         -seen
+        +shared         +statuslog
+        +userbans       +userexempts
+        +userinvites
 }
 
 set global-chanmode "nt-likm"

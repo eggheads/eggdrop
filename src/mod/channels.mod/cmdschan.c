@@ -2,7 +2,7 @@
  * cmdschan.c -- part of channels.mod
  *   commands from a user via dcc that cause server interaction
  *
- * $Id: cmdschan.c,v 1.32 2000/09/27 19:47:15 fabian Exp $
+ * $Id: cmdschan.c,v 1.33 2000/10/19 16:30:32 fabian Exp $
  */
 /*
  * Copyright (C) 1997  Robey Pointer
@@ -1201,38 +1201,35 @@ static void cmd_chaninfo(struct userrec *u, int idx, char *par)
 	dprintf(idx, "When channel full (need-limit):\n%s\n", chan->need_limit);
     }
     dprintf(idx, "Other modes:\n");
-    dprintf(idx, "     %cclearbans  %cenforcebans  %cdynamicbans  %cuserbans\n",
-	    (chan->status & CHAN_CLEARBANS) ? '+' : '-',
+    dprintf(idx, "     %cinactive       %cstatuslog      %csecret         %cshared\n",
+	    (chan->status & CHAN_INACTIVE) ? '+' : '-',
+	    (chan->status & CHAN_LOGSTATUS) ? '+' : '-',
+	    (chan->status & CHAN_SECRET) ? '+' : '-',
+	    (chan->status & CHAN_SHARED) ? '+' : '-');
+    dprintf(idx, "     %cgreet          %cseen           %ccycle          %cdontkickops\n",
+	    (chan->status & CHAN_GREET) ? '+' : '-',
+	    (chan->status & CHAN_SEEN) ? '+' : '-',
+	    (chan->status & CHAN_CYCLE) ? '+' : '-',
+	    (chan->status & CHAN_DONTKICKOPS) ? '+' : '-');
+    dprintf(idx, "     %cprotectops     %cprotectfriends %crevenge        %crevengebot\n",
+	    (chan->status & CHAN_PROTECTOPS) ? '+' : '-',
+            (chan->status & CHAN_PROTECTFRIENDS) ? '+' : '-',
+	    (chan->status & CHAN_REVENGE) ? '+' : '-',
+	    (chan->status & CHAN_REVENGEBOT) ? '+' : '-');
+    dprintf(idx, "     %cbitch          %cautoop         %cautovoice      %cnodesynch\n",
+	    (chan->status & CHAN_BITCH) ? '+' : '-',
+	    (chan->status & CHAN_OPONJOIN) ? '+' : '-',
+	    (chan->status & CHAN_AUTOVOICE) ? '+' : '-',
+	    (chan->status & CHAN_NODESYNCH) ? '+' : '-');
+    dprintf(idx, "     %cenforcebans    %cdynamicbans    %cuserbans\n",
 	    (chan->status & CHAN_ENFORCEBANS) ? '+' : '-',
 	    (chan->status & CHAN_DYNAMICBANS) ? '+' : '-',
 	    (chan->status & CHAN_NOUSERBANS) ? '-' : '+');
-    dprintf(idx, "     %cautoop     %cbitch        %cgreet        %cprotectops\n",
-	    (chan->status & CHAN_OPONJOIN) ? '+' : '-',
-	    (chan->status & CHAN_BITCH) ? '+' : '-',
-	    (chan->status & CHAN_GREET) ? '+' : '-',
-	    (chan->status & CHAN_PROTECTOPS) ? '+' : '-');
-    dprintf(idx, "     %cstatuslog  %crevenge      %csecret\n",
-	    (chan->status & CHAN_LOGSTATUS) ? '+' : '-',
-	    (chan->status & CHAN_REVENGE) ? '+' : '-',
-	    (chan->status & CHAN_SECRET) ? '+' : '-');
-    dprintf(idx, "     %cshared     %cautovoice    %ccycle        %cseen\n",
-	    (chan->status & CHAN_SHARED) ? '+' : '-',
-	    (chan->status & CHAN_AUTOVOICE) ? '+' : '-',
-	    (chan->status & CHAN_CYCLE) ? '+' : '-',
-	    (chan->status & CHAN_SEEN) ? '+' : '-');
-    dprintf(idx, "     %cdontkickops              %cinactive\n",
-	    (chan->status & CHAN_DONTKICKOPS) ? '+' : '-',
-	    (chan->status & CHAN_INACTIVE) ? '+' : '-');
-    dprintf(idx, "     %cdynamicexempts           %cuserexempts\n",
+    dprintf(idx, "     %cdynamicexempts %cuserexempts    %cdynamicinvites %cuserinvites\n",
 	    (chan->ircnet_status & CHAN_DYNAMICEXEMPTS) ? '+' : '-',
-	    (chan->ircnet_status & CHAN_NOUSEREXEMPTS) ? '-' : '+');
-    dprintf(idx, "     %cdynamicinvites           %cuserinvites\n",
+	    (chan->ircnet_status & CHAN_NOUSEREXEMPTS) ? '-' : '+',
 	    (chan->ircnet_status & CHAN_DYNAMICINVITES) ? '+' : '-',
 	    (chan->ircnet_status & CHAN_NOUSERINVITES) ? '-' : '+');
-    dprintf(idx, "     %cprotectfriends           %crevengebot   %cnodesynch\n",
-            (chan->status & CHAN_PROTECTFRIENDS) ? '+' : '-',
-	    (chan->status & CHAN_REVENGEBOT) ? '+' : '-',
-	    (chan->status & CHAN_NODESYNCH) ? '+' : '-');
 
     ii = 1;
     tmp = 0;

@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  * 
- * $Id: chan.c,v 1.50 2000/10/01 19:11:43 fabian Exp $
+ * $Id: chan.c,v 1.51 2000/10/19 16:30:32 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -685,6 +685,7 @@ static void recheck_channel(struct chanset_t *chan, int dobans)
   char s[UHOSTLEN], *p;
   struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
   static int stacking = 0;
+  int stop_reset = 0;
 
   if (stacking)
     return;			/* wewps */
@@ -703,6 +704,8 @@ static void recheck_channel(struct chanset_t *chan, int dobans)
     if (!match_my_nick(m->nick)) {
       /* if channel user is current a chanop */
       if (chan_hasop(m)) {
+	if (glob_bot(fr))
+	  stop_reset = 1;
 	/* if user is channel deop */
 	if (chan_deop(fr) ||
 	/* OR global deop and NOT channel op */
@@ -773,11 +776,22 @@ static void recheck_channel(struct chanset_t *chan, int dobans)
     m = m->next;
   }
   if (dobans) {
-    recheck_bans(chan);
-    if (use_invites)
-      recheck_invites(chan);
-    if (use_exempts)
-      recheck_exempts(chan);
+    if (channel_nouserbans(chan) && !stop_reset)
+      resetbans(chan);
+    else
+      recheck_bans(chan);
+    if (use_invites) {
+      if (channel_nouserinvites(chan) && !stop_reset)
+	resetinvites(chan);
+      else
+	recheck_invites(chan);
+    }
+    if (use_exempts) {
+      if (channel_nouserexempts(chan) && !stop_reset)
+	resetexempts(chan);
+      else
+	recheck_exempts(chan);
+    }
     if (channel_enforcebans(chan))
       enforce_bans(chan);
     if ((chan->status & CHAN_ASKEDMODES) &&
@@ -1043,11 +1057,8 @@ static int got368(char *from, char *msg)
   newsplit(&msg);
   chname = newsplit(&msg);
   chan = findchan(chname);
-  if (chan) {
+  if (chan)
     chan->status &= ~CHAN_ASKEDBANS;
-    if (channel_clearbans(chan))
-      resetbans(chan);
-  }
   /* If i sent a mode -b on myself (deban) in got367, either
    * resetbans() or recheck_bans() will flush that.
    */
@@ -1095,11 +1106,8 @@ static int got349(char *from, char *msg)
     newsplit(&msg);
     chname = newsplit(&msg);
     chan = findchan(chname);
-    if (chan) {
+    if (chan)
       chan->ircnet_status &= ~CHAN_ASKED_EXEMPTS;
-      if (channel_clearbans(chan))
-	resetexempts(chan);
-    }  
   }
   return 0;
 }
@@ -1144,11 +1152,8 @@ static int got347(char *from, char *msg)
     newsplit(&msg);
     chname = newsplit(&msg);
     chan = findchan(chname);
-    if (chan) {
+    if (chan)
       chan->ircnet_status &= ~CHAN_ASKED_INVITED;
-      if (channel_clearbans(chan))
-	resetinvites(chan);
-    }
   }
   return 0;
 }

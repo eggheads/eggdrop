@@ -31,9 +31,7 @@
                          if channel +bitch: see stopnethack-mode 1
                        6 if channel -bitch: see stopnethack-mode 2
                          if channel +bitch: see stopnethack-mode 4
-     The following can be set + or - (eg .chanset #channel -clearbans)
-        %bclearbans%b      clear all the channel bans when the bot joins the 
-	               channel?
+     The following can be set + or - (eg .chanset #channel -enforcebans)
 	%benforcebans%b    kicks people who match channel bans?
 	%bdynamicbans%b    only activate bans on channel when they are needed
 	%buserbans%b       allow other users to place bans on the channel

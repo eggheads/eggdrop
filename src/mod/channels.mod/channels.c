@@ -2,7 +2,7 @@
  * channels.c -- part of channels.mod
  *   support for channels within the bot
  * 
- * $Id: channels.c,v 1.36 2000/09/27 19:47:15 fabian Exp $
+ * $Id: channels.c,v 1.37 2000/10/19 16:30:32 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -396,7 +396,7 @@ static void write_channels()
 need-op %s need-invite %s need-key %s need-unban %s need-limit %s \
 flood-chan %d:%d flood-ctcp %d:%d flood-join %d:%d \
 flood-kick %d:%d flood-deop %d:%d flood-nick %d:%d \
-%cclearbans %cenforcebans %cdynamicbans %cuserbans %cautoop %cbitch \
+%cenforcebans %cdynamicbans %cuserbans %cautoop %cbitch \
 %cgreet %cprotectops %cprotectfriends %cdontkickops \
 %cstatuslog %crevenge %crevengebot %cautovoice %csecret \
 %cshared %ccycle %cseen %cinactive %cdynamicexempts %cuserexempts \
@@ -414,7 +414,6 @@ flood-kick %d:%d flood-deop %d:%d flood-nick %d:%d \
         chan->flood_kick_thr, chan->flood_kick_time,
         chan->flood_deop_thr, chan->flood_deop_time,
 	chan->flood_nick_thr, chan->flood_nick_time,
-	PLSMNS(channel_clearbans(chan)),
 	PLSMNS(channel_enforcebans(chan)),
 	PLSMNS(channel_dynamicbans(chan)),
 	PLSMNS(!channel_nouserbans(chan)),
@@ -588,8 +587,6 @@ static void channels_report(int idx, int details)
       if (details) {
 	s[0] = 0;
 	i = 0;
-	if (channel_clearbans(chan))
-	  i += my_strcpy(s + i, "clear-bans ");
 	if (channel_enforcebans(chan))
 	  i += my_strcpy(s + i, "enforce-bans ");
 	if (channel_dynamicbans(chan))
@@ -894,7 +891,7 @@ char *channels_start(Function * global_funcs)
   udef = NULL;
   global_stopnethack_mode = 0;
   strcpy(glob_chanset, "\
--clearbans -enforcebans +dynamicbans +userbans -autoop -bitch +greet \
+-enforcebans +dynamicbans +userbans -autoop -bitch +greet \
 +protectops +statuslog -revenge -secret -autovoice +cycle \
 +dontkickops -inactive -protectfriends +shared -seen \
 +userexempts +dynamicexempts +userinvites +dynamicinvites -revengebot \

@@ -2,7 +2,7 @@
  * irc.c -- part of irc.mod
  *   support for channels within the bot 
  * 
- * $Id: irc.c,v 1.35 2000/09/27 19:47:16 fabian Exp $
+ * $Id: irc.c,v 1.36 2000/10/19 16:30:33 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -610,7 +610,7 @@ static void check_expired_chanstuff()
 	  sfrom = s;
 	  snick = splitnick(&sfrom);
 	  
-	  if (force_expire || channel_clearbans(chan) ||
+	  if (force_expire ||
 	      !(snick[0] && egg_strcasecmp(sfrom, botuserhost) &&
 		(m = ismember(chan, snick)) &&
 		m->user && (m->user->flags & USER_BOT) && chan_hasop(m))) {
@@ -631,7 +631,7 @@ static void check_expired_chanstuff()
 	  strcpy(s, e->who);
 	  sfrom = s;
 	  snick = splitnick(&sfrom);
-	  if (force_expire || channel_clearbans(chan) ||
+	  if (force_expire ||
 	      !(snick[0] && egg_strcasecmp(sfrom, botuserhost) &&
 		(m = ismember(chan, snick)) &&
 		m->user && (m->user->flags & USER_BOT) && chan_hasop(m))) {
@@ -673,7 +673,7 @@ static void check_expired_chanstuff()
 	  sfrom = s;
 	  snick = splitnick(&sfrom);
 
-	  if (force_expire || channel_clearbans(chan) ||
+	  if (force_expire ||
 	      !(snick[0] && egg_strcasecmp(sfrom, botuserhost) &&
 		(m = ismember(chan, snick)) &&
 		m->user && (m->user->flags & USER_BOT) && chan_hasop(m))) {
