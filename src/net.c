@@ -2,7 +2,7 @@
  * net.c -- handles:
  *   all raw network i/o
  * 
- * $Id: net.c,v 1.12 1999/12/22 12:11:02 fabian Exp $
+ * $Id: net.c,v 1.13 2000/01/06 19:45:03 fabian Exp $
  */
 /* 
  * This is hereby released into the public domain.
@@ -437,7 +437,8 @@ int open_telnet(char *server, int port)
  * connection -- port # is returned in port */
 int open_listen(int *port)
 {
-  int sock, addrlen;
+  int sock;
+  unsigned int addrlen;
   struct sockaddr_in name;
 
   if (firewall[0]) {
@@ -514,7 +515,8 @@ char *iptostr(IP ip)
 int answer(int sock, char *caller, unsigned long *ip,
 	   unsigned short *port, int binary)
 {
-  int new_sock, addrlen;
+  int new_sock;
+  unsigned int addrlen;
   struct sockaddr_in from;
   addrlen = sizeof(struct sockaddr);
 

@@ -1,7 +1,7 @@
 /* 
  * servmsg.c -- part of server.mod
  * 
- * $Id: servmsg.c,v 1.20 2000/01/02 02:42:13 fabian Exp $
+ * $Id: servmsg.c,v 1.21 2000/01/06 19:45:06 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1167,7 +1167,8 @@ static void connect_server(void)
 {
   char pass[121], botserver[UHOSTLEN];
   static int oldserv = -1;
-  int servidx, botserverport = 0;
+  int servidx;
+  unsigned int botserverport = 0;
 
   waiting_for_awake = 0;
   trying_server = now;

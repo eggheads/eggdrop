@@ -5,7 +5,7 @@
  * 
  * Modified/written by Fabian Knittel <fknittel@gmx.de>
  * 
- * $Id: coredns.c,v 1.7 2000/01/02 02:42:11 fabian Exp $
+ * $Id: coredns.c,v 1.8 2000/01/06 19:45:05 fabian Exp $
  */
 /* 
  * Portions copyright (C) 1999  Eggheads
@@ -130,7 +130,7 @@ enum {
     RR_QUERY,
     RR_ANSWER,
     RR_AUTHORITY,
-    RR_RESOURCE,
+    RR_RESOURCE
 };
 
 typedef struct {
@@ -594,7 +594,7 @@ static void dorequest(char *s, int type, word id)
 {
     packetheader *hp;
     int r, i;
-    char buf[(MAX_PACKETSIZE / sizeof(char)) + 1];
+    u_8bit_t buf[(MAX_PACKETSIZE / sizeof(char)) + 1];
 
     Context;
     r = res_mkquery(QUERY, s, C_IN, type, NULL, 0, NULL, buf,
@@ -958,7 +958,7 @@ static void parserespacket(byte *s, int l)
 static void dns_ack(void)
 {
     struct sockaddr_in from;
-    int fromlen = sizeof(struct sockaddr_in);
+    unsigned int fromlen = sizeof(struct sockaddr_in);
     int r, i;
 
     Context;

@@ -2,7 +2,7 @@
  * blowfish.c -- part of blowfish.mod
  *   encryption and decryption of passwords
  * 
- * $Id: blowfish.c,v 1.8 1999/12/21 17:35:11 fabian Exp $
+ * $Id: blowfish.c,v 1.9 2000/01/06 19:45:03 fabian Exp $
  */
 /* 
  * The first half of this is very lightly edited from public domain
@@ -263,7 +263,7 @@ static void blowfish_encrypt_pass(char *text, char *new)
   int n;
   char *p;
 
-  blowfish_init(text, strlen(text));
+  blowfish_init((unsigned char *) text, strlen(text));
   left = SALT1;
   right = SALT2;
   blowfish_encipher(&left, &right);
@@ -302,7 +302,7 @@ static char *encrypt_string(char *key, char *str)
     p++;
   for (i = 0; i < 8; i++)
     *p++ = 0;
-  blowfish_init(key, strlen(key));
+  blowfish_init((unsigned char *) key, strlen(key));
   p = s;
   d = dest;
   while (*p) {
@@ -347,7 +347,7 @@ static char *decrypt_string(char *key, char *str)
     p++;
   for (i = 0; i < 12; i++)
     *p++ = 0;
-  blowfish_init(key, strlen(key));
+  blowfish_init((unsigned char *) key, strlen(key));
   p = s;
   d = dest;
   while (*p) {
@@ -450,7 +450,7 @@ char *blowfish_start(Function * global_funcs)
     module_register(MODULE_NAME, blowfish_table, 2, 0);
     if (!module_depend(MODULE_NAME, "eggdrop", 105, 0))
       return "This module requires eggdrop1.5.0 or later";
-    add_hook(HOOK_ENCRYPT_PASS, blowfish_encrypt_pass);
+    add_hook(HOOK_ENCRYPT_PASS, (Function) blowfish_encrypt_pass);
   }
   add_tcl_commands(mytcls);
   return NULL;

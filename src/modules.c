@@ -4,7 +4,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: modules.c,v 1.18 2000/01/01 19:42:29 fabian Exp $
+ * $Id: modules.c,v 1.19 2000/01/06 19:45:03 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -147,9 +147,9 @@ static void null_share(int idx, char *x)
 void (*encrypt_pass) (char *, char *) = 0;
 void (*shareout) () = null_func;
 void (*sharein) (int, char *) = null_share;
-void (*qserver) (int, char *, int) = null_func;
+void (*qserver) (int, char *, int) = (void (*)(int, char *, int)) null_func;
 void (*add_mode) () = null_func;
-int (*match_noterej) (struct userrec*, char *) = false_func;
+int (*match_noterej) (struct userrec *, char *) = (int (*)(struct userrec *, char *)) false_func;
 int (*rfc_casecmp) (const char *, const char *) = _rfc_casecmp;
 int (*rfc_ncasecmp) (const char *, const char *, int) = _rfc_ncasecmp;
 int (*rfc_toupper) (int) = _rfc_toupper;
@@ -636,9 +636,9 @@ const char *module_load(char *name)
     f = NULL;
 #else
 #ifdef OSF1_HACKS
-  f = ldr_lookup_package(hand, workbuf);
+  f = (Function) ldr_lookup_package(hand, workbuf);
 #else
-  f = dlsym(hand, workbuf);
+  f = (Function) dlsym(hand, workbuf);
 #endif
 #endif
   if (f == NULL) {		/* some OS's need the _ */
@@ -648,9 +648,9 @@ const char *module_load(char *name)
       f = NULL;
 #else
 #ifdef OSF1_HACKS
-    f = ldr_lookup_package(hand, workbuf);
+    f = (Function) ldr_lookup_package(hand, workbuf);
 #else
-    f = dlsym(hand, workbuf);
+    f = (Function) dlsym(hand, workbuf);
 #endif
 #endif
     if (f == NULL) {
@@ -873,7 +873,7 @@ void mod_free(void *ptr, char *modname, char *filename, int line)
 }
 
 /* hooks, various tables of functions to call on ceratin events */
-void add_hook(int hook_num, void *func)
+void add_hook(int hook_num, Function func)
 {
   Context;
   if (hook_num < REAL_HOOKS) {
@@ -890,29 +890,29 @@ void add_hook(int hook_num, void *func)
   } else
     switch (hook_num) {
     case HOOK_ENCRYPT_PASS:
-      encrypt_pass = func;
+      encrypt_pass = (void (*)(char *, char *)) func;
       break;
     case HOOK_SHAREOUT:
-      shareout = func;
+      shareout = (void (*)()) func;
       break;
     case HOOK_SHAREIN:
-      sharein = func;
+      sharein = (void (*)(int, char *)) func;
       break;
     case HOOK_QSERV:
-      if (qserver == null_func)
-	qserver = func;
+      if (qserver == (void (*)(int, char *, int)) null_func)
+	qserver = (void (*)(int, char *, int)) func;
       break;
     case HOOK_ADD_MODE:
-      if (add_mode == null_func)
-	add_mode = func;
+      if (add_mode == (void (*)()) null_func)
+	add_mode = (void (*)()) func;
       break;
     /* special hook <drummer> */
     case HOOK_RFC_CASECMP:
-      if (func == 0) {
-	rfc_casecmp = (void *) strcasecmp;
-	rfc_ncasecmp = (void *) strncasecmp;
-	rfc_tolower = (void *) tolower;
-	rfc_toupper = (void *) toupper;
+      if (func == NULL) {
+	rfc_casecmp = strcasecmp;
+	rfc_ncasecmp = (int (*)(const char *, const char *, int)) strncasecmp;
+	rfc_tolower = tolower;
+	rfc_toupper = toupper;
       } else {
 	rfc_casecmp = _rfc_casecmp;
 	rfc_ncasecmp = _rfc_ncasecmp;
@@ -926,16 +926,16 @@ void add_hook(int hook_num, void *func)
       break;
     case HOOK_DNS_HOSTBYIP:
       if (dns_hostbyip == block_dns_hostbyip)
-	dns_hostbyip = func;
+	dns_hostbyip = (void (*)(IP)) func;
       break;
     case HOOK_DNS_IPBYHOST:
       if (dns_ipbyhost == block_dns_ipbyhost)
-	dns_ipbyhost = func;
+	dns_ipbyhost = (void (*)(char *)) func;
       break;
     }
 }
 
-void del_hook(int hook_num, void *func)
+void del_hook(int hook_num, Function func)
 {
   Context;
   if (hook_num < REAL_HOOKS) {
@@ -956,23 +956,23 @@ void del_hook(int hook_num, void *func)
   } else
     switch (hook_num) {
     case HOOK_ENCRYPT_PASS:
-      if (encrypt_pass == func)
-	encrypt_pass = null_func;
+      if (encrypt_pass == (void (*)(char *, char *)) func)
+	encrypt_pass = (void (*)(char *, char *)) null_func;
       break;
     case HOOK_SHAREOUT:
-      if (shareout == func)
+      if (shareout == (void (*)()) func)
 	shareout = null_func;
       break;
     case HOOK_SHAREIN:
-      if (sharein == func)
+      if (sharein == (void (*)(int, char *)) func)
 	sharein = null_share;
       break;
     case HOOK_QSERV:
-      if (qserver == func)
+      if (qserver == (void (*)(int, char *, int)) func)
 	qserver = null_func;
       break;
     case HOOK_ADD_MODE:
-      if (add_mode == func)
+      if (add_mode == (void (*)()) func)
 	add_mode = null_func;
       break;
     case HOOK_MATCH_NOTEREJ:
@@ -980,11 +980,11 @@ void del_hook(int hook_num, void *func)
 	match_noterej = false_func;
       break;
     case HOOK_DNS_HOSTBYIP:
-      if (dns_hostbyip == func)
+      if (dns_hostbyip == (void (*)(IP)) func)
 	dns_hostbyip = block_dns_hostbyip;
       break;
     case HOOK_DNS_IPBYHOST:
-      if (dns_ipbyhost == func)
+      if (dns_ipbyhost == (void (*)(char *)) func)
 	dns_ipbyhost = block_dns_ipbyhost;
       break;
     }

@@ -2,7 +2,7 @@
  * global.h
  *   RSAREF types and constants
  * 
- * $Id: global.h,v 1.3 1999/12/21 17:35:10 fabian Exp $
+ * $Id: global.h,v 1.4 2000/01/06 19:45:03 fabian Exp $
  */
 
 #ifndef _EGG_MD5_GLOBAL_H
@@ -21,7 +21,7 @@
 #endif
 
 /* POINTER defines a generic pointer type */
-typedef unsigned char *POINTER;
+typedef char *POINTER;
 
 /* UINT4 defines a four byte word */
 typedef u_32bit_t UINT4;

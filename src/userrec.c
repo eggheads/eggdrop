@@ -6,7 +6,7 @@
  * 
  * dprintf'ized, 10nov1995
  * 
- * $Id: userrec.c,v 1.11 2000/01/06 19:42:09 fabian Exp $
+ * $Id: userrec.c,v 1.12 2000/01/06 19:45:03 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -666,10 +666,11 @@ struct userrec *adduser(struct userrec *bu, char *handle, char *host,
   noshare = oldshare;
   if ((!noshare) && (handle[0] != '*') && (!(flags & USER_UNSHARED)) &&
       (bu == userlist)) {
-    struct flag_record fr =
-    {FR_GLOBAL, u->flags, u->flags_udef, 0, 0, 0};    
+    struct flag_record fr = {FR_GLOBAL, 0, 0, 0, 0, 0};    
     char x[100];
 
+    fr.global = u->flags;
+    fr.udef_global = u->flags_udef;
     build_flags(x, &fr, 0);
     shareout(NULL, "n %s %s %s %s\n", handle, host, pass, x);
   }

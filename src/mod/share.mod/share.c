@@ -1,7 +1,7 @@
 /* 
  * share.c -- part of share.mod
  * 
- * $Id: share.c,v 1.17 2000/01/06 19:42:10 fabian Exp $
+ * $Id: share.c,v 1.18 2000/01/06 19:45:06 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1111,7 +1111,7 @@ static void share_endstartup(int idx, char *par)
   dcc[idx].status &= ~STAT_GETTING;
   /* Send to any other sharebots */
   hook_read_userfile();
-};
+}
 
 static void share_end(int idx, char *par)
 {
@@ -1946,10 +1946,10 @@ static char *share_close()
       dcc[i].status &= ~(STAT_SHARE | STAT_GETTING | STAT_SENDING |
 			 STAT_OFFERED | STAT_AGGRESSIVE | STAT_OVERRIDE);
     }
-  del_hook(HOOK_SHAREOUT, shareout_mod);
-  del_hook(HOOK_SHAREIN, sharein_mod);
-  del_hook(HOOK_MINUTELY, check_expired_tbufs);
-  del_hook(HOOK_READ_USERFILE, hook_read_userfile);
+  del_hook(HOOK_SHAREOUT, (Function) shareout_mod);
+  del_hook(HOOK_SHAREIN, (Function) sharein_mod);
+  del_hook(HOOK_MINUTELY, (Function) check_expired_tbufs);
+  del_hook(HOOK_READ_USERFILE, (Function) hook_read_userfile);
   DCC_BOT.kill = def_dcc_bot_kill;
   rem_tcl_ints(my_ints);
   rem_tcl_strings(my_strings);
@@ -2056,10 +2056,10 @@ char *share_start(Function * global_funcs)
     module_undepend(MODULE_NAME);
     return "You need the channels module to use userfile sharing";
   }
-  add_hook(HOOK_SHAREOUT, shareout_mod);
-  add_hook(HOOK_SHAREIN, sharein_mod);
-  add_hook(HOOK_MINUTELY, check_expired_tbufs);
-  add_hook(HOOK_READ_USERFILE, hook_read_userfile);
+  add_hook(HOOK_SHAREOUT, (Function) shareout_mod);
+  add_hook(HOOK_SHAREIN, (Function) sharein_mod);
+  add_hook(HOOK_MINUTELY, (Function) check_expired_tbufs);
+  add_hook(HOOK_READ_USERFILE, (Function) hook_read_userfile);
   add_help_reference("share.help");
   for (i = 0; i < 5; i++) {
     tbuf[i].q = NULL;

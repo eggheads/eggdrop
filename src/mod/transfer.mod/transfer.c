@@ -1,7 +1,7 @@
 /* 
  * transfer.c -- part of transfer.mod
  * 
- * $Id: transfer.c,v 1.16 2000/01/02 02:42:13 fabian Exp $
+ * $Id: transfer.c,v 1.17 2000/01/06 19:45:06 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -802,8 +802,8 @@ inline static void handle_resend_packet(int idx, transfer_reget *reget_data)
  */
 static void dcc_get(int idx, char *buf, int len)
 {
-  char xnick[NICKLEN];
-  unsigned char bbuf[4], *bf;
+  char xnick[NICKLEN], *bf;
+  unsigned char bbuf[4];
   unsigned long cmp, l;
   int w = len + dcc[idx].u.xfer->sofar, p = 0;
 
@@ -931,7 +931,7 @@ static void dcc_get(int idx, char *buf, int len)
   l = dcc_block;
   if ((l == 0) || (dcc[idx].status + l > dcc[idx].u.xfer->length))
     l = dcc[idx].u.xfer->length - dcc[idx].status;
-  bf = (unsigned char *) nmalloc(l + 1);
+  bf = (char *) nmalloc(l + 1);
   fread(bf, l, 1, dcc[idx].u.xfer->f);
   tputs(dcc[idx].sock, bf, l);
   nfree(bf);

@@ -4,7 +4,7 @@
  * 
  * Written by Fabian Knittel <fknittel@gmx.de>
  * 
- * $Id: dns.c,v 1.7 2000/01/02 02:42:11 fabian Exp $
+ * $Id: dns.c,v 1.8 2000/01/06 19:45:05 fabian Exp $
  */
 /* 
  * Copyright (C) 1999  Eggheads
@@ -193,9 +193,9 @@ static char *dns_close()
   int i;
 
   Context;
-  del_hook(HOOK_DNS_HOSTBYIP, dns_lookup);
-  del_hook(HOOK_DNS_IPBYHOST, dns_forward);
-  del_hook(HOOK_SECONDLY, dns_check_expires);
+  del_hook(HOOK_DNS_HOSTBYIP, (Function) dns_lookup);
+  del_hook(HOOK_DNS_IPBYHOST, (Function) dns_forward);
+  del_hook(HOOK_SECONDLY, (Function) dns_check_expires);
   rem_builtins(H_dcc, dns_dcc);
 
   Context;
@@ -245,9 +245,9 @@ char *dns_start(Function *global_funcs)
   Context;
   module_register(MODULE_NAME, dns_table, 1, 0);
   Context;
-  add_hook(HOOK_SECONDLY, dns_check_expires);
-  add_hook(HOOK_DNS_HOSTBYIP, dns_lookup);
-  add_hook(HOOK_DNS_IPBYHOST, dns_forward);
+  add_hook(HOOK_SECONDLY, (Function) dns_check_expires);
+  add_hook(HOOK_DNS_HOSTBYIP, (Function) dns_lookup);
+  add_hook(HOOK_DNS_IPBYHOST, (Function) dns_forward);
   add_builtins(H_dcc, dns_dcc);
   Context;
   return NULL;

@@ -4,7 +4,7 @@
  * 
  * Written by Fabian Knittel <fknittel@gmx.de>
  * 
- * $Id: dns.h,v 1.4 2000/01/02 02:42:11 fabian Exp $
+ * $Id: dns.h,v 1.5 2000/01/06 19:45:05 fabian Exp $
  */
 /* 
  * Copyright (C) 1999  Eggheads
@@ -54,11 +54,11 @@ struct resolve {
     byte		sends;
 };
 
-enum {
+enum resolve_states {
     STATE_FINISHED,
     STATE_FAILED,
     STATE_PTRREQ,
-    STATE_AREQ,
+    STATE_AREQ
 };
 
 #define IS_PTR(x) (x->state == STATE_PTRREQ)
