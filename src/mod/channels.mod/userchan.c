@@ -273,7 +273,7 @@ static int u_setsticky_invite (struct chanset_t * chan, char * uhost, int sticky
       if (!j)
 	strcpy(uhost,u->invitemask);
       if (!noshare) {
-	shareout(chan,"si %s %d %s\n", uhost, sticky,
+	shareout(chan,"sInv %s %d %s\n", uhost, sticky,
 		 chan?chan->name:"");
       }
       return 1;
@@ -468,9 +468,9 @@ static int u_delinvite (struct chanset_t * c, char * who, int doit)
     if (!noshare) {
       /* distribute chan invites differently */
       if (c)
-	shareout(c,"-Ic %s %s\n", c->name, who);
+	shareout(c,"-Invc %s %s\n", c->name, who);
       else 
-	shareout(NULL,"-I %s\n", who);
+	shareout(NULL,"-Inv %s\n", who);
     }
     if (!c)
       ginvite_total --;
@@ -612,11 +612,11 @@ static int u_addinvite (struct chanset_t * chan, char * invite, char * from,
   strcpy(p->desc,note);
   if (!noshare) {
     if (!chan)
-      shareout(NULL,"+I %s %lu %s%s %s %s\n", host, expire_time - now,
+      shareout(NULL,"+Inv %s %lu %s%s %s %s\n", host, expire_time - now,
 	       (flags & INVITEREC_STICKY) ? "s" : "",
 	       (flags & INVITEREC_PERM) ? "p": "-", from, note);
     else 
-      shareout(chan,"+Ic %s %lu %s %s%s %s %s\n", host, expire_time - now,
+      shareout(chan,"+Invc %s %lu %s %s%s %s %s\n", host, expire_time - now,
 	       chan->name, (flags & INVITEREC_STICKY) ? "s" : "",
 	       (flags & INVITEREC_PERM) ? "p": "-", from, note);
   }
