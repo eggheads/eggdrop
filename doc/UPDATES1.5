@@ -5,6 +5,8 @@ Changes in eggdrop: (since v1.5.0)
 
 1.5.5
 Foundby   Fixedby   What....
+          Cybah     flush_mode() cleanups. -{b,e,I} now sent before +{b,e,I}.
+                      used egg_strcatn to make buffer-overflow free.
           Fabian    Fixed caching for tcl configuration details. As soon as
                       different libraries are detected, we discard cached
                       values.

@@ -4,7 +4,7 @@
  *   channel mode changes and the bot's reaction to them
  *   setting and getting the current wanted channel modes
  * 
- * $Id: mode.c,v 1.35 2000/09/18 20:04:58 fabian Exp $
+ * $Id: mode.c,v 1.36 2000/10/02 00:18:07 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -41,109 +41,123 @@ static struct flag_record victim = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
 
 static void flush_mode(struct chanset_t *chan, int pri)
 {
-  char *p, out[512], post[512];
-  int i, ok = 0;
+  char		*p, out[512], post[512];
+  size_t	postsize = sizeof(post);
+  int		i, plus = 2;		/* 0 = '-', 1 = '+', 2 = none */
 
   p = out;
-  post[0] = 0;
-  if (chan->pls[0])
-    *p++ = '+';
-  for (i = 0; i < strlen(chan->pls); i++)
-    *p++ = chan->pls[i];
-  if (chan->mns[0])
-    *p++ = '-';
-  for (i = 0; i < strlen(chan->mns); i++)
-    *p++ = chan->mns[i];
-  chan->pls[0] = 0;
-  chan->mns[0] = 0;
+  post[0] = 0, postsize--;
+
+  if (chan->mns[0]) {
+    *p++ = '-', plus = 0;
+    for (i = 0; i < strlen(chan->mns); i++)
+      *p++ = chan->mns[i];
+    chan->mns[0] = 0;
+  }
+
+  if (chan->pls[0]) {
+    *p++ = '+', plus = 1;
+    for (i = 0; i < strlen(chan->pls); i++)
+      *p++ = chan->pls[i];
+    chan->pls[0] = 0;
+  }
+  
   chan->bytes = 0;
   chan->compat = 0;
-  ok = 0;
+
   /* +k or +l ? */
-  if (chan->key != NULL) {
-    if (!ok) {
-      *p++ = '+';
-      ok = 1;
+  if (chan->key) {
+    if (plus != 1) {
+      *p++ = '+', plus = 1;
     }
     *p++ = 'k';
-    strcat(post, chan->key);
-    strcat(post, " ");
-    nfree(chan->key);
-    chan->key = NULL;
+
+    postsize -= egg_strcatn(post, chan->key, sizeof(post));
+    postsize -= egg_strcatn(post, " ", sizeof(post));
+    
+    nfree(chan->key), chan->key = NULL;
   }
-  if (chan->limit != -1) {
-    if (!ok) {
-      *p++ = '+';
-      ok = 1;
+  
+  /* max +l is signed 2^32 on ircnet at least... so makesure we've got at least
+   * a 13 char buffer for '-2147483647 \0'. We'll be overwriting the existing
+   * terminating null in 'post', so makesure postsize >= 12.
+   */
+  if (chan->limit != -1 && postsize >= 12) {
+    if (plus != 1) {
+      *p++ = '+', plus = 1;
     }
     *p++ = 'l';
-    sprintf(&post[strlen(post)], "%d ", chan->limit);
+    
+    /* 'sizeof(post) - 1' is used because we want to overwrite the old null */
+    postsize -= sprintf(&post[(sizeof(post) - 1) - postsize], "%d ", chan->limit);
+    
     chan->limit = -1;
   }
-  /* Do -b before +b to avoid server ban overlap ignores */
-  for (i = 0; i < modesperline; i++)
-    if ((chan->cmode[i].type & MINUS) && (chan->cmode[i].type & BAN)) {
-      if (ok < 2) {
-	*p++ = '-';
-	ok = 2;
-      }
-      *p++ = 'b';
-      strcat(post, chan->cmode[i].op);
-      strcat(post, " ");
-      nfree(chan->cmode[i].op);
-      chan->cmode[i].op = NULL;
-    }
-  ok &= 1;
-  for (i = 0; i < modesperline; i++)
-    if (chan->cmode[i].type & PLUS) {
-      if (!ok) {
-	*p++ = '+';
-	ok = 1;
-      }
-      *p++ = ((chan->cmode[i].type & BAN) ? 'b' :
-	      ((chan->cmode[i].type & CHOP) ? 'o' : 
-	       ((chan->cmode[i].type & EXEMPT) ? 'e' : 
-		((chan->cmode[i].type & INVITE) ? 'I' : 'v'))));
-      strcat(post, chan->cmode[i].op);
-      strcat(post, " ");
-      nfree(chan->cmode[i].op);
-      chan->cmode[i].op = NULL;
-    }
-  ok = 0;
+  
   /* -k ? */
-  if (chan->rmkey != NULL) {
-    if (!ok) {
-      *p++ = '-';
-      ok = 1;
+  if (chan->rmkey) {
+    if (plus) {
+      *p++ = '-', plus = 0;
     }
     *p++ = 'k';
-    strcat(post, chan->rmkey);
-    strcat(post, " ");
-    nfree(chan->rmkey);
-    chan->rmkey = NULL;
+
+    postsize -= egg_strcatn(post, chan->rmkey, sizeof(post));
+    postsize -= egg_strcatn(post, " ", sizeof(post));
+    
+    nfree(chan->rmkey), chan->rmkey = NULL;
   }
-  for (i = 0; i < modesperline; i++)
-    if ((chan->cmode[i].type & MINUS) && !(chan->cmode[i].type & BAN)) {
-      if (!ok) {
-	*p++ = '-';
-	ok = 1;
+
+  /* Do -{b,e,I} before +{b,e,I} to avoid the server ignoring overlaps */
+  for (i = 0; i < modesperline; i++) {
+    if (chan->cmode[i].type & MINUS && postsize > strlen(chan->cmode[i].op)) {
+      if (plus) {
+        *p++ = '-', plus = 0;
       }
-	 *p++ = ((chan->cmode[i].type & CHOP) ? 'o' : 
-		 ((chan->cmode[i].type & EXEMPT) ? 'e' : 
-		  ((chan->cmode[i].type & INVITE) ? 'I' : 'v')));
-      strcat(post, chan->cmode[i].op);
-      strcat(post, " ");
-      nfree(chan->cmode[i].op);
-      chan->cmode[i].op = NULL;
+      
+      *p++ = ((chan->cmode[i].type & BAN) ? 'b' :
+              ((chan->cmode[i].type & CHOP) ? 'o' : 
+               ((chan->cmode[i].type & EXEMPT) ? 'e' : 
+                ((chan->cmode[i].type & INVITE) ? 'I' : 'v'))));
+      
+      postsize -= egg_strcatn(post, chan->cmode[i].op, sizeof(post));
+      postsize -= egg_strcatn(post, " ", sizeof(post));
+      
+      nfree(chan->cmode[i].op), chan->cmode[i].op = NULL;
+      chan->cmode[i].type = 0;
     }
+  }
+  
+  /* now do all the + modes... */
+  for (i = 0; i < modesperline; i++) {
+    if (chan->cmode[i].type & PLUS && postsize > strlen(chan->cmode[i].op)) {
+      if (plus != 1) {
+        *p++ = '+', plus = 1;
+      }
+
+      *p++ = ((chan->cmode[i].type & BAN) ? 'b' :
+              ((chan->cmode[i].type & CHOP) ? 'o' : 
+               ((chan->cmode[i].type & EXEMPT) ? 'e' : 
+                ((chan->cmode[i].type & INVITE) ? 'I' : 'v'))));
+
+      postsize -= egg_strcatn(post, chan->cmode[i].op, sizeof(post));
+      postsize -= egg_strcatn(post, " ", sizeof(post));
+
+      nfree(chan->cmode[i].op), chan->cmode[i].op = NULL;
+      chan->cmode[i].type = 0;
+    }
+  }
+  
+  /* remember to terminate the buffer ('out')... */
   *p = 0;
-  for (i = 0; i < modesperline; i++)
-    chan->cmode[i].type = 0;
-  if (post[0] && post[strlen(post) - 1] == ' ')
-    post[strlen(post) - 1] = 0;
+
   if (post[0]) {
-    strcat(out, " ");
-    strcat(out, post);
+    /* remove the trailing space... */
+    size_t index = (sizeof(post) - 1) - postsize;
+    if (index > 0 && post[index - 1] == ' ')
+      post[index - 1] = 0;
+
+    egg_strcatn(out, " ", sizeof(out));
+    egg_strcatn(out, post, sizeof(out));
   }
   if (out[0]) {
     if (pri == QUICK)
@@ -276,6 +290,7 @@ static void real_add_mode(struct chanset_t *chan,
 	break;
       }
   }
+
   /* +k ? store key */
   else if (plus == '+' && mode == 'k') {
     if (chan->key)
