@@ -641,9 +641,9 @@ static void share_pls_ban(int idx, char *par)
     tm = newsplit(&par);
     from = newsplit(&par);
     if (strchr(from, 's'))
-      flags |= BANREC_STICKY;
+      flags |= MASKREC_STICKY;
     if (strchr(from, 'p'))
-      flags |= BANREC_PERM;
+      flags |= MASKREC_PERM;
     from = newsplit(&par);
     expire_time = (time_t) atoi(tm);
     if (expire_time != 0L)
@@ -678,9 +678,9 @@ static void share_pls_banchan(int idx, char *par)
       shareout_but(chan, idx, "+bc %s %s %s %s\n", ban, tm, chname, par);
       from = newsplit(&par);
       if (strchr(from, 's'))
-	flags |= BANREC_STICKY;
+	flags |= MASKREC_STICKY;
       if (strchr(from, 'p'))
-	flags |= BANREC_PERM;
+	flags |= MASKREC_PERM;
       from = newsplit(&par);
       putlog(LOG_CMDS, "*", "%s: ban %s on %s (%s:%s)", dcc[idx].nick,
 	     ban, chname, from, par);
@@ -707,9 +707,9 @@ static void share_pls_exempt (int idx, char * par) {
     tm = newsplit(&par);
     from = newsplit(&par);
     if (strchr(from,'s'))
-      flags |= EXEMPTREC_STICKY;
+      flags |= MASKREC_STICKY;
     if (strchr(from,'p'))
-      flags |= EXEMPTREC_PERM;
+      flags |= MASKREC_PERM;
     from = newsplit(&par);
     expire_time = (time_t) atoi(tm);
     if (expire_time != 0L)
@@ -743,9 +743,9 @@ static void share_pls_exemptchan (int idx, char * par) {
       shareout_but(chan,idx, "+ec %s %s %s %s\n", exempt, tm, chname, par);
       from = newsplit(&par);
       if (strchr(from,'s'))
-	flags |= EXEMPTREC_STICKY;
+	flags |= MASKREC_STICKY;
       if (strchr(from,'p'))
-	flags |= EXEMPTREC_PERM;
+	flags |= MASKREC_PERM;
       from = newsplit(&par);
       putlog(LOG_CMDS, "*", "%s: exempt %s on %s (%s:%s)", dcc[idx].nick,
 	     exempt, chname, from, par);
@@ -772,9 +772,9 @@ static void share_pls_invite (int idx, char * par) {
      tm = newsplit(&par);
      from = newsplit(&par);
      if (strchr(from,'s'))
-       flags |= INVITEREC_STICKY;
+       flags |= MASKREC_STICKY;
      if (strchr(from,'p'))
-       flags |= INVITEREC_PERM;
+       flags |= MASKREC_PERM;
      from = newsplit(&par);
      expire_time = (time_t) atoi(tm);
      if (expire_time != 0L)
@@ -808,9 +808,9 @@ static void share_pls_invitechan (int idx, char * par) {
        shareout_but(chan,idx, "+invc %s %s %s %s\n", invite, tm, chname, par);
        from = newsplit(&par);
        if (strchr(from,'s'))
-	 flags |= INVITEREC_STICKY;
+	 flags |= MASKREC_STICKY;
        if (strchr(from,'p'))
-	 flags |= INVITEREC_PERM;
+	 flags |= MASKREC_PERM;
        from = newsplit(&par);
        putlog(LOG_CMDS, "*", "%s: invite %s on %s (%s:%s)", dcc[idx].nick,
 	      invite, chname, from, par);
@@ -1502,23 +1502,23 @@ static void finish_share(int idx)
 
     fr.match = (FR_CHAN | FR_BOT);
     while (global_bans)
-      u_delban(NULL, global_bans->banmask, 1);
+      u_delban(NULL, global_bans->mask, 1);
     while (global_ign)
       delignore(global_ign->igmask);
     while (global_invites)
-      u_delinvite(NULL, global_invites->invitemask, 1);
+      u_delinvite(NULL, global_invites->mask, 1);
     while (global_exempts)
-      u_delexempt(NULL, global_exempts->exemptmask, 1);
+      u_delexempt(NULL, global_exempts->mask, 1);
     for (chan = chanset;chan;chan=chan->next) {
       if (channel_shared(chan)) {
         get_user_flagrec(dcc[j].user, &fr, chan->name);
         if (bot_chan(fr) || bot_global(fr)) {
       while (chan->bans)
-	    u_delban(chan, chan->bans->banmask, 1);
+	    u_delban(chan, chan->bans->mask, 1);
       while (chan->exempts)
-	    u_delexempt(chan,chan->exempts->exemptmask,1);
+	    u_delexempt(chan,chan->exempts->mask,1);
       while (chan->invites)
-        u_delinvite(chan,chan->invites->invitemask,1);
+        u_delinvite(chan,chan->invites->mask,1);
         }
       }
     }

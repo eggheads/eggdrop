@@ -293,72 +293,26 @@ static int hand_on_chan(struct chanset_t *chan, struct userrec *u)
   return 0;
 }
 
-/* adds a ban to the list */
-static void newban(struct chanset_t *chan, char *s, char *who)
+/* adds a ban, exempt or invite mask to the list
+ * m should be chan->channel.(exempt|invite|ban)
+ */
+static void newmask(masklist *m, char *s, char *who)
 {
-  banlist *b;
+  while (m->mask[0] && rfc_casecmp(m->mask, s))
+    m = m->next;
+  if (m->mask[0])
+    return;			/* already existent mask */
 
-  b = chan->channel.ban;
-  while (b->ban[0] && rfc_casecmp(b->ban, s))
-    b = b->next;
-  if (b->ban[0])
-    return;			/* already existent ban */
-  b->next = (banlist *) channel_malloc(sizeof(banlist));
-  b->next->next = NULL;
-  b->next->ban = (char *) channel_malloc(1);
-  b->next->ban[0] = 0;
-  nfree(b->ban);
-  b->ban = (char *) channel_malloc(strlen(s) + 1);
-  strcpy(b->ban, s);
-  b->who = (char *) channel_malloc(strlen(who) + 1);
-  strcpy(b->who, who);
-  b->timer = now;
-}
-
-/* add a ban exemption to the list - Daemus - 2/3/1999 */
-static void newexempt(struct chanset_t *chan, char *s, char *who)
-{
-  exemptlist *e;
-
-  context;
-  e = chan->channel.exempt;
-  while (e->exempt[0] && rfc_casecmp(e->exempt, s))
-    e = e->next;
-  if (e->exempt[0])
-    return;			/* already existent exemption */
-  e->next = (exemptlist *) channel_malloc(sizeof(exemptlist));
-  e->next->next = NULL;
-  e->next->exempt = (char *) channel_malloc(1);
-  e->next->exempt[0] = 0;
-  nfree(e->exempt);
-  e->exempt = (char *) channel_malloc(strlen(s) + 1);
-  strcpy(e->exempt, s);
-  e->who = (char *) channel_malloc(strlen(who) + 1);
-  strcpy(e->who, who);
-  e->timer = now;
-}
-
-/* add an invite exemption to the list - Daemus - 2/3/1999 */
-static void newinvite(struct chanset_t *chan, char *s, char *who)
-{
-  invitelist *inv;
-  
-  context;
-  inv = chan->channel.invite;
-  while (inv->invite[0] && rfc_casecmp(inv->invite, s))
-    inv = inv->next;
-  if (inv->invite[0])
-    return;			/* already existent invitation */
-  inv->next = (invitelist *) channel_malloc(sizeof(invitelist));
-  inv->next->next = NULL;
-  inv->next->invite = (char *) channel_malloc(1);
-  inv->next->invite[0] = 0;
-  nfree(inv->invite);
-  inv->invite = (char *) channel_malloc(strlen(s) + 1);
-  strcpy(inv->invite, s);
-  inv->who = (char *) channel_malloc(strlen(who) + 1);
-  strcpy(inv->who, who);
-  inv->timer = now;
+  m->next = (masklist *)channel_malloc(sizeof(masklist));
+  m->next->next = NULL;
+  m->next->mask = (char *)channel_malloc(1);
+  m->next->mask[0] = 0;
+  nfree(m->mask);
+  m->mask = (char *) channel_malloc(strlen(s) + 1);
+  strcpy(m->mask, s);
+  m->who = (char *)channel_malloc(strlen(who) + 1);
+  strcpy(m->who, who);
+  m->timer = now;
 }
 
 /* removes a nick from the channel member list (returns 1 if successful) */
@@ -453,40 +407,32 @@ static void reset_chan_info(struct chanset_t *chan)
 /* log the channel members */
 static void log_chans()
 {
-  banlist *b;
-  exemptlist *e;
-  invitelist *i;
+  masklist *b;
   memberlist *m;
   struct chanset_t *chan;
-  int chops, bans, invites,exempts;
-  chan = chanset;
-  while (chan != NULL) {
-    if (channel_active(chan) && channel_logstatus(chan) && !channel_inactive(chan)) {    
-      m = chan->channel.member;
+  int chops, bans, invites, exempts;
+  
+  for (chan = chanset; chan != NULL; chan = chan->next) {
+    if (channel_active(chan) && channel_logstatus(chan) &&
+        !channel_inactive(chan)) {
       chops = 0;
-      while (m->nick[0]) {
+      for (m = chan->channel.member; m->nick[0]; m = m->next) {
 	if (chan_hasop(m))
 	  chops++;
-	m = m->next;
       }
-      b = chan->channel.ban;
+
       bans = 0;
-      while (b->ban[0]) {
+      for (b = chan->channel.ban; b->mask[0]; b = b->next)
 	bans++;
-	b = b->next;
-      }
-      e = chan->channel.exempt;
+
       exempts = 0;
-      while (e->exempt[0]) {
+      for (b = chan->channel.exempt; b->mask[0]; b = b->next)
 	exempts++;
-	e = e->next;
-      }
-      i = chan->channel.invite;
+
       invites = 0;
-      while (i->invite[0]) {
+      for (b = chan->channel.invite; b->mask[0]; b = b->next)
 	invites++;
-	i = i->next;
-      }
+
       putlog(LOG_MISC, chan->name, "%-10s: %d member%c (%d chop%s, %2d ba%s %s",
 	     chan->name, chan->channel.members, chan->channel.members == 1 ? ' ' : 's',
 	     chops, chops == 1 ? ")" : "s)", bans, bans == 1 ? "n" : "ns", me_op(chan) ? "" :
@@ -497,7 +443,6 @@ static void log_chans()
 	       exempts == 1 ? "n" : "ns", invites, invites == 1 ? "e" : "es");
       }
     }
-    chan = chan->next;
   }
 }
 
@@ -574,9 +519,7 @@ static void check_lonely_channel(struct chanset_t *chan)
 
 static void check_expired_chanstuff()
 {
-  banlist *b;
-  exemptlist *e;
-  invitelist *inv;
+  masklist *b, *e;
   memberlist *m, *n;
   char s[UHOSTLEN], *snick, *sfrom;
   struct chanset_t *chan;
@@ -597,10 +540,10 @@ static void check_expired_chanstuff()
       dprintf(DP_MODE, "PART %s\n", chan->name);
     }
     if (channel_dynamicbans(chan) && me_op(chan) && !channel_inactive(chan) && ismember(chan, botname)) {
-      for (b = chan->channel.ban; b->ban[0]; b = b->next) {
+      for (b = chan->channel.ban; b->mask[0]; b = b->next) {
 	if ((ban_time != 0) && (((now - b->timer) > (60 * ban_time)) &&
-				!u_sticky_ban(chan->bans, b->ban) &&
-				!u_sticky_ban(global_bans, b->ban))) {
+				!u_sticky_mask(chan->bans, b->mask) &&
+				!u_sticky_mask(global_bans, b->mask))) {
 	  strcpy(s, b->who); sfrom = s; snick = splitnick(&sfrom);
 	  if (force_expire || channel_clearbans(chan) ||
 	      !(snick[0] && strcasecmp(sfrom, botuserhost) &&
@@ -608,8 +551,8 @@ static void check_expired_chanstuff()
 		m->user && (m->user->flags & USER_BOT) && chan_hasop(m))) {
 	  putlog(LOG_MODES, chan->name,
 		 "(%s) Channel ban on %s expired.",
-		 chan->name, b->ban);
-	  add_mode(chan, '-', 'b', b->ban);
+		 chan->name, b->mask);
+	  add_mode(chan, '-', 'b', b->mask);
 	  b->timer = now;
 	}
       }
@@ -617,11 +560,11 @@ static void check_expired_chanstuff()
     }
     if (use_exempts == 1) {
       if (channel_dynamicexempts(chan) && me_op(chan)) {
-	for (e = chan->channel.exempt; e->exempt[0]; e = e->next) {
+	for (e = chan->channel.exempt; e->mask[0]; e = e->next) {
 	  if ((exempt_time != 0) && 
 	      (((now - e->timer) > (60 * exempt_time)) &&
-	       !u_sticky_exempt(chan->exempts, e->exempt) && 
-	       !u_sticky_exempt(global_exempts,e->exempt))) {
+	       !u_sticky_mask(chan->exempts, e->mask) && 
+	       !u_sticky_mask(global_exempts, e->mask))) {
  	    strcpy(s, e->who); sfrom = s; snick = splitnick(&sfrom);
 	    if (force_expire || channel_clearbans(chan) ||
 		!(snick[0] && strcasecmp(sfrom, botuserhost) &&
@@ -632,9 +575,8 @@ static void check_expired_chanstuff()
          * Jason */
         int match = 0;
         b = chan->channel.ban;
-        while (b->ban[0] && !match) {
-          if (wild_match(b->ban, e->exempt) ||
-              wild_match(e->exempt,b->ban))
+        while (b->mask[0] && !match) {
+          if (wild_match(b->mask, e->mask) || wild_match(e->mask, b->mask))
             match=1;
           else
             b = b->next;
@@ -642,12 +584,12 @@ static void check_expired_chanstuff()
         if (match) {
 		  putlog(LOG_MODES, chan->name,
              "(%s) Channel exemption %s NOT expired. Ban still set!",
-		     chan->name, e->exempt);
+		     chan->name, e->mask);
 	    } else {
 	      putlog(LOG_MODES, chan->name,
 		     "(%s) Channel exemption on %s expired.",
-		     chan->name, e->exempt);
-	      add_mode(chan, '-', 'e', e->exempt);
+		     chan->name, e->mask);
+	      add_mode(chan, '-', 'e', e->mask);
 	    }
 	    e->timer = now;
 	  }
@@ -658,29 +600,29 @@ static void check_expired_chanstuff()
 
     if (use_invites == 1) {
       if (channel_dynamicinvites(chan) && me_op(chan)) {
-	for (inv = chan->channel.invite; inv->invite[0]; inv = inv->next) {
+	for (b = chan->channel.invite; b->mask[0]; b = b->next) {
 	  if ((invite_time != 0) &&
-	      (((now - inv->timer) > (60 * invite_time)) &&
-	       !u_sticky_invite(chan->invites, inv->invite) && 
-	       !u_sticky_invite(global_invites,inv->invite))) {
- 	    strcpy(s, inv->who); sfrom = s; snick = splitnick(&sfrom);
+	      (((now - b->timer) > (60 * invite_time)) &&
+	       !u_sticky_mask(chan->invites, b->mask) && 
+	       !u_sticky_mask(global_invites, b->mask))) {
+ 	    strcpy(s, b->who); sfrom = s; snick = splitnick(&sfrom);
 	    if (force_expire || channel_clearbans(chan) ||
 		!(snick[0] && strcasecmp(sfrom, botuserhost) &&
 		  (m=ismember(chan, snick)) &&
 		  m->user && (m->user->flags & USER_BOT) && chan_hasop(m))) {
-        if ((chan->channel.mode & CHANINV) && isinvited(chan,inv->invite)) {
+        if ((chan->channel.mode & CHANINV) && isinvited(chan, b->mask)) {
 	      /*Leave this extra logging in for now. Can be removed later
 	       * Jason */
 	      putlog(LOG_MODES, chan->name,
              "(%s) Channel invitation %s NOT expired. i mode still set!",
-		     chan->name, inv->invite);
+		     chan->name, b->mask);
 	    } else {
 	      putlog(LOG_MODES, chan->name,
 		     "(%s) Channel invitation on %s expired.",
-		     chan->name, inv->invite);
-	      add_mode(chan, '-', 'I', inv->invite);
+		     chan->name, b->mask);
+	      add_mode(chan, '-', 'I', b->mask);
 	    }
-	    inv->timer = now;
+	    b->timer = now;
 	    }
 	  }
 	}

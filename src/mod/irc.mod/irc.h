@@ -24,23 +24,31 @@ static int any_ops(struct chanset_t *);
 static int hand_on_chan(struct chanset_t *, struct userrec *);
 static char *getchanmode(struct chanset_t *);
 static void flush_mode(struct chanset_t *, int);
-static void resetbans(struct chanset_t *);
-static void resetexempts(struct chanset_t *);
-static void resetinvites(struct chanset_t *);
+
+/*        reset(bans|exempts|invites) are now just macros that call resetmasks
+ *      in order to reduce the code duplication. <cybah>
+ */
+
+#define resetbans(chan)         resetmasks((chan), (chan)->channel.ban, (chan)->bans, global_bans, 'b')
+#define resetexempts(chan)      resetmasks((chan), (chan)->channel.ban, (chan)->exempts, global_exempts, 'e')
+#define resetinvites(chan)      resetmasks((chan), (chan)->channel.ban, (chan)->invites, global_invites, 'I')
+
 static void reset_chan_info(struct chanset_t *);
 static void recheck_channel(struct chanset_t *, int);
 static void set_key(struct chanset_t *, char *);
 static void maybe_revenge(struct chanset_t *, char *, char *, int);
 static int detect_chan_flood(char *, char *, char *, struct chanset_t *, int, char *);
-static void newban(struct chanset_t *, char *, char *);
-static void newexempt(struct chanset_t *, char *, char *);
-static void newinvite(struct chanset_t *, char *, char *);
+static void newmask(masklist *, char *, char *);
 static char *quickban(struct chanset_t *, char *);
 static void got_op(struct chanset_t *chan, char *nick, char *from,
 		   char *who, struct flag_record *opper);
 static int killmember(struct chanset_t *chan, char *nick);
 static void check_lonely_channel(struct chanset_t *chan);
 static void gotmode(char *, char *);
+
+#define newban(chan, mask, who)         newmask((chan)->channel.ban, mask, who)
+#define newexempt(chan, mask, who)      newmask((chan)->channel.exempt, mask, who)
+#define newinvite(chan, mask, who)      newmask((chan)->channel.invite, mask, who)
 
 #else
 /* 4 - 7 */

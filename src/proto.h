@@ -29,10 +29,8 @@ void bzero(char *, int);
 
 struct chanset_t;		/* keeps the compiler warnings down :) */
 struct userrec;
-struct banrec;
+struct maskrec;
 struct igrec;
-struct exemptrec;
-struct inviterec;
 struct flag_record;
 struct list_type;
 struct tand_t_struct;
@@ -230,6 +228,7 @@ int xtra_set();
 /* userrec.c */
 struct userrec *adduser(struct userrec *, char *, char *, char *, int);
 void addhost_by_handle(char *, char *);
+void clear_masks(struct maskrec *);
 void clear_userlist(struct userrec *);
 int u_pass_match(struct userrec *, char *);
 int delhost_by_handle(char *, char *);

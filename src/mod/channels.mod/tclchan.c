@@ -173,10 +173,10 @@ static int tcl_isban STDVAR
       Tcl_AppendResult(irp, "invalid channel: ", argv[2], NULL);
       return TCL_ERROR;
     }
-    if (u_equals_ban(chan->bans, argv[1]))
+    if (u_equals_mask(chan->bans, argv[1]))
       ok = 1;
   }
-  if (u_equals_ban(global_bans, argv[1]))
+  if (u_equals_mask(global_bans, argv[1]))
     ok = 1;
   if (ok)
     Tcl_AppendResult(irp, "1", NULL);
@@ -197,10 +197,10 @@ static int tcl_isexempt STDVAR
       Tcl_AppendResult(irp, "invalid channel: ", argv[2], NULL);
       return TCL_ERROR;
     }
-    if (u_equals_exempt(chan->exempts, argv[1]))
+    if (u_equals_mask(chan->exempts, argv[1]))
       ok = 1;
   }
-  if (u_equals_exempt(global_exempts,argv[1]))
+  if (u_equals_mask(global_exempts,argv[1]))
     ok = 1;
   if (ok)
     Tcl_AppendResult(irp, "1", NULL);
@@ -221,10 +221,10 @@ static int tcl_isinvite STDVAR
       Tcl_AppendResult(irp, "invalid channel: ", argv[2], NULL);
       return TCL_ERROR;
     }
-    if (u_equals_invite(chan->invites, argv[1]))
+    if (u_equals_mask(chan->invites, argv[1]))
       ok = 1;
   }
-  if (u_equals_invite(global_invites,argv[1]))
+  if (u_equals_mask(global_invites,argv[1]))
     ok = 1;
   if (ok)
     Tcl_AppendResult(irp, "1", NULL);
@@ -246,10 +246,10 @@ static int tcl_isbansticky STDVAR
       Tcl_AppendResult(irp, "invalid channel: ", argv[2], NULL);
       return TCL_ERROR;
     }
-    if (u_sticky_ban(chan->bans, argv[1]))
+    if (u_sticky_mask(chan->bans, argv[1]))
       ok = 1;
   }
-  if (u_sticky_ban(global_bans, argv[1]))
+  if (u_sticky_mask(global_bans, argv[1]))
     ok = 1;
   if (ok)
     Tcl_AppendResult(irp, "1", NULL);
@@ -270,10 +270,10 @@ static int tcl_isexemptsticky STDVAR
       Tcl_AppendResult(irp, "invalid channel: ", argv[2], NULL);
       return TCL_ERROR;
        }
-    if (u_sticky_exempt(chan->exempts, argv[1]))
+    if (u_sticky_mask(chan->exempts, argv[1]))
       ok = 1;
   }
-  if (u_sticky_exempt(global_exempts,argv[1]))
+  if (u_sticky_mask(global_exempts,argv[1]))
     ok = 1;
   if (ok)
        Tcl_AppendResult(irp, "1", NULL);
@@ -294,10 +294,10 @@ static int tcl_isinvitesticky STDVAR
       Tcl_AppendResult(irp, "invalid channel: ", argv[2], NULL);
       return TCL_ERROR;
     }
-    if (u_sticky_invite(chan->invites, argv[1]))
+    if (u_sticky_mask(chan->invites, argv[1]))
       ok = 1;
   }
-  if (u_sticky_invite(global_invites,argv[1]))
+  if (u_sticky_mask(global_invites,argv[1]))
     ok = 1;
   if (ok)
     Tcl_AppendResult(irp, "1", NULL);
@@ -318,10 +318,10 @@ static int tcl_ispermban STDVAR
       Tcl_AppendResult(irp, "invalid channel: ", argv[2], NULL);
       return TCL_ERROR;
     }
-    if (u_equals_ban(chan->bans, argv[1]) == 2)
+    if (u_equals_mask(chan->bans, argv[1]) == 2)
       ok = 1;
   }
-  if (u_equals_ban(global_bans, argv[1]) == 2)
+  if (u_equals_mask(global_bans, argv[1]) == 2)
     ok = 1;
   if (ok)
     Tcl_AppendResult(irp, "1", NULL);
@@ -341,10 +341,10 @@ static int tcl_ispermexempt STDVAR
       Tcl_AppendResult(irp, "invalid channel: ", argv[2], NULL);
       return TCL_ERROR;
     }
-      if (u_equals_exempt(chan->exempts, argv[1]) == 2)
+      if (u_equals_mask(chan->exempts, argv[1]) == 2)
 	ok = 1;
   }
-  if (u_equals_exempt(global_exempts,argv[1]) == 2)
+  if (u_equals_mask(global_exempts,argv[1]) == 2)
     ok = 1;
   if (ok)
     Tcl_AppendResult(irp, "1", NULL);
@@ -364,10 +364,10 @@ static int tcl_isperminvite STDVAR
       Tcl_AppendResult(irp, "invalid channel: ", argv[2], NULL);
       return TCL_ERROR;
     }
-    if (u_equals_invite(chan->invites, argv[1]) == 2)
+    if (u_equals_mask(chan->invites, argv[1]) == 2)
       ok = 1;
   }
-  if (u_equals_invite(global_invites,argv[1]) == 2)
+  if (u_equals_mask(global_invites,argv[1]) == 2)
     ok = 1;
   if (ok)
     Tcl_AppendResult(irp, "1", NULL);
@@ -388,10 +388,10 @@ static int tcl_matchban STDVAR
       Tcl_AppendResult(irp, "invalid channel: ", argv[2], NULL);
       return TCL_ERROR;
     }
-    if (u_match_ban(chan->bans, argv[1]))
+    if (u_match_mask(chan->bans, argv[1]))
       ok = 1;
   }
-  if (u_match_ban(global_bans, argv[1]))
+  if (u_match_mask(global_bans, argv[1]))
     ok = 1;
   if (ok)
     Tcl_AppendResult(irp, "1", NULL);
@@ -411,10 +411,10 @@ static int tcl_matchexempt STDVAR
      Tcl_AppendResult(irp, "invalid channel: ", argv[2], NULL);
      return TCL_ERROR;
       }
-      if (u_match_exempt(chan->exempts, argv[1]))
+      if (u_match_mask(chan->exempts, argv[1]))
       ok = 1;
    }
-   if (u_match_exempt(global_exempts,argv[1]))
+   if (u_match_mask(global_exempts,argv[1]))
       ok = 1;
    if (ok)
       Tcl_AppendResult(irp, "1", NULL);
@@ -434,10 +434,10 @@ static int tcl_matchinvite STDVAR
      Tcl_AppendResult(irp, "invalid channel: ", argv[2], NULL);
      return TCL_ERROR;
       }
-      if (u_match_invite(chan->invites, argv[1]))
+      if (u_match_mask(chan->invites, argv[1]))
       ok = 1;
    }
-   if (u_match_invite(global_invites,argv[1]))
+   if (u_match_mask(global_invites,argv[1]))
       ok = 1;
    if (ok)
       Tcl_AppendResult(irp, "1", NULL);
@@ -867,7 +867,7 @@ static int tcl_channel STDVAR
     clear_channel(chan, 0);
     noshare = 1;
     while (chan->bans)
-      u_delban(chan, chan->bans->banmask, 1);
+      u_delban(chan, chan->bans->mask, 1);
     noshare = 0;
     killchanset(chan);
     return TCL_OK;
@@ -1114,12 +1114,35 @@ static int tcl_channel_modify(Tcl_Interp * irp, struct chanset_t *chan,
   return TCL_OK;
 }
 
+static int tcl_do_masklist(maskrec *m, Tcl_Interp *irp)
+{
+  char ts[21], ts1[21], ts2[21];
+  char *list[6], *p;
+
+  if (!m)
+    return TCL_OK;
+    
+  while (m) {
+    list[0] = m->mask;
+    list[1] = m->desc;
+    sprintf(ts, "%lu", m->expire);
+    list[2] = ts;
+    sprintf(ts1, "%lu", m->added);
+    list[3] = ts1;
+    sprintf(ts2, "%lu", m->lastactive);
+    list[4] = ts2;
+    list[5] = m->user;
+    p = Tcl_Merge(6, list);
+    Tcl_AppendElement(irp, p);
+    n_free(p, "", 0);
+  }
+  
+  return TCL_OK;  
+}
+
 static int tcl_banlist STDVAR
 {
   struct chanset_t *chan;
-  struct banrec *u;
-  char ts[21], ts1[21], ts2[21];
-  char *list[6], *p;
 
   BADARGS(1, 2, " ?channel?");
   if (argc == 2) {
@@ -1128,34 +1151,15 @@ static int tcl_banlist STDVAR
       Tcl_AppendResult(irp, "invalid channel: ", argv[1], NULL);
       return TCL_ERROR;
     }
-    u = chan->bans;
-  } else
-    u = global_bans;
-  if (u == NULL)
-    return TCL_OK;
-  for (; u; u = u->next) {
-    list[0] = u->banmask;
-    list[1] = u->desc;
-    sprintf(ts, "%lu", u->expire);
-    list[2] = ts;
-    sprintf(ts1, "%lu", u->added);
-    list[3] = ts1;
-    sprintf(ts2, "%lu", u->lastactive);
-    list[4] = ts2;
-    list[5] = u->user;
-    p = Tcl_Merge(6, list);
-    Tcl_AppendElement(irp, p);
-    n_free(p, "", 0);
+    return tcl_do_masklist(chan->bans, irp);
   }
-  return TCL_OK;
+  
+  return tcl_do_masklist(global_bans, irp);
 }
 
 static int tcl_exemptlist STDVAR
 {
   struct chanset_t *chan;
-  struct exemptrec *u;
-  char ts[21], ts1[21], ts2[21];
-  char *list[6], *p;
   
   BADARGS(1, 2, " ?channel?");
   if (argc == 2) {
@@ -1164,34 +1168,15 @@ static int tcl_exemptlist STDVAR
       Tcl_AppendResult(irp, "invalid channel: ", argv[1], NULL);
       return TCL_ERROR;
     }
-    u = chan->exempts;
-  } else
-    u = global_exempts;
-  if (u == NULL)
-    return TCL_OK;
-  for (;u;u=u->next) {
-    list[0] = u->exemptmask;
-    list[1] = u->desc;
-    sprintf(ts,"%lu",u->expire);
-    list[2] = ts;
-    sprintf(ts1,"%lu",u->added);
-    list[3] = ts1;
-    sprintf(ts2,"%lu",u->lastactive);
-    list[4] = ts2;
-    list[5] = u->user;
-    p = Tcl_Merge(6, list);
-    Tcl_AppendElement(irp, p);
-    n_free(p, "", 0);
+    return tcl_do_masklist(chan->exempts, irp);
   }
-  return TCL_OK;
+  
+  return tcl_do_masklist(global_exempts, irp);
 }
 
 static int tcl_invitelist STDVAR
 {
   struct chanset_t *chan;
-  struct inviterec *u;
-  char ts[21], ts1[21], ts2[21];
-  char *list[6], *p;
   
   BADARGS(1, 2, " ?channel?");
   if (argc == 2) {
@@ -1200,28 +1185,11 @@ static int tcl_invitelist STDVAR
       Tcl_AppendResult(irp, "invalid channel: ", argv[1], NULL);
       return TCL_ERROR;
     }
-    u = chan->invites;
-  } else
-    u = global_invites;
-  if (u == NULL)
-    return TCL_OK;
-  for (;u;u=u->next) {
-    list[0] = u->invitemask;
-    list[1] = u->desc;
-    sprintf(ts,"%lu",u->expire);
-    list[2] = ts;
-    sprintf(ts1,"%lu",u->added);
-    list[3] = ts1;
-    sprintf(ts2,"%lu",u->lastactive);
-    list[4] = ts2;
-    list[5] = u->user;
-    p = Tcl_Merge(6, list);
-    Tcl_AppendElement(irp, p);
-    n_free(p, "", 0);
+    return tcl_do_masklist(chan->invites, irp);
   }
-  return TCL_OK;
+  
+  return tcl_do_masklist(global_invites, irp);
 }
-
 
 static int tcl_channels STDVAR
 {
@@ -1386,6 +1354,14 @@ static int tcl_delchanrec STDVAR
   return TCL_OK;
 }
 
+static void init_masklist(masklist *m)
+{
+  m->mask = (char *)nmalloc(1);
+  m->mask[0] = 0;
+  m->who = NULL;
+  m->next = NULL;
+}
+
 /* initialize out the channel record */
 static void init_channel(struct chanset_t *chan)
 {
@@ -1394,34 +1370,41 @@ static void init_channel(struct chanset_t *chan)
   chan->channel.members = 0;
   chan->channel.key = (char *) nmalloc(1);
   chan->channel.key[0] = 0;
-  chan->channel.ban = (banlist *) nmalloc(sizeof(banlist));
-  chan->channel.ban->ban = (char *) nmalloc(1);
-  chan->channel.ban->ban[0] = 0;
-  chan->channel.ban->who = NULL;
-  chan->channel.ban->next = NULL;
-  chan->channel.exempt = (exemptlist *) nmalloc(sizeof(exemptlist));
-  chan->channel.exempt->exempt = (char *) nmalloc(1);
-  chan->channel.exempt->exempt[0] = 0;
-  chan->channel.exempt->who = NULL;
-  chan->channel.exempt->next = NULL;
-  chan->channel.invite = (invitelist *) nmalloc(sizeof(invitelist));
-  chan->channel.invite->invite = (char *) nmalloc(1);
-  chan->channel.invite->invite[0] = 0;
-  chan->channel.invite->who = NULL;
-  chan->channel.invite->next = NULL;
+
+  chan->channel.ban = (masklist *)nmalloc(sizeof(masklist));
+  init_masklist(chan->channel.ban);
+  
+  chan->channel.exempt = (masklist *)nmalloc(sizeof(masklist));
+  init_masklist(chan->channel.exempt);
+  
+  chan->channel.invite = (masklist *)nmalloc(sizeof(masklist));
+  init_masklist(chan->channel.invite);
+
   chan->channel.member = (memberlist *) nmalloc(sizeof(memberlist));
   chan->channel.member->nick[0] = 0;
   chan->channel.member->next = NULL;
   chan->channel.topic = NULL;
 }
 
+static void clear_masklist(masklist *m)
+{
+  masklist *temp;
+  
+  while (m) {
+    temp = m->next;
+    if (m->mask)
+      nfree(m->mask);
+    if (m->who)
+      nfree(m->who);
+    nfree(m);
+    m = temp;
+  }
+}
+
 /* clear out channel data from memory */
 static void clear_channel(struct chanset_t *chan, int reset)
 {
   memberlist *m, *m1;
-  banlist *b, *b1;
-  exemptlist *e, *e1;
-  invitelist *inv, *inv1;
 
   nfree(chan->channel.key);
   if (chan->channel.topic)
@@ -1432,33 +1415,16 @@ static void clear_channel(struct chanset_t *chan, int reset)
     nfree(m);
     m = m1;
   }
-  b = chan->channel.ban;
-  while (b != NULL) {
-    b1 = b->next;
-    if (b->ban[0])
-      nfree(b->who);
-    nfree(b->ban);
-    nfree(b);
-    b = b1;
-  }
-  e = chan->channel.exempt;
-  while (e != NULL) {
-    e1 = e->next;
-    if (e->exempt[0])
-      nfree(e->who);
-    nfree(e->exempt);
-    nfree(e);
-    e = e1;
-  }
-  inv = chan->channel.invite;
-  while (inv != NULL) {
-    inv1 = inv->next;
-    if (inv->invite[0])
-      nfree(inv->who);
-    nfree(inv->invite);
-    nfree(inv);
-    inv = inv1;
-  }
+  
+  clear_masklist(chan->channel.ban);
+  chan->channel.ban = NULL;
+  
+  clear_masklist(chan->channel.exempt);
+  chan->channel.exempt = NULL;
+
+  clear_masklist(chan->channel.invite);
+  chan->channel.invite = NULL;
+
   if (reset)
     init_channel(chan);
 }

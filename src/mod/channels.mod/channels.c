@@ -13,7 +13,6 @@
 #define MODULE_NAME "channels"
 #define MAKING_CHANNELS
 #include "../module.h"
-#include "channels.h"
 #include <sys/stat.h>
 
 static int setstatic = 0;
@@ -50,6 +49,7 @@ static int gfld_join_time;
 static int gfld_ctcp_thr;
 static int gfld_ctcp_time;
 
+#include "channels.h"
 #include "cmdschan.c"
 #include "tclchan.c"
 #include "userchan.c"
@@ -198,47 +198,18 @@ static void get_mode_protect(struct chanset_t *chan, char *s)
   }
 }
 
-/* returns true if this is one of the channel bans */
-static int isbanned(struct chanset_t *chan, char *user)
+/* returns true if this is one of the channel masks */
+static int ismasked(masklist *m, char *user)
 {
-  banlist *b;
-
-  b = chan->channel.ban;
-  while (b->ban[0] && rfc_casecmp(b->ban, user))
-    b = b->next;
-  if (!b->ban[0])
-    return 0;
-  return 1;
+  while (m && m->mask[0]) {
+    if (!rfc_casecmp(m->mask, user))
+      return 1;
+    m = m->next;
+  }
+  
+  return 0;
 }
-
-/* returns true if this is one of the channel exemptions */
-/* Crotale */
-static int isexempted(struct chanset_t *chan, char *user)
-{
-  exemptlist *e;
-
-  e = chan->channel.exempt;
-  while (e->exempt[0] && !wild_match(e->exempt, user))
-    e = e->next;
-  if (!e->exempt[0])
-    return 0;
-  return 1;
-}
-
-/* returns true if this is one of the channel +I */
-/* arthur2 */
-static int isinvited(struct chanset_t *chan, char *user)
-{
-  invitelist *inv;
-
-  inv = chan->channel.invite;
-  while (inv->invite[0] && !wild_match(inv->invite, user))
-    inv = inv->next;
-  if (!inv->invite[0])
-    return 0;
-  return 1;
-}
-
+  
 /* destroy a chanset in the list */
 /* does NOT free up memory associated with channel data inside the chanset! */
 static int killchanset(struct chanset_t *chan)
@@ -457,11 +428,11 @@ static void read_channels(int create)
       clear_channel(chan, 0);
       noshare = 1;
       while (chan->bans)
-	u_delban(chan, chan->bans->banmask, 1);
+	u_delban(chan, chan->bans->mask, 1);
       while (chan->exempts)
-	u_delexempt(chan,chan->exempts->exemptmask,1);
+	u_delexempt(chan, chan->exempts->mask, 1);
       while (chan->invites)
-	u_delinvite(chan,chan->invites->invitemask,1);
+	u_delinvite(chan, chan->invites->mask, 1);
       noshare = 0;
       chan2 = chan->next;
       killchanset(chan);
@@ -501,11 +472,11 @@ static void channels_rehash()
       clear_channel(chan, 0);
       noshare = 1;
       while (chan->bans)
-	u_delban(chan, chan->bans->banmask, 1);
+	u_delban(chan, chan->bans->mask, 1);
       while (chan->exempts)
-	u_delexempt(chan,chan->exempts->exemptmask,1);
+	u_delexempt(chan, chan->exempts->mask, 1);
       while (chan->invites)
-	u_delinvite(chan,chan->invites->invitemask,1);
+	u_delinvite(chan, chan->invites->mask, 1);
       noshare = 0;
       killchanset(chan);
       chan = chanset;
@@ -633,12 +604,26 @@ static void channels_report(int idx, int details)
   }
 }
 
+static int expmem_masklist(masklist *m)
+{
+  int result = 0;
+        
+  while (m) {
+    result += sizeof(masklist);
+    if (m->mask && m->mask[0])
+        result += strlen(m->mask) + 1;
+    if (m->who && m->who[0])
+        result += strlen(m->who) + 1;
+    
+    m = m->next;
+  }
+  
+  return result;
+}
+
 static int channels_expmem()
 {
   int tot = 0;
-  banlist *b;
-  exemptlist *e;
-  invitelist *inv;
   struct chanset_t *chan = chanset;
 
   context;
@@ -650,33 +635,10 @@ static int channels_expmem()
       tot += strlen(chan->channel.topic) + 1;
     tot += (sizeof(struct memstruct) * (chan->channel.members + 1));
 
-    b = chan->channel.ban;
-    while (b != NULL) {
-      tot += strlen(b->ban) + 1;
-      if (b->ban[0])
-	tot += strlen(b->who) + 1;
-      tot += sizeof(struct banstruct);
+    tot += expmem_masklist(chan->channel.ban);
+    tot += expmem_masklist(chan->channel.exempt);
+    tot += expmem_masklist(chan->channel.invite);
 
-      b = b->next;
-    }
-    e = chan->channel.exempt;
-    while (e != NULL) {
-      tot += strlen(e->exempt) + 1;
-      if (e->exempt[0])
-	tot += strlen(e->who) + 1;
-      tot += sizeof(struct exbanstruct);
-
-      e = e->next;
-    }
-    inv = chan->channel.invite;
-    while (inv != NULL) {
-      tot += strlen(inv->invite) + 1;
-      if (inv->invite[0])
-	tot += strlen(inv->who) + 1;
-      tot += sizeof(struct exinvitestruct);
-
-      inv = inv->next;
-    }
     chan = chan->next;
   }
   return tot;
@@ -787,7 +749,7 @@ static Function channels_table[] =
   (Function) channels_expmem,
   (Function) channels_report,
   /* 4 - 7 */
-  (Function) u_setsticky_ban,
+  (Function) u_setsticky_mask,
   (Function) u_delban,
   (Function) u_addban,
   (Function) write_bans,
@@ -798,8 +760,8 @@ static Function channels_table[] =
   (Function) set_handle_chaninfo,
   /* 12 - 15 */
   (Function) channel_malloc,
-  (Function) u_match_ban,
-  (Function) u_equals_ban,
+  (Function) u_match_mask,
+  (Function) u_equals_mask,
   (Function) clear_channel,
   /* 16 - 19 */
   (Function) set_handle_laston,
@@ -807,29 +769,35 @@ static Function channels_table[] =
   (Function) & use_info,
   (Function) get_handle_chaninfo,
   /* 20 - 23 */
-  (Function) u_sticky_ban,
-  (Function) isbanned,
+  (Function) u_sticky_mask,
+  (Function) ismasked,
   (Function) add_chanrec_by_handle,
-  (Function) isexempted,
+/* *HOLE* channels_funcs[23] used to be isexempted() <cybah> */
+  (Function) NULL,
   /* 24 - 27 */
   (Function) & exempt_time,
-  (Function) isinvited,
+/* *HOLE* channels_funcs[25] used to be isinvited() <cybah> */
+  (Function) NULL,
   (Function) & invite_time,
-  (Function) u_match_exempt,
+  (Function) NULL,
   /* 28 - 31 */
-  (Function) u_setsticky_exempt,
+/* *HOLE* channels_funcs[28] used to be u_setsticky_exempt() <cybah> */
+  (Function) NULL,
   (Function) u_delexempt,
   (Function) u_addexempt,
-  (Function) u_equals_exempt,
+  (Function) NULL,
   /* 32 - 35 */
-  (Function) u_sticky_exempt,
-  (Function) u_match_invite,
-  (Function) u_setsticky_invite,
+/* *HOLE* channels_funcs[32] used to be u_sticky_exempt() <cybah> */
+  (Function) NULL,
+  (Function) NULL,
+/* *HOLE* channels_funcs[34] used to be u_setsticky_invite() <cybah> */
+  (Function) NULL,
   (Function) u_delinvite,
   /* 36 - 39 */
   (Function) u_addinvite,
-  (Function) u_equals_invite,
-  (Function) u_sticky_invite,
+  (Function) NULL,
+/* *HOLE* channels_funcs[38] used to be u_sticky_invite() <cybah> */
+  (Function) NULL,
   (Function) write_exempts,
   /* 40 - 43 */
   (Function) write_invites,

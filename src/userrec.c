@@ -36,10 +36,10 @@ int noshare = 1;		/* don't send out to sharebots */
 int sort_users = 0;		/* sort the userlist when saving */
 struct userrec *userlist = NULL;	/* user records are stored here */
 struct userrec *lastuser = NULL;	/* last accessed user record */
-struct banrec *global_bans = NULL;
+maskrec *global_bans = NULL,
+        *global_exempts = NULL,
+        *global_invites = NULL;
 struct igrec *global_ign = NULL;
-struct exemptrec *global_exempts = NULL;
-struct inviterec *global_invites = NULL;
 int cache_hit = 0, cache_miss = 0;	/* temporary cache accounting */
 
 #ifdef EBUG_MEM
@@ -62,11 +62,30 @@ void *_user_malloc(int size, char *file, int line)
 {
   return nmalloc(size);
 }
+
 void *_user_realloc(void *ptr, int size, char *file, int line)
 {
   return nrealloc(ptr, size);
 }
 #endif
+
+inline int expmem_mask(struct maskrec *m)
+{
+  int result = 0;
+  
+  while (m) {
+    result += sizeof(struct maskrec);
+    result += strlen(m->mask) + 1;
+    if (m->user)
+      result += strlen(m->user) + 1;
+    if (m->desc)
+      result += strlen(m->desc) + 1;
+      
+    m = m->next;
+  }
+  
+  return result;
+}
 
 /* memory we should be using */
 int expmem_users()
@@ -76,10 +95,7 @@ int expmem_users()
   struct chanuserrec *ch;
   struct chanset_t *chan;
   struct user_entry *ue;
-  struct banrec *b;
   struct igrec *i;
-  struct exemptrec * e;
-  struct inviterec * inv;
 
   context;
   tot = 0;
@@ -107,62 +123,23 @@ int expmem_users()
     }
     u = u->next;
   }
-  /* account for each channel's ban-list user */
+  /* account for each channel's masks */
   for (chan = chanset; chan; chan = chan->next) {
 
-    for (b = chan->bans; b; b = b->next) {
-      tot += sizeof(struct banrec);
+    /* account for each channel's ban-list user */
+    tot += expmem_mask(chan->bans);
 
-      tot += strlen(b->banmask) + 1;
-      if (b->user)
-	tot += strlen(b->user) + 1;
-      if (b->desc)
-	tot += strlen(b->desc) + 1;
-    }
     /* account for each channel's exempt-list user */
-    for (e = chan->exempts;e;e=e->next) {
-      tot += sizeof(struct exemptrec);
-      tot += strlen(e->exemptmask)+1;
-      if (e->user)
-	tot += strlen(e->user)+1;
-      if (e->desc)
-	tot += strlen(e->desc)+1;
-    }
-    /* account for each channel's invite-list user */
-    for (inv = chan->invites;inv;inv=inv->next) {
-      tot += sizeof(struct inviterec);  
-      tot += strlen(inv->invitemask)+1;
-      if (inv->user)
-	tot += strlen(inv->user)+1;
-      if (inv->desc)
-	tot += strlen(inv->desc)+1;
-    }
-  }
-  for (b = global_bans; b; b = b->next) {
-    tot += sizeof(struct banrec);
+    tot += expmem_mask(chan->exempts);
 
-    tot += strlen(b->banmask) + 1;
-    if (b->user)
-      tot += strlen(b->user) + 1;
-    if (b->desc)
-      tot += strlen(b->desc) + 1;
+    /* account for each channel's invite-list user */
+    tot += expmem_mask(chan->invites);
   }
-  for (e = global_exempts;e;e=e->next) {
-    tot += sizeof(struct exemptrec);
-    tot += strlen(e->exemptmask)+1;
-    if (e->user)
-      tot += strlen(e->user)+1;
-    if (e->desc)
-      tot += strlen(e->desc)+1;
-  }
-  for (inv = global_invites;inv;inv=inv->next) {
-    tot += sizeof(struct inviterec);
-    tot += strlen(inv->invitemask)+1;
-    if (inv->user)
-      tot += strlen(inv->user)+1;
-    if (inv->desc)
-      tot += strlen(inv->desc)+1;  
-  }
+  
+  tot += expmem_mask(global_bans);
+  tot += expmem_mask(global_exempts);
+  tot += expmem_mask(global_invites);
+
   for (i = global_ign; i; i = i->next) {
     tot += sizeof(struct igrec);
 
@@ -245,6 +222,28 @@ void correct_handle(char *handle)
   strcpy(handle, u->handle);
 }
 
+/*        This will be usefull in a lot of places, much more code re-use so we
+ *      endup with a smaller executable bot. <cybah> 
+ */
+void clear_masks(maskrec *m)
+{
+  maskrec *temp = NULL;
+
+  while (m) {
+    temp = m->next;
+      
+    if (m->mask)
+      nfree(m->mask);
+    if (m->user)
+      nfree(m->user);
+    if (m->desc)
+      nfree(m->desc);
+	
+    nfree(m);
+    m = temp;
+  }
+}
+
 void clear_userlist(struct userrec *bu)
 {
   struct userrec *u = bu, *v;
@@ -263,81 +262,22 @@ void clear_userlist(struct userrec *bu)
       dcc[i].user = NULL;
     clear_chanlist();
     lastuser = NULL;
-    while (global_bans) {
-      struct banrec *b = global_bans;
-
-      global_bans = b->next;
-      if (b->banmask)
-	nfree(b->banmask);
-      if (b->user)
-	nfree(b->user);
-      if (b->desc)
-	nfree(b->desc);
-      nfree(b);
-    }
+    
     while (global_ign)
       delignore(global_ign->igmask);
-    while (global_exempts) {
-      struct exemptrec * e = global_exempts;
-      global_exempts = e->next;
-      if (e->exemptmask)
-	nfree(e->exemptmask);
-      if (e->user)
-	nfree(e->user);
-      if (e->desc)
-	nfree(e->desc);
-      nfree(e);
-    }
-    while (global_invites) {
-      struct inviterec * inv = global_invites;
-      global_invites = inv->next;
-      if (inv->invitemask)
-	nfree(inv->invitemask);
-      if (inv->user)  
-	nfree(inv->user);
-      if (inv->desc)
-	nfree(inv->desc);
-      nfree(inv);
-    }
-    for (cst = chanset; cst; cst = cst->next)
-      while (cst->bans) {
-	struct banrec *b = cst->bans;
 
-	cst->bans = b->next;
-	if (b->banmask)
-	  nfree(b->banmask);
-	if (b->user)
-	  nfree(b->user);
-	if (b->desc)
-	  nfree(b->desc);
-	nfree(b);
-      }
-    for (cst = chanset;cst;cst=cst->next)
-      while (cst->exempts) {
-	struct exemptrec * e = cst->exempts;
-	
-	cst->exempts = e->next; 
-	if (e->exemptmask)
-	  nfree(e->exemptmask); 
-	if (e->user)
-	  nfree(e->user);
-	if (e->desc)
-	  nfree(e->desc);
-	nfree(e);
-      }
-    for (cst = chanset;cst;cst=cst->next)
-      while (cst->invites) {
-	struct inviterec * inv = cst->invites;
-	
-	cst->invites = inv->next;
-	if (inv->invitemask)
-	  nfree(inv->invitemask);
-	if (inv->user)
-	  nfree(inv->user);
-	if (inv->desc)
-	  nfree(inv->desc);
-	nfree(inv);
-      }
+    clear_masks(global_bans);
+    clear_masks(global_exempts);
+    clear_masks(global_invites);
+    global_exempts = global_invites = global_bans = NULL;
+
+    for (cst = chanset; cst; cst = cst->next) {
+      clear_masks(cst->bans);
+      clear_masks(cst->exempts);
+      clear_masks(cst->invites);
+      
+      cst->bans = cst->exempts = cst->invites = NULL;
+    }
   }
   /* remember to set your userlist to NULL after calling this */
   context;

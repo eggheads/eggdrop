@@ -306,11 +306,28 @@ static int tcl_getchanidle STDVAR
   return TCL_OK;
 }
 
+inline int tcl_chanmasks(masklist *m, Tcl_Interp *irp)
+{
+  char *list[3], work[20], *p;
+  
+  while(m && m->mask && m->mask[0]) {
+    list[0] = m->mask;
+    list[1] = m->who;
+    simple_sprintf(work, "%lu", now - m->timer);
+    list[2] = work;
+    p = Tcl_Merge(3, list);
+    Tcl_AppendElement(irp, p);
+    n_free(p, "", 0);
+    
+    m = m->next;
+  }
+  
+  return TCL_OK;
+}
+
 static int tcl_chanbans STDVAR
 {
-  banlist *b;
   struct chanset_t *chan;
-  char *list[3], work[20], *p;
 
   BADARGS(2, 2, " channel");
   chan = findchan(argv[1]);
@@ -318,25 +335,13 @@ static int tcl_chanbans STDVAR
     Tcl_AppendResult(irp, "illegal channel: ", argv[2], NULL);
     return TCL_ERROR;
   }
-  b = chan->channel.ban;
-  while (b->ban[0]) {
-    list[0] = b->ban;
-    list[1] = b->who;
-    simple_sprintf(work, "%lu", now - b->timer);
-    list[2] = work;
-    p = Tcl_Merge(3, list);
-    Tcl_AppendElement(irp, p);
-    n_free(p, "", 0);
-    b = b->next;
-  }
-  return TCL_OK;
+
+  return tcl_chanmasks(chan->channel.ban, irp);
 }
 
 static int tcl_chanexempts STDVAR
 {
-  exemptlist *e;
   struct chanset_t *chan;
-  char *list[3], work[20], *p;
 
   BADARGS(2, 2, " channel");
   chan = findchan(argv[1]);
@@ -344,25 +349,13 @@ static int tcl_chanexempts STDVAR
     Tcl_AppendResult(irp, "illegal channel: ", argv[2], NULL);
     return TCL_ERROR;
   }
-  e = chan->channel.exempt;
-  while (e->exempt[0]) {
-    list[0] = e->exempt;
-    list[1] = e->who;
-    simple_sprintf(work, "%lu", now - e->timer);
-    list[2] = work;
-    p = Tcl_Merge(3, list);
-    Tcl_AppendElement(irp, p);
-    n_free(p, "", 0);
-    e = e->next;
-  }
-  return TCL_OK;
+
+  return tcl_chanmasks(chan->channel.exempt, irp);
 }
 
 static int tcl_chaninvites STDVAR
 {
-  invitelist *inv;
   struct chanset_t *chan;
-  char *list[3], work[20], *p;
 
   BADARGS(2, 2, " channel");
   chan = findchan(argv[1]);
@@ -370,18 +363,8 @@ static int tcl_chaninvites STDVAR
     Tcl_AppendResult(irp, "illegal channel: ", argv[2], NULL);
     return TCL_ERROR;
   }
-  inv = chan->channel.invite;
-  while (inv->invite[0]) {
-    list[0] = inv->invite;
-    list[1] = inv->who;
-    simple_sprintf(work, "%lu", now - inv->timer);
-    list[2] = work;
-    p = Tcl_Merge(3, list);
-    Tcl_AppendElement(irp, p);
-    n_free(p, "", 0);
-    inv = inv->next;
-  }
-  return TCL_OK;
+
+  return tcl_chanmasks(chan->channel.invite, irp);
 }
 
 static int tcl_getchanmode STDVAR

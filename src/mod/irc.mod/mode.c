@@ -150,10 +150,10 @@ static void real_add_mode(struct chanset_t *chan,
 {
   int i, type, ok, l;
   int bans, exempts, invites, modes;
-  banlist *b;
-  exemptlist *e;
-  invitelist *inv;
+  masklist *m;
   char s[21];
+  
+  context;
 
   if (!me_op(chan))
     return;			/* no point in queueing the mode */
@@ -175,34 +175,31 @@ static void real_add_mode(struct chanset_t *chan,
 	return;
     /* if there are already max_bans bans on the channel, don't try to add 
      * one more */
-    b = chan->channel.ban;
+    context;
     bans = 0;
-    while (b->ban[0]) {
+    for (m = chan->channel.ban; m && m->mask[0]; m = m->next)
       bans++;
-      b = b->next;
-    }
+    context;
     if ((plus == '+') && (mode == 'b'))
       if (bans >= max_bans)
 	return;
     /* if there are already max_exempts exemptions on the channel, don't
      * try to add one more */
-    e = chan->channel.exempt;
+    context;
     exempts = 0;
-    while (e->exempt[0]) {
+    for (m = chan->channel.exempt; m && m->mask[0]; m = m->next)
       exempts++;
-      e = e->next;
-    }
+    context;
     if ((plus == '+') && (mode == 'e'))
       if (exempts >= max_exempts)
 	return;
     /* if there are already max_invites invitations on the channel, don't
      * try to add one more */
-    inv = chan->channel.invite;
+    context;
     invites = 0;
-    while (inv->invite[0]) {
+    for (m = chan->channel.invite; m && m->mask[0]; m = m->next)
       invites++;
-      inv = inv->next;
-    }
+    context;
     if ((plus == '+') && (mode == 'I'))
       if (invites >= max_invites)
 	return;
@@ -605,8 +602,8 @@ static void got_ban(struct chanset_t *chan, char *nick, char *from,
   /* is it a server ban from nowhere? */
   if (reversing ||
       (bounce_bans && (!nick[0]) &&
-       (!u_equals_ban(global_bans, who) ||
-	!u_equals_ban(chan->bans, who)) && (check)))
+       (!u_equals_mask(global_bans, who) ||
+	!u_equals_mask(chan->bans, who)) && (check)))
     add_mode(chan, '-', 'b', who);
 }
 
@@ -614,20 +611,20 @@ static void got_unban(struct chanset_t *chan, char *nick, char *from,
 		      char *who, struct userrec *u)
 {
   int i, bogus;
-  banlist *b, *old;
+  masklist *b, *old;
 
   b = chan->channel.ban;
   old = NULL;
-  while (b->ban[0] && rfc_casecmp(b->ban, who)) {
+  while (b->mask[0] && rfc_casecmp(b->mask, who)) {
     old = b;
     b = b->next;
   }
-  if (b->ban[0]) {
+  if (b->mask[0]) {
     if (old)
       old->next = b->next;
     else
       chan->channel.ban = b->next;
-    nfree(b->ban);
+    nfree(b->mask);
     nfree(b->who);
     nfree(b);
   }
@@ -652,12 +649,12 @@ static void got_unban(struct chanset_t *chan, char *nick, char *from,
     }
     return;
   }
-  if (u_sticky_ban(chan->bans, who) || u_sticky_ban(global_bans, who)) {
+  if (u_sticky_mask(chan->bans, who) || u_sticky_mask(global_bans, who)) {
     /* that's a sticky ban! No point in being
      * sticky unless we enforce it!! */
     add_mode(chan, '+', 'b', who);
   }
-  if ((u_equals_ban(global_bans, who) || u_equals_ban(chan->bans, who)) &&
+  if ((u_equals_mask(global_bans, who) || u_equals_mask(chan->bans, who)) &&
       me_op(chan) && !channel_dynamicbans(chan)) {
     /* that's a permban! */
     if (glob_bot(user) && (bot_flags(u) & BOT_SHARE)) {
@@ -735,8 +732,8 @@ static void got_exempt(struct chanset_t *chan, char *nick, char *from,
     if ((!nick[0]) && (bounce_modes))
       reversing = 1;
   }
-  if (reversing || (bounce_exempts && (!nick[0]) && 
-		    (!u_equals_exempt(global_exempts,who) || !u_equals_exempt(chan->exempts,who))
+  if (reversing || (bounce_exempts && !nick[0] && 
+		   (!u_equals_mask(global_exempts, who) || !u_equals_mask(chan->exempts, who))
 		    && (check)))
     add_mode(chan, '-', 'e', who);
 }
@@ -744,44 +741,44 @@ static void got_exempt(struct chanset_t *chan, char *nick, char *from,
 static void got_unexempt(struct chanset_t *chan, char *nick, char *from,
 			 char *who, struct userrec *u)
 {
-  exemptlist *e, *old;
-  banlist *b ;
+  masklist *e, *old;
+  masklist *b ;
   int match = 0;
 
   context;
   e = chan->channel.exempt;
   old = NULL;
-  while (e->exempt[0] && rfc_casecmp(e->exempt, who)) {
+  while (e && e->mask[0] && rfc_casecmp(e->mask, who)) {
     old = e;
     e = e->next;
   }
-  if (e->exempt[0]) {
+  if (e && e->mask[0]) {
     if (old)
       old->next = e->next;
     else
       chan->channel.exempt = e->next;
-    nfree(e->exempt);
+    nfree(e->mask);
     nfree(e->who);
     nfree(e);
   }
-  if (u_sticky_exempt(chan->exempts, who) || u_sticky_exempt(global_exempts,who)) {
-    /* that's a sticky exempt! No point in being */
-    /* sticky unless we enforce it!! */
+  if (u_sticky_mask(chan->exempts, who) || u_sticky_mask(global_exempts, who)) {
+    /* that's a sticky exempt! No point in being
+     * sticky unless we enforce it!! */
     add_mode(chan, '+', 'e', who);
   }
   /* if exempt was removed by master then leave it else check for bans */
   if (!nick[0] && glob_bot(user) && !glob_master(user) && !chan_master(user)) {
     b = chan->channel.ban;
-    while (b->ban[0] && !match) {
-      if (wild_match(b->ban, who) ||
-          wild_match(who,b->ban)) {
+    while (b->mask[0] && !match) {
+      if (wild_match(b->mask, who) ||
+          wild_match(who, b->mask)) {
         add_mode(chan, '+', 'e', who);
-        match=1;
+        match = 1;
       } else
         b = b->next;
     }
   }
-  if ((u_equals_exempt(global_exempts,who) || u_equals_exempt(chan->exempts, who)) &&
+  if ((u_equals_mask(global_exempts, who) || u_equals_mask(chan->exempts, who)) &&
       me_op(chan) && !channel_dynamicexempts(chan)) {
     /* that's a permexempt! */
     if (glob_bot(user) && (bot_flags(u) & BOT_SHARE)) {
@@ -857,7 +854,7 @@ static void got_invite(struct chanset_t *chan, char *nick, char *from,
       reversing = 1;
   }
   if (reversing || (bounce_invites && (!nick[0])  && 
-		    (!u_equals_invite(global_invites,who) || !u_equals_invite(chan->invites,who))
+		    (!u_equals_mask(global_invites, who) || !u_equals_mask(chan->invites, who))
 		    && (check)))
     add_mode(chan, '-', 'I', who);
 }
@@ -865,32 +862,32 @@ static void got_invite(struct chanset_t *chan, char *nick, char *from,
 static void got_uninvite(struct chanset_t *chan, char *nick, char *from,
 			 char *who, struct userrec *u)
 {
-  invitelist *inv, *old;
+  masklist *inv, *old;
 
   inv = chan->channel.invite;
   old = NULL;
-  while (inv->invite[0] && rfc_casecmp(inv->invite, who)) {
+  while (inv->mask[0] && rfc_casecmp(inv->mask, who)) {
     old = inv;
     inv = inv->next;
   }
-  if (inv->invite[0]) {
+  if (inv->mask[0]) {
     if (old)
       old->next = inv->next;
     else
       chan->channel.invite = inv->next;
-    nfree(inv->invite);
+    nfree(inv->mask);
     nfree(inv->who);
     nfree(inv);
   }
-  if (u_sticky_invite(chan->invites, who) || u_sticky_invite(global_invites,who)) {
-    /* that's a sticky invite! No point in being */
-    /* sticky unless we enforce it!! */
+  if (u_sticky_mask(chan->invites, who) || u_sticky_mask(global_invites, who)) {
+    /* that's a sticky invite! No point in being
+     * sticky unless we enforce it!! */
     add_mode(chan, '+', 'I', who);
   }
   if (!nick[0] && glob_bot(user) && !glob_master(user) && !chan_master(user)
       &&  (chan->channel.mode & CHANINV))
     add_mode(chan, '+', 'I', who);
-  if ((u_equals_invite(global_invites,who) || u_equals_invite(chan->invites, who)) &&
+  if ((u_equals_mask(global_invites, who) || u_equals_mask(chan->invites, who)) &&
       me_op(chan) && !channel_dynamicinvites(chan)) {
     /* that's a perminvite! */
     if (glob_bot(user) && (bot_flags(u) & BOT_SHARE)) {

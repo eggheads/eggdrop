@@ -190,7 +190,7 @@ static void cmd_kickban(struct userrec *u, int idx, char *par)
 	  break;
       }
       if (bantype == '@' || bantype == '-')
-	do_ban(chan, s1);
+	do_mask(chan, chan->channel.ban, s1, 'b');
       if (!par[0])
 	par = "requested";
       dprintf(DP_SERVER, "KICK %s %s :%s\n", chan->name, m->nick, par);

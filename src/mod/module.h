@@ -22,6 +22,7 @@
 #undef nfree
 #undef nrealloc
 #undef context
+#undef contextnote
 #undef feof
 
 /* redefine for module-relevance */
@@ -148,7 +149,7 @@
 #define userlist (*(struct userrec **)global[94])
 #define lastuser (*(struct userrec **)(global[95]))
 /* 96 - 99 */
-#define global_bans (*(struct banrec **)(global[96]))
+#define global_bans (*(maskrec **)(global[96]))
 #define global_ign (*(struct igrec **)(global[97]))
 #define password_timeout (*(int *)(global[98]))
 #define share_greet (*(int *)global[99])
@@ -303,8 +304,8 @@
 #define rfc_casecmp ((int(*)(char *, char *))global[218])
 #define rfc_ncasecmp ((int(*)(char *, char *, int *))global[219])
 /* 220 - 223 */
-#define global_exempts (*(struct exemptrec **)(global[220]))
-#define global_invites (*(struct inviterec **)(global[221]))
+#define global_exempts (*(maskrec **)(global[220]))
+#define global_invites (*(maskrec **)(global[221]))
 #define ginvite_total (*(int*)global[222])
 #define gexempt_total (*(int*)global[223])
 /* 224 - 227 */
@@ -317,6 +318,10 @@
 #define user_realloc(x,y) ((void *(*)(void *,int,char *,int))global[229])((x),(y),__FILE__,__LINE__)
 #define nrealloc(x,y) ((void *)(global[230]((x),(y),MODULE_NAME,__FILE__,__LINE__)))
 #define xtra_set ((int(*)(struct userrec *,struct user_entry *, void *))global[231])
+
+/* time to let modules use contextnote <cybah> */
+#define contextnote(note) (global[230](MODULE_NAME, __FILE__, __LINE__, note))
+
 /* this is for blowfish module, couldnt be bothereed making a whole new .h
  * file for it ;) */
 #ifndef MAKING_BLOWFISH

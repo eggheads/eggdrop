@@ -17,8 +17,11 @@ dw	  Fabian    removed string stripping code from set_handle_chaninfo()
 	  Fabian    moved notes reject code to notes module; reorganized module
           Fabian    added notes ignore feature
 	  Peter     quotes [] were missing in AC_MSG_RESULT in configure.in.
+          Cybah     contextnote() now works for modules.
 Charvel   poptix    nrealloc() called with too few args in non-debugmem mode.
 	  poptix    Removed two FIXME's that need not be.
+          Cybah     Removed over 450 lines of code by unifying most of the
+                    ban, exempt and invite code.
 	  Fabian    Allows users to ignore messages from others by setting
 		    note ignore masks. e.g.: .+noteign *@foobot
 	  Fabian    Fixed memleak in xtra_set.

@@ -42,7 +42,7 @@ static int msg_hello(char *nick, char *h, struct userrec *u, char *p)
     return 1;
   }
   simple_sprintf(s, "%s!%s", nick, h);
-  if (u_match_ban(global_bans, s)) {
+  if (u_match_mask(global_bans, s)) {
     dprintf(DP_HELP, "NOTICE %s :%s.\n", nick, IRC_BANNED2);
     return 1;
   }

@@ -48,34 +48,38 @@ typedef struct memstruct {
 #define chan_issplit(x) (x->split > 0)
 #define chan_wasop(x) (x->flags & WASOP)
 
-typedef struct banstruct {
-  char *ban;
+/*        Why duplicate this struct for exempts and invites only under another
+ *      name? <cybah>
+ */
+typedef struct maskstruct {
+  char *mask;
   char *who;
   time_t timer;
-  struct banstruct *next;
-} banlist;
+  struct maskstruct *next;
+} masklist;
 
-/* Next 2 structures created for IRCnet server module - Daemus - 2/1/1999 */
-typedef struct exbanstruct {
-  char *exempt;
-  char *who;
-  time_t timer;
-  struct exbanstruct *next;
-} exemptlist;
+/* used for temporary bans, exempts and invites */
+typedef struct maskrec {
+  struct maskrec *next;
+  char *mask,
+       *desc,
+       *user;
+  time_t expire,
+         added,
+         lastactive;
+  int flags;
+} maskrec;
+extern maskrec *global_bans, *global_exempts, *global_invites;
 
-typedef struct exinvitestruct {
-  char *invite;
-  char *who;
-  time_t timer;
-  struct exinvitestruct *next;
-} invitelist;
+#define MASKREC_STICKY 1
+#define MASKREC_PERM   2
 
 /* for every channel i join */
 struct chan_t {
   memberlist *member;
-  banlist *ban;
-  exemptlist *exempt;
-  invitelist *invite;
+  masklist *ban;
+  masklist *exempt;
+  masklist *invite;
   char *topic;
   char *key;
   unsigned short int mode;
@@ -117,9 +121,10 @@ struct chanset_t {
   int status;
   int ircnet_status;
   int idle_kick;
-  struct banrec *bans;		/* temporary channel bans */
-  struct exemptrec *exempts; /* temporary channel exempts */
-  struct inviterec *invites; /* temporary channel invites */
+  /* temporary channel bans, exempts and invites */
+  maskrec *bans,
+          *exempts,
+          *invites;
   /* desired channel modes: */
   int mode_pls_prot;		/* modes to enforce */
   int mode_mns_prot;		/* modes to reject */

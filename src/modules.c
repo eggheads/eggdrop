@@ -150,9 +150,19 @@ void mod_context(char *module, char *file, int line)
   cx_line[cx_ptr] = line;
 }
 
-/* the horrible global lookup table for functions */
-/* BUT it makes the whole thing *much* more portable than letting each
- * OS screw up the symbols their own special way :/ */
+void mod_contextnote(char *module, char *file, int line, char *note)
+{
+  cx_ptr=((cx_ptr + 1) & 15);
+  snprintf(cx_file[cx_ptr], 30, "%s:%s", module, file);
+  cx_line[cx_ptr] = line;
+  strncpy(cx_note[cx_ptr], note, 255);
+  cx_note[cx_ptr][255] = 0;
+}
+
+/* the horrible global lookup table for functions
+ * BUT it makes the whole thing *much* more portable than letting each
+ * OS screw up the symbols their own special way :/
+ */
 
 Function global_table[] =
 {
@@ -451,6 +461,7 @@ Function global_table[] =
   (Function) mod_realloc,
   (Function) xtra_set,
   /* 232 - 235 */
+  (Function) mod_contextnote,
 };
 
 void init_modules(void)
