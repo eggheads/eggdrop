@@ -88,9 +88,11 @@ struct filesys_stats {
 };
 
 void *_user_malloc(int, char *, int);
+void *_user_realloc(void *, int, char *, int);
 
 #ifndef MAKING_MODS
 #define user_malloc(x) _user_malloc(x,__FILE__,__LINE__)
+#define user_realloc(x,y) _user_realloc(x,y,__FILE__,__LINE__)
 #endif
 int add_entry_type(struct user_entry_type *);
 int del_entry_type(struct user_entry_type *);

@@ -314,6 +314,7 @@
 #define force_expire (*(int *)(global[227]))	/* Rufus */
 /* 228 - 231 */
 #define add_lang_section ((void(*)(char *))global[228])
+#define user_realloc(x) ((void *(*)(void *,int,char *,int))global[229])(x,__FILE__,__LINE__)
 /* this is for blowfish module, couldnt be bothereed making a whole new .h
  * file for it ;) */
 #ifndef MAKING_BLOWFISH

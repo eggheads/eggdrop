@@ -443,6 +443,7 @@ Function global_table[] =
   (Function) & force_expire,	/* int - Rufus */
   /* 228 - 231 */
   (Function) add_lang_section,
+  (Function) _user_realloc,
 };
 
 void init_modules(void)

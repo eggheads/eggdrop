@@ -51,10 +51,21 @@ void *_user_malloc(int size, char *file, int line)
   simple_sprintf(x, "userrec.c:%s", file);
   return n_malloc(size, x, line);
 }
+void *_user_realloc(void *ptr, int size, char *file, int line)
+{
+  char x[1024];
+
+  simple_sprintf(x, "userrec.c:%s", file);
+  return n_realloc(ptr, size, x, line);
+}
 #else
 void *_user_malloc(int size, char *file, int line)
 {
   return nmalloc(size);
+}
+void *_user_realloc(int size, char *file, int line)
+{
+  return nrealloc(size);
 }
 #endif
 
