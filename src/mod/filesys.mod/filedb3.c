@@ -4,7 +4,7 @@
  * 
  * Rewritten by Fabian Knittel <fknittel@gmx.de>
  * 
- * $Id: filedb3.c,v 1.8 2000/01/17 22:36:08 fabian Exp $
+ * $Id: filedb3.c,v 1.9 2000/02/29 20:29:29 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1317,6 +1317,7 @@ static void filedb_change(char *dir, char *fn, int what)
 {
   FILE *fdb;
   filedb_entry *fdbe;
+  int changed = 0;
 
   fdb = filedb_open(dir, 0);
   if (!fdb)
@@ -1326,12 +1327,6 @@ static void filedb_change(char *dir, char *fn, int what)
   if (fdbe) {
     if (!(fdbe->stat & FILE_DIR)) {
       switch (what) {
-      case FILEDB_HIDE:
-	fdbe->stat |= FILE_HIDDEN;
-	break;
-      case FILEDB_UNHIDE:
-	fdbe->stat &= ~FILE_HIDDEN;
-	break;
       case FILEDB_SHARE:
 	fdbe->stat |= FILE_SHARE;
 	break;
@@ -1339,8 +1334,20 @@ static void filedb_change(char *dir, char *fn, int what)
 	fdbe->stat &= ~FILE_SHARE;
 	break;
       }
-      filedb_updatefile(fdb, fdbe->pos, fdbe, UPDATE_HEADER);
+      changed = 1;
     }
+    switch (what) {
+    case FILEDB_HIDE:
+      fdbe->stat |= FILE_HIDDEN;
+      changed = 1;
+      break;
+    case FILEDB_UNHIDE:
+      fdbe->stat &= ~FILE_HIDDEN;
+      changed = 1;
+      break;
+    }
+    if (changed)
+      filedb_updatefile(fdb, fdbe->pos, fdbe, UPDATE_HEADER);
     free_fdbe(&fdbe);
   }
   filedb_close(fdb);

@@ -1,7 +1,7 @@
 dnl aclocal.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: aclocal.m4,v 1.10 2000/02/29 19:57:27 fabian Exp $
+dnl $Id: aclocal.m4,v 1.11 2000/02/29 20:29:29 fabian Exp $
 dnl
 AC_DEFUN(EGG_MSG_CONFIGURE_START, [dnl
 AC_MSG_RESULT()
@@ -159,6 +159,18 @@ case "$egg_cv_var_system" in
     SHLIB_STRIP=strip
     NEED_DL=0
     DEFAULT_MAKE=static
+    ;;
+  Ultrix)
+    AC_MSG_RESULT(Ultrix)
+    NEED_DL=0
+    SHLIB_STRIP=touch
+    DEFUALT_MAKE=static
+    ;;
+  BeOS)
+    AC_MSG_RESULT(BeOS)
+    NEED_DL=0
+    SHLIB_STRIP=strip
+    DEFUALT_MAKE=static
     ;;
   Linux)
     AC_MSG_RESULT(Linux! The choice of the GNU generation)
