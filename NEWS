@@ -119,13 +119,6 @@ Changes made to Eggdrop 1.6.x from Eggdrop1.4.x:
 
   CONFIG FILES
 
-     * eggdrop.conf.dist was replaced with three files: eggdrop.simple.conf,
-       eggdrop.advanced.conf, and eggdrop.complete.conf. This allows users to
-       choose how they want to configure their bot. eggdrop.simple.conf
-       contains the simplest configuration options, eggdrop.advanced.conf
-       goes more into detail, and eggdrop.complete.conf contains all possible
-       settings.
-
      * To support longer nicknames, as some IRC servers do, a new 'nick-len'
        setting was added.
 

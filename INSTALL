@@ -72,15 +72,12 @@ Last revised: March 08, 2002
 
          [The following is performed from the directory installed above.]
 
-      5. Copy the file 'eggdrop.complete.conf' to a new file, usually the same
-         name as the bot that will use it, e.g. "LamestBot.conf".
+      5. Edit your config file completely.
 
-      6. Edit your config file completely.
-
-      7. Start the bot with the "-m" option to create a user file, i.e. './eggdrop
+      6. Start the bot with the "-m" option to create a user file, i.e. './eggdrop
          -m LamestBot.conf'.
 
-      8. When starting the bot in the future, drop the "-m". If you have edited
+      7. When starting the bot in the future, drop the "-m". If you have edited
          your config file correctly, you can type:
 
            chmod u+x <my-config-file-name>
@@ -94,12 +91,12 @@ Last revised: March 08, 2002
          to start up your bot. For this to work, the top line of your script
          MUST contain the correct path to the Eggdrop executable.
 
-      9. It's advisable to run your bot via crontab, so that it will
+      8. It's advisable to run your bot via crontab, so that it will
          automatically restart if the machine goes down or (heaven forbid)
          the bot should crash. Look at 'scripts/botchk' and 'scripts/autobotchk'
          for a great start with crontabbing the bot.
 
-     10. Smile, and if you haven't already read the README file in its
+      9. Smile, and if you haven't already read the README file in its
          entirety, go take a long walk off a short pier.
 
   (3) MODULES

@@ -44,14 +44,8 @@ Last revised: June 04, 2002
   disabled_modules
     Any module listed in this file will not be compiled by default.
 
-  eggdrop.advanced.conf
-    This is an advanced configuration file for your bot.
-
-  eggdrop.complete.conf
-    This is a configuration file including all options for your bot.
-
-  eggdrop.simple.conf
-    This is a simple configuration file for your bot.
+  eggdrop.conf
+    This is a sample configuration file for your bot.
 
   FEATURES
     This tells you what Eggdrop can do -- a kind of advertisement.
