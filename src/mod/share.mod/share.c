@@ -1,7 +1,7 @@
 /*
  * share.c -- part of share.mod
  *
- * $Id: share.c,v 1.51 2001/06/24 20:37:16 poptix Exp $
+ * $Id: share.c,v 1.52 2001/06/29 13:58:54 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1324,7 +1324,7 @@ static int flush_tbuf(char *bot)
   struct share_msgq *q, *r;
   tandbuf **old = &tbuf, *t;
 
-  for (; *old; old = &((*old)->next)) 
+  for (; *old; old = &((*old)->next)) {
     if (!egg_strcasecmp((*old)->bot, bot)) {
       t = *old;
       *old = t->next;
@@ -1336,6 +1336,7 @@ static int flush_tbuf(char *bot)
       nfree(t);
       return 1;
     }
+  }
   return 0;
 }
 
@@ -1344,15 +1345,16 @@ static int flush_tbuf(char *bot)
 static void check_expired_tbufs()
 {
   int i;
-  struct share_msgq *q;
+  struct share_msgq *q, *r;
   tandbuf **old = &tbuf, *t;
 
-  for (; *old; old = &((*old)->next)) 
+  for (; *old; old = &((*old)->next)) {
     if ((now - (*old)->timer) > resync_time) {
 	/* EXPIRED */
       t = *old;
       *old = t->next;
-      for (q = t->q; q && q->msg[0]; q = q->next) {
+      for (q = t->q; q && q->msg[0]; q = r) {
+	r = q->next;
 	  nfree(q->msg);
 	  nfree(q);
 	}
@@ -1360,6 +1362,7 @@ static void check_expired_tbufs()
 	t->bot);
       nfree(t);
     }
+  }
   /* Resend userfile requests */
   for (i = 0; i < dcc_total; i++)
     if (dcc[i].type->flags & DCT_BOT) {

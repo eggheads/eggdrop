@@ -70,10 +70,10 @@ EGG_EXEEXT
 # (well, what used to be robey's tcl thingies...)
 
 # Latest tested Tcl version to recommend if Tcl isn't found
-tclrecommendver="8.3.2"
+tclrecommendver="8.3.3"
 
 # Site recommended to download Tcl from
-tclrecommendsite="ftp://ftp.scriptics.com/pub/tcl/tcl8_3/"
+tclrecommendsite="ftp://ftp.eggheads.org/pub/tcl/tcl8_3/"
 
 # Tcl library filename prefixes (also used for Tcl header dir on FreeBSD)
 tcllibnames="tcl tcl8.4 tcl84 tcl8.3 tcl83 tcl8.2 tcl82 tcl8.1 tcl81 \
