@@ -115,6 +115,7 @@ specific commands, see later.
       COMMENT - returns the master-visible only comment for the user
       EMAIL   - returns the users email address
       URL     - returns the users url address
+      HANDLE  - returns the users handle as it is saved in the userfile
 
   setuser <handle> <entry-type> [extra info]
     this is the counterpart of getuser, it lets you set the various values

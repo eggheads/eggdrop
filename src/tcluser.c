@@ -4,7 +4,7 @@
  * 
  * dprintf'ized, 1aug1996
  * 
- * $Id: tcluser.c,v 1.9 1999/12/22 12:24:58 fabian Exp $
+ * $Id: tcluser.c,v 1.10 1999/12/27 14:52:43 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -492,7 +492,7 @@ static int tcl_getuser STDVAR {
 
   Context;
   BADARGS(3, 999, " handle type");
-  if (!(et = find_entry_type(argv[2]))) {
+  if (!(et = find_entry_type(argv[2])) && strcasecmp(argv[2], "HANDLE")) {
     Tcl_AppendResult(irp, "No such info type: ", argv[2], NULL);
     return TCL_ERROR;
   }
@@ -503,10 +503,14 @@ static int tcl_getuser STDVAR {
     } else
       return TCL_OK;		/* silently ignore user * */
   }
+  if (!strcasecmp(argv[2], "HANDLE")) {
+    Tcl_AppendResult(irp,u->handle, NULL);
+  } else {
   e = find_user_entry(et, u);
 
   if (e)
     return et->tcl_get(irp, u, e, argc, argv);
+  }
   return TCL_OK;
 }
 
