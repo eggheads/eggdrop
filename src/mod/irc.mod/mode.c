@@ -4,7 +4,7 @@
  *   channel mode changes and the bot's reaction to them
  *   setting and getting the current wanted channel modes
  * 
- * $Id: mode.c,v 1.22 2000/04/13 21:44:05 fabian Exp $
+ * $Id: mode.c,v 1.23 2000/06/10 01:02:23 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -291,8 +291,6 @@ static void real_add_mode(struct chanset_t *chan,
 	ok = 1;
     if (!ok)
       flush_mode(chan, NORMAL);	/* Full buffer!  flush modes */
-    if ((mode == 'b') && (plus == '+') && channel_enforcebans(chan))
-      enforce_bans(chan);
     return;
   }
   /* +k ? store key */
