@@ -2,7 +2,7 @@
  * language.c -- handles:
  *   language support code
  * 
- * $Id: language.c,v 1.11 1999/12/22 20:30:03 guppy Exp $
+ * $Id: language.c,v 1.12 1999/12/25 01:49:24 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -133,7 +133,7 @@ void add_lang(char *lang)
   if (langpriority)
     lp->next = langpriority;
   langpriority = lp;
-  putlog(LOG_MISC, "*", "LANG: Added language support for %s.", lang); 
+  putlog(LOG_MISC, "*", "LANG: Language loaded: %s", lang);
 }
 
 /* remove a language from the list of preferred languages. */
@@ -152,7 +152,7 @@ static int del_lang(char *lang)
       if (lp->lang)
         nfree(lp->lang);
       nfree(lp);
-      putlog(LOG_MISC, "*", "LANG: Not supporting language %s any longer.",
+      putlog(LOG_MISC, "*", "LANG: Language unloaded: %s",
 	     lang); 
       return 1;
     }
@@ -321,8 +321,7 @@ void add_lang_section(char *section)
     ols->next = ls;
   else
     langsection = ls;
-  putlog(LOG_MISC, "*", "LANG: Added section %s.", section);
-  
+  putlog(LOG_MISC, "*", "LANG: Section loaded: %s", section);  
   /* Always load base language */
   langfile = get_specific_langfile(BASELANG, ls);
   if (langfile) {
@@ -356,7 +355,7 @@ int del_lang_section(char *section)
       if (ls->lang)
 	nfree(ls->lang);
       nfree(ls);
-      putlog(LOG_MISC, "*", "LANG: Removed section %s.", section);
+      putlog(LOG_MISC, "*", "LANG: Section unloaded: %s", section);
       return 1;
     }
     ols = ls;
@@ -601,12 +600,14 @@ int expmem_language()
 /* a report on the module status - not sure if we need this now :/ */
 static int cmd_languagestatus(struct userrec *u, int idx, char *par)
 {
-  int ltexts = 0;
-  int maxdepth = 0, used = 0, empty = 0, i, c;
+  int ltexts = 0;  
+  register int i, c, maxdepth = 0, used = 0, empty = 0;
   lang_tab *l;
   lang_sec *ls = langsection;
   lang_pri *lp = langpriority;
 
+  Context;
+  putlog(LOG_CMDS, "*", "#%s# lstat %s", dcc[idx].nick, par);
   for (i = 0; i < 64; i++) {
     c = 0;
     for (l = langtab[i]; l; l = l->next)
@@ -620,22 +621,28 @@ static int cmd_languagestatus(struct userrec *u, int idx, char *par)
     ltexts += c;
   }
   Context;
-  dprintf(idx, "language code report:\n");
-  dprintf(idx, "   Table size: %d bytes\n", expmem_language());
+  dprintf(idx, "Language code report:\n");
+  dprintf(idx, "   Table size   : %d bytes\n", expmem_language());
   dprintf(idx, "   Text messages: %d\n", ltexts);
   dprintf(idx, "   %d used, %d unused, maxdepth %d, avg %f\n",
 	  used, empty, maxdepth, (float) ltexts / 64.0);
   if (lp) {
-    dprintf(idx, "languages:\n");
+    int c = 0;
+    
+    dprintf(idx, "   Supported languages:");
     while (lp) {
-      dprintf(idx, "   %s\n", lp->lang);
+      dprintf(idx, "%s %s", c ? "," : "", lp->lang);
+      c = 1;
       lp = lp->next;
     }
+    dprintf(idx, "\n");
   }
   if (ls) {
-    dprintf(idx, "language sections:\n");
+    dprintf(idx, "\n   SECTION              LANG\n");
+    dprintf(idx, "   ==============================\n");
+
     while (ls) {
-      dprintf(idx, "   %s - %s\n", ls->section,
+      dprintf(idx, "   %-20s %s\n", ls->section,
 	      ls->lang ? ls->lang : "<none>");
       ls = ls->next;
     }

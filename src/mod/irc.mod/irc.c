@@ -2,7 +2,7 @@
  * irc.c -- part of irc.mod
  *   support for channels withing the bot 
  * 
- * $Id: irc.c,v 1.33 1999/12/19 23:09:33 guppy Exp $
+ * $Id: irc.c,v 1.34 1999/12/25 01:49:25 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -132,8 +132,8 @@ static int want_to_revenge(struct chanset_t *chan, struct userrec *u,
 /* Dependant on revenge_mode, punish the offender.
  */
 static void punish_badguy(struct chanset_t *chan, char *whobad,
-			  struct userrec *u, char *badnick, int mevictim,
-			  int type)
+			  struct userrec *u, char *badnick, char *victim,
+			  int mevictim, int type)
 {
   char reason[1024], ct[81], *kick_msg;
   memberlist *m;
@@ -291,7 +291,7 @@ static void maybe_revenge(struct chanset_t *chan, char *whobad,
     return;	/* No, leave them alone ... */
 
   /* Haha! Do the vengeful thing ... */
-  punish_badguy(chan, whobad, u, badnick, mevictim, type);
+  punish_badguy(chan, whobad, u, badnick, victim, mevictim, type);
 }
 
 /* set the key */

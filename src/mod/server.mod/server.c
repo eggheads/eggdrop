@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  * 
- * $Id: server.c,v 1.24 1999/12/22 20:30:04 guppy Exp $
+ * $Id: server.c,v 1.25 1999/12/25 01:49:25 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -988,6 +988,7 @@ static char *server_close()
   cycle_time = 100;
   nuke_server("Connection reset by phear");
   clearq(serverlist);
+  dcc_remove_lost();		/* Remove lost dcc entries. */
   Context;
   rem_builtins(H_dcc, C_dcc_serv);
   rem_builtins(H_raw, my_raw_binds);

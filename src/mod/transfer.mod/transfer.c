@@ -1,7 +1,7 @@
 /* 
  * transfer.c -- part of transfer.mod
  * 
- * $Id: transfer.c,v 1.18 1999/12/22 20:30:05 guppy Exp $
+ * $Id: transfer.c,v 1.19 1999/12/25 01:49:25 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1483,6 +1483,8 @@ static char *transfer_close()
     else if (dcc[i].type == &DCC_FORK_SEND)
       eof_dcc_fork_send(i);
   }
+  /* Remove lost dcc entries. */
+  dcc_remove_lost();
   while (fileq)
     deq_this(fileq);
   del_entry_type(&USERENTRY_FSTAT);

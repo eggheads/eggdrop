@@ -8,7 +8,7 @@
  * 
  * dprintf'ized, 28aug1995
  * 
- * $Id: dccutil.c,v 1.9 1999/12/22 20:30:03 guppy Exp $
+ * $Id: dccutil.c,v 1.10 1999/12/25 01:49:24 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -283,6 +283,23 @@ void removedcc(int n)
     bzero(&dcc[n], sizeof(struct dcc_t)); /* drummer */
 }
 
+/* Clean up sockets that were just left for dead.
+ */
+void dcc_remove_lost(void)
+{
+  int i;
+
+  Context;
+  for (i = 0; i < dcc_total; i++) {
+    if (dcc[i].type == &DCC_LOST) {
+      dcc[i].type = (struct dcc_table *) (dcc[i].sock);
+      dcc[i].sock = (-1);
+      removedcc(i);
+      i--;
+    }
+  }
+}
+
 /* show list of current dcc's to a dcc-chatter */
 /* positive value: idx given -- negative value: sock given */
 void tell_dcc(int zidx)
@@ -312,7 +329,8 @@ void tell_dcc(int zidx)
     }
     k = HANDLEN - strlen(dcc[i].nick);
     spaces[k] = 0;
-    dprintf(zidx, "%-4d %08X %5d %s%s %-17s %s\n", dcc[i].sock, dcc[i].addr,
+    dprintf(zidx, "%-4d %08X %5d %s%s %-17s %s\n", (dcc[i].type == &DCC_LOST) ?
+	    (-1) : dcc[i].sock, dcc[i].addr,
 	    dcc[i].port, dcc[i].nick, spaces, dcc[i].host + j, other);
     spaces[k] = ' ';
   }

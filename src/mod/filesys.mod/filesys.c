@@ -1,7 +1,7 @@
 /* 
  * filesys.c -- part of filesys.mod
  * 
- * $Id: filesys.c,v 1.13 1999/12/15 02:32:59 guppy Exp $
+ * $Id: filesys.c,v 1.14 1999/12/25 01:49:25 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -829,6 +829,7 @@ static char *filesys_close()
       killsock(dcc[i].sock);
       lostdcc(i);
     }
+  dcc_remove_lost();			/* Remove lost dcc entries. */
   rem_tcl_commands(mytcls);
   rem_tcl_strings(mystrings);
   rem_tcl_ints(myints);
