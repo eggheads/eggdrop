@@ -95,6 +95,11 @@ see also: +ignore, -ignore, set ignore-time
    changes your handle on the bot. That's the handle(nickname) that the
    bot will know you as forever and ever, and what you have to use when
    telnetting in or IDENT'ing yourself, so remember it.
+%{help=nick}
+###  %bnick%b
+   Please note, that this command has been superceeded by
+   'handle'. If you still want to use 'nick', load compat.tcl
+   into your bot.
 %{help=note}
 ###  %bnote%b <nickname[@bot]> <message>
    sends a private note to a user on the party line.  if that user

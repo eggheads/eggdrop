@@ -213,6 +213,11 @@ See also: whois
    Changes the handle of a user record. For example, to
    change the handle of user 'gavroche' to 'jamie', you would
    type: 'chhandle gavroche jamie'
+%{help=chnick}%{+t}
+###  %bchnick%b
+   Please note, that this command has been superceeded by
+   'chhandle'. If you still want to use 'chnick', load compat.tcl
+   into your bot.
 %{help=chpass}%{+t}
 ###  %bchpass%b <handle> [newpassword]
    Changes a user's password on the bot.  If you leave off the new
