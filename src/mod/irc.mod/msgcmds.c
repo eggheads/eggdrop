@@ -2,7 +2,7 @@
  * msgcmds.c -- part of irc.mod
  *   all commands entered via /MSG
  *
- * $Id: msgcmds.c,v 1.21 2001/04/12 02:39:46 guppy Exp $
+ * $Id: msgcmds.c,v 1.22 2001/06/24 20:42:17 poptix Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -653,7 +653,8 @@ static int msg_key(char *nick, char *host, struct userrec *u, char *par)
       }
     }
   }
-  putlog(LOG_CMDS, "*", "(%s!%s) !*! failed KEY", nick, host);
+  putlog(LOG_CMDS, "*", "(%s!%s) !%s! failed KEY %s", nick, host,
+	 (u ? u->handle : "*"), par);
   return 1;
 }
 
@@ -709,10 +710,8 @@ static int msg_invite(char *nick, char *host, struct userrec *u, char *par)
 
   if (match_my_nick(nick))
     return 1;
-  if (!u)
-    return 0;
   pass = newsplit(&par);
-  if (u_pass_match(u, pass)) {
+  if (u_pass_match(u, pass) && !u_pass_match(u, "-")) {
     if (par[0] == '*') {
       for (chan = chanset; chan; chan = chan->next) {
 	get_user_flagrec(u, &fr, chan->dname);
@@ -743,7 +742,7 @@ static int msg_invite(char *nick, char *host, struct userrec *u, char *par)
     }
   }
   putlog(LOG_CMDS, "*", "(%s!%s) !%s! failed INVITE %s", nick, host,
-	 u->handle, par);
+	 (u ? u->handle : "*"), par);
   return 1;
 }
 
