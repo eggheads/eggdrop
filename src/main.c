@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  *
- * $Id: main.c,v 1.57 2001/04/13 19:26:35 guppy Exp $
+ * $Id: main.c,v 1.58 2001/04/13 22:27:14 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -77,8 +77,8 @@ extern jmp_buf		 alarmret;
  * modified versions of this bot.
  */
 
-char	egg_version[1024] = "1.6.4";
-int	egg_numver = 1060400;
+char	egg_version[1024] = "1.6.5";
+int	egg_numver = 1060500;
 
 char	notify_new[121] = "";	/* Person to send a note to for new users */
 int	default_flags = 0;	/* Default user flags and */
