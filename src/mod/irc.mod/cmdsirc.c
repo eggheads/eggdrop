@@ -2,7 +2,7 @@
  * chancmds.c -- part of irc.mod
  *   handles commands direclty relating to channel interaction
  * 
- * $Id: cmdsirc.c,v 1.13 2000/06/20 20:44:18 fabian Exp $
+ * $Id: cmdsirc.c,v 1.14 2000/06/20 20:49:46 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -145,6 +145,10 @@ static void cmd_kickban(struct userrec *u, int idx, char *par)
     chname = 0;
   if (!(chan = has_op(idx, chname)))
     return;
+  if (!channel_active(chan)) {
+    dprintf(idx, "I'm not on %s right now!\n", chan->dname);
+    return;
+  }
   if (!me_op(chan)) {
     dprintf(idx, "I can't help you now because I'm not a channel op on %s.\n",
 	    chan->dname);
@@ -228,6 +232,10 @@ static void cmd_voice(struct userrec *u, int idx, char *par)
   nick = newsplit(&par);
   if (!(chan = has_op(idx, par)))
     return;
+  if (!channel_active(chan)) {
+    dprintf(idx, "I'm not on %s right now!\n", chan->dname);
+    return;
+  }
   if (!me_op(chan)) {
     dprintf(idx, "I can't help you now because I'm not a chan op on %s.\n",
 	    chan->dname);
@@ -259,6 +267,10 @@ static void cmd_devoice(struct userrec *u, int idx, char *par)
   nick = newsplit(&par);
   if (!(chan = has_op(idx, par)))
     return;
+  if (!channel_active(chan)) {
+    dprintf(idx, "I'm not on %s right now!\n", chan->dname);
+    return;
+  }
   if (!me_op(chan)) {
     dprintf(idx, "I can't do that right now I'm not a chan op on %s.\n",
 	    chan->dname);
@@ -290,6 +302,10 @@ static void cmd_op(struct userrec *u, int idx, char *par)
   nick = newsplit(&par);
   if (!(chan = has_op(idx, par)))
     return;
+  if (!channel_active(chan)) {
+    dprintf(idx, "I'm not on %s right now!\n", chan->dname);
+    return;
+  }
   if (!me_op(chan)) {
     dprintf(idx, "I can't help you now because I'm not a chan op on %s.\n",
 	    chan->dname);
@@ -332,6 +348,10 @@ static void cmd_deop(struct userrec *u, int idx, char *par)
   nick = newsplit(&par);
   if (!(chan = has_op(idx, par)))
     return;
+  if (!channel_active(chan)) {
+    dprintf(idx, "I'm not on %s right now!\n", chan->dname);
+    return;
+  }
   if (!me_op(chan)) {
     dprintf(idx, "I can't help you now because I'm not a chan op on %s.\n",
 	    chan->dname);
@@ -382,6 +402,10 @@ static void cmd_kick(struct userrec *u, int idx, char *par)
     chname = 0;
   if (!(chan = has_op(idx, chname)))
     return;
+  if (!channel_active(chan)) {
+    dprintf(idx, "I'm not on %s right now!\n", chan->dname);
+    return;
+  }
   if (!me_op(chan)) {
     dprintf(idx, "I can't help you now because I'm not a channel op on %s.\n",
 	    chan->dname);
@@ -615,6 +639,10 @@ static void cmd_topic(struct userrec *u, int idx, char *par)
   } else
     chan = has_op(idx, "");
   if (chan) {
+    if (!channel_active(chan)) {
+      dprintf(idx, "I'm not on %s right now!\n", chan->dname);
+      return;
+    }
     if (!par[0]) {
       if (chan->channel.topic) {
 	dprintf(idx, "The topic for %s is: %s\n", chan->dname,
