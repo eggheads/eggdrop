@@ -14,6 +14,7 @@
 
 #include "main.h"
 #include "tandem.h"
+#include "modules.h"
 
 extern Tcl_Interp *interp;
 extern tcl_timer_t *timer, *utimer;
@@ -254,6 +255,7 @@ static int tcl_dccputchan STDVAR
 static int tcl_console STDVAR
 {
   int i, j, pls, arg;
+  module_entry *me;
 
   context;
   BADARGS(2, 4, " idx ?channel? ?console-modes?");
@@ -300,6 +302,11 @@ static int tcl_console STDVAR
   }
   Tcl_AppendElement(irp, dcc[i].u.chat->con_chan);
   Tcl_AppendElement(irp, masktype(dcc[i].u.chat->con_flags));
+  /* new style autosave -- drummer,07/25/1999*/
+  if ((me = module_find("console", 0, 0))) {
+    Function *func = me->funcs;
+    (func[4]) (i);
+  }
   return TCL_OK;
 }
 

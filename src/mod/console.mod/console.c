@@ -293,7 +293,8 @@ static int console_store(struct userrec *u, int idx, char *par)
   return 0;
 }
 
-static int console_chof(char *handle, int idx)
+/* cmds.c:cmd_console calls this, better than chof bind - drummer,07/25/1999 */
+static int console_oncmd(int idx)
 {
   if (console_autosave)
     console_store(dcc[idx].user, idx, NULL);
@@ -313,11 +314,6 @@ static cmd_t mychon[] =
   {"*", "", console_chon, "console:chon"}
 };
 
-static cmd_t mychof[] =
-{
-  {"*", "", console_chof, "console:chof"}
-};
-
 static cmd_t mydcc[] =
 {
   {"store", "", console_store, NULL}
@@ -327,7 +323,6 @@ static char *console_close()
 {
   context;
   rem_builtins(H_chon, mychon, 1);
-  rem_builtins(H_chof, mychof, 1);
   rem_builtins(H_dcc, mydcc, 1);
   rem_tcl_ints(myints);
   rem_help_reference("console.help");
@@ -344,6 +339,7 @@ static Function console_table[] =
   (Function) console_close,
   (Function) 0,
   (Function) 0,
+  (Function) console_oncmd,
 };
 
 char *console_start(Function * global_funcs)
@@ -355,7 +351,6 @@ char *console_start(Function * global_funcs)
   if (!module_depend(MODULE_NAME, "eggdrop", 103, 0))
     return "This module requires eggdrop1.3.0 or later";
   add_builtins(H_chon, mychon, 1);
-  add_builtins(H_chof, mychof, 1);
   add_builtins(H_dcc, mydcc, 1);
   add_tcl_ints(myints);
   add_help_reference("console.help");

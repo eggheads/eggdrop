@@ -641,6 +641,7 @@ static void cmd_console(struct userrec *u, int idx, char *par)
   int dest = 0, i, ok = 0, pls, md;
   struct flag_record fr =
   {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
+  module_entry *me;
 
   if (!par[0]) {
     dprintf(idx, "Your console is %s: %s (%s)\n",
@@ -738,6 +739,11 @@ static void cmd_console(struct userrec *u, int idx, char *par)
 	    dcc[dest].u.chat->con_chan,
 	    masktype(dcc[dest].u.chat->con_flags),
 	    maskname(dcc[dest].u.chat->con_flags));
+  }
+  /* new style autosave -- drummer,07/25/1999*/
+  if ((me = module_find("console", 0, 0))) {
+    Function *func = me->funcs;
+    (func[4]) (idx);
   }
 }
 
