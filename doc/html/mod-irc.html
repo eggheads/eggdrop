@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: mod-irc.html,v 1.22 2004/05/27 01:30:11 wcc Exp $ -->
+<!-- $Id: mod-irc.html,v 1.23 2004/08/21 22:43:27 wcc Exp $ -->
 
 <html>
   <head>
@@ -14,7 +14,7 @@
 
     <p>This module controls the bots interaction on IRC. It allows the bot to
     join channels, etc. You have to load this if you want your bot to come on
-	IRC.</p>
+    IRC.</p>
 
     <blockquote>
       <ol>
@@ -43,6 +43,20 @@
           <p>Set this to 1 if you want to bounce all server bans.</p>
         </dd>
 
+        <dt><strong>set bounce-exempts 0</strong></dt>
+
+        <dd>
+          <p>Set this to 1 if you want to bounce all server exemptions
+          (+e modes). This is disabled if use-exempts is disabled.</p>
+        </dd>
+
+        <dt><strong>set bounce-invites 0</strong></dt>
+
+        <dd>
+          <p>Set this to 1 if you want to bounce all server invitations
+          (+I modes). This is disabled if use-invites is disabled.</p>
+        </dd>
+
         <dt><strong>set bounce-modes 0</strong></dt>
 
         <dd>
@@ -64,6 +78,34 @@
           channel. Eggdrop will not place any more bans if this limit is
           reached. Undernet currently allows 45 bans, IRCnet allows 30, EFnet
           allows 100, and DALnet allows 100.</p>
+        </dd>
+
+        <dt><strong>set max-exempts 20</strong></dt>
+
+        <dd>
+          <p>Set here the maximum number of exempts you want Eggdrop to set
+          on a channel. Eggdrop will not place any more exempts if this
+          limit is reached.</p>
+        </dd>
+
+        <dt><strong>set max-invites 20</strong></dt>
+
+        <dd>
+          <p>Set here the maximum number of invites you want Eggdrop to set
+          on a channel. Eggdrop will not place any more invites if this
+          limit is reached.</p>
+        </dd>
+
+        <dt><strong>set use-exempts 0<br>
+        set use-invites 0</strong></dt>
+
+        <dd>
+          <p>These settings should be left commented unless the default values
+          are being overridden. By default, exempts and invites are on for
+          EFnet and IRCnet, but off for all other large networks. This behavior
+          can be modified with the following 2 flags. If your network
+          doesn&#39;t support +e/+I modes then you will be unable to use these
+          features.</p>
         </dd>
 
         <dt><strong>set kick-fun 0</strong></dt>
@@ -113,6 +155,16 @@
           to 200.</p>
         </dd>
 
+        <dt><strong>set opchars &quot;@&quot;<br>
+        #set opchars &quot;@&~&quot;</strong></dt>
+
+        <dd>
+          <p>Some IRC servers are using some non-standard op-like channel
+          prefixes/modes. Define them here so the bot can recognize them. Just
+          &quot;@&quot; should be fine for most networks. Un-comment the second
+          line for some UnrealIRCds.</p>
+        </dd>
+
         <dt><strong>unbind msg - hello *msg:hello<br>
         bind msg - myword *msg:hello</strong></dt>
 
@@ -159,52 +211,6 @@
 
     <blockquote>
       <dl>
-        <dt><strong>set bounce-exempts 0</strong></dt>
-
-        <dd>
-          <p>Set this to 1 if you want to bounce all server exemptions
-          (+e modes).</p>
-        </dd>
-
-        <dt><strong>set bounce-invites 0</strong></dt>
-
-        <dd>
-          <p>Set this to 1 if you want to bounce all server invitations
-          (+I modes).</p>
-        </dd>
-
-        <dt><strong>set max-exempts 20</strong></dt>
-
-        <dd>
-          <p>Set here the maximum number of exempts you want Eggdrop to set
-          on a channel. Eggdrop will not place any more exempts if this
-         limit is reached.</p>
-        </dd>
-
-        <dt><strong>set max-invites 20</strong></dt>
-
-        <dd>
-          <p>Set here the maximum number of invites you want Eggdrop to set
-          on a channel. Eggdrop will not place any more invites if this
-          limit is reached.</p>
-        </dd>
-
-        <dt><strong>set use-exempts 0</strong> (Disabled by default)</dt>
-
-        <dd>
-          <p>If you set this feature to 0 in your Eggdrop config file, the
-          bot will not use any exempts. This setting is set to 1 as a default
-          in net-type 1.</p>
-        </dd>
-
-        <dt><strong>set use-invites 0</strong> (Disabled by default)</dt>
-
-        <dd>
-          <p>If you set this feature to 0 in your Eggdrop config file,
-          the bot won&#39;t use any invites. This setting is set to 1 as a
-          default in net-type 1.</p>
-        </dd>
-
         <dt><strong>set prevent-mixing 1</strong></dt>
 
         <dd>

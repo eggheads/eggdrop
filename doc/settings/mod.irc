@@ -1,7 +1,7 @@
-$Id: mod.irc,v 1.20 2004/07/25 03:56:59 wcc Exp $
+$Id: mod.irc,v 1.21 2004/08/21 22:43:27 wcc Exp $
 
 IRC Module
-Last revised: May 26, 2004
+Last revised: August 21, 2004
     _____________________________________________________________________
 
                                   IRC Module
@@ -24,6 +24,16 @@ Last revised: May 26, 2004
       Set this to 1 if you want to bounce all server bans.
 
 
+    set bounce-exempts 0
+      Set this to 1 if you want to bounce all server exemptions (+e modes).
+      This is disabled if use-exempts is disabled.
+
+
+    set bounce-invites 0
+      Set this to 1 if you want to bounce all server invitations (+I modes).
+      This is disabled if use-invites is disabled.
+
+
     set bounce-modes 0
       Set this to 1 if you want to bounce all server modes.
 
@@ -38,6 +48,27 @@ Last revised: May 26, 2004
       Eggdrop will not place any more bans if this limit is reached. Undernet
       currently allows 45 bans, IRCnet allows 30, EFnet allows 100, and DALnet
       allows 100.
+
+
+    set max-exempts 20
+      Set here the maximum number of exempts you want Eggdrop to set on a
+      channel. Eggdrop will not place any more exempts if this limit is
+      reached.
+
+
+    set max-invites 20
+      Set here the maximum number of invites you want Eggdrop to set on a
+      channel. Eggdrop will not place any more invites if this limit is
+      reached.
+
+
+    set use-exempts 0
+    set use-invites 0
+      These settings should be left commented unless the default values are
+      being overridden. By default, exempts and invites are on for EFnet and
+      IRCnet, but off for all other large networks. This behavior can be
+      modified with the following 2 flags. If your network doesn't support
+      +e/+I modes then you will be unable to use these features.
 
 
     set kick-fun 0
@@ -90,6 +121,14 @@ Last revised: May 26, 2004
       these two lines.
 
 
+    set opchars "@"
+    #set opchars "@&~"
+      Some IRC servers are using some non-standard op-like channel
+      prefixes/modes. Define them here so the bot can recognize them. Just
+      "@" should be fine for most networks. Un-comment the second line for
+      some UnrealIRCds.
+
+
     set no-chanrec-info 0
       If you are so lame you want the bot to display peoples info lines, even
       when you are too lazy to add their chanrecs to a channel, set this to 1.
@@ -102,36 +141,8 @@ Last revised: May 26, 2004
     'net-type' 1 and 5. net-type has to be set in the server module config
     section.
 
+
     Use the following settings only if you set 'net-type' to 1!
-
-    set bounce-exempts 0
-      Set this to 1 if you want to bounce all server exemptions (+e modes).
-
-
-    set bounce-invites 0
-      Set this to 1 if you want to bounce all server invitations (+I modes).
-
-
-    set max-exempts 20
-      Set here the maximum number of exempts you want Eggdrop to set on a
-      channel. Eggdrop will not place any more exempts if this limit is
-      reached.
-
-
-    set max-invites 20
-      Set here the maximum number of invites you want Eggdrop to set on a
-      channel. Eggdrop will not place any more invites if this limit is
-      reached.
-
-
-    set use-exempts 0
-      If you set this feature to 0 in your Eggdrop config file, the bot will
-      not use any exempts. This setting is set to 1 as a default in net-type 1.
-
-
-    set use-invites 0
-      If you set this feature to 0 in your Eggdrop config file, the bot won't
-      use any invites. This setting is set to 1 as a default in net-type 1.
 
 
     set prevent-mixing 1
@@ -139,7 +150,9 @@ Last revised: May 26, 2004
       mixing of b, o and v modes with e and I modes. This might be changed in
       the future, so use 1 at the moment for this setting.
 
+
     Use the following settings only if you set 'net-type' to 5!
+
 
     set kick-method 1
       If your network supports more users per kick command then 1, you can
@@ -155,10 +168,12 @@ Last revised: May 26, 2004
       value, you can modify this by changing the value of MODES_PER_LINE_MAX
       in src/chan.h and recompiling the bot.
 
+
     set include-lk 1
       Some networks don't include the +l limit and +k or -k key modes in the
       modes-per-line (see above) limitation. Set include-lk to 0 for these
       networks.
+
 
     set use-354 0
       Set this to 1 if your network uses IRCu2.10.01 specific /who requests.
@@ -168,7 +183,6 @@ Last revised: May 26, 2004
     set rfc-compliant 1
       If your network doesn't use rfc 1459 compliant string matching routines,
       set this to 0.
-
     _____________________________________________________________________
 
   Copyright (C) 2000, 2001, 2002, 2003, 2004 Eggheads Development Team
