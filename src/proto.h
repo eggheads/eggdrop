@@ -7,7 +7,7 @@
  * because they use structures in those
  * (saves including those .h files EVERY time) - Beldin
  * 
- * $Id: proto.h,v 1.38 2001/03/10 06:36:20 guppy Exp $
+ * $Id: proto.h,v 1.39 2001/03/11 21:00:34 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -232,7 +232,9 @@ void logsuffix_change(char *);
 char *str_escape(const char *str, const char div, const char mask);
 char *strchr_unescape(char *str, const char div, register const char esc_char);
 void str_unescape(char *str, register const char esc_char);
+#if TCL_MAJOR_VERSION >= 8 && TCL_MINOR_VERSION >= 1
 int str_utf8tounicode(char *str);
+#endif
 
 /* net.c */
 IP my_atoul(char *);

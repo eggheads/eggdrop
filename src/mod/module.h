@@ -1,7 +1,7 @@
 /* 
  * module.h
  * 
- * $Id: module.h,v 1.41 2001/03/10 06:36:20 guppy Exp $
+ * $Id: module.h,v 1.42 2001/03/11 21:00:34 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -431,7 +431,9 @@
 #define str_unescape ((void (*)(char *, register const char))global[264])
 #define egg_strcatn ((int (*)(char *dst, const char *src, size_t max))global[265])
 #define clear_chanlist_member ((void (*)(const char *nick))global[266])
+#if TCL_MAJOR_VERSION >= 8 && TCL_MINOR_VERSION >= 1
 #define str_utf8tounicode ((int (*)(char *))global[267])
+#endif
 
 /* This is for blowfish module, couldnt be bothered making a whole new .h
  * file for it ;)
