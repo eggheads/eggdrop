@@ -616,6 +616,66 @@ static int tcl_nick2hand STDVAR
   return TCL_OK;		/* blank */
 }
 
+/*  sends an optimal number of kicks per command (as defined by
+ *  kick_method) to the server, simialer to kick_all.  Fabian */
+static int tcl_putkick STDVAR
+{
+  struct chanset_t *chan;
+  int k = 0, l;
+  char kicknick[512], *nick, *p, *comment = NULL;
+  memberlist *m;
+
+  context;
+  BADARGS(3, 4, " channel nick?s? ?comment?");
+  chan = findchan(argv[1]);
+  if (chan == NULL) { 
+    Tcl_AppendResult(irp, "illegal channel: ", argv[1], NULL);
+    return TCL_ERROR;
+  }
+  if (argc == 4)
+    comment = argv[3];
+  else
+    comment = "";
+  if (!me_op(chan)) {
+    Tcl_AppendResult(irp, "need op", NULL);
+    return TCL_ERROR;
+  }
+  
+  kicknick[0] = 0;
+  p = argv[2];
+  /* loop through all given nicks */
+  while(p) {
+    nick = p;
+    p = strchr(nick, ',');	/* search for beginning of next nick */
+    if (p) {
+      *p = 0;
+      p++;
+    }
+    
+    m = ismember(chan, nick);
+    if (!m)
+      continue;			/* skip non-existant nicks */
+    m->flags |= SENTKICK;	/* mark as pending kick */
+    if (kicknick[0])
+      strcat(kicknick, ",");
+    strcat(kicknick, nick);	/* add to local queue */
+    k++;
+
+    /* check if we should send the kick command yet */
+    l = strlen(chan->name) + strlen(kicknick) + strlen(comment);
+    if (((kick_method != 0) && (k == kick_method)) || (l > 480)) {
+      dprintf(DP_SERVER, "KICK %s %s :%s\n", chan->name, kicknick, comment);
+      k = 0;
+      kicknick[0] = 0;
+    }
+  }
+  /* clear out all pending kicks in our local kick queue */
+  if (k > 0)
+   dprintf(DP_SERVER, "KICK %s %s :%s\n", chan->name, kicknick, comment);
+  context;
+  return TCL_OK;
+}
+
 static tcl_cmds tclchan_cmds[] =
 {
   {"chanlist", tcl_chanlist},
@@ -647,5 +707,6 @@ static tcl_cmds tclchan_cmds[] =
   {"resetchan", tcl_resetchan},
   {"topic", tcl_topic},
   {"botonchan", tcl_botonchan},
+  {"putkick", tcl_putkick},
   {0, 0}
 };
