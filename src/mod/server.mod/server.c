@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  * 
- * $Id: server.c,v 1.53 2000/09/27 19:40:44 fabian Exp $
+ * $Id: server.c,v 1.54 2000/09/27 19:41:37 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1934,6 +1934,5 @@ char *server_start(Function *global_funcs)
   egg_snprintf(botuserhost, sizeof botuserhost, "%s@%s", botuser, bothost);
   curserv = 999;
   do_nettype();
-  putlog(LOG_MISC, "*", "=== SERVER SUPPORT LOADED");
   return NULL;
 }
