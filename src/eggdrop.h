@@ -4,7 +4,7 @@
  *
  *   IF YOU ALTER THIS FILE, YOU NEED TO RECOMPILE THE BOT.
  *
- * $Id: eggdrop.h,v 1.47 2003/04/17 01:55:57 wcc Exp $
+ * $Id: eggdrop.h,v 1.48 2003/05/07 04:45:10 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -195,6 +195,9 @@
 #  define sigemptyset(x) ((*(int *)(x))=0)
 #endif
 
+#if !HAVE_SOCKLEN_T
+typedef int socklen_t;
+#endif
 
 /*
  *    Handy aliases for memory tracking and core dumps

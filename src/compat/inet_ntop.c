@@ -21,17 +21,13 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: inet_ntop.c,v 1.2 2003/04/02 21:16:22 wcc Exp $";
+static const char rcsid[] = "$Id: inet_ntop.c,v 1.3 2003/05/07 04:45:10 wcc Exp $";
 #endif
-
-#if defined(LIBC_SCCS) && !defined(lint)
-static const char rcsid[] = "$BINDId: inet_ntop.c,v 1.8 1999/10/13 16:39:28 vixie Exp $";
-#endif /* LIBC_SCCS and not lint */
 
 #include "main.h"
 #include "inet_ntop.h"
 
-#ifndef HAVE_INET_NTOP
+#if defined (USE_IPV6) && !defined(HAVE_INET_NTOP)
 
 #include <sys/param.h>
 #include <sys/types.h>

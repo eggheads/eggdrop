@@ -21,7 +21,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: inet_ntop.h,v 1.1 2003/04/01 22:58:08 wcc Exp $
+ * $Id: inet_ntop.h,v 1.2 2003/05/07 04:45:10 wcc Exp $
  */
 
 #ifndef _EGG_COMPAT_INET_NTOP_H
@@ -32,10 +32,14 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
-#ifndef HAVE_INET_NTOP
+#ifdef USE_IPV6
+#  ifndef HAVE_INET_NTOP
 const char *egg_inet_ntop(int af, const void *src, char *dst, socklen_t size);
+#  else
+#    define egg_inet_ntop inet_ntop
+#  endif
 #else
-#  define egg_inet_ntop inet_ntop
+#  define egg_inet_ntop 0
 #endif
 
 #endif /* !_EGG_COMPAT_INET_NTOP_H */
