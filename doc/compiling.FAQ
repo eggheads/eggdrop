@@ -1,5 +1,5 @@
 Compiling FAQ
-Last revised: March  09, 2003
+Last revised: March  24, 2003
   ________________________________________________________________________
 
                                Compiling FAQ
@@ -25,6 +25,7 @@ Last revised: March  09, 2003
     10. Compile stops at the last minute with "ld fatal signal 11"! (Linux)
     11. Undefined references in net.o (Sun OS)
     12. ld: -ltcl7.4: expected libx.so(.major.minor.xxx) (various)
+    13. I experiance problems starting the configure script (AIX/various)
 
 
   1. I get lots of warnings
@@ -311,6 +312,13 @@ Last revised: March  09, 2003
         --with-tcllib='<full path to Tcl library from XREQ line>'
 
       4. Continue compiling the bot, starting with 'make config'.
+
+  13. I experiance problems starting the configure script (AIX/various)
+
+    If you receive file descriptor or bad interpreter errors when attempting
+    to run the configure script, try running 'sh configure' or 'bash configure'
+    instead of './configure'. This problem seems to show up on many AIX
+    machines.
 
 
      _________________________________________________________________

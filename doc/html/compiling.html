@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: compiling.html,v 1.19 2003/03/10 05:26:41 wcc Exp $ -->
+<!-- $Id: compiling.html,v 1.20 2003/03/24 07:29:20 wcc Exp $ -->
 
 <html>
   <head>
@@ -53,6 +53,9 @@
 
         <li><a href="#faq12">ld: -ltcl7.4: expected libx.so(.major.minor.xxx)
         (various)</a></li>
+
+        <li><a href="#faq13">I experiance problems starting the configure
+        script (AIX/various)</a></li>
       </ol>
     </blockquote>
     <br>
@@ -496,6 +499,17 @@ XREQ = /usr/local/lib/libtcl7.4.a
           </li>
         </ol>
       </blockquote>
+    </blockquote>
+
+    <p><a name="faq13">13. <strong>I experiance problems starting the configure
+    script (AIX/various)</strong></a></p>
+
+    <blockquote>
+      <p>If you receive file descriptor or bad interpreter errors when
+      attempting to run the configure script, try running &#39;sh
+      configure&#39; or &#39;bash configure&#39; instead of
+      &#39;./configure&#39;. This problem seems to show up on many AIX
+      machines.</p>
     </blockquote>
     <hr>
 
