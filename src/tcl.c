@@ -4,7 +4,7 @@
  *   Tcl initialization
  *   getting and setting Tcl/eggdrop variables
  *
- * $Id: tcl.c,v 1.40 2001/09/28 14:07:26 guppy Exp $
+ * $Id: tcl.c,v 1.41 2001/11/04 09:18:44 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -299,9 +299,12 @@ static int utf_converter(ClientData cdata, Tcl_Interp *myinterp, int objc,
   Function func;
   ClientData cd;
 
+  objc += 5;
   strings = (char **)nmalloc(sizeof(char *) * objc);
+  egg_memset(strings, 0, sizeof(char *) * objc);
   diff = utftot;
   utftot += sizeof(char *) * objc;
+  objc -= 5;
   for (i = 0; i < objc; i++) {
     byteptr = (char *)Tcl_GetByteArrayFromObj(objv[i], &len);
     strings[i] = (char *)nmalloc(len+1);

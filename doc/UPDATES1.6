@@ -1,17 +1,19 @@
-$Id: UPDATES1.6,v 1.205 2001/11/03 21:58:17 guppy Exp $
+$Id: UPDATES1.6,v 1.206 2001/11/04 09:18:44 guppy Exp $
 
 Changes in eggdrop: (since v1.6.0)
 ----------------------------------
 
 1.6.7
 Found by  Fixed by  What...
+various   stdarg    fixed some issues with utf8 dealing with how we handle tcl
+                    arguments
           Wcc       small fix to let tcl_adduser accept only a handle
 FeaRx/    Sup       show `#channel is active but has no ops :(' only if channel
 DarkReap1           is set +statuslog.
           Wcc       fixed up some spelling mistakes in tcl-commands.doc
           poptix    lots of argv[] fixes that caused crashes
 dfrank    stdarg    'chattr hand' no longer crashes (legacy bug)
-          poptix    this should fix the banreason bug (Hey, i tested it too)
+          poptix    finally fixed the banreason bug 
 zip       guppy     small fix for ircu servers that send ERROR: instead of ERROR :
           fuchs     don't get GO if the channel is -cycle
           guppy     couple of small uptime.mod backports from 1.7
