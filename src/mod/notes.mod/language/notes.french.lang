@@ -1,0 +1,47 @@
+# notes.french.lang
+#   language messages for the notes module
+#
+# $Id: notes.french.lang,v 1.1 2001/12/02 21:43:28 guppy Exp $
+
+0xc000,  Fait suivre les notes à : %.70s\n
+0xc001,%d note%s transférées de %s à %s.
+0xc002,%d note%s expirées
+0xc003,Non en ligne ; transmis à %s.\n
+0xc004,Les notes ne sont pas supportées par ce bot.
+0xc005,Désolé, cet utilisateur a déja trop de notes.
+0xc006,Je ne peut pas créer de fichier de note. Désolé.
+0xc007,Fichier de notes illisible!
+0xc008,Message stocké
+0xc009,Vous n'avez pas de messages
+0xc00a, -- EXPIRE AUJOURD'HUI
+0xc00b, -- EXPIRE DANS %d JOUR%s
+0xc00c,Vous avez les notes suivantes en attente 
+0xc00d,Vous n'avez pas autant de messages
+0xc00e,Utilisez '.notes read' pour les lire.
+0xc00f,Je ne peux pas modifier le fichier de notes
+0xc010,Toutes les notes on été effacées
+0xc011,Effacé
+0xc012,reste
+0xc013,# peut être des nombres et/ou intervalles séparé par ;
+0xc014,C'est un bot. Vous ne pouvez pas laisser de notes aux bots.
+0xc015,Note externe
+0xc016,Note délivrée.
+0xc017,Pour la liste :
+0xc018,NOTICE %s :Vous avez %d note%s en attente sur %s.\n
+0xc019,### vous avez %d note%s en attente.\n
+0xc01a,### Utilisez '.notes read' pour les lire.\n
+0xc01b,Les notes seront stockées.
+0xc01c,Vous n'êtes pas autorisé à changer l'ignorance des notes pour %s\n
+0xc01d,L'utilisateur %s n'existe pas.\n
+0xc01e,Les notes de %s sont ignorées à partir de maintenant\n
+0xc01f,J'ignore déja les notes de %s\n
+0xc020,Les notes de %s ne sont plus ignorées\n
+0xc021,Ignorance de note %s non présent dans la liste.\n
+0xc022,Pas d'ignorance de notes.\n
+0xc023,Ignorances de note pour %s :\n
+0xc024,Utilisateur inconnu.
+0xc025,Vous ne pouvez pas changer le suivi de notes du propriétaire du bot.\n
+0xc026,Supression du suivi de notes de %s\n
+0xc027,Vous devez fournir un nom de bot à qui faire suivre les notes.
+0xc028,Changement de l'ignorance des notes de %s à : %s\n
+0xc029,La fonction doit être INDEX, READ, ou ERASE.

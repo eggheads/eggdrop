@@ -1,0 +1,16 @@
+# console.french.lang
+#   language messages for the console module
+#
+# $Id: console.french.lang,v 1.1 2001/12/02 21:43:28 guppy Exp $
+
+0xb040,Paramètres de console sauvegardés :
+0xb041,Vos paramètres de console ont été sauvegardés :
+0xb042,Canal :
+0xb043,Drapeaux de console :
+0xb044,Drapeaux de terminal :
+0xb045,Echo :
+0xb046,Pagination :
+0xb047,Canal sur la console :
+0xb048,oui
+0xb049,non
+
