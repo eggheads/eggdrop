@@ -1,7 +1,7 @@
 /* 
  * share.c -- part of share.mod
  * 
- * $Id: share.c,v 1.32 2000/05/13 20:20:30 fabian Exp $
+ * $Id: share.c,v 1.33 2000/06/03 12:16:57 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -36,16 +36,15 @@
 #include "transfer.mod/transfer.h"
 #include "channels.mod/channels.h"
 
-/* Minimum version I will share with */
+/* Minimum version I will share with. */
 static const int min_share		= 1029900;
-/* Earliest version that supports exempts and invites */
+/* Earliest version that supports exempts and invites. */
 static const int min_exemptinvite	= 1032800; 
-/* Minimum version that supports userfile features */
+/* Minimum version that supports userfile features. */
 static const int min_uffeature		= 1050200;
 
 static Function *global = NULL, *transfer_funcs = NULL, *channels_funcs = NULL;
 
-static int private_owner = 1;
 static int private_global = 0;
 static int private_user = 0;
 static char private_globals[50];
@@ -2116,5 +2115,5 @@ int private_globals_bitmask()
   struct flag_record fr = {FR_GLOBAL, 0, 0, 0, 0, 0};
 
   break_down_flags(private_globals, &fr, 0);
-  return fr.global | (private_owner ? USER_OWNER : 0);
+  return fr.global;
 }
