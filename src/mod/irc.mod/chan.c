@@ -1075,7 +1075,7 @@ static int gotinvite(char *from, char *msg)
   chan = findchan(msg);
   if (chan && (channel_pending(chan) || channel_active(chan)))
     dprintf(DP_HELP, "NOTICE %s :I'm already here.\n", nick);
-  else if (chan && channel_inactive(chan))
+  else if (chan && !channel_inactive(chan))
     dprintf(DP_MODE, "JOIN %s %s\n", chan->name, chan->key_prot);
   return 0;
 }
