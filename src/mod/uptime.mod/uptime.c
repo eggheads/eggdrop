@@ -1,6 +1,6 @@
 /* Original Copyright (c) 2000-2001 proton
  * 
- * $Id: uptime.c,v 1.6 2001/06/12 19:49:33 poptix Exp $
+ * $Id: uptime.c,v 1.7 2001/06/12 19:51:48 poptix Exp $
  * Borrowed from Emech, reports to http://uptime.energymech.net, feel free to opt out if you
  * dont like it by not loading the module.
  * 
@@ -40,7 +40,6 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-// typedef unsigned long ulong;
 typedef struct PackUp
 {
         int     regnr;
