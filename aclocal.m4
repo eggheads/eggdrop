@@ -16,7 +16,7 @@ dnl You should have received a copy of the GNU General Public License
 dnl along with this program; if not, write to the Free Software
 dnl Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 dnl
-dnl $Id: aclocal.m4,v 1.90 2004/06/16 06:47:10 wcc Exp $
+dnl $Id: aclocal.m4,v 1.91 2004/06/16 06:53:03 wcc Exp $
 dnl
 
 dnl EGG_MSG_CONFIGURE_START()
