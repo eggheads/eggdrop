@@ -420,7 +420,8 @@ static void read_channels(int create)
   while (chan != NULL) {
     if (chan->status & CHAN_FLAGGED) {
       putlog(LOG_MISC, "*", "No longer supporting channel %s", chan->name);
-      dprintf(DP_SERVER, "PART %s\n", chan->name);
+      if (!channel_inactive(chan))
+	dprintf(DP_SERVER, "PART %s\n", chan->name);
       clear_channel(chan, 0);
       noshare = 1;
       while (chan->bans)
@@ -464,7 +465,8 @@ static void channels_rehash()
   while (chan) {
     if (chan->status & CHAN_FLAGGED) {
       putlog(LOG_MISC, "*", "No longer supporting channel %s", chan->name);
-      dprintf(DP_SERVER, "PART %s\n", chan->name);
+      if (!channel_inactive(chan))
+	dprintf(DP_SERVER, "PART %s\n", chan->name);
       clear_channel(chan, 0);
       noshare = 1;
       while (chan->bans)
