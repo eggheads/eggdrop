@@ -1,7 +1,7 @@
 /*
  * userchan.c -- part of channels.mod
  *
- * $Id: userchan.c,v 1.35 2003/02/10 00:25:19 wcc Exp $
+ * $Id: userchan.c,v 1.36 2003/03/10 05:33:14 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -249,7 +249,7 @@ static int u_delban(struct chanset_t *c, char *who, int doit)
     /* Find matching host, if there is one */
     for (; *u && !i; u = &((*u)->next))
       if (!rfc_casecmp((*u)->mask, who)) {
-        strncpyz(temp, who, strlen(who));
+        strncpyz(temp, who, sizeof temp);
         i = 1;
         break;
       }
@@ -299,7 +299,7 @@ static int u_delexempt(struct chanset_t *c, char *who, int doit)
     /* Find matching host, if there is one */
     for (; *u && !i; u = &((*u)->next))
       if (!rfc_casecmp((*u)->mask, who)) {
-        strncpyz(temp, who, strlen(who));
+        strncpyz(temp, who, sizeof temp);
         i = 1;
         break;
       }
@@ -350,7 +350,7 @@ static int u_delinvite(struct chanset_t *c, char *who, int doit)
     /* Find matching host, if there is one */
     for (; *u && !i; u = &((*u)->next))
       if (!rfc_casecmp((*u)->mask, who)) {
-        strncpyz(temp, who, strlen(who));
+        strncpyz(temp, who, sizeof temp);
         i = 1;
         break;
       }
