@@ -2,7 +2,7 @@
  * channels.c -- part of channels.mod
  *   support for channels within the bot
  *
- * $Id: channels.c,v 1.79 2003/01/30 07:15:14 wcc Exp $
+ * $Id: channels.c,v 1.80 2003/02/02 09:22:55 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -444,7 +444,14 @@ static void write_channels()
         else if (ul->type == UDEF_INT)
           fprintf(f, "%s%s %d ", "udef-int-", ul->name, getudef(ul->values,
                   chan->dname));
-        else
+        else if (ul->type == UDEF_STR) {
+          char *p = (char *) getudef(ul->values, chan->dname);
+
+          if (!p)
+            p = "{}";
+
+          fprintf(f, "udef-str-%s %s ", ul->name, p);
+        } else
           debug1("UDEF-ERROR: unknown type %d", ul->type);
       }
     }

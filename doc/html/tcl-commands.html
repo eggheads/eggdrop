@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: tcl-commands.html,v 1.26 2003/02/02 04:20:43 wcc Exp $ -->
+<!-- $Id: tcl-commands.html,v 1.27 2003/02/02 09:22:55 wcc Exp $ -->
 
 <html>
   <head>
@@ -1710,11 +1710,11 @@
           <p><strong>Module:</strong> channels</p>
         </dd>
 
-        <dt><strong>setudef &lt;flag/int&gt; &lt;name&gt;</strong></dt>
+        <dt><strong>* setudef &lt;flag/int/str&gt; &lt;name&gt;</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> initializes a user defined channel
-          flag or integer setting. You can use it like any other
+          flag, string, or integer setting. You can use it like any other
           flag/setting. IMPORTANT: Don&#39;t forget to reinitialize your
           flags/settings after a restart, or it&#39;ll be lost.</p>
 
@@ -1723,23 +1723,23 @@
           <p><strong>Module:</strong> channels</p>
         </dd>
 
-        <dt><strong>renudef &lt;flag/int&gt; &lt;oldname&gt;
+        <dt><strong>* renudef &lt;flag/int/str&gt; &lt;oldname&gt;
         &lt;newname&gt;</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> renames a user defined channel
-          flag or integer setting.</p>
+          flag, string, or integer setting.</p>
 
           <p><strong>Returns:</strong> nothing</p>
 
           <p><strong>Module:</strong> channels</p>
         </dd>
 
-        <dt><strong>deludef &lt;flag/int&gt; &lt;name&gt;</strong></dt>
+        <dt><strong>* deludef &lt;flag/int/str&gt; &lt;name&gt;</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> deletes a user defined channel
-          flag or integer setting.</p>
+          flag, string, or integer setting.</p>
 
           <p><strong>Returns:</strong> nothing</p>
 

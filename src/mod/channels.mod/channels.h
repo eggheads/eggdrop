@@ -1,7 +1,7 @@
 /*
  * channels.h -- part of channels.mod
  *
- * $Id: channels.h,v 1.23 2003/01/29 05:48:41 wcc Exp $
+ * $Id: channels.h,v 1.24 2003/02/02 09:22:55 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -27,7 +27,8 @@
 
 /* User defined chanmodes/settings */
 #define UDEF_FLAG 1
-#define UDEF_INT 2
+#define UDEF_INT  2
+#define UDEF_STR  3
 
 #define MASKREASON_MAX 307    /* Max length of ban/invite/exempt/etc reasons. */
 #define MASKREASON_LEN (MASKREASON_MAX + 1)
@@ -101,9 +102,9 @@ static int tcl_channel_modify(Tcl_Interp *irp, struct chanset_t *chan,
 static int tcl_channel_add(Tcl_Interp *irp, char *, char *);
 static char *convert_element(char *src, char *dst);
 static int expmem_udef(struct udef_struct *);
-static int expmem_udef_chans(struct udef_chans *);
+static int expmem_udef_chans (int, struct udef_chans *);
 static void free_udef(struct udef_struct *);
-static void free_udef_chans(struct udef_chans *);
+static void free_udef_chans(struct udef_chans *, int);
 static int getudef(struct udef_chans *, char *);
 static void initudef(int type, char *, int);
 static void setudef(struct udef_struct *, char *, int);
@@ -188,5 +189,19 @@ inline static int chanset_unlink(struct chanset_t *chan);
 #define u_setsticky_ban(chan, host, sticky)     u_setsticky_mask(chan, ((struct chanset_t *)chan) ? ((struct chanset_t *)chan)->bans : global_bans, host, sticky, "s")
 #define u_setsticky_exempt(chan, host, sticky)  u_setsticky_mask(chan, ((struct chanset_t *)chan) ? ((struct chanset_t *)chan)->exempts : global_exempts, host, sticky, "se")
 #define u_setsticky_invite(chan, host, sticky)  u_setsticky_mask(chan, ((struct chanset_t *)chan) ? ((struct chanset_t *)chan)->invites : global_invites, host, sticky, "sInv")
+
+#define CHKFLAG_POS(x,y,z) (!strcmp(setting, y)) {                       \
+        if (z & x)                                                       \
+          simple_sprintf(s, "%d", 1);                                    \
+        else                                                             \
+          simple_sprintf(s, "%d", 0);                                    \
+}
+
+#define CHKFLAG_NEG(x,y,z) (!strcmp(setting, y)) {                       \
+        if (z & x)                                                       \
+          simple_sprintf(s, "%d", 0);                                    \
+        else                                                             \
+          simple_sprintf(s, "%d", 1);                                    \
+}
 
 #endif /* _EGG_MOD_CHANNELS_CHANNELS_H */

@@ -1,7 +1,7 @@
 /*
  * tclchan.c -- part of channels.mod
  *
- * $Id: tclchan.c,v 1.74 2003/01/30 07:15:14 wcc Exp $
+ * $Id: tclchan.c,v 1.75 2003/02/02 09:22:55 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -886,6 +886,16 @@ static int tcl_channel_info(Tcl_Interp *irp, struct chanset_t *chan)
       args[1] = b;
       egg_snprintf(s, sizeof s, "%s", Tcl_Merge(2, args));
       Tcl_AppendElement(irp, s);
+    } else if (ul->type == UDEF_STR) {
+      char *p = (char *) getudef(ul->values, chan->dname), *buf;
+      
+      if (!p)
+        p = "{}";
+
+      buf = (char *) nmalloc(strlen(ul->name) + strlen(p) + 2);
+      simple_sprintf(buf, "%s %s", ul->name, p);
+      Tcl_AppendElement(irp, buf);
+      nfree(buf);
     } else
       debug1("UDEF-ERROR: unknown type %d", ul->type);
   }
@@ -898,64 +908,49 @@ static int tcl_channel_get(Tcl_Interp *irp, struct chanset_t *chan,
   char s[121];
   struct udef_struct *ul;
 
-#define CHECK(x) !strcmp(setting, x)
-
-#define CHKFLAG_POS(x,y,z) (!strcmp(setting, y)) { \
-                            if(z & x) simple_sprintf(s, "%d", 1); \
-                            else simple_sprintf(s, "%d", 0); }
-
-#define CHKFLAG_NEG(x,y,z) (!strcmp(setting, y)) { \
-                            if (z & x) simple_sprintf(s, "%d", 0); \
-                            else simple_sprintf(s, "%d", 1); }
-
-  if (CHECK("chanmode"))
+  if (!strcmp(setting, "chanmode"))
     get_mode_protect(chan, s);
-
-  /* Code in need_op can be longer than 120 chars, so we have to cut it. */
-  else if (CHECK("need-op")) {
+  else if (!strcmp(setting, "need-op")) {
     strncpy(s, chan->need_op, 120);
     s[120] = 0;
-  } else if (CHECK("need-invite")) {
+  } else if (!strcmp(setting, "need-invite")) {
     strncpy(s, chan->need_invite, 120);
     s[120] = 0;
-  } else if (CHECK("need-key")) {
+  } else if (!strcmp(setting, "need-key")) {
     strncpy(s, chan->need_key, 120);
     s[120] = 0;
-  } else if (CHECK("need-unban")) {
+  } else if (!strcmp(setting, "need-unban")) {
     strncpy(s, chan->need_unban, 120);
     s[120] = 0;
-  } else if (CHECK("need-limit")) {
+  } else if (!strcmp(setting, "need-limit")) {
     strncpy(s, chan->need_limit, 120);
     s[120] = 0;
-  }
-
-  else if (CHECK("idle-kick"))
+  } else if (!strcmp(setting, "idle-kick"))
     simple_sprintf(s, "%d", chan->idle_kick);
-  else if (CHECK("stop-net-hack"))
+  else if (!strcmp(setting, "stop-net-hack"))
     simple_sprintf(s, "%d", chan->stopnethack_mode);
-  else if (CHECK("revenge-mode"))
+  else if (!strcmp(setting, "revenge-mode"))
     simple_sprintf(s, "%d", chan->revenge_mode);
-  else if (CHECK("ban-time"))
+  else if (!strcmp(setting, "ban-time"))
     simple_sprintf(s, "%d", chan->ban_time);
-  else if (CHECK("exempt-time"))
+  else if (!strcmp(setting, "exempt-time"))
     simple_sprintf(s, "%d", chan->exempt_time);
-  else if (CHECK("invite-time"))
+  else if (!strcmp(setting, "invite-time"))
     simple_sprintf(s, "%d", chan->invite_time);
-  else if (CHECK("flood-pub"))
+  else if (!strcmp(setting, "flood-pub"))
     simple_sprintf(s, "%d %d", chan->flood_pub_thr, chan->flood_pub_time);
-  else if (CHECK("flood-ctcp"))
+  else if (!strcmp(setting, "flood-ctcp"))
     simple_sprintf(s, "%d %d", chan->flood_ctcp_thr, chan->flood_ctcp_time);
-  else if (CHECK("flood-join"))
+  else if (!strcmp(setting, "flood-join"))
     simple_sprintf(s, "%d %d", chan->flood_join_thr, chan->flood_join_time);
-  else if (CHECK("flood-kick"))
+  else if (!strcmp(setting, "flood-kick"))
     simple_sprintf(s, "%d %d", chan->flood_kick_thr, chan->flood_kick_time);
-  else if (CHECK("flood-deop"))
+  else if (!strcmp(setting, "flood-deop"))
     simple_sprintf(s, "%d %d", chan->flood_deop_thr, chan->flood_deop_time);
-  else if (CHECK("flood-nick"))
+  else if (!strcmp(setting, "flood-nick"))
     simple_sprintf(s, "%d %d", chan->flood_nick_thr, chan->flood_nick_time);
-  else if (CHECK("aop-delay"))
+  else if (!strcmp(setting, "aop-delay"))
     simple_sprintf(s, "%d %d", chan->aop_min, chan->aop_max);
-
   else if CHKFLAG_POS(CHAN_ENFORCEBANS, "enforcebans", chan->status)
   else if CHKFLAG_POS(CHAN_DYNAMICBANS, "dynamicbans", chan->status)
   else if CHKFLAG_NEG(CHAN_NOUSERBANS, "userbans", chan->status)
@@ -977,7 +972,6 @@ static int tcl_channel_get(Tcl_Interp *irp, struct chanset_t *chan,
   else if CHKFLAG_POS(CHAN_CYCLE, "cycle", chan->status)
   else if CHKFLAG_POS(CHAN_SEEN, "seen", chan->status)
   else if CHKFLAG_POS(CHAN_NODESYNCH, "nodesynch", chan->status)
-
   else if CHKFLAG_POS(CHAN_DYNAMICEXEMPTS, "dynamicexempts",
                       chan->ircnet_status)
   else if CHKFLAG_NEG(CHAN_NOUSEREXEMPTS, "userexempts",
@@ -986,7 +980,6 @@ static int tcl_channel_get(Tcl_Interp *irp, struct chanset_t *chan,
                       chan->ircnet_status)
   else if CHKFLAG_NEG(CHAN_NOUSERINVITES, "userinvites",
                       chan->ircnet_status)
-
   else {
     /* Hopefully it's a user-defined flag. */
     for (ul = udef; ul && ul->name; ul = ul->next) {
@@ -1360,6 +1353,8 @@ static int tcl_channel_modify(Tcl_Interp *irp, struct chanset_t *chan,
         initudef(UDEF_FLAG, item[i] + 11, 0);
       else if (!strncmp(item[i], "udef-int-", 9))
         initudef(UDEF_INT, item[i] + 9, 0);
+      else if (!strncmp(item[i], "udef-str-", 9))
+        initudef(UDEF_STR, item[i] + 9, 0);
       found = 0;
       for (ul = udef; ul; ul = ul->next) {
         if (ul->type == UDEF_FLAG && (!egg_strcasecmp(item[i] + 1, ul->name) ||
@@ -1381,6 +1376,29 @@ static int tcl_channel_modify(Tcl_Interp *irp, struct chanset_t *chan,
             return TCL_ERROR;
           }
           setudef(ul, chan->dname, atoi(item[i]));
+          found = 1;
+          break;
+        } else if (ul->type == UDEF_STR &&
+                   (!egg_strcasecmp(item[i], ul->name) ||
+                   (!strncmp(item[i], "udef-str-", 9) &&
+                   !egg_strcasecmp(item[i] + 9, ul->name)))) {
+          char *val;
+
+          i++;
+          if (i >= items) {
+            if (irp)
+              Tcl_AppendResult(irp, "this setting needs an argument", NULL);
+            return TCL_ERROR;
+          }
+          val = (char *) getudef(ul->values, chan->dname);
+          if (val)
+            nfree(val);
+
+          /* Get extra room for new braces, etc */
+          val = nmalloc(3 * strlen(item[i]) + 10);
+          convert_element(item[i], val);
+          val = nrealloc(val, strlen(val) + 1);
+          setudef(ul, chan->dname, (int) val);
           found = 1;
           break;
         }
@@ -1869,8 +1887,11 @@ static int tcl_setudef STDVAR
     type = UDEF_FLAG;
   else if (!egg_strcasecmp(argv[1], "int"))
     type = UDEF_INT;
+  else if (!egg_strcasecmp(argv[1], "str"))
+    type = UDEF_STR;
   else {
-    Tcl_AppendResult(irp, "invalid type. Must be one of: flag, int", NULL);
+    Tcl_AppendResult(irp, "invalid type. Must be one of: flag, int, str",
+                     NULL);
     return TCL_ERROR;
   }
   initudef(type, argv[2], 1);
@@ -1887,8 +1908,11 @@ static int tcl_renudef STDVAR
     type = UDEF_FLAG;
   else if (!egg_strcasecmp(argv[1], "int"))
     type = UDEF_INT;
+  else if (!egg_strcasecmp(argv[1], "str"))
+    type = UDEF_STR;
   else {
-    Tcl_AppendResult(irp, "invalid type. Must be one of: flag, int", NULL);
+    Tcl_AppendResult(irp, "invalid type. Must be one of: flag, int, str",
+                     NULL);
     return TCL_ERROR;
   }
   for (ul = udef; ul; ul = ul->next) {
@@ -1916,8 +1940,11 @@ static int tcl_deludef STDVAR
     type = UDEF_FLAG;
   else if (!egg_strcasecmp(argv[1], "int"))
     type = UDEF_INT;
+  else if (!egg_strcasecmp(argv[1], "str"))
+    type = UDEF_STR;
   else {
-    Tcl_AppendResult(irp, "invalid type. Must be one of: flag, int", NULL);
+    Tcl_AppendResult(irp, "invalid type. Must be one of: flag, int, str",
+                     NULL);
     return TCL_ERROR;
   }
   for (ul = udef; ul; ul = ul->next) {
@@ -1927,7 +1954,7 @@ static int tcl_deludef STDVAR
     if (ull->type == type && !egg_strcasecmp(ull->name, argv[2])) {
       ul->next = ull->next;
       nfree(ull->name);
-      free_udef_chans(ull->values);
+      free_udef_chans(ull->values, ull->type);
       nfree(ull);
       found = 1;
     }
@@ -1936,7 +1963,7 @@ static int tcl_deludef STDVAR
     if (udef->type == type && !egg_strcasecmp(udef->name, argv[2])) {
       ul = udef->next;
       nfree(udef->name);
-      free_udef_chans(udef->values);
+      free_udef_chans(udef->values, udef->type);
       nfree(udef);
       udef = ul;
       found = 1;

@@ -2,7 +2,7 @@
  * cmdschan.c -- part of channels.mod
  *   commands from a user via dcc that cause server interaction
  *
- * $Id: cmdschan.c,v 1.61 2003/01/30 07:15:14 wcc Exp $
+ * $Id: cmdschan.c,v 1.62 2003/02/02 09:22:55 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1325,6 +1325,26 @@ static void cmd_chaninfo(struct userrec *u, int idx, char *par)
       }
     if (ii > 1)
       dprintf(idx, "%s\n", work);
+
+    if (u->flags & USER_OWNER) {
+      tmp = 0;
+      
+      for (ul = udef; ul; ul = ul->next) {
+        if (ul->defined && ul->type == UDEF_STR) {
+          char *p = (char *) getudef(ul->values, chan->dname);
+
+          if (!p)
+            p = "{}";
+
+          if (!tmp) {
+            dprintf(idx, "User defined channel strings:\n");
+            tmp = 1;
+          }
+          dprintf(idx, "%s: %s\n", ul->name, p);
+        }
+      }
+    }
+
 
     dprintf(idx, "flood settings: chan ctcp join kick deop nick\n");
     dprintf(idx, "number:          %3d  %3d  %3d  %3d  %3d  %3d\n",

@@ -2,7 +2,7 @@
  * udefchan.c -- part of channels.mod
  *   user definable channel flags/settings
  *
- * $Id: udefchan.c,v 1.8 2002/12/24 02:30:06 wcc Exp $
+ * $Id: udefchan.c,v 1.9 2003/02/02 09:22:55 wcc Exp $
  */
 /*
  * Copyright (C) 1999, 2000, 2001, 2002, 2003 Eggheads Development Team
@@ -29,18 +29,20 @@ static int expmem_udef(struct udef_struct *ul)
   for (; ul; ul = ul->next) {
     i += sizeof(struct udef_struct);
     i += strlen(ul->name) + 1;
-    i += expmem_udef_chans(ul->values);
+    i += expmem_udef_chans(ul->type, ul->values);
   }
   return i;
 }
 
-static int expmem_udef_chans(struct udef_chans *ul)
+static int expmem_udef_chans(int type, struct udef_chans *ul)
 {
   int i = 0;
 
   for (; ul; ul = ul->next) {
     i += sizeof(struct udef_chans);
     i += strlen(ul->chan) + 1;
+    if (type == UDEF_STR && ul->value)
+      i += strlen((char *) ul->value) + 1;
   }
   return i;
 }
@@ -99,6 +101,7 @@ static void initudef(int type, char *name, int defined)
 
   if (strlen(name) < 1)
     return;
+
   for (ul = udef; ul; ul_last = ul, ul = ul->next)
     if (ul->name && !egg_strcasecmp(ul->name, name)) {
       if (defined) {
@@ -131,18 +134,20 @@ static void free_udef(struct udef_struct *ul)
 
   for (; ul; ul = ull) {
     ull = ul->next;
-    free_udef_chans(ul->values);
+    free_udef_chans(ul->values, ul->type);
     nfree(ul->name);
     nfree(ul);
   }
 }
 
-static void free_udef_chans(struct udef_chans *ul)
+static void free_udef_chans(struct udef_chans *ul, int type)
 {
   struct udef_chans *ull;
 
   for (; ul; ul = ull) {
     ull = ul->next;
+    if (type == UDEF_STR && ul->value)
+      nfree((void *) ul->value);
     nfree(ul->chan);
     nfree(ul);
   }
