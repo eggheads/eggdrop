@@ -2,7 +2,7 @@
  * cmdschan.c -- part of channels.mod
  *   commands from a user via dcc that cause server interaction
  * 
- * $Id: cmdschan.c,v 1.30 2000/01/08 21:23:15 per Exp $
+ * $Id: cmdschan.c,v 1.31 2000/02/02 11:53:14 per Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -871,8 +871,8 @@ static void cmd_chinfo(struct userrec *u, int idx, char *par)
     }
   } else
     chname = 0;
-  if (u1->flags & USER_BOT) {
-    dprintf(idx, "Useful only for users.\n");
+  if ((u1->flags & USER_BOT) && !(u->flags & USER_MASTER)) {
+    dprintf(idx, "You have to be master to change bots info.\n");
     return;
   }
   if ((u1->flags & USER_OWNER) && !(u->flags & USER_OWNER)) {
@@ -895,7 +895,8 @@ static void cmd_chinfo(struct userrec *u, int idx, char *par)
   if (chname) {
     set_handle_chaninfo(userlist, handle, chname, par);
     if (par[0] == '@')
-      dprintf(idx, "New info (LOCKED) for %s on %s: %s\n", handle, chname, &par[1]);
+      dprintf(idx, "New info (LOCKED) for %s on %s: %s\n", handle,
+	      chname, &par[1]);
     else if (par[0])
       dprintf(idx, "New info for %s on %s: %s\n", handle, chname, par);
     else
