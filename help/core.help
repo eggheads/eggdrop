@@ -1,0 +1,125 @@
+%{help=common}%{+o|o}
+###  %b(the +c 'common' flag)%b
+   Sometimes a lot of people use irc from the same account, i.e.
+   example, a public telnet site.  In that case, many people can
+   have the same user@host.  For that reason, they can't use a 
+   traditional user record because they will appear to all be 
+   the same person.
+  
+   In such cases, create a user record for the account, and mark
+   it +c, or "common access".  Marking it as "common access" means 
+   that it shouldn't be used as a definitive address.  When someone 
+   introduces themself to the bot (ie, by /msg'ing "hello")and matches 
+   as a +c user, they will be given a new user record which identifies 
+   them BY NICKNAME.
+
+   Obviously people with that kind of user record shouldn't be given
+   much special access, as when they change nicknames the bot
+   will identify them as someone else.
+%{help=help}
+DCC COMMANDS for %B, %V:
+%b  who          away         quit         whom         me%b
+%b  whois        note         match        motd         bots%b
+%b  addlog       newpass      bottree      console      chat%b
+%b  nick         echo         botinfo      strip        su%b
+%b  trace        fixcodes     page%b
+%{+t}
+For botnet masters:
+%b  +bot         chattr       chnick       chpass       +host%b
+%b  -bot         link         chaddr       relay        -host%b
+%b  unlink       boot%b
+%{+m|m}
+For masters:
+%b  chattr       save         backup       reload       status%b
+%{+m}
+%b  +user        +ignore      comment      binds        ignores%b
+%b  -user        -ignore      dccstat      debug        banner%b
+%b  rehash       restart      uptime%b
+%{+n}
+For owners:
+%b  die          simul        module       loadmod      unloadmod%b
+%b  set          tcl          rehelp       modules%b
+%{-}
+All commands begin with '.' and all else goes to the party line.
+%{+m}Text starting with ',' is sent ONLY to bot-masters.%{end}
+You can get help on individual commands: %b'.help <command>'%b
+Extra help relating to loaded modules may be obtained by typing
+%b'.help <module> module'%b, possible modules include
+  %bassoc%b  %bchannels%b  %bconsole%b  %bctcp%b    %btransfer%b
+  %birc%b    %bnotes%b     %bseen%b     %bserver%b  %bshare%b
+These are distributed with the bot, and they may be loaded, others can
+be added also.
+%{help=helpparty}
+%B party-line commands:
+  %b.quit%b              leave the party line
+  %b.whom%b [channel]    show list of all users on the party line, or
+                        on a particular channel
+  %b.whom *%b            show list of all users, indicating which ones
+                        are on the party line
+  %b.chat%b <channel>    move to a channel (valid channels are 1 to 99999,
+                        channel 0 is the party line)
+  %b.me%b <action>       do an action on the party line
+  %b.note%b <who> <msg>  send a private note to someone else on the
+                        party line
+  %b.nick%b <nick>       changes nick on party line
+  %b.help%b <command>    get more help on a specific command
+The following commands are also available:
+%b   bots      newpass   email     who       echo   %b    
+%b   info      away      back      strip     trace%b
+%b   page      su        fixcodes  motd      whom%b
+%b%{+x}   files%{-}%b
+Anything you type that doesn't begin with a '.' goes out to
+everyone on the party line.
+%{help=set}%{+n}
+###  %bset%b <variable> [value]
+   changes the values of internal settings of the bot, or, if used
+   without a value parameter, shows the current value of a setting.
+   the bot starts out with settings as given in the configuration
+   file.  here are the variables eggdrop cares about:
+%{cols=4}
+mod-path
+nat-ip
+dcc-flood-thr
+die-on-sighup
+die-on-sigterm
+remote-boots
+max-dcc
+max-logs
+enable-simul
+protect-telnet
+ident-timeout
+share-unlinks
+allow-dk-cmds
+botnet-nick
+help-path
+temp-path
+userfile
+motd
+notify-newusers
+admin
+owner
+my-hostname
+my-ip
+network
+save-users-at
+switch-logfiles-at
+connect-timeout
+reserved-port
+log-time
+require-p
+keep-all-logs
+open-telnets
+firewall
+console
+default-flags
+whois-fields
+hourly-updates
+username
+ignore-time
+uptime
+version
+numversion
+telnet-flood
+%{end}
+   use %b'.help set <variable>'%b for more info on each variable.
+%{+n}

@@ -1,0 +1,152 @@
+%{help=set botnet-nick}%{+n}
+###  %bset botnet-nick%b <nickname>
+   sets a name to use on the botnet that's different from the
+   nickname used on IRC.  if not set, this will default to being
+   the same as 'nick'. if the server module is not loaded and
+   you don't set a botnet-nick the bot will not start
+   
+see also: set nick, set altnick (server module variables)
+%{help=set userfile}%{+n}
+###  %bset userfile%b <filename>
+   specifies the filename where eggdrop should store user
+   records.  you normally don't want to change this once you
+   have started using the bot.
+%{help=set motd}%{+n}
+###  %bset motd%b <filename>
+   specifies the "Message Of The Day" file.  this should be a
+   text file.  it will be displayed to users as they enter a
+   dcc chat session with the bot (so it shouldn't be TOO long).
+   there are a few %%-variables you can insert into the motd,
+   which will be interpreted by eggdrop:
+      %%b   display bold
+      %%v   display inverse
+      %%_   display underline
+      %%f   display flashing via telnet, bold underline via irc
+      %%B   bot's nickname (ie, "%B")
+      %%V   current eggdrop version (ie, "%V")
+      %%E   long form of %%V (ie, "%E")
+      %%C   channels the bot is on (ie, "%C")
+      %%A   whatever is set in 'admin' (see 'set admin')
+      %%T   the current time (ie, "%T")
+      %%N   the current user's nickname (ie, "%N")
+      %%U   the current operating system the bot is on
+      %%%%   a percent sign ("%%")
+   you can also encode messages which can only be read by people
+   with certain flags:
+      %%{+m}Only masters would see this.%%{-}
+      %%{+1}Only people with user flag #1 see this.%%{-}
+      %%{+b}This is only displayed to users doing a remote '.motd'
+      from another bot.%%{-}
+      %%{+|m}Only channel masters would see this.%%{-}
+   Other extended %% commands are:
+      %%{cols=N}     start splitting output into N columns
+      %%{cols=N/W}   same, but use a screen width of W
+      %%{end}        end columnated or restricted (ie %%{+m}) block
+      %%{centre}     center the following text (70 columns)
+%{help=set admin}%{+n}
+###  %bset admin%b <admin-info>
+   specifies the admin info for your bot.  it's just human-
+   readable text that is displayed every once in a while.  it
+   shouldn't be very long (no more than about 60 characters)
+   and ought to say who's running the bot, and maybe an email
+   address too.  here's an example:
+      set admin "Jace the Happy <jason@mtu.edu>"
+%{help=set help-path}%{+n}
+###  %bset help-path%b <path>
+   specifies the path to the help/ directory for the bot.  if
+   you can read this, it was probably set right. :)
+%{help=set temp-path}%{+n}
+###  %bset temp-path%b <path>
+   specifies a temporary directory where eggdrop can store
+   files for a short period of time.  right now this is used
+   to hold copies of files while people dcc-transfer them,
+   so that changes made to the file in the file transfer area
+   won't affect the dcc-get.  under all normal circumstances,
+   this ought to be set to "/tmp".
+%{help=set mod-path}%{+n}
+###  %bset mod-path%b <path>
+   Specifies the path to the modules directory for the bot, modules
+   are chunks of C code that can be loaded & unloaded from the bot.
+   if you're reading this, it's highly likely you've got this 
+   setup correctly, the default modules/ is usually sufficient.
+%{help=set notify-newusers}%{+n}
+###  %bset notify-newusers%b <nickname-list>
+   specifies who to inform when the bot gets introduced to
+   new users via the %b/MSG HELLO%b command.  obviously this has
+   no effect unless the %b/MSG HELLO%b command is activated.
+   the bot will send a note (see %b'note'%b) to each user listed
+   in notify-newusers.  this can be just one nick:
+      set notify-newusers "Robey"
+   or several, separated by commas:
+      set notify-newusers "Guy, Eden@Priscilla"
+   the default is "HQ" which stands for head quarters.
+   if you don't want anyone to be informed, just leave it blank.
+%{help=set owner}%{+n}
+###  %bset owner%b <nickname-list>
+   specifies the user(s) who are to ALWAYS be bot owners.  it
+   is impossible to remove the +n flag from anyone listed here.
+   if the bot was compiled with the owner flag turned off, this
+   variable has no significance.
+%{help=set my-hostname}%{+n}
+###  %bset my-hostname%b <hostname>
+   overrides the network DNS name used by the bot to identify
+   itself on servers, etc.  this is only useful if your machine
+   has multiple hostnames and you would like the bot to use a
+   particular one, or if the bot has trouble detecting your
+   hostname automatically.
+   
+see also: set my-ip
+%{help=set my-ip}%{+n}
+###  %bset my-ip%b <ip-address>
+   overrides the network IP used by the bot to identify itself
+   over dcc connections.  this is really only useful if your
+   machine has multiple IPs and you would like the bot to use
+   a particular one, or if the bot has trouble detecing your
+   IP automatically.
+   
+see also: set my-hostname
+%{help=set nat-ip}%{+n}
+###  %bset nat-ip%b <ip-address>
+   if you are behind a NAT firewall, or using IP masquerading, you
+   may have trouble with the bot dcc send'ing files to people, set
+   this to you firewalls IP address to get around this problem.
+%{help=set network}%{+n}
+###  %bset network%b <net-name>
+   names the IRC network you're connected to.  (obviously,
+   this only matters if the bot is on IRC.)  it's just
+   human-readable text that's shared with other bots on
+   your botnet.
+%{help=set whois-fields}%{+n}
+###  %bset whois-fields%b <field-list>
+   tells the bot what "xtra" fields to display in a %b'.whois'%b or
+   %b'.match'%b command.  the "xtra" fields are normally set by
+   scripts using 'user-get' or 'user-set' and contain extra info
+   about a user.  an example is:
+      set whois-fields "url pet"
+   which will make %b'.whois'%b and %b'.match'%b display the values for
+   'url' and 'pet' that have been set by scripts.
+%{help=set username}%{+n}
+###  %bset username%b <username>
+   specifies the username the bot will try to use on IRC.  if
+   your machine is running ident, this won't work, and the bot
+   will show up as the user who started up the bot.
+see also: set realname
+%{help=set version}%{+n}
+### %bset version%b
+   this read-only variable returns the current version of the bot 
+   in the form v1.3.0+<lastpatch> <versionnumber> <patch list>.
+%{help=set filewall}%{+n}
+###  %bset firewall%b <host:port>
+   specifies your telnet proxy server if you're behind a firewall.
+   leave this blank if you have a normal (direct) net connection.
+   if set, this should contain the host and port of your socks v4
+   proxy server.  it may start with a '!' if you're on a sun telnet
+   passthru server (this barely works, if at all -- consider using
+   socks).
+   
+see also: set reserved-port
+%{help=set telnet-flood}%{+n}
+###  %bset telnet-flood <times:seconds>%b
+   this setting will cause the bot to ignore any futher telnets it 
+   receives from any given host that connects any more than the 
+   given times in the given number of seconds

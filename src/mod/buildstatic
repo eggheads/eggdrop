@@ -1,0 +1,22 @@
+#!/bin/sh
+rm -f static.h
+for x in *.mod
+do
+y=`echo $x | sed s/.mod//`
+cat >> static.h << EOF
+char * ${y}_start();
+EOF
+done
+cat >> static.h << EOF
+static void link_statics() {
+EOF
+for x in *.mod
+do
+y=`echo $x | sed s/.mod//`
+cat >> static.h << EOF
+check_static("${y}",${y}_start);
+EOF
+done
+cat >> static.h << EOF
+}
+EOF

@@ -1,0 +1,239 @@
+#!/bin/sh
+# ^-- little trick to restart using tclsh \
+exec tclsh "$0" "$@"
+#
+# AutoBotchk, (C)1999 Jeff Fisher (guppy@eggheads.org)
+#
+# updates
+# -------
+#  03Feb99: wrote the first version and it worked
+#  04Feb99: made it easier to use, how? ./autobotchk
+#           <config> will create the botchk and crontab
+#           automatically, no command line options now.
+#  20Feb99: added a '-noemail' setting for [s]
+#  21Feb99: added '-5' '-10' '-15' '-30' to allow people to
+#           use a diff time value then 10 minutes.
+#
+# how to use
+# ----------
+#  well, first you need to put the program into your Eggdrop
+#  directory (the one you run from hopefully). then you should
+#  probably type 'chmod u+x autobotchk' so the file permissions
+#  are set correctly. and finally, type './autobotchk <config>'
+#  replacing <config> with the name of your config file right?
+#
+#  in 1.05z, because of [z], you can now specify the bot directory
+#  to use, for example, './autobotchk eggdrop.conf -dir /home/bot'
+#  this now allows you to run the program from any dir :P~
+#
+# other Stuff
+# -----------
+# [22:36] <cHr|s`> when you type ./autobotchk without any options, it should give you the menu
+# [22:36] <cHr|s`> like the nukes do
+#  ^ -- he might be Urkel, but we love him anyways ..
+# [18:10] <[z]> nope...came back weith can't crontab -l error
+#  ^ -- no one said this script was perfect, mmmm z's wife
+# [19:27] <[z]> also guppy..would be nice if i could reference my bots directories ;)
+#  ^ -- just when I finished 1.05 :P
+# [18:50] <[s]> how to set the autobotchk not to recieve e-mails about the cron ??
+# [18:51] <slennox> add >/dev/null 2>&1 to the end of the crontab entry
+# [18:52] <[s]> what crontab
+# [18:52] <[s]> i have gupy's script
+# [18:52] <[s]> autobotchk
+
+if {$argc == 0} {
+ puts "\nusage: $argv0 <eggdrop config> \[options\]"
+ puts " -dir     (bot directory to use instead of \[pwd\])"
+ puts " -noemail (will make crontab not mail you)"
+ puts " -5       (5 minute checks)"
+ puts " -10      (10 minute checks)"
+ puts " -15      (15 minute checks)"
+ puts " -30      (30 minute checks)\n\n"
+ exit
+} {
+ puts "\nAutoBotchk 1.06p1, (C)1999 Jeff Fisher (guppy@eggheads.org)"
+ puts "----------------------------------------------------------"
+
+ set x [join [lindex [split $argv] 0]]
+ set q [lrange $argv 1 end]
+ set dir [pwd]
+ set delay 10
+ set email 1
+ for {set z 0} {$z < [llength $q]} {incr z} {
+  set opt [join [lindex $q $z]]
+  switch -- $opt {
+   -time -
+   -5 {set delay 5}
+   -10 {set delay 10}
+   -15 {set delay 15}
+   -20 {set delay 20}
+   -30 {set delay 30}
+   -nomail -
+   -noemail {set email 0}
+   -dir {
+    set dir [string trimright [join [lindex $q [expr $z + 1]]] /]
+    if {[string match -* $dir]} {
+     puts " *** ERROR: you did not supply a directory name\n\n"
+     exit
+    }
+    if {![file isdirectory $dir]} {
+     puts " *** ERROR: the directory you supplied is not a directory\n\n"
+     exit
+    }
+    incr z
+   }
+  }
+ }
+ if {![file exists $dir/$x]} {
+  puts " *** ERROR: you supplied a non-existant filename\n\n"
+  exit
+ } elseif {![file isfile $dir/$x]} {
+  puts " *** ERROR: unknown filetype, config files should be text files\n\n"
+  exit
+ } elseif {![file readable $dir/$x]} {
+  puts " *** ERROR: unable to open the file, permission denied\n\n"
+  exit
+ } elseif {![file exists $dir/help] || ![file isdirectory $dir/help]} {
+  puts " *** ERROR: are you sure you are running from a bot directory?\n\n"
+  exit
+ } elseif {![file exists $dir/eggdrop]} {
+  puts " *** ERROR: are you sure you are running from a bot directory?\n\n"
+  exit
+ }
+ puts " *** Attempting to process '$x', be patient ..."
+
+ set f [open $dir/$x r]
+ while {![eof $f]} {
+  set z [split [gets $f]]
+  if {[join [lindex $z 0]] != "set"} {continue}
+  switch -- [join [lindex $z 1]] {
+   nick -
+   userfile -
+   botnet-nick {
+    set [join [lindex $z 1]] [join [lindex $z 2]]
+    puts "     !! scanned: [join $z]"
+   }
+  }
+ }
+ close $f
+ if {![info exists {botnet-nick}] && [info exists nick]} {
+  puts "         !! setting \$botnet-nick to \$nick"
+  set botnet-nick $nick
+ }
+ if {![info exists {botnet-nick}] || ![info exists userfile]} {
+  puts " *** ERROR: could not find either \$userfile or \$botnet-nick"
+  puts "      !! you sure its a valid Eggdrop config file?\n\n"
+  exit
+ }
+ if {[catch {open $dir/${botnet-nick}.botchk w} fd]} {
+  puts " *** ERROR: unable to open '${botnet-nick}.botchk' for writing"
+  puts "      !! without this, this program is useless\n\n"
+  exit
+ }
+ puts $fd "#!/bin/sh\n#"
+ puts $fd "# Created on: [clock format [clock seconds] -format "%B %d, %Y @ %I:%M%p"]"
+ puts $fd "# Created by: AutoBotchk 1.05 (C)1999 Jeff Fisher\n#"
+ puts $fd "# (this is basically botchk from scripts/, credits to the author(s)\n#"
+ puts $fd "\n# Directory the Eggdrop runs from:"
+ puts $fd "botdir=\"$dir\""
+ puts $fd "\n# Name of our configuration file (including the binary):"
+ puts $fd "botscript=\"eggdrop $x\""
+ puts $fd "\n# Eggdrop's nickname (capitalization COUNTS):"
+ puts $fd "botname=\"${botnet-nick}\""
+ puts $fd "\n# Eggdrop's userfile (capitalization COUNTS):"
+ puts $fd "userfile=\"$userfile\""
+ puts $fd "\n########## Edit before here if you want, but you shouldn't need too ##########"
+ puts $fd "\ncd \$botdir"
+ puts $fd "if test -r pid.\$botname; then"
+ puts $fd "  # there is a pid file -- is it current?"
+ puts $fd "  botpid=`cat pid.\$botname`"
+ puts $fd "  if `kill -CHLD \$botpid >/dev/null 2>&1`; then"
+ puts $fd "    # it's still going"
+ puts $fd "    # back out quietly"
+ puts $fd "    exit 0"
+ puts $fd "  fi"
+ puts $fd "  echo \"\""
+ puts $fd "  echo \"Stale pid.\$botname file (erasing it)\""
+ puts $fd "  rm -f pid.\$botname"
+ puts $fd "fi"
+ puts $fd "echo \"\""
+ puts $fd "echo \"Couldn't find the bot running.  Reloading it...\""
+ puts $fd "echo \"\""
+ puts $fd "# Check for userfile first"
+ puts $fd "if test -r \$userfile; then"
+ puts $fd "  # It's there, load the bot"
+ puts $fd "  ./\$botscript"
+ puts $fd "  exit 0"
+ puts $fd "fi"
+ puts $fd "if test -r \$userfile~new; then"
+ puts $fd "  # Bot f*@!ed up while saving the userfile last time.  Move it over."
+ puts $fd "  echo \"Userfile missing.  Using last saved userfile...\""
+ puts $fd "  mv \$userfile~new \$userfile"
+ puts $fd "  ./\$botscript"
+ puts $fd "  exit 0"
+ puts $fd "fi"
+ puts $fd "if test -r \$userfile~bak; then"
+ puts $fd "  # Userfile is missing, use backup userfile."
+ puts $fd "  echo \"Userfile missing.  Using backup userfile...\""
+ puts $fd "  cp \$userfile~bak \$userfile"
+ puts $fd "  ./\$botscript"
+ puts $fd "  exit 0"
+ puts $fd "fi"
+ puts $fd "# Well, nothing to work with..."
+ puts $fd "echo \"No userfile.  Could not reload the bot..\""
+ puts $fd "exit 0"
+ close $fd
+ puts " *** Wrote '${botnet-nick}.botchk' successfully ([file size $dir/${botnet-nick}.botchk] bytes)"
+ if {[catch {exec chmod u+x $dir/${botnet-nick}.botchk} 0]} {
+  puts "      *** ERROR: unable to 'chmod u+x' the output file\n\n"
+  exit
+ }
+ puts "      !! chmod u+x completed"
+ puts " *** Crontab mode?? Heaven forbid I automated this ..."
+ set tmp "[pwd]/.autobotchk"
+ if {$delay != "10"} {puts "      *** Using a time delay of $delay minutes."}
+ if {$email} {
+  set line "\*\/$delay \* \* \* \* $dir/${botnet-nick}.botchk"
+ } {
+  set line "\*\/$delay \* \* \* \* $dir/${botnet-nick}.botchk >\/dev\/null 2>&1"
+  puts "      *** Making crontab line to NOT send e-mail."
+ }
+ if {[catch {exec crontab -l > $tmp} error ]} {
+  if {![string match "*no*cron*" [string tolower $error]]} {
+   catch {exec rm -rf $tmp} 0
+   puts "      *** ERROR: unable to get crontab listing"
+   puts "           *** MSG: $error\n\n"
+   exit
+  }
+ }
+ set fd [open $tmp r]
+ while {![eof $fd]} {
+  set z [split [gets $fd]]
+  if {[string match "*$dir/${botnet-nick}.botch*" $z]} {
+   puts "      !! ${botnet-nick}.botchk is already crontab'd, but why?\n\n"
+   exit
+  }
+ }
+ close $fd
+ set fd [open $tmp a]
+ puts $fd $line
+ puts "      !! adding new crontab line to existing crontab"
+ close $fd
+ if {[catch {exec crontab $tmp} error]} {
+  puts "      *** ERROR: unable to do 'crontab $tmp'"
+  puts "           *** MSG: $error\n\n"
+  exit
+ }
+ catch {exec rm -rf $tmp} 0
+ puts "      !! crontab reloaded\n\n"
+ exit
+}
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,22 @@
+%{help=email}
+%b/MSG%b %B %bEMAIL%b <my email address>
+   This will set your email address.  It's shown when
+   someone does a WHOIS on you (see HELP WHOIS).
+%{help=url}
+%b/MSG%b %B %bURL%b <my url>
+   This will set your url address.
+%{help=bf}
+%b/MSG%b %B %bBF%b <my boyfriend>
+   This will set your boyfriend. some scripts (such as seen)
+   use this information.
+%{help=gf}
+%b/MSG%b %B %bGF%b <my girlfriend>
+   This will set your girlfriend. some scripts (such as seen)
+   use this information.
+%{help=irl}
+%b/MSG%b %B %bIRL%b <my real name>
+   This will set your real name. just for the information
+   of others :)
+%{help=dob}
+%b/MSG%b %B %bDOB%b <my date of birth>
+   This will set your date of birth. now now, be honest :)

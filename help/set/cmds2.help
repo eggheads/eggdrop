@@ -1,0 +1,145 @@
+%{help=set ignore-time}%{+n}
+###  %bset ignore-time%b <#>
+   specifies how long (in minutes) a temporary ignore will last
+   on the bot before being purged.
+   
+see also: ignores, +ignore, set ban-time
+%{help=set dcc-flood-thr}%{+n}
+###  %bset dcc-flood-thr%b <#>
+   This determines the number of messages per second a user can
+   send to the botnet before it's considered a flood, and they
+   should get booted.
+%{help=set save-users-at}%{+n}
+###  %bset save-users-at%b <minute>
+   tells eggdrop when to save its userfile, which it does once an
+   hour.  this number will set the number of minutes after the top
+   of the hour to write the userfile -- for example, setting it to
+   15 will make the bot write its userfile at 3:15, 4:15, etc.
+see also: set switch-logfiles-at
+%{help=set hourly-updates}%{+n}
+###  %bset hourly-updates%b <#>
+   allows you to set the minutes past the hour that the hourly
+   event hooks will be called, this effects such things as note
+   notfication.
+%{help=set switch-logfiles-at}%{+n}
+###  %bset switch-logfiles-at%b <military-time>
+   tells eggdrop when to switch logfiles, storing away the current
+   logfile and starting fresh.  normally this happens at midnight,
+   but on some busy systems where many other processes do things
+   at midnight, you might want to set this to a different time,
+   like 3am.  the time is a number, in military time with no other
+   characters, like "300" or "2200".
+   (please note that a leading zero will make it think you're
+   specifying the time in octal, which is almost certainly not
+   what you want.)
+   
+see also: set save-users-at
+%{help=set connect-timeout}%{+n}
+###  %bset connect-timeout%b <seconds>
+   specifies how long to wait when connecting to a dcc chat, telnet,
+   relay, bot link, or anything like that.  if the connect doesn't
+   happen after this many seconds, the bot will just give up.
+%{help=set reserved-port}%{+n}
+###  %bset reserved-port%b <port#>
+   names a particular port to send all outgoing DCC file transfers
+   through.  if you're behind a firewall, and you can tell your
+   firewall software to make a "peephole" on a certain port, you
+   would need to set this to make sure that all file transfers
+   go through the peephole.  (normally, DCC file transfers grab
+   the nearest unused port.)  there are also various other security
+   uses for this.
+   
+see also: set firewall
+%{help=set require-p}%{+n}
+###  %bset require-p%b <0/1>
+   specifies whether users with 'o' (global op) also need
+   the 'p' flag to join the party line.
+%{help=set keep-all-logs}%{+n}
+###  %bset keep-all-logs%b <0/1>
+   specifies whether to keep logs older than 48 hours or not.  if
+   this is set off, at midnight, the current logfile will be re-
+   named to "(logfile).yesterday" and a new logfile started.  the
+   old "(logfile).yesterday" will be erased.  if this is set on,
+   at midnight, the current logfile will be renamed to "(logfile).
+   (date)" and a new logfile started.  eventually your directory
+   will be full of files like "LameBot.log.14Jul94".
+%{help=set open-telnets}%{+n}
+###  %bset open-telnets%b <0/1>
+   specifies whether to accept new users via a telnet connection.
+   if set to 0, the bot will only accept telnet connections from
+   people who already have user records.  if set to 1, someone can
+   enter "NEW" after telnetting to the bot, and create a new user
+   record.
+%{help=set uptime}%{+n}
+###  %bset uptime%b
+   this read-only variable returns the time the bot started running
+   in unixtime.
+%{help=set console}%{+n}
+###  %bset console%b <console-flags>
+   specifies the default console mode for masters and ops when
+   they first get on the dcc chat connection with the bot.  for
+   more info about console flags, see %b'console'%b.
+%{help=set default-flags}%{+n}
+###  %bset default-flags%b <flags>
+   specifies the flags to give to a user when they first
+   introduce themselves to the bot with %b/MSG HELLO%b or via telnet.
+   obviously this has no effect if you have %b'learn-users'%b and
+   %b'open-telnets'%b turned off.
+   for a list of the flags, see %b'whois'%b.
+%{help=set log-time}%{+n}
+###  %bset log-time%b <0/1>
+   specifies whether or not to time-stamp all log entries.
+%{help=set numversion}%{+n}
+###  %bset numversion%b
+   This read-only variable returns the current version in numeric
+   form:  aabbccdd, where aa = major version, bb = minor version,
+   cc = release version, dd = patch version, 
+   so version 1.2.2+pl5 would be 01020205
+%{help=set die-on-sighup}%{+n}
+###  %bset die-on-sighup%b 0/1
+   This config-file-only variable determines whether the bot will
+   die on receiving a HUP signal, or just rehash.
+%{help=set die-on-sigterm}%{+n}
+###  %bset die-on-sigterm%b 0/1
+   This config-file-only variable determines whether the bot will
+   die on receiving a TERM signal, or just save the userfile.
+%{help=set remote-boots}%{+n}
+###  %bset remote-boots%b 0/1
+   This config-file-only variable has 3 settings, 0 means dont allow
+   anyone else to boot people of your bot, 1 means allow people on
+   other sharebots to boot people of you bot, 2 means allow any bot
+   to boot people of your bot.
+%{help=set max-dcc}%{+n}
+###  %bset max-dcc%b <#>
+   This sets the maximum number of dcc users you can have on the bot
+   at any one time, this value can only ever be increased, and it
+   always helps to have a few spare.
+%{help=set max-logs}%{+n}
+###  %bset max-logs%b <#>
+   This sets the maximum number of log files you can have at any one 
+   time, this value can only ever be increase, and it always helps 
+   to have a few spare.
+%{help=set enable-simul}%{+n}
+###  %bset enable-simul%b 0/1
+   This questionable setting enables the dccsimul command which 
+   allows tcl to simulate a user typing a command, some scripts
+   require it.
+%{help=set protect-telnet}%{+n}
+###  %bset protect-telnet%b 0/1
+   This setting, when enabled, only allows telnet connections from
+   know user@host's. This prevents to some degree botscans.
+   This also negates the use of open-telnet's since a new user
+   can't even get to a prompt.
+%{help=set ident-timeout}%{+n}
+###  %bset ident-timeout%b <#>
+   Sets the number of seconds to wait before discarding an ident
+   attempt for a connectiong user.
+%{help=set share-unlinks}%{+n}
+###  %bset share-unlinks%b 0/1
+   If you wish to prevent other bots/users from unlinking a sharebot
+   you are connected to, set this value to 1.
+%{help=set allow-dk-cmds}%{+n}
+###  %bset allow-dk-cmds%b 0/1
+   Some say +d/+k users should be able to use all the any-user commands,
+   Some say they shouldn't, WHO CARES :) this little setting lets you
+   decide for yourself, I'm too weak to decide for you.

@@ -1,0 +1,13 @@
+#define WIRE_IDLE		MISC_IDLE
+#define WIRE_AWAY		MISC_AWAY
+#define WIRE_NOTONWIRE		get_language(0xa000)
+#define WIRE_CURRENTLYON	get_language(0xa001)
+#define WIRE_NOLONGERWIRED	get_language(0xa002)
+#define WIRE_CHANGINGKEY	get_language(0xa003)
+#define WIRE_INFO1		get_language(0xa004)
+#define WIRE_INFO2		get_language(0xa005)
+#define WIRE_INFO3		get_language(0xa006)
+#define WIRE_JOINED		get_language(0xa007)
+#define WIRE_LEFT		get_language(0xa008)
+#define WIRE_UNLOAD		get_language(0xa009)
+#define WIRE_VERSIONERROR	get_language(0xa00a)

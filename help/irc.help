@@ -1,0 +1,193 @@
+%{help=adduser}%{+m|m}
+###  %badduser%b [!]<nickname> [handle]
+   Creates a new user record for a user on the channel, using their
+   current hostname.  It's similar to a user msg'ing the bot 'hello'
+   except that no information is sent to that user.  If the bot
+   already knows someone by that nickname, and the user on the channel
+   doesn't have a bot record, then it does the equivalent of an
+   'ident' for that user -- except that, again, no information is
+   sent to the user telling them that anything was done.
+
+   If the user is using a different nickname than the bot normally
+   knows her by, you can specify her "handle" (the nickname that the
+   bot remembers).
+
+   If you want to add a user using a static hostmask, prefix their nick
+   with a '!'. ie .adduser !Lamer
+   
+see also: +host, -host, +user, -user
+%{help=deluser}%{+m|m}
+###  %bdeluser%b <nickname>
+   deletes a user record for a user on the channel, using their
+   current hostname.  Channel masters can remove users so long as
+   the user isn't a bot master.
+   
+see also: adduser, +user, -user
+%{help=reset}%{+m}
+###  %breset%b [channel]
+   clears out the bot's channel information and makes it gather the
+   information from the server all over again, as if it had just
+   joined that channel.  it's not really useful much, but could be
+   if an odd bug causes the channel information to get scrambled.
+   unfortunately this command used to get a lot of use.  you can omit
+   the channel name to make it reset ALL channels.
+%{help=resetbans}%{+o|o}
+###  %bresetbans%b
+   resets the ban list on the channel you're currently viewing in
+   the console.  any bans on the channel that aren't in the ban
+   list (either the global list or the local channel ban list) will
+   be removed, and if there are any bans in the global ban list or
+   channel ban list that are not currently on the channel, they will
+   be added.
+   
+see also: bans, reset, console
+%{help=resetexempts}%{+o|o}
+###  %bresetexempts%b
+   resets the exemption list on the channel you're currently viewing
+   in the console. this is an IRCNET feature.
+%{help=resetinvites}%{+o|o}
+###  %bresetinvites%b
+   resets the invitation list on the channel you're currently viewing   
+   in the console. this is an IRCNET feature.
+%{help=act}%{+o|o}
+###  %bact%b [channel] <text>
+   Performs an action on the current console channel (or otherwise
+   specified channel), as if the bot did it.  Just like the /me
+   command in IRC.
+   
+See also: console
+%{help=channel}%{+o|o}
+###  %bchannel%b [channel-name]
+   Shows you an extensive display of the users on a channel, and
+   the current channel attributes.  By default, it shows you the
+   channel you are currently viewing on the console, but you can
+   specify another channel if you wish.
+ 
+   The first line will look like:
+      Channel #hiya, 8 members, 45 users, mode +tn:
+   This means that the bot is sitting on channel #hiya, where 8
+   other irc'ers are.  There are 45 people that the bot knows by
+   hostmask, and the channel mode is +tn.  If the bot isn't on
+   the channel it is supposed to be on, it will say "Desiring
+   channel #hiya" instead.  Next is a list of the users on the
+   channel, with each entry looking like this:
+       NICKNAME  HANDLE    JOIN   IDLE  USER@HOST
+      @kantSF    kantSF    14:53 o  6m  josh@random.edu
+   The "@kantSF" means that the user's nickname is kantSF and that
+   he is a chanop.  The second "kantSF" is the nickname that the
+   bot knows him by.  Sometimes this will differ from the nickname
+   a person is using.  The time displayed is the time the user
+   joined the channel.  The next field is the attributes:
+      n - bot owner                      o - can get ops (+o)
+      m - bot master or owner            f - channel friend
+      b - another bot                    d - cannot get ops (+d)
+   The last field is the user@host he is using irc from.
+   
+See also: status, whois
+%{help=voice}%{+o|o}
+###  %bvoice%b <nickname> [channel]
+    will give a +v voice to a person you specify, so long as the
+    bot is opped on that channel.
+
+see also: devoice
+
+%{help=devoice}%{+o|o}
+### %bdevoice%b <nickname> [channel]
+    will remove the +v voice from the person you specify, so long as
+    the bot is opped on that channel.
+
+%{help=deop}%{+o|o}
+###  %bdeop%b <nickname> [channel]
+   will remove chanop from the person you specify, so long as the
+   bot is opped on that channel, and the person you specify isn't
+   on the bot's list of authorized chanops.
+   
+see also: op, console
+%{help=invite}%{+o|o}
+###  %binvite%b <nickname> [channel]
+   invites someone from irc into your current console channel (or
+   specified other channel).  this is most useful when the channel
+   is +i.  a user with the +o flag can also request an invite from
+   the bot with /MSG INVITE
+
+see also: console
+%{help=kick}%{+o|o}
+###  %bkick%b [channel] <nickname> [reason]
+   will kick a user off your current console channel (or specified
+   other channel) with the comment given.  if you omit the reason, 
+   the default kick comment is "requested".
+   
+see also: kickban, console
+%{help=kickban}%{+o|o}
+###  %bkickban%b [channel] [!|@]<nickname> [comment]
+   kicks a user off the channel and bans her by a reasonable host-
+   mask.  your nickname will be attached to the ban in the bot's
+   internal ban list, and the ban will last for whatever is set in
+   ban-time -- only on this channel.  use %b'.+ban'%b for a more
+   permanent ban which will be activated on every channel the bot
+   monitors.  if you use a comment, that will also be attached to
+   the ban in the ban list, and used as the kick comment.
+     appending a prefix of ! or @ to a nickname changes the ban
+   mask used:
+        eg. with a host of nick!ident@host.name.domain
+
+        command        banmask
+        .kickban nick  *!*dent@*.name.domain
+        .kickban !nick *!*dent@host.name.domain
+        .kickban @nick *!*@host.name.domain
+
+        with a host of nick!~ident@host.name.domain (strict-host set to 1)
+        
+        command        banmask
+        .kickban nick  *!*ident@*.name.domain
+        .kickban !nick *!*ident@host.name.domain
+  
+see also: +ban, bans, stick
+%{help=msg}%{+o}
+###  %bmsg%b <nickname> <text>
+   sends a private message to someone from the bot, just as if the
+   bot had typed /msg.
+%{help=op}%{+o|o}
+###  %bop%b <nickname> [channel]
+   will grant chanop to the person you specify, so long as the bot
+   is opped on that channel, and the person you specify isn't being
+   actively deopped by the bot.
+   
+see also: deop, console
+%{help=say}%{+o|o}
+###  %bsay%b [channel] <text>
+   dumps the text to your current console channel (or other specified
+   channel), as if the bot "said" it.
+%{help=topic}%{+o|o}
+###  %btopic%b <text>
+   changes the channel's topic, assuming the bot is a chanop or the
+   channel is not +t (uses your current console channel).
+   
+see also: console
+%{help=irc module}%{+o|o}
+###  help on the %birc module%b
+   the irc module provides the following dcc commmands:
+%{+o|o}
+     for channel ops:
+       %bresetbans%b %bact%b      %bchannel%b    %bdeop%b     %bsay%b
+       %binvite%b    %bkick%b     %bkickban%b    %bop%b       %btopic%b
+       %bresetexempts%b           %resetinvites%b
+%{+o}
+     for global ops:
+       %bmsg%b 
+%{+m|m}
+     for channel masters:
+       %badduser%b   %bdeluser%b
+%{+m}
+     for global masters:
+       %breset%b
+%{+n}
+   various tcl settings are avaliable and can be viewed by using
+   %b'help set <setting>'%b. Thes include:
+      %blearn-users%b      %bwait-split%b
+      %bwait-info%b        %bmodes-per-line%b
+      %bmode-buf-length%b  %bbounce-bans%b
+      %bbounce-exempts%b   %bbounce-invites%b
+      %bbounce-modes%b     %bmax-bans%b
+      %bmax-exempts%b      %bmax-invites%b
+      %max-modes%b         %buse-354%b

@@ -1,0 +1,505 @@
+This documentation is not finished.  In fact it's barely even started.
+Currently completed sections are:
+
+(1) About Eggdrop
+(2) Starting Out
+(3) User Records
+(4) Access Levels?  No, Flags
+(5) The Party Line
+(6) Botnet
+(7) Userfile Sharing
+(8) Bans and How They Work
+
+Appendices:
+(Z) Weird Messages That Get Logged
+
+
+If you have questions or comments about this file, please send me email
+at <eggdrop@sodre.net> (after subscribing).  Thanks.
+
+
+
+(1) ABOUT EGGDROP
+
+    Eggdrop was created around December 1993 to help stop the incessant
+    wars on #gayteen.  It spawned from another bot I had been writing
+    at the time called "Unrest".  The purpose of Unrest was to answer
+    help requests from other bots (the equivalent of eggdrop's current
+    helpbot option).  The first public release was (I think) v0.6, and
+    it's grown a lot since then.
+
+    To use eggdrop, you need:
+    * some sort of Unix account -- it does not compile for Windows or
+      Mac machines, nor will it probably ever compile there
+    * pretty good knowledge of IRC and Unix, including how to compile
+      programs and what DCC chat is, at absolute minimum
+    * about 500k of disk space, or more, depending on your system (on
+      Linux, the executable takes up about 400k currently -- it will
+      be a lot larger on a RISC system)
+    * the Tcl libraries -- if you don't have them (and most systems
+      should), check the README file on info about how to install it
+      yourself (you don't need to be root)
+
+    Before starting, ask yourself if you really need a bot.  Most IRC
+    servers allow only a handful of bots -- some forbid them outright.
+    The reason?  Too many people run bots as "toys" or as a means of
+    destruction.  If you want to use eggdrop for destructive purposes,
+    go ahead and erase this directory now.  It's almost impossible to
+    do what you want with this bot.
+
+    You should try to find at least one server that will allow you to
+    run a bot.  If you use an ISP (Internet Service Provider) that runs
+    its own IRC server, check to make sure that bots are okay.  If you're
+    going to use a server somewhere else, read the MOTD (message of the
+    day) and find out what their bot policy is.  Following the rules will
+    go a long way toward making your bot accepted.
+
+    Generally speaking, you only need a bot on EFnet if your channel has
+    a constant supply of users (24 hours a day) and no bot.  If your
+    channel already has a couple of bots on it, it probably doesn't need
+    any more.  More bots don't do any more good, and waste bandwidth.
+    On the Undernet you will probably never need more than one bot per
+    channel.  Also note that it's generally not acceptable to use a bot
+    to "keep a channel open" when it's not in use.  However, policies
+    differ from net to net and server to server so check around before
+    starting.
+
+    Bots CANNOT provide absolute protection.  Nothing can.  Eggdrop will
+    try its hardest but there are no guarantees.
+
+
+(2) STARTING OUT
+
+    Obviously the first thing you want to do is compile the bot.  The
+    README file tells you what to do and answers some frequenty-asked
+    questions about compiling.  If you're in a rush and you know what
+    you're doing, you don't have to read this at all -- the README file
+    tells you how to quickly compile and start up the bot.
+
+    If you've read this far, then, I'll assume you have successfully
+    compiled eggdrop and edited the config file.
+
+    First of all, eggdrop has some command-line options -- not many,
+    because most things should be defined through the config file.
+    However sometimes you may want to start up the bot in a different
+    mode, and the command-line options let you do that.  Basically,
+    the command line for eggdrop is:
+
+    % eggdrop <options> <config-file>
+
+    The options available are:
+
+    -n   Don't background.  Normally eggdrop will move itself into the
+         background when you start it up, meaning you'll get another
+         shell prompt and you can do other things while the bot is going.
+         With -n, you won't return to the shell prompt until the bot
+         exits (which won't normally happen until it's killed).  By
+         default, -n will send all log entries to the console.
+
+    -nt  Don't background, use terminal.  This is just like -n, except
+         that instead of seeing log entries, your console will simulate
+         a DCC chat with the bot.
+
+    -nc  Don't background, show channel info.  This is just like -n,
+         except that instead of seeing log entries, every 10 seconds
+         your screen will clear and you will see the current channel
+         status, sort of like "top".
+
+    -m   Create userfile.  If you don't have a userfile, this will make
+         eggdrop create one, and give master/owner status to the first
+         person that introduces himself or herself to it.  You'll need
+         to do this when you first set up your bot, and never again.
+
+    -v   Show version info, then quit.
+
+    Most people never use any of the options except -m, and you only
+    need to use that once.
+
+    It's advisable to run your bot from its own directory.  That way
+    upgrading to a new version is somewhat painless.  You can put your
+    config file and user file in that directory, and then when you
+    compile a new version of eggdrop, you just have to do:
+       putegg <directory>
+    and it will copy eggdrop, weed, and optionally the help files.
+
+    The config file that comes with eggdrop is called "eggdrop.conf.dist".
+    You need to edit that file and change almost everything.  It specifies
+    the bot's nickname, server list, and pretty much everything else about
+    how your bot will work.  You should also rename it from "eggdrop.conf"
+    to something resembling your bot's name, for convenience.  I call mine
+    "snow" since my bot is "Snowbot".
+
+    You can execute the script to start the bot.  For example, I use:
+       chmod u+x snow
+    to make the "snow" script executable.  Then I edited the first line
+    of the script to say:
+       #!./eggdrop
+    which tells the operating system which program to run when executing
+    this script.  (Obviously, it needs to run eggdrop.)  If you're too
+    lazy to do this, or just don't feel like it, you can still start up
+    your bot this way:
+       eggdrop <options> <config-file>
+    For example:
+       eggdrop -nt snow
+
+    After you've edited your config file and set the directories up the
+    way you want them, start the bot with the -m option.  That will make
+    it create a user file.  As soon as you've started up the bot, you
+    need to go to IRC and introduce yourself to the bot.  Typically this
+    is done by sending it the /msg "hello", although many people change
+    that greeting to something else (read the config file for more info
+    about that).
+
+    When started with the -m option, the first person to introduce
+    themselves to the bot will become the master/owner.  You want to
+    be that person.  Once you are recognized as the owner, you have
+    full access to the commands and abilities of the bot.
+
+
+(3) USER RECORDS
+
+    People on irc are recognized by the bot according to their user@host.
+    That is, if I am on irc as:
+       *** Robey is robey@hubcap.clemson.edu (i hate milk)
+    then eggdrop will identify me according to "robey@hubcap.clemson.edu"
+    and not by my nickname.  I can change nicknames at will and it won't
+    forget me.
+
+    For convenience, it's useful to have a "handle" which always identifies
+    the same person.  Usually the "handle" is just whatever nickname some-
+    one was using when the bot first learned them.  The nickname you had
+    when you first said "hello" to eggdrop is the handle it will know you
+    by, regardless of whatever nickname you may be using at a given time.
+
+    Because of this, only one person can have a given handle on your bot.
+    Masters can change it, and anyone with party-line access can change
+    their own handle, but it's intended to be something stable -- unlike
+    nicknames on irc which are about as stable as jello.
+
+    Eggdrop likes to store a lot of information about each user.  The
+    most important thing stored is the list of hostmasks that a user is
+    recognized by.  You can add a new hostmask with the /msg "ident"
+    command.  Masters can add and remove hostmasks with the party-line
+    commands ".adduser", ".+host", and ".-host".
+
+    Other things that are stored include the user's flags (see below),
+    the last time he/she was on any channel, an optional comment, an
+    email address, their current directory in the file area, an info
+    line which can be displayed when they join a channel, and possibly
+    even some other things that Tcl scripts store.
+
+
+(4) ACCESS LEVELS?  NO, FLAGS
+
+    Eggdrop does not have access levels like some bots.  There are no
+    meaningless numbers or titles.  Instead, each user has "flags" that
+    entitle them to certain priveledges.  Think of a flag as a badge.
+    Any user can have any number of flags -- you can have no flags, or
+    you can have all of them.  Some flags are good, some are bad.  Each
+    flag is identified by a letter.  The standard flags are:
+
+    m  (master)  someone who has access to almost every feature of the
+                 bot
+
+    n  (owner)   someone who has absolute control -- you generally only
+                 want one or two people to have this flag
+
+    t  (botnet)  someone who has access to all features dealing with the
+		 botnet
+
+    x  (xfer)    someone who has access to the file transfer area of the
+                 bot (if it exists) and can send and receive files to/from
+                 the bot
+
+    j  (janitor) someone who can perform maintanence in the file area of
+                 the bot (if it exists) -- like a "master" of the file
+                 area
+
+    c  (common)  marks a user who is really just a public irc site from
+                 which any number of people can use irc, making the
+                 user@host information useless
+
+    p  (party)   someone who has access to the party line
+
+    b  (bot)     marks a user that is really a bot
+
+    u  (unshare) user record is not sent to other bots
+  
+    h  (hilite)  use nice bolds & inverse in the help files? 
+    
+    Also, there are 26 user-defined flags numbered A-Z (capitals).
+    Bots can have additional flags which are explained later on.  
+    The channel flags for the bot are: (these can also be applied
+    globally, or on a channel-specific basis)
+
+    o  (op)      someone who can ask for channel op (+o) status on the
+                 channel at will
+
+    d  (deop)    someone who is not permitted to ever gain channel op
+                 status
+
+    k  (kick)    someone who should be kicked if they ever attempt to
+                 join the channel
+
+    f  (friend)  if revenge mode is on, the bot won't take revenge on
+                 someone with this flag
+
+    m  (master)  someone who has the ability to add/delete/modify users on
+		 the channel
+
+    n  (owner)   someone who owns the channel
+
+    a  (auto-op) automatically op the person when they join the channel
+                 even if the channel isnt +autoop
+		 
+    v  (auto-voice) automatically give this person a voice it they
+                 join a +autovoice channel.
+		 
+    q  (quiet)   do not allow this person to get a voice on a +autovoice
+                 channel
+
+    Once again there are 26 user-defined flags numbered A-Z, as channel
+    flags.
+
+
+(5) THE PARTY LINE
+
+    The most important way you will communicate with your bot is through
+    the party line.  The party line is accessable via DCC chat or telnet.
+    It's pretty much just a miniature lagless irc (see "Botnet" below),
+    but it also consists of a console through which you can watch channel
+    activity and give commands.
+
+    To enter the party line, just offer a DCC chat to your bot.  It should
+    ask for your password if you've set one.  If you haven't set one, be
+    sure to do so, so that you can use the /msg "ident" command and other
+    goodies that require some sort of security.
+
+    The party line is actually split up into 200,000 "channels".  The
+    console is available from each channel, but you can only talk to
+    people who are on your current channel (just like irc).  Channel 0
+    is the main party line, while others are typically reserved for private
+    conversations. Channels 1-99,999 are botnet wide chat channels and any
+    user joining that channel anywhere on the botnet will be able to chat
+    with you, Channels *0-*99,999 are local bot-only channels, only people
+    on the current bot you are on can chat to you on there channels.
+    
+    Commands for the console start with a dot (.), similar to the slash (/)
+    used for irc.  At any time you can type ".help" to get a list of the
+    possible commands.  To find out what a command does, use ".help
+    <command>" -- for example, ".help channel".  This documentation won't
+    list every command and what it does, because the online help files are
+    sufficient, and it's a lot more fun to explore on your own.
+
+    When you're on the party line, anything you type that doesn't start
+    with a dot is considered to be broadcast to everyone else, just like
+    talking on a channel.  You can change channels with the ".chat"
+    command or even leave all channels with ".chat off".
+
+
+(6) BOTNET
+
+    People starting up an eggdrop bot for the first time are usually confused
+    about the "botnet" support -- ie, the ability to link two or more bots
+    together and have them merge party lines, and form a sort of miniature
+    irc.
+
+    In order to link to other bots, your bot needs to have a telnet port
+    defined in the config file.  The default is usually something like 2222
+    or 3333, but it's wise to choose something else, especially if a lot of
+    other people are using the same machine.  If other eggdrop bots are
+    running from that machine, try to pick telnet ports at least 5-10 apart.
+
+    Sometimes you will specify a port, like 3333, but that's not available
+    when eggdrop starts up.  On most operating systems, it just means the
+    port was in use recently (probably by your bot!) and it hasn't had time
+    to reset it yet.  So eggdrop will try 3334, and maybe even 3335, until
+    it gets one.  Other bots are aware of this, and when they try to connect,
+    if the specified port (3333 in this example) doesn't work, they'll try
+    the next few before giving up.  If you have one bot on 3333, and another
+    on 3334, they will always be bumping into each other, and other bots
+    will get confused.  That's bad.
+
+    When you first connect two bots together, you need to tell each bot about
+    the other one.  To do this, use the "+bot" command.  You need to know:
+
+    1) the nickname of the other bot, like 'Lamestbot'
+    2) the hostname, like 'maverick.math.uic.edu'
+    3) the telnet port it's using, like 2222 or 3454
+
+    The format of the '+bot' command is:
+       .+bot <nickname> <hostname>:<port>
+
+    This creates a "bot record" for the bot, in your userfile.  It's kind of
+    like a user record, but a little different.  For example, Lamestbot,
+    running from connected.com on port 3454, would be:
+       .+bot Lamestbot connected.com:3454
+
+    Now to connect the bots, one of you (but not both!) needs to type:
+       .link <botname>
+
+    The first time two bots connect, they set a password for each other, so
+    that after that, nobody can "fake" a connection between the two.  You
+    can reset that password later with the command:
+       .chpass <botname>
+
+    The bot record is like a user record except for two things:
+    1) If you share userfiles with another bot (see below), only user records
+       are shared.  The bot records will stay on this bot only.
+    2) There are special flags that can be set for bots, which can't be set
+       for users.
+
+    The special flags you can set for bots are:
+
+    h  (hub)        Your bot will try about once a minute to link to a hub
+                    bot, until it succeeds.  Once it's linked to one hub,
+                    it will no longer try to connect to others.
+
+    a  (alternate)  If no hub bots can be linked, your bot will try to link
+                    to one of these instead.  Once one alternate bot is
+                    linked, it won't try to connect any others -- although
+                    it will still try to link to hub bots.  If a hub bot
+                    connects later, any alternate bot could be dropped.
+
+    s  (share)      This means that it's okay for your bot to share users
+    p  (passive)    with this bot.  There's a full explanation of this below,
+                    in the section called "Userfile Sharing".
+
+    l  (leaf)       If a bot is marked as a leaf, that means you don't want
+                    it to link any other bots behind it.  In other words, it
+                    can only be connected to the botnet in one place, and no
+                    other bots may be connected through it.
+
+    r  (reject)     Any bot that has this flag will not be permitted on the
+                    botnet at all, no matter where it connects.  This is
+                    equivalent to irc's "Q-line".
+
+    There are also 10 user-defined flags (0-9) avaliable for use with
+    bots only.
+    
+    These flags can all be changed by the '.botattr' command just like for
+    users.  For example:
+       .botattr Valis +sh
+
+    There are several chains of connected bots out there.  See the 'nets'
+    file for a list of the ones I've heard of...  If the flags above seem
+    confusing, don't worry.  Usually the only one you need to worry about
+    is the +h flag.  And most botnets have a policy about what flags you 
+    should set when hooking in, and they'll tell you what to set.
+
+
+(7) USERFILE SHARING
+
+    One of the more interesting things you can do when you link two bots,
+    is to make them share userfiles.  BE CAREFUL before you do this, though!
+    When you link, one bot is going to lose its userfile!  (It will be
+    overwritten by the other bot's userfile.)
+
+    To do userfile sharing, you have to make sure the share module is 
+    loaded. Otherwise, your bot will automatically reject all userfile
+    share attempts by other bots.  (It's a safety feature.)
+
+    Next you need to decide which bot will be ACTIVE and which will
+    be PASSIVE, the ACTIVE bot will send its userfile and overwrite
+    the PASSIVE's userfile, so be carefull. Once you've decided, on
+    the ACTIVE bot you set the PASSIVE bot +s, to idicate sharing,
+    and on the PASSIVE you set the ACTIVE +p to idicate passive sharing,
+    the bot will only share passively with 1 bot at once, but can
+    share actively with any number of bots.
+    
+    Next go through all the channels you want shared between the 2
+    bots and make sure they are +shared in the config file, and also
+    that each bot has the other bot make +s for each channel,
+    e.g. on bot1: .botattr bot2 |+s #channel
+
+    When two sharing bots first connect, they will transfer the userfile.
+    After that, when something in the user records changes, the info will
+    be passed to the other share bot(s) so that as long as they are linked,
+    they will stay in sync.
+
+    If two sharing bots get disconnected, they will start up resync buffers
+    for each other.  If they get reconnected within 15 minutes, they can
+    resync from the buffers and not have to re-download the userfile.
+    ** this may not work reliably ** :(
+    
+    You can mark a bot both +s and +a (share user files, but only link
+    as an alternate).  This is very odd and should probably only be used
+    as a backup when you have a lot of bots sharing to one central hub.
+    Only people who really know what they're doing should try marking a
+    bot +s and +a.
+
+
+(8) BANS AND HOW THEY WORK
+
+    I assume that you know how bans work on IRC.  Eggdrop handles them
+    in various ways, and this chapter is intended to help clarify how
+    bans are treated within the bot.  There are three types of bans:
+
+    * global bans
+      These bans will be active on every channel the bot monitors.  Some
+      will "expire" after a while (be removed automatically).  Others
+      are considered "permanent" and can only be removed by a master.
+
+    * channel-specific bans
+      These bans are active only on one channel, and are almost always
+      temporary bans that expire after an hour or so (depending on how
+      long you've specified in the config file).  Usually they're created
+      by the "revenge" mechanism (if active), or by a Tcl script of some
+      sort.
+
+    * non-bot bans
+      These are bans that were not placed by the bot, and that the bot
+      doesn't care about.  They can be removed by anyone on the channel.
+      The other two types of bans are generally protected by the bot,
+      and have to be removed via the bot.
+
+    The party-line command '.+ban' adds a global ban.  '.kickban' will
+    add a channel-specific ban.  '.bans' will list them all, according
+    to their category.  Be sure to check out the help pages for those
+    commands for more info.
+
+(Z) WEIRD MESSAGES THAT GET LOGGED
+
+    (!) timer drift -- spun N minutes
+
+    This is caused by one of several know things..
+    
+     (a) Your bot was swapped out of memory for a while, or that
+     for some reason the computer stopped letting the bot run.  Once a minute,
+     eggdrop does a few maintanance things, including counting down any Tcl
+     timers you have going.  If for some reason, several minutes pass without
+     eggdrop getting to do this, it logs this message to let you know what
+     happened.  It's generally a bad thing, because it means that the system
+     your bot is on is very busy, and the bot can hardly keep track of the
+     channel very well when it gets swapped out for minutes at a time.
+
+     (b) on some systems (at least Linux), if the dns your bot is using to
+     lookup hostnames is broken, and *very* slow in responding (this
+     can occur if the dns's uplink doesnt exist) then you will get 4/5
+     minute time drifts continuously, not much can be done about this,
+     it's an operating system problem :(
+    
+     (c) the clock on your machine has just been changed (e.g. it was running
+     behind by several minutes and was just corrected)
+     
+    (!) killmember(Nickname) -> nonexistant
+
+    We have yet to track this down.  It's a mildly bad thing, though.
+    It means the bot just got informed by the server that someone left the
+    channel -- but the bot has no record of that person ever being ON the
+    channel.
+
+    jwilkinson@mail.utexas.edu had some insight into this one:
+
+       This is not an eggdrop bug, at least not most of the time.  This is
+       a bug in all but perhaps the very latest ircd systems.  It's not
+       uncommon during netsplits and other joins for the server to lose
+       track of killed or collided join notices.  Also, in some servers,
+       it is possible to specify non-standard characters, such as carret
+       symbols, which get falsely interpreted as capital letters.
+
+       When converted to lowercase, these symbols fail to get processed,
+       and joins are not reported, although parts are.
+
+    Cool that I'm not the only one that makes mistakes. :)  And shame on
+    the ircd hackers!

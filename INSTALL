@@ -1,0 +1,100 @@
+                       _
+  ___   __ _  __ _  __| |_ __  ___  _ __
+ / _ \ / _` |/ _` |/ _` | '__|/ _ \| '_ \
+|  __/| (_| | (_| | (_| | |  | (_) | |_) |
+ \___| \__, |\__, |\__,_|_|   \___/| .__/
+       |___/ |___/                 |_|     v1.3
+       
+This is the quick install guide, if you have had little or no
+experience with unix or eggdrop, READ THE README FILE NOW!
+This file is only for experienced users.
+
+(1) WHAT IS EGGDROP?
+
+    Please, read the file README before attempting to set up this bot. It
+    is NOT easy to use! This file is a quick setup guide, not a miracle
+    worker. If you enter this file without basic eggdrop knowledge, you
+    will NOT leave with a working bot! Before asking ANY questions, READ
+    THE README FILE OR YOU WILL BE BURNED TO A HORRIBLE DEATH! IF YOU DO
+    NOT READ THAT FILE I WILL PERSONALLY WALK TO YOUR TERMINAL AND BEAT IT
+    WITH A SMELLY SNEAKER! By the way, read README.
+
+(2) QUICK STARTUP
+
+    Eggdrop uses the GNU autoconfigure scripts, to make things easier.
+
+    1. Type './configure' from the eggdrop directory.  That script will
+       determine how your system is set up, and figure out how to compile
+       eggdrop.  It will also try to find Tcl, which is required to
+       compile.
+
+    2. Type 'make' from the eggdrop directory.  Or to force a statically 
+       linked module bot type 'make static'.  Otherwise the Makefile will
+       determin which type of bot your system will support.  Dynamic is 
+       aways the better way to go if possible.  And for the brave with
+       off the wall operating systems you can type 'make eggmod' but be 
+       warned that it might not work.  If it does please contact the dev
+       team and let them know it did or/and what you did to make it work.  
+
+    3. Eggdrop must be installed in a directory somewhere.  This is
+       accomplished by entering the unix command:
+		make install DEST=<directory>
+ 		example make install DEST=/home/egguser/eggdrop
+
+	[The following is performed from the directory installed above]
+
+    4. Copy the file 'eggdrop.conf.dist' to a new file, usually the
+       same name as the bot that will use it, e.g. "LamestBot".
+
+    5. Start the bot with the "-m" option to create a user file, ie
+       'eggdrop -m LamestBot'.
+
+    6. When starting the bot in the future, drop the "-m".  If you have 
+       edited your bot script correctly, you can type: 
+           chmod u+x <my-bot-script-name>
+       e.g.
+           chmod u+x LamestBot
+       and from then on, you will be able to run your bot directly from the
+       script.  So you can just type "LamestBot" from your shell prompt to
+       start up your bot.  For this to work, the top line of your script MUST
+       contain the correct path to eggdrop.
+
+    7. It's advisable to run your bot via crontab so that it will automatic-
+       ally restart if the machine goes down or (heaven forbid) the bot
+       should crash.  Look at the file 'scripts/botchk' for a great start
+       with crontabbing the bot.
+
+    8. Smile, and if you haven't already read the README file in its
+       entirety, go take a long walk off a short pier.
+
+
+(3) MODULES
+
+  1.  Modules are small pieces of code that can either be compiled into
+the binary or can be compiled seperatly in a file.  This allows for a much
+smaller binary and a way of choosing which options you want installed in
+the bot.  Before you compile the bot you can remove any *.mod directory in
+the src/mod that you dont wish to be compiled.  Use caution though most of
+the modules that come with eggdrop the are required.  The exception is
+woobie.mod and seen.mod.  If you do not want these modules it is safe
+to delete those directories.
+
+  2.  If there are any personal modules that you have made or downloaded
+you can add them to the bot by placing them in the /src/mod directory with
+a mod extension.  They will be automatically compiled during the make for
+you.  They must have a valid make file and of course be compatiable with
+the rest of the eggdrop source.
+
+  3.  If you wish to add a module at a latter time follow the same steps
+in paragraph 2.  After you have moved the appropriate files you will only
+need to type make modules to compile only the modules portion of the bot.
+
+
+(3) FREQUENTLY ASKED QUESTIONS
+
+    1. WHAT DO I DO IF...?
+
+       (1a) READ THE README FILE!
+
+This is the end. If you read to this point, hopefully you have also read
+the README file. If not, then READ IT!&@#%@!

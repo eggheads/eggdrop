@@ -1,0 +1,31 @@
+%{help=notes}
+###  %bnotes index%b
+###  %bnotes read%b <# or ALL>
+###  %bnotes erase%b <# or ALL>
+   lets you manipulate notes that have been stored up for you while
+   you were gone.  %b'notes index'%b gives a listing of all the notes
+   stored up: who they are from, and when they were left.  
+   %b'notes read'%b lets you read some or all notes, according to a
+   list of numbers and/or intervals separated by semicolon.
+   and %b'notes erase'%b erases notes after you are done with them.
+     ex: notes erase 2-4;8;16-
+
+see also: note, whom
+%{help=notes module}
+###  help on the %bnotes modules%b
+   This module provides the means for storing & retrieving notes
+   at a later stage. 
+   Commands:
+      %bnotes%b%{+m}  %bfwd%b%{-}
+   (use %b'.help notes'%b for more info)
+%{+n}
+   Tcl variables:
+      %bnote-life%b  %bmax-notes%b  %ballow-fwd%b  %bnotefile%b
+   (use %b'.help set <variable>'%b for more info)
+%{help=fwd}%{+m}
+###   %bfwd%b <handle> [desto]
+   This allows you to set a note forwarding address for a user,
+   this means if a note needs to be stored for the user, the
+   bot will attempt to pass it on to the given user@bot, if
+   the bot is not online then the note is still stored locally,
+   if the other user doesn't exist, the note is lost. Boohoo.

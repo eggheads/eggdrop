@@ -1,0 +1,470 @@
+TODO list for 1.3.28
+
+Please send any patches to eggdev@eggheads.org or they wont make it into
+the next release <Cybah>
+
+When you commit a patch about those TODO points, just remove the
+concerned part in this file. Don't renumber the other points <arthur2>
+
+----------
+
+Problem status:
+
+        1:      drummer submited a patch to eggdev
+        2:      poptix
+        3:      cybah
+        4:      no-one
+        6:      no-one
+        7:      no-one
+       10:      drummer/Mixter
+       11:      no-one
+       12:      no-one
+       13:      no-one
+       14:      no-one
+       15:      no-one
+       16:      no-one
+       18:      slennox
+       19:      no-one
+       20:      Tothwolf/Cybah
+       21:      no-one is working on this, due for 1.3.28.
+       24:      no-one
+       26:      no-one
+       27:      no-one
+       28:      dw submitted a patch to eggdev
+       30:      no-one
+       32:      no-one
+       36:      no-one
+       37:      drummer submitted a patch to eggdev
+       38:      drummer submitted a patch to eggdev
+       39:      drummer
+       41:      no-one
+       42:      no-one
+       43:      Jason
+       44:      no-one
+       48:      no-one
+       49:      no-one
+
+----------
+1. user fields to sharebots not being removed,
+   .info none, sharebots have empty info field,
+   if info-party is 1, will display *empty* info line...
+
+Status: drummer submited a patch to eggdev
+
+--
+2. SEGV with sharing. Don't know how to reproduce this bug, but it
+occurs again and again (Found by TheUnknown). Here are two DEBUG files:
+
+Context: userent.c/940, [SEGV with sharing bug track - added 99/03/26]
+         userent.c/942, [SEGV with sharing bug track - added 99/03/26]
+         share:share.c/1095, [SEGV with sharing bug track - added 99/03/26]
+         share:share.c/1121, [SEGV with sharing bug track - added 99/03/26]
+         share:share.c/1095, []
+         share:share.c/1121, [SEGV with sharing bug track]
+         userent.c/489, []
+         userent.c/495, [SEGV with sharing bug track]
+         share:share.c/1095, []
+         share:share.c/1121, [SEGV with sharing bug track]
+         userent.c/932, []
+         userent.c/934, [SEGV with sharing bug track]
+         userent.c/936, [e->u.list is NULL!]
+         userent.c/937, [e is valid]
+         userent.c/940, [SEGV with sharing bug track - added 99/03/26]
+         userent.c/942 [SEGV with sharing bug track - added 99/03/26]
+
+Context: share:share.c/1095, []
+         share:share.c/1121, [SEGV with sharing bug track]
+         share:share.c/1095, []
+         share:share.c/1121, [SEGV with sharing bug track]
+         userent.c/101, []
+         userent.c/125, []
+         share:share.c/1095, [SEGV with sharing bug track - added 99/03/26]
+         share:share.c/1121, [SEGV with sharing bug track - added 99/03/26]
+         share:share.c/1095, [e->u.list is NULL!]
+         share:share.c/1121, [e is valid]
+         userent.c/932, []
+         userent.c/934, [SEGV with sharing bug track]
+         userent.c/936, [e->u.list is NULL!]
+         userent.c/937, [e is valid]
+         userent.c/940, [SEGV with sharing bug track - added 99/03/26]
+         userent.c/942 [SEGV with sharing bug track - added 99/03/26]
+
+--
+3. CTCP flood a bot, it ignores you, then channel flood, it won't kick
+you. It should ignore CTCP and not ignore ALL (found by Plex/Harry).
+
+note: there is no such thing as a CTCP ignore, will code this for
+1.3.28. users.h - line 153, and detect_flood() in servmsg.c - line 283. <cybah>
+
+--
+4. +h flag seems to be redundant with .strip (confusing)
+
+Status: noone is working on this
+
+--
+6.  There's been some discussion on eggdev about going back to the old way of
+    doing the help files. I'll simply paste the Q & A from the list ;) <cybah>
+
+Q. On 15 Apr, John wrote:
+   > can anyone tell me why .bans, .-ban and .+ban are missing in .help?
+
+A. its the new stupid way .help works hides lots of stuff
+   in diffrent modules so you have to .help modulename module
+   every f*cking module to see what commands there is.
+   This is not userfriendly, we should consider moving back
+   all commands to the main .help or fix a .help all command.
+
+   dw
+
+--
+7. ./configure not detecting static tcl being incompatible with modules in
+    some situations (ask details to Tothwolf).
+
+Status: noone is working on this
+
+--
+10. should ignore invalid channel options instead of droping the
+    channel when loading the chanfile.
+
+<drummer> channel set #chan +bitch -stopnethack +invalidflagsuxx +autoop
+you wont get error, but channel wont be +autoop, it's too hard to
+process valid params (+autoop) after an invalid param (+invalidflagsuxx).
+
+Status: drummer submited a patch to eggdev, applied to cvs.
+        Mixter submited another one.
+
+--
+11. +shared/+s flags need to be recoded. The way all this works seems to be
+confusing for users.
+
+Status: noone is working on this
+
+--
+12. some users asked for mIrc bantypes (1/2/3/4) for the eggdrop. A setting
+has to be added to allow the bot-owner to choose the banmask type he wants
+his bot to use. not before 1.3.28.
+
+<drummer> .kickban command already supports different bantypes...
+
+Status: noone is working on this
+
+--
+13. add the possibility to put some '?' in the alternative nickname var.
+The nick the bot tries to use when its first nickname is in use. The bot
+then will replace those '?' with a random number. not before 1.3.28.
+
+Status: noone is working on this
+
+--
+14. fix the eggdrop/tcl8.* info exist bug.
+
+Status: noone is working on this
+
+--
+15. rewrite the eggdrop server queue, like Cybah's bot. not before 1.3.28.
+
+Status: Cybah ?
+
+--
+16. From the eggheads list: <cybah>
+
+I think there is a minor bug in the way
+how botnets restructure...
+
+dcc!leafy *** Unlinked oldhub (restructure)
+dcc!leafy [17:13] ERROR linking newhub: Already connected.
+dcc!leafy [17:13] Lost bot: newhub
+
+problem here is, that they delink from the old hub
+and link to the newly designated (or alternate) hub
+immediately, but that hub doesnt have the information
+that leafy unlinked from newhub yet (botnet lag), so it will
+say error: already connceted. making the bots wait
+for about 2 seconds before re-linking would fix this
+
+Mixter
+
+--
+18.
+
+There are some english sentences in the C src. They should be moved to
+/language. We also need some coordination between the different
+languages.
+
+Status: slennox is working on this.
+	Michael is working on updating the German lang file, can we pls
+	have some updates for the other languages? <cybah>
+
+--
+19.
+
+(poptix' report)
+[20:10] !!! writing to nonexistent socket: 6
+[20:10] * Last context: botnet.c/1350 []
+[20:10] * Wrote DEBUG
+[20:10] * SEGMENT VIOLATION -- CRASHING!
+
+Debug (eggdrop v1.3.27) written Sun May  2 20:10:00 1999
+Full Patch List:
+Using tcl library: /usr/lib/tcl8.0 (header version 8.0)
+Compile flags: gcc
+Link flags   : gcc
+Strip flags  : strip
+Context: chanprog.c/533, []
+         chanprog.c/545, []
+         chanprog.c/533, []
+         chanprog.c/539, []
+         tcl.c/463, []
+         tclmisc.c/351, []
+         tclmisc.c/147, []
+         tcldcc.c/503, []
+         tcldcc.c/503, []
+         tcldcc.c/503, []
+         tcldcc.c/503, []
+         tcldcc.c/503, []
+         main.c/495, []
+         users.c/827, []
+         main.c/436, []
+         botnet.c/1350 []
+
+and (TheUnknown's report):
+
+[13:00] !!! writing to nonexistent socket: 13
+[13:00] * Last context: botnet.c/1350 []
+[13:00] * Wrote DEBUG
+[13:00] * SEGMENT VIOLATION -- CRASHING!
+
+Debug (eggdrop v1.3.27) written Sun May  2 13:00:00 1999
+Full Patch List:
+STATICALLY LINKED
+Using tcl library: ./tcl8.0/library (header version 8.0)
+Compile flags: gcc
+Link flags   : gcc
+Strip flags  : strip
+Context: tclhash.c/900, []
+         chanprog.c/530, []
+         chanprog.c/533, []
+         chanprog.c/545, []
+         chanprog.c/533, []
+         chanprog.c/545, []
+         main.c/495, []
+         irc:irc.c/372, []
+         irc:irc.c/372, []
+         irc:irc.c/372, []
+         irc:irc.c/372, []
+         users.c/827, []
+         main.c/436, []
+         botnet.c/1350 []
+
+Status: no one is working on this.
+
+--
+20. Eggdrop won't work with TCL 8.1 libs compiled with --enable-threads
+
+(Ian White's report)
+
+Debug (eggdrop v1.3.27) written Sun May  2 22:54:09 1999
+Full Patch List:
+Compile flags: gcc -DEBUG_MEM
+Link flags   : gcc -g
+Strip flags  : touch
+Context: main.c/526, []
+         main.c/526, []
+         main.c/526, []
+         main.c/526, []
+         main.c/526, []
+         main.c/526, []
+         main.c/526, []
+         main.c/526, []
+         main.c/526, []
+         main.c/526, []
+         main.c/526, []
+         main.c/526, []
+         main.c/537, []
+         language.c/284, []
+         language.c/86, []
+         modules.c/430 []
+
+This seems to occur with thread compile tcl 8.1.
+
+Status: Tothwolf/Cybah are working on this.
+
+--
+21. We need a better solution to the non-rfc-complient networks than to remove
+    -DRFC_COMPLIENT from the Makefile. Need to make rfc_casecmp a pointer to a
+    function and check net-type whenever the config file is loaded. Obviously
+    with this approach, net-type has to be set readonly because we cant check
+    when it's value is changed on a running bot. Anyone who changes it
+    on-the-fly is mad anyway :p If net-type is set on a known non rfc-complient
+    network, we just point rfc_casecmp at strcasecmp.. otherwise to the proper
+    functions <Cybah>
+
+Status: no-one is working on this, due for 1.3.28.
+
+--
+24. console.mod's console-autosave is buggy (ask Tothwolf for details)
+
+Status: no-one is working on this
+
+--
+26. many commands break with extra spaces in them '.status  all'
+
+Status: no-one is working on this
+
+--
+27. after you end a relay session with a bot and your using a dcc
+    connection, shouldn't eggdrop turn off telnet codes automatically?
+
+Status: no-one is working on this
+
+--
+28. local bots telneting to local IP for a hub bot will be ignored for
+    telnet flood even with +f set for their user@host
+
+Status: dw submitted a patch to eggdev.
+
+--
+30. This is an odd one, and I've included code that should reproduce it...
+    (Tothwolf)
+   =TestBot= [04:12] joined #TestChannel but didn't want to!
+
+   bind time "?0 * * * *" time:join:channel
+   bind time "?5 * * * *" time:join:channel
+   proc time:join:channel {min hour day month year} {
+     test:join:channel
+     return 0
+   }
+
+   proc test:join:channel {} {
+     channel add #TestChannel
+     puthelp "PRIVMSG #TestChannel :I'm here!"
+     timer 1 "catch {channel remove $chan}"
+     return 0
+   }
+
+Status: no-one is working on this
+
+--
+32. notes rejection (to ignore notes from some user@bot that keeps 
+    annoying them)
+
+Status: no-one is working on this
+
+--
+36. an old 1.3.20 bug (still there?)
+    (Tothwolf)
+ 
+    bind nick -|- * nick:test
+    proc nick:test {nick uhost hand chan newnick} {
+       global botnick
+       putlog "$nick:$newnick:$botnick"
+       if {$newnick == $botnick} {
+          putlog "Debug:Botnick:1"
+       } else {
+          putlog "Debug:Botnick:0"
+       }
+    }
+
+Status: no-one is working on this
+
+--
+37. notes bug (TheUnknown updated bug report)
+
+[01:56] <me> .note nick ? :)
+[01:56] <bot> Not online; forwarded to nick@bot2.
+[01:56] <bot> *** [bot2] Not online; note stored.
+[01:56] <me> .note nick la lala lalala :)
+[01:56] <bot> [15:56] * Last context: tclhash.c/673 []
+[01:56] <bot> [15:56] * Wrote DEBUG
+[01:56] <bot> [15:56] * SEGMENT VIOLATION -- CRASHING!
+
+Debug (eggdrop v1.3.28) written Tue May 11 15:56:02 1999
+Full Patch List: 
+STATICALLY LINKED
+Using tcl library: /usr/local/lib/tcl8.1 (header version 8.1)
+Compile flags: gcc
+Link flags   : gcc
+Strip flags  : strip
+Context: chanprog.c/542, []
+         main.c/381, []
+         main.c/713, []
+         net.c/666, []
+         net.c/705, []
+         net.c/730, []
+         net.c/752, []
+         net.c/776, []
+         main.c/734, []
+         dcc.c/744, []
+         tclhash.c/787, []
+         tclhash.c/792, []
+         tclhash.c/570, []
+         tclhash.c/642, []
+         tclhash.c/796, []
+         tclhash.c/673 []
+
+Status: drummer submitted a patch to eggdev
+
+Note: this seems to be a bug with tcl 8.0 (it seems the problem doesn't
+occur with tcl 7.5, 7.6, 7.6p2 and 8.1b3)
+
+--
+38. If you set userdefined flags in DEFAULT_FLAGS variable they are
+    ignored (reported by /WiNGE).
+
+Status: drummer submitted a patch to eggdev
+
+--
+39. .+ban *!*user@*.host.com #channel *comment
+    this adds a stickyban because of the '*' at the beginning of the
+    comment, but sharebots are not getting sent a stick command for the
+    ban (reported by Tothwolf).
+
+Status: drummer submited a patch to eggdev
+
+--
+41. .resetbans #channel doesn't work properly (ask Tothwolf for details).
+
+Status: no-one is working on this
+
+--
+42. ignores are not sent with the userfile for sharebots (reported by
+    Tothwolf)
+
+Status: no-one is working on this
+
+--
+43. add +e/+I support in userfile
+
+Status: Jason/arthur2 are working on this
+
+--
+44. Bug report from drummer
+
+=dcc(bot)= .+user user
+=dcc(bot)= .tcl setuser user HOSTS n!u@h
+=dcc(bot)= .tcl setuser user HOSTS none
+[dcc(bot)] [01:00] *** ATTEMPTING TO FREE NON-MALLOC'D PTR: tcluser.c (493)
+
+<drummer>
+Nice bug, i tried to fix it...
+If I remove that nfree(e); bot works and doesnt crash... (memleak?)
+but I dont understand who/where allocate memory for 'e'...
+that's too hard for me...
+
+Status: no-one is working on this
+
+--
+48. chattr should be patched to work as botattr and demand | being used
+for channels (dw's suggestion).
+
+Status: no-one is working on this
+
+--
+49. Adds a tcl config setting to allow vs correct bogus-bans (suggested by
+matt).
+
+set bogus-bans [0/1] <- if set to 0, the bot won't do anything if people
+set bogus bans thus preventing bogus ban floods. it will only react to
+bogus bans if it is set to 1.
+
+Status: no-one is working on this

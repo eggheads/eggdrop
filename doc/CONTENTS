@@ -1,0 +1,40 @@
+Contents of the doc/ directory:
+
+UPDATES1.3
+   a list of what's changed in recent 1.3 versions
+
+UPDATES.pre1.3
+   a list of what's changed in old pre 1.3 versions
+
+BOTNET
+   a guid to flags and bot user file sharing
+
+compiling.FAQ
+   Chad Wagner's helpful guide to getting eggdrop to compile on odd
+   or mis-installed systems
+
+eggdrop.doc
+   the primary documentation on running an eggdrop bot -- to be used
+   AFTER you get it compiled  (unfinished, but a good starter course)
+
+man1/
+   unix man pages, should you ever need them
+
+Ode_To_Beldin
+   A tribute to the latest acheiver in eggdrop coding.
+
+patch.howto
+   a how-to on applying patches to eggdrop, snagged from ftp.sodre.net
+   (patches are a popular way to modify parts of eggdrop)
+
+tcl-commands.doc
+   documentation for eggdrop/Tcl script programmers
+
+tricks
+   some advanced tips on making eggdrop do what you want it to do
+
+MODULES
+   module information (not finished yet, but getting there).
+
+KNOWN-PROBLEMS
+   i.e. things that are broke, but aren't getting fixed anytime soon

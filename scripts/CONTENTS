@@ -1,0 +1,53 @@
+These are the example scripts that come with eggdrop.  They're meant
+to be useful AND to introduce Tcl to those who haven't dealt with it
+before.  Even people who program in Tcl may be confused by eggdrop's
+implementation at first, because so many commands were added to
+interface the bot.
+
+action.fix.tcl
+   gets rid of those ugly /me's people do instead of a .me.
+
+alltools.tcl
+   toolbox.tcl, toolkit.tcl and a few more tools all in 1 file
+   toolbox.tcl
+      cmwagner's collection of handy proc's
+   toolkit.tcl
+      a few useful proc's that may be required by other Tcl scripts
+
+autobotchk
+   tcl script used to crontab your Eggdrop
+   usage: ./autobotchk eggdrop.conf.dist
+
+botchk
+   A shell script which can be used for auto-starting the bot via 'cron'.
+
+compat.tcl
+   maps old tcl functions to new ones, for lazy people who can't be bothered
+   updating their scripts
+   
+getops-2.2d.tcl
+   a way to get ops from other bots on the botnet (if they're on the
+   same channel)
+
+klined.tcl
+   removes servers from your server list that your bot has been k-lined on
+   to prevent admins getting peeved with constant connects from your bot's host
+   
+notes2.tcl
+   Check your notes on every shared bot of the hub.
+
+ques4.tcl
+   makes web pages of who's on each channel, updated periodically
+   (requires toolkit.tcl)
+
+sentinel1.54.tcl (by slennox)
+   flood protection script for eggdrop 1.3.17 and later, with integrated
+   BitchX CTCP simulation. this script is designed to provide strong 
+   protection for your bot and channels against large floodnets and proxy
+   floods.
+
+userinfo1.0.tcl
+   cute user info settings things 
+ 
+weed
+   weed out certain undesirables from an eggdrop userlist

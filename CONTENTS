@@ -1,0 +1,55 @@
+One (1) eggdrop bot (n.)  Functional on many UNIX platforms. README is
+   included for you (human) to read (please). Helpful stuff.
+
+"What are all these files for?"
+
+COPYING
+   legal stuff
+
+FEATURES
+   just tells you what eggdrop can do -- a kind of advertisement
+
+Makefile
+Makefile.in
+   help with automated making of bot
+
+NEWTO.1.3.0
+   lists significant differences with previous versions, if you're used
+   to using a previous version, or upgrading READ IT.
+   
+README
+   what you should read before trying to compile eggdrop -- contains
+   tips on compiling, and an explanation of what eggdrop does
+
+config*
+   scripts/files for automatic configure of the bot
+
+doc/
+   lots of IMPORTANT DOCUMENTATION that you must read!
+
+eggdrop.conf.dist
+   sample configuration for your bot
+
+filesys/
+   sample filesystem
+
+help/
+   the online help files for the bot
+
+language/
+   a directory of language files, for multiple language support.
+   More information on contributing/customising for languages will be
+   forthcoming.
+   
+motd
+   sample "message of the day" displayed to party-line users as they join
+
+obsolete/putegg
+   The old script for installing the bot in another directory
+   Now try:  make install DEST=/home/mydir/eggdrop
+
+scripts/
+   some tcl scripts that you might want to use
+
+src/
+   the eggdrop source

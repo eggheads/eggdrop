@@ -1,0 +1,134 @@
+BOTNET SHARING and LINKING                   16 Oct 97
+
+This document is designed to help you with a working knowledge of botnets.  
+This includes bot flags sharing and linking bots.  This only covers the
+new version 1.3.0 of eggdrop.  Many things have changed in the way flags 
+are handled and the way user-files are shared.  The code as been stream- 
+lined and made more efficient. Even if you have used previous version you should still glance over this document to find out what changes have been made.  It will take some time to get used to but you will see its all for the better.
+
+TERMS
+The following are some common terms that will be used in this document.  
+Also the associated command if applicable.
+	
+	Botnet- The term used to describe multiple bots connected together.
+	
+	Link- The term that means the actual linking of more than one bot 
+      (.link .unlink) 
+	
+	Flags- Flags are attributes that determine what a bot can do or does
+      do. Flags can be either global or channel specific.  The main ones 
+      that affect a botnet are +h(hub) +a(alt hub) +s(passive share)
+ 	+s (channel share), +p (passive share). 
+      Associated commands (.chattr, .botattr).
+	
+	Share- The term used to describe two bots that share user records.
+	
+	Aggressive Share- Term used to describe the method of sharing 
+      user-files.  Aggressive share bot will only receive users from 
+      a passive bot.
+	
+	Passive Share- Term used to describe the method of sharing 
+      user-files. Passive share bots will only send users to another bot.
+
+	Address- The physical address of the bot, i.e. the host address 
+      "eggdrop.com:3333"  contains the port address of the bot also.  
+      Associated command (.chaddr)
+
+	Relay-  The relay port number of the bot if defined in the conf 
+      file.  If defined in the conf file the bot will use to separate 
+      ports.  One for telnet connections to other bots and one for relay
+ 	connections.  A relay connection is used to relay (jump) to another
+      bot in DCC chat.  You can still relay to another bot even if this 
+      is not defined in the conf file.  Associated command (.relay)
+
+	Port- The telnet port the bot uses to communicate with other bots.
+
+ADDING BOTS
+With the common terms out of the way we can start with the process of 
+adding a bot so you may connect them together.  Before you start you will
+need to decide or know the following:
+	1.  Will it be a share bot?
+	2.  Which bot is the hub (+h) bot?
+	3.  Will there be a alternate hub (+a) bot?
+	4.  If sharing who gets what from whom?
+	5.  What are the domains and ports of the bots.
+
+*NOTE:  For sharing to work modules: transfer, share, filesys must be 
+loaded on all the bots.  You will also need to ensure that the +shared is
+added to any channels in the conf file that the bot will be sharing 
+channel flags for.  (See eggdrop.conf.dist for more information)
+
+First off lets say we have two bots we want to link.  We will call one 
+Lamestbot and the other LamestShare.  The first thing that needs to be 
+done is each bot needs the other bot added to its user record.  Your 
+botnet should have a hub bot.  This will have them connect automatically 
+when ever they are started.  Without a hub you would have to manually 
+link them with the .link command.  For this situation we will make 
+Lamestbot the hub for our small botnet. Lets also use a channel called 
+#eggdrop as the one we want to share user channel flags with.  Do the 
+following:
+	On Lamestbot:
+	.+bot LamestShare eggdrop.com:3333 (This command adds a user 
+       record to Lamestbot for lameshare.  Lame share is running from 
+       eggdrop.com and is on port 3333. If Lameshare where to have a 
+       seperate port for relays we would just add another : and the port
+       number i.e. 3333:5555)
+	.botattr LamestShare +s (this tells us that Lamestbot will only 
+       send user files to Lame, Lame will not send them to it)
+	.botattr LamestShare |s #eggdrop (this sets up sharing of the 
+       channel flags for #eggdrop between the bots. Without this they 
+       will not share channel flags only global flags for the users.)
+
+	On LameShare:
+	.+bot Lamestbot best.com:3333:5555 (Again this will add a user on 
+       Lameshare called lamestbot with the domain of best.com.  The bot 
+       has two ports 3333 for telnet and 5555 for relay.)
+	.botattr Lamestbot +hp (this command sets lamesbot as the hub and 
+       also as a passive share which means Lameshare will accept user 
+       files from Lamestbot.
+	.botattr Lamestbot |+s #eggdrop (again sets #eggdrop as a share 
+       channel and that channel flags will be passed to LameShare from 
+       Lamestbot)
+ 
+At his point the bots should be auto-connecting and sharing between 
+themselves.  HINT: dont assign the +h flag until you are ready for them
+to link.  Depending on the speed of the box they may connect premature 
+before you have all the flags set.
+
+			LamestBot (hub)
+			      |
+			      |
+			      |
+			LameShare
+
+Lets add a third bot called beldin to this senerio:
+	On Lamestbot:
+	.+bot beldin llama.com:3333
+	.botattr beldin s|s #eggdrop (notice how i piped (the | character)
+       the channel flag also saving time.)
+Also note that you dont have to add beldin on LamestShare since they are
+already sharing it was added automatically.  The one thing that you 
+should note though is that no bot flags will be shared.  Meaning that if
+you set beldin as +s (Aggressive share) on the hub (LamestBot)he will
+not be set on the other bots as that.  The same is with the channel +s 
+flag.  All other flags will be shared such as the o f etc..
+
+Now that we have three bots we can also set up one as an alternate hub.
+The alternate hub is the bot that the bots will auto-connect to in the 
+event the hub goes down and is unreachable.
+
+Lets make bedin an alternate hub for our little botnet
+	On LameShare:
+	.botattr beldin +a
+Thats all there is to it.  Again since bot flags are not shared you would
+have to add the botflag +a for beldin on them all.  The only ones you 
+would not do this on is beldin, and the hub (Lamestbot).  Of course if 
+you had more bots you would have to add beldin as a +a to them
+but you would not do it on the hub or beldin.
+
+			LamestBot (hub)___< >___LamesShare
+			             |_____< >______beldin
+
+
+Thats about it for sharing, again you could add subsequent bots the same 
+way you added beldin.

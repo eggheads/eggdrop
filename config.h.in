@@ -1,0 +1,142 @@
+/* config.h.in.  Generated automatically from configure.in by autoheader.  */
+
+/* Define if on AIX 3.
+   System headers sometimes define this.
+   We just want to avoid a redefinition error message.  */
+#ifndef _ALL_SOURCE
+#undef _ALL_SOURCE
+#endif
+
+/* Define if you have <sys/wait.h> that is POSIX.1 compatible.  */
+#undef HAVE_SYS_WAIT_H
+
+/* Define if on MINIX.  */
+#undef _MINIX
+
+/* Define to `int' if <sys/types.h> doesn't define.  */
+#undef pid_t
+
+/* Define if the system does not provide POSIX.1 features except
+   with this defined.  */
+#undef _POSIX_1_SOURCE
+
+/* Define if you need to in order for stat and other things to work.  */
+#undef _POSIX_SOURCE
+
+/* Define if you have the ANSI C header files.  */
+#undef STDC_HEADERS
+
+/* Define if you can safely include both <sys/time.h> and <time.h>.  */
+#undef TIME_WITH_SYS_TIME
+
+/* Define if you have the getdtablesize function.  */
+#undef HAVE_GETDTABLESIZE
+
+/* Define if you have the getrusage function.  */
+#undef HAVE_GETRUSAGE
+
+/* Define if you have the random function.  */
+#undef HAVE_RANDOM
+
+/* Define if you have the rename function.  */
+#undef HAVE_RENAME
+
+/* Define if you have the dprintf function  */
+#undef HAVE_DPRINTF
+
+/* Define if you have the sigaction function.  */
+#undef HAVE_SIGACTION
+
+/* Define if you have the sigemptyset function.  */
+#undef HAVE_SIGEMPTYSET
+
+/* Define if you have the srandom function.  */
+#undef HAVE_SRANDOM
+
+/* Define if you have the vsprintf function.  */
+#undef HAVE_VSPRINTF
+
+/* Define if you have the waitpid function.  */
+#undef HAVE_WAITPID
+
+/* Define if you have the setpgid function. */
+#undef HAVE_SETPGID
+
+/* Define if you have the clock function. */
+#undef HAVE_CLOCK
+
+/* Define if you have the <dirent.h> header file.  */
+#undef HAVE_DIRENT_H
+
+/* Define if you have the <ndir.h> header file.  */
+#undef HAVE_NDIR_H
+
+/* Define if you have the <sys/dir.h> header file.  */
+#undef HAVE_SYS_DIR_H
+
+/* Define if you have the <sys/ndir.h> header file.  */
+#undef HAVE_SYS_NDIR_H
+
+/* Define if you have the <sys/rusage.h> header file.  */
+#undef HAVE_SYS_RUSAGE_H
+
+/* Define if you have the <sys/select.h> header file.  */
+#undef HAVE_SYS_SELECT_H
+
+/* Define if you have the <sys/time.h> header file.  */
+#undef HAVE_SYS_TIME_H
+
+/* Define if you have the <unistd.h> header file.  */
+#undef HAVE_UNISTD_H
+
+/* Define if you have the <stdarg.h> header file.  */
+#undef HAVE_STDARG_H
+
+/* Define if running on OSF/1 platform. */
+#undef STOP_UAC
+
+/* Define if you need strcasecmp */
+#undef HAVE_STRCASECMP
+
+/* Define if running on Linux with thread support. */
+#undef LINUX_THREADS
+
+/* define if running on Linux and need to watch for byteorder headers */
+#undef LINUX
+
+/* define if big-endian chipset */
+#undef WORDS_BIGENDIAN
+
+/* we may need dlopen now (modules) so include it */
+#undef HAVE_DLOPEN
+
+/* this willl get defined if modules will work on your system */
+#undef MODULES_OK
+
+/* sunos 4.0 *sigh* */
+#undef DLOPEN_1 
+
+/* some systems dont have bzero, so compile in if needed */
+#undef HAVE_BZERO
+
+/* use hpux dynamic linking ? */
+#undef HPUX_HACKS
+
+/* using hpux 10.x ? */
+#undef HPUX10_HACKS
+
+/* do you actually have dlfcn.h ? */
+#undef HAVE_DLFCN_H
+
+/* assume nothing */
+#define SIZEOF_INT 0
+#define SIZEOF_LONG 0
+
+/*define for the system uname*/
+#undef HAVE_UNAME
+
+/* have vsnpritf to use */
+#undef HAVE_VSNPRINTF
+
+/* running on NeXT Step */
+#undef BORGCUBES

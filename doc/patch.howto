@@ -1,0 +1,21 @@
+In order to apply the patch files found on this site you must have a
+utility called patch, if you do not have it, then you can only manually
+apply these patches, which I wouldn't recommend.
+
+Here is the basic command, ungzip the patch file, and run the following
+command from your eggdrop directory (not the src directory):
+
+patch -p1 < file.patch
+
+Once this is complete, execute the following command:
+
+find . -name "*.rej" -print
+
+If it returns a list with filenames that end in the rej extension then the
+patch didn't apply properly, ensure that the patch is for the version
+intended, ensure that you have the original source, and ensure that the
+patch is not corrupted.
+
+If it turns out that the patch was successful then be sure to recompile
+by running make again. Remember to properly install the new
+binary/modules.

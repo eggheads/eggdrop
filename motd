@@ -1,0 +1,26 @@
+    ____                __ 
+   / __/___ _ ___ _ ___/ /____ ___   ___ 
+  / _/ / _ `// _ `// _  // __// _ \ / _ \   
+ /___/ \_, / \_, / \_,_//_/   \___// .__/ 
+      /___/ /___/                 /_/
+           ___    ____   
+          <  /   |_  /  
+          / /_  _/_ < 
+         /_/(_)/____/ (c) Robey Pointer 1997
+
+Hey %b%N!%b  My name is %b%B%b and I am running %b%V%b,
+on %b%U%b.
+
+Local time is now %b%T%b
+%{+n}
+You are an owner of this bot. Only +n users can see this! For more info,
+try %b.help set motd%b (please edit the %bmotd%b file in your bot's directory)
+%{-}
+If you need help with this eggdrop you can go
+to the following help channels:
+
+#eggdrop@Undernet
+#bothelp@Ircnet
+#egghelp@Efnet
+
+Have fun.

@@ -1,0 +1,545 @@
+#!/usr/local/bin/tclsh
+#
+# weed out certain undesirables from an eggdrop userlist
+# try just typing 'tclsh weed' to find out the options
+#    Robey Pointer, november 1994
+#
+# <cmwagner@gate.net>:
+# I did a few bug fixes to the original weed script, things changed...
+#
+# when specifying other weed options they would unset the User() field and
+# a maxlast weed would try and weed again and cause the script to stop due
+# to User() being already unset  (array nonexistant)
+#
+# when loadUserFile encountered an xtra field it would try and use the $info
+# variable, which was supposed to be $xtra (something overlooked when the
+# line was cut and pasted -- I hate it when that happens)
+#
+# changed the formatting of the saved weed file to match more closely to
+# eggdrop 0.9tp (so this may cause incompatibilities), but when a hostmask
+# field exactly matched 40 characters it would save it with no spaces after
+# it and eggdrop would reject the user record.  I know I could have easily
+# changed one character, but I couldn't help myself.  <grin>
+#                                         5 march 96
+#
+# <robey, 23jul96>:
+#     upgrade for v2 userfiles
+# <bruce s, 4sep96>:
+#     fixed xtra field from getting truncated
+# <robey, 20sep96>:
+#     stopped it from mangling channel ban lists
+# <Ec|ipse & dtM, 10jun97>:
+#     upgrade for v3 userfiles
+# <Ec|ipse 18jun97>:
+#     added an option to remove users from unwanted channels
+# <Ec|ipse 28oct97>:
+#     upgrade for v4 userfiles, with v3 converter
+# <Ernst 8mar98>:
+#     fixed bug "list element in braces followed by X instead of space"
+#       (the use of "lrange" where you aren't sure if it's a list is bad)
+#     fixed --CONSOLE item not being included, creating "user" --CONSOLE
+# <Ernst 1apr98>:
+#     two more improper ocurrences of "lrange" removed
+#
+
+set exempt {*ban *ignore}
+set exemptops 0 ; set exemptmasters 0 ; set exemptfriends 0
+set exemptparty 0 ; set exemptfile 0 ; set exemptchanm 0
+set exemptbotm 0 ; set exemptchann 0 ; set exemptchanf 0
+set exemptchano 0
+set maxlast 0 ; set maxban 0 ; set maxignore 0
+set weedops 0 ; set weedmasters 0 ; set weednopw 0
+set stripops 0 ; set stripmasters 0 ; set weedlurkers 0
+set chanrem {}
+set convert 0
+
+set fd [open "/tmp/egg.timer." w]
+close $fd
+set CURRENT [file atime "/tmp/egg.timer."]
+exec rm -f /tmp/egg.timer.
+
+if {$argc < 1} {
+  puts stdout "\nUsage: weed <userfile> \[options\]"
+  puts stdout "  (weeds out users from an eggdrop userlist)"
+  puts stdout "Output goes to <userfile>.weed"
+  puts stdout "Possible options:"
+  puts stdout "  -<nick>        exempt this user from weeding"
+  puts stdout "  ^o  ^m  ^f     exempt ops or masters or friends"
+  puts stdout "  ^co ^cm ^cf    exempt chanops or chanmasters or chanfriends"
+  puts stdout "  ^cn            exempt chanowner"
+  puts stdout "  ^p  ^x         exempt party-line or file-area users"
+  puts stdout "  ^b             exempt botnet master"
+  puts stdout "  +<days>        weed: haven't been seen in N days"
+  puts stdout "  :n             weed: haven't EVER been seen"
+  puts stdout "  :o  :m         weed: ops or masters with no password set"
+  puts stdout "  :a             weed: anyone with no pasword set"
+  puts stdout "  o   m          unop/unmaster: ops or masters with no pass."
+  puts stdout "  b<days>        weed: bans not used in N days"
+  puts stdout "  i<days>        weed: ignores created over N days ago"
+  puts stdout "  =<chan>        weed: channels nolonger supported"
+  puts stdout "  c              convert v3 eggdrop userfile"
+  puts stdout ""
+  exit
+}
+puts stdout "\nWEED  18jun97, robey\n"
+
+set filename [lindex $argv 0]
+for {set i 1} {$i < $argc} {incr i} {
+  set carg [lindex $argv $i]
+  if {$carg == ":n"} { 
+    set weedlurkers 1 
+  } elseif {$carg == ":o"} {
+    set weedops 1 ; set stripops 0 ; set weednopw 0
+  } elseif {$carg == ":m"} { 
+    set weedmasters 1 ; set stripmasters 0 ; set weednopw 0
+  } elseif {$carg == ":a"} {
+    set weednopw 1 ; set weedops 0 ; set weedmasters 0
+    set stripops 0 ; set stripmasters 0
+  } elseif {$carg == "o"} {
+    set stripops 1 ; set weedops 0 ; set weednopw 0
+  } elseif {$carg == "m"} {
+    set stripmasters 1 ; set weedmasters 0 ; set weednopw 0
+  } elseif {$carg == "^m"} {
+    set exemptmasters 1
+  } elseif {$carg == "^o"} {
+    set exemptops 1
+  } elseif {$carg == "^f"} {
+    set exemptfriends 1
+  } elseif {$carg == "^p"} {
+    set exemptparty 1
+  } elseif {$carg == "^x"} {
+    set exemptfile 1
+  } elseif {$carg == "^cf"} {
+    set exemptchanf 1
+  } elseif {$carg == "^cm"} {
+    set exemptchanm 1
+  } elseif {$carg == "^cn"} {
+    set exemptchann 1
+  } elseif {$carg == "^b"} {
+    set exemptbotm 1
+  } elseif {$carg == "^co"} {
+    set exemptchano 1
+  } elseif {$carg == "c"} {
+    set convert 1
+  } elseif {[string index $carg 0] == "-"} {
+    lappend exempt [string range $carg 1 end]
+  } elseif {[string index $carg 0] == "+"} {
+    set maxlast [expr 60*60*24* [string range $carg 1 end]]
+  } elseif {[string index $carg 0] == "b"} {
+    set maxban [expr 60*60*24* [string range $carg 1 end]]
+  } elseif {[string index $carg 0] == "i"} {
+    set maxignore [expr 60*60*24* [string range $carg 1 end]]
+  } elseif {[string index $carg 0] == "="} {
+    lappend chanrem [string tolower [string range $carg 1 end]]
+  } else {
+    puts stderr "UNKNOWN OPTION: '$carg'\n"
+    exit
+  }
+}
+
+if {(!$weedlurkers) && (!$weedops) && (!$weedmasters) && (!$weednopw) &&
+    (!$stripops) && (!$stripmasters) && ($maxlast == 0) && ($convert == 0) &&
+    ($maxban == 0) && ($maxignore == 0) && ($chanrem == {})} {
+  puts stderr "PROBLEM: You didn't specify anything to weed out.\n"
+  exit
+}
+
+set weeding { } ; set strip { } ; set exempting { }
+if {$weedlurkers} { lappend weeding "lurkers" }
+if {$weedops} { lappend weeding "pwdless-ops" }
+if {$weedmasters} { lappend weeding "pwdless-masters" }
+if {$weednopw} { lappend weeding "pwdless-users" }
+if {$chanrem != {}} { lappend weeding "unwanted-channel" }
+if {$maxlast > 0} { lappend weeding ">[expr $maxlast /(60*60*24)]-days" }
+if {$maxban > 0} { lappend weeding "bans>[expr $maxban /(60*60*24)]-days" }
+if {$maxignore > 0} { lappend weeding "ign>[expr $maxignore /(60*60*24)]-days" }
+if {$weeding != { }} { puts stdout "Weeding:$weeding" }
+
+if {$stripops} { lappend strip "pwdless-ops" }
+if {$stripmasters} { lappend strip "pwdless-masters" }
+if {$strip != { }} { puts stdout "Stripping:$strip" }
+
+if {$exemptops} { lappend exempting "(ops)" }
+if {$exemptmasters} { lappend exempting "(masters)" }
+if {$exemptfriends} { lappend exempting "(friends)" }
+if {$exemptparty} { lappend exempting "(party-line)" }
+if {$exemptfile} { lappend exempting "(file-area)" }
+if {$exemptchann} { lappend exempting "(channel-owners)" }
+if {$exemptchanm} { lappend exempting "(channel-masters)" }
+if {$exemptchano} { lappend exempting "(channel-ops)" }
+if {$exemptchanf} { lappend exempting "(channel-friends)" }
+if {$exemptbotm} { lappend exempting "(botnet masters)" }
+if {[llength $exempt]>2} { lappend exempting "[lrange $exempt 2 end]" }
+if {$exempting != { }} { puts stdout "Exempt:$exempting" }
+
+puts stdout "\nReading $filename ..."
+
+proc convertUserFile {fname} {
+  global User Hostmask Channel Botflag LastOn BotAddr Xtra convert
+  puts stdout "\nRunning Converter on $fname"
+  set oldhandle {}
+  if {[catch {set fd [open $fname r]}] != 0} { return 0 }
+  set line [string trim [gets $fd]]
+  if {[string range $line 1 2] == "3v"} {
+    set convert 1
+  } elseif {[string range $line 1 2] == "4v"} {
+    return 0
+  }
+  while {![eof $fd]} {
+    set line [string trim [gets $fd]]
+    if {([string index $line 0] != "#") && ([string length $line] > 0)} {
+      scan $line "%s" handle
+      if {$handle == "-"} {
+        # hostmask
+        set hmList [split [string range $line 2 end] ,]
+        for {set i 0} {$i < [llength $hmList]} {incr i} {
+          lappend Hostmask($oldhandle) [string trim [lindex $hmList $i]]
+        }
+      } elseif {$handle == "!"} {
+        # channel
+        set chList [string trim [string range $line 1 end]]
+        lappend Channel($oldhandle) "[lrange $chList 0 1] [string trim [lindex $chList end] 0123456789]"
+      } elseif {$handle == "*"} {
+        # dccdir
+        set dccdir [string trim [string range $line 2 end]]
+        set User($oldhandle) [lreplace $User($oldhandle) 2 2 $dccdir]
+      } elseif {$handle == "+"} {
+        # email
+        set email [string trim [string range $line 2 end]]
+        set User($oldhandle) [lreplace $User($oldhandle) 3 3 $email]
+      } elseif {$handle == "="} {
+        # comment
+        set comment [string trim [string range $line 2 end]]
+        set User($oldhandle) [lreplace $User($oldhandle) 4 4 $comment]
+      } elseif {$handle == ":"} {
+        # user info line / bot addresses
+        if {[lsearch [split [lindex $User($oldhandle) 0] ""] b] == -1} {
+          set info [string trim [string range $line 1 end]]
+          set User($oldhandle) [lreplace $User($oldhandle) 5 5 $info]
+        } else {
+          set BotAddr($oldhandle) [string trim [string range $line 1 end]]
+        }
+      } elseif {$handle == "."} {
+        # xtra field start
+        if {![info exists xtraList($oldhandle)]} {
+          set xtraList($oldhandle) [string trim [string range $line 1 end]]
+        } {
+          set xtraList($oldhandle) "$xtraList($oldhandle) [string trim [string range $line 1 end]]"
+        }
+      } elseif {$handle == "!!"} {
+        # laston
+        set LastOn($oldhandle) [lindex $line 1]
+      } else {
+        # finish up xtra field first
+        if {[info exists xtraList($oldhandle)]} {
+          for {set i 0} {$i < [llength $xtraList($oldhandle)]} {incr i} {
+            lappend Xtra($oldhandle) [string trim [lindex $xtraList($oldhandle) $i] \{]
+          }
+        }
+        # begin of new user
+        scan $line "%s %s %s %s" handle pass attr ts
+        if {$convert == 1 && $attr != ""} {
+          regsub -all {B} $attr {t} attr
+          set botflags "s h a l r" ; set Botflag($handle) ""
+          set nattr [split [string trim $attr 0123456789] ""] ; set attr ""
+          foreach flag $botflags {
+            if {[lsearch -exact $nattr $flag] != -1} {append Botflag($handle) $flag}
+          }
+          foreach flag $nattr {
+            if {[lsearch -exact $botflags $flag] == -1} {append attr $flag}
+          }
+        }
+        set User($handle) [list $attr $pass {} {} {} {}]
+        set Hostmask($handle) {}
+        set Channel($handle) {}
+        set oldhandle $handle
+      }
+    }
+  }
+  return 1
+}
+
+proc loadUserFile {fname} {
+  global User Hostmask Channel Botflag LastOn BotAddr Xtra
+  set oldhandle {}
+  if {[catch {set fd [open $fname r]}] != 0} { return 0 }
+  set line [string trim [gets $fd]]
+  if {[string range $line 1 2] != "4v"} {
+    if {[string range $line 1 2] == "3v"} {
+      convertUserFile $fname
+      return 1
+    } else {
+      puts stderr "Unknown userfile version!  (not v4)\n"
+      exit
+    }
+  }
+  while {![eof $fd]} {
+    set line [string trim [gets $fd]]
+    if {([string index $line 0] != "#") && ([string length $line] > 0)} {
+      scan $line "%s" handle
+      if {$handle == "--HOSTS"} {
+        # hostmask
+        set hmList [lindex $line 1]
+        lappend Hostmask($oldhandle) [string trim $hmList]
+      } elseif {$handle == "-"} {
+        # hostmask
+        set hmList [lindex $line 1]
+        lappend Hostmask($oldhandle) [string trim $hmList]
+      } elseif {$handle == "!"} {
+        # channel
+        set chList [string trim [string range $line 1 end]]
+        lappend Channel($oldhandle) $chList
+      } elseif {$handle == "--BOTADDR"} {
+        # botaddr
+        set BotAddr($oldhandle) [lindex $line 1]
+      } elseif {$handle == "--PASS"} {
+        # pass
+        set pass [string trim [string range $line [expr [string first " " $line] + 1] end]]
+        set User($oldhandle) [lreplace $User($oldhandle) 1 1 $pass]
+      } elseif {$handle == "--DCCDIR"} {
+        # dccdir
+        set first [string first " " $line]
+        if {$first != -1} {
+            set dccdir [string trim [string range $line [expr $first + 1] end]]
+        } {
+            set dccdir ""
+        }
+        set User($oldhandle) [lreplace $User($oldhandle) 2 2 $dccdir]
+      } elseif {$handle == "--COMMENT"} {
+        # comment
+        set first [string first " " $line]
+        if {$first != -1} {
+            set comment [string trim [string range $line [expr $first + 1] end]]
+        } {
+            set comment ""
+        }
+        set User($oldhandle) [lreplace $User($oldhandle) 4 4 $comment]
+      } elseif {$handle == "--INFO"} {
+        # user info line
+        set first [string first " " $line]
+        if {$first != -1} {
+            set info [string trim [string range $line [expr $first + 1] end]]
+        } {
+            set info ""
+        }
+        set User($oldhandle) [lreplace $User($oldhandle) 5 5 $info]
+      } elseif {$handle == "--CONSOLE"} {
+        # console
+        set first [string first " " $line]
+        if {$first != -1} {
+            set console [string trim [string range $line [expr $first + 1] end]]
+        } {
+            set console ""
+        }
+        set User($oldhandle) [lreplace $User($oldhandle) 6 6 $console]
+      } elseif {$handle == "--XTRA"} {
+        # xtra field
+        set first [string first " " $line]
+        if {$first != -1} {
+            set xtraList [string trim [string range $line [expr $first + 1] end]]
+        } {
+            set xtraList ""
+        }
+        lappend Xtra($oldhandle) $xtraList
+      } elseif {$handle == "--LASTON"} {
+        # laston
+        set LastOn($oldhandle) [lindex $line 1]
+      } elseif {$handle == "--BOTFL"} {
+        # botflags
+        set Botflag($oldhandle) [string trim [string range $line 1 end]]
+      } else {
+        # begin of new user
+        scan $line "%s %s %s" handle dash attr
+        set User($handle) [list $attr {} {} {} {} {} {}]
+        set Hostmask($handle) {}
+        set Channel($handle) {}
+        set oldhandle $handle
+      }
+    }
+  }
+  return 1
+}
+
+proc saveUserFile fname {
+  global User Hostmask Channel Botflag LastOn BotAddr Xtra
+  if {[catch {set fd [open $fname w]}] != 0} { return 0 }
+  puts $fd "#4v: weed!  now go away."
+  foreach i [array names User] {
+    set hmask "none"
+    set hmloop 0 ; set chloop 0 ; set loloop 0 ; set xloop 0 ; set aloop 0
+    if {[lindex $User($i) 1] == "bans"} {set plug "bans"} {set plug "-"}
+    set attr [lindex $User($i) 0]
+    set ts [lindex $User($i) 2]
+    puts $fd [format "%-9s %-20s %-24s" $i $plug $attr]
+    for {} {$hmloop < [llength $Hostmask($i)]} {incr hmloop} {
+      if {[string index $i 0] == "*" || [string range $i 0 1] == "::"} {
+        set hmask [lindex $Hostmask($i) $hmloop]
+        regsub -all {~} $hmask { } hmask
+        puts $fd "- $hmask"
+      } else {
+        puts $fd "--HOSTS [lindex $Hostmask($i) $hmloop]"
+      }
+    }
+    if {[info exists BotAddr($i)]} {
+      puts $fd "--BOTADDR [lindex $BotAddr($i) 0]"
+    }
+    if {[info exists Xtra($i)]} {
+      for {} {$xloop < [llength $Xtra($i)]} {incr xloop} {
+        puts $fd "--XTRA [lindex $Xtra($i) $xloop]"
+      }
+    }
+    if {[info exists Channel($i)]} {
+      for {} {$chloop < [llength $Channel($i)]} {incr chloop} {
+        puts $fd "! [lindex $Channel($i) $chloop]"
+      }
+    }
+    if {[info exists Botflag($i)]} {
+      if {$Botflag($i) != ""} { puts $fd "--BOTFL [lindex $Botflag($i) 0]" }
+    }
+    if {[string index $i 0] == "*" || [string range $i 0 1] == "::"} {
+      set User($i) [lreplace $User($i) 1 1 {}]
+    }
+    if {[lindex $User($i) 1] != {}} { puts $fd "--PASS [lindex $User($i) 1]" }
+    if {[lindex $User($i) 2] != {}} { puts $fd "--DCCDIR [lindex $User($i) 2]" }
+    if {[lindex $User($i) 3] != {}} { puts $fd "--XTRA EMAIL [lindex $User($i) 3]" }
+    if {[lindex $User($i) 4] != {}} { puts $fd "--COMMENT [lindex $User($i) 4]" }
+    if {[lindex $User($i) 5] != {}} { puts $fd "--INFO [lindex $User($i) 5]" }
+    if {[lindex $User($i) 6] != {}} { puts $fd "--CONSOLE [lindex $User($i) 6]" }
+    if {[info exists LastOn($i)]} {
+      puts $fd "--LASTON [lindex $LastOn($i) 0]"
+    }
+  }
+  close $fd
+  return 1
+}
+
+if {![loadUserFile $filename]} {
+  puts stdout "* Couldn't load userfile!\n"
+  exit
+}
+
+if {$convert == 0} {
+  puts stdout "Loaded.  Weeding..."
+  puts stdout "(pwd = no pass, -o/-m = removed op/master, lrk = never seen, exp = expired)"
+  puts stdout "(uwc = unwanted channel)\n"
+} else {
+  puts stdout "Loaded.  Converting..."
+}
+
+set total 0
+set weeded 0
+foreach i [array names User] {
+  incr total
+  set attr [lindex $User($i) 0]
+  set chanattr [lindex [lindex $Channel($i) 0] 2]
+  if {([lsearch -exact $exempt $i] == -1) &&  
+    ([string range $i 0 1] != "::") &&
+    ([string range $i 0 1] != "--") &&
+    (([string first o $attr] == -1) || (!$exemptops)) &&
+    (([string first m $attr] == -1) || (!$exemptmasters)) &&
+    (([string first f $attr] == -1) || (!$exemptfriends)) &&
+    (([string first p $attr] == -1) || (!$exemptparty)) &&
+    (([string first x $attr] == -1) || (!$exemptfile)) &&
+    (([string first t $attr] == -1) || (!$exemptbotm)) &&
+    (([string first f $chanattr] == -1) || (!$exemptchanf)) &&
+    (([string first m $chanattr] == -1) || (!$exemptchanm)) &&
+    (([string first n $chanattr] == -1) || (!$exemptchann)) &&
+    (([string first o $chanattr] == -1) || (!$exemptchano))} {
+    set pass [lindex $User($i) 1]
+    if {[info exists LastOn($i)]} { set ts [lindex $LastOn($i) 0] } { set ts 0 }
+    if {([string compare $pass "-"] == 0) &&  ([string first b $attr] == -1)} {
+      if {$weednopw == 1} {
+        unset User($i) ; incr weeded
+        puts -nonewline stdout "[format "pwd: %-10s     " $i]"
+      } elseif {([string first o $attr] != -1) && ($weedops == 1)} {
+        unset User($i) ; incr weeded
+        puts -nonewline stdout "[format "pwd: %-10s     " $i]"
+      } elseif {([string first m $attr] != -1) && ($weedmasters == 1)} {
+        unset User($i) ; incr weeded
+        puts -nonewline stdout "[format "pwd: %-10s     " $i]"
+      } 
+      if {([string first o $attr] != -1) && ($stripops == 1)} {
+        set nattr {}
+        for {set x 0} {$x < [string length $attr]} {incr x} {
+          if {[string index $attr $x] != "o"} {
+            set nattr [format "%s%s" $nattr [string index $attr $x]]
+          }
+        }
+        if {$nattr == {}} { set nattr "-" }
+        set User($i) [lreplace $User($i) 0 0 $nattr]
+        puts -nonewline stdout "[format " -o: %-10s     " $i]"
+      }
+      if {([string first m $attr] != -1) && ($stripmasters == 1)} {
+        set nattr {}
+        for {set x 0} {$x < [string length $attr]} {incr x} {
+          if {[string index $attr $x] != "m"} {
+            set nattr [format "%s%s" $nattr [string index $attr $x]]
+          }
+        }
+        if {$nattr == {}} { set nattr "-" }
+        set User($i) [lreplace $User($i) 0 0 $nattr]
+        puts -nonewline stdout "[format " -m: %-10s     " $i]"
+      }
+    }
+    if {($ts==0) && ($weedlurkers==1) && ([string first b $attr] == -1) && [info exists User($i)]} {
+      unset User($i) ; incr weeded
+      puts -nonewline stdout "[format "lrk: %-10s     " $i]"
+    } 
+    if {($ts > 0) && ($maxlast > 0) && ($CURRENT-$ts > $maxlast &&  [info exists User($i)])} {
+      unset User($i) ; incr weeded
+      puts -nonewline stdout "[format "exp: %-10s     " $i]"
+    }
+    if {$chanrem != {} && [info exists Channel($i)]} {
+      foreach unchan $chanrem {
+        set id [lsearch [string tolower $Channel($i)] *$unchan*]
+        if {$id != -1} {
+          set Channel($i) [lreplace $Channel($i) $id $id] ; incr weeded
+          puts -nonewline stdout "[format "uwc: %-10s     " $i]"
+        }
+      }
+    }
+  }
+  flush stdout
+}
+if {$weeded == 0 && $convert == 0} { puts -nonewline stdout "uNF... Nothing to weed!" }
+puts stdout "\n"
+
+foreach i [array names User] {
+  if {([string range $i 0 1] == "::") || ($i == "*ban")} {
+    for {set j 0} {$j < [llength $Hostmask($i)]} {incr j} {
+      set ban [split [lindex $Hostmask($i) $j] :]
+      if {[string range [lindex $ban 2] 0 0] == "+"} {
+        set lastused [lindex $ban 3]
+        if {($maxban > 0) && ($CURRENT-$lastused > $maxban)} {
+          if {$i == "*ban"} {
+            puts stdout "Expired ban: [lindex $ban 0]"
+          } {
+            puts stdout "Expired ban on [string range $i 2 end]: [lindex $ban 0]"
+          }
+          set Hostmask($i) [lreplace $Hostmask($i) $j $j]
+          incr j -1
+        }
+      }
+    }
+  }
+  if {$i == "*ignore"} {
+    for {set j 0} {$j < [llength $Hostmask($i)]} {incr j} {
+      set ign [split [lindex $Hostmask($i) $j] :]
+      set lastused [lindex $ign 3]
+      if {($maxignore > 0) && ($CURRENT-$lastused > $maxignore)} {
+        puts stdout "Expired ignore: [lindex $ign 0]"
+        set Hostmask($i) [lreplace $Hostmask($i) $j $j]
+        incr j -1
+      }
+    }
+  }
+}
+
+puts stdout "\nFinished scan."
+puts stdout "Original total ($total), new total ([expr $total-$weeded]), zapped ($weeded)"
+
+if {![saveUserFile $filename.weed]} {
+  puts stdout "* uNF... Couldn't save new userfile!\n"
+  exit
+}
+puts stdout "Wrote $filename.weed"
