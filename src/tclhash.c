@@ -12,7 +12,7 @@
  * dprintf'ized, 15nov1995 (hash.c)
  * dprintf'ized, 4feb1996 (tclhash.c)
  * 
- * $Id: tclhash.c,v 1.6 1999/12/22 12:11:02 fabian Exp $
+ * $Id: tclhash.c,v 1.7 2000/01/01 19:12:18 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1010,14 +1010,14 @@ void tell_binds(int idx, char *name)
   }
 }
 
-/* bring the default msg/dcc/fil commands into the Tcl interpreter */
+/* Bring the default msg/dcc/fil commands into the Tcl interpreter */
 void add_builtins(p_tcl_bind_list table, cmd_t * cc)
 {
   int k, i;
   char p[1024], *l;
 
   Context;
-  for (i = 0;cc[i].name; i++) {
+  for (i = 0; cc[i].name; i++) {
     simple_sprintf(p, "*%s:%s", table->name,
 	       cc[i].funcname ? cc[i].funcname : cc[i].name);
     l = (char *) nmalloc(Tcl_ScanElement(p, &k));
@@ -1026,11 +1026,10 @@ void add_builtins(p_tcl_bind_list table, cmd_t * cc)
 		      (ClientData) cc[i].func, NULL);
     bind_bind_entry(table, cc[i].flags, cc[i].name, l);
     nfree(l);
-    /* create command entry in Tcl interpreter */
   }
 }
 
-/* bring the default msg/dcc/fil commands into the Tcl interpreter */
+/* Remove the default msg/dcc/fil commands from the Tcl interpreter */
 void rem_builtins(p_tcl_bind_list table, cmd_t * cc)
 {
   int k, i;

@@ -2,9 +2,10 @@
  * woobie.c -- part of woobie.mod
  *   nonsensical command to exemplify module programming
  * 
- * By ButchBub - 15 July 1997
+ * Originally written by ButchBub	- 15 July     1997
+ * Comments by Fabian Knittel		- 29 December 1999
  * 
- * $Id: woobie.c,v 1.6 1999/12/21 17:35:32 fabian Exp $
+ * $Id: woobie.c,v 1.7 2000/01/01 19:12:19 fabian Exp $
  */
 /* 
  * Copyright (C) 1999  Eggheads
@@ -30,8 +31,13 @@
 #include <stdlib.h>
 
 #undef global
+/* Pointer to the eggdrop core function table. Gets initialized in
+ * woobie_start().
+ */
 static Function *global = NULL;
 
+/* Calculate the memory we keep allocated.
+ */
 static int woobie_expmem()
 {
   int size = 0;
@@ -42,26 +48,50 @@ static int woobie_expmem()
 
 static int cmd_woobie(struct userrec *u, int idx, char *par)
 {
+  /* Define a context.
+   *
+   * If the bot crashes after the context, it will be  the last mentioned
+   * in the resulting DEBUG file. This helps you debugging.
+   */
   Context;
+
+  /* Log the command as soon as you're sure all parameters are valid. */
   putlog(LOG_CMDS, "*", "#%s# woobie", dcc[idx].nick);
+
   dprintf(idx, "WOOBIE!\n");
   return 0;
 }
 
-/* a report on the module status */
+/* A report on the module status.
+ *
+ * details is either 0 or 1:
+ *    0 - `.status'
+ *    1 - `.status all'  or  `.module woobie'
+ */
 static void woobie_report(int idx, int details)
 {
-  int size = 0;
+  int size;
 
   Context;
+  size = woobie_expmem();
   if (details)
     dprintf(idx, "    0 woobies using %d bytes\n", size);
 }
 
+/* Note: The tcl-name is automatically created if you set it to NULL. In
+ *       the example below it would be just "*dcc:woobie". If you specify
+ *       "woobie:woobie" it would be "*dcc:woobie:woobie" instead.
+ *               ^----- command name   ^--- table name
+ *        ^------------ module name
+ *
+ *       This is only useful for stackable binding tables (and H_dcc isn't
+ *       stackable).
+ */
 static cmd_t mydcc[] =
 {
-  {"woobie", "", cmd_woobie, NULL},
-  {0, 0, 0, 0}
+  /* command	flags	function	tcl-name */
+  {"woobie",	"",	cmd_woobie,	NULL},
+  {NULL,	NULL,	NULL,		NULL}		/* Mark end. */
 };
 
 static char *woobie_close()
@@ -72,8 +102,17 @@ static char *woobie_close()
   return NULL;
 }
 
+/* Define the prototype here, to avoid warning messages in the
+ * woobie_table.
+ */
 char *woobie_start();
 
+/* This function table is exported and may be used by other modules and
+ * the core.
+ *
+ * The first four have to be defined (you may define them as NULL), as
+ * they are checked by eggdrop core.
+ */
 static Function woobie_table[] =
 {
   (Function) woobie_start,
@@ -82,13 +121,28 @@ static Function woobie_table[] =
   (Function) woobie_report,
 };
 
-char *woobie_start(Function * global_funcs)
+char *woobie_start(Function *global_funcs)
 {
+  /* Assign the core function table. After this point you use all normal
+   * functions defined in src/mod/modules.h
+   */
   global = global_funcs;
+
   Context;
+  /* Register the module. */
   module_register(MODULE_NAME, woobie_table, 2, 0);
+  /*                                            ^--- minor module version
+   *                                         ^------ major module version
+   *                           ^-------------------- module function table
+   *              ^--------------------------------- module name
+   */
+  
   if (!module_depend(MODULE_NAME, "eggdrop", 105, 0))
     return "This module requires eggdrop1.5.0 or later";
+
+  /* Add command table to bind list H_dcc, responsible for dcc commands.
+   * Currently we only add one command, `woobie'.
+   */
   add_builtins(H_dcc, mydcc);
   return NULL;
 }

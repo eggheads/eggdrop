@@ -10,7 +10,7 @@
  * 1.2     1997-08-20      Minor fixes. [BB]
  * 1.2a    1997-08-24      Minor fixes. [BB]
  * 
- * $Id: seen.c,v 1.10 1999/12/21 17:35:30 fabian Exp $
+ * $Id: seen.c,v 1.11 2000/01/01 19:12:18 fabian Exp $
  */
 /* 
  * Copyright (C) 1999  Eggheads
@@ -94,13 +94,13 @@ typedef struct {
 
 static trig_data trigdata[] =
 {
-  {"god", "Let's not get into a religious discussion, %s"},
-  {"jesus", "Let's not get into a religious discussion, %s"},
-  {"shit", "Here's looking at you, %s"},
-  {"yourself", "Yeah, whenever I look in a mirror..."},
-  {NULL, "You found me, %s!"},
-  {"elvis", "Last time I was on the moon man."},
-  {0, 0}
+  {"god",	"Let's not get into a religious discussion, %s"},
+  {"jesus",	"Let's not get into a religious discussion, %s"},
+  {"shit",	"Here's looking at you, %s"},
+  {"yourself",	"Yeah, whenever I look in a mirror..."},
+  {NULL,	"You found me, %s!"},
+  {"elvis",	"Last time I was on the moon man."},
+  {NULL,	NULL}
 };
 
 static int seen_expmem()
@@ -543,7 +543,7 @@ static char *match_trigger(char *word)
       return t->text;
     t++;
   }
-  return (char *) 0;
+  return (char *) NULL;
 }
 
 static char *getxtra(char *hand, char *field)
@@ -576,12 +576,11 @@ static void wordshift(char *first, char *rest)
 {
   char *p, *q = rest;
 
-  LOOPIT:
-  p = newsplit(&q);
-  strcpy(first, p);
-  strcpy(rest, q);
-  if (!strcasecmp(first, "and") || !strcasecmp(first, "or"))
-    goto LOOPIT;
+  do {
+    p = newsplit(&q);
+    strcpy(first, p);
+    strcpy(rest, q);
+  } while (!strcasecmp(first, "and") || !strcasecmp(first, "or"));
 }
 
 /* Report on current seen info for .modulestat. */
@@ -594,20 +593,20 @@ static void seen_report(int idx, int details)
 /* PUB channel builtin commands. */
 static cmd_t seen_pub[] =
 {
-  {"seen", "", pub_seen, 0},
-  {0, 0, 0, 0}
+  {"seen",	"",	pub_seen,	NULL},
+  {NULL,	NULL,	NULL,		NULL}
 };
 
 static cmd_t seen_dcc[] =
 {
-  {"seen", "", dcc_seen, 0},
-  {0, 0, 0, 0}
+  {"seen",	"",	dcc_seen, 	NULL},
+  {NULL,	NULL,	NULL,		NULL}
 };
 
 static cmd_t seen_msg[] =
 {
-  {"seen", "", msg_seen, 0},
-  {0, 0, 0, 0}
+  {"seen",	"",	msg_seen,	NULL},
+  {NULL,	NULL,	NULL,		NULL}
 };
 
 static int server_seen_setup(char *mod)
@@ -630,9 +629,9 @@ static int irc_seen_setup(char *mod)
 
 static cmd_t seen_load[] =
 {
-  {"server", "", server_seen_setup, 0},
-  {"irc", "", irc_seen_setup, 0},
-  {0, 0, 0, 0}
+  {"server",	"",	server_seen_setup,	NULL},
+  {"irc",	"",	irc_seen_setup,		NULL},
+  {NULL,	NULL,	NULL,			NULL}
 };
 
 static char *seen_close()
@@ -671,8 +670,8 @@ char *seen_start(Function * egg_func_table)
   add_builtins(H_load, seen_load);
   add_builtins(H_dcc, seen_dcc);
   add_help_reference("seen.help");
-  server_seen_setup(0);
-  irc_seen_setup(0);
+  server_seen_setup(NULL);
+  irc_seen_setup(NULL);
   trigdata[4].key = botnetnick;
   return NULL;
 }

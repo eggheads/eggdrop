@@ -1,7 +1,7 @@
 /* 
  * transfer.c -- part of transfer.mod
  * 
- * $Id: transfer.c,v 1.13 1999/12/24 14:21:54 fabian Exp $
+ * $Id: transfer.c,v 1.14 2000/01/01 19:12:19 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -586,9 +586,9 @@ static int tcl_dccsend STDVAR
 
 static tcl_cmds mytcls[] =
 {
-  {"dccsend", tcl_dccsend},
-  {"getfileq", tcl_getfileq},
-  {0, 0}
+  {"dccsend",		tcl_dccsend},
+  {"getfileq",		tcl_getfileq},
+  {NULL,		NULL}
 };
 
 
@@ -1361,11 +1361,11 @@ static int raw_dcc_send(char *filename, char *nick, char *from, char *dir)
 
 static tcl_ints myints[] =
 {
-  {"max-dloads", &dcc_limit},
-  {"dcc-block", &dcc_block},
-  {"copy-to-tmp", &copy_to_tmp},
-  {"xfer-timeout", &wait_dcc_xfer},
-  {0, 0}
+  {"max-dloads",	&dcc_limit},
+  {"dcc-block",		&dcc_block},
+  {"copy-to-tmp",	&copy_to_tmp},
+  {"xfer-timeout",	&wait_dcc_xfer},
+  {NULL,		NULL}
 };
 
 
@@ -1459,9 +1459,9 @@ static int fstat_set(struct userrec *u, struct user_entry *e, void *buf)
        *  ofs->dnloads != fs->dnloads || ofs->dnload_ks != fs->dnload_ks
        * someone could do:
        *  e->u.extra->uploads = 12345;
-       *  fs = user_malloc (sizeof (struct filesys_stats));
+       *  fs = user_malloc(sizeof(struct filesys_stats));
        *  memcpy (...e->u.extra...fs...);
-       *  set_user (&USERENTRY_FSTAT, u, fs);
+       *  set_user(&USERENTRY_FSTAT, u, fs);
        * then we wouldn't detect here that something's changed...
        * --rtc
        */
@@ -1724,10 +1724,25 @@ static int ctcp_DCC_RESUME(char *nick, char *from, char *handle,
 
 static cmd_t transfer_ctcps[] =
 {
-  {"DCC", "", ctcp_DCC_RESUME, "transfer:DCC"},
-  {0, 0, 0, 0}
+  {"DCC",	"",	ctcp_DCC_RESUME,	"transfer:DCC"},
+  {NULL,	NULL,	NULL,			NULL}
 };
 
+/* Add our CTCP bindings if the server module is loaded. */
+static int server_transfer_setup(char *mod)
+{
+  p_tcl_bind_list H_ctcp;
+
+  if ((H_ctcp = find_bind_table("ctcp")))
+    add_builtins(H_ctcp, transfer_ctcps);
+  return 1;
+}
+
+static cmd_t transfer_load[] =
+{
+  {"server",	"",	server_transfer_setup,	NULL},
+  {NULL,	"",	NULL,			NULL}
+};
 
 /* 
  *   Module functions
@@ -1736,10 +1751,10 @@ static cmd_t transfer_ctcps[] =
 static char *transfer_close()
 {
   int i;
-  module_entry *me;
+  p_tcl_bind_list H_ctcp;
 
   Context;
-  putlog(LOG_MISC, "*", "Unloading transfer module, killing all transfer connections..");
+  putlog(LOG_MISC, "*", "Unloading transfer module, killing all transfer connections...");
   for (i = dcc_total - 1; i >= 0; i--) {
     if (dcc[i].type == &DCC_GET || dcc[i].type == &DCC_GET_PENDING)
       eof_dcc_get(i);
@@ -1748,22 +1763,19 @@ static char *transfer_close()
     else if (dcc[i].type == &DCC_FORK_SEND)
       eof_dcc_fork_send(i);
   }
-  /* Remove lost dcc entries. */
+  /* Remove lost dcc entries */
   dcc_remove_lost();
   while (fileq)
     deq_this(fileq);
   del_entry_type(&USERENTRY_FSTAT);
   del_bind_table(H_rcvd);
   del_bind_table(H_sent);
+  rem_builtins(H_load, transfer_load);
+  /* Try to remove our CTCP bindings */
+  if ((H_ctcp = find_bind_table("ctcp")))
+    rem_builtins(H_ctcp, transfer_ctcps);
   rem_tcl_commands(mytcls);
   rem_tcl_ints(myints);
-
-  /* Try to remove our CTCP bindings. */
-  me = module_find("server", 0, 0);
-  if (me && me->funcs)
-    add_builtins(*(p_tcl_bind_list *)(me->funcs[SERVER_H_CTCP]),
-		 transfer_ctcps);
-
   rem_help_reference("transfer.help");
   module_undepend(MODULE_NAME);
   return NULL;
@@ -1777,8 +1789,8 @@ static int transfer_expmem()
 static void transfer_report(int idx, int details)
 {
   if (details) {
-    dprintf(idx, "    DCC block is %d%s, max concurrent d/ls is %d\n", dcc_block,
-	    (dcc_block == 0) ? " (turbo dcc)" : "", dcc_limit);
+    dprintf(idx, "    DCC block is %d%s, max concurrent d/ls is %d\n",
+	    dcc_block, (dcc_block == 0) ? " (turbo dcc)" : "", dcc_limit);
     dprintf(idx, "    Using %d bytes of memory\n", transfer_expmem());
   }
 }
@@ -1792,9 +1804,9 @@ static Function transfer_table[] =
   (Function) transfer_expmem,
   (Function) transfer_report,
   /* 4- 7 */
-  (Function) & DCC_FORK_SEND,
+  (Function) & DCC_FORK_SEND,		/* struct dcc_table		*/
   (Function) at_limit,
-  (Function) & copy_to_tmp,
+  (Function) & copy_to_tmp,		/* int				*/
   (Function) fileq_cancel,
   /* 8 - 11 */
   (Function) queue_file,
@@ -1803,18 +1815,17 @@ static Function transfer_table[] =
   (Function) wild_match_file,
   /* 12 - 15 */
   (Function) wipe_tmp_filename,
-  (Function) & DCC_GET,
-  (Function) & H_rcvd,
-  (Function) & H_sent,
+  (Function) & DCC_GET,			/* struct dcc_table		*/
+  (Function) & H_rcvd,			/* p_tcl_bind_list		*/
+  (Function) & H_sent,			/* p_tcl_bind_list		*/
   /* 16 - 19 */
-  (Function) & USERENTRY_FSTAT,
-  (Function) & quiet_reject,        /* int */
+  (Function) & USERENTRY_FSTAT,		/* struct user_entry_type	*/
+  (Function) & quiet_reject,		/* int				*/
   (Function) & raw_dcc_resend,
 };
 
 char *transfer_start(Function * global_funcs)
 {
-  module_entry *me;
   global = global_funcs;
 
   Context;
@@ -1823,14 +1834,10 @@ char *transfer_start(Function * global_funcs)
   if (!module_depend(MODULE_NAME, "eggdrop", 105, 0))
     return "This module requires eggdrop1.5.0 or later";
 
-  /* Add our CTCP bindings if the server module is loaded. */
-  me = module_find("server", 0, 0);
-  if (me && me->funcs)
-    add_builtins(*(p_tcl_bind_list *)(me->funcs[SERVER_H_CTCP]),
-		 transfer_ctcps);
-
   add_tcl_commands(mytcls);
   add_tcl_ints(myints);
+  add_builtins(H_load, transfer_load);
+  server_transfer_setup(NULL);
   add_help_reference("transfer.help");
   H_rcvd = add_bind_table("rcvd", HT_STACKABLE, builtin_sentrcvd);
   H_sent = add_bind_table("sent", HT_STACKABLE, builtin_sentrcvd);
