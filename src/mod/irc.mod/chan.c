@@ -9,7 +9,7 @@
  * dprintf'ized, 27oct1995
  * multi-channel, 8feb1996
  * 
- * $Id: chan.c,v 1.57 2000/02/02 12:07:36 per Exp $
+ * $Id: chan.c,v 1.58 2000/02/02 12:23:07 per Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -619,7 +619,7 @@ static void recheck_channel(struct chanset_t *chan, int dobans)
       }
       /* ^ will use the ban comment */
       if (use_exempts &&
-	  (u_match_mask(global_exempts,s) || u_match_mask(chan-exempts, s))) {
+	  (u_match_mask(global_exempts,s) || u_match_mask(chan->exempts, s))) {
 	refresh_exempt(chan, s);
       }
       /* check vs invites */
