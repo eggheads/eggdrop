@@ -1,7 +1,7 @@
 /* 
  * uf_features.c -- part of share.mod
  * 
- * $Id: uf_features.c,v 1.3 2000/03/23 23:17:59 fabian Exp $
+ * $Id: uf_features.c,v 1.4 2000/09/18 20:01:43 fabian Exp $
  */
 /* 
  * Copyright (C) 2000  Eggheads
@@ -258,7 +258,7 @@ static void uf_features_parse(int idx, char *par)
 
     /* Is the feature available and active? */
     ul = uff_findentry_byname(p);
-    if (ul && ul->entry->ask_func(idx)) {
+    if (ul && (ul->entry->ask_func == NULL || ul->entry->ask_func(idx))) {
       dcc[idx].u.bot->uff_flags |= ul->entry->flag; /* Set flag	*/
       strcat(uff_sbuf, ul->entry->feature);	 /* Add feature to list	*/
       strcat(uff_sbuf, " ");
@@ -281,7 +281,7 @@ static char *uf_features_dump(int idx)
   Context;
   uff_sbuf[0] = 0;
   for (ul = uff_list.start; ul; ul = ul->next)
-    if (ul->entry->ask_func(idx)) {
+    if (ul->entry->ask_func == NULL || ul->entry->ask_func(idx)) {
       strcat(uff_sbuf, ul->entry->feature);	/* Add feature to list	*/
       strcat(uff_sbuf, " ");
     }
@@ -307,7 +307,7 @@ static int uf_features_check(int idx, char *par)
 
     /* Is the feature available and active? */
     ul = uff_findentry_byname(p);
-    if (ul && ul->entry->ask_func(idx))
+    if (ul && (ul->entry->ask_func == NULL || ul->entry->ask_func(idx)))
       dcc[idx].u.bot->uff_flags |= ul->entry->flag; /* Set flag	*/
     else {
       /* It isn't, and our hub wants to use it! This either happens
@@ -381,31 +381,13 @@ static int uff_ask_override_bots(int idx)
 }
 
 
-/* Feature `invite'
- */
-
-static int uff_ask_invite(int idx)
-{
-  return 1;
-}
-
-
-/* Feature `exempt'
- */
-
-static int uff_ask_exempt(int idx)
-{
-  return 1;
-}
-
-
 /*
  *     Internal user file feature table
  */
 
 static uff_table_t internal_uff_table[] = {
   {"overbots",	UFF_OVERRIDE,	uff_ask_override_bots,	0, NULL, NULL},
-  {"invites",	UFF_INVITE,	uff_ask_invite,		0, NULL, NULL},
-  {"exempts",	UFF_EXEMPT,	uff_ask_exempt,		0, NULL, NULL},
+  {"invites",	UFF_INVITE,	NULL,			0, NULL, NULL},
+  {"exempts",	UFF_EXEMPT,	NULL,			0, NULL, NULL},
   {NULL,	0,		NULL,			0, NULL, NULL}
 };

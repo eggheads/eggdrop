@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  * 
- * $Id: cmds.c,v 1.41 2000/09/12 15:26:50 fabian Exp $
+ * $Id: cmds.c,v 1.42 2000/09/18 20:01:41 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -2317,7 +2317,6 @@ static void cmd_pls_ignore(struct userrec *u, int idx, char *par)
   }
 
   who = newsplit(&par);
-  remove_gunk(who);
   if (par[0] == '%') {
     char		*p, *p_expire;
     unsigned long int	 expire_foo;

@@ -1,7 +1,7 @@
 /* 
  * module.h
  * 
- * $Id: module.h,v 1.32 2000/08/18 00:25:10 fabian Exp $
+ * $Id: module.h,v 1.33 2000/09/18 20:01:42 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -279,7 +279,7 @@
 /* 152 - 155 */
 #define makepass ((void (*) (char *))global[152])
 #define wild_match ((int (*)(const char *, const char *))global[153])
-#define maskhost ((void(*)(char *,char*))global[154])
+#define maskhost ((void (*)(const char *, char *))global[154])
 #define show_motd ((void(*)(int))global[155])
 /* 156 - 159 */
 #define tellhelp ((void(*)(int,char *,struct flag_record *,int))global[156])
@@ -423,7 +423,10 @@
 /* 260 - 263 */
 #define party (*(party_t **)(global[260]))
 #define open_address_listen ((int (*)(IP addr, int *port))global[261])
-
+#define str_escape ((char *(*)(const char *, const char, const char))global[262])
+#define strchr_unescape ((char *(*)(char *, const char, register const char))global[263])
+/* 264 - 267 */
+#define str_unescape ((void (*)(char *, register const char))global[264])
 
 /* This is for blowfish module, couldnt be bothereed making a whole new .h
  * file for it ;)

@@ -10,7 +10,7 @@
  * 
  * dprintf'ized, 9nov1995
  * 
- * $Id: users.c,v 1.19 2000/09/12 15:26:51 fabian Exp $
+ * $Id: users.c,v 1.20 2000/09/18 20:01:42 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -106,8 +106,14 @@ int delignore(char *ign)
       }
   }
   if (i) {
-    if (!noshare)
-      shareout(NULL, "-i %s\n", ign);
+    if (!noshare) {
+      char *mask = str_escape(ign, ':', '\\');
+
+      if (mask) {
+	shareout(NULL, "-i %s\n", ign);
+	nfree(mask);
+      }
+    }
     nfree((*u)->igmask);
     if ((*u)->msg)
       nfree((*u)->msg);
@@ -139,9 +145,15 @@ void addignore(char *ign, char *from, char *mnote, time_t expire_time)
   strcpy(p->user, from);
   p->msg = user_malloc(strlen(mnote) + 1);
   strcpy(p->msg, mnote);
-  if (!noshare)
-    shareout(NULL, "+i %s %lu %c %s %s\n", ign, expire_time - now,
-	     (p->flags & IGREC_PERM) ? 'p' : '-', from, mnote);
+  if (!noshare) {
+    char *mask = str_escape(ign, ':', '\\');
+
+    if (mask) {
+      shareout(NULL, "+i %s %lu %c %s %s\n", mask, expire_time - now,
+	       (p->flags & IGREC_PERM) ? 'p' : '-', from, mnote);
+      nfree(mask);
+    }
+  }
 }
 
 /* take host entry from ignore list and display it ignore-style */
@@ -245,10 +257,8 @@ static void restore_chanban(struct chanset_t *chan, char *host)
   char *expi, *add, *last, *user, *desc;
   int flags = 0;
 
-  expi = strchr(host, ':');
+  expi = strchr_unescape(host, ':', '\\');
   if (expi) {
-    *expi = 0;
-    expi++;
     if (*expi == '+') {
       flags |= MASKREC_PERM;
       expi++;
@@ -296,118 +306,112 @@ static void restore_chanban(struct chanset_t *chan, char *host)
 	 chan ? chan->dname : "global_bans");
 }
 
-static void restore_chanexempt (struct chanset_t * chan, char * host)
+static void restore_chanexempt(struct chanset_t *chan, char *host)
 {
-  char * expi, * add, * last, * user, * desc;
+  char *expi, *add, *last, *user, *desc;
   int flags = 0;
   
-  expi = strchr(host,':');
+  expi = strchr_unescape(host, ':', '\\');
   if (expi) {
-    *expi = 0;
-    expi++;
       if (*expi == '+') {
 	flags |= MASKREC_PERM;
 	expi++;
       }
-    add = strchr(expi,':');
+    add = strchr(expi, ':');
     if (add) { 
-      if (add[-1]=='*') {
+      if (add[-1] == '*') {
 	flags |= MASKREC_STICKY;
 	add[-1] = 0;   
       } else
 	*add = 0;
       add++;
       if (*add == '+') {
-	last = strchr(add,':');
+	last = strchr(add, ':');
 	if (last) {
 	  *last = 0;
 	  last++;
-	  user = strchr(last,':');
+	  user = strchr(last, ':');
 	  if (user) {
 	    *user = 0;
 	    user++;
-	    desc = strchr(user,':');
+	    desc = strchr(user, ':');
 	    if (desc) {
 	      *desc = 0;
 	      desc++;
-	      addmask_fully(chan, &chan->exempts, &global_exempts, host,user,desc,atoi(expi),flags,
-			      atoi(add), atoi(last));
+	      addmask_fully(chan, &chan->exempts, &global_exempts, host, user,
+			    desc, atoi(expi), flags, atoi(add), atoi(last));
 	      return;
 	    }
 	  }
 	}
       } else {
-	desc = strchr(add,':');
-	
+	desc = strchr(add, ':');
 	if (desc) {
 	  *desc = 0;
 	  desc++;
-	  addmask_fully(chan, &chan->exempts, &global_exempts, host,add,desc,atoi(expi),flags,
-			  now, 0);
+	  addmask_fully(chan, &chan->exempts, &global_exempts, host, add,
+			desc, atoi(expi), flags, now, 0);
 	  return;
 	}
       } 
     }
   }
-  putlog(LOG_MISC,"*","*** Malformed exemptline for %s.",
-	 chan?chan->dname:"global_exempts");
+  putlog(LOG_MISC, "*", "*** Malformed exemptline for %s.",
+	 chan ? chan->dname : "global_exempts");
 }
 
-static void restore_chaninvite (struct chanset_t * chan, char * host)
+static void restore_chaninvite(struct chanset_t *chan, char *host)
 {
-  char * expi, * add, * last, * user, * desc;
+  char *expi, *add, *last, *user, *desc;
   int flags = 0;
   
-  expi = strchr(host,':');
+  expi = strchr_unescape(host, ':', '\\');
   if (expi) { 
-    *expi = 0;
-    expi++;  
     if (*expi == '+') {  
       flags |= MASKREC_PERM;  
       expi++;
     }
-    add = strchr(expi,':');
+    add = strchr(expi, ':');
     if (add) {
-      if (add[-1]=='*') {
+      if (add[-1] == '*') {
 	flags |= MASKREC_STICKY;
 	add[-1] = 0; 
       } else
 	*add = 0;
       add++;
       if (*add == '+') { 
-	last = strchr(add,':');
+	last = strchr(add, ':');
 	if (last) {
 	  *last = 0;   
 	  last++;
-	  user = strchr(last,':');
+	  user = strchr(last, ':');
 	  if (user) {
 	    *user = 0;
 	    user++;
-	    desc = strchr(user,':');
+	    desc = strchr(user, ':');
 	    if (desc) {
 	      *desc = 0;
 	      desc++;
 	      addmask_fully(chan, &chan->invites, &global_invites, host, user,
-	                    desc, atoi(expi), flags, atoi(add), atoi(last));
+			    desc, atoi(expi), flags, atoi(add), atoi(last));
 	      return;
 	    }
 	  }
 	}
       } else {
-	desc = strchr(add,':');
-	
+	desc = strchr(add, ':');
 	if (desc) {
 	  *desc = 0;
 	  desc++;
 	  addmask_fully(chan, &chan->invites, &global_invites, host, add,
-	                desc,atoi(expi),flags, now, 0);
+			desc, atoi(expi), flags, now, 0);
 	  return;
 	}
       }
     }
   }
-  putlog(LOG_MISC,"*","*** Malformed inviteline for %s.",
-	 chan?chan->dname:"global_invites");
+  putlog(LOG_MISC, "*", "*** Malformed inviteline for %s.",
+	 chan ? chan->dname : "global_invites");
 }
 
 static void restore_ignore(char *host)
@@ -416,10 +420,8 @@ static void restore_ignore(char *host)
   int flags = 0;
   struct igrec *p;
 
-  expi = strchr(host, ':');
+  expi = strchr_unescape(host, ':', '\\');
   if (expi) {
-    *expi = 0;
-    expi++;
     if (*expi == '+') {
       flags |= IGREC_PERM;
       expi++;
@@ -472,12 +474,10 @@ void tell_user(int idx, struct userrec *u, int master)
   struct chanuserrec *ch;
   struct user_entry *ue;
   struct laston_info *li;
-  struct flag_record fr =
-  {FR_GLOBAL, 0, 0, 0, 0, 0};
+  struct flag_record fr = {FR_GLOBAL, 0, 0, 0, 0, 0};
 
   Context;
   fr.global = u->flags;
-
   fr.udef_global = u->flags_udef;
   build_flags(s, &fr, NULL);
   Tcl_SetVar(interp, "user", u->handle, 0);
@@ -703,64 +703,53 @@ int readuserfile(char *file, struct userrec **ret)
     s = buf;
     fgets(s, 511, f);
     if (!feof(f)) {
-      if ((s[0] != '#') && (s[0] != ';') && (s[0])) {
+      if (s[0] != '#' && s[0] != ';' && s[0]) {
 	code = newsplit(&s);
 	rmspace(s);
-	if (!strcmp(code, "-")) {
-	  if (lasthand[0]) {
-	    if (u) {		/* only break it down if there a real users */
+	if (!strcmp(code, "-") && lasthand[0]) {
+	  if (u) {		/* only break it down if there a real users */
+	    p = strchr(s, ',');
+	    while (p != NULL) {
+	      splitc(s1, s, ',');
+	      rmspace(s1);
+	      if (s1[0])
+		set_user(&USERENTRY_HOSTS, u, s1);
 	      p = strchr(s, ',');
-	      while (p != NULL) {
-		splitc(s1, s, ',');
-		rmspace(s1);
-		if (s1[0])
-		  set_user(&USERENTRY_HOSTS, u, s1);
-		p = strchr(s, ',');
-	      }
-	    }
-	    /* channel bans are never stacked with , */
-	    if (s[0]) {
-	      if (lasthand[0] && (strchr(CHANMETA, lasthand[0]) != NULL))	      
-		restore_chanban(cst, s);
-	      else if (lasthand[0] == '*') {
-		if (lasthand[1] == 'i') {
-		  restore_ignore(s);
-		} else {
-		  restore_chanban(NULL, s);
-		  gban_total++;
-		}
-	      } else if (lasthand[0]) {
-		set_user(&USERENTRY_HOSTS, u, s);
-	      }
 	    }
 	  }
-	} else if (!strcmp(code, "%")) { /* exemptmasks */
-	  if (lasthand[0]) {
-	    if (s[0]) {
-	      if ((lasthand[0] == '#') || (lasthand[0] == '+')) {
-		restore_chanexempt(cst,s);
+	  /* channel bans are never stacked with , */
+	  if (s[0]) {
+	    if (lasthand[0] && strchr(CHANMETA, lasthand[0]) != NULL)
+	      restore_chanban(cst, s);
+	    else if (lasthand[0] == '*') {
+	      if (lasthand[1] == 'i')
+		restore_ignore(s);
+	      else {
+		restore_chanban(NULL, s);
+		gban_total++;
 	      }
-	      else if (lasthand[0] == '*') {
-		if (lasthand[1] == 'e') {
-		  restore_chanexempt(NULL, s);
-		  gexempt_total++;
-		}
-	      }
-	    }
+	    } else if (lasthand[0])
+	      set_user(&USERENTRY_HOSTS, u, s);
 	  }
-	} else if (!strcmp(code, "@")) { /* Invitemasks */
-	  if (lasthand[0]) {
-	    if (s[0]) {
-	      if ((lasthand[0] == '#') || (lasthand[0] == '+')) {
-		restore_chaninvite(cst,s);
+	} else if (!strcmp(code, "%") && lasthand[0]) { /* exemptmasks */
+	  if (s[0]) {
+	    if (lasthand[0] == '#' || lasthand[0] == '+')
+	      restore_chanexempt(cst,s);
+	    else if (lasthand[0] == '*')
+	      if (lasthand[1] == 'e') {
+		restore_chanexempt(NULL, s);
+		gexempt_total++;
 	      }
-	      else if (lasthand[0] == '*') {
-		if (lasthand[1] == 'I') {  
-		  restore_chaninvite(NULL, s);
-		  ginvite_total++;
-		}
-	      }   
-	    }      
+	  }
+	} else if (!strcmp(code, "@") && lasthand[0]) { /* Invitemasks */
+	  if (s[0]) {
+	    if (lasthand[0] == '#' || lasthand[0] == '+')
+	      restore_chaninvite(cst,s);
+	    else if (lasthand[0] == '*')
+	      if (lasthand[1] == 'I') {  
+		restore_chaninvite(NULL, s);
+		ginvite_total++;
+	      }
 	  }
 	} else if (!strcmp(code, "!")) {
 	  /* ! #chan laston flags [info] */

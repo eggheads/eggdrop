@@ -7,7 +7,7 @@
  *   help system
  *   motd display and %var substitution
  * 
- * $Id: misc.c,v 1.27 2000/09/12 15:26:50 fabian Exp $
+ * $Id: misc.c,v 1.28 2000/09/18 20:01:41 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -223,10 +223,13 @@ char *newsplit(char **rest)
 
 /* Convert "abc!user@a.b.host" into "*!user@*.b.host"
  * or "abc!user@1.2.3.4" into "*!user@1.2.3.*"
+ * or "abc!user@0:0:0:0:0:ffff:1.2.3.4" into "*!user@0:0:0:0:0:ffff:1.2.3.*"
+ * or "abc!user@3ffe:604:2:b02e:6174:7265:6964:6573" into
+ *    "*!user@3ffe:604:2:b02e:6174:7265:6964:*"
  */
-void maskhost(char *s, char *nw)
+void maskhost(const char *s, char *nw)
 {
-  register char *p, *q, *e, *f;
+  register const char *p, *q, *e, *f;
   int i;
 
   *nw++ = '*';
@@ -263,38 +266,57 @@ void maskhost(char *s, char *nw)
     q = s;
   }
   nw += i;
+  e = NULL;
   /* Now q points to the hostname, i point to where to put the mask */
-  if (!(p = strchr(q, '.')) || !(e = strchr(p + 1, '.')))
+  if ((!(p = strchr(q, '.')) || !(e = strchr(p + 1, '.'))) && !strchr(q, ':'))
     /* TLD or 2 part host */
     strcpy(nw, q);
   else {
-    for (f = e; *f; f++);
-    f--;
-    if ((*f >= '0') && (*f <= '9')) {	/* Numeric IP address */
-      while (*f != '.')
-	f--;
-      strncpy(nw, q, f - q);
-      /* No need to nw[f-q]=0 here. */
-      nw += (f - q);
-      strcpy(nw, ".*");
-    } else {			/* Normal host >= 3 parts */
-      /* Ok, people whined at me...how about this? ..
-       *    a.b.c  -> *.b.c
-       *    a.b.c.d ->  *.b.c.d if tld is a country (2 chars)
-       *             OR   *.c.d if tld is com/edu/etc (3 chars)
-       *    a.b.c.d.e -> *.c.d.e   etc
-       */
-      char *x = strchr(e + 1, '.');
+    if (e == NULL) {		/* IPv6 address?		*/
+      const char *mask_str;
 
-      if (!x)
-	x = p;
-      else if (strchr(x + 1, '.'))
-	x = e;
-      else if (strlen(x) == 3)
-	x = p;
-      else
-	x = e;
-      sprintf(nw, "*%s", x);
+      f = strrchr(q, ':');
+      if (strchr(f, '.')) {	/* IPv4 wrapped in an IPv6?	*/
+	f = strrchr(f, '.');
+	mask_str = ".*";
+      } else 			/* ... no, true IPv6.		*/
+	mask_str = ":*";
+      strncpy(nw, q, f - q);
+      /* No need to nw[f-q] = 0 here, as the strcpy below will
+       * terminate the string for us.
+       */
+      nw += (f - q);
+      strcpy(nw, mask_str);
+    } else {
+      for (f = e; *f; f++);
+      f--;
+      if (*f >= '0' && *f <= '9') {	/* Numeric IP address */
+	while (*f != '.')
+	  f--;
+	strncpy(nw, q, f - q);
+	/* No need to nw[f-q] = 0 here, as the strcpy below will
+	 * terminate the string for us.
+	 */
+	nw += (f - q);
+	strcpy(nw, ".*");
+      } else {				/* Normal host >= 3 parts */
+	/*    a.b.c  -> *.b.c
+	 *    a.b.c.d ->  *.b.c.d if tld is a country (2 chars)
+	 *             OR   *.c.d if tld is com/edu/etc (3 chars)
+	 *    a.b.c.d.e -> *.c.d.e   etc
+	 */
+	const char *x = strchr(e + 1, '.');
+
+	if (!x)
+	  x = p;
+	else if (strchr(x + 1, '.'))
+	  x = e;
+	else if (strlen(x) == 3)
+	  x = p;
+	else
+	  x = e;
+	sprintf(nw, "*%s", x);
+      }
     }
   }
 }
@@ -1380,4 +1402,89 @@ int oatoi(const char *octal)
   if (*octal)
     return -1;
   return i;
+}
+
+/* Return an allocated buffer which contains a copy of the string
+ * 'str', with all 'div' characters escaped by 'mask'. 'mask'
+ * characters are escaped too.
+ *
+ * Remember to free the returned memory block.
+ */
+char *str_escape(const char *str, const char div, const char mask)
+{
+  const int	 len = strlen(str);
+  int		 buflen = (2 * len), blen = 0;
+  char		*buf = nmalloc(buflen + 1), *b = buf;
+  const char	*s;
+
+  if (!buf)
+    return NULL;
+  for (s = str; *s; s++) {
+    /* Resize buffer. */
+    if ((buflen - blen) <= 3) {
+      buflen = (buflen * 2);
+      buf = nrealloc(buf, buflen + 1);
+      if (!buf)
+	return NULL;
+      b = buf + blen;
+    }
+
+    if (*s == div || *s == mask) {
+      sprintf(b, "%c%02x", mask, *s);
+      b += 3;
+      blen += 3;
+    } else {
+      *(b++) = *s;
+      blen++;
+    }
+  }
+  *b = 0;
+  return buf;
+}
+
+/* Search for a certain character 'div' in the string 'str', while
+ * ignoring escaped characters prefixed with 'mask'.
+ *
+ * The string
+ *
+ *   "\\3a\\5c i am funny \\3a):further text\\5c):oink"
+ * 
+ * as str, '\\' as mask and ':' as div would change the str buffer
+ * to
+ * 
+ *   ":\\ i am funny :)"
+ *
+ * and return a pointer to "further text\\5c):oink".
+ *
+ * NOTE: If you look carefully, you'll notice that strchr_unescape()
+ *       behaves differently than strchr().
+ */
+char *strchr_unescape(char *str, const char div, register const char esc_char)
+{
+  char		 buf[3];
+  register char	*s, *p;
+
+  buf[3] = 0;
+  for (s = p = str; *s; s++, p++) {
+    if (*s == esc_char) {	/* Found escape character.		*/
+      /* Convert code to character. */
+      buf[0] = s[1], buf[1] = s[2];
+      *p = (unsigned char) strtol(buf, NULL, 16);
+      s += 2;
+    } else if (*s == div) {
+      *p = *s = 0;
+      return (s + 1);		/* Found searched for character.	*/
+    } else
+      *p = *s;
+  }
+  *p = 0;
+  return NULL;
+}
+
+/* As strchr_unescape(), but converts the complete string, without
+ * searching for a specific delimiter character.
+ */
+void str_unescape(char *str, register const char esc_char)
+{
+  (void) strchr_unescape(str, 0, esc_char);
 }

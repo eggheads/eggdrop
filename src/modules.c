@@ -4,7 +4,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: modules.c,v 1.38 2000/08/18 00:25:09 fabian Exp $
+ * $Id: modules.c,v 1.39 2000/09/18 20:01:41 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -520,6 +520,10 @@ Function global_table[] =
   /* 260 - 263 */
   (Function) & party,		/* party_t *				*/
   (Function) open_address_listen,
+  (Function) str_escape,
+  (Function) strchr_unescape,
+  /* 264 - 267 */
+  (Function) str_unescape,
 };
 
 void init_modules(void)

@@ -2,7 +2,7 @@
  * cmdschan.c -- part of channels.mod
  *   commands from a user via dcc that cause server interaction
  *
- * $Id: cmdschan.c,v 1.30 2000/09/15 20:08:34 fabian Exp $
+ * $Id: cmdschan.c,v 1.31 2000/09/18 20:01:42 fabian Exp $
  */
 /*
  * Copyright (C) 1997  Robey Pointer
@@ -40,7 +40,6 @@ static void cmd_pls_ban(struct userrec *u, int idx, char *par)
     dprintf(idx, "Usage: +ban <hostmask> [channel] [%%bantime<XdXhXm>] [reason]\n");
   } else {
     who = newsplit(&par);
-    remove_gunk(who);
     if (par[0] && strchr(CHANMETA, par[0]))
       chname = newsplit(&par);
     else
@@ -174,7 +173,6 @@ static void cmd_pls_exempt (struct userrec *u, int idx, char *par)
     dprintf(idx, "Usage: +exempt <hostmask> [channel] [%%exempttime<XdXhXm>] [reason]\n");
   } else {
     who = newsplit(&par);
-    remove_gunk(who);
     if ((par[0] == '#') || (par[0] == '&') || (par[0] == '+'))
       chname = newsplit(&par);
     else
@@ -305,7 +303,6 @@ static void cmd_pls_invite (struct userrec *u, int idx, char *par)
     dprintf(idx, "Usage: +invite <hostmask> [channel] [%%invitetime<XdXhXm>] [reason]\n");
   } else {
     who = newsplit(&par);
-    remove_gunk(who);
     if ((par[0] == '#') || (par[0] == '&') || (par[0] == '+'))
       chname = newsplit(&par);
     else
