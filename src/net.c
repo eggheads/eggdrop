@@ -2,7 +2,7 @@
  * net.c -- handles:
  *   all raw network i/o
  * 
- * $Id: net.c,v 1.31 2001/06/28 19:21:55 guppy Exp $
+ * $Id: net.c,v 1.32 2001/07/24 14:32:31 guppy Exp $
  */
 /* 
  * This is hereby released into the public domain.
@@ -1136,7 +1136,8 @@ int hostsanitycheck_dcc(char *nick, char *from, IP ip, char *dnsname,
   }
   if (!strcmp(badaddress, dnsname))
     putlog(LOG_MISC, "*", "ALERT: (%s!%s) sent a DCC request with bogus IP "
-	   "information of %s port %u!", nick, from, badaddress, prt);
+	   "information of %s port %s. %s does not resolve to %s!", nick, from,
+	    badaddress, prt, from, badaddress);
   else
     return 1; /* <- usually happens when we have 
 		    a user with an unresolved hostmask! */
