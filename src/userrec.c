@@ -37,6 +37,8 @@ struct userrec *userlist = NULL;	/* user records are stored here */
 struct userrec *lastuser = NULL;	/* last accessed user record */
 struct banrec *global_bans = NULL;
 struct igrec *global_ign = NULL;
+struct exemptrec *global_exempts = NULL;
+struct inviterec *global_invites = NULL;
 int cache_hit = 0, cache_miss = 0;	/* temporary cache accounting */
 
 /* FIXME: rename EBUG_MEM to DEBUG_MEM */
@@ -65,6 +67,8 @@ int expmem_users()
   struct user_entry *ue;
   struct banrec *b;
   struct igrec *i;
+  struct exemptrec * e;
+  struct inviterec * inv;
 
   context;
   tot = 0;
@@ -104,6 +108,24 @@ int expmem_users()
       if (b->desc)
 	tot += strlen(b->desc) + 1;
     }
+    /* account for each channel's exempt-list user */
+    for (e = chan->exempts;e;e=e->next) {
+      tot += sizeof(struct exemptrec);
+      tot += strlen(e->exemptmask)+1;
+      if (e->user)
+	tot += strlen(e->user)+1;
+      if (e->desc)
+	tot += strlen(e->desc)+1;
+    }
+    /* account for each channel's invite-list user */
+    for (inv = chan->invites;inv;inv=inv->next) {
+      tot += sizeof(struct inviterec);  
+      tot += strlen(inv->invitemask)+1;
+      if (inv->user)
+	tot += strlen(inv->user)+1;
+      if (inv->desc)
+	tot += strlen(inv->desc)+1;
+    }
   }
   for (b = global_bans; b; b = b->next) {
     tot += sizeof(struct banrec);
@@ -113,6 +135,22 @@ int expmem_users()
       tot += strlen(b->user) + 1;
     if (b->desc)
       tot += strlen(b->desc) + 1;
+  }
+  for (e = global_exempts;e;e=e->next) {
+    tot += sizeof(struct exemptrec);
+    tot += strlen(e->exemptmask)+1;
+    if (e->user)
+      tot += strlen(e->user)+1;
+    if (e->desc)
+      tot += strlen(e->desc)+1;
+  }
+  for (inv = global_invites;inv;inv=inv->next) {
+    tot += sizeof(struct inviterec);
+    tot += strlen(inv->invitemask)+1;
+    if (inv->user)
+      tot += strlen(inv->user)+1;
+    if (inv->desc)
+      tot += strlen(inv->desc)+1;  
   }
   for (i = global_ign; i; i = i->next) {
     tot += sizeof(struct igrec);
@@ -228,6 +266,28 @@ void clear_userlist(struct userrec *bu)
     }
     while (global_ign)
       delignore(global_ign->igmask);
+    while (global_exempts) {
+      struct exemptrec * e = global_exempts;
+      global_exempts = e->next;
+      if (e->exemptmask)
+	nfree(e->exemptmask);
+      if (e->user)
+	nfree(e->user);
+      if (e->desc)
+	nfree(e->desc);
+      nfree(e);
+    }
+    while (global_invites) {
+      struct inviterec * inv = global_invites;
+      global_invites = inv->next;
+      if (inv->invitemask)
+	nfree(inv->invitemask);
+      if (inv->user)  
+	nfree(inv->user);
+      if (inv->desc)
+	nfree(inv->desc);
+      nfree(inv);
+    }
     for (cst = chanset; cst; cst = cst->next)
       while (cst->bans) {
 	struct banrec *b = cst->bans;
@@ -240,6 +300,32 @@ void clear_userlist(struct userrec *bu)
 	if (b->desc)
 	  nfree(b->desc);
 	nfree(b);
+      }
+    for (cst = chanset;cst;cst=cst->next)
+      while (cst->exempts) {
+	struct exemptrec * e = cst->exempts;
+	
+	cst->exempts = e->next; 
+	if (e->exemptmask)
+	  nfree(e->exemptmask); 
+	if (e->user)
+	  nfree(e->user);
+	if (e->desc)
+	  nfree(e->desc);
+	nfree(e);
+      }
+    for (cst = chanset;cst;cst=cst->next)
+      while (cst->invites) {
+	struct inviterec * inv = cst->invites;
+	
+	cst->invites = inv->next;
+	if (inv->invitemask)
+	  nfree(inv->invitemask);
+	if (inv->user)
+	  nfree(inv->user);
+	if (inv->desc)
+	  nfree(inv->desc);
+	nfree(inv);
       }
   }
   /* remember to set your userlist to NULL after calling this */

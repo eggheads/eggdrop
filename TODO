@@ -37,7 +37,6 @@ Problem status:
        39:      drummer
        41:      no-one
        42:      no-one
-       43:      Jason
        44:      no-one
        48:      no-one
        49:      drummer submitted a patch to eggdev
@@ -423,11 +422,6 @@ Status: no-one is working on this
     Tothwolf)
 
 Status: no-one is working on this
-
---
-43. add +e/+I support in userfile
-
-Status: Jason/arthur2 are working on this
 
 --
 44. Bug report from drummer

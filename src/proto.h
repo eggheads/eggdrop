@@ -31,6 +31,8 @@ struct chanset_t;		/* keeps the compiler warnings down :) */
 struct userrec;
 struct banrec;
 struct igrec;
+struct exemptrec;
+struct inviterec;
 struct flag_record;
 struct list_type;
 struct tand_t_struct;

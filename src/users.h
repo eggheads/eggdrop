@@ -108,7 +108,7 @@ int set_user(struct user_entry_type *, struct userrec *, void *);
 #define IGNORE_NAME "*ignore"
 #define BAN_NAME    "*ban"
 #define EXEMPT_NAME "*exempt"
-#define INVITE_NAME "*invite"
+#define INVITE_NAME "*Invite"
 
 /* channel-specific info */
 struct chanuserrec {
@@ -158,6 +158,36 @@ struct igrec {
 extern struct igrec *global_ign;
 
 #define IGREC_PERM   2
+
+struct exemptrec {
+   struct exemptrec * next;
+   char * exemptmask;
+   time_t expire;
+   time_t added;
+   time_t lastactive;
+   char * user;
+   char * desc;  
+   int flags;
+};
+extern struct exemptrec * global_exempts;
+   
+#define EXEMPTREC_STICKY 1
+#define EXEMPTREC_PERM   2
+
+struct inviterec {
+   struct inviterec * next;
+   char * invitemask;
+   time_t expire;
+   time_t added;
+   time_t lastactive;
+   char * user;
+   char * desc;
+   int flags;
+};
+extern struct inviterec * global_invites;
+   
+#define INVITEREC_STICKY 1
+#define INVITEREC_PERM   2
 
 /* flags are in eggdrop.h */
 

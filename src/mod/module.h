@@ -302,7 +302,12 @@
 #define max_dcc_port (*(int *)(global[217]))
 #define rfc_casecmp ((int(*)(char *, char *))global[218])
 #define rfc_ncasecmp ((int(*)(char *, char *, int *))global[219])
-#define H_event (*(p_tcl_bind_list *)(global[220]))
+/* 220 - 223 */
+#define global_exempts (*(struct exemptrec **)(global[220]))
+#define global_invites (*(struct inviterec **)(global[221]))
+#define ginvite_total (*(int*)global[222])
+#define gexempt_total (*(int*)global[223])
+#define H_event (*(p_tcl_bind_list *)(global[224]))
 /* this is for blowfish module, couldnt be bothereed making a whole new .h
  * file for it ;) */
 #ifndef MAKING_BLOWFISH

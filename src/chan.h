@@ -115,6 +115,8 @@ struct chanset_t {
   int ircnet_status;
   int idle_kick;
   struct banrec *bans;		/* temporary channel bans */
+  struct exemptrec *exempts; /* temporary channel exempts */
+  struct inviterec *invites; /* temporary channel invites */
   /* desired channel modes: */
   int mode_pls_prot;		/* modes to enforce */
   int mode_mns_prot;		/* modes to reject */
@@ -168,8 +170,13 @@ struct chanset_t {
 #define CHAN_ASKEDBANS      0x20000000
 #define CHAN_SEEN           0x40000000
 
-#define CHAN_ASKED_EXEMPTS 0x0001
-#define CHAN_ASKED_INVITED 0x0002
+#define CHAN_ASKED_EXEMPTS  0x0001
+#define CHAN_ASKED_INVITED  0x0002
+
+#define CHAN_DYNAMICEXEMPTS 0x0004
+#define CHAN_NOUSEREXEMPTS  0x0008
+#define CHAN_DYNAMICINVITES 0x0010
+#define CHAN_NOUSERINVITES  0x0020
 
 /* prototypes */
 memberlist *ismember(struct chanset_t *, char *);
@@ -202,6 +209,10 @@ struct chanset_t *findchan();
 #define channel_cycle(chan) (chan->status & CHAN_CYCLE)
 #define channel_seen(chan) (chan->status & CHAN_SEEN)
 #define channel_inactive(chan) (chan->status & CHAN_INACTIVE)
+#define channel_dynamicexempts(chan) (chan->ircnet_status & CHAN_DYNAMICEXEMPTS)
+#define channel_nouserexempts(chan) (chan->ircnet_status & CHAN_NOUSEREXEMPTS)
+#define channel_dynamicinvites(chan) (chan->ircnet_status & CHAN_DYNAMICINVITES)
+#define channel_nouserinvites(chan) (chan->ircnet_status & CHAN_NOUSERINVITES)
 
 struct server_list {
   struct server_list *next;

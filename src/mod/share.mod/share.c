@@ -43,7 +43,7 @@ static struct tandbuf {
 
 /* botnet commands */
 
-static void share_stick(int idx, char *par)
+static void share_stick_ban(int idx, char *par)
 {
   char *host, *val;
   int yn;
@@ -76,6 +76,82 @@ static void share_stick(int idx, char *par)
 	}
       putlog(LOG_CMDS, "*", "Rejecting invalid sticky ban: %s on %s, %c",
 	     host, par, yn ? 'y' : 'n');
+    }
+    noshare = 0;
+  }
+}
+
+/* same for exempts */
+static void share_stick_exempt (int idx, char * par) {
+  char *host, *val;
+  int yn;
+  
+  if (dcc[idx].status & STAT_SHARE) {
+    host = newsplit(&par);
+    val = newsplit(&par);
+    yn = atoi(val);
+    noshare = 1;
+    if (!par[0]) {		/* global exempt */
+      if (u_setsticky_exempt(NULL,host, yn) > 0) {
+	putlog(LOG_CMDS, "*", "%s: stick %s %c", dcc[idx].nick, host,
+	       yn ? 'y' : 'n');
+	shareout_but(NULL,idx,"se %s %d\n", host, yn);
+      }
+    } else {
+      struct chanset_t *chan = findchan(par);
+      struct chanuserrec * cr;
+      
+      if ((chan != NULL) && channel_shared(chan) &&
+	  ((bot_flags(dcc[idx].user) & BOT_GLOBAL) 
+	   || ((cr = get_chanrec(dcc[idx].user,par))
+	       && (cr->flags & BOT_AGGRESSIVE))))
+	if (u_setsticky_exempt(chan, host, yn) > 0) {
+	  putlog(LOG_CMDS, "*", "%s: stick %s %c %s", dcc[idx].nick, host,
+		 yn ? 'y' : 'n', par);
+	  shareout_but(chan,idx,"se %s %d %s\n", host, yn, chan->name);
+	  noshare = 0;
+	  return;
+	}
+      putlog(LOG_CMDS,"*","Rejecting invalid sticky exempt: %s on %s, %c",
+	     host,par,yn?'y':'n');
+    }
+     noshare = 0;
+  }
+}
+
+/* same for invites */
+static void share_stick_invite (int idx, char * par) {
+  char *host, *val;
+  int yn;
+  
+  if (dcc[idx].status & STAT_SHARE) {
+    host = newsplit(&par);
+    val = newsplit(&par);
+    yn = atoi(val);
+    noshare = 1;
+    if (!par[0]) {		/* global invite */
+      if (u_setsticky_invite(NULL,host, yn) > 0) {
+ 	    putlog(LOG_CMDS, "*", "%s: stick %s %c", dcc[idx].nick, host,
+ 		   yn ? 'y' : 'n');
+ 	    shareout_but(NULL,idx,"sI %s %d\n", host, yn);
+      }
+    } else {
+      struct chanset_t *chan = findchan(par);
+      struct chanuserrec * cr;
+      
+      if ((chan != NULL) && channel_shared(chan) &&
+	  ((bot_flags(dcc[idx].user) & BOT_GLOBAL) 
+	   || ((cr = get_chanrec(dcc[idx].user,par))
+	       && (cr->flags & BOT_AGGRESSIVE))))
+	if (u_setsticky_invite(chan, host, yn) > 0) {
+	  putlog(LOG_CMDS, "*", "%s: stick %s %c %s", dcc[idx].nick, host,
+		 yn ? 'y' : 'n', par);
+	  shareout_but(chan,idx,"sI %s %d %s\n", host, yn, chan->name);
+	  noshare = 0;
+	  return;
+	}
+      putlog(LOG_CMDS,"*","Rejecting invalid sticky invite: %s on %s, %c",
+	     host,par,yn?'y':'n');
     }
     noshare = 0;
   }
@@ -446,6 +522,26 @@ static void share_mns_ban(int idx, char *par)
   }
 }
 
+static void share_mns_exempt (int idx, char * par) {
+  if (dcc[idx].status & STAT_SHARE) {
+    shareout_but(NULL,idx, "-b %s\n", par);
+    putlog(LOG_CMDS, "*", "%s: cancel exempt %s", dcc[idx].nick, par);
+    noshare = 1;
+    u_delexempt(NULL,par,1);
+    noshare = 0;
+  }
+}
+
+static void share_mns_invite (int idx, char * par) {
+  if (dcc[idx].status & STAT_SHARE) {
+    shareout_but(NULL,idx, "-b %s\n", par);
+    putlog(LOG_CMDS, "*", "%s: cancel invite %s", dcc[idx].nick, par);
+    noshare = 1;
+    u_delinvite(NULL,par,1);
+    noshare = 0;
+  }
+}
+
 static void share_mns_banchan(int idx, char *par)
 {
   char *chname;
@@ -469,6 +565,49 @@ static void share_mns_banchan(int idx, char *par)
       u_delban(chan, par, 1);
       noshare = 0;
     }
+  }
+}
+
+static void share_mns_exemptchan (int idx, char * par) {
+  char *chname;
+  struct chanset_t *chan;    
+  if (dcc[idx].status & STAT_SHARE) {
+    chname = newsplit(&par);
+    chan = findchan(chname);
+    fr.match = (FR_CHAN | FR_BOT);
+    get_user_flagrec(dcc[idx].user,&fr,chname);
+    if (chan && (bot_chan(fr) || bot_global(fr))) {
+      shareout_but(chan,idx, "-ec %s %s\n", chname, par);
+      if (channel_shared(chan)) {
+	putlog(LOG_CMDS, "*", "%s: cancel exempt %s on %s", dcc[idx].nick,
+	       par, chname);
+	noshare = 1;
+	u_delexempt(chan, par,1);
+	noshare = 0;
+      }
+    } 
+  }
+}
+
+static void share_mns_invitechan (int idx, char * par) {
+  char *chname;
+  struct chanset_t *chan;
+  
+  if (dcc[idx].status & STAT_SHARE) {
+    chname = newsplit(&par);
+    chan = findchan(chname);
+    fr.match = (FR_CHAN | FR_BOT);
+    get_user_flagrec(dcc[idx].user,&fr,chname);
+    if (chan && (bot_chan(fr) || bot_global(fr))) {
+      shareout_but(chan,idx, "-Ic %s %s\n", chname, par);
+      if (channel_shared(chan)) {
+	putlog(LOG_CMDS, "*", "%s: cancel invite %s on %s", dcc[idx].nick,
+	       par, chname);
+	noshare = 1;
+ 	    u_delinvite(chan, par,1);
+ 	    noshare = 0;
+      }
+    } 
   }
 }
 
@@ -546,6 +685,136 @@ static void share_pls_banchan(int idx, char *par)
       u_addban(chan, ban, from, par, expire_time, flags);
       noshare = 0;
     }
+  }
+}
+
+/* repeat for exempts */
+static void share_pls_exempt (int idx, char * par) {
+  time_t expire_time;
+  char *exempt, *tm, *from;
+  int flags = 0;
+  
+  if (dcc[idx].status & STAT_SHARE) {
+    shareout_but(NULL,idx, "+e %s\n", par);
+    noshare = 1;
+    exempt = newsplit(&par);
+    tm = newsplit(&par);
+    from = newsplit(&par);
+    if (strchr(from,'s'))
+      flags |= EXEMPTREC_STICKY;
+    if (strchr(from,'p'))
+      flags |= EXEMPTREC_PERM;
+    from = newsplit(&par);
+    expire_time = (time_t) atoi(tm);
+    if (expire_time != 0L)
+      expire_time += now;
+    u_addexempt(NULL,exempt, from, par, expire_time,flags);
+    putlog(LOG_CMDS, "*", "%s: global exempt %s (%s:%s)", dcc[idx].nick, exempt,
+	   from, par);
+    noshare = 0;
+  }
+}
+
+static void share_pls_exemptchan (int idx, char * par) {
+  time_t expire_time;
+  int flags = 0;
+  struct chanset_t *chan;
+  char *exempt, *tm, *chname, *from;
+  
+  if (dcc[idx].status & STAT_SHARE) {
+    exempt = newsplit(&par);
+    tm = newsplit(&par);
+    chname = newsplit(&par);
+    chan = findchan(chname);
+    fr.match = (FR_CHAN | FR_BOT);
+    get_user_flagrec(dcc[idx].user,&fr,chname);
+    if (!chan || !channel_shared(chan) || 
+	!(bot_chan(fr) || bot_global(fr)))
+      putlog(LOG_CMDS, "*", 
+	     "Channel exempt %s on %s rejected - channel not shared.",
+	     exempt, chname);
+    else {
+      shareout_but(chan,idx, "+ec %s %s %s %s\n", exempt, tm, chname, par);
+      from = newsplit(&par);
+      if (strchr(from,'s'))
+	flags |= EXEMPTREC_STICKY;
+      if (strchr(from,'p'))
+	flags |= EXEMPTREC_PERM;
+      from = newsplit(&par);
+      putlog(LOG_CMDS, "*", "%s: exempt %s on %s (%s:%s)", dcc[idx].nick,
+	     exempt, chname, from, par);
+      noshare = 1;
+      expire_time = (time_t) atoi(tm);
+      if (expire_time != 0L)
+	expire_time += now;
+      u_addexempt(chan, exempt, from, par, expire_time,flags);
+      noshare = 0;
+    }
+  }
+}
+
+/* and for invites */
+static void share_pls_invite (int idx, char * par) {
+  time_t expire_time;
+  char *invite, *tm, *from;
+  int flags = 0;
+  
+  if (dcc[idx].status & STAT_SHARE) {
+    shareout_but(NULL,idx, "+I %s\n", par);
+    noshare = 1;
+     invite = newsplit(&par);
+     tm = newsplit(&par);
+     from = newsplit(&par);
+     if (strchr(from,'s'))
+       flags |= INVITEREC_STICKY;
+     if (strchr(from,'p'))
+       flags |= INVITEREC_PERM;
+     from = newsplit(&par);
+     expire_time = (time_t) atoi(tm);
+     if (expire_time != 0L)
+       expire_time += now;
+     u_addinvite(NULL,invite, from, par, expire_time,flags);
+     putlog(LOG_CMDS, "*", "%s: global invite %s (%s:%s)", dcc[idx].nick, invite,
+	    from, par);
+     noshare = 0;
+  }
+}
+
+static void share_pls_invitechan (int idx, char * par) {
+  time_t expire_time;
+  int flags = 0;
+  struct chanset_t *chan;
+  char *invite, *tm, *chname, *from;
+  
+  if (dcc[idx].status & STAT_SHARE) {
+    invite = newsplit(&par);
+    tm = newsplit(&par);
+    chname = newsplit(&par);
+     chan = findchan(chname);
+     fr.match = (FR_CHAN | FR_BOT);
+     get_user_flagrec(dcc[idx].user,&fr,chname);
+     if (!chan || !channel_shared(chan) || 
+	 !(bot_chan(fr) || bot_global(fr)))
+       putlog(LOG_CMDS, "*", 
+	      "Channel invite %s on %s rejected - channel not shared.",
+	      invite, chname);
+     else {
+       shareout_but(chan,idx, "+Ic %s %s %s %s\n", invite, tm, chname, par);
+       from = newsplit(&par);
+       if (strchr(from,'s'))
+	 flags |= INVITEREC_STICKY;
+       if (strchr(from,'p'))
+	 flags |= INVITEREC_PERM;
+       from = newsplit(&par);
+       putlog(LOG_CMDS, "*", "%s: invite %s on %s (%s:%s)", dcc[idx].nick,
+	      invite, chname, from, par);
+       noshare = 1;
+       expire_time = (time_t) atoi(tm);
+       if (expire_time != 0L)
+	 expire_time += now;
+       u_addinvite(chan, invite, from, par, expire_time,flags);
+       noshare = 0;
+     }
   }
 }
 
@@ -775,12 +1044,20 @@ static botcmd_t C_share[] =
   {"!", (Function) share_endstartup},
   {"+b", (Function) share_pls_ban},
   {"+bc", (Function) share_pls_banchan},
+  {"+e", (Function) share_pls_exempt },
+  {"+ec", (Function) share_pls_exemptchan },
+  {"+I", (Function) share_pls_invite },
+  {"+Ic", (Function) share_pls_invitechan },
   {"+bh", (Function) share_pls_bothost},
   {"+cr", (Function) share_pls_chrec},
   {"+h", (Function) share_pls_host},
   {"+i", (Function) share_pls_ignore},
   {"-b", (Function) share_mns_ban},
   {"-bc", (Function) share_mns_banchan},
+  {"-e", (Function) share_mns_exempt },
+  {"-ec", (Function) share_mns_exemptchan },
+  {"-I", (Function) share_mns_invite },
+  {"-Ic", (Function) share_mns_invitechan },
   {"-cr", (Function) share_mns_chrec},
   {"-h", (Function) share_mns_host},
   {"-i", (Function) share_mns_ignore},
@@ -794,7 +1071,9 @@ static botcmd_t C_share[] =
   {"r!", (Function) share_resync},
   {"r?", (Function) share_resyncq},
   {"rn", (Function) share_resync_no},
-  {"s", (Function) share_stick},
+  {"s", (Function) share_stick_ban },
+  {"se", (Function) share_stick_exempt },
+  {"sI", (Function) share_stick_invite },
   {"u?", (Function) share_userfileq},
   {"un", (Function) share_ufno},
   {"us", (Function) share_ufsend},

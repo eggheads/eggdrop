@@ -23,12 +23,32 @@ static int u_sticky_ban(struct banrec *u, char *uhost);
 static int u_setsticky_ban(struct chanset_t *chan, char *uhost, int sticky);
 static int u_equals_ban(struct banrec *u, char *uhost);
 static int u_match_ban(struct banrec *u, char *uhost);
+static int u_match_exempt (struct exemptrec * e, char * uhost);
+static int u_sticky_exempt (struct exemptrec * u, char * uhost);
+static int u_setsticky_exempt (struct chanset_t * chan, char * uhost, int sticky);
+static int u_equals_exempt (struct exemptrec * u, char * uhost);
+static int u_delexempt (struct chanset_t * c, char * who, int doit);
+static int u_addexempt (struct chanset_t * chan, char * exempt, char * from,
+ 			char * note,  time_t expire_time, int flags);
+static int u_match_invite (struct inviterec * e, char * uhost);
+static int u_sticky_invite (struct inviterec * u, char * uhost);
+static int u_setsticky_invite (struct chanset_t * chan, char * uhost, int sticky);
+static int u_equals_invite (struct inviterec * u, char * uhost);
+static int u_delinvite (struct chanset_t * c, char * who, int doit);
+static int u_addinvite (struct chanset_t * chan, char * invite, char * from,
+ 			char * note,  time_t expire_time, int flags);
 static int u_delban(struct chanset_t *c, char *who, int doit);
 static int u_addban(struct chanset_t *chan, char *ban, char *from, char *note,
 		    time_t expire_time, int flags);
 static void tell_bans(int idx, int show_inact, char *match);
 static int write_bans(FILE * f, int idx);
 static void check_expired_bans(void);
+static void tell_exempts (int idx, int show_inact, char * match);
+static int write_exempts (FILE * f, int idx);
+static void check_expired_exempts(void);
+static void tell_invites (int idx, int show_inact, char * match);
+static int write_invites (FILE * f, int idx);
+static void check_expired_invites(void);
 static void write_channels(void);
 static void read_channels(int);
 static int killchanset(struct chanset_t *);
@@ -60,6 +80,24 @@ static int tcl_channel_add(Tcl_Interp * irp, char *, char *);
 #define clear_channel ((void(*)(struct chanset_t *,int))channels_funcs[15])
 /* 16 - 19 */
 #define set_handle_laston ((void (*)(char *,struct userrec *,time_t))channels_funcs[16])
+#define u_match_exempt ((int(*)(struct exemptrec *, char *))channels_funcs[27])
+/* 28 - 31 */
+#define u_setsticky_exempt ((int (*)(struct chanset_t *, char *,int))channels_funcs[28])
+#define u_delexempt ((int (*)(struct chanset_t *, char *, int))channels_funcs[29])
+#define u_addexempt ((int (*)(struct chanset_t *, char *, char *, char *, time_t, int))channels_funcs[30])
+#define u_equals_exempt ((int(*)(struct exemptrec *, char *))channels_funcs[31])
+/* 32 - 35 */
+#define u_sticky_exempt ((int(*)(struct exemptrec *, char *))channels_funcs[32])
+#define u_match_invite ((int(*)(struct inviterec *, char *))channels_funcs[33])
+#define u_setsticky_invite ((int (*)(struct chanset_t *, char *,int))channels_funcs[34])
+#define u_delinvite ((int (*)(struct chanset_t *, char *, int))channels_funcs[35])
+/* 36 - 39 */
+#define u_addinvite ((int (*)(struct chanset_t *, char *, char *, char *, time_t, int))channels_funcs[36])
+#define u_equals_invite ((int(*)(struct inviterec *, char *))channels_funcs[37])
+#define u_sticky_invite ((int(*)(struct inviterec *, char *))channels_funcs[38])
+#define write_exempts ((int (*)(FILE *, int))channels_funcs[39])
+/* 40 - 43 */
+#define write_invites ((int (*)(FILE *, int))channels_funcs[40])
 #define ban_time (*(int *)(channels_funcs[17]))
 #define use_info (*(int *)(channels_funcs[18]))
 #define get_handle_chaninfo ((void (*)(char *, char *, char *))channels_funcs[19])

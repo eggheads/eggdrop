@@ -33,8 +33,6 @@ int protect_readonly = 0;	/* turn on/off readonly protection */
 char whois_fields[121] = "";	/* fields to display in a .whois */
 Tcl_Interp *interp;		/* eggdrop always uses the same interpreter */
 
-/* 1/2 of these arent even here anymore, one day I'll clean them up */
-/* done - arthur2 */
 extern int backgrd, flood_telnet_thr, flood_telnet_time;
 extern int shtime, share_greet, require_p, keep_all_logs;
 extern int use_stderr, allow_new_telnets, stealth_telnets;

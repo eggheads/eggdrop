@@ -19,6 +19,7 @@
 static int setstatic = 0;
 static int use_info = 1;
 static int ban_time = 60;
+static int net_type = 0;
 static int exempt_time = 0;	/* if exempt_time = 0, never remove them */
 static int invite_time = 0;	/* if invite_time = 0, never remove them */
 static char chanfile[121] = "chanfile";
@@ -399,6 +400,14 @@ static void write_channels()
 	    channel_seen(chan) ? '+' : '-');
     fprintf(f, "%cinactive ",
 	    channel_inactive(chan) ? '+' : '-');
+/*  fprintf(f, "%cdynamicexempts ", 
+            channel_dynamicexempts(chan) ? '+' : '-');
+    fprintf(f, "%cuserexempts ", 
+            channel_nouserexempts(chan) ? '-' : '+');
+    fprintf(f, "%cdynamicinvites ", 
+ 	    channel_dynamicinvites(chan) ? '+' : '-');
+    fprintf(f, "%cuserinvites ", 
+            channel_nouserinvites(chan) ? '-' : '+');*/
 
     fprintf(f, "%c\n", channel_static(chan) ? ' ' : '}');
     if (fflush(f)) {
@@ -447,6 +456,10 @@ static void read_channels(int create)
       noshare = 1;
       while (chan->bans)
 	u_delban(chan, chan->bans->banmask, 1);
+      while (chan->exempts)
+	u_delexempt(chan,chan->exempts->exemptmask,1);
+      while (chan->invites)
+	u_delinvite(chan,chan->invites->invitemask,1);
       noshare = 0;
       chan2 = chan->next;
       killchanset(chan);
@@ -487,6 +500,10 @@ static void channels_rehash()
       noshare = 1;
       while (chan->bans)
 	u_delban(chan, chan->bans->banmask, 1);
+      while (chan->exempts)
+	u_delexempt(chan,chan->exempts->exemptmask,1);
+      while (chan->invites)
+	u_delinvite(chan,chan->invites->invitemask,1);
       noshare = 0;
       killchanset(chan);
       chan = chanset;
@@ -580,6 +597,14 @@ static void channels_report(int idx, int details)
 	  i += my_strcpy(s + i, "cycle ");
 	if (channel_seen(chan))
 	  i += my_strcpy(s + i, "seen ");
+	if (channel_dynamicexempts(chan)) 
+	  i += my_strcpy(s + i, "dynamic-exempts ");
+	if (channel_nouserexempts(chan))
+	  i += my_strcpy(s + i, "forbid-user-exempts ");
+	if (channel_dynamicinvites(chan)) 
+	  i += my_strcpy(s + i, "dynamic-invites ");
+	if (channel_nouserinvites(chan))
+	  i += my_strcpy(s + i, "forbid-user-invites ");
 	if (channel_inactive(chan))
 	  i += my_strcpy(s + i, "inactive ");
 	dprintf(idx, "      Options: %s\n", s);
@@ -660,6 +685,7 @@ static tcl_ints my_tcl_ints[] =
   {"share-greet", 0, 0},
   {"use-info", &use_info, 0},
   {"ban-time", &ban_time, 0},
+  {"net-type", &net_type, 0},
   {"exempt-time", &exempt_time, 0},
   {"invite-time", &invite_time, 0},
   {"must-be-owner", &must_be_owner, 0},
@@ -687,7 +713,7 @@ static char *channels_close()
   context;
   write_channels();
   rem_builtins(H_chon, my_chon, 1);
-  rem_builtins(H_dcc, C_dcc_irc, 15);
+  rem_builtins(H_dcc, C_dcc_irc, 21);
   rem_tcl_commands(channels_cmds);
   rem_tcl_strings(my_tcl_strings);
   rem_tcl_ints(my_tcl_ints);
@@ -696,6 +722,8 @@ static char *channels_close()
   del_hook(HOOK_REHASH, channels_rehash);
   del_hook(HOOK_PRE_REHASH, channels_prerehash);
   del_hook(HOOK_MINUTELY, check_expired_bans);
+  del_hook(HOOK_MINUTELY,check_expired_exempts);
+  del_hook(HOOK_MINUTELY,check_expired_invites);
   rem_help_reference("channels.help");
   rem_help_reference("chaninfo.help");
   module_undepend(MODULE_NAME);
@@ -740,6 +768,24 @@ static Function channels_table[] =
   (Function) & exempt_time,
   (Function) isinvited,
   (Function) & invite_time,
+  (Function) u_match_exempt,
+  /* 28 - 31 */
+  (Function) u_setsticky_exempt,
+  (Function) u_delexempt,
+  (Function) u_addexempt,
+  (Function) u_equals_exempt,
+  /* 32 - 35 */
+  (Function) u_sticky_exempt,
+  (Function) u_match_invite,
+  (Function) u_setsticky_invite,
+  (Function) u_delinvite,
+  /* 36 - 39 */
+  (Function) u_addinvite,
+  (Function) u_equals_invite,
+  (Function) u_sticky_invite,
+  (Function) write_exempts,
+  /* 40 - 43 */
+  (Function) write_invites,
 };
 
 char *channels_start(Function * global_funcs)
@@ -761,11 +807,13 @@ char *channels_start(Function * global_funcs)
   if (!module_depend(MODULE_NAME, "eggdrop", 103, 0))
     return "This module needs eggdrop1.3.0 or later";
   add_hook(HOOK_MINUTELY, check_expired_bans);
+  add_hook(HOOK_MINUTELY,check_expired_exempts);
+  add_hook(HOOK_MINUTELY,check_expired_invites);
   add_hook(HOOK_USERFILE, channels_writeuserfile);
   add_hook(HOOK_REHASH, channels_rehash);
   add_hook(HOOK_PRE_REHASH, channels_prerehash);
   add_builtins(H_chon, my_chon, 1);
-  add_builtins(H_dcc, C_dcc_irc, 15);
+  add_builtins(H_dcc, C_dcc_irc, 21);
   add_tcl_commands(channels_cmds);
   add_tcl_strings(my_tcl_strings);
   add_help_reference("channels.help");

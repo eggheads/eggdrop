@@ -593,6 +593,11 @@ static void got_ban(struct chanset_t *chan, char *nick, char *from,
       }
     }
   }
+  /* If a ban is set on an exempted user then we might as well set exemption
+   * at the same time */
+  if ((u_equals_exempt(global_exempts,who) || u_equals_exempt(chan->exempts, who))) {
+    add_mode(chan, '+', 'e' , who);
+  }
   if (check && channel_enforcebans(chan))
     kick_all(chan, who, IRC_BANNED);
   /* is it a server ban from nowhere? */
@@ -687,7 +692,7 @@ static void got_exempt(struct chanset_t *chan, char *nick, char *from,
 	/* fix their bogus exemption */
 	if (bounce_bogus_exempts) {
 	  int ok = 0;
-
+	  
 	  strcpy(s1, who);
 	  for (i = 0; i < strlen(s1); i++) {
 	    if (((s1[i] < 32) || (s1[i] == 127)) &&
@@ -722,7 +727,9 @@ static void got_exempt(struct chanset_t *chan, char *nick, char *from,
     if ((!nick[0]) && (bounce_modes))
       reversing = 1;
   }
-  if (reversing || (bounce_exempts && (!nick[0]) && (check)))
+  if (reversing || (bounce_exempts && (!nick[0]) && 
+		    (!u_equals_exempt(global_exempts,who) || !u_equals_exempt(chan->exempts,who))
+		    && (check)))
     add_mode(chan, '-', 'e', who);
 }
 
@@ -746,6 +753,19 @@ static void got_unexempt(struct chanset_t *chan, char *nick, char *from,
     nfree(e->exempt);
     nfree(e->who);
     nfree(e);
+  }
+  if (u_sticky_exempt(chan->exempts, who) || u_sticky_exempt(global_exempts,who)) {
+    /* that's a sticky exempt! No point in being */
+    /* sticky unless we enforce it!! */
+    add_mode(chan, '+', 'e', who);
+  }
+  if ((u_equals_exempt(global_exempts,who) || u_equals_exempt(chan->exempts, who)) &&
+      me_op(chan) && !channel_dynamicbans(chan)) {
+    /* that's a permexempt! */
+    if (glob_bot(user) && (bot_flags(u) & BOT_SHARE)) {
+      /* sharebot -- do nothing */
+    } else
+      add_mode(chan, '+', 'e', who);
   }
 }
 
@@ -808,7 +828,9 @@ static void got_invite(struct chanset_t *chan, char *nick, char *from,
     if ((!nick[0]) && (bounce_modes))
       reversing = 1;
   }
-  if (reversing || (bounce_invites && (!nick[0]) && (check)))
+  if (reversing || (bounce_invites && (!nick[0])  && 
+		    (!u_equals_invite(global_invites,who) || !u_equals_invite(chan->invites,who))
+		    && (check)))
     add_mode(chan, '-', 'I', who);
 }
 
@@ -831,6 +853,19 @@ static void got_uninvite(struct chanset_t *chan, char *nick, char *from,
     nfree(inv->invite);
     nfree(inv->who);
     nfree(inv);
+  }
+  if (u_sticky_invite(chan->invites, who) || u_sticky_invite(global_invites,who)) {
+    /* that's a sticky invite! No point in being */
+    /* sticky unless we enforce it!! */
+    add_mode(chan, '+', 'I', who);
+  }
+  if ((u_equals_invite(global_invites,who) || u_equals_invite(chan->invites, who)) &&
+      me_op(chan) && !channel_dynamicbans(chan)) {
+    /* that's a perminvite! */
+    if (glob_bot(user) && (bot_flags(u) & BOT_SHARE)) {
+      /* sharebot -- do nothing */
+    } else
+      add_mode(chan, '+', 'I', who);
   }
 }
 

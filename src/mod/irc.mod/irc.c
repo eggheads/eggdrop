@@ -24,8 +24,8 @@ static int strict_host;
 /* time to wait for user to return for net-split */
 static int wait_split = 300;
 static int max_bans = 20;
-static int max_exempts = 0;
-static int max_invites = 0;
+static int max_exempts = 20;
+static int max_invites = 20;
 static int max_modes = 30;
 static int bounce_bans = 1;
 static int bounce_exempts = 0;
@@ -229,7 +229,7 @@ static void newexempt(struct chanset_t *chan, char *s, char *who)
 static void newinvite(struct chanset_t *chan, char *s, char *who)
 {
   invitelist *inv;
-
+  
   context;
   inv = chan->channel.invite;
   while (inv->invite[0] && rfc_casecmp(inv->invite, s))
@@ -319,11 +319,13 @@ static void reset_chan_info(struct chanset_t *chan)
 	((net_type == 1) || (net_type == 4))) {
       chan->ircnet_status |= CHAN_ASKED_EXEMPTS;
       dprintf(DP_MODE, "MODE %s +e\n", chan->name);
+      recheck_exempt(chan);
     }
     if (!(chan->ircnet_status & CHAN_ASKED_INVITED) &&
 	((net_type == 1) || (net_type == 4))) {
       chan->ircnet_status |= CHAN_ASKED_INVITED;
       dprintf(DP_MODE, "MODE %s +I\n", chan->name);
+      recheck_invite(chan);
     }
     /* these 2 need to get out asap, so into the mode queue */
     if (use_354)
@@ -341,10 +343,11 @@ static void reset_chan_info(struct chanset_t *chan)
 static void log_chans()
 {
   banlist *b;
+  exemptlist *e;
+  invitelist *i;
   memberlist *m;
   struct chanset_t *chan;
-  int chops, bans;
-
+  int chops, bans, invites,exempts;
   chan = chanset;
   while (chan != NULL) {
     if (channel_active(chan) && channel_logstatus(chan) && !channel_inactive(chan)) {    
@@ -361,10 +364,27 @@ static void log_chans()
 	bans++;
 	b = b->next;
       }
+      e = chan->channel.exempt;
+      exempts = 0;
+      while (e->exempt[0]) {
+	exempts++;
+	e = e->next;
+      }
+      i = chan->channel.invite;
+      invites = 0;
+      while (i->invite[0]) {
+	invites++;
+	i = i->next;
+      }
       putlog(LOG_MISC, chan->name, "%-10s: %d member%c (%d chop%s, %2d ba%s %s",
 	     chan->name, chan->channel.members, chan->channel.members == 1 ? ' ' : 's',
 	     chops, chops == 1 ? ")" : "s)", bans, bans == 1 ? "n" : "ns", me_op(chan) ? "" :
 	     "(not op'd)");
+      if ((net_type == 1) || (net_type ==4)) {
+	putlog(LOG_MISC, chan->name, "%-10s: %d exemptio%s, %d invit%s",
+	       chan->name, exempts,
+	       exempts == 1 ? "n" : "ns", invites, invites == 1 ? "e" : "es");
+      }
     }
     chan = chan->next;
   }
@@ -479,9 +499,12 @@ static void check_expired_chanstuff()
 	}
       }
     }
-    if (me_op(chan)) {
+    if (channel_dynamicbans(chan) && me_op(chan)) {
       for (e = chan->channel.exempt; e->exempt[0]; e = e->next) {
-	if ((exempt_time != 0) && (((now - e->timer) > (60 * exempt_time)))) {
+	if ((exempt_time != 0) && 
+	    (((now - e->timer) > (60 * exempt_time)) &&
+	     !u_sticky_exempt(chan->exempts, e->exempt) && 
+	     !u_sticky_exempt(global_exempts,e->exempt))) {
 	  putlog(LOG_MODES, chan->name,
 		 "(%s) Channel exemption on %s expired.",
 		 chan->name, e->exempt);
@@ -490,9 +513,12 @@ static void check_expired_chanstuff()
 	}
       }
     }
-    if (me_op(chan)) {
+     if (channel_dynamicbans(chan) && me_op(chan)) {
       for (inv = chan->channel.invite; inv->invite[0]; inv = inv->next) {
-	if ((invite_time != 0) && (((now - inv->timer) > (60 * invite_time)))) {
+	if ((invite_time != 0) &&
+	    (((now - inv->timer) > (60 * invite_time)) &&
+	     !u_sticky_invite(chan->invites, inv->invite) && 
+	     !u_sticky_invite(global_invites,inv->invite))) {
 	  putlog(LOG_MODES, chan->name,
 		 "(%s) Channel invitation on %s expired.",
 		 chan->name, inv->invite);

@@ -58,6 +58,7 @@ extern char origbotname[], botuser[], admin[], userfile[], ver[], notify_new[];
 extern char helpdir[], version[];
 extern int reserved_port, noshare, dcc_total, egg_numver, use_silence;
 extern int use_console_r, ignore_time, debug_output, gban_total, make_userfile;
+extern int gexempt_total, ginvite_total;
 extern int default_flags, require_p, max_dcc, share_greet, password_timeout;
 extern int min_dcc_port, max_dcc_port;	/* dw */
 extern int do_restart;
@@ -428,6 +429,11 @@ Function global_table[] =
   (Function) & max_dcc_port,
   (Function) rfc_casecmp,
   (Function) rfc_ncasecmp,
+ /* 220 - 223 */
+  (Function) &global_exempts,     /* struct exemptrec * */
+  (Function) &global_invites,      /* struct inviterec * */
+  (Function) &gexempt_total,      /* int */
+  (Function) &ginvite_total,      /* int */
   (Function) & H_event,
 };
 

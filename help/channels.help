@@ -7,6 +7,24 @@
    make it only visible within the bot. Bantime has to be expressed
    in days, hours and minutes.
 See also: bans, -ban, stick, unstick
+%{help=+exempt}%{+o|o}
+###  %b+exempt%b <hostmask> [channel] [%%exempttime <XdXhXm>] [comment]
+   Adds a ban exempt to the list of permanent exempts stored on the bot,
+   with optional comment and exempttime. This exempt will be in effect for
+   every channel on the bot if no channel is supplied, and is stored
+   with your nickname and comment.  Prefixing a comment with @ will
+   make it only visible within the bot. Exempttime has to be expressed
+   in days, hours and minutes.
+See also: exempts, -exempt, stick, unstick
+%{help=+invite}%{+o|o}
+###  %b+invite%b <hostmask> [channel] [%%invitetime <XdXhXm>] [comment]
+   Adds a invite to the list of permanent invites stored on the bot,
+   with optional comment and invitetime. This invite will be in effect for
+   every channel on the bot if no channel is supplied, and is stored
+   with your nickname and comment.  Prefixing a comment with @ will
+   make it only visible within the bot. invitetime has to be expressed
+   in days, hours and minutes.
+See also: invites, -invite, stick, unstick
 %{help=+chan}%{+n}
 ### %b+chan%b <channel>
      Lets you add another channel to the bot, this cause the bot to 
@@ -28,6 +46,20 @@ See also: chattr
    bot -- you may reference the ban by the number shown in '.bans'.
    
 See also: bans, +ban, stick, unstick
+%{help=-exempt}%{+o|o}
+###  %b-exempt%b <hostmask OR number>
+   Removes the exemption from the list of permanent exempts stored 
+   on the bot -- you may reference the exempt by the number shown in
+   '.exempts'.
+   
+See also: exempts, +exempt, stick, unstick
+%{help=-invite}%{+o|o}
+###  %b-invite%b <hostmask OR number>
+   Removes the invite from the list of permanent invites stored
+   on the bot -- you may reference the ban by the number shown in
+   '.invites'.
+   
+See also: invites, +invite, stick, unstick
 %{help=-chan}%{+n}
 ### %b-chan%b <channel>
      This removes ALL information about a channel from the bot. It's not
@@ -98,6 +130,93 @@ See also: chattr
    channel will be used instead of your current console channel.
    
 See also: -ban, +ban, console, set ban-time, stick, unstick
+%{help=invites}%{+o|o}
+###  %binvites%b [[channel] wildcard]
+###  %binvites%b all
+   Shows you a list of the global invites active on the current channel,
+   and the list of channel-specific invites, as well as any invites that
+   are on the channel but weren't placed by the bot.
+
+   Here's a sample entry;
+      [ 5] *!*habib@*frys.com (perm)
+           paulie: revolving check policy
+           Created 15:10
+   The number (5) can be used to reference the invite if you wish
+   to remove it (see '.-invite').  Next is the actual hostmask being
+   invitened.  The "(perm)" means that the invite is "permanent": that
+   is, it doesn't automatically expire.  If there is an elapsed time
+   showing instead, the time displayed is how long the invite has been
+   active.  Those kind of invites expire after one hour.  The second line
+   of the invite entry is the comment ("revolving check policy" -- it
+   would seem that paulie had to stand in line for a while) and who put
+   the invite there (paulie).  The last line shows when the invite was added,
+   and possibly the last time the invite was activated on the channel (if
+   it's different from the creation time).
+
+   Sometimes there will be a "!" or "*" right before the number.  a "!"
+   means the invite is in the bot's perminvite list, but is not currently on
+   the channel.  a "*" marks a invite which is NOT in the perminvite list but
+   IS on the channel.
+
+   Af you use 'invites' it will show you only the invites which are
+   currently in action on the channel.  If you use 'invites all' it
+   will show you every invite in memory (with 'perm-invites' on, these
+   are identical).
+
+   If you use 'invites <wildcard>' it will list all the invites (active
+   or not) that match against your wildcard.  Consider it a 'invites
+   all' list matched against your wildcard.
+
+   The invite list may change according to which channel you're
+   currently viewing in the console.  Different invites may be active
+   on different channels.  If you specify a channel name, that
+   channel will be used instead of your current console channel.
+   
+See also: -invite, +invite, console, set invite-time, stick, unstick
+%{help=exempts}%{+o|o}
+###  %bexempts%b [[channel] wildcard]
+###  %bexempts%b all
+   Shows you a list of the global ban exemptions active on the current 
+   channel, and the list of channel-specific ban exemptions, as well 
+   as any ban exemptions that are on the channel but weren't placed by
+   the bot.
+
+   Here's a sample entry;
+      [ 5] *!*habib@*frys.com (perm)
+           paulie: revolving check policy
+           Created 15:10
+   The number (5) can be used to reference the ban exemption if you wish
+   to remove it (see '.-exempt').  Next is the actual hostmask being
+   exempted. The "(perm)" means that the ban exemption is "permanent":
+   that is, it doesn't automatically expire.  If there is an elapsed time
+   showing instead, the time displayed is how long the ban exemption has
+   been active.  Those kind of ban exemptions expire after one hour.  The 
+   second line of the ban exemption entry is the comment ("revolving check
+   policy" -- it would seem that paulie had to stand in line for a while)
+   and who put the ban exemption there (paulie).  The last line shows when
+   the ban exemption was added, and possibly the last time the ban exemption
+   was activated on the channel (if it's different from the creation time).
+
+   Sometimes there will be a "!" or "*" right before the number.  a "!"
+   means the ban exemption is in the bot's permban exemption list, but is
+   not currently on the channel.  a "*" marks a ban exemption which is NOT
+   in the permban exemption list but IS on the channel.
+
+   Af you use 'exempts' it will show you only the ban exemptions which are
+   currently in action on the channel.  If you use 'ban exemptions all' it
+   will show you every ban exemption in memory (with 'perm-exempts' on,
+   these are identical).
+
+   If you use 'exempts <wildcard>' it will list all the ban exemptions 
+   (active or not) that match against your wildcard.  Consider it a 'exempts
+   all' list matched against your wildcard.
+
+   The ban exemption list may change according to which channel you're
+   currently viewing in the console.  Different ban exemptions may be active
+   on different channels.  If you specify a channel name, that
+   channel will be used instead of your current console channel.
+   
+See also: -exempt, +exempt, console, set exempt-time, stick, unstick
 %{help=chanload}%{+n|n}
 ###  %bchanload%b
      Reloads the channel settings from the file defined by the 
@@ -139,17 +258,17 @@ See also: info
 ###  %binfo%b [channel] none
    removes your info line.
 %{help=stick}%{+o|o}
-###  %bstick%b <hostmask OR number>
-   makes a ban "sticky" -- meaning the bot will always try to
-   keep the ban active on the channel, even if the channel is
-   using dynamic bans.  obviously if the channel isn't using
-   dynamic bans, this has no effect.
-see also: bans, unstick, +ban
+###  %bstick%b [ban/exempt/invite] <hostmask OR number>
+   makes a ban/exempt/invite "sticky" -- meaning the bot will
+   always try to keep it active on the channel, even if the 
+   channel is using dynamic bans.  obviously if the channel isn't
+   using dynamic bans, this has no effect.
+see also: bans, exempts, invites, unstick, +ban, +exempt, +invite
 %{help=unstick}%{+o|o}
-###  %bunstick%b <hostmask OR number>
-   turns a "sticky" ban normal again.
+###  %bunstick%b [ban/exempt/invite] <hostmask OR number>
+   turns a "sticky" ban/exempt/invite normal again.
    
-see also: bans, stick, -ban
+see also: bans, exempts, invites, stick, -ban, -exempt, -invite
 %{help=channels module}%{+n}
 ###  help on the %bchannels module%b
    The channels module provides the means for STORING channel
@@ -160,7 +279,8 @@ see also: bans, stick, -ban
 %{+o|o}
    for channel ops:
       %b+ban%b      %b-ban%b      %bbans%b      %bstick%b
-      %bunstick%b
+      %bunstick%b   %b+exempt%b   %b-exempt%b   %bexempts%b
+      %b+invite%b   %b-invite%b   %binvites%b
 %{+m|m}
    for channel masters:
       %b+chrec%b    %b-chrec%b    %bchaninfo%b  %bchinfo%b
@@ -171,6 +291,8 @@ see also: bans, stick, -ban
    for global owners:
       %b+chan%b     %b-chan%b
    Tcl variables for configuring the channels module:
-     %bshare-greet%b  %buse-info%b  %bban-time%b
-     %bchanfile%b
+     %bshare-greet%b  %buse-info%b    %bban-time%b
+     %bexempt-time%b  %binvite-time%b %bchanfile%b     
    (Use %b'.help set <variable>'%b for more info)
+
+
