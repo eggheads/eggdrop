@@ -3,11 +3,11 @@ AC_INIT(eggdrop.conf.dist)
 ac_default_prefix=\${HOME}/eggdrop
 AC_CONFIG_HEADER(config.h)
 
-echo ""
-echo "This is eggdrop's GNU configure script."
-echo "It's going to run a bunch of strange tests to hopefully make"
-echo "your compile work without much twiddling."
-echo ""
+AC_MSG_RESULT()
+AC_MSG_RESULT(This is eggdrop's GNU configure script.)
+AC_MSG_RESULT(It's going to run a bunch of strange tests to hopefully)
+AC_MSG_RESULT(make your compile work without much twiddling.)
+AC_MSG_RESULT()
 
 AC_PROG_MAKE_SET
 AC_PROG_CC
@@ -15,10 +15,13 @@ AC_PROG_CC
 dnl no cross-compiling!
 if test ! "x${cross_compiling}" = "xno"
 then
-  echo "" >&2
-  echo "This system does not appear to have a working C compiler." >&2
-  echo "A working C compiler is required to compile eggdrop." >&2
-  echo "" >&2
+  cat << 'EOF' >&2
+configure: error:
+
+  This system does not appear to have a working C compiler.
+  A working C compiler is required to compile eggdrop.
+
+EOF
   exit 1
 fi
 
@@ -35,19 +38,40 @@ AC_CHECK_PROG(UNAME,uname,uname)
 AC_PROG_AWK
 if test "x${AWK}" = "x"
 then
-  AC_MSG_ERROR(This system seems to lack a working 'awk' command.)
+  cat << 'EOF' >&2
+configure: error:
+
+  This system seems to lack a working 'awk' command.
+  A working 'awk' command is required to compile eggdrop.
+
+EOF
+  exit 1
 fi
 
 AC_CHECK_PROG(BASENAME,basename,basename)
 if test "x${BASENAME}" = "x"
 then
-  AC_MSG_ERROR(This system seems to lack a working 'basename' command.)
+  cat << 'EOF' >&2
+configure: error:
+
+  This system seems to lack a working 'basename' command.
+  A working 'basename' command is required to compile eggdrop.
+
+EOF
+  exit 1
 fi
 
 AC_CHECK_PROG(DIRNAME,dirname,dirname)
 if test "x${DIRNAME}" = "x"
 then
-  AC_MSG_ERROR(This system seems to lack a working 'dirname' command.)
+  cat << 'EOF' >&2
+configure: error:
+
+  This system seems to lack a working 'dirname' command.
+  A working 'dirname' command is required to compile eggdrop.
+
+EOF
+  exit 1
 fi
 
 AC_PROG_LN_S
@@ -58,7 +82,7 @@ ac_file1=beldin1
 ac_file2=beldin2
 ac_cp="cp -f $ac_file1 $ac_file2"
 
-cat > $ac_file1 <<EOF
+cat > $ac_file1 << 'EOF'
 Beldin is a llama.  :P
 EOF
 if { (eval echo configure: \"$ac_cp\") 1>&5; (eval $ac_cp) 2>&5; } && test -s $ac_file2
@@ -91,7 +115,7 @@ fi
 dnl test the os and set the module linking settings
 if test "x${STRIP}" = "x"
 then
-  STRIP="touch"
+  STRIP=touch
 fi
 IRIX=no
 LINUX=no
@@ -124,20 +148,23 @@ case $system in
       DEFAULT_MAKE=static
     else
       AC_MSG_RESULT(BSD/OS 3+! ok I spose)
-      BEL_MOD_CC="shlicc"
-      BEL_MOD_LD="shlicc"
+      BEL_MOD_CC=shlicc
+      BEL_MOD_LD=shlicc
       BEL_MOD_STRIP="${STRIP} -d"
       SHLIB_LD="shlicc -r"
-      SHLIB_STRIP="touch"
+      SHLIB_STRIP=touch
       AC_DEFINE(MODULES_OK)
     fi
     AC_CHECK_PROG(GMAKE,gmake,gmake)
     if test "x${GMAKE}" = "x"
     then
-      echo "" >&2
-      echo "Yoicks! you have BSD/OS & you dont have 'gmake', you may" >&2
-      echo "not be able to compile the bot successfully :(" >&2
-      echo "" >&2
+      cat << 'EOF' >&2
+configure: warning:
+
+  Yoicks! You have BSD/OS and you dont have 'gmake'.
+  You may not be able to compile the bot successfully :(
+
+EOF
     fi
     ;;
   *BSD)
@@ -153,8 +180,8 @@ case $system in
       SHLIB_LD="/usr/ccs/bin/ld -G -z text"
     else
       AC_MSG_RESULT(SunOS 4 :/)
-      SHLIB_LD="ld"
-      SHLIB_STRIP="touch"
+      SHLIB_LD=ld
+      SHLIB_STRIP=touch
     fi
     SHLIB_CC="${CC} -fPIC"
     BEL_MOD_CC="${CC} -fPIC"
@@ -171,14 +198,14 @@ case $system in
 	;;
       1.0|1.1|1.2)
 	AC_MSG_RESULT(pre 1.3)
-	SHLIB_LD='ld -R -export $@:'
+	SHLIB_LD="ld -R -export $@:"
 	AC_DEFINE(OSF1_HACKS)
 	AC_DEFINE(MODULES_OK)
 	;;
       1.*)
 	AC_MSG_RESULT(1.3+)
 	SHLIB_CFL="${CC} -fpic"
-	SHLIB_LD='ld -shared'
+	SHLIB_LD="ld -shared"
 	AC_DEFINE(OSF1_HACKS)
 	AC_DEFINE(MODULES_OK)
 	;;
@@ -207,7 +234,7 @@ case $system in
   IRIX|IRIX64)
     AC_MSG_RESULT(you are cursed with IRIX)
     IRIX=yes
-    STRIP=
+    SHLIB_STRIP=touch
     need_dl=0
     DEFAULT_MAKE=static
     ;;
@@ -271,46 +298,56 @@ AC_CHECK_FUNCS(dprintf bzero uname vsnprintf)
 
 if test "x${ac_cv_func_vsprintf}" = "xno"
 then
-  echo "" >&2
-  echo "Your system does not have the sprintf/vsprintf libraries." >&2
-  echo "These are required to compile almost anything.  Sorry." >&2
-  echo "" >&2
+  cat << 'EOF' >&2
+configure: error:
+
+  Your system does not have the sprintf/vsprintf libraries.
+  These are required to compile almost anything.  Sorry.
+
+EOF
   exit 1
 fi
 
 if test "x${ac_cv_header_stdc}" = "xno"
 then
-  echo "" >&2
-  echo "Your system must support ANSI C Header files." >&2
-  echo "These are required for the language support. Sorry." >&2
-  echo "" >&2
+  cat << 'EOF' >&2
+configure: error:
+
+  Your system must support ANSI C Header files.
+  These are required for the language support.  Sorry.
+
+EOF
   exit 1
 fi
 
 dnl check how much space is left in filedb (informational purposes)
 AC_MSG_CHECKING(space left in file database struct)
-cat > abacab.c <<'EOF'
+cat > abacab.c << 'EOF'
 #include <stdio.h>
 #include <sys/time.h>
 #include "src/mod/filesys.mod/files.h"
 main() {
-  fprintf(stderr, "%d/%d", 512-sizeof(struct filler), sizeof(filedb));
+  fprintf(stdout, "%d/%d", 512-sizeof(struct filler), sizeof(filedb));
 }
 EOF
 ${CC} -o abacab abacab.c
 FILEDB_SPACE=`./abacab`
 AC_MSG_RESULT($FILEDB_SPACE bytes)
 rm -f abacab abacab.o abacab.c
-echo "   (standard is currently 48/512 bytes)"
+AC_MSG_RESULT([   (standard is currently 48/512 bytes)])
 
 dnl where is tcl?  is it here?
 # ---------- begin robey's tcl thingies
 # (well, what used to be robey's tcl thingies...)
 
-tclnames="tcl tcl8.3 tcl83 tcl8.2 tcl82 tcl8.1 tcl81 \
+tclversions="8.3 8.2 8.1 8.0 7.6 7.5"
+
+tcllibnames="tcl tcl8.3 tcl83 tcl8.2 tcl82 tcl8.1 tcl81 \
 	tcl8.0 tcl80 tcl7.6 tcl76 tcl7.5 tcl75"
 
 tcllibextensions=".so .so.1 .so.1.0 .so.1.2 .a"
+
+tclheadernames="tcl.h"
 
 tcllibpaths="/usr/local/lib /usr/local/pkgs/tcl/lib \
 	/usr/lib /lib /usr/i486-linuxaout/lib \
@@ -319,208 +356,287 @@ tcllibpaths="/usr/local/lib /usr/local/pkgs/tcl/lib \
 tclheaderpaths="/usr/local/include /usr/local/pkgs/tcl/include \
 	/usr/include $HOME/include $HOME/tcl/include $HOME"
 
-# sanity checking to make sure either both or neither TCLLIB and TCLINC are set
-if test ! "x${TCLLIB}" = "x"
-then
-  if test "x${TCLINC}" = "x"
-  then
-    echo "" >&2
-    echo "Environment variable TCLLIB was set, but I did not detect TCLINC." >&2
-    echo "Please set both TCLLIB and TCLINC correctly if you wish to use them." >&2
-    echo "configure will now attempt to autodetect both libtcl and tcl.h..." >&2
-    echo "" >&2
-    unset TCLLIB
-  fi
-else
-  if test ! "x${TCLINC}" = "x"
-  then
-    echo "" >&2
-    echo "Environment variable TCLINC was set, but I did not detect TCLLIB." >&2
-    echo "Please set both TCLLIB and TCLINC correctly if you wish to use them." >&2
-    echo "configure will now attempt to autodetect both libtcl and tcl.h..." >&2
-    echo "" >&2
-    unset TCLINC
-  fi
-fi
-
 dnl oohh new configure --variables for those with multiple tcl libs
 AC_ARG_WITH(tcllib, [  --with-tcllib=PATH      full path to tcl library], tcllibname=$withval)
 AC_ARG_WITH(tclinc, [  --with-tclinc=PATH      full path to tcl header], tclincname=$withval)
 
-if test -r "$tcllibname"
+# make sure either both or neither $tcllibname and $tclincname are set
+if test ! "x${tcllibname}" = "x"
 then
-  TCLLIB=`$DIRNAME $tcllibname`
-  TCLLIBEXT=".`echo $tcllibname | $AWK '{j=split($1, i, "."); k=i[[j]]; print k}'`"
-  TCLLIBFN=`$BASENAME $tcllibname $TCLLIBEXT | cut -c4-`
-  echo "Using Tcl library: $TCLLIB/lib$TCLLIBFN$TCLLIBEXT"
-else
-
-  # look for libtcl: if TCLLIB is set, check there first
-  if test ! "x${TCLLIB}" = "x"
+  if test "x${tclincname}" = "x"
   then
-    for tcllibfn in $tclnames
+    cat << 'EOF' >&2
+configure: warning:
+
+  You must specify both --with-tcllib and --with-tclinc for them to work.
+  configure will now attempt to autodetect both the Tcl library and header...
+
+EOF
+    tcllibname=""
+    TCLLIB=""
+    TCLINC=""
+  fi
+else
+  if test ! "x${tclincname}" = "x"
+  then
+    cat << 'EOF' >&2
+configure: warning:
+
+  You must specify both --with-tcllib and --with-tclinc for them to work.
+  configure will now attempt to autodetect both the Tcl library and header...
+
+EOF
+    tclincname=""
+    TCLLIB=""
+    TCLINC=""
+  fi
+fi
+
+# make sure either both or neither $TCLLIB and $TCLINC are set
+if test ! "x${TCLLIB}" = "x"
+then
+  if test "x${TCLINC}" = "x"
+  then
+    cat << 'EOF' >&2
+configure: warning:
+
+  Environment variable TCLLIB was set, but I did not detect TCLINC.
+  Please set both TCLLIB and TCLINC correctly if you wish to use them.
+  configure will now attempt to autodetect both the Tcl library and header...
+
+EOF
+    TCLLIB=""
+  fi
+else
+  if test ! "x${TCLINC}" = "x"
+  then
+    cat << 'EOF' >&2
+configure: warning:
+
+  Environment variable TCLINC was set, but I did not detect TCLLIB.
+  Please set both TCLLIB and TCLINC correctly if you wish to use them.
+  configure will now attempt to autodetect both the Tcl library and header...
+
+EOF
+    TCLINC=""
+  fi
+fi
+
+# look for $TCLLIBFN: if $tcllibname is set, check there first
+if test ! "x${tcllibname}" = "x"
+then
+  if test -f "$tcllibname" && test -r "$tcllibname"
+  then
+    TCLLIB=`$DIRNAME $tcllibname`
+    TCLLIBEXT=".`echo $tcllibname | $AWK '{j=split($1, i, "."); k=i[[j]]; print k}'`"
+    TCLLIBFN=`$BASENAME $tcllibname $TCLLIBEXT | cut -c4-`
+  else
+    cat << 'EOF' >&2
+configure: warning:
+
+  The filename given to option --with-tcllib is not valid.
+  configure will now attempt to autodetect both the Tcl library and header...
+
+EOF
+    tclincname=""
+  fi
+fi
+
+# look for $TCLINCFN: if $tclincname is set, check there first
+if test ! "x${tclincname}" = "x"
+then
+  if test -f "$tclincname" && test -r "$tclincname"
+  then
+    TCLINC=`$DIRNAME $tclincname`
+    TCLINCFN=`$BASENAME $tclincname`
+  else
+    cat << 'EOF' >&2
+configure: warning:
+
+  The filename given to option --with-tclinc is not valid.
+  configure will now attempt to autodetect both the Tcl library and header...
+
+EOF
+    TCLLIB=""
+    TCLLIBFN=""
+  fi
+fi
+
+# look for $TCLLIBFN: if $TCLLIB is set, check there first
+if test ! "x${TCLLIB}" = "x"
+then
+  if test -d "${TCLLIB}"
+  then
+    for tcllibfn in $tcllibnames
     do
       for tcllibext in $tcllibextensions
       do
 	if test -r "$TCLLIB/lib$tcllibfn$tcllibext"
 	then
-	  if test "x${TCLLIBFN}" = "x"
-	  then
-	    TCLLIBFN=$tcllibfn
-	    TCLLIBEXT=$tcllibext
-	    break 2
-	  fi
+	  TCLLIBFN=$tcllibfn
+	  TCLLIBEXT=$tcllibext
+	  break 2
 	fi
       done
     done
-    if test "x${TCLLIBFN}" = "x"
-    then
-      echo "" >&2
-      echo "Environment variable TCLLIB was set, but incorrect." >&2
-      echo "Please set both TCLLIB and TCLINC correctly if you wish to use them." >&2
-      echo "configure will now attempt to autodetect both libtcl and tcl.h..." >&2
-      echo "" >&2
-      unset TCLLIB
-      unset TCLINC
-    fi
   fi
-
-  # check in common places now
-  AC_MSG_CHECKING(for libtcl)
-  if test ! "x${TCLLIB}" = "x"
+  if test "x${TCLLIBFN}" = "x"
   then
-    AC_MSG_RESULT(found in $TCLLIB/lib$TCLLIBFN$TCLLIBEXT)
-  else
-    for tcllibfn in $tclnames
+    cat << 'EOF' >&2
+configure: warning:
+
+  Environment variable TCLLIB was set, but incorrect.
+  Please set both TCLLIB and TCLINC correctly if you wish to use them.
+  configure will now attempt to autodetect both the Tcl library and header...
+
+EOF
+    TCLLIB=""
+    TCLLIBFN=""
+    TCLINC=""
+    TCLINCFN=""
+  fi
+fi
+
+# look for $TCLINCFN: if $TCLINC is set, check there first
+if test ! "x${TCLINC}" = "x"
+then
+  if test -d "${TCLINC}"
+  then
+    for tclheaderfn in $tclheadernames
     do
-      for tcllibext in $tcllibextensions
-      do
-	for tcllibpath in $tcllibpaths
-	do
-	  if test -r "$tcllibpath/lib$tcllibfn$tcllibext"
-	  then
-	    if test "x${TCLLIB}" = "x"
-	    then
-	      AC_MSG_RESULT(found in $tcllibpath/lib$tcllibfn$tcllibext)
-	      TCLLIB=$tcllibpath
-	      TCLLIBFN=$tcllibfn
-	      TCLLIBEXT=$tcllibext
-	      break 3
-	    fi
-	  fi
-	done
-      done
+      if test -r "$TCLINC/$tclheaderfn"
+      then
+	TCLINCFN=$tclheaderfn
+      fi
     done
   fi
+  if test "x${TCLINCFN}" = "x"
+  then
+    cat << 'EOF' >&2
+configure: warning:
 
-fi # test tcllibname
+  Environment variable TCLINC was set, but incorrect.
+  Please set both TCLLIB and TCLINC correctly if you wish to use them.
+  configure will now attempt to autodetect both the Tcl library and header...
 
-# give up if they don't even have that
-if test "x${TCLLIB}" = "x"
+EOF
+    TCLLIB=""
+    TCLLIBFN=""
+    TCLINC=""
+    TCLINCFN=""
+  fi
+fi
+
+AC_MSG_CHECKING(for Tcl library)
+
+# attempt autodetect for $TCLLIBFN if not set
+if test ! "x${TCLLIBFN}" = "x"
+then
+  AC_MSG_RESULT(using $TCLLIB/lib$TCLLIBFN$TCLLIBEXT)
+else
+  for tcllibfn in $tcllibnames
+  do
+    for tcllibext in $tcllibextensions
+    do
+      for tcllibpath in $tcllibpaths
+      do
+	if test -r "$tcllibpath/lib$tcllibfn$tcllibext"
+	then
+	  AC_MSG_RESULT(found $tcllibpath/lib$tcllibfn$tcllibext)
+	  TCLLIB=$tcllibpath
+	  TCLLIBFN=$tcllibfn
+	  TCLLIBEXT=$tcllibext
+	  break 3
+	fi
+      done
+    done
+  done
+fi
+
+# show if $TCLLIBFN wasn't found
+if test "x${TCLLIBFN}" = "x"
 then
   AC_MSG_RESULT(not found)
 fi
 
-# now look for pesky $TCLINCFN file
-if test -r "$tclincname"
+AC_MSG_CHECKING(for Tcl header)
+
+# attempt autodetect for $TCLINCFN if not set
+if test ! "x${TCLINCFN}" = "x"
 then
-  TCLINC=`$DIRNAME $tclincname`
-  TCLINCFN=`$BASENAME $tclincname`
-  echo "Using Tcl header: $TCLINC/$TCLINCFN"
+  AC_MSG_RESULT(using $TCLINC/$TCLINCFN)
 else
-
-  TCLINCFN=tcl.h
-
-  if test ! "x${TCLINC}" = "x"
-  then
-    if test ! -r "$TCLINC/$TCLINCFN"
-    then
-      echo "" >&2
-      echo "Environment variable TCLINC was set, but incorrect." >&2
-      echo "Please set both TCLLIB and TCLINC correctly if you wish to use them." >&2
-      echo "configure cannot safely continue now..." >&2
-      echo "" >&2
-      exit 1
-    fi
-  fi
-
-  # check in common places now
-  AC_MSG_CHECKING(for $TCLINCFN)
-  if test ! "x${TCLINC}" = "x"
-  then
-    AC_MSG_RESULT(found in $TCLINC/$TCLINCFN)
-  else
-    for headerpath in $tclheaderpaths
+  for headerpath in $tclheaderpaths
+  do
+    for tclheaderfn in $tclheadernames
     do
-      if test -r "$headerpath/$TCLINCFN"
+      if test -r "$headerpath/$tclheaderfn"
       then
-	if test "x${TCLINC}" = "x"
-	then
-	  AC_MSG_RESULT(found in $headerpath/$TCLINCFN)
-	  TCLINC=$headerpath
-	  break
-	fi
+	AC_MSG_RESULT(found $headerpath/$tclheaderfn)
+	TCLINC=$headerpath
+	TCLINCFN=$tclheaderfn
+	break 2
       fi
     done
-    if test "x${TCLINC}" = "x"
-    then
-      for tcllibfn in $tclnames
+  done
+  # FreeBSD hack ...
+  if test "x${TCLINCFN}" = "x"
+  then
+    for tclversion in $tclversions
+    do
+      for headerpath in $tclheaderpaths
       do
-	for headerpath in $tclheaderpaths
+	for tclheaderfn in $tclheadernames
 	do
-	  if test -r "$headerpath/$tcllibfn/$TCLINCFN"
+	  if test -r "$headerpath/tcl$tclversion/$tclheaderfn"
 	  then
-	    AC_MSG_RESULT(found in $headerpath/$TCLINCFN)
-	    TCLINC=$headerpath/$tcllibfn
-	    break 2
+	    AC_MSG_RESULT(found $headerpath/tcl$tclversion/$tclheaderfn)
+	    TCLINC=$headerpath/tcl$tclversion
+	    TCLINCFN=$tclheaderfn
+	    break 3
 	  fi
 	done
       done
-    fi
+    done
   fi
+fi
 
-  # had TCLLIB but not TCLINC?  so close... :(
-  if test "x${TCLINC}" = "x"
-  then
-    AC_MSG_RESULT(not found)
-    unset TCLLIB
-    unset TCLLIBFN
-    unset TCLLIBEXT
-  fi
-
-fi # test tclincname
-
-# done looking, now either TCLLIB & TCLINC are both set, or neither is set
-if test "x${TCLLIB}" = "x"
+# show if $TCLINCFN wasn't found
+if test "x${TCLINCFN}" = "x"
 then
-  echo "" >&2
-  echo "I can't find Tcl on this system." >&2
-  echo "" >&2
-  echo "Eggdrop now requires Tcl to compile.  If you already have Tcl" >&2
-  echo "installed on this system, and I just wasn't looking in the right" >&2
-  echo "place for it, set the environment variables TCLLIB and TCLINC so" >&2
-  echo "I will know where to find 'libtcl.a' (or 'libtcl.so') and 'tcl.h'" >&2
-  echo "(respectively).  Then run 'configure' again." >&2
-  echo "" >&2
-  echo "Read the README file if you don't know what Tcl is or how to get" >&2
-  echo "it and install it." >&2
-  echo "" >&2
+  AC_MSG_RESULT(not found)
+fi
+
+# done looking, now either TCLLIBFN & TCLINCFN are both set, or we bail
+if test "x${TCLLIBFN}" = "x" || test "x${TCLINCFN}" = "x"
+then
+  cat << 'EOF' >&2
+configure: error:
+
+  I can't find Tcl on this system.
+
+  Eggdrop now requires Tcl to compile.  If you already have Tcl
+  installed on this system, and I just wasn't looking in the right
+  place for it, set the environment variables TCLLIB and TCLINC so
+  I will know where to find 'libtcl.a' (or 'libtcl.so') and 'tcl.h'
+  (respectively).  Then run 'configure' again.
+
+  Read the README file if you don't know what Tcl is or how to get
+  it and install it.
+
+EOF
   exit 1
 else
 
   AC_MSG_CHECKING(for Tcl version)
 
-  for ver in $tclnames
+  for ver in $tclversions
   do
-    ver=`echo $ver | cut -c4-`
-    if test ! "x${ver}" = "x"
+    TCLFOUND=`grep TCL_VERSION $TCLINC/$TCLINCFN | grep $ver | wc -l`
+    if test ! $TCLFOUND = 0
     then
-      TCLFOUND=`grep TCL_VERSION $TCLINC/$TCLINCFN | grep $ver | wc -l`
-      if test ! $TCLFOUND = 0
-      then
-        TCLVER=$ver
-        break
-      fi
+      TCLVER=$ver
+      break
     fi
   done
 
@@ -536,20 +652,26 @@ else
     TCL_REQS="$TCLLIB/lib$TCLLIBFN$TCLLIBEXT"
     TCL_LIBS="-L$TCLLIB -l$TCLLIBFN -lm"
   else
-    echo "" >&2
-    echo "Your Tcl version is much too old for eggdrop to use." >&2
-    echo "I suggest you download and complie a more recent version." >&2
-    echo "The most reliable current version is 8.2.1" >&2
-    echo "" >&2
+    cat << 'EOF' >&2
+configure: error:
+
+  Your Tcl version is much too old for eggdrop to use.
+  I suggest you download and complie a more recent version.
+  The most reliable current version is 8.2.1
+
+EOF
     exit 1
   fi
 
   if test "x${TCLLIBEXT}" = "x.a"
   then
-    echo "" >&2
-    echo "Your libtcl is not a shared library." >&2
-    echo "configure will set default make type to static..." >&2
-    echo "" >&2
+    cat << 'EOF' >&2
+configure: warning:
+
+  Your libtcl is not a shared library.
+  configure will set default make type to static...
+
+EOF
     DEFAULT_MAKE=static
   fi
 
@@ -567,30 +689,44 @@ if test $need_dl = 1 && test "x${ac_cv_func_dlopen}" = "xno"
 then
   if test "$LINUX" = "yes"
   then
-    echo "Since you are on a Linux system, this has a known problem," >&2
+    cat << 'EOF' >&2
+configure: warning:
+
+  Since you are on a Linux system, this has a known problem,
+  I know a kludge for it,
+EOF
+
     if test -r "/lib/libdl.so.1"
     then
-      echo "and you seem to have it, I know a kludge for it," >&2
-      echo "so we'll do that..." >&2
-      echo "" >&2
+      cat << 'EOF' >&2
+  and you seem to have it, so we'll do that...
+
+EOF
       AC_DEFINE(HAVE_DLOPEN)
       LIBS="/lib/libdl.so.1 $LIBS"
-      got_dl=1
     else
-      echo "which you DONT seem to have... doh!" >&2
-      echo "perhaps you may still have the stuff lying around somewhere" >&2
-      echo "if you work out where it is, add it to your XLIBS= lines" >&2
-      echo "and #define HAVE_DLOPEN in config.h" >&2
-      echo "" >&2
-      echo "we'll proceed on anyway, but you probably won't be able" >&2
-      echo "to 'make eggdrop' but you might be able to make the" >&2
-      echo "static bot (I'll default your make to this version)." >&2
+      cat << 'EOF' >&2
+  which you DONT seem to have... doh!
+  perhaps you may still have the stuff lying around somewhere
+  if you work out where it is, add it to your XLIBS= lines
+  and #define HAVE_DLOPEN in config.h
+
+  we'll proceed on anyway, but you probably won't be able
+  to 'make eggdrop' but you might be able to make the
+  static bot (I'll default your make to this version).
+
+EOF
       DEFAULT_MAKE=static
     fi
   else
-    echo "You don't seem to have libdl anywhere I can find it, this will" >&2
-    echo "prevent you from doing dynamic modules, I'll set your default" >&2
-    echo "make to static linking." >&2
+    cat << 'EOF' >&2
+configure: warning:
+
+  You don't seem to have libdl anywhere I can find it, this will
+  prevent you from doing dynamic modules, I'll set your default
+  make to static linking.
+
+EOF
     DEFAULT_MAKE=static
   fi
 fi
@@ -621,13 +757,13 @@ AC_SUBST(DLFLAGS)
 AC_SUBST(DEFAULT_MAKE)
 AC_OUTPUT(Makefile lush.h)
 
-echo ""
-echo "Configure is done."
-echo ""
+AC_MSG_RESULT()
+AC_MSG_RESULT(Configure is done.)
+AC_MSG_RESULT()
 if test -f "./eggdrop"
 then
-  echo "Type 'make clean' and then 'make' to create the bot."
+  AC_MSG_RESULT(Type 'make clean' and then 'make' to create the bot.)
 else
-  echo "Type 'make' to create the bot."
+  AC_MSG_RESULT(Type 'make' to create the bot.)
 fi
-echo ""
+AC_MSG_RESULT()
