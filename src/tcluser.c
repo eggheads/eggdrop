@@ -2,7 +2,7 @@
  * tcluser.c -- handles:
  *   Tcl stubs for the user-record-oriented commands
  *
- * $Id: tcluser.c,v 1.24 2001/10/31 02:20:56 guppy Exp $
+ * $Id: tcluser.c,v 1.25 2001/10/31 15:22:48 poptix Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -190,7 +190,7 @@ static int tcl_botattr STDVAR
   } else {
     user.match = FR_BOT;
     chan = NULL;
-    chg = argv[2];
+    chg = NULL;
   }
   if (chan && !findchan_by_dname(chan)) {
     Tcl_AppendResult(irp, "no such channel", NULL);
@@ -226,8 +226,7 @@ static int tcl_matchattr STDVAR
   int ok = 0, f;
 
   BADARGS(3, 4, " handle flags ?channel?");
-  if ((u = get_user_by_handle(userlist, argv[1])) &&
-      ((argc == 3) || findchan_by_dname(argv[3]))) {
+  if ((u = get_user_by_handle(userlist, argv[1]))) {
     user.match = FR_GLOBAL | (argc == 4 ? FR_CHAN : 0) | FR_BOT;
     get_user_flagrec(u, &user, argv[3]);
     plus.match = user.match;
@@ -342,10 +341,10 @@ static int tcl_userlist STDVAR
   for (u = userlist; u; u = u->next) {
     if (argc >= 2) {
       user.match = FR_GLOBAL | FR_CHAN | FR_BOT | (argc == 3 ? 0 : FR_ANYWH);
-      if (argc == 2) 
-	      get_user_flagrec(u, &user, NULL);
-      else
+      if (argc == 3) 
 	      get_user_flagrec(u, &user, argv[2]);
+      else
+	      get_user_flagrec(u, &user, NULL);
 
       if (flagrec_eq(&plus, &user) && !(f && flagrec_eq(&minus, &user)))
 	ok = 1;
@@ -437,10 +436,10 @@ static int tcl_newignore STDVAR
   if (argc == 4)
      expire_time = now + (60 * ignore_time);
   else {
-    if (atol(argv[4]) == 0)
+    if (argc == 5 && atol(argv[4]) == 0)
       expire_time = 0L;
     else
-      expire_time = now + (60 * atol(argv[4]));
+      expire_time = now + (60 * atol(argv[4])); /* This is a potential crash. FIXME  -poptix */
   }
   addignore(ign, from, cmt, expire_time);
   return TCL_OK;
