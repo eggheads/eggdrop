@@ -6,7 +6,7 @@
  * Written by Fabian Knittel <fknittel@gmx.de>. Based on zlib examples
  * by Jean-loup Gailly and Miguel Albrecht.
  *
- * $Id: compress.c,v 1.11 2001/07/17 19:53:40 guppy Exp $
+ * $Id: compress.c,v 1.12 2001/11/28 23:10:39 guppy Exp $
  */
 /*
  * Copyright (C) 2000, 2001 Eggheads Development Team
@@ -342,13 +342,13 @@ static int uncompress_file(char *filename)
 
 static int uff_comp(int idx, char *filename)
 {
-  debug1("NOTE: Compressing user file for %s.", dcc[idx].nick);
+  debug1("Compressing user file for %s.", dcc[idx].nick);
   return compress_file(filename, compress_level);
 }
 
 static int uff_uncomp(int idx, char *filename)
 {
-  debug1("NOTE: Uncompressing user file from %s.", dcc[idx].nick);
+  debug1("Uncompressing user file from %s.", dcc[idx].nick);
   return uncompress_file(filename);
 }
 
