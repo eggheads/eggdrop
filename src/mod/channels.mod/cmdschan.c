@@ -2,7 +2,7 @@
  * cmdschan.c -- part of channels.mod
  *   commands from a user via dcc that cause server interaction
  *
- * $Id: cmdschan.c,v 1.49 2002/01/21 19:19:55 wcc Exp $
+ * $Id: cmdschan.c,v 1.50 2002/05/18 00:07:31 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -178,7 +178,7 @@ static void cmd_pls_exempt(struct userrec *u, int idx, char *par)
     dprintf(idx, "Usage: +exempt <hostmask> [channel] [%%<XdXhXm>] [reason]\n");
   } else {
     who = newsplit(&par);
-    if ((par[0] == '#') || (par[0] == '&') || (par[0] == '+'))
+    if (par[0] && strchr(CHANMETA, par[0]))
       chname = newsplit(&par);
     else
       chname = 0;
@@ -305,7 +305,7 @@ static void cmd_pls_invite(struct userrec *u, int idx, char *par)
     dprintf(idx, "Usage: +invite <hostmask> [channel] [%%<XdXhXm>] [reason]\n");
   } else {
     who = newsplit(&par);
-    if ((par[0] == '#') || (par[0] == '&') || (par[0] == '+'))
+    if (par[0] && strchr(CHANMETA, par[0]))
       chname = newsplit(&par);
     else
       chname = 0;
@@ -517,7 +517,7 @@ static void cmd_mns_exempt (struct userrec *u, int idx, char *par)
     return;
   }
   exempt = newsplit(&par);
-  if ((par[0] == '#') || (par[0] == '&') || (par[0] == '+'))
+  if (par[0] && strchr(CHANMETA, par[0]))
     chname = newsplit(&par);
   else
     chname = dcc[idx].u.chat->con_chan;
@@ -606,7 +606,7 @@ static void cmd_mns_invite (struct userrec *u, int idx, char *par)
     return;
   }
   invite = newsplit(&par);
-  if ((par[0] == '#') || (par[0] == '&') || (par[0] == '+'))
+  if (par[0] && strchr(CHANMETA, par[0]))
     chname = newsplit(&par);
   else
     chname = dcc[idx].u.chat->con_chan;
