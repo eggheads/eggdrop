@@ -66,7 +66,7 @@ extern int force_expire; /* Rufus */
 extern int do_restart;
 extern time_t now, online_since;
 extern struct chanset_t *chanset;
-int cmd_die(), xtra_kill(), xtra_unpack();	/* wtf ??? */
+int cmd_die(), xtra_kill(), xtra_unpack();
 static int module_rename(char *name, char *newname);
 
 #ifndef STATIC
