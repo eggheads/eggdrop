@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  * 
- * $Id: chan.c,v 1.55 2000/11/03 17:04:59 fabian Exp $
+ * $Id: chan.c,v 1.56 2000/11/05 10:30:25 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1494,7 +1494,7 @@ static int gotjoin(char *from, char *chname)
      * name now. This will happen when we initially join the channel, as we
      * dont know the unique channel name that the server has made up. <cybah>
      */  
-     int	l_chname = strlen(chname);
+    int	l_chname = strlen(chname);
 
     if (l_chname > (CHANNEL_ID_LEN + 1)) {
       ch_dname = nmalloc(l_chname + 1);
@@ -1502,6 +1502,24 @@ static int gotjoin(char *from, char *chname)
 	egg_snprintf(ch_dname, l_chname + 2, "!%s",
 		     chname + (CHANNEL_ID_LEN + 1));
 	chan = findchan_by_dname(ch_dname);
+	if (!chan) {
+	  /* Hmm.. okay. Maybe the admin's a genius and doesn't know the
+	   * difference between id and descriptive channel names. Search
+	   * the channel name in the dname list using the id-name.
+	   */
+	   chan = findchan_by_dname(chname);
+	   if (chan) {
+	     /* Duh, I was right. Mark this channel as inactive and log
+	      * the incident.
+	      */
+	     chan->status |= CHAN_INACTIVE;
+	     putlog(LOG_MISC, "*", "Deactivated channel %s, because it uses "
+		    "an ID channel-name. Use the descriptive name instead.",
+		    chname);
+	     dprintf(DP_SERVER, "PART %s\n", chname);
+	     goto exit;
+	   }
+	}
       }
     }
   } else if (!chan) {
