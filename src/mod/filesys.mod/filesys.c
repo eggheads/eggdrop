@@ -2,7 +2,7 @@
  * filesys.c -- part of filesys.mod
  *   main file of the filesys eggdrop module
  *
- * $Id: filesys.c,v 1.44 2001/09/24 04:25:40 guppy Exp $
+ * $Id: filesys.c,v 1.45 2001/10/09 10:55:07 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -873,8 +873,6 @@ static int filesys_DCC_CHAT(char *nick, char *from, char *handle,
       dcc[i].status = STAT_ECHO;
       dcc[i].timeval = now;
       dcc[i].u.file->chat = get_data_ptr(sizeof(struct chat_info));
-      egg_bzero(dcc[i].u.file->chat, sizeof(struct chat_info));
-
       strcpy(dcc[i].u.file->chat->con_chan, "*");
       dcc[i].user = u;
       putlog(LOG_MISC, "*", "DCC connection: CHAT(file) (%s!%s)", nick, from);

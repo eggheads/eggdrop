@@ -4,7 +4,7 @@
  *
  * Rewritten by Fabian Knittel <fknittel@gmx.de>
  *
- * $Id: filedb3.c,v 1.18 2001/04/12 02:39:46 guppy Exp $
+ * $Id: filedb3.c,v 1.19 2001/10/09 10:55:07 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -101,7 +101,7 @@ static filedb_entry *_malloc_fdbe(char *file, int line)
 {
   filedb_entry *fdbe = NULL;
 
-#ifdef EBUG_MEM
+#ifdef DEBUG_MEM
   /* This is a hack to access the nmalloc function with
    * special file and line information
    */
