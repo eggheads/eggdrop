@@ -1,7 +1,7 @@
 # userinfo.tcl v1.06 for Eggdrop 1.4.3 and higher
 #           Scott G. Taylor -- ButchBub!staylor@mrynet.com
 #
-# $Id: userinfo.tcl,v 1.4 2001/11/05 04:08:28 guppy Exp $
+# $Id: userinfo.tcl,v 1.5 2001/11/15 06:28:35 guppy Exp $
 #
 # v1.00      ButchBub     14 July      1997 -Original release.  Based on
 #                                            whois.tcl "URL" commands.
@@ -281,5 +281,5 @@ set userinfo_loaded 1
 
 # Announce that we've loaded the script.
 
-putlog "$userinfover by ButchBub, Beldin, Kirk, guppy, Ernst, Dude and TaKeDa \002loaded\002 for: ${userinfo-fields}."
+putlog "$userinfover loaded (${userinfo-fields})."
 putlog "use '.help userinfo' for commands."
