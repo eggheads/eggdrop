@@ -1,19 +1,19 @@
 BOTNET SHARING and LINKING v2.0			                  03 Jun 1999
 
 
-	
+
 INDEX
-	
+
 I	ABOUT THIS DOCUMENT
 II	TERMS USED
 III	WHAT IS A BOTNET FOR?
 IV	ADDING AND LINKING BOTS
 V	USING BOTFLAGS
 VI	MAKE TWO BOTS SHARE USER RECORD
-	
-	
-	
-	
+
+
+
+
 
 
 I. ABOUT THIS DOCUMENT
@@ -42,35 +42,65 @@ If applicable, there is also the associated command named.
 
 
  Hub
-  A bot is described as a hub-bot, if one or more leafs are linking
-  to him.
+  A bot is described as a hub-bot, if one or more bots are linked to
+  it.
 
 
  Leaf
-  A leaf is a bot connecting to an other bot.
+  A leaf is a non-hub bot connecting to another bot. A leaf has only
+  one other bot connected to it, its hub.  Leaf bots can be assigned
+  the "l" botattr flag to prevent other bots from linking to them.  
+
+
+ Link Bot
+  A link bot is a bot that is linked to another.  It may or may not be
+  a hubbot, with other bots linked to it besides its hub.
 
 
  Share
   The term used to describe two bots sharing user records.
 
 
+ Share Bots
+  Share bots is a term used to describe two or more bots sharing user
+  records.
+
+
  Aggressive Share
-  Term used to describe the method of sharing user-files. Aggressive
-  share bots will send user data to another bot.
+  Term used to describe the direction of sharing user-files.
+  Aggressive share bots will SEND userfiles to another passive bot.
 
 
  Passive Share
-  Term used to describe the method of sharing user-files. Passive
-  share bots will only receive users from an other bot.
+  Term used to describe the direction of sharing user-files.
+  Passive share bots will accept userfiles from an active/aggressive bot.
+
+
+Note:  With the eggdrop1.3.xx series, active/passive designations are
+relative, not absolute like the prior versions of eggdrop bots, like 1.1.5.
+A 1.3.xx bot may be both active and passive at the same time, in relation to
+other bots it is connected to.
+
+example bottree:
+
+superbot
+    |   
+    \+intermed
+         |
+         \+peonbot
+
+intermed has a master sharebot, superbot and a slave sharebot, peonbot.
+intermed is passive with [receives from] superbot while being aggressive
+with [sends to] peonbot at the same time. 
 
 
  Flags
-  Flags are attributes that determine what a bot can or is allowed
-  to do. Flags can be either global (+s) or channel specific (|+s #lamest).
+  Flags are attributes that determine what a bot can or is allowed to do.
+  Flags can be either global (+s) or channel specific (|+s #lamest).
   Botnet affecting flags are:
 
-  s   share (user records will be shared aggressively with this bot)
-  p   share (user records will be shared passively with this bot)
+  s   share (Aggressively SEND userfile to a passive bot (assigned +s flag))
+  p   share (Passively ACCEPT userfile from an agressive bot (assigned +p flag))
   g   global share (share all channels)
   h   hub (bot is auto-linked)
   a   alternate (bot is auto-linked if the hub bot can't be linked)
@@ -113,12 +143,19 @@ If applicable, there is also the associated command named.
 
 III. WHAT IS A BOTNET FOR?
 
-Basically a botnet is needed if you want to use more then one bot to protect
-your channel.
-Linked Bots can share user records (global or channel specific) between each
-other or perform script controlled tasks. Such a script can be get-ops (ops each
-bot in a botnet) or some kind of a prevent-flood stuff. Just take a look at /pub/eggdrop/scripts1.3 on ftp.eggheads.org and you'll find a lot of botnet
-scripts.
+Basically a botnet is useful if you want to use more then one bot to protect
+your channel.  Bots linked a botnet can perform script controlled tasks.
+Such a script can be get-ops (ops each bot in a botnet) or some kind of a
+prevent-flood stuff. Just take a look at /pub/eggdrop/scripts1.3 on
+ftp.eggheads.org and you'll find a lot of botnet scripts.
+
+Also, linked bots can share common user records (global or channel specific)
+between each other which helps reduce the time needed to maintain a
+complete, up to date user record database, needed if you operate your
+channels in a +bitch mode. However, a warning - such sharing, with current
+designs, may allow a user on one bot, even a slave bot to alter, change or
+manipulate the entire botnet userfiles and use the botnet to take control of
+your channel away from you.
 
 
 
@@ -153,16 +190,16 @@ Botflags are needed to assign special functions and tasks to your bots.
 
  "h" (hub)
   If you want your bots to auto-link after getting unlinked or started (due
-  to a crash or a server reboot) or started, you have to set +h on the bot
-  you want to link to an other.
+  to a crash or a server reboot), you have to assign the botattr +h to the 
+  bot you want the bot to link to.
   Note, you can assign +h only to one bot at a time!
 
   command: ".botattr <botname> +h"
 
 
  "a" (alternate)
-  If your leaf's are for some reason not able to link to your hub, they will
-  start to connect to an other "alternate-hub", which you can define by
+  If your bots are for some reason not able to link to their hub, they will
+  attempt to connect to an other "alternate-hub", which you can define by  
   setting "+a" on one bot.
   Note, you can assign +a only to one bot at a time!
 
@@ -170,8 +207,8 @@ Botflags are needed to assign special functions and tasks to your bots.
 
 
  "l" flag (leaf)
-  This flag assigned to another bot will cause your bot to unlink the other
-  one, if it tries to link any other bot.
+  This flag assigned to a link bot will cause your bot to unlink the leaf
+  one, if it allows any other bots to link to it.
 
   command: ".botattr <botname> +l"
 
@@ -197,12 +234,11 @@ Botflags are needed to assign special functions and tasks to your bots.
   command: ".botattr <botname> +(0-9)"
 
 
- "s" flag (share aggressively)
+ "s" flag (SEND userfile to bots assigned the +s flag)
    +s   If you set on BotA's console BotB +s then BotA will try to send his
         userfile (parts selected by |s and g flags) aggressively to BotB.
 
         command: ".botattr <botname> +s"
-
 
    |s   With this flag you can define channels, which you want your bots
         to share.
@@ -216,9 +252,9 @@ Botflags are needed to assign special functions and tasks to your bots.
         command: ".botattr <botname> |+s #lamest"
 
 
- "p" flag (share passively)
-  If you set this flag to another bot, your bot will accept changes to his
-  userfile by the other one (as much as you've allowed with |+s or +g)
+ "p" flag (ACCEPT userfile FROM bots assigned the +p flag)
+  If you assign this flag to another bot, your bot will accept userfiles
+  sent from the aggressive bot (as much as you've allowed with |+s or +g)
 
         command: ".botattr <botname> +p"
 
@@ -235,43 +271,81 @@ Botflags are needed to assign special functions and tasks to your bots.
 VI	MAKE TWO BOTS SHARE USER RECORDS
 
 Before you start preparing your bots for sharing, you have to make sure that
-you've loaded the transfer, share and filesys module into your bot (look
+you've loaded the transfer, share and filesys module into your bot (look  
 through the conf). You also have to ensure that the channel, which user records
-should be shared, is set +shared in the conf.
+should be shared, is set +shared.
 
-If you've fulfilled all the requirements mentioned above, you can start to
-prepare your bots.
-At first you have to decide which bot should share aggressively (BotA) and which
-will be passively (BotB) receive the user records. You should type this on your
-bots console (Note that you can't change botflags for a linked bot, you have to
-unlink it first):
+When you are adding bot attribute flags to yourbot for other bots to be
+linked, so that they will all share a common userfile, you cannot dictate
+how the other link bots will react by setting botattr flag for them in
+yourbot.  You can only control how you want yourbot to react to those bots
+when they link.
 
-On BotA:
-.botattr BotB +s
+By setting specific botattr flags, you can cause yourbot to be aggressive
+with some link bots and to be passive with other link bots.
 
-On BotB:
-.botattr BotA +p
+But remember, no botattr settings in yourbot have any control over how the
+other bots will react with yourbot.
 
-Next you have to decide if BotA should share every channel with BotB or if just
-one specific. If you want him to share the user record globally you have to type
-the following:
+For sharing to work, the flags must be cordinated with one bot agreeing to
+be passive and accept and the other link bot agreeing to send or share it's
+userfile.  No setting in yourbot can force another bot to accept files
+yourbot tries to send nor can any such flag force another bot to send or 
+share it userfile.  It has to be by mutual agreement to work.  Each bot has
+total control of it own userfile sending and receiving functions.
 
-On BotA:
-.botattr BotA +g
+Two primary botattr flags establish the pecking order, +s and +p, defining
+which bot, by mutual agreement, is to be the aggressive/active bot that
+sends the master userfile and which will bots will be passive and accept the
+shared userfile.
 
-On BotB:
-.botattr BotA +g
+Yourbot will send userfiles to any others set to botattr +s.
+Yourbot will accept userfiles from any bot set to botattr +p.
 
-If you don't want to share all channels with BotB but #lamest you have to set
-the following:
+Active/aggressive bots send userfiles to link bots with the +s botattr flag.
+If those bots have the botattr of such an active bot set to +p, then they
+will passively accept the aggressive sender's userfile.
 
-On BotA:
-.botattr BotA |s #lamest
+In yourbot, setting slavebot +s will not make slavebot accept yourbot's 
+userfile.  It will only make yourbot attempt to send your userfile to  
+slavebot if they link.
 
-On BotB:
-.botattr BotA |+s #lamest
+In yourbot, setting masterbot +p will not make masterbot send its userfile
+to yourbot.  The +p flag only gives masterbot permission to send yourbot a
+userfile, if masterbot chooses to send one.
 
-You can add as many channels in this way as you like.
+If you set slavebot +s, then yourbot will try to send slavebot your
+userfile, once a minute until a successful tranfer is made.  If slavebot has
+not given you write/send permission by adding the +p for yourbot, then   
+slavebot will refuse to accept yourbot's repeated offer to send.  Each and
+every minute you will see this message repeated on yourbot's console:
+
+<yourbot> [04:54] User file rejected by Slavebot: You are not marked for
+sharing with me.
+
+With these setting in yourbot:
+     masterbot +p  [yourbot will be passive with masterbot]
+     slavebot +s   [yourbot will be aggressive with slavebot]
+ 
+On connection to slavebot, slavebot does not ask yourbot to send it
+userfile.  Yourbot is aggressive in relation to slavebot and on linking,   
+yourbot automatically attempts to send its userfile to slavebot without any
+request and will try to do so every 60 seconds until slavebot accepts the
+userfile and a successful transfer is completed.
+
+On connection to masterbot, yourbot does not ask master to send.  If
+masterbot decides to send, yourbot gives permission and will accept any   
+userfile masterbot might send.
+
+If the flags in both bots do not make a +s+p pair, the bots will link but
+will not share.  If the +s+p pair is set properly, but the userfile transfer
+fails for some reason, the bots will unlink.  If with has a +h or +a hub
+flag set for the other, that bot will seek to relink and upon connection,
+another attempt to share will be made.  If sucessful, the bots will then
+stay linked and all will be well with the world.  :)
+
+
+  
 Note that by sharing user records, you also share automatically bans and
 ignores (globally or channel specific) with the other bot. Botflags are
 *not* shared.
@@ -280,5 +354,5 @@ ignores (globally or channel specific) with the other bot. Botflags are
 
 Hope that this document helped you in some way...
 
-Johoho@IRCNET
-comments: wodecki@gmx.de
+Johoho@IrcNET (johoho@venus.lagerfeuer.de)
+thanks to Dover for his sharing part!
