@@ -1,7 +1,7 @@
 /*
  * transfer.h -- part of transfer.mod
  *
- * $Id: transfer.h,v 1.15 2002/12/24 02:30:09 wcc Exp $
+ * $Id: transfer.h,v 1.16 2003/01/21 00:11:29 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -37,7 +37,7 @@ enum dccsend_types {
 /* 4 - 7 */
 #define DCC_FORK_SEND (*(struct dcc_table *)(transfer_funcs[4]))
 #define at_limit(a) (((int (*) (char *))transfer_funcs[5])(a))
-#define copy_to_tmp (*(int *)(transfer_funcs[6]))
+/* Was copy_to_tmp (moved to core) <Wcc[01/20/03]>. */
 #define fileq_cancel(a,b) (((void (*) (int,char *))transfer_funcs[7])(a,b))
 /* 8 - 11 */
 #define queue_file(a,b,c,d) (((void (*)(char *,char *,char *,char *))transfer_funcs[8])(a,b,c,d))

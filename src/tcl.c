@@ -4,7 +4,7 @@
  *   Tcl initialization
  *   getting and setting Tcl/eggdrop variables
  *
- * $Id: tcl.c,v 1.54 2002/12/24 02:30:05 wcc Exp $
+ * $Id: tcl.c,v 1.55 2003/01/21 00:11:29 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -48,50 +48,49 @@ typedef struct {
 
 
 extern time_t	online_since;
-extern int	backgrd, flood_telnet_thr, flood_telnet_time;
-extern int	shtime, share_greet, require_p, keep_all_logs;
-extern int	allow_new_telnets, stealth_telnets, use_telnet_banner;
-extern int	default_flags, conmask, switch_logfiles_at, connect_timeout;
-extern int	firewallport, notify_users_at, flood_thr, ignore_time;
-extern int	reserved_port_min, reserved_port_max;
-extern char	origbotname[], botuser[], motdfile[], admin[], userfile[],
-		firewall[], helpdir[], notify_new[], hostname[], myip[],
-		moddir[], tempdir[], owner[], network[], botnetnick[],
-		bannerfile[], egg_version[], natip[], configfile[],
-		logfile_suffix[], textdir[], pid_file[];
-extern int	die_on_sighup, die_on_sigterm, max_logs, max_logsize,
-		enable_simul, dcc_total, debug_output, identtimeout,
-		protect_telnet, dupwait_timeout, egg_numver, share_unlinks,
-		dcc_sanitycheck, sort_users, tands, resolve_timeout,
-		default_uflags, strict_host, userfile_perm;
-extern struct dcc_t	*dcc;
-extern tcl_timer_t	*timer, *utimer;
 
-int	    protect_readonly = 0;	/* turn on/off readonly protection */
-char	    whois_fields[1025] = "";	/* fields to display in a .whois */
-Tcl_Interp *interp;			/* eggdrop always uses the same
-					   interpreter */
-int	    dcc_flood_thr = 3;
-int	    use_invites = 0;		/* Jason/drummer */
-int	    use_exempts = 0;		/* Jason/drummer */
-int	    force_expire = 0;		/* Rufus */
-int	    remote_boots = 2;
-int	    allow_dk_cmds = 1;
-int	    must_be_owner = 1;
-int	    max_dcc = 20;		/* needs at least 4 or 5 just to
-					   get started. 20 should be enough   */
-int	    quick_logs = 0;		/* quick write logs? (flush them
-					   every min instead of every 5	      */
-int	    par_telnet_flood = 1;       /* trigger telnet flood for +f
-					   ppl? - dw			      */
-int	    quiet_save = 0;             /* quiet-save patch by Lucas	      */
-int	    strtot = 0;
-int 	    handlen = HANDLEN;
-int	    utftot = 0;
-int	    clientdata_stuff = 0;
+extern char origbotname[], botuser[], motdfile[], admin[], userfile[],
+            firewall[], helpdir[], notify_new[], hostname[], myip[], moddir[],
+            tempdir[], owner[], network[], botnetnick[], bannerfile[],
+            egg_version[], natip[], configfile[], logfile_suffix[], textdir[],
+            pid_file[];
+extern int  backgrd, flood_telnet_thr, flood_telnet_time, shtime, share_greet,
+            require_p, keep_all_logs,  allow_new_telnets, stealth_telnets,
+            use_telnet_banner, default_flags, conmask, switch_logfiles_at,
+            connect_timeout, firewallport, notify_users_at, flood_thr,
+            ignore_time, reserved_port_min, reserved_port_max, die_on_sighup,
+            die_on_sigterm, max_logs, max_logsize, enable_simul, dcc_total,
+            debug_output, identtimeout, protect_telnet, dupwait_timeout,
+            egg_numver, share_unlinks, dcc_sanitycheck, sort_users, tands,
+            resolve_timeout, default_uflags, strict_host, userfile_perm;
+	
+extern struct dcc_t *dcc;
+extern tcl_timer_t  *timer, *utimer;
+
+Tcl_Interp *interp;
+
+int  protect_readonly = 0;	/* turn on/off readonly protection */
+char whois_fields[1025] = "";
+
+int dcc_flood_thr = 3;
+int use_invites = 0;		/* Jason/drummer */
+int use_exempts = 0;		/* Jason/drummer */
+int force_expire = 0;		/* Rufus */
+int remote_boots = 2;
+int allow_dk_cmds = 1;
+int must_be_owner = 1;
+int copy_to_tmp = 1;
+int max_dcc = 20;
+int quick_logs = 0;
+int par_telnet_flood = 1;       /* dw */
+int quiet_save = 0;             /* Lucas */
+int strtot = 0;
+int handlen = HANDLEN;
+int utftot = 0;
+int clientdata_stuff = 0;
 
 
-/* Prototypes for tcl */
+/* Prototypes for Tcl */
 Tcl_Interp *Tcl_CreateInterp();
 
 int expmem_tcl()
@@ -489,8 +488,7 @@ static tcl_ints def_tcl_ints[] =
   {"hourly-updates",		&notify_users_at,	0},
   {"switch-logfiles-at",	&switch_logfiles_at,	0},
   {"connect-timeout",		&connect_timeout,	0},
-  {"reserved-port",		&reserved_port_min,		0},
-  /* booleans (really just ints) */
+  {"reserved-port",		&reserved_port_min,	0},
   {"require-p",			&require_p,		0},
   {"keep-all-logs",		&keep_all_logs,		0},
   {"open-telnets",		&allow_new_telnets,	0},
@@ -499,7 +497,6 @@ static tcl_ints def_tcl_ints[] =
   {"uptime",			(int *) &online_since,	2},
   {"console",			&conmask,		0},
   {"default-flags",		&default_flags,		0},
-  /* moved from eggdrop.h */
   {"numversion",		&egg_numver,		2},
   {"die-on-sighup",		&die_on_sighup,		1},
   {"die-on-sigterm",		&die_on_sigterm,	1},
@@ -520,20 +517,21 @@ static tcl_ints def_tcl_ints[] =
   {"resolve-timeout",		&resolve_timeout,	0},
   {"must-be-owner",		&must_be_owner,		1},
   {"paranoid-telnet-flood",	&par_telnet_flood,	0},
-  {"use-exempts",		&use_exempts,		0},			/* Jason/drummer */
-  {"use-invites",		&use_invites,		0},			/* Jason/drummer */
-  {"quiet-save",		&quiet_save,		0},			/* Lucas */
-  {"force-expire",		&force_expire,		0},			/* Rufus */
+  {"use-exempts",		&use_exempts,		0}, /* Jason/drummer */
+  {"use-invites",		&use_invites,		0}, /* Jason/drummer */
+  {"quiet-save",		&quiet_save,		0}, /* Lucas */
+  {"force-expire",		&force_expire,		0}, /* Rufus */
   {"dupwait-timeout",		&dupwait_timeout,	0},
-  {"strict-host",		&strict_host,		0}, 			/* drummer */
+  {"strict-host",		&strict_host,		0}, /* drummer */
   {"userfile-perm",		&userfile_perm,		0},
-  {NULL,			NULL,			0}	/* arthur2 */
+  {"copy-to-tmp",               &copy_to_tmp,		0},
+  {NULL,			NULL,			0}  /* arthur2 */
 };
 
 static tcl_coups def_tcl_coups[] =
 {
-  {"telnet-flood",	&flood_telnet_thr,	&flood_telnet_time},
-  {"reserved-portrange", &reserved_port_min, &reserved_port_max},
+  {"telnet-flood",	 &flood_telnet_thr,	&flood_telnet_time},
+  {"reserved-portrange", &reserved_port_min,	&reserved_port_max},
   {NULL,		NULL,			NULL}
 };
 

@@ -1,10 +1,13 @@
-$Id: UPDATES1.6,v 1.445 2003/01/20 08:51:19 wcc Exp $
+$Id: UPDATES1.6,v 1.446 2003/01/21 00:11:29 wcc Exp $
 
 Changes in Eggdrop: (since v1.6.0)
 ----------------------------------
 
 1.6.14
 Found by  Fixed by  What...
+          Wcc       files copied to /tmp from file transfers are now deleted
+                    if the transfer connection is killed (makes resends and
+                    resumes function correctly)
 BarkerJr  Wcc       ignores are now saved if channels.mod is not loaded
 fbs       fbs/      open file descriptors are now closed when the killdcc Tcl
           Wcc       command is used on a transfer socket

@@ -1,7 +1,7 @@
 /*
  * transfer.c -- part of transfer.mod
  *
- * $Id: transfer.c,v 1.56 2002/12/27 20:27:40 wcc Exp $
+ * $Id: transfer.c,v 1.57 2003/01/21 00:11:29 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -44,14 +44,13 @@
 
 static Function *global = NULL;
 
-static int copy_to_tmp = 1;	/* Copy files to /tmp before transmitting? */
-static int wait_dcc_xfer = 300;	/* Timeout time on DCC xfers */
 static p_tcl_bind_list H_rcvd, H_sent, H_lost, H_tout;
-static int dcc_limit = 3;	/* Maximum number of simultaneous file
-				   downloads allowed */
+
+static int wait_dcc_xfer = 300;	/* Timeout time on DCC xfers */
+static int dcc_limit = 3;	/* Max simultaneous downloads allowed */
 static int dcc_block = 0;	/* Size of one dcc block */
-static int quiet_reject;        /* Quietly reject dcc chat or sends from
-                                   users without access? */
+static int quiet_reject;        /* Quietly reject dcc chat or sends from users
+				   without access? */
 
 /*
  * Prototypes
@@ -1516,7 +1515,6 @@ static tcl_ints myints[] =
 {
   {"max-dloads",	&dcc_limit},
   {"dcc-block",		&dcc_block},
-  {"copy-to-tmp",	&copy_to_tmp},
   {"xfer-timeout",	&wait_dcc_xfer},
   {NULL,		NULL}
 };
@@ -1942,7 +1940,7 @@ static Function transfer_table[] =
   /* 4- 7 */
   (Function) & DCC_FORK_SEND,		/* struct dcc_table		*/
   (Function) at_limit,
-  (Function) & copy_to_tmp,		/* int				*/
+  (Function) 0,				/* Was copy_to_tmp <Wcc[01/20/03]>. */
   (Function) fileq_cancel,
   /* 8 - 11 */
   (Function) queue_file,

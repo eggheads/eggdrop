@@ -6,7 +6,7 @@
  *   memory management for dcc structures
  *   timeout checking for dcc connections
  *
- * $Id: dccutil.c,v 1.43 2003/01/20 08:54:54 wcc Exp $
+ * $Id: dccutil.c,v 1.44 2003/01/21 00:11:29 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -258,9 +258,24 @@ void dcc_chatter(int idx)
 /* Closes an open FD for transfer sockets. */
 void killtransfer(int n)
 {
-  if ((dcc[n].u.xfer->f) && (dcc[n].type->flags & DCT_FILETRAN)) {
-    fclose(dcc[n].u.xfer->f);
-    dcc[n].u.xfer->f = NULL;
+  int i, ok = 1;
+
+  if (dcc[n].type->flags & DCT_FILETRAN) {
+    if (dcc[n].u.xfer->f) {
+      fclose(dcc[n].u.xfer->f);
+      dcc[n].u.xfer->f = NULL;
+    }
+    if (dcc[n].u.xfer->filename) {
+      for (i = 0; i < dcc_total; i++) {
+        if ((i != n) && (dcc[i].type->flags & DCT_FILETRAN) &&
+            (dcc[i].u.xfer->filename) &&
+            (!strcmp(dcc[i].u.xfer->filename, dcc[n].u.xfer->filename))) {
+          ok = 0;
+          break;
+        }
+      }
+      if (ok) unlink(dcc[n].u.xfer->filename);
+    }
   }
 }
 

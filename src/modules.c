@@ -4,7 +4,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: modules.c,v 1.73 2003/01/20 08:51:19 wcc Exp $
+ * $Id: modules.c,v 1.74 2003/01/21 00:11:29 wcc Exp $
  */
 /* 
  * Copyright (C) 1997 Robey Pointer
@@ -65,25 +65,25 @@ extern struct dcc_t	*dcc;
 
 #include "users.h"
 
-extern Tcl_Interp	*interp;
-extern struct userrec	*userlist, *lastuser;
-extern char		 tempdir[], botnetnick[], botname[], natip[],
-			 hostname[], origbotname[], botuser[], admin[],
-			 userfile[], ver[], notify_new[], helpdir[],
-			 version[], quit_msg[];
-extern int	 noshare, dcc_total, egg_numver, userfile_perm,
-			 use_console_r, ignore_time, must_be_owner,
-			 debug_output, make_userfile, default_flags,
-			 require_p, max_dcc, share_greet, password_timeout,
-			 use_invites, use_exempts, force_expire, do_restart,
-			 protect_readonly, reserved_port_min, reserved_port_max;
-extern time_t now, online_since;
-extern struct chanset_t *chanset;
-extern tand_t *tandbot;
-extern party_t *party;
-extern int parties;
-extern sock_list        *socklist;
 
+extern struct userrec   *userlist, *lastuser;
+extern struct chanset_t *chanset;
+
+extern char tempdir[], botnetnick[], botname[], natip[], hostname[],
+            origbotname[], botuser[], admin[], userfile[], ver[], notify_new[],
+            helpdir[], version[], quit_msg[];
+extern int  parties, noshare, dcc_total, egg_numver, userfile_perm, do_restart,
+            use_console_r, ignore_time, must_be_owner, debug_output, max_dcc,
+            make_userfile, default_flags, require_p, share_greet, use_invites,
+            password_timeout, use_exempts, force_expire, protect_readonly,
+            reserved_port_min, reserved_port_max, copy_to_tmp;
+
+extern party_t *party;
+extern time_t  now, online_since;
+extern tand_t  *tandbot;
+
+extern Tcl_Interp *interp;
+extern sock_list  *socklist;
 
 int cmd_die();
 int xtra_kill();
@@ -539,7 +539,7 @@ Function global_table[] =
   (Function) quit_msg,		/* char *				*/
   (Function) module_load,
   (Function) module_unload,
-  (Function) & parties,	/* int					*/
+  (Function) & parties, 	/* int					*/
   /* 276 - 279 */
   (Function) tell_bottree,
   (Function) MD5_Init,
@@ -548,7 +548,8 @@ Function global_table[] =
   /* 280 - 283 */
   (Function) _wild_match_per,
   (Function) killtransfer,
-  (Function) write_ignores
+  (Function) write_ignores,
+  (Function) & copy_to_tmp	/* int					*/
 };
 
 void init_modules(void)
