@@ -2,7 +2,7 @@
  * chancmds.c -- part of irc.mod
  *   handles commands direclty relating to channel interaction
  * 
- * $Id: cmdsirc.c,v 1.14 2000/06/20 20:49:46 fabian Exp $
+ * $Id: cmdsirc.c,v 1.15 2000/06/20 20:54:00 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -87,10 +87,10 @@ static void cmd_msg(struct userrec *u, int idx, char *par)
 {
   char *nick;
 
+  nick = newsplit(&par);
   if (!par[0]) {
     dprintf(idx, "Usage: msg <nick> <message>\n");
   } else {
-    nick = newsplit(&par);
     putlog(LOG_CMDS, "*", "#%s# msg %s %s", dcc[idx].nick, nick, par);
     dprintf(DP_HELP, "PRIVMSG %s :%s\n", nick, par);
     dprintf(idx, "Msg to %s: %s\n", nick, par);
