@@ -744,7 +744,7 @@ int add_note(char *to, char *from, char *msg, int idx, int echo)
     *p = '@';
     p++;
     if (!strcasecmp(p, botnetnick))	/* to me?? */
-      return add_note(x, from, msg, idx, echo);		/* start over, dimwit. */
+      return add_note(x, from, msg, idx, echo); /* start over, dimwit. */
     if (strcasecmp(from, botnetnick)) {
       if (strlen(from) > 40)
 	from[40] = 0;
@@ -794,6 +794,11 @@ int add_note(char *to, char *from, char *msg, int idx, int echo)
   if (is_bot(u)) {
     if (idx >= 0)
       dprintf(idx, BOT_NONOTES);
+    return NOTE_ERROR;
+  }
+  if (match_note_ignore(u, from)) {
+    if (idx >= 0)
+      dprintf(idx, "%s doesn't want notes from you. Go away.\n", u->handle);
     return NOTE_ERROR;
   }
   status = NOTE_STORED;

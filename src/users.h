@@ -217,4 +217,7 @@ void def_display(int idx, struct user_entry *e);
 int def_dupuser(struct userrec *new, struct userrec *old,
 		struct user_entry *e);
 
+/* key name in the XTRA list for note ignore masks */
+#define NOTES_IGNKEY "NOTESIGNORE"
+
 #endif

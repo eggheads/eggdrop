@@ -104,12 +104,12 @@ void init_bind()
   H_act = add_bind_table("act", HT_STACKABLE, builtin_chat);
   context;
   H_event = add_bind_table("evnt", HT_STACKABLE, builtin_char);
-  add_builtins(H_dcc, C_dcc, 65);
+  add_builtins(H_dcc, C_dcc, 68);
 }
 
 void kill_bind()
 {
-  rem_builtins(H_dcc, C_dcc, 65);
+  rem_builtins(H_dcc, C_dcc, 68);
   while (bind_table_list) {
     del_bind_table(bind_table_list);
   }

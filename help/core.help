@@ -34,7 +34,8 @@ For masters:
 %{+m}
 %b  +user        +ignore      comment      binds        ignores%b
 %b  -user        -ignore      dccstat      debug        banner%b
-%b  rehash       restart      uptime       clearqueue%b
+%b  rehash       restart      uptime       clearqueue   +noteign%b
+%b  -noteign     noteigns%b
 %{+n}
 For owners:
 %b  die          simul        module       loadmod      unloadmod%b
@@ -164,6 +165,22 @@ telnet-flood
 %{end}
    use %b'.help set <variable>'%b for more info on each variable.
 %{+n}
+%{help=+noteign}
+###  %b+noteign%b%{+m} [user]%{-} <ignoremask>
+   Add a new ignore to the user's note ignore list.
+
+See also: -noteign noteigns
+%{help=-noteign}
+###  %b-noteign%b%{+m} [user]%{-} <ignoremask>
+   Remove an existing ignore from the user's note ignore list.
+
+See also: +noteign noteigns
+%{help=noteigns}
+###  %bnoteigns%b%{+m} [user]%{-}
+   List all note ignores. All notes sent from users who match one of the
+   ignore masks will be rejected.
+
+See also: +noteign -noteign
 %{help=all}
 ###  %bcore%b commands
 %b  who          away         quit         whom         me%b
@@ -182,7 +199,8 @@ For masters:
 %{+m}
 %b  +user        +ignore      comment      binds        ignores%b
 %b  -user        -ignore      dccstat      debug        banner%b
-%b  rehash       restart      uptime       clearqueue%b
+%b  rehash       restart      uptime       clearqueue   +noteign%b
+%b  -noteign     noteigns%b
 %{+n}
 For owners:
 %b  die          simul        module       loadmod      unloadmod%b

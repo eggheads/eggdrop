@@ -240,6 +240,10 @@ int write_user(struct userrec *u, FILE * f, int shr);
 void write_userfile(int);
 struct userrec *check_dcclist_hand(char *);
 void touch_laston(struct userrec *, char *, time_t);
+int get_note_ignores(struct userrec *, char ***);
+int add_note_ignore(struct userrec *, char *);
+int del_note_ignore(struct userrec *, char *);
+int match_note_ignore(struct userrec *, char *);
 
 /* users.c */
 void addignore(char *, char *, char *, time_t);
