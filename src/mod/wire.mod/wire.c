@@ -15,7 +15,7 @@
  * 1.4       1997-11-25      1.2.2.0         Added language addition  Kirk
  * 1.5       1998-07-12      1.3.0.0         Fixed ;me and updated    BB
  * 
- * $Id: wire.c,v 1.10 2000/01/08 21:23:17 per Exp $
+ * $Id: wire.c,v 1.11 2000/01/11 13:43:11 per Exp $
  */
 /* 
  * Copyright (C) 1999, 2000  Eggheads
@@ -71,9 +71,9 @@ static int wire_expmem()
 
   Context;
   while (w) {
-    size += sizeof(wirelist);
-    size += strlen(w->crypt);
-    size += strlen(w->key);
+    size += sizeof(wire_list);
+    size += strlen(w->crypt) + 1;
+    size += strlen(w->key) + 1;
     w = w->next;
   }
   return size;
@@ -212,9 +212,9 @@ static int cmd_wirelist(struct userrec *u, int idx, char *par)
   int entry = 0;
 
   Context;
-  dprintf(idx, "Current Wire table:  (Base table address = %U)\n", w);
+  dprintf(idx, "Current Wire table:  (Base table address = %p)\n", w);
   while (w) {
-    dprintf(idx, "entry %d: w=%U  idx=%d  sock=%d  next=%U\n",
+    dprintf(idx, "entry %d: w=%p  idx=%d  sock=%d  next=%p\n",
 	    ++entry, w, findanyidx(w->sock), w->sock, w->next);
     w = w->next;
   }
@@ -431,7 +431,7 @@ static void wire_leave(int sock)
   while (w2) {
     if (w2->sock != sock && !strcmp(w2->key, w->key)) {
       dprintf(findanyidx(w2->sock), "----- %s %s\n",
-	      dcc[findanyidx(w2->sock)].nick, WIRE_LEFT);
+	      dcc[findanyidx(w->sock)].nick, WIRE_LEFT);
     }
     w2 = w2->next;
   }
