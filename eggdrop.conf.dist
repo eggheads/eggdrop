@@ -736,7 +736,8 @@ set double-help 0
 #set use-silence 1
 
 # [0/1] some nets use umode +r to mean a restricted connection. If this is your
-# case, then set it to 1
+# case, and you want your bot to leave restricted servers and jump to the
+# next one on his server list, then set it to 1.
 # Automatically set to 0 for net-type 0/2/3/4, set to 1 for net-type 1.
 # Only use this if you set net-type 5
 #set check-mode-r 1
