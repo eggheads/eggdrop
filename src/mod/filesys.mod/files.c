@@ -2,7 +2,7 @@
  * files.c - part of filesys.mod
  *   handles all file system commands
  * 
- * $Id: files.c,v 1.20 2000/03/23 23:17:57 fabian Exp $
+ * $Id: files.c,v 1.21 2000/04/25 20:53:55 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -399,8 +399,11 @@ static void files_ls(int idx, char *par, int showall)
   } else {
     putlog(LOG_FILES, "*", "files: #%s# ls", dcc[idx].nick);
     fdb = filedb_open(dcc[idx].u.file->dir, 0);
-    filedb_ls(fdb, idx, "*", showall);
-    filedb_close(fdb);
+    if (fdb) {
+      filedb_ls(fdb, idx, "*", showall);
+      filedb_close(fdb);
+    } else
+      dprintf(idx, FILES_ILLDIR);
   }
   Context;
 }
