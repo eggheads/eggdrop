@@ -1,0 +1,47 @@
+%{help=set files-path}%{+n}
+###  %bset files-path%b <path>
+   specifies where the bot's dcc file directory is.  if you don't
+   want a file transfer section on your bot, define this as "".
+   otherwise, the directory given will be the root directory for
+   users in the file section.  they may move into any subdirectory
+   and download any file you make visible, but may never move out
+   past the files-path directory.
+see also: set incoming-path
+%{help=set incoming-path}%{+n}
+###  %bset incoming-path%b <path>
+   specifies the directory where files dcc'd to the bot will go.
+   if you have turned off the file section by setting %b'files-path'%b
+   to "", then this has no effect since all files offered by dcc
+   to the bot will be rejected anyway.  if you have set the
+   %b'upload-to-pwd'%b to 1, then this will be ignored, and all files
+   uploaded (sent) to the bot will go into whichever directory
+   the user is in currently, or was in last.
+see also: set files-path, set upload-to-pwd
+%{help=set filedb-path}%{+n}
+###  %bset filedb-path%b <path>
+   specifies where database files for the file system should go.
+   (this only matters if your bot has a file system.)  if this
+   is left blank, a hidden file is created in each subdirectory
+   of the file system.  if you set a filedb-path, though, the
+   bot will store all the file system database files in the path
+   you specify.  this is useful if you only have read access to
+   the files-path, or just don't want hidden files lurking around.
+see also: set files-path
+%{help=set max-filesize}%{+n}
+###  %bset max-filesize%b <#>
+   specifies the maximum allowable size (in kilobytes) of a file that
+   the bot will accept in a dcc send.  the default is 1024, which is
+   1 meg.
+see also: set max-dloads, set max-file-users
+%{help=set max-file-users}%{+n}
+###  %bset max-file-users%b <#>
+   specifies the maximum number of people to allow in the bot's
+   file system at one time.  this can be used to keep your file
+   system from being abused if you offer a lot of files.
+see also: set max-dloads, set max-filesize
+%{help=set upload-to-pwd}%{+n}
+###  %bset upload-to-pwd%b <0/1>
+   specifies whether uploads to the bot's file area go to the
+   user's current directory (1), or to the directory specified
+   in %b'incoming-path'%b (0).
+see also: set incoming-path

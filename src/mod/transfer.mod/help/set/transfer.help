@@ -1,0 +1,38 @@
+%{help=set max-dloads}%{+n}
+###  %bset max-dloads%b <#>
+   specifies the maximum number of downloads (dcc gets) a user can
+   have going at once.  to effectively disable this, set it to 99.
+   the default is 3.  when a user reaches this limit, she will be
+   unable to 'get' any more files from the file area until either
+   the current transfers complete, or any pending transfers event-
+   ually timeout.
+%{help=set dcc-block}%{+n}
+###  %bset dcc-block%b <#>
+   Specifies the block size to use in DCC file transfers.  The ircII
+   client defaults to 512, but admits that it may be too small.  Most
+   toolboxes set it to 1024.
+
+   You can set this to 0, which turns on "turbo dcc".  In turbo dcc
+   mode, the bot will dump transfers as fast as possible, only stopping
+   to count acks after it's finished.  This can dramatically improve
+   the speed of file transfers, and is recommended.
+%{help=set copy-to-tmp}%{+n}
+###  %bset copy-to-tmp%b <0/1>
+   sets whether files will be copied into your /tmp directory
+   before they are sent to users who download them from the file
+   system.  turning this on protects ongoing transfers from being
+   affected by people moving files around in the file system, but
+   if you're short of disk space or using a slow disk (** NFS **),
+   you should probably turn this off.
+%{help=set xfer-timeout}%{+n}
+###  %bset xfer-timeout%b <#>
+   sets the number of seconds to wait before a dcc send/get is
+   considered to have timeout, if no traffic occurs on the transfer
+   for the given time, it closes.
+%{help=transfer module}%{+n}
+###  help on the %btransfer module%b
+   This module provides support for file transfers by the bot, it's
+   used by both the share and filesys modules.
+   The following tcl settings are avalible, and more info is
+   provide by %b'.help set <variable>'%b
+     %bxfer-timeout%b  %bcopy-to-tmp%b  %bdcc-block%b  %bmax-dloads%b

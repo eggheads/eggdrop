@@ -1,0 +1,11 @@
+%{help=seen}
+###  %bseen%b <handle>
+   Returns the last time <handle> was seen by the bot. 
+%{help=seen module}
+###  help for the %bseen module%b
+   This module provides the classic %b'seen'%b command, which
+   returns the last time a user was seen by the bot, both
+   dcc & msg commands are provided.
+%{help=all}
+###  commands for the %bseen module%b
+  %bseen%b

@@ -1,0 +1,23 @@
+%{help=ctcp module}%{+n}
+###  help on the %bctcp module%b
+   This module provides all the normal ctcp replies for the bot,
+   including handling of dcc chat. The following settings allow
+   you to configure it:
+      %bctcp-finger%b  %bctcp-userinfo%b  %bctcp-version%b
+   (use %b'.help set <variable>'%b for more info)
+%{help=set ctcp-finger}%{+n}
+###  %bset ctcp-finger%b <text>
+   specifies the response to send to a CTCP FINGER request.  one
+   example is:
+      Robey (robey@wc130), idle 0 seconds
+see also: set ctcp-version, set ctcp-userinfo
+%{help=set ctcp-userinfo}%{+n}
+###  %bset ctcp-userinfo%b <text>
+   specifies the response to send to a CTCP USERINFO request.
+see also: set ctcp-version, set ctcp-finger
+%{help=set ctcp-version}%{+n}
+###  %bset ctcp-version%b <text>
+   specifies the response to send to a CTCP VERSION request.  one
+   example is:
+      ircII 2.8 Linux 1.2.4 :ircii 2.6: almost there...
+see also: set ctcp-finger, set ctcp-userinfo

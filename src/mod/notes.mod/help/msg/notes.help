@@ -1,0 +1,16 @@
+%{help=notes}
+You must use your password for any NOTES command.
+%b/MSG%b %B %bNOTES%b <password> %bINDEX%b
+   This lists all the notes stored up for you.
+%b/MSG%b %B %bNOTES%b <password> %bREAD%b <# or ALL>
+   This will display some notes for you, or, if you used
+   'READ ALL', it will show you every note stored for you.
+   # may be numbers and/or intervals separated by semicolon.
+     ex: notes read 2-4;8;16-
+%b/MSG%b %B %bNOTES%b <password> %bERASE%b <# or ALL>
+   This works like READ, except it erases whichever note you
+   tell it to (or all of them).
+%b/MSG%b %B %bNOTES%b <password> %bTO%b <nickname> <message...>
+   This stores a note to someone, as long as I know him or
+   her.  They will be informed of a note waiting for them
+   the next time they join the channel.

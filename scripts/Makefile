@@ -1,0 +1,57 @@
+# Makefile for scripts/
+
+SCRIPTS = action.fix.tcl alltools.tcl compat.tcl getops-2.2d.tcl \
+	klined.tcl notes2.tcl ques5.tcl sentinel1.54.tcl userinfo1.0.tcl
+
+EXESCRIPTS = autobotchk botchk weed
+
+all: $(SCRIPTS) $(EXESCRIPTS)
+
+clean:
+	@rm -f *~
+
+install: install-scripts install-help
+
+install-scripts
+	@if test ! -d $(DEST)/scripts; then \
+		echo "Creating a scripts subdirectory."; \
+		$(INSTALL) -d $(DEST)/scripts; \
+		echo Copying scripts.; \
+		for i in $(SCRIPTS); do \
+			$(INSTALL_DATA) $$i $(DEST)/scripts/; \
+		done; \
+		for i in $(EXESCRIPTS); do \
+			$(INSTALL_SCRIPT) $$i $(DEST)/scripts/; \
+		done; \
+	fi
+
+install-help:
+	@if test ! "x`echo help/*.help`" = "xhelp/*.help"; then \
+		if test ! -d $(DEST)/help; then \
+			echo "Creating 'help' subdirectory."; \
+			$(INSTALL) -d $(DEST)/help; \
+		fi; \
+		for i in help/*.help; do \
+			$(INSTALL_DATA) $$i $(DEST)/help/; \
+		done; \
+	fi
+	@if test ! "x`echo help/msg/*.help`" = "xhelp/msg/*.help"; then \
+		if test ! -d $(DEST)/help/msg; then \
+			echo "Creating 'help/msg' subdirectory."; \
+			$(INSTALL) -d $(DEST)/help/msg; \
+		fi; \
+		for i in help/msg/*.help; do \
+			$(INSTALL_DATA) $$i $(DEST)/help/msg/; \
+		done; \
+	fi
+	@if test ! "x`echo help/set/*.help`" = "xhelp/set/*.help"; then \
+		if test ! -d $(DEST)/help/set; then \
+			echo "Creating 'help/set' subdirectory."; \
+			$(INSTALL) -d $(DEST)/help/set; \
+		fi; \
+		for i in help/set/*.help; do \
+			$(INSTALL_DATA) $$i $(DEST)/help/set/; \
+		done; \
+	fi
+
+#safety hash

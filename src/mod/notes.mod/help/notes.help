@@ -1,0 +1,69 @@
+%{help=notes}
+###  %bnotes index%b
+###  %bnotes read%b <# or ALL>
+###  %bnotes erase%b <# or ALL>
+   lets you manipulate notes that have been stored up for you while
+   you were gone.  %b'notes index'%b gives a listing of all the notes
+   stored up: who they are from, and when they were left.  
+   %b'notes read'%b lets you read some or all notes, according to a
+   list of numbers and/or intervals separated by semicolon.
+   and %b'notes erase'%b erases notes after you are done with them.
+     ex: notes erase 2-4;8;16-
+
+see also: note, whom, noteigns
+%{help=notes module}
+###  help on the %bnotes modules%b
+   This module provides the means for storing & retrieving notes
+   at a later stage. 
+   Commands:
+      %bnotes%b%{+m}  %bfwd%b%{-}
+   (use %b'.help notes'%b for more info)
+%{+n}
+   Tcl variables:
+      %bnote-life%b  %bmax-notes%b  %ballow-fwd%b  %bnotefile%b
+   (use %b'.help set <variable>'%b for more info)
+%{help=fwd}%{+m}
+###   %bfwd%b <handle> [desto]
+   This allows you to set a note forwarding address for a user,
+   this means if a note needs to be stored for the user, the
+   bot will attempt to pass it on to the given user@bot, if
+   the bot is not online then the note is still stored locally,
+   if the other user doesn't exist, the note is lost. Boohoo.
+%{help=all}
+###  commands for the %bnotes module%b
+  for users:
+    %bnotes       +noteign        -noteign        noteigns%b
+    %bnote%b
+%{+m}
+  for admins:
+    %bfwd%b
+%{-}
+
+%{help=+noteign}
+###  %b+noteign%b%{+m} [user]%{-} <ignoremask>
+   Add a new ignore to the user's note ignore list.
+
+See also: -noteign noteigns
+%{help=-noteign}
+###  %b-noteign%b%{+m} [user]%{-} <ignoremask>
+   Remove an existing ignore from the user's note ignore list.
+
+See also: +noteign noteigns
+%{help=noteigns}
+###  %bnoteigns%b%{+m} [user]%{-}
+   List all note ignores. All notes sent from users who match one of the
+   ignore masks will be rejected.
+
+See also: +noteign -noteign
+%{help=note}
+###  %bnote%b <nickname[@bot]> <message>
+   sends a private note to a user on the party line.  if that user
+   is currently on the party line, and not marked as away, she will
+   receive the message immediately.  otherwise it may be stored
+   and displayed the next time that user joins the party line.  if
+   you join the channel, and have notes stored for you on the bot,
+   it will tell you.  to send a note to someone on a different bot,
+   use "nick@bot" for the nickname.
+   
+see also: whom, notes, noteigns
+
