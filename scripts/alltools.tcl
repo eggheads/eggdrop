@@ -1,12 +1,12 @@
 #
 # All-Tools TCL, includes toolbox.tcl, toolkit.tcl and moretools.tcl
-# toolbox was authored by cmwagner@sodre.net
-# toolkit was authored by (Someone claim this)[unknown]
-# moretools was authored by David Sesno(walker@shell.pcrealm.net)
+# toolbox was originally authored by cmwagner <cmwagner@sodre.net>
+# toolkit was originally authored by Robey Pointer
+# moretools was originally authored by David Sesno <walker@shell.pcrealm.net>
+# modified for 1.3.0 bots by TG
 #
-# Copyright (C) 2002, 2003 Eggheads Development Team
+# Copyright (C) 1999, 2003 Eggheads Development Team
 #
-# TG        ?????????: modified for 1.3.0 bots
 # Tothwolf  02May1999: rewritten and updated
 # guppy     02May1999: updated even more
 # Tothwolf  02May1999: fixed what guppy broke and updated again
@@ -21,12 +21,19 @@
 # Hanno     28Sep2001: fixed testip
 # guppy     03Mar2002: optimized
 # Souperman 05Nov2002: added ordnumber
+# Tothwolf  27Dec2003: added matchbotattrany, optimized ordnumber,
+#                      more minor changes
 #
-# $Id: alltools.tcl,v 1.15 2002/12/24 02:30:04 wcc Exp $
+# $Id: alltools.tcl,v 1.16 2003/12/27 10:55:11 tothwolf Exp $
 #
 ########################################
+#
 # Descriptions of available commands:
+#
+##
 ## (toolkit):
+##
+#
 # putmsg <nick/chan> <text>
 #   send a privmsg to the given nick or channel
 #
@@ -40,7 +47,11 @@
 # putact <nick/chan> <text>
 #   send an action to the given nick or channel
 #
+#
+##
 ## (toolbox):
+##
+#
 # strlwr <string>
 #   string tolower
 #
@@ -91,7 +102,11 @@
 # killdccbut <idx>
 #   kill all dcc user connections except for the given idx
 #
+#
+##
 ## (moretools):
+##
+#
 # iso <nick> <channel>
 #   if the given nick has +o access on the given channel, return 1
 #   else return 0
@@ -110,7 +125,11 @@
 #   if the given number is between 1 and 15, return its text representation
 #   else return the number given
 #
+#
+##
 ## (other commands):
+##
+#
 # isnumber <string>
 #   if the given string is a valid number, return 1
 #   else return 0
@@ -123,17 +142,21 @@
 #   if the given bot has all the given flags, return 1
 #   else return 0
 #
+# matchbotattrany <bot> <flags>
+#   if the given bot has any the given flags, return 1
+#   else return 0
+#
 # ordnumber <string>
 #   if the given string is a number, returns the
 #   "ordinal" version of that number, i.e. 1 -> "1st",
-#   2 -> "2nd", etc.
+#   2 -> "2nd", 3 -> "3rd", 4 -> "4th", etc.
 #   else return <string>
 #
 ########################################
 
 # So scripts can see if allt is loaded.
 set alltools_loaded 1
-set allt_version 205
+set allt_version 206
 
 # For backward compatibility.
 set toolbox_revision 1007
@@ -365,9 +388,9 @@ proc isnumber {string} {
 proc ispermowner {hand} {
   global owner
 
-  regsub -all -- , [string tolower $owner] "" owners
   if {([matchattr $hand n]) && \
-      ([lsearch -exact $owners [string tolower $hand]] != -1)} then {
+      ([lsearch -exact [split [string tolower $owner] ", "] \
+        [string tolower $hand]] != -1)} then {
     return 1
   }
   return 0
@@ -382,20 +405,28 @@ proc matchbotattr {bot flags} {
   return 1
 }
 
-proc ordnumber {str} {
-  if {[isnumber $str]} {
-    set last1 [string range $str [expr [strlen $str]-1] end]
-    set last2 [string range $str [expr [strlen $str]-2] end]
-    if {$last1=="1"&&$last2!="11"} {
-      return "[expr $str]st"
-    } elseif {$last1=="2"&&$last2!="12"} {
-      return "[expr $str]nd"
-    } elseif {$last1=="3"&&$last2!="13"} {
-      return "[expr $str]rd"
-    } else {
-      return "[expr $str]th"
+proc matchbotattrany {bot flags} {
+  foreach flag [split $flags ""] {
+    if {[string first $flag [botattr $bot]] != -1} then {
+      return 1
     }
-  } else {
-    return "$str"
   }
+  return 0
+}
+
+proc ordnumber {string} {
+  if {[isnumber $string]} then {
+    set last [string index $string end]
+    if {[string index $string [expr [string length $string] - 2]] != 1} then {
+      if {$last == 1} then {
+        return ${string}st
+      } elseif {$last == 2} then {
+        return ${string}nd
+      } elseif {$last == 3} then {
+        return ${string}rd
+      }
+    }
+    return ${string}th
+  }
+  return $string
 }
