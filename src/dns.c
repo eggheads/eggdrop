@@ -4,7 +4,7 @@
  *   provides the code used by the bot if the DNS module is not loaded
  *   DNS Tcl commands
  *
- * $Id: dns.c,v 1.27 2003/01/30 07:15:14 wcc Exp $
+ * $Id: dns.c,v 1.28 2003/12/02 00:37:34 wcc Exp $
  */
 /*
  * Written by Fabian Knittel <fknittel@gmx.de>
@@ -239,12 +239,30 @@ void dcc_dnshostbyip(IP ip)
 static void dns_tcl_iporhostres(IP ip, char *hostn, int ok, void *other)
 {
   devent_tclinfo_t *tclinfo = (devent_tclinfo_t *) other;
+  Tcl_DString list;
 
-  if (Tcl_VarEval(interp, tclinfo->proc, " ", iptostr(htonl(ip)), " ",
-                  hostn, ok ? " 1" : " 0", tclinfo->paras, NULL) == TCL_ERROR)
+  Tcl_DStringInit(&list);
+  Tcl_DStringAppendElement(&list, tclinfo->proc);
+  Tcl_DStringAppendElement(&list, iptostr(htonl(ip)));
+  Tcl_DStringAppendElement(&list, hostn);
+  Tcl_DStringAppendElement(&list, ok ? "1" : "0");
+
+  if (tclinfo->paras) {
+    EGG_CONST char *argv[2];
+    char *output;
+
+    argv[0] = Tcl_DStringValue(&list);
+    argv[1] = tclinfo->paras;
+    output = Tcl_Concat(2, argv);
+
+    if (Tcl_Eval(interp, output) == TCL_ERROR)
+      putlog(LOG_MISC, "*", DCC_TCLERROR, tclinfo->proc, interp->result);
+    Tcl_Free(output);
+  } else if (Tcl_Eval(interp, Tcl_DStringValue(&list)) == TCL_ERROR)
     putlog(LOG_MISC, "*", DCC_TCLERROR, tclinfo->proc, interp->result);
 
-  /* Free the memory. It will be unused after this event call. */
+  Tcl_DStringFree(&list);
+
   nfree(tclinfo->proc);
   if (tclinfo->paras)
     nfree(tclinfo->paras);
@@ -496,36 +514,28 @@ int expmem_dns(void)
 static int tcl_dnslookup STDVAR
 {
   struct in_addr inaddr;
-  char *paras = NULL;
+  Tcl_DString paras;
 
-  /* This function should be using BADARGS, FIXME -poptix */
   if (argc < 3) {
     Tcl_AppendResult(irp, "wrong # args: should be \"", argv[0],
                      " ip-address/hostname proc ?args...?\"", NULL);
     return TCL_ERROR;
   }
-  if (argc > 3) {
-    int l = 0, p;
 
-    /* Create a string with a leading space out of all provided
-     * additional parameters.
-     */
-    paras = nmalloc(1);
-    paras[0] = 0;
-    for (p = 3; p < argc; p++) {
-      l += strlen(argv[p]) + 1;
-      paras = nrealloc(paras, l + 1);
-      strcat(paras, " ");
-      strcat(paras, argv[p]);
-    }
+  Tcl_DStringInit(&paras);
+  if (argc > 3) {
+    int p;
+
+    for (p = 3; p < argc; p++)
+      Tcl_DStringAppendElement(&paras, argv[p]);
   }
 
   if (egg_inet_aton(argv[1], &inaddr))
-    tcl_dnshostbyip(ntohl(inaddr.s_addr), argv[2], paras);
+    tcl_dnshostbyip(ntohl(inaddr.s_addr), argv[2], Tcl_DStringValue(&paras));
   else
-    tcl_dnsipbyhost(argv[1], argv[2], paras);
-  if (paras)
-    nfree(paras);
+    tcl_dnsipbyhost(argv[1], argv[2], Tcl_DStringValue(&paras));
+
+  Tcl_DStringFree(&paras);
   return TCL_OK;
 }
 
