@@ -1,4 +1,4 @@
-$Id: UPDATES1.6,v 1.505 2003/08/16 21:20:12 wcc Exp $
+$Id: UPDATES1.6,v 1.506 2003/08/16 23:22:32 wcc Exp $
 
 Changes in Eggdrop: (since v1.6.0)
 ----------------------------------
@@ -7,6 +7,10 @@ Changes in Eggdrop: (since v1.6.0)
 Found by  Fixed by  What...
 |SmAsH|   Wcc       bind documentation updates
 BarkerJr  Wcc       exported strip_mirc_codes() and check_ansi() from dcc.c
+          Paul E./  H_notc used wrong handler
+          stdarg
+fbs       stdarg    check to make sure file we want to send exists when
+                    resuming a transfer
           tchaika   small fix to n_realloc()
 Wanderer| Wcc       fixed output of tcl_duration to not return extra spaces
 paladinz  Wcc       don't compile inet_ntop compatability code unless USE_IPV6
@@ -21,9 +25,9 @@ MORA      Wcc       fixed a patch.h compile error
 1.6.14 (04 May 2003)
 Found by  Fixed by  What...
           poptix/   added support for the IPv6 protocol
-	  Wcc
+          Wcc
           guppy     fixed a couple of bugs in autobotchk and made the output
-	            cleaner
+                    cleaner
           PPSlim    updated the logic of .fixcodes
           KuNgFo0   added a missing cast in tcl_rand
           PPSlim    fixed getops timer handling
