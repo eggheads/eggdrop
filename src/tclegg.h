@@ -2,7 +2,7 @@
  * tclegg.h
  *   stuff used by tcl.c and tclhash.c
  *
- * $Id: tclegg.h,v 1.27 2005/02/04 14:15:26 tothwolf Exp $
+ * $Id: tclegg.h,v 1.28 2005/02/08 01:08:19 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -32,6 +32,14 @@
 #  include "proto.h" /* This file needs this */
 #endif
 
+
+/*
+ * Wow, this is old...CMD_LEAVE goes back to before version 0.9.
+ * This is for partyline and filesys 'quit'.
+ */
+#define CMD_LEAVE    (Function)(-1)
+
+
 /*
  * Match types for check_tcl_bind
  */
@@ -59,6 +67,8 @@
  *        they are only available to the partyline/filesys (+p/+x)?
  *        Eggdrop's revenge code does not add default flags when
  *        adding a user record for +d or +k flags. */
+/* FIXME: This type actually seems to be obsolete. This was originally
+ *        used to check built-in types in Eggdrop version 1.0. */
 #define BIND_HAS_BUILTINS   0x10
 
 /* Want return; we want to know if the proc returns 1
@@ -84,7 +94,7 @@
 #define BIND_MATCHED    2       /* But the proc couldn't be found */
 #define BIND_EXECUTED   3
 #define BIND_EXEC_LOG   4       /* Proc returned 1 -> wants to be logged */
-#define BIND_EXEC_BRK   5       /* Proc returned BREAK (quit) */
+#define BIND_QUIT       5       /* CMD_LEAVE 'quit' from partyline or filesys */
 
 /* Extra commands are stored in Tcl hash tables (one hash table for each type
  * of command: msg, dcc, etc)
@@ -97,18 +107,25 @@ typedef struct timer_str {
 } tcl_timer_t;
 
 
-/* Used for stub functions:
- */
-
+/* Used for Tcl stub functions */
 #define STDVAR (cd, irp, argc, argv)                                    \
         ClientData cd;                                                  \
         Tcl_Interp *irp;                                                \
         int argc;                                                       \
         char *argv[];
+
 #define BADARGS(nl, nh, example) do {                                   \
         if ((argc < (nl)) || (argc > (nh))) {                           \
                 Tcl_AppendResult(irp, "wrong # args: should be \"",     \
                                  argv[0], (example), "\"", NULL);       \
+                return TCL_ERROR;                                       \
+        }                                                               \
+} while (0)
+
+#define CHECKVALIDITY(a)        do {                                    \
+        if (!check_validity(argv[0], (a))) {                            \
+                Tcl_AppendResult(irp, "bad builtin command call!",      \
+                                 NULL);                                 \
                 return TCL_ERROR;                                       \
         }                                                               \
 } while (0)

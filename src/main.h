@@ -2,7 +2,7 @@
  * main.h
  *   include file to include most other include files
  *
- * $Id: main.h,v 1.32 2005/01/20 20:45:20 wcc Exp $
+ * $Id: main.h,v 1.33 2005/02/08 01:08:19 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -140,7 +140,7 @@ extern struct dcc_table DCC_CHAT, DCC_BOT, DCC_LOST, DCC_SCRIPT, DCC_BOT_NEW,
 
 #ifdef BORGCUBES
 #  define O_NONBLOCK 00000004 /* POSIX non-blocking I/O */
-#endif /* BORGUBES */
+#endif /* BORGCUBES */
 
 /* Use high-order bits for getting the random integer. With random()
  * modulo would probably be sufficient but on systems lacking random(),

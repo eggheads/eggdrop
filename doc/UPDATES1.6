@@ -1,4 +1,4 @@
-$Id: UPDATES1.6,v 1.605 2005/02/04 14:15:26 tothwolf Exp $
+$Id: UPDATES1.6,v 1.606 2005/02/08 01:08:19 tothwolf Exp $
 
 Eggdrop Changes (since v1.6.0)
     _____________________________________________________________________
@@ -12,6 +12,22 @@ Eggdrop Changes (since v1.6.0)
 
 
   1.6.18:
+    - Completely rewrote check_tcl_bind().
+    - Added inline check_bind_flags() for flag checking for check_tcl_bind().
+    - Added inline check_bind_match() for match checking for check_tcl_bind().
+    - Rewrote trigger_bind() and made it inline for check_tcl_bind().
+    - Fixed pointless calling of nmalloc() and nfree() for ContextNote
+      in trigger_bind() when DEBUG_CONTEXT isn't defined.
+    - Moved findidx() from tcl.c to dccutil.c.
+    - Moved findanyidx() from tclhash.c to dccutil.c.
+    - Moved CHECKVALIDITY from tclhash.h to tclegg.h.
+    - Added CHECKVALIDITY checks to builtin_dcc() and builtin_fil().
+    - Moved CMD_LEAVE from cmdt.h to tclegg.h.
+    - Changed NULL to CMD_LEAVE for partyline quit in cmds.c.
+    - Renamed BIND_EXEC_BRK to BIND_QUIT.
+    - Fixed misc typos. 
+    * Patch by: Tothwolf
+
     - Added support to MSGM, PUBM, NOTC, and WALL binds to support bound
       procs returning 1 to prevent logging of the trigger message text.
       Fixes Bugzilla Bug # 334 "msgm bind return values"

@@ -7,7 +7,7 @@
  *   (non-Tcl) procedure lookups for msg/dcc/file commands
  *   (Tcl) binding internal procedures to msg/dcc/file commands
  *
- * $Id: tclhash.c,v 1.53 2005/02/04 14:15:26 tothwolf Exp $
+ * $Id: tclhash.c,v 1.54 2005/02/08 01:08:19 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -595,16 +595,6 @@ static int builtin_idxchar STDVAR
   return TCL_OK;
 }
 
-int findanyidx(register int z)
-{
-  register int j;
-
-  for (j = 0; j < dcc_total; j++)
-    if (dcc[j].sock == z)
-      return j;
-  return -1;
-}
-
 static int builtin_charidx STDVAR
 {
   Function F = (Function) cd;
@@ -643,170 +633,206 @@ static int builtin_dcc STDVAR
 
   BADARGS(4, 4, " hand idx param");
 
+  CHECKVALIDITY(builtin_dcc);
   idx = findidx(atoi(argv[2]));
   if (idx < 0) {
     Tcl_AppendResult(irp, "invalid idx", NULL);
     return TCL_ERROR;
   }
-  if (F == NULL) {
+
+  /* FIXME: This is an ugly hack. It is not documented as a
+   *        'feature' because it will eventually go away.
+   */ 
+  if (F == CMD_LEAVE) {
     Tcl_AppendResult(irp, "break", NULL);
     return TCL_OK;
   }
+
   /* Check if it's a password change, if so, don't show the password. We
    * don't need pretty formats here, as it's only for debugging purposes.
    */
   debug4("tcl: builtin dcc call: %s %s %s %s", argv[0], argv[1], argv[2],
          (!strcmp(argv[0] + 5, "newpass") || !strcmp(argv[0] + 5, "chpass")) ?
          "[something]" : argv[3]);
-  (F) (dcc[idx].user, idx, argv[3]);
+  F(dcc[idx].user, idx, argv[3]);
   Tcl_ResetResult(irp);
   Tcl_AppendResult(irp, "0", NULL);
   return TCL_OK;
 }
 
-/* trigger (execute) a proc */
-static int trigger_bind(const char *proc, const char *param)
+
+/* Trigger (execute) a Tcl proc
+ *
+ * Note: This is INLINE code for check_tcl_bind().
+ */
+static inline int trigger_bind(const char *proc, const char *param,
+                               char *mask)
 {
   int x;
+  #ifdef DEBUG_CONTEXT
+  const char *msg = "Tcl proc: %s, param: %s";
+  char *buf;
 
   /* We now try to debug the Tcl_VarEval() call below by remembering both
    * the called proc name and it's parameters. This should render us a bit
    * less helpless when we see context dumps.
    */
-  {
-    const char *msg = "Tcl proc: %s, param: %s";
-    char *buf;
-
-    Context;
-    buf = nmalloc(strlen(msg) + (proc ? strlen(proc) : 6)
-                  + (param ? strlen(param) : 6) + 1);
-    sprintf(buf, msg, proc ? proc : "<null>", param ? param : "<null>");
-    ContextNote(buf);
-    nfree(buf);
-  }
+  Context;
+  buf = nmalloc(strlen(msg) + (proc ? strlen(proc) : 6)
+                + (param ? strlen(param) : 6) + 1);
+  sprintf(buf, msg, proc ? proc : "<null>", param ? param : "<null>");
+  ContextNote(buf);
+  nfree(buf);
+#endif /* DEBUG_CONTEXT */
   x = Tcl_VarEval(interp, proc, param, NULL);
   Context;
+
+  Tcl_SetVar(interp, "lastbind", (char *) mask, TCL_GLOBAL_ONLY);
+
   if (x == TCL_ERROR) {
     /* FIXME: we really should be able to log longer errors */
     if (strlen(interp->result) > 400)
       interp->result[400] = 0;
+
     putlog(LOG_MISC, "*", "Tcl error [%s]: %s", proc, interp->result);
+
     return BIND_EXECUTED;
-  } else {
-    if (!strcmp(interp->result, "break"))
-      return BIND_EXEC_BRK;
-    return (atoi(interp->result) > 0) ? BIND_EXEC_LOG : BIND_EXECUTED;
   }
+
+  /* FIXME: This is an ugly hack. It is not documented as a
+   *        'feature' because it will eventually go away.
+   */
+  if (!strcmp(interp->result, "break"))
+    return BIND_QUIT;
+
+  return (atoi(interp->result) > 0) ? BIND_EXEC_LOG : BIND_EXECUTED;
 }
 
-/* FIXME: this function is very ugly and really should be redesigned */
+
+/* Find out whether this bind matches the mask or provides the
+ * requested attributes, depending on the specified requirements.
+ *
+ * Note: This is INLINE code for check_tcl_bind().
+ */
+static inline int check_bind_match(const char *match, char *mask,
+                                   int match_type)
+{
+  switch (match_type & 0x03) {
+  case MATCH_PARTIAL:
+    return (!egg_strncasecmp(match, mask, strlen(match)));
+    break;
+  case MATCH_EXACT:
+    return (!egg_strcasecmp(match, mask));
+    break;
+  case MATCH_CASE:
+    return (!strcmp(match, mask));
+    break;
+  case MATCH_MASK:
+    return (wild_match_per(mask, match));
+    break;
+  default:
+    /* Do nothing */
+    break;
+  }
+  return 0;
+}
+
+
+/* Check if the provided flags suffice for this command/trigger.
+ *
+ * Note: This is INLINE code for check_tcl_bind().
+ */
+static inline int check_bind_flags(struct flag_record *flags,
+                                   struct flag_record *atr, int match_type)
+{
+  if (match_type & BIND_USE_ATTR) {
+    if (match_type & BIND_HAS_BUILTINS)
+      return (flagrec_ok(flags, atr));
+    else
+      return (flagrec_eq(flags, atr));
+  } else
+    return 1;
+  return 0;
+}
+
+
+/* Check for and process Tcl binds */
 int check_tcl_bind(tcl_bind_list_t *tl, const char *match,
                    struct flag_record *atr, const char *param, int match_type)
 {
+  int x, result = 0, cnt = 0, finish = 0;
+  char *proc = NULL, *mask = NULL;
   tcl_bind_mask_t *tm, *tm_last = NULL, *tm_p = NULL;
-  int cnt = 0, result = 0, finish = 0, atrok, x, ok;
-  char *proc = NULL, *fullmatch = NULL;
   tcl_cmd_t *tc, *htc = NULL;
 
   for (tm = tl->first; tm && !finish; tm_last = tm, tm = tm->next) {
-    if (tm->flags & TBM_DELETED)
-      continue;
 
-    /* Find out whether this bind matches the mask or provides
-     * the the requested atcributes, depending on the specified
-     * requirements.
-     */
-    switch (match_type & 0x03) {
-    case MATCH_PARTIAL:
-      ok = !egg_strncasecmp(match, tm->mask, strlen(match));
-      break;
-    case MATCH_EXACT:
-      ok = !egg_strcasecmp(match, tm->mask);
-      break;
-    case MATCH_CASE:
-      ok = !strcmp(match, tm->mask);
-      break;
-    case MATCH_MASK:
-      ok = wild_match_per(tm->mask, match);
-      break;
-    default:
-      ok = 0;
-    }
-    if (!ok)
+    if (tm->flags & TBM_DELETED)
+      continue;                 /* This bind mask was deleted */
+
+    if (!check_bind_match(match, tm->mask, match_type))
       continue;                 /* This bind does not match. */
 
-    if (match_type & BIND_STACKABLE) {
+    for (tc = tm->first; tc; tc = tc->next) {
 
-      /* Could be multiple commands/triggers. */
-      for (tc = tm->first; tc; tc = tc->next) {
-        if (match_type & BIND_USE_ATTR) {
+      /* Search for valid entry. */
+      if (!(tc->attributes & TC_DELETED)) {
 
-          /* Check whether the provided flags suffice for
-           * this command/trigger.
-           */
-          if (match_type & BIND_HAS_BUILTINS)
-            atrok = flagrec_ok(&tc->flags, atr);
-          else
-            atrok = flagrec_eq(&tc->flags, atr);
-        } else
-          atrok = 1;
-
-        if (atrok) {
+        /* Check if the provided flags suffice for this command. */
+        if (check_bind_flags(&tc->flags, atr, match_type)) {
           cnt++;
-          tc->hits++;
           tm_p = tm_last;
-          Tcl_SetVar(interp, "lastbind", (char *) tm->mask, TCL_GLOBAL_ONLY);
-          x = trigger_bind(tc->func_name, param);
+
+          /* Not stackable */
+          if (!(match_type & BIND_STACKABLE)) {
+
+            /* Remember information about this bind. */
+            proc = tc->func_name;
+            mask = tm->mask;
+            htc = tc;
+
+            /* Either this is a non-partial match, which means we
+             * only want to execute _one_ bind ...
+             */
+            if ((match_type & 0x03) != MATCH_PARTIAL ||
+              /* ... or this happens to be an exact match. */
+              !egg_strcasecmp(match, tm->mask)) {
+              cnt = 1;
+              finish = 1;
+            }
+
+            /* We found a match so break out of the inner loop. */
+            break;
+          }
+
+          /*
+           * Stackable; could be multiple commands/triggers.
+           * Note: This code assumes BIND_ALTER_ARGS, BIND_WANTRET, and
+           *       BIND_STACKRET will only be used for stackable binds.
+           */
+
+          tc->hits++;
+          x = trigger_bind(tc->func_name, param, tm->mask);
+
           if (match_type & BIND_ALTER_ARGS) {
+
             if (interp->result == NULL || !interp->result[0])
               return x;
+
           } else if ((match_type & BIND_STACKRET) && x == BIND_EXEC_LOG) {
 
-            /* If we have multiple commands/triggers,
-             * and if any of the commands return 1, we accept it.
+            /* If we have multiple commands/triggers, and if any of the
+             * commands return 1, we store the result so we can return it
+             * after processing all stacked binds.
              */
             if (!result)
               result = x;
             continue;
+
           } else if ((match_type & BIND_WANTRET) && x == BIND_EXEC_LOG)
+
+            /* Return immediately if any commands return 1 */
             return x;
-        }
-      }
-    } else {
-
-      /* Search for valid entry. */
-      for (tc = tm->first; tc; tc = tc->next)
-        if (!(tc->attributes & TC_DELETED))
-          break;
-      if (tc) {
-
-        /* Check if the provided flags suffice for this command/trigger. */
-        if (match_type & BIND_USE_ATTR) {
-          if (match_type & BIND_HAS_BUILTINS)
-            atrok = flagrec_ok(&tc->flags, atr);
-          else
-            atrok = flagrec_eq(&tc->flags, atr);
-        } else
-          atrok = 1;
-
-        if (atrok) {
-          cnt++;
-
-          /* Remember information about this bind and its only
-           * command/trigger.
-           */
-          proc = tc->func_name;
-          fullmatch = tm->mask;
-          htc = tc;
-          tm_p = tm_last;
-
-          /* Either this is a non-partial match, which means we
-           * only want to execute _one_ bind ...
-           */
-          if ((match_type & 3) != MATCH_PARTIAL ||
-              /* ... or this is happens to be an exact match. */
-              !egg_strcasecmp(match, tm->mask))
-            cnt = finish = 1;
         }
       }
     }
@@ -841,9 +867,9 @@ int check_tcl_bind(tcl_bind_list_t *tl, const char *match,
   if (cnt > 1)
     return BIND_AMBIGUOUS;
 
-  Tcl_SetVar(interp, "lastbind", (char *) fullmatch, TCL_GLOBAL_ONLY);
-  return trigger_bind(proc, param);
+  return trigger_bind(proc, param, mask);
 }
+
 
 /* Check for tcl-bound dcc command, return 1 if found
  * dcc: proc-name <handle> <sock> <args...>
@@ -869,8 +895,11 @@ int check_tcl_dcc(const char *cmd, int idx, const char *args)
     dprintf(idx, MISC_NOSUCHCMD);
     return 0;
   }
-  if (x == BIND_EXEC_BRK)
-    return 1;                   /* quit */
+
+  /* We return 1 to leave the partyline */
+  if (x == BIND_QUIT)           /* CMD_LEAVE, 'quit' */
+    return 1;
+
   if (x == BIND_EXEC_LOG)
     putlog(LOG_CMDS, "*", "#%s# %s %s", dcc[idx].nick, cmd, args);
   return 0;

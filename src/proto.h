@@ -7,7 +7,7 @@
  * because they use structures in those
  * (saves including those .h files EVERY time) - Beldin
  *
- * $Id: proto.h,v 1.67 2005/01/03 20:01:45 paladin Exp $
+ * $Id: proto.h,v 1.68 2005/02/08 01:08:19 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -130,6 +130,9 @@ int check_ansi(char *);
 void dupwait_notify(char *);
 
 /* dccutil.c */
+int findidx(int);
+int findanyidx(int);
+char *add_cr(char *);
 void dprintf EGG_VARARGS(int, arg1);
 void chatout EGG_VARARGS(char *, arg1);
 extern void (*shareout) ();
@@ -153,7 +156,6 @@ void flush_lines(int, struct chat_info *);
 struct dcc_t *find_idx(int);
 int new_dcc(struct dcc_table *, int);
 void del_dcc(int);
-char *add_cr(char *);
 void changeover_dcc(int, struct dcc_table *, int);
 
 /* dns.c */
@@ -271,8 +273,6 @@ void protect_tcl();
 void unprotect_tcl();
 void do_tcl(char *, char *);
 int readtclprog(char *fname);
-int findidx(int);
-int findanyidx(int);
 
 /* userent.c */
 void list_type_kill(struct list_type *);

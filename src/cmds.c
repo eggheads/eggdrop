@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  *
- * $Id: cmds.c,v 1.112 2005/01/03 20:01:44 paladin Exp $
+ * $Id: cmds.c,v 1.113 2005/02/08 01:08:19 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -2837,7 +2837,7 @@ cmd_t C_dcc[] = {
   {"handle",    "",     (Function) cmd_handle,     NULL},
   {"nick",      "",     (Function) cmd_handle,     NULL},
   {"page",      "",     (Function) cmd_page,       NULL},
-  {"quit",      "",     (Function) NULL,           NULL},
+  {"quit",      "",     (Function) CMD_LEAVE,      NULL},
   {"rehash",    "m",    (Function) cmd_rehash,     NULL},
   {"rehelp",    "n",    (Function) cmd_rehelp,     NULL},
   {"relay",     "o",    (Function) cmd_relay,      NULL},

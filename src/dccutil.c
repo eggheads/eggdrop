@@ -6,7 +6,7 @@
  *   memory management for dcc structures
  *   timeout checking for dcc connections
  *
- * $Id: dccutil.c,v 1.54 2005/01/03 20:01:44 paladin Exp $
+ * $Id: dccutil.c,v 1.55 2005/02/08 01:08:19 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -81,6 +81,25 @@ int expmem_dccutil()
   return tot;
 }
 
+int findidx(int z)
+{
+  int j;
+
+  for (j = 0; j < dcc_total; j++)
+    if ((dcc[j].sock == z) && (dcc[j].type->flags & DCT_VALIDIDX))
+      return j;
+  return -1;
+}
+
+int findanyidx(register int z)
+{
+  register int j;
+
+  for (j = 0; j < dcc_total; j++)
+    if (dcc[j].sock == z)
+      return j;
+  return -1;
+}
 
 /* Replace \n with \r\n */
 char *add_cr(char *buf)
@@ -431,7 +450,6 @@ void set_away(int idx, char *s)
 void *_get_data_ptr(int size, char *file, int line)
 {
   char *p;
-
 #ifdef DEBUG_MEM
   char x[1024];
 

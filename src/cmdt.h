@@ -2,7 +2,7 @@
  * cmdt.h
  *   stuff for builtin commands
  *
- * $Id: cmdt.h,v 1.9 2005/01/03 20:01:44 paladin Exp $
+ * $Id: cmdt.h,v 1.10 2005/02/08 01:08:19 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -26,7 +26,6 @@
 #ifndef _EGG_CMDT_H
 #define _EGG_CMDT_H
 
-#define CMD_LEAVE    (Function)(-1)
 typedef struct {
   char *name;
   char *flags;
