@@ -2,7 +2,7 @@
  * irc.c -- part of irc.mod
  *   support for channels within the bot
  *
- * $Id: irc.c,v 1.77 2002/09/21 20:40:56 wcc Exp $
+ * $Id: irc.c,v 1.78 2002/10/08 01:21:30 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -929,6 +929,10 @@ static void flush_modes()
         if (chan_sentop(m)) {
           m->flags &= ~SENTOP;
           add_mode(chan, '+', 'o', m->nick);
+        }
+        if (chan_senthalfop(m)) {
+          m->flags &= ~SENTHALFOP;
+          add_mode(chan, '+', 'h', m->nick);
         }
         if (chan_sentvoice(m)) {
           m->flags &= ~SENTVOICE;

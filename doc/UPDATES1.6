@@ -1,15 +1,16 @@
-$Id: UPDATES1.6,v 1.417 2002/09/28 00:06:29 wcc Exp $
+$Id: UPDATES1.6,v 1.418 2002/10/08 01:21:30 wcc Exp $
 
 Changes in Eggdrop: (since v1.6.0)
 ----------------------------------
 
 1.6.13
 Found by  Fixed by  What...
+Eule      Wcc       halfops were not honored in flush_modes()
           NeoN      fixed cosmetic problems with logging in some irc module commands
           Mo-Ize    exported tell_bottree() to modues
           BarkerJr  optimized logging functions
 various   Wcc       removed eggdrop.advanced.conf and eggdrop.simple.conf
-          Eule      adding a missing killsock and lostdcc in eof_dcc_send() and
+TaKeDa    Eule      adding a missing killsock and lostdcc in eof_dcc_send() and
                     eof_dcc_get()
           Wcc       fixed the logic in check_this_member()
           BarkerJr  made the timestamp style definable in src/eggdrop.h
