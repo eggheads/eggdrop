@@ -1019,8 +1019,8 @@ ac_config_headers="$ac_config_headers config.h"
 
 echo "$as_me:1020: result: " >&5
 echo "${ECHO_T}" >&6
-echo "$as_me:1022: result: This is eggdrop's GNU configure script." >&5
-echo "${ECHO_T}This is eggdrop's GNU configure script." >&6
+echo "$as_me:1022: result: This is Eggdrop's GNU configure script." >&5
+echo "${ECHO_T}This is Eggdrop's GNU configure script." >&6
 echo "$as_me:1024: result: It's going to run a bunch of strange tests to hopefully" >&5
 echo "${ECHO_T}It's going to run a bunch of strange tests to hopefully" >&6
 echo "$as_me:1026: result: make your compile work without much twiddling." >&5
@@ -1793,7 +1793,7 @@ then
 configure: error:
 
   This system does not appear to have a working C compiler.
-  A working C compiler is required to compile eggdrop.
+  A working C compiler is required to compile Eggdrop.
 
 EOF
   exit 1
@@ -2688,7 +2688,7 @@ then
 configure: error:
 
   This system seems to lack a working 'awk' command.
-  A working 'awk' command is required to compile eggdrop.
+  A working 'awk' command is required to compile Eggdrop.
 
 EOF
   exit 1
@@ -2733,7 +2733,7 @@ then
 configure: error:
 
   This system seems to lack a working 'basename' command.
-  A working 'basename' command is required to compile eggdrop.
+  A working 'basename' command is required to compile Eggdrop.
 
 EOF
   exit 1
@@ -2968,8 +2968,8 @@ echo "${ECHO_T}yes" >&6
         else
           echo "$as_me:2969: result: no" >&5
 echo "${ECHO_T}no" >&6
-          { echo "$as_me:2971: WARNING: Make sure the directory eggdrop is installed into is mounted in binary mode." >&5
-echo "$as_me: WARNING: Make sure the directory eggdrop is installed into is mounted in binary mode." >&2;}
+          { echo "$as_me:2971: WARNING: Make sure the directory Eggdrop is installed into is mounted in binary mode." >&5
+echo "$as_me: WARNING: Make sure the directory Eggdrop is installed into is mounted in binary mode." >&2;}
         fi
         MOD_EXT=dll
         cat >>confdefs.h <<\_ACEOF
@@ -2979,8 +2979,8 @@ _ACEOF
       *)
         NEED_DL=0
         DEFAULT_MAKE=static
-        { echo "$as_me:2982: WARNING: Make sure the directory eggdrop is installed into is mounted in binary mode." >&5
-echo "$as_me: WARNING: Make sure the directory eggdrop is installed into is mounted in binary mode." >&2;}
+        { echo "$as_me:2982: WARNING: Make sure the directory Eggdrop is installed into is mounted in binary mode." >&5
+echo "$as_me: WARNING: Make sure the directory Eggdrop is installed into is mounted in binary mode." >&2;}
       ;;
     esac
     EGG_CYGWIN=yes
@@ -6217,7 +6217,7 @@ then
   cat << EOF >&2
 configure: error:
 
-  Your Tcl version is much too old for eggdrop to use.
+  Your Tcl version is much too old for Eggdrop to use.
   I suggest you download and compile a more recent version.
   The most reliable current version is $tclrecommendver and
   can be downloaded from $tclrecommendsite
@@ -7506,10 +7506,10 @@ echo "$as_me:7505: result: Configure is done." >&5
 echo "${ECHO_T}Configure is done." >&6
 echo "$as_me:7507: result: " >&5
 echo "${ECHO_T}" >&6
-echo "$as_me:7509: result: Type 'make config' to configure the modules. Or 'make iconfig' to" >&5
-echo "${ECHO_T}Type 'make config' to configure the modules. Or 'make iconfig' to" >&6
-echo "$as_me:7511: result: interactively choose which modules to compile." >&5
-echo "${ECHO_T}interactively choose which modules to compile." >&6
+echo "$as_me:7509: result: Type 'make config' to configure the modules" >&5
+echo "${ECHO_T}Type 'make config' to configure the modules" >&6
+echo "$as_me:7511: result: to interactively choose which modules to compile." >&5
+echo "${ECHO_T}to interactively choose which modules to compile." >&6
 echo "$as_me:7513: result: " >&5
 echo "${ECHO_T}" >&6
 if test -f "./$EGGEXEC"

@@ -1,7 +1,7 @@
 dnl aclocal.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: aclocal.m4,v 1.55 2002/02/24 07:57:42 guppy Exp $
+dnl $Id: aclocal.m4,v 1.56 2002/02/25 03:39:56 wcc Exp $
 dnl
 
 
@@ -9,7 +9,7 @@ dnl  EGG_MSG_CONFIGURE_START()
 dnl
 AC_DEFUN(EGG_MSG_CONFIGURE_START, [dnl
 AC_MSG_RESULT()
-AC_MSG_RESULT(This is eggdrop's GNU configure script.)
+AC_MSG_RESULT(This is Eggdrop's GNU configure script.)
 AC_MSG_RESULT(It's going to run a bunch of strange tests to hopefully)
 AC_MSG_RESULT(make your compile work without much twiddling.)
 AC_MSG_RESULT()
@@ -22,8 +22,8 @@ AC_DEFUN(EGG_MSG_CONFIGURE_END, [dnl
 AC_MSG_RESULT()
 AC_MSG_RESULT(Configure is done.)
 AC_MSG_RESULT()
-AC_MSG_RESULT(Type 'make config' to configure the modules. Or 'make iconfig' to)
-AC_MSG_RESULT(interactively choose which modules to compile.)
+AC_MSG_RESULT(Type 'make config' to configure the modules, or type 'make iconfig')
+AC_MSG_RESULT(to interactively choose which modules to compile.)
 AC_MSG_RESULT()
 if test -f "./$EGGEXEC"
 then
@@ -46,7 +46,7 @@ then
 configure: error:
 
   This system does not appear to have a working C compiler.
-  A working C compiler is required to compile eggdrop.
+  A working C compiler is required to compile Eggdrop.
 
 EOF
   exit 1
@@ -100,7 +100,7 @@ then
 configure: error:
 
   This system seems to lack a working 'awk' command.
-  A working 'awk' command is required to compile eggdrop.
+  A working 'awk' command is required to compile Eggdrop.
 
 EOF
   exit 1
@@ -119,7 +119,7 @@ then
 configure: error:
 
   This system seems to lack a working 'basename' command.
-  A working 'basename' command is required to compile eggdrop.
+  A working 'basename' command is required to compile Eggdrop.
 
 EOF
   exit 1
@@ -203,7 +203,7 @@ case "$egg_cv_var_system_type" in
           LIBS="$LIBS /usr/lib/binmode.o"
         else
           AC_MSG_RESULT(no)
-          AC_MSG_WARN(Make sure the directory eggdrop is installed into is mounted in binary mode.)
+          AC_MSG_WARN(Make sure the directory Eggdrop is installed into is mounted in binary mode.)
         fi
         MOD_EXT=dll
         AC_DEFINE(MODULES_OK)dnl
@@ -211,7 +211,7 @@ case "$egg_cv_var_system_type" in
       *)
         NEED_DL=0
         DEFAULT_MAKE=static
-        AC_MSG_WARN(Make sure the directory eggdrop is installed into is mounted in binary mode.)
+        AC_MSG_WARN(Make sure the directory Eggdrop is installed into is mounted in binary mode.)
       ;;
     esac
     EGG_CYGWIN=yes
@@ -483,7 +483,7 @@ fi
 
 dnl  EGG_EXEEXT()
 dnl
-dnl  Test for executable suffix and define eggdrop's executable name
+dnl  Test for executable suffix and define Eggdrop's executable name
 dnl  accordingly.
 AC_DEFUN(EGG_EXEEXT, [dnl
 EGGEXEC=eggdrop
@@ -936,7 +936,7 @@ then
   cat << EOF >&2
 configure: error:
 
-  Your Tcl version is much too old for eggdrop to use.
+  Your Tcl version is much too old for Eggdrop to use.
   I suggest you download and compile a more recent version.
   The most reliable current version is $tclrecommendver and
   can be downloaded from $tclrecommendsite
@@ -1192,7 +1192,7 @@ AC_SUBST(MOD_UPDIR)dnl
 dnl  EGG_REPLACE_IF_CHANGED(FILE-NAME, CONTENTS-CMDS, INIT-CMDS)
 dnl
 dnl  Replace FILE-NAME if the newly created contents differs from the existing
-dnl  file contents.  Otherwise leave the file alone.  This avoids needless
+dnl  file contents.  Otherwise, leave the file alone.  This avoids needless
 dnl  recompiles.
 dnl
 define(EGG_REPLACE_IF_CHANGED, [dnl
