@@ -1,5 +1,4 @@
 dnl Process this file with autoconf to produce a configure script.
-AC_REVISION($Revision: 1.26 $)
 AC_INIT(src/eggdrop.h)
 AC_CONFIG_AUX_DIR(misc)
 AC_PREFIX_DEFAULT([\${HOME}/eggdrop])

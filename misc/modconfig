@@ -19,7 +19,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-# $Id: modconfig,v 1.3 2000/03/22 00:42:56 fabian Exp $
+# $Id: modconfig,v 1.4 2000/04/25 20:49:48 fabian Exp $
 
 
 mc_pn=`echo $0 | sed -e 's/^.*\///'`
@@ -358,10 +358,13 @@ xstatic.h)
 
 	#  Header
 	cat 1>> ${mc_fstatic_h} << EOF
-/* src/mod/static.h -- header file for static compiles
+/* src/mod/static.h -- header file for static compiles.
  *
- * NOTE: Do not edit directly, but instead re-run \`make config'
+ * NOTE: Do not edit directly. Instead, re-run \`make config'.
  */
+
+#ifndef _EGG_MOD_STATIC_H
+#define _EGG_MOD_STATIC_H
 
 EOF
 
@@ -378,7 +381,11 @@ EOF
 	for mc_mod in ${mc_sel_modules}; do
 		echo "  check_static(\"${mc_mod}\", ${mc_mod}_start);" 1>> ${mc_fstatic_h}
 	done
-	echo "}" 1>> ${mc_fstatic_h}
+	cat 1>> ${mc_fstatic_h} << EOF
+}
+
+#endif /* _EGG_MOD_STATIC_H */
+EOF
 
 	echo " done." 1>&6
 ;;

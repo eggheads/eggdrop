@@ -2,7 +2,7 @@
 #  This is the Makefile for EGGDROP (the irc bot)
 #  You should never need to edit this.
 #
-# $Id: Makefile.in,v 1.19 2000/03/23 23:17:54 fabian Exp $
+# $Id: Makefile.in,v 1.20 2000/04/25 20:49:48 fabian Exp $
 
 SHELL = /bin/sh
 top_srcdir = @top_srcdir@
@@ -76,6 +76,10 @@ post_iconfig =  $(modconf) update-depends && \
 		(cd src/mod && $(MAKE_CONFIG) config) && \
 		$(modconf) Makefile
 
+egg_install_msg =  echo "" && \
+		   echo "Now run \"make install\" to install your bot." && \
+		   echo ""
+
 MAKE_MODEGG = $(MAKE) 'MAKE=$(MAKE)' 'CC=$(MOD_CC)' 'LD=$(MOD_LD)' \
 'STRIP=$(MOD_STRIP)' 'RANLIB=$(RANLIB)' 'CFLGS=$(CFLGS)' \
 'TCLLIB=$(TCLLIB)' 'TCLLIBFN=$(TCLLIBFN)' 'XREQS=$(XREQS)' \
@@ -91,15 +95,15 @@ MAKE_STATIC = $(MAKE) 'MAKE=$(MAKE)' 'CC=$(CC)' 'LD=$(LD)' \
 'MODOBJS=mod/*.o'
 
 MAKE_DEBEGG = $(MAKE) 'MAKE=$(MAKE)' 'CC=$(MOD_CC)' 'LD=$(MOD_LD) -g' \
-'STRIP=touch' 'RANLIB=$(RANLIB)' 'CFLGS=-g3 $(DEBCFLAGS)' \
+'STRIP=touch' 'RANLIB=$(RANLIB)' 'CFLGS=-g3 $(DEBCFLAGS) $(CFLGS)' \
 'TCLLIB=$(TCLLIB)' 'TCLLIBFN=$(TCLLIBFN)' 'XREQS=$(XREQS)' \
 'XLIBS=$(XLIBS)' 'EGGEXEC=$(EGGEXEC)' 'EGGBUILD=(debug version)' 'MODOBJS='
 
 MAKE_DEBMODULES = $(MAKE) 'MAKE=$(MAKE)' 'CC=$(SHLIB_CC)' 'LD=$(SHLIB_LD)' \
-'STRIP=touch' 'CFLGS=-g3 $(DEBCFLAGS)'
+'STRIP=touch' 'CFLGS=-g3 $(DEBCFLAGS) $(CFLGS)'
 
 MAKE_SDEBUG = $(MAKE) 'MAKE=$(MAKE)' 'CC=$(CC)' 'LD=$(LD) -g' \
-'STRIP=touch' 'RANLIB=$(RANLIB)' 'CFLGS=-g3 $(DEBCFLAGS) -DSTATIC' \
+'STRIP=touch' 'RANLIB=$(RANLIB)' 'CFLGS=-g3 $(DEBCFLAGS) -DSTATIC $(CFLGS)' \
 'TCLLIB=$(TCLLIB)' 'TCLLIBFN=$(TCLLIBFN)' 'XREQS=$(XREQS)' 'XLIBS=$(XLIBS)' \
 'EGGEXEC=$(EGGEXEC)' 'EGGBUILD=(static and debug version)' 'MODOBJS=mod/*.o'
 
@@ -204,6 +208,7 @@ modules: modtest
 	@echo ""
 	@echo "modules made:"
 	@ls -l *.so
+	@$(egg_install_msg)
 
 static: eggtest
 	@echo ""
@@ -218,6 +223,7 @@ static: eggtest
 	@echo ""
 	@./$(EGGEXEC) -v
 	@ls -l $(EGGEXEC)
+	@$(egg_install_msg)
 
 debug: debegg debmodules
 
@@ -232,6 +238,7 @@ debmodules: modtest
 	@echo ""
 	@echo "modules made:"
 	@ls -l *.so
+	@$(egg_install_msg)
 
 sdebug: eggtest
 	@echo ""
@@ -246,6 +253,7 @@ sdebug: eggtest
 	@echo ""
 	@./$(EGGEXEC) -v
 	@ls -l $(EGGEXEC)
+	@$(egg_install_msg)
 
 eggtest: conftest
 	@if test -f EGGMOD.stamp; then \
@@ -303,7 +311,7 @@ install-start:
 	fi
 
 install-bin:
-	@if test -f $(DEST)/$(EGGEXEC); then \
+	@if test -f $(DEST)/o$(EGGEXEC); then \
 		rm -f $(DEST)/o$(EGGEXEC); \
 	fi
 	@if test -h $(DEST)/$(EGGEXEC); then \

@@ -1,5 +1,5 @@
 # Makefile for src/mod/
-# $Id: Makefile.in,v 1.9 2000/03/24 23:00:25 fabian Exp $
+# $Id: Makefile.in,v 1.10 2000/04/25 20:49:48 fabian Exp $
 
 SHELL = /bin/sh
 top_srcdir = @top_srcdir@
@@ -92,20 +92,26 @@ clean:
 	@rm -f *.o *.so *~ static.h mod.xlibs
 	@for i in *.mod; do \
 		if test ! -d $$i; then mkdir $$i; fi; \
-		if test ! -r $$i/Makefile; then \
+		if (test ! -r $$i/Makefile) && \
+		   (test -r $(srcdir)/$$i/Makefile); then \
 			cp $(srcdir)/$$i/Makefile $$i/Makefile; \
 		fi; \
-		(cd $$i; $(MAKE) "VPATH=../$(srcdir)/$$i" "srcdir=../$(srcdir)/$$i" 'MAKE=$(MAKE)' clean); \
+		if (test -r $$i/Makefile); then \
+			(cd $$i; $(MAKE) "VPATH=../$(srcdir)/$$i" "srcdir=../$(srcdir)/$$i" 'MAKE=$(MAKE)' clean); \
+		fi; \
 	done
 
 distclean:
 	@rm -f *.o *.so *~ static.h mod.xlibs
 	@for i in *.mod; do \
 		if test ! -d $$i; then mkdir $$i; fi; \
-		if test ! -r $$i/Makefile; then \
+		if (test ! -r $$i/Makefile) && \
+		   (test -r $(srcdir)/$$i/Makefile); then \
 			cp $(srcdir)/$$i/Makefile $$i/Makefile; \
 		fi; \
-		(cd $$i; $(MAKE) "VPATH=../$(srcdir)/$$i" "srcdir=../$(srcdir)/$$i" 'MAKE=$(MAKE)' distclean); \
+		if (test -r $$i/Makefile); then \
+			(cd $$i; $(MAKE) "VPATH=../$(srcdir)/$$i" "srcdir=../$(srcdir)/$$i" 'MAKE=$(MAKE)' distclean); \
+		fi; \
 	done
 
 install: install-help install-language
