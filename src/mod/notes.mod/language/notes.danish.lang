@@ -1,7 +1,7 @@
 # notes.danish.lang
 #   language messages for the notes module
 #
-# $Id: notes.danish.lang,v 1.2 2003/03/07 21:32:52 wcc Exp $
+# $Id: notes.danish.lang,v 1.3 2003/03/20 00:04:48 wcc Exp $
 
 0xc000,  Videresend notitser til: %.70s\n
 0xc001,Skiftede %d notits%s fra %s til %s.
