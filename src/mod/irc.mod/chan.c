@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  * 
- * $Id: chan.c,v 1.61 2000/12/06 02:32:18 guppy Exp $
+ * $Id: chan.c,v 1.62 2000/12/17 21:37:46 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -101,12 +101,12 @@ static char *getchanmode(struct chanset_t *chan)
     s[i++] = 'a';
   if (atr & CHANKEY)
     s[i++] = 'k';
-  if (chan->channel.maxmembers > -1)
+  if (chan->channel.maxmembers != 0)
     s[i++] = 'l';
   s[i] = 0;
   if (chan->channel.key[0])
     i += sprintf(s + i, " %s", chan->channel.key);
-  if (chan->channel.maxmembers > -1)
+  if (chan->channel.maxmembers != 0)
     sprintf(s + i, " %d", chan->channel.maxmembers);
   return s;
 }
@@ -659,12 +659,12 @@ static void recheck_channel_modes(struct chanset_t *chan)
       add_mode(chan, '+', 'q', "");
     else if ((mns & CHANQUIET) && (cur & CHANQUIET))
       add_mode(chan, '-', 'q', "");
-    if ((chan->limit_prot != -1) && (chan->channel.maxmembers == -1)) {
+    if ((chan->limit_prot != 0) && (chan->channel.maxmembers == 0)) {
       char s[50];
 
       sprintf(s, "%d", chan->limit_prot);
       add_mode(chan, '+', 'l', s);
-    } else if ((mns & CHANLIMIT) && (chan->channel.maxmembers >= 0))
+    } else if ((mns & CHANLIMIT) && (chan->channel.maxmembers != 0))
       add_mode(chan, '-', 'l', "");
     if (chan->key_prot[0]) {
       if (rfc_casecmp(chan->channel.key, chan->key_prot) != 0) {

@@ -1,7 +1,7 @@
 /* 
  * tclchan.c -- part of channels.mod
  * 
- * $Id: tclchan.c,v 1.39 2000/11/21 05:18:04 guppy Exp $
+ * $Id: tclchan.c,v 1.40 2000/12/17 21:37:46 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1493,7 +1493,7 @@ static void init_masklist(masklist *m)
  */
 static void init_channel(struct chanset_t *chan, int reset)
 {
-  chan->channel.maxmembers = (-1);
+  chan->channel.maxmembers = 0;
   chan->channel.mode = 0;
   chan->channel.members = 0;
   if (!reset) {
@@ -1588,8 +1588,8 @@ static int tcl_channel_add(Tcl_Interp *irp, char *newname, char *options)
     /* Hells bells, why set *every* variable to 0 when we have bzero? */
     egg_bzero(chan, sizeof(struct chanset_t));
 
-    chan->limit_prot = (-1);
-    chan->limit = (-1);
+    chan->limit_prot = 0;
+    chan->limit = 0;
     chan->flood_pub_thr = gfld_chan_thr;
     chan->flood_pub_time = gfld_chan_time;
     chan->flood_ctcp_thr = gfld_ctcp_thr;

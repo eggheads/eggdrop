@@ -4,7 +4,7 @@
  *   channel mode changes and the bot's reaction to them
  *   setting and getting the current wanted channel modes
  * 
- * $Id: mode.c,v 1.38 2000/10/27 19:38:09 fabian Exp $
+ * $Id: mode.c,v 1.39 2000/12/17 21:37:46 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -82,7 +82,7 @@ static void flush_mode(struct chanset_t *chan, int pri)
    * a 13 char buffer for '-2147483647 \0'. We'll be overwriting the existing
    * terminating null in 'post', so makesure postsize >= 12.
    */
-  if (chan->limit != -1 && postsize >= 12) {
+  if (chan->limit != 0 && postsize >= 12) {
     if (plus != 1) {
       *p++ = '+', plus = 1;
     }
@@ -91,7 +91,7 @@ static void flush_mode(struct chanset_t *chan, int pri)
     /* 'sizeof(post) - 1' is used because we want to overwrite the old null */
     postsize -= sprintf(&post[(sizeof(post) - 1) - postsize], "%d ", chan->limit);
     
-    chan->limit = -1;
+    chan->limit = 0;
   }
   
   /* -k ? */
@@ -966,16 +966,16 @@ static int gotmode(char *from, char *origmsg)
 	  if (ms2[0] == '-') {
 	    check_tcl_mode(nick, from, u, chan->dname, ms2, "");
 	    if (channel_active(chan)) {
-	      if ((reversing) && (chan->channel.maxmembers != (-1))) {
+	      if ((reversing) && (chan->channel.maxmembers != 0)) {
 		simple_sprintf(s, "%d", chan->channel.maxmembers);
 		add_mode(chan, '+', 'l', s);
-	      } else if ((chan->limit_prot != (-1)) && !glob_master(user) &&
+	      } else if ((chan->limit_prot != 0) && !glob_master(user) &&
 			 !chan_master(user)) {
 		simple_sprintf(s, "%d", chan->limit_prot);
 		add_mode(chan, '+', 'l', s);
 	      }
 	    }
-	    chan->channel.maxmembers = (-1);
+	    chan->channel.maxmembers = 0;
 	  } else {
 	    op = newsplit(&msg);
 	    fixcolon(op);
@@ -996,7 +996,7 @@ static int gotmode(char *from, char *origmsg)
 	    }
 	    if ((chan->limit_prot != chan->channel.maxmembers) &&
 		(chan->mode_pls_prot & CHANLIMIT) &&
-		(chan->limit_prot != (-1)) &&	/* arthur2 */
+		(chan->limit_prot != 0) &&	/* arthur2 */
 		!glob_master(user) && !chan_master(user)) {
 	      simple_sprintf(s, "%d", chan->limit_prot);
 	      add_mode(chan, '+', 'l', s);

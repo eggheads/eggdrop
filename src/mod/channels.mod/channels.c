@@ -2,7 +2,7 @@
  * channels.c -- part of channels.mod
  *   support for channels within the bot
  * 
- * $Id: channels.c,v 1.44 2000/11/21 22:30:24 guppy Exp $
+ * $Id: channels.c,v 1.45 2000/12/17 21:37:46 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -92,7 +92,7 @@ static void set_mode_protect(struct chanset_t *chan, char *set)
 
   /* Clear old modes */
   chan->mode_mns_prot = chan->mode_pls_prot = 0;
-  chan->limit_prot = (-1);
+  chan->limit_prot = 0;
   chan->key_prot[0] = 0;
   for (s = newsplit(&set); *s; s++) {
     i = 0;
@@ -135,7 +135,7 @@ static void set_mode_protect(struct chanset_t *chan, char *set)
       break;
     case 'l':
       i = CHANLIMIT;
-      chan->limit_prot = (-1);
+      chan->limit_prot = 0;
       if (pos) {
 	s1 = newsplit(&set);
 	if (s1[0])
@@ -177,9 +177,9 @@ static void get_mode_protect(struct chanset_t *chan, char *s)
     ok = 0;
     if (i == 0) {
       tst = chan->mode_pls_prot;
-      if ((tst) || (chan->limit_prot != (-1)) || (chan->key_prot[0]))
+      if ((tst) || (chan->limit_prot != 0) || (chan->key_prot[0]))
 	*p++ = '+';
-      if (chan->limit_prot != (-1)) {
+      if (chan->limit_prot != 0) {
 	*p++ = 'l';
 	sprintf(&s1[strlen(s1)], "%d ", chan->limit_prot);
       }
