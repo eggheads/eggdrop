@@ -1,7 +1,7 @@
 /* 
  * servmsg.c -- part of server.mod
  * 
- * $Id: servmsg.c,v 1.49 2000/10/27 19:32:42 fabian Exp $
+ * $Id: servmsg.c,v 1.50 2001/01/08 03:43:06 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -830,7 +830,7 @@ static int got432(char *from, char *msg)
   newsplit(&msg);
   erroneus = newsplit(&msg);
   if (server_online)
-    putlog(LOG_MISC, "*", "NICK IN INVALID: %s (keeping '%s').", erroneus,
+    putlog(LOG_MISC, "*", "NICK IS INVALID: %s (keeping '%s').", erroneus,
 	   botname);
   else {
     putlog(LOG_MISC, "*", IRC_BADBOTNICK);
