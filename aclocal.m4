@@ -1,7 +1,7 @@
 dnl aclocal.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: aclocal.m4,v 1.6 2000/01/09 16:34:49 fabian Exp $
+dnl $Id: aclocal.m4,v 1.7 2000/01/17 22:18:48 fabian Exp $
 dnl
 AC_DEFUN(EGG_MSG_CONFIGURE_START, [dnl
 AC_MSG_RESULT()
@@ -292,13 +292,13 @@ dnl
 dnl
 AC_DEFUN(EGG_CHECK_RES_LIBS, [dnl
 AC_CHECK_FUNC(res_init, ,
-  AC_CHECK_LIB(bind, res_init, RESLIB="-lbind",
-   AC_CHECK_LIB(resolv, res_init, RESLIB="-lresolv",
+  AC_CHECK_LIB(resolv, res_init, RESLIB="-lresolv",
+   AC_CHECK_LIB(bind, res_init, RESLIB="-lbind",
     AC_MSG_ERROR(No resolver library found))))
 
 AC_CHECK_FUNC(res_mkquery, ,
-  AC_CHECK_LIB(bind, res_mkquery, RESLIB="-lbind",
-   AC_CHECK_LIB(resolv, res_mkquery, RESLIB="-lresolv",
+  AC_CHECK_LIB(resolv, res_mkquery, RESLIB="-lresolv",
+   AC_CHECK_LIB(bind, res_mkquery, RESLIB="-lbind",
     AC_MSG_ERROR(No resolver library found))))
 
 AC_SUBST(RESLIB)

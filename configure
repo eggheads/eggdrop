@@ -1846,14 +1846,14 @@ if eval "test \"`echo '$ac_cv_func_'res_init`\" = yes"; then
   :
 else
   echo "$ac_t""no" 1>&6
-echo $ac_n "checking for res_init in -lbind""... $ac_c" 1>&6
-echo "configure:1851: checking for res_init in -lbind" >&5
-ac_lib_var=`echo bind'_'res_init | sed 'y%./+-%__p_%'`
+echo $ac_n "checking for res_init in -lresolv""... $ac_c" 1>&6
+echo "configure:1851: checking for res_init in -lresolv" >&5
+ac_lib_var=`echo resolv'_'res_init | sed 'y%./+-%__p_%'`
 if eval "test \"`echo '$''{'ac_cv_lib_$ac_lib_var'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   ac_save_LIBS="$LIBS"
-LIBS="-lbind  $LIBS"
+LIBS="-lresolv  $LIBS"
 cat > conftest.$ac_ext <<EOF
 #line 1859 "configure"
 #include "confdefs.h"
@@ -1881,17 +1881,17 @@ LIBS="$ac_save_LIBS"
 fi
 if eval "test \"`echo '$ac_cv_lib_'$ac_lib_var`\" = yes"; then
   echo "$ac_t""yes" 1>&6
-  RESLIB="-lbind"
+  RESLIB="-lresolv"
 else
   echo "$ac_t""no" 1>&6
-echo $ac_n "checking for res_init in -lresolv""... $ac_c" 1>&6
-echo "configure:1889: checking for res_init in -lresolv" >&5
-ac_lib_var=`echo resolv'_'res_init | sed 'y%./+-%__p_%'`
+echo $ac_n "checking for res_init in -lbind""... $ac_c" 1>&6
+echo "configure:1889: checking for res_init in -lbind" >&5
+ac_lib_var=`echo bind'_'res_init | sed 'y%./+-%__p_%'`
 if eval "test \"`echo '$''{'ac_cv_lib_$ac_lib_var'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   ac_save_LIBS="$LIBS"
-LIBS="-lresolv  $LIBS"
+LIBS="-lbind  $LIBS"
 cat > conftest.$ac_ext <<EOF
 #line 1897 "configure"
 #include "confdefs.h"
@@ -1919,7 +1919,7 @@ LIBS="$ac_save_LIBS"
 fi
 if eval "test \"`echo '$ac_cv_lib_'$ac_lib_var`\" = yes"; then
   echo "$ac_t""yes" 1>&6
-  RESLIB="-lresolv"
+  RESLIB="-lbind"
 else
   echo "$ac_t""no" 1>&6
 { echo "configure: error: No resolver library found" 1>&2; exit 1; }
@@ -1976,14 +1976,14 @@ if eval "test \"`echo '$ac_cv_func_'res_mkquery`\" = yes"; then
   :
 else
   echo "$ac_t""no" 1>&6
-echo $ac_n "checking for res_mkquery in -lbind""... $ac_c" 1>&6
-echo "configure:1981: checking for res_mkquery in -lbind" >&5
-ac_lib_var=`echo bind'_'res_mkquery | sed 'y%./+-%__p_%'`
+echo $ac_n "checking for res_mkquery in -lresolv""... $ac_c" 1>&6
+echo "configure:1981: checking for res_mkquery in -lresolv" >&5
+ac_lib_var=`echo resolv'_'res_mkquery | sed 'y%./+-%__p_%'`
 if eval "test \"`echo '$''{'ac_cv_lib_$ac_lib_var'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   ac_save_LIBS="$LIBS"
-LIBS="-lbind  $LIBS"
+LIBS="-lresolv  $LIBS"
 cat > conftest.$ac_ext <<EOF
 #line 1989 "configure"
 #include "confdefs.h"
@@ -2011,17 +2011,17 @@ LIBS="$ac_save_LIBS"
 fi
 if eval "test \"`echo '$ac_cv_lib_'$ac_lib_var`\" = yes"; then
   echo "$ac_t""yes" 1>&6
-  RESLIB="-lbind"
+  RESLIB="-lresolv"
 else
   echo "$ac_t""no" 1>&6
-echo $ac_n "checking for res_mkquery in -lresolv""... $ac_c" 1>&6
-echo "configure:2019: checking for res_mkquery in -lresolv" >&5
-ac_lib_var=`echo resolv'_'res_mkquery | sed 'y%./+-%__p_%'`
+echo $ac_n "checking for res_mkquery in -lbind""... $ac_c" 1>&6
+echo "configure:2019: checking for res_mkquery in -lbind" >&5
+ac_lib_var=`echo bind'_'res_mkquery | sed 'y%./+-%__p_%'`
 if eval "test \"`echo '$''{'ac_cv_lib_$ac_lib_var'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   ac_save_LIBS="$LIBS"
-LIBS="-lresolv  $LIBS"
+LIBS="-lbind  $LIBS"
 cat > conftest.$ac_ext <<EOF
 #line 2027 "configure"
 #include "confdefs.h"
@@ -2049,7 +2049,7 @@ LIBS="$ac_save_LIBS"
 fi
 if eval "test \"`echo '$ac_cv_lib_'$ac_lib_var`\" = yes"; then
   echo "$ac_t""yes" 1>&6
-  RESLIB="-lresolv"
+  RESLIB="-lbind"
 else
   echo "$ac_t""no" 1>&6
 { echo "configure: error: No resolver library found" 1>&2; exit 1; }
