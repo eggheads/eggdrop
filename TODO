@@ -42,7 +42,7 @@ Problem status:
        43:      Jason
        44:      no-one
        48:      no-one
-       49:      no-one
+       49:      drummer submitted a patch to eggdev
 
 ----------
 1. user fields to sharebots not being removed,
@@ -467,4 +467,4 @@ set bogus-bans [0/1] <- if set to 0, the bot won't do anything if people
 set bogus bans thus preventing bogus ban floods. it will only react to
 bogus bans if it is set to 1.
 
-Status: no-one is working on this
+Status: drummer submitted a patch to eggdev
