@@ -1012,8 +1012,8 @@ char *channels_start(Function * global_funcs)
   gfld_ctcp_time = 60;
   context;
   module_register(MODULE_NAME, channels_table, 1, 0);
-  if (!module_depend(MODULE_NAME, "eggdrop", 104, 0))
-    return "This module needs eggdrop1.4.0 or later";
+  if (!module_depend(MODULE_NAME, "eggdrop", 105, 0))
+    return "This module needs eggdrop1.5.0 or later";
   add_hook(HOOK_MINUTELY, check_expired_bans);
   add_hook(HOOK_MINUTELY,check_expired_exempts);
   add_hook(HOOK_MINUTELY,check_expired_invites);

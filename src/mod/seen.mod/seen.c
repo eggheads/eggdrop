@@ -649,9 +649,9 @@ char *seen_start(Function * egg_func_table)
 
   context;
   module_register(MODULE_NAME, seen_table, 2, 0);
-  if (!module_depend(MODULE_NAME, "eggdrop", 104, 0))
+  if (!module_depend(MODULE_NAME, "eggdrop", 105, 0))
     return
-      "MODULE `seen' cannot be loaded on Eggdrops prior to version 1.4.0";
+      "MODULE `seen' cannot be loaded on Eggdrops prior to version 1.5.0";
   add_builtins(H_load, seen_load);
   add_builtins(H_dcc, seen_dcc);
   add_help_reference("seen.help");

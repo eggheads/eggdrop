@@ -1909,8 +1909,8 @@ char *share_start(Function * global_funcs)
 
   context;
   module_register(MODULE_NAME, share_table, 2, 0);
-  if (!module_depend(MODULE_NAME, "eggdrop", 104, 0))
-    return "You need an eggdrop of at least v1.4.0 to use this share module.";
+  if (!module_depend(MODULE_NAME, "eggdrop", 105, 0))
+    return "You need an eggdrop of at least v1.5.0 to use this share module.";
   if (!(transfer_funcs = module_depend(MODULE_NAME, "transfer", 2, 0))) {
     module_undepend(MODULE_NAME);
     return "You need the transfer module to use userfile sharing.";

@@ -966,8 +966,8 @@ char *filesys_start(Function * global_funcs)
   module_register(MODULE_NAME, filesys_table, 2, 0);
   if (!(transfer_funcs = module_depend(MODULE_NAME, "transfer", 2, 0)))
     return "You need the transfer module to user the file system.";
-  if (!module_depend(MODULE_NAME, "eggdrop", 104, 0))
-    return "You need at least eggdrop1.4.0 to run this module.";
+  if (!module_depend(MODULE_NAME, "eggdrop", 105, 0))
+    return "You need at least eggdrop1.5.0 to run this module.";
   add_tcl_commands(mytcls);
   add_tcl_strings(mystrings);
   add_tcl_ints(myints);

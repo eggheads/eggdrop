@@ -67,8 +67,8 @@ char *woobie_start(Function * global_funcs)
   global = global_funcs;
   context;
   module_register(MODULE_NAME, woobie_table, 2, 0);
-  if (!module_depend(MODULE_NAME, "eggdrop", 104, 0))
-    return "This module requires eggdrop1.4.0 or later";
+  if (!module_depend(MODULE_NAME, "eggdrop", 105, 0))
+    return "This module requires eggdrop1.5.0 or later";
   add_builtins(H_dcc, mydcc);
   return NULL;
 }

@@ -442,8 +442,8 @@ char *blowfish_start(Function * global_funcs)
     }
     context;
     module_register(MODULE_NAME, blowfish_table, 2, 0);
-    if (!module_depend(MODULE_NAME, "eggdrop", 104, 0))
-      return "This module requires eggdrop1.4.0 or later";
+    if (!module_depend(MODULE_NAME, "eggdrop", 105, 0))
+      return "This module requires eggdrop1.5.0 or later";
     add_hook(HOOK_ENCRYPT_PASS, blowfish_encrypt_pass);
   }
   add_tcl_commands(mytcls);

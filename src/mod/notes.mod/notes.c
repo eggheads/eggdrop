@@ -1210,8 +1210,8 @@ char *notes_start(Function * global_funcs)
   context;
   notefile[0] = 0;
   module_register(MODULE_NAME, notes_table, 2, 1);
-  if (!module_depend(MODULE_NAME, "eggdrop", 104, 0))
-    return "This module requires eggdrop1.4.0 or later";
+  if (!module_depend(MODULE_NAME, "eggdrop", 105, 0))
+    return "This module requires eggdrop1.5.0 or later";
   add_hook(HOOK_HOURLY, notes_hourly);
   add_hook(HOOK_MATCH_NOTEREJ, match_note_ignore);
   add_tcl_ints(notes_ints);

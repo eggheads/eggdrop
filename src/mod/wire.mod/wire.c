@@ -590,7 +590,7 @@ char *wire_start(Function * global_funcs)
 
   context;
   module_register(MODULE_NAME, wire_table, 2, 0);
-  if (!module_depend(MODULE_NAME, "eggdrop", 104, 0)) {
+  if (!module_depend(MODULE_NAME, "eggdrop", 105, 0)) {
     module_undepend(MODULE_NAME);
     return WIRE_VERSIONERROR;
   }

@@ -1588,8 +1588,8 @@ char *transfer_start(Function * global_funcs)
   fileq = NULL;
   context;
   module_register(MODULE_NAME, transfer_table, 2, 0);
-  if (!module_depend(MODULE_NAME, "eggdrop", 104, 0))
-    return "This module requires eggdrop1.4.0 or later";
+  if (!module_depend(MODULE_NAME, "eggdrop", 105, 0))
+    return "This module requires eggdrop1.5.0 or later";
   add_tcl_commands(mytcls);
   add_tcl_ints(myints);
   add_help_reference("transfer.help");
