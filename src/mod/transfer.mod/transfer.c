@@ -457,6 +457,7 @@ static void dcc_get(int idx, char *buf, int len)
   int w = len + dcc[idx].u.xfer->sofar, p = 0;
 
   context;
+  dcc[idx].timeval = now;
   if (w < 4) {
     my_memcpy(&(dcc[idx].u.xfer->buf[dcc[idx].u.xfer->sofar]), buf, len);
     dcc[idx].u.xfer->sofar += len;
@@ -552,7 +553,6 @@ static void dcc_get(int idx, char *buf, int len)
   tputs(dcc[idx].sock, bf, l);
   nfree(bf);
   dcc[idx].status += l;
-  dcc[idx].timeval = now;
 }
 
 static void eof_dcc_get(int idx)

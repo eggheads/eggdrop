@@ -415,7 +415,7 @@ static int u_addban(struct chanset_t *chan, char *ban, char *from, char *note,
   if ((expire_time == 0L) || (flags & MASKREC_PERM)) {
     flags |= MASKREC_PERM;
     expire_time = 0L;
-  }
+  } 
   /* new format: */
   p = user_malloc(sizeof(maskrec));
 
@@ -480,10 +480,10 @@ static int u_addinvite (struct chanset_t * chan, char * invite, char * from,
     flags |= MASKREC_STICKY;
     note++;
   }
-  if (expire_time != 0L)
-    flags &= ~MASKREC_STICKY;
-  else
+  if ((expire_time == 0L) || (flags & MASKREC_PERM)) {
     flags |= MASKREC_PERM;
+    expire_time = 0L;
+  }
   /* new format: */
   p = user_malloc(sizeof(maskrec));
   p->next = *u;
@@ -547,10 +547,10 @@ static int u_addexempt (struct chanset_t * chan, char * exempt, char * from,
     flags |= MASKREC_STICKY;
     note++;
   }
-  if (expire_time != 0L)
-    flags &= ~MASKREC_STICKY;
-  else
+  if ((expire_time == 0L) || (flags & MASKREC_PERM)) {
     flags |= MASKREC_PERM;
+    expire_time = 0L;
+  }
   /* new format: */
   p = user_malloc(sizeof(maskrec));
   p->next = *u;
