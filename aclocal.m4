@@ -16,7 +16,7 @@ dnl You should have received a copy of the GNU General Public License
 dnl along with this program; if not, write to the Free Software
 dnl Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 dnl
-dnl $Id: aclocal.m4,v 1.85 2004/01/18 03:50:21 wcc Exp $
+dnl $Id: aclocal.m4,v 1.86 2004/01/18 03:57:26 wcc Exp $
 dnl
 
 dnl EGG_MSG_CONFIGURE_START()
@@ -523,7 +523,7 @@ EOF
 dnl EGG_CHECK_LIBSAFE_SSCANF()
 AC_DEFUN([EGG_CHECK_LIBSAFE_SSCANF],
 [
-  AC_CACHE_CHECK([for broken libsafe sscanf, egg_cv_var_libsafe_sscanf],
+  AC_CACHE_CHECK([for broken libsafe sscanf], [egg_cv_var_libsafe_sscanf],
   [
     AC_RUN_IFELSE(
     [[

@@ -7713,59 +7713,12 @@ done
 
 # Make sure we are using the correct result from a broken libsafe sscanf
 
-  echo "$as_me:$LINENO: checking for broken libsafe sscanf, egg_cv_var_libsafe_sscanf" >&5
-echo $ECHO_N "checking for broken libsafe sscanf, egg_cv_var_libsafe_sscanf... $ECHO_C" >&6
-if test "${
-    if test "$cross_compiling" = yes; then
-
-      egg_cv_var_libsafe_sscanf="no"
-
-else
-  cat >conftest.$ac_ext <<_ACEOF
-
-      #include <stdio.h>
-
-      int main()
-      {
-        char *src = "0x001,guppyism\n", dst[10];
-        int idx;
-
-        if (sscanf(src, "0x%x,%10c", &idx, dst) == 1)
-          exit(1);
-        return 0;
-      }
-
-_ACEOF
-rm -f conftest$ac_exeext
-if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
-  (eval $ac_link) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); } && { ac_try='./conftest$ac_exeext'
-  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
-  (eval $ac_try) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); }; }; then
-
-      egg_cv_var_libsafe_sscanf="no"
-
-else
-  echo "$as_me: program exited with status $ac_status" >&5
-echo "$as_me: failed program was:" >&5
-sed 's/^/| /' conftest.$ac_ext >&5
-
-( exit $ac_status )
-
-      egg_cv_var_libsafe_sscanf="yes"
-
-fi
-rm -f core *.core gmon.out bb.out conftest$ac_exeext conftest.$ac_objext conftest.$ac_ext
-fi
-  +set}" = set; then
+  echo "$as_me:$LINENO: checking for broken libsafe sscanf" >&5
+echo $ECHO_N "checking for broken libsafe sscanf... $ECHO_C" >&6
+if test "${egg_cv_var_libsafe_sscanf+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
-fi
-echo "$as_me:$LINENO: result: $
+else
+
     if test "$cross_compiling" = yes; then
 
       egg_cv_var_libsafe_sscanf="no"
@@ -7812,55 +7765,10 @@ sed 's/^/| /' conftest.$ac_ext >&5
 fi
 rm -f core *.core gmon.out bb.out conftest$ac_exeext conftest.$ac_objext conftest.$ac_ext
 fi
-  " >&5
-echo "${ECHO_T}$
-    if test "$cross_compiling" = yes; then
-
-      egg_cv_var_libsafe_sscanf="no"
-
-else
-  cat >conftest.$ac_ext <<_ACEOF
-
-      #include <stdio.h>
-
-      int main()
-      {
-        char *src = "0x001,guppyism\n", dst[10];
-        int idx;
-
-        if (sscanf(src, "0x%x,%10c", &idx, dst) == 1)
-          exit(1);
-        return 0;
-      }
-
-_ACEOF
-rm -f conftest$ac_exeext
-if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
-  (eval $ac_link) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); } && { ac_try='./conftest$ac_exeext'
-  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
-  (eval $ac_try) 2>&5
-  ac_status=$?
-  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); }; }; then
-
-      egg_cv_var_libsafe_sscanf="no"
-
-else
-  echo "$as_me: program exited with status $ac_status" >&5
-echo "$as_me: failed program was:" >&5
-sed 's/^/| /' conftest.$ac_ext >&5
-
-( exit $ac_status )
-
-      egg_cv_var_libsafe_sscanf="yes"
 
 fi
-rm -f core *.core gmon.out bb.out conftest$ac_exeext conftest.$ac_objext conftest.$ac_ext
-fi
-  " >&6
+echo "$as_me:$LINENO: result: $egg_cv_var_libsafe_sscanf" >&5
+echo "${ECHO_T}$egg_cv_var_libsafe_sscanf" >&6
   if test "$egg_cv_var_libsafe_sscanf" = "yes"; then
 
 cat >>confdefs.h <<\_ACEOF
