@@ -532,7 +532,7 @@ marked with vertical bars (|) on the left.
 
 *** CHANNEL COMMANDS ***
 
-  channel add <name> <option-list>
+  channel add <name> [option-list]
     Description: adds a channel record for the bot to monitor. The full
       list of possible options are given in doc/settings.mod.channels. Note
       that the channel options must be in a list (enclosed in {}).
