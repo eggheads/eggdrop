@@ -4,7 +4,7 @@
  * 
  *   IF YOU ALTER THIS FILE, YOU NEED TO RECOMPILE THE BOT.
  * 
- * $Id: eggdrop.h,v 1.25 2000/03/04 20:49:44 fabian Exp $
+ * $Id: eggdrop.h,v 1.26 2000/03/06 19:10:12 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -515,6 +515,7 @@ typedef struct {
 #define SOCK_PROXYWAIT	0x0080	/* waiting for SOCKS traversal		*/
 #define SOCK_PASS	0x0100	/* passed on; only notify in case
 				   of traffic				*/
+#define SOCK_VIRTUAL	0x0200	/* not-connected socket (dont read it!)	*/
 
 /* Flags to sock_has_data
  */

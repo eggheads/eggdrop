@@ -7,7 +7,7 @@
  *   linking, unlinking, and relaying to another bot
  *   pinging the bots periodically and checking leaf status
  * 
- * $Id: botnet.c,v 1.19 2000/01/31 23:03:01 fabian Exp $
+ * $Id: botnet.c,v 1.20 2000/03/06 19:10:12 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1143,9 +1143,8 @@ void tandem_relay(int idx, char *nick, register int i)
   ci = dcc[idx].u.chat;
   dcc[idx].u.relay = get_data_ptr(sizeof(struct relay_info));
   dcc[idx].u.relay->chat = ci;
-  dcc[i].sock = getsock(SOCK_STRONGCONN);
+  dcc[i].sock = getsock(SOCK_STRONGCONN | SOCK_VIRTUAL);
   dcc[idx].u.relay->sock = dcc[i].sock;
-  dcc[i].u.relay->sock = dcc[idx].sock;
   dcc[i].timeval = now;
   dcc[i].u.dns->ibuf = dcc[idx].sock;
   dcc[i].u.dns->host = get_data_ptr(strlen(bi->address) + 1);
@@ -1235,9 +1234,9 @@ static void pre_relay(int idx, char *buf, register int i)
   }
   if (tidx < 0) {
     putlog(LOG_MISC, "*", "%s  %d -> %d", BOT_CANTFINDRELAYUSER,
-	   dcc[i].sock, dcc[i].u.relay->sock);
-    killsock(dcc[i].sock);
-    lostdcc(i);
+	   dcc[idx].sock, dcc[idx].u.relay->sock);
+    killsock(dcc[idx].sock);
+    lostdcc(idx);
     return;
   }
   Context;

@@ -2,7 +2,7 @@
  * net.c -- handles:
  *   all raw network i/o
  * 
- * $Id: net.c,v 1.16 2000/01/30 19:26:21 fabian Exp $
+ * $Id: net.c,v 1.17 2000/03/06 19:10:12 fabian Exp $
  */
 /* 
  * This is hereby released into the public domain.
@@ -409,7 +409,7 @@ int open_telnet_raw(int sock, char *server, int sport)
   }
   for (i = 0; i < MAXSOCKS; i++) {
     if (!(socklist[i].flags & SOCK_UNUSED) && (socklist[i].sock == sock))
-      socklist[i].flags |= SOCK_CONNECT;
+      socklist[i].flags = (socklist[i].flags & ~SOCK_VIRTUAL) | SOCK_CONNECT;
   }
   if (connect(sock, (struct sockaddr *) &name,
 	      sizeof(struct sockaddr_in)) < 0) {
@@ -601,8 +601,9 @@ static int sockread(char *s, int *len)
   t.tv_sec = 1;
   t.tv_usec = 0;
   FD_ZERO(&fd);
+  
   for (i = 0; i < MAXSOCKS; i++)
-    if (!(socklist[i].flags & SOCK_UNUSED)) {
+    if (!(socklist[i].flags & (SOCK_UNUSED | SOCK_VIRTUAL))) {
       if ((socklist[i].sock == STDOUT) && !backgrd)
 	FD_SET(STDIN, &fd);
       else
