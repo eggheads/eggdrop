@@ -2,7 +2,7 @@
  * chancmds.c -- part of irc.mod
  *   handles commands directly relating to channel interaction
  *
- * $Id: cmdsirc.c,v 1.52 2003/03/18 21:23:08 wcc Exp $
+ * $Id: cmdsirc.c,v 1.53 2003/03/19 00:13:22 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -515,7 +515,6 @@ static void cmd_voice(struct userrec *u, int idx, char *par)
   char *nick;
   memberlist *m;
   char s[UHOSTLEN];
-  int fail = 0;
 
   nick = newsplit(&par);
   chan = get_channel(idx, par);
