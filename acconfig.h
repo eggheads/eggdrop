@@ -1,8 +1,11 @@
+#ifndef _EGG_CONFIG_H
+#define _EGG_CONFIG_H
+@TOP@
 /* 
  * acconfig.h
  *   template file autoheader uses when building config.h.in
  * 
- * $Id: acconfig.h,v 1.5 2000/01/09 16:34:49 fabian Exp $
+ * $Id: acconfig.h,v 1.6 2000/03/22 00:42:56 fabian Exp $
  */
 
 /* Define if modules will work on your system  */
@@ -43,3 +46,7 @@
 
 /* Defines the current eggdrop version */
 #undef EGG_VERSION
+
+@BOTTOM@
+
+#endif /* !_EGG_CONFIG_H */

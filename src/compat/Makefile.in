@@ -1,5 +1,5 @@
-# Makefile for src/md5/
-# $Id: Makefile.in,v 1.4 2000/03/22 00:42:57 fabian Exp $
+# Makefile for src/compat/
+# $Id: Makefile.in,v 1.1 2000/03/22 00:42:57 fabian Exp $
 
 SHELL = /bin/sh
 top_srcdir = @top_srcdir@
@@ -14,10 +14,10 @@ INSTALL_SCRIPT = @INSTALL_SCRIPT@
 CC = @CC@
 LD = @CC@
 STRIP = @STRIP@
-CFLAGS = @CFLAGS@ -I. -I../.. -I$(top_srcdir) -I$(top_srcdir)/src @DEFS@ $(CFLGS)
+CFLAGS = @CFLAGS@ -I../.. -I$(top_srcdir) -I$(top_srcdir)/src @DEFS@ $(CFLGS)
 CPPFLAGS = @CPPFLAGS@
 
-OBJS = md5c.o
+OBJS = inet_aton.o snprintf.o
 
 doofus:
 	@echo ""
@@ -31,7 +31,7 @@ depend:
 clean:
 	@rm -f .depend *.o *~
 
-md5: $(OBJS)
+compat: $(OBJS)
 
 .SUFFIXES:
 .SUFFIXES: .c .o .h
@@ -40,4 +40,5 @@ md5: $(OBJS)
 	$(CC) $(CFLAGS) $(CPPFLAGS) -c $<
 
 #safety hash
-md5c.o: md5c.c global.h md5.h
+inet_aton.o: inet_aton.c $(top_srcdir)/src/main.h \
+$(top_srcdir)/src/eggdrop.h $(top_srcdir)/src/proto.h

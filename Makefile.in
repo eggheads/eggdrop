@@ -2,10 +2,12 @@
 #  This is the Makefile for EGGDROP (the irc bot)
 #  You should never need to edit this.
 #
-# $Id: Makefile.in,v 1.16 2000/03/06 18:54:07 fabian Exp $
+# $Id: Makefile.in,v 1.17 2000/03/22 00:42:56 fabian Exp $
 
 SHELL = /bin/sh
 top_srcdir = @top_srcdir@
+srcdir = @srcdir@
+VPATH = @srcdir@
 
 @SET_MAKE@
 prefix = @prefix@
@@ -61,8 +63,7 @@ XLIBS = @TCL_LIBS@ @LIBS@
 TCLLIB = @TCLLIB@
 TCLLIBFN = @TCLLIBFN@
 
-CFLAGS = @CFLAGS@ -I.. @DEFS@ $(CFLGS)
-DEBCFLAGS = @CFLAGS@ -I.. @DEFS@ -DDEBUG_ASSERT -DDEBUG_MEM $(CFLGS)
+DEBCFLAGS = -DDEBUG_ASSERT -DDEBUG_MEM 
 
 modconf = $(top_srcdir)/misc/modconfig --top_srcdir=$(top_srcdir)
 
@@ -76,37 +77,34 @@ post_iconfig =  $(modconf) update-depends && \
 		$(modconf) Makefile
 
 MAKE_MODEGG = $(MAKE) 'MAKE=$(MAKE)' 'CC=$(MOD_CC)' 'LD=$(MOD_LD)' \
-'STRIP=$(MOD_STRIP)' 'RANLIB=$(RANLIB)' 'CFLAGS=$(CFLAGS)' \
-'CPPFLAGS=$(CPPFLAGS)' 'TCLLIB=$(TCLLIB)' 'TCLLIBFN=$(TCLLIBFN)' \
-'XREQS=$(XREQS)' 'XLIBS=$(XLIBS)' 'EGGEXEC=$(EGGEXEC)' \
-'EGGBUILD=' 'MODOBJS='
+'STRIP=$(MOD_STRIP)' 'RANLIB=$(RANLIB)' 'CFLGS=$(CFLGS)' \
+'TCLLIB=$(TCLLIB)' 'TCLLIBFN=$(TCLLIBFN)' 'XREQS=$(XREQS)' \
+'XLIBS=$(XLIBS)' 'EGGEXEC=$(EGGEXEC)' 'EGGBUILD=' 'MODOBJS='
 
 MAKE_MODULES = $(MAKE) 'MAKE=$(MAKE)' 'CC=$(SHLIB_CC)' 'LD=$(SHLIB_LD)' \
-'STRIP=$(SHLIB_STRIP)' 'CFLAGS=$(CFLAGS)' 'CPPFLAGS=$(CPPFLAGS)'
+'STRIP=$(SHLIB_STRIP)' 'CFLGS=$(CFLGS)'
 
 MAKE_STATIC = $(MAKE) 'MAKE=$(MAKE)' 'CC=$(CC)' 'LD=$(LD)' \
-'STRIP=$(STRIP)' 'RANLIB=$(RANLIB)' 'CFLAGS=$(CFLAGS) -DSTATIC' \
-'CPPFLAGS=$(CPPFLAGS)' 'TCLLIB=$(TCLLIB)' 'TCLLIBFN=$(TCLLIBFN)' \
-'XREQS=$(XREQS)' 'XLIBS=$(XLIBS)' 'EGGEXEC=$(EGGEXEC)' \
-'EGGBUILD=(static version)' 'MODOBJS=mod/*.o'
+'STRIP=$(STRIP)' 'RANLIB=$(RANLIB)' 'CFLGS=$(CFLGS) -DSTATIC' \
+'TCLLIB=$(TCLLIB)' 'TCLLIBFN=$(TCLLIBFN)' 'XREQS=$(XREQS)' \
+'XLIBS=$(XLIBS)' 'EGGEXEC=$(EGGEXEC)' 'EGGBUILD=(static version)' \
+'MODOBJS=mod/*.o'
 
 MAKE_DEBEGG = $(MAKE) 'MAKE=$(MAKE)' 'CC=$(MOD_CC)' 'LD=$(MOD_LD) -g' \
-'STRIP=touch' 'RANLIB=$(RANLIB)' 'CFLAGS=-g3 $(DEBCFLAGS)' \
-'CPPFLAGS=$(CPPFLAGS)' 'TCLLIB=$(TCLLIB)' 'TCLLIBFN=$(TCLLIBFN)' \
-'XREQS=$(XREQS)' 'XLIBS=$(XLIBS)' 'EGGEXEC=$(EGGEXEC)' \
-'EGGBUILD=(debug version)' 'MODOBJS='
+'STRIP=touch' 'RANLIB=$(RANLIB)' 'CFLGS=-g3 $(DEBCFLAGS)' \
+'TCLLIB=$(TCLLIB)' 'TCLLIBFN=$(TCLLIBFN)' 'XREQS=$(XREQS)' \
+'XLIBS=$(XLIBS)' 'EGGEXEC=$(EGGEXEC)' 'EGGBUILD=(debug version)' 'MODOBJS='
 
 MAKE_DEBMODULES = $(MAKE) 'MAKE=$(MAKE)' 'CC=$(SHLIB_CC)' 'LD=$(SHLIB_LD)' \
-'STRIP=touch' 'CFLAGS=-g3 $(DEBCFLAGS)' 'CPPFLAGS=$(CPPFLAGS)'
+'STRIP=touch' 'CFLGS=-g3 $(DEBCFLAGS)'
 
 MAKE_SDEBUG = $(MAKE) 'MAKE=$(MAKE)' 'CC=$(CC)' 'LD=$(LD) -g' \
-'STRIP=touch' 'RANLIB=$(RANLIB)' 'CFLAGS=-g3 $(DEBCFLAGS) -DSTATIC' \
-'CPPFLAGS=$(CPPFLAGS)' 'TCLLIB=$(TCLLIB)' 'TCLLIBFN=$(TCLLIBFN)' \
-'XREQS=$(XREQS)' 'XLIBS=$(XLIBS)' 'EGGEXEC=$(EGGEXEC)' \
-'EGGBUILD=(static and debug version)' 'MODOBJS=mod/*.o'
+'STRIP=touch' 'RANLIB=$(RANLIB)' 'CFLGS=-g3 $(DEBCFLAGS) -DSTATIC' \
+'TCLLIB=$(TCLLIB)' 'TCLLIBFN=$(TCLLIBFN)' 'XREQS=$(XREQS)' 'XLIBS=$(XLIBS)' \
+'EGGEXEC=$(EGGEXEC)' 'EGGBUILD=(static and debug version)' 'MODOBJS=mod/*.o'
 
 MAKE_DEPEND = $(MAKE) 'MAKE=$(MAKE)' 'CC=$(CC)' 'LD=$(LD)' \
-'STRIP=$(STRIP)' 'CFLAGS=$(CFLAGS)' 'CPPFLAGS=$(CPPFLAGS)'
+'STRIP=$(STRIP)' 'CFLGS=$(CFLGS)'
 
 MAKE_CONFIG = $(MAKE) 'MAKE=$(MAKE)'
 
@@ -120,13 +118,14 @@ eggclean:
 	@cd scripts && $(MAKE) clean
 	@cd src && $(MAKE) clean
 	@cd src/md5 && $(MAKE) clean
+	@cd src/compat && $(MAKE) clean
 
 clean: eggclean
 	@cd src/mod && $(MAKE) clean
 
 distclean: eggclean clean-modconfig
 	@cd src/mod && $(MAKE) distclean
-	@rm -f Makefile doc/Makefile scripts/Makefile src/Makefile src/md5/Makefile src/mod/Makefile
+	@rm -f Makefile doc/Makefile scripts/Makefile src/Makefile src/md5/Makefile src/compat/Makefile src/mod/Makefile
 	@rm -f config.cache config.log config.status config.h lush.h
 
 distrib: distclean
@@ -146,6 +145,7 @@ depend:
 	@cd src && $(MAKE_DEPEND) depend
 	@cd src/md5 && $(MAKE_DEPEND) depend
 	@cd src/mod && $(MAKE_DEPEND) depend
+	@cd src/compat && $(MAKE_DEPEND) depend
 
 config:
 	@$(modconf) modules-still-exist
@@ -338,49 +338,49 @@ install-modules:
 	fi
 
 install-data:
-	@$(INSTALL_DATA) eggdrop.conf.dist $(DEST)
+	@$(INSTALL_DATA) $(srcdir)/eggdrop.conf.dist $(DEST)
 	@if test ! -d $(DEST)/logs; then \
 		echo "Creating 'logs' subdirectory."; \
 		$(top_srcdir)/misc/mkinstalldirs $(DEST)/logs; \
-		$(INSTALL_DATA) logs/CONTENTS $(DEST)/logs/; \
+		$(INSTALL_DATA) $(srcdir)/logs/CONTENTS $(DEST)/logs/; \
 	fi;
 	@if test ! -d $(DEST)/text; then \
 		echo "Creating 'text' subdirectory."; \
 		$(top_srcdir)/misc/mkinstalldirs $(DEST)/text; \
 	fi;
 	@if test ! -f $(DEST)/text/motd; then \
-		$(INSTALL_DATA) text/motd $(DEST)/text/; \
+		$(INSTALL_DATA) $(srcdir)/text/motd $(DEST)/text/; \
 	fi
 	@if test ! -f $(DEST)/text/banner; then \
-		$(INSTALL_DATA) text/banner $(DEST)/text/; \
+		$(INSTALL_DATA) $(srcdir)/text/banner $(DEST)/text/; \
 	fi
 
 install-help:
 	@echo "Copying help files."
-	@if test ! "x`echo help/*.help`" = "xhelp/*.help"; then \
+	@if test ! "x`echo $(srcdir)/help/*.help`" = "x$(srcdir)/help/*.help"; then \
 		if test ! -d $(DEST)/help; then \
 			echo "Creating 'help' subdirectory."; \
 			$(top_srcdir)/misc/mkinstalldirs $(DEST)/help; \
 		fi; \
-		for i in help/*.help; do \
+		for i in $(srcdir)/help/*.help; do \
 			$(INSTALL_DATA) $$i $(DEST)/help/; \
 		done; \
 	fi
-	@if test ! "x`echo help/msg/*.help`" = "xhelp/msg/*.help"; then \
+	@if test ! "x`echo $(srcdir)/help/msg/*.help`" = "x$(srcdir)/help/msg/*.help"; then \
 		if test ! -d $(DEST)/help/msg; then \
 			echo "Creating 'help/msg' subdirectory."; \
 			$(top_srcdir)/misc/mkinstalldirs $(DEST)/help/msg; \
 		fi; \
-		for i in help/msg/*.help; do \
+		for i in $(srcdir)/help/msg/*.help; do \
 			$(INSTALL_DATA) $$i $(DEST)/help/msg/; \
 		done; \
 	fi
-	@if test ! "x`echo help/set/*.help`" = "xhelp/set/*.help"; then \
+	@if test ! "x`echo $(srcdir)/help/set/*.help`" = "x$(srcdir)/help/set/*.help"; then \
 		if test ! -d $(DEST)/help/set; then \
 			echo "Creating 'help/set' subdirectory."; \
 			$(top_srcdir)/misc/mkinstalldirs $(DEST)/help/set; \
 		fi; \
-		for i in help/set/*.help; do \
+		for i in $(srcdir)/help/set/*.help; do \
 			$(INSTALL_DATA) $$i $(DEST)/help/set/; \
 		done; \
 	fi
@@ -388,12 +388,12 @@ install-help:
 
 install-language:
 	@echo "Copying language files."
-	@if test ! "x`echo language/*.lang`" = "xlanguage/*.lang"; then \
+	@if test ! "x`echo $(srcdir)/language/*.lang`" = "x$(srcdir)/language/*.lang"; then \
 		if test ! -d $(DEST)/language; then \
 			echo "Creating 'language' subdirectory."; \
 			$(top_srcdir)/misc/mkinstalldirs $(DEST)/language; \
 		fi; \
-		for i in language/*.lang; do \
+		for i in $(srcdir)/language/*.lang; do \
 			$(INSTALL_DATA) $$i $(DEST)/language/; \
 		done; \
 	fi
@@ -407,7 +407,7 @@ install-filesys:
 	fi
 
 install-doc:
-	@$(INSTALL_DATA) README $(DEST)
+	@$(INSTALL_DATA) $(srcdir)/README $(DEST)
 	@cd doc/ && $(MAKE_INSTALL) install
 
 install-scripts:

@@ -1,18 +1,21 @@
 # Makefile for src/mod/wire.mod/
-# $Id: Makefile,v 1.8 2000/02/25 21:51:30 fabian Exp $
+# $Id: Makefile,v 1.9 2000/03/22 00:42:59 fabian Exp $
+
+srcdir = .
+
 
 doofus:
 	@echo ""
 	@echo "Let's try this from the right directory..."
 	@echo ""
-	@cd ../../../; make
+	@cd ../../../ && make
 
 static: ../wire.o
 
 modules: ../../../wire.so
 
 ../wire.o:
-	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c wire.c
+	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c $(srcdir)/wire.c
 	@rm -f ../wire.o
 	mv wire.o ../
 
@@ -21,7 +24,7 @@ modules: ../../../wire.so
 	$(STRIP) ../../../wire.so
 
 depend:
-	$(CC) $(CFLAGS) $(CPPFLAGS) -MM *.c > .depend
+	$(CC) $(CFLAGS) $(CPPFLAGS) -MM $(srcdir)/*.c > .depend
 
 clean:
 	@rm -f .depend *.o *.so *~

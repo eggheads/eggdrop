@@ -1,14 +1,13 @@
 /* 
  * misc.c -- handles:
- *   split() maskhost() copyfile() movefile()
- *   dumplots() daysago() days() daysdur()
+ *   split() maskhost() dumplots() daysago() days() daysdur()
  *   logging things
  *   queueing output for the bot (msg and help)
  *   resync buffers for sharebots
  *   help system
  *   motd display and %var substitution
  * 
- * $Id: misc.c,v 1.17 2000/03/04 21:14:01 fabian Exp $
+ * $Id: misc.c,v 1.18 2000/03/22 00:42:57 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -278,66 +277,6 @@ void maskhost(char *s, char *nw)
   }
 }
 
-/* Copy a file from one place to another (possibly erasing old copy).
- *
- * returns:  0 if OK
- *	     1 if can't open original file
- *	     2 if can't open new file
- *	     3 if original file isn't normal
- *	     4 if ran out of disk space
- */
-int copyfile(char *oldpath, char *newpath)
-{
-  int fi, fo, x;
-  char buf[512];
-  struct stat st;
-
-  fi = open(oldpath, O_RDONLY, 0);
-  if (fi < 0)
-    return 1;
-  fstat(fi, &st);
-  if (!(st.st_mode & S_IFREG))
-    return 3;
-  fo = creat(newpath, (int) (st.st_mode & 0777));
-  if (fo < 0) {
-    close(fi);
-    return 2;
-  }
-  for (x = 1; x > 0;) {
-    x = read(fi, buf, 512);
-    if (x > 0) {
-      if (write(fo, buf, x) < x) {	/* Couldn't write */
-	close(fo);
-	close(fi);
-	unlink(newpath);
-	return 4;
-      }
-    }
-  }
-  close(fo);
-  close(fi);
-  return 0;
-}
-
-int movefile(char *oldpath, char *newpath)
-{
-  int ret;
-  
-#ifdef HAVE_RENAME
-  /* Try to use rename first */
-  if (rename(oldpath, newpath) == 0)
-    return 0;
-#endif /* HAVE_RENAME */
-
-  /* If that fails, fall back to just copying and then
-   * deleting the file.
-   */
-  ret = copyfile(oldpath, newpath);
-  if (ret == 0)
-    unlink(oldpath);
-  return ret;
-}
-
 /* Dump a potentially super-long string of text.
  * Assume prefix 20 chars or less.
  */
@@ -468,15 +407,11 @@ void putlog EGG_VARARGS_DEF(int, arg1)
 
   /* Format log entry at offset 8, then i can prepend the timestamp */
   out = &s[8];
-#ifdef HAVE_VSNPRINTF
   /* No need to check if out should be null-terminated here,
    * just do it! <cybah>
    */
-  vsnprintf(out, LOGLINEMAX - 8, format, va);
+  egg_vsnprintf(out, LOGLINEMAX - 8, format, va);
   out[LOGLINEMAX - 8] = 0;
-#else
-  vsprintf(out, format, va);
-#endif
   tt = now;
   if (keep_all_logs) {
     strcpy(ct, ctime(&tt));

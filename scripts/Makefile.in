@@ -1,8 +1,10 @@
 # Makefile for scripts/
-# $Id: Makefile.in,v 1.5 2000/03/06 18:54:08 fabian Exp $
+# $Id: Makefile.in,v 1.6 2000/03/22 00:42:56 fabian Exp $
 
 SHELL = /bin/sh
 top_srcdir = @top_srcdir@
+srcdir = @srcdir@
+VPATH = @srcdir@
 
 @SET_MAKE@
 INSTALL = @INSTALL@
@@ -21,7 +23,7 @@ doofus:
 	@echo ""
 	@echo "Let's try this from the right directory..."
 	@echo ""
-	@cd $(top_srcdir); $(MAKE)
+	@cd .. && $(MAKE)
 
 all: $(DOCS) $(SCRIPTS) $(EXESCRIPTS)
 
@@ -34,38 +36,38 @@ install:
 		$(top_srcdir)/misc/mkinstalldirs $(DEST)/scripts; \
 		echo "Copying scripts."; \
 		for i in $(DOCS); do \
-			$(INSTALL_DATA) $$i $(DEST)/scripts/; \
+			$(INSTALL_DATA) $(srcdir)/$$i $(DEST)/scripts/; \
 		done; \
 		for i in $(SCRIPTS); do \
-			$(INSTALL_DATA) $$i $(DEST)/scripts/; \
+			$(INSTALL_DATA) $(srcdir)/$$i $(DEST)/scripts/; \
 		done; \
 		for i in $(EXESCRIPTS); do \
-			$(INSTALL_SCRIPT) $$i $(DEST)/scripts/; \
+			$(INSTALL_SCRIPT) $(srcdir)/$$i $(DEST)/scripts/; \
 		done; \
-		if test ! "x`echo help/*.help`" = "xhelp/*.help"; then \
+		if test ! "x`echo $(srcdir)/help/*.help`" = "x$(srcdir)/help/*.help"; then \
 			if test ! -d $(DEST)/help; then \
 				echo "Creating 'help' subdirectory."; \
 				$(top_srcdir)/misc/mkinstalldirs $(DEST)/help; \
 			fi; \
-			for i in help/*.help; do \
+			for i in $(srcdir)/help/*.help; do \
 				$(INSTALL_DATA) $$i $(DEST)/help/; \
 			done; \
 		fi; \
-		if test ! "x`echo help/msg/*.help`" = "xhelp/msg/*.help"; then \
+		if test ! "x`echo $(srcdir)/help/msg/*.help`" = "x$(srcdir)/help/msg/*.help"; then \
 			if test ! -d $(DEST)/help/msg; then \
 				echo "Creating 'help/msg' subdirectory."; \
 				$(top_srcdir)/misc/mkinstalldirs $(DEST)/help/msg; \
 			fi; \
-			for i in help/msg/*.help; do \
+			for i in $(srcdir)/help/msg/*.help; do \
 				$(INSTALL_DATA) $$i $(DEST)/help/msg/; \
 			done; \
 		fi; \
-		if test ! "x`echo help/set/*.help`" = "xhelp/set/*.help"; then \
+		if test ! "x`echo $(srcdir)/help/set/*.help`" = "x$(srcdir)/help/set/*.help"; then \
 			if test ! -d $(DEST)/help/set; then \
 				echo "Creating 'help/set' subdirectory."; \
 				$(top_srcdir)/misc/mkinstalldirs $(DEST)/help/set; \
 			fi; \
-			for i in help/set/*.help; do \
+			for i in $(srcdir)/help/set/*.help; do \
 				$(INSTALL_DATA) $$i $(DEST)/help/set/; \
 			done; \
 		fi; \

@@ -2,7 +2,7 @@
  * blowfish.c -- part of blowfish.mod
  *   encryption and decryption of passwords
  * 
- * $Id: blowfish.c,v 1.11 2000/02/18 22:36:12 fabian Exp $
+ * $Id: blowfish.c,v 1.12 2000/03/22 00:42:57 fabian Exp $
  */
 /* 
  * Copyright (C) 1999  Eggheads
@@ -472,8 +472,10 @@ char *blowfish_start(Function *global_funcs)
     }
     Context;
     module_register(MODULE_NAME, blowfish_table, 2, 0);
-    if (!module_depend(MODULE_NAME, "eggdrop", 105, 0))
+    if (!module_depend(MODULE_NAME, "eggdrop", 105, 0)) {
+      module_undepend(MODULE_NAME);
       return "This module requires eggdrop1.5.0 or later";
+    }
     add_hook(HOOK_ENCRYPT_PASS, (Function) blowfish_encrypt_pass);
   }
   add_tcl_commands(mytcls);

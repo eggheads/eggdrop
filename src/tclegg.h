@@ -2,7 +2,7 @@
  * tclegg.h
  *   stuff used by tcl.c and tclhash.c
  * 
- * $Id: tclegg.h,v 1.6 2000/01/30 19:26:21 fabian Exp $
+ * $Id: tclegg.h,v 1.7 2000/03/22 00:42:57 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -26,7 +26,7 @@
 #ifndef _EGG_TCLEGG_H
 #define _EGG_TCLEGG_H
 
-#include "../lush.h"		/* Include this here, since it's needed
+#include "lush.h"		/* Include this here, since it's needed
 				   in this file */
 #ifndef MAKING_MODS
 #  include "proto.h"		/* This file needs this */

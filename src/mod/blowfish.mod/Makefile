@@ -1,18 +1,21 @@
 # Makefile for src/mod/blowfish.mod/
-# $Id: Makefile,v 1.6 2000/02/25 21:51:30 fabian Exp $
+# $Id: Makefile,v 1.7 2000/03/22 00:42:57 fabian Exp $
+
+srcdir = .
+
 
 doofus:
 	@echo ""
 	@echo "Let's try this from the right directory..."
 	@echo ""
-	@cd ../../../; make
+	@cd ../../../ && make
 
 static: ../blowfish.o
 
 modules: ../../../blowfish.so
 
 ../blowfish.o:
-	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c blowfish.c
+	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c $(srcdir)/blowfish.c
 	@rm -f ../blowfish.o
 	mv blowfish.o ../
 
@@ -21,7 +24,7 @@ modules: ../../../blowfish.so
 	$(STRIP) ../../../blowfish.so
 
 depend:
-	$(CC) $(CFLAGS) $(CPPFLAGS) -MM *.c > .depend
+	$(CC) $(CFLAGS) $(CPPFLAGS) -MM $(srcdir)/*.c > .depend
 
 clean:
 	@rm -f .depend *.o *.so *~

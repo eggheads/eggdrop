@@ -7,7 +7,7 @@
  * because they use structures in those
  * (saves including those .h files EVERY time) - Beldin
  * 
- * $Id: proto.h,v 1.20 2000/01/30 19:26:21 fabian Exp $
+ * $Id: proto.h,v 1.21 2000/03/22 00:42:57 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -31,7 +31,8 @@
 #ifndef _EGG_PROTO_H
 #define _EGG_PROTO_H
 
-#include "../lush.h"
+#include "lush.h"
+#include "misc_file.h"
 
 #ifdef HAVE_DPRINTF
 #define dprintf dprintf_eggdrop
@@ -217,8 +218,6 @@ void tellhelp(int, char *, struct flag_record *, int);
 void tellwildhelp(int, char *, struct flag_record *);
 void tellallhelp(int, char *, struct flag_record *);
 void showhelp(char *, char *, struct flag_record *, int);
-int copyfile(char *, char *);
-int movefile(char *, char *);
 void rem_help_reference(char *file);
 void add_help_reference(char *file);
 void debug_help(int);

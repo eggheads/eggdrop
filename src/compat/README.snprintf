@@ -1,0 +1,127 @@
+                                  snprintf.c
+               - yet another portable implementation of snprintf
+                                       
+   snprintf is a routine to convert numeric and string arguments to
+   formatted strings. It is similar to sprintf(3) provided in a system's
+   C library, yet it requires an additional argument - the buffer size -
+   and it guarantees never to store anything beyond the given buffer,
+   regardless of the format or arguments to be formatted. Some newer
+   operating systems do provide snprintf in their C library, but many do
+   not or do provide an inadequate (slow or idiosyncratic) version, which
+   calls for a portable implementation of this routine.
+   
+Author
+
+   Mark Martinec <mark.martinec@ijs.si>, April 1999
+   Copyright ©: Mark Martinec
+   
+Terms and conditions ...
+
+   ... for copying, distribution and modification, NO WARRANTY:
+   GNU GENERAL PUBLIC LICENSE, Version 2 or later
+   
+Features
+
+     * careful adherence to specs regarding flags, field width and
+       precision;
+     * good performance for large string handling (large format, large
+       argument or large paddings). Performance is similar to system's
+       sprintf and in several cases significantly better (make sure you
+       compile with optimizations turned on, tell the compiler the code
+       is strict ANSI if necessary to give it more freedom for
+       optimizations);
+     * written in standard ANSI C - requires an ANSI C compiler.
+       
+Supported formats and data types
+
+   This snprintf only supports format specifiers: s, c, d, o, u, x, X, p
+   (and synonyms: i, D, U, O - see below) with flags: '-', '+', ' ', '0'
+   and '#'. An asterisk is supported for field width as well as
+   precision.
+   
+   Data type modifiers 'h' (short int), 'l' (long int) and 'll' (long
+   long int) are supported.
+   
+   NOTE:
+     If macro SNPRINTF_LONGLONG_SUPPORT is not defined (default) the
+     data type modifier 'll' is recognized but treated the same as 'l',
+     which may cause argument value truncation! Defining
+     SNPRINTF_LONGLONG_SUPPORT requires that your system's sprintf also
+     handles data type modifier 'll'. long long int is a language
+     extension which may not be portable.
+     
+   Conversion of numeric data (formats d, o, u, x, X, p) with data type
+   modifiers (none or h, l, ll) is left to the system routine sprintf,
+   but all handling of flags, field width and precision as well as c and
+   s formats is done very carefully by this portable routine. If a string
+   precision (truncation) is specified (e.g. %.8s) it is guaranteed the
+   string beyond the specified precision will not be referenced.
+   
+   Data type modifiers h, l and ll are ignored for c and s formats (data
+   types wint_t and wchar_t are not supported).
+   
+   The following common synonyms for conversion characters are supported:
+     * i is a synonym for d
+     * D is a synonym for ld, explicit data type modifiers are ignored
+     * U is a synonym for lu, explicit data type modifiers are ignored
+     * O is a synonym for lo, explicit data type modifiers are ignored
+       
+   The following is specifically not supported:
+     * flag ' (thousands' grouping character) is recognized but ignored
+     * numeric formats: f, e, E, g, G and synonym F
+     * data type modifier 'L' (long double) and 'q' (quad - use 'll' instead)
+     * wide character/string formats: C, lc, S, ls
+     * writeback of converted string length: conversion character n
+     * the n$ specification for direct reference to n-th argument
+     * locales
+       
+Availability
+
+   http://www.ijs.si/software/snprintf/
+       
+Other implementations of snprintf
+
+   I am aware of some other portable implementations of snprintf. I do
+   not claim they are public - please refer to their respective copyright
+   and licensing terms. If you know of other versions please let me know.
+
+     * a very thorough implementation (src/util_snprintf.c) by the Apache
+       Group distributed with the Apache web server -
+       http://www.apache.org/ . Does its own floating point conversions
+       using routines ecvt(3), fcvt(3) and gcvt(3) from the standard C
+       library or from the GNU libc.
+       This is from the code:
+
+         This software [...] was originally based on public domain software
+         written at the National Center for Supercomputing Applications,
+         University of Illinois, Urbana-Champaign.
+         [...] This code is based on, and used with the permission of, the
+         SIO stdio-replacement strx_* functions by Panos Tsirigotis
+         <panos@alumni.cs.colorado.edu> for xinetd.
+
+     * original implementation from Prof. Patrick Powell <papowell@sdsu.edu>,
+       Dept. Electrical and Computer Engineering, San Diego State University,
+       San Diego, CA 92182-1309, published in Bugtraq archives for 3rd
+       quarter (Jul-Aug) 1995. No floating point conversions.
+
+     * Brandon Long's <blong@fiction.net> modified version of Prof.
+       Patrick Powell's snprintf with contributions from others.
+       With minimal floating point support.
+
+     * implementation (src/snprintf.c) as distributed with sendmail -
+       http://www.sendmail.org/ is a cleaned up Prof. Patrick Powell's
+       version to compile properly and to support .precision and %lx.
+
+     * implementation used by newlog (a replacement for syslog(3)) made
+       available by the SOS Corporation. Enabling floating point support
+       is a compile-time option.
+
+     * implementation from Tomi Salo <ttsalo@ssh.fi> distributed with SSH
+       2.0 Unix Server. Not in public domain. Floating point conversions
+       done by system's sprintf.
+
+     * and for completeness: my portable version described in this very
+       document available at http://www.ijs.si/software/snprintf/ .
+
+   In retrospect, it appears that a lot of effort was wasted by many
+   people for not being aware of what others are doing. Sigh.

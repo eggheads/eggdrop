@@ -4,7 +4,7 @@
  *   provides the code used by the bot if the DNS module is not loaded
  *   DNS Tcl commands
  * 
- * $Id: dns.c,v 1.14 2000/01/30 19:26:20 fabian Exp $
+ * $Id: dns.c,v 1.15 2000/03/22 00:42:57 fabian Exp $
  */
 /* 
  * Written by Fabian Knittel <fknittel@gmx.de>
@@ -251,8 +251,8 @@ static void dns_tcl_iporhostres(IP ip, char *hostn, int ok, void *other)
   devent_tclinfo_t *tclinfo = (devent_tclinfo_t *) other;
   
   Context;
-  if (Tcl_VarEval(interp, tclinfo->proc, " ", iptostr(htonl(ip)), " ", hostn,
-		  ok ? " 1" : " 0", tclinfo->paras, NULL) == TCL_ERROR)
+  if (Tcl_VarEval(interp, tclinfo->proc, " ", iptostr(my_htonl(ip)), " ",
+		  hostn, ok ? " 1" : " 0", tclinfo->paras, NULL) == TCL_ERROR)
     putlog(LOG_MISC, "*", DCC_TCLERROR, tclinfo->proc, interp->result);
 
   /* Free the memory. It will be unused after this event call. */
@@ -479,7 +479,7 @@ void block_dns_ipbyhost(char *host)
   Context;
   /* Check if someone passed us an IP address as hostname 
    * and return it straight away */
-  if (inet_aton(host, &inaddr)) {
+  if (egg_inet_aton(host, &inaddr)) {
     call_ipbyhost(host, my_ntohl(inaddr.s_addr), 1);
     return;
   }
@@ -548,7 +548,7 @@ static int tcl_dnslookup STDVAR
     }
   }
 
-  if (inet_aton(argv[1], &inaddr))
+  if (egg_inet_aton(argv[1], &inaddr))
     tcl_dnshostbyip(ntohl(inaddr.s_addr), argv[2], paras);
   else
     tcl_dnsipbyhost(argv[1], argv[2], paras);

@@ -1,11 +1,12 @@
 dnl Process this file with autoconf to produce a configure script.
-AC_REVISION($Revision: 1.23 $)
+AC_REVISION($Revision: 1.24 $)
 AC_INIT(src/eggdrop.h)
 AC_CONFIG_AUX_DIR(misc)
 AC_PREFIX_DEFAULT([\${HOME}/eggdrop])
 AC_CONFIG_HEADER(config.h)
 
 EGG_MSG_CONFIGURE_START
+EGG_SAVE_PARAMETERS
 
 # Setup build environment
 AC_PROG_CC
@@ -41,6 +42,7 @@ AC_CHECK_HEADERS(sys/select.h sys/rusage.h unistd.h dlfcn.h stdarg.h std_args.h 
 
 # Checks for typedefs, structures, and compiler characteristics
 AC_TYPE_PID_T
+AC_TYPE_SIZE_T
 AC_C_BIGENDIAN
 AC_C_INLINE
 AC_CHECK_SIZEOF(long, 0)
@@ -49,7 +51,7 @@ AC_CHECK_SIZEOF(char, 0)
 AC_CHECK_SIZEOF(short int, 0)
 
 # Checks for library functions
-AC_CHECK_FUNCS(clock getrusage setpgid uname sigaction sigemptyset rename strcasecmp getdtablesize bzero random srandom dlopen dprintf snprintf vsnprintf)
+AC_CHECK_FUNCS(clock getrusage setpgid uname sigaction sigemptyset rename strcasecmp getdtablesize bzero random srandom dlopen dprintf snprintf vsnprintf isascii inet_aton)
 EGG_CHECK_FUNC_VSPRINTF
 
 # Make sure we have stdc headers, since we can't compile without them
@@ -115,6 +117,6 @@ EGG_SUBST_EGGVERSION
 EGG_SUBST_DEST
 EGG_CATCH_MAKEFILE_REBUILD
 
-AC_OUTPUT(Makefile doc/Makefile scripts/Makefile src/Makefile src/md5/Makefile src/mod/Makefile)
+AC_OUTPUT(Makefile doc/Makefile scripts/Makefile src/Makefile src/md5/Makefile src/compat/Makefile src/mod/Makefile)
 
 EGG_MSG_CONFIGURE_END

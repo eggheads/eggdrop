@@ -5,7 +5,7 @@
  * 
  * Modified/written by Fabian Knittel <fknittel@gmx.de>
  * 
- * $Id: coredns.c,v 1.10 2000/03/04 20:40:24 fabian Exp $
+ * $Id: coredns.c,v 1.11 2000/03/22 00:42:58 fabian Exp $
  */
 /* 
  * Portions copyright (C) 1999, 2000  Eggheads
@@ -1083,7 +1083,7 @@ static void dns_forward(char *hostn)
     /* Check if someone passed us an IP address as hostname 
      * and return it straight away.
      */
-    if (inet_aton(hostn, &inaddr)) {
+    if (egg_inet_aton(hostn, &inaddr)) {
       call_ipbyhost(hostn, my_ntohl(inaddr.s_addr), 1);
       return;
     }
@@ -1141,7 +1141,7 @@ static int init_dns_network(void)
 	return 0;
     }
     
-    inet_aton("127.0.0.1", &inaddr);
+    egg_inet_aton("127.0.0.1", &inaddr);
     localhost = inaddr.s_addr;
     return 1;
 }

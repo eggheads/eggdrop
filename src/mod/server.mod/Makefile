@@ -1,18 +1,21 @@
 # Makefile for src/mod/server.mod/
-# $Id: Makefile,v 1.7 2000/02/25 21:51:30 fabian Exp $
+# $Id: Makefile,v 1.8 2000/03/22 00:42:58 fabian Exp $
+
+srcdir = .
+
 
 doofus:
 	@echo ""
 	@echo "Let's try this from the right directory..."
 	@echo ""
-	@cd ../../../; make
+	@cd ../../../ && make
 
 static: ../server.o
 
 modules: ../../../server.so
 
 ../server.o:
-	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c server.c
+	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c $(srcdir)/server.c
 	@rm -f ../server.o
 	mv server.o ../
 
@@ -21,7 +24,7 @@ modules: ../../../server.so
 	$(STRIP) ../../../server.so
 
 depend:
-	$(CC) $(CFLAGS) $(CPPFLAGS) -MM *.c > .depend
+	$(CC) $(CFLAGS) $(CPPFLAGS) -MM $(srcdir)/*.c > .depend
 
 clean:
 	@rm -f .depend *.o *.so *~

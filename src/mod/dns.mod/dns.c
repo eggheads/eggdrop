@@ -4,7 +4,7 @@
  * 
  * Written by Fabian Knittel <fknittel@gmx.de>
  * 
- * $Id: dns.c,v 1.11 2000/03/04 20:40:24 fabian Exp $
+ * $Id: dns.c,v 1.12 2000/03/22 00:42:58 fabian Exp $
  */
 /* 
  * Copyright (C) 1999, 2000  Eggheads
@@ -132,7 +132,7 @@ static void cmd_resolve(struct userrec *u, int idx, char *par)
   struct in_addr inaddr;
 
   Context;
-  if (inet_aton(par, &inaddr))
+  if (egg_inet_aton(par, &inaddr))
     dns_lookup(my_ntohl(inaddr.s_addr));
   else
     dns_forward(par);
@@ -233,8 +233,10 @@ char *dns_start(Function *global_funcs)
   global = global_funcs;
   Context;
   module_register(MODULE_NAME, dns_table, 1, 0);
-  if (!module_depend(MODULE_NAME, "eggdrop", 105, 0))
-    return "This module requires eggdrop1.5.0 or later";
+  if (!module_depend(MODULE_NAME, "eggdrop", 105, 3)) {
+    module_undepend(MODULE_NAME);
+    return "This module requires eggdrop1.5.3 or later";
+  }
 
   if (!init_dns_core())
     return "DNS initialisation failed.";

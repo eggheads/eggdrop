@@ -19,12 +19,13 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-# $Id: modconfig,v 1.2 2000/03/06 18:54:08 fabian Exp $
+# $Id: modconfig,v 1.3 2000/03/22 00:42:56 fabian Exp $
 
 
 mc_pn=`echo $0 | sed -e 's/^.*\///'`
 mc_top_srcdir=
 mc_srcdir=
+mc_bindir=.
 
 mc_flag_quiet=no
 mc_flag_onlynew=no
@@ -46,6 +47,13 @@ while true; do
 	--srcdir)
 		shift
 		mc_srcdir=${1}
+	;;
+	--bindir=*)
+		mc_bindir=`echo ${1} | sed -e 's/^--bindir=//'`
+	;;
+	--bindir)
+		shift
+		mc_bindir=${1}
 	;;
 	--quiet|-q)
 		mc_flag_quiet=yes
@@ -94,17 +102,18 @@ fi
 #
 
 #  List of all selected modules (including the `.mod' at the end)
-mc_fmodules=${mc_top_srcdir}/.modules
+mc_fmodules=${mc_bindir}/.modules
 
 #  List of all modules we have detected so far.
-mc_fknownmods=${mc_top_srcdir}/.known_modules
+mc_fknownmods=${mc_bindir}/.known_modules
 
 #  List of modules disabled by default
 mc_fdisabledmods=${mc_top_srcdir}/disabled_modules
 
 mc_mod_dir=${mc_srcdir}/mod
 
-mc_fMakefile=${mc_mod_dir}/Makefile
+mc_mod_bin_dir=${mc_bindir}/src/mod
+mc_fMakefile=${mc_mod_bin_dir}/Makefile
 
 mc_fstatic_h=${mc_mod_dir}/static.h
 
@@ -168,10 +177,12 @@ Commands:
     help                 Displays this information.
     detect-modules       Find all available modules.
     modules-still-exist  Check wether all known modules still exist.
+    eggautoconf          Recreate the configure scripts in every module dir.
 
 Options:
     --top_srcdir=DIR     Top directory         (At least one of these two
     --srcdir=DIR         Source directory       directories MUST be supplied.)
+    --bindir=DIR         Binary directory
     --quiet [-q]         Quiet mode. Only show errors.
 
 Options specific to the \`configure' command:
@@ -253,7 +264,7 @@ xdetect-modules)
 				mc_new_mod_state=enabled
 			else
 				#  Was it configured before?
-				if (grep "^${mc_mod}.mod\$" ${mc_fmodules} 1>&7 2>&1); then
+				if (grep "^${mc_mod}.mod\$" ${mc_fknownmods} 1>&7 2>&1); then
 					:
 				else
 					mc_new_mod_state=enabled
@@ -675,6 +686,33 @@ EOF
 		echo "failed!" 1>&6
 		exit 1
 	fi
+;;
+xeggautoconf)
+#
+#  Recreate the eggdrop specific configure scripts for every module.
+#
+
+	#  Detect available modules
+	mc_mods=`echo ${mc_mod_dir}/*.mod`
+
+	#  Error out if we have no available modules
+	if test "${mc_mods}" = "echo ${mc_mod_dir}/*.mod"; then
+		echo "${mc_pn}: error: no modules found." 1>&2
+		exit 1
+	fi
+
+	#  Loop through each available module
+	for mc_modd in ${mc_mods}; do
+		#  Skip modules without their own configure script.
+		if test ! -r "${mc_modd}/configure.in"; then
+			continue
+		fi
+
+		#  Remove directory information from name
+		mc_mod=`echo ${mc_modd} | sed -e 's/.*\///'`
+		echo "creating configure for module \`${mc_mod}'."
+		(cd ${mc_modd} && ../eggautoconf)
+	done
 ;;
 *)
 	if test "x${mc_cmd}" = x; then

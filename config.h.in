@@ -1,4 +1,6 @@
 /* config.h.in.  Generated automatically from configure.in by autoheader.  */
+#ifndef _EGG_CONFIG_H
+#define _EGG_CONFIG_H
 
 /* Define if on AIX 3.
    System headers sometimes define this.
@@ -105,6 +107,12 @@
 /* Define if you have the getrusage function.  */
 #undef HAVE_GETRUSAGE
 
+/* Define if you have the inet_aton function.  */
+#undef HAVE_INET_ATON
+
+/* Define if you have the isascii function.  */
+#undef HAVE_ISASCII
+
 /* Define if you have the random function.  */
 #undef HAVE_RANDOM
 
@@ -188,3 +196,5 @@
 
 /* Define if you have the socket library (-lsocket).  */
 #undef HAVE_LIBSOCKET
+
+#endif /* !_EGG_CONFIG_H */

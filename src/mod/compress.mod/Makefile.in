@@ -1,13 +1,15 @@
 # Makefile.in for src/mod/compress.mod/
-# $Id: Makefile.in,v 1.2 2000/03/04 20:49:45 fabian Exp $
+# $Id: Makefile.in,v 1.3 2000/03/22 00:42:57 fabian Exp $
 
 ZLIB = @ZLIB@
+srcdir = .
+
 
 doofus:
 	@echo ""
 	@echo "Let's try this from the right directory..."
 	@echo ""
-	@cd ../../../; make
+	@cd ../../../ && make
 
 static: ../compress.o
 	@echo "$(ZLIB)" >> ../mod.xlibs
@@ -15,7 +17,7 @@ static: ../compress.o
 modules: ../../../compress.so
 
 ../compress.o:
-	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c compress.c
+	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c $(srcdir)/compress.c
 	rm -f ../compress.o
 	mv compress.o ../
 
@@ -24,13 +26,13 @@ modules: ../../../compress.so
 	$(STRIP) ../../../compress.so
 
 depend:
-	$(CC) $(CFLAGS) $(CPPFLAGS) -MM *.c > .depend
+	$(CC) $(CFLAGS) $(CPPFLAGS) -MM $(srcdir)/*.c > .depend
 
 clean:
 	@rm -f .depend *.o *.so *~
 
 distclean: clean
-	@rm -f Makefile config.cache config.log config.status config.h
+	@rm -f Makefile config.cache config.log config.status config.h compress_config.h
 
 #safety hash
 ../compress.o: compress.c compress.h ../share.mod/share.h \

@@ -2,7 +2,7 @@
  * filesys.c -- part of filesys.mod
  *   main file of the filesys eggdrop module
  * 
- * $Id: filesys.c,v 1.25 2000/02/29 20:05:41 fabian Exp $
+ * $Id: filesys.c,v 1.26 2000/03/22 00:42:58 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -28,7 +28,7 @@
 #define MODULE_NAME "filesys"
 #define MAKING_FILESYS
 #ifdef HAVE_CONFIG_H
-# include "../../config.h"
+# include "config.h"
 #endif
 #include <sys/file.h>
 #if HAVE_DIRENT_H
@@ -996,10 +996,14 @@ char *filesys_start(Function * global_funcs)
 
   Context;
   module_register(MODULE_NAME, filesys_table, 2, 0);
-  if (!(transfer_funcs = module_depend(MODULE_NAME, "transfer", 2, 0)))
-    return "You need the transfer module to user the file system.";
-  if (!module_depend(MODULE_NAME, "eggdrop", 105, 0))
+  if (!module_depend(MODULE_NAME, "eggdrop", 105, 0)) {
+    module_undepend(MODULE_NAME);
     return "You need at least eggdrop1.5.0 to run this module.";
+  }
+  if (!(transfer_funcs = module_depend(MODULE_NAME, "transfer", 2, 0))) {
+    module_undepend(MODULE_NAME);
+    return "You need the transfer module to user the file system.";
+  }
   add_tcl_commands(mytcls);
   add_tcl_strings(mystrings);
   add_tcl_ints(myints);

@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  * 
- * $Id: chan.c,v 1.35 2000/03/04 21:23:33 fabian Exp $
+ * $Id: chan.c,v 1.36 2000/03/22 00:42:58 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1491,12 +1491,8 @@ static int gotjoin(char *from, char *chname)
      * name now. This will happen when we initially join the channel, as we
      * dont know the unique channel name that the server has made up. <cybah>
      */  
-    if (strlen(chname)>6) {
-#ifdef HAVE_SNPRINTF
-      snprintf(buf, UHOSTLEN, "!%s", chname + 6);
-#else
-      sprintf(buf, "!%s", chname + 6);
-#endif
+    if (strlen(chname) > 6) {
+      egg_snprintf(buf, UHOSTLEN, "!%s", chname + 6);
       chan = findchan_by_dname(buf);
     }
   } else if (!chan) {

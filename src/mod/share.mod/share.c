@@ -1,7 +1,7 @@
 /* 
  * share.c -- part of share.mod
  * 
- * $Id: share.c,v 1.29 2000/03/22 00:33:57 fabian Exp $
+ * $Id: share.c,v 1.30 2000/03/22 00:42:59 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1197,17 +1197,13 @@ static void shareout_mod EGG_VARARGS_DEF(struct chanset_t *, arg1)
   char s[601];
   struct chanset_t *chan;
   va_list va;
-  chan = EGG_VARARGS_START(struct chanset_t *, arg1, va);
 
+  chan = EGG_VARARGS_START(struct chanset_t *, arg1, va);
   if (!chan || channel_shared(chan)) {
     format = va_arg(va, char *);
     strcpy(s, "s ");
-#ifdef HAVE_VSNPRINTF
-    if ((l = vsnprintf(s + 2, 509, format, va)) < 0)
+    if ((l = egg_vsnprintf(s + 2, 509, format, va)) < 0)
       s[2 + (l = 509)] = 0;
-#else
-    l = vsprintf(s + 2, format, va); /* Seggy: possible overflow */
-#endif
     for (i = 0; i < dcc_total; i++)
       if ((dcc[i].type->flags & DCT_BOT) &&
 	  (dcc[i].status & STAT_SHARE) &&
@@ -1237,12 +1233,8 @@ static void shareout_but EGG_VARARGS_DEF(struct chanset_t *, arg1)
   format = va_arg(va, char *);
 
   strcpy(s, "s ");
-#ifdef HAVE_VSNPRINTF
-  if ((l = vsnprintf(s + 2, 509, format, va)) < 0)
+  if ((l = egg_vsnprintf(s + 2, 509, format, va)) < 0)
     s[2 + (l = 509)] = 0;
-#else
-  l = vsprintf(s + 2, format, va);
-#endif
   for (i = 0; i < dcc_total; i++)
     if ((dcc[i].type->flags & DCT_BOT) && (i != x) &&
 	(dcc[i].status & STAT_SHARE) &&
@@ -2086,8 +2078,10 @@ char *share_start(Function *global_funcs)
 
   Context;
   module_register(MODULE_NAME, share_table, 2, 3);
-  if (!module_depend(MODULE_NAME, "eggdrop", 105, 0))
-    return "You need an eggdrop of at least v1.5.0 to use this share module.";
+  if (!module_depend(MODULE_NAME, "eggdrop", 105, 3)) {
+    module_undepend(MODULE_NAME);
+    return "You need an eggdrop of at least v1.5.3 to use this share module.";
+  }
   if (!(transfer_funcs = module_depend(MODULE_NAME, "transfer", 2, 0))) {
     module_undepend(MODULE_NAME);
     return "You need the transfer module to use userfile sharing.";

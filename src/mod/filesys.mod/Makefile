@@ -1,18 +1,21 @@
 # Makefile for src/mod/filesys.mod/
-# $Id: Makefile,v 1.10 2000/02/25 21:51:30 fabian Exp $
+# $Id: Makefile,v 1.11 2000/03/22 00:42:58 fabian Exp $
+
+srcdir = .
+
 
 doofus:
 	@echo ""
 	@echo "Let's try this from the right directory..."
 	@echo ""
-	@cd ../../../; make
+	@cd ../../../ && make
 
 static: ../filesys.o
 
 modules: ../../../filesys.so
 
 ../filesys.o:
-	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c filesys.c
+	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c $(srcdir)/filesys.c
 	@rm -f ../filesys.o
 	mv filesys.o ../
 
@@ -21,7 +24,7 @@ modules: ../../../filesys.so
 	$(STRIP) ../../../filesys.so
 
 depend:
-	$(CC) $(CFLAGS) $(CPPFLAGS) -MM *.c > .depend
+	$(CC) $(CFLAGS) $(CPPFLAGS) -MM $(srcdir)/*.c > .depend
 
 clean:
 	@rm -f .depend *.o *.so *~

@@ -6,7 +6,7 @@
  *   memory management for dcc structures
  *   timeout checking for dcc connections
  * 
- * $Id: dccutil.c,v 1.17 2000/01/30 19:26:20 fabian Exp $
+ * $Id: dccutil.c,v 1.18 2000/03/22 00:42:57 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -108,12 +108,8 @@ void dprintf EGG_VARARGS_DEF(int, arg1)
 
   idx = EGG_VARARGS_START(int, arg1, va);
   format = va_arg(va, char *);
-#ifdef HAVE_VSNPRINTF
-  if ((len = vsnprintf(SBUF, 1023, format, va)) < 0)
+  if ((len = egg_vsnprintf(SBUF, 1023, format, va)) < 0)
     SBUF[len = 1023] = 0;
-#else
-  len = vsprintf(SBUF, format, va);
-#endif
   va_end(va);
   if (idx < 0) {
     tputs(-idx, SBUF, len);
@@ -163,12 +159,8 @@ void chatout EGG_VARARGS_DEF(char *, arg1)
   va_list va;
 
   format = EGG_VARARGS_START(char *, arg1, va);
-#ifdef HAVE_VSNPRINTF
-  if (vsnprintf(s, 511, format, va) < 0)
+  if (egg_vsnprintf(s, 511, format, va) < 0)
     s[511] = 0;
-#else
-  vsprintf(s, format, va);
-#endif
   for (i = 0; i < dcc_total; i++)
     if (dcc[i].type == &DCC_CHAT)
       if (dcc[i].u.chat->channel >= 0)
@@ -188,12 +180,8 @@ void chanout_but EGG_VARARGS_DEF(int, arg1)
   x = EGG_VARARGS_START(int, arg1, va);
   chan = va_arg(va, int);
   format = va_arg(va, char *);
-#ifdef HAVE_VSNPRINTF
-  if (vsnprintf(s, 511, format, va) < 0)
+  if (egg_vsnprintf(s, 511, format, va) < 0)
     s[511] = 0;
-#else
-  vsprintf(s, format, va);
-#endif
   for (i = 0; i < dcc_total; i++)
     if ((dcc[i].type == &DCC_CHAT) && (i != x))
       if (dcc[i].u.chat->channel == chan)

@@ -4,7 +4,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: modules.c,v 1.25 2000/03/19 23:56:07 fabian Exp $
+ * $Id: modules.c,v 1.26 2000/03/22 00:42:57 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -504,6 +504,10 @@ Function global_table[] =
   (Function) sock_has_data,
   (Function) bots_in_subtree,
   (Function) users_in_subtree,
+  (Function) egg_inet_aton,
+  /* 252 - 255 */
+  (Function) egg_snprintf,
+  (Function) egg_vsnprintf,
 };
 
 void init_modules(void)

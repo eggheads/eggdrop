@@ -1,7 +1,7 @@
 /* 
  * module.h
  * 
- * $Id: module.h,v 1.24 2000/01/31 23:03:02 fabian Exp $
+ * $Id: module.h,v 1.25 2000/03/22 00:42:57 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -26,20 +26,18 @@
 #define _EGG_MOD_MODULE_H
 
 /* Just include *all* the include files...it's slower but EASIER */
-#ifdef HAVE_CONFIG_H
-#  include "../../config.h"
-#endif
-#include "../main.h"
+#include "src/main.h"
 #include "modvals.h"
-#include "../tandem.h"
+#include "src/tandem.h"
 
 /* 
  * This file contains all the orrible stuff required to do the lookup
  * table for symbols, rather than getting the OS to do it, since most
  * OS's require all symbols resolved, this can cause a problem with
- * some modules. This is intimately related to the table in modules.c.
+ * some modules.
  *
- * Don't change the files unless you have flamable underwear.
+ * This is intimately related to the table in `modules.c'. Don't change
+ * the files unless you have flamable underwear.
  *
  * Do not read this file whilst unless heavily sedated, I will not be
  * held responsible for mental break-downs caused by this file <G>
@@ -57,6 +55,17 @@
 #undef Context
 #undef ContextNote
 #undef Assert
+
+/* Compability functions. */
+#ifdef egg_inet_aton
+#  undef egg_inet_aton
+#endif
+#ifdef egg_vsnprintf
+#  undef egg_vsnprintf
+#endif
+#ifdef egg_snprintf
+#  undef egg_snprintf
+#endif
 
 /* Version checks for modules. */
 #define EGG_IS_MIN_VER(ver) 		((ver) <= EGG_VERSION)
@@ -393,6 +402,10 @@
 #define sock_has_data ((int(*)(int, int))global[248])
 #define bots_in_subtree ((int (*)(tand_t *))global[249])
 #define users_in_subtree ((int (*)(tand_t *))global[250])
+#define egg_inet_aton ((int (*)(const char *cp, struct in_addr *addr))global[251])
+/* 252 - 255 */
+#define egg_snprintf (global[252])
+#define egg_vsnprintf ((int (*)(char *str, size_t str_m, const char *fmt, va_list ap))global[253])
 
 
 /* This is for blowfish module, couldnt be bothereed making a whole new .h

@@ -1,8 +1,10 @@
 # Makefile for src/mod/
-# $Id: Makefile.in,v 1.6 2000/03/05 23:22:48 fabian Exp $
+# $Id: Makefile.in,v 1.7 2000/03/22 00:42:57 fabian Exp $
 
 SHELL = /bin/sh
 top_srcdir = @top_srcdir@
+srcdir = @srcdir@
+VPATH = @srcdir@
 
 @SET_MAKE@
 INSTALL = @INSTALL@
@@ -10,22 +12,34 @@ INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
 
+CC = @CC@
+LD = @CC@
+STRIP = @STRIP@
+CFLAGS = @CFLAGS@ -I../.. -I$(top_srcdir) @DEFS@ $(CFLGS)
+CPPFLAGS = @CPPFLAGS@
+MOD_CFLAGS = @CFLAGS@ -I. -I../../.. -I../$(top_srcdir)/src/mod \
+	     -I../$(top_srcdir) @DEFS@ $(CFLGS)
+MOD_CPPFLAGS = @CPPFLAGS@
+
+
 # Note: The following three lines are automatically adjusted by
 #       misc/modconfig. They have to be present here.
 mods =
 mod_objs =
 mod_libs =
 
-modconfig = $(top_srcdir)/misc/modconfig --top_srcdir=$(top_srcdir)
+modconfig = $(top_srcdir)/misc/modconfig --bindir=../.. --top_srcdir=$(top_srcdir)
+egg_ac_parameters = @egg_ac_parameters@
 
 MAKE_MOD = $(MAKE) 'MAKE=$(MAKE)' 'CC=$(CC)' 'LD=$(LD)' \
-'STRIP=$(STRIP)' 'CFLAGS=$(CFLAGS)' 'CPPFLAGS=$(CPPFLAGS)'
+'STRIP=$(STRIP)' 'CFLAGS=$(MOD_CFLAGS)' 'CPPFLAGS=$(MOD_CPPFLAGS)'
+
 
 doofus:
 	@echo ""
 	@echo "Let's try this from the right directory..."
 	@echo ""
-	@cd $(top_srcdir); $(MAKE)
+	@cd ../.. && $(MAKE)
 
 modules: $(mod_libs)
 	@echo "All modules compiled."
@@ -38,34 +52,59 @@ static: $(mod_objs)
 .SUFFIXES: .mod .mod_so .mod_o
 
 .mod.mod_so:
-	@cd $*.mod; $(MAKE_MOD) modules;
+	@if test ! -d $*.mod; then mkdir $*.mod; fi; \
+	if test ! -r $*.mod/Makefile; then \
+		cp $(srcdir)/$*.mod/Makefile $*.mod/Makefile; \
+	fi; \
+	cd $*.mod && $(MAKE_MOD) 'VPATH=../$(srcdir)/$*.mod' 'srcdir=../$(srcdir)/$*.mod' 'MAKE=$(MAKE)' modules;
 
 .mod.mod_o:
-	@cd $*.mod; $(MAKE_MOD) static;
+	@if test ! -d $*.mod; then mkdir $*.mod; fi; \
+	if test ! -r $*.mod/Makefile; then \
+		cp $(srcdir)/$*.mod/Makefile $*.mod/Makefile; \
+	fi; \
+	cd $*.mod && $(MAKE_MOD) 'VPATH=../$(srcdir)/$*.mod' 'srcdir=../$(srcdir)/$*.mod' 'MAKE=$(MAKE)' static;
 
 depend:
-	@for i in $(mods); do cd $$i; $(MAKE_MOD) depend; cd ../; done
+	@for i in $(mods); do \
+		if test ! -d $$i; then mkdir $$i; fi; \
+		if test ! -r $$i/Makefile; then \
+			cp $(srcdir)/$$i/Makefile $$i/Makefile; \
+		fi; \
+		(cd $$i && $(MAKE_MOD) 'VPATH=../$(srcdir)/$$i' 'srcdir=../$(srcdir)/$$i' depend); \
+	done
 
 config:
 	@for i in $(mods); do \
-		if test -f $$i/configure; then \
+		if test -f $(srcdir)/$$i/configure; then \
 			modname=`echo $$i | sed -e 's/.mod//'`; \
 			echo ""; \
 			echo "Configuring module $${modname} ..."; \
 			echo ""; \
-			(cd $$i && ./configure --cache-file=../$(top_srcdir)/config.cache --srcdir=../$(top_srcdir)/src/mod/$$i); \
+			if test ! -d $$i; then mkdir $$i; fi; \
+			(cd $$i && ../$(srcdir)/$$i/configure $(egg_ac_parameters) --cache-file=../../../config.cache --srcdir=../$(top_srcdir)/src/mod/$$i); \
 		fi; \
 	done; \
 	echo ""
 
 clean:
 	@rm -f *.o *.so *~ static.h mod.xlibs
-	@for i in *.mod; do cd $$i; $(MAKE) 'MAKE=$(MAKE)' clean; cd ../; done
+	@for i in *.mod; do \
+		if test ! -d $$i; then mkdir $$i; fi; \
+		if test ! -r $$i/Makefile; then \
+			cp $(srcdir)/$$i/Makefile $$i/Makefile; \
+		fi; \
+		(cd $$i; $(MAKE) 'VPATH=../$(srcdir)/$$i' 'srcdir=../$(srcdir)/$$i' 'MAKE=$(MAKE)' clean); \
+	done
 
 distclean:
 	@rm -f *.o *.so *~ static.h mod.xlibs
 	@for i in *.mod; do \
-		cd $$i; $(MAKE) 'MAKE=$(MAKE)' distclean; cd ../; \
+		if test ! -d $$i; then mkdir $$i; fi; \
+		if test ! -r $$i/Makefile; then \
+			cp $(srcdir)/$$i/Makefile $$i/Makefile; \
+		fi; \
+		(cd $$i; $(MAKE) 'VPATH=../$(srcdir)/$$i' 'srcdir=../$(srcdir)/$$i' 'MAKE=$(MAKE)' distclean); \
 	done
 
 install: install-help install-language
@@ -77,8 +116,8 @@ install-help:
 		$(top_srcdir)/misc/mkinstalldirs $(DEST)/help; \
 	fi; \
 	for i in $(mods); do \
-		if test ! "x`echo $$i/help/*.help`" = "x$$i/help/*.help"; then \
-			for h in $$i/help/*.help; do \
+		if test ! "x`echo $(srcdir)/$$i/help/*.help`" = "x$(srcdir)/$$i/help/*.help"; then \
+			for h in $(srcdir)/$$i/help/*.help; do \
 				$(INSTALL_DATA) $$h $(DEST)/help/; \
 			done; \
 		fi; \
@@ -88,8 +127,8 @@ install-help:
 		$(top_srcdir)/misc/mkinstalldirs $(DEST)/help/msg; \
 	fi; \
 	for i in $(mods); do \
-		if test ! "x`echo $$i/help/msg/*.help`" = "x$$i/help/msg/*.help"; then \
-			for h in $$i/help/msg/*.help; do \
+		if test ! "x`echo $(srcdir)/$$i/help/msg/*.help`" = "x$(srcdir)/$$i/help/msg/*.help"; then \
+			for h in $(srcdir)/$$i/help/msg/*.help; do \
 				$(INSTALL_DATA) $$h $(DEST)/help/msg/; \
 			done; \
 		fi; \
@@ -99,8 +138,8 @@ install-help:
 		$(top_srcdir)/misc/mkinstalldirs $(DEST)/help/set; \
 	fi; \
 	for i in $(mods); do \
-		if test ! "x`echo $$i/help/set/*.help`" = "x$$i/help/set/*.help"; then \
-			for h in $$i/help/set/*.help; do \
+		if test ! "x`echo $(srcdir)/$$i/help/set/*.help`" = "x$(srcdir)/$$i/help/set/*.help"; then \
+			for h in $(srcdir)/$$i/help/set/*.help; do \
 				$(INSTALL_DATA) $$h $(DEST)/help/set/; \
 			done; \
 		fi; \
@@ -113,8 +152,8 @@ install-language:
 		$(top_srcdir)/misc/mkinstalldirs $(DEST)/language; \
 	fi; \
 	for i in $(mods); do \
-		if test ! "x`echo $$i/language/*.lang`" = "x$$i/language/*.lang"; then \
-			for h in $$i/language/*.lang; do \
+		if test ! "x`echo $(srcdir)/$$i/language/*.lang`" = "x$(srcdir)/$$i/language/*.lang"; then \
+			for h in $(srcdir)/$$i/language/*.lang; do \
 				$(INSTALL_DATA) $$h $(DEST)/language/; \
 			done; \
 		fi; \

@@ -5,7 +5,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: botmsg.c,v 1.9 2000/01/30 19:26:19 fabian Exp $
+ * $Id: botmsg.c,v 1.10 2000/03/22 00:42:57 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -52,12 +52,8 @@ void tandout_but EGG_VARARGS_DEF(int, arg1)
   x = EGG_VARARGS_START(int, arg1, va);
   format = va_arg(va, char *);
 
-#ifdef HAVE_VSNPRINTF
-  if ((l = vsnprintf(s, 511, format, va)) < 0)
+  if ((l = egg_vsnprintf(s, 511, format, va)) < 0)
     s[l = 511] = 0;
-#else
-  l = vsprintf(s, format, va);
-#endif
   va_end(va);
   for (i = 0; i < dcc_total; i++)
     if ((dcc[i].type == &DCC_BOT) && (i != x) &&
@@ -307,12 +303,8 @@ void botnet_send_priv EGG_VARARGS_DEF(int, arg1)
   tobot = va_arg(va, char *);
   format = va_arg(va, char *);
 
-#ifdef HAVE_VSNPRINTF
-  if (vsnprintf(tbuf, 450, format, va) < 0)
+  if (egg_vsnprintf(tbuf, 450, format, va) < 0)
     tbuf[450] = 0;
-#else
-  vsprintf(tbuf, format, va);
-#endif
   va_end(va);
   if (tobot) {
 #ifndef NO_OLD_BOTNET

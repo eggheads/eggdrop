@@ -1,7 +1,7 @@
 dnl aclocal.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: aclocal.m4,v 1.14 2000/03/19 23:32:08 fabian Exp $
+dnl $Id: aclocal.m4,v 1.15 2000/03/22 00:42:56 fabian Exp $
 dnl
 
 
@@ -1065,7 +1065,7 @@ dnl  recompiles.
 dnl
 define(EGG_REPLACE_IF_CHANGED, [dnl
   AC_OUTPUT_COMMANDS([
-egg_replace_file=${ac_given_srcdir}/$1
+egg_replace_file=$1
 echo "creating $1"
 $2
 if test -f ${egg_replace_file} && cmp -s conftest.out ${egg_replace_file}
@@ -1094,7 +1094,19 @@ dnl  EGG_CATCH_MAKEFILE_REBUILD()
 dnl
 AC_DEFUN(EGG_CATCH_MAKEFILE_REBUILD, [dnl
   AC_OUTPUT_COMMANDS([
-if test -f ${ac_given_srcdir}/.modules; then
+if test -f .modules; then
   ${ac_given_srcdir}/misc/modconfig --top_srcdir=${ac_given_srcdir} Makefile
 fi])
+])dnl
+
+dnl  EGG_SAVE_PARAMETERS()
+dnl
+AC_DEFUN(EGG_SAVE_PARAMETERS, [dnl
+  dnl  Normally, we shouldn't use this level as it's not intended for this
+  dnl  type of code, but there's no other way to run it before the main
+  dnl  parameter loop in configure.
+  AC_DIVERT_PUSH(AC_DIVERSION_NOTICE)dnl
+  egg_ac_parameters="[$]*"
+  AC_DIVERT_POP()dnl to NORMAL
+  AC_SUBST(egg_ac_parameters)dnl
 ])dnl

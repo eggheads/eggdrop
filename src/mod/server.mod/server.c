@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  * 
- * $Id: server.c,v 1.37 2000/02/29 20:13:37 fabian Exp $
+ * $Id: server.c,v 1.38 2000/03/22 00:42:58 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -2097,8 +2097,10 @@ char *server_start(Function * global_funcs)
   Context;
   server_table[4] = (Function) botname;
   module_register(MODULE_NAME, server_table, 1, 1);
-  if (!module_depend(MODULE_NAME, "eggdrop", 105, 0))
+  if (!module_depend(MODULE_NAME, "eggdrop", 105, 0)) {
+    module_undepend(MODULE_NAME);
     return "This module requires eggdrop1.5.0 or later";
+  }
 
   Context;
   /* Fool bot in reading the values. */

@@ -4,7 +4,7 @@
  *   disconnect on a dcc socket
  *   ...and that's it!  (but it's a LOT)
  * 
- * $Id: dcc.c,v 1.24 2000/02/18 22:40:36 fabian Exp $
+ * $Id: dcc.c,v 1.25 2000/03/22 00:42:57 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -513,14 +513,10 @@ static int dcc_bot_check_digest(int idx, char *remote_digest)
 
   MD5Init(&md5context);
 
-#ifdef HAVE_SNPRINTF
-  snprintf(digest_string, 33, "<%x%x@", getpid(),
-	   (unsigned int) dcc[idx].timeval);
-#else
-  sprintf(digest_string, "<%x%x@", getpid(),
-	  (unsigned int) dcc[idx].timeval);
-#endif
-  MD5Update(&md5context, (unsigned char *) digest_string, strlen(digest_string));
+  egg_snprintf(digest_string, 33, "<%x%x@", getpid(),
+	       (unsigned int) dcc[idx].timeval);
+  MD5Update(&md5context, (unsigned char *) digest_string,
+	    strlen(digest_string));
   MD5Update(&md5context, (unsigned char *) botnetnick, strlen(botnetnick));
   MD5Update(&md5context, (unsigned char *) ">", 1);
   MD5Update(&md5context, (unsigned char *) password, strlen(password));

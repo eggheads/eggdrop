@@ -1,18 +1,21 @@
 # Makefile for src/mod/irc.mod/
-# $Id: Makefile,v 1.6 2000/02/25 21:51:30 fabian Exp $
+# $Id: Makefile,v 1.7 2000/03/22 00:42:58 fabian Exp $
+
+srcdir = .
+
 
 doofus:
 	@echo ""
 	@echo "Let's try this from the right directory..."
 	@echo ""
-	@cd ../../../; make
+	@cd ../../../ && make
 
 static: ../irc.o
 
 modules: ../../../irc.so
 
 ../irc.o:
-	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c irc.c
+	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c $(srcdir)/irc.c
 	@rm -f ../irc.o
 	mv irc.o ../
 
@@ -21,7 +24,7 @@ modules: ../../../irc.so
 	$(STRIP) ../../../irc.so
 
 depend:
-	$(CC) $(CFLAGS) $(CPPFLAGS) -MM *.c > .depend
+	$(CC) $(CFLAGS) $(CPPFLAGS) -MM $(srcdir)/*.c > .depend
 
 clean:
 	@rm -f .depend *.o *.so *~
