@@ -7,7 +7,7 @@
  *   telling the current programmed settings
  *   initializing a lot of stuff and loading the tcl scripts
  * 
- * $Id: chanprog.c,v 1.21 2001/01/31 05:32:31 guppy Exp $
+ * $Id: chanprog.c,v 1.22 2001/02/24 20:08:51 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -449,11 +449,6 @@ void chanprog()
   protect_readonly = 1;
   if (!userfile[0])
     fatal(MISC_NOUSERFILE2, 0);
-  if ((int) getuid() == 0) {
-    /* Perhaps you should make it run something innocent here ;)
-     * like rm -rf /etc :) */
-    printf("\n\n%s\n", MISC_ROOTWARN);
-  }
   if (!readuserfile(userfile, &userlist)) {
     if (!make_userfile) {
       char tmp[178];

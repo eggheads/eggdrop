@@ -2,7 +2,7 @@
  * lang.h
  *   Conversion definitions for language support
  * 
- * $Id: lang.h,v 1.20 2001/01/31 05:32:31 guppy Exp $
+ * $Id: lang.h,v 1.21 2001/02/24 20:08:51 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -108,7 +108,7 @@
 #define MISC_NEWUSERFLAGS	get_language(0x530)
 #define MISC_NOTIFY		get_language(0x531)
 #define MISC_PERMOWNER		get_language(0x532)
-#define MISC_ROOTWARN		get_language(0x533)
+/* was: MISC_ROOTWARN - 0x533 */
 #define MISC_NOCONFIGFILE	get_language(0x534)
 #define MISC_NOUSERFILE		get_language(0x535)
 #define MISC_NOUSERFILE2	get_language(0x536)

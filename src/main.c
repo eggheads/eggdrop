@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  * 
- * $Id: main.c,v 1.52 2001/01/31 05:34:23 guppy Exp $
+ * $Id: main.c,v 1.53 2001/02/24 20:08:51 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -763,6 +763,11 @@ int main(int argc, char **argv)
     for (i = 1; i < argc; i++)
       do_arg(argv[i]);
   printf("\n%s\n", version);
+
+  /* Don't allow eggdrop to run as root */
+  if (((int) getuid() == 0) || ((int) geteuid() == 0))
+    fatal("ERROR: Eggdrop will not run as root!", 0);
+
   init_dcc_max();
   init_userent();
   init_misc();
