@@ -1,7 +1,7 @@
 dnl aclocal.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: aclocal.m4,v 1.45 2001/08/09 04:00:25 guppy Exp $
+dnl $Id: aclocal.m4,v 1.46 2001/09/23 19:54:06 guppy Exp $
 dnl
 
 
@@ -301,24 +301,17 @@ case "$egg_cv_var_system_type" in
     AC_DEFINE(STOP_UAC)dnl
   ;;
   SunOS)
-    if test "`echo $egg_cv_var_system_release | cut -d . -f 1`" = "5"
+    if test "`echo $egg_cv_var_system_release | cut -d . -f 1`" = "x5"
     then
-      # Solaris
-      if test -n "$GCC"
-      then
-        SHLIB_CC="$CC -fPIC"
-        SHLIB_LD="$CC"
-      else
-        SHLIB_CC="$CC -KPIC"
-        SHLIB_LD="$CC -G -z text"
-      fi
+      SHLIB_LD="/usr/ccs/bin/ld -G -z text"
     else
-      # SunOS 4
       SUNOS=yes
       SHLIB_LD=ld
-      SHLIB_CC="$CC -PIC"
+      SHLIB_STRIP=touch
       AC_DEFINE(DLOPEN_1)dnl
     fi
+    MOD_CC="${CC} -fPIC"
+    SHLIB_CC="${CC} -fPIC"
     AC_DEFINE(MODULES_OK)dnl
   ;;
   *BSD)
