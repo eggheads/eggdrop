@@ -1,7 +1,7 @@
 dnl aclocal.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: aclocal.m4,v 1.39 2001/06/25 21:32:07 guppy Exp $
+dnl $Id: aclocal.m4,v 1.40 2001/06/28 19:06:44 guppy Exp $
 dnl
 
 
@@ -178,8 +178,20 @@ case "$egg_cv_var_system" in
   CYGWIN*)
     cygwin_version=`${UNAME} -r | cut -c 1-3`
     case "$cygwin_version" in
-      1.*)
-        AC_MSG_RESULT(Cygwin 1.x)
+      1.1.3|1.1.4|1.1.5|1.1.6|1.1.7|1.1.8|1.3)
+        AC_MSG_RESULT(Cygwin 1.1.3 or later)
+        NEED_DL=0
+        SHLIB_LD="${CC} -shared"
+	CC="$CC -mwin32"
+	MOD_CC="${CC}"
+	MOD_LD="${CC}"
+        LIBS="${LIBS} /usr/lib/binmode.o"
+        MOD_EXT=dll
+        AC_DEFINE(MODULES_OK)dnl
+      ;;
+      1.1.*)
+        AC_MSG_RESULT(Cygwin 1.1.0-1.1.2)
+	AC_MSG_RESULT(The directory eggdrop is installed into must be mounted in binary mode)
         NEED_DL=0
         SHLIB_LD="${CC} -shared"
 	CC="$CC -mwin32"
@@ -189,7 +201,8 @@ case "$egg_cv_var_system" in
         AC_DEFINE(MODULES_OK)dnl
       ;;
       *)
-        AC_MSG_RESULT(Cygwin pre 1.0 or unknown)
+        AC_MSG_RESULT(Cygwin pre 1.1.x or unknown)
+	AC_MSG_RESULT(The directory eggdrop is installed into must be mounted in binary mode)
         NEED_DL=0
         DEFAULT_MAKE=static
       ;;
