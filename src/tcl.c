@@ -4,7 +4,7 @@
  *   Tcl initialization
  *   getting and setting Tcl/eggdrop variables
  *
- * $Id: tcl.c,v 1.48 2002/10/23 04:03:04 wcc Exp $
+ * $Id: tcl.c,v 1.49 2002/11/02 00:23:21 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -54,7 +54,7 @@ extern char	origbotname[], botuser[], motdfile[], admin[], userfile[],
 		firewall[], helpdir[], notify_new[], hostname[], myip[],
 		moddir[], tempdir[], owner[], network[], botnetnick[],
 		bannerfile[], egg_version[], natip[], configfile[],
-		logfile_suffix[], textdir[], pid_file[], encoding[];
+		logfile_suffix[], textdir[], pid_file[];
 extern int	die_on_sighup, die_on_sigterm, max_logs, max_logsize,
 		enable_simul, dcc_total, debug_output, identtimeout,
 		protect_telnet, dupwait_timeout, egg_numver, share_unlinks,
@@ -438,7 +438,6 @@ static tcl_strings def_tcl_strings[] =
 #endif
   {"notify-newusers",	notify_new,	120,		0},
   {"owner",		owner,		120,		STR_PROTECT},
-  {"encoding",		encoding,	20,		0},
   {"my-hostname",	hostname,	120,		0},
   {"my-ip",		myip,		120,		0},
   {"network",		network,	40,		0},
