@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: mod-server.html,v 1.11 2001/11/11 20:24:45 guppy Exp $ -->
+<!-- $Id: mod-server.html,v 1.12 2001/12/19 04:58:39 guppy Exp $ -->
 
 <html>
   <head>
@@ -107,13 +107,13 @@
           first connects to a server.</p>
         </dd>
 
-        <dt><strong>set servers { IRCSERVER1:PORT IRSERVER2:PORT ...
-        }</strong></dt>
+        <dt><strong>set servers { irc.change.this:6667 irc.example.com:7000 }
+		</strong></dt>
 
         <dd>
-          <p>This setting tell the bot what servers it should use when
-          connecting to IRC. You may optionally specify a port for each
-          server.</p>
+          <p>This is the bot's server list. The bot will start at the first 
+		  server listed, and cycle through them whenever it gets disconnected. 
+		  You need to change these servers to YOUR network's servers.</p>
 
           <p>For example:</p>
 
@@ -122,10 +122,11 @@
            &nbsp; irc.krow.ten:6668<br>
            }</p>
 
-          <p>This will make the bot connect on startup to irc.netw.ork using
-          &#39;default-port&#39;. On disconnect, or if someone uses the
-          &#39;.jump&#39; command, it will then try to connect to
-          irc.kwor.ten on port 6668.</p>
+           <p>The format is: server[:port[:password]]</p>
+    
+           <p>Both the port and password fields are optional; however, if you 
+		   want to set a password you must also set a port. If a port isn't 
+		   specified it will default to your default-port setting.</p>
         </dd>
 
         <dt><strong>set default-port 6667</strong></dt>

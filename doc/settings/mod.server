@@ -15,11 +15,11 @@ There are also some variables you can to set in your config file:
 set net-type 0
     What is your network?
       0 = EFnet (non +e/+I hybrid)
-     1 = IRCnet
-     2 = Undernet
+      1 = IRCnet
+      2 = Undernet
       3 = DALnet
       4 = EFnet +e/+I hybrid
-     5 = Others
+      5 = Others
     Valid settings are 0-5.
 
 
@@ -47,20 +47,17 @@ set init-server { putserv "MODE $botnick +i-ws" }
     Set here a script to run (if any) when first connecting to a server.
 
 
-set servers { IRCSERVER1:PORT IRSERVER2:PORT ... }
-    Set here the list of IRC servers you want your bot to connect to. You can
-    add an optional port for the server.
-
-    Example:
-
-     set servers {
-       irc.netw.ork
-       irc.krow.ten:6668
-     }
-
-    This will make the bot connect on startup to irc.netw.ork using
-    'default-port'. On disconnect or a '.jump' it will try to connect
-    to irc.kwor.ten on port 6668.
+set servers { irc.change.this:6667 irc.example.com:7000 }
+    This is the bot's server list. The bot will start at the first server listed,
+    and cycle through them whenever it gets disconnected. You need to change these
+    servers to YOUR network's servers.
+    
+    The format is: 
+      server[:port[:password]]
+    
+    Both the port and password fields are optional; however, if you want to set a 
+    password you must also set a port. If a port isn't specified it will default to 
+    your default-port setting.
 
 
 set default-port 6667
