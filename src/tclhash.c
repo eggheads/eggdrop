@@ -7,7 +7,7 @@
  *   (non-Tcl) procedure lookups for msg/dcc/file commands
  *   (Tcl) binding internal procedures to msg/dcc/file commands
  * 
- * $Id: tclhash.c,v 1.21 2001/01/08 03:30:57 guppy Exp $
+ * $Id: tclhash.c,v 1.22 2001/01/17 23:32:44 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1080,13 +1080,12 @@ void tell_binds(int idx, char *par)
     tl_kind = find_bind_table(name);
   else
     tl_kind = NULL;
-  if ((s && !egg_strcasecmp(s, "all")) || !egg_strcasecmp(name, "all"))
-    showall = 1;
 
-  if (tl_kind == NULL && name && name[0] && egg_strcasecmp(name, "all")) {
+  if ((name && name[0] &&!egg_strcasecmp(name, "all")) || (s && s[0] && !egg_strcasecmp(s, "all")))
+    showall = 1;
+  if (tl_kind == NULL && name && name[0] && egg_strcasecmp(name, "all"))
     patmatc = 1;
-    dprintf(idx, "Bind type %s not found, using wild card match.\n", name);
-  }
+
   dprintf(idx, MISC_CMDBINDS);
   dprintf(idx, "  TYPE FLGS     COMMAND              HITS BINDING (TCL)\n");
 
@@ -1102,7 +1101,7 @@ void tell_binds(int idx, char *par)
 	  continue;
 	proc = tc->func_name;
 	build_flags(flg, &(tc->flags), NULL);
-	if (showall || proc[0] != '*' || !strchr(proc, ':')) {
+	if (showall || (proc[0] != '*' && !strchr(proc, ':'))) {
 	  int	ok = 0;
 
           if (patmatc == 1) {
