@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  *
- * $Id: server.c,v 1.73 2001/11/29 04:43:38 guppy Exp $
+ * $Id: server.c,v 1.74 2001/12/30 06:32:43 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1321,6 +1321,7 @@ static tcl_ints my_tcl_ints[] =
   {"double-help",		&double_help,			0},
   {"use-penalties",		&use_penalties,			0},
   {"use-fastdeq",		&use_fastdeq,			0},
+  {"nicklen",			&nick_len,			0},
   {"nick-len",			&nick_len,			0},
   {"optimize-kicks",		&optimize_kicks,		0},
   {"isjuped",			&nick_juped,			0},
