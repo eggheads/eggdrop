@@ -468,7 +468,7 @@ static void read_channels(int create)
     if (!f)
       putlog(LOG_MISC, "*", "Couldn't create channel file: %s.  Dropping",
 	     chanfile);
-    fclose(f);
+    else fclose(f);
   }
   chan_hack = 0;
   chan = chanset;
