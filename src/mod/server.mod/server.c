@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  * 
- * $Id: server.c,v 1.21 1999/12/22 12:11:03 fabian Exp $
+ * $Id: server.c,v 1.22 1999/12/24 14:20:08 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -926,14 +926,14 @@ static char *traced_nicklen(ClientData cdata, Tcl_Interp *irp, char *name1,
 
     sprintf(s, "%d", nick_len);
     Tcl_SetVar2(interp, name1, name2, s, TCL_GLOBAL_ONLY);
-    if (flags & TCL_TRACE_READS)
+    if (flags & TCL_TRACE_UNSETS)
       Tcl_TraceVar(irp, name1, TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
 		   traced_nicklen, cdata);
   } else {
     char *cval = Tcl_GetVar2(interp, name1, name2, TCL_GLOBAL_ONLY);
-    long lval;
+    long lval = 0;
 
-    if (Tcl_ExprLong(interp, cval, &lval) != TCL_ERROR) {
+    if (cval && Tcl_ExprLong(interp, cval, &lval) != TCL_ERROR) {
       if (lval > NICKMAX)
 	lval = NICKMAX;
       nick_len = (int) lval;
@@ -1389,6 +1389,9 @@ static char *server_close()
   Tcl_UntraceVar(interp, "net-type",
 		 TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
 		 traced_nettype, NULL);
+  Tcl_UntraceVar(interp, "nick-len",
+		 TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
+		 traced_nicklen, NULL);
   tcl_untraceserver("servers", NULL);
   Context;
   empty_msgq();
