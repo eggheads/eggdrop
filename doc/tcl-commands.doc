@@ -55,6 +55,14 @@ specific commands, see later.
       msg (one line per msg); the user has no flags, so the
       flag bindings wont work within the file.
 
+  queuesize [queue]
+    returns: the number of msgs in all queues. If a queue is specified, only
+      the size of this queue is returned.
+
+  clearqueue <queue>
+    removes all msgs from the specified queue
+    returns: number of deleted msgs
+
 
 *** USER RECORD MANIPULATION COMMANDS ***
 

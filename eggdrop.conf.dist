@@ -645,6 +645,11 @@ set max-queue-msg 300
 # trigger bindings for ignored users?
 set trigger-on-ignore 0
 
+# allow a msg being twice in a queue?
+set double-mode 0
+set double-server 0
+set double-help 0
+
 ##### SERVER MODULE - net-type 5 specific features (other networks) #####
 
 # some IRC Networks use the ircdu's SILENCE command

@@ -12,6 +12,9 @@
    server (default port is 6667), and if that server is not in the
    internal list already, it will add it.  jumping servers ALWAYS
    makes the bot lose ops! be careful!
+%{help=clearqueue}%{+m}
+###  %bclearqueue%b <queue>
+   removes all msgs from the specified queue (mode/server/help/all)
 %{help=servers}%{+o|o}
 ###  %bservers%b
    lists the servers that the bot has in its server list.  this is

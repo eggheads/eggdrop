@@ -73,6 +73,108 @@ static void cmd_jump(struct userrec *u, int idx, char *par)
   nuke_server("changing servers");
 }
 
+ static void cmd_clearqueue (struct userrec * u, int idx, char * par)
+ {
+ struct msgq *q, *qq;
+ int msgs;
+ msgs = 0;
+ if (!par[0]) {
+     dprintf(idx, "Usage: clearqueue <mode|server|help|all>\n");
+     putlog(LOG_CMDS, "*", "#%s# clearqueue %s", dcc[idx].nick, par);
+     return;
+     }
+ if (!strcasecmp(par, "all")) {
+     msgs = (int) (modeq.tot + mq.tot + hq.tot);
+     q = modeq.head;
+     while (q) {
+         qq = q->next;
+         nfree(q->msg);
+         nfree(q);
+         q = qq;
+         }
+     q = mq.head;
+     while (q) {
+         qq = q->next;
+         nfree(q->msg);
+         nfree(q);
+         q = qq;
+         }
+     q = hq.head;
+     while (q) {
+         qq = q->next;
+         nfree(q->msg);
+         nfree(q);  
+         q = qq;
+         }
+     modeq.tot = mq.tot = hq.tot = modeq.warned = mq.warned = hq.warned = 0;
+     mq.head = hq.head = modeq.head = mq.last = hq.last = modeq.last = 0;
+     double_warned = 0;
+     burst = 0;  
+     dprintf(idx, "Removed %d msgs from all queues\n",msgs);
+     putlog(LOG_CMDS, "*", "#%s# clearqueue %s", dcc[idx].nick, par);
+     return;
+     }
+ if (!strcasecmp(par, "mode")) {
+     q = modeq.head;
+     msgs = modeq.tot;
+     while (q) {
+          qq = q->next;
+         nfree(q->msg);
+         nfree(q);  
+         q = qq;
+         }
+     if (mq.tot == 0) {
+         burst = 0;
+         }
+     double_warned = 0;
+     modeq.tot = modeq.warned = 0;
+     modeq.head = modeq.last = 0;
+     dprintf(idx, "Removed %d msgs from the mode queue\n",msgs);
+     putlog(LOG_CMDS, "*", "#%s# clearqueue %s", dcc[idx].nick, par);
+     return;
+     }
+ if (!strcasecmp(par, "help")) {
+     msgs = hq.tot;   
+     q = hq.head;
+     while (q) {
+         qq = q->next; 
+         nfree(q->msg);
+         nfree(q);
+         q = qq;
+         }
+     double_warned = 0;
+     hq.tot = hq.warned = 0;
+     hq.head = hq.last = 0;
+     dprintf(idx, "Removed %d msgs from the help queue\n",msgs);
+     putlog(LOG_CMDS, "*", "#%s# clearqueue %s", dcc[idx].nick, par);
+     return;
+     }
+ if (!strcasecmp(par, "server")) {
+     msgs = mq.tot;
+     q = mq.head;
+     while (q) {      
+         qq = q->next;
+         nfree(q->msg);
+         nfree(q);
+         q = qq;
+         mq.tot = mq.warned = 0;
+         mq.head = mq.last = 0;
+         if (modeq.tot == 0) {
+             burst = 0;
+             }
+         }
+     double_warned = 0;
+     mq.tot = mq.warned = 0;
+     mq.head = mq.last = 0;
+     dprintf(idx, "Removed %d msgs from the server queue\n",msgs);
+     putlog(LOG_CMDS, "*", "#%s# clearqueue %s", dcc[idx].nick, par);
+     return;
+     }
+ dprintf(idx, "Usage: clearqueue <mode|server|help|all>\n");
+ putlog(LOG_CMDS, "*", "#%s# clearqueue %s", dcc[idx].nick, par);
+ }
+         
+
 /* this overrides the default die, handling extra server stuff
  * send a QUIT if on the server */
 static void my_cmd_die(struct userrec *u, int idx, char *par)
@@ -90,10 +192,11 @@ static void my_cmd_die(struct userrec *u, int idx, char *par)
 /* function call should be: int cmd_whatever(idx,"parameters");
  * as with msg commands, function is responsible for any logging */
 /* update the add/rem_builtins in server.c if you add to this list!! */
-static cmd_t C_dcc_serv[4] =
+static cmd_t C_dcc_serv[5] =
 {
   {"die", "n", (Function) my_cmd_die, "server:die"},
   {"dump", "m", (Function) cmd_dump, NULL},
   {"jump", "m", (Function) cmd_jump, NULL},
   {"servers", "o", (Function) cmd_servers, NULL},
+  {"clearqueue", "m", (Function)cmd_clearqueue, NULL },
 };

@@ -63,6 +63,13 @@ static int net_type;
 static int must_be_owner;	/* arthur2 */
 static char connectserver[121];	/* what, if anything, to do before connect
 				 * to the server */
+
+/* allow a msgs being twice in a queue ? */
+static int double_mode;
+static int double_server;
+static int double_help;
+static int double_warned;
+
 static int lastpingtime = 0;	/* IRCNet LAGmeter support -- drummer */
 
 static Function *global = NULL;
@@ -74,7 +81,6 @@ static void empty_msgq(void);
 static void next_server(int *, char *, int *, char *);
 
 #include "servmsg.c"
-#include "cmdsserv.c"
 
 /* number of seconds to wait between transmitting queued lines to the server
  * lower this value at your own risk.  ircd is known to start flood control
@@ -84,6 +90,9 @@ static void next_server(int *, char *, int *, char *);
 /* maximum messages to store in each queue */
 static int maxqmsg;
 static struct msgq_head mq, hq, modeq;
+static int burst;
+
+#include "cmdsserv.c"
 
 /***** BOT SERVER QUEUES *****/
 
@@ -95,7 +104,6 @@ static struct msgq_head mq, hq, modeq;
  * it will *not* send anything from hq until the 'burst' value drops
  * down to 0 again (allowing a sudden mq flood to sneak through) */
 
-static int burst;
 static void deq_msg()
 {
   struct msgq *q;
@@ -191,7 +199,10 @@ static void queue_server(int which, char *buf, int len)
 {
   struct msgq_head *h = 0;
   struct msgq *q;
-
+  struct msgq_head tempq;
+  struct msgq *tq, *tqq;
+  int doublemsg;
+  doublemsg = 0;
   if (serv < 0)
     return;			/* don't even BOTHER if there's no server
 				 * online */
@@ -206,18 +217,39 @@ static void queue_server(int which, char *buf, int len)
   switch (which) {
   case DP_MODE:
     h = &modeq;
+    tempq = modeq;
+    if (double_mode) doublemsg = 1;
     break;
   case DP_SERVER:
     h = &mq;
+    tempq = mq;
+    if (double_server) doublemsg = 1;
     break;
   case DP_HELP:
     h = &hq;
+    tempq = hq;
+    if (double_help) doublemsg = 1;
     break;
   default:
     putlog(LOG_MISC, "*", "!!! queueing unknown type to server!!");
     return;
   }
   if (h->tot < maxqmsg) {
+       if (!doublemsg) {   /* Don't queue msg if it's already queued */
+           tq = tempq.head;
+           while (tq) {
+               tqq = tq->next;
+               if (!strcasecmp(tq->msg, buf)) {
+                   if (!double_warned) {
+                     putlog(LOG_MISC, "*", "msg already qeueued. skipping...");
+                     double_warned = 1;
+                     }
+                   return;
+                   }
+               tq = tqq;
+               }
+           } 
+ 
     q = nmalloc(sizeof(struct msgq));
 
     q->next = NULL;
@@ -231,6 +263,7 @@ static void queue_server(int which, char *buf, int len)
     strcpy(q->msg, buf);
     h->tot++;
     h->warned = 0;
+    double_warned = 0;
   } else {
     if (!h->warned)
       putlog(LOG_MISC, "*", "!!! OVER MAXIMUM MODE QUEUE");
@@ -557,6 +590,9 @@ static tcl_ints my_tcl_ints[] =
   {"net-type", &net_type, 0},
   {"must-be-owner", &must_be_owner, 0},		/* arthur2 */
   {"ctcp-mode", &ctcp_mode, 0},
+  {"double-mode", &double_mode, 0}, /* G`Quann */
+  {"double-server", &double_server, 0},
+  {"double-help", &double_help, 0},
   {0, 0, 0}
 };
 
@@ -777,14 +813,14 @@ static void server_report(int idx, int details)
   } else
     dprintf(idx, "    %s\n", IRC_NOSERVER);
   if (modeq.tot)
-    dprintf(idx, "    %s %d%%\n", IRC_MODEQUEUE,
-	    (int) ((float) (modeq.tot * 100.0) / (float) maxqmsg));
+    dprintf(idx, "    %s %d%%, %d msgs\n", IRC_MODEQUEUE,
+            (int) ((float) (modeq.tot * 100.0) / (float) maxqmsg), (int) modeq.tot);
   if (mq.tot)
-    dprintf(idx, "    %s %d%%\n", IRC_SERVERQUEUE,
-	    (int) ((float) (mq.tot * 100.0) / (float) maxqmsg));
+    dprintf(idx, "    %s %d%%, %d msgs\n", IRC_SERVERQUEUE,
+           (int) ((float) (mq.tot * 100.0) / (float) maxqmsg), (int) mq.tot);
   if (hq.tot)
-    dprintf(idx, "    %s %d%%\n", IRC_HELPQUEUE,
-	    (int) ((float) (hq.tot * 100.0) / (float) maxqmsg));
+    dprintf(idx, "    %s %d%%, %d msgs\n", IRC_HELPQUEUE,
+           (int) ((float) (hq.tot * 100.0) / (float) maxqmsg), (int) hq.tot);
   if (details) {
     if (min_servs)
       dprintf(idx, "    Requiring a net of at least %d server(s)\n", min_servs);
@@ -901,12 +937,155 @@ static int tcl_jump STDVAR {
   return TCL_OK;
 }
 
+static int tcl_clearqueue STDVAR  
+{
+ struct msgq *q, *qq;
+ int msgs;
+ char s[20];
+ msgs = 0;
+ BADARGS(2,2, " queue");
+ if (strcmp(argv[1],"all") == 0) {
+     msgs = (int) (modeq.tot + mq.tot + hq.tot);
+     q = modeq.head;   
+     while (q) {  
+         qq = q->next;
+         nfree(q->msg);
+         nfree(q);
+         q = qq;
+         }
+     q = mq.head;
+     while (q) {
+         qq = q->next; 
+         nfree(q->msg);
+         nfree(q);
+         q = qq;
+         }
+     q = hq.head;
+     while (q) {
+         qq = q->next;
+         nfree(q->msg);
+         nfree(q);     
+         q = qq;  
+         }
+     modeq.tot = mq.tot = hq.tot = modeq.warned = mq.warned = hq.warned = 0;
+     mq.head = hq.head = modeq.head = mq.last = hq.last = modeq.last = 0;
+     double_warned = 0;
+     burst = 0;
+     simple_sprintf(s, "%d", msgs);
+     Tcl_AppendResult(irp, s, NULL);
+     return TCL_OK;    
+     }
+ if (strcmp(argv[1],"server") == 0) {
+     msgs = mq.tot;
+     q = mq.head;
+     while (q) { 
+         qq = q->next;
+         nfree(q->msg);
+         nfree(q);
+         q = qq;       
+         mq.tot = mq.warned = 0;
+         mq.head = mq.last = 0;
+         if (modeq.tot == 0) {
+             burst = 0;
+             }
+         }
+     double_warned = 0;
+     mq.tot = mq.warned = 0;
+     mq.head = mq.last = 0;
+     simple_sprintf(s, "%d", msgs);
+     Tcl_AppendResult(irp, s, NULL); 
+     return TCL_OK;
+     }
+ if (strcmp(argv[1],"mode") == 0) {
+     msgs = modeq.tot;
+     q = modeq.head;   
+     while (q) {  
+         qq = q->next; 
+         nfree(q->msg);
+         nfree(q);
+         q = qq;
+         }
+     if (mq.tot == 0) {
+         burst = 0;
+         }
+     double_warned = 0;
+     modeq.tot = modeq.warned = 0;
+     modeq.head = modeq.last = 0;  
+     simple_sprintf(s, "%d", msgs);  
+     Tcl_AppendResult(irp, s, NULL);
+     return TCL_OK;
+     }
+ if (strcmp(argv[1],"help") == 0) {
+     msgs = hq.tot;    
+     q = hq.head; 
+     while (q) {
+         qq = q->next; 
+         nfree(q->msg);
+         nfree(q);
+         q = qq;
+         }
+     double_warned = 0;
+     hq.tot = hq.warned = 0;
+     hq.head = hq.last = 0;
+     simple_sprintf(s, "%d", msgs);
+     Tcl_AppendResult(irp, s, NULL);
+     return TCL_OK;
+     }
+ Tcl_AppendResult(irp, "unknown clearqueue option: should be one of: ",
+ "mode serv help all", NULL);
+ return TCL_ERROR;
+ }
+     
+ static int tcl_queuesize STDVAR
+ {
+    char s[20];
+    int x;
+         
+     BADARGS(1, 2, " ?queue?");
+    if (argc == 1) {   
+       x = (int) (modeq.tot + hq.tot + mq.tot);
+       simple_sprintf(s, "%d", x);
+       Tcl_AppendResult(irp, s, NULL);
+       return TCL_OK;
+       }
+    if (strcmp(argv[1], "serv") == 0) {
+       x = (int) (mq.tot);
+       simple_sprintf(s, "%d", x);
+       Tcl_AppendResult(irp, s, NULL);
+       return TCL_OK;
+       }
+    if (strcmp(argv[1], "mode") == 0) {
+       x = (int) (modeq.tot);
+       simple_sprintf(s, "%d", x);
+       Tcl_AppendResult(irp, s, NULL);
+       return TCL_OK;
+       }
+    if (strcmp(argv[1], "help") == 0) {
+       x = (int) (hq.tot);
+       simple_sprintf(s, "%d", x);
+       Tcl_AppendResult(irp, s, NULL);
+       return TCL_OK;
+       }
+    if (strcmp(argv[1], "server") == 0) {
+       x = (int) (mq.tot);
+       simple_sprintf(s, "%d", x);
+       Tcl_AppendResult(irp, s, NULL);
+       return TCL_OK;
+       }
+    Tcl_AppendResult(irp, "unknown queuesize option: should be one of: ",
+             "mode serv help", NULL);
+    return TCL_ERROR;
+ }
+       
 static tcl_cmds my_tcl_cmds[] =
 {
   {"jump", tcl_jump},
   {"isbotnick", tcl_isbotnick},
+  {"clearqueue", tcl_clearqueue},
+  {"queuesize", tcl_queuesize},
   {0, 0},
 };
+
 static char *server_close()
 {
   cmd_t C_t[1];
@@ -916,7 +1095,7 @@ static char *server_close()
   nuke_server("Connection reset by phear");
   clearq(serverlist);
   context;
-  rem_builtins(H_dcc, C_dcc_serv, 4);
+  rem_builtins(H_dcc, C_dcc_serv, 5);
   rem_builtins(H_raw, my_raw_binds, 18);
   rem_builtins(H_ctcp, my_ctcps, 1);
   context;
@@ -1068,6 +1247,9 @@ char *server_start(Function * global_funcs)
   use_ison = 1;
   recycle = 1;
   net_type = 0;
+  double_mode = 0;
+  double_server = 0;
+  double_help = 0;
   context;
   server_table[4] = (Function) botname;
   module_register(MODULE_NAME, server_table, 1, 0);
@@ -1106,7 +1288,7 @@ char *server_start(Function * global_funcs)
   H_ctcp = add_bind_table("ctcp", HT_STACKABLE, server_6char);
   context;
   add_builtins(H_raw, my_raw_binds, 18);
-  add_builtins(H_dcc, C_dcc_serv, 4);
+  add_builtins(H_dcc, C_dcc_serv, 5);
   add_builtins(H_ctcp, my_ctcps, 1);
   add_help_reference("server.help");
   context;
@@ -1129,6 +1311,7 @@ char *server_start(Function * global_funcs)
   mq.last = hq.last = modeq.last = 0;
   mq.tot = hq.tot = modeq.tot = 0;
   mq.warned = hq.warned = modeq.warned = 0;
+  double_warned = 0;
   context;
   newbotname[0] = 0;
   newserver[0] = 0;
