@@ -2,7 +2,7 @@
  * tcldcc.c -- handles:
  *   Tcl stubs for the dcc commands
  * 
- * $Id: tcldcc.c,v 1.16 2000/04/05 19:22:33 fabian Exp $
+ * $Id: tcldcc.c,v 1.17 2000/07/12 21:45:29 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -85,19 +85,21 @@ static int tcl_putdcc STDVAR
  */
 static int tcl_putdccraw STDVAR
 {
-  int i, j, z;
+  int i, j = 0, z;
 
   Context;
   BADARGS(4, 4, " idx size text");
   z = atoi(argv[1]);
-  j = 0;
   for (i = 0; i < dcc_total; i++) {
-    if (!(strcmp(dcc[i].nick, "(server)")) && (z == 0))
+    if (z == 0 && !strcmp(dcc[i].nick, "(server)")) {
       j = dcc[i].sock;
-    if (dcc[i].sock == z)
+      break;
+    } else if (dcc[i].sock == z) {
       j = dcc[i].sock;
+      break;
+    }
   }
-  if (j == 0) {
+  if (i == dcc_total) {
     Tcl_AppendResult(irp, "invalid idx", NULL);
     return TCL_ERROR;
   }
