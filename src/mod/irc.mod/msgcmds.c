@@ -2,7 +2,7 @@
  * msgcmds.c -- part of irc.mod
  *   all commands entered via /MSG
  * 
- * $Id: msgcmds.c,v 1.12 2000/03/23 23:17:58 fabian Exp $
+ * $Id: msgcmds.c,v 1.13 2000/06/02 16:56:52 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -879,7 +879,10 @@ static int msg_die(char *nick, char *host, struct userrec *u, char *par)
   }
   putlog(LOG_CMDS, "*", "(%s!%s) !%s! DIE", nick, host, u->handle);
   dprintf(-serv, "NOTICE %s :%s\n", nick, BOT_MSGDIE);
+  if (!par[0])
   simple_sprintf(s, "BOT SHUTDOWN (authorized by %s)", u->handle);
+  else 
+    simple_sprintf(s, "BOT SHUTDOWN (%s: %s)", u->handle, par);
   chatout("*** %s\n", s);
   botnet_send_chat(-1, botnetnick, s);
   botnet_send_bye();

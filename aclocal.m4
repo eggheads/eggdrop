@@ -1,7 +1,7 @@
 dnl aclocal.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: aclocal.m4,v 1.18 2000/05/07 00:18:36 fabian Exp $
+dnl $Id: aclocal.m4,v 1.19 2000/06/02 16:56:51 fabian Exp $
 dnl
 
 
@@ -229,7 +229,7 @@ case "$egg_cv_var_system" in
         MOD_CC=cc
         MOD_LD=cc
         SHLIB_CC=cc
-        SHLIB_LD="ld -shared -expect_unresolved '*'"
+        SHLIB_LD="ld -shared -expect_unresolved \"'*'\""
         SHLIB_STRIP=touch
         AC_DEFINE(MODULES_OK)dnl
         ;;

@@ -4,10 +4,17 @@ Changes in eggdrop: (since v1.4.0)
 
 1.4.4
 Foundby   Fixedby   What....
+          Murf      adjusted compiler flag and added explicit variable cast
+                      in module.c to fix errors on Tru64 Unix 5.0.
+          Sup       fixed output of `.stick' for missing parameters.
+          Sup       minor fixes to the core help-file.
+Wiktor    guppy     msg_die now sends the reason along with the BOT SHUTDOWN
+                      message.
+          Lucas     updated french core language file.
           guppy     changed the output of +statuslog to be more effective.
           blaster   bind flud was getting the nickname passed in the
-                      user@host information
-kirben    guppy     changed the userinfo version from 1.05 to 1.06
+                      user@host information.
+kirben    guppy     changed the userinfo version from 1.05 to 1.06.
 Wiktor    guppy     added three new events, 'init-server', 'connect-server'
                       and 'disconnect-server'.
 LtGen     Fabian    Enhanced `.unlink' to remove ghost bots (as a temporary
