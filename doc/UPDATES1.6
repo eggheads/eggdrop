@@ -1,10 +1,15 @@
-$Id: UPDATES1.6,v 1.191 2001/10/09 17:23:21 tothwolf Exp $
+$Id: UPDATES1.6,v 1.192 2001/10/14 15:06:34 tothwolf Exp $
 
 Changes in eggdrop: (since v1.6.0)
 ----------------------------------
 
 1.6.7
 Found by  Fixed by  What...
+          Tothwolf  don't attempt to flood check server notices
+          Tothwolf  display global bans, exempts and invites even if
+                    not on a channel
+          Tothwolf  removed unused "existant" check from tell_bans(),
+                    tell_exempts(), and tell_invites()
           Tothwolf  fixed buffer overflow in adduser()
           Tothwolf  fixed typo in filedb3.c: EBUG_MEM -> DEBUG_MEM
           Tothwolf  removed extra egg_bzero call from filesys.c
