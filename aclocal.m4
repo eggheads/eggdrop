@@ -1,7 +1,7 @@
 dnl aclocal.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: aclocal.m4,v 1.26 2000/09/27 19:48:54 fabian Exp $
+dnl $Id: aclocal.m4,v 1.27 2000/10/01 19:14:41 fabian Exp $
 dnl
 
 
@@ -49,6 +49,27 @@ configure: error:
 
 EOF
   exit 1
+fi
+])dnl
+
+
+dnl  EGG_CHECK_PIPE()
+dnl
+AC_DEFUN(EGG_CHECK_PIPE, [dnl
+if test -z "$no_pipe"
+then
+  if test -n "$GCC"
+  then
+    AC_CACHE_CHECK(if the compiler understands -pipe, egg_cv_var_ccpipe, [dnl
+      ac_old_CC="$CC"
+      CC="$CC -pipe"
+      AC_TRY_COMPILE(,, egg_cv_var_ccpipe="yes", egg_cv_var_ccpipe="no")
+      CC="$ac_old_CC"
+    ])
+    if test "x$egg_cv_var_ccpipe" = "xyes"; then
+      CC="$CC -pipe"
+    fi
+  fi
 fi
 ])dnl
 
@@ -145,6 +166,7 @@ case "$egg_cv_var_system" in
         CFLAGS="$CFLAGS -Wall"
         MOD_LD="${CC} "
         MOD_STRIP="${STRIP} -d"
+        SHLIB_CC="${CC} -export-dynamic -fPIC" 
         SHLIB_LD="${CC} -shared -nostartfiles"
         AC_DEFINE(MODULES_OK)dnl
       ;;
@@ -244,6 +266,7 @@ case "$egg_cv_var_system" in
     LINUX=yes
     CFLAGS="$CFLAGS -Wall"
     MOD_LD="${CC}"
+    SHLIB_CC="${CC} -fPIC"
     SHLIB_LD="${CC} -shared -nostartfiles"
     AC_DEFINE(MODULES_OK)dnl
     ;;
@@ -292,21 +315,21 @@ case "$egg_cv_var_system" in
     if test "x`${UNAME} -r | cut -d . -f 1`" = "x5"
     then
       AC_MSG_RESULT(Solaris -- yay)
+      SHLIB_CC="${CC} -KPIC"     
       SHLIB_LD="/usr/ccs/bin/ld -G -z text"
     else
       AC_MSG_RESULT(SunOS -- sigh)
       SUNOS=yes
+      SHLIB_CC="${CC} -PIC" 
       SHLIB_LD=ld
       SHLIB_STRIP=touch
       AC_DEFINE(DLOPEN_1)dnl
     fi
-    MOD_CC="${CC} -fPIC"
-    SHLIB_CC="${CC} -fPIC"
     AC_DEFINE(MODULES_OK)dnl
     ;;
   *BSD)
     AC_MSG_RESULT(FreeBSD/NetBSD/OpenBSD - choose your poison)
-    SHLIB_CC="${CC} -fpic"
+    SHLIB_CC="${CC} -fPIC"
     SHLIB_LD="ld -Bshareable -x"
     AC_DEFINE(MODULES_OK)dnl
     ;;

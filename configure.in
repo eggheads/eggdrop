@@ -16,6 +16,9 @@ AC_AIX
 AC_ISC_POSIX
 AC_MINIX
 
+# Speedup compile
+EGG_CHECK_PIPE
+
 # Checks for programs
 AC_PROG_MAKE_SET
 AC_PROG_RANLIB
