@@ -1,7 +1,7 @@
 /*
  * tclchan.c -- part of channels.mod
  *
- * $Id: tclchan.c,v 1.55 2002/02/22 13:25:45 stdarg Exp $
+ * $Id: tclchan.c,v 1.56 2002/03/11 04:34:16 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1567,8 +1567,10 @@ static int tcl_channel_add(Tcl_Interp *irp, char *newname, char *options)
   char **item;
   char buf[2048], buf2[256];
 
-  if (!newname || !newname[0] || !strchr(CHANMETA, newname[0]))
+  if (!newname || !newname[0] || !strchr(CHANMETA, newname[0])) {
+    Tcl_AppendResult(irp, "invalid channel prefix", NULL);
     return TCL_ERROR;
+  }
 
   convert_element(glob_chanmode, buf2);
   simple_sprintf(buf, "chanmode %s ", buf2);
