@@ -1,7 +1,7 @@
 /*
  * tclchan.c -- part of channels.mod
  *
- * $Id: tclchan.c,v 1.64 2002/10/28 22:17:55 wcc Exp $
+ * $Id: tclchan.c,v 1.65 2002/11/03 23:33:02 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -734,7 +734,7 @@ static int tcl_newinvite STDVAR
 
 static int tcl_channel_info(Tcl_Interp * irp, struct chanset_t *chan)
 {
-  char s[121];
+  char a[121], b[121], s[121], *argv[2];
   struct udef_struct *ul;
 
   get_mode_protect(chan, s);
@@ -879,7 +879,11 @@ static int tcl_channel_info(Tcl_Interp * irp, struct chanset_t *chan)
 		       ul->name);
         Tcl_AppendElement(irp, s);
       } else if (ul->type == UDEF_INT) {
-        simple_sprintf(s, "%s %d", ul->name, getudef(ul->values, chan->dname));
+        egg_snprintf(a, sizeof a, "%s", ul->name);
+        egg_snprintf(b, sizeof b, "%d", getudef(ul->values, chan->dname));
+        argv[0] = a;
+        argv[1] = b;
+        egg_snprintf(s, sizeof s, "%s", Tcl_Merge(2, argv));
         Tcl_AppendElement(irp, s);
       } else
         debug1("UDEF-ERROR: unknown type %d", ul->type);
@@ -1477,7 +1481,7 @@ static int tcl_channels STDVAR
   struct chanset_t *chan;
 
   BADARGS(1, 1, "");
-  for (chan = chanset; chan; chan = chan->next) 
+  for (chan = chanset; chan; chan = chan->next)
     Tcl_AppendElement(irp, chan->dname);
   return TCL_OK;
 }
