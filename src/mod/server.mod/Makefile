@@ -1,5 +1,5 @@
 # Makefile for src/mod/server.mod/
-# $Id: Makefile,v 1.10 2000/03/31 23:04:22 fabian Exp $
+# $Id: Makefile,v 1.11 2000/07/09 14:10:49 fabian Exp $
 
 srcdir = .
 
@@ -12,22 +12,22 @@ doofus:
 
 static: ../server.o
 
-modules: ../../../server.so
+modules: ../../../server.$(MOD_EXT)
 
 ../server.o:
 	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c $(srcdir)/server.c
 	@rm -f ../server.o
 	mv server.o ../
 
-../../../server.so: ../server.o
-	$(LD) -o ../../../server.so ../server.o
-	$(STRIP) ../../../server.so
+../../../server.$(MOD_EXT): ../server.o
+	$(LD) -o ../../../server.$(MOD_EXT) ../server.o $(XLIBS)
+	$(STRIP) ../../../server.$(MOD_EXT)
 
 depend:
 	$(CC) $(CFLAGS) $(CPPFLAGS) -MM $(srcdir)/server.c > .depend
 
 clean:
-	@rm -f .depend *.o *.so *~
+	@rm -f .depend *.o *.$(MOD_EXT) *~
 distclean: clean
 
 #safety hash

@@ -1,7 +1,7 @@
 dnl aclocal.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: aclocal.m4,v 1.19 2000/06/02 16:56:51 fabian Exp $
+dnl $Id: aclocal.m4,v 1.20 2000/07/09 14:10:49 fabian Exp $
 dnl
 
 
@@ -117,6 +117,7 @@ SHLIB_LD="${CC}"
 SHLIB_STRIP="${STRIP}"
 NEED_DL=1
 DEFAULT_MAKE=debug
+MOD_EXT=so
 
 AC_MSG_CHECKING(your OS)
 if eval "test \"`echo '$''{'egg_cv_var_system'+set}'`\" = set"
@@ -155,9 +156,22 @@ case "$egg_cv_var_system" in
     esac
     ;;
   CYGWIN*)
-    AC_MSG_RESULT(Cygwin)
-    NEED_DL=0
-    DEFAULT_MAKE=static
+    cygwin_version=`${UNAME} -r | cut -c 1-3`
+    case "$cygwin_version" in
+      1.*)
+        AC_MSG_RESULT(Cygwin 1.x)
+        NEED_DL=0
+        MOD_LD="${CC}"
+        SHLIB_LD="${CC} -shared"
+        MOD_EXT=dll
+        AC_DEFINE(MODULES_OK)dnl
+      ;;
+      *)
+        AC_MSG_RESULT(Cygwin pre 1.0 or unknown)
+        NEED_DL=0
+        DEFAULT_MAKE=static
+      ;;
+    esac
     ;;
   HP-UX)
     AC_MSG_RESULT([HP-UX, just shoot yourself now])
@@ -308,6 +322,8 @@ AC_SUBST(SHLIB_LD)dnl
 AC_SUBST(SHLIB_CC)dnl
 AC_SUBST(SHLIB_STRIP)dnl
 AC_SUBST(DEFAULT_MAKE)dnl
+AC_SUBST(MOD_EXT)dnl
+AC_DEFINE_UNQUOTED(EGG_MOD_EXT, "${MOD_EXT}")dnl
 ])dnl
 
 

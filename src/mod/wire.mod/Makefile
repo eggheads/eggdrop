@@ -1,5 +1,5 @@
 # Makefile for src/mod/wire.mod/
-# $Id: Makefile,v 1.11 2000/03/31 23:04:22 fabian Exp $
+# $Id: Makefile,v 1.12 2000/07/09 14:10:49 fabian Exp $
 
 srcdir = .
 
@@ -12,22 +12,22 @@ doofus:
 
 static: ../wire.o
 
-modules: ../../../wire.so
+modules: ../../../wire.$(MOD_EXT)
 
 ../wire.o:
 	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c $(srcdir)/wire.c
 	@rm -f ../wire.o
 	mv wire.o ../
 
-../../../wire.so: ../wire.o
-	$(LD) -o ../../../wire.so ../wire.o
-	$(STRIP) ../../../wire.so
+../../../wire.$(MOD_EXT): ../wire.o
+	$(LD) -o ../../../wire.$(MOD_EXT) ../wire.o
+	$(STRIP) ../../../wire.$(MOD_EXT)
 
 depend:
 	$(CC) $(CFLAGS) $(CPPFLAGS) -MM $(srcdir)/wire.c > .depend
 
 clean:
-	@rm -f .depend *.o *.so *~
+	@rm -f .depend *.o *.$(MOD_EXT) *~
 distclean: clean
 
 #safety hash

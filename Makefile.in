@@ -2,7 +2,7 @@
 #  This is the Makefile for EGGDROP (the irc bot)
 #  You should never need to edit this.
 #
-# $Id: Makefile.in,v 1.21 2000/05/28 18:59:24 fabian Exp $
+# $Id: Makefile.in,v 1.22 2000/07/09 14:10:49 fabian Exp $
 
 SHELL = /bin/sh
 top_srcdir = @top_srcdir@
@@ -44,6 +44,7 @@ MOD_STRIP = @MOD_STRIP@
 SHLIB_CC = @SHLIB_CC@
 SHLIB_LD = @SHLIB_LD@
 SHLIB_STRIP = @SHLIB_STRIP@
+MOD_EXT = @MOD_EXT@
 
 # programs make install uses
 LN_S = @LN_S@
@@ -86,7 +87,7 @@ MAKE_MODEGG = $(MAKE) 'MAKE=$(MAKE)' 'CC=$(MOD_CC)' 'LD=$(MOD_LD)' \
 'XLIBS=$(XLIBS)' 'EGGEXEC=$(EGGEXEC)' 'EGGBUILD=' 'MODOBJS='
 
 MAKE_MODULES = $(MAKE) 'MAKE=$(MAKE)' 'CC=$(SHLIB_CC)' 'LD=$(SHLIB_LD)' \
-'STRIP=$(SHLIB_STRIP)' 'CFLGS=$(CFLGS)'
+'STRIP=$(SHLIB_STRIP)' 'CFLGS=$(CFLGS)' 'XLIBS=$(XLIBS)' 'MOD_EXT=$(MOD_EXT)'
 
 MAKE_STATIC = $(MAKE) 'MAKE=$(MAKE)' 'CC=$(CC)' 'LD=$(LD)' \
 'STRIP=$(STRIP)' 'RANLIB=$(RANLIB)' 'CFLGS=$(CFLGS) -DSTATIC' \
@@ -100,7 +101,8 @@ MAKE_DEBEGG = $(MAKE) 'MAKE=$(MAKE)' 'CC=$(MOD_CC)' 'LD=$(MOD_LD) -g' \
 'XLIBS=$(XLIBS)' 'EGGEXEC=$(EGGEXEC)' 'EGGBUILD=(debug version)' 'MODOBJS='
 
 MAKE_DEBMODULES = $(MAKE) 'MAKE=$(MAKE)' 'CC=$(SHLIB_CC)' 'LD=$(SHLIB_LD)' \
-'STRIP=touch' 'CFLGS=-g3 $(DEBCFLAGS) $(CFLGS)'
+'XLIBS=$(XLIBS)' 'STRIP=touch' 'CFLGS=-g3 $(DEBCFLAGS) $(CFLGS)' \
+'MOD_EXT=$(MOD_EXT)'
 
 MAKE_SDEBUG = $(MAKE) 'MAKE=$(MAKE)' 'CC=$(CC)' 'LD=$(LD) -g' \
 'STRIP=touch' 'RANLIB=$(RANLIB)' 'CFLGS=-g3 $(DEBCFLAGS) -DSTATIC $(CFLGS)' \
@@ -117,7 +119,7 @@ MAKE_INSTALL = $(MAKE) 'MAKE=$(MAKE)' 'DEST=$(DEST)'
 all: @DEFAULT_MAKE@
 
 eggclean:
-	@rm -f $(EGGEXEC) *.so *.stamp core DEBUG *~
+	@rm -f $(EGGEXEC) *.$(MOD_EXT) *.stamp core DEBUG *~
 	@cd doc && $(MAKE) clean
 	@cd scripts && $(MAKE) clean
 	@cd src && $(MAKE) clean
@@ -207,7 +209,7 @@ modules: modtest
 	@cd src/mod && $(MAKE_MODULES) modules
 	@echo ""
 	@echo "modules made:"
-	@ls -l *.so
+	@ls -l *.$(MOD_EXT)
 	@$(egg_install_msg)
 
 static: eggtest
@@ -237,7 +239,7 @@ debmodules: modtest
 	@cd src/mod && $(MAKE_DEBMODULES) modules
 	@echo ""
 	@echo "modules made:"
-	@ls -l *.so
+	@ls -l *.$(MOD_EXT)
 	@$(egg_install_msg)
 
 sdebug: eggtest
@@ -336,14 +338,14 @@ install-modules:
 		rm -rf $(DEST)/modules.old; \
 		mv -f $(DEST)/modules $(DEST)/modules.old; \
 	fi
-	@if test ! "x`echo *.so`" = "x*.so"; then \
+	@if test ! "x`echo *.$(MOD_EXT)`" = "x*.$(MOD_EXT)"; then \
 		if test ! -d $(DEST)/modules-$(EGGVERSION); then \
 			echo "Creating modules-$(EGGVERSION) directory and symlink."; \
 			$(top_srcdir)/misc/mkinstalldirs $(DEST)/modules-$(EGGVERSION); \
 		fi; \
 		(cd $(DEST) && $(LN_S) modules-$(EGGVERSION) modules); \
 		echo "Copying new modules."; \
-		for i in *.so; do \
+		for i in *.$(MOD_EXT); do \
 			$(INSTALL_PROGRAM) $$i $(DEST)/modules-$(EGGVERSION)/; \
 		done; \
 	fi

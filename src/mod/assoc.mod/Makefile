@@ -1,5 +1,5 @@
 # Makefile for src/mod/assoc.mod/
-# $Id: Makefile,v 1.9 2000/03/31 23:04:22 fabian Exp $
+# $Id: Makefile,v 1.10 2000/07/09 14:10:49 fabian Exp $
 
 srcdir = .
 
@@ -12,22 +12,22 @@ doofus:
 
 static: ../assoc.o
 
-modules: ../../../assoc.so
+modules: ../../../assoc.$(MOD_EXT)
 
 ../assoc.o:
 	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c $(srcdir)/assoc.c
 	@rm -f ../assoc.o
 	mv assoc.o ../
 
-../../../assoc.so: ../assoc.o
-	$(LD) -o ../../../assoc.so ../assoc.o
-	$(STRIP) ../../../assoc.so
+../../../assoc.$(MOD_EXT): ../assoc.o
+	$(LD) -o ../../../assoc.$(MOD_EXT) ../assoc.o $(XLIBS)
+	$(STRIP) ../../../assoc.$(MOD_EXT)
 
 depend:
 	$(CC) $(CFLAGS) $(CPPFLAGS) -MM $(srcdir)/assoc.c > .depend
 
 clean:
-	@rm -f .depend *.o *.so *~
+	@rm -f .depend *.o *.$(MOD_EXT) *~
 distclean: clean
 
 #safety hash

@@ -1,5 +1,5 @@
 # Makefile for src/mod/transfer.mod/
-# $Id: Makefile,v 1.9 2000/03/31 23:04:22 fabian Exp $
+# $Id: Makefile,v 1.10 2000/07/09 14:10:49 fabian Exp $
 
 srcdir = .
 
@@ -12,22 +12,22 @@ doofus:
 
 static: ../transfer.o
 
-modules: ../../../transfer.so
+modules: ../../../transfer.$(MOD_EXT)
 
 ../transfer.o:
 	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c $(srcdir)/transfer.c
 	@rm -f ../transfer.o
 	mv transfer.o ../
 
-../../../transfer.so: ../transfer.o
-	$(LD) -o ../../../transfer.so ../transfer.o
-	$(STRIP) ../../../transfer.so
+../../../transfer.$(MOD_EXT): ../transfer.o
+	$(LD) -o ../../../transfer.$(MOD_EXT) ../transfer.o $(XLIBS)
+	$(STRIP) ../../../transfer.$(MOD_EXT)
 
 depend:
 	$(CC) $(CFLAGS) $(CPPFLAGS) -MM $(srcdir)/transfer.c > .depend
 
 clean:
-	@rm -f .depend *.o *.so *~
+	@rm -f .depend *.o *.$(MOD_EXT) *~
 distclean: clean
 
 #safety hash

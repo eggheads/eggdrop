@@ -1,5 +1,5 @@
 # Makefile for src/mod/console.mod/
-# $Id: Makefile,v 1.9 2000/03/31 23:04:22 fabian Exp $
+# $Id: Makefile,v 1.10 2000/07/09 14:10:49 fabian Exp $
 
 srcdir = .
 
@@ -12,22 +12,22 @@ doofus:
 
 static: ../console.o
 
-modules: ../../../console.so
+modules: ../../../console..$(MOD_EXT)
 
 ../console.o:
 	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c $(srcdir)/console.c
 	@rm -f ../console.o
 	mv console.o ../
 
-../../../console.so: ../console.o
-	$(LD) -o ../../../console.so ../console.o
-	$(STRIP) ../../../console.so
+../../../console..$(MOD_EXT): ../console.o
+	$(LD) -o ../../../console..$(MOD_EXT) ../console.o $(XLIBS)
+	$(STRIP) ../../../console..$(MOD_EXT)
 
 depend:
 	$(CC) $(CFLAGS) $(CPPFLAGS) -MM $(srcdir)/console.c > .depend
 
 clean:
-	@rm -f .depend *.o *.so *~
+	@rm -f .depend *.o *..$(MOD_EXT) *~
 distclean: clean
 
 #safety hash

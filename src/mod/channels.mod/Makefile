@@ -1,5 +1,5 @@
 # Makefile for src/mod/channels.mod/
-# $Id: Makefile,v 1.10 2000/03/31 23:04:22 fabian Exp $
+# $Id: Makefile,v 1.11 2000/07/09 14:10:49 fabian Exp $
 
 srcdir = .
 
@@ -12,22 +12,22 @@ doofus:
 
 static: ../channels.o
 
-modules: ../../../channels.so
+modules: ../../../channels.$(MOD_EXT)
 
 ../channels.o:
 	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c $(srcdir)/channels.c
 	@rm -f ../channels.o
 	mv channels.o ../
 
-../../../channels.so: ../channels.o
-	$(LD) -o ../../../channels.so ../channels.o
-	$(STRIP) ../../../channels.so
+../../../channels.$(MOD_EXT): ../channels.o
+	$(LD) -o ../../../channels.$(MOD_EXT) ../channels.o $(XLIBS)
+	$(STRIP) ../../../channels.$(MOD_EXT)
 
 depend:
 	$(CC) $(CFLAGS) $(CPPFLAGS) -MM $(srcdir)/channels.c > .depend
 
 clean:
-	@rm -f .depend *.o *.so *~
+	@rm -f .depend *.o *.$(MOD_EXT) *~
 distclean: clean
 
 #safety hash

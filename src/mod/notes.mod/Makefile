@@ -1,5 +1,5 @@
 # Makefile for src/mod/notes.mod
-# $Id: Makefile,v 1.10 2000/03/31 23:04:22 fabian Exp $
+# $Id: Makefile,v 1.11 2000/07/09 14:10:49 fabian Exp $
 
 srcdir = .
 
@@ -12,22 +12,22 @@ doofus:
 
 static: ../notes.o
 
-modules: ../../../notes.so
+modules: ../../../notes.$(MOD_EXT)
 
 ../notes.o:
 	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c $(srcdir)/notes.c
 	@rm -f ../notes.o
 	mv notes.o ../
 
-../../../notes.so: ../notes.o
-	$(LD) -o ../../../notes.so ../notes.o
-	$(STRIP) ../../../notes.so
+../../../notes.$(MOD_EXT): ../notes.o
+	$(LD) -o ../../../notes.$(MOD_EXT) ../notes.o $(XLIBS)
+	$(STRIP) ../../../notes.$(MOD_EXT)
 
 depend:
 	$(CC) $(CFLAGS) $(CPPFLAGS) -MM $(srcdir)/notes.c > .depend
 
 clean:
-	@rm -f .depend *.o *.so *~
+	@rm -f .depend *.o *.$(MOD_EXT) *~
 distclean: clean
 
 #safety hash

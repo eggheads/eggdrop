@@ -1,5 +1,5 @@
 # Makefile for src/mod/filesys.mod/
-# $Id: Makefile,v 1.13 2000/03/31 23:04:22 fabian Exp $
+# $Id: Makefile,v 1.14 2000/07/09 14:10:49 fabian Exp $
 
 srcdir = .
 
@@ -12,22 +12,22 @@ doofus:
 
 static: ../filesys.o
 
-modules: ../../../filesys.so
+modules: ../../../filesys.$(MOD_EXT)
 
 ../filesys.o:
 	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c $(srcdir)/filesys.c
 	@rm -f ../filesys.o
 	mv filesys.o ../
 
-../../../filesys.so: ../filesys.o
-	$(LD) -o ../../../filesys.so ../filesys.o
-	$(STRIP) ../../../filesys.so
+../../../filesys.$(MOD_EXT): ../filesys.o
+	$(LD) -o ../../../filesys.$(MOD_EXT) ../filesys.o $(XLIBS)
+	$(STRIP) ../../../filesys.$(MOD_EXT)
 
 depend:
 	$(CC) $(CFLAGS) $(CPPFLAGS) -MM $(srcdir)/filesys.c > .depend
 
 clean:
-	@rm -f .depend *.o *.so *~
+	@rm -f .depend *.o *.$(MOD_EXT) *~
 distclean: clean
 
 #safety hash

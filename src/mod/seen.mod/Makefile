@@ -1,5 +1,5 @@
 # Makefile for src/mod/seen.mod/
-# $Id: Makefile,v 1.9 2000/03/31 23:04:22 fabian Exp $
+# $Id: Makefile,v 1.10 2000/07/09 14:10:49 fabian Exp $
 
 srcdir = .
 
@@ -12,22 +12,22 @@ doofus:
 
 static: ../seen.o
 
-modules: ../../../seen.so
+modules: ../../../seen.$(MOD_EXT)
 
 ../seen.o:
 	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c $(srcdir)/seen.c
 	@rm -f ../seen.o
 	mv seen.o ../
 
-../../../seen.so: ../seen.o
-	$(LD) -o ../../../seen.so ../seen.o
-	$(STRIP) ../../../seen.so
+../../../seen.$(MOD_EXT): ../seen.o
+	$(LD) -o ../../../seen.$(MOD_EXT) ../seen.o
+	$(STRIP) ../../../seen.$(MOD_EXT)
 
 depend:
 	$(CC) $(CFLAGS) $(CPPFLAGS) -MM $(srcdir)/seen.c > .depend
 
 clean:
-	@rm -f .depend *.o *.so *~
+	@rm -f .depend *.o *.$(MOD_EXT) *~
 distclean: clean
 
 #safety hash

@@ -4,7 +4,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: modules.c,v 1.35 2000/07/09 13:51:56 fabian Exp $
+ * $Id: modules.c,v 1.36 2000/07/09 14:10:49 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -621,9 +621,9 @@ const char *module_load(char *name)
   if (moddir[0] != '/') {
     if (getcwd(workbuf, 1024) == NULL)
       return MOD_BADCWD;
-    sprintf(&(workbuf[strlen(workbuf)]), "/%s%s.so", moddir, name);
+    sprintf(&(workbuf[strlen(workbuf)]), "/%s%s." EGG_MOD_EXT, moddir, name);
   } else
-    sprintf(workbuf, "%s%s.so", moddir, name);
+    sprintf(workbuf, "%s%s." EGG_MOD_EXT, moddir, name);
 #  ifdef HPUX_HACKS
   hand = shl_load(workbuf, BIND_IMMEDIATE, 0L);
   Context;

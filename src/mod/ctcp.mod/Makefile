@@ -1,5 +1,5 @@
 # Makefile for src/mod/ctcp.mod/
-# $Id: Makefile,v 1.9 2000/03/31 23:04:22 fabian Exp $
+# $Id: Makefile,v 1.10 2000/07/09 14:10:49 fabian Exp $
 
 srcdir = .
 
@@ -12,22 +12,22 @@ doofus:
 
 static: ../ctcp.o
 
-modules: ../../../ctcp.so
+modules: ../../../ctcp.$(MOD_EXT)
 
 ../ctcp.o:
 	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c $(srcdir)/ctcp.c
 	@rm -f ../ctcp.o
 	mv ctcp.o ../
 
-../../../ctcp.so: ../ctcp.o
-	$(LD) -o ../../../ctcp.so ../ctcp.o
-	$(STRIP) ../../../ctcp.so
+../../../ctcp.$(MOD_EXT): ../ctcp.o
+	$(LD) -o ../../../ctcp.$(MOD_EXT) ../ctcp.o
+	$(STRIP) ../../../ctcp.$(MOD_EXT)
 
 depend:
 	$(CC) $(CFLAGS) $(CPPFLAGS) -MM $(srcdir)/ctcp.c > .depend
 
 clean:
-	@rm -f .depend *.o *.so *~
+	@rm -f .depend *.o *.$(MOD_EXT) *~
 distclean: clean
 
 #safety hash

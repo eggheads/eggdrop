@@ -1,5 +1,5 @@
 # Makefile for src/mod/irc.mod/
-# $Id: Makefile,v 1.9 2000/03/31 23:04:22 fabian Exp $
+# $Id: Makefile,v 1.10 2000/07/09 14:10:49 fabian Exp $
 
 srcdir = .
 
@@ -12,22 +12,22 @@ doofus:
 
 static: ../irc.o
 
-modules: ../../../irc.so
+modules: ../../../irc.$(MOD_EXT)
 
 ../irc.o:
 	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c $(srcdir)/irc.c
 	@rm -f ../irc.o
 	mv irc.o ../
 
-../../../irc.so: ../irc.o
-	$(LD) -o ../../../irc.so ../irc.o
-	$(STRIP) ../../../irc.so
+../../../irc.$(MOD_EXT): ../irc.o
+	$(LD) -o ../../../irc.$(MOD_EXT) ../irc.o $(XLIBS)
+	$(STRIP) ../../../irc.$(MOD_EXT)
 
 depend:
 	$(CC) $(CFLAGS) $(CPPFLAGS) -MM $(srcdir)/irc.c > .depend
 
 clean:
-	@rm -f .depend *.o *.so *~
+	@rm -f .depend *.o *.$(MOD_EXT) *~
 distclean: clean
 
 #safety hash

@@ -1,5 +1,5 @@
 # Makefile for src/mod/woobie.mod/
-# $Id: Makefile,v 1.8 2000/03/31 23:04:22 fabian Exp $
+# $Id: Makefile,v 1.9 2000/07/09 14:10:49 fabian Exp $
 
 srcdir = .
 
@@ -12,22 +12,22 @@ doofus:
 
 static: ../woobie.o
 
-modules: ../../../woobie.so
+modules: ../../../woobie.$(MOD_EXT)
 
 ../woobie.o:
 	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c $(srcdir)/woobie.c
 	@rm -f ../woobie.o
 	mv woobie.o ../
 
-../../../woobie.so: ../woobie.o
-	$(LD) -o ../../../woobie.so ../woobie.o
-	$(STRIP) ../../../woobie.so
+../../../woobie.$(MOD_EXT): ../woobie.o
+	$(LD) -o ../../../woobie.$(MOD_EXT) ../woobie.o
+	$(STRIP) ../../../woobie.$(MOD_EXT)
 
 depend:
 	$(CC) $(CFLAGS) $(CPPFLAGS) -MM $(srcdir)/woobie.c > .depend
 
 clean:
-	@rm -f .depend *.o *.so *~
+	@rm -f .depend *.o *.$(MOD_EXT) *~
 distclean: clean
 
 #safety hash

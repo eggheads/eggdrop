@@ -5,7 +5,7 @@
  * acconfig.h
  *   template file autoheader uses when building config.h.in
  * 
- * $Id: acconfig.h,v 1.6 2000/03/22 00:42:56 fabian Exp $
+ * $Id: acconfig.h,v 1.7 2000/07/09 14:10:49 fabian Exp $
  */
 
 /* Define if modules will work on your system  */
@@ -44,8 +44,11 @@
 /* Define for Tcl that has threads  */
 #undef HAVE_TCL_THREADS
 
-/* Defines the current eggdrop version */
+/* Defines the current eggdrop version  */
 #undef EGG_VERSION
+
+/* Defines extension of eggdrop modules  */
+#undef EGG_MOD_EXT
 
 @BOTTOM@
 

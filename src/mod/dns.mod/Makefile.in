@@ -1,5 +1,5 @@
 # Makefile for src/mod/dns.mod/
-# $Id: Makefile.in,v 1.5 2000/03/31 23:04:22 fabian Exp $
+# $Id: Makefile.in,v 1.6 2000/07/09 14:10:49 fabian Exp $
 
 RESLIB = @RESLIB@
 srcdir = .
@@ -14,22 +14,22 @@ doofus:
 static: ../dns.o
 	@echo "$(RESLIB)" >> ../mod.xlibs
 
-modules: ../../../dns.so
+modules: ../../../dns.$(MOD_EXT)
 
 ../dns.o:
 	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c $(srcdir)/dns.c
 	@rm -f ../dns.o
 	mv dns.o ../
 
-../../../dns.so: ../dns.o
-	$(LD) -o ../../../dns.so ../dns.o $(RESLIB)
-	$(STRIP) ../../../dns.so
+../../../dns.$(MOD_EXT): ../dns.o
+	$(LD) -o ../../../dns.$(MOD_EXT) ../dns.o $(RESLIB)
+	$(STRIP) ../../../dns.$(MOD_EXT)
 
 depend:
 	$(CC) $(CFLAGS) $(CPPFLAGS) -MM $(srcdir)/dns.c > .depend
 
 clean:
-	@rm -f .depend *.o *.so *~
+	@rm -f .depend *.o *.$(MOD_EXT) *~
 
 distclean: clean
 	@rm -f Makefile config.cache config.log config.status

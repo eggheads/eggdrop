@@ -1,5 +1,5 @@
 # Makefile for src/mod/
-# $Id: Makefile.in,v 1.10 2000/04/25 20:49:48 fabian Exp $
+# $Id: Makefile.in,v 1.11 2000/07/09 14:10:49 fabian Exp $
 
 SHELL = /bin/sh
 top_srcdir = @top_srcdir@
@@ -20,7 +20,8 @@ CPPFLAGS = @CPPFLAGS@
 MOD_CFLAGS = @CFLAGS@ -I. -I../../.. -I../$(top_srcdir) \
   -I../$(top_srcdir)/src/mod @DEFS@ $(CFLGS)
 MOD_CPPFLAGS = @CPPFLAGS@
-
+XLIBS = @XLIBS@
+MOD_EXT = @MOD_EXT@
 
 # Note: The following three lines are automatically adjusted by
 #       misc/modconfig. They have to be present here.
@@ -33,7 +34,8 @@ modconfig = $(top_srcdir)/misc/modconfig --bindir=../.. \
 egg_ac_parameters = @egg_ac_parameters@
 
 MAKE_MOD = $(MAKE) 'MAKE=$(MAKE)' 'CC=$(CC)' 'LD=$(LD)' \
-'STRIP=$(STRIP)' 'CFLAGS=$(MOD_CFLAGS)' 'CPPFLAGS=$(MOD_CPPFLAGS)'
+'STRIP=$(STRIP)' 'CFLAGS=$(MOD_CFLAGS)' 'CPPFLAGS=$(MOD_CPPFLAGS)' \
+'XLIBS=$(XLIBS)' 'MOD_EXT=$(MOD_EXT)'
 
 
 doofus:
@@ -89,7 +91,7 @@ config:
 	echo ""
 
 clean:
-	@rm -f *.o *.so *~ static.h mod.xlibs
+	@rm -f *.o *.$(MOD_EXT) *~ static.h mod.xlibs
 	@for i in *.mod; do \
 		if test ! -d $$i; then mkdir $$i; fi; \
 		if (test ! -r $$i/Makefile) && \
@@ -102,7 +104,7 @@ clean:
 	done
 
 distclean:
-	@rm -f *.o *.so *~ static.h mod.xlibs
+	@rm -f *.o *.$(MOD_EXT) *~ static.h mod.xlibs
 	@for i in *.mod; do \
 		if test ! -d $$i; then mkdir $$i; fi; \
 		if (test ! -r $$i/Makefile) && \

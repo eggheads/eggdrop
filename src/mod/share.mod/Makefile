@@ -1,5 +1,5 @@
 # Makefile for src/mod/share.mod/
-# $Id: Makefile,v 1.10 2000/03/31 23:04:22 fabian Exp $
+# $Id: Makefile,v 1.11 2000/07/09 14:10:49 fabian Exp $
 
 srcdir = .
 
@@ -12,22 +12,22 @@ doofus:
 
 static: ../share.o
 
-modules: ../../../share.so
+modules: ../../../share.$(MOD_EXT)
 
 ../share.o:
 	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c $(srcdir)/share.c
 	@rm -f ../share.o
 	mv share.o ../
 
-../../../share.so: ../share.o
-	$(LD) -o ../../../share.so ../share.o
-	$(STRIP) ../../../share.so
+../../../share.$(MOD_EXT): ../share.o
+	$(LD) -o ../../../share.$(MOD_EXT) ../share.o
+	$(STRIP) ../../../share.$(MOD_EXT)
 
 depend:
 	$(CC) $(CFLAGS) $(CPPFLAGS) -MM $(srcdir)/share.c > .depend
 
 clean:
-	@rm -f .depend *.o *.so *~
+	@rm -f .depend *.o *.$(MOD_EXT) *~
 distclean: clean
 
 #safety hash

@@ -1,5 +1,5 @@
 # Makefile for src/mod/blowfish.mod/
-# $Id: Makefile,v 1.9 2000/03/31 23:04:22 fabian Exp $
+# $Id: Makefile,v 1.10 2000/07/09 14:10:49 fabian Exp $
 
 srcdir = .
 
@@ -12,22 +12,22 @@ doofus:
 
 static: ../blowfish.o
 
-modules: ../../../blowfish.so
+modules: ../../../blowfish.$(MOD_EXT)
 
 ../blowfish.o:
 	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c $(srcdir)/blowfish.c
 	@rm -f ../blowfish.o
 	mv blowfish.o ../
 
-../../../blowfish.so: ../blowfish.o
-	$(LD) -o ../../../blowfish.so ../blowfish.o
-	$(STRIP) ../../../blowfish.so
+../../../blowfish.$(MOD_EXT): ../blowfish.o
+	$(LD) -o ../../../blowfish.$(MOD_EXT) ../blowfish.o $(XLIBS)
+	$(STRIP) ../../../blowfish.$(MOD_EXT)
 
 depend:
 	$(CC) $(CFLAGS) $(CPPFLAGS) -MM $(srcdir)/blowfish.c > .depend
 
 clean:
-	@rm -f .depend *.o *.so *~
+	@rm -f .depend *.o *.$(MOD_EXT) *~
 distclean: clean
 
 #safety hash
