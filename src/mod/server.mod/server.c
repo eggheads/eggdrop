@@ -1128,7 +1128,7 @@ static int tcl_clearqueue STDVAR
      return TCL_OK;
      }
  Tcl_AppendResult(irp, "unknown clearqueue option: should be one of: ",
- "mode serv help all", NULL);
+ "mode server help all", NULL);
  return TCL_ERROR;
  }
      
