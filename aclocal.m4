@@ -1,7 +1,7 @@
 dnl aclocal.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: aclocal.m4,v 1.22 2000/08/07 10:09:16 fabian Exp $
+dnl $Id: aclocal.m4,v 1.23 2000/09/02 18:45:15 fabian Exp $
 dnl
 
 
@@ -193,26 +193,40 @@ case "$egg_cv_var_system" in
     NEED_DL=0
     MOD_LD="gcc -lelf -lucb"
     ;; 
-  IRIX)
-    AC_MSG_RESULT(you are cursed with IRIX)
+        IRIX-4.*)
+        AC_MSG_RESULT(IRIX4.+!)
     IRIX=yes
     SHLIB_STRIP=touch
     NEED_DL=0
     DEFAULT_MAKE=static
     ;;
-  IRIX64)
-    AC_MSG_RESULT(IRIX64)
+        IRIX-5.*|IRIX-6.*|IRIX64-6.5*)
+        SHLIB_LD="ld -n32 -shared -rdata_shared"
     IRIX=yes
-    SHLIB_STRIP=strip
+        SHLIB_STRIP=touch
     NEED_DL=0
     DEFAULT_MAKE=static
     ;;
+        IRIX-6.3)
+        IRIX=yes
+        SHLIB_STRIP=touch
+        NEED_DL=0
+        DEFAULT_MAKE=static
+        SHLIB_LD="ld -n32 -D_OLD_TERMIOS"
+   ;;
   Ultrix)
     AC_MSG_RESULT(Ultrix)
     NEED_DL=0
     SHLIB_STRIP=touch
     DEFUALT_MAKE=static
     SHELL=/bin/sh5
+    ;;
+  SINIX*)
+    AC_MSG_RESULT(SINIX - bit broken use at your own risk)
+    NEED_DL=0
+    SHLIB_STRIP=touch
+    DEFUALT_MAKE=static
+    SHLIB_CC="cc -G"
     ;;
   BeOS)
     AC_MSG_RESULT(BeOS)
@@ -296,7 +310,6 @@ case "$egg_cv_var_system" in
     then
       AC_MSG_RESULT([NeXT...We are borg, you will be assimilated])
       AC_MSG_RESULT([break out the static modules, it's all you'll ever get :P])
-      AC_MSG_RESULT(Hiya DK :P)
       NEED_DL=0
       DEFAULT_MAKE=static
       AC_DEFINE(BORGCUBES)dnl
