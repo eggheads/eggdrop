@@ -47,10 +47,10 @@ Next do one of two things to load the module:
    from the partyline (as an owner) type:
       .loadmod <module-name>
    or in a tcl script:
-      loadmod <module-name>
+      loadmodule <module-name>
 
-   module-name is the part BEFORE .so, eg filesys.so module
-   you type '.loadmodule filesys'.
+   module-name is the part BEFORE .so, e.g filesys.so module
+   you type '.loadmod filesys'.
 
 Normally you will want to add the loadmodule statement to your
 bot's configuration file instead of typing it every time the bot
