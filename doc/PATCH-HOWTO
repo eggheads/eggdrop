@@ -73,12 +73,12 @@ Last revised: December 07, 2003
          You should also include the nick/handle/name you would like to be used
          in the UPDATES1.6 file (if applicable).
 
-    Never modify src/patch.h or one of the UPDATES files. We will do it. If
-    your patch includes changes related to autotools (./configure, etc), do
-    NOT run autoconf, autoheader, etc; we will do this as well.
+      Never modify src/patch.h or one of the UPDATES files. We will do it. If
+      your patch includes changes related to autotools (./configure, etc), do
+      NOT run autoconf, autoheader, etc; we will do this as well.
 
-    Also, please don't add credit lines all over the source when patching.
-    Patch contributors will receive credit in UPDATES1.6 and ChangeLog.
+      Also, please don't add credit lines all over the source when patching.
+      Patch contributors will receive credit in UPDATES1.6 and ChangeLog.
 
 
   4. Downloading a patch

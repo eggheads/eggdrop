@@ -1,4 +1,4 @@
-$Id: FIRST-SCRIPT,v 1.1 2003/12/09 00:27:13 wcc Exp $
+$Id: FIRST-SCRIPT,v 1.2 2003/12/11 00:31:28 wcc Exp $
 
 Your First Eggdrop Script
 Last revised: December 07, 2003
@@ -83,7 +83,8 @@ proc my_talk_handler {nick uhost hand chan text} {
 	global our_chan
 
 	# We only want to respond on the $our_chan channel.
-	if {$chan != $our_chan} {
+        # The string tolower command converts a string to lowercase.
+	if {[string tolower $chan] != $our_chan} {
 		return 0
 	}
 
