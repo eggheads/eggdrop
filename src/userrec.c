@@ -809,7 +809,7 @@ struct userrec *get_user_by_nick(char *nick)
   context;
   while (chan) {
     m = chan->channel.member;
-    while (m->nick[0]) {
+    while (m && m->nick[0]) {
       if (!rfc_casecmp(nick, m->nick)) {
   	char word[512];
 

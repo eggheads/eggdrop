@@ -75,7 +75,7 @@ memberlist *ismember(struct chanset_t *chan, char *nick)
   memberlist *x;
 
   x = chan->channel.member;
-  while (x->nick[0] && rfc_casecmp(x->nick, nick))
+  while (x && x->nick[0] && rfc_casecmp(x->nick, nick))
     x = x->next;
   if (!x->nick[0])
     return NULL;
@@ -111,7 +111,7 @@ struct userrec *check_chanlist(char *host)
   nick = splitnick(&uhost);
   for (chan = chanset; chan; chan = chan->next) {
     m = chan->channel.member;
-    while (m->nick[0]) {
+    while (m && m->nick[0]) {
       if (!rfc_casecmp(nick, m->nick) &&
 	  !strcasecmp(uhost, m->userhost))
 	return m->user;
@@ -129,7 +129,7 @@ struct userrec *check_chanlist_hand(char *hand)
 
   while (chan) {
     m = chan->channel.member;
-    while (m->nick[0]) {
+    while (m && m->nick[0]) {
       if (m->user)
 	if (!strcasecmp(m->user->handle, hand))
 	  return m->user;
@@ -149,7 +149,7 @@ void clear_chanlist()
 
   while (chan) {
     m = chan->channel.member;
-    while (m->nick[0]) {
+    while (m && m->nick[0]) {
       m->user = NULL;
       m = m->next;
     }
@@ -170,7 +170,7 @@ void set_chanlist(char *host, struct userrec *rec)
   nick = splitnick(&uhost);
   while (chan) {
     m = chan->channel.member;
-    while (m->nick[0]) {
+    while (m && m->nick[0]) {
       if (!rfc_casecmp(nick, m->nick) &&
 	  !strcasecmp(uhost, m->userhost))
 	m->user = rec;

@@ -168,14 +168,15 @@ static int tcl_setflags STDVAR
     d = s;
   }
   f = filedb_open(d, 0);
-  if (!findmatch(f, p, &where, &fdb))
+  if (!f)
+    Tcl_AppendResult(irp, "-1", NULL);  /* no such dir */
+  else if (!findmatch(f, p, &where, &fdb))
     Tcl_AppendResult(irp, "-1", NULL);	/* no such dir */
   else if (!(fdb.stat & FILE_DIR))
     Tcl_AppendResult(irp, "-2", NULL);	/* not a dir */
   else {
     if (argc >= 3) {
-      struct flag_record fr =
-      {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
+      struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
 
       break_down_flags(argv[2], &fr, NULL);
       build_flags(s, &fr, NULL);
@@ -216,7 +217,9 @@ static int tcl_getflags STDVAR
     d = s;
   }
   f = filedb_open(d, 0);
-  if (!findmatch(f, p, &where, &fdb))
+  if (!f)
+    Tcl_AppendResult(irp, "", NULL);  /* no such dir */
+  else if (!findmatch(f, p, &where, &fdb))
     Tcl_AppendResult(irp, "", NULL);	/* no such dir */
   else if (!(fdb.stat & FILE_DIR))
     Tcl_AppendResult(irp, "", NULL);	/* not a dir */
@@ -237,8 +240,7 @@ static int tcl_mkdir STDVAR
   FILE *f;
   filedb fdb;
   long where = 0;
-  struct flag_record fr =
-  {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
+  struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
 
   BADARGS(2, 3, " dir ?required-flags ?channel??");
   strcpy(s, argv[1]);
@@ -254,6 +256,10 @@ static int tcl_mkdir STDVAR
     d = s;
   }
   f = filedb_open(d, 0);
+  if (!f) {
+    Tcl_AppendResult(irp, "1", NULL);
+    return TCL_OK;
+  }
   if (!findmatch(f, p, &where, &fdb)) {
     sprintf(t, "%s%s/%s", dccdir, d, p);
     if (mkdir(t, 0755) != 0) {
@@ -320,6 +326,10 @@ static int tcl_rmdir STDVAR
     d = s;
   }
   f = filedb_open(d, 0);
+  if (!f) {
+    Tcl_AppendResult(irp, "1", NULL);
+    return TCL_OK;
+  }
   if (!findmatch(f, p, &where, &fdb)) {
     Tcl_AppendResult(irp, "1", NULL);
     filedb_close(f);
@@ -349,7 +359,7 @@ static int tcl_rmdir STDVAR
   return TCL_OK;
 }
 
-static int tcl_mv_cp(Tcl_Interp * irp, int argc, char **argv, int copy)
+static int tcl_mv_cp(Tcl_Interp *irp, int argc, char **argv, int copy)
 {
   char *p, fn[161], oldpath[161], s[161], s1[161], newfn[161], newpath[161];
   int ok, only_first, skip_this, ret, ret2;
@@ -403,10 +413,19 @@ static int tcl_mv_cp(Tcl_Interp * irp, int argc, char **argv, int copy)
   else
     only_first = 0;
   f = filedb_open(oldpath, 0);
+  if (!f) {
+    Tcl_AppendResult(irp, "-1", NULL);	/* invalid source */
+    return TCL_OK;
+  }
   if (!strcmp(oldpath, newpath))
     g = NULL;
-  else
+  else {
     g = filedb_open(newpath, 0);
+    if (!g) {
+      Tcl_AppendResult(irp, "-2", NULL);	/* invalid destination */
+      return TCL_OK;
+    }
+  }
   where = 0L;
   ok = 0;
   ret = findmatch(f, fn, &where, &fdb);

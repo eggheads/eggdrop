@@ -485,7 +485,7 @@ static void got_deop(struct chanset_t *chan, char *nick, char *from,
     /* cancel any pending kicks and modes */
     memberlist *m2 = chan->channel.member;
 
-    while (m2->nick[0]) {
+    while (m2 && m2->nick[0]) {
 	m2->flags &= ~(SENTKICK | SENTDEOP | SENTOP | SENTVOICE | SENTDEVOICE);
       m2 = m2->next;
     }
@@ -594,7 +594,7 @@ static void got_ban(struct chanset_t *chan, char *nick, char *from,
     } else {
       /* banning an oplisted person who's on the channel? */
       m = chan->channel.member;
-      while (m->nick[0]) {
+      while (m && m->nick[0]) {
 	sprintf(s1, "%s!%s", m->nick, m->userhost);
 	if (wild_match(who, s1)) {
 	  u = get_user_by_host(s1);

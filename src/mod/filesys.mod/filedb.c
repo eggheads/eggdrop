@@ -436,13 +436,12 @@ static void filedb_add(FILE * f, char *filename, char *nick)
   fwrite(&fdb, sizeof(filedb), 1, f);
 }
 
-static void filedb_ls(FILE * f, int idx, char *mask, int showall)
+static void filedb_ls(FILE *f, int idx, char *mask, int showall)
 {
   filedb fdb;
   int ok = 0, cnt = 0, is = 0;
   char s[81], s1[81], *p;
-  struct flag_record user =
-  {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
+  struct flag_record user = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
 
   rewind(f);
   while (!feof(f)) {
@@ -453,8 +452,7 @@ static void filedb_ls(FILE * f, int idx, char *mask, int showall)
 	ok = 0;
       if (fdb.stat & FILE_DIR) {
 	/* check permissions */
-	struct flag_record req =
-	{FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
+	struct flag_record req = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
 
 	break_down_flags(fdb.flags_req, &req, NULL);
 	get_user_flagrec(dcc[idx].user, &user,

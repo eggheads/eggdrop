@@ -30,7 +30,7 @@ static memberlist *newmember(struct chanset_t *chan)
   memberlist *x;
 
   x = chan->channel.member;
-  while (x->nick[0])
+  while (x && x->nick[0])
     x = x->next;
   x->next = (memberlist *) channel_malloc(sizeof(memberlist));
   x->next->next = NULL;
@@ -253,7 +253,7 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
 	  char s[UHOSTLEN];
 	  m = chan->channel.member;
 	  
-	  while (m->nick[0]) {
+	  while (m && m->nick[0]) {
 	    sprintf(s, "%s!%s", m->nick, m->userhost);
 	    if (wild_match(h, s) &&
 		(m->joined >= chan->floodtime[which]) &&
@@ -318,7 +318,7 @@ static void kick_all(struct chanset_t *chan, char *hostmask, char *comment)
   flushed = 0;
   kicknick[0] = 0;
   m = chan->channel.member;
-  while (m->nick[0]) {
+  while (m && m->nick[0]) {
     get_user_flagrec(m->user, &fr, chan->name);
     sprintf(s, "%s!%s", m->nick, m->userhost);
     if (!chan_sentkick(m) && wild_match(hostmask, s) &&
@@ -546,8 +546,7 @@ static void recheck_channel(struct chanset_t *chan, int dobans)
 {
   memberlist *m;
   char s[UHOSTLEN], *p;
-  struct flag_record fr =
-  {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
+  struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
   int cur, pls, mns;
   static int stacking = 0;
 
@@ -559,7 +558,7 @@ static void recheck_channel(struct chanset_t *chan, int dobans)
   /* okay, sort through who needs to be deopped. */
   context;
   m = chan->channel.member;
-  while (m->nick[0]) {
+  while (m && m->nick[0]) {
     sprintf(s, "%s!%s", m->nick, m->userhost);
     if (!m->user)
       m->user = get_user_by_host(s);
@@ -1316,7 +1315,7 @@ static int got332(char *from, char *msg)
 }
 
 static void do_embedded_mode(struct chanset_t *chan, char *nick,
-			     memberlist * m, char *mode)
+			     memberlist *m, char *mode)
 {
   struct flag_record fr = {0, 0, 0, 0, 0, 0};
   int servidx = findanyidx(serv);
@@ -1345,8 +1344,7 @@ static int gotjoin(char *from, char *chname)
   memberlist *m;
   masklist *b, *e;
   struct userrec *u;
-  struct flag_record fr =
-  {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
+  struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
 
   context;
   fixcolon(chname);
@@ -1875,8 +1873,7 @@ static int gotnotice(char *from, char *msg)
   struct userrec *u;
   memberlist *m;
   struct chanset_t *chan;
-  struct flag_record fr =
-  {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
+  struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
   int ignoring;
 
   if (!strchr(CHANMETA "@", *msg))

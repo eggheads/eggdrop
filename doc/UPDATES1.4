@@ -3,6 +3,14 @@ Changes in eggdrop: (since v1.4.0)
 
 1.4.1
 Foundby   Fixedby   What....
+OpTiC-?X  Fabian    filesys had several unchecked filedb_open() calls
+          Fabian    not sending ISON during irc login now
+arthur2   Fabian    added several sanity checks to avoid crashs in obscure
+                    situations, e.g. -1 channel members
+various   Tothwolf/ sharing crash bug
+          Fabian/
+	  ^PRS4^
+Ben	  Fabian    now properly uses and adjusts altnicks
 SuperS    drummer   note bug that killed the listening ports
           drummer   small fix to tcl_strings/tcl_ints
           guppy     made modules with lang files delete their sections

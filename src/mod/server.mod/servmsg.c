@@ -8,43 +8,64 @@
 
 static time_t last_ctcp = (time_t) 0L;
 static int count_ctcp = 0;
+static char altnick_char = 0;
 
-/* shrug (guppy:24Feb1999) */
+/* We try to change to a preferred unique nick here. We always first try the
+ * specified alternate nick. If that failes, we repeatedly modify the nick
+ * until it gets accepted.
+ * 
+ * sent nick:
+ *     "<altnick><c>"
+ *                ^--- additional count character: 1-9^-_\\[]`a-z
+ *          ^--------- given, alternate nick
+ * 
+ * The last added character is always saved in altnick_char. At the very first
+ * attempt (were altnick_char is 0), we try the alternate nick without any
+ * additions.
+ * 
+ * fixed by guppy (1999/02/24) and Fabian (1999/11/26)
+ */
 static int gotfake433(char *from)
 {
-  char c, *oknicks = "^-_\\[]`", *p, *alt = get_altbotnick();
+  int l = strlen(botname) - 1;
 
   context;
-  /* alternate nickname defined? */
-  if ((alt[0]) && (rfc_casecmp(alt, botname)))
-    strcpy(botname, alt);
-  /* if alt nickname failed, drop thru to here */
-  else {
-    int l = strlen(botname) - 1;
-
-    c = botname[l];
-    p = strchr(oknicks, c);
-    if (((c >= '0') && (c <= '9')) || (p != NULL)) {
-      if (p == NULL) {
-	if (c == '9')
-	  botname[l] = oknicks[0];
-	else
-	  botname[l] = c + 1;
+  /* First run? */
+  if (altnick_char == 0) {
+    char *alt = get_altbotnick();
+   
+    if (alt[0] && (rfc_casecmp(alt, botname)))
+      /* Alternate nickname defined. Let's try that first. */
+      strcpy(botname, alt);
+    else {
+      /* Fall back to appending count char. */
+      altnick_char = '0';
+      if (l + 1 == NICKMAX) {
+	botname[l] = altnick_char;
       } else {
-	p++;
-	if (!*p)
-	  botname[l] = 'a' + random() % 26;
-	else
-	  botname[l] = (*p);
-      }
-    } else {
-      if (l + 1 == NICKLEN)
-	botname[l] = '0';
-      else {
-	botname[++l] = '0';
-	botname[++l] = 0;
+	botname[++l]   = altnick_char;
+	botname[l + 1] = 0;
       }
     }
+  /* No, we already tried the default stuff. Now we'll go through variations
+   * of the original alternate nick. */
+  } else {
+    char *oknicks = "^-_\\[]`";
+    char *p = strchr(oknicks, altnick_char);
+    
+    if (p == NULL) {
+      if (altnick_char == '9')
+        altnick_char = oknicks[0];
+      else
+	altnick_char = altnick_char + 1;
+    } else {
+      p++;
+      if (!*p)
+	altnick_char = 'a' + random() % 26;
+      else
+	altnick_char = (*p);
+    }
+    botname[l] = altnick_char;
   }
   putlog(LOG_MISC, "*", IRC_BOTNICKINUSE, botname);
   dprintf(DP_MODE, "NICK %s\n", botname);
@@ -56,8 +77,7 @@ static int gotfake433(char *from)
 static int check_tcl_msg(char *cmd, char *nick, char *uhost,
 			 struct userrec *u, char *args)
 {
-  struct flag_record fr =
-  {FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0};
+  struct flag_record fr = {FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0};
   char *hand = u ? u->handle : "*";
   int x;
 
@@ -214,6 +234,7 @@ static int got001(char *from, char *msg)
   fixcolon(msg);
   strncpy(botname, msg, NICKMAX);
   botname[NICKMAX] = 0;
+  altnick_char = 0;
   /* init-server */
   if (initserver[0])
     do_tcl("init-server", initserver);
@@ -641,6 +662,9 @@ static void minutely_checks()
   int ok = 0;
   struct chanset_t *chan;
 
+  /* Only check if we have already successfully logged in */
+  if (!server_online)
+    return;
   if (keepnick) {
     /* NOTE: now that botname can but upto NICKLEN bytes long,
      * check that it's not just a truncation of the full nick */
@@ -871,6 +895,7 @@ static int gotnick(char *from, char *msg)
     /* regained nick! */
     strncpy(botname, msg, NICKMAX);
     botname[NICKMAX] = 0;
+    altnick_char = 0;
     waiting_for_awake = 0;
     if (!strcmp(msg, origbotname))
       putlog(LOG_SERV | LOG_MISC, "*", "Regained nickname '%s'.", msg);
@@ -1088,8 +1113,10 @@ static void connect_server(void)
       dcc[servidx].host[UHOSTMAX] = 0;
       dcc[servidx].timeval = now;
       SERVER_SOCKET.timeout_val = &server_timeout;
+      /* Another server may have truncated it, so use the original */
       strcpy(botname, origbotname);
-      /* another server may have truncated it :/ */
+      /* Start alternate nicks from the beginning */
+      altnick_char = 0;
       dprintf(DP_MODE, "NICK %s\n", botname);
       if (pass[0])
 	dprintf(DP_MODE, "PASS %s\n", pass);

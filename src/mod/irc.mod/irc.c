@@ -284,7 +284,7 @@ static int hand_on_chan(struct chanset_t *chan, struct userrec *u)
   char s[UHOSTLEN];
   memberlist *m = chan->channel.member;
 
-  while (m->nick[0]) {
+  while (m && m->nick[0]) {
     sprintf(s, "%s!%s", m->nick, m->userhost);
     if (u == get_user_by_host(s))
       return 1;
@@ -322,11 +322,11 @@ static int killmember(struct chanset_t *chan, char *nick)
 
   x = chan->channel.member;
   old = NULL;
-  while (x->nick[0] && rfc_casecmp(x->nick, nick)) {
+  while (x && x->nick[0] && rfc_casecmp(x->nick, nick)) {
     old = x;
     x = x->next;
   }
-  if (!x->nick[0] && !channel_pending(chan)) {
+  if ((!x || !x->nick[0]) && !channel_pending(chan)) {
     putlog(LOG_MISC, "*", "(!) killmember(%s) -> nonexistent", nick);
     return 0;
   }
@@ -336,6 +336,26 @@ static int killmember(struct chanset_t *chan, char *nick)
     chan->channel.member = x->next;
   nfree(x);
   chan->channel.members--;
+  /* The following two errors should NEVER happen. We will try to correct
+   * them though, to keep the bot from crashing. */
+  if (chan->channel.members < 0) {
+     putlog(LOG_MISC, "*", "(!) BUG: number of members is negative: %d",
+	    chan->channel.members);
+     chan->channel.members = 0;
+     x = chan->channel.member;
+     while (x && x->nick[0]) {
+       chan->channel.members++;
+       x = x->next;
+     }
+     putlog(LOG_MISC, "*", "(!) actually I know of %d members.",
+	    chan->channel.members);
+  }
+  if (!chan->channel.member) {
+    putlog(LOG_MISC, "*", "(!) BUG: memberlist is NULL");
+    chan->channel.member = (memberlist *) channel_malloc(sizeof(memberlist));
+    chan->channel.member->nick[0] = 0;
+    chan->channel.member->next = NULL;
+  }
   return 1;
 }
 
@@ -358,9 +378,9 @@ static int any_ops(struct chanset_t *chan)
 {
   memberlist *x = chan->channel.member;
 
-  while (x->nick[0] && !chan_hasop(x))
+  while (x && x->nick[0] && !chan_hasop(x))
     x = x->next;
-  if (!x->nick[0])
+  if (!x || !x->nick[0])
     return 0;
   return 1;
 }
@@ -416,7 +436,7 @@ static void log_chans()
     if (channel_active(chan) && channel_logstatus(chan) &&
         !channel_inactive(chan)) {
       chops = 0;
-      for (m = chan->channel.member; m->nick[0]; m = m->next) {
+      for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
 	if (chan_hasop(m))
 	  chops++;
       }
@@ -462,7 +482,7 @@ static void check_lonely_channel(struct chanset_t *chan)
     return;
   m = chan->channel.member;
   /* count non-split channel members */
-  while (m->nick[0]) {
+  while (m && m->nick[0]) {
     if (!chan_issplit(m))
       i++;
     m = m->next;
@@ -492,7 +512,7 @@ static void check_lonely_channel(struct chanset_t *chan)
       whined = 1;
     }
     m = chan->channel.member;
-    while (m->nick[0]) {
+    while (m && m->nick[0]) {
       struct userrec *u;
 
       sprintf(s, "%s!%s", m->nick, m->userhost);
@@ -504,7 +524,7 @@ static void check_lonely_channel(struct chanset_t *chan)
     if (ok) {
       /* ALL bots!  make them LEAVE!!! */
       m = chan->channel.member;
-      while (m->nick[0]) {
+      while (m && m->nick[0]) {
 	if (!match_my_nick(m->nick))
 	  dprintf(DP_SERVER, "PRIVMSG %s :go %s\n", m->nick, chan->name);
 	m = m->next;
@@ -640,7 +660,7 @@ static void check_expired_chanstuff()
       }
     }
     m = chan->channel.member;
-    while (m->nick[0]) {
+    while (m && m->nick[0]) {
       if (m->split) {
 	n = m->next;
 	if (!channel_active(chan))
@@ -661,7 +681,7 @@ static void check_expired_chanstuff()
     }
     if (channel_active(chan) && me_op(chan) && (chan->idle_kick)) {
       m = chan->channel.member;
-      while (m->nick[0]) {
+      while (m && m->nick[0]) {
 	if ((now - m->last) >= (chan->idle_kick * 60) &&
 	    !match_my_nick(m->nick)) {
 	  sprintf(s, "%s!%s", m->nick, m->userhost);
@@ -726,8 +746,7 @@ static int channels_4char STDVAR {
 static void check_tcl_joinpart(char *nick, char *uhost, struct userrec *u,
 			       char *chname, p_tcl_bind_list table)
 {
-  struct flag_record fr =
-  {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
+  struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
   char args[1024];
 
   context;
@@ -747,8 +766,7 @@ static void check_tcl_signtopcnick(char *nick, char *uhost, struct userrec *u,
 				   char *chname, char *reason,
 				   p_tcl_bind_list table)
 {
-  struct flag_record fr =
-  {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
+  struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
   char args[1024];
 
   context;
@@ -772,8 +790,7 @@ static void check_tcl_kickmode(char *nick, char *uhost, struct userrec *u,
 			       char *chname, char *dest, char *reason,
 			       p_tcl_bind_list table)
 {
-  struct flag_record fr =
-  {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
+  struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
   char args[512];
 
   context;
@@ -796,8 +813,7 @@ static void check_tcl_kickmode(char *nick, char *uhost, struct userrec *u,
 
 static int check_tcl_pub(char *nick, char *from, char *chname, char *msg)
 {
-  struct flag_record fr =
-  {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
+  struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
   int x;
   char buf[512], *args = buf, *cmd, host[161], *hand;
   struct userrec *u;
@@ -827,8 +843,7 @@ static int check_tcl_pub(char *nick, char *from, char *chname, char *msg)
 
 static void check_tcl_pubm(char *nick, char *from, char *chname, char *msg)
 {
-  struct flag_record fr =
-  {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
+  struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
   char buf[1024], host[161];
   struct userrec *u;
 
@@ -897,7 +912,7 @@ static void flush_modes()
   chan = chanset;
   while (chan != NULL) {
     m = chan->channel.member;
-    while (m->nick[0]) {
+    while (m && m->nick[0]) {
       if ((m->delay) && (now - m->delay) > 4) {
         add_mode(chan, '+', 'o', m->nick);
         m->delay = 0L;

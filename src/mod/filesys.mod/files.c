@@ -120,6 +120,10 @@ static void cmd_sort(int idx, char *par)
   if (f == NULL) {
     set_user(&USERENTRY_DCCDIR, u, NULL);
     f = filedb_open("", 1);
+    if (!f) {
+      dprintf(idx, FILES_ILLDIR);
+      return;
+    }
   }
   filedb_close(f);
   dprintf(idx, "Current directory has been sorted.\n");
@@ -341,11 +345,19 @@ static void files_ls(int idx, char *par, int showall)
       strcpy(mask, "*");
     }
     f = filedb_open(destdir, 0);
+    if (!f) {
+      dprintf(idx, FILES_ILLDIR);
+      return;
+    }
     filedb_ls(f, idx, mask, showall);
     filedb_close(f);
   } else {
     putlog(LOG_FILES, "*", "files: #%s# ls", dcc[idx].nick);
     f = filedb_open(dcc[idx].u.file->dir, 0);
+    if (!f) {
+      dprintf(idx, FILES_ILLDIR);
+      return;
+    }
     filedb_ls(f, idx, "*", showall);
     filedb_close(f);
   }
@@ -394,6 +406,10 @@ static void cmd_get(int idx, char *par)
     destdir[121] = 0;
   }
   f = filedb_open(destdir, 0);
+  if (!f) {
+    dprintf(idx, FILES_ILLDIR);
+    return;
+  }
   where = 0L;
   if (!findmatch(f, what, &where, &fdb)) {
     filedb_close(f);
@@ -451,8 +467,7 @@ static void cmd_get(int idx, char *par)
 static void cmd_file_help(int idx, char *par)
 {
   char s[1024];
-  struct flag_record fr =
-  {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
+  struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
 
   get_user_flagrec(dcc[idx].user, &fr, dcc[idx].u.file->chat->con_chan);
   if (par[0]) {
@@ -479,6 +494,10 @@ static void cmd_hide(int idx, char *par)
   }
   where = 0L;
   f = filedb_open(dcc[idx].u.file->dir, 0);
+  if (!f) {
+    dprintf(idx, FILES_ILLDIR);
+    return;
+  }
   ret = findmatch(f, par, &where, &fdb);
   if (!ret) {
     filedb_close(f);
@@ -519,6 +538,10 @@ static void cmd_unhide(int idx, char *par)
   }
   where = 0L;
   f = filedb_open(dcc[idx].u.file->dir, 0);
+  if (!f) {
+    dprintf(idx, FILES_ILLDIR);
+    return;
+  }
   ret = findmatch(f, par, &where, &fdb);
   if (!ret) {
     filedb_close(f);
@@ -559,6 +582,10 @@ static void cmd_share(int idx, char *par)
   }
   where = 0L;
   f = filedb_open(dcc[idx].u.file->dir, 0);
+  if (!f) {
+    dprintf(idx, FILES_ILLDIR);
+    return;
+  }
   ret = findmatch(f, par, &where, &fdb);
   if (!ret) {
     filedb_close(f);
@@ -599,6 +626,10 @@ static void cmd_unshare(int idx, char *par)
   }
   where = 0L;
   f = filedb_open(dcc[idx].u.file->dir, 0);
+  if (!f) {
+    dprintf(idx, FILES_ILLDIR);
+    return;
+  }
   ret = findmatch(f, par, &where, &fdb);
   if (!ret) {
     filedb_close(f);
@@ -661,6 +692,10 @@ static void cmd_ln(int idx, char *par)
       newfn[80] = 0;
     }
     f = filedb_open(newpath, 0);
+    if (!f) {
+      dprintf(idx, FILES_ILLDIR);
+      return;
+    }
     ret = findmatch(f, newfn, &where, &fdb);
     if (ret) {
       if (!fdb.sharelink[0]) {
@@ -754,6 +789,10 @@ static void cmd_desc(int idx, char *par)
   if (desc[strlen(desc) - 1] == '\n')
     desc[strlen(desc) - 1] = 0;
   f = filedb_open(dcc[idx].u.file->dir, 0);
+  if (!f) {
+    dprintf(idx, FILES_ILLDIR);
+    return;
+  }
   where = 0L;
   ret = findmatch(f, fn, &where, &fdb);
   if (!ret) {
@@ -800,6 +839,10 @@ static void cmd_rm(int idx, char *par)
     return;
   }
   f = filedb_open(dcc[idx].u.file->dir, 0);
+  if (!f) {
+    dprintf(idx, FILES_ILLDIR);
+    return;
+  }
   where = 0L;
   ret = findmatch(f, par, &where, &fdb);
   if (!ret) {
@@ -876,6 +919,10 @@ static void cmd_mkdir(int idx, char *par)
       return;
     }
     f = filedb_open(dcc[idx].u.file->dir, 0);
+    if (!f) {
+      dprintf(idx, FILES_ILLDIR);
+      return;
+    }
     ret = findmatch(f, name, &where, &fdb);
     if (!ret) {
       sprintf(s, "%s%s/%s", dccdir, dcc[idx].u.file->dir, name);
@@ -943,6 +990,10 @@ static void cmd_rmdir(int idx, char *par)
     dprintf(idx, "You can only create directories in the current directory\n");
   else {
     f = filedb_open(dcc[idx].u.file->dir, 0);
+    if (!f) {
+      dprintf(idx, FILES_ILLDIR);
+      return;
+    }
     if (!findmatch(f, name, &where, &fdb)) {
       dprintf(idx, FILES_NOSUCHDIR);
       filedb_close(f);
@@ -1031,10 +1082,19 @@ static void cmd_mv_cp(int idx, char *par, int copy)
   else
     only_first = 0;
   f = filedb_open(oldpath, 0);
+  if (!f) {
+    dprintf(idx, FILES_ILLDIR);
+    return;
+  }
   if (!strcmp(oldpath, newpath))
     g = NULL;
-  else
+  else {
     g = filedb_open(newpath, 0);
+    if (!g) {
+      dprintf(idx, FILES_ILLDIR);
+      return;
+    }
+  }
   where = 0L;
   ok = 0;
   ret = findmatch(f, fn, &where, &fdb);
@@ -1266,6 +1326,10 @@ static int files_get(int idx, char *fn, char *nick)
     what[80] = 0;
   }
   f = filedb_open(destdir, 0);
+  if (!f) {
+    dprintf(idx, FILES_ILLDIR);
+    return 0;
+  }
   if (!findmatch(f, what, &where, &fdb)) {
     filedb_close(f);
     return 0;

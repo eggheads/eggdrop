@@ -22,7 +22,7 @@ static int tcl_chanlist STDVAR
   m = chan->channel.member;
   if (argc == 2) {
     /* no flag restrictions so just whiz it thru quick */
-    while (m->nick[0]) {
+    while (m && m->nick[0]) {
       Tcl_AppendElement(irp, m->nick);
       m = m->next;
     }
@@ -36,7 +36,7 @@ static int tcl_chanlist STDVAR
       !plus.chan && !plus.udef_chan && !plus.bot && !f)
     return TCL_OK;
   minus.match = plus.match ^ (FR_AND | FR_OR);
-  while (m->nick[0]) {
+  while (m && m->nick[0]) {
     simple_sprintf(s1, "%s!%s", m->nick, m->userhost);
     u = get_user_by_host(s1);
     get_user_flagrec(u, &user, argv[1]);
@@ -548,7 +548,7 @@ static int tcl_hand2nick STDVAR
   context;
   while ((chan != NULL) && ((thechan == NULL) || (thechan == chan))) {
     m = chan->channel.member;
-    while (m->nick[0]) {
+    while (m && m->nick[0]) {
       simple_sprintf(s, "%s!%s", m->nick, m->userhost);
       u = get_user_by_host(s);
       if (u && !strcasecmp(u->handle, argv[1])) {

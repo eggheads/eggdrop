@@ -1436,10 +1436,12 @@ static struct userrec *dup_userlist(int t)
       for (ch = u->chanrec; ch; ch = ch->next) {
 	struct chanuserrec *z = add_chanrec(nu, ch->channel);
 
-	z->flags = ch->flags;
-	z->flags_udef = ch->flags_udef;
-	z->laston = ch->laston;
-	set_handle_chaninfo(nu, nu->handle, ch->channel, ch->info);
+	if (z) {
+	  z->flags = ch->flags;
+	  z->flags_udef = ch->flags_udef;
+	  z->laston = ch->laston;
+	  set_handle_chaninfo(nu, nu->handle, ch->channel, ch->info);
+	}
       }
       for (ue = u->entries; ue; ue = ue->next) {
 	context;

@@ -400,7 +400,7 @@ static int msg_who(char *nick, char *host, struct userrec *u, char *par)
   also[0] = 0;
   i = 0;
   m = chan->channel.member;
-  while (m->nick[0]) {
+  while (m && m->nick[0]) {
     struct userrec *u;
 
     simple_sprintf(s, "%s!%s", m->nick, m->userhost);
