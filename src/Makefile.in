@@ -1,5 +1,5 @@
 # Makefile for src/
-# $Id: Makefile.in,v 1.6 1999/12/25 00:07:50 fabian Exp $
+# $Id: Makefile.in,v 1.7 2000/02/25 21:51:29 fabian Exp $
 
 SHELL = /bin/sh
 top_srcdir = @top_srcdir@
@@ -28,7 +28,8 @@ doofus:
 	@echo ""
 	@echo "Linking eggdrop... $(EGGBUILD)"
 	@echo ""
-	$(LD) -o ../$(EGGEXEC) $(OBJS) $(MODOBJS) $(XLIBS)
+	@touch mod/mod.xlibs
+	$(LD) -o ../$(EGGEXEC) $(OBJS) $(MODOBJS) $(XLIBS) `cat mod/mod.xlibs`
 	$(STRIP) ../$(EGGEXEC)
 	@echo "Successful compile: $(EGGEXEC)"
 	@echo ""

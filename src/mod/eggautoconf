@@ -1,0 +1,38 @@
+#! /bin/sh
+#
+# eggautoconf -- creates workable small configure scripts by cutting down
+#                GNU autoconf scripts with the help of special eggdrop
+#                m4 macros.
+#
+# $Id: eggautoconf,v 1.1 2000/02/25 21:51:30 fabian Exp $
+#
+# Copyright (C) 2000  Eggheads
+# Written by Fabian Knittel
+
+set -e
+if ! test -f configure.in; then
+	echo "$0: error: no \`configure.in' found."
+	exit 1
+fi
+if ! test -f ../eggmod.sh; then
+	echo "$0: \`../eggmod.sh' not found. Not calling from module directory?"
+	exit 1
+fi
+autoconf
+if ! test -f configure; then
+	echo "$0: error: autoconf did not produce \`configure' script."
+	exit 1
+fi
+echo -n "Recreating eggdrop/autoconf configure script ... "
+if (cat configure | awk '
+	BEGIN { RS = "\f-never-\f"; FS = "\n## SPLIT" }
+	{ print "#! /bin/sh" $2 }' > configure_new); then
+	mv configure_new configure
+	chmod 0775 configure
+else
+	echo "failed."
+	echo "Failed to create configure script!" >&2
+	exit 1
+fi
+echo "done."
+exit 0

@@ -1,0 +1,4 @@
+DESC:This provides the normal ctcp replies that you'd expect.
+DESC:
+DESC:Enabling this module is recommended for bots active on IRC.
+DEPENDS:server

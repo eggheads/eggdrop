@@ -1,0 +1,5 @@
+DESC:The filesys module provides an area within the bot where you can store
+DESC:files.
+DESC:
+DESC:Not everyone will need this module. If unsure, ENABLE it.
+DEPENDS:transfer

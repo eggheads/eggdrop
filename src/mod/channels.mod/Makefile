@@ -1,5 +1,5 @@
 # Makefile for src/mod/channels.mod/
-# $Id: Makefile,v 1.6 1999/12/21 17:35:11 fabian Exp $
+# $Id: Makefile,v 1.7 2000/02/25 21:51:30 fabian Exp $
 
 doofus:
 	@echo ""
@@ -13,7 +13,7 @@ modules: ../../../channels.so
 
 ../channels.o:
 	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c channels.c
-	rm -f ../channels.o
+	@rm -f ../channels.o
 	mv channels.o ../
 
 ../../../channels.so: ../channels.o
@@ -25,6 +25,7 @@ depend:
 
 clean:
 	@rm -f .depend *.o *.so *~
+distclean: clean
 
 #safety hash
 ../channels.o: channels.c ../module.h ../../../config.h ../../main.h \

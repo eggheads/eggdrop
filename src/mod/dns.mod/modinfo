@@ -1,0 +1,6 @@
+DESC:The DNS module provides support for asynchronous DNS requests. This
+DESC:guards the bot from blocking several seconds on IP-addresses or
+DESC:hostnames which don't properly resolve.  This is especially useful
+DESC:for bots serving as hubs.
+DESC:
+DESC:You will normally want to ENABLE this module.

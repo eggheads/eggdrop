@@ -2,7 +2,7 @@
 #  This is the Makefile for EGGDROP (the irc bot)
 #  You should never need to edit this.
 #
-# $Id: Makefile.in,v 1.12 1999/12/21 17:35:01 fabian Exp $
+# $Id: Makefile.in,v 1.13 2000/02/25 21:51:29 fabian Exp $
 
 SHELL = /bin/sh
 top_srcdir = @top_srcdir@
@@ -61,8 +61,6 @@ XLIBS = @TCL_LIBS@ @LIBS@
 TCLLIB = @TCLLIB@
 TCLLIBFN = @TCLLIBFN@
 
-RESLIB = @RESLIB@
-
 CFLAGS = @CFLAGS@ -I.. @DEFS@ $(CFLGS)
 DEBCFLAGS = @CFLAGS@ -I.. @DEFS@ -DDEBUG_ASSERT -DDEBUG_MEM $(CFLGS)
 
@@ -78,7 +76,7 @@ MAKE_MODULES = $(MAKE) 'MAKE=$(MAKE)' 'CC=$(SHLIB_CC)' 'LD=$(SHLIB_LD)' \
 MAKE_STATIC = $(MAKE) 'MAKE=$(MAKE)' 'CC=$(CC)' 'LD=$(LD)' \
 'STRIP=$(STRIP)' 'RANLIB=$(RANLIB)' 'CFLAGS=$(CFLAGS) -DSTATIC' \
 'CPPFLAGS=$(CPPFLAGS)' 'TCLLIB=$(TCLLIB)' 'TCLLIBFN=$(TCLLIBFN)' \
-'XREQS=$(XREQS)' 'XLIBS=$(XLIBS) $(RESLIB)' 'EGGEXEC=$(EGGEXEC)' \
+'XREQS=$(XREQS)' 'XLIBS=$(XLIBS)' 'EGGEXEC=$(EGGEXEC)' \
 'EGGBUILD=(static version)' 'MODOBJS=mod/*.o'
 
 MAKE_DEBEGG = $(MAKE) 'MAKE=$(MAKE)' 'CC=$(MOD_CC)' 'LD=$(MOD_LD) -g' \
@@ -93,27 +91,32 @@ MAKE_DEBMODULES = $(MAKE) 'MAKE=$(MAKE)' 'CC=$(SHLIB_CC)' 'LD=$(SHLIB_LD)' \
 MAKE_SDEBUG = $(MAKE) 'MAKE=$(MAKE)' 'CC=$(CC)' 'LD=$(LD) -g' \
 'STRIP=touch' 'RANLIB=$(RANLIB)' 'CFLAGS=-g3 $(DEBCFLAGS) -DSTATIC' \
 'CPPFLAGS=$(CPPFLAGS)' 'TCLLIB=$(TCLLIB)' 'TCLLIBFN=$(TCLLIBFN)' \
-'XREQS=$(XREQS)' 'XLIBS=$(XLIBS) $(RESLIB)' 'EGGEXEC=$(EGGEXEC)' \
+'XREQS=$(XREQS)' 'XLIBS=$(XLIBS)' 'EGGEXEC=$(EGGEXEC)' \
 'EGGBUILD=(static and debug version)' 'MODOBJS=mod/*.o'
 
 MAKE_DEPEND = $(MAKE) 'MAKE=$(MAKE)' 'CC=$(CC)' 'LD=$(LD)' \
 'STRIP=$(STRIP)' 'CFLAGS=$(CFLAGS)' 'CPPFLAGS=$(CPPFLAGS)'
 
+MAKE_CONFIG = $(MAKE) 'MAKE=$(MAKE)'
+
 MAKE_INSTALL = $(MAKE) 'MAKE=$(MAKE)' 'DEST=$(DEST)'
 
 all: @DEFAULT_MAKE@
 
-clean:
+eggclean:
 	@rm -f $(EGGEXEC) *.so *.stamp core DEBUG *~
-	@cd doc; $(MAKE) clean
-	@cd scripts; $(MAKE) clean
-	@cd src; $(MAKE) clean
-	@cd src/md5; $(MAKE) clean
-	@cd src/mod; $(MAKE) clean
+	@cd doc && $(MAKE) clean
+	@cd scripts && $(MAKE) clean
+	@cd src && $(MAKE) clean
+	@cd src/md5 && $(MAKE) clean
 
-distclean: clean
+clean: eggclean
+	@cd src/mod && $(MAKE) clean
+
+distclean: eggclean
+	@cd src/mod && $(MAKE) distclean
 	@rm -f Makefile doc/Makefile scripts/Makefile src/Makefile src/md5/Makefile src/mod/Makefile
-	@rm -f config.cache config.log config.status config.h lush.h
+	@rm -f config.cache config.log config.status config.h lush.h .modules .modnames
 
 distrib: distclean
 	@rm -f `find . \( -name '*~' -o -name '*#' -o -name '*.orig' \
@@ -129,20 +132,30 @@ distrib: distclean
 
 depend:
 	@cat /dev/null > lush.h
-	@cd src; $(MAKE_DEPEND) depend
-	@cd src/md5; $(MAKE_DEPEND) depend
-	@cd src/mod; $(MAKE_DEPEND) depend
+	@cd src && $(MAKE_DEPEND) depend
+	@cd src/md5 && $(MAKE_DEPEND) depend
+	@cd src/mod && $(MAKE_DEPEND) depend
+
+config:
+	@cd src/mod && $(MAKE_CONFIG) config
+	@src/mod/modtool --root-dir=. -q makefile
+
+reconfig:
+	@src/mod/modtool --root-dir=. config
+	@src/mod/modtool --root-dir=. update-depends
+	@$(MAKE) config
 
 eggdrop: modegg modules
 
 modegg: modtest
-	@cd src; $(MAKE_MODEGG) $(EGGEXEC)
+	@rm -f src/mod/mod.xlibs
+	@cd src && $(MAKE_MODEGG) $(EGGEXEC)
 	@echo ""
 	@./$(EGGEXEC) -v
 	@ls -l $(EGGEXEC)
 
 modules: modtest
-	@cd src/mod; $(MAKE_MODULES) modules
+	@cd src/mod && $(MAKE_MODULES) modules
 	@echo ""
 	@echo "modules made:"
 	@ls -l *.so
@@ -151,11 +164,12 @@ static: eggtest
 	@echo ""
 	@echo "Making module objects for static linking..."
 	@echo ""
-	@cd src/mod; $(MAKE_STATIC) static
+	@rm -f src/mod/mod.xlibs
+	@cd src/mod && $(MAKE_STATIC) static
 	@echo ""
 	@echo "Making core eggdrop for static linking..."
 	@echo ""
-	@cd src; $(MAKE_STATIC) $(EGGEXEC)
+	@cd src && $(MAKE_STATIC) $(EGGEXEC)
 	@echo ""
 	@./$(EGGEXEC) -v
 	@ls -l $(EGGEXEC)
@@ -163,13 +177,13 @@ static: eggtest
 debug: debegg debmodules
 
 debegg: modtest
-	@cd src; $(MAKE_DEBEGG) $(EGGEXEC)
+	@cd src && $(MAKE_DEBEGG) $(EGGEXEC)
 	@echo ""
 	@./$(EGGEXEC) -v
 	@ls -l $(EGGEXEC)
 
 debmodules: modtest
-	@cd src/mod; $(MAKE_DEBMODULES) modules
+	@cd src/mod && $(MAKE_DEBMODULES) modules
 	@echo ""
 	@echo "modules made:"
 	@ls -l *.so
@@ -178,11 +192,12 @@ sdebug: eggtest
 	@echo ""
 	@echo "Making module objects for static linking..."
 	@echo ""
-	@cd src/mod; $(MAKE_SDEBUG) static
+	@rm -f src/mod/mod.xlibs
+	@cd src/mod && $(MAKE_SDEBUG) static
 	@echo ""
 	@echo "Making core eggdrop for static linking..."
 	@echo ""
-	@cd src; $(MAKE_SDEBUG) $(EGGEXEC)
+	@cd src && $(MAKE_SDEBUG) $(EGGEXEC)
 	@echo ""
 	@./$(EGGEXEC) -v
 	@ls -l $(EGGEXEC)
@@ -327,7 +342,7 @@ install-help:
 			$(INSTALL_DATA) $$i $(DEST)/help/set/; \
 		done; \
 	fi
-	@cd src/mod/; $(MAKE_INSTALL) install-help
+	@cd src/mod/ && $(MAKE_INSTALL) install-help
 
 install-language:
 	@echo "Copying language files."
@@ -340,7 +355,7 @@ install-language:
 			$(INSTALL_DATA) $$i $(DEST)/language/; \
 		done; \
 	fi
-	@cd src/mod/; $(MAKE_INSTALL) install-language
+	@cd src/mod && $(MAKE_INSTALL) install-language
 
 install-filesys:
 	@if test ! -d $(DEST)/filesys; then \
@@ -351,10 +366,10 @@ install-filesys:
 
 install-doc:
 	@$(INSTALL_DATA) README $(DEST)
-	@cd doc/; $(MAKE_INSTALL) install
+	@cd doc/ && $(MAKE_INSTALL) install
 
 install-scripts:
-	@cd scripts/; $(MAKE_INSTALL) install
+	@cd scripts/ && $(MAKE_INSTALL) install
 
 install-end:
 	@echo

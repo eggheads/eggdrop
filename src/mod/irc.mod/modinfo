@@ -1,0 +1,5 @@
+DESC:The irc module provides all normal irc interaction. If you want the
+DESC:normal join & maintain channels stuff, this is the module.
+DESC:
+DESC:Normally you will want to ENABLE this module.
+DEPENDS:server channels

@@ -1,0 +1,5 @@
+DESC:The blowfish module provides encryption support for eggdrop. You always
+DESC:need to load an encryption module to run eggdrop.  Currently, blowfish
+DESC:is the only encryption module so you don't have much choice ...
+DESC:
+DESC:ENABLE this module.

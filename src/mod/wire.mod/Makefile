@@ -1,5 +1,5 @@
 # Makefile for src/mod/wire.mod/
-# $Id: Makefile,v 1.7 1999/12/21 17:35:32 fabian Exp $
+# $Id: Makefile,v 1.8 2000/02/25 21:51:30 fabian Exp $
 
 doofus:
 	@echo ""
@@ -13,7 +13,7 @@ modules: ../../../wire.so
 
 ../wire.o:
 	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c wire.c
-	rm -f ../wire.o
+	@rm -f ../wire.o
 	mv wire.o ../
 
 ../../../wire.so: ../wire.o
@@ -25,6 +25,7 @@ depend:
 
 clean:
 	@rm -f .depend *.o *.so *~
+distclean: clean
 
 #safety hash
 ../wire.o: wire.c ../module.h ../../../config.h ../../main.h ../../lang.h \

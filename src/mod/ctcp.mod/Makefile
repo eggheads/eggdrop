@@ -1,5 +1,5 @@
 # Makefile for src/mod/ctcp.mod/
-# $Id: Makefile,v 1.5 1999/12/21 17:35:15 fabian Exp $
+# $Id: Makefile,v 1.6 2000/02/25 21:51:30 fabian Exp $
 
 doofus:
 	@echo ""
@@ -13,7 +13,7 @@ modules: ../../../ctcp.so
 
 ../ctcp.o:
 	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c ctcp.c
-	rm -f ../ctcp.o
+	@rm -f ../ctcp.o
 	mv ctcp.o ../
 
 ../../../ctcp.so: ../ctcp.o
@@ -25,6 +25,7 @@ depend:
 
 clean:
 	@rm -f .depend *.o *.so *~
+distclean: clean
 
 #safety hash
 ../ctcp.o: ctcp.c ctcp.h ../module.h ../../../config.h ../../main.h \

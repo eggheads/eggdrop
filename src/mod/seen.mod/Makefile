@@ -1,5 +1,5 @@
 # Makefile for src/mod/seen.mod/
-# $Id: Makefile,v 1.5 1999/12/21 17:35:30 fabian Exp $
+# $Id: Makefile,v 1.6 2000/02/25 21:51:30 fabian Exp $
 
 doofus:
 	@echo ""
@@ -13,7 +13,7 @@ modules: ../../../seen.so
 
 ../seen.o:
 	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c seen.c
-	rm -f ../seen.o
+	@rm -f ../seen.o
 	mv seen.o ../
 
 ../../../seen.so: ../seen.o
@@ -25,6 +25,7 @@ depend:
 
 clean:
 	@rm -f .depend *.o *.so *~
+distclean: clean
 
 #safety hash
 ../seen.o: seen.c ../module.h ../../../config.h ../../main.h ../../lang.h \

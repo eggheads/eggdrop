@@ -1,5 +1,5 @@
 # Makefile for src/mod/share.mod/
-# $Id: Makefile,v 1.6 2000/01/22 22:37:47 fabian Exp $
+# $Id: Makefile,v 1.7 2000/02/25 21:51:30 fabian Exp $
 
 doofus:
 	@echo ""
@@ -13,7 +13,7 @@ modules: ../../../share.so
 
 ../share.o:
 	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c share.c
-	rm -f ../share.o
+	@rm -f ../share.o
 	mv share.o ../
 
 ../../../share.so: ../share.o
@@ -25,6 +25,7 @@ depend:
 
 clean:
 	@rm -f .depend *.o *.so *~
+distclean: clean
 
 #safety hash
 ../share.o: share.c uf_features.c share.h ../module.h ../../../config.h \

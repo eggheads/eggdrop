@@ -1,0 +1,5 @@
+DESC:This provides the userfile sharing support. You also have to enable the
+DESC:channels & transfer modules to use it.
+DESC:
+DESC:If unsure, ENABLE it.
+DEPENDS:transfer channels

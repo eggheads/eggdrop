@@ -1,5 +1,5 @@
 # Makefile for src/mod/filesys.mod/
-# $Id: Makefile,v 1.9 2000/02/01 20:36:18 fabian Exp $
+# $Id: Makefile,v 1.10 2000/02/25 21:51:30 fabian Exp $
 
 doofus:
 	@echo ""
@@ -13,7 +13,7 @@ modules: ../../../filesys.so
 
 ../filesys.o:
 	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c filesys.c
-	rm -f ../filesys.o
+	@rm -f ../filesys.o
 	mv filesys.o ../
 
 ../../../filesys.so: ../filesys.o
@@ -25,6 +25,7 @@ depend:
 
 clean:
 	@rm -f .depend *.o *.so *~
+distclean: clean
 
 #safety hash
 ../filesys.o: filesys.c ../../../config.h ../module.h ../../main.h \

@@ -126,7 +126,7 @@ before. PLEASE! READ IT!
     v1.5 so PAY ATTENTION to this part if you have a v0.9, 1.0 or 1.1 bot
     already.  If you're just starting out, you can skip this section.
 
-    to 1.3/1.4/1.5:
+    to 1.3/1.4:
     *  If you run sharebots, you will need to upgrade them all at the
        same time because of the new userfile format.  Older bots will
        be able to link in, but will not get or send a userfile. 1.2's

@@ -1,0 +1,5 @@
+DESC:The channels module provides channel related support for the bot. It's
+DESC:essential for hubs that share userfiles, as well as normal bots
+DESC:monitoring channels on IRC.
+DESC:
+DESC:You will normally want to ENABLE this module.

@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_REVISION($Revision $)
-AC_INIT(eggdrop.conf.dist)
+AC_INIT(src/eggdrop.h)
 AC_PREFIX_DEFAULT([\${HOME}/eggdrop])
 AC_CONFIG_HEADER(config.h)
 
@@ -30,7 +30,6 @@ EGG_CHECK_OS
 
 # Checks for system libraries
 EGG_CHECK_LIBS
-EGG_CHECK_RES_LIBS
 
 # Checks for header files
 AC_HEADER_DIRENT
@@ -112,5 +111,8 @@ EGG_SUBST_EGGVERSION
 EGG_SUBST_DEST
 
 AC_OUTPUT(Makefile doc/Makefile scripts/Makefile src/Makefile src/md5/Makefile src/mod/Makefile lush.h)
+
+EGG_DETECT_MODULES
+EGG_CONFIGURE_MODULES
 
 EGG_MSG_CONFIGURE_END

@@ -1,5 +1,5 @@
 # Makefile for src/mod/woobie.mod/
-# $Id: Makefile,v 1.5 1999/12/21 17:35:32 fabian Exp $
+# $Id: Makefile,v 1.6 2000/02/25 21:51:30 fabian Exp $
 
 doofus:
 	@echo ""
@@ -13,7 +13,7 @@ modules: ../../../woobie.so
 
 ../woobie.o:
 	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c woobie.c
-	rm -f ../woobie.o
+	@rm -f ../woobie.o
 	mv woobie.o ../
 
 ../../../woobie.so: ../woobie.o
@@ -25,6 +25,7 @@ depend:
 
 clean:
 	@rm -f .depend *.o *.so *~
+distclean: clean
 
 #safety hash
 ../woobie.o: woobie.c ../module.h ../../../config.h ../../main.h \

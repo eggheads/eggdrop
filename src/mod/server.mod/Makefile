@@ -1,5 +1,5 @@
 # Makefile for src/mod/server.mod/
-# $Id: Makefile,v 1.6 1999/12/21 17:35:30 fabian Exp $
+# $Id: Makefile,v 1.7 2000/02/25 21:51:30 fabian Exp $
 
 doofus:
 	@echo ""
@@ -13,7 +13,7 @@ modules: ../../../server.so
 
 ../server.o:
 	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c server.c
-	rm -f ../server.o
+	@rm -f ../server.o
 	mv server.o ../
 
 ../../../server.so: ../server.o
@@ -25,6 +25,7 @@ depend:
 
 clean:
 	@rm -f .depend *.o *.so *~
+distclean: clean
 
 #safety hash
 ../server.o: server.c ../module.h ../../../config.h ../../main.h \

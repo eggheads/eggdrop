@@ -1,5 +1,5 @@
 # Makefile for src/mod/assoc.mod/
-# $Id: Makefile,v 1.5 1999/12/21 17:35:11 fabian Exp $
+# $Id: Makefile,v 1.6 2000/02/25 21:51:30 fabian Exp $
 
 doofus:
 	@echo ""
@@ -13,7 +13,7 @@ modules: ../../../assoc.so
 
 ../assoc.o:
 	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c assoc.c
-	rm -f ../assoc.o
+	@rm -f ../assoc.o
 	mv assoc.o ../
 
 ../../../assoc.so: ../assoc.o
@@ -25,6 +25,7 @@ depend:
 
 clean:
 	@rm -f .depend *.o *.so *~
+distclean: clean
 
 #safety hash
 ../assoc.o: assoc.c ../module.h ../../../config.h ../../main.h \

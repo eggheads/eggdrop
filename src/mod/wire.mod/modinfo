@@ -1,0 +1,4 @@
+DESC:This module provides all the standard .wire commands via dcc. It's an
+DESC:encrypted partyline communication tool, compatible with `wire.tcl'.
+DESC:
+DESC:Most users won't need this module. If unsure ENABLE it.

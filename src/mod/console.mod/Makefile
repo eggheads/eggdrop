@@ -1,5 +1,5 @@
 # Makefile for src/mod/console.mod/
-# $Id: Makefile,v 1.5 1999/12/21 17:35:15 fabian Exp $
+# $Id: Makefile,v 1.6 2000/02/25 21:51:30 fabian Exp $
 
 doofus:
 	@echo ""
@@ -13,7 +13,7 @@ modules: ../../../console.so
 
 ../console.o:
 	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c console.c
-	rm -f ../console.o
+	@rm -f ../console.o
 	mv console.o ../
 
 ../../../console.so: ../console.o
@@ -25,6 +25,7 @@ depend:
 
 clean:
 	@rm -f .depend *.o *.so *~
+distclean: clean
 
 #safety hash
 ../console.o: console.c ../module.h ../../../config.h ../../main.h \

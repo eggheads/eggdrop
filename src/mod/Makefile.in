@@ -1,5 +1,5 @@
 # Makefile for src/mod/
-# $Id: Makefile.in,v 1.3 1999/12/21 17:35:10 fabian Exp $
+# $Id: Makefile.in,v 1.4 2000/02/25 21:51:30 fabian Exp $
 
 SHELL = /bin/sh
 top_srcdir = @top_srcdir@
@@ -9,11 +9,16 @@ INSTALL = @INSTALL@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
-RESLIB = @RESLIB@
+
+# Note: The following three lines are automatically adjusted by
+#       modtool. They have to be present here.
+mods =
+mod_objs =
+mod_libs =
+
 
 MAKE_MOD = $(MAKE) 'MAKE=$(MAKE)' 'CC=$(CC)' 'LD=$(LD)' \
-'STRIP=$(STRIP)' 'CFLAGS=$(CFLAGS)' 'CPPFLAGS=$(CPPFLAGS)' \
-'RESLIB=$(RESLIB)'
+'STRIP=$(STRIP)' 'CFLAGS=$(CFLAGS)' 'CPPFLAGS=$(CPPFLAGS)'
 
 doofus:
 	@echo ""
@@ -21,62 +26,91 @@ doofus:
 	@echo ""
 	@cd $(top_srcdir); $(MAKE)
 
-modules:
-	@for i in *.mod; do cd $$i; $(MAKE_MOD) modules; cd ../; done
+modules: $(mod_libs)
+	@echo "All modules compiled."
+	@echo ""
 
-static:
-	@./buildstatic
-	@for i in *.mod; do cd $$i; $(MAKE_MOD) static; cd ../; done
+static: $(mod_objs)
+	@./modtool --root-dir=$(top_srcdir) static.h
+
+%.mod_so:	
+	@cd $*.mod; $(MAKE_MOD) modules;
+
+%.mod_o:	
+	@cd $*.mod; $(MAKE_MOD) static;
 
 depend:
-	@for i in *.mod; do cd $$i; $(MAKE_MOD) depend; cd ../; done
+	@for i in $(mods); do cd $$i; $(MAKE_MOD) depend; cd ../; done
+
+config:
+	@for i in $(mods); do \
+		if test -f $$i/configure; then \
+			modname=`echo $$i | sed -e 's/.mod//'`; \
+			echo; echo "Configuring module $${modname} ..."; echo; \
+			(cd $$i && ./configure --cache-file=../$(top_srcdir)/config.cache); \
+		fi; \
+	done
 
 clean:
-	@rm -f *.o *.so *~ static.h
+	@rm -f *.o *.so *~ static.h mod.xlibs
 	@for i in *.mod; do cd $$i; $(MAKE) 'MAKE=$(MAKE)' clean; cd ../; done
+
+distclean:
+	@rm -f *.o *.so *~ static.h mod.xlibs
+	@for i in *.mod; do \
+		cd $$i; $(MAKE) 'MAKE=$(MAKE)' distclean; cd ../; \
+	done
 
 install: install-help install-language
 
 install-help:
 	@echo "Copying module help files."
-	@if test ! "x`echo *.mod/help/*.help`" = "x*.mod/help/*.help"; then \
-		if test ! -d $(DEST)/help; then \
-			echo "Creating 'help' subdirectory."; \
-			$(top_srcdir)/mkinstalldirs $(DEST)/help; \
+	@if test ! -d $(DEST)/help; then \
+		echo "Creating 'help' subdirectory."; \
+		$(top_srcdir)/mkinstalldirs $(DEST)/help; \
+	fi; \
+	for i in $(mods); do \
+		if ! test "x`echo $$i/help/*.help`" = "x$$i/help/*.help"; then \
+			for h in $$i/help/*.help; do \
+				$(INSTALL_DATA) $$h $(DEST)/help/; \
+			done; \
 		fi; \
-		for i in *.mod/help/*.help; do \
-			$(INSTALL_DATA) $$i $(DEST)/help/; \
-		done; \
-	fi
-	@if test ! "x`echo *.mod/help/msg/*.help`" = "x*.mod/help/msg/*.help"; then \
-		if test ! -d $(DEST)/help/msg; then \
-			echo "Creating 'help/msg' subdirectory."; \
-			$(top_srcdir)/mkinstalldirs $(DEST)/help/msg; \
+	done;
+	@if test ! -d $(DEST)/help/msg; then \
+		echo "Creating 'help/msg' subdirectory."; \
+		$(top_srcdir)/mkinstalldirs $(DEST)/help/msg; \
+	fi; \
+	for i in $(mods); do \
+		if ! test "x`echo $$i/help/msg/*.help`" = "x$$i/help/msg/*.help"; then \
+			for h in $$i/help/msg/*.help; do \
+				$(INSTALL_DATA) $$h $(DEST)/help/msg/; \
+			done; \
 		fi; \
-		for i in *.mod/help/msg/*.help; do \
-			$(INSTALL_DATA) $$i $(DEST)/help/msg/; \
-		done; \
-	fi
-	@if test ! "x`echo *.mod/help/set/*.help`" = "x*.mod/help/set/*.help"; then \
-		if test ! -d $(DEST)/help/set; then \
-			echo "Creating 'help/set' subdirectory."; \
-			$(top_srcdir)/mkinstalldirs $(DEST)/help/set; \
+	done;
+	@if test ! -d $(DEST)/help/set; then \
+		echo "Creating 'help/set' subdirectory."; \
+		$(top_srcdir)/mkinstalldirs $(DEST)/help/set; \
+	fi; \
+	for i in $(mods); do \
+		if test ! "x`echo $$i/help/set/*.help`" = "x$$i/help/set/*.help"; then \
+			for h in $$i/help/set/*.help; do \
+				$(INSTALL_DATA) $$h $(DEST)/help/set/; \
+			done; \
 		fi; \
-		for i in *.mod/help/set/*.help; do \
-			$(INSTALL_DATA) $$i $(DEST)/help/set/; \
-		done; \
-	fi
+	done;
 
 install-language:
 	@echo "Copying module language files."
-	@if test ! "x`echo *.mod/language/*.lang`" = "x*.mod/language/*.lang"; then \
-		if test ! -d $(DEST)/language; then \
-			echo "Creating 'language' subdirectory."; \
-			$(top_srcdir)/mkinstalldirs $(DEST)/language; \
+	@if test ! -d $(DEST)/language; then \
+		echo "Creating 'language' subdirectory."; \
+		$(top_srcdir)/mkinstalldirs $(DEST)/language; \
+	fi; \
+	for i in $(mods); do \
+		if test ! "x`echo $$i/language/*.lang`" = "x$$i/language/*.lang"; then \
+			for h in $$i/language/*.lang; do \
+				$(INSTALL_DATA) $$h $(DEST)/language/; \
+			done; \
 		fi; \
-		for i in *.mod/language/*.lang; do \
-			$(INSTALL_DATA) $$i $(DEST)/language/; \
-		done; \
-	fi
+	done;
 
 #safety hash

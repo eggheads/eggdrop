@@ -1,0 +1,14 @@
+#  disabled_modules -- File which lists all eggdrop modules that are
+#                      disabled by default.
+#  $Id: disabled_modules,v 1.1 2000/02/25 21:51:29 fabian Exp $
+#
+# Note:
+#   -  Lines which start with a '#' character are ignored.
+#   -  There should be no spaces infront or behind the module name:
+#        `dns'       is valid.
+#        `  dns  '   is invalid!
+#   -  Every module name needs to be on its own line
+
+# Woobie only serves as an example for module programming. No need to
+# compile it for normal bots ...
+woobie

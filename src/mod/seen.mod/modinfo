@@ -1,0 +1,5 @@
+DESC:This module provides seen commands via msg, on channel or via dcc,
+DESC:similar to the various scripts.
+DESC:
+DESC:If you plan to use a tcl script or no seen functionality at all, you
+DESC:can safely DISABLE this module.

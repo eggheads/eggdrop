@@ -1,5 +1,5 @@
 # Makefile for src/mod/notes.mod
-# $Id: Makefile,v 1.6 1999/12/21 17:35:30 fabian Exp $
+# $Id: Makefile,v 1.7 2000/02/25 21:51:30 fabian Exp $
 
 doofus:
 	@echo ""
@@ -13,7 +13,7 @@ modules: ../../../notes.so
 
 ../notes.o:
 	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c notes.c
-	rm -f ../notes.o
+	@rm -f ../notes.o
 	mv notes.o ../
 
 ../../../notes.so: ../notes.o
@@ -25,6 +25,7 @@ depend:
 
 clean:
 	@rm -f .depend *.o *.so *~
+distclean: clean
 
 #safety hash
 ../notes.o: notes.c ../module.h ../../../config.h ../../main.h \

@@ -1,0 +1,4 @@
+DESC:This module provides storage of console settings when you exit the bot
+DESC:(or .store).
+DESC:
+DESC:Normally you will want to ENABLE this module.

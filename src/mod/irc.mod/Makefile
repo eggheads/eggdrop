@@ -1,5 +1,5 @@
 # Makefile for src/mod/irc.mod/
-# $Id: Makefile,v 1.5 1999/12/21 17:35:16 fabian Exp $
+# $Id: Makefile,v 1.6 2000/02/25 21:51:30 fabian Exp $
 
 doofus:
 	@echo ""
@@ -13,7 +13,7 @@ modules: ../../../irc.so
 
 ../irc.o:
 	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c irc.c
-	rm -f ../irc.o
+	@rm -f ../irc.o
 	mv irc.o ../
 
 ../../../irc.so: ../irc.o
@@ -25,6 +25,7 @@ depend:
 
 clean:
 	@rm -f .depend *.o *.so *~
+distclean: clean
 
 #safety hash
 ../irc.o: irc.c ../module.h ../../../config.h ../../main.h ../../lang.h \

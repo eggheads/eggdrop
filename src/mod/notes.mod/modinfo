@@ -1,0 +1,6 @@
+DESC:This provides support for storing of notes for users from each other.
+DESC:Notes between currently online users is supported in the core, this is
+DESC:only for storing the notes for later retrieval, direct user->user
+DESC:notes are built-in.
+DESC:
+DESC:You will normally want to ENABLE this module.

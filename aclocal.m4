@@ -1,7 +1,7 @@
 dnl aclocal.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: aclocal.m4,v 1.8 2000/02/01 23:35:23 fabian Exp $
+dnl $Id: aclocal.m4,v 1.9 2000/02/25 21:51:29 fabian Exp $
 dnl
 AC_DEFUN(EGG_MSG_CONFIGURE_START, [dnl
 AC_MSG_RESULT()
@@ -22,6 +22,7 @@ then
 else
   AC_MSG_RESULT(Type 'make' to create the bot.)
 fi
+AC_MSG_RESULT(Type 'make reconfig' if you want to alter the list of enabled modules.)
 AC_MSG_RESULT()
 ])dnl
 dnl
@@ -287,21 +288,6 @@ ac_cv_lib_pthread_pthread_mutex_init=no)
     fi
   fi
 fi
-])dnl
-dnl
-dnl
-AC_DEFUN(EGG_CHECK_RES_LIBS, [dnl
-AC_CHECK_FUNC(res_init, ,
-  AC_CHECK_LIB(resolv, res_init, RESLIB="-lresolv",
-   AC_CHECK_LIB(bind, res_init, RESLIB="-lbind",
-    AC_MSG_ERROR(No resolver library found))))
-
-AC_CHECK_FUNC(res_mkquery, ,
-  AC_CHECK_LIB(resolv, res_mkquery, RESLIB="-lresolv",
-   AC_CHECK_LIB(bind, res_mkquery, RESLIB="-lbind",
-    AC_MSG_ERROR(No resolver library found))))
-
-AC_SUBST(RESLIB)
 ])dnl
 dnl
 dnl
@@ -981,3 +967,74 @@ then
 fi
 AC_SUBST(DEST)dnl
 ])dnl
+dnl
+dnl
+dnl EGG_DETECT_MODULES -- Detect, enable and/or disable eggdrop modules.
+AC_DEFUN(EGG_DETECT_MODULES, [dnl
+AC_ARG_ENABLE(mod-MODULE,
+[  --disable-mod-MODULE    disable compilation of eggdrop module MODULE
+  --enable-mod-MODULE     enable compilation of eggdrop module MODULE],
+[# This is a pseudo option. We check this stuff on our own below...])dnl
+
+echo ""
+echo -n "Detecting modules ..."
+
+# Depending on wether the user has already selected/deselected modules
+# before, we change our behaviour below.
+if src/mod/modtool --root-dir=. -q isconfigured; then
+  egg_mods_configured=yes
+else
+  egg_mods_configured=no
+fi
+
+egg_mods=`echo src/mod/*.mod | sed -e 's/src\/mod\///g' -e 's/\.mod//g'`
+echo -n "."
+egg_mods_enabled=
+egg_mods_disabled=
+for egg_mod in ${egg_mods}; do
+  eval "egg_modval=\$enable_mod_${mod}"
+  if (test "${egg_modval}" = no) || \
+     ((test ! "${egg_modval}" = yes) && \
+      ((grep ^${egg_mod}\$ disabled_modules > /dev/null 2>&1) || \
+      ((test "${egg_mods_configured}" = yes) && \
+       (src/mod/modtool --root-dir=. -q isdeselected ${egg_mod})))); then
+    src/mod/modtool --root-dir=. -q del ${egg_mod}
+    egg_mods_disabled="${egg_mods_disabled} ${egg_mod}"
+  else
+    src/mod/modtool --root-dir=. -q add ${egg_mod}
+    egg_mods_enabled="${egg_mods_enabled} ${egg_mod}"
+  fi
+  echo -n "."
+done
+echo " done."
+src/mod/modtool --root-dir=. -q makefile
+
+echo ""
+if test ! "x${egg_mods_enabled}" = x; then
+  echo "Enabled modules : `echo ${egg_mods_enabled} | sed -e 's/ /, /g'`"
+fi
+if test ! "x${egg_mods_disabled}" = x; then
+  echo "Disabled modules: `echo ${egg_mods_disabled} | sed -e 's/ /, /g'`"
+fi
+echo ""
+])dnl
+dnl
+dnl
+AC_DEFUN(EGG_CONFIGURE_MODULES, [dnl
+AC_ARG_ENABLE(modconf, [  --disable-modconf       disable interactive module selection], [# We check this below ... ])dnl
+if test ! "${enable_modconf}" = no; then
+  echo ""
+  echo ""
+  if src/mod/modtool --root-dir=. -x config; then
+    :
+  else
+    AC_MSG_ERROR([module configuration failed.])
+  fi
+  echo ""
+fi
+src/mod/modtool --root-dir=. update-depends
+if make config; then
+  :
+else
+  AC_MSG_ERROR([module configuration failed.])
+fi])dnl

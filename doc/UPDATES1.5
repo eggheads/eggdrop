@@ -5,6 +5,14 @@ Changes in eggdrop: (since v1.5.0)
 
 1.5.3
 Foundby   Fixedby   What....
+SuperS    Fabian    portability fixes to configure and modtool
+FireEgl   Fabian    every module can now have it's own configure script and
+                      modules which need features not supported by the system
+                      are disabled automatically.
+          Fabian    configure supports `--disable-mod-MODULE' to disable
+                      specific modules and `make reconfig' allows you to select
+                      modules interactively.
+          Fabian    make -j is now supported during module compilation.
           Wiktor    updated patch.howto. also fixed small bug in irc.c.
           G`Quann   fixed a bug in the lagcheck functions and a typo.
 Whilor/   Fabian    need-invite/-limit/-unban/-key failed to work when the bot

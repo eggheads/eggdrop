@@ -1,5 +1,5 @@
 # Makefile for src/mod/transfer.mod/
-# $Id: Makefile,v 1.5 1999/12/21 17:35:31 fabian Exp $
+# $Id: Makefile,v 1.6 2000/02/25 21:51:30 fabian Exp $
 
 doofus:
 	@echo ""
@@ -13,7 +13,7 @@ modules: ../../../transfer.so
 
 ../transfer.o:
 	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c transfer.c
-	rm -f ../transfer.o
+	@rm -f ../transfer.o
 	mv transfer.o ../
 
 ../../../transfer.so: ../transfer.o
@@ -25,6 +25,7 @@ depend:
 
 clean:
 	@rm -f .depend *.o *.so *~
+distclean: clean
 
 #safety hash
 ../transfer.o: transfer.c ../module.h ../../../config.h ../../main.h \
