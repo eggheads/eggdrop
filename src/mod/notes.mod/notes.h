@@ -1,7 +1,7 @@
 /*
  * notes.h -- part of notes.mod
  *
- * $Id: notes.h,v 1.12 2004/01/09 05:56:38 wcc Exp $
+ * $Id: notes.h,v 1.13 2004/02/01 06:13:03 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -55,9 +55,9 @@
 #define NOTES_OUTSIDE                   get_language(0xc015)
 #define NOTES_DELIVERED                 get_language(0xc016)
 #define NOTES_FORLIST                   get_language(0xc017)
-#define NOTES_WAITING_ON                get_language(0xc018)
+/* WAS: 0xc018 NOTES_WAITING_ON */
 #define NOTES_WAITING2                  get_language(0xc019)
-#define NOTES_DCC_USAGE_READ2           get_language(0xc01a)
+/* WAS: 0xc01a NOTES_DCC_USAGE_READ2 */
 #define NOTES_STORED                    get_language(0xc01b)
 #define NOTES_IGN_OTHERS                get_language(0xc01c)
 #define NOTES_UNKNOWN_USER              get_language(0xc01d)
@@ -73,6 +73,8 @@
 #define NOTES_FWD_BOTNAME               get_language(0xc027)
 #define NOTES_FWD_CHANGED               get_language(0xc028)
 #define NOTES_MUSTBE                    get_language(0xc029)
+#define NOTES_DCC_USAGE_READ2           get_language(0xc02a)
+#define NOTES_WAITING_NOTICE            get_language(0xc02b)
 
 #ifdef MAKING_NOTES
 static int get_note_ignores(struct userrec *, char ***);

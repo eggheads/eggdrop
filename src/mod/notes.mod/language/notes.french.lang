@@ -1,7 +1,7 @@
 # notes.french.lang
 #   language messages for the notes module
 #
-# $Id: notes.french.lang,v 1.2 2003/01/29 05:48:42 wcc Exp $
+# $Id: notes.french.lang,v 1.3 2004/02/01 06:13:03 wcc Exp $
 
 0xc000,  Fait suivre les notes à : %.70s\n
 0xc001,%d note%s transférées de %s à %s.
@@ -15,21 +15,19 @@
 0xc009,Vous n'avez pas de messages
 0xc00a, -- EXPIRE AUJOURD'HUI
 0xc00b, -- EXPIRE DANS %d JOUR%s
-0xc00c,Vous avez les notes suivantes en attente
+0xc00c,Vous avez les note(s) suivantes en attente
 0xc00d,Vous n'avez pas autant de messages
 0xc00e,Utilisez '.notes read' pour les lire.
 0xc00f,Je ne peux pas modifier le fichier de notes
 0xc010,Toutes les notes on été effacées
 0xc011,Effacé
 0xc012,reste
-0xc013,# peut être des nombres et/ou intervalles séparé par ;
+0xc013,'#' peut être des nombres et/ou intervalles séparé par ';'.
 0xc014,C'est un bot. Vous ne pouvez pas laisser de notes aux bots.
 0xc015,Note externe
 0xc016,Note délivrée.
 0xc017,Pour la liste :
-0xc018,NOTICE %s :Vous avez %d note%s en attente sur %s.\n
 0xc019,### vous avez %d note%s en attente.\n
-0xc01a,### Utilisez '.notes read' pour les lire.\n
 0xc01b,Les notes seront stockées.
 0xc01c,Vous n'êtes pas autorisé à changer l'ignorance des notes pour %s\n
 0xc01d,L'utilisateur %s n'existe pas.\n
@@ -45,3 +43,5 @@
 0xc027,Vous devez fournir un nom de bot à qui faire suivre les notes.
 0xc028,Changement de l'ignorance des notes de %s à : %s\n
 0xc029,La fonction doit être INDEX, READ, ou ERASE.
+0xc02a,Utilisez '.notes read' pour le lire.
+0xc02b,NOTICE %s :Vous avez %d note%s en attente.\n

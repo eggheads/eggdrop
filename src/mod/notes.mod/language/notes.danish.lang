@@ -1,7 +1,7 @@
 # notes.danish.lang
 #   language messages for the notes module
 #
-# $Id: notes.danish.lang,v 1.3 2003/03/20 00:04:48 wcc Exp $
+# $Id: notes.danish.lang,v 1.4 2004/02/01 06:13:03 wcc Exp $
 
 0xc000,  Videresend notitser til: %.70s\n
 0xc001,Skiftede %d notits%s fra %s til %s.
@@ -22,14 +22,12 @@
 0xc010,Slettede alle notitser
 0xc011,Slettet
 0xc012,tilbage
-0xc013,# kan være numre og/eller intervaller adskilt med ;
+0xc013,'#' kan være numre og/eller intervaller adskilt med ';'.
 0xc014,Det er en bot. Du kan ikke sende notitser til en bot.
 0xc015,Outside notits
 0xc016,Notits sendt.
 0xc017,For en liste:
-0xc018,NOTICE %s :Du har %d notits(er)%s ventende på %s.\n
 0xc019,### Du har %d notits(er)%s ventende.\n
-0xc01a,### Brug '.notes read' for at læse dem.\n
 0xc01b,Notitser vil blive gemt.
 0xc01c,Du har ikke tilladelse til at ændre notitsignoreringer for %s\n
 0xc01d,Brugeren %s findes ikke.\n
@@ -45,3 +43,5 @@
 0xc027,Du skal angive et botnavn at videresende til.
 0xc028,Ændrede notitsvideresendelse for %s til: %s\n
 0xc029,Funktion skal være en af følgende: INDEX, READ eller ERASE.
+0xc02a,Brug '.notes read' for at læse den.
+0xc02b,NOTICE %s :Du har %d note%s ventende.\n

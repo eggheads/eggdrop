@@ -7,7 +7,7 @@
  *   linking, unlinking, and relaying to another bot
  *   pinging the bots periodically and checking leaf status
  *
- * $Id: botnet.c,v 1.54 2004/01/09 05:56:36 wcc Exp $
+ * $Id: botnet.c,v 1.55 2004/02/01 06:13:02 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -562,7 +562,7 @@ void tell_bots(int idx)
   }
   if (s[0])
     dprintf(idx, "Bots: %s\n", s);
-  dprintf(idx, "(%s: %d)\n", MISC_TOTAL, tands + 1);
+  dprintf(idx, "%s: %d\n", MISC_TOTAL, tands + 1);
 }
 
 /* Show a simpleton bot tree

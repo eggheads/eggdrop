@@ -1,7 +1,7 @@
 # notes.english.lang
 #   language messages for the notes module
 #
-# $Id: notes.english.lang,v 1.4 2003/11/27 02:44:12 wcc Exp $
+# $Id: notes.english.lang,v 1.5 2004/02/01 06:13:03 wcc Exp $
 
 0xc000,  Forward notes to: %.70s\n
 0xc001,Switched %d note%s from %s to %s.
@@ -15,21 +15,19 @@
 0xc009,You have no messages
 0xc00a, -- EXPIRES TODAY
 0xc00b, -- EXPIRES IN %d DAY%s
-0xc00c,You have the following notes waiting
+0xc00c,You have the following note(s) waiting
 0xc00d,You don't have that many messages
 0xc00e,Use '.notes read' to read them.
 0xc00f,Can't modify the note file
 0xc010,Erased all notes
 0xc011,Erased
 0xc012,left
-0xc013,# may be numbers and/or intervals separated by ;
+0xc013,'#' may be numbers and/or intervals separated by ';'.
 0xc014,That's a bot. You can't leave notes for a bot.
 0xc015,Outside note
 0xc016,Note delivered.
 0xc017,For a list:
-0xc018,NOTICE %s :You have %d note%s waiting on %s.\n
 0xc019,### You have %d note%s waiting.\n
-0xc01a,### Use '.notes read' to read them.\n
 0xc01b,Notes will be stored.
 0xc01c,You are not allowed to change note ignores for %s\n
 0xc01d,User %s does not exist.\n
@@ -45,3 +43,5 @@
 0xc027,You must supply a botname to forward to.
 0xc028,Changed notes forwarding for %s to: %s\n
 0xc029,Function must be one of INDEX, READ, or ERASE.
+0xc02a,Use '.notes read' to read it.
+0xc02b,NOTICE %s :You have %d note%s waiting.\n
