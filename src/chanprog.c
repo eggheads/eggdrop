@@ -197,7 +197,7 @@ int expmem_chanprog()
 }
 
 /* dump uptime info out to dcc (guppy 9Jan99) */
-void tell_verbose_uptime(int idx, int showchan)
+void tell_verbose_uptime(int idx)
 {
   char s[256], s1[121];
   time_t now2, hr, min;
@@ -231,7 +231,7 @@ void tell_verbose_uptime(int idx, int showchan)
 }
 
 /* dump status info out to dcc */
-void tell_verbose_status(int idx, int showchan)
+void tell_verbose_status(int idx)
 {
   char s[256], s1[121], s2[81];
   char *vers_t, *uni_t;

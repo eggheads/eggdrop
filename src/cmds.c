@@ -537,7 +537,7 @@ static void cmd_match(struct userrec *u, int idx, char *par)
 static void cmd_uptime(struct userrec *u, int idx, char *par)
 {
   putlog(LOG_CMDS, "*", "#%s# uptime", dcc[idx].nick);
-  tell_verbose_uptime(idx, 1);
+  tell_verbose_uptime(idx);
 }
 
 static void cmd_status(struct userrec *u, int idx, char *par)
@@ -550,14 +550,14 @@ static void cmd_status(struct userrec *u, int idx, char *par)
       return;
     }
     putlog(LOG_CMDS, "*", "#%s# status all", dcc[idx].nick);
-    tell_verbose_status(idx, 1);
+    tell_verbose_status(idx);
     tell_mem_status_dcc(idx);
     dprintf(idx, "\n");
     tell_settings(idx);
     do_module_report(idx, 1, NULL);
   } else {
     putlog(LOG_CMDS, "*", "#%s# status", dcc[idx].nick);
-    tell_verbose_status(idx, 1);
+    tell_verbose_status(idx);
     tell_mem_status_dcc(idx);
     do_module_report(idx, 0, NULL);
   }

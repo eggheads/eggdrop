@@ -17,12 +17,12 @@ PATCH("CVS");    /* CVS beta */
  *
  *
  */
-PATCH("932494173"); /* current "unix" time */
+PATCH("932494539"); /* current "unix" time */
 /*
  *
  *
  */
-PATCH("sharemeuncleguppy.patch"); /* last patch added */ 
+PATCH("guppy-tellverbose.patch"); /* last patch added */ 
 /*
  *
  *

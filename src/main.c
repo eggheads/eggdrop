@@ -381,7 +381,7 @@ static void core_secondly()
     check_expired_dcc();
     if (con_chan && !backgrd) {
       dprintf(DP_STDOUT, "\033[2J\033[1;1H");
-      tell_verbose_status(DP_STDOUT, 0);
+      tell_verbose_status(DP_STDOUT);
       do_module_report(DP_STDOUT, 0, "server");
       do_module_report(DP_STDOUT, 0, "channels");
       tell_mem_status_dcc(DP_STDOUT);
