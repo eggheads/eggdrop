@@ -8,7 +8,7 @@
  * 
  * dprintf'ized, 28aug1995
  * 
- * $Id: dccutil.c,v 1.12 1999/12/24 14:21:53 fabian Exp $
+ * $Id: dccutil.c,v 1.13 1999/12/24 14:23:01 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -332,7 +332,8 @@ void tell_dcc(int zidx)
     }
     k = HANDLEN - strlen(dcc[i].nick);
     spaces[k] = 0;
-    dprintf(zidx, "%-4d %08X %5d %s%s %-17s %s\n", dcc[i].sock, dcc[i].addr,
+    dprintf(zidx, "%-4d %08X %5d %s%s %-17s %s\n", (dcc[i].type == &DCC_LOST) ?
+	    (-1) : dcc[i].sock, dcc[i].addr,
 	    dcc[i].port, dcc[i].nick, spaces, dcc[i].host + j, other);
     spaces[k] = ' ';
   }
