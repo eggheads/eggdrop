@@ -2,7 +2,7 @@
  * tclfiles.c -- part of filesys.mod
  *   Tcl stubs for file system commands moved here to support modules
  *
- * $Id: tclfiles.c,v 1.13 2001/05/25 11:06:04 poptix Exp $
+ * $Id: tclfiles.c,v 1.14 2001/06/10 00:11:51 poptix Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -183,7 +183,7 @@ static int tcl_setflags STDVAR
   filedb_entry *fdbe;
   char *s = NULL, *p, *d;
 
-  BADARGS(2, 3, " dir ?flags ?channel??");
+  BADARGS(3, 4, " dir ?flags ?channel??");
   malloc_strcpy(s, argv[1]);
   if (s[strlen(s) - 1] == '/')
      s[strlen(s) - 1] = 0;
@@ -261,6 +261,7 @@ static int tcl_getflags STDVAR
       !(fdbe->stat & FILE_DIR)) {
     Tcl_AppendResult(irp, "", NULL);
     my_free(s);
+    free_fdbe(&fdbe);
     return TCL_OK;
   }
   if (fdbe->flags_req) {
@@ -272,6 +273,7 @@ static int tcl_getflags STDVAR
   Tcl_AppendElement(irp, s);
   Tcl_AppendElement(irp, fdbe->chan);
   my_free(s);
+  free_fdbe(&fdbe);
   return TCL_OK;
 }
 

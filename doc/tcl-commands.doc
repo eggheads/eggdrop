@@ -1704,7 +1704,7 @@ users to read later
       "-2" if the idx matches an entry which is not a file transfer and the
       unix start-time of the file-transfer in all other cases.
 
-  mkdir <directory> [required-flags] [channel]
+  mkdir <directory> [<required-flags> [channel]]
     creates a directory in the files system, only users with the
     required flags may access
     returns:
@@ -1732,6 +1732,6 @@ users to read later
   getflags <dir>
     returns: the flags required to access this directory
 
-  setflags <dir> [flags]
+  setflags <dir> [<flags> [channel]]
     sets the flags required to access the directory
     returns: 0 on success, -1 on failure
