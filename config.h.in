@@ -1,5 +1,8 @@
 /* config.h.in.  Generated from configure.ac by autoheader.  */
 
+#ifndef _EGG_CONFIG_H
+#define _EGG_CONFIG_H
+
 /* Define if running on NeXT Step. */
 #undef BORGCUBES
 
@@ -323,3 +326,5 @@
 /* Define to empty if the keyword `volatile' does not work. Warning: valid
    code using `volatile' can become incorrect without. Disable with care. */
 #undef volatile
+
+#endif /* !_EGG_CONFIG_H */
