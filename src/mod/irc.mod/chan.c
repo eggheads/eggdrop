@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  * 
- * $Id: chan.c,v 1.57 2000/11/08 20:07:06 guppy Exp $
+ * $Id: chan.c,v 1.58 2000/11/08 22:55:06 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1442,32 +1442,11 @@ static int got332(char *from, char *msg)
   return 0;
 }
 
-static void do_embedded_mode(struct chanset_t *chan, char *nick,
-			     memberlist *m, char *mode)
-{
-  struct flag_record fr = {0, 0, 0, 0, 0, 0};
-  int servidx = findanyidx(serv);
-
-  while (*mode) {
-    switch (*mode) {
-    case 'o':
-      check_tcl_mode(dcc[servidx].host, "", NULL, chan->dname, "+o", nick);
-      got_op(chan, "", dcc[servidx].host, nick, NULL, &fr);
-      break;
-    case 'v':
-      check_tcl_mode(dcc[servidx].host, "", NULL, chan->dname, "+v", nick);
-      m->flags |= CHANVOICE;
-      break;
-    }
-    mode++;
-  }
-}
-
 /* Got a join
  */
 static int gotjoin(char *from, char *chname)
 {
-  char *nick, *p, *newmode, buf[UHOSTLEN], *uhost = buf;
+  char *nick, *p, buf[UHOSTLEN], *uhost = buf;
   char *ch_dname = NULL;
   struct chanset_t *chan;
   memberlist *m;
@@ -1477,16 +1456,6 @@ static int gotjoin(char *from, char *chname)
 
   Context;
   fixcolon(chname);
-  newmode = NULL;
-  /* ircd 2.9 sometimes does '#chname^Gmodes' when returning from splits,
-   * filter out the modes if we find a ^G.
-   */
-  p = strchr(chname, 7);
-  if (p != NULL) {
-    *p = 0;
-    newmode = (++p);
-  }
-
   chan = findchan(chname);
   if (!chan && chname[0] == '!') {
     /* As this is a !channel, we need to search for it by display (short)
@@ -1559,13 +1528,8 @@ static int gotjoin(char *from, char *chname)
 	m->user = u;
 	set_handle_laston(chan->dname, u, now);
 	m->flags |= STOPWHO;
-	if (newmode) {
-	  putlog(LOG_JOIN, chan->dname, "%s (%s) returned to %s (with +%s).",
-		 nick, uhost, chan->dname, newmode);
-	  do_embedded_mode(chan, nick, m, newmode);
-	} else
-	  putlog(LOG_JOIN, chan->dname, "%s (%s) returned to %s.", nick, uhost,
-		 chan->dname);
+	putlog(LOG_JOIN, chan->dname, "%s (%s) returned to %s.", nick, uhost,
+	       chan->dname);
       } else {
 	if (m)
 	  killmember(chan, nick);
@@ -1601,8 +1565,6 @@ static int gotjoin(char *from, char *chname)
 	   so we can use that. */
 	u = m->user;
 
-	if (newmode)
-	  do_embedded_mode(chan, nick, m, newmode);
 	if (match_my_nick(nick)) {
 	  /* It was me joining! Need to update the channel record with the
 	   * unique name for the channel (as the server see's it). <cybah>
@@ -1615,33 +1577,18 @@ static int gotjoin(char *from, char *chname)
 	   * important in this case. As the config file will never contain
 	   * logs with the unique name.
            */
-	  if (newmode) {
-	    if (chname[0] == '!')
-	      putlog(LOG_JOIN | LOG_MISC, chan->dname,
-	             "%s joined %s (%s), with +%s.",
-	             nick, chan->dname, chname, newmode);
-	    else
-	      putlog(LOG_JOIN | LOG_MISC, chan->dname,
-	             "%s joined %s (with +%s).", nick, chname, newmode);
-	  } else {
-	    if (chname[0] == '!')
-	      putlog(LOG_JOIN | LOG_MISC, chan->dname, "%s joined %s (%s)",
-	             nick, chan->dname, chname);
-	    else
-	      putlog(LOG_JOIN | LOG_MISC, chan->dname, "%s joined %s.", nick,
-	             chname);
-	  }
+	  if (chname[0] == '!')
+	    putlog(LOG_JOIN | LOG_MISC, chan->dname, "%s joined %s (%s)",
+	           nick, chan->dname, chname);
+	  else
+	    putlog(LOG_JOIN | LOG_MISC, chan->dname, "%s joined %s.", nick,
+	           chname);
 	  reset_chan_info(chan);
 	} else {
 	  struct chanuserrec *cr;
 
-	  if (newmode)
-	    putlog(LOG_JOIN, chan->dname,
-		   "%s (%s) joined %s (with +%s).", nick,
-		   uhost, chan->dname, newmode);
-	  else
-	    putlog(LOG_JOIN, chan->dname,
-		   "%s (%s) joined %s.", nick, uhost, chan->dname);
+	  putlog(LOG_JOIN, chan->dname,
+		 "%s (%s) joined %s.", nick, uhost, chan->dname);
 	  /* Don't re-display greeting if they've been on the channel
 	   * recently.
 	   */
