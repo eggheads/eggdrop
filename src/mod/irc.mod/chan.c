@@ -260,7 +260,10 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
       /* ban check or after? Could go before, and ban is not placed */
       if ((u_match_exempt(global_exempts,from))
 	  || (u_match_exempt(chan->exempts, from)))
-	add_mode(chan, '+', 'e', h);
+	return 1;		/* already exempted */
+      putlog(LOG_MISC | LOG_JOIN, chan->name, IRC_FLOODIGNORE3, p);
+      strcpy(ftype+4," flood");
+      u_addexempt(chan, h, origbotname, ftype, now + (60 * exempt_time),0);
       context;
       /* don't kick user if exempted */
       if (!channel_enforcebans(chan) && me_op(chan) && !isexempted(chan,h))
