@@ -2,7 +2,7 @@
  * cmdschan.c -- part of channels.mod
  *   commands from a user via dcc that cause server interaction
  *
- * $Id: cmdschan.c,v 1.68 2003/12/07 21:49:16 wcc Exp $
+ * $Id: cmdschan.c,v 1.69 2003/12/11 03:56:39 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -977,8 +977,12 @@ static void cmd_stick_yn(int idx, char *par, int yn)
       dprintf(idx, "No such channel.\n");
       return;
     }
-    if (i)
-      egg_snprintf(s, sizeof s, "%d", -i);
+    if (str_isdigit(s)) {
+      /* substract the numer of global exempts to get the number of the channel exempt */
+      j = u_setsticky_exempt(NULL, s, -1);
+      if (j < 0)
+        egg_snprintf(s, sizeof s, "%d", -j);
+    }
     j = u_setsticky_exempt(chan, s, yn);
     if (j > 0) {
       putlog(LOG_CMDS, "*", "#%s# %sstick exempt %s %s", dcc[idx].nick,
@@ -1011,8 +1015,12 @@ static void cmd_stick_yn(int idx, char *par, int yn)
       dprintf(idx, "No such channel.\n");
       return;
     }
-    if (i)
-      egg_snprintf(s, sizeof s, "%d", -i);
+    if (str_isdigit(s)) {
+      /* substract the numer of global invites to get the number of the channel invite */
+      j = u_setsticky_invite(NULL, s, -1);
+      if (j < 0)
+        egg_snprintf(s, sizeof s, "%d", -j);
+    }
     j = u_setsticky_invite(chan, s, yn);
     if (j > 0) {
       putlog(LOG_CMDS, "*", "#%s# %sstick invite %s %s", dcc[idx].nick,
@@ -1042,8 +1050,12 @@ static void cmd_stick_yn(int idx, char *par, int yn)
     dprintf(idx, "No such channel.\n");
     return;
   }
-  if (i)
-    egg_snprintf(s, sizeof s, "%d", -i);
+  if (str_isdigit(s)) {
+    /* substract the numer of global bans to get the number of the channel ban */
+    j = u_setsticky_ban(NULL, s, -1);
+    if (j < 0)
+      egg_snprintf(s, sizeof s, "%d", -j);
+  }
   j = u_setsticky_ban(chan, s, yn);
   if (j > 0) {
     putlog(LOG_CMDS, "*", "#%s# %sstick ban %s %s", dcc[idx].nick,
