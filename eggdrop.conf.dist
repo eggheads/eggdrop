@@ -439,16 +439,6 @@ channel add #lamest {
 #   how many joins/nick changes in how many seconds is a join flood?
 #   not specifying or using number = 0 will not check join floods!
 
-# when you .+chan #channel, its flood-chan, flood-deop, flood-kick,
-# flood-join and flood-ctcp settings will be automatically equal to
-# global-flood-chan, global-flood-deop, global-flood-kick,
-# global-flood-join and global-flood-ctcp. Same thing if you don't specify
-# the static channel flood settings.
-set global-flood-chan 10:60
-set global-flood-deop 3:10
-set global-flood-kick 3:10
-set global-flood-join 5:60
-set global-flood-ctcp 3:60
 
 # note that "need-op", "need-invite", etc, are limited to 120 characters,
 # so if you want to so something more complicated, just write a proc,
@@ -569,6 +559,15 @@ channel set #botcentral +bitch +clearbans +enforcebans -greet +revenge
 
 # these settings are used as
 # default values when you .+chan #chan
+# look in the section above for explanation
+# on every option
+
+set global-flood-chan 10:60
+set global-flood-deop 3:10
+set global-flood-kick 3:10
+set global-flood-join 5:60
+set global-flood-ctcp 3:60
+
 set global-chanset {
         -clearbans      -enforcebans
         +dynamicbans    +userbans   
@@ -816,6 +815,11 @@ set mode-buf-length 200
 # We now unbind this command by default to discourage them
 unbind msg - ident *msg:ident
 unbind msg - addhost *msg:addhost
+
+# If you or your users use many different hosts and wants to
+# be able to add it by /msg'ing you need to remove the
+# unbind ident line above or bind it to another word.
+#bind msg - myidentword *msg:ident
 
 # [0/1] If you are so lame you want the bot to display peoples info lines, even
 # when you are too lazy to add their chanrecs to a channel, set this to 1
