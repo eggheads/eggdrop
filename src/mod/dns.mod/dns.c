@@ -4,7 +4,7 @@
  * 
  * Written by Fabian Knittel <fknittel@gmx.de>
  * 
- * $Id: dns.c,v 1.8 2000/01/06 19:45:05 fabian Exp $
+ * $Id: dns.c,v 1.9 2000/01/09 14:59:29 fabian Exp $
  */
 /* 
  * Copyright (C) 1999  Eggheads
@@ -207,11 +207,8 @@ static char *dns_close()
       break;
     }
   }
-  dcc_remove_lost();		/* Remove lost dcc entries. */
 
-  Context;
   dns_free_cache();
-  Context;
   module_undepend(MODULE_NAME);
   Context;
   return NULL;
@@ -244,7 +241,6 @@ char *dns_start(Function *global_funcs)
 
   Context;
   module_register(MODULE_NAME, dns_table, 1, 0);
-  Context;
   add_hook(HOOK_SECONDLY, (Function) dns_check_expires);
   add_hook(HOOK_DNS_HOSTBYIP, (Function) dns_lookup);
   add_hook(HOOK_DNS_IPBYHOST, (Function) dns_forward);

@@ -7,7 +7,7 @@
  * 
  * dprintf'ized, 15nov1995
  * 
- * $Id: main.c,v 1.22 2000/01/06 19:45:02 fabian Exp $
+ * $Id: main.c,v 1.23 2000/01/09 14:59:28 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -985,7 +985,6 @@ int main(int argc, char **argv)
 	Function x;
 	char xx[256];
 
-	dcc_remove_lost();
 	while (f) {
 	  f = 0;
 	  for (p = module_list; p != NULL; p = p->next) {

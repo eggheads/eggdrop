@@ -1,24 +1,8 @@
-From: Chad Wagner <cmwagner@laker.net>
-Subject: %Eggdrop compiling.FAQ 7/4/96
-To: eggdrop@sodre.net
-Date: Thu, 4 Jul 1996 19:57:15 -0400 (EDT)
-
-As a preface to this, I just want to say that I haven't come up with all
-of these solutions, one I know for a fact is from this mailing list (don't
-know the originator of it -- it is the net.o one), another is from the
-eggdrop.doc (rephrased), and the others are solutions that I have come
-up with for problems.  (TCL_DONT_WAIT was one that Robey recommend to
-users using a 7.5 beta release of Tcl).  I will hopefully try to
-give credit where credit is due, but essentially I have just claimed it
-as contributors.  If anything is to be contributed I will place e-mail
-addresses with it on future contributions.
-
-
-
 EGGDROP AND TCL COMPILING ERRORS AND RESOLUTION FAQ
 (in other words, maybe this FAQ will help you get eggdrop compiled).
-by Chad Wagner <cmwagner@sodre.net> and contributors
-Last revised: July 4, 1996
+by various contributors. If you think something should be added, please
+send en E-Mail to eggheads@eggheads.org!
+Last revised: January 8 2000
 
 
 A. EGGDROP
@@ -386,3 +370,17 @@ We are deleting the getcwd.o object file.  The problem was that configure
 didn't detect that getcwd() wasn't necessary, so it caused a compatible
 getcwd() function to be compiled.
 
+ 5. There's no TCL installed on your shell
+
+If there's really no TCL installed on your shell, you can install it
+temporary in /tmp or your home. Get the newest version of TCL from 
+ftp.eggheads.org/pub/tcl/ (anything above TCL 8.2 should be fine) and
+follow the isntallation steps in the README.
+After you've installed tcl, you have to set environmental variables so
+configure can detect the new TCL. to achieve this, type this:
+
+    export TCLLIB=/path/to/tcl/lib
+    export TCLINC=/path/to/tcl/include
+
+Please note that on some unix machines export doesn't work and you have to
+use 'setenv' instead.

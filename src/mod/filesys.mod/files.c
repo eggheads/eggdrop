@@ -2,7 +2,7 @@
  * files.c - part of filesys.mod
  *   handles all file system commands
  * 
- * $Id: files.c,v 1.15 2000/01/02 02:42:11 fabian Exp $
+ * $Id: files.c,v 1.16 2000/01/09 14:59:29 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -463,6 +463,7 @@ static void cmd_reget_get(int idx, char *par, int resend)
   if (!fdb)
     return;
   filedb_readtop(fdb, NULL);
+  debug1("what: '%s'", what);
   fdbe = filedb_matchfile(fdb, ftell(fdb), what);
   if (!fdbe) {
     filedb_close(fdb);
@@ -505,15 +506,7 @@ static void cmd_reget_get(int idx, char *par, int resend)
 	}
 	my_free(bot);
       } else {
-	char *xx;
-
-	xx = nmalloc(strlen(fdbe->filename) + strlen(par) + 2);
-	if (par[0])
-	  sprintf(xx, "%s %s", fdbe->filename, par);
-	else
-	  strcpy(xx, fdbe->filename);
-	do_dcc_send(idx, destdir, xx, resend);
-	my_free(xx);
+	do_dcc_send(idx, destdir, fdbe->filename, par, resend);
 	/* Don't increase got count till later */
       }
     }
@@ -870,6 +863,14 @@ static void cmd_desc(int idx, char *par)
 	dprintf(idx, FILES_NOTOWNER, fdbe->filename);
       else {
 	if (desc[0]) {
+	  /* If the current description is the same as the new
+	   * one, don't change anything.
+	   */
+	  if (fdbe->desc && !strcmp(fdbe->desc, desc)) {
+	    free_fdbe(&fdbe);
+	    fdbe = filedb_matchfile(fdb, where, fn);
+	    continue;
+	  }
 	  malloc_strcpy(fdbe->desc, desc);
 	} else if (fdbe->desc) {
 	  my_free(fdbe->desc);
@@ -1461,12 +1462,7 @@ static int files_reget(int idx, char *fn, char *nick, int resend)
     }
   }
   filedb_close(fdb);
-  if (nick[0]) {
-    what = nrealloc(what, strlen(fdbe->filename) + strlen(nick) + 2);
-    sprintf(what, "%s %s", fdbe->filename, nick);
-  } else
-    malloc_strcpy(what, fdbe->filename);
-  do_dcc_send(idx, destdir, what, resend);
+  do_dcc_send(idx, destdir, fdbe->filename, nick, resend);
   my_free(what);
   my_free(destdir);
   free_fdbe(&fdbe);

@@ -1,7 +1,7 @@
 /* 
  * transfer.c -- part of transfer.mod
  * 
- * $Id: transfer.c,v 1.17 2000/01/06 19:45:06 fabian Exp $
+ * $Id: transfer.c,v 1.18 2000/01/09 14:59:29 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -180,6 +180,20 @@ static int at_limit(char *nick)
   return (x >= dcc_limit);
 }
 
+/* Replaces all spaces with underscores (' ' -> '_').  The returned buffer
+ * needs to be freed after use.
+ */
+static char *replace_spaces(char *fn)
+{
+  register char *ret, *p;
+
+  p = ret = nmalloc(strlen(fn) + 1);
+  strcpy(ret, fn);
+  while ((p = strchr(p, ' ')) != NULL)
+    *p = '_';
+  return ret;
+}
+
 
 /* 
  *    Tcl sent and rcvd functions
@@ -343,35 +357,40 @@ static void send_next_file(char *to)
     sprintf(s, "%s%s%s", this->dir, this->dir[0] ? "/" : "", this->file);
   }
   x = raw_dcc_send(s1, this->to, this->nick, s);
-  if (x == 1) {
-    wipe_tmp_filename(s1, -1);
+  if (x == DCCSEND_OK) {
+    if (strcasecmp(this->to, this->nick))
+      dprintf(DP_HELP, "NOTICE %s :Here is a file from %s ...\n", this->to,
+	      this->nick);
+    deq_this(this);
+    nfree(s);
+    nfree(s1);
+    return;
+  }
+  wipe_tmp_filename(s1, -1);
+  if (x == DCCSEND_FULL) {
     putlog(LOG_FILES, "*", "DCC connections full: GET %s [%s]", s1, this->nick);
     dprintf(DP_HELP,
 	    "NOTICE %s :DCC connections full; aborting queued files.\n",
 	    this->to);
     strcpy(s, this->to);
     flush_fileq(s);
-    nfree(s);
-    nfree(s1);
-    return;
-  }
-  if (x == 2) {
-    wipe_tmp_filename(s1, -1);
+  } else if (x == DCCSEND_NOSOCK) {
     putlog(LOG_FILES, "*", "DCC socket error: GET %s [%s]", s1, this->nick);
     dprintf(DP_HELP, "NOTICE %s :DCC socket error; aborting queued files.\n",
 	    this->to);
     strcpy(s, this->to);
     flush_fileq(s);
-    nfree(s);
-    nfree(s1);
-    return;
+  } else {
+    if (x == DCCSEND_FEMPTY) {
+      putlog(LOG_FILES, "*", "Aborted dcc get %s: File is empty!", this->file);
+      dprintf(DP_HELP, "NOTICE %s :File %s is empty, aborting transfer.\n",
+	      this->to, this->file);
+    }
+    deq_this(this);
   }
-  if (strcasecmp(this->to, this->nick))
-    dprintf(DP_HELP, "NOTICE %s :Here is a file from %s ...\n", this->to,
-	    this->nick);
-  deq_this(this);
   nfree(s);
   nfree(s1);
+  return;
 }
 
 static void show_queued_files(int idx)
@@ -683,7 +702,8 @@ static void eof_dcc_send(int idx)
     Context;
     /* Move the file from /tmp */
     ofn = nmalloc(strlen(tempdir) + strlen(dcc[idx].u.xfer->filename) + 1);
-    nfn = nmalloc(strlen(dcc[idx].u.xfer->dir) + strlen(dcc[idx].u.xfer->origname) + 1);
+    nfn = nmalloc(strlen(dcc[idx].u.xfer->dir)
+		  + strlen(dcc[idx].u.xfer->origname) + 1);
     simple_sprintf(ofn, "%s%s", tempdir, dcc[idx].u.xfer->filename);
     simple_sprintf(nfn, "%s%s", dcc[idx].u.xfer->dir,
 		   dcc[idx].u.xfer->origname);
@@ -846,7 +866,7 @@ static void dcc_get(int idx, char *buf, int len)
       }
       my_memcpy(bbuf, &(buf[p]), w);
     }
-    /* This is more compatable than ntohl for machines where an int
+    /* This is more compatible than ntohl for machines where an int
      * is more than 4 bytes:
      */
     cmp = ((unsigned int) (bbuf[0]) << 24) +
@@ -1310,11 +1330,15 @@ static int raw_dcc_resend_send(char *filename, char *nick, char *from,
 			       char *dir, int resend)
 {
   int zz, port, i;
-  char *nfn;
+  char *nfn, *buf = NULL;
   struct stat ss;
   FILE *f;
 
   Context;
+  stat(filename, &ss);
+  /* File empty?! */
+  if (ss.st_size == 0)
+    return DCCSEND_FEMPTY;
   port = reserved_port;
   zz = open_listen(&port);
   if (zz == (-1))
@@ -1329,7 +1353,6 @@ static int raw_dcc_resend_send(char *filename, char *nick, char *from,
     return DCCSEND_BADFN;
   if ((i = new_dcc(&DCC_GET_PENDING, sizeof(struct xfer_info))) == -1)
      return DCCSEND_FULL;
-  stat(filename, &ss);
   dcc[i].sock = zz;
   dcc[i].addr = (IP) (-559026163);
   dcc[i].port = port;
@@ -1337,6 +1360,8 @@ static int raw_dcc_resend_send(char *filename, char *nick, char *from,
   strcpy(dcc[i].host, "irc");
   dcc[i].u.xfer->filename = get_data_ptr(strlen(filename) + 1);
   strcpy(dcc[i].u.xfer->filename, filename);
+  if (strchr(nfn, ' '))
+    nfn = buf = replace_spaces(nfn);
   dcc[i].u.xfer->origname = get_data_ptr(strlen(nfn) + 1);
   strcpy(dcc[i].u.xfer->origname, nfn);
   strcpy(dcc[i].u.xfer->from, from);
@@ -1353,6 +1378,8 @@ static int raw_dcc_resend_send(char *filename, char *nick, char *from,
     putlog(LOG_FILES, "*", "Begin DCC %ssend %s to %s", resend ? "re" :  "",
 	   nfn, nick);
   }
+  if (buf)
+    nfree(buf);
   return DCCSEND_OK;
 }
 
@@ -1774,8 +1801,6 @@ static char *transfer_close()
     else if (dcc[i].type == &DCC_FORK_SEND)
       eof_dcc_fork_send(i);
   }
-  /* Remove lost dcc entries */
-  dcc_remove_lost();
   while (fileq)
     deq_this(fileq);
   del_entry_type(&USERENTRY_FSTAT);

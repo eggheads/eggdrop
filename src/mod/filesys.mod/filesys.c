@@ -2,7 +2,7 @@
  * filesys.c -- part of filesys.mod
  *   main file of the filesys eggdrop module
  * 
- * $Id: filesys.c,v 1.20 2000/01/02 02:42:11 fabian Exp $
+ * $Id: filesys.c,v 1.21 2000/01/09 14:59:29 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -356,7 +356,7 @@ static int _dcc_send(int idx, char *filename, char *nick, char *dir,
 		     int resend)
 {
   int x;
-  char *nfn;
+  char *nfn, *buf = NULL;
 
   Context;
   if (strlen(nick) > HANDLEN)
@@ -389,30 +389,46 @@ static int _dcc_send(int idx, char *filename, char *nick, char *dir,
 	   resend ? "RE" : "", dcc[idx].nick);
     return 0;
   }
+  if (x == DCCSEND_FEMPTY) {
+    dprintf(idx, "The file is empty.  Aborted transfer.\n");
+    putlog(LOG_FILES, "*", "DCC file is empty: %s [%s]", filename,
+	   dcc[idx].nick);
+    return 0;
+  }
   nfn = strrchr(dir, '/');
   if (nfn == NULL)
     nfn = dir;
   else
     nfn++;
+
+  /* Eliminate any spaces in the filename. */
+  if (strchr(nfn, ' ')) {
+    char *p;
+
+    malloc_strcpy(buf, nfn);
+    p = nfn = buf;
+    while ((p = strchr(p, ' ')) != NULL)
+      *p = '_';
+  }
+    
   if (strcasecmp(nick, dcc[idx].nick))
     dprintf(DP_HELP, "NOTICE %s :Here is %s file from %s %s...\n", nick,
 	    resend ? "the" : "a", dcc[idx].nick, resend ? "again " : "");
   dprintf(idx, "Type '/DCC %sGET %s %s' to receive.\n", resend ? "RE" : "",
 	  botname, nfn);
   dprintf(idx, "%sending: %s to %s\n", resend ? "Res" : "S", nfn, nick);
+  my_free(buf);
   return 1;
 }
 
-static int do_dcc_send(int idx, char *dir, char *nick, int resend)
+static int do_dcc_send(int idx, char *dir, char *fn, char *nick, int resend)
 {
-  char *s = NULL, *s1 = NULL, *fn;
+  char *s = NULL, *s1 = NULL;
   FILE *f;
   int x;
 
   Context;
-  /* Nickname? */
-  fn = newsplit(&nick);
-  if (strlen(nick) > NICKMAX)
+  if (nick && (strlen(nick) > NICKMAX))
     nick[NICKMAX] = 0;
   if (dccdir[0] == 0) {
     dprintf(idx, "DCC file transfers not supported.\n");
@@ -442,7 +458,7 @@ static int do_dcc_send(int idx, char *dir, char *nick, int resend)
     return 0;
   }
   fclose(f);
-  if (!nick[0])
+  if (!nick || !nick[0])
     nick = dcc[idx].nick;
   /* Already have too many transfers active for this user?  queue it */
   if (at_limit(nick)) {
@@ -941,7 +957,6 @@ static char *filesys_close()
       killsock(dcc[i].sock);
       lostdcc(i);
     }
-  dcc_remove_lost();			/* Remove lost dcc entries. */
   rem_tcl_commands(mytcls);
   rem_tcl_strings(mystrings);
   rem_tcl_ints(myints);

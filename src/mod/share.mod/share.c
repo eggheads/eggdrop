@@ -1,7 +1,7 @@
 /* 
  * share.c -- part of share.mod
  * 
- * $Id: share.c,v 1.18 2000/01/06 19:45:06 fabian Exp $
+ * $Id: share.c,v 1.19 2000/01/09 14:59:29 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1769,8 +1769,10 @@ static void start_sending_users(int idx)
     dprintf(idx, "s e %s\n", USERF_CANTSEND);
     Context;
     putlog(LOG_BOTS, "*", "%s -- can't send userfile",
-	   i == 1 ? "NO MORE DCC CONNECTIONS" :
-	   i == 2 ? "CAN'T OPEN A LISTENING SOCKET" : "BAD FILE");
+	   i == DCCSEND_FULL   ? "NO MORE DCC CONNECTIONS" :
+	   i == DCCSEND_NOSOCK ? "CAN'T OPEN A LISTENING SOCKET" :
+	   i == DCCSEND_BADFN  ? "BAD FILE" :
+	   i == DCCSEND_FEMPTY ? "EMPTY FILE" : "UNKNOWN REASON!");
     dcc[idx].status &= ~(STAT_SHARE | STAT_SENDING | STAT_AGGRESSIVE);
   } else {
     Context;

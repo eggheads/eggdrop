@@ -1,7 +1,7 @@
 /* 
  * transfer.h -- part of transfer.mod
  * 
- * $Id: transfer.h,v 1.7 2000/01/06 19:45:06 fabian Exp $
+ * $Id: transfer.h,v 1.8 2000/01/09 14:59:30 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -29,7 +29,8 @@ enum dccsend_types {
   DCCSEND_OK = 0,
   DCCSEND_FULL,		/* DCC table is full			*/
   DCCSEND_NOSOCK,	/* Can not open a listening socket	*/
-  DCCSEND_BADFN		/* No such file				*/
+  DCCSEND_BADFN,	/* No such file				*/
+  DCCSEND_FEMPTY	/* File is empty			*/
 };
 
 #ifndef MAKING_TRANSFER

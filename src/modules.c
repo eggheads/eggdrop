@@ -4,7 +4,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: modules.c,v 1.20 2000/01/06 19:46:54 fabian Exp $
+ * $Id: modules.c,v 1.21 2000/01/09 14:59:29 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -490,9 +490,8 @@ Function global_table[] =
   (Function) & protect_readonly, /* int */
   (Function) findchan_by_dname,
   (Function) removedcc,
-  (Function) dcc_remove_lost,
-  /* 248 - 251 */
   (Function) & userfile_perm,	/* int */
+  /* 248 - 251 */
 };
 
 void init_modules(void)

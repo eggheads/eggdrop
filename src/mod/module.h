@@ -1,7 +1,7 @@
 /* 
  * module.h
  * 
- * $Id: module.h,v 1.18 2000/01/06 19:46:54 fabian Exp $
+ * $Id: module.h,v 1.19 2000/01/09 14:59:29 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -380,9 +380,8 @@
 #define protect_readonly (*(int *)(global[244]))
 #define findchan_by_dname ((struct chanset_t *(*)(char *))global[245])
 #define removedcc ((void (*) (int))global[246])
-#define dcc_remove_lost ((void (*) (void))global[247])
+#define userfile_perm (*(int *)global[247])
 /* 248 - 251 */
-#define userfile_perm (*(int *)global[248])
 
 /* this is for blowfish module, couldnt be bothereed making a whole new .h
  * file for it ;) */
