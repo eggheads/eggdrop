@@ -89,7 +89,7 @@ all: @DEFAULT_MAKE@
 clean:
 	@rm -f $(EGGEXEC) *.so *.stamp core DEBUG *~
 	@cd doc; $(MAKE) clean
-	@cd scripts $(MAKE) clean
+	@cd scripts; $(MAKE) clean
 	@cd src; $(MAKE) clean
 	@cd src/md5; $(MAKE) clean
 	@cd src/mod; $(MAKE) clean
