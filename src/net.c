@@ -2,7 +2,7 @@
  * net.c -- handles:
  *   all raw network i/o
  * 
- * $Id: net.c,v 1.40 2002/07/22 05:55:22 guppy Exp $
+ * $Id: net.c,v 1.41 2002/07/25 20:00:18 wcc Exp $
  */
 /* 
  * This is hereby released into the public domain.
@@ -791,6 +791,9 @@ int sockgets(char *s, int *len)
               if (socklist[i].inbuf != NULL) {
                 strcpy(s, socklist[i].inbuf);
                 *len = strlen(s);
+                nfree(socklist[i].inbuf);
+                socklist[i].inbuf = NULL;
+                socklist[i].inbuflen = 0;
                 return socklist[i].sock;
               }
             }
@@ -938,6 +941,9 @@ int sockgets(char *s, int *len)
       if (socklist[ret].inbuf != NULL) {
         strcpy(s, socklist[ret].inbuf);
         *len = strlen(s);
+        nfree(socklist[ret].inbuf);
+        socklist[ret].inbuf = NULL;
+        socklist[ret].inbuflen = 0;
       }
     }
     return socklist[ret].sock;
