@@ -257,7 +257,7 @@ Telnet to the bot and enter 'NEW' as your nickname.
 0x65d,Channel invite only--can't join:
 0x65e,Banned from channel--can't join:
 0x65f,Server says I'm not on channel:
-0x660,Bad key--can't join: %s
+0x660,Bad key--can't join:
 0x661,NOTICE %s :All commands are done via /MSG. For the complete list, /MSG %s help   Cya!\n
 0x662,NOTICE %s :I don't recognize you from that host.\n
 0x663,NOTICE %s :Either you are using someone else's nickname or you need to type: /MSG %s IDENT (password)\n

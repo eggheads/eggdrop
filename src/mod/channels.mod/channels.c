@@ -400,14 +400,14 @@ static void write_channels()
 	    channel_seen(chan) ? '+' : '-');
     fprintf(f, "%cinactive ",
 	    channel_inactive(chan) ? '+' : '-');
-/*  fprintf(f, "%cdynamicexempts ", 
+    fprintf(f, "%cdynamicexempts ", 
             channel_dynamicexempts(chan) ? '+' : '-');
     fprintf(f, "%cuserexempts ", 
             channel_nouserexempts(chan) ? '-' : '+');
     fprintf(f, "%cdynamicinvites ", 
  	    channel_dynamicinvites(chan) ? '+' : '-');
     fprintf(f, "%cuserinvites ", 
-            channel_nouserinvites(chan) ? '-' : '+');*/
+            channel_nouserinvites(chan) ? '-' : '+');
 
     fprintf(f, "%c\n", channel_static(chan) ? ' ' : '}');
     if (fflush(f)) {

@@ -493,7 +493,8 @@ static void recheck_exempt (struct chanset_t * chan) {
   
   for (i = 0; i < 2; i++) 
     for (e = i ? chan->exempts : global_exempts; e; e = e->next) 
-      if (!isexempted(chan, e->exemptmask) && (e->flags & EXEMPTREC_STICKY))
+      if (!isexempted(chan, e->exemptmask) && (!channel_dynamicexempts(chan) ||
+					       e->flags & EXEMPTREC_STICKY))
 	add_mode(chan, '+', 'e', e->exemptmask);
 }
 
@@ -504,7 +505,8 @@ static void recheck_invite (struct chanset_t * chan) {
   
   for (i = 0; i < 2; i++) 
     for (ir = i ? chan->invites : global_invites; ir; ir = ir->next) 
-      if (!isinvited(chan, ir->invitemask)  && (ir->flags & INVITEREC_STICKY))
+      if (!isinvited(chan, ir->invitemask)  && (!channel_dynamicinvites(chan) ||
+						ir->flags & INVITEREC_STICKY))
 	add_mode(chan, '+', 'I', ir->invitemask);
 }
 

@@ -234,7 +234,7 @@ Baue eine Telnetverbindung zu dem Bot auf und gib 'NEW' als deinen Nickname.
 0x65d,Channel invite only -- kann folgenden Channel nicht betreten:
 0x65e,Gebannt von Channel -- kann folgenden Channel nicht betreten:
 0x65f,Server sagt ich sei nicht auf Channel:
-0x660,Falsches Passwort -- kann folgenden Channel nicht betreten: %s
+0x660,Falsches Passwort -- kann folgenden Channel nicht betreten:
 0x661,NOTICE %s :Alle Befehle erfolgen via /MSG. Für eine vollständige Liste, /MSG %s help   CU!\n
 0x662,NOTICE %s :Ich erkenne Dich nicht mit diesem Host.\n
 0x663,NOTICE %s :Entweder Du benutzt den Nickname von jemand anderem oder Du mußt eingeben: /MSG %s IDENT (password)\n

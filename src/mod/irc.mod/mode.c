@@ -681,6 +681,12 @@ static void got_exempt(struct chanset_t *chan, char *nick, char *from,
   bogus = 0;
   check = 1;
   if (!match_my_nick(nick)) {	/* it's not my exemption */
+    if (channel_nouserexempts(chan) && !glob_bot(user) &&
+	!glob_master(user) && !chan_master(user)) {
+      /* no exempts made by users */
+      add_mode(chan, '-', 'e', who);
+      return;
+    }
     for (i = 0; who[i]; i++)
       if (((who[i] < 32) || (who[i] == 127)) &&
 	  (who[i] != 2) && (who[i] != 22) && (who[i] != 31))
@@ -760,7 +766,7 @@ static void got_unexempt(struct chanset_t *chan, char *nick, char *from,
     add_mode(chan, '+', 'e', who);
   }
   if ((u_equals_exempt(global_exempts,who) || u_equals_exempt(chan->exempts, who)) &&
-      me_op(chan) && !channel_dynamicbans(chan)) {
+      me_op(chan) && !channel_dynamicexempts(chan)) {
     /* that's a permexempt! */
     if (glob_bot(user) && (bot_flags(u) & BOT_SHARE)) {
       /* sharebot -- do nothing */
@@ -782,6 +788,12 @@ static void got_invite(struct chanset_t *chan, char *nick, char *from,
   bogus = 0;
   check = 1;
   if (!match_my_nick(nick)) {	/* it's not my invitation */
+    if (channel_nouserinvites(chan) && !glob_bot(user) &&
+	!glob_master(user) && !chan_master(user)) {
+      /* no exempts made by users */
+      add_mode(chan, '-', 'I', who);
+      return;
+    }
     for (i = 0; who[i]; i++)
       if (((who[i] < 32) || (who[i] == 127)) &&
 	  (who[i] != 2) && (who[i] != 22) && (who[i] != 31))
@@ -860,7 +872,7 @@ static void got_uninvite(struct chanset_t *chan, char *nick, char *from,
     add_mode(chan, '+', 'I', who);
   }
   if ((u_equals_invite(global_invites,who) || u_equals_invite(chan->invites, who)) &&
-      me_op(chan) && !channel_dynamicbans(chan)) {
+      me_op(chan) && !channel_dynamicinvites(chan)) {
     /* that's a perminvite! */
     if (glob_bot(user) && (bot_flags(u) & BOT_SHARE)) {
       /* sharebot -- do nothing */

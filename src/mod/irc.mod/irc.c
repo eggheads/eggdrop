@@ -498,7 +498,7 @@ static void check_expired_chanstuff()
 	}
       }
     }
-    if (channel_dynamicbans(chan) && me_op(chan)) {
+    if (channel_dynamicexempts(chan) && me_op(chan)) {
       for (e = chan->channel.exempt; e->exempt[0]; e = e->next) {
 	if ((exempt_time != 0) && 
 	    (((now - e->timer) > (60 * exempt_time)) &&
@@ -512,7 +512,7 @@ static void check_expired_chanstuff()
 	}
       }
     }
-     if (channel_dynamicbans(chan) && me_op(chan)) {
+     if (channel_dynamicinvites(chan) && me_op(chan)) {
       for (inv = chan->channel.invite; inv->invite[0]; inv = inv->next) {
 	if ((invite_time != 0) &&
 	    (((now - inv->timer) > (60 * invite_time)) &&

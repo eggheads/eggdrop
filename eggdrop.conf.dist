@@ -479,6 +479,26 @@ channel set #lamest +dynamicbans
 #   require all bans to be made through the bot's console)
 channel set #lamest +userbans
 
+#   only activate exempts on the channel when necessary?  (this keeps the
+#   channel's exempt list from getting excessively long.  the bot still 
+#   remembers every exempt, but it only activates a exempt on the channel
+#   when it sees  someone join who matches that exempt.)
+channel set #lamest +dynamicexempts
+
+#   allow exempts to be made by users directly?  (if turned off, the bot will
+#   require all exempts to be made through the bot's console)
+channel set #lamest +userexempts
+
+#   only activate invites on the channel when necessary?  (this keeps the
+#   channel's invite list from getting excessively long.  the bot still 
+#   remembers every invite, but it only activates a invite on the channel
+#   when it sees  someone join who matches that invite.)
+channel set #lamest +dynamicinvites
+
+#   allow invites to be made by users directly?  (if turned off, the bot will
+#   require all invites to be made through the bot's console)
+channel set #lamest +userinvites
+
 #   op users with the +o (op) flag as soon as they join the channel?
 #   (hint: this is a BAD IDEA)
 channel set #lamest -autoop

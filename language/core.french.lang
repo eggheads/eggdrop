@@ -231,7 +231,7 @@
 0x65d,Le canal est réservé aux invités -- je ne peux venir sur:
 0x65e,Je suis banni du canal -- je ne peux venir sur:
 0x65f,Le serveur dit que je ne suis pas sur le canal:
-0x660,Mauvaise clé -- je ne peux venir sur: %s
+0x660,Mauvaise clé -- je ne peux venir sur:
 0x661,NOTICE %s :Toutes les commandes sont faites par /MSG. pour la liste complete, /MSG %s help   Cya!\n
 0x662,NOTICE %s :Je ne vous reconnais pas sur ce host.\n
 0x663,NOTICE %s :Soit vous utilisez le nick de quelqu'un d'autre, soit vous devez taper: /MSG %s IDENT (mot de passe)\n

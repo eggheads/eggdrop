@@ -800,22 +800,22 @@ static int tcl_channel_info(Tcl_Interp * irp, struct chanset_t *chan)
     Tcl_AppendElement(irp, "+seen");
   else
     Tcl_AppendElement(irp, "-seen");
-  /*if (chan->ircnet_status& CHAN_DYNAMICEXEMPTS)
+  if (chan->ircnet_status& CHAN_DYNAMICEXEMPTS)
     Tcl_AppendElement(irp, "+dynamicexempts");
-    else
+  else
     Tcl_AppendElement(irp, "-dynamicexempts");
-    if (chan->ircnet_status& CHAN_NOUSEREXEMPTS)
+  if (chan->ircnet_status& CHAN_NOUSEREXEMPTS)
     Tcl_AppendElement(irp, "-userexempts");
-    else
+  else
     Tcl_AppendElement(irp, "+userexempts");
-    if (chan->ircnet_status& CHAN_DYNAMICINVITES)
+  if (chan->ircnet_status& CHAN_DYNAMICINVITES)
     Tcl_AppendElement(irp, "+dynamicinvites");
-    else
+  else
     Tcl_AppendElement(irp, "-dynamicinvites");
-    if (chan->ircnet_status& CHAN_NOUSERINVITES)
+  if (chan->ircnet_status& CHAN_NOUSERINVITES)
     Tcl_AppendElement(irp, "-userinvites");
-    else
-    Tcl_AppendElement(irp, "+userinvites");*/
+  else
+    Tcl_AppendElement(irp, "+userinvites");
   return TCL_OK;
 }
 
@@ -1028,26 +1028,26 @@ static int tcl_channel_modify(Tcl_Interp * irp, struct chanset_t *chan,
       chan->status |= CHAN_SEEN;
     else if (!strcmp(item[i], "-seen"))
       chan->status &= ~CHAN_SEEN;
-    /*else if (!strcmp(item[i], "+dynamicexempts"))
+    else if (!strcmp(item[i], "+dynamicexempts"))
       chan->ircnet_status|= CHAN_DYNAMICEXEMPTS;
-      else if (!strcmp(item[i], "-dynamicexempts"))
+    else if (!strcmp(item[i], "-dynamicexempts"))
       chan->ircnet_status&= ~CHAN_DYNAMICEXEMPTS;
-      else if (!strcmp(item[i], "-userexempts"))
+    else if (!strcmp(item[i], "-userexempts"))
       chan->ircnet_status|= CHAN_NOUSEREXEMPTS;
-      else if (!strcmp(item[i], "+userexempts"))
+    else if (!strcmp(item[i], "+userexempts"))
       chan->ircnet_status&= ~CHAN_NOUSEREXEMPTS;
-      else if (!strcmp(item[i], "+dynamicinvites"))
+    else if (!strcmp(item[i], "+dynamicinvites"))
       chan->ircnet_status|= CHAN_DYNAMICINVITES;
-      else if (!strcmp(item[i], "-dynamicinvites"))
+    else if (!strcmp(item[i], "-dynamicinvites"))
       chan->ircnet_status&= ~CHAN_DYNAMICINVITES;
-      else if (!strcmp(item[i], "-userinvites"))
+    else if (!strcmp(item[i], "-userinvites"))
       chan->ircnet_status|= CHAN_NOUSERINVITES;
-      else if (!strcmp(item[i], "+userinvites"))
-      chan->ircnet_status&= ~CHAN_NOUSERINVITES;*/
-   else if (!strncmp(item[i], "flood-", 6)) {
+    else if (!strcmp(item[i], "+userinvites"))
+      chan->ircnet_status&= ~CHAN_NOUSERINVITES;
+    else if (!strncmp(item[i], "flood-", 6)) {
       int *pthr = 0, *ptime;
       char *p;
-
+      
       if (!strcmp(item[i] + 6, "chan")) {
 	pthr = &chan->flood_pub_thr;
 	ptime = &chan->flood_pub_time;
@@ -1484,7 +1484,7 @@ static int tcl_channel_add(Tcl_Interp * irp, char *newname, char *options)
     chan->status = CHAN_DYNAMICBANS | CHAN_GREET | CHAN_PROTECTOPS |
 		   CHAN_DONTKICKOPS | CHAN_LOGSTATUS | CHAN_STOPNETHACK |
 		   CHAN_CYCLE;
-    /*chan->ircnet_status= CHAN_DYNAMICEXEMPTS | CHAN_DYNAMICINVITES;*/
+    chan->ircnet_status= CHAN_DYNAMICEXEMPTS | CHAN_DYNAMICINVITES;
     chan->limit = (-1);
     chan->flood_pub_thr = gfld_chan_thr;
     chan->flood_pub_time = gfld_chan_time;

@@ -1228,12 +1228,12 @@ static void cmd_chaninfo(struct userrec *u, int idx, char *par)
 	    (chan->status & CHAN_DONTKICKOPS) ? '+' : '-',
 	    (chan->status & CHAN_WASOPTEST) ? '+' : '-',
 	    (chan->status & CHAN_INACTIVE) ? '+' : '-');
-    /*dprintf(idx, "     %cdynamicexempts            %cuserexempts\n",
-      (chan->ircnet_status & CHAN_DYNAMICEXEMPTS) ? '+' : '-',
-      (chan->ircnet_status & CHAN_NOUSEREXEMPTS) ? '-' : '+'); 
-      dprintf(idx, "     %cdynamicinvites            %cuserinvites\n",
-      (chan->ircnet_status & CHAN_DYNAMICINVITES) ? '+' : '-',
-      (chan->ircnet_status & CHAN_NOUSERINVITES) ? '-' : '+');*/
+    dprintf(idx, "     %cdynamicexempts            %cuserexempts\n",
+	    (chan->ircnet_status & CHAN_DYNAMICEXEMPTS) ? '+' : '-',
+	    (chan->ircnet_status & CHAN_NOUSEREXEMPTS) ? '-' : '+'); 
+    dprintf(idx, "     %cdynamicinvites            %cuserinvites\n",
+	    (chan->ircnet_status & CHAN_DYNAMICINVITES) ? '+' : '-',
+	    (chan->ircnet_status & CHAN_NOUSERINVITES) ? '-' : '+');
     dprintf(idx, "     %cprotectfriends\n",
             (chan->status & CHAN_PROTECTFRIENDS) ? '+' : '-');
     dprintf(idx, "flood settings: chan ctcp join kick deop\n");
