@@ -53,6 +53,3 @@ mod.wire
 
 mod.woobie
   Documentation for the woobie module is provided in this file.
-
-tricks
-  This document contains tweaking tips for your config file.

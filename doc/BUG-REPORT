@@ -88,8 +88,8 @@ Instructions:
 4.1) The logged last context (example: Last context: userent.c/973 []):
 
 4.2) If the bot wrote to the file DEBUG, copy the text -contents- of
-     that file here (NOTE: It should be about 20 lines of info, could
-     be a few lines more):
+     that file here (NOTE: It should be about 20 lines of info, but it
+     could be a few lines more):
 
 4.3) Your comments and a description of the bug:
 

@@ -1,8 +1,7 @@
 ##### TRANSFER MODULE #####
 
 The transfer module provides dcc send/get support and userfile transfer
-support for userfile sharing. Un-comment the next line to load it if you 
-need this functionality.
+support for userfile sharing.
 
 This module requires: none
 
