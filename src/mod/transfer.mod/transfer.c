@@ -1,7 +1,7 @@
 /*
  * transfer.c -- part of transfer.mod
  *
- * $Id: transfer.c,v 1.36 2001/04/12 02:39:47 guppy Exp $
+ * $Id: transfer.c,v 1.37 2001/04/12 02:44:23 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1851,7 +1851,7 @@ static int ctcp_DCC_RESUME(char *nick, char *from, char *handle,
 
     dprintf(DP_HELP, "NOTICE %s :Ignoring resume of `%s': no data requested.\n",
 	    nick, p ? p + 1 : dcc[i].u.xfer->origname);
-    return 1;
+    return 0;
   }
   dcc[i].u.xfer->type = XFER_RESUME_PEND;
   dcc[i].u.xfer->offset = offset;

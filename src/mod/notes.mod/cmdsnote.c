@@ -2,7 +2,7 @@
  * cmdsnote.c -- part of notes.mod
  *   handles all notes interaction over the party line
  *
- * $Id: cmdsnote.c,v 1.11 2001/04/12 02:39:47 guppy Exp $
+ * $Id: cmdsnote.c,v 1.12 2001/04/12 02:44:23 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -73,7 +73,7 @@ static void cmd_mns_noteign(struct userrec *u, int idx, char *par)
     dprintf(idx, "%s: -noteign [handle] <ignoremask>\n", NOTES_USAGE);
     return;
   }
-  putlog(LOG_CMDS, "*", "#%s# -noteignore %s", dcc[idx].nick, par);
+  putlog(LOG_CMDS, "*", "#%s# -noteign %s", dcc[idx].nick, par);
   p = buf = nmalloc(strlen(par)+1);
   strcpy(p, par);
   handle = newsplit(&p);

@@ -5,7 +5,7 @@
  *
  * Modified/written by Fabian Knittel <fknittel@gmx.de>
  *
- * $Id: coredns.c,v 1.19 2001/04/12 02:39:46 guppy Exp $
+ * $Id: coredns.c,v 1.20 2001/04/12 02:44:22 guppy Exp $
  */
 /*
  * Portions Copyright (C) 1999, 2000, 2001 Eggheads Development Team
@@ -175,7 +175,7 @@ static long aseed;
 
 static int resfd;
 
-static char tempstring[16384 + 1 + 1];
+static char tempstring[512];
 static char namestring[1024 + 1];
 static char stackstring[1024 + 1];
 

@@ -2,7 +2,7 @@
  * misc.c -- handles:
  *   copyfile() movefile()
  *
- * $Id: misc_file.c,v 1.4 2001/04/12 02:39:43 guppy Exp $
+ * $Id: misc_file.c,v 1.5 2001/04/12 02:44:22 guppy Exp $
  */
 /*
  * Copyright (C) 1999, 2000, 2001 Eggheads Development Team
@@ -69,6 +69,9 @@ int copyfile(char *oldpath, char *newpath)
       }
     }
   }
+#ifdef HAVE_FSYNC
+  fsync(fo);
+#endif /* HAVE_FSYNC */
   close(fo);
   close(fi);
   return 0;
