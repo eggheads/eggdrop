@@ -13,8 +13,8 @@ static: ../server.o
 
 modules: ../../../server.so
 
-../server.o: ../module.h ../modvals.h ../../eggdrop.h cmdsserv.c server.c \
-servmsg.c server.h
+../server.o: cmdsserv.c server.c server.h servmsg.c ../module.h \
+../modvals.h ../../eggdrop.h
 	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c server.c
 	rm -f ../server.o
 	mv server.o ../

@@ -1,6 +1,8 @@
 # Makefile for src/
 
+SHELL = /bin/sh
 top_srcdir = @top_srcdir@
+
 @SET_MAKE@
 INSTALL = @INSTALL@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
@@ -12,45 +14,25 @@ dccutil.o flags.o language.o main.o mem.o misc.o \
 modules.o net.o rfc1459.o tcl.o tcldcc.o tclhash.o \
 tclmisc.o tcluser.o userent.o userrec.o users.o md5/md5c.o
 
+MAKE_MD5 = $(MAKE) 'MAKE=$(MAKE)' 'CC=$(CC)' 'LD=$(LD)' \
+'STRIP=$(STRIP)' 'CFLAGS=$(CFLAGS)' 'CPPFLAGS=$(CPPFLAGS)'
+
 doofus:
 	@echo ""
 	@echo "Let's try this from the right directory..."
 	@echo ""
 	@cd $(top_srcdir); $(MAKE)
 
-modegg: $(OBJS) $(XREQS)
+../$(EGGEXEC): $(OBJS) $(XREQS)
 	@echo ""
-	@echo "Linking eggdrop..."
+	@echo "Linking eggdrop... $(EGGBUILD)"
 	@echo ""
-	$(LD) -o ../$(EGGEXEC) $(OBJS) $(XLIBS)
+	$(LD) -o ../$(EGGEXEC) $(OBJS) $(MODOBJS) $(XLIBS)
 	$(STRIP) ../$(EGGEXEC)
 	@echo "Successful compile: $(EGGEXEC)"
 	@echo ""
 
-static: $(OBJS) $(XREQS)
-	@echo ""
-	@echo "Linking eggdrop... (static version)"
-	@echo ""
-	$(LD) -o ../$(EGGEXEC) $(OBJS) mod/*.o $(XLIBS)
-	$(STRIP) ../$(EGGEXEC)
-	@echo "Successful compile: $(EGGEXEC)"
-	@echo ""
-
-debegg: $(OBJS) $(XREQS)
-	@echo ""
-	@echo "Linking eggdrop... (debug version)"
-	@echo ""
-	$(LD) -g -o ../$(EGGEXEC) $(OBJS) $(XLIBS)
-	@echo "Successful compile: $(EGGEXEC)"
-	@echo ""
-
-sdebug: $(OBJS) $(XREQS)
-	@echo ""
-	@echo "Linking eggdrop... (static and debug version)"
-	@echo ""
-	$(LD) -g -o ../$(EGGEXEC) $(OBJS) mod/*.o $(XLIBS)
-	@echo "Successful compile: $(EGGEXEC)"
-	@echo ""
+$(EGGEXEC): ../$(EGGEXEC)
 
 clean:
 	@rm -f *.o *.a *~
@@ -66,8 +48,7 @@ main.o:
 '-DSTRIPFLAGS="$(STRIP)"' -c main.c
 
 md5/md5c.o:
-	@cd md5; $(MAKE) 'MAKE=$(MAKE)' 'CC=$(CC)' 'LD=$(LD)' \
-'STRIP=$(STRIP)' 'CFLAGS=$(CFLAGS)' 'CPPFLAGS=$(CPPFLAGS)' md5
+	@cd md5; $(MAKE_MD5) md5
 	@echo "---------- Yeah! that's the compiling, now the linking! ----------"
 
 libtcle.a: $(TCLLIB)/lib$(TCLLIBFN)

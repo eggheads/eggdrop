@@ -13,8 +13,8 @@ static: ../channels.o
 
 modules: ../../../channels.so
 
-../channels.o: ../module.h ../modvals.h ../../eggdrop.h cmdschan.c tclchan.c \
-userchan.c channels.h
+../channels.o: channels.c channels.h cmdschan.c tclchan.c userchan.c \
+../module.h ../modvals.h ../../eggdrop.h
 	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c channels.c
 	rm -f ../channels.o
 	mv channels.o ../

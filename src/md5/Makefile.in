@@ -1,6 +1,8 @@
 # Makefile for src/md5/
 
+SHELL = /bin/sh
 top_srcdir = @top_srcdir@
+
 @SET_MAKE@
 INSTALL = @INSTALL@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@

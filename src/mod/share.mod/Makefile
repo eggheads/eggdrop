@@ -13,7 +13,7 @@ static: ../share.o
 
 modules: ../../../share.so
 
-../share.o: ../module.h ../modvals.h ../../eggdrop.h share.c ../../chan.h \
+../share.o: share.c ../module.h ../modvals.h ../../eggdrop.h ../../chan.h \
 ../../users.h ../channels.mod/channels.h ../transfer.mod/transfer.h
 	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c share.c
 	rm -f ../share.o

@@ -1,11 +1,15 @@
 # Makefile for scripts/
 
+SHELL = /bin/sh
 top_srcdir = @top_srcdir@
+
 @SET_MAKE@
 INSTALL = @INSTALL@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
+
+DOCS = CONTENTS
 
 SCRIPTS = action.fix.tcl alltools.tcl compat.tcl getops-2.2d.tcl \
 klined.tcl notes2.tcl ques5.tcl sentinel1.54.tcl userinfo1.0.tcl
@@ -18,53 +22,52 @@ doofus:
 	@echo ""
 	@cd $(top_srcdir); $(MAKE)
 
-all: $(SCRIPTS) $(EXESCRIPTS)
+all: $(DOCS) $(SCRIPTS) $(EXESCRIPTS)
 
 clean:
 	@rm -f *~
 
-install: install-scripts install-help
-
-install-scripts:
+install:
 	@if test ! -d $(DEST)/scripts; then \
 		echo "Creating a scripts subdirectory."; \
-		$(INSTALL) -d $(DEST)/scripts; \
+		$(top_srcdir)/mkinstalldirs $(DEST)/scripts; \
 		echo Copying scripts.; \
+		for i in $(DOCS); do \
+			$(INSTALL_DATA) $$i $(DEST)/scripts/; \
+		done; \
 		for i in $(SCRIPTS); do \
 			$(INSTALL_DATA) $$i $(DEST)/scripts/; \
 		done; \
 		for i in $(EXESCRIPTS); do \
 			$(INSTALL_SCRIPT) $$i $(DEST)/scripts/; \
 		done; \
-	fi
-
-install-help:
-	@if test ! "x`echo help/*.help`" = "xhelp/*.help"; then \
-		if test ! -d $(DEST)/help; then \
-			echo "Creating 'help' subdirectory."; \
-			$(INSTALL) -d $(DEST)/help; \
+		if test ! "x`echo help/*.help`" = "xhelp/*.help"; then \
+			if test ! -d $(DEST)/help; then \
+				echo "Creating 'help' subdirectory."; \
+				$(top_srcdir)/mkinstalldirs $(DEST)/help; \
+			fi; \
+			for i in help/*.help; do \
+				$(INSTALL_DATA) $$i $(DEST)/help/; \
+			done; \
 		fi; \
-		for i in help/*.help; do \
-			$(INSTALL_DATA) $$i $(DEST)/help/; \
-		done; \
-	fi
-	@if test ! "x`echo help/msg/*.help`" = "xhelp/msg/*.help"; then \
-		if test ! -d $(DEST)/help/msg; then \
-			echo "Creating 'help/msg' subdirectory."; \
-			$(INSTALL) -d $(DEST)/help/msg; \
+		if test ! "x`echo help/msg/*.help`" = "xhelp/msg/*.help"; then \
+			if test ! -d $(DEST)/help/msg; then \
+				echo "Creating 'help/msg' subdirectory."; \
+				$(top_srcdir)/mkinstalldirs $(DEST)/help/msg; \
+			fi; \
+			for i in help/msg/*.help; do \
+				$(INSTALL_DATA) $$i $(DEST)/help/msg/; \
+			done; \
 		fi; \
-		for i in help/msg/*.help; do \
-			$(INSTALL_DATA) $$i $(DEST)/help/msg/; \
-		done; \
-	fi
-	@if test ! "x`echo help/set/*.help`" = "xhelp/set/*.help"; then \
-		if test ! -d $(DEST)/help/set; then \
-			echo "Creating 'help/set' subdirectory."; \
-			$(INSTALL) -d $(DEST)/help/set; \
+		if test ! "x`echo help/set/*.help`" = "xhelp/set/*.help"; then \
+			if test ! -d $(DEST)/help/set; then \
+				echo "Creating 'help/set' subdirectory."; \
+				$(top_srcdir)/mkinstalldirs $(DEST)/help/set; \
+			fi; \
+			for i in help/set/*.help; do \
+				$(INSTALL_DATA) $$i $(DEST)/help/set/; \
+			done; \
 		fi; \
-		for i in help/set/*.help; do \
-			$(INSTALL_DATA) $$i $(DEST)/help/set/; \
-		done; \
 	fi
 
 #safety hash

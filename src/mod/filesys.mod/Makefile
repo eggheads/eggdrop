@@ -13,8 +13,8 @@ static: ../filesys.o
 
 modules: ../../../filesys.so
 
-../filesys.o: ../module.h ../modvals.h ../../eggdrop.h filedb.c \
-files.c tclfiles.c files.h filesys.h ../../lang.h ../../tandem.h \
+../filesys.o: filedb.c files.c files.h filesys.c filesys.h tclfiles.c \
+../module.h ../modvals.h ../../eggdrop.h ../../lang.h ../../tandem.h \
 ../transfer.mod/transfer.h
 	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c filesys.c
 	rm -f ../filesys.o

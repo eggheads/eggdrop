@@ -13,8 +13,9 @@ static: ../irc.o
 
 modules: ../../../irc.so
 
-../irc.o: ../module.h ../modvals.h ../../eggdrop.h chan.c cmdsirc.c mode.c \
-msgcmds.c tclirc.c irc.h ../channels.mod/channels.h ../server.mod/server.h
+../irc.o: chan.c cmdsirc.c irc.c irc.h mode.c msgcmds.c tclirc.c \
+../module.h ../modvals.h ../../eggdrop.h ../channels.mod/channels.h \
+../server.mod/server.h
 	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c irc.c
 	rm -f ../irc.o
 	mv irc.o ../

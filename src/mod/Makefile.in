@@ -1,6 +1,8 @@
 # Makefile for src/mod/
 
+SHELL = /bin/sh
 top_srcdir = @top_srcdir@
+
 @SET_MAKE@
 INSTALL = @INSTALL@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
@@ -34,7 +36,7 @@ install-help:
 	@if test ! "x`echo *.mod/help/*.help`" = "x*.mod/help/*.help"; then \
 		if test ! -d $(DEST)/help; then \
 			echo "Creating 'help' subdirectory."; \
-			$(INSTALL) -d $(DEST)/help; \
+			$(top_srcdir)/mkinstalldirs $(DEST)/help; \
 		fi; \
 		for i in *.mod/help/*.help; do \
 			$(INSTALL_DATA) $$i $(DEST)/help/; \
@@ -43,7 +45,7 @@ install-help:
 	@if test ! "x`echo *.mod/help/msg/*.help`" = "x*.mod/help/msg/*.help"; then \
 		if test ! -d $(DEST)/help/msg; then \
 			echo "Creating 'help/msg' subdirectory."; \
-			$(INSTALL) -d $(DEST)/help/msg; \
+			$(top_srcdir)/mkinstalldirs $(DEST)/help/msg; \
 		fi; \
 		for i in *.mod/help/msg/*.help; do \
 			$(INSTALL_DATA) $$i $(DEST)/help/msg/; \
@@ -52,7 +54,7 @@ install-help:
 	@if test ! "x`echo *.mod/help/set/*.help`" = "x*.mod/help/set/*.help"; then \
 		if test ! -d $(DEST)/help/set; then \
 			echo "Creating 'help/set' subdirectory."; \
-			$(INSTALL) -d $(DEST)/help/set; \
+			$(top_srcdir)/mkinstalldirs $(DEST)/help/set; \
 		fi; \
 		for i in *.mod/help/set/*.help; do \
 			$(INSTALL_DATA) $$i $(DEST)/help/set/; \
@@ -64,7 +66,7 @@ install-language:
 	@if test ! "x`echo *.mod/language/*.lang`" = "x*.mod/language/*.lang"; then \
 		if test ! -d $(DEST)/language; then \
 			echo "Creating 'language' subdirectory."; \
-			$(INSTALL) -d $(DEST)/language; \
+			$(top_srcdir)/mkinstalldirs $(DEST)/language; \
 		fi; \
 		for i in *.mod/language/*.lang; do \
 			$(INSTALL_DATA) $$i $(DEST)/language/; \

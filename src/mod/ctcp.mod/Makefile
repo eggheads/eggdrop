@@ -13,7 +13,7 @@ static: ../ctcp.o
 
 modules: ../../../ctcp.so
 
-../ctcp.o: ../module.h ../modvals.h ../../eggdrop.h ctcp.h \
+../ctcp.o: ctcp.c ctcp.h ../module.h ../modvals.h ../../eggdrop.h \
 ../server.mod/server.h
 	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c ctcp.c
 	rm -f ../ctcp.o

@@ -13,7 +13,7 @@ static: ../console.o
 
 modules: ../../../console.so
 
-../console.o: ../module.h ../modvals.h ../../eggdrop.h
+../console.o: console.c ../module.h ../modvals.h ../../eggdrop.h
 	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c console.c
 	rm -f ../console.o
 	mv console.o ../

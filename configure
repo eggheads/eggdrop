@@ -3116,22 +3116,23 @@ if test ! "x${TCLLIBFN}" = "x" && test ! "x${TCLINCFN}" = "x"
 then
 
   # find Tcl's version
+  TCL_VERSION=`grep TCL_VERSION $TCLINC/$TCLINCFN | head -1 | $AWK '{gsub(/\"/, "", $3); print $3}'`
   TCL_PATCH_LEVEL=`grep TCL_PATCH_LEVEL $TCLINC/$TCLINCFN | head -1 | $AWK '{gsub(/\"/, "", $3); print $3}'`
-  if test ! "x${TCL_PATCH_LEVEL}" = "x"
-  then
-    TCL_VERSION=$TCL_PATCH_LEVEL
-  else
-    TCL_VERSION=`grep TCL_VERSION $TCLINC/$TCLINCFN | head -1 | $AWK '{gsub(/\"/, "", $3); print $3}'`
-  fi
 fi
 
 # check if we found Tcl's version
 echo $ac_n "checking for Tcl version""... $ac_c" 1>&6
-echo "configure:3131: checking for Tcl version" >&5
+echo "configure:3126: checking for Tcl version" >&5
 if test ! "x${TCL_VERSION}" = "x"
 then
-  echo "$ac_t""$TCL_VERSION" 1>&6
-  TCL_FOUND=1
+  if test ! "x${TCL_PATCH_LEVEL}" = "x"
+  then
+    echo "$ac_t""$TCL_PATCH_LEVEL" 1>&6
+    TCL_FOUND=1
+  else
+    echo "$ac_t""$TCL_VERSION" 1>&6
+    TCL_FOUND=1
+  fi
 else
   echo "$ac_t""not found" 1>&6
   TCL_FOUND=0
@@ -3184,7 +3185,7 @@ fi
 
 # check for Tcl threads
 echo $ac_n "checking for Tcl threads""... $ac_c" 1>&6
-echo "configure:3188: checking for Tcl threads" >&5
+echo "configure:3189: checking for Tcl threads" >&5
 TCL_VER_POST81=`echo $TCL_VERSION | $AWK '{split($1, i, "."); if (((i[1] == 8) && (i[2] >= 1)) || (i[1] >= 9)) print "yes"; else print "no"}'`
 if test "x${TCL_VER_POST81}" = "xyes"
 then

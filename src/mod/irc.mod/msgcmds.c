@@ -610,7 +610,7 @@ static int msg_op(char *nick, char *host, struct userrec *u, char *par)
       }
     }
   }
-  putlog(LOG_CMDS, "*", "(%s!%s) !%s! failed OP", nick, host, nick);
+  putlog(LOG_CMDS, "*", "(%s!%s) !*! failed OP", nick, host);
   return 1;
 }
 
@@ -658,7 +658,7 @@ static int msg_key(char *nick, char *host, struct userrec *u, char *par)
       }
     }
   }
-  putlog(LOG_CMDS, "*", "(%s!%s) !%s! failed KEY", nick, host, nick);
+  putlog(LOG_CMDS, "*", "(%s!%s) !*! failed KEY", nick, host);
   return 1;
 }
 
@@ -699,7 +699,7 @@ static int msg_voice(char *nick, char *host, struct userrec *u, char *par)
       }
     }
   }
-  putlog(LOG_CMDS, "*", "(%s!%s) !%s! failed VOICE", nick, host, nick);
+  putlog(LOG_CMDS, "*", "(%s!%s) !*! failed VOICE", nick, host);
   return 1;
 }
 
@@ -928,7 +928,7 @@ static int msg_reset(char *nick, char *host, struct userrec *u, char *par)
       return 1;
     }
   } else {
-    putlog(LOG_CMDS, "*", "(%s!%s) !*! failed RESET", nick, host, u->handle);
+    putlog(LOG_CMDS, "*", "(%s!%s) !*! failed RESET", nick, host);
     if (!quiet_reject)
       dprintf(DP_HELP, "NOTICE %s :%s\n", nick, IRC_NOPASS);
     return 1;

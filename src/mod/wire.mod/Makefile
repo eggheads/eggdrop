@@ -13,7 +13,7 @@ static: ../wire.o
 
 modules: ../../../wire.so
 
-../wire.o: ../module.h ../modvals.h ../../eggdrop.h wire.c wire.h \
+../wire.o: wire.c wire.h ../module.h ../modvals.h ../../eggdrop.h \
 ../../chan.h ../../users.h
 	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c wire.c
 	rm -f ../wire.o
