@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  *
- * $Id: cmds.c,v 1.102 2003/11/27 03:20:24 wcc Exp $
+ * $Id: cmds.c,v 1.103 2003/12/14 04:24:02 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -513,12 +513,23 @@ static void cmd_who(struct userrec *u, int idx, char *par)
 
 static void cmd_whois(struct userrec *u, int idx, char *par)
 {
+  struct flag_record fr = { FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0 };
+
   if (!par[0]) {
     dprintf(idx, "Usage: whois <handle>\n");
     return;
   }
-  putlog(LOG_CMDS, "*", "#%s# whois %s", dcc[idx].nick, par);
-  tell_user_ident(idx, par, u ? (u->flags & USER_MASTER) : 0);
+
+  handle = newsplit(&par);
+  get_user_flagrec(u, &fr, NULL);
+  if (egg_strcasecmp(handle, dcc[idx].nick) && !glob_botmast(fr) &&
+      !glob_op(fr) && !chan_master(fr)) {
+    dprintf(idx, "You do not have access to whois handles other than your "
+            "own.\n");
+    return;
+  }
+  putlog(LOG_CMDS, "*", "#%s# whois %s", dcc[idx].nick, handle);
+  tell_user_ident(idx, handle, u ? (u->flags & USER_MASTER) : 0);
 }
 
 static void cmd_match(struct userrec *u, int idx, char *par)
@@ -2792,7 +2803,7 @@ cmd_t C_dcc[] = {
   {"uptime",    "m|m",  (Function) cmd_uptime,     NULL},
   {"vbottree",  "",     (Function) cmd_vbottree,   NULL},
   {"who",       "",     (Function) cmd_who,        NULL},
-  {"whois",     "to|o", (Function) cmd_whois,      NULL},
+  {"whois",     "",     (Function) cmd_whois,      NULL},
   {"whom",      "",     (Function) cmd_whom,       NULL},
   {"traffic",   "m|m",  (Function) cmd_traffic,    NULL},
   {"whoami",    "",     (Function) cmd_whoami,     NULL},
