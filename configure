@@ -5056,6 +5056,7 @@ _ACEOF
   SUNOS="no"
   HPUX="no"
   EGG_CYGWIN="no"
+  RANDMAX="RAND_MAX"
 
   case "$egg_cv_var_system_type" in
     BSD/OS)
@@ -5302,6 +5303,8 @@ _ACEOF
         SHLIB_LD="ld"
         SHLIB_CC="$CC -PIC"
       fi
+      # Solaris defines (2^31)-1 as the limit for random() rather than RAND_MAX.
+      RANDMAX="0x7FFFFFFF"
     ;;
     *BSD)
       # FreeBSD/OpenBSD/NetBSD
@@ -5336,6 +5339,11 @@ _ACEOF
 
 
 
+
+
+cat >>confdefs.h <<_ACEOF
+#define RANDOM_MAX $RANDMAX
+_ACEOF
 
 
 
