@@ -2,7 +2,7 @@
  * net.c -- handles:
  *   all raw network i/o
  *
- * $Id: net.c,v 1.70 2004/06/21 05:57:24 wcc Exp $
+ * $Id: net.c,v 1.71 2004/07/05 21:42:39 wcc Exp $
  */
 /*
  * This is hereby released into the public domain.
@@ -447,10 +447,11 @@ int open_address_listen(IP addr, int *port)
 
   if (firewall[0]) {
     /* FIXME: can't do listen port thru firewall yet */
-    putlog(LOG_MISC, "*", "!! Cant open a listen port (you are using a "
-           "firewall)");
+    putlog(LOG_MISC, "*", "Can't open a listen port (you are using a "
+           "firewall).");
     return -1;
   }
+
   if (getmyip() > 0) {
     sock = getsock(SOCK_LISTEN);
     if (sock < 1)
@@ -476,6 +477,7 @@ int open_address_listen(IP addr, int *port)
       return -1;
     }
   }
+
   return sock;
 }
 
