@@ -2,7 +2,7 @@
  * files.c - part of filesys.mod
  *   handles all file system commands
  * 
- * $Id: files.c,v 1.24 2000/07/12 21:50:35 fabian Exp $
+ * $Id: files.c,v 1.25 2000/08/31 18:08:56 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -81,7 +81,7 @@ static int welcome_to_files(int idx)
 
   dprintf(idx, "\n");
   if (fr.global & USER_JANITOR)
-    fr.global |=USER_MASTER;
+    fr.global |= USER_MASTER;
 
   /* Show motd if the user went straight here without going thru the
    * party line.

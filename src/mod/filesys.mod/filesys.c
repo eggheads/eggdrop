@@ -2,7 +2,7 @@
  * filesys.c -- part of filesys.mod
  *   main file of the filesys eggdrop module
  * 
- * $Id: filesys.c,v 1.30 2000/08/06 14:50:45 fabian Exp $
+ * $Id: filesys.c,v 1.31 2000/08/31 18:08:56 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -504,14 +504,15 @@ static int do_dcc_send(int idx, char *dir, char *fn, char *nick, int resend)
   return x;
 }
 
-static int builtin_fil STDVAR {
+static int builtin_fil STDVAR
+{
   int idx;
   Function F = (Function) cd;
 
   Context;
   BADARGS(4, 4, " hand idx param");
   idx = findanyidx(atoi(argv[2]));
-  if ((idx < 0) && (dcc[idx].type != &DCC_FILES)) {
+  if (idx < 0 && dcc[idx].type != &DCC_FILES) {
     Tcl_AppendResult(irp, "invalid idx", NULL);
     return TCL_ERROR;
   }
@@ -519,7 +520,7 @@ static int builtin_fil STDVAR {
     Tcl_AppendResult(irp, "break", NULL);
     return TCL_OK;
   }
-  (F) (idx, argv[3]);
+  (F)(idx, argv[3]);
   Tcl_ResetResult(irp);
   return TCL_OK;
 }
