@@ -4,7 +4,7 @@
  *   channel mode changes and the bot's reaction to them
  *   setting and getting the current wanted channel modes
  * 
- * $Id: mode.c,v 1.27 2000/08/07 10:09:17 fabian Exp $
+ * $Id: mode.c,v 1.28 2000/08/18 01:05:30 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -521,6 +521,7 @@ static void got_deop(struct chanset_t *chan, char *nick, char *from,
 	m2->flags &= ~(SENTKICK | SENTDEOP | SENTOP | SENTVOICE | SENTDEVOICE);
       m2 = m2->next;
     }
+    check_tcl_need(chan->dname, "op");
     if (chan->need_op[0])
       do_tcl("need-op", chan->need_op);
     if (!nick[0])

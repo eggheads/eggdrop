@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  * 
- * $Id: chan.c,v 1.44 2000/08/07 10:09:17 fabian Exp $
+ * $Id: chan.c,v 1.45 2000/08/18 01:05:30 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -874,9 +874,11 @@ static int got352or4(struct chanset_t *chan, char *user, char *host,
     m->flags &= ~CHANVOICE;
   if (!(m->flags & (CHANVOICE | CHANOP)))
     m->flags |= STOPWHO;
-  if (match_my_nick(nick) && any_ops(chan) && !me_op(chan) &&
-      chan->need_op[0])
-    do_tcl("need-op", chan->need_op);
+  if (match_my_nick(nick) && any_ops(chan) && !me_op(chan)) {
+    check_tcl_need(chan->dname, "op");
+    if (chan->need_op[0])
+      do_tcl("need-op", chan->need_op);
+  }
   m->user = get_user_by_host(userhost);
   return 0;
 }
@@ -1193,6 +1195,7 @@ static int got471(char *from, char *msg)
   chan = findchan_by_dname(chname);
   if (chan) {
     putlog(LOG_JOIN, chan->dname, IRC_CHANFULL, chan->dname);
+    check_tcl_need(chan->dname, "limit");
     if (chan->need_limit[0])
       do_tcl("need-limit", chan->need_limit);
   } else
@@ -1222,6 +1225,7 @@ static int got473(char *from, char *msg)
   chan = findchan_by_dname(chname);
   if (chan) {
     putlog(LOG_JOIN, chan->dname, IRC_CHANINVITEONLY, chan->dname);
+    check_tcl_need(chan->dname, "invite");
     if (chan->need_invite[0])
       do_tcl("need-invite", chan->need_invite);
   } else
@@ -1251,6 +1255,7 @@ static int got474(char *from, char *msg)
   chan = findchan_by_dname(chname);
   if (chan) {
     putlog(LOG_JOIN, chan->dname, IRC_BANNEDFROMCHAN, chan->dname);
+    check_tcl_need(chan->dname, "unban");
     if (chan->need_unban[0])
       do_tcl("need-unban", chan->need_unban);
   } else
@@ -1285,8 +1290,11 @@ static int got475(char *from, char *msg)
       chan->channel.key = (char *) channel_malloc(1);
       chan->channel.key[0] = 0;
       dprintf(DP_MODE, "JOIN %s %s\n", chan->dname, chan->key_prot);
-    } else if (chan->need_key[0])
-      do_tcl("need-key", chan->need_key);
+    } else {
+      check_tcl_need(chan->dname, "key");
+      if (chan->need_key[0])
+	do_tcl("need-key", chan->need_key);
+    }
   } else
     putlog(LOG_JOIN, chname, IRC_BADCHANKEY, chname);
   return 0;

@@ -2,7 +2,7 @@
  * irc.c -- part of irc.mod
  *   support for channels within the bot 
  * 
- * $Id: irc.c,v 1.29 2000/08/06 14:51:38 fabian Exp $
+ * $Id: irc.c,v 1.30 2000/08/18 01:05:30 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -34,7 +34,7 @@
 #endif
 
 static p_tcl_bind_list H_topc, H_splt, H_sign, H_rejn, H_part, H_pub, H_pubm;
-static p_tcl_bind_list H_nick, H_mode, H_kick, H_join;
+static p_tcl_bind_list H_nick, H_mode, H_kick, H_join, H_need;
 static Function *global = NULL, *channels_funcs = NULL, *server_funcs = NULL;
 
 static int ctcp_mode;
@@ -540,6 +540,7 @@ static void check_lonely_channel(struct chanset_t *chan)
     }
   } else if (any_ops(chan)) {
     whined = 0;
+    check_tcl_need(chan->dname, "op");
     if (chan->need_op[0])
       do_tcl("need-op", chan->need_op);
   } else {
@@ -576,6 +577,7 @@ static void check_lonely_channel(struct chanset_t *chan)
       }
     } else {
       /* Some humans on channel, but still op-less */
+      check_tcl_need(chan->dname, "op");
       if (chan->need_op[0])
 	do_tcl("need-op", chan->need_op);
     }
@@ -763,7 +765,8 @@ static void check_expired_chanstuff()
   }
 }
 
-static int channels_6char STDVAR {
+static int channels_6char STDVAR
+{
   Function F = (Function) cd;
   char x[20];
 
@@ -774,7 +777,8 @@ static int channels_6char STDVAR {
   return TCL_OK;
 }
 
-static int channels_5char STDVAR {
+static int channels_5char STDVAR
+{
   Function F = (Function) cd;
 
   BADARGS(6, 6, " nick user@host handle channel text");
@@ -783,12 +787,23 @@ static int channels_5char STDVAR {
   return TCL_OK;
 }
 
-static int channels_4char STDVAR {
+static int channels_4char STDVAR
+{
   Function F = (Function) cd;
 
   BADARGS(5, 5, " nick uhost hand chan/param");
   CHECKVALIDITY(channels_4char);
   F(argv[1], argv[2], argv[3], argv[4]);
+  return TCL_OK;
+}
+
+static int channels_2char STDVAR
+{
+  Function F = (Function) cd;
+
+  BADARGS(2, 2, " channel type");
+  CHECKVALIDITY(channels_2char);
+  F(argv[1], argv[2]);
   return TCL_OK;
 }
 
@@ -932,6 +947,16 @@ static void check_tcl_pubm(char *nick, char *from, char *chname, char *msg)
   check_tcl_bind(H_pubm, buf, &fr, " $_pubm1 $_pubm2 $_pubm3 $_pubm4 $_pubm5",
 		 MATCH_MASK | BIND_USE_ATTR | BIND_STACKABLE);
   Context;
+}
+
+static void check_tcl_need(char *chname, char *type)
+{
+  char buf[1024];
+
+  simple_sprintf(buf, "%s %s", chname, type);
+  Tcl_SetVar(interp, "_need1", chname, 0);
+  Tcl_SetVar(interp, "_need2", type, 0);
+  check_tcl_bind(H_need, buf, 0, " $_need1 $_need2", MATCH_MASK | BIND_STACKABLE);
 }
 
 static tcl_ints myints[] =
@@ -1121,6 +1146,7 @@ static char *irc_close()
   del_bind_table(H_join);
   del_bind_table(H_pubm);
   del_bind_table(H_pub);
+  del_bind_table(H_need);
   Context;
   rem_tcl_ints(myints);
   rem_builtins(H_dcc, irc_dcc);
@@ -1172,6 +1198,7 @@ static Function irc_table[] =
   /* 16 - 19 */
   (Function) me_op,
   (Function) recheck_channel_modes,
+  (Function) & H_need,		/* p_tcl_bind_list		*/
 };
 
 char *irc_start(Function * global_funcs)
@@ -1232,6 +1259,7 @@ char *irc_start(Function * global_funcs)
   H_join = add_bind_table("join", HT_STACKABLE, channels_4char);
   H_pubm = add_bind_table("pubm", HT_STACKABLE, channels_5char);
   H_pub = add_bind_table("pub", 0, channels_5char);
+  H_need = add_bind_table("need", HT_STACKABLE, channels_2char);
   Context;
   do_nettype();
   Context;

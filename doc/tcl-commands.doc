@@ -1292,7 +1292,16 @@ for the msg-command "stop", use "unbind msg - stop msg_stop".
        is considered parsed; otherwise the bot will use the text returned
        from the proc and continue parsing that
 
-  (29) FLUD   (stackable)
+| (29) NEED   (stackable)
+|      bind need <flags> <type/mask> <proc>
+|      procname <channel> <type>
+|
+|      this bind is triggered on certain events, like when the bot needs
+|      operator status or the key for a channel; the types are: op, unban,
+|      invite, and key; <type/mask> can contain wildcards, and contains
+|      the channel and the type of need request; flags are ignored
+
+  (30) FLUD   (stackable)
        bind flud <flags> <type> <proc>
        procname <nick> <user@host> <handle> <type> <channel>
 
@@ -1303,7 +1312,7 @@ for the msg-command "stop", use "unbind msg - stop msg_stop".
        the flood type is "pub", "msg", "join", or "ctcp" (and can be
        masked to "*" for the bind); flags are ignored
 
-  (30) NOTE
+  (31) NOTE
        bind note <flags> <handle> <proc>
        procname <from> <to> <text>
 
@@ -1313,7 +1322,7 @@ for the msg-command "stop", use "unbind msg - stop msg_stop".
        deliver the note; the handle must be an exact match (no wild-
        cards), but it is not case sensitive; flags are ignored
 
-  (31) ACT   (stackable)
+  (32) ACT   (stackable)
        bind act <flags> <mask> <proc>
        proc-name <handle> <channel#> <action>
 
@@ -1321,35 +1330,35 @@ for the msg-command "stop", use "unbind msg - stop msg_stop".
        flags are ignored; the mask is checked against the text of the
        action (this is very similar to the CHAT binding)
 
-  (32) WALL   (stackable)
+  (33) WALL   (stackable)
        bind wall <flags> <mask> <proc>
        proc-name <handle> <msg>
 
        when the bot receives a wallops, it invokes this binding; flags are
        ignored; the mask is checked against the text of the wallops msg
 
-  (33) BCST   (stackable)
+  (34) BCST   (stackable)
        bind bcst <flags> <mask> <proc>
        proc-name <botname> <channel#> <text>
 
        when a bot says something on the botnet, it invokes this binding;
        flags are ignored; the mask is checked against the text
 
-  (34) CHJN   (stackable)
+  (35) CHJN   (stackable)
        bind chjn <flags> <mask> <proc>
        proc-name <botname> <handle> <channel#> <flag> <idx> <from>
 
        when someone joins a botnet channel, it invokes this binding;
        flags are ignored; the mask is checked against the text
 
-  (35) CHPT   (stackable)
+  (36) CHPT   (stackable)
        bind chpt <flags> <mask> <proc>
        proc-name <botname> <handle> <idx> <channel#>
 
        when someone parts a botnet channel, it invokes this binding;
        flags are ignored; the mask is checked against the channel
 
-  (36) TIME   (stackable)
+  (37) TIME   (stackable)
        bind time - <mask> <proc>
        proc-name <min> <hour> <day> <month> <year>
 
@@ -1361,32 +1370,32 @@ for the msg-command "stop", use "unbind msg - stop msg_stop".
        exactly two characters long, year is extended to four characters
        in the same way if needed ;)
 
-  (37) AWAY   (stackable)
+  (38) AWAY   (stackable)
        bind away - <mask> <proc>
        proc-name <botname> <idx> <text>
 
        triggers when a user goes away or comes back on the botnet, text
        is the reason than has been specified (text == "" when returning)
 
-  (38) LOAD   (stackable)
+  (39) LOAD   (stackable)
        bind load - <mask> <proc>
        proc-name <module>
 
        triggers when a module is loaded.
 
-  (38) UNLD   (stackable)
+  (40) UNLD   (stackable)
        bind unld - <mask> <proc>
        proc-name <module>
 
        triggers when a module is unloaded.
 
-  (39) NKCH   (stackable)
+  (41) NKCH   (stackable)
        bind nkch - <mask> <proc>
        proc-name <oldhandle> <newhandle>
 
        triggered whenever a local users handle is changed (in the userfile)
 
-  (40) EVNT   (stackable)
+  (42) EVNT   (stackable)
        bind evnt - <type> <proc>
        proc-name <type>
 
@@ -1404,7 +1413,7 @@ for the msg-command "stop", use "unbind msg - stop msg_stop".
 |        init-server       (called when we actually get on our irc server)
 |        disconnect-server (called when we disconnect from our irc server)
 
-| (41) LOST   (stackable)
+| (43) LOST   (stackable)
 |      bind lost <flags> <mask> <proc>
 |      proc-name <handle> <nick> <path> <bytes-transferred> <length-of-file>
 |
@@ -1413,7 +1422,7 @@ for the msg-command "stop", use "unbind msg - stop msg_stop".
 |      typically caused by a user abort.
 |      (THIS IS ONLY AVALIABLE WHEN THE transfer MODULE IS LOADED)
 
-| (42) TOUT   (stackable)
+| (44) TOUT   (stackable)
 |      bind tout <flags> <mask> <proc>
 |      proc-name <handle> <nick> <path> <bytes-transferred> <length-of-file>
 |

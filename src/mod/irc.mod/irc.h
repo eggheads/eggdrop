@@ -1,7 +1,7 @@
 /* 
  * irc.h -- part of irc.mod
  * 
- * $Id: irc.h,v 1.10 2000/05/28 17:32:44 fabian Exp $
+ * $Id: irc.h,v 1.11 2000/08/18 01:05:30 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -38,6 +38,7 @@
 #define REVENGE_DEOP 2		/* Took op		*/
 
 #ifdef MAKING_IRC
+static void check_tcl_need(char *, char *);
 static void check_tcl_kickmode(char *, char *, struct userrec *, char *,
 			       char *, char *, p_tcl_bind_list);
 static void check_tcl_joinspltrejn(char *, char *, struct userrec *, char *,
@@ -102,6 +103,8 @@ static int gotmode(char *, char *);
 /* 16 - 19 */
 #define me_op ((int(*)(irc_funcs[16]))(struct chanset_t *))
 /* recheck_channel_modes is here */
+#define H_need (*(p_tcl_bind_list*)(irc_funcs[18]))
+
 #endif				/* MAKING_IRC */
 
 #endif				/* _EGG_MOD_IRC_IRC_H */
