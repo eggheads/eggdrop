@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  * 
- * $Id: chan.c,v 1.59 2000/11/21 05:06:45 guppy Exp $
+ * $Id: chan.c,v 1.60 2000/11/29 03:10:24 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1440,6 +1440,34 @@ static int got332(char *from, char *msg)
   return 0;
 }
 
+static void set_delay(struct chanset_t *chan, char *nick)
+{
+  time_t a_delay;
+  int aop_min = chan->aop_min, aop_max = chan->aop_max, count = 0;
+  memberlist *m, *m2;
+
+  m = ismember(chan, nick);
+  if (!m)
+    return;
+  if (aop_min >= aop_max)
+    a_delay = now + aop_min;
+  else
+    a_delay = now + (random() % (aop_max - aop_min)) + aop_min + 1;
+  for (m2 = chan->channel.member; m2 && m2->nick[0]; m2 = m2->next)
+    if (m2->delay && !(m2->flags & FULL_DELAY))
+      count++;
+  if (count)
+    for (m2 = chan->channel.member; m2 && m2->nick[0]; m2 = m2->next)
+      if (m2->delay && !(m2->flags & FULL_DELAY)) {
+ m2->delay = a_delay;
+ if (count + 1 >=  modesperline)
+   m2->flags |= FULL_DELAY;
+      }
+  if (count + 1 >=modesperline)
+    m->flags |= FULL_DELAY;
+  m->delay = a_delay;
+}
+
 /* Got a join
  */
 static int gotjoin(char *from, char *chname)
@@ -1668,29 +1696,19 @@ static int gotjoin(char *from, char *chname)
 	  if (!chan->aop_min)
 	    add_mode(chan, '+', 'o', nick);
 	  else {
-	    time_t a_delay;
-	    int aop_min = chan->aop_min, aop_max = chan->aop_max, count = 0;
-	    memberlist *m2;
-	    if (aop_min >= aop_max)
-	      a_delay = now + aop_min;
-	    else
-	      a_delay = now + (random() % (aop_max - aop_min)) + aop_min + 1;
-	    for (m2 = chan->channel.member; m2 && m2->nick[0]; m2 = m2->next)
-	      if (m2->delay && !(m2->flags & FULL_DELAY))
-		count++;
-	    if (count)
-	      for (m2 = chan->channel.member; m2 && m2->nick[0]; m2 = m2->next)
-		if (m2->delay && !(m2->flags & FULL_DELAY)) {
-		  m2->delay = a_delay;
-		  if (count + 1 >=  modesperline)
-		    m2->flags |= FULL_DELAY;
-		}
-	    m->delay = a_delay;
+            set_delay(chan, nick);
+            m->flags |= SENTOP;
 	  }
 	} else if ((channel_autovoice(chan) &&
 		    (chan_voice(fr) || (glob_voice(fr) && !chan_quiet(fr)))) ||
-		   ((glob_gvoice(fr) || chan_gvoice(fr)) && !chan_quiet(fr)))
-	  add_mode(chan, '+', 'v', nick);
+                   ((glob_gvoice(fr) || chan_gvoice(fr)) && !chan_quiet(fr))) {
+           if (!chan->aop_min)
+             add_mode(chan, '+', 'v', nick);
+           else {
+             set_delay(chan, nick);
+             m->flags |= SENTVOICE;
+           }
+         }
       }
     }
   }

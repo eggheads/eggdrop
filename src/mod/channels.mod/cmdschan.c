@@ -2,7 +2,7 @@
  * cmdschan.c -- part of channels.mod
  *   commands from a user via dcc that cause server interaction
  *
- * $Id: cmdschan.c,v 1.37 2000/11/21 05:18:04 guppy Exp $
+ * $Id: cmdschan.c,v 1.38 2000/11/29 03:10:24 guppy Exp $
  */
 /*
  * Copyright (C) 1997  Robey Pointer
@@ -1188,6 +1188,7 @@ static void cmd_chaninfo(struct userrec *u, int idx, char *par)
       dprintf(idx, "stopnethack-mode: %d\n", chan->stopnethack_mode);
     else
       dprintf(idx, "stopnethack: DON'T!\n");
+      dprintf(idx, "aop-delay: %d:%d\n", chan->aop_min, chan->aop_max);
     if (chan->revenge_mode)
       dprintf(idx, "revenge-mode: %d\n", chan->revenge_mode);
     else

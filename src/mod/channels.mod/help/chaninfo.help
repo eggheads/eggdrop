@@ -37,6 +37,10 @@
                        1 for deop and +d
                        2 for deop, +d and kick
                        3 for deop, chattr +d, kick and ban
+ %baop-delay%b        autoop or autovoice delaytime
+                       0:0 no delay
+                       x:x x sec delaytime
+                       x:y random delay, minimum x sec, maximum y sec
      The following can be set + or - (eg .chanset #channel -enforcebans)
 	%benforcebans%b    kicks people who match channel bans?
 	%bdynamicbans%b    only activate bans on channel when they are needed
