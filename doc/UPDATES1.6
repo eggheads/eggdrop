@@ -1,10 +1,11 @@
-$Id: UPDATES1.6,v 1.492 2003/03/24 05:47:07 wcc Exp $
+$Id: UPDATES1.6,v 1.493 2003/03/26 00:19:30 wcc Exp $
 
 Changes in Eggdrop: (since v1.6.0)
 ----------------------------------
 
 1.6.14
 Found by  Fixed by  What...
+          PPSlim    fixed getops timer handling
 Paladin   Wcc       fixed access checking in -ban, -exempt, and -invite
           TaKeDa    fixed a Tcl_Merge memleak
           M. Koszik fixed a crash related to the cd command in filesys.mod
@@ -32,7 +33,7 @@ Shane0    Wcc       fixed a compile error on Tru64 UNIX
           Sven      the WASHALFOP flag now works correctly
 fbs       Wcc       kill a transfer connection after sending a
                     TRANSFER_DCC_IGNORED notice to a user
-          ppslim    flood-pub should be flood-chan when using 'channel get'
+          PPSlim    flood-pub should be flood-chan when using 'channel get'
           BarkerJr  '~' and '&' are now correctly recognized as a meaning a
                     user has ops on a channel
           winkey    fixed uhost buffer length
