@@ -1,5 +1,5 @@
 News
-Last revised: March 08, 2002
+Last revised: May 19, 2002
   ________________________________________________________________________
 
 What's new? First, read the following documents:
@@ -183,6 +183,9 @@ Changes made to Eggdrop 1.6.x from Eggdrop1.4.x:
      * A 'handlen' variable was added (set to the value of the HANDLEN
        define in eggdrop.h. 'nick-len' was also renamed to 'nicklen' (the
        old variable will remain until version 1.8.
+
+     * The 'channel get' command was added to allow channel settings to be
+       easily retrieved.
 
      For more information about changed or added Tcl commands, see
      doc/tcl-commands.doc.
