@@ -2,7 +2,7 @@
  * tcldcc.c -- handles:
  *   Tcl stubs for the dcc commands
  *
- * $Id: tcldcc.c,v 1.48 2003/11/01 23:26:57 wcc Exp $
+ * $Id: tcldcc.c,v 1.49 2003/12/11 23:37:44 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -151,7 +151,7 @@ static int tcl_hand2idx STDVAR
   BADARGS(2, 2, " nickname");
 
   for (i = 0; i < dcc_total; i++)
-    if ((dcc[i].type->flags & DCT_SIMUL) &&
+    if ((dcc[i].type->flags & (DCT_SIMUL | DCT_BOT)) &&
         !egg_strcasecmp(argv[1], dcc[i].nick)) {
       egg_snprintf(s, sizeof s, "%ld", dcc[i].sock);
       Tcl_AppendResult(irp, s, NULL);
