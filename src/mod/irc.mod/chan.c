@@ -1683,10 +1683,6 @@ static int gotnick(char *from, char *msg)
 	  killmember(chan, mm->nick);
 	}
       }
-      detect_chan_flood(nick, uhost, from, chan, FLOOD_NICK, NULL);
-      /* any pending kick to the old nick is lost. Ernst 18/3/1998 */
-      if (chan_sentkick(m))
-	m->flags &= ~SENTKICK;
       /* banned? */
       /* compose a nick!user@host for the new nick */
       sprintf(s1, "%s!%s", msg, uhost);
@@ -1695,6 +1691,10 @@ static int gotnick(char *from, char *msg)
 	  (u_match_ban(global_bans, s1) || u_match_ban(chan->bans, s1)))
 	refresh_ban_kick(chan, s1, msg);
       strcpy(m->nick, msg);
+      detect_chan_flood(nick, uhost, from, chan, FLOOD_NICK, NULL);
+      /* any pending kick to the old nick is lost. Ernst 18/3/1998 */
+      if (chan_sentkick(m))
+	m->flags &= ~SENTKICK;
       check_tcl_nick(nick, uhost, u, chan->name, msg);
     }
     chan = chan->next;
