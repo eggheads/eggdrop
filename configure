@@ -786,10 +786,10 @@ fi
 
 if test ! "x${cross_compiling}" = "xno"
 then
-  echo ""
-  echo "This system does not appear to have a working C compiler."
-  echo "A working C compiler is required to compile eggdrop."
-  echo ""
+  echo "" >&2
+  echo "This system does not appear to have a working C compiler." >&2
+  echo "A working C compiler is required to compile eggdrop." >&2
+  echo "" >&2
   exit 1
 fi
 
@@ -1301,10 +1301,10 @@ fi
 
     if test "x${GMAKE}" = "x"
     then
-      echo ""
-      echo "Yoicks! you have BSD/OS & you dont have 'gmake', you may"
-      echo "not be able to compile the bot successfully :("
-      echo ""
+      echo "" >&2
+      echo "Yoicks! you have BSD/OS & you dont have 'gmake', you may" >&2
+      echo "not be able to compile the bot successfully :(" >&2
+      echo "" >&2
     fi
     ;;
   *BSD)
@@ -2482,19 +2482,19 @@ done
 
 if test "x${ac_cv_func_vsprintf}" = "xno"
 then
-  echo ""
-  echo "Your system does not have the sprintf/vsprintf libraries."
-  echo "These are required to compile almost anything.  Sorry."
-  echo ""
+  echo "" >&2
+  echo "Your system does not have the sprintf/vsprintf libraries." >&2
+  echo "These are required to compile almost anything.  Sorry." >&2
+  echo "" >&2
   exit 1
 fi
 
 if test "x${ac_cv_header_stdc}" = "xno"
 then
-  echo ""
-  echo "Your system must support ANSI C Header files."
-  echo "These are required for the language support. Sorry."
-  echo ""
+  echo "" >&2
+  echo "Your system must support ANSI C Header files." >&2
+  echo "These are required for the language support. Sorry." >&2
+  echo "" >&2
   exit 1
 fi
 
@@ -2530,22 +2530,25 @@ tclheaderpaths="/usr/local/include /usr/local/pkgs/tcl/include \
 	/usr/include $HOME/include $HOME/tcl/include $HOME"
 
 # sanity checking to make sure either both or neither TCLLIB and TCLINC are set
-if test ! "x${TCLLIB}" = "x" && test "x${TCLINC}" = "x"
+if test ! "x${TCLLIB}" = "x"
 then
-  echo ""
-  echo "You set the environment variable TCLLIB, but I failed to detect TCLINC."
-  echo "Please set both if you wish to use them."
-  echo "configure will now try to autodetect both libtcl and tcl.h"
-  echo ""
-  unset TCLLIB
+  if test "x${TCLINC}" = "x"
+  then
+    echo "" >&2
+    echo "Environment variable TCLLIB was set, but I did not detect TCLINC." >&2
+    echo "Please set both TCLLIB and TCLINC correctly if you wish to use them." >&2
+    echo "configure will now attempt to autodetect both libtcl and tcl.h..." >&2
+    echo "" >&2
+    unset TCLLIB
+  fi
 else
   if test ! "x${TCLINC}" = "x"
   then
-    echo ""
-    echo "You set the environment variable TCLINC, but I failed to detect TCLLIB."
-    echo "Please set both if you wish to use them."
-    echo "configure will now try to autodetect both libtcl and tcl.h"
-    echo ""
+    echo "" >&2
+    echo "Environment variable TCLINC was set, but I did not detect TCLLIB." >&2
+    echo "Please set both TCLLIB and TCLINC correctly if you wish to use them." >&2
+    echo "configure will now attempt to autodetect both libtcl and tcl.h..." >&2
+    echo "" >&2
     unset TCLINC
   fi
 fi
@@ -2591,14 +2594,19 @@ else
     done
     if test "x${TCLLIBFN}" = "x"
     then
-      echo "Environment variable TCLLIB is set, but incorrect."
+      echo "" >&2
+      echo "Environment variable TCLLIB was set, but incorrect." >&2
+      echo "Please set both TCLLIB and TCLINC correctly if you wish to use them." >&2
+      echo "configure will now attempt to autodetect both libtcl and tcl.h..." >&2
+      echo "" >&2
       unset TCLLIB
+      unset TCLINC
     fi
   fi
 
   # check in common places now
   echo $ac_n "checking for libtcl""... $ac_c" 1>&6
-echo "configure:2602: checking for libtcl" >&5
+echo "configure:2610: checking for libtcl" >&5
   if test ! "x${TCLLIB}" = "x"
   then
     echo "$ac_t""found in $TCLLIB/lib$TCLLIBFN$TCLLIBEXT" 1>&6
@@ -2647,14 +2655,18 @@ else
   then
     if test ! -r "$TCLINC/$TCLINCFN"
     then
-      echo "Environment variable TCLINC is set, but incorrect."
-      unset TCLINC
+      echo "" >&2
+      echo "Environment variable TCLINC was set, but incorrect." >&2
+      echo "Please set both TCLLIB and TCLINC correctly if you wish to use them." >&2
+      echo "configure cannot safely continue now..." >&2
+      echo "" >&2
+      exit 1
     fi
   fi
 
   # check in common places now
   echo $ac_n "checking for $TCLINCFN""... $ac_c" 1>&6
-echo "configure:2658: checking for $TCLINCFN" >&5
+echo "configure:2670: checking for $TCLINCFN" >&5
   if test ! "x${TCLINC}" = "x"
   then
     echo "$ac_t""found in $TCLINC/$TCLINCFN" 1>&6
@@ -2702,23 +2714,23 @@ fi # test tclincname
 # done looking, now either TCLLIB & TCLINC are both set, or neither is set
 if test "x${TCLLIB}" = "x"
 then
-  echo ""
-  echo "I can't find Tcl on this system."
-  echo ""
-  echo "Eggdrop now requires Tcl to compile.  If you already have Tcl"
-  echo "installed on this system, and I just wasn't looking in the right"
-  echo "place for it, set the environment variables TCLLIB and TCLINC so"
-  echo "I will know where to find 'libtcl.a' (or 'libtcl.so') and 'tcl.h'"
-  echo "(respectively).  Then run 'configure' again."
-  echo ""
-  echo "Read the README file if you don't know what Tcl is or how to get"
-  echo "it and install it."
-  echo ""
+  echo "" >&2
+  echo "I can't find Tcl on this system." >&2
+  echo "" >&2
+  echo "Eggdrop now requires Tcl to compile.  If you already have Tcl" >&2
+  echo "installed on this system, and I just wasn't looking in the right" >&2
+  echo "place for it, set the environment variables TCLLIB and TCLINC so" >&2
+  echo "I will know where to find 'libtcl.a' (or 'libtcl.so') and 'tcl.h'" >&2
+  echo "(respectively).  Then run 'configure' again." >&2
+  echo "" >&2
+  echo "Read the README file if you don't know what Tcl is or how to get" >&2
+  echo "it and install it." >&2
+  echo "" >&2
   exit 1
 else
 
   echo $ac_n "checking for Tcl version""... $ac_c" 1>&6
-echo "configure:2722: checking for Tcl version" >&5
+echo "configure:2734: checking for Tcl version" >&5
 
   for ver in $tclnames
   do
@@ -2746,20 +2758,20 @@ echo "configure:2722: checking for Tcl version" >&5
     TCL_REQS="$TCLLIB/lib$TCLLIBFN$TCLLIBEXT"
     TCL_LIBS="-L$TCLLIB -l$TCLLIBFN -lm"
   else
-    echo ""
-    echo "Your tcl version is much too old for eggdrop to use."
-    echo "I suggest you download and complie a more recent version."
-    echo "The most reliable current version is 8.2.1"
-    echo ""
+    echo "" >&2
+    echo "Your Tcl version is much too old for eggdrop to use." >&2
+    echo "I suggest you download and complie a more recent version." >&2
+    echo "The most reliable current version is 8.2.1" >&2
+    echo "" >&2
     exit 1
   fi
 
   if test "x${TCLLIBEXT}" = "x.a"
   then
-    echo ""
-    echo "Your libtcl is not a shared library."
-    echo "configure will set default make type to static..."
-    echo ""
+    echo "" >&2
+    echo "Your libtcl is not a shared library." >&2
+    echo "configure will set default make type to static..." >&2
+    echo "" >&2
     DEFAULT_MAKE=static
   fi
 
@@ -2777,12 +2789,12 @@ if test $need_dl = 1 && test "x${ac_cv_func_dlopen}" = "xno"
 then
   if test "$LINUX" = "yes"
   then
-    echo "Since you are on a Linux system, this has a known problem,"
+    echo "Since you are on a Linux system, this has a known problem," >&2
     if test -r "/lib/libdl.so.1"
     then
-      echo "and you seem to have it, I know a kludge for it,"
-      echo "so we'll do that..."
-      echo ""
+      echo "and you seem to have it, I know a kludge for it," >&2
+      echo "so we'll do that..." >&2
+      echo "" >&2
       cat >> confdefs.h <<\EOF
 #define HAVE_DLOPEN 1
 EOF
@@ -2790,20 +2802,20 @@ EOF
       LIBS="/lib/libdl.so.1 $LIBS"
       got_dl=1
     else
-      echo "which you DONT seem to have... doh!"
-      echo "perhaps you may still have the stuff lying around somewhere"
-      echo "if you work out where it is, add it to your XLIBS= lines"
-      echo "and #define HAVE_DLOPEN in config.h"
-      echo ""
-      echo "we'll proceed on anyway, but you probably won't be able"
-      echo "to 'make eggdrop' but you might be able to make the"
-      echo "static bot (I'll default your make to this version)."
+      echo "which you DONT seem to have... doh!" >&2
+      echo "perhaps you may still have the stuff lying around somewhere" >&2
+      echo "if you work out where it is, add it to your XLIBS= lines" >&2
+      echo "and #define HAVE_DLOPEN in config.h" >&2
+      echo "" >&2
+      echo "we'll proceed on anyway, but you probably won't be able" >&2
+      echo "to 'make eggdrop' but you might be able to make the" >&2
+      echo "static bot (I'll default your make to this version)." >&2
       DEFAULT_MAKE=static
     fi
   else
-    echo "You don't seem to have libdl anywhere I can find it, this will"
-    echo "prevent you from doing dynamic modules, I'll set your default"
-    echo "make to static linking."
+    echo "You don't seem to have libdl anywhere I can find it, this will" >&2
+    echo "prevent you from doing dynamic modules, I'll set your default" >&2
+    echo "make to static linking." >&2
     DEFAULT_MAKE=static
   fi
 fi
