@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: tcl-commands.html,v 1.47 2005/02/02 00:02:28 tothwolf Exp $ -->
+<!-- $Id: tcl-commands.html,v 1.48 2005/02/02 15:32:54 tothwolf Exp $ -->
 
 <html>
   <head>
@@ -3834,7 +3834,7 @@
               the person who got kicked (can contain wildcards). The proc
               is called with the nick, user@host, and handle of the kicker,
               plus the channel, the nickname of the person who was kicked,
-              and the reason; flags are ignored.</p>
+              and the reason.</p>
 
               <p><strong>Module:</strong> irc</p>
             </li>
@@ -3866,11 +3866,10 @@
               &lt;mode-change&gt; will always be a single mode, such as
               &quot;+m&quot; or &quot;-o&quot;. target will show the argument
               of the mode change (for o/v/b/e/I) or &quot;&quot; if the set
-              mode does not take an argument. Flags are ignored. The
-              bot&#39;s automatic response to a mode change will happen
-              AFTER all matching Tcl procs are called. The mask will be
-              matched against &#39;#channel +/-modes&#39; and can
-              contain wildcards.</p>
+              mode does not take an argument. The bot&#39;s automatic
+              response to a mode change will happen AFTER all matching Tcl
+              procs are called. The mask will be matched against
+              &#39;#channel +/-modes&#39; and can contain wildcards.</p>
 
               <p>If it is a server mode, nick will be &quot;&quot;, user@host
               is the server name, and handle is *.</p>
@@ -4180,7 +4179,7 @@
             </li>
 
             <li>
-              <p><strong>NOTE</strong></p>
+              <p><strong>NOTE (stackable)</strong></p>
 
               <p><strong>bind note &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;<br>
               procname &lt;from&gt; &lt;to&gt; &lt;text&gt;</strong></p>
@@ -4255,7 +4254,8 @@
               <p><strong>Description:</strong> when someone joins a botnet
               channel, it invokes this binding. The mask is matched against
               the channel and can contain wildcards. flag is one of: *
-              (owner), + (master), @ (op), or % (botnet master).</p>
+              (owner), + (master), @ (op), or % (botnet master).
+              Flags are ignored.</p>
 
               <p><strong>Module:</strong> core</p>
             </li>
@@ -4268,8 +4268,8 @@
               &lt;channel#&gt;</strong></p>
 
               <p><strong>Description:</strong> when someone parts a botnet
-              channel, it invokes this binding. flags are ignored; the mask
-              is matched against the channel and can contain wildcards.</p>
+              channel, it invokes this binding. The mask is matched against
+              the channel and can contain wildcards. Flags are ignored.</p>
 
               <p><strong>Module:</strong> core</p>
             </li>
@@ -4285,8 +4285,8 @@
               procedure calls at certain times. mask matches 5 space
               separated integers of the form: &quot;minute hour day month
               year&quot;. minute, hour, day, month have a zero padding so
-              they are exactly two characters long; year is extended to
-              four characters in the same way. flags are ignored.</p>
+              they are exactly two characters long; year is four characters.
+              Flags are ignored.</p>
 
               <p><strong>Module:</strong> core</p>
             </li>
@@ -4555,9 +4555,9 @@
 
           <ol>
             <li>
-              <p><strong>MSG</strong>
+              <p><strong>MSG</strong></p>
 
-              <p>Return 1 to make the command get logged like so:</p>
+              <p>Return 1 to make Eggdrop log the command as:</p>
 
               <blockquote>
                 <p>(nick!user@host) !handle! command</p>
@@ -4565,9 +4565,9 @@
             </li>
 
             <li>
-              <p><strong>DCC</strong>
+              <p><strong>DCC</strong></p>
 
-              <p>Return 1 to make the command get logged like so:</p>
+              <p>Return 1 to make Eggdrop log the command as:</p>
 
               <blockquote>
                 <p>#handle# command</p>
@@ -4575,9 +4575,9 @@
             </li>
 
             <li>
-              <p><strong>FIL</strong>
+              <p><strong>FIL</strong></p>
 
-              <p>Return 1 to make the command get logged like so:</p>
+              <p>Return 1 to make Eggdrop log the command as:</p>
 
               <blockquote>
                 <p>#handle# files: command</p>
@@ -4585,9 +4585,9 @@
             </li>
 
             <li>
-              <p><strong>PUB</strong>
+              <p><strong>PUB</strong></p>
 
-              <p>Return 1 to make the command get logged like so:</p>
+              <p>Return 1 to make Eggdrop log the command as:</p>
 
               <blockquote>
                 <p>&lt;&lt;nick&gt;&gt; !handle! command</p>
@@ -4595,7 +4595,7 @@
             </li>
 
             <li>
-              <p><strong>CTCP</strong>
+              <p><strong>CTCP</strong></p>
 
               <p>Return 1 to ask the bot not to process the CTCP command on
               its own. Otherwise, it would send its own response to the CTCP
@@ -4604,7 +4604,7 @@
             </li>
 
             <li>
-              <p><strong>FILT</strong>
+              <p><strong>FILT</strong></p>
 
               <p>Return "" to indicate the text has been processed, and the
               bot should just ignore it. Otherwise, it will treat the text
@@ -4612,14 +4612,14 @@
             </li>
 
             <li>
-              <p><strong>FLUD</strong>
+              <p><strong>FLUD</strong></p>
 
               <p>Return 1 to ask the bot not to take action on the flood.
               Otherwise it will do its normal punishment.</p>
             </li>
 
             <li>
-              <p><strong>RAW</strong>
+              <p><strong>RAW</strong></p>
 
               <p>Return 1 to ask the bot not to process the server text.
               This can affect the bot&#39;s performance by causing it to
@@ -4628,27 +4628,36 @@
             </li>
 
             <li>
-              <p><strong>CHON</strong>
+              <p><strong>CHON</strong></p>
 
               <p>Return 1 to ask the bot not to process the partyline join
               event.</p>
             </li>
 
             <li>
-              <p><strong>CHOF</strong>
+              <p><strong>CHOF</strong></p>
 
               <p>Return 1 to ask the bot not to process the partyline part
               event.</p>
             </li>
 
             <li>
-              <p><strong>WALL</strong>
+              <p><strong>WALL</strong></p>
 
-              <p>Return 1 to make the command get logged like so:</p>
+              <p>Return 1 to make Eggdrop log the command as:</p>
 
               <blockquote>
                 <p>!nick! msg</p>
               </blockquote>
+            </li>
+
+            <li>
+              <p><strong>NOTE</strong></p>
+
+              <p>Return 1 to make Eggdrop not process the note any
+              further. This includes stacked note bindings that would
+              be processed after this one, as well as the built-in
+              eggdrop note handling routines.</p>
             </li>
           </ol>
         </li>

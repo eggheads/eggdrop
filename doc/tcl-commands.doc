@@ -1,4 +1,4 @@
-$Id: tcl-commands.doc,v 1.119 2005/02/02 00:02:27 tothwolf Exp $
+$Id: tcl-commands.doc,v 1.120 2005/02/02 15:32:54 tothwolf Exp $
 
 Eggdrop Tcl Commands
 Last revised: August 02, 2004
@@ -1744,7 +1744,7 @@ marked with vertical bars (|) on the left.
            the nickname of the person who got kicked (can contain wildcards).
            The proc is called with the nick, user@host, and handle of the
            kicker, plus the channel, the nickname of the person who was
-           kicked, and the reason; flags are ignored.
+           kicked, and the reason.
          Module: irc
 
     (13) NICK (stackable)
@@ -1757,7 +1757,7 @@ marked with vertical bars (|) on the left.
            yet in a channel).
          Module: irc
 
-    (14) MODE   (stackable)
+    (14) MODE (stackable)
          bind mode <flags> <mask> <proc>
          proc-name <nick> <user@host> <handle> <channel> <mode-change> <target>
 
@@ -1765,10 +1765,10 @@ marked with vertical bars (|) on the left.
            parts before being sent here, so the <mode-change> will always
            be a single mode, such as "+m" or "-o". target will show the
            argument of the mode change (for o/v/b/e/I) or "" if the set
-           mode does not take an argument. Flags are ignored. The bot's
-           automatic response to a mode change will happen AFTER all
-           matching Tcl procs are called. The mask will be matched against
-           '#channel +/-modes' and can contain wildcards.
+           mode does not take an argument. The bot's automatic response
+           to a mode change will happen AFTER all matching Tcl procs are
+           called. The mask will be matched against '#channel +/-modes'
+           and can contain wildcards.
 
            If it is a server mode, nick will be "", user@host is the server
            name, and handle is *.
@@ -1976,16 +1976,16 @@ marked with vertical bars (|) on the left.
            "*" for the bind); flags are ignored.
          Module: server
 
-    (31) NOTE
-         bind note <flags> <mask> <proc>
-         procname <from> <to> <text>
-
-         Description: incoming notes (either from the party line, someone on
-           IRC, or someone on another bot on the botnet) are checked against
-           these binds before being processed. The mask is matched against
-           the receiving handle and supports wildcards. If the proc returns 1,
-           Eggdrop will not process the note any further. Flags are ignored.
-         Module: core
+|   (31) NOTE (stackable)
+|        bind note <flags> <mask> <proc>
+|        procname <from> <to> <text>
+|
+|        Description: incoming notes (either from the party line, someone on
+|          IRC, or someone on another bot on the botnet) are checked against
+|          these binds before being processed. The mask is matched against
+|          the receiving handle and supports wildcards. If the proc returns 1,
+|          Eggdrop will not process the note any further. Flags are ignored.
+|        Module: core
 
     (32) ACT (stackable)
          bind act <flags> <mask> <proc>
@@ -2030,7 +2030,7 @@ marked with vertical bars (|) on the left.
          Description: when someone joins a botnet channel, it invokes this
            binding. The mask is matched against the channel and can contain
            wildcards. flag is one of: * (owner), + (master), @ (op), or %
-           (botnet master).
+           (botnet master). Flags are ignored.
          Module: core
 
     (36) CHPT (stackable)
@@ -2038,8 +2038,8 @@ marked with vertical bars (|) on the left.
          proc-name <botname> <handle> <idx> <channel#>
 
          Description: when someone parts a botnet channel, it invokes this
-           binding. flags are ignored; the mask is matched against the
-           channel and can contain wildcards.
+           binding. The mask is matched against the channel and can contain
+           wildcards. Flags are ignored.
          Module: core
 
     (37) TIME (stackable)
@@ -2050,7 +2050,7 @@ marked with vertical bars (|) on the left.
            times. mask matches 5 space separated integers of the form:
            "minute hour day month year". minute, hour, day, month have a
            zero padding so they are exactly two characters long; year is
-           extended to four characters in the same way.
+           four characters. Flags are ignored.
          Module: core
 
     (38) AWAY (stackable)
@@ -2145,16 +2145,16 @@ marked with vertical bars (|) on the left.
     Here's a list of the bindings that use the return value from procs
     they trigger:
 
-    (1) MSG   Return 1 to make the command get logged like so:
+    (1) MSG   Return 1 to make Eggdrop log the command as:
                 (nick!user@host) !handle! command
 
-    (2) DCC   Return 1 to make the command get logged like so:
+    (2) DCC   Return 1 to make Eggdrop log the command as:
                 #handle# command
 
-    (3) FIL   Return 1 to make the command get logged like so:
+    (3) FIL   Return 1 to make Eggdrop log the command as:
                 #handle# files: command
 
-    (4) PUB   Return 1 to make the command get logged like so:
+    (4) PUB   Return 1 to make Eggdrop log the command as:
                 <<nick>> !handle! command
 
     (5) CTCP  Return 1 to ask the bot not to process the CTCP command on its
@@ -2177,13 +2177,13 @@ marked with vertical bars (|) on the left.
 
     (10) CHOF  Return 1 to ask the bot not to process the partyline part event.
 
-    (11) WALL  Return 1 to make the command get logged like so:
-           !nick! msg
+    (11) WALL  Return 1 to make Eggdrop log the command as:
+                 !nick! msg
 
-    (12) NOTE  Return 1 to ask the bot not to process the note any further.
-               This includes stacked note bindings that would be processed
-               after this one, as well as the built-in eggdrop note handling
-               routines.
+|   (12) NOTE  Return 1 to make Eggdrop not process the note any further.
+|              This includes stacked note bindings that would be processed
+|              after this one, as well as the built-in eggdrop note handling
+|              routines.
 
 *** CONTROL PROCEDURES ***
 
