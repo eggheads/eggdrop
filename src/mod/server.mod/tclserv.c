@@ -1,7 +1,7 @@
 /*
  * tclserv.c -- part of server.mod
  *
- * $Id: tclserv.c,v 1.13 2003/01/28 06:37:26 wcc Exp $
+ * $Id: tclserv.c,v 1.14 2003/01/30 07:15:15 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -167,8 +167,7 @@ static int tcl_clearqueue STDVAR
     simple_sprintf(s, "%d", msgs);
     Tcl_AppendResult(irp, s, NULL);
     return TCL_OK;
-  }
-  else if (!strncmp(argv[1], "serv", 4)) {
+  } else if (!strncmp(argv[1], "serv", 4)) {
     msgs = mq.tot;
     for (q = mq.head; q; q = qq) {
       qq = q->next;
@@ -185,8 +184,7 @@ static int tcl_clearqueue STDVAR
     simple_sprintf(s, "%d", msgs);
     Tcl_AppendResult(irp, s, NULL);
     return TCL_OK;
-  }
-  else if (!strcmp(argv[1], "mode")) {
+  } else if (!strcmp(argv[1], "mode")) {
     msgs = modeq.tot;
     for (q = modeq.head; q; q = qq) {
       qq = q->next;
@@ -201,8 +199,7 @@ static int tcl_clearqueue STDVAR
     simple_sprintf(s, "%d", msgs);
     Tcl_AppendResult(irp, s, NULL);
     return TCL_OK;
-  }
-  else if (!strcmp(argv[1], "help")) {
+  } else if (!strcmp(argv[1], "help")) {
     msgs = hq.tot;
     for (q = hq.head; q; q = qq) {
       qq = q->next;
@@ -233,20 +230,17 @@ static int tcl_queuesize STDVAR
     simple_sprintf(s, "%d", x);
     Tcl_AppendResult(irp, s, NULL);
     return TCL_OK;
-  }
-  else if (!strncmp(argv[1], "serv", 4)) {
+  } else if (!strncmp(argv[1], "serv", 4)) {
     x = (int) (mq.tot);
     simple_sprintf(s, "%d", x);
     Tcl_AppendResult(irp, s, NULL);
     return TCL_OK;
-  }
-  else if (!strcmp(argv[1], "mode")) {
+  } else if (!strcmp(argv[1], "mode")) {
     x = (int) (modeq.tot);
     simple_sprintf(s, "%d", x);
     Tcl_AppendResult(irp, s, NULL);
     return TCL_OK;
-  }
-  else if (!strcmp(argv[1], "help")) {
+  } else if (!strcmp(argv[1], "help")) {
     x = (int) (hq.tot);
     simple_sprintf(s, "%d", x);
     Tcl_AppendResult(irp, s, NULL);

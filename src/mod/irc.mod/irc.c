@@ -2,7 +2,7 @@
  * irc.c -- part of irc.mod
  *   support for channels within the bot
  *
- * $Id: irc.c,v 1.87 2003/01/30 00:41:24 wcc Exp $
+ * $Id: irc.c,v 1.88 2003/01/30 07:15:15 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -185,8 +185,7 @@ static void punish_badguy(struct chanset_t *chan, char *whobad,
 
           i = atoi(s1 + 3);
           simple_sprintf(s1 + 3, "%d", i + 1);
-        }
-        else
+        } else
           strcpy(s1, "bad1");   /* Start with '1' */
       }
       userlist = adduser(userlist, s1, s, "-", 0);
@@ -536,14 +535,12 @@ static void check_lonely_channel(struct chanset_t *chan)
               chan->dname, chan->key_prot);
       whined = 0;
     }
-  }
-  else if (any_ops(chan)) {
+  } else if (any_ops(chan)) {
     whined = 0;
     check_tcl_need(chan->dname, "op");
     if (chan->need_op[0])
       do_tcl("need-op", chan->need_op);
-  }
-  else {
+  } else {
     /* Other people here, but none are ops. If there are other bots make
      * them LEAVE!
      */
@@ -571,8 +568,7 @@ static void check_lonely_channel(struct chanset_t *chan)
       for (m = chan->channel.member; m && m->nick[0]; m = m->next)
         if (!match_my_nick(m->nick))
           dprintf(DP_SERVER, "PRIVMSG %s :go %s\n", m->nick, chan->dname);
-    }
-    else {
+    } else {
       /* Some humans on channel, but still op-less */
       check_tcl_need(chan->dname, "op");
       if (chan->need_op[0])
@@ -628,8 +624,7 @@ static void check_expired_chanstuff()
                 putlog(LOG_MODES, chan->dname,
                        "(%s) Channel exemption %s NOT expired. Exempt still set!",
                        chan->dname, e->mask);
-              }
-              else {
+              } else {
                 putlog(LOG_MODES, chan->dname,
                        "(%s) Channel exemption on %s expired.",
                        chan->dname, e->mask);
@@ -682,8 +677,7 @@ static void check_expired_chanstuff()
         m = n;
       }
       check_lonely_channel(chan);
-    }
-    else if (!channel_inactive(chan) && !channel_pending(chan))
+    } else if (!channel_inactive(chan) && !channel_pending(chan))
       dprintf(DP_MODE, "JOIN %s %s\n",
               (chan->name[0]) ? chan->name : chan->dname,
               chan->channel.key[0] ? chan->channel.key : chan->key_prot);

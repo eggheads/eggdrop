@@ -5,7 +5,7 @@
  *
  * by Darrin Smith (beldin@light.iinet.net.au)
  *
- * $Id: botmsg.c,v 1.27 2003/01/28 06:37:24 wcc Exp $
+ * $Id: botmsg.c,v 1.28 2003/01/30 07:15:13 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -185,8 +185,7 @@ int simple_sprintf EGG_VARARGS_DEF(char *, arg1)
         while (*s && c < 1023)
           buf[c++] = *s++;
       format++;
-    }
-    else
+    } else
       buf[c++] = *format++;
   }
   va_end(va);
@@ -228,8 +227,7 @@ void botnet_send_chan(int idx, char *botnick, char *user, int chan, char *data)
   if ((tands > 0) && (chan < GLOBAL_CHANS)) {
     if (user) {
       i = simple_sprintf(OBUF, "c %s@%s %D %s\n", user, botnick, chan, data);
-    }
-    else {
+    } else {
       i = simple_sprintf(OBUF, "c %s %D %s\n", botnick, chan, data);
     }
     send_tand_but(idx, OBUF, -i);
@@ -247,8 +245,7 @@ void botnet_send_act(int idx, char *botnick, char *user, int chan, char *data)
   if ((tands > 0) && (chan < GLOBAL_CHANS)) {
     if (user) {
       i = simple_sprintf(OBUF, "a %s@%s %D %s\n", user, botnick, chan, data);
-    }
-    else {
+    } else {
       i = simple_sprintf(OBUF, "a %s %D %s\n", botnick, chan, data);
     }
     send_tand_but(idx, OBUF, -i);
@@ -316,8 +313,7 @@ void botnet_send_priv EGG_VARARGS_DEF(int, arg1)
     else
 #endif
       l = simple_sprintf(OBUF, "p %s %s@%s %s\n", from, to, tobot, tbuf);
-  }
-  else {
+  } else {
 #ifndef NO_OLD_BOTNET
     if (b_numver(idx) < NEAT_BOTNET)
       l = simple_sprintf(OBUF, "priv %s %s %s\n", from, to, tbuf);
@@ -583,8 +579,7 @@ void botnet_send_away(int idx, char *bot, int sock, char *msg, int linking)
       if (idx < 0) {
         tandout_but(idx, "chan %s %d %s is now away: %s.\n", bot,
                     dcc[linking].u.chat->channel, dcc[linking].nick, msg);
-      }
-      else if ((b_numver(idx) >= NEAT_BOTNET)) {
+      } else if ((b_numver(idx) >= NEAT_BOTNET)) {
         int partyidx = getparty(bot, sock);
 
         if (partyidx >= 0)
@@ -593,14 +588,12 @@ void botnet_send_away(int idx, char *bot, int sock, char *msg, int linking)
                       NET_AWAY, msg);
       }
       tandout_but(idx, "away %s %d %s\n", bot, sock, msg);
-    }
-    else {
+    } else {
       if (idx < 0) {
         tandout_but(idx, "chan %s %d %s %s.\n", bot,
                     dcc[linking].u.chat->channel, dcc[linking].nick,
                     NET_UNAWAY);
-      }
-      else if (b_numver(idx) >= NEAT_BOTNET) {
+      } else if (b_numver(idx) >= NEAT_BOTNET) {
         int partyidx = getparty(bot, sock);
 
         if (partyidx >= 0)
@@ -788,11 +781,9 @@ int add_note(char *to, char *from, char *msg, int idx, int echo)
         from[40] = 0;
       if (strchr(from, '@')) {
         strcpy(botf, from);
-      }
-      else
+      } else
         sprintf(botf, "%s@%s", from, botnetnick);
-    }
-    else
+    } else
       strcpy(botf, botnetnick);
     i = nextbot(p);
     if (i < 0) {
@@ -805,8 +796,7 @@ int add_note(char *to, char *from, char *msg, int idx, int echo)
     if (idx >= 0) {
       sprintf(ssf, "%lu:%s", dcc[idx].sock, botf);
       botnet_send_priv(i, ssf, x, p, "%s", msg);
-    }
-    else
+    } else
       botnet_send_priv(i, botf, x, p, "%s", msg);
     return NOTE_OK;             /* Forwarded to the right bot */
   }

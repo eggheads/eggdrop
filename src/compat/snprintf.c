@@ -1,7 +1,7 @@
 /*
  * snprintf.c - a portable implementation of snprintf and vsnprintf
  *
- * $Id: snprintf.c,v 1.9 2003/01/29 05:48:41 wcc Exp $
+ * $Id: snprintf.c,v 1.10 2003/01/30 07:15:14 wcc Exp $
  */
 /*
  * Portions Copyright (C) 2000, 2001, 2002, 2003 Eggheads Development Team
@@ -219,22 +219,19 @@ static void dopr(char *buffer, size_t maxlen, const char *format, va_list args)
       if (isdigit(ch)) {
         min = 10 * min + char_to_int(ch);
         ch = *format++;
-      }
-      else if (ch == '*') {
+      } else if (ch == '*') {
         min = va_arg(args, int);
 
         ch = *format++;
         state = DP_S_DOT;
-      }
-      else
+      } else
         state = DP_S_DOT;
       break;
     case DP_S_DOT:
       if (ch == '.') {
         state = DP_S_MAX;
         ch = *format++;
-      }
-      else
+      } else
         state = DP_S_MOD;
       break;
     case DP_S_MAX:
@@ -243,14 +240,12 @@ static void dopr(char *buffer, size_t maxlen, const char *format, va_list args)
           max = 0;
         max = 10 * max + char_to_int(ch);
         ch = *format++;
-      }
-      else if (ch == '*') {
+      } else if (ch == '*') {
         max = va_arg(args, int);
 
         ch = *format++;
         state = DP_S_MOD;
-      }
-      else
+      } else
         state = DP_S_MOD;
       break;
     case DP_S_MOD:
@@ -378,14 +373,12 @@ static void dopr(char *buffer, size_t maxlen, const char *format, va_list args)
           num = va_arg(args, short int *);
 
           *num = currlen;
-        }
-        else if (cflags == DP_C_LONG) {
+        } else if (cflags == DP_C_LONG) {
           long int *num;
           num = va_arg(args, long int *);
 
           *num = currlen;
-        }
-        else {
+        } else {
           int *num;
           num = va_arg(args, int *);
 
@@ -476,8 +469,7 @@ static void fmtint(char *buffer, size_t *currlen, size_t maxlen,
     if (value < 0) {
       signvalue = '-';
       uvalue = -value;
-    }
-    else if (flags & DP_F_PLUS) /* Do a sign (+/i) */
+    } else if (flags & DP_F_PLUS) /* Do a sign (+/i) */
       signvalue = '+';
     else if (flags & DP_F_SPACE)
       signvalue = ' ';

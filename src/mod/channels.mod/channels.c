@@ -2,7 +2,7 @@
  * channels.c -- part of channels.mod
  *   support for channels within the bot
  *
- * $Id: channels.c,v 1.78 2003/01/29 05:48:41 wcc Exp $
+ * $Id: channels.c,v 1.79 2003/01/30 07:15:14 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -147,8 +147,7 @@ static void set_mode_protect(struct chanset_t *chan, char *set)
       if (pos) {
         chan->mode_pls_prot |= i;
         chan->mode_mns_prot &= ~i;
-      }
-      else {
+      } else {
         chan->mode_pls_prot &= ~i;
         chan->mode_mns_prot |= i;
       }
@@ -178,8 +177,7 @@ static void get_mode_protect(struct chanset_t *chan, char *s)
         *p++ = 'k';
         sprintf(&s1[strlen(s1)], "%s ", chan->key_prot);
       }
-    }
-    else {
+    } else {
       tst = chan->mode_mns_prot;
       if (tst)
         *p++ = '-';
@@ -532,8 +530,7 @@ static void channels_rehash()
       putlog(LOG_MISC, "*", "No longer supporting channel %s", chan->dname);
       remove_channel(chan);
       chan = chanset;
-    }
-    else
+    } else
       chan = chan->next;
   }
 }
@@ -574,19 +571,16 @@ static void channels_report(int idx, int details)
                     "unique name %s\n", chan->dname, chan->channel.members,
                     (chan->channel.members == 1) ? "," : "s,", s2, s,
                     chan->name);
-          }
-          else {
+          } else {
             dprintf(idx, "    %-10s: %2d member%s enforcing \"%s\" (%s)\n",
                     chan->dname, chan->channel.members,
                     chan->channel.members == 1 ? "," : "s,", s2, s);
           }
-        }
-        else {
+        } else {
           dprintf(idx, "    %-10s: (%s), enforcing \"%s\"  (%s)\n", chan->dname,
                   channel_pending(chan) ? "pending" : "not on channel", s2, s);
         }
-      }
-      else {
+      } else {
         dprintf(idx, "    %-10s: channel is set +inactive\n", chan->dname);
       }
       if (details) {
@@ -738,8 +732,7 @@ static char *traced_globchanset(ClientData cdata, Tcl_Interp *irp,
       Tcl_TraceVar(interp, "global-chanset",
                    TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
                    traced_globchanset, NULL);
-  }
-  else {                        /* Write */
+  } else {                        /* Write */
     s2 = Tcl_GetVar2(interp, name1, name2, TCL_GLOBAL_ONLY);
     Tcl_SplitList(interp, s2, &items, &item);
     for (i = 0; i < items; i++) {

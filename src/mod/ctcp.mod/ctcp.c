@@ -2,7 +2,7 @@
  * ctcp.c -- part of ctcp.mod
  *   all the ctcp handling (except DCC, it's special ;)
  *
- * $Id: ctcp.c,v 1.20 2003/01/28 06:37:25 wcc Exp $
+ * $Id: ctcp.c,v 1.21 2003/01/30 07:15:14 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -121,8 +121,7 @@ static int ctcp_CLIENTINFO(char *nick, char *uhosr, char *handle,
     simple_sprintf(ctcp_reply,
                    "%s\001ERRMSG CLIENTINFO: %s is not a valid function\001",
                    ctcp_reply, msg);
-  }
-  else
+  } else
     simple_sprintf(ctcp_reply, "%s\001CLIENTINFO %s\001", ctcp_reply, p);
   return 1;
 }

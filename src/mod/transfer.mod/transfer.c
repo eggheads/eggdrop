@@ -1,7 +1,7 @@
 /*
  * transfer.c -- part of transfer.mod
  *
- * $Id: transfer.c,v 1.60 2003/01/29 05:48:42 wcc Exp $
+ * $Id: transfer.c,v 1.61 2003/01/30 07:15:15 wcc Exp $
  *
  * Copyright (C) 1997 Robey Pointer
  * Copyright (C) 1999, 2000, 2001, 2002, 2003 Eggheads Development Team
@@ -276,8 +276,7 @@ static void eof_dcc_fork_send(int idx)
     }
     putlog(LOG_BOTS, "*", USERF_FAILEDXFER);
     unlink(dcc[idx].u.xfer->filename);
-  }
-  else {
+  } else {
     neterror(s1);
     if (!quiet_reject)
       dprintf(DP_HELP, "NOTICE %s :%s (%s)\n", dcc[idx].nick,
@@ -391,8 +390,7 @@ static void eof_dcc_send(int idx)
       killsock(dcc[idx].sock);
       lostdcc(idx);
     }
-  }
-  else {
+  } else {
     putlog(LOG_FILES, "*", TRANSFER_LOST_DCCSEND, dcc[idx].u.xfer->origname,
            dcc[idx].nick, dcc[idx].host, dcc[idx].status,
            dcc[idx].u.xfer->length);
@@ -464,8 +462,7 @@ static void dcc_get(int idx, char *buf, int len)
     dcc[idx].u.xfer->sofar += len;
     return;
     /* Waiting for the 8 bit reget packet? */
-  }
-  else if (dcc[idx].u.xfer->type == XFER_RESEND_PEND) {
+  } else if (dcc[idx].u.xfer->type == XFER_RESEND_PEND) {
     /* The 8 bit packet is complete now. Parse it. */
     if (w == 8) {
       transfer_reget reget_data;
@@ -474,19 +471,16 @@ static void dcc_get(int idx, char *buf, int len)
       my_memcpy(&reget_data + dcc[idx].u.xfer->sofar, buf, len);
       handle_resend_packet(idx, &reget_data);
       cmp = dcc[idx].u.xfer->offset;
-    }
-    else
+    } else
       return;
     /* Fall through! */
     /* No, only want 4 bit ack responses. */
-  }
-  else {
+  } else {
     /* Complete packet? */
     if (w == 4) {
       my_memcpy(bbuf, dcc[idx].u.xfer->buf, dcc[idx].u.xfer->sofar);
       my_memcpy(&(bbuf[dcc[idx].u.xfer->sofar]), buf, len);
-    }
-    else {
+    } else {
       p = ((w - 1) & ~3) - dcc[idx].u.xfer->sofar;
       w = w - ((w - 1) & ~3);
       if (w < 4) {
@@ -509,8 +503,7 @@ static void dcc_get(int idx, char *buf, int len)
     /* Attempt to resume, but file is not as long as requested... */
     putlog(LOG_FILES, "*", TRANSFER_BEHIND_FILEEND, dcc[idx].u.xfer->origname,
            dcc[idx].nick);
-  }
-  else if (cmp > dcc[idx].status) {
+  } else if (cmp > dcc[idx].status) {
     /* Attempt to resume */
     if (!strcmp(dcc[idx].nick, "*users"))
       putlog(LOG_BOTS, "*", TRANSFER_TRY_SKIP_AHEAD);
@@ -520,8 +513,7 @@ static void dcc_get(int idx, char *buf, int len)
       putlog(LOG_FILES, "*", TRANSFER_RESUME_FILE, (int) (cmp / 1024),
              dcc[idx].u.xfer->origname, dcc[idx].nick);
     }
-  }
-  else {
+  } else {
     if (dcc[idx].u.xfer->ack_type == XFER_ACK_UNKNOWN) {
       if (cmp < dcc[idx].u.xfer->offset)
         /* If we don't start at the top of the file, some clients only tell
@@ -558,8 +550,7 @@ static void dcc_get(int idx, char *buf, int len)
       if (me && me->funcs[SHARE_DUMP_RESYNC])
         ((me->funcs)[SHARE_DUMP_RESYNC]) (y);
       xnick[0] = 0;
-    }
-    else {
+    } else {
       module_entry *fs = module_find("filesys", 0, 0);
       struct userrec *u = get_user_by_handle(userlist, dcc[idx].u.xfer->from);
 
@@ -622,8 +613,7 @@ static void eof_dcc_get(int idx)
     killsock(dcc[idx].sock);
     lostdcc(idx);
     return;
-  }
-  else {
+  } else {
     struct userrec *u;
 
     /* Call `lost' DCC trigger now.
@@ -705,8 +695,7 @@ static void transfer_get_timeout(int i)
     killsock(dcc[y].sock);
     lostdcc(y);
     xx[0] = 0;
-  }
-  else {
+  } else {
     char *p;
     struct userrec *u;
 
@@ -748,8 +737,7 @@ static void tout_dcc_send(int idx)
     }
     unlink(dcc[idx].u.xfer->filename);
     putlog(LOG_BOTS, "*", TRANSFER_USERFILE_TIMEOUT);
-  }
-  else {
+  } else {
     char *buf;
 
     dprintf(DP_HELP, TRANSFER_NOTICE_TIMEOUT, dcc[idx].nick,
@@ -944,8 +932,7 @@ static void dcc_get_pending(int idx, char *buf, int len)
     if (dcc_block == 0 || dcc[idx].u.xfer->length < dcc_block) {
       l = dcc[idx].u.xfer->length - dcc[idx].u.xfer->offset;
       dcc[idx].status = dcc[idx].u.xfer->length;
-    }
-    else {
+    } else {
       l = dcc_block;
       dcc[idx].status = dcc[idx].u.xfer->offset + dcc_block;
     }
@@ -955,8 +942,7 @@ static void dcc_get_pending(int idx, char *buf, int len)
     dcc[idx].u.xfer->block_pending = pump_file_to_sock(dcc[idx].u.xfer->f,
                                                        dcc[idx].sock, l);
     dcc[idx].u.xfer->type = XFER_RESUME;
-  }
-  else {
+  } else {
     dcc[idx].u.xfer->offset = 0;
 
     /* If we're resending the data, wait for the client's response first,
@@ -970,8 +956,7 @@ static void dcc_get_pending(int idx, char *buf, int len)
       dcc[idx].u.xfer->block_pending = pump_file_to_sock(dcc[idx].u.xfer->f,
                                                          dcc[idx].sock,
                                                          dcc[idx].status);
-    }
-    else
+    } else
       dcc[idx].status = 0;
   }
 
@@ -1004,8 +989,7 @@ static int raw_dcc_resend_send(char *filename, char *nick, char *from,
     for (port = reserved_port_min; port <= reserved_port_max; port++)
       if ((zz = open_listen(&port)) != -1)
         break;
-  }
-  else {
+  } else {
     port = reserved_port_min;
     zz = open_listen(&port);
   }

@@ -6,7 +6,7 @@
  * Written by Fabian Knittel <fknittel@gmx.de>. Based on zlib examples
  * by Jean-loup Gailly and Miguel Albrecht.
  *
- * $Id: compress.c,v 1.17 2003/01/29 05:48:41 wcc Exp $
+ * $Id: compress.c,v 1.18 2003/01/30 07:15:14 wcc Exp $
  */
 /*
  * Copyright (C) 2000, 2001, 2002, 2003 Eggheads Development Team
@@ -247,8 +247,7 @@ static int compress_to_file(char *f_src, char *f_target, int mode_num)
   if (compress_to_file_mmap(fout, fin) == COMPF_SUCCESS) {
     compressed_files++;
     return COMPF_SUCCESS;
-  }
-  else {
+  } else {
     /* To be on the safe side, close the file before attempting
      * to write again.
      */

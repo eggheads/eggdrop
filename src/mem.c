@@ -3,7 +3,7 @@
  *   memory allocation and deallocation
  *   keeping track of what memory is being used by whom
  *
- * $Id: mem.c,v 1.19 2003/01/28 06:37:24 wcc Exp $
+ * $Id: mem.c,v 1.20 2003/01/30 07:15:14 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -177,8 +177,7 @@ void debug_mem_to_dcc(int idx)
       for (me = module_list; me; me = me->next)
         if (!strcmp(fn, me->name))
           me->mem_work += l;
-    }
-    else
+    } else
       dprintf(idx, "Not logging file %s!\n", fn);
   }
   for (i = 0; i < MAX_MEM; i++) {

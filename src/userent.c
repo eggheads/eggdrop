@@ -2,7 +2,7 @@
  * userent.c -- handles:
  *   user-entry handling, new stylem more versatile.
  *
- * $Id: userent.c,v 1.27 2003/01/28 06:37:24 wcc Exp $
+ * $Id: userent.c,v 1.28 2003/01/30 07:15:14 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -140,8 +140,7 @@ int def_set(struct userrec *u, struct user_entry *e, void *buf)
        */
       if ((unsigned int) *i < 32 && !strchr("\002\003\026\037", *i))
         *i = '?';
-  }
-  else {
+  } else {
     nfree(e->u.string);
     e->u.string = NULL;
   }
@@ -373,8 +372,7 @@ static int laston_tcl_get(Tcl_Interp * irp, struct userrec *u,
       }
     if (!cr)
       Tcl_AppendResult(irp, "0", NULL);
-  }
-  else {
+  } else {
     sprintf(number, "%lu ", li->laston);
     Tcl_AppendResult(irp, number, li->lastonplace, NULL);
   }
@@ -403,8 +401,7 @@ static int laston_tcl_set(Tcl_Interp * irp, struct userrec *u,
   if (argc == 5) {
     li->lastonplace = user_malloc(strlen(argv[4]) + 1);
     strcpy(li->lastonplace, argv[4]);
-  }
-  else {
+  } else {
     li->lastonplace = user_malloc(1);
     li->lastonplace[0] = 0;
   }
@@ -462,8 +459,7 @@ static int botaddr_unpack(struct userrec *u, struct user_entry *e)
   if (!(q = strchr((p = e->u.list->extra), ':'))) {
     bi->address = user_malloc(strlen(p) + 1);
     strcpy(bi->address, p);
-  }
-  else {
+  } else {
     bi->address = user_malloc((q - p) + 1);
     strncpy(bi->address, p, q - p);
     bi->address[q - p] = 0;
@@ -562,8 +558,7 @@ static int botaddr_tcl_set(Tcl_Interp * irp, struct userrec *u,
     if (!bi) {
       bi = user_malloc(sizeof(struct bot_addr));
       egg_bzero(bi, sizeof(struct bot_addr));
-    }
-    else
+    } else
       nfree(bi->address);
     bi->address = user_malloc(strlen(argv[3]) + 1);
     strcpy(bi->address, argv[3]);
@@ -687,8 +682,7 @@ int xtra_set(struct userrec *u, struct user_entry *e, void *buf)
   if (old != new && new->data) {
     if (new->data[0])
       list_insert((&e->u.extra), new)  /* do not add a ';' here */
-  }
-  else {
+  } else {
     if (new->data)
       nfree(new->data);
     nfree(new->key);
@@ -986,8 +980,7 @@ static void hosts_display(int idx, struct user_entry *e)
       if (strlen(s) + strlen(q->extra) + 2 > 65) {
         dprintf(idx, "%s\n", s);
         sprintf(s, "         %s", q->extra);
-      }
-      else {
+      } else {
         strcat(s, ", ");
         strcat(s, q->extra);
       }
@@ -1003,8 +996,7 @@ static int hosts_set(struct userrec *u, struct user_entry *e, void *buf)
     /* When the bot crashes, it's in this part, not in the 'else' part */
     list_type_kill(e->u.list);
     e->u.list = NULL;
-  }
-  else {
+  } else {
     char *host = buf, *p = strchr(host, ',');
     struct list_type **t;
 
@@ -1026,8 +1018,7 @@ static int hosts_set(struct userrec *u, struct user_entry *e, void *buf)
         if (u->extra)
           nfree(u->extra);
         nfree(u);
-      }
-      else
+      } else
         t = &((*t)->next);
     }
     *t = user_malloc(sizeof(struct list_type));

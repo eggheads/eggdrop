@@ -10,7 +10,7 @@
  * 1.2     1997-08-20      Minor fixes. [BB]
  * 1.2a    1997-08-24      Minor fixes. [BB]
  *
- * $Id: seen.c,v 1.29 2003/01/28 06:37:26 wcc Exp $
+ * $Id: seen.c,v 1.30 2003/01/30 07:15:15 wcc Exp $
  */
 /*
  * Copyright (C) 1999, 2000, 2001, 2002, 2003 Eggheads Development Team
@@ -277,8 +277,7 @@ static void do_seen(int idx, char *prefix, char *nick, char *hand,
       strcpy(whotarget, getxtra(hand, "BF"));
       if (whotarget[0]) {
         sprintf(whoredirect, "%s, your boyfriend is %s, and ", nick, whotarget);
-      }
-      else {
+      } else {
         dprintf(idx, "%sI didn't know you had a boyfriend, %s\n", prefix, nick);
         return;
       }
@@ -290,14 +289,12 @@ static void do_seen(int idx, char *prefix, char *nick, char *hand,
       if (whotarget[0]) {
         sprintf(whoredirect, "%s, your girlfriend is %s, and ",
                 nick, whotarget);
-      }
-      else {
+      } else {
         dprintf(idx,
                 "%sI didn't know you had a girlfriend, %s\n", prefix, nick);
         return;
       }
-    }
-    else {
+    } else {
       dprintf(idx,
               "%sI don't know anything about your %s, %s.\n",
               prefix, word1, nick);
@@ -327,15 +324,13 @@ static void do_seen(int idx, char *prefix, char *nick, char *hand,
           dprintf(idx, "%s%s\n", prefix, whoredirect);
           return;
         }
-      }
-      else {                    /* owner variable munged or not set */
+      } else {                    /* owner variable munged or not set */
         dprintf(idx,
                 "%sI don't seem to recall who my owner is right now...\n",
                 prefix);
         return;
       }
-    }
-    else {                      /* no "your" target specified */
+    } else {                      /* no "your" target specified */
       dprintf(idx, "%sLet's not get personal, %s.\n", prefix, nick);
       return;
     }
@@ -451,8 +446,7 @@ targetcont:
           strcat(whoredirect,
                  " is 'observing' this channel right now from my party line!");
           dprintf(idx, "%s%s\n", prefix, whoredirect);
-        }
-        else {
+        } else {
           dprintf(idx,
                   "%s%s%s is linked to me via DCC CHAT right now!\n",
                   prefix, whoredirect, whotarget);
@@ -504,8 +498,7 @@ targetcont:
   }
   if (!word2[0] && (work < 60)) {
     strcpy(word2, "just moments ago!!");
-  }
-  else {
+  } else {
     strcpy(word2 + strlen(word2) - 2, " ago.");
   }
   if (lastonplace[0] && (strchr(CHANMETA, lastonplace[0]) != NULL))
@@ -570,8 +563,7 @@ static char *getxtra(char *hand, char *field)
             strncpy(fixit, &xk->data[1], strlen(xk->data) - 2);
             fixit[strlen(xk->data) - 2] = 0;
             return fixit;
-          }
-          else {
+          } else {
             return xk->data;
           }
         }

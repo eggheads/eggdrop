@@ -15,7 +15,7 @@
  * 1.4       1997-11-25      1.2.2.0         Added language addition  Kirk
  * 1.5       1998-07-12      1.3.0.0         Fixed ;me and updated    BB
  *
- * $Id: wire.c,v 1.26 2003/01/28 06:37:26 wcc Exp $
+ * $Id: wire.c,v 1.27 2003/01/30 07:15:15 wcc Exp $
  */
 /*
  * Copyright (C) 1999, 2000, 2001, 2002, 2003 Eggheads Development Team
@@ -142,8 +142,7 @@ static void wire_filter(char *from, char *cmd, char *param)
             sprintf(idle, " [%s %luh%lum]", WIRE_IDLE, hrs, mins);
           else
             sprintf(idle, " [%s %lum]", WIRE_IDLE, mins);
-        }
-        else
+        } else
           idle[0] = 0;
         sprintf(wirereq, "----- %c%-9s %-9s  %s%s",
                 geticon(idx), dcc[idx].nick, botnetnick, dcc[idx].host, idle);
@@ -269,8 +268,7 @@ static int cmd_onwire(struct userrec *u, int idx, char *par)
           sprintf(idle, " [%s %luh%lum]", WIRE_IDLE, hrs, mins);
         else
           sprintf(idle, " [%s %lum]", WIRE_IDLE, mins);
-      }
-      else
+      } else
         idle[0] = 0;
       dprintf(idx, "----- %c%-9s %-9s  %s%s\n",
               geticon(idx2), dcc[idx2].nick, botnetnick, dcc[idx2].host, idle);
@@ -314,8 +312,7 @@ static int cmd_wire(struct userrec *u, int idx, char *par)
   if (w) {
     dprintf(idx, "%s %s...\n", WIRE_CHANGINGKEY, par);
     wire_leave(w->sock);
-  }
-  else {
+  } else {
     dprintf(idx, "----- %s\n", WIRE_INFO1);
     dprintf(idx, "----- %s\n", WIRE_INFO2);
     dprintf(idx, "----- %s\n", WIRE_INFO3);
@@ -347,8 +344,7 @@ static void wire_join(int idx, char *key)
   if (!wirelist) {
     wirelist = (wire_list *) nmalloc(sizeof(wire_list));
     w = wirelist;
-  }
-  else {
+  } else {
     w->next = (wire_list *) nmalloc(sizeof(wire_list));
     w = w->next;
   }
@@ -461,8 +457,7 @@ static void wire_leave(int sock)
       wlast->next = w->next;
     else
       wlast->next = 0;
-  }
-  else if (!w->next)
+  } else if (!w->next)
     wirelist = 0;
   else
     wirelist = w->next;
@@ -496,8 +491,7 @@ static char *cmd_putwire(int idx, char *message)
     sprintf(wiretmp2, "!%s@%s", dcc[idx].nick, botnetnick);
     enctmp = encrypt_string(w->key, &message[3]);
     wiretype = 1;
-  }
-  else {
+  } else {
     sprintf(wiretmp2, "%s@%s", dcc[idx].nick, botnetnick);
     enctmp = encrypt_string(w->key, &message[1]);
     wiretype = 0;

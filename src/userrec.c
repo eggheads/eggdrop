@@ -4,7 +4,7 @@
  *   a bunch of functions to find and change user records
  *   change and check user (and channel-specific) flags
  *
- * $Id: userrec.c,v 1.44 2003/01/29 07:24:32 wcc Exp $
+ * $Id: userrec.c,v 1.45 2003/01/30 07:15:14 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -120,8 +120,7 @@ int expmem_users()
       if (ue->name) {
         tot += strlen(ue->name) + 1;
         tot += list_type_expmem(ue->u.list);
-      }
-      else
+      } else
         tot += ue->type->expmem(ue);
     }
   }
@@ -376,8 +375,7 @@ int u_pass_match(struct userrec *u, char *pass)
   if (u->flags & USER_BOT) {
     if (!strcmp(cmp, pass))
       return 1;
-  }
-  else {
+  } else {
     if (strlen(pass) > 15)
       pass[15] = 0;
     encrypt_pass(pass, new);
@@ -407,8 +405,7 @@ int write_user(struct userrec *u, FILE *f, int idx)
       if (idx >= 0) {
         fr.match = (FR_CHAN | FR_BOT);
         get_user_flagrec(dcc[idx].user, &fr, ch->channel);
-      }
-      else
+      } else
         fr.chan = BOT_SHARE;
       if ((fr.chan & BOT_SHARE) || (fr.bot & BOT_GLOBAL)) {
         fr.match = FR_CHAN;
@@ -428,8 +425,7 @@ int write_user(struct userrec *u, FILE *f, int idx)
       for (lt = ue->u.list; lt; lt = lt->next)
         if (fprintf(f, "--%s %s\n", ue->name, lt->extra) == EOF)
           return 0;
-    }
-    else if (!ue->type->write_userfile(f, u, ue))
+    } else if (!ue->type->write_userfile(f, u, ue))
       return 0;
   }
   return 1;
@@ -479,8 +475,7 @@ int sort_compare(struct userrec *a, struct userrec *b)
       return 1;
     if (bot_flags(a) & ~bot_flags(b) & BOT_LEAF)
       return 0;
-  }
-  else {
+  } else {
     if (~a->flags & b->flags & USER_BOT)
       return 1;
     if (a->flags & ~b->flags & USER_BOT)
@@ -632,8 +627,7 @@ struct userrec *adduser(struct userrec *bu, char *handle, char *host,
   if (flags != USER_DEFAULT) {  /* drummer */
     u->flags = flags;
     u->flags_udef = 0;
-  }
-  else {
+  } else {
     u->flags = default_flags;
     u->flags_udef = default_uflags;
   }
@@ -667,8 +661,7 @@ struct userrec *adduser(struct userrec *bu, char *handle, char *host,
       p = strchr(host, ',');
     }
     set_user(&USERENTRY_HOSTS, u, host);
-  }
-  else
+  } else
     set_user(&USERENTRY_HOSTS, u, "none");
   if (bu == userlist)
     clear_chanlist();
@@ -730,8 +723,7 @@ void freeuser(struct userrec *u)
       }
       nfree(ue->name);
       nfree(ue);
-    }
-    else
+    } else
       ue->type->kill(ue);
   }
   nfree(u);
@@ -789,8 +781,7 @@ int delhost_by_handle(char *handle, char *host)
       i++;
       qprev = NULL;
       q = e->u.extra;
-    }
-    else
+    } else
       q = q->next;
     while (q) {
       qnext = q->next;
@@ -804,8 +795,7 @@ int delhost_by_handle(char *handle, char *host)
         nfree(q->extra);
         nfree(q);
         i++;
-      }
-      else
+      } else
         qprev = q;
       q = qnext;
     }
@@ -851,12 +841,10 @@ void touch_laston(struct userrec *u, char *where, time_t timeval)
     if (where) {
       li->lastonplace = nmalloc(strlen(where) + 1);
       strcpy(li->lastonplace, where);
-    }
-    else
+    } else
       li->lastonplace = NULL;
     set_user(&USERENTRY_LASTON, u, li);
-  }
-  else if (timeval == 1)
+  } else if (timeval == 1)
     set_user(&USERENTRY_LASTON, u, 0);
 }
 

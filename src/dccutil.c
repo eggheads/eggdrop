@@ -6,7 +6,7 @@
  *   memory management for dcc structures
  *   timeout checking for dcc connections
  *
- * $Id: dccutil.c,v 1.45 2003/01/28 06:37:24 wcc Exp $
+ * $Id: dccutil.c,v 1.46 2003/01/30 07:15:14 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -125,8 +125,7 @@ void dprintf EGG_VARARGS_DEF(int, arg1)
 
   if (idx < 0) {
     tputs(-idx, buf, len);
-  }
-  else if (idx > 0x7FF0) {
+  } else if (idx > 0x7FF0) {
     switch (idx) {
     case DP_LOG:
       putlog(LOG_MISC, "*", "%s", buf);
@@ -147,8 +146,7 @@ void dprintf EGG_VARARGS_DEF(int, arg1)
       break;
     }
     return;
-  }
-  else {
+  } else {
     if (len > 500) {            /* Truncate to fit */
       buf[500] = 0;
       strcat(buf, "\n");
@@ -158,8 +156,7 @@ void dprintf EGG_VARARGS_DEF(int, arg1)
       char *p = add_cr(buf);
 
       tputs(dcc[idx].sock, p, strlen(p));
-    }
-    else if (dcc[idx].type && dcc[idx].type->output)
+    } else if (dcc[idx].type && dcc[idx].type->output)
       dcc[idx].type->output(idx, buf, dcc[idx].u.other);
     else
       tputs(dcc[idx].sock, buf, len);
@@ -252,8 +249,7 @@ void dcc_chatter(int idx)
     /* But *do* bother with sending it locally */
     if (!dcc[idx].u.chat->channel) {
       chanout_but(-1, 0, "*** %s joined the party line.\n", dcc[idx].nick);
-    }
-    else if (dcc[idx].u.chat->channel > 0) {
+    } else if (dcc[idx].u.chat->channel > 0) {
       chanout_but(-1, dcc[idx].u.chat->channel,
                   "*** %s joined the channel.\n", dcc[idx].nick);
     }
@@ -530,8 +526,7 @@ int detect_dcc_flood(time_t *timer, struct chat_info *chat, int idx)
   if (*timer != t) {
     *timer = t;
     chat->msgs_per_sec = 0;
-  }
-  else {
+  } else {
     chat->msgs_per_sec++;
     if (chat->msgs_per_sec > dcc_flood_thr) {
       /* FLOOD */
@@ -549,8 +544,7 @@ int detect_dcc_flood(time_t *timer, struct chat_info *chat, int idx)
       if ((dcc[idx].sock != STDOUT) || backgrd) {
         killsock(dcc[idx].sock);
         lostdcc(idx);
-      }
-      else {
+      } else {
         dprintf(DP_STDOUT, "\n### SIMULATION RESET ###\n\n");
         dcc_chatter(idx);
       }
@@ -586,8 +580,7 @@ void do_boot(int idx, char *by, char *reason)
     killsock(dcc[idx].sock);
     lostdcc(idx);
     /* Entry must remain in the table so it can be logged by the caller */
-  }
-  else {
+  } else {
     dprintf(DP_STDOUT, "\n### SIMULATION RESET\n\n");
     dcc_chatter(idx);
   }

@@ -4,7 +4,7 @@
  *
  * Written by Fabian Knittel <fknittel@gmx.de>
  *
- * $Id: filelist.c,v 1.12 2003/01/28 06:37:26 wcc Exp $
+ * $Id: filelist.c,v 1.13 2003/01/30 07:15:15 wcc Exp $
  */
 /*
  * Copyright (C) 1999, 2000, 2001, 2002, 2003 Eggheads Development Team
@@ -72,8 +72,7 @@ static void filelist_addout(filelist_t *flist, char *desc)
                                 strlen(FILELIST_LE(flist).output) +
                                 strlen(desc) + 1);
     strcat(FILELIST_LE(flist).output, desc);
-  }
-  else {
+  } else {
     FILELIST_LE(flist).output = nmalloc(strlen(desc) + 1);
     strcpy(FILELIST_LE(flist).output, desc);
   }

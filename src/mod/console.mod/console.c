@@ -3,7 +3,7 @@
  *   saved console settings based on console.tcl
  *   by cmwagner/billyjoe/D. Senso
  *
- * $Id: console.c,v 1.27 2003/01/28 06:37:25 wcc Exp $
+ * $Id: console.c,v 1.28 2003/01/30 07:15:14 wcc Exp $
  */
 /*
  * Copyright (C) 1999, 2000, 2001, 2002, 2003 Eggheads Development Team
@@ -261,8 +261,7 @@ static int console_chon(char *handle, int idx)
           dcc[idx].u.chat->current_lines = 0;
       }
       dcc[idx].u.chat->channel = i->conchan;
-    }
-    else if (force_channel > -1)
+    } else if (force_channel > -1)
       dcc[idx].u.chat->channel = force_channel;
     if ((dcc[idx].u.chat->channel >= 0) &&
         (dcc[idx].u.chat->channel < GLOBAL_CHANS)) {

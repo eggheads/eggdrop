@@ -5,7 +5,7 @@
  *
  * Modified/written by Fabian Knittel <fknittel@gmx.de>
  *
- * $Id: coredns.c,v 1.24 2003/01/29 05:48:41 wcc Exp $
+ * $Id: coredns.c,v 1.25 2003/01/30 07:15:14 wcc Exp $
  */
 /*
  * Portions Copyright (C) 1999, 2000, 2001, 2002, 2003 Eggheads Development Team
@@ -215,8 +215,7 @@ static char *strtdiff(char *d, long signeddiff)
       sprintf(d + strlen(d), "%um", minutes);
     if (seconds)
       sprintf(d + strlen(d), "%us", seconds);
-  }
-  else
+  } else
     sprintf(d, "0s");
   return d;
 }
@@ -285,18 +284,15 @@ static void linkresolveid(struct resolve *addrp)
       if (rp->nextid)
         rp->nextid->previousid = addrp;
       rp->nextid = addrp;
-    }
-    else if (rp->id > addrp->id) {
+    } else if (rp->id > addrp->id) {
       addrp->previousid = rp->previousid;
       addrp->nextid = rp;
       if (rp->previousid)
         rp->previousid->nextid = addrp;
       rp->previousid = addrp;
-    }
-    else                        /* Trying to add the same id! */
+    } else                        /* Trying to add the same id! */
       return;
-  }
-  else
+  } else
     addrp->nextid = addrp->previousid = NULL;
   idbash[bashnum] = addrp;
 }
@@ -344,18 +340,15 @@ static void linkresolvehost(struct resolve *addrp)
       if (rp->nexthost)
         rp->nexthost->previoushost = addrp;
       rp->nexthost = addrp;
-    }
-    else if (ret > 0) {
+    } else if (ret > 0) {
       addrp->previoushost = rp->previoushost;
       addrp->nexthost = rp;
       if (rp->previoushost)
         rp->previoushost->nexthost = addrp;
       rp->previoushost = addrp;
-    }
-    else                        /* Trying to add the same host! */
+    } else                        /* Trying to add the same host! */
       return;
-  }
-  else
+  } else
     addrp->nexthost = addrp->previoushost = NULL;
   hostbash[bashnum] = addrp;
 }
@@ -400,18 +393,15 @@ static void linkresolveip(struct resolve *addrp)
       if (rp->nextip)
         rp->nextip->previousip = addrp;
       rp->nextip = addrp;
-    }
-    else if (rp->ip > addrp->ip) {
+    } else if (rp->ip > addrp->ip) {
       addrp->previousip = rp->previousip;
       addrp->nextip = rp;
       if (rp->previousip)
         rp->previousip->nextip = addrp;
       rp->previousip = addrp;
-    }
-    else                        /* Trying to add the same ip! */
+    } else                        /* Trying to add the same ip! */
       return;
-  }
-  else
+  } else
     addrp->nextip = addrp->previousip = NULL;
   ipbash[bashnum] = addrp;
 }
@@ -450,8 +440,7 @@ static void linkresolve(struct resolve *rp)
       rp->next = NULL;
       rp->previous = irp;
       irp->next = rp;
-    }
-    else {
+    } else {
       rp->previous = irp->previous;
       rp->next = irp;
       if (irp->previous)
@@ -460,8 +449,7 @@ static void linkresolve(struct resolve *rp)
         expireresolves = rp;
       irp->previous = rp;
     }
-  }
-  else {
+  } else {
     rp->next = NULL;
     rp->previous = NULL;
     expireresolves = rp;
@@ -512,8 +500,7 @@ static struct resolve *findid(u_16bit_t id)
     if (id == rp->id) {
       idbash[bashnum] = rp;
       return rp;
-    }
-    else
+    } else
       return NULL;
   }
   return rp;                    /* NULL */
@@ -562,8 +549,7 @@ static struct resolve *findip(IP ip)
     if (ip == rp->ip) {
       ipbash[bashnum] = rp;
       return rp;
-    }
-    else
+    } else
       return NULL;
   }
   return rp;                    /* NULL */
@@ -608,8 +594,7 @@ static void resendrequest(struct resolve *rp, int type)
   if (type == T_A) {
     dorequest(rp->hostn, type, rp->id);
     ddebug1(RES_MSG "Sent domain lookup request for \"%s\".", rp->hostn);
-  }
-  else if (type == T_PTR) {
+  } else if (type == T_PTR) {
     sprintf(tempstring, "%u.%u.%u.%u.in-addr.arpa",
             ((u_8bit_t *) & rp->ip)[3],
             ((u_8bit_t *) & rp->ip)[2],
@@ -889,8 +874,7 @@ static void parserespacket(u_8bit_t *s, int l)
                       resourcetypes[datatype] :
                       resourcetypes[RESOURCETYPES_COUNT]);
             }
-        }
-        else if (datatype == T_CNAME) {
+        } else if (datatype == T_CNAME) {
           *namestring = '\0';
           r = dn_expand(s, s + l, c, namestring, MAXDNAME);
           if (r == -1) {
@@ -904,8 +888,7 @@ static void parserespacket(u_8bit_t *s, int l)
            * respones we regard as important.
            */
           strncpy(stackstring, namestring, 1024);
-        }
-        else {
+        } else {
           ddebug2(RES_MSG "Ignoring resource type %u. (%s)",
                   datatype, datatype < RESOURCETYPES_COUNT ?
                   resourcetypes[datatype] :
@@ -913,8 +896,7 @@ static void parserespacket(u_8bit_t *s, int l)
         }
         c += rdatalength;
       }
-    }
-    else
+    } else
       ddebug0(RES_ERR "No error returned but no answers given.");
     break;
   case NXDOMAIN:
@@ -962,8 +944,7 @@ static void dns_ack(void)
       if ((_res.nsaddr_list[i].sin_addr.s_addr == from.sin_addr.s_addr) ||
           (!_res.nsaddr_list[i].sin_addr.s_addr))
         break;
-  }
-  else {
+  } else {
     for (i = 0; i < _res.nscount; i++)
       if (_res.nsaddr_list[i].sin_addr.s_addr == from.sin_addr.s_addr)
         break;
@@ -971,8 +952,7 @@ static void dns_ack(void)
   if (i == _res.nscount) {
     ddebug1(RES_ERR "Received reply from unknown source: %s",
             iptostr(from.sin_addr.s_addr));
-  }
-  else
+  } else
     parserespacket((u_8bit_t *) resrecvbuf, r);
 }
 
@@ -998,8 +978,7 @@ static void dns_check_expires(void)
       if (rp->sends <= RES_MAXSENDS) {
         ddebug1(RES_MSG "Resend #%d for \"PTR\" query...", rp->sends - 1);
         resendrequest(rp, T_PTR);
-      }
-      else {
+      } else {
         ddebug0(RES_MSG "\"PTR\" query timed out.");
         failrp(rp, T_PTR);
       }
@@ -1008,8 +987,7 @@ static void dns_check_expires(void)
       if (rp->sends <= RES_MAXSENDS) {
         ddebug1(RES_MSG "Resend #%d for \"A\" query...", rp->sends - 1);
         resendrequest(rp, T_A);
-      }
-      else {
+      } else {
         ddebug0(RES_MSG "\"A\" query timed out.");
         failrp(rp, T_A);
       }
@@ -1034,8 +1012,7 @@ static void dns_lookup(IP ip)
         ddebug2(RES_MSG "Used cached record: %s == \"%s\".",
                 iptostr(ip), rp->hostn);
         dns_event_success(rp, T_PTR);
-      }
-      else {
+      } else {
         ddebug1(RES_MSG "Used failed record: %s == ???", iptostr(ip));
         dns_event_failure(rp, T_PTR);
       }
@@ -1072,8 +1049,7 @@ static void dns_forward(char *hostn)
         ddebug2(RES_MSG "Used cached record: %s == \"%s\".", hostn,
                 iptostr(rp->ip));
         dns_event_success(rp, T_A);
-      }
-      else {
+      } else {
         ddebug1(RES_MSG "Used failed record: %s == ???", hostn);
         dns_event_failure(rp, T_A);
       }

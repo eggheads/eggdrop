@@ -3,7 +3,7 @@
  *   commands that comes across the botnet
  *   userfile transfer and update commands from sharebots
  *
- * $Id: botcmd.c,v 1.35 2003/01/28 06:37:24 wcc Exp $
+ * $Id: botcmd.c,v 1.36 2003/01/30 07:15:13 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -130,16 +130,14 @@ static void bot_chan2(int idx, char *msg)
     }
     *p = '@';
     p++;
-  }
-  else {
+  } else {
     sprintf(TBUF, "*** (%s) %s", from, msg);
     p = from;
   }
   i = nextbot(p);
   if (i != idx) {
     fake_alert(idx, "direction", p);
-  }
-  else {
+  } else {
     chanout_but(-1, chan, "%s\n", TBUF);
     /* Send to new version bots */
     if (i >= 0)
@@ -281,8 +279,7 @@ static void bot_priv(int idx, char *par)
           break;
         }
     }
-  }
-  else {                        /* Pass it on */
+  } else {                        /* Pass it on */
     i = nextbot(tobot);
     if (i >= 0)
       botnet_send_priv(i, from, to, tobot, "%s", par);
@@ -335,8 +332,7 @@ static void remote_tell_who(int idx, char *nick, int chan)
     }
   if (i > 10) {
     botnet_send_priv(idx, botnetnick, nick, NULL, "%s  (%s)", s, ver);
-  }
-  else
+  } else
     botnet_send_priv(idx, botnetnick, nick, NULL, "%s  (%s)", BOT_NOCHANNELS,
                      ver);
   if (admin[0])
@@ -446,8 +442,7 @@ static void bot_who(int idx, char *par)
     i = nextbot(to);
     if (i >= 0)
       botnet_send_who(i, from, to, chan);
-  }
-  else
+  } else
     remote_tell_who(idx, from, chan);
 }
 
@@ -506,12 +501,10 @@ static void bot_infoq(int idx, char *par)
       s[strlen(s) - 2] = 0;
       botnet_send_priv(idx, botnetnick, par, NULL,
                        "%s <%s> (%s) [UP %s]", ver, network, s, s2);
-    }
-    else
+    } else
       botnet_send_priv(idx, botnetnick, par, NULL, "%s <%s> (%s) [UP %s]", ver,
                        network, BOT_NOCHANNELS, s2);
-  }
-  else
+  } else
     botnet_send_priv(idx, botnetnick, par, NULL,
                      "%s <NO_IRC> [UP %s]", ver, s2);
   botnet_send_infoq(idx, par);
@@ -548,8 +541,7 @@ static void bot_link(int idx, char *par)
                        BOT_LINKATTEMPT, par);
     else
       botnet_send_priv(idx, botnetnick, from, NULL, "%s.", BOT_CANTLINKTHERE);
-  }
-  else {
+  } else {
     i = nextbot(bot);
     if (i >= 0)
       botnet_send_link(i, from, bot, par);
@@ -587,8 +579,7 @@ static void bot_unlink(int idx, char *par)
           botnet_send_priv(i, botnetnick, from, NULL,
                            "Unlinked from %s.", undes);
       }
-    }
-    else if (i == 0) {
+    } else if (i == 0) {
       botnet_send_unlinked(-1, undes, "");
       p = strchr(from, '@');
       if (p) {
@@ -598,8 +589,7 @@ static void bot_unlink(int idx, char *par)
           botnet_send_priv(i, botnetnick, from, NULL,
                            "%s %s.", BOT_CANTUNLINK, undes);
       }
-    }
-    else {
+    } else {
       p = strchr(from, '@');
       if (p) {
         i = nextbot(p + 1);
@@ -608,8 +598,7 @@ static void bot_unlink(int idx, char *par)
                            "Can't remotely unlink sharebots.");
       }
     }
-  }
-  else {
+  } else {
     i = nextbot(bot);
     if (i >= 0)
       botnet_send_unlink(i, from, bot, undes, par);
@@ -654,8 +643,7 @@ static void bot_nlinked(int idx, char *par)
     simple_sprintf(s, "%s %s (%s)", MISC_DISCONNECTED, dcc[idx].nick,
                    MISC_INVALIDBOT);
     dprintf(idx, "error invalid eggnet protocol for 'nlinked'\n");
-  }
-  else if ((in_chain(newbot)) || (!egg_strcasecmp(newbot, botnetnick))) {
+  } else if ((in_chain(newbot)) || (!egg_strcasecmp(newbot, botnetnick))) {
     /* Loop! */
     putlog(LOG_BOTS, "*", "%s %s (mutual: %s)",
            BOT_LOOPDETECT, dcc[idx].nick, newbot);
@@ -821,12 +809,10 @@ static void bot_traced(int idx, char *par)
           }
           dprintf(i, "%s -> %s (%lu secs, %d hop%s)\n", BOT_TRACERESULT, p,
                   now - t, j, (j != 1) ? "s" : "");
-        }
-        else
+        } else
           dprintf(i, "%s -> %s\n", BOT_TRACERESULT, p);
       }
-  }
-  else {
+  } else {
     i = nextbot(p);
     if (p != to)
       *--p = '@';
@@ -863,8 +849,7 @@ static void bot_reject(int idx, char *par)
     if (i < 0) {
       botnet_send_priv(idx, botnetnick, from, NULL, "%s %s (%s)",
                        BOT_CANTUNLINK, who, BOT_DOESNTEXIST);
-    }
-    else if (!egg_strcasecmp(dcc[i].nick, who)) {
+    } else if (!egg_strcasecmp(dcc[i].nick, who)) {
       char s[1024];
 
       /* I'm the connection to the rejected bot */
@@ -877,13 +862,11 @@ static void bot_reject(int idx, char *par)
       botnet_send_unlinked(i, dcc[i].nick, s);
       killsock(dcc[i].sock);
       lostdcc(i);
-    }
-    else {
+    } else {
       if (i >= 0)
         botnet_send_reject(i, from, NULL, who, NULL, par);
     }
-  }
-  else {                        /* Rejecting user */
+  } else {                        /* Rejecting user */
     *destbot++ = 0;
     if (!egg_strcasecmp(destbot, botnetnick)) {
       /* Kick someone here! */
@@ -900,8 +883,7 @@ static void bot_reject(int idx, char *par)
           add_note(from, botnetnick, "No non sharebot boots.", -1, 0);
           ok = 1;
         }
-      }
-      else if (remote_boots == 0) {
+      } else if (remote_boots == 0) {
         botnet_send_priv(idx, botnetnick, from, NULL, "%s", BOT_NOREMOTEBOOT);
         ok = 1;
       }
@@ -918,8 +900,7 @@ static void bot_reject(int idx, char *par)
           putlog(LOG_CMDS, "*", "#%s# boot %s (%s)", from, who,
                  par[0] ? par : "No reason");
         }
-    }
-    else {
+    } else {
       i = nextbot(destbot);
       *--destbot = '@';
       if (i >= 0)
@@ -1034,8 +1015,7 @@ static void bot_motd(int idx, char *par)
       fr.global |=USER_HIGHLITE;
 
       who++;
-    }
-    else if (who[0] == '#') {
+    } else if (who[0] == '#') {
       fr.global |=USER_HIGHLITE;
 
       who++;
@@ -1058,11 +1038,9 @@ static void bot_motd(int idx, char *par)
         }
       }
       fclose(vv);
-    }
-    else
+    } else
       botnet_send_priv(idx, botnetnick, who, NULL, "%s :(", MISC_NOMOTDFILE);
-  }
-  else {
+  } else {
     /* Pass it on */
     i = nextbot(par);
     if (i >= 0)
@@ -1098,8 +1076,7 @@ static void bot_filereject(int idx, char *par)
     }
     /* No ':'? malformed */
     putlog(LOG_FILES, "*", "%s %s: %s", path, MISC_REJECTED, par);
-  }
-  else {                        /* Pass it on */
+  } else {                        /* Pass it on */
     i = nextbot(tobot);
     if (i >= 0)
       botnet_send_filereject(i, path, to, par);
@@ -1128,8 +1105,7 @@ static void bot_filereq(int idx, char *tobot)
 
         f(idx, from, path);
       }
-    }
-    else {                      /* Pass it on */
+    } else {                      /* Pass it on */
       i = nextbot(tobot);
       if (i >= 0)
         botnet_send_filereq(i, from, tobot, path);
@@ -1150,8 +1126,7 @@ static void bot_filesend(int idx, char *par)
   if ((tobot = strchr(to, '@'))) {
     *tobot = 0;
     tobot++;
-  }
-  else
+  } else
     tobot = to;
   if (!egg_strcasecmp(tobot, botnetnick)) {     /* For me! */
     nfn = strrchr(botpath, '/');
@@ -1161,8 +1136,7 @@ static void bot_filesend(int idx, char *par)
         nfn = botpath;          /* That's odd. */
       else
         nfn++;
-    }
-    else
+    } else
       nfn++;
     if ((nick = strchr(to, ':')))
       nick++;
@@ -1170,8 +1144,7 @@ static void bot_filesend(int idx, char *par)
       nick = to;
     /* Send it to 'nick' as if it's from me */
     dprintf(DP_SERVER, "PRIVMSG %s :\001DCC SEND %s %s\001\n", nick, nfn, par);
-  }
-  else {
+  } else {
     i = nextbot(tobot);
     if (i >= 0) {
       *--tobot = '@';
@@ -1255,8 +1228,7 @@ static void bot_join(int idx, char *par)
   if (!y[0]) {
     y[0] = '-';
     sock = 0;
-  }
-  else {
+  } else {
 #ifndef NO_OLD_BOTNET
     if (b_numver(idx) < NEAT_BOTNET)
       sock = atoi(y + 1);
@@ -1321,8 +1293,7 @@ static void bot_part(int idx, char *par)
   if (b_numver(idx) < NEAT_BOTNET) {
     sock = atoi(etc);
     silent = 1;
-  }
-  else
+  } else
 #endif
     sock = base64_to_int(etc);
   if (sock == 0)
@@ -1384,8 +1355,7 @@ static void bot_away(int idx, char *par)
   if (par[0]) {
     partystat(bot, sock, PLSTAT_AWAY, 0);
     partyaway(bot, sock, par);
-  }
-  else
+  } else
     partystat(bot, sock, 0, PLSTAT_AWAY);
   partyidx = getparty(bot, sock);
   if ((b_numver(idx) >= NEAT_BOTNET) && !linking) {
@@ -1470,8 +1440,7 @@ static void bot_versions(int sock, char *par)
   else if (egg_strcasecmp(tobot = newsplit(&par), botnetnick)) {
     if ((sock = nextbot(tobot)) >= 0)
       dprintf(sock, "v %s %s %s\n", frombot, tobot, par);
-  }
-  else {
+  } else {
     from = newsplit(&par);
     botnet_send_priv(sock, botnetnick, from, frombot, "Modules loaded:\n");
     for (me = module_list; me; me = me->next)

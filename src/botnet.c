@@ -7,7 +7,7 @@
  *   linking, unlinking, and relaying to another bot
  *   pinging the bots periodically and checking leaf status
  *
- * $Id: botnet.c,v 1.47 2003/01/28 06:37:24 wcc Exp $
+ * $Id: botnet.c,v 1.48 2003/01/30 07:15:13 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -186,8 +186,7 @@ int addparty(char *bot, char *nick, int chan, char flag, int sock,
     party[parties].flag = flag;
     party[parties].from = nmalloc(strlen(from) + 1);
     strcpy(party[parties].from, from);
-  }
-  else {
+  } else {
     party[parties].flag = ' ';
     party[parties].from = nmalloc(10);
     strcpy(party[parties].from, "(unknown)");
@@ -286,8 +285,7 @@ void partyaway(char *bot, int sock, char *msg)
       if (msg[0]) {
         party[i].away = nmalloc(strlen(msg) + 1);
         strcpy(party[i].away, msg);
-      }
-      else
+      } else
         party[i].away = 0;
     }
   }
@@ -378,8 +376,7 @@ void unvia(int idx, tand_t *who)
       bot2 = bot->next;
       rembot(bot->bot);
       bot = bot2;
-    }
-    else
+    } else
       bot = bot->next;
   }
 #ifndef NO_OLD_BOTNET
@@ -494,8 +491,7 @@ void answer_local_whom(int idx, int chan)
             sprintf(idle, " [idle %luh%lum]", hrs, mins);
           else
             sprintf(idle, " [idle %lum]", mins);
-        }
-        else
+        } else
           idle[0] = 0;
         total++;
         dprintf(idx, format, c, dcc[i].nick,
@@ -525,8 +521,7 @@ void answer_local_whom(int idx, int chan)
           sprintf(idle, " [idle %luh%lum]", hrs, mins);
         else
           sprintf(idle, " [idle %lum]", mins);
-      }
-      else
+      } else
         idle[0] = 0;
       total++;
       dprintf(idx, format, c, party[i].nick,
@@ -644,11 +639,9 @@ void tell_bottree(int idx, int showver)
                       bot->ver / 1000000,
                       bot->ver % 1000000 / 10000,
                       bot->ver % 10000 / 100, bot->ver % 100);
-          }
-          else
+          } else
             sprintf(s, "-%s", bot->bot);
-        }
-        else
+        } else
           bot = bot->next;
       }
       dprintf(idx, "%s%s\n", work, s);
@@ -661,8 +654,7 @@ void tell_bottree(int idx, int showver)
       this = bot;
       lev++;
       more = 1;
-    }
-    else {
+    } else {
       while (cnt == 0) {
         /* No subtrees from here */
         if (lev == 0) {
@@ -685,8 +677,7 @@ void tell_bottree(int idx, int showver)
                             bot->ver / 1000000,
                             bot->ver % 1000000 / 10000,
                             bot->ver % 10000 / 100, bot->ver % 100);
-                }
-                else
+                } else
                   sprintf(s, "-%s", bot->bot);
               }
             }
@@ -712,15 +703,13 @@ void tell_bottree(int idx, int showver)
             mark[lev - 1] = 1;
           else
             mark[lev - 1] = 0;
-        }
-        else {
+        } else {
           /* This was the last child */
           lev--;
           if (lev == 0) {
             more = 0;
             cnt = 999;
-          }
-          else {
+          } else {
             more = 1;
             this = last[lev];
           }
@@ -786,8 +775,7 @@ void dump_links(int z)
             }
             l = simple_sprintf(x, "idle %s %d %d\n", botnetnick,
                                dcc[i].sock, now - dcc[i].timeval);
-          }
-          else
+          } else
 #endif
             l = simple_sprintf(x, "i %s %D %D %s\n", botnetnick,
                                dcc[i].sock, now - dcc[i].timeval,
@@ -820,8 +808,7 @@ void dump_links(int z)
           }
           l = simple_sprintf(x, "idle %s %d %d\n", party[i].bot,
                              party[i].sock, now - party[i].timer);
-        }
-        else
+        } else
 #endif
           l = simple_sprintf(x, "i %s %D %D %s\n", party[i].bot,
                              party[i].sock, now - party[i].timer,
@@ -896,8 +883,7 @@ int botunlink(int idx, char *nick, char *reason, char *from)
         lostdcc(i);
         if (nick[0] != '*')
           return 1;
-      }
-      else if (dcc[i].type == &DCC_BOT_NEW) {
+      } else if (dcc[i].type == &DCC_BOT_NEW) {
         if (idx >= 0)
           dprintf(idx, "%s %s.\n", BOT_ENDLINKATTEMPT, dcc[i].nick);
         putlog(LOG_BOTS, "*", "%s %s @ %s:%d",
@@ -906,8 +892,7 @@ int botunlink(int idx, char *nick, char *reason, char *from)
         lostdcc(i);
         if (nick[0] != '*')
           return 1;
-      }
-      else if (dcc[i].type == &DCC_BOT) {
+      } else if (dcc[i].type == &DCC_BOT) {
         char s[1024];
 
         if (idx >= 0)
@@ -923,8 +908,7 @@ int botunlink(int idx, char *nick, char *reason, char *from)
                          (bots != 1) ? "s" : "", users, (users != 1) ?
                          "s" : "");
           dprintf(i, "bye %s\n", reason);
-        }
-        else {
+        } else {
           simple_sprintf(s, "%s %s (%s) (lost %d bot%s and %d user%s)",
                          BOT_UNLINKEDFROM, dcc[i].nick, from, bots,
                          (bots != 1) ? "s" : "", users,
@@ -995,16 +979,13 @@ int botlink(char *linker, int idx, char *nick)
   if (!u || !(u->flags & USER_BOT)) {
     if (idx >= 0)
       dprintf(idx, "%s %s\n", nick, BOT_BOTUNKNOWN);
-  }
-  else if (!egg_strcasecmp(nick, botnetnick)) {
+  } else if (!egg_strcasecmp(nick, botnetnick)) {
     if (idx >= 0)
       dprintf(idx, "%s\n", BOT_CANTLINKMYSELF);
-  }
-  else if (in_chain(nick) && (idx != -3)) {
+  } else if (in_chain(nick) && (idx != -3)) {
     if (idx >= 0)
       dprintf(idx, "%s\n", BOT_ALREADYLINKED);
-  }
-  else {
+  } else {
     for (i = 0; i < dcc_total; i++)
       if ((dcc[i].user == u) &&
           ((dcc[i].type == &DCC_FORK_BOT) || (dcc[i].type == &DCC_BOT_NEW))) {
@@ -1021,12 +1002,10 @@ int botlink(char *linker, int idx, char *nick)
         dprintf(idx, "%s .chaddr %s %s\n",
                 MISC_USEFORMAT, nick, MISC_CHADDRFORMAT);
       }
-    }
-    else if (dcc_total == max_dcc) {
+    } else if (dcc_total == max_dcc) {
       if (idx >= 0)
         dprintf(idx, "%s\n", DCC_TOOMANYDCCS1);
-    }
-    else {
+    } else {
       correct_handle(nick);
 
       if (idx > -2)
@@ -1329,8 +1308,7 @@ static void failed_pre_relay(int idx)
     }
     killsock(dcc[tidx].sock);
     lostdcc(tidx);
-  }
-  else
+  } else
     fatal("Lost my terminal?!", 0);
   killsock(dcc[idx].sock);
   lostdcc(idx);
@@ -1449,15 +1427,13 @@ static void dcc_relay(int idx, char *buf, int j)
             mark = 2;           /* Bogus */
         }
         strcpy((char *) p, (char *) (p + mark));
-      }
-      else if (*p == '\033') {
+      } else if (*p == '\033') {
         unsigned char *e;
 
         /* Search for the end of the escape sequence. */
         for (e = p + 2; *e != 'm' && *e; e++);
         strcpy((char *) p, (char *) (e + 1));
-      }
-      else if (*p == '\r')
+      } else if (*p == '\r')
         strcpy((char *) p, (char *) (p + 1));
     }
     if (!buf[0])
@@ -1664,13 +1640,11 @@ void check_botnet_pings()
             botnet_send_unlinked(i, dcc[i].nick, s);
             killsock(dcc[i].sock);
             lostdcc(i);
-          }
-          else {
+          } else {
             botnet_send_reject(i, botnetnick, NULL, bot->bot, NULL, NULL);
             dcc[i].status |= STAT_WARNED;
           }
-        }
-        else
+        } else
           dcc[i].status &= ~STAT_WARNED;
       }
     }

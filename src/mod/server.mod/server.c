@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  *
- * $Id: server.c,v 1.90 2003/01/29 05:48:42 wcc Exp $
+ * $Id: server.c,v 1.91 2003/01/30 07:15:15 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -272,8 +272,7 @@ static int calc_penalty(char *msg)
       par3 = splitnicks(&par1);
       penalty += ii;
     }
-  }
-  else if (!egg_strcasecmp(cmd, "MODE")) {
+  } else if (!egg_strcasecmp(cmd, "MODE")) {
     i = 0;
     par1 = newsplit(&msg);      /* channel */
     par2 = newsplit(&msg);      /* mode(s) */
@@ -296,8 +295,7 @@ static int calc_penalty(char *msg)
       ii++;
     }
     penalty += (ii * i);
-  }
-  else if (!egg_strcasecmp(cmd, "TOPIC")) {
+  } else if (!egg_strcasecmp(cmd, "TOPIC")) {
     penalty++;
     par1 = newsplit(&msg);      /* channel */
     par2 = newsplit(&msg);      /* topic */
@@ -309,16 +307,14 @@ static int calc_penalty(char *msg)
         penalty += 2;
       }
     }
-  }
-  else if (!egg_strcasecmp(cmd, "PRIVMSG") || !egg_strcasecmp(cmd, "NOTICE")) {
+  } else if (!egg_strcasecmp(cmd, "PRIVMSG") || !egg_strcasecmp(cmd, "NOTICE")) {
     par1 = newsplit(&msg);      /* channel(s)/nick(s) */
     /* Add one sec penalty for each recipient */
     while (strlen(par1) > 0) {
       splitnicks(&par1);
       penalty++;
     }
-  }
-  else if (!egg_strcasecmp(cmd, "WHO")) {
+  } else if (!egg_strcasecmp(cmd, "WHO")) {
     par1 = newsplit(&msg);      /* masks */
     par2 = par1;
     while (strlen(par1) > 0) {
@@ -328,47 +324,35 @@ static int calc_penalty(char *msg)
       else
         penalty += 5;
     }
-  }
-  else if (!egg_strcasecmp(cmd, "AWAY")) {
+  } else if (!egg_strcasecmp(cmd, "AWAY")) {
     if (strlen(msg) > 0)
       penalty += 2;
     else
       penalty += 1;
-  }
-  else if (!egg_strcasecmp(cmd, "INVITE")) {
+  } else if (!egg_strcasecmp(cmd, "INVITE")) {
     /* Successful invite receives 2 or 3 penalty points. Let's go
      * with the maximum.
      */
     penalty += 3;
-  }
-  else if (!egg_strcasecmp(cmd, "JOIN")) {
+  } else if (!egg_strcasecmp(cmd, "JOIN")) {
     penalty += 2;
-  }
-  else if (!egg_strcasecmp(cmd, "PART")) {
+  } else if (!egg_strcasecmp(cmd, "PART")) {
     penalty += 4;
-  }
-  else if (!egg_strcasecmp(cmd, "VERSION")) {
+  } else if (!egg_strcasecmp(cmd, "VERSION")) {
     penalty += 2;
-  }
-  else if (!egg_strcasecmp(cmd, "TIME")) {
+  } else if (!egg_strcasecmp(cmd, "TIME")) {
     penalty += 2;
-  }
-  else if (!egg_strcasecmp(cmd, "TRACE")) {
+  } else if (!egg_strcasecmp(cmd, "TRACE")) {
     penalty += 2;
-  }
-  else if (!egg_strcasecmp(cmd, "NICK")) {
+  } else if (!egg_strcasecmp(cmd, "NICK")) {
     penalty += 3;
-  }
-  else if (!egg_strcasecmp(cmd, "ISON")) {
+  } else if (!egg_strcasecmp(cmd, "ISON")) {
     penalty += 1;
-  }
-  else if (!egg_strcasecmp(cmd, "WHOIS")) {
+  } else if (!egg_strcasecmp(cmd, "WHOIS")) {
     penalty += 2;
-  }
-  else if (!egg_strcasecmp(cmd, "DNS")) {
+  } else if (!egg_strcasecmp(cmd, "DNS")) {
     penalty += 2;
-  }
-  else
+  } else
     penalty++;                  /* just add standard-penalty */
   /* Shouldn't happen, but you never know... */
   if (penalty > 99)
@@ -483,8 +467,7 @@ static int fast_deq(int which)
       nfree(nm->msg);
       nfree(nm);
       h->tot--;
-    }
-    else
+    } else
       m = m->next;
   }
   if (doit) {
@@ -556,8 +539,7 @@ static void parse_q(struct msgq_head *q, char *oldnick, char *newnick)
           if (newnick)
             egg_snprintf(newnicks, sizeof newnicks, "%s,%s", newnicks, newnick);
           changed = 1;
-        }
-        else
+        } else
           egg_snprintf(newnicks, sizeof newnicks, ",%s", nick);
       }
       egg_snprintf(newmsg, sizeof newmsg, "KICK %s %s %s\n", chan,
@@ -575,8 +557,7 @@ static void parse_q(struct msgq_head *q, char *oldnick, char *newnick)
         q->tot--;
         if (!q->head)
           q->last = 0;
-      }
-      else {
+      } else {
         nfree(m->msg);
         m->msg = nmalloc(strlen(newmsg) + 1);
         m->len = strlen(newmsg);
@@ -643,8 +624,7 @@ static void purge_kicks(struct msgq_head *q)
           q->tot--;
           if (!q->head)
             q->last = 0;
-        }
-        else {
+        } else {
           nfree(m->msg);
           egg_snprintf(newmsg, sizeof newmsg, "KICK %s %s %s\n", chan,
                        newnicks + 1, reason);
@@ -726,8 +706,7 @@ static int deq_kick(int which)
             egg_snprintf(newnicks, sizeof newnicks, "%s,%s", newnicks, nick);
             nr++;
             changed = 1;
-          }
-          else
+          } else
             egg_snprintf(newnicks2, sizeof newnicks2, "%s,%s", newnicks2, nick);
         }
       }
@@ -743,8 +722,7 @@ static int deq_kick(int which)
           h->tot--;
           if (!h->head)
             h->last = 0;
-        }
-        else {
+        } else {
           nfree(m->msg);
           egg_snprintf(newmsg, sizeof newmsg, "KICK %s %s %s\n", chan2,
                        newnicks2 + 1, reason);
@@ -883,8 +861,7 @@ static void queue_server(int which, char *buf, int len)
     if (h->head) {
       if (!qnext)
         h->last->next = q;
-    }
-    else
+    } else
       h->head = q;
     if (qnext)
       h->head = q;
@@ -895,8 +872,7 @@ static void queue_server(int which, char *buf, int len)
     h->tot++;
     h->warned = 0;
     double_warned = 0;
-  }
-  else {
+  } else {
     if (!h->warned) {
       switch (which) {
       case DP_MODE_NEXT:
@@ -977,8 +953,7 @@ static void add_server(char *ss)
       x->pass = 0;
       x->name = nmalloc(strlen(ss) + 1);
       strcpy(x->name, ss);
-    }
-    else {
+    } else {
       *q++ = 0;
       x->name = nmalloc(q - ss);
       strcpy(x->name, ss);
@@ -986,8 +961,7 @@ static void add_server(char *ss)
       q = strchr(ss, ':');
       if (!q) {
         x->pass = 0;
-      }
-      else {
+      } else {
         *q++ = 0;
         x->pass = nmalloc(strlen(q) + 1);
         strcpy(x->pass, q);
@@ -1035,8 +1009,7 @@ static void next_server(int *ptr, char *serv, unsigned int *port, char *pass)
         if (!egg_strcasecmp(x->name, serv)) {
           *ptr = i;
           return;
-        }
-        else if (x->realname && !egg_strcasecmp(x->realname, serv)) {
+        } else if (x->realname && !egg_strcasecmp(x->realname, serv)) {
           *ptr = i;
           strncpyz(serv, x->realname, sizeof serv);
           return;
@@ -1055,8 +1028,7 @@ static void next_server(int *ptr, char *serv, unsigned int *port, char *pass)
     if (pass && pass[0]) {
       x->pass = nmalloc(strlen(pass) + 1);
       strcpy(x->pass, pass);
-    }
-    else
+    } else
       x->pass = NULL;
     list_append((struct list_type **) (&serverlist), (struct list_type *) x);
     *ptr = i;
@@ -1161,8 +1133,7 @@ static char *nick_change(ClientData cdata, Tcl_Interp *irp, char *name1,
     if (flags & TCL_TRACE_UNSETS)
       Tcl_TraceVar(irp, name1, TCL_TRACE_READS | TCL_TRACE_WRITES |
                    TCL_TRACE_UNSETS, nick_change, cdata);
-  }
-  else {                        /* writes */
+  } else {                        /* writes */
     new = Tcl_GetVar2(interp, name1, name2, TCL_GLOBAL_ONLY);
     if (rfc_casecmp(origbotname, (char *) new)) {
       if (origbotname[0]) {
@@ -1200,8 +1171,7 @@ static char *get_altbotnick(void)
       rand_nick(raltnick);
     }
     return raltnick;
-  }
-  else
+  } else
     return altnick;
 }
 
@@ -1233,8 +1203,7 @@ static char *traced_serveraddress(ClientData cdata, Tcl_Interp *irp,
     int servidx = findanyidx(serv);
 
     simple_sprintf(s, "%s:%u", dcc[servidx].host, dcc[servidx].port);
-  }
-  else
+  } else
     s[0] = 0;
   Tcl_SetVar2(interp, name1, name2, s, TCL_GLOBAL_ONLY);
   if (flags & TCL_TRACE_UNSETS)
@@ -1262,8 +1231,7 @@ static char *traced_server(ClientData cdata, Tcl_Interp *irp, char *name1,
       i++;
     /* return real server name */
     simple_sprintf(s, "%s:%u", x->realname, dcc[servidx].port);
-  }
-  else
+  } else
     s[0] = 0;
   Tcl_SetVar2(interp, name1, name2, s, TCL_GLOBAL_ONLY);
   if (flags & TCL_TRACE_UNSETS)
@@ -1357,8 +1325,7 @@ static char *traced_nicklen(ClientData cdata, Tcl_Interp *irp, char *name1,
     if (flags & TCL_TRACE_UNSETS)
       Tcl_TraceVar(irp, name1, TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
                    traced_nicklen, cdata);
-  }
-  else {
+  } else {
 #if (((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 4)) || (TCL_MAJOR_VERSION > 8))
     CONST char *cval = Tcl_GetVar2(interp, name1, name2, TCL_GLOBAL_ONLY);
 #else
@@ -1462,8 +1429,7 @@ static char *tcl_eggserver(ClientData cdata, Tcl_Interp *irp, char *name1,
     slist = Tcl_DStringValue(&ds);
     Tcl_SetVar2(interp, name1, name2, slist, TCL_GLOBAL_ONLY);
     Tcl_DStringFree(&ds);
-  }
-  else {                        /* TCL_TRACE_WRITES */
+  } else {                        /* TCL_TRACE_WRITES */
     if (serverlist) {
       clearq(serverlist);
       serverlist = NULL;
@@ -1529,27 +1495,23 @@ static int ctcp_DCC_CHAT(char *nick, char *from, char *handle,
     if (!quiet_reject)
       dprintf(DP_HELP, "NOTICE %s :%s\n", nick, DCC_TOOMANYDCCS1);
     putlog(LOG_MISC, "*", DCC_TOOMANYDCCS2, "CHAT", param, nick, from);
-  }
-  else if (!(glob_party(fr) || (!require_p && chan_op(fr)))) {
+  } else if (!(glob_party(fr) || (!require_p && chan_op(fr)))) {
     if (glob_xfer(fr))
       return 0;                 /* Allow filesys to pick up the chat */
     if (!quiet_reject)
       dprintf(DP_HELP, "NOTICE %s :%s\n", nick, DCC_REFUSED2);
     putlog(LOG_MISC, "*", "%s: %s!%s", DCC_REFUSED, nick, from);
-  }
-  else if (u_pass_match(u, "-")) {
+  } else if (u_pass_match(u, "-")) {
     if (!quiet_reject)
       dprintf(DP_HELP, "NOTICE %s :%s\n", nick, DCC_REFUSED3);
     putlog(LOG_MISC, "*", "%s: %s!%s", DCC_REFUSED4, nick, from);
-  }
-  else if (atoi(prt) < 1024 || atoi(prt) > 65535) {
+  } else if (atoi(prt) < 1024 || atoi(prt) > 65535) {
     /* Invalid port */
     if (!quiet_reject)
       dprintf(DP_HELP, "NOTICE %s :%s (invalid port)\n", nick,
               DCC_CONNECTFAILED1);
     putlog(LOG_MISC, "*", "%s: CHAT (%s!%s)", DCC_CONNECTFAILED3, nick, from);
-  }
-  else {
+  } else {
     if (!sanitycheck_dcc(nick, from, ip, prt))
       return 1;
     i = new_dcc(&DCC_DNSWAIT, sizeof(struct dns_info));
@@ -1597,8 +1559,7 @@ static void dcc_chat_hostresolved(int i)
     putlog(LOG_MISC, "*", "    (%s)", buf);
     killsock(dcc[i].sock);
     lostdcc(i);
-  }
-  else {
+  } else {
     changeover_dcc(i, &DCC_CHAT_PASS, sizeof(struct chat_info));
     dcc[i].status = STAT_ECHO;
     get_user_flagrec(dcc[i].user, &fr, 0);
@@ -1640,8 +1601,7 @@ static void server_5minutely()
       disconnect_server(servidx);
       lostdcc(servidx);
       putlog(LOG_SERV, "*", IRC_SERVERSTONED);
-    }
-    else if (!trying_server) {
+    } else if (!trying_server) {
       /* Check for server being stoned. */
       dprintf(DP_MODE, "PING :%lu\n", (unsigned long) now);
       waiting_for_awake = 1;
@@ -1711,8 +1671,7 @@ static void server_report(int idx, int details)
       ((servidx = findanyidx(serv)) != -1)) {
     dprintf(idx, "    Server %s:%d %s\n", dcc[servidx].host, dcc[servidx].port,
             trying_server ? "(trying)" : s);
-  }
-  else
+  } else
     dprintf(idx, "    %s\n", IRC_NOSERVER);
   if (modeq.tot)
     dprintf(idx, "    %s %d%%, %d msgs\n", IRC_MODEQUEUE,

@@ -2,7 +2,7 @@
  * blowfish.c -- part of blowfish.mod
  *   encryption and decryption of passwords
  *
- * $Id: blowfish.c,v 1.25 2003/01/28 06:37:25 wcc Exp $
+ * $Id: blowfish.c,v 1.26 2003/01/30 07:15:14 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -421,8 +421,7 @@ static int tcl_encpass STDVAR
    
     blowfish_encrypt_pass(argv[1], p);
     Tcl_AppendResult(irp, p, NULL);
-  }
-  else
+  } else
     Tcl_AppendResult(irp, "", NULL);
   return TCL_OK;
 }

@@ -2,7 +2,7 @@
  * tclfiles.c -- part of filesys.mod
  *   Tcl stubs for file system commands moved here to support modules
  *
- * $Id: tclfiles.c,v 1.18 2003/01/28 06:37:26 wcc Exp $
+ * $Id: tclfiles.c,v 1.19 2003/01/30 07:15:15 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -34,8 +34,7 @@ static int tcl_getdesc STDVAR
     Tcl_AppendResult(irp, s, NULL);
     my_free(s);
     return TCL_OK;
-  }
-  else {
+  } else {
     Tcl_AppendResult(irp, "filedb access failed", NULL);
     return TCL_ERROR;
   }
@@ -60,8 +59,7 @@ static int tcl_getowner STDVAR
     Tcl_AppendResult(irp, s, NULL);
     my_free(s);
     return TCL_OK;
-  }
-  else {
+  } else {
     Tcl_AppendResult(irp, "filedb access failed", NULL);
     return TCL_ERROR;
   }
@@ -106,8 +104,7 @@ static int tcl_getlink STDVAR
   if (s) {
     Tcl_AppendResult(irp, s, NULL);
     return TCL_OK;
-  }
-  else {
+  } else {
     Tcl_AppendResult(irp, "filedb access failed", NULL);
     return TCL_ERROR;
   }
@@ -210,8 +207,7 @@ static int tcl_setflags STDVAR
   if (p == NULL) {
     p = s;
     d = "";
-  }
-  else {
+  } else {
     *p = 0;
     p++;
     d = s;
@@ -242,8 +238,7 @@ static int tcl_setflags STDVAR
     break_down_flags(argv[2], &fr, NULL);
     build_flags(f, &fr, NULL);
     malloc_strcpy(fdbe->flags_req, f);
-  }
-  else
+  } else
     my_free(fdbe->flags_req);
   if (argc == 4)
     malloc_strcpy(fdbe->chan, argv[3]);
@@ -269,8 +264,7 @@ static int tcl_getflags STDVAR
   if (p == NULL) {
     p = s;
     d = "";
-  }
-  else {
+  } else {
     *p = 0;
     p++;
     d = s;
@@ -288,8 +282,7 @@ static int tcl_getflags STDVAR
     malloc_strcpy(s, fdbe->flags_req);
     if (s[0] == '-')
       s[0] = 0;
-  }
-  else
+  } else
     s[0] = 0;
   Tcl_AppendElement(irp, s);
   Tcl_AppendElement(irp, fdbe->chan);
@@ -314,8 +307,7 @@ static int tcl_mkdir STDVAR
   if (p == NULL) {
     p = s;
     d = "";
-  }
-  else {
+  } else {
     *p = 0;
     p++;
     d = s;
@@ -344,8 +336,7 @@ static int tcl_mkdir STDVAR
     fdbe->stat = FILE_DIR;
     malloc_strcpy(fdbe->filename, argv[1]);
     fdbe->uploaded = now;
-  }
-  else if (!(fdbe->stat & FILE_DIR)) {
+  } else if (!(fdbe->stat & FILE_DIR)) {
     Tcl_AppendResult(irp, "2", NULL);
     free_fdbe(&fdbe);
     my_free(s);
@@ -358,14 +349,12 @@ static int tcl_mkdir STDVAR
     break_down_flags(argv[2], &fr, NULL);
     build_flags(f, &fr, NULL);
     malloc_strcpy(fdbe->flags_req, f);
-  }
-  else if (fdbe->flags_req) {
+  } else if (fdbe->flags_req) {
     my_free(fdbe->flags_req);
   }
   if (argc == 4) {
     malloc_strcpy(fdbe->chan, argv[3]);
-  }
-  else if (fdbe->chan)
+  } else if (fdbe->chan)
     my_free(fdbe->chan);
 
   if (fdbe->pos)
@@ -392,8 +381,7 @@ static int tcl_rmdir STDVAR
   if (p == NULL) {
     p = s;
     d = "";
-  }
-  else {
+  } else {
     *p = 0;
     p++;
     d = s;
@@ -468,8 +456,7 @@ static int tcl_mv_cp(Tcl_Interp *irp, int argc, char **argv, int copy)
       return TCL_OK;
     }
     my_free(s);
-  }
-  else
+  } else
     malloc_strcpy(oldpath, "/");
   malloc_strcpy(s, argv[2]);
   if (!resolve_dir("/", s, &newpath, -1)) {
@@ -478,8 +465,7 @@ static int tcl_mv_cp(Tcl_Interp *irp, int argc, char **argv, int copy)
     if (!p) {
       malloc_strcpy(newfn, s);
       s[0] = 0;
-    }
-    else {
+    } else {
       *p = 0;
       malloc_strcpy(newfn, p + 1);
     }
@@ -491,8 +477,7 @@ static int tcl_mv_cp(Tcl_Interp *irp, int argc, char **argv, int copy)
       my_free(newfn);
       return TCL_OK;
     }
-  }
-  else
+  } else
     malloc_strcpy(newfn, "");
   my_free(s);
 

@@ -1,7 +1,7 @@
 /*
  * tcltransfer.c -- part of transfer.mod
  *
- * $Id: tcltransfer.c,v 1.2 2003/01/28 06:37:26 wcc Exp $
+ * $Id: tcltransfer.c,v 1.3 2003/01/30 07:15:15 wcc Exp $
  *
  * Copyright (C) 2003 Eggheads Development Team
  *
@@ -60,8 +60,7 @@ static int tcl_dccsend STDVAR
       return TCL_OK;
     }
     copyfile(argv[1], sys);
-  }
-  else {
+  } else {
     sys = nmalloc(strlen(argv[1]) + 1);
     strcpy(sys, argv[1]);
   }
@@ -109,8 +108,7 @@ static int tcl_getfilesendtime STDVAR
       if (dcc[i].type == &DCC_SEND || dcc[i].type == &DCC_GET) {
         egg_snprintf(s, sizeof s, "%lu", dcc[i].u.xfer->start_time);
         Tcl_AppendResult(irp, s, NULL);
-      }
-      else
+      } else
         Tcl_AppendResult(irp, "-2", NULL); /* Not a valid file transfer */
       return TCL_OK;
     }

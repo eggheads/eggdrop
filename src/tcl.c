@@ -4,7 +4,7 @@
  *   Tcl initialization
  *   getting and setting Tcl/eggdrop variables
  *
- * $Id: tcl.c,v 1.59 2003/01/29 05:48:41 wcc Exp $
+ * $Id: tcl.c,v 1.60 2003/01/30 07:15:14 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -119,8 +119,7 @@ static void botnet_change(char *new)
              "* Tried to change my botnet nick, but I'm still linked to a botnet.");
       putlog(LOG_MISC, "*", "* (Unlink and try again.)");
       return;
-    }
-    else {
+    } else {
       if (botnetnick[0])
         putlog(LOG_MISC, "*", "* IDENTITY CHANGE: %s -> %s", botnetnick, new);
       strcpy(botnetnick, new);
@@ -160,8 +159,7 @@ static char *tcl_eggcouplet(ClientData cdata, Tcl_Interp *irp, char *name1,
       Tcl_TraceVar(interp, name1,
                    TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
                    tcl_eggcouplet, cdata);
-  }
-  else {                        /* writes */
+  } else {                        /* writes */
     s = (char *) Tcl_GetVar2(interp, name1, name2, 0);
     if (s != NULL) {
       int nr1, nr2;
@@ -200,11 +198,9 @@ static char *tcl_eggint(ClientData cdata, Tcl_Interp *irp, char *name1,
 
       fr.udef_global = default_uflags;
       build_flags(s1, &fr, 0);
-    }
-    else if ((int *) ii->var == &userfile_perm) {
+    } else if ((int *) ii->var == &userfile_perm) {
       egg_snprintf(s1, sizeof s1, "0%o", userfile_perm);
-    }
-    else
+    } else
       egg_snprintf(s1, sizeof s1, "%d", *(int *) ii->var);
     Tcl_SetVar2(interp, name1, name2, s1, TCL_GLOBAL_ONLY);
     if (flags & TCL_TRACE_UNSETS)
@@ -212,8 +208,7 @@ static char *tcl_eggint(ClientData cdata, Tcl_Interp *irp, char *name1,
                    TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
                    tcl_eggint, cdata);
     return NULL;
-  }
-  else {                        /* Writes */
+  } else {                        /* Writes */
     s = (char *) Tcl_GetVar2(interp, name1, name2, TCL_GLOBAL_ONLY);
     if (s != NULL) {
       if ((int *) ii->var == &conmask) {
@@ -221,23 +216,20 @@ static char *tcl_eggint(ClientData cdata, Tcl_Interp *irp, char *name1,
           conmask = logmodes(s);
         else
           conmask = LOG_MODES | LOG_MISC | LOG_CMDS;
-      }
-      else if ((int *) ii->var == &default_flags) {
+      } else if ((int *) ii->var == &default_flags) {
         struct flag_record fr = { FR_GLOBAL, 0, 0, 0, 0, 0 };
 
         break_down_flags(s, &fr, 0);
         default_flags = sanity_check(fr.global);        /* drummer */
 
         default_uflags = fr.udef_global;
-      }
-      else if ((int *) ii->var == &userfile_perm) {
+      } else if ((int *) ii->var == &userfile_perm) {
         int p = oatoi(s);
 
         if (p <= 0)
           return "invalid userfile permissions";
         userfile_perm = p;
-      }
-      else if ((ii->ro == 2) || ((ii->ro == 1) && protect_readonly))
+      } else if ((ii->ro == 2) || ((ii->ro == 1) && protect_readonly))
         return "read-only variable";
       else {
         if (Tcl_ExprLong(interp, s, &l) == TCL_ERROR)
@@ -247,14 +239,12 @@ static char *tcl_eggint(ClientData cdata, Tcl_Interp *irp, char *name1,
             return "you can't DECREASE max-dcc";
           max_dcc = l;
           init_dcc_max();
-        }
-        else if ((int *) ii->var == &max_logs) {
+        } else if ((int *) ii->var == &max_logs) {
           if (l < max_logs)
             return "you can't DECREASE max-logs";
           max_logs = l;
           init_misc();
-        }
-        else
+        } else
           *(ii->var) = (int) l;
       }
     }
@@ -281,8 +271,7 @@ static char *tcl_eggstr(ClientData cdata, Tcl_Interp *irp, char *name1,
 
       egg_snprintf(s1, sizeof s1, "%s:%d", firewall, firewallport);
       Tcl_SetVar2(interp, name1, name2, s1, TCL_GLOBAL_ONLY);
-    }
-    else
+    } else
       Tcl_SetVar2(interp, name1, name2, st->str, TCL_GLOBAL_ONLY);
     if (flags & TCL_TRACE_UNSETS) {
       Tcl_TraceVar(interp, name1, TCL_TRACE_READS | TCL_TRACE_WRITES |
@@ -291,8 +280,7 @@ static char *tcl_eggstr(ClientData cdata, Tcl_Interp *irp, char *name1,
         return "read-only variable";    /* it won't return the error... */
     }
     return NULL;
-  }
-  else {                        /* writes */
+  } else {                        /* writes */
     if ((st->max <= 0) && (protect_readonly || (st->max == 0))) {
       Tcl_SetVar2(interp, name1, name2, st->str, TCL_GLOBAL_ONLY);
       return "read-only variable";
@@ -332,8 +320,7 @@ static char *tcl_eggstr(ClientData cdata, Tcl_Interp *irp, char *name1,
           strcpy(firewall, s);
         else
           firewallport = atoi(s);
-      }
-      else
+      } else
         strcpy(st->str, s);
       if ((st->flags) && (s[0])) {
         if (st->str[strlen(st->str) - 1] != '/')

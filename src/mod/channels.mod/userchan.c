@@ -1,7 +1,7 @@
 /*
  * userchan.c -- part of channels.mod
  *
- * $Id: userchan.c,v 1.32 2003/01/29 05:48:41 wcc Exp $
+ * $Id: userchan.c,v 1.33 2003/01/30 07:15:14 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -111,8 +111,7 @@ static void set_handle_chaninfo(struct userrec *bu, char *handle,
   if (info && info[0]) {
     ch->info = (char *) user_malloc(strlen(info) + 1);
     strcpy(ch->info, info);
-  }
-  else
+  } else
     ch->info = NULL;
   cst = findchan_by_dname(chname);
   if ((!noshare) && (bu == userlist) &&
@@ -243,11 +242,9 @@ static int u_delban(struct chanset_t *c, char *who, int doit)
     if (*u) {
       strcpy(who, (*u)->mask);
       i = 1;
-    }
-    else
+    } else
       return -j - 1;
-  }
-  else {
+  } else {
     /* Find matching host, if there is one */
     for (; *u && !i; u = &((*u)->next))
       if (!rfc_casecmp((*u)->mask, who)) {
@@ -293,11 +290,9 @@ static int u_delexempt(struct chanset_t *c, char *who, int doit)
     if (*u) {
       strcpy(who, (*u)->mask);
       i = 1;
-    }
-    else
+    } else
       return -j - 1;
-  }
-  else {
+  } else {
     /* Find matching host, if there is one */
     for (; *u && !i; u = &((*u)->next))
       if (!rfc_casecmp((*u)->mask, who)) {
@@ -344,11 +339,9 @@ static int u_delinvite(struct chanset_t *c, char *who, int doit)
     if (*u) {
       strcpy(who, (*u)->mask);
       i = 1;
-    }
-    else
+    } else
       return -j - 1;
-  }
-  else {
+  } else {
     /* Find matching host, if there is one */
     for (; *u && !i; u = &((*u)->next))
       if (!rfc_casecmp((*u)->mask, who)) {
@@ -438,8 +431,7 @@ static int u_addban(struct chanset_t *chan, char *ban, char *from, char *note,
     p = user_malloc(sizeof(maskrec));
     p->next = *u;
     *u = p;
-  }
-  else {
+  } else {
     nfree(p->mask);
     nfree(p->user);
     nfree(p->desc);
@@ -521,8 +513,7 @@ static int u_addinvite(struct chanset_t *chan, char *invite, char *from,
     p = user_malloc(sizeof(maskrec));
     p->next = *u;
     *u = p;
-  }
-  else {
+  } else {
     nfree(p->mask);
     nfree(p->user);
     nfree(p->desc);
@@ -604,8 +595,7 @@ static int u_addexempt(struct chanset_t *chan, char *exempt, char *from,
     p = user_malloc(sizeof(maskrec));
     p->next = *u;
     *u = p;
-  }
-  else {
+  } else {
     nfree(p->mask);
     nfree(p->user);
     nfree(p->desc);
@@ -655,8 +645,7 @@ static void display_ban(int idx, int number, maskrec *ban,
       daysago(now, ban->lastactive, s);
       strcat(dates, s);
     }
-  }
-  else
+  } else
     dates[0] = 0;
   if (ban->flags & MASKREC_PERM)
     strcpy(s, "(perm)");
@@ -673,14 +662,12 @@ static void display_ban(int idx, int number, maskrec *ban,
       dprintf(idx, "  [%3d] %s %s\n", number, ban->mask, s);
     else
       dprintf(idx, "BAN: %s %s\n", ban->mask, s);
-  }
-  else if (show_inact) {
+  } else if (show_inact) {
     if (number >= 0)
       dprintf(idx, "! [%3d] %s %s\n", number, ban->mask, s);
     else
       dprintf(idx, "BAN (%s): %s %s\n", MODES_INACTIVE, ban->mask, s);
-  }
-  else
+  } else
     return;
   dprintf(idx, "        %s: %s\n", ban->user, ban->desc);
   if (dates[0])
@@ -704,8 +691,7 @@ static void display_exempt(int idx, int number, maskrec *exempt,
       daysago(now, exempt->lastactive, s);
       strcat(dates, s);
     }
-  }
-  else
+  } else
     dates[0] = 0;
   if (exempt->flags & MASKREC_PERM)
     strcpy(s, "(perm)");
@@ -722,14 +708,12 @@ static void display_exempt(int idx, int number, maskrec *exempt,
       dprintf(idx, "  [%3d] %s %s\n", number, exempt->mask, s);
     else
       dprintf(idx, "EXEMPT: %s %s\n", exempt->mask, s);
-  }
-  else if (show_inact) {
+  } else if (show_inact) {
     if (number >= 0)
       dprintf(idx, "! [%3d] %s %s\n", number, exempt->mask, s);
     else
       dprintf(idx, "EXEMPT (%s): %s %s\n", MODES_INACTIVE, exempt->mask, s);
-  }
-  else
+  } else
     return;
   dprintf(idx, "        %s: %s\n", exempt->user, exempt->desc);
   if (dates[0])
@@ -753,8 +737,7 @@ static void display_invite(int idx, int number, maskrec *invite,
       daysago(now, invite->lastactive, s);
       strcat(dates, s);
     }
-  }
-  else
+  } else
     dates[0] = 0;
   if (invite->flags & MASKREC_PERM)
     strcpy(s, "(perm)");
@@ -771,14 +754,12 @@ static void display_invite(int idx, int number, maskrec *invite,
       dprintf(idx, "  [%3d] %s %s\n", number, invite->mask, s);
     else
       dprintf(idx, "INVITE: %s %s\n", invite->mask, s);
-  }
-  else if (show_inact) {
+  } else if (show_inact) {
     if (number >= 0)
       dprintf(idx, "! [%3d] %s %s\n", number, invite->mask, s);
     else
       dprintf(idx, "INVITE (%s): %s %s\n", MODES_INACTIVE, invite->mask, s);
-  }
-  else
+  } else
     return;
   dprintf(idx, "        %s: %s\n", invite->user, invite->desc);
   if (dates[0])
@@ -801,8 +782,7 @@ static void tell_bans(int idx, int show_inact, char *match)
         dprintf(idx, "%s.\n", CHAN_NOSUCH);
         return;
       }
-    }
-    else
+    } else
       match = chname;
   }
 
@@ -822,8 +802,7 @@ static void tell_bans(int idx, int show_inact, char *match)
           (wild_match(match, u->desc)) || (wild_match(match, u->user)))
         display_ban(idx, k, u, chan, 1);
       k++;
-    }
-    else
+    } else
       display_ban(idx, k++, u, chan, show_inact);
   }
   if (chan) {
@@ -839,8 +818,7 @@ static void tell_bans(int idx, int show_inact, char *match)
             (wild_match(match, u->desc)) || (wild_match(match, u->user)))
           display_ban(idx, k, u, chan, 1);
         k++;
-      }
-      else
+      } else
         display_ban(idx, k++, u, chan, show_inact);
     }
     if (chan->status & CHAN_ACTIVE) {
@@ -893,8 +871,7 @@ static void tell_exempts(int idx, int show_inact, char *match)
         dprintf(idx, "%s.\n", CHAN_NOSUCH);
         return;
       }
-    }
-    else
+    } else
       match = chname;
   }
 
@@ -914,8 +891,7 @@ static void tell_exempts(int idx, int show_inact, char *match)
           (wild_match(match, u->desc)) || (wild_match(match, u->user)))
         display_exempt(idx, k, u, chan, 1);
       k++;
-    }
-    else
+    } else
       display_exempt(idx, k++, u, chan, show_inact);
   }
   if (chan) {
@@ -931,8 +907,7 @@ static void tell_exempts(int idx, int show_inact, char *match)
             (wild_match(match, u->desc)) || (wild_match(match, u->user)))
           display_exempt(idx, k, u, chan, 1);
         k++;
-      }
-      else
+      } else
         display_exempt(idx, k++, u, chan, show_inact);
     }
     if (chan->status & CHAN_ACTIVE) {
@@ -985,8 +960,7 @@ static void tell_invites(int idx, int show_inact, char *match)
         dprintf(idx, "%s.\n", CHAN_NOSUCH);
         return;
       }
-    }
-    else
+    } else
       match = chname;
   }
 
@@ -1006,8 +980,7 @@ static void tell_invites(int idx, int show_inact, char *match)
           (wild_match(match, u->desc)) || (wild_match(match, u->user)))
         display_invite(idx, k, u, chan, 1);
       k++;
-    }
-    else
+    } else
       display_invite(idx, k++, u, chan, show_inact);
   }
   if (chan) {
@@ -1023,8 +996,7 @@ static void tell_invites(int idx, int show_inact, char *match)
             (wild_match(match, u->desc)) || (wild_match(match, u->user)))
           display_invite(idx, k, u, chan, 1);
         k++;
-      }
-      else
+      } else
         display_invite(idx, k++, u, chan, show_inact);
     }
     if (chan->status & CHAN_ACTIVE) {

@@ -7,7 +7,7 @@
  *   help system
  *   motd display and %var substitution
  *
- * $Id: misc.c,v 1.58 2003/01/29 05:48:40 wcc Exp $
+ * $Id: misc.c,v 1.59 2003/01/30 07:15:14 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -294,8 +294,7 @@ void maskhost(const char *s, char *nw)
       nw[0] = '*';
       p = q - 7;
       i = 1;
-    }
-    else
+    } else
       i = 0;
     while (*p != '@') {
       if (!fl && strchr("~+-^=", *p)) {
@@ -303,8 +302,7 @@ void maskhost(const char *s, char *nw)
           nw[i] = '?';
         else
           i--;
-      }
-      else
+      } else
         nw[i] = *p;
       fl++;
       p++;
@@ -312,8 +310,7 @@ void maskhost(const char *s, char *nw)
     }
     nw[i++] = '@';
     q++;
-  }
-  else {
+  } else {
     nw[0] = '*';
     nw[1] = '@';
     i = 2;
@@ -333,8 +330,7 @@ void maskhost(const char *s, char *nw)
       if (strchr(f, '.')) {     /* IPv4 wrapped in an IPv6?     */
         f = strrchr(f, '.');
         mask_str = ".*";
-      }
-      else                      /* ... no, true IPv6.               */
+      } else                      /* ... no, true IPv6.               */
         mask_str = ":*";
       strncpy(nw, q, f - q);
       /* No need to nw[f-q] = 0 here, as the strcpy below will
@@ -342,8 +338,7 @@ void maskhost(const char *s, char *nw)
        */
       nw += (f - q);
       strcpy(nw, mask_str);
-    }
-    else {
+    } else {
       for (f = e; *f; f++);
       f--;
       if (*f >= '0' && *f <= '9') {     /* Numeric IP address */
@@ -355,8 +350,7 @@ void maskhost(const char *s, char *nw)
          */
         nw += (f - q);
         strcpy(nw, ".*");
-      }
-      else {                    /* Normal host >= 3 parts */
+      } else {                    /* Normal host >= 3 parts */
         /*    a.b.c  -> *.b.c
          *    a.b.c.d ->  *.b.c.d if tld is a country (2 chars)
          *             OR   *.c.d if tld is com/edu/etc (3 chars)
@@ -399,8 +393,7 @@ void dumplots(int idx, const char *prefix, char *data)
       dprintf(idx, "%s%s\n", prefix, p);
       *n = '\n';
       p = n + 1;
-    }
-    else {
+    } else {
       /* Search backwards for the last space */
       while (*q != ' ' && q != p)
         q--;
@@ -542,8 +535,7 @@ void putlog EGG_VARARGS_DEF(int, arg1)
           if (keep_all_logs) {
             egg_snprintf(s1, 256, "%s%s", logs[i].filename, ct);
             logs[i].f = fopen(s1, "a+");
-          }
-          else
+          } else
             logs[i].f = fopen(logs[i].filename, "a+");
         }
         if (logs[i].f != NULL) {
@@ -802,12 +794,10 @@ void help_subst(char *s, char *nick, struct flag_record *flags,
       if (glob_hilite(*flags)) {
         if (help_flags & HELP_IRC) {
           towrite = "\002";
-        }
-        else if (help_flags & HELP_BOLD) {
+        } else if (help_flags & HELP_BOLD) {
           help_flags &= ~HELP_BOLD;
           towrite = "\033[0m";
-        }
-        else {
+        } else {
           help_flags |= HELP_BOLD;
           towrite = "\033[1m";
         }
@@ -817,12 +807,10 @@ void help_subst(char *s, char *nick, struct flag_record *flags,
       if (glob_hilite(*flags)) {
         if (help_flags & HELP_IRC) {
           towrite = "\026";
-        }
-        else if (help_flags & HELP_REV) {
+        } else if (help_flags & HELP_REV) {
           help_flags &= ~HELP_REV;
           towrite = "\033[0m";
-        }
-        else {
+        } else {
           help_flags |= HELP_REV;
           towrite = "\033[7m";
         }
@@ -832,12 +820,10 @@ void help_subst(char *s, char *nick, struct flag_record *flags,
       if (glob_hilite(*flags)) {
         if (help_flags & HELP_IRC) {
           towrite = "\037";
-        }
-        else if (help_flags & HELP_UNDER) {
+        } else if (help_flags & HELP_UNDER) {
           help_flags &= ~HELP_UNDER;
           towrite = "\033[0m";
-        }
-        else {
+        } else {
           help_flags |= HELP_UNDER;
           towrite = "\033[4m";
         }
@@ -851,8 +837,7 @@ void help_subst(char *s, char *nick, struct flag_record *flags,
           else
             towrite = "\033[0m";
           help_flags &= ~HELP_FLASH;
-        }
-        else {
+        } else {
           help_flags |= HELP_FLASH;
           if (help_flags & HELP_IRC)
             towrite = "\037\002";
@@ -867,8 +852,7 @@ void help_subst(char *s, char *nick, struct flag_record *flags,
         egg_snprintf(sub, sizeof sub, "%s %s", uname_info.sysname,
                      uname_info.release);
         towrite = sub;
-      }
-      else
+      } else
 #endif
         towrite = "*UNKNOWN*";
       break;
@@ -928,8 +912,7 @@ void help_subst(char *s, char *nick, struct flag_record *flags,
             blind |= 2;
           else
             blind &= ~2;
-        }
-        else if (!(blind & 2)) {
+        } else if (!(blind & 2)) {
           if (q[0] == '+') {
             struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
 
@@ -938,8 +921,7 @@ void help_subst(char *s, char *nick, struct flag_record *flags,
               blind |= 1;
             else
               blind &= ~1;
-          }
-          else if (q[0] == '-')
+          } else if (q[0] == '-')
             blind &= ~1;
           else if (!egg_strcasecmp(q, "end")) {
             blind &= ~1;
@@ -952,8 +934,7 @@ void help_subst(char *s, char *nick, struct flag_record *flags,
               cols = 0;
               towrite = sub;
             }
-          }
-          else if (!egg_strcasecmp(q, "center"))
+          } else if (!egg_strcasecmp(q, "center"))
             center = 1;
           else if (!strncmp(q, "cols=", 5)) {
             char *r;
@@ -967,8 +948,7 @@ void help_subst(char *s, char *nick, struct flag_record *flags,
               subwidth = atoi(r + 1);
           }
         }
-      }
-      else
+      } else
         current = q;            /* no } so ignore */
       break;
     default:
@@ -991,8 +971,7 @@ void help_subst(char *s, char *nick, struct flag_record *flags,
     if (chr) {
       readidx = current + 2;
       current = strchr(readidx, '%');
-    }
-    else {
+    } else {
       readidx = current + 1;
       current = NULL;
     }
@@ -1005,8 +984,7 @@ void help_subst(char *s, char *nick, struct flag_record *flags,
       return;
     }
     strcpy(writeidx, readidx);
-  }
-  else
+  } else
     *writeidx = 0;
   if (center) {
     strcpy(xx, s);
@@ -1048,8 +1026,7 @@ static void scan_help_file(struct help_ref *current, char *filename, int type)
             list->type = type;
             current->first = list;
             p++;
-          }
-          else
+          } else
             p = "";
         }
       }
@@ -1154,8 +1131,7 @@ FILE *resolve_help(int dcc, char *file)
             egg_snprintf(s, sizeof s, "%smsg/%s", helpdir, current->name);
             if ((f = fopen(s, "r")))
               return f;
-          }
-          else if (dcc && item->type) {
+          } else if (dcc && item->type) {
             if (item->type == 1)
               egg_snprintf(s, sizeof s, "%s%s", helpdir, current->name);
             else
@@ -1448,8 +1424,7 @@ char *str_escape(const char *str, const char div, const char mask)
       sprintf(b, "%c%02x", mask, *s);
       b += 3;
       blen += 3;
-    }
-    else {
+    } else {
       *(b++) = *s;
       blen++;
     }
@@ -1487,12 +1462,10 @@ char *strchr_unescape(char *str, const char div, register const char esc_char)
       buf[0] = s[1], buf[1] = s[2];
       *p = (unsigned char) strtol(buf, NULL, 16);
       s += 2;
-    }
-    else if (*s == div) {
+    } else if (*s == div) {
       *p = *s = 0;
       return (s + 1);           /* Found searched for character.        */
-    }
-    else
+    } else
       *p = *s;
   }
   *p = 0;

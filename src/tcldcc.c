@@ -2,7 +2,7 @@
  * tcldcc.c -- handles:
  *   Tcl stubs for the dcc commands
  *
- * $Id: tcldcc.c,v 1.40 2003/01/29 05:48:41 wcc Exp $
+ * $Id: tcldcc.c,v 1.41 2003/01/30 07:15:14 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -95,8 +95,7 @@ static int tcl_putdccraw STDVAR
     if (!z && !strcmp(dcc[i].nick, "(server)")) {
       j = dcc[i].sock;
       break;
-    }
-    else if (dcc[i].sock == z) {
+    } else if (dcc[i].sock == z) {
       j = dcc[i].sock;
       break;
     }
@@ -127,11 +126,9 @@ static int tcl_dccsimul STDVAR
         dcc[idx].type->activity(idx, argv[2], l);
         return TCL_OK;
       }
-    }
-    else
+    } else
       Tcl_AppendResult(irp, "invalid idx", NULL);
-  }
-  else
+  } else
     Tcl_AppendResult(irp, "simul disabled", NULL);
   return TCL_ERROR;
 }
@@ -215,8 +212,7 @@ static int tcl_setchan STDVAR
       }
       chan = atoi(interp->result);
     }
-  }
-  else
+  } else
     chan = atoi(argv[2]);
   if ((chan < -1) || (chan > 199999)) {
     Tcl_AppendResult(irp, "channel out of range; must be -1 through 199999",
@@ -295,8 +291,7 @@ static int tcl_console STDVAR
         return TCL_ERROR;
       }
       strncpyz(dcc[i].u.chat->con_chan, argv[arg], 81);
-    }
-    else {
+    } else {
       if ((argv[arg][0] != '+') && (argv[arg][0] != '-'))
         dcc[i].u.chat->con_flags = 0;
     do_console_flags:
@@ -430,8 +425,7 @@ static int tcl_page STDVAR
   if (dcc[i].status & STAT_PAGE) {
     egg_snprintf(x, sizeof x, "%d", dcc[i].u.chat->max_line);
     Tcl_AppendResult(irp, x, NULL);
-  }
-  else
+  } else
     Tcl_AppendResult(irp, "0", NULL);
   /* Console autosave. */
   if ((argc > 2) && (me = module_find("console", 1, 1))) {
@@ -681,8 +675,7 @@ static int tcl_whom STDVAR
         return TCL_ERROR;
       }
       chan = atoi(interp->result);
-    }
-    else
+    } else
       chan = atoi(argv[1]);
     if ((chan < 0) || (chan > 199999)) {
       Tcl_AppendResult(irp, "channel out of range; must be 0 through 199999",
@@ -821,8 +814,7 @@ static int tcl_link STDVAR
       x = 0;
     else
       botnet_send_link(i, botnetnick, bot, bot2);
-  }
-  else
+  } else
     x = botlink("", -2, bot);
 
   egg_snprintf(bot, sizeof bot, "%d", x);
@@ -950,8 +942,7 @@ static int tcl_listen STDVAR
     if (i == -1) {
       Tcl_AppendResult(irp, "Couldn't grab nearby port", NULL);
       return TCL_ERROR;
-    }
-    else if (i == -2) {
+    } else if (i == -2) {
       Tcl_AppendResult(irp, "Couldn't assign the requested IP. Please make "
                        "sure 'my-ip' is set properly.", NULL);
       return TCL_ERROR;
@@ -1039,8 +1030,7 @@ static int tcl_boot STDVAR
         return TCL_OK;
       botnet_send_reject(i, botnetnick, NULL, whonick, who,
                          argv[2] ? argv[2] : "");
-    }
-    else
+    } else
       return TCL_OK;
   }
   for (i = 0; i < dcc_total; i++)

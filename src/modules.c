@@ -4,7 +4,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: modules.c,v 1.76 2003/01/28 06:37:24 wcc Exp $
+ * $Id: modules.c,v 1.77 2003/01/30 07:15:14 wcc Exp $
  */
 /* 
  * Copyright (C) 1997 Robey Pointer
@@ -156,8 +156,7 @@ static void null_share(int idx, char *x)
     if (!(dcc[idx].status & STAT_GETTING)) {
       dcc[idx].status &= ~STAT_SHARE;
     }
-  }
-  else if ((x[0] != 'v') && (x[0] != 'e'))
+  } else if ((x[0] != 'v') && (x[0] != 'e'))
     dprintf(idx, "s un Not sharing userfile.\n");
 }
 
@@ -654,8 +653,7 @@ const char *module_load(char *name)
     if (getcwd(workbuf, 1024) == NULL)
       return MOD_BADCWD;
     sprintf(&(workbuf[strlen(workbuf)]), "/%s%s." EGG_MOD_EXT, moddir, name);
-  }
-  else
+  } else
     sprintf(workbuf, "%s%s." EGG_MOD_EXT, moddir, name);
 #  ifdef HPUX_HACKS
   hand = shl_load(workbuf, BIND_IMMEDIATE, 0L);
@@ -858,8 +856,7 @@ int module_undepend(char *name1)
     if (d->needing == p) {
       if (o == NULL) {
         dependancy_list = d->next;
-      }
-      else {
+      } else {
         o->next = d->next;
       }
       nfree(d);
@@ -868,8 +865,7 @@ int module_undepend(char *name1)
       else
         d = o->next;
       ok++;
-    }
-    else {
+    } else {
       o = d;
       d = d->next;
     }
@@ -931,8 +927,7 @@ void add_hook(int hook_num, Function func)
     p->next = hook_list[hook_num];
     hook_list[hook_num] = p;
     p->func = func;
-  }
-  else
+  } else
     switch (hook_num) {
     case HOOK_ENCRYPT_PASS:
       encrypt_pass = (void (*)(char *, char *)) func;
@@ -965,8 +960,7 @@ void add_hook(int hook_num, Function func)
           (int (*)(const char *, const char *, int)) egg_strncasecmp;
         rfc_tolower = tolower;
         rfc_toupper = toupper;
-      }
-      else {
+      } else {
         rfc_casecmp = _rfc_casecmp;
         rfc_ncasecmp = _rfc_ncasecmp;
         rfc_tolower = _rfc_tolower;
@@ -1005,8 +999,7 @@ void del_hook(int hook_num, Function func)
       o = p;
       p = p->next;
     }
-  }
-  else
+  } else
     switch (hook_num) {
     case HOOK_ENCRYPT_PASS:
       if (encrypt_pass == (void (*)(char *, char *)) func)

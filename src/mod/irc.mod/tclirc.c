@@ -1,7 +1,7 @@
 /*
  * tclirc.c -- part of irc.mod
  *
- * $Id: tclirc.c,v 1.40 2003/01/28 06:37:26 wcc Exp $
+ * $Id: tclirc.c,v 1.41 2003/01/30 07:15:15 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -84,8 +84,7 @@ static int tcl_botisop STDVAR
       Tcl_AppendResult(irp, "illegal channel: ", argv[1], NULL);
       return TCL_ERROR;
     }
-  }
-  else
+  } else
     chan = chanset;
 
   while (chan && (thechan == NULL || thechan == chan)) {
@@ -112,8 +111,7 @@ static int tcl_botishalfop STDVAR
       Tcl_AppendResult(irp, "illegal channel: ", argv[1], NULL);
       return TCL_ERROR;
     }
-  }
-  else
+  } else
     chan = chanset;
 
   while (chan && (thechan == NULL || thechan == chan)) {
@@ -159,8 +157,7 @@ static int tcl_botisvoice STDVAR
       Tcl_AppendResult(irp, "illegal channel: ", argv[1], NULL);
       return TCL_ERROR;
     }
-  }
-  else
+  } else
     chan = chanset;
 
   while (chan && (thechan == NULL || thechan == chan)) {
@@ -187,8 +184,7 @@ static int tcl_botonchan STDVAR
       Tcl_AppendResult(irp, "illegal channel: ", argv[1], NULL);
       return TCL_ERROR;
     }
-  }
-  else
+  } else
     chan = chanset;
 
   while (chan && (thechan == NULL || thechan == chan)) {
@@ -216,8 +212,7 @@ static int tcl_isop STDVAR
       Tcl_AppendResult(irp, "illegal channel: ", argv[2], NULL);
       return TCL_ERROR;
     }
-  }
-  else
+  } else
     chan = chanset;
 
   while (chan && (thechan == NULL || thechan == chan)) {
@@ -245,8 +240,7 @@ static int tcl_ishalfop STDVAR
       Tcl_AppendResult(irp, "illegal channel: ", argv[2], NULL);
       return TCL_ERROR;
     }
-  }
-  else
+  } else
     chan = chanset;
 
   while (chan && (thechan == NULL || thechan == chan)) {
@@ -274,8 +268,7 @@ static int tcl_isvoice STDVAR
       Tcl_AppendResult(irp, "illegal channel: ", argv[2], NULL);
       return TCL_ERROR;
     }
-  }
-  else
+  } else
     chan = chanset;
 
   while (chan && (thechan == NULL || thechan == chan)) {
@@ -340,8 +333,7 @@ static int tcl_onchan STDVAR
       Tcl_AppendResult(irp, "illegal channel: ", argv[2], NULL);
       return TCL_ERROR;
     }
-  }
-  else
+  } else
     chan = chanset;
 
   while (chan && (thechan == NULL || thechan == chan)) {
@@ -370,8 +362,7 @@ static int tcl_handonchan STDVAR
       Tcl_AppendResult(irp, "illegal channel: ", argv[2], NULL);
       return TCL_ERROR;
     }
-  }
-  else
+  } else
     chan = chanset;
 
   while (chan && (thechan == NULL || thechan == chan)) {
@@ -459,8 +450,7 @@ static int tcl_getchanhost STDVAR
       Tcl_AppendResult(irp, "illegal channel: ", argv[2], NULL);
       return TCL_ERROR;
     }
-  }
-  else
+  } else
     chan = chanset;
 
   while (chan && (thechan == NULL || thechan == chan)) {
@@ -488,8 +478,7 @@ static int tcl_onchansplit STDVAR
       Tcl_AppendResult(irp, "illegal channel: ", argv[2], NULL);
       return TCL_ERROR;
     }
-  }
-  else
+  } else
     chan = chanset;
 
   while (chan && (thechan == NULL || thechan == chan)) {
@@ -652,8 +641,7 @@ static int tcl_channame2dname STDVAR
   if (chan) {
     Tcl_AppendResult(irp, chan->dname, NULL);
     return TCL_OK;
-  }
-  else {
+  } else {
     Tcl_AppendResult(irp, "invalid channel-name: ", argv[1], NULL);
     return TCL_ERROR;
   }
@@ -669,8 +657,7 @@ static int tcl_chandname2name STDVAR
   if (chan) {
     Tcl_AppendResult(irp, chan->name, NULL);
     return TCL_OK;
-  }
-  else {
+  } else {
     Tcl_AppendResult(irp, "invalid channel-dname: ", argv[1], NULL);
     return TCL_ERROR;
   }
@@ -807,8 +794,7 @@ static int tcl_hand2nick STDVAR
       Tcl_AppendResult(irp, "invalid channel: ", argv[2], NULL);
       return TCL_ERROR;
     }
-  }
-  else
+  } else
     chan = chanset;
 
   while (chan && (thechan == NULL || thechan == chan)) {
@@ -843,8 +829,7 @@ static int tcl_nick2hand STDVAR
       Tcl_AppendResult(irp, "invalid channel: ", argv[2], NULL);
       return TCL_ERROR;
     }
-  }
-  else
+  } else
     chan = chanset;
 
   while (chan && (thechan == NULL || thechan == chan)) {

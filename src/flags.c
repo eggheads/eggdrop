@@ -2,7 +2,7 @@
  * flags.c -- handles:
  *   all the flag matching/conversion functions in one neat package :)
  *
- * $Id: flags.c,v 1.22 2003/01/28 06:37:24 wcc Exp $
+ * $Id: flags.c,v 1.23 2003/01/30 07:15:14 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -394,8 +394,7 @@ void break_down_flags(const char *string, struct flag_record *plus,
         case 2:
           which->bot |= 1 << (*string - 'a');
         }
-      }
-      else if ((*string >= 'A') && (*string <= 'Z')) {
+      } else if ((*string >= 'A') && (*string <= 'Z')) {
         switch (mode) {
         case 0:
           which->udef_global |= 1 << (*string - 'A');
@@ -404,8 +403,7 @@ void break_down_flags(const char *string, struct flag_record *plus,
           which->udef_chan |= 1 << (*string - 'A');
           break;
         }
-      }
-      else if ((*string >= '0') && (*string <= '9')) {
+      } else if ((*string >= '0') && (*string <= '9')) {
         switch (mode) {
           /* Map 0->9 to A->K for glob/chan so they are not lost */
         case 0:
@@ -494,8 +492,7 @@ int build_flags(char *string, struct flag_record *plus,
       *string++ = '-';
       string += flag2str(string, minus->global, minus->udef_global);
     }
-  }
-  else if (plus->match & FR_BOT) {
+  } else if (plus->match & FR_BOT) {
     if (minus && plus->bot)
       *string++ = '+';
     string += bot2str(string, plus->bot);
@@ -590,8 +587,7 @@ int flagrec_eq(struct flag_record *req, struct flag_record *have)
         return 0;
     }
     return 1;
-  }
-  else if (req->match & FR_OR) {
+  } else if (req->match & FR_OR) {
     if (!req->chan && !req->global &&!req->udef_chan &&
         !req->udef_global && !req->bot)
       return 1;
@@ -680,16 +676,14 @@ void get_user_flagrec(struct userrec *u, struct flag_record *fr,
     fr->global = u->flags;
 
     fr->udef_global = u->flags_udef;
-  }
-  else {
+  } else {
     fr->global = 0;
 
     fr->udef_global = 0;
   }
   if (fr->match & FR_BOT) {
     fr->bot = (long) get_user(&USERENTRY_BOTFL, u);
-  }
-  else
+  } else
     fr->bot = 0;
   if (fr->match & FR_CHAN) {
     if (fr->match & FR_ANYWH) {
@@ -700,8 +694,7 @@ void get_user_flagrec(struct userrec *u, struct flag_record *fr,
           fr->chan |= cr->flags;
           fr->udef_chan |= cr->flags_udef;
         }
-    }
-    else {
+    } else {
       if (chname)
         for (cr = u->chanrec; cr; cr = cr->next)
           if (!rfc_casecmp(chname, cr->channel))
@@ -709,8 +702,7 @@ void get_user_flagrec(struct userrec *u, struct flag_record *fr,
       if (cr) {
         fr->chan = cr->flags;
         fr->udef_chan = cr->flags_udef;
-      }
-      else {
+      } else {
         fr->chan = 0;
         fr->udef_chan = 0;
       }

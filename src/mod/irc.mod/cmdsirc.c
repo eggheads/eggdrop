@@ -2,7 +2,7 @@
  * chancmds.c -- part of irc.mod
  *   handles commands directly relating to channel interaction
  *
- * $Id: cmdsirc.c,v 1.47 2003/01/28 06:37:26 wcc Exp $
+ * $Id: cmdsirc.c,v 1.48 2003/01/30 07:15:15 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -35,8 +35,7 @@ static struct chanset_t *has_op(int idx, char *chname)
       dprintf(idx, "No such channel.\n");
       return 0;
     }
-  }
-  else {
+  } else {
     chname = dcc[idx].u.chat->con_chan;
     chan = findchan_by_dname(chname);
     if (!chan) {
@@ -61,8 +60,7 @@ static struct chanset_t *has_oporhalfop(int idx, char *chname)
       dprintf(idx, "No such channel.\n");
       return 0;
     }
-  }
-  else {
+  } else {
     chname = dcc[idx].u.chat->con_chan;
     chan = findchan_by_dname(chname);
     if (!chan) {
@@ -694,8 +692,7 @@ static void cmd_channel(struct userrec *u, int idx, char *par)
           egg_strftime(s, 6, "%d%b", localtime(&(m->joined)));
         else
           egg_strftime(s, 6, "%H:%M", localtime(&(m->joined)));
-      }
-      else
+      } else
         strncpyz(s, " --- ", sizeof s);
       if (m->user == NULL) {
         egg_snprintf(s1, sizeof s1, "%s!%s", m->nick, m->userhost);
@@ -787,14 +784,12 @@ static void cmd_channel(struct userrec *u, int idx, char *par)
                      maxnicklen, maxhandlen);
         dprintf(idx, format, chanflag, m->nick, handle, s, atrflag,
                 now - (m->split));
-      }
-      else if (!rfc_casecmp(m->nick, botname)) {
+      } else if (!rfc_casecmp(m->nick, botname)) {
         egg_snprintf(format, sizeof format,
                      "%%c%%-%us %%-%us %%s %%c     <- it's me!\n",
                      maxnicklen, maxhandlen);
         dprintf(idx, format, chanflag, m->nick, handle, s, atrflag);
-      }
-      else {
+      } else {
         /* Determine idle time */
         if (now - (m->last) > 86400)
           egg_snprintf(s1, sizeof s1, "%2lud", ((now - (m->last)) / 86400));
@@ -831,8 +826,7 @@ static void cmd_topic(struct userrec *u, int idx, char *par)
     char *chname = newsplit(&par);
 
     chan = has_oporhalfop(idx, chname);
-  }
-  else
+  } else
     chan = has_oporhalfop(idx, "");
   if (chan) {
     if (!channel_active(chan)) {
@@ -845,8 +839,7 @@ static void cmd_topic(struct userrec *u, int idx, char *par)
                 chan->channel.topic);
       else
         dprintf(idx, "No topic is set for %s\n", chan->dname);
-    }
-    else if (channel_optopic(chan) && !me_op(chan) && !me_halfop(chan))
+    } else if (channel_optopic(chan) && !me_op(chan) && !me_halfop(chan))
       dprintf(idx, "I'm not a channel op or halfop on %s and the channel is"
               " +t.\n", chan->dname);
     else {
@@ -921,8 +914,7 @@ static void cmd_adduser(struct userrec *u, int idx, char *par)
 
   if (!par[0]) {
     hand = nick;
-  }
-  else {
+  } else {
     char *p;
     int ok = 1;
 
@@ -932,8 +924,7 @@ static void cmd_adduser(struct userrec *u, int idx, char *par)
     if (!ok) {
       dprintf(idx, "You can't have strange characters in a nick.\n");
       return;
-    }
-    else if (strchr("-,+*=:!.@#;$", par[0]) != NULL) {
+    } else if (strchr("-,+*=:!.@#;$", par[0]) != NULL) {
       dprintf(idx, "You can't start a nick with '%c'.\n", par[0]);
       return;
     }
@@ -982,8 +973,7 @@ static void cmd_adduser(struct userrec *u, int idx, char *par)
   if (!u) {
     dprintf(idx, "Added [%s]%s with no password.\n", hand, p1);
     userlist = adduser(userlist, hand, p1, "-", USER_DEFAULT);
-  }
-  else {
+  } else {
     dprintf(idx, "Added hostmask %s to %s.\n", p1, u->handle);
     addhost_by_handle(hand, p1);
     get_user_flagrec(u, &user, chan->dname);
@@ -1033,20 +1023,15 @@ static void cmd_deluser(struct userrec *u, int idx, char *par)
   if ((glob_owner(victim) && egg_strcasecmp(dcc[idx].nick, nick)) ||
       isowner(u->handle)) {
     dprintf(idx, "You can't remove a bot owner!\n");
-  }
-  else if (glob_botmast(victim) && !glob_owner(user)) {
+  } else if (glob_botmast(victim) && !glob_owner(user)) {
     dprintf(idx, "You can't remove a bot master!\n");
-  }
-  else if (chan_owner(victim) && !glob_owner(user)) {
+  } else if (chan_owner(victim) && !glob_owner(user)) {
     dprintf(idx, "You can't remove a channel owner!\n");
-  }
-  else if (chan_master(victim) && !(glob_owner(user) || chan_owner(user))) {
+  } else if (chan_master(victim) && !(glob_owner(user) || chan_owner(user))) {
     dprintf(idx, "You can't remove a channel master!\n");
-  }
-  else if (glob_bot(victim) && !glob_owner(user)) {
+  } else if (glob_bot(victim) && !glob_owner(user)) {
     dprintf(idx, "You can't remove a bot!\n");
-  }
-  else {
+  } else {
     char buf[HANDLEN + 1];
 
     strncpyz(buf, u->handle, sizeof buf);
@@ -1054,8 +1039,7 @@ static void cmd_deluser(struct userrec *u, int idx, char *par)
     if (deluser(u->handle)) {
       dprintf(idx, "Deleted %s.\n", buf);       /* ?!?! :) */
       putlog(LOG_CMDS, "*", "#%s# deluser %s [%s]", dcc[idx].nick, nick, buf);
-    }
-    else
+    } else
       dprintf(idx, "Failed.\n");
   }
 }
@@ -1080,8 +1064,7 @@ static void cmd_reset(struct userrec *u, int idx, char *par)
         reset_chan_info(chan);
       }
     }
-  }
-  else if (!(u->flags & USER_MASTER))
+  } else if (!(u->flags & USER_MASTER))
     dprintf(idx, "You are not a Bot Master.\n");
   else {
     putlog(LOG_CMDS, "*", "#%s# reset all", dcc[idx].nick);

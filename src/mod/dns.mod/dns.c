@@ -4,7 +4,7 @@
  *
  * Written by Fabian Knittel <fknittel@gmx.de>
  *
- * $Id: dns.c,v 1.29 2003/01/28 06:37:25 wcc Exp $
+ * $Id: dns.c,v 1.30 2003/01/30 07:15:14 wcc Exp $
  */
 /*
  * Copyright (C) 1999, 2000, 2001, 2002, 2003 Eggheads Development Team
@@ -50,8 +50,7 @@ static void dns_event_success(struct resolve *rp, int type)
   if (type == T_PTR) {
     debug2("DNS resolved %s to %s", iptostr(rp->ip), rp->hostn);
     call_hostbyip(ntohl(rp->ip), rp->hostn, 1);
-  }
-  else if (type == T_A) {
+  } else if (type == T_A) {
     debug2("DNS resolved %s to %s", rp->hostn, iptostr(rp->ip));
     call_ipbyhost(rp->hostn, ntohl(rp->ip), 1);
   }
@@ -68,12 +67,10 @@ static void dns_event_failure(struct resolve *rp, int type)
     debug1("DNS resolve failed for %s", iptostr(rp->ip));
     strcpy(s, iptostr(rp->ip));
     call_hostbyip(ntohl(rp->ip), s, 0);
-  }
-  else if (type == T_A) {
+  } else if (type == T_A) {
     debug1("DNS resolve failed for %s", rp->hostn);
     call_ipbyhost(rp->hostn, 0, 0);
-  }
-  else
+  } else
     debug2("DNS resolve failed for unknown %s / %s", iptostr(rp->ip),
            nonull(rp->hostn));
   return;
@@ -93,8 +90,7 @@ static void eof_dns_socket(int idx)
     putlog(LOG_MISC, "*", "DNS socket successfully reopened!");
     dcc[idx].sock = resfd;
     dcc[idx].timeval = now;
-  }
-  else
+  } else
     lostdcc(idx);
 }
 

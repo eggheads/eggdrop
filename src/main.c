@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  *
- * $Id: main.c,v 1.93 2003/01/28 06:37:24 wcc Exp $
+ * $Id: main.c,v 1.94 2003/01/30 07:15:14 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -259,8 +259,7 @@ void write_debug()
     bg_send_quit(BG_ABORT);
     exit(1);                    /* Dont even try & tell people about, that may
                                  * have caused the fault last time. */
-  }
-  else
+  } else
     nested_debug = 1;
   putlog(LOG_MISC, "*", "* Last context: %s/%d [%s]", cx_file[cx_ptr],
          cx_line[cx_ptr], cx_note[cx_ptr][0] ? cx_note[cx_ptr] : "");
@@ -270,8 +269,7 @@ void write_debug()
   setsock(x, SOCK_NONSOCK);
   if (x < 0) {
     putlog(LOG_MISC, "*", "* Failed to write DEBUG");
-  }
-  else {
+  } else {
     strncpyz(s, ctime(&now), sizeof s);
     dprintf(-x, "Debug (%s) written %s\n", ver, s);
     dprintf(-x, "Full Patch List: %s\n", egg_xtra);
@@ -365,8 +363,7 @@ static void got_term(int z)
   if (die_on_sigterm) {
     botnet_send_chat(-1, botnetnick, "ACK, I've been terminated!");
     fatal("TERMINATE SIGNAL -- SIGNING OFF", 0);
-  }
-  else
+  } else
     putlog(LOG_MISC, "*", "RECEIVED TERMINATE SIGNAL (IGNORING)");
 }
 
@@ -383,8 +380,7 @@ static void got_hup(int z)
   check_tcl_event("sighup");
   if (die_on_sighup) {
     fatal("HANGUP SIGNAL -- SIGNING OFF", 0);
-  }
-  else
+  } else
     putlog(LOG_MISC, "*", "Received HUP signal: rehashing...");
   do_restart = -2;
   return;
@@ -419,8 +415,7 @@ void eggContext(const char *file, int line, const char *module)
   p = strrchr(file, '/');
   if (!module) {
     strncpyz(x, p ? p + 1 : file, sizeof x);
-  }
-  else
+  } else
     egg_snprintf(x, 31, "%s:%s", module, p ? p + 1 : file);
   cx_ptr = ((cx_ptr + 1) & 15);
   strcpy(cx_file[cx_ptr], x);
@@ -438,8 +433,7 @@ void eggContextNote(const char *file, int line, const char *module,
   p = strrchr(file, '/');
   if (!module) {
     strncpyz(x, p ? p + 1 : file, sizeof x);
-  }
-  else
+  } else
     egg_snprintf(x, 31, "%s:%s", module, p ? p + 1 : file);
   cx_ptr = ((cx_ptr + 1) & 15);
   strcpy(cx_file[cx_ptr], x);
@@ -504,8 +498,7 @@ static void do_arg(char *s)
         exit(0);
         break;                  /* this should never be reached */
       }
-    }
-  else
+    } else
     strncpyz(configfile, s, sizeof configfile);
 }
 
@@ -854,8 +847,7 @@ int main(int argc, char **argv)
   if (backgrd) {
 #ifndef CYGWIN_HACKS
     bg_do_split();
-  }
-  else {                        /* !backgrd */
+  } else {                        /* !backgrd */
 #endif
     xx = getpid();
     if (xx != 0) {
@@ -871,11 +863,9 @@ int main(int argc, char **argv)
           printf(EGG_NOWRITE, pid_file);
           fclose(fp);
           unlink(pid_file);
-        }
-        else
+        } else
           fclose(fp);
-      }
-      else
+      } else
         printf(EGG_NOWRITE, pid_file);
 #ifdef CYGWIN_HACKS
       printf("Launched into the background  (pid: %d)\n\n", xx);
@@ -968,8 +958,7 @@ int main(int argc, char **argv)
 
       /* Check for server or dcc activity. */
       dequeue_sockets();
-    }
-    else
+    } else
       socket_cleanup--;
 
     /* Free unused structures. */
@@ -1000,15 +989,13 @@ int main(int argc, char **argv)
                 itraffic_unknown_today += strlen(buf) + 1;
             }
             dcc[idx].type->activity(idx, buf, i);
-          }
-          else
+          } else
             putlog(LOG_MISC, "*",
                    "!!! untrapped dcc activity: type %s, sock %d",
                    dcc[idx].type->name, dcc[idx].sock);
           break;
         }
-    }
-    else if (xx == -1) {        /* EOF from someone */
+    } else if (xx == -1) {        /* EOF from someone */
       int idx;
 
       if (i == STDOUT && !backgrd)
@@ -1032,8 +1019,7 @@ int main(int argc, char **argv)
         close(i);
         killsock(i);
       }
-    }
-    else if (xx == -2 && errno != EINTR) {      /* select() error */
+    } else if (xx == -2 && errno != EINTR) {      /* select() error */
       putlog(LOG_MISC, "*", "* Socket error #%d; recovering.", errno);
       for (i = 0; i < dcc_total; i++) {
         if ((fcntl(dcc[i].sock, F_GETFD, 0) == -1) && (errno == EBADF)) {
@@ -1045,8 +1031,7 @@ int main(int argc, char **argv)
           i--;
         }
       }
-    }
-    else if (xx == -3) {
+    } else if (xx == -3) {
       call_hook(HOOK_IDLE);
       socket_cleanup = 0;       /* If we've been idle, cleanup & flush */
     }

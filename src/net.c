@@ -2,7 +2,7 @@
  * net.c -- handles:
  *   all raw network i/o
  * 
- * $Id: net.c,v 1.53 2003/01/29 05:48:41 wcc Exp $
+ * $Id: net.c,v 1.54 2003/01/30 07:15:14 wcc Exp $
  */
 /* 
  * This is hereby released into the public domain.
@@ -325,15 +325,13 @@ static int proxy_connect(int sock, char *host, int port, int proxy)
       IP ip = ((IP) inet_addr(host));   /* drummer */
 
       egg_memcpy(x, &ip, 4);    /* Beige@EFnet */
-    }
-    else {
+    } else {
       /* no, must be host.domain */
       if (!setjmp(alarmret)) {
         alarm(resolve_timeout);
         hp = gethostbyname(host);
         alarm(0);
-      }
-      else
+      } else
         hp = NULL;
       if (hp == NULL) {
         killsock(sock);
@@ -347,8 +345,7 @@ static int proxy_connect(int sock, char *host, int port, int proxy)
     egg_snprintf(s, sizeof s, "\004\001%c%c%c%c%c%c%s", (port >> 8) % 256,
                  (port % 256), x[0], x[1], x[2], x[3], botuser);
     tputs(sock, s, strlen(botuser) + 9);        /* drummer */
-  }
-  else if (proxy == PROXY_SUN) {
+  } else if (proxy == PROXY_SUN) {
     egg_snprintf(s, sizeof s, "%s %d\n", host, port);
     tputs(sock, s, strlen(s));  /* drummer */
   }
@@ -378,14 +375,12 @@ int open_telnet_raw(int sock, char *server, int sport)
     if (firewall[0] == '!') {
       proxy = PROXY_SUN;
       strcpy(host, &firewall[1]);
-    }
-    else {
+    } else {
       proxy = PROXY_SOCKS;
       strcpy(host, firewall);
     }
     port = firewallport;
-  }
-  else {
+  } else {
     proxy = 0;
     strcpy(host, server);
     port = sport;
@@ -411,8 +406,7 @@ int open_telnet_raw(int sock, char *server, int sport)
       alarm(resolve_timeout);
       hp = gethostbyname(host);
       alarm(0);
-    }
-    else
+    } else
       hp = NULL;
     if (hp == NULL)
       return -2;
@@ -429,8 +423,7 @@ int open_telnet_raw(int sock, char *server, int sport)
       if (firewall[0])
         return proxy_connect(sock, server, sport, proxy);
       return sock;              /* async success! */
-    }
-    else
+    } else
       return -1;
   }
   /* Synchronous? :/ */
@@ -519,8 +512,7 @@ char *hostnamefromip(unsigned long ip)
     alarm(resolve_timeout);
     hp = gethostbyaddr((char *) &addr, sizeof(addr), AF_INET);
     alarm(0);
-  }
-  else {
+  } else {
     hp = NULL;
   }
   if (hp == NULL) {
@@ -673,8 +665,7 @@ static int sockread(char *s, int *len)
             *len = 0;
             return i;
           }
-        }
-        else if (socklist[i].flags & SOCK_PASS) {
+        } else if (socklist[i].flags & SOCK_PASS) {
           s[0] = 0;
           *len = 0;
           return i;
@@ -693,8 +684,7 @@ static int sockread(char *s, int *len)
             socklist[i].flags &= ~SOCK_CONNECT;
             debug1("net: eof!(read) socket %d", socklist[i].sock);
             return -1;
-          }
-          else {
+          } else {
             debug3("sockread EAGAIN: %d %d (%s)", socklist[i].sock, errno,
                    strerror(errno));
             continue;           /* EAGAIN */
@@ -727,8 +717,7 @@ static int sockread(char *s, int *len)
         return i;
       }
     }
-  }
-  else if (x == -1)
+  } else if (x == -1)
     return -2;                  /* socket error */
   else {
     s[0] = 0;
@@ -793,8 +782,7 @@ int sockgets(char *s, int *len)
           *len = strlen(s);
           return socklist[i].sock;
         }
-      }
-      else {
+      } else {
         /* Handling buffered binary data (must have been SOCK_BUFFER before). */
         if (socklist[i].inbuflen <= 510) {
           *len = socklist[i].inbuflen;
@@ -802,8 +790,7 @@ int sockgets(char *s, int *len)
           nfree(socklist[i].inbuf);
           socklist[i].inbuf = NULL;
           socklist[i].inbuflen = 0;
-        }
-        else {
+        } else {
           /* Split up into chunks of 510 bytes. */
           *len = 510;
           egg_memcpy(s, socklist[i].inbuf, *len);
@@ -872,8 +859,7 @@ int sockgets(char *s, int *len)
       nfree(socklist[ret].inbuf);
       socklist[ret].inbuf = NULL;
       socklist[ret].inbuflen = 0;
-    }
-    else {
+    } else {
       p = socklist[ret].inbuf;
       socklist[ret].inbuflen = strlen(p) - 510;
       socklist[ret].inbuf = (char *) nmalloc(socklist[ret].inbuflen + 1);
@@ -898,8 +884,7 @@ int sockgets(char *s, int *len)
                                  * blank line */
 /* NO! */
 /* if (!s[0]) strcpy(s," ");  */
-  }
-  else {
+  } else {
     s[0] = 0;
     if (strlen(xx) >= 510) {
       /* String is too long, so just insert fake \n */
@@ -924,8 +909,7 @@ int sockgets(char *s, int *len)
     strcpy(socklist[ret].inbuf, xx);
     strcat(socklist[ret].inbuf, p);
     nfree(p);
-  }
-  else {
+  } else {
     socklist[ret].inbuflen = strlen(xx);
     socklist[ret].inbuf = (char *) nmalloc(socklist[ret].inbuflen + 1);
     strcpy(socklist[ret].inbuf, xx);
@@ -961,28 +945,22 @@ void tputs(register int z, char *s, unsigned int len)
               if (!strncmp(dcc[idx].type->name, "BOT", 3)) {
                 otraffic_bn_today += len;
                 break;
-              }
-              else if (!strcmp(dcc[idx].type->name, "SERVER")) {
+              } else if (!strcmp(dcc[idx].type->name, "SERVER")) {
                 otraffic_irc_today += len;
                 break;
-              }
-              else if (!strncmp(dcc[idx].type->name, "CHAT", 4)) {
+              } else if (!strncmp(dcc[idx].type->name, "CHAT", 4)) {
                 otraffic_dcc_today += len;
                 break;
-              }
-              else if (!strncmp(dcc[idx].type->name, "FILES", 5)) {
+              } else if (!strncmp(dcc[idx].type->name, "FILES", 5)) {
                 otraffic_filesys_today += len;
                 break;
-              }
-              else if (!strcmp(dcc[idx].type->name, "SEND")) {
+              } else if (!strcmp(dcc[idx].type->name, "SEND")) {
                 otraffic_trans_today += len;
                 break;
-              }
-              else if (!strncmp(dcc[idx].type->name, "GET", 3)) {
+              } else if (!strncmp(dcc[idx].type->name, "GET", 3)) {
                 otraffic_trans_today += len;
                 break;
-              }
-              else {
+              } else {
                 otraffic_unknown_today += len;
                 break;
               }
@@ -1083,14 +1061,12 @@ void dequeue_sockets()
         debug3("net: eof!(write) socket %d (%s,%d)", socklist[i].sock,
                strerror(errno), errno);
         socklist[i].flags |= SOCK_EOFD;
-      }
-      else if (x == socklist[i].outbuflen) {
+      } else if (x == socklist[i].outbuflen) {
         /* If the whole buffer was sent, nuke it */
         nfree(socklist[i].outbuf);
         socklist[i].outbuf = NULL;
         socklist[i].outbuflen = 0;
-      }
-      else if (x > 0) {
+      } else if (x > 0) {
         char *p = socklist[i].outbuf;
 
         /* This removes any sent bytes from the beginning of the buffer */
@@ -1098,8 +1074,7 @@ void dequeue_sockets()
         egg_memcpy(socklist[i].outbuf, p + x, socklist[i].outbuflen - x);
         socklist[i].outbuflen -= x;
         nfree(p);
-      }
-      else {
+      } else {
         debug3("dequeue_sockets(): errno = %d (%s) on %d", errno,
                strerror(errno), socklist[i].sock);
       }
@@ -1241,8 +1216,7 @@ int sock_has_data(int type, int sock)
       ret = (socklist[i].inbuf != NULL);
       break;
     }
-  }
-  else
+  } else
     debug1("sock_has_data: could not find socket #%d, returning false.", sock);
   return ret;
 }
@@ -1274,11 +1248,9 @@ int flush_inbuf(int idx)
           dcc[idx].type->activity(idx, inbuf, len);
           nfree(inbuf);
           return len;
-        }
-        else
+        } else
           return -2;
-      }
-      else
+      } else
         return 0;
     }
   }

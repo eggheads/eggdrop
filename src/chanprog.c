@@ -7,7 +7,7 @@
  *   telling the current programmed settings
  *   initializing a lot of stuff and loading the tcl scripts
  *
- * $Id: chanprog.c,v 1.39 2003/01/29 05:48:40 wcc Exp $
+ * $Id: chanprog.c,v 1.40 2003/01/30 07:15:13 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -279,8 +279,7 @@ void tell_verbose_status(int idx)
     vers_t = " ";
     uni_t = "*unknown*";
 #ifdef HAVE_UNAME
-  }
-  else {
+  } else {
     vers_t = un.release;
     uni_t = un.sysname;
   }
@@ -473,8 +472,7 @@ void chanprog()
     if (module_find("server", 0, 0))
       printf(MISC_USERFCREATE1, origbotname);
     printf("%s\n\n", MISC_USERFCREATE2);
-  }
-  else if (make_userfile) {
+  } else if (make_userfile) {
     make_userfile = 0;
     printf("%s\n", MISC_USERFEXISTS);
   }
@@ -575,8 +573,7 @@ int remove_timer(tcl_timer_t ** stack, unsigned long id)
       *stack = ((*stack)->next);
       nfree(old->cmd);
       nfree(old);
-    }
-    else
+    } else
       stack = &((*stack)->next);
   }
   return ok;
@@ -604,8 +601,7 @@ void do_check_timers(tcl_timer_t ** stack)
       do_tcl(x, old->cmd);
       nfree(old->cmd);
       nfree(old);
-    }
-    else {
+    } else {
       old->next = *stack;
       *stack = old;
     }

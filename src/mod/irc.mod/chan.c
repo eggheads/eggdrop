@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  *
- * $Id: chan.c,v 1.106 2003/01/29 05:48:42 wcc Exp $
+ * $Id: chan.c,v 1.107 2003/01/30 07:15:15 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -683,8 +683,7 @@ static void recheck_channel_modes(struct chanset_t *chan)
 
       sprintf(s, "%d", chan->limit_prot);
       add_mode(chan, '+', 'l', s);
-    }
-    else if ((mns & CHANLIMIT) && (chan->channel.maxmembers != 0))
+    } else if ((mns & CHANLIMIT) && (chan->channel.maxmembers != 0))
       add_mode(chan, '-', 'l', "");
     if (chan->key_prot[0]) {
       if (rfc_casecmp(chan->channel.key, chan->key_prot) != 0) {
@@ -692,8 +691,7 @@ static void recheck_channel_modes(struct chanset_t *chan)
           add_mode(chan, '-', 'k', chan->channel.key);
         add_mode(chan, '+', 'k', chan->key_prot);
       }
-    }
-    else if ((mns & CHANKEY) && (chan->channel.key[0]))
+    } else if ((mns & CHANKEY) && (chan->channel.key[0]))
       add_mode(chan, '-', 'k', chan->channel.key);
   }
 }
@@ -728,8 +726,7 @@ static void check_this_member(struct chanset_t *chan, char *nick,
           set_delay(chan, m->nick);
           m->flags |= SENTOP;
         }
-      }
-      else if (!chan_hasop(m) && !chan_hashalfop(m) && (chan_halfop(*fr) ||
+      } else if (!chan_hasop(m) && !chan_hashalfop(m) && (chan_halfop(*fr) ||
                (glob_halfop(*fr) && !chan_dehalfop(*fr))) &&
                (channel_autohalfop(chan) || glob_autohalfop(*fr) ||
                chan_autohalfop(*fr))) {
@@ -908,8 +905,7 @@ static int got324(char *from, char *msg)
           *q = 0;
           set_key(chan, p);
           strcpy(p, q + 1);
-        }
-        else {
+        } else {
           set_key(chan, p);
           *p = 0;
         }
@@ -932,8 +928,7 @@ static int got324(char *from, char *msg)
           *q = 0;
           chan->channel.maxmembers = atoi(p);
           strcpy(p, q + 1);
-        }
-        else {
+        } else {
           chan->channel.maxmembers = atoi(p);
           *p = 0;
         }
@@ -1063,8 +1058,7 @@ static int got315(char *from, char *msg)
     dprintf(DP_MODE, "JOIN %s %s\n",
             (chan->name[0]) ? chan->name : chan->dname,
             chan->channel.key[0] ? chan->channel.key : chan->key_prot);
-  }
-  else if (me_op(chan))
+  } else if (me_op(chan))
     recheck_channel(chan, 1);
   else if (chan->channel.members == 1)
     chan->status |= CHAN_STOP_CYCLE;
@@ -1250,8 +1244,7 @@ static int got403(char *from, char *msg)
              "Unique channel %s does not exist... Attempting to join with "
              "short name.", chname);
       dprintf(DP_SERVER, "JOIN %s\n", chan->dname);
-    }
-    else {
+    } else {
       /* We have found the channel, so the server has given us the short
        * name. Prefix another '!' to it, and attempt the join again...
        */
@@ -1293,8 +1286,7 @@ static int got471(char *from, char *msg)
 
     if (chan->need_limit[0])
       do_tcl("need-limit", chan->need_limit);
-  }
-  else
+  } else
     putlog(LOG_JOIN, chname, IRC_CHANFULL, chname);
   return 0;
 }
@@ -1329,8 +1321,7 @@ static int got473(char *from, char *msg)
 
     if (chan->need_invite[0])
       do_tcl("need-invite", chan->need_invite);
-  }
-  else
+  } else
     putlog(LOG_JOIN, chname, IRC_CHANINVITEONLY, chname);
   return 0;
 }
@@ -1365,8 +1356,7 @@ static int got474(char *from, char *msg)
 
     if (chan->need_unban[0])
       do_tcl("need-unban", chan->need_unban);
-  }
-  else
+  } else
     putlog(LOG_JOIN, chname, IRC_BANNEDFROMCHAN, chname);
   return 0;
 }
@@ -1398,8 +1388,7 @@ static int got475(char *from, char *msg)
       chan->channel.key = (char *) channel_malloc(1);
       chan->channel.key[0] = 0;
       dprintf(DP_MODE, "JOIN %s %s\n", chan->dname, chan->key_prot);
-    }
-    else {
+    } else {
       check_tcl_need(chan->dname, "key");
 
       chan = findchan_by_dname(chname);
@@ -1409,8 +1398,7 @@ static int got475(char *from, char *msg)
       if (chan->need_key[0])
         do_tcl("need-key", chan->need_key);
     }
-  }
-  else
+  } else
     putlog(LOG_JOIN, chname, IRC_BADCHANKEY, chname);
   return 0;
 }
@@ -1454,8 +1442,7 @@ static void set_topic(struct chanset_t *chan, char *k)
   if (k && k[0]) {
     chan->channel.topic = (char *) channel_malloc(strlen(k) + 1);
     strcpy(chan->channel.topic, k);
-  }
-  else
+  } else
     chan->channel.topic = NULL;
 }
 
@@ -1597,8 +1584,7 @@ static int gotjoin(char *from, char *chname)
         }
       }
     }
-  }
-  else if (!chan) {
+  } else if (!chan) {
     /* As this is not a !chan, we need to search for it by display name now.
      * Unlike !chan's, we dont need to remove the unique part.
      */
@@ -1612,8 +1598,7 @@ static int gotjoin(char *from, char *chname)
       putlog(LOG_MISC, "*", "joined %s but didn't want to!", chname);
       dprintf(DP_MODE, "PART %s\n", chname);
     }
-  }
-  else if (!channel_pending(chan)) {
+  } else if (!channel_pending(chan)) {
     chan->status &= ~CHAN_STOP_CYCLE;
     strcpy(uhost, from);
     nick = splitnick(&uhost);
@@ -1641,8 +1626,7 @@ static int gotjoin(char *from, char *chname)
       chan->status |= CHAN_ACTIVE;
       chan->status &= ~CHAN_PEND;
       reset_chan_info(chan);
-    }
-    else {
+    } else {
       m = ismember(chan, nick);
       if (m && m->split && !egg_strcasecmp(m->userhost, uhost)) {
         check_tcl_rejn(nick, uhost, u, chan->dname);
@@ -1669,8 +1653,7 @@ static int gotjoin(char *from, char *chname)
         m->flags |= STOPWHO;
         putlog(LOG_JOIN, chan->dname, "%s (%s) returned to %s.", nick, uhost,
                chan->dname);
-      }
-      else {
+      } else {
         if (m)
           killmember(chan, nick);
         m = newmember(chan);
@@ -1724,8 +1707,7 @@ static int gotjoin(char *from, char *chname)
             putlog(LOG_JOIN | LOG_MISC, chan->dname, "%s joined %s.", nick,
                    chname);
           reset_chan_info(chan);
-        }
-        else {
+        } else {
           struct chanuserrec *cr;
 
           putlog(LOG_JOIN, chan->dname,
@@ -1809,8 +1791,7 @@ static int gotjoin(char *from, char *chname)
             set_delay(chan, nick);
             m->flags |= SENTOP;
           }
-        }
-        else if ((chan_halfop(fr) || (glob_halfop(fr) &&
+        } else if ((chan_halfop(fr) || (glob_halfop(fr) &&
                  !chan_dehalfop(fr))) && (channel_autohalfop(chan) ||
                  glob_autohalfop(fr) || chan_autohalfop(fr))) {
           if (!chan->aop_min)
@@ -1819,8 +1800,7 @@ static int gotjoin(char *from, char *chname)
             set_delay(chan, nick);
             m->flags |= SENTHALFOP;
           }
-        }
-        else if ((channel_autovoice(chan) && (chan_voice(fr) ||
+        } else if ((channel_autovoice(chan) && (chan_voice(fr) ||
                  (glob_voice(fr) && !chan_quiet(fr)))) || ((glob_gvoice(fr) ||
                  chan_gvoice(fr)) && !chan_quiet(fr))) {
           if (!chan->aop_min)
@@ -1893,8 +1873,7 @@ static int gotpart(char *from, char *msg)
         dprintf(DP_MODE, "JOIN %s %s\n",
                 (chan->name[0]) ? chan->name : chan->dname,
                 chan->channel.key[0] ? chan->channel.key : chan->key_prot);
-    }
-    else
+    } else
       check_lonely_channel(chan);
   }
   return 0;
@@ -1968,8 +1947,7 @@ static int gotkick(char *from, char *origmsg)
               (chan->name[0]) ? chan->name : chan->dname,
               chan->channel.key[0] ? chan->channel.key : chan->key_prot);
       clear_channel(chan, 1);
-    }
-    else {
+    } else {
       killmember(chan, nick);
       check_lonely_channel(chan);
     }
@@ -2092,8 +2070,7 @@ static int gotquit(char *from, char *msg)
        * assuming)
        */
       split = 1;
-    }
-    else
+    } else
       *p = ' ';
   }
   for (chan = chanset; chan; chan = chan->next) {
@@ -2116,8 +2093,7 @@ static int gotquit(char *from, char *msg)
           continue;
         }
         putlog(LOG_JOIN, chan->dname, "%s (%s) got netsplit.", nick, from);
-      }
-      else {
+      } else {
         check_tcl_sign(nick, from, u, chan->dname, msg);
 
         if (!findchan_by_dname(chname)) {
@@ -2138,8 +2114,7 @@ static int gotquit(char *from, char *msg)
     if (!rfc_casecmp(nick, origbotname)) {
       putlog(LOG_MISC, "*", IRC_GETORIGNICK, origbotname);
       dprintf(DP_SERVER, "NICK %s\n", origbotname);
-    }
-    else if (alt[0]) {
+    } else if (alt[0]) {
       if (!rfc_casecmp(nick, alt) && strcmp(botname, origbotname)) {
         putlog(LOG_MISC, "*", IRC_GETALTNICK, alt);
         dprintf(DP_SERVER, "NICK %s\n", alt);
@@ -2250,8 +2225,7 @@ static int gotmsg(char *from, char *msg)
               /* Log DCC, it's to a channel damnit! */
               if (!strcmp(code, "ACTION")) {
                 putlog(LOG_PUBLIC, chan->dname, "Action: %s %s", nick, ctcp);
-              }
-              else {
+              } else {
                 putlog(LOG_PUBLIC, chan->dname,
                        "CTCP %s: %s from %s (%s) to %s", code, ctcp, nick,
                        from, to);
@@ -2266,13 +2240,11 @@ static int gotmsg(char *from, char *msg)
   if (ctcp_reply[0]) {
     if (ctcp_mode != 2) {
       dprintf(DP_HELP, "NOTICE %s :%s\n", nick, ctcp_reply);
-    }
-    else {
+    } else {
       if (now - last_ctcp > flud_ctcp_time) {
         dprintf(DP_HELP, "NOTICE %s :%s\n", nick, ctcp_reply);
         count_ctcp = 1;
-      }
-      else if (count_ctcp < flud_ctcp_thr) {
+      } else if (count_ctcp < flud_ctcp_thr) {
         dprintf(DP_HELP, "NOTICE %s :%s\n", nick, ctcp_reply);
         count_ctcp++;
       }

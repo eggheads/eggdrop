@@ -2,7 +2,7 @@
  * cmdsserv.c -- part of server.mod
  *   handles commands from a user via dcc that cause server interaction
  *
- * $Id: cmdsserv.c,v 1.16 2003/01/28 06:37:26 wcc Exp $
+ * $Id: cmdsserv.c,v 1.17 2003/01/30 07:15:15 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -32,8 +32,7 @@ static void cmd_servers(struct userrec *u, int idx, char *par)
   putlog(LOG_CMDS, "*", "#%s# servers", dcc[idx].nick);
   if (!x) {
     dprintf(idx, "There are no servers in the server list.\n");
-  }
-  else {
+  } else {
     dprintf(idx, "Server list:\n");
     i = 0;
     for (; x; x = x->next) {
@@ -81,8 +80,7 @@ static void cmd_jump(struct userrec *u, int idx, char *par)
     strncpyz(newserver, other, sizeof newserver);
     newserverport = port;
     strncpyz(newserverpass, par, sizeof newserverpass);
-  }
-  else
+  } else
     putlog(LOG_CMDS, "*", "#%s# jump", dcc[idx].nick);
   dprintf(idx, "%s...\n", IRC_JUMP);
   cycle_time = 0;
@@ -105,8 +103,7 @@ static void cmd_clearqueue(struct userrec *u, int idx, char *par)
     double_warned = burst = 0;
     dprintf(idx, "Removed %d message%s from all queues.\n", msgs,
             (msgs != 1) ? "s" : "");
-  }
-  else if (!egg_strcasecmp(par, "mode")) {
+  } else if (!egg_strcasecmp(par, "mode")) {
     msgs = modeq.tot;
     msgq_clear(&modeq);
     if (mq.tot == 0)
@@ -114,15 +111,13 @@ static void cmd_clearqueue(struct userrec *u, int idx, char *par)
     double_warned = 0;
     dprintf(idx, "Removed %d message%s from the mode queue.\n", msgs,
             (msgs != 1) ? "s" : "");
-  }
-  else if (!egg_strcasecmp(par, "help")) {
+  } else if (!egg_strcasecmp(par, "help")) {
     msgs = hq.tot;
     msgq_clear(&hq);
     double_warned = 0;
     dprintf(idx, "Removed %d message%s from the help queue.\n", msgs,
             (msgs != 1) ? "s" : "");
-  }
-  else if (!egg_strcasecmp(par, "server")) {
+  } else if (!egg_strcasecmp(par, "server")) {
     msgs = mq.tot;
     msgq_clear(&mq);
     if (modeq.tot == 0)
@@ -130,8 +125,7 @@ static void cmd_clearqueue(struct userrec *u, int idx, char *par)
     double_warned = 0;
     dprintf(idx, "Removed %d message%s from the server queue.\n", msgs,
             (msgs != 1) ? "s" : "");
-  }
-  else {
+  } else {
     dprintf(idx, "Usage: clearqueue <mode|server|help|all>\n");
     return;
   }

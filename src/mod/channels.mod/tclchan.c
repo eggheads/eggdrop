@@ -1,7 +1,7 @@
 /*
  * tclchan.c -- part of channels.mod
  *
- * $Id: tclchan.c,v 1.73 2003/01/29 06:13:49 wcc Exp $
+ * $Id: tclchan.c,v 1.74 2003/01/30 07:15:14 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -31,8 +31,7 @@ static int tcl_killban STDVAR
     for (chan = chanset; chan; chan = chan->next)
       add_mode(chan, '-', 'b', argv[1]);
     Tcl_AppendResult(irp, "1", NULL);
-  }
-  else
+  } else
     Tcl_AppendResult(irp, "0", NULL);
   return TCL_OK;
 }
@@ -50,8 +49,7 @@ static int tcl_killchanban STDVAR
   if (u_delban(chan, argv[2], 1) > 0) {
     add_mode(chan, '-', 'b', argv[2]);
     Tcl_AppendResult(irp, "1", NULL);
-  }
-  else
+  } else
     Tcl_AppendResult(irp, "0", NULL);
   return TCL_OK;
 }
@@ -65,8 +63,7 @@ static int tcl_killexempt STDVAR
     for (chan = chanset; chan; chan = chan->next)
       add_mode(chan, '-', 'e', argv[1]);
     Tcl_AppendResult(irp, "1", NULL);
-  }
-  else
+  } else
     Tcl_AppendResult(irp, "0", NULL);
   return TCL_OK;
 }
@@ -84,8 +81,7 @@ static int tcl_killchanexempt STDVAR
   if (u_delexempt(chan, argv[2], 1) > 0) {
     add_mode(chan, '-', 'e', argv[2]);
     Tcl_AppendResult(irp, "1", NULL);
-  }
-  else
+  } else
     Tcl_AppendResult(irp, "0", NULL);
   return TCL_OK;
 }
@@ -99,8 +95,7 @@ static int tcl_killinvite STDVAR
     for (chan = chanset; chan; chan = chan->next)
       add_mode(chan, '-', 'I', argv[1]);
     Tcl_AppendResult(irp, "1", NULL);
-  }
-  else
+  } else
     Tcl_AppendResult(irp, "0", NULL);
   return TCL_OK;
 }
@@ -118,8 +113,7 @@ static int tcl_killchaninvite STDVAR
   if (u_delinvite(chan, argv[2], 1) > 0) {
     add_mode(chan, '-', 'I', argv[2]);
     Tcl_AppendResult(irp, "1", NULL);
-  }
-  else
+  } else
     Tcl_AppendResult(irp, "0", NULL);
   return TCL_OK;
 }
@@ -520,8 +514,7 @@ static int tcl_newchanban STDVAR
       expire_time = 0L;
     else
       expire_time = now + (60 * chan->ban_time);
-  }
-  else {
+  } else {
     if (atoi(argv[5]) == 0)
       expire_time = 0L;
     else
@@ -560,8 +553,7 @@ static int tcl_newban STDVAR
       expire_time = 0L;
     else
       expire_time = now + (60 * global_ban_time);
-  }
-  else {
+  } else {
     if (atoi(argv[4]) == 0)
       expire_time = 0L;
     else
@@ -605,8 +597,7 @@ static int tcl_newchanexempt STDVAR
       expire_time = 0L;
     else
       expire_time = now + (60 * chan->exempt_time);
-  }
-  else {
+  } else {
     if (atoi(argv[5]) == 0)
       expire_time = 0L;
     else
@@ -643,8 +634,7 @@ static int tcl_newexempt STDVAR
       expire_time = 0L;
     else
       expire_time = now + (60 * global_exempt_time);
-  }
-  else {
+  } else {
     if (atoi(argv[4]) == 0)
       expire_time = 0L;
     else
@@ -687,8 +677,7 @@ static int tcl_newchaninvite STDVAR
       expire_time = 0L;
     else
       expire_time = now + (60 * chan->invite_time);
-  }
-  else {
+  } else {
     if (atoi(argv[5]) == 0)
       expire_time = 0L;
     else
@@ -725,8 +714,7 @@ static int tcl_newinvite STDVAR
       expire_time = 0L;
     else
       expire_time = now + (60 * global_invite_time);
-  }
-  else {
+  } else {
     if (atoi(argv[4]) == 0)
       expire_time = 0L;
     else
@@ -891,16 +879,14 @@ static int tcl_channel_info(Tcl_Interp *irp, struct chanset_t *chan)
       simple_sprintf(s, "%c%s", getudef(ul->values, chan->dname) ? '+' : '-',
                      ul->name);
       Tcl_AppendElement(irp, s);
-    }
-    else if (ul->type == UDEF_INT) {
+    } else if (ul->type == UDEF_INT) {
       egg_snprintf(a, sizeof a, "%s", ul->name);
       egg_snprintf(b, sizeof b, "%d", getudef(ul->values, chan->dname));
       args[0] = a;
       args[1] = b;
       egg_snprintf(s, sizeof s, "%s", Tcl_Merge(2, args));
       Tcl_AppendElement(irp, s);
-    }
-    else
+    } else
       debug1("UDEF-ERROR: unknown type %d", ul->type);
   }
   return TCL_OK;
@@ -929,20 +915,16 @@ static int tcl_channel_get(Tcl_Interp *irp, struct chanset_t *chan,
   else if (CHECK("need-op")) {
     strncpy(s, chan->need_op, 120);
     s[120] = 0;
-  }
-  else if (CHECK("need-invite")) {
+  } else if (CHECK("need-invite")) {
     strncpy(s, chan->need_invite, 120);
     s[120] = 0;
-  }
-  else if (CHECK("need-key")) {
+  } else if (CHECK("need-key")) {
     strncpy(s, chan->need_key, 120);
     s[120] = 0;
-  }
-  else if (CHECK("need-unban")) {
+  } else if (CHECK("need-unban")) {
     strncpy(s, chan->need_unban, 120);
     s[120] = 0;
-  }
-  else if (CHECK("need-limit")) {
+  } else if (CHECK("need-limit")) {
     strncpy(s, chan->need_limit, 120);
     s[120] = 0;
   }
@@ -1107,8 +1089,7 @@ static int tcl_channel_modify(Tcl_Interp *irp, struct chanset_t *chan,
       }
       strncpy(chan->need_op, item[i], 120);
       chan->need_op[120] = 0;
-    }
-    else if (!strcmp(item[i], "need-invite")) {
+    } else if (!strcmp(item[i], "need-invite")) {
       i++;
       if (i >= items) {
         if (irp)
@@ -1117,8 +1098,7 @@ static int tcl_channel_modify(Tcl_Interp *irp, struct chanset_t *chan,
       }
       strncpy(chan->need_invite, item[i], 120);
       chan->need_invite[120] = 0;
-    }
-    else if (!strcmp(item[i], "need-key")) {
+    } else if (!strcmp(item[i], "need-key")) {
       i++;
       if (i >= items) {
         if (irp)
@@ -1127,8 +1107,7 @@ static int tcl_channel_modify(Tcl_Interp *irp, struct chanset_t *chan,
       }
       strncpy(chan->need_key, item[i], 120);
       chan->need_key[120] = 0;
-    }
-    else if (!strcmp(item[i], "need-limit")) {
+    } else if (!strcmp(item[i], "need-limit")) {
       i++;
       if (i >= items) {
         if (irp)
@@ -1137,8 +1116,7 @@ static int tcl_channel_modify(Tcl_Interp *irp, struct chanset_t *chan,
       }
       strncpy(chan->need_limit, item[i], 120);
       chan->need_limit[120] = 0;
-    }
-    else if (!strcmp(item[i], "need-unban")) {
+    } else if (!strcmp(item[i], "need-unban")) {
       i++;
       if (i >= items) {
         if (irp)
@@ -1147,8 +1125,7 @@ static int tcl_channel_modify(Tcl_Interp *irp, struct chanset_t *chan,
       }
       strncpy(chan->need_unban, item[i], 120);
       chan->need_unban[120] = 0;
-    }
-    else if (!strcmp(item[i], "chanmode")) {
+    } else if (!strcmp(item[i], "chanmode")) {
       i++;
       if (i >= items) {
         if (irp)
@@ -1158,8 +1135,7 @@ static int tcl_channel_modify(Tcl_Interp *irp, struct chanset_t *chan,
       strncpy(s, item[i], 120);
       s[120] = 0;
       set_mode_protect(chan, s);
-    }
-    else if (!strcmp(item[i], "idle-kick")) {
+    } else if (!strcmp(item[i], "idle-kick")) {
       i++;
       if (i >= items) {
         if (irp)
@@ -1167,8 +1143,7 @@ static int tcl_channel_modify(Tcl_Interp *irp, struct chanset_t *chan,
         return TCL_ERROR;
       }
       chan->idle_kick = atoi(item[i]);
-    }
-    else if (!strcmp(item[i], "dont-idle-kick"))
+    } else if (!strcmp(item[i], "dont-idle-kick"))
       chan->idle_kick = 0;
     else if (!strcmp(item[i], "stopnethack-mode")) {
       i++;
@@ -1179,8 +1154,7 @@ static int tcl_channel_modify(Tcl_Interp *irp, struct chanset_t *chan,
         return TCL_ERROR;
       }
       chan->stopnethack_mode = atoi(item[i]);
-    }
-    else if (!strcmp(item[i], "revenge-mode")) {
+    } else if (!strcmp(item[i], "revenge-mode")) {
       i++;
       if (i >= items) {
         if (irp)
@@ -1188,8 +1162,7 @@ static int tcl_channel_modify(Tcl_Interp *irp, struct chanset_t *chan,
         return TCL_ERROR;
       }
       chan->revenge_mode = atoi(item[i]);
-    }
-    else if (!strcmp(item[i], "ban-time")) {
+    } else if (!strcmp(item[i], "ban-time")) {
       i++;
       if (i >= items) {
         if (irp)
@@ -1197,8 +1170,7 @@ static int tcl_channel_modify(Tcl_Interp *irp, struct chanset_t *chan,
         return TCL_ERROR;
       }
       chan->ban_time = atoi(item[i]);
-    }
-    else if (!strcmp(item[i], "exempt-time")) {
+    } else if (!strcmp(item[i], "exempt-time")) {
       i++;
       if (i >= items) {
         if (irp)
@@ -1206,8 +1178,7 @@ static int tcl_channel_modify(Tcl_Interp *irp, struct chanset_t *chan,
         return TCL_ERROR;
       }
       chan->exempt_time = atoi(item[i]);
-    }
-    else if (!strcmp(item[i], "invite-time")) {
+    } else if (!strcmp(item[i], "invite-time")) {
       i++;
       if (i >= items) {
         if (irp)
@@ -1215,8 +1186,7 @@ static int tcl_channel_modify(Tcl_Interp *irp, struct chanset_t *chan,
         return TCL_ERROR;
       }
       chan->invite_time = atoi(item[i]);
-    }
-    else if (!strcmp(item[i], "+enforcebans"))
+    } else if (!strcmp(item[i], "+enforcebans"))
       chan->status |= CHAN_ENFORCEBANS;
     else if (!strcmp(item[i], "-enforcebans"))
       chan->status &= ~CHAN_ENFORCEBANS;
@@ -1331,28 +1301,22 @@ static int tcl_channel_modify(Tcl_Interp *irp, struct chanset_t *chan,
       if (!strcmp(item[i] + 6, "chan")) {
         pthr = &chan->flood_pub_thr;
         ptime = &chan->flood_pub_time;
-      }
-      else if (!strcmp(item[i] + 6, "join")) {
+      } else if (!strcmp(item[i] + 6, "join")) {
         pthr = &chan->flood_join_thr;
         ptime = &chan->flood_join_time;
-      }
-      else if (!strcmp(item[i] + 6, "ctcp")) {
+      } else if (!strcmp(item[i] + 6, "ctcp")) {
         pthr = &chan->flood_ctcp_thr;
         ptime = &chan->flood_ctcp_time;
-      }
-      else if (!strcmp(item[i] + 6, "kick")) {
+      } else if (!strcmp(item[i] + 6, "kick")) {
         pthr = &chan->flood_kick_thr;
         ptime = &chan->flood_kick_time;
-      }
-      else if (!strcmp(item[i] + 6, "deop")) {
+      } else if (!strcmp(item[i] + 6, "deop")) {
         pthr = &chan->flood_deop_thr;
         ptime = &chan->flood_deop_time;
-      }
-      else if (!strcmp(item[i] + 6, "nick")) {
+      } else if (!strcmp(item[i] + 6, "nick")) {
         pthr = &chan->flood_nick_thr;
         ptime = &chan->flood_nick_time;
-      }
-      else {
+      } else {
         if (irp)
           Tcl_AppendResult(irp, "illegal channel flood type: ", item[i], NULL);
         return TCL_ERROR;
@@ -1369,13 +1333,11 @@ static int tcl_channel_modify(Tcl_Interp *irp, struct chanset_t *chan,
         *pthr = atoi(item[i]);
         *ptime = atoi(p);
         *--p = ':';
-      }
-      else {
+      } else {
         *pthr = atoi(item[i]);
         *ptime = 1;
       }
-    }
-    else if (!strncmp(item[i], "aop-delay", 9)) {
+    } else if (!strncmp(item[i], "aop-delay", 9)) {
       char *p;
 
       i++;
@@ -1389,13 +1351,11 @@ static int tcl_channel_modify(Tcl_Interp *irp, struct chanset_t *chan,
         p++;
         chan->aop_min = atoi(item[i]);
         chan->aop_max = atoi(p);
-      }
-      else {
+      } else {
         chan->aop_min = atoi(item[i]);
         chan->aop_max = chan->aop_min;
       }
-    }
-    else {
+    } else {
       if (!strncmp(item[i] + 1, "udef-flag-", 10))
         initudef(UDEF_FLAG, item[i] + 11, 0);
       else if (!strncmp(item[i], "udef-int-", 9))
@@ -1411,8 +1371,7 @@ static int tcl_channel_modify(Tcl_Interp *irp, struct chanset_t *chan,
             setudef(ul, chan->dname, 0);
           found = 1;
           break;
-        }
-        else if (ul->type == UDEF_INT && (!egg_strcasecmp(item[i], ul->name) ||
+        } else if (ul->type == UDEF_INT && (!egg_strcasecmp(item[i], ul->name) ||
                  (!strncmp(item[i], "udef-int-", 9) &&
                  !egg_strcasecmp(item[i] + 9, ul->name)))) {
           i++;
@@ -1455,8 +1414,7 @@ static int tcl_channel_modify(Tcl_Interp *irp, struct chanset_t *chan,
                                        CHAN_AUTOHALFOP)) {
       if ((me = module_find("irc", 0, 0)))
         (me->funcs[IRC_RECHECK_CHANNEL]) (chan, 1);
-    }
-    else if (old_mode_pls_prot != chan->mode_pls_prot ||
+    } else if (old_mode_pls_prot != chan->mode_pls_prot ||
              old_mode_mns_prot != chan->mode_mns_prot)
       if ((me = module_find("irc", 1, 2)))
         (me->funcs[IRC_RECHECK_CHANNEL_MODES]) (chan);
@@ -1839,8 +1797,7 @@ static int tcl_channel_add(Tcl_Interp *irp, char *newname, char *options)
   if ((chan = findchan_by_dname(newname))) {
     /* Already existing channel, maybe a reload of the channel file */
     chan->status &= ~CHAN_FLAGGED;      /* don't delete me! :) */
-  }
-  else {
+  } else {
     chan = (struct chanset_t *) nmalloc(sizeof(struct chanset_t));
 
     /* Hells bells, why set *every* variable to 0 when we have bzero? */
@@ -1945,8 +1902,7 @@ static int tcl_renudef STDVAR
   if (!found) {
     Tcl_AppendResult(irp, "not found", NULL);
     return TCL_ERROR;
-  }
-  else
+  } else
     return TCL_OK;
 }
 
@@ -1989,8 +1945,7 @@ static int tcl_deludef STDVAR
   if (!found) {
     Tcl_AppendResult(irp, "not found", NULL);
     return TCL_ERROR;
-  }
-  else
+  } else
     return TCL_OK;
 }
 

@@ -3,7 +3,7 @@
  *   moving the process to the background, i.e. forking, while keeping threads
  *   happy.
  *
- * $Id: bg.c,v 1.7 2003/01/28 06:37:24 wcc Exp $
+ * $Id: bg.c,v 1.8 2003/01/30 07:15:13 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -125,8 +125,7 @@ static void bg_do_detach(pid_t p)
       exit(1);
     }
     fclose(fp);
-  }
-  else
+  } else
     printf(EGG_NOWRITE, pid_file);
   printf("Launched into the background  (pid: %d)\n\n", p);
 #if HAVE_SETPGID
@@ -159,8 +158,7 @@ void bg_prepare_split(void)
   if (p == 0) {
     bg.state = BG_SPLIT;
     return;
-  }
-  else {
+  } else {
     bg.child_pid = p;
     bg.state = BG_PARENT;
   }
@@ -222,15 +220,13 @@ void bg_send_quit(bg_quit_t q)
 #ifdef SUPPORT_THREADS
   if (bg.state == BG_PARENT) {
     kill(bg.child_pid, SIGKILL);
-  }
-  else if (bg.state == BG_SPLIT) {
+  } else if (bg.state == BG_SPLIT) {
     bg_comm_t message;
 
     if (q == BG_QUIT) {
       bg_send_pidfile();
       message.comm_type = BG_COMM_QUIT;
-    }
-    else
+    } else
       message.comm_type = BG_COMM_ABORT;
     /* Send message. */
     if (write(bg.comm_send, &message, sizeof(message)) < 0)

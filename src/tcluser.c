@@ -2,7 +2,7 @@
  * tcluser.c -- handles:
  *   Tcl stubs for the user-record-oriented commands
  *
- * $Id: tcluser.c,v 1.33 2003/01/28 06:37:24 wcc Exp $
+ * $Id: tcluser.c,v 1.34 2003/01/30 07:15:14 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -91,22 +91,19 @@ static int tcl_chattr STDVAR
     user.match = FR_GLOBAL | FR_CHAN;
     chan = argv[3];
     chg = argv[2];
-  }
-  else if (argc == 3 && argv[2][0]) {
+  } else if (argc == 3 && argv[2][0]) {
     int ischan = (findchan_by_dname(argv[2]) != NULL);
 
     if (strchr(CHANMETA, argv[2][0]) && !ischan && argv[2][0] != '+' &&
         argv[2][0] != '-') {
       Tcl_AppendResult(irp, "no such channel", NULL);
       return TCL_ERROR;
-    }
-    else if (ischan) {
+    } else if (ischan) {
       /* Channel exists */
       user.match = FR_GLOBAL | FR_CHAN;
       chan = argv[2];
       chg = NULL;
-    }
-    else {
+    } else {
       /* 3rd possibility... channel doesnt exist, does start with a +.
        * In this case we assume the string is flags.
        */
@@ -114,8 +111,7 @@ static int tcl_chattr STDVAR
       chan = NULL;
       chg = argv[2];
     }
-  }
-  else {
+  } else {
     user.match = FR_GLOBAL;
     chan = NULL;
     chg = NULL;
@@ -171,8 +167,7 @@ static int tcl_botattr STDVAR
     user.match = FR_BOT | FR_CHAN;
     chan = argv[3];
     chg = argv[2];
-  }
-  else if (argc == 3 && argv[2][0] && strchr(CHANMETA, argv[2][0]) != NULL) {
+  } else if (argc == 3 && argv[2][0] && strchr(CHANMETA, argv[2][0]) != NULL) {
     /* We need todo extra checking here to stop us mixing up +channel's
      * with flags. <cybah>
      */
@@ -182,14 +177,12 @@ static int tcl_botattr STDVAR
        */
       Tcl_AppendResult(irp, "no such channel", NULL);
       return TCL_ERROR;
-    }
-    else if (findchan_by_dname(argv[2])) {
+    } else if (findchan_by_dname(argv[2])) {
       /* Channel exists */
       user.match = FR_BOT | FR_CHAN;
       chan = argv[2];
       chg = NULL;
-    }
-    else {
+    } else {
       /* 3rd possibility... channel doesnt exist, does start with a +.
        * In this case we assume the string is flags.
        */
@@ -197,8 +190,7 @@ static int tcl_botattr STDVAR
       chan = NULL;
       chg = argv[2];
     }
-  }
-  else {
+  } else {
     user.match = FR_BOT;
     chan = NULL;
     if (argc < 3)
@@ -299,8 +291,7 @@ static int tcl_addbot STDVAR
       strcpy(bi->address, argv[2]);
       bi->telnet_port = 3333;
       bi->relay_port = 3333;
-    }
-    else {
+    } else {
       bi->address = user_malloc(q - argv[2] + 1);
       strncpy(bi->address, argv[2], q - argv[2]);
       bi->address[q - argv[2]] = 0;
@@ -521,8 +512,7 @@ static int tcl_getuser STDVAR
     if (argv[1][0] != '*') {
       Tcl_AppendResult(irp, "No such user.", NULL);
       return TCL_ERROR;
-    }
-    else
+    } else
       return TCL_OK; /* silently ignore user */
   }
   if (!egg_strcasecmp(argv[2], "HANDLE"))
@@ -552,8 +542,7 @@ static int tcl_setuser STDVAR
     if (argv[1][0] != '*') {
       Tcl_AppendResult(irp, "No such user.", NULL);
       return TCL_ERROR;
-    }
-    else
+    } else
       return TCL_OK; /* Silently ignore user * */
   }
   if (!(e = find_user_entry(et, u))) {

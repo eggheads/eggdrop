@@ -2,7 +2,7 @@
  * language.c -- handles:
  *   language support code
  *
- * $Id: language.c,v 1.20 2003/01/28 06:37:24 wcc Exp $
+ * $Id: language.c,v 1.21 2003/01/30 07:15:14 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -181,8 +181,7 @@ static int add_message(int lidx, char *ltext)
   if (l) {
     l->next = nmalloc(sizeof(lang_tab));
     l = l->next;
-  }
-  else
+  } else
     l = langtab[lidx & 63] = nmalloc(sizeof(lang_tab));
   l->idx = lidx;
   l->text = nmalloc(strlen(ltext) + 1);
@@ -243,8 +242,7 @@ static void read_lang(char *langfile)
 #endif
           putlog(LOG_MISC, "*", "Malformed text line in %s at %d.",
                  langfile, lline);
-        }
-        else {
+        } else {
           ltexts++;
           ctmp = strchr(ltext, '\n');
           *ctmp = 0;
@@ -268,12 +266,10 @@ static void read_lang(char *langfile)
           if ((*ctmp1 == '\\') && (*(ctmp1 + 1) == 'n')) {
             *ctmp = '\n';
             ctmp1++;
-          }
-          else if ((*ctmp1 == '\\') && (*(ctmp1 + 1) == 't')) {
+          } else if ((*ctmp1 == '\\') && (*(ctmp1 + 1) == 't')) {
             *ctmp = '\t';
             ctmp1++;
-          }
-          else
+          } else
             *ctmp = *ctmp1;
           ctmp++;
           ctmp1++;
@@ -281,12 +277,10 @@ static void read_lang(char *langfile)
         *ctmp = '\0';
         if (add_message(lidx, ltext)) {
           lupdate++;
-        }
-        else
+        } else
           ladd++;
       }
-    }
-    else {
+    } else {
       ctmp = strchr(lbuf, '\n');
       if (lskip && (strlen(lbuf) == 1 || *(ctmp - 1) != '\\'))
         lskip = 0;
@@ -759,8 +753,7 @@ void init_language(int flag)
     if (deflang)
       add_lang(deflang);
     add_lang_section("core");
-  }
-  else {
+  } else {
     add_tcl_commands(langtcls);
     add_builtins(H_dcc, langdcc);
   }

@@ -1,7 +1,7 @@
 /*
  * inet_aton.c -- provides inet_aton() if necessary.
  *
- * $Id: inet_aton.c,v 1.10 2003/01/29 05:48:41 wcc Exp $
+ * $Id: inet_aton.c,v 1.11 2003/01/30 07:15:14 wcc Exp $
  */
 /*
  * Portions Copyright (C) 2000, 2001, 2002, 2003 Eggheads Development Team
@@ -137,12 +137,10 @@ struct in_addr *addr;
       if (isascii(c) && isdigit(c)) {
         val = (val * base) + (c - '0');
         c = *++cp;
-      }
-      else if (base == 16 && isascii(c) && isxdigit(c)) {
+      } else if (base == 16 && isascii(c) && isxdigit(c)) {
         val = (val << 4) | (c + 10 - (islower(c) ? 'a' : 'A'));
         c = *++cp;
-      }
-      else
+      } else
         break;
     }
     if (c == '.') {
@@ -156,8 +154,7 @@ struct in_addr *addr;
         goto ret_0;
       *pp++ = val;
       c = *++cp;
-    }
-    else
+    } else
       break;
   }
   /*

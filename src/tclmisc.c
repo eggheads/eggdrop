@@ -2,7 +2,7 @@
  * tclmisc.c -- handles:
  *   Tcl stubs for everything else
  *
- * $Id: tclmisc.c,v 1.36 2003/01/28 06:37:24 wcc Exp $
+ * $Id: tclmisc.c,v 1.37 2003/01/30 07:15:14 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -108,8 +108,7 @@ static int tcl_logfile STDVAR
           logs[i].f = NULL;
         }
         logs[i].flags = 0;
-      }
-      else {
+      } else {
         logs[i].chname = (char *) nmalloc(strlen(argv[2]) + 1);
         strcpy(logs[i].chname, argv[2]);
       }
@@ -506,8 +505,7 @@ static int tcl_die STDVAR
   if (argc == 2) {
     egg_snprintf(s, sizeof s, "BOT SHUTDOWN (%s)", argv[1]);
     strncpyz(quit_msg, argv[1], 1024);
-  }
-  else {
+  } else {
     strncpyz(s, "BOT SHUTDOWN (No reason)", sizeof s);
     quit_msg[0] = 0;
   }
@@ -546,8 +544,7 @@ static int tcl_unames STDVAR
     unix_n = "*unkown*";
     vers_n = "";
 #ifdef HAVE_UNAME
-  }
-  else {
+  } else {
     unix_n = un.sysname;
     vers_n = un.release;
   }

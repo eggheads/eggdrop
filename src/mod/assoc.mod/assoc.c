@@ -2,7 +2,7 @@
  * assoc.c -- part of assoc.mod
  *   the assoc code, moved here mainly from botnet.c for module work
  *
- * $Id: assoc.c,v 1.24 2003/01/29 05:48:41 wcc Exp $
+ * $Id: assoc.c,v 1.25 2003/01/30 07:15:14 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -96,8 +96,7 @@ static void kill_assoc(int chan)
         assoc = a->next;
       nfree(a);
       a = NULL;
-    }
-    else {
+    } else {
       last = a;
       a = a->next;
     }
@@ -198,8 +197,7 @@ static int cmd_assoc(struct userrec *u, int idx, char *par)
   if (!par[0]) {
     putlog(LOG_CMDS, "*", "#%s# assoc", dcc[idx].nick);
     dump_assoc(idx);
-  }
-  else if (!u || !(u->flags & USER_BOTMAST))
+  } else if (!u || !(u->flags & USER_BOTMAST))
     dprintf(idx, "%s", MISC_NOSUCHCMD);
   else {
     num = newsplit(&par);
@@ -209,14 +207,12 @@ static int cmd_assoc(struct userrec *u, int idx, char *par)
         dprintf(idx, "%s\n", ASSOC_LCHAN_RANGE);
         return 0;
       }
-    }
-    else {
+    } else {
       chan = atoi(num);
       if (chan == 0) {
         dprintf(idx, "%s\n", ASSOC_PARTYLINE);
         return 0;
-      }
-      else if ((chan < 1) || (chan > 99999)) {
+      } else if ((chan < 1) || (chan > 99999)) {
         dprintf(idx, "%s\n", ASSOC_CHAN_RANGE);
         return 0;
       }
@@ -334,12 +330,10 @@ static void zapf_assoc(char *botnick, char *code, char *par)
         add_assoc(par, chan);
         botnet_send_assoc(idx, chan, nick, par);
         chanout_but(-1, chan, ASSOC_CHNAME_NAMED, nick, par);
-      }
-      else if (par[0] == '0') {
+      } else if (par[0] == '0') {
         kill_assoc(chan);
         chanout_but(-1, chan, ASSOC_CHNAME_REM, botnick, nick);
-      }
-      else if (get_assoc(par) != chan) {
+      } else if (get_assoc(par) != chan) {
         /* New one i didn't know about -- pass it on */
         s1 = get_assoc_name(chan);
         add_assoc(par, chan);

@@ -7,7 +7,7 @@
  *   (non-Tcl) procedure lookups for msg/dcc/file commands
  *   (Tcl) binding internal procedures to msg/dcc/file commands
  *
- * $Id: tclhash.c,v 1.41 2003/01/29 05:48:41 wcc Exp $
+ * $Id: tclhash.c,v 1.42 2003/01/30 07:15:14 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -122,8 +122,7 @@ inline void garbage_collect_tclhash(void)
       else
         bind_table_list = tl->next;
       tcl_bind_list_delete(tl);
-    }
-    else {
+    } else {
       for (tm = tl->first, tm_prev = NULL; tm; tm = tm_next) {
         tm_next = tm->next;
 
@@ -137,8 +136,7 @@ inline void garbage_collect_tclhash(void)
               else
                 tm->first = tc->next;
               tcl_cmd_delete(tc);
-            }
-            else
+            } else
               tc_prev = tc;
           }
         }
@@ -151,8 +149,7 @@ inline void garbage_collect_tclhash(void)
           else
             tl->first = tm_next;
           tcl_bind_mask_delete(tm);
-        }
-        else
+        } else
           tm_prev = tm;
       }
       tl_prev = tl;
@@ -284,8 +281,7 @@ tcl_bind_list_t *add_bind_table(const char *nme, int flg, Function func)
   if (tl_prev) {
     tl->next = tl_prev->next;
     tl_prev->next = tl;
-  }
-  else {
+  } else {
     tl->next = bind_table_list;
     bind_table_list = tl;
   }
@@ -482,8 +478,7 @@ static int tcl_bind STDVAR
         return TCL_ERROR;
       }
     }
-  }
-  else {
+  } else {
     if (argc == 4)
       return tcl_getbinds(tl, argv[3]);
     bind_bind_entry(tl, argv[2], argv[3], argv[4]);
@@ -696,8 +691,7 @@ static int trigger_bind(const char *proc, const char *param)
       interp->result[400] = 0;
     putlog(LOG_MISC, "*", "Tcl error [%s]: %s", proc, interp->result);
     return BIND_EXECUTED;
-  }
-  else {
+  } else {
     if (!strcmp(interp->result, "break"))
       return BIND_EXEC_BRK;
     return (atoi(interp->result) > 0) ? BIND_EXEC_LOG : BIND_EXECUTED;
@@ -748,8 +742,7 @@ int check_tcl_bind(tcl_bind_list_t *tl, const char *match,
             atrok = flagrec_ok(&tc->flags, atr);
           else
             atrok = flagrec_eq(&tc->flags, atr);
-        }
-        else
+        } else
           atrok = 1;
 
         if (atrok) {
@@ -761,8 +754,7 @@ int check_tcl_bind(tcl_bind_list_t *tl, const char *match,
           if (match_type & BIND_ALTER_ARGS) {
             if (interp->result == NULL || !interp->result[0])
               return x;
-          }
-          else if ((match_type & BIND_WANTRET) && x == BIND_EXEC_LOG)
+          } else if ((match_type & BIND_WANTRET) && x == BIND_EXEC_LOG)
             return x;
         }
       }
@@ -773,8 +765,7 @@ int check_tcl_bind(tcl_bind_list_t *tl, const char *match,
       /* This will suffice until we have stackable partials. */
       if ((match_type & 3) != MATCH_MASK)
         finish = 1;
-    }
-    else {
+    } else {
       /* Search for valid entry. */
       for (tc = tm->first; tc; tc = tc->next)
         if (!(tc->attributes & TC_DELETED))
@@ -786,8 +777,7 @@ int check_tcl_bind(tcl_bind_list_t *tl, const char *match,
             atrok = flagrec_ok(&tc->flags, atr);
           else
             atrok = flagrec_eq(&tc->flags, atr);
-        }
-        else
+        } else
           atrok = 1;
 
         if (atrok) {
@@ -947,8 +937,7 @@ const char *check_tcl_filt(int idx, const char *text)
       return "";
     else
       return interp->result;
-  }
-  else
+  } else
     return text;
 }
 
@@ -1120,8 +1109,7 @@ void tell_binds(int idx, char *par)
                 wild_match_per(name, tm->mask) ||
                 wild_match_per(name, tc->func_name))
               ok = 1;
-          }
-          else
+          } else
             ok = 1;
 
           if (ok) {

@@ -2,7 +2,7 @@
  * msgcmds.c -- part of irc.mod
  *   all commands entered via /MSG
  *
- * $Id: msgcmds.c,v 1.39 2003/01/29 05:48:42 wcc Exp $
+ * $Id: msgcmds.c,v 1.40 2003/01/30 07:15:15 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -63,16 +63,14 @@ static int msg_hello(char *nick, char *h, struct userrec *u, char *p)
     putlog(LOG_MISC, "*", "%s %s (%s) -- %s",
            IRC_INTRODUCED, nick, host, IRC_COMMONSITE);
     common = 1;
-  }
-  else {
+  } else {
     maskhost(s, host);
     if (make_userfile) {
       userlist = adduser(userlist, handle, host, "-",
                  sanity_check(default_flags | USER_MASTER | USER_OWNER));
       set_user(&USERENTRY_HOSTS, get_user_by_handle(userlist, handle),
                "-telnet!*@*");
-    }
-    else
+    } else
       userlist = adduser(userlist, handle, host, "-",
                          sanity_check(default_flags));
     putlog(LOG_MISC, "*", "%s %s (%s)", IRC_INTRODUCED, nick, host);
@@ -94,8 +92,7 @@ static int msg_hello(char *nick, char *h, struct userrec *u, char *p)
     make_userfile = 0;
     write_userfile(-1);
     add_note(handle, botnetnick, IRC_INITNOTE, -1, 0);
-  }
-  else {
+  } else {
     dprintf(DP_HELP, IRC_INTRO1, nick, botname);
   }
   if (strlen(nick) > HANDLEN)
@@ -149,8 +146,7 @@ static int msg_pass(char *nick, char *host, struct userrec *u, char *par)
       return 1;
     }
     new = newsplit(&par);
-  }
-  else
+  } else
     new = old;
   putlog(LOG_CMDS, "*", "(%s!%s) !%s! PASS...", nick, host, u->handle);
   if (strlen(new) > 15)
@@ -190,29 +186,24 @@ static int msg_ident(char *nick, char *host, struct userrec *u, char *par)
   if (!u2) {
     if (u && !quiet_reject)
       dprintf(DP_HELP, IRC_MISIDENT, nick, nick, u->handle);
-  }
-  else if (rfc_casecmp(who, origbotname) && !(u2->flags & USER_BOT)) {
+  } else if (rfc_casecmp(who, origbotname) && !(u2->flags & USER_BOT)) {
     /* This could be used as detection... */
     if (u_pass_match(u2, "-")) {
       putlog(LOG_CMDS, "*", "(%s!%s) !*! IDENT %s", nick, host, who);
       if (!quiet_reject)
         dprintf(DP_HELP, "NOTICE %s :%s\n", nick, IRC_NOPASS);
-    }
-    else if (!u_pass_match(u2, pass)) {
+    } else if (!u_pass_match(u2, pass)) {
       if (!quiet_reject)
         dprintf(DP_HELP, "NOTICE %s :%s\n", nick, IRC_DENYACCESS);
-    }
-    else if (u == u2) {
+    } else if (u == u2) {
       if (!quiet_reject)
         dprintf(DP_HELP, "NOTICE %s :%s\n", nick, IRC_RECOGNIZED);
       return 1;
-    }
-    else if (u) {
+    } else if (u) {
       if (!quiet_reject)
         dprintf(DP_HELP, IRC_MISIDENT, nick, who, u->handle);
       return 1;
-    }
-    else {
+    } else {
       putlog(LOG_CMDS, "*", "(%s!%s) !*! IDENT %s", nick, host, who);
       egg_snprintf(s, sizeof s, "%s!%s", nick, host);
       maskhost(s, s1);
@@ -243,23 +234,19 @@ static int msg_addhost(char *nick, char *host, struct userrec *u, char *par)
   if (!par[0]) {
     if (!quiet_reject)
       dprintf(DP_HELP, "NOTICE %s :You must supply a hostmask\n", nick);
-  }
-  else if (rfc_casecmp(u->handle, origbotname)) {
+  } else if (rfc_casecmp(u->handle, origbotname)) {
     /* This could be used as detection... */
     if (u_pass_match(u, "-")) {
       if (!quiet_reject)
         dprintf(DP_HELP, "NOTICE %s :%s\n", nick, IRC_NOPASS);
-    }
-    else if (!u_pass_match(u, pass)) {
+    } else if (!u_pass_match(u, pass)) {
       if (!quiet_reject)
         dprintf(DP_HELP, "NOTICE %s :%s\n", nick, IRC_DENYACCESS);
-    }
-    else if (get_user_by_host(par)) {
+    } else if (get_user_by_host(par)) {
       if (!quiet_reject)
         dprintf(DP_HELP, "NOTICE %s :That hostmask clashes with another "
                 "already in use.\n", nick);
-    }
-    else {
+    } else {
       putlog(LOG_CMDS, "*", "(%s!%s) !*! ADDHOST %s", nick, host, par);
       dprintf(DP_HELP, "NOTICE %s :%s: %s\n", nick, IRC_ADDHOSTMASK, par);
       addhost_by_handle(u->handle, par);
@@ -290,8 +277,7 @@ static int msg_info(char *nick, char *host, struct userrec *u, char *par)
       putlog(LOG_CMDS, "*", "(%s!%s) !%s! failed INFO", nick, host, u->handle);
       return 1;
     }
-  }
-  else {
+  } else {
     putlog(LOG_CMDS, "*", "(%s!%s) !%s! failed INFO", nick, host, u->handle);
     if (!quiet_reject)
       dprintf(DP_HELP, "NOTICE %s :%s\n", nick, IRC_NOPASS);
@@ -302,8 +288,7 @@ static int msg_info(char *nick, char *host, struct userrec *u, char *par)
       dprintf(DP_HELP, "NOTICE %s :%s\n", nick, IRC_NOMONITOR);
       return 1;
     }
-  }
-  else
+  } else
     chname = 0;
   if (par[0]) {
     p = get_user(&USERENTRY_INFO, u);
@@ -325,8 +310,7 @@ static int msg_info(char *nick, char *host, struct userrec *u, char *par)
         dprintf(DP_HELP, "NOTICE %s :%s %s.\n", nick, IRC_REMINFOON, chname);
         putlog(LOG_CMDS, "*", "(%s!%s) !%s! INFO %s NONE", nick, host,
                u->handle, chname);
-      }
-      else {
+      } else {
         set_user(&USERENTRY_INFO, u, NULL);
         dprintf(DP_HELP, "NOTICE %s :%s\n", nick, IRC_REMINFO);
         putlog(LOG_CMDS, "*", "(%s!%s) !%s! INFO NONE", nick, host, u->handle);
@@ -340,8 +324,7 @@ static int msg_info(char *nick, char *host, struct userrec *u, char *par)
       set_handle_chaninfo(userlist, u->handle, chname, par);
       putlog(LOG_CMDS, "*", "(%s!%s) !%s! INFO %s ...", nick, host, u->handle,
              chname);
-    }
-    else {
+    } else {
       set_user(&USERENTRY_INFO, u, par);
       putlog(LOG_CMDS, "*", "(%s!%s) !%s! INFO ...", nick, host, u->handle);
     }
@@ -352,8 +335,7 @@ static int msg_info(char *nick, char *host, struct userrec *u, char *par)
     p = s;
     putlog(LOG_CMDS, "*", "(%s!%s) !%s! INFO? %s", nick, host, u->handle,
            chname);
-  }
-  else {
+  } else {
     p = get_user(&USERENTRY_INFO, u);
     putlog(LOG_CMDS, "*", "(%s!%s) !%s! INFO?", nick, host, u->handle);
   }
@@ -362,8 +344,7 @@ static int msg_info(char *nick, char *host, struct userrec *u, char *par)
     dprintf(DP_HELP, "NOTICE %s :%s /msg %s info <pass>%s%s none\n",
             nick, IRC_FIELDTOREMOVE, botname, chname ? " " : "", chname
             ? chname : "");
-  }
-  else {
+  } else {
     if (chname)
       dprintf(DP_HELP, "NOTICE %s :%s %s.\n", nick, IRC_NOINFOON, chname);
     else
@@ -435,8 +416,7 @@ static int msg_who(char *nick, char *host, struct userrec *u, char *par)
                   nick, m->nick);
         else
           dprintf(DP_HELP, "NOTICE %s :[%9s] <-- another bot\n", nick, m->nick);
-      }
-      else {
+      } else {
         if (i) {
           also[i++] = ',';
           also[i++] = ' ';
@@ -516,8 +496,7 @@ static int msg_whois(char *nick, char *host, struct userrec *u, char *par)
       egg_snprintf(s1, sizeof s1, "NOTICE %s :[%s] %s %s.", nick, u2->handle,
                    IRC_ONCHANNOW, chan->dname);
       ok = 1;
-    }
-    else {
+    } else {
       get_user_flagrec(u, &fr, chan->dname);
       cr = get_chanrec(u2, chan->dname);
       if (cr && (cr->laston > tt) && (!channel_hidden(chan) ||
@@ -575,8 +554,7 @@ static int msg_help(char *nick, char *host, struct userrec *u, char *par)
           *p += ('a' - 'A');
       showhelp(nick, par, &fr, 0);
     }
-  }
-  else
+  } else
     dprintf(DP_HELP, "NOTICE %s :%s\n", nick, IRC_NOHELP);
 
   return 1;
@@ -603,8 +581,7 @@ static int msg_op(char *nick, char *host, struct userrec *u, char *par)
                  par);
           return 1;
         }
-      }
-      else {
+      } else {
         for (chan = chanset; chan; chan = chan->next) {
           get_user_flagrec(u, &fr, chan->dname);
           if (chan_op(fr) || (glob_op(fr) && !chan_deop(fr)))
@@ -641,8 +618,7 @@ static int msg_halfop(char *nick, char *host, struct userrec *u, char *par)
                  nick, host, u->handle, par);
           return 1;
         }
-      }
-      else {
+      } else {
         for (chan = chanset; chan; chan = chan->next) {
           get_user_flagrec(u, &fr, chan->dname);
           if (chan_op(fr) || chan_halfop(fr) || (glob_op(fr) &&
@@ -692,8 +668,7 @@ static int msg_key(char *nick, char *host, struct userrec *u, char *par)
               putlog(LOG_CMDS, "*", "(%s!%s) !%s! KEY %s",
                      nick, host, u->handle, par);
             }
-          }
-          else {
+          } else {
             dprintf(DP_HELP, "NOTICE %s :%s: no key set for this channel\n",
                     nick, par);
             putlog(LOG_CMDS, "*", "(%s!%s) !%s! KEY %s", nick, host, u->handle,
@@ -731,14 +706,12 @@ static int msg_voice(char *nick, char *host, struct userrec *u, char *par)
             add_mode(chan, '+', 'v', nick);
             putlog(LOG_CMDS, "*", "(%s!%s) !%s! VOICE %s", nick, host,
                    u->handle, par);
-          }
-          else
+          } else
             putlog(LOG_CMDS, "*", "(%s!%s) !*! failed VOICE %s",
                    nick, host, par);
           return 1;
         }
-      }
-      else {
+      } else {
         for (chan = chanset; chan; chan = chan->next) {
           get_user_flagrec(u, &fr, chan->dname);
           if (chan_voice(fr) || glob_voice(fr) ||
@@ -815,8 +788,7 @@ static int msg_status(char *nick, char *host, struct userrec *u, char *par)
     ve_t = " ";
     un_t = "*unknown*";
 #ifdef HAVE_UNAME
-  }
-  else {
+  } else {
     ve_t = un.release;
     un_t = un.sysname;
   }
@@ -831,8 +803,7 @@ static int msg_status(char *nick, char *host, struct userrec *u, char *par)
              u->handle);
       return 1;
     }
-  }
-  else {
+  } else {
     putlog(LOG_CMDS, "*", "(%s!%s) !%s! failed STATUS", nick, host, u->handle);
     if (!quiet_reject)
       dprintf(DP_HELP, "NOTICE %s :%s\n", nick, IRC_NOPASS);
@@ -892,8 +863,7 @@ static int msg_memory(char *nick, char *host, struct userrec *u, char *par)
              u->handle);
       return 1;
     }
-  }
-  else {
+  } else {
     putlog(LOG_CMDS, "*", "(%s!%s) !%s! failed MEMORY", nick, host, u->handle);
     if (!quiet_reject)
       dprintf(DP_HELP, "NOTICE %s :%s\n", nick, IRC_NOPASS);
@@ -917,8 +887,7 @@ static int msg_die(char *nick, char *host, struct userrec *u, char *par)
       putlog(LOG_CMDS, "*", "(%s!%s) !%s! failed DIE", nick, host, u->handle);
       return 1;
     }
-  }
-  else {
+  } else {
     putlog(LOG_CMDS, "*", "(%s!%s) !%s! failed DIE", nick, host, u->handle);
     if (!quiet_reject)
       dprintf(DP_HELP, "NOTICE %s :%s\n", nick, IRC_NOPASS);
@@ -988,8 +957,7 @@ static int msg_reset(char *nick, char *host, struct userrec *u, char *par)
       putlog(LOG_CMDS, "*", "(%s!%s) !%s! failed RESET", nick, host, u->handle);
       return 1;
     }
-  }
-  else {
+  } else {
     putlog(LOG_CMDS, "*", "(%s!%s) !*! failed RESET", nick, host);
     if (!quiet_reject)
       dprintf(DP_HELP, "NOTICE %s :%s\n", nick, IRC_NOPASS);
@@ -1062,12 +1030,10 @@ static int msg_go(char *nick, char *host, struct userrec *u, char *par)
   }
   if (ok) {
     putlog(LOG_CMDS, "*", "(%s!%s) !%s! GO", nick, host, u->handle);
-  }
-  else if (ok2) {
+  } else if (ok2) {
     putlog(LOG_CMDS, "*", "(%s!%s) !%s! failed GO (i'm chop)", nick, host,
            u->handle);
-  }
-  else {
+  } else {
     putlog(LOG_CMDS, "*", "(%s!%s) !%s! failed GO (not op)", nick, host,
            u->handle);
   }
@@ -1099,14 +1065,12 @@ static int msg_jump(char *nick, char *host, struct userrec *u, char *par)
       strcpy(newserver, s);
       newserverport = port;
       strcpy(newserverpass, par);
-    }
-    else
+    } else
       putlog(LOG_CMDS, "*", "(%s!%s) !%s! JUMP", nick, host, u->handle);
     dprintf(-serv, "NOTICE %s :%s\n", nick, IRC_JUMP);
     cycle_time = 0;
     nuke_server("changing servers");
-  }
-  else
+  } else
     putlog(LOG_CMDS, "*", "(%s!%s) !%s! failed JUMP", nick, host, u->handle);
   return 1;
 }

@@ -5,7 +5,7 @@
  *   note cmds
  *   note ignores
  *
- * $Id: notes.c,v 1.43 2003/01/28 06:37:26 wcc Exp $
+ * $Id: notes.c,v 1.44 2003/01/30 07:15:15 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -136,11 +136,9 @@ static void notes_change(char *oldnick, char *newnick)
         if (!egg_strcasecmp(to, oldnick)) {
           tot++;
           fprintf(g, "%s %s\n", newnick, s1);
-        }
-        else
+        } else
           fprintf(g, "%s %s\n", to, s1);
-      }
-      else
+      } else
         fprintf(g, "%s\n", s);
     }
   }
@@ -191,8 +189,7 @@ static void expire_notes()
           tot++;
         else
           fprintf(g, "%s %s %s %s\n", to, from, ts, s1);
-      }
-      else
+      } else
         fprintf(g, "%s\n", s);
     }
   }
@@ -268,38 +265,32 @@ static int tcl_storenote STDVAR
                          argv[1], argv[3]);
           simple_sprintf(u, "@%s", botnetnick);
           p = u;
-        }
-        else {
+        } else {
           simple_sprintf(work, "<%s@%s %s", argv[2], botnetnick, argv[3]);
           p = argv[1];
         }
       }
-    }
-    else
+    } else
       ok = 0;
     if (ok) {
       if ((add_note(fwd, p, work, idx, 0) == NOTE_OK) && (idx >= 0))
         dprintf(idx, NOTES_FORWARD_NOTONLINE, f1);
       Tcl_AppendResult(irp, f1, NULL);
       to = NULL;
-    }
-    else {
+    } else {
       strcpy(work, argv[3]);
       to = argv[2];
     }
-  }
-  else
+  } else
     to = argv[2];
   if (to) {
     if (notefile[0] == 0) {
       if (idx >= 0)
         dprintf(idx, "%s\n", NOTES_UNSUPPORTED);
-    }
-    else if (num_notes(to) >= maxnotes) {
+    } else if (num_notes(to) >= maxnotes) {
       if (idx >= 0)
         dprintf(idx, "%s\n", NOTES_NOTES2MANY);
-    }
-    else {                      /* Time to unpack it meaningfully */
+    } else {                      /* Time to unpack it meaningfully */
       f = fopen(notefile, "a");
       if (f == NULL)
         f = fopen(notefile, "w");
@@ -307,8 +298,7 @@ static int tcl_storenote STDVAR
         if (idx >= 0)
           dprintf(idx, "%s\n", NOTES_NOTEFILE_FAILED);
         putlog(LOG_MISC, "*", "%s", NOTES_NOTEFILE_UNREACHABLE);
-      }
-      else {
+      } else {
         char *p, *blah = argv[3], *from = argv[1];
         int l = 0;
 
@@ -353,8 +343,7 @@ static void notes_parse(int dl[], char *s)
         dl[idl] = atoi(s + i + 1);      /* Will be 0 if not a number */
         if (dl[idl] == 0)
           dl[idl] = maxnotes;
-      }
-      else
+      } else
         dl[idl] = dl[idl - 1];
       idl++;
       while ((s[i]) && (s[i] != ';'))
@@ -427,8 +416,7 @@ static int tcl_erasenotes STDVAR
             fprintf(g, "%s %s\n", to, s1);
           else
             erased++;
-        }
-        else
+        } else
           fprintf(g, "%s %s\n", to, s1);
       }
     }
@@ -532,12 +520,10 @@ static void notes_read(char *hand, char *nick, char *srd, int idx)
               if (ix == 1)
                 dprintf(idx, "### %s:\n", NOTES_WAITING);
               dprintf(idx, "  %2d. %s (%s)\n", ix, from, dt);
-            }
-            else
+            } else
               dprintf(DP_HELP, "NOTICE %s :%2d. %s (%s)\n", nick, ix, from,
                       dt);
-          }
-          else if (notes_in(rd, ix)) {
+          } else if (notes_in(rd, ix)) {
             if (idx >= 0)
               dprintf(idx, "%2d. %s (%s): %s\n", ix, from, dt, s1);
             else
@@ -563,15 +549,13 @@ static void notes_read(char *hand, char *nick, char *srd, int idx)
         dprintf(idx, "%s.\n", NOTES_NO_MESSAGES);
       else
         dprintf(DP_HELP, "NOTICE %s :%s.\n", nick, NOTES_NO_MESSAGES);
-    }
-    else {
+    } else {
       if (idx >= 0)
         dprintf(idx, "### %s.\n", NOTES_DCC_USAGE_READ);
       else
         dprintf(DP_HELP, "NOTICE %s :(%d %s)\n", nick, ix - 1, MISC_TOTAL);
     }
-  }
-  else if ((ir == 0) && (ix == 1)) {
+  } else if ((ir == 0) && (ix == 1)) {
     if (idx >= 0)
       dprintf(idx, "%s.\n", NOTES_NO_MESSAGES);
     else
@@ -636,11 +620,9 @@ static void notes_del(char *hand, char *nick, char *sdl, int idx)
           else
             er++;
           in++;
-        }
-        else
+        } else
           fprintf(g, "%s %s\n", to, s1);
-      }
-      else
+      } else
         fprintf(g, "%s\n", s);
     }
   }
@@ -654,21 +636,18 @@ static void notes_del(char *hand, char *nick, char *sdl, int idx)
       dprintf(idx, "%s.\n", NOTES_NOT_THAT_MANY);
     else
       dprintf(DP_HELP, "NOTICE %s :%s.\n", nick, NOTES_NOT_THAT_MANY);
-  }
-  else if (in == 1) {
+  } else if (in == 1) {
     if (idx >= 0)
       dprintf(idx, "%s.\n", NOTES_NO_MESSAGES);
     else
       dprintf(DP_HELP, "NOTICE %s :%s.\n", nick, NOTES_NO_MESSAGES);
-  }
-  else {
+  } else {
     if (er == (in - 1)) {
       if (idx >= 0)
         dprintf(idx, "%s.\n", NOTES_ERASED_ALL);
       else
         dprintf(DP_HELP, "NOTICE %s :%s.\n", nick, NOTES_ERASED_ALL);
-    }
-    else {
+    } else {
       if (idx >= 0)
         dprintf(idx, "%s %d note%s; %d %s.\n", NOTES_ERASED, er,
                 (er != 1) ? "s" : "", in - 1 - er, NOTES_LEFT);
@@ -780,14 +759,12 @@ static int msg_notes(char *nick, char *host, struct userrec *u, char *par)
       notes_read(u->handle, nick, "-", -1);
     else
       notes_read(u->handle, nick, par, -1);
-  }
-  else if (!egg_strcasecmp(fcn, "ERASE")) {
+  } else if (!egg_strcasecmp(fcn, "ERASE")) {
     if (!egg_strcasecmp(par, "ALL"))
       notes_del(u->handle, nick, "-", -1);
     else
       notes_del(u->handle, nick, par, -1);
-  }
-  else if (!egg_strcasecmp(fcn, "TO")) {
+  } else if (!egg_strcasecmp(fcn, "TO")) {
     char *to;
     int i;
     FILE *f;
@@ -803,8 +780,7 @@ static int msg_notes(char *nick, char *host, struct userrec *u, char *par)
     if (!u2) {
       dprintf(DP_HELP, "NOTICE %s :%s\n", nick, NOTES_USERF_UNKNOWN);
       return 1;
-    }
-    else if (is_bot(u2)) {
+    } else if (is_bot(u2)) {
       dprintf(DP_HELP, "NOTICE %s :%s\n", nick, NOTES_NOTTO_BOT);
       return 1;
     }
@@ -843,8 +819,7 @@ static int msg_notes(char *nick, char *host, struct userrec *u, char *par)
     fclose(f);
     dprintf(DP_HELP, "NOTICE %s :%s\n", nick, NOTES_DELIVERED);
     return 1;
-  }
-  else
+  } else
     dprintf(DP_HELP, "NOTICE %s :%s INDEX, READ, ERASE, TO\n",
             nick, NOTES_DCC_USAGE_READ);
   putlog(LOG_CMDS, "*", "(%s!%s) !%s! NOTES %s %s", nick, host, u->handle, fcn,
@@ -1029,8 +1004,7 @@ int add_note_ignore(struct userrec *u, char *mask)
     mxk->key = user_malloc(strlen(NOTES_IGNKEY) + 1);
     strcpy(mxk->key, NOTES_IGNKEY);
     xtra_set(u, ue, mxk);
-  }
-  else {                        /* ... else, we already have other entries. */
+  } else {                        /* ... else, we already have other entries. */
     xk->data = user_realloc(xk->data, strlen(xk->data) + strlen(mask) + 2);
     strcat(xk->data, " ");
     strcat(xk->data, mask);
@@ -1060,8 +1034,7 @@ int del_note_ignore(struct userrec *u, char *mask)
       if (buf[0])
         strcat(buf, " ");
       strcat(buf, ignores[i]);
-    }
-    else
+    } else
       foundit = 1;
   }
   nfree(ignores[0]);            /* Free the string buffer       */
@@ -1082,8 +1055,7 @@ int del_note_ignore(struct userrec *u, char *mask)
     nfree(buf);                 /* The allocated byte needs to be free'd too */
     strcpy(xk->key, NOTES_IGNKEY);
     xk->data = 0;
-  }
-  else {
+  } else {
     xk->data = buf;
     strcpy(xk->key, NOTES_IGNKEY);
   }

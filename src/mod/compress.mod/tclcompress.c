@@ -4,7 +4,7 @@
  *
  * Written by Fabian Knittel <fknittel@gmx.de>
  *
- * $Id: tclcompress.c,v 1.8 2003/01/29 05:48:41 wcc Exp $
+ * $Id: tclcompress.c,v 1.9 2003/01/30 07:15:14 wcc Exp $
  */
 /*
  * Copyright (C) 2000, 2001, 2002, 2003 Eggheads Development Team
@@ -43,8 +43,7 @@ static int tcl_compress_file STDVAR
       }
       curr_arg++;
       mode_num = atoi(argv[curr_arg]);
-    }
-    else {
+    } else {
       Tcl_AppendResult(irp, "unknown option `", argv[curr_arg], "'", NULL);
       return TCL_ERROR;
     }

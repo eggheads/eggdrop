@@ -4,7 +4,7 @@
  *
  * Written for filedb3 by Fabian Knittel <fknittel@gmx.de>
  *
- * $Id: dbcompat.c,v 1.14 2003/01/28 06:37:26 wcc Exp $
+ * $Id: dbcompat.c,v 1.15 2003/01/30 07:15:14 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -81,13 +81,11 @@ static int convert_old_files(char *path, char *newfiledb)
               fdbe->desc = nrealloc(fdbe->desc,
                                     strlen(fdbe->desc) + strlen(s) + 2);
               strcat(fdbe->desc, "\n");
-            }
-            else
+            } else
               fdbe->desc = nmalloc(strlen(s) + 2);
             strcat(fdbe->desc, s);
           }
-        }
-        else {
+        } else {
           if (fdbe) {
             /* File pending. Write to DB */
             filedb_addfile(fdb, fdbe);
@@ -125,8 +123,7 @@ static int convert_old_files(char *path, char *newfiledb)
               }
             }
             fdbe->size = st.st_size;
-          }
-          else
+          } else
             in_file = 0;        /* skip */
         }
       }
@@ -275,14 +272,12 @@ static int convert_old_db(FILE ** fdb_s, char *filedb)
          * of the DB instead of the original one.
          */
         ret = 1;
-      }
-      else
+      } else
         putlog(LOG_MISC, "*", "(!) Reopening db %s failed.", filedb);
     }
     my_free(tempdb);
     /* Database already at the newest version? */
-  }
-  else if (fdbt.version == FILEDB_VERSION3)
+  } else if (fdbt.version == FILEDB_VERSION3)
     ret = 1;
   else
     putlog(LOG_MISC, "*", "(!) Unknown db version: %d", fdbt.version);

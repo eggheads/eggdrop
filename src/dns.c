@@ -4,7 +4,7 @@
  *   provides the code used by the bot if the DNS module is not loaded
  *   DNS Tcl commands
  *
- * $Id: dns.c,v 1.26 2003/01/28 06:37:24 wcc Exp $
+ * $Id: dns.c,v 1.27 2003/01/30 07:15:14 wcc Exp $
  */
 /*
  * Written by Fabian Knittel <fknittel@gmx.de>
@@ -302,8 +302,7 @@ static void tcl_dnsipbyhost(char *hostn, char *proc, char *paras)
   if (paras) {
     tclinfo->paras = nmalloc(strlen(paras) + 1);
     strcpy(tclinfo->paras, paras);
-  }
-  else
+  } else
     tclinfo->paras = NULL;
   de->other = tclinfo;
 
@@ -334,8 +333,7 @@ static void tcl_dnshostbyip(IP ip, char *proc, char *paras)
   if (paras) {
     tclinfo->paras = nmalloc(strlen(paras) + 1);
     strcpy(tclinfo->paras, paras);
-  }
-  else
+  } else
     tclinfo->paras = NULL;
   de->other = tclinfo;
 
@@ -441,8 +439,7 @@ void block_dns_hostbyip(IP ip)
       strncpyz(s, hp->h_name, sizeof s);
     else
       strcpy(s, iptostr(addr));
-  }
-  else {
+  } else {
     hp = NULL;
     strcpy(s, iptostr(addr));
   }

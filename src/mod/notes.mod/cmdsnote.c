@@ -2,7 +2,7 @@
  * cmdsnote.c -- part of notes.mod
  *   handles all notes interaction over the party line
  *
- * $Id: cmdsnote.c,v 1.16 2003/01/28 06:37:26 wcc Exp $
+ * $Id: cmdsnote.c,v 1.17 2003/01/30 07:15:15 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -55,8 +55,7 @@ static void cmd_pls_noteign(struct userrec *u, int idx, char *par)
       nfree(buf);
       return;
     }
-  }
-  else {
+  } else {
     u2 = u;
     mask = handle;
   }
@@ -99,8 +98,7 @@ static void cmd_mns_noteign(struct userrec *u, int idx, char *par)
       nfree(buf);
       return;
     }
-  }
-  else {
+  } else {
     u2 = u;
     mask = handle;
   }
@@ -134,8 +132,7 @@ static void cmd_noteigns(struct userrec *u, int idx, char *par)
       dprintf(idx, NOTES_UNKNOWN_USER, par);
       return;
     }
-  }
-  else
+  } else
     u2 = u;
 
   ignoresn = get_note_ignores(u2, &ignores);
@@ -207,14 +204,12 @@ static void cmd_notes(struct userrec *u, int idx, char *par)
       notes_read(dcc[idx].nick, "", "-", idx);
     else
       notes_read(dcc[idx].nick, "", par, idx);
-  }
-  else if (!egg_strcasecmp(fcn, "erase")) {
+  } else if (!egg_strcasecmp(fcn, "erase")) {
     if (!egg_strcasecmp(par, "all"))
       notes_del(dcc[idx].nick, "", "-", idx);
     else
       notes_del(dcc[idx].nick, "", par, idx);
-  }
-  else {
+  } else {
     dprintf(idx, "%s\n", NOTES_MUSTBE);
     return;
   }
