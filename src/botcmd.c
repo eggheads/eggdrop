@@ -3,7 +3,7 @@
  *   commands that comes across the botnet
  *   userfile transfer and update commands from sharebots
  *
- * $Id: botcmd.c,v 1.31 2002/08/21 02:37:55 wcc Exp $
+ * $Id: botcmd.c,v 1.32 2002/09/21 21:06:23 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -195,6 +195,7 @@ static void bot_actchan(int idx, char *par)
   if (!partyidle(p + 1, from)) {
     *p = '@';
     fake_alert(idx, "user", from);
+    return;
   }
   *p = '@';
   p++;
