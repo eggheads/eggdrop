@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  * 
- * $Id: chan.c,v 1.56 2000/11/05 10:30:25 fabian Exp $
+ * $Id: chan.c,v 1.57 2000/11/08 20:07:06 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1469,10 +1469,9 @@ static int gotjoin(char *from, char *chname)
 {
   char *nick, *p, *newmode, buf[UHOSTLEN], *uhost = buf;
   char *ch_dname = NULL;
-  int ok = 1;
   struct chanset_t *chan;
   memberlist *m;
-  masklist *b, *e;
+  masklist *b;
   struct userrec *u;
   struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
 
@@ -1679,23 +1678,6 @@ static int gotjoin(char *from, char *chname)
       }
       /* ok, the op-on-join,etc, tests...first only both if Im opped */
       if (me_op(chan)) {
-	if (channel_enforcebans(chan) && !chan_op(fr) && !glob_op(fr) &&
-	    !glob_friend(fr) && !chan_friend(fr)) {
-	  for (b = chan->channel.ban; b->mask[0]; b = b->next) { 
-	    if (wild_match(b->mask, from)) {
-	      if (use_exempts)
-		for (e = chan->channel.exempt; e->mask[0]; e = e->next)
-		  if (wild_match(e->mask, from))
-		    ok = 0;
-		  if (ok && !chan_sentkick(m)) {
-		    dprintf(DP_SERVER, "KICK %s %s :%s\n", chname, m->nick,
-			    IRC_YOUREBANNED);
-		    m->flags |= SENTKICK;
-		    goto exit;
-		  }
-	    }
-	  }
-	}
 	/* Check for and reset exempts and invites.
 	 *
 	 * This will require further checking to account for when to use the
@@ -1707,6 +1689,18 @@ static int gotjoin(char *from, char *chname)
 	if (!(use_exempts &&
 	      (u_match_mask(global_exempts,from) ||
 	       u_match_mask(chan->exempts, from)))) {
+          if (channel_enforcebans(chan) && !chan_op(fr) && !glob_op(fr) &&
+              !glob_friend(fr) && !chan_friend(fr) && !chan_sentkick(m) && 
+              !(use_exempts && isexempted(chan, from))) {
+            for (b = chan->channel.ban; b->mask[0]; b = b->next) {
+              if (wild_match(b->mask, from)) {
+                dprintf(DP_SERVER, "KICK %s %s :%s\n", chname, m->nick,
+                        IRC_YOUREBANNED);
+                m->flags |= SENTKICK;
+                goto exit;
+              }
+            }
+          }
 	  /* If it matches a ban, dispose of them. */
 	  if (u_match_mask(global_bans, from) ||
 	      u_match_mask(chan->bans, from)) {
