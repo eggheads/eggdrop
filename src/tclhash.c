@@ -7,7 +7,7 @@
  *   (non-Tcl) procedure lookups for msg/dcc/file commands
  *   (Tcl) binding internal procedures to msg/dcc/file commands
  * 
- * $Id: tclhash.c,v 1.22 2001/01/17 23:32:44 guppy Exp $
+ * $Id: tclhash.c,v 1.23 2001/01/21 07:49:05 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1081,7 +1081,7 @@ void tell_binds(int idx, char *par)
   else
     tl_kind = NULL;
 
-  if ((name && name[0] &&!egg_strcasecmp(name, "all")) || (s && s[0] && !egg_strcasecmp(s, "all")))
+  if ((name && name[0] && !egg_strcasecmp(name, "all")) || (s && s[0] && !egg_strcasecmp(s, "all")))
     showall = 1;
   if (tl_kind == NULL && name && name[0] && egg_strcasecmp(name, "all"))
     patmatc = 1;
@@ -1101,7 +1101,7 @@ void tell_binds(int idx, char *par)
 	  continue;
 	proc = tc->func_name;
 	build_flags(flg, &(tc->flags), NULL);
-	if (showall || (proc[0] != '*' && !strchr(proc, ':'))) {
+	if (showall || proc[0] != '*') {
 	  int	ok = 0;
 
           if (patmatc == 1) {
