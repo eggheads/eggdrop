@@ -57,7 +57,6 @@ static int lowercase_ctcp;	/* answer lowercase CTCP's (non-standard) */
 static char bothost[81];	/* dont mind me, Im stupid */
 static int check_mode_r;	/* check for IRCNET +r modes */
 static int use_ison;		/* arthur2 static */
-static int recycle;		/* arthur2 static */
 static int net_type;
 static int must_be_owner;	/* arthur2 */
 static char connectserver[121];	/* what, if anything, to do before connect
@@ -1238,7 +1237,6 @@ char *server_start(Function * global_funcs)
   maxqmsg = 300;
   burst = 0;
   use_ison = 1;
-  recycle = 1;
   net_type = 0;
   double_mode = 0;
   double_server = 0;

@@ -218,7 +218,6 @@ static int got001(char *from, char *msg)
   /* init-server */
   if (initserver[0])
     do_tcl("init-server", initserver);
-  recycle = 1;
   x = serverlist;
   if (x == NULL)
     return 0;			/* uh, no server list */
@@ -571,12 +570,8 @@ static int gotnotice(char *from, char *msg)
       /* server notice? */
       if ((from[0] == 0) || (nick[0] == 0)) {
 	/* hidden `250' connection count message from server */
-	if (strncmp(msg, "Highest connection count:", 25)) {
-	  /* NO_CHOPS_ON_SPLIT server */
-	  if (recycle && (!strncmp(msg, "*** Notice -- Due to a network split, you can not obtain channel operator status in a new channel at this time.", 111)))
-	    recycle = 0;
+	if (strncmp(msg, "Highest connection count:", 25))
 	  putlog(LOG_SERV, "*", "-NOTICE- %s", msg);
-	}
       } else if (!ignoring) {
 	check_tcl_notc(nick, from, u, msg);
 	putlog(LOG_MSGS, "*", "-%s (%s)- %s", nick, from, msg);

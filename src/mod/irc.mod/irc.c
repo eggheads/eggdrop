@@ -411,7 +411,6 @@ static void check_lonely_channel(struct chanset_t *chan)
       i++;
     m = m->next;
   }
-/*   if ((i == 1) && channel_cycle(chan) && recycle) { */
   if ((i == 1) && channel_cycle(chan)) {
     if (chan->name[0] != '+') {	/* Its pointless to cycle + chans for ops */
       putlog(LOG_MISC, "*", "Trying to cycle %s to regain ops.", chan->name);
