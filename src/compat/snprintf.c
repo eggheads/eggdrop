@@ -61,11 +61,10 @@
  **************************************************************/
 
 #ifndef lint
-static const char rcsid[] = "$Id: snprintf.c,v 1.15 2003/03/05 03:15:36 stdarg Exp $";
+static const char rcsid[] = "$Id: snprintf.c,v 1.16 2003/03/05 03:24:34 stdarg Exp $";
 #endif
 
 /* These are ugly... */
-#include <ctype.h>
 #include "snprintf.h"
 
 #ifdef HAVE_CONFIG_H
@@ -79,13 +78,12 @@ static const char rcsid[] = "$Id: snprintf.c,v 1.15 2003/03/05 03:15:36 stdarg E
 #ifdef HAVE_STRINGS_H
 #include <strings.h>
 #endif
-#ifdef HAVE_CTYPE_H
-#include <ctype.h>
-#endif
 #include <sys/types.h>
 #ifdef HAVE_STDLIB_H
 #include <stdlib.h>
 #endif
+
+#include <ctype.h>
 
 #if defined(HAVE_SNPRINTF) && defined(HAVE_VSNPRINTF) && defined(HAVE_C99_VSNPRINTF)
 /* only include stdio.h if we are not re-defining snprintf or vsnprintf */
