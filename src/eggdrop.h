@@ -4,7 +4,7 @@
  * 
  *   IF YOU ALTER THIS FILE, YOU NEED TO RECOMPILE THE BOT.
  * 
- * $Id: eggdrop.h,v 1.28 2000/03/23 23:17:55 fabian Exp $
+ * $Id: eggdrop.h,v 1.29 2000/04/05 19:31:38 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -319,6 +319,7 @@ struct xfer_info {
   char from[NICKLEN];		/* [GET] user who offered the file	   */
   FILE *f;			/* pointer to file being sent/received	   */
   unsigned int type;		/* xfer connection type, see enum below	   */
+  unsigned short ack_type;	/* type of ack				   */
   unsigned long offset;		/* offset from beginning of file, during
 				   resend				   */
 };
@@ -330,6 +331,13 @@ enum {				/* transfer connection handling a ...	*/
 	XFER_RESUME,		/*  ... file-send-resume to s.o.	*/
 	XFER_RESUME_PEND,	/*  ... (as above) and waiting for conn */
 	XFER_GET		/*  ... file-get from s.o.		*/
+};
+
+enum {
+	XFER_ACK_UNKNOWN,	/* We don't know how blocks are acked.	*/
+	XFER_ACK_WITH_OFFSET,	/* Skipped data is also counted as
+				   received.				*/
+	XFER_ACK_WITHOUT_OFFSET	/* Skipped data is NOT counted in ack.	*/
 };
 
 struct bot_info {

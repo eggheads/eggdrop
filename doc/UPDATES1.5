@@ -5,6 +5,9 @@ Changes in eggdrop: (since v1.5.0)
 
 1.5.3
 Foundby   Fixedby   What....
+Phoenix   Fabian    resume support in the transfer module was not compatible
+                      with mircs implementation. mirc would also do some silly
+                      stuff during communication, which is now also detected.
 Wiktor    Fabian    fixed minor memory leak in transfer module.
           Wiktor    renamed .nick and .chnick to .handle and .chhandle. Fixed
                       docs to reflect this change.

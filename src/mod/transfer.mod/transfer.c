@@ -1,7 +1,7 @@
 /* 
  * transfer.c -- part of transfer.mod
  * 
- * $Id: transfer.c,v 1.24 2000/04/05 19:27:30 fabian Exp $
+ * $Id: transfer.c,v 1.25 2000/04/05 19:31:38 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -879,22 +879,36 @@ static void dcc_get(int idx, char *buf, int len)
   }
 
   dcc[idx].u.xfer->sofar = 0;
-  if ((cmp > dcc[idx].status) && (cmp <= dcc[idx].u.xfer->length)) {
+  if ((cmp > dcc[idx].u.xfer->length) && (cmp > dcc[idx].status)) {
+    /* Attempt to resume, but file is not as long as requested... */
+    putlog(LOG_FILES, "*",
+	   "!! Resuming file transfer behind file end for %s to %s",
+	   dcc[idx].u.xfer->origname, dcc[idx].nick);
+  } else if ((cmp > dcc[idx].status)) {
     /* Attempt to resume */
-    if (!strcmp(dcc[idx].nick, "*users")) {
+    if (!strcmp(dcc[idx].nick, "*users"))
       putlog(LOG_BOTS, "*", "!!! Trying to skip ahead on userfile transfer");
-    } else {
+    else {
       fseek(dcc[idx].u.xfer->f, cmp, SEEK_SET);
       dcc[idx].status = cmp;
       putlog(LOG_FILES, "*", "Resuming file transfer at %dk for %s to %s",
 	     (int) (cmp / 1024), dcc[idx].u.xfer->origname,
 	     dcc[idx].nick);
     }
-  } else
-    /* If we didn't start at the top of the file, we need to add the offset
-     * to make the check routines happy below.
-     */
-    cmp += dcc[idx].u.xfer->offset;
+  } else {
+    if (dcc[idx].u.xfer->ack_type == XFER_ACK_UNKNOWN) {
+      if (cmp < dcc[idx].u.xfer->offset)
+	/* If we don't start at the top of the file, some clients only tell
+	 * us the really received bytes (e.g. bitchx). This seems to be the
+	 * case here.
+	 */
+	dcc[idx].u.xfer->ack_type = XFER_ACK_WITHOUT_OFFSET;
+      else
+	dcc[idx].u.xfer->ack_type = XFER_ACK_WITH_OFFSET;
+    }
+    if (dcc[idx].u.xfer->ack_type == XFER_ACK_WITHOUT_OFFSET)
+      cmp += dcc[idx].u.xfer->offset;
+  }
 
   if (cmp != dcc[idx].status)
     return;
@@ -1276,6 +1290,7 @@ static void dcc_get_pending(int idx, char *buf, int len)
     return;
   }
   dcc[idx].type = &DCC_GET;
+  dcc[idx].u.xfer->ack_type = XFER_ACK_UNKNOWN;
 
   /* 
    * Note: The file was already opened and dcc[idx].u.xfer->f may be
@@ -1755,6 +1770,13 @@ static int ctcp_DCC_RESUME(char *nick, char *from, char *handle,
   if (i == dcc_total)
     return 0;
 
+  if (dcc[i].u.xfer->length <= offset) {
+    char *p = strrchr(dcc[i].u.xfer->origname, '/');
+
+    dprintf(DP_HELP, "NOTICE %s :Ignoring resume of `%s': no data requested.\n",
+	    nick, p ? p + 1 : dcc[i].u.xfer->origname);
+    return 1;
+  }
   dcc[i].u.xfer->type = XFER_RESUME_PEND; 
   dcc[i].u.xfer->offset = offset;
   dprintf(DP_HELP, "PRIVMSG %s :\001DCC ACCEPT %s %d %u\001\n", nick,
