@@ -1256,7 +1256,7 @@ static void cmd_chaninfo(struct userrec *u, int idx, char *par)
 
 static void cmd_chanset(struct userrec *u, int idx, char *par)
 {
-  char *chname = NULL, answers[512];
+  char *chname = NULL, answers[512], *parcpy;
   char *list[2];
   struct chanset_t *chan = NULL;
 
@@ -1306,14 +1306,19 @@ static void cmd_chanset(struct userrec *u, int idx, char *par)
 	    return;
 	  }
 	  list[1] = par;
-	  if (tcl_channel_modify(0, chan, 2, list) == TCL_OK) {
+	  /* par gets modified in tcl_channel_modify under some
+  	   * circumstances, so save it now */
+	  parcpy = nmalloc(strlen(par) + 1);
+	  strcpy(parcpy, par);
+          if (tcl_channel_modify(0, chan, 2, list) == TCL_OK) {
 	    strcat(answers, list[0]);
 	    strcat(answers, " { ");
-	    strcat(answers, par);
+	    strcat(answers, parcpy);
 	    strcat(answers, " }");
 	  } else
 	    dprintf(idx, "Error trying to set %s for %s, invalid option\n",
 		    list[0], chname);
+        nfree(parcpy);
 	}
 	break;
       }

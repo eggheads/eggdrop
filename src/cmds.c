@@ -410,18 +410,25 @@ static void cmd_rehelp(struct userrec *u, int idx, char *par)
 
 static void cmd_help(struct userrec *u, int idx, char *par)
 {
-  struct flag_record fr =
-  {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
+  struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
 
   get_user_flagrec(u, &fr, dcc[idx].u.chat->con_chan);
-  rmspace(par);			/* maintain some sanity */
   if (par[0]) {
     putlog(LOG_CMDS, "*", "#%s# help %s", dcc[idx].nick, par);
     if (!strcmp(par, "all"))
       tellallhelp(idx, "all", &fr);
-    else if (strchr(par, '*') || strchr(par, '?'))
-      tellwildhelp(idx, par, &fr);
-    else
+    else if (strchr(par, '*') || strchr(par, '?')) {
+      char *p = par;
+
+      /* Check if the search pattern only consists of '*' and/or '?'
+       * If it does, show help for "all" instead of listing all help
+       * entries. */
+      for (p = par; *p && ((*p == '*') || (*p == '?')); p++);
+      if (*p)
+        tellwildhelp(idx, par, &fr);
+      else
+	tellallhelp(idx, "all", &fr);
+    } else
       tellhelp(idx, par, &fr, 0);
   } else {
     putlog(LOG_CMDS, "*", "#%s# help", dcc[idx].nick);
@@ -1974,8 +1981,7 @@ static void cmd_strip(struct userrec *u, int idx, char *par)
 static void cmd_su(struct userrec *u, int idx, char *par)
 {
   int atr = u ? u->flags : 0;
-  struct flag_record fr =
-  {FR_ANYWH | FR_CHAN | FR_GLOBAL, 0, 0, 0, 0, 0};
+  struct flag_record fr = {FR_ANYWH | FR_CHAN | FR_GLOBAL, 0, 0, 0, 0, 0};
 
   context;
   u = get_user_by_handle(userlist, par);
@@ -1986,8 +1992,6 @@ static void cmd_su(struct userrec *u, int idx, char *par)
     dprintf(idx, "No such user.\n");
   else if (u->flags & USER_BOT)
     dprintf(idx, "Can't su to a bot... then again, why would you wanna?\n");
-  else if (u_pass_match(u, "-"))
-    dprintf(idx, "No password set for user. You may not .su to them\n");
   else if (dcc[idx].u.chat->su_nick)
     dprintf(idx, "You cannot currently double .su, try .su'ing directly\n");
   else {
@@ -2001,6 +2005,11 @@ static void cmd_su(struct userrec *u, int idx, char *par)
       if (!(atr & USER_OWNER) ||
 	  ((atr & USER_OWNER) && !(isowner(dcc[idx].nick))) ||
 	  ((u->flags & USER_OWNER) && (isowner(par)))) {
+	/* This check is only important for non-owners */
+	if (u_pass_match(u, "-")) {
+	  dprintf(idx, "No password set for user. You may not .su to them\n");
+	  return;
+	}
 	if (dcc[idx].u.chat->channel < 100000)
 	  botnet_send_part_idx(idx, "");
 	chanout_but(-1, dcc[idx].u.chat->channel,
@@ -2010,11 +2019,9 @@ static void cmd_su(struct userrec *u, int idx, char *par)
 	 * their password right ;) */
 	if (dcc[idx].u.chat->away != NULL)
 	  nfree(dcc[idx].u.chat->away);
-	dcc[idx].u.chat->away = n_malloc(strlen(dcc[idx].nick) + 1,
-					 "dccutil.c", 9999);	/* evil hack :) */
+        dcc[idx].u.chat->away = get_data_ptr(strlen(dcc[idx].nick) + 1);
 	strcpy(dcc[idx].u.chat->away, dcc[idx].nick);
-	dcc[idx].u.chat->su_nick = n_malloc(strlen(dcc[idx].nick) + 1,
-					    "dccutil.c", 9999);
+        dcc[idx].u.chat->su_nick = get_data_ptr(strlen(dcc[idx].nick) + 1);
 	strcpy(dcc[idx].u.chat->su_nick, dcc[idx].nick);
 	dcc[idx].user = u;
 	strcpy(dcc[idx].nick, par);
@@ -2029,7 +2036,7 @@ static void cmd_su(struct userrec *u, int idx, char *par)
 	dprintf(idx, "Setting your username to %s.\n", par);
 	if (atr & USER_MASTER)
 	  dcc[idx].u.chat->con_flags = conmask;
-	dcc[idx].u.chat->su_nick = n_malloc(strlen(dcc[idx].nick) + 1, "dccutil.c", 9999);
+        dcc[idx].u.chat->su_nick = get_data_ptr(strlen(dcc[idx].nick) + 1);
 	strcpy(dcc[idx].u.chat->su_nick, dcc[idx].nick);
 	dcc[idx].user = u;
 	strcpy(dcc[idx].nick, par);

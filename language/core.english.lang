@@ -382,7 +382,7 @@ Telnet to the bot and enter 'NEW' as your nickname.
 0xb45,is not a known bot.
 0xb46,Link to myself?  Oh boy, Freud would have a field day.
 0xb47,That bot is already connected up.
-0xb48,No telnet port stored for
+0xb48,Invalid telnet address:port stored for
 0xb49,Linking to
 0xb4a,Can't find user for relay!
 0xb4b,Could not link to

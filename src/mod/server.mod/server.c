@@ -1440,6 +1440,6 @@ char *server_start(Function * global_funcs)
     use_silence = 0;
     check_mode_r = 0;
   }
-  putlog(LOG_ALL, "*", "=== SERVER SUPPORT LOADED");
+  putlog(LOG_MISC, "*", "=== SERVER SUPPORT LOADED");
   return NULL;
 }
