@@ -233,7 +233,7 @@ set resolve-timeout 15
 # ranges: 192.168.0.0-192.168.255.255, 172.16.0.0-172.31.255.255,
 # 10.0.0.0-10.255.255.255 and your firewall transparently changes your
 # address to a unique address for your box.) or you have IP masquerading
-# between you and the rest of the word, and /dcc chat,/ctcp chat or
+# between you and the rest of the world, and /dcc chat,/ctcp chat or
 # userfile shareing aren't working. Enter your outside IP here, and
 # #define HAVE_NAT in eggdrop.h
 # Do not enter anything for my-ip or my-hostname.
