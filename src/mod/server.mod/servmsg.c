@@ -685,25 +685,20 @@ static int gotpong(char *from, char *msg)
   return 0;
 }
 
+/* cleaned up the ison reply code .. (guppy) */
 static void got303(char *from, char *msg)
 {
   char *tmp;
 
-  if (use_ison && keepnick) {
+  if (keepnick) {
     newsplit(&msg);
     fixcolon(msg);
     tmp = newsplit(&msg);
     if (strncmp(botname, origbotname, strlen(botname))) {
-      /* we dont have our nick, so we care about this ISON */
-      if (!tmp[0] || !strcasecmp(tmp, altnick)) {
-	/* message has no text, or .. the first parm, is our altnick */
+      if (!tmp[0] || (altnick[0] && !strcasecmp(tmp, altnick))) {
 	putlog(LOG_MISC, "*", IRC_GETORIGNICK, origbotname);
 	dprintf(DP_MODE, "NICK %s\n", origbotname);
-      } else if (strcasecmp(botname, altnick) && !msg[0]) {
-	/* first parm must be our nick we want, otherwise, we'd be using
-	 * that nick ... */
-	/* so, if the second parm, is non-existant, that means our altnick 
-	 * is free ??? */
+      } else if (altnick[0] && strcasecmp(botname, altnick) && !msg[0]) {
 	putlog(LOG_MISC, "*", IRC_GETALTNICK, altnick);
 	dprintf(DP_MODE, "NICK %s\n", altnick);
       }
@@ -724,7 +719,6 @@ static void trace_fail(char *from, char *msg)
 }
 
 /* 432 : bad nickname */
-/* :washington.dc.us.undernet.org 432 guppy_ -guppy :Erroneus Nickname */
 static int got432(char *from, char *msg)
 {
   char *erroneus;
@@ -732,7 +726,7 @@ static int got432(char *from, char *msg)
   newsplit(&msg);
   erroneus = newsplit(&msg);
   if (server_online)
-    putlog(LOG_MISC, "*", "Server says '%s' is invalid (keeping '%s').", erroneus, botname);
+    putlog(LOG_MISC, "*", "NICK IN INVALID: %s (keeping '%s').", erroneus, botname);
   else {
     putlog(LOG_MISC, "*", IRC_BADBOTNICK);
     if (!keepnick) {
@@ -749,21 +743,13 @@ static int got432(char *from, char *msg)
  * change nicks till we're acceptable or we give up */
 static int got433(char *from, char *msg)
 {
-  char *s;
   char *tmp;
-
-  /* could be futile attempt to regain nick: */
   context;
   if (server_online) {
-    /* If we're online, dont bother changing ... (guppy:14Nov1998) */
-    /* Lets log the nick is in use now though, I forgot this
-     * (guppy:19Jan1998) */
-    /* sigh */
+    /* we are online and have a nickname, we'll keep it */
+	newsplit(&msg);
     tmp = newsplit(&msg);
-    strncpy(botname, tmp, NICKMAX);
-    botname[NICKMAX] = 0;
-    s = newsplit(&msg);
-    putlog(LOG_MISC, "*", "NICK IN USE: %s (keeping '%s').\n", s, botname);
+    putlog(LOG_MISC, "*", "NICK IN USE: %s (keeping '%s').\n", tmp, botname);
     return 0;
   }
   context;
@@ -779,16 +765,17 @@ static int got437(char *from, char *msg)
 
   newsplit(&msg);
   s = newsplit(&msg);
-  if (strchr("#&+", s[0]) != NULL) {
+  if (strchr(CHANMETA, s[0]) != NULL) {
     chan = findchan(s);
     if (chan) {
       if (chan->status & CHAN_ACTIVE) {
 	putlog(LOG_MISC, "*", IRC_CANTCHANGENICK, s);
-	gotfake433(from);
       } else {
 	putlog(LOG_MISC, "*", IRC_CHANNELJUPED, s);
       }
     }
+  } else if (server_online) {
+    putlog(LOG_MISC, "*", "NICK IS JUPED: %s (keeping '%s').\n", s, botname);
   } else {
     putlog(LOG_MISC, "*", "%s: %s", IRC_BOTNICKJUPED, s);
     gotfake433(from);
