@@ -10,7 +10,7 @@
  * 
  * dprintf'ized, 9nov1995
  * 
- * $Id: users.c,v 1.20 2000/09/18 20:01:42 fabian Exp $
+ * $Id: users.c,v 1.21 2000/11/21 04:55:45 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -706,7 +706,9 @@ int readuserfile(char *file, struct userrec **ret)
       if (s[0] != '#' && s[0] != ';' && s[0]) {
 	code = newsplit(&s);
 	rmspace(s);
-	if (!strcmp(code, "-") && lasthand[0]) {
+	if (!strcmp(code, "-")) {
+	  if (!lasthand[0])
+	    continue;		/* Skip this entry.	*/
 	  if (u) {		/* only break it down if there a real users */
 	    p = strchr(s, ',');
 	    while (p != NULL) {
@@ -731,7 +733,9 @@ int readuserfile(char *file, struct userrec **ret)
 	    } else if (lasthand[0])
 	      set_user(&USERENTRY_HOSTS, u, s);
 	  }
-	} else if (!strcmp(code, "%") && lasthand[0]) { /* exemptmasks */
+	} else if (!strcmp(code, "%")) { /* exemptmasks */
+	  if (!lasthand[0])
+	    continue;		/* Skip this entry.	*/
 	  if (s[0]) {
 	    if (lasthand[0] == '#' || lasthand[0] == '+')
 	      restore_chanexempt(cst,s);
@@ -741,7 +745,9 @@ int readuserfile(char *file, struct userrec **ret)
 		gexempt_total++;
 	      }
 	  }
-	} else if (!strcmp(code, "@") && lasthand[0]) { /* Invitemasks */
+	} else if (!strcmp(code, "@")) { /* Invitemasks */
+	  if (!lasthand[0])
+	    continue;		/* Skip this entry.	*/
 	  if (s[0]) {
 	    if (lasthand[0] == '#' || lasthand[0] == '+')
 	      restore_chaninvite(cst,s);
