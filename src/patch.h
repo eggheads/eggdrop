@@ -17,12 +17,12 @@ PATCH("CVS");    /* CVS beta */
  *
  *
  */
-PATCH("934238653"); /* current "unix" time */
+PATCH("934927965"); /* current "unix" time */
 /*
  *
  *
  */
-PATCH("telnet-banner.patch"); /* last patch added */ 
+PATCH("skipfix.patch"); /* last patch added */ 
 /*
  *
  *

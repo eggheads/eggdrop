@@ -73,9 +73,8 @@ int cmd_loadlanguage(struct userrec *u, int idx, char *par)
 {
   FILE *FLANG;
   char langfile[100];
-  char *lread;
   int lidx;
-  char ltext[512];
+  char *ltext = NULL;
   char lbuf[512];
   int lline = 0;
   int lskip;
@@ -102,9 +101,10 @@ int cmd_loadlanguage(struct userrec *u, int idx, char *par)
     return 0;
   }
   lskip = 0;
-  while ((lread = fgets(lbuf, 511, FLANG))) {
+  while (fgets(lbuf, 511, FLANG)) {
     lline++;
     if (lbuf[0] != '#' || lskip) {
+      ltext = nrealloc(ltext, 512);
       if (sscanf(lbuf, "%s", ltext) != EOF) {
 	if (sscanf(lbuf, "0x%x,%500c", &lidx, ltext) != 2) {
 	  putlog(LOG_MISC, "*", "Malformed text line in %s at %d.",
@@ -119,12 +119,8 @@ int cmd_loadlanguage(struct userrec *u, int idx, char *par)
 	      lline++;
 	      ctmp = strchr(lbuf, '\n');
 	      *ctmp = 0;
-	      if (strlen(lbuf) + strlen(ltext) > 511) {
-		putlog(LOG_MISC, "*", "Language: Message 0x%lx in %s at line %d too long.",
-		       lidx, langfile, lline);
-		lskip = 1;
-	      } else
-		strcpy(strchr(ltext, 0), lbuf);
+	      ltext = nrealloc(ltext, strlen(lbuf) + strlen(ltext) + 1);
+	      strcpy(strchr(ltext, 0), lbuf);
 	    }
 	  }
 	}
@@ -153,7 +149,9 @@ int cmd_loadlanguage(struct userrec *u, int idx, char *par)
 	lskip = 0;
     }
   }
+  nfree(ltext);
   fclose(FLANG);
+
   putlog(LOG_MISC, "*", "LANG: %d messages of %d lines loaded from %s",
 	 ltexts, lline, langfile);
   putlog(LOG_MISC, "*", "LANG: %d adds, %d updates to message table",

@@ -899,8 +899,12 @@ int readuserfile(char *file, struct userrec **ret)
 	  /* channel-specific bans */
 	  strcpy(lasthand, &code[2]);
 	  if (!findchan(lasthand)) {
-	    strcat(ignored, lasthand);
-	    strcat(ignored, " ");
+	    strcpy(s1, lasthand);
+	    strcat(s1, " ");
+	    if (strstr(ignored, s1) == NULL) {
+	      strcat(ignored, lasthand);
+	      strcat(ignored, " ");
+	    }
 	    lasthand[0] = 0;
 	    u = 0;
 	  } else {
@@ -931,8 +935,12 @@ int readuserfile(char *file, struct userrec **ret)
 	  /* channel-specific exempts */
 	  strcpy(lasthand, &code[2]);
 	  if (!findchan(lasthand)) {
-	    strcat(ignored, lasthand);
-	    strcat(ignored, " ");
+	    strcpy(s1, lasthand);
+	    strcat(s1, " ");
+	    if (strstr(ignored, s1) == NULL) {
+	      strcat(ignored, lasthand);
+	      strcat(ignored, " ");
+	    }
 	    lasthand[0] = 0;
 	    u = 0;
 	  } else {
@@ -963,8 +971,12 @@ int readuserfile(char *file, struct userrec **ret)
 	  /* channel-specific invites */
 	  strcpy(lasthand, &code[2]);
 	  if (!findchan(lasthand)) {   
-	    strcat(ignored, lasthand);
-	    strcat(ignored, " ");
+	    strcpy(s1, lasthand);
+	    strcat(s1, " ");
+	    if (strstr(ignored, s1) == NULL) {
+	      strcat(ignored, lasthand);
+	      strcat(ignored, " ");
+	    }
 	    lasthand[0] = 0;
 	    u = 0;
 	  } else {

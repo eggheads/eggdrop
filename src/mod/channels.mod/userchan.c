@@ -1169,16 +1169,7 @@ static int write_exempts (FILE * f, int idx)
 {
   struct chanset_t *chan;
   struct exemptrec * e;
-  struct igrec * i;
   
-  if (global_ign)
-    if (fprintf(f, IGNORE_NAME " - -\n")==EOF) /* Daemus */
-      return 0;
-  for (i = global_ign;i;i=i->next) 
-    if (fprintf(f,"%s %s:%s%lu:%s:%lu:%s\n","%", i->igmask,
-		(i->flags & IGREC_PERM) ? "+" : "", i->expire,
-		i->user?i->user:botnetnick, i->added, i->msg?i->msg:"")==EOF)
-      return 0;
   if (global_exempts)
     if (fprintf(f, EXEMPT_NAME " - -\n")==EOF) /* Daemus */
       return 0;
@@ -1216,16 +1207,7 @@ static int write_invites (FILE * f, int idx)
 {
   struct chanset_t *chan;
   struct inviterec * ir;
-  struct igrec * i;
   
-  if (global_ign)
-    if (fprintf(f, IGNORE_NAME " - -\n")==EOF) /* Daemus */
-      return 0;
-  for (i = global_ign;i;i=i->next) 
-    if (fprintf(f,"@ %s:%s%lu:%s:%lu:%s\n", i->igmask,
-		(i->flags & IGREC_PERM) ? "+" : "", i->expire,
-		i->user?i->user:botnetnick, i->added, i->msg?i->msg:"")==EOF)
-      return 0;
   if (global_invites)
     if (fprintf(f, INVITE_NAME " - -\n")==EOF) /* Daemus */
       return 0;

@@ -326,6 +326,10 @@ void *n_realloc(void *ptr, int size, char *file, int line)
   void *x;
   int i = 0;
 
+  /* ptr == NULL is valid. Avoiding duplicate code further down */
+  if (!ptr)
+    return n_malloc(size, file, line);
+
   x = (void *) realloc(ptr, size);
   if (x == NULL) {
     i = i;

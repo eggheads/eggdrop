@@ -177,6 +177,7 @@ void help_subst(char *, char *, struct flag_record *, int, char *);
 void sub_lang(int, char *);
 void show_motd(int);
 void tellhelp(int, char *, struct flag_record *, int);
+void tellwildhelp(int, char *, struct flag_record *);
 void showhelp(char *, char *, struct flag_record *, int);
 int copyfile(char *, char *);
 int movefile(char *, char *);

@@ -442,7 +442,12 @@ static void cmd_help(struct userrec *u, int idx, char *par)
   rmspace(par);			/* maintain some sanity */
   if (par[0]) {
     putlog(LOG_CMDS, "*", "#%s# help %s", dcc[idx].nick, par);
-    tellhelp(idx, par, &fr, 0);
+    if (!strcmp(par, "all"))
+      tellwildhelp(idx, "* module", &fr);
+    else if (strchr(par, '*') || strchr(par, '?'))
+      tellwildhelp(idx, par, &fr);
+    else
+      tellhelp(idx, par, &fr, 0);
   } else {
     putlog(LOG_CMDS, "*", "#%s# help", dcc[idx].nick);
     if (glob_op(fr) || glob_botmast(fr) || chan_op(fr))

@@ -13,7 +13,7 @@ Problem status:
         2:      no-one, we need someone who can reproduce this
         3:      cybah
         4:      SegFault
-        6:      no-one
+        6:      no-one (changed task, please read again!)
         7:      no-one
        10:      no-one
        11:      no-one
@@ -101,6 +101,12 @@ A. its the new stupid way .help works hides lots of stuff
    all commands to the main .help or fix a .help all command.
 
    dw
+
+   Ok, we now have a concept but someone still needs to create a help entry
+   for each module of the form: "<modulename> cmds". The entries should
+   only contain the commands specific to their corresponding module. All
+   entries will be shown when the dcc command ".help all" is called so keep
+   the entries very brief.  -Fabian
 
 --
 7. ./configure not detecting static tcl being incompatible with modules in
