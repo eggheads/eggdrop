@@ -4,7 +4,7 @@
  *   Tcl initialization
  *   getting and setting Tcl/eggdrop variables
  *
- * $Id: tcl.c,v 1.50 2002/11/17 05:36:03 stdarg Exp $
+ * $Id: tcl.c,v 1.51 2002/11/18 03:53:33 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -28,6 +28,10 @@
 #include <stdlib.h>		/* getenv()				*/
 #include <locale.h>		/* setlocale()				*/
 #include "main.h"
+
+#ifndef CONST
+#define CONST
+#endif
 
 #if ((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 1)) || (TCL_MAJOR_VERSION > 8)
 #define USE_BYTE_ARRAYS
@@ -140,7 +144,7 @@ typedef struct {
 
 /* Read/write integer couplets (int1:int2) */
 #if ((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 4))
-static char *tcl_eggcouplet(ClientData cdata, Tcl_Interp *irp, char *name1,
+static char *tcl_eggcouplet(ClientData cdata, Tcl_Interp *irp, CONST char *name1,
                             CONST char *name2, int flags)
 #else
 static char *tcl_eggcouplet(ClientData cdata, Tcl_Interp *irp, char *name1,
@@ -175,7 +179,7 @@ static char *tcl_eggcouplet(ClientData cdata, Tcl_Interp *irp, char *name1,
 /* Read or write normal integer.
  */
 #if ((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 4))
-static char *tcl_eggint(ClientData cdata, Tcl_Interp *irp, char *name1,
+static char *tcl_eggint(ClientData cdata, Tcl_Interp *irp, CONST char *name1,
 			CONST char *name2, int flags)
 #else
 static char *tcl_eggint(ClientData cdata, Tcl_Interp *irp, char *name1,
@@ -251,7 +255,7 @@ static char *tcl_eggint(ClientData cdata, Tcl_Interp *irp, char *name1,
 /* Read/write normal string variable
  */
 #if ((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 4))
-static char *tcl_eggstr(ClientData cdata, Tcl_Interp *irp, char *name1,
+static char *tcl_eggstr(ClientData cdata, Tcl_Interp *irp, CONST char *name1,
                         CONST char *name2, int flags)
 #else
 static char *tcl_eggstr(ClientData cdata, Tcl_Interp *irp, char *name1,
