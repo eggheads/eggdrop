@@ -37,7 +37,7 @@
                        1 for deop and +d
                        2 for deop, +d and kick
                        3 for deop, chattr +d, kick and ban
- %baop-delay%b        autoop or autovoice delaytime
+ %baop-delay%b        autoop/autohalfop/autovoice delaytime
                        0:0 no delay
                        x:x x sec delaytime
                        x:y random delay, minimum x sec, maximum y sec
@@ -50,10 +50,12 @@
 	%bdynamicinvites%b only activate invites on channel when needed?
 	%buserinvites%b    allow invites to be made by users directly?
 	%bautoop%b         automatically op users when they join the channel
+	%bautohalfop%b     automatically halfop users when they join the channel
 	%bbitch%b          only allow users with the +o flag to be ops on the 
 	               channel
 	%bgreet%b          say a users info line when they join the channel
 	%bprotectops%b     re-op a +o user who gets deopped?
+	%bprotecthalfops%b re-halfop a +l user who gets dehalfopped?
 	%bprotectfriends%b re-op a +f user who gets deopped?
 	%bdontkickops%b    never kick +o flag people
 	%binactive%b        never join this channel, or leave if already

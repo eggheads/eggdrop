@@ -1,5 +1,5 @@
 News
-Last revised: June 09, 2002
+Last revised: June 13, 2002
      _________________________________________________________________
 
                                    News
@@ -95,6 +95,8 @@ Changes made to Eggdrop 1.6.x from Eggdrop1.4.x:
 
      * ".binds" now supports wildcards.
 
+     * ".halfop" and ".dehalfop" have been added.
+
      * The 'optimise' file system command was renamed to 'optimize'. The
        old command will still be kept up to version 1.8.
 
@@ -158,6 +160,8 @@ Changes made to Eggdrop 1.6.x from Eggdrop1.4.x:
 
      * A new 'wasop' command was added to check if a user had op before a
        mode change.
+
+     * 'washalfop', 'ishalfop', and 'botishalfop' have been added.
 
      * Three new Tcl commands were added as part of the compress module:
        compressfile, uncompressfile, and iscompressed.

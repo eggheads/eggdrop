@@ -635,8 +635,8 @@ marked with vertical bars (|) on the left.
     Module: irc
 
 | washalfop <nickname> <channel>
-|   Returns: 1 if someone that just got opped/deopped in the chan had halfop
-|     before the modechange; 0 otherwise
+|   Returns: 1 if someone that just got halfopped/dehalfopped in the chan
+|     had halfop before the modechange; 0 otherwise
 |   Module: irc
 
   isvoice <nickname> [channel]

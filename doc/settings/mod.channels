@@ -96,12 +96,12 @@ There are also some variables you can set in your config file:
         3 Deop the user, give them the +d flag for the channel, kick, and ban them.
 
    aop-delay (minimum:maximum)
-       This is used for autoop and autovoice. If an op or voice joins a channel
-       while another op or voice is pending, the bot will attempt to put both
-       modes on one line.
-         aop-delay 0   No delay is used.
-         aop-delay X   An X second delay is used.
-         aop-delay X:Y A random delay between X and Y is used.
+      This is used for autoop, autohalfop, autovoice. If an op or voice joins a
+      channel while another op or voice is pending, the bot will attempt to put
+      both modes on one line.
+        aop-delay 0   No delay is used.
+        aop-delay X   An X second delay is used.
+        aop-delay X:Y A random delay between X and Y is used.
 
     need-op { putserv "PRIVMSG #lamest :op me cos i'm lame!" }
        This setting will make the bot run the script enclosed in braces
@@ -213,6 +213,10 @@ There are also some variables you can set in your config file:
        Op users with the +o flag as soon as they join the channel?
        This is insecure and not recommended.
 
+     autohalfop
+       Halfop users with the +l flag as soon as they join the channel?
+       This is insecure and not recommended.
+
      bitch
        Only let users with the +o flag have op on the channel?
 
@@ -221,6 +225,9 @@ There are also some variables you can set in your config file:
 
      protectops
        Re-op a user with the +o flag if they get deopped?
+
+     protecthalfops
+       Re-halfop a user with the +l flag if they get dehalfopped?
 
      protectfriends
        Re-op a user with the +f flag if they get deopped?

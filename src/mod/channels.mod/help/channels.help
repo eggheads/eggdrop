@@ -1,4 +1,4 @@
-%{help=+ban}%{+o|o}
+%{help=+ban}%{+lo|lo}
 ###  %b+ban%b <hostmask> [channel] [%%<XdXhXm>] [comment]
    Adds a ban to the list of permanent bans stored on the bot,
    with optional comment and bantime.  This ban will be in effect for
@@ -7,7 +7,7 @@
    make it only visible within the bot. Bantime has to be expressed
    in days, hours and/or minutes.
 See also: bans, -ban, stick, unstick
-%{help=+exempt}%{+o|o}
+%{help=+exempt}%{+lo|lo}
 ###  %b+exempt%b <hostmask> [channel] [%%<XdXhXm>] [comment]
    Adds a ban exempt to the list of permanent exempts stored on the bot,
    with optional comment and exempttime. This exempt will be in effect for
@@ -16,7 +16,7 @@ See also: bans, -ban, stick, unstick
    make it only visible within the bot. Exempttime has to be expressed
    in days, hours and/or minutes.
 See also: exempts, -exempt, stick, unstick
-%{help=+invite}%{+o|o}
+%{help=+invite}%{+lo|lo}
 ###  %b+invite%b <hostmask> [channel] [%%<XdXhXm>] [comment]
    Adds a invite to the list of permanent invites stored on the bot,
    with optional comment and invitetime. This invite will be in effect for
@@ -40,20 +40,20 @@ See also: +chan, -chan, chanload, chanset, chaninfo
    lines can be saved.  No flags are associated with the channel.
    
 See also: chattr
-%{help=-ban}%{+o|o}
+%{help=-ban}%{+lo|lo}
 ###  %b-ban%b <hostmask OR number>
    Removes the ban from the list of permanent bans stored on the
    bot -- you may reference the ban by the number shown in '.bans'.
    
 See also: bans, +ban, stick, unstick
-%{help=-exempt}%{+o|o}
+%{help=-exempt}%{+lo|lo}
 ###  %b-exempt%b <hostmask OR number>
    Removes the exemption from the list of permanent exempts stored 
    on the bot -- you may reference the exempt by the number shown in
    '.exempts'.
    
 See also: exempts, +exempt, stick, unstick
-%{help=-invite}%{+o|o}
+%{help=-invite}%{+lo|lo}
 ###  %b-invite%b <hostmask OR number>
    Removes the invite from the list of permanent invites stored
    on the bot -- you may reference the ban by the number shown in
@@ -87,7 +87,7 @@ See also: +chan, chansave, chanload, chanset, chaninfo
    lines, and flags.
 
 See also: chattr
-%{help=bans}%{+o|o}
+%{help=bans}%{+lo|lo}
 ###  %bbans%b [[channel] wildcard]
 ###  %bbans%b all
    Shows you a list of the global bans active on the current channel,
@@ -130,7 +130,7 @@ See also: chattr
    channel will be used instead of your current console channel.
    
 See also: -ban, +ban, console, set ban-time, stick, unstick
-%{help=invites}%{+o|o}
+%{help=invites}%{+lo|lo}
 ###  %binvites%b [[channel] wildcard]
 ###  %binvites%b all
    Shows you a list of the global invites active on the current channel,
@@ -173,7 +173,7 @@ See also: -ban, +ban, console, set ban-time, stick, unstick
    channel will be used instead of your current console channel.
    
 See also: -invite, +invite, console, set invite-time, stick, unstick
-%{help=exempts}%{+o|o}
+%{help=exempts}%{+lo|lo}
 ###  %bexempts%b [[channel] wildcard]
 ###  %bexempts%b all
    Shows you a list of the global ban exemptions active on the current 
@@ -260,14 +260,14 @@ See also: info
    and they will not be able to change it.
 ###  %binfo%b [channel] none
    removes your info line.
-%{help=stick}%{+o|o}
+%{help=stick}%{+ol|ol}
 ###  %bstick%b [ban/exempt/invite] <hostmask OR number> [channel]
    makes a ban/exempt/invite "sticky" -- meaning the bot will
    always try to keep it active on the channel, even if the 
    channel is using dynamic bans.  obviously if the channel isn't
    using dynamic bans, this has no effect.
 see also: bans, exempts, invites, unstick, +ban, +exempt, +invite
-%{help=unstick}%{+o|o}
+%{help=unstick}%{+ol|ol}
 ###  %bunstick%b [ban/exempt/invite] <hostmask OR number> [channel]
    turns a "sticky" ban/exempt/invite normal again.
    
@@ -278,11 +278,11 @@ see also: bans, exempts, invites, stick, -ban, -exempt, -invite
    information about users, it DOES NOT provide the means
    for sitting on a channel (this is in the irc module).
    The following commands are provided by the channels module:
-      %binfo%b
-%{+o|o}
-   for channel ops:
+      %binfo%b 
+%{+lo|lo}
+   for channel ops or halfops:
       %b+ban%b      %b-ban%b      %bbans%b      %bstick%b
-      %bunstick%b   %b+exempt%b   %b-exempt%b   %bexempts%b
+      %b+exempt%b   %b-exempt%b   %bexempts%b   %bunstick%b
       %b+invite%b   %b-invite%b   %binvites%b
 %{+m|m}
    for channel masters:

@@ -106,6 +106,13 @@ see also: devoice
    on the bot's list of authorized chanops.
    
 see also: op, console
+%{help=dehalfop}%{+o|o}
+###  %bdehalfop%b <nickname> [channel]
+   will remove halfop from the person you specify, so long as the
+   bot is opped on that channel, and the person you specify isn't
+   on the bot's list of authorized halfops.
+   
+see also: halfop, console
 %{help=invite}%{+o|o}
 ###  %binvite%b <nickname> [channel]
    invites someone from irc into your current console channel (or
@@ -114,14 +121,14 @@ see also: op, console
    the bot with /MSG INVITE
 
 see also: console
-%{help=kick}%{+o|o}
+%{help=kick}%{+lo|lo}
 ###  %bkick%b [channel] <nickname> [reason]
    will kick a user off your current console channel (or specified
    other channel) with the comment given.  if you omit the reason, 
    the default kick comment is "requested".
    
 see also: kickban, console
-%{help=kickban}%{+o|o}
+%{help=kickban}%{+lo|lo}
 ###  %bkickban%b [channel] [-|@]<nickname> [comment]
    kicks a user off the channel and bans her by a reasonable host-
    mask.  your nickname will be attached to the ban in the bot's
@@ -157,6 +164,13 @@ see also: +ban, bans, stick
    actively deopped by the bot.
    
 see also: deop, console
+%{help=op}%{+o|o}
+###  %bhalfop%b <nickname> [channel]
+   will grant halfop to the person you specify, so long as the bot
+   is opped on that channel, and the person you specify isn't being
+   actively dehalfopped by the bot.
+   
+see also: dehalfop, console
 %{help=say}%{+o|o}
 ###  %bsay%b [channel] <text>
    dumps the text to your current console channel (or other specified
@@ -172,9 +186,13 @@ see also: console
    the irc module provides the following dcc commmands:
 %{+o|o}
      for channel ops:
-       %bresetbans%b %bact%b      %bchannel%b    %bdeop%b     %bsay%b
-       %binvite%b    %bkick%b     %bkickban%b    %bop%b       %btopic%b
-       %bresetexempts%b       %bresetinvites%b
+       %bresetbans%b     %bact%b      %bdeop%b
+       %binvite%b        %bop%b       %bsay%b
+       %bresetexempts%b  %btopic%b    %bhalfop%b
+       %bresetinvites%b  %bchannel%b  %bdehalfop%b
+%{+ol|ol}
+     for channel ops or halfops:
+       %bkick%b   %bkickban%b
 %{+o}
      for global ops:
        %bmsg%b 
