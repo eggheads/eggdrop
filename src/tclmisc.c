@@ -2,7 +2,7 @@
  * tclmisc.c -- handles:
  *   Tcl stubs for everything else
  *
- * $Id: tclmisc.c,v 1.43 2003/04/17 01:55:57 wcc Exp $
+ * $Id: tclmisc.c,v 1.44 2003/05/11 23:53:24 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -379,6 +379,8 @@ static int tcl_duration STDVAR
     tmp = (sec);
     sprintf(&s[strlen(s)], "%lu second%s", tmp, (tmp == 1) ? "" : "s");
   }
+  if (s[strlen(s) - 1] == ' ')
+    s[strlen(s) - 1] = 0;
   Tcl_AppendResult(irp, s, NULL);
   return TCL_OK;
 }
