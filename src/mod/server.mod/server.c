@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  * 
- * $Id: server.c,v 1.40 2000/04/05 19:58:11 fabian Exp $
+ * $Id: server.c,v 1.41 2000/05/06 22:08:38 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -301,6 +301,8 @@ static void check_lag(char *buf)
     lagchecktype = LC_KICK;
     debug2("Starting lagcheck using KICK %s (%s)", nick, buf);
   } else if (!egg_strcasecmp(cmd, "MODE")) {
+    if ((net_type == 0) ||(net_type == 2) || (net_type == 4))
+      return; /* Undernet and Efnet do not reply to every MODE */
     chans = newsplit(&msg);
     modes = newsplit(&msg);
     par = newsplit(&msg);
