@@ -9,7 +9,7 @@
  * dprintf'ized, 27oct1995
  * multi-channel, 8feb1996
  * 
- * $Id: chan.c,v 1.50 1999/12/30 23:23:45 guppy Exp $
+ * $Id: chan.c,v 1.51 2000/01/06 19:22:49 arthur2 Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1393,7 +1393,7 @@ static int gotjoin(char *from, char *chname)
 	m->split = 0;
 	m->last = now;
 	m->delay = 0L;
-        m->flags &= ~WASOP; /* drummer */
+        m->flags = (chan_hasop(m) ? WASOP : 0);
 	m->user = u;
 	set_handle_laston(chname, u, now);
 	m->flags |= STOPWHO;

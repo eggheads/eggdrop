@@ -8,7 +8,7 @@
  * multi-channel, 6feb1996
  * stopped the bot deopping masters and bots in bitch mode, pteron 23Mar1997
  * 
- * $Id: mode.c,v 1.33 1999/12/30 23:23:46 guppy Exp $
+ * $Id: mode.c,v 1.34 2000/01/06 19:22:49 arthur2 Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1122,7 +1122,6 @@ static void gotmode(char *from, char *msg)
 	case 'o':
 	  op = newsplit(&msg);
 	  fixcolon(op);
-	  check_tcl_mode(nick, from, u, chan->name, ms2, op);
 	  if (ms2[0] == '+')
 	    got_op(chan, nick, from, op, &user);
 	  else
