@@ -2,7 +2,7 @@
  * net.c -- handles:
  *   all raw network i/o
  * 
- * $Id: net.c,v 1.36 2001/11/11 03:07:50 poptix Exp $
+ * $Id: net.c,v 1.37 2001/11/11 19:56:54 guppy Exp $
  */
 /* 
  * This is hereby released into the public domain.
@@ -996,9 +996,11 @@ void dequeue_sockets()
   int i, x;
 /* start poptix test code, this should avoid writes to sockets not ready to be written to. */
   int z=0, fds;
-  fds = getdtablesize();
   fd_set wfds;
   struct timeval tv;
+
+  fds = getdtablesize();
+
 #ifdef FD_SETSIZE
   if (fds > FD_SETSIZE)
     fds = FD_SETSIZE;           /* Fixes YET ANOTHER freebsd bug!!! */
