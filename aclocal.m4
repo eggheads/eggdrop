@@ -1,7 +1,7 @@
 dnl aclocal.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: aclocal.m4,v 1.28 2000/10/01 19:19:19 fabian Exp $
+dnl $Id: aclocal.m4,v 1.29 2000/10/27 19:33:28 fabian Exp $
 dnl
 
 
@@ -316,13 +316,6 @@ case "$egg_cv_var_system" in
     esac
     AC_DEFINE(STOP_UAC)dnl
     ;;
-  SunOS-4*)
-    AC_MSG_RESULT(SunOS 4)
-    SHLIB_LD="ld"
-    SHLIB_CC="${CC} -PIC"
-    SUNOS=yes
-    SHLIB_STRIP=touch
-    ;; 
   SunOS)
     if test "x`${UNAME} -r | cut -d . -f 1`" = "x5"
     then
@@ -333,7 +326,7 @@ case "$egg_cv_var_system" in
       AC_MSG_RESULT(SunOS)
       SUNOS=yes
       SHLIB_LD=ld
-      SHLIB_STRIP=touch
+      SHLIB_CC="${CC} -PIC"
       AC_DEFINE(DLOPEN_1)dnl
     fi
     AC_DEFINE(MODULES_OK)dnl
@@ -347,7 +340,7 @@ case "$egg_cv_var_system" in
   *)
     if test -r "/mach"
     then
-      AC_MSG_RESULT([NeXT])
+      AC_MSG_RESULT(Something Mach based)
       NEED_DL=0
       DEFAULT_MAKE=static
       AC_DEFINE(BORGCUBES)dnl
