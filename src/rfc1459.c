@@ -1,27 +1,27 @@
 /*
  * rfc1459.c
- * 
- * $Id: rfc1459.c,v 1.9 2004/01/09 05:56:37 wcc Exp $
+ *
+ * $Id: rfc1459.c,v 1.10 2004/04/06 06:56:38 wcc Exp $
  */
-/* 
+/*
  * Copyright (C) 1990 Jarkko Oikarinen
  * Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004 Eggheads Development Team
- * 
+ *
  * This code was more or less cloned from the ircd-hybrid 5.3 source.
  * The original code was written by Otto Harkoonen and even though it
  * it not entirely in synch with section 2.2 of RFC1459 in that it
  * additionally defines carat as an uppercase version of tilde, it's
  * what is in the servers themselves so we're going with it this way.
- * 
+ *
  * If for some reason someone who maintains the source for ircd decides
  * to change the code to be completely RFC compliant, the change here
  * would be absolutely miniscule.
- * 
+ *
  * BTW, since carat characters are allowed in nicknames and tildes are
  * not, I stronly suggest that people convert to uppercase when doing
  * comparisons or creation of hash elements (which tcl laughably calls
  * arrays) to avoid making entries with impossible nicknames in them.
- * 
+ *
  * --+ Dagmar
  */
 

@@ -4,7 +4,7 @@
  *   disconnect on a dcc socket
  *   ...and that's it!  (but it's a LOT)
  *
- * $Id: dcc.c,v 1.76 2004/03/14 13:30:21 wcc Exp $
+ * $Id: dcc.c,v 1.77 2004/04/06 06:56:38 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -509,7 +509,7 @@ static int dcc_bot_check_digest(int idx, char *remote_digest)
 
   if (!password)
     return 1;
-  
+
   MD5_Init(&md5context);
 
   egg_snprintf(digest_string, 33, "<%x%x@", getpid(),

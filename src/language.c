@@ -2,7 +2,7 @@
  * language.c -- handles:
  *   language support code
  *
- * $Id: language.c,v 1.23 2004/01/09 05:56:37 wcc Exp $
+ * $Id: language.c,v 1.24 2004/04/06 06:56:38 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -652,7 +652,7 @@ static int tcl_language STDVAR
 
   buf = nmalloc(strlen(argv[1]) + 1);
   strcpy(buf, argv[1]);
-  
+
   if (!split_lang(buf, &lang, &section)) {
     Tcl_AppendResult(irp, "Invalid parameter", NULL);
     nfree(buf);

@@ -4,7 +4,7 @@
  *
  *   IF YOU ALTER THIS FILE, YOU NEED TO RECOMPILE THE BOT.
  *
- * $Id: eggdrop.h,v 1.55 2004/01/09 05:56:36 wcc Exp $
+ * $Id: eggdrop.h,v 1.56 2004/04/06 06:56:38 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -76,7 +76,7 @@
 
 /* Language stuff */
 #define LANGDIR  "./language" /* language file directory                   */
-#define BASELANG "english"    /* language which always gets loaded before 
+#define BASELANG "english"    /* language which always gets loaded before
                                  all other languages. You do not want to
                                  change this.                              */
 

@@ -2,23 +2,23 @@
  * match.c
  *   wildcard matching functions
  *
- * $Id: match.c,v 1.10 2004/02/10 02:10:50 wcc Exp $
+ * $Id: match.c,v 1.11 2004/04/06 06:56:38 wcc Exp $
  *
  * Once this code was working, I added support for % so that I could
  * use the same code both in Eggdrop and in my IrcII client.
  * Pleased with this, I added the option of a fourth wildcard, ~,
  * which matches varying amounts of whitespace (at LEAST one space,
  * though, for sanity reasons).
- * 
+ *
  * This code would not have been possible without the prior work and
  * suggestions of various sourced.  Special thanks to Robey for
  * all his time/help tracking down bugs and his ever-helpful advice.
- * 
+ *
  * 04/09:  Fixed the "*\*" against "*a" bug (caused an endless loop)
- * 
+ *
  *   Chris Fuller  (aka Fred1@IRC & Fwitz@IRC)
  *     crf@cfox.bchs.uh.edu
- * 
+ *
  * I hereby release this code into the public domain
  *
  */

@@ -2,7 +2,7 @@
  * tcldcc.c -- handles:
  *   Tcl stubs for the dcc commands
  *
- * $Id: tcldcc.c,v 1.50 2004/01/09 05:56:37 wcc Exp $
+ * $Id: tcldcc.c,v 1.51 2004/04/06 06:56:38 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -112,7 +112,7 @@ static int tcl_dccsimul STDVAR
   int idx;
 
   BADARGS(3, 3, " idx command");
-  
+
   idx = findidx(atoi(argv[1]));
   if (idx >= 0 && (dcc[idx].type->flags & DCT_SIMUL)) {
     int l = strlen(argv[2]);
@@ -327,7 +327,7 @@ static int tcl_strip STDVAR
   module_entry *me;
 
   BADARGS(2, 4, " idx ?strip-flags?");
-  
+
   i = findidx(atoi(argv[1]));
   if (i < 0 || dcc[i].type != &DCC_CHAT) {
     Tcl_AppendResult(irp, "invalid idx", NULL);
@@ -439,7 +439,7 @@ static int tcl_control STDVAR
   void *hold;
 
   BADARGS(3, 3, " idx command");
-  
+
   idx = findidx(atoi(argv[1]));
   if (idx < 0) {
     Tcl_AppendResult(irp, "invalid idx", NULL);
@@ -496,7 +496,7 @@ static int tcl_killdcc STDVAR
   if ((dcc[idx].sock == STDOUT) && !backgrd) /* Don't kill terminal socket */
     return TCL_OK;
 
-  
+
   if (dcc[idx].type->flags & DCT_CHAT) { /* Make sure 'whom' info is updated */
     chanout_but(idx, dcc[idx].u.chat->channel, "*** %s has left the %s%s%s\n",
                 dcc[idx].nick, dcc[idx].u.chat ? "channel" : "partyline",
@@ -520,7 +520,7 @@ static int tcl_putbot STDVAR
   char msg[401];
 
   BADARGS(3, 3, " botnick message");
-  
+
   i = nextbot(argv[1]);
   if (i < 0) {
     Tcl_AppendResult(irp, "bot is not on the botnet", NULL);
@@ -548,7 +548,7 @@ static int tcl_idx2hand STDVAR
   int idx;
 
   BADARGS(2, 2, " idx");
-  
+
   idx = findidx(atoi(argv[1]));
   if (idx < 0) {
     Tcl_AppendResult(irp, "invalid idx", NULL);
@@ -564,7 +564,7 @@ static int tcl_islinked STDVAR
   int i;
 
   BADARGS(2, 2, " bot");
-  
+
   i = nextbot(argv[1]);
   if (i < 0)
     Tcl_AppendResult(irp, "0", NULL);
@@ -732,7 +732,7 @@ static int tcl_getdccidle STDVAR
   char s[21];
 
   BADARGS(2, 2, " idx");
-  
+
   idx = findidx(atoi(argv[1]));
   if (idx < 0) {
     Tcl_AppendResult(irp, "invalid idx", NULL);
@@ -750,7 +750,7 @@ static int tcl_getdccaway STDVAR
   int idx;
 
   BADARGS(2, 2, " idx");
-  
+
   idx = findidx(atol(argv[1]));
   if (idx < 0 || dcc[idx].type != &DCC_CHAT) {
     Tcl_AppendResult(irp, "invalid idx", NULL);
@@ -768,7 +768,7 @@ static int tcl_setdccaway STDVAR
   int idx;
 
   BADARGS(3, 3, " idx message");
-  
+
   idx = findidx(atol(argv[1]));
   if (idx < 0 || dcc[idx].type != &DCC_CHAT) {
     Tcl_AppendResult(irp, "invalid idx", NULL);
@@ -813,7 +813,7 @@ static int tcl_unlink STDVAR
   char bot[HANDLEN + 1];
 
   BADARGS(2, 3, " bot ?comment?");
-  
+
   strncpyz(bot, argv[1], sizeof bot);
   i = nextbot(bot);
   if (i < 0)
@@ -837,7 +837,7 @@ static int tcl_connect STDVAR
   char s[81];
 
   BADARGS(3, 3, " hostname port");
-  
+
   if (dcc_total == max_dcc) {
     Tcl_AppendResult(irp, "out of dcc table space", NULL);
     return TCL_ERROR;
@@ -881,7 +881,7 @@ static int tcl_listen STDVAR
   struct portmap *pmap = NULL, *pold = NULL;
 
   BADARGS(3, 5, " port type ?mask?/?proc ?flag??");
-  
+
   port = realport = atoi(argv[1]);
   for (pmap = root; pmap; pold = pmap, pmap = pmap->next)
     if (pmap->realport == port) {
@@ -999,7 +999,7 @@ static int tcl_boot STDVAR
   int i, ok = 0;
 
   BADARGS(2, 3, " user@bot ?reason?");
-  
+
   strncpyz(who, argv[1], sizeof who);
 
   if (strchr(who, '@') != NULL) {

@@ -2,7 +2,7 @@
  * tcluser.c -- handles:
  *   Tcl stubs for the user-record-oriented commands
  *
- * $Id: tcluser.c,v 1.37 2004/01/09 05:56:37 wcc Exp $
+ * $Id: tcluser.c,v 1.38 2004/04/06 06:56:38 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -70,7 +70,7 @@ static int tcl_passwdOk STDVAR
   struct userrec *u;
 
   BADARGS(3, 3, " handle passwd");
-  
+
   Tcl_AppendResult(irp, ((u = get_user_by_handle(userlist, argv[1])) &&
                    u_pass_match(u, argv[2])) ? "1" : "0", NULL);
   return TCL_OK;
@@ -83,7 +83,7 @@ static int tcl_chattr STDVAR
   struct userrec *u;
 
   BADARGS(2, 4, " handle ?changes? ?channel?");
-  
+
   if ((argv[1][0] == '*') || !(u = get_user_by_handle(userlist, argv[1]))) {
     Tcl_AppendResult(irp, "*", NULL);
     return TCL_OK;
@@ -158,7 +158,7 @@ static int tcl_botattr STDVAR
   struct userrec *u;
 
   BADARGS(2, 4, " bot-handle ?changes? ?channel?");
- 
+
   u = get_user_by_handle(userlist, argv[1]);
   if ((argv[1][0] == '*') || !u || !(u->flags & USER_BOT)) {
     Tcl_AppendResult(irp, "*", NULL);
@@ -258,7 +258,7 @@ static int tcl_matchattr STDVAR
 static int tcl_adduser STDVAR
 {
   BADARGS(2, 3, " handle ?hostmask?");
-  
+
   if (strlen(argv[1]) > HANDLEN)
     argv[1][HANDLEN] = 0;
   if ((argv[1][0] == '*') || get_user_by_handle(userlist, argv[1]))
@@ -387,7 +387,7 @@ static int tcl_chhandle STDVAR
   int x = 1, i;
 
   BADARGS(3, 3, " oldnick newnick");
-  
+
   u = get_user_by_handle(userlist, argv[1]);
   if (!u)
     x = 0;
@@ -531,7 +531,7 @@ static int tcl_setuser STDVAR
   module_entry *me;
 
   BADARGS(3, 999, " handle type ?setting....?");
-  
+
   if (!(et = find_entry_type(argv[2]))) {
     Tcl_AppendResult(irp, "No such info type: ", argv[2], NULL);
     return TCL_ERROR;

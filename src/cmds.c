@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  *
- * $Id: cmds.c,v 1.106 2004/01/18 02:11:39 wcc Exp $
+ * $Id: cmds.c,v 1.107 2004/04/06 06:56:38 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -800,7 +800,7 @@ static void cmd_pls_bot(struct userrec *u, int idx, char *par)
     userlist = adduser(userlist, handle, "none", "-", USER_BOT);
     u1 = get_user_by_handle(userlist, handle);
     bi = user_malloc(sizeof(struct bot_addr));
- 
+
     q = strchr(addr, ':');
     if (!q) {
       bi->address = user_malloc(strlen(addr) + 1);

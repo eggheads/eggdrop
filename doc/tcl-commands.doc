@@ -1,4 +1,4 @@
-$Id: tcl-commands.doc,v 1.107 2004/01/13 01:30:25 wcc Exp $
+$Id: tcl-commands.doc,v 1.108 2004/04/06 06:56:38 wcc Exp $
 
 Eggdrop Tcl Commands
 Last revised: January 12, 2004
@@ -1795,13 +1795,13 @@ marked with vertical bars (|) on the left.
 
          Description: previous versions of Eggdrop required a special compile
            option to enable this binding, but it's now standard. The keyword
-	   is either a numeric, like "368", or a keyword, such as "PRIVMSG".
-	   from will be the server name or the source user (depending on
-	   the keyword); flags are ignored. The order of the arguments is
-	   identical to the order that the IRC server sends to the bot. The
-	   pre-processing  only splits it apart enough to determine the
-	   keyword. If the proc returns 1, Eggdrop will not process the line
-	   any further (this could cause unexpected behavior in some cases).
+           is either a numeric, like "368", or a keyword, such as "PRIVMSG".
+           from will be the server name or the source user (depending on
+           the keyword); flags are ignored. The order of the arguments is
+           identical to the order that the IRC server sends to the bot. The
+           pre-processing  only splits it apart enough to determine the
+           keyword. If the proc returns 1, Eggdrop will not process the line
+           any further (this could cause unexpected behavior in some cases).
          Module: server
 
     (18) BOT

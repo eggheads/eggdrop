@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  *
- * $Id: main.c,v 1.105 2004/01/13 10:21:00 wcc Exp $
+ * $Id: main.c,v 1.106 2004/04/06 06:56:38 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -50,9 +50,9 @@
 #  endif
 #endif
 
-#ifdef STOP_UAC				/* osf/1 complains a lot */
+#ifdef STOP_UAC                         /* osf/1 complains a lot */
 #  include <sys/sysinfo.h>
-#  define UAC_NOPRINT 0x00000001	/* Don't report unaligned fixups */
+#  define UAC_NOPRINT 0x00000001        /* Don't report unaligned fixups */
 #endif
 
 #include "chan.h"
@@ -89,25 +89,25 @@ time_t now;
 char egg_version[1024] = "1.6.16";
 int egg_numver = 1061600;
 
-char notify_new[121] = "";	/* Person to send a note to for new users */
-int default_flags = 0;		/* Default user flags                     */
-int default_uflags = 0;		/* Default user-definied flags            */
+char notify_new[121] = "";      /* Person to send a note to for new users */
+int default_flags = 0;          /* Default user flags                     */
+int default_uflags = 0;         /* Default user-definied flags            */
 
-int backgrd = 1;	/* Run in the background?                        */
-int con_chan = 0;	/* Foreground: constantly display channel stats? */
-int term_z = 0;		/* Foreground: use the terminal as a partyline?  */
+int backgrd = 1;        /* Run in the background?                        */
+int con_chan = 0;       /* Foreground: constantly display channel stats? */
+int term_z = 0;         /* Foreground: use the terminal as a partyline?  */
 int use_stderr = 1;     /* Send stuff to stderr instead of logfiles?     */
 
-char configfile[121] = "eggdrop.conf";	/* Default config file name */
-char pid_file[120];			/* Name of the pid file     */
-char helpdir[121] = "help/";		/* Directory of help files  */
-char textdir[121] = "text/";		/* Directory for text files */
+char configfile[121] = "eggdrop.conf";  /* Default config file name */
+char pid_file[120];                     /* Name of the pid file     */
+char helpdir[121] = "help/";            /* Directory of help files  */
+char textdir[121] = "text/";            /* Directory for text files */
 
-int keep_all_logs = 0;			/* Never erase logfiles?    */
-char logfile_suffix[21] = ".%d%b%Y";	/* Format of logfile suffix */
-int switch_logfiles_at = 300;		/* When to switch logfiles  */
+int keep_all_logs = 0;                  /* Never erase logfiles?    */
+char logfile_suffix[21] = ".%d%b%Y";    /* Format of logfile suffix */
+int switch_logfiles_at = 300;           /* When to switch logfiles  */
 
-time_t online_since;	/* time that the bot was started */
+time_t online_since;    /* time that the bot was started */
 
 int make_userfile = 0; /* Using bot in userfile-creation mode? */
 char owner[121] = "";  /* Permanent owner(s) of the bot        */

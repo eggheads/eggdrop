@@ -7,7 +7,7 @@
  *   (non-Tcl) procedure lookups for msg/dcc/file commands
  *   (Tcl) binding internal procedures to msg/dcc/file commands
  *
- * $Id: tclhash.c,v 1.46 2004/04/05 23:35:20 wcc Exp $
+ * $Id: tclhash.c,v 1.47 2004/04/06 06:56:38 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -512,7 +512,7 @@ static int builtin_3char STDVAR
   Function F = (Function) cd;
 
   BADARGS(4, 4, " from to args");
-  
+
   CHECKVALIDITY(builtin_3char);
   F(argv[1], argv[2], argv[3]);
   return TCL_OK;
@@ -523,7 +523,7 @@ static int builtin_2char STDVAR
   Function F = (Function) cd;
 
   BADARGS(3, 3, " nick msg");
-  
+
   CHECKVALIDITY(builtin_2char);
   F(argv[1], argv[2]);
   return TCL_OK;
@@ -534,7 +534,7 @@ static int builtin_5int STDVAR
   Function F = (Function) cd;
 
   BADARGS(6, 6, " min hrs dom mon year");
-  
+
   CHECKVALIDITY(builtin_5int);
   F(atoi(argv[1]), atoi(argv[2]), atoi(argv[3]), atoi(argv[4]), atoi(argv[5]));
   return TCL_OK;
@@ -545,7 +545,7 @@ static int builtin_char STDVAR
   Function F = (Function) cd;
 
   BADARGS(2, 2, " handle");
-  
+
   CHECKVALIDITY(builtin_char);
   F(argv[1]);
   return TCL_OK;
@@ -556,7 +556,7 @@ static int builtin_chpt STDVAR
   Function F = (Function) cd;
 
   BADARGS(3, 3, " bot nick sock");
-  
+
   CHECKVALIDITY(builtin_chpt);
   F(argv[1], argv[2], atoi(argv[3]));
   return TCL_OK;
@@ -567,7 +567,7 @@ static int builtin_chjn STDVAR
   Function F = (Function) cd;
 
   BADARGS(6, 6, " bot nick chan# flag&sock host");
-  
+
   CHECKVALIDITY(builtin_chjn);
   F(argv[1], argv[2], atoi(argv[3]), argv[4][0],
     argv[4][0] ? atoi(argv[4] + 1) : 0, argv[5]);
@@ -581,7 +581,7 @@ static int builtin_idxchar STDVAR
   char *r;
 
   BADARGS(3, 3, " idx args");
-  
+
   CHECKVALIDITY(builtin_idxchar);
   idx = findidx(atoi(argv[1]));
   if (idx < 0) {
@@ -611,7 +611,7 @@ static int builtin_charidx STDVAR
   int idx;
 
   BADARGS(3, 3, " handle idx");
-  
+
   CHECKVALIDITY(builtin_charidx);
   idx = findanyidx(atoi(argv[2]));
   if (idx < 0) {
@@ -629,7 +629,7 @@ static int builtin_chat STDVAR
   int ch;
 
   BADARGS(4, 4, " handle idx text");
-  
+
   CHECKVALIDITY(builtin_chat);
   ch = atoi(argv[2]);
   F(argv[1], ch, argv[3]);
@@ -642,7 +642,7 @@ static int builtin_dcc STDVAR
   Function F = (Function) cd;
 
   BADARGS(4, 4, " hand idx param");
-  
+
   idx = findidx(atoi(argv[2]));
   if (idx < 0) {
     Tcl_AppendResult(irp, "invalid idx", NULL);

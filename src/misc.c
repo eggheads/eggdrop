@@ -7,7 +7,7 @@
  *   help system
  *   motd display and %var substitution
  *
- * $Id: misc.c,v 1.69 2004/01/09 12:07:22 wcc Exp $
+ * $Id: misc.c,v 1.70 2004/04/06 06:56:38 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1359,7 +1359,7 @@ void show_motd(int idx)
   dprintf(idx, "\n");
 }
 
-/* Show banner to telnet user 
+/* Show banner to telnet user
  */
 void show_banner(int idx)
 {
@@ -1518,7 +1518,7 @@ void str_unescape(char *str, register const char esc_char)
   (void) strchr_unescape(str, 0, esc_char);
 }
 
-/* Kills the bot. s1 is the reason shown to other bots, 
+/* Kills the bot. s1 is the reason shown to other bots,
  * s2 the reason shown on the partyline. (Sup 25Jul2001)
  */
 void kill_bot(char *s1, char *s2)

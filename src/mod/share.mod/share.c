@@ -1,7 +1,7 @@
 /*
  * share.c -- part of share.mod
  *
- * $Id: share.c,v 1.79 2004/02/10 01:57:13 wcc Exp $
+ * $Id: share.c,v 1.80 2004/04/06 06:56:38 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1453,7 +1453,7 @@ static void check_expired_tbufs()
           /* ^ send it again in case they missed it */
         /* If it's a share bot that hasnt been sharing, ask again */
       } else if (!(dcc[i].status & STAT_SHARE)) {
-	/* Patched from original source by giusc@gbss.it <20040207> */
+        /* Patched from original source by giusc@gbss.it <20040207> */
         if (dcc[i].user && (bot_flags(dcc[i].user) & BOT_AGGRESSIVE))  {
           dprintf(i, "s u?\n");
           dcc[i].status |= STAT_OFFERED;
@@ -2118,7 +2118,7 @@ static void share_report(int idx, int details)
     dprintf(idx, "    Private owners: %s\n", (private_global ||
             (private_globals_bitmask() & USER_OWNER)) ? "yes" : "no");
     dprintf(idx, "    Allow resync: %s\n", allow_resync ? "yes" : "no");
-            
+
     for (i = 0; i < dcc_total; i++) {
       if (dcc[i].type == &DCC_BOT) {
         if (dcc[i].status & STAT_GETTING) {

@@ -2,7 +2,7 @@
  * tclmisc.c -- handles:
  *   Tcl stubs for everything else
  *
- * $Id: tclmisc.c,v 1.47 2004/01/09 05:56:37 wcc Exp $
+ * $Id: tclmisc.c,v 1.48 2004/04/06 06:56:38 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -76,7 +76,7 @@ static int tcl_logfile STDVAR
   char s[151];
 
   BADARGS(1, 4, " ?logModes channel logFile?");
-  
+
   if (argc == 1) {
     /* They just want a list of the logfiles and modes */
     for (i = 0; i < max_logs; i++)
@@ -141,7 +141,7 @@ static int tcl_putlog STDVAR
   char logtext[501];
 
   BADARGS(2, 2, " text");
-  
+
   strncpyz(logtext, argv[1], sizeof logtext);
   putlog(LOG_MISC, "*", "%s", logtext);
   return TCL_OK;
@@ -152,7 +152,7 @@ static int tcl_putcmdlog STDVAR
   char logtext[501];
 
   BADARGS(2, 2, " text");
-  
+
   strncpyz(logtext, argv[1], sizeof logtext);
   putlog(LOG_CMDS, "*", "%s", logtext);
   return TCL_OK;
@@ -163,7 +163,7 @@ static int tcl_putxferlog STDVAR
   char logtext[501];
 
   BADARGS(2, 2, " text");
-  
+
   strncpyz(logtext, argv[1], sizeof logtext);
   putlog(LOG_FILES, "*", "%s", logtext);
   return TCL_OK;
@@ -175,7 +175,7 @@ static int tcl_putloglev STDVAR
   char logtext[501];
 
   BADARGS(4, 4, " level channel text");
-  
+
   lev = logmodes(argv[1]);
   if (!lev) {
     Tcl_AppendResult(irp, "No valid log-level given", NULL);
@@ -290,7 +290,7 @@ static int tcl_killtimer STDVAR
 static int tcl_killutimer STDVAR
 {
   BADARGS(2, 2, " timerID");
-  
+
   if (strncmp(argv[1], "timer", 5)) {
     Tcl_AppendResult(irp, "argument is not a timerID", NULL);
     return TCL_ERROR;
@@ -372,7 +372,7 @@ static int tcl_unixtime STDVAR
   time_t now2 = time(NULL);
 
   BADARGS(1, 1, "");
-  
+
   egg_snprintf(s, sizeof s, "%lu", (unsigned long) now2);
   Tcl_AppendResult(irp, s, NULL);
   return TCL_OK;
@@ -384,7 +384,7 @@ static int tcl_ctime STDVAR
   char s[25];
 
   BADARGS(2, 2, " unixtime");
-  
+
   tt = (time_t) atol(argv[1]);
   strncpyz(s, ctime(&tt), sizeof s);
   Tcl_AppendResult(irp, s, NULL);
@@ -417,7 +417,7 @@ static int tcl_myip STDVAR
   char s[16];
 
   BADARGS(1, 1, "");
-   
+
   egg_snprintf(s, sizeof s, "%lu", iptolong(getmyip()));
   Tcl_AppendResult(irp, s, NULL);
   return TCL_OK;
@@ -446,7 +446,7 @@ static int tcl_sendnote STDVAR
   char s[5], from[NOTENAMELEN + 1], to[NOTENAMELEN + 1], msg[451];
 
   BADARGS(4, 4, " from to message");
-  
+
   strncpyz(from, argv[1], sizeof from);
   strncpyz(to, argv[2], sizeof to);
   strncpyz(msg, argv[3], sizeof msg);
@@ -461,7 +461,7 @@ static int tcl_dumpfile STDVAR
   struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
 
   BADARGS(3, 3, " nickname filename");
- 
+
   strncpyz(nick, argv[1], sizeof nick);
   get_user_flagrec(get_user_by_nick(nick), &fr, NULL);
   showhelp(argv[1], argv[2], &fr, HELP_TEXT);
@@ -474,7 +474,7 @@ static int tcl_dccdumpfile STDVAR
   struct flag_record fr = { FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0 };
 
   BADARGS(3, 3, " idx filename");
- 
+
   i = atoi(argv[1]);
   idx = findidx(i);
   if (idx < 0) {
@@ -615,7 +615,7 @@ static int tcl_reloadhelp STDVAR
 static int tcl_callevent STDVAR
 {
   BADARGS(2, 2, " event");
-  
+
   check_tcl_event(argv[1]);
   return TCL_OK;
 }
@@ -630,7 +630,7 @@ Tcl_Obj *CONST objv[];
 #else
 static int tcl_md5 STDVAR
 {
-#endif				/* USE_TCL_OBJ */
+#endif /* USE_TCL_OBJ */
   MD5_CTX md5context;
   char digest_string[33], *string;
   unsigned char digest[16];
@@ -648,7 +648,7 @@ static int tcl_md5 STDVAR
 #  endif /* USE_TCL_BYTE_ARRAYS */
 #else /* USE_TCL_OBJ */
   BADARGS(2, 2, " string");
-  
+
   string = argv[1];
   len = strlen(argv[1]);
 #endif /* USE_TCL_OBJ */
