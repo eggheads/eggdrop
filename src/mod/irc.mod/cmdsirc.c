@@ -2,7 +2,7 @@
  * chancmds.c -- part of irc.mod
  *   handles commands directly relating to channel interaction
  *
- * $Id: cmdsirc.c,v 1.35 2002/07/09 05:40:56 guppy Exp $
+ * $Id: cmdsirc.c,v 1.36 2002/07/09 05:46:35 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -251,7 +251,7 @@ static void cmd_kickban(struct userrec *u, int idx, char *par)
       s1[2] = '*';
       break;
     case '-':
-      s1 = strchr(s, '-');
+      s1 = strchr(s, '!');
       s1[1] = '*';
       s1--;
       s1[0] = '*';
