@@ -2,7 +2,7 @@
  * misc.c -- handles:
  *   copyfile() movefile()
  * 
- * $Id: misc_file.c,v 1.2 2000/05/13 20:20:29 fabian Exp $
+ * $Id: misc_file.c,v 1.3 2000/12/10 15:10:27 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -81,7 +81,7 @@ int movefile(char *oldpath, char *newpath)
   
 #ifdef HAVE_RENAME
   /* Try to use rename first */
-  if (rename(oldpath, newpath) == 0)
+  if (!rename(oldpath, newpath))
     return 0;
 #endif /* HAVE_RENAME */
 
@@ -89,7 +89,7 @@ int movefile(char *oldpath, char *newpath)
    * deleting the file.
    */
   ret = copyfile(oldpath, newpath);
-  if (ret == 0)
+  if (!ret)
     unlink(oldpath);
   return ret;
 }

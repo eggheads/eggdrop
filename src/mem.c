@@ -3,7 +3,7 @@
  *   memory allocation and deallocation
  *   keeping track of what memory is being used by whom
  * 
- * $Id: mem.c,v 1.13 2000/10/27 19:32:41 fabian Exp $
+ * $Id: mem.c,v 1.14 2000/12/10 15:10:27 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -145,29 +145,29 @@ void debug_mem_to_dcc(int idx)
     if (p)
       *p = 0;
     l = memtbl[i].size;
-    if (!egg_strcasecmp(fn, "language.c"))
+    if (!strcmp(fn, "language.c"))
       use[0] += l;
-    else if (!egg_strcasecmp(fn, "chanprog.c"))
+    else if (!strcmp(fn, "chanprog.c"))
       use[1] += l;
-    else if (!egg_strcasecmp(fn, "misc.c"))
+    else if (!strcmp(fn, "misc.c"))
       use[2] += l;
-    else if (!egg_strcasecmp(fn, "userrec.c"))
+    else if (!strcmp(fn, "userrec.c"))
       use[3] += l;
-    else if (!egg_strcasecmp(fn, "net.c"))
+    else if (!strcmp(fn, "net.c"))
       use[4] += l;
-    else if (!egg_strcasecmp(fn, "dccutil.c"))
+    else if (!strcmp(fn, "dccutil.c"))
       use[5] += l;
-    else if (!egg_strcasecmp(fn, "botnet.c"))
+    else if (!strcmp(fn, "botnet.c"))
       use[6] += l;
-    else if (!egg_strcasecmp(fn, "tcl.c"))
+    else if (!strcmp(fn, "tcl.c"))
       use[7] += l;
-    else if (!egg_strcasecmp(fn, "tclhash.c"))
+    else if (!strcmp(fn, "tclhash.c"))
       use[8] += l;
-    else if (!egg_strcasecmp(fn, "modules.c"))
+    else if (!strcmp(fn, "modules.c"))
       use[9] += l;
-    else if (!egg_strcasecmp(fn, "tcldcc.c"))
+    else if (!strcmp(fn, "tcldcc.c"))
       use[10] += l;
-    else if (!egg_strcasecmp(fn, "dns.c"))
+    else if (!strcmp(fn, "dns.c"))
       use[11] += l;
     else if (p) {
       for (me = module_list; me; me = me->next)

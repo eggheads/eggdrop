@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  * 
- * $Id: main.c,v 1.48 2000/11/23 03:56:40 guppy Exp $
+ * $Id: main.c,v 1.49 2000/12/10 15:10:27 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -46,6 +46,7 @@
 /* Some systems have a working sys/wait.h even though configure will
  * decide it's not bsd compatable.  Oh well.
  */
+
 #include "chan.h"
 #include "modules.h"
 #include "tandem.h"
@@ -103,7 +104,7 @@ time_t	online_since;		/* Unix-time that the bot loaded up */
 int	make_userfile = 0;	/* Using bot in make-userfile mode? (first
 				   user to 'hello' becomes master) */
 char	owner[121] = "";	/* Permanent owner(s) of the bot */
-char	pid_file[40];		/* Name of the file for the pid to be
+char	pid_file[HANDLEN + 5];		/* Name of the file for the pid to be
 				   stored in */
 int	save_users_at = 0;	/* How many minutes past the hour to
 				   save the userfile? */
@@ -181,7 +182,6 @@ int expected_memory(void)
 {
   int tot;
 
-  Context;
   tot = expmem_chanprog() + expmem_users() + expmem_misc() +
     expmem_dccutil() + expmem_botnet() + expmem_tcl() + expmem_tclhash() +
     expmem_net() + expmem_modules(0) + expmem_language() + expmem_tcldcc();
@@ -212,7 +212,7 @@ static int	nested_debug = 0;
 void write_debug()
 {
   int x;
-  char s[80];
+  char s[25];
   int y;
 
   if (nested_debug) {
@@ -225,7 +225,7 @@ void write_debug()
     x = creat("DEBUG.DEBUG", 0644);
     setsock(x, SOCK_NONSOCK);
     if (x >= 0) {
-      strcpy(s, ctime(&now));
+      strncpyz(s, ctime(&now), sizeof s);
       dprintf(-x, "Debug (%s) written %s", ver, s);
       dprintf(-x, "Please report problem to eggheads@eggheads.org");
       dprintf(-x, "after a visit to http://www.eggheads.org/bugs.html");
@@ -252,14 +252,13 @@ void write_debug()
   if (x < 0) {
     putlog(LOG_MISC, "*", "* Failed to write DEBUG");
   } else {
-    strcpy(s, ctime(&now));
+    strncpyz(s, ctime(&now), sizeof s);
     dprintf(-x, "Debug (%s) written %s", ver, s);
     dprintf(-x, "Full Patch List: %s\n", egg_xtra);
 #ifdef STATIC
     dprintf(-x, "STATICALLY LINKED\n");
 #endif
-    strcpy(s, "info library");
-    if (interp && (Tcl_Eval(interp, s) == TCL_OK))
+    if (interp && (Tcl_Eval(interp, "info library") == TCL_OK))
       dprintf(-x, "Using tcl library: %s (header version %s)\n",
 	      interp->result, TCL_VERSION);
     dprintf(-x, "Compile flags: %s\n", CCFLAGS);
@@ -377,8 +376,7 @@ void eggContext(const char *file, int line, const char *module)
 
   p = strrchr(file, '/');
   if (!module) {
-    strncpy(x, p ? p + 1 : file, 30);
-    x[30] = 0;
+    strncpyz(x, p ? p + 1 : file, sizeof x);
   } else
     egg_snprintf(x, 31, "%s:%s", module, p ? p + 1 : file);
   cx_ptr = ((cx_ptr + 1) & 15);
@@ -396,15 +394,13 @@ void eggContextNote(const char *file, int line, const char *module,
 
   p = strrchr(file, '/');
   if (!module) {
-    strncpy(x, p ? p + 1 : file, 30);
-    x[30] = 0;
+    strncpyz(x, p ? p + 1 : file, sizeof x);
   } else
     egg_snprintf(x, 31, "%s:%s", module, p ? p + 1 : file);
   cx_ptr = ((cx_ptr + 1) & 15);
   strcpy(cx_file[cx_ptr], x);
   cx_line[cx_ptr] = line;
-  strncpy(cx_note[cx_ptr], note, 255);
-  cx_note[cx_ptr][255] = 0;
+  strncpyz(cx_note[cx_ptr], note, sizeof cx_note[cx_ptr]);
 }
 #endif
 
@@ -426,26 +422,28 @@ void eggAssert(const char *file, int line, const char *module)
 
 static void do_arg(char *s)
 {
+  char x[1024], *z = x;
   int i;
 
   if (s[0] == '-')
     for (i = 1; i < strlen(s); i++) {
-      if (s[i] == 'n')
+      switch (s[i]) {
+	case 'n':
 	backgrd = 0;
-      if (s[i] == 'c') {
+	  break;
+        case 'c':
 	con_chan = 1;
 	term_z = 0;
-      }
-      if (s[i] == 't') {
+	  break;
+	case 't':
 	con_chan = 0;
 	term_z = 1;
-      }
-      if (s[i] == 'm')
+	  break;
+	case 'm':
 	make_userfile = 1;
-      if (s[i] == 'v') {
-	char x[256], *z = x;
-
-	strcpy(x, egg_version);
+	  break;
+	case 'v':
+	  strncpyz(x, egg_version, sizeof x);
 	newsplit(&z);
 	newsplit(&z);
 	printf("%s\n", version);
@@ -453,25 +451,25 @@ static void do_arg(char *s)
 	  printf("  (patches: %s)\n", z);
 	bg_send_quit(BG_ABORT);
 	exit(0);
-      }
-      if (s[i] == 'h') {
+ 	  break; /* this should never be reached */
+	case 'h':
 	printf("\n%s\n\n", version);
 	printf(EGG_USAGE);
 	printf("\n");
 	bg_send_quit(BG_ABORT);
 	exit(0);
+	  break; /* this should never be reached */
       }
   } else
-    strcpy(configfile, s);
+    strncpyz(configfile, s, sizeof configfile);
 }
 
 void backup_userfile(void)
 {
-  char s[150];
+  char s[125];
 
   putlog(LOG_MISC, "*", USERF_BACKUP);
-  strcpy(s, userfile);
-  strcat(s, "~bak");
+  egg_snprintf(s, sizeof s, "%s~bak", userfile);
   copyfile(userfile, s);
 }
 
@@ -525,15 +523,15 @@ static void core_secondly()
     if (((int) (nowtm.tm_min / 5) * 5) == (nowtm.tm_min)) {	/* 5 min */
       call_hook(HOOK_5MINUTELY);
       check_botnet_pings();
-      if (quick_logs == 0) {
+      if (!quick_logs) {
 	flushlogs();
 	check_logsize();
       }
-      if (miltime == 0) {	/* At midnight */
-	char s[128];
+      if (!miltime) {	/* At midnight */
+	char s[25];
 	int j;
 
-	s[my_strcpy(s, ctime(&now)) - 1] = 0;
+	strncpyz(s, ctime(&now), sizeof s);
 	putlog(LOG_ALL, "*", "--- %.11s%s", s, s + 20);
 	backup_userfile();
 	for (j = 0; j < max_logs; j++) {
@@ -561,7 +559,7 @@ static void core_secondly()
 	      fclose(logs[i].f);
 	      logs[i].f = NULL;
 	    }
-	    simple_sprintf(s, "%s.yesterday", logs[i].filename);
+	    egg_snprintf(s, sizeof s, "%s.yesterday", logs[i].filename);
 	    unlink(s);
 	    movefile(logs[i].filename, s);
 	  }
@@ -582,37 +580,31 @@ static void core_minutely()
 
 static void core_hourly()
 {
-  Context;
   write_userfile(-1);
 }
 
 static void event_rehash()
 {
-  Context;
   check_tcl_event("rehash");
 }
 
 static void event_prerehash()
 {
-  Context;
   check_tcl_event("prerehash");
 }
 
 static void event_save()
 {
-  Context;
   check_tcl_event("save");
 }
 
 static void event_logfile()
 {
-  Context;
   check_tcl_event("logfile");
 }
 
 static void event_resettraffic()
 {
-  Context;
   otraffic_irc += otraffic_irc_today;
   itraffic_irc += itraffic_irc_today;
   otraffic_bn += otraffic_bn_today;
@@ -667,7 +659,7 @@ static inline void garbage_collect(void)
 int main(int argc, char **argv)
 {
   int xx, i;
-  char buf[520], s[520];
+  char buf[520], s[25];
   FILE *f;
   struct sigaction sv;
   struct chanset_t *chan;
@@ -692,13 +684,13 @@ int main(int argc, char **argv)
 
 #include "patch.h"
   /* Version info! */
-  sprintf(ver, "eggdrop v%s", egg_version);
-  sprintf(version, "Eggdrop v%s  (c)1997 Robey Pointer (c)1999, 2000  Eggheads",
+  egg_snprintf(ver, sizeof ver, "eggdrop v%s", egg_version);
+  egg_snprintf(version, sizeof version, 
+	       "Eggdrop v%s  (c)1997 Robey Pointer (c)1999, 2000  Eggheads",
      egg_version);
   /* Now add on the patchlevel (for Tcl) */
   sprintf(&egg_version[strlen(egg_version)], " %u", egg_numver);
   strcat(egg_version, egg_xtra);
-  Context;
 #ifdef STOP_UAC
   {
     int nvpair[2];
@@ -763,14 +755,11 @@ int main(int argc, char **argv)
 #ifdef STATIC
   link_statics();
 #endif
-  Context;
-  strcpy(s, ctime(&now));
-  s[strlen(s) - 1] = 0;
+  strncpyz(s, ctime(&now), sizeof s);
   strcpy(&s[11], &s[20]);
   putlog(LOG_ALL, "*", "--- Loading %s (%s)", ver, s);
   chanprog();
-  Context;
-  if (encrypt_pass == 0) {
+  if (!encrypt_pass) {
     printf(MOD_NOCRYPT);
     bg_send_quit(BG_ABORT);
     exit(1);
@@ -782,8 +771,7 @@ int main(int argc, char **argv)
 	 botnetnick, i, count_users(userlist));
   cache_miss = 0;
   cache_hit = 0;
-  sprintf(pid_file, "pid.%s", botnetnick);
-  Context;
+  egg_snprintf(pid_file, sizeof pid_file, "pid.%s", botnetnick);
 
   /* Check for pre-existing eggdrop! */
   f = fopen(pid_file, "r");
@@ -799,7 +787,6 @@ int main(int argc, char **argv)
       exit(1);
     }
   }
-  Context;
 
   /* Move into background? */
   if (backgrd) {
@@ -888,7 +875,6 @@ int main(int argc, char **argv)
   while (1) {
     int socket_cleanup = 0;
 
-    Context;
 #if !defined(HAVE_PRE7_5_TCL)
     /* Process a single tcl event */
     Tcl_DoOneEvent(TCL_ALL_EVENTS | TCL_DONT_WAIT);
@@ -904,7 +890,6 @@ int main(int argc, char **argv)
       then = now;
     }
 
-    Context;
     /* Only do this every so often. */
     if (!socket_cleanup) {
       socket_cleanup = 5;
@@ -956,7 +941,6 @@ int main(int argc, char **argv)
 
       if (i == STDOUT && !backgrd)
 	fatal("END OF FILE ON TERMINAL", 0);
-      Context;
       for (idx = 0; idx < dcc_total; idx++)
 	if (dcc[idx].sock == i) {
 	  if (dcc[idx].type && dcc[idx].type->eof)
@@ -977,7 +961,6 @@ int main(int argc, char **argv)
 	killsock(i);
       }
     } else if (xx == -2 && errno != EINTR) {	/* select() error */
-      Context;
       putlog(LOG_MISC, "*", "* Socket error #%d; recovering.", errno);
       for (i = 0; i < dcc_total; i++) {
 	if ((fcntl(dcc[i].sock, F_GETFD, 0) == -1) && (errno = EBADF)) {
@@ -1029,9 +1012,7 @@ int main(int argc, char **argv)
 	  /* Should be only 2 modules now - blowfish (or some other
 	     encryption module) and eggdrop. */
 	  putlog(LOG_MISC, "*", MOD_STAGNANT);
-	Context;
 	flushlogs();
-	Context;
 	kill_tcl();
 	init_tcl(argc, argv);
 	init_language(0);

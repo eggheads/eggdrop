@@ -2,7 +2,7 @@
  * language.c -- handles:
  *   language support code
  * 
- * $Id: language.c,v 1.10 2000/04/05 19:35:43 fabian Exp $
+ * $Id: language.c,v 1.11 2000/12/10 15:10:27 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -109,7 +109,6 @@ void add_lang(char *lang)
 {
   lang_pri *lp = langpriority, *lpo = NULL;
 
-  Context;
   while (lp) {
     /* The language already exists, moving to the beginning */
     if (!strcmp(lang, lp->lang)) {
@@ -144,7 +143,6 @@ static int del_lang(char *lang)
 {
   lang_pri *lp = langpriority, *lpo = NULL;
 
-  Context;
   while (lp) {
     /* Found the language? */
     if (!strcmp(lang, lp->lang)) {
@@ -200,7 +198,6 @@ static void recheck_lang_sections(void)
   lang_sec *ls = langsection;
   char *langfile;
 
-  Context;
   while (ls) {
     if (ls->section) {
       langfile = get_langfile(ls);
@@ -228,7 +225,6 @@ static void read_lang(char *langfile)
   int ltexts = 0;
   int ladd = 0, lupdate = 0;
 
-  Context;
   FLANG = fopen(langfile, "r");
   if (FLANG == NULL) {
     putlog(LOG_MISC, "*", "LANG: unexpected: reading from file %s failed.",
@@ -318,7 +314,6 @@ void add_lang_section(char *section)
   lang_sec	*ls, *ols = NULL;
   int		 ok = 0;
 
-  Context;
   for (ls = langsection; ls; ols = ls, ls = ls->next)
     /* Already know of that section? */
     if (!strcmp(section, ls->section))
@@ -407,7 +402,6 @@ static char *get_langfile(lang_sec *sec)
   char *langfile;
   lang_pri *lp;
 
-  Context;
   for (lp = langpriority; lp; lp = lp->next) {
     /* There is no need to reload the same language */
     if (sec->lang && !strcmp(sec->lang, lp->lang))
@@ -431,7 +425,6 @@ static int split_lang(char *par, char **lang, char **section)
 {
   char *p;
 
-  Context;
   p = strrchr(par, '/');
   /* path attached? */
   if (p)
@@ -456,7 +449,6 @@ int cmd_loadlanguage(struct userrec *u, int idx, char *par)
 {
   char *section, *lang, *buf;
 
-  Context;
   dprintf(idx, "Note: This command is obsoleted by +lang.\n");
   if (!par || !par[0]) {
     dprintf(idx, "Usage: language <section>.<language>\n");
@@ -480,7 +472,6 @@ int cmd_loadlanguage(struct userrec *u, int idx, char *par)
 
 static int cmd_plslang(struct userrec *u, int idx, char *par)
 {
-  Context;
   if (!par || !par[0]) {
     dprintf(idx, "Usage: +lang <language>\n");
     return 0;
@@ -493,7 +484,6 @@ static int cmd_plslang(struct userrec *u, int idx, char *par)
 
 static int cmd_mnslang(struct userrec *u, int idx, char *par)
 {
-  Context;
   if (!par || !par[0]) {
     dprintf(idx, "Usage: -lang <language>\n");
     return 0;
@@ -508,7 +498,6 @@ static int cmd_mnslang(struct userrec *u, int idx, char *par)
 
 static int cmd_plslsec(struct userrec *u, int idx, char *par)
 {
-  Context;
   if (!par || !par[0]) {
     dprintf(idx, "Usage: +lsec <section>\n");
     return 0;
@@ -520,7 +509,6 @@ static int cmd_plslsec(struct userrec *u, int idx, char *par)
 
 static int cmd_mnslsec(struct userrec *u, int idx, char *par)
 {
-  Context;
   if (!par || !par[0]) {
     dprintf(idx, "Usage: -lsec <section>\n");
     return 0;
@@ -544,7 +532,6 @@ static int cmd_languagedump(struct userrec *u, int idx, char *par)
   char ltext2[512];
   int idx2, i;
 
-  Context;
   putlog(LOG_CMDS, "*", "#%s# ldump %s", dcc[idx].nick, par);
   if (par[0]) {
     /* atoi (hence strtol) don't work right here for hex */
@@ -575,7 +562,7 @@ char *get_language(int idx)
       return l->text;
     l = l->next;
   }
-  sprintf(text, "MSG%03X", idx);
+  egg_snprintf(text, sizeof text, "MSG%03X", idx);
   return text;
 }
 
@@ -586,7 +573,6 @@ int expmem_language()
   lang_pri *lp;
   int i, size = 0;
 
-  Context;
   for (i = 0; i < 64; i++)
     for (l = langtab[i]; l; l = l->next) {
       size += sizeof(lang_tab);
@@ -617,7 +603,6 @@ static int cmd_languagestatus(struct userrec *u, int idx, char *par)
   lang_sec *ls = langsection;
   lang_pri *lp = langpriority;
 
-  Context;
   putlog(LOG_CMDS, "*", "#%s# lstat %s", dcc[idx].nick, par);
   for (i = 0; i < 64; i++) {
     c = 0;
@@ -631,7 +616,6 @@ static int cmd_languagestatus(struct userrec *u, int idx, char *par)
       empty++;
     ltexts += c;
   }
-  Context;
   dprintf(idx, "Language code report:\n");
   dprintf(idx, "   Table size   : %d bytes\n", expmem_language());
   dprintf(idx, "   Text messages: %d\n", ltexts);
@@ -760,7 +744,6 @@ void init_language(int flag)
   int i;
   char *deflang;
 
-  Context;
   if (flag) {
     for (i = 0; i < 32; i++)
       langtab[i] = 0;

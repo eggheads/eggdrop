@@ -10,7 +10,7 @@
  * 
  * dprintf'ized, 9nov1995
  * 
- * $Id: users.c,v 1.22 2000/12/06 02:35:18 guppy Exp $
+ * $Id: users.c,v 1.23 2000/12/10 15:10:27 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -87,8 +87,6 @@ int delignore(char *ign)
   int i, j;
   struct igrec **u;
   struct igrec *t;
-
-  Context;
 
   i = 0;
   if (!strchr(ign, '!') && (j = atoi(ign))) {
@@ -476,7 +474,6 @@ void tell_user(int idx, struct userrec *u, int master)
   struct laston_info *li;
   struct flag_record fr = {FR_GLOBAL, 0, 0, 0, 0, 0};
 
-  Context;
   fr.global = u->flags;
   fr.udef_global = u->flags_udef;
   build_flags(s, &fr, NULL);
@@ -494,14 +491,12 @@ void tell_user(int idx, struct userrec *u, int master)
     else
       egg_strftime(s1, 6, "%H:%M", localtime(&li->laston));
   }
-  Context;
   spaces[l] = 0;
   dprintf(idx, "%s%s %-5s%5d %-15s %s (%-10.10s)\n", u->handle, spaces,
 	  get_user(&USERENTRY_PASS, u) ? "yes" : "no", n, s, s1,
 	  (li && li->lastonplace) ? li->lastonplace : "nowhere");
   spaces[l] = ' ';
   /* channel flags? */
-  Context;
   ch = u->chanrec;
   while (ch != NULL) {
     fr.match = FR_CHAN | FR_GLOBAL;
@@ -529,7 +524,6 @@ void tell_user(int idx, struct userrec *u, int master)
     ch = ch->next;
   }
   /* user-defined extra fields */
-  Context;
   for (ue = u->entries; ue; ue = ue->next)
     if (!ue->name && ue->type->display)
       ue->type->display(idx, ue);
@@ -564,7 +558,6 @@ void tell_users_match(int idx, char *mtch, int start, int limit,
   struct list_type *q;
   struct flag_record user, pls, mns;
 
-  Context;
   dprintf(idx, "*** %s '%s':\n", MISC_MATCHING, mtch);
   cnt = 0;
   spaces[HANDLEN - 6] = 0;
@@ -671,7 +664,6 @@ int readuserfile(char *file, struct userrec **ret)
   struct flag_record fr;
   struct chanuserrec *cr;
 
-  Context;
   bu = (*ret);
   ignored[0] = 0;
   if (bu == userlist) {
@@ -687,7 +679,6 @@ int readuserfile(char *file, struct userrec **ret)
   if (f == NULL)
     return 0;
   noshare = noxtra = 1;
-  Context;
   /* read opening comment */
   s = buf;
   fgets(s, 180, f);
@@ -778,8 +769,7 @@ int readuserfile(char *file, struct userrec **ret)
 
 		cr->next = u->chanrec;
 		u->chanrec = cr;
-		strncpy(cr->channel, chname, 80);
-		cr->channel[80] = 0;
+		strncpyz(cr->channel, chname, 80);
 		cr->laston = atoi(st);
 		cr->flags = fr.chan;
 		cr->flags_udef = fr.udef_chan;
@@ -875,7 +865,6 @@ int readuserfile(char *file, struct userrec **ret)
 	    struct user_entry *ue;
 	    int ok = 0;
 
-	    Context;
 	    for (ue = u->entries; ue && !ok; ue = ue->next)
 	      if (ue->name && !egg_strcasecmp(code + 2, ue->name)) {
 		struct list_type *list;
@@ -959,14 +948,12 @@ int readuserfile(char *file, struct userrec **ret)
       }
     }
   }
-  Context;
   fclose(f);
   (*ret) = bu;
   if (ignored[0]) {
     putlog(LOG_MISC, "*", "%s %s", USERF_IGNBANS, ignored);
   }
   putlog(LOG_MISC, "*", "Userfile loaded, unpacking...");
-  Context;
   for (u = bu; u; u = u->next) {
     struct user_entry *e;
 
@@ -988,7 +975,6 @@ int readuserfile(char *file, struct userrec **ret)
       }
   }
   noshare = noxtra = 0;
-  Context;
   /* process the user data *now* */
   return 1;
 }
@@ -1004,7 +990,6 @@ void autolink_cycle(char *start)
   int got_hub = 0, got_alt = 0, got_shared = 0, linked, ready = 0, i,
    bfl;
 
-  Context;
   /* don't start a new cycle if some links are still pending */
   if (!start) {
     for (i = 0; i < dcc_total; i++) {
@@ -1040,7 +1025,7 @@ void autolink_cycle(char *start)
 	  if ((bfl & BOT_HUB) && (bfl & BOT_SHARE)) {
 	    if (linked)
 	      got_shared = 1;
-	    else if ((cycle == 0) && ready && !autc)
+	    else if (!cycle && ready && !autc)
 	      autc = u;
 	  } else if ((bfl & BOT_HUB) && cycle > 0) {
 	    if (linked)
@@ -1068,7 +1053,7 @@ void autolink_cycle(char *start)
 	      }
 	    }
 	}
-	if ((cycle == 0) && (bfl & BOT_REJECT) && in_chain(u->handle)) {
+	if (!cycle && (bfl & BOT_REJECT) && in_chain(u->handle)) {
 	  /* get rid of nasty reject bot */
 	  int i;
 
@@ -1094,7 +1079,7 @@ void autolink_cycle(char *start)
       u = u->next;
     }
     if (!autc) {
-      if ((cycle == 0) && !got_shared) {
+      if (!cycle && !got_shared) {
 	cycle++;
 	u = userlist;
       } else if ((cycle == 1) && !(got_shared || got_hub)) {
@@ -1103,7 +1088,7 @@ void autolink_cycle(char *start)
       }
     }
   }
-  if (got_shared && (cycle == 0))
+  if (got_shared && !cycle)
     autc = NULL;
   else if ((got_shared || got_hub) && (cycle == 1))
     autc = NULL;

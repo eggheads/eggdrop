@@ -4,7 +4,7 @@
  *   a bunch of functions to find and change user records
  *   change and check user (and channel-specific) flags
  * 
- * $Id: userrec.c,v 1.28 2000/11/10 19:43:30 guppy Exp $
+ * $Id: userrec.c,v 1.29 2000/12/10 15:10:27 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -111,7 +111,6 @@ int expmem_users()
   struct user_entry *ue;
   struct igrec *i;
 
-  Context;
   tot = 0;
   u = userlist;
   while (u != NULL) {
@@ -188,8 +187,7 @@ static char *fixfrom(char *s)
 
   if (s == NULL)
     return NULL;
-  strncpy(buf, s, 511);
-  buf[511] = 0;
+  strncpyz(buf, s, sizeof buf);
   if (strict_host)
     return buf;
   if ((p = strchr(buf, '!')))
@@ -291,7 +289,6 @@ void clear_userlist(struct userrec *bu)
   struct userrec *u = bu, *v;
   int i;
 
-  Context;
   while (u != NULL) {
     v = u->next;
     freeuser(u);
@@ -322,7 +319,6 @@ void clear_userlist(struct userrec *bu)
     }
   }
   /* Remember to set your userlist to NULL after calling this */
-  Context;
 }
 
 /* Find CLOSEST host match
@@ -545,7 +541,6 @@ void write_userfile(int idx)
   struct userrec *u;
   int ok;
 
-  Context;
   if (userlist == NULL)
     return;			/* No point in saving userfile */
 
@@ -566,14 +561,12 @@ void write_userfile(int idx)
   tt = now;
   strcpy(s1, ctime(&tt));
   fprintf(f, "#4v: %s -- %s -- written %s", ver, botnetnick, s1);
-  Context;
   ok = 1;
   u = userlist;
   while (u != NULL && ok) {
     ok = write_user(u, f, idx);
     u = u->next;
   }
-  Context;
   if (!ok || fflush(f)) {
     putlog(LOG_MISC, "*", "%s (%s)", USERF_ERRWRITE, strerror(ferror(f)));
     fclose(f);
@@ -581,12 +574,9 @@ void write_userfile(int idx)
     return;
   }
   fclose(f);
-  Context;
   call_hook(HOOK_USERFILE);
-  Context;
   movefile(new_userfile, userfile);
   nfree(new_userfile);
-  Context;
 }
 
 int change_handle(struct userrec *u, char *newh)
@@ -597,20 +587,17 @@ int change_handle(struct userrec *u, char *newh)
   if (!u)
     return 0;
   /* Nothing that will confuse the userfile */
-  if (newh[1] == 0 && strchr(BADHANDCHARS, newh[0]))
+  if (!newh[1] && strchr(BADHANDCHARS, newh[0]))
     return 0;
   check_tcl_nkch(u->handle, newh);
   /* Yes, even send bot nick changes now: */
   if (!noshare && !(u->flags & USER_UNSHARED))
     shareout(NULL, "h %s %s\n", u->handle, newh);
-  strncpy(s, u->handle, HANDLEN);
-  s[HANDLEN] = 0;
-  strncpy(u->handle, newh, HANDLEN);
-  u->handle[HANDLEN] = 0;
+  strncpyz(s, u->handle, sizeof s);
+  strncpyz(u->handle, newh, sizeof u->handle);
   for (i = 0; i < dcc_total; i++)
-    if (!egg_strcasecmp(dcc[i].nick, s) && dcc[i].type != &DCC_BOT) {
-      strncpy(dcc[i].nick, newh, HANDLEN);
-      dcc[i].nick[HANDLEN] = 0;
+    if (dcc[i].type != &DCC_BOT && !egg_strcasecmp(dcc[i].nick, s)) {
+      strncpyz(dcc[i].nick, newh, sizeof dcc[i].nick);
       if (dcc[i].type == &DCC_CHAT && dcc[i].u.chat->channel >= 0) {
 	chanout_but(-1, dcc[i].u.chat->channel,
 		    "*** Handle change: %s -> %s\n", s, newh);
@@ -634,8 +621,7 @@ struct userrec *adduser(struct userrec *bu, char *handle, char *host,
   u = (struct userrec *) nmalloc(sizeof(struct userrec));
 
   /* u->next=bu; bu=u; */
-  strncpy(u->handle, handle, HANDLEN);
-  u->handle[HANDLEN] = 0;
+  strncpyz(u->handle, handle, sizeof u->handle);
   u->next = NULL;
   u->chanrec = NULL;
   u->entries = NULL;
@@ -777,7 +763,6 @@ int delhost_by_handle(char *handle, char *host)
   struct user_entry *e = NULL;
   int i = 0;
 
-  Context;
   u = get_user_by_handle(userlist, handle);
   if (!u)
     return 0;
@@ -867,23 +852,19 @@ void touch_laston(struct userrec *u, char *where, time_t timeval)
  */
 struct userrec *get_user_by_nick(char *nick)
 {
-  struct chanset_t *chan = chanset;
+  struct chanset_t *chan;
   memberlist *m;
 
-  Context;
-  while (chan) {
-    m = chan->channel.member;
-    while (m && m->nick[0]) {
+  for (chan = chanset; chan; chan = chan->next) {
+    for (m = chan->channel.member; m && m->nick[0] ;m = m->next) {
       if (!rfc_casecmp(nick, m->nick)) {
   	char word[512];
 
-	sprintf(word, "%s!%s", m->nick, m->userhost);
+	egg_snprintf(word, sizeof word, "%s!%s", m->nick, m->userhost);
 	/* No need to check the return value ourself */
 	return get_user_by_host(word);;
       }
-      m = m->next;
     }
-    chan = chan->next;
   }
   /* Sorry, no matches */
   return NULL;

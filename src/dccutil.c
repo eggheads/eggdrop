@@ -6,7 +6,7 @@
  *   memory management for dcc structures
  *   timeout checking for dcc connections
  * 
- * $Id: dccutil.c,v 1.23 2000/09/18 20:04:57 fabian Exp $
+ * $Id: dccutil.c,v 1.24 2000/12/10 15:10:27 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -71,7 +71,6 @@ int expmem_dccutil()
 {
   int tot, i;
 
-  Context;
   tot = sizeof(struct dcc_t) * max_dcc + sizeof(sock_list) * MAXSOCKS;
 
   for (i = 0; i < dcc_total; i++) {
@@ -217,7 +216,6 @@ void dcc_chatter(int idx)
 	i = 0;
       dcc[idx].u.chat->channel = i;
       if (dcc[idx].u.chat->channel >= 0) {
-	Context;
 	if (dcc[idx].u.chat->channel < 100000) {
 	  botnet_send_join_idx(idx, -1);
 	}
@@ -226,7 +224,7 @@ void dcc_chatter(int idx)
 		     geticon(idx), dcc[idx].sock, dcc[idx].host);
     }
     /* But *do* bother with sending it locally */
-    if (dcc[idx].u.chat->channel == 0) {
+    if (!dcc[idx].u.chat->channel) {
       chanout_but(-1, 0, "*** %s joined the party line.\n", dcc[idx].nick);
     } else if (dcc[idx].u.chat->channel > 0) {
       chanout_but(-1, dcc[idx].u.chat->channel,
@@ -276,7 +274,6 @@ void dcc_remove_lost(void)
 {
   int i;
 
-  Context;
   for (i = 0; i < dcc_total; i++) {
     if (dcc[i].type == &DCC_LOST) {
       dcc[i].type = NULL;
@@ -295,7 +292,6 @@ void tell_dcc(int zidx)
   int i, j, k;
   char other[160];
 
-  Context;
   spaces[HANDLEN - 9] = 0;
   dprintf(zidx, "SOCK ADDR     PORT  NICK     %s HOST              TYPE\n"
 	  ,spaces);
@@ -327,7 +323,6 @@ void tell_dcc(int zidx)
  */
 void not_away(int idx)
 {
-  Context;
   if (dcc[idx].u.chat->away == NULL) {
     dprintf(idx, "You weren't away!\n");
     return;
@@ -335,7 +330,6 @@ void not_away(int idx)
   if (dcc[idx].u.chat->channel >= 0) {
     chanout_but(-1, dcc[idx].u.chat->channel,
 		"*** %s is no longer away.\n", dcc[idx].nick);
-    Context;
     if (dcc[idx].u.chat->channel < 100000) {
       botnet_send_away(-1, botnetnick, dcc[idx].sock, NULL, idx);
     }
@@ -363,7 +357,6 @@ void set_away(int idx, char *s)
   if (dcc[idx].u.chat->channel >= 0) {
     chanout_but(-1, dcc[idx].u.chat->channel,
 		"*** %s is now away: %s\n", dcc[idx].nick, s);
-    Context;
     if (dcc[idx].u.chat->channel < 100000) {
       botnet_send_away(-1, botnetnick, dcc[idx].sock, s, idx);
     }
@@ -381,7 +374,7 @@ void *_get_data_ptr(int size, char *file, int line)
   char x[1024];
 
   p = strrchr(file, '/');
-  simple_sprintf(x, "dccutil.c:%s", p ? p + 1 : file);
+  egg_snprintf(x, sizeof x, "dccutil.c:%s", p ? p + 1 : file);
   p = n_malloc(size, x, line);
 #else
   p = nmalloc(size);
@@ -464,7 +457,7 @@ int detect_dcc_flood(time_t * timer, struct chat_info *chat, int idx)
 {
   time_t t;
 
-  if (dcc_flood_thr == 0)
+  if (!dcc_flood_thr)
     return 0;
   t = now;
   if (*timer != t) {
@@ -480,7 +473,7 @@ int detect_dcc_flood(time_t * timer, struct chat_info *chat, int idx)
 	  (chat->channel >= 0)) {
 	char x[1024];
 
-	simple_sprintf(x, DCC_FLOODBOOT, dcc[idx].nick);
+	egg_snprintf(x, sizeof x, DCC_FLOODBOOT, dcc[idx].nick);
 	chanout_but(idx, chat->channel, "*** %s", x);
 	if (chat->channel < 100000)
 	  botnet_send_part_idx(idx, x);
@@ -515,8 +508,8 @@ void do_boot(int idx, char *by, char *reason)
       (dcc[idx].u.chat->channel >= 0)) {
     char x[1024];
 
-    simple_sprintf(x, DCC_BOOTED3, by, dcc[idx].nick, reason[0] ? ": " : "",
-                   reason);
+    egg_snprintf(x, sizeof x, DCC_BOOTED3, by, dcc[idx].nick, 
+		 reason[0] ? ": " : "", reason);
     chanout_but(idx, dcc[idx].u.chat->channel, "*** %s.\n", x);
     if (dcc[idx].u.chat->channel < 100000)
       botnet_send_part_idx(idx, x);

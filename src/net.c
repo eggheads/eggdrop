@@ -2,7 +2,7 @@
  * net.c -- handles:
  *   all raw network i/o
  * 
- * $Id: net.c,v 1.26 2000/10/30 20:49:46 fabian Exp $
+ * $Id: net.c,v 1.27 2000/12/10 15:10:27 guppy Exp $
  */
 /* 
  * This is hereby released into the public domain.
@@ -86,7 +86,6 @@ int expmem_net()
 {
   int i, tot = 0;
 
-  Context;
   for (i = 0; i < MAXSOCKS; i++) {
     if (!(socklist[i].flags & SOCK_UNUSED)) {
       if (socklist[i].inbuf != NULL)
@@ -209,7 +208,6 @@ int sockoptions(int sock, int operation, int sock_options)
 {
   int i;
 
-  Context;
   for (i = 0; i < MAXSOCKS; i++)
     if (socklist[i].sock == sock) {
       if (operation == EGG_OPTION_SET)
@@ -516,8 +514,7 @@ char *hostnamefromip(unsigned long ip)
     sprintf(s, "%u.%u.%u.%u", p[0], p[1], p[2], p[3]);
     return s;
   }
-  strncpy(s, hp->h_name, UHOSTLEN - 1);
-  s[UHOSTLEN - 1] = 0;
+  strncpyz(s, hp->h_name, sizeof s);
   return s;
 }
 
@@ -553,8 +550,7 @@ int answer(int sock, char *caller, unsigned long *ip, unsigned short *port,
      *
      * strncpy(caller, hostnamefromip(*ip), 120);
      */
-    strncpy(caller, iptostr(*ip), 120);
-    caller[120] = 0;
+    strncpyz(caller, iptostr(*ip), 121);
     *ip = ntohl(*ip);
   }
   if (port != NULL)
@@ -736,7 +732,6 @@ int sockgets(char *s, int *len)
   char xx[514], *p, *px;
   int ret, i, data = 0;
 
-  Context;
   for (i = 0; i < MAXSOCKS; i++) {
     /* Check for stored-up data waiting to be processed */
     if (!(socklist[i].flags & SOCK_UNUSED) &&
@@ -788,14 +783,12 @@ int sockgets(char *s, int *len)
     /* Also check any sockets that might have EOF'd during write */
     if (!(socklist[i].flags & SOCK_UNUSED)
 	&& (socklist[i].flags & SOCK_EOFD)) {
-      Context;
       s[0] = 0;
       *len = socklist[i].sock;
       return -1;
     }
   }
   /* No pent-up data of any worth -- down to business */
-  Context;
   *len = 0;
   ret = sockread(xx, len);
   if (ret < 0) {
@@ -834,7 +827,6 @@ int sockgets(char *s, int *len)
     socklist[ret].inbuf[socklist[ret].inbuflen] = 0;
     return -4;	/* Ignore this one. */
   }
-  Context;
   /* Might be necessary to prepend stored-up data! */
   if (socklist[ret].inbuf != NULL) {
     p = socklist[ret].inbuf;
@@ -858,7 +850,6 @@ int sockgets(char *s, int *len)
       /* (leave the rest to be post-pended later) */
     }
   }
-  Context;
   /* Look for EOL marker; if it's there, i have something to show */
   p = strchr(xx, '\n');
   if (p == NULL)
@@ -882,7 +873,6 @@ int sockgets(char *s, int *len)
       data = 1;
     }
   }
-  Context;
   *len = strlen(s);
   /* Anything left that needs to be saved? */
   if (!xx[0]) {
@@ -891,10 +881,8 @@ int sockgets(char *s, int *len)
     else
       return -3;
   }
-  Context;
   /* Prepend old data back */
   if (socklist[ret].inbuf != NULL) {
-    Context;
     p = socklist[ret].inbuf;
     socklist[ret].inbuflen = strlen(p) + strlen(xx);
     socklist[ret].inbuf = (char *) nmalloc(socklist[ret].inbuflen + 1);
@@ -902,17 +890,13 @@ int sockgets(char *s, int *len)
     strcat(socklist[ret].inbuf, p);
     nfree(p);
   } else {
-    Context;
     socklist[ret].inbuflen = strlen(xx);
     socklist[ret].inbuf = (char *) nmalloc(socklist[ret].inbuflen + 1);
     strcpy(socklist[ret].inbuf, xx);
   }
-  Context;
   if (data) {
-    Context;
     return socklist[ret].sock;
   } else {
-    Context;
     return -3;
   }
 }
@@ -1109,8 +1093,6 @@ int sanitycheck_dcc(char *nick, char *from, char *ipaddy, char *port)
   /* It is disabled HERE so we only have to check in *one* spot! */
   if (!dcc_sanitycheck)
     return 1;
-  Context;			/* This should be pretty solid, but
-				   something _might_ break. */
   if (prt < 1) {
     putlog(LOG_MISC, "*", "ALERT: (%s!%s) specified an impossible port of %u!",
 	   nick, from, prt);
@@ -1137,16 +1119,13 @@ int hostsanitycheck_dcc(char *nick, char *from, IP ip, char *dnsname,
   /* It is disabled HERE so we only have to check in *one* spot! */
   if (!dcc_sanitycheck)
     return 1;
-  Context;			/* This should be pretty solid, but
-				   something _might_ break. */
   sprintf(badaddress, "%u.%u.%u.%u", (ip >> 24) & 0xff, (ip >> 16) & 0xff,
 	  (ip >> 8) & 0xff, ip & 0xff);
   /* These should pad like crazy with zeros, since 120 bytes or so is
    * where the routines providing our data currently lose interest. I'm
    * using the n-variant in case someone changes that...
    */
-  strncpy(hostn, extracthostname(from), 255);
-  hostn[255] = 0;
+  strncpyz(hostn, extracthostname(from), sizeof hostn);
   if (!egg_strcasecmp(hostn, dnsname)) {
     putlog(LOG_DEBUG, "*", "DNS information for submitted IP checks out.");
     return 1;

@@ -7,7 +7,7 @@
  *   telling the current programmed settings
  *   initializing a lot of stuff and loading the tcl scripts
  * 
- * $Id: chanprog.c,v 1.19 2000/11/16 02:49:14 guppy Exp $
+ * $Id: chanprog.c,v 1.20 2000/12/10 15:10:26 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -131,7 +131,7 @@ struct userrec *check_chanlist(const char *host)
   register memberlist		*m;
   register struct chanset_t	*chan;
 
-  strncpy(buf, host, UHOSTMAX), buf[UHOSTMAX] = 0;
+  strncpyz(buf, host, sizeof buf);
   uhost = buf;
   nick = splitnick(&uhost);
   for (chan = chanset; chan; chan = chan->next)
@@ -196,7 +196,7 @@ void set_chanlist(const char *host, struct userrec *rec)
   register memberlist		*m;
   register struct chanset_t	*chan;
 
-  strncpy(buf, host, UHOSTMAX), buf[UHOSTMAX] = 0;
+  strncpyz(buf, host, sizeof buf);
   uhost = buf;
   nick = splitnick(&uhost);
   for (chan = chanset; chan; chan = chan->next)
@@ -212,7 +212,6 @@ int expmem_chanprog()
   register int		 tot = 0;
   register tcl_timer_t	*t;
 
-  Context;
   for (t = timer; t; t = t->next)
     tot += sizeof(tcl_timer_t) + strlen(t->cmd) + 1;
   for (t = utimer; t; t = t->next)
@@ -334,8 +333,7 @@ void tell_verbose_status(int idx)
   dprintf(idx, "%s %s  (%s)  %s  %s %4.1f%%\n", MISC_ONLINEFOR,
 	  s, s1, s2, MISC_CACHEHIT,
 	  100.0 * ((float) cache_hit) / ((float) (cache_hit + cache_miss)));
-  strcpy(s, "info library");
-  if ((interp) && (Tcl_Eval(interp, s) == TCL_OK))
+  if ((interp) && (Tcl_Eval(interp, "info library") == TCL_OK))
     dprintf(idx, "%s %s\n", MISC_TCLLIBVER, interp->result);
 }
 
@@ -383,8 +381,7 @@ void reaffirm_owners()
     q = owner;
     p = strchr(q, ',');
     while (p) {
-      strncpy(s, q, p - q);
-      s[p - q] = 0;
+      strncpyz(s, q, p - q);
       rmspace(s);
       u = get_user_by_handle(userlist, s);
       if (u)
@@ -413,7 +410,6 @@ void chanprog()
   /* Turn off read-only variables (make them write-able) for rehash */
   protect_readonly = 0;
   /* Now read it */
-  Context;
   if (!readtclprog(configfile))
     fatal(MISC_NOCONFIGFILE, 0);
   for (i = 0; i < max_logs; i++) {
@@ -436,7 +432,6 @@ void chanprog()
   }
   /* We should be safe now */
   call_hook(HOOK_REHASH);
-  Context;
   protect_readonly = 1;
   if (!userfile[0])
     fatal(MISC_NOUSERFILE2, 0);
@@ -460,7 +455,6 @@ void chanprog()
      make_userfile = 0;
      printf("%s\n", MISC_USERFEXISTS);
   }
-  Context;
   if (helpdir[0])
     if (helpdir[strlen(helpdir) - 1] != '/')
       strcat(helpdir, "/");
@@ -468,12 +462,10 @@ void chanprog()
     if (tempdir[strlen(tempdir) - 1] != '/')
       strcat(tempdir, "/");
   if (!botnetnick[0]) {
-    strncpy(botnetnick, origbotname, HANDLEN);
-    botnetnick[HANDLEN] = 0;
+    strncpyz(botnetnick, origbotname, HANDLEN + 1);
   }
   if (!botnetnick[0])
     fatal("I don't have a botnet nick!!\n", 0);
-  Context;
   /* Test tempdir: it's vital */
   {
     FILE *f;
@@ -493,7 +485,6 @@ void chanprog()
     fclose(f);
     unlink(s);
   }
-  Context;
   reaffirm_owners();
 }
 
@@ -515,7 +506,6 @@ void reload()
   userlist = NULL;
   if (!readuserfile(userfile, &userlist))
     fatal(MISC_MISSINGUSERF, 0);
-  Context;
   reaffirm_owners();
   call_hook(HOOK_READ_USERFILE);
 }
@@ -581,7 +571,7 @@ int remove_timer(tcl_timer_t **stack, unsigned long id)
 void do_check_timers(tcl_timer_t **stack)
 {
   tcl_timer_t *mark = *stack, *old = NULL;
-  char x[30];
+  char x[16];
 
   /* New timers could be added by a Tcl script inside a current timer
    * so i'll just clear out the timer list completely, and add any
@@ -593,8 +583,8 @@ void do_check_timers(tcl_timer_t **stack)
       mark->mins--;
     old = mark;
     mark = mark->next;
-    if (old->mins == 0) {
-      simple_sprintf(x, "timer%d", old->id);
+    if (!old->mins) {
+      egg_snprintf(x, sizeof x, "timer%lu", old->id);
       do_tcl(x, old->cmd);
       nfree(old->cmd);
       nfree(old);
@@ -625,11 +615,11 @@ void wipe_timers(Tcl_Interp *irp, tcl_timer_t **stack)
 void list_timers(Tcl_Interp *irp, tcl_timer_t *stack)
 {
   tcl_timer_t *mark = stack;
-  char mins[10], id[20], *argv[3], *x;
+  char mins[10], id[16], *argv[3], *x;
 
   while (mark != NULL) {
-    sprintf(mins, "%u", mark->mins);
-    sprintf(id, "timer%lu", mark->id);
+    egg_snprintf(mins, sizeof mins, "%u", mark->mins);
+    egg_snprintf(id, sizeof id, "timer%lu", mark->id);
     argv[0] = mins;
     argv[1] = mark->cmd;
     argv[2] = id;

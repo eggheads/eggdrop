@@ -4,7 +4,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: modules.c,v 1.42 2000/10/27 19:32:41 fabian Exp $
+ * $Id: modules.c,v 1.43 2000/12/10 15:10:27 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -532,7 +532,6 @@ void init_modules(void)
 {
   int i;
 
-  Context;
   module_list = nmalloc(sizeof(module_entry));
   module_list->name = nmalloc(8);
   strcpy(module_list->name, "eggdrop");
@@ -558,7 +557,6 @@ int expmem_modules(int y)
 #endif
   Function *f;
 
-  Context;
 #ifdef STATIC
   for (s = static_modules; s; s = s->next)
     c += sizeof(struct static_list) + strlen(s->name) + 1;
@@ -592,7 +590,6 @@ int module_register(char *name, Function * funcs,
 {
   module_entry *p = module_list;
 
-  Context;
   while (p) {
     if (p->name && !egg_strcasecmp(name, p->name)) {
       p->major = major;
@@ -625,11 +622,9 @@ const char *module_load(char *name)
   struct static_list *sl;
 #endif
 
-  Context;
   if (module_find(name, 0, 0) != NULL)
     return MOD_ALREADYLOAD;
 #ifndef STATIC
-  Context;
   if (moddir[0] != '/') {
     if (getcwd(workbuf, 1024) == NULL)
       return MOD_BADCWD;
@@ -638,7 +633,6 @@ const char *module_load(char *name)
     sprintf(workbuf, "%s%s." EGG_MOD_EXT, moddir, name);
 #  ifdef HPUX_HACKS
   hand = shl_load(workbuf, BIND_IMMEDIATE, 0L);
-  Context;
   if (!hand)
     return "Can't load module.";
 #  else
@@ -649,7 +643,6 @@ const char *module_load(char *name)
     return "Can't load module.";
 #      endif
 #    else
-  Context;
   hand = dlopen(workbuf, DLFLAGS);
   if (!hand)
     return dlerror();
@@ -658,7 +651,6 @@ const char *module_load(char *name)
 
   sprintf(workbuf, "%s_start", name);
 #  ifdef HPUX_HACKS
-  Context;
   if (shl_findsym(&hand, workbuf, (short) TYPE_PROCEDURE, (void *) &f))
     f = NULL;
 #  else
@@ -694,7 +686,6 @@ const char *module_load(char *name)
   }
 #  else
   for (sl = static_modules; sl && egg_strcasecmp(sl->name, name); sl = sl->next);
-  Context;
   if (!sl)
     return "Unkown module.";
   f = (Function) sl->func;
@@ -704,7 +695,6 @@ const char *module_load(char *name)
     return "Malloc error";
   p->name = nmalloc(strlen(name) + 1);
   strcpy(p->name, name);
-  Context;
   p->major = 0;
   p->minor = 0;
 #ifndef STATIC
@@ -714,7 +704,6 @@ const char *module_load(char *name)
   p->next = module_list;
   module_list = p;
   e = (((char *(*)()) f) (global_table));
-  Context;
   if (e) {
     module_list = module_list->next;
     nfree(p->name);
@@ -726,7 +715,6 @@ const char *module_load(char *name)
     putlog(LOG_MISC, "*", MOD_LOADED_WITH_LANG, name);
   else
     putlog(LOG_MISC, "*", MOD_LOADED, name);
-  Context;
   return NULL;
 }
 
@@ -736,7 +724,6 @@ char *module_unload(char *name, char *user)
   char *e;
   Function *f;
 
-  Context;
   while (p) {
     if ((p->name != NULL) && (!strcmp(name, p->name))) {
       dependancy *d = dependancy_list;
@@ -787,9 +774,8 @@ module_entry *module_find(char *name, int major, int minor)
   module_entry *p = module_list;
 
   while (p) {
-    if (p->name && !egg_strcasecmp(name, p->name) &&
-	((major == p->major) || (major == 0)) &&
-	(minor <= p->minor))
+    if (p->name && (major == p->major || !major) &&
+	minor <= p->minor && !egg_strcasecmp(name, p->name))
       return p;
     p = p->next;
   }
@@ -824,7 +810,6 @@ Function *module_depend(char *name1, char *name2, int major, int minor)
   module_entry *o = module_find(name1, 0, 0);
   dependancy *d;
 
-  Context;
   if (!p) {
     if (module_load(name2))
       return 0;
@@ -840,7 +825,6 @@ Function *module_depend(char *name1, char *name2, int major, int minor)
   d->major = major;
   d->minor = minor;
   dependancy_list = d;
-  Context;
   return p->funcs ? p->funcs : (Function *) 1;
 }
 
@@ -850,7 +834,6 @@ int module_undepend(char *name1)
   module_entry *p = module_find(name1, 0, 0);
   dependancy *d = dependancy_list, *o = NULL;
 
-  Context;
   if (p == NULL)
     return 0;
   while (d != NULL) {
@@ -871,7 +854,6 @@ int module_undepend(char *name1)
       d = d->next;
     }
   }
-  Context;
   return ok;
 }
 
@@ -881,7 +863,7 @@ void *mod_malloc(int size, const char *modname, const char *filename, int line)
   char x[100], *p;
 
   p = strrchr(filename, '/');
-  sprintf(x, "%s:%s", modname, p ? p + 1 : filename);
+  egg_snprintf(x, sizeof x, "%s:%s", modname, p ? p + 1 : filename);
   x[19] = 0;
   return n_malloc(size, x, line);
 #else
@@ -896,7 +878,7 @@ void *mod_realloc(void *ptr, int size, const char *modname,
   char x[100], *p;
 
   p = strrchr(filename, '/');
-  sprintf(x, "%s:%s", modname, p ? p + 1 : filename);
+  egg_snprintf(x, sizeof x, "%s:%s", modname, p ? p + 1 : filename);
   x[19] = 0;
   return n_realloc(ptr, size, x, line);
 #else
@@ -909,7 +891,7 @@ void mod_free(void *ptr, const char *modname, const char *filename, int line)
   char x[100], *p;
 
   p = strrchr(filename, '/');
-  sprintf(x, "%s:%s", modname, p ? p + 1 : filename);
+  egg_snprintf(x, sizeof x, "%s:%s", modname, p ? p + 1 : filename);
   x[19] = 0;
   n_free(ptr, x, line);
 }
@@ -918,7 +900,6 @@ void mod_free(void *ptr, const char *modname, const char *filename, int line)
  */
 void add_hook(int hook_num, Function func)
 {
-  Context;
   if (hook_num < REAL_HOOKS) {
     struct hook_entry *p;
 
@@ -980,7 +961,6 @@ void add_hook(int hook_num, Function func)
 
 void del_hook(int hook_num, Function func)
 {
-  Context;
   if (hook_num < REAL_HOOKS) {
     struct hook_entry *p = hook_list[hook_num], *o = NULL;
 
@@ -1041,7 +1021,6 @@ int call_hook_cccc(int hooknum, char *a, char *b, char *c, char *d)
   if (hooknum >= REAL_HOOKS)
     return 0;
   p = hook_list[hooknum];
-  Context;
   for (p = hook_list[hooknum]; p && !f; p = pn) {
     pn = p->next;
     f = p->func(a, b, c, d);

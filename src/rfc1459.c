@@ -1,7 +1,7 @@
 /* 
  * rfc1459.c
  * 
- * $Id: rfc1459.c,v 1.3 1999/12/21 17:35:10 fabian Exp $
+ * $Id: rfc1459.c,v 1.4 2000/12/10 15:10:27 guppy Exp $
  */
 /* 
  * This code was more or less cloned from the ircd-hybrid 5.3 source.
@@ -30,7 +30,7 @@ int _rfc_casecmp(const char *s1, const char *s2)
   register unsigned char *str2 = (unsigned char *) s2;
   register int res;
 
-  while ((res = rfc_toupper(*str1) - rfc_toupper(*str2)) == 0) {
+  while (!(res = rfc_toupper(*str1) - rfc_toupper(*str2))) {
     if (*str1 == '\0')
       return 0;
     str1++;
@@ -45,11 +45,11 @@ int _rfc_ncasecmp(const char *str1, const char *str2, int n)
   register unsigned char *s2 = (unsigned char *) str2;
   register int res;
 
-  while ((res = rfc_toupper(*s1) - rfc_toupper(*s2)) == 0) {
+  while (!(res = rfc_toupper(*s1) - rfc_toupper(*s2))) {
     s1++;
     s2++;
     n--;
-    if (n == 0 || (*s1 == '\0' && *s2 == '\0'))
+    if (!n || (*s1 == '\0' && *s2 == '\0'))
       return 0;
   }
   return (res);

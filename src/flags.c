@@ -2,7 +2,7 @@
  * flags.c -- handles:
  *   all the flag matching/conversion functions in one neat package :)
  * 
- * $Id: flags.c,v 1.16 2000/11/10 19:39:38 guppy Exp $
+ * $Id: flags.c,v 1.17 2000/12/10 15:10:27 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -358,7 +358,7 @@ void break_down_flags(const char *string, struct flag_record *plus,
       break;
     case '|':
     case '&':
-      if (mode == 0) {
+      if (!mode) {
 	if (*string == '|')
 	  plus->match = FR_OR;
 	else
@@ -637,8 +637,7 @@ void set_user_flagrec(struct userrec *u, struct flag_record *fr,
 
       cr->next = u->chanrec;
       u->chanrec = cr;
-      strncpy(cr->channel, chname, 80);
-      cr->channel[80] = 0;
+      strncpyz(cr->channel, chname, sizeof cr->channel);
     }
     if (cr && ch) {
       cr->flags = fr->chan;
@@ -704,9 +703,6 @@ static int botfl_unpack(struct userrec *u, struct user_entry *e)
 {
   struct flag_record fr = {FR_BOT, 0, 0, 0, 0, 0};
  
-  Context;
-  Assert(e);
-  Assert(e->name);
   break_down_flags(e->u.list->extra, &fr, NULL);
   list_type_kill(e->u.list);
   e->u.ulong = fr.bot;
@@ -728,7 +724,6 @@ static int botfl_pack(struct userrec *u, struct user_entry *e)
 
 static int botfl_kill(struct user_entry *e)
 {
-  Context;
   nfree(e);
   return 1;
 }
@@ -739,7 +734,6 @@ static int botfl_write_userfile(FILE *f, struct userrec *u,
   char x[100];
   struct flag_record fr = {FR_BOT, 0, 0, 0, 0, 0};
 
-  Context;
   fr.bot = e->u.ulong;
   build_flags(x, &fr, NULL);
   if (fprintf(f, "--%s %s\n", e->type->name, x) == EOF)
@@ -751,7 +745,6 @@ static int botfl_set(struct userrec *u, struct user_entry *e, void *buf)
 {
   register long atr = ((long) buf & BOT_VALID);
 
-  Context;
   if (!(u->flags & USER_BOT))
     return 1;			/* Don't even bother trying to set the
 				   flags for a non-bot */
@@ -769,7 +762,6 @@ static int botfl_set(struct userrec *u, struct user_entry *e, void *buf)
   if (!(atr & BOT_SHARE))
     atr &= ~BOT_GLOBAL;
   e->u.ulong = atr;
-  Context;
   return 1;
 }
 
@@ -801,7 +793,6 @@ static int botfl_tcl_set(Tcl_Interp *irp, struct userrec *u,
 
 static int botfl_expmem(struct user_entry *e)
 {
-  Context;
   return 0;
 }
 
@@ -810,7 +801,6 @@ static void botfl_display(int idx, struct user_entry *e)
   struct flag_record fr = {FR_BOT, 0, 0, 0, 0, 0};
   char x[100];
 
-  Context;
   fr.bot = e->u.ulong;
   build_flags(x, &fr, NULL);
   dprintf(idx, "  BOT FLAGS: %s\n", x);

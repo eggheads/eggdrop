@@ -2,7 +2,7 @@
  * tcldcc.c -- handles:
  *   Tcl stubs for the dcc commands
  * 
- * $Id: tcldcc.c,v 1.23 2000/12/08 03:07:38 guppy Exp $
+ * $Id: tcldcc.c,v 1.24 2000/12/10 15:10:27 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -143,7 +143,7 @@ static int tcl_dccbroadcast STDVAR
 static int tcl_hand2idx STDVAR
 {
   int i;
-  char s[10];
+  char s[11];
 
   BADARGS(2, 2, " nickname");
   for (i = 0; i < dcc_total; i++)
@@ -228,6 +228,7 @@ static int tcl_setchan STDVAR
   /* Console autosave. */
   if ((me = module_find("console", 1, 1))) {
     Function *func = me->funcs;
+
     (func[CONSOLE_DOSTORE]) (idx);
   }
   return TCL_OK;
@@ -304,6 +305,7 @@ static int tcl_console STDVAR
   /* Console autosave. */
   if (argc > 2 && (me = module_find("console", 1, 1))) {
     Function *func = me->funcs;
+
     (func[CONSOLE_DOSTORE]) (i);
   }
   return TCL_OK;
@@ -345,6 +347,7 @@ static int tcl_strip STDVAR
   /* Console autosave. */
   if (argc > 2 && (me = module_find("console", 1, 1))) {
     Function *func = me->funcs;
+
     (func[CONSOLE_DOSTORE]) (i);
   }
   return TCL_OK;
@@ -374,6 +377,7 @@ static int tcl_echo STDVAR
   /* Console autosave. */
   if (argc > 2 && (me = module_find("console", 1, 1))) {
     Function *func = me->funcs;
+
     (func[CONSOLE_DOSTORE]) (i);
   }
   return TCL_OK;
@@ -409,6 +413,7 @@ static int tcl_page STDVAR
   /* Console autosave. */
   if ((argc > 2) && (me = module_find("console", 1, 1))) {
     Function *func = me->funcs;
+
     (func[CONSOLE_DOSTORE]) (i);
   }
   return TCL_OK;
@@ -443,8 +448,7 @@ static int tcl_control STDVAR
   /* Do not buffer data anymore. All received and stored data is passed
      over to the dcc functions from now on.  */
   sockoptions(dcc[idx].sock, EGG_OPTION_UNSET, SOCK_BUFFER);
-  strncpy(dcc[idx].u.script->command, argv[2], 120);
-  dcc[idx].u.script->command[120] = 0;
+  strncpyz(dcc[idx].u.script->command, argv[2], 120);
   return TCL_OK;
 }
 
@@ -583,11 +587,10 @@ static int tcl_dcclist STDVAR
 {
   int i;
   char idxstr[10];
-  char timestamp[15];	/* When will unixtime ever be 14 numbers long */
+  char timestamp[10];
   char *list[6], *p;
   char other[160];
 
-  Context;
   BADARGS(1, 2, " ?type?");
   for (i = 0; i < dcc_total; i++) {
     if (argc == 1 ||
@@ -882,7 +885,7 @@ static int tcl_listen STDVAR
     /* Try to grab port */
     j = port + 20;
     i = (-1);
-    while ((port < j) && (i < 0)) {
+    while (port < j && i < 0) {
       i = open_listen(&port);
       if (i < 0)
 	port++;
@@ -898,7 +901,7 @@ static int tcl_listen STDVAR
     dcc[idx].timeval = now;
   }
   /* script? */
-  if (!egg_strcasecmp(argv[2], "script")) {
+  if (!strcmp(argv[2], "script")) {
     strcpy(dcc[idx].nick, "(script)");
     if (argc < 4) {
       Tcl_AppendResult(irp, "must give proc name for script listen", NULL);
@@ -907,7 +910,7 @@ static int tcl_listen STDVAR
       return TCL_ERROR;
     }
     if (argc == 5) {
-      if (egg_strcasecmp(argv[4], "pub")) {
+      if (strcmp(argv[4], "pub")) {
 	Tcl_AppendResult(irp, "unknown flag: ", argv[4], ". allowed flags: pub",
 		         NULL);
 	killsock(dcc[idx].sock);
@@ -922,11 +925,11 @@ static int tcl_listen STDVAR
     return TCL_OK;
   }
   /* bots/users/all */
-  if (!egg_strcasecmp(argv[2], "bots"))
+  if (!strcmp(argv[2], "bots"))
     strcpy(dcc[idx].nick, "(bots)");
-  else if (!egg_strcasecmp(argv[2], "users"))
+  else if (!strcmp(argv[2], "users"))
     strcpy(dcc[idx].nick, "(users)");
-  else if (!egg_strcasecmp(argv[2], "all"))
+  else if (!strcmp(argv[2], "all"))
     strcpy(dcc[idx].nick, "(telnet)");
   if (!dcc[idx].nick[0]) {
     Tcl_AppendResult(irp, "illegal listen type: must be one of ",

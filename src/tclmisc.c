@@ -3,7 +3,7 @@
  *   Tcl stubs for file system commands
  *   Tcl stubs for everything else
  * 
- * $Id: tclmisc.c,v 1.16 2000/12/08 03:07:38 guppy Exp $
+ * $Id: tclmisc.c,v 1.17 2000/12/10 15:10:27 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -28,12 +28,10 @@
 #include "main.h"
 #include "modules.h"
 #include "tandem.h"
+#include "md5/md5.h"
 #ifdef HAVE_UNAME
 #include <sys/utsname.h>
 #endif
-
-/* Includes for the tcl_md5 function <Olrick> */
-#include "md5/md5.h"
 
 extern p_tcl_bind_list	 bind_table_list;
 extern tcl_timer_t	*timer, *utimer;
@@ -90,30 +88,12 @@ static int tcl_putloglev STDVAR
   return TCL_OK;
 }
 
-static int tcl_timer STDVAR
-{
-  unsigned long x;
-  char s[41];
-
-  BADARGS(3, 3, " minutes command");
-  if (atoi(argv[1]) < 0) {
-    Tcl_AppendResult(irp, "time value must be positive", NULL);
-    return TCL_ERROR;
-  }
-  if (argv[2][0] != '#') {
-    x = add_timer(&timer, atoi(argv[1]), argv[2], 0L);
-    sprintf(s, "timer%lu", x);
-    Tcl_AppendResult(irp, s, NULL);
-  }
-  return TCL_OK;
-}
-
 static int tcl_binds STDVAR
 {
   tcl_bind_list_t	*tl, *tl_kind;
   tcl_bind_mask_t	*tm;
   tcl_cmd_t		*tc;
-  char			*list[5], *g, flg[100], hits[160];
+  char			*list[5], *g, flg[100], hits[11];
   int			 matching = 0;
 
   BADARGS(1, 2, " ?type/mask?");
@@ -139,7 +119,7 @@ static int tcl_binds STDVAR
             !wild_match(argv[1], tc->func_name))
           continue;
 	build_flags(flg, &(tc->flags), NULL);
-        sprintf(hits, "%i", (int) tc->hits);
+        egg_snprintf(hits, sizeof hits, "%i", (int) tc->hits);
         list[0] = tl->name;
         list[1] = flg;
         list[2] = tm->mask;
@@ -154,10 +134,28 @@ static int tcl_binds STDVAR
   return TCL_OK;
 }
 
+static int tcl_timer STDVAR
+{
+  unsigned long x;
+  char s[16];
+ 
+  BADARGS(3, 3, " minutes command");
+  if (atoi(argv[1]) < 0) {
+    Tcl_AppendResult(irp, "time value must be positive", NULL);
+    return TCL_ERROR;
+  }
+  if (argv[2][0] != '#') {
+    x = add_timer(&timer, atoi(argv[1]), argv[2], 0L);
+    egg_snprintf(s, sizeof s, "timer%lu", x);
+    Tcl_AppendResult(irp, s, NULL);
+  }
+  return TCL_OK;
+}
+
 static int tcl_utimer STDVAR
 {
   unsigned long x;
-  char s[41];
+  char s[16];
 
   BADARGS(3, 3, " seconds command");
   if (atoi(argv[1]) < 0) {
@@ -166,7 +164,7 @@ static int tcl_utimer STDVAR
   }
   if (argv[2][0] != '#') {
     x = add_timer(&utimer, atoi(argv[1]), argv[2], 0L);
-    sprintf(s, "timer%lu", x);
+    egg_snprintf(s, sizeof s, "timer%lu", x);
     Tcl_AppendResult(irp, s, NULL);
   }
   return TCL_OK;
@@ -198,57 +196,60 @@ static int tcl_killutimer STDVAR
   return TCL_ERROR;
 }
 
+static int tcl_timers STDVAR
+{
+  BADARGS(1, 1, "");
+  list_timers(irp, timer);
+  return TCL_OK;
+}
+
+static int tcl_utimers STDVAR
+{
+  BADARGS(1, 1, "");
+  list_timers(irp, utimer);
+  return TCL_OK;
+}
+
 static int tcl_duration STDVAR
 {
-  char s[256];
-  time_t sec;
+  char s[70];
+  unsigned long sec, tmp;
 
   BADARGS(2, 2, " seconds");
   if (atol(argv[1]) <= 0) {
     Tcl_AppendResult(irp, "0 seconds", NULL);
     return TCL_OK;
   }
-  sec = atoi(argv[1]);
+  sec = atol(argv[1]);
   s[0] = 0;
   if (sec >= 31536000) {
-    sprintf(s, "%d year", (int) (sec / 31536000));
-    if ((int) (sec / 31536000) > 1)
-      strcat(s, "s");
-    strcat(s, " ");
-    sec -= (((int) (sec / 31536000)) * 31536000);
+    tmp = (sec / 31536000);
+    sprintf(s, "%lu year%s ", tmp, (tmp == 1) ? "" : "s");
+    sec -= (tmp * 31536000);
   }
   if (sec >= 604800) {
-    sprintf(&s[strlen(s)], "%d week", (int) (sec / 604800));
-    if ((int) (sec / 604800) > 1)
-      strcat(s, "s");
-    strcat(s, " ");
-    sec -= (((int) (sec / 604800)) * 604800);
+    tmp = (sec / 604800);
+    sprintf(&s[strlen(s)], "%lu week%s ", tmp, (tmp == 1) ? "" : "s");
+    sec -= (tmp * 604800);
   }
   if (sec >= 86400) {
-    sprintf(&s[strlen(s)], "%d day", (int) (sec / 86400));
-    if ((int) (sec / 86400) > 1)
-      strcat(s, "s");
-    strcat(s, " ");
-    sec -= (((int) (sec / 86400)) * 86400);
+    tmp = (sec / 86400);
+    sprintf(&s[strlen(s)], "%lu day%s ", tmp, (tmp == 1) ? "" : "s");
+    sec -= (tmp * 86400);
   }
   if (sec >= 3600) {
-    sprintf(&s[strlen(s)], "%d hour", (int) (sec / 3600));
-    if ((int) (sec / 3600) > 1)
-      strcat(s, "s");
-    strcat(s, " ");
-    sec -= (((int) (sec / 3600)) * 3600);
+    tmp = (sec / 3600);
+    sprintf(&s[strlen(s)], "%lu hour%s ", tmp, (tmp == 1) ? "" : "s");
+    sec -= (tmp * 3600);
   }
   if (sec >= 60) {
-    sprintf(&s[strlen(s)], "%d minute", (int) (sec / 60));
-    if ((int) (sec / 60) > 1)
-      strcat(s, "s");
-    strcat(s, " ");
-    sec -= (((int) (sec / 60)) * 60);
+    tmp = (sec / 60);
+    sprintf(&s[strlen(s)], "%lu minute%s ", tmp, (tmp == 1) ? "" : "s");
+    sec -= (tmp * 60);
   }
   if (sec > 0) {
-    sprintf(&s[strlen(s)], "%d second", (int) (sec / 1));
-    if ((int) (sec / 1) > 1)
-      strcat(s, "s");
+    tmp = (sec);
+    sprintf(&s[strlen(s)], "%lu second%s", tmp, (tmp == 1) ? "" : "s");
   }
   Tcl_AppendResult(irp, s, NULL);
   return TCL_OK;
@@ -264,20 +265,6 @@ static int tcl_unixtime STDVAR
   return TCL_OK;
 }
 
-static int tcl_timers STDVAR
-{
-  BADARGS(1, 1, "");
-  list_timers(irp, timer);
-  return TCL_OK;
-}
-
-static int tcl_utimers STDVAR
-{
-  BADARGS(1, 1, "");
-  list_timers(irp, utimer);
-  return TCL_OK;
-}
-
 static int tcl_ctime STDVAR
 {
   time_t tt;
@@ -288,6 +275,26 @@ static int tcl_ctime STDVAR
   strncpyz(s, ctime(&tt), sizeof s);
   Tcl_AppendResult(irp, s, NULL);
   return TCL_OK;
+}
+
+static int tcl_strftime STDVAR
+{
+  char buf[512];
+  struct tm *tm1;
+  time_t t;
+  
+  BADARGS(2, 3, " format ?time?");
+  if (argc == 3)
+    t = atol(argv[2]);
+  else
+    t = now;
+    tm1 = localtime(&t);
+  if (egg_strftime(buf, sizeof(buf) - 1, argv[1], tm1)) {
+    Tcl_AppendResult(irp, buf, NULL);
+    return TCL_OK;
+  }
+  Tcl_AppendResult(irp, " error with strftime", NULL);
+  return TCL_ERROR;
 }
 
 static int tcl_myip STDVAR
@@ -367,17 +374,16 @@ static int tcl_backup STDVAR
 
 static int tcl_die STDVAR
 {
-  char s[1024];
-  char g[1024];
+  char s[501];
+  char g[501];
 
-  Context;
   BADARGS(1, 2, " ?reason?");
   if (argc == 2) {
-    simple_sprintf(s, "BOT SHUTDOWN (%s)", argv[1]);
-    simple_sprintf(g, "%s", argv[1]);
+    egg_snprintf(s, sizeof s, "BOT SHUTDOWN (%s)", argv[1]);
+    egg_snprintf(g, sizeof g, "%s", argv[1]);
   } else {
-    simple_sprintf(s, "BOT SHUTDOWN (authorized by a canadian)");
-    simple_sprintf(g, "EXIT");
+    egg_snprintf(s, sizeof s, "BOT SHUTDOWN (aboot time -- eh?)");
+    egg_snprintf(g, sizeof g, "EXIT");
   }
   chatout("*** %s\n", s);
   botnet_send_chat(-1, botnetnick, s);
@@ -385,26 +391,6 @@ static int tcl_die STDVAR
   write_userfile(-1);
   fatal(g, 0);
   return TCL_OK;
-}
-
-static int tcl_strftime STDVAR
-{
-  char buf[512];
-  struct tm *tm1;
-  time_t t;
-
-  BADARGS(2, 3, " format ?time?");
-  if (argc == 3)
-    t = atol(argv[2]);
-  else
-    t = now;
-    tm1 = localtime(&t);
-  if (egg_strftime(buf, sizeof(buf) - 1, argv[1], tm1)) {
-    Tcl_AppendResult(irp, buf, NULL);
-    return TCL_OK;
-  }
-  Tcl_AppendResult(irp, " error with strftime", NULL);
-  return TCL_ERROR;
 }
 
 static int tcl_loadmodule STDVAR
@@ -451,19 +437,19 @@ static int tcl_modules STDVAR
   module_entry *current;
   dependancy *dep;
   char *list[100], *list2[2], *p;
-  char s[40], s2[40];
+  char s[24], s2[24];
   int i;
 
   BADARGS(1, 1, "");
   for (current = module_list; current; current = current->next) {
     list[0] = current->name;
-    simple_sprintf(s, "%d.%d", current->major, current->minor);
+    egg_snprintf(s, sizeof s, "%d.%d", current->major, current->minor);
     list[1] = s;
     i = 2;
     for (dep = dependancy_list; dep && (i < 100); dep = dep->next) {
       if (dep->needing == current) {
 	list2[0] = dep->needed->name;
-	simple_sprintf(s2, "%d.%d", dep->major, dep->minor);
+	egg_snprintf(s2, sizeof s2, "%d.%d", dep->major, dep->minor);
 	list2[1] = s2;
 	list[i] = Tcl_Merge(2, list2);
 	i++;
@@ -528,9 +514,10 @@ tcl_cmds tclmisc_cmds[] =
   {"utimer",		tcl_utimer},
   {"killtimer",		tcl_killtimer},
   {"killutimer",	tcl_killutimer},
-  {"unixtime",		tcl_unixtime},
   {"timers",		tcl_timers},
   {"utimers",		tcl_utimers},
+  {"unixtime",		tcl_unixtime},
+  {"strftime",          tcl_strftime},
   {"ctime",		tcl_ctime},
   {"myip",		tcl_myip},
   {"rand",		tcl_rand},
@@ -540,7 +527,6 @@ tcl_cmds tclmisc_cmds[] =
   {"backup",		tcl_backup},
   {"exit",		tcl_die},
   {"die",		tcl_die},
-  {"strftime",		tcl_strftime},
   {"unames",		tcl_unames},
   {"unloadmodule",	tcl_unloadmodule},
   {"loadmodule",	tcl_loadmodule},

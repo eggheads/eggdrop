@@ -4,7 +4,7 @@
  *   Tcl initialization
  *   getting and setting Tcl/eggdrop variables
  * 
- * $Id: tcl.c,v 1.24 2000/08/11 22:40:26 fabian Exp $
+ * $Id: tcl.c,v 1.25 2000/12/10 15:10:27 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -94,7 +94,6 @@ int expmem_tcl()
 {
   int i, tot = 0;
 
-  Context;
   for (i = 0; i < max_logs; i++)
     if (logs[i].filename != NULL) {
       tot += strlen(logs[i].filename) + 1;
@@ -219,7 +218,7 @@ static char *tcl_eggcouplet(ClientData cdata, Tcl_Interp *irp, char *name1,
   coupletinfo *cp = (coupletinfo *) cdata;
 
   if (flags & (TCL_TRACE_READS | TCL_TRACE_UNSETS)) {
-    sprintf(s1, "%d:%d", *(cp->left), *(cp->right));
+    egg_snprintf(s1, sizeof s1, "%d:%d", *(cp->left), *(cp->right));
     Tcl_SetVar2(interp, name1, name2, s1, TCL_GLOBAL_ONLY);
     if (flags & TCL_TRACE_UNSETS)
       Tcl_TraceVar(interp, name1,
@@ -259,9 +258,9 @@ static char *tcl_eggint(ClientData cdata, Tcl_Interp *irp, char *name1,
       fr.udef_global = default_uflags;
       build_flags(s1, &fr, 0);
     } else if ((int *) ii->var == &userfile_perm) {
-      sprintf(s1, "0%o", userfile_perm);
+      egg_snprintf(s1, sizeof s1, "0%o", userfile_perm);
     } else
-      sprintf(s1, "%d", *(int *) ii->var);
+      egg_snprintf(s1, sizeof s1, "%d", *(int *) ii->var);
     Tcl_SetVar2(interp, name1, name2, s1, TCL_GLOBAL_ONLY);
     if (flags & TCL_TRACE_UNSETS)
       Tcl_TraceVar(interp, name1,
@@ -321,9 +320,9 @@ static char *tcl_eggstr(ClientData cdata, Tcl_Interp *irp, char *name1,
 
   if (flags & (TCL_TRACE_READS | TCL_TRACE_UNSETS)) {
     if ((st->str == firewall) && (firewall[0])) {
-      char s1[161];
+      char s1[127];
 
-      sprintf(s1, "%s:%d", firewall, firewallport);
+      egg_snprintf(s1, sizeof s1, "%s:%d", firewall, firewallport);
       Tcl_SetVar2(interp, name1, name2, s1, TCL_GLOBAL_ONLY);
     } else
       Tcl_SetVar2(interp, name1, name2, st->str, TCL_GLOBAL_ONLY);
@@ -480,7 +479,6 @@ static void init_traces()
 
 void kill_tcl()
 {
-  Context;
   rem_tcl_coups(def_tcl_coups);
   rem_tcl_strings(def_tcl_strings);
   rem_tcl_ints(def_tcl_ints);
@@ -500,7 +498,6 @@ void init_tcl(int argc, char **argv)
   char pver[1024] = "";
 #endif
 
-  Context;
 #ifndef HAVE_PRE7_5_TCL
   /* This is used for 'info nameofexecutable'.
    * The filename in argv[0] must exist in a directory listed in
@@ -554,7 +551,6 @@ void do_tcl(char *whatzit, char *script)
     if (f != NULL)
       fprintf(f, "eval: %s\n", script);
   }
-  Context;
   code = Tcl_Eval(interp, script);
   if (debug_tcl && (f != NULL)) {
     fprintf(f, "done eval, result=%d\n", code);

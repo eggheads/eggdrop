@@ -7,7 +7,7 @@
  *   help system
  *   motd display and %var substitution
  * 
- * $Id: misc.c,v 1.31 2000/11/21 04:46:17 guppy Exp $
+ * $Id: misc.c,v 1.32 2000/12/10 15:10:27 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -231,7 +231,7 @@ void splitcn(char *first, char *rest, char divider, size_t max)
   }
   *p = 0;
   if (first != NULL)
-    strncpy(first, rest, max), first[max] = 0;
+    strncpyz(first, rest, max);
   if (first != rest)
     /*    In most circumstances, strcpy with src and dst being the same buffer
      *  can produce undefined results. We're safe here, as the src is
@@ -427,7 +427,7 @@ void daysago(time_t now, time_t then, char *out)
   if (now - then > 86400) {
     int days = (now - then) / 86400;
 
-    sprintf(out, "%d day%s ago", days, (days == 1) ? "" : "s");
+    egg_snprintf(out, sizeof out, "%d day%s ago", days, (days == 1) ? "" : "s");
     return;
   }
   egg_strftime(out, 6, "%H:%M", localtime(&then));
@@ -441,7 +441,7 @@ void days(time_t now, time_t then, char *out)
   if (now - then > 86400) {
     int days = (now - then) / 86400;
 
-    sprintf(out, "in %d day%s", days, (days == 1) ? "" : "s");
+    egg_snprintf(out, sizeof out, "in %d day%s", days, (days == 1) ? "" : "s");
     return;
   }
   egg_strftime(out, 9, "at %H:%M", localtime(&now));
@@ -452,21 +452,18 @@ void days(time_t now, time_t then, char *out)
  */
 void daysdur(time_t now, time_t then, char *out)
 {
-  char s[81];
   int hrs, mins;
 
   if (now - then > 86400) {
     int days = (now - then) / 86400;
 
-    sprintf(out, "for %d day%s", days, (days == 1) ? "" : "s");
+    egg_snprintf(out, sizeof out, "for %d day%s", days, (days == 1) ? "" : "s");
     return;
   }
-  strcpy(out, "for ");
   now -= then;
   hrs = (int) (now / 3600);
   mins = (int) ((now - (hrs * 3600)) / 60);
-  sprintf(s, "%02d:%02d", hrs, mins);
-  strcat(out, s);
+  egg_snprintf(out, sizeof out, "for %02d:%02d", hrs, mins);
 }
 
 
@@ -561,8 +558,7 @@ void putlog EGG_VARARGS_DEF(int, arg1)
 	       */
 	    }
 	    fputs(out, logs[i].f);
-	    strncpy(logs[i].szlast, out + 8, LOGLINEMAX);
-	    logs[i].szlast[LOGLINEMAX] = 0;
+	    strncpyz(logs[i].szlast, out + 8, LOGLINEMAX);
 	  }
 	}
       }
@@ -592,7 +588,6 @@ void logsuffix_change(char *s)
   int	 i;
   char	*s2 = logfile_suffix;
 
-  Context;
   debug0("Logfile suffix changed. Closing all open logs.");
   strcpy(logfile_suffix, s);
   while (s2[0]) {
@@ -616,51 +611,29 @@ void check_logsize()
 /* int x=1; */
   char buf[1024];		/* Should be plenty */
 
-  Context;
-  if ((keep_all_logs == 0) && (max_logsize != 0)) {
+  if (!keep_all_logs && max_logsize > 0) {
     for (i = 0; i < max_logs; i++) {
       if (logs[i].filename) {
 	if (stat(logs[i].filename, &ss) != 0) {
 	  break;
 	}
 	if ((ss.st_size >> 10) > max_logsize) {
-	  Context;
 	  if (logs[i].f) {
 	    /* write to the log before closing it huh.. */
 	    putlog(LOG_MISC, "*", MISC_CLOGS, logs[i].filename, ss.st_size);
 	    fflush(logs[i].f);
 	    fclose(logs[i].f);
 	    logs[i].f = NULL;
-	    Context;
 	  }
-	  Context;
 
-	  simple_sprintf(buf, "%s.yesterday", logs[i].filename);
+	  egg_snprintf(buf, sizeof buf, "%s.yesterday", logs[i].filename);
 	  buf[1023] = 0;
 	  unlink(buf);
-/* x++; 
- * This is an alternate method i was considering, i want to leave
- * this in here and commented.. in case someone wants it like this
- * it really depends on feedback from the users. - poptix
- * feel free to ask me, if you have questions on this.. 
- * 
- * while (x > 0) {
- * x++;
- * * only YOU can prevent buffer overflows! *
- * simple_sprintf(buf,"%s.%d",logs[i].filename,x);
- * buf[1023] = 0;
- * if (stat(buf,&ss) == -1) { 
- * * file doesnt exist, lets use it *
- */
 	  movefile(logs[i].filename, buf);
-/* x=0;
- * }
- * } */
 	}
       }
     }
   }
-  Context;
 }
 
 /* Flush the logfiles to disk
@@ -670,7 +643,6 @@ void flushlogs()
   int i;
   struct tm *t = localtime(&now);
 
-  Context;
   /* Logs may not be initialised yet. */
   if (!logs)
     return;
@@ -697,7 +669,6 @@ void flushlogs()
       fflush(logs[i].f);
     }
   }
-  Context;
 }
 
 
@@ -796,8 +767,7 @@ void help_subst(char *s, char *nick, struct flag_record *flags,
     help_flags = isdcc;
     return;
   }
-  strncpy(xx, s, HELP_BUF_LEN);
-  xx[HELP_BUF_LEN] = 0;
+  strncpyz(xx, s, sizeof xx);
   readidx = xx;
   writeidx = s;
   current = strchr(readidx, '%');
@@ -877,7 +847,7 @@ void help_subst(char *s, char *nick, struct flag_record *flags,
     case 'U':
 #ifdef HAVE_UNAME
       if (!uname(&uname_info)) {
-	simple_sprintf(sub, "%s %s", uname_info.sysname,
+	egg_snprintf(sub, sizeof sub, "%s %s", uname_info.sysname,
 		       uname_info.release);
 	towrite = sub;
       } else
@@ -1077,11 +1047,11 @@ void add_help_reference(char *file)
   current->next = help_list;
   current->first = NULL;
   help_list = current;
-  simple_sprintf(s, "%smsg/%s", helpdir, file);
+  egg_snprintf(s, sizeof s, "%smsg/%s", helpdir, file);
   scan_help_file(current, s, 0);
-  simple_sprintf(s, "%s%s", helpdir, file);
+  egg_snprintf(s, sizeof s, "%s%s", helpdir, file);
   scan_help_file(current, s, 1);
-  simple_sprintf(s, "%sset/%s", helpdir, file);
+  egg_snprintf(s, sizeof s, "%sset/%s", helpdir, file);
   scan_help_file(current, s, 2);
 }
 
@@ -1154,14 +1124,14 @@ FILE *resolve_help(int dcc, char *file)
       for (item = current->first; item; item = item->next)
 	if (!strcmp(item->name, file)) {
 	  if (!item->type && !dcc) {
-	    simple_sprintf(s, "%smsg/%s", helpdir, current->name);
+	    egg_snprintf(s, sizeof s, "%smsg/%s", helpdir, current->name);
 	    if ((f = fopen(s, "r")))
 	      return f;
 	  } else if (dcc && item->type) {
 	    if (item->type == 1)
-	      simple_sprintf(s, "%s%s", helpdir, current->name);
+	      egg_snprintf(s, sizeof s, "%s%s", helpdir, current->name);
 	    else
-	      simple_sprintf(s, "%sset/%s", helpdir, current->name);
+	      egg_snprintf(s, sizeof s, "%sset/%s", helpdir, current->name);
 	    if ((f = fopen(s, "r")))
 	      return f;
 	  }
@@ -1274,9 +1244,9 @@ void tellwildhelp(int idx, char *match, struct flag_record *flags)
     for (item = current->first; item; item = item->next)
       if (wild_match(match, item->name) && item->type) {
 	if (item->type == 1)
-	  simple_sprintf(s, "%s%s", helpdir, current->name);
+	  egg_snprintf(s, sizeof s, "%s%s", helpdir, current->name);
 	else
-	  simple_sprintf(s, "%sset/%s", helpdir, current->name);
+	  egg_snprintf(s, sizeof s, "%sset/%s", helpdir, current->name);
 	if ((f = fopen(s, "r")))
 	  display_tellhelp(idx, item->name, f, flags);
       }
@@ -1299,9 +1269,9 @@ void tellallhelp(int idx, char *match, struct flag_record *flags)
       if (!strcmp(match, item->name) && item->type) {
 
 	if (item->type == 1)
-	  simple_sprintf(s, "%s%s", helpdir, current->name);
+	  egg_snprintf(s, sizeof s, "%s%s", helpdir, current->name);
 	else
-	  simple_sprintf(s, "%sset/%s", helpdir, current->name);
+	  egg_snprintf(s, sizeof s, "%sset/%s", helpdir, current->name);
 	if ((f = fopen(s, "r")))
 	  display_tellhelp(idx, item->name, f, flags);
       }
@@ -1319,8 +1289,7 @@ void sub_lang(int idx, char *text)
   get_user_flagrec(dcc[idx].user, &fr, dcc[idx].u.chat->con_chan);
   help_subst(NULL, NULL, 0,
 	     (dcc[idx].status & STAT_TELNET) ? 0 : HELP_IRC, NULL);
-  strncpy(s, text, 1023);
-  s[1023] = 0;
+  strncpyz(s, text, sizeof s);
   if (s[strlen(s) - 1] == '\n')
     s[strlen(s) - 1] = 0;
   if (!s[0])
