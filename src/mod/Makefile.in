@@ -1,5 +1,5 @@
 # Makefile for src/mod/
-# $Id: Makefile.in,v 1.17 2003/12/10 19:04:49 wcc Exp $
+# $Id: Makefile.in,v 1.18 2003/12/13 19:18:50 wcc Exp $
 
 SHELL = @SHELL@
 top_srcdir = @top_srcdir@
@@ -46,8 +46,8 @@ doofus:
 	@cd ../.. && $(MAKE)
 
 modules: $(mod_libs)
-	@echo "All modules compiled."
 	@echo ""
+	@echo "All modules compiled."
 
 static: $(mod_objs)
 	@$(modconfig) static.h
