@@ -2,7 +2,7 @@
  * tclmisc.c -- handles:
  *   Tcl stubs for everything else
  *
- * $Id: tclmisc.c,v 1.32 2002/12/24 02:30:05 wcc Exp $
+ * $Id: tclmisc.c,v 1.33 2002/12/26 02:21:53 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -200,9 +200,9 @@ static int tcl_binds STDVAR
 	if (tc->attributes & TC_DELETED)
 	  continue;
         if (matching &&
-	    !wild_match(argv[1], tl->name) &&
-            !wild_match(argv[1], tm->mask) &&
-            !wild_match(argv[1], tc->func_name))
+            !wild_match_per(argv[1], tl->name) &&
+            !wild_match_per(argv[1], tm->mask) &&
+            !wild_match_per(argv[1], tc->func_name))
           continue;
 	build_flags(flg, &(tc->flags), NULL);
         egg_snprintf(hits, sizeof hits, "%i", (int) tc->hits);

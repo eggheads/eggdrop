@@ -1,5 +1,5 @@
 # Makefile for src/
-# $Id: Makefile.in,v 1.15 2000/11/23 03:56:40 guppy Exp $
+# $Id: Makefile.in,v 1.16 2002/12/26 02:21:53 wcc Exp $
 
 SHELL = @SHELL@
 top_srcdir = @top_srcdir@
@@ -19,9 +19,9 @@ CFLAGS = @CFLAGS@ -I.. -I$(top_srcdir) @DEFS@ $(CFLGS)
 CPPFLAGS = @CPPFLAGS@
 
 eggdrop_objs = bg.o botcmd.o botmsg.o botnet.o chanprog.o cmds.o dcc.o \
-dccutil.o dns.o flags.o language.o main.o mem.o misc.o misc_file.o \
-modules.o net.o rfc1459.o tcl.o tcldcc.o tclhash.o tclmisc.o \
-tcluser.o userent.o userrec.o users.o
+dccutil.o dns.o flags.o language.o match.o main.o mem.o misc.o misc_file.o \
+modules.o net.o rfc1459.o tcl.o tcldcc.o tclhash.o tclmisc.o tcluser.o \
+userent.o userrec.o users.o
 
 MAKE_GENERIC = $(MAKE) 'MAKE=$(MAKE)' 'CC=$(CC)' 'LD=$(LD)' \
 'STRIP=$(STRIP)' 'CFLGS=$(CFLGS)'
@@ -143,7 +143,7 @@ main.o: ./main.c main.h ../config.h lang.h eggdrop.h flags.h proto.h \
  compat/compat.h compat/inet_aton.h ../src/main.h compat/snprintf.h \
  compat/memset.h compat/memcpy.h compat/strcasecmp.h compat/strftime.h \
  modules.h mod/modvals.h tandem.h bg.h patch.h
-match.o: ./match.c
+match.o: ./match.c ./main.h
 mem.o: ./mem.c main.h ../config.h lang.h eggdrop.h flags.h proto.h \
  ../lush.h misc_file.h cmdt.h tclegg.h tclhash.h chan.h users.h \
  compat/compat.h compat/inet_aton.h ../src/main.h compat/snprintf.h \
@@ -186,7 +186,7 @@ tclhash.o: ./tclhash.c main.h ../config.h lang.h eggdrop.h flags.h \
  proto.h ../lush.h misc_file.h cmdt.h tclegg.h tclhash.h chan.h \
  users.h compat/compat.h compat/inet_aton.h ../src/main.h \
  compat/snprintf.h compat/memset.h compat/memcpy.h compat/strcasecmp.h \
- compat/strftime.h match.c
+ compat/strftime.h
 tclmisc.o: ./tclmisc.c main.h ../config.h lang.h eggdrop.h flags.h \
  proto.h ../lush.h misc_file.h cmdt.h tclegg.h tclhash.h chan.h \
  users.h compat/compat.h compat/inet_aton.h ../src/main.h \

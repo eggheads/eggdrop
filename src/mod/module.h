@@ -1,7 +1,7 @@
 /*
  * module.h
  *
- * $Id: module.h,v 1.62 2002/12/24 02:30:06 wcc Exp $
+ * $Id: module.h,v 1.63 2002/12/26 02:21:54 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -457,6 +457,8 @@
 #define MD5_Init ((void (*)(MD5_CTX))global[277])
 #define MD5_Update ((void (*)(MD5_CTX *, void *, unsigned long))global[278])
 #define MD5_Final ((void (*)(unsigned char *, MD5_CTX *))global[279])
+/* 280 - 283 */
+#define wild_match_per ((int (*)(const char *, const char *))global[280])
 
 /* This is for blowfish module, couldnt be bothered making a whole new .h
  * file for it ;)

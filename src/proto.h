@@ -7,7 +7,7 @@
  * because they use structures in those
  * (saves including those .h files EVERY time) - Beldin
  *
- * $Id: proto.h,v 1.50 2002/12/24 03:33:24 wcc Exp $
+ * $Id: proto.h,v 1.51 2002/12/26 02:21:53 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -184,7 +184,9 @@ void backup_userfile(void);
 
 /* match.c */
 int _wild_match(register unsigned char *, register unsigned char *);
+int _wild_match_per(register unsigned char *, register unsigned char *);
 #define wild_match(a,b) _wild_match((unsigned char *)(a),(unsigned char *)(b))
+#define wild_match_per(a,b) _wild_match_per((unsigned char *)(a),(unsigned char *)(b))
 
 /* mem.c */
 void *n_malloc(int, const char *, int);

@@ -7,7 +7,7 @@
  *   (non-Tcl) procedure lookups for msg/dcc/file commands
  *   (Tcl) binding internal procedures to msg/dcc/file commands
  *
- * $Id: tclhash.c,v 1.37 2002/12/24 02:30:05 wcc Exp $
+ * $Id: tclhash.c,v 1.38 2002/12/26 02:21:53 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -31,7 +31,6 @@
 #include "main.h"
 #include "chan.h"
 #include "users.h"
-#include "match.c"
 
 extern Tcl_Interp	*interp;
 extern struct dcc_t	*dcc;
@@ -717,7 +716,7 @@ int check_tcl_bind(tcl_bind_list_t *tl, const char *match,
       ok = !strcmp(match, tm->mask);
       break;
     case MATCH_MASK:
-      ok = wild_match_per((unsigned char *) tm->mask, (unsigned char *) match);
+      ok = wild_match_per(tm->mask, match);
       break;
     default:
       ok = 0;
@@ -1095,9 +1094,9 @@ void tell_binds(int idx, char *par)
 	  int	ok = 0;
 
           if (patmatc == 1) {
-            if (wild_match(name, tl->name) ||
-                wild_match(name, tm->mask) ||
-                wild_match(name, tc->func_name))
+            if (wild_match_per(name, tl->name) ||
+                wild_match_per(name, tm->mask) ||
+                wild_match_per(name, tc->func_name))
 	      ok = 1;
           } else
 	    ok = 1;
