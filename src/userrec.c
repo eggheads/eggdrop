@@ -4,7 +4,7 @@
  *   a bunch of functions to find and change user records
  *   change and check user (and channel-specific) flags
  *
- * $Id: userrec.c,v 1.31 2001/06/30 06:29:55 guppy Exp $
+ * $Id: userrec.c,v 1.32 2001/07/16 05:14:33 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -331,7 +331,7 @@ struct userrec *get_user_by_host(char *host)
     return ret;
   }
   cache_miss++;
-  strcpy(host2, host);
+  strncpyz(host2, host, sizeof host2);
   host = fixfrom(host);
   for (u = userlist; u; u = u->next) {
     q = get_user(&USERENTRY_HOSTS, u);
