@@ -6663,6 +6663,14 @@ echo "${ECHO_T}no" >&6
   fi
 
 
+# Some newer systems don't support head -1 anymore.
+if test `echo test | head -1`
+then
+  egg_headone="head -1"
+else
+  egg_headone="head -n 1"
+fi
+
 # Both TCLLIBFN & TCLINCFN must be set, or we bail
 TCL_FOUND=0
 if test ! "${TCLLIBFN-x}" = "x" && test ! "${TCLINCFN-x}" = "x"
@@ -6680,7 +6688,7 @@ echo $ECHO_N "checking for Tcl version... $ECHO_C" >&6
   if test "${egg_cv_var_tcl_version+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
 else
-      egg_cv_var_tcl_version=`grep TCL_VERSION $TCLINC/$TCLINCFN | head -1 | $AWK '{gsub(/\"/, "", $3); print $3}'`
+      egg_cv_var_tcl_version=`grep TCL_VERSION $TCLINC/$TCLINCFN | $egg_headone | $AWK '{gsub(/\"/, "", $3); print $3}'`
 
 fi
 
@@ -6706,7 +6714,7 @@ echo $ECHO_N "checking for Tcl patch level... $ECHO_C" >&6
   if test "${egg_cv_var_tcl_patch_level+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
 else
-      eval "egg_cv_var_tcl_patch_level=`grep TCL_PATCH_LEVEL $TCLINC/$TCLINCFN | head -1 | $AWK '{gsub(/\"/, "", $3); print $3}'`"
+      eval "egg_cv_var_tcl_patch_level=`grep TCL_PATCH_LEVEL $TCLINC/$TCLINCFN | $egg_headone | $AWK '{gsub(/\"/, "", $3); print $3}'`"
 
 fi
 
