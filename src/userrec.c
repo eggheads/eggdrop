@@ -6,7 +6,7 @@
  * 
  * dprintf'ized, 10nov1995
  * 
- * $Id: userrec.c,v 1.24 2000/01/30 22:21:18 per Exp $
+ * $Id: userrec.c,v 1.25 2000/07/14 22:26:58 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -667,7 +667,8 @@ struct userrec *adduser(struct userrec *bu, char *handle, char *host,
     fr.global = u->flags;
     fr.udef_global = u->flags_udef;
     build_flags(x, &fr, 0);
-    shareout(NULL, "n %s %s %s %s\n", handle, host ? host : "none", pass, x);
+    shareout(NULL, "n %s %s %s %s\n", handle, host && host[0] ? host : "none",
+             pass, x);
   }
   if (bu == NULL)
     bu = u;

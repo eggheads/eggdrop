@@ -9,6 +9,6 @@ BUG REPORTS:
   a fault of the TCL interpreter, and not eggdrop.  The TCL interpreter
   filters the characters when it reads a file for interpreting.
 * There is a "ghost bug" in eggdrop at the moment. We don't know how to
-  fix it, since we can't reproduce it. If you can so, please report it
-  to eggheads@eggheads.org. Visit http://todo.eggheads.org/detail.php3?id=39
+  fix it, since we can't reproduce it. If you can so, please report it to
+  eggheads@eggheads.org. Visit http://www.eggheads.org/bugzilla/show_bug.cgi?id=4
   for more details...

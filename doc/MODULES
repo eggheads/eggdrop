@@ -13,14 +13,14 @@ How:  run ./configure as normal, then 'make' to make the eggdrop
       
       next do one of two things to load the module:
       from the partyline (as an owner) type:
-      .loadmodule <module-name>
+      .loadmod <module-name>
       or in a tcl script:
       loadmodule <module-name>
       
       module name is the part BEFORE .so, eg filesys.so module 
-      you type '.loadmodule filesys'
+      you type '.loadmod filesys'
       
-      to see your currently running modules type '.modules'
+      to see your currently running modules type '.module'
 
 CURRENT MODULES:
 
@@ -82,7 +82,7 @@ module name), and here's where the work starts :)
    (1) things you need to include in your source code.
        (i) #define MODULE_NAME "module-name"
            You MUST use this, it's required by several short cuts in the
-	   code, it's gotta be the name you will be using in .loadmodule
+	   code, it's gotta be the name you will be using in .loadmod
        (ii) #include "../module.h"
            this provides all the accessible functions in eggdrop,
 	   examine closely src/mod/module.h to find a list of functions
@@ -160,9 +160,9 @@ drastically reduce the size of modules on decent systems.
 	    
        (v) static void MODULE_report (int idx) 
             this should provide a relatively short report of module status
-	    (for .modules/.status)
+	    (for .module/.status)
 	    
-   (c) AVALIABLE FUNCTIONS - this is what ppl want no? :)
+   (c) AVAILABLE FUNCTIONS - this is what ppl want no? :)
        (i) reliable ones, you can RELY on these functions being available,
            they may move in the tables for the moment (since it's a work
 	   in progress) but they will be there...

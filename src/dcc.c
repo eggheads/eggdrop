@@ -6,7 +6,7 @@
  * 
  * dprintf'ized, 27oct1995
  * 
- * $Id: dcc.c,v 1.26 2000/06/10 07:03:31 guppy Exp $
+ * $Id: dcc.c,v 1.27 2000/07/14 22:26:57 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1213,7 +1213,7 @@ static void dcc_telnet_id(int idx, char *buf, int atr)
   buf[HANDLEN] = 0;
   /* toss out bad nicknames */
   if ((dcc[idx].nick[0] != '@') && (!wild_match(dcc[idx].nick, buf))) {
-    dprintf(idx, "Sorry, that nickname format is invalid.\r\n");
+    dprintf(idx, "Sorry, that nickname format is invalid.\n");
     putlog(LOG_BOTS, "*", DCC_BADNICK, dcc[idx].host);
     killsock(dcc[idx].sock);
     lostdcc(idx);
@@ -1223,7 +1223,7 @@ static void dcc_telnet_id(int idx, char *buf, int atr)
   get_user_flagrec(dcc[idx].user, &fr, NULL);
   /* make sure users-only/bots-only connects are honored */
   if ((dcc[idx].status & STAT_BOTONLY) && !glob_bot(fr)) {
-    dprintf(idx, "This telnet port is for bots only.\r\n");
+    dprintf(idx, "This telnet port is for bots only.\n");
     putlog(LOG_BOTS, "*", DCC_NONBOT, dcc[idx].host);
     killsock(dcc[idx].sock);
     lostdcc(idx);
@@ -1241,10 +1241,10 @@ static void dcc_telnet_id(int idx, char *buf, int atr)
       ((allow_new_telnets) || (make_userfile))) {
     dcc[idx].type = &DCC_TELNET_NEW;
     dcc[idx].timeval = now;
-    dprintf(idx, "\r\n");
+    dprintf(idx, "\n");
     dprintf(idx, IRC_TELNET, IRC_TELNET_ARGS);
     dprintf(idx, IRC_TELNET1);
-    dprintf(idx, "\r\nEnter the nickname you would like to use.\r\n");
+    dprintf(idx, "\nEnter the nickname you would like to use.\n");
     return;
   }
   if (chan_op(fr)) {
@@ -1260,7 +1260,7 @@ static void dcc_telnet_id(int idx, char *buf, int atr)
       ok = 1;
   }
   if (!ok) {
-    dprintf(idx, "You don't have access.\r\n");
+    dprintf(idx, "You don't have access.\n");
     putlog(LOG_BOTS, "*", DCC_INVHANDLE, dcc[idx].host, buf);
     killsock(dcc[idx].sock);
     lostdcc(idx);
@@ -1305,7 +1305,7 @@ static void dcc_telnet_id(int idx, char *buf, int atr)
 #endif
       return;
     }
-    dprintf(idx, "Can't telnet until you have a password set.\r\n");
+    dprintf(idx, "Can't telnet until you have a password set.\n");
     putlog(LOG_MISC, "*", DCC_NOPASS, buf, dcc[idx].host);
     killsock(dcc[idx].sock);
     lostdcc(idx);
@@ -1938,9 +1938,9 @@ void dcc_telnet_got_ident(int i, char *host)
   if (stealth_telnets) 
     sub_lang(i, MISC_BANNER_STEALTH);
   else {
-    dprintf(i, "\r\n\r\n");
+    dprintf(i, "\n\n");
     sub_lang(i, MISC_BANNER);
   }
   if (allow_new_telnets)
-    dprintf(i, "(If you are new, enter 'NEW' here.)\r\n");
+    dprintf(i, "(If you are new, enter 'NEW' here.)\n");
 }

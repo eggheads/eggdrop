@@ -9,7 +9,7 @@
  * 
  * dprintf'ized, 28nov1995
  * 
- * $Id: botnet.c,v 1.13 2000/06/22 03:45:05 guppy Exp $
+ * $Id: botnet.c,v 1.14 2000/07/14 22:26:57 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1185,7 +1185,7 @@ static void eof_dcc_relay(int idx)
   dcc[j].status = dcc[j].u.relay->old_status;
   /* in case echo was off, turn it back on: */
   if (dcc[j].status & STAT_TELNET)
-    dprintf(j, "\377\374\001\r\n");
+    dprintf(j, "\377\374\001\n");
   putlog(LOG_MISC, "*", "%s: %s -> %s", BOT_ENDRELAY1, dcc[j].nick,
 	 dcc[idx].nick);
   dprintf(j, "\n\n*** %s %s\n", BOT_ENDRELAY2, botnetnick);
@@ -1226,13 +1226,14 @@ static void dcc_relay(int idx, char *buf, int j)
   unsigned char *p = (unsigned char *) buf;
   int mark;
 
-  for (j = 0; (dcc[j].sock != dcc[idx].u.relay->sock) ||
-       (dcc[j].type != &DCC_RELAYING); j++);
-  /* if redirecting to a non-telnet user, swallow telnet codes */
+  for (j = 0; dcc[j].sock != dcc[idx].u.relay->sock ||
+       dcc[j].type != &DCC_RELAYING; j++);
+  /* If redirecting to a non-telnet user, swallow telnet codes and
+      escape sequences. */
   if (!(dcc[j].status & STAT_TELNET)) {
     while (*p != 0) {
-      while ((*p != 255) && (*p != 0))
-	p++;			/* search for IAC */
+      while (*p != 255 && (*p != '\033' || *(p + 1) != '[') && *p != '\r' && *p)
+	p++;			/* Search for IAC, escape sequences and CR. */
       if (*p == 255) {
 	mark = 2;
 	if (!*(p + 1))
@@ -1243,7 +1244,15 @@ static void dcc_relay(int idx, char *buf, int j)
 	    mark = 2;		/* bogus */
 	}
 	strcpy((char *) p, (char *) (p + mark));
-      }
+      } else if (*p == '\033') {
+	unsigned char	*e;
+
+	/* Search for the end of the escape sequence. */
+	for (e = p + 2; *e != 'm' && *e; e++)
+	  ;
+	strcpy((char *) p, (char *) (e + 1));
+      } else if (*p == '\r')
+	strcpy((char *) p, (char *) (p + 1));
     }
     if (!buf[0])
       dprintf(-dcc[idx].u.relay->sock, " \n");
@@ -1271,7 +1280,7 @@ static void dcc_relaying(int idx, char *buf, int j)
   dcc[idx].status = dcc[idx].u.relay->old_status;
   /* in case echo was off, turn it back on: */
   if (dcc[idx].status & STAT_TELNET)
-    dprintf(idx, "\377\374\001\r\n");
+    dprintf(idx, "\377\374\001\n");
   dprintf(idx, "\n(%s %s.)\n", BOT_BREAKRELAY, dcc[j].nick);
   dprintf(idx, "%s %s.\n\n", BOT_ABORTRELAY2, botnetnick);
   putlog(LOG_MISC, "*", "%s: %s -> %s", BOT_RELAYBROKEN,
