@@ -1,5 +1,5 @@
 # Makefile for src/mod/console.mod/
-# $Id: Makefile,v 1.10 2000/07/09 14:10:49 fabian Exp $
+# $Id: Makefile,v 1.11 2000/07/11 17:03:05 tothwolf Exp $
 
 srcdir = .
 
@@ -12,7 +12,7 @@ doofus:
 
 static: ../console.o
 
-modules: ../../../console..$(MOD_EXT)
+modules: ../../../console.$(MOD_EXT)
 
 ../console.o:
 	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c $(srcdir)/console.c
