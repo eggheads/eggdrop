@@ -21,21 +21,27 @@ marked with vertical bars (|) on the left.
     Description: sends text to the server, like '.dump' (intended for direct
       server commands); output is queued so that the bot won't flood itself
       off the server.
-    Options: -next: push messages to the front of the queue
+    Options:
+      -next:   push messages to the front of the queue
+      -normal: no effect
     Returns: nothing
     Module: server
 
   puthelp <text> [options]
     Description: sends text to the server, like 'putserv', but it uses a
       different queue intended for sending messages to channels or people.
-    Options: -next: push messages to the front of the queue
+    Options:
+      -next:   push messages to the front of the queue
+      -normal: no effect
     Returns: nothing
     Module: server
 
   putquick <text> [options]
     Description: sends text to the server, like 'putserv', but it uses a
       different (and faster) queue.
-    Options: -next: push messages to the front of the queue
+    Options:
+      -next:   push messages to the front of the queue
+      -normal: no effect
     Returns: nothing
     Module: server
 
@@ -238,8 +244,9 @@ marked with vertical bars (|) on the left.
       minutes. If lifetime is not specified, ban-time (usually 60) is
       used. Setting the lifetime to 0 makes it a permanent ban.
     Options:
-      sticky - forces the ban to be always active on a channel, even
-               with dynamic bans on
+      sticky: forces the ban to be always active on a channel, even
+              with dynamicbans on
+      none:   no effect
     Returns: nothing
     Module: channels
 
@@ -250,8 +257,9 @@ marked with vertical bars (|) on the left.
       ban-time (usually 60) is used. Setting the lifetime to 0 makes it a
       permanent ban.
     Options:
-      sticky - forces the ban to be always active on a channel, even
-               with dynamic bans on
+      sticky: forces the ban to be always active on a channel, even
+              with dynamicbans on
+      none:   no effect
     Returns: nothing
     Module: channels
 
@@ -264,8 +272,9 @@ marked with vertical bars (|) on the left.
       timed bans, once the time period has expired, the exempt will not be
       removed until the corresponding ban has either expired or been removed.
     Options:
-      sticky - forces the exempt to be always active on a channel, even
-                 with dynamicexempts on
+      sticky: forces the exempt to be always active on a channel, even
+              with dynamicexempts on
+      none:   no effect
     Returns: nothing
     Module: channels
 
@@ -277,8 +286,9 @@ marked with vertical bars (|) on the left.
       permanent exempt. The exempt will not be removed until the
       corresponding ban has been removed.
     Options:
-      sticky - forces the exempt to be always active on a channel, even
-                 with dynamicexempts on
+      sticky: forces the exempt to be always active on a channel, even
+              with dynamicexempts on
+      none:   no effect
     Returns: nothing
     Module: channels
 
@@ -289,8 +299,9 @@ marked with vertical bars (|) on the left.
       used. Setting the lifetime to 0 makes it a permanent invite. The invite
       will not be removed until the channel has gone -i.
     Options:
-      sticky - forces the exempt to be always active on a channel, even
-                 with dynamicexempts on
+      sticky: forces the invite to be always active on a channel, even
+              with dynamicinvites on
+      none:   no effect
     Returns: nothing
     Module: channels
 
@@ -302,8 +313,9 @@ marked with vertical bars (|) on the left.
       a permanent invite. The invite will not be removed until the channel
       has gone -i.
     Options:
-      sticky - forces the exempt to be always active on a channel, even
-                 with dynamicexempts on
+      sticky: forces the invite to be always active on a channel, even
+              with dynamicinvites on
+      none:   no effect
     Returns: nothing
     Module: channels
 

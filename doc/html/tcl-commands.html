@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: tcl-commands.html,v 1.5 2002/03/09 21:14:16 wcc Exp $ -->
+<!-- $Id: tcl-commands.html,v 1.6 2002/03/14 07:10:55 wcc Exp $ -->
 
 <html>
   <head>
@@ -76,8 +76,13 @@
           &#39;.dump&#39; (intended for direct server commands); output is
           queued so that the bot won&#39;t flood itself off the server.</p>
 
-          <p><strong>Options:</strong> -next: push messages to the front
-          of the queue</p>
+          <p><strong>Options:</strong></p>
+
+          <blockquote>
+            <p><strong>-next</strong>: push messages to the front of the
+            queue<br>
+            <strong>-normal</strong>: no effect</p>
+          </blockquote>
 
           <p><strong>Returns:</strong> nothing</p>
 
@@ -91,8 +96,13 @@
           &#39;putserv&#39;, but it uses a different queue intended for
           sending messages to channels or people.</p>
 
-          <p><strong>Options:</strong> -next: push messages to the front
-          of the queue</p>
+          <p><strong>Options:</strong></p>
+
+          <blockquote>
+            <p><strong>-next</strong>: push messages to the front of the
+            queue<br>
+            <strong>-normal</strong>: no effect</p>
+          </blockquote>
 
           <p><strong>Returns:</strong> nothing</p>
 
@@ -105,8 +115,13 @@
           <p><strong>Description:</strong> sends text to the server, like
           &#39;putserv&#39;, but it uses a different (and faster) queue.</p>
 
-          <p><strong>Options:</strong> -next: push messages to the front
-          of the queue</p>
+          <p><strong>Options:</strong></p>
+
+          <blockquote>
+            <p><strong>-next</strong>: push messages to the front of the
+            queue<br>
+            <strong>-normal</strong>: no effect</p>
+          </blockquote>
 
           <p><strong>Returns:</strong> nothing</p>
 
@@ -608,8 +623,13 @@
           ban-time (usually 60) is used. Setting the lifetime to 0 makes
           it a permanent ban.</p>
 
-          <p><strong>Options:</strong> sticky: forces the ban to be always
-          active on a channel, even with dynamic bans on</p>
+          <p><strong>Options:</strong></p>
+
+          <blockquote>
+            <p><strong>sticky</strong>: forces the ban to be always active
+            on a channel, even with dynamicbans on<br>
+            <strong>none</strong>: no effect</p>
+          </blockquote>
 
           <p><strong>Returns:</strong> nothing</p>
 
@@ -626,8 +646,13 @@
           lifetime is not specified, ban-time (usually 60) is used. Setting
           the lifetime to 0 makes it a permanent ban.</p>
 
-          <p><strong>Options:</strong> sticky: forces the ban to be always
-          active on a channel, even with dynamic bans on</p>
+          <p><strong>Options:</strong></p>
+
+          <blockquote>
+            <p><strong>sticky</strong>: forces the ban to be always active
+            on a channel, even with dynamicbans on<br>
+            <strong>none</strong>: no effect</p>
+          </blockquote>
 
           <p><strong>Returns:</strong> nothing</p>
 
@@ -647,8 +672,13 @@
           once the time period has expired, the exempt will not be removed
           until the corresponding ban has either expired or been removed.</p>
 
-          <p><strong>Options:</strong> sticky: forces the ban to be always
-          active on a channel, even with dynamic bans on</p>
+          <p><strong>Options:</strong></p>
+
+          <blockquote>
+            <p><strong>sticky</strong>: forces the exempt to be always active
+            on a channel, even with dynamicexempts on<br>
+            <strong>none</strong>: no effect</p>
+          </blockquote>
 
           <p><strong>Returns:</strong> nothing</p>
 
@@ -667,8 +697,13 @@
           permanent exempt. The exempt will not be removed until the
           corresponding ban has been removed.</p>
 
-          <p><strong>Options:</strong> sticky: forces the ban to be always
-          active on a channel, even with dynamic bans on</p>
+          <p><strong>Options:</strong></p>
+
+          <blockquote>
+            <p><strong>sticky</strong>: forces the exempt to be always active
+            on a channel, even with dynamicexempts on<br>
+            <strong>none</strong>: no effect</p>
+          </blockquote>
 
           <p><strong>Returns:</strong> nothing</p>
 
@@ -686,8 +721,13 @@
           to 0 makes it a permanent invite. The invite will not be removed
           until the channel has gone -i.</p>
 
-          <p><strong>Options:</strong> sticky: forces the ban to be always
-          active on a channel, even with dynamic bans on</p>
+          <p><strong>Options:</strong></p>
+
+          <blockquote>
+            <p><strong>sticky</strong>: forces the invite to be always active
+            on a channel, even with dynamicinvites on<br>
+            <strong>none</strong>: no effect</p>
+          </blockquote>
 
           <p><strong>Returns:</strong> nothing</p>
 
@@ -705,8 +745,13 @@
           is used. Setting the lifetime to 0 makes it a permanent invite.
           The invite will not be removed until the channel has gone -i.</p>
 
-          <p><strong>Options:</strong> sticky: forces the ban to be always
-          active on a channel, even with dynamic bans on</p>
+          <p><strong>Options:</strong></p>
+
+          <blockquote>
+            <p><strong>sticky</strong>: forces the invite to be always active
+            on a channel, even with dynamicinvites on<br>
+            <strong>none</strong>: no effect</p>
+          </blockquote>
 
           <p><strong>Returns:</strong> nothing</p>
 
