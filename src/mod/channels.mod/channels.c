@@ -2,7 +2,7 @@
  * channels.c -- part of channels.mod
  *   support for channels within the bot
  * 
- * $Id: channels.c,v 1.25 2000/01/30 19:26:22 fabian Exp $
+ * $Id: channels.c,v 1.26 2000/03/19 23:56:07 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -848,6 +848,9 @@ static Function channels_table[] =
   /* 40 - 43 */
   (Function) write_invites,
   (Function) ismodeline,
+  (Function) initudef,
+  (Function) ngetudef,
+  /* 44 - 47 */
 };
 
 char *channels_start(Function * global_funcs)

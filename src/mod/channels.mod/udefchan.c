@@ -2,7 +2,7 @@
  * udefchan.c -- part of channels.mod
  *   user definable channel flags/settings
  * 
- * $Id: udefchan.c,v 1.2 2000/01/17 22:36:08 fabian Exp $
+ * $Id: udefchan.c,v 1.3 2000/03/19 23:56:07 fabian Exp $
  */
 /* 
  * Copyright (C) 1999, 2000  Eggheads
@@ -60,6 +60,20 @@ static int getudef(struct udef_chans *ul, char *name)
     ul = ul->next;
   }
   return val;
+}
+
+static int ngetudef(char *name, char *chan)
+{
+  struct udef_struct *l;
+  struct udef_chans *ll;
+
+  Context;
+  for (l = udef; l; l = l->next)
+    if (!strcasecmp(l->name, name))
+      for (ll = l->values; ll; ll = ll->next)
+        if (!strcasecmp(ll->chan, chan))
+          return ll->value;
+  return 0;
 }
 
 static void setudef(struct udef_struct *us, struct udef_chans *ul, char *name,

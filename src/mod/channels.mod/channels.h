@@ -1,7 +1,7 @@
 /* 
  * channels.h -- part of channels.mod
  * 
- * $Id: channels.h,v 1.10 2000/01/17 22:36:08 fabian Exp $
+ * $Id: channels.h,v 1.11 2000/03/19 23:56:07 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -25,11 +25,11 @@
 #ifndef _EGG_MOD_CHANNELS_CHANNELS_H
 #define _EGG_MOD_CHANNELS_CHANNELS_H
 
-#ifdef MAKING_CHANNELS
-
 /* User defined chanmodes/settings */
 #define UDEF_FLAG 1
 #define UDEF_INT 2
+
+#ifdef MAKING_CHANNELS
 
 struct udef_chans {
   struct udef_chans *next;
@@ -97,6 +97,7 @@ static int getudef(struct udef_chans *, char *);
 static void initudef(int type, char *, int);
 static void setudef(struct udef_struct *, struct udef_chans *, char *, int);
 static void remove_channel(struct chanset_t *);
+static int ngetudef(char *, char *);
 
 #else
 
@@ -148,6 +149,9 @@ static void remove_channel(struct chanset_t *);
 /* 40 - 43 */
 #define write_invites ((int (*)(FILE *, int))channels_funcs[40])
 #define ismodeline ((int(*)(masklist *, char *))channels_funcs[41])
+#define initudef ((void(*)(int, char *,int))channels_funcs[42])
+#define ngetudef ((int(*)(char *, char *))channels_funcs[43])
+/* 44 - 47 */
 
 #endif				/* MAKING_CHANNELS */
 
