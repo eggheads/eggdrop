@@ -1,7 +1,7 @@
 /*
  * module.h
  *
- * $Id: module.h,v 1.52 2001/09/23 20:17:47 guppy Exp $
+ * $Id: module.h,v 1.53 2001/09/24 04:25:40 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -363,8 +363,8 @@
 #define sanitycheck_dcc ((int (*)(char *, char *, char *, char *))global[214])
 #define isowner ((int (*)(char *))global[215])
 /* 216 - 219 */
-#define min_dcc_port (*(int *)(global[216]))	/* dcc-portrange dw/guppy */
-#define max_dcc_port (*(int *)(global[217]))
+/* 216: min_dcc_port -- UNUSED (guppy) */
+/* 217: max_dcc_port -- UNUSED (guppy) */
 #define rfc_casecmp ((int(*)(char *, char *))(*(Function**)(global[218])))
 #define rfc_ncasecmp ((int(*)(char *, char *, int *))(*(Function**)(global[219])))
 /* 220 - 223 */

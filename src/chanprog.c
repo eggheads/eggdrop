@@ -7,7 +7,7 @@
  *   telling the current programmed settings
  *   initializing a lot of stuff and loading the tcl scripts
  *
- * $Id: chanprog.c,v 1.25 2001/07/14 12:37:08 poptix Exp $
+ * $Id: chanprog.c,v 1.26 2001/09/24 04:25:39 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -339,21 +339,15 @@ void tell_verbose_status(int idx)
 	  ((interp) && (Tcl_Eval(interp, "info library") == TCL_OK)) ?
 	  interp->result : "*unknown*");
 
-  /* info tclversion */
+  /* info tclversion/patchlevel */
   dprintf(idx, "%s %s (%s %s)\n", MISC_TCLVERSION,
-	  ((interp) && (Tcl_Eval(interp, "info tclversion") == TCL_OK)) ?
-	  interp->result : "*unknown*", MISC_TCLHVERSION, TCL_VERSION);
-
-  /* info patchlevel */
-  dprintf(idx, "%s %s (%s %s)\n", MISC_TCLPATCHLEVEL,
 	  ((interp) && (Tcl_Eval(interp, "info patchlevel") == TCL_OK)) ?
-	  interp->result : "*unknown*", MISC_TCLHPATCHLEVEL,
+	  interp->result : (Tcl_Eval(interp, "info tclversion") == TCL_OK) ?
+	  interp->result : "*unknown*", MISC_TCLHVERSION,
 	  TCL_PATCH_LEVEL ? TCL_PATCH_LEVEL : "*unknown*");
 
 #if HAVE_TCL_THREADS
-  dprintf(idx, "TCL is threaded\n");
-#else
-  dprintf(idx, "TCL isn't threaded\n");
+  dprintf(idx, "Tcl is threaded\n");
 #endif  
 	  
 }

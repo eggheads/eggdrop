@@ -6,7 +6,7 @@
 # Modified by Michael for 1.3.25.
 # Modified by rtc for 1.4.0
 #
-# $Id: core.german.lang,v 1.24 2001/04/19 04:49:54 guppy Exp $
+# $Id: core.german.lang,v 1.25 2001/09/24 04:25:39 guppy Exp $
 
 # General stuff
 0x001,Gebrauch
@@ -124,7 +124,7 @@ die mitgelieferte Konfigurationsdatei.\n
 0x52c,Log-Modus
 0x52d,Online seit
 0x52e,Cache-Trefferrate
-0x52f,Benutze Tcl Bibliothek:
+0x52f,Tcl Bibliothek:
 0x530,Neue Benutzer bekommen folgende Flags
 0x531,Benachrichtigung
 0x532,Permanente Botbesitzer
@@ -145,8 +145,6 @@ Baue eine Telnetverbindung zu dem Bot auf und gib 'NEW' als Deinen Nickname ein.
 0x543,Keine freien Sockets verfuegbar.
 0x544,Tcl version:
 0x545,header version
-0x546,Tcl patchlevel:
-0x547,header patchlevel
 
 # IRC_
 0x600,gebannt

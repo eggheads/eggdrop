@@ -389,13 +389,6 @@ set reserved-portrange 2010:2020
     here.
 
 
-set dcc-portrange 1024:65535
-    This setting is so that people can't send fake ports to your bot when
-    they try to dcc it. irc clients should never use a port below 1024 and
-    well 65535 is the highest port possible. this setting is used for telnet
-    too.
-
-
 set dupwait-timeout 5
     If your eggdrop rejects bots that actually have already disconnected from
     another hub, but the disconnect information has not yet spread over the

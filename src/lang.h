@@ -2,7 +2,7 @@
  * lang.h
  *   Conversion definitions for language support
  *
- * $Id: lang.h,v 1.22 2001/04/12 02:39:43 guppy Exp $
+ * $Id: lang.h,v 1.23 2001/09/24 04:25:39 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -127,8 +127,6 @@
 #define MISC_NOFREESOCK		get_language(0x543)
 #define MISC_TCLVERSION		get_language(0x544)
 #define MISC_TCLHVERSION	get_language(0x545)
-#define MISC_TCLPATCHLEVEL	get_language(0x546)
-#define MISC_TCLHPATCHLEVEL	get_language(0x547)
 
 /* IRC */
 #define IRC_BANNED		get_language(0x600)

@@ -1,7 +1,7 @@
 # core.english.lang
 #   core language messages for eggdrop
 #
-# $Id: core.english.lang,v 1.24 2001/04/19 04:49:54 guppy Exp $
+# $Id: core.english.lang,v 1.25 2001/09/24 04:25:39 guppy Exp $
 
 # General stuff
 0x001,Usage
@@ -116,7 +116,7 @@ module, please consult the default config file for info.\n
 0x52c,log dump mode
 0x52d,Online for
 0x52e,cache hit
-0x52f,Using Tcl library:
+0x52f,Tcl library:
 0x530,New users get flags
 0x531,notify
 0x532,Permanent owner(s)
@@ -138,8 +138,6 @@ Telnet to the bot and enter 'NEW' as your nickname.
 0x543,No free sockets available.
 0x544,Tcl version:
 0x545,header version
-0x546,Tcl patchlevel:
-0x547,header patchlevel
 
 # IRC_
 0x600,Banned

@@ -4,7 +4,7 @@
  *   Tcl initialization
  *   getting and setting Tcl/eggdrop variables
  *
- * $Id: tcl.c,v 1.37 2001/09/23 20:17:47 guppy Exp $
+ * $Id: tcl.c,v 1.38 2001/09/24 04:25:40 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -76,8 +76,6 @@ int	    allow_dk_cmds = 1;
 int	    must_be_owner = 1;
 int	    max_dcc = 20;		/* needs at least 4 or 5 just to
 					   get started. 20 should be enough   */
-int	    min_dcc_port = 1024;	/* dcc-portrange, min port - dw/guppy */
-int	    max_dcc_port = 65535;	/* dcc-portrange, max port - dw/guppy */
 int	    quick_logs = 0;		/* quick write logs? (flush them
 					   every min instead of every 5	      */
 int	    par_telnet_flood = 1;       /* trigger telnet flood for +f
@@ -483,7 +481,6 @@ static tcl_ints def_tcl_ints[] =
 static tcl_coups def_tcl_coups[] =
 {
   {"telnet-flood",	&flood_telnet_thr,	&flood_telnet_time},
-  {"dcc-portrange",	&min_dcc_port,		&max_dcc_port},	/* dw */
   {"reserved-portrange", &reserved_port_min, &reserved_port_max},
   {NULL,		NULL,			NULL}
 };

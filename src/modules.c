@@ -4,7 +4,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: modules.c,v 1.55 2001/09/23 20:17:47 guppy Exp $
+ * $Id: modules.c,v 1.56 2001/09/24 04:25:39 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -75,9 +75,8 @@ extern int	 noshare, dcc_total, egg_numver, userfile_perm,
 			 debug_output, gban_total, make_userfile,
 			 gexempt_total, ginvite_total, default_flags,
 			 require_p, max_dcc, share_greet, password_timeout,
-			 min_dcc_port, max_dcc_port, use_invites, use_exempts,
-			 force_expire, do_restart, protect_readonly,
-			 reserved_port_min, reserved_port_max;
+			 use_invites, use_exempts, force_expire, do_restart,
+			 protect_readonly, reserved_port_min, reserved_port_max;
 extern time_t now, online_since;
 extern struct chanset_t *chanset;
 extern tand_t *tandbot;
@@ -458,8 +457,8 @@ Function global_table[] =
   (Function) sanitycheck_dcc,
   (Function) isowner,
   /* 216 - 219 */
-  (Function) & min_dcc_port,	/* int					*/
-  (Function) & max_dcc_port,	/* int					*/
+  (Function) 0, /* min_dcc_port -- UNUSED! (guppy) */
+  (Function) 0, /* max_dcc_port -- UNUSED! (guppy) */
   (Function) & rfc_casecmp,	/* Function *				*/
   (Function) & rfc_ncasecmp,	/* Function *				*/
   /* 220 - 223 */
