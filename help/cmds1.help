@@ -6,11 +6,16 @@
    for bots and users they should be separated with a slash (/).
 
 See also: -bot
-%{help=+host}%{+m|m}
+%{help=+host}
+###  %b+host%b <hostmask>
+   Adds a hostmask to your user record. Hostmasks are used to identify your
+   handle on IRC.
+ 
+%{+m|m}
 ###  %b+host%b <handle> <hostmask>
-   Adds a hostmask to a user's user record. Hostmasks are used to identify a
-   handle on IRC. Usually, you will not need to use this command since a user
-   can add hostmasks to their own record via the %b/MSG IDENT%b command.
+   Adds a hostmask to a user's user record. Usually, you will not need to use
+   this command, since a user can add hostmasks to his or her own record via
+   the %b/MSG IDENT%b command.
 
 See also: -host
 %{help=+ignore}%{+m}
