@@ -10,7 +10,7 @@
  * 
  * dprintf'ized, 12dec1995
  * 
- * $Id: misc.c,v 1.24 2000/01/08 21:23:14 per Exp $
+ * $Id: misc.c,v 1.25 2000/01/12 20:14:52 per Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -59,6 +59,7 @@ extern char botnetnick[];
 extern struct chanset_t *chanset;
 extern time_t now;
 extern char bannerfile[];
+extern int strict_host;
 
 int shtime = 1;			/* whether or not to display the time
 				 * with console output */
@@ -225,7 +226,10 @@ void maskhost(char *s, char *nw)
       i = 0;
     while (*p != '@') {
       if (strchr("~+-^=", *p))
-	nw[i] = '?'; 
+        if (strict_host)
+	  nw[i] = '?';
+	else
+	  i--; 
       else
 	nw[i] = *p;
       p++;
