@@ -20,3 +20,8 @@
 ###  %bassoc%b <[*]channel #>
    Wipes out the name for a channel, if there was one.
 %{end}
+%{help=all}
+%{+t}
+###  commands for the %bassoc module%b
+  %bassoc%b
+%{end}

@@ -29,3 +29,7 @@ see also: note, whom
    bot will attempt to pass it on to the given user@bot, if
    the bot is not online then the note is still stored locally,
    if the other user doesn't exist, the note is lost. Boohoo.
+%{help=all}
+###  commands for the %bnotes module%b
+  %bnotes%b%{+m}  %bfwd%b%{-}
+

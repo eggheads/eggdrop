@@ -15,3 +15,7 @@
    next time you join the party line.
    
 See Also: set console-autosave
+%{help=all}
+###  commands for the %bconsole module%b
+  %bstore%b
+

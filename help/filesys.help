@@ -77,7 +77,7 @@ You can get help on any command via:  %bhelp <command>%b
 (To upload a file, just start your dcc transfer.)
 %{+n}
 As a bot owner, there are a number of setting that can be set to
-configure the file area, use %b'.help set <setting>' for more info.
+configure the file area, use %b'.help set <setting>'%b for more info.
 Settings:
    %bfiles-path%b        %bincoming-path%b
    %bfiledb-path%b       %bmax-filesize%b
@@ -177,3 +177,6 @@ see also: hide, lsa
    removes the shared tag from a file.
    
 see also: share, lsa, ln
+%{help=all}%{+x}
+###  commands for the %bfilesys module%b
+  %bfilesys%b

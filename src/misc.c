@@ -1160,6 +1160,7 @@ void tellhelp(int idx, char *file, struct flag_record *flags, int fl)
     dprintf(idx, "%s\n", IRC_NOHELP2);
 }
 
+/* same as tellallhelp, just using wild_match instead of strcmp */
 void tellwildhelp(int idx, char *match, struct flag_record *flags)
 {
   struct help_ref *current;
@@ -1167,9 +1168,34 @@ void tellwildhelp(int idx, char *match, struct flag_record *flags)
   FILE *f;
   char s[1024];
 
+  s[0] = '\0';
   for (current = help_list; current; current = current->next)
     for (item = current->first; item; item = item->next)
       if (wild_match(match, item->name) && item->type) {
+	if (item->type == 1)
+	  simple_sprintf(s, "%s%s", helpdir, current->name);
+	else
+	  simple_sprintf(s, "%sset/%s", helpdir, current->name);
+	if ((f = fopen(s, "r")))
+	  display_tellhelp(idx, item->name, f, flags);
+      }
+  if (!s[0])
+    dprintf(idx, "%s\n", IRC_NOHELP2);
+}
+
+/* same as tellwildhelp, just using strcmp instead of wild_match */
+void tellallhelp(int idx, char *match, struct flag_record *flags)
+{
+  struct help_ref *current;
+  struct help_list *item;
+  FILE *f;
+  char s[1024];
+
+  s[0] = '\0';
+  for (current = help_list; current; current = current->next)
+    for (item = current->first; item; item = item->next)
+      if (!strcmp(match, item->name) && item->type) {
+
 	if (item->type == 1)
 	  simple_sprintf(s, "%s%s", helpdir, current->name);
 	else

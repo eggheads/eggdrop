@@ -123,3 +123,27 @@ telnet-flood
 %{end}
    use %b'.help set <variable>'%b for more info on each variable.
 %{+n}
+%{help=all}
+###  %bcore%b commands
+%b  who          away         quit         whom         me%b
+%b  whois        note         match        motd         bots%b
+%b  addlog       newpass      bottree      console      chat%b
+%b  nick         echo         botinfo      strip        su%b
+%b  trace        fixcodes     page%b
+%{+t}
+For botnet masters:
+%b  +bot         chattr       chnick       chpass       +host%b
+%b  -bot         link         chaddr       relay        -host%b
+%b  unlink       boot%b
+%{+m|m}
+For masters:
+%b  chattr       save         backup       reload       status%b
+%{+m}
+%b  +user        +ignore      comment      binds        ignores%b
+%b  -user        -ignore      dccstat      debug        banner%b
+%b  rehash       restart      uptime       clearqueue%b
+%{+n}
+For owners:
+%b  die          simul        module       loadmod      unloadmod%b
+%b  set          tcl          rehelp       modules%b
+%{-}

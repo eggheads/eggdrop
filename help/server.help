@@ -33,3 +33,7 @@
 %{+n}
    There is also a list of tcl settings avalible,
    use %b'.help server settings'%b   
+%{help=all}%{+o|o}
+###  commands for the %bserver module%b
+  %bservers%b  %{+m}%bjump%b  %bdump%b
+

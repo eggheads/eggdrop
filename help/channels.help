@@ -294,5 +294,20 @@ see also: bans, exempts, invites, stick, -ban, -exempt, -invite
      %bshare-greet%b  %buse-info%b    %bban-time%b
      %bexempt-time%b  %binvite-time%b %bchanfile%b     
    (Use %b'.help set <variable>'%b for more info)
-
+%{help=all}%{+n}
+###  commands for the %bchannels module%b
+%{+o|o}
+  for channel ops:
+     %b+ban%b      %b-ban%b      %bbans%b      %bstick%b
+     %bunstick%b   %b+exempt%b   %b-exempt%b   %bexempts%b
+     %b+invite%b   %b-invite%b   %binvites%b
+%{+m|m}
+  for channel masters:
+     %b+chrec%b    %b-chrec%b    %bchaninfo%b  %bchinfo%b
+%{+n|n}
+  for channel owners:
+     %bchanload%b  %bchansave%b  %bchanset%b
+%{+n}
+  for global owners:
+     %b+chan%b     %b-chan%b
 

@@ -191,3 +191,19 @@ see also: console
       %bbounce-modes%b     %bmax-bans%b
       %bmax-exempts%b      %bmax-invites%b
       %max-modes%b         %buse-354%b
+%{help=all}%{+o|o}
+###  commands for the %birc module%b
+  for channel ops:
+    %bresetbans%b %bact%b      %bchannel%b    %bdeop%b     %bsay%b
+    %binvite%b    %bkick%b     %bkickban%b    %bop%b       %btopic%b
+    %bresetexempts%b       %bresetinvites%b
+%{+o}
+  for global ops:
+    %bmsg%b 
+%{+m|m}
+  for channel masters:
+    %badduser%b   %bdeluser%b
+%{+m}
+  for global masters:
+    %breset%b
+

@@ -79,3 +79,7 @@ see also: set private-owner, set private-global
            on A type: '.botattr B |+s #channel'
            on B type: '.botattr A |+s #channel'
      (4) link them together, they should start sharing immediately	   
+%{help=all}%{+n}
+###  commands for the %bshare module%b
+  %bflush%b
+

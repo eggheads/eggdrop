@@ -443,7 +443,7 @@ static void cmd_help(struct userrec *u, int idx, char *par)
   if (par[0]) {
     putlog(LOG_CMDS, "*", "#%s# help %s", dcc[idx].nick, par);
     if (!strcmp(par, "all"))
-      tellwildhelp(idx, "* module", &fr);
+      tellallhelp(idx, "all", &fr);
     else if (strchr(par, '*') || strchr(par, '?'))
       tellwildhelp(idx, par, &fr);
     else
