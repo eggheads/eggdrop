@@ -1,7 +1,7 @@
 /* 
  * transfer.c -- part of transfer.mod
  * 
- * $Id: transfer.c,v 1.34 2001/01/16 17:13:24 guppy Exp $
+ * $Id: transfer.c,v 1.35 2001/01/22 23:47:34 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1444,12 +1444,21 @@ static int raw_dcc_resend_send(char *filename, char *nick, char *from,
   struct stat ss;
   FILE *f;
 
+  zz = (-1);
   stat(filename, &ss);
   /* File empty?! */
   if (ss.st_size == 0)
     return DCCSEND_FEMPTY;
-  port = reserved_port;
+  if (reserved_port_min > 0 && reserved_port_min < reserved_port_max) {
+    for (port = reserved_port_min; port <= reserved_port_max; port++) {
   zz = open_listen(&port);
+     if (zz != (-1))
+       break;
+    }
+  } else {
+    port = reserved_port_min;
+    zz = open_listen(&port);
+  }
   if (zz == (-1))
     return DCCSEND_NOSOCK;
   nfn = strrchr(dir, '/');

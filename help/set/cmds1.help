@@ -144,7 +144,7 @@ see also: set realname
    passthru server (this barely works, if at all -- consider using
    socks).
 
-see also: set reserved-port
+see also: set reserved-portrange
 %{help=set telnet-flood}%{+n}
 ###  %bset telnet-flood <times:seconds>%b
    this setting will cause the bot to ignore any futher telnets it

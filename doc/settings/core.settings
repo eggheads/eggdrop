@@ -383,10 +383,10 @@ set nat-ip "127.0.0.1"
     Do not enter anything for my-ip or my-hostname if you use this setting.
 
 
-set reserved-port 9076
-    If you want all your dcc connections bound to one specific port, set
-    it here.
-    Note that this setting limits your dcc connections to pretty one at time.
+set reserved-portrange 2010:2020
+    If you want all dcc file transfers to use a particular portrange either
+    because you're behind a firewall, or for other security reasons, set it
+    here.
 
 
 set dcc-portrange 1024:65535

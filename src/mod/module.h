@@ -1,7 +1,7 @@
 /* 
  * module.h
  * 
- * $Id: module.h,v 1.38 2000/12/17 21:48:42 guppy Exp $
+ * $Id: module.h,v 1.39 2001/01/22 23:47:33 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -214,11 +214,11 @@
 /* 100 - 103 */
 #define max_dcc (*(int *)global[100])
 #define require_p (*(int *)global[101])
-/* this was use_silence */
+#define ignore_time (*(int *)(global[102]))
 #define use_console_r (*(int *)(global[103]))
 /* 104 - 107 */
-#define ignore_time (*(int *)(global[104]))
-#define reserved_port (*(int *)(global[105]))
+#define reserved_port_min (*(int *)(global[104]))
+#define reserved_port_max (*(int *)(global[105]))
 #define debug_output (*(int *)(global[106]))
 #define noshare (*(int *)(global[107]))
 /* 108 - 111 */

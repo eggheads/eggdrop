@@ -4,7 +4,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: modules.c,v 1.43 2000/12/10 15:10:27 guppy Exp $
+ * $Id: modules.c,v 1.44 2001/01/22 23:47:33 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -70,14 +70,14 @@ extern char		 tempdir[], botnetnick[], botname[], natip[],
 			 hostname[], origbotname[], botuser[], admin[],
 			 userfile[], ver[], notify_new[], helpdir[],
 			 version[];
-extern int		 reserved_port, noshare, dcc_total, egg_numver,
+extern int	 noshare, dcc_total, egg_numver, userfile_perm,
 			 use_console_r, ignore_time, must_be_owner,
 			 debug_output, gban_total, make_userfile,
 			 gexempt_total, ginvite_total, default_flags,
 			 require_p, max_dcc, share_greet, password_timeout,
 			 min_dcc_port, max_dcc_port, use_invites, use_exempts,
 			 force_expire, do_restart, protect_readonly,
-			 userfile_perm;
+			 reserved_port_min, reserved_port_max;
 extern time_t now, online_since;
 extern struct chanset_t *chanset;
 extern tand_t *tandbot;
@@ -312,11 +312,11 @@ Function global_table[] =
   /* 100 - 103 */
   (Function) & max_dcc,		 /* int					*/
   (Function) & require_p,	 /* int					*/
-  (Function) 0,                  /* this was use_silence		*/
+  (Function) & ignore_time,	 /* int					*/
   (Function) & use_console_r,	 /* int					*/
   /* 104 - 107 */
-  (Function) & ignore_time,	 /* int					*/
-  (Function) & reserved_port,	 /* int					*/
+  (Function) & reserved_port_min,
+  (Function) & reserved_port_max,
   (Function) & debug_output,	 /* int					*/
   (Function) & noshare,		 /* int					*/
   /* 108 - 111 */

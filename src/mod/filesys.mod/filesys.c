@@ -2,7 +2,7 @@
  * filesys.c -- part of filesys.mod
  *   main file of the filesys eggdrop module
  * 
- * $Id: filesys.c,v 1.39 2001/01/16 17:13:22 guppy Exp $
+ * $Id: filesys.c,v 1.40 2001/01/22 23:47:33 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -369,8 +369,8 @@ static int _dcc_send(int idx, char *filename, char *nick, char *dir,
     return 0;
   }
   if (x == DCCSEND_NOSOCK) {
-    if (reserved_port) {
-      dprintf(idx, "My DCC SEND port is in use.  Try later.\n");
+    if (reserved_port_min) {
+      dprintf(idx, "All my DCC SEND ports are in use.  Try later.\n");
       putlog(LOG_FILES, "*", "DCC port in use (can't open): %sGET %s [%s]",
 	     resend ? "RE" : "", filename, dcc[idx].nick);
     } else {

@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: egg-core.html,v 1.5 2000/11/06 04:06:41 guppy Exp $ -->
+<!-- $Id: egg-core.html,v 1.6 2001/01/22 23:47:32 guppy Exp $ -->
 
 <html>
   <head>
@@ -624,14 +624,12 @@
           setting.</p>
         </dd>
 
-        <dt><strong><em>set reserved-port 9076</em></strong></dt>
+        <dt><strong><em>set reserved-portrange 2010:2020</em></strong></dt>
 
         <dd>
-          <p>If you want all your dcc connections bound to one specific port,
-          set it here.</p>
-
-          <p>Note that this setting limits your dcc connections to pretty one
-          at time.</p>
+          <p>If you want all your dcc file transfers bound to a particular portrange,
+          either because your behind a firewall, or for other security reasons, set it
+          here.</p>
         </dd>
 
         <dt><strong><em>set dcc-portrange 1024:65535</em></strong></dt>

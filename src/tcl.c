@@ -4,7 +4,7 @@
  *   Tcl initialization
  *   getting and setting Tcl/eggdrop variables
  * 
- * $Id: tcl.c,v 1.27 2001/01/22 23:41:11 guppy Exp $
+ * $Id: tcl.c,v 1.28 2001/01/22 23:47:33 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -47,8 +47,8 @@ extern int	backgrd, flood_telnet_thr, flood_telnet_time;
 extern int	shtime, share_greet, require_p, keep_all_logs;
 extern int	allow_new_telnets, stealth_telnets, use_telnet_banner;
 extern int	default_flags, conmask, switch_logfiles_at, connect_timeout;
-extern int	firewallport, reserved_port, notify_users_at;
-extern int	flood_thr, ignore_time;
+extern int	firewallport, notify_users_at, flood_thr, ignore_time;
+extern int	reserved_port_min, reserved_port_max;
 extern char	origbotname[], botuser[], motdfile[], admin[], userfile[],
 		firewall[], helpdir[], notify_new[], hostname[], myip[],
 		moddir[], tempdir[], owner[], network[], botnetnick[],
@@ -419,7 +419,7 @@ static tcl_ints def_tcl_ints[] =
   {"hourly-updates",		&notify_users_at,	0},
   {"switch-logfiles-at",	&switch_logfiles_at,	0},
   {"connect-timeout",		&connect_timeout,	0},
-  {"reserved-port",		&reserved_port,		0},
+  {"reserved-port",		&reserved_port_min,		0},
   /* booleans (really just ints) */
   {"require-p",			&require_p,		0},
   {"keep-all-logs",		&keep_all_logs,		0},
@@ -465,6 +465,7 @@ static tcl_coups def_tcl_coups[] =
 {
   {"telnet-flood",	&flood_telnet_thr,	&flood_telnet_time},
   {"dcc-portrange",	&min_dcc_port,		&max_dcc_port},	/* dw */
+  {"reserved-portrange", &reserved_port_min, &reserved_port_max},
   {NULL,		NULL,			NULL}
 };
 

@@ -39,11 +39,11 @@ see also: set save-users-at
    specifies how long to wait when connecting to a dcc chat, telnet,
    relay, bot link, or anything like that.  if the connect doesn't
    happen after this many seconds, the bot will just give up.
-%{help=set reserved-port}%{+n}
-###  %bset reserved-port%b <port#>
-   names a particular port to send all outgoing DCC file transfers
+%{help=set reserved-portrange}%{+n}
+###  %bset reserved-portrange%b <lowport>:<highport>
+   names a particular portrange to send all outgoing DCC file transfers
    through.  if you're behind a firewall, and you can tell your
-   firewall software to make a "peephole" on a certain port, you
+   firewall software to make a "peephole" on certain ports, you
    would need to set this to make sure that all file transfers
    go through the peephole.  (normally, DCC file transfers grab
    the nearest unused port.)  there are also various other security

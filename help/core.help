@@ -151,7 +151,7 @@ network
 save-users-at
 switch-logfiles-at
 connect-timeout
-reserved-port
+reserved-portrange
 log-time
 require-p
 keep-all-logs

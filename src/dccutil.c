@@ -6,7 +6,7 @@
  *   memory management for dcc structures
  *   timeout checking for dcc connections
  * 
- * $Id: dccutil.c,v 1.24 2000/12/10 15:10:27 guppy Exp $
+ * $Id: dccutil.c,v 1.25 2001/01/22 23:47:33 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -43,8 +43,9 @@ extern sock_list	*socklist;
 char	motdfile[121] = "text/motd";	/* File where the motd is stored */
 int	connect_timeout = 15;		/* How long to wait before a telnet
 					   connection times out */
-int	reserved_port = 0;
 
+int reserved_port_min = 0;
+int reserved_port_max = 0;
 
 void init_dcc_max()
 {
