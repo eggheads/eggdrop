@@ -1,5 +1,5 @@
 /*
- * channels.c - part of channels.mod
+ * irc.c - part of channels.mod
  * support for channels withing the bot 
  */
 
