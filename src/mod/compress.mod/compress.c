@@ -6,7 +6,7 @@
  * Written by Fabian Knittel <fknittel@gmx.de>. Based on zlib examples
  * by Jean-loup Gailly and Miguel Albrecht.
  * 
- * $Id: compress.c,v 1.3 2000/03/23 23:17:57 fabian Exp $
+ * $Id: compress.c,v 1.4 2000/04/05 19:51:54 fabian Exp $
  */
 /* 
  * Copyright (C) 2000  Eggheads
@@ -50,25 +50,74 @@
 static Function *global = NULL,
 		*share_funcs = NULL;
 
-static int compressed_files;		/* Number of files compressed.      */
-static int uncompressed_files;		/* Number of files uncompressed.    */
-static int share_compressed;		/* Compress userfiles when sharing? */
-static int compress_level;		/* Default compression used.	    */
+static unsigned int compressed_files;	/* Number of files compressed.      */
+static unsigned int uncompressed_files;	/* Number of files uncompressed.    */
+static unsigned int share_compressed;	/* Compress userfiles when sharing? */
+static unsigned int compress_level;	/* Default compression used.	    */
 
 
 static int uncompress_to_file(char *f_src, char *f_target);
 static int compress_to_file(char *f_src, char *f_target, int mode_num);
 static int compress_file(char *filename, int mode_num);
 static int uncompress_file(char *filename);
+static int is_compressedfile(char *filename);
 
 #include "tclcompress.c"
+
+
+/*
+ *    Misc functions.
+ */
+
+static int is_compressedfile(char *filename)
+{
+  char		  buf1[50], buf2[50];
+  FILE		 *fin;
+  register int    len1, len2, i;
+
+  Context;
+  egg_memset(buf1, 0, 50);
+  egg_memset(buf2, 0, 50);
+  if (!is_file(filename))
+    return COMPF_FAILED;
+
+  /* Read data with zlib routines.
+   */
+  fin = gzopen(filename, "rb");
+  if (!fin)
+    return COMPF_FAILED;
+  len1 = gzread(fin, buf1, sizeof(buf1));
+  if (len1 < 0)
+    return COMPF_FAILED;
+  if (gzclose(fin) != Z_OK)
+    return COMPF_FAILED;
+
+  /* Read raw data.
+   */
+  fin = fopen(filename, "rb");
+  if (!fin)
+    return COMPF_FAILED;
+  len2 = fread(buf2, 1, sizeof(buf2), fin);
+  if (ferror(fin))
+    return COMPF_FAILED;
+  fclose(fin);
+
+  /* Compare what we found.
+   */
+  if (len1 != len2)
+    return COMPF_COMPRESSED;
+  for (i = 0; i < sizeof(buf1); i++)
+    if (buf1[i] != buf2[i])
+      return COMPF_COMPRESSED;
+  return COMPF_UNCOMPRESSED;
+}
 
 
 /*
  *    General compression / uncompression functions
  */
 
-/* Uncompresses a file `f_src' and saved it as `f_target'.
+/* Uncompresses a file `f_src' and saves it as `f_target'.
  */
 static int uncompress_to_file(char *f_src, char *f_target)
 {
@@ -76,15 +125,22 @@ static int uncompress_to_file(char *f_src, char *f_target)
   int len;
   FILE *fin, *fout;
 
+  Context;
+  if (!is_file(f_src)) {
+    putlog(LOG_MISC, "*", "Failed to uncompress file `%s': not a file.",
+	   f_src);
+    return COMPF_ERROR;
+  }
   fin = gzopen(f_src, "rb");
   if (!fin) {
     putlog(LOG_MISC, "*", "Failed to uncompress file `%s': gzopen failed.",
 	   f_src);
     return COMPF_ERROR;
   }
+
   fout = fopen(f_target, "wb");
   if (!fout) {
-    putlog(LOG_MISC, "*", "Failed to uncompress file `%s': open failed: %s",
+    putlog(LOG_MISC, "*", "Failed to uncompress file `%s': open failed: %s.",
 	   f_src, strerror(errno));
     return COMPF_ERROR;
   }
@@ -99,13 +155,13 @@ static int uncompress_to_file(char *f_src, char *f_target)
     if (!len)
       break;
     if ((int) fwrite(buf, 1, (unsigned int) len, fout) != len) {
-      putlog(LOG_MISC, "*", "Failed to uncompress file `%s': fwrite failed: %s",
+      putlog(LOG_MISC, "*", "Failed to uncompress file `%s': fwrite failed: %s.",
 	     f_src, strerror(errno));
       return COMPF_ERROR;
     }
   }
   if (fclose(fout)) {
-    putlog(LOG_MISC, "*", "Failed to uncompress file `%s': fclose failed: %s",
+    putlog(LOG_MISC, "*", "Failed to uncompress file `%s': fclose failed: %s.",
 	   f_src, strerror(errno));
     return COMPF_ERROR;
   }
@@ -129,7 +185,7 @@ inline static void adjust_mode_num(int *mode)
 }
 
 #ifdef HAVE_MMAP
-/* Attempt to compress in one go, my mmap'ing the file to memory.
+/* Attempt to compress in one go, by mmap'ing the file to memory.
  */
 static int compress_to_file_mmap(FILE *fout, FILE *fin)
 {
@@ -137,6 +193,7 @@ static int compress_to_file_mmap(FILE *fout, FILE *fin)
     char	 *buf;
     struct stat	  st;
 
+    Context;
     /* Find out size of file */
     if (fstat(ifd, &st) < 0)
       return COMPF_ERROR;
@@ -161,7 +218,7 @@ static int compress_to_file_mmap(FILE *fout, FILE *fin)
 }
 #endif /* HAVE_MMAP */
 
-/* Compresses a file `f_src' and saved it as `f_target'.
+/* Compresses a file `f_src' and saves it as `f_target'.
  */
 static int compress_to_file(char *f_src, char *f_target, int mode_num)
 {
@@ -169,15 +226,22 @@ static int compress_to_file(char *f_src, char *f_target, int mode_num)
   FILE *fin, *fout;
   int   len;
 
+  Context;
   adjust_mode_num(&mode_num);
   sprintf(mode, "wb%d", mode_num);
 
+  if (!is_file(f_src)) {
+    putlog(LOG_MISC, "*", "Failed to compress file `%s': not a file.",
+	   f_src);
+    return COMPF_ERROR;
+  }
   fin = fopen(f_src, "rb");
   if (!fin) {
-    putlog(LOG_MISC, "*", "Failed to compress file `%s': open failed: %s",
+    putlog(LOG_MISC, "*", "Failed to compress file `%s': open failed: %s.",
 	   f_src, strerror(errno));
     return COMPF_ERROR;
   }
+
   fout = gzopen(f_target, mode);
   if (!fout) {
     putlog(LOG_MISC, "*", "Failed to compress file `%s': gzopen failed.",
@@ -230,6 +294,7 @@ static int compress_file(char *filename, int mode_num)
   char *temp_fn, randstr[5];
   int   ret;
 
+  Context;
   /* Create temporary filename. */
   temp_fn = nmalloc(strlen(filename) + 5);
   make_rand_str(randstr, 4);
@@ -256,6 +321,7 @@ static int uncompress_file(char *filename)
   char *temp_fn, randstr[5];
   int   ret;
 
+  Context;
   /* Create temporary filename. */
   temp_fn = nmalloc(strlen(filename) + 5);
   make_rand_str(randstr, 4);
@@ -323,7 +389,7 @@ static int compress_expmem(void)
 static int compress_report(int idx, int details)
 {
   if (details)
-    dprintf(idx, "    Compressed %d file(s), uncompressed %d file(s).\n",
+    dprintf(idx, "    Compressed %u file(s), uncompressed %u file(s).\n",
 	    compressed_files, uncompressed_files);
   return 0;
 }
@@ -356,6 +422,8 @@ static Function compress_table[] =
   (Function) compress_file,
   (Function) uncompress_to_file,
   (Function) uncompress_file,
+  /* 8 - 11 */
+  (Function) is_compressedfile,
 };
 
 char *compress_start(Function *global_funcs)
@@ -369,6 +437,10 @@ char *compress_start(Function *global_funcs)
 
   Context;
   module_register(MODULE_NAME, compress_table, 1, 1);
+  if (!module_depend(MODULE_NAME, "eggdrop", 105, 3)) {
+    module_undepend(MODULE_NAME);
+    return "This module needs eggdrop1.5.3 or later";
+  }
   share_funcs = module_depend(MODULE_NAME, "share", 2, 3);
   if (!share_funcs) {
     module_undepend(MODULE_NAME);

@@ -2,7 +2,7 @@
  * compress.h -- part of src/mod/compress.mod
  *   header file for the zlib compression module
  *
- * $Id: compress.h,v 1.2 2000/03/04 20:49:45 fabian Exp $
+ * $Id: compress.h,v 1.3 2000/04/05 19:51:54 fabian Exp $
  */
 /* 
  * Copyright (C) 2000  Eggheads
@@ -32,13 +32,21 @@ typedef enum {
   COMPF_SUCCESS		/* Compression succeeded.		*/
 } compf_result;
 
+typedef enum {
+  COMPF_UNCOMPRESSED,	/* File is uncompressed.		*/
+  COMPF_COMPRESSED,	/* File is compressed.			*/
+  COMPF_FAILED		/* Could not determine file type.	*/
+} compf_type;
+
 
 #ifndef MAKING_COMPRESS
 /* 4 - 7 */
-# define compress_to_file   ((int (char *, char *, int))(compress_funcs[4]))
-# define compress_file	    ((int (char *, int))(compress_funcs[5]))
-# define uncompress_to_file ((int (char *, char *))(uncompress_funcs[6]))
-# define uncompress_file    ((int (char *))(uncompress_funcs[7]))
+# define compress_to_file   ((int (*)(char *, char *, int))(compress_funcs[4]))
+# define compress_file	    ((int (*)(char *, int))(compress_funcs[5]))
+# define uncompress_to_file ((int (*)(char *, char *))(uncompress_funcs[6]))
+# define uncompress_file    ((int (*)(char *))(uncompress_funcs[7]))
+/* 8 - 11 */
+# define is_compressedfile  ((int (*)(char *))(uncompress_funcs[8]))
 #endif /* !MAKING_COMPRESS */
 
 #endif /* !_EGG_MOD_COMPRESS_COMPRESS_H */

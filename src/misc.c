@@ -7,7 +7,7 @@
  *   help system
  *   motd display and %var substitution
  * 
- * $Id: misc.c,v 1.20 2000/04/05 19:45:37 fabian Exp $
+ * $Id: misc.c,v 1.21 2000/04/05 19:51:53 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -115,7 +115,7 @@ void init_misc()
 
 /* low-level stuff for other modules
  */
-static int is_file(char *s)
+int is_file(const char *s)
 {
   struct stat ss;
   int i = stat(s, &ss);

@@ -1,7 +1,7 @@
 /* 
  * module.h
  * 
- * $Id: module.h,v 1.26 2000/03/23 23:17:56 fabian Exp $
+ * $Id: module.h,v 1.27 2000/04/05 19:51:54 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -417,7 +417,8 @@
 #define egg_memset ((void *(*)(void *, int, size_t))global[254])
 #define egg_strcasecmp ((int (*)(const char *, const char *))global[255])
 /* 256 - 259 */
-#define egg_strncasecmp ((int (*)(const char *, const char *, size_t))global[255])
+#define egg_strncasecmp ((int (*)(const char *, const char *, size_t))global[256])
+#define is_file ((int (*)(const char *))global[257])
 
 
 /* This is for blowfish module, couldnt be bothereed making a whole new .h

@@ -4,7 +4,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: modules.c,v 1.28 2000/04/05 19:35:43 fabian Exp $
+ * $Id: modules.c,v 1.29 2000/04/05 19:51:53 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -512,6 +512,7 @@ Function global_table[] =
   (Function) egg_strcasecmp,
   /* 256 - 259 */
   (Function) egg_strncasecmp,
+  (Function) is_file,
 };
 
 void init_modules(void)

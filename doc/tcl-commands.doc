@@ -913,15 +913,18 @@ specific commands, see later.
 | md5 <string>
 |   returns: the 128 bits MD5 "message-digest" of the specified string.
 
-| compresstofile   <src-file> <target-file> <mode>
-| uncompresstofile <src-file> <target-file>
-| compressfile     <file> <mode>
-| uncompressfile   <file>
-|   Compress or uncompress files. The file is either overwritten with the
-|   un-/compressed file (un-/compressfile commands) or saved to a new
-|   location (un-/compresstofile commands).  The <mode> specifies the
-|   compression mode to use. Available modes are from 0 (least CPU usage,
-|   least compression) upto 9 (maximal CPU usage, maximal compression).
+| compressfile [-level <level>] <src-file> [target-file]
+| uncompressfile <src-file> [target-file]
+|   Compress or uncompress files. The level option specifies the compression
+|   mode to use when compressing. Available modes are from 0 (minimum CPU
+|   usage, minimum compression) all the way up to 9 (maximum CPU usage,
+|   maximum compression).
+|   If you don't specify the target-file, the src-file will be overwritten.
+
+| iscompressed <filename>
+|   Determines whether <filename> is gzip compressed. Returns "1" if it is,
+|   "0" if it isn't and "2" if some kind of error prevented the checks from
+|   succeeding.
 
 
 GLOBAL VARIABLES:
