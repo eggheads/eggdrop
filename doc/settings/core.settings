@@ -160,7 +160,7 @@ logfile <logflags> <channel> "logs/logfile"
 
 
   set switch-logfiles-at 300
-    You can specifiy when Eggdrop should switch logfiles and start fresh.
+    You can specify when Eggdrop should switch logfiles and start fresh.
     use military time for this setting. 300 is the default, and describes
     03:00 (AM).
 
