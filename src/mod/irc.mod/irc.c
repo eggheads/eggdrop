@@ -489,7 +489,10 @@ static void check_expired_chanstuff()
 				!u_sticky_ban(chan->bans, b->ban) &&
 				!u_sticky_ban(global_bans, b->ban))) {
 	  strcpy(s, b->who); sfrom = s; snick = splitnick(&sfrom);
-	  if (force_expire || channel_clearbans(chan) || !(snick[0] && strcasecmp(sfrom, botuserhost) && (m=ismember(chan, snick)) && chan_hasop(m) && (m->user->flags & USER_BOT))) {
+	  if (force_expire || channel_clearbans(chan) ||
+	      !(snick[0] && strcasecmp(sfrom, botuserhost) &&
+		(m=ismember(chan, snick)) &&
+		m->user && (m->user->flags & USER_BOT) && chan_hasop(m))) {
 	  putlog(LOG_MODES, chan->name,
 		 "(%s) Channel ban on %s expired.",
 		 chan->name, b->ban);
@@ -507,7 +510,10 @@ static void check_expired_chanstuff()
 	       !u_sticky_exempt(chan->exempts, e->exempt) && 
 	       !u_sticky_exempt(global_exempts,e->exempt))) {
  	    strcpy(s, e->who); sfrom = s; snick = splitnick(&sfrom);
-	    if (force_expire || channel_clearbans(chan) || !(snick[0] && strcasecmp(sfrom, botuserhost) && (m=ismember(chan, snick)) && chan_hasop(m) && (m->user->flags & USER_BOT))) {
+	    if (force_expire || channel_clearbans(chan) ||
+		!(snick[0] && strcasecmp(sfrom, botuserhost) &&
+		  (m=ismember(chan, snick)) &&
+		  m->user && (m->user->flags & USER_BOT) && chan_hasop(m))) {
 	    /* Check to see if it matches a ban */
         /* Leave this extra logging in for now. Can be removed later
          * Jason */
@@ -545,7 +551,10 @@ static void check_expired_chanstuff()
 	       !u_sticky_invite(chan->invites, inv->invite) && 
 	       !u_sticky_invite(global_invites,inv->invite))) {
  	    strcpy(s, inv->who); sfrom = s; snick = splitnick(&sfrom);
-	    if (force_expire || channel_clearbans(chan) || !(snick[0] && strcasecmp(sfrom, botuserhost) && (m=ismember(chan, snick)) && chan_hasop(m) && (m->user->flags & USER_BOT))) {
+	    if (force_expire || channel_clearbans(chan) ||
+		!(snick[0] && strcasecmp(sfrom, botuserhost) &&
+		  (m=ismember(chan, snick)) &&
+		  m->user && (m->user->flags & USER_BOT) && chan_hasop(m))) {
         if ((chan->channel.mode & CHANINV) && isinvited(chan,inv->invite)) {
 	      /*Leave this extra logging in for now. Can be removed later
 	       * Jason */
