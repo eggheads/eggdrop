@@ -1,5 +1,5 @@
 Eggdrop Tcl Commands
-Last revised: Feburary 02, 2002
+Last revised: March 01, 2002
      _________________________________________________________________
 
 This is an exhaustive list of all the Tcl commands added to Eggdrop. All
@@ -386,7 +386,7 @@ marked with vertical bars (|) on the left.
     Returns: 1 on success; 0 otherwise
     Module: channels
 
-  ischanjuped [channel]
+  ischanjuped <channel>
     Returns: 1 if the channel is juped, and the bot is unable to join; 0
       otherwise
     Module: channels

@@ -1,11 +1,9 @@
 Directory Contents - /
-Last revised: June 04, 2002
+Last revised: March  01, 2003
      _________________________________________________________________
 
                            Directory Contents - /
 
-
-  "What are all these files for?"
 
   doc/
     Lots of IMPORTANT DOCUMENTATION that you MUST READ is in this directory.
@@ -38,6 +36,9 @@ Last revised: June 04, 2002
   configure.in
     These are scripts for automatic configure of the bot.
 
+  ChangeLog
+    Contains CVS commit logs from each change made to Eggdrop in CVS.
+
   COPYING
     Eggdrop legal information is contained in this file.
 
@@ -54,7 +55,7 @@ Last revised: June 04, 2002
     Information on installing your Eggdrop.
 
   Makefile.in
-    This help with the automated compiling of the bot.
+    This helps with the automated compiling of the bot.
 
   NEWS
     This lists significant differences with previous versions.
