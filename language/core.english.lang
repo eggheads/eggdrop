@@ -1,7 +1,7 @@
 # core.english.lang
 #   core language messages for eggdrop
 #
-# $Id: core.english.lang,v 1.22 2000/06/17 19:55:13 guppy Exp $
+# $Id: core.english.lang,v 1.23 2000/07/28 05:11:18 guppy Exp $
 
 # General stuff
 0x001,Usage
@@ -287,21 +287,15 @@ Telnet to the bot and enter 'NEW' as your nickname.
 
 # CHAN_
 0x900,No such channel defined
-0x901,Bogus channel key
 0x902,* Mode change on %s for nonexistant %s!
 0x903,Mass deop on %s by %s
 0x904,Mass deop.  Go sit in a corner.
-0x905,Bogus ban
 0x907,Oops.   Someone made me join %s... leaving...
 0x908,Mode change by fake op on %s!  Reversing...
 0x909,Abusing ill-gained server ops
 0x90a,Mode change by non-chanop on %s!  Reversing...
 0x90b,Abusing desync
 0x90c,flood
-0x90d,bogus ban
-0x90e,bogus username
-0x90f,bogus exempt
-0x910,bogus invite
 
 0xa00,No ignores
 0xa01,Currently ignoring

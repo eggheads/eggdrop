@@ -9,7 +9,7 @@
  * dprintf'ized, 27oct1995
  * multi-channel, 8feb1996
  * 
- * $Id: chan.c,v 1.64 2000/07/02 23:41:01 guppy Exp $
+ * $Id: chan.c,v 1.65 2000/07/28 05:11:18 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -964,22 +964,6 @@ static int got368(char *from, char *msg)
     chan->status &= ~CHAN_ASKEDBANS;
     if (channel_clearbans(chan))
       resetbans(chan);
-    else {
-      masklist *b = chan->channel.ban;
-      int bogus;
-      char *p;
-
-      if (me_op(chan))
-	while (b && b->mask[0]) {
-	  bogus = 0;
-	  for (p = b->mask; *p; p++)
-	    if ((*p < 32) || (*p > 126))
-	      bogus = 1;
-	  if (bogus)
-	    add_mode(chan, '-', 'b', b->mask);
-	  b = b->next;
-	}
-    }
   }
   /* if i sent a mode -b on myself (deban) in got367, either */
   /* resetbans() or recheck_bans() will flush that */
@@ -1025,24 +1009,7 @@ static int got349(char *from, char *msg)
       chan->ircnet_status &= ~CHAN_ASKED_EXEMPTS;
       if (channel_clearbans(chan))
 	resetexempts(chan);
-      else {
-	masklist *e = chan->channel.exempt;
-	int bogus;
-	char * p;
-	
-	if (me_op(chan))
-	  while (e->mask[0]) {
-	    bogus = 0;
-	    for (p = e->mask; *p; p++)
-	      if ((*p < 32) || (*p > 126))
-		bogus = 1;
-	    if (bogus)
-	      add_mode(chan, '-', 'e', e->mask);
-	    e = e->next;
-	  }
-      }
     }  
-    
   }
   return 0;
 }
@@ -1085,22 +1052,6 @@ static int got347(char *from, char *msg)
       chan->ircnet_status &= ~CHAN_ASKED_INVITED;
       if (channel_clearbans(chan))
 	resetinvites(chan);
-      else {
-	masklist *inv = chan->channel.invite;
-	int bogus;
-	char * p;
-	
-	if (me_op(chan))
-	  while (inv && inv->mask[0]) {
-	    bogus = 0;
-	    for (p = inv->mask; *p; p++)
-	      if ((*p < 32) || (*p > 126))
-		bogus = 1;
-	    if (bogus)
-	      add_mode(chan, '-', 'I', inv->mask);
-	    inv = inv->next;
-	  }
-      }
     }
   }
   return 0;
@@ -1422,19 +1373,6 @@ static int gotjoin(char *from, char *chname)
       }
 	  /* ok, the op-on-join,etc, tests...first only both if Im opped */
 	  if (me_op(chan)) {
-	for (p = m->userhost; *p; p++)
-	  if (((unsigned char) *p) < 32) {
-		if (ban_bogus)
-		  u_addban(chan, quickban(chan, uhost), origbotname,
-			   CHAN_BOGUSUSERNAME, now + (60 * ban_time), 0);
-		if (kick_bogus) {
-		  dprintf(DP_MODE, "KICK %s %s :%s\n",
-			  chname, nick, CHAN_BOGUSUSERNAME);
-		  m->flags |= SENTKICK;
-		}
-		if (kick_bogus || (ban_bogus && channel_enforcebans(chan)))
-		  return 0;
-	}
 	if (channel_enforcebans(chan) &&
 	!chan_op(fr) && !glob_op(fr) && !glob_friend(fr) && !chan_friend(fr)) {
       for (b = chan->channel.ban; b->mask[0]; b = b->next) { 

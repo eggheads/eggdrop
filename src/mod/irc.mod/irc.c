@@ -2,7 +2,7 @@
  * irc.c -- part of irc.mod
  *   support for channels withing the bot
  *
- * $Id: irc.c,v 1.41 2000/05/30 21:04:56 guppy Exp $
+ * $Id: irc.c,v 1.42 2000/07/28 05:11:18 guppy Exp $
  */
 /*
  * Copyright (C) 1997  Robey Pointer
@@ -51,12 +51,6 @@ static int bounce_bans = 1;
 static int bounce_exempts = 0;
 static int bounce_invites = 0;
 static int bounce_modes = 0;
-static int bounce_bogus_bans = 1;
-static int kick_bogus_bans = 1;
-static int bounce_bogus_exempts = 0;
-static int kick_bogus_exempts = 0;
-static int bounce_bogus_invites = 0;
-static int kick_bogus_invites = 0;
 static int learn_users = 0;
 static int wait_info = 15;
 static int invite_key = 1;
@@ -67,8 +61,6 @@ static int use_354 = 0;		/* use ircu's short 354 /who responses */
 static int kick_method = 1;	/* how many kicks does the irc network
 				 * support at once? */
 				/* 0 = as many as possible. Ernst 18/3/1998 */
-static int kick_bogus = 0;
-static int ban_bogus = 0;
 static int kick_fun = 0;
 static int ban_fun = 0;
 static int allow_desync = 0;
@@ -937,18 +929,10 @@ static tcl_ints myints[] =
   {"bounce-exempts", &bounce_exempts, 0},
   {"bounce-invites", &bounce_invites, 0},
   {"bounce-modes", &bounce_modes, 0},
-  {"bounce-bogus-bans", &bounce_bogus_bans, 0},
-  {"kick-bogus-bans", &kick_bogus_bans, 0},
-  {"bounce-bogus-exempts", &bounce_bogus_exempts, 0},
-  {"kick-bogus-exempts", &kick_bogus_exempts, 0},
-  {"bounce-bogus-invites", &bounce_bogus_invites, 0},
-  {"kick-bogus-invites", &kick_bogus_invites, 0},
   {"modes-per-line", &modesperline, 0},
   {"mode-buf-length", &mode_buf_len, 0},
   {"use-354", &use_354, 0},
   {"kick-method", &kick_method, 0},
-  {"kick-bogus", &kick_bogus, 0},
-  {"ban-bogus", &ban_bogus, 0},
   {"kick-fun", &kick_fun, 0},
   {"ban-fun", &ban_fun, 0},
   {"invite-key", &invite_key, 0},

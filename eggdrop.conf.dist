@@ -1,7 +1,7 @@
 #! /path/to/eggdrop
 # ^- set that to the directory eggdrop is in ie "#! /users/lamest/egg/eggdrop"
 #
-# $Id: eggdrop.conf.dist,v 1.43 2000/06/04 08:26:41 guppy Exp $
+# $Id: eggdrop.conf.dist,v 1.44 2000/07/28 05:11:18 guppy Exp $
 #
 # This is a sample configuration file for your bot.  You will definitely
 # want to edit this, to set up your bot.  Right now it creates a bot called
@@ -791,12 +791,6 @@ set bounce-bans 1
 # [0/1] define this if you want to bounce all the server modes
 set bounce-modes 0
 
-# [0/1] Do you want the bot to kick users who set bogus bans?
-set kick-bogus-bans 1
-
-# [0/1] Do you want the bot to remove bogus bans?
-set bounce-bogus-bans 1
-
 # If there are more than max-bans active bans on a channel, then the
 # bot won't try to put more bans. Thus it won't flood the irc server.
 # ircd 2.9.5 allows 20 bans. ircd 2.10 allows 30 bans (max).
@@ -809,15 +803,6 @@ set max-modes 30
 # [0/1] define this to allow modes from non-op users (ChanServ)
 # or if you use services like X/W to avoid fake op messages
 set allow-desync 0
-
-# [0/1] Do you want the bot to kick bogus usernames?
-# Remember that if it does, as it won't ban them, it can be at the origin
-# of a nice kick-flood
-set kick-bogus 0
-
-# [0/1] Do you want the bot to ban bogus usernames?
-# Can prevent the above described kick-flood, but can also fill the banlist
-set ban-bogus 0
 
 # [0/1] Do you want the bot to kick for control character/ctcp avalanches
 # to a channel?
@@ -902,18 +887,6 @@ set max-exempts 20
 # server. Only 2.10 irc servers are concerned by these +I modes.
 #  * This is an IRCNET feature
 set max-invites 20
-
-# [0/1] Do you want the bot to remove bogus exempts?
-set bounce-bogus-exempts 0
-
-# [0/1] Do you want the bot to kick users who set bogus exempts?
-set kick-bogus-exempts 0
-
-# [0/1] Do you want the bot to remove bogus invites?
-set bounce-bogus-invites 0
-
-# [0/1] Do you want the bot to kick users who set bogus invites?
-set kick-bogus-invites 0
 
 # The following lines should be left uncommented unless the default values
 # are being over-ridden. By default exempts and invites are on for IRCnet

@@ -6,7 +6,7 @@
  * 
  * dprintf'ized, 4feb1996
  * 
- * $Id: tcl.c,v 1.27 2000/01/17 16:14:45 per Exp $
+ * $Id: tcl.c,v 1.28 2000/07/28 05:11:18 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -43,7 +43,7 @@ typedef struct {
 } intinfo;
 
 int protect_readonly = 0;	/* turn on/off readonly protection */
-char whois_fields[121] = "";	/* fields to display in a .whois */
+char whois_fields[1025] = "";	/* fields to display in a .whois */
 Tcl_Interp *interp;		/* eggdrop always uses the same interpreter */
 
 extern int backgrd, flood_telnet_thr, flood_telnet_time;
@@ -380,7 +380,7 @@ static tcl_strings def_tcl_strings[] =
   {"my-hostname", hostname, 120, 0},
   {"my-ip", myip, 120, 0},
   {"network", network, 40, 0},
-  {"whois-fields", whois_fields, 120, 0},
+  {"whois-fields", whois_fields, 1024, 0},
   {"nat-ip", natip, 120, 0},
   {"username", botuser, 10, 0},
   {"version", egg_version, 0, 0},
