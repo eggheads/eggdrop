@@ -468,9 +468,9 @@ static int u_delinvite (struct chanset_t * c, char * who, int doit)
     if (!noshare) {
       /* distribute chan invites differently */
       if (c)
-	shareout(c,"-Invc %s %s\n", c->name, who);
+	shareout(c,"-invc %s %s\n", c->name, who);
       else 
-	shareout(NULL,"-Inv %s\n", who);
+	shareout(NULL,"-inv %s\n", who);
     }
     if (!c)
       ginvite_total --;
@@ -612,11 +612,11 @@ static int u_addinvite (struct chanset_t * chan, char * invite, char * from,
   strcpy(p->desc,note);
   if (!noshare) {
     if (!chan)
-      shareout(NULL,"+Inv %s %lu %s%s %s %s\n", host, expire_time - now,
+      shareout(NULL,"+inv %s %lu %s%s %s %s\n", host, expire_time - now,
 	       (flags & INVITEREC_STICKY) ? "s" : "",
 	       (flags & INVITEREC_PERM) ? "p": "-", from, note);
     else 
-      shareout(chan,"+Invc %s %lu %s %s%s %s %s\n", host, expire_time - now,
+      shareout(chan,"+invc %s %lu %s %s%s %s %s\n", host, expire_time - now,
 	       chan->name, (flags & INVITEREC_STICKY) ? "s" : "",
 	       (flags & INVITEREC_PERM) ? "p": "-", from, note);
   }

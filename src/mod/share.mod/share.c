@@ -533,7 +533,7 @@ static void share_mns_exempt (int idx, char * par) {
 
 static void share_mns_invite (int idx, char * par) {
   if (dcc[idx].status & STAT_SHARE) {
-    shareout_but(NULL,idx, "-Inv %s\n", par);
+    shareout_but(NULL,idx, "-inv %s\n", par);
     putlog(LOG_CMDS, "*", "%s: cancel invite %s", dcc[idx].nick, par);
     noshare = 1;
     u_delinvite(NULL,par,1);
@@ -598,7 +598,7 @@ static void share_mns_invitechan (int idx, char * par) {
     fr.match = (FR_CHAN | FR_BOT);
     get_user_flagrec(dcc[idx].user,&fr,chname);
     if (chan && (bot_chan(fr) || bot_global(fr))) {
-      shareout_but(chan,idx, "-Invc %s %s\n", chname, par);
+      shareout_but(chan,idx, "-invc %s %s\n", chname, par);
       if (channel_shared(chan)) {
 	putlog(LOG_CMDS, "*", "%s: cancel invite %s on %s", dcc[idx].nick,
 	       par, chname);
@@ -759,7 +759,7 @@ static void share_pls_invite (int idx, char * par) {
   int flags = 0;
   
   if (dcc[idx].status & STAT_SHARE) {
-    shareout_but(NULL,idx, "+Inv %s\n", par);
+    shareout_but(NULL,idx, "+inv %s\n", par);
     noshare = 1;
      invite = newsplit(&par);
      tm = newsplit(&par);
@@ -798,7 +798,7 @@ static void share_pls_invitechan (int idx, char * par) {
 	      "Channel invite %s on %s rejected - channel not shared.",
 	      invite, chname);
      else {
-       shareout_but(chan,idx, "+Invc %s %s %s %s\n", invite, tm, chname, par);
+       shareout_but(chan,idx, "+invc %s %s %s %s\n", invite, tm, chname, par);
        from = newsplit(&par);
        if (strchr(from,'s'))
 	 flags |= INVITEREC_STICKY;
