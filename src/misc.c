@@ -7,7 +7,7 @@
  *   help system
  *   motd display and %var substitution
  *
- * $Id: misc.c,v 1.70 2004/04/06 06:56:38 wcc Exp $
+ * $Id: misc.c,v 1.71 2004/04/07 13:00:39 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -504,7 +504,7 @@ void putlog EGG_VARARGS_DEF(int, arg1)
   char *format, *chname, s[LOGLINELEN], s1[256], *out, ct[81], *s2, stamp[34];
   va_list va;
   time_t now2 = time(NULL);
-  struct tm *t;
+  struct tm *t = localtime(&now2);
 
   type = EGG_VARARGS_START(int, arg1, va);
   chname = va_arg(va, char *);
@@ -517,9 +517,11 @@ void putlog EGG_VARARGS_DEF(int, arg1)
     strcat(stamp, " ");
     tsl = strlen(stamp);
   }
+  else
+    *stamp = '\0';
 
   /* Format log entry at offset 'tsl,' then i can prepend the timestamp */
-  out = s+tsl;
+  out = s + tsl;
   /* No need to check if out should be null-terminated here,
    * just do it! <cybah>
    */
@@ -541,7 +543,7 @@ void putlog EGG_VARARGS_DEF(int, arg1)
     }
   }
   /* Place the timestamp in the string to be printed */
-  if ((out[0]) && (shtime)) {
+  if (out[0] && shtime) {
     strncpy(s, stamp, tsl);
     out = s;
   }
@@ -589,13 +591,15 @@ void putlog EGG_VARARGS_DEF(int, arg1)
       }
     }
   }
-  for (i = 0; i < dcc_total; i++)
+  for (i = 0; i < dcc_total; i++) {
     if ((dcc[i].type == &DCC_CHAT) && (dcc[i].u.chat->con_flags & type)) {
       if ((chname[0] == '*') || (dcc[i].u.chat->con_chan[0] == '*') ||
-          (!rfc_casecmp(chname, dcc[i].u.chat->con_chan)))
+          !rfc_casecmp(chname, dcc[i].u.chat->con_chan)) {
         dprintf(i, "%s", out);
+      }
     }
-  if ((!backgrd) && (!con_chan) && (!term_z))
+  }
+  if (!backgrd && !con_chan && !term_z)
     dprintf(DP_STDOUT, "%s", out);
   else if ((type & LOG_MISC) && use_stderr) {
     if (shtime)
