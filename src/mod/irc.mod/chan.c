@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  *
- * $Id: chan.c,v 1.85 2002/04/16 19:56:33 guppy Exp $
+ * $Id: chan.c,v 1.86 2002/05/19 15:59:54 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1975,7 +1975,7 @@ static int gotnick(char *from, char *msg)
       strcpy(m->nick, msg);
       detect_chan_flood(msg, uhost, from, chan, FLOOD_NICK, NULL);
 
-      if (!findchan(chname)) {
+      if (!findchan_by_dname(chname)) {
         chan = oldchan;
         continue;
       }
@@ -1994,7 +1994,7 @@ static int gotnick(char *from, char *msg)
                                      in an earlier iteration of the loop */
       check_tcl_nick(nick, uhost, u, chan->dname, msg);
     
-      if (!findchan(chname)) {
+      if (!findchan_by_dname(chname)) {
 	chan = oldchan;
         continue;
       }
@@ -2053,7 +2053,7 @@ static int gotquit(char *from, char *msg)
 	m->split = now;
 	check_tcl_splt(nick, from, u, chan->dname);
 
-	if (!findchan(chname)) {
+	if (!findchan_by_dname(chname)) {
           chan = oldchan;
 	  continue;
         }
@@ -2062,7 +2062,7 @@ static int gotquit(char *from, char *msg)
       } else {
 	check_tcl_sign(nick, from, u, chan->dname, msg);
 
-	if (!findchan(chname)) {
+	if (!findchan_by_dname(chname)) {
 	  chan = oldchan;
 	  continue;
 	}
