@@ -191,34 +191,29 @@ See also: console
    be used.
 
 See also: console, devoice
-%{help=irc module}%{+o|o}
+%{help=irc module}%{+n}
 ###  %birc module%b
    This module controls the bots interaction on IRC. It allows the bot to join
    channels, etc.
 
    The following commands are provided by the irc module:
 
-%{+o|o}
    For channel ops:
       %bact            halfop       say          resetbans%b
       %bdeop           invite       topic        resetinvites%b
       %bop             channel      dehalfop     resetexempts%b
       %bdevoice        voice%b
 
-%{+ol|ol}
    For channel ops or halfops:
       %bkick           kickban%b
 
-%{+o}
    For global ops:
       %bmsg%b
 
-%{+m|m}
    For channel masters:
       %badduser        deluser      reset%b
 
-%{+n}
-   Config file variables for configuring the channels module:
+   Config file variables for configuring the irc module:
       %blearn-users     wait-info           mode-buf-length%b
       %bbounce-bans     max-bans            wait-split%b
       %bbounce-modes    use-354             bounce-invites%b

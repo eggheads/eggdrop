@@ -16,14 +16,14 @@ See also: link, unlink, chattr, botattr
    For global owners:
       %bflush%b
 
-   Config file variables for configuring the channels module:
+   Config file variables for configuring the share module:
       %ballow-resync%b   %bresync-time%b   %bprivate-global%b
       %bprivate-user%b   %boverride-bots%b %bprivate-globals%b
    (Use %b'.help set <variable>'%b for more info)
 
 See also: flush, share howto
 %{help=share howto}%{+n}
-###   how to setup sharing with the %bshare module%b
+###  how to setup sharing with the %bshare module%b
    First you need to decide 2 things:
      (1) which bot will be 'active' and which 'passive',
          the passive bot's userfile WILL GET OVERWRITTEN
@@ -43,6 +43,6 @@ See also: flush, share howto
            on B type: '.botattr A |+s #channel'
      (4) link them together, they should start sharing immediately
 %{help=all}%{+n}
-###  %bchannels module%b commands
+###  %bshare module%b commands
    For global owners:
       %bflush%b

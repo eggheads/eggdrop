@@ -1,4 +1,4 @@
-$Id: MODULES,v 1.27 2004/01/09 05:56:35 wcc Exp $
+$Id: MODULES,v 1.28 2004/05/27 04:18:38 wcc Exp $
 
 Eggdrop Module Information
 Last revised: March 04, 2003
@@ -91,7 +91,8 @@ Last revised: March 04, 2003
               other connections.
 
     filesys   This module provides an area within the bot where users can store
-              files. With this module, the bot is usable as a file server.
+              and manage files. With this module, the bot is usable as a file
+              server.
 
     irc       This module provides basic IRC support for your bot. You have to
               load this if you want your bot to come on IRC.

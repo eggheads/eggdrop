@@ -1,8 +1,8 @@
 %{help=files}%{+x}
 ###  %bfiles%b
-   will move you into the file transfer sub-system, if it has been
-   enabled on this bot.  from there you can browse through the
-   files online and use dcc file transfers to download and upload.
+   Moves you into the file transfer sub-system, if it has been enabled on this
+   bot. From there you can browse through the files online and use dcc file
+   transfers to download and upload.
 %{help=filesys/cancel}%{+x}
 ###  %bcancel%b <file(s)>
    tells the bot to stop sending a file that is pending (either
@@ -182,11 +182,16 @@ see also: hide, lsa
    removes the shared tag from a file.
 
 see also: share, lsa, ln
-%{help=filesys module}%{+x}
-### commands for the %bfilesys module%b
-  %bfiles%b
+%{help=filesys module}%{+n}
+### %bfilesys module%b
+   This module provides an area within the bot where users can store and
+   manage files. With this module, the bot is usable as a file server.
 
-see also: help in filearea
+   The following commands are provided by the filesys module:
+
+   For filesystem users:
+      %bfiles%b
 %{help=all}%{+x}
-###  commands for the %bfilesys module%b
-  %bfiles%b
+###  %bfilesys module%b commands
+   For filesystem users:
+      %bfiles%b

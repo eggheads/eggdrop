@@ -1,11 +1,11 @@
 Filesys Module
-Last revised: January 1, 2002
+Last revised: May 26, 2004
      _________________________________________________________________
 
                               Filesys Module
 
 
-This module provides an area within the bot where users can store
+This module provides an area within the bot where users can store and manage
 files. With this module, the bot is usable as a file server.
 
 This module requires: transfer
