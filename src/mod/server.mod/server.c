@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  *
- * $Id: server.c,v 1.64 2001/06/20 14:44:20 poptix Exp $
+ * $Id: server.c,v 1.65 2001/06/24 20:50:33 poptix Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -176,8 +176,10 @@ static void deq_msg()
         continue;
       }
       tputs(serv, modeq.head->msg, modeq.head->len);
-      if (debug_output)
+      if (debug_output) {
+	modeq.head->msg[strlen(modeq.head->msg) - 1] = 0; /* delete the "\n" */
         putlog(LOG_SRVOUT, "*", "[m->] %s", modeq.head->msg);
+      }
       modeq.tot--;
       last_time += calc_penalty(modeq.head->msg);
       q = modeq.head->next;
@@ -200,8 +202,10 @@ static void deq_msg()
     if (fast_deq(DP_SERVER))
       return;
     tputs(serv, mq.head->msg, mq.head->len);
-    if (debug_output)
+    if (debug_output) {
+      mq.head->msg[strlen(mq.head->msg) - 1] = 0; /* delete the "\n" */
       putlog(LOG_SRVOUT, "*", "[s->] %s", mq.head->msg);
+    }
     mq.tot--;
     last_time += calc_penalty(mq.head->msg);
     q = mq.head->next;
@@ -222,8 +226,10 @@ static void deq_msg()
   if (fast_deq(DP_HELP))
     return;
   tputs(serv, hq.head->msg, hq.head->len);
-  if (debug_output)
+  if (debug_output) {
+    hq.head->msg[strlen(hq.head->msg) - 1] = 0; /* delete the "\n" */
     putlog(LOG_SRVOUT, "*", "[h->] %s", hq.head->msg);
+  }
   hq.tot--;
   last_time += calc_penalty(hq.head->msg);
   q = hq.head->next;
@@ -351,10 +357,8 @@ static int calc_penalty(char * msg)
     penalty += 2;
   } else if (!egg_strcasecmp(cmd, "DNS")) {
     penalty += 2;
-  } else {
-    debug1("Unknown command %s, adding 1sec standard-penalty", cmd);
-    penalty++;
-  }
+  } else
+    penalty++; /* just add standard-penalty */
   /* Shouldn't happen, but you never know... */
   if (penalty > 99)
     penalty = 99;
