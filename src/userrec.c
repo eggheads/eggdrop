@@ -4,7 +4,7 @@
  *   a bunch of functions to find and change user records
  *   change and check user (and channel-specific) flags
  * 
- * $Id: userrec.c,v 1.22 2000/08/07 10:09:53 fabian Exp $
+ * $Id: userrec.c,v 1.23 2000/08/27 18:52:26 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -539,7 +539,8 @@ void sort_userlist()
 void write_userfile(int idx)
 {
   FILE *f;
-  char s[121], s1[81];
+  char *new_userfile;
+  char s1[81];
   time_t tt;
   struct userrec *u;
   int ok;
@@ -547,11 +548,15 @@ void write_userfile(int idx)
   Context;
   if (userlist == NULL)
     return;			/* No point in saving userfile */
-  sprintf(s, "%s~new", userfile);
-  f = fopen(s, "w");
-  chmod(s, userfile_perm);
+
+  new_userfile = nmalloc(strlen(userfile) + 5);
+  sprintf(new_userfile, "%s~new", userfile);
+
+  f = fopen(new_userfile, "w");
+  chmod(new_userfile, userfile_perm);
   if (f == NULL) {
     putlog(LOG_MISC, "*", USERF_ERRWRITE);
+    nfree(new_userfile);
     return;
   }
   if (!quiet_save)
@@ -572,15 +577,15 @@ void write_userfile(int idx)
   if (!ok || fflush(f)) {
     putlog(LOG_MISC, "*", "%s (%s)", USERF_ERRWRITE, strerror(ferror(f)));
     fclose(f);
+    nfree(new_userfile);
     return;
   }
   fclose(f);
   Context;
   call_hook(HOOK_USERFILE);
   Context;
-  unlink(userfile);
-  sprintf(s, "%s~new", userfile);
-  movefile(s, userfile);
+  movefile(new_userfile, userfile);
+  nfree(new_userfile);
 }
 
 int change_handle(struct userrec *u, char *newh)
