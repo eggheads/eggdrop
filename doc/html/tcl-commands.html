@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: tcl-commands.html,v 1.37 2004/01/13 01:30:26 wcc Exp $ -->
+<!-- $Id: tcl-commands.html,v 1.38 2004/04/30 07:51:08 tothwolf Exp $ -->
 
 <html>
   <head>
@@ -263,7 +263,7 @@
         <dd>
           <p><strong>Returns:</strong> a list of users on the bot. You
           can use the flag matching system here
-          ([global]{&/|}[chan]{&/|}[bot]). &#39;&&#39; specifies
+          ([global]{&amp;/|}[chan]{&amp;/|}[bot]). &#39;&amp;&#39; specifies
           &quot;and&quot;; &#39;|&#39; specifies &quot;or&quot;.</p>
 
           <p><strong>Module:</strong> core</p>
@@ -486,9 +486,9 @@
           <p><strong>Description:</strong> changes the attributes for a user
           record, if you include any. Changes are of the form &#39;+f&#39;,
           &#39;-o&#39;, &#39;+dk&#39;, &#39;-o+d&#39;, etc. If changes are
-          specified in the format of |<changes> <channel>, the channel-specific
-          flags for that channel are altered. You can now use the +o|-o
-          #channel format here too.</p>
+          specified in the format of &lt;changes&gt; &lt;channel&lt;, the
+          channel-specific flags for that channel are altered. You can now
+          use the +o|-o #channel format here too.</p>
 
           <p><strong>Returns:</strong>  new flags for the user (if you made
           no changes, the current flags are returned). If a channel was
@@ -1573,11 +1573,12 @@
           <p><strong>Module:</strong> irc</p>
         </dd>
 
-        <dt><strong>chanlist &lt;channel&gt; [flags[&chanflags]]</strong></dt>
+        <dt><strong>chanlist &lt;channel&gt;
+        [flags[&amp;chanflags]]</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> flags are any global flags; the
-          &#39;&&#39; denotes to look for channel specific flags.
+          &#39;&amp;&#39; denotes to look for channel specific flags.
           Examples:</p>
 
           <blockquote>
@@ -1594,7 +1595,7 @@
 
               <tr valign="top">
                 <td>
-                  <p><strong>&n</strong></p>
+                  <p><strong>&amp;n</strong></p>
                 </td>
 
                 <td>
@@ -1604,7 +1605,7 @@
 
               <tr valign="top">
                 <td>
-                  <p><strong>o&m</strong></p>
+                  <p><strong>o&amp;m</strong></p>
                 </td>
 
                 <td>
@@ -2033,7 +2034,7 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong>dcclist ?type?</strong></dt>
+        <dt><strong>dcclist [type]</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> a list of active connections, each
@@ -2269,7 +2270,7 @@
 
         <dd>
           <p><strong>Description:</strong> removes the name associated
-          with a botnet channel, if any exists. Use &#39;killassoc &&#39;
+          with a botnet channel, if any exists. Use &#39;killassoc &amp;&#39;
           to kill all assocs.</p>
 
           <p><strong>Returns:</strong> nothing</p>
@@ -2805,7 +2806,7 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong>binds ?type/mask?</strong></dt>
+        <dt><strong>binds [type/mask]</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> a list of Tcl binds, each item in the
@@ -3473,8 +3474,6 @@
       <p>To remove a bind, use the &#39;unbind&#39; command. For example,
       to remove the bind for the &quot;stop&quot; msg command, use
       &#39;unbind msg - stop msg:stop&#39;.</p>
-
-      <a name="binda"></a>
 
       <ol type="A">
         <li>

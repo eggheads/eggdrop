@@ -1,4 +1,4 @@
-$Id: tcl-commands.doc,v 1.108 2004/04/06 06:56:38 wcc Exp $
+$Id: tcl-commands.doc,v 1.109 2004/04/30 07:51:08 tothwolf Exp $
 
 Eggdrop Tcl Commands
 Last revised: January 12, 2004
@@ -954,7 +954,7 @@ marked with vertical bars (|) on the left.
     Returns: number of dcc connections currently in use
     Module: core
 
-  dcclist ?type?
+  dcclist [type]
     Returns: a list of active connections, each item in the list is a
       sublist containing six elements:
         {<idx> <handle> <hostname> <type> {<other>} <timestamp>}.
@@ -1269,7 +1269,7 @@ marked with vertical bars (|) on the left.
     Returns: name of the command that was removed
     Module: core
 
-  binds ?type/mask?
+  binds [type/mask]
     Returns: a list of Tcl binds, each item in the list is a sublist of
       five elements:
         {<type> <flags> <name> <hits> <proc>}
