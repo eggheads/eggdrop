@@ -915,6 +915,63 @@ static int tcl_isbotnick STDVAR {
   return TCL_OK;
 }
 
+/* why weren't putserv/help/quick moved from the eggdrop core
+ * into the server module ?? (guppy 19Jul1999) */
+
+static int tcl_putquick STDVAR
+{
+  char s[511], *p;
+
+  context;
+  BADARGS(2, 2, " text");
+  strncpy(s, argv[1], 510);
+  s[510] = 0;
+  p = strchr(s, '\n');
+  if (p != NULL)
+    *p = 0;
+   p = strchr(s, '\r');
+  if (p != NULL)
+    *p = 0;
+   dprintf(DP_MODE, "%s\n", s);
+   return TCL_OK;
+}
+
+static int tcl_putserv STDVAR
+{
+  char s[511], *p;
+
+  context;
+  BADARGS(2, 2, " text");
+  strncpy(s, argv[1], 510);
+  s[510] = 0;
+  p = strchr(s, '\n');
+  if (p != NULL)
+    *p = 0;
+   p = strchr(s, '\r');
+  if (p != NULL)
+    *p = 0;
+   dprintf(DP_SERVER, "%s\n", s);
+   return TCL_OK;
+}
+
+static int tcl_puthelp STDVAR
+{
+  char s[511], *p;
+
+  context;
+  BADARGS(2, 2, " text");
+  strncpy(s, argv[1], 510);
+  s[510] = 0;
+  p = strchr(s, '\n');
+  if (p != NULL)
+    *p = 0;
+   p = strchr(s, '\r');
+  if (p != NULL)
+    *p = 0;
+   dprintf(DP_HELP, "%s\n", s);
+   return TCL_OK;
+}
+
 static int tcl_jump STDVAR {
   BADARGS(1, 4, " ?server? ?port? ?pass?");
   if (argc >= 2) {
@@ -1077,6 +1134,9 @@ static tcl_cmds my_tcl_cmds[] =
   {"isbotnick", tcl_isbotnick},
   {"clearqueue", tcl_clearqueue},
   {"queuesize", tcl_queuesize},
+  {"puthelp", tcl_puthelp},
+  {"putserv", tcl_putserv},
+  {"putquick", tcl_putquick},
   {0, 0},
 };
 
