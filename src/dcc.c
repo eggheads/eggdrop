@@ -4,7 +4,7 @@
  *   disconnect on a dcc socket
  *   ...and that's it!  (but it's a LOT)
  *
- * $Id: dcc.c,v 1.45 2001/05/12 20:50:57 guppy Exp $
+ * $Id: dcc.c,v 1.46 2001/06/29 05:09:58 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1561,7 +1561,7 @@ static void dcc_telnet_new(int idx, char *buf, int x)
     dprintf(idx, "\nSorry, that nickname is taken already.\n");
     dprintf(idx, "Try another one please:\n");
     return;
-  } else if (!egg_strcasecmp(buf, origbotname) || !egg_strcasecmp(buf, botnetnick)) {
+  } else if (!egg_strcasecmp(buf, botnetnick)) {
     dprintf(idx, "Sorry, can't use my name for a nick.\n");
   } else {
     if (make_userfile)
