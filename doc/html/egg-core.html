@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: egg-core.html,v 1.29 2003/01/31 08:02:08 wcc Exp $ -->
+<!-- $Id: egg-core.html,v 1.30 2003/02/11 09:19:17 wcc Exp $ -->
 
 <html>
   <head>
@@ -545,30 +545,34 @@
         <dt><strong>listen &lt;port&gt; &lt;mode&gt;</strong></dt>
 
         <dd>
-          <p>The listen command opens a telnet port by which you or other
-          bots can interact with the Eggdrop by telneting in.</p>
-
-          <p>Valid ports are typically anything between 1025 and 65535
-          assuming the port is not already in use.</p>
-
-          <p>Valid modes are &#39;all&#39;, &#39;bots&#39;, and
-          &#39;users&#39;. You can assign special ports for users and bots,
-          or one for all.</p>
-
-          <p>Examples:</p>
-
-          <p><strong>listen 3333 bots<br>
-           listen 4444 users</strong></p>
-
-          <p>Or:</p>
-
-          <p><strong>listen 3333 all</strong></p>
+          <p>This opens a telnet port by which you and other bots can interact
+          with the Eggdrop by telneting in.</p>
 
           <p>There are more options for the listen command in
-          <a href="tcl-commands.html">Eggdrop Tcl Commands</a>. Note that
-          if you are running more than one bot on the same machine, you will
-          want to space the telnet ports at LEAST 5 apart. 10 is even
-          better.</p>
+          <a href="tcl-commands.html">Tcl Commands</a>. Note that if you are
+          running more than one bot on the same machine, you will want to space
+          the telnet ports at LEAST 5 apart, although 10 is even better.</p>
+
+          <p>Valid ports are typically anything between 1025 and 65535 assuming
+          the port is not already in use.</p>
+
+          <p>If you would like the bot to listen for users and bots in separate
+          ports, use the following format:</p>
+          
+          <blockquote>
+            <p><strong>listen 3333 bots</strong><br>
+            <strong>listen 4444 users</strong></p>
+          </blockquote>
+
+          <p>If you wish to use only one port, use this format:</p>
+          
+          <blockquote>
+            <p><strong>listen 3333 all</strong></p>
+          </blockquote>
+
+          <p>You need to un-comment this line and change the port number in
+          order to open the listen port. You should not keep this set to
+          3333.</p>
         </dd>
 
         <dt><strong>set remote-boots 2</strong></dt>
@@ -576,10 +580,12 @@
         <dd>
           <p>This setting defines whether or not people can boot users on
           the Eggdrop from other bots in your botnet. Valid settings are:</p>
-
-          <p>0 - allow <strong>no</strong> outside boots<br>
-           1 - allow boots from sharebots<br>
-           2 - allow any boots</p>
+          
+          <blockquote>
+            <p>0 - allow <strong>no</strong> outside boots<br>
+            1 - allow boots from sharebots<br>
+            2 - allow any boots</p>
+          </blockquote>
         </dd>
 
         <dt><strong>set share-unlinks 1</strong></dt>

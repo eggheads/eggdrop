@@ -277,27 +277,28 @@ should read doc/BOTNET before modifying these settings.
 
 
   listen <port> <mode>
-    The listen command opens a telnet port by which you or other bots can
-    interact with the Eggdrop by telneting in.
+    This opens a telnet port by which you and other bots can interact with the
+    Eggdrop by telneting in.
 
-    Valid ports are typically anything between 1025 and 65535 assuming the 
+    There are more options for the listen command in doc/tcl-commands.doc. Note
+    that if you are running more than one bot on the same machine, you will want
+    to space the telnet ports at LEAST 5 apart, although 10 is even better.
+
+    Valid ports are typically anything between 1025 and 65535 assuming the
     port is not already in use.
 
-    Valid modes are 'all', 'bots', and 'users'. You can assign special ports
-    for users and bots, or one for all.
+    If you would like the bot to listen for users and bots in separate ports,
+    use the following format:
 
-    Examples:
+      listen 3333 bots
+      listen 4444 users
 
-    listen 3333 bots
-    listen 4444 users
+    If you wish to use only one port, use this format:
 
-    Or:
+      listen 3333 all
 
-    listen 3333 all
-
-    There are more options for the listen command in doc/tcl-commands.doc.
-    Note that if you are running more than one bot on the same machine, you 
-    will want to space the telnet ports at LEAST 5 apart. 10 is even better.
+    You need to un-comment this line and change the port number in order to open
+    the listen port. You should not keep this set to 3333.
 
 
   set remote-boots 2

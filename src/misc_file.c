@@ -1,8 +1,8 @@
 /*
- * misc.c -- handles:
+ * misc_file.c -- handles:
  *   copyfile() movefile() file_readable()
  *
- * $Id: misc_file.c,v 1.10 2003/01/29 05:48:40 wcc Exp $
+ * $Id: misc_file.c,v 1.11 2003/02/11 09:19:17 wcc Exp $
  */
 /*
  * Copyright (C) 1999, 2000, 2001, 2002, 2003 Eggheads Development Team
