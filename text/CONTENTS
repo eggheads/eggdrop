@@ -1,5 +1,5 @@
 Directory Contents - text/
-Last revised: December 23, 2002
+Last revised: April 16, 2003
      _________________________________________________________________
 
                          Directory Contents - text/
@@ -11,3 +11,6 @@ banner
 motd
    anytime a user logs in successfully and joins the party line, he
    is show the text from this file
+    ________________________________________________________________________
+
+  Copyright (C) 2003 Eggheads Development Team

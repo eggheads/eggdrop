@@ -4,7 +4,7 @@
  *   Tcl initialization
  *   getting and setting Tcl/eggdrop variables
  *
- * $Id: tcl.c,v 1.72 2003/04/17 01:55:57 wcc Exp $
+ * $Id: tcl.c,v 1.73 2003/04/17 04:38:33 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -47,10 +47,10 @@ extern time_t online_since;
 
 extern char origbotname[], botuser[], motdfile[], admin[], userfile[],
             firewall[], helpdir[], notify_new[], hostname[], myip[], moddir[],
-            tempdir[], owner[], network[], botnetnick[], bannerfile[], myip6[],
+            tempdir[], owner[], network[], botnetnick[], bannerfile[],
             egg_version[], natip[], configfile[], logfile_suffix[], textdir[],
 #ifdef USE_IPV6
-            pid_file[], hostname6[];
+            pid_file[], hostname6[], myip6[];
 #else
             pid_file[];
 #endif /* USE_IPV6 */

@@ -319,8 +319,6 @@ Last revised: March  24, 2003
     to run the configure script, try running 'sh configure' or 'bash configure'
     instead of './configure'. This problem seems to show up on many AIX
     machines.
-
-
      _________________________________________________________________
 
    Copyright (C) 1997 Robey Pointer

@@ -1,5 +1,5 @@
 Eggdrop Core Settings
-Last revised: January 28, 2003
+Last revised: April 17, 2003
      _________________________________________________________________
 
                            Eggdrop Core Settings
@@ -20,7 +20,7 @@ work as a shell script.
 
 Example:
 
-#! /path/to/eggdrop
+  #! /path/to/eggdrop
 
 
 ##### BASIC SETTINGS #####
@@ -29,7 +29,7 @@ You can change the basic Eggdrop appearance and behavior in this section.
 
 
   set username "lamest"
-    This setting defines the username the bot uses on IRC. This setting has 
+    This setting defines the username the bot uses on IRC. This setting has
     no effect if an ident daemon is running on your bot's machine.
 
 
@@ -52,9 +52,9 @@ You can change the basic Eggdrop appearance and behavior in this section.
 
 
   set offset "5"
-    The offset setting specifies the time value to be added to the local 
-    time to get Coordinated Universal Time (UTC aka GMT). The offset is 
-    positive if the local timezone is west of the Prime Meridian and 
+    The offset setting specifies the time value to be added to the local
+    time to get Coordinated Universal Time (UTC aka GMT). The offset is
+    positive if the local timezone is west of the Prime Meridian and
     negative if it is east. The value (in hours) must be between -23 and
     23. For example, if the timezone is UTC+1, the offset is -1.
 
@@ -70,6 +70,12 @@ You can change the basic Eggdrop appearance and behavior in this section.
     may want to specify the particular IP to bind to. You can specify either
     by hostname or by IP. You may also want to set the hostname here if
     Eggdrop has trouble detecting it when it starts up.
+
+
+  set my-hostname6 "virtual.host.com"
+  set my-ip6 "2001:1:1:1::1"
+    If you're using IPv6 support, set the IPv6 IP address and hostname to bind
+    to here. You still need to set my-ip.
 
 
   addlang "english"
@@ -90,7 +96,7 @@ the logfile of the next day.
 
 
   set max-logs 5
-    This is the maximum number of logfiles allowed. This setting can be 
+    This is the maximum number of logfiles allowed. This setting can be
     increased; however, don't decrease it.
 
 
@@ -162,9 +168,9 @@ logfile <logflags> <channel> "logs/logfile"
 
 
   set keep-all-logs 0
-    If you want to keep your logfiles forever, turn this setting on. All 
-    logfiles will get the suffix 
-    ".[day, 2 digits][month, 3 letters][year, 4 digits]". Note that your 
+    If you want to keep your logfiles forever, turn this setting on. All
+    logfiles will get the suffix
+    ".[day, 2 digits][month, 3 letters][year, 4 digits]". Note that your
     quota/hard-disk might be filled by this, so check your logfiles
     often and download them.
 
@@ -190,7 +196,7 @@ logfile <logflags> <channel> "logs/logfile"
 
 
 ##### CONSOLE #####
-  
+
   set console "mkcobxs"
     This is the default console mode. It uses the same event flags as the log
     files do. The console channel is automatically set to your "primary" channel,
@@ -266,7 +272,7 @@ logfile <logflags> <channel> "logs/logfile"
 ##### BOTNET/DCC/TELNET #####
 
 Settings in this section should be unimportant for you until you deal with
-botnets (multiple Eggdrops connected together to maximize efficiency). You 
+botnets (multiple Eggdrops connected together to maximize efficiency). You
 should read doc/BOTNET before modifying these settings.
 
 
@@ -338,18 +344,18 @@ should read doc/BOTNET before modifying these settings.
 
   set open-telnets 0
     If you want people allow to telnet in and type 'NEW' to become a new user,
-    set this to 1. This is similar to the 'hello' msg command. The 
+    set this to 1. This is similar to the 'hello' msg command. The
     protect-telnet setting must be set to 0 to use this.
 
 
   set stealth-telnets 0
-    If you don't want Eggdrop to identify itself as an Eggdrop on a telnet 
-    connection, set this setting to 1. Eggdrop will display 'Nickname' 
+    If you don't want Eggdrop to identify itself as an Eggdrop on a telnet
+    connection, set this setting to 1. Eggdrop will display 'Nickname'
     instead.
 
 
   set use-telnet-banner 0
-    If you want Eggdrop to display a banner when telneting in, set this 
+    If you want Eggdrop to display a banner when telneting in, set this
     setting to 1. The telnet banner is set by 'set telnet-banner'.
 
 
@@ -382,7 +388,7 @@ should read doc/BOTNET before modifying these settings.
 ##### MORE ADVANCED SETTINGS #####
 
   set firewall "!sun-barr.ebay:3666"
-    Set this to your socks host if your Eggdrop sits behind a firewall. If 
+    Set this to your socks host if your Eggdrop sits behind a firewall. If
     you use a Sun "telnet passthru" firewall, prefix the host with a "!".
 
 
@@ -392,7 +398,7 @@ should read doc/BOTNET before modifying these settings.
     10.0.0.0-10.255.255.255 and your firewall transparently changes your
     address to a unique address for your box) or you have IP masquerading
     between you and the rest of the world, and /dcc chat,/ctcp chat or
-    userfile sharing aren't working, enter your outside IP here. Do not 
+    userfile sharing aren't working, enter your outside IP here. Do not
     enter anything for my-ip or my-hostname if you use this setting.
 
 
@@ -456,7 +462,7 @@ should read doc/BOTNET before modifying these settings.
 
   set must-be-owner 1
     If you enable this setting, only permanent owners (owner setting) will be
-    able to use .tcl and .set. Moreover, if you want to only let permanent 
+    able to use .tcl and .set. Moreover, if you want to only let permanent
     owners use .dump, then set this to 2.
 
 
@@ -474,31 +480,31 @@ should read doc/BOTNET before modifying these settings.
   set allow-dk-cmds 1
     Enable this setting if you want +d & +k users to use commands bound as -|-.
 
-  
+
   set dupwait-timeout 5
     If your Eggdrop rejects bots that actually have already disconnected from
     another hub, but the disconnect information has not yet spread over the
-    botnet due to lag, use this setting. The bot will wait dupwait-timeout 
+    botnet due to lag, use this setting. The bot will wait dupwait-timeout
     seconds before it checks again and then finally reject the bot.
 
 
 
 ##### MODULES #####
 
-After the core settings, you should start loading modules. Modules are 
+After the core settings, you should start loading modules. Modules are
 loaded by the command "loadmodule <module>". Eggdrop looks for modules in
-the directory you specified by the module-path setting in the files and 
+the directory you specified by the module-path setting in the files and
 directories section.
 
 Please note that for different configurations, different modules are needed.
 Four examples:
 
  Channel Security Bot:
-    This bot needs the channels, blowfish, console, dns, irc, and (if you 
+    This bot needs the channels, blowfish, console, dns, irc, and (if you
     like) ctcp modules loaded. More is not needed and makes the bot slower.
 
   Public IRC Bot:
-    A public bot should have all modules available loaded since they provide 
+    A public bot should have all modules available loaded since they provide
     all functions for everyday use.
 
   Secure Filesys Bot:
@@ -522,8 +528,8 @@ should be loaded and their variables should be set at this point.
     directory. All scripts should be put there, although you can place them where
     you like as long as you can supply a fully qualified path to them.
 
-    Some commonly loaded scripts are alltools.tcl and action.fix.tcl. 
-    
+    Some commonly loaded scripts are alltools.tcl and action.fix.tcl.
+
     The appropriate source lines are:
 
       source scripts/alltools.tcl

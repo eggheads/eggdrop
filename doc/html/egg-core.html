@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: egg-core.html,v 1.30 2003/02/11 09:19:17 wcc Exp $ -->
+<!-- $Id: egg-core.html,v 1.31 2003/04/17 04:38:33 wcc Exp $ -->
 
 <html>
   <head>
@@ -137,6 +137,14 @@
           starts up.</p>
         </dd>
 
+        <dt><strong>set my-hostname6 &quot;virtual.host.com&quot;</strong></dt>
+        <dt><strong>set my-ip6 &quot;2001:1:1:1::1&quot;</strong></dt>
+
+        <dd>
+          <p>If you&quot;re using IPv6 support, set the IPv6 IP address and
+          hostname to bind to here. You still need to set my-ip.</p>
+        </dd>
+
         <dt><strong>addlang &quot;english&quot;</strong></dt>
 
         <dd>
@@ -193,7 +201,7 @@
           and to which file.</p>
 
           <p>Logfile flags:</p>
-          
+
           <blockquote>
             <table>
               <tr valign="top">
@@ -347,7 +355,7 @@
               </tr>
             </table>
           </blockquote>
-          
+
           <p>Note that modes d, h, r, t, and v can fill disk quotas quickly.
           There are also eight user-defined levels (1-8) which can be used by
           Tcl scripts.</p>
@@ -558,14 +566,14 @@
 
           <p>If you would like the bot to listen for users and bots in separate
           ports, use the following format:</p>
-          
+
           <blockquote>
             <p><strong>listen 3333 bots</strong><br>
             <strong>listen 4444 users</strong></p>
           </blockquote>
 
           <p>If you wish to use only one port, use this format:</p>
-          
+
           <blockquote>
             <p><strong>listen 3333 all</strong></p>
           </blockquote>
@@ -580,7 +588,7 @@
         <dd>
           <p>This setting defines whether or not people can boot users on
           the Eggdrop from other bots in your botnet. Valid settings are:</p>
-          
+
           <blockquote>
             <p>0 - allow <strong>no</strong> outside boots<br>
             1 - allow boots from sharebots<br>

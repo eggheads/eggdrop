@@ -1,5 +1,5 @@
 Directory Contents - doc/settings/
-Last revised: December 23, 2002
+Last revised: April 16, 2003
      _________________________________________________________________
 
                      Directory Contents - doc/settings
@@ -58,3 +58,6 @@ mod.wire
 
 mod.woobie
   Documentation for the woobie module is provided in this file.
+    ________________________________________________________________________
+
+  Copyright (C) 2003 Eggheads Development Team

@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  *
- * $Id: cmds.c,v 1.98 2003/04/17 01:55:57 wcc Exp $
+ * $Id: cmds.c,v 1.99 2003/04/17 04:38:33 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1016,6 +1016,16 @@ static void cmd_chaddr(struct userrec *u, int idx, char *par)
       }
     }
   }
+#else
+  bi->address = user_malloc(q - addr + 1);
+  strncpyz(bi->address, addr, q - addr + 1);
+  p = q + 1;
+  bi->telnet_port = atoi(p);
+  q = strchr(p, '/');
+  if (!q)
+    bi->relay_port = bi->telnet_port;
+  else
+    bi->relay_port = atoi(q + 1);
 #endif /* USE_IPV6 */
   set_user(&USERENTRY_BOTADDR, u1, bi);
 }

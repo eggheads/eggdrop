@@ -2,7 +2,7 @@
  * net.c -- handles:
  *   all raw network i/o
  *
- * $Id: net.c,v 1.57 2003/04/17 01:55:57 wcc Exp $
+ * $Id: net.c,v 1.58 2003/04/17 04:38:33 wcc Exp $
  */
 /*
  * This is hereby released into the public domain.
@@ -424,8 +424,8 @@ static int proxy_connect(int sock, char *host, int port, int proxy)
 #else
     if (host[strlen(host) - 1] >= '0' && host[strlen(host) - 1] <= '9') {
 #endif /* USE_IPV6 */
-      IP ip = ((IP) inet_addr(host)); /* drummer */
-      egg_memcpy(x, &ip, 4);  /* Beige@Efnet */
+      IP ip = ((IP) inet_addr(host));
+      egg_memcpy(x, &ip, 4);
     } else {
       /* no, must be host.domain */
       if (!setjmp(alarmret)) {
@@ -674,7 +674,7 @@ int open_address_listen(IP addr, int *port)
       name6.sin6_family = af_def;
       name6.sin6_port = htons(*port);
       memcpy(&name6.sin6_addr, &in6addr_any, 16);
-      /* memcpy(&name6.sin6_addr,myipv6he->h_addr,myipv6he->h_length); */
+      /* memcpy(&name6.sin6_addr, myipv6he->h_addr, myipv6he->h_length); */
       if (bind(sock, (struct sockaddr *) &name6, sizeof(name6)) < 0) {
         killsock(sock);
         return -1;
