@@ -1,5 +1,5 @@
 Eggdrop Tcl Commands
-Last revised: March 01, 2002
+Last revised: August 16, 2003
      _________________________________________________________________
 
 This is an exhaustive list of all the Tcl commands added to Eggdrop. All
@@ -1715,7 +1715,7 @@ marked with vertical bars (|) on the left.
          procname <nick> <user@host> <handle> <channel> <target> <reason>
 
          Description: triggered when someone is kicked off the channel. The
-           mask is matched against '#channel target' where the target is
+           mask is matched against '#channel target reason' where the target is
            the nickname of the person who got kicked (can contain wildcards).
            The proc is called with the nick, user@host, and handle of the
            kicker, plus the channel, the nickname of the person who was
@@ -1785,19 +1785,18 @@ marked with vertical bars (|) on the left.
          Module: server
 
     (17) RAW (stackable)
-         bind raw <flags> <keyword-mask> <proc>
+         bind raw <flags> <keyword> <proc>
          procname <from> <keyword> <text>
 
          Description: previous versions of Eggdrop required a special compile
-           option to enable this binding, but it's now standard. The mask
-           is checked against the keyword (either a numeric, like "368",
-           or a keyword, like "PRIVMSG"). from will be the server name or
-           the source user (depending on the keyword); flags are ignored.
-           The order of the arguments is identical to the order that the
-           IRC server sends to the bot. The pre-processing only splits it
-           apart enough to determine the keyword. If the proc returns 1,
-           Eggdrop will not process the line any further (this could cause
-           your bot to behave oddly in some cases).
+           option to enable this binding, but it's now standard. The keyword
+	   is either a numeric, like "368", or a keyword, such as "PRIVMSG".
+	   from will be the server name or the source user (depending on
+	   the keyword); flags are ignored. The order of the arguments is
+	   identical to the order that the IRC server sends to the bot. The
+	   pre-processing  only splits it apart enough to determine the
+	   keyword. If the proc returns 1, Eggdrop will not process the line
+	   any further (this could cause unexpected behavior in some cases).
          Module: server
 
     (18) BOT
