@@ -177,6 +177,12 @@ see also: hide, lsa
    removes the shared tag from a file.
    
 see also: share, lsa, ln
+%{help=filesys module}%{+x}
+### commands for the %bfilesys module%b
+  %bfiles%b
+
+see also: help in filearea
 %{help=all}%{+x}
 ###  commands for the %bfilesys module%b
-  %bfilesys%b
+  %bfiles%b
+
