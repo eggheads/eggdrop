@@ -4,7 +4,7 @@
  *   Tcl initialization
  *   getting and setting Tcl/eggdrop variables
  * 
- * $Id: tcl.c,v 1.31 2001/03/10 22:38:03 guppy Exp $
+ * $Id: tcl.c,v 1.32 2001/04/06 22:28:43 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -494,7 +494,7 @@ extern tcl_cmds tcluser_cmds[], tcldcc_cmds[], tclmisc_cmds[], tcldns_cmds[];
  */
 void init_tcl(int argc, char **argv)
 {
-#if TCL_MAJOR_VERSION >= 8 && TCL_MINOR_VERSION >= 1
+#if (TCL_MAJOR_VERSION >= 8 && TCL_MINOR_VERSION >= 1) || (TCL_MAJOR_VERSION >= 9)
   const char *encoding;
   int i;
   char *langEnv;
@@ -530,7 +530,7 @@ void init_tcl(int argc, char **argv)
   Tcl_Init(interp);
 
 /* Code based on Tcl's TclpSetInitialEncodings() */
-#if TCL_MAJOR_VERSION >= 8 && TCL_MINOR_VERSION >= 1
+#if (TCL_MAJOR_VERSION >= 8 && TCL_MINOR_VERSION >= 1) || (TCL_MAJOR_VERSION >= 9)
   /* Determine the current encoding from the LC_* or LANG environment
    * variables.
    */

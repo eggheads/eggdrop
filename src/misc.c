@@ -7,7 +7,7 @@
  *   help system
  *   motd display and %var substitution
  * 
- * $Id: misc.c,v 1.37 2001/03/18 23:00:31 guppy Exp $
+ * $Id: misc.c,v 1.38 2001/04/06 22:28:42 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -370,7 +370,7 @@ void maskhost(const char *s, char *nw)
   }
 }
 
-#if TCL_MAJOR_VERSION >= 8 && TCL_MINOR_VERSION >= 1
+#if (TCL_MAJOR_VERSION >= 8 && TCL_MINOR_VERSION >= 1) || (TCL_MAJOR_VERSION >= 9)
 /* Converts an UTF-8 string to unicode safe string
  */
 void str_nutf8tounicode(char *str, int len)

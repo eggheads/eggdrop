@@ -1,7 +1,7 @@
 /* 
  * tclchan.c -- part of channels.mod
  * 
- * $Id: tclchan.c,v 1.44 2001/03/18 23:00:32 guppy Exp $
+ * $Id: tclchan.c,v 1.45 2001/04/06 22:28:43 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1568,7 +1568,7 @@ static int tcl_channel_add(Tcl_Interp *irp, char *newname, char *options)
   strncat(buf, glob_chanset, 2047 - strlen(buf));
   strncat(buf, options, 2047 - strlen(buf));
   buf[2047] = 0;
-#if TCL_MAJOR_VERSION >= 8 && TCL_MINOR_VERSION >= 1
+#if (TCL_MAJOR_VERSION >= 8 && TCL_MINOR_VERSION >= 1) || (TCL_MAJOR_VERSION >= 9)
   str_nutf8tounicode(newname, strlen(newname) + 1);
   str_nutf8tounicode(buf2, sizeof buf2);
   str_nutf8tounicode(buf, sizeof buf);

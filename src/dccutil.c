@@ -6,7 +6,7 @@
  *   memory management for dcc structures
  *   timeout checking for dcc connections
  * 
- * $Id: dccutil.c,v 1.29 2001/03/18 23:00:31 guppy Exp $
+ * $Id: dccutil.c,v 1.30 2001/04/06 22:28:42 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -121,7 +121,7 @@ void dprintf EGG_VARARGS_DEF(int, arg1)
     len = 1023;
   buf[len + 1] = 0;
 
-#if TCL_MAJOR_VERSION >= 8 && TCL_MINOR_VERSION >= 1
+#if (TCL_MAJOR_VERSION >= 8 && TCL_MINOR_VERSION >= 1) || (TCL_MAJOR_VERSION >= 9)
   str_nutf8tounicode(buf, sizeof buf);
 #endif
 

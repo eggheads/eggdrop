@@ -4,7 +4,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: modules.c,v 1.48 2001/03/18 23:00:31 guppy Exp $
+ * $Id: modules.c,v 1.49 2001/04/06 22:28:42 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -528,7 +528,7 @@ Function global_table[] =
   (Function) str_unescape,
   (Function) egg_strcatn,
   (Function) clear_chanlist_member,
-#if TCL_MAJOR_VERSION >= 8 && TCL_MINOR_VERSION >= 1
+#if (TCL_MAJOR_VERSION >= 8 && TCL_MINOR_VERSION >= 1) || (TCL_MAJOR_VERSION >= 9)
   (Function) str_nutf8tounicode
 #else
   (Function) 0
