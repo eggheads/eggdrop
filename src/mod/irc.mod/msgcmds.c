@@ -217,13 +217,13 @@ static int msg_ident(char *nick, char *host, struct userrec *u, char *par)
       dprintf(DP_HELP, "NOTICE %s :%s: %s\n", nick, IRC_ADDHOSTMASK, s1);
       addhost_by_handle(who, s1);
       while (chan) {
-	get_user_flagrec(u, &fr, chan->name);
+	get_user_flagrec(u2, &fr, chan->name);
 	/* is the channel or the user marked auto-op? */
 	if ((channel_autoop(chan) || glob_autoop(fr) || chan_autoop(fr)) &&
+	(mx = ismember(chan, nick)) && !chan_hasop(mx) && !chan_sentop(mx) &&
 	/* are they actually validly +o ? */
 	    (chan_op(fr) || (glob_op(fr) && !chan_deop(fr)))) {
 	  add_mode(chan, '+', 'o', nick);
-          mx = ismember(chan, nick);
 	  mx->flags |= SENTOP;
 	}
 	chan = chan->next;

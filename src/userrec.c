@@ -843,3 +843,33 @@ void touch_laston(struct userrec *u, char *where, time_t timeval)
     set_user(&USERENTRY_LASTON, u, 0);
   }
 }
+
+/*  Go through all channel records and try to find a matching
+ *  nick. Will return the user's user record if that is known
+ *  to the bot.  (Fabian)
+ *  
+ *  Warning: This is unreliable by concept!
+ */
+struct userrec *get_user_by_nick(char *nick)
+{
+  struct chanset_t *chan = chanset;
+  memberlist *m;
+
+  context;
+  while (chan) {
+    m = chan->channel.member;
+    while (m->nick[0]) {
+      if (!rfc_casecmp(nick, m->nick)) {
+  	char word[512];
+
+	sprintf(word, "%s!%s", m->nick, m->userhost);
+	/* no need to check the return value ourself */
+	return get_user_by_host(word);;
+      }
+      m = m->next;
+    }
+    chan = chan->next;
+  }
+  /* sorry, no matches */
+  return NULL;
+}

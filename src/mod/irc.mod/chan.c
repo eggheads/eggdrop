@@ -1639,6 +1639,7 @@ static int gotkick(char *from, char *msg)
       simple_sprintf(s1, "%s!%s", m->nick, m->userhost);
       u2 = get_user_by_host(s1);
       set_handle_laston(chname, u2, now);
+      get_user_flagrec(u2, &fr2, chname);
       /* kicked has op ? */
       if ((chan_op(fr2) || (glob_op(fr2) && !chan_deop(fr2))) &&
       /* channel is revenge ? */

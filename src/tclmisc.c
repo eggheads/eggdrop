@@ -326,20 +326,21 @@ static int tcl_sendnote STDVAR {
 static int tcl_dumpfile STDVAR
 {
   char nick[NICKLEN];
+  struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
 
   context;
   BADARGS(3, 3, " nickname filename");
   strncpy(nick, argv[1], NICKLEN - 1);
   nick[NICKLEN - 1] = 0;
-  showhelp(argv[1], argv[2], 0, HELP_TEXT);
+  get_user_flagrec(get_user_by_nick(nick), &fr, NULL);
+  showhelp(argv[1], argv[2], &fr, HELP_TEXT);
   return TCL_OK;
 }
 
 static int tcl_dccdumpfile STDVAR
 {
   int idx, i;
-  struct flag_record fr =
-  {FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0};
+  struct flag_record fr = {FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0};
 
   context;
   BADARGS(3, 3, " idx filename");

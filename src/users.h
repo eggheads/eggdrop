@@ -196,6 +196,7 @@ extern struct inviterec * global_invites;
 struct userrec *adduser();
 struct userrec *get_user_by_handle(struct userrec *, char *);
 struct userrec *get_user_by_host(char *);
+struct userrec *get_user_by_nick(char *);
 struct userrec *check_chanlist();
 struct userrec *check_chanlist_hand();
 
