@@ -6,7 +6,7 @@
 # Modified by Michael for 1.3.25.
 # Modified by rtc for 1.4.0
 #
-# $Id: core.german.lang,v 1.25 2001/09/24 04:25:39 guppy Exp $
+# $Id: core.german.lang,v 1.26 2001/12/20 04:53:28 guppy Exp $
 
 # General stuff
 0x001,Gebrauch
@@ -195,7 +195,7 @@ Baue eine Telnetverbindung zu dem Bot auf und gib 'NEW' als Deinen Nickname ein.
 0x630,Ich kenne Dich nicht, bitte stell Dich mir zuerst vor.
 0x631,Keine Hilfe.
 0x632,Keine Hilfe dazu verfuegbar.
-0x633,ist keine normale Datei!
+# 0x633 - unused
 0x634,Im Moment nicht auf diesem Channel.
 0x635,Wechsele zurueck zu Nickname %s
 0x636,Server sagt mein Nickname sei ungueltig.

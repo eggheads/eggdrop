@@ -7,7 +7,7 @@
  *   help system
  *   motd display and %var substitution
  *
- * $Id: misc.c,v 1.45 2001/12/02 07:17:24 guppy Exp $
+ * $Id: misc.c,v 1.46 2001/12/20 04:53:28 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1294,42 +1294,6 @@ void sub_lang(int idx, char *text)
     dprintf(idx, "%s\n", s);
 }
 
-/* Show motd to dcc chatter
- */
-void show_motd(int idx)
-{
-  FILE *vv;
-  char s[1024];
-  struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
-
-  get_user_flagrec(dcc[idx].user, &fr, dcc[idx].u.chat->con_chan);
-  vv = fopen(motdfile, "r");
-  if (vv != NULL) {
-    if (!is_file(motdfile)) {
-      fclose(vv);
-      dprintf(idx, "### MOTD %s\n", IRC_NOTNORMFILE);
-      return;
-    }
-    dprintf(idx, "\n");
-    help_subst(NULL, NULL, 0,
-	       (dcc[idx].status & STAT_TELNET) ? 0 : HELP_IRC, NULL);
-    while (!feof(vv)) {
-      fgets(s, 120, vv);
-      if (!feof(vv)) {
-	if (s[strlen(s) - 1] == '\n')
-	  s[strlen(s) - 1] = 0;
-	if (!s[0])
-	  strcpy(s, " ");
-	help_subst(s, dcc[idx].nick, &fr, 1, botnetnick);
-	if (s[0])
-	  dprintf(idx, "%s\n", s);
-      }
-    }
-    fclose(vv);
-    dprintf(idx, "\n");
-  }
-}
-
 /* This will return a pointer to the first character after the @ in the
  * string given it.  Possibly it's time to think about a regexp library
  * for eggdrop...
@@ -1340,29 +1304,69 @@ char *extracthostname(char *hostmask)
   return p ? p + 1 : "";
 }
 
-/* Show banner to telnet user (very simialer to show_motd)
+/* Show motd to dcc chatter
+ */
+void show_motd(int idx)
+{
+  FILE *vv;
+  char s[1024];
+  struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
+
+  if (!is_file(motdfile))
+    return;
+
+  vv = fopen(motdfile, "r");
+  if (!vv)
+    return;
+
+  get_user_flagrec(dcc[idx].user, &fr, dcc[idx].u.chat->con_chan);
+  dprintf(idx, "\n");
+  /* reset the help_subst variables to their defaults */
+  help_subst(NULL, NULL, 0,
+	     (dcc[idx].status & STAT_TELNET) ? 0 : HELP_IRC, NULL);
+  while (!feof(vv)) {
+    fgets(s, 120, vv);
+    if (!feof(vv)) {
+      if (s[strlen(s) - 1] == '\n')
+	s[strlen(s) - 1] = 0;
+      if (!s[0])
+	strcpy(s, " ");
+      help_subst(s, dcc[idx].nick, &fr, 1, botnetnick);
+      if (s[0])
+	dprintf(idx, "%s\n", s);
+    }
+  }
+  fclose(vv);
+  dprintf(idx, "\n");
+}
+
+/* Show banner to telnet user 
  */
 void show_banner(int idx) {
-   FILE *vv;
-   char s[1024];
-   struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
+  FILE *vv;
+  char s[1024];
+  struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
 
-   if (!is_file(bannerfile))
-      return;
-   get_user_flagrec(dcc[idx].user, &fr,dcc[idx].u.chat->con_chan);
-   vv = fopen(bannerfile, "r");
-   if (!vv)
-      return;
-   while(!feof(vv)) {
-      fgets(s, 120, vv);
-      if (!feof(vv)) {
-        if (!s[0])
-          strcpy(s, " \n");
-        help_subst(s, dcc[idx].nick, &fr, 1, botnetnick);
-        dprintf(idx, "%s", s);
-      }
-   }
-   fclose(vv);
+  if (!is_file(bannerfile))
+    return;
+
+  vv = fopen(bannerfile, "r");
+  if (!vv)
+    return;
+
+  get_user_flagrec(dcc[idx].user, &fr,dcc[idx].u.chat->con_chan);
+  /* reset the help_subst variables to their defaults */
+  help_subst(NULL, NULL, 0, 0, NULL);
+  while(!feof(vv)) {
+    fgets(s, 120, vv);
+    if (!feof(vv)) {
+      if (!s[0])
+	strcpy(s, " \n");
+      help_subst(s, dcc[idx].nick, &fr, 0, botnetnick);
+      dprintf(idx, "%s", s);
+    }
+  }
+  fclose(vv);
 }
 
 /* Create a string with random letters and digits

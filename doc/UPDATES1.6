@@ -1,10 +1,13 @@
-$Id: UPDATES1.6,v 1.257 2001/12/19 07:30:58 guppy Exp $
+$Id: UPDATES1.6,v 1.258 2001/12/20 04:53:27 guppy Exp $
 
 Changes in eggdrop: (since v1.6.0)
 ----------------------------------
 
 1.6.8
 Found by  Fixed by  What...
+          guppy     made show_banner reset the help_subst arguments like show_motd does
+                    and if the motd isn't a regular file, just return instead of giving
+                    an error like show_banner does
           guppy     tcl_jump could easily crash the bot
 various   guppy     tcl_pushmode now accepts any irc modes instead of the standard ones
           guppy     made tcl_chanlist (when matching chanflags), tcl_handonchan, and

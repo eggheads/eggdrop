@@ -1,7 +1,7 @@
 # core.french.lang
 #   core language messages for eggdrop
 #
-# $Id: core.french.lang,v 1.20 2001/09/24 04:25:39 guppy Exp $
+# $Id: core.french.lang,v 1.21 2001/12/20 04:53:28 guppy Exp $
 
 
 # General stuff
@@ -189,7 +189,7 @@ Faites un Telnet sur le bot et entrez 'NEW' comme surnom.
 0x630,Vous n'êtes pas enregistré ; présentez vous d'abord.
 0x631,Aucune aide.
 0x632,Aucune aide disponible là-dessus.
-0x633,n'est pas un fichier normal!
+# 0x633 - unused
 0x634,Pas sur ce canal en ce moment.
 0x635,Je récupère mon surnom (%s)
 0x636,Le serveur me dit que mon surnom est invalide.

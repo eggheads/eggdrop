@@ -2,7 +2,7 @@
  * lang.h
  *   Conversion definitions for language support
  *
- * $Id: lang.h,v 1.23 2001/09/24 04:25:39 guppy Exp $
+ * $Id: lang.h,v 1.24 2001/12/20 04:53:28 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -181,7 +181,6 @@
 #define IRC_DONTKNOWYOU		get_language(0x630)
 #define IRC_NOHELP		get_language(0x631)
 #define IRC_NOHELP2		get_language(0x632)
-#define IRC_NOTNORMFILE		get_language(0x633)
 #define IRC_NOTONCHAN		get_language(0x634)
 #define IRC_GETORIGNICK		get_language(0x635)
 #define IRC_BADBOTNICK		get_language(0x636)
