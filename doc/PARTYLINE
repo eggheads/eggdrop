@@ -18,7 +18,7 @@ Last revised: December 31, 2001
     is available from each channel, but you can only talk to people who are
     on your current channel (just like IRC). Channel 0 is the main party
     line, while others are typically reserved for private conversations.
-    Channels 1-99,999 are botnet wide chat channels and any user joining 
+    Channels 1-99,999 are botnet wide chat channels and any user joining
     that channel anywhere on the botnet will be able to chat with you.
     Channels *0-*99,999 are local channels (only people on the bot you
     are on can chat with you on these channels).

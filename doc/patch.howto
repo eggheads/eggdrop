@@ -23,7 +23,7 @@ II. TERMS USED
 
   The following are some common terms used in this document.
   If applicable, there is also the associated command named.
-  
+
    patch
     A patch is an update for a sourcecode of a program (here Eggdrop). Be
     careful, every patch is designed for a special Eggdrop version and
@@ -33,8 +33,8 @@ II. TERMS USED
 III. APPLYING A PATCH
 
   To apply a patch to an Eggdrop, you have to first obtain the Eggdrop
-  sourcecode. You should always keep a tar.gz archive with the source of 
-  your current Eggdrop on your shell. In the next step, you have to change 
+  sourcecode. You should always keep a tar.gz archive with the source of
+  your current Eggdrop on your shell. In the next step, you have to change
   to your source directory (i.e.: /home/user/eggdrop1.6.0/) and type
   the following command:
 
@@ -56,7 +56,7 @@ III. APPLYING A PATCH
 IV. CREATING AND SUBMITTING A PATCH
 
   If you fixed a bug and changed something in Eggdrop's source code, it would
-  be really nice to let the dev team know about it, so they can possibly apply 
+  be really nice to let the dev team know about it, so they can possibly apply
   it to next release of Eggdrop.
 
   There are several steps to submit a patch to the eggdev team:
@@ -67,9 +67,9 @@ IV. CREATING AND SUBMITTING A PATCH
      your changes created any new files, use 'diff -burN' instead.
 
   3. Send an email to patches@eggheads.org with the patch attached. The body should
-     contain a detailed description of what you changed and why you changed it. Don't 
-     forget to include the botversion for which your patch was made. Also, please send 
-     a second email with same info to eggdev@eggheads.org, this time without the patch 
+     contain a detailed description of what you changed and why you changed it. Don't
+     forget to include the botversion for which your patch was made. Also, please send
+     a second email with same info to eggdev@eggheads.org, this time without the patch
      attached.
 
 

@@ -1,46 +1,50 @@
 Contents of the doc/ directory:
 
-settings/
-   This directory contains documentation for all config file and module
-   settings.
+html/
+  An HTML version of Eggdrop's documentation is provided in this directory.
 
 man1/
-   This contains Unix man page files.
+  This contains Unix man page files.
 
-html/
-   An HTML version of Eggdrop's documentation is provided in this directory.
+settings/
+  This directory contains documentation for all config file and module
+  settings.
+
+ABOUT
+  Information about eggdrop and a brief history can be found in this file.
 
 AUTHORS
-   A list of Eggdrop developers and contributors is in this file.
+  A list of Eggdrop developers and contributors is in this file.
 
 BOTNET
-   This is a guide to flags and bot user file sharing.
+  This is a guide to flags and bot user file sharing.
 
 BUG-REPORT
-   Fill out this form and e-mail it to bugs@eggheads.org if you find a bug
-   in Eggdrop.
+  Fill out this form and e-mail it to bugs@eggheads.org if you find a bug
+  in Eggdrop.
 
 compiling.FAQ
-   If you have trouble compiling your Eggdrop, take a look
-   in this file.
+  If you have trouble compiling your Eggdrop, take a look
+  in this file.
 
-eggdrop.doc
-   The primary documentation on running an Eggdrop bot (to be used
-   AFTER you get it compiled) is in this file. It is unfinished, but 
-   a good starter course.
+first_script.txt
+  This document will help get you started with Tcl scripting for Eggdrop.
 
 KNOWN-PROBLEMS
-   See this file for a list of things that are broken but aren't getting 
-   fixed anytime soon
+  See this file for a list of things that are broken but aren't getting
+  fixed anytime soon
 
 MODULES
-     Information on writing Eggdrop modules can be found in this document.
+  Information on writing Eggdrop modules can be found in this document.
+
+PARTYLINE
+  This file contains information about Eggdrop's partyline.
 
 patch.howto
    This is a how-to on applying and creating Eggdrop patches.
 
 tcl-commands.doc
-   Documentation on Eggdrop Tcl commands available to scripters can be 
+   Documentation on Eggdrop Tcl commands available to scripters can be
    found here.
 
 text-substitutions.doc
@@ -50,7 +54,7 @@ text-substitutions.doc
 tricks
    Some advanced tips on making Eggdrop do what you want it to do can be found
    here. It also contains tweaking tips for your config file.
-   
+
 UPDATES1.6
    This is a complete list of changes made to Eggdrop 1.6.
 

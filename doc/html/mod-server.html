@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: mod-server.html,v 1.18 2002/02/28 05:13:56 wcc Exp $ -->
+<!-- $Id: mod-server.html,v 1.19 2002/03/09 21:14:15 wcc Exp $ -->
 
 <html>
   <head>
@@ -55,15 +55,15 @@
         <dt><strong>set nick &quot;LamestBot&quot;</strong></dt>
 
         <dd>
-          <p>Set the nick the bot uses on IRC, and on the botnet unless 
+          <p>Set the nick the bot uses on IRC, and on the botnet unless
           you specify a separate botnet-nick, here.</p>
         </dd>
 
         <dt><strong>set altnick &quot;LamestBot&quot;</strong></dt>
 
         <dd>
-          <p>Set the alternative nick which the bot uses on IRC if the nick 
-          specified by &#39;set nick&#39; is unavailable. All &#39;?&#39; 
+          <p>Set the alternative nick which the bot uses on IRC if the nick
+          specified by &#39;set nick&#39; is unavailable. All &#39;?&#39;
           characters will be replaced by random numbers.</p>
         </dd>
 
@@ -85,7 +85,7 @@
         }</strong></dt>
 
         <dd>
-          <p>Set here a script to run (if any) when first connecting to a 
+          <p>Set here a script to run (if any) when first connecting to a
           server.</p>
         </dd>
 
@@ -105,7 +105,7 @@
            }</p>
 
            <p>The format is: server[:port[:password]]</p>
-    
+
            <p>Both the port and password fields are optional; however, if you
            want to set a password you must also set a port. If a port isn&#39;t
            specified it will default to  your default-port setting..</p>
@@ -132,7 +132,7 @@
 
         <dd>
           <p>This setting defines how long Eggdrop should wait before moving
-          from one server to another on disconnect. If you set 0 here, 
+          from one server to another on disconnect. If you set 0 here,
           Eggdrop will not wait at all and will connect instantly. Setting
           this too low could result in your bot being K:Lined.</p>
         </dd>
@@ -147,7 +147,7 @@
         <dt><strong>set server-timeout 60</strong></dt>
 
         <dd>
-          <p>Set here how long Eggdrop should wait for a response when 
+          <p>Set here how long Eggdrop should wait for a response when
           connecting to a server before giving up and moving on to next
           server.</p>
         </dd>
@@ -173,7 +173,7 @@
         <dt><strong>set serverror-quit 1</strong></dt>
 
         <dd>
-          <p>If you want your bot to exit the server if it receives an 
+          <p>If you want your bot to exit the server if it receives an
           ERROR message, set this to 1.</p>
         </dd>
 
@@ -199,9 +199,9 @@
         <dt><strong>set debug-output 0</strong></dt>
 
         <dd>
-          <p>This setting allows you the logging of all information sent 
+          <p>This setting allows you the logging of all information sent
           to the server via console mode &#39;v&#39;. <strong>NOTE:</strong>
-          This is a large security hole, allowing people to see passwords. 
+          This is a large security hole, allowing people to see passwords.
           This is now restricted to +n users only. Please choose your owners
           with care.</p>
         </dd>
@@ -209,16 +209,16 @@
         <dt><strong>set strict-host 0</strong></dt>
 
         <dd>
-          <p>Set this to 1 if you don&#39;t want your the bot to strip a 
+          <p>Set this to 1 if you don&#39;t want your the bot to strip a
           leading &#39;~&#39;on user@hosts.</p>
         </dd>
 
         <dt><strong>set quiet-reject 1</strong></dt>
 
         <dd>
-          <p>This setting makes the bot squelch the error message when 
+          <p>This setting makes the bot squelch the error message when
           rejecting a DCC CHAT or SEND. Normally it tells the DCC user that
-          the CHAT or SEND has been rejected because they don&#39;t have 
+          the CHAT or SEND has been rejected because they don&#39;t have
           access. Please note, sometimes IRC server operators detect bots
           that  way.</p>
         </dd>
@@ -226,7 +226,7 @@
         <dt><strong>set flood-msg 5:60</strong></dt>
 
         <dd>
-          <p>Set here how many msgs in how many seconds from one host 
+          <p>Set here how many msgs in how many seconds from one host
           constitutes a flood. If you set this to 0:0, msg flood protection
           will be disabled.</p>
         </dd>
@@ -248,7 +248,7 @@
         <dt><strong>set lowercase-ctcp 0</strong></dt>
 
         <dd>
-          <p>If you want your bot to answer lower case ctcp requests (non 
+          <p>If you want your bot to answer lower case ctcp requests (non
           rfc-compliant), set this setting to 1. mIRC will do this, most
           other clients will not.</p>
         </dd>
@@ -256,7 +256,7 @@
         <dt><strong>set trigger-on-ignore 0</strong></dt>
 
         <dd>
-          <p>If you want Eggdrop to trigger binds for ignored users, set 
+          <p>If you want Eggdrop to trigger binds for ignored users, set
           this to 1.</p>
         </dd>
 
@@ -285,8 +285,8 @@
         <dd>
           <p>This enables Eggdrop&#39;s penalty calculation. Every command
           Eggdrop sends to the IRC server raises it&#39;s penalty points.
-          If Eggdrop reaches a server limit, it gets disconnected with 
-          "excess flood" message. Eggdrop is able to count internal those 
+          If Eggdrop reaches a server limit, it gets disconnected with
+          "excess flood" message. Eggdrop is able to count internal those
           penalty points, too and take measures against excess flooding.
           Note: it&#39;s highly advised to turn this on!</p>
         </dd>
@@ -294,7 +294,7 @@
         <dt><strong>set optimize-kicks 1</strong></dt>
 
         <dd>
-          <p>This optimizes the kick queue. It also traces nick changes 
+          <p>This optimizes the kick queue. It also traces nick changes
           and parts in the channel and changes the kick queue accordingly.
           There are three different options for this setting:</p>
 
@@ -331,7 +331,7 @@
 
         <dd>
           <p>This setting allows you to specify the maximum nick-length
-          supported by your network. The default setting is 9. The 
+          supported by your network. The default setting is 9. The
           maximum supported length by Eggdrop is 32.</p>
         </dd>
       </dl>

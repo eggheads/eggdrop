@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: mod-channels.html,v 1.15 2002/03/01 05:59:40 wcc Exp $ -->
+<!-- $Id: mod-channels.html,v 1.16 2002/03/09 21:14:15 wcc Exp $ -->
 
 <html>
   <head>
@@ -12,7 +12,7 @@
     </div>
     <hr>
 
-    <p>This module provides channel related support for the bot. Without 
+    <p>This module provides channel related support for the bot. Without
     it, you won&#39;t be able to make the bot join a channel or save channel
     specific userfile information.</p>
 
@@ -26,7 +26,7 @@
     <p><a name="config"></a>1. <strong>Config file settings</strong></p>
 
     <blockquote>
-      <p>Put this line into your Eggdrop configuration file to load the 
+      <p>Put this line into your Eggdrop configuration file to load the
       channels module:</p>
 
       <p><strong>loadmodule channels</strong></p>
@@ -40,7 +40,7 @@
         <dt><strong>set chanfile&quot;LamestBot.chan&quot;</strong></dt>
 
         <dd>
-          <p>Enter here the filename where dynamic channel settings are 
+          <p>Enter here the filename where dynamic channel settings are
           stored.</p>
         </dd>
 
@@ -54,10 +54,10 @@
         <dt><strong>set exempt-time 60</strong></dt>
 
         <dd>
-          <p>Set here how long temporary exempts will last (in minutes). If 
+          <p>Set here how long temporary exempts will last (in minutes). If
           you set this setting to 0, the bot will never remove them. The bot
-          will check the exempts every X minutes, but will not remove the 
-          exempt if a ban is set on the channel that matches that exempt. 
+          will check the exempts every X minutes, but will not remove the
+          exempt if a ban is set on the channel that matches that exempt.
           Once the ban is removed, then the exempt will be removed the next
           time the bot checks.</p>
 
@@ -67,11 +67,11 @@
         <dt><strong>set invite-time 60</strong></dt>
 
         <dd>
-          <p>Set here how long temporary invites will last (in minutes). 
+          <p>Set here how long temporary invites will last (in minutes).
           If you set this setting to 0, the bot will never remove them.
-          The bot will check the invites every X minutes, but will not 
-          remove the invite if a channel is set to +i. Once the channel 
-          is -i, then the invite will be removed the next time the bot 
+          The bot will check the invites every X minutes, but will not
+          remove the invite if a channel is set to +i. Once the channel
+          is -i, then the invite will be removed the next time the bot
           checks.</p>
 
           <p>Please note that this is an IRCnet feature.</p>
@@ -80,28 +80,28 @@
         <dt><strong>set force-expire 0</strong></dt>
 
         <dd>
-          <p>Set this setting to 1 if you want your bot to expire 
+          <p>Set this setting to 1 if you want your bot to expire
           bans/exempts/invites set by other opped bots on the channel.</p>
         </dd>
 
         <dt><strong>set share-greet 0</strong></dt>
 
         <dd>
-          <p>Set this setting to 1 if you want your bot to share user greets 
+          <p>Set this setting to 1 if you want your bot to share user greets
           with other bots on the channel if sharing user data.</p>
         </dd>
 
         <dt><strong>set use-info 1</strong></dt>
 
         <dd>
-          <p>Set this setting to 1 if you want to allow users to store an 
+          <p>Set this setting to 1 if you want to allow users to store an
           info line.</p>
         </dd>
 
         <dt><strong>channel add #channel { SETTINGS }</strong></dt>
 
         <dd>
-          <p>Add each static channel you want your bot to sit in using this 
+          <p>Add each static channel you want your bot to sit in using this
           command. There are many different possible settings you can insert
           into this command, which are explained below.</p>
 
@@ -110,7 +110,7 @@
               <dt><strong>chanmode +/-&lt;modes&gt;</strong></dt>
 
               <dd>
-                <p>This setting makes the bot enforce channel modes. It will 
+                <p>This setting makes the bot enforce channel modes. It will
                 always add the +&lt;modes&gt; and remove the -&lt;modes&gt;
                 modes.</p>
               </dd>
@@ -125,8 +125,8 @@
               <dt><strong>stopnethack-mode 0</strong></dt>
 
               <dd>
-                <p>This setting will make the bot de-op anyone who enters 
-                the channel with serverops. There are seven different modes 
+                <p>This setting will make the bot de-op anyone who enters
+                the channel with serverops. There are seven different modes
                 for this settings:</p>
 
                 <table border=0>
@@ -145,7 +145,7 @@
                   <tr>
                     <td>2</td>
 
-                    <td>wasoptest (allow serverop if user had op before 
+                    <td>wasoptest (allow serverop if user had op before
                     split)</td>
                   </tr>
 
@@ -182,8 +182,8 @@
 
               <dd>
                 <p>This setting will make the bot run the script enclosed in
-                braces if it does not have ops. This must be shorter than 
-                120 characters. If you use scripts like getops.tcl or 
+                braces if it does not have ops. This must be shorter than
+                120 characters. If you use scripts like getops.tcl or
                 botnetop.tcl, you don&#39;t need to set this setting.</p>
               </dd>
 
@@ -191,9 +191,9 @@
               :let me in!&quot; }</strong></dt>
 
               <dd>
-                <p>This setting will make the bot run the script enclosed in 
-                braces if it needs an invite to the channel. This must be 
-                shorter than 120 characters. If you use scripts like 
+                <p>This setting will make the bot run the script enclosed in
+                braces if it needs an invite to the channel. This must be
+                shorter than 120 characters. If you use scripts like
                 getops.tcl or botnetop.tcl, you don&#39;t need to set this
                 setting.</p>
               </dd>
@@ -203,8 +203,8 @@
 
               <dd>
                 <p>This setting will make the bot run the script enclosed in
-                braces if it needs the key to the channel. This must be 
-                shorter than 120 characters. If you use scripts like 
+                braces if it needs the key to the channel. This must be
+                shorter than 120 characters. If you use scripts like
                 getops.tcl or botnetop.tcl, you don&#39;t need to set this
                 setting.</p>
               </dd>
@@ -213,9 +213,9 @@
               me in!&quot; }</strong></dt>
 
               <dd>
-                <p>This setting will make the bot run the script enclosed in 
-                braces if it needs to be unbanned on the channel. This must 
-                be shorter than 120 characters. If you use scripts like 
+                <p>This setting will make the bot run the script enclosed in
+                braces if it needs to be unbanned on the channel. This must
+                be shorter than 120 characters. If you use scripts like
                 getops.tcl or botnetop.tcl, you don&#39;t need to set this
                 setting.</p>
               </dd>
@@ -225,16 +225,16 @@
 
               <dd>
                 <p>This setting will make the bot run the script enclosed in
-                braces if it needs the limit to be raised on the channel. 
+                braces if it needs the limit to be raised on the channel.
                 This must be shorter than 120 characters. If you use scripts
-                like getops.tcl or botnetop.tcl, you don&#39;t need to set 
+                like getops.tcl or botnetop.tcl, you don&#39;t need to set
                 this setting.</p>
               </dd>
 
               <dt><strong>flood-chan 10:60</strong></dt>
 
               <dd>
-                <p>Set here how many channel messages in how many seconds 
+                <p>Set here how many channel messages in how many seconds
                 from one host constitutes a flood. Setting this to 0 or 0:0
                 disables text flood protection for the channel.</p>
               </dd>
@@ -251,7 +251,7 @@
 
               <dd>
                 <p>Set here how many kicks in how many seconds from one host
-                constitutes a flood. Setting this to 0 or 0:0 disables kick 
+                constitutes a flood. Setting this to 0 or 0:0 disables kick
                 flood protection for the channel.</p>
               </dd>
 
@@ -259,23 +259,23 @@
 
               <dd>
                 <p>Set here how many joins in how many seconds from one host
-                constitutes a flood. Setting this to 0 or 0:0 disables join 
+                constitutes a flood. Setting this to 0 or 0:0 disables join
                 flood protection for the channel.</p>
               </dd>
 
               <dt><strong>flood-ctcp 3:60</strong></dt>
 
               <dd>
-                <p>Set here how many channel ctcps in how many seconds from 
-                one host constitutes a flood. Setting this to 0 or 0:0 
+                <p>Set here how many channel ctcps in how many seconds from
+                one host constitutes a flood. Setting this to 0 or 0:0
                 disables ctcp flood  protection for the channel.</p>
               </dd>
 
               <dt><strong>flood-nick 5:60</strong></dt>
 
               <dd>
-                <p>Set here how many nick changes in how many seconds from 
-                one host constitutes a flood. Setting this to 0 or 0:0 
+                <p>Set here how many nick changes in how many seconds from
+                one host constitutes a flood. Setting this to 0 or 0:0
                 disables nick flood protection for the channel.</p>
               </dd>
             </dl>
@@ -287,7 +287,7 @@
 
         <dd>
           <p>There are many different options for channels which you can
-          define. They can be enabled or disabled by a plus or minus in 
+          define. They can be enabled or disabled by a plus or minus in
           front of them.</p>
 
           <p>A complete list of all available channel settings:</p>
@@ -297,14 +297,14 @@
               <dt><strong>enforcebans</strong></dt>
 
               <dd>
-                <p>When a ban is set, kick people who are on the channel and 
+                <p>When a ban is set, kick people who are on the channel and
                 match the ban?</p>
               </dd>
 
               <dt><strong>dynamicbans</strong></dt>
 
               <dd>
-                <p>Only activate bans on the channel when necessary? This 
+                <p>Only activate bans on the channel when necessary? This
                 keeps the channel&#39;s ban list from getting excessively long.
                 The bot still remembers every ban, but it only activates a
                 ban on the channel when it sees someone join who matches that
@@ -314,7 +314,7 @@
               <dt><strong>userbans</strong></dt>
 
               <dd>
-                <p>Allow bans to be made by users directly? If turned off, 
+                <p>Allow bans to be made by users directly? If turned off,
                 the bot will require all bans to be made through the bot&#39;s
                 console.</p>
               </dd>
@@ -322,28 +322,28 @@
               <dt><strong>dynamicexempts</strong></dt>
 
               <dd>
-                <p>Only activate exempts on the channel when necessary? This 
-                keeps the channel&#39;s exempt list from getting excessively 
-                long. The bot still remembers every exempt, but it only 
-                activates a exempt on the channel when it sees a ban set 
-                that matches the exempt. The exempt remains active on the 
+                <p>Only activate exempts on the channel when necessary? This
+                keeps the channel&#39;s exempt list from getting excessively
+                long. The bot still remembers every exempt, but it only
+                activates a exempt on the channel when it sees a ban set
+                that matches the exempt. The exempt remains active on the
                 channel for as long as the ban is still active.</p>
               </dd>
 
               <dt><strong>userexempts</strong></dt>
 
               <dd>
-                <p>Allow exempts to be made by users directly? If turned 
-                off, the bot will require all exempts to be made through 
+                <p>Allow exempts to be made by users directly? If turned
+                off, the bot will require all exempts to be made through
                 the bot&#39;s console.</p>
               </dd>
 
               <dt><strong>dynamicinvites</strong></dt>
 
               <dd>
-                <p>Only activate invites on the channel when necessary? 
-                This keeps the channel&#39;s invite list from getting 
-                excessively long. The bot still remembers every invite, but 
+                <p>Only activate invites on the channel when necessary?
+                This keeps the channel&#39;s invite list from getting
+                excessively long. The bot still remembers every invite, but
                 the invites are only activated when the channel is set to
                 invite only and a user joins after requesting an invite.
                 Once set, the invite remains until the channel goes to -i.</p>
@@ -352,8 +352,8 @@
               <dt><strong>userinvites</strong></dt>
 
               <dd>
-                <p>Allow invites to be made by users directly? If turned 
-                off, the bot will require all invites to be made through 
+                <p>Allow invites to be made by users directly? If turned
+                off, the bot will require all invites to be made through
                 the bot&#39;s console.</p>
               </dd>
 
@@ -393,7 +393,7 @@
 
               <dd>
                 <p>Log the channel status line every 5 minutes? This shows
-                the bot&#39;s status on the channel (op, voice, etc.), The 
+                the bot&#39;s status on the channel (op, voice, etc.), The
                 channel&#39;s modes, and the number of +m/+o/+v/+n/+b/+e/+I
                 users on the channel. A sample status line follows:</p>
 
@@ -406,16 +406,16 @@
               <dt><strong>revenge</strong></dt>
 
               <dd>
-                <p>Remember people who deop/kick/ban the bot, valid ops, or 
-                friends and punish them? Users with the +f flag are exempt 
+                <p>Remember people who deop/kick/ban the bot, valid ops, or
+                friends and punish them? Users with the +f flag are exempt
                 from revenge.</p>
               </dd>
 
               <dt><strong>revengebot</strong></dt>
 
               <dd>
-                <p>This is similar to to the &#39;revenge&#39; option, but 
-                it only triggers if a <strong>bot</strong> gets deopped, 
+                <p>This is similar to to the &#39;revenge&#39; option, but
+                it only triggers if a <strong>bot</strong> gets deopped,
                 kicked or banned.</p>
               </dd>
 
@@ -446,7 +446,7 @@
               <dt><strong>dontkickops</strong></dt>
 
               <dd>
-                <p>Do you want the bot not to be able to kick users who 
+                <p>Do you want the bot not to be able to kick users who
                 have the +o flag, letting them kick-flood for instance to
                 protect the channel against clone attacks?</p>
               </dd>
@@ -454,10 +454,10 @@
               <dt><strong>inactive</strong></dt>
 
               <dd>
-                <p>This prevents the bot from joining the channel (or makes 
-                it leave the channel if it is already there). It can be 
+                <p>This prevents the bot from joining the channel (or makes
+                it leave the channel if it is already there). It can be
                 useful to make the bot leave a channel without losing it&#39;s
-                settings, channel-specific user flags, channel bans, and 
+                settings, channel-specific user flags, channel bans, and
                 without affecting sharing.</p>
               </dd>
 
@@ -472,8 +472,8 @@
 
               <dd>
                 <p>Allow non-ops to perform channel modes? This can stop the
-                bot from fighting with services such as ChanServ, or from 
-                kicking IRCops when setting channel modes without having 
+                bot from fighting with services such as ChanServ, or from
+                kicking IRCops when setting channel modes without having
                 ops.</p>
               </dd>
             </dl>
@@ -483,7 +483,7 @@
     </blockquote>
 
     <blockquote>
-      <p>The following settings are used as default values when you .+chan 
+      <p>The following settings are used as default values when you .+chan
       #chan or .tcl channel add #chan. Look in the section above for
       explanation of every option.</p>
 

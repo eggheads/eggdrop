@@ -1,6 +1,6 @@
 Things that are broke, but aren't getting fixed anytime soon:
 
-  * Non-working alarm(10) in Linux (calls to gethostbyaddr/name() have 
+  * Non-working alarm(10) in Linux (calls to gethostbyaddr/name() have
     blocked for long periods when bind/named doesn't resolve quickly,
     and the alarm does not interrupt it).
 
@@ -11,6 +11,6 @@ Things that are broke, but aren't getting fixed anytime soon:
     filters the characters when it reads a file for interpreting. Update
     your Tcl to version 8.1 or higher.
 
-  * Version 8.1 of Tcl doesn't support unicode characters, for example, è. 
+  * Version 8.1 of Tcl doesn't support unicode characters, for example, è.
     If those characters are handled in a script as text, you run into errors.
     Eggdrop can't handle these errors at the moment.

@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: app-problems.html,v 1.9 2002/01/03 01:05:43 guppy Exp $ -->
+<!-- $Id: app-problems.html,v 1.10 2002/03/09 21:14:15 wcc Exp $ -->
 
 <html>
   <head>
@@ -27,15 +27,15 @@
         </li>
 
         <li>
-          <p>High-bit characters are being filtered from channel names. 
+          <p>High-bit characters are being filtered from channel names.
           This is a fault of the Tcl interpreter, and not Eggdrop. The Tcl
-          interpreter filters the characters when it reads a file for 
+          interpreter filters the characters when it reads a file for
           interpreting. Update your Tcl to version 8.1 or higher.</p>
         </li>
 
         <li>
           <p>Version 8.1 of Tcl doesn&#39;t support unicode characters, for
-          example, &egrave;. If those characters are handled in a script as 
+          example, &egrave;. If those characters are handled in a script as
           text, you run into errors. Eggdrop can&#39;t handle these errors at
           the moment.</p>
         </li>

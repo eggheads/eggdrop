@@ -103,8 +103,8 @@ Instructions:
 
 4.7) Other comments?
 
-4.8) If you compiled the bot using the debug or sdebug options and it 
-     dumped a 'core' file when it crashed, it would be *very* useful 
+4.8) If you compiled the bot using the debug or sdebug options and it
+     dumped a 'core' file when it crashed, it would be *very* useful
      if you could paste gdb's output during the following steps:
      First call gdb
          $ gdb eggdrop -c core

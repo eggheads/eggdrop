@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: mod-ctcp.html,v 1.2 2002/02/28 05:13:56 wcc Exp $ -->
+<!-- $Id: mod-ctcp.html,v 1.3 2002/03/09 21:14:15 wcc Exp $ -->
 
 <html>
   <head>
@@ -25,7 +25,7 @@
     <p><a name="config"></a>1. <strong>Config file settings</strong></p>
 
     <blockquote>
-      <p>Put this line into your Eggdrop configuration file to load the 
+      <p>Put this line into your Eggdrop configuration file to load the
       CTCP module:</p>
 
       <p><strong>loadmodule ctcp</strong></p>
@@ -39,7 +39,7 @@
         <dt><strong>set ctcp-mode 0</strong></dt>
 
         <dd>
-          <p>Set here how the ctcp module should answer ctcps. There are 3 
+          <p>Set here how the ctcp module should answer ctcps. There are 3
           possible operating modes:</p>
 
           <table border=0>
@@ -52,22 +52,22 @@
             <tr>
               <td>1</td>
 
-              <td>The bot ignores all ctcps, except for CHAT and PING 
+              <td>The bot ignores all ctcps, except for CHAT and PING
               requests by users with the +o flag.</td>
             </tr>
 
             <tr>
               <td>2</td>
 
-              <td>Normal behavior is used, however the bot will not answer 
-              more than X ctcps in Y seconds (defined by &#39;set 
+              <td>Normal behavior is used, however the bot will not answer
+              more than X ctcps in Y seconds (defined by &#39;set
               flood-ctcp&#39;).</td>
             </tr>
           </table>
         </dd>
       </dl>
 
-      <p>There are also several variables to help make your bot less 
+      <p>There are also several variables to help make your bot less
       noticeable. They are: ctcp-version, ctcp-finger, and ctcp-userinfo.
       You can use set to set them to values you&#39;d like.</p>
     </blockquote>

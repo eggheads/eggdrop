@@ -4,54 +4,53 @@ One (1) eggdrop bot (n.)  Functional on many UNIX platforms. README is
 "What are all these files for?"
 
 COPYING
-   legal stuff
+   Eggdrop legal information is contained in this file.
 
 FEATURES
-   just tells you what eggdrop can do -- a kind of advertisement
+   This tells you what eggdrop can do -- a kind of advertisement.
 
 Makefile
 Makefile.in
-   help with automated making of bot
+   These help with the automated compiling of the bot.
 
 NEWS
-   lists significant differences with previous versions, if you're used
-   to using a previous version, or upgrading READ IT.
+   This lists significant differences with previous versions.
 
 README
-   what you should read before trying to compile eggdrop -- contains
-   tips on compiling, and an explanation of what eggdrop does
+   You should read this file before even trying to compile eggdrop.
 
 config*
-   scripts/files for automatic configure of the bot
+   These are scripts for automatic configure of the bot.
 
 doc/
-   lots of IMPORTANT DOCUMENTATION that you must read!
+   Lots of IMPORTANT DOCUMENTATION that you MUST READ is in this directory.
 
 eggdrop.simple.conf
-   a simple configuration file for your bot
+   This is a simple configuration file for your bot.
 
 eggdrop.advanced.conf
-   an advanced configuration file for your bot
+   This is an advanced configuration file for your bot.
 
 eggdrop.complete.conf
-   a configuration file including all options for your bot
+   This is a configuration file including all options for your bot.
 
 filesys/
-   sample filesystem
+   This is the default filesystem directory.
 
 help/
-   the online help files for the bot
+   All of the bot's help files are stored here.
 
 language/
-   a directory of language files, for multiple language support.
-   More information on contributing/customizing for languages will be
-   forthcoming.
+   All of the bot's language files are stored here.
 
-motd
-   sample "message of the day" displayed to party-line users as they join
+misc/
+  These are misc. source/script files.
+
+text/
+   This contains the motd and banner files.
 
 scripts/
-   some Tcl scripts that you might want to use
+   Tcl scripts included with eggdrop are contained in this directory.
 
 src/
-   the eggdrop source
+   This is the eggdrop source.

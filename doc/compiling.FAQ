@@ -3,8 +3,8 @@ Last revised: February 28, 2002
   ________________________________________________________________________
 
 
-This FAQ may help you successfully compile Eggdrop. Suggestions 
-are by various contributors. If you think something should be added, 
+This FAQ may help you successfully compile Eggdrop. Suggestions
+are by various contributors. If you think something should be added,
 please send an e-mail to eggheads@eggheads.org.
 
 
@@ -101,11 +101,11 @@ A. Eggdrop Related Questions
      output of find replacing $$find$$:
 
      mv $$find$$ include
-     
+
      Hopefully, you know what shell you are using and can pick out which
-     commands to use. If the first two setenv commands give a 'command not 
-     found' error, then use the next two. If not, then don't use the next 
-     two. The first set of commands is for csh/tcsh users; the next set is for 
+     commands to use. If the first two setenv commands give a 'command not
+     found' error, then use the next two. If not, then don't use the next
+     two. The first set of commands is for csh/tcsh users; the next set is for
      bash/ksh users.
 
      csh/tcsh:
@@ -127,10 +127,10 @@ A. Eggdrop Related Questions
 
 
      On some Unix boxes, this seems to be caused by the linker. It is
-     expecting a specific filename format, and when the filename doesn't 
-     live up to its expectations, it usually barfs. I always see this when 
-     the library for Tcl is called libtcl7.4.a or libtcl7.5.a. Rename it to 
-     libtcl.a if you installed Tcl yourself; if you didn't and your using 
+     expecting a specific filename format, and when the filename doesn't
+     live up to its expectations, it usually barfs. I always see this when
+     the library for Tcl is called libtcl7.4.a or libtcl7.5.a. Rename it to
+     libtcl.a if you installed Tcl yourself; if you didn't and your using
      the Tcl that the system admin installed, then do this:
 
      View your Makefile, look for the line (should be close to the top)
@@ -148,8 +148,8 @@ A. Eggdrop Related Questions
      Replace $$xreq$$ with the full pathname from the XREQ line in the
      Makefile.
 
-     The next thing you want to do, depending on what shell your using, 
-     is (if the first two setenv commands give a 'command not found' 
+     The next thing you want to do, depending on what shell your using,
+     is (if the first two setenv commands give a 'command not found'
      error, then use the next two.):
 
      csh/tcsh:
@@ -245,7 +245,7 @@ A. Eggdrop Related Questions
      userrec.o users.o -L/home2/f/foster/lib -ltcl7.5 -lm
         0706-317 ERROR: Unresolved or undefined symbols detected:
                          Symbols in error (followed by references) are dumped to the load map.
-                         The -bloadmap:&lt;filename&gt; option will create a load map.
+                         The -bloadmap:<filename> option will create a load map.
         .ldclose
         .ldopen
         .ldnshread
@@ -298,13 +298,13 @@ A. Eggdrop Related Questions
  9. BOT DOESN'T COMPILE ON ULTRIX
 
      There are some known problems with make and Eggdrop on Ultrix systems.
-     Try to use gmake instead of make. Additionally, sh5 should be used. A 
+     Try to use gmake instead of make. Additionally, sh5 should be used. A
      simple 'gmake SHELL=/bin/sh5' should be enough.
 
 10. BOT CRASHES AT STARTUP WITH THE MESSAGE "net.c/708", FOR EXAMPLE
 
-     On some non IA32 systems, the gcc options -O2 and -O3 can cause that. We 
-     don't know why this happens, but sometimes it helps to remove those flags 
+     On some non IA32 systems, the gcc options -O2 and -O3 can cause that. We
+     don't know why this happens, but sometimes it helps to remove those flags
      from the Makefile. To disable them, use:
 
         ./configure --disable-cc-optimization
@@ -313,7 +313,7 @@ A. Eggdrop Related Questions
 
 11. I GET LOTS OF WARNINGS
 
-     Well, warnings are warnings, nothing really bad. As long as the compile 
+     Well, warnings are warnings, nothing really bad. As long as the compile
      runs through, there is nothing to worry about. Generally, we try to avoid
      warnings, but we do not have time to fix all of them in the code. This
      might change in the future, but at the moment you have to live with them.
@@ -472,8 +472,8 @@ B. Tcl Related Questions
      COMPAT_OBJS =          opendir.o strstr.o strtol.o tmpnam.o strstr.o
      strtoul.o strtod.o strncasecmp.o
 
-     We are deleting the getcwd.o object file. The problem is that configure 
-     didn't detect that getcwd() wasn't necessary, so it caused a compatible 
+     We are deleting the getcwd.o object file. The problem is that configure
+     didn't detect that getcwd() wasn't necessary, so it caused a compatible
      getcwd() function to be compiled.
 
 5. There's no Tcl installed on your shell
@@ -481,7 +481,7 @@ B. Tcl Related Questions
     If there's really no Tcl installed on your shell, you can install
     it temporarily in /tmp or your /home. Get the latest version of Tcl from
     ftp://ftp.scriptics.com/pub/tcl/ and follow the installation steps in its
-    README file. After you've installed Tcl, you have to make configure detect 
+    README file. After you've installed Tcl, you have to make configure detect
     Tcl. To achieve this, you have to set either environmental variables:
 
          export LD_LIBRARY_PATH=/path/to/tcl/lib

@@ -1,5 +1,5 @@
 # Makefile for doc/
-# $Id: Makefile.in,v 1.17 2002/01/27 04:14:25 wcc Exp $
+# $Id: Makefile.in,v 1.18 2002/03/09 21:14:14 wcc Exp $
 
 SHELL = @SHELL@
 top_srcdir = @top_srcdir@
@@ -12,10 +12,10 @@ INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
 
-DOCS = ABOUT BOTNET BUG-REPORT compiling.FAQ CONTENTS eggdrop.doc \
+DOCS = ABOUT AUTHORS BANS BOTNET BUG-REPORT compiling.FAQ CONTENTS \
 first_script.txt KNOWN-PROBLEMS MODULES PARTYLINE patch.howto \
 tcl-commands.doc text-substitutions.doc tricks UPDATES.pre1.5 UPDATES1.5 \
-UPDATES1.6
+UPDATES1.6 USERS
 
 MAN1 = man1/eggdrop.1
 

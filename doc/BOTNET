@@ -46,7 +46,7 @@ II. TERMS USED
 
 
     Link Bot
-      A link-bot is a bot that is linked to another bot. It may or may not 
+      A link-bot is a bot that is linked to another bot. It may or may not
       be a hub-bot.
 
 
@@ -55,18 +55,18 @@ II. TERMS USED
 
 
     Share Bot
-      A share-bot is a bot which shares user records with one or more 
+      A share-bot is a bot which shares user records with one or more
       linked bots.
 
 
     Aggressive Share
-      Aggressive share is a term used to describe the direction of sharing 
-      user-files. Aggressive share bots will SEND userfiles to another passive 
+      Aggressive share is a term used to describe the direction of sharing
+      user-files. Aggressive share bots will SEND userfiles to another passive
       bot.
 
 
     Passive Share
-      Passive share is a term used to describe the direction of sharing 
+      Passive share is a term used to describe the direction of sharing
       user-files. Passive share bots will accept userfiles from an aggressive
       share bot.
 
@@ -76,23 +76,23 @@ II. TERMS USED
           |-+BotB
             `-+BotC
 
-        BotB is linked to a master sharebot, BotA, and a slave sharebot, 
-        BotC. BotB shares passively with [receives from] BotA and shares 
+        BotB is linked to a master sharebot, BotA, and a slave sharebot,
+        BotC. BotB shares passively with [receives from] BotA and shares
         aggressively with [sends to] BotC.
 
 
     Bot Flags
       Flags are attributes that determine what a bot can or is allowed to do.
-      Flags can be either global (such as +s) or channel specific (such as 
+      Flags can be either global (such as +s) or channel specific (such as
       |+s #lamest). See '.help botattr' for help with setting these flags.
-    
+
       The following is a list of valid bot flags:
-  
+
         s   share aggressively (SEND userfile to a passive bot)
         p   share passively (ACCEPT userfile from an aggressive bot)
         g   global share (share all channels)
         h   hub (automatically link to this bot)
-        a   alternate (automatically link to this bot if the hub bot can't be 
+        a   alternate (automatically link to this bot if the hub bot can't be
             linked)
         l   leaf (bot is not allowed to link in other bots)
         r   reject (bot will not be allowed to link)
@@ -109,7 +109,7 @@ II. TERMS USED
 
     Relay
       The relay port number of the bot is defined in the config file.
-      Note that you can define one port for bots and another for user 
+      Note that you can define one port for bots and another for user
       connections.
 
 
@@ -120,7 +120,7 @@ II. TERMS USED
 
 
     Port
-      The telnet port is used by the bot to communicate with other bots 
+      The telnet port is used by the bot to communicate with other bots
       and/or users. Note that you can define separate ports for user and bot
       connections.
 
@@ -130,7 +130,7 @@ II. TERMS USED
 III. WHAT IS A BOTNET?
 
   A botnet consists of one or more bots linked together. This can allow bots
-  to op each other securely, control floods efficiently, and share user lists, 
+  to op each other securely, control floods efficiently, and share user lists,
   ban lists, exempt/invite lists, and ignore lists (if sharing is enabled).
 
 
@@ -141,17 +141,17 @@ IV. ADDING AND LINKING BOTS
   port of each bot you wish to link.
 
   Here is an example senario:
-  
-    BotA is on lame.org listening on port 3333, and BotB is on irc.org 
-    listening on port 4444. First, you have to add each Bot to the other's 
-    userfile. On BotA, you would type '.+bot BotB irc.org:4444'. If BotB is 
+
+    BotA is on lame.org listening on port 3333, and BotB is on irc.org
+    listening on port 4444. First, you have to add each Bot to the other's
+    userfile. On BotA, you would type '.+bot BotB irc.org:4444'. If BotB is
     on a common channel with BotA, BotB's hostmask is automatically added.
     Otherwise, you have to add the hostmask manually with the '.+host'
     command. On BotB, you would type '.+bot BotA lame.org:3333'.
 
-    At this point, you can link the two bots by typing '.link BotA' on BotB (or 
+    At this point, you can link the two bots by typing '.link BotA' on BotB (or
     '.link BotB' on BotA). The bots will now give themselves random passwords
-    which are *not* stored encrypted in the userfile. Note that you can link as 
+    which are *not* stored encrypted in the userfile. Note that you can link as
     many bots as you wish to your botnet.
 
 
@@ -161,17 +161,17 @@ V. USING BOTFLAGS
 
   Botflags are needed to assign special functions and tasks to your bots.
   Bot flags are set with the '.botattr' command. See '.help botattr' for
-  help with this command. The following is a list of botflags and their 
+  help with this command. The following is a list of botflags and their
   functions:
 
     "h" (hub)
-      If you want your bot(s) to automatically link/relink, you can assign 
-      the +h botflag each bot's hub. Note that if you set multiple bots +h, 
+      If you want your bot(s) to automatically link/relink, you can assign
+      the +h botflag each bot's hub. Note that if you set multiple bots +h,
       the bot only attempts to link to one.
 
 
     "a" (alternate)
-      If your bots are, for some reason, unable to link to their hub, they 
+      If your bots are, for some reason, unable to link to their hub, they
       will attempt to connect to an alternate hub. You can assign a bot as
       an alternate hub by giving it the +a botflag.
 
@@ -188,21 +188,21 @@ V. USING BOTFLAGS
 
     "i" (isolate)
       This flag isolates a link bot's partyline from the rest of the botnet.
-      Anything said on the link bot's partyline won't appear on the rest of 
+      Anything said on the link bot's partyline won't appear on the rest of
       the botnet.
 
 
     "s" (SEND userfile to)
-      +s   Giving a link bot this flag will make the bot share aggressively 
-           with the link bot. See 'Aggressive Share' in section II of this 
+      +s   Giving a link bot this flag will make the bot share aggressively
+           with the link bot. See 'Aggressive Share' in section II of this
            document for more information on aggressive sharing.
 
       |s     +s bots need this flag for each channel you want to share.
 
 
     "p" (ACCEPT userfile from)
-      Giving a link bot this flag will make the bot share passively 
-      with the link bot. See 'Passive Share' in section II of this 
+      Giving a link bot this flag will make the bot share passively
+      with the link bot. See 'Passive Share' in section II of this
       document for more information on passive sharing.
 
 
@@ -219,12 +219,12 @@ VI. MAKING BOTS SHARE USER RECORDS
 
   Before you start preparing your bots for sharing, make sure that
   you've loaded the transfer and share modules. You also have to ensure
-  that each channel you wish to share is set +shared (see '.help 
+  that each channel you wish to share is set +shared (see '.help
   chanset' and '.help chaninfo').
 
-  By using specific botflags, you can cause your bot to share 
-  aggressively with some link bots, and passively with others. For 
-  sharing to work, flags must be set properly on both the passive and 
+  By using specific botflags, you can cause your bot to share
+  aggressively with some link bots, and passively with others. For
+  sharing to work, flags must be set properly on both the passive and
   the aggressive bots. An aggressive  bot will not share userfiles with
   another aggressive bot; a passive bot will not share userfiles with
   another passive bot.
@@ -275,7 +275,7 @@ VI. MAKING BOTS SHARE USER RECORDS
 
     On Lamestbot:
 
-      .+bot beldin llama.com:3333 
+      .+bot beldin llama.com:3333
 
       .botattr beldin s|s #eggdrop (Notice how i piped (the | character)
       the channel flag also saving time.)
@@ -283,10 +283,10 @@ VI. MAKING BOTS SHARE USER RECORDS
     Also note that you don't have to add beldin on Lameshare. Since
     they are already sharing, it was added automatically. The one thing that
     you should note is that no bot flags will be shared. If you set beldin as
-    +s (Aggressive share) on the hub (Lamestbot) he will not be set on the 
-    other bots as that. The same with the channel +s flag. All other flags 
-    will be shared such as the o, f, etc. Now that we have three bots, we 
-    can also set up one as an alternate hub. The alternate hub is the bot 
+    +s (Aggressive share) on the hub (Lamestbot) he will not be set on the
+    other bots as that. The same with the channel +s flag. All other flags
+    will be shared such as the o, f, etc. Now that we have three bots, we
+    can also set up one as an alternate hub. The alternate hub is the bot
     that the bots will auto-connect to in the event the hub goes down or
     is unreachable.
 
@@ -299,7 +299,7 @@ VI. MAKING BOTS SHARE USER RECORDS
     That's all there is to it. Again, since bot flags are not shared,
     you would have to add the bot flag +a for beldin on them all. The only
     ones you would not have to do this on are beldin and the hub (Lamestbot).
-    Of course, if you had more bots, you would have to add beldin as a +a on 
+    Of course, if you had more bots, you would have to add beldin as a +a on
     them, but you would not do it on the hub or beldin.
 
     Our botnet:

@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: compiling.html,v 1.15 2002/03/01 05:59:40 wcc Exp $ -->
+<!-- $Id: compiling.html,v 1.16 2002/03/09 21:14:15 wcc Exp $ -->
 
 <html>
   <head>
@@ -12,8 +12,8 @@
     </div>
     <hr>
 
-    <p>This FAQ may help you successfully compile Eggdrop. Suggestions 
-    are by various contributors. If you think something should be added, 
+    <p>This FAQ may help you successfully compile Eggdrop. Suggestions
+    are by various contributors. If you think something should be added,
     please send an e-mail to <a href="mailto:eggheads@eggheads.org">
     eggheads@eggheads.org</a>.</p>
 
@@ -48,7 +48,7 @@
 
         <li><a href="#egg9">Bot doesn&#39;t compile on Ultrix</a></li>
 
-        <li><a href="#egg10">Bot crashes at startup with the message 
+        <li><a href="#egg10">Bot crashes at startup with the message
         "net.c/708", for example</a></li>
 
         <li><a href="#egg11">I get lot&#39;s of warnings</a></li>
@@ -169,9 +169,9 @@
     </blockquote>
 
     <p>Hopefully, you know what shell you are using and can pick out which
-    commands to use. If the first two setenv commands give a &#39;command not 
-    found&#39; error, then use the next two. If not, then don&#39;t use the next 
-    two. The first set of commands is for csh/tcsh users; the next set is for 
+    commands to use. If the first two setenv commands give a &#39;command not
+    found&#39; error, then use the next two. If not, then don&#39;t use the next
+    two. The first set of commands is for csh/tcsh users; the next set is for
     bash/ksh users.</p>
 
     <blockquote>
@@ -192,7 +192,7 @@
       </dl>
     </blockquote>
 
-    <p>Finally, run ./configure again, then make, and hopefully it will 
+    <p>Finally, run ./configure again, then make, and hopefully it will
     work.</p>
 
     <p><a name="egg3">3. <strong>ld: -ltcl7.4: Expected
@@ -208,10 +208,10 @@
     </blockquote>
 
     <p>On some Unix boxes, this seems to be caused by the linker. It is
-    expecting a specific filename format, and when the filename doesn&#39;t 
-    live up to it&#39;s expectations, it usually barfs. I always see this when 
-    the library for Tcl is called libtcl7.4.a or libtcl7.5.a. Rename it to 
-    libtcl.a if you installed Tcl yourself; if you didn&#39;t and your using 
+    expecting a specific filename format, and when the filename doesn&#39;t
+    live up to it&#39;s expectations, it usually barfs. I always see this when
+    the library for Tcl is called libtcl7.4.a or libtcl7.5.a. Rename it to
+    libtcl.a if you installed Tcl yourself; if you didn&#39;t and your using
     the Tcl that the system admin installed, then do this:</p>
 
     <p>View your Makefile, look for the line (should be close to the top)
@@ -235,8 +235,8 @@
     <p>Replace $$xreq$$ with the full pathname from the XREQ line in the
     Makefile.</p>
 
-    <p>The next thing you want to do, depending on what shell your using, 
-    is (if the first two setenv commands give a &#39;command not found&#39; 
+    <p>The next thing you want to do, depending on what shell your using,
+    is (if the first two setenv commands give a &#39;command not found&#39;
     error, then use the next two.):</p>
 
     <blockquote>
@@ -447,26 +447,26 @@
     <p><a name="egg9">9. <strong>Bot doesn&#39;t compile on Ultrix</strong></a></p>
 
      <p>There are some known problems with make and Eggdrop on Ultrix systems.
-     Try to use gmake instead of make. Additionally, sh5 should be used. A 
+     Try to use gmake instead of make. Additionally, sh5 should be used. A
      simple &#39;gmake SHELL=/bin/sh5&#39; should be enough.</p>
 
-    <p><a name="egg10">10. <strong>Bot crashes at startup with the message 
+    <p><a name="egg10">10. <strong>Bot crashes at startup with the message
     "net.c/708", for example</strong></a></p>
 
-     <p>On some non IA32 systems, the gcc options -O2 and -O3 can cause that. We 
-     don&#39;t know why this happens, but sometimes it helps to remove those flags 
+     <p>On some non IA32 systems, the gcc options -O2 and -O3 can cause that. We
+     don&#39;t know why this happens, but sometimes it helps to remove those flags
      from the Makefile. To disable them, use:</p>
 
     <blockquote>
       <p>./configure --disable-cc-optimization</p>
     </blockquote>
-        
-     <p>Ah well, drop us a note if you know why, so we can extend the info 
+
+     <p>Ah well, drop us a note if you know why, so we can extend the info
      here.</p>
 
     <p><a name="egg11">11. <strong>I get lot&#39;s of warnings</strong></a></p>
 
-     <p>Well, warnings are warnings, nothing really bad. As long as the compile 
+     <p>Well, warnings are warnings, nothing really bad. As long as the compile
      runs through, there is nothing to worry about. Generally, we try to avoid
      warnings, but we do not have time to fix all of them in the code. This
      might change in the future, but at the moment you have to live with them.
@@ -614,7 +614,7 @@
     </blockquote>
 
     <p>Configure couldn&#39;t find or detect that the nsl and socket libraries
-    were required, so we have to force it to use them. The solution is to edit 
+    were required, so we have to force it to use them. The solution is to edit
     Makefile and change the following line:</p>
 
     <blockquote>
@@ -675,8 +675,8 @@
     <p>If there&#39;s really no Tcl installed on your shell, you can install
     it temporarily in /tmp or your /home. Get the latest version of Tcl from <a
     href="ftp://ftp.scriptics.com/pub/tcl/"> ftp://ftp.scriptics.com/pub/tcl/</a>
-    and follow the installation steps in it&#39;s README file. After you&#39;ve 
-    installed Tcl, you have to make configure detect Tcl. To achieve this, you 
+    and follow the installation steps in it&#39;s README file. After you&#39;ve
+    installed Tcl, you have to make configure detect Tcl. To achieve this, you
     have to set either environmental variables:</p>
 
     <blockquote>

@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: readme.html,v 1.21 2002/03/01 05:59:40 wcc Exp $ -->
+<!-- $Id: readme.html,v 1.22 2002/03/09 21:14:16 wcc Exp $ -->
 
 <html>
   <head>
@@ -43,27 +43,29 @@
             <li><a href="#sect5a">Upgrading from a pre-1.3 version to 1.6
             </a></li>
 
-            <li><a href="#sect5b">Upgrading from an older 1.3/1.4/1.5/1.6 
+            <li><a href="#sect5b">Upgrading from an older 1.3/1.4/1.5/1.6
             version to 1.6</a></li>
           </ol>
         </li>
 
+        <li><a href="#sect6">Command line</a></li>
+
         <li>
-          <a href="#sect6">Setting up a crontab</a>
+          <a href="#sect7">Setting up a crontab</a>
 
           <ol type="a">
-            <li><a href="#sect6a">Setting up a crontab using
+            <li><a href="#sect7a">Setting up a crontab using
             autobotchk</a></li>
           </ol>
         </li>
 
-        <li><a href="#sect7">Boring legal stuff</a></li>
+        <li><a href="#sect8">Boring legal stuff</a></li>
 
-        <li><a href="#sect8">Mailing list</a></li>
+        <li><a href="#sect9">Mailing list</a></li>
 
-        <li><a href="#sect9">Documentation</a></li>
+        <li><a href="#sect10">Documentation</a></li>
 
-        <li><a href="#sect10">Obtaining help</a></li>
+        <li><a href="#sect11">Obtaining help</a></li>
       </ol>
     </blockquote>
     <hr>
@@ -71,7 +73,7 @@
     <p><a name="sect1"></a>1. <strong>Notice</strong></p>
 
     <blockquote>
-      <p>Please read this file carefully before trying to set up this bot.
+      <p>Please read this file carefully before trying to set up Eggdrop.
       Also, make <strong>SURE</strong> that you select your +n (owner) users
       wisely! They have 100% access to your bot and account! <strong>ONLY
       GIVE THIS POWER TO SOMEONE YOU TRUST COMPLETELY!!</strong></p>
@@ -87,26 +89,26 @@
       users on a variety of hardware and software platforms.</p>
 
       <p>An IRC bot is a program that sits on an IRC channel and preforms
-      automated tasks while looking just like a normal user on the 
+      automated tasks while looking just like a normal user on the
       channel. Some of these functions include protecting the channel
       from abuse, allowing privileged users to gain op or voice status,
       logging channel events, providing information, hosting games, etc.</p>
 
-      <p>One of the features that makes eggdrop stand out from other bots 
-      is module and Tcl scripting support. With scripts and modules, 
+      <p>One of the features that makes eggdrop stand out from other bots
+      is module and Tcl scripting support. With scripts and modules,
       you can make the bot preform almost any task you want. They can
       do anything from preventing floods to greeting users and banning
       advertisers from channels.</p>
 
       <p>You can also link multiple Eggdrop bots together to form a botnet.
-      This can allow bots to op each other securely, control floods 
+      This can allow bots to op each other securely, control floods
       efficiently, and even link channels across multiple IRC networks.
-      It also allows the Eggdrops share user lists, ban lists, 
-      exempt/invite lists, and ignore lists with other bots if userfile 
+      It also allows the Eggdrops share user lists, ban lists,
+      exempt/invite lists, and ignore lists with other bots if userfile
       sharing is enabled. This allows users to have the same access on
-      every bot on your botnet. It also allows the bots to distribute 
+      every bot on your botnet. It also allows the bots to distribute
       tasks such as opping and banning users. See <a href="botnet.html">
-      Botnet Sharing and Linking</a> for information on setting up a 
+      Botnet Sharing and Linking</a> for information on setting up a
       botnet.</p>
 
       <p>Eggdrop is always being improved and adjusted because there are
@@ -117,16 +119,12 @@
       destroy bugs.</p>
 
       <p>This readme file contains information about how to get Eggdrop,
-      how to quickly compile the bot, what you may need to do when
-      upgrading from older versions, a list of frequently asked 
-      questions about compiling, how to set up a crontab, some boring
-      legal stuff, info about the mailing list (a great place to ask
-      questions, and a good place to report bugs, also), some basics 
-      about CVS usage, and some channels where you might get help with
-      Eggdrop.</p>
-
-      <p>The preliminary documentation is in &quot;eggdrop.doc&quot; and is
-      intended to be read after you have Eggdrop compiled and set up.</p>
+      command line options for Eggdrop, what you may need to do when
+      upgrading from older versions, a list of frequently asked
+      questions, how to set up a crontab, some boring legal stuff, info
+      about the mailing list (a great place to ask questions, and a good
+      place to report bugs, also), some basics about CVS usage, and some
+      channels where you might get help with Eggdrop.</p>
     </blockquote>
 
     <p><a name="sect3"></a>3. <strong>How to get Eggdrop</strong></p>
@@ -136,9 +134,9 @@
       your system. Most systems should have Tcl on them by now -- you can
       check by trying the command &quot;tclsh&quot;. If it works, you will be
       given a &quot;%&quot; prompt, and you can type &quot;exit&quot; to exit
-      the program. This means Tcl is on your system. If tclsh doesn&#39;t
-      load, then Tcl probably isn&#39;t on your system, and you will need to
-      ftp it.</p>
+      the program. This means Tcl is installed on your system. If tclsh
+      doesn&#39;t load, then Tcl probably isn&#39;t on your system, and you
+      will need to install it.</p>
 
       <p>The best ftp site for Tcl is <a href="ftp://ftp.scriptics.com/pub/tcl/">
       ftp://ftp.scriptics.com/pub/tcl/.</a></p>
@@ -147,8 +145,8 @@
       that comes on Slackware 3.0 is goofed up and you&#39;ll have to
       reinstall it for yourself to get it working.</p>
 
-      <p>Currently, the 1.6 tree of Eggdrop is developed at eggheads.org. 
-      You can get the latest version of Eggdrop from 
+      <p>Currently, the 1.6 tree of Eggdrop is developed at eggheads.org.
+      You can get the latest version of Eggdrop from
       <a href="ftp://ftp.eggheads.org/pub/eggdrop/source/eggdrop-latest.tar.gz">
       ftp://ftp.eggheads.org/pub/eggdrop/source/eggdrop-latest.tar.gz.</a></p>
 
@@ -169,7 +167,7 @@
       <p>This is intended only for users that know a good bit about Eggdrop.
       Be aware that the versions of Eggdrop that you get via CVS are still
       being developed, and may be buggy. The Eggheads devteam will in <strong>
-      NO WAY</strong> take any responsibility for whatever might happen to 
+      NO WAY</strong> take any responsibility for whatever might happen to
       you or your shell if you use a CVS version of Eggdrop.</p>
     </blockquote>
 
@@ -206,9 +204,9 @@
         </li>
 
         <li>If you experience errors when using &#39;export&#39;, you might
-        be using tclsh as a shell. If so, try using the command 
-        &#39;setenv&#39; instead of &#39;export&#39;: 
-        
+        be using tclsh as a shell. If so, try using the command
+        &#39;setenv&#39; instead of &#39;export&#39;:
+
           <blockquote>
             <p>&#39;setenv CVSROOT
             :pserver:anonymous@cvs.eggheads.org:/usr/local/cvsroot&#39;
@@ -234,8 +232,8 @@
       <p><strong>BACK UP YOUR USERFILE</strong></p>
 
       <p>We can&#39;t stress this enough. If you are upgrading and you have
-      even a slight possibility of downgrading again later, you will 
-      <strong>HAVE</strong> to back up your userfile, or you will lose it. 
+      even a slight possibility of downgrading again later, you will
+      <strong>HAVE</strong> to back up your userfile, or you will lose it.
       v1.3 of Eggdrop radically changed a lot of things.</p>
 
       <p>There are many major changes between v0.9, v1.0, v1.1 and
@@ -246,16 +244,16 @@
       <p>If you run share bots, you will need to upgrade
       them all at the same time because of the new userfile format. Older
       bots will be able to link in, but will not get or send a userfile.
-      <strong>MAKE A NEW CONFIG FILE</strong> from the example, there are
+      <strong>MAKE A NEW CONFIG FILE</strong> from the example; there are
       some radical changes.</p>
 
       <p>If you are upgrading from 0.9/1.0 to 1.6, just redo the whole thing.
-      Absolutely everything has changed, including the userfile and config 
+      Absolutely everything has changed, including the userfile and config
       file formats.</p>
 
       <p>If you are upgrading from 1.1/1.2 to 1.6, you will likely want to
-      redo the config file, as much as changed. <strong>BACK UP!!</strong>
-      You will need to run &#39;tclsh scripts/weed/&lt;userfile&gt; c&#39; 
+      redo the config file, as much as changed. <strong>BACK UP!</strong>
+      You will need to run &#39;tclsh scripts/weed/&lt;userfile&gt; c&#39;
       to convert your userfile from v3 (1.1/1.2) to v4 (1.3/1.4/1.5/1.6).</p>
     </blockquote>
 
@@ -264,24 +262,90 @@
 
     <blockquote>
       <p>If you followed the <a href="install.html">Installation file</a>
-      and did a &#39;make install&#39; (or &#39;make install 
+      and did a &#39;make install&#39; (or &#39;make install
       DEST=&quot;path&quot;&#39;) after &#39;make&#39;, this will be pretty
       easy. Just upload the new eggdrop1.6.x.tar.gz file to your home dir on
       your shell, gunzip and untar it, and type &#39;cd ~/eggdrop1.6.x&#39;.
-      Next, type &#39;./configure&#39;, &#39;make config&#39; or &#39;make 
-      iconfig&#39;, then &#39;make&#39;. Then, kill the bot (&#39;.die&#39; 
-      on the party line), and &#39;make install&#39; to the same directory 
-      your bot is currently in. After that, you can just restart your bot. 
-      You may wish to delete the old Eggdrop executable and modules as well, 
+      Next, type &#39;./configure&#39;, &#39;make config&#39; or &#39;make
+      iconfig&#39;, then &#39;make&#39;. Then, kill the bot (&#39;.die&#39;
+      on the party line), and &#39;make install&#39; to the same directory
+      your bot is currently in. After that, you can just restart your bot.
+      You may wish to delete the old Eggdrop executable and modules as well,
       especially if you have limited disk space.</p>
 
-      <p>You should read through the new eggdrop.complete.conf file for all 
-      the new options in Eggdrop 1.6.x if you are upgrading from 1.3.x or 
-      1.4.x. You can copy and paste any of these settings into you current 
+      <p>You should read through the new eggdrop.complete.conf file for all
+      the new options in Eggdrop 1.6.x if you are upgrading from 1.3.x or
+      1.4.x. You can copy and paste any of these settings into you current
       conf file if you do not want to use the default settings.</p>
     </blockquote>
 
-    <p><a name="sect6"></a>6. <strong>Setting up a crontab</strong></p>
+    <p><a name="sect6"></a>6. <strong>Command line</strong></p>
+
+    <blockquote>
+      <p>Eggdrop has some command-line options -- not many, because most
+      things should be defined through the config file. However, sometimes
+      you may want to start up the bot in a different mode, and the
+      command-line options let you do that. Basically, the command line for
+      Eggdrop is:</p>
+
+      <blockquote>
+        <p><em>% eggdrop [options] [config-file]</em></p>
+      </blockquote>
+
+      <p>The options available are:</p>
+
+      <blockquote>
+        <dl>
+          <dt><strong>-n</strong></dt>
+
+          <dd>
+            <p>Don&#39;t background. Normally, Eggdrop will move itself into
+            the background when you start it up, meaning you&#39;ll get another
+            shell prompt, and you can do other things while the bot is running.
+            With -n, you won&#39;t return to the shell prompt until the bot
+            exits (which won&#39;t normally happen until it&#39;s killed). By
+            default, -n will send all log entries to the console.</p>
+          </dd>
+
+          <dt><strong>-nt</strong></dt>
+
+          <dd>
+            <p>Don&#39;t background, use terminal. This is just like -n, except
+            that instead of seeing log entries, your console will simulate a
+            DCC chat with the bot.</p>
+          </dd>
+
+          <dt><strong>-nc</strong></dt>
+
+          <dd>
+            <p>Don&#39;t background, show channel info. This is just like -n,
+            except that instead of seeing log entries, every 10 seconds your
+            screen will clear and you will see the current channel status, sort
+            of like &quot;top&quot;.</p>
+          </dd>
+
+          <dt><strong>-m</strong></dt>
+
+          <dd>
+            <p>Create userfile. If you don&#39;t have a userfile, this will
+            make Eggdrop create one and give owner status to the first person
+            that introduces himself or herself to it. You&#39;ll need to do
+            this when you first set up your bot.</p>
+          </dd>
+
+          <dt><strong>-v</strong></dt>
+
+          <dd>
+            <p>Show version info, then quit.</p>
+          </dd>
+        </dl>
+      </blockquote>
+
+      <p>Most people never use any of the options except -m, and you usually
+      only need to use that once.</p>
+    </blockquote>
+
+    <p><a name="sect7"></a>7. <strong>Setting up a crontab</strong></p>
 
     <blockquote>
       <p>Eggdrop has become more stable with time, thanks mostly to people
@@ -292,13 +356,13 @@
       <p>Also, most systems go down from time to time. These things cause
       your bot to disappear from IRC, and you have to restart it.</p>
 
-      <p>Eggdrop comes with a shell script called &#39;botchk&#39; that 
-      will help keep the bot online. It will make the machine check every 
-      ten minutes to make sure your bot is still running. To use it, you 
-      have to add a line to your crontab. First, edit &#39;botchk&#39; and 
-      change the directory and command line parameters so that it will be 
+      <p>Eggdrop comes with a shell script called &#39;botchk&#39; that
+      will help keep the bot online. It will make the machine check every
+      ten minutes to make sure your bot is still running. To use it, you
+      have to add a line to your crontab. First, edit &#39;botchk&#39; and
+      change the directory and command line parameters so that it will be
       able to start up your bot. Then, add this line to your crontab:</p>
-      
+
       <blockquote>
         <p>0,10,20,30,40,50 * * * * /home/mydir/botchk</p>
       </blockquote>
@@ -306,7 +370,7 @@
       <p>If you don&#39;t want to get e-mails from cron, use this:</p>
 
       <blockquote>
-        <p>0,10,20,30,40,50 * * * * /home/mydir/botchk &gt;/dev/null 
+        <p>0,10,20,30,40,50 * * * * /home/mydir/botchk &gt;/dev/null
         2&gt;&amp;1</p>
       </blockquote>
 
@@ -318,17 +382,17 @@
         <ol>
           <li> Create a new file called &#39;mycron&#39; and put the above
           line into it.</li>
-          
+
           <li>From your shell prompt, type &#39;% crontab mycron&#39;.
         </ol>
 
-        <p>That will create a new crontab entry for you with a line that 
+        <p>That will create a new crontab entry for you with a line that
         runs botchk every ten minutes. Botchk will then restart the bot when
         necessary (and send you email informing you).</p>
       </blockquote>
     </blockquote>
 
-    <p><a name="sect6a"></a>6a. <strong>Setting up a crontab using
+    <p><a name="sect7a"></a>7a. <strong>Setting up a crontab using
     autobotchk</strong></p>
 
     <blockquote>
@@ -356,43 +420,43 @@
       to not send you e-mail saying that it restarted your bot.</p>
     </blockquote>
 
-    <p><a name="sect7"></a>7. <strong>Boring legal stuff</strong></p>
+    <p><a name="sect8"></a>8. <strong>Boring legal stuff</strong></p>
 
     <blockquote>
       <p>The Eggdrop bot is copyright (C) by Robey Pointer. As of January,
-      1997, Eggdrop is distributed according to the GNU General Public 
-      License. There should be a copy of this license in the file 
-      &#39;COPYING&#39;. If not, write to the Free Software Foundation, 
+      1997, Eggdrop is distributed according to the GNU General Public
+      License. There should be a copy of this license in the file
+      &#39;COPYING&#39;. If not, write to the Free Software Foundation,
       Inc., 675 Mass Ave, Cambridge, MA 02139, USA.</p>
 
       <p>As of eggdrop1.3.28, all changes made by the Eggheads development
       team to the Eggdrop source code and any related files are copyright
-      (C) by Eggheads. The source code will still be distributed according 
+      (C) by Eggheads. The source code will still be distributed according
       to the GNU General Public License as Robey Pointer did in the past.</p>
 
-      <p>Releases previous to 1.0m were made using a different licensing 
+      <p>Releases previous to 1.0m were made using a different licensing
       scheme. You may, at your option, use the GNU General Public License
-      on those versions (instead of the license packaged with them) with 
-      my blessing. For any versions bearing a copyright date of 1997 or 
-      later, you have no choice -- you must use the GNU General Public 
+      on those versions (instead of the license packaged with them) with
+      my blessing. For any versions bearing a copyright date of 1997 or
+      later, you have no choice -- you must use the GNU General Public
       License.</p>
 
       <p>The files "match.c", "net.c", and "blowfish.c" are exempt from
       the above restrictions. "match.c" is original code by Chris Fuller
-      (email: crf@cfox.bchs.uh.edu) and has been placed by him into the 
-      public domain. "net.c" is by me and I [who?] also choose to place 
-      it in the public domain. "blowfish.c" is by various sources and is 
-      in the public domain as well. All 3 files contain useful functions 
+      (email: crf@cfox.bchs.uh.edu) and has been placed by him into the
+      public domain. "net.c" is by me and I [who?] also choose to place
+      it in the public domain. "blowfish.c" is by various sources and is
+      in the public domain as well. All 3 files contain useful functions
       that could easily be ported to other applications.</p>
 
       <p>Tcl is by John Ousterhout and is in no way affiliated with Eggdrop.
       It likely has its own set of copyrights and whatnots.</p>
 
-      <p>There is no warranty, implied or whatever. You use this software 
+      <p>There is no warranty, implied or whatever. You use this software
       at your own risk, no matter what purpose you put it to.</p>
     </blockquote>
 
-    <p><a name="sect8"></a>8. <strong>Mailing list</strong></p>
+    <p><a name="sect8"></a>9. <strong>Mailing list</strong></p>
 
     <blockquote>
 
@@ -401,11 +465,11 @@
       is the one relevant for posts about Eggdrop 1.4 and up (and bug
       fixes, and suggestions, etc).</p>
 
-      <p>To subscribe to the eggheads mailing list, send email to
+      <p>To subscribe to the eggheads mailing list, send e-mail to
       <a href="mailto:eggheads-request@eggheads.org">
       eggheads-request@eggheads.org</a>. In the body of the message, put
-      &quot;subscribe eggheads&quot;. You can also go to the following url:
-      </p>
+      &quot;subscribe eggheads&quot;. You can also go to the following
+      url:</p>
 
       <blockquote>
         <p><a href="http://scrambled.eggheads.org/mailman/listinfo/eggheads">
@@ -425,21 +489,31 @@
 
       <p>Open discussion and debate is integral to change and progress.
       Don&#39;t flame others over mere form (grammar and spelling), or even
-      substantive issues for that matter. Please read and follow the mailing 
+      substantive issues for that matter. Please read and follow the mailing
       list rules.</p>
 
       <p>The <a href="mailto:eggheads@eggheads.org"> eggheads@eggheads.org
-      </a> mailing list is not dedicated to those all too common questions 
+      </a> mailing list is not dedicated to those all too common questions
       we have all seen on other lists... For example:</p>
 
       <blockquote>
-        <p>&quot;Why does my bot say this: Please edit your config file.&quot;
-        <br>
-        &quot;How do I telnet my bot?&quot;<br>
-        &quot;Where do I get Eggdrop for windows??????&quot;<br></p>
+        <ul>
+          <li>
+            <p> &quot;Why does my bot say this: Please edit your config
+            file.&quot;</p>
+          </li>
+
+          <li>
+            <p>&quot;How do I telnet my bot?&quot;</p>
+          </li>
+
+          <li>
+            <p>&quot;Where do I get Eggdrop for windows??????&quot;</p>
+          </li>
+        </ul>
       </blockquote>
 
-      <p>Technical questions, your thoughts or suggestions on new features 
+      <p>Technical questions, your thoughts or suggestions on new features
       being added to Eggdrop, things that should be removed or fixed, amazing
       problems that even stump the guru&#39;s, etc. are what we want to see
       here.</p>
@@ -452,15 +526,15 @@
       BE REMOVED IMMEDIATELY!</strong></p>
     </blockquote>
 
-    <p><a name="sect9"></a>9. <strong>Documentation</strong></p>
+    <p><a name="sect10"></a>10. <strong>Documentation</strong></p>
 
     <blockquote>
-      <p>We&#39;re trying to keep the documentation up to date. If you feel 
-      that anything is missing here or that anything should be added, 
+      <p>We&#39;re trying to keep the documentation up to date. If you feel
+      that anything is missing here or that anything should be added,
       etc, please email eggheads@eggheads.org about it. Thank you.</p>
     </blockquote>
 
-    <p><a name="sect10"></a>10. <strong>Obtaining help</strong></p>
+    <p><a name="sect11"></a>11. <strong>Obtaining help</strong></p>
 
     <blockquote>
       <p>You can obtain help with Eggdrop in the following IRC channels:</p>
@@ -511,7 +585,7 @@
       <p>Some important things to remember:</p>
 
       <ul>
-        <li>Don&#39;t type using CAPITAL letters, colors, or bold, and 
+        <li>Don&#39;t type using CAPITAL letters, colors, or bold, and
         don&#39;t use &quot;!&quot; and &quot;?&quot; excessively.</li>
 
         <li>Don&#39;t /msg people without their permission.</li>
