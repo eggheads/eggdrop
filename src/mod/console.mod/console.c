@@ -3,7 +3,7 @@
  *   saved console settings based on console.tcl
  *   by cmwagner/billyjoe/D. Senso
  * 
- * $Id: console.c,v 1.14 2000/03/23 23:17:57 fabian Exp $
+ * $Id: console.c,v 1.15 2000/09/09 11:37:52 fabian Exp $
  */
 /* 
  * Copyright (C) 1999, 2000  Eggheads
@@ -160,7 +160,7 @@ static int console_tcl_get(Tcl_Interp *irp, struct userrec *u,
   return TCL_OK;
 }
 
-int console_tcl_set(Tcl_Interp *irp, struct userrec *u,
+static int console_tcl_set(Tcl_Interp *irp, struct userrec *u,
 		    struct user_entry *e, int argc, char **argv)
 {
   struct console_info *i = e->u.extra;
@@ -197,7 +197,7 @@ int console_tcl_set(Tcl_Interp *irp, struct userrec *u,
   return TCL_OK;
 }
 
-int console_expmem(struct user_entry *e)
+static int console_expmem(struct user_entry *e)
 {
   struct console_info *i = e->u.extra;
 
@@ -205,7 +205,7 @@ int console_expmem(struct user_entry *e)
   return sizeof(struct console_info) + strlen(i->channel) + 1;
 }
 
-void console_display(int idx, struct user_entry *e)
+static void console_display(int idx, struct user_entry *e)
 {
   struct console_info *i = e->u.extra;
 

@@ -5,7 +5,7 @@
  * 
  * Modified/written by Fabian Knittel <fknittel@gmx.de>
  * 
- * $Id: coredns.c,v 1.14 2000/09/02 19:45:23 fabian Exp $
+ * $Id: coredns.c,v 1.15 2000/09/09 11:37:53 fabian Exp $
  */
 /* 
  * Portions copyright (C) 1999, 2000  Eggheads
@@ -67,16 +67,9 @@
 
 /* Non-blocking nameserver interface routines */
 
-#define OPCODES_COUNT 3
-char *opcodes[OPCODES_COUNT + 1] = {
-    "standard query",
-    "inverse query",
-    "server status request",
-    "unknown",
-};
-
-#define RESPONSECODES_COUNT 6
-char *responsecodes[RESPONSECODES_COUNT + 1] = {
+#ifdef DEBUG_DNS
+#  define RESPONSECODES_COUNT 6
+static char *responsecodes[RESPONSECODES_COUNT + 1] = {
     "no error",
     "format error in query",
     "server failure",
@@ -85,9 +78,11 @@ char *responsecodes[RESPONSECODES_COUNT + 1] = {
     "refused by name server",
     "unknown error",
 };
+#endif /* DEBUG_DNS */
 
-#define RESOURCETYPES_COUNT 17
-char *resourcetypes[RESOURCETYPES_COUNT + 1] = {
+#ifdef DEBUG_DNS
+#  define RESOURCETYPES_COUNT 17
+static const char *resourcetypes[RESOURCETYPES_COUNT + 1] = {
     "unknown type",
     "A: host address",
     "NS: authoritative name server",
@@ -107,9 +102,11 @@ char *resourcetypes[RESOURCETYPES_COUNT + 1] = {
     "TXT: text string",
     "unknown type",
 };
+#endif /* DEBUG_DNS */
 
-#define CLASSTYPES_COUNT 5
-char *classtypes[CLASSTYPES_COUNT + 1] = {
+#ifdef DEBUG_DNS
+#  define CLASSTYPES_COUNT 5
+static const char *classtypes[CLASSTYPES_COUNT + 1] = {
     "unknown class",
     "IN: the Internet",
     "CS: CSNET (OBSOLETE)",
@@ -117,22 +114,7 @@ char *classtypes[CLASSTYPES_COUNT + 1] = {
     "HS: Hesoid [Dyer 87]",
     "unknown class"
 };
-
-char *rrtypes[] = {
-    "Unknown",
-    "Query",
-    "Answer",
-    "Authority reference",
-    "Resource reference",
-};
-
-enum {
-    RR_UNKNOWN,
-    RR_QUERY,
-    RR_ANSWER,
-    RR_AUTHORITY,
-    RR_RESOURCE
-};
+#endif /* DEBUG_DNS */
 
 typedef struct {
     word id;			/* Packet id */
@@ -179,27 +161,29 @@ typedef struct {
                                           ((x)[-2] <<  8) | ((x)[-1] <<  0))))
 
 
-dword resrecvbuf[(MAX_PACKETSIZE + 7) >> 2];	/* MUST BE DWORD ALIGNED */
+static dword resrecvbuf[(MAX_PACKETSIZE + 7) >> 2];	/* MUST BE DWORD ALIGNED */
 
-struct resolve *idbash[BASH_SIZE];
-struct resolve *ipbash[BASH_SIZE];
-struct resolve *hostbash[BASH_SIZE];
-struct resolve *expireresolves = NULL;
+static struct resolve *idbash[BASH_SIZE];
+static struct resolve *ipbash[BASH_SIZE];
+static struct resolve *hostbash[BASH_SIZE];
+static struct resolve *expireresolves = NULL;
 
-IP alignedip;
-IP localhost;
+static IP localhost;
 
-long idseed = 0xdeadbeef;
-long aseed;
+static long idseed = 0xdeadbeef;
+static long aseed;
 
-int resfd;
+static int resfd;
 
-char tempstring[16384 + 1 + 1];
-char sendstring[1024 + 1];
-char namestring[1024 + 1];
-char stackstring[1024 + 1];
+static char tempstring[16384 + 1 + 1];
+static char namestring[1024 + 1];
+static char stackstring[1024 + 1];
 
-char nullstring[] = "";
+#ifdef DEBUG_DNS
+static char sendstring[1024 + 1];
+#endif /* DEBUG_DNS */
+
+static const char nullstring[] = "";
 
 
 /* 

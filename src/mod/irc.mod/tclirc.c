@@ -1,7 +1,7 @@
 /* 
  * tclirc.c -- part of irc.mod
  * 
- * $Id: tclirc.c,v 1.15 2000/06/03 12:14:41 fabian Exp $
+ * $Id: tclirc.c,v 1.16 2000/09/09 11:37:53 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -364,7 +364,7 @@ static int tcl_getchanidle STDVAR
   return TCL_OK;
 }
 
-inline int tcl_chanmasks(masklist *m, Tcl_Interp *irp)
+static inline int tcl_chanmasks(masklist *m, Tcl_Interp *irp)
 {
   char *list[3], work[20], *p;
   

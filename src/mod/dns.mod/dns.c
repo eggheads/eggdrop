@@ -4,7 +4,7 @@
  * 
  * Written by Fabian Knittel <fknittel@gmx.de>
  * 
- * $Id: dns.c,v 1.14 2000/09/02 19:45:23 fabian Exp $
+ * $Id: dns.c,v 1.15 2000/09/09 11:37:53 fabian Exp $
  */
 /* 
  * Copyright (C) 1999, 2000  Eggheads
@@ -108,7 +108,7 @@ static void display_dns_socket(int idx, char *buf)
   strcpy(buf, "dns   (ready)");
 }
 
-struct dcc_table DCC_DNS =
+static struct dcc_table DCC_DNS =
 {
   "DNS",
   DCT_LISTEN,

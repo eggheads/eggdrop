@@ -1,7 +1,7 @@
 /* 
  * transfer.c -- part of transfer.mod
  * 
- * $Id: transfer.c,v 1.28 2000/07/12 21:50:35 fabian Exp $
+ * $Id: transfer.c,v 1.29 2000/09/09 11:37:53 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -835,7 +835,7 @@ static void eof_dcc_send(int idx)
 
 /* Determine byte order. Used for resend DCC startup packets.
  */
-u_8bit_t byte_order_test(void)
+static inline u_8bit_t byte_order_test(void)
 {
   u_16bit_t test = TRANSFER_REGET_PACKETID;
 

@@ -2,7 +2,7 @@
  * channels.c -- part of channels.mod
  *   support for channels within the bot
  * 
- * $Id: channels.c,v 1.33 2000/08/27 19:14:53 fabian Exp $
+ * $Id: channels.c,v 1.34 2000/09/09 11:37:52 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -75,7 +75,7 @@ static int gfld_nick_time;
 #include "udefchan.c"
 
 
-void *channel_malloc(int size, char *file, int line)
+static void *channel_malloc(int size, char *file, int line)
 {
   char *p;
 
