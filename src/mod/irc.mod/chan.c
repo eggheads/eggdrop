@@ -9,7 +9,7 @@
  * dprintf'ized, 27oct1995
  * multi-channel, 8feb1996
  * 
- * $Id: chan.c,v 1.60 2000/03/04 18:57:42 guppy Exp $
+ * $Id: chan.c,v 1.61 2000/05/02 00:42:42 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1197,26 +1197,6 @@ static int got474(char *from, char *msg)
   return 0;
 }
 
-/* got 442: not on channel */
-static int got442(char *from, char *msg)
-{
-  char *chname;
-  struct chanset_t *chan;
-
-  newsplit(&msg);
-  chname = newsplit(&msg);
-  chan = findchan(chname);
-  if (chan) {
-    if (!channel_inactive(chan)) {
-      putlog(LOG_MISC, chname, IRC_SERVNOTONCHAN, chname);
-      clear_channel(chan, 1);
-      chan->status &= ~CHAN_ACTIVE;
-      dprintf(DP_MODE, "JOIN %s %s\n", chan->name, chan->key_prot);
-    }  
-  }
-  return 0;
-}
-
 /* got 475: can't goin channel, bad key */
 static int got475(char *from, char *msg)
 {
@@ -1981,7 +1961,6 @@ static cmd_t irc_raw[] =
   {"471", "", (Function) got471, "irc:471"},
   {"473", "", (Function) got473, "irc:473"},
   {"474", "", (Function) got474, "irc:474"},
-  {"442", "", (Function) got442, "irc:442"},
   {"475", "", (Function) got475, "irc:475"},
   {"INVITE", "", (Function) gotinvite, "irc:invite"},
   {"TOPIC", "", (Function) gottopic, "irc:topic"},
