@@ -1,6 +1,6 @@
 /* Original Copyright (c) 2000-2001 proton
  * 
- * $Id: uptime.c,v 1.4 2001/06/12 17:45:33 poptix Exp $
+ * $Id: uptime.c,v 1.5 2001/06/12 17:50:10 poptix Exp $
  * Borrowed from Emech, reports to http://uptime.energymech.net, feel free to opt out if you
  * dont like it by not loading the module.
  * 
@@ -162,11 +162,11 @@ int send_uptime(void)
 		if (uptimeip == -1)
 			return -2;
 	}
-	len = sizeof(upPack) + strlen(botname) + strlen(dcc[servidx].host) + strlen(uptime_version);
+	len = sizeof(upPack) + strlen(botnet-nick) + strlen(dcc[servidx].host) + strlen(uptime_version);
 	putlog(LOG_DEBUG, "*", "len = %d",len);
 	mem = (PackUp*)nmalloc(len);
 	memcpy(mem,&upPack,sizeof(upPack));
-	sprintf(mem->string,"%s %s %s",botname,dcc[servidx].host,uptime_version);
+	sprintf(mem->string,"%s %s %s",botnet-nick,dcc[servidx].host,uptime_version);
 	memset(&sai,0,sizeof(sai));
 	sai.sin_family = AF_INET;
 	sai.sin_addr.s_addr = uptimeip;
@@ -189,7 +189,7 @@ static int uptime_set_send(struct userrec *u, int idx, char *par)
 {
 	int servidx = findanyidx(serv);
 	Context;
-	dprintf(idx,"Nick %s Ontime %lu Server %s Version %s Result %d\n", botname, online_since, dcc[servidx].host,
+	dprintf(idx,"Nick %s Ontime %lu Server %s Version %s Result %d\n", botnet-nick, online_since, dcc[servidx].host,
 	        uptime_version, send_uptime()); 
 	return 1;
 }
