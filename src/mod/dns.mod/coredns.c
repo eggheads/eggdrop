@@ -5,7 +5,7 @@
  * 
  * Modified/written by Fabian Knittel <fknittel@gmx.de>
  * 
- * $Id: coredns.c,v 1.9 2000/01/17 22:36:08 fabian Exp $
+ * $Id: coredns.c,v 1.10 2000/03/04 20:40:24 fabian Exp $
  */
 /* 
  * Portions copyright (C) 1999, 2000  Eggheads
@@ -1166,7 +1166,6 @@ static int init_dns_core(void)
     if (!init_dns_network())
 	return 0;
 
-    Context;
     /* Initialise the hash tables. */
     aseed = time(NULL) ^ (time(NULL) << 3) ^ (dword) getpid();
     for (i = 0; i < BASH_SIZE; i++) {

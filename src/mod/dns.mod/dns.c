@@ -4,7 +4,7 @@
  * 
  * Written by Fabian Knittel <fknittel@gmx.de>
  * 
- * $Id: dns.c,v 1.10 2000/01/17 22:36:08 fabian Exp $
+ * $Id: dns.c,v 1.11 2000/03/04 20:40:24 fabian Exp $
  */
 /* 
  * Copyright (C) 1999, 2000  Eggheads
@@ -228,19 +228,21 @@ static Function dns_table[] =
 
 char *dns_start(Function *global_funcs)
 {
-  int i;
+  int idx;
   
   global = global_funcs;
   Context;
+  module_register(MODULE_NAME, dns_table, 1, 0);
+  if (!module_depend(MODULE_NAME, "eggdrop", 105, 0))
+    return "This module requires eggdrop1.5.0 or later";
+
   if (!init_dns_core())
     return "DNS initialisation failed.";
-  i = new_dcc(&DCC_DNS, 0);
-  dcc[i].sock = resfd;
-  dcc[i].timeval = now;
-  strcpy(dcc[i].nick, "(dns)");
+  idx = new_dcc(&DCC_DNS, 0);
+  dcc[idx].sock = resfd;
+  dcc[idx].timeval = now;
+  strcpy(dcc[idx].nick, "(dns)");
 
-  Context;
-  module_register(MODULE_NAME, dns_table, 1, 0);
   add_hook(HOOK_SECONDLY, (Function) dns_check_expires);
   add_hook(HOOK_DNS_HOSTBYIP, (Function) dns_lookup);
   add_hook(HOOK_DNS_IPBYHOST, (Function) dns_forward);
