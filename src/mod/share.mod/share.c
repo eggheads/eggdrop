@@ -1,7 +1,7 @@
 /* 
  * share.c -- part of share.mod
  * 
- * $Id: share.c,v 1.33 2000/06/03 12:16:57 fabian Exp $
+ * $Id: share.c,v 1.34 2000/08/06 14:47:20 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -361,43 +361,49 @@ static void share_mns_chrec(int idx, char *par)
 
 static void share_newuser(int idx, char *par)
 {
-  char *etc, *etc2, *etc3, s[100];
+  char *nick, *host, *pass, s[100];
   struct userrec *u;
 
   if ((dcc[idx].status & STAT_SHARE) && !private_user) {
-    etc = newsplit(&par);
-    if (!(u = get_user_by_handle(userlist, etc)) ||
+    nick = newsplit(&par);
+    host = newsplit(&par);
+    pass = newsplit(&par);
+
+    if (!(u = get_user_by_handle(userlist, nick)) ||
 	!(u->flags & USER_UNSHARED)) {
       fr.global = 0;
 
+      fr.match = FR_GLOBAL;
+      break_down_flags(par, &fr, NULL);
+
       /* If user already exists, ignore command */
-      shareout_but(NULL, idx, "n %s %s\n", etc, private_global
-		   ? ((fr.global &USER_BOT) ? "b" : "-") : par);
+      shareout_but(NULL, idx, "n %s %s %s %s\n", nick, host, pass,
+		   private_global ? (fr.global & USER_BOT ? "b" : "-") : par);
+
       if (!u) {
 	noshare = 1;
-	if (strlen(etc) > HANDLEN)
-	  etc[HANDLEN] = 0;
-	etc2 = newsplit(&par);
-	etc3 = newsplit(&par);
-	fr.match = FR_GLOBAL;
-	break_down_flags(par, &fr, NULL);
+	if (strlen(nick) > HANDLEN)
+	  nick[HANDLEN] = 0;
 
 	if (private_global)
 	  fr.global &= USER_BOT;
 	else {
+	  /* It shouldn't be done before sending to other bots? */
 	  int pgbm = private_globals_bitmask();
 
 	  fr.match = FR_GLOBAL;
 	  fr.global &=~pgbm;
 	}
+
 	build_flags(s, &fr, 0);
-	userlist = adduser(userlist, etc, etc2, etc3, 0);
+	userlist = adduser(userlist, nick, host, pass, 0);
+
 	/* Support for userdefinedflag share - drummer */
-	u = get_user_by_handle(userlist, etc);
+	u = get_user_by_handle(userlist, nick);
 	set_user_flagrec(u, &fr, 0);
 	fr.match = FR_CHAN; /* why?? */
 	noshare = 0;
-	putlog(LOG_CMDS, "*", "%s: newuser %s %s", dcc[idx].nick, etc, s);
+	putlog(LOG_CMDS, "*", "%s: newuser %s %s", dcc[idx].nick, nick, s);
       }
     }
   }
