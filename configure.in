@@ -492,7 +492,7 @@ else
 
   if test $TCLVERFOUND = 1
   then
-    TCL_REQS="$TCLLIB/lib$TCLLIBFN"
+    TCL_REQS="$TCLLIB/$TCLLIBFN"
     TCL_LIBS="-L$TCLLIB -ltcl$TCLLIBVER -lm"
   else
     echo ""
