@@ -1,7 +1,7 @@
 # core.english.lang
 #   core language messages for eggdrop
 #
-# $Id: core.english.lang,v 1.16 2000/09/23 17:40:17 fabian Exp $
+# $Id: core.english.lang,v 1.17 2000/10/27 19:34:53 fabian Exp $
 
 # General stuff
 0x001,Usage
@@ -147,6 +147,7 @@ Telnet to the bot and enter 'NEW' as your nickname.
 0x540,\nNickname.\n
 0x541,Last message repeated %d time(s).\n
 0x542,juped
+0x543,No free sockets available.
 
 # IRC_
 0x600,Banned

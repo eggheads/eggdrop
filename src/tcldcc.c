@@ -2,7 +2,7 @@
  * tcldcc.c -- handles:
  *   Tcl stubs for the dcc commands
  * 
- * $Id: tcldcc.c,v 1.20 2000/09/27 19:40:43 fabian Exp $
+ * $Id: tcldcc.c,v 1.21 2000/10/27 19:34:54 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -876,6 +876,10 @@ static int tcl_connect STDVAR
     return TCL_ERROR;
   }
   sock = getsock(0);
+  if (sock < 0) {
+    Tcl_AppendResult(irp, MISC_NOFREESOCK, NULL);
+    return TCL_ERROR;
+  }
   z = open_telnet_raw(sock, argv[1], atoi(argv[2]));
   if (z < 0) {
     killsock(sock);

@@ -2,7 +2,7 @@
  * lang.h
  *   Conversion definitions for language support
  * 
- * $Id: lang.h,v 1.17 2000/09/23 17:40:17 fabian Exp $
+ * $Id: lang.h,v 1.18 2000/10/27 19:34:54 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -124,6 +124,7 @@
 #define MISC_BANNER_STEALTH	get_language(0x540)
 #define MISC_LOGREPEAT		get_language(0x541)
 #define MISC_JUPED		get_language(0x542)
+#define MISC_NOFREESOCK		get_language(0x543)
 
 /* IRC */
 #define IRC_BANNED		get_language(0x600)

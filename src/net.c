@@ -2,7 +2,7 @@
  * net.c -- handles:
  *   all raw network i/o
  * 
- * $Id: net.c,v 1.23 2000/10/27 19:30:23 fabian Exp $
+ * $Id: net.c,v 1.24 2000/10/27 19:34:54 fabian Exp $
  */
 /* 
  * This is hereby released into the public domain.
@@ -247,18 +247,22 @@ int getsock(int options)
 {
   int sock = socket(AF_INET, SOCK_STREAM, 0);
 
-  if (sock < 0)
-    fatal("Can't open a socket at all!", 0);
-  setsock(sock, options);
+  if (sock >= 0)
+    setsock(sock, options);
+  else
+    putlog(LOG_MISC, "*", "Warning: Can't create new socket!");
   return sock;
 }
 
 /* Done with a socket
  */
-void killsock(int sock)
+void killsock(register int sock)
 {
-  int i;
+  register int	i;
 
+  /* Ignore invalid sockets.  */
+  if (sock < 0)
+    return;
   for (i = 0; i < MAXSOCKS; i++) {
     if ((socklist[i].sock == sock) && !(socklist[i].flags & SOCK_UNUSED)) {
       close(socklist[i].sock);
@@ -429,9 +433,12 @@ int open_address_listen(IP addr, int *port)
     putlog(LOG_MISC, "*", "!! Cant open a listen port (you are using a firewall)");
     return -1;
   }
-  sock = getsock(SOCK_LISTEN);
-  egg_bzero((char *) &name, sizeof(struct sockaddr_in));
 
+  sock = getsock(SOCK_LISTEN);
+  if (sock < 1)
+    return -1;
+
+  egg_bzero((char *) &name, sizeof(struct sockaddr_in));
   name.sin_family = AF_INET;
   name.sin_port = htons(*port);	/* 0 = just assign us a port */
   name.sin_addr.s_addr = addr;

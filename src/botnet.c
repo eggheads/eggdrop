@@ -7,7 +7,7 @@
  *   linking, unlinking, and relaying to another bot
  *   pinging the bots periodically and checking leaf status
  * 
- * $Id: botnet.c,v 1.30 2000/09/09 11:39:09 fabian Exp $
+ * $Id: botnet.c,v 1.31 2000/10/27 19:34:54 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1066,7 +1066,8 @@ static void botlink_resolve_success(int i)
   dcc[i].u.bot->numver = idx;
   dcc[i].u.bot->port = dcc[i].port;		/* Remember where i started */
   dcc[i].sock = getsock(SOCK_STRONGCONN);
-  if (open_telnet_raw(dcc[i].sock, iptostr(htonl(dcc[i].addr)),
+  if (dcc[i].sock < 0 ||
+      open_telnet_raw(dcc[i].sock, iptostr(htonl(dcc[i].addr)),
 		      dcc[i].port) < 0)
     failed_link(i);
 }
@@ -1104,7 +1105,8 @@ static void failed_tandem_relay(int idx)
   dcc[uidx].u.relay->sock = dcc[idx].sock;
   dcc[idx].port++;
   dcc[idx].timeval = now;
-  if (open_telnet_raw(dcc[idx].sock, dcc[idx].addr ?
+  if (dcc[idx].sock < 0 ||
+      open_telnet_raw(dcc[idx].sock, dcc[idx].addr ?
 				     iptostr(htonl(dcc[idx].addr)) :
 				     dcc[idx].host, dcc[idx].port) < 0)
     failed_tandem_relay(idx);
@@ -1147,6 +1149,13 @@ void tandem_relay(int idx, char *nick, register int i)
     return;
   }
 
+  dcc[i].sock = getsock(SOCK_STRONGCONN | SOCK_VIRTUAL);
+  if (dcc[i].sock < 0) {
+    lostdcc(i);
+    dprintf(idx, "%s\n", MISC_NOFREESOCK);
+    return;
+  }
+
   dcc[i].port = bi->relay_port;
   dcc[i].addr = 0L;
   strcpy(dcc[i].nick, nick);
@@ -1160,7 +1169,6 @@ void tandem_relay(int idx, char *nick, register int i)
   dcc[idx].u.relay = get_data_ptr(sizeof(struct relay_info));
   dcc[idx].u.relay->chat = ci;
   dcc[idx].u.relay->old_status = dcc[idx].status;
-  dcc[i].sock = getsock(SOCK_STRONGCONN | SOCK_VIRTUAL);
   dcc[idx].u.relay->sock = dcc[i].sock;
   dcc[i].timeval = now;
   dcc[i].u.dns->ibuf = dcc[idx].sock;

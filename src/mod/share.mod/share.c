@@ -1,7 +1,7 @@
 /* 
  * share.c -- part of share.mod
  * 
- * $Id: share.c,v 1.42 2000/10/27 19:32:42 fabian Exp $
+ * $Id: share.c,v 1.43 2000/10/27 19:34:55 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1025,10 +1025,10 @@ static void share_ufsend(int idx, char *par)
     putlog(LOG_MISC, "*", "CAN'T WRITE USERFILE DOWNLOAD FILE!");
     zapfbot(idx);
   } else {
-    sock = getsock(SOCK_BINARY);
     ip = newsplit(&par);
     port = newsplit(&par);
-    if (open_telnet_dcc(sock, ip, port) < 0) {
+    sock = getsock(SOCK_BINARY);
+    if (sock < 0 || open_telnet_dcc(sock, ip, port) < 0) {
       killsock(sock);
       putlog(LOG_BOTS, "*", "Asynchronous connection failed!");
       dprintf(idx, "s e Can't connect to you!\n");

@@ -2,7 +2,7 @@
  * filesys.c -- part of filesys.mod
  *   main file of the filesys eggdrop module
  * 
- * $Id: filesys.c,v 1.36 2000/10/27 19:24:44 fabian Exp $
+ * $Id: filesys.c,v 1.37 2000/10/27 19:34:54 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -812,7 +812,7 @@ static void filesys_dcc_send_hostresolved(int i)
     } else {
       dcc[i].timeval = now;
       dcc[i].sock = getsock(SOCK_BINARY);
-      if (open_telnet_dcc(dcc[i].sock, ip, prt) < 0)
+      if (dcc[i].sock < 0 || open_telnet_dcc(dcc[i].sock, ip, prt) < 0)
 	dcc[i].type->eof(i);
     }
   }
@@ -858,7 +858,7 @@ static int filesys_DCC_CHAT(char *nick, char *from, char *handle,
     ip = newsplit(&msg);
     prt = newsplit(&msg);
     sock = getsock(0);
-    if (open_telnet_dcc(sock, ip, prt) < 0) {
+    if (sock < 0 || open_telnet_dcc(sock, ip, prt) < 0) {
       neterror(buf);
       if (!quiet_reject)
         dprintf(DP_HELP, "NOTICE %s :%s (%s)\n", nick,

@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  * 
- * $Id: server.c,v 1.56 2000/10/27 19:30:24 fabian Exp $
+ * $Id: server.c,v 1.57 2000/10/27 19:34:55 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1449,9 +1449,9 @@ static void dcc_chat_hostresolved(int i)
     lostdcc(i);
     return;
   }
-  dcc[i].sock = getsock(0);
   egg_snprintf(ip, sizeof ip, "%lu", iptolong(htonl(dcc[i].addr)));
-  if (open_telnet_dcc(dcc[i].sock, ip, buf) < 0) {
+  dcc[i].sock = getsock(0);
+  if (dcc[i].sock < 0 || open_telnet_dcc(dcc[i].sock, ip, buf) < 0) {
     neterror(buf);
     if(!quiet_reject)
       dprintf(DP_HELP, "NOTICE %s :%s (%s)\n", dcc[i].nick,
