@@ -790,7 +790,7 @@ static int msg_status(char *nick, char *host, struct userrec *u, char *par)
     }
   }
   putlog(LOG_CMDS, "*", "(%s!%s) !%s! STATUS", nick, host, u->handle);
-  dprintf(DP_HELP, "NOTICE %s :I am %s, running %s.\n", nick, botname,
+  dprintf(DP_HELP, "NOTICE %s :I am %s, running %s.\n", nick, botnetnick,
 	  Version);
   dprintf(DP_HELP, "NOTICE %s :Running on %s %s\n", nick, un_t, ve_t);
   if (admin[0])

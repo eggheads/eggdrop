@@ -263,8 +263,8 @@ void tell_verbose_status(int idx, int showchan)
 
   i = count_users(userlist);
   dprintf(idx, "I am %s, running %s:  %d user%s (mem: %uk)\n",
-	  origbotname[0] ? origbotname : botnetnick, ver,
-	  i, i == 1 ? "" : "s", (int) (expected_memory() / 1024));
+	  botnetnick, ver, i, i == 1 ? "" : "s",
+          (int) (expected_memory() / 1024));
   dprintf(idx, "Running on %s %s\n", uni_t, vers_t);
   if (admin[0])
     dprintf(idx, "Admin: %s\n", admin);
