@@ -4,7 +4,7 @@
  *   Tcl initialization
  *   getting and setting Tcl/eggdrop variables
  * 
- * $Id: tcl.c,v 1.23 2000/08/03 21:51:33 fabian Exp $
+ * $Id: tcl.c,v 1.24 2000/08/11 22:40:26 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -566,34 +566,55 @@ void do_tcl(char *whatzit, char *script)
   }
 }
 
-/* Read and interpret the configfile given
+/* Read the tcl file fname into memory and interpret it. Not using
+ * Tcl_EvalFile avoids problems with high ascii characters.
  *
- * returns:   1 if everything was okay
+ * returns:   1 - if everything was okay
  */
 int readtclprog(char *fname)
 {
-  int code;
-  FILE *f;
+  int	 code;
+  long	 size;
+  char	*script;
+  FILE	*f;
 
-  f = fopen(fname, "r");
-  if (f == NULL)
+  if ((f = fopen(fname, "r")) == NULL)
     return 0;
-  fclose(f);
-  if (debug_tcl) {
-    f = fopen("DEBUG.TCL", "a");
-    if (f != NULL) {
-      fprintf(f, "Sourcing file %s ...\n", fname);
-      fclose(f);
-    }
+
+  /* Find out file size. */
+  fseek(f, 0, SEEK_END);
+  size = ftell(f);
+  fseek(f, 0, SEEK_SET);
+
+  /* Allocate buffer to save the file's data in. */
+  if ((script = nmalloc(size + 1)) == NULL) {
+    fclose(f);
+    return 0;
   }
-  code = Tcl_EvalFile(interp, fname);
+  script[size] = 0;
+
+  /* Read file's data to the allocated buffer. */
+  fread(script, 1, size, f);
+  fclose(f);
+
+  if (debug_tcl) {
+    if ((f = fopen("DEBUG.TCL", "a")) != NULL)
+      fprintf(f, "*** eval: %s\n", script);
+  }
+  code = Tcl_Eval(interp, script);
+  nfree(script);
+  if (debug_tcl && f) {
+    fprintf(f, "*** done eval, result=%d\n", code);
+    fclose(f);
+  }
+
   if (code != TCL_OK) {
     putlog(LOG_MISC, "*", "Tcl error in file '%s':", fname);
     putlog(LOG_MISC, "*", "%s",
-          Tcl_GetVar(interp, "errorInfo", TCL_GLOBAL_ONLY));
-    /* It's too risky to go on now. */
+	   Tcl_GetVar(interp, "errorInfo", TCL_GLOBAL_ONLY));
     return 0;
   }
+
   /* Refresh internal variables */
   return 1;
 }
