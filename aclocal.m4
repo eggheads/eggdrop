@@ -1,7 +1,7 @@
 dnl aclocal.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: aclocal.m4,v 1.43 2001/07/24 14:43:34 guppy Exp $
+dnl $Id: aclocal.m4,v 1.44 2001/07/26 03:55:33 guppy Exp $
 dnl
 
 
@@ -181,7 +181,8 @@ case "$egg_cv_var_system_type" in
       1.*)
         NEED_DL=0
         SHLIB_LD="$CC -shared"
-        CC="$CC -mwin32"
+	AC_PROG_CC_WIN32
+	CC="$CC $WIN32FLAGS"
         MOD_CC="$CC"
         MOD_LD="$CC"
         AC_MSG_CHECKING(for /usr/lib/binmode.o)
@@ -1238,3 +1239,42 @@ AC_DEFUN(EGG_SAVE_PARAMETERS, [dnl
   AC_DIVERT_POP()dnl to NORMAL
   AC_SUBST(egg_ac_parameters)dnl
 ])dnl
+
+AC_DEFUN([AC_PROG_CC_WIN32], [
+AC_MSG_CHECKING([how to access the Win32 API])
+WIN32FLAGS=
+AC_TRY_COMPILE(,[
+#ifndef WIN32
+# ifndef _WIN32
+#  error WIN32 or _WIN32 not defined
+# endif
+#endif], [
+dnl found windows.h with the current config.
+AC_MSG_RESULT([present by default])
+], [
+dnl try -mwin32
+ac_compile_save="$ac_compile"
+dnl we change CC so config.log looks correct
+save_CC="$CC"
+ac_compile="$ac_compile -mwin32"
+CC="$CC -mwin32"
+AC_TRY_COMPILE(,[
+#ifndef WIN32
+# ifndef _WIN32
+#  error WIN32 or _WIN32 not defined
+# endif
+#endif], [
+dnl found windows.h using -mwin32
+AC_MSG_RESULT([found via -mwin32])
+ac_compile="$ac_compile_save"
+CC="$save_CC"
+WIN32FLAGS="-mwin32"
+], [
+ac_compile="$ac_compile_save"
+CC="$save_CC"
+AC_MSG_RESULT([not found])
+])
+])
+
+])
+dnl
