@@ -2,7 +2,7 @@
 #  This is the Makefile for EGGDROP (the IRC bot)
 #  You should never need to edit this.
 #
-# $Id: Makefile.in,v 1.35 2003/12/10 19:04:49 wcc Exp $
+# $Id: Makefile.in,v 1.36 2004/04/09 18:31:37 wcc Exp $
 
 SHELL = @SHELL@
 top_srcdir = @top_srcdir@
@@ -137,17 +137,8 @@ distclean: eggclean clean-modconfig
 	@rm -f config.cache config.log config.status config.h lush.h
 	@rm -rf autom4te.cache
 
-distrib: distclean
-	@rm -f `find . \( -name '*~' -o -name '*#' -o -name '*.orig' \
-		-o -name '*.rej' -o -name '*.bak' \) -print`
-	@rm -rf `find . \( -name 'CVS' \) -print`
-	@(echo "all:"; \
-	echo "	@echo \"\""; \
-	echo "	@echo \"Before you can compile your bot you have to configure it.\""; \
-	echo "	@echo \"Please start the configure script now:\""; \
-	echo "	@echo \"\""; \
-	echo "	@echo \" % ./configure\""; \
-	echo "	@echo \"\""; ) > Makefile
+distrib:
+	misc/releaseprep
 
 depend:
 	@cat /dev/null > lush.h
