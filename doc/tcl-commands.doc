@@ -828,14 +828,14 @@ for the msg-command "stop", use "unbind msg - stop msg_stop".
 
   (1)  MSG
        bind msg <flags> <command> <proc>
-       procname <nick> <user@host> <handle> <args>
+       procname <nick> <user@host> <handle> <arg>
 
        used for /msg commands; the first word of the user's msg is the
        command, and everything else becomes the argument string
 
   (2)  DCC
        bind dcc <flags> <command> <proc>
-       procname <handle> <idx> <args>
+       procname <handle> <idx> <arg>
 
        used for commands from a dcc chat on the party line; as in MSG, the
        command is the first word and everything else is the argument string;
@@ -844,7 +844,7 @@ for the msg-command "stop", use "unbind msg - stop msg_stop".
 
   (3)  FIL
        bind fil <flags> <command> <proc>
-       procname <handle> <idx> <args>
+       procname <handle> <idx> <arg>
 
        the same as DCC, except this is triggered if the user is in the file
        area instead of the party line
@@ -852,7 +852,7 @@ for the msg-command "stop", use "unbind msg - stop msg_stop".
 
   (4)  PUB
        bind pub <flags> <command> <proc>
-       procname <nick> <user@host> <handle> <channel> <args>
+       procname <nick> <user@host> <handle> <channel> <arg>
 
        used for commands given on a channel; just like MSG, the first word
        becomes the command and everything else is the argument string
@@ -961,23 +961,23 @@ for the msg-command "stop", use "unbind msg - stop msg_stop".
 
   (15) CTCP
        bind ctcp <flags> <keyword> <proc>
-       proc-name <nick> <user@host> <handle> <dest> <keyword> <args...>
+       proc-name <nick> <user@host> <handle> <dest> <keyword> <arg...>
 
        destination will be a nickname (the bot's nickname, obviously) or
-       a channel name; keyword is the ctcp command and args may be empty;
+       a channel name; keyword is the ctcp command and arg may be empty;
        if the proc returns 0, the bot will attempt its own processing of
        the ctcp command
 
   (16) CTCR
        bind ctcr <flags> <keyword-mask> <proc>
-       proc-name <nick> <user@host> <handle> <dest> <keyword> <args...>
+       proc-name <nick> <user@host> <handle> <dest> <keyword> <arg...>
 
        just like ctcp, but this is triggered for a ctcp-reply (ie, ctcp
        embedded in a notice instead of a privmsg)
 
   (17) RAW   (stackable)
        bind raw <flags> <keyword-mask> <proc>
-       procname <from> <keyword> <args...>
+       procname <from> <keyword> <arg...>
 
        previous versions of eggdrop required a special compile option to
        enable this binding, but it's now standard; the mask is checked
@@ -991,7 +991,7 @@ for the msg-command "stop", use "unbind msg - stop msg_stop".
 
   (18) BOT
        bind bot <flags> <command> <proc>
-       proc-name <from-bot> <command> <args>
+       proc-name <from-bot> <command> <arg>
 
        triggered by a message coming from another bot in the botnet; works
        similar to a DCC binding; the first word is the command and the rest

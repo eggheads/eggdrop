@@ -41,6 +41,7 @@ extern int use_stderr;
 extern char motdfile[];
 extern char ver[];
 extern int keep_all_logs;
+extern int quick_logs;
 extern char botnetnick[];
 extern struct chanset_t *chanset;
 extern time_t now;
@@ -483,12 +484,13 @@ void putlog VARARGS_DEF(int, arg1)
 	      /* Yep.. so display 'last message repeated x times'
 	       * then reset repeats. We want the current time here,
 	       * so put that in the file first. */
-	      if (T)
-		fprintf(logs[i].f, "[%2.2d:%2.2d] last message repeated %d times\n",
-			T->tm_hour, T->tm_min, logs[i].Repeats);
-	      else
-		fprintf(logs[i].f, "[??:??] last message repeated %d times\n",
-			logs[i].Repeats);
+	      if (T) {
+		fprintf(logs[i].f, "[%2.2d:%2.2d] ", T->tm_hour, T->tm_min);
+		fprintf(logs[i].f, MISC_LOGREPEAT, logs[i].Repeats);
+	      } else {
+		fprintf(logs[i].f, "[??:??] ");
+		fprintf(logs[i].f, MISC_LOGREPEAT, logs[i].Repeats);
+	      }
 	      logs[i].Repeats = 0;
 	      /* no need to reset logs[i].szLast here
 	       * because we update it later on... */
@@ -587,15 +589,15 @@ void flushlogs()
    * displays the 'last message repeated...' stuff too <cybah> */
   for (i = 0; i < max_logs; i++) {
     if (logs[i].f != NULL) {
-      if (logs[i].Repeats > 0) {
-	/* Repeat.. so display 'last message
-	 * repeated x times' then reset Repeats. */
+       if ((logs[i].Repeats > 0) && quick_logs) {
+         /* Repeat.. if quicklogs used then display 'last message
+          * repeated x times' and reset Repeats. */
 	if (T) {
-	  fprintf(logs[i].f, "[%2.2d:%2.2d] last message repeated %d times\n",
-		  T->tm_hour, T->tm_min, logs[i].Repeats);
+	  fprintf(logs[i].f, "[%2.2d:%2.2d] ", T->tm_hour, T->tm_min);
+	  fprintf(logs[i].f, MISC_LOGREPEAT, logs[i].Repeats);
 	} else {
-	  fprintf(logs[i].f, "[??:??] last message repeated %d times\n",
-		  logs[i].Repeats);
+	  fprintf(logs[i].f, "[??:??] ");
+	  fprintf(logs[i].f, MISC_LOGREPEAT, logs[i].Repeats);
 	}
 	/* Reset repeats */
 	logs[i].Repeats = 0;

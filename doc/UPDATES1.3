@@ -3,6 +3,15 @@ Changes in eggdrop: (since v1.3.0)
 
 1.3.28
 Foundby   Fixedby   What....
+          Rufus     -clearbans stops the bot from expiring bans/exempts/invites
+                    set by bots who are still in the channel and have chanop
+                    to prevent repeating -b/+b on channels with bots that are
+     	            not sharing their banlist (same with +e/-e and +I/-i).
+		    to disable this set force-expire 1
+          Johoho    rewrote doc/BOTNET and doc/patch.howto
+          Rufus     arg instead of args in tcl-commands.doc
+          Kimmo     "last message repeated" flood fixed
+various   guppy     removed the static tcl check for now
           Jason     more exempt/invite fixes/changes
           dw        using chattr to change chanflags w/o a '|' made
                      the bot wipe botflags from the chan.

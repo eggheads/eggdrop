@@ -381,6 +381,9 @@ set exempt-time 60
 # checks this counter
 set invite-time 60
 
+# [0/1] expire bans/exempts/invites set by other opped bots on the channel?
+# set force-expire 0
+
 # [0/1] share user greets with other bots on the channel if sharing user data?
 set share-greet 0
 

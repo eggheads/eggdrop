@@ -316,7 +316,7 @@ static void reset_chan_info(struct chanset_t *chan)
       dprintf(DP_MODE, "MODE %s +b\n", chan->name);
     }
     if (!(chan->ircnet_status & CHAN_ASKED_EXEMPTS) &&
-	use_exempts == 1 ) {
+	use_exempts == 1) {
       chan->ircnet_status |= CHAN_ASKED_EXEMPTS;
       dprintf(DP_MODE, "MODE %s +e\n", chan->name);
     }
@@ -465,7 +465,7 @@ static void check_expired_chanstuff()
   exemptlist *e;
   invitelist *inv;
   memberlist *m, *n;
-  char s[UHOSTLEN];
+  char s[UHOSTLEN], *snick, *sfrom;
   struct chanset_t *chan;
   struct flag_record fr =
   {
@@ -488,6 +488,8 @@ static void check_expired_chanstuff()
 	if ((ban_time != 0) && (((now - b->timer) > (60 * ban_time)) &&
 				!u_sticky_ban(chan->bans, b->ban) &&
 				!u_sticky_ban(global_bans, b->ban))) {
+	  strcpy(s, b->who); sfrom = s; snick = splitnick(&sfrom);
+	  if (force_expire || channel_clearbans(chan) || !(snick[0] && strcasecmp(sfrom, botuserhost) && (m=ismember(chan, snick)) && chan_hasop(m) && (m->user->flags & USER_BOT))) {
 	  putlog(LOG_MODES, chan->name,
 		 "(%s) Channel ban on %s expired.",
 		 chan->name, b->ban);
@@ -496,13 +498,16 @@ static void check_expired_chanstuff()
 	}
       }
     }
-    if (use_exempts ==1) {
+    }
+    if (use_exempts == 1) {
       if (channel_dynamicexempts(chan) && me_op(chan)) {
 	for (e = chan->channel.exempt; e->exempt[0]; e = e->next) {
 	  if ((exempt_time != 0) && 
 	      (((now - e->timer) > (60 * exempt_time)) &&
 	       !u_sticky_exempt(chan->exempts, e->exempt) && 
 	       !u_sticky_exempt(global_exempts,e->exempt))) {
+ 	    strcpy(s, e->who); sfrom = s; snick = splitnick(&sfrom);
+	    if (force_expire || channel_clearbans(chan) || !(snick[0] && strcasecmp(sfrom, botuserhost) && (m=ismember(chan, snick)) && chan_hasop(m) && (m->user->flags & USER_BOT))) {
 	    /* Check to see if it matches a ban */
         /* Leave this extra logging in for now. Can be removed later
          * Jason */
@@ -530,14 +535,17 @@ static void check_expired_chanstuff()
 	}
       }
     }
+    }
 
-    if (use_invites ==1 ) {
+    if (use_invites == 1) {
       if (channel_dynamicinvites(chan) && me_op(chan)) {
 	for (inv = chan->channel.invite; inv->invite[0]; inv = inv->next) {
 	  if ((invite_time != 0) &&
 	      (((now - inv->timer) > (60 * invite_time)) &&
 	       !u_sticky_invite(chan->invites, inv->invite) && 
 	       !u_sticky_invite(global_invites,inv->invite))) {
+ 	    strcpy(s, inv->who); sfrom = s; snick = splitnick(&sfrom);
+	    if (force_expire || channel_clearbans(chan) || !(snick[0] && strcasecmp(sfrom, botuserhost) && (m=ismember(chan, snick)) && chan_hasop(m) && (m->user->flags & USER_BOT))) {
         if ((chan->channel.mode & CHANINV) && isinvited(chan,inv->invite)) {
 	      /*Leave this extra logging in for now. Can be removed later
 	       * Jason */
@@ -551,6 +559,7 @@ static void check_expired_chanstuff()
 	      add_mode(chan, '-', 'I', inv->invite);
 	    }
 	    inv->timer = now;
+	    }
 	  }
 	}
       }

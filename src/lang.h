@@ -154,6 +154,7 @@
 #define MISC_BANNER     get_language(0x53e)
 #define MISC_CLOGS      get_language(0x53f)
 #define MISC_BANNER_STEALTH get_language(0x540)
+#define MISC_LOGREPEAT  get_language(0x541)
 
 /* IRC */
 #define IRC_BANNED	get_language(0x600)

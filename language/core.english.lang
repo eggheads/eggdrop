@@ -158,6 +158,7 @@ Telnet to the bot and enter 'NEW' as your nickname.
 0x53e,%B  (%E)\n\nPlease enter your nickname.\n
 0x53f,Cycling logfile %s, over max-logsize (%d)
 0x540,\nNickname.\n
+0x541,Last message repeated %d time(s).\n
 
 # IRC_
 

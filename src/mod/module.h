@@ -307,10 +307,11 @@
 #define global_invites (*(struct inviterec **)(global[221]))
 #define ginvite_total (*(int*)global[222])
 #define gexempt_total (*(int*)global[223])
-/* 224 - 226 */
+/* 224 - 227 */
 #define H_event (*(p_tcl_bind_list *)(global[224]))
 #define use_exempts (*(int *)(global[225]))	/* drummer/Jason */
 #define use_invites (*(int *)(global[226]))	/* drummer/Jason */
+#define force_expire (*(int *)(global[227]))	/* Rufus */
 /* this is for blowfish module, couldnt be bothereed making a whole new .h
  * file for it ;) */
 #ifndef MAKING_BLOWFISH

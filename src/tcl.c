@@ -62,6 +62,7 @@ int debug_tcl = 0;
 int use_silence = 0;
 int use_invites = 0; /* Jason/drummer */
 int use_exempts = 0; /* Jason/drummer */
+int force_expire = 0; /* Rufus */
 int remote_boots = 2;
 int allow_dk_cmds = 1;
 int must_be_owner = 1;
@@ -408,6 +409,7 @@ static tcl_ints def_tcl_ints[] =
   {"paranoid-telnet-flood", &par_telnet_flood, 0},
   {"use-exempts", &use_exempts, 0}, /* Jason/drummer */
   {"use-invites", &use_invites, 0}, /* Jason/drummer */
+  {"force-expire", &force_expire, 0}, /* Rufus */
   {0, 0, 0}			/* arthur2 */
 };
 
