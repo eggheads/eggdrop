@@ -46,7 +46,7 @@ static int convert_old_files(char *path, char *newfiledb)
   s = nmalloc(strlen(path) + 8);
   sprintf(s, "%s/.files", path);
   f = fopen(s, "r");
-  nfree(s);
+  my_free(s);
   if (f == NULL)
     return 0;
 
@@ -90,8 +90,8 @@ static int convert_old_files(char *path, char *newfiledb)
 	  if (fdbe) {
 	    /* File pending. Write to DB */
 	    Context;
-	    filedb_addfile(fdb, POS_NEW, fdbe);
-	    free_fdbe(fdbe);
+	    filedb_addfile(fdb, fdbe);
+	    free_fdbe(&fdbe);
 	  }
 	  fdbe = malloc_fdbe();
 	  in_file = 1;
@@ -129,13 +129,13 @@ static int convert_old_files(char *path, char *newfiledb)
 	}
       }
     }
-    nfree(s);
+    my_free(s);
   }
   if (fdbe) {
     /* File pending. Write to DB */
     Context;
-    filedb_addfile(fdb, POS_NEW, fdbe);
-    free_fdbe(fdbe);
+    filedb_addfile(fdb, fdbe);
+    free_fdbe(&fdbe);
   }
   fseek(fdb, 0, SEEK_END);
   unlockfile(f);
@@ -176,8 +176,8 @@ static void convert_version1(FILE *fdb_s, FILE *fdb_t)
 	fdbe->gots = fdb1.gots;
 	if (fdb1.sharelink[0])
 	  malloc_strcpy(fdbe->sharelink, fdb1.sharelink);
-	filedb_addfile(fdb_s, POS_NEW, fdbe);
-	free_fdbe(fdbe);
+	filedb_addfile(fdb_s, fdbe);
+	free_fdbe(&fdbe);
       }
     }
   }
@@ -215,8 +215,8 @@ static void convert_version2(FILE *fdb_s, FILE *fdb_t)
 	fdbe->gots = fdb2.gots;
 	if (fdb2.sharelink[0])
 	  malloc_strcpy(fdbe->sharelink, fdb2.sharelink);
-	filedb_addfile(fdb_t, POS_NEW, fdbe);
-	free_fdbe(fdbe);
+	filedb_addfile(fdb_t, fdbe);
+	free_fdbe(&fdbe);
       }
     }
   }
@@ -283,7 +283,7 @@ static int convert_old_db(FILE **fdb_s, char *filedb)
       } else
         putlog(LOG_MISC, "*", "(!) Reopening db %s failed.", filedb);
     }
-    nfree(tempdb);
+    my_free(tempdb);
     Context;
   /* Database already at the newest version? */
   } else if (fdbt.version == FILEDB_VERSION3) {

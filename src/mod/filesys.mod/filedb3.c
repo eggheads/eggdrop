@@ -74,24 +74,24 @@ static int count = 0;
 
 /* Frees a filedb entry and all it's elements.
  */
-static void free_fdbe(filedb_entry *fdbe)
+static void free_fdbe(filedb_entry **fdbe)
 {
-  if (!fdbe)
+  if (!fdbe || !*fdbe)
     return;
   Context;
-  if (fdbe->filename)
-    nfree(fdbe->filename);
-  if (fdbe->desc)
-    nfree(fdbe->desc);
-  if (fdbe->sharelink)
-    nfree(fdbe->sharelink);
-  if (fdbe->chan)
-    nfree(fdbe->chan);
-  if (fdbe->uploader)
-    nfree(fdbe->uploader);
-  if (fdbe->flags_req)
-    nfree(fdbe->flags_req);
-  nfree(fdbe);
+  if ((*fdbe)->filename)
+    my_free((*fdbe)->filename);
+  if ((*fdbe)->desc)
+    my_free((*fdbe)->desc);
+  if ((*fdbe)->sharelink)
+    my_free((*fdbe)->sharelink);
+  if ((*fdbe)->chan)
+    my_free((*fdbe)->chan);
+  if ((*fdbe)->uploader)
+    my_free((*fdbe)->uploader);
+  if ((*fdbe)->flags_req)
+    my_free((*fdbe)->flags_req);
+  my_free(*fdbe);
   Context;
 }
 
@@ -109,6 +109,9 @@ static filedb_entry *_malloc_fdbe(char *file, int line)
   fdbe = nmalloc(sizeof(filedb_entry));
 #endif
   bzero(fdbe, sizeof(filedb_entry));
+
+  /* Mark as new, will be overwritten if necessary. */
+  fdbe->_type = TYPE_NEW;
   return fdbe;
 }
 
@@ -236,10 +239,8 @@ static filedb_entry *filedb_findempty(FILE *fdb, int tot)
 	fdbe_oe->stat = FILE_UNUSED;
 	fdbe_oe->pos = fdbe->pos + sizeof(filedb_header) + tot;
 	fdbe_oe->buf_len = fdbe->buf_len - tot - sizeof(filedb_header);
-	fdbe_oe->_type = TYPE_EXIST;
-
-	filedb_updatefile(fdb, fdbe_oe->pos, fdbe_oe, UPDATE_SIZE);
-	free_fdbe(fdbe_oe);
+	filedb_movefile(fdb, fdbe_oe->pos, fdbe_oe);
+	free_fdbe(&fdbe_oe);
 
 	/* Cut down buf_len of entry as the rest is now used in the new
 	 * entry. */
@@ -248,7 +249,7 @@ static filedb_entry *filedb_findempty(FILE *fdb, int tot)
       Context;
       return fdbe;		
     }
-    free_fdbe(fdbe);
+    free_fdbe(&fdbe);
     fdbe = filedb_getfile(fdb, ftell(fdb), GET_HEADER);
   }
 
@@ -357,7 +358,7 @@ static int _filedb_updatefile(FILE *fdb, long pos, filedb_entry *fdbe,
       nbuftot = n_fdbe->buf_len - ndyntot;
     else
       nbuftot = 0;
-    free_fdbe(n_fdbe);
+    free_fdbe(&n_fdbe);
   }
 
   /* Set length of dynamic data and buffer */
@@ -386,14 +387,24 @@ static int _filedb_updatefile(FILE *fdb, long pos, filedb_entry *fdbe,
   return 0;
 }
 
+/* Moves an existing file entry, saved in fdbe to a new position.
+ */
+static int _filedb_movefile(FILE *fdb, long pos, filedb_entry *fdbe,
+			    char *file, int line)
+{
+  Context;
+  fdbe->_type = TYPE_EXIST;
+  _filedb_updatefile(fdb, pos, fdbe, UPDATE_ALL, file, line);
+  return 0;
+}
+
 /* Adds a completely new file.
  */
-static int _filedb_addfile(FILE *fdb, long pos, filedb_entry *fdbe,
-			   char *file, int line)
+static int _filedb_addfile(FILE *fdb, filedb_entry *fdbe, char *file, int line)
 {
   Context;
   fdbe->_type = TYPE_NEW;
-  _filedb_updatefile(fdb, pos, fdbe, UPDATE_ALL, file, line);
+  _filedb_updatefile(fdb, POS_NEW, fdbe, UPDATE_ALL, file, line);
   return 0;
 }
 
@@ -479,13 +490,13 @@ static filedb_entry *_filedb_matchfile(FILE *fdb, long pos, char *match,
     if (fdbe) {
       if (!(fdbe->stat & FILE_UNUSED) &&	    /* Not unused?	   */
 	  wild_match_file(match, fdbe->filename)) { /* Matches our mask?   */
-        free_fdbe(fdbe);
+        free_fdbe(&fdbe);
         fdbe = _filedb_getfile(fdb, pos, GET_FULL,
 			       file, line);	    /* Save all data now   */
 	Context;
         return fdbe;
       }
-      free_fdbe(fdbe);
+      free_fdbe(&fdbe);
     }
   }
   Context;
@@ -509,22 +520,22 @@ static void filedb_cleanup(FILE *fdb)
     fdbe = filedb_getfile(fdb, oldpos, GET_HEADER);	/* Read header	   */
     if (fdbe) {
       if (fdbe->stat & FILE_UNUSED) {			/* Found dirt!	   */
-        free_fdbe(fdbe);
+        free_fdbe(&fdbe);
 	while (!feof(fdb)) {				/* Loop until EOF  */
 	  newpos = ftell(fdb);
 	  fdbe = filedb_getfile(fdb, newpos, GET_FULL);	/* Read next entry */
 	  if (!fdbe)
 	    break;
 	  if (!(fdbe->stat & FILE_UNUSED)) {		/* Not unused?	   */
-	    temppos = ftell(fdb);		
-	    filedb_addfile(fdb, oldpos, fdbe);		/* Move to top	   */
+	    temppos = ftell(fdb);
+	    filedb_movefile(fdb, oldpos, fdbe);		/* Move to top	   */
 	    oldpos = ftell(fdb);
 	    fseek(fdb, temppos, SEEK_SET);
 	  }
-	  free_fdbe(fdbe);
+	  free_fdbe(&fdbe);
 	}
       } else {
-        free_fdbe(fdbe);
+        free_fdbe(&fdbe);
 	oldpos = ftell(fdb);
       }
     }
@@ -561,14 +572,14 @@ static void filedb_mergeempty(FILE *fdb)
 	   * our target entry's buffer space. */
 	  fdbe_t->buf_len += sizeof(filedb_header) + fdbe_i->buf_len;
 	  modified++;
-	  free_fdbe(fdbe_i);
+	  free_fdbe(&fdbe_i);
 	  /* Get next file entry */
 	  fdbe_i = filedb_getfile(fdb, ftell(fdb), GET_HEADER);
 	}
 
 	/* Did we exit the loop because of a used entry? */
 	if (fdbe_i) {
-	  free_fdbe(fdbe_i);
+	  free_fdbe(&fdbe_i);
 	  /* Did we find any empty entries before? */
 	  if (modified)
 	    filedb_updatefile(fdb, fdbe_t->pos, fdbe_t, UPDATE_SIZE);
@@ -576,12 +587,12 @@ static void filedb_mergeempty(FILE *fdb)
 	} else {
 	  /* Truncate trailing empty entries and exit. */
 	  ftruncate(fileno(fdb), fdbe_t->pos);
-	  free_fdbe(fdbe_t);
+	  free_fdbe(&fdbe_t);
 	  Context;
 	  return;
 	}
       }
-      free_fdbe(fdbe_t);
+      free_fdbe(&fdbe_t);
     }
   }
   Context;
@@ -633,13 +644,13 @@ static void filedb_timestamp(FILE * fdb)
  */
 static void filedb_update(char *path, FILE * fdb, int sort)
 {
-  struct dirent *dd;
-  DIR *dir;
-  char *name = NULL;
-  long where;
-  struct stat st;
-  char *s;
-  filedb_entry *fdbe;
+  struct dirent *dd    = NULL;
+  struct stat    st;
+  filedb_entry  *fdbe  = NULL;
+  DIR           *dir   = NULL;
+  long           where = 0;
+  char          *name  = NULL;
+  char          *s     = NULL;
 
   /*
    * FIRST: make sure every real file is in the database
@@ -657,7 +668,7 @@ static void filedb_update(char *path, FILE * fdb, int sort)
       s = nmalloc(strlen(path) + strlen(name) + 2);
       sprintf(s, "%s/%s", path, name);
       stat(s, &st);
-      nfree(s);
+      my_free(s);
       filedb_readtop(fdb, NULL);
       fdbe = filedb_matchfile(fdb, ftell(fdb), name);
       if (!fdbe) {
@@ -669,17 +680,16 @@ static void filedb_update(char *path, FILE * fdb, int sort)
 	fdbe->size = st.st_size;
 	if (S_ISDIR(st.st_mode))
 	  fdbe->stat |= FILE_DIR;
-	filedb_addfile(fdb, POS_NEW, fdbe);
+	filedb_addfile(fdb, fdbe);
       } else if (fdbe->size != st.st_size) {
 	/* update size if needed */
 	fdbe->size = st.st_size;
 	filedb_updatefile(fdb, fdbe->pos, fdbe, UPDATE_HEADER);
       }
-      free_fdbe(fdbe);
+      free_fdbe(&fdbe);
     }
     dd = readdir(dir);
-    nfree(name);
-    name = NULL;
+    my_free(name);
   }
   closedir(dir);
 
@@ -697,9 +707,9 @@ static void filedb_update(char *path, FILE * fdb, int sort)
       if (stat(s, &st) != 0)
 	/* gone file */
 	filedb_delfile(fdb, fdbe->pos);
-      nfree(s);
+      my_free(s);
     }
-    free_fdbe(fdbe);
+    free_fdbe(&fdbe);
     fdbe = filedb_getfile(fdb, where, GET_FILENAME);
   }
 
@@ -721,7 +731,8 @@ static void filedb_update(char *path, FILE * fdb, int sort)
  */
 static char *make_point_path(char *path)
 {
-    char *s2 = NULL, *p;
+    char *s2 = NULL,
+	 *p  = NULL;
 
     malloc_strcpy(s2, path);
     if (s2[strlen(s2) - 1] == '/')
@@ -754,7 +765,7 @@ static FILE *filedb_open(char *path, int sort)
     s2 = make_point_path(path);
     s = nmalloc(strlen(filedb_path) + strlen(s2) + 8);
     simple_sprintf(s, "%sfiledb.%s", filedb_path, s2);
-    nfree(s2);
+    my_free(s2);
   } else {
     s = nmalloc(strlen(npath) + 10);
     simple_sprintf(s, "%s/.filedb", npath);
@@ -765,14 +776,16 @@ static FILE *filedb_open(char *path, int sort)
       fdb = fopen(s, "r+b");
       if (fdb == NULL) {
 	putlog(LOG_MISC, FILES_NOCONVERT, npath);
-	nfree2(s, npath);
+	my_free(s);
+	my_free(npath);
 	Context;
         return NULL;
       }
       lockfile(fdb);
       filedb_update(npath, fdb, sort);
       count++;
-      nfree2(s, npath);
+      my_free(s);
+      my_free(npath);
       Context;
       return fdb;
     } else {
@@ -781,7 +794,8 @@ static FILE *filedb_open(char *path, int sort)
       /* create new database and fix it up */
       fdb = fopen(s, "w+b");
       if (!fdb) {
-	nfree2(s, npath);
+	my_free(s);
+	my_free(npath);
 	Context;
 	return NULL;
       }
@@ -791,7 +805,8 @@ static FILE *filedb_open(char *path, int sort)
       filedb_writetop(fdb, &fdbt);
       filedb_update(npath, fdb, sort);
       count++;
-      nfree2(s, npath);
+      my_free(s);
+      my_free(npath);
       Context;
       return fdb;
     }
@@ -806,7 +821,8 @@ static FILE *filedb_open(char *path, int sort)
        * for fdb != NULL.) */
       if (fdb)
         unlockfile(fdb);
-      nfree2(npath, s);
+      my_free(npath);
+      my_free(s);
       Context;
       return NULL;
     }
@@ -827,7 +843,8 @@ static FILE *filedb_open(char *path, int sort)
     filedb_mergeempty(fdb);
 
   count++;
-  nfree2(npath, s);
+  my_free(npath);
+  my_free(s);
   Context;
   return fdb;
 }
@@ -851,18 +868,19 @@ static void filedb_close(FILE * fdb)
  */
 static void filedb_add(FILE * fdb, char *filename, char *nick)
 {
-  filedb_entry *fdbe;
+  filedb_entry *fdbe = NULL;
 
   Context;
   filedb_readtop(fdb, NULL);
-  /* when the filedb was opened, a record was already created */
+  /* When the filedb was opened, a record was already created. */
   fdbe = filedb_matchfile(fdb, ftell(fdb), filename);
   if (!fdbe)
     return;
+  my_free(fdbe->uploader);
   malloc_strcpy(fdbe->uploader, nick);
   fdbe->uploaded = now;
   filedb_updatefile(fdb, fdbe->pos, fdbe, UPDATE_ALL);
-  free_fdbe(fdbe);
+  free_fdbe(&fdbe);
 }
 
 /* Outputs a sorted list of files/directories matching the mask,
@@ -870,11 +888,11 @@ static void filedb_add(FILE * fdb, char *filename, char *nick)
  */
 static void filedb_ls(FILE *fdb, int idx, char *mask, int showall)
 {
-  int ok = 0, cnt = 0, is = 0;
-  char s1[81], *p;
-  struct flag_record user = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
-  filedb_entry *fdbe;
-  filelist_t *flist;
+  int  ok = 0, cnt = 0, is = 0;
+  char s1[81], *p = NULL;
+  struct flag_record user  = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
+  filedb_entry *fdbe  = NULL;
+  filelist_t   *flist = NULL;
 
   Context;
   flist = filelist_new();
@@ -908,17 +926,16 @@ static void filedb_ls(FILE *fdb, int idx, char *mask, int showall)
       }
       filelist_add(flist, fdbe->filename);
       if (fdbe->stat & FILE_DIR) {
-	char *s2, *s3;
+	char *s2 = NULL, *s3 = NULL;
 
 	Context;
-	/* too long? */
+	/* Too long? */
 	if (strlen(fdbe->filename) > 45) {
+	  /* Display the filename on its own line. */
 	  s2 = nmalloc(strlen(fdbe->filename) + 3);
 	  sprintf(s2, "%s/\n", fdbe->filename);
 	  filelist_addout(flist, s2);
-	  nfree(s2);
-	  s2 = NULL;
-	  /* causes filename to be displayed on its own line */
+	  my_free(s2);
 	} else {
 	  s2 = nmalloc(strlen(fdbe->filename) + 2);
 	  sprintf(s2, "%s/", fdbe->filename);
@@ -940,9 +957,9 @@ static void filedb_ls(FILE *fdb, int idx, char *mask, int showall)
 	  sprintf(s3, "%-30s <DIR>\n", s2 ? s2 : "");
 	}
 	if (s2)
-	  nfree(s2);
+	  my_free(s2);
 	filelist_addout(flist, s3);
-	nfree(s3);
+	my_free(s3);
       } else {
 	char s2[41], t[50], *s3 = NULL, *s4;
 
@@ -972,8 +989,7 @@ static void filedb_ls(FILE *fdb, int idx, char *mask, int showall)
 	  s3 = nmalloc(strlen(fdbe->filename) + 2);
 	  sprintf(s3, "%s\n", fdbe->filename);
 	  filelist_addout(flist, s3);
-	  nfree(s3);
-	  s3 = NULL;
+	  my_free(s3);
 	  /* causes filename to be displayed on its own line */
 	} else
 	  malloc_strcpy(s3, fdbe->filename);
@@ -982,14 +998,14 @@ static void filedb_ls(FILE *fdb, int idx, char *mask, int showall)
 	sprintf(s4, "%-30s %s  %-9s (%s)  %6d%s\n", s3, s1,
 		fdbe->uploader, t, fdbe->gots, s2);
 	if (s3)
-	  nfree(s3);
+	  my_free(s3);
 	filelist_addout(flist, s4);
-	nfree(s4);
+	my_free(s4);
 	if (fdbe->sharelink) {
 	  s4 = nmalloc(9 + strlen(fdbe->sharelink));
 	  sprintf(s4, "   --> %s\n", fdbe->sharelink);
 	  filelist_addout(flist, s4);
-	  nfree(s4);
+	  my_free(s4);
 	}
       }
       if (fdbe->desc) {
@@ -1002,7 +1018,7 @@ static void filedb_ls(FILE *fdb, int idx, char *mask, int showall)
 	    sd = nmalloc(strlen(fdbe->desc) + 5);
 	    sprintf(sd, "   %s\n", fdbe->desc);
 	    filelist_addout(flist, sd);
-	    nfree(sd);
+	    my_free(sd);
 	  }
 	  strcpy(fdbe->desc, p + 1);
 	  p = strchr(fdbe->desc, '\n');
@@ -1013,12 +1029,12 @@ static void filedb_ls(FILE *fdb, int idx, char *mask, int showall)
 	  sd = nmalloc(strlen(fdbe->desc) + 5);
 	  sprintf(sd, "   %s\n", fdbe->desc);
 	  filelist_addout(flist, sd);
-	  nfree(sd);
+	  my_free(sd);
 	}
       }
       cnt++;
     }
-    free_fdbe(fdbe);
+    free_fdbe(&fdbe);
     fdbe = filedb_getfile(fdb, ftell(fdb), GET_FULL);
   }
   if (is == 0)
@@ -1036,10 +1052,11 @@ static void filedb_ls(FILE *fdb, int idx, char *mask, int showall)
 
 static void remote_filereq(int idx, char *from, char *file)
 {
-  char *p, *what = NULL, *dir = NULL, *s, *s1, *reject;
-  FILE *fdb;
-  int i;
-  filedb_entry *fdbe;
+  char *p   = NULL, *what   = NULL, *dir = NULL,
+       *s1  = NULL, *reject = NULL, *s   = NULL;
+  FILE *fdb = NULL;
+  int	i   = 0;
+  filedb_entry *fdbe = NULL;
 
   Context;
   malloc_strcpy(what, file);
@@ -1052,7 +1069,6 @@ static void remote_filereq(int idx, char *from, char *file)
     malloc_strcpy(dir, "");
   }
   fdb = filedb_open(dir, 0);
-  reject = NULL;
   if (!fdb) {
     reject = FILES_DIRDNE;
   } else {
@@ -1062,7 +1078,7 @@ static void remote_filereq(int idx, char *from, char *file)
     if (!fdbe) {
       reject = FILES_FILEDNE;
     } else {
-      free_fdbe(fdbe);
+      free_fdbe(&fdbe);
       if ((!(fdbe->stat & FILE_SHARE)) ||
 	  (fdbe->stat & (FILE_HIDDEN | FILE_DIR)))
 	reject = FILES_NOSHARE;
@@ -1082,8 +1098,8 @@ static void remote_filereq(int idx, char *from, char *file)
 	  reject = FILES_SENDERR;
 	}
 	if (s1 != s)
-	  nfree(s);
-	nfree(s1);
+	  my_free(s);
+	my_free(s1);
       }
     }
   }
@@ -1091,7 +1107,9 @@ static void remote_filereq(int idx, char *from, char *file)
   simple_sprintf(s1, "%s:%s/%s", botnetnick, dir, what);
   if (reject) {
     botnet_send_filereject(idx, s1, from, reject);
-    nfree3(s1, what, dir);
+    my_free(s1);
+    my_free(what);
+    my_free(dir);
     Context;
     return;
   }
@@ -1102,7 +1120,10 @@ static void remote_filereq(int idx, char *from, char *file)
 		dcc[i].u.xfer->length);
   botnet_send_filesend(idx, s1, from, s);
   putlog(LOG_FILES, "*", FILES_REMOTEREQ, dir, dir[0] ? "/" : "", what);
-  nfree4(s1, s, what, dir);
+  my_free(s1);
+  my_free(s);
+  my_free(what);
+  my_free(dir);
   Context;
 }
 
@@ -1110,49 +1131,49 @@ static void remote_filereq(int idx, char *from, char *file)
 
 static void filedb_getdesc(char *dir, char *fn, char **desc)
 {
-  filedb_entry *fdbe;
+  filedb_entry *fdbe = NULL;
 
   Assert(desc);
   fdbe = filedb_getentry(dir, fn);
   if (fdbe) {
     *desc = nmalloc(strlen(fdbe->desc) + 1);
     strcpy(*desc, fdbe->desc);
-    free_fdbe(fdbe);
+    free_fdbe(&fdbe);
   } else
     *desc = NULL;
 }
 
 static void filedb_getowner(char *dir, char *fn, char **owner)
 {
-  filedb_entry *fdbe;
+  filedb_entry *fdbe = NULL;
 
   Assert(owner);
   fdbe = filedb_getentry(dir, fn);
   if (fdbe) {
     *owner = nmalloc(strlen(fdbe->uploader) + 1);
     strcpy(*owner, fdbe->uploader);
-    free_fdbe(fdbe);
+    free_fdbe(&fdbe);
   } else
     *owner = NULL;
 }
 
 static int filedb_getgots(char *dir, char *fn)
 {
-  filedb_entry *fdbe;
-  int gots = 0;
+  filedb_entry *fdbe = NULL;
+  int	        gots = 0;
 
   fdbe = filedb_getentry(dir, fn);
   if (fdbe) {
     gots = fdbe->gots;
-    free_fdbe(fdbe);
+    free_fdbe(&fdbe);
   }
   return gots;
 }
 
 static void filedb_setdesc(char *dir, char *fn, char *desc)
 {
-  FILE *fdb;
-  filedb_entry *fdbe;
+  filedb_entry *fdbe = NULL;
+  FILE         *fdb  = NULL;
 
   fdb = filedb_open(dir, 0);
   if (!fdb)
@@ -1160,19 +1181,18 @@ static void filedb_setdesc(char *dir, char *fn, char *desc)
   filedb_readtop(fdb, NULL);
   fdbe = filedb_matchfile(fdb, ftell(fdb), fn);
   if (fdbe) {
-    if (fdbe->desc)
-      nfree(fdbe->desc);
+    my_free(fdbe->desc);
     malloc_strcpy(fdbe->desc, desc);
     filedb_updatefile(fdb, fdbe->pos, fdbe, UPDATE_ALL);
-    free_fdbe(fdbe);
+    free_fdbe(&fdbe);
   }
   filedb_close(fdb);
 }
 
 static void filedb_setowner(char *dir, char *fn, char *owner)
 {
-  FILE *fdb;
-  filedb_entry *fdbe;
+  filedb_entry *fdbe = NULL;
+  FILE         *fdb  = NULL;
 
   fdb = filedb_open(dir, 0);
   if (!fdb)
@@ -1180,19 +1200,18 @@ static void filedb_setowner(char *dir, char *fn, char *owner)
   filedb_readtop(fdb, NULL);
   fdbe = filedb_matchfile(fdb, ftell(fdb), fn);
   if (fdbe) {
-    if (fdbe->uploader)
-      nfree(fdbe->uploader);
+    my_free(fdbe->uploader);
     malloc_strcpy(fdbe->uploader, owner);
     filedb_updatefile(fdb, fdbe->pos, fdbe, UPDATE_ALL);
-    free_fdbe(fdbe);
+    free_fdbe(&fdbe);
   }
   filedb_close(fdb);
 }
 
 static void filedb_setlink(char *dir, char *fn, char *link)
 {
-  FILE *fdb;
-  filedb_entry *fdbe;
+  filedb_entry *fdbe = NULL;
+  FILE	       *fdb  = NULL;
 
   fdb = filedb_open(dir, 0);
   if (!fdb)
@@ -1206,12 +1225,11 @@ static void filedb_setlink(char *dir, char *fn, char *link)
     if (!link || !link[0])
       filedb_delfile(fdb, fdbe->pos);
     else {
-      if (fdbe->sharelink)
-	nfree(fdbe->sharelink);
+      my_free(fdbe->sharelink);
       malloc_strcpy(fdbe->sharelink, link);
       filedb_updatefile(fdb, fdbe->pos, fdbe, UPDATE_ALL);
     }
-    free_fdbe(fdbe);
+    free_fdbe(&fdbe);
     return;
   }
 
@@ -1220,23 +1238,23 @@ static void filedb_setlink(char *dir, char *fn, char *link)
   malloc_strcpy(fdbe->filename, fn);
   malloc_strcpy(fdbe->sharelink, link);
   fdbe->uploaded = now;
-  filedb_addfile(fdb, POS_NEW, fdbe);
-  free_fdbe(fdbe);
+  filedb_addfile(fdb, fdbe);
+  free_fdbe(&fdbe);
   filedb_close(fdb);
 }
 
 static void filedb_getlink(char *dir, char *fn, char **link)
 {
-  filedb_entry *fdbe;
+  filedb_entry *fdbe = NULL;
 
   Assert(link);
   fdbe = filedb_getentry(dir, fn);
-  if (fdbe && !(fdbe->stat & FILE_DIR)) {
-    *link = nmalloc(strlen(fdbe->sharelink) + 1);
-    strcpy(*link, fdbe->sharelink);
-    free_fdbe(fdbe);
+  if (fdbe && (!(fdbe->stat & FILE_DIR))) {
+    malloc_strcpy(*link, fdbe->sharelink);
   } else
     *link = NULL;
+  if (fdbe)
+    free_fdbe(&fdbe);
   return;
 }
 
@@ -1254,7 +1272,7 @@ static void filedb_getfiles(Tcl_Interp * irp, char *dir)
     if (fdbe) {
       if (!(fdbe->stat & (FILE_DIR | FILE_UNUSED)))
 	Tcl_AppendElement(irp, fdbe->filename);
-      free_fdbe(fdbe);
+      free_fdbe(&fdbe);
     }
   }
   filedb_close(fdb);
@@ -1274,7 +1292,7 @@ static void filedb_getdirs(Tcl_Interp * irp, char *dir)
     if (fdbe) {
       if ((!(fdbe->stat & FILE_UNUSED)) && (fdbe->stat & FILE_DIR))
 	Tcl_AppendElement(irp, fdbe->filename);
-      free_fdbe(fdbe);
+      free_fdbe(&fdbe);
     }
   }
   filedb_close(fdb);
@@ -1308,7 +1326,7 @@ static void filedb_change(char *dir, char *fn, int what)
       }
       filedb_updatefile(fdb, fdbe->pos, fdbe, UPDATE_HEADER);
     }
-    free_fdbe(fdbe);
+    free_fdbe(&fdbe);
   }
   filedb_close(fdb);
 }

@@ -42,12 +42,12 @@ static void filelist_free(filelist_t *flist) {
     return;
   for (i = 0; i < flist->tot; i++) {
     if (flist->elements[i].output)
-      nfree(flist->elements[i].output);
-    nfree(flist->elements[i].fn);
+      my_free(flist->elements[i].output);
+    my_free(flist->elements[i].fn);
   }
   if (flist->elements)
-    nfree(flist->elements);
-  nfree(flist);
+    my_free(flist->elements);
+  my_free(flist);
 }
 
 /* Increase number of filelist entries */

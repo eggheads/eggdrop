@@ -70,7 +70,7 @@ see also: pending, cancel
 %{+j}
 Janitor only:
   %bhide      share     mkdir     cp        rm        lsa%b
-  %bunhide    unshare   rmdir     mv        ln	      sort%b
+  %bunhide    unshare   rmdir     mv        ln        optimise%b
   %bfilestats%b
 %{+x}
 You can get help on any command via:  %bhelp <command>%b
@@ -163,10 +163,16 @@ see also: mkdir
    files are marked as unshared.
    
 see also: unshare, lsa, ln
+%{help=filesys/optimise}%{+j}
+###  %boptimise%b
+   cleans up the current directory's database.  if you have a large
+   directory with many files you may want to use this command if
+   you experience slow-downs/delays over time.  normally, the db
+   should clean up itsself though.
 %{help=filesys/sort}%{+j}
 ###  %bsort%b
-   sorts the files in the current directory into ascending
-   alphabetical order.
+   this command is obsolete, because the directory is always
+   sorted on the fly.
 %{help=filesys/unhide}%{+j}
 ###  %bunhide%b <file(s)>
    makes a file be not hidden any more.

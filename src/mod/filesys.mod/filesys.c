@@ -245,7 +245,7 @@ static void dcc_files(int idx, char *buf, int i)
 
       dprintf(idx, "Returning you to command mode...\n");
       ci = dcc[idx].u.file->chat;
-      nfree(dcc[idx].u.file);
+      my_free(dcc[idx].u.file);
       dcc[idx].u.chat = ci;
       dcc[idx].status &= (~STAT_CHAT);
       dcc[idx].type = &DCC_CHAT;
@@ -331,7 +331,7 @@ static int cmd_files(struct userrec *u, int idx, char *par)
       if (!welcome_to_files(idx)) {
 	struct chat_info *ci = dcc[idx].u.file->chat;
 
-	nfree(dcc[idx].u.file);
+	my_free(dcc[idx].u.file);
 	dcc[idx].u.chat = ci;
 	dcc[idx].type = &DCC_CHAT;
 	putlog(LOG_FILES, "*", "File system broken.");
@@ -440,7 +440,7 @@ static int do_dcc_send(int idx, char *dir, char *nick, int resend)
     dprintf(idx, "No such file.\n");
     putlog(LOG_FILES, "*", "Refused dcc %sget %s from [%s]", resend ? "re" : "",
 	   fn, dcc[idx].nick);
-    nfree(s);
+    my_free(s);
     return 0;
   }
   fclose(f);
@@ -453,7 +453,7 @@ static int do_dcc_send(int idx, char *dir, char *nick, int resend)
     sprintf(xxx, "%d*%s%s", strlen(dccdir), dccdir, dir);
     queue_file(xxx, fn, dcc[idx].nick, nick);
     dprintf(idx, "Queued: %s to %s\n", fn, nick);
-    nfree(s);
+    my_free(s);
     return 1;
   }
   if (copy_to_tmp) {
@@ -464,14 +464,14 @@ static int do_dcc_send(int idx, char *dir, char *nick, int resend)
     sprintf(s, "%s%s%s%s", dccdir, dir, dir[0] ? "/" : "", fn);
     s1 = nrealloc(s1, strlen(tempdir) + strlen(tempfn) + 1);
     sprintf(s1, "%s%s", tempdir, tempfn);
-    nfree(tempfn);
+    my_free(tempfn);
     if (copyfile(s, s1) != 0) {
       dprintf(idx, "Can't make temporary copy of file!\n");
       putlog(LOG_FILES | LOG_MISC, "*",
 	     "Refused dcc %sget %s: copy to %s FAILED!",
 	     resend ? "re" : "", fn, tempdir);
-      nfree(s);
-      nfree(s1);
+      my_free(s);
+      my_free(s1);
       return 0;
     }
   } else {
@@ -483,8 +483,8 @@ static int do_dcc_send(int idx, char *dir, char *nick, int resend)
   x = _dcc_send(idx, s1, nick, s, resend);
   if (x != DCCSEND_OK)
     wipe_tmp_filename(s1, -1);
-  nfree(s);
-  nfree(s1);
+  my_free(s);
+  my_free(s1);
   return x;
 }
 
@@ -539,7 +539,7 @@ static void kill_dcc_files(int idx, void *x)
 
   if (f->chat)
     DCC_CHAT.kill(idx, f->chat);
-  nfree(x);
+  my_free(x);
 }
 
 static void eof_dcc_files(int idx)
@@ -659,7 +659,7 @@ static void filesys_dcc_send(char *nick, char *from, struct userrec *u,
     } else {
       /* This looks like a good place for a sanity check. */
       if (!sanitycheck_dcc(nick, from, ip, prt)) {
-	nfree(buf);
+	my_free(buf);
 	return;
       }
       i = new_dcc(&DCC_DNSWAIT, sizeof(struct dns_info));
@@ -688,7 +688,7 @@ static void filesys_dcc_send(char *nick, char *from, struct userrec *u,
       dns_hostbyip(dcc[i].addr);
     }
   }
-  nfree(buf);
+  my_free(buf);
 }
 
 /* Create a temporary filename with random elements. Shortens
@@ -717,7 +717,7 @@ static char *mktempfile(char *filename)
   tempname = nmalloc(l + MKTEMPFILE_TOT + 1);
   sprintf(tempname, "%u-%s-%s", getpid(), rands, fn);
   if (fn != filename)
-    nfree(fn);
+    my_free(fn);
   return tempname;
 }
 
@@ -749,7 +749,8 @@ static void filesys_dcc_send_hostresolved(int i)
   dcc[i].u.xfer->filename = get_data_ptr(strlen(tempf) + 1);
   strcpy(dcc[i].u.xfer->filename, tempf);
   /* we don't need the temporary buffers anymore */
-  nfree2(tempf, param);
+  my_free(tempf);
+  my_free(param);
 
   if (upload_to_cd) {
     char *p = get_user(&USERENTRY_DCCDIR, dcc[i].user);
@@ -766,7 +767,7 @@ static void filesys_dcc_send_hostresolved(int i)
   sprintf(s1, "%s%s", dcc[i].u.xfer->dir, dcc[i].u.xfer->origname);
   Context;      
   f = fopen(s1, "r");
-  nfree(s1);
+  my_free(s1);
   if (f) {
     fclose(f);
     dprintf(DP_HELP, "NOTICE %s :That file already exists.\n", dcc[i].nick);
@@ -789,7 +790,7 @@ static void filesys_dcc_send_hostresolved(int i)
     s1 = nmalloc(strlen(tempdir) + strlen(dcc[i].u.xfer->filename) + 1);
     sprintf(s1, "%s%s", tempdir, dcc[i].u.xfer->filename);
     dcc[i].u.xfer->f = fopen(s1, "w");
-    nfree(s1);
+    my_free(s1);
     if (dcc[i].u.xfer->f == NULL) {
       dprintf(DP_HELP,
 	      "NOTICE %s :Can't create that file (temp dir error)\n",

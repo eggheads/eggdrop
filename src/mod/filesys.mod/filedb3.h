@@ -58,7 +58,8 @@ typedef struct {
   unsigned short int gots;		/* number of gets		*/
   unsigned short int _type;		/* type of entry (private)	*/
 
-  /* NOTE: These two are only valid during one db open/close */
+  /* NOTE: These two are only valid during one db open/close. During entry
+   *       movements, this may be even shorter. */
   long pos;				/* last position in the filedb	*/
   unsigned short int dyn_len;		/* length of dynamic data in DB	*/
   unsigned short int buf_len;		/* length of additional buffer	*/
@@ -76,18 +77,22 @@ typedef struct {
  *   Macros
  */
 
+#define my_free(ptr)							\
+  if (ptr) {								\
+    nfree(ptr);								\
+    ptr = NULL;								\
+  }
+
 /* Copy entry to target -- Uses dynamic memory allocation, which
  * means you'll eventually have to free the memory again. 'target'
- * has to be defined, either NULL or with allocated memory.
+ * will be overwritten.
  */
 #define malloc_strcpy(target, entry)					\
 {									\
+  my_free(target);							\
   if (entry) {								\
-    target = nrealloc(target, strlen(entry) + 1);			\
+    target = nmalloc(strlen(entry) + 1);				\
     strcpy(target, entry);						\
-  } else if (target) {							\
-    nfree(target);							\
-    target = NULL;							\
   }									\
 }
 
@@ -102,19 +107,13 @@ typedef struct {
 	(fdh).flags_req_len = 0;					\
 }
 
-/* Free several memory blocks in one go. */
-#define nfree2(x1, x2) { nfree(x1); nfree(x2); }
-#define nfree3(x1, x2, x3) { nfree(x1); nfree(x2); nfree(x3); }
-#define nfree4(x1, x2, x3, x4) { nfree(x1); nfree(x2); nfree(x3); nfree(x4); }
-#define nfree5(x1, x2, x3, x4, x5) { nfree(x1); nfree(x2); nfree(x3); \
-    				     nfree(x4); nfree(x5); }
-
 /* Memory debugging makros */
 #define malloc_fdbe() _malloc_fdbe(__FILE__, __LINE__)
 #define filedb_getfile(fdb, pos, get) _filedb_getfile(fdb, pos, get, __FILE__, __LINE__)
 #define filedb_matchfile(fdb, pos, match) _filedb_matchfile(fdb, pos, match, __FILE__, __LINE__)
 #define filedb_updatefile(fdb, pos, fdbe, update) _filedb_updatefile(fdb, pos, fdbe, update, __FILE__, __LINE__)
-#define filedb_addfile(fdb, pos, fdbe) _filedb_addfile(fdb, pos, fdbe, __FILE__, __LINE__)
+#define filedb_addfile(fdb, fdbe) _filedb_addfile(fdb, fdbe, __FILE__, __LINE__)
+#define filedb_movefile(fdb, pos, fdbe) _filedb_movefile(fdb, pos, fdbe, __FILE__, __LINE__)
 
 
 /*
@@ -128,12 +127,12 @@ typedef struct {
 #define POS_NEW		0	/* Position which indicates that the
 				   entry wants to be repositioned.	*/
 
-#define FILE_UNUSED	0x0001	/* deleted entry */
-#define FILE_DIR	0x0002	/* it's actually a directory */
-#define FILE_SHARE	0x0004	/* can be shared on the botnet */
-#define FILE_HIDDEN	0x0008	/* hidden file */
+#define FILE_UNUSED	0x0001	/* Deleted entry */
+#define FILE_DIR	0x0002	/* It's actually a directory */
+#define FILE_SHARE	0x0004	/* Can be shared on the botnet */
+#define FILE_HIDDEN	0x0008	/* Hidden file */
 
-#define FILEDB_ESTDYN	50	/* estimated dynamic length of an entry	*/
+#define FILEDB_ESTDYN	50	/* Estimated dynamic length of an entry	*/
 
 enum {
   GET_HEADER,			/* Only save minimal data		*/
@@ -153,14 +152,15 @@ enum {
  *  filedb3.c prototypes
  */
 
-static void free_fdbe(filedb_entry *);
+static void free_fdbe(filedb_entry **);
 static filedb_entry *_malloc_fdbe(char *, int);
 static int filedb_readtop(FILE *, filedb_top *);
 static int filedb_writetop(FILE *, filedb_top *);
 static int filedb_delfile(FILE *, long);
 static filedb_entry *filedb_findempty(FILE *, int);
 static int _filedb_updatefile(FILE *, long, filedb_entry *, int, char *, int);
-static int _filedb_addfile(FILE *, long, filedb_entry *, char *, int);
+static int _filedb_movefile(FILE *, long, filedb_entry *, char *, int);
+static int _filedb_addfile(FILE *, filedb_entry *, char *, int);
 static filedb_entry *_filedb_getfile(FILE *, long, int, char *, int);
 static filedb_entry *_filedb_matchfile(FILE *, long, char *, char *, int);
 static filedb_entry *filedb_getentry(char *, char *);
