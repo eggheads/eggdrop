@@ -13,8 +13,7 @@ static: ../server.o
 
 modules: ../../../server.so
 
-../server.o: cmdsserv.c server.c server.h servmsg.c ../module.h \
-../modvals.h ../../eggdrop.h
+../server.o: server.c
 	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c server.c
 	rm -f ../server.o
 	mv server.o ../
@@ -22,5 +21,8 @@ modules: ../../../server.so
 ../../../server.so: ../server.o
 	$(LD) -o ../../../server.so ../server.o
 	$(STRIP) ../../../server.so
+
+server.c: servmsg.c cmdsserv.c server.h \
+../module.h ../modvals.h ../../eggdrop.h
 
 #safety hash

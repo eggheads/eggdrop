@@ -13,8 +13,7 @@ static: ../assoc.o
 
 modules: ../../../assoc.so
 
-../assoc.o: assoc.c ../module.h ../modvals.h ../../eggdrop.h \
-../../tandem.h
+../assoc.o: assoc.c
 	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c assoc.c
 	rm -f ../assoc.o
 	mv assoc.o ../
@@ -22,5 +21,7 @@ modules: ../../../assoc.so
 ../../../assoc.so: ../assoc.o
 	$(LD) -o ../../../assoc.so ../assoc.o
 	$(STRIP) ../../../assoc.so
+
+assoc.c: ../../tandem.h ../module.h ../modvals.h ../../eggdrop.h
 
 #safety hash

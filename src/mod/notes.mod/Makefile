@@ -13,8 +13,7 @@ static: ../notes.o
 
 modules: ../../../notes.so
 
-../notes.o: cmdsnote.c notes.c notes.h ../module.h ../modvals.h \
-../../eggdrop.h ../../tandem.h
+../notes.o: notes.c
 	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c notes.c
 	rm -f ../notes.o
 	mv notes.o ../
@@ -22,5 +21,8 @@ modules: ../../../notes.so
 ../../../notes.so: ../notes.o
 	$(LD) -o ../../../notes.so ../notes.o
 	$(STRIP) ../../../notes.so
+
+notes.c: notes.h cmdsnote.c ../../tandem.h \
+../module.h ../modvals.h ../../eggdrop.h
 
 #safety hash

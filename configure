@@ -1408,17 +1408,17 @@ EOF
 	echo "$ac_t""   Digital OSF" 1>&6
 	if test "x$AWK" = "xgawk"
 	then
-	  AWK="awk"
+	  AWK=awk
 	fi
 	if test "x$INSTALL" = "x./install-sh"
 	then
-	  INSTALL="installbsd"
+	  INSTALL=installbsd
 	fi
-	MOD_CC="cc"
-	MOD_LD="cc"
-	SHLIB_CC="cc"
+	MOD_CC=cc
+	MOD_LD=cc
+	SHLIB_CC=cc
 	SHLIB_LD="ld -shared -expect_unresolved '*'"
-	SHLIB_STRIP="touch"
+	SHLIB_STRIP=touch
 	cat >> confdefs.h <<\EOF
 #define MODULES_OK 1
 EOF
@@ -3178,40 +3178,81 @@ TCL_VER_PRE75=`echo $TCL_VERSION | $AWK '{split($1, i, "."); if (((i[1] == 7) &&
 if test "x${TCL_VER_PRE75}" = "xyes"
 then
   cat >> confdefs.h <<\EOF
-#define HAVE_OLD_TCL 1
+#define HAVE_PRE7_5_TCL 1
 EOF
 
 fi
 
-# check for Tcl threads
-echo $ac_n "checking for Tcl threads""... $ac_c" 1>&6
-echo "configure:3189: checking for Tcl threads" >&5
-TCL_VER_POST81=`echo $TCL_VERSION | $AWK '{split($1, i, "."); if (((i[1] == 8) && (i[2] >= 1)) || (i[1] >= 9)) print "yes"; else print "no"}'`
-if test "x${TCL_VER_POST81}" = "xyes"
+# set TCL_TESTLIBS for Tcl library tests
+if test ! "x${TCLLIBEXT}" = "x.a"
 then
-
-  # check for TclpFinalizeThreadData()
-  if eval "test \"`echo '$''{'ac_cv_var_tcl_threads'+set}'`\" = set"
+  TCL_TESTLIBS="-L$TCLLIB -l$TCLLIBFNS -lm $LIBS"
+else
+  if test ! "x${tcllibname}" = "x"
   then
-    echo $ac_n "(cached) $ac_c" 1>&6
+    TCL_TESTLIBS="$TCLLIB/lib$TCLLIBFN -lm $LIBS"
   else
-    ac_save_LIBS="$LIBS"
-    if test "x${ac_cv_lib_pthread_pthread_create}" = "xyes"
-    then
-      LIBS="-lpthread $LIBS"
-    fi
-    if test ! "x${TCLLIBEXT}" = "x.a"
-    then
-      LIBS="-L$TCLLIB -l$TCLLIBFNS -lm $LIBS"
-    else
-      if test ! "x${tcllibname}" = "x"
-      then
-	LIBS="$TCLLIB/lib$TCLLIBFN -lm $LIBS"
-      else
-	LIBS="-L$TCLLIB -l$TCLLIBFNS -lm $LIBS"
-      fi
-    fi
-    cat > conftest.$ac_ext << EOF
+    TCL_TESTLIBS="-L$TCLLIB -l$TCLLIBFNS -lm $LIBS"
+  fi
+fi
+if test "x${ac_cv_lib_pthread_pthread_create}" = "xyes"
+then
+  TCL_TESTLIBS="-lpthread $TCL_TESTLIBS"
+fi
+
+# check for Tcl_Free()
+echo $ac_n "checking if Tcl library has Tcl_Free""... $ac_c" 1>&6
+echo "configure:3206: checking if Tcl library has Tcl_Free" >&5
+if eval "test \"`echo '$''{'ac_cv_var_tcl_free'+set}'`\" = set"
+then
+  echo $ac_n "(cached) $ac_c" 1>&6
+else
+  ac_save_LIBS="$LIBS"
+  LIBS="$TCL_TESTLIBS"
+  cat > conftest.$ac_ext << EOF
+#include "confdefs.h"
+char Tcl_Free();
+
+int main() {
+  Tcl_Free();
+  return 0;
+}
+EOF
+  if { (eval echo configure: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}
+  then
+    rm -rf conftest*
+    eval "ac_cv_var_tcl_free=yes"
+  else
+    echo "configure: failed program was:" >&5
+    cat conftest.$ac_ext >&5
+    rm -rf conftest*
+    eval "ac_cv_var_tcl_free=no"
+  fi
+  rm -f conftest*
+  LIBS="$ac_save_LIBS"
+fi
+
+if test "x${ac_cv_var_tcl_free}" = "xyes"
+then
+  echo "$ac_t""yes" 1>&6
+  cat >> confdefs.h <<\EOF
+#define HAVE_TCL_FREE 1
+EOF
+
+else
+  echo "$ac_t""no" 1>&6
+fi
+
+# check for TclpFinalizeThreadData()
+echo $ac_n "checking if Tcl library has threads""... $ac_c" 1>&6
+echo "configure:3249: checking if Tcl library has threads" >&5
+if eval "test \"`echo '$''{'ac_cv_var_tcl_threads'+set}'`\" = set"
+then
+  echo $ac_n "(cached) $ac_c" 1>&6
+else
+  ac_save_LIBS="$LIBS"
+  LIBS="$TCL_TESTLIBS"
+  cat > conftest.$ac_ext << EOF
 #include "confdefs.h"
 char TclpFinalizeThreadData();
 
@@ -3220,19 +3261,18 @@ int main() {
   return 0;
 }
 EOF
-    if { (eval echo configure: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}
-    then
-      rm -rf conftest*
-      eval "ac_cv_var_tcl_threads=yes"
-    else
-      echo "configure: failed program was:" >&5
-      cat conftest.$ac_ext >&5
-      rm -rf conftest*
-      eval "ac_cv_var_tcl_threads=no"
-    fi
-    rm -f conftest*
-    LIBS="$ac_save_LIBS"
+  if { (eval echo configure: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}
+  then
+    rm -rf conftest*
+    eval "ac_cv_var_tcl_threads=yes"
+  else
+    echo "configure: failed program was:" >&5
+    cat conftest.$ac_ext >&5
+    rm -rf conftest*
+    eval "ac_cv_var_tcl_threads=no"
   fi
+  rm -f conftest*
+  LIBS="$ac_save_LIBS"
 fi
 
 if test "x${ac_cv_var_tcl_threads}" = "xyes"
@@ -3246,7 +3286,7 @@ configure: warning:
 
 EOF
   cat >> confdefs.h <<\EOF
-#define HAVE_BUGGY_TCL_THREADS 1
+#define HAVE_TCL_THREADS 1
 EOF
 
 

@@ -316,8 +316,7 @@ inline int tcl_chanmasks(masklist *m, Tcl_Interp *irp)
     list[2] = work;
     p = Tcl_Merge(3, list);
     Tcl_AppendElement(irp, p);
-    n_free(p, "", 0);
-    
+    Tcl_Free((char *) p);
     m = m->next;
   }
   

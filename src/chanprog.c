@@ -598,7 +598,7 @@ void list_timers(Tcl_Interp * irp, tcl_timer_t * stack)
     argv[2] = id;
     x = Tcl_Merge(3, argv);
     Tcl_AppendElement(irp, x);
-    n_free(x, "", 0);
+    Tcl_Free((char *) x);
     mark = mark->next;
   }
 }

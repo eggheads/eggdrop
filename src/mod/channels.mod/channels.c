@@ -678,7 +678,7 @@ static char *traced_globchanset(ClientData cdata, Tcl_Interp * irp,
       }
     }
     if (item) /* hmm it cant be 0 */
-      Tcl_Free((char*) item);
+      Tcl_Free((char *) item);
     Tcl_SetVar2(interp, name1, name2, glob_chanset, TCL_GLOBAL_ONLY);
   }
   return NULL;

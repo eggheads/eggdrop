@@ -10,7 +10,7 @@
 #endif
 
 /* UGH! Why couldn't Tcl pick a standard? */
-#if !defined(HAVE_OLD_TCL) && defined(__STDC__)
+#if !defined(HAVE_PRE7_5_TCL) && defined(__STDC__)
 #  ifdef HAVE_STDARG_H
 #    include <stdarg.h>
 #  else
@@ -26,6 +26,11 @@
 #  define EGG_VARARGS(type, name) ()
 #  define EGG_VARARGS_DEF(type, name) (va_alist) va_dcl
 #  define EGG_VARARGS_START(type, name, list) (va_start(list), va_arg(list,type))
+#endif
+
+/* For pre Tcl7.5p1 versions */
+#ifndef HAVE_TCL_FREE
+#  define Tcl_Free(x) n_free(x, "", 0)
 #endif
 
 #include <stdio.h>

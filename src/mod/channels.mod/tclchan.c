@@ -1140,7 +1140,7 @@ static int tcl_do_masklist(maskrec *m, Tcl_Interp *irp)
     list[5] = m->user;
     p = Tcl_Merge(6, list);
     Tcl_AppendElement(irp, p);
-    n_free(p, "", 0);
+    Tcl_Free((char *) p);
     m = m->next;
   }
   
@@ -1496,7 +1496,7 @@ static int tcl_channel_add(Tcl_Interp * irp, char *newname, char *options)
   if ((tcl_channel_modify(irp, chan, items, item) != TCL_OK) && !chan_hack) {
     ret = TCL_ERROR;
   }
-  Tcl_Free((char*) item);
+  Tcl_Free((char *) item);
   if (join && !channel_inactive(chan) && module_find("irc", 0, 0))
     dprintf(DP_SERVER, "JOIN %s %s\n", chan->name, chan->key_prot);
   return ret; 

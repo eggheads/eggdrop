@@ -599,7 +599,7 @@ const char *module_load(char *name)
     return "Can't load module.";
 #else
 #ifdef OSF1_HACKS
-#ifndef HAVE_OLD_TCL
+#ifndef HAVE_PRE7_5_TCL
   hand = (Tcl_PackageInitProc *) load(workbuf, LDR_NOFLAGS);
   if (hand == LDR_NULL_MODULE)
     return "Can't load module.";

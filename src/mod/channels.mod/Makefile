@@ -13,8 +13,7 @@ static: ../channels.o
 
 modules: ../../../channels.so
 
-../channels.o: channels.c channels.h cmdschan.c tclchan.c userchan.c \
-../module.h ../modvals.h ../../eggdrop.h
+../channels.o: channels.c
 	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c channels.c
 	rm -f ../channels.o
 	mv channels.o ../
@@ -22,5 +21,8 @@ modules: ../../../channels.so
 ../../../channels.so: ../channels.o
 	$(LD) -o ../../../channels.so ../channels.o
 	$(STRIP) ../../../channels.so
+
+channels.c: cmdschan.c tclchan.c userchan.c channels.h \
+../module.h ../modvals.h ../../eggdrop.h
 
 #safety hash

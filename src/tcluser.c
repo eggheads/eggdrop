@@ -466,7 +466,7 @@ static int tcl_ignorelist STDVAR {
     list[4] = i->user;
     p = Tcl_Merge(5, list);
     Tcl_AppendElement(irp, p);
-    n_free(p, "", 0);
+    Tcl_Free((char *) p);
   }
   return TCL_OK;
 }

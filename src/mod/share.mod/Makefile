@@ -13,8 +13,7 @@ static: ../share.o
 
 modules: ../../../share.so
 
-../share.o: share.c ../module.h ../modvals.h ../../eggdrop.h ../../chan.h \
-../../users.h ../channels.mod/channels.h ../transfer.mod/transfer.h
+../share.o: share.c
 	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c share.c
 	rm -f ../share.o
 	mv share.o ../
@@ -22,5 +21,8 @@ modules: ../../../share.so
 ../../../share.so: ../share.o
 	$(LD) -o ../../../share.so ../share.o
 	$(STRIP) ../../../share.so
+
+share.c: ../../chan.h ../../users.h ../channels.mod/channels.h \
+../transfer.mod/transfer.h ../module.h ../modvals.h ../../eggdrop.h
 
 #safety hash

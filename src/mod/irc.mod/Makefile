@@ -13,9 +13,7 @@ static: ../irc.o
 
 modules: ../../../irc.so
 
-../irc.o: chan.c cmdsirc.c irc.c irc.h mode.c msgcmds.c tclirc.c \
-../module.h ../modvals.h ../../eggdrop.h ../channels.mod/channels.h \
-../server.mod/server.h
+../irc.o: irc.c
 	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c irc.c
 	rm -f ../irc.o
 	mv irc.o ../
@@ -23,5 +21,9 @@ modules: ../../../irc.so
 ../../../irc.so: ../irc.o
 	$(LD) -o ../../../irc.so ../irc.o
 	$(STRIP) ../../../irc.so
+
+irc.c: chan.c mode.c cmdsirc.c msgcmds.c tclirc.c irc.h \
+../channels.mod/channels.h ../server.mod/server.h \
+../module.h ../modvals.h ../../eggdrop.h
 
 #safety hash

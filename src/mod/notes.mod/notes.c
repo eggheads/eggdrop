@@ -694,7 +694,7 @@ static int tcl_notes STDVAR
 	    list[2] = s1;
 	    p = Tcl_Merge(3, list);
 	    Tcl_AppendElement(irp, p);
-	    n_free(p, "", 0);
+	    Tcl_Free((char *) p);
 	  }
 	}
       }

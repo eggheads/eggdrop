@@ -613,7 +613,7 @@ static int tcl_botlist STDVAR
     sh[0] = bot->share;
     p = Tcl_Merge(4, list);
     Tcl_AppendElement(irp, p);
-    n_free(p, "", 0);
+    Tcl_Free((char *) p);
   }
   return TCL_OK;
 }
@@ -649,7 +649,7 @@ static int tcl_dcclist STDVAR
       list[5] = timestamp;
       p = Tcl_Merge(6, list);
       Tcl_AppendElement(irp, p);
-      n_free(p, "", 0);
+      Tcl_Free((char *) p);
     }
   }
   return TCL_OK;
@@ -700,7 +700,7 @@ static int tcl_whom STDVAR
 	}
 	p = Tcl_Merge((chan == -1) ? 7 : 6, list);
 	Tcl_AppendElement(irp, p);
-	n_free(p, "", 0);
+	Tcl_Free((char *) p);
       }
     }
   for (i = 0; i < parties; i++) {
@@ -723,7 +723,7 @@ static int tcl_whom STDVAR
       }
       p = Tcl_Merge((chan == -1) ? 7 : 6, list);
       Tcl_AppendElement(irp, p);
-      n_free(p, "", 0);
+      Tcl_Free((char *) p);
     }
   }
   return TCL_OK;

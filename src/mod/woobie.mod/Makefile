@@ -13,7 +13,7 @@ static: ../woobie.o
 
 modules: ../../../woobie.so
 
-../woobie.o: woobie.c ../module.h ../modvals.h ../../eggdrop.h
+../woobie.o: woobie.c
 	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c woobie.c
 	rm -f ../woobie.o
 	mv woobie.o ../
@@ -21,5 +21,7 @@ modules: ../../../woobie.so
 ../../../woobie.so: ../woobie.o
 	$(LD) -o ../../../woobie.so ../woobie.o
 	$(STRIP) ../../../woobie.so
+
+woobie.c: ../module.h ../modvals.h ../../eggdrop.h
 
 #safety hash

@@ -462,7 +462,7 @@ extern tcl_cmds tcluser_cmds[], tcldcc_cmds[], tclmisc_cmds[];
  * smoking?!) so we gotta initialize the Tcl interpreter */
 void init_tcl()
 {
-#ifndef HAVE_OLD_TCL
+#ifndef HAVE_PRE7_5_TCL
   int i;
   char pver[1024] = "";
 #endif
@@ -479,7 +479,7 @@ void init_tcl()
   add_tcl_commands(tcldcc_cmds);
   add_tcl_commands(tclmisc_cmds);
   Tcl_CreateCommand(interp, "logfile", tcl_logfile, NULL, NULL);
-#ifndef HAVE_OLD_TCL
+#ifndef HAVE_PRE7_5_TCL
   /* add eggdrop to Tcl's package list */
   for (i = 0; i <= strlen(egg_version); i++) {
     if ((egg_version[i] == ' ') || (egg_version[i] == '+'))

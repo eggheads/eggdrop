@@ -13,8 +13,7 @@ static: ../seen.o
 
 modules: ../../../seen.so
 
-../seen.o: seen.c ../module.h ../modvals.h ../../eggdrop.h \
-../channels.mod/channels.h ../../chan.h ../../users.h
+../seen.o: seen.c
 	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c seen.c
 	rm -f ../seen.o
 	mv seen.o ../
@@ -22,5 +21,8 @@ modules: ../../../seen.so
 ../../../seen.so: ../seen.o
 	$(LD) -o ../../../seen.so ../seen.o
 	$(STRIP) ../../../seen.so
+
+seen.c: ../channels.mod/channels.h ../../chan.h ../../users.h \
+../module.h ../modvals.h ../../eggdrop.h
 
 #safety hash

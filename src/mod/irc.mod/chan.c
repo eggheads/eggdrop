@@ -1385,19 +1385,6 @@ static int gotjoin(char *from, char *chname)
         m->flags = (chan_hasop(m) ? WASOP : 0);
 	m->user = u;
 	set_handle_laston(chname, u, now);
-	/* had ops before split, Im an op */
-	if (chan_wasop(m) && me_op(chan) &&
-	/* and the user is a valid op... */
-	    (chan_op(fr) || (glob_op(fr) && !chan_deop(fr))) &&
-	/* channel is +autoop... */
-	    (channel_autoop(chan)
-	/* OR user is maked autoop */
-	     || glob_autoop(fr) || chan_autoop(fr))) {
-	  /* give them a special surprise */
-          m->delay = now;
-	  /* also prevent +stopnethack automatically de-opping them */
-	  m->flags |= WASOP;
-	}
 	m->flags |= STOPWHO;
 	if (newmode) {
 	  putlog(LOG_JOIN, chname, "%s (%s) returned to %s (with +%s).",
@@ -1434,7 +1421,6 @@ static int gotjoin(char *from, char *chname)
 	  reset_chan_info(chan);
 	} else {
 	  struct chanuserrec *cr;
-	  char *p;
 
 	  if (newmode)
 	    putlog(LOG_JOIN, chname,
@@ -1443,55 +1429,6 @@ static int gotjoin(char *from, char *chname)
 	  else
 	    putlog(LOG_JOIN, chname,
 		   "%s (%s) joined %s.", nick, uhost, chname);
-	  if (me_op(chan))
-	    for (p = m->userhost; *p; p++)
-	      if (((unsigned char) *p) < 32) {
-		if (ban_bogus)
-		  u_addban(chan, quickban(chan, uhost), origbotname,
-			   CHAN_BOGUSUSERNAME, now + (60 * ban_time), 0);
-		if (kick_bogus) {
-		  dprintf(DP_MODE, "KICK %s %s :%s\n",
-			  chname, nick, CHAN_BOGUSUSERNAME);
-		  m->flags |= SENTKICK;
-		}
-		return 0;
-	      }
-	  /* ok, the op-on-join,etc, tests...first only both if Im opped */
-	  if (me_op(chan)) {
-	    /* Check for and reset exempts and invites
-	     * this will require further checking to account for when
-	     * to use the various modes */
-	    if (u_match_mask(global_invites,from) || 
-		u_match_mask(chan->invites, from))
-	      refresh_invite(chan, from);
-	    /* are they a chan op, or global op without chan deop */
-	    if ((chan_op(fr) || (glob_op(fr) && !chan_deop(fr))) &&
-		/* is it op-on-join or is the use marked auto-op */
-		(channel_autoop(chan) || glob_autoop(fr) || chan_autoop(fr))) {
-	      /* yes! do the honors */
-              m->delay = now;
-	      m->flags |= WASOP;	/* nethack sanity */
-	      /* if it matches a ban, dispose of them */
-	    } else {
-	      if (u_match_mask(global_bans, from) ||
-		  u_match_mask(chan->bans, from)) {
-		refresh_ban_kick(chan, from, nick);
-		refresh_exempt(chan, from);
-		/* likewise for kick'ees */
-	      } else if (glob_kick(fr) || chan_kick(fr)) {
-		quickban(chan, from);
-		refresh_exempt(chan, from);
-		p = get_user(&USERENTRY_COMMENT, m->user);
-		dprintf(DP_MODE, "KICK %s %s :%s\n", chname, nick,
-			(p && (p[0] != '@')) ? p : IRC_COMMENTKICK);
-		m->flags |= SENTKICK;
-	      } else if ((channel_autovoice(chan) &&
-		 (chan_voice(fr) || (glob_voice(fr) && !chan_quiet(fr)))) ||
-		 ((glob_gvoice(fr) || chan_gvoice(fr)) && !chan_quiet(fr))) {
-		add_mode(chan, '+', 'v', nick);
-		 }
-	    }
-	  }
 	  /* don't re-display greeting if they've been on the channel
 	   * recently */
 	  if (u) {
@@ -1524,22 +1461,71 @@ static int gotjoin(char *from, char *chname)
 	  set_handle_laston(chname, u, now);
 	}
       }
-      if (channel_enforcebans(chan) && me_op(chan) &&
-          !chan_op(fr) && !glob_op(fr) && !glob_friend(fr) && !chan_friend(fr)) {
-        for (b = chan->channel.ban; b->mask[0]; b = b->next) { 
-          if (wild_match(b->mask, from)) {
-   	    if (use_exempts)
-	      for (e = chan->channel.exempt; e->mask[0]; e = e->next)
-	        if (wild_match(e->mask, from))
-	          ok = 0;
-	    if (ok && !chan_sentkick(m)) {
+	  /* ok, the op-on-join,etc, tests...first only both if Im opped */
+	  if (me_op(chan)) {
+	for (p = m->userhost; *p; p++)
+	  if (((unsigned char) *p) < 32) {
+		if (ban_bogus)
+		  u_addban(chan, quickban(chan, uhost), origbotname,
+			   CHAN_BOGUSUSERNAME, now + (60 * ban_time), 0);
+		if (kick_bogus) {
+		  dprintf(DP_MODE, "KICK %s %s :%s\n",
+			  chname, nick, CHAN_BOGUSUSERNAME);
+		  m->flags |= SENTKICK;
+		}
+		if (kick_bogus || (ban_bogus && channel_enforcebans(chan)))
+		  return 0;
+	}
+	if (channel_enforcebans(chan) &&
+	!chan_op(fr) && !glob_op(fr) && !glob_friend(fr) && !chan_friend(fr)) {
+      for (b = chan->channel.ban; b->mask[0]; b = b->next) { 
+        if (wild_match(b->mask, from)) {
+   	      if (use_exempts)
+	        for (e = chan->channel.exempt; e->mask[0]; e = e->next)
+	          if (wild_match(e->mask, from))
+	            ok = 0;
+	        if (ok && !chan_sentkick(m)) {
 	      dprintf(DP_SERVER, "KICK %s %s :%s\n", chname, m->nick,
 		      IRC_YOUREBANNED);
 	      m->flags |= SENTKICK;
-            }
+		  return 0;
+	        }
+        }
+      }
+	}
+	/* Check for and reset exempts and invites
+	* this will require further checking to account for when
+	* to use the various modes */
+	if (u_match_mask(global_invites,from) || 
+	u_match_mask(chan->invites, from))
+	  refresh_invite(chan, from);
+	/* are they a chan op, or global op without chan deop */
+	if ((chan_op(fr) || (glob_op(fr) && !chan_deop(fr))) &&
+	/* is it op-on-join or is the use marked auto-op */
+	(channel_autoop(chan) || glob_autoop(fr) || chan_autoop(fr))) {
+	  /* yes! do the honors */
+	  m->delay = now;
+	} else {
+	  /* if it matches a ban, dispose of them */
+	  if (u_match_mask(global_bans, from) ||
+	  u_match_mask(chan->bans, from)) {
+	    refresh_ban_kick(chan, from, nick);
+	    refresh_exempt(chan, from);
+	  /* likewise for kick'ees */
+	  } else if (glob_kick(fr) || chan_kick(fr)) {
+	    quickban(chan, from);
+	    refresh_exempt(chan, from);
+	    p = get_user(&USERENTRY_COMMENT, m->user);
+	    dprintf(DP_MODE, "KICK %s %s :%s\n", chname, nick,
+			(p && (p[0] != '@')) ? p : IRC_COMMENTKICK);
+		m->flags |= SENTKICK;
+	  } else if ((channel_autovoice(chan) &&
+	  (chan_voice(fr) || (glob_voice(fr) && !chan_quiet(fr)))) ||
+	  ((glob_gvoice(fr) || chan_gvoice(fr)) && !chan_quiet(fr))) {
+	    add_mode(chan, '+', 'v', nick);
 	  }
 	}
-      }
+	  }
     }
   }
   return 0;

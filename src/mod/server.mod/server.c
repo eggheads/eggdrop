@@ -684,7 +684,7 @@ static char *tcl_eggserver(ClientData cdata, Tcl_Interp * irp, char *name1,
 	curserv = (-1);
 	next_server(&curserv, dcc[servidx].host, &dcc[servidx].port, "");
       }
-      n_free(list, "", 0);
+      Tcl_Free((char *) list);
     }
   }
   context;

@@ -13,8 +13,7 @@ static: ../wire.o
 
 modules: ../../../wire.so
 
-../wire.o: wire.c wire.h ../module.h ../modvals.h ../../eggdrop.h \
-../../chan.h ../../users.h
+../wire.o: wire.c
 	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c wire.c
 	rm -f ../wire.o
 	mv wire.o ../
@@ -22,5 +21,8 @@ modules: ../../../wire.so
 ../../../wire.so: ../wire.o
 	$(LD) -o ../../../wire.so ../wire.o
 	$(STRIP) ../../../wire.so
+
+wire.c: wire.h ../../chan.h ../../users.h \
+../module.h ../modvals.h ../../eggdrop.h
 
 #safety hash

@@ -445,10 +445,10 @@ static int tcl_modules STDVAR
     }
     p = Tcl_Merge(i, list);
     Tcl_AppendElement(irp, p);
-    n_free(p, "", 0);
+    Tcl_Free((char *) p);
     while (i > 2) {
       i--;
-      n_free(list[i], "", 0);
+      Tcl_Free((char *) list[i]);
     }
   }
   return TCL_OK;

@@ -766,7 +766,7 @@ int main(int argc, char **argv)
     int socket_cleanup = 0;
 
     context;
-#if !defined(HAVE_OLD_TCL) && !defined(HAVE_BUGGY_TCL_THREADS)
+#if !defined(HAVE_PRE7_5_TCL) && !defined(HAVE_TCL_THREADS)
     /* process a single tcl event */
     Tcl_DoOneEvent(TCL_ALL_EVENTS | TCL_DONT_WAIT);
 #endif

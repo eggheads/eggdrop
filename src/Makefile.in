@@ -68,29 +68,29 @@ eggdrop.h:
 .c.o:
 	$(CC) $(CFLAGS) $(CPPFLAGS) -c $<
 
-botcmd.o: chan.h main.h modules.h tandem.h users.h
-botmsg.o: main.h tandem.h
-botnet.o: main.h tandem.h
-chanprog.o: main.h modules.h
-cmds.o: main.h modules.h tandem.h
-dcc.o: main.h md5/global.h md5/md5.h modules.h tandem.h
-dccutil.o: chan.h main.h modules.h tandem.h
-flags.o: main.h
-language.o: main.h
-main.o: chan.h main.h modules.h patch.h tandem.h
-mem.o: mod/modvals.h
-misc.o: chan.h main.h
-modules.o: main.h modules.h tandem.h users.h
-net.o: main.h
-rfc1459.o: main.h
-tcl.o: main.h
-tcldcc.o: main.h modules.h tandem.h
-tclhash.o: chan.h main.h match.c users.h
-tclmisc.o: main.h modules.h tandem.h
-tcluser.o: chan.h main.h tandem.h users.h
-userent.o: main.h users.h
-userrec.o: chan.h main.h modules.h tandem.h users.h
-users.o: chan.h main.h modules.h tandem.h users.h
+botcmd.c: chan.h main.h modules.h tandem.h users.h
+botmsg.c: main.h tandem.h
+botnet.c: main.h tandem.h
+chanprog.c: main.h modules.h
+cmds.c: main.h modules.h tandem.h
+dcc.c: main.h md5/global.h md5/md5.h modules.h tandem.h
+dccutil.c: chan.h main.h modules.h tandem.h
+flags.c: main.h
+language.c: main.h
+main.c: chan.h main.h modules.h patch.h tandem.h
+mem.c: mod/modvals.h
+misc.c: chan.h main.h
+modules.c: main.h modules.h tandem.h users.h
+net.c: main.h
+rfc1459.c: main.h
+tcl.c: main.h
+tcldcc.c: main.h modules.h tandem.h
+tclhash.c: match.c chan.h main.h users.h
+tclmisc.c: main.h modules.h tandem.h
+tcluser.c: chan.h main.h tandem.h users.h
+userent.c: main.h users.h
+userrec.c: chan.h main.h modules.h tandem.h users.h
+users.c: chan.h main.h modules.h tandem.h users.h
 main.h: ../config.h chan.h cmdt.h eggdrop.h flags.h lang.h \
 proto.h tclegg.h tclhash.h users.h
 modules.h: mod/modvals.h
