@@ -18,6 +18,7 @@
 #include <string.h>
 
 #include "md5.h"
+#include "compat/compat.h"
 
 /*
  * The basic MD5 functions.
