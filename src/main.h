@@ -2,7 +2,7 @@
  * main.h
  *   include file to include most other include files
  * 
- * $Id: main.h,v 1.8 2000/01/17 22:36:06 fabian Exp $
+ * $Id: main.h,v 1.9 2000/01/24 20:46:50 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -59,6 +59,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#ifdef HAVE_STRINGS_H
+#  include <strings.h>
+#endif
 #include <sys/types.h>
 #include "lang.h"
 #include "eggdrop.h"
