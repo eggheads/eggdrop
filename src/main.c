@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  * 
- * $Id: main.c,v 1.32 2000/03/05 23:22:48 fabian Exp $
+ * $Id: main.c,v 1.33 2000/03/19 23:58:01 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -120,28 +120,28 @@ time_t	now;			/* duh, now :) */
 
 /* Traffic stats
  */
-int	otraffic_irc = 0;
-int	otraffic_irc_today = 0;
-int	otraffic_bn = 0;
-int	otraffic_bn_today = 0;
-int	otraffic_dcc = 0;
-int	otraffic_dcc_today = 0;
-int	otraffic_filesys = 0;
-int	otraffic_filesys_today = 0;
-int	otraffic_trans = 0;
-int	otraffic_trans_today = 0;
-int	otraffic_unknown = 0;
-int	otraffic_unknown_today = 0;
-int	itraffic_irc = 0;
-int	itraffic_irc_today = 0;
-int	itraffic_bn = 0;
-int	itraffic_bn_today = 0;
-int	itraffic_dcc = 0;
-int	itraffic_dcc_today = 0;
-int	itraffic_trans = 0;
-int	itraffic_trans_today = 0;
-int	itraffic_unknown = 0;
-int	itraffic_unknown_today = 0;
+unsigned long	otraffic_irc = 0;
+unsigned long	otraffic_irc_today = 0;
+unsigned long	otraffic_bn = 0;
+unsigned long	otraffic_bn_today = 0;
+unsigned long	otraffic_dcc = 0;
+unsigned long	otraffic_dcc_today = 0;
+unsigned long	otraffic_filesys = 0;
+unsigned long	otraffic_filesys_today = 0;
+unsigned long	otraffic_trans = 0;
+unsigned long	otraffic_trans_today = 0;
+unsigned long	otraffic_unknown = 0;
+unsigned long	otraffic_unknown_today = 0;
+unsigned long	itraffic_irc = 0;
+unsigned long	itraffic_irc_today = 0;
+unsigned long	itraffic_bn = 0;
+unsigned long	itraffic_bn_today = 0;
+unsigned long	itraffic_dcc = 0;
+unsigned long	itraffic_dcc_today = 0;
+unsigned long	itraffic_trans = 0;
+unsigned long	itraffic_trans_today = 0;
+unsigned long	itraffic_unknown = 0;
+unsigned long	itraffic_unknown_today = 0;
 
 #ifdef DEBUG_CONTEXT
 /* Context storage for fatal crashes */

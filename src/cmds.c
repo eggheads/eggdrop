@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  * 
- * $Id: cmds.c,v 1.24 2000/03/04 20:35:04 fabian Exp $
+ * $Id: cmds.c,v 1.25 2000/03/19 23:58:01 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -35,8 +35,8 @@ extern struct userrec	*userlist;
 extern tcl_timer_t	*timer, *utimer;
 extern int		 dcc_total, remote_boots, backgrd, make_userfile,
 			 do_restart, conmask, require_p, must_be_owner,
-			 use_silence,
-			 otraffic_irc, otraffic_irc_today,
+			 use_silence;
+extern unsigned long	 otraffic_irc, otraffic_irc_today,
 			 itraffic_irc, itraffic_irc_today,
 			 otraffic_bn, otraffic_bn_today,
 			 itraffic_bn, itraffic_bn_today,
