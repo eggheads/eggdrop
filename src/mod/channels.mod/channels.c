@@ -2,7 +2,7 @@
  * channels.c -- part of channels.mod
  *   support for channels within the bot
  * 
- * $Id: channels.c,v 1.32 2000/08/07 10:09:16 fabian Exp $
+ * $Id: channels.c,v 1.33 2000/08/27 19:14:53 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -283,6 +283,8 @@ static int killchanset(struct chanset_t *chan)
  */
 static void remove_channel(struct chanset_t *chan)
 {
+   int i;
+
    clear_channel(chan, 0);
    noshare = 1;
    /* Remove channel-bans */
@@ -297,6 +299,13 @@ static void remove_channel(struct chanset_t *chan)
    /* Remove channel specific user flags */
    user_del_chan(chan->dname);
    noshare = 0;
+   nfree(chan->channel.key);
+   for (i = 0; i < 6 && chan->cmode[i].op; i++)
+     nfree(chan->cmode[i].op);
+   if (chan->key)
+     nfree(chan->key);
+   if (chan->rmkey)
+     nfree(chan->rmkey);
    killchanset(chan);
 }
 
@@ -484,7 +493,6 @@ static void read_channels(int create)
   chan = chanset;
   while (chan != NULL) {
     if (chan->status & CHAN_FLAGGED) {
-      nfree(chan->channel.key);
       putlog(LOG_MISC, "*", "No longer supporting channel %s", chan->dname);
       if (chan->name[0] && !channel_inactive(chan))
         dprintf(DP_SERVER, "PART %s\n", chan->name);

@@ -5,6 +5,8 @@ Changes in eggdrop: (since v1.5.0)
 
 1.5.5
 Foundby   Fixedby   What....
+          Eule      Fixed possible memleaks related to chan->channel.key,
+                      chan->cmode[] and chan->key.
 various   Fabian    Under certain circumstances, the old user file was deleted
                       and the new user file wasn't correctly created.
           blaster   Fixed crash in splitc().
