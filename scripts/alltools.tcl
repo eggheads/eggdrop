@@ -1,4 +1,5 @@
 #
+# $Id: alltools.tcl,v 1.9 2001/06/14 12:52:03 poptix Exp $
 # All-Tools TCL, includes toolbox.tcl, toolkit.tcl and moretools.tcl
 # toolbox was authored by cmwagner@sodre.net
 # toolkit was authored by (Someone claim this)[unknown]
@@ -17,7 +18,7 @@
 # Sup       02Apr2001: added matchbotattr
 # Tothwolf  13Jun2001: updated/modified several commands
 #
-# $Id: alltools.tcl,v 1.8 2001/06/14 00:19:14 tothwolf Exp $
+# $Id: alltools.tcl,v 1.9 2001/06/14 12:52:03 poptix Exp $
 #
 ########################################
 # Descriptions of avaliable commands:
