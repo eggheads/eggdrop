@@ -1,7 +1,7 @@
 /*
  * tclirc.c -- part of irc.mod
  *
- * $Id: tclirc.c,v 1.23 2001/09/23 19:56:06 guppy Exp $
+ * $Id: tclirc.c,v 1.24 2001/10/07 14:09:12 poptix Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -287,7 +287,7 @@ static int tcl_getchanhost STDVAR
   memberlist *m;
 
   BADARGS(2, 3, " nickname ?channel?");	/* drummer */
-  if (argv[2]) {
+  if (argc > 2) {
     thechan = findchan_by_dname(argv[2]);
     if (!thechan) {
       Tcl_AppendResult(irp, "illegal channel: ", argv[2], NULL);
@@ -606,7 +606,7 @@ static int tcl_hand2nick STDVAR
   struct userrec *u;
 
   BADARGS(2, 3, " handle ?channel?");	/* drummer */
-  if (argv[2]) {
+  if (argc > 2) {
     chan = findchan_by_dname(argv[2]);
     thechan = chan;
     if (chan == NULL) {
@@ -639,7 +639,7 @@ static int tcl_nick2hand STDVAR
   struct userrec *u;
 
   BADARGS(2, 3, " nick ?channel?");	/* drummer */
-  if (argv[2]) {
+  if (argc > 2) {
     chan = findchan_by_dname(argv[2]);
     thechan = chan;
     if (chan == NULL) {
