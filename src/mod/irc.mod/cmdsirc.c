@@ -2,7 +2,7 @@
  * chancmds.c -- part of irc.mod
  *   handles commands direclty relating to channel interaction
  * 
- * $Id: cmdsirc.c,v 1.12 2000/03/23 23:17:58 fabian Exp $
+ * $Id: cmdsirc.c,v 1.13 2000/06/20 20:44:18 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -73,7 +73,7 @@ static void cmd_act(struct userrec *u, int idx, char *par)
     return;
   }
   if ((chan->channel.mode & CHANMODER) && !(m->flags & (CHANOP | CHANVOICE))) {
-    dprintf(idx, "Cannot say to %s, it is moderated.\n", chan->name);
+    dprintf(idx, "Cannot say to %s, it is moderated.\n", chan->dname);
     return;
   }
   putlog(LOG_CMDS, "*", "#%s# (%s) act %s", dcc[idx].nick,
@@ -292,7 +292,7 @@ static void cmd_op(struct userrec *u, int idx, char *par)
     return;
   if (!me_op(chan)) {
     dprintf(idx, "I can't help you now because I'm not a chan op on %s.\n",
-	    chan->name);
+	    chan->dname);
     return;
   }
   putlog(LOG_CMDS, "*", "#%s# (%s) op %s %s", dcc[idx].nick,
@@ -384,7 +384,7 @@ static void cmd_kick(struct userrec *u, int idx, char *par)
     return;
   if (!me_op(chan)) {
     dprintf(idx, "I can't help you now because I'm not a channel op on %s.\n",
-	    chan->name);
+	    chan->dname);
     return;
   }
   putlog(LOG_CMDS, "*", "#%s# (%s) kick %s", dcc[idx].nick,
@@ -411,7 +411,7 @@ static void cmd_kick(struct userrec *u, int idx, char *par)
   }
   if ((chan_master(victim) || glob_master(victim)) &&
       !(glob_owner(user) || chan_owner(user))) {
-    dprintf(idx, "%s is a %s master.\n", nick, chan->name);
+    dprintf(idx, "%s is a %s master.\n", nick, chan->dname);
     return;
   }
   if (glob_bot(victim) && !(glob_owner(victim) || chan_owner(victim))) {
@@ -897,9 +897,9 @@ static void cmd_reset(struct userrec *u, int idx, char *par)
     else {
       get_user_flagrec(u, &user, par);
       if (!glob_master(user) && !chan_master(user)) {
-	dprintf(idx, "You are not a master on %s.\n", chan->name);
+	dprintf(idx, "You are not a master on %s.\n", chan->dname);
       } else if (!channel_active(chan)) {
-	dprintf(idx, "Im not on %s at the moment!\n", chan->name);
+	dprintf(idx, "I'm not on %s at the moment!\n", chan->dname);
       } else {
 	putlog(LOG_CMDS, "*", "#%s# reset %s", dcc[idx].nick, par);
 	dprintf(idx, "Resetting channel info for %s...\n", chan->dname);
