@@ -40,6 +40,7 @@
 #define H_flud (*(p_tcl_bind_list *)(server_funcs[32]))
 #define H_ctcp (*(p_tcl_bind_list *)(server_funcs[33]))
 #define H_ctcr (*(p_tcl_bind_list *)(server_funcs[34]))
-/* 35 - ??? */
+/* 35 - 36 */
 #define ctcp_reply ((char *)(server_funcs[35]))
+#define get_altbotnick ((char *(*)(void))(server_funcs[36]))
 #endif

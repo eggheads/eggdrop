@@ -53,7 +53,6 @@ static int kick_fun = 0;
 static int ban_fun = 0;
 static int allow_desync = 0;
 static int keepnick = 1;	/* keepnick */
-static char altnick[NICKLEN];	/* dang it, we need this here too */
 
 #include "chan.c"
 #include "mode.c"
@@ -817,12 +816,6 @@ static tcl_ints myints[] =
   {0, 0, 0}			/* arthur2 */
 };
 
-static tcl_strings mystrings[] =
-{
-  {"altnick", altnick, NICKMAX, 0},
-  {0, 0, 0, 0}
-};
-
 /* for EVERY channel */
 static void flush_modes()
 {
@@ -961,7 +954,6 @@ static char *irc_close()
   del_bind_table(H_pub);
   context;
   rem_tcl_ints(myints);
-  rem_tcl_strings(mystrings);
   rem_builtins(H_dcc, irc_dcc, 18);
   rem_builtins(H_msg, C_msg, 20);
   rem_builtins(H_raw, irc_raw, 28);
@@ -1042,7 +1034,6 @@ char *irc_start(Function * global_funcs)
 	       traced_nettype, NULL);
   context;
   add_tcl_ints(myints);
-  add_tcl_strings(mystrings);
   add_builtins(H_dcc, irc_dcc, 18);
   add_builtins(H_msg, C_msg, 20);
   add_builtins(H_raw, irc_raw, 28);

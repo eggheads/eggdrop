@@ -119,7 +119,7 @@ see also: console
    
 see also: kickban, console
 %{help=kickban}%{+o|o}
-###  %bkickban%b [channel] [!|@]<nickname> [comment]
+###  %bkickban%b [channel] [-|@]<nickname> [comment]
    kicks a user off the channel and bans her by a reasonable host-
    mask.  your nickname will be attached to the ban in the bot's
    internal ban list, and the ban will last for whatever is set in
@@ -133,14 +133,14 @@ see also: kickban, console
 
         command        banmask
         .kickban nick  *!*dent@*.name.domain
-        .kickban !nick *!*dent@host.name.domain
+        .kickban -nick *!*dent@host.name.domain
         .kickban @nick *!*@host.name.domain
 
         with a host of nick!~ident@host.name.domain (strict-host set to 1)
         
         command        banmask
         .kickban nick  *!*ident@*.name.domain
-        .kickban !nick *!*ident@host.name.domain
+        .kickban -nick *!*ident@host.name.domain
   
 see also: +ban, bans, stick
 %{help=msg}%{+o}

@@ -402,6 +402,7 @@ static tcl_cmds mytcl[] =
 static char *assoc_close()
 {
   context;
+  kill_all_assoc();
   rem_builtins(H_dcc, mydcc, 1);
   rem_builtins(H_bot, mybot, 1);
   rem_builtins(H_link, mylink, 1);

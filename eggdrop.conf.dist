@@ -614,7 +614,7 @@ set net-type 0
 set nick "Lamestbot"
 
 # an alternative nick to use if the nick specified by 'set nick' is
-# unavailable
+# unavailable. All '?' characters will be replaced by a random number.
 set altnick "Llamabot"
 
 # what to display in the real-name field for the bot

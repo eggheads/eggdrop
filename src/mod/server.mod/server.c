@@ -18,6 +18,7 @@ static char newserverpass[121];	/* new server password? */
 static time_t trying_server;	/* trying to connect to a server right now? */
 static int server_lag;		/* how lagged (in seconds) is the server? */
 static char altnick[NICKLEN];	/* possible alternate nickname to use */
+static char raltnick[NICKLEN];	/* random nick created from altnick */
 static int curserv;		/* current position in server list: */
 static int flud_thr;		/* msg flood threshold */
 static int flud_time;		/* msg flood time */
@@ -77,6 +78,7 @@ static p_tcl_bind_list H_wall, H_raw, H_notc, H_msgm, H_msg, H_flud,
 
 static void empty_msgq(void);
 static void next_server(int *, char *, int *, char *);
+static char *get_altbotnick(void);
 
 #include "servmsg.c"
 
@@ -491,6 +493,40 @@ static char *nick_change(ClientData cdata, Tcl_Interp * irp, char *name1,
   return NULL;
 }
 
+/* replace all '?'s in s with a random number */
+static void rand_nick(char *nick)
+{
+  char *p = nick;
+  while ((p = strchr(p, '?')) != NULL) {
+    *p = '0' + rand() % 10;
+    p++;
+  }
+}
+
+/* return the alternative bot nick */
+static char *get_altbotnick(void)
+{
+  context;
+  /* a random-number nick? */
+  if (strchr(altnick, '?')) {
+    if (!raltnick[0]) {
+      strncpy(raltnick, altnick, NICKMAX);
+      rand_nick(raltnick);
+    }
+    return raltnick;
+  } else
+    return altnick;
+}
+
+static char *altnick_change(ClientData cdata, Tcl_Interp * irp, char *name1,
+			    char *name2, int flags)
+{
+  context;
+  /* always unset raltnick. Will be regenerated when needed. */
+  raltnick[0] = 0;
+  return NULL;
+}
+
 static char *traced_server(ClientData cdata, Tcl_Interp * irp, char *name1,
 			   char *name2, int flags)
 {
@@ -778,8 +814,8 @@ static void server_postrehash()
     fatal("NO BOT NAME.", 0);
   if (serverlist == NULL)
     fatal("NO SERVER.", 0);
-  if (!rfc_casecmp(oldnick, botname) && !rfc_casecmp(oldnick, altnick) &&
-      oldnick[0]) {
+    if (oldnick[0] && !rfc_casecmp(oldnick, botname)
+       && !rfc_casecmp(oldnick, get_altbotnick())) {
     /* change botname back, don't be premature */
     strcpy(botname, oldnick);
     dprintf(DP_MODE, "NICK %s\n", origbotname);
@@ -1186,6 +1222,8 @@ static char *server_close()
   Tcl_UntraceVar(interp, "nick",
 		 TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
 		 nick_change, NULL);
+  Tcl_UntraceVar(interp, "altnick",
+		 TCL_TRACE_WRITES | TCL_TRACE_UNSETS, altnick_change, NULL);
   Tcl_UntraceVar(interp, "botname",
 		 TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
 		 traced_botname, NULL);
@@ -1259,6 +1297,7 @@ static Function server_table[] =
   (Function) & H_ctcr,
   /* 36 - 39 */
   (Function) ctcp_reply,
+  (Function) get_altbotnick,	/* char * */
 };
 
 char *server_start(Function * global_funcs)
@@ -1274,6 +1313,7 @@ char *server_start(Function * global_funcs)
   trying_server = 0L;
   server_lag = 0;
   altnick[0] = 0;
+  raltnick[0] = 0;
   curserv = 0;
   flud_thr = 5;
   flud_time = 60;
@@ -1328,6 +1368,8 @@ char *server_start(Function * global_funcs)
   Tcl_TraceVar(interp, "nick",
 	       TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
 	       nick_change, NULL);
+  Tcl_TraceVar(interp, "altnick",
+	       TCL_TRACE_WRITES | TCL_TRACE_UNSETS, altnick_change, NULL);
   Tcl_TraceVar(interp, "botname",
 	       TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
 	       traced_botname, NULL);

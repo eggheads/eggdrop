@@ -18,7 +18,6 @@ Problem status:
        10:      no-one
        11:      no-one
        12:      no-one
-       13:      no-one
        14:      no-one
        15:      no-one
        16:      no-one
@@ -135,13 +134,6 @@ has to be added to allow the bot-owner to choose the banmask type he wants
 his bot to use. not before 1.3.28.
 
 <drummer> .kickban command already supports different bantypes...
-
-Status: noone is working on this
-
---
-13. add the possibility to put some '?' in the alternative nickname var.
-The nick the bot tries to use when its first nickname is in use. The bot
-then will replace those '?' with a random number. not before 1.3.28.
 
 Status: noone is working on this
 

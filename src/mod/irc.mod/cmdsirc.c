@@ -121,7 +121,7 @@ static void cmd_kickban(struct userrec *u, int idx, char *par)
   char bantype = 0;
 
   if (!par[0]) {
-    dprintf(idx, "Usage: kickban [channel] <nick> [reason]\n");
+    dprintf(idx, "Usage: kickban [channel] [-|@]<nick> [reason]\n");
     return;
   }
   if (strchr(CHANMETA, par[0]) != NULL)
@@ -138,7 +138,7 @@ static void cmd_kickban(struct userrec *u, int idx, char *par)
   putlog(LOG_CMDS, "*", "#%s# (%s) kickban %s", dcc[idx].nick,
 	 chan->name, par);
   nick = newsplit(&par);
-  if ((nick[0] == '@') || (nick[0] == '!')) {
+  if ((nick[0] == '@') || (nick[0] == '-')) {
     bantype = nick[0];
     nick++;
   }
@@ -178,7 +178,7 @@ static void cmd_kickban(struct userrec *u, int idx, char *par)
 	  s1[2] = '*';
 	  break;
 	case '!':
-	  s1 = strchr(s, '!');
+	  s1 = strchr(s, '-');
 	  s1[1] = '*';
 	  s1--;
 	  s1[0] = '*';
@@ -187,7 +187,7 @@ static void cmd_kickban(struct userrec *u, int idx, char *par)
 	  s1 = quickban(chan, m->userhost);
 	  break;
       }
-      if (bantype == '@' || bantype == '!')
+      if (bantype == '@' || bantype == '-')
 	do_ban(chan, s1);
       if (!par[0])
 	par = "requested";

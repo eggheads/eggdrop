@@ -518,7 +518,7 @@ int init_mem(), init_dcc_max(), init_userent(), init_misc(), init_bots(),
 int main(int argc, char **argv)
 {
   int xx, i;
-  char buf[520], s[520];
+  char buf[520], s[520], *deflang = NULL;
   FILE *f;
   struct sigaction sv;
   struct chanset_t *chan;
@@ -579,7 +579,11 @@ int main(int argc, char **argv)
   lastmin = nowtm->tm_min;
   srandom(now);
   init_mem();
-  init_language("core.english");
+  deflang = getenv("EGG_LANGFILE");
+  if (deflang)
+    init_language(deflang);
+  else
+    init_language("core.english");
   if (argc > 1)
     for (i = 1; i < argc; i++)
       do_arg(argv[i]);

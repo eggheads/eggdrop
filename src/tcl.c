@@ -437,6 +437,7 @@ static void init_traces()
 
 void kill_tcl()
 {
+  context;
   rem_tcl_coups(def_tcl_coups);
   rem_tcl_strings(def_tcl_strings);
   rem_tcl_ints(def_tcl_ints);

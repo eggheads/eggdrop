@@ -1706,10 +1706,9 @@ static int gotnick(char *from, char *msg)
 /* signoff, similar to part */
 static int gotquit(char *from, char *msg)
 {
-  char *nick;
+  char *nick, *p, *alt;
   int split = 0;
   memberlist *m;
-  char *p;
   struct chanset_t *chan;
   struct userrec *u;
 
@@ -1754,12 +1753,15 @@ static int gotquit(char *from, char *msg)
   /* our nick quit? if so, grab it */
   /* heck, our altnick quit maybe, maybe we want it */
   if (keepnick) {
+    alt = get_altbotnick();
     if (!rfc_casecmp(nick, origbotname)) {
       putlog(LOG_MISC, "*", IRC_GETORIGNICK, origbotname);
       dprintf(DP_MODE, "NICK %s\n", origbotname);
-    } else if (altnick[0] && !rfc_casecmp(nick, altnick) && strcmp(botname, origbotname)) {
-      putlog(LOG_MISC, "*", IRC_GETALTNICK, altnick);
-      dprintf(DP_MODE, "NICK %s\n", altnick);
+    } else if (alt[0]) {
+      if (!rfc_casecmp(nick, alt) && strcmp(botname, origbotname)) {
+	putlog(LOG_MISC, "*", IRC_GETALTNICK, alt);
+	dprintf(DP_MODE, "NICK %s\n", alt);
+      }
     }
   }
   return 0;
