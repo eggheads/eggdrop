@@ -1,7 +1,7 @@
 #! /path/to/eggdrop
 # ^- set that to the directory eggdrop is in ie "#! /users/lamest/egg/eggdrop"
 #
-# $Id: eggdrop.conf.dist,v 1.17 2000/01/06 19:46:54 fabian Exp $
+# $Id: eggdrop.conf.dist,v 1.18 2000/01/09 14:36:53 fabian Exp $
 #
 # This is a sample configuration file for your bot.  You will definitely
 # want to edit this, to set up your bot.  Right now it creates a bot called
@@ -20,7 +20,7 @@
 
 # IMPORTANT: Remember to make install and cd to the directory it created
 # (~/eggdrop by default) before you continue, running the bot from
-# eggdrop1.4.xx/ will not work.
+# eggdrop1.5/ will not work.
 
 ##### GENERAL STUFF #####
 
@@ -463,6 +463,7 @@ set global-chanset {
         +shared         -seen
 	+userexempts	+dynamicexempts
 	+userinvites	+dynamicinvites
+	-nodesynch
 }
 
 set global-chanmode "nt"
@@ -737,7 +738,8 @@ set server-timeout 15
 # if the number of servers on the net gets below this number, it will
 # jump to a new server (ie, it will assume it's on the losing end of a
 # netsplit) -- set to 0 to turn off
-# [most irc networks use TS now, so it's to your advantage to turn this off]
+# [most irc networks use TS or ND now, so it's to your advantage to turn
+# this off]
 set servlimit 0
 
 # [0/1] check for stoned servers? (i.e. Where the server connection has
