@@ -3,7 +3,7 @@
  *   Tcl stubs for file system commands
  *   Tcl stubs for everything else
  * 
- * $Id: tclmisc.c,v 1.15 2000/10/27 19:32:41 fabian Exp $
+ * $Id: tclmisc.c,v 1.16 2000/12/08 03:07:38 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -48,10 +48,8 @@ static int tcl_putlog STDVAR
 {
   char logtext[501];
 
-  Context;
   BADARGS(2, 2, " text");
-  strncpy(logtext, argv[1], 500);
-  logtext[500] = 0;
+  strncpyz(logtext, argv[1], sizeof logtext);
   putlog(LOG_MISC, "*", "%s", logtext);
   return TCL_OK;
 }
@@ -60,10 +58,8 @@ static int tcl_putcmdlog STDVAR
 {
   char logtext[501];
 
-  Context;
   BADARGS(2, 2, " text");
-  strncpy(logtext, argv[1], 500);
-  logtext[500] = 0;
+  strncpyz(logtext, argv[1], sizeof logtext);
   putlog(LOG_CMDS, "*", "%s", logtext);
   return TCL_OK;
 }
@@ -72,10 +68,8 @@ static int tcl_putxferlog STDVAR
 {
   char logtext[501];
 
-  Context;
   BADARGS(2, 2, " text");
-  strncpy(logtext, argv[1], 500);
-  logtext[500] = 0;
+  strncpyz(logtext, argv[1], sizeof logtext);
   putlog(LOG_FILES, "*", "%s", logtext);
   return TCL_OK;
 }
@@ -85,15 +79,13 @@ static int tcl_putloglev STDVAR
   int lev = 0;
   char logtext[501];
 
-  Context;
   BADARGS(4, 4, " level channel text");
   lev = logmodes(argv[1]);
-  if (lev == 0) {
+  if (!lev) {
     Tcl_AppendResult(irp, "No valid log-level given", NULL);
     return TCL_ERROR;
   }
-  strncpy(logtext, argv[3], 500);
-  logtext[500] = 0;
+  strncpyz(logtext, argv[3], sizeof logtext);
   putlog(lev, argv[2], "%s", logtext);
   return TCL_OK;
 }
@@ -103,7 +95,6 @@ static int tcl_timer STDVAR
   unsigned long x;
   char s[41];
 
-  Context;
   BADARGS(3, 3, " minutes command");
   if (atoi(argv[1]) < 0) {
     Tcl_AppendResult(irp, "time value must be positive", NULL);
@@ -126,14 +117,12 @@ static int tcl_binds STDVAR
   int			 matching = 0;
 
   BADARGS(1, 2, " ?type/mask?");
-
   if (argv[1])
     tl_kind = find_bind_table(argv[1]);
   else
     tl_kind = NULL;
   if (!tl_kind && argv[1])
     matching = 1;
-
   for (tl = tl_kind ? tl_kind : bind_table_list; tl;
        tl = tl_kind ? 0 : tl->next) {
     if (tl->flags & HT_DELETED)
@@ -149,7 +138,6 @@ static int tcl_binds STDVAR
             !wild_match(argv[1], tm->mask) && 
             !wild_match(argv[1], tc->func_name))
           continue;
-
 	build_flags(flg, &(tc->flags), NULL);
         sprintf(hits, "%i", (int) tc->hits);
         list[0] = tl->name;
@@ -171,7 +159,6 @@ static int tcl_utimer STDVAR
   unsigned long x;
   char s[41];
 
-  Context;
   BADARGS(3, 3, " seconds command");
   if (atoi(argv[1]) < 0) {
     Tcl_AppendResult(irp, "time value must be positive", NULL);
@@ -187,29 +174,26 @@ static int tcl_utimer STDVAR
 
 static int tcl_killtimer STDVAR
 {
-  Context;
   BADARGS(2, 2, " timerID");
   if (strncmp(argv[1], "timer", 5)) {
     Tcl_AppendResult(irp, "argument is not a timerID", NULL);
     return TCL_ERROR;
   }
   if (remove_timer(&timer, atol(&argv[1][5])))
-     return TCL_OK;
+    return TCL_OK;
   Tcl_AppendResult(irp, "invalid timerID", NULL);
   return TCL_ERROR;
 }
 
 static int tcl_killutimer STDVAR
 {
-  Context;
   BADARGS(2, 2, " timerID");
   if (strncmp(argv[1], "timer", 5)) {
     Tcl_AppendResult(irp, "argument is not a timerID", NULL);
     return TCL_ERROR;
   }
   if (remove_timer(&utimer, atol(&argv[1][5])))
-     return TCL_OK;
-
+    return TCL_OK;
   Tcl_AppendResult(irp, "invalid timerID", NULL);
   return TCL_ERROR;
 }
@@ -218,15 +202,14 @@ static int tcl_duration STDVAR
 {
   char s[256];
   time_t sec;
-  BADARGS(2, 2, " seconds");
 
+  BADARGS(2, 2, " seconds");
   if (atol(argv[1]) <= 0) {
     Tcl_AppendResult(irp, "0 seconds", NULL);
     return TCL_OK;
   }
   sec = atoi(argv[1]);
   s[0] = 0;
-
   if (sec >= 31536000) {
     sprintf(s, "%d year", (int) (sec / 31536000));
     if ((int) (sec / 31536000) > 1)
@@ -273,18 +256,16 @@ static int tcl_duration STDVAR
 
 static int tcl_unixtime STDVAR
 {
-  char s[20];
+  char s[10];
 
-  Context;
   BADARGS(1, 1, "");
-  sprintf(s, "%lu", (unsigned long) now);
+  egg_snprintf(s, sizeof s, "%lu", (unsigned long) now);
   Tcl_AppendResult(irp, s, NULL);
   return TCL_OK;
 }
 
 static int tcl_timers STDVAR
 {
-  Context;
   BADARGS(1, 1, "");
   list_timers(irp, timer);
   return TCL_OK;
@@ -292,7 +273,6 @@ static int tcl_timers STDVAR
 
 static int tcl_utimers STDVAR
 {
-  Context;
   BADARGS(1, 1, "");
   list_timers(irp, utimer);
   return TCL_OK;
@@ -301,24 +281,21 @@ static int tcl_utimers STDVAR
 static int tcl_ctime STDVAR
 {
   time_t tt;
-  char s[81];
+  char s[25];
 
-  Context;
   BADARGS(2, 2, " unixtime");
   tt = (time_t) atol(argv[1]);
-  strcpy(s, ctime(&tt));
-  s[strlen(s) - 1] = 0;
+  strncpyz(s, ctime(&tt), sizeof s);
   Tcl_AppendResult(irp, s, NULL);
   return TCL_OK;
 }
 
 static int tcl_myip STDVAR
 {
-  char s[21];
+  char s[16];
 
-  Context;
   BADARGS(1, 1, "");
-  sprintf(s, "%lu", iptolong(getmyip()));
+  egg_snprintf(s, sizeof s, "%lu", iptolong(getmyip()));
   Tcl_AppendResult(irp, s, NULL);
   return TCL_OK;
 }
@@ -326,17 +303,15 @@ static int tcl_myip STDVAR
 static int tcl_rand STDVAR
 {
   unsigned long x;
-  char s[41];
+  char s[11];
 
-  Context;
   BADARGS(2, 2, " limit");
   if (atol(argv[1]) <= 0) {
     Tcl_AppendResult(irp, "random limit must be greater than zero", NULL);
     return TCL_ERROR;
   }
   x = random() % (atol(argv[1]));
-
-  sprintf(s, "%lu", x);
+  egg_snprintf(s, sizeof s, "%lu", x);
   Tcl_AppendResult(irp, s, NULL);
   return TCL_OK;
 }
@@ -345,14 +320,10 @@ static int tcl_sendnote STDVAR
 {
   char s[5], from[NOTENAMELEN + 1], to[NOTENAMELEN + 1], msg[451];
 
-  Context;
   BADARGS(4, 4, " from to message");
-  strncpy(from, argv[1], NOTENAMELEN);
-  from[NOTENAMELEN] = 0;
-  strncpy(to, argv[2], NOTENAMELEN);
-  to[NOTENAMELEN] = 0;
-  strncpy(msg, argv[3], 450);
-  msg[450] = 0;
+  strncpyz(from, argv[1], sizeof from);
+  strncpyz(to, argv[2], sizeof to);
+  strncpyz(msg, argv[3], sizeof msg);
   egg_snprintf(s, sizeof s, "%d", add_note(to, from, msg, -1, 0));
   Tcl_AppendResult(irp, s, NULL);
   return TCL_OK;
@@ -363,10 +334,8 @@ static int tcl_dumpfile STDVAR
   char nick[NICKLEN];
   struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
 
-  Context;
   BADARGS(3, 3, " nickname filename");
-  strncpy(nick, argv[1], NICKLEN - 1);
-  nick[NICKLEN - 1] = 0;
+  strncpyz(nick, argv[1], sizeof nick);
   get_user_flagrec(get_user_by_nick(nick), &fr, NULL);
   showhelp(argv[1], argv[2], &fr, HELP_TEXT);
   return TCL_OK;
@@ -377,7 +346,6 @@ static int tcl_dccdumpfile STDVAR
   int idx, i;
   struct flag_record fr = {FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0};
 
-  Context;
   BADARGS(3, 3, " idx filename");
   i = atoi(argv[1]);
   idx = findidx(i);
@@ -392,7 +360,6 @@ static int tcl_dccdumpfile STDVAR
 
 static int tcl_backup STDVAR
 {
-  Context;
   BADARGS(1, 1, "");
   backup_userfile();
   return TCL_OK;
@@ -417,7 +384,6 @@ static int tcl_die STDVAR
   botnet_send_bye();
   write_userfile(-1);
   fatal(g, 0);
-  /* Should never return, but, to keep gcc happy: */
   return TCL_OK;
 }
 
@@ -427,7 +393,6 @@ static int tcl_strftime STDVAR
   struct tm *tm1;
   time_t t;
 
-  Context;
   BADARGS(2, 3, " format ?time?");
   if (argc == 3)
     t = atol(argv[2]);
@@ -446,7 +411,6 @@ static int tcl_loadmodule STDVAR
 {
   const char *p;
 
-  Context;
   BADARGS(2, 2, " module-name");
   p = module_load(argv[1]);
   if (p && strcmp(p, MOD_ALREADYLOAD) && !strcmp(argv[0], "loadmodule"))
@@ -457,7 +421,6 @@ static int tcl_loadmodule STDVAR
 
 static int tcl_unloadmodule STDVAR
 {
-  Context;
   BADARGS(2, 2, " module-name");
   Tcl_AppendResult(irp, module_unload(argv[1], origbotname), NULL);
   return TCL_OK;
@@ -491,7 +454,6 @@ static int tcl_modules STDVAR
   char s[40], s2[40];
   int i;
 
-  Context;
   BADARGS(1, 1, "");
   for (current = module_list; current; current = current->next) {
     list[0] = current->name;
@@ -520,7 +482,6 @@ static int tcl_modules STDVAR
 
 static int tcl_loadhelp STDVAR
 {
-  Context;
   BADARGS(2, 2, " helpfile-name");
   add_help_reference(argv[1]);
   return TCL_OK;
@@ -528,7 +489,6 @@ static int tcl_loadhelp STDVAR
 
 static int tcl_unloadhelp STDVAR
 {
-  Context;
   BADARGS(2, 2, " helpfile-name");
   rem_help_reference(argv[1]);
   return TCL_OK;
@@ -536,7 +496,6 @@ static int tcl_unloadhelp STDVAR
 
 static int tcl_reloadhelp STDVAR
 {
-  Context;
   BADARGS(1, 1, "");
   reload_help_data();
   return TCL_OK;
@@ -549,18 +508,13 @@ static int tcl_md5 STDVAR
   unsigned char digest[16];
   int           i;
 
-  Context;
   BADARGS(2, 2, " string");
-
   MD5Init(&md5context);
   MD5Update(&md5context, (unsigned char *)argv[1], strlen(argv[1]));
   MD5Final(digest, &md5context);
-
   for(i=0; i<16; i++)
     sprintf(digest_string + (i*2), "%.2x", digest[i]);
-
   Tcl_AppendResult(irp, digest_string, NULL);
-
   return TCL_OK;
 }
 

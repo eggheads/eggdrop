@@ -2,7 +2,7 @@
  * tcldcc.c -- handles:
  *   Tcl stubs for the dcc commands
  * 
- * $Id: tcldcc.c,v 1.22 2000/10/27 19:35:52 fabian Exp $
+ * $Id: tcldcc.c,v 1.23 2000/12/08 03:07:38 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -60,7 +60,6 @@ static int tcl_putdcc STDVAR
 {
   int i, j;
 
-  Context;
   BADARGS(3, 3, " idx text");
   i = atoi(argv[1]);
   j = findidx(i);
@@ -69,7 +68,6 @@ static int tcl_putdcc STDVAR
     return TCL_ERROR;
   }
   dumplots(-i, "", argv[2]);
-
   return TCL_OK;
 }
 
@@ -83,15 +81,15 @@ static int tcl_putdcc STDVAR
  *
  * (added by drummer@sophia.jpte.hu)
  */
+
 static int tcl_putdccraw STDVAR
 {
   int i, j = 0, z;
 
-  Context;
   BADARGS(4, 4, " idx size text");
   z = atoi(argv[1]);
   for (i = 0; i < dcc_total; i++) {
-    if (z == 0 && !strcmp(dcc[i].nick, "(server)")) {
+    if (!z && !strcmp(dcc[i].nick, "(server)")) {
       j = dcc[i].sock;
       break;
     } else if (dcc[i].sock == z) {
@@ -109,7 +107,6 @@ static int tcl_putdccraw STDVAR
 
 static int tcl_dccsimul STDVAR
 {
-  Context;
   BADARGS(3, 3, " idx command");
   if (enable_simul) {
     int idx = findidx(atoi(argv[1]));
@@ -136,10 +133,8 @@ static int tcl_dccbroadcast STDVAR
 {
   char msg[401];
 
-  Context;
   BADARGS(2, 2, " message");
-  strncpy(msg, argv[1], 400);
-  msg[400] = 0;
+  strncpyz(msg, argv[1], sizeof msg);
   chatout("*** %s\n", msg);
   botnet_send_chat(-1, botnetnick, msg);
   return TCL_OK;
@@ -150,33 +145,27 @@ static int tcl_hand2idx STDVAR
   int i;
   char s[10];
 
-  Context;
   BADARGS(2, 2, " nickname");
   for (i = 0; i < dcc_total; i++)
-    if (!egg_strcasecmp(argv[1], dcc[i].nick) &&
-	 (dcc[i].type->flags & DCT_SIMUL)) {
+    if ((dcc[i].type->flags & DCT_SIMUL) &&
+        !egg_strcasecmp(argv[1], dcc[i].nick)) {
       egg_snprintf(s, sizeof s, "%ld", dcc[i].sock);
       Tcl_AppendResult(irp, s, NULL);
       return TCL_OK;
     }
   Tcl_AppendResult(irp, "-1", NULL);
-
   return TCL_OK;
 }
 
 static int tcl_getchan STDVAR
 {
-  char s[10];
+  char s[7];
   int idx;
 
-  Context;
   BADARGS(2, 2, " idx");
   idx = findidx(atoi(argv[1]));
-  if (idx < 0) {
-    Tcl_AppendResult(irp, "invalid idx", NULL);
-    return TCL_ERROR;
-  }
-  if (dcc[idx].type != &DCC_CHAT && dcc[idx].type != &DCC_SCRIPT) {
+  if (idx < 0 ||
+      (dcc[idx].type != &DCC_CHAT && dcc[idx].type != &DCC_SCRIPT)) {
     Tcl_AppendResult(irp, "invalid idx", NULL);
     return TCL_ERROR;
   }
@@ -193,14 +182,10 @@ static int tcl_setchan STDVAR
   int idx, chan;
   module_entry *me;
 
-  Context;
   BADARGS(3, 3, " idx channel");
   idx = findidx(atoi(argv[1]));
-  if (idx < 0) {
-    Tcl_AppendResult(irp, "invalid idx", NULL);
-    return TCL_ERROR;
-  }
-  if (dcc[idx].type != &DCC_CHAT && dcc[idx].type != &DCC_SCRIPT) {
+  if (idx < 0 ||
+      (dcc[idx].type != &DCC_CHAT && dcc[idx].type != &DCC_SCRIPT)) {
     Tcl_AppendResult(irp, "invalid idx", NULL);
     return TCL_ERROR;
   }
@@ -243,7 +228,6 @@ static int tcl_setchan STDVAR
   /* Console autosave. */
   if ((me = module_find("console", 1, 1))) {
     Function *func = me->funcs;
-
     (func[CONSOLE_DOSTORE]) (idx);
   }
   return TCL_OK;
@@ -254,7 +238,6 @@ static int tcl_dccputchan STDVAR
   int chan;
   char msg[401];
 
-  Context;
   BADARGS(3, 3, " channel message");
   chan = atoi(argv[1]);
   if ((chan < 0) || (chan > 199999)) {
@@ -262,9 +245,7 @@ static int tcl_dccputchan STDVAR
 		     NULL);
     return TCL_ERROR;
   }
-  strncpy(msg, argv[2], 400);
-  msg[400] = 0;
-
+  strncpyz(msg, argv[2], sizeof msg);
   chanout_but(-1, chan, "*** %s\n", argv[2]);
   botnet_send_chan(-1, botnetnick, NULL, chan, argv[2]);
   check_tcl_bcst(botnetnick, chan, argv[2]);
@@ -276,14 +257,9 @@ static int tcl_console STDVAR
   int i, j, pls, arg;
   module_entry *me;
 
-  Context;
   BADARGS(2, 4, " idx ?channel? ?console-modes?");
   i = findidx(atoi(argv[1]));
-  if (i < 0) {
-    Tcl_AppendResult(irp, "invalid idx", NULL);
-    return TCL_ERROR;
-  }
-  if (dcc[i].type != &DCC_CHAT) {
+  if (i < 0 || dcc[i].type != &DCC_CHAT) {
     Tcl_AppendResult(irp, "invalid idx", NULL);
     return TCL_ERROR;
   }
@@ -300,12 +276,11 @@ static int tcl_console STDVAR
 	Tcl_AppendResult(irp, "invalid channel", NULL);
 	return TCL_ERROR;
       }
-      strncpy(dcc[i].u.chat->con_chan, argv[arg], 81);
-      dcc[i].u.chat->con_chan[80] = 0;
+      strncpyz(dcc[i].u.chat->con_chan, argv[arg], 81);
     } else {
       if ((argv[arg][0] != '+') && (argv[arg][0] != '-'))
 	dcc[i].u.chat->con_flags = 0;
-do_console_flags:
+      do_console_flags:
       for (j = 0; j < strlen(argv[arg]); j++) {
 	if (argv[arg][j] == '+')
 	  pls = 1;
@@ -329,7 +304,6 @@ do_console_flags:
   /* Console autosave. */
   if (argc > 2 && (me = module_find("console", 1, 1))) {
     Function *func = me->funcs;
-
     (func[CONSOLE_DOSTORE]) (i);
   }
   return TCL_OK;
@@ -340,14 +314,9 @@ static int tcl_strip STDVAR
   int i, j, pls, arg;
   module_entry *me;
 
-  Context;
   BADARGS(2, 4, " idx ?strip-flags?");
   i = findidx(atoi(argv[1]));
-  if (i < 0) {
-    Tcl_AppendResult(irp, "invalid idx", NULL);
-    return TCL_ERROR;
-  }
-  if (dcc[i].type != &DCC_CHAT) {
+  if (i < 0 || dcc[i].type != &DCC_CHAT) {
     Tcl_AppendResult(irp, "invalid idx", NULL);
     return TCL_ERROR;
   }
@@ -376,7 +345,6 @@ static int tcl_strip STDVAR
   /* Console autosave. */
   if (argc > 2 && (me = module_find("console", 1, 1))) {
     Function *func = me->funcs;
-
     (func[CONSOLE_DOSTORE]) (i);
   }
   return TCL_OK;
@@ -387,14 +355,9 @@ static int tcl_echo STDVAR
   int i;
   module_entry *me;
 
-  Context;
   BADARGS(2, 3, " idx ?status?");
   i = findidx(atoi(argv[1]));
-  if (i < 0) {
-    Tcl_AppendResult(irp, "invalid idx", NULL);
-    return TCL_ERROR;
-  }
-  if (dcc[i].type != &DCC_CHAT) {
+  if (i < 0 || dcc[i].type != &DCC_CHAT) {
     Tcl_AppendResult(irp, "invalid idx", NULL);
     return TCL_ERROR;
   }
@@ -411,7 +374,6 @@ static int tcl_echo STDVAR
   /* Console autosave. */
   if (argc > 2 && (me = module_find("console", 1, 1))) {
     Function *func = me->funcs;
-
     (func[CONSOLE_DOSTORE]) (i);
   }
   return TCL_OK;
@@ -423,21 +385,16 @@ static int tcl_page STDVAR
   char x[20];
   module_entry *me;
 
-  Context;
   BADARGS(2, 3, " idx ?status?");
   i = findidx(atoi(argv[1]));
-  if (i < 0) {
-    Tcl_AppendResult(irp, "invalid idx", NULL);
-    return TCL_ERROR;
-  }
-  if (dcc[i].type != &DCC_CHAT) {
+  if (i < 0 || dcc[i].type != &DCC_CHAT) {
     Tcl_AppendResult(irp, "invalid idx", NULL);
     return TCL_ERROR;
   }
   if (argc == 3) {
     int l = atoi(argv[2]);
 
-    if (l == 0)
+    if (!l)
       dcc[i].status &= ~STAT_PAGE;
     else {
       dcc[i].status |= STAT_PAGE;
@@ -452,7 +409,6 @@ static int tcl_page STDVAR
   /* Console autosave. */
   if ((argc > 2) && (me = module_find("console", 1, 1))) {
     Function *func = me->funcs;
-
     (func[CONSOLE_DOSTORE]) (i);
   }
   return TCL_OK;
@@ -463,7 +419,6 @@ static int tcl_control STDVAR
   int idx;
   void *hold;
 
-  Context;
   BADARGS(3, 3, " idx command");
   idx = findidx(atoi(argv[1]));
   if (idx < 0) {
@@ -482,7 +437,6 @@ static int tcl_control STDVAR
   }
   hold = dcc[idx].u.other;
   dcc[idx].u.script = get_data_ptr(sizeof(struct script_info));
-
   dcc[idx].u.script->u.other = hold;
   dcc[idx].u.script->type = dcc[idx].type;
   dcc[idx].type = &DCC_SCRIPT;
@@ -498,10 +452,9 @@ static int tcl_valididx STDVAR
 {
   int idx;
 
-  Context;
   BADARGS(2, 2, " idx");
   idx = findidx(atoi(argv[1]));
-  if ((idx < 0) || !(dcc[idx].type->flags & DCT_VALIDIDX))
+  if (idx < 0 || !(dcc[idx].type->flags & DCT_VALIDIDX))
      Tcl_AppendResult(irp, "0", NULL);
   else
      Tcl_AppendResult(irp, "1", NULL);
@@ -512,15 +465,12 @@ static int tcl_killdcc STDVAR
 {
   int idx;
 
-  ContextNote(argv[1] ? argv[1] : "argv[1] == NULL!");
   BADARGS(2, 3, " idx ?reason?");
   idx = findidx(atoi(argv[1]));
   if (idx < 0) {
     Tcl_AppendResult(irp, "invalid idx", NULL);
     return TCL_ERROR;
   }
-  Context;
-
   /* Don't kill terminal socket */
   if ((dcc[idx].sock == STDOUT) && !backgrd)
     return TCL_OK;
@@ -547,16 +497,13 @@ static int tcl_putbot STDVAR
   int i;
   char msg[401];
 
-  Context;
   BADARGS(3, 3, " botnick message");
   i = nextbot(argv[1]);
   if (i < 0) {
     Tcl_AppendResult(irp, "bot is not in the botnet", NULL);
     return TCL_ERROR;
   }
-  strncpy(msg, argv[2], 400);
-  msg[400] = 0;
-
+  strncpyz(msg, argv[2], sizeof msg);
   botnet_send_zapf(i, botnetnick, argv[1], msg);
   return TCL_OK;
 }
@@ -565,10 +512,8 @@ static int tcl_putallbots STDVAR
 {
   char msg[401];
 
-  Context;
   BADARGS(2, 2, " message");
-  strncpy(msg, argv[1], 400);
-  msg[400] = 0;
+  strncpyz(msg, argv[1], sizeof msg);
   botnet_send_zapf_broad(-1, botnetnick, NULL, msg);
   return TCL_OK;
 }
@@ -577,7 +522,6 @@ static int tcl_idx2hand STDVAR
 {
   int idx;
 
-  Context;
   BADARGS(2, 2, " idx");
   idx = findidx(atoi(argv[1]));
   if (idx < 0) {
@@ -592,7 +536,6 @@ static int tcl_islinked STDVAR
 {
   int i;
 
-  Context;
   BADARGS(2, 2, " bot");
   i = nextbot(argv[1]);
   if (i < 0)
@@ -606,7 +549,6 @@ static int tcl_bots STDVAR
 {
   tand_t *bot;
 
-  Context;
   BADARGS(1, 1, "");
   for (bot = tandbot; bot; bot = bot->next)
      Tcl_AppendElement(irp, bot->bot);
@@ -619,7 +561,6 @@ static int tcl_botlist STDVAR
   char *list[4], *p;
   char sh[2], string[20];
 
-  Context;
   BADARGS(1, 1, "");
   sh[1] = 0;
   list[3] = sh;
@@ -627,7 +568,7 @@ static int tcl_botlist STDVAR
   for (bot = tandbot; bot; bot = bot->next) {
     list[0] = bot->bot;
     list[1] = (bot->uplink == (tand_t *) 1) ? botnetnick : bot->uplink->bot;
-    strcpy(string, int_to_base10(bot->ver));
+    strncpyz(string, int_to_base10(bot->ver), sizeof string);
     sh[0] = bot->share;
     p = Tcl_Merge(4, list);
     Tcl_AppendElement(irp, p);
@@ -681,7 +622,6 @@ static int tcl_whom STDVAR
   char c[2], idle[10], work[20], *list[7], *p;
   int chan, i;
 
-  Context;
   BADARGS(2, 2, " chan");
   if (argv[1][0] == '*')
      chan = -1;
@@ -753,7 +693,6 @@ static int tcl_dccused STDVAR
 {
   char s[20];
 
-  Context;
   BADARGS(1, 1, "");
   egg_snprintf(s, sizeof s, "%d", dcc_total);
   Tcl_AppendResult(irp, s, NULL);
@@ -765,14 +704,13 @@ static int tcl_getdccidle STDVAR
   int  x, idx;
   char s[21];
 
-  Context;
   BADARGS(2, 2, " idx");
   idx = findidx(atoi(argv[1]));
   if (idx < 0) {
     Tcl_AppendResult(irp, "invalid idx", NULL);
     return TCL_ERROR;
   }
-  x = (now - (dcc[idx].timeval));
+  x = (now - dcc[idx].timeval);
   egg_snprintf(s, sizeof s, "%d", x);
   Tcl_AppendElement(irp, s);
   return TCL_OK;
@@ -782,7 +720,6 @@ static int tcl_getdccaway STDVAR
 {
   int idx;
 
-  Context;
   BADARGS(2, 2, " idx");
   idx = findidx(atol(argv[1]));
   if (idx < 0 || dcc[idx].type != &DCC_CHAT) {
@@ -799,7 +736,6 @@ static int tcl_setdccaway STDVAR
 {
   int idx;
 
-  Context;
   BADARGS(3, 3, " idx message");
   idx = findidx(atol(argv[1]));
   if (idx < 0 || dcc[idx].type != &DCC_CHAT) {
@@ -822,16 +758,13 @@ static int tcl_link STDVAR
   int x, i;
   char bot[HANDLEN + 1], bot2[HANDLEN + 1];
 
-  Context;
   BADARGS(2, 3, " ?via-bot? bot");
-  strncpy(bot, argv[1], HANDLEN);
-  bot[HANDLEN] = 0;
+  strncpyz(bot, argv[1], sizeof bot);
   if (argc == 2)
      x = botlink("", -2, bot);
   else {
     x = 1;
-    strncpy(bot2, argv[2], HANDLEN);
-    bot2[HANDLEN] = 0;
+    strncpyz(bot2, argv[2], sizeof bot2);
     i = nextbot(bot);
     if (i < 0)
       x = 0;
@@ -848,10 +781,8 @@ static int tcl_unlink STDVAR
   int i, x;
   char bot[HANDLEN + 1];
 
-  Context;
   BADARGS(2, 3, " bot ?comment?");
-  strncpy(bot, argv[1], HANDLEN);
-  bot[HANDLEN] = 0;
+  strncpyz(bot, argv[1], sizeof bot);
   i = nextbot(bot);
   if (i < 0)
      x = 0;
@@ -872,7 +803,6 @@ static int tcl_connect STDVAR
   int i, z, sock;
   char s[81];
 
-  Context;
   BADARGS(3, 3, " hostname port");
   if (dcc_total == max_dcc) {
     Tcl_AppendResult(irp, "out of dcc table space", NULL);
@@ -887,7 +817,7 @@ static int tcl_connect STDVAR
   if (z < 0) {
     killsock(sock);
     if (z == (-2))
-      strcpy(s, "DNS lookup failed");
+      strncpyz(s, "DNS lookup failed", sizeof s);
     else
       neterror(s);
     Tcl_AppendResult(irp, s, NULL);
@@ -898,8 +828,7 @@ static int tcl_connect STDVAR
   dcc[i].sock = sock;
   dcc[i].port = atoi(argv[2]);
   strcpy(dcc[i].nick, "*");
-  strncpy(dcc[i].host, argv[1], UHOSTMAX);
-  dcc[i].host[UHOSTMAX] = 0;
+  strncpyz(dcc[i].host, argv[1], UHOSTMAX);
   egg_snprintf(s, sizeof s, "%d", sock);
   Tcl_AppendResult(irp, s, NULL);
   return TCL_OK;
@@ -917,7 +846,6 @@ static int tcl_listen STDVAR
   char s[10];
   struct portmap *pmap = NULL, *pold = NULL;
 
-  Context;
   BADARGS(3, 5, " port type ?mask?/?proc ?flag??");
   port = realport = atoi(argv[1]);
   for (pmap = root; pmap; pold = pmap, pmap = pmap->next)
@@ -988,8 +916,7 @@ static int tcl_listen STDVAR
       }
       dcc[idx].status = LSTN_PUBLIC;
     }
-    strncpy(dcc[idx].host, argv[3], UHOSTMAX);
-    dcc[idx].host[UHOSTMAX] = 0;
+    strncpyz(dcc[idx].host, argv[3], UHOSTMAX);
     egg_snprintf(s, sizeof s, "%d", port);
     Tcl_AppendResult(irp, s, NULL);
     return TCL_OK;
@@ -1009,15 +936,13 @@ static int tcl_listen STDVAR
     return TCL_ERROR;
   }
   if (argc == 4) {
-    strncpy(dcc[idx].host, argv[3], UHOSTMAX);
-    dcc[idx].host[UHOSTMAX] = 0;
+    strncpyz(dcc[idx].host, argv[3], UHOSTMAX);
   } else
     strcpy(dcc[idx].host, "*");
   egg_snprintf(s, sizeof s, "%d", port);
   Tcl_AppendResult(irp, s, NULL);
   if (!pmap) {
     pmap = nmalloc(sizeof(struct portmap));
-
     pmap->next = root;
     root = pmap;
   }
@@ -1032,17 +957,15 @@ static int tcl_boot STDVAR
   char who[NOTENAMELEN + 1];
   int i, ok = 0;
 
-  Context;
   BADARGS(2, 3, " user@bot ?reason?");
-  strncpy(who, argv[1], NOTENAMELEN);
-  who[NOTENAMELEN] = 0;
+  strncpyz(who, argv[1], sizeof who);
   if (strchr(who, '@') != NULL) {
     char whonick[HANDLEN + 1];
 
     splitc(whonick, who, '@');
     whonick[HANDLEN] = 0;
     if (!egg_strcasecmp(who, botnetnick))
-       strcpy(who, whonick);
+       strncpyz(who, whonick, sizeof who);
     else if (remote_boots > 1) {
       i = nextbot(who);
       if (i < 0)
@@ -1053,8 +976,8 @@ static int tcl_boot STDVAR
     }
   }
   for (i = 0; i < dcc_total; i++)
-    if ((!egg_strcasecmp(dcc[i].nick, who)) && !ok &&
-	(dcc[i].type->flags & DCT_CANBOOT)) {
+    if (!ok && (dcc[i].type->flags & DCT_CANBOOT) &&
+        !egg_strcasecmp(dcc[i].nick, who)) {
       do_boot(i, botnetnick, argv[2] ? argv[2] : "");
       ok = 1;
     }
@@ -1063,7 +986,6 @@ static int tcl_boot STDVAR
 
 static int tcl_rehash STDVAR
 {
-  Context;
   BADARGS(1, 1, " ");
   if (make_userfile) {
     putlog(LOG_MISC, "*", USERF_NONEEDNEW);
@@ -1077,7 +999,6 @@ static int tcl_rehash STDVAR
 
 static int tcl_restart STDVAR
 {
-  Context;
   BADARGS(1, 1, " ");
   if (!backgrd) {
     Tcl_AppendResult(interp, "You can't restart a -n bot", NULL);
