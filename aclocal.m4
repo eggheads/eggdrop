@@ -38,7 +38,8 @@ fi
 ])dnl
 
 
-AC_DEFUN(EGG_CHECK_STRIP, [dnl
+AC_DEFUN(EGG_PROG_STRIP, [dnl
+AC_CHECK_PROG(STRIP,strip,strip)
 if test "x${STRIP}" = "x"
 then
   STRIP=touch
