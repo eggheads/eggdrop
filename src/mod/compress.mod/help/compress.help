@@ -1,0 +1,9 @@
+%{help=compress module}%{+n}
+###  %bcompress module%b
+   This module provides provides support for file compression. It can be used
+   to compress files via Tcl or to transfer the userfile compressed during the
+   share process, saving bandwidth.
+
+   Config file variables for configuring the compress module:
+      %bcompress-level  share-compressed%b
+   (Use %b'.help set <variable>'%b for more info)

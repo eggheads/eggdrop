@@ -1,27 +1,28 @@
 Compress Module
 Last revised: January 1, 2002
+$Id: mod.compress,v 1.12 2004/05/27 05:23:39 wcc Exp $
      _________________________________________________________________
 
                              Compress Module
 
 
 This module provides provides support for file compression. It can be used to
-compress files via Tcl or to transfer the userfile compressed during the
-share process, saving bandwidth.
-  
+compress files via Tcl or to transfer the userfile compressed during the share
+process, saving bandwidth.
+
   This module requires: share
-  
-Put this line into your Eggdrop configuration file to load the compress 
+
+Put this line into your Eggdrop configuration file to load the compress
 module:
-  
+
   loadmodule compress
-  
+
 There are also some variables you can set in your config file:
-  
+
   set share-compressed 1 (Disabled by default)
       Allow compressed sending of user files? The user files are
       compressed with the compression level defined in `compress-level'.
-  
+
   set compress-level 9
      This is the default compression level used.
 

@@ -3,11 +3,14 @@
    Removes all msgs from the specified queue.
 
    The queue argument can be one of:
+
       %bmode%b, %bserver%b, %bhelp%b, %ball%b
 %{help=dump}%{+m}
 ###  %bdump%b <text>
-   Dumps the text to the IRC server. See http://www.ietf.org/rfc/rfc1459.txt
-   for more information on the IRC protocol.
+   Dumps the given text to the IRC server.
+
+   See http://www.ietf.org/rfc/rfc1459.txt for more information on the
+   IRC protocol.
 %{help=jump}%{+m}
 ###  %bjump%b [server [port [pass]]]
    Makes the bot jump to another server. If you don't specify a server, it
@@ -29,22 +32,35 @@ See also: servers
    indicate which server the bot is currently on. For example:
 
       <D|Ares>   irc.arcti.ca:6667 (irc.arcti.ca) <- I am here
+%{+m|m}
+See also: jump
+%{help=server module}%{+n}
+###  %bserver module%b
+   This module provides the core server support. You have to load this if you
+   want your bot to come on IRC.
 
-%{+m|m}See also: jump%{-}
-%{help=server module}%{+o|o}
-###  help on the %bserver module%b
-   This module provides all that's need to get a bot on a server and
-   sitting there, it provides server connection, raw irc, private
-   message/notice/ctcp handling.
-   Command(s) avalible: (use %b'.help <command>'%b for more info)
-      %bservers%b  %{+m}%bjump%b  %bdump%b
-%{+n}
-   There is also a list of Tcl settings available,
-   use %b'.help server settings'%b
+   The following commands are provided by the server module:
+
+   For channel ops:
+      %bservers%b
+
+   For global masters:
+      %bjump         dump%b
+
+   Config file variables for configuring the server module:
+      %bservlimit       server-timeout      lowercase-ctcp%b
+      %bnever-give-up   keep-nick           check-stoned%b
+      %bserverror-quit  max-queue-msg       trigger-on-ignore%b
+      %banswer-ctcp     server-cycle-wait   default-port%b
+      %bcheck-mode-r    ctcp-mode           use-penalties%b
+      %bdouble-server   double-mode         double-help%b
+      %buse-fastdeq     nick-len            optimize-kicks%b
+      %bstack-limit%b
+   (Use %b'.help set <variable>'%b for more info)
 %{help=all}%{+o|o}
 ###  %bserver module%b commands
    For channel ops:
       %bservers%b
 %{+m|m}
    For global masters:
-      %bjump%b       %bdump%b     %bclearqueue%b
+      %bjump         dump         clearqueue%b

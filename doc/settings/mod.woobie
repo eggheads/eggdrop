@@ -1,5 +1,6 @@
 Woobie Module
 Last revised: December 31, 2001
+$Id: mod.woobie,v 1.11 2004/05/27 05:23:39 wcc Exp $
      _________________________________________________________________
 
                               Woobie Module
@@ -12,7 +13,7 @@ This module requires: none
 
 Put this line into your Eggdrop configuration file to load the woobie
 module:
-  
+
   loadmodule woobie
      _________________________________________________________________
 

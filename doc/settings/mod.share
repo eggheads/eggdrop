@@ -1,11 +1,13 @@
 Share Module
 Last revised: November 27, 2003
+$Id: mod.share,v 1.13 2004/05/27 05:23:39 wcc Exp $
      _________________________________________________________________
 
                                Share Module
 
 
-This module provides userfile sharing support between two directly linked bots.
+This module provides userfile sharing support between two directly linked
+bots.
 
 This module requires: transfer, channels
 

@@ -15,7 +15,7 @@
  * 1.4       1997-11-25      1.2.2.0         Added language addition  Kirk
  * 1.5       1998-07-12      1.3.0.0         Fixed ;me and updated    BB
  *
- * $Id: wire.c,v 1.30 2004/03/14 13:52:29 wcc Exp $
+ * $Id: wire.c,v 1.31 2004/05/27 05:23:41 wcc Exp $
  */
 /*
  * Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004 Eggheads Development Team
@@ -576,6 +576,7 @@ static char *wire_close()
     wire_leave(w->sock);
     w = wirelist;
   }
+  rem_help_reference("wire.help");
   rem_builtins(H_dcc, wire_dcc);
   H_temp = find_bind_table("filt");
   rem_builtins(H_temp, wire_filt);
@@ -597,7 +598,7 @@ static Function wire_table[] = {
 
 char *wire_start(Function *global_funcs)
 {
-  p_tcl_bind_list H_temp; /* variable "H_temp" was set but never used */
+  p_tcl_bind_list H_temp;
 
   global = global_funcs;
 
@@ -606,10 +607,13 @@ char *wire_start(Function *global_funcs)
     module_undepend(MODULE_NAME);
     return "This module requires Eggdrop 1.6.0 or later.";
   }
+
   if (!(encryption_funcs = module_depend(MODULE_NAME, "encryption", 2, 1))) {
     module_undepend(MODULE_NAME);
     return "This module requires an encryption module.";
   }
+
+  add_help_reference("wire.help");
   add_builtins(H_dcc, wire_dcc);
   H_temp = find_bind_table("filt");
   add_builtins(H_filt, wire_filt);

@@ -1,4 +1,6 @@
-# $Id: modinfo,v 1.3 2003/12/10 19:04:50 wcc Exp $
-DESC:This ranks your bot in the uptimes list soon to be setup.
+# $Id: modinfo,v 1.4 2004/05/27 05:23:40 wcc Exp $
+DESC:This module reports uptime statistics to http://uptime.eggheads.org. Go
+DESC:look and see what your uptime is! It takes about 9 hours to show up, so
+DESC:if your bot isn't listed, try again later.
 DESC:
 DESC:Enabling this module is recommended for bots active on IRC.

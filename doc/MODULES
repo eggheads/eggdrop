@@ -1,4 +1,4 @@
-$Id: MODULES,v 1.28 2004/05/27 04:18:38 wcc Exp $
+$Id: MODULES,v 1.29 2004/05/27 05:23:39 wcc Exp $
 
 Eggdrop Module Information
 Last revised: March 04, 2003
@@ -115,7 +115,7 @@ Last revised: March 04, 2003
     share     This module provides userfile sharing support between two
               directly linked bots.
 
-    transfer  The transfer module provides dcc send/get support and userfile
+    transfer  The transfer module provides DCC SEND/GET support and userfile
               transfer support for userfile sharing.
 
     uptime    This module reports uptime statistics to the uptime contest

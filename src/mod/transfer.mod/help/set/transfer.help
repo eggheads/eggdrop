@@ -29,12 +29,3 @@
    This is the number of seconds to wait before a dcc send or get is
    considered to have timed out. If no traffic occurs on the transfer
    in the given time, it closes.
-%{help=transfer module}%{+n}
-###  help on the %btransfer module%b
-   This module provides support for file transfers by the bot. It's
-   used by both the share and filesys modules. The following Tcl
-   settings are available, and more info is provided by
-   %b'.help set <variable>'%b
-
-   Available variables are:
-     %bxfer-timeout%b  %bcopy-to-tmp%b  %bdcc-block%b  %bmax-dloads%b
