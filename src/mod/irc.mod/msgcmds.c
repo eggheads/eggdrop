@@ -2,7 +2,7 @@
  * msgcmds.c -- part of irc.mod
  *   all commands entered via /MSG
  *
- * $Id: msgcmds.c,v 1.24 2001/10/20 23:50:28 poptix Exp $
+ * $Id: msgcmds.c,v 1.25 2001/12/04 19:58:07 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -171,7 +171,6 @@ static int msg_ident(char *nick, char *host, struct userrec *u, char *par)
 {
   char s[UHOSTLEN], s1[UHOSTLEN], *pass, who[NICKLEN];
   struct userrec *u2;
-  memberlist *mx;
 
   if (match_my_nick(nick))
     return 1;
@@ -212,28 +211,12 @@ static int msg_ident(char *nick, char *host, struct userrec *u, char *par)
 	dprintf(DP_HELP, IRC_MISIDENT, nick, who, u->handle);
       return 1;
     } else {
-      struct chanset_t *chan;
-      struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
-
       putlog(LOG_CMDS, "*", "(%s!%s) !*! IDENT %s", nick, host, who);
       egg_snprintf(s, sizeof s, "%s!%s", nick, host);
       maskhost(s, s1);
       dprintf(DP_HELP, "NOTICE %s :%s: %s\n", nick, IRC_ADDHOSTMASK, s1);
       addhost_by_handle(who, s1);
-      for (chan = chanset; chan; chan = chan->next) {
-	get_user_flagrec(u2, &fr, chan->dname);
-	/* Is the channel or the user marked auto-op? */
-	if ((channel_autoop(chan) || glob_autoop(fr) || chan_autoop(fr)) &&
-           (mx = ismember(chan, nick)) &&
-	   /* ... and isn't the user chanop already? */
-	   !chan_hasop(mx) && !chan_sentop(mx) &&
-	   /* ... and are they actually validly +o? */
-	   !chan_sentop(mx) && (chan_op(fr) || (glob_op(fr) &&
-	   !chan_deop(fr)))) {
-	  add_mode(chan, '+', 'o', nick);
-          mx->flags |= SENTOP;
-        }
-      }
+      check_this_user(who);
       return 1;
     }
   }
@@ -273,6 +256,7 @@ static int msg_addhost(char *nick, char *host, struct userrec *u, char *par)
       putlog(LOG_CMDS, "*", "(%s!%s) !*! ADDHOST %s", nick, host, par);
       dprintf(DP_HELP, "NOTICE %s :%s: %s\n", nick, IRC_ADDHOSTMASK, par);
       addhost_by_handle(u->handle, par);
+      check_this_user(u->handle);
       return 1;
     }
   }

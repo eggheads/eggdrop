@@ -1,7 +1,7 @@
 /*
  * irc.h -- part of irc.mod
  *
- * $Id: irc.h,v 1.15 2001/04/26 03:38:51 guppy Exp $
+ * $Id: irc.h,v 1.16 2001/12/04 19:58:07 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -107,6 +107,7 @@ static int gotmode(char *, char *);
 /* do_channel_part is here. */
 /* 20 - 23 */
 /* check_this_ban is here. */
+/* check_this_user is here. */
 
 #endif				/* MAKING_IRC */
 
