@@ -2,7 +2,7 @@
  * channels.c -- part of channels.mod
  *   support for channels within the bot
  *
- * $Id: channels.c,v 1.70 2002/10/08 02:04:03 wcc Exp $
+ * $Id: channels.c,v 1.71 2002/11/21 07:59:24 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -736,20 +736,20 @@ static int channels_expmem()
 
 #if ((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 4))
 static char *traced_globchanset(ClientData cdata, Tcl_Interp * irp,
-				char *name1, CONST char *name2, int flags)
+				CONST char *name1, CONST char *name2,
+                                int flags)
 #else
 static char *traced_globchanset(ClientData cdata, Tcl_Interp * irp, 
                                 char *name1, char *name2, int flags)
 #endif
 {
-  char *s;
-  char *t;
+  char *t, *s;
   int i;
   int items;
 #if ((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 4))
-  CONST char **item;
+  CONST char **item, *s2;
 #else
-  char **item;
+  char **item, *s2;
 #endif
 
   if (flags & (TCL_TRACE_READS | TCL_TRACE_UNSETS)) {
@@ -759,8 +759,8 @@ static char *traced_globchanset(ClientData cdata, Tcl_Interp * irp,
 	    TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
 	    traced_globchanset, NULL);
   } else { /* Write */
-    s = Tcl_GetVar2(interp, name1, name2, TCL_GLOBAL_ONLY);
-    Tcl_SplitList(interp, s, &items, &item);
+    s2 = Tcl_GetVar2(interp, name1, name2, TCL_GLOBAL_ONLY);
+    Tcl_SplitList(interp, s2, &items, &item);
     for (i = 0; i<items; i++) {
       if (!(item[i]) || (strlen(item[i]) < 2)) continue;
       s = glob_chanset;

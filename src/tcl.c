@@ -4,7 +4,7 @@
  *   Tcl initialization
  *   getting and setting Tcl/eggdrop variables
  *
- * $Id: tcl.c,v 1.51 2002/11/18 03:53:33 stdarg Exp $
+ * $Id: tcl.c,v 1.52 2002/11/21 07:59:24 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -28,10 +28,6 @@
 #include <stdlib.h>		/* getenv()				*/
 #include <locale.h>		/* setlocale()				*/
 #include "main.h"
-
-#ifndef CONST
-#define CONST
-#endif
 
 #if ((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 1)) || (TCL_MAJOR_VERSION > 8)
 #define USE_BYTE_ARRAYS
@@ -567,7 +563,7 @@ extern tcl_cmds tcluser_cmds[], tcldcc_cmds[], tclmisc_cmds[], tclmisc_objcmds[]
  */
 void init_tcl(int argc, char **argv)
 {
-#if (TCL_MAJOR_VERSION >= 8 && TCL_MINOR_VERSION >= 1) || (TCL_MAJOR_VERSION >= 9)
+#if (TCL_MAJOR_VERSION >= 8 && TCL_MINOR_VERSION >= 1) || (TCL_MAJOR_VERSION > 8)
   const char *encoding;
   int i;
   char *langEnv;
@@ -603,7 +599,7 @@ void init_tcl(int argc, char **argv)
   Tcl_Init(interp);
 
 /* Code based on Tcl's TclpSetInitialEncodings() */
-#if (TCL_MAJOR_VERSION >= 8 && TCL_MINOR_VERSION >= 1) || (TCL_MAJOR_VERSION >= 9)
+#if (TCL_MAJOR_VERSION >= 8 && TCL_MINOR_VERSION >= 1) || (TCL_MAJOR_VERSION > 8)
   /* Determine the current encoding from the LC_* or LANG environment
    * variables.
    */
