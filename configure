@@ -8172,14 +8172,4 @@ echo "$as_me:$LINENO: result: to interactively choose which modules to compile."
 echo "${ECHO_T}to interactively choose which modules to compile." >&6
 echo "$as_me:$LINENO: result: " >&5
 echo "${ECHO_T}" >&6
-if test -f "./$EGGEXEC"
-then
-  echo "$as_me:$LINENO: result: After that, type 'make clean' and then 'make' to create the bot." >&5
-echo "${ECHO_T}After that, type 'make clean' and then 'make' to create the bot." >&6
-else
-  echo "$as_me:$LINENO: result: After that, type 'make' to create the bot." >&5
-echo "${ECHO_T}After that, type 'make' to create the bot." >&6
-fi
-echo "$as_me:$LINENO: result: " >&5
-echo "${ECHO_T}" >&6
 

@@ -1,7 +1,7 @@
 dnl aclocal.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: aclocal.m4,v 1.59 2002/08/24 17:29:46 wcc Exp $
+dnl $Id: aclocal.m4,v 1.60 2002/12/24 03:10:21 wcc Exp $
 dnl
 
 
@@ -24,13 +24,6 @@ AC_MSG_RESULT(Configure is done.)
 AC_MSG_RESULT()
 AC_MSG_RESULT([Type 'make config' to configure the modules, or type 'make iconfig'])
 AC_MSG_RESULT(to interactively choose which modules to compile.)
-AC_MSG_RESULT()
-if test -f "./$EGGEXEC"
-then
-  AC_MSG_RESULT([After that, type 'make clean' and then 'make' to create the bot.])
-else
-  AC_MSG_RESULT([After that, type 'make' to create the bot.])
-fi
 AC_MSG_RESULT()
 ])dnl
 
