@@ -2,7 +2,7 @@
  * chancmds.c -- part of irc.mod
  *   handles commands directly relating to channel interaction
  *
- * $Id: cmdsirc.c,v 1.42 2002/09/11 02:14:45 wcc Exp $
+ * $Id: cmdsirc.c,v 1.43 2002/09/28 00:06:29 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -292,8 +292,8 @@ static void cmd_voice(struct userrec *u, int idx, char *par)
 	    " %s.\n", chan->dname);
     return;
   }
-  putlog(LOG_CMDS, "*", "#%s# (%s) voice %s %s", dcc[idx].nick,
-	 dcc[idx].u.chat->con_chan, nick, par);
+  putlog(LOG_CMDS, "*", "#%s# (%s) voice %s", dcc[idx].nick,
+	 chan->dname, nick);
   m = ismember(chan, nick);
   if (!m) {
     dprintf(idx, "%s is not on %s.\n", nick, chan->dname);
@@ -327,8 +327,8 @@ static void cmd_devoice(struct userrec *u, int idx, char *par)
 	    " %s.\n", chan->dname);
     return;
   }
-  putlog(LOG_CMDS, "*", "#%s# (%s) devoice %s %s", dcc[idx].nick,
-	 dcc[idx].u.chat->con_chan, nick, par);
+  putlog(LOG_CMDS, "*", "#%s# (%s) devoice %s", dcc[idx].nick,
+	 chan->dname, nick);
   m = ismember(chan, nick);
   if (!m) {
     dprintf(idx, "%s is not on %s.\n", nick, chan->dname);
@@ -362,8 +362,8 @@ static void cmd_op(struct userrec *u, int idx, char *par)
 	    chan->dname);
     return;
   }
-  putlog(LOG_CMDS, "*", "#%s# (%s) op %s %s", dcc[idx].nick,
-	 dcc[idx].u.chat->con_chan, nick, par);
+  putlog(LOG_CMDS, "*", "#%s# (%s) op %s", dcc[idx].nick,
+	 chan->dname, nick);
   m = ismember(chan, nick);
   if (!m) {
     dprintf(idx, "%s is not on %s.\n", nick, chan->dname);
@@ -408,8 +408,8 @@ static void cmd_halfop(struct userrec *u, int idx, char *par)
 	    chan->dname);
     return;
   }
-  putlog(LOG_CMDS, "*", "#%s# (%s) halfop %s %s", dcc[idx].nick,
-	 dcc[idx].u.chat->con_chan, nick, par);
+  putlog(LOG_CMDS, "*", "#%s# (%s) halfop %s", dcc[idx].nick,
+	 chan->dname, nick);
   m = ismember(chan, nick);
   if (!m) {
     dprintf(idx, "%s is not on %s.\n", nick, chan->dname);
@@ -455,8 +455,8 @@ static void cmd_deop(struct userrec *u, int idx, char *par)
 	    chan->dname);
     return;
   }
-  putlog(LOG_CMDS, "*", "#%s# (%s) deop %s %s", dcc[idx].nick,
-	 dcc[idx].u.chat->con_chan, nick, par);
+  putlog(LOG_CMDS, "*", "#%s# (%s) deop %s", dcc[idx].nick,
+	 chan->dname, nick);
   m = ismember(chan, nick);
   if (!m) {
     dprintf(idx, "%s is not on %s.\n", nick, chan->dname);
@@ -506,8 +506,8 @@ static void cmd_dehalfop(struct userrec *u, int idx, char *par)
 	    chan->dname);
     return;
   }
-  putlog(LOG_CMDS, "*", "#%s# (%s) dehalfop %s %s", dcc[idx].nick,
-	 dcc[idx].u.chat->con_chan, nick, par);
+  putlog(LOG_CMDS, "*", "#%s# (%s) dehalfop %s", dcc[idx].nick,
+	 chan->dname, nick);
   m = ismember(chan, nick);
   if (!m) {
     dprintf(idx, "%s is not on %s.\n", nick, chan->dname);
@@ -621,8 +621,8 @@ static void cmd_invite(struct userrec *u, int idx, char *par)
 	 nick);
   if (!me_op(chan) && !me_halfop(chan)) {
     if (chan->channel.mode & CHANINV) {
-      dprintf(idx, "I can't help you now because I'm not a channel op or %s",
-	      "halfop on %s.\n", chan->dname);
+      dprintf(idx, "I can't help you now because I'm not a channel op or"
+	      " halfop on %s.\n", chan->dname);
       return;
     }
     if (!channel_active(chan)) {
@@ -651,8 +651,8 @@ static void cmd_channel(struct userrec *u, int idx, char *par)
   if (!has_oporhalfop(idx, par))
     return;
   chname = newsplit(&par);
-  putlog(LOG_CMDS, "*", "#%s# (%s) channel %s", dcc[idx].nick,
-	 dcc[idx].u.chat->con_chan, chname);
+  putlog(LOG_CMDS, "*", "#%s# (%s) channel", dcc[idx].nick,
+	 !chname[0] ? dcc[idx].u.chat->con_chan : chname);
   if (!chname[0])
     chan = findchan_by_dname(dcc[idx].u.chat->con_chan);
   else
