@@ -7,7 +7,7 @@
  *   telling the current programmed settings
  *   initializing a lot of stuff and loading the tcl scripts
  * 
- * $Id: chanprog.c,v 1.17 2000/10/02 22:35:42 fabian Exp $
+ * $Id: chanprog.c,v 1.18 2000/10/19 16:32:20 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -168,6 +168,24 @@ void clear_chanlist(void)
   for (chan = chanset; chan; chan = chan->next)
     for (m = chan->channel.member; m && m->nick[0]; m = m->next)
       m->user = NULL;
+}
+
+/* Clear the user pointer of a specific nick in the chanlists.
+ *
+ * Necessary when a hostmask is added/removed, a nick changes, etc.
+ * Does not completely invalidate the channel cache like clear_chanlist().
+ */
+void clear_chanlist_member(const char *nick)
+{
+  register memberlist		*m;
+  register struct chanset_t	*chan;
+
+  for (chan = chanset; chan; chan = chan->next)
+    for (m = chan->channel.member; m && m->nick[0]; m = m->next)
+      if (!rfc_casecmp(m->nick, nick)) {
+	m->user = NULL;
+	break;
+      }
 }
 
 /* If this user@host is in a channel, set it (it was null)

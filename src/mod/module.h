@@ -1,7 +1,7 @@
 /* 
  * module.h
  * 
- * $Id: module.h,v 1.34 2000/09/23 17:49:57 fabian Exp $
+ * $Id: module.h,v 1.35 2000/10/19 16:32:21 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -428,6 +428,7 @@
 /* 264 - 267 */
 #define str_unescape ((void (*)(char *, register const char))global[264])
 #define egg_strcatn ((int (*)(char *dst, const char *src, size_t max))global[265])
+#define clear_chanlist_member ((void (*)(const char *nick))global[266])
 
 /* This is for blowfish module, couldnt be bothered making a whole new .h
  * file for it ;)

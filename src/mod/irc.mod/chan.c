@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  * 
- * $Id: chan.c,v 1.51 2000/10/19 16:30:32 fabian Exp $
+ * $Id: chan.c,v 1.52 2000/10/19 16:32:21 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1853,7 +1853,7 @@ static int gotnick(char *from, char *msg)
     }
     chan = chan->next;
   }
-  clear_chanlist();		/* Cache is meaningless now. */
+  clear_chanlist_member(msg);	/* Cache for nick 'msg' is meaningless now. */
   return 0;
 }
 

@@ -4,7 +4,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: modules.c,v 1.40 2000/09/23 17:49:56 fabian Exp $
+ * $Id: modules.c,v 1.41 2000/10/19 16:32:20 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -334,7 +334,7 @@ Function global_table[] =
   (Function) admin,		 /* char *				*/
   (Function) userfile,		 /* char *				*/
   (Function) ver,		 /* char *				*/
-     /* 120 - 123 */
+  /* 120 - 123 */
   (Function) notify_new,	 /* char *				*/
   (Function) helpdir,		 /* char *				*/
   (Function) version,		 /* char *				*/
@@ -524,7 +524,8 @@ Function global_table[] =
   (Function) strchr_unescape,
   /* 264 - 267 */
   (Function) str_unescape,
-  (Function) egg_strcatn
+  (Function) egg_strcatn,
+  (Function) clear_chanlist_member
 };
 
 void init_modules(void)
