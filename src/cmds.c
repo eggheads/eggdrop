@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  *
- * $Id: cmds.c,v 1.56 2001/06/30 06:29:55 guppy Exp $
+ * $Id: cmds.c,v 1.57 2001/07/03 01:33:34 poptix Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1246,25 +1246,11 @@ int check_dcc_attrs(struct userrec *u, int oatr)
   int i, stat;
   char *p, *q, s[121];
 
-  /* If it matches someone in the owner list, make sure he/she has +n */
   if (!u)
     return 0;
   /* Make sure default owners are +n */
-  if (owner[0]) {
-    q = owner;
-    p = strchr(q, ',');
-    while (p) {
-      strncpyz(s, q, p - q);
-      rmspace(s);
-      if (!egg_strcasecmp(u->handle, s))
-	u->flags = sanity_check(u->flags | USER_OWNER);
-      q = p + 1;
-      p = strchr(q, ',');
-    }
-    strcpy(s, q);
-    rmspace(s);
-    if (!egg_strcasecmp(u->handle, s))
-      u->flags = sanity_check(u->flags | USER_OWNER);
+  if (isowner(u->handle)) {
+    u->flags = sanity_check(u->flags | USER_OWNER);
   }
   for (i = 0; i < dcc_total; i++) {
     if ((dcc[i].type->flags & DCT_MASTER) &&
