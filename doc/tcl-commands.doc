@@ -1,4 +1,4 @@
-$Id: tcl-commands.doc,v 1.118 2005/01/07 02:25:05 tothwolf Exp $
+$Id: tcl-commands.doc,v 1.119 2005/02/02 00:02:27 tothwolf Exp $
 
 Eggdrop Tcl Commands
 Last revised: August 02, 2004
@@ -1977,14 +1977,14 @@ marked with vertical bars (|) on the left.
          Module: server
 
     (31) NOTE
-         bind note <flags> <handle> <proc>
+         bind note <flags> <mask> <proc>
          procname <from> <to> <text>
 
          Description: incoming notes (either from the party line, someone on
            IRC, or someone on another bot on the botnet) are checked against
-           these binds before being processed. If a bind exists, the bot will
-           not deliver the note. The handle must be an exact match (no wildcards),
-           but it is not case sensitive; flags are ignored.
+           these binds before being processed. The mask is matched against
+           the receiving handle and supports wildcards. If the proc returns 1,
+           Eggdrop will not process the note any further. Flags are ignored.
          Module: core
 
     (32) ACT (stackable)
@@ -2179,6 +2179,11 @@ marked with vertical bars (|) on the left.
 
     (11) WALL  Return 1 to make the command get logged like so:
            !nick! msg
+
+    (12) NOTE  Return 1 to ask the bot not to process the note any further.
+               This includes stacked note bindings that would be processed
+               after this one, as well as the built-in eggdrop note handling
+               routines.
 
 *** CONTROL PROCEDURES ***
 

@@ -7,7 +7,7 @@
  *   (non-Tcl) procedure lookups for msg/dcc/file commands
  *   (Tcl) binding internal procedures to msg/dcc/file commands
  *
- * $Id: tclhash.c,v 1.50 2005/01/03 20:01:45 paladin Exp $
+ * $Id: tclhash.c,v 1.51 2005/02/02 00:02:29 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -945,8 +945,11 @@ int check_tcl_note(const char *from, const char *to, const char *text)
   Tcl_SetVar(interp, "_note1", (char *) from, 0);
   Tcl_SetVar(interp, "_note2", (char *) to, 0);
   Tcl_SetVar(interp, "_note3", (char *) text, 0);
-  x = check_tcl_bind(H_note, to, 0, " $_note1 $_note2 $_note3", MATCH_EXACT);
-  return (x == BIND_MATCHED || x == BIND_EXECUTED || x == BIND_EXEC_LOG);
+
+  x = check_tcl_bind(H_note, to, 0, " $_note1 $_note2 $_note3",
+                     MATCH_MASK | BIND_STACKABLE | BIND_WANTRET);
+
+  return (x == BIND_EXEC_LOG);
 }
 
 void check_tcl_listen(const char *cmd, int idx)

@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: tcl-commands.html,v 1.46 2005/01/07 02:25:05 tothwolf Exp $ -->
+<!-- $Id: tcl-commands.html,v 1.47 2005/02/02 00:02:28 tothwolf Exp $ -->
 
 <html>
   <head>
@@ -4182,15 +4182,15 @@
             <li>
               <p><strong>NOTE</strong></p>
 
-              <p><strong>bind note &lt;flags&gt; &lt;handle&gt; &lt;proc&gt;<br>
+              <p><strong>bind note &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;<br>
               procname &lt;from&gt; &lt;to&gt; &lt;text&gt;</strong></p>
 
               <p><strong>Description:</strong> incoming notes (either from
               the party line, someone on IRC, or someone on another bot on
               the botnet) are checked against these binds before being
-              processed. If a bind exists, the bot will not deliver the
-              note. The handle must be an exact match (no wildcards), but
-              it is not case sensitive; flags are ignored.</p>
+              processed. The mask is matched against the receiving handle
+              and supports wildcards. If the proc returns 1, Eggdrop will
+              not process the note any further. Flags are ignored.</p>
 
               <p><strong>Module:</strong> core</p>
             </li>

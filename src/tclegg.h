@@ -2,7 +2,7 @@
  * tclegg.h
  *   stuff used by tcl.c and tclhash.c
  *
- * $Id: tclegg.h,v 1.25 2005/01/03 20:01:45 paladin Exp $
+ * $Id: tclegg.h,v 1.26 2005/02/02 00:02:29 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -41,11 +41,12 @@
 
 /* Bitwise 'or' these:
  */
-#define BIND_USE_ATTR       0x04
-#define BIND_STACKABLE      0x08
-#define BIND_HAS_BUILTINS   0x10
-#define BIND_WANTRET        0x20
-#define BIND_ALTER_ARGS     0x40
+#define BIND_USE_ATTR       0x04        /* Check flags */
+#define BIND_STACKABLE      0x08        /* Stackable */
+#define BIND_HAS_BUILTINS   0x10        /* ??? Used for dcc, fil, msg, pub */
+#define BIND_WANTRET        0x20        /* Return tcl proc result */
+#define BIND_ALTER_ARGS     0x40        /* Use return value from tcl proc
+                                           as args for command */
 
 /* Return values
  */
