@@ -335,7 +335,7 @@
 #  define ContextNote(note) {}
 #endif
 #ifdef DEBUG_ASSERT
-#  define Assert(expr) (global[233](__FILE__, __LINE__, MODULE_NAME, expr))
+#  define Assert(expr) (global[233](__FILE__, __LINE__, MODULE_NAME, (int)(expr)))
 #else
 #  define Assert(expr) {}
 #endif
