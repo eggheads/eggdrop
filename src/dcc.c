@@ -4,7 +4,7 @@
  *   disconnect on a dcc socket
  *   ...and that's it!  (but it's a LOT)
  * 
- * $Id: dcc.c,v 1.26 2000/03/23 23:17:55 fabian Exp $
+ * $Id: dcc.c,v 1.27 2000/04/05 19:45:37 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -2095,7 +2095,7 @@ void dcc_telnet_got_ident(int i, char *host)
   strcpy(dcc[i].u.chat->con_chan, chanset ? chanset->name : "*");
   /* Displays a customizable banner. */
   if (use_telnet_banner)
-   show_banner(i);  
+    show_banner(i);  
   /* This is so we dont tell someone doing a portscan anything
    * about ourselves. <cybah>
    */

@@ -7,7 +7,7 @@
  *   help system
  *   motd display and %var substitution
  * 
- * $Id: misc.c,v 1.19 2000/03/23 23:17:55 fabian Exp $
+ * $Id: misc.c,v 1.20 2000/04/05 19:45:37 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1281,11 +1281,13 @@ char *extracthostname(char *hostmask)
 void show_banner(int idx) {
    FILE *vv;
    char s[1024];
-   struct flag_record fr = {FR_GLOBAL|FR_CHAN,0,0,0,0,0};
+   struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
 
-   get_user_flagrec(dcc[idx].user,&fr,dcc[idx].u.chat->con_chan);
+   if (!is_file(bannerfile))
+      return;
+   get_user_flagrec(dcc[idx].user, &fr,dcc[idx].u.chat->con_chan);
    vv = fopen(bannerfile, "r");
-   if (!vv || !is_file(bannerfile))
+   if (!vv)
       return;
    while(!feof(vv)) {
       fgets(s, 120, vv);
