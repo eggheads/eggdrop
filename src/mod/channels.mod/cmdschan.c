@@ -1030,9 +1030,11 @@ static void cmd_pls_chrec(struct userrec *u, int idx, char *par)
     return;
   }
   get_user_flagrec(u, &user, chan->name);
-  if (!glob_master(user) && !chan_master(user)) {
-    dprintf(idx, "You have no permission to do that on %s.\n",
-	    chan->name);
+  get_user_flagrec(u1, &victim, chan->name);
+  if ((!glob_master(user) && !chan_master(user)) ||  /* drummer */
+      (chan_owner(victim) && !chan_owner(user) && !glob_owner(user)) ||
+      (glob_owner(victim) && !glob_owner(user))) {
+    dprintf(idx, "You have no permission to do that.\n");
     return;
   }
   chanrec = get_chanrec(u1, chan->name);
