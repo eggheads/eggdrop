@@ -2,7 +2,7 @@
  * net.c -- handles:
  *   all raw network i/o
  * 
- * $Id: net.c,v 1.34 2001/11/10 19:48:37 poptix Exp $
+ * $Id: net.c,v 1.35 2001/11/10 20:01:47 poptix Exp $
  */
 /* 
  * This is hereby released into the public domain.
@@ -991,10 +991,16 @@ void tputs(register int z, char *s, unsigned int len)
  */
 void dequeue_sockets()
 {
-  int i, x, z=0;
+  int i, x;
 /* start poptix test code, this should avoid writes to sockets not ready to be written to. */
+  int z=0, fds;
+  fds = getdtablesize();
   fd_set wfds;
   struct timeval tv;
+#ifdef FD_SETSIZE
+  if (fds > FD_SETSIZE)
+    fds = FD_SETSIZE;           /* Fixes YET ANOTHER freebsd bug!!! */
+#endif
   FD_ZERO(&wfds);
   tv.tv_sec = 0;
   tv.tv_usec = 0; /* we only want to see if it's ready for writing, no need to actually wait.. */
@@ -1008,7 +1014,16 @@ void dequeue_sockets()
   if (!z) { 
 	return; /* nothing to write */
   }
-  select(MAXSOCKS, NULL, &wfds, NULL, &tv);
+#ifdef HPUX_HACKS
+ #ifndef HPUX10_HACKS
+  select(fds, (int *) NULL, (int *) &wfds, (int *) NULL, &tv);
+ #else
+  select(fds, NULL, &wfds, NULL, &tv);
+ #endif
+#else
+  select(fds, NULL, &wfds, NULL, &tv);
+#endif
+
 /* end poptix */
 
   for (i = 0; i < MAXSOCKS; i++) { 
