@@ -1,7 +1,7 @@
-]dnl aclocal.m4
+dnl aclocal.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: aclocal.m4,v 1.9 2000/03/18 19:43:22 guppy Exp $
+dnl $Id: aclocal.m4,v 1.10 2000/03/20 23:00:40 guppy Exp $
 dnl
 AC_DEFUN(EGG_MSG_CONFIGURE_START, [dnl
 AC_MSG_RESULT()

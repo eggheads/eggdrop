@@ -1,8 +1,9 @@
 # Makefile for doc/
-# $Id: Makefile.in,v 1.8 1999/12/28 01:25:27 guppy Exp $
+# $Id: Makefile.in,v 1.9 2000/03/20 23:00:40 guppy Exp $
 
 SHELL = /bin/sh
 top_srcdir = @top_srcdir@
+srcdir = @srcdir@
 
 @SET_MAKE@
 INSTALL = @INSTALL@
@@ -12,9 +13,11 @@ INSTALL_SCRIPT = @INSTALL_SCRIPT@
 
 DOCS = BOTNET BUG-REPORT CONTENTS KNOWN-PROBLEMS MODULES \
 UPDATES.pre1.3 UPDATES1.3 UPDATES1.4 compiling.FAQ eggdrop.doc \
- patch.howto tcl-commands.doc tricks
+patch.howto tcl-commands.doc tricks
 
 MAN1 = man1/eggdrop.1
+
+WEB_DOCS = $(srcdir)/web_docs/*.html
 
 doofus:
 	@echo ""
@@ -35,12 +38,20 @@ install:
 	@if test ! -d $(DEST)/doc/man1; then \
 		$(top_srcdir)/mkinstalldirs $(DEST)/doc/man1; \
 	fi
+	@if test ! -d $(DEST)/doc/web_docs; then \
+		$(top_srcdir)/mkinstalldirs $(DEST)/doc/web_docs; \
+	fi
 	@echo "Copying docs."
 	@for i in $(DOCS); do \
-		$(INSTALL_DATA) $$i $(DEST)/doc/; \
+		$(INSTALL_DATA) $(srcdir)/$$i $(DEST)/doc/; \
 	done
 	@for i in $(MAN1); do \
-		$(INSTALL_DATA) $$i $(DEST)/doc/man1/; \
+		$(INSTALL_DATA) $(srcdir)/$$i $(DEST)/doc/man1/; \
 	done
+	@if test "x`echo $(WEB_DOCS)`" != "x$(WEB_DOCS)"; then \
+		for i in `echo $(WEB_DOCS)`; do \
+			$(INSTALL_DATA) $$i $(DEST)/doc/web_docs/; \
+		done; \
+	fi
 
 #safety hash

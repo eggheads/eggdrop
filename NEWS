@@ -1,63 +1,75 @@
-NEWS                             08 Nov 1999
+News - Updated 08 Nov 1999
+  ------------------------------------------------------------------------
 
 Whats new, first read the following documents:
-INSTALL
-README
-BOTNET
-UPDATES1.4
-MODULES
-tcl-commands.doc
 
+     INSTALL
+     README
+     BOTNET
+     UPDATES1.4
+     tcl-commands
 
-All of these documents combined will fill you in on the latest
-changes to eggdrop in version 1.4.xx -- This series is alot like
-the 1.3.xx series, so this file may not be needed for you.
+All of these documents combined will fill you in on the latest changes to
+eggdrop in version 1.4.xx -- This series is alot like the 1.3.xx series, so
+this file may not be needed for you.
 
 Alot of things have changed in this version so at a minimum read the
-UPDATES1.4 and BOTNET text files.  UPDATES shows whats been added and
-fixed along the way.  BOTNET gives a comprehensive step by step guide on
-linking bots and the new bot flags.
+UPDATES1.4 and BOTNET text files. UPDATES shows whats been added and fixed
+along the way. BOTNET gives a comprehensive step by step guide on linking
+bots and the new bot flags.
 
 CAUTION:
-1.  Before you start the bot for the first time BACKUP your userfile if
-this is an upgrade from a previous version.
 
-2.  DON'T USE YOUR OLD CONFIG FILE!!  MAKE A NEW ONE.........
+     1. Before you start the bot for the first time BACKUP your
+     userfile if this is an upgrade from a previous version.
+
+     2. DON'T USE YOUR OLD CONFIG FILE.. MAKE A NEW ONE.........
 
 SHARING
-Sharing has changed a little.  You will notice that a resync buffer is
-kept for share bots when they disconnect.  This allows for them not to
-have to send the entire userfile again when they reconnect.  This is a
-much more effient approach to syncing the user files.
+
+     Sharing has changed a little. You will notice that a resync
+     buffer is kept for share bots when they disconnect. This allows
+     for them not to have to send the entire userfile again when they
+     reconnect. This is a much more effient approach to syncing the
+     user files.
 
 BOTFLAGS
-Bot flags have changed. It is recommended that you read the BOTNET
-document to learn more about linking bots.  Major changes in how you
-configure a passive and aggressive bot.
+
+     Bot flags have changed. It is recommended that you read the
+     BOTNET document to learn more about linking bots. Major changes
+     in how you configure a passive and aggressive bot.
 
 USERFLAGS
-User flags have changed.  You still have the basic flags but others have
-been added.  Some changes to this are that if someone has a global +n they
-will automatically be given all the global flags available.  You will also
-notice there are no more capital letters; each flag has its own unique
-letter.  An example is the B flag, in previous versions, it stood for a
-botnet master.  The new flag is t.  For more information on these changes,
-see the .help whois for a list of all flags. 1.3.24 introduces a new flag
-for +stopnethack procedure flexibility: +w.
+
+     User flags have changed. You still have the basic flags but
+     others have been added. Some changes to this are that if someone
+     has a global +n they will automatically be given all the global
+     flags available. You will also notice there are no more capital
+     letters; each flag has its own unique letter. An example is the B
+     flag, in previous versions, it stood for a botnet master. The new
+     flag is t. For more information on these changes, see the .help
+     whois for a list of all flags. 1.3.24 introduces a new flag for
+     +stopnethack procedure flexibility: +w.
 
 LANGUAGES
-Almost everthing the bot says now is in language file.  This should allow
-the bot to be more versatile for other people that do not speak english.
-As soon as we start getting the translations in there will be a directory
-on raistlin.toledolink.com that will contain ready to use language files.
-Look for it real soon.
 
-3.  MISC stuff
+     Almost everthing the bot says now is in language file. This
+     should allow the bot to be more versatile for other people that
+     do not speak english. As soon as we start getting the
+     translations in there will be a directory on ftp.eggheads.org
+     that will contain ready to use language files. Look for it real
+     soon.
 
 COMMANDS
-.voice and .devoice commands where added in dcc chat.  This will
-voice a user on a channel if the bot is oped.  Likewise for the .devoice
-command.
 
-.email is now support in userinfo1.0.tcl so if you want emails to work, use
-this :)
+     .voice and .devoice commands where added in dcc chat. This will
+     voice a user on a channel if the bot is oped. Likewise for the
+     .devoice command.
+     .email is now support in userinfo1.0.tcl so if you want emails to
+     work, use this :)
+
+  ------------------------------------------------------------------------
+(c) 1997 Robey Pointer
+(c) 2000 Eggheads Development Team
+
+
