@@ -10,7 +10,7 @@
  * 
  * dprintf'ized, 12dec1995
  * 
- * $Id: misc.c,v 1.27 2000/02/02 12:09:13 per Exp $
+ * $Id: misc.c,v 1.28 2000/03/04 18:57:42 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1332,6 +1332,7 @@ void show_banner(int idx) {
         dprintf(idx, "%s", s);
       }
    }
+   fclose(vv);
 }
 
 /* create a string with random letters and digits */

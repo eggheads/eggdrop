@@ -9,7 +9,7 @@
  * dprintf'ized, 27oct1995
  * multi-channel, 8feb1996
  * 
- * $Id: chan.c,v 1.59 2000/02/27 19:21:41 guppy Exp $
+ * $Id: chan.c,v 1.60 2000/03/04 18:57:42 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1014,7 +1014,6 @@ static int got368(char *from, char *msg)
 	    add_mode(chan, '-', 'b', b->mask);
 	  b = b->next;
 	}
-      recheck_bans(chan);
     }
   }
   /* if i sent a mode -b on myself (deban) in got367, either */
@@ -1076,7 +1075,6 @@ static int got349(char *from, char *msg)
 	      add_mode(chan, '-', 'e', e->mask);
 	    e = e->next;
 	  }
-	recheck_exempts(chan);
       }
     }  
     
@@ -1137,7 +1135,6 @@ static int got347(char *from, char *msg)
 	      add_mode(chan, '-', 'I', inv->mask);
 	    inv = inv->next;
 	  }
-	recheck_invites(chan);
       }
     }
   }
