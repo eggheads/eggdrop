@@ -1,7 +1,11 @@
 dnl aclocal.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: aclocal.m4,v 1.12 2000/03/05 23:22:48 fabian Exp $
+dnl $Id: aclocal.m4,v 1.13 2000/03/06 18:54:07 fabian Exp $
+dnl
+
+
+dnl  EGG_MSG_CONFIGURE_START()
 dnl
 AC_DEFUN(EGG_MSG_CONFIGURE_START, [dnl
 AC_MSG_RESULT()
@@ -10,7 +14,9 @@ AC_MSG_RESULT(It's going to run a bunch of strange tests to hopefully)
 AC_MSG_RESULT(make your compile work without much twiddling.)
 AC_MSG_RESULT()
 ])dnl
-dnl
+
+
+dnl  EGG_MSG_CONFIGURE_END()
 dnl
 AC_DEFUN(EGG_MSG_CONFIGURE_END, [dnl
 AC_MSG_RESULT()
@@ -27,9 +33,11 @@ else
 fi
 AC_MSG_RESULT()
 ])dnl
+
+
+dnl  EGG_CHECK_CC()
 dnl
-dnl
-dnl FIXME: make a better test
+dnl  FIXME: make a better test
 AC_DEFUN(EGG_CHECK_CC, [dnl
 if test "x${cross_compiling}" = "x"
 then
@@ -43,7 +51,9 @@ EOF
   exit 1
 fi
 ])dnl
-dnl
+
+
+dnl  EGG_PROG_STRIP()
 dnl
 AC_DEFUN(EGG_PROG_STRIP, [dnl
 AC_CHECK_PROG(STRIP,strip,strip)
@@ -52,7 +62,9 @@ then
   STRIP=touch
 fi
 ])dnl
-dnl
+
+
+dnl  EGG_PROG_AWK()
 dnl
 AC_DEFUN(EGG_PROG_AWK, [dnl
 # awk is needed for Tcl library and header checks, and eggdrop version subst
@@ -69,7 +81,9 @@ EOF
   exit 1
 fi
 ])dnl
-dnl
+
+
+dnl  EGG_PROG_BASENAME()
 dnl
 AC_DEFUN(EGG_PROG_BASENAME, [dnl
 # basename is needed for Tcl library and header checks
@@ -86,7 +100,9 @@ EOF
   exit 1
 fi
 ])dnl
-dnl
+
+
+dnl  EGG_CHECK_OS()
 dnl
 AC_DEFUN(EGG_CHECK_OS, [dnl
 LINUX=no
@@ -276,7 +292,9 @@ AC_SUBST(SHLIB_CC)dnl
 AC_SUBST(SHLIB_STRIP)dnl
 AC_SUBST(DEFAULT_MAKE)dnl
 ])dnl
-dnl
+
+
+dnl  EGG_CHECK_LIBS()
 dnl
 AC_DEFUN(EGG_CHECK_LIBS, [dnl
 if test "$IRIX" = "yes"
@@ -303,7 +321,9 @@ ac_cv_lib_pthread_pthread_mutex_init=no)
   fi
 fi
 ])dnl
-dnl
+
+
+dnl  EGG_CHECK_FUNC_VSPRINTF()
 dnl
 AC_DEFUN(EGG_CHECK_FUNC_VSPRINTF, [dnl
 AC_CHECK_FUNCS(vsprintf)
@@ -319,7 +339,9 @@ EOF
   exit 1
 fi
 ])dnl
-dnl
+
+
+dnl  EGG_HEADER_STDC()
 dnl
 AC_DEFUN(EGG_HEADER_STDC, [dnl
 if test "x${ac_cv_header_stdc}" = "xno"
@@ -334,7 +356,9 @@ EOF
   exit 1
 fi
 ])dnl
-dnl
+
+
+dnl  EGG_CYGWIN()
 dnl
 AC_DEFUN(EGG_CYGWIN, [dnl
 AC_CYGWIN
@@ -343,7 +367,9 @@ then
   AC_DEFINE(CYGWIN_HACKS)dnl
 fi
 ])dnl
-dnl
+
+
+dnl  EGG_EXEEXT()
 dnl
 AC_DEFUN(EGG_EXEEXT, [dnl
 EGGEXEC=eggdrop
@@ -354,7 +380,9 @@ then
 fi
 AC_SUBST(EGGEXEC)dnl
 ])dnl
-dnl
+
+
+dnl  EGG_TCL_ARG_WITH()
 dnl
 AC_DEFUN(EGG_TCL_ARG_WITH, [dnl
 # oohh new configure --variables for those with multiple tcl libs
@@ -392,7 +420,9 @@ configure: warning:
 EOF
 fi
 ])dnl
-dnl
+
+
+dnl  EGG_TCL_ENV()
 dnl
 AC_DEFUN(EGG_TCL_ENV, [dnl
 WARN=0
@@ -427,7 +457,9 @@ configure: warning:
 EOF
 fi
 ])dnl
-dnl
+
+
+dnl  EGG_TCL_WITH_TCLLIB()
 dnl
 AC_DEFUN(EGG_TCL_WITH_TCLLIB, [dnl
 # Look for Tcl library: if $tcllibname is set, check there first
@@ -456,7 +488,9 @@ EOF
   fi
 fi
 ])dnl
-dnl
+
+
+dnl  EGG_TCL_WITH_TCLINC()
 dnl
 AC_DEFUN(EGG_TCL_WITH_TCLINC, [dnl
 # Look for Tcl header: if $tclincname is set, check there first
@@ -483,7 +517,9 @@ EOF
   fi
 fi
 ])dnl
-dnl
+
+
+dnl  EGG_TCL_FIND_LIBRARY()
 dnl
 AC_DEFUN(EGG_TCL_FIND_LIBRARY, [dnl
 # Look for Tcl library: if $TCLLIB is set, check there first
@@ -525,7 +561,9 @@ EOF
   fi
 fi
 ])dnl
-dnl
+
+
+dnl  EGG_TCL_FIND_HEADER()
 dnl
 AC_DEFUN(EGG_TCL_FIND_HEADER, [dnl
 # Look for Tcl header: if $TCLINC is set, check there first
@@ -562,7 +600,9 @@ EOF
   fi
 fi
 ])dnl
-dnl
+
+
+dnl  EGG_TCL_CHECK_LIBRARY()
 dnl
 AC_DEFUN(EGG_TCL_CHECK_LIBRARY, [dnl
 AC_MSG_CHECKING(for Tcl library)
@@ -600,7 +640,9 @@ fi
 AC_SUBST(TCLLIB)dnl
 AC_SUBST(TCLLIBFN)dnl
 ])dnl
-dnl
+
+
+dnl  EGG_TCL_CHECK_HEADER()
 dnl
 AC_DEFUN(EGG_TCL_CHECK_HEADER, [dnl
 AC_MSG_CHECKING(for Tcl header)
@@ -653,7 +695,9 @@ fi
 AC_SUBST(TCLINC)dnl
 AC_SUBST(TCLINCFN)dnl
 ])dnl
-dnl
+
+
+dnl  EGG_TCL_CHECK_VERSION()
 dnl
 AC_DEFUN(EGG_TCL_CHECK_VERSION, [dnl
 # Both TCLLIBFN & TCLINCFN must be set, or we bail
@@ -718,7 +762,9 @@ EOF
   exit 1
 fi
 ])dnl
-dnl
+
+
+dnl  EGG_TCL_CHECK_PRE70()
 dnl
 AC_DEFUN(EGG_TCL_CHECK_PRE70, [dnl
 # Is this version of Tcl too old for us to use ?
@@ -737,7 +783,9 @@ EOF
   exit 1
 fi
 ])dnl
-dnl
+
+
+dnl  EGG_TCL_CHECK_PRE75()
 dnl
 AC_DEFUN(EGG_TCL_CHECK_PRE75, [dnl
 # Are we using a pre 7.5 Tcl version ?
@@ -747,7 +795,9 @@ then
   AC_DEFINE(HAVE_PRE7_5_TCL)dnl
 fi
 ])dnl
-dnl
+
+
+dnl  EGG_TCL_TESTLIBS()
 dnl
 AC_DEFUN(EGG_TCL_TESTLIBS, [dnl
 # Setup TCL_TESTLIBS for Tcl library tests
@@ -767,7 +817,9 @@ then
   TCL_TESTLIBS="-lpthread $TCL_TESTLIBS"
 fi
 ])dnl
-dnl
+
+
+dnl  EGG_TCL_CHECK_FREE()
 dnl
 AC_DEFUN(EGG_TCL_CHECK_FREE, [dnl
 # Check for Tcl_Free()
@@ -809,7 +861,9 @@ else
   AC_MSG_RESULT(no)
 fi
 ])dnl
-dnl
+
+
+dnl  EGG_TCL_CHECK_THREADS()
 dnl
 AC_DEFUN(EGG_TCL_CHECK_THREADS, [dnl
 # Check for TclpFinalizeThreadData()
@@ -864,7 +918,9 @@ else
   AC_MSG_RESULT(no)
 fi
 ])dnl
-dnl
+
+
+dnl  EGG_TCL_LIB_REQS()
 dnl
 AC_DEFUN(EGG_TCL_LIB_REQS, [dnl
 if test ! "x${TCLLIBEXT}" = "x.a"
@@ -916,7 +972,9 @@ fi
 AC_SUBST(TCL_REQS)dnl
 AC_SUBST(TCL_LIBS)dnl
 ])dnl
-dnl
+
+
+dnl  EGG_FUNC_DLOPEN()
 dnl
 AC_DEFUN(EGG_FUNC_DLOPEN, [dnl
 if test $NEED_DL = 1 && test "x${ac_cv_func_dlopen}" = "xno"
@@ -965,7 +1023,9 @@ EOF
   fi
 fi
 ])dnl
-dnl
+
+
+dnl  EGG_SUBST_EGGVERSION()
 dnl
 AC_DEFUN(EGG_SUBST_EGGVERSION, [dnl
 EGGVERSION=`grep 'char.egg_version' ${srcdir}/src/main.c | $AWK '{gsub(/(\"|\;)/, "", [$]4); print [$]4}'`
@@ -973,7 +1033,9 @@ egg_version_num=`echo ${EGGVERSION} | $AWK 'BEGIN { FS = "."; } { printf("%d%02d
 AC_SUBST(EGGVERSION)dnl
 AC_DEFINE_UNQUOTED(EGG_VERSION, $egg_version_num)dnl
 ])dnl
-dnl
+
+
+dnl  EGG_SUBST_DEST()
 dnl
 AC_DEFUN(EGG_SUBST_DEST, [dnl
 if test "x$DEST" = "x"
@@ -981,4 +1043,47 @@ then
   DEST=\${prefix}
 fi
 AC_SUBST(DEST)dnl
+])dnl
+
+
+dnl  EGG_REPLACE_IF_CHANGED(FILE-NAME, CONTENTS-CMDS, INIT-CMDS)
+dnl
+dnl  Replace FILE-NAME if the newly created contents differs from the existing
+dnl  file contents.  Otherwise leave the file allone.  This avoids needless
+dnl  recompiles.
+dnl
+define(EGG_REPLACE_IF_CHANGED, [dnl
+  AC_OUTPUT_COMMANDS([
+egg_replace_file=${ac_given_srcdir}/$1
+echo "creating $1"
+$2
+if test -f ${egg_replace_file} && cmp -s conftest.out ${egg_replace_file}
+then
+  echo "$1 is unchanged"
+else
+  mv conftest.out ${egg_replace_file}
+fi
+rm -f conftest.out], [$3])dnl
+])dnl
+
+
+dnl  EGG_TCL_LUSH()
+dnl
+AC_DEFUN(EGG_TCL_LUSH, [dnl
+    EGG_REPLACE_IF_CHANGED(lush.h, [
+cat > conftest.out <<EGGEOF
+/* Ignore me but do not erase me.  I am a kludge. */
+
+#include "${egg_tclinc}/${egg_tclincfn}"
+EGGEOF], [egg_tclinc=${TCLINC}; egg_tclincfn=${TCLINCFN}])dnl
+])dnl
+
+
+dnl  EGG_CATCH_MAKEFILE_REBUILD()
+dnl
+AC_DEFUN(EGG_CATCH_MAKEFILE_REBUILD, [dnl
+  AC_OUTPUT_COMMANDS([
+if test -f ${ac_given_srcdir}/.modules; then
+  ${ac_given_srcdir}/misc/modconfig --top_srcdir=${ac_given_srcdir} Makefile
+fi])
 ])dnl

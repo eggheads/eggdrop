@@ -19,7 +19,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-# $Id: modconfig,v 1.1 2000/03/05 23:22:48 fabian Exp $
+# $Id: modconfig,v 1.2 2000/03/06 18:54:08 fabian Exp $
 
 
 mc_pn=`echo $0 | sed -e 's/^.*\///'`
@@ -27,7 +27,7 @@ mc_top_srcdir=
 mc_srcdir=
 
 mc_flag_quiet=no
-mc_flag_askextended=no
+mc_flag_onlynew=no
 
 
 #  Read options
@@ -50,8 +50,8 @@ while true; do
 	--quiet|-q)
 		mc_flag_quiet=yes
 	;;
-	--extended-ask|-x)
-		mc_flag_askextended=yes
+	--only-new|-n)
+		mc_flag_onlynew=yes
 	;;
 	--*)
 		echo "${mc_pn}: warning: unknown option \`${1}'." 2>&1
@@ -95,6 +95,9 @@ fi
 
 #  List of all selected modules (including the `.mod' at the end)
 mc_fmodules=${mc_top_srcdir}/.modules
+
+#  List of all modules we have detected so far.
+mc_fknownmods=${mc_top_srcdir}/.known_modules
 
 #  List of modules disabled by default
 mc_fdisabledmods=${mc_top_srcdir}/disabled_modules
@@ -164,6 +167,7 @@ Commands:
     update-depends       Check all module dependencies and add modules missing.
     help                 Displays this information.
     detect-modules       Find all available modules.
+    modules-still-exist  Check wether all known modules still exist.
 
 Options:
     --top_srcdir=DIR     Top directory         (At least one of these two
@@ -172,7 +176,7 @@ Options:
 
 Options specific to the \`configure' command:
 
-    --extended-ask [-x]  Ask wether to accept the current modules list.
+    --only-new [-n]      Only query new modules.
 EOF
 ;;
 xis-configured)
@@ -184,6 +188,26 @@ xis-configured)
 		exit 0
 	else
 		exit 1
+	fi
+;;
+xmodules-still-exist)
+#
+#  Check wether all known modules still exist.
+#
+
+	if ${mc_self_call} -q is-configured; then
+		mc_known_mods=`cat ${mc_fknownmods}`
+
+		echo ${mc_n} "checking for removed modules...${mc_c}" 1>&6
+		#  Check wether all known mods still exist
+		for mc_mod in ${mc_known_mods}; do
+			echo ${mc_n} ".${mc_c}" >&6
+			if test ! -d ${mc_mod_dir}/${mc_mod}; then
+				grep -v "^${mc_mod}$" ${mc_fknownmods} > ${mc_fknownmods}_new
+				mv ${mc_fknownmods}_new ${mc_fknownmods}
+			fi
+		done
+		echo " done." 1>&6
 	fi
 ;;
 xdetect-modules)
@@ -218,19 +242,35 @@ xdetect-modules)
 	mc_mods=`echo ${mc_mods} | sed -e 's/\.mod//g'`
 	for mc_mod in ${mc_mods}; do
 		mc_mod=`echo ${mc_mod} | sed -e 's/.*\///g'`
+		mc_new_mod_state=disabled
 		echo ${mc_n} ".${mc_c}" >&6
-		if (test ${mc_mods_configured} = yes); then
+
+		#  Do we have an existing configuration?
+		if (test "${mc_mods_configured}" = yes); then
+			#  Is the module active?
 			if (grep "^${mc_mod}.mod\$" ${mc_fmodules} 1>&7 2>&1)
 			then
-				${mc_self_call} -q add ${mc_mod}
+				mc_new_mod_state=enabled
+			else
+				#  Was it configured before?
+				if (grep "^${mc_mod}.mod\$" ${mc_fmodules} 1>&7 2>&1); then
+					:
+				else
+					mc_new_mod_state=enabled
+				fi
 			fi
 		else
 			if (grep "^${mc_mod}\$" ${mc_fdisabledmods} 1>&7 2>&1)
 			then
 				:
 			else
-				${mc_self_call} -q add ${mc_mod}
+				mc_new_mod_state=enabled
 			fi
+		fi
+		if test "${mc_new_mod_state}" = enabled; then
+			${mc_self_call} -q add ${mc_mod}
+		else
+			${mc_self_call} -q del ${mc_mod}
 		fi
 	done
 
@@ -348,8 +388,24 @@ xdel)
 	for mc_mod in ${mc_mods}; do
 		#  Remove any path information
 		mc_mod=`echo ${mc_mod} | sed -e 's/.*\///'`
-
 		echo "${mc_pn}: disabling eggdrop module: ${mc_mod}" 1>&6
+
+		#  Add module to the list of known modules.
+		if grep "^${mc_mod}.mod$" ${mc_fknownmods} 1>&7 2>&7; then
+			if test ! -d ${mc_mod_dir}/${mc_mod}.mod; then
+				grep -v "^${mc_mod}.mod$" ${mc_fknownmods} \
+					> ${mc_fknownmods}_new
+				mv ${mc_fknownmods}_new ${mc_fknownmods}
+			fi
+		else
+			if test ! -d ${mc_mod_dir}/${mc_mod}.mod; then
+				:
+			else
+				echo ${mc_mod}.mod 1>> ${mc_fknownmods}
+			fi
+		fi
+
+		#  Remove module from list of active modules.
 		if grep -v "^${mc_mod}.mod$" ${mc_fmodules} 1> ${mc_nfmodules}
 		then
 			:
@@ -376,6 +432,22 @@ xadd)
 		#  Remove any path information
 		mc_mod=`echo ${mc_mod} | sed -e 's/.*\///'`
 
+		#  Add module to the list of known modules.
+		if grep "^${mc_mod}.mod$" ${mc_fknownmods} 1>&7 2>&7; then
+			if test ! -d ${mc_mod_dir}/${mc_mod}.mod; then
+				grep -v "^${mc_mod}.mod$" ${mc_fknownmods} \
+					> ${mc_fknownmods}_new
+				mv ${mc_fknownmods}_new ${mc_fknownmods}
+			fi
+		else
+			if test ! -d ${mc_mod_dir}/${mc_mod}.mod; then
+				:
+			else
+				echo ${mc_mod}.mod 1>> ${mc_fknownmods}
+			fi
+		fi
+
+		#  Add module to the list of active modules.
 		if grep "^${mc_mod}.mod$" ${mc_fmodules} 1>&7 2>&7; then
 			:
 		else
@@ -507,30 +579,6 @@ EOF
 		exit 1
 	fi
 
-	#  Ask question wether to accept default?
-	if test "${mc_flag_askextended}" = yes; then
-		mc_ask_response=
-		while true; do
-			echo ${mc_n} "Do you want to accept the current list of enabled modules? [Y/n] ${mc_c}" 1>&6
-			read mc_ask_response
-
-			if ((test "x${mc_ask_response}" = x) || \
-			    (test "${mc_ask_response}" = y) || \
-			    (test "${mc_ask_response}" = Y)); then
-				echo "Using current list." 1>&6
-				echo "" 1>&6
-				exit 0
-			fi
-			if ((test "${mc_ask_response}" = n) || \
-			    (test "${mc_ask_response}" = N)); then
-				#  User wants to select modules.
-				echo "" 1>&6
-				break;
-			fi
-		done
-	fi
-
-
 	#  Read current list
 	mc_sel_modules=`cat ${mc_fmodules}`
 
@@ -547,6 +595,15 @@ EOF
 	for mc_mod in ${mc_mods}; do
 		#  Remove directory information from name
 		mc_mod=`echo ${mc_mod} | sed -e 's/.*\///'`
+
+		#  Only ask for new modules?
+		if test "${mc_flag_onlynew}" = yes; then
+			#  Did we already query for that module?
+			if grep "^${mc_mod}$" ${mc_fknownmods} 1>&7 2>&7; then
+				continue
+			fi
+		fi
+
 		#  Remove .mod ending
 		mc_modname=`echo ${mc_mod} | sed -e 's/.mod//g'`
 

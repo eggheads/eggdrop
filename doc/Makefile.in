@@ -1,5 +1,5 @@
 # Makefile for doc/
-# $Id: Makefile.in,v 1.5 1999/12/27 20:07:54 fabian Exp $
+# $Id: Makefile.in,v 1.6 2000/03/06 18:54:08 fabian Exp $
 
 SHELL = /bin/sh
 top_srcdir = @top_srcdir@
@@ -30,10 +30,10 @@ clean:
 install:
 	@if test ! -d $(DEST)/doc; then \
 		echo "Creating a doc subdirectory."; \
-		$(top_srcdir)/mkinstalldirs $(DEST)/doc; \
+		$(top_srcdir)/misc/mkinstalldirs $(DEST)/doc; \
 	fi
 	@if test ! -d $(DEST)/doc/man1; then \
-		$(top_srcdir)/mkinstalldirs $(DEST)/doc/man1; \
+		$(top_srcdir)/misc/mkinstalldirs $(DEST)/doc/man1; \
 	fi
 	@echo "Copying docs."
 	@for i in $(DOCS); do \

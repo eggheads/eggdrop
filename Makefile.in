@@ -2,7 +2,7 @@
 #  This is the Makefile for EGGDROP (the irc bot)
 #  You should never need to edit this.
 #
-# $Id: Makefile.in,v 1.15 2000/03/05 23:22:48 fabian Exp $
+# $Id: Makefile.in,v 1.16 2000/03/06 18:54:07 fabian Exp $
 
 SHELL = /bin/sh
 top_srcdir = @top_srcdir@
@@ -65,6 +65,15 @@ CFLAGS = @CFLAGS@ -I.. @DEFS@ $(CFLGS)
 DEBCFLAGS = @CFLAGS@ -I.. @DEFS@ -DDEBUG_ASSERT -DDEBUG_MEM $(CFLGS)
 
 modconf = $(top_srcdir)/misc/modconfig --top_srcdir=$(top_srcdir)
+
+post_config  =  echo "" && \
+		echo "You can now compile the bot, using \"make\"." && \
+		echo ""
+
+post_iconfig =  $(modconf) update-depends && \
+		$(modconf) Makefile && \
+		(cd src/mod && $(MAKE_CONFIG) config) && \
+		$(modconf) Makefile
 
 MAKE_MODEGG = $(MAKE) 'MAKE=$(MAKE)' 'CC=$(MOD_CC)' 'LD=$(MOD_LD)' \
 'STRIP=$(MOD_STRIP)' 'RANLIB=$(RANLIB)' 'CFLAGS=$(CFLAGS)' \
@@ -139,28 +148,34 @@ depend:
 	@cd src/mod && $(MAKE_DEPEND) depend
 
 config:
+	@$(modconf) modules-still-exist
 	@$(modconf) detect-modules
 	@$(modconf) update-depends
 	@$(modconf) Makefile
 	@cd src/mod && $(MAKE_CONFIG) config
 	@$(modconf) Makefile
-	@echo ""; echo "You can now compile the bot, using \"make\"."; echo "";
+	@$(post_config)
+
+new-iconfig:
+	@$(modconf) modules-still-exist
+	@$(modconf) update-depends
+	@$(modconf) -n configure
+	@$(post_iconfig)
+	@$(post_config)
 
 iconfig:
+	@$(modconf) modules-still-exist
 	@$(modconf) detect-modules
 	@$(modconf) update-depends
 	@$(modconf) configure
-	@$(modconf) update-depends
-	@$(modconf) Makefile
-	@cd src/mod && $(MAKE_CONFIG) config
-	@$(modconf) Makefile
-	@echo ""; echo "You can now compile the bot, using \"make\"."; echo "";
+	@$(post_iconfig)
+	@$(post_config)
 
 clean-modconfig:
-	@rm -f .modules
+	@rm -f .modules .known_modules
 
 conftest:
-	@if [ ! -f .modules ]; then \
+	@if test ! -f .modules; then \
 		echo ""; \
 		echo "You have NOT configured the modules yet. This has to be done"; \
 		echo "before you can start compiling."; \
@@ -230,7 +245,7 @@ sdebug: eggtest
 	@ls -l $(EGGEXEC)
 
 eggtest: conftest
-	@if [ -f EGGMOD.stamp ]; then \
+	@if test -f EGGMOD.stamp; then \
 		echo "You're trying to do a STATIC build of eggdrop when you've";\
 		echo "already run 'make' for a module build.";\
 		echo "You must first type \"make clean\" before you can build";\
