@@ -1,5 +1,5 @@
 Seen Module
-Last revised: December 31, 2001
+Last revised: January 1, 2002
      _________________________________________________________________
 
                                Seen Module
@@ -11,9 +11,10 @@ can find it at http://www.visions-of-fantasy.de/gseen.mod/.
 
 This module requires: none
 
-Put this line into your Eggdrop configuration file to load the seen module:
+Put this line into your Eggdrop configuration file to load the seen
+module:
 
-loadmodule seen
+  loadmodule seen
      _________________________________________________________________
 
    Copyright (C) 2000, 2001, 2002 Eggheads Development Team

@@ -1,100 +1,96 @@
 IRC Module
-Last revised: December 31, 2001
+Last revised: January 1, 2002
      _________________________________________________________________
 
                                 IRC Module
 
-This module provides basic IRC support for your bot.  You have to
-load this if you want your bot to come on IRC.
+This module controls the bots interaction on IRC. Allows the bot to
+join channels, handles channel userlists, etc. You have to load this if
+you want your bot to come on irc.
 
-This module requires: server, channels
-
-Put this line into your Eggdrop configuration file to load the irc module:
-
-loadmodule irc
-
-There are also some variables you can to set in your config file:
-
-set bounce-bans 1
+  This module requires: server, channels
+  
+Put this line into your Eggdrop configuration file to load the irc 
+module:
+  
+  loadmodule irc
+  
+There are also some variables you can set in your config file:
+  
+  set bounce-bans 1
     Set this to 1 if you want to bounce all server bans.
-    Valid settings are 0 for OFF and 1 ON.
-
-
-set bounce-modes 0
-    Set this to 1 if you want to bounce all the server modes.
-    Valid settings are 0 for OFF and 1 ON.
-
-
-set max-modes 30
+  
+  
+  set bounce-modes 0
+    Set this to 1 if you want to bounce all server modes.
+  
+  
+  set max-modes 30
     Set here the global limit for +b/+e/+I modes on your IRC server. This
     limit is set to 30 on 2.10 IRCd servers.
-
-
-set max-bans 20
+  
+  
+  set max-bans 20
     Set here the maximum number of bans you want the bot to set on a channel.
     Eggdrop will not place any more bans if this limit is reached.
-
-
-set kick-fun 0
+  
+  
+  set kick-fun 0
     Set this to 1 if you want the bot to kick for control character/ctcp
     avalanches to a channel. Remember that if it does, it won't ban them.
     This can start kick floods.
-    Valid settings are 0 for OFF and 1 ON.
-
-
-set ban-fun 0
+  
+  
+  set ban-fun 0
     Set this to 1 if you want the bot to ban for control character/ctcp
-    avalanches to a channel. Can prevent kick floods, but also fill the
-    banlist.
-    Valid settings are 0 for OFF and 1 ON.
-
-
-set learn-users 0
+    avalanches to a channel. This can prevent kick floods, but it also can
+    fill the banlist.
+  
+  
+  set learn-users 0
     If you want people to be able to add themselves to the bot's userlist
     with the default userflags (defined above in the config file) via the
     'hello' msg command, set this to 1.
-    Valid settings are 0 for OFF and 1 ON.
-
-
-set wait-split 600
+  
+  
+  set wait-split 600
     Set here the time (in seconds) to wait for someone to return from
     a netsplit (i.e. wasop will expire afterwards). Set this to 1500
     on IRCnet since it's nick delay stops after 30 minutes.
-
-
-set wait-info 180
+  
+  
+  set wait-info 180
     Set here the time (in seconds) that someone must have been off-channel
     before re-displaying their info line.
-
-
-set mode-buf-length 200
+  
+  
+  set mode-buf-length 200
     Set this to the maximum number of bytes to send in the arguments
     of modes sent to the server. Most servers default this to 200.
-
-
-unbind msg - hello *msg:hello
-bind msg - myword *msg:hello
+  
+  
+  unbind msg - hello *msg:hello
+  bind msg - myword *msg:hello
     Many IRCops find bots by seeing if they reply to 'hello' in a msg. 
-    You can change this to another word by un-commenting the following
-    two lines, and changing "myword" to the word wish to use instead of
-    'hello'. It must be a single word.
-
-
-unbind msg - ident *msg:ident
-unbind msg - addhost *msg:addhost
+    You can change this to another word by un-commenting thse two lines
+    and changing "myword" to the word wish to use instead of'hello'. It 
+    must be a single word.
+  
+  
+  unbind msg - ident *msg:ident
+  unbind msg - addhost *msg:addhost
     Many takeover attempts occur due to lame users blindly /msg ident'ing to
     the bot and attempting to guess passwords. We now unbind this command by
     default to discourage them. You can enable this command by un-commenting
-    the following two lines.
-
-
-set no-chanrec-info 0
+    these two lines.
+  
+  
+  set no-chanrec-info 0
     If you are so lame you want the bot to display peoples info lines, even
     when you are too lazy to add their chanrecs to a channel, set this to 1.
     *NOTE* This means *every* user with an info line will have their info
-    display on EVERY channel they join (provided they have been gone longer
-    than wait-info).
-    Valid settings are 0 for OFF and 1 ON.
+    line displayed on EVERY channel they join (provided they have been gone 
+    longer than wait-info).
 
 
 Those were the core IRC module settings. There are more settings for
@@ -102,83 +98,148 @@ Those were the core IRC module settings. There are more settings for
 section.
 
 
-### IRC MODULE - IRCnet SPECIFIC FEATURES ####
+IRCnet specific features:
 
 Attention: Use these settings *only* if you set 'net-type' to 1!
 
-set bounce-exempts 0
+  set bounce-exempts 0
     Set this to 1 if you want to bounce all server exemptions (+e modes).
-    Valid settings are 0 for OFF and 1 ON.
 
 
-set bounce-invites 0
+  set bounce-invites 0
     Set this to 1 if you want to bounce all server invitations (+I modes).
-    Valid settings are 0 for OFF and 1 ON.
 
 
-set max-exempts 20
+  set max-exempts 20
     Set here the maximum number of exempts you want Eggdrop to set
     on a channel. Eggdrop will not place any more exempts if this
     limit is reached.
 
 
-set max-invites 20
+  set max-invites 20
     Set here the maximum number of invites you want Eggdrop  to set
     on a channel. Eggdrop will not place any more invites if this
     limit is reached.
 
 
-set use-exempts 0
+  set use-exempts 0
     If you set this feature to 0 in your Eggdrop config file, the bot
     will not use any exempts. This setting is set to 1 as a default in
     nettype 1.
-    Valid settings are 0 for OFF and 1 ON.
 
 
-set use-invites 0
+  set use-invites 0
     If you set this feature to 0 in your Eggdrop config file, the bot
     wont use any invites. This setting is set to 1 as a default in
     nettype 1.
-    Valid settings are 0 for OFF and 1 ON.
 
 
-set prevent-mixing 1
+  set prevent-mixing 1
     At the moment, the current IRCnet IRCd version (2.10) doesn't support the mixing
     of b,o and v modes with e and I modes. This might be changed in the future, so
     use 1 at the moment for this setting.
-    Valid settings are 0 for OFF and 1 ON.
 
-
-##### IRC MODULE - net-type 5 specific features (other networks) #####
+net-type 5 specific features:
 
 Attention: Use this settings *only* if you set 'net-type' to 5!
 
-set kick-method 1
+  set kick-method 1
     If your network supports more users per kick command then 1, you can
     change this behavior here. Set this to the number of users to kick at
     once, or set this to 0 for all at once.
 
 
-set modes-per-line 3
+  set modes-per-line 3
     Some networks allow you to stack lots of channel modes into one line.
     They're all guaranteed to support at least 3, so that's the default.
     If you know your network supports more, you may want to adjust this.
-    Valid settings are 3-6
 
-set include-lk 1
+  set include-lk 1
     Some networks don't include the +l limit and +k or -k key modes
     in the modes-per-line (see above) limitation. Set include-lk to 0 for
     these networks.
 
-set use-354 0
+  set use-354 0
     Set this to 1 if your network uses IRCu2.10.01 specific /who requests.
     Eggdrop can, therefore, ask only for exactly what's needed.
-    Valid settings are 0 for OFF and 1 ON.
 
 
-set rfc-compliant 1
+  set rfc-compliant 1
     If your network doesn't use rfc 1459 compliant string matching routines,
     set this to 0.
+
+Tcl commands provided by the IRC module:
+
+See doc/tcl-commands.doc for information on each command.
+
+  * botisop <channel> 
+
+  * botisvoice <channel> 
+
+  * isop <nickname> <channel> 
+
+  * isvoice <nickname> <channel> 
+
+  * onchan <nickname> <channel> 
+
+  * botonchan <channel> 
+
+  * nick2hand <nickname> <channel> 
+
+  * handonchan <handle> <channel> 
+
+  * hand2nick <handle> <channel> 
+
+  * chanbans <channel> 
+
+  * ischanban <ban> <channel> 
+
+  * resetbans <channel> 
+
+  * chanexempts <channel> 
+
+  * ischanexempt <exempt> <channel> 
+
+  * ischanjuped [channel] 
+
+  * resetexempts <channel> 
+
+  * chaninvites <channel> 
+
+  * ischaninvite <invite> <channel> 
+
+  * resetinvites <channel> 
+
+  * resetchan <channel> 
+
+  * getchanhost <nickname> <channel> 
+
+  * getchanjoin <nickname> <channel> 
+
+  * onchansplit <nick> <channel> 
+
+  * chanlist <channel> [flags[&chanflags]] 
+
+  * getchanidle <nickname> <channel> 
+
+  * getchanmode <channel> 
+
+  * pushmode <channel> <mode> [arg] 
+
+  * flushmode <channel> 
+
+  * topic <channel> 
+
+  * wasop <nickname> <channel> 
+
+  * channame2dname <channel-name> 
+
+  * chandname2name <channel-dname> 
+
+  * putkick <channel> <nick,nick,...> [reason] 
+
+  * maskhost <nick!user@host> 
+
      _________________________________________________________________
 
    Copyright (C) 2000, 2001, 2002 Eggheads Development Team

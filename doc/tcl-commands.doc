@@ -939,15 +939,19 @@ specific commands, see later.
   unames
    returns:  The current operating system the bot is using.
 
-  dnslookup <ip-address/hostname> <proc> [[arg1] [arg2] ... [argn]]
-    Issues an asynchronous dns lookup request. The command will block if
-    dns module is not loaded, otherwise it will either return immediately
-    or immediately call the proc (e.g. if the lookup is already cached).
+  dnslookup <ip-address/hostname> <proc> [[arg1] [arg2] ... [argN]]
+    This issues an asynchronous dns lookup request. The command will block
+    if dns module is not loaded; otherwise it will either return immediately
+    or immediately call the specified proc (e.g. if the lookup is already 
+    cached).
+
     As soon as the request completes, <proc> will be called as follows:
-      <proc> ipaddress hostname status [[arg1] [arg2] ... [argn]]
-    status is 1 if the lookup was successful and 0 if it wasn't. All
-    additional parameters (called arg1, arg2 and argn above) get appended
-    to the proc's other parameters.
+
+     <proc> ipaddress hostname status [[arg1] [arg2] [argN]]
+
+     status is 1 if the lookup was successful and 0 if it wasn't. All 
+     additional parameters (called arg1, arg2 and argN above) get
+     appended to the proc's other parameters.
 
   md5 <string>
     returns: the 128 bit MD5 message-digest of the specified string.

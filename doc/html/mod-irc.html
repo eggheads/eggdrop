@@ -1,27 +1,26 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: mod-irc.html,v 1.11 2002/01/02 08:06:12 tothwolf Exp $ -->
+<!-- $Id: mod-irc.html,v 1.12 2002/01/03 01:05:43 guppy Exp $ -->
 
 <html>
   <head>
-    <title>Eggdrop Documentation: IRC module</title>
+    <title>Eggdrop Documentation: IRC Module</title>
   </head>
 
   <body>
     <div align="center">
-      <p><strong>IRC module</strong></p>
+      <p><strong>IRC Module</strong></p>
     </div>
     <hr>
 
     <p>This module controls the bots interaction on IRC. Allows the bot to
-    join channels, handles channel userlists etc.</p>
+    join channels, handles channel userlists, etc. You have to load this if
+    you want your bot to come on irc.</p>
 
     <blockquote>
       <ol>
         <li><a href="#config">Config file settings</a></li>
 
         <li><a href="#tclcmds">Tcl commands</a></li>
-
-        <li><a href="#tclbinds">Tcl bindings</a></li>
       </ol>
     </blockquote>
     <hr>
@@ -31,18 +30,16 @@
     <blockquote>
       <p>Lines in <strong>bold</strong> are the lines that need to be
       included in the Eggdrop config file if you want to use the share
-      module. Lines in bold <strong><em>italics</em></strong> are optional
+      module. Lines in <strong><em>bold italics</em></strong> are optional
       and only required if you wish to change the default behaviour for 
       that particular feature.</p>
 
-      <p>This module provides basic irc support for your bot. You have to
-      load this if you want your bot to come on irc.</p>
-
-      <p>Put this line into your eggdrop.conf file to load irc module:</p>
+      <p>Put this line into your Eggdrop configuration file to load the
+      irc module:</p>
 
       <p><strong>loadmodule irc</strong></p>
 
-      <p>There are also some variables you can to set in your config
+      <p>There are also some variables you can set in your config
       file:</p>
     </blockquote>
 
@@ -51,118 +48,108 @@
         <dt><strong><em>set bounce-bans 1</em></strong></dt>
 
         <dd>
-          <p>Set this to 1 if you want to bounce all server bans</p>
-
-          <p>Valid settings are 0 and 1.</p>
+          <p>Set this to 1 if you want to bounce all server bans.</p>
         </dd>
 
         <dt><strong><em>set bounce-modes 0</em></strong></dt>
 
         <dd>
-          <p>Set this to 1 if you want to bounce all the server modes</p>
-
-          <p>Valid settings are 0 and 1.</p>
+          <p>Set this to 1 if you want to bounce all server modes.</p>
         </dd>
 
         <dt><strong><em>set max-modes 30</em></strong></dt>
 
         <dd>
-          <p>Set here the global limit for +b/+e/+I modes on your irc server.
-          This limit is set to 30 on 2.10 ircd servers.</p>
+          <p>Set here the global limit for +b/+e/+I modes on your IRC server. 
+          This limit is set to 30 on 2.10 IRCd servers.</p>
         </dd>
 
         <dt><strong><em>set max-bans 20</em></strong></dt>
 
         <dd>
-          <p>Set here the maximum number of bans you want Eggdrop to put in 
-          a channel. Eggdrop wont place any more bans if this limit is
+          <p> Set here the maximum number of bans you want the bot to set on a
+          channel. Eggdrop will not place any more bans if this limit is 
           reached.</p>
         </dd>
 
         <dt><strong><em>set kick-fun 0</em></strong></dt>
 
         <dd>
-          <p>Set this to 1 if you want the bot to kick for control
+          <p>Set this to 1 if you want the bot to kick for control 
           character/ctcp avalanches to a channel. Remember that if it does,
-          as it won&#39;t ban them, it can be at the origin of a nice
-          kick-flood.</p>
-
-          <p>Valid settings are 0 and 1.</p>
+          it won&#39;t ban them. This can start kick floods.</p>
         </dd>
 
         <dt><strong><em>set ban-fun 0</em></strong></dt>
 
         <dd>
-          <p>Set this to 1 if you want the bot to ban for control
-          character/ctcp avalanches to a channel. Can prevent the above
-          described kick-flood, but can also fill the banlist.</p>
-
-          <p>Valid settings are 0 and 1.</p>
+          <p>Set this to 1 if you want the bot to ban for control 
+          character/ctcp avalanches to a channel. This can prevent kick 
+          floods, but it also can fill the banlist.</p>
         </dd>
 
         <dt><strong><em>set learn-users 0</em></strong></dt>
 
         <dd>
-          <p>If you want people to introduce themselves to Eggdrop via
-          &#39;hello&#39;, set this to 1.</p>
-
-          <p>Valid settings are 0 and 1.</p>
+          <p>If you want people to be able to add themselves to the bot&#39;s
+          userlist with the default userflags (defined above in the config 
+          file) via the &#39;hello&#39; msg command, set this to 1.</p>
         </dd>
 
         <dt><strong><em>set wait-split 300</em></strong></dt>
 
         <dd>
-          <p>Set here the time (in seconds) to wait for someone to return
-          from a netsplit (i.e. wasop will expire afterwards).</p>
-
-          <p>Hint: Set this to 1500 on IRCNet, since it&#39;s nick delay
-          stops after 30 minutes.</p>
+          <p>Set here the time (in seconds) to wait for someone to return 
+          from a netsplit (i.e. wasop will expire afterwards). Set this to
+          1500 on IRCnet since it&#39;s nick delay stops after 30 minutes.</p>
         </dd>
 
         <dt><strong><em>set wait-info 15</em></strong></dt>
 
         <dd>
-          <p>Set here the time (in seconds) that someone must have been
-          off-channel before re-displaying their info</p>
+          <p>Set here the time (in seconds) that someone must have been 
+          off-channel before re-displaying their info line.</p>
         </dd>
 
         <dt><strong><em>set mode-buf-length 200</em></strong></dt>
 
         <dd>
-          <p>Set this to the maximum number of bytes to send in the arguments
-          to mode&#39;s sent to the server, most servers default this to 200,
-          so it should be sufficient.</p>
+          <p>Set this to the maximum number of bytes to send in the 
+          arguments of modes sent to the server. Most servers default this
+          to 200.</p>
+        </dd>
+
+        <dt><strong><em>unbind msg - hello *msg:hello<br>
+        bind msg - myword *msg:hello</em></strong></dt>
+        
+        <dd>
+          <p>Many IRCops find bots by seeing if they reply to &#39;hello&#39;
+          in a msg. You can change this to another word by un-commenting the
+          these two lines and changing &quot;myword&quot; to the word wish 
+          to use instead of &#39;hello&#39;. It must be a single word.</p>
+        </dd>
+
+        <dt><strong><em>unbind msg - ident *msg:ident<br>
+        unbind msg - addhost *msg:addhost</em></strong></dt>
+        
+        <dd>
+          <p>Many takeover attempts occur due to lame users blindly /msg 
+          ident&#39;ing to the bot and attempting to guess passwords. We now
+          unbind this command by default to discourage them. You can enable
+          this command by un-commenting these two lines.</p>
         </dd>
 
         <dt><strong><em>set no-chanrec-info 0</em></strong></dt>
 
         <dd>
-          <p>If you are so lame you want the bot to display peoples info
-          lines, even when you are too lazy to add their chanrecs to a
-          channel, set this to 1</p>
+          <p>If you are so lame you want the bot to display peoples info 
+          lines even when you are too lazy to add their chanrecs to a 
+          channel, set this to 1.</p>
 
-          <p>*<strong>NOTE</strong>* This means *<strong>every</strong>* user
-          with an info line will have their info display on <strong>
-          EVERY</strong> channel they join (provided they have been gone
-          longer than wait-info)</p>
-
-          <p>Valid settings are 0 and 1.</p>
-        </dd>
-
-        <dt><strong><em>set revenge-mode 1</em></strong></dt>
-
-        <dd>
-          <p>This settings defines how the bot should punish bad users when
-          revenging.</p>
-
-          <p>There are four possible settings:</p>
-
-          <p>0 for deop<br>
-           1 for deop and chattr +d #chan<br>
-           2 for deop, chattr +d #chan and kick<br>
-           3 for deop, chattr +d #chan, kick and ban.</p>
-
-          <p>Valid settings are 0-3</p>
+          <p><strong>NOTE:</strong> This means <strong>every</strong> user
+          with an info line will have their info line displayed on EVERY 
+          channel they join (provided they have been gone longer than 
+          wait-info).</p>
         </dd>
       </dl>
     </blockquote>
@@ -181,37 +168,31 @@
         <dt><strong><em>set bounce-exempts 0</em></strong></dt>
 
         <dd>
-          <p>Set this to 1 if you want to bounce all server exemptions (+e
-          modes)</p>
-
-          <p>Valid settings are 0 and 1.</p>
+          <p>Set this to 1 if you want to bounce all server exemptions
+          (+e modes).</p>
         </dd>
 
         <dt><strong><em>set bounce-invites 0</em></strong></dt>
 
         <dd>
-          <p>Set this to 1 if you want to bounce all server invitations (+I
-          modes)</p>
-
-          <p>Valid settings are 0 and 1.</p>
+          <p>Set this to 1 if you want to bounce all server invitations 
+          (+I modes).</p>
         </dd>
 
         <dt><strong><em>set max-exempts 20</em></strong></dt>
 
         <dd>
-          <p>Set here the maximum number of exempts you want Eggdrop to put
-          in a channel. Eggdrop wont place any more exempts if this limit is
-          reached.</p>
+          <p>Set here the maximum number of exempts you want Eggdrop to set
+          on a channel. Eggdrop will not place any more exempts if this
+         limit is reached.</p>
         </dd>
 
         <dt><strong><em>set max-invites 20</em></strong></dt>
 
         <dd>
-          <p>Set here the maximum number of invites you want Eggdrop to put
-          in a channel. Eggdrop wont place any more invites if this limit is
-          reached.</p>
-
-          <p>Valid settings are 0 and 1.</p>
+          <p>Set here the maximum number of invites you want Eggdrop to set
+          on a channel. Eggdrop will not place any more invites if this
+          limit is reached.</p>
         </dd>
 
         <dt><em><strong>set use-exempts 0</strong></em> (Disabled by
@@ -219,31 +200,26 @@
 
         <dd>
           <p>If you set this feature to 0 in your Eggdrop config file, the
-          bot wont use any exempts. This setting is set to 1 as a default in
-          nettype 1</p>
-
-          <p>Valid settings are 0 and 1.</p>
+          bot will not use any exempts. This setting is set to 1 as a default
+          in nettype 1.</p>
         </dd>
 
         <dt><strong><em>set use-invites 0</em></strong> (Disabled by
         Default)</dt>
 
         <dd>
-          <p>If you set this feature to 0 in your Eggdrop config file, the
-          bot wont use any invites. This setting is set to 1 as a default in
-          nettype 1</p>
-
-          <p>Valid settings are 0 and 1.</p>
+          <p>If you set this feature to 0 in your Eggdrop config file, 
+          the bot wont use any invites. This setting is set to 1 as a 
+          default in nettype 1.</p>
         </dd>
 
         <dt><strong><em>set prevent-mixing 1</em></strong></dt>
 
         <dd>
-          <p>At the moment the current ircd version (2.10) doesn&#39;t
-          support the mix of b,o and v modes with e and I modes. This might
-          be changed in the future, so use 1 at the moment for this flag</p>
-
-          <p>Valid settings are 0 and 1.</p>
+          <p>At the moment, the current IRCnet IRCd version (2.10) 
+          doesn&#39;t support the mixing of b,o and v modes with e and I 
+          modes. This might be changed in the future, so use 1 at the
+          moment for this  setting.</p>
         </dd>
       </dl>
     </blockquote>
@@ -258,40 +234,42 @@
         <dt><strong><em>set kick-method 1</em></strong></dt>
 
         <dd>
-          <p>If your network supports more users per kick command then 1, you
-          change this behaviour here: Set X for x users at once or 0 for all
-          at once.</p>
+          <p>If your network supports more users per kick command then 1,
+          you can change this behavior here. Set this to the number of 
+          users to kick at once, or set this to 0 for all at once.</p>
         </dd>
 
         <dt><strong><em>set modes-per-line 3</em></strong></dt>
 
         <dd>
-          <p>Some networks allow you to stack lots of channel modes into one
-          line. They&#39;re all guaranteed to support at least 3, so
-          that&#39;s the default, but if you know your network supports more,
-          you may want to adjust this value.</p>
+          <p>Some networks allow you to stack lots of channel modes into 
+          one line. They&#39;re all guaranteed to support at least 3, so 
+          that&#39;s the default. If you know your network supports more, 
+          you may  want to adjust this.</p>
+        </dd>
 
-          <p>Valid settings are 3-6</p>
+        <dt><strong><em>set include-lk 1</em></strong></dt>
+
+        <dd>
+          <p>Some networks don&#39;t include the +l limit and +k or -k key modes
+          in the modes-per-line (see above) limitation. Set include-lk to 0 
+          for these networks.</p>
         </dd>
 
         <dt><strong><em>set use-354 0</em></strong></dt>
 
         <dd>
-          <p>Set this to 1 if your network uses ircu2.10.01 specific /who
-          requests, Eggdrop can therefore ask only for exactly what&#39;s
+          <p>Set this to 1 if your network uses IRCu2.10.01 specific /who 
+          requests. Eggdrop can, therefore, ask only for exactly what&#39;s
           needed.</p>
-
-          <p>Valid settings are 0 and 1.</p>
         </dd>
 
         <dt><strong><em>set rfc-compliant 1</em></strong> (Disabled by
         default)</dt>
 
         <dd>
-          <p>If your network doesn&#39;t use rfc 1459 compliant string
-          matching routines, turn this to 0. All networks apart from Dalnet
-          comply with rfc 1459, so you should only disable it on Dalnet or
-          networks which use Dalnet&#39;s code.</p>
+          <p>If your network doesn&#39;t use rfc 1459 compliant string 
+          matching routines, set this to 0.</p>
         </dd>
       </dl>
     </blockquote>
@@ -299,437 +277,83 @@
 
     <p><a name="tclcmds"></a>2. <strong>Tcl commands</strong></p>
 
-    <blockquote>
-      <dl>
-        <dt><strong>botisop &lt;channel&gt;</strong></dt>
-
-        <dd>
-          <p>returns: &quot;1&quot; if the bot is an op on that channel;
-          &quot;0&quot; otherwise</p>
-        </dd>
-
-        <dt><strong>isop &lt;nickname&gt; &lt;channel&gt;</strong></dt>
-
-        <dd>
-          <p>returns: &quot;1&quot; if someone by that nickname is on the
-          channel and has chop; &quot;0&quot; otherwise</p>
-        </dd>
-
-        <dt><strong>isvoice &lt;nickname&gt; &lt;channel&gt;</strong></dt>
-
-        <dd>
-          <p>returns: &quot;1&quot; if someone by that nickname is on the
-          channel and has voice (+v); &quot;0&quot; otherwise</p>
-        </dd>
-
-        <dt><strong>onchan &lt;nickname&gt; &lt;channel&gt;</strong></dt>
-
-        <dd>
-          <p>returns: &quot;1&quot; if someone by that nickname is on the
-          bot&#39;s channel; &quot;0&quot; otherwise</p>
-        </dd>
-
-        <dt><strong>botonchan &lt;channel&gt;</strong></dt>
-
-        <dd>
-          <p>returns: &quot;1&quot; if the bot is on that channel;
-          &quot;0&quot; otherwise</p>
-        </dd>
-
-        <dt><strong>nick2hand &lt;nickname&gt; &lt;channel&gt;</strong></dt>
-
-        <dd>
-          <p>returns: handle of the person on the channel with that nickname,
-          if someone by that nickname is on the channel; &quot;&quot;
-          otherwise<br>
-           if &lt;channel&gt; is not specified, bot will check all of its
-          channels<br>
-           if &lt;nickname&gt; not found, returns &quot;&quot;<br>
-           if &lt;nickname&gt; found but unknown, returns &quot;*&quot;</p>
-        </dd>
-
-        <dt><strong>handonchan &lt;handle&gt; &lt;channel&gt;</strong></dt>
-
-        <dd>
-          <p>returns: &quot;1&quot; if the the user@host for someone on the
-          channel matches for the handle given; &quot;0&quot; otherwise</p>
-        </dd>
-
-        <dt><strong>hand2nick &lt;handle&gt; &lt;channel&gt;</strong></dt>
-
-        <dd>
-          <p>returns: nickname of the first person on the channel whose
-          user@host matches that handle, if there is one; &quot;&quot;
-          otherwise</p>
-        </dd>
-
-        <dt><strong>chanbans &lt;channel&gt;</strong></dt>
-
-        <dd>
-          <p>returns: a list of the current bans on the channel, each element
-          is of the form {ban bywho age} age is seconds from the bots POV</p>
-        </dd>
-
-        <dt><strong>ischanban &lt;ban&gt; &lt;channel&gt;</strong></dt>
-
-        <dd>
-          <p>returns: &quot;1&quot; if that is a ban on the bot&#39;s
-          channel</p>
-        </dd>
-
-        <dt><strong>resetbans &lt;channel&gt;</strong></dt>
-
-        <dd>
-          <p>removes all bans on the channel that aren&#39;t in the bot&#39;s
-          ban list, and refreshes any bans that should be on the channel but
-          aren&#39;t</p>
-
-          <p>returns: nothing</p>
-        </dd>
-
-        <dt><strong>chanexempts &lt;channel&gt;</strong></dt>
-
-        <dd>
-          <p>returns: a list of the current exempts on the channel, each
-          element is of the form {exempt bywho age} age is seconds from the
-          bots POV</p>
-        </dd>
-
-        <dt><strong>ischanexempt &lt;exempt&gt; &lt;channel&gt;</strong></dt>
-
-        <dd>
-          <p>returns: &quot;1&quot; if that is a exempt on the bot&#39;s
-          channel</p>
-        </dd>
-
-        <dt><strong>ischanjuped [channel]</strong></dt>
-
-        <dd>
-          <p>returns: &quot;1&quot; if the channel is juped and bot is unable
-          to join, &quot;0&quot; otherwise.</p>
-        </dd>
-
-        <dt><strong>resetexempts &lt;channel&gt;</strong></dt>
-
-        <dd>
-          <p>removes all exempts on the channel that aren&#39;t in the
-          bot&#39;s exempt list, and refreshes any exempts that should be on
-          the channel but aren&#39;t</p>
-
-          <p>returns: nothing</p>
-        </dd>
-
-        <dt><strong>chaninvites &lt;channel&gt;</strong></dt>
-
-        <dd>
-          <p>returns: a list of the current invites on the channel, each
-          element is of the form {invite bywho age} age is seconds from the
-          bots POV</p>
-        </dd>
-
-        <dt><strong>ischaninvite &lt;invite&gt; &lt;channel&gt;</strong></dt>
-
-        <dd>
-          <p>returns: &quot;1&quot; if that is a invite on the bot&#39;s
-          channel</p>
-        </dd>
-
-        <dt><strong>resetinvites &lt;channel&gt;</strong></dt>
-
-        <dd>
-          <p>removes all invites on the channel that aren&#39;t in the
-          bot&#39;s invite list, and refreshes any invites that should be on
-          the channel but aren&#39;t</p>
-
-          <p>returns: nothing</p>
-        </dd>
-
-        <dt><strong>resetchan &lt;channel&gt;</strong></dt>
-
-        <dd>
-          <p>rereads in the channel info from the server</p>
-
-          <p>returns: nothing</p>
-        </dd>
-
-        <dt><strong>getchanhost &lt;nickname&gt;
-        &lt;channel&gt;</strong></dt>
-
-        <dd>
-          <p>returns: user@host of that person if they are on the channel; {}
-          otherwise</p>
-        </dd>
-
-        <dt><strong>getchanjoin &lt;nickname&gt;
-        &lt;channel&gt;</strong></dt>
-
-        <dd>
-          <p>returns: timestamp of when that person joined the channel</p>
-        </dd>
-
-        <dt><strong>onchansplit &lt;nick&gt; &lt;channel&gt;</strong></dt>
-
-        <dd>
-          <p>returns: &quot;1&quot; if that nick is split from the channel;
-          &quot;0&quot; otherwise</p>
-        </dd>
-
-        <dt><strong>chanlist &lt;channel&gt;
-        [flags[&amp;chanflags]]</strong></dt>
-
-        <dd>
-          <p>flags are any flags that are global flags, the &#39;&amp;&#39;
-          denotes to look for channel specific flags. Examples:</p>
-
-          <p>n (Botowner)<br>
-           &amp;n (Channel owner)<br>
-           o&amp;m (Global op, Channel master)</p>
-
-          <p>now you can use even more complex matching of flags, including
-          +&amp;- flags and &amp; or | (and or or) matching</p>
-
-          <p>returns: list of nicknames currently on the bot&#39;s channel
-          that have all of the flags specified; if no flags are given, all of
-          the nicknames are returned</p>
-        </dd>
-
-        <dt><strong>getchanidle &lt;nickname&gt;
-        &lt;channel&gt;</strong></dt>
-
-        <dd>
-          <p>returns: number of minutes that person has been idle;
-          &quot;0&quot; if the specified user isn&#39;t even on the
-          channel</p>
-        </dd>
-
-        <dt><strong>getchanmode &lt;channel&gt;</strong></dt>
-
-        <dd>
-          <p>returns: string of the type &quot;+ntik key&quot; for the
-          channel specified</p>
-        </dd>
-
-        <dt><strong>pushmode &lt;channel&gt; &lt;mode&gt; [arg]</strong></dt>
-
-        <dd>
-          <p>sends out a channel mode change (ex: pushmode #lame +o goober)
-          through the bot&#39;s queuing system; all the mode changes will be
-          sent out at once (combined into one line as much as possible) after
-          the script finishes, or when &#39;flushmode&#39; is called</p>
-        </dd>
-
-        <dt><strong>flushmode &lt;channel&gt;</strong></dt>
-
-        <dd>
-          <p>forces all previously pushed channel mode changes to go out
-          right now, instead of when the script is done (just for the channel
-          specified)</p>
-        </dd>
-
-        <dt><strong>topic &lt;channel&gt;</strong></dt>
-
-        <dd>
-          <p>returns: string of the current topic on the specified
-          channel</p>
-        </dd>
-      </dl>
-    </blockquote>
-    <hr>
-
-    <p><a name="tclbinds"></a>3. <strong>Tcl bindings</strong></p>
+    <p>See doc/tcl-commands.doc for information on each of these 
+    commands.</p>
 
     <blockquote>
-      <dl>
-        <dt><strong>PUB</strong></dt>
+      <ul>
+        <li><strong>botisop &lt;channel&gt;</strong></li>
 
-        <dd>
-          <p>bind pub &lt;flags&gt; &lt;command&gt; &lt;proc&gt;<br>
-           proc-name &lt;nick&gt; &lt;user@host&gt; &lt;handle&gt;
-          &lt;channel&gt; &lt;args&gt;</p>
+        <li><strong>botisvoice &lt;channel&gt;</strong></li>
 
-          <p>used for commands given on a channel; just like MSG, the first
-          word becomes the command and everything else is the argument
-          string</p>
-        </dd>
+        <li><strong>isop &lt;nickname&gt; &lt;channel&gt;</strong></li>
 
-        <dt><strong>PUBM (stackable)</strong></dt>
+        <li><strong>isvoice &lt;nickname&gt; &lt;channel&gt;</strong></li>
 
-        <dd>
-          <p>bind pubm &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;<br>
-           proc-name &lt;nick&gt; &lt;user@host&gt; &lt;handle&gt;
-          &lt;channel&gt; &lt;text&gt;</p>
+        <li><strong>onchan &lt;nickname&gt; &lt;channel&gt;</strong></li>
 
-          <p>just like MSGM, except it&#39;s triggered by things said on a
-          channel instead of things /msg&#39;d to the bot; the mask is
-          matched against the channel name followed by the text, i.e.,
-          &quot;#nowhere hello there!&quot;, and can contain wildcards</p>
-        </dd>
+        <li><strong>botonchan &lt;channel&gt;</strong></li>
 
-        <dt><strong>JOIN (stackable)</strong></dt>
+        <li><strong>nick2hand &lt;nickname&gt; &lt;channel&gt;</strong></li>
 
-        <dd>
-          <p>bind join &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;<br>
-           proc-name &lt;nick&gt; &lt;user@host&gt; &lt;handle&gt;
-          &lt;channel&gt;</p>
+        <li><strong>handonchan &lt;handle&gt; &lt;channel&gt;</strong></li>
 
-          <p>triggered by someone joining the channel; the &lt;mask&gt; in
-          the bind is matched against &quot;#channel nick!user@host&quot; and
-          can contain wildcards</p>
-        </dd>
+        <li><strong>hand2nick &lt;handle&gt; &lt;channel&gt;</strong></li>
 
-        <dt><strong>PART (stackable)</strong></dt>
+        <li><strong>chanbans &lt;channel&gt;</strong></li>
 
-        <dd>
-          <p>bind part &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;<br>
-           proc-name &lt;nick&gt; &lt;user@host&gt; &lt;handle&gt;
-          &lt;channel&gt; &lt;msg&gt;</p>
+        <li><strong>ischanban &lt;ban&gt; &lt;channel&gt;</strong></li>
 
-          <p>triggered by someone leaving the channel; as in JOIN, the
-          &lt;mask&gt; is matched against &quot;#channel nick!user@host&quot;
-          and can contain wildcards. If no part message is specified msg will
-          be set to &quot;&quot;.</p>
+        <li><strong>resetbans &lt;channel&gt;</strong></li>
 
-          <p>new Tcl procs should be declared as</p>
+        <li><strong>chanexempts &lt;channel&gt;</strong></li>
 
-          <p>proc partproc {nick uhost hand chan {msg &quot;&quot;}} {<br>
-           &nbsp; ...<br>
-           }</p>
+        <li><strong>ischanexempt &lt;exempt&gt; &lt;channel&gt;</strong></li>
 
-          <p>for compatibility</p>
-        </dd>
+        <li><strong>ischanjuped [channel]</strong></li>
 
-        <dt><strong>SIGN (stackable)</strong></dt>
+        <li><strong>resetexempts &lt;channel&gt;</strong></li>
 
-        <dd>
-          <p>bind sign &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;<br>
-           proc-name &lt;nick&gt; &lt;user@host&gt; &lt;handle&gt;
-          &lt;channel&gt; &lt;reason&gt;</p>
+        <li><strong>chaninvites &lt;channel&gt;</strong></li>
 
-          <p>triggered by a signoff, or possibly by someone who got netsplit
-          and never returned; the signoff message is the last argument to the
-          proc; wildcards can be used in &lt;mask&gt;, which contains the
-          channel name</p>
-        </dd>
+        <li><strong>ischaninvite &lt;invite&gt; &lt;channel&gt;</strong></li>
 
-        <dt><strong>TOPC (stackable)</strong></dt>
+        <li><strong>resetinvites &lt;channel&gt;</strong></li>
 
-        <dd>
-          <p>bind topc &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;<br>
-           proc-name &lt;nick&gt; &lt;user@host&gt; &lt;handle&gt;
-          &lt;channel&gt; &lt;topic&gt;</p>
+        <li><strong>resetchan &lt;channel&gt;</strong></li>
 
-          <p>triggered by a topic change; can use wildcards in &lt;mask&gt;,
-          which is matched against the channel name and new topic</p>
-        </dd>
+        <li><strong>getchanhost &lt;nickname&gt;
+        &lt;channel&gt;</strong></li>
 
-        <dt><strong>KICK (stackable)</strong></dt>
+        <li><strong>getchanjoin &lt;nickname&gt;
+        &lt;channel&gt;</strong></li>
 
-        <dd>
-          <p>bind kick &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;<br>
-           proc-name &lt;nick&gt; &lt;user@host&gt; &lt;handle&gt;
-          &lt;channel&gt; &lt;kicked-nick&gt; &lt;reason&gt;</p>
+        <li><strong>onchansplit &lt;nick&gt; &lt;channel&gt;</strong></li>
 
-          <p>triggered when someone is kicked off the channel; the
-          &lt;mask&gt; is matched against &quot;#channel nick&quot; where the
-          nickname is of the person who got kicked off (can use wildcards);
-          the proc is called with the nick, user@host, and handle of the
-          kicker, plus the channel, the nickname of the person who was
-          kicked, and the reason; &lt;flags&gt; is unused here</p>
-        </dd>
+        <li><strong>chanlist &lt;channel&gt;
+        [flags[&amp;chanflags]]</strong></li>
 
-        <dt><strong>NICK (stackable)</strong></dt>
+        <li><strong>getchanidle &lt;nickname&gt;
+        &lt;channel&gt;</strong></li>
 
-        <dd>
-          <p>bind nick &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;<br>
-           proc-name &lt;nick&gt; &lt;user@host&gt; &lt;handle&gt;
-          &lt;channel&gt; &lt;newnick&gt;</p>
+        <li><strong>getchanmode &lt;channel&gt;</strong></li>
 
-          <p>triggered when someone changes nicknames; wildcards are allowed;
-          the mask is matched against &quot;#channel newnick&quot;</p>
-        </dd>
+        <li><strong>pushmode &lt;channel&gt; &lt;mode&gt; [arg]</strong></li>
 
-        <dt><strong>MODE (stackable)</strong></dt>
+        <li><strong>flushmode &lt;channel&gt;</strong></li>
 
-        <dd>
-          <p>bind mode &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;<br>
-           proc-name &lt;nick&gt; &lt;user@host&gt; &lt;handle&gt;
-          &lt;channel&gt; &lt;mode-change&gt; &lt;victim&gt;</p>
+        <li><strong>topic &lt;channel&gt;</strong></li>
 
-          <p>mode changes are broken down into their component parts before
-          being sent here, so the &lt;mode-change&gt; will always be a single
-          mode, like &quot;+m&quot; or &quot;-o&quot;, and the victims nick
-          is contained in &lt;victim&gt;; flags are ignored; the bot&#39;s
-          automatic response to a mode change will happen AFTER all matching
-          Tcl procs are called; the &lt;mask&gt; will have the channel
-          prefixed (i.e., &quot;#turtle +m&quot;)</p>
+        <li><strong>wasop &lt;nickname&gt; &lt;channel&gt;</strong></li>
 
-          <p>if it is a server mode &lt;nick&gt; will be &quot;&quot;,
-          &lt;user@host&gt; is the server address and handle is *</p>
+        <li><strong>channame2dname &lt;channel-name&gt;</strong></li>
 
-          <p>note that &quot;victim&quot; was added in 1.3.23 and that this
-          will break Tcl scripts that were written for pre-1.3.23 versions
-          and use this binding. An easy fix (by guppy) is as follows
-          (example):</p>
+        <li><strong>chandname2name &lt;channel-dname&gt;</strong></li>
 
-          <p>Old script looks as follows:<br>
-           bind mode - * mode_proc<br>
-           proc mode_proc {nick uhost hand chan mc} {<br>
-           &nbsp; ...<br>
-           }</p>
+        <li><strong>putkick &lt;channel&gt; &lt;nick,nick,...&gt; [reason]</strong></li>
 
-          <p>To make it work with 1.3.23+ and stay compatible with older
-          bots, do:<br>
-           bind mode - * mode_proc_fix<br>
-           proc mode_proc_fix {nick uhost hand chan mc {victim &quot;&quot;}}
-          {<br>
-           &nbsp; if {$victim != &quot;&quot;} {<br>
-           &nbsp;&nbsp;&nbsp; append mc &quot;$victim&quot;<br>
-           &nbsp; }<br>
-           &nbsp; mode_proc $nick $uhost $hand $chan $mc<br>
-           }<br>
-           proc mode_proc {nick uhost hand chan mc} {<br>
-           &nbsp; ...<br>
-           }</p>
-        </dd>
-
-        <dt><strong>SPLT (stackable)</strong></dt>
-
-        <dd>
-          <p>bind splt &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;<br>
-           proc-name &lt;nick&gt; &lt;user@host&gt; &lt;handle&gt;
-          &lt;channel&gt;</p>
-
-          <p>triggered when someone gets netsplit on the channel; be aware
-          that this may be a false alarm (it&#39;s easy to fake a netsplit
-          signoff message); &lt;mask&gt; may contain wildcards, and is
-          matched against the channel and nick!user@host just like join;
-          anyone who is SPLT will trigger a REJN or SIGN within the next 15
-          minutes</p>
-        </dd>
-
-        <dt><strong>REJN (stackable)</strong></dt>
-
-        <dd>
-          <p>bind rejn &lt;flags&gt; &lt;nick!user@host&gt; &lt;proc&gt;<br>
-           proc-name &lt;nick&gt; &lt;user@host&gt; &lt;handle&gt;
-          &lt;channel&gt;</p>
-
-          <p>someone who was split has rejoined; &lt;mask&gt; can contain
-          wildcards, and contains channel and nick!user@host just like
-          join</p>
-        </dd>
-
-        <dt><strong>NEED (stackable)</strong></dt>
-
-        <dd>
-          <p>bind need &lt;flags&gt; &lt;op/voice/unban/limit/invite&gt;
-          &lt;proc&gt;<br>
-           proc-name &lt;channel&gt; &lt;which&gt;</p>
-
-          <p>when the bot needs one of the listed things, on a channel, this
-          binding is called to allow resolving</p>
-        </dd>
-      </dl>
+        <li><strong>maskhost &lt;nick!user@host&gt;</strong></li>
+      </ul>
     </blockquote>
     <hr>
 

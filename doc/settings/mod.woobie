@@ -9,9 +9,10 @@ point in writing modules, woobie is the right thing.
 
 This module requires: none
 
-Put this line into your Eggdrop configuration file to load the woobie module:
-
-loadmodule woobie
+Put this line into your Eggdrop configuration file to load the woobie
+module:
+  
+  loadmodule woobie
      _________________________________________________________________
 
    Copyright (C) 2000, 2001, 2002 Eggheads Development Team

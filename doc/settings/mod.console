@@ -1,5 +1,5 @@
 Console Module
-Last revised: December 31, 2001
+Last revised: January 1, 2002
      _________________________________________________________________
 
                               Console Module
@@ -9,28 +9,26 @@ bot or type .store on the partyline.
 
 This module requires: none
 
-Put this line into your Eggdrop configuration file to load the console module:
-
-loadmodule console
-
-There are also some variables you can to set in your config file:
-
-set console-autosave 1
-    Save users console settings automatically? Otherwise, they have
-    to use the .store command.
-    Valid settings are 0 for OFF and 1 ON.
-
-
-set force-channel 0
-    If a user doesn't have any console settings saved, which channel
-    do you want them automatically put on?
-    Valid settings are 0-99999
-
-
-set info-party 0
-    Enable this setting if a user's global info line should be displayed
-    when they join a botnet channel.
-    Valid settings are 0 for OFF and 1 ON.
+Put this line into your Eggdrop configuration file to load the console 
+module:
+  
+  loadmodule console
+  
+There are also some variables you can set in your config file:
+  
+  set console-autosave 1
+      Save users console settings automatically? Otherwise, they have
+      to use the .store command.
+  
+  
+  set force-channel 0
+      If a user doesn't have any console settings saved, which channel
+      do you want them automatically put on?
+  
+  
+  set info-party 0
+      Enable this setting if a user's global info line should be displayed
+      when they join a botnet channel.
      _________________________________________________________________
 
    Copyright (C) 2000, 2001, 2002 Eggheads Development Team

@@ -1,5 +1,5 @@
 Uptime Module
-Last revised: December 31, 2001
+Last revised: January 1, 2002
      _________________________________________________________________
 
                               Uptime Module
@@ -17,9 +17,10 @@ config file.
 
 This module requires: server
 
-Put this line into your Eggdrop configuration file to load the uptime module:
+Put this line into your Eggdrop configuration file to load the uptime
+module:
 
-loadmodule uptime
+  loadmodule uptime
      _________________________________________________________________
 
-   Copyright (C) 2000, 2001, 2002 Eggheads Development Team
+   Copyright (C) 2001, 2002 Eggheads Development Team

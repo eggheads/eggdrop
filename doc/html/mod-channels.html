@@ -1,19 +1,19 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: mod-channels.html,v 1.11 2002/01/02 08:06:12 tothwolf Exp $ -->
+<!-- $Id: mod-channels.html,v 1.12 2002/01/03 01:05:43 guppy Exp $ -->
 
 <html>
   <head>
-    <title>Eggdrop Documentation: Channels module</title>
+    <title>Eggdrop Documentation: Channels Module</title>
   </head>
 
   <body>
     <div align="center">
-      <p><strong>Channels module</strong></p>
+      <p><strong>Channels Module</strong></p>
     </div>
     <hr>
 
-    <p>This module provides channel related support for the bot. Without it
-    you wont be able to make the bot join a channel or to save channel
+    <p>This module provides channel related support for the bot. Without 
+    it, you wont be able to make the bot join a channel or save channel
     specific userfile information.</p>
 
     <blockquote>
@@ -30,16 +30,16 @@
     <blockquote>
       <p>Lines in <strong>bold</strong> are the lines that need to be
       included in the Eggdrop config file if you want to use the share
-      module. Lines in bold <strong><em>italics</em></strong> are optional
-      and only required if you wish to change the default behaviour for 
+      module. Lines in <strong><em>bold italics</em></strong> are optional
+      and only required if you wish to change the default behavior for 
       that particular feature.</p>
 
-      <p>Put this line into your eggdrop.conf file to load channel
-      module:</p>
+      <p>Put this line into your Eggdrop configuration file to load the 
+      channels module:</p>
 
       <p><strong>loadmodule channels</strong></p>
 
-      <p>There are also some variables you can to set in your config
+      <p>There are also some variables you can set in your config
       file:</p>
     </blockquote>
 
@@ -68,7 +68,7 @@
           will check the exempts every X minutes, but will not remove the 
           exempt if a ban is set on the channel that matches that exempt. 
           Once the ban is removed, then the exempt will be removed the next
-	   time the bot checks.</p>
+          time the bot checks.</p>
 
           <p>Please note that this is an IRCnet feature.</p>
         </dd>
@@ -135,7 +135,7 @@
 
               <dd>
                 <p>This setting will make the bot de-op anyone who enters 
-                the channel with serverops. There're seven different modes 
+                the channel with serverops. There are seven different modes 
                 for this settings:</p>
 
                 <table border=0>
@@ -175,146 +175,129 @@
 
                     <td>If the channel is -bitch, see stopnethack-mode 3<br>
                     If the channel is +bitch, see stopnethack-mode 1</td>
-                 </tr>
+                  </tr>
 
-                 <tr>
+                  <tr>
                     <td>6</td>
 
                     <td>If the channel is -bitch, see stopnethack-mode 2<br>
                     If the channel is +bitch, see stopnethack-mode 4</td>
-                    </tr>
-                 </table>
+                  </tr>
+                </table>
               </dd>
 
               <dt><strong><em>need-op { putserv &quot;PRIVMSG #lamest :op me
               cos i&#39;m lame!&quot; }</em></strong></dt>
 
               <dd>
-                <p>This setting will make the bot do the specified thing in
-                the brackets if it becomes opless.<br>
-                 Attention, you cannot put anything that is longer than 120
-                chars in here!<br>
-                 Note that if you use scripts like get-ops, you don&#39;t
-                need to set this setting.</p>
+                <p>This setting will make the bot run the script enclosed in
+                braces if it does not have ops. This must be shorter than 
+                120 characters. If you use scripts like getops.tcl or 
+                botnetop.tcl, you don&#39;t need to set this setting.</p>
               </dd>
 
               <dt><strong><em>need-invite { putserv &quot;PRIVMSG #lamest
               :let me in!&quot; }</em></strong></dt>
 
               <dd>
-                <p>This setting will make the bot do the specified thing in
-                the brackets if it needs an invitation to the channel.<br>
-                 Attention, you cannot put anything that is longer than 120
-                chars in here!<br>
-                 Note that if you use scripts like get-ops, you don&#39;t
-                need to set this setting.</p>
+                <p>This setting will make the bot run the script enclosed in 
+                braces if it needs an invite to the channel. This must be 
+                shorter than 120 characters. If you use scripts like 
+                getops.tcl or botnetop.tcl, you don&#39;t need to set this
+                setting.</p>
               </dd>
 
               <dt><strong><em>need-key { putserv &quot;PRIVMSG #lamest :let
               me in!&quot; }</em></strong></dt>
 
               <dd>
-                <p>This setting will make the bot do the specified thing in
-                the brackets if it needs a key to a channel.<br>
-                 Attention, you cannot put anything that is longer than 120
-                chars in here!<br>
-                 Note that if you use scripts like get-ops, you don&#39;t
-                need to set this setting.</p>
+                <p>This setting will make the bot run the script enclosed in
+                braces if it needs the key to the channel. This must be 
+                shorter than 120 characters. If you use scripts like 
+                getops.tcl or botnetop.tcl, you don&#39;t need to set this
+                setting.</p>
               </dd>
 
               <dt><strong><em>need-unban { putserv &quot;PRIVMSG #lamest :let
               me in!&quot; }</em></strong></dt>
 
               <dd>
-                <p>This setting will make the bot do the specified thing in
-                the brackets if it becomes banned.<br>
-                 Attention, you cannot put anything that is longer than 120
-                chars in here!<br>
-                 Note that if you use scripts like get-ops, you don&#39;t
-                need to set this setting.</p>
+                <p>This setting will make the bot run the script enclosed in 
+                braces if it needs to be unbanned on the channel. This must 
+                be shorter than 120 characters. If you use scripts like 
+                getops.tcl or botnetop.tcl, you don&#39;t need to set this
+                setting.</p>
               </dd>
 
               <dt><strong><em>need-limit { putserv &quot;PRIVMSG #lamest :let
               me in!&quot; }</em></strong></dt>
 
               <dd>
-                <p>This setting will make the bot do the specified thing in
-                the brackets if it needs a limit raise.<br>
-                 Attention, you cannot put anything that is longer than 120
-                chars in here!<br>
-                 Note that if you use scripts like get-ops, you don&#39;t
-                need to set this setting.</p>
+                <p>This setting will make the bot run the script enclosed in
+                braces if it needs the limit to be raised on the channel. 
+                This must be shorter than 120 characters. If you use scripts
+                like getops.tcl or botnetop.tcl, you don&#39;t need to set 
+                this setting.</p>
               </dd>
 
               <dt><strong><em>flood-chan 10:60</em></strong></dt>
 
               <dd>
-                <p>Set here how many channel messages in how many seconds
-                from one host are recognized as a flood. Not specifying or
-                using number = 0 will not check against chan floods</p>
+                <p>Set here how many channel messages in how many seconds 
+                from one host constitutes a flood. Setting this to 0 or 0:0
+                disables text flood protection for the channel.</p>
               </dd>
 
               <dt><strong><em>flood-deop 3:10</em></strong></dt>
 
               <dd>
                 <p>Set here how many deops in how many seconds from one host
-                are recognized as a flood. Not specifying or using number = 0
-                will not check against deop floods</p>
+                constitutes a flood. Setting this to 0 or 0:0 disables deop
+                flood protection for the channel.</p>
               </dd>
 
               <dt><strong><em>flood-kick 3:10</em></strong></dt>
 
               <dd>
                 <p>Set here how many kicks in how many seconds from one host
-                are recognized as a flood. Not specifying or using number = 0
-                will not check against kick floods</p>
+                constitutes a flood. Setting this to 0 or 0:0 disables kick 
+                flood protection for the channel.</p>
               </dd>
 
               <dt><strong><em>flood-join 5:60</em></strong></dt>
 
               <dd>
-                <p>Set here how many channel joins in how many seconds are
-                recognized as a flood. Not specifying or using number = 0
-                will not check against join floods</p>
+                <p>Set here how many joins in how many seconds from one host
+                constitutes a flood. Setting this to 0 or 0:0 disables join 
+                flood protection for the channel.</p>
               </dd>
 
               <dt><strong><em>flood-ctcp 3:60</em></strong></dt>
 
               <dd>
-                <p>Set here how many channel ctcps in how many seconds from
-                one host are recognized as a flood. Not specifying or using
-                number = 0 will not check against ctcp floods</p>
+                <p>Set here how many channel ctcps in how many seconds from 
+                one host constitutes a flood. Setting this to 0 or 0:0 
+                disables ctcp flood  protection for the channel.</p>
               </dd>
 
               <dt><strong><em>flood-nick 5:60</em></strong></dt>
 
               <dd>
-                <p>Set here how many nick changes in how many seconds from
-                one host are recognized as a flood. Not specifying or using
-                number = 0 will not check against nick floods</p>
+                <p>Set here how many nick changes in how many seconds from 
+                one host constitutes a flood. Setting this to 0 or 0:0 
+                disables nick flood protection for the channel.</p>
               </dd>
             </dl>
           </blockquote>
         </dd>
 
-        <dt><strong><em>channel set &lt;chan&gt;
-        +/-&lt;setting&gt;</em></strong></dt>
+        <dt><strong><em>channel set &lt;chan&gt; +/-&lt;setting&gt;</em>
+        </strong></dt>
 
         <dd>
-          <p>There are many different options for a channel which you can
-          define. They can be enabled or disabled by a plus or minus in front
-          of them.</p>
-
-          <p>Examples:</p>
-
-          <p><strong><em>chanset #lamest +autoop</em></strong></p>
-
-          <p>This will make the bot auto-op every registered op on join</p>
-
-          <p><strong><em>chanset #lamest +autoop -userbans</em></strong></p>
-
-          <p>This will make the bot auto-op every registered op on join and
-          enforce all bans to be made through the bots console</p>
+          <p>There are many different options for channels which you can
+          define. They can be enabled or disabled by a plus or minus in 
+          front of them.</p>
 
           <p>A complete list of all available channel settings:</p>
 
@@ -323,174 +306,184 @@
               <dt><strong>enforcebans</strong></dt>
 
               <dd>
-                <p>when a ban is set, kick people who are on the channel and
-                match the new ban? (i.e., they were on the channel before the
-                ban)</p>
+                <p>When a ban is set, kick people who are on the channel and 
+                match the ban?</p>
               </dd>
 
               <dt><strong>dynamicbans</strong></dt>
 
               <dd>
-                <p>only activate bans on the channel when necessary? (this
-                keeps the channel&#39;s ban list from getting excessively
-                long. The bot still remembers every ban, but it only
-                activates a ban on the channel when it sees someone join who
-                matches that ban.)</p>
+                <p>Only activate bans on the channel when necessary? This 
+                keeps the channel&#39;s ban list from getting excessively long.
+                The bot still remembers every ban, but it only activates a
+                ban on the channel when it sees someone join who matches that
+                ban.</p>
               </dd>
 
               <dt><strong>userbans</strong></dt>
 
               <dd>
-                <p>allow bans to be made by users directly? (if turned off,
-                the bot will require all bans to be made through the
-                bot&#39;s console)</p>
+                <p>Allow bans to be made by users directly? If turned off, 
+                the bot will require all bans to be made through the bot&#39;s
+                console.</p>
               </dd>
 
               <dt><strong>dynamicexempts</strong></dt>
 
               <dd>
-                <p>only activate exempts on the channel when necessary? (this
-                keeps the channel&#39;s exempt list from getting excessively
-                long. The bot still remembers every exempt, but it only
-                activates a exempt on the channel when it sees a ban set
-                matching the exempt. The exempt remains active on the channel
-                for as long as the ban is still active.</p>
+                <p>Only activate exempts on the channel when necessary? This 
+                keeps the channel&#39;s exempt list from getting excessively 
+                long. The bot still remembers every exempt, but it only 
+                activates a exempt on the channel when it sees a ban set 
+                that matches the exempt. The exempt remains active on the 
+                channel for as long as the ban is still active.</p>
               </dd>
 
               <dt><strong>userexempts</strong></dt>
 
               <dd>
-                <p>allow exempts to be made by users directly? (if turned
-                off, the bot will require all exempts to be made through the
-                bot&#39;s console)</p>
+                <p>Allow exempts to be made by users directly? If turned 
+                off, the bot will require all exempts to be made through 
+                the bot&#39;s console.</p>
               </dd>
 
               <dt><strong>dynamicinvites</strong></dt>
 
               <dd>
-                <p>only activate invites on the channel when necessary? (this
-                keeps the channel&#39;s invite list from getting excessively
-                long. The bot still remembers every invite, but the invites
-                are only activated when the channel is set to invite only and
-                a user joins after requesting an invite. Once set the invite
-                remains until the channel goes to -i</p>
+                <p>Only activate invites on the channel when necessary? 
+                This keeps the channel&#39;s invite list from getting 
+				excessively long. The bot still remembers every invite, but 
+				the invites are only activated when the channel is set to
+				invite only and a user joins after requesting an invite.
+				Once set, the invite remains until the channel goes to -i.</p>
               </dd>
 
               <dt><strong>userinvites</strong></dt>
 
               <dd>
-                <p>allow invites to be made by users directly? (if turned
-                off, the bot will require all invites to be made through the
-                bot&#39;s console)</p>
+                <p>Allow invites to be made by users directly? If turned 
+                off, the bot will require all invites to be made through 
+                the bot&#39;s console.</p>
               </dd>
 
               <dt><strong>autoop</strong></dt>
 
               <dd>
-                <p>op users with the +o (op) flag as soon as they join the
-                channel?<br>
-                 (hint: this is a BAD IDEA)</p>
+                <p>Op users with the +o flag as soon as they join the channel?
+                <strong>This is insecure and not recommended.</strong></p>
               </dd>
 
               <dt><strong>bitch</strong></dt>
 
               <dd>
-                <p>only let users with +o (op) flag be channel ops?</p>
+                <p>Only let users with the +o flag have op on the channel?
+                </p>
               </dd>
 
               <dt><strong>greet</strong></dt>
 
               <dd>
-                <p>show a user&#39;s info line when they join the
-                channel?</p>
+                <p>Say a user&#39;s info line when they join the channel?</p>
               </dd>
 
               <dt><strong>protectops</strong></dt>
 
               <dd>
-                <p>re-op a user with the +o (op) flag if they get
-                deopped?</p>
+                <p>Re-op a user with the +o flag if they get deopped?</p>
               </dd>
 
               <dt><strong>protectfriends</strong></dt>
 
               <dd>
-                <p>re-op a user with the +f (friend) flag if they get
-                deopped?</p>
+                <p>Re-op a user with the +f flag if they get deopped?</p>
               </dd>
 
               <dt><strong>statuslog</strong></dt>
 
               <dd>
-                <p>log the channel status line every 5 minutes? (some people
-                think it&#39;s annoying; i think it&#39;s neat)</p>
+                <p>Log the channel status line every 5 minutes? This shows
+                the bot&#39;s status on the channel (op, voice, etc.), The 
+                channel&#39;s modes, and the number of +m/+o/+v/+n/+b/+e/+I
+                users on the channel. A sample status line follows:</p>
+
+                <blockquote>
+                  <p>[01:40] @#lamest (+istn) : [m/1 o/1 v/4 n/7 b/1 e/5 I/7]
+                  </p>
+                </blockquote>
               </dd>
 
               <dt><strong>revenge</strong></dt>
 
               <dd>
-                <p>remember people who deop/kick/ban the bot or valid ops,
-                and punish them? Users with +f (friend) flag are exempt from
-                revenge</p>
+                <p>Remember people who deop/kick/ban the bot, valid ops, or 
+                friends and punish them? Users with the +f flag are exempt 
+                from revenge.</p>
+              </dd>
+
+              <dt><strong>revengebot</strong></dt>
+
+              <dd>
+                <p>This is similar to to the &#39;revenge&#39; option, but 
+                it only triggers if a <strong>bot</strong> gets deopped, 
+                kicked or banned.</p>
               </dd>
 
               <dt><strong>autovoice</strong></dt>
 
               <dd>
-                <p>voice users with +v (voice) flag when they join the
-                channel?</p>
+                <p>Voice users with the +v flag when they join the channel?</p>
               </dd>
 
               <dt><strong>secret</strong></dt>
 
               <dd>
-                <p>prevent this channel from being listed on the botnet? (for
-                paranoid people)</p>
+                <p>Prevent this channel from being listed on the botnet?</p>
               </dd>
 
               <dt><strong>shared</strong></dt>
 
               <dd>
-                <p>share user channel info for this channel?</p>
+                <p>Share channel-related user info for this channel?</p>
               </dd>
 
               <dt><strong>cycle</strong></dt>
 
               <dd>
-                <p>cycle the channel when it becomes op-less?</p>
+                <p>Cycle the channel when it has no ops?</p>
               </dd>
 
               <dt><strong>dontkickops</strong></dt>
 
               <dd>
-                <p>do you want the bot not to be able to kick +o flag users ?
-                letting them kick-flood for instance, to protect the channel
-                against clone attacks</p>
+                <p>Do you want the bot not to be able to kick users who 
+                have the +o flag, letting them kick-flood for instance to
+                protect the channel against clone attacks?</p>
               </dd>
 
               <dt><strong>inactive</strong></dt>
 
               <dd>
-                <p>prevents the bot from joining the channel (or makes it
-                leave the channel if it is already there). Can be useful to
-                make the bot leave a channel without loosing it&#39;s
-                settings (flood settings, all these &quot;channel set&quot;
-                settings), user flags for this channel, bans for this
-                channel, and without affecting any sharing</p>
+                <p>This prevents the bot from joining the channel (or makes 
+                it leave the channel if it is already there). It can be 
+                useful to make the bot leave a channel without loosing it&#39;s
+                settings, channel-specific user flags, channel bans, and 
+                without affecting sharing.</p>
               </dd>
 
               <dt><strong>seen</strong></dt>
 
               <dd>
-                <p>respond to seen requests in the channel? (seen module must
-                be loaded)</p>
+                <p>Respond to seen requests in the channel?  The seen module
+                must be loaded for this to work.</p>
               </dd>
 
               <dt><strong>nodesynch</strong></dt>
 
               <dd>
-                <p>allow non-ops to perform channel modes? (Stops bot from
-                fighting with services such as ChanServ)</p>
+                <p>Allow non-ops to perform channel modes? This can stop the
+                bot from fighting with services such as ChanServ, or from 
+                kicking IRCops when setting channel modes without having 
+                ops.</p>
               </dd>
             </dl>
           </blockquote>
@@ -499,35 +492,36 @@
     </blockquote>
 
     <blockquote>
-      <p>The following setting are used as default values when you .+chan
+      <p>The following settings are used as default values when you .+chan 
       #chan or .tcl channel add #chan. Look in the section above for
-      explanation on every option.</p>
+      explanation of every option.</p>
 
       <p><strong><em>set global-flood-chan 10:60</em></strong><br>
-       <strong><em>set global-flood-deop 3:10</em></strong><br>
-       <strong><em>set global-flood-kick 3:10</em></strong><br>
-       <strong><em>set global-flood-join 5:60</em></strong><br>
-       <strong><em>set global-flood-ctcp 3:60</em></strong><br>
-       <strong><em>set global-flood-nick 5:60</em></strong></p>
+      <strong><em>set global-flood-deop 3:10</em></strong><br>
+      <strong><em>set global-flood-kick 3:10</em></strong><br>
+      <strong><em>set global-flood-join 5:60</em></strong><br>
+      <strong><em>set global-flood-ctcp 3:60</em></strong><br>
+      <strong><em>set global-flood-nick 5:60</em></strong></p>
 
-      <p><strong><em>set global-chanset {</em></strong><br>
-       <strong><em>&nbsp; -nodesynch -enforcebans</em></strong><br>
-       <strong><em>&nbsp; +dynamicbans +userbans</em></strong><br>
-       <strong><em>&nbsp; -autoop -bitch</em></strong><br>
-       <strong><em>&nbsp; +greet +protectops</em></strong><br>
-       <strong><em>&nbsp; +statuslog -revenge</em></strong><br>
-       <strong><em>&nbsp; -secret -autovoice</em></strong><br>
-       <strong><em>&nbsp; +cycle +dontkickops</em></strong><br>
-       <strong><em>&nbsp; -inactive -protectfriends</em></strong><br>
-       <strong><em>&nbsp; +shared -seen</em></strong><br>
-       <strong><em>&nbsp; +userexempts +dynamicexempts</em></strong><br>
-       <strong><em>&nbsp; +userinvites +dynamicinvites</em></strong><br>
-       <strong><em>}</em></strong></p>
+      <p><strong><em>set global-chanmode &quot;nt-likm&quot;</em></strong><br>
+      <strong><em>set global-stopnethack-mode 0</em></strong><br>
+      <strong><em>set global-revenge-mode 1</em></strong></p>
 
-      <p><strong><em>set global-chanmode
-      &quot;nt-likm&quot;</em></strong></p>
-
-      <p><strong><em>set global-stopnethack-mode 0</em></strong></p>
+      <p><strong><em>set global-chanset {</em></strong></p>
+<pre>
+  -nodesynch -enforcebans
+  +dynamicbans +userbans
+  -autoop -bitch
+  +greet +protectops
+  +statuslog -revenge
+  -secret -autovoice
+  +cycle +dontkickops
+  -inactive -protectfriends
+  +shared -seen
+  +userexempts +dynamicexempts
+  +userinvites +dynamicinvites
+</pre>
+      <p><strong><em>}</em></strong></p>
     </blockquote>
     <hr>
 
@@ -614,14 +608,26 @@
 
         <li><strong>setlaston &lt;handle&gt; [channel] [time]</strong></li>
 
-        <li><strong>addchanrec &lt;handle&gt; &lt;channel&gt;</strong></li>
-
-        <li><strong>delchanrec &lt;handle&gt; &lt;channel&gt;</strong></li>
-
         <li><strong>getchaninfo &lt;handle&gt; &lt;channel&gt;</strong></li>
 
         <li><strong>setchaninfo &lt;handle&gt; &lt;channel&gt;
         &lt;info&gt;</strong></li>
+
+        <li><strong>addchanrec &lt;handle&gt; &lt;channel&gt;</strong></li>
+
+        <li><strong>delchanrec &lt;handle&gt; &lt;channel&gt;</strong></li>
+
+        <li><strong>stick &lt;banmask&gt; [channel]</strong></li>
+
+        <li><strong>unstick &lt;banmask&gt; [channel]</strong></li>
+
+        <li><strong>stickexempt &lt;exemptmask&gt; [channel]</strong></li>
+
+        <li><strong>unstickexempt &lt;exemptmask&gt; [channel]</strong></li>
+
+        <li><strong>stickinvite &lt;invitemask&gt; [channel]</strong></li>
+
+        <li><strong>unstickinvite &lt;invitemask&gt; [channel]</strong></li>
 
         <li><strong>setudef &lt;flag/int&gt; &lt;name&gt;</strong></li>
 
@@ -629,6 +635,8 @@
         </strong></li>
 
         <li><strong>deludef &lt;flag/int&gt; &lt;name&gt;</strong></li>
+
+        <li><strong>haschanrec &lt;handle&gt; &lt;channel&gt;</strong></li>
       </ul>
     </blockquote>
     <hr>

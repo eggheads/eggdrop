@@ -1,5 +1,5 @@
 Filesys Module
-Last revised: December 31, 2001
+Last revised: January 1, 2002
      _________________________________________________________________
 
                               Filesys Module
@@ -9,30 +9,30 @@ files. With this module, the bot is usable as a file server.
 
 This module requires: transfer
 
-Put this line into your Eggdrop configuration file to load the filesys module:
+Put this line into your Eggdrop configuration file to load the filesys 
+module:
 
-loadmodule filesys
+  loadmodule filesys
 
-There are also some variables you can to set in your config file:
+There are also some variables you can set in your config file:
 
-set files-path "/home/mydir/eggdrop/filesys"
+  set files-path "/home/mydir/eggdrop/filesys"
     Set here the 'root' directory for the file system.
 
 
-set incoming-path "/home/mydir/eggdrop/filesys/incoming"
+  set incoming-path "/home/mydir/eggdrop/filesys/incoming"
     If you want to allow uploads, set this to the directory uploads
     should be put into. Set this to "" if you don't want people to
     upload files to your bot.
 
 
-set upload-to-pwd 0
+  set upload-to-pwd 0
     If you don't want to have a central incoming directory, but instead
     want uploads to go to the current directory that a user is in, set
     this setting to 1.
-    Valid settings are 0 for OFF and 1 ON.
 
 
-set filedb-path ""
+  set filedb-path ""
     Eggdrop creates a '.filedb' file in each subdirectory of your file area
     to keep track of its own file system information. If you can't do that (for
     example, if the dcc path isn't owned by you, or you just don't want it to do
@@ -40,16 +40,61 @@ set filedb-path ""
     stored instead.
 
 
-set max-file-users 20
+  set max-file-users 20
     Set here the maximum number of people that can be in the file area at once.
     Setting this to 0 makes it effectively infinite.
-    Valid settings are 0-unlimited.
-
-
-set max-filesize 1024
+  
+  
+  set max-filesize 1024
     Set here the maximum allowable file size that will be received (in kb).
     Setting this to 0 makes it effectively infinite.
-    Valid settings are 0-unlimited.
+      
+Tcl commands provided by the filesys module:
+
+See doc/tcl-commands.doc for information on each command.
+
+  * setpwd <idx> <dir> 
+
+  * getpwd <idx> 
+
+  * getfiles <dir> 
+
+  * getdirs <dir> 
+
+  * dccsend <filename> <ircnick>
+
+  * filesend <idx> <filename> [ircnick] 
+
+  * fileresend <idx> <filename> [ircnick] 
+
+  * setdesc <dir> <file> <desc> 
+
+  * getdesc <dir> <file> 
+
+  * setowner <dir> <file> <handle> 
+
+  * getowner <dir> <file> 
+
+  * setlink <dir> <file> <link> 
+
+  * getlink <dir> <file> 
+
+  * getfileq <handle> 
+
+  * getfilesendtime <idx> 
+
+  * mkdir <directory> [<required-flags> [channel]] 
+
+  * rmdir <directory> 
+
+  * mv <file> <destination> 
+
+  * cp <file> <destination> 
+
+  * getflags <dir> 
+
+  * setflags <dir> [<flags> [channel]] 
+
      _________________________________________________________________
 
    Copyright (C) 2000, 2001, 2002 Eggheads Development Team

@@ -1,14 +1,14 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: mod-notes.html,v 1.10 2002/01/02 08:06:12 tothwolf Exp $ -->
+<!-- $Id: mod-notes.html,v 1.11 2002/01/03 01:05:43 guppy Exp $ -->
 
 <html>
   <head>
-    <title>Eggdrop Documentation: Notes module</title>
+    <title>Eggdrop Documentation: Notes Module</title>
   </head>
 
   <body>
     <div align="center">
-      <p><strong>Notes module</strong></p>
+      <p><strong>Notes Module</strong></p>
     </div>
     <hr>
 
@@ -22,8 +22,6 @@
         <li><a href="#config">Config file settings</a></li>
 
         <li><a href="#tclcmds">Tcl commands</a></li>
-
-        <li><a href="#tclbinds">Tcl bindings</a></li>
       </ol>
     </blockquote>
     <hr>
@@ -33,15 +31,16 @@
     <blockquote>
       <p>Lines in <strong>bold</strong> are the lines that need to be
       included in the Eggdrop config file if you want to use the share
-      module. Lines in bold <strong><em>italics</em></strong> are optional
+      module. Lines in <strong><em>bold italics</em></strong> are optional
       and only required if you wish to change the default behaviour for 
       that particular feature.</p>
 
-      <p>Put this line into your eggdrop.conf file to load notes module:</p>
+      <p>Put this line into your Eggdrop configuration file to load the 
+      notes module:</p>
 
       <p><strong>loadmodule notes</strong></p>
 
-      <p>There are also some variables you can to set in your config
+      <p>There are also some variables you can set in your config
       file:</p>
     </blockquote>
 
@@ -50,26 +49,22 @@
         <dt><strong>set notefile &quot;LamestBot.notes&quot;</strong></dt>
 
         <dd>
-          <p>Enter here the filename where private notes between users are
-          stored</p>
+          <p>Set here the filename where private notes between users are 
+          stored.</p>
         </dd>
 
         <dt><strong><em>set max-notes 50</em></strong></dt>
 
         <dd>
           <p>Set here the maximum number of notes to allow to be stored for
-          each user (to prevent flooding)</p>
-
-          <p>Valid settings are 0-99999</p>
+          each user (to prevent flooding).</p>
         </dd>
 
         <dt><strong><em>set note-life 60</em></strong></dt>
 
         <dd>
-          <p>Set here how long (in days) to store notes before expiring
-          them</p>
-
-          <p>Valid settings are 0-99999</p>
+          <p>Set here how long (in days) to store notes before expiring 
+          them.</p>
         </dd>
 
         <dt><strong><em>set allow-fwd 0</em></strong></dt>
@@ -77,26 +72,20 @@
         <dd>
           <p>Set this to 1 if you want to allow users to specify a forwarding
           address for forwarding notes to another account on another bot.</p>
-
-          <p>Valid settings are 0 and 1.</p>
         </dd>
 
         <dt><strong><em>set notify-users 1</em></strong></dt>
 
         <dd>
-          <p>Set this to 1 if you want the bot to let people know hourly if
-          they have any notes</p>
-
-          <p>Valid settings are 0 and 1.</p>
+          <p>Set this to 1 if you want the bot to let people know hourly if 
+          they have any notes.</p>
         </dd>
 
         <dt><strong><em>set notify-onjoin 1</em></strong></dt>
 
         <dd>
-          <p>Set this to 1 if you want the bot to let people know on join if
-          they have any notes</p>
-
-          <p>Valid settings are 0 and 1.</p>
+          <p>Set this to 1 if you want the bot to let people know on join 
+          if they have any notes.</p>
         </dd>
       </dl>
     </blockquote>
@@ -104,86 +93,20 @@
 
     <p><a name="tclcmds"></a>2. <strong> Tcl commands</strong></p>
 
-    <blockquote>
-      <dl>
-        <dt><strong>notes &lt;user&gt; [number]</strong></dt>
-
-        <dd>
-          <p>gets info on notes stored for a user</p>
-
-          <p>returns: (if no numbers specified) number of notes for user, -1
-          if no such user, -2 if notefile failure (if a note number
-          specified) the number&#39;th note for the user, -1 if no such user,
-          -2 if notefile failure, 0 if no such note. the note is a list,
-          first element from, 2nd element timestamp, 3rd element the note
-          itself</p>
-        </dd>
-
-        <dt><strong>erasenotes &lt;user&gt; &lt;numberlist&gt;</strong></dt>
-
-        <dd>
-          <p>erases some or all stored notes for a user</p>
-
-          <p>returns: -1 if no such user, -2 if notefile failure, 0 if no
-          such note, or number of erased notes. &#39;erasenote mynick
-          &quot;-&quot;&#39; erase all notes for mynick.</p>
-        </dd>
-
-        <dt><strong>listnotes &lt;user&gt; &lt;numberlist&gt;</strong></dt>
-
-        <dd>
-          <p>lists existing notes according to the numberlist (ex:
-          &quot;2-4;8;16-&quot;)</p>
-
-          <p>returns: -1 if no such user, -2 if notefile failure, 0 if no
-          such note, list of existing notes.</p>
-        </dd>
-
-        <dt><strong>storenote &lt;from&gt; &lt;to&gt; &lt;msg&gt;
-        &lt;idx&gt;</strong></dt>
-
-        <dd>
-          <p>stores a note for later reading, notify idx of any results (use
-          idx == -1 for no notify).</p>
-
-          <p>returns: 0 on success non-0 on failure</p>
-        </dd>
-
-        <dt><strong>sendnote &lt;from&gt; &lt;to&gt;
-        &lt;message&gt;</strong></dt>
-
-        <dd>
-          <p>simulates what happens when one user sends a note to another
-          (this can also do cross-bot notes)</p>
-
-          <p>returns: &quot;1&quot; if the note was delivered locally or sent
-          to another bot, &quot;2&quot; if the note was stored locally,
-          &quot;3&quot; if the user&#39;s notebox is too full to store a
-          note, &quot;4&quot; if a Tcl binding caught the note, &quot;5&quot;
-          if the note was stored because the user is away, or &quot;0&quot;
-          if the send failed</p>
-        </dd>
-      </dl>
-    </blockquote>
-    <hr>
-
-    <p><a name="tclbinds"></a>3. <strong>Tcl bindings</strong></p>
+    <p>See doc/tcl-commands.doc for information on each of these 
+    commands.</p>
 
     <blockquote>
-      <dl>
-        <dt><strong>NOTE</strong></dt>
+      <ul>
+        <li><strong>notes &lt;user&gt; [numberlist]</strong></li>
 
-        <dd>
-          <p>bind note &lt;flags&gt; &lt;nickname&gt; &lt;proc&gt;<br>
-           proc-name &lt;from&gt; &lt;to&gt; &lt;text&gt;</p>
+        <li><strong>erasenotes &lt;user&gt; &lt;numberlist&gt;</strong></li>
 
-          <p>incoming notes (either from the party line, someone on IRC, or
-          someone on another bot on the botnet) are checked against these
-          binds before being process; if a bind exists, the bot will not
-          deliver the note; the nickname must be an exact match (no wild-
-          cards), but it is not case sensitive; flags are ignored</p>
-        </dd>
-      </dl>
+        <li><strong>listnotes &lt;user&gt; &lt;numberlist&gt;</strong></li>
+
+        <li><strong>storenote &lt;from&gt; &lt;to&gt; &lt;msg&gt;
+        &lt;idx&gt;</strong></li>
+      </ul>
     </blockquote>
     <hr>
 

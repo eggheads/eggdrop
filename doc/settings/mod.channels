@@ -1,5 +1,5 @@
 Channels Module
-Last revised: December 31, 2001
+Last revised: January 1, 2002
      _________________________________________________________________
 
                              Channels Module
@@ -10,11 +10,12 @@ specific userfile information.
 
 This module requires: none
 
-Put this line into your Eggdrop configuration file to load the channels module:
+Put this line into your Eggdrop configuration file to load the channels 
+module:
 
-loadmodule channels
+  loadmodule channels
 
-There are also some variables you can to set in your config file:
+There are also some variables you can set in your config file:
 
   set chanfile "LamestBot.chan"
     Enter here the filename where dynamic channel settings are stored.
@@ -91,7 +92,7 @@ There are also some variables you can to set in your config file:
       revenging. There are four possible settings:
         0 Deop the user.
         1 Deop the user and give them the +d flag for the channel.
-	2 Deop the user, give them the +d flag for the channel, and kick them.
+        2 Deop the user, give them the +d flag for the channel, and kick them.
         3 Deop the user, give them the +d flag for the channel, kick, and ban them.
       Valid settings are 0-3.
 
@@ -104,38 +105,38 @@ There are also some variables you can to set in your config file:
          aop-delay X:Y A random delay between X and Y is used.
 
     need-op { putserv "PRIVMSG #lamest :op me cos i'm lame!" }
-       This setting will make the bot run the script enclosed in brackets
+       This setting will make the bot run the script enclosed in braces
        if it does not have ops. This must be shorter than 120 characters.
        If you use scripts like getops.tcl or botnetop.tcl, you don't need
        to set this setting.
 
     need-invite { putserv "PRIVMSG #lamest :let me in!" }
-       This setting will make the bot run the script enclosed in brackets
+       This setting will make the bot run the script enclosed in braces
        if it needs an invite to the channel. This must be shorter than 120
        characters. If you use scripts like getops.tcl or botnetop.tcl, you
        don't need to set this setting.
 
     need-key { putserv "PRIVMSG #lamest :let me in!" }
-       This setting will make the bot run the script enclosed in brackets
+       This setting will make the bot run the script enclosed in braces
        if it needs the key to the channel. This must be shorter than 120
        characters. If you use scripts like getops.tcl or botnetop.tcl, you
-       don't need to set this setting
+       don't need to set this setting.
 
     need-unban { putserv "PRIVMSG #lamest :let me in!" }
-       This setting will make the bot run the script enclosed in brackets
+       This setting will make the bot run the script enclosed in braces
        if it needs to be unbanned on the channel. This must be shorter than
        120 characters. If you use scripts like getops.tcl or botnetop.tcl,
-       you don't need to set this setting
+       you don't need to set this setting.
 
     need-limit { putserv "PRIVMSG #lamest :let me in!" }
-       This setting will make the bot run the script enclosed in brackets
+       This setting will make the bot run the script enclosed in braces
        if it needs the limit to be raised on the channel. This must be
        shorter than 120 characters. If you use scripts like getops.tcl or
-       botnetop.tcl, you don't need to set this setting
+       botnetop.tcl, you don't need to set this setting.
 
     flood-chan 10:60
        Set here how many channel messages in how many seconds from one
-       host constitutes a flood. Setting this to 0 or 0:0 disables
+       host constitutes a flood. Setting this to 0 or 0:0 disables text
        flood protection for the channel.
 
     flood-deop 3:10
@@ -214,7 +215,7 @@ There are also some variables you can to set in your config file:
        This is insecure and not recommended.
 
      bitch
-       Only let users with +o) flag be opped on the channel?
+       Only let users with the +o flag have op on the channel?
 
      greet
        Say a user's info line when they join the channel?
@@ -256,7 +257,7 @@ There are also some variables you can to set in your config file:
      dontkickops
        Do you want the bot not to be able to kick users who have the +o 
        flag, letting them kick-flood for instance to protect the channel
-       against clone attacks.
+       against clone attacks?
 
      inactive
        This prevents the bot from joining the channel (or makes it leave
@@ -302,6 +303,106 @@ There are also some variables you can to set in your config file:
         +userbans       +userexempts
         +userinvites
   }
+
+Tcl commands provided by the channels module:
++ 
+See doc/tcl-commands.doc for information on each command.
+
+  * channel add <name> <option-list>
+
+  * channel set <name> <options>
+
+  * channel info <name>
+
+  * channel remove <name>
+
+  * savechannels
+
+  * loadchannels
+
+  * channels
+
+  * validchan <channel>
+
+  * isdynamic <channel>
+
+  * newchanban <channel> <ban> <creator> <comment> [lifetime] [options]
+
+  * newban <ban> <creator> <comment> [lifetime] [options]
+
+  * killchanban <channel> <ban>
+
+  * killban <ban>
+
+  * isban <ban> [channel]
+
+  * ispermban <ban> [channel]
+
+  * matchban <nick!user@host> [channel]
+
+  * banlist [channel]
+      
+  * newchanexempt <channel> <exempt> <creator> <comment> [lifetime] [options]
+
+  * newexempt <exempt> <creator> <comment> [lifetime] [options]
+
+  * killchanexempt <channel> <exempt> 
+
+  * killexempt <exempt>
+
+  * isexempt <exempt> [channel]
+
+  * ispermexempt <exempt> [channel]
+
+  * matchexempt <nick!user@host> [channel]
+
+  * exemptlist [channel]
+
+  * newchaninvite <channel> <invite> <creator> <comment> [lifetime] [options]
+
+  * newinvite <invite> <creator> <comment> [lifetime] [options]
+
+  * killchaninvite <channel> <invite>
+
+  * killinvite <invite>
+
+  * isinvite <invite> [channel]
+
+  * isperminvite <invite> [channel]
+
+  * matchinvite <nick!user@host> [channel]
+
+  * invitelist [channel]
+
+  * setlaston <handle> [channel] [time]
+
+  * addchanrec <handle> <channel>
+
+  * delchanrec <handle> <channel>
+
+  * getchaninfo <handle> <channel>
+
+  * setchaninfo <handle> <channel> <info>
+
+  * setudef <flag/int> <name>
+
+  * renudef <flag/int> <oldname> <newname>
+
+  * deludef <flag/int> <name>
+
+  * haschanrec <handle> <channel>
+
+  * stick <banmask> [channel]
+
+  * unstick <banmask> [channel]
+
+  * stickexempt <exemptmask> [channel]
+
+  * unstickexempt <exemptmask> [channel]
+
+  * stickinvite <invitemask> [channel]
+
+  * unstickinvite <invitemask> [channel]
      _________________________________________________________________
 
    Copyright (C) 2000, 2001, 2002 Eggheads Development Team

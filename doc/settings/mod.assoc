@@ -1,5 +1,5 @@
 Assoc Module
-Last revised: December 31, 2001
+Last revised: January 1, 2002
      _________________________________________________________________
 
                                Assoc Module
@@ -8,10 +8,18 @@ This module provides assoc support, i.e. naming channels on the botnet.
 
 This module requires: none
 
-Put this line into your Eggdrop configuration file to load the assoc 
+Put this line into your Eggdrop configuration file to load the assoc
 module:
 
   loadmodule assoc
+
+Tcl commands provided by the assoc module:
+
+See doc/tcl-commands.doc for information on each command.
+ 
+  * assoc <chan> [name]
+ 
+  * killassoc <chan>
      _________________________________________________________________
 
    Copyright (C) 2000, 2001, 2002 Eggheads Development Team

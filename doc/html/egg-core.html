@@ -1,9 +1,9 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: egg-core.html,v 1.15 2002/01/02 08:06:12 tothwolf Exp $ -->
+<!-- $Id: egg-core.html,v 1.16 2002/01/03 01:05:43 guppy Exp $ -->
 
 <html>
   <head>
-    <title>Eggdrop Documentation: Eggdrop core</title>
+    <title>Eggdrop Documentation: Eggdrop Core</title>
   </head>
 
   <body>
@@ -41,7 +41,7 @@
 
             <li><a href="#sect1d">Files and directories</a></li>
 
-            <li><a href="#sect1e">Botnet, dcc and network</a></li>
+            <li><a href="#sect1e">Botnet, DCC, and network</a></li>
 
             <li><a href="#sect1f">Console</a></li>
 
@@ -53,21 +53,7 @@
           </ol>
         </li>
 
-        <li><a href="#sect2">Output commands</a></li>
-
-        <li><a href="#sect3">User record manipulation Commands</a></li>
-
-        <li><a href="#sect4">DCC commands</a></li>
-
-        <li><a href="#sect5">Miscellaneous commands</a></li>
-
-        <li><a href="#sect6">Global variables</a></li>
-
-        <li><a href="#sect7">Command extension</a></li>
-
-        <li><a href="#sect8">Return values</a></li>
-
-        <li><a href="#sect9">Matching characters</a></li>
+        <li><a href="#tclcmds">Tcl commands</a></li>
       </ol>
     </blockquote>
     <hr>
@@ -76,20 +62,19 @@
 
     <blockquote>
       <p>Lines in <strong>bold</strong> are the lines that need to be
-      included in the eggdrop config file if you want to use the share
-      module.<br>
-       Lines in bold <strong><em>italics</em></strong> are optional and only
-      required if you wish to change the default behaviour for that
-      particular feature.</p>
+      included in the Eggdrop config file if you want to use the share
+      module. Lines in <strong><em>bold italics</em></strong> are optional
+      and only required if you wish to change the default behaviour for 
+      that particular feature.</p>
     </blockquote>
 
     <p><a name="sect1a"></a>1a. <strong>Executable path</strong></p>
 
     <blockquote>
-      <p>The first line in eggdrop configuration file should contain a full
-      qualified path to eggdrop executable. It has to be implemented in the
-      way the example shows to make the config file work as a shell
-      script</p>
+      <p>The first line in an Eggdrop configuration file should contain
+      a fully qualified path to your Eggdrop executable. It has to be
+      implemented in the way the example shows to make the config file
+      work as a shell script.</p>
 
       <p>Example:</p>
 
@@ -158,7 +143,7 @@
         by default)</em></strong></dt>
 
         <dd>
-          <p>If you don't want to use the timezone setting for scripting
+          <p>If you don&#39;t want to use the timezone setting for scripting
           purpose only but instead everywhere possible then use this
           setting.</p>
         </dd>
@@ -238,7 +223,7 @@
            w wallops: msgs between IRCops (be sure to set the bot +w in
           init-server)</p>
 
-          <p>There are others, but you probably shouldn't log them, it&#39;d
+          <p>There are others, but you probably shouldn&#39;t log them, it&#39;d
           be rather unethical ;). There are also five user-defined levels
           (&#39;1&#39;..&#39;5&#39;) which are used by Tcl scripts.</p>
 
@@ -314,11 +299,11 @@
           <p>Specify here how your userfile should be called</p>
         </dd>
 
-	<dt><strong>set pidfile &quot;pid.LamestBot&quot;</strong</dt>
+    <dt><strong>set pidfile &quot;pid.LamestBot&quot;</strong</dt>
 
-	<dd>
-	  <p>Specify here what filename eggdrop will save its pid under</p>
-	</dd>
+    <dd>
+      <p>Specify here what filename eggdrop will save its pid under</p>
+    </dd>
 
         <dt><strong><em>set sort-users 0</em></strong></dt>
 
@@ -1191,8 +1176,8 @@
 
           <dd>
             <p>makes a simple backup of the userfile that&#39;s on disk.
-	    If the channels module is loaded this also makes a backup of the
-	    channel file.</p>
+        If the channels module is loaded this also makes a backup of the
+        channel file.</p>
 
             <p>returns: nothing</p>
           </dd>

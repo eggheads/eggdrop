@@ -1,20 +1,20 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: mod-dns.html,v 1.10 2002/01/02 08:06:12 tothwolf Exp $ -->
+<!-- $Id: mod-dns.html,v 1.11 2002/01/03 01:05:43 guppy Exp $ -->
 
 <html>
   <head>
-    <title>Eggdrop Documentation: DNS module</title>
+    <title>Eggdrop Documentation: DNS Module</title>
   </head>
 
   <body>
     <div align="center">
-      <p><strong>DNS module</strong></p>
+      <p><strong>DNS Module</strong></p>
     </div>
     <hr>
 
     <p>This module provides asynchronous dns support. This will avoid long
-    periods where the bot hangs, waiting for a hostname to resolve, which
-    often let it timeout on all other connections.</p>
+    periods where the bot just hangs there, waiting for a hostname to
+    resolve, which will often let it timeout on all other connections.</p>
 
     <blockquote>
       <ol>
@@ -30,11 +30,12 @@
     <blockquote>
       <p>Lines in <strong>bold</strong> are the lines that need to be
       included in the Eggdrop config file if you want to use the share
-      module. Lines in bold <strong><em>italics</em></strong> are optional
+      module. Lines in <strong><em>bold italics</em></strong> are optional
       and only required if you wish to change the default behaviour for 
       that particular feature.</p>
 
-      <p>Put this line into your config file to load dns module:</p>
+      <p>Put this line into your Eggdrop configuration file to load the
+      dns module:</p>
 
       <p><strong>loadmodule dns</strong></p>
     </blockquote>
@@ -42,28 +43,14 @@
 
     <p><a name="tclcmds"></a>2. <strong>Tcl commands:</strong></p>
 
+    <p>See doc/tcl-commands.doc for information on each of these 
+    commands.</p>
+
     <blockquote>
-      <dl>
-        <dt><strong>dnslookup &lt;ip-address/hostname&gt; &lt;proc&gt;
-        [[arg1] [arg2] ... [argn]]</strong></dt>
-
-        <dd>
-          <p>Issues an asynchronous dns lookup request. The command will
-          block if dns module is not loaded, otherwise it will either return
-          immediately or immediately call the proc (e.g. if the lookup is
-          already cached).</p>
-
-          <p>As soon as the request completes, &lt;proc&gt; will be called as
-          follows:</p>
-
-          <p>&lt;proc&gt; ipaddress hostname status [[arg1] [arg2] ...
-          [argn]]</p>
-
-          <p>status is 1 if the lookup was successful and 0 if it wasn&#39;t.
-          All additional parameters (called arg1, arg2 and argn above) get
-          appended to the proc&#39;s other parameters.</p>
-        </dd>
-      </dl>
+      <ul>
+        <li><strong>dnslookup &lt;ip-address/hostname&gt; &lt;proc&gt;
+        [[arg1] [arg2] ... [argN]]</strong></li>
+      </ul>
     </blockquote>
     <hr>
 

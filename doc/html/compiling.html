@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: compiling.html,v 1.12 2002/01/02 08:06:12 tothwolf Exp $ -->
+<!-- $Id: compiling.html,v 1.13 2002/01/03 01:05:43 guppy Exp $ -->
 
 <html>
   <head>
@@ -46,12 +46,12 @@
         <li><a href="#egg8">Unsatisfied symbols &#39;shl_findsym&#39; and
         &#39;shl_load&#39; (HP-UX 9)</a></li>
 
-        <li><a href="#egg9">Bot doesn't compile on Ultrix</a></li>
+        <li><a href="#egg9">Bot doesn&#39;t compile on Ultrix</a></li>
 
         <li><a href="#egg10">Bot crashes at startup with the message 
         "net.c/708", for example</a></li>
 
-        <li><a href="#egg11">I get lot's of warnings</a></li>
+        <li><a href="#egg11">I get lot&#39;s of warnings</a></li>
       </ol>
     </blockquote>
 
@@ -169,8 +169,8 @@
     </blockquote>
 
     <p>Hopefully, you know what shell you are using and can pick out which
-    commands to use. If the first two setenv commands give a 'command not 
-    found' error, then use the next two. If not, then don&#39;t use the next 
+    commands to use. If the first two setenv commands give a &#39;command not 
+    found&#39; error, then use the next two. If not, then don&#39;t use the next 
     two. The first set of commands is for csh/tcsh users; the next set is for 
     bash/ksh users.</p>
 
@@ -236,7 +236,7 @@
     Makefile.</p>
 
     <p>The next thing you want to do, depending on what shell your using, 
-    is (if the first two setenv commands give a 'command not found' 
+    is (if the first two setenv commands give a &#39;command not found&#39; 
     error, then use the next two.):</p>
 
     <blockquote>
@@ -444,17 +444,17 @@
 </pre>
     </blockquote>
 
-    <p><a name="egg9">9. <strong>Bot doesn't compile on Ultrix</strong></a></p>
+    <p><a name="egg9">9. <strong>Bot doesn&#39;t compile on Ultrix</strong></a></p>
 
      <p>There are some known problems with make and Eggdrop on Ultrix systems.
      Try to use gmake instead of make. Additionally, sh5 should be used. A 
-     simple'gmake SHELL=/bin/sh5' should be enough.</p>
+     simple&#39;gmake SHELL=/bin/sh5&#39; should be enough.</p>
 
     <p><a name="egg10">10. <strong>Bot crashes at startup with the message 
     "net.c/708", for example</strong></a></p>
 
      <p>On some non IA32 systems, the gcc options -O2 and -O3 can cause that. We 
-     don't know why this happens, but sometimes it helps to remove those flags 
+     don&#39;t know why this happens, but sometimes it helps to remove those flags 
      from the Makefile. To disable them, use:</p>
 
     <blockquote>
@@ -464,7 +464,7 @@
      <p>Ah well, drop us a note if you know why, so we can extend the info 
      here.</p>
 
-    <p><a name="egg11">11. <strong>I get lot's of warnings</strong></a></p>
+    <p><a name="egg11">11. <strong>I get lot&#39;s of warnings</strong></a></p>
 
      <p>Well, warnings are warnings, nothing really bad. As long as the compile 
      runs through, there is nothing to worry about. Generally, we try to avoid
