@@ -6,7 +6,7 @@
  *   memory management for dcc structures
  *   timeout checking for dcc connections
  *
- * $Id: dccutil.c,v 1.39 2002/07/09 05:40:55 guppy Exp $
+ * $Id: dccutil.c,v 1.40 2002/08/08 20:49:32 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -327,13 +327,13 @@ void tell_dcc(int zidx)
   }
   if(nicklen < 9) nicklen = 9;
   
-  snprintf(format, sizeof format, "%%-4s %%-8s %%-5s %%-%us %%-17s %%s\n", 
+  egg_snprintf(format, sizeof format, "%%-4s %%-8s %%-5s %%-%us %%-17s %%s\n", 
                           nicklen);
   dprintf(zidx, format, "SOCK", "ADDR",     "PORT",  "NICK", "HOST", "TYPE");
   dprintf(zidx, format, "----", "--------", "-----", "---------", 
                         "-----------------", "----");
 
-  snprintf(format, sizeof format, "%%-4d %%08X %%5d %%-%us %%-17s %%s\n", 
+  egg_snprintf(format, sizeof format, "%%-4d %%08X %%5d %%-%us %%-17s %%s\n", 
                           nicklen);
   /* Show server */
   for (i = 0; i < dcc_total; i++) {

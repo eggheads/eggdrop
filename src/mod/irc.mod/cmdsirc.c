@@ -2,7 +2,7 @@
  * chancmds.c -- part of irc.mod
  *   handles commands directly relating to channel interaction
  *
- * $Id: cmdsirc.c,v 1.40 2002/08/07 22:05:49 wcc Exp $
+ * $Id: cmdsirc.c,v 1.41 2002/08/08 20:49:32 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -686,7 +686,7 @@ static void cmd_channel(struct userrec *u, int idx, char *par)
     if(maxhandlen < 9) maxhandlen = 9;
     
     dprintf(idx, "(n = owner, m = master, o = op, d = deop, b = bot)\n");
-    snprintf(format, sizeof format, " %%-%us %%-%us %%-6s %%-5s %%s\n", 
+    egg_snprintf(format, sizeof format, " %%-%us %%-%us %%-6s %%-5s %%s\n", 
 			maxnicklen, maxhandlen);
     dprintf(idx, format, "NICKNAME", "HANDLE", " JOIN", "IDLE", "USER@HOST");
     for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
@@ -783,13 +783,13 @@ static void cmd_channel(struct userrec *u, int idx, char *par)
       else
 	chanflag = ' ';
       if (chan_issplit(m)) {
-        snprintf(format, sizeof format, 
+        egg_snprintf(format, sizeof format, 
 			"%%c%%-%us %%-%us %%s %%c     <- netsplit, %%lus\n", 
 			maxnicklen, maxhandlen);
 	dprintf(idx, format, chanflag, m->nick, handle, s, atrflag,
 		now - (m->split));
       } else if (!rfc_casecmp(m->nick, botname)) {
-        snprintf(format, sizeof format, 
+        egg_snprintf(format, sizeof format, 
 			"%%c%%-%us %%-%us %%s %%c     <- it's me!\n", 
 			maxnicklen, maxhandlen);
 	dprintf(idx, format, chanflag, m->nick, handle, s, atrflag);
@@ -803,7 +803,7 @@ static void cmd_channel(struct userrec *u, int idx, char *par)
 	  egg_snprintf(s1, sizeof s1, "%2lum", ((now - (m->last)) / 60));
 	else
 	  strncpyz(s1, "   ", sizeof s1);
-	snprintf(format, sizeof format, "%%c%%-%us %%-%us %%s %%c %%s  %%s\n", 
+	egg_snprintf(format, sizeof format, "%%c%%-%us %%-%us %%s %%c %%s  %%s\n", 
 			maxnicklen, maxhandlen);
 	dprintf(idx, format, chanflag, m->nick,	handle, s, atrflag, s1, 
 		    m->userhost);

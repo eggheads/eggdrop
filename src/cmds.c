@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  *
- * $Id: cmds.c,v 1.81 2002/07/09 05:40:55 guppy Exp $
+ * $Id: cmds.c,v 1.82 2002/08/08 20:49:32 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -126,12 +126,12 @@ static void tell_who(struct userrec *u, int idx, int chan)
     if (dcc[i].type == &DCC_CHAT)
       if (dcc[i].u.chat->channel == chan) {
 	if (atr & USER_OWNER) {
-	  snprintf(format, sizeof format, "  [%%.2lu]  %%c%%-%us %%s", nicklen);
+	  egg_snprintf(format, sizeof format, "  [%%.2lu]  %%c%%-%us %%s", nicklen);
 	  sprintf(s, format,
 		  dcc[i].sock, (geticon(i) == '-' ? ' ' : geticon(i)),
 		  dcc[i].nick, dcc[i].host);
 	} else {
-	  snprintf(format, sizeof format, "  %%c%%-%us %%s", nicklen);
+	  egg_snprintf(format, sizeof format, "  %%c%%-%us %%s", nicklen);
 	  sprintf(s, format,
 		  (geticon(i) == '-' ? ' ' : geticon(i)),
 		  dcc[i].nick, dcc[i].host);
@@ -166,14 +166,14 @@ static void tell_who(struct userrec *u, int idx, int chan)
       }
       egg_strftime(s, 14, "%d %b %H:%M", localtime(&dcc[i].timeval));
       if (atr & USER_OWNER) {
-        snprintf(format, sizeof format, "  [%%.2lu]  %%s%%c%%-%us (%%s) %%s\n", 
+        egg_snprintf(format, sizeof format, "  [%%.2lu]  %%s%%c%%-%us (%%s) %%s\n", 
 			    nicklen);
 	dprintf(idx, format,
 		dcc[i].sock, dcc[i].status & STAT_CALLED ? "<-" : "->",
 		dcc[i].status & STAT_SHARE ? '+' : ' ',
 		dcc[i].nick, s, dcc[i].u.bot->version);
       } else {
-        snprintf(format, sizeof format, "  %%s%%c%%-%us (%%s) %%s\n", nicklen);
+        egg_snprintf(format, sizeof format, "  %%s%%c%%-%us (%%s) %%s\n", nicklen);
 	dprintf(idx, format,
 		dcc[i].status & STAT_CALLED ? "<-" : "->",
 		dcc[i].status & STAT_SHARE ? '+' : ' ',
@@ -188,11 +188,11 @@ static void tell_who(struct userrec *u, int idx, int chan)
 	dprintf(idx, "Other people on the bot:\n");
       }
       if (atr & USER_OWNER) {
-	snprintf(format, sizeof format, "  [%%.2lu]  %%c%%-%us ", nicklen);
+	egg_snprintf(format, sizeof format, "  [%%.2lu]  %%c%%-%us ", nicklen);
 	sprintf(s, format, dcc[i].sock,
 		(geticon(i) == '-' ? ' ' : geticon(i)), dcc[i].nick);
       } else {
-	snprintf(format, sizeof format, "  %%c%%-%us ", nicklen);
+	egg_snprintf(format, sizeof format, "  %%c%%-%us ", nicklen);
 	sprintf(s, format,
 		(geticon(i) == '-' ? ' ' : geticon(i)), dcc[i].nick);
       }
@@ -228,13 +228,13 @@ static void tell_who(struct userrec *u, int idx, int chan)
 	dprintf(idx, "Other people on the bot:\n");
       }
       if (atr & USER_OWNER) {
-	snprintf(format, sizeof format, "  [%%.2lu]  %%c%%-%us (files) %%s", 
+	egg_snprintf(format, sizeof format, "  [%%.2lu]  %%c%%-%us (files) %%s", 
 				nicklen);
 	sprintf(s, format,
 		dcc[i].sock, dcc[i].status & STAT_CHAT ? '+' : ' ',
 		dcc[i].nick, dcc[i].host);
       } else {
-	snprintf(format, sizeof format, "  %%c%%-%us (files) %%s", nicklen);
+	egg_snprintf(format, sizeof format, "  %%c%%-%us (files) %%s", nicklen);
 	sprintf(s, format,
 		dcc[i].status & STAT_CHAT ? '+' : ' ',
 		dcc[i].nick, dcc[i].host);

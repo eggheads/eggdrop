@@ -10,7 +10,7 @@
  *
  * dprintf'ized, 9nov1995
  *
- * $Id: users.c,v 1.34 2002/07/09 05:40:55 guppy Exp $
+ * $Id: users.c,v 1.35 2002/08/08 20:49:32 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -497,7 +497,7 @@ void tell_user(int idx, struct userrec *u, int master)
     else
       egg_strftime(s1, 6, "%H:%M", localtime(&li->laston));
   }
-  snprintf(format, sizeof format, "%%-%us %%-5s%%5d %%-15s %%s (%%-10.10s)\n", 
+  egg_snprintf(format, sizeof format, "%%-%us %%-5s%%5d %%-15s %%s (%%-10.10s)\n", 
                           HANDLEN);
   dprintf(idx, format, u->handle, 
 	  get_user(&USERENTRY_PASS, u) ? "yes" : "no", n, s, s1,
@@ -520,7 +520,7 @@ void tell_user(int idx, struct userrec *u, int master)
       fr.chan = ch->flags;
       fr.udef_chan = ch->flags_udef;
       build_flags(s, &fr, NULL);
-      snprintf(format, sizeof format, "%%%us  %%-18s %%-15s %%s\n", HANDLEN-9);
+      egg_snprintf(format, sizeof format, "%%%us  %%-18s %%-15s %%s\n", HANDLEN-9);
       dprintf(idx, format, " ", ch->channel, s, s1);
       if (ch->info != NULL)
 	dprintf(idx, "    INFO: %s\n", ch->info);
@@ -545,7 +545,7 @@ void tell_user_ident(int idx, char *id, int master)
     dprintf(idx, "%s.\n", USERF_NOMATCH);
     return;
   }
-  snprintf(format, sizeof format, "%%-%us PASS NOTES FLAGS           LAST\n", 
+  egg_snprintf(format, sizeof format, "%%-%us PASS NOTES FLAGS           LAST\n", 
                           HANDLEN);
   dprintf(idx, format, "HANDLE");
   tell_user(idx, u, master);
@@ -565,7 +565,7 @@ void tell_users_match(int idx, char *mtch, int start, int limit,
 
   dprintf(idx, "*** %s '%s':\n", MISC_MATCHING, mtch);
   cnt = 0;
-  snprintf(format, sizeof format, "%%-%us PASS NOTES FLAGS           LAST\n", 
+  egg_snprintf(format, sizeof format, "%%-%us PASS NOTES FLAGS           LAST\n", 
                       HANDLEN);
   dprintf(idx, format, "HANDLE");
   if (start > 1)

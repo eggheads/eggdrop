@@ -7,7 +7,7 @@
  *   linking, unlinking, and relaying to another bot
  *   pinging the bots periodically and checking leaf status
  *
- * $Id: botnet.c,v 1.43 2002/07/09 05:40:55 guppy Exp $
+ * $Id: botnet.c,v 1.44 2002/08/08 20:49:32 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -464,11 +464,11 @@ void answer_local_whom(int idx, int chan)
   if(nicklen < 9) nicklen = 9;
   if(botnicklen < 9) botnicklen = 9;
 
-  snprintf(format, sizeof format, "%%-%us   %%-%us  %%s\n", 
+  egg_snprintf(format, sizeof format, "%%-%us   %%-%us  %%s\n", 
                                   nicklen, botnicklen);
   dprintf(idx, format, " Nick", 	" Bot",      " Host");
   dprintf(idx, format, "----------",	"---------", "--------------------");
-  snprintf(format, sizeof format, "%%c%%-%us %%c %%-%us  %%s%%s\n", 
+  egg_snprintf(format, sizeof format, "%%c%%-%us %%c %%-%us  %%s%%s\n", 
                                   nicklen, botnicklen);
   for (i = 0; i < dcc_total; i++)
     if (dcc[i].type == &DCC_CHAT) {
