@@ -1,7 +1,7 @@
 /* 
  * servmsg.c -- part of server.mod
  * 
- * $Id: servmsg.c,v 1.46 2000/09/09 11:39:11 fabian Exp $
+ * $Id: servmsg.c,v 1.47 2000/09/09 17:31:27 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1306,9 +1306,9 @@ static void server_resolve_success(int servidx)
     strcpy(botname, origbotname);
     /* Start alternate nicks from the beginning */
     altnick_char = 0;
-    dprintf(DP_MODE, "NICK %s\n", botname);
     if (pass[0])
       dprintf(DP_MODE, "PASS %s\n", pass);
+    dprintf(DP_MODE, "NICK %s\n", botname);
     dprintf(DP_MODE, "USER %s %s %s :%s\n",
 	    botuser, bothost, dcc[servidx].host, botrealname);
     /* Wait for async result now */
