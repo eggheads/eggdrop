@@ -2,7 +2,7 @@
 #  This is the Makefile for EGGDROP (the irc bot)
 #  You should never need to edit this.
 #
-# $Id: Makefile.in,v 1.13 2000/02/25 21:51:29 fabian Exp $
+# $Id: Makefile.in,v 1.14 2000/02/29 19:57:27 fabian Exp $
 
 SHELL = /bin/sh
 top_srcdir = @top_srcdir@
@@ -64,6 +64,8 @@ TCLLIBFN = @TCLLIBFN@
 CFLAGS = @CFLAGS@ -I.. @DEFS@ $(CFLGS)
 DEBCFLAGS = @CFLAGS@ -I.. @DEFS@ -DDEBUG_ASSERT -DDEBUG_MEM $(CFLGS)
 
+modconf = $(top_srcdir)/aux/modconfig --top_srcdir=$(top_srcdir)
+
 MAKE_MODEGG = $(MAKE) 'MAKE=$(MAKE)' 'CC=$(MOD_CC)' 'LD=$(MOD_LD)' \
 'STRIP=$(MOD_STRIP)' 'RANLIB=$(RANLIB)' 'CFLAGS=$(CFLAGS)' \
 'CPPFLAGS=$(CPPFLAGS)' 'TCLLIB=$(TCLLIB)' 'TCLLIBFN=$(TCLLIBFN)' \
@@ -113,10 +115,10 @@ eggclean:
 clean: eggclean
 	@cd src/mod && $(MAKE) clean
 
-distclean: eggclean
+distclean: eggclean clean-modconfig
 	@cd src/mod && $(MAKE) distclean
 	@rm -f Makefile doc/Makefile scripts/Makefile src/Makefile src/md5/Makefile src/mod/Makefile
-	@rm -f config.cache config.log config.status config.h lush.h .modules .modnames
+	@rm -f config.cache config.log config.status config.h lush.h
 
 distrib: distclean
 	@rm -f `find . \( -name '*~' -o -name '*#' -o -name '*.orig' \
@@ -137,13 +139,38 @@ depend:
 	@cd src/mod && $(MAKE_DEPEND) depend
 
 config:
+	@$(modconf) detect-modules
+	@$(modconf) update-depends
+	@$(modconf) Makefile
 	@cd src/mod && $(MAKE_CONFIG) config
-	@src/mod/modtool --root-dir=. -q makefile
+	@$(modconf) Makefile
+	@echo ""; echo "You can now compile the bot, using \"make\"."; echo "";
 
-reconfig:
-	@src/mod/modtool --root-dir=. config
-	@src/mod/modtool --root-dir=. update-depends
-	@$(MAKE) config
+iconfig:
+	@$(modconf) detect-modules
+	@$(modconf) update-depends
+	@$(modconf) configure
+	@$(modconf) update-depends
+	@$(modconf) Makefile
+	@cd src/mod && $(MAKE_CONFIG) config
+	@$(modconf) Makefile
+	@echo ""; echo "You can now compile the bot, using \"make\"."; echo "";
+
+clean-modconfig:
+	@rm -f .modules
+
+conftest:
+	@if [ ! -f .modules ]; then \
+		echo ""; \
+		echo "You have NOT configured the modules yet. This has to be done"; \
+		echo "before you can start compiling."; \
+		echo ""; \
+		echo "   Run \"make config\" or \"make iconfig\" now."; \
+		echo ""; \
+		exit 1; \
+	fi
+
+reconfig: clean-modconfig config
 
 eggdrop: modegg modules
 
@@ -202,7 +229,7 @@ sdebug: eggtest
 	@./$(EGGEXEC) -v
 	@ls -l $(EGGEXEC)
 
-eggtest:
+eggtest: conftest
 	@if [ -f EGGMOD.stamp ]; then \
 		echo "You're trying to do a STATIC build of eggdrop when you've";\
 		echo "already run 'make' for a module build.";\
@@ -212,7 +239,7 @@ eggtest:
 	fi
 	@echo "stamp" >EGGDROP.stamp
 
-modtest:
+modtest: conftest
 	@if [ -f EGGDROP.stamp ]; then \
 		echo "You're trying to do a MODULE build of eggdrop when you've";\
 		echo "already run 'make' for a static build.";\

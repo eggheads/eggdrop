@@ -136,10 +136,10 @@ if eval "test \"`echo '$ac_cv_lib_'$ac_lib_var`\" = yes"; then
   RESLIB="-lbind"
 else
   echo "$ac_t""no" 1>&6
-			RESLIB_AVAIL="false";
-		
+      RESLIB_AVAIL="false";
+    
 fi
-	
+  
 fi
 
 fi
@@ -224,10 +224,10 @@ LIBS="$ac_save_LIBS"
 fi
 if eval "test \"`echo '$ac_cv_lib_'$ac_lib_var`\" = yes"; then
   echo "$ac_t""yes" 1>&6
-  		if ! test "x${RESLIB}" = "-lresolv"; then
-			RESLIB="${RESLIB} -lresolv"
-		fi
-	
+      if test "${RESLIB}" != "-lresolv"; then
+      RESLIB="${RESLIB} -lresolv"
+    fi
+  
 else
   echo "$ac_t""no" 1>&6
 echo $ac_n "checking for res_mkquery in -lbind""... $ac_c" 1>&6
@@ -265,31 +265,31 @@ LIBS="$ac_save_LIBS"
 fi
 if eval "test \"`echo '$ac_cv_lib_'$ac_lib_var`\" = yes"; then
   echo "$ac_t""yes" 1>&6
-  			if ! test "x${RESLIB}" = "-lbind"; then
-				RESLIB="${RESLIB} -lbind"
-			fi
-		
+        if test "${RESLIB}" != "-lbind"; then
+        RESLIB="${RESLIB} -lbind"
+      fi
+    
 else
   echo "$ac_t""no" 1>&6
-			RESLIB_AVAIL="false";
-		
+      RESLIB_AVAIL="false";
+    
 fi
 
-	
+  
 fi
 
 
 fi
 
 if test "${RESLIB_AVAIL}" = false; then
-    cat >&2 <<EOF
+  cat >&2 <<EOF
 configure: warning:
 
   Your system provides no functional resolver library. The DNS
   module will therefore be disabled.
 
 EOF
-	../modtool -q del dns
+  ${srcdir}/../../../aux/modconfig -q --top_srcdir=${srcdir}/../../.. del dns
 fi
 
 

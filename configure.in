@@ -112,7 +112,4 @@ EGG_SUBST_DEST
 
 AC_OUTPUT(Makefile doc/Makefile scripts/Makefile src/Makefile src/md5/Makefile src/mod/Makefile lush.h)
 
-EGG_DETECT_MODULES
-EGG_CONFIGURE_MODULES
-
 EGG_MSG_CONFIGURE_END
