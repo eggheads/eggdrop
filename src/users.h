@@ -2,7 +2,7 @@
  * users.h
  *   structures and definitions used by users.c and userrec.c
  *
- * $Id: users.h,v 1.9 2002/01/02 03:46:36 guppy Exp $
+ * $Id: users.h,v 1.10 2002/03/29 05:53:55 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -126,7 +126,6 @@ int set_user(struct user_entry_type *, struct userrec *, void *);
 
 #define bot_flags(u)	((long)get_user(&USERENTRY_BOTFL, (u)))
 #define is_bot(u)	((u) && ((u)->flags & USER_BOT))
-#define is_master(u)	((u) && ((u)->flags & USER_MASTER))
 #define is_owner(u)	((u) && ((u)->flags & USER_OWNER))
 
 /* Fake users used to store ignores and bans

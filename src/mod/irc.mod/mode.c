@@ -4,7 +4,7 @@
  *   channel mode changes and the bot's reaction to them
  *   setting and getting the current wanted channel modes
  *
- * $Id: mode.c,v 1.59 2002/03/07 15:10:17 guppy Exp $
+ * $Id: mode.c,v 1.60 2002/03/29 05:53:55 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -510,14 +510,14 @@ static void got_deop(struct chanset_t *chan, char *nick, char *from,
     }
 
     /* do we want to reop victim? */
-    if (!ok && had_op && !match_my_nick(nick) && rfc_casecmp(who, nick) && 
-	!match_my_nick(who)) {
-      /* Is the deopper NOT a master or bot? */
-      if (reversing || (!glob_master(user) && !chan_master(user) && !glob_bot(user) &&
-	  !channel_bitch(chan)))
-	/* Then we'll bless the victim */
-	add_mode(chan, '+', 'o', who);
-    }
+    if ((reversing || !ok) && had_op && !match_my_nick(nick) &&
+	rfc_casecmp(who, nick) && !match_my_nick(who) &&
+	/* Is the deopper NOT a master or bot? */
+	!glob_master(user) && !chan_master(user) && !glob_bot(user) &&
+	((chan_op(victim) || (glob_op(victim) && !chan_deop(victim))) ||
+	 !channel_bitch(chan)))
+      /* Then we'll bless the victim */
+      add_mode(chan, '+', 'o', who);
   }
 
   if (!nick[0])
