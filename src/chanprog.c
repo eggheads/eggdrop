@@ -7,7 +7,7 @@
  *   telling the current programmed settings
  *   initializing a lot of stuff and loading the tcl scripts
  * 
- * $Id: chanprog.c,v 1.15 2000/03/23 23:17:54 fabian Exp $
+ * $Id: chanprog.c,v 1.16 2000/10/01 19:11:43 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -86,41 +86,35 @@ void rmspace(char *s)
  */
 memberlist *ismember(struct chanset_t *chan, char *nick)
 {
-  memberlist *x;
+  register memberlist	*x;
 
-  x = chan->channel.member;
-  while (x && x->nick[0] && rfc_casecmp(x->nick, nick))
-    x = x->next;
-  if (!x->nick[0])
-    return NULL;
-  return x;
+  for (x = chan->channel.member; x && x->nick[0]; x = x->next)
+    if (rfc_casecmp(x->nick, nick))
+      return x;
+  return NULL;
 }
 
 /* Find a chanset by channel name as the server knows it (ie !ABCDEchannel)
  */
-struct chanset_t *findchan(char *name)
+struct chanset_t *findchan(const char *name)
 {
-  struct chanset_t *chan = chanset;
+  register struct chanset_t	*chan;
 
-  while (chan != NULL) {
+  for (chan = chanset; chan; chan = chan->next)
     if (!rfc_casecmp(chan->name, name))
       return chan;
-    chan = chan->next;
-  }
   return NULL;
 }
 
 /* Find a chanset by display name (ie !channel)
  */
-struct chanset_t *findchan_by_dname(char *name)
+struct chanset_t *findchan_by_dname(const char *name)
 {
-  struct chanset_t *chan = chanset;
+  register struct chanset_t	*chan;
 
-  while (chan != NULL) {
+  for (chan = chanset; chan; chan = chan->next)
     if (!rfc_casecmp(chan->dname, name))
       return chan;
-    chan = chan->next;
-  }
   return NULL;
 }
 
@@ -131,46 +125,33 @@ struct chanset_t *findchan_by_dname(char *name)
 /* Shortcut for get_user_by_host -- might have user record in one
  * of the channel caches.
  */
-struct userrec *check_chanlist(char *host)
+struct userrec *check_chanlist(const char *host)
 {
-  char *nick, *uhost, buf[UHOSTLEN];
-  memberlist *m;
-  struct chanset_t *chan;
+  char				*nick, *uhost, buf[UHOSTLEN];
+  register memberlist		*m;
+  register struct chanset_t	*chan;
 
-  strncpy(buf, host, UHOSTMAX);
-  buf[UHOSTMAX] = 0;	/* Why is this case sanely done, when there
-			 * are so many others? */
+  strncpy(buf, host, UHOSTMAX), buf[UHOSTMAX] = 0;
   uhost = buf;
   nick = splitnick(&uhost);
-  for (chan = chanset; chan; chan = chan->next) {
-    m = chan->channel.member;
-    while (m && m->nick[0]) {
-      if (!rfc_casecmp(nick, m->nick) &&
-	  !egg_strcasecmp(uhost, m->userhost))
+  for (chan = chanset; chan; chan = chan->next)
+    for (m = chan->channel.member; m && m->nick[0]; m = m->next)
+      if (!rfc_casecmp(nick, m->nick) && !egg_strcasecmp(uhost, m->userhost))
 	return m->user;
-      m = m->next;
-    }
-  }
   return NULL;
 }
 
 /* Shortcut for get_user_by_handle -- might have user record in channels
  */
-struct userrec *check_chanlist_hand(char *hand)
+struct userrec *check_chanlist_hand(const char *hand)
 {
-  struct chanset_t *chan = chanset;
-  memberlist *m;
+  register struct chanset_t	*chan;
+  register memberlist		*m;
 
-  while (chan) {
-    m = chan->channel.member;
-    while (m && m->nick[0]) {
-      if (m->user)
-	if (!egg_strcasecmp(m->user->handle, hand))
-	  return m->user;
-      m = m->next;
-    }
-    chan = chan->next;
-  }
+  for (chan = chanset; chan; chan = chan->next)
+    for (m = chan->channel.member; m && m->nick[0]; m = m->next)
+      if (m->user && !egg_strcasecmp(m->user->handle, hand))
+	return m->user;
   return NULL;
 }
 
@@ -179,63 +160,45 @@ struct userrec *check_chanlist_hand(char *hand)
  * Necessary when a hostmask is added/removed, a user is added or a new
  * userfile is loaded.
  */
-void clear_chanlist()
+void clear_chanlist(void)
 {
-  memberlist *m;
-  struct chanset_t *chan = chanset;
+  register memberlist		*m;
+  register struct chanset_t	*chan;
 
-  while (chan) {
-    m = chan->channel.member;
-    while (m && m->nick[0]) {
+  for (chan = chanset; chan; chan = chan->next)
+    for (m = chan->channel.member; m && m->nick[0]; m = m->next)
       m->user = NULL;
-      m = m->next;
-    }
-    chan = chan->next;
-  }
 }
 
 /* If this user@host is in a channel, set it (it was null)
  */
-void set_chanlist(char *host, struct userrec *rec)
+void set_chanlist(const char *host, struct userrec *rec)
 {
-  char *nick, *uhost, buf[UHOSTLEN];
-  memberlist *m;
-  struct chanset_t *chan = chanset;
+  char				*nick, *uhost, buf[UHOSTLEN];
+  register memberlist		*m;
+  register struct chanset_t	*chan;
 
-  Context;
-  strncpy(buf, host, UHOSTMAX);
-  buf[UHOSTMAX] = 0;
+  strncpy(buf, host, UHOSTMAX), buf[UHOSTMAX] = 0;
   uhost = buf;
   nick = splitnick(&uhost);
-  while (chan) {
-    m = chan->channel.member;
-    while (m && m->nick[0]) {
-      if (!rfc_casecmp(nick, m->nick) &&
-	  !egg_strcasecmp(uhost, m->userhost))
+  for (chan = chanset; chan; chan = chan->next)
+    for (m = chan->channel.member; m && m->nick[0]; m = m->next)
+      if (!rfc_casecmp(nick, m->nick) && !egg_strcasecmp(uhost, m->userhost))
 	m->user = rec;
-      m = m->next;
-    }
-    chan = chan->next;
-  }
 }
 
 /* Calculate the memory we should be using
  */
 int expmem_chanprog()
 {
-  int tot;
-  tcl_timer_t *t;
+  register int		 tot = 0;
+  register tcl_timer_t	*t;
 
   Context;
-  tot = 0;
-  for (t = timer; t; t = t->next) {
-    tot += sizeof(tcl_timer_t);
-    tot += strlen(t->cmd) + 1;
-  }
-  for (t = utimer; t; t = t->next) {
-    tot += sizeof(tcl_timer_t);
-    tot += strlen(t->cmd) + 1;
-  }
+  for (t = timer; t; t = t->next)
+    tot += sizeof(tcl_timer_t) + strlen(t->cmd) + 1;
+  for (t = utimer; t; t = t->next)
+    tot += sizeof(tcl_timer_t) + strlen(t->cmd) + 1;
   return tot;
 }
 
@@ -551,7 +514,7 @@ void rehash()
 
 /* Add a timer
  */
-unsigned long add_timer(tcl_timer_t ** stack, int elapse, char *cmd,
+unsigned long add_timer(tcl_timer_t **stack, int elapse, char *cmd,
 			unsigned long prev_id)
 {
   tcl_timer_t *old = (*stack);
@@ -573,7 +536,7 @@ unsigned long add_timer(tcl_timer_t ** stack, int elapse, char *cmd,
 
 /* Remove a timer, by id
  */
-int remove_timer(tcl_timer_t ** stack, unsigned long id)
+int remove_timer(tcl_timer_t **stack, unsigned long id)
 {
   tcl_timer_t *old;
   int ok = 0;
@@ -593,7 +556,7 @@ int remove_timer(tcl_timer_t ** stack, unsigned long id)
 
 /* Check timers, execute the ones that have expired.
  */
-void do_check_timers(tcl_timer_t ** stack)
+void do_check_timers(tcl_timer_t **stack)
 {
   tcl_timer_t *mark = *stack, *old = NULL;
   char x[30];
@@ -622,7 +585,7 @@ void do_check_timers(tcl_timer_t ** stack)
 
 /* Wipe all timers.
  */
-void wipe_timers(Tcl_Interp * irp, tcl_timer_t ** stack)
+void wipe_timers(Tcl_Interp *irp, tcl_timer_t **stack)
 {
   tcl_timer_t *mark = *stack, *old;
 
@@ -637,7 +600,7 @@ void wipe_timers(Tcl_Interp * irp, tcl_timer_t ** stack)
 
 /* Return list of timers
  */
-void list_timers(Tcl_Interp * irp, tcl_timer_t * stack)
+void list_timers(Tcl_Interp *irp, tcl_timer_t *stack)
 {
   tcl_timer_t *mark = stack;
   char mins[10], id[20], *argv[3], *x;

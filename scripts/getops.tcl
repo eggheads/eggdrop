@@ -1,7 +1,7 @@
 
 # Getops 2.2f
 
-# $Id: getops.tcl,v 1.5 2000/08/17 03:49:10 guppy Exp $
+# $Id: getops.tcl,v 1.6 2000/10/01 19:11:42 fabian Exp $
 
 # This script is used for bots to request and give ops to each other. 
 # For this to work, you'll need:
@@ -367,4 +367,4 @@ proc gop_join { nick uhost hand chan } {
 
 set getops_loaded 1
 
-putlog "GetOps v2.2f by Fabian, brainsick, Progfou, Cron@irc.pl, dtM, The_O, DarkDruid & Ernst loaded."
+putlog "GetOps v2.2f by brainsick, Progfou, Cron@irc.pl, dtM, The_O, DarkDruid & Ernst loaded."

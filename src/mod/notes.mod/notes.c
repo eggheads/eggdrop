@@ -5,7 +5,7 @@
  *   note cmds
  *   note ignores
  * 
- * $Id: notes.c,v 1.24 2000/09/23 17:40:18 fabian Exp $
+ * $Id: notes.c,v 1.25 2000/10/01 19:11:43 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -70,7 +70,7 @@ static void fwd_display(int idx, struct user_entry *e)
 {
   Context;
   if (dcc[idx].user && (dcc[idx].user->flags & USER_BOTMAST))
-    dprintf(idx, "%s", NOTES_FORWARD_TO, e->u.string);
+    dprintf(idx, NOTES_FORWARD_TO, e->u.string);
 }
 
 /* Determine how many notes are waiting for a user.
@@ -653,8 +653,8 @@ static void notes_del(char *hand, char *nick, char *sdl, int idx)
 	dprintf(DP_HELP, "NOTICE %s :%s.\n", nick, NOTES_ERASED_ALL);
     } else {
       if (idx >= 0)
-	dprintf(idx, "%s %d note%s; %d %s.\n", NOTES_ERASED, er, (er > 1) ? "s" : "",
-		in - 1 - er, NOTES_LEFT);
+	dprintf(idx, "%s %d note%s; %d %s.\n", NOTES_ERASED, er,
+		er > 1 ? "s" : "", in - 1 - er, NOTES_LEFT);
       else
 	dprintf(DP_HELP, "NOTICE %s :%s %d note%s; %d %s.\n", nick, MISC_ERASED,
 		er, (er > 1) ? "s" : "", in - 1 - er, NOTES_LEFT);
@@ -828,37 +828,35 @@ static int msg_notes(char *nick, char *host, struct userrec *u, char *par)
 
 static void notes_hourly()
 {
-  int k, l;
-  struct chanset_t *chan;
-  memberlist *m;
-  char s1[256];
-  struct userrec *u;
-
   expire_notes();
   if (notify_users) {
-    chan = chanset;
-    while (chan != NULL) {
-      m = chan->channel.member;
-      while (m && m->nick[0]) {
+    register struct chanset_t	*chan;
+    register memberlist		*m;
+    int				 k;
+    register int		 l;
+    char			 s1[256];
+    struct userrec		*u;
+
+    for (chan = chanset; chan; chan = chan->next) {
+      for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
 	sprintf(s1, "%s!%s", m->nick, m->userhost);
 	u = get_user_by_host(s1);
 	if (u) {
 	  k = num_notes(u->handle);
-	  for (l = 0; l < dcc_total; l++) {
+	  for (l = 0; l < dcc_total; l++)
 	    if ((dcc[l].type->flags & DCT_CHAT) &&
-		(!egg_strcasecmp(dcc[l].nick, u->handle)))
+		!egg_strcasecmp(dcc[l].nick, u->handle)) {
 	      k = 0;		/* They already know they have notes */
-	  }
+	      break;
+	    }
 	  if (k) {
-	    dprintf(DP_HELP, NOTES_WAITING_ON, m->nick, k, k == 1 ? "" : "s",
+	    dprintf(DP_HELP, NOTES_WAITING_ON, k, k == 1 ? "" : "s",
                     origbotname);
 	    dprintf(DP_HELP, "NOTICE %s :%s /MSG %s NOTES [pass] INDEX\n",
 		        m->nick, NOTES_FORLIST, botname);
 	  }
 	}
-	m = m->next;
       }
-      chan = chan->next;
     }
     for (l = 0; l < dcc_total; l++) {
       k = num_notes(dcc[l].nick);

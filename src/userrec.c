@@ -4,7 +4,7 @@
  *   a bunch of functions to find and change user records
  *   change and check user (and channel-specific) flags
  * 
- * $Id: userrec.c,v 1.24 2000/09/05 15:59:43 fabian Exp $
+ * $Id: userrec.c,v 1.25 2000/10/01 19:11:43 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -534,7 +534,8 @@ void sort_userlist()
   }
 }
 
-/* Rewrite the entire user file. Also write the channel file at the same time
+/* Rewrite the entire user file. Call USERFILE hook as well, probably
+ * causing the channel file to be rewritten as well.
  */
 void write_userfile(int idx)
 {
@@ -569,7 +570,7 @@ void write_userfile(int idx)
   Context;
   ok = 1;
   u = userlist;
-  while ((u != NULL) && (ok)) {
+  while (u != NULL && ok) {
     ok = write_user(u, f, idx);
     u = u->next;
   }
@@ -586,6 +587,7 @@ void write_userfile(int idx)
   Context;
   movefile(new_userfile, userfile);
   nfree(new_userfile);
+  Context;
 }
 
 int change_handle(struct userrec *u, char *newh)

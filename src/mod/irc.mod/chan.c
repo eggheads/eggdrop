@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  * 
- * $Id: chan.c,v 1.49 2000/09/27 19:43:12 fabian Exp $
+ * $Id: chan.c,v 1.50 2000/10/01 19:11:43 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1062,11 +1062,12 @@ static int got348(char *from, char *origmsg)
   char *exempt, *who, *chname, buf[511], *msg;
   struct chanset_t *chan;
 
+  if (use_exempts == 0)
+    return 0;
+
   strncpy(buf, origmsg, 510);
   buf[510] = 0;
   msg = buf;
-  if (use_exempts == 0)
-    return 0;
   newsplit(&msg);
   chname = newsplit(&msg);
   chan = findchan(chname);

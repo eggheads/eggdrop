@@ -3,7 +3,7 @@
  *   stuff common to chan.c and mode.c
  *   users.h needs to be loaded too
  * 
- * $Id: chan.h,v 1.15 2000/08/22 16:22:45 fabian Exp $
+ * $Id: chan.h,v 1.16 2000/10/01 19:11:43 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -219,8 +219,8 @@ struct chanset_t {
 
 /* prototypes */
 memberlist *ismember(struct chanset_t *, char *);
-struct chanset_t *findchan();
-struct chanset_t *findchan_by_dname(char *name);
+struct chanset_t *findchan(const char *name);
+struct chanset_t *findchan_by_dname(const char *name);
 
 /* is this channel +s/+p? */
 #define channel_hidden(chan) (chan->channel.mode & (CHANPRIV | CHANSEC))

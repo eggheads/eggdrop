@@ -7,7 +7,7 @@
  * because they use structures in those
  * (saves including those .h files EVERY time) - Beldin
  * 
- * $Id: proto.h,v 1.30 2000/09/23 17:49:56 fabian Exp $
+ * $Id: proto.h,v 1.31 2000/10/01 19:11:43 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -111,10 +111,10 @@ void reload();
 void chanprog();
 void check_timers();
 void check_utimers();
-void rmspace(char *);
+void rmspace(char *s);
 void check_timers();
-void set_chanlist(char *host, struct userrec *rec);
-void clear_chanlist();
+void set_chanlist(const char *host, struct userrec *rec);
+void clear_chanlist(void);
 
 /* cmds.c */
 int check_dcc_attrs(struct userrec *, int);
