@@ -1315,6 +1315,8 @@ static void check_expired_exempts()
   banlist *b;
   int match;
   
+  if (!use_exempts)
+    return;
   u = &global_exempts;
   while (*u) {
     if (!((*u)->flags & EXEMPTREC_PERM) && (now >= (*u)->expire)) {
@@ -1378,7 +1380,9 @@ static void check_expired_invites()
 {
   struct inviterec ** u;
   struct chanset_t *chan = chanset;
-  
+
+  if (!use_invites)
+    return;
   u = &global_invites;
   while (*u) {
     if (!((*u)->flags & INVITEREC_PERM) && (now >= (*u)->expire)
