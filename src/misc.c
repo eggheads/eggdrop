@@ -1251,10 +1251,16 @@ void show_banner(int idx) {
    }
    while(!feof(vv)) {
       fgets(s, 120, vv);
-      if (!s[0])
-        strcpy(s, " \n");
-      help_subst(s, dcc[idx].nick, &fr, 1, botnetnick);
-      dprintf(idx, "%s", s);
+      if (!feof(vv)) {
+        if (s[strlen(s) - 1] == '\n')
+          s[strlen(s) - 1] = 0;
+        if (!s[0])
+          strcpy(s, " \n");
+        help_subst(s, dcc[idx].nick, &fr, 1, botnetnick);
+        if (s[0])
+          dprintf(idx, "%s", s);
+      }
    }
+   dprintf(idx, "\r\nNickname.\r\n");
 }
 
