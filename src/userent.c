@@ -2,7 +2,7 @@
  * userent.c -- handles:
  *   user-entry handling, new stylem more versatile.
  *
- * $Id: userent.c,v 1.20 2001/04/12 02:39:44 guppy Exp $
+ * $Id: userent.c,v 1.21 2001/11/13 22:55:20 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -268,7 +268,7 @@ static int pass_tcl_set(Tcl_Interp * irp, struct userrec *u,
 			struct user_entry *e, int argc, char **argv)
 {
   BADARGS(3, 4, " handle PASS ?newpass?");
-  pass_set(u, e, argv[3]);
+  pass_set(u, e, argc == 3 ? NULL : argv[3]);
   return TCL_OK;
 }
 
