@@ -9,7 +9,7 @@
  * dprintf'ized, 27oct1995
  * multi-channel, 8feb1996
  * 
- * $Id: chan.c,v 1.56 2000/01/30 22:21:18 per Exp $
+ * $Id: chan.c,v 1.57 2000/02/02 12:07:36 per Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -618,11 +618,13 @@ static void recheck_channel(struct chanset_t *chan, int dobans)
 	refresh_ban_kick(chan, s, m->nick);
       }
       /* ^ will use the ban comment */
-      if (u_match_mask(global_exempts,s) || u_match_mask(chan->exempts, s)){
+      if (use_exempts &&
+	  (u_match_mask(global_exempts,s) || u_match_mask(chan-exempts, s))) {
 	refresh_exempt(chan, s);
-      }      
+      }
       /* check vs invites */
-      if (u_match_mask(global_invites,s) || u_match_mask(chan->invites, s))
+      if (use_invites &&
+	  (u_match_mask(global_invites,s) || u_match_mask(chan->invites, s)))
 	refresh_invite(chan, s);
       /* are they +k ? */
       if (chan_kick(fr) || glob_kick(fr)) {
@@ -649,8 +651,10 @@ static void recheck_channel(struct chanset_t *chan, int dobans)
     m = m->next;
   }
   if (dobans) {
-      recheck_bans(chan);
+    recheck_bans(chan);
+    if (use_invites)
       recheck_invites(chan);
+    if (use_exempts)
       recheck_exempts(chan);
   }
   if (dobans && channel_enforcebans(chan))
