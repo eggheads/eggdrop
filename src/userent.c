@@ -682,17 +682,29 @@ static int xtra_set(struct userrec *u, struct user_entry *e, void *buf)
       break;
     }
   }
-  if (y && (!z->data || (z != y))) {
+  if (y && (!z->data || (z != y) || !z->data[0])) {
     nfree(y->key);
     nfree(y->data);
     list_delete((struct list_type **) (&e->u.extra),
 		(struct list_type *) y);
     nfree(y);
   }
-  if (z->data && (z != y))
-    list_insert((&e->u.extra), z);
+  
+  /* we will possibly free z below, so let's send the information
+   * to the botnet now */
   if (!noshare && !(u->flags & (USER_BOT | USER_UNSHARED)))
-    shareout(NULL, "c XTRA %s %s %s\n", u->handle, z->key, z->data ? z->data : "");
+    shareout(NULL, "c XTRA %s %s %s\n", u->handle, z->key,
+	     z->data ? z->data : "");
+ 
+  if (z->data && z->data[0] && (z != y))
+    list_insert((&e->u.extra), z) /* do not add a ';' here */
+  /* z->key and z are only dynamically allocated if z->data is not NULL */
+  else if (z->data != NULL) {
+    nfree(z->data);
+    nfree(z->key);
+    nfree(z);
+  }
+  
   return TCL_OK;
 }
 
