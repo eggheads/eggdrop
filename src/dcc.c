@@ -4,7 +4,7 @@
  *   disconnect on a dcc socket
  *   ...and that's it!  (but it's a LOT)
  * 
- * $Id: dcc.c,v 1.28 2000/05/06 22:00:31 fabian Exp $
+ * $Id: dcc.c,v 1.29 2000/05/13 20:24:09 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -156,6 +156,13 @@ static void bot_version(int idx, char *par)
 
   Context;
   dcc[idx].timeval = now;
+  if (in_chain(dcc[idx].nick)) {
+    dprintf(idx, "error Sorry, already connected.\n");
+    dprintf(idx, "bye\n");
+    killsock(dcc[idx].sock);
+    lostdcc(idx);
+    return;
+  }
   if ((par[0] >= '0') && (par[0] <= '9')) {
     char *work;
 
