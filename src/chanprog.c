@@ -7,7 +7,7 @@
  *   telling the current programmed settings
  *   initializing a lot of stuff and loading the tcl scripts
  *
- * $Id: chanprog.c,v 1.33 2002/08/11 18:45:52 wcc Exp $
+ * $Id: chanprog.c,v 1.34 2002/09/27 19:30:02 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -166,8 +166,10 @@ void clear_chanlist(void)
   register struct chanset_t	*chan;
 
   for (chan = chanset; chan; chan = chan->next)
-    for (m = chan->channel.member; m && m->nick[0]; m = m->next)
+    for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
       m->user = NULL;
+      m->tried_getuser = 0;
+    }
 }
 
 /* Clear the user pointer of a specific nick in the chanlists.
@@ -184,6 +186,7 @@ void clear_chanlist_member(const char *nick)
     for (m = chan->channel.member; m && m->nick[0]; m = m->next)
       if (!rfc_casecmp(m->nick, nick)) {
 	m->user = NULL;
+	m->tried_getuser = 0;
 	break;
       }
 }

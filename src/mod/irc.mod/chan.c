@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  *
- * $Id: chan.c,v 1.98 2002/09/22 18:10:21 wcc Exp $
+ * $Id: chan.c,v 1.99 2002/09/27 19:30:02 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -819,7 +819,11 @@ static void recheck_channel(struct chanset_t *chan, int dobans)
   /* Okay, sort through who needs to be deopped. */
   for (m = chan->channel.member; m && m->nick[0]; m = m->next) { 
     sprintf(s, "%s!%s", m->nick, m->userhost);
-    get_user_flagrec(m->user ? m->user : get_user_by_host(s), &fr, chan->dname);
+    if (!m->user && !m->tried_getuser) {
+	    m->tried_getuser = 1;
+	    m->user = get_user_by_host(s);
+    }
+    get_user_flagrec(m->user, &fr, chan->dname);
       if (glob_bot(fr) && chan_hasop(m) && !match_my_nick(m->nick))
 	stop_reset = 1;
       check_this_member(chan, m->nick, &fr);

@@ -3,7 +3,7 @@
  *   stuff common to chan.c and mode.c
  *   users.h needs to be loaded too
  *
- * $Id: chan.h,v 1.30 2002/08/02 23:50:38 wcc Exp $
+ * $Id: chan.h,v 1.31 2002/09/27 19:30:02 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -36,6 +36,7 @@ typedef struct memstruct {
   time_t last;			/* for measuring idle time		*/
   time_t delay;			/* for delayed autoop			*/
   struct userrec *user;
+  int tried_getuser;
   struct memstruct *next;
 } memberlist;
 

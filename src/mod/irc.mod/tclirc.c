@@ -1,7 +1,7 @@
 /*
  * tclirc.c -- part of irc.mod
  *
- * $Id: tclirc.c,v 1.36 2002/07/18 19:01:45 guppy Exp $
+ * $Id: tclirc.c,v 1.37 2002/09/27 19:30:02 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -761,8 +761,9 @@ static int tcl_hand2nick STDVAR
 
   while (chan && (thechan == NULL || thechan == chan)) {
     for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
-      if (!m->user) {
+      if (!m->user && !m->tried_getuser) {
 	egg_snprintf(nuh, sizeof nuh, "%s!%s", m->nick, m->userhost);
+	m->tried_getuser = 1;
 	m->user = get_user_by_host(nuh);
       }
       if (m->user && !rfc_casecmp(m->user->handle, argv[1])) {
