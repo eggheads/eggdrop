@@ -2,7 +2,7 @@
  * cmdschan.c -- part of channels.mod
  *   commands from a user via dcc that cause server interaction
  * 
- * $Id: cmdschan.c,v 1.32 2000/02/27 19:21:40 guppy Exp $
+ * $Id: cmdschan.c,v 1.33 2000/06/04 08:26:41 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -921,6 +921,14 @@ static void cmd_stick_yn(int idx, char *par, int yn)
   strncpy(s, par, UHOSTMAX);
   s[UHOSTMAX] = 0;
        
+  if ((strcasecmp(stick_type,"exempt")) && (strcasecmp(stick_type,"invite")) && (strcasecmp(stick_type,"ban"))) {
+    strncpy(s, stick_type, UHOSTMAX);
+    s[UHOSTMAX] = 0;
+  }
+  if (!s[0]) {
+    dprintf(idx, "Usage: %sstick [ban/exempt/invite] <num or mask>\n", yn ? "" : "un");
+    return;
+  }
     /* now deal with exemptions */
   if (!strcasecmp(stick_type,"exempt")) {
     i = u_setsticky_exempt(NULL, s,
@@ -976,10 +984,6 @@ static void cmd_stick_yn(int idx, char *par, int yn)
     dprintf(idx, "No such invite.\n");
     return;
   }
-  if (strcasecmp(stick_type,"ban")) {
-    strncpy(s, stick_type, UHOSTMAX);
-    s[UHOSTMAX] = 0;    
-  }
   i = u_setsticky_ban(NULL, s,
 		      (dcc[idx].user->flags & USER_MASTER) ? yn : -1);
   if (i > 0) {
@@ -1004,7 +1008,6 @@ static void cmd_stick_yn(int idx, char *par, int yn)
     return;
   }
   dprintf(idx, "No such ban.\n");
-  dprintf(idx, "Usage: %sstick [ban/exempt/invite] <num or mask>\n", yn ? "" : "un");
 }
 
 

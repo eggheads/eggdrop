@@ -1,7 +1,7 @@
 /* 
  * tclchan.c -- part of channels.mod
  * 
- * $Id: tclchan.c,v 1.28 2000/05/22 18:37:30 guppy Exp $
+ * $Id: tclchan.c,v 1.29 2000/06/04 08:26:41 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1519,6 +1519,7 @@ static int tcl_channel_add(Tcl_Interp * irp, char *newname, char *options)
     chan->flood_deop_time = gfld_deop_time;
     chan->flood_kick_thr = gfld_kick_thr;
     chan->flood_kick_time = gfld_kick_time;
+    chan->idle_kick = global_idle_kick;
     strncpy(chan->name, newname, 80);
     chan->name[80] = 0;
     /* initialize chan->channel info */

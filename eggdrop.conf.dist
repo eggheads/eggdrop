@@ -1,7 +1,7 @@
 #! /path/to/eggdrop
 # ^- set that to the directory eggdrop is in ie "#! /users/lamest/egg/eggdrop"
 #
-# $Id: eggdrop.conf.dist,v 1.42 2000/05/01 06:15:42 poptix Exp $
+# $Id: eggdrop.conf.dist,v 1.43 2000/06/04 08:26:41 guppy Exp $
 #
 # This is a sample configuration file for your bot.  You will definitely
 # want to edit this, to set up your bot.  Right now it creates a bot called
@@ -425,6 +425,8 @@ set global-flood-deop 3:10
 set global-flood-kick 3:10
 set global-flood-join 5:60
 set global-flood-ctcp 3:60
+
+set global-idle-kick 0
 
 set global-chanset {
         -clearbans      -enforcebans

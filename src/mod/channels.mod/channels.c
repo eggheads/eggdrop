@@ -2,7 +2,7 @@
  * channels.c -- part of channels.mod
  *   support for channels within the bot
  * 
- * $Id: channels.c,v 1.34 2000/01/08 21:23:15 per Exp $
+ * $Id: channels.c,v 1.35 2000/06/04 08:26:41 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -38,6 +38,7 @@ static Function *global = NULL;
 static int chan_hack = 0;
 static int must_be_owner = 0;
 static int quiet_save = 0;
+static int global_idle_kick;	/* Default idle-kick setting. */
 
 /* global channel settings (drummer/dw) */
 static char glob_chanset[512] = "\
@@ -701,6 +702,7 @@ static tcl_ints my_tcl_ints[] =
   {"invite-time", &invite_time, 0},
   {"must-be-owner", &must_be_owner, 0},
   {"quiet-save", &quiet_save, 0},
+  {"global-idle-kick", &global_idle_kick, 0},
   {0, 0, 0}
 };
 
@@ -823,6 +825,7 @@ char *channels_start(Function * global_funcs)
   gfld_join_time = 60;
   gfld_ctcp_thr = 5;
   gfld_ctcp_time = 60;
+  global_idle_kick = 0;
   Context;
   module_register(MODULE_NAME, channels_table, 1, 0);
   if (!module_depend(MODULE_NAME, "eggdrop", 104, 0))
