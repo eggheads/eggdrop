@@ -8,7 +8,7 @@
  *   help system
  *   motd display and %var substitution
  * 
- * $Id: misc.c,v 1.16 2000/02/03 21:58:28 fabian Exp $
+ * $Id: misc.c,v 1.17 2000/03/04 21:14:01 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1375,6 +1375,7 @@ void show_banner(int idx) {
         dprintf(idx, "%s", s);
       }
    }
+   fclose(vv);
 }
 
 /* Create a string with random letters and digits
