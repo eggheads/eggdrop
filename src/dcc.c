@@ -4,7 +4,7 @@
  *   disconnect on a dcc socket
  *   ...and that's it!  (but it's a LOT)
  *
- * $Id: dcc.c,v 1.75 2004/02/06 22:36:28 stdarg Exp $
+ * $Id: dcc.c,v 1.76 2004/03/14 13:30:21 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -507,6 +507,9 @@ static int dcc_bot_check_digest(int idx, char *remote_digest)
   int i;
   char *password = get_user(&USERENTRY_PASS, dcc[idx].user);
 
+  if (!password)
+    return 1;
+  
   MD5_Init(&md5context);
 
   egg_snprintf(digest_string, 33, "<%x%x@", getpid(),
@@ -524,6 +527,7 @@ static int dcc_bot_check_digest(int idx, char *remote_digest)
 
   if (!strcmp(digest_string, remote_digest))
     return 1;
+
   putlog(LOG_BOTS, "*", "Response (password hash) from %s incorrect",
          dcc[idx].nick);
   return 0;
