@@ -1,5 +1,5 @@
 # Makefile for src/mod/console.mod/
-# $Id: Makefile,v 1.11 2000/07/11 17:03:05 tothwolf Exp $
+# $Id: Makefile,v 1.12 2000/07/11 20:47:28 tothwolf Exp $
 
 srcdir = .
 
@@ -19,15 +19,15 @@ modules: ../../../console.$(MOD_EXT)
 	@rm -f ../console.o
 	mv console.o ../
 
-../../../console..$(MOD_EXT): ../console.o
-	$(LD) -o ../../../console..$(MOD_EXT) ../console.o $(XLIBS)
-	$(STRIP) ../../../console..$(MOD_EXT)
+../../../console.$(MOD_EXT): ../console.o
+	$(LD) -o ../../../console.$(MOD_EXT) ../console.o $(XLIBS)
+	$(STRIP) ../../../console.$(MOD_EXT)
 
 depend:
 	$(CC) $(CFLAGS) $(CPPFLAGS) -MM $(srcdir)/console.c > .depend
 
 clean:
-	@rm -f .depend *.o *..$(MOD_EXT) *~
+	@rm -f .depend *.o *.$(MOD_EXT) *~
 distclean: clean
 
 #safety hash
