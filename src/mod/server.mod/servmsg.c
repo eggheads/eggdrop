@@ -1,7 +1,7 @@
 /*
  * servmsg.c -- part of server.mod
  *
- * $Id: servmsg.c,v 1.73 2003/02/02 18:24:40 wcc Exp $
+ * $Id: servmsg.c,v 1.74 2003/02/04 11:10:39 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -219,47 +219,47 @@ static int match_my_nick(char *nick)
   return 0;
 }
 
-/* 001: welcome to IRC (use it to fix the server name)
- */
+/* 001: welcome to IRC (use it to fix the server name) */
 static int got001(char *from, char *msg)
 {
-  struct server_list *x;
+  struct server_list *x = serverlist;
   int i;
   struct chanset_t *chan;
 
-  /* Ok...param #1 of 001 = what server thinks my nick is */
+  if (x) {
+    for (i = curserv; i > 0 && x; i--)
+      x = x->next;
+    if (!x)
+      putlog(LOG_MISC, "*", "Invalid server list!");
+    if (x->realname)
+      nfree(x->realname);
+    x->realname = nmalloc(strlen(from) + 1);
+    strcpy(x->realname, from);
+  } else
+    putlog(LOG_MISC, "*", "No server list!");
+
   server_online = now;
   fixcolon(msg);
   strncpyz(botname, msg, NICKLEN);
   altnick_char = 0;
-  dprintf(DP_SERVER, "WHOIS %s\n", botname);    /* get user@host */
-  /* Call Tcl init-server */
+  dprintf(DP_SERVER, "WHOIS %s\n", botname); /* get user@host */
   if (initserver[0])
-    do_tcl("init-server", initserver);
+    do_tcl("init-server", initserver); /* Call Tcl init-server */
   check_tcl_event("init-server");
-  x = serverlist;
-  if (x == NULL)
-    return 0;                   /* Uh, no server list */
-  /* Only join if the IRC module is loaded. */
-  if (module_find("irc", 0, 0))
+
+  if (!x)
+    return 0;
+
+  if (module_find("irc", 0, 0)) {  /* Only join if the IRC module is loaded. */
     for (chan = chanset; chan; chan = chan->next) {
       chan->status &= ~(CHAN_ACTIVE | CHAN_PEND);
-      if (!channel_inactive(chan))
-        dprintf(DP_SERVER, "JOIN %s %s\n",
-                (chan->name[0]) ? chan->name : chan->dname,
-                chan->channel.key[0] ? chan->channel.key : chan->key_prot);
+      if (!channel_inactive(chan)) {
+        dprintf(DP_SERVER, "JOIN %s %s\n", (chan->name[0]) ? chan->name :
+                chan->dname, chan->channel.key[0] ? chan->channel.key :
+                chan->key_prot);
+      }
     }
-
-  for (i = curserv; i > 0 && x != NULL; i--)
-    x = x->next;
-  if (x == NULL) {
-    putlog(LOG_MISC, "*", "Invalid server list!");
-    return 0;
   }
-  if (x->realname)
-    nfree(x->realname);
-  x->realname = nmalloc(strlen(from) + 1);
-  strcpy(x->realname, from);
   return 0;
 }
 
