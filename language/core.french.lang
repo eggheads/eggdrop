@@ -245,6 +245,7 @@
 0x66b,lemmingbot
 0x66c,touche pas a mon pote
 0x66d,... pas la peine de revenir.
+0x672,NICK flood from @%s!  Banning.
 
 0x700,Arguments de la ligne de commande:\n\
   -h   aide\n\

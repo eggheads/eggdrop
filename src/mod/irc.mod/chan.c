@@ -236,7 +236,10 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
       if ((u_match_mask(global_bans, from))
 	  || (u_match_mask(chan->bans, from)))
 	return 1;		/* already banned */
-      putlog(LOG_MISC | LOG_JOIN, chan->name, IRC_FLOODIGNORE3, p);
+      if (which == FLOOD_JOIN)
+	putlog(LOG_MISC | LOG_JOIN, chan->name, IRC_FLOODIGNORE3, p);
+      else
+	putlog(LOG_MISC | LOG_JOIN, chan->name, IRC_FLOODIGNORE4, p);
       strcpy(ftype + 4, " flood");
       u_addban(chan, h, origbotname, ftype, now + (60 * ban_time), 0);
       context;

@@ -3,45 +3,33 @@
 0x001,Usage
 0x002,Failed.\n
 
+# MODES_
+0x130,Created
+0x131,last used
+0x132,inactive
+0x133,placed by
+0x135,not active on
+0x137,not active
+0x138,not placed by bot
+
 # BANS_
 
-0x100,Created
-0x101,last used
-0x102,inactive
-0x103,placed by
 0x104,Global bans
-0x105,not active on
 0x106,Channel bans for
-0x107,not active
-0x108,not placed by bot
 0x109,Use '.bans all' to see the total list
 0x10A,No longer banning
 
 # EXEMPTS_
 
-0x110,Created
-0x111,last used
-0x112,inactive
-0x113,placed by
 0x114,Global exempts
-0x115,not active on
 0x116,Channel exempts for
-0x117,not active
-0x118,not placed by bot
 0x119,Use '.exempts all' to see the total list
 0x11A,No longer ban exempting
 
-# Invites
+# INVITES_
 
-0x120,Created
-0x121,last used
-0x122,inactive
-0x123,placed by
 0x124,Global invites
-0x125,not active on
 0x126,Channel invites for
-0x127,not active
-0x128,not placed by bot
 0x129,Use '.invites all' to see the total list
 0x12A,No longer inviteing
 
@@ -275,6 +263,7 @@ Telnet to the bot and enter 'NEW' as your nickname.
 0x66e,Switching back to altnick %s
 0x670,Removed exempt
 0x671,Removed invite
+0x672,NICK flood from @%s!  Banning.
 
 # EGG_
 

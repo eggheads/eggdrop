@@ -345,6 +345,10 @@ static void got_op(struct chanset_t *chan, char *nick, char *from,
     dprintf(DP_MODE, "WHO %s\n", who);
     return;
   }
+  /* Did *I* just get opped? */
+  if (!me_op(chan) && match_my_nick(who))
+    check_chan = 1;
+
   /* flags need to be set correctly right from the beginning now, so that
    * add_mode() doesn't get irritated  (Fabian) */
   m->flags |= CHANOP;
@@ -356,11 +360,8 @@ static void got_op(struct chanset_t *chan, char *nick, char *from,
   } else
     u = m->user;
   get_user_flagrec(u, &victim, chan->name);
-  /* Did *I* just get opped? */
-  if (!me_op(chan) && match_my_nick(who))
-    check_chan = 1;
   /* I'm opped, and the opper isn't me */
-  else if (me_op(chan) && !match_my_nick(who) &&
+  if (me_op(chan) && !match_my_nick(who) &&
     /* and it isn't a server op */
 	   nick[0]) {
     /* Channis is +bitch, and the opper isn't a global master or a bot */

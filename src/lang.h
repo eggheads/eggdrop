@@ -282,6 +282,7 @@
 #define IRC_GETALTNICK	get_language(0x66e)
 #define IRC_REMOVEDEXEMPT       get_language(0x670)
 #define IRC_REMOVEDINVITE       get_language(0x671)
+#define IRC_FLOODIGNORE4        get_language(0x672)
 
 /* Eggdrop command line usage */
 
@@ -294,42 +295,30 @@
 #define USER_ISBOT	get_language(0x801)
 #define USER_ISMASTER	get_language(0x802)
 
+/* '.bans/.invites/.exempts' common messages */
+#define MODES_CREATED		get_language(0x130)
+#define MODES_LASTUSED		get_language(0x131)
+#define MODES_INACTIVE		get_language(0x132)
+#define MODES_PLACEDBY		get_language(0x133)
+#define MODES_NOTACTIVE		get_language(0x135)
+#define MODES_NOTACTIVE2 	get_language(0x137)
+#define MODES_NOTBYBOT		get_language(0x138)
+
 /* Messages used when listing with `.bans' */
-#define BANS_CREATED	get_language(0x100)
-#define BANS_LASTUSED	get_language(0x101)
-#define BANS_INACTIVE	get_language(0x102)
-#define BANS_PLACEDBY	get_language(0x103)
 #define BANS_GLOBAL	get_language(0x104)
-#define BANS_NOTACTIVE	get_language(0x105)
 #define BANS_BYCHANNEL	get_language(0x106)
-#define BANS_NOTACTIVE2	get_language(0x107)
-#define BANS_NOTBYBOT	get_language(0x108)
 #define BANS_USEBANSALL	get_language(0x109)
 #define BANS_NOLONGER	get_language(0x10a)
 
 /* Messages used when listing with '.exempts' */
-#define EXEMPTS_CREATED	        get_language(0x110)
-#define EXEMPTS_LASTUSED	get_language(0x111)
-#define EXEMPTS_INACTIVE	get_language(0x112)
-#define EXEMPTS_PLACEDBY	get_language(0x113)
 #define EXEMPTS_GLOBAL	        get_language(0x114)
-#define EXEMPTS_NOTACTIVE	get_language(0x115)
 #define EXEMPTS_BYCHANNEL	get_language(0x116)
-#define EXEMPTS_NOTACTIVE2	get_language(0x117)
-#define EXEMPTS_NOTBYBOT	get_language(0x118)
 #define EXEMPTS_USEEXEMPTSALL	get_language(0x119)
 #define EXEMPTS_NOLONGER	get_language(0x11a)
 
 /* Messages used when listing with '.invites' */
-#define INVITES_CREATED	        get_language(0x120)
-#define INVITES_LASTUSED	get_language(0x121)
-#define INVITES_INACTIVE	get_language(0x122)
-#define INVITES_PLACEDBY	get_language(0x123)
 #define INVITES_GLOBAL	        get_language(0x124)
-#define INVITES_NOTACTIVE	get_language(0x125)
 #define INVITES_BYCHANNEL	get_language(0x126)
-#define INVITES_NOTACTIVE2	get_language(0x127)
-#define INVITES_NOTBYBOT	get_language(0x128)
 #define INVITES_USEINVITESALL	get_language(0x129)
 #define INVITES_NOLONGER	get_language(0x12a)
 

@@ -248,6 +248,7 @@ Baue eine Telnetverbindung zu dem Bot auf und gib 'NEW' als deinen Nickname.
 0x66b,nick Flood
 0x66c,laß meine Freunde in Ruhe, mein Lieber
 0x66d,...und komm nicht zurück.
+0x672,NICK flood von @%s!  Wird gebannt.
 
 0x700,Kommandozeilen - Optionen:\n\
   -h   Hilfe\n\

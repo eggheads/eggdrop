@@ -736,10 +736,14 @@ static int msg_invite(char *nick, char *host, struct userrec *u, char *par)
       dprintf(DP_HELP, "NOTICE %s :%s: %s\n", nick, par, IRC_NOTONCHAN);
       return 1;
     }
-    dprintf(DP_SERVER, "INVITE %s %s\n", nick, par);
-    putlog(LOG_CMDS, "*", "(%s!%s) !%s! INVITE %s", nick, host,
-	   u->handle, par);
-    return 1;
+    /* we need to check access here also (dw 991002) */
+    get_user_flagrec(u, &fr, par);
+    if (chan_op(fr) || (glob_op(fr) && !chan_deop(fr))) {
+      dprintf(DP_SERVER, "INVITE %s %s\n", nick, par);
+      putlog(LOG_CMDS, "*", "(%s!%s) !%s! INVITE %s", nick, host,
+	     u->handle, par);
+      return 1;
+    }
   }
   putlog(LOG_CMDS, "*", "(%s!%s) !%s! failed INVITE %s", nick, host,
 	 u->handle, par);

@@ -158,7 +158,7 @@ void display_ignore(int idx, int number, struct igrec *ignore)
   if (ignore->msg && ignore->msg[0])
     dprintf(idx, "        %s: %s\n", ignore->user, ignore->msg);
   else
-    dprintf(idx, "        %s %s\n", BANS_PLACEDBY, ignore->user);
+    dprintf(idx, "        %s %s\n", MODES_PLACEDBY, ignore->user);
   if (dates[0])
     dprintf(idx, "        %s\n", dates);
 }

@@ -657,7 +657,7 @@ static void check_expired_chanstuff()
       } else
 	m = m->next;
     }
-    if (channel_active(chan) && (chan->idle_kick)) {
+    if (channel_active(chan) && me_op(chan) && (chan->idle_kick)) {
       m = chan->channel.member;
       while (m->nick[0]) {
 	if ((now - m->last) >= (chan->idle_kick * 60) &&

@@ -74,7 +74,7 @@ main.o: main.c patch.h
 	'-DSTRIPFLAGS="${STRIP}"' main.c
 
 md5/md5c.o:
-	@cd md5; ${MAKE} md5
+	@cd md5; ${GMAKE} md5
 
 mem.o: mem.c
 	${CC} ${CFLAGS} mem.c

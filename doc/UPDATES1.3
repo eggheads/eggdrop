@@ -4,6 +4,12 @@ Changes in eggdrop: (since v1.3.0)
 
 1.3.29
 Foundby   Fixedby   What....
+          dw        it said 'JOIN flood from @%s!  Banning.'
+                    for nick floods.
+reddawg   rtc       md5 make could fail on some OS
+          dw        Users with chanflag +o could gain access to any
+                    channel using /msg bot invite <pass> #chan
+          Eule      fixed recheck_channel in got_op
           dw        moved 'msg already queued. skipping...' to a debug
                     message and added what it skips for debugging reasons.
 Ben	  Fabian    minor doc changes to eggdrop.conf.dist

@@ -587,10 +587,10 @@ static void display_ban(int idx, int number, maskrec *ban,
 
   if (ban->added) {
     daysago(now, ban->added, s);
-    sprintf(dates, "%s %s", BANS_CREATED, s);
+    sprintf(dates, "%s %s", MODES_CREATED, s);
     if (ban->added < ban->lastactive) {
       strcat(dates, ", ");
-      strcat(dates, BANS_LASTUSED);
+      strcat(dates, MODES_LASTUSED);
       strcat(dates, " ");
       daysago(now, ban->lastactive, s);
       strcat(dates, s);
@@ -617,7 +617,7 @@ static void display_ban(int idx, int number, maskrec *ban,
     if (number >= 0) {
       dprintf(idx, "! [%3d] %s %s\n", number, ban->mask, s);
     } else {
-      dprintf(idx, "BAN (%s): %s %s\n", BANS_INACTIVE, ban->mask, s);
+      dprintf(idx, "BAN (%s): %s %s\n", MODES_INACTIVE, ban->mask, s);
     }
   } else
     return;
@@ -634,10 +634,10 @@ static void display_exempt (int idx, int number, maskrec * exempt,
   
   if (exempt->added) {
     daysago(now, exempt->added, s);
-    sprintf(dates, "%s %s", EXEMPTS_CREATED, s);
+    sprintf(dates, "%s %s", MODES_CREATED, s);
     if (exempt->added < exempt->lastactive) {
       strcat(dates, ", ");
-      strcat(dates, EXEMPTS_LASTUSED);
+      strcat(dates, MODES_LASTUSED);
       strcat(dates, " ");
       daysago(now, exempt->lastactive, s);
       strcat(dates, s);
@@ -663,7 +663,7 @@ static void display_exempt (int idx, int number, maskrec * exempt,
     if (number >= 0) {
       dprintf(idx, "! [%3d] %s %s\n", number, exempt->mask, s);
     } else {
-      dprintf(idx, "EXEMPT (%s): %s %s\n", EXEMPTS_INACTIVE, exempt->mask, s);
+      dprintf(idx, "EXEMPT (%s): %s %s\n", MODES_INACTIVE, exempt->mask, s);
     }
   } else 
     return;
@@ -680,10 +680,10 @@ static void display_invite (int idx, int number, maskrec * invite,
   
   if (invite->added) {
     daysago(now, invite->added, s);
-    sprintf(dates, "%s %s", INVITES_CREATED, s);
+    sprintf(dates, "%s %s", MODES_CREATED, s);
     if (invite->added < invite->lastactive) {
       strcat(dates, ", ");
-      strcat(dates, INVITES_LASTUSED);
+      strcat(dates, MODES_LASTUSED);
       strcat(dates, " ");
       daysago(now, invite->lastactive, s);
       strcat(dates, s);
@@ -709,7 +709,7 @@ static void display_invite (int idx, int number, maskrec * invite,
     if (number >= 0) {
       dprintf(idx, "! [%3d] %s %s\n", number, invite->mask, s);
     } else {
-      dprintf(idx, "INVITE (%s): %s %s\n", INVITES_INACTIVE, invite->mask, s);
+      dprintf(idx, "INVITE (%s): %s %s\n", MODES_INACTIVE, invite->mask, s);
     }
   } else 
     return;
@@ -743,7 +743,7 @@ static void tell_bans(int idx, int show_inact, char *match)
     return;
   if (show_inact)
     dprintf(idx, "%s:   (! = %s %s)\n", BANS_GLOBAL,
-	    BANS_NOTACTIVE, chan->name);
+	    MODES_NOTACTIVE, chan->name);
   else
     dprintf(idx, "%s:\n", BANS_GLOBAL);
   context;
@@ -761,11 +761,11 @@ static void tell_bans(int idx, int show_inact, char *match)
   if (show_inact)
     dprintf(idx, "%s %s:   (! = %s, * = %s)\n",
 	    BANS_BYCHANNEL, chan->name,
-	    BANS_NOTACTIVE2, BANS_NOTBYBOT);
+	    MODES_NOTACTIVE2, MODES_NOTBYBOT);
   else
     dprintf(idx, "%s %s:  (* = %s)\n",
 	    BANS_BYCHANNEL, chan->name,
-	    BANS_NOTBYBOT);
+	    MODES_NOTBYBOT);
   u = chan->bans;
   for (; u; u = u->next) {
     if (match[0]) {
@@ -838,7 +838,7 @@ static void tell_exempts (int idx, int show_inact, char * match)
     return;	 
   if (show_inact)
     dprintf(idx, "%s:   (! = %s %s)\n", EXEMPTS_GLOBAL, 
-	    EXEMPTS_NOTACTIVE, chan->name);
+	    MODES_NOTACTIVE, chan->name);
   else
     dprintf(idx, "%s:\n", EXEMPTS_GLOBAL);
   context;
@@ -856,12 +856,12 @@ static void tell_exempts (int idx, int show_inact, char * match)
   if (show_inact)
     dprintf(idx, "%s %s:   (! = %s, * = %s)\n",
 	    EXEMPTS_BYCHANNEL, chan->name, 
-	    EXEMPTS_NOTACTIVE2,
-	    EXEMPTS_NOTBYBOT);
+	    MODES_NOTACTIVE2,
+	    MODES_NOTBYBOT);
   else
     dprintf(idx, "%s %s:  (* = %s)\n",
 	    EXEMPTS_BYCHANNEL, chan->name, 
-	    EXEMPTS_NOTBYBOT);
+	    MODES_NOTBYBOT);
   u = chan->exempts;
   for (;u;u=u->next) {
     if (match[0]) {
@@ -933,7 +933,7 @@ static void tell_invites (int idx, int show_inact, char * match)
     return;	 
   if (show_inact)
     dprintf(idx, "%s:   (! = %s %s)\n", INVITES_GLOBAL, 
-	    INVITES_NOTACTIVE, chan->name);
+	    MODES_NOTACTIVE, chan->name);
   else
     dprintf(idx, "%s:\n", INVITES_GLOBAL);
   context;
@@ -951,12 +951,12 @@ static void tell_invites (int idx, int show_inact, char * match)
   if (show_inact)
     dprintf(idx, "%s %s:   (! = %s, * = %s)\n",
 	    INVITES_BYCHANNEL, chan->name, 
-	    INVITES_NOTACTIVE2,
-	    INVITES_NOTBYBOT);
+	    MODES_NOTACTIVE2,
+	    MODES_NOTBYBOT);
   else
     dprintf(idx, "%s %s:  (* = %s)\n",
 	    INVITES_BYCHANNEL, chan->name, 
-	    INVITES_NOTBYBOT);
+	    MODES_NOTBYBOT);
   u = chan->invites;
   for (;u;u=u->next) {
     if (match[0]) {
