@@ -699,10 +699,12 @@ static int filesys_DCC_CHAT(char *nick, char *from, char *handle,
   } else if (glob_party(fr) || (!require_p && chan_op(fr)))
     return 0;			/* allow ctcp.so to pick up the chat */
   else if (!glob_xfer(fr)) {
-    dprintf(DP_HELP, "NOTICE %s :.\n", nick, DCC_REFUSED3);
+    if (!quiet_reject)
+      dprintf(DP_HELP, "NOTICE %s :.\n", nick, DCC_REFUSED3);
     putlog(LOG_MISC, "*", "%s: %s!%s", DCC_REFUSED, nick, from);
   } else if (u_pass_match(u, "-")) {
-    dprintf(DP_HELP, "NOTICE %s :%s.\n", nick, DCC_REFUSED3);
+    if (!quiet_reject)
+      dprintf(DP_HELP, "NOTICE %s :%s.\n", nick, DCC_REFUSED3);
     putlog(LOG_MISC, "*", "%s: %s!%s", DCC_REFUSED4, nick, from);
   } else if (!dccdir[0]) {
     putlog(LOG_MISC, "*", "%s: %s!%s", DCC_REFUSED5, nick, from);
@@ -712,16 +714,18 @@ static int filesys_DCC_CHAT(char *nick, char *from, char *handle,
     sock = getsock(0);
     if (open_telnet_dcc(sock, ip, prt) < 0) {
       neterror(buf);
-      dprintf(DP_HELP, "NOTICE %s :%s (%s)\n", nick,
-	      DCC_CONNECTFAILED1, buf);
+      if (!quiet_reject)
+        dprintf(DP_HELP, "NOTICE %s :%s (%s)\n", nick,
+	        DCC_CONNECTFAILED1, buf);
       putlog(LOG_MISC, "*", "%s: CHAT(file) (%s!%s)", DCC_CONNECTFAILED2,
 	     nick, from);
       putlog(LOG_MISC, "*", "    (%s)", buf);
       killsock(sock);
     } else if ((atoi(prt) < min_dcc_port) || (atoi(prt) > max_dcc_port)) {
       /* invalid port range, do clients even use over 5000?? */
-      dprintf(DP_HELP, "NOTICE %s :%s (invalid port)\n", nick,
-	      DCC_CONNECTFAILED1);
+      if (!quiet_reject)
+        dprintf(DP_HELP, "NOTICE %s :%s (invalid port)\n", nick,
+	        DCC_CONNECTFAILED1);
       putlog(LOG_FILES, "*", "%s: %s!%s", DCC_REFUSED7, nick, from);
 
     } else {

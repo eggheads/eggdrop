@@ -23,6 +23,7 @@
 #define H_sent (*(p_tcl_bind_list*)(transfer_funcs[15]))
 /* 16 - 19 */
 #define USERENTRY_FSTAT (*(struct user_entry_type *)(transfer_funcs[16]))
+#define quiet_reject (*(int *)(transfer_funcs[17]))
 
 #else
 static int raw_dcc_send(char *, char *, char *, char *);

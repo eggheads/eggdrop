@@ -885,6 +885,7 @@ static void dcc_chat(int idx, char *buf, int i)
 	if (buf[0] == '.')
 	  buf++;
 	v = newsplit(&buf);
+	rmspace(buf);
 	if (check_tcl_dcc(v, idx, buf)) {
 	  check_tcl_chpt(botnetnick, dcc[idx].nick, dcc[idx].sock,
 			 dcc[idx].u.chat->channel);

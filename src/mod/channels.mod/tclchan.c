@@ -879,6 +879,7 @@ static int tcl_channel_modify(Tcl_Interp * irp, struct chanset_t *chan,
 {
   int i;
   int oldstatus;
+  int x=0;
   module_entry *me;
 
   oldstatus = chan->status;
@@ -1087,7 +1088,7 @@ static int tcl_channel_modify(Tcl_Interp * irp, struct chanset_t *chan,
     } else {
       if (irp && item[i][0]) /* ignore "" */
 	Tcl_AppendResult(irp, "illegal channel option: ", item[i], NULL);
-      return TCL_ERROR;
+	x++;
     }
   }
   if (((oldstatus ^ chan->status) & CHAN_INACTIVE) && module_find("irc", 0, 0)) {
@@ -1101,6 +1102,7 @@ static int tcl_channel_modify(Tcl_Interp * irp, struct chanset_t *chan,
       (me->funcs[15])(chan, 1);
     }
   }
+  if (x > 0) { return TCL_ERROR; }
   return TCL_OK;
 }
 

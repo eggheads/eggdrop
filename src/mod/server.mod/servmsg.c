@@ -491,6 +491,7 @@ static int gotmsg(char *from, char *msg)
 	detect_flood(nick, uhost, from, FLOOD_PRIVMSG);
       u = get_user_by_host(from);
       code = newsplit(&msg);
+      rmspace(msg);
       if (!ignoring || trigger_on_ignore)
 	check_tcl_msgm(code, nick, uhost, u, msg);
       if (!ignoring)

@@ -186,8 +186,6 @@ char *newsplit(char **rest)
     o++;
   if (*o)
     *o++ = 0;
-  while (*o && (*o == ' '))
-    o++;
   *rest = o;
   return r;
 }

@@ -33,6 +33,8 @@ static void stats_add_upload(struct userrec *, unsigned long);
 static void wipe_tmp_filename(char *fn, int idx);
 static int at_limit(char *nick);
 static void dcc_get_pending(int idx, char *buf, int len);
+static int quiet_reject;        /* Quietly reject dcc chat or sends from
+                                 * users without access? */
 
 typedef struct zarrf {
   char *dir;			/* starts with '*' -> absolute dir */
@@ -313,8 +315,9 @@ static void eof_dcc_fork_send(int idx)
     unlink(dcc[idx].u.xfer->filename);
   } else {
     neterror(s1);
-    dprintf(DP_HELP, "NOTICE %s :%s (%s)\n", dcc[idx].nick,
-	    DCC_CONNECTFAILED1, s1);
+    if (!quiet_reject)
+      dprintf(DP_HELP, "NOTICE %s :%s (%s)\n", dcc[idx].nick,
+	      DCC_CONNECTFAILED1, s1);
     putlog(LOG_MISC, "*", "%s: SEND %s (%s!%s)", DCC_CONNECTFAILED2,
 	   dcc[idx].u.xfer->filename, dcc[idx].nick, dcc[idx].host);
     putlog(LOG_MISC, "*", "    (%s)", s1);
@@ -1468,6 +1471,7 @@ static Function transfer_table[] =
   (Function) & H_sent,
   /* 16 - 19 */
   (Function) & USERENTRY_FSTAT,
+  (Function) & quiet_reject,        /* int */
 };
 
 char *transfer_start(Function * global_funcs)
