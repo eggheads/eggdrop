@@ -825,7 +825,7 @@ static void out_dcc_xfer(int idx, char *buf, void *x)
 static struct dcc_table DCC_SEND =
 {
   "SEND",
-  DCT_FILETRAN | DCT_FILESEND,
+  DCT_FILETRAN | DCT_FILESEND | DCT_VALIDIDX,
   eof_dcc_send,
   dcc_send,
   &wait_dcc_xfer,
@@ -841,7 +841,7 @@ static void dcc_fork_send(int idx, char *x, int y);
 static struct dcc_table DCC_FORK_SEND =
 {
   "FORK_SEND",
-  DCT_FILETRAN | DCT_FORKTYPE | DCT_FILESEND,
+  DCT_FILETRAN | DCT_FORKTYPE | DCT_FILESEND | DCT_VALIDIDX,
   eof_dcc_fork_send,
   dcc_fork_send,
   &wait_dcc_xfer,
@@ -870,7 +870,7 @@ static void dcc_fork_send(int idx, char *x, int y)
 static struct dcc_table DCC_GET =
 {
   "GET",
-  DCT_FILETRAN,
+  DCT_FILETRAN | DCT_VALIDIDX,
   eof_dcc_get,
   dcc_get,
   &wait_dcc_xfer,
@@ -884,7 +884,7 @@ static struct dcc_table DCC_GET =
 static struct dcc_table DCC_GET_PENDING =
 {
   "GET_PENDING",
-  DCT_FILETRAN,
+  DCT_FILETRAN | DCT_VALIDIDX,
   eof_dcc_get,
   dcc_get_pending,
   &wait_dcc_xfer,
