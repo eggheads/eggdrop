@@ -1,7 +1,7 @@
 /*
  * tclchan.c -- part of channels.mod
  *
- * $Id: tclchan.c,v 1.83 2003/03/24 02:18:06 wcc Exp $
+ * $Id: tclchan.c,v 1.84 2003/03/24 02:46:42 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -931,7 +931,7 @@ static int tcl_channel_info(Tcl_Interp *irp, struct chanset_t *chan)
 static int tcl_channel_get(Tcl_Interp *irp, struct chanset_t *chan,
                            char *setting)
 {
-  char s[121], *str = NULL, **argv = NULL;
+  char s[121], *str = NULL, EGG_CONST **argv = NULL;
   int argc = 0;
   struct udef_struct *ul;
 
