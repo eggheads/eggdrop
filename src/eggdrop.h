@@ -391,6 +391,7 @@ struct dupwait_info {
 #define STAT_LINKING 0x100	/* the bot is currently going through the
 				 * linking stage */
 #define STAT_AGGRESSIVE 0x200	/* aggressively sharing with this bot */
+#define STAT_OVERRIDE   0x400	/* overriding existing bot entries */
 
 /* chan & global */
 #define FLOOD_PRIVMSG    0

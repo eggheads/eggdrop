@@ -1051,6 +1051,11 @@ set xfer-timeout 30
 # will force all +host/+user/chpass/etc. changes to be made via the hub
 #set private-user 0
 
+# [0/1] this setting makes the bot discard it's own bot records in favor of
+# the ones sent by the hub. Note: This only works with hubs that are v1.5.1
+# _or higher_.
+#set override-bots 0
+
 
 ##### FILESYSTEM MODULE #####
 
