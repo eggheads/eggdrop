@@ -2,7 +2,7 @@
  * channels.c -- part of channels.mod
  *   support for channels within the bot
  * 
- * $Id: channels.c,v 1.41 2000/11/03 17:04:59 fabian Exp $
+ * $Id: channels.c,v 1.42 2000/11/06 04:06:42 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -900,9 +900,9 @@ char *channels_start(Function * global_funcs)
 -nodesynch" /* Do not remove this extra space: */ " ");
   Context;
   module_register(MODULE_NAME, channels_table, 1, 0);
-  if (!module_depend(MODULE_NAME, "eggdrop", 105, 3)) {
+  if (!module_depend(MODULE_NAME, "eggdrop", 106, 0)) {
     module_undepend(MODULE_NAME);
-    return "This module needs eggdrop1.5.3 or later";
+    return "This module needs eggdrop1.6.0 or later";
   }
   add_hook(HOOK_MINUTELY, (Function) check_expired_bans);
   add_hook(HOOK_MINUTELY, (Function) check_expired_exempts);

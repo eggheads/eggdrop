@@ -5,7 +5,7 @@
  *   note cmds
  *   note ignores
  * 
- * $Id: notes.c,v 1.25 2000/10/01 19:11:43 fabian Exp $
+ * $Id: notes.c,v 1.26 2000/11/06 04:06:44 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1232,9 +1232,9 @@ char *notes_start(Function * global_funcs)
   Context;
   notefile[0] = 0;
   module_register(MODULE_NAME, notes_table, 2, 1);
-  if (!module_depend(MODULE_NAME, "eggdrop", 105, 0)) {
+  if (!module_depend(MODULE_NAME, "eggdrop", 106, 0)) {
     module_undepend(MODULE_NAME);
-    return "This module requires eggdrop1.5.0 or later";
+    return "This module requires eggdrop1.6.0 or later";
   }
   add_hook(HOOK_HOURLY, (Function) notes_hourly);
   add_hook(HOOK_MATCH_NOTEREJ, (Function) match_note_ignore);

@@ -1,7 +1,7 @@
 # wire.english.lang
 #   language messages for wire module
 #
-# $Id: wire.english.lang,v 1.3 1999/12/21 17:35:32 fabian Exp $
+# $Id: wire.english.lang,v 1.4 2000/11/06 04:06:45 guppy Exp $
 
 0xa000,You are not on a wire.
 0xa001,Currently on wire
@@ -13,4 +13,3 @@
 0xa007,joined wire
 0xa008,left the wire.
 0xa009,WIRE module being unloaded.
-0xa00a,This module requires eggdrop1.4.0 or later

@@ -1,5 +1,5 @@
 =====================================================================
-              Eggheads Eggdrop 1.5 Bug Report Form
+              Eggheads Eggdrop 1.6 Bug Report Form
 =====================================================================
 
 By reporting bugs, you help to improve the quality of eggdrop which
@@ -19,7 +19,7 @@ Instructions:
 1) INFORMATION ABOUT YOUR EGGDROP
 
 1.1) version:
-     1.5.__
+     1.6.__
 
 1.2) make type:
      ( ) dynamic
@@ -44,6 +44,7 @@ Instructions:
      ( ) 8.1
      ( ) 8.2
      ( ) 8.3
+     ( ) 8.4
      ( ) Other - Which? ____
 
 2.2) TCL library patchlevel: ___

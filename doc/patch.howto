@@ -44,7 +44,7 @@ III.    APPLYING A PATCH
 To apply a patch to an eggdrop you have to get first the sourcecode of
 it (you should always keep a tar.gz archieve with the source of your
 current eggdrop on your shell). In the next step you have to change to
-your current source directory (i.e.: /home/user/eggdrop1.5.3/) and type
+your current source directory (i.e.: /home/user/eggdrop1.6.0/) and type
 the following command:
 
 patch -p1 < ../path.to.the/patch
@@ -73,7 +73,7 @@ eggdrop release.
 There are several steps to submit a patch to the eggdev team:
 
 1. make a directory with orig. source tree and one with modified source tree
-2. do a 'diff -bur eggdrop1.5.original eggdrop1.5.modified > myfirst.patch'
+2. do a 'diff -bur eggdrop1.6.original eggdrop1.6.modified > myfirst.patch'
 3. send an email to patches@eggheads.org with the patch attached and a detailed
    description of what you changed and why you changed it. Don't forget to write
    for which botversion your patch was made. Please send a second email with
@@ -89,8 +89,8 @@ Thank you.
 
 V.      DOWNLOADING A PATCH
 
-All patches for eggdrop1.5.x can be found on ftp.eggheads.org in
-/pub/eggdrop/GNU/patches1.5.
+All patches for eggdrop1.6.x can be found on ftp.eggheads.org in
+/pub/eggdrop/patches/1.6
 
 
 

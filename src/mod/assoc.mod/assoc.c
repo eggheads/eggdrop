@@ -2,7 +2,7 @@
  * assoc.c -- part of assoc.mod
  *   the assoc code, moved here mainly from botnet.c for module work
  * 
- * $Id: assoc.c,v 1.10 2000/09/23 17:40:17 fabian Exp $
+ * $Id: assoc.c,v 1.11 2000/11/06 04:06:42 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -445,9 +445,9 @@ char *assoc_start(Function * global_funcs)
 
   Context;
   module_register(MODULE_NAME, assoc_table, 2, 0);
-  if (!module_depend(MODULE_NAME, "eggdrop", 105, 0)) {
+  if (!module_depend(MODULE_NAME, "eggdrop", 106, 0)) {
     module_undepend(MODULE_NAME);
-    return "This module requires eggdrop1.5.0 or later";
+    return "This module requires eggdrop1.6.0 or later";
   }
   assoc = NULL;
   add_builtins(H_dcc, mydcc);

@@ -2,7 +2,7 @@
  * irc.c -- part of irc.mod
  *   support for channels within the bot 
  * 
- * $Id: irc.c,v 1.41 2000/11/05 21:37:57 fabian Exp $
+ * $Id: irc.c,v 1.42 2000/11/06 04:06:43 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1154,9 +1154,9 @@ char *irc_start(Function * global_funcs)
 
   Context;
   module_register(MODULE_NAME, irc_table, 1, 3);
-  if (!module_depend(MODULE_NAME, "eggdrop", 105, 3)) {
+  if (!module_depend(MODULE_NAME, "eggdrop", 106, 0)) {
     module_undepend(MODULE_NAME);
-    return "This module needs eggdrop1.5.3 or later";
+    return "This module needs eggdrop1.6.0 or later";
   }
   if (!(server_funcs = module_depend(MODULE_NAME, "server", 1, 0))) {
     module_undepend(MODULE_NAME);

@@ -3,7 +3,7 @@
 #
 # german translation by rtc
 #
-# $Id: wire.german.lang,v 1.3 2000/10/01 19:12:46 fabian Exp $
+# $Id: wire.german.lang,v 1.4 2000/11/06 04:06:45 guppy Exp $
 
 0xa000,Du bist nicht auf einem heissen Draht.
 0xa001,Gerade auf dem heissen Draht
@@ -15,4 +15,3 @@
 0xa007,hat den heissen Draht betreten
 0xa008,hat den heissen Draht verlassen.
 0xa009,WIRE-modul wird entfernt.
-0xa00a,Dieses Modul benoetigt eggdrop1.4.0 oder hoeher

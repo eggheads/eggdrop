@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: readme.html,v 1.6 2000/10/11 10:27:55 tothwolf Exp $ -->
+<!-- $Id: readme.html,v 1.7 2000/11/06 04:06:41 guppy Exp $ -->
 
 <html>
   <head>
@@ -26,7 +26,7 @@
         <li><a href="#sect2">What is Eggdrop?</a></li>
 
         <li>
-          <a href="#sect3">How do I get Eggdrop</a> 
+          <a href="#sect3">How do I get Eggdrop</a>
 
           <ol type="a">
             <li><a href="#sect3a">How to get the latest version of eggdrop
@@ -37,19 +37,19 @@
         <li><a href="#sect4">Quick startup</a></li>
 
         <li>
-          <a href="#sect5">Upgrading</a> 
+          <a href="#sect5">Upgrading</a>
 
           <ol type="a">
-            <li><a href="#sect5a">From a pre-1.3/1.4/1.5 version to
-            1.5</a></li>
+            <li><a href="#sect5a">From a pre-1.3 version to
+            1.6</a></li>
 
-            <li><a href="#sect5b">From an older 1.3/1.4/1.5 version to a
+            <li><a href="#sect5b">From an older 1.3/1.4/1.5/1.6 version to a
             newer one</a></li>
           </ol>
         </li>
 
         <li>
-          <a href="#sect6">Setting up a crontab</a> 
+          <a href="#sect6">Setting up a crontab</a>
 
           <ol type="a">
             <li><a href="#sect6a">Setting up a crontab using
@@ -98,7 +98,7 @@
       bugs to be fixed and features to be added (if the users demand them,
       and they make actually sense). In fact, it existed for several years
       as v0.7 - v0.9 before finally going 1.0. This version of Eggdrop is
-      part of the 1.5 tree. A valiant effort has been made to chase down and
+      part of the 1.6 tree. A valiant effort has been made to chase down and
       destroy bugs.</p>
 
       <p>This Readme file contains information about how to get Eggdrop, how
@@ -132,7 +132,7 @@
       that comes on Slackware 3.0 is goofed up and you&#39;ll have to
       reinstall it for yourself to get it working.</p>
 
-      <p>Currently, the 1.5 tree of Eggdrop is developed at eggheads.org. You
+      <p>Currently, the 1.6 tree of Eggdrop is developed at eggheads.org. You
       can get the latest version of Eggdrop from:
       <a href="ftp://ftp.eggheads.org/pub/eggdrop/">
       ftp://ftp.eggheads.org/pub/eggdrop/</a></p>
@@ -171,9 +171,9 @@
 
         <li>press &lt;enter&gt; when it asks for a password.</li>
 
-        <li>in your home dir, type &#39;cvs checkout eggdrop1.5&#39;</li>
+        <li>in your home dir, type &#39;cvs checkout eggdrop1.6&#39;</li>
 
-        <li>in ~/eggdrop1.5, you should have a copy of the latest CVS version
+        <li>in ~/eggdrop1.6, you should have a copy of the latest CVS version
         of Eggdrop.</li>
       </ol>
     </blockquote>
@@ -186,7 +186,7 @@
 
         <li>you don&#39;t need to go through this whole process every time;
         if you want to get a CVS version of Eggdrop at a later time, you can
-        just &#39;cd ~/eggdrop1.5&#39; and type &#39;cvs update
+        just &#39;cd ~/eggdrop1.6&#39; and type &#39;cvs update
         -dAP&#39;.</li>
 
         <li>if you experience errors when using &#39;export&#39;, you might
@@ -204,8 +204,8 @@
 
     <p><a name="sect5"></a>5. <strong>Upgrading</strong></p>
 
-    <p><a name="sect5a"></a>5a. <strong>from a pre-1.3/1.4/1.5 version to
-    1.5</strong></p>
+    <p><a name="sect5a"></a>5a. <strong>from a pre-1.3 version to
+    1.6</strong></p>
 
     <blockquote>
       <p><strong>BACK UP YOUR USERFILE</strong></p>
@@ -216,36 +216,37 @@
       changed alot of things.</p>
 
       <p> There are many major changes between v0.9, v1.0, v1.1 and
-      v1.3/1.4/1.5 so PAY ATTENTION to this part if you have a v0.9, 1.0 or
+      v1.6 so PAY ATTENTION to this part if you have a v0.9, 1.0 or
       1.1 bot already. If you&#39;re just starting out, you can skip this
       section.</p>
 
-      <p>to 1.3/1.4/1.5: * If you run share bots, you will need to upgrade
+      <p>to 1.6: * If you run share bots, you will need to upgrade
       them all at the same time because of the new userfile format. Older
       bots will be able to link in, but will not get or send a userfile.
-      1.2&#39;s will also tend to refuse to share with another pre1.2. MAKE A
-      NEW CONFIG FILE from the example, there are some radical extras.</p>
+      MAKE A NEW CONFIG FILE from the example, there are some radical
+      extras.</p>
 
-      <p>from 0.9/1.0 to 1.3/1.4/1.5: * Just redo the whole thing, absolutely
+      <p>from 0.9/1.0 to 1.6: * Just redo the whole thing, absolutely
       everything has changed including the userfile and config file
       formats.</p>
 
-      <p>from 1.1/1.2 to 1.3/1.4/1.5: * You will likely want to redo the
+      <p>from 1.1/1.2 to 1.6: * You will likely want to redo the
       config file, as much as changed. BACK UP!! You will need to run
       &#39;tclsh scripts/weed/&lt;userfile&gt; c&#39; to convert your
-      userfile from v3 (1.1/1.2) to v4 (1.3/1.4/1.5)</p>
+      userfile from v3 (1.1/1.2) to v4 (1.3/1.4/1.5/1.6)</p>
     </blockquote>
 
-    <p><a name="sect5b"></a>5b. <strong>from an older 1.3/1.4/1.5 version to
+    <p><a name="sect5b"></a>5b. <strong>from an older 1.3/1.4/1.5/1.6 version to
     a newer one</strong></p>
 
     <blockquote>
       <p>If you followed the <a href="install.html">Installation file</a>
       and did a &#39;make install&#39; (or &#39;make DEST=&quot;path&quot;
       install&#39;) after &#39;make&#39;, this will be pretty easy. Just
-      upload the new eggdrop1.5.xx.tar.gz file to the home dir of your
-      shell, gunzip and untar it, and type &#39;cd ~/eggdrop1.5.xx&#39;.
-      Then, type &#39;./configure&#39;, &#39;make&#39;, then kill the bot
+      upload the new eggdrop1.6.x.tar.gz file to the home dir of your
+      shell, gunzip and untar it, and type &#39;cd ~/eggdrop1.6.x&#39;.
+      Then, type &#39;./configure&#39;, &#39;make config&#39; or
+      &#39;make iconfig&#39;, &#39;make&#39;, then kill the bot
       (&#39;.die&#39; on the party line, or use &#39;kill&#39; on the shell)
       and &#39;make install&#39; to the same directory your bot is currently
       in. Then, you can just restart your bot. You may wish to delete the
@@ -356,13 +357,13 @@
 
       <p>There are currently a couple of mailing lists about Eggdrop.
       <a href="mailto:eggheads@eggheads.org">eggheads@eggheads.org</a>
-      is the one relevant for posts about Eggdrop 1.4 &amp; 1.5 (and bug
+      is the one relevant for posts about Eggdrop 1.4 and up (and bug
       fixes, and suggestions, etc).</p>
 
       <p>To subscribe to the eggheads mailing list, send email to:
       <a href="mailto:eggheads-request@eggheads.org">
       eggheads-request@eggheads.org</a> In the body of the message, put
-      &quot;subscribe eggheads&quot;; or go to <a href= 
+      &quot;subscribe eggheads&quot;; or go to <a href=
       "http://scrambled.eggheads.org/mailman/listinfo/eggheads">
       http://scrambled.eggheads.org/mailman/listinfo/eggheads</a></p>
 
@@ -422,7 +423,7 @@
       <blockquote>
         <ul>
           <li>
-            Undernet 
+            Undernet
 
             <ul>
               <li><a href="chat/undernet_eggdrop.chat">#eggdrop</a></li>
@@ -430,7 +431,7 @@
           </li>
 
           <li>
-            EFnet 
+            EFnet
 
             <ul>
               <li><a href="chat/efnet_eggheads.chat">#eggheads</a></li>
@@ -440,7 +441,7 @@
           </li>
 
           <li>
-            IRCNet 
+            IRCNet
 
             <ul>
               <li><a href="chat/ircnet_eggdrop.chat">#eggdrop</a></li>

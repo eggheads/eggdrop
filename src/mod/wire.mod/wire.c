@@ -15,7 +15,7 @@
  * 1.4       1997-11-25      1.2.2.0         Added language addition  Kirk
  * 1.5       1998-07-12      1.3.0.0         Fixed ;me and updated    BB
  * 
- * $Id: wire.c,v 1.13 2000/06/21 22:28:13 fabian Exp $
+ * $Id: wire.c,v 1.14 2000/11/06 04:06:45 guppy Exp $
  */
 /* 
  * Copyright (C) 1999, 2000  Eggheads
@@ -613,9 +613,9 @@ char *wire_start(Function * global_funcs)
 
   Context;
   module_register(MODULE_NAME, wire_table, 2, 0);
-  if (!module_depend(MODULE_NAME, "eggdrop", 105, 0)) {
+  if (!module_depend(MODULE_NAME, "eggdrop", 106, 0)) {
     module_undepend(MODULE_NAME);
-    return WIRE_VERSIONERROR;
+    return "This module requires eggdrop1.6.0 or later";
   }
   me = module_find("encryption", 2, 0);
   blowfish_funcs = me->funcs;

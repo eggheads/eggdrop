@@ -1,9 +1,9 @@
 
 # Getops 2.2f
 
-# $Id: getops.tcl,v 1.6 2000/10/01 19:11:42 fabian Exp $
+# $Id: getops.tcl,v 1.7 2000/11/06 04:06:41 guppy Exp $
 
-# This script is used for bots to request and give ops to each other. 
+# This script is used for bots to request and give ops to each other.
 # For this to work, you'll need:
 
 # - Bots must be linked in a botnet
@@ -28,7 +28,7 @@
 
 # 2.2e by Fabian <fknittel@gmx.de>
 #  - added support for !channels (so-called ID-channels), using chandname2name
-#    functions. This makes it eggdrop 1.5 specific.
+#    functions. This makes it eggdrop 1.5+ specific.
 
 # 2.2d by brainsick <brnsck@mail.earthlink.net>
 #  - Undernet now handles keys differently.  It no longer gives the key on a
@@ -109,7 +109,7 @@ proc gain_entrance {what chan} {
    foreach bs [lbots] {
     putbot $bs "gop invite $chan $botnick"
     putlog "GetOps: Requesting invite from $bs for $chan."
-   }  
+   }
   }
   "unban" {
    if {$go_bot_unban} {

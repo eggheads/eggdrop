@@ -1,7 +1,7 @@
 /* 
  * share.c -- part of share.mod
  * 
- * $Id: share.c,v 1.43 2000/10/27 19:34:55 fabian Exp $
+ * $Id: share.c,v 1.44 2000/11/06 04:06:44 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -2110,9 +2110,9 @@ char *share_start(Function *global_funcs)
 
   Context;
   module_register(MODULE_NAME, share_table, 2, 3);
-  if (!module_depend(MODULE_NAME, "eggdrop", 105, 3)) {
+  if (!module_depend(MODULE_NAME, "eggdrop", 106, 0)) {
     module_undepend(MODULE_NAME);
-    return "You need an eggdrop of at least v1.5.3 to use this share module.";
+    return "You need an eggdrop of at least v1.6.0 to use this share module.";
   }
   if (!(transfer_funcs = module_depend(MODULE_NAME, "transfer", 2, 0))) {
     module_undepend(MODULE_NAME);

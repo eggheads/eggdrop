@@ -3,7 +3,7 @@
 #
 # Traduction par Fraggle, voir core.french.lang pour plus d'informations
 #
-# $Id: wire.french.lang,v 1.2 1999/12/21 17:35:32 fabian Exp $
+# $Id: wire.french.lang,v 1.3 2000/11/06 04:06:45 guppy Exp $
 
 0xa000,Vous n'êtes pas sur un wire.
 0xa001,Actuellement sur wire
@@ -15,4 +15,3 @@
 0xa007,a rejoint le wire
 0xa008,a quitté le wire.
 0xa009,WIRE module est en train d'être déchargé.
-0xa00a,Ce module nécessite eggdrop1.4.0 ou supérieur
