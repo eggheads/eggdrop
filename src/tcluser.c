@@ -2,7 +2,7 @@
  * tcluser.c -- handles:
  *   Tcl stubs for the user-record-oriented commands
  *
- * $Id: tcluser.c,v 1.20 2001/05/14 16:17:00 guppy Exp $
+ * $Id: tcluser.c,v 1.21 2001/06/06 21:35:52 poptix Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -455,16 +455,16 @@ static int tcl_killignore STDVAR
 static int tcl_ignorelist STDVAR
 {
   struct igrec *i;
-  char ts[11], *list[5], *p;
+  char expire[11], added[11], *list[5], *p;
 
   BADARGS(1, 1, "");
   for (i = global_ign; i; i = i->next) {
     list[0] = i->igmask;
     list[1] = i->msg;
-    egg_snprintf(ts, sizeof ts, "%lu", i->expire);
-    list[2] = ts;
-    egg_snprintf(ts, sizeof ts, "%lu", i->added);
-    list[3] = ts;
+    egg_snprintf(expire, sizeof expire, "%lu", i->expire);
+    list[2] = expire;
+    egg_snprintf(added, sizeof added, "%lu", i->added);
+    list[3] = added;
     list[4] = i->user;
     p = Tcl_Merge(5, list);
     Tcl_AppendElement(irp, p);
