@@ -1,122 +1,171 @@
-<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
-<html>
-<head>
-   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-   <meta name="GENERATOR" content="Mozilla/4.7 [en] (WinNT; U) [Netscape]">
-   <title>Eggdrop Documentation: Botnet</title>
-</head>
-<body text="#000000" bgcolor="#FFFFFF" link="#3333FF" vlink="#3333FF" alink="#3333FF">
-<b><font face="Arial, Helvetica"><font color="#FF0000"><font size=-1>BOTNET</font></font></font></b>
-<hr>
-<blockquote><font face="Arial, Helvetica"><font size=-1>People starting
-up an eggdrop bot for the first time are usually confused about the "botnet"
-support -- i.e., the ability to link two or more bots together and have
-them merge party lines, and form a sort of miniature irc.</font></font>
-<p><font face="Arial, Helvetica"><font size=-1>In order to link to other
-bots, your bot needs to have a telnet port defined in the config file.
-The default is usually something like 2222 or 3333, but it's wise to choose
-something else, especially if a lot of other people are using the same
-machine. If other eggdrop bots are running from that machine, try to pick
-telnet ports at least 5-10 apart.</font></font>
-<p><font face="Arial, Helvetica"><font size=-1>Sometimes you will specify
-a port, like 3333, but that's not available when eggdrop starts up. On
-most operating systems, it just means the port was in use recently (probably
-by your bot!) and it hasn't had time to reset it yet. So eggdrop will try
-3334, and maybe even 3335, until it gets one. Other bots are aware of this,
-and when they try to connect, if the specified port (3333 in this example)
-doesn't work, they'll try the next few before giving up. If you have one
-bot on 3333, and another on 3334, they will always be bumping into each
-other, and other bots will get confused. That's bad.</font></font>
-<p><font face="Arial, Helvetica"><font size=-1>When you first connect two
-bots together, you need to tell each bot about the other one. To do this,
-use the "+bot" command. You need to know:</font></font>
-<blockquote>
-<li>
-<font face="Arial, Helvetica"><font size=-1>the nickname of the other bot,
-like 'Lamestbot'</font></font></li>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
 
-<li>
-<font face="Arial, Helvetica"><font size=-1>the hostname, like 'maverick.math.uic.edu'</font></font></li>
+<HTML>
+  <HEAD>
+    <TITLE>Eggdrop Documentation: Botnet</TITLE>
+  </HEAD>
 
-<li>
-<font face="Arial, Helvetica"><font size=-1>the telnet port it's using,
-like 2222 or 3454</font></font></li>
-</blockquote>
-<font face="Arial, Helvetica"><font size=-1>The format of the '+bot' command
-is:</font></font>
-<blockquote><i><font face="Arial, Helvetica"><font size=-1>.+bot &lt;nickname>
-&lt;hostname>:&lt;port></font></font></i></blockquote>
-<font face="Arial, Helvetica"><font size=-1>This creates a "bot record"
-for the bot, in your userfile. It's kind of like a user record, but a little
-different. For example, Lamestbot, running from connected.com on port 3454,
-would be:</font></font>
-<blockquote><i><font face="Arial, Helvetica"><font size=-1>.+bot Lamestbot
-connected.com:3454</font></font></i></blockquote>
-<font face="Arial, Helvetica"><font size=-1>Now to connect the bots, one
-of you (but not both!) needs to type:</font></font>
-<blockquote><i><font face="Arial, Helvetica"><font size=-1>.link &lt;botname></font></font></i></blockquote>
-<font face="Arial, Helvetica"><font size=-1>The first time two bots connect,
-they set a password for each other, so that after that, nobody can "fake"
-a connection between the two. You can reset that password later with the
-command:</font></font>
-<blockquote><i><font face="Arial, Helvetica"><font size=-1>.chpass &lt;botname></font></font></i></blockquote>
-<font face="Arial, Helvetica"><font size=-1>The bot record is like a user
-record except for two things:</font></font>
-<blockquote>
-<li>
-<font face="Arial, Helvetica"><font size=-1>If you share userfiles with
-another bot (see below), only user records are shared. The bot records
-will stay on this bot only.</font></font></li>
+  <BODY text="#000000" bgcolor="#FFFFFF" link="#3333FF" vlink="#3333FF"
+  alink="#3333FF">
+    <STRONG><FONT face="Arial, Helvetica" size="-1" color="#FF0000">
+    BOTNET</FONT></STRONG> 
+    <HR>
 
-<li>
-<font face="Arial, Helvetica"><font size=-1>There are special flags that
-can be set for bots, which can't be set for users.</font></font></li>
-</blockquote>
-<font face="Arial, Helvetica"><font size=-1>The special flags you can set
-for bots are:</font></font>
-<blockquote><b><font face="Arial, Helvetica"><font size=-1>h (hub):</font></font></b>
-<br><font face="Arial, Helvetica"><font size=-1>Your bot will try about
-once a minute to link to a hub bot, until it succeeds. Once it's linked
-to one hub, it will no longer try to connect to others.</font></font>
-<p><b><font face="Arial, Helvetica"><font size=-1>a (alternate):</font></font></b>
-<br><font face="Arial, Helvetica"><font size=-1>If no hub bots can be linked,
-your bot will try to link to one of these instead. Once one alternate bot
-is linked, it won't try to connect any others -- although it will still
-try to link to hub bots. If a hub bot connects later, any alternate bot
-could be dropped.</font></font>
-<p><b><font face="Arial, Helvetica"><font size=-1>s (share):</font></font></b>
-<br><font face="Arial, Helvetica"><font size=-1>This means that the bot
-is sharing user records aggressively.</font></font>
-<p><b><font face="Arial, Helvetica"><font size=-1>p (passive):</font></font></b>
-<br><font face="Arial, Helvetica"><font size=-1>This means that the bot
-is to share user records passively with this bot.</font></font>
-<p><b><font face="Arial, Helvetica"><font size=-1>l (leaf):</font></font></b>
-<br><font face="Arial, Helvetica"><font size=-1>If a bot is marked as a
-leaf, that means you don't want it to link any other bots behind it. In
-other words, it can only be connected to the botnet in one place, and no
-other bots may be connected through it.</font></font>
-<p><b><font face="Arial, Helvetica"><font size=-1>r (reject):</font></font></b>
-<br><font face="Arial, Helvetica"><font size=-1>Any bot that has this flag
-will not be permitted on the botnet at all, no matter where it connects.
-This is equivalent to irc's "Q-line".</font></font></blockquote>
-<font face="Arial, Helvetica"><font size=-1>There are also 10 user-defined
-flags (0-9) avaliable for use with bots only.</font></font>
-<p><font face="Arial, Helvetica"><font size=-1><b>N.B.</b>: There's a full
-explanation of these flags and how to use them in the section called <i>"Userfile
-Sharing".</i></font></font>
-<p><font face="Arial, Helvetica"><font size=-1>These flags can all be changed
-by the '.botattr' command just like for users. For example:</font></font>
-<blockquote><i><font face="Arial, Helvetica"><font size=-1>.botattr Valis
-+sh</font></font></i></blockquote>
-<font face="Arial, Helvetica"><font size=-1>There are several chains of
-connected bots out there. See the 'nets' file for a list of the various
-botnets around. If the flags above seem confusing, don't worry. Usually
-the only one you need to worry about is the +h flag. And most botnets have
-a policy about what flags you should set when hooking in, and they'll tell
-you what to set.</font></font></blockquote>
+    <BLOCKQUOTE>
+      <FONT face="Arial, Helvetica" size="-1">People starting up an Eggdrop
+      bot for the first time are usually confused about the
+      &quot;botnet&quot; support -- i.e., the ability to link two or more
+      bots together and have them merge party lines, and form a sort of
+      miniature IRC.</FONT> 
 
-<hr><i><font face="Arial, Helvetica"><font size=-1>(c) 1997 Robey Pointer</font></font></i>
-<br><i><font face="Arial, Helvetica"><font size=-1>(c) 2000 Eggheads Development
-Team</font></font></i>
-</body>
-</html>
+      <P><FONT face="Arial, Helvetica" size="-1">In order to link to other
+      bots, your bot needs to have a telnet port defined in the config file.
+      The default is usually something like 2222 or 3333, but it&#39;s wise
+      to choose something else, especially if a lot of other people are using
+      the same machine. If other Eggdrop bots are running from that machine,
+      try to pick telnet ports at least 5-10 apart.</FONT></P>
+
+      <P><FONT face="Arial, Helvetica" size="-1">Sometimes you will specify a
+      port, like 3333, but that&#39;s not available when Eggdrop starts up.
+      On most operating systems, it just means the port was in use recently
+      (probably by your bot!) and it hasn&#39;t had time to reset it yet. So
+      Eggdrop will try 3334, and maybe even 3335, until it gets one. Other
+      bots are aware of this, and when they try to connect, if the specified
+      port (3333 in this example) doesn&#39;t work, they&#39;ll try the next
+      few before giving up. If you have one bot on 3333, and another on 3334,
+      they will always be bumping into each other, and other bots will get
+      confused. That&#39;s bad.</FONT></P>
+
+      <P><FONT face="Arial, Helvetica" size="-1">When you first connect two
+      bots together, you need to tell each bot about the other one. To do
+      this, use the &quot;+bot&quot; command. You need to know:</FONT></P>
+
+      <BLOCKQUOTE>
+        <UL>
+          <LI><FONT face="Arial, Helvetica" size="-1">the nickname of the
+          other bot, like &#39;Lamestbot&#39;</FONT></LI>
+
+          <LI><FONT face="Arial, Helvetica" size="-1">the hostname, like
+          &#39;maverick.math.uic.edu&#39;</FONT></LI>
+
+          <LI><FONT face="Arial, Helvetica" size="-1">the telnet port
+          it&#39;s using, like 2222 or 3454</FONT></LI>
+        </UL>
+      </BLOCKQUOTE>
+      <FONT face="Arial, Helvetica" size="-1">The format of the
+      &#39;+bot&#39; command is:</FONT> 
+
+      <BLOCKQUOTE>
+        <EM><FONT face="Arial, Helvetica" size="-1">.+bot &lt;nickname&gt;
+        &lt;hostname&gt;:&lt;port&gt;</FONT></EM>
+      </BLOCKQUOTE>
+      <FONT face="Arial, Helvetica" size="-1">This creates a &quot;bot
+      record&quot; for the bot, in your userfile. It&#39;s kind of like a
+      user record, but a little different. For example, Lamestbot, running
+      from connected.com on port 3454, would be:</FONT> 
+
+      <BLOCKQUOTE>
+        <EM><FONT face="Arial, Helvetica" size="-1">.+bot Lamestbot
+        connected.com:3454</FONT></EM>
+      </BLOCKQUOTE>
+      <FONT face="Arial, Helvetica" size="-1">Now to connect the bots, one of
+      you (but not both!) needs to type:</FONT> 
+
+      <BLOCKQUOTE>
+        <EM><FONT face="Arial, Helvetica" size="-1">.link
+        &lt;botname&gt;</FONT></EM>
+      </BLOCKQUOTE>
+      <FONT face="Arial, Helvetica" size="-1">The first time two bots
+      connect, they set a password for each other, so that after that, nobody
+      can &quot;fake&quot; a connection between the two. You can reset that
+      password later with the command:</FONT> 
+
+      <BLOCKQUOTE>
+        <EM><FONT face="Arial, Helvetica" size="-1">.chpass
+        &lt;botname&gt;</FONT></EM>
+      </BLOCKQUOTE>
+      <FONT face="Arial, Helvetica" size="-1">The bot record is like a user
+      record except for two things:</FONT> 
+
+      <BLOCKQUOTE>
+        <UL>
+          <LI><FONT face="Arial, Helvetica" size="-1">If you share userfiles
+          with another bot (see below), only user records are shared. The bot
+          records will stay on this bot only.</FONT></LI>
+
+          <LI><FONT face="Arial, Helvetica" size="-1">There are special flags
+          that can be set for bots, which can&#39;t be set for
+          users.</FONT></LI>
+        </UL>
+      </BLOCKQUOTE>
+      <FONT face="Arial, Helvetica" size="-1">The special flags you can set
+      for bots are:</FONT> 
+
+      <BLOCKQUOTE>
+        <STRONG><FONT face="Arial, Helvetica" size="-1">h
+        (hub):</FONT></STRONG><BR>
+         <FONT face="Arial, Helvetica" size="-1">Your bot will try about once
+        a minute to link to a hub bot, until it succeeds. Once it&#39;s
+        linked to one hub, it will no longer try to connect to others.</FONT>
+        
+
+        <P><STRONG><FONT face="Arial, Helvetica" size="-1">a
+        (alternate):</FONT></STRONG><BR>
+         <FONT face="Arial, Helvetica" size="-1">If no hub bots can be
+        linked, your bot will try to link to one of these instead. Once one
+        alternate bot is linked, it won&#39;t try to connect any others --
+        although it will still try to link to hub bots. If a hub bot connects
+        later, any alternate bot could be dropped.</FONT></P>
+
+        <P><STRONG><FONT face="Arial, Helvetica" size="-1">s
+        (share):</FONT></STRONG><BR>
+         <FONT face="Arial, Helvetica" size="-1">This means that the bot is
+        sharing user records aggressively.</FONT></P>
+
+        <P><STRONG><FONT face="Arial, Helvetica" size="-1">p
+        (passive):</FONT></STRONG><BR>
+         <FONT face="Arial, Helvetica" size="-1">This means that the bot is
+        to share user records passively with this bot.</FONT></P>
+
+        <P><STRONG><FONT face="Arial, Helvetica" size="-1">l
+        (leaf):</FONT></STRONG><BR>
+         <FONT face="Arial, Helvetica" size="-1">If a bot is marked as a
+        leaf, that means you don&#39;t want it to link any other bots behind
+        it. In other words, it can only be connected to the botnet in one
+        place, and no other bots may be connected through it.</FONT></P>
+
+        <P><STRONG><FONT face="Arial, Helvetica" size="-1">r
+        (reject):</FONT></STRONG><BR>
+         <FONT face="Arial, Helvetica" size="-1">Any bot that has this flag
+        will not be permitted on the botnet at all, no matter where it
+        connects. This is equivalent to an IRC&#39;s
+        &quot;Q-line&quot;.</FONT></P>
+      </BLOCKQUOTE>
+      <FONT face="Arial, Helvetica" size="-1">There are also 10 user-defined
+      flags (0-9) available for use with bots only.</FONT> 
+
+      <P><FONT face="Arial, Helvetica" size="-1"><STRONG> N.B.</STRONG>:
+      There&#39;s a full explanation of these flags and how to use them in
+      the section called <EM> &quot;Userfile Sharing&quot;.</EM></FONT></P>
+
+      <P><FONT face="Arial, Helvetica" size="-1">These flags can all be
+      changed by the &#39;.botattr&#39; command just like for users. For
+      example:</FONT></P>
+
+      <BLOCKQUOTE>
+        <EM><FONT face="Arial, Helvetica" size="-1">.botattr Valis
+        +sh</FONT></EM>
+      </BLOCKQUOTE>
+      <FONT face="Arial, Helvetica" size="-1">There are several chains of
+      connected bots out there. See the &#39;nets&#39; file for a list of the
+      various botnets around. If the flags above seem confusing, don&#39;t
+      worry. Usually the only one you need to worry about is the +h flag. And
+      most botnets have a policy about what flags you should set when hooking
+      in, and they&#39;ll tell you what to set.</FONT>
+    </BLOCKQUOTE>
+    <HR>
+    <EM><FONT face="Arial, Helvetica" size="-1">&copy; 1997 Robey Pointer<BR>
+     &copy; 1999,2000 Eggheads Development Team</FONT></EM>
+  </BODY>
+</HTML>
+

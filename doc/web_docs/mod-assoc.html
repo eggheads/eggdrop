@@ -6,29 +6,50 @@
    <title>Eggdrop Documentation: Assoc Module</title>
 </head>
 <body text="#000000" bgcolor="#FFFFFF" link="#3333FF" vlink="#3333FF" alink="#3333FF">
-<b><font face="Arial, Helvetica"><font color="#FF0000"><font size=-1>ASSOC
-MODULE
-<hr>TCL COMMANDS:</font></font></font></b>
-<blockquote><b><font face="Arial, Helvetica"><font size=-1>assoc &lt;chan>
-[name]</font></font></b>
-<br><font face="Arial, Helvetica"><font size=-1>sets the name associated
-with a botnet channel, if you specify one</font></font>
-<br><i><font face="Arial, Helvetica"><font size=-1>returns: current name
-for that channel, if any</font></font></i>
-<p><b><font face="Arial, Helvetica"><font size=-1>killassoc &lt;chan></font></font></b>
-<br><font face="Arial, Helvetica"><font size=-1>removes the name associated
+<b><font face="Arial, Helvetica" color="#FF0000" size=-1>ASSOC
+MODULE Last modified 06 April 2000</font></b>
+<hr>
+<br>
+<font face="Arial, Helvetica" color="#000000" size=-1>
+This module provides assoc support, i.e. naming channels on the botnet
+<blockquote>
+<a href="#config">Config file settings</a><br>
+<a href="#tcl">TCL commands</a><br>
+<a href="#tclvar">TCL variables</a>
+</blockquote>
+</font>
+<hr>
+<a name="config"></a>
+<b><font face="Arial, Helvetica" color="#FF0000" size=-1>Config file settings</font></b>
+<br><blockquote>
+<font face="Arial, Helvetica" color="#000000" size=-1>
+<font color="#ff0000">##### ASSOC MODULE #####</font><br><br>
+Put this line into your eggdrop.conf.dist file to load assoc module:<br><br>
+<b>loadmodule assoc</b>
+<br>
+</font>
+</blockquote>
+<hr><a name="tcl"></a><b><font face="Arial, Helvetica" color="#FF0000" size=-1>TCL COMMANDS:</font></b>
+<blockquote><b><font face="Arial, Helvetica" size=-1>assoc &lt;chan>
+[name]</font></b>
+<br><font face="Arial, Helvetica" size=-1>sets the name associated
+with a botnet channel, if you specify one</font>
+<br><i><font face="Arial, Helvetica" size=-1>returns: current name
+for that channel, if any</font></i>
+<p><b><font face="Arial, Helvetica" size=-1>killassoc &lt;chan></font></b>
+<br><font face="Arial, Helvetica" size=-1>removes the name associated
 with a botnet channel, if any exists, use 'killassoc &amp;' to kill all
-assocs.</font></font>
-<br><i><font face="Arial, Helvetica"><font size=-1>returns: nothing</font></font></i></blockquote>
+assocs.</font>
+<br><i><font face="Arial, Helvetica" size=-1>returns: nothing</font></i></blockquote>
 
-<hr><b><font face="Arial, Helvetica"><font color="#FF0000"><font size=-1>TCL
-VARIABLES:</font></font></font></b>
-<blockquote><b><font face="Arial, Helvetica"><font size=-1>assoc-length</font></font></b>
-<br><font face="Arial, Helvetica"><font size=-1>maximum length of assoc
-name to store.</font></font></blockquote>
+<hr><b><a name="tclvar"></a><font face="Arial, Helvetica" color="#FF0000" size=-1>TCL
+VARIABLES:</font></b>
+<blockquote><b><font face="Arial, Helvetica" size=-1>assoc-length</font></b>
+<br><font face="Arial, Helvetica" size=-1>maximum length of assoc
+name to store.</font></blockquote>
 
-<hr><i><font face="Arial, Helvetica"><font size=-1>(c) 1997 Robey Pointer</font></font></i>
-<br><i><font face="Arial, Helvetica"><font size=-1>(c) 2000 Eggheads Development
-Team</font></font></i>
+<hr><i><font face="Arial, Helvetica" size=-1>&copy; 1997 Robey Pointer</font></i>
+<br><i><font face="Arial, Helvetica" size=-1>&copy; 1999,2000 Eggheads Development
+Team</font></i>
 </body>
 </html>

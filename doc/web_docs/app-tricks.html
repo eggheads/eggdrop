@@ -1,99 +1,120 @@
-<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
-<html>
-<head>
-   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-   <meta name="GENERATOR" content="Mozilla/4.7 [en] (WinNT; U) [Netscape]">
-   <title>Eggdrop Documentation: Tricks</title>
-</head>
-<body text="#000000" bgcolor="#FFFFFF" link="#3333FF" vlink="#3333FF" alink="#3333FF">
-<b><font face="Arial, Helvetica"><font color="#FF0000"><font size=-1>TRICKS</font></font></font></b>
-<hr>
-<br><font face="Arial, Helvetica"><font size=-1>Some little tricks that
-you may or may not know about...</font></font>
-<br><font face="Arial, Helvetica"><font size=-1></font></font>&nbsp;
-<blockquote>
-<ul>
-<li>
-<font face="Arial, Helvetica"><font size=-1>You can "lock" a user's info
-line by putting a '@' as the first letter. They won't be able to change
-it any more.</font></font></li>
-</ul>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
 
-<ul>
-<li>
-<font face="Arial, Helvetica"><font size=-1>'.status all' will dump out
-virtually everything you have configured on your bot</font></font></li>
-</ul>
-</blockquote>
+<HTML>
+  <HEAD>
+    <TITLE>Eggdrop Documentation: Tricks</TITLE>
+  </HEAD>
 
-<blockquote>
-<ul>
-<li>
-<font face="Arial, Helvetica"><font size=-1>TCL has a command 'info body
-&lt;proc>' that will list the contents of a proc.&nbsp; 'info args &lt;proc>'
-shows what you have defined as the parameters for the proc.</font></font></li>
-</ul>
+  <BODY text="#000000" bgcolor="#FFFFFF" link="#3333FF" vlink="#3333FF"
+  alink="#3333FF">
+    <STRONG><FONT face="Arial, Helvetica" size="-1" color="#FF0000">
+    TRICKS</FONT></STRONG> 
+    <HR>
+    <BR>
+     <FONT face="Arial, Helvetica" size="-1">Some little tricks that you may
+    or may not know about...</FONT><BR>
+     
 
-<ul>
-<li>
-<font face="Arial, Helvetica"><font size=-1>You can rename a builtin command
-by binding over it.&nbsp; To rename '.status' to '.report', you'd do:</font></font></li>
+    <BLOCKQUOTE>
+      <UL>
+        <LI><FONT face="Arial, Helvetica" size="-1">You can &quot;lock&quot;
+        a user&#39;s info line by putting a &#39;@&#39; as the first letter.
+        They won&#39;t be able to change it any more.</FONT></LI>
+      </UL>
 
-<br><font face="Arial, Helvetica"><font size=-1>unbind dcc - status *dcc:status</font></font>
-<br><font face="Arial, Helvetica"><font size=-1>bind dcc m report *dcc:status</font></font><font face="Arial, Helvetica"><font size=-1></font></font>
-<p><font face="Arial, Helvetica"><font size=-1>The first line removes the
-builtin binding on '.status', and the second line binds '.report' to the
-builtin status function.&nbsp; Other built-in command examples include:</font></font><font face="Arial, Helvetica"><font size=-1></font></font>
-<p><font face="Arial, Helvetica"><font size=-1>&nbsp;&nbsp;&nbsp;&nbsp;
-unbind msg - status *msg:status</font></font>
-<br><font face="Arial, Helvetica"><font size=-1>&nbsp;&nbsp;&nbsp;&nbsp;
-bind msg m report *msg:status</font></font><font face="Arial, Helvetica"><font size=-1></font></font>
-<p><font face="Arial, Helvetica"><font size=-1>and:</font></font><font face="Arial, Helvetica"><font size=-1></font></font>
-<p><font face="Arial, Helvetica"><font size=-1>&nbsp;&nbsp;&nbsp;&nbsp;
-unbind fil - share *fil:share</font></font>
-<br><font face="Arial, Helvetica"><font size=-1>&nbsp;&nbsp;&nbsp;&nbsp;
-bind fil m link *fil:share</font></font></ul>
+      <UL>
+        <LI><FONT face="Arial, Helvetica" size="-1">&#39;.status all&#39;
+        will dump out virtually everything you have configured on your
+        bot</FONT></LI>
+      </UL>
+    </BLOCKQUOTE>
 
-<ul>
-<li>
-<font face="Arial, Helvetica"><font size=-1>You can unlink all bots and
-clear out the botnet info from memory by using '.unlink *'.&nbsp; It erases
-all channel assoc's and everything.</font></font></li>
-</ul>
+    <BLOCKQUOTE>
+      <UL>
+        <LI><FONT face="Arial, Helvetica" size="-1">TCL has a command
+        &#39;info body &lt;proc&gt;&#39; that will list the contents of a
+        proc.&nbsp; &#39;info args &lt;proc&gt;&#39; shows what you have
+        defined as the parameters for the proc.</FONT></LI>
+      </UL>
 
-<ul>
-<li>
-<font face="Arial, Helvetica"><font size=-1>You can automagically make
-a ban sticky by adding a * as the first character in the ban reason.</font></font></li>
-</ul>
+      <UL>
+        <LI><FONT face="Arial, Helvetica" size="-1">You can rename a builtin
+        command by binding over it.&nbsp; To rename &#39;.status&#39; to
+        &#39;.report&#39;, you&#39;d do:</FONT></LI>
 
-<ul>
-<li>
-<font face="Arial, Helvetica"><font size=-1>You can add a user with a static
-hostmask when using .adduser by prefixing their nick by !.</font></font></li>
+        <LI>
+          <BR>
+           <FONT face="Arial, Helvetica" size="-1">unbind dcc - status
+          *dcc:status</FONT><BR>
+           <FONT face="Arial, Helvetica" size="-1">bind dcc m report
+          *dcc:status</FONT> 
 
-<br><font face="Arial, Helvetica"><font size=-1>&nbsp;ie with a hostmask
-of drummer!ident@some.host.com</font></font>
-<br><font face="Arial, Helvetica"><font size=-1>&nbsp;</font></font>
-<br><font face="Arial, Helvetica"><font size=-1>.adduser drummer</font></font><font face="Arial, Helvetica"><font size=-1></font></font>
-<p><font face="Arial, Helvetica"><font size=-1>&nbsp;uses *!ident@*.host.com</font></font>
-<br><font face="Arial, Helvetica"><font size=-1>&nbsp;.adduser !drummer</font></font>
-<br><font face="Arial, Helvetica"><font size=-1>&nbsp;</font></font>
-<br><font face="Arial, Helvetica"><font size=-1>uses *!ident@some.host.com</font></font></ul>
+          <P><FONT face="Arial, Helvetica" size="-1">The first line removes
+          the builtin binding on &#39;.status&#39;, and the second line binds
+          &#39;.report&#39; to the builtin status function.&nbsp; Other
+          built-in command examples include:</FONT></P>
 
-<ul>
-<li>
-<font face="Arial, Helvetica"><font size=-1>If you don't want your logfiles
-to be deleted after two days and don't want the bot to create a new logfile
-each new day, then set 'keep-all-logs' to 0 and 'switch-logfiles-at' to
-2500 in your bot config file to make it keeping one logfile all the time.
-However this is not recommended on high traffic channels.</font></font></li>
-</ul>
-</blockquote>
-<font face="Arial, Helvetica"><font size=-1></font></font>
-<p><br>
-<hr><i><font face="Arial, Helvetica"><font size=-1>(c) 1997 Robey Pointer</font></font></i>
-<br><i><font face="Arial, Helvetica"><font size=-1>(c) 2000 Eggheads Development
-Team</font></font></i>
-</body>
-</html>
+          <P><FONT face="Arial, Helvetica" size="-1">
+          &nbsp;&nbsp;&nbsp;&nbsp; unbind msg - status *msg:status</FONT><BR>
+           <FONT face="Arial, Helvetica" size="-1"> &nbsp;&nbsp;&nbsp;&nbsp;
+          bind msg m report *msg:status</FONT></P>
+
+          <P><FONT face="Arial, Helvetica" size="-1"> and:</FONT></P>
+
+          <P><FONT face="Arial, Helvetica" size="-1">
+          &nbsp;&nbsp;&nbsp;&nbsp; unbind fil - share *fil:share</FONT><BR>
+           <FONT face="Arial, Helvetica" size="-1"> &nbsp;&nbsp;&nbsp;&nbsp;
+          bind fil m link *fil:share</FONT></P>
+        </LI>
+      </UL>
+
+      <UL>
+        <LI><FONT face="Arial, Helvetica" size="-1">You can unlink all bots
+        and clear out the botnet info from memory by using &#39;.unlink
+        *&#39;.&nbsp; It erases all channel assocs and
+        everything.</FONT></LI>
+      </UL>
+
+      <UL>
+        <LI><FONT face="Arial, Helvetica" size="-1">You can automagically
+        make a ban sticky by adding a * as the first character in the ban
+        reason.</FONT></LI>
+      </UL>
+
+      <UL>
+        <LI>
+          <FONT face="Arial, Helvetica" size="-1">You can add a user with a
+          static hostmask when using .adduser by prefixing their nick by
+          !.</FONT><BR>
+           
+
+          <P>ie with a hostmask of drummer!ident@some.host.com<BR>
+           <FONT face="Arial, Helvetica" size="-1"> &nbsp;</FONT><BR>
+           <FONT face="Arial, Helvetica" size="-1">.adduser
+          drummer</FONT></P>
+
+          <P><FONT face="Arial, Helvetica" size="-1">&nbsp;uses
+          *!ident@*.host.com</FONT><BR>
+           <FONT face="Arial, Helvetica" size="-1">&nbsp;.adduser
+          !drummer</FONT><BR>
+           <FONT face="Arial, Helvetica" size="-1"> &nbsp;</FONT><BR>
+           <FONT face="Arial, Helvetica" size="-1">uses
+          *!ident@some.host.com</FONT></P>
+        </LI>
+      </UL>
+
+      <UL>
+        <LI><FONT face="Arial, Helvetica" size="-1">If you don&#39;t want
+        your logfiles to be deleted after two days and don&#39;t want the bot
+        to create a new logfile each new day, then set
+        &#39;keep-all-logs&#39; to 0 and &#39;switch-logfiles-at&#39; to 2500
+        in your bot config file to make it keeping one logfile all the time.
+        However this is not recommended on high traffic channels.</FONT></LI>
+      </UL>
+    </BLOCKQUOTE>
+    <HR>
+    <EM><FONT face="Arial, Helvetica" size="-1">&copy; 1997 Robey Pointer<BR>
+     &copy; 1999,2000 Eggheads Development Team</FONT></EM>
+  </BODY>
+</HTML>
+

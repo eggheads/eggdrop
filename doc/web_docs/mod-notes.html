@@ -6,64 +6,130 @@
    <title>Eggdrop Documentation: Notes Module</title>
 </head>
 <body text="#000000" bgcolor="#FFFFFF" link="#3333FF" vlink="#3333FF" alink="#3333FF">
-<b><font face="Arial, Helvetica"><font color="#FF0000"><font size=-1>NOTES
-MODULE
-<hr>TCL COMMANDS:</font></font></font></b>
-<blockquote><b><font face="Arial, Helvetica"><font size=-1>notes &lt;user>
-[number]</font></font></b>
-<br><font face="Arial, Helvetica"><font size=-1>gets info on notes stored
-for a user</font></font>
-<br><i><font face="Arial, Helvetica"><font size=-1>returns: (if no numbers
+<b><font face="Arial, Helvetica" color="#FF0000" size=-1>NOTES
+MODULE Last modified 06 April 2000</font></b>
+<hr><br>
+<font face="Arial, Helvetica" color="#000000" size=-1>
+This module provides support for storing of notes for users from each
+other notes between currently online users is supported in the core,
+this is only for storing the notes for later retrieval, direct
+user->user notes are built-in
+<br>
+<blockquote>
+<a href="#config">Config file settings</a><br>
+<a href="#tcl">TCL commands</a><br>
+<a href="#binds">TCL bindings</a>
+</blockquote>
+</font>
+<hr>
+<b><a name="config"></a><font face="Arial, Helvetica" color="#FF0000" size=-1>Config file settings</font></b><br>
+<font face="Arial, Helvetica" color="#000000" size=-1><br>
+Lines in bold are the lines that should be included in the eggdrop config file if you want to use
+the NOTES module. <br>
+Lines in bold italics are optional and only required if you wish to change the default behaviour
+for that particular feature.<br>
+<br>
+<blockquote>
+<font color="#ff0000">##### NOTES MODULE #####</font><br>
+<br>
+Put this line into your eggdrop.conf.dist file to load notes module:<br><br>
+<b>loadmodule notes</b><br><br>
+There are also some variables you can to set in your config file:<br><br>
+
+<b>set notefile "LamestBot.notes"</b>
+<blockquote>
+    Enter here the filename where private notes between users are
+    stored
+</blockquote>
+
+<b><i>set max-notes 50</i></b>
+<blockquote>
+    Set here the maximum number of notes to allow to be stored for
+    each user (to prevent flooding)<br>
+    Valid settings are 0-99999
+</blockquote>
+
+<b><i>set note-life 60</i></b>
+<blockquote>
+    Set here how long (in days) to store notes before expiring them<br>
+    Valid settings are 0-99999
+</blockquote>
+<b><i>set allow-fwd 0</i></b>
+<blockquote>
+    Set this to 1 if you want to allow users to specify a forwarding
+    address for forwarding notes to another account on another bot.<br>
+    Valid settings are 0 for OFF and 1 ON.
+</blockquote>
+<b><i>set notify-users 1</i></b>
+<blockquote>
+    Set this to 1 if you want the bot to let people know hourly if they
+    have any notes<br>
+    Valid settings are 0 for OFF and 1 ON.
+</blockquote>
+<b><i>set notify-onjoin 1</i></b>
+<blockquote>
+    Set this to 1 if you want the bot to let people know on join if they
+    have any notes<br>
+    Valid settings are 0 for OFF and 1 ON.
+</blockquote>
+</blockquote>
+</font>
+<hr><b><a name="tcl"></a><font face="Arial, Helvetica" color="#FF0000" size=-1>TCL COMMANDS:</font></b>
+<blockquote><b><font face="Arial, Helvetica" size=-1>notes &lt;user>
+[number]</font></b>
+<br><font face="Arial, Helvetica" size=-1>gets info on notes stored
+for a user</font>
+<br><i><font face="Arial, Helvetica" size=-1>returns: (if no numbers
 specified) number of notes for user, -1 if no such user, -2 if notefile
 failure (if a note number specified) the number'th note for the user, -1
 if no such user, -2 if notefile failure, 0 if no such note. the note is
 a list, first element from, 2nd element timestamp, 3rd element the note
-itself</font></font></i><i><font face="Arial, Helvetica"><font size=-1></font></font></i>
-<p><b><font face="Arial, Helvetica"><font size=-1>erasenotes &lt;user>
-&lt;numberlist></font></font></b>
-<br><font face="Arial, Helvetica"><font size=-1>erases some or all stored
-notes for a user</font></font>
-<br><i><font face="Arial, Helvetica"><font size=-1>returns: -1 if no such
+itself</font></i><i><font face="Arial, Helvetica" size=-1></font></i>
+<p><b><font face="Arial, Helvetica" size=-1>erasenotes &lt;user>
+&lt;numberlist></font></b>
+<br><font face="Arial, Helvetica" size=-1>erases some or all stored
+notes for a user</font>
+<br><i><font face="Arial, Helvetica" size=-1>returns: -1 if no such
 user, -2 if notefile failure, 0 if no such note, or number of erased notes.
-'erasenote mynick "-"' erase all notes for mynick.</font></font></i><font face="Arial, Helvetica"><font size=-1></font></font>
-<p><b><font face="Arial, Helvetica"><font size=-1>listnotes &lt;user> &lt;numberlist></font></font></b>
-<br><font face="Arial, Helvetica"><font size=-1>lists existing notes according
-to the numberlist (ex: "2-4;8;16-")</font></font>
-<br><i><font face="Arial, Helvetica"><font size=-1>returns: -1 if no such
-user, -2 if notefile failure, 0 if no such note, list of existing notes.</font></font></i>
-<p><b><font face="Arial, Helvetica"><font size=-1>storenote &lt;from> &lt;to>
-&lt;msg> &lt;idx></font></font></b>
-<br><font face="Arial, Helvetica"><font size=-1>stores a note for later
-reading, notify idx of any results (use idx == -1 for no notify).</font></font>
-<br><i><font face="Arial, Helvetica"><font size=-1>returns: 0 on success
-non-0 on failure</font></font></i>
-<p><b><font face="Arial, Helvetica"><font size=-1>sendnote &lt;from> &lt;to>
-&lt;message></font></font></b>
-<br><font face="Arial, Helvetica"><font size=-1>simulates what happens
-when one user sends a note to another (this can also do cross-bot notes)</font></font>
-<br><i><font face="Arial, Helvetica"><font size=-1>returns: "1" if the
+'erasenote mynick "-"' erase all notes for mynick.</font></i><font face="Arial, Helvetica" size=-1></font>
+<p><b><font face="Arial, Helvetica" size=-1>listnotes &lt;user> &lt;numberlist></font></b>
+<br><font face="Arial, Helvetica" size=-1>lists existing notes according
+to the numberlist (ex: "2-4;8;16-")</font>
+<br><i><font face="Arial, Helvetica" size=-1>returns: -1 if no such
+user, -2 if notefile failure, 0 if no such note, list of existing notes.</font></i>
+<p><b><font face="Arial, Helvetica" size=-1>storenote &lt;from> &lt;to>
+&lt;msg> &lt;idx></font></b>
+<br><font face="Arial, Helvetica" size=-1>stores a note for later
+reading, notify idx of any results (use idx == -1 for no notify).</font>
+<br><i><font face="Arial, Helvetica" size=-1>returns: 0 on success
+non-0 on failure</font></i>
+<p><b><font face="Arial, Helvetica" size=-1>sendnote &lt;from> &lt;to>
+&lt;message></font></b>
+<br><font face="Arial, Helvetica" size=-1>simulates what happens
+when one user sends a note to another (this can also do cross-bot notes)</font>
+<br><i><font face="Arial, Helvetica" size=-1>returns: "1" if the
 note was delivered locally or sent to another bot, "2" if the note was
 stored locally, "3" if the user's notebox is too full to store a note,
 "4" if a Tcl binding caught the note, "5" if the note was stored because
-the user is away, or "0" if the send failed</font></font></i>
+the user is away, or "0" if the send failed</font></i>
 <br>&nbsp;
 <br>&nbsp;</blockquote>
 
-<hr><b><font face="Arial, Helvetica"><font color="#FF0000"><font size=-1>BINDING(S)
-TABLE(S):</font></font></font></b>
-<blockquote><b><font face="Arial, Helvetica"><font size=-1>NOTE</font></font></b>
-<blockquote><font face="Arial, Helvetica"><font size=-1>bind note &lt;flags>
-&lt;nickname> &lt;proc></font></font>
-<br><font face="Arial, Helvetica"><font size=-1>proc-name &lt;from> &lt;to>
-&lt;text></font></font></blockquote>
-<font face="Arial, Helvetica"><font size=-1>incoming notes (either from
+<hr><b><a name="binds"></a><font face="Arial, Helvetica" color="#FF0000" size=-1>BINDING(S)
+TABLE(S):</font></b>
+<blockquote><b><font face="Arial, Helvetica" size=-1>NOTE</font></b>
+<blockquote><font face="Arial, Helvetica" size=-1>bind note &lt;flags>
+&lt;nickname> &lt;proc></font>
+<br><font face="Arial, Helvetica" size=-1>proc-name &lt;from> &lt;to>
+&lt;text></font></blockquote>
+<font face="Arial, Helvetica" size=-1>incoming notes (either from
 the party line, someone on IRC, or someone on another bot on the botnet)
 are checked against these binds before being process; if a bind exists,
 the bot will not deliver the note; the nickname must be an exact match
-(no wild- cards), but it is not case sensitive; flags is ignored</font></font></blockquote>
+(no wild- cards), but it is not case sensitive; flags is ignored</font></blockquote>
 
-<hr><i><font face="Arial, Helvetica"><font size=-1>(c) 1997 Robey Pointer</font></font></i>
-<br><i><font face="Arial, Helvetica"><font size=-1>(c) 2000 Eggheads Development
-Team</font></font></i>
+<hr><i><font face="Arial, Helvetica" size=-1>&copy; 1997 Robey Pointer</font></i>
+<br><i><font face="Arial, Helvetica" size=-1>&copy; 1999,2000 Eggheads Development
+Team</font></i>
 </body>
 </html>

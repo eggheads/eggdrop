@@ -1,32 +1,83 @@
-<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
-<html>
-<head>
-   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-   <meta name="GENERATOR" content="Mozilla/4.7 [en] (WinNT; U) [Netscape]">
-   <meta name="Author" content="Jason Ede">
-   <title>Eggdrop Documentation: Compress Module</title>
-</head>
-<body text="#000000" bgcolor="#FFFFFF" link="#3333FF" vlink="#3333FF" alink="#3333FF">
-<b><font face="Arial, Helvetica"><font color="#FF0000"><font size=-1>COMPRESS
-MODULE
-<hr>TCL COMMANDS:</font></font></font></b>
-<blockquote><b><font face="Arial, Helvetica"><font size=-1>compresstofile&nbsp;&nbsp;
-&lt;src-file> &lt;target-file> &lt;mode></font></font></b>
-<br><b><font face="Arial, Helvetica"><font size=-1>uncompresstofile &lt;src-file>
-&lt;target-file></font></font></b>
-<br><b><font face="Arial, Helvetica"><font size=-1>compressfile&nbsp;&nbsp;&nbsp;&nbsp;
-&lt;file> &lt;mode></font></font></b>
-<br><b><font face="Arial, Helvetica"><font size=-1>uncompressfile&nbsp;&nbsp;
-&lt;file></font></font></b>
-<br><font face="Arial, Helvetica"><font size=-1>Compress or uncompress
-files. The file is either overwritten with the un-/compressed file (un-/compressfile
-commands) or saved to a new location (un-/compresstofile commands).&nbsp;
-The &lt;mode> specifies the compression mode to use. Available modes are
-from 0 (least CPU usage, least compression) upto 9 (maximal CPU usage,
-maximal compression).</font></font></blockquote>
+<!-- saved from url=(0022)http://internet.e-mail -->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+<TITLE>Eggdrop Documentation: COMPRESS Module</TITLE>
+</HEAD>
+<BODY aLink=#3333ff bgColor=#ffffff link=#3333ff text=#000000 vLink=#3333ff>
+<FONT face="Arial, Helvetica" color=#000000 size=-1>
+<B><FONT color=#ff0000>COMPRESS MODULE&nbsp;&nbsp;&nbsp;&nbsp; Last modified 24th March 2000</FONT></B> 
+<HR>
 
-<hr><i><font face="Arial, Helvetica"><font size=-1>(c) 1997 Robey Pointer</font></font></i>
-<br><i><font face="Arial, Helvetica"><font size=-1>(c) 2000 Eggheads Development
-Team</font></font></i>
-</body>
-</html>
+<P>This module provides the bot with a zlib interface. It can be used to compress files via tcl or to transfer the userfile compressed during the share process.
+<BR>
+&nbsp; 
+
+<BLOCKQUOTE>
+<A href="#config">Config file settings</A><br>
+<A href="#tcl">TCL commands</A>
+</BLOCKQUOTE>
+<HR width="100%">
+
+<BR>
+<A name=config><B><FONT color=#ff0000>Config file settings</font></B></A>
+<P>
+
+
+Lines in bold are the lines that need to be included in the eggdrop config file if you want to use the compress module.<BR>
+Lines in bold italics are optional and only required if you wish to change the default behaviour for that particular feature.<BR>&nbsp;
+
+<BLOCKQUOTE>
+<FONT color=#ff0000>##### COMPRESS MODULE #####</font><P>
+Put this line into your config file to load compress module:<P>
+
+<B>loadmodule share</B><p>
+
+There are also some variables you can to set in your config file:<P>
+
+<B><I>set share-compressed 1</I></B> 
+<BLOCKQUOTE>
+This setting makes the bot send the userfile during share transfer compressed.<BR>
+Valid settings: 1 to enable, 0 to disable.
+</BLOCKQUOTE>
+
+<B><I>set compress-level 9</I></B> 
+<BLOCKQUOTE>
+Set here the gzip compression mode you want to use.<BR>
+Valid settings: 0 (least CPU usage, least compression) upto 9 (maximal CPU usage, maximal compression).
+</BLOCKQUOTE>
+
+</BLOCKQUOTE>
+<HR width="100%">
+<BR>
+<A name=tcl><B><FONT color=#ff0000>TCL commands:</FONT></B></A>
+
+<BLOCKQUOTE>
+<B>compresstofile &lt;src-file&gt; &lt;target-file&gt; &lt;mode&gt;</B><BR>
+Compress src-file to target-file by using a compression mode from 0 (least CPU usage, least compression) upto 9 (maximal CPU usage, maximal compression).
+</BLOCKQUOTE>
+<P>
+
+<BLOCKQUOTE>
+<B>uncompresstofile &lt;src-file&gt; &lt;target-file&gt;</B><BR>
+Uncompress src-file to target-file.
+</BLOCKQUOTE>
+<P>
+
+<BLOCKQUOTE>
+<B>compressfile &lt;file&gt; &lt;mode&gt;</B><BR>
+Compress file and overwrite it by using a compression mode from 0 (least CPU usage, least compression) upto 9 (maximal CPU usage, maximal compression).
+</BLOCKQUOTE>
+<P>
+
+<BLOCKQUOTE>
+<B>uncompressfile &lt;file&gt;</B><BR>
+Uncompress file and overwrite it.
+</BLOCKQUOTE>
+<P>
+
+<HR>
+&copy;<I>1997 Robey Pointer</I><BR>
+&copy;<I>1999,2000 Eggheads Development Team</I>
+</BODY>
+</HTML>

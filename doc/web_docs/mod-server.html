@@ -6,124 +6,460 @@
    <title>Eggdrop Documentation: Server Module</title>
 </head>
 <body text="#000000" bgcolor="#FFFFFF" link="#3333FF" vlink="#3333FF" alink="#3333FF">
-<b><font face="Arial, Helvetica"><font color="#FF0000"><font size=-1>SERVER
-MODULE
-<hr>TCL COMMANDS:</font></font></font></b>
-<blockquote><b><font face="Arial, Helvetica"><font size=-1>putserv &lt;text></font></font></b>
-<br><font face="Arial, Helvetica"><font size=-1>sends text to the server,
+<b><font face="Arial, Helvetica" color="#FF0000" size=-1>SERVER
+MODULE Last modified 05 April 2000</font></b>
+<br><hr><br>
+<font face="Arial, Helvetica" color="#000000" size=-1>
+The server module allows the bot to connect to an IRC server. Currently the bot cannot be run without this module loaded.
+
+<blockquote>
+<a href="#config">Config file settings</a><br>
+<a href="#tcl">TCL commands</a><br>
+<a href="#tclvar">TCL variables</a><br>
+<a href="#binds">TCL bindings</a><br>
+</blockquote>
+
+</font>
+<hr>
+<a name="config"></a>
+<b><font face="Arial, Helvetica" color="#FF0000" size=-1>Config file settings</font></b><br>
+<font face="Arial, Helvetica" color="#000000" size=-1>
+<br>
+Lines in bold are the lines that need to be included in the eggdrop config file if you want to use
+the SERVER module.
+<br>Lines in bold italics are optional and only required if you wish to change the default behaviour
+for that particular feature.
+<br><br>
+<blockquote>
+<font color="#ff0000">##### SERVER MODULE #####</font><br>
+<br>
+This module provides the core server support. You have to load this
+if you want your bot to come on irc.<br>
+<br>
+Put this line into your eggdrop.conf.dist file to load server module:<br>
+<br>
+<b>loadmodule server</b><br>
+<br>
+There are also some variables you can to set in your config file:<br>
+<br>
+
+<b>set net-type 0</b>
+<blockquote>
+    Define here the network you use. There are six settings:
+	<blockquote>
+     0 = Efnet (non +e/+I hybrid)<br>
+     1 = IRCnet<br>
+     2 = Undernet<br>
+     3 = Dalnet<br>
+     4 = Efnet +e/+I hybrid<br>
+     5 = Others<br>
+	 </blockquote>
+    Valid settings are 0-5
+</blockquote>
+
+<b>set nick "LamestBot"</b>
+<blockquote>
+    Set here the nick of the bot, that which it uses on IRC, and
+   on the botnet unless you specify a sperate botnet-nick
+</blockquote>
+
+<b>set altnick "L?m?stB?t"</b>
+<blockquote>
+    Set here an alternative nick to use if the nick specified by 'nick'
+    is unavailable. All '?' characters will be replaced by a random number.
+</blockquote>
+
+<b><i>set keep-nick 1</i></b>
+<blockquote>
+    This setting makes the bot try to get his original nickname back (for
+    example, if the intended nickname is already in use).
+</blockquote>
+
+<b>set realname "/msg LamestBot hello"</b>
+<blockquote>
+    Set here what to display in the real-name field for the bot
+</blockquote>
+
+<b><i>set init-server { putserv "MODE $botnick +i-ws" }</i></b>
+<blockquote>
+    Set here a script to run (if any) when first connecting to a server
+</blockquote>
+
+<b>set servers { IRCSERVER1:PORT IRSERVER2:PORT ... }</b>
+<blockquote>
+    Set here the list of irc servers you want your bot to connect to. You can
+    add an optional port for the server.
+<br>
+    Example:<br>
+<blockquote>
+     <b>set servers {<br>
+       irc.netw.ork<br>
+       irc.krow.ten:6668<br>
+     }</b>
+</blockquote>
+    This will make the bot connect on startup to irc.netw.ork using
+    'default-port'. On deconnect or a '.jump' it will try to connect
+    to irc.kwor.ten on port 6668.
+</blockquote>
+
+<b>set default-port 6667</b>
+<blockquote>
+    Set the default port which should be used if no one is specified at
+    '.jump' or in 'server'
+</blockquote>
+
+<b><i>set strict-servernames 0</i></b>
+<blockquote>
+    Often irc server call themself in another way then there dns is. If
+    you want eggdrop to replace your entry in the config file with this
+    name, set this to 1. If you turn this setting to 0, eggdrop will keep
+    a seperate list of the names irc servers call themselves<br>
+    Valid settings are 0 for OFF and 1 ON.
+</blockquote>
+<b>set server-cycle-wait 60</b>
+<blockquote>
+    This setting defines how long eggdrop should wait before moving from one
+    server to another on disconnect.<br>
+    If you set 0 here, eggdrop wont wait at all and connect instantly.
+    Please note, that a too low setting could result in k-line for your host,
+    since many ircops don't like being flooded with connects.<br>
+    Valid settings are 0-infinite
+</blockquote>
+<b>set never-give-up 1</b>
+<blockquote>
+    This settings makes the bot cycle forever and keep trying to connect to
+    all irc servers in it's current list if they're down.<br>
+    Valid settings are 0 for OFF and 1 ON.
+</blockquote>
+
+<b>set server-timeout 15</b>
+<blockquote>
+    Set here the timeout how long eggdrop should wait for a response when
+    connecting to a server before giving up and moving on to next server
+    in list.
+</blockquote>
+
+<b>set servlimit 0</b>
+<blockquote>
+    If the number of servers on the net gets below this number, it will
+    jump to a new server (ie, it will assume it's on the losing end of
+    a netsplit) -- set to 0 to turn off<br>
+    Note that most irc networks use Time Stamping or Nick Delay now, so
+    it's to your advantage to turn this off.<br>
+    Valid settings are 0 for OFF and 1 ON.
+</blockquote>
+
+<b><i>set check-stoned 1</i></b>
+<blockquote>
+    Set this to 1 if eggdrop should check for stoned servers? (i.e.
+    Where the server connection has died, but eggdrop hasn't been
+    notified yet).<br>
+    Valid settings are 0 for OFF and 1 ON.
+</blockquote>
+
+<b><i>set serverror-quit 1</i></b>
+<blockquote>
+    If you want your bot to exit the server if it receives a error msg set
+    this to 1<br>
+    Valid settings are 0 for OFF and 1 ON.
+</blockquote>
+
+<b><i>set use-ison 1</i></b>
+<blockquote>
+    This setting makes the bot not u se /trace but /ison to check if our
+    botnick is free or being used.<br>
+    Please note: some irc admins, look for excessive use of /trace<br>
+    Valid settings are 0 for OFF and 1 ON.
+</blockquote>
+
+<b>set max-queue-msg 300</b>
+<blockquote>
+    Set here the maximum number of lines to queue to the server. If you're
+    going to dump large chunks of text to people over irc, you will probably
+    want to raise this -- most people are fine at 300 though
+</blockquote>
+
+<b><i>set use-console-r 0</i></b>
+<blockquote>
+    This setting allows you the logging of all information got from a server,
+    via console mode 'r'<br>
+    NOTE: This is a large security hole, allowing people to see passwords.
+    This is now restricted to +n users only. Please choose your owners with
+    care.<br>
+    Valid settings are 0 for OFF and 1 ON.
+</blockquote>
+
+<b><i>set debug-output 0</i></b>
+<blockquote>
+    This setting allows you the logging of all information sent to a server,
+    via console mode 'v'<br>
+    NOTE: This is a large security hole, allowing people to see passwords.
+    This is now restricted to +n users only. Please choose your owners with
+    care.<br>
+    Valid settings are 0 for OFF and 1 ON.
+</blockquote>
+
+<b><i>set strict-host 0</i></b>
+<blockquote>
+    Set this to 1 if you don't want your the bot to strip a leading '~'
+    on user@hosts<br>
+    Valid settings are 0 for OFF and 1 ON.
+</blockquote>
+
+<b><i>set quiet-reject 1</i></b>
+<blockquote>
+    This setting makes the bot squelch the error message when rejecting a DCC
+    CHAT or SEND. Normally it tells the DCC user that the CHAT or SEND has
+    been rejected because they don't have access.<br>
+    Please note, sometimes IRC server operators detect bots that way.<br>
+    Valid settings are 0 for OFF and 1 ON.
+</blockquote>
+
+<b>set flood-msg 5:60</b>
+<blockquote>
+     Set here how many msgs in how many seconds from one host are
+     recognized as a flood. Not specifying or using number = 0
+     will not check against msg floods
+</blockquote>
+<b>set flood-ctcp 3:60</b>
+<blockquote>
+     Set here how many ctcps in how many seconds from one host are
+     recognized as a flood. Not specifying or using number = 0
+     will not check against ctcp floods
+</blockquote>
+
+<b>set answer-ctcp 3</b>
+<blockquote>
+    Set how many ctcps should be answered at once
+</blockquote>
+
+<b><i>set lowercase-ctcp 0</i></b>
+<blockquote>
+    If you want your bot to answer lower case ctcp request (non rfc
+    compliant) set this setting to 1.<br>
+    Please note: mIRC will do this, most other clients will not<br>
+    Valid settings are 0 for OFF and 1 ON.
+</blockquote>
+
+<b><i>set trigger-on-ignore 0</i></b>
+<blockquote>
+    If you want eggdrop to trigger binds for ignored users, set this to 1<br>
+    Valid settings are 0 for OFF and 1 ON.
+</blockquote>
+
+<b>set double-mode 0</b>
+<blockquote>
+    Allow a msg being twice in mode queue?<br>
+    Valid settings are 0 for OFF and 1 ON.
+</blockquote>
+
+<b>set double-server 0</b>
+<blockquote>
+    Allow a msg being twice in server queue?
+    Valid settings are 0 for OFF and 1 ON.
+</blockquote>
+
+<b>set double-help 0</b>
+<blockquote>
+    Allow a msg being twice in help queue? <br>
+    Valid settings are 0 for OFF and 1 ON.
+</blockquote>
+<b>set use-penalties 1</b> (default on net-type 1)
+<blockquote>
+    This enables eggdrop's penalty calculation. Every command eggdrop sends to
+    the irc server raises it's penatly points. If eggdrop reaches a server limit,
+    it gets disconnected with "excess flood" message. Eggdrop is able to count
+    internal those penalty points, too and take measures against excess flooding.<br>
+    Note: it's highly adviced to turn this on!
+</blockquote>
+
+<b><i>set use-lagcheck 1</i></b>
+<blockquote>
+    Lag check makes the bot check after every command send to the server if it's
+    lagging or not. If it is, queues are stopped to prevent server flooding.<br>
+    There are three different options for this setting:
+	<blockquote>
+     0 = turn it off<br>
+     1 = enable lag check and optimize kicks<br>
+     2 = trace nick changes and channel parts and change the queues respectively.
+	 </blockquote>
+    Please note, this lagcheck has been optimized for IRCNET at the moment,
+    but it should work for other networks, too. If you experience any
+    problems on other nets eggdrop still excess floods) mail the eggdrop
+    development crew please.<br>
+    Valid settings are 0-2
+</blockquote>
+
+<b><i>set optimize-kicks 1</i></b>
+<blockquote>
+    Optimize kicks optimizes kick queue. It also traces nick changes and parts in
+    channel and changes the kick queue respectively.<br>
+    There are three different options for this setting:
+	<blockquote>
+     0 = turn it off<br>
+     1 = optimize kick queue by sumarizing kicks.<br>
+     2 = trace nick changes and channel parts and change the queue respectively. For
+         example, bot wont try to kick users who have already parted the channel.<br>
+	</blockquote>	 
+    Please note, this setting is not needed if you set 'use-lagcheck' to 1.<br>
+    Valid settings are 0-2
+</blockquote>
+<br>
+These were the core irc module settings. There are more settings for
+'net-type' 5.
+<br>
+<br>
+<font color="#ff0000">##### SERVER MODULE - net-type 5 specific features (other networks) #####</font>
+<br><br>
+Attention: Use this settings *<b>only</b>* if you set 'net-type' to 5!
+<br><br>
+<b><i>set use-silence 1</i></b>
+<blockquote>
+    This setting makes the bot use ircdu's SILENCE command. If your network
+    supports this, set this to 1.<br>
+    Please note, this setting is automatically set to 0 for net-type 0/1/3/4,
+    and set to 1 for net-type 2.<br>
+    Valid settings are 0 for OFF and 1 ON.
+</blockquote>
+
+<b><i>set check-mode-r 1</i></b>
+<blockquote>
+    This settings defines how umode +r is understood by eggdrop. Some
+    networks use +r to mean a restricted connection. If this is your
+    case, and you want your bot to leave restricted servers and jump
+    to the next one on his server list, then set it to 1.<br>
+    Please note, this setting is automatically set to 0 for net-type 0/2/3/4,
+    and set to 1 for net-type 1.<br>
+    Valid settings are 0 for OFF and 1 ON.
+</blockquote>
+
+<b><i>set nick-len 9</i></b>
+<blockquote>
+    This setting enables you to use different nick lengths then the ircd's
+    default 9 (Dalnet uses 32 imo). The maximum supported length by eggdrop is 32.<br>
+    Valid settings are 9-32
+	</blockquote>
+</blockquote>	
+</font>
+
+<hr>
+<a name="tcl"></a>
+<b><font face="Arial, Helvetica" color="#FF0000" size=-1>TCL COMMANDS:</font></b>
+<blockquote><b><font face="Arial, Helvetica" size=-1>putserv &lt;text></font></b>
+<br><font face="Arial, Helvetica" size=-1>sends text to the server,
 like 'dump' (intended for direct server commands); output is queued so
-that you won't flood yourself off the server</font></font>
-<br><i><font face="Arial, Helvetica"><font size=-1>returns: nothing</font></font></i>
-<p><b><font face="Arial,Helvetica"><font size=-1>putquick &lt;text></font></font></b>
-<br><font face="Arial,Helvetica"><font size=-1>sends text to the server,
+that you won't flood yourself off the server</font>
+<br><i><font face="Arial, Helvetica" size=-1>returns: nothing</font></i>
+<p><b><font face="Arial, Helvetica" font size=-1>putquick &lt;text></font></b>
+<br><font face="Arial, Helvetica" font size=-1>sends text to the server,
 like 'dump' (intended for direct server commands); output is queued so
 that you won't flood yourself off the server, using the MODE queue (should
-be alot faster)</font></font>
-<br><i><font face="Arial,Helvetica"><font size=-1>returns: nothing</font></font></i>
-<p><b><font face="Arial,Helvetica"><font size=-1>putkick &lt;channel> &lt;nick,nick,...>
-[reason]</font></font></b>
-<br><font face="Arial,Helvetica"><font size=-1>sends kicks to the server
-and tries to put as many nicks into one kick command as possible.</font></font>
-<br><i><font face="Arial,Helvetica"><font size=-1>returns: nothing</font></font></i>
-<p><b><font face="Arial, Helvetica"><font size=-1>puthelp &lt;text></font></font></b>
-<br><font face="Arial, Helvetica"><font size=-1>sends text to the server
+be alot faster)</font>
+<br><i><font face="Arial, Helvetica" font size=-1>returns: nothing</font></i>
+<p><b><font face="Arial, Helvetica" font size=-1>putkick &lt;channel> &lt;nick,nick,...>
+[reason]</font></b>
+<br><font face="Arial, Helvetica" font size=-1>sends kicks to the server
+and tries to put as many nicks into one kick command as possible.</font>
+<br><i><font face="Arial, Helvetica" font size=-1>returns: nothing</font></i>
+<p><b><font face="Arial, Helvetica" size=-1>puthelp &lt;text></font></b>
+<br><font face="Arial, Helvetica" size=-1>sends text to the server
 like 'putserv', but uses a different queue (intended for sending messages
-to channels or people)</font></font>
-<br><i><font face="Arial, Helvetica"><font size=-1>returns: nothing</font></font></i>
-<p><b><font face="Arial,Helvetica"><font size=-1>queuesize [queue]</font></font></b>
-<br><i><font face="Arial,Helvetica"><font size=-1>returns: the number of
+to channels or people)</font>
+<br><i><font face="Arial, Helvetica" size=-1>returns: nothing</font></i>
+<p><b><font face="Arial, Helvetica" font size=-1>queuesize [queue]</font></b>
+<br><i><font face="Arial, Helvetica" font size=-1>returns: the number of
 msgs in all queues. If a queue is specified, only the size of this queue
-is returned. valid queues are: mode, server help, or all.</font></font></i>
-<p><b><font face="Arial,Helvetica"><font size=-1>clearqueue &lt;queue></font></font></b>
-<br><i><font face="Arial,Helvetica"><font size=-1>returns: number of deleted
-lines from the specified queue</font></font></i>
-<p><b><font face="Arial, Helvetica"><font size=-1>dumpfile &lt;nick> &lt;filename></font></font></b>
-<br><font face="Arial, Helvetica"><font size=-1>dumps out a file from the
+is returned. valid queues are: mode, server help, or all.</font></i>
+<p><b><font face="Arial, Helvetica" font size=-1>clearqueue &lt;queue></font></b>
+<br><i><font face="Arial, Helvetica" font size=-1>returns: number of deleted
+lines from the specified queue</font></i>
+<p><b><font face="Arial, Helvetica" size=-1>dumpfile &lt;nick> &lt;filename></font></b>
+<br><font face="Arial, Helvetica" size=-1>dumps out a file from the
 help/text directory to a user on IRC via msg (one line per msg); the user
-has no flags, so the flag bindings won't work within the file.</font></font>
-<p><b><font face="Arial, Helvetica"><font size=-1>jump [server [port [password]]]</font></font></b>
-<br><font face="Arial, Helvetica"><font size=-1>jumps to the server specified,
-or (if none is specified) the next server in the list</font></font>
-<br><i><font face="Arial, Helvetica"><font size=-1>returns: nothing</font></font></i></blockquote>
-
-<hr><b><font face="Arial, Helvetica"><font color="#FF0000"><font size=-1>TCL
-VARIABLES:</font></font></font></b>
-<blockquote><b><font face="Arial, Helvetica"><font size=-1>botnick</font></font></b>
-<br><font face="Arial, Helvetica"><font size=-1>current nickname the bot
-is using, ie 'Sisko' or 'Sisko0', etc</font></font>
-<p><b><font face="Arial, Helvetica"><font size=-1>botname</font></font></b>
-<br><font face="Arial, Helvetica"><font size=-1>current nick!user@host
+has no flags, so the flag bindings won't work within the file.</font>
+<p><b><font face="Arial, Helvetica" size=-1>jump [server [port [password]]]</font></b>
+<br><font face="Arial, Helvetica" size=-1>jumps to the server specified,
+or (if none is specified) the next server in the list</font>
+<br><i><font face="Arial, Helvetica" size=-1>returns: nothing</font></i></blockquote>
+<a name="tclvar"></a>
+<hr><b><font face="Arial, Helvetica" color="#FF0000" size=-1>TCL
+VARIABLES:</font></b>
+<blockquote><b><font face="Arial, Helvetica" size=-1>botnick</font></b>
+<br><font face="Arial, Helvetica" size=-1>current nickname the bot
+is using, ie 'Sisko' or 'Sisko0', etc</font>
+<p><b><font face="Arial, Helvetica" size=-1>botname</font></b>
+<br><font face="Arial, Helvetica" size=-1>current nick!user@host
 that
-the server sees, ie 'Sisko!ikaney@uk.defiant.org'</font></font>
+the server sees, ie 'Sisko!ikaney@uk.defiant.org'</font>
 <p><b>isjuped</b>
 <br>value is 1 if bots nick is juped(437) 0 otherwise.
-<p><b><font face="Arial, Helvetica"><font size=-1>server</font></font></b>
-<br><font face="Arial, Helvetica"><font size=-1>current server the bot
-is using, ie 'irc.math.ufl.edu:6667'</font></font><font face="Arial, Helvetica"><font size=-1></font></font>
-<p><b><font face="Arial, Helvetica"><font size=-1>server-online</font></font></b>
-<br><font face="Arial, Helvetica"><font size=-1>unixtime value for when
-the bot connected to its current server</font></font></blockquote>
-
-<hr><b><font face="Arial, Helvetica"><font color="#FF0000"><font size=-1>BINDING(S)
-TABLE(S):</font></font></font></b>
-<blockquote><b><font face="Arial, Helvetica"><font size=-1>MSG</font></font></b>
-<blockquote><font face="Arial, Helvetica"><font size=-1>bind msg &lt;flags>
-&lt;command> &lt;proc></font></font>
-<br><font face="Arial, Helvetica"><font size=-1>proc-name &lt;nick> &lt;user@host>
-&lt;handle> &lt;args></font></font></blockquote>
-<font face="Arial, Helvetica"><font size=-1>used for /msg commands; the
+<p><b><font face="Arial, Helvetica" size=-1>server</font></b>
+<br><font face="Arial, Helvetica" size=-1>current server the bot
+is using, ie 'irc.math.ufl.edu:6667'</font><font face="Arial, Helvetica" size=-1></font>
+<p><b><font face="Arial, Helvetica" size=-1>server-online</font></b>
+<br><font face="Arial, Helvetica" size=-1>unixtime value for when
+the bot connected to its current server</font></blockquote>
+<a name="binds"></a>
+<hr><b><font face="Arial, Helvetica" color="#FF0000" size=-1>BINDING(S)
+TABLE(S):</font></b>
+<blockquote><b><font face="Arial, Helvetica" size=-1>MSG</font></b>
+<blockquote><font face="Arial, Helvetica" size=-1>bind msg &lt;flags>
+&lt;command> &lt;proc></font>
+<br><font face="Arial, Helvetica" size=-1>proc-name &lt;nick> &lt;user@host>
+&lt;handle> &lt;args></font></blockquote>
+<font face="Arial, Helvetica" size=-1>used for /msg commands; the
 first word of the user's msg is the command, and everything else becomes
-the argument string</font></font>
-<p><b><font face="Arial, Helvetica"><font size=-1>MSGM (stackable)</font></font></b>
-<blockquote><font face="Arial, Helvetica"><font size=-1>bind msgm &lt;flags>
-&lt;mask> &lt;proc></font></font>
-<br><font face="Arial, Helvetica"><font size=-1>proc-name &lt;nick> &lt;user@host>
-&lt;handle> &lt;text></font></font></blockquote>
-<font face="Arial, Helvetica"><font size=-1>matches the entire line of
+the argument string</font>
+<p><b><font face="Arial, Helvetica" size=-1>MSGM (stackable)</font></b>
+<blockquote><font face="Arial, Helvetica" size=-1>bind msgm &lt;flags>
+&lt;mask> &lt;proc></font>
+<br><font face="Arial, Helvetica" size=-1>proc-name &lt;nick> &lt;user@host>
+&lt;handle> &lt;text></font></blockquote>
+<font face="Arial, Helvetica" size=-1>matches the entire line of
 text from a /msg with the mask; this is more useful for binding Tcl procs
-to words or phrases spoken anywhere within a line of text</font></font>
-<p><b><font face="Arial, Helvetica"><font size=-1>NOTC (stackable)</font></font></b>
-<blockquote><font face="Arial, Helvetica"><font size=-1>bind notc &lt;flags>
-&lt;mask> &lt;proc></font></font>
-<br><font face="Arial, Helvetica"><font size=-1>proc-name &lt;nick> &lt;user@host>
-&lt;handle> &lt;text> &lt;dest></font></font></blockquote>
-<font face="Arial, Helvetica"><font size=-1>destination will be a nickname
+to words or phrases spoken anywhere within a line of text</font>
+<p><b><font face="Arial, Helvetica" size=-1>NOTC (stackable)</font></b>
+<blockquote><font face="Arial, Helvetica" size=-1>bind notc &lt;flags>
+&lt;mask> &lt;proc></font>
+<br><font face="Arial, Helvetica" size=-1>proc-name &lt;nick> &lt;user@host>
+&lt;handle> &lt;text> &lt;dest></font></blockquote>
+<font face="Arial, Helvetica" size=-1>destination will be a nickname
 (the bot's nickname, obviously) or a channel name; matches the entire line
 of text from a /notice with the mask; it is considered a breach of protocol
 to respond to a&nbsp; /notice on IRC, so this is intended for internal
-use (ie, logging, etc) only</font></font><font face="Arial, Helvetica"><font size=-1></font></font>
-<p><font face="Arial, Helvetica"><font size=-1>new Tcl procs should be
-declared as</font></font>
-<blockquote><font face="Arial, Helvetica"><font size=-1>proc notcproc {nick
-uhost hand chan text {dest ""}} {</font></font>
-<br><font face="Arial, Helvetica"><font size=-1>&nbsp; global botnick;
-if {$dest==""} { set dest $botnick }</font></font>
-<br><font face="Arial, Helvetica"><font size=-1>&nbsp; ...</font></font>
-<br><font face="Arial, Helvetica"><font size=-1>}</font></font></blockquote>
-<font face="Arial, Helvetica"><font size=-1>for compatiblity</font></font>
-<p><b><font face="Arial, Helvetica"><font size=-1>CTCP</font></font></b>
-<blockquote><font face="Arial, Helvetica"><font size=-1>bind ctcp &lt;flags>
-&lt;keyword-mask> &lt;proc></font></font>
-<br><font face="Arial, Helvetica"><font size=-1>proc-name &lt;nick> &lt;user@host>
-&lt;handle> &lt;dest> &lt;keyword> &lt;args...></font></font></blockquote>
-<font face="Arial, Helvetica"><font size=-1>destination will be a nickname
+use (ie, logging, etc) only</font><font face="Arial, Helvetica" size=-1></font>
+<p><font face="Arial, Helvetica" size=-1>new Tcl procs should be
+declared as</font>
+<blockquote><font face="Arial, Helvetica" size=-1>proc notcproc {nick
+uhost hand chan text {dest ""}} {</font>
+<br><font face="Arial, Helvetica" size=-1>&nbsp; global botnick;
+if {$dest==""} { set dest $botnick }</font>
+<br><font face="Arial, Helvetica" size=-1>&nbsp; ...</font>
+<br><font face="Arial, Helvetica" size=-1>}</font></blockquote>
+<font face="Arial, Helvetica" size=-1>for compatiblity</font>
+<p><b><font face="Arial, Helvetica" size=-1>CTCP</font></b>
+<blockquote><font face="Arial, Helvetica" size=-1>bind ctcp &lt;flags>
+&lt;keyword-mask> &lt;proc></font>
+<br><font face="Arial, Helvetica" size=-1>proc-name &lt;nick> &lt;user@host>
+&lt;handle> &lt;dest> &lt;keyword> &lt;args...></font></blockquote>
+<font face="Arial, Helvetica" size=-1>destination will be a nickname
 (the bot's nickname, obviously) or a channel name; keyword is the ctcp
 command and args may be empty; if the proc returns 0, the bot will attempt
-its own processing of the ctcp command</font></font>
-<p><b><font face="Arial, Helvetica"><font size=-1>CTCR</font></font></b>
-<blockquote><font face="Arial, Helvetica"><font size=-1>bind ctcr &lt;flags>
-&lt;keyword-mask> &lt;proc></font></font>
-<br><font face="Arial, Helvetica"><font size=-1>proc-name &lt;nick> &lt;user@host>
-&lt;handle> &lt;dest> &lt;keyword> &lt;args...></font></font></blockquote>
-<font face="Arial, Helvetica"><font size=-1>just like ctcp, but this is
+its own processing of the ctcp command</font>
+<p><b><font face="Arial, Helvetica" size=-1>CTCR</font></b>
+<blockquote><font face="Arial, Helvetica" size=-1>bind ctcr &lt;flags>
+&lt;keyword-mask> &lt;proc></font>
+<br><font face="Arial, Helvetica" size=-1>proc-name &lt;nick> &lt;user@host>
+&lt;handle> &lt;dest> &lt;keyword> &lt;args...></font></blockquote>
+<font face="Arial, Helvetica" size=-1>just like ctcp, but this is
 triggered for a ctcp-reply (ie, ctcp embedded in a notice instead of a
-privmsg)</font></font>
-<p><b><font face="Arial, Helvetica"><font size=-1>RAW (stackable)</font></font></b>
-<blockquote><font face="Arial, Helvetica"><font size=-1>bind raw &lt;flags>
-&lt;keyword-mask> &lt;proc></font></font>
-<br><font face="Arial, Helvetica"><font size=-1>proc-name &lt;from> &lt;keyword>
-&lt;args...></font></font></blockquote>
-<font face="Arial, Helvetica"><font size=-1>previous versions of eggdrop
+privmsg)</font>
+<p><b><font face="Arial, Helvetica" size=-1>RAW (stackable)</font></b>
+<blockquote><font face="Arial, Helvetica" size=-1>bind raw &lt;flags>
+&lt;keyword-mask> &lt;proc></font>
+<br><font face="Arial, Helvetica" size=-1>proc-name &lt;from> &lt;keyword>
+&lt;args...></font></blockquote>
+<font face="Arial, Helvetica" size=-1>previous versions of eggdrop
 required a special compile option to enable this binding, but it's now
 standard; the mask is checked against the keyword (either a numeric like
 "368" or a keyword like "PRIVMSG"); from will be the server name or the
@@ -132,28 +468,28 @@ the arguments is identical to the order that the IRC server sends to the
 bot -- the pre-processing only splits it apart enough to determine the
 keyword; if the proc returns 1, eggdrop will not process the line any further
 <b>(THIS
-COULD CAUSE YOUR BOT TO BEHAVE ODDLY IN SOME CASES)</b></font></font>
-<p><b><font face="Arial, Helvetica"><font size=-1>FLUD (stackable)</font></font></b>
-<blockquote><font face="Arial, Helvetica"><font size=-1>bind flud &lt;flags>
-&lt;type> &lt;proc></font></font>
-<br><font face="Arial, Helvetica"><font size=-1>proc-name &lt;nick> &lt;user@host>
-&lt;handle> &lt;type> &lt;channel></font></font></blockquote>
-<font face="Arial, Helvetica"><font size=-1>any floods detected through
+COULD CAUSE YOUR BOT TO BEHAVE ODDLY IN SOME CASES)</b></font>
+<p><b><font face="Arial, Helvetica" size=-1>FLUD (stackable)</font></b>
+<blockquote><font face="Arial, Helvetica" size=-1>bind flud &lt;flags>
+&lt;type> &lt;proc></font>
+<br><font face="Arial, Helvetica" size=-1>proc-name &lt;nick> &lt;user@host>
+&lt;handle> &lt;type> &lt;channel></font></blockquote>
+<font face="Arial, Helvetica" size=-1>any floods detected through
 the flood control settings (like 'flood-ctcp') are sent here before processing;
 if the proc returns 1, no further action is taken on the flood; if the
 proc returns 0, the bot will do its normal "punishment" for the flood;
 the flood type is "pub", "msg", "join", or "ctcp" (and can be masked to
-"*" for the bind); flags is ignored</font></font>
-<p><b><font face="Arial, Helvetica"><font size=-1>WALL (stackable)</font></font></b>
-<blockquote><font face="Arial, Helvetica"><font size=-1>bind wall &lt;flags>
-&lt;mask> &lt;proc></font></font>
-<br><font face="Arial, Helvetica"><font size=-1>proc-name &lt;nick> &lt;msg></font></font></blockquote>
-<font face="Arial, Helvetica"><font size=-1>when the bot receives a wallops,
+"*" for the bind); flags is ignored</font>
+<p><b><font face="Arial, Helvetica" size=-1>WALL (stackable)</font></b>
+<blockquote><font face="Arial, Helvetica" size=-1>bind wall &lt;flags>
+&lt;mask> &lt;proc></font>
+<br><font face="Arial, Helvetica" size=-1>proc-name &lt;nick> &lt;msg></font></blockquote>
+<font face="Arial, Helvetica" size=-1>when the bot receives a wallops,
 it invokes this binding; flags is ignored; the mask is checked against
-the text of the wallops msg</font></font></blockquote>
+the text of the wallops msg</font></blockquote>
 
-<hr><i><font face="Arial, Helvetica"><font size=-1>(c) 1997 Robey Pointer</font></font></i>
-<br><i><font face="Arial, Helvetica"><font size=-1>(c) 2000 Eggheads Development
-Team</font></font></i>
+<hr><i><font face="Arial, Helvetica" size=-1>&copy; 1997 Robey Pointer</font></i>
+<br><i><font face="Arial, Helvetica" size=-1>&copy; 1999,2000 Eggheads Development
+Team</font></i>
 </body>
 </html>

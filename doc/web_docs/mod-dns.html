@@ -1,31 +1,53 @@
-<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
-<html>
-<head>
-   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-   <meta name="GENERATOR" content="Mozilla/4.7 [en] (WinNT; U) [Netscape]">
-   <meta name="Author" content="Jason Ede">
-   <title>Eggdrop Documentation: DNS Module</title>
-</head>
-<body text="#000000" bgcolor="#FFFFFF" link="#3333FF" vlink="#3333FF" alink="#3333FF">
-<b><font face="Arial, Helvetica"><font color="#FF0000"><font size=-1>DNS
-MODULE
-<hr>TCL COMMANDS:</font></font></font></b>
-<blockquote><b><font face="Arial,Helvetica"><font size=-1>dnslookup &lt;ip-address/hostname>
-&lt;proc> [[arg1] [arg2] ... [argn]]</font></font></b>
-<br><font face="Arial,Helvetica"><font size=-1>Issues an asynchronous dns
-lookup request. The command will block if dns module is not loaded, otherwise
-it will either return immediately or immediately call the proc (e.g. if
-the lookup is already cached).</font></font>
-<br><font face="Arial,Helvetica"><font size=-1>As soon as the request completes,
-&lt;proc> will be called as follows:</font></font>
-<blockquote><font face="Arial,Helvetica"><font size=-1>&lt;proc> ipaddress
-hostname status [[arg1] [arg2] ... [argn]]</font></font></blockquote>
-<font face="Arial,Helvetica"><font size=-1>Status is 1 if the lookup was
-successful and 0 if it wasn't. All additional parameters (called arg1,
-arg2 and argn above) get appended to the proc's other parameters.</font></font></blockquote>
+<!-- saved from url=(0022)http://internet.e-mail -->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+<TITLE>Eggdrop Documentation: DNS Module</TITLE>
+</HEAD>
+<BODY aLink=#3333ff bgColor=#ffffff link=#3333ff text=#000000 vLink=#3333ff>
+<FONT face="Arial, Helvetica" color=#000000 size=-1>
+<B><FONT color=#ff0000>DNS MODULE&nbsp;&nbsp;&nbsp;&nbsp; Last modified 24th March 2000</FONT></B> 
+<HR>
 
-<hr><i><font face="Arial, Helvetica"><font size=-1>(c) 1997 Robey Pointer</font></font></i>
-<br><i><font face="Arial, Helvetica"><font size=-1>(c) 2000 Eggheads Development
-Team</font></font></i>
-</body>
-</html>
+<P>This module provides asynchronous dns support. This will avoid long periods where the bot just hangs there, waiting for a hostname to resolve, which often let it timeout on all other connections.
+<BR>
+&nbsp; 
+
+<BLOCKQUOTE>
+<A href="#config">Config file settings</A><br>
+<A href="#tcl">TCL commands</A>
+</BLOCKQUOTE>
+<HR width="100%">
+
+<BR>
+<A name=config><B><FONT color=#ff0000>Config file settings</font></B></A>
+<P>
+
+
+Lines in bold are the lines that need to be included in the eggdrop config file if you want to use the dns module.<BR>
+Lines in bold italics are optional and only required if you wish to change the default behaviour for that particular feature.<BR>&nbsp;
+
+<BLOCKQUOTE>
+<FONT color=#ff0000>##### DNS MODULE #####</font><P>
+Put this line into your config file to load dns module:<P>
+
+<B>loadmodule dns</B><p>
+</BLOCKQUOTE>
+<HR width="100%">
+<BR>
+<A name=tcl><B><FONT color=#ff0000>TCL commands:</FONT></B></A>
+
+<BLOCKQUOTE>
+<B>dnslookup &lt;ip-address/hostname&gt; &lt;proc&gt; [[arg1] [arg2] ... [argn]]</B><BR>
+Issues an asynchronous dns lookup request. The command will block if dns module is not loaded, otherwise it will either return immediately or immediately call the proc (e.g. if the lookup is already cached).<br>
+As soon as the request completes, &lt;proc&gt; will be called as follows:<br>
+&nbsp;&nbsp;&lt;proc&gt; ipaddress hostname status [[arg1] [arg2] ... [argn]]<br>
+status is 1 if the lookup was successful and 0 if it wasn't. All additional parameters (called arg1, arg2 and argn above) get appended to the proc's other parameters.
+</BLOCKQUOTE>
+<P>
+
+<HR>
+&copy;<I>1997 Robey Pointer</I><BR>
+&copy;<I>1999,2000 Eggheads Development Team</I>
+</BODY>
+</HTML>

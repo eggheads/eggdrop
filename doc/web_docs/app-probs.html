@@ -1,34 +1,37 @@
-<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
-<html>
-<head>
-   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-   <meta name="GENERATOR" content="Mozilla/4.7 [en] (WinNT; U) [Netscape]">
-   <title>Eggdrop Documentation: Known Problems</title>
-</head>
-<body text="#000000" bgcolor="#FFFFFF" link="#3333FF" vlink="#3333FF" alink="#3333FF">
-<b><font face="Arial, Helvetica"><font color="#FF0000"><font size=-1>KNOWN
-PROBLEMS</font></font></font></b>
-<hr>
-<br><b><u><font color="#FF0000">BUG REPORTS</font></u></b>
-<br>(i.e. things that are broke, but aren't getting fixed anytime soon)
-<blockquote>
-<ul>
-<li>
-Solve to non-working alarm(10) in linux (calls to gethostbyaddr/name()
-have blocked for long periods when bind/named doesn't resolve quickly,
-and the alarm does not interrupt it).</li>
-</ul>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
 
-<ul>
-<li>
-High-bit characters are being filtered from channel names.This is a fault
-of the TCL interpreter, and not eggdrop.&nbsp; The TCL interpreter filters
-the characters when it reads a file for interpreting.</li>
-</ul>
-</blockquote>
+<HTML>
+  <HEAD>
+    <TITLE>Eggdrop Documentation: Known Problems</TITLE>
+  </HEAD>
 
-<hr><i><font face="Arial, Helvetica"><font size=-1>(c) 1997 Robey Pointer</font></font></i>
-<br><i><font face="Arial, Helvetica"><font size=-1>(c) 2000 Eggheads Development
-Team</font></font></i>
-</body>
-</html>
+  <BODY text="#000000" bgcolor="#FFFFFF" link="#3333FF" vlink="#3333FF"
+  alink="#3333FF">
+    <STRONG><FONT face="Arial, Helvetica" size="-1" color="#FF0000">KNOWN
+    PROBLEMS</FONT></STRONG> 
+    <HR>
+    <BR>
+     <STRONG><U><FONT color="#FF0000">BUG REPORTS</FONT></U></STRONG> <BR>
+     (i.e. things that are broke, but aren&#39;t getting fixed anytime soon) 
+
+    <BLOCKQUOTE>
+      <UL>
+        <LI>Solve to non-working alarm(10) in Linux (calls to
+        gethostbyaddr/name() have blocked for long periods when bind/named
+        doesn&#39;t resolve quickly, and the alarm does not interrupt
+        it).</LI>
+      </UL>
+
+      <UL>
+        <LI>High-bit characters are being filtered from channel names.This is
+        a fault of the TCL interpreter, and not Eggdrop.&nbsp; The TCL
+        interpreter filters the characters when it reads a file for
+        interpreting.</LI>
+      </UL>
+    </BLOCKQUOTE>
+    <HR>
+    <EM><FONT face="Arial, Helvetica" size="-1">&copy; 1997 Robey Pointer<BR>
+     &copy; 1999,2000 Eggheads Development Team</FONT></EM>
+  </BODY>
+</HTML>
+
