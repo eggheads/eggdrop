@@ -1,7 +1,7 @@
 /* 
  * tclirc.c -- part of irc.mod
  * 
- * $Id: tclirc.c,v 1.18 2001/02/11 17:55:03 guppy Exp $
+ * $Id: tclirc.c,v 1.19 2001/02/15 04:33:18 tothwolf Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -730,28 +730,6 @@ static int tcl_putkick STDVAR
   return TCL_OK;
 }
 
-/* Sends an optimal number of kicks per command (as defined by kick_method)
- * to the server, similar to putkick but by mask instead of by nick.
- */
-static int tcl_putkickall STDVAR
-{
-  struct chanset_t *chan;
-
-  BADARGS(3, 4, " channel mask ?comment?");
-  chan = findchan_by_dname(argv[1]);
-  if (chan == NULL) { 
-    Tcl_AppendResult(irp, "illegal channel: ", argv[1], NULL);
-    return TCL_ERROR;
-  }
-  if (!me_op(chan)) {
-    Tcl_AppendResult(irp, "need op", NULL);
-    return TCL_ERROR;
-  }
-
-  kick_all( chan, argv[2], (argc == 4) ? argv[3] : IRC_BANNED, 0 );
-  return TCL_OK;
-}
-
 static tcl_cmds tclchan_cmds[] =
 {
   {"chanlist",		tcl_chanlist},
@@ -786,7 +764,6 @@ static tcl_cmds tclchan_cmds[] =
   {"topic",		tcl_topic},
   {"botonchan",		tcl_botonchan},
   {"putkick",		tcl_putkick},
-  {"putkickall",		tcl_putkickall},
   {"channame2dname",	tcl_channame2dname},
   {"chandname2name",	tcl_chandname2name},
   {NULL,		NULL}

@@ -47,11 +47,6 @@ specific commands, see later.
     one kick command as possible.
     returns: nothing
 
-| putkickall <channel> <mask> [reason]
-|   sends kicks to the server and tries to put as many nicks into
-|   one kick command as possible.
-|   returns: nothing
-
   putlog <text>
     sends text to the log for any channel, marked as 'misc' (o)
     returns: nothing
