@@ -2,10 +2,10 @@
  * strftime.h
  *   header file for strftime.c
  *
- * $Id: strftime.h,v 1.1 2000/09/12 15:34:01 fabian Exp $
+ * $Id: strftime.h,v 1.2 2001/12/26 04:43:57 tothwolf Exp $
  */
 /* 
- * Copyright (C) 2000  Eggheads
+ * Copyright (C) 2000, 2001 Eggheads Development Team
  * Written by Fabian Knittel
  * 
  * This program is free software; you can redistribute it and/or
