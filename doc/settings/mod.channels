@@ -209,7 +209,7 @@ There are also some variables you can set in your config file:
        Allow invites to be made by users directly? If turned off, the
        bot will require all invites to be made through the bot's console.
 
-     autop
+     autoop
        Op users with the +o flag as soon as they join the channel?
        This is insecure and not recommended.
 
