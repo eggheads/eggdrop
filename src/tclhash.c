@@ -12,7 +12,7 @@
  * dprintf'ized, 15nov1995 (hash.c)
  * dprintf'ized, 4feb1996 (tclhash.c)
  * 
- * $Id: tclhash.c,v 1.16 2000/03/20 19:50:02 guppy Exp $
+ * $Id: tclhash.c,v 1.17 2000/03/20 19:52:45 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -982,7 +982,7 @@ void tell_binds(int idx, char *par)
   kind = find_bind_table(name);
   if (!strcasecmp(s, "all") || !strcasecmp(name, "all"))
     showall = 1;
-  if (kind == NULL && strcasecmp(name, "all")) {
+  if (kind == NULL && strcasecmp(name, "all") && name != "") { 
     patmatc = 1;
     dprintf(idx, "Bind type %s not found, using wild card match.\n", name);
   }
