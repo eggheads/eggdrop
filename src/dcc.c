@@ -4,7 +4,7 @@
  *   disconnect on a dcc socket
  *   ...and that's it!  (but it's a LOT)
  *
- * $Id: dcc.c,v 1.53 2002/02/07 05:04:20 guppy Exp $
+ * $Id: dcc.c,v 1.54 2002/02/28 05:28:40 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1368,12 +1368,7 @@ static void dcc_telnet_id(int idx, char *buf, int atr)
   }
   if (!ok && (glob_party(fr) || glob_bot(fr)))
     ok = 1;
-  if (!ok && glob_xfer(fr)) {
-    module_entry *me = module_find("filesys", 0, 0);
 
-    if (me && me->funcs[FILESYS_ISVALID] && (me->funcs[FILESYS_ISVALID])())
-      ok = 1;
-  }
   if (!ok) {
     dprintf(idx, "You don't have access.\n");
     putlog(LOG_BOTS, "*", DCC_INVHANDLE, dcc[idx].host, buf);
