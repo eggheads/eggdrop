@@ -2,7 +2,7 @@
  * msgcmds.c -- part of irc.mod
  *   all commands entered via /MSG
  *
- * $Id: msgcmds.c,v 1.36 2003/01/23 02:13:29 wcc Exp $
+ * $Id: msgcmds.c,v 1.37 2003/01/23 03:32:29 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -533,13 +533,19 @@ static int msg_help(char *nick, char *host, struct userrec *u, char *par)
 
   if (match_my_nick(nick))
     return 1;
+
   if (!u) {
     if (!quiet_reject) {
-      dprintf(DP_HELP, "NOTICE %s :%s\n", nick, IRC_DONTKNOWYOU);
-      dprintf(DP_HELP, "NOTICE %s :/MSG %s hello\n", nick, botname);
+      if (!learn_users)
+        dprintf(DP_HELP, "NOTICE %s :No access\n", nick);
+      else {
+        dprintf(DP_HELP, "NOTICE %s :%s\n", nick, IRC_DONTKNOWYOU);
+        dprintf(DP_HELP, "NOTICE %s :/MSG %s hello\n", nick, botname);
+      }
     }
     return 0;
   }
+
   if (helpdir[0]) {
     struct flag_record fr = {FR_ANYWH | FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
 
@@ -554,6 +560,7 @@ static int msg_help(char *nick, char *host, struct userrec *u, char *par)
     }
   } else
     dprintf(DP_HELP, "NOTICE %s :%s\n", nick, IRC_NOHELP);
+
   return 1;
 }
 
