@@ -17,7 +17,7 @@ These variables will be replaced in the MOTD by their respective values:
 
  %B   bot's nickname (i.e., "LamestBot")
  %V   current eggdrop version (i.e., "eggdrop v1.6.0")
- %E   long form of %V (i.e., "Eggdrop v1.6.0  (c)1997 Robey Pointer (c)1999, 2000  Eggheads")
+ %E   long form of %V (i.e., "Eggdrop v1.6.0  (c) 1997 Robey Pointer (c) 1999, 2000, 2001  Eggheads")
  %C   channels the bot is on (i.e., "#lamest, #botnetcentral")
  %A   whatever is set in the config file by 'set admin'
  %n   whatever is set in the config file by 'set network'
