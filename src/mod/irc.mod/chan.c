@@ -1878,7 +1878,7 @@ static int gotmsg(char *from, char *msg)
     }
   }
   if (msg[0]) {
-    if (!ignoring)
+    /* if (!ignoring) */ /* removed by Eule 17.7.99 */ 
       detect_chan_flood(nick, uhost, from, chan, FLOOD_PRIVMSG, NULL);
     if (!ignoring || trigger_on_ignore) {
       if (check_tcl_pub(nick, uhost, realto, msg))
@@ -1953,7 +1953,7 @@ static int gotnotice(char *from, char *msg)
       strcpy(ctcp, p1);
       strcpy(p1 - 1, p + 1);
       p = strchr(msg, 1);
-      if (!ignoring)
+      /* if (!ignoring) */ /* removed by Eule 17.7.99 */
 	detect_chan_flood(nick, uhost, from, chan,
 			  strncmp(ctcp, "ACTION ", 7) ?
 			  FLOOD_CTCP : FLOOD_PRIVMSG, NULL);
@@ -1972,7 +1972,7 @@ static int gotnotice(char *from, char *msg)
     }
   }
   if (msg[0]) {
-    if (!ignoring)
+    /* if (!ignoring) */ /* removed by Eule 17.7.99 */
       detect_chan_flood(nick, uhost, from, chan, FLOOD_NOTICE, NULL);
     if (!ignoring)
       putlog(LOG_PUBLIC, realto, "-%s:%s- %s", nick, to, msg);
