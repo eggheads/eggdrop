@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  *
- * $Id: cmds.c,v 1.63 2001/10/05 07:26:57 poptix Exp $
+ * $Id: cmds.c,v 1.64 2001/10/05 09:21:59 poptix Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -2702,7 +2702,7 @@ cmd_t C_dcc[] =
   {"botattr",		"t",	(Function) cmd_botattr,		NULL},
   {"botinfo",		"t",	(Function) cmd_botinfo,		NULL},
   {"bots",		"",	(Function) cmd_bots,		NULL},
-  {"bottree",		"",	(Function) cmd_bottree,		NULL},
+  {"bottree",		"t",	(Function) cmd_bottree,		NULL},
   {"chaddr",		"t",	(Function) cmd_chaddr,		NULL},
   {"chat",		"",	(Function) cmd_chat,		NULL},
   {"chattr",		"m|m",	(Function) cmd_chattr,		NULL},
@@ -2746,7 +2746,7 @@ cmd_t C_dcc[] =
   {"unlink",		"t",	(Function) cmd_unlink,		NULL},
   {"unloadmod",		"n",	(Function) cmd_unloadmod,	NULL},
   {"uptime",		"m|m",	(Function) cmd_uptime,		NULL},
-  {"vbottree",		"",	(Function) cmd_vbottree,	NULL},
+  {"vbottree",		"t",	(Function) cmd_vbottree,	NULL},
   {"who",		"",	(Function) cmd_who,		NULL},
   {"whois",		"to|o",	(Function) cmd_whois,		NULL},
   {"whom",		"",	(Function) cmd_whom,		NULL},
