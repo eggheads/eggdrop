@@ -2,7 +2,7 @@
  * cmdschan.c -- part of channels.mod
  *   commands from a user via dcc that cause server interaction
  *
- * $Id: cmdschan.c,v 1.64 2003/03/07 07:02:17 wcc Exp $
+ * $Id: cmdschan.c,v 1.65 2003/03/10 05:57:10 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -423,7 +423,7 @@ static void cmd_mns_ban(struct userrec *u, int idx, char *par)
 {
   int console = 0, i = 0, j;
   struct chanset_t *chan = NULL;
-  char s[UHOSTLEN], *ban, *chname;
+  char s[UHOSTLEN], *ban, *chname, *mask;
   masklist *b;
 
   if (!par[0]) {
@@ -451,10 +451,14 @@ static void cmd_mns_ban(struct userrec *u, int idx, char *par)
   if (console) {
     i = u_delban(NULL, s, (u->flags & USER_MASTER));
     if (i > 0) {
-      putlog(LOG_CMDS, "*", "#%s# -ban %s", dcc[idx].nick, s);
-      dprintf(idx, "%s: %s\n", IRC_REMOVEDBAN, s);
+      if (lastdeletedmask)
+        mask = lastdeletedmask;
+      else
+        mask = s;
+      putlog(LOG_CMDS, "*", "#%s# -ban %s", dcc[idx].nick, mask);
+      dprintf(idx, "%s: %s\n", IRC_REMOVEDBAN, mask);
       for (chan = chanset; chan != NULL; chan = chan->next)
-        add_mode(chan, '-', 'b', s);
+        add_mode(chan, '-', 'b', mask);
       return;
     }
   }
@@ -465,13 +469,18 @@ static void cmd_mns_ban(struct userrec *u, int idx, char *par)
     dprintf(idx, "Invalid channel.\n");
     return;
   }
-  if (atoi(ban) > 0) {
-    egg_snprintf(s, sizeof s, "%d", -i);
+  if ((i = atoi(ban)) > 0) {
+    egg_snprintf(s, sizeof s, "%d", i);
     j = u_delban(chan, s, 1);
     if (j > 0) {
-      putlog(LOG_CMDS, "*", "#%s# (%s) -ban %s", dcc[idx].nick, chan->dname, s);
-      dprintf(idx, "Removed %s channel ban: %s\n", chan->dname, s);
-      add_mode(chan, '-', 'b', s);
+      if (lastdeletedmask)
+        mask = lastdeletedmask;
+      else
+        mask = s;
+      putlog(LOG_CMDS, "*", "#%s# (%s) -ban %s", dcc[idx].nick, chan->dname,
+             mask);
+      dprintf(idx, "Removed %s channel ban: %s\n", chan->dname, mask);
+      add_mode(chan, '-', 'b', mask);
       return;
     }
     i = 0;
@@ -513,9 +522,9 @@ static void cmd_mns_ban(struct userrec *u, int idx, char *par)
 
 static void cmd_mns_exempt(struct userrec *u, int idx, char *par)
 {
-  int i = 0, j;
+  int console = 0, i = 0, j;
   struct chanset_t *chan = NULL;
-  char s[UHOSTLEN], *exempt, *chname;
+  char s[UHOSTLEN], *exempt, *chname, *mask;
   masklist *e;
 
   if (!use_exempts) {
@@ -529,8 +538,10 @@ static void cmd_mns_exempt(struct userrec *u, int idx, char *par)
   exempt = newsplit(&par);
   if (par[0] && strchr(CHANMETA, par[0]))
     chname = newsplit(&par);
-  else
+  else {
     chname = dcc[idx].u.chat->con_chan;
+    console = 1;
+  }
   if (chname || !(u->flags & USER_MASTER)) {
     if (!chname)
       chname = dcc[idx].u.chat->con_chan;
@@ -542,26 +553,36 @@ static void cmd_mns_exempt(struct userrec *u, int idx, char *par)
     }
   }
   strncpyz(s, exempt, sizeof s);
-  i = u_delexempt(NULL, s, (u->flags & USER_MASTER));
-  if (i > 0) {
-    putlog(LOG_CMDS, "*", "#%s# -exempt %s", dcc[idx].nick, s);
-    dprintf(idx, "%s: %s\n", IRC_REMOVEDEXEMPT, s);
-    for (chan = chanset; chan != NULL; chan = chan->next)
-      add_mode(chan, '-', 'e', s);
-    return;
+  if (console) {
+    i = u_delexempt(NULL, s, (u->flags & USER_MASTER));
+    if (i > 0) {
+      if (lastdeletedmask)
+        mask = lastdeletedmask;
+      else
+        mask = s;
+      putlog(LOG_CMDS, "*", "#%s# -exempt %s", dcc[idx].nick, mask);
+      dprintf(idx, "%s: %s\n", IRC_REMOVEDEXEMPT, mask);
+      for (chan = chanset; chan != NULL; chan = chan->next)
+        add_mode(chan, '-', 'e', mask);
+      return;
+    }
   }
   /* Channel-specific exempt? */
   if (chname)
     chan = findchan_by_dname(chname);
   if (chan) {
-    if (atoi(exempt) > 0) {
-      egg_snprintf(s, sizeof s, "%d", -i);
+    if ((i = atoi(exempt)) > 0) {
+      egg_snprintf(s, sizeof s, "%d", i);
       j = u_delexempt(chan, s, 1);
       if (j > 0) {
+        if (lastdeletedmask)
+          mask = lastdeletedmask;
+        else
+          mask = s;
         putlog(LOG_CMDS, "*", "#%s# (%s) -exempt %s", dcc[idx].nick,
-               chan->dname, s);
-        dprintf(idx, "Removed %s channel exempt: %s\n", chan->dname, s);
-        add_mode(chan, '-', 'e', s);
+               chan->dname, mask);
+        dprintf(idx, "Removed %s channel exempt: %s\n", chan->dname, mask);
+        add_mode(chan, '-', 'e', mask);
         return;
       }
       i = 0;
@@ -599,15 +620,18 @@ static void cmd_mns_exempt(struct userrec *u, int idx, char *par)
         }
       }
     }
+  } else {
+    dprintf(idx, "Invalid channel.\n");
+    return; 
   }
   dprintf(idx, "No such exemption.\n");
 }
 
 static void cmd_mns_invite(struct userrec *u, int idx, char *par)
 {
-  int i = 0, j;
+  int console = 0, i = 0, j;
   struct chanset_t *chan = NULL;
-  char s[UHOSTLEN], *invite, *chname;
+  char s[UHOSTLEN], *invite, *chname, *mask;
   masklist *inv;
 
   if (!use_invites) {
@@ -621,8 +645,10 @@ static void cmd_mns_invite(struct userrec *u, int idx, char *par)
   invite = newsplit(&par);
   if (par[0] && strchr(CHANMETA, par[0]))
     chname = newsplit(&par);
-  else
+  else {
     chname = dcc[idx].u.chat->con_chan;
+    console = 1;
+  }
   if (chname || !(u->flags & USER_MASTER)) {
     if (!chname)
       chname = dcc[idx].u.chat->con_chan;
@@ -634,26 +660,36 @@ static void cmd_mns_invite(struct userrec *u, int idx, char *par)
     }
   }
   strncpyz(s, invite, sizeof s);
-  i = u_delinvite(NULL, s, (u->flags & USER_MASTER));
-  if (i > 0) {
-    putlog(LOG_CMDS, "*", "#%s# -invite %s", dcc[idx].nick, s);
-    dprintf(idx, "%s: %s\n", IRC_REMOVEDINVITE, s);
-    for (chan = chanset; chan != NULL; chan = chan->next)
-      add_mode(chan, '-', 'I', s);
-    return;
+  if (console) {
+    i = u_delinvite(NULL, s, (u->flags & USER_MASTER));
+    if (i > 0) {
+      if (lastdeletedmask)
+        mask = lastdeletedmask;
+      else
+        mask = s;
+      putlog(LOG_CMDS, "*", "#%s# -invite %s", dcc[idx].nick, mask);
+      dprintf(idx, "%s: %s\n", IRC_REMOVEDINVITE, mask);
+      for (chan = chanset; chan != NULL; chan = chan->next)
+        add_mode(chan, '-', 'I', mask);
+      return;
+    }
   }
   /* Channel-specific invite? */
   if (chname)
     chan = findchan_by_dname(chname);
   if (chan) {
-    if (atoi(invite) > 0) {
-      egg_snprintf(s, sizeof s, "%d", -i);
+    if ((i = atoi(invite)) > 0) {
+      egg_snprintf(s, sizeof s, "%d", i);
       j = u_delinvite(chan, s, 1);
       if (j > 0) {
+        if (lastdeletedmask)
+          mask = lastdeletedmask;
+        else
+          mask = s;
         putlog(LOG_CMDS, "*", "#%s# (%s) -invite %s", dcc[idx].nick,
-               chan->dname, s);
-        dprintf(idx, "Removed %s channel invite: %s\n", chan->dname, s);
-        add_mode(chan, '-', 'I', s);
+               chan->dname, mask);
+        dprintf(idx, "Removed %s channel invite: %s\n", chan->dname, mask);
+        add_mode(chan, '-', 'I', mask);
         return;
       }
       i = 0;
@@ -693,6 +729,9 @@ static void cmd_mns_invite(struct userrec *u, int idx, char *par)
         }
       }
     }
+  } else {
+    dprintf(idx, "Invalid channel.\n");
+    return; 
   }
   dprintf(idx, "No such invite.\n");
 }

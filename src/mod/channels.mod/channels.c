@@ -2,7 +2,7 @@
  * channels.c -- part of channels.mod
  *   support for channels within the bot
  *
- * $Id: channels.c,v 1.82 2003/03/08 04:29:43 wcc Exp $
+ * $Id: channels.c,v 1.83 2003/03/10 05:57:10 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -31,6 +31,7 @@
 static Function *global = NULL;
 
 static char chanfile[121], glob_chanmode[64];
+static char *lastdeletedmask;
 
 static struct udef_struct *udef;
 
@@ -715,6 +716,8 @@ static int channels_expmem()
       tot += strlen(chan->rmkey) + 1;
   }
   tot += expmem_udef(udef);
+  if (lastdeletedmask)
+    tot += strlen(lastdeletedmask);
   return tot;
 }
 
@@ -796,6 +799,8 @@ static char *channels_close()
 {
   write_channels();
   free_udef(udef);
+  if (lastdeletedmask)
+    nfree(lastdeletedmask);
   rem_builtins(H_chon, my_chon);
   rem_builtins(H_dcc, C_dcc_irc);
   rem_tcl_commands(channels_cmds);
@@ -903,6 +908,7 @@ char *channels_start(Function *global_funcs)
   global_aop_min = 5;
   global_aop_max = 30;
   setstatic = 0;
+  lastdeletedmask = 0;
   use_info = 1;
   strcpy(chanfile, "chanfile");
   chan_hack = 0;
