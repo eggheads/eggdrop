@@ -1,7 +1,7 @@
 dnl aclocal.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: aclocal.m4,v 1.5 2000/01/08 22:06:19 per Exp $
+dnl $Id: aclocal.m4,v 1.6 2000/01/08 22:38:19 per Exp $
 dnl
 AC_DEFUN(EGG_MSG_CONFIGURE_START, [dnl
 AC_MSG_RESULT()
@@ -987,7 +987,9 @@ dnl
 dnl
 AC_DEFUN(EGG_SUBST_EGGVERSION, [dnl
 EGGVERSION=`grep 'char egg_version' src/main.c | $AWK '{gsub(/(\"|\;)/, "", [$]4); print [$]4}'`
+egg_version_num=`echo ${EGGVERSION} | $AWK 'BEGIN { FS = "."; } { printf("%d%02d%02d", [$]1, [$]2, [$]3); }'`
 AC_SUBST(EGGVERSION)dnl
+AC_DEFINE_UNQUOTED(EGG_VERSION, $egg_version_num)dnl
 ])dnl
 dnl
 dnl
