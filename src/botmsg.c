@@ -850,8 +850,8 @@ int add_note(char *to, char *from, char *msg, int idx, int echo)
   set_tcl_vars();
   if (Tcl_VarEval(interp, "storenote", " $_from $_to $_data $_idx", NULL) == TCL_OK) {
     if (interp->result && interp->result[0]) {
-      strncpy(to, interp->result, NOTENAMELEN);
-      to[NOTENAMELEN] = 0;
+      /* strncpy(to, interp->result, NOTENAMELEN);
+      to[NOTENAMELEN] = 0; */ /* notebug fixed ;) -- drummer 29May1999 */
       status = NOTE_FWD;
     }
     if (status == NOTE_AWAY) {
