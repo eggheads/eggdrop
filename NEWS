@@ -1,4 +1,4 @@
-News - Updated 02 April 2000
+News - Updated 18 August 2000
   ------------------------------------------------------------------------
 
 Whats new, first read the following documents:
@@ -121,6 +121,8 @@ TCL COMMANDS
        added (isjuped)
      * binds NOTC and PART were upgraded so msg in them can be kept now.
      * fileresend command was added to support mIRC's dcc resume feature
+     * a new bind called 'NEED' was added which can be used to trap
+       events like need-op or need-unban but via a bind
 
      For more information about this changed or added tcl commands see
      doc/tcl-commands.doc
