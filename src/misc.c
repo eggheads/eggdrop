@@ -7,7 +7,7 @@
  *   help system
  *   motd display and %var substitution
  *
- * $Id: misc.c,v 1.64 2003/05/03 04:36:38 wcc Exp $
+ * $Id: misc.c,v 1.65 2003/05/05 00:49:44 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -494,8 +494,8 @@ void putlog EGG_VARARGS_DEF(int, arg1)
   format = va_arg(va, char *);
 
   /* Create the timestamp */
+  t = localtime(&now2);
   if (shtime) {
-    t = localtime(&now2);
     egg_strftime(stamp, sizeof(stamp) - 2, LOG_TS, t);
     strcat(stamp, " ");
     tsl = strlen(stamp);
