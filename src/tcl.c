@@ -4,7 +4,7 @@
  *   Tcl initialization
  *   getting and setting Tcl/eggdrop variables
  *
- * $Id: tcl.c,v 1.68 2003/03/06 03:49:41 wcc Exp $
+ * $Id: tcl.c,v 1.69 2003/03/10 06:06:29 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -86,6 +86,10 @@ int strtot = 0;
 int handlen = HANDLEN;
 int utftot = 0;
 int clientdata_stuff = 0;
+
+/* Compatability for removed settings.*/
+int strict_servernames = 0, enable_simul = 0, use_console_r = 0,
+    debug_output = 0;
 
 
 /* Prototypes for Tcl */
@@ -513,6 +517,10 @@ static tcl_ints def_tcl_ints[] = {
   {"userfile-perm",         &userfile_perm,        0},
   {"copy-to-tmp",           &copy_to_tmp,          0},
   {"quiet-reject",          &quiet_reject,         0},
+  {"strict-servernames",    &strict_servernames,   0}, /* compat */
+  {"enable-simul",          &enable_simul,         0}, /* compat */
+  {"debug-output",          &debug_output,         0}, /* compat */
+  {"use-console-r",         &use_console_r,        0}, /* compat */
   {NULL,                    NULL,                  0}
 };
 
