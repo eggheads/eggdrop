@@ -1192,7 +1192,7 @@ then
 fi
 
 # awk is needed for Tcl library and header checks, and eggdrop version subst
-for ac_prog in gawk mawk nawk awk
+for ac_prog in mawk gawk nawk awk
 do
 # Extract the first word of "$ac_prog", so it can be a program name with args.
 set dummy $ac_prog; ac_word=$2
@@ -2955,7 +2955,7 @@ fi
 # (well, what used to be robey's tcl thingies...)
 
 # Latest tested Tcl version to recommend if Tcl isn't found
-tclrecommendver="8.3.1"
+tclrecommendver="8.3.2"
 
 # Site recommended to download Tcl from
 tclrecommendsite="ftp://ftp.scriptics.com/pub/tcl/tcl8_3/"
