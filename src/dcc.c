@@ -4,7 +4,7 @@
  *   disconnect on a dcc socket
  *   ...and that's it!  (but it's a LOT)
  *
- * $Id: dcc.c,v 1.57 2002/09/22 04:11:08 wcc Exp $
+ * $Id: dcc.c,v 1.58 2002/11/22 23:29:51 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -541,16 +541,10 @@ static void dcc_chat_pass(int idx, char *buf, int atr)
 {
   if (!atr)
     return;
-
   strip_telnet(dcc[idx].sock, buf, &atr);
-
-  if (buf == NULL || buf[0] == 0)
-    return;
-
+  atr = dcc[idx].user ? dcc[idx].user->flags : 0;
 
   /* Check for MD5 digest from remote _bot_. <cybah> */
-
-  atr = dcc[idx].user ? dcc[idx].user->flags : 0;
   if ((atr & USER_BOT) && !egg_strncasecmp(buf, "digest ", 7)) {
     if(dcc_bot_check_digest(idx, buf+7)) {
       nfree(dcc[idx].u.chat);

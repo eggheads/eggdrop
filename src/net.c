@@ -2,7 +2,7 @@
  * net.c -- handles:
  *   all raw network i/o
  * 
- * $Id: net.c,v 1.50 2002/11/22 21:35:03 wcc Exp $
+ * $Id: net.c,v 1.51 2002/11/22 23:29:51 wcc Exp $
  */
 /* 
  * This is hereby released into the public domain.
@@ -308,18 +308,6 @@ void killsock(register int sock)
     }
   }
   putlog(LOG_MISC, "*", "Attempt to kill un-allocated socket %d !!", sock);
-}
-
-/* convert a socklist sock idx to dcc idx
-*/
-static int sock_to_dcc(int sock)
-{
-  int i;
-  
-  for (i = 0; i < dcc_total; i++)
-    if (sock == dcc[i].sock)
-      return i;
-  return -1;
 }
 
 /* Send connection request to proxy
