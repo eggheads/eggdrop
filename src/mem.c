@@ -3,7 +3,7 @@
  *   memory allocation and deallocation
  *   keeping track of what memory is being used by whom
  *
- * $Id: mem.c,v 1.20 2003/01/30 07:15:14 wcc Exp $
+ * $Id: mem.c,v 1.21 2003/06/09 01:49:10 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -344,7 +344,7 @@ void *n_realloc(void *ptr, int size, const char *file, int line)
     return n_malloc(size, file, line);
 
   x = (void *) realloc(ptr, size);
-  if (x == NULL) {
+  if (x == NULL && size > 0) {
     i = i;
     putlog(LOG_MISC, "*", "*** FAILED REALLOC %s (%d)", file, line);
     return NULL;
