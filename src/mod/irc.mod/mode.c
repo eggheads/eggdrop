@@ -4,7 +4,7 @@
  *   channel mode changes and the bot's reaction to them
  *   setting and getting the current wanted channel modes
  * 
- * $Id: mode.c,v 1.32 2000/09/02 19:34:36 fabian Exp $
+ * $Id: mode.c,v 1.33 2000/09/07 16:04:44 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -158,7 +158,7 @@ static void flush_mode(struct chanset_t *chan, int pri)
 static void real_add_mode(struct chanset_t *chan,
 			  char plus, char mode, char *op)
 {
-  int i, type, ok, l;
+  int i, type, modes, l;
   masklist *m;
   memberlist *mx;
   char s[21];
@@ -264,28 +264,20 @@ static void real_add_mode(struct chanset_t *chan,
       if (chan->cmode[i].type == type && chan->cmode[i].op != NULL &&
 	  !rfc_casecmp(chan->cmode[i].op, op))
 	return;			/* Already in there :- duplicate */
-    ok = 0;			/* Add mode to buffer */
     l = strlen(op) + 1;
     if (chan->bytes + l > mode_buf_len)
       flush_mode(chan, NORMAL);
     for (i = 0; i < modesperline; i++)
-      if (chan->cmode[i].type == 0 && !ok) {
+      if (chan->cmode[i].type == 0) {
 	chan->cmode[i].type = type;
 	chan->cmode[i].op = (char *) channel_malloc(l);
 	chan->bytes += l;	/* Add 1 for safety */
 	strcpy(chan->cmode[i].op, op);
-	ok = 1;
+	break;
       }
-    ok = 0;			/* Check for full buffer */
-    for (i = 0; i < modesperline; i++)
-      if (chan->cmode[i].type == 0)
-	ok = 1;
-    if (!ok)
-      flush_mode(chan, NORMAL);	/* Full buffer!  flush modes */
-    return;
   }
   /* +k ? store key */
-  if (plus == '+' && mode == 'k') {
+  else if (plus == '+' && mode == 'k') {
     chan->key = (char *) channel_malloc(strlen(op) + 1);
     if (chan->key)
       strcpy(chan->key, op);
@@ -315,17 +307,17 @@ static void real_add_mode(struct chanset_t *chan,
       }
     }
   }
-  ok = modesperline;			/* Check for full buffer. */
+  modes = modesperline;			/* Check for full buffer. */
   for (i = 0; i < modesperline; i++)
     if (chan->cmode[i].type)
-      ok--;
+      modes--;
   if (include_lk && chan->limit != -1)
-    ok--;
+    modes--;
   if (include_lk && chan->rmkey)
-    ok--;
+    modes--;
   if (include_lk && chan->key)
-    ok--;
-  if (ok <= 0)
+    modes--;
+  if (modes <= 0)
     flush_mode(chan, NORMAL);		/* Full buffer! Flush modes. */
 }
 
