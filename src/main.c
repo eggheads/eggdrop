@@ -189,6 +189,7 @@ void write_debug()
       strcpy(s, ctime(&now));
       dprintf(-x, "Debug (%s) written %s", ver, s);
       dprintf(-x, "Please report problem to eggheads@eggheads.org");
+      dprintf(-x, "after a visit to http://www.eggheads.org/bugs.html");
       dprintf(-x, "Full Patch List: %s\n", egg_xtra);
       dprintf(-x, "Context: ");
       cx_ptr = cx_ptr & 15;

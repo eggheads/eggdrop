@@ -1057,7 +1057,7 @@ static int hosts_set(struct userrec *u, struct user_entry *e, void *buf)
     (*t)->extra = user_malloc(strlen(host) + 1);
     strcpy((*t)->extra, host);
   }
-  contextnote("please report this bug to eggheads@eggheads.org");
+  contextnote("please visit http://www.eggheads.org/bugs.html now.");
   return 1;
 }
 
