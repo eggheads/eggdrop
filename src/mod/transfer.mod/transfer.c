@@ -1,7 +1,7 @@
 /*
  * transfer.c -- part of transfer.mod
  *
- * $Id: transfer.c,v 1.62 2003/02/21 02:15:58 wcc Exp $
+ * $Id: transfer.c,v 1.63 2003/02/28 23:07:39 wcc Exp $
  *
  * Copyright (C) 1997 Robey Pointer
  * Copyright (C) 1999, 2000, 2001, 2002, 2003 Eggheads Development Team
@@ -1066,11 +1066,14 @@ static int ctcp_DCC_RESUME(char *nick, char *from, char *handle,
 
   strcpy(msg, text);
   action = newsplit(&msg);
+
   if (egg_strcasecmp(action, "RESUME"))
     return 0;
+
   fn = newsplit(&msg);
   port = atoi(newsplit(&msg));
   offset = my_atoul(newsplit(&msg));
+
   for (i = 0; i < dcc_total; i++) /* Search for existing SEND */
     if ((dcc[i].type == &DCC_GET_PENDING) &&
         (!rfc_casecmp(dcc[i].nick, nick)) && (dcc[i].port == port))
@@ -1083,8 +1086,12 @@ static int ctcp_DCC_RESUME(char *nick, char *from, char *handle,
 
     dprintf(DP_HELP, TRANSFER_DCC_IGNORED, nick,
             p ? p + 1 : dcc[i].u.xfer->origname);
+    killsock(dcc[i].sock);
+    killtransfer(i);
+    lostdcc(i);
     return 0;
   }
+
   dcc[i].u.xfer->type = XFER_RESUME_PEND;
   dcc[i].u.xfer->offset = offset;
   dprintf(DP_SERVER, "PRIVMSG %s :\001DCC ACCEPT %s %d %u\001\n", nick, fn, port,
