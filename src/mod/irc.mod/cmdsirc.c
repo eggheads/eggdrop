@@ -717,7 +717,7 @@ static void cmd_adduser(struct userrec *u, int idx, char *par)
   char s[121], s1[121];
   int atr = u ? u->flags : 0;
   int statichost = 0;
-  char *p1 = (char*) &s1;
+  char *p1 = s1;
 
   context;
   if ((!par[0]) || ((par[0]=='!') && (!par[1]))) {

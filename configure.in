@@ -9,7 +9,18 @@ echo "It's going to run a bunch of strange tests to hopefully make"
 echo "your compile work without much twiddling."
 echo ""
 
+AC_PROG_MAKE_SET
 AC_PROG_CC
+
+dnl no cross-compiling!
+if test ! "x${cross_compiling}" = "xno"
+then
+  echo ""
+  echo "This system does not appear to have a working C compiler."
+  echo "A working C compiler is required to compile eggdrop."
+  echo ""
+  exit 1
+fi
 
 dnl crazy machines
 AC_AIX
@@ -17,37 +28,32 @@ AC_ISC_POSIX
 AC_MINIX
 
 dnl Checks for programs.
-AC_PROG_MAKE_SET
 AC_PROG_RANLIB
 AC_CHECK_PROG(STRIP,strip,strip)
 AC_CHECK_PROG(UNAME,uname,uname)
+
+AC_PROG_AWK
+if test "x${AWK}" = "x"
+then
+  AC_MSG_ERROR(This system seems to lack a working 'awk' command.)
+fi
+
 AC_CHECK_PROG(BASENAME,basename,basename)
+if test "x${BASENAME}" = "x"
+then
+  AC_MSG_ERROR(This system seems to lack a working 'basename' command.)
+fi
+
 AC_CHECK_PROG(DIRNAME,dirname,dirname)
-
-dnl no cross-compiling!
-if ! test "x${cross_compiling}" = "xno"
+if test "x${DIRNAME}" = "x"
 then
-  echo ""
-  echo "This system does not appear to have a working C compiler."
-  echo "A working C compiler is required to compile eggdrop."
-  echo ""
-  exit
+  AC_MSG_ERROR(This system seems to lack a working 'dirname' command.)
 fi
 
-dnl stop putting -g in there!  @#$!#$%!
-if test "x${CFLAGS}" = "x"
-then
-  CFLAGS="-O"
-  if test "x${CC}" = "xgcc"
-  then
-    CFLAGS="-O2"
-  fi
-else
-  CFLAGS=${CFLAGS}
-fi
+AC_PROG_LN_S
 
-dnl cp checks
-AC_MSG_CHECKING(whether cp takes -f)
+dnl cp -f checks
+AC_MSG_CHECKING(whether cp -f works)
 ac_file1=beldin1
 ac_file2=beldin2
 ac_cp="cp -f $ac_file1 $ac_file2"
@@ -55,7 +61,8 @@ ac_cp="cp -f $ac_file1 $ac_file2"
 cat > $ac_file1 <<EOF
 Beldin is a llama.  :P
 EOF
-if { (eval echo configure: \"$ac_cp\") 1>&5; (eval $ac_cp) 2>&5; } && test -s $ac_file2; then
+if { (eval echo configure: \"$ac_cp\") 1>&5; (eval $ac_cp) 2>&5; } && test -s $ac_file2
+then
   AC_MSG_RESULT(yes)
   ac_cv_prog_cp_f=yes
   CP1="cp -f"
@@ -69,6 +76,17 @@ else
   CP3="cp -p"
 fi
 rm -f $ac_file1 $ac_file2
+
+dnl stop putting -g in there!  @#$!#$%!
+if test "x${CFLAGS}" = "x"
+then
+  if test "x${CC}" = "xgcc"
+  then
+    CFLAGS="-O2"
+  else
+    CFLAGS="-O"
+  fi
+fi
 
 dnl test the os and set the module linking settings
 if test "x${STRIP}" = "x"
@@ -138,9 +156,9 @@ case $system in
       SHLIB_LD="ld"
       SHLIB_STRIP="touch"
     fi
-    AC_DEFINE(MODULES_OK)
     SHLIB_CC="${CC} -fPIC"
     BEL_MOD_CC="${CC} -fPIC"
+    AC_DEFINE(MODULES_OK)
     ;;
   OSF1)
     AC_MSG_RESULT(OSF...)
@@ -175,15 +193,15 @@ case $system in
   HP-UX)
     AC_MSG_RESULT([HP-UX, just shoot yourself now])
     AC_CHECK_LIB(dld,shl_load)
-    AC_DEFINE(MODULES_OK)
+    BEL_MOD_LD="gcc -Wl,-E"
+    SHLIB_CC="gcc -fPIC"
+    SHLIB_LD="ld -b"
     AC_DEFINE(HPUX_HACKS)
     if test "x`${UNAME} -r | cut -d . -f 2`" = "x10"
     then
        AC_DEFINE(HPUX10_HACKS)
     fi
-    BEL_MOD_LD="gcc -Wl,-E"
-    SHLIB_CC="gcc -fPIC"
-    SHLIB_LD="ld -b"
+    AC_DEFINE(MODULES_OK)
     need_dl=0
     ;;
   IRIX|IRIX64)
@@ -212,7 +230,7 @@ esac
 dnl Check for Sun libraries.
 if test "$IRIX" = "yes"
 then
-  echo "Skipping library tests because they CONFUSE Irix."
+  AC_MSG_WARN(Skipping library tests because they *confuse* IRIX.)
 else
   AC_CHECK_LIB(socket,socket)
   AC_CHECK_LIB(nsl,connect)
@@ -244,6 +262,7 @@ AC_CHECK_HEADERS(sys/time.h sys/select.h sys/rusage.h unistd.h stdarg.h dlfcn.h)
 dnl Checks for typedefs, structures, and compiler characteristics.
 AC_TYPE_PID_T
 AC_HEADER_TIME
+AC_C_INLINE
 
 dnl Checks for library functions.
 AC_CHECK_FUNCS(rename getrusage getdtablesize srandom random sigaction)
@@ -256,7 +275,7 @@ then
   echo "Your system does not have the sprintf/vsprintf libraries."
   echo "These are required to compile almost anything.  Sorry."
   echo ""
-  exit
+  exit 1
 fi
 
 if test "x${ac_cv_header_stdc}" = "xno"
@@ -264,17 +283,18 @@ then
   echo ""
   echo "Your system must support ANSI C Header files."
   echo "These are required for the language support. Sorry."
-  exit
+  echo ""
+  exit 1
 fi
 
 dnl check how much space is left in filedb (informational purposes)
 AC_MSG_CHECKING(space left in file database struct)
-cat >abacab.c <<'EOF'
+cat > abacab.c <<'EOF'
 #include <stdio.h>
 #include <sys/time.h>
 #include "src/mod/filesys.mod/files.h"
 main() {
-  fprintf(stderr,"%d/%d",512-sizeof(struct filler),sizeof(filedb));
+  fprintf(stderr, "%d/%d", 512-sizeof(struct filler), sizeof(filedb));
 }
 EOF
 ${CC} -o abacab abacab.c
@@ -299,6 +319,27 @@ tcllibpaths="/usr/local/lib /usr/local/pkgs/tcl/lib \
 tclheaderpaths="/usr/local/include /usr/local/pkgs/tcl/include \
 	/usr/include $HOME/include $HOME/tcl/include $HOME"
 
+# sanity checking to make sure either both or neither TCLLIB and TCLINC are set
+if test ! "x${TCLLIB}" = "x" && test "x${TCLINC}" = "x"
+then
+  echo ""
+  echo "You set the environment variable TCLLIB, but I failed to detect TCLINC."
+  echo "Please set both if you wish to use them."
+  echo "configure will now try to autodetect both libtcl and tcl.h"
+  echo ""
+  unset TCLLIB
+else
+  if test ! "x${TCLINC}" = "x"
+  then
+    echo ""
+    echo "You set the environment variable TCLINC, but I failed to detect TCLLIB."
+    echo "Please set both if you wish to use them."
+    echo "configure will now try to autodetect both libtcl and tcl.h"
+    echo ""
+    unset TCLINC
+  fi
+fi
+
 dnl oohh new configure --variables for those with multiple tcl libs
 AC_ARG_WITH(tcllib, [  --with-tcllib=PATH      full path to tcl library], tcllibname=$withval)
 AC_ARG_WITH(tclinc, [  --with-tclinc=PATH      full path to tcl header], tclincname=$withval)
@@ -306,7 +347,7 @@ AC_ARG_WITH(tclinc, [  --with-tclinc=PATH      full path to tcl header], tclincn
 if test -r "$tcllibname"
 then
   TCLLIB=`$DIRNAME $tcllibname`
-  TCLLIBEXT=".`echo $tcllibname | awk '{j=split($1, i, "."); k=i[[j]]; print k}'`"
+  TCLLIBEXT=".`echo $tcllibname | $AWK '{j=split($1, i, "."); k=i[[j]]; print k}'`"
   TCLLIBFN=`$BASENAME $tcllibname $TCLLIBEXT | cut -c4-`
   echo "Using Tcl library: $TCLLIB/lib$TCLLIBFN$TCLLIBEXT"
 else
@@ -322,7 +363,7 @@ else
 	then
 	  if test "x${TCLLIBFN}" = "x"
 	  then
-	    TCLLIBFN=$libtclfn
+	    TCLLIBFN=$tcllibfn
 	    TCLLIBEXT=$tcllibext
 	    break 2
 	  fi
@@ -454,6 +495,7 @@ then
   echo ""
   exit 1
 else
+
   AC_MSG_CHECKING(for Tcl version)
 
   for ver in $tclnames
@@ -461,23 +503,23 @@ else
     ver=`echo $ver | cut -c4-`
     if test ! "x${ver}" = "x"
     then
-      TCLVERFOUND=`grep TCL_VERSION $TCLINC/$TCLINCFN | grep $ver | wc -l`
-      if test ! $TCLVERFOUND = 0
+      TCLFOUND=`grep TCL_VERSION $TCLINC/$TCLINCFN | grep $ver | wc -l`
+      if test ! $TCLFOUND = 0
       then
-      TCLVER=$ver
-      break
+        TCLVER=$ver
+        break
       fi
     fi
   done
 
   if test ! "x${TCLVER}" = "x"
   then
-    AC_MSG_RESULT($TCLVER found)
+    AC_MSG_RESULT($TCLVER found!)
   else
     AC_MSG_RESULT(hmm... unknown version)
   fi
 
-  if test $TCLVERFOUND = 1
+  if test $TCLFOUND = 1
   then
     TCL_REQS="$TCLLIB/lib$TCLLIBFN$TCLLIBEXT"
     TCL_LIBS="-L$TCLLIB -l$TCLLIBFN -lm"
@@ -494,7 +536,7 @@ else
   then
     echo ""
     echo "Your libtcl is not a shared library."
-    echo "Eggdrop will build static."
+    echo "configure will set default make type to static..."
     echo ""
     DEFAULT_MAKE=static
   fi
@@ -528,7 +570,7 @@ then
       echo "if you work out where it is, add it to your XLIBS= lines"
       echo "and #define HAVE_DLOPEN in config.h"
       echo ""
-      echo "we'll proceed on anyways, but you probably won't be able"
+      echo "we'll proceed on anyway, but you probably won't be able"
       echo "to 'make eggdrop' but you might be able to make the"
       echo "static bot (I'll default your make to this version)."
       DEFAULT_MAKE=static
@@ -567,14 +609,13 @@ AC_SUBST(DLFLAGS)
 AC_SUBST(DEFAULT_MAKE)
 AC_OUTPUT(Makefile lush.h)
 
-# make sure we start with a clean build tree
-if test -r "./eggdrop"
-then
-  make clean
-fi
-
 echo ""
 echo "Configure is done."
 echo ""
-echo "Type 'make' to create the bot"
+if test -f "./eggdrop"
+then
+  echo "Type 'make clean' and then 'make' to create the bot."
+else
+  echo "Type 'make' to create the bot."
+fi
 echo ""

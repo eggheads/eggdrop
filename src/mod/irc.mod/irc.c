@@ -187,7 +187,7 @@ static void punish_badguy(struct chanset_t *chan, char *reason, char *whobad,
         mx->user = u;
       set_user_flagrec(u, &fr, chan->name);
       simple_sprintf(s, "(%s) %s (%s)", ct, reason, whobad);
-      set_user(&USERENTRY_COMMENT, u, (void *) &s);
+      set_user(&USERENTRY_COMMENT, u, (void *) s);
       putlog(LOG_MISC, "*", "Now deopping %s (%s)", whobad, reason);
     }
   }

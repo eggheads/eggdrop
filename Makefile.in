@@ -4,10 +4,10 @@
 #
 
 prefix = @prefix@
-DEST=@DEST@
-NEWVERSION=`grep 'char egg_version' src/main.c | awk '{gsub(/\"|\;/, "", $4); print $4}'`
+DEST = @DEST@
+NEWVERSION = `grep 'char egg_version' src/main.c | @AWK@ '{gsub(/(\"|\;)/, "", $$4); print $$4}'`
 
-SHELL=/bin/sh
+SHELL = /bin/sh
 
 # things you can put here:
 #   -Wall            if you're using gcc and it supports it (configure
@@ -18,20 +18,20 @@ CFLGS =
 
 # configure SHOULD set these...you may need to tweak them to get modules
 # to compile .. if you do...let the devel-team know the working settings
-# btw to turn STRIP off, do STRIP=touch not STRIP=
+# btw to turn STRIP off, do 'STRIP = touch' not 'STRIP ='
 
-CC=@CC@
-LD=@CC@
+CC = @CC@
+LD = @CC@
 
 #making eggmod
 MOD_CC = @BEL_MOD_CC@
 MOD_LD = @BEL_MOD_LD@
 MOD_STRIP = @BEL_MOD_STRIP@
-DLFLAGS= @DLFLAGS@
+DLFLAGS = @DLFLAGS@
 
 #making modules
 SHLIB_CC = @SHLIB_CC@
-SHLIB_LD  = @SHLIB_LD@
+SHLIB_LD = @SHLIB_LD@
 SHLIB_STRIP = @SHLIB_STRIP@
 
 # configure SHOULD set these properly if not, modify them appropriately
@@ -41,7 +41,7 @@ CP2 = @CP2@
 CP3 = @CP3@
 
 # With any luck this won't burst into flames or cause sterility
-LN_S = ln -s
+LN_S = @LN_S@
 
 # STOP STOP STOP STOP STOP STOP STOP STOP STOP STOP STOP STOP STOP STOP #
 # - - - - - - - - do not edit anything below this line. - - - - - - - - #
