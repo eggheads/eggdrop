@@ -1,5 +1,6 @@
 /* Original Copyright (c) 2000-2001 proton
  * 
+ * $Id: uptime.h,v 1.4 2001/06/12 17:45:33 poptix Exp $
  * Borrowed from Emech, reports to http://uptime.energymech.net, feel free to opt out if you
  * dont like it by not loading the module.
  *                              
