@@ -20,6 +20,12 @@ if test "x$1" = "x"; then
 else
 	patch_name=$1
 fi
+
+if test ! -f src/main.c; then
+	echo "You are not in the eggdrop root directory."
+	exit 1
+fi
+
 if test "x$2" = "x"; then
 	unix_time=`date +%s`
 	echo "Setting unix time to now."
@@ -30,11 +36,6 @@ fi
 if test "${unix_time}" = now; then
 	unix_time=`date +%s`
 	echo "Setting unix time to now."
-fi
-
-if test ! -f src/main.c; then
-	echo "You are not in the eggdrop root directory."
-	exit 1
 fi
 
 echo "Patching src/patch.h:"
