@@ -1,7 +1,7 @@
 /*
  * servmsg.c -- part of server.mod
  *
- * $Id: servmsg.c,v 1.57 2001/08/27 23:04:18 poptix Exp $
+ * $Id: servmsg.c,v 1.58 2001/08/27 23:08:29 poptix Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -177,8 +177,7 @@ static int check_tcl_ctcpr(char *nick, char *uhost, struct userrec *u,
   Tcl_SetVar(interp, "_ctcpr6", args, 0);
   x = check_tcl_bind(table, keyword, &fr,
 		     " $_ctcpr1 $_ctcpr2 $_ctcpr3 $_ctcpr4 $_ctcpr5 $_ctcpr6",
-		     (lowercase_ctcp ? MATCH_EXACT : MATCH_CASE)
-		     | BIND_USE_ATTR | BIND_STACKABLE |
+		     MATCH_MASK | BIND_USE_ATTR | BIND_STACKABLE |
 		     ((table == H_ctcp) ? BIND_WANTRET : 0));
   return (x == BIND_EXEC_LOG) || (table == H_ctcr);
 }
