@@ -4,7 +4,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: modules.c,v 1.87 2003/11/01 23:26:57 wcc Exp $
+ * $Id: modules.c,v 1.88 2003/11/27 03:25:10 wcc Exp $
  */
 /* 
  * Copyright (C) 1997 Robey Pointer
@@ -1070,8 +1070,8 @@ void do_module_report(int idx, int details, char *which)
 {
   module_entry *p = module_list;
 
-  if (p && !which && details)
-    dprintf(idx, "MODULES LOADED:\n");
+  if (p && !which)
+    dprintf(idx, "Loaded module information:\n");
   for (; p; p = p->next) {
     if (!which || !egg_strcasecmp(which, p->name)) {
       dependancy *d;

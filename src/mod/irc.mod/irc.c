@@ -2,7 +2,7 @@
  * irc.c -- part of irc.mod
  *   support for channels within the bot
  *
- * $Id: irc.c,v 1.93 2003/08/18 03:27:06 wcc Exp $
+ * $Id: irc.c,v 1.94 2003/11/27 03:25:10 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -948,8 +948,8 @@ static void irc_report(int idx, int details)
       l = simple_sprintf(ch, "%s%s%s%s, ", chan->dname, p ? " (" : "",
                          p ? p : "", p ? ")" : "");
       if ((k + l) > 70) {
-        dprintf(idx, "   %s\n", q);
-        strcpy(q, "          ");
+        dprintf(idx, "    %s\n", q);
+        strcpy(q, "           ");
         k = 10;
       }
       k += my_strcpy(q + k, ch);
