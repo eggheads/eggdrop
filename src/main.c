@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  * 
- * $Id: main.c,v 1.42 2000/09/27 19:40:43 fabian Exp $
+ * $Id: main.c,v 1.43 2000/09/27 19:48:54 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -49,6 +49,7 @@
 #include "chan.h"
 #include "modules.h"
 #include "tandem.h"
+#include "bg.h"
 
 #ifdef CYGWIN_HACKS
 #include <windows.h>
@@ -163,8 +164,10 @@ void fatal(char *s, int recoverable)
     if (dcc[i].sock >= 0)
       killsock(dcc[i].sock);
   unlink(pid_file);
-  if (!recoverable)
+  if (!recoverable) {
+    bg_send_quit(BG_ABORT);
     exit(1);
+  }
 }
 
 
@@ -235,6 +238,7 @@ void write_debug()
       killsock(x);
       close(x);
     }
+    bg_send_quit(BG_ABORT);
     exit(1);			/* Dont even try & tell people about, that may
 				   have caused the fault last time. */
   } else
@@ -287,6 +291,7 @@ static void got_bus(int z)
 #ifdef SA_RESETHAND
   kill(getpid(), SIGBUS);
 #else
+  bg_send_quit(BG_ABORT);
   exit(1);
 #endif
 }
@@ -300,6 +305,7 @@ static void got_segv(int z)
 #ifdef SA_RESETHAND
   kill(getpid(), SIGSEGV);
 #else
+  bg_send_quit(BG_ABORT);
   exit(1);
 #endif
 }
@@ -447,12 +453,14 @@ static void do_arg(char *s)
 	printf("%s\n", version);
 	if (z[0])
 	  printf("  (patches: %s)\n", z);
+	bg_send_quit(BG_ABORT);
 	exit(0);
       }
       if (s[i] == 'h') {
 	printf("\n%s\n\n", version);
 	printf(EGG_USAGE);
 	printf("\n");
+	bg_send_quit(BG_ABORT);
 	exit(0);
       }
   } else
@@ -740,6 +748,8 @@ int main(int argc, char **argv)
   init_bots();
   init_net();
   init_modules();
+  if (backgrd)
+    bg_prepare_split();
   init_tcl(argc, argv);
   init_language(0);
 #ifdef STATIC
@@ -754,6 +764,7 @@ int main(int argc, char **argv)
   Context;
   if (encrypt_pass == 0) {
     printf(MOD_NOCRYPT);
+    bg_send_quit(BG_ABORT);
     exit(1);
   }
   i = 0;
@@ -776,6 +787,7 @@ int main(int argc, char **argv)
     if (errno != ESRCH) {
       printf(EGG_RUNNING1, origbotname);
       printf(EGG_RUNNING2, pid_file);
+      bg_send_quit(BG_ABORT);
       exit(1);
     }
   }
@@ -784,34 +796,7 @@ int main(int argc, char **argv)
   /* Move into background? */
   if (backgrd) {
 #ifndef CYGWIN_HACKS
-    xx = fork();
-    if (xx == -1)
-      fatal("CANNOT FORK PROCESS.", 0);
-    if (xx != 0) {
-      FILE *fp;
-
-      /* Need to attempt to write pid now, not later */
-      unlink(pid_file);
-      fp = fopen(pid_file, "w");
-      if (fp != NULL) {
-	fprintf(fp, "%u\n", xx);
-	if (fflush(fp)) {
-	  /* Kill bot incase a botchk is run from crond */
-	  printf(EGG_NOWRITE, pid_file);
-	  printf("  Try freeing some disk space\n");
-	  fclose(fp);
-	  unlink(pid_file);
-	  exit(1);
-	}
-	fclose(fp);
-      } else
-	printf(EGG_NOWRITE, pid_file);
-      printf("Launched into the background  (pid: %d)\n\n", xx);
-#if HAVE_SETPGID
-      setpgid(xx, xx);
-#endif
-      exit(0);
-    }
+    bg_do_split();
   } else {			/* !backgrd */
 #endif
     xx = getpid();
@@ -896,7 +881,7 @@ int main(int argc, char **argv)
     int socket_cleanup = 0;
 
     Context;
-#if !defined(HAVE_PRE7_5_TCL) && !defined(HAVE_TCL_THREADS)
+#if !defined(HAVE_PRE7_5_TCL)
     /* Process a single tcl event */
     Tcl_DoOneEvent(TCL_ALL_EVENTS | TCL_DONT_WAIT);
 #endif

@@ -1,7 +1,7 @@
 dnl aclocal.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: aclocal.m4,v 1.25 2000/09/12 15:28:28 fabian Exp $
+dnl $Id: aclocal.m4,v 1.26 2000/09/27 19:48:54 fabian Exp $
 dnl
 
 
@@ -934,13 +934,6 @@ EOF
 
 if test "x${egg_cv_var_tcl_multithreaded}" = "xyes"
 then
-  cat << 'EOF' >&2
-configure: warning:
-
-  Your Tcl library is compiled with threads support.
-  There are known problems, but we will attempt to work around them.
-
-EOF
   AC_DEFINE(HAVE_TCL_THREADS)dnl
 
   # Add -lpthread to $LIBS if we have it

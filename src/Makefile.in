@@ -1,5 +1,5 @@
 # Makefile for src/
-# $Id: Makefile.in,v 1.13 2000/09/12 15:26:50 fabian Exp $
+# $Id: Makefile.in,v 1.14 2000/09/27 19:48:54 fabian Exp $
 
 SHELL = @SHELL@
 top_srcdir = @top_srcdir@
@@ -18,7 +18,7 @@ STRIP = @STRIP@
 CFLAGS = @CFLAGS@ -I.. -I$(top_srcdir) @DEFS@ $(CFLGS)
 CPPFLAGS = @CPPFLAGS@
 
-eggdrop_objs = botcmd.o botmsg.o botnet.o chanprog.o cmds.o dcc.o \
+eggdrop_objs = bg.o botcmd.o botmsg.o botnet.o chanprog.o cmds.o dcc.o \
 dccutil.o dns.o flags.o language.o main.o mem.o misc.o misc_file.o \
 modules.o net.o rfc1459.o tcl.o tcldcc.o tclhash.o tclmisc.o \
 tcluser.o userent.o userrec.o users.o
@@ -32,7 +32,7 @@ doofus:
 	@echo ""
 	@cd .. && $(MAKE)
 
-../$(EGGEXEC): $(eggdrop_objs) $(XREQS) compile_md5 compatability
+../$(EGGEXEC): build_msg $(eggdrop_objs) $(XREQS) compile_md5 compatability
 	@echo ""
 	@echo "Linking eggdrop... $(EGGBUILD)"
 	@echo ""
@@ -50,9 +50,8 @@ depend:
 clean:
 	@rm -f .depend *.o *.a *~
 
-botcmd.o:
+build_msg:
 	@echo "(This will take a while. Go make a pizza or something.)"
-	$(CC) $(CFLAGS) $(CPPFLAGS) -c $(srcdir)/botcmd.c
 
 main.o:
 	$(CC) $(CFLAGS) $(CPPFLAGS) \
@@ -85,6 +84,11 @@ eggdrop.h:
 	$(CC) $(CFLAGS) $(CPPFLAGS) -c $<
 
 #safety hash
+bg.o: ./bg.c main.h ../config.h lang.h eggdrop.h flags.h proto.h \
+ ../lush.h misc_file.h cmdt.h tclegg.h tclhash.h chan.h users.h \
+ compat/compat.h compat/inet_aton.h ../src/main.h compat/snprintf.h \
+ compat/memset.h compat/memcpy.h compat/strcasecmp.h compat/strftime.h \
+ bg.h
 botcmd.o: ./botcmd.c main.h ../config.h lang.h eggdrop.h flags.h \
  proto.h ../lush.h misc_file.h cmdt.h tclegg.h tclhash.h chan.h \
  users.h compat/compat.h compat/inet_aton.h ../src/main.h \
@@ -138,7 +142,7 @@ main.o: ./main.c main.h ../config.h lang.h eggdrop.h flags.h proto.h \
  ../lush.h misc_file.h cmdt.h tclegg.h tclhash.h chan.h users.h \
  compat/compat.h compat/inet_aton.h ../src/main.h compat/snprintf.h \
  compat/memset.h compat/memcpy.h compat/strcasecmp.h compat/strftime.h \
- modules.h mod/modvals.h tandem.h patch.h
+ modules.h mod/modvals.h tandem.h bg.h patch.h
 match.o: ./match.c
 mem.o: ./mem.c main.h ../config.h lang.h eggdrop.h flags.h proto.h \
  ../lush.h misc_file.h cmdt.h tclegg.h tclhash.h chan.h users.h \
