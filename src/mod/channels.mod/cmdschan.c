@@ -1148,7 +1148,7 @@ static void cmd_mns_chan(struct userrec *u, int idx, char *par)
     dprintf(DP_SERVER, "PART %s\n", chname);
   killchanset(chan);
   dprintf(idx, "Channel %s removed from the bot.\n", chname);
-  dprintf(idx, "This includes any channel specific bans, invires and exemptions that you set.\n");
+  dprintf(idx, "This includes any channel specific bans, invites and exemptions that you set.\n");
   putlog(LOG_CMDS, "*", "#%s# -chan %s", dcc[idx].nick, chname);
   for (i = 0; i < dcc_total; i++)
     if ((dcc[i].type->flags & DCT_CHAT) &&
