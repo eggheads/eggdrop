@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  *
- * $Id: cmds.c,v 1.93 2003/02/06 20:15:19 wcc Exp $
+ * $Id: cmds.c,v 1.94 2003/02/13 23:39:21 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -952,12 +952,12 @@ static void cmd_chaddr(struct userrec *u, int idx, char *par)
   struct bot_addr *bi;
   struct userrec *u1;
 
+  handle = newsplit(&par);
   if (!par[0]) {
     dprintf(idx,
             "Usage: chaddr <botname> <address[:telnet-port[/relay-port]]>\n");
     return;
   }
-  handle = newsplit(&par);
   addr = newsplit(&par);
   if (strlen(addr) > UHOSTMAX)
     addr[UHOSTMAX] = 0;
@@ -1006,11 +1006,11 @@ static void cmd_comment(struct userrec *u, int idx, char *par)
   char *handle;
   struct userrec *u1;
 
+  handle = newsplit(&par);
   if (!par[0]) {
     dprintf(idx, "Usage: comment <handle> <newcomment>\n");
     return;
   }
-  handle = newsplit(&par);
   u1 = get_user_by_handle(userlist, handle);
   if (!u1) {
     dprintf(idx, "No such user!\n");
