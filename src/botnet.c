@@ -1204,11 +1204,9 @@ static void failed_pre_relay(int idx)
     lostdcc(idx);
     return;
   }
-  putlog(LOG_MISC, "*", "%s [%s]%s/%d",
-	 BOT_LOSTDCCUSER, dcc[idx].nick,
+  putlog(LOG_MISC, "*", "%s [%s]%s/%d", BOT_LOSTDCCUSER, dcc[idx].nick,
 	 dcc[idx].host, dcc[idx].port);
-  putlog(LOG_MISC, "*", "(%s %s)",
-	 BOT_DROPPINGRELAY, dcc[tidx].nick);
+  putlog(LOG_MISC, "*", "(%s %s)", BOT_DROPPINGRELAY, dcc[tidx].nick);
   if ((dcc[tidx].sock != STDOUT) || backgrd) {
     if (idx > tidx) {
       int t = tidx;

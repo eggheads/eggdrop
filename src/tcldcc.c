@@ -469,7 +469,7 @@ static int tcl_control STDVAR
   dcc[idx].u.script->type = dcc[idx].type;
   dcc[idx].type = &DCC_SCRIPT;
   strncpy(dcc[idx].u.script->command, argv[2], 120);
-  dcc[idx].u.script->command[119] = 0;
+  dcc[idx].u.script->command[120] = 0;
   return TCL_OK;
 }
 

@@ -122,7 +122,9 @@ specific commands, see later.
 |     LASTON - 2 forms:
 |              setuser <handle> laston <unixtime> <place>
 |                 sets global laston time
-|              setuser <handle> laston <unixtime> <channel> *
+|              setuser <handle> laston <unixtime>
+|                 sets global laston time, leaving the place field empty
+|              setuser <handle> laston <unixtime> <channel>
 |                 will set a users laston time in a channel record
 |                 (if it already exists)
 

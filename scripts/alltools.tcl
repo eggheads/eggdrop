@@ -1,27 +1,32 @@
 # All-Tools TCL, includes toolbox.tcl, toolkit.tcl and moretools.tcl
-# toolbox is Authored by cmwagner@sodre.net
-# toolkit is Authored by (Someone claim this)[unknown]
-# moretools is Authored by David Sesno(walker@shell.pcrealm.net)
-# modified for 1.3.0 bots by TG
-# rewritten and updated by Tothwolf 02May1999
-# updated even more by guppy 02May1999
-# fixed what guppy broke and updated again by Tothwolf 02May1999
-# more changes from Tothwolf 24/25May1999
-
+# toolbox was authored by cmwagner@sodre.net
+# toolkit was authored by (Someone claim this)[unknown]
+# moretools was authored by David Sesno(walker@shell.pcrealm.net)
+#
+# TG        ?????????: modified for 1.3.0 bots
+# Tothwolf  02May1999: rewritten and updated
+# guppy     02May1999: updated even more
+# Tothwolf  02May1999: fixed what guppy broke and updated again
+# Tothwolf  24/25May1999: more changes
+# rtc       20Sep1999: added isnumber, changes
+# dw        20Sep1999: use regexp for isnumber checking
+# Tothwolf  06Oct1999: optimized completely
+#
 ########################################
 # Descriptions of avaliable commands:
 ## (toolkit):
 # putmsg <nick/chan> <text>
-#   send a message to a nick/chan
+#   send a privmsg to the given nick or channel
 #
 # putchan <nick/chan> <text>
-#   identical to putmsg
+#   send a privmsg to the given nick or channel
+#   (for compat only, this is the same as 'putmsg' above)
 #
 # putnotc <nick/chan> <text>
-#   send a notice to a nick/chan
+#   send a notice to the given nick or channel
 #
 # putact <nick/chan> <text>
-#   send an action to a nick/chan
+#   send an action to the given nick or channel
 #
 ## (toolbox):
 # strlwr <string>
@@ -48,34 +53,31 @@
 #
 # timerexists <command>
 #   if the given command is scheduled by a timer, return its timer id
-#   else return ""
+#   else return empty string
 #
 # utimerexists <command>
 #   if the given command is scheduled by a utimer, return its utimer id
-#   else return ""
+#   else return empty string
 #
 # inchain <bot>
 #   if the given bot is connected to the botnet, return 1
 #   else return 0
+#   (for compat only, same as 'islinked')
 #
 # randstring <length>
 #   returns a random string of the given length
 #
 # putdccall <text>
 #   send the given text to all dcc users
-#   returns nothing
 #
 # putdccbut <idx> <text>
 #   send the given text to all dcc users except for the given idx
-#   returns nothing
 #
 # killdccall
 #   kill all dcc user connections
-#   returns nothing
 #
 # killdccbut <idx>
 #   kill all dcc user connections except for the given idx
-#   returns nothing
 #
 ## (moretools):
 # iso <nick> <channel>
@@ -85,8 +87,8 @@
 # realtime [format]
 #   'time' returns the current time in 24 hour format '14:15'
 #   'date' returns the current date in the format '21 Dec 1994'
-#   not specifying any format will return the current time with
-#   in 12 hour format '1:15 am'
+#   not specifying any format will return the current time in
+#   12 hour format '1:15 am'
 #
 # testip <ip>
 #   if the given ip is valid, return 1
@@ -94,60 +96,74 @@
 #
 # number_to_number <number>
 #   if the given number is between 1 and 15, return its analog representation
+#   else return the number given
+#
+## (other commands):
+# isnumber <string>
+#   if the given string is a valid number, return 1
+#   else return 0
 #
 ########################################
 
 # So scripts can see if allt is loaded.
 set alltools_loaded 1
-set allt_version 203
+set allt_version 204
 
 # For backward comptibility.
 set toolbox_revision 1007
 set toolbox_loaded 1
 set toolkit_loaded 1
 
-proc putmsg {who text} {
-  puthelp "PRIVMSG $who :$text"
+#
+# toolbox:
+#
+
+proc putmsg {dest text} {
+  puthelp "PRIVMSG $dest :$text"
 }
 
-proc putchan {who text} {
-  puthelp "PRIVMSG $who :$text"
+proc putchan {dest text} {
+  puthelp "PRIVMSG $dest :$text"
 }
 
-proc putnotc {who text} {
-  puthelp "NOTICE $who :$text"
+proc putnotc {dest text} {
+  puthelp "NOTICE $dest :$text"
 }
 
-proc putact {who text} {
-  puthelp "PRIVMSG $who :\001ACTION $text\001"
+proc putact {dest text} {
+  puthelp "PRIVMSG $dest :\001ACTION $text\001"
 }
+
+#
+# toolkit:
+#
 
 proc strlwr {string} {
-  return [string tolower $string]
+  string tolower $string
 }
 
 proc strupr {string} {
-  return [string toupper $string]
+  string toupper $string
 }
 
 proc strcmp {string1 string2} {
-  return [string compare $string1 $string2]
+  string compare $string1 $string2
 }
 
 proc stricmp {string1 string2} {
-  return [string compare [string tolower $string1] [string tolower $string2]]
+  string compare [string tolower $string1] [string tolower $string2]
 }
 
 proc strlen {string} {
-  return [string length $string]
+  string length $string
 }
 
 proc stridx {string index} {
-  return [string index $string $index]
+  string index $string $index
 }
 
 proc iscommand {command} {
-  if {![string match "" [info commands $command]]} then {
+  if {[string compare [info commands $command] ""]} then {
     return 1
   }
   return 0
@@ -155,7 +171,7 @@ proc iscommand {command} {
 
 proc timerexists {command} {
   foreach i [timers] {
-    if {[string match [lindex $i 1] $command]} then {
+    if {[string compare $command [lindex $i 1]] == 0} then {
       return [lindex $i 2]
     }
   }
@@ -164,7 +180,7 @@ proc timerexists {command} {
 
 proc utimerexists {command} {
   foreach i [utimers] {
-    if {[string match [lindex $i 1] $command]} then {
+    if {[string compare $command [lindex $i 1]] == 0} then {
       return [lindex $i 2]
     }
   }
@@ -172,101 +188,88 @@ proc utimerexists {command} {
 }
 
 proc inchain {bot} {
-  return [islinked $bot]
+  islinked $bot
 }
 
 proc randstring {length} {
-  set string ""
   set chars abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789
   set count [string length $chars]
-  for {set i 0} {[expr $i < $length]} {incr i} {
-    append string [string index $chars [rand $count]]
+  for {set i 0} {$i < $length} {incr i} {
+    append result [string index $chars [rand $count]]
   }
-  return $string
 }
 
 proc putdccall {text} {
-  foreach i [dcclist] {
-    set j [lindex $i 0]
-    if {[valididx $j]} then {
-      putdcc $j $text
-    }
+  foreach i [dcclist CHAT] {
+    putdcc [lindex $i 0] $text
   }
-  return
 }
 
 proc putdccbut {idx text} {
-  foreach i [dcclist] {
+  foreach i [dcclist CHAT] {
     set j [lindex $i 0]
-    if {([valididx $j]) && (![string match $j $idx])} then {
+    if {$j != $idx} then {
       putdcc $j $text
     }
   }
-  return
 }
 
 proc killdccall {} {
-  foreach i [dcclist] {
-    set j [lindex $i 0]
-    if {[valididx $j]} then {
-      killdcc $j
-    }
+  foreach i [dcclist CHAT] {
+    killdcc [lindex $i 0]
   }
-  return
 }
 
 proc killdccbut {idx} {
-  foreach i [dcclist] {
+  foreach i [dcclist CHAT] {
     set j [lindex $i 0]
-    if {([valididx $j]) && (![string match $j $idx])} then {
+    if {$j != $idx} then {
       killdcc $j
     }
   }
-  return
 }
 
+#
+# moretools:
+#
+
 proc iso {nick chan} {
-  return [matchattr [nick2hand $nick $chan] o|o $chan]
+  matchattr [nick2hand $nick $chan] o|o $chan
 }
 
 proc realtime {args} {
-  switch -exact [lindex $args 0] {
+  switch -exact -- $args {
     time {
-      return [strftime "%H:%M"]
+      strftime "%H:%M"
     }
     date {
-      return [strftime "%d %b %Y"]
+      strftime "%d %b %Y"
     }
     default {
-      return [strftime "%l:%M %P"]
+      strftime "%I:%M %P"
     }
   }
 }
 
 proc testip {ip} {
   set tmp [split $ip .]
-  if {[expr [llength $tmp] != 4]} then {
+  if {[llength $tmp] != 4} then {
     return 0
-  }
-  foreach i [split [join $tmp ""] ""] {
-    if {![string match \[0-9\] $i]} then {
-      return 0
-    }
   }
   set index 0
   foreach i $tmp {
-    if {(([expr [string length $i] > 3]) || \
-        (([expr $index == 3]) && (([expr $i > 254]) || ([expr $i < 1]))) || \
-        (([expr $index <= 2]) && (([expr $i > 255]) || ([expr $i < 0]))))} then {
+    if {((![regexp \[^0-9\] $i]) || ([string length $i] > 3) ||
+         (($index == 3) && (($i > 254) || ($i < 1))) ||
+         (($index <= 2) && (($i > 255) || ($i < 0))))} then {
       return 0
     }
-    incr index 1
+    incr index
   }
   return 1
 }
 
 proc number_to_number {number} {
-  switch -exact $number {
+  switch -exact -- $number {
     0 {
       return Zero
     }
@@ -315,6 +318,19 @@ proc number_to_number {number} {
     15 {
       return Fifteen
     }
+    default {
+      return $number
+    }
   }
-  return
+}
+
+#
+# other commands:
+#
+
+proc isnumber {string} {
+  if {([string compare $string ""]) && (![regexp \[^0-9\] $string])} then {
+    return 1
+  }
+  return 0
 }

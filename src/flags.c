@@ -586,7 +586,7 @@ int flagrec_eq(struct flag_record *req, struct flag_record *have)
 void set_user_flagrec(struct userrec *u, struct flag_record *fr,
 		      char *chname)
 {
-  struct chanuserrec *cr;
+  struct chanuserrec *cr = NULL;
   int oldflags = fr->match;
   char buffer[100];
   struct chanset_t *ch;

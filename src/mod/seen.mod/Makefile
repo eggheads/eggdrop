@@ -16,6 +16,7 @@ modules: ../../../seen.so
 ../seen.o: ../module.h ../modvals.h ../../eggdrop.h \
 ../channels.mod/channels.h ../../chan.h ../../users.h
 	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c seen.c
+	rm -f ../seen.o
 	mv seen.o ../
 
 ../../../seen.so: ../seen.o

@@ -8,7 +8,7 @@
 #define DATAERROR        -1
 #define KEYBYTES         8
 
-#define UBYTE_08bits  unsigned char
+#define UBYTE_08bits  char
 #define UWORD_16bits  unsigned short
 
 #if SIZEOF_INT==4

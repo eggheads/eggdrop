@@ -112,7 +112,7 @@ void add_lang(char *lang)
   if (langpriority)
     lp->next = langpriority;
   langpriority = lp;
-  putlog(LOG_MISC, "*", "LANG: Now supporting language %s.", lang); 
+  putlog(LOG_MISC, "*", "LANG: Added language support for %s.", lang); 
 }
 
 /* remove a language from the list of preferred languages. */

@@ -16,6 +16,7 @@ modules: ../../../server.so
 ../server.o: ../module.h ../modvals.h ../../eggdrop.h cmdsserv.c server.c \
 servmsg.c server.h
 	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c server.c
+	rm -f ../server.o
 	mv server.o ../
 
 ../../../server.so: ../server.o

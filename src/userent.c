@@ -405,19 +405,28 @@ static int laston_tcl_set(Tcl_Interp * irp, struct userrec *u,
   struct laston_info *li;
   struct chanuserrec *cr;
 
-  BADARGS(5, 6, " handle LASTON time ?place?");
-  if (argc == 5) {
-    li = user_malloc(sizeof(struct laston_info));
-
-    li->lastonplace = user_malloc(strlen(argv[4]) + 1);
-    li->laston = atoi(argv[3]);
-    strcpy(li->lastonplace, argv[4]);
-    set_user(&USERENTRY_LASTON, u, li);
-  } else {
+  BADARGS(4, 5, " handle LASTON time ?place?");
+  
+  if ((argc == 5) && argv[4][0] && strchr(CHANMETA, argv[4][0])) {
+    /* Search for matching channel */
     for (cr = u->chanrec; cr; cr = cr->next)
-      if (!rfc_casecmp(cr->channel, argv[4]))
+      if (!rfc_casecmp(cr->channel, argv[4])) {
 	cr->laston = atoi(argv[3]);
+	break;
+      }
   }
+  /* Save globally */
+  li = user_malloc(sizeof(struct laston_info));
+
+  if (argc == 5) {
+    li->lastonplace = user_malloc(strlen(argv[4]) + 1);
+    strcpy(li->lastonplace, argv[4]);
+  } else {
+    li->lastonplace = user_malloc(1);
+    li->lastonplace[0] = 0;
+  }
+  li->laston = atoi(argv[3]);
+  set_user(&USERENTRY_LASTON, u, li);
   return TCL_OK;
 }
 
@@ -741,7 +750,7 @@ static int xtra_tcl_set(Tcl_Interp * irp, struct userrec *u,
   strncpy(xk->key, argv[3], l);
   xk->key[l] = 0;
 
-  if (argc == 4) {
+  if (argc == 5) {
     int k = strlen(argv[4]);
     if (k > 500 - l)
       k = 500 - l;

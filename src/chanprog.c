@@ -431,7 +431,7 @@ void chanprog()
     printf("%s\n\n", MISC_USERFCREATE2);
   } else if (make_userfile) {
      make_userfile = 0;
-     printf(MISC_USERFEXISTS);
+     printf("%s\n", MISC_USERFEXISTS);
   }
   context;
   if (helpdir[0])

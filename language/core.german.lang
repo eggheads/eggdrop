@@ -169,7 +169,7 @@ Baue eine Telnetverbindung zu dem Bot auf und gib 'NEW' als deinen Nickname ein.
 0x53e,%B  (%E)\n\nBitte gib deinen Nickname ein:\n
 0x53f,Rotiere Logdatei %s da groesser als max-logsize (%d)
 0x540,\nNickname.\n
-0x541,Die letzte Meldung wiederholte sich %s mal.\n
+0x541,Die letzte Meldung wiederholte sich %d mal.\n
 
 # IRC_
 

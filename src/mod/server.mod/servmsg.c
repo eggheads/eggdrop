@@ -831,7 +831,7 @@ static int goterror(char *from, char *msg)
   fixcolon(msg);
   putlog(LOG_SERV | LOG_MSGS, "*", "-ERROR from server- %s", msg);
   if (serverror_quit) {
-    putlog(LOG_BOTS, "*", "Disconnecting from server.");
+    putlog(LOG_SERV, "*", "Disconnecting from server.");
     nuke_server("Bah, stupid error messages.");
   }
   return 1;
