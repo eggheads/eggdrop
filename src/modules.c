@@ -387,7 +387,7 @@ Function global_table[] =
   (Function) in_chain,
   /* 164 - 167 */
   (Function) add_note,
-  (Function) NULL,
+  (Function) del_lang_section,
   (Function) detect_dcc_flood,
   (Function) flush_lines,
   /* 168 - 171 */
@@ -422,7 +422,7 @@ Function global_table[] =
   (Function) & USERENTRY_PASS,
   /* 192 - 195 */
   (Function) & USERENTRY_XTRA,
-  (Function) 0,
+  (Function) null_func,				/* EMPTY */
   (Function) & USERENTRY_INFO,
   (Function) & USERENTRY_COMMENT,
   /* 196 - 199 */

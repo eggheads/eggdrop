@@ -567,6 +567,7 @@ static char *wire_close()
   rem_builtins(H_temp, wire_filt);
   H_temp = find_bind_table("chof");
   rem_builtins(H_temp, wire_chof);
+  del_lang_section("wire");
   module_undepend(MODULE_NAME);
   return NULL;
 }

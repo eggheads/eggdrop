@@ -94,14 +94,13 @@ static char *convert_element(char *src, char *dst);
 /* 32 - 35 */
 /* *HOLE* channels_funcs[32] used to be u_sticky_exempt()
  * *HOLE* channels_funcs[33] used to be u_match_invite()
- * *HOLE* channels_funcs[34] used to be u_setsticky_invite() <cybah>
  */
+#define killchanset ((int (*)(struct chanset_t *))channels_funcs[354)
 #define u_delinvite ((int (*)(struct chanset_t *, char *, int))channels_funcs[35])
 /* 36 - 39 */
 #define u_addinvite ((int (*)(struct chanset_t *, char *, char *, char *, time_t, int))channels_funcs[36])
-/* *HOLE* channels_funcs[37] used to be u_equals_invite()
- * *HOLE* channels_funcs[38] used to be u_sticky_invite() <cybah>
- */
+#define tcl_channel_add ((int (*)Tcl_Interp *, char *, char *))channels_funcs[37])
+#define tcl_channel_modify ((int (*)Tcl_Interp *, struct chanset_t *, int, char **))channels_funcs[38])
 #define write_exempts ((int (*)(FILE *, int))channels_funcs[39])
 /* 40 - 43 */
 #define write_invites ((int (*)(FILE *, int))channels_funcs[40])

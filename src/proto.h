@@ -154,6 +154,7 @@ int detect_dcc_flood(time_t *, struct chat_info *, int);
 char *get_language(int);
 int cmd_loadlanguage(struct userrec *, int, char *);
 void add_lang_section(char *);
+int del_lang_section(char *);
 
 /* main.c */
 void fatal(char *, int);
