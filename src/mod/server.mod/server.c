@@ -1089,32 +1089,31 @@ static void dcc_chat_success(int i)
     lostdcc(i);
     return;
   }
-
   dcc[i].sock = getsock(0);
   sprintf(ip, "%lu", iptolong(my_htonl(dcc[i].addr)));
   if (open_telnet_dcc(dcc[i].sock, ip, buf) < 0) {
-      neterror(buf);
-      if(!quiet_reject)
+    neterror(buf);
+    if(!quiet_reject)
       dprintf(DP_HELP, "NOTICE %s :%s (%s)\n", dcc[i].nick,
-		DCC_CONNECTFAILED1, buf);
-      putlog(LOG_MISC, "*", "%s: CHAT (%s!%s)", DCC_CONNECTFAILED2,
+	      DCC_CONNECTFAILED1, buf);
+    putlog(LOG_MISC, "*", "%s: CHAT (%s!%s)", DCC_CONNECTFAILED2,
 	   dcc[i].nick, dcc[i].host);
-      putlog(LOG_MISC, "*", "    (%s)", buf);
+    putlog(LOG_MISC, "*", "    (%s)", buf);
     killsock(dcc[i].sock);
     lostdcc(i);
-    } else {
+  } else {
     changeover_dcc(i, &DCC_CHAT_PASS, sizeof(struct chat_info));
-      dcc[i].status = STAT_ECHO;
+    dcc[i].status = STAT_ECHO;
     get_user_flagrec(dcc[i].user, &fr, 0);
-      if (glob_party(fr))
-	dcc[i].status |= STAT_PARTY;
-      strcpy(dcc[i].u.chat->con_chan, (chanset) ? chanset->dname : "*");
-      dcc[i].timeval = now;
-      /* ok, we're satisfied with them now: attempt the connect */
+    if (glob_party(fr))
+      dcc[i].status |= STAT_PARTY;
+    strcpy(dcc[i].u.chat->con_chan, (chanset) ? chanset->dname : "*");
+    dcc[i].timeval = now;
+    /* ok, we're satisfied with them now: attempt the connect */
     putlog(LOG_MISC, "*", "DCC connection: CHAT (%s!%s)", dcc[i].nick,
 	   dcc[i].host);
-      dprintf(i, "%s\n", DCC_ENTERPASS);
-    }
+    dprintf(i, "%s\n", DCC_ENTERPASS);
+  }
   return;
 }
 

@@ -613,9 +613,8 @@ void rem_tcl_strings(tcl_strings * list)
 
 void add_tcl_ints(tcl_ints * list)
 {
-  int i;
+  int i, tmp;
   intinfo *ii;
-  int tmp;
 
   for (i = 0; list[i].name; i++) {
     ii = nmalloc(sizeof(intinfo));

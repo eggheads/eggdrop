@@ -415,7 +415,6 @@ static void eof_dcc_bot(int idx)
   chatout("*** %s\n", x);
   botnet_send_unlinked(idx, dcc[idx].nick, x);
   killsock(dcc[idx].sock);
-  strcpy(x, dcc[idx].nick);
   lostdcc(idx);
 }
 

@@ -22,8 +22,59 @@ PATCH("CVS");		/* CVS beta */
  *
  *
  */
-PATCH("resume");	/* last patch applied */
+PATCH("sync991211");	/* last patch applied */
 /*
  *
  *
  */
+/* PATCH GOES HERE */
+/*
+ *
+ *
+ */
+/* PATCH GOES HERE */
+/*
+ *
+ *
+ */
+/* PATCH GOES HERE */
+/*
+ *
+ *
+ */
+/* PATCH GOES HERE */
+/*
+ *
+ *
+ */
+/* PATCH GOES HERE */
+/*
+ *
+ *
+ */
+/* PATCH GOES HERE */
+/*
+ *
+ *
+ */
+/* PATCH GOES HERE */
+/*
+ *
+ *
+ */
+/* PATCH GOES HERE */
+/*
+ *
+ *
+ */
+/* PATCH GOES HERE */
+/*
+ *
+ *
+ */
+/* PATCH GOES HERE */
+/*
+ *
+ *
+ */
+/* if that's not enough, maybe you should release a new version :) */
