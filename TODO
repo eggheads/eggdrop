@@ -26,7 +26,6 @@ Problem status:
        20:      Tothwolf/Cybah
        21:      drummer submitted a patch to eggdev
        24:      no-one
-       26:      no-one
        27:      no-one
        30:      no-one
        32:      no-one
@@ -285,11 +284,6 @@ Status: drummer submitted a patch to eggdev
 
 --
 24. console.mod's console-autosave is buggy (ask Tothwolf for details)
-
-Status: no-one is working on this
-
---
-26. many commands break with extra spaces in them '.status  all'
 
 Status: no-one is working on this
 
