@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  * 
- * $Id: cmds.c,v 1.37 2000/08/06 14:51:38 fabian Exp $
+ * $Id: cmds.c,v 1.38 2000/08/18 16:45:51 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -2304,22 +2304,60 @@ static void cmd_unloadmod(struct userrec *u, int idx, char *par)
 
 static void cmd_pls_ignore(struct userrec *u, int idx, char *par)
 {
-  char *who;
-  char s[UHOSTLEN];
+  char			*who;
+  char			 s[UHOSTLEN];
+  unsigned long int	 expire_time = 0;
 
   if (!par[0]) {
-    dprintf(idx, "Usage: +ignore <hostmask> [comment]\n");
+    dprintf(idx,
+	    "Usage: +ignore <hostmask> [%%ignoretime <XdXhXm>] [comment]\n");
     return;
   }
+
   who = newsplit(&par);
   remove_gunk(who);
+  if (par[0] == '%') {
+    char		*p, *p_expire;
+    unsigned long int	 expire_foo;
+
+    p = newsplit(&par);
+    p_expire = p + 1;
+    while (*(++p) != 0) {
+      switch (tolower(*p)) {
+      case 'd':
+	*p = 0;
+	expire_foo = strtol(p_expire, NULL, 10);
+	if (expire_foo > 365)
+	  expire_foo = 365;
+	expire_time += 86400 * expire_foo;
+	p_expire = p + 1;
+	break;
+      case 'h':
+	*p = 0;
+	expire_foo = strtol(p_expire, NULL, 10);
+	if (expire_foo > 8760)
+	  expire_foo = 8760;
+	expire_time += 3600 * expire_foo;
+	p_expire = p + 1;
+	break;
+      case 'm':
+	*p = 0;
+	expire_foo = strtol(p_expire, NULL, 10);
+	if (expire_foo > 525600)
+	  expire_foo = 525600;
+	expire_time += 60 * expire_foo;
+	p_expire = p + 1;
+      }
+    }
+  }
   if (!par[0])
     par = "requested";
   else if (strlen(par) > 65)
     par[65] = 0;
   if (strlen(who) > UHOSTMAX - 4)
     who[UHOSTMAX - 4] = 0;
-  /* Fix missing ! or @ BEFORE continuing - sounds familiar */
+
+  /* Fix missing ! or @ BEFORE continuing */
   if (!strchr(who, '!')) {
     if (!strchr(who, '@'))
       simple_sprintf(s, "%s!*@*", who);
@@ -2329,13 +2367,14 @@ static void cmd_pls_ignore(struct userrec *u, int idx, char *par)
     simple_sprintf(s, "%s@*", who);
   else
     strcpy(s, who);
-  if (match_ignore(s)) {
+
+  if (match_ignore(s))
     dprintf(idx, "That already matches an existing ignore.\n");
-    return;
+  else {
+    dprintf(idx, "Now ignoring: %s (%s)\n", s, par);
+    addignore(s, dcc[idx].nick, par, expire_time ? now + expire_time : 0L);
+    putlog(LOG_CMDS, "*", "#%s# +ignore %s %s", dcc[idx].nick, s, par);
   }
-  dprintf(idx, "Now ignoring: %s (%s)\n", s, par);
-  addignore(s, dcc[idx].nick, par, 0L);
-  putlog(LOG_CMDS, "*", "#%s# +ignore %s %s", dcc[idx].nick, s, par);
 }
 
 static void cmd_mns_ignore(struct userrec *u, int idx, char *par)
