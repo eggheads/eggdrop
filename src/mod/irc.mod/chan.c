@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  * 
- * $Id: chan.c,v 1.45 2000/08/18 01:05:30 fabian Exp $
+ * $Id: chan.c,v 1.46 2000/09/02 19:34:36 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -109,6 +109,23 @@ static char *getchanmode(struct chanset_t *chan)
   if (chan->channel.maxmembers > -1)
     sprintf(s + i, " %d", chan->channel.maxmembers);
   return s;
+}
+
+static void check_exemptlist(struct chanset_t *chan, char *from)
+{
+  masklist *e;
+  int ok = 0;
+
+  if (!use_exempts)
+    return;
+
+  for (e = chan->channel.exempt; e->mask[0]; e = e->next)
+    if (wild_match(e->mask, from)) {
+      add_mode(chan, '-', 'e', e->mask);
+      ok = 1;
+    }
+  if (prevent_mixing && ok)
+    flush_mode(chan, QUICK);
 }
 
 /* Check a channel and clean-out any more-specific matching masks.
@@ -256,9 +273,15 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
       return 1;
     case FLOOD_JOIN:
     case FLOOD_NICK:
+      if (use_exempts &&
+	  (u_match_mask(global_exempts, from) ||
+	   u_match_mask(chan->exempts, from)))
+	return 1;
       simple_sprintf(h, "*!*@%s", p);
-      if (!isbanned(chan, h) && me_op(chan))
-        do_mask(chan, chan->channel.ban, h, 'b');
+      if (!isbanned(chan, h) && me_op(chan)) {
+	check_exemptlist(chan, from);
+	do_mask(chan, chan->channel.ban, h, 'b');
+      }
       if ((u_match_mask(global_bans, from))
 	  || (u_match_mask(chan->bans, from)))
 	return 1;		/* Already banned */
@@ -269,8 +292,7 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
       strcpy(ftype + 4, " flood");
       u_addban(chan, h, origbotname, ftype, now + (60 * ban_time), 0);
       Context;
-      /* Don't kick user if exempted */
-      if (!channel_enforcebans(chan) && me_op(chan) && !isexempted(chan, h)) {
+      if (!channel_enforcebans(chan) && me_op(chan)) {
 	  char s[UHOSTLEN];
 	  m = chan->channel.member;
 	  
@@ -330,7 +352,7 @@ static char *quickban(struct chanset_t *chan, char *uhost)
 /* Kick any user (except friends/masters) with certain mask from channel
  * with a specified comment.  Ernst 18/3/1998
  */
-static void kick_all(struct chanset_t *chan, char *hostmask, char *comment)
+static void kick_all(struct chanset_t *chan, char *hostmask, char *comment, int bantype)
 {
   memberlist *m;
   char kicknick[512], s[UHOSTLEN];
@@ -347,10 +369,13 @@ static void kick_all(struct chanset_t *chan, char *hostmask, char *comment)
   while (m && m->nick[0]) {
     get_user_flagrec(m->user, &fr, chan->dname);
     sprintf(s, "%s!%s", m->nick, m->userhost);
-    if (!chan_sentkick(m) && wild_match(hostmask, s) &&
+    if (wild_match(hostmask, s) && !chan_sentkick(m) &&
 	!match_my_nick(m->nick) && !chan_issplit(m) &&
 	!glob_friend(fr) && !chan_friend(fr) &&
-	!isexempted(chan, s) &&	/* Crotale - don't kick +e users */
+	!(use_exempts &&
+	  ((bantype && isexempted(chan, s)) ||
+	   (u_match_mask(global_exempts,s) ||
+	    u_match_mask(chan->exempts, s)))) &&
 	!(channel_dontkickops(chan) &&
 	  (chan_op(fr) || (glob_op(fr) && !chan_deop(fr))))) {	/* arthur2 */
       if (!flushed) {
@@ -401,8 +426,9 @@ static void refresh_ban_kick(struct chanset_t *chan, char *user, char *nick)
 	get_user_flagrec(m->user, &fr, chan->dname);
 	if (!glob_friend(fr) && !chan_friend(fr))
 	  add_mode(chan, '-', 'o', nick);	/* Guess it can't hurt */
-        do_mask(chan, chan->channel.ban, u->mask, 'b');
-        u->lastactive = now;
+	check_exemptlist(chan, user);
+	do_mask(chan, chan->channel.ban, u->mask, 'b');
+	u->lastactive = now;
 	c[0] = 0;
 	if (u->desc && (u->desc[0] != '@')) {
 	  if (strcmp(IRC_PREBANNED, ""))
@@ -410,7 +436,7 @@ static void refresh_ban_kick(struct chanset_t *chan, char *user, char *nick)
 	  else
 	    sprintf(c, "%s", u->desc);
 	}
-	kick_all(chan, u->mask, c[0] ? c : IRC_YOUREBANNED);
+	kick_all(chan, u->mask, c[0] ? c : IRC_YOUREBANNED, 0);
 	return;		/* Drop out on 1st ban */
       }
     }
@@ -482,7 +508,7 @@ static void enforce_bans(struct chanset_t *chan)
   while (b && b->mask[0]) {
     if (!wild_match(b->mask, me))
       if (!isexempted(chan, b->mask))
-	kick_all(chan, b->mask, IRC_YOUREBANNED);
+	kick_all(chan, b->mask, IRC_YOUREBANNED, 1);
     b = b->next;
   }
 }
@@ -694,41 +720,46 @@ static void recheck_channel(struct chanset_t *chan, int dobans)
 	  add_mode(chan, '-', 'o', m->nick);
 	}
       }
+      /* check vs invites */
+      if (use_invites &&
+	  (u_match_mask(global_invites,s) ||
+	   u_match_mask(chan->invites, s)))
+	refresh_invite(chan, s);
+      /* don't kickban if permanent exempted */
+      if (!(use_exempts &&
+	    (u_match_mask(global_exempts,s) ||
+	     u_match_mask(chan->exempts, s)))) {
+	/* if we're enforcing bans */
+	if (channel_enforcebans(chan) &&
+	/* & they match a ban */
+	    (u_match_mask(global_bans, s) ||
+	     u_match_mask(chan->bans, s))) {
+	  /* bewm */
+	  refresh_ban_kick(chan, s, m->nick);
+	/* ^ will use the ban comment */
+	}
+	/* are they +k ? */
+	if (chan_kick(fr) || glob_kick(fr)) {
+	  check_exemptlist(chan, s);
+	  quickban(chan, m->userhost);
+	  p = get_user(&USERENTRY_COMMENT, m->user);
+	  dprintf(DP_SERVER, "KICK %s %s :%s\n", chan->name, m->nick,
+		  p ? p : IRC_POLITEKICK);
+	  m->flags |= SENTKICK;
+	} 
+      }
       /* now lets look at de-op'd ppl */
       if (!chan_hasop(m) &&
-      /* if they're an op, channel or global (without channel +d) */
+	  /* if they're an op, channel or global (without channel +d) */
 	  (chan_op(fr) || (glob_op(fr) && !chan_deop(fr))) &&
-      /* and the channel is op on join, or they are auto-opped */
+	  /* and the channel is op on join, or they are auto-opped */
 	  (channel_autoop(chan) || (glob_autoop(fr) || chan_autoop(fr)))) {
 	/* op them! */
 	add_mode(chan, '+', 'o', m->nick);
-      }
-      /* now lets check 'em vs bans */
-      /* if we're enforcing bans */
-      if (channel_enforcebans(chan) &&
-      /* & they match a ban */
-	  (u_match_mask(global_bans, s) || u_match_mask(chan->bans, s))) {
-	/* bewm */
-	refresh_ban_kick(chan, s, m->nick);
-      }
-      /* ^ will use the ban comment */
-      if (use_exempts && (u_match_mask(global_exempts,s) || u_match_mask(chan->exempts, s))){
-	refresh_exempt(chan, s);
-      }      
-      /* check vs invites */
-      if (use_invites && (u_match_mask(global_invites,s) || u_match_mask(chan->invites, s)))
-	refresh_invite(chan, s);
-      /* are they +k ? */
-      if (chan_kick(fr) || glob_kick(fr)) {
-	quickban(chan, m->userhost);
-	p = get_user(&USERENTRY_COMMENT, m->user);
-	dprintf(DP_SERVER, "KICK %s %s :%s\n", chan->name, m->nick,
-		p ? p : IRC_POLITEKICK);
-	m->flags |= SENTKICK;
-	/* otherwise, lets check +v stuff if the llamas want it */
+	  /* otherwise, lets check +v stuff if the llamas want it */
       } else if (!chan_hasvoice(m) && !chan_hasop(m)) {
 	if ((channel_autovoice(chan) && !chan_quiet(fr) && 
-	    (chan_voice(fr) || glob_voice(fr))) || 
+	     (chan_voice(fr) || glob_voice(fr))) || 
 	    (!chan_quiet(fr) && (glob_gvoice(fr) || chan_gvoice(fr)))) {
 	  add_mode(chan, '+', 'v', m->nick);
 	}
@@ -748,14 +779,14 @@ static void recheck_channel(struct chanset_t *chan, int dobans)
       recheck_invites(chan);
     if (use_exempts)
       recheck_exempts(chan);
+    if (channel_enforcebans(chan))
+      enforce_bans(chan);
+    if ((chan->status & CHAN_ASKEDMODES) &&
+	!channel_inactive(chan)) /* Spot on guppy, this just keeps the
+	                          * checking sane */
+      dprintf(DP_SERVER, "MODE %s\n", chan->name);
   }
-  if (dobans && channel_enforcebans(chan))
-    enforce_bans(chan);
   recheck_channel_modes(chan);
-  if ((chan->status & CHAN_ASKEDMODES) && dobans &&
-     !channel_inactive(chan)) /* Spot on guppy, this just keeps the
- 	                       * checking sane */
-    dprintf(DP_SERVER, "MODE %s\n", chan->name);
   stacking--;
 }
 
@@ -1626,31 +1657,33 @@ static int gotjoin(char *from, char *chname)
 	if (u_match_mask(global_invites,from) ||
 	    u_match_mask(chan->invites, from))
 	  refresh_invite(chan, from);
+	if (!(use_exempts &&
+	      (u_match_mask(global_exempts,from) ||
+	       u_match_mask(chan->exempts, from)))) {
+	  /* If it matches a ban, dispose of them. */
+	  if (u_match_mask(global_bans, from) ||
+	      u_match_mask(chan->bans, from)) {
+	    refresh_ban_kick(chan, from, nick);
+	  /* Likewise for kick'ees */
+	  } else if (glob_kick(fr) || chan_kick(fr)) {
+	    check_exemptlist(chan, from);
+	    quickban(chan, from);
+	    p = get_user(&USERENTRY_COMMENT, m->user);
+	    dprintf(DP_MODE, "KICK %s %s :%s\n", chname, nick,
+		    (p && (p[0] != '@')) ? p : IRC_COMMENTKICK);
+	    m->flags |= SENTKICK;
+	  } 
+	}
 	/* Are they a chan op, or global op without chan deop? */
 	if ((chan_op(fr) || (glob_op(fr) && !chan_deop(fr))) &&
 	   /* ... and is it op-on-join or is the use marked auto-op? */
 	    (channel_autoop(chan) || glob_autoop(fr) || chan_autoop(fr))) {
 	  /* Yes! do the honors. */
 	  m->delay = now;
-	} else {
-	  /* If it matches a ban, dispose of them. */
-	  if (u_match_mask(global_bans, from) ||
-	      u_match_mask(chan->bans, from)) {
-	    refresh_ban_kick(chan, from, nick);
-	    refresh_exempt(chan, from);
-	  /* Likewise for kick'ees */
-	  } else if (glob_kick(fr) || chan_kick(fr)) {
-	    quickban(chan, from);
-	    refresh_exempt(chan, from);
-	    p = get_user(&USERENTRY_COMMENT, m->user);
-	    dprintf(DP_MODE, "KICK %s %s :%s\n", chname, nick,
-		    (p && (p[0] != '@')) ? p : IRC_COMMENTKICK);
-	    m->flags |= SENTKICK;
-	  } else if ((channel_autovoice(chan) &&
-		     (chan_voice(fr) || (glob_voice(fr) && !chan_quiet(fr)))) ||
-		     ((glob_gvoice(fr) || chan_gvoice(fr)) && !chan_quiet(fr)))
-	    add_mode(chan, '+', 'v', nick);
-	}
+	} else if ((channel_autovoice(chan) &&
+		    (chan_voice(fr) || (glob_voice(fr) && !chan_quiet(fr)))) ||
+		   ((glob_gvoice(fr) || chan_gvoice(fr)) && !chan_quiet(fr)))
+	  add_mode(chan, '+', 'v', nick);
       }
     }
   }
@@ -1800,7 +1833,11 @@ static int gotnick(char *from, char *msg)
       sprintf(s1, "%s!%s", msg, uhost);
       /* Enforcing bans & haven't already kicked them? */
       if (channel_enforcebans(chan) && chan_sentkick(m) &&
-	  (u_match_mask(global_bans, s1) || u_match_mask(chan->bans, s1)))
+	  (u_match_mask(global_bans, s1) ||
+	   u_match_mask(chan->bans, s1)) &&
+	  !(use_exempts &&
+	   (u_match_mask(global_exempts,s1) ||
+	    u_match_mask(chan->exempts, s1))))
 	refresh_ban_kick(chan, s1, msg);
       strcpy(m->nick, msg);
       detect_chan_flood(msg, uhost, from, chan, FLOOD_NICK, NULL);
@@ -1912,22 +1949,24 @@ static int gotmsg(char *from, char *msg)
   if (flud_ctcp_thr && detect_avalanche(msg)) {
     u = get_user_by_host(from);
     get_user_flagrec(u, &fr, chan->dname);
+    m = ismember(chan, nick);
     /* Discard -- kick user if it was to the channel */
-    if (me_op(chan) &&
+    if (me_op(chan) && m && !chan_sentkick(m) &&
 	!chan_friend(fr) && !glob_friend(fr) &&
 	!(channel_dontkickops(chan) &&
-	  (chan_op(fr) || (glob_op(fr) && !chan_deop(fr))))) {	/* arthur2 */
-      m = ismember(chan, nick);
-      if (m && !chan_sentkick(m)) {
-	if (ban_fun)
-	  u_addban(chan, quickban(chan, uhost), origbotname,
-		   IRC_FUNKICK, now + (60 * ban_time), 0);
-	if (kick_fun) {
-	  /* This can induce kickflood - arthur2 */
-	  dprintf(DP_SERVER, "KICK %s %s :%s\n", chan->name, nick,
-		  IRC_FUNKICK);
-	  m->flags |= SENTKICK;
-	}
+	  (chan_op(fr) || (glob_op(fr) && !chan_deop(fr)))) &&	/* arthur2 */
+	!(use_exempts && ban_fun && /* don't kickban if permanent exempted -- Eule */
+	  (u_match_mask(global_exempts,from) || u_match_mask(chan->exempts, from)))) {
+      if (ban_fun) {
+	check_exemptlist(chan, from);
+	u_addban(chan, quickban(chan, uhost), origbotname,
+		IRC_FUNKICK, now + (60 * ban_time), 0);
+      }
+      if (kick_fun) {
+	/* This can induce kickflood - arthur2 */
+	dprintf(DP_SERVER, "KICK %s %s :%s\n", chan->name, nick,
+		IRC_FUNKICK);
+	m->flags |= SENTKICK;
       }
     }
     if (!ignoring) {
@@ -2044,22 +2083,24 @@ static int gotnotice(char *from, char *msg)
     u = get_user_by_host(from);
   if (flud_ctcp_thr && detect_avalanche(msg)) {
     get_user_flagrec(u, &fr, chan->dname);
+    m = ismember(chan, nick);
     /* Discard -- kick user if it was to the channel */
-    if (me_op(chan) &&
+    if (me_op(chan) && m && !chan_sentkick(m) &&
 	!chan_friend(fr) && !glob_friend(fr) &&
 	!(channel_dontkickops(chan) &&
-	  (chan_op(fr) || (glob_op(fr) && !chan_deop(fr))))) {	/* arthur2 */
-      m = ismember(chan, nick);
-      if (m || !chan_sentkick(m)) {
-	if (ban_fun)
-	  u_addban(chan, quickban(chan, uhost), origbotname,
-		   IRC_FUNKICK, now + (60 * ban_time), 0);
-	if (kick_fun) {
-	  /* This can induce kickflood - arthur2 */
-	  dprintf(DP_SERVER, "KICK %s %s :%s\n", chan->name, nick,
-		  IRC_FUNKICK);
-	  m->flags |= SENTKICK;
-	}
+	  (chan_op(fr) || (glob_op(fr) && !chan_deop(fr)))) &&	/* arthur2 */
+	!(use_exempts && ban_fun && /* don't kickban if permanent exempted -- Eule */
+	  (u_match_mask(global_exempts,from) || u_match_mask(chan->exempts, from)))) {
+      if (ban_fun) {
+	check_exemptlist(chan, from);
+	u_addban(chan, quickban(chan, uhost), origbotname,
+		IRC_FUNKICK, now + (60 * ban_time), 0);
+      }
+      if (kick_fun) {
+	/* This can induce kickflood - arthur2 */
+	dprintf(DP_SERVER, "KICK %s %s :%s\n", chan->name, nick,
+		IRC_FUNKICK);
+	m->flags |= SENTKICK;
       }
     }
     if (!ignoring)

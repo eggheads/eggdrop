@@ -2,7 +2,7 @@
  * chancmds.c -- part of irc.mod
  *   handles commands direclty relating to channel interaction
  * 
- * $Id: cmdsirc.c,v 1.19 2000/08/25 13:12:24 fabian Exp $
+ * $Id: cmdsirc.c,v 1.20 2000/09/02 19:34:36 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -186,8 +186,14 @@ static void cmd_kickban(struct userrec *u, int idx, char *par)
 	dprintf(idx, "%s is another channel bot!\n", nick);
 	return;
       }
+      if (use_exempts &&
+	  (u_match_mask(global_exempts,s) || u_match_mask(chan->exempts, s))) {
+	dprintf(idx, "%s is permanent exempted!\n", nick);
+	return;
+      }
       if (m->flags & CHANOP)
 	add_mode(chan, '-', 'o', m->nick);
+      check_exemptlist(chan, s);
       switch (bantype) {
 	case '@':
 	  s1 = strchr(s, '@');
