@@ -1,8 +1,8 @@
 /*
  * misc.c -- handles:
- *   copyfile() movefile()
+ *   copyfile() movefile() file_readable()
  *
- * $Id: misc_file.c,v 1.7 2002/12/24 02:30:05 wcc Exp $
+ * $Id: misc_file.c,v 1.8 2003/01/23 02:13:29 wcc Exp $
  */
 /*
  * Copyright (C) 1999, 2000, 2001, 2002, 2003 Eggheads Development Team
@@ -94,4 +94,15 @@ int movefile(char *oldpath, char *newpath)
   if (!ret)
     unlink(oldpath);
   return ret;
+}
+
+int file_readable(char *file)
+{
+  FILE *fp;
+
+  if (!(fp = fopen(file, "r")))
+    return 0;
+
+  fclose(fp);
+  return 1;
 }

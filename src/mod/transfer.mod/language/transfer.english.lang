@@ -61,5 +61,6 @@
 0xf38,re
 0xf39,NOTICE %s :Ignoring resume of `%s': no data requested.\n
 0xf40,Unloading transfer module, killing all transfer connections...
-0xf41,    DCC block is %d%s, max concurrent d/ls is %d\n
-0xf42,    Using %d bytes of memory\n
+0xf41,    DCC block size: %d%s\n
+0xf42,    Max simultaneous downloads per user: %d\n
+0xf43,    Using %d bytes of memory\n

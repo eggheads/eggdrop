@@ -132,10 +132,10 @@ There are also some variables you can set in your config file:
 
 
   set quiet-reject 1
-    This setting makes the bot squelch the error message when rejecting a DCC
-    CHAT or SEND. Normally it tells the DCC user that the CHAT or SEND has
-    been rejected because they don't have access.
-    Please note, sometimes IRC server operators detect bots that way.
+    This setting makes the bot squelch the error message when rejecting a
+    DCC CHAT, SEND or message command. Normally, Eggdrop notifies the user
+    that the command has been rejected because they don't have access. Note
+    that sometimes IRC server operators detect bots that way.
 
 
   set flood-msg 5:60

@@ -1,7 +1,7 @@
 /*
  * module.h
  *
- * $Id: module.h,v 1.66 2003/01/21 00:11:29 wcc Exp $
+ * $Id: module.h,v 1.67 2003/01/23 02:13:29 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -462,6 +462,9 @@
 #define killtransfer ((void(*)(int))global[281])
 #define write_ignores ((int (*)(FILE *, int))global[282])
 #define copy_to_tmp (*(int *)(global[283]))
+/* 284 - 287 */
+#define quiet_reject (*(int *)(global[284]))
+#define file_readable ((int (*) (char *))global[285])
 
 /* This is for blowfish module, couldnt be bothered making a whole new .h
  * file for it ;)

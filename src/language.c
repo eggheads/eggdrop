@@ -2,7 +2,7 @@
  * language.c -- handles:
  *   language support code
  *
- * $Id: language.c,v 1.18 2002/12/24 02:30:04 wcc Exp $
+ * $Id: language.c,v 1.19 2003/01/23 02:13:29 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -377,20 +377,19 @@ static char *get_specific_langfile(char *language, lang_sec *sec)
 {
   char *ldir = getenv("EGG_LANGDIR");
   char *langfile;
-  FILE *sfile = NULL;
 
   if (!ldir)
     ldir = LANGDIR;
   langfile = nmalloc(strlen(ldir) + strlen(sec->section) + strlen(language)+8);
   sprintf(langfile, "%s/%s.%s.lang", ldir, sec->section, language);
-  sfile = fopen(langfile, "r");
-  if (sfile) {
-    fclose(sfile);
+
+  if (file_readable(langfile)) {
     /* Save language used for this section */
     sec->lang = nrealloc(sec->lang, strlen(language) + 1);
     strcpy(sec->lang, language);
     return langfile;
   }
+
   nfree(langfile);
   return NULL;
 }

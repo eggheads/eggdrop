@@ -7,7 +7,7 @@
  *   telling the current programmed settings
  *   initializing a lot of stuff and loading the tcl scripts
  *
- * $Id: chanprog.c,v 1.36 2002/12/24 02:30:04 wcc Exp $
+ * $Id: chanprog.c,v 1.37 2003/01/23 02:13:29 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -509,14 +509,11 @@ void chanprog()
  */
 void reload()
 {
-  FILE *f;
-
-  f = fopen(userfile, "r");
-  if (f == NULL) {
+  if (!file_readable(userfile)) {
     putlog(LOG_MISC, "*", MISC_CANTRELOADUSER);
     return;
   }
-  fclose(f);
+
   noshare = 1;
   clear_userlist(userlist);
   noshare = 0;

@@ -1,7 +1,7 @@
 /*
  * server.h -- part of server.mod
  *
- * $Id: server.h,v 1.14 2002/12/24 02:30:08 wcc Exp $
+ * $Id: server.h,v 1.15 2003/01/23 02:13:29 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -30,8 +30,9 @@
 
 #ifndef MAKING_SERVER
 /* 4 - 7 */
+/* Empty */
 #define botuserhost ((char *)(server_funcs[5]))
-#define quiet_reject (*(int *)(server_funcs[6]))
+/* Was quiet_reject (moved to core) <Wcc[01/21/03]>. */
 #define serv (*(int *)(server_funcs[7]))
 /* 8 - 11 */
 #define flud_thr (*(int*)(server_funcs[8]))

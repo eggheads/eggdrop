@@ -2,7 +2,7 @@
  * match.c
  *   wildcard matching functions
  *
- * $Id: match.c,v 1.6 2002/12/26 02:21:53 wcc Exp $
+ * $Id: match.c,v 1.7 2003/01/23 02:13:29 wcc Exp $
  *
  * Once this code was working, I added support for % so that I could
  * use the same code both in Eggdrop and in my IrcII client.
@@ -37,19 +37,14 @@
 int _wild_match_per(register unsigned char *m, register unsigned char *n)
 {
   unsigned char *ma = m, *lsm = 0, *lsn = 0, *lpm = 0, *lpn = 0;
-  int match = 1, saved = 0;
+  int match = 1, saved = 0, space;
   register unsigned int sofar = 0;
-
-#ifdef WILDT
-  int space;
-#endif
 
   /* null strings should never match */
   if ((m == 0) || (n == 0) || (!*n))
     return NOMATCH;
 
   while (*n) {
-#ifdef WILDT
     if (*m == WILDT) {		/* Match >=1 space */
       space = 0;		/* Don't need any spaces */
       do {
@@ -67,7 +62,6 @@ int _wild_match_per(register unsigned char *m, register unsigned char *n)
     }
     /* Do the fallback       */
     else {
-#endif
       switch (*m) {
       case 0:
 	do

@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  *
- * $Id: server.c,v 1.87 2003/01/21 00:53:27 wcc Exp $
+ * $Id: server.c,v 1.88 2003/01/23 02:13:29 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -56,8 +56,6 @@ static int nick_juped = 0;	/* True if origbotname is juped(RPL437) (dw) */
 static int check_stoned;	/* Check for a stoned server? */
 static int serverror_quit;	/* Disconnect from server if ERROR
 				   messages received? */
-static int quiet_reject;	/* Quietly reject dcc chat or sends from
-				   users without access? */
 static int waiting_for_awake;	/* set when i unidle myself, cleared when
 				   i get the response */
 static time_t server_online;	/* server connection time */
@@ -1375,7 +1373,6 @@ static tcl_ints my_tcl_ints[] =
   {"keep-nick",			&keepnick,			0},
   {"check-stoned",		&check_stoned,			0},
   {"serverror-quit",		&serverror_quit,		0},
-  {"quiet-reject",		&quiet_reject,			0},
   {"max-queue-msg",		&maxqmsg,			0},
   {"trigger-on-ignore",		&trigger_on_ignore,		0},
   {"answer-ctcp",		&answer_ctcp,			0},
@@ -1819,7 +1816,7 @@ static Function server_table[] =
   /* 4 - 7 */
   (Function) NULL,		/* char * (points to botname later on)	*/
   (Function) botuserhost,	/* char *				*/
-  (Function) & quiet_reject,	/* int					*/
+  (Function) NULL,              /* Was quiet_reject <Wcc[01/21/03]>.    */
   (Function) & serv,		/* int					*/
   /* 8 - 11 */
   (Function) & flud_thr,	/* int					*/
@@ -1829,7 +1826,7 @@ static Function server_table[] =
   /* 12 - 15 */
   (Function) match_my_nick,
   (Function) check_tcl_flud,
-  (Function) NULL,		/* fixfrom - moved to the core (drummer) */
+  (Function) NULL,		/* fixfrom - moved to core (drummer)    */
   (Function) & answer_ctcp,	/* int					*/
   /* 16 - 19 */
   (Function) & trigger_on_ignore, /* int				*/
@@ -1893,7 +1890,6 @@ char *server_start(Function *global_funcs)
   keepnick = 1;
   check_stoned = 1;
   serverror_quit = 1;
-  quiet_reject = 1;
   waiting_for_awake = 0;
   server_online = 0;
   server_cycle_wait = 60;

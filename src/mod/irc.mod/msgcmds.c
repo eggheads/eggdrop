@@ -2,7 +2,7 @@
  * msgcmds.c -- part of irc.mod
  *   all commands entered via /MSG
  *
- * $Id: msgcmds.c,v 1.35 2003/01/21 00:53:27 wcc Exp $
+ * $Id: msgcmds.c,v 1.36 2003/01/23 02:13:29 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -33,13 +33,16 @@ static int msg_hello(char *nick, char *h, struct userrec *u, char *p)
 
   if (!learn_users && !make_userfile)
     return 0;
+
   if (match_my_nick(nick))
     return 1;
-  if (u)
+
+  if (u) {
     atr = u->flags;
-  if (u && !(atr & USER_COMMON)) {
-    dprintf(DP_HELP, "NOTICE %s :%s, %s.\n", nick, IRC_HI, u->handle);
-    return 1;
+    if (!(atr & USER_COMMON)) {
+      dprintf(DP_HELP, "NOTICE %s :%s, %s.\n", nick, IRC_HI, u->handle);
+      return 1;
+    }
   }
   strncpyz(handle, nick, sizeof(handle));
   if (get_user_by_handle(userlist, handle)) {
@@ -182,9 +185,8 @@ static int msg_ident(char *nick, char *host, struct userrec *u, char *par)
   }
   u2 = get_user_by_handle(userlist, who);
   if (!u2) {
-    if (u && !quiet_reject) {
+    if (u && !quiet_reject)
       dprintf(DP_HELP, IRC_MISIDENT, nick, nick, u->handle);
-    }
   } else if (rfc_casecmp(who, origbotname) && !(u2->flags & USER_BOT)) {
     /* This could be used as detection... */
     if (u_pass_match(u2, "-")) {
@@ -243,7 +245,8 @@ static int msg_addhost(char *nick, char *host, struct userrec *u, char *par)
 	dprintf(DP_HELP, "NOTICE %s :%s\n", nick, IRC_DENYACCESS);
     } else if (get_user_by_host(par)) {
       if (!quiet_reject)
-	dprintf(DP_HELP, "NOTICE %s :That hostmask clashes with another already in use.\n", nick);
+	dprintf(DP_HELP, "NOTICE %s :That hostmask clashes with another "
+                "already in use.\n", nick);
     } else {
       putlog(LOG_CMDS, "*", "(%s!%s) !*! ADDHOST %s", nick, host, par);
       dprintf(DP_HELP, "NOTICE %s :%s: %s\n", nick, IRC_ADDHOSTMASK, par);

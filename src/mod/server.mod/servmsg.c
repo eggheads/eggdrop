@@ -1,7 +1,7 @@
 /*
  * servmsg.c -- part of server.mod
  *
- * $Id: servmsg.c,v 1.68 2003/01/21 00:53:27 wcc Exp $
+ * $Id: servmsg.c,v 1.69 2003/01/23 02:13:29 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -476,25 +476,22 @@ static int gotmsg(char *from, char *msg)
 		  if (!strcmp(code, "CHAT")) {
 		    if (!quiet_reject) {
 		      if (u)
-			dprintf(DP_HELP, "NOTICE %s :%s\n", nick,
-				"I'm not accepting call at the moment.");
+			dprintf(DP_HELP, "NOTICE %s :I'm not accepting calls "
+                                "at the moment.\n", nick);
 		      else
-			dprintf(DP_HELP, "NOTICE %s :%s\n",
-				nick, DCC_NOSTRANGERS);
+			dprintf(DP_HELP, "NOTICE %s :%s\n", nick,
+                                DCC_NOSTRANGERS);
 		    }
-		    putlog(LOG_MISC, "*", "%s: %s",
-			   DCC_REFUSED, from);
+		    putlog(LOG_MISC, "*", "%s: %s", DCC_REFUSED, from);
 		  } else
-		    putlog(LOG_MISC, "*", "Refused DCC %s: %s",
-			   code, from);
+		    putlog(LOG_MISC, "*", "Refused DCC %s: %s",  code, from);
 		}
 	      }
 	      if (!strcmp(code, "ACTION")) {
-		putlog(LOG_MSGS, "*", "Action to %s: %s %s",
-		       to, nick, ctcp);
+		putlog(LOG_MSGS, "*", "Action to %s: %s %s", to, nick, ctcp);
 	      } else {
-		putlog(LOG_MSGS, "*", "CTCP %s: %s from %s (%s)",
-		       code, ctcp, nick, uhost);
+		putlog(LOG_MSGS, "*", "CTCP %s: %s from %s (%s)", code, ctcp,
+                       nick, uhost);
 	      }			/* I love a good close cascade ;) */
 	    }
 	  }

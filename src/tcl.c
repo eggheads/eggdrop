@@ -4,7 +4,7 @@
  *   Tcl initialization
  *   getting and setting Tcl/eggdrop variables
  *
- * $Id: tcl.c,v 1.56 2003/01/21 00:53:27 wcc Exp $
+ * $Id: tcl.c,v 1.57 2003/01/23 02:13:29 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -54,15 +54,16 @@ extern char origbotname[], botuser[], motdfile[], admin[], userfile[],
             tempdir[], owner[], network[], botnetnick[], bannerfile[],
             egg_version[], natip[], configfile[], logfile_suffix[], textdir[],
             pid_file[];
-extern int  backgrd, flood_telnet_thr, flood_telnet_time, shtime, share_greet,
-            require_p, keep_all_logs,  allow_new_telnets, stealth_telnets,
-            use_telnet_banner, default_flags, conmask, switch_logfiles_at,
-            connect_timeout, firewallport, notify_users_at, flood_thr,
-            ignore_time, reserved_port_min, reserved_port_max, die_on_sighup,
-            die_on_sigterm, max_logs, max_logsize, enable_simul, dcc_total,
-            debug_output, identtimeout, protect_telnet, dupwait_timeout,
-            egg_numver, share_unlinks, dcc_sanitycheck, sort_users, tands,
-            resolve_timeout, default_uflags, strict_host, userfile_perm;
+
+extern int backgrd, flood_telnet_thr, flood_telnet_time, shtime, share_greet,
+           require_p, keep_all_logs, allow_new_telnets, stealth_telnets,
+           use_telnet_banner, default_flags, conmask, switch_logfiles_at,
+           connect_timeout, firewallport, notify_users_at, flood_thr, tands,
+           ignore_time, reserved_port_min, reserved_port_max, die_on_sighup,
+           die_on_sigterm, max_logs, max_logsize, enable_simul, dcc_total,
+           debug_output, identtimeout, dcc_sanitycheck, dupwait_timeout,
+           egg_numver, share_unlinks, protect_telnet, sort_users, strict_host,
+           resolve_timeout, default_uflags, userfile_perm;
 	
 extern struct dcc_t *dcc;
 extern tcl_timer_t  *timer, *utimer;
@@ -79,6 +80,7 @@ int force_expire = 0;		/* Rufus */
 int remote_boots = 2;
 int allow_dk_cmds = 1;
 int must_be_owner = 1;
+int quiet_reject = 1;
 int copy_to_tmp = 1;
 int max_dcc = 20;
 int quick_logs = 0;
@@ -525,6 +527,7 @@ static tcl_ints def_tcl_ints[] =
   {"strict-host",		&strict_host,		0}, /* drummer */
   {"userfile-perm",		&userfile_perm,		0},
   {"copy-to-tmp",               &copy_to_tmp,		0},
+  {"quiet-reject",              &quiet_reject,		0},
   {NULL,			NULL,			0}  /* arthur2 */
 };
 
@@ -708,12 +711,8 @@ void do_tcl(char *whatzit, char *script)
  */
 int readtclprog(char *fname)
 {
-  FILE	*f;
-
-  /* Check whether file is readable. */
-  if ((f = fopen(fname, "r")) == NULL)
+  if (!file_readable(fname))
     return 0;
-  fclose(f);
 
   if (Tcl_EvalFile(interp, fname) != TCL_OK) {
     putlog(LOG_MISC, "*", "Tcl error in file '%s':", fname);

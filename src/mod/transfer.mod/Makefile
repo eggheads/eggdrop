@@ -1,5 +1,5 @@
 # Makefile for src/mod/transfer.mod/
-# $Id: Makefile,v 1.11 2000/09/12 15:26:54 fabian Exp $
+# $Id: Makefile,v 1.12 2003/01/23 02:13:29 wcc Exp $
 
 srcdir = .
 
@@ -41,4 +41,5 @@ distclean: clean
  ../../../src/compat/memset.h ../../../src/compat/memcpy.h \
  ../../../src/compat/strcasecmp.h ../../../src/compat/strftime.h \
  ../../../src/mod/modvals.h ../../../src/tandem.h \
- ../transfer.mod/transfer.h
+ ../transfer.mod/transfer.h  ../transfer.mod/tcltransfer.c \
+ ../transfer.mod/transferqueue.c ../transfer.mod/transferfstat.c

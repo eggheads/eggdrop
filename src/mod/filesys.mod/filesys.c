@@ -2,7 +2,7 @@
  * filesys.c -- part of filesys.mod
  *   main file of the filesys eggdrop module
  *
- * $Id: filesys.c,v 1.52 2002/12/24 02:30:07 wcc Exp $
+ * $Id: filesys.c,v 1.53 2003/01/23 02:13:29 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -443,15 +443,16 @@ static int do_dcc_send(int idx, char *dir, char *fn, char *nick, int resend)
     s = nmalloc(strlen(dccdir) + strlen(fn) + 1);
     sprintf(s, "%s%s", dccdir, fn);
   }
-  f = fopen(s, "r");
-  if (f == NULL) {
+
+  if (!file_readable(s)) {
     dprintf(idx, "No such file.\n");
-    putlog(LOG_FILES, "*", "Refused dcc %sget %s from [%s]", resend ? "re" : "",
-	   fn, dcc[idx].nick);
+    putlog(LOG_FILES, "*", "Refused dcc %sget %s from [%s]", resend ? "re" :
+           "", fn, dcc[idx].nick);
     my_free(s);
     return 0;
   }
   fclose(f);
+
   if (!nick || !nick[0])
     nick = dcc[idx].nick;
   /* Already have too many transfers active for this user?  queue it */
@@ -630,19 +631,17 @@ static void filesys_dcc_send(char *nick, char *from, struct userrec *u,
   strcpy(buf, text);
   param = newsplit(&msg);
   if (!(atr & USER_XFER)) {
-    putlog(LOG_FILES, "*",
-	   "Refused DCC SEND %s (no access): %s!%s", param,
+    putlog(LOG_FILES, "*", "Refused DCC SEND %s (no access): %s!%s", param,
 	   nick, from);
+    if (!quiet_reject) dprintf(DP_HELP, "NOTICE %s :No access\n", nick);
   } else if (!dccin[0] && !upload_to_cd) {
-    dprintf(DP_HELP,
-	    "NOTICE %s :DCC file transfers not supported.\n", nick);
-    putlog(LOG_FILES, "*",
-	   "Refused dcc send %s from %s!%s", param, nick, from);
+    dprintf(DP_HELP, "NOTICE %s :DCC file transfers not supported.\n", nick);
+    putlog(LOG_FILES, "*", "Refused dcc send %s from %s!%s", param, nick,
+           from);
   } else if (strchr(param, '/')) {
-    dprintf(DP_HELP,
-	    "NOTICE %s :Filename cannot have '/' in it...\n", nick);
-    putlog(LOG_FILES, "*",
-	   "Refused dcc send %s from %s!%s", param, nick, from);
+    dprintf(DP_HELP, "NOTICE %s :Filename cannot have '/' in it...\n", nick);
+    putlog(LOG_FILES, "*", "Refused dcc send %s from %s!%s", param, nick,
+           from);
   } else {
     ip = newsplit(&msg);
     prt = newsplit(&msg);
@@ -653,8 +652,7 @@ static void filesys_dcc_send(char *nick, char *from, struct userrec *u,
       putlog(LOG_FILES, "*", "Refused dcc send %s (%s): invalid port", param,
 	     nick);
     } else if (atoi(msg) == 0) {
-      dprintf(DP_HELP,
-	      "NOTICE %s :Sorry, file size info must be included.\n",
+      dprintf(DP_HELP, "NOTICE %s :Sorry, file size info must be included.\n",
 	      nick);
       putlog(LOG_FILES, "*", "Refused dcc send %s (%s): no file size",
 	     param, nick);
@@ -672,8 +670,8 @@ static void filesys_dcc_send(char *nick, char *from, struct userrec *u,
       if (i < 0) {
 	dprintf(DP_HELP, "NOTICE %s :Sorry, too many DCC connections.\n",
 		nick);
-	putlog(LOG_MISC, "*", "DCC connections full: SEND %s (%s!%s)",
-	       param, nick, from);
+	putlog(LOG_MISC, "*", "DCC connections full: SEND %s (%s!%s)", param,
+               nick, from);
 	return;
       }
       dcc[i].addr = my_atoul(ip);
@@ -728,7 +726,6 @@ static char *mktempfile(char *filename)
 
 static void filesys_dcc_send_hostresolved(int i)
 {
-  FILE *f;
   char *s1, *param, prt[100], ip[100], *tempf;
   int len = dcc[i].u.dns->ibuf, j;
 
@@ -768,14 +765,14 @@ static void filesys_dcc_send_hostresolved(int i)
   s1 = nmalloc(strlen(dcc[i].u.xfer->dir) +
 	       strlen(dcc[i].u.xfer->origname) + 1);
   sprintf(s1, "%s%s", dcc[i].u.xfer->dir, dcc[i].u.xfer->origname);
-  f = fopen(s1, "r");
-  my_free(s1);
-  if (f) {
-    fclose(f);
-    dprintf(DP_HELP, "NOTICE %s :File `%s' already exists.\n",
-	    dcc[i].nick, dcc[i].u.xfer->origname);
+  
+  if (file_readable(s1)) {
+    dprintf(DP_HELP, "NOTICE %s :File `%s' already exists.\n", dcc[i].nick,
+            dcc[i].u.xfer->origname);
     lostdcc(i);
+    my_free(s1);
   } else {
+    my_free(s1);
     /* Check for dcc-sends in process with the same filename */
     for (j = 0; j < dcc_total; j++)
       if (j != i) {
@@ -808,7 +805,7 @@ static void filesys_dcc_send_hostresolved(int i)
   }
 }
 
-/* This only handles CHAT requests, otherwise it's handled in filesys.
+/* This only handles CHAT requests, otherwise it's handled in transfer.
  */
 static int filesys_DCC_CHAT(char *nick, char *from, char *handle,
 			    char *object, char *keyword, char *text)
@@ -852,8 +849,8 @@ static int filesys_DCC_CHAT(char *nick, char *from, char *handle,
       if (!quiet_reject)
         dprintf(DP_HELP, "NOTICE %s :%s (%s)\n", nick,
 	        DCC_CONNECTFAILED1, buf);
-      putlog(LOG_MISC, "*", "%s: CHAT(file) (%s!%s)", DCC_CONNECTFAILED2,
-	     nick, from);
+      putlog(LOG_MISC, "*", "%s: CHAT(file) (%s!%s)", DCC_CONNECTFAILED2, nick,
+             from);
       putlog(LOG_MISC, "*", "    (%s)", buf);
       killsock(sock);
     } else if (atoi(prt) < 1024 || atoi(prt) > 65535) {

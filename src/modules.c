@@ -4,7 +4,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: modules.c,v 1.74 2003/01/21 00:11:29 wcc Exp $
+ * $Id: modules.c,v 1.75 2003/01/23 02:13:29 wcc Exp $
  */
 /* 
  * Copyright (C) 1997 Robey Pointer
@@ -76,7 +76,7 @@ extern int  parties, noshare, dcc_total, egg_numver, userfile_perm, do_restart,
             use_console_r, ignore_time, must_be_owner, debug_output, max_dcc,
             make_userfile, default_flags, require_p, share_greet, use_invites,
             password_timeout, use_exempts, force_expire, protect_readonly,
-            reserved_port_min, reserved_port_max, copy_to_tmp;
+            reserved_port_min, reserved_port_max, copy_to_tmp, quiet_reject;
 
 extern party_t *party;
 extern time_t  now, online_since;
@@ -549,7 +549,10 @@ Function global_table[] =
   (Function) _wild_match_per,
   (Function) killtransfer,
   (Function) write_ignores,
-  (Function) & copy_to_tmp	/* int					*/
+  (Function) & copy_to_tmp,	/* int					*/
+  /* 284 - 287 */
+  (Function) & quiet_reject,	/* int					*/
+  (Function) file_readable
 };
 
 void init_modules(void)
