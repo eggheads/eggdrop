@@ -2,7 +2,7 @@
  * assoc.c -- part of assoc.mod
  *   the assoc code, moved here mainly from botnet.c for module work
  *
- * $Id: assoc.c,v 1.28 2004/01/09 05:56:37 wcc Exp $
+ * $Id: assoc.c,v 1.29 2004/06/11 05:53:03 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -132,7 +132,7 @@ static void add_assoc(char *name, int chan)
   /* Add in numerical order */
   for (a = assoc; a; old = a, a = a->next) {
     if (a->channel > chan) {
-      b = (assoc_t *) nmalloc(sizeof(assoc_t));
+      b = nmalloc(sizeof *b);
       b->next = a;
       b->channel = chan;
       strncpyz(b->name, name, sizeof b->name);
@@ -144,7 +144,7 @@ static void add_assoc(char *name, int chan)
     }
   }
   /* Add at the end */
-  b = (assoc_t *) nmalloc(sizeof(assoc_t));
+  b = nmalloc(sizeof *b);
   b->next = NULL;
   b->channel = chan;
   strncpyz(b->name, name, sizeof b->name);

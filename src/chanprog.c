@@ -7,7 +7,7 @@
  *   telling the current programmed settings
  *   initializing a lot of stuff and loading the tcl scripts
  *
- * $Id: chanprog.c,v 1.51 2004/04/06 07:15:18 wcc Exp $
+ * $Id: chanprog.c,v 1.52 2004/06/11 05:53:03 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -555,10 +555,10 @@ unsigned long add_timer(tcl_timer_t ** stack, int elapse, char *cmd,
 {
   tcl_timer_t *old = (*stack);
 
-  *stack = (tcl_timer_t *) nmalloc(sizeof(tcl_timer_t));
+  *stack = nmalloc(sizeof **stack);
   (*stack)->next = old;
   (*stack)->mins = elapse;
-  (*stack)->cmd = (char *) nmalloc(strlen(cmd) + 1);
+  (*stack)->cmd = nmalloc(strlen(cmd) + 1);
   strcpy((*stack)->cmd, cmd);
   /* If it's just being added back and already had an id,
    * don't create a new one.

@@ -2,7 +2,7 @@
  * tclmisc.c -- handles:
  *   Tcl stubs for everything else
  *
- * $Id: tclmisc.c,v 1.50 2004/05/26 00:20:19 wcc Exp $
+ * $Id: tclmisc.c,v 1.51 2004/06/11 05:53:03 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -109,7 +109,7 @@ static int tcl_logfile STDVAR
         }
         logs[i].flags = 0;
       } else {
-        logs[i].chname = (char *) nmalloc(strlen(argv[2]) + 1);
+        logs[i].chname = nmalloc(strlen(argv[2]) + 1);
         strcpy(logs[i].chname, argv[2]);
       }
       Tcl_AppendResult(interp, argv[3], NULL);
@@ -125,9 +125,9 @@ static int tcl_logfile STDVAR
     if (logs[i].filename == NULL) {
       logs[i].flags = 0;
       logs[i].mask = logmodes(argv[1]);
-      logs[i].filename = (char *) nmalloc(strlen(argv[3]) + 1);
+      logs[i].filename = nmalloc(strlen(argv[3]) + 1);
       strcpy(logs[i].filename, argv[3]);
-      logs[i].chname = (char *) nmalloc(strlen(argv[2]) + 1);
+      logs[i].chname = nmalloc(strlen(argv[2]) + 1);
       strcpy(logs[i].chname, argv[2]);
       Tcl_AppendResult(interp, argv[3], NULL);
       return TCL_OK;

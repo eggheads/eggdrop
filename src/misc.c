@@ -7,7 +7,7 @@
  *   help system
  *   motd display and %var substitution
  *
- * $Id: misc.c,v 1.73 2004/05/27 06:29:46 wcc Exp $
+ * $Id: misc.c,v 1.74 2004/06/11 05:53:03 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -746,7 +746,7 @@ static void subst_addcol(char *s, char *newcol)
     }
     strcat(s, q);
     nfree(colstr);
-    colstr = (char *) nmalloc(1);
+    colstr = nmalloc(1);
     colstr[0] = 0;
   }
 }
@@ -970,7 +970,7 @@ void help_subst(char *s, char *nick, struct flag_record *flags,
 
             cols = atoi(q + 5);
             colsofar = 0;
-            colstr = (char *) nmalloc(1);
+            colstr = nmalloc(1);
             colstr[0] = 0;
             r = strchr(q + 5, '/');
             if (r != NULL)
@@ -1047,7 +1047,7 @@ static void scan_help_file(struct help_ref *current, char *filename, int type)
           q += 7;
           if ((p = strchr(q, '}'))) {
             *p = 0;
-            list = nmalloc(sizeof(struct help_list_t));
+            list = nmalloc(sizeof *list);
 
             list->name = nmalloc(p - q + 1);
             strcpy(list->name, q);
@@ -1072,7 +1072,7 @@ void add_help_reference(char *file)
   for (current = help_list; current; current = current->next)
     if (!strcmp(current->name, file))
       return;                   /* Already exists, can't re-add :P */
-  current = nmalloc(sizeof(struct help_ref));
+  current = nmalloc(sizeof *current);
 
   current->name = nmalloc(strlen(file) + 1);
   strcpy(current->name, file);

@@ -1,7 +1,7 @@
 /*
  * tclchan.c -- part of channels.mod
  *
- * $Id: tclchan.c,v 1.88 2004/04/08 00:54:40 wcc Exp $
+ * $Id: tclchan.c,v 1.89 2004/06/11 05:53:03 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -918,7 +918,7 @@ static int tcl_channel_info(Tcl_Interp *irp, struct chanset_t *chan)
       if (!p)
         p = "{}";
 
-      buf = (char *) nmalloc(strlen(ul->name) + strlen(p) + 2);
+      buf = nmalloc(strlen(ul->name) + strlen(p) + 2);
       simple_sprintf(buf, "%s %s", ul->name, p);
       Tcl_AppendElement(irp, buf);
       nfree(buf);
@@ -1757,7 +1757,7 @@ static int tcl_haschanrec STDVAR
 
 static void init_masklist(masklist *m)
 {
-  m->mask = (char *) nmalloc(1);
+  m->mask = nmalloc(1);
   m->mask[0] = 0;
   m->who = NULL;
   m->next = NULL;
@@ -1771,20 +1771,20 @@ static void init_channel(struct chanset_t *chan, int reset)
   chan->channel.mode = 0;
   chan->channel.members = 0;
   if (!reset) {
-    chan->channel.key = (char *) nmalloc(1);
+    chan->channel.key = nmalloc(1);
     chan->channel.key[0] = 0;
   }
 
-  chan->channel.ban = (masklist *) nmalloc(sizeof(masklist));
+  chan->channel.ban = nmalloc(sizeof(masklist));
   init_masklist(chan->channel.ban);
 
-  chan->channel.exempt = (masklist *) nmalloc(sizeof(masklist));
+  chan->channel.exempt = nmalloc(sizeof(masklist));
   init_masklist(chan->channel.exempt);
 
-  chan->channel.invite = (masklist *) nmalloc(sizeof(masklist));
+  chan->channel.invite = nmalloc(sizeof(masklist));
   init_masklist(chan->channel.invite);
 
-  chan->channel.member = (memberlist *) nmalloc(sizeof(memberlist));
+  chan->channel.member = nmalloc(sizeof(memberlist));
   chan->channel.member->nick[0] = 0;
   chan->channel.member->next = NULL;
   chan->channel.topic = NULL;
@@ -1863,7 +1863,7 @@ static int tcl_channel_add(Tcl_Interp *irp, char *newname, char *options)
     /* Already existing channel, maybe a reload of the channel file */
     chan->status &= ~CHAN_FLAGGED;      /* don't delete me! :) */
   } else {
-    chan = (struct chanset_t *) nmalloc(sizeof(struct chanset_t));
+    chan = nmalloc(sizeof *chan);
 
     /* Hells bells, why set *every* variable to 0 when we have bzero? */
     egg_bzero(chan, sizeof(struct chanset_t));

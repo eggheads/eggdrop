@@ -7,7 +7,7 @@
  *   linking, unlinking, and relaying to another bot
  *   pinging the bots periodically and checking leaf status
  *
- * $Id: botnet.c,v 1.55 2004/02/01 06:13:02 wcc Exp $
+ * $Id: botnet.c,v 1.56 2004/06/11 05:53:03 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -68,7 +68,7 @@ void init_bots()
   tandbot = NULL;
   /* Grab space for 50 bots for now -- expand later as needed */
   maxparty = 50;
-  party = (party_t *) nmalloc(maxparty * sizeof(party_t));
+  party = nmalloc(maxparty * sizeof *party);
 }
 
 tand_t *findbot(char *who)

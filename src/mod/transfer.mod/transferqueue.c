@@ -1,7 +1,7 @@
 /*
  * transferqueue.c -- part of transfer.mod
  *
- * $Id: transferqueue.c,v 1.4 2004/01/09 05:56:39 wcc Exp $
+ * $Id: transferqueue.c,v 1.5 2004/06/11 05:53:03 wcc Exp $
  *
  * Copyright (C) 2003, 2004 Eggheads Development Team
  *
@@ -35,10 +35,10 @@ static void queue_file(char *dir, char *file, char *from, char *to)
 {
   fileq_t *q = fileq;
 
-  fileq = (fileq_t *) nmalloc(sizeof(fileq_t));
+  fileq = nmalloc(sizeof *fileq);
   fileq->next = q;
-  fileq->dir = (char *) nmalloc(strlen(dir) + 1);
-  fileq->file = (char *) nmalloc(strlen(file) + 1);
+  fileq->dir = nmalloc(strlen(dir) + 1);
+  fileq->file = nmalloc(strlen(file) + 1);
   strcpy(fileq->dir, dir);
   strcpy(fileq->file, file);
   strcpy(fileq->nick, from);

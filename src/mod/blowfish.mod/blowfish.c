@@ -2,7 +2,7 @@
  * blowfish.c -- part of blowfish.mod
  *   encryption and decryption of passwords
  *
- * $Id: blowfish.c,v 1.28 2004/01/09 05:56:37 wcc Exp $
+ * $Id: blowfish.c,v 1.29 2004/06/11 05:53:03 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -208,10 +208,10 @@ static void blowfish_init(u_8bit_t *key, int keybytes)
   }
   /* Initialize new buffer */
   /* uh... this is over 4k */
-  box[bx].P = (u_32bit_t *) nmalloc((bf_N + 2) * sizeof(u_32bit_t));
-  box[bx].S = (u_32bit_t **) nmalloc(4 * sizeof(u_32bit_t *));
+  box[bx].P = nmalloc((bf_N + 2) * sizeof(u_32bit_t));
+  box[bx].S = nmalloc(4 * sizeof(u_32bit_t *));
   for (i = 0; i < 4; i++)
-    box[bx].S[i] = (u_32bit_t *) nmalloc(256 * sizeof(u_32bit_t));
+    box[bx].S[i] = nmalloc(256 * sizeof(u_32bit_t));
   bf_P = box[bx].P;
   bf_S = box[bx].S;
   box[bx].keybytes = keybytes;
@@ -314,12 +314,12 @@ static char *encrypt_string(char *key, char *str)
   int i;
 
   /* Pad fake string with 8 bytes to make sure there's enough */
-  s = (char *) nmalloc(strlen(str) + 9);
+  s = nmalloc(strlen(str) + 9);
   strcpy(s, str);
   if ((!key) || (!key[0]))
     return s;
   p = s;
-  dest = (char *) nmalloc((strlen(str) + 9) * 2);
+  dest = nmalloc((strlen(str) + 9) * 2);
   while (*p)
     p++;
   for (i = 0; i < 8; i++)
@@ -360,12 +360,12 @@ static char *decrypt_string(char *key, char *str)
   int i;
 
   /* Pad encoded string with 0 bits in case it's bogus */
-  s = (char *) nmalloc(strlen(str) + 12);
+  s = nmalloc(strlen(str) + 12);
   strcpy(s, str);
   if ((!key) || (!key[0]))
     return s;
   p = s;
-  dest = (char *) nmalloc(strlen(str) + 12);
+  dest = nmalloc(strlen(str) + 12);
   while (*p)
     p++;
   for (i = 0; i < 12; i++)

@@ -1,7 +1,7 @@
 /*
  * share.c -- part of share.mod
  *
- * $Id: share.c,v 1.81 2004/05/26 00:20:19 wcc Exp $
+ * $Id: share.c,v 1.82 2004/06/11 05:53:03 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -105,14 +105,14 @@ static void add_delay(struct chanset_t *chan, int plsmns, int mode, char *mask)
 {
   struct delay_mode *d = NULL;
 
-  d = (struct delay_mode *) nmalloc(sizeof(struct delay_mode));
+  d = nmalloc(sizeof *d);
 
   d->chan = chan;
   d->plsmns = plsmns;
   d->mode = mode;
   d->seconds = now + randint(30);
 
-  d->mask = (char *) nmalloc(strlen(mask) + 1);
+  d->mask = nmalloc(strlen(mask) + 1);
   strncpyz(d->mask, mask, strlen(mask) + 1);
 
   if (!delay_head)
@@ -1475,11 +1475,11 @@ static struct share_msgq *q_addmsg(struct share_msgq *qq,
   int cnt;
 
   if (!qq) {
-    q = (struct share_msgq *) nmalloc(sizeof(struct share_msgq));
+    q = nmalloc(sizeof *q);
 
     q->chan = chan;
     q->next = NULL;
-    q->msg = (char *) nmalloc(strlen(s) + 1);
+    q->msg = nmalloc(strlen(s) + 1);
     strcpy(q->msg, s);
     return q;
   }
@@ -1488,12 +1488,12 @@ static struct share_msgq *q_addmsg(struct share_msgq *qq,
     cnt++;
   if (cnt > 1000)
     return NULL;                /* Return null: did not alter queue */
-  q->next = (struct share_msgq *) nmalloc(sizeof(struct share_msgq));
+  q->next = nmalloc(sizeof *q->next);
 
   q = q->next;
   q->chan = chan;
   q->next = NULL;
-  q->msg = (char *) nmalloc(strlen(s) + 1);
+  q->msg = nmalloc(strlen(s) + 1);
   strcpy(q->msg, s);
   return qq;
 }

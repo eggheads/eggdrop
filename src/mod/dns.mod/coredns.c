@@ -5,7 +5,7 @@
  *
  * Modified/written by Fabian Knittel <fknittel@gmx.de>
  *
- * $Id: coredns.c,v 1.27 2004/01/09 05:56:38 wcc Exp $
+ * $Id: coredns.c,v 1.28 2004/06/11 05:53:03 wcc Exp $
  */
 /*
  * Portions Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004 Eggheads Development Team
@@ -227,7 +227,7 @@ static struct resolve *allocresolve()
 {
   struct resolve *rp;
 
-  rp = (struct resolve *) nmalloc(sizeof(struct resolve));
+  rp = nmalloc(sizeof *rp);
   egg_bzero(rp, sizeof(struct resolve));
   return rp;
 }
@@ -855,7 +855,7 @@ static void parserespacket(u_8bit_t *s, int l)
                 return;
               }
               if (!rp->hostn) {
-                rp->hostn = (char *) nmalloc(strlen(namestring) + 1);
+                rp->hostn = nmalloc(strlen(namestring) + 1);
                 strcpy(rp->hostn, namestring);
                 linkresolvehost(rp);
                 passrp(rp, ttl, T_PTR);
@@ -1053,7 +1053,7 @@ static void dns_forward(char *hostn)
   rp = allocresolve();
   rp->state = STATE_AREQ;
   rp->sends = 1;
-  rp->hostn = (char *) nmalloc(strlen(hostn) + 1);
+  rp->hostn = nmalloc(strlen(hostn) + 1);
   strcpy(rp->hostn, hostn);
   linkresolvehost(rp);
   sendrequest(rp, T_A);

@@ -7,7 +7,7 @@
  *   (non-Tcl) procedure lookups for msg/dcc/file commands
  *   (Tcl) binding internal procedures to msg/dcc/file commands
  *
- * $Id: tclhash.c,v 1.47 2004/04/06 06:56:38 wcc Exp $
+ * $Id: tclhash.c,v 1.48 2004/06/11 05:53:03 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -272,7 +272,7 @@ tcl_bind_list_t *add_bind_table(const char *nme, int flg, Function func)
       break;                    /* New. Insert at start of list.        */
   }
 
-  tl = nmalloc_null(sizeof(tcl_bind_list_t));
+  tl = nmalloc_null(sizeof *tl);
   strcpy(tl->name, nme);
   tl->flags = flg;
   tl->func = func;
@@ -386,7 +386,7 @@ static int bind_bind_entry(tcl_bind_list_t *tl, const char *flags,
 
   /* Create bind if it doesn't exist yet. */
   if (!tm) {
-    tm = nmalloc_null(sizeof(tcl_bind_mask_t));
+    tm = nmalloc_null(sizeof *tm);
     tm->mask = nmalloc(strlen(cmd) + 1);
     strcpy(tm->mask, cmd);
 
@@ -418,7 +418,7 @@ static int bind_bind_entry(tcl_bind_list_t *tl, const char *flags,
     }
   }
 
-  tc = nmalloc_null(sizeof(tcl_cmd_t));
+  tc = nmalloc_null(sizeof *tc);
   tc->flags.match = FR_GLOBAL | FR_CHAN;
   break_down_flags(flags, &(tc->flags), NULL);
   tc->func_name = nmalloc(strlen(proc) + 1);
@@ -1141,7 +1141,7 @@ void add_builtins(tcl_bind_list_t *tl, cmd_t *cc)
   for (i = 0; cc[i].name; i++) {
     egg_snprintf(p, sizeof p, "*%s:%s", tl->name,
                  cc[i].funcname ? cc[i].funcname : cc[i].name);
-    l = (char *) nmalloc(Tcl_ScanElement(p, &k));
+    l = nmalloc(Tcl_ScanElement(p, &k));
     Tcl_ConvertElement(p, l, k | TCL_DONT_USE_BRACES);
     table[0].cdata = (void *) cc[i].func;
     add_cd_tcl_cmds(table);
@@ -1159,7 +1159,7 @@ void rem_builtins(tcl_bind_list_t *table, cmd_t *cc)
   for (i = 0; cc[i].name; i++) {
     egg_snprintf(p, sizeof p, "*%s:%s", table->name,
                  cc[i].funcname ? cc[i].funcname : cc[i].name);
-    l = (char *) nmalloc(Tcl_ScanElement(p, &k));
+    l = nmalloc(Tcl_ScanElement(p, &k));
     Tcl_ConvertElement(p, l, k | TCL_DONT_USE_BRACES);
     Tcl_DeleteCommand(interp, p);
     unbind_bind_entry(table, cc[i].flags, cc[i].name, l);

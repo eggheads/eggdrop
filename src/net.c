@@ -2,7 +2,7 @@
  * net.c -- handles:
  *   all raw network i/o
  *
- * $Id: net.c,v 1.67 2004/05/27 05:33:40 wcc Exp $
+ * $Id: net.c,v 1.68 2004/06/11 05:53:03 wcc Exp $
  */
 /*
  * This is hereby released into the public domain.
@@ -755,7 +755,7 @@ int sockgets(char *s, int *len)
           if (strlen(socklist[i].inbuf) > 510)
             socklist[i].inbuf[510] = 0;
           strcpy(s, socklist[i].inbuf);
-          px = (char *) nmalloc(strlen(p + 1) + 1);
+          px = nmalloc(strlen(p + 1) + 1);
           strcpy(px, p + 1);
           nfree(socklist[i].inbuf);
           if (px[0])
@@ -810,7 +810,7 @@ int sockgets(char *s, int *len)
       socklist[ret].flags &= ~SOCK_STRONGCONN;
       /* Buffer any data that came in, for future read. */
       socklist[ret].inbuflen = *len;
-      socklist[ret].inbuf = (char *) nmalloc(*len + 1);
+      socklist[ret].inbuf = nmalloc(*len + 1);
       /* It might be binary data. You never know. */
       egg_memcpy(socklist[ret].inbuf, xx, *len);
       socklist[ret].inbuf[*len] = 0;
@@ -838,7 +838,7 @@ int sockgets(char *s, int *len)
   /* Might be necessary to prepend stored-up data! */
   if (socklist[ret].inbuf != NULL) {
     p = socklist[ret].inbuf;
-    socklist[ret].inbuf = (char *) nmalloc(strlen(p) + strlen(xx) + 1);
+    socklist[ret].inbuf = nmalloc(strlen(p) + strlen(xx) + 1);
     strcpy(socklist[ret].inbuf, p);
     strcat(socklist[ret].inbuf, xx);
     nfree(p);
@@ -850,7 +850,7 @@ int sockgets(char *s, int *len)
     } else {
       p = socklist[ret].inbuf;
       socklist[ret].inbuflen = strlen(p) - 510;
-      socklist[ret].inbuf = (char *) nmalloc(socklist[ret].inbuflen + 1);
+      socklist[ret].inbuf = nmalloc(socklist[ret].inbuflen + 1);
       strcpy(socklist[ret].inbuf, p + 510);
       *(p + 510) = 0;
       strcpy(xx, p);
@@ -892,13 +892,13 @@ int sockgets(char *s, int *len)
   if (socklist[ret].inbuf != NULL) {
     p = socklist[ret].inbuf;
     socklist[ret].inbuflen = strlen(p) + strlen(xx);
-    socklist[ret].inbuf = (char *) nmalloc(socklist[ret].inbuflen + 1);
+    socklist[ret].inbuf = nmalloc(socklist[ret].inbuflen + 1);
     strcpy(socklist[ret].inbuf, xx);
     strcat(socklist[ret].inbuf, p);
     nfree(p);
   } else {
     socklist[ret].inbuflen = strlen(xx);
-    socklist[ret].inbuf = (char *) nmalloc(socklist[ret].inbuflen + 1);
+    socklist[ret].inbuf = nmalloc(socklist[ret].inbuflen + 1);
     strcpy(socklist[ret].inbuf, xx);
   }
   if (data)
@@ -961,7 +961,7 @@ void tputs(register int z, char *s, unsigned int len)
         x = 0;
       if (x < len) {
         /* Socket is full, queue it */
-        socklist[i].outbuf = (char *) nmalloc(len - x);
+        socklist[i].outbuf = nmalloc(len - x);
         egg_memcpy(socklist[i].outbuf, &s[x], len - x);
         socklist[i].outbuflen = len - x;
       }
@@ -1043,7 +1043,7 @@ void dequeue_sockets()
         char *p = socklist[i].outbuf;
 
         /* This removes any sent bytes from the beginning of the buffer */
-        socklist[i].outbuf = (char *) nmalloc(socklist[i].outbuflen - x);
+        socklist[i].outbuf = nmalloc(socklist[i].outbuflen - x);
         egg_memcpy(socklist[i].outbuf, p + x, socklist[i].outbuflen - x);
         socklist[i].outbuflen -= x;
         nfree(p);
