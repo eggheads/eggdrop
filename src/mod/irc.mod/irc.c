@@ -2,7 +2,7 @@
  * irc.c -- part of irc.mod
  *   support for channels within the bot 
  * 
- * $Id: irc.c,v 1.16 2000/02/03 22:54:17 fabian Exp $
+ * $Id: irc.c,v 1.17 2000/02/18 22:27:53 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -727,7 +727,7 @@ static void check_expired_chanstuff()
       m = chan->channel.member;
       while (m && m->nick[0]) {
 	if ((now - m->last) >= (chan->idle_kick * 60) &&
-	    !match_my_nick(m->nick)) {
+	    !match_my_nick(m->nick) && !chan_issplit(m)) {
 	  sprintf(s, "%s!%s", m->nick, m->userhost);
 	  m->user = get_user_by_host(s);
 	  get_user_flagrec(m->user, &fr, chan->dname);

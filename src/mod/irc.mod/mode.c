@@ -4,7 +4,7 @@
  *   channel mode changes and the bot's reaction to them
  *   setting and getting the current wanted channel modes
  * 
- * $Id: mode.c,v 1.20 2000/01/31 22:56:01 fabian Exp $
+ * $Id: mode.c,v 1.21 2000/02/18 22:27:53 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -206,16 +206,23 @@ static void real_add_mode(struct chanset_t *chan,
 
   if ((mode == 'o') || (mode == 'b') || (mode == 'v') ||
       (mode == 'e') || (mode == 'I')) {
-    type = (plus == '+' ? PLUS : MINUS) |
-           (mode == 'o' ? CHOP : (mode == 'b' ? BAN : (mode == 'v' ? VOICE : (mode == 'e' ? EXEMPT : INVITE))));
+    type = (plus == '+' ? PLUS : MINUS) | (mode == 'o' ? CHOP : (mode == 'b' ? BAN : (mode == 'v' ? VOICE : (mode == 'e' ? EXEMPT : INVITE))));
     /* 
      * FIXME: Some networks remove overlapped bans, IrcNet does not
      *        (poptix/drummer)
+     *
+     * Note:  On ircnet ischanXXX() should be used, otherwise isXXXed().
      */
-    /* If -b'ing a non-existant ban...*/
-    if (((plus == '-') && (mode == 'b') && !ischanban(chan, op)) ||
-        /* or +b'ing an existant ban... */
-        ((plus == '+') && (mode == 'b') && ischanban(chan, op)))
+    /* If removing a non-existant mask... */
+    if (((plus == '-') &&
+         (((mode == 'b') && (!ischanban(chan, op))) ||
+          ((mode == 'e') && (!ischanexempt(chan, op))) ||
+          ((mode == 'I') && (!ischaninvite(chan, op))))) ||
+        /* or adding an existant mask... */
+        ((plus == '+') &&
+         (((mode == 'b') && ischanban(chan, op)) ||
+          ((mode == 'e') && ischanexempt(chan, op)) ||
+          ((mode == 'I') && ischaninvite(chan, op)))))
       return;	/* ...nuke it */
 
     /* If there are already max_bans bans on the channel, don't try to add 

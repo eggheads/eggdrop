@@ -10,7 +10,7 @@
  * 
  * dprintf'ized, 9nov1995
  * 
- * $Id: users.c,v 1.12 2000/01/22 23:30:54 fabian Exp $
+ * $Id: users.c,v 1.13 2000/02/18 22:27:53 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -820,6 +820,7 @@ int readuserfile(char *file, struct userrec **ret)
 	} else if (!strncmp(code, "::", 2)) {
 	  /* channel-specific bans */
 	  strcpy(lasthand, &code[2]);
+	  u = NULL;
 	  if (!findchan_by_dname(lasthand)) {
 	    strcpy(s1, lasthand);
 	    strcat(s1, " ");
@@ -828,7 +829,6 @@ int readuserfile(char *file, struct userrec **ret)
 	      strcat(ignored, " ");
 	    }
 	    lasthand[0] = 0;
-	    u = 0;
 	  } else {
 	    /* Remove all bans for this channel to avoid dupes */
 	    /* NOTE only remove bans for when getting a userfile
@@ -846,6 +846,7 @@ int readuserfile(char *file, struct userrec **ret)
 	} else if (strncmp(code, "&&", 2) == 0) {
 	  /* channel-specific exempts */
 	  strcpy(lasthand, &code[2]);
+	  u = NULL;
 	  if (!findchan_by_dname(lasthand)) {
 	    strcpy(s1, lasthand);
 	    strcat(s1, " ");
@@ -854,7 +855,6 @@ int readuserfile(char *file, struct userrec **ret)
 	      strcat(ignored, " ");
 	    }
 	    lasthand[0] = 0;
-	    u = 0;
 	  } else {
 	    /* Remove all exempts for this channel to avoid dupes */
 	    /* NOTE only remove exempts for when getting a userfile
@@ -872,6 +872,7 @@ int readuserfile(char *file, struct userrec **ret)
 	} else if (strncmp(code, "$$", 2) == 0) {  
 	  /* channel-specific invites */
 	  strcpy(lasthand, &code[2]);
+	  u = NULL;
 	  if (!findchan_by_dname(lasthand)) {   
 	    strcpy(s1, lasthand);
 	    strcat(s1, " ");
@@ -880,7 +881,6 @@ int readuserfile(char *file, struct userrec **ret)
 	      strcat(ignored, " ");
 	    }
 	    lasthand[0] = 0;
-	    u = 0;
 	  } else {
 	    /* Remove all invites for this channel to avoid dupes */
 	    /* NOTE only remove invites for when getting a userfile

@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  * 
- * $Id: chan.c,v 1.30 2000/02/03 22:54:16 fabian Exp $
+ * $Id: chan.c,v 1.31 2000/02/18 22:27:53 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -339,7 +339,7 @@ static void kick_all(struct chanset_t *chan, char *hostmask, char *comment)
     get_user_flagrec(m->user, &fr, chan->dname);
     sprintf(s, "%s!%s", m->nick, m->userhost);
     if (!chan_sentkick(m) && wild_match(hostmask, s) &&
-	!match_my_nick(m->nick) &&
+	!match_my_nick(m->nick) && !chan_issplit(m) &&
 	!glob_friend(fr) && !chan_friend(fr) &&
 	!isexempted(chan, s) &&	/* Crotale - don't kick +e users */
 	!(channel_dontkickops(chan) &&

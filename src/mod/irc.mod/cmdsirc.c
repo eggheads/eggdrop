@@ -2,7 +2,7 @@
  * chancmds.c -- part of irc.mod
  *   handles commands direclty relating to channel interaction
  * 
- * $Id: cmdsirc.c,v 1.10 2000/01/17 22:36:09 fabian Exp $
+ * $Id: cmdsirc.c,v 1.11 2000/02/18 22:27:53 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -785,9 +785,9 @@ static void cmd_adduser(struct userrec *u, int idx, char *par)
     return;
   }
   u = get_user_by_handle(userlist, hand);
-  if (u && (u->flags & USER_OWNER) &&
-      !(atr & USER_OWNER) && !strcasecmp(dcc[idx].nick, hand)) {
-    dprintf(idx, "You can't add hostmasks to the bot owner.\n");
+  if (u && (u->flags & (USER_OWNER|USER_MASTER)) &&
+      !(atr & USER_OWNER) && strcasecmp(dcc[idx].nick, hand)) {
+    dprintf(idx, "You can't add hostmasks to the bot owner/master.\n");
     return;
   }
   if (!statichost)
@@ -795,8 +795,14 @@ static void cmd_adduser(struct userrec *u, int idx, char *par)
   else {
     strcpy(s1,s);
     p1 = strchr(s1,'!');
-    if (strchr("~^+=-",p1[1]))
-      p1[1] = '*';
+    if (strchr("~^+=-",p1[1])) {
+      if (strict_host)
+	p1[1] = '?';
+      else {
+	p1[1] = '!';
+	p1++;
+      }
+    }
     p1--;
     p1[0] = '*';
   }
