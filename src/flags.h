@@ -1,7 +1,7 @@
 /* 
  * flags.h
  * 
- * $Id: flags.h,v 1.6 2000/10/27 19:32:41 fabian Exp $
+ * $Id: flags.h,v 1.7 2000/10/27 19:38:08 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -44,21 +44,21 @@ struct flag_record {
 
 /* 
  * userflags:
- *             abcd?fgh?jk?mnopq??tuvwx??
+ *             abcdefgh?jk?mnopq??tuvwx??
  * + user defined A-Z
- *   unused letters: eilrsyz
+ *   unused letters: ilrsyz
  * 
  * botflags:
  *   0123456789ab????ghi??l???p?rs???????
  *   unused letters: cdefjkmnoqtuvwxyz
  * 
  * chanflags:
- *             a??d?fg???k?mno?q???uv????
+ *             a??defg???k?mno?q???uv????
  * + user defined A-Z
- *   unused letters: bcehijlprstwxyz
+ *   unused letters: bchijlprstwxyz
  */
-#define USER_VALID    0x00f9f6ef	/* all USER_ flags in use	 */
-#define CHAN_VALID    0x00757469	/* all flags that can be chan
+#define USER_VALID    0x00f9f6ff	/* all USER_ flags in use	 */
+#define CHAN_VALID    0x00757479	/* all flags that can be chan
 					   specific			 */
 #define BOT_VALID     0x7fe689C1	/* all BOT_ flags in use	 */
 
@@ -68,7 +68,7 @@ struct flag_record {
 #define USER_COMMON   0x00000004	/* c  user is actually a public
 					      irc site			 */
 #define USER_DEOP     0x00000008	/* d  user is global de-op	 */
-#define USER_E        0x00000010	/* e  unused			 */
+#define USER_EXEMPT   0x00000010	/* e  exempted from stopnethack	 */
 #define USER_FRIEND   0x00000020	/* f  user is global friend	 */
 #define USER_GVOICE   0x00000040	/* g  give voice true auto	 */
 #define USER_HIGHLITE 0x00000080	/* h  highlighting (bold)	 */
@@ -169,6 +169,8 @@ struct flag_record {
 #define glob_party(x)		((x).global & USER_PARTY)
 #define glob_xfer(x)		((x).global & USER_XFER)
 #define glob_hilite(x) 		((x).global & USER_HIGHLITE)
+#define chan_exempt(x)		((x).chan & USER_EXEMPT)
+#define glob_exempt(x)		((x).global & USER_EXEMPT)
 
 #define bot_global(x)		((x).bot & BOT_GLOBAL)
 #define bot_chan(x)		((x).chan & BOT_AGGRESSIVE)

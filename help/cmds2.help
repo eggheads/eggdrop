@@ -322,6 +322,7 @@ see also: whom
       a   global auto-op (always op this user on join)
       h   high-light flag, user sees highlighting in text output
       w   wasop-test (needs wasop test for +stopnethack procedure)
+      e   global exempted from stopnethack
       g   give auto-voice (works as +a but for voice instead)
       (plus 26 user-defined flags, A-Z)
    
@@ -338,6 +339,7 @@ see also: whom
       q   quiet (user never gets +v on +autovoice channels)
       a   auto-op (always op this user on join)
       w   wasop-test (needs wasop test for +stopnethack procedure)
+      e   exempted from stopnethack
       g   give auto-voice (works as +a but for voice instead)
       (plus 26 user-defined flags, A-Z)
    
