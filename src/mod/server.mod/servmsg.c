@@ -897,12 +897,11 @@ static int gotmode(char *from, char *msg)
     if (match_my_nick(ch) && check_mode_r) {
       /* umode +r? - D0H dalnet uses it to mean something different */
       fixcolon(msg);
-      if ((msg[0] == '+')
-	  && strchr(msg, 'r')) {
+      if ((msg[0] == '+') && strchr(msg, 'r')) {
 	int servidx = findanyidx(serv);
 
 	putlog(LOG_MISC | LOG_JOIN, "*",
-	       "%s has me i-lined (jumping)", dcc[servidx].sock);
+	       "%s has me i-lined (jumping)", dcc[servidx].host);
 	nuke_server("i-lines suck");
       }
     }

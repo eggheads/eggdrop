@@ -22,7 +22,7 @@ PATCH("933871309"); /* current "unix" time */
  *
  *
  */
-PATCH("dcclog.patch"); /* last patch added */ 
+PATCH("usermode_r.patch"); /* last patch added */ 
 /*
  *
  *
