@@ -2,7 +2,7 @@
  * main.h
  *   include file to include most other include files
  *
- * $Id: main.h,v 1.29 2004/07/25 11:17:34 wcc Exp $
+ * $Id: main.h,v 1.30 2004/08/28 06:43:22 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -71,10 +71,12 @@
 #  define EGG_VARARGS_DEF(type, name) (type name, ...)
 #  define EGG_VARARGS_START(type, name, list) (va_start(list, name), name)
 #else
-#  include <varargs.h>
-#  define EGG_VARARGS(type, name) ()
-#  define EGG_VARARGS_DEF(type, name) (va_alist) va_dcl
-#  define EGG_VARARGS_START(type, name, list) (va_start(list), va_arg(list,type))
+#  ifndef MAKING_DEPEND /* Allows 'make depend' to work on newer GCC versions. */
+#    include <varargs.h>
+#    define EGG_VARARGS(type, name) ()
+#    define EGG_VARARGS_DEF(type, name) (va_alist) va_dcl
+#    define EGG_VARARGS_START(type, name, list) (va_start(list), va_arg(list,type))
+#  endif
 #endif
 
 #include <stdio.h>

@@ -1,5 +1,5 @@
 # Makefile for src/mod/ctcp.mod/
-# $Id: Makefile,v 1.14 2004/07/25 11:17:34 wcc Exp $
+# $Id: Makefile,v 1.15 2004/08/28 06:43:22 wcc Exp $
 
 srcdir = .
 
@@ -24,7 +24,7 @@ modules: ../../../ctcp.$(MOD_EXT)
 	$(STRIP) ../../../ctcp.$(MOD_EXT)
 
 depend:
-	$(CC) $(CFLAGS) $(CPPFLAGS) -MM $(srcdir)/ctcp.c > .depend
+	$(CC) $(CFLAGS) -MM $(srcdir)/ctcp.c -MT ../ctcp.o > .depend
 
 clean:
 	@rm -f .depend *.o *.$(MOD_EXT) *~
@@ -32,14 +32,13 @@ clean:
 distclean: clean
 
 #safety hash
-../ctcp.o: .././ctcp.mod/ctcp.c ../ctcp.mod/ctcp.h \
- ../../../src/mod/module.h ../../../src/main.h ../../../config.h \
- ../../../src/lang.h ../../../src/eggdrop.h ../../../src/flags.h \
- ../../../src/proto.h ../../../lush.h ../../../src/misc_file.h \
- ../../../src/cmdt.h ../../../src/tclegg.h ../../../src/tclhash.h \
- ../../../src/chan.h ../../../src/users.h ../../../src/compat/compat.h \
- ../../../src/compat/inet_aton.h \
- ../../../src/compat/snprintf.h ../../../src/compat/memset.h \
- ../../../src/compat/memcpy.h ../../../src/compat/strcasecmp.h \
- ../../../src/compat/strftime.h ../../../src/mod/modvals.h \
- ../../../src/tandem.h ../../../src/mod/server.mod/server.h
+../ctcp.o: ../ctcp.mod/ctcp.c ../ctcp.mod/ctcp.h \
+  ../../../src/mod/module.h ../../../src/main.h ../../../config.h \
+  ../../../lush.h ../../../src/lang.h ../../../src/eggdrop.h \
+  ../../../src/flags.h ../../../src/cmdt.h ../../../src/tclegg.h \
+  ../../../src/tclhash.h ../../../src/chan.h ../../../src/users.h \
+  ../../../src/compat/compat.h ../../../src/compat/inet_aton.h \
+  ../../../src/compat/snprintf.h ../../../src/compat/memset.h \
+  ../../../src/compat/memcpy.h ../../../src/compat/strcasecmp.h \
+  ../../../src/compat/strftime.h ../../../src/mod/modvals.h \
+  ../../../src/tandem.h ../../../src/mod/server.mod/server.h

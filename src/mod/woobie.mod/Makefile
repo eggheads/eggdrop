@@ -1,5 +1,5 @@
 # Makefile for src/mod/woobie.mod/
-# $Id: Makefile,v 1.12 2004/07/25 11:17:35 wcc Exp $
+# $Id: Makefile,v 1.13 2004/08/28 06:43:23 wcc Exp $
 
 srcdir = .
 
@@ -24,7 +24,7 @@ modules: ../../../woobie.$(MOD_EXT)
 	$(STRIP) ../../../woobie.$(MOD_EXT)
 
 depend:
-	$(CC) $(CFLAGS) $(CPPFLAGS) -MM $(srcdir)/woobie.c > .depend
+	$(CC) $(CFLAGS) -MM $(srcdir)/woobie.c -MT ../woobie.o > .depend
 
 clean:
 	@rm -f .depend *.o *.$(MOD_EXT) *~
@@ -32,13 +32,12 @@ clean:
 distclean: clean
 
 #safety hash
-../woobie.o: .././woobie.mod/woobie.c ../../../src/mod/module.h \
- ../../../src/main.h ../../../src/lang.h ../../../src/eggdrop.h \
- ../../../src/flags.h ../../../src/proto.h ../../../lush.h \
- ../../../src/misc_file.h ../../../src/cmdt.h ../../../src/tclegg.h \
- ../../../src/tclhash.h ../../../src/chan.h ../../../src/users.h \
- ../../../src/compat/compat.h ../../../src/compat/inet_aton.h \
- ../../../src/compat/snprintf.h \
- ../../../src/compat/memset.h ../../../src/compat/memcpy.h \
- ../../../src/compat/strcasecmp.h ../../../src/mod/modvals.h \
- ../../../src/tandem.h
+../woobie.o: woobie.c ../../../src/mod/module.h ../../../src/main.h \
+  ../../../config.h ../../../lush.h ../../../src/lang.h \
+  ../../../src/eggdrop.h ../../../src/flags.h ../../../src/cmdt.h \
+  ../../../src/tclegg.h ../../../src/tclhash.h ../../../src/chan.h \
+  ../../../src/users.h ../../../src/compat/compat.h \
+  ../../../src/compat/inet_aton.h ../../../src/compat/snprintf.h \
+  ../../../src/compat/memset.h ../../../src/compat/memcpy.h \
+  ../../../src/compat/strcasecmp.h ../../../src/compat/strftime.h \
+  ../../../src/mod/modvals.h ../../../src/tandem.h

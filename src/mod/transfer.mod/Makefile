@@ -1,5 +1,5 @@
 # Makefile for src/mod/transfer.mod/
-# $Id: Makefile,v 1.15 2004/07/25 11:17:35 wcc Exp $
+# $Id: Makefile,v 1.16 2004/08/28 06:43:23 wcc Exp $
 
 srcdir = .
 
@@ -24,7 +24,7 @@ modules: ../../../transfer.$(MOD_EXT)
 	$(STRIP) ../../../transfer.$(MOD_EXT)
 
 depend:
-	$(CC) $(CFLAGS) $(CPPFLAGS) -MM $(srcdir)/transfer.c > .depend
+	$(CC) $(CFLAGS) -MM $(srcdir)/transfer.c -MT ../transfer.o > .depend
 
 clean:
 	@rm -f .depend *.o *.$(MOD_EXT) *~
@@ -32,16 +32,14 @@ clean:
 distclean: clean
 
 #safety hash
-../transfer.o: .././transfer.mod/transfer.c ../../../src/mod/module.h \
- ../../../src/main.h ../../../config.h ../../../src/lang.h \
- ../../../src/eggdrop.h ../../../src/flags.h ../../../src/proto.h \
- ../../../lush.h ../../../src/misc_file.h ../../../src/cmdt.h \
- ../../../src/tclegg.h ../../../src/tclhash.h ../../../src/chan.h \
- ../../../src/users.h ../../../src/compat/compat.h \
- ../../../src/compat/inet_aton.h \
- ../../../src/compat/snprintf.h  ../../../src/compat/memset.h \
- ../../../src/compat/memcpy.h ../../../src/compat/strcasecmp.h \
- ../../../src/compat/strftime.h ../../../src/mod/modvals.h \
- ../../../src/tandem.h ../transfer.mod/transfer.h \
- ../transfer.mod/tcltransfer.c ../transfer.mod/transferqueue.c \
- ../transfer.mod/transferfstat.c
+../transfer.o: ../transfer.mod/transfer.c ../../../src/mod/module.h \
+  ../../../src/main.h ../../../config.h ../../../lush.h \
+  ../../../src/lang.h ../../../src/eggdrop.h ../../../src/flags.h \
+  ../../../src/cmdt.h ../../../src/tclegg.h ../../../src/tclhash.h \
+  ../../../src/chan.h ../../../src/users.h ../../../src/compat/compat.h \
+  ../../../src/compat/inet_aton.h ../../../src/compat/snprintf.h \
+  ../../../src/compat/memset.h ../../../src/compat/memcpy.h \
+  ../../../src/compat/strcasecmp.h ../../../src/compat/strftime.h \
+  ../../../src/mod/modvals.h ../../../src/tandem.h \
+  ../transfer.mod/transfer.h ../transfer.mod/transferfstat.c \
+  ../transfer.mod/transferqueue.c ../transfer.mod/tcltransfer.c
