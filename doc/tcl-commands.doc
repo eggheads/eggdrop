@@ -292,7 +292,11 @@ specific commands, see later.
 
   killinvite <invite>
     removes a invite from the global invite list
-    returns: "1" if successful, "0" otherwise
+    returns: "1" if successful, "0" otherwise 
+
+  ischanjuped [channel]
+    returns: "1" if the channel is juped and bot is unable to join, "0"
+      otherwise
 
   isban <ban> [channel]
     returns: "1" if that ban is in the global ban list, "0" otherwise; if

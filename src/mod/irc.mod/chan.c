@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  * 
- * $Id: chan.c,v 1.29 2000/02/01 20:17:36 fabian Exp $
+ * $Id: chan.c,v 1.30 2000/02/03 22:54:16 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1565,6 +1565,7 @@ static int gotjoin(char *from, char *chname)
 	   */
 	  strncpy(chan->name, chname, 81);
 	  chan->name[80] = 0;
+	  chan->status &= ~CHAN_JUPED;
 
           /* ... and log us joining. Using chan->dname for the channel is
 	   * important in this case. As the config file will never contain

@@ -2,7 +2,7 @@
  * irc.c -- part of irc.mod
  *   support for channels within the bot 
  * 
- * $Id: irc.c,v 1.15 2000/01/28 22:14:03 fabian Exp $
+ * $Id: irc.c,v 1.16 2000/02/03 22:54:17 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1005,7 +1005,9 @@ static void irc_report(int idx, int details)
     if ((idx == DP_STDOUT) || glob_master(fr) || chan_master(fr)) {
       p = NULL;
       if (!channel_inactive(chan)) {
-	if (!(chan->status & CHAN_ACTIVE))
+	if (chan->status & CHAN_JUPED)
+	  p = MISC_JUPED;
+	else if (!(chan->status & CHAN_ACTIVE))
 	  p = MISC_TRYING;
 	else if (chan->status & CHAN_PEND)
 	  p = MISC_PENDING;

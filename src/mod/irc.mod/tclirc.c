@@ -1,7 +1,7 @@
 /* 
  * tclirc.c -- part of irc.mod
  * 
- * $Id: tclirc.c,v 1.11 2000/01/17 22:36:09 fabian Exp $
+ * $Id: tclirc.c,v 1.12 2000/02/03 22:54:17 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -85,6 +85,23 @@ static int tcl_botisop STDVAR
     return TCL_ERROR;
   }
   if (me_op(chan))
+    Tcl_AppendResult(irp, "1", NULL);
+  else
+    Tcl_AppendResult(irp, "0", NULL);
+  return TCL_OK;
+}
+
+static int tcl_ischanjuped STDVAR
+{
+  struct chanset_t *chan;
+
+  BADARGS(2, 2, " channel");
+  chan = findchan_by_dname(argv[1]);
+  if (chan == NULL) {
+    Tcl_AppendResult(irp, "illegal channel: ", argv[1], NULL);
+    return TCL_ERROR;
+  }
+  if (channel_juped(chan))
     Tcl_AppendResult(irp, "1", NULL);
   else
     Tcl_AppendResult(irp, "0", NULL);
@@ -709,6 +726,7 @@ static tcl_cmds tclchan_cmds[] =
   {"ischanban",		tcl_ischanban},
   {"ischanexempt",	tcl_ischanexempt},
   {"ischaninvite",	tcl_ischaninvite},
+  {"ischanjuped",	tcl_ischanjuped},
   {"getchanhost",	tcl_getchanhost},
   {"onchansplit",	tcl_onchansplit},
   {"maskhost",		tcl_maskhost},

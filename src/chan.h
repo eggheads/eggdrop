@@ -3,7 +3,7 @@
  *   stuff common to chan.c and mode.c
  *   users.h needs to be loaded too
  * 
- * $Id: chan.h,v 1.11 2000/01/30 19:26:20 fabian Exp $
+ * $Id: chan.h,v 1.12 2000/02/03 22:54:16 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -205,6 +205,7 @@ struct chanset_t {
 #define CHAN_STATIC         0x8000000	/* channels that are NOT dynamic      */
 #define CHAN_ASKEDBANS      0x10000000
 #define CHAN_ASKEDMODES     0x20000000  /* find out key-info on IRCu          */
+#define CHAN_JUPED          0x40000000  /* Is channel juped                     */
 
 #define CHAN_ASKED_EXEMPTS  0x0001
 #define CHAN_ASKED_INVITED  0x0002
@@ -251,6 +252,7 @@ struct chanset_t *findchan_by_dname(char *name);
 #define channel_nouserexempts(chan) (chan->ircnet_status & CHAN_NOUSEREXEMPTS)
 #define channel_dynamicinvites(chan) (chan->ircnet_status & CHAN_DYNAMICINVITES)
 #define channel_nouserinvites(chan) (chan->ircnet_status & CHAN_NOUSERINVITES)
+#define channel_juped(chan) (chan->status & CHAN_JUPED)
 
 struct server_list {
   struct server_list *next;

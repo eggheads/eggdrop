@@ -1,7 +1,7 @@
 /* 
  * servmsg.c -- part of server.mod
  * 
- * $Id: servmsg.c,v 1.28 2000/01/31 22:56:01 fabian Exp $
+ * $Id: servmsg.c,v 1.29 2000/02/03 22:54:17 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -855,7 +855,10 @@ static int got437(char *from, char *msg)
       if (chan->status & CHAN_ACTIVE) {
 	putlog(LOG_MISC, "*", IRC_CANTCHANGENICK, s);
       } else {
-	putlog(LOG_MISC, "*", IRC_CHANNELJUPED, s);
+	if (!channel_juped(chan)) {
+	  putlog(LOG_MISC, "*", IRC_CHANNELJUPED, s);
+	  chan->status |= CHAN_JUPED;
+	}
       }
     }
   } else if (server_online) {
