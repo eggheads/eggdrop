@@ -258,8 +258,11 @@ e-mail to eggheads@eggheads.org (after subscribing). Thanks.
     a  (auto-op) automatically op the person when they join the channel
                  even if the channel isn't +autoop
 
-    v  (auto-voice) automatically give this person a voice it they
-                 join a +autovoice channel.
+    v  (voice)   someone who can ask for channel voice (+v) status on the
+                 channel at will
+
+    g  (auto-voice) automatically voice the person when they join the
+                 channel even if the channel isn't +autovoice
 
     q  (quiet)   do not allow this person to get a voice on a +autovoice
                  channel

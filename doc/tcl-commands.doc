@@ -75,6 +75,7 @@ specific commands, see later.
       help.
 
    clearqueue <queue>
+     valid arguments for queue are: mode, server, help, or all.
      returns: number of deleted lines from the specified queue
 
 
@@ -91,12 +92,12 @@ specific commands, see later.
     returns: the handle found, or "*" if none
 
   userlist [flags]
-    returns: a list of the handles of users on the bot
       you can use the new flag matching system here,
       usage: [global]{&/|}[chan]{&/|}[bot]
       matches the flags relevantly, (chan matches vs anywhere), &
       specifies and when match, | specifies or. only the first of these is
       relevant, the default is or.
+    returns: a list of the handles of users on the bot
 
   passwdok <handle> <pass>
     checks the password given against the user's password
@@ -402,7 +403,7 @@ specific commands, see later.
     returns: "1" if the ignore is in the list, "0" otherwise
 
   save
-    writes the userfile to disk
+    writes the user and channel files to disk
     returns: nothing
 
   reload
@@ -648,9 +649,9 @@ specific commands, see later.
      returns: nothing
 
   restart
-    rehashes the bot and kills all timers
-      note that as this will also unload and reload all the modules, your
-      bot will also jump servers.
+    rehashes the bot and kills all timers.
+      note that as this will unload and reload all the modules and your
+      bot will jump servers.
     returns: nothing
 
   rehash
@@ -1500,8 +1501,7 @@ for the msg-command "stop", use 'unbind msg - stop msg_stop'.
     will be called with blank text (the input-text will be ""). This
     is the only time it will ever be called with "" as the text, and it
     is the last time your proc will be called for that connection. Don't
-call
-    killdcc on the idx when text is blank, it will always fail with
+    call killdcc on the idx when text is blank, it will always fail with
     "invalid idx".
 
     If you want to hand control of your connection back to eggdrop, your

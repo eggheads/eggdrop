@@ -101,7 +101,7 @@ with [sends to] peonbot at the same time.
 
   s   share (Aggressively SEND userfile to a passive bot (assigned +s flag))
   p   share (Passively ACCEPT userfile from an aggressive bot (assigned +p flag))
-  g   global share (share all channels (this works correctly in 1.4.xx))
+  g   global share (share all channels (this works correctly in 1.4+))
   h   hub (bot is auto-linked)
   a   alternate (bot is auto-linked if the hub bot can't be linked)
   l   leaf (bot is not allowed to link in other bots)
@@ -116,13 +116,13 @@ with [sends to] peonbot at the same time.
   The physical address, containing the host and port address of the bot.
   i.e. lame.org:3333
 
-  command: ".cheddar <botname> <hostaddress:botport[/userport]>"
+  command: ".chaddr <botname> <hostaddress:botport[/userport]>"
 
 
  Relay
-  The relay port number of the bot if defined in the config file.
- Note that you can define one for telnet connections to other bots
- and one for relay connections.
+  The relay port number of the bot is defined in the config file.
+ Note that you can define one port for telnet connections to other bots
+ and another for relay connections.
 
 
  Relay connection
@@ -175,11 +175,11 @@ other bot). In BotA's console you have to type ".+bot BotB irc.org:4444"
 automatically, otherwise you have to add it manually with ".+host") and on
 BotB's console ".+bot BotA lame.org:3333".
 At this point you can link them for the first time manually by typing
-".link BotA" on BotB's console (or in reverse, of course with BotB ".link BotB"
-on BotA's console). The bots will give themselves now randomized passwords,
+".link BotA" in BotB's console (or in reverse, of course with BotB ".link BotB"
+in BotA's console). The bots will now give themselves randomized passwords,
 which are *not* stored encrypted in the userfile. Now you've generated your
 first botnet.
-Note that you can add and link as much Bots as you want to your botnet.
+Note that you can add and link as many Bots as you want to your botnet.
 
 
 
@@ -192,7 +192,7 @@ Botflags are needed to assign special functions and tasks to your bots.
   If you want your bots to auto-link after getting unlinked or started (due
   to a crash or a server reboot), you have to assign the botattr +h to the
   bot you want the bot to link to.
-  Note, you can assign +h only to one bot at a time!
+  Note, if you set multiple bots +h, the bot only attempts to link to one.
 
   command: ".botattr <botname> +h"
 
@@ -215,14 +215,14 @@ Botflags are needed to assign special functions and tasks to your bots.
 
  "r" flag (reject)
   If you assign this flag to a bot, it won't be tolerated on your botnet and
-  will be unlinked, if it tries to link to your one or any other bot.
+  will be unlinked, if it tries to link to your bot or any other bot.
 
   command: ".botattr <botname> +r"
 
 
  "i" flag (isolate)
-  Setting this flag to a bot will effect an isolation of the partyline
-  between your bot(net) and the other bot(net).
+  Setting this flag to a bot will isolate the partyline between your bot(net)
+  and the other bot(net).
 
   command: ".botattr <botname> +i"
 
