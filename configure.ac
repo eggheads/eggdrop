@@ -1,11 +1,11 @@
 dnl configure.ac: this file is processed by autoconf to produce ./configure.
 dnl
-dnl $Id: configure.ac,v 1.13 2004/07/25 11:17:34 wcc Exp $
+dnl $Id: configure.ac,v 1.14 2004/07/25 22:15:12 wcc Exp $
 
 AC_PREREQ(2.59)
 AC_INIT([Eggdrop],[1.6.17],[bugs@eggheads.org])
 AC_COPYRIGHT([Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004 Eggheads Development Team])
-AC_REVISION($Revision: 1.13 $)
+AC_REVISION($Revision: 1.14 $)
 AC_CONFIG_SRCDIR(src/eggdrop.h)
 AC_CONFIG_AUX_DIR(misc)
 AC_CONFIG_HEADER(config.h)
@@ -107,7 +107,7 @@ tclrecommendsite="ftp://tcl.activestate.com/pub/tcl/tcl8_4/"
 tcllibnames="tcl8.4 tcl84 tcl8.3 tcl83 tcl8.2 tcl82 tcl8.1 tcl81 \
              tcl8.0 tcl80 tcl tcl7.6 tcl76 tcl7.5 tcl75 tcl7.4 tcl74 tcl7.3 \
              tcl73 tcl7.2 tcl72 tcl7.1 tcl71 tcl7.0 tcl70 tcl8.5 tcl85"
-tcllibextensions=".so .so.1 .so.1.0 .so.1.2 .a .sl .dll .dylib"
+tcllibextensions=".so .so.1 .so.1.0 .so.1.2 .dll .dylib .a .sl"
 tcllibpaths="$HOME/lib $HOME/tcl/lib /usr/local/lib /usr/lib /lib \
              /usr/local/lib/tcl8.4 /usr/local/lib/tcl8.3 \
              /usr/lib/tcl8.4 /usr/lib/tcl8.3 \
