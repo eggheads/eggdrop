@@ -2,7 +2,7 @@
  * cmdschan.c -- part of channels.mod
  *   commands from a user via dcc that cause server interaction
  * 
- * $Id: cmdschan.c,v 1.24 2000/07/13 21:19:52 fabian Exp $
+ * $Id: cmdschan.c,v 1.25 2000/08/06 14:53:54 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1332,7 +1332,7 @@ static void cmd_chanset(struct userrec *u, int idx, char *par)
   if (!par[0])
     dprintf(idx, "Usage: chanset [%schannel] <settings>\n", CHANMETA);
   else {
-    if ((strlen(par) > 2) && (par[0] == '*') && (par[1] == ' ')) {
+    if (strlen(par) > 2 && par[0] == '*' && par[1] == ' ') {
       all = 1;
       get_user_flagrec(u, &user, chanset ? chanset->dname : "");
       if (!glob_master(user)) {
@@ -1356,6 +1356,10 @@ static void cmd_chanset(struct userrec *u, int idx, char *par)
 	    *--par = ' ';
 	  par = chname;
 	}
+      }
+      if (!par[0] || par[0] == '*') {
+        dprintf(idx, "Usage: chanset [%schannel] <settings>\n", CHANMETA);
+        return;
       }
       if (!chan &&
           !(chan = findchan_by_dname(chname = dcc[idx].u.chat->con_chan))) {
@@ -1391,7 +1395,7 @@ static void cmd_chanset(struct userrec *u, int idx, char *par)
 	 */
 	if (strncmp(list[0], "need-", 5) || (u->flags & USER_OWNER)) {
 	  if (!strncmp(list[0], "need-", 5) && !(isowner(dcc[idx].nick)) &&
-	      (must_be_owner)) {
+	      must_be_owner) {
 	    dprintf(idx, "Due to security concerns, only permanent owners can set these modes.\n");
 	    nfree(buf);
 	    return;
