@@ -1757,7 +1757,6 @@ users to read later
   setflags <dir> [<flags> [channel]]
     sets the flags required to access the directory
     returns: 0 on success, -1 on failure
+     _________________________________________________________________
 
-  ________________________________________________________________________
-
-Copyright (C) 2002 Eggheads Development Team
+   Copyright (C) 1999, 2000, 2001, 2002 Eggheads Development Team

@@ -313,4 +313,3 @@ see also: bans, exempts, invites, stick, -ban, -exempt, -invite
 %{+n}
   for global owners:
      %b+chan%b     %b-chan%b
-

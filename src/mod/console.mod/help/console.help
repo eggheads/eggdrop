@@ -18,4 +18,3 @@ See Also: set console-autosave
 %{help=all}
 ###  commands for the %bconsole module%b
   %bstore%b
-

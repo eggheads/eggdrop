@@ -1,7 +1,7 @@
 #
 # ques5.tcl
 #
-# Copyright (C) 1995 Robey Pointer
+# Copyright (C) 1995, 1996, 1997 Robey Pointer
 # Copyright (C) 1999, 2000, 2001, 2002 Eggheads Development Team
 #
 # v1 -- 20aug95
@@ -11,7 +11,7 @@
 # v4.00001 nov97 [blurgh]
 # v5-BETA1 -- 26sep99 by rtc
 #
-# $Id: ques5.tcl,v 1.8 2002/01/02 03:46:35 guppy Exp $
+# $Id: ques5.tcl,v 1.9 2002/01/02 08:06:13 tothwolf Exp $
 #
 # o clean webfile var removal
 # o using timezone variable from config file
@@ -368,4 +368,3 @@ if {![info exists channels]} {
 if {![info exists timezone]} {
   set timezone [clock format 0 -format %Z]
 }
-

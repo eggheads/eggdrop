@@ -5,7 +5,7 @@
  *   note cmds
  *   note ignores
  *
- * $Id: notes.c,v 1.36 2002/01/02 03:55:20 guppy Exp $
+ * $Id: notes.c,v 1.37 2002/01/02 08:06:15 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1243,4 +1243,3 @@ char *notes_start(Function * global_funcs)
   add_entry_type(&USERENTRY_FWD);
   return NULL;
 }
-

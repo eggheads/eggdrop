@@ -1,8 +1,8 @@
 Compress Module
 Last revised: December 31, 2001
-   ________________________________________________________________________
+     _________________________________________________________________
 
-                                Compress Module
+                             Compress Module
 
 This module provides provides support for file compression. This allows the
 bot to transfer compressed user files and, therefore, save a significant amount
@@ -22,7 +22,6 @@ set share-compressed 1 (Disabled by default)
 
 set compress-level 9
    This is the default compression level used.
-   
-  ________________________________________________________________________
+     _________________________________________________________________
 
-Copyright (C) 2002 Eggheads Development Team
+   Copyright (C) 2000, 2001, 2002 Eggheads Development Team

@@ -70,4 +70,3 @@ see also: set private-global
 %{help=all}%{+n}
 ###  commands for the %bshare module%b
   %bflush%b
-

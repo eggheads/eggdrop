@@ -2,7 +2,7 @@
  * assoc.c -- part of assoc.mod
  *   the assoc code, moved here mainly from botnet.c for module work
  *
- * $Id: assoc.c,v 1.18 2002/01/02 03:46:37 guppy Exp $
+ * $Id: assoc.c,v 1.19 2002/01/02 08:06:14 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -423,4 +423,3 @@ char *assoc_start(Function * global_funcs)
   add_help_reference("assoc.help");
   return NULL;
 }
-

@@ -2,7 +2,7 @@
  * cmdsnote.c -- part of notes.mod
  *   handles all notes interaction over the party line
  *
- * $Id: cmdsnote.c,v 1.13 2002/01/02 03:46:39 guppy Exp $
+ * $Id: cmdsnote.c,v 1.14 2002/01/02 08:06:15 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -245,4 +245,3 @@ static cmd_t notes_cmds[] =
   {"note",	"",	(Function) cmd_note,		NULL},
   {NULL,	NULL,	NULL,				NULL}
 };
-

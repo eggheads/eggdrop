@@ -36,4 +36,3 @@
 %{help=all}%{+o|o}
 ###  commands for the %bserver module%b
   %bservers%b  %{+m}%bjump%b  %bdump%b
-

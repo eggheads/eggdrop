@@ -1,8 +1,8 @@
 Wire Module
 Last revised: December 31, 2001
-   ________________________________________________________________________
+     _________________________________________________________________
 
-                                  Wire Module
+                               Wire Module
 
 This module provides all the standard .wire commands via dcc. It is an 
 encrypted partyline communication tool, compatible with wire.tcl.
@@ -12,7 +12,6 @@ This module requires: encryption
 Put this line into your Eggdrop configuration file to load the wire module:
 
 loadmodule wire
+     _________________________________________________________________
 
-  ________________________________________________________________________
-
-Copyright (C) 2002 Eggheads Development Team
+   Copyright (C) 2000, 2001, 2002 Eggheads Development Team

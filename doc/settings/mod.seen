@@ -1,8 +1,8 @@
 Seen Module
 Last revised: December 31, 2001
-   ________________________________________________________________________
+     _________________________________________________________________
 
-                                  Seen Module
+                               Seen Module
 
 This module provides very basic seen commands via msg, on channel or via dcc.
 This module works only for users in the bot's userlist. If you are looking for
@@ -14,7 +14,6 @@ This module requires: none
 Put this line into your Eggdrop configuration file to load the seen module:
 
 loadmodule seen
+     _________________________________________________________________
 
-  ________________________________________________________________________
-
-Copyright (C) 2002 Eggheads Development Team
+   Copyright (C) 2000, 2001, 2002 Eggheads Development Team

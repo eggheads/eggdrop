@@ -1,8 +1,8 @@
 Transfer Module
 Last revised: December 31, 2001
-   ________________________________________________________________________
+     _________________________________________________________________
 
-                                Transfer Module
+                             Transfer Module
 
 The transfer module provides dcc send/get support and userfile transfer
 support for userfile sharing.
@@ -41,8 +41,6 @@ set xfer-timeout 30
     Set here the time (in seconds) to wait before an inactive transfer
     times out.
     Valid settings are 0-infinite.
+     _________________________________________________________________
 
-    
-  ________________________________________________________________________
-
-Copyright (C) 2002 Eggheads Development Team
+   Copyright (C) 2000, 2001, 2002 Eggheads Development Team

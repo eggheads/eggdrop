@@ -1,8 +1,8 @@
 Filesys Module
 Last revised: December 31, 2001
-   ________________________________________________________________________
+     _________________________________________________________________
 
-                                 Filesys Module
+                              Filesys Module
 
 This module provides an area within the bot where users can store
 files. With this module, the bot is usable as a file server.
@@ -50,7 +50,6 @@ set max-filesize 1024
     Set here the maximum allowable file size that will be received (in kb).
     Setting this to 0 makes it effectively infinite.
     Valid settings are 0-unlimited.
-    
-  ________________________________________________________________________
+     _________________________________________________________________
 
-Copyright (C) 2002 Eggheads Development Team
+   Copyright (C) 2000, 2001, 2002 Eggheads Development Team

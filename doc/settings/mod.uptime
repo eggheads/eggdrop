@@ -1,8 +1,8 @@
 Uptime Module
 Last revised: December 31, 2001
-   ________________________________________________________________________
+     _________________________________________________________________
 
-                                 Uptime Module
+                              Uptime Module
 
 This module reports uptime statistics to http://uptime.eggheads.org.
 Go look and see what your uptime is! It takes about 9 hours to show up,
@@ -20,7 +20,6 @@ This module requires: server
 Put this line into your Eggdrop configuration file to load the uptime module:
 
 loadmodule uptime
+     _________________________________________________________________
 
-  ________________________________________________________________________
-
-Copyright (C) 2002 Eggheads Development Team
+   Copyright (C) 2000, 2001, 2002 Eggheads Development Team

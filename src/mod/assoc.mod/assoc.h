@@ -1,7 +1,7 @@
 /*
  * assoc.h -- part of assoc.mod
  *
- * $Id: assoc.h,v 1.3 2002/01/02 03:46:37 guppy Exp $
+ * $Id: assoc.h,v 1.4 2002/01/02 08:06:14 tothwolf Exp $
  */
 /*
  * Copyright (C) 2000, 2001, 2002 Eggheads Development Team
@@ -43,4 +43,3 @@
 #define ASSOC_CHNAME_FIRSTCHAR	get_language(0xb00f)
 
 #endif				/* _EGG_MOD_ASSOC_ASSOC_H */
-

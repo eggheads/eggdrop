@@ -1,8 +1,8 @@
 DNS Module
 Last revised: December 31, 2001
-   ________________________________________________________________________
+     _________________________________________________________________
 
-                                   DNS Module
+                                DNS Module
 
 This module provides asynchronous dns support. This will avoid long
 periods where the bot just hangs there, waiting for a hostname to
@@ -13,7 +13,6 @@ This module requires: none
 Put this line into your Eggdrop configuration file to load the dns module:
 
 loadmodule dns
+     _________________________________________________________________
 
-  ________________________________________________________________________
-
-Copyright (C) 2002 Eggheads Development Team
+   Copyright (C) 2000, 2001, 2002 Eggheads Development Team

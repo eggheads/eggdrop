@@ -1,8 +1,8 @@
 Share Module
 Last revised: December 31, 2001
-   ________________________________________________________________________
+     _________________________________________________________________
 
-                                  Share Module
+                               Share Module
 
 This module provides userfile sharing support between two directly
 linked bots.
@@ -56,9 +56,6 @@ set override-bots 0
     address are added to sharing procedure. This only works with hubs that
     are v1.5.1 or higher.
     Valid settings are 0 for OFF and 1 ON.
+     _________________________________________________________________
 
-    
-  ________________________________________________________________________
-
-Copyright (C) 2002 Eggheads Development Team
-
+   Copyright (C) 2000, 2001, 2002 Eggheads Development Team

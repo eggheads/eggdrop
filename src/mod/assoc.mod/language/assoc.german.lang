@@ -1,7 +1,7 @@
 # assoc.german.lang
 #   language messages for the assoc module
 #
-# $Id: assoc.german.lang,v 1.1 2001/04/13 19:25:05 guppy Exp $
+# $Id: assoc.german.lang,v 1.2 2002/01/02 08:06:14 tothwolf Exp $
 
 0xb000,Keine Channel-Namen
 0xb001,Channel
@@ -19,4 +19,3 @@
 0xb00d,--- (%s) %s entfernte diesen Channel-Namen.\n
 0xb00e,Channel-Name kann nicht so lang sein (20 Zeichen maximal).
 0xb00f,Erstes Zeichen des Channel-Namens kann keine Zahl sein.
-

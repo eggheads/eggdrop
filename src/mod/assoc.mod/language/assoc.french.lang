@@ -1,7 +1,7 @@
 # assoc.french.lang
 #   language messages for the assoc module
 #
-# $Id: assoc.french.lang,v 1.1 2001/12/02 21:43:28 guppy Exp $
+# $Id: assoc.french.lang,v 1.2 2002/01/02 08:06:14 tothwolf Exp $
 
 0xb000,Pas de noms de canaux
 0xb001,Canal
@@ -19,4 +19,3 @@
 0xb00d,--- (%s) %s a enlevé le nom de ce canal.\n
 0xb00e,Le nom du canal ne peut pas être aussi long (20 cars max).
 0xb00f,Le premier caractère d'un nom de canal ne doit pas être un chiffre.
-

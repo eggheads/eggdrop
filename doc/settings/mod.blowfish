@@ -1,8 +1,8 @@
 Blowfish Module
 Last revised: December 31, 2001
-   ________________________________________________________________________
+     _________________________________________________________________
 
-                                Blowfish Module
+                             Blowfish Module
 
 Eggdrop can encrypt your userfile, so users can have secure passwords.
 Please note that when you change your encryption method later (i.e.
@@ -18,7 +18,6 @@ module:
 
   This is checkmodule because during .restart the module will already
   be loaded.
+     _________________________________________________________________
 
-  ________________________________________________________________________
-
-Copyright (C) 2002 Eggheads Development Team
+   Copyright (C) 2000, 2001, 2002 Eggheads Development Team

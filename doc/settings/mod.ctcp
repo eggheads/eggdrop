@@ -1,8 +1,8 @@
 CTCP Module
 Last revised: December 31, 2001
-   ________________________________________________________________________
+     _________________________________________________________________
 
-                                CTCP Module
+                               CTCP Module
 
 This module provides the normal ctcp replies that you'd expect.
 Without it loaded, CTCP CHAT will not work.
@@ -28,7 +28,6 @@ set ctcp-mode 0
 There are also several variables to help make your bot less noticeable.
 They are: ctcp-version, ctcp-finger, and ctcp-userinfo. You can use set to 
 set them to values you'd like.
+     _________________________________________________________________
 
-  ________________________________________________________________________
-
-Copyright (C) 2002 Eggheads Development Team
+   Copyright (C) 2000, 2001, 2002 Eggheads Development Team

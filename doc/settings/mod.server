@@ -1,8 +1,8 @@
 Server Module
 Last revised: December 31, 2001
-   ________________________________________________________________________
+     _________________________________________________________________
 
-                                  Server Module
+                              Server Module
 
 This module provides the core server support. You have to load this
 if you want your bot to come on IRC. Not loading this is equivalent
@@ -236,8 +236,6 @@ set nick-len 9
     your network. The default setting is 9. The maximum supported length by
     Eggdrop is 32.
     Valid settings are 9-32
-    
-  ________________________________________________________________________
+     _________________________________________________________________
 
-Copyright (C) 2002 Eggheads Development Team
-
+   Copyright (C) 2000, 2001, 2002 Eggheads Development Team

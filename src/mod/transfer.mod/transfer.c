@@ -1,7 +1,7 @@
 /*
  * transfer.c -- part of transfer.mod
  *
- * $Id: transfer.c,v 1.49 2002/01/02 03:55:20 guppy Exp $
+ * $Id: transfer.c,v 1.50 2002/01/02 08:06:16 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1987,4 +1987,3 @@ char *transfer_start(Function *global_funcs)
   add_lang_section("transfer");
   return NULL;
 }
-

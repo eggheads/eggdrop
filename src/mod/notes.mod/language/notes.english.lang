@@ -1,7 +1,7 @@
 # notes.english.lang
 #   language messages for the notes module
 #
-# $Id: notes.english.lang,v 1.2 2001/01/31 05:40:14 guppy Exp $
+# $Id: notes.english.lang,v 1.3 2002/01/02 08:06:16 tothwolf Exp $
 
 0xc000,  Forward notes to: %.70s\n
 0xc001,Switched %d note%s from %s to %s.
@@ -45,4 +45,3 @@
 0xc027,You must supply a botname to forward to.
 0xc028,Changed notes forwarding for %s to: %s\n
 0xc029,Function must be one of INDEX, READ, or ERASE.
-

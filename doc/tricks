@@ -72,7 +72,6 @@ with their config files, you might render these little tweaking tips useful:
   set myvar "yourbot"
   set userfile "$myvar.user"
   set chanfile "$myvar.chan"
+     _________________________________________________________________
 
-  ________________________________________________________________________
-
-Copyright (C) 2002 Eggheads Development Team
+   Copyright (C) 1999, 2000, 2001, 2002 Eggheads Development Team

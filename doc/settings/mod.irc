@@ -1,8 +1,8 @@
-Seen Module
+IRC Module
 Last revised: December 31, 2001
-   ________________________________________________________________________
+     _________________________________________________________________
 
-                                  Seen Module
+                                IRC Module
 
 This module provides basic IRC support for your bot.  You have to
 load this if you want your bot to come on IRC.
@@ -179,7 +179,6 @@ set use-354 0
 set rfc-compliant 1
     If your network doesn't use rfc 1459 compliant string matching routines,
     set this to 0.
-    
-  ________________________________________________________________________
+     _________________________________________________________________
 
-Copyright (C) 2002 Eggheads Development Team
+   Copyright (C) 2000, 2001, 2002 Eggheads Development Team

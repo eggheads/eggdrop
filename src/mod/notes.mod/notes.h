@@ -1,7 +1,7 @@
 /*
  * notes.h -- part of notes.mod
  *
- * $Id: notes.h,v 1.7 2002/01/02 03:46:39 guppy Exp $
+ * $Id: notes.h,v 1.8 2002/01/02 08:06:15 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -85,4 +85,3 @@ static void fwd_display(int, struct user_entry *);
 #endif				/* MAKING_NOTES */
 
 #endif				/* _EGG_MOD_NOTES_H */
-

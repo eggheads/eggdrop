@@ -1,8 +1,8 @@
 Notes Module
 Last revised: December 31, 2001
-   ________________________________________________________________________
+     _________________________________________________________________
 
-                                 Notes Module
+                               Notes Module
 
 This module provides support for storing of notes for users from each
 other. Note sending between currently online users is supported in the core,
@@ -47,8 +47,6 @@ set notify-onjoin 1
     Set this to 1 if you want the bot to let people know on join if they
     have any notes.
     Valid settings are 0 for OFF and 1 ON.
-    
-  ________________________________________________________________________
+     _________________________________________________________________
 
-Copyright (C) 2002 Eggheads Development Team
-
+   Copyright (C) 2000, 2001, 2002 Eggheads Development Team

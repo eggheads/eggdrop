@@ -1,8 +1,8 @@
 Console Module
 Last revised: December 31, 2001
-   ________________________________________________________________________
+     _________________________________________________________________
 
-                                Console Module
+                              Console Module
 
 This module provides storage of console settings when you exit the
 bot or type .store on the partyline.
@@ -31,7 +31,6 @@ set info-party 0
     Enable this setting if a user's global info line should be displayed
     when they join a botnet channel.
     Valid settings are 0 for OFF and 1 ON.
-    
-  ________________________________________________________________________
+     _________________________________________________________________
 
-Copyright (C) 2002 Eggheads Development Team
+   Copyright (C) 2000, 2001, 2002 Eggheads Development Team

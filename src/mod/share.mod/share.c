@@ -1,7 +1,7 @@
 /*
  * share.c -- part of share.mod
  *
- * $Id: share.c,v 1.62 2002/01/02 03:46:40 guppy Exp $
+ * $Id: share.c,v 1.63 2002/01/02 08:06:16 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -2227,4 +2227,3 @@ int private_globals_bitmask()
   break_down_flags(private_globals, &fr, 0);
   return fr.global;
 }
-

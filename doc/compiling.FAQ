@@ -494,8 +494,7 @@ B. Tcl Related Questions
 
      ./configure --with-tcllib=/path/to/libtclx.x.so
      --with-tclinc=/path/to/tcl.h
+     _________________________________________________________________
 
-  ________________________________________________________________________
-
-Copyright (C) 1997 Robey Pointer
-Copyright (C) 2000, 2001, 2002 Eggheads Development Team
+   Copyright (C) 1997 Robey Pointer
+   Copyright (C) 1999, 2000, 2001, 2002 Eggheads Development Team

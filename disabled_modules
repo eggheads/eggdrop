@@ -1,7 +1,7 @@
 #  disabled_modules -- File which lists all eggdrop modules that are
 #                      disabled by default.
 #
-#  $Id: disabled_modules,v 1.4 2001/11/05 04:08:25 guppy Exp $
+#  $Id: disabled_modules,v 1.5 2002/01/02 08:06:11 tothwolf Exp $
 #
 # Note:
 #   -  Lines which start with a '#' character are ignored.

@@ -1,7 +1,7 @@
 # notes.german.lang
 #   language messages for the notes module
 #
-# $Id: notes.german.lang,v 1.1 2001/04/13 06:22:11 guppy Exp $
+# $Id: notes.german.lang,v 1.2 2002/01/02 08:06:16 tothwolf Exp $
 
 0xc000,  Befoerdere Nachrichten weiter an: %.70s\n
 0xc001,%d Nachrichten[%s] von %s an %s uebermittelt.
@@ -45,4 +45,3 @@
 0xc027,Du musst einen Botnamen zur Weiterbefoerderung bereitstellen.
 0xc028,Aenderte Nachrichten-Weiterbefoerderung fuer %s auf: %s\n
 0xc029,Funktion muss eine sein von INDEX, READ, oder ERASE.
-

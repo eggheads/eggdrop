@@ -1,8 +1,8 @@
 Channels Module
 Last revised: December 31, 2001
-   ________________________________________________________________________
+     _________________________________________________________________
 
-                                Channels Module
+                             Channels Module
 
 This module provides channel related support for the bot. Without it,
 you wont be able to make the bot join a channel or save channel
@@ -302,7 +302,6 @@ There are also some variables you can to set in your config file:
         +userbans       +userexempts
         +userinvites
   }
+     _________________________________________________________________
 
-  ________________________________________________________________________
-
-Copyright (C) 2002 Eggheads Development Team
+   Copyright (C) 2000, 2001, 2002 Eggheads Development Team

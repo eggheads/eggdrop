@@ -68,7 +68,6 @@ Other variables:
  %{end}        end columnated or restricted (i.e. %{+m}) block
 
  %{center}     center the following text (70 columns)
+     _________________________________________________________________
 
-   ________________________________________________________________________
-
-Copyright (C) 2002 Eggheads Development Team
+   Copyright (C) 1999, 2000, 2001, 2002 Eggheads Development Team
