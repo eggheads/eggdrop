@@ -2,7 +2,7 @@
  * filesys.c -- part of filesys.mod
  *   main file of the filesys eggdrop module
  *
- * $Id: filesys.c,v 1.55 2003/01/29 05:48:41 wcc Exp $
+ * $Id: filesys.c,v 1.56 2003/01/30 02:49:50 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -420,7 +420,6 @@ static int _dcc_send(int idx, char *filename, char *nick, char *dir, int resend)
 static int do_dcc_send(int idx, char *dir, char *fn, char *nick, int resend)
 {
   char *s = NULL, *s1 = NULL;
-  FILE *f;
   int x;
 
   if (nick && strlen(nick) > NICKMAX)
@@ -453,7 +452,6 @@ static int do_dcc_send(int idx, char *dir, char *fn, char *nick, int resend)
     my_free(s);
     return 0;
   }
-  fclose(f);
 
   if (!nick || !nick[0])
     nick = dcc[idx].nick;
