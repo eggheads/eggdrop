@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  *
- * $Id: main.c,v 1.60 2001/05/20 00:25:58 guppy Exp $
+ * $Id: main.c,v 1.61 2001/06/01 21:56:41 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -639,6 +639,11 @@ static void event_resettraffic()
   itraffic_trans_today = otraffic_trans_today = 0;
 }
 
+static void event_loaded()
+{
+  check_tcl_event("loaded");
+}
+
 void kill_tcl();
 extern module_entry *module_list;
 void restart_chons();
@@ -888,6 +893,9 @@ int main(int argc, char **argv)
   add_hook(HOOK_USERFILE, (Function) event_save);
   add_hook(HOOK_DAILY, (Function) event_logfile);
   add_hook(HOOK_DAILY, (Function) event_resettraffic);
+  add_hook(HOOK_LOADED, (Function) event_loaded);
+
+  call_hook(HOOK_LOADED);
 
   debug0("main: entering loop");
   while (1) {
@@ -1047,6 +1055,7 @@ int main(int argc, char **argv)
 	x(NULL);
 	rehash();
 	restart_chons();
+	call_hook(HOOK_LOADED);
       }
       do_restart = 0;
     }
