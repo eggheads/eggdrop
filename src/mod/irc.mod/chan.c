@@ -37,6 +37,7 @@ static memberlist *newmember(struct chanset_t *chan)
   x->next->nick[0] = 0;
   x->next->split = 0L;
   x->next->last = 0L;
+  x->next->delay = 0L;
   chan->channel.members++;
   return x;
 }
@@ -780,7 +781,7 @@ static int got352or4(struct chanset_t *chan, char *user, char *host,
   m = ismember(chan, nick);	/* In my channel list copy? */
   if (!m) {			/* Nope, so update */
     m = newmember(chan);	/* Get a new channel entry */
-    m->joined = m->split = 0L;	/* Don't know when he joined */
+    m->joined = m->split = m->delay = 0L;	/* Don't know when he joined */
     m->flags = 0;		/* No flags for now */
     m->last = now;		/* Last time I saw him */
   }
@@ -1378,17 +1379,20 @@ static int gotjoin(char *from, char *chname)
 	check_tcl_rejn(nick, uhost, u, chan->name);
 	m->split = 0;
 	m->last = now;
-	m->flags = (chan_hasop(m) ? WASOP : 0);
+	m->delay = 0L;
+        m->flags = (chan_hasop(m) ? WASOP : 0);
 	m->user = u;
 	set_handle_laston(chname, u, now);
 	/* had ops before split, Im an op */
 	if (chan_wasop(m) && me_op(chan) &&
+	/* and the user is a valid op... */
+	    (chan_op(fr) || (glob_op(fr) && !chan_deop(fr))) &&
 	/* channel is +autoop... */
-	    ((chan->status & CHAN_OPONJOIN)
+	    (channel_autoop(chan)
 	/* OR user is maked autoop */
 	     || glob_autoop(fr) || chan_autoop(fr))) {
 	  /* give them a special surprise */
-	  add_mode(chan, '+', 'o', nick);
+          m->delay = now;
 	  /* also prevent +stopnethack automatically de-opping them */
 	  m->flags |= WASOP;
 	}
@@ -1408,7 +1412,8 @@ static int gotjoin(char *from, char *chname)
 	m->split = 0L;
 	m->flags = 0;
 	m->last = now;
-	strcpy(m->nick, nick);
+	m->delay = 0L;
+        strcpy(m->nick, nick);
 	strcpy(m->userhost, uhost);
 	m->user = u;
 	m->flags |= STOPWHO;
@@ -1462,7 +1467,7 @@ static int gotjoin(char *from, char *chname)
 		/* is it op-on-join or is the use marked auto-op */
 		(channel_autoop(chan) || glob_autoop(fr) || chan_autoop(fr))) {
 	      /* yes! do the honors */
-	      add_mode(chan, '+', 'o', nick);
+              m->delay = now;
 	      m->flags |= WASOP;	/* nethack sanity */
 	      /* if it matches a ban, dispose of them */
 	    } else {
@@ -1518,7 +1523,7 @@ static int gotjoin(char *from, char *chname)
 	}
       }
       if (channel_enforcebans(chan) && me_op(chan) &&
-          !chan_op(fr) && !glob_op(fr)) {
+          !chan_op(fr) && !glob_op(fr) && !glob_friend(fr) && !chan_friend(fr)) {
         for (b = chan->channel.ban; b->mask[0]; b = b->next) { 
           if (wild_match(b->mask, from)) {
    	    if (use_exempts)

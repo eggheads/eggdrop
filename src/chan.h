@@ -17,6 +17,7 @@ typedef struct memstruct {
   unsigned short flags;
   time_t split;			/* in case they were just netsplit */
   time_t last;			/* for measuring idle time */
+  time_t delay;			/* for delayed autoop */
   struct userrec *user;
   struct memstruct *next;
 } memberlist;

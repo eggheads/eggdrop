@@ -1,4 +1,4 @@
-/* 
+/*
  * This file is part of the eggdrop source code copyright (c) 1997 Robey
  * Pointer and is distributed according to the GNU general public license.
  * For full details, read the top of 'main.c' or the file called COPYING
@@ -76,8 +76,8 @@ static int wild_match_file(register unsigned char *m, register unsigned char *n)
   /* (!*m) test used to be here, too, but I got rid of it.  After all, If
    * (!*n) was false, there must be a character in the name (the second
    * string), so if the mask is empty it is a non-match.  Since the
-   * algorithm handles this correctly without testing for it here and this 
-   * shouldn't be called with null masks anyway, it should be a bit faster 
+   * algorithm handles this correctly without testing for it here and this
+   * shouldn't be called with null masks anyway, it should be a bit faster
    * this way */
   while (*n) {
     /* Used to test for (!*m) here, but this scheme seems to work better */
@@ -1143,64 +1143,59 @@ static tcl_ints myints[] =
 
 static int fstat_unpack(struct userrec *u, struct user_entry *e)
 {
+  char *par, *arg;
+  struct filesys_stats *fs;
+
+  ASSERT (e != NULL && e->name != NULL);
   context;
-  if (e->name) {
-    char *p, *q, *r;
-    struct filesys_stats *fs = user_malloc(sizeof(struct filesys_stats));
+  fs = user_malloc(sizeof(struct filesys_stats));
+  bzero(fs, sizeof(struct filesys_stats));
+  par = e->u.list->extra;
+  arg = newsplit(&par);
+  if (arg[0])
+    fs->uploads = atoi(arg);
+  arg = newsplit(&par);
+  if (arg[0])
+    fs->upload_ks = atoi(arg);
+  arg = newsplit(&par);
+  if (arg[0])
+    fs->dnloads = atoi(arg);
+  arg = newsplit(&par);
+  if (arg[0])
+    fs->dnload_ks = atoi(arg);
 
-    p = e->u.list->extra;
-    e->u.list->extra = NULL;
-    list_type_kill (e->u.list);
-    bzero(fs, sizeof(struct filesys_stats));
-
-    q = strchr(p, ' ');
-    if (q) {
-      *q++ = 0;
-      fs->uploads = atoi(p);
-      r = strchr(q, ' ');
-      if (r) {
-	*r++ = 0;
-	fs->upload_ks = atoi(q);
-	q = strchr(r, ' ');
-	*q++ = 0;
-	fs->dnloads = atoi(r);
-	r = strchr(q, ' ');
-	if (r) {
-	  *r++ = 0;
-	  fs->dnload_ks = atoi(q);
-	}
-      }
-    }
-    nfree(p);
-    e->u.extra = fs;
-  }
+  list_type_kill(e->u.list);
+  e->u.extra = fs;
   return 1;
 }
 
 static int fstat_pack(struct userrec *u, struct user_entry *e)
 {
-  context;
-  if (!e->name) {
-    struct list_type *l = user_malloc(sizeof(struct list_type));
-    register struct filesys_stats *fs = e->u.extra;
+  register struct filesys_stats *fs;
+  struct list_type *l = user_malloc(sizeof(struct list_type));
 
-    l->extra = user_malloc(40);
-    sprintf(l->extra, "%09u %09u %09u %09u",
-	    fs->uploads, fs->upload_ks,
-	    fs->dnloads, fs->dnload_ks);
-    l->next = NULL;
-    e->u.list = l;
-    nfree(fs);
-  }
+  ASSERT (e != NULL && e->name == NULL && e->u.extra != NULL);
+  context;
+  fs = e->u.extra;
+  /* if you set it in the declaration, the ASSERT will be useless. ++rtc */
+
+  l->extra = user_malloc(40);
+  sprintf(l->extra, "%09u %09u %09u %09u",
+          fs->uploads, fs->upload_ks, fs->dnloads, fs->dnload_ks);
+  l->next = NULL;
+  e->u.list = l;
+  nfree(fs);
   return 1;
 }
 
 static int fstat_write_userfile(FILE * f, struct userrec *u,
 				struct user_entry *e)
 {
-  register struct filesys_stats *fs = e->u.extra;
+  register struct filesys_stats *fs;
 
+  ASSERT (e != NULL && e->u.extra != NULL);
   context;
+  fs = e->u.extra;
   if (fprintf(f, "--FSTAT %09u %09u %09u %09u\n",
 	      fs->uploads, fs->upload_ks,
 	      fs->dnloads, fs->dnload_ks) == EOF)
@@ -1212,20 +1207,32 @@ static int fstat_set(struct userrec *u, struct user_entry *e, void *buf)
 {
   register struct filesys_stats *fs = buf;
 
+  ASSERT (e != NULL);
   context;
-  if (e->u.extra != buf) {
+  if (e->u.extra != fs) {
     if (e->u.extra)
-      nfree(e->u.extra);
-    e->u.extra = buf;
-  }
-  if (buf && !noshare && !(u->flags & (USER_BOT | USER_UNSHARED))) {
-    shareout(NULL, "ch fstat %09u %09u %09u %09u\n",
-	     fs->uploads, fs->upload_ks,
-	     fs->dnloads, fs->dnload_ks);
-  }
-  if (buf && !fs->uploads && !fs->upload_ks && !fs->dnloads && !fs->dnload_ks) {
-    nfree(buf);
-    e->u.extra = NULL;
+      nfree (e->u.extra);
+    e->u.extra = fs;
+  } else if (!fs) /* e->u.extra == NULL && fs == NULL */
+    return 1;
+
+  if (!noshare && !(u->flags & (USER_BOT | USER_UNSHARED))) {
+    if (fs)
+      /* don't check here for something like
+       *  ofs->uploads != fs->uploads || ofs->upload_ks != fs->upload_ks ||
+       *  ofs->dnloads != fs->dnloads || ofs->dnload_ks != fs->dnload_ks
+       * someone could do:
+       *  e->u.extra->uploads = 12345;
+       *  fs = user_malloc (sizeof (struct filesys_stats));
+       *  memcpy (...e->u.extra...fs...);
+       *  set_user (&USERENTRY_FSTAT, u, fs);
+       * then we wouldn't detect here that something's changed...
+       * --rtc
+       */
+      shareout (NULL, "ch fstat %09u %09u %09u %09u\n",
+	        fs->uploads, fs->upload_ks, fs->dnloads, fs->dnload_ks);
+    else
+      shareout (NULL, "ch fstat r\n");
   }
   return 1;
 }
@@ -1233,23 +1240,32 @@ static int fstat_set(struct userrec *u, struct user_entry *e, void *buf)
 static int fstat_tcl_get(Tcl_Interp * irp, struct userrec *u,
 			 struct user_entry *e, int argc, char **argv)
 {
-  register struct filesys_stats *fs = e->u.extra;
+  register struct filesys_stats *fs;
   char d[50];
 
   BADARGS(3, 4, " handle FSTAT ?u/d?");
+  ASSERT (e != NULL && e->u.extra != NULL);
+  fs = e->u.extra;
   if (argc == 3)
-    sprintf(d, "%u %u %u %u", fs->uploads, fs->upload_ks,
-	    fs->dnloads, fs->dnload_ks);
-  else if (argv[3][0] == 'u')
-    sprintf(d, "%u %u", fs->uploads, fs->upload_ks);
-  else if (argv[3][0] == 'd')
-    sprintf(d, "%u %u", fs->dnloads, fs->dnload_ks);
+    simple_sprintf(d, "%u %u %u %u", fs->uploads, fs->upload_ks,
+                   fs->dnloads, fs->dnload_ks);
+  else
+    switch (argv[3][0]) {
+    case 'u':
+      simple_sprintf(d, "%u %u", fs->uploads, fs->upload_ks);
+      break;
+    case 'd':
+      simple_sprintf(d, "%u %u", fs->dnloads, fs->dnload_ks);
+      break;
+    }
+
   Tcl_AppendResult(irp, d, NULL);
   return TCL_OK;
 }
 
 static int fstat_kill(struct user_entry *e)
 {
+  ASSERT (e != NULL);
   context;
   if (e->u.extra)
     nfree(e->u.extra);
@@ -1264,12 +1280,13 @@ static int fstat_expmem(struct user_entry *e)
 
 static void fstat_display(int idx, struct user_entry *e)
 {
-  struct filesys_stats *u = e->u.extra;
+  struct filesys_stats *fs;
 
-  if ((u->uploads) || (u->dnloads))
-    dprintf(idx, "  FILES: %u download%s (%luk), %u upload%s (%luk)\n",
-	    u->dnloads, (u->dnloads == 1) ? "" : "s", u->dnload_ks,
-	    u->uploads, (u->uploads == 1) ? "" : "s", u->upload_ks);
+  ASSERT (e != NULL && e->u.extra != NULL);
+  fs = e->u.extra;
+  dprintf(idx, "  FILES: %u download%s (%luk), %u upload%s (%luk)\n",
+	  fs->dnloads, (fs->dnloads == 1) ? "" : "s", fs->dnload_ks,
+	  fs->uploads, (fs->uploads == 1) ? "" : "s", fs->upload_ks);
 }
 
 static int fstat_gotshare(struct userrec *u, struct user_entry *e,
@@ -1302,26 +1319,38 @@ static struct user_entry_type USERENTRY_FSTAT =
 static int fstat_gotshare(struct userrec *u, struct user_entry *e,
 			  char *par, int idx)
 {
+  char *p;
+  struct filesys_stats *fs;
+
+  ASSERT (e != NULL);
   noshare = 1;
-  if (par[0] == 'u')
-    stats_add_upload(u, atoi(par + 1));
-  else if (par[0] == 'd')
-    stats_add_dnload(u, atoi(par + 1));
-  else {
-    char *p = par;
-    int i = 0;
-
-    struct filesys_stats *fs = user_malloc(sizeof(struct filesys_stats));
-    bzero(fs, sizeof(struct filesys_stats));
-
-    while (p && (i < 4)) {
-      p = strchr(p, ' ');
-      if (p)
-	*p++ = 0;
-      ((int *) fs)[i] = atoi(p);
-      i++;
+  switch (par[0]) {
+  case 'u':
+  case 'd':
+    /* no stats_add_up/dnload here, it's already been sent... --rtc */
+    break;
+  case 'r':
+    set_user (&USERENTRY_FSTAT, u, NULL);
+    break;
+  default:
+    if (!(fs = e->u.extra)) {
+      fs = user_malloc(sizeof(struct filesys_stats));
+      bzero(fs, sizeof(struct filesys_stats));
     }
+    p = newsplit (&par);
+    if (p[0])
+      fs->uploads = atoi (p);
+    p = newsplit (&par);
+    if (p[0])
+      fs->upload_ks = atoi (p);
+    p = newsplit (&par);
+    if (p[0])
+      fs->dnloads = atoi (p);
+    p = newsplit (&par);
+    if (p[0])
+      fs->dnload_ks = atoi (p);
     set_user(&USERENTRY_FSTAT, u, fs);
+    break;
   }
   noshare = 0;
   return 1;
@@ -1345,70 +1374,75 @@ static int fstat_dupuser(struct userrec *u, struct userrec *o,
 static void stats_add_dnload(struct userrec *u, unsigned long bytes)
 {
   struct user_entry *ue;
-  register struct filesys_stats *fs = NULL;
+  register struct filesys_stats *fs;
 
   if (u) {
-    ue = find_user_entry(&USERENTRY_FSTAT, u);
-    if (ue)
-      fs = ue->u.extra;
-    if (!fs) {
+    if (!(ue = find_user_entry (&USERENTRY_FSTAT, u)) ||
+        !(fs = ue->u.extra)) {
       fs = user_malloc(sizeof(struct filesys_stats));
       bzero(fs, sizeof(struct filesys_stats));
     }
     fs->dnloads++;
     fs->dnload_ks += ((bytes + 512) / 1024);
     set_user(&USERENTRY_FSTAT, u, fs);
-    if ((!noshare) && !(u->flags & (USER_BOT | USER_UNSHARED)))
-      shareout(NULL, "ch fstat %s u%lu\n", u->handle, bytes);
+    /* no shareout here, set_user already sends info... --rtc */
   }
 }
 
 static void stats_add_upload(struct userrec *u, unsigned long bytes)
 {
   struct user_entry *ue;
-  register struct filesys_stats *fs = NULL;
+  register struct filesys_stats *fs;
 
   if (u) {
-    ue = find_user_entry(&USERENTRY_FSTAT, u);
-    if (ue)
-      fs = ue->u.extra; /* can this be NULL? --rtc */
-    if (!fs) {
+    if (!(ue = find_user_entry (&USERENTRY_FSTAT, u)) ||
+        !(fs = ue->u.extra)) {
       fs = user_malloc(sizeof(struct filesys_stats));
       bzero(fs, sizeof(struct filesys_stats));
     }
     fs->uploads++;
     fs->upload_ks += ((bytes + 512) / 1024);
     set_user(&USERENTRY_FSTAT, u, fs);
-    if ((!noshare) && !(u->flags & (USER_BOT | USER_UNSHARED)))
-      shareout(NULL, "ch fstat %s u%lu\n", u->handle, bytes);
+    /* no shareout here, set_user already sends info... --rtc */
   }
 }
 
 static int fstat_tcl_set(Tcl_Interp * irp, struct userrec *u,
 			 struct user_entry *e, int argc, char **argv)
 {
-  register struct filesys_stats *fs = e->u.extra;
+  register struct filesys_stats *fs;
   int f = 0, k = 0;
 
+  ASSERT (e != NULL);
   BADARGS(4, 6, " handle FSTAT u/d ?files ?ks??");
+
   if (argc > 4)
     f = atoi(argv[4]);
   if (argc > 5)
     k = atoi(argv[5]);
-  if (argv[3][0] == 'u' || argv[3][0] == 'd') {
-    if (!fs) {
+  switch (argv[3][0]) {
+  case 'u':
+  case 'd':
+    if (!(fs = e->u.extra)) {
       fs = user_malloc(sizeof(struct filesys_stats));
       bzero(fs, sizeof(struct filesys_stats));
     }
-    if (argv[3][0] == 'u') {
+    switch (argv[3][0]) {
+    case 'u':
       fs->uploads = f;
       fs->upload_ks = k;
-    } else if (argv[3][0] == 'd') {
+      break;
+    case 'd':
       fs->dnloads = f;
       fs->dnload_ks = k;
+      break;
     }
+    set_user (&USERENTRY_FSTAT, u, fs);
+    break;
+  case 'r':
+    set_user (&USERENTRY_FSTAT, u, NULL);
+    break;
   }
-  set_user(&USERENTRY_FSTAT, u, fs);
   return TCL_OK;
 }
 
@@ -1419,7 +1453,7 @@ static char *transfer_close()
   context;
   putlog(LOG_MISC, "*", "Unloading transfer module, killing all transfer connections..");
   for (i = dcc_total - 1; i >= 0; i--) {
-    if ((dcc[i].type == &DCC_GET) || (dcc[i].type == &DCC_GET_PENDING))
+    if (dcc[i].type == &DCC_GET || dcc[i].type == &DCC_GET_PENDING)
       eof_dcc_get(i);
     else if (dcc[i].type == &DCC_SEND)
       eof_dcc_send(i);

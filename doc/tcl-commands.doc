@@ -1527,24 +1527,6 @@ users to read later
       a sublist with two elements: nickname the file is being sent to, and
       the filename
 
-  setuploads <handle> <#uploads> <size-in-k>
-    sets a user's statistics on the number of files uploaded and the total
-      kilobytes uploaded
-    returns: nothing
-
-  getuploads <handle>
-    returns: list containing upload statistics for a user: the first
-      element is the number of files uploaded; the second element is the
-      total kilobytes uploaded
-
-  setdnloads <handle> <#dnloads> <size-in-k>
-    like setuploads, but sets the download statistics
-    returns: nothing
-
-  getdnloads <handle>
-    returns: list containing download statistics, in the same format
-      as getuploads
-
   mkdir <directory> [required-flags]
     creates a directory in the files system, only users with the
     required flags may access

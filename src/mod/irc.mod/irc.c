@@ -892,9 +892,18 @@ static tcl_ints myints[] =
 static void flush_modes()
 {
   struct chanset_t *chan;
+  memberlist *m;
 
   chan = chanset;
   while (chan != NULL) {
+    m = chan->channel.member;
+    while (m->nick[0]) {
+      if ((m->delay) && (now - m->delay) > 4) {
+        add_mode(chan, '+', 'o', m->nick);
+        m->delay = 0L;
+      }
+      m = m->next;
+    }
     flush_mode(chan, NORMAL);
     chan = chan->next;
   }

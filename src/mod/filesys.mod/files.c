@@ -1172,6 +1172,7 @@ static int cmd_stats(int idx, char *par)
 static int cmd_filestats(int idx, char *par)
 {
   char *nick;
+  struct userrec *u;
 
   context;
   if (!par[0]) {
@@ -1182,12 +1183,11 @@ static int cmd_filestats(int idx, char *par)
   putlog(LOG_FILES, "*", "#%s# filestats %s", dcc[idx].nick, nick);
   if (nick[0] == 0)
     tell_file_stats(idx, dcc[idx].nick);
-  else if (!get_user_by_handle(userlist, nick))
+  else if (!(u = get_user_by_handle(userlist, nick)))
     dprintf(idx, "No such user.\n");
   else if (!strcmp(par, "clear") && dcc[idx].user &&
 	   (dcc[idx].user->flags & USER_JANITOR)) {
-    set_handle_uploads(userlist, nick, 0, 0);
-    set_handle_dnloads(userlist, nick, 0, 0);
+    set_user (&USERENTRY_FSTAT, u, NULL);
     dprintf(idx, "Cleared filestats for %s.\n", nick);
   } else
     tell_file_stats(idx, nick);

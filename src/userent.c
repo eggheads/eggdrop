@@ -60,29 +60,28 @@ int list_type_expmem(struct list_type *t)
 
 int def_unpack(struct userrec *u, struct user_entry *e)
 {
-  context;
-  if (e->name) {
-    char *p;
+  char *tmp;
 
-    p = e->u.list->extra;
-    e->u.list->extra = NULL;
-    list_type_kill(e->u.list);
-    e->u.string = p;
-  }
+  ASSERT (e != NULL);
+  ASSERT (e->name != NULL);
+  context;
+  tmp = e->u.list->extra;
+  e->u.list->extra = NULL;
+  list_type_kill(e->u.list);
+  e->u.string = tmp;
   return 1;
 }
 
 int def_pack(struct userrec *u, struct user_entry *e)
 {
-  if (!e->name) {
-    char *p;
+  char *tmp;
 
-    p = e->u.string;
-    e->u.list = user_malloc(sizeof(struct list_type));
-
-    e->u.list->next = NULL;
-    e->u.list->extra = p;
-  }
+  ASSERT (e != NULL);
+  ASSERT (e->name == NULL);
+  tmp = e->u.string;
+  e->u.list = user_malloc(sizeof(struct list_type));
+  e->u.list->next = NULL;
+  e->u.list->extra = tmp;
   return 1;
 }
 
@@ -282,49 +281,43 @@ struct user_entry_type USERENTRY_PASS =
 
 static int laston_unpack(struct userrec *u, struct user_entry *e)
 {
+  char *par, *arg;
+  struct laston_info *li;
+
+  ASSERT (e != NULL);
+  ASSERT (e->name != NULL);
   context;
-  if (e->name) {
-    char *p, *q;
-    struct laston_info *li;
-
-    p = e->u.list->extra;
-    e->u.list->extra = NULL;
-    list_type_kill(e->u.list);
-    q = strchr(p, ' ');
-    if (q) {
-      q++;
-    } else {
-      q = "???";
-    }
-    li = user_malloc(sizeof(struct laston_info));
-
-    li->lastonplace = user_malloc(strlen(q) + 1);
-    li->laston = atoi(p);
-    strcpy(li->lastonplace, q);
-    e->u.extra = li;
-    nfree(p);
-  }
+  par = e->u.list->extra;
+  ASSERT (par != NULL);
+  arg = newsplit (&par);
+  if (!par[0])
+    par = "???";
+  li = user_malloc(sizeof(struct laston_info));
+  li->lastonplace = user_malloc(strlen(par) + 1);
+  li->laston = atoi(arg);
+  strcpy(li->lastonplace, par);
+  list_type_kill(e->u.list);
+  e->u.extra = li;
   return 1;
 }
 
 static int laston_pack(struct userrec *u, struct user_entry *e)
 {
-  if (!e->name) {
-    char number[1024];
-    struct list_type *l;
-    struct laston_info *li = (struct laston_info *) e->u.extra;
-    int r;
+  char work[1024];
+  struct laston_info *li;
+  int l;
 
-    r = sprintf(number, "%lu %s", li->laston, li->lastonplace);
-    l = user_malloc(sizeof(struct list_type));
-
-    l->extra = user_malloc(r + 1);
-    strcpy(l->extra, number);
-    l->next = 0;
-    e->u.extra = l;
-    nfree(li->lastonplace);
-    nfree(li);
-  }
+  ASSERT (e != NULL);
+  ASSERT (e->u.extra != NULL);
+  ASSERT (e->name == NULL);
+  li = (struct laston_info *) e->u.extra;
+  l = sprintf(work, "%lu %s", li->laston, li->lastonplace);
+  e->u.list = user_malloc(sizeof(struct list_type));
+  e->u.list->next = NULL;
+  e->u.list->extra = user_malloc(l + 1);
+  strcpy(e->u.list->extra, work);
+  nfree(li->lastonplace);
+  nfree(li);
   return 1;
 }
 
@@ -353,17 +346,19 @@ static int laston_kill(struct user_entry *e)
 
 static int laston_set(struct userrec *u, struct user_entry *e, void *buf)
 {
+  struct laston_info *li = (struct laston_info *) e->u.extra;
+
   context;
-  if ((e->u.list != buf) && e->u.list) {
-    if (((struct laston_info *) (e->u.extra))->lastonplace)
-      nfree(((struct laston_info *) (e->u.extra))->lastonplace);
-    nfree(e->u.extra);
+  if (li != buf) {
+    if (li) {
+      ASSERT (li->lastonplace != NULL);
+      nfree(li->lastonplace);
+      nfree(li);
+    }
+    contextnote("(sharebug) occurred in laston_set");
+
+    e->u.extra = buf;
   }
-  contextnote("SEGV with sharing bug track");
-  if (buf) {
-    e->u.list = (struct list_type *) buf;
-  } else
-    e->u.list = NULL;
   /* donut share laston unfo */
   return 1;
 }
@@ -371,7 +366,7 @@ static int laston_set(struct userrec *u, struct user_entry *e, void *buf)
 static int laston_tcl_get(Tcl_Interp * irp, struct userrec *u,
 			  struct user_entry *e, int argc, char **argv)
 {
-  struct laston_info *li = (struct laston_info *) e->u.list;
+  struct laston_info *li = (struct laston_info *) e->u.extra;
   char number[20];
   struct chanuserrec *cr;
 
@@ -417,7 +412,7 @@ static int laston_expmem(struct user_entry *e)
 {
   context;
   return sizeof(struct laston_info) +
-   strlen(((struct laston_info *) (e->u.list))->lastonplace) + 1;
+    strlen(((struct laston_info *) (e->u.extra))->lastonplace) + 1;
 }
 
 static int laston_dupuser(struct userrec *new, struct userrec *old,
@@ -456,55 +451,52 @@ struct user_entry_type USERENTRY_LASTON =
 
 static int botaddr_unpack(struct userrec *u, struct user_entry *e)
 {
-  context;
-  if (e->name) {
-    char *p, *q;
-    struct bot_addr *bi = user_malloc(sizeof(struct bot_addr));
+  char *p, *q;
+  struct bot_addr *bi = user_malloc(sizeof(struct bot_addr));
 
-    p = e->u.list->extra;
-    e->u.list->extra = NULL;
-    list_type_kill(e->u.list);
-    q = strchr(p, ':');
-    if (!q) {
-      bi->address = p;
-      bi->telnet_port = 3333;
-      bi->relay_port = 3333;
-    } else {
-      bi->address = user_malloc((q - p) + 1);
-      strncpy(bi->address, p, q - p);
-      bi->address[q - p] = 0;
-      q++;
-      bi->telnet_port = atoi(q);
-      q = strchr(q, '/');
-      if (!q) {
-	bi->relay_port = bi->telnet_port;
-      } else {
-	bi->relay_port = atoi(q + 1);
-      }
-    }
-    e->u.extra = bi;
-    nfree(p);
+  ASSERT (e != NULL);
+  ASSERT (e->name != NULL);
+  context;
+  bzero (bi, sizeof(struct bot_addr));
+
+  if (!(q = strchr ((p = e->u.list->extra), ':'))) {
+    bi->address = user_malloc (strlen (p) + 1);
+    strcpy (bi->address, p);
+  } else {
+    bi->address = user_malloc((q - p) + 1);
+    strncpy(bi->address, p, q - p);
+    bi->address[q - p] = 0;
+    q++;
+    bi->telnet_port = atoi(q);
+    if ((q = strchr(q, '/')))
+      bi->relay_port = atoi(q + 1);
   }
+  if (!bi->telnet_port)
+    bi->telnet_port = 3333;
+  if (!bi->relay_port)
+    bi->relay_port = bi->telnet_port;
+  list_type_kill(e->u.list);
+  e->u.extra = bi;
   return 1;
 }
 
 static int botaddr_pack(struct userrec *u, struct user_entry *e)
 {
-  if (!e->name) {
-    char work[1024];
-    struct bot_addr *bi = (struct bot_addr *) e->u.extra;
-    int l;
+  char work[1024];
+  struct bot_addr *bi;
+  int l;
 
-    l = sprintf(work, "%s:%d/%d", bi->address, bi->telnet_port,
-		bi->relay_port);
-    e->u.list = user_malloc(sizeof(struct list_type));
-
-    e->u.list->extra = user_malloc(l + 1);
-    strcpy(e->u.list->extra, work);
-    e->u.list->next = NULL;
-    nfree(bi->address);
-    nfree(bi);
-  }
+  ASSERT (e != NULL);
+  ASSERT (e->name == NULL);
+  bi = (struct bot_addr *) e->u.extra;
+  l = simple_sprintf(work, "%s:%u/%u", bi->address, bi->telnet_port,
+              bi->relay_port);
+  e->u.list = user_malloc(sizeof(struct list_type));
+  e->u.list->next = NULL;
+  e->u.list->extra = user_malloc(l + 1);
+  strcpy(e->u.list->extra, work);
+  nfree(bi->address);
+  nfree(bi);
   return 1;
 }
 
@@ -523,7 +515,7 @@ static int botaddr_write_userfile(FILE * f, struct userrec *u, struct user_entry
   register struct bot_addr *bi = (struct bot_addr *) e->u.extra;
 
   context;
-  if (fprintf(f, "--%s %s:%d/%d\n", e->type->name, bi->address,
+  if (fprintf(f, "--%s %s:%u/%u\n", e->type->name, bi->address,
 	      bi->telnet_port, bi->relay_port) == EOF)
     return 0;
   return 1;
@@ -531,24 +523,24 @@ static int botaddr_write_userfile(FILE * f, struct userrec *u, struct user_entry
 
 static int botaddr_set(struct userrec *u, struct user_entry *e, void *buf)
 {
-  context;
-  if ((e->u.list != buf) && e->u.list) {
-    if (((struct bot_addr *) (e->u.extra))->address)
-      nfree(((struct bot_addr *) (e->u.extra))->address);
-    nfree(e->u.extra);
-  }
-  contextnote("SEGV with sharing bug track");
-  if (buf) {
-    e->u.list = (struct list_type *) buf;
-    /* donut share laston unfo */
-    if (!noshare && !(u && (u->flags & USER_UNSHARED))) {
-      register struct bot_addr *bi = (struct bot_addr *) e->u.extra;
+  register struct bot_addr *bi = (struct bot_addr *) e->u.extra;
 
-      shareout(NULL, "c BOTADDR %s %s %d %d\n", u->handle,
-	       bi->address, bi->telnet_port, bi->relay_port);
+  context;
+  if (!bi && !buf)
+    return 1;
+  if (bi != buf) {
+    if (bi) {
+      ASSERT (bi->address != NULL);
+      nfree (bi->address);
+      nfree (bi);
     }
-  } else
-    e->u.list = NULL;
+    contextnote("(sharebug) occurred in botaddr_set");
+    e->u.extra = buf;
+  }
+  if (!noshare && !(u && (u->flags & USER_UNSHARED))) {
+    shareout(NULL, "c BOTADDR %s %s %d %d\n", u->handle,
+             bi->address, bi->telnet_port, bi->relay_port);
+  }
   return 1;
 }
 
@@ -574,17 +566,23 @@ static int botaddr_tcl_set(Tcl_Interp * irp, struct userrec *u,
   BADARGS(4, 6, " handle type address ?telnetport ?relayport??");
   if (u->flags & USER_BOT) {
     /* silently ignore for users */
-    if (!bi)
+    if (!bi) {
       bi = user_malloc(sizeof(struct bot_addr));
-
-    else if (bi->address)
+      bzero (bi, sizeof (struct bot_addr));
+    } else {
+      ASSERT (bi->address != NULL);
       nfree(bi->address);
+    }
     bi->address = user_malloc(strlen(argv[3]) + 1);
     strcpy(bi->address, argv[3]);
     if (argc > 4)
       bi->telnet_port = atoi(argv[4]);
     if (argc > 5)
       bi->relay_port = atoi(argv[5]);
+    if (!bi->telnet_port)
+      bi->telnet_port = 3333;
+    if (!bi->relay_port)
+      bi->relay_port = bi->telnet_port;
     botaddr_set(u, e, bi);
   }
   return TCL_OK;
@@ -611,23 +609,19 @@ static int botaddr_gotshare(struct userrec *u, struct user_entry *e,
 			    char *buf, int idx)
 {
   struct bot_addr *bi = user_malloc(sizeof(struct bot_addr));
-  int i;
-  char *key;
+  char *arg;
 
-  key = newsplit(&buf);
-  bi->address = user_malloc(strlen(key) + 1);
-  strcpy(bi->address, key);
-  key = newsplit(&buf);
-  i = atoi(key);
-  if (i)
-    bi->telnet_port = i;
-  else
+  bzero (bi, sizeof(struct bot_addr));
+  arg = newsplit(&buf);
+  bi->address = user_malloc(strlen(arg) + 1);
+  strcpy(bi->address, arg);
+  arg = newsplit(&buf);
+  bi->telnet_port = atoi(arg);
+  bi->relay_port = atoi(buf);
+  if (!bi->telnet_port)
     bi->telnet_port = 3333;
-  i = atoi(buf);
-  if (i)
-    bi->relay_port = i;
-  else
-    bi->relay_port = 3333;
+  if (!bi->relay_port)
+    bi->relay_port = bi->telnet_port;
   if (!(dcc[idx].status & STAT_GETTING))
     putlog(LOG_CMDS, "*", "%s: change botaddr %s", dcc[idx].nick,
 	   u->handle);
@@ -673,123 +667,128 @@ struct user_entry_type USERENTRY_BOTADDR =
 
 int xtra_set(struct userrec *u, struct user_entry *e, void *buf)
 {
-  struct xtra_key *x, *y = 0, *z = buf;
+  struct xtra_key *curr, *old = NULL, *new = buf;
 
+  ASSERT (new != NULL);
   context;
-  for (x = e->u.extra; x; x = x->next) {
-    if (x->key && !strcasecmp(z->key, x->key)) {
-      y = x;
+  for (curr = e->u.extra; curr; curr = curr->next) {
+    if (curr->key && !strcasecmp(curr->key, new->key)) {
+      old = curr;
       break;
     }
   }
-  if (y && (!z->data || (z != y) || !z->data[0])) {
-    nfree(y->key);
-    nfree(y->data);
-    list_delete((struct list_type **) (&e->u.extra),
-		(struct list_type *) y);
-    nfree(y);
+  if (!old && (!new->data || !new->data[0])) {
+    /* delete non-existant entry -- doh ++rtc */
+    nfree(new->key);
+    if (new->data)
+      nfree(new->data);
+    nfree(new);
+    return TCL_OK;
   }
-  
-  /* we will possibly free z below, so let's send the information
+
+  /* we will possibly free new below, so let's send the information
    * to the botnet now */
   if (!noshare && !(u->flags & (USER_BOT | USER_UNSHARED)))
-    shareout(NULL, "c XTRA %s %s %s\n", u->handle, z->key,
-	     z->data ? z->data : "");
- 
-  if (z->data && z->data[0] && (z != y))
-    list_insert((&e->u.extra), z) /* do not add a ';' here */
-  /* z->key and z are only dynamically allocated if z->data is not NULL */
-  else if (z->data != NULL) {
-    nfree(z->data);
-    nfree(z->key);
-    nfree(z);
+    shareout(NULL, "c XTRA %s %s %s\n", u->handle, new->key,
+	     new->data ? new->data : "");
+  if ((old && old != new) || !new->data || !new->data[0]) {
+    list_delete((struct list_type **) (&e->u.extra),
+		(struct list_type *) old);
+    nfree(old->key);
+    nfree(old->data);
+    nfree(old);
   }
-  
+  if (old != new) {
+    if (new->data && new->data[0])
+      list_insert((&e->u.extra), new) /* do not add a ';' here */
+    else {
+      if (new->data)
+        nfree(new->data);
+      nfree(new->key);
+      nfree(new);
+    }
+  }
   return TCL_OK;
 }
 
 static int xtra_tcl_set(Tcl_Interp * irp, struct userrec *u,
 			struct user_entry *e, int argc, char **argv)
 {
+  struct xtra_key *xk;
+  int l;
+
   BADARGS(4, 5, " handle type key ?value?");
+  xk = user_malloc(sizeof(struct xtra_key));
+  l = strlen(argv[3]);
+  bzero (xk, sizeof (struct xtra_key));
+  if (l > 500)
+    l = 500;
+  xk->key = user_malloc(l + 1);
+  strncpy(xk->key, argv[3], l);
+  xk->key[l] = 0;
 
   if (argc == 4) {
-    struct xtra_key xk =
-    {
-      0, argv[3], 0
-    };
-
-    xtra_set(u, e, &xk);
-    return TCL_OK;
-  } else {
-    struct xtra_key *y = user_malloc(sizeof(struct xtra_key));
-    int l = strlen(argv[3]), k = strlen(argv[4]);
-
-    if (l > 500) {
-      l = 500;
-      k = 0;
-    }
-    y->key = user_malloc(l + 1);
-    strncpy(y->key, argv[3], l);
-    y->key[l] = 0;
+    int k = strlen(argv[4]);
     if (k > 500 - l)
       k = 500 - l;
-    y->data = user_malloc(k + 1);
-    strncpy(y->data, argv[4], k);
-    y->data[k] = 0;
-    xtra_set(u, e, y);
+    xk->data = user_malloc(k + 1);
+    strncpy(xk->data, argv[4], k);
+    xk->data[k] = 0;
   }
+  xtra_set(u, e, xk);
   return TCL_OK;
 }
 
 int xtra_unpack(struct userrec *u, struct user_entry *e)
 {
+  struct list_type *curr, *head;
+  struct xtra_key *t;
+  char *key, *data;
+
+  ASSERT (e != NULL);
+  ASSERT (e->name != NULL);
   context;
-  if (e->name) {
-    struct list_type *x, *y;
-    struct xtra_key *t;
-    char *ptr, *thing;
 
-    y = e->u.extra;
-    e->u.list = NULL;
-    for (x = y; x; x = y) {
-      y = x->next;
-      t = user_malloc(sizeof(struct xtra_key));
+  head = curr = e->u.list;
+  e->u.extra = NULL;
+  while (curr) {
+    t = user_malloc(sizeof(struct xtra_key));
 
+    data = curr->extra;
+    key = newsplit(&data);
+    if (data[0]) {
+      t->key = user_malloc(strlen(key) + 1);
+      strcpy(t->key, key);
+      t->data = user_malloc(strlen(data) + 1);
+      strcpy(t->data, data);
       list_insert((&e->u.extra), t);
-      thing = x->extra;
-      ptr = newsplit(&thing);
-      t->key = user_malloc(strlen(ptr) + 1);
-      strcpy(t->key, ptr);
-      t->data = user_malloc(strlen(thing) + 1);
-      strcpy(t->data, thing);
-      nfree(x->extra);
-      nfree(x);
     }
+    curr = curr->next;
   }
+  list_type_kill(head);
   return 1;
 }
 
 static int xtra_pack(struct userrec *u, struct user_entry *e)
 {
+  struct list_type *t;
+  struct xtra_key *curr, *next;
+
+  ASSERT (e != NULL);
+  ASSERT (e->name == NULL);
   context;
-  if (!e->name) {
-    struct list_type *t;
-    struct xtra_key *x, *y;
-
-    y = e->u.extra;
-    e->u.list = NULL;
-    for (x = y; x; x = y) {
-      y = x->next;
-      t = user_malloc(sizeof(struct list_type));
-
-      list_insert((&e->u.extra), t);
-      t->extra = user_malloc(strlen(x->key) + strlen(x->data) + 4);
-      sprintf(t->extra, "%s %s", x->key, x->data);
-      nfree(x->key);
-      nfree(x->data);
-      nfree(x);
-    }
+  curr = e->u.extra;
+  e->u.list = NULL;
+  while (curr) {
+    t = user_malloc(sizeof(struct list_type));
+    t->extra = user_malloc(strlen(curr->key) + strlen(curr->data) + 4);
+    sprintf(t->extra, "%s %s", curr->key, curr->data);
+    list_insert((&e->u.list), t);
+    next = curr->next;
+    nfree(curr->key);
+    nfree(curr->data);
+    nfree(curr);
+    curr = next;
   }
   return 1;
 }
@@ -821,42 +820,33 @@ static void xtra_display(int idx, struct user_entry *e)
 static int xtra_gotshare(struct userrec *u, struct user_entry *e,
 			 char *buf, int idx)
 {
-  char *x = strchr(buf, ' ');
-  struct xtra_key *xk, *y = 0;
+  char *arg;
+  struct xtra_key *xk;
+  int l;
 
-  if (x) {
-    int l = x - buf, k = strlen(++x);
+  arg = newsplit (&buf);
+  if (!arg[0])
+    return 1;
 
-    xk = user_malloc(sizeof(struct xtra_key));
+  xk = user_malloc (sizeof(struct xtra_key));
+  bzero (xk, sizeof(struct xtra_key));
+  l = strlen(arg);
+  if (l > 500)
+    l = 500;
+  xk->key = user_malloc(l + 1);
+  strncpy(xk->key, arg, l);
+  xk->key[l] = 0;
 
-    if (l > 500) {
-      l = 500;
-      k = 0;
-    }
-    xk->key = user_malloc(l + 1);
-    strncpy(xk->key, buf, l);
-    xk->key[l] = 0;
+  if (buf[0]) {
+    int k = strlen(buf);
+
     if (k > 500 - l)
-      k = 500;
+      k = 500 - l;
     xk->data = user_malloc(k + 1);
-    strncpy(xk->data, x, k);
+    strncpy(xk->data, buf, k);
     xk->data[k] = 0;
-    return xtra_set(u, e, xk);
-  } else {
-    for (xk = e->u.extra; xk; xk = xk->next) {
-      if (xk->key && !strcasecmp(buf, xk->key)) {
-	y = xk;
-	break;
-      }
-    }
-    if (y) {
-      nfree(y->key);
-      nfree(y->data);
-      list_delete((struct list_type **) (&e->u.extra),
-		  (struct list_type *) y);
-      nfree(y);
-    }
   }
+  xtra_set(u, e, xk);
   return 1;
 }
 
@@ -1031,13 +1021,12 @@ static int hosts_set(struct userrec *u, struct user_entry *e, void *buf)
     contextnote("SEGV with sharing bug track");
     /* when the bot crashes, it's in this part, not in the 'else' part */
     contextnote(e ? "e is valid" : "e is NULL!");
-    if (e) {
-      contextnote((e->u.list) ? "e->u.list is valid" : "e->u.list is NULL!");
-      list_type_kill(e->u.list);
-      contextnote("SEGV with sharing bug track - added 99/03/26");
-      e->u.list = NULL;
-      contextnote("SEGV with sharing bug track - added 99/03/26");
-    }
+    ASSERT (e != NULL); /* e cannot be null ++rtc */
+    contextnote((e->u.list) ? "(sharebug) e->u.list is valid" : "(sharebug) e->u.list is NULL!");
+    list_type_kill(e->u.list);
+    contextnote("(sharebug[c1]) occurred in hosts_set - added 99/03/26");
+    e->u.list = NULL;
+    contextnote("(sharebug[c2]) occurred in hosts_set - added 99/03/26");
   } else {
     char *host = buf, *p = strchr(host, ',');
     struct list_type **t;

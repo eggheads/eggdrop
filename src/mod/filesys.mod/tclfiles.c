@@ -540,56 +540,6 @@ static int tcl_filesend STDVAR
   return TCL_OK;
 }
 
-static int tcl_getuploads STDVAR
-{
-  struct userrec *u;
-  struct filesys_stats *fs;
-  char s[81];
-
-  BADARGS(2, 2, " handle");
-  u = get_user_by_handle(userlist, argv[1]);
-  if (u) {
-    fs = get_user(&USERENTRY_FSTAT, u);
-    if (fs) {
-      sprintf(s, "%u %u", fs->uploads, fs->upload_ks);
-      Tcl_AppendResult(irp, s, NULL);
-    }
-  }
-  return TCL_OK;
-}
-
-static int tcl_getdnloads STDVAR
-{
-  struct userrec *u;
-  struct filesys_stats *fs;
-  char s[81];
-
-  BADARGS(2, 2, " handle");
-  u = get_user_by_handle(userlist, argv[1]);
-  if (u) {
-    fs = get_user(&USERENTRY_FSTAT, u);
-    if (fs) {
-      sprintf(s, "%u %u", fs->dnloads, fs->dnload_ks);
-      Tcl_AppendResult(irp, s, NULL);
-    }
-  }
-  return TCL_OK;
-}
-
-static int tcl_setuploads STDVAR
-{
-  BADARGS(4, 4, " handle files k");
-  set_handle_uploads(userlist, argv[1], atoi(argv[2]), atoi(argv[3]));
-  return TCL_OK;
-}
-
-static int tcl_setdnloads STDVAR
-{
-  BADARGS(4, 4, " handle files k");
-  set_handle_dnloads(userlist, argv[1], atoi(argv[2]), atoi(argv[3]));
-  return TCL_OK;
-}
-
 static tcl_cmds mytcls[] =
 {
   {"getdesc", tcl_getdesc},
@@ -608,10 +558,6 @@ static tcl_cmds mytcls[] =
   {"share", tcl_share},
   {"unshare", tcl_unshare},
   {"filesend", tcl_filesend},
-  {"getuploads", tcl_getuploads},
-  {"setuploads", tcl_setuploads},
-  {"getdnloads", tcl_getdnloads},
-  {"setdnloads", tcl_setdnloads},
   {"mkdir", tcl_mkdir},
   {"rmdir", tcl_rmdir},
   {"cp", tcl_cp},

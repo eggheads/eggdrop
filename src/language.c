@@ -73,9 +73,10 @@ static void recheck_lang_sections(void);
 static void read_lang(char *);
 void add_lang_section(char *);
 int del_lang_section(char *);
-static char *get_langfile(char *, lang_sec *);
+static char *get_specific_langfile(char *, lang_sec *);
+static char *get_langfile(lang_sec *);
 static int split_lang(char *, char **, char **);
-int cmd_loadlanguage(struct userrec *u, int idx, char *par);
+int cmd_loadlanguage(struct userrec *, int, char *);
 
 
 /* add a new preferred language to the list of languages. Newly added
@@ -179,7 +180,7 @@ static void recheck_lang_sections(void)
   context;
   while (ls) {
     if (ls->section) {
-      langfile = get_langfile(ls->section, ls);
+      langfile = get_langfile(ls);
       /* found a language with a more preferred language? */
       if (langfile) {
         read_lang(langfile);
@@ -206,7 +207,8 @@ static void read_lang(char *langfile)
   context;
   FLANG = fopen(langfile, "r");
   if (FLANG == NULL) {
-    putlog(LOG_MISC, "*", "LANG: unexpected: reading from file %s failed.");
+    putlog(LOG_MISC, "*", "LANG: unexpected: reading from file %s failed.",
+	   langfile);
     return;
   }
 
@@ -275,7 +277,8 @@ void add_lang_section(char *section)
 {
   char *langfile = NULL;
   lang_sec *ls = langsection, *ols = NULL;
- 
+  int ok = 0;
+
   context;
   while (ls) {
     /* already know of that section? */
@@ -299,10 +302,19 @@ void add_lang_section(char *section)
     langsection = ls;
   putlog(LOG_MISC, "*", "LANG: Added section %s.", section);
   
-  langfile = get_langfile(section, ls);
+  /* Always load base language */
+  langfile = get_specific_langfile(BASELANG, ls);
+  if (langfile) {
+    read_lang(langfile);
+    nfree(langfile);
+    ok = 1;
+  }
+  /* Now overwrite base language with a more preferred one */
+  langfile = get_langfile(ls);
   if (!langfile) {
-    putlog(LOG_MISC, "*", "LANG: No lang files found for section %s.",
-	   section);
+    if (!ok)
+      putlog(LOG_MISC, "*", "LANG: No lang files found for section %s.",
+           section);
     return;
   }
   read_lang(langfile);
@@ -332,13 +344,33 @@ int del_lang_section(char *section)
   return 0;
 }
 
+static char *get_specific_langfile(char *language, lang_sec *sec)
+{
+  char *ldir = getenv("EGG_LANGDIR");
+  char *langfile;
+  FILE *sfile = NULL;
+
+  if (!ldir)
+    ldir = LANGDIR;
+  langfile = nmalloc(strlen(ldir) + strlen(sec->section) + strlen(language)+8);
+  sprintf(langfile, "%s/%s.%s.lang", ldir, sec->section, language);
+  sfile = fopen(langfile, "r");
+  if (sfile) {
+    fclose(sfile);
+    /* save language used for this section */
+    sec->lang = nrealloc(sec->lang, strlen(language) + 1);
+    strcpy(sec->lang, language);
+    return langfile;
+  }
+  nfree(langfile);
+  return NULL;
+}
+
 /* Searches for available language files and returns the file with the
  * most preferred language.
  */
-static char *get_langfile(char *section, lang_sec *sec)
+static char *get_langfile(lang_sec *sec)
 {
-  FILE *sfile = NULL;
-  char *ldir = getenv("EGG_LANGDIR");
   char *langfile;
   lang_pri *lp = langpriority;
 
@@ -348,22 +380,9 @@ static char *get_langfile(char *section, lang_sec *sec)
     if (sec->lang && !strcmp(sec->lang, lp->lang)) {
       return NULL;
     }
-    if (ldir) {
-      langfile = nmalloc(strlen(ldir)+strlen(section)+strlen(lp->lang)+8);
-      sprintf(langfile, "%s/%s.%s.lang", ldir, section, lp->lang);
-    } else {
-      langfile = nmalloc(strlen(LANGDIR)+strlen(section)+strlen(lp->lang)+8);
-      sprintf(langfile, "%s/%s.%s.lang", LANGDIR, section, lp->lang);
-    }
-    sfile = fopen(langfile, "r");
-    if (sfile) {
-      fclose(sfile);
-      /* save language used for this section */
-      sec->lang = nrealloc(sec->lang, strlen(lp->lang) + 1);
-      strcpy(sec->lang, lp->lang);
+    langfile = get_specific_langfile(lp->lang, sec);
+    if (langfile)
       return langfile;
-    }
-    nfree(langfile);
     lp = lp->next;
   }
   /* we did not find any files, clear the language field */

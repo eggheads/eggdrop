@@ -31,10 +31,6 @@ static int do_dcc_send(int, char *, char *);
 static int files_get(int, char *, char *);
 static void files_setpwd(int, char *);
 static int resolve_dir(char *, char *, char *, int);
-static void set_handle_uploads(struct userrec *bu, char *hand,
-			       unsigned int ups, unsigned long upk);
-static void set_handle_dnloads(struct userrec *bu, char *hand,
-			       unsigned int dns, unsigned long dnk);
 #else
 #define H_fil (*(p_tcl_hash_list *)(filesys_funcs[8]))
 #endif

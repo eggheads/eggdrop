@@ -25,53 +25,55 @@ struct console_info {
 
 static int console_unpack(struct userrec *u, struct user_entry *e)
 {
+  struct console_info *ci = user_malloc(sizeof(struct console_info));
+  char *par, *arg;
+
+  ASSERT (e != NULL);
+  ASSERT (e->name != NULL);
   context;
-  if (e->name) {
-    char *p, *w, *o;
-    struct console_info *i;
-
-    p = e->u.list->extra;
-    e->u.list->extra = NULL;
-    list_type_kill(e->u.list);
-    e->u.extra = i = user_malloc(sizeof(struct console_info));
-
-    o = p;
-    w = newsplit(&p);
-    i->channel = user_malloc(strlen(w) + 1);
-    strcpy(i->channel, w);
-    w = newsplit(&p);
-    i->conflags = logmodes(w);
-    w = newsplit(&p);
-    i->stripflags = stripmodes(w);
-    w = newsplit(&p);
-    i->echoflags = (w[0] == '1') ? 1 : 0;
-    w = newsplit(&p);
-    i->page = atoi(w);
-    w = newsplit(&p);
-    i->conchan = atoi(w);
-    nfree(o);
-  }
+  par = e->u.list->extra;
+  arg = newsplit(&par);
+  ci->channel = user_malloc(strlen(arg) + 1);
+  strcpy(ci->channel, arg);
+  arg = newsplit(&par);
+  ci->conflags = logmodes(arg);
+  arg = newsplit(&par);
+  ci->stripflags = stripmodes(arg);
+  arg = newsplit(&par);
+  ci->echoflags = (arg[0] == '1') ? 1 : 0;
+  arg = newsplit(&par);
+  ci->page = atoi(arg);
+  arg = newsplit(&par);
+  ci->conchan = atoi(arg);
+  list_type_kill(e->u.list);
+  e->u.extra = ci;
   return 1;
 }
 
 static int console_pack(struct userrec *u, struct user_entry *e)
 {
-  if (!e->name) {
-    char work[1024];
-    struct console_info *i = e->u.extra;
-    int c = simple_sprintf(work, "%s %s %s %d %d %d",
-			   i->channel, masktype(i->conflags),
-			   stripmasktype(i->stripflags), i->echoflags,
-			   i->page, i->conchan);
+  char work[1024];
+  struct console_info *ci;
+  int l;
 
-    e->u.list = user_malloc(sizeof(struct list_type));
+  ASSERT (e != NULL);
+  ASSERT (e->u.extra != NULL);
+  ASSERT (e->name == NULL);
 
-    e->u.list->next = NULL;
-    e->u.list->extra = user_malloc(c + 1);
-    strcpy(e->u.list->extra, work);
-    nfree(i->channel);
-    nfree(i);
-  }
+  ci = (struct console_info *) e->u.extra;
+  
+  l = simple_sprintf(work, "%s %s %s %d %d %d",
+		     ci->channel, masktype(ci->conflags),
+		     stripmasktype(ci->stripflags), ci->echoflags,
+		     ci->page, ci->conchan);
+
+  e->u.list = user_malloc(sizeof(struct list_type));
+  e->u.list->next = NULL;
+  e->u.list->extra = user_malloc(l + 1);
+  strcpy(e->u.list->extra, work);
+
+  nfree(ci->channel);
+  nfree(ci);
   return 1;
 }
 
@@ -101,8 +103,20 @@ static int console_write_userfile(FILE * f, struct userrec *u, struct user_entry
 
 static int console_set(struct userrec *u, struct user_entry *e, void *buf)
 {
-  e->u.extra = buf;
-  context;
+  struct console_info *ci = (struct console_info *) e->u.extra;
+
+  if (ci != buf) {
+    if (ci) {
+      ASSERT (ci->channel != NULL);
+      nfree (ci->channel);
+      nfree (ci);
+    }
+    context;
+
+    e->u.extra = buf;
+  }
+
+  /* donut share console info */
   return 1;
 }
 

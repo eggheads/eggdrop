@@ -21,10 +21,6 @@
 
 #undef NO_OLD_BOTNET
 
-/***********************************************************************/
-/***** the 'configure' script should make this next part automatic *****/
-/***********************************************************************/
-
 /*
  * define the maximum length a handle on the bot can be.
  * (standard is 9 characters long)
@@ -34,18 +30,27 @@
  * handle length)
  */
 
-#define HANDLEN		9	/* valid values 9->NICKMAX */
+/* handy string lengths */
 
-/* handy maximum string lengths */
+#define HANDLEN		9	/* valid values 9->NICKMAX */
 #define NICKMAX       15	/* valid values HANDLEN->32 */
 #define UHOSTLEN     161	/* reasonable, i think? */
 #define DIRLEN       256	/* paranoia */
-#define MAX_LOG_LINE (767)	/* for misc.c/putlog() <cybah> */
+#define MAX_LOG_LINE 767	/* for misc.c/putlog() <cybah> */
 
-#define NICKLEN		NICKMAX + 1
-#define NOTENAMELEN     ((HANDLEN * 2) + 1)
+/* language stuff */
 
 #define LANGDIR	"./language"	/* language file directory */
+#define BASELANG "english"	/* language which always gets loaded before
+				   all other languages. You don't want to
+				   change this. */
+
+/***********************************************************************/
+/***** the 'configure' script should make this next part automatic *****/
+/***********************************************************************/
+
+#define NICKLEN         NICKMAX + 1
+#define NOTENAMELEN     ((HANDLEN * 2) + 1)
 
 /* have to use a weird way to make the compiler error out cos not all
  * compilers support #error or error */

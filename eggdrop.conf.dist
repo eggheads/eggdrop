@@ -657,8 +657,6 @@ set lowercase-ctcp 0
 # answer HOW MANY stacked ctcp's at once
 set answer-ctcp 3
 
-# *NOTE* due to lazyness on beldin's behalf, these must be set *after*
-# server.so is loaded
 # setting any of the following with howmany == 0 will turn them off
 # how many msgs in how many seconds from the same host constitutes a flood?
 set flood-msg 5:60

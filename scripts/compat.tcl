@@ -3,6 +3,7 @@
 # use this is you are to lazy to get of your butt and update your scripts :D
 #
 # cleanup by Tothwolf 25May1999
+# added g/setdn/uploads functions by rtc 10Oct1999
 
 proc gethosts {hand} {
   return [getuser $hand HOSTS]
@@ -72,6 +73,22 @@ proc time {} {
 
 proc date {} {
   return [strftime "%d %b %Y"]
+}
+
+proc setdnloads {hand {c 0} {k 0}} {
+  return [setuser $hand FSTAT d $c $k]
+}
+
+proc getdnloads {hand} {
+  return [getuser $hand FSTAT d]
+}
+
+proc setuploads {hand {c 0} {k 0}} {
+  return [setuser $hand FSTAT u $c $k]
+}
+
+proc getuploads {hand} {
+  return [getuser $hand FSTAT u]
 }
 
 # as you can see it takes a lot of effort to simulate all the old commands

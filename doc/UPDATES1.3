@@ -4,6 +4,18 @@ Changes in eggdrop: (since v1.3.0)
 
 1.3.29
 Foundby   Fixedby   What....
+	  Fabian    the language table is now always first loaded with english
+		    rather than the more preferred languages
+          rtc       fixed memleak in botfl_pack and SEGV in 
+                    botfl_tcl_set
+dw        Eule      delayed autoop + flagchecks
+          rtc       fixed memleak in console_set
+          drummer   changes to tcl.c dealing with strings/ints/couplets
+          rtc       several fixes to userent.c
+          rtc       transfer module was sending share notifications twice
+          rtc       removed tcl functions setuploads, getuploads, setdnloads
+                    and getdnloads and C functions set_handle_dnloads
+                    and set_handle_uploads
 	  CyberTech Fixed pver length into init_tcl().
 	  drummer   Adds ismodeline macros.
 ranjha	  Fabian    .help * is now converted to .help all
