@@ -7,7 +7,7 @@
  *   help system
  *   motd display and %var substitution
  *
- * $Id: misc.c,v 1.49 2002/09/21 21:32:05 wcc Exp $
+ * $Id: misc.c,v 1.50 2002/09/27 22:44:02 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -483,15 +483,15 @@ void putlog EGG_VARARGS_DEF(int, arg1)
 {
   int i, type, tsl;
   char *format, *chname, s[LOGLINELEN], s1[256], *out;
-  time_t tt=now;
   char ct[81], *s2, stamp[32];
   va_list va;
+  struct tm *t = localtime(&now);
 
   type = EGG_VARARGS_START(int, arg1, va);
   chname = va_arg(va, char *);
   format = va_arg(va, char *);
 
-  strftime(&stamp[0], 32, LOG_TS, localtime(&tt));
+  strftime(&stamp[0], 32, LOG_TS, t);
   sprintf(&stamp[0], "%s ", stamp);
   tsl = strlen(stamp);
 
@@ -504,9 +504,9 @@ void putlog EGG_VARARGS_DEF(int, arg1)
   out[LOGLINEMAX - tsl] = 0;
   if (keep_all_logs) {
     if (!logfile_suffix[0])
-      egg_strftime(ct, 12, ".%d%b%Y", localtime(&tt));
+      egg_strftime(ct, 12, ".%d%b%Y", t);
     else {
-      egg_strftime(ct, 80, logfile_suffix, localtime(&tt));
+      egg_strftime(ct, 80, logfile_suffix, t);
       ct[80] = 0;
       s2 = ct;
       /* replace spaces by underscores */
