@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: compiling.html,v 1.13 2002/01/03 01:05:43 guppy Exp $ -->
+<!-- $Id: compiling.html,v 1.14 2002/02/25 18:15:51 guppy Exp $ -->
 
 <html>
   <head>
@@ -17,7 +17,7 @@
     please send an e-mail to <a href="mailto:eggheads@eggheads.org">
     eggheads@eggheads.org</a>.</p>
 
-    <p>Last revised: December 29, 2001</p>
+    <p>Last revised: February 25, 2002</p>
     <hr>
 
     <p><a href="#egg">Eggdrop Related Questions</a></p>
@@ -684,14 +684,16 @@
         <dt>csh/tcsh:</dt>
 
         <dd>
-          <p>setenv TCLLIB &#39;/path/to/tcl/lib&#39;<br>
+          <p>setenv LD_LIBRARY_PATH &#39;/path/to/tcl/lib&#39;<br>
+           setenv TCLLIB &#39;/path/to/tcl/lib&#39;<br>
            setenv TCLINC &#39;/path/to/tcl/include&#39;</p>
         </dd>
 
         <dt>bash/ksh:</dt>
 
         <dd>
-          <p>export TCLLIB=&#39;/path/to/tcl/lib&#39;<br>
+          <p>export LD_LIBRARY_PATH=&#39;/path/to/tcl/lib&#39;<br>
+           export TCLLIB=&#39;/path/to/tcl/lib&#39;<br>
            export TCLINC=&#39;/path/to/tcl/include&#39;</p>
         </dd>
       </dl>

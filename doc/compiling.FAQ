@@ -1,5 +1,5 @@
 Compiling FAQ
-Last revised: December 29, 2001
+Last revised: February 25, 2002
   ________________________________________________________________________
 
 
@@ -479,14 +479,14 @@ B. Tcl Related Questions
 5. There's no Tcl installed on your shell
 
     If there's really no Tcl installed on your shell, you can install
-    it temporarily in /tmp or your /home. Get the latest version of Tcl from <a
-    href="ftp://ftp.scriptics.com/pub/tcl/"> ftp://ftp.scriptics.com/pub/tcl/</a>
-    and follow the installation steps in it's README file. After you've 
-    installed Tcl, you have to make configure detect Tcl. To achieve this, you 
-    have to set either environmental variables:
+    it temporarily in /tmp or your /home. Get the latest version of Tcl from
+    ftp://ftp.scriptics.com/pub/tcl/ and follow the installation steps in it's
+    README file. After you've installed Tcl, you have to make configure detect 
+    Tcl. To achieve this, you have to set either environmental variables:
 
-         export TCLLIB=/path/to/tcl/lib
-         export TCLINC=/path/to/tcl/include
+         export LD_LIBRARY_PATH="/path/to/tcl/lib"
+         export TCLLIB="/path/to/tcl/lib"
+         export TCLINC="/path/to/tcl/include"
 
      Please note that on some unix machines export doesn't work and you
      have to use 'setenv' instead or to pass configure the full qualified
