@@ -239,7 +239,7 @@ static void real_add_mode(struct chanset_t *chan,
     /* if there are already max_modes +b/+e/+I modes on the channel, don't 
      * try to add one more */
     modes = bans + exempts + invites;
-    if ((modes >= max_modes) &&
+    if ((modes >= max_modes) && (plus == '+') &&
 	((mode == 'b') || (mode == 'e') || (mode == 'I')))
       return;
     /* op-type mode change */

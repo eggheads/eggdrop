@@ -16,11 +16,11 @@ PATCH("CVS"); /* CVS beta version */
 /*
  *
  */
-PATCH("943171534"); /* current unixtime */
+PATCH("943402543"); /* current unixtime */
 /*
  *
  */
-PATCH("sync");
+PATCH("unban");
 /*
  *
  */
