@@ -1,10 +1,10 @@
 # console.english.lang
 #   language messages for the console module
 #
-# $Id: console.english.lang,v 1.1 2000/09/23 17:45:23 fabian Exp $
+# $Id: console.english.lang,v 1.2 2001/04/13 19:25:05 guppy Exp $
 
 0xb040,Saved Console Settings:
-0xb041,Saved Console your Settings:
+0xb041,Saved your Console Settings:
 0xb042,Channel:
 0xb043,Console flags:
 0xb044,Strip flags:

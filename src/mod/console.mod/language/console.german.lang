@@ -1,0 +1,15 @@
+# console.german.lang
+#   language messages for the console module
+#
+# $Id: console.german.lang,v 1.1 2001/04/13 19:25:05 guppy Exp $
+
+0xb040,Habe Consolen-Einstellungen gespeichert:
+0xb041,Habe Deine Consolen-Einstellungen gespeichert:
+0xb042,Channel:
+0xb043,Console flags:
+0xb044,Strip flags:
+0xb045,Echo:
+0xb046,Page setting:
+0xb047,Console channel:
+0xb048,ja
+0xb049,nein

@@ -3,12 +3,12 @@
 #
 # german translation by rtc
 #
-# $Id: filesys.german.lang,v 1.2 1999/12/21 17:35:16 fabian Exp $
+# $Id: filesys.german.lang,v 1.3 2001/04/13 19:25:05 guppy Exp $
 
 0x300,Konvertiere Dateisystem-Abbild in %s ...
 0x301,filedb-update: kann Verzeichnis nicht oeffnen!
 0x302,(!) Fehlerhafte Konvertierung zur filedb in %s
-0x303,Dateiname                       Gr.   Von/Datum            # Dlds\n
+0x303,Dateiname                       Gr.   Gesendet Von/Datum   # Dlds\n
 0x304,------------------------------  ----  -------------------  ------\n
 0x305,Keine Dateien in diesem Verzeichnis.\n
 0x306,Keine passenden Dateien.\n
@@ -18,20 +18,20 @@
 0x30a,(woanders)
 0x30b,Fehler beim Sendeversuch der Datei
 0x30c,(sende)
-0x30d,Anfrage von Bot fuer /%s%s%s (sende)
-0x30e,\nDas Dateisystem scheint gerade defunct zu sein.\n
-0x30f,(Der files-path zeigt auf ein ungueltiges Verzeichnis.)\n
-0x310,Momentanes Verzeichnis
-0x311,Neues Verzeichnis
+0x30d,Fern-Anfrage fuer /%s%s%s (sende)
+0x30e,\nDas Dateisystem scheint gerade kaputt zu sein.\n
+0x30f,(Der Datei-Pfad ist auf ein ungueltiges Verzeichnis gesetzt.)\n
+0x310,Aktuelles Verzeichnis
+0x311,Neues Aktuelles Verzeichnis
 0x312,Kein solches Verzeichnis.\n
 0x313,Unerlaubtes Verzeichnis.\n
-0x314,Sein verfuenftig.\n
+0x314,Sei vernuenftig.\n
 0x315,%s ist gerade nicht verfuegbar.\n
 0x316,%s von %s angefordert ...\n
 0x317,%s ist bereits eine normale Datei.\n
-0x318,Link auf %s umgebogen\n
+0x318,Link auf %s geaendert\n
 0x319,Du hast %s nicht geuploaded\n
-0x31a,Verzeichnis erstellt:
+0x31a,Verzeichnis erstellt
 0x31b,Benoetigt +%s zum Zugriff\n
 0x31c,Rechte von %s/ geaendert, braucht jetzt +%s zum Zugriff\n
 0x31d,Rechte von %s/ geaendert, braucht keine Flags zum Zugriff mehr\n
@@ -43,10 +43,10 @@
 0x323,auf sich selbst?  Nix da.
 0x324,Ziel
 0x325,kopieren
-0x326,Kopiert:
+0x326,Kopiert
 0x327,verschieben
-0x328,Verschoben:
-0x329,Fehler beim Zugriff auf
+0x328,Verschoben
+0x329,Konnte nicht schreiben
 0x32a,benoetigt
 0x32b,Versteckt
 0x32c,Sichtbar gemacht
@@ -57,6 +57,6 @@
 0x331,Geleert
 0x332,Geloescht
 0x33a,Willkommen auf dem %B-Dateiserver\n
-0x33b,Alle Dateitransferts werden standardmaessig zu '%N' gesendet.\n\
-(Du kannst dem get-Kommando auch einen anderen nick uebergeben.)\n\
+0x33b,Alle Dateitransferts werden standardmaessig an '%N' gesendet.\n\
+(Du kannst dem get-Kommando auch einen anderen Nick uebergeben.)\n\
 Gib 'help' ein, wenn Du Hilfe brauchst.\n

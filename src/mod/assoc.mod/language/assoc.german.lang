@@ -1,0 +1,22 @@
+# assoc.german.lang
+#   language messages for the assoc module
+#
+# $Id: assoc.german.lang,v 1.1 2001/04/13 19:25:05 guppy Exp $
+
+0xb000,Keine Channel-Namen
+0xb001,Channel
+0xb002,Name
+0xb003,Channel # ausserhalb des Bereiches: muss sein *0-*99999
+0xb004,Channel # ausserhalb des Bereiches: muss sein 1-99999
+0xb005,Du kannst der Haupt-Partyline keinen namen geben; es ist nur eine Partyline.
+0xb006,Channel %s%d hat keinen Namen.\n
+0xb007,Gut, Name fuer Channel %s%d entfernt.\n
+0xb008,--- %s entfernte Channel-Namen.\n
+0xb009,Gut, Channel %s%d ist nun '%s'.\n
+0xb00a,--- %s benannte diesen Channel '%s'\n
+0xb00b,--- (%s) benannte diesen Channel '%s'.\n
+0xb00c,--- (%s) %s benannte diesen Channel '%s'.\n
+0xb00d,--- (%s) %s entfernte diesen Channel-Namen.\n
+0xb00e,Channel-Name kann nicht so lang sein (20 Zeichen maximal).
+0xb00f,Erstes Zeichen des Channel-Namens kann keine Zahl sein.
+
