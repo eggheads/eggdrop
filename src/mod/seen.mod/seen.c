@@ -185,7 +185,8 @@ static void do_seen(int idx, char *prefix, char *nick, char *hand, char *channel
       chan = chanset;
       while (chan) {
 	onchan = 0;
-	if ((m = ismember(chan, object))) {
+	m = ismember(chan, object);
+	if (m) {
 	  onchan = 1;
 	  sprintf(stuff, "%s!%s", object, m->userhost);
 	  urec = get_user_by_host(stuff);
@@ -337,7 +338,8 @@ static void do_seen(int idx, char *prefix, char *nick, char *hand, char *channel
   /* Check if nick is on a channel */
   chan = chanset;
   while (chan) {
-    if ((m = ismember(chan, whotarget))) {
+    m = ismember(chan, whotarget);
+    if (m) {
       onchan = 1;
       sprintf(word1, "%s!%s", whotarget, m->userhost);
       urec = get_user_by_host(word1);
@@ -379,8 +381,7 @@ static void do_seen(int idx, char *prefix, char *nick, char *hand, char *channel
   if (chan) {
     m = ismember(chan, whotarget);
     if (m && chan_issplit(m)) {
-      dprintf(idx,
-	      "%s%s%s was just here, but got netsplit.\n",
+      dprintf(idx, "%s%s%s was just here, but got netsplit.\n",
 	      prefix, whoredirect, whotarget);
       return;
     }

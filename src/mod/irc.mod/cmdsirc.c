@@ -755,7 +755,7 @@ static void cmd_adduser(struct userrec *u, int idx, char *par)
   chan = chanset;
   while (chan != NULL) {
     m = ismember(chan, nick);
-    if (m!=NULL)
+    if (m)
       break;
     chan=chan->next;
   }

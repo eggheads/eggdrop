@@ -461,8 +461,7 @@ static int msg_whois(char *nick, char *host, struct userrec *u, char *par)
   memberlist *m;
   struct chanuserrec *cr;
   struct userrec *u2;
-  struct flag_record fr =
-  {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
+  struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
   struct xtra_key *xk;
   time_t tt = 0;
 
@@ -479,7 +478,8 @@ static int msg_whois(char *nick, char *host, struct userrec *u, char *par)
     ok = 0;
     chan = chanset;
     while (chan && !ok) {
-      if ((m = ismember(chan, par))) {
+      m = ismember(chan, par);
+      if (m) {
 	simple_sprintf(s, "%s!%s", par, m->userhost);
 	u2 = get_user_by_host(s);
 	if (u2) {

@@ -219,7 +219,7 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
     case FLOOD_NOTICE:
     case FLOOD_CTCP:
       /* flooding chan! either by public or notice */
-      if (me_op(chan)) {
+      if (m && me_op(chan)) {
 	putlog(LOG_MODES, chan->name, IRC_FLOODKICK, floodnick);
 	dprintf(DP_MODE, "KICK %s %s :%s\n", chan->name, floodnick,
 		CHAN_FLOOD);
@@ -241,7 +241,7 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
       u_addban(chan, h, origbotname, ftype, now + (60 * ban_time), 0);
       context;
       /* don't kick user if exempted */
-      if (!channel_enforcebans(chan) && me_op(chan) && !isexempted(chan,h))
+      if (!channel_enforcebans(chan) && me_op(chan) && !isexempted(chan, h))
 	{
 	  char s[UHOSTLEN];
 	  m = chan->channel.member;
@@ -362,6 +362,8 @@ static void refresh_ban_kick(struct chanset_t *chan, char *user, char *nick)
     for (; u; u = u->next) {
       if (wild_match(u->mask, user)) {
 	m = ismember(chan, nick);
+	if (!m)
+	  continue;				/* skip non-existant nick */
 	get_user_flagrec(m->user, &fr, chan->name);
 	if (!glob_friend(fr) && !chan_friend(fr))
 	  add_mode(chan, '-', 'o', nick);	/* guess it can't hurt */
@@ -1375,7 +1377,7 @@ static int gotjoin(char *from, char *chname)
 	  /* also prevent +stopnethack automatically de-opping them */
 	  m->flags |= WASOP;
 	}
-    m->flags |= STOPWHO;
+	m->flags |= STOPWHO;
 	if (newmode) {
 	  putlog(LOG_JOIN, chname, "%s (%s) returned to %s (with +%s).",
 		 nick, uhost, chname, newmode);
@@ -1394,7 +1396,7 @@ static int gotjoin(char *from, char *chname)
 	strcpy(m->nick, nick);
 	strcpy(m->userhost, uhost);
 	m->user = u;
-    m->flags |= STOPWHO;
+	m->flags |= STOPWHO;
 	check_tcl_join(nick, uhost, u, chname);
 	if (newmode)
 	  do_embedded_mode(chan, nick, m, newmode);

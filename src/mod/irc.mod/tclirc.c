@@ -7,10 +7,9 @@ static int tcl_chanlist STDVAR
   memberlist *m;
   struct userrec *u;
   struct chanset_t *chan;
-  struct flag_record plus =
-  {FR_CHAN | FR_GLOBAL | FR_BOT, 0, 0, 0, 0, 0}, minus =
-  {FR_CHAN | FR_GLOBAL | FR_BOT, 0, 0, 0, 0, 0}, user =
-  {FR_CHAN | FR_GLOBAL | FR_BOT, 0, 0, 0, 0, 0};
+  struct flag_record plus = {FR_CHAN | FR_GLOBAL | FR_BOT, 0, 0, 0, 0, 0},
+ 		     minus = {FR_CHAN | FR_GLOBAL | FR_BOT, 0, 0, 0, 0, 0},
+		     user = {FR_CHAN | FR_GLOBAL | FR_BOT, 0, 0, 0, 0, 0};
 
   BADARGS(2, 3, " channel ?flags?");
   context;
@@ -587,7 +586,7 @@ static int tcl_nick2hand STDVAR
   context;
   while ((chan != NULL) && ((thechan == NULL) || (thechan == chan))) {
     m = ismember(chan, argv[1]);
-    if (m != NULL) {
+    if (m) {
       simple_sprintf(s, "%s!%s", m->nick, m->userhost);
       u = get_user_by_host(s);
       Tcl_AppendResult(irp, u ? u->handle : "*", NULL);

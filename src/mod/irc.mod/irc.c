@@ -521,40 +521,44 @@ static void check_expired_chanstuff()
   memberlist *m, *n;
   char s[UHOSTLEN], *snick, *sfrom;
   struct chanset_t *chan;
-  struct flag_record fr =
-  {
-    FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0
-  };
+  struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
   static int count = 4;
   int ok = 0;
 
   if (!server_online)
     return;
   for (chan = chanset; chan; chan = chan->next) {
-    if (!(chan->status & (CHAN_ACTIVE | CHAN_PEND)) && !channel_inactive(chan) && server_online) {
+    if (!(chan->status & (CHAN_ACTIVE | CHAN_PEND)) &&
+	!channel_inactive(chan) &&
+	server_online)
       dprintf(DP_MODE, "JOIN %s %s\n", chan->name, chan->key_prot);      
-    }
-    if ((chan->status & (CHAN_ACTIVE | CHAN_PEND)) && channel_inactive(chan)) {
+    if ((chan->status & (CHAN_ACTIVE | CHAN_PEND)) &&
+	channel_inactive(chan))
       dprintf(DP_MODE, "PART %s\n", chan->name);
-    }
-    if (channel_dynamicbans(chan) && me_op(chan) && !channel_inactive(chan) && ismember(chan, botname)) {
+    if (channel_dynamicbans(chan) &&
+	me_op(chan) &&
+	!channel_inactive(chan) &&
+	ismember(chan, botname)) {
       for (b = chan->channel.ban; b->mask[0]; b = b->next) {
 	if ((ban_time != 0) && (((now - b->timer) > (60 * ban_time)) &&
 				!u_sticky_mask(chan->bans, b->mask) &&
 				!u_sticky_mask(global_bans, b->mask))) {
-	  strcpy(s, b->who); sfrom = s; snick = splitnick(&sfrom);
+	  strcpy(s, b->who);
+	  sfrom = s;
+	  snick = splitnick(&sfrom);
+	  
 	  if (force_expire || channel_clearbans(chan) ||
 	      !(snick[0] && strcasecmp(sfrom, botuserhost) &&
-		(m=ismember(chan, snick)) &&
+		(m = ismember(chan, snick)) &&
 		m->user && (m->user->flags & USER_BOT) && chan_hasop(m))) {
-	  putlog(LOG_MODES, chan->name,
-		 "(%s) Channel ban on %s expired.",
-		 chan->name, b->mask);
-	  add_mode(chan, '-', 'b', b->mask);
-	  b->timer = now;
+	    putlog(LOG_MODES, chan->name,
+		   "(%s) Channel ban on %s expired.",
+		   chan->name, b->mask);
+	    add_mode(chan, '-', 'b', b->mask);
+	    b->timer = now;
+	  }
 	}
       }
-    }
     }
     if (use_exempts == 1) {
       if (channel_dynamicexempts(chan) && me_op(chan)) {
@@ -563,37 +567,40 @@ static void check_expired_chanstuff()
 	      (((now - e->timer) > (60 * exempt_time)) &&
 	       !u_sticky_mask(chan->exempts, e->mask) && 
 	       !u_sticky_mask(global_exempts, e->mask))) {
- 	    strcpy(s, e->who); sfrom = s; snick = splitnick(&sfrom);
+	    strcpy(s, e->who);
+	    sfrom = s;
+	    snick = splitnick(&sfrom);
 	    if (force_expire || channel_clearbans(chan) ||
 		!(snick[0] && strcasecmp(sfrom, botuserhost) &&
-		  (m=ismember(chan, snick)) &&
+		  (m = ismember(chan, snick)) &&
 		  m->user && (m->user->flags & USER_BOT) && chan_hasop(m))) {
-	    /* Check to see if it matches a ban */
-        /* Leave this extra logging in for now. Can be removed later
-         * Jason */
-        int match = 0;
-        b = chan->channel.ban;
-        while (b->mask[0] && !match) {
-          if (wild_match(b->mask, e->mask) || wild_match(e->mask, b->mask))
-            match=1;
-          else
-            b = b->next;
-        }
-        if (match) {
-		  putlog(LOG_MODES, chan->name,
-             "(%s) Channel exemption %s NOT expired. Ban still set!",
-		     chan->name, e->mask);
-	    } else {
-	      putlog(LOG_MODES, chan->name,
-		     "(%s) Channel exemption on %s expired.",
-		     chan->name, e->mask);
-	      add_mode(chan, '-', 'e', e->mask);
+	      /* Check to see if it matches a ban */
+	      /* Leave this extra logging in for now. Can be removed later
+	       * Jason */
+	      int match = 0;
+	      b = chan->channel.ban;
+	      while (b->mask[0] && !match) {
+	       if (wild_match(b->mask, e->mask)
+		   || wild_match(e->mask, b->mask))
+                 match = 1;
+	       else
+		 b = b->next;
+	      }
+	      if (match) {
+	        putlog(LOG_MODES, chan->name,
+		       "(%s) Channel exemption %s NOT expired. Ban still set!",
+		       chan->name, e->mask);
+	      } else {
+	        putlog(LOG_MODES, chan->name,
+		       "(%s) Channel exemption on %s expired.",
+		       chan->name, e->mask);
+	        add_mode(chan, '-', 'e', e->mask);
+	      }
+	      e->timer = now;
 	    }
-	    e->timer = now;
 	  }
 	}
       }
-    }
     }
 
     if (use_invites == 1) {
@@ -603,24 +610,28 @@ static void check_expired_chanstuff()
 	      (((now - b->timer) > (60 * invite_time)) &&
 	       !u_sticky_mask(chan->invites, b->mask) && 
 	       !u_sticky_mask(global_invites, b->mask))) {
- 	    strcpy(s, b->who); sfrom = s; snick = splitnick(&sfrom);
+ 	    strcpy(s, b->who);
+	    sfrom = s;
+	    snick = splitnick(&sfrom);
+
 	    if (force_expire || channel_clearbans(chan) ||
 		!(snick[0] && strcasecmp(sfrom, botuserhost) &&
-		  (m=ismember(chan, snick)) &&
+		  (m = ismember(chan, snick)) &&
 		  m->user && (m->user->flags & USER_BOT) && chan_hasop(m))) {
-        if ((chan->channel.mode & CHANINV) && isinvited(chan, b->mask)) {
-	      /*Leave this extra logging in for now. Can be removed later
-	       * Jason */
-	      putlog(LOG_MODES, chan->name,
-             "(%s) Channel invitation %s NOT expired. i mode still set!",
-		     chan->name, b->mask);
-	    } else {
-	      putlog(LOG_MODES, chan->name,
-		     "(%s) Channel invitation on %s expired.",
-		     chan->name, b->mask);
-	      add_mode(chan, '-', 'I', b->mask);
-	    }
-	    b->timer = now;
+	      if ((chan->channel.mode & CHANINV) &&
+		  isinvited(chan, b->mask)) {
+	        /* Leave this extra logging in for now. Can be removed later
+	         * Jason */
+	        putlog(LOG_MODES, chan->name,
+                   "(%s) Channel invitation %s NOT expired. i mode still set!",
+		       chan->name, b->mask);
+	      } else {
+	        putlog(LOG_MODES, chan->name,
+		       "(%s) Channel invitation on %s expired.",
+		       chan->name, b->mask);
+	        add_mode(chan, '-', 'I', b->mask);
+	      }
+	      b->timer = now;
 	    }
 	  }
 	}

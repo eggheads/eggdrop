@@ -155,36 +155,47 @@ static void real_add_mode(struct chanset_t *chan,
   char s[21];
   
   context;
-
   if (!me_op(chan))
     return;			/* no point in queueing the mode */
+
   if (mode == 'o' || mode == 'v') {
-    if (!(mx = ismember(chan, op))) return;
-	if (plus == '-' && mode == 'o') {
-	  if ((mx->flags & SENTDEOP) || !chan_hasop(mx)) return;
-	  mx->flags |= SENTDEOP;
-	  }
-	if (plus == '+' && mode == 'o') {
-	  if ((mx->flags & SENTOP) || chan_hasop(mx)) return;
-	  mx->flags |= SENTOP;
-	  }
-	if (plus == '-' && mode == 'v') {
-	  if ((mx->flags & SENTDEVOICE) || !chan_hasvoice(mx)) return;
-	  mx->flags |= SENTDEVOICE;
-	  }
-	if (plus == '+' && mode == 'v') {
-	  if ((mx->flags & SENTVOICE) || chan_hasvoice(mx)) return;
-	  mx->flags |= SENTVOICE;
-	  }
+    mx = ismember(chan, op);
+    if (!mx)
+      return;
+
+    if (plus == '-' && mode == 'o') {
+      if ((mx->flags & SENTDEOP) || !chan_hasop(mx))
+	return;
+      mx->flags |= SENTDEOP;
+    }
+    if (plus == '+' && mode == 'o') {
+      if ((mx->flags & SENTOP) || chan_hasop(mx))
+	return;
+      mx->flags |= SENTOP;
+    }
+    if (plus == '-' && mode == 'v') {
+      if ((mx->flags & SENTDEVOICE) || !chan_hasvoice(mx))
+	return;
+      mx->flags |= SENTDEVOICE;
+    }
+    if (plus == '+' && mode == 'v') {
+      if ((mx->flags & SENTVOICE) || chan_hasvoice(mx))
+	return;
+      mx->flags |= SENTVOICE;
+    }
   }
+
   if (chan->compat == 0) {
-     if (mode == 'e' || mode == 'I') chan->compat = 2;
-     else chan->compat = 1;
-	} else if (mode == 'e' || mode == 'I') {
-  	 if (prevent_mixing && chan->compat == 1)
-           flush_mode(chan, NORMAL);
-    } else if (prevent_mixing && chan->compat == 2)
-           flush_mode(chan, NORMAL);
+    if (mode == 'e' || mode == 'I')
+      chan->compat = 2;
+    else
+      chan->compat = 1;
+  } else if (mode == 'e' || mode == 'I') {
+    if (prevent_mixing && chan->compat == 1)
+      flush_mode(chan, NORMAL);
+  } else if (prevent_mixing && chan->compat == 2)
+    flush_mode(chan, NORMAL);
+
   if ((mode == 'o') || (mode == 'b') || (mode == 'v') ||
       (mode == 'e') || (mode == 'I')) {
     type = (plus == '+' ? PLUS : MINUS) |
@@ -303,10 +314,11 @@ static void got_key(struct chanset_t *chan, char *nick, char *from,
       bogus = 1;
   if (bogus && !match_my_nick(nick)) {
     putlog(LOG_MODES, chan->name, "%s on %s!", CHAN_BADCHANKEY, chan->name);
-    dprintf(DP_MODE, "KICK %s %s :%s\n", chan->name, nick, CHAN_BADCHANKEY);
     m = ismember(chan, nick);
-    if (m)
+    if (m) {
+      dprintf(DP_MODE, "KICK %s %s :%s\n", chan->name, nick, CHAN_BADCHANKEY);
       m->flags |= SENTKICK;
+    }
   }
   if (((reversing) && !(chan->key_prot[0])) || (bogus) ||
       ((chan->mode_mns_prot & CHANKEY) &&
@@ -533,9 +545,9 @@ static void got_ban(struct chanset_t *chan, char *nick, char *from,
 	  add_mode(chan, '-', 'b', who);
 	  if (kick_bogus_bans) {
 	    m = ismember(chan, nick);
-	    if (!m || !chan_sentkick(m)) {
-	      if (m)
-		m->flags |= SENTKICK;
+	    /* if the user is in the channel and we didn't send a kick yet */
+	    if (m && !chan_sentkick(m)) {
+	      m->flags |= SENTKICK;
 	      dprintf(DP_MODE, "KICK %s %s :%s\n", chan->name, nick,
 		      CHAN_BOGUSBAN);
 	    }
@@ -650,9 +662,10 @@ static void got_unban(struct chanset_t *chan, char *nick, char *from,
     /* then lets kick the weenie */
     memberlist *m = ismember(chan, nick);
 
-    if (!m || !chan_sentkick(m)) {
-      if (m)
-	m->flags |= SENTKICK;
+    /* no point in kicking someone who doesn't exist or which we are
+     * trying to kick already */
+    if (m && !chan_sentkick(m)) {
+      m->flags |= SENTKICK;
       dprintf(DP_MODE, "KICK %s %s :%s\n", chan->name, nick, CHAN_BADBAN);
     }
     return;
@@ -726,9 +739,10 @@ static void got_exempt(struct chanset_t *chan, char *nick, char *from,
 	  add_mode(chan, '-', 'e', who);
 	  if (kick_bogus_exempts) {
 	    m = ismember(chan, nick);
-	    if (!m || !chan_sentkick(m)) {
-	      if (m)
-		m->flags |= SENTKICK;
+	    /* no point in kicking someone who doesn't exist or which we are
+	     * trying to kick already */
+	    if (m && !chan_sentkick(m)) {
+	      m->flags |= SENTKICK;
 	      dprintf(DP_MODE, "KICK %s %s :%s\n", chan->name, nick,
 		      CHAN_BOGUSEXEMPT);
 	    }
@@ -847,9 +861,10 @@ static void got_invite(struct chanset_t *chan, char *nick, char *from,
 	  add_mode(chan, '-', 'I', who);
 	  if (kick_bogus_invites) {
 	    m = ismember(chan, nick);
-	    if (!m || !chan_sentkick(m)) {
-	      if (m)
-		m->flags |= SENTKICK;
+	    /* no point in kicking someone who doesn't exist or which we are
+	     * trying to kick already */
+	    if (m && !chan_sentkick(m)) {
+	      m->flags |= SENTKICK;
 	      dprintf(DP_MODE, "KICK %s %s :%s\n", chan->name, nick,
 		      CHAN_BOGUSINVITE);
 	    }
