@@ -69,7 +69,7 @@ language.o: language.c
 
 main.o: main.c patch.h 
 	${CC} ${CFLAGS} \
-	'-DCCFLAGS="${CC}"' \
+	'-DCCFLAGS="${CC} ${CFLAGS}"' \
 	'-DLDFLAGS="${LD}"' \
 	'-DSTRIPFLAGS="${STRIP}"' main.c
 

@@ -1054,7 +1054,6 @@ int match_note_ignore(struct userrec *u, char *from)
   int ignoresn, i;
   
   context;
-  putlog(LOG_MISC, "*", "In match_note_ignore!");
   ignoresn = get_note_ignores(u, &ignores);
   if (!ignoresn)
     return 0;

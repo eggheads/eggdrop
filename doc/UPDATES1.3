@@ -5,6 +5,10 @@ Changes in eggdrop: (since v1.3.0)
 
 1.3.29
 Foundby   Fixedby   What....
+toot      Fabian    removed debug message in notes module
+rtc       Fabian    eggdrop.doc fixes
+          rtc       Fixes version variable not to have a leading zero if major
+                    release number <= 9.
 DVS01     guppy     added a timestamp value to the end of tcl_dcclist
           Fabian    fixed memory accounting problem in the channels module
 mho	  Fabian    rename doesn't handle cross-filesystem moves. Enhanced
@@ -27,7 +31,7 @@ okey      Fabian    fixed tcl_dumpfile
 dw	  Fabian    removed string stripping code from set_handle_chaninfo()
 	  Fabian    moved notes reject code to notes module; reorganized module
           Fabian    added notes ignore feature
-	  Peter     quotes [] were missing in AC_MSG_RESULT in configure.in.
+	  rtc       quotes [] were missing in AC_MSG_RESULT in configure.in.
           Cybah     contextnote() now works for modules.
 Charvel   poptix    nrealloc() called with too few args in non-debugmem mode.
 	  poptix    Removed two FIXME's that need not be.

@@ -468,7 +468,7 @@ at <eggdrop@sodre.net> (after subscribing).  Thanks.
     
     There are three ways to set your preferred language:
 
-    * Set the environment variable EGG_LANGFILE:
+    * Set the environment variable EGG_LANG:
       csh/tcsh:
          setenv EGG_LANG <language>
       bash/ksh:

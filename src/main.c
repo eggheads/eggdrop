@@ -532,7 +532,7 @@ int main(int argc, char **argv)
   sprintf(ver, "eggdrop v%s", egg_version);
   sprintf(version, "Eggdrop v%s  (c)1997 Robey Pointer (c)1999 Eggheads", egg_version);
   /* now add on the patchlevel (for Tcl) */
-  sprintf(&egg_version[strlen(egg_version)], " %08u", egg_numver);
+  sprintf(&egg_version[strlen(egg_version)], " %u", egg_numver);
   strcat(egg_version, egg_xtra);
   context;
 #ifdef STOP_UAC
