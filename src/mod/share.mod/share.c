@@ -1,7 +1,7 @@
 /*
  * share.c -- part of share.mod
  *
- * $Id: share.c,v 1.58 2001/12/03 03:02:41 guppy Exp $
+ * $Id: share.c,v 1.59 2001/12/22 20:25:17 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1600,7 +1600,7 @@ static int write_tmp_userfile(char *fn, struct userrec *bu, int idx)
     putlog(LOG_MISC, "*", USERF_ERRWRITE2);
   else {
     chmod(fn, 0600);		/* make it -rw------- */
-    fprintf(f, "#4v: %s -- %s -- transmit\n", ver, origbotname);
+    fprintf(f, "#4v: %s -- %s -- transmit\n", ver, botnetnick);
     ok = 1;
     for (u = bu; u && ok; u = u->next)
       ok = write_user(u, f, idx);

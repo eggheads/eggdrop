@@ -1,7 +1,7 @@
 /*
  * servmsg.c -- part of server.mod
  *
- * $Id: servmsg.c,v 1.61 2001/10/30 03:01:02 guppy Exp $
+ * $Id: servmsg.c,v 1.62 2001/12/22 20:25:16 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -392,7 +392,7 @@ static int detect_flood(char *floodnick, char *floodhost, char *from, int which)
     /* Private msg */
     simple_sprintf(h, "*!*@%s", p);
     putlog(LOG_MISC, "*", IRC_FLOODIGNORE1, p);
-    addignore(h, origbotname, (which == FLOOD_CTCP) ? "CTCP flood" :
+    addignore(h, botnetnick, (which == FLOOD_CTCP) ? "CTCP flood" :
 	      "MSG/NOTICE flood", now + (60 * ignore_time));
   }
   return 0;
@@ -443,7 +443,7 @@ static int gotmsg(char *from, char *msg)
       else
 	p = uhost;
       simple_sprintf(ctcpbuf, "*!*@%s", p);
-      addignore(ctcpbuf, origbotname, "ctcp avalanche",
+      addignore(ctcpbuf, botnetnick, "ctcp avalanche",
 		now + (60 * ignore_time));
     }
   }

@@ -2,7 +2,7 @@
  * msgcmds.c -- part of irc.mod
  *   all commands entered via /MSG
  *
- * $Id: msgcmds.c,v 1.26 2001/12/16 14:56:00 guppy Exp $
+ * $Id: msgcmds.c,v 1.27 2001/12/22 20:25:16 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -94,7 +94,7 @@ static int msg_hello(char *nick, char *h, struct userrec *u, char *p)
     putlog(LOG_MISC, "*", IRC_INIT1, handle);
     make_userfile = 0;
     write_userfile(-1);
-    add_note(handle, origbotname, IRC_INITNOTE, -1, 0);
+    add_note(handle, botnetnick, IRC_INITNOTE, -1, 0);
   } else {
     fr.global = default_flags;
 
@@ -114,7 +114,7 @@ static int msg_hello(char *nick, char *h, struct userrec *u, char *p)
 	rmspace(p1);
       }
       rmspace(s1);
-      add_note(s1, origbotname, s, -1, 0);
+      add_note(s1, botnetnick, s, -1, 0);
       if (p1 == NULL)
 	s1[0] = 0;
       else

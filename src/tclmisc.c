@@ -2,7 +2,7 @@
  * tclmisc.c -- handles:
  *   Tcl stubs for everything else
  *
- * $Id: tclmisc.c,v 1.27 2001/12/20 07:51:26 guppy Exp $
+ * $Id: tclmisc.c,v 1.28 2001/12/22 20:25:16 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -484,7 +484,7 @@ static int tcl_loadmodule STDVAR
 static int tcl_unloadmodule STDVAR
 {
   BADARGS(2, 2, " module-name");
-  Tcl_AppendResult(irp, module_unload(argv[1], origbotname), NULL);
+  Tcl_AppendResult(irp, module_unload(argv[1], botnetnick), NULL);
   return TCL_OK;
 }
 

@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  *
- * $Id: main.c,v 1.75 2001/12/07 20:14:45 guppy Exp $
+ * $Id: main.c,v 1.76 2001/12/22 20:25:16 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -815,7 +815,7 @@ int main(int argc, char **argv)
     kill(xx, SIGCHLD);		/* Meaningless kill to determine if pid
 				   is used */
     if (errno != ESRCH) {
-      printf(EGG_RUNNING1, origbotname);
+      printf(EGG_RUNNING1, botnetnick);
       printf(EGG_RUNNING2, pid_file);
       bg_send_quit(BG_ABORT);
       exit(1);
@@ -1041,7 +1041,7 @@ int main(int argc, char **argv)
 	    }
 	    if (ok) {
 	      strcpy(xx, p->name);
-	      if (module_unload(xx, origbotname) == NULL) {
+	      if (module_unload(xx, botnetnick) == NULL) {
 		f = 1;
 		break;
 	      }

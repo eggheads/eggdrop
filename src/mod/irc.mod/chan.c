@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  *
- * $Id: chan.c,v 1.77 2001/12/22 06:43:57 guppy Exp $
+ * $Id: chan.c,v 1.78 2001/12/22 20:25:16 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -285,7 +285,7 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
       else
 	putlog(LOG_MISC | LOG_JOIN, chan->dname, IRC_FLOODIGNORE4, p);
       strcpy(ftype + 4, " flood");
-      u_addban(chan, h, origbotname, ftype, now + (60 * ban_time), 0);
+      u_addban(chan, h, botnetnick, ftype, now + (60 * ban_time), 0);
       if (!channel_enforcebans(chan) && me_op(chan)) {
 	  char s[UHOSTLEN];
 	  for (m = chan->channel.member; m && m->nick[0]; m = m->next) {	  
@@ -2029,7 +2029,7 @@ static int gotmsg(char *from, char *msg)
 	   u_match_mask(chan->exempts, from)))) {
       if (ban_fun) {
 	check_exemptlist(chan, from);
-	u_addban(chan, quickban(chan, uhost), origbotname,
+	u_addban(chan, quickban(chan, uhost), botnetnick,
 		IRC_FUNKICK, now + (60 * ban_time), 0);
       }
       if (kick_fun) {
@@ -2048,7 +2048,7 @@ static int gotmsg(char *from, char *msg)
       else
 	p = uhost;
       simple_sprintf(buf2, "*!*@%s", p);
-      addignore(buf2, origbotname, "ctcp avalanche", now + (60 * ignore_time));
+      addignore(buf2, botnetnick, "ctcp avalanche", now + (60 * ignore_time));
     }
     return 0;
   }
@@ -2165,7 +2165,7 @@ static int gotnotice(char *from, char *msg)
 	   u_match_mask(chan->exempts, from)))) {
       if (ban_fun) {
 	check_exemptlist(chan, from);
-	u_addban(chan, quickban(chan, uhost), origbotname,
+	u_addban(chan, quickban(chan, uhost), botnetnick,
 		IRC_FUNKICK, now + (60 * ban_time), 0);
       }
       if (kick_fun) {
