@@ -10,9 +10,7 @@ Whats new, first read the following documents:
      tcl-commands
 
 All of these documents combined will fill you in on the latest changes to
-eggdrop in version 1.5.xx. Further down the file is changes made from the
-1.3.xx to the 1.4.xx version of eggdrop. All files are also available in
-html in doc/html/.
+eggdrop in version 1.5.xx. All files are also available in html in doc/html/.
 
 A lot of things have changed in this version so at a minimum read the
 UPDATES1.5 text file. UPDATES shows whats been added and fixed
@@ -43,18 +41,47 @@ Changes made to Eggdrop 1.5.xx from Eggdrop1.4.xx
 
 ASYNCHRONOUS DNS MODULE
 
-     Eggdrop 1.5.1 is shipped with a new module, the dns module. It
+     Eggdrop 1.5 is shipped with a new module, the dns module. It
      replaces those old dns-lookups performed by eggdrop which could
      halt the whole bot during a time-out. We also added a new tcl
      command 'dnslookup', so scripts can look up IP's and hostname now
      asynchronously, too.
 
-COMMANDS
+COMPRESS MODULE
+
+     A new module called compress was introduced to eggdrop now. It
+     provides gzip support to eggdrop (via tcl commands) and enables 
+     compressed userfile transfer.
+
+DCC COMMANDS
 
      * ".nick" was renamed to ".handle". ".nick" will still be kept
        up to version 1.8.
      * ".chnick" was renamed to ".chhandle". ".chnick" will still be kept
        up to version 1.8.
+     * .binds supports now wildcards
+
+DOCUMENTATION
+
+     A lot has happend to the documentation, nearly every file was changed
+     or modified, so keep a look at them. Also we discovered html now and
+     full html documentation is avilable now in doc/html.
+     Additionally all possible settings in eggdrop are documented in
+     doc/settings
+
+EGGDROP.CONF.DIST
+
+     eggdrop.conf.dist was replaced with three files, eggdrop.simple.conf, 
+     eggdrop.advanced.conf and eggdrop.complete.conf. This allows users to
+     choose how detailed they want to configure their bot. eggdrop.simple.conf
+     just contains the simplest configuration options, where
+     eggdrop.advanced.conf goes more into details and eggdrop.complete.conf
+     contains all possible settings.
+
+LOGFILES
+
+     Eggdrop uses strftime now to support different log files suffixes. The
+     new setting is 'logfile-suffix'
 
 NICK LENGTH
 
@@ -64,7 +91,8 @@ NICK LENGTH
 PENALTY CALCULATION
 
      Eggdrop calculates penalty points on IRCNET now, so it won't
-     flood itself off anymore.
+     flood itself off anymore. This feature also works on Efnet and
+     Undernet. Should work on other networks, too
 
 SHARE MODULE
 
@@ -75,14 +103,27 @@ SHARE MODULE
 
 TCL COMMANDS
 
+     * chnick was renamed to chhandle. The use of chnick is deprecated.
+       chnick will is still accessible if you load compat.tcl
      * All three commands to add stuff to the queus (puthelp, putserv
        and putquick) support the '-next' parameter now which pushes
        data to the front of the queues.
      * An command to calculate md5 checksums was added (md5).
      * To support the new asynch dns module, the command 'dnslookup'
-     was added.
-     * chnick was renamed to chhandle. The use of chnick is deprecated
-       chnick will is still accessible if you load compat.tcl
+       was added.
+     * Four new commands regarding exempts/invites were added
+       stickexempt/unstickexempt, stickinvite/unstickinvite
+     * New command wasop was added to check if a user had op before a
+       mode change.
+     * Three new tcl commands came with the compress module
+       compressfile/uncompressfile and iscompressed
+     * A new command to check whether the bot's nick is juped was
+       added (isjuped)
+     * binds NOTC and PART were upgraded so msg in them can be kept now.
+     * fileresend command was added to support mIRC's dcc resume feature
+
+     For more information about this changed or added tcl commands see
+     doc/tcl-commands.doc
 
 TRAFFIC ACCOUNTING
 
@@ -103,53 +144,8 @@ TRANSFER / FILESYS MODULE
      to older versions after this though, so maybe you'll want to make
      a backup first.
 
-Changes made to Eggdrop 1.4.xx from Eggdrop1.3.xx
-
-SHARING
-
-     Sharing has changed a little. You will notice that a resync
-     buffer is kept for share bots when they disconnect. This allows
-     for them not to have to send the entire userfile again when they
-     reconnect. This is a much more effient approach to syncing the
-     user files.
-
-BOTFLAGS
-
-     Bot flags have changed. It is recommended that you read the
-     BOTNET document to learn more about linking bots. Major changes
-     in how you configure a passive and aggressive bot.
-
-USERFLAGS
-
-     User flags have changed. You still have the basic flags but
-     others have been added. Some changes to this are that if someone
-     has a global +n they will automatically be given all the global
-     flags available. You will also notice there are no more capital
-     letters; each flag has its own unique letter. An example is the B
-     flag, in previous versions, it stood for a botnet master. The new
-     flag is t. For more information on these changes, see the .help
-     whois for a list of all flags. 1.3.24 introduces a new flag for
-     +stopnethack procedure flexibility: +w.
-
-LANGUAGES
-
-     Almost everthing the bot says now is in language file. This
-     should allow the bot to be more versatile for other people that
-     do not speak english. As soon as we start getting the
-     translations in there will be a directory on ftp.eggheads.org
-     that will contain ready to use language files. Look for it real
-     soon.
-
-COMMANDS
-
-     .voice and .devoice commands where added in dcc chat. This will
-     voice a user on a channel if the bot is oped. Likewise for the
-     .devoice command.
-     .email is now support in userinfo1.0.tcl so if you want emails to
-     work, use this :)
-
   ------------------------------------------------------------------------
 (c) 1997 Robey Pointer
-(c) 2000 Eggheads Development Team
+(c) 1999,2000 Eggheads Development Team
 
 
