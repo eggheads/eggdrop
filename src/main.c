@@ -7,7 +7,7 @@
  * 
  * dprintf'ized, 15nov1995
  * 
- * $Id: main.c,v 1.42 2000/03/26 17:11:37 guppy Exp $
+ * $Id: main.c,v 1.43 2000/04/12 02:15:34 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -76,8 +76,8 @@ extern jmp_buf alarmret;
  * modified versions of this bot.
  */
 
-char egg_version[1024] = "1.4.3";
-int egg_numver = 1040300;
+char egg_version[1024] = "1.4.4";
+int egg_numver = 1040400;
 
 char notify_new[121] = "";	/* person to send a note to for new users */
 int default_flags = 0;		/* default user flags and */
