@@ -384,21 +384,8 @@ void chanprog()
   admin[0] = 0;
   helpdir[0] = 0;
   tempdir[0] = 0;
-  for (i = 0; i < max_logs; i++) {
-    if (logs[i].filename != NULL) {
-      nfree(logs[i].filename);
-      logs[i].filename = NULL;
-    }
-    if (logs[i].chname != NULL) {
-      nfree(logs[i].chname);
-      logs[i].chname = NULL;
-    }
-    if (logs[i].f != NULL) {
-      fclose(logs[i].f);
-      logs[i].f = NULL;
-    }
-    logs[i].mask = 0;
-  }
+  for (i = 0; i < max_logs; i++)
+    logs[i].flags |= LF_EXPIRING;
   conmask = 0;
   /* turn off read-only variables (make them write-able) for rehash */
   protect_readonly = 0;
@@ -406,6 +393,24 @@ void chanprog()
   context;
   if (!readtclprog(configfile))
     fatal(MISC_NOCONFIGFILE, 0);
+  for (i = 0; i < max_logs; i++) {
+    if (logs[i].flags & LF_EXPIRING) {
+      if (logs[i].filename != NULL) {
+        nfree(logs[i].filename);
+        logs[i].filename = NULL;
+      }
+      if (logs[i].chname != NULL) {
+        nfree(logs[i].chname);
+        logs[i].chname = NULL;
+      }
+      if (logs[i].f != NULL) {
+        fclose(logs[i].f);
+        logs[i].f = NULL;
+      }
+      logs[i].mask = 0;
+      logs[i].flags = 0;
+    }
+  }
   /* We should be safe now */
   call_hook(HOOK_REHASH);
   context;

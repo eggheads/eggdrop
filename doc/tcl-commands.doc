@@ -877,8 +877,8 @@ GLOBAL VARIABLES:
 
   numversion
     current numeric bot version (ie: "1010201");
-      Numerical version is "MMNNRRPP" where:
-        MM is the Major release number
+      Numerical version is "MNNRRPP" where:
+        M  is the Major release number
         NN is the Minor release number
         RR is the sub-release number
         PP is the patch level for that sub-release

@@ -1716,7 +1716,7 @@ static void cmd_chat(struct userrec *u, int idx, char *par)
 	}
       } else
 	newchan = atoi(par);
-      if ((newchan < 0) || (newchan > 199999)) {
+      if ((newchan < 0) || (newchan > 99999)) {
 	dprintf(idx, "Channel # out of range: must be between 0 and 99999.\n");
 	return;
       }

@@ -100,6 +100,8 @@ void init_misc()
     /*        Added by cybah  */
     logs[last].szLast[0] = 0;
     logs[last].Repeats = 0;
+    /*        Added by rtc  */
+    logs[last].flags = 0;
   }
 }
 

@@ -423,7 +423,7 @@ int open_listen(int *port)
 
   if (firewall[0]) {
     /* FIXME: can't do listen port thru firewall yet */
-    putlog(LOG_ALL, "*", "!! Cant open a listen port (you are using a firewall)\n");
+    putlog(LOG_ALL, "*", "!! Cant open a listen port (you are using a firewall)");
     return -1;
   }
   sock = getsock(SOCK_LISTEN);

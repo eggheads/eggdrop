@@ -36,3 +36,10 @@ Some little tricks that you may or may not know about...
 			uses *!ident@*.host.com
 		.adduser !drummer
 			uses *!ident@some.host.com
+
+* If you don't want your logfiles to be deleted after two days and 
+  don't want the bot to create a new logfile each new day, then set 
+  'keep-all-logs' to 0 and 'switch-logfiles-at' to 2500 in your bot 
+  config file to make it keeping one logfile all the time. However this 
+  is not recommended on high traffic channels.
+

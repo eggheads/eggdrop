@@ -346,6 +346,7 @@ typedef struct {
   char szLast[MAX_LOG_LINE + 1];	/* for 'Last message repeated n times'
 					 * stuff in misc.c/putlog() <cybah> */
   int Repeats;			/* number of times szLast has been repeated */
+  unsigned int flags;		/* other flags <rtc> */
   FILE *f;			/* existing file */
 } log_t;
 
@@ -374,6 +375,8 @@ typedef struct {
 #define LOG_BOTNET 0x200000	/* t   botnet traffic */
 #define LOG_BOTSHARE 0x400000	/* h   share traffic */
 #define LOG_ALL    0x7fffff	/* (dump to all logfiles) */
+/* internal logfile flags */
+#define LF_EXPIRING 0x000001	/* Logfile will be closed soon */
 
 #define FILEDB_HIDE     1
 #define FILEDB_UNHIDE   2

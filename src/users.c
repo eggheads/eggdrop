@@ -303,7 +303,7 @@ static void restore_chanban(struct chanset_t *chan, char *host)
       }
     }
   }
-  putlog(LOG_MISC, "*", "*** Malformed banline for %s.\n",
+  putlog(LOG_MISC, "*", "*** Malformed banline for %s.",
 	 chan ? chan->name : "global_bans");
 }
 
@@ -360,7 +360,7 @@ static void restore_chanexempt (struct chanset_t * chan, char * host)
       } 
     }
   }
-  putlog(LOG_MISC,"*","*** Malformed exemptline for %s.\n",
+  putlog(LOG_MISC,"*","*** Malformed exemptline for %s.",
 	 chan?chan->name:"global_exempts");
 }
 
@@ -417,7 +417,7 @@ static void restore_chaninvite (struct chanset_t * chan, char * host)
       }
     }
   }
-  putlog(LOG_MISC,"*","*** Malformed inviteline for %s.\n",
+  putlog(LOG_MISC,"*","*** Malformed inviteline for %s.",
 	 chan?chan->name:"global_invites");
 }
 
@@ -483,7 +483,7 @@ static void restore_ignore(char *host)
       return;
     }
   }
-  putlog(LOG_MISC, "*", "*** Malformed ignore line.\n");
+  putlog(LOG_MISC, "*", "*** Malformed ignore line.");
 }
 
 void tell_user(int idx, struct userrec *u, int master)

@@ -189,14 +189,7 @@ case $system in
     SHLIB_LD="ld -b"
     need_dl=0
     ;;
-  IRIX64)
-    echo "$ac_t""you are cursed with IRIX" 1>&6
-    IRIX=yes 
-    STRIP=   
-    need_dl=0
-    DEFAULT_MAKE=static
-    ;;
-  IRIX)
+  IRIX|IRIX64)
     AC_MSG_RESULT(you are cursed with IRIX)
     IRIX=yes
     STRIP=
@@ -243,8 +236,8 @@ else
 fi
 
 AC_C_BIGENDIAN
-AC_CHECK_SIZEOF(long)
-AC_CHECK_SIZEOF(int)
+AC_CHECK_SIZEOF(long,0)
+AC_CHECK_SIZEOF(int,0)
 
 dnl Checks for header files.
 AC_HEADER_DIRENT

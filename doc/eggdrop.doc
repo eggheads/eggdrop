@@ -12,6 +12,7 @@ Currently completed sections are:
 (9) Language support
 
 Appendices:
+(Y) Bugs and bug reporting
 (Z) Weird Messages That Get Logged
 
 
@@ -505,6 +506,19 @@ at <eggdrop@sodre.net> (after subscribing).  Thanks.
        setenv EGG_LANGDIR <directory> 
     bash/ksh:
        export EGG_LANGDIR=<directory>
+
+
+
+(Y) BUGS AND BUG REPORTING
+
+    Although we try hard to remove all bugs, there are probably a few bugs
+    left in the eggdrop. Sometimes this may even lead to a complete crash
+    of the bot and make a restart necessary. Usually, if a crash occurs,
+    a file named DEBUG is created in the bots directory, containing valuable
+    information for the development team to fix that bug.
+
+    If you encounter a bug or even a crash, please read doc/BUG-REPORT
+    and follow the instructions mentioned therein.
 
 
 (Z) WEIRD MESSAGES THAT GET LOGGED

@@ -758,7 +758,7 @@ static int got433(char *from, char *msg)
   return 0;
 }
 
-/* 437 : nickname juped (Euronet) */
+/* 437 : nickname juped (IRCnet) */
 static int got437(char *from, char *msg)
 {
   char *s;
@@ -776,7 +776,7 @@ static int got437(char *from, char *msg)
       }
     }
   } else if (server_online) {
-    putlog(LOG_MISC, "*", "NICK IS JUPED: %s (keeping '%s').\n", s, botname);
+    putlog(LOG_MISC, "*", "NICK IS JUPED: %s (keeping '%s').", s, botname);
   } else {
     putlog(LOG_MISC, "*", "%s: %s", IRC_BOTNICKJUPED, s);
     gotfake433(from);

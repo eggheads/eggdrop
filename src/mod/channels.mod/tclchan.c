@@ -1105,11 +1105,11 @@ static int tcl_channel_modify(Tcl_Interp * irp, struct chanset_t *chan,
     if (!channel_inactive(chan) && !(chan->status & (CHAN_ACTIVE + CHAN_PEND)))
       dprintf(DP_SERVER, "JOIN %s %s\n", chan->name, chan->key_prot);
   }
-  if ((oldstatus ^ chan->status) & (CHAN_ENFORCEBANS+CHAN_OPONJOIN+CHAN_BITCH+CHAN_AUTOVOICE)) {
+  if ((oldstatus ^ chan->status) & (CHAN_ENFORCEBANS+CHAN_OPONJOIN+CHAN_BITCH+CHAN_AUTOVOICE))
     if ((me = module_find("irc", 0, 0)))
       (me->funcs[IRC_RECHECK_CHANNEL])(chan, 1);
-  }
-  if (x > 0) { return TCL_ERROR; }
+  if (x > 0) 
+    return TCL_ERROR;
   return TCL_OK;
 }
 

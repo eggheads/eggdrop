@@ -65,7 +65,7 @@ set timezone "EST"
 #   b  information about bot linking and userfile sharing
 #   c  commands people use (via msg or dcc)
 #   x  file transfers and file-area commands
-#   r  (if user-console-r defined) EVERYTHING sent to the bot by the server
+#   r  (if use-console-r defined) EVERYTHING sent to the bot by the server
 #   o  other: misc info, errors -- IMPORTANT STUFF
 #   w  wallops: msgs between IRCops (be sure to set the bot +w in init-server)
 # There are others, but you probably shouldnt log them, it'd be rather
@@ -251,11 +251,6 @@ set resolve-timeout 15
 
 # temporary ignores will last how many minutes?
 set ignore-time 15
-
-# [0/1] enable logging of all information sent *to* a server, via console mode 'v'
-# NOTE: This is a large security hole, allowing people to see passwords.
-# This is now restricted to +n users only. Please choose your owners with care.
-set debug-output 0
 
 # this setting affects what part of the hour the 'hourly' calls occur
 # on the bot, this includes such things as note notifying,
@@ -710,6 +705,11 @@ set check-stoned 1
 #       messages to the bot containing passwords
 # This is now restricted to +n users only. Please choose your owners with care.
 set use-console-r 0
+
+# [0/1] enable logging of all information sent *to* a server, via console mode 'v'
+# NOTE: This is a large security hole, allowing people to see passwords.
+# This is now restricted to +n users only. Please choose your owners with care.
+set debug-output 0
 
 # [0/1] exit if the server sends a ERROR message?
 set serverror-quit 1

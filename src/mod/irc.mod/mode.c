@@ -164,22 +164,22 @@ static void real_add_mode(struct chanset_t *chan,
       return;
 
     if (plus == '-' && mode == 'o') {
-      if ((mx->flags & SENTDEOP) || !chan_hasop(mx))
+      if (chan_sentdeop(mx) || !chan_hasop(mx))
 	return;
       mx->flags |= SENTDEOP;
     }
     if (plus == '+' && mode == 'o') {
-      if ((mx->flags & SENTOP) || chan_hasop(mx))
+      if (chan_sentop(mx) || chan_hasop(mx))
 	return;
       mx->flags |= SENTOP;
     }
     if (plus == '-' && mode == 'v') {
-      if ((mx->flags & SENTDEVOICE) || !chan_hasvoice(mx))
+      if (chan_sentdevoice(mx) || !chan_hasvoice(mx))
 	return;
       mx->flags |= SENTDEVOICE;
     }
     if (plus == '+' && mode == 'v') {
-      if ((mx->flags & SENTVOICE) || chan_hasvoice(mx))
+      if (chan_sentvoice(mx) || chan_hasvoice(mx))
 	return;
       mx->flags |= SENTVOICE;
     }
@@ -345,6 +345,11 @@ static void got_op(struct chanset_t *chan, char *nick, char *from,
     dprintf(DP_MODE, "WHO %s\n", who);
     return;
   }
+  /* flags need to be set correctly right from the beginning now, so that
+   * add_mode() doesn't get irritated  (Fabian) */
+  m->flags |= CHANOP;
+  m->flags &= ~SENTOP;
+
   if (!m->user) {
     simple_sprintf(s, "%s!%s", m->nick, m->userhost);
     u = get_user_by_host(s);
@@ -399,8 +404,7 @@ static void got_op(struct chanset_t *chan, char *nick, char *from,
       m->flags &= ~FAKEOP;
     }
   }
-  m->flags |= CHANOP;
-  m->flags &= ~(SENTOP | WASOP);
+  m->flags &= ~WASOP;
   if (check_chan)
     recheck_channel(chan, 1);
 }
@@ -411,6 +415,7 @@ static void got_deop(struct chanset_t *chan, char *nick, char *from,
   memberlist *m;
   char s[UHOSTLEN], s1[UHOSTLEN];
   struct userrec *u;
+  int had_op;
 
   m = ismember(chan, who);
   if (!m) {
@@ -418,6 +423,10 @@ static void got_deop(struct chanset_t *chan, char *nick, char *from,
     dprintf(DP_MODE, "WHO %s\n", who);
     return;
   }
+  had_op = chan_hasop(m);
+  /* flags need to be set correctly right from the beginning now, so that
+   * add_mode() doesn't get irritated  (Fabian) */
+  m->flags &= ~(CHANOP | SENTDEOP | FAKEOP | WASOP);
 
   simple_sprintf(s, "%s!%s", m->nick, m->userhost);
   simple_sprintf(s1, "%s!%s", nick, from);
@@ -434,7 +443,7 @@ static void got_deop(struct chanset_t *chan, char *nick, char *from,
     else if (chan_op(victim) || chan_friend(victim))
       ok = 0;
     if (!ok && !match_my_nick(nick) &&
-	rfc_casecmp(who, nick) && chan_hasop(m) &&
+       rfc_casecmp(who, nick) && had_op &&
 	!match_my_nick(who)) {	/* added 25mar1996, robey */
       /* reop? */
       /* let's break it down home boy... */
@@ -486,8 +495,6 @@ static void got_deop(struct chanset_t *chan, char *nick, char *from,
       putlog(LOG_MODES, chan->name, "TS resync deopped me on %s :(",
 	     chan->name);
   }
-  m->flags &= ~(FAKEOP | CHANOP | SENTDEOP | WASOP);
-
   if (nick[0])
     maybe_revenge(chan, s1, s, REVENGE_DEOP);
 }
