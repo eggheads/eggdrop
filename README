@@ -1,5 +1,5 @@
 README
-Last revised: December 29, 2001
+Last revised: January 12, 2002
   ________________________________________________________________________
 
      Please at least SKIM this document before asking questions. In fact,
@@ -61,41 +61,49 @@ Last revised: December 29, 2001
 
      (1) WHAT IS EGGDROP?
 
-          Eggdrop is an IRC bot, written in C. If you don't know what
-          IRC is, this is probably not whatever you're looking for!
-          being a bot, sits on a channel and takes protective measures 
-          to keep the channel from being taken over (in the few ways 
-          that anything can), to recognize banished users or sites and 
-          reject them, to recognize privileged users and let them gain 
-          ops, etc.
+          Eggdrop is the world's most popular Internet Relay Chat (IRC) 
+          bot; it is freely distributable under the GNU General Public
+          License (GPL). Eggdrop is a feature rich program designed to be
+          easily used and expanded upon by both novice and advanced IRC
+          users on a variety of hardware and software platforms.
 
-          One of the more unique features of Eggdrop is its "party line", 
-          accessible via DCC chat and telnet, which allows you to talk 
-          with other people lag-free. Consider it a multi-way DCC chat, 
-          or a miniature IRC (complete with channels). You can link up 
-          with other bots and expand the party line until it actually 
-          becomes something very much like IRC, in fact.
+          An IRC bot is a program that sits on an IRC channel and preforms
+          automated tasks while looking just like a normal user on the 
+          channel. Some of these functions include protecting the channel
+          from abuse, allowing privileged users to gain op or voice status,
+          logging channel events, providing information, hosting games, etc.
 
-          Eggdrop is always being improved and adjusted because there
-          are bugs to be fixed and features to be added (if the users
-          demand them, and they make actually sense). In fact, it
-          existed for several years as v0.7 - v0.9 before finally
-          going 1.0. This version of Eggdrop is part of the 1.6 tree.
-          A valiant effort has been made to chase down and destroy
-          bugs.
+          One of the features that makes eggdrop stand out from other bots 
+          is module and Tcl scripting support. With scripts and modules, 
+          you can make the bot preform almost any task you want. They can
+          do anything from preventing floods to greeting users and banning
+          advertisers from channels.
 
-          This README file contains information about how to get
-          Eggdrop, how to quickly compile the bot, what you may need
-          to do when upgrading from older versions, a list of
-          frequently asked questions about compiling, how to set up a
-          crontab, some boring legal stuff, info about the mailing
-          list (a great place to ask questions, and a good place to
-          report bugs also), some basics about CVS usage and some
-          channels where you might get help with Eggdrop.
+          You can also link multiple Eggdrop bots together to form a botnet.
+          This can allow bots to op each other securely, control floods 
+          efficiently, and even link channels across multiple IRC networks.
+          It also allows the Eggdrops share user lists, ban lists, 
+          exempt/invite lists, and ignore lists with other bots if userfile 
+          sharing is enabled. This allows users to have the same access on
+          every bot on your botnet. It also allows the bots to distribute 
+          tasks such as opping and banning users. See doc/BOTNET for
+          information on setting up a botnet.
 
-          The preliminary documentation is in "eggdrop.doc" and is
-          intended to be read after you have Eggdrop compiled and set
-          up.
+          Eggdrop is always being improved and adjusted because there are
+          bugs to be fixed and features to be added (if the users demand 
+          them, and they make actually sense). In fact, it existed for 
+          several years as v0.7 - v0.9 before finally going 1.0. This 
+          version of Eggdrop is part of the 1.6 tree. A valiant effort 
+          has been made to chase down and destroy bugs.
+
+          This README file contains information about how to get Eggdrop,
+          how to quickly compile the bot, what you may need to do when
+          upgrading from older versions, a list of frequently asked 
+          questions about compiling, how to set up a crontab, some boring
+          legal stuff, info about the mailing list (a great place to ask
+          questions, and a good place to report bugs, also), some basics 
+          about CVS usage, and some channels where you might get help with
+          Eggdrop.
 
 
      (2) HOW TO GET EGGDROP
@@ -295,7 +303,7 @@ Last revised: December 29, 2001
                by typing 'make static'. You can also try to compile dynamic 
                modules on a static-only system by using 'make eggdrop'.
 
-               8.1 DO I STILL NEED TO 'loadmodule' modules ???
+               8.1 DO I STILL NEED TO 'loadmodule' MODULES ???
 
                YES, when you compile statically, all the modules are linked 
                into the main executable. HOWEVER, they are not enabled until 
@@ -321,7 +329,7 @@ Last revised: December 29, 2001
           11. WHEN I 'tclsh scripts/weed <userfile> c' IT BARFS CHUNKS
           AT ME AND DIES :(
 
-               UPGRADE YOUR TCL, you are probably using Tcl 7.5 or earlier. 
+               UPGRADE YOUR TCL. You are probably using Tcl 7.5 or earlier. 
                Some of the commands in weed require Tcl7.6 to run, so either
                upgrade it or remove the offending lines from you userfile 
                manually (those starting with '.' generally) and accept the
@@ -363,8 +371,8 @@ Last revised: December 29, 2001
                If everything else fails, try to install Tcl to your home dir
                ;) (Suggested by dw@Undernet, dw@lixom.nu)
 
-          13. I get a whole pile of "Unresolved symbol 'Tcl_AppendResult'"
-              (or some other symbol) when I try to load a modules.
+          13. I GET A WHOLE PILE OF "Unresolved symbol 'Tcl_AppendResult'"
+              (OR SOME OTHER SYMBOL) WHEN I TRY TO LOAD A MODULES.
 
                POSSIBILITY A: See section 12.
 
@@ -390,7 +398,7 @@ Last revised: December 29, 2001
           Eggdrop has become more stable with time, thanks mostly to people
           reporting bug details and helping find places where it crashes.
           However, there are still a -few- places where things aren't
-          perfect. Few, if any, things in life are.</p>
+          perfect. Few, if any, things in life are.
 
           Also, most systems go down from time to time. These things cause
           your bot to disappear from IRC, and you have to restart it.

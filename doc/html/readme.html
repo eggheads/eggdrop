@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: readme.html,v 1.19 2002/01/03 03:25:42 guppy Exp $ -->
+<!-- $Id: readme.html,v 1.20 2002/01/16 03:17:59 guppy Exp $ -->
 
 <html>
   <head>
@@ -80,19 +80,33 @@
     <p><a name="sect2"></a>2. <strong>What is Eggdrop?</strong></p>
 
     <blockquote>
-      <p>Eggdrop is an IRC bot, written in C. If you don&#39;t know what IRC
-      is, this is probably not whatever you&#39;re looking for. Eggdrop,
-      being a bot, sits on a channel and takes protective measures to keep
-      the channel from being taken over (in the few ways that anything can),
-      to recognize banished users or sites and reject them, to recognize
-      privileged users and let them gain ops, etc.</p>
+      <p>Eggdrop is the world&#39;s most popular Internet Relay Chat (IRC)
+      bot; it is freely distributable under the GNU General Public
+      License (GPL). Eggdrop is a feature rich program designed to be
+      easily used and expanded upon by both novice and advanced IRC
+      users on a variety of hardware and software platforms.</p>
 
-      <p>One of the more unique features of Eggdrop is its &quot;party
-      line&quot;, accessible via DCC chat and telnet, which allows you to
-      talk with other people lag-free. Consider it a multi-way DCC chat, or
-      a miniature IRC (complete with channels). You can link up with other
-      bots and expand the party line until it actually becomes something
-      very much like IRC, in fact.</p>
+      <p>An IRC bot is a program that sits on an IRC channel and preforms
+      automated tasks while looking just like a normal user on the 
+      channel. Some of these functions include protecting the channel
+      from abuse, allowing privileged users to gain op or voice status,
+      logging channel events, providing information, hosting games, etc.</p>
+
+      <p>One of the features that makes eggdrop stand out from other bots 
+      is module and Tcl scripting support. With scripts and modules, 
+      you can make the bot preform almost any task you want. They can
+      do anything from preventing floods to greeting users and banning
+      advertisers from channels.</p>
+
+      <p>You can also link multiple Eggdrop bots together to form a botnet.
+      This can allow bots to op each other securely, control floods 
+      efficiently, and even link channels across multiple IRC networks.
+      It also allows the Eggdrops share user lists, ban lists, 
+      exempt/invite lists, and ignore lists with other bots if userfile 
+      sharing is enabled. This allows users to have the same access on
+      every bot on your botnet. It also allows the bots to distribute 
+      tasks such as opping and banning users. See doc/BOTNET for
+      information on setting up a botnet.<.p>
 
       <p>Eggdrop is always being improved and adjusted because there are
       bugs to be fixed and features to be added (if the users demand them,
@@ -101,13 +115,14 @@
       part of the 1.6 tree. A valiant effort has been made to chase down and
       destroy bugs.</p>
 
-      <p>This Readme file contains information about how to get Eggdrop, how
-      to quickly compile the bot, what you may need to do when upgrading from
-      older versions, a list of frequently asked questions about compiling,
-      how to set up a crontab, some boring legal stuff, info about the
-      mailing list (a great place to ask questions, and a good place to
-      report bugs also), some basics about CVS usage and some channels where
-      you might get help with Eggdrop.</p>
+      <p>This readme file contains information about how to get Eggdrop,
+      how to quickly compile the bot, what you may need to do when
+      upgrading from older versions, a list of frequently asked 
+      questions about compiling, how to set up a crontab, some boring
+      legal stuff, info about the mailing list (a great place to ask
+      questions, and a good place to report bugs, also), some basics 
+      about CVS usage, and some channels where you might get help with
+      Eggdrop.</p>
 
       <p>The preliminary documentation is in &quot;eggdrop.doc&quot; and is
       intended to be read after you have Eggdrop compiled and set up.</p>
@@ -455,9 +470,9 @@
             Undernet
 
             <ul>
-              <li><a href="chat/undernet_eggdrop.chat">#eggdrop</a></li>
+              <li><a href="irc://us.undernet.org/eggdrop">#eggdrop</a></li>
 
-              <li><a href="chat/undernet_eggheads.chat">#eggheads</a></li>
+              <li><a href="irc://us.undernet.org/eggheads">#eggheads</a></li>
             </ul>
           </li>
 
@@ -465,9 +480,9 @@
             EFnet
 
             <ul>
-              <li><a href="chat/efnet_egghelp.chat">#egghelp</a></li>
+              <li><a href="irc://irc.prison.net/egghelp">#egghelp</a></li>
 
-              <li><a href="chat/efnet_eggfaq.chat">#eggfaq</a></li>
+              <li><a href="irc://irc.prison.net/eggfaq">#eggfaq</a></li>
             </ul>
           </li>
 
@@ -475,7 +490,7 @@
             IRCnet
 
             <ul>
-              <li><a href="chat/ircnet_eggdrop.chat">#eggdrop</a></li>
+              <li><a href="irc://irc.stealth.net/eggdrop">#eggdrop</a></li>
             </ul>
           </li>
 
@@ -483,7 +498,7 @@
             DALnet
 
             <ul>
-              <li><a href="chat/dalnet_eggdrop.chat">#eggdrop</a></li>
+              <li><a href="irc://irc.dal.net/eggdrop">#eggdrop</a></li>
             </ul>
           </li>
         </ul>
