@@ -1,4 +1,4 @@
-$Id: tcl-commands.doc,v 1.110 2004/05/27 01:30:10 wcc Exp $
+$Id: tcl-commands.doc,v 1.111 2004/06/02 06:58:58 wcc Exp $
 
 Eggdrop Tcl Commands
 Last revised: January 12, 2004
@@ -12,7 +12,7 @@ of the normal Tcl built-in commands are still there, of course, but you
 can also use these to manipulate features of the bot. They are listed
 according to category.
 
-This list is accurate for Eggdrop v1.6.16. Scripts written for v1.3/v1.4
+This list is accurate for Eggdrop v1.6.17. Scripts written for v1.3/v1.4
 series of Eggdrop should probably work with a few minor modifications
 depending on the script. Scripts which were written for  v0.9, v1.0, v1.1
 or v1.2 will probably not work without modification. Commands which have
@@ -2073,7 +2073,7 @@ marked with vertical bars (|) on the left.
              prerestart      - called just before a restart
              logfile         - called when the logs are switched daily
              loaded          - called when the bot is done loading
-|            userfile-loaded - called after userfile has been loaded
+             userfile-loaded - called after userfile has been loaded
 
              connect-server    - called just before we connect to an IRC server
              init-server       - called when we actually get on our IRC server
