@@ -458,6 +458,42 @@ at <eggdrop@sodre.net> (after subscribing).  Thanks.
     to their category.  Be sure to check out the help pages for those
     commands for more info.
 
+
+(9) LANGUAGE SUPPORT
+
+    Large parts of what eggdrop outputs have been translated to other
+    languages. At the moment we have English, French and German; however, 
+    English is loaded by default.
+    
+    There are three ways to set your preferred language:
+
+    * Set the environment variable EGG_LANGFILE:
+      csh/tcsh:
+         setenv EGG_LANGFILE <file>
+      bash/ksh:
+         export EGG_LANGFILE=<file>
+      This takes effect right from the beginning.
+
+    * Add 'language <file>' to the bot's configuration file.
+      This takes effect as soon as the command is processed.
+
+    * Type '.language <file>' 
+      This takes effect as soon as the command is processed.
+
+    <file> is either "core.english", "core.french", "core.german" or
+    possibly another language file.
+
+
+    The default language directory is "./language". If you want to specify
+    another directory just set the environment variable EGG_LANGDIR
+    apropriately.
+
+    csh/tcsh:
+       setenv EGG_LANGDIR <directory> 
+    bash/ksh:
+       export EGG_LANGDIR=<directory>
+
+
 (Z) WEIRD MESSAGES THAT GET LOGGED
 
     (!) timer drift -- spun N minutes

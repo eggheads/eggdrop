@@ -44,6 +44,9 @@
 
 #define NICKLEN		NICKMAX + 1
 #define NOTENAMELEN     ((HANDLEN * 2) + 1)
+
+#define LANGDIR	"./language"	/* language file directory */
+
 /* have to use a weird way to make the compiler error out cos not all
  * compilers support #error or error */
 #if !HAVE_VSPRINTF

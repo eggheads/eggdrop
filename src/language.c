@@ -72,15 +72,16 @@ static int add_message(int lidx, char *ltext)
 int cmd_loadlanguage(struct userrec *u, int idx, char *par)
 {
   FILE *FLANG;
-  char langfile[100];
-  int lidx;
-  char *ltext = NULL;
   char lbuf[512];
+  char *langfile = NULL;
+  char *ltext = NULL;
+  char *ctmp, *ctmp1;
+  char *ldir;
+  int lidx;
   int lline = 0;
   int lskip;
   int ltexts = 0;
   int ladd = 0, lupdate = 0;
-  char *ctmp, *ctmp1;
 
   context;
   langloaded = 0;
@@ -90,14 +91,24 @@ int cmd_loadlanguage(struct userrec *u, int idx, char *par)
   }
   if (idx != DP_LOG)
     putlog(LOG_CMDS, "*", "#%s# language %s", dcc[idx].nick, par);
-  if (par[0] == '.' && par[0] == '/')
+  if (par[0] == '.' && par[0] == '/') {
+    langfile = nmalloc(strlen(par) + 1);
     strcpy(langfile, par);
-  else
-    sprintf(langfile, "./language/%s.lang", par);
+  } else {
+    ldir = getenv("EGG_LANGDIR");
+    if (ldir) {
+      langfile = nmalloc(strlen(ldir) + strlen(par) + 7);
+      sprintf(langfile, "%s/%s.lang", ldir, par);
+    } else {
+      langfile = nmalloc(strlen(LANGDIR) + strlen(par) + 7);
+      sprintf(langfile, "%s/%s.lang", LANGDIR, par);
+    }
+  }
 
   FLANG = fopen(langfile, "r");
   if (FLANG == NULL) {
     dprintf(idx, "Can't load language module: %s\n", langfile);
+    nfree(langfile);
     return 0;
   }
   lskip = 0;
@@ -156,6 +167,7 @@ int cmd_loadlanguage(struct userrec *u, int idx, char *par)
 	 ltexts, lline, langfile);
   putlog(LOG_MISC, "*", "LANG: %d adds, %d updates to message table",
 	 ladd, lupdate);
+  nfree(langfile);
   langloaded = 1;
   return 0;
 }
