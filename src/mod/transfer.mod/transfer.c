@@ -64,9 +64,9 @@ static fileq_t *fileq = NULL;
  * Features:  Forward, case-sensitive, ?, *                               *
  * Best use:  File mask matching, as it is case-sensitive                 *
  *========================================================================*/
-static int wild_match_file(register unsigned char *m, register unsigned char *n)
+static int wild_match_file(register char *m, register char *n)
 {
-  unsigned char *ma = m, *lsm = 0, *lsn = 0;
+  char *ma = m, *lsm = 0, *lsn = 0;
   int match = 1;
   register unsigned int sofar = 0;
 
@@ -451,7 +451,8 @@ static void eof_dcc_send(int idx)
 
 static void dcc_get(int idx, char *buf, int len)
 {
-  unsigned char bbuf[4], xnick[NICKLEN], *bf;
+  char xnick[NICKLEN];
+  unsigned char bbuf[4], *bf;
   unsigned long cmp, l;
   int w = len + dcc[idx].u.xfer->sofar, p = 0;
 

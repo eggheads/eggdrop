@@ -77,7 +77,7 @@ static p_tcl_bind_list H_wall, H_raw, H_notc, H_msgm, H_msg, H_flud,
  H_ctcr, H_ctcp;
 
 static void empty_msgq(void);
-static void next_server(int *, char *, int *, char *);
+static void next_server(int *, char *, unsigned int *, char *);
 static char *get_altbotnick(void);
 
 #include "servmsg.c"
@@ -357,7 +357,7 @@ static void clearq(struct server_list *xx)
 
 /* set botserver to the next available server
  * -> if (*ptr == -1) then jump to that particular server */
-static void next_server(int *ptr, char *serv, int *port, char *pass)
+static void next_server(int *ptr, char *serv, unsigned int *port, char *pass)
 {
   struct server_list *x = serverlist;
   int i = 0;
