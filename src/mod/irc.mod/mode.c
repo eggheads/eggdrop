@@ -4,7 +4,7 @@
  *   channel mode changes and the bot's reaction to them
  *   setting and getting the current wanted channel modes
  *
- * $Id: mode.c,v 1.43 2001/06/30 06:29:56 guppy Exp $
+ * $Id: mode.c,v 1.44 2001/07/06 16:36:41 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -981,11 +981,8 @@ static int gotmode(char *from, char *origmsg)
 	    if (((reversing) &&
 		 !(chan->mode_pls_prot & CHANLIMIT)) ||
 		((chan->mode_mns_prot & CHANLIMIT) &&
-		 !glob_master(user) && !chan_master(user))) {
-	      if (chan->channel.maxmembers == 0)
-		add_mode(chan, '+', 'l', "23");		/* wtf? 23 ??? */
+		 !glob_master(user) && !chan_master(user))) 
 	      add_mode(chan, '-', 'l', "");
-	    }
 	    if ((chan->limit_prot != chan->channel.maxmembers) &&
 		(chan->mode_pls_prot & CHANLIMIT) &&
 		(chan->limit_prot != 0) &&	/* arthur2 */
