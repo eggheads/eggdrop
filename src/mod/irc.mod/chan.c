@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  *
- * $Id: chan.c,v 1.82 2002/02/19 22:19:24 guppy Exp $
+ * $Id: chan.c,v 1.83 2002/02/24 16:50:14 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1262,6 +1262,11 @@ static int got471(char *from, char *msg)
   if (chan) {
     putlog(LOG_JOIN, chan->dname, IRC_CHANFULL, chan->dname);
     check_tcl_need(chan->dname, "limit");
+
+    chan = findchan(chname); 
+    if (!chan)
+      return 0;
+
     if (chan->need_limit[0])
       do_tcl("need-limit", chan->need_limit);
   } else
@@ -1292,6 +1297,11 @@ static int got473(char *from, char *msg)
   if (chan) {
     putlog(LOG_JOIN, chan->dname, IRC_CHANINVITEONLY, chan->dname);
     check_tcl_need(chan->dname, "invite");
+
+    chan = findchan(chname); 
+    if (!chan)
+      return 0;
+
     if (chan->need_invite[0])
       do_tcl("need-invite", chan->need_invite);
   } else
@@ -1322,6 +1332,11 @@ static int got474(char *from, char *msg)
   if (chan) {
     putlog(LOG_JOIN, chan->dname, IRC_BANNEDFROMCHAN, chan->dname);
     check_tcl_need(chan->dname, "unban");
+
+    chan = findchan(chname); 
+    if (!chan)
+      return 0;
+
     if (chan->need_unban[0])
       do_tcl("need-unban", chan->need_unban);
   } else
@@ -1358,6 +1373,11 @@ static int got475(char *from, char *msg)
       dprintf(DP_MODE, "JOIN %s %s\n", chan->dname, chan->key_prot);
     } else {
       check_tcl_need(chan->dname, "key");
+
+      chan = findchan(chname); 
+      if (!chan)
+	return 0;
+
       if (chan->need_key[0])
 	do_tcl("need-key", chan->need_key);
     }
@@ -1562,6 +1582,18 @@ static int gotjoin(char *from, char *chname)
     strcpy(uhost, from);
     nick = splitnick(&uhost);
     detect_chan_flood(nick, uhost, from, chan, FLOOD_JOIN, NULL);
+
+    chan = findchan(chname);
+    if (!chan) {   
+      if (ch_dname)
+	chan = findchan_by_dname(ch_dname);
+      else
+	chan = findchan_by_dname(chname);
+    }
+    if (!chan)
+      /* The channel doesn't exist anymore, so get out of here. */
+      goto exit;
+
     /* Grab last time joined before we update it */
     u = get_user_by_host(from);
     get_user_flagrec(u, &fr, chan->dname); /* Lam: fix to work with !channels */
@@ -1577,6 +1609,18 @@ static int gotjoin(char *from, char *chname)
       m = ismember(chan, nick);
       if (m && m->split && !egg_strcasecmp(m->userhost, uhost)) {
 	check_tcl_rejn(nick, uhost, u, chan->dname);
+
+	chan = findchan(chname);
+	if (!chan) {
+	  if (ch_dname)
+	    chan = findchan_by_dname(ch_dname);
+	  else
+	    chan = findchan_by_dname(chname);
+        }
+        if (!chan)
+          /* The channel doesn't exist anymore, so get out of here. */
+          goto exit;
+
 	/* The tcl binding might have deleted the current user. Recheck. */
 	u = get_user_by_host(from);
 	m->split = 0;
@@ -1783,6 +1827,10 @@ static int gotpart(char *from, char *msg)
     check_tcl_part(nick, from, u, chan->dname, msg); /* This must be directly above the killmember, in case
     							we're doing anything to the record that would affect
 							the above */
+    chan = findchan(chname);
+    if (!chan)
+      return 0;
+
     killmember(chan, nick);
     if (msg[0])
       putlog(LOG_JOIN, chan->dname, "%s (%s) left %s (%s).", nick, from, chan->dname, msg);
@@ -1825,6 +1873,11 @@ static int gotkick(char *from, char *origmsg)
     strcpy(uhost, from);
     whodid = splitnick(&uhost);
     detect_chan_flood(whodid, uhost, from, chan, FLOOD_KICK, nick);
+
+    chan = findchan(chname);
+    if (!chan)
+      return 0;     
+
     m = ismember(chan, whodid);
     if (m)
       m->last = now;
@@ -1832,6 +1885,11 @@ static int gotkick(char *from, char *origmsg)
     get_user_flagrec(u, &fr, chan->dname);
     set_handle_laston(chan->dname, u, now);
     check_tcl_kick(whodid, uhost, u, chan->dname, nick, msg);
+ 
+    chan = findchan(chname);
+    if (!chan)
+      return 0;
+
     m = ismember(chan, nick);
     if (m) {
       struct userrec *u2;
@@ -1862,9 +1920,9 @@ static int gotkick(char *from, char *origmsg)
  */
 static int gotnick(char *from, char *msg)
 {
-  char *nick, s1[UHOSTLEN], buf[UHOSTLEN], *uhost = buf;
+  char *nick, *chname, s1[UHOSTLEN], buf[UHOSTLEN], *uhost = buf;
   memberlist *m, *mm;
-  struct chanset_t *chan;
+  struct chanset_t *chan, *oldchan = NULL;
   struct userrec *u;
   struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
 
@@ -1872,7 +1930,9 @@ static int gotnick(char *from, char *msg)
   nick = splitnick(&uhost);
   fixcolon(msg);
   clear_chanlist_member(nick);	/* Cache for nick 'nick' is meaningless now. */
-  for (chan = chanset; chan; chan = chan->next) { 
+  for (chan = chanset; chan; chan = chan->next) {
+    oldchan = chan;
+    chname = chan->dname; 
     m = ismember(chan, nick);
     if (m) {
       putlog(LOG_JOIN, chan->dname, "Nick change: %s -> %s", nick, msg);
@@ -1898,6 +1958,11 @@ static int gotnick(char *from, char *msg)
       sprintf(s1, "%s!%s", msg, uhost);
       strcpy(m->nick, msg);
       detect_chan_flood(msg, uhost, from, chan, FLOOD_NICK, NULL);
+
+      if (!findchan(chname)) {
+        chan = oldchan;
+        continue;
+      }
       /* don't fill the serverqueue with modes or kicks in a nickflood */
       if (chan_sentkick(m) || chan_sentdeop(m) || chan_sentop(m) ||
 	  chan_sentdevoice(m) || chan_sentvoice(m))
@@ -1912,6 +1977,11 @@ static int gotnick(char *from, char *msg)
       u = get_user_by_host(from); /* make sure this is in the loop, someone could have changed the record
                                      in an earlier iteration of the loop */
       check_tcl_nick(nick, uhost, u, chan->dname, msg);
+    
+      if (!findchan(chname)) {
+	chan = oldchan;
+        continue;
+      }
     }
   }
   return 0;
@@ -1921,11 +1991,11 @@ static int gotnick(char *from, char *msg)
  */
 static int gotquit(char *from, char *msg)
 {
-  char *nick, *p, *alt;
+  char *nick, *chname, *p, *alt;
   int split = 0;
   char from2[NICKMAX + UHOSTMAX + 1];
   memberlist *m;
-  struct chanset_t *chan;
+  struct chanset_t *chan, *oldchan = NULL;
   struct userrec *u;
 
   strcpy(from2,from);
@@ -1953,6 +2023,8 @@ static int gotquit(char *from, char *msg)
       *p = ' ';
   }
   for (chan = chanset; chan; chan = chan->next) {
+    oldchan = chan;
+    chname = chan->dname;
     m = ismember(chan, nick);
     if (m) {
       u = get_user_by_host(from2);
@@ -1964,10 +2036,20 @@ static int gotquit(char *from, char *msg)
       if (split) {
 	m->split = now;
 	check_tcl_splt(nick, from, u, chan->dname);
+
+	if (!findchan(chname)) {
+          chan = oldchan;
+	  continue;
+        }
 	putlog(LOG_JOIN, chan->dname, "%s (%s) got netsplit.", nick,
 	       from);
       } else {
 	check_tcl_sign(nick, from, u, chan->dname, msg);
+
+	if (!findchan(chname)) {
+	  chan = oldchan;
+	  continue;
+	}
 	putlog(LOG_JOIN, chan->dname, "%s (%s) left irc: %s", nick,
 	       from, msg);
 	killmember(chan, nick);
@@ -2072,6 +2154,11 @@ static int gotmsg(char *from, char *msg)
       detect_chan_flood(nick, uhost, from, chan,
 			strncmp(ctcp, "ACTION ", 7) ?
 			FLOOD_CTCP : FLOOD_PRIVMSG, NULL);
+
+      chan = findchan(realto);
+      if (!chan)
+        return 0;
+
       /* Respond to the first answer_ctcp */
       p = strchr(msg, 1);
       if (ctcp_count < answer_ctcp) {
@@ -2080,8 +2167,14 @@ static int gotmsg(char *from, char *msg)
 	  code = newsplit(&ctcp);
 	  u = get_user_by_host(from);
 	  if (!ignoring || trigger_on_ignore) {
-	    if (!check_tcl_ctcp(nick, uhost, u, to, code, ctcp))
+	    if (!check_tcl_ctcp(nick, uhost, u, to, code, ctcp)) {
+
+	      chan = findchan(realto); 
+	      if (!chan)
+		return 0;
+
 	      update_idle(chan->dname, nick);
+            }
 	    if (!ignoring) {
 	      /* Log DCC, it's to a channel damnit! */
 	      if (!strcmp(code, "ACTION")) {
@@ -2115,10 +2208,20 @@ static int gotmsg(char *from, char *msg)
   if (msg[0]) {
     /* Check even if we're ignoring the host. (modified by Eule 17.7.99) */
     detect_chan_flood(nick, uhost, from, chan, FLOOD_PRIVMSG, NULL);
+
+    chan = findchan(realto);
+    if (!chan)
+      return 0;
+
     if (!ignoring || trigger_on_ignore) {
       if (check_tcl_pub(nick, uhost, chan->dname, msg))
 	return 0;
       check_tcl_pubm(nick, uhost, chan->dname, msg);
+
+      chan = findchan(realto);
+      if (!chan)
+	return 0;
+
     }
     if (!ignoring) {
       if (to[0] == '@')
@@ -2199,10 +2302,20 @@ static int gotnotice(char *from, char *msg)
       detect_chan_flood(nick, uhost, from, chan,
 			strncmp(ctcp, "ACTION ", 7) ?
 			FLOOD_CTCP : FLOOD_PRIVMSG, NULL);
+
+      chan = findchan(realto); 
+      if (!chan)
+	return 0;
+
       if (ctcp[0] != ' ') {
 	code = newsplit(&ctcp);
 	if (!ignoring || trigger_on_ignore) {
 	  check_tcl_ctcr(nick, uhost, u, chan->dname, code, msg);
+
+	  chan = findchan(realto); 
+	  if (!chan)
+	    return 0;
+
 	  if (!ignoring) {
 	    putlog(LOG_PUBLIC, chan->dname, "CTCP reply %s: %s from %s (%s) to %s",
 		   code, msg, nick, from, chan->dname);
@@ -2215,8 +2328,19 @@ static int gotnotice(char *from, char *msg)
   if (msg[0]) {
     /* Check even if we're ignoring the host. (modified by Eule 17.7.99) */
     detect_chan_flood(nick, uhost, from, chan, FLOOD_NOTICE, NULL);
-    if (!ignoring || trigger_on_ignore)
+
+    chan = findchan(realto); 
+    if (!chan)
+      return 0;
+
+    if (!ignoring || trigger_on_ignore) {
       check_tcl_notc(nick, uhost, u, to, msg);
+
+      chan = findchan(realto); 
+      if (!chan)
+	return 0;
+    }
+
     if (!ignoring)
       putlog(LOG_PUBLIC, chan->dname, "-%s:%s- %s", nick, to, msg);
     update_idle(chan->dname, nick);
