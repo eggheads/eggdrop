@@ -1,3 +1,4 @@
+# $Id: modinfo,v 1.2 2003/12/10 19:04:50 wcc Exp $
 DESC:The DNS module provides support for asynchronous DNS requests. This
 DESC:guards the bot from blocking several seconds on IP-addresses or
 DESC:hostnames which don't properly resolve.  This is especially useful

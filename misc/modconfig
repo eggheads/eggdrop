@@ -19,7 +19,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #
-# $Id: modconfig,v 1.12 2003/12/09 22:21:46 wcc Exp $
+# $Id: modconfig,v 1.13 2003/12/10 19:04:49 wcc Exp $
 
 
 mc_pn=`echo $0 | sed -e 's/^.*\///'`
@@ -209,7 +209,7 @@ xmodules-still-exist)
 	if ${mc_self_call} -q is-configured; then
 		mc_known_mods=`cat ${mc_fknownmods}`
 
-		echo ${mc_n} "checking for removed modules...${mc_c}" 1>&6
+		echo ${mc_n} "Checking for removed modules...${mc_c}" 1>&6
 		#  Check wether all known mods still exist
 		for mc_mod in ${mc_known_mods}; do
 			echo ${mc_n} ".${mc_c}" >&6
@@ -432,7 +432,7 @@ xdel)
 				:
 			else
 				echo "${mc_pn}: error: building new module file failed" 1>&2
-				echo "grepping for ${mc_mod}.mod in ${mc_fmodules} and writing to ${mc_nfmodules}"
+				echo "Grepping for ${mc_mod}.mod in ${mc_fmodules} and writing to ${mc_nfmodules}."
 				kill -STOP $$
 				exit 1
 			fi
@@ -639,11 +639,11 @@ EOF
 		then
 			#  The module is selected.
 			mc_mstate="enabled"
-			mc_mdisp="(E)nable / (d)isable  [E/d]"
+			mc_mdisp="(E)nable / (d)isable [E/d] ->"
 		else
 			#  The module is NOT selected.
 			mc_mstate="disabled"
-			mc_mdisp="(e)nable / (D)isable  [e/D]"
+			mc_mdisp="(e)nable / (D)isable [e/D] ->"
 		fi
 
 		#  Display description
@@ -655,7 +655,7 @@ EOF
 		fi
 
 		while true; do
-			echo ${mc_n} "\`${mc_modname}' is ${mc_mstate}, ${mc_mdisp} ${mc_c}" 1>&6
+			echo ${mc_n} "\`${mc_modname}' is ${mc_mstate}: ${mc_mdisp} ${mc_c} " 1>&6
 			read mc_ask_response;
 
 			if (test "${mc_ask_response}" = D); then

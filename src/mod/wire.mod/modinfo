@@ -1,3 +1,4 @@
+# $Id: modinfo,v 1.2 2003/12/10 19:04:50 wcc Exp $
 DESC:This module provides all the standard .wire commands via dcc. It's an
 DESC:encrypted partyline communication tool, compatible with `wire.tcl'.
 DESC:

@@ -1,3 +1,4 @@
+# $Id: modinfo,v 1.2 2003/12/10 19:04:49 wcc Exp $
 DESC:The compress module provides support for file compression. This
 DESC:allows the bot to transfer compressed user files and therefore
 DESC:saves a significant amount of bandwidth, especially on very active

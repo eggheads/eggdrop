@@ -2,7 +2,7 @@
 #  This is the Makefile for EGGDROP (the IRC bot)
 #  You should never need to edit this.
 #
-# $Id: Makefile.in,v 1.34 2003/12/09 22:21:46 wcc Exp $
+# $Id: Makefile.in,v 1.35 2003/12/10 19:04:49 wcc Exp $
 
 SHELL = @SHELL@
 top_srcdir = @top_srcdir@
@@ -454,3 +454,5 @@ install-end:
 	@echo ""
 	@echo "Remember to change directory to $(DEST) before you proceed."
 	@echo ""
+
+#safety hash

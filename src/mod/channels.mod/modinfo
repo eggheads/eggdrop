@@ -1,3 +1,4 @@
+# $Id: modinfo,v 1.2 2003/12/10 19:04:49 wcc Exp $
 DESC:The channels module provides channel related support for the bot. It's
 DESC:essential for hubs that share userfiles, as well as normal bots
 DESC:monitoring channels on IRC.

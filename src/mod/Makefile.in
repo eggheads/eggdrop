@@ -1,5 +1,5 @@
 # Makefile for src/mod/
-# $Id: Makefile.in,v 1.16 2003/12/09 22:21:47 wcc Exp $
+# $Id: Makefile.in,v 1.17 2003/12/10 19:04:49 wcc Exp $
 
 SHELL = @SHELL@
 top_srcdir = @top_srcdir@
@@ -167,3 +167,5 @@ install-language:
 			done; \
 		fi; \
 	done;
+
+#safety hash

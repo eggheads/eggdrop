@@ -1,3 +1,4 @@
+# $Id: modinfo,v 1.3 2003/12/10 19:04:50 wcc Exp $
 DESC:This module provides the core server support. If you want your bot to
 DESC:connect to servers, this is the module. Hub-only bots will probably not
 DESC:need it. It is essential for the irc and ctcp modules.

@@ -1,3 +1,4 @@
+# $Id: modinfo,v 1.2 2003/12/10 19:04:50 wcc Exp $
 DESC:This provides support for storing of notes for users from each other.
 DESC:Notes between currently online users is supported in the core, this is
 DESC:only for storing the notes for later retrieval, direct user->user

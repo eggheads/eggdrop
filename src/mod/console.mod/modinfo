@@ -1,3 +1,4 @@
+# $Id: modinfo,v 1.2 2003/12/10 19:04:49 wcc Exp $
 DESC:This module provides storage of console settings when you exit the bot
 DESC:(or .store).
 DESC:
