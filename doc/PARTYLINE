@@ -1,8 +1,8 @@
 The Party Line
 Last revised: December 31, 2001
-  ________________________________________________________________________
+     _________________________________________________________________
 
-                               The Party Line
+                              The Party Line
 
     The most important way you will communicate with your bot is through
     the party line. The party line is accessible via DCC chat or telnet.
@@ -35,7 +35,6 @@ Last revised: December 31, 2001
     prefixed with an apostrophe is sent to all users on the local bot only.
     You can change channels with the ".chat" command or even leave all
     channels with ".chat off".
-    
-  ________________________________________________________________________
+       _________________________________________________________________
 
-Copyright (C) 2002 Eggheads Development Team
+   Copyright (C) 2002 Eggheads Development Team
