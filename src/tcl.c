@@ -194,6 +194,10 @@ static char *tcl_eggcouplet(ClientData cdata, Tcl_Interp * irp, char *name1,
   if (flags & (TCL_TRACE_READS | TCL_TRACE_UNSETS)) {
     sprintf(s1, "%d:%d", *(cp->left), *(cp->right));
     Tcl_SetVar2(interp, name1, name2, s1, TCL_GLOBAL_ONLY);
+    if (flags & TCL_TRACE_UNSETS)
+      Tcl_TraceVar(interp, name1,
+		   TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
+		   tcl_eggcouplet, cdata);
   } else {			/* writes */
     s = Tcl_GetVar2(interp, name1, name2, TCL_GLOBAL_ONLY);
     if (s != NULL) {
@@ -230,6 +234,10 @@ static char *tcl_eggint(ClientData cdata, Tcl_Interp * irp, char *name1,
     } else
       sprintf(s1, "%d", *(int *) ii->var);
     Tcl_SetVar2(interp, name1, name2, s1, TCL_GLOBAL_ONLY);
+    if (flags & TCL_TRACE_UNSETS)
+      Tcl_TraceVar(interp, name1,
+		   TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
+		   tcl_eggint, cdata);
     return NULL;
   } else {			/* writes */
     s = Tcl_GetVar2(interp, name1, name2, TCL_GLOBAL_ONLY);
@@ -284,14 +292,11 @@ static char *tcl_eggstr(ClientData cdata, Tcl_Interp * irp, char *name1,
       Tcl_SetVar2(interp, name1, name2, s1, TCL_GLOBAL_ONLY);
     } else
       Tcl_SetVar2(interp, name1, name2, st->str, TCL_GLOBAL_ONLY);
-    if (st->max <= 0) {
-      if ((flags & TCL_TRACE_UNSETS) && (protect_readonly || (st->max == 0))) {
-	/* no matter what we do, it won't return the error */
-	Tcl_SetVar2(interp, name1, name2, st->str, TCL_GLOBAL_ONLY);
-	Tcl_TraceVar(interp, name1, TCL_TRACE_READS | TCL_TRACE_WRITES |
-		     TCL_TRACE_UNSETS, tcl_eggstr, (ClientData) st);
-	return "read-only variable";
-      }
+    if (flags & TCL_TRACE_UNSETS) {
+      Tcl_TraceVar(interp, name1, TCL_TRACE_READS | TCL_TRACE_WRITES |
+		   TCL_TRACE_UNSETS, tcl_eggstr, cdata);
+      if ((st->max <= 0) && (protect_readonly || (st->max == 0)))
+	return "read-only variable"; /* it won't return the error... */
     }
     return NULL;
   } else {			/* writes */

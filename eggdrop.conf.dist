@@ -390,6 +390,33 @@ set share-greet 0
 # [0/1] allow users to store an info line?
 set use-info 1
 
+# these settings are used as default values when you
+# .+chan #chan or .tcl channel add #chan
+# look in the section above for explanation on every option
+
+set global-flood-chan 10:60
+set global-flood-deop 3:10
+set global-flood-kick 3:10
+set global-flood-join 5:60
+set global-flood-ctcp 3:60
+
+set global-chanset {
+        -clearbans      -enforcebans
+        +dynamicbans    +userbans   
+        -autoop         -bitch      
+        +greet          +protectops 
+        +statuslog      +stopnethack
+        -revenge        -secret
+        -autovoice      +cycle 
+        +dontkickops    -wasoptest
+        -inactive       -protectfriends
+        +shared         -seen
+	+userexempts	+dynamicexempts
+	+userinvites	+dynamicinvites
+}
+
+set global-chanmode "nt"
+
 # do this for each channel you wish to sit on:
 # NOTE: for some reason Tcl won't let you put comments inside { } -- so
 #   don't try it, cos it'll mess up your channel definition
@@ -567,32 +594,6 @@ channel add #botcentral {
   idle-kick 1
 }
 channel set #botcentral +bitch +clearbans +enforcebans -greet +revenge
-
-# these settings are used as
-# default values when you .+chan #chan
-# look in the section above for explanation
-# on every option
-
-set global-flood-chan 10:60
-set global-flood-deop 3:10
-set global-flood-kick 3:10
-set global-flood-join 5:60
-set global-flood-ctcp 3:60
-
-set global-chanset {
-        -clearbans      -enforcebans
-        +dynamicbans    +userbans   
-        -autoop         -bitch      
-        +greet          +protectops 
-        +statuslog      +stopnethack
-        -revenge        -secret
-        -autovoice      +cycle 
-        +dontkickops    -wasoptest
-        -inactive       -protectfriends
-        +shared         -seen
-	+userexempts	+dynamicexempts
-	+userinvites	+dynamicinvites
-}
 
 ##### SERVER MODULE #####
 

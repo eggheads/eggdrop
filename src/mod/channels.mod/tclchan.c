@@ -1085,7 +1085,7 @@ static int tcl_channel_modify(Tcl_Interp * irp, struct chanset_t *chan,
 	*ptime = 1;
       }
     } else {
-      if (irp)
+      if (irp && item[i][0]) /* ignore "" */
 	Tcl_AppendResult(irp, "illegal channel option: ", item[i], NULL);
       return TCL_ERROR;
     }
@@ -1462,16 +1462,22 @@ static int tcl_channel_add(Tcl_Interp * irp, char *newname, char *options)
 {
   struct chanset_t *chan;
   int items;
-  int i_s;
   char **item;
   int ret = TCL_OK;
   int join = 0;
+  char buf[2048];
 
   if ((newname[0] != '#') && (newname[0] != '&'))
     return TCL_ERROR;
-  if (irp)
-    if (Tcl_SplitList(irp, options, &items, &item) != TCL_OK)
-      return TCL_ERROR;
+  context;
+  simple_sprintf(buf, "chanmode \"%s\" ", glob_chanmode);
+  strncat(buf, glob_chanset, 2047 - strlen(buf));
+  strncat(buf, options, 2047 - strlen(buf));
+  buf[2047] = 0;
+  /* drummer: Tcl8.0: Tcl_SplitList does not use irp, can be NULL */
+  if (Tcl_SplitList(NULL, buf, &items, &item) != TCL_OK)
+    return TCL_ERROR;
+  context;
   if ((chan = findchan(newname))) {
     /* already existing channel, maybe a reload of the channel file */
     chan->status &= ~CHAN_FLAGGED;	/* don't delete me! :) */
@@ -1482,12 +1488,6 @@ static int tcl_channel_add(Tcl_Interp * irp, char *newname, char *options)
     bzero(chan, sizeof(struct chanset_t));
 
     chan->limit_prot = (-1);
-    for (i_s=0;i_s<20;i_s++)
-      if (strstr(glob_chanset, name_globopt[i_s]))
-        chan->status |= const_globopt[i_s];
-    for (i_s=0;i_s<4;i_s++)
-      if (strstr(glob_chanset, name_ieglobopt[i_s]))
-        chan->ircnet_status |= const_ieglobopt[i_s];
     chan->limit = (-1);
     chan->flood_pub_thr = gfld_chan_thr;
     chan->flood_pub_time = gfld_chan_time;
@@ -1509,16 +1509,14 @@ static int tcl_channel_add(Tcl_Interp * irp, char *newname, char *options)
   }
   if (setstatic)
     chan->status |= CHAN_STATIC;
-  if (irp) {
-    /* if chan_hack is set, we're loading the userfile. Ignore errors while
-     * reading userfile and just return TCL_OK. This is for compatability
-     * if a user goes back to an eggdrop that no-longer supports certain
-     * (channel) options. */
-    if ((tcl_channel_modify(irp, chan, items, item) != TCL_OK) && !chan_hack) {
-      ret = TCL_ERROR;
-    }
+  /* if chan_hack is set, we're loading the userfile. Ignore errors while
+   * reading userfile and just return TCL_OK. This is for compatability
+   * if a user goes back to an eggdrop that no-longer supports certain
+   * (channel) options. */
+  if ((tcl_channel_modify(irp, chan, items, item) != TCL_OK) && !chan_hack) {
+    ret = TCL_ERROR;
   }
-  if (module_find("irc", 0, 0) && join && !channel_inactive(chan))
+  if (join && !channel_inactive(chan) && module_find("irc", 0, 0))
     dprintf(DP_SERVER, "JOIN %s %s\n", chan->name, chan->key_prot);
   return ret; 
 }

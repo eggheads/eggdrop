@@ -26,30 +26,16 @@ static Function *global = NULL;
 static int chan_hack = 0;
 static int must_be_owner = 0;
 
-/* global channel settings (dw) */
-static char glob_chanset[513] = "+dynamicbans +greet +protectops +cycle
-				 +dontkickops +statuslog +stopnethack
-				 +dynamicexempts +dynamicinvites";
+/* global channel settings (drummer/dw) */
+static char glob_chanset[512] = "\
+-clearbans -enforcebans +dynamicbans +userbans -autoop -bitch +greet \
++protectops +statuslog +stopnethack -revenge -secret -autovoice +cycle \
++dontkickops -wasoptest -inactive -protectfriends +shared -seen \
++userexempts +dynamicexempts +userinvites +dynamicinvites ";
+/* DO NOT remove the extra space at the end of the string! */
 
-static int const_globopt[20] =
-                    {0x0001,0x0002,0x0004,
-                     0x0008,0x0010,0x0020,
-                     0x0040,0x0080,0x0100,
-                     0x0200,0x0400,0x0800,  
-                     0x1000,0x2000,0x4000,  
-                     0x8000,0x10000,0x20000,
-                     0x10000000,0x40000000};
-static char *name_globopt[20] =
-                     {"+clearbans","+enforcebans","+dynamicbans",
-                      "-userbans","+autoop","+bitch",
-                      "+greet","+protectops","+statuslog",
-                      "+stopnethack","+revenge","+secret",
-                      "+autovoice","+cycle","+dontkickops",
-                      "+wasoptest","+inactive","+protectfriends",
-                      "+shared","+seen"};
-static int const_ieglobopt[4] = {0x0004,0x0008,0x0010,0x0020};
-static char *name_ieglobopt[4] = {"+dynamicexempts","-userexempts",
-				  "+dynamicinvites","-userinvites"};
+/* default chanmode (drummer,990731) */
+static char glob_chanmode[64] = "nt";
 
 /* global flood settings */
 static int gfld_chan_thr;
@@ -696,6 +682,47 @@ static int channels_expmem()
   return tot;
 }
 
+static char *traced_globchanset(ClientData cdata, Tcl_Interp * irp,
+				char *name1, char *name2, int flags)
+{
+  char *s;
+  char *t;
+  int i;
+  int items;
+  char **item;
+  
+  context;
+  if (flags & (TCL_TRACE_READS | TCL_TRACE_UNSETS)) {
+    Tcl_SetVar2(interp, name1, name2, glob_chanset, TCL_GLOBAL_ONLY);
+    if (flags & TCL_TRACE_UNSETS)
+      Tcl_TraceVar(interp, "global-chanset",
+	    TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
+	    traced_globchanset, NULL);
+  } else { /* write */
+    s = Tcl_GetVar2(interp, name1, name2, TCL_GLOBAL_ONLY);
+    Tcl_SplitList(interp, s, &items, &item);
+    context;
+    for (i = 0; i<items; i++) {
+      if (!(item[i]) || (strlen(item[i]) < 2)) continue;
+      s = glob_chanset;
+      while (s[0]) {
+	t = strchr(s, ' '); /* cant be NULL coz of the extra space */
+	context;
+	t[0] = 0;
+	if (!strcmp(s + 1, item[i] + 1)) {
+	  s[0] = item[i][0]; /* +- */
+	  t[0] = ' ';
+	  break;
+	}
+	t[0] = ' ';
+	s = t + 1;
+      }
+    }
+    Tcl_SetVar2(interp, name1, name2, glob_chanset, TCL_GLOBAL_ONLY);
+  }
+  return NULL;
+}
+
 static tcl_ints my_tcl_ints[] =
 {
   {"share-greet", 0, 0},
@@ -720,7 +747,7 @@ static tcl_coups mychan_tcl_coups[] =
 static tcl_strings my_tcl_strings[] =
 {
   {"chanfile", chanfile, 120, STR_PROTECT},
-  {"global-chanset", glob_chanset, 512, 0},
+  {"global-chanmode", glob_chanmode, 64, 0},
   {0, 0, 0, 0}
 };
 
@@ -740,6 +767,9 @@ static char *channels_close()
   del_hook(HOOK_MINUTELY, check_expired_bans);
   del_hook(HOOK_MINUTELY,check_expired_exempts);
   del_hook(HOOK_MINUTELY,check_expired_invites);
+  Tcl_UntraceVar(interp, "global-chanset",
+		 TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
+		 traced_globchanset, NULL);
   rem_help_reference("channels.help");
   rem_help_reference("chaninfo.help");
   module_undepend(MODULE_NAME);
@@ -828,6 +858,9 @@ char *channels_start(Function * global_funcs)
   add_hook(HOOK_USERFILE, channels_writeuserfile);
   add_hook(HOOK_REHASH, channels_rehash);
   add_hook(HOOK_PRE_REHASH, channels_prerehash);
+  Tcl_TraceVar(interp, "global-chanset",
+	       TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
+	       traced_globchanset, NULL);
   add_builtins(H_chon, my_chon, 1);
   add_builtins(H_dcc, C_dcc_irc, 21);
   add_tcl_commands(channels_cmds);

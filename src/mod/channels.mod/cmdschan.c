@@ -1107,7 +1107,7 @@ static void cmd_pls_chan(struct userrec *u, int idx, char *par)
     dprintf(idx, "That channel already exists!\n");
     return;
   }
-  if (tcl_channel_add(0, chname, "") == TCL_ERROR)
+  if (tcl_channel_add(0, chname, par) == TCL_ERROR) /* drummer */
     dprintf(idx, "Invalid channel.\n");
   else
     putlog(LOG_CMDS, "*", "#%s# +chan %s", dcc[idx].nick, chname);
@@ -1227,10 +1227,10 @@ static void cmd_chaninfo(struct userrec *u, int idx, char *par)
 	    (chan->status & CHAN_DONTKICKOPS) ? '+' : '-',
 	    (chan->status & CHAN_WASOPTEST) ? '+' : '-',
 	    (chan->status & CHAN_INACTIVE) ? '+' : '-');
-    dprintf(idx, "     %cdynamicexempts            %cuserexempts\n",
+    dprintf(idx, "     %cdynamicexempts           %cuserexempts\n",
 	    (chan->ircnet_status & CHAN_DYNAMICEXEMPTS) ? '+' : '-',
 	    (chan->ircnet_status & CHAN_NOUSEREXEMPTS) ? '-' : '+'); 
-    dprintf(idx, "     %cdynamicinvites            %cuserinvites\n",
+    dprintf(idx, "     %cdynamicinvites           %cuserinvites\n",
 	    (chan->ircnet_status & CHAN_DYNAMICINVITES) ? '+' : '-',
 	    (chan->ircnet_status & CHAN_NOUSERINVITES) ? '-' : '+');
     dprintf(idx, "     %cprotectfriends\n",
