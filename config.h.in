@@ -5,7 +5,7 @@
  * acconfig.h
  *   template file autoheader uses when building config.h.in
  * 
- * $Id: config.h.in,v 1.26 2003/02/28 04:01:36 wcc Exp $
+ * $Id: config.h.in,v 1.27 2003/03/04 10:33:11 tothwolf Exp $
  */
 
 /* Define if modules will work on your system. */
@@ -21,7 +21,7 @@
 #undef OSF1_HACKS
 
 /* Define to use Eggdrop's snprintf functions without regard to HAVE_SNPRINTF. */
-#undef DONT_USE_SNPRINTFS
+#undef BROKEN_SNPRINTF
 
 /* Define if running on OSF/1 platform. */
 #undef STOP_UAC

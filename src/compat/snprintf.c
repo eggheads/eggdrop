@@ -1,7 +1,7 @@
 /*
  * snprintf.c - a portable implementation of snprintf and vsnprintf
  *
- * $Id: snprintf.c,v 1.12 2003/03/04 07:01:08 wcc Exp $
+ * $Id: snprintf.c,v 1.13 2003/03/04 10:33:11 tothwolf Exp $
  */
 /*
  * Portions Copyright (C) 2000, 2001, 2002, 2003 Eggheads Development Team
@@ -86,7 +86,7 @@
 #include <ctype.h>
 #include <sys/types.h>
 
-#if !defined(HAVE_VSNPRINTF) || defined(DONT_USE_SNPRINTFS)
+#ifndef HAVE_VSNPRINTF
 
 /* varargs declarations: */
 
@@ -714,7 +714,7 @@ int egg_vsnprintf(char *str, size_t count, const char *fmt, va_list args)
 }
 #endif /* !HAVE_VSNPRINTF */
 
-#if !defined(HAVE_SNPRINTF) || defined(DONT_USE_SNPRINTFS)
+#ifndef HAVE_SNPRINTF
 #  ifdef HAVE_STDARGS
 int egg_snprintf(char *str, size_t count, const char *fmt, ...)
 #  else

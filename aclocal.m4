@@ -1,7 +1,7 @@
 dnl aclocal.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: aclocal.m4,v 1.62 2003/02/28 04:01:36 wcc Exp $
+dnl $Id: aclocal.m4,v 1.63 2003/03/04 10:33:11 tothwolf Exp $
 dnl
 
 
@@ -305,7 +305,7 @@ case "$egg_cv_var_system_type" in
       ;;
     esac
     AC_DEFINE(STOP_UAC)dnl
-    AC_DEFINE(DONT_USE_SNPRINTFS)dnl
+    AC_DEFINE(BROKEN_SNPRINTF)dnl
   ;;
   SunOS)
     if test "`echo $egg_cv_var_system_release | cut -d . -f 1`" = "5"
