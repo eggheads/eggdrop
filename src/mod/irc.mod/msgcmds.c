@@ -2,7 +2,7 @@
  * msgcmds.c -- part of irc.mod
  *   all commands entered via /MSG
  * 
- * $Id: msgcmds.c,v 1.17 2000/09/18 20:04:58 fabian Exp $
+ * $Id: msgcmds.c,v 1.18 2000/10/19 16:31:30 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -74,7 +74,7 @@ static int msg_hello(char *nick, char *h, struct userrec *u, char *p)
       userlist = adduser(userlist, nick, host, "-",
 		 sanity_check(default_flags | USER_MASTER | USER_OWNER));
       set_user(&USERENTRY_HOSTS, get_user_by_handle(userlist, nick),
-	       "telnet!*@*");
+	       "-telnet!*@*");
     } else
       userlist = adduser(userlist, nick, host, "-",
 			 sanity_check(default_flags));

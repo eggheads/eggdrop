@@ -4,7 +4,7 @@
  *   disconnect on a dcc socket
  *   ...and that's it!  (but it's a LOT)
  * 
- * $Id: dcc.c,v 1.35 2000/09/18 20:04:57 fabian Exp $
+ * $Id: dcc.c,v 1.36 2000/10/19 16:31:30 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1189,7 +1189,7 @@ static void dcc_telnet_hostresolved(int i)
     }
   }
   Context;
-  sprintf(s2, "telnet!telnet@%s", dcc[i].host);
+  sprintf(s2, "-telnet!telnet@%s", dcc[i].host);
   if (match_ignore(s2) || detect_telnet_flood(s2)) {
     killsock(dcc[i].sock);
     lostdcc(i);
@@ -1591,7 +1591,7 @@ static void dcc_telnet_new(int idx, char *buf, int x)
     dprintf(idx, "Sorry, can't use my name for a nick.\n");
   } else {
     if (make_userfile)
-      userlist = adduser(userlist, buf, "telnet!*@*", "-",
+      userlist = adduser(userlist, buf, "-telnet!*@*", "-",
 			 sanity_check(default_flags | USER_PARTY |
 				      USER_MASTER | USER_OWNER));
     else {
@@ -1602,12 +1602,12 @@ static void dcc_telnet_new(int idx, char *buf, int x)
 	p++;
 	r = strchr(p, '.');
 	if (!r)
-	  simple_sprintf(work, "telnet!%s@%s", dcc[idx].host, p);
+	  simple_sprintf(work, "-telnet!%s@%s", dcc[idx].host, p);
 	else
-	  simple_sprintf(work, "telnet!%s@*%s", dcc[idx].host, r);
+	  simple_sprintf(work, "-telnet!%s@*%s", dcc[idx].host, r);
 	*q = '@';
       } else
-	simple_sprintf(work, "telnet!*@*%s", dcc[idx].host);
+	simple_sprintf(work, "-telnet!*@*%s", dcc[idx].host);
       userlist = adduser(userlist, buf, work, "-",
 			 sanity_check(USER_PARTY | default_flags));
     }
@@ -2048,7 +2048,7 @@ void dcc_telnet_got_ident(int i, char *host)
   }
   strncpy(dcc[i].host, host, UHOSTMAX);
   dcc[i].host[UHOSTMAX] = 0;
-  simple_sprintf(x, "telnet!%s", dcc[i].host);
+  simple_sprintf(x, "-telnet!%s", dcc[i].host);
   if (protect_telnet && !make_userfile) {
     struct userrec *u;
     int ok = 1;
