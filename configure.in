@@ -1,5 +1,5 @@
 dnl Process this file with autoconf to produce a configure script.
-AC_REVISION($Id: configure.in,v 1.44 1999/12/15 02:32:57 guppy Exp $)
+AC_REVISION($Revision $)
 AC_INIT(eggdrop.conf.dist)
 AC_PREFIX_DEFAULT([\${HOME}/eggdrop])
 AC_CONFIG_HEADER(config.h)

@@ -1,7 +1,7 @@
 dnl aclocal.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: aclocal.m4,v 1.4 1999/12/15 02:32:56 guppy Exp $
+dnl $Id: aclocal.m4,v 1.5 2000/01/08 22:06:19 per Exp $
 dnl
 AC_DEFUN(EGG_MSG_CONFIGURE_START, [dnl
 AC_MSG_RESULT()
@@ -436,7 +436,7 @@ else
 fi
 if test ${WARN} = 1
 then
-  cat << 'EOF' >&2
+  cat << EOF >&2
 configure: warning:
 
   Environment variable ${WVAR1} was set, but I did not detect ${WVAR2}.

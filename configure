@@ -1,6 +1,6 @@
 #! /bin/sh
 
-# From configure.in Id
+# From configure.in Revision 
 # Guess values for system-dependent variables and create Makefiles.
 # Generated automatically using autoconf version 2.13 
 # Copyright (C) 1992, 93, 94, 95, 96 Free Software Foundation, Inc.
@@ -2889,7 +2889,7 @@ else
 fi
 if test ${WARN} = 1
 then
-  cat << 'EOF' >&2
+  cat << EOF >&2
 configure: warning:
 
   Environment variable ${WVAR1} was set, but I did not detect ${WVAR2}.
