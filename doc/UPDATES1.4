@@ -4,6 +4,10 @@ Changes in eggdrop: (since v1.4.0)
 
 1.4.4
 Foundby   Fixedby   What....
+LtGen     Fabian    Enhanced `.unlink' to remove ghost bots (as a temporary
+                      work-around).
+Felix3339 Fabian    `chanset chanmode' now forces the bot to immediately
+                      recheck the currently set channel modes.
           Eule      in got442: if remote-server return
 guppy     Fabian    fixed 1 byte buffer overflow in add_note().
 
@@ -15,7 +19,7 @@ Foundby   Fixedby   What....
           Wiktor    modified the docs to show the proper CVS usage
           guppy     removed some excessive Context calls in core_secondly
           aba       minor fixes for HPUX
-          Eule      fixed +host sharing bug
+Felix3339 Eule      fixed +host sharing bug
           guppy     tcl_getdccidle now can be used on all idx types
           guppy     tcl_boot now uses strncpy
           Jason     added HTML documentation to doc/web_docs/.

@@ -9,7 +9,7 @@
  * 
  * dprintf'ized, 28nov1995
  * 
- * $Id: botnet.c,v 1.11 2000/01/17 16:14:44 per Exp $
+ * $Id: botnet.c,v 1.12 2000/05/22 18:37:30 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -806,6 +806,7 @@ int botunlink(int idx, char *nick, char *reason)
 {
   char s[20];
   register int i;
+  tand_t *bot;
 
   Context;
   if (nick[0] == '*')
@@ -864,8 +865,20 @@ int botunlink(int idx, char *nick, char *reason)
     }
   }
   Context;
-  if ((idx >= 0) && (nick[0] != '*'))
+  if ((idx >= 0) && (nick[0] != '*')) {
     dprintf(idx, "%s\n", BOT_NOTCONNECTED);
+
+    /* The internal bot list is desynched from the dcc list
+     * sometimes. While we still search for the bug, provide
+     * an easy way to clear out those `ghost'-bots.  -FK
+     */
+    bot = findbot(nick);
+    if (bot) {
+      dprintf(idx, "BUG: Found bot `%s' in internal bot list! Removing.\n",
+	      nick);
+      rembot(bot->bot);
+    }
+  }
   if (nick[0] == '*') {
     dprintf(idx, "%s\n", BOT_WIPEBOTTABLE);
     while (tandbot)

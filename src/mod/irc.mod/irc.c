@@ -2,7 +2,7 @@
  * irc.c -- part of irc.mod
  *   support for channels withing the bot
  *
- * $Id: irc.c,v 1.38 2000/02/28 02:06:15 guppy Exp $
+ * $Id: irc.c,v 1.39 2000/05/22 18:37:30 guppy Exp $
  */
 /*
  * Copyright (C) 1997  Robey Pointer
@@ -1160,6 +1160,7 @@ static Function irc_table[] =
   (Function) recheck_channel,
   /* 16 - 19 */
   (Function) me_op,
+  (Function) recheck_channel_modes,
 };
 
 char *server_start();
@@ -1171,7 +1172,7 @@ char *irc_start(Function * global_funcs)
   global = global_funcs;
 
   Context;
-  module_register(MODULE_NAME, irc_table, 1, 1);
+  module_register(MODULE_NAME, irc_table, 1, 2);
   if (!(server_funcs = module_depend(MODULE_NAME, "server", 1, 0)))
     return "You need the server module to use the irc module.";
   if (!(channels_funcs = module_depend(MODULE_NAME, "channels", 1, 0))) {

@@ -1,7 +1,7 @@
 /* 
  * modvals.h
  * 
- * $Id: modvals.h,v 1.10 2000/01/08 21:23:15 per Exp $
+ * $Id: modvals.h,v 1.11 2000/05/22 18:37:30 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -69,6 +69,7 @@
 #define SERVER_BOTUSERHOST   5
 /* irc */
 #define IRC_RECHECK_CHANNEL 15
+#define IRC_RECHECK_CHANNEL_MODES 17
 /* notes */
 #define NOTES_CMD_NOTE       4
 /* console */

@@ -1,7 +1,7 @@
 /* 
  * tclchan.c -- part of channels.mod
  * 
- * $Id: tclchan.c,v 1.27 2000/01/08 21:23:15 per Exp $
+ * $Id: tclchan.c,v 1.28 2000/05/22 18:37:30 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -915,11 +915,12 @@ static int tcl_channel_modify(Tcl_Interp * irp, struct chanset_t *chan,
 			      int items, char **item)
 {
   int i;
-  int oldstatus;
+  int old_status = chan->status,
+      old_mode_mns_prot = chan->mode_mns_prot,
+      old_mode_pls_prot = chan->mode_pls_prot;
   int x=0;
   module_entry *me;
 
-  oldstatus = chan->status;
   for (i = 0; i < items; i++) {
     if (!strcmp(item[i], "need-op")) {
       i++;
@@ -1139,7 +1140,7 @@ static int tcl_channel_modify(Tcl_Interp * irp, struct chanset_t *chan,
      <drummer/1999/10/21>
   */
   if (protect_readonly || chan_hack) {
-    if (((oldstatus ^ chan->status) & CHAN_INACTIVE) &&
+    if (((old_status ^ chan->status) & CHAN_INACTIVE) &&
 	module_find("irc", 0, 0)) {
       if (channel_inactive(chan) &&
 	  (chan->status & (CHAN_ACTIVE | CHAN_PEND)))
@@ -1148,10 +1149,14 @@ static int tcl_channel_modify(Tcl_Interp * irp, struct chanset_t *chan,
 	  !(chan->status & (CHAN_ACTIVE | CHAN_PEND)))
 	dprintf(DP_SERVER, "JOIN %s %s\n", chan->name, chan->key_prot);
     }
-    if ((oldstatus ^ chan->status) &
-	(CHAN_ENFORCEBANS | CHAN_OPONJOIN | CHAN_BITCH | CHAN_AUTOVOICE))
+    if ((old_status ^ chan->status) &
+	(CHAN_ENFORCEBANS | CHAN_OPONJOIN | CHAN_BITCH | CHAN_AUTOVOICE)) {
       if ((me = module_find("irc", 0, 0)))
 	(me->funcs[IRC_RECHECK_CHANNEL])(chan, 1);
+    } else if (old_mode_pls_prot != chan->mode_pls_prot ||
+	       old_mode_mns_prot != chan->mode_mns_prot)
+      if ((me = module_find("irc", 1, 2)))
+	(me->funcs[IRC_RECHECK_CHANNEL_MODES])(chan);
   }
   if (x > 0) 
     return TCL_ERROR;
