@@ -4,7 +4,7 @@
  * 
  * Rewritten by Fabian Knittel <fknittel@gmx.de>
  * 
- * $Id: filedb3.c,v 1.9 2000/02/29 20:29:29 fabian Exp $
+ * $Id: filedb3.c,v 1.10 2000/03/04 20:38:20 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -163,7 +163,7 @@ static int filedb_readtop(FILE *fdb, filedb_top *fdbt)
   Context;
   if (fdbt) {
     /* Read header */
-    fseek(fdb, 0, SEEK_SET);
+    fseek(fdb, 0L, SEEK_SET);
     if (feof(fdb))
       return 0;
     fread(fdbt, 1, sizeof(filedb_top), fdb);
@@ -177,7 +177,7 @@ static int filedb_readtop(FILE *fdb, filedb_top *fdbt)
 static int filedb_writetop(FILE *fdb, filedb_top *fdbt)
 {
   Context;
-  fseek(fdb, 0, SEEK_SET);
+  fseek(fdb, 0L, SEEK_SET);
   fwrite(fdbt, 1, sizeof(filedb_top), fdb);
   return 1;
 }
@@ -261,7 +261,7 @@ static filedb_entry *filedb_findempty(FILE *fdb, int tot)
 
   /* No existing entries, so create new entry at end of DB instead. */
   fdbe = malloc_fdbe();
-  fseek(fdb, 0, SEEK_END);
+  fseek(fdb, 0L, SEEK_END);
   fdbe->pos = ftell(fdb);
   Context;
   return fdbe;
@@ -653,7 +653,7 @@ static void filedb_timestamp(FILE * fdb)
  * 2. Removes all stale entries from the db.
  * 3. Optimises the db.
  */
-static void filedb_update(char *path, FILE * fdb, int sort)
+static void filedb_update(char *path, FILE *fdb, int sort)
 {
   struct dirent *dd = NULL;
   struct stat st;
@@ -699,8 +699,9 @@ static void filedb_update(char *path, FILE * fdb, int sort)
       free_fdbe(&fdbe);
     }
     dd = readdir(dir);
-    my_free(name);
   }
+  if (name)
+    my_free(name);
   closedir(dir);
 
   /* 
@@ -849,8 +850,7 @@ static FILE *filedb_open(char *path, int sort)
       (fdbt.timestamp < st.st_ctime))
     /* File database isn't up-to-date! */
     filedb_update(npath, fdb, sort & 1);
-
-  if (!sort)
+  else if ((now - fdbt.timestamp) > 300)
     filedb_mergeempty(fdb);
 
   count++;

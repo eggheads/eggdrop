@@ -4,7 +4,7 @@
  * 
  * Written for filedb3 by Fabian Knittel <fknittel@gmx.de>
  * 
- * $Id: dbcompat.c,v 1.6 2000/01/17 22:36:08 fabian Exp $
+ * $Id: dbcompat.c,v 1.7 2000/03/04 20:38:20 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -138,7 +138,7 @@ static int convert_old_files(char *path, char *newfiledb)
     filedb_addfile(fdb, fdbe);
     free_fdbe(&fdbe);
   }
-  fseek(fdb, 0, SEEK_END);
+  fseek(fdb, 0L, SEEK_END);
   unlockfile(f);
   unlockfile(fdb);
   fclose(fdb);
@@ -155,7 +155,7 @@ static void convert_version1(FILE *fdb_s, FILE *fdb_t)
   long where;
   filedb1 fdb1;
 
-  fseek(fdb_s, 0, SEEK_SET);
+  fseek(fdb_s, 0L, SEEK_SET);
   while (!feof(fdb_s)) {
     where = ftell(fdb_s);
     fread(&fdb1, sizeof(filedb1), 1, fdb_s);
@@ -192,7 +192,7 @@ static void convert_version2(FILE *fdb_s, FILE *fdb_t)
   long where;
   filedb2 fdb2;
 
-  fseek(fdb_s, 0, SEEK_SET);
+  fseek(fdb_s, 0L, SEEK_SET);
   while (!feof(fdb_s)) {
     where = ftell(fdb_s);
     fread(&fdb2, sizeof(filedb2), 1, fdb_s);

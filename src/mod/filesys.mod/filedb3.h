@@ -4,7 +4,7 @@
  * 
  * Written by Fabian Knittel <fknittel@gmx.de>
  * 
- * $Id: filedb3.h,v 1.6 2000/01/17 22:36:08 fabian Exp $
+ * $Id: filedb3.h,v 1.7 2000/03/04 20:38:20 fabian Exp $
  */
 /* 
  * Copyright (C) 1999, 2000  Eggheads
@@ -92,11 +92,11 @@ typedef struct {
  */
 #define malloc_strcpy(target, entry)					\
 {									\
-  my_free(target);							\
   if (entry) {								\
-    target = nmalloc(strlen(entry) + 1);				\
-    strcpy(target, entry);						\
-  }									\
+    (target) = nrealloc((target), strlen(entry) + 1);			\
+    strcpy((target), (entry));						\
+  } else								\
+    my_free(target);							\
 }
 
 #define filedb_tot_dynspace(fdh) ((fdh).filename_len + (fdh).desc_len +	\
