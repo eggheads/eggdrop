@@ -3,6 +3,10 @@ Changes in eggdrop: (since v1.4.0)
 
 1.4.1
 Foundby   Fixedby   What....
+SuperS    Tothwolf  --with-tclinc/tcllib were broken      
+          drummer   encryption/decryption functions now return plaintext
+                    if the key is empty.
+	  Eule      fixed nickfloodprotect
 	  Tothwolf  no PART sending for inactive channels anymore
 OpTiC-?X  Fabian    filesys had several unchecked filedb_open() calls
           Fabian    not sending ISON during irc login now

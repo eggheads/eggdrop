@@ -351,6 +351,7 @@ else
 #include "src/mod/filesys.mod/files.h"
 int main() {
   fprintf(stdout, "%d/%d %s\n", 512 - sizeof(struct filler), sizeof(filedb), "bytes");
+  return 0;
 }
 EOF
   if { (eval echo configure: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}
@@ -375,18 +376,13 @@ AC_DEFUN(EGG_TCL_ARG_WITH, [dnl
 AC_ARG_WITH(tcllib, [  --with-tcllib=PATH      full path to tcl library], tcllibname=$withval)
 AC_ARG_WITH(tclinc, [  --with-tclinc=PATH      full path to tcl header], tclincname=$withval)
 
+WARN=0
 # Make sure either both or neither $tcllibname and $tclincname are set
 if test ! "x${tcllibname}" = "x"
 then
   if test "x${tclincname}" = "x"
   then
-    cat << 'EOF' >&2
-configure: warning:
-
-  You must specify both --with-tcllib and --with-tclinc for them to work.
-  configure will now attempt to autodetect both the Tcl library and header...
-
-EOF
+    WARN=1
     tcllibname=""
     TCLLIB=""
     TCLINC=""
@@ -394,50 +390,56 @@ EOF
 else
   if test ! "x${tclincname}" = "x"
   then
-    cat << 'EOF' >&2
+    WARN=1
+    tclincname=""
+    TCLLIB=""
+    TCLINC=""
+  fi
+fi
+if test ${WARN} = 1
+then
+  cat << 'EOF' >&2
 configure: warning:
 
   You must specify both --with-tcllib and --with-tclinc for them to work.
   configure will now attempt to autodetect both the Tcl library and header...
 
 EOF
-    tclincname=""
-    TCLLIB=""
-    TCLINC=""
-  fi
 fi
 ])dnl
 
 
 AC_DEFUN(EGG_TCL_ENV, [dnl
+WARN=0
 # Make sure either both or neither $TCLLIB and $TCLINC are set
 if test ! "x${TCLLIB}" = "x"
 then
   if test "x${TCLINC}" = "x"
   then
-    cat << 'EOF' >&2
-configure: warning:
-
-  Environment variable TCLLIB was set, but I did not detect TCLINC.
-  Please set both TCLLIB and TCLINC correctly if you wish to use them.
-  configure will now attempt to autodetect both the Tcl library and header...
-
-EOF
+    WARN=1
+    WVAR1=TCLLIB
+    WVAR2=TCLINC
     TCLLIB=""
   fi
 else
   if test ! "x${TCLINC}" = "x"
   then
-    cat << 'EOF' >&2
+    WARN=1
+    WVAR1=TCLINC
+    WVAR2=TCLLIB
+    TCLINC=""
+  fi
+fi
+if test ${WARN} = 1
+then
+  cat << 'EOF' >&2
 configure: warning:
 
-  Environment variable TCLINC was set, but I did not detect TCLLIB.
+  Environment variable ${WVAR1} was set, but I did not detect ${WVAR2}.
   Please set both TCLLIB and TCLINC correctly if you wish to use them.
   configure will now attempt to autodetect both the Tcl library and header...
 
 EOF
-    TCLINC=""
-  fi
 fi
 ])dnl
 
@@ -448,7 +450,7 @@ if test ! "x${tcllibname}" = "x"
 then
   if test -f "$tcllibname" && test -r "$tcllibname"
   then
-    TCLLIB=`echo $tcllibname | sed 's%/[^/][^/]*$%%'`
+    TCLLIB=`echo $tcllibname | sed 's%/[[^/]][[^/]]*$%%'`
     TCLLIBFN=`$BASENAME $tcllibname | cut -c4-`
     TCLLIBEXT=".`echo $TCLLIBFN | $AWK '{j=split([$]1, i, "."); print i[[j]]}'`"
     TCLLIBFNS=`$BASENAME $tcllibname $TCLLIBEXT | cut -c4-`
@@ -477,7 +479,7 @@ if test ! "x${tclincname}" = "x"
 then
   if test -f "$tclincname" && test -r "$tclincname"
   then
-    TCLINC=`echo $tclincname | sed 's%/[^/][^/]*$%%'`
+    TCLINC=`echo $tclincname | sed 's%/[[^/]][[^/]]*$%%'`
     TCLINCFN=`$BASENAME $tclincname`
   else
     cat << EOF >&2
@@ -553,6 +555,7 @@ then
         if test -r "$TCLINC/$tclheaderfn"
         then
           TCLINCFN=$tclheaderfn
+          break
         fi
       done
     fi

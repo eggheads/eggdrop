@@ -1657,7 +1657,7 @@ static int gotnick(char *from, char *msg)
 	  (u_match_mask(global_bans, s1) || u_match_mask(chan->bans, s1)))
 	refresh_ban_kick(chan, s1, msg);
       strcpy(m->nick, msg);
-      detect_chan_flood(nick, uhost, from, chan, FLOOD_NICK, NULL);
+      detect_chan_flood(msg, uhost, from, chan, FLOOD_NICK, NULL);
       /* any pending kick to the old nick is lost. Ernst 18/3/1998 */
       if (chan_sentkick(m))
 	m->flags &= ~SENTKICK;

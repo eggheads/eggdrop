@@ -289,11 +289,13 @@ static char *encrypt_string(char *key, char *str)
   char *p, *s, *dest, *d;
   int i;
 
-  dest = (char *) nmalloc((strlen(str) + 9) * 2);
   /* pad fake string with 8 bytes to make sure there's enough */
   s = (char *) nmalloc(strlen(str) + 9);
   strcpy(s, str);
+  if ((!key) || (!key[0]))
+    return s;
   p = s;
+  dest = (char *) nmalloc((strlen(str) + 9) * 2);
   while (*p)
     p++;
   for (i = 0; i < 8; i++)
@@ -332,11 +334,13 @@ static char *decrypt_string(char *key, char *str)
   char *p, *s, *dest, *d;
   int i;
 
-  dest = (char *) nmalloc(strlen(str) + 12);
   /* pad encoded string with 0 bits in case it's bogus */
   s = (char *) nmalloc(strlen(str) + 12);
   strcpy(s, str);
+  if ((!key) || (!key[0]))
+    return s;
   p = s;
+  dest = (char *) nmalloc(strlen(str) + 12);
   while (*p)
     p++;
   for (i = 0; i < 12; i++)
