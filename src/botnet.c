@@ -7,7 +7,7 @@
  *   linking, unlinking, and relaying to another bot
  *   pinging the bots periodically and checking leaf status
  *
- * $Id: botnet.c,v 1.35 2001/06/30 06:29:55 guppy Exp $
+ * $Id: botnet.c,v 1.36 2001/08/07 13:52:37 poptix Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -427,6 +427,7 @@ void answer_local_whom(int idx, int chan)
 {
   char c, idle[40], spaces2[33] = "                               ";
   int i, len, len2;
+  int t, nicklen, botnicklen;
 
   if (chan == (-1))
     dprintf(idx, "%s (+: %s, *: %s)\n", BOT_BOTNETUSERS, BOT_PARTYLINE,
@@ -441,11 +442,31 @@ void answer_local_whom(int idx, int chan)
 	      (chan < 100000) ? "" : "*", interp->result,
 	      (chan < 100000) ? "" : "*", chan % 100000);
   }
-  spaces[HANDLEN - 9] = 0;
-  dprintf(idx, " Nick     %s   Bot      %s  Host\n", spaces, spaces);
+  /* Find longest nick and botnick */
+  nicklen = botnicklen = 0;
+  for (i = 0; i < dcc_total; i++)
+    if (dcc[i].type == &DCC_CHAT) {
+      if ((chan == (-1)) || ((chan >= 0) && (dcc[i].u.chat->channel == chan))) {
+        t = strlen(dcc[i].nick); if(t > nicklen) nicklen = t;
+        t = strlen(botnetnick); if(t > botnicklen) botnicklen = t;
+      }
+    }
+  for (i = 0; i < parties; i++) {
+    if ((chan == (-1)) || ((chan >= 0) && (party[i].chan == chan))) {
+      t = strlen(party[i].nick); if(t > nicklen) nicklen = t;
+      t = strlen(party[i].bot); if(t > botnicklen) botnicklen = t;
+    }
+  }
+  if(nicklen < 9) nicklen = 9;
+  if(botnicklen < 9) botnicklen = 9;
+
+  spaces[nicklen - 9] = 0;
+  spaces2[botnicklen - 9] = 0;
+  dprintf(idx, " Nick     %s   Bot      %s  Host\n", spaces, spaces2);
   dprintf(idx, "----------%s   ---------%s  --------------------\n",
-	  spaces, spaces);
-  spaces[HANDLEN - 9] = ' ';
+	  spaces, spaces2);
+  spaces[nicklen - 9] = ' ';
+  spaces2[botnicklen - 9] = ' ';
   for (i = 0; i < dcc_total; i++)
     if (dcc[i].type == &DCC_CHAT) {
       if ((chan == (-1)) || ((chan >= 0) && (dcc[i].u.chat->channel == chan))) {
@@ -466,8 +487,8 @@ void answer_local_whom(int idx, int chan)
 	    sprintf(idle, " [idle %lum]", mins);
 	} else
 	  idle[0] = 0;
-	spaces[len = HANDLEN - strlen(dcc[i].nick)] = 0;
-	spaces2[len2 = HANDLEN - strlen(botnetnick)] = 0;
+	spaces[len = nicklen - strlen(dcc[i].nick)] = 0;
+	spaces2[len2 = botnicklen - strlen(botnetnick)] = 0;
 	dprintf(idx, "%c%s%s %c %s%s  %s%s\n", c, dcc[i].nick, spaces,
 		(dcc[i].u.chat->channel == 0) && (chan == (-1)) ? '+' :
 		(dcc[i].u.chat->channel > 100000) &&
@@ -500,8 +521,8 @@ void answer_local_whom(int idx, int chan)
 	  sprintf(idle, " [idle %lum]", mins);
       } else
 	idle[0] = 0;
-      spaces[len = HANDLEN - strlen(party[i].nick)] = 0;
-      spaces2[len2 = HANDLEN - strlen(party[i].bot)] = 0;
+      spaces[len = nicklen - strlen(party[i].nick)] = 0;
+      spaces2[len2 = botnicklen - strlen(party[i].bot)] = 0;
       dprintf(idx, "%c%s%s %c %s%s  %s%s\n", c, party[i].nick, spaces,
 	      (party[i].chan == 0) && (chan == (-1)) ? '+' : ' ',
 	      party[i].bot, spaces2, party[i].from, idle);
