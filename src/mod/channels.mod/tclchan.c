@@ -849,10 +849,10 @@ static int tcl_channel_info(Tcl_Interp * irp, struct chanset_t *chan)
   while (ul) {
     if (ul->defined && ul->name) {
       if (ul->type == UDEF_FLAG) {
-        simple_sprintf(s,"%c%s", getudef(ul->values, chan->name) ? '+' : '-', ul->name);
+        simple_sprintf(s,"%c%s", getudef(ul->values, chan->dname) ? '+' : '-', ul->name);
         Tcl_AppendElement(irp, s);
       } else if (ul->type == UDEF_INT) {
-        simple_sprintf(s,"%s %d", ul->name, getudef(ul->values, chan->name));
+        simple_sprintf(s,"%s %d", ul->name, getudef(ul->values, chan->dname));
         Tcl_AppendElement(irp, s);
       } else
         debug1("UDEF-ERROR: unknown type %d", ul->type);
@@ -1157,7 +1157,7 @@ static int tcl_channel_modify(Tcl_Interp * irp, struct chanset_t *chan,
               Tcl_AppendResult(irp, "this setting needs an argument", NULL);
             return TCL_ERROR;
           }
-          setudef(ul, ul->values, chan->name, atoi(item[i]));
+          setudef(ul, ul->values, chan->dname, atoi(item[i]));
         }
       }
       if (!found) {

@@ -1278,7 +1278,7 @@ static void cmd_chaninfo(struct userrec *u, int idx, char *par)
           dprintf(idx, "User defined channel settings:\n");
           tmp = 1;
         }
-        simple_sprintf(work, "%s%s: %d   ", work, ul->name, getudef(ul->values, chan->name));
+        simple_sprintf(work, "%s%s: %d   ", work, ul->name, getudef(ul->values, chan->dname));
         ii++;
         if (ii > 4) {
           dprintf(idx, "%s\n", work);
