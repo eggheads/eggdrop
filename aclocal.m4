@@ -1,7 +1,7 @@
-optidnl aclocal.m4
+dnl aclocal.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: aclocal.m4,v 1.51 2001/12/04 21:11:57 guppy Exp $
+dnl $Id: aclocal.m4,v 1.52 2001/12/06 04:52:18 guppy Exp $
 dnl
 
 
@@ -186,7 +186,7 @@ case "$egg_cv_var_system_type" in
       ;;
     esac
   ;;
-  CYGWIN*)
+  CYGWI*)
     case "`echo $egg_cv_var_system_release | cut -c 1-3`" in
       1.*)
         NEED_DL=0
@@ -213,6 +213,7 @@ case "$egg_cv_var_system_type" in
         AC_MSG_WARN(Make sure the directory eggdrop is installed into is mounted in binary mode.)
       ;;
     esac
+    AC_DEFINE(CYGWIN_HACKS)
   ;;
   HP-UX)
     HPUX=yes
@@ -474,18 +475,6 @@ egg_cv_var_libsafe_sscanf="no")
 if test "$egg_cv_var_libsafe_sscanf" = "yes"
 then
   AC_DEFINE(LIBSAFE_HACKS)dnl
-fi
-])dnl
-
-
-dnl  EGG_CYGWIN()
-dnl
-dnl  Check for Cygwin support.
-AC_DEFUN(EGG_CYGWIN, [dnl
-AC_CYGWIN
-if test "$ac_cv_cygwin" = "yes"
-then
-  AC_DEFINE(CYGWIN_HACKS)dnl
 fi
 ])dnl
 

@@ -64,8 +64,7 @@ EGG_HEADER_STDC
 # Make sure we are using the correct result from a broken libsafe sscanf
 EGG_CHECK_LIBSAFE_SSCANF
 
-# Checks for cygwin
-EGG_CYGWIN
+# Checks for executable extension
 EGG_EXEEXT
 
 # Where is Tcl?  Is it here?

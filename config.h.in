@@ -5,7 +5,7 @@
  * acconfig.h
  *   template file autoheader uses when building config.h.in
  * 
- * $Id: config.h.in,v 1.22 2001/12/04 21:11:57 guppy Exp $
+ * $Id: config.h.in,v 1.23 2001/12/06 04:52:18 guppy Exp $
  */
 
 /* Define if modules will work on your system  */
