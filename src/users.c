@@ -821,7 +821,7 @@ int readuserfile(char *file, struct userrec **ret)
 		cr->flags = fr.chan;
 		cr->flags_udef = fr.udef_chan;
 		if (s[0]) {
-		  cr->info = (char *) nmalloc(strlen(s) + 1);
+		  cr->info = (char *) user_malloc(strlen(s) + 1);
 		  strcpy(cr->info, s);
 		} else
 		  cr->info = NULL;

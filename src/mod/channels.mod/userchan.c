@@ -99,7 +99,7 @@ static void set_handle_chaninfo(struct userrec *bu, char *handle,
   if (ch->info != NULL)
     nfree(ch->info);
   if (info && info[0]) {
-    ch->info = (char *) nmalloc(strlen(info) + 1);
+    ch->info = (char *) user_malloc(strlen(info) + 1);
     strcpy(ch->info, info);
   } else
     ch->info = NULL;
