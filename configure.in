@@ -358,7 +358,7 @@ else
    do
      if test "$TCLLIB" = ""
      then
-       for check in /usr/local/lib /usr/local/lib/tcl /usr/local/pkgs/tcl/lib /usr/lib /usr/i486-linuxaout/lib $HOME/lib $HOME/tcl $HOME/tcl/lib $HOME
+       for check in /usr/local/lib /usr/local/lib/tcl /usr/local/pkgs/tcl/lib /usr/lib /usr/i486-linuxaout/lib $HOME/lib $HOME/tcl $HOME/tcl/lib $HOME /lib
        do
 	 if test -r $check/lib$checkfn
          then
