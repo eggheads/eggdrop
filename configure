@@ -1124,6 +1124,7 @@ case $system in
 EOF
 
     LINUX=yes
+    DEFAULT_MAKE=debugmem
     DLOPEN_1=
     ;;
   BSD/OS)

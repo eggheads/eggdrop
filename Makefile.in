@@ -99,13 +99,13 @@ GMAKE_MOD = ${MAKE} 'CC=${MOD_CC}' 'LD=${MOD_LD}' 'OBJS=${OBJS}'\
 'TCLLIB=${TCLLIB}' 'STRIP=${MOD_STRIP}' 'RANLIB=@RANLIB@' \
 'XLIBS=@TCL_LIBS@ @LIBS@'
 
-DMAKE_MEM = ${MAKE} 'CC=${MOD_CC} -DEBUG_MEM' 'LD=${MOD_LD} -g' \
-'OBJS=${OBJS}' 'CFLAGS=-g ${CFLAGS}' 'XREQ=${XREQ}' \
+DMAKE_MEM = ${MAKE} 'CC=${MOD_CC} -DEBUG_MEM' 'LD=${MOD_LD} -g3' \
+'OBJS=${OBJS}' 'CFLAGS=-g3 ${CFLAGS}' 'XREQ=${XREQ}' \
 'TCLLIB=${TCLLIB}' 'STRIP=touch' 'RANLIB=@RANLIB@' \
 'XLIBS=@TCL_LIBS@ @LIBS@'
 
-DMAKE_SHLIB = ${MAKE} 'CC=${SHLIB_CC}' 'LD=${SHLIB_LD} -g' \
-'STRIP=touch' 'CFLAGS=-g ${CFLAGS}'
+DMAKE_SHLIB = ${MAKE} 'CC=${SHLIB_CC}' 'LD=${SHLIB_LD} -g3' \
+'STRIP=touch' 'CFLAGS=-g3 ${CFLAGS}'
 
 static: eggtest
 	@echo ""
