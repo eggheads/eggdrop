@@ -1,7 +1,7 @@
 /*
  * module.h
  *
- * $Id: module.h,v 1.49 2001/07/17 19:53:39 guppy Exp $
+ * $Id: module.h,v 1.50 2001/07/18 06:03:29 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -77,9 +77,9 @@
 #endif
 
 #if defined (__CYGWIN__) && !defined(STATIC)
-    #  define EXPORT_SCOPE	__declspec(dllexport)
-    #else
-    #  define EXPORT_SCOPE
+#  define EXPORT_SCOPE	__declspec(dllexport)
+#else
+#  define EXPORT_SCOPE
 #endif
 
 /* Version checks for modules. */
