@@ -1,10 +1,12 @@
-$Id: UPDATES1.6,v 1.442 2003/01/15 01:42:21 wcc Exp $
+$Id: UPDATES1.6,v 1.443 2003/01/18 00:40:05 wcc Exp $
 
 Changes in Eggdrop: (since v1.6.0)
 ----------------------------------
 
 1.6.14
 Found by  Fixed by  What...
+never     Wcc       unixtime was not increased when eggdrop was blocked during
+                    a series of in-line Tcl commands
 lee       Wcc       exported getchanmode()
 various   darko``   removed strict-servernames -- $server is now always the
                     server's realname and $serveraddress is it's server list

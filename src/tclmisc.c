@@ -2,7 +2,7 @@
  * tclmisc.c -- handles:
  *   Tcl stubs for everything else
  *
- * $Id: tclmisc.c,v 1.33 2002/12/26 02:21:53 wcc Exp $
+ * $Id: tclmisc.c,v 1.34 2003/01/18 00:40:05 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -24,6 +24,7 @@
  */
 
 #include <sys/stat.h>
+#include <time.h>
 #include "main.h"
 #include "modules.h"
 #include "tandem.h"
@@ -344,9 +345,10 @@ static int tcl_duration STDVAR
 static int tcl_unixtime STDVAR
 {
   char s[11];
+  time_t now2 = time(NULL);
 
   BADARGS(1, 1, "");
-  egg_snprintf(s, sizeof s, "%lu", (unsigned long) now);
+  egg_snprintf(s, sizeof s, "%lu", (unsigned long) now2);
   Tcl_AppendResult(irp, s, NULL);
   return TCL_OK;
 }
