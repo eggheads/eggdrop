@@ -2,7 +2,7 @@
  * files.c - part of filesys.mod
  *   handles all file system commands
  *
- * $Id: files.c,v 1.33 2003/01/30 07:15:15 wcc Exp $
+ * $Id: files.c,v 1.34 2003/01/30 10:38:31 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -220,7 +220,7 @@ static int resolve_dir(char *current, char *change, char **real, int idx)
         get_user_flagrec(dcc[idx].user, &user, fdbe->chan);
       else
         user.global = USER_OWNER | USER_BOT | USER_MASTER | USER_OP |
-          USER_FRIEND;
+                      USER_FRIEND;
 
       if (fdbe->flags_req) {
         break_down_flags(fdbe->flags_req, &req, NULL);
@@ -1210,7 +1210,8 @@ static void cmd_mv_cp(int idx, char *par, int copy)
         free_fdbe(&fdbe_new);
       }
       if (!skip_this) {
-        if ((fdbe_old->sharelink) || (copyfile(s, s1) == 0)) {
+        if ((fdbe_old->sharelink) ||
+            ((copy ? copyfile(s, s1) : movefile(s, s1)) == 0)) {
           /* Raw file moved okay: create new entry for it */
           ok++;
           fdbe_new = malloc_fdbe();
@@ -1230,10 +1231,8 @@ static void cmd_mv_cp(int idx, char *par, int copy)
           fdbe_new->gots = fdbe_old->gots;
           malloc_strcpy(fdbe_new->sharelink, fdbe_old->sharelink);
           filedb_addfile(fdb_new, fdbe_new);
-          if (!copy) {
-            unlink(s);
+          if (!copy)
             filedb_delfile(fdb_old, fdbe_old->pos);
-          }
           free_fdbe(&fdbe_new);
         }
       }

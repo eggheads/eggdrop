@@ -2,7 +2,7 @@
  * tclfiles.c -- part of filesys.mod
  *   Tcl stubs for file system commands moved here to support modules
  *
- * $Id: tclfiles.c,v 1.19 2003/01/30 07:15:15 wcc Exp $
+ * $Id: tclfiles.c,v 1.20 2003/01/30 10:38:31 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -559,7 +559,8 @@ static int tcl_mv_cp(Tcl_Interp *irp, int argc, char **argv, int copy)
         free_fdbe(&fdbe_new);
       }
       if (!skip_this) {
-        if ((fdbe_old->sharelink) || (copyfile(s, s1) == 0)) {
+        if ((fdbe_old->sharelink) ||
+            ((copy ? copyfile(s, s1) : movefile(s, s1)) == 0)) {
           /* Raw file moved okay: create new entry for it */
           ok++;
           fdbe_new = malloc_fdbe();
@@ -579,10 +580,8 @@ static int tcl_mv_cp(Tcl_Interp *irp, int argc, char **argv, int copy)
           fdbe_new->gots = fdbe_old->gots;
           malloc_strcpy(fdbe_new->sharelink, fdbe_old->sharelink);
           filedb_addfile(fdb_new, fdbe_new);
-          if (!copy) {
-            unlink(s);
+          if (!copy)
             filedb_delfile(fdb_old, fdbe_old->pos);
-          }
           free_fdbe(&fdbe_new);
         }
       }
