@@ -1,7 +1,7 @@
 # core.english.lang
 #   core language messages for eggdrop
 #
-# $Id: core.english.lang,v 1.30 2002/01/08 04:24:27 guppy Exp $
+# $Id: core.english.lang,v 1.31 2002/02/04 05:03:35 wcc Exp $
 
 # General stuff
 0x001,Usage
@@ -124,7 +124,7 @@ module, please consult the default config file for info.\n
 0x535,USER FILE NOT FOUND!  (try './eggdrop -m %s' to make one)\n
 0x536,STARTING BOT IN USERFILE CREATION MODE.\n\
 Telnet to the bot and enter 'NEW' as your nickname.
-0x537,OR Go to IRC and:  /msg %s hello\n
+0x537,OR go to IRC and type:  /msg %s hello\n
 0x538,This will make the bot recognize you as the master.
 0x539,USERFILE ALREADY EXISTS (drop the '-m')
 0x53a,CAN'T WRITE TO TEMP DIR

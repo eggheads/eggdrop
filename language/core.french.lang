@@ -1,7 +1,7 @@
 # core.french.lang
 #   core language messages for eggdrop
 #
-# $Id: core.french.lang,v 1.23 2002/01/08 04:24:27 guppy Exp $
+# $Id: core.french.lang,v 1.24 2002/02/04 05:03:35 wcc Exp $
 
 
 # General stuff
@@ -125,7 +125,7 @@ consultez le ficher de configuration initiale pour plus de renseignements.\n
 0x535,LISTE UTILISATEURS NON TROUVEE!  (essayez './eggdrop -m %s' pour en créer une)\n
 0x536,DEMARRAGE DU BOT EN MODE CREATION DE LISTE UTILISATEURS.\n\
 Faites un Telnet sur le bot et entrez 'NEW' comme surnom.
-0x537,OU Allez sur IRC et:  /msg %s hello\n
+0x537,OU allez sur IRC et:  /msg %s hello\n
 0x538,Le bot vous reconnaitra alors comme maître.
 0x539,LA LISTE UTILISATEURS EXISTE DEJA (enlevez le '-m')
 0x53a,NE PEUT PAS ECRIRE DANS LE REPERTOIRE TEMPORAIRE
