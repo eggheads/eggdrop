@@ -21,10 +21,10 @@
 #undef NO_OLD_BOTNET
 
 /* 
- * Undefine this to completely disable context/assert debugging.
+ * Undefine this to completely disable context debugging.
  * WARNING: DO NOT send in bug reports if you undefine this!
  */
-#define DEBUG
+#define DEBUG_CONTEXT
 
 /*
  * define the maximum length a handle on the bot can be.
@@ -141,13 +141,18 @@
 #define nmalloc(x) n_malloc((x),__FILE__,__LINE__)
 #define nrealloc(x,y) n_realloc((x),(y),__FILE__,__LINE__)
 #define nfree(x) n_free((x),__FILE__,__LINE__)
-#ifdef DEBUG
+
+#ifdef DEBUG_CONTEXT
 #  define Context eggContext(__FILE__, __LINE__, NULL)
 #  define ContextNote(note) eggContextNote(__FILE__, __LINE__, NULL, note)
-#  define Assert(expr) eggAssert(__FILE__, __LINE__, NULL, (int)(expr))
 #else
 #  define Context {}
 #  define ContextNote(note) {}
+#endif
+
+#ifdef DEBUG_ASSERT
+#  define Assert(expr) eggAssert(__FILE__, __LINE__, NULL, (int)(expr))
+#else
 #  define Assert(expr) {}
 #endif
 
@@ -185,15 +190,6 @@ typedef u_32bit_t dword;
 
 /* IP type */
 typedef u_32bit_t IP;
-
-/* macro for simplifying patches */
-#define PATCH(str) { \
-  char *p=strchr(egg_version,'+'); \
-  if (p==NULL) p=&egg_version[strlen(egg_version)]; \
-  sprintf(p,"+%s",str); \
-  egg_numver++; \
-  sprintf(&egg_xtra[strlen(egg_xtra)]," %s",str); \
-}
 
 #define debug0(x) putlog(LOG_DEBUG,"*",x)
 #define debug1(x,a1) putlog(LOG_DEBUG,"*",x,a1)
