@@ -2,7 +2,7 @@
  * userent.c -- handles:
  *   user-entry handling, new stylem more versatile.
  *
- * $Id: userent.c,v 1.21 2001/11/13 22:55:20 guppy Exp $
+ * $Id: userent.c,v 1.22 2001/12/14 05:32:11 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -595,7 +595,7 @@ static void botaddr_display(int idx, struct user_entry *e)
   register struct bot_addr *bi = (struct bot_addr *) e->u.extra;
 
   dprintf(idx, "  ADDRESS: %.70s\n", bi->address);
-  dprintf(idx, "     telnet: %d, relay: %d\n", bi->telnet_port, bi->relay_port);
+  dprintf(idx, "     users: %d, bots: %d\n", bi->relay_port, bi->telnet_port);
 }
 
 static int botaddr_gotshare(struct userrec *u, struct user_entry *e,
