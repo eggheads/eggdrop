@@ -52,6 +52,13 @@ As soon as we start getting the translations in there will be a directory
 on raistlin.toledolink.com that will contain ready to use language files.
 Look for it real soon.
 
+FILESYS
+The filesys module has changed it's db format to add flexibility and remove
+the limits imposed by the old format.  There's nothing special for you to
+do as the old db is automatically converted to the new format when you first
+access it. You won't be able to downgrade to older versions after this
+though, so maybe you'll want to make a backup first.
+
 3.  MISC stuff
 
 COMMANDS

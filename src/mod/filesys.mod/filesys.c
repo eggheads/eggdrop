@@ -1,44 +1,65 @@
-/* 
- * This file is part of the eggdrop source code copyright (c) 1997 Robey
- * Pointer and is distributed according to the GNU general public license.
- * For full details, read the top of 'main.c' or the file called COPYING
- * that was distributed with this code.
+/*
+ * filesys.c  - main file of the filesys eggdrop module
  */
+/*
+ * This file is part of the eggdrop source code.
+ *
+ * Copyright (C) 1997  Robey Pointer
+ * Copyright (C) 1999  Eggheads
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
+
 
 #include <fcntl.h>
 #include <sys/stat.h>
 #define MAKING_FILESYS
 #define MODULE_NAME "filesys"
 #ifdef HAVE_CONFIG_H
-#include "../../config.h"
+# include "../../config.h"
 #endif
 #include <sys/file.h>
 #if HAVE_DIRENT_H
-#include <dirent.h>
-#define NAMLEN(dirent) strlen((dirent)->d_name)
+# include <dirent.h>
+# define NAMLEN(dirent) strlen((dirent)->d_name)
 #else
-#define dirent direct
-#define NAMLEN(dirent) (dirent)->d_namlen
-#if HAVE_SYS_NDIR_H
-#include <sys/ndir.h>
-#endif
-#if HAVE_SYS_DIR_H
-#include <sys/dir.h>
-#endif
-#if HAVE_NDIR_H
-#include <ndir.h>
-#endif
+# define dirent direct
+# define NAMLEN(dirent) (dirent)->d_namlen
+# if HAVE_SYS_NDIR_H
+#  include <sys/ndir.h>
+# endif
+# if HAVE_SYS_DIR_H
+#  include <sys/dir.h>
+# endif
+# if HAVE_NDIR_H
+#  include <ndir.h>
+# endif
 #endif
 #include "../module.h"
+#include "filedb3.h"
 #include "filesys.h"
 #include "../../tandem.h"
 #include "files.h"
+#include "dbcompat.h"
+#include "filelist.h"
 
 static p_tcl_bind_list H_fil;
 static Function *transfer_funcs = NULL;
 
 /* fcntl.h sets this :/ */
-#undef global			/* fcntl.h sets this :/ */
+#undef global
 static Function *global = NULL;
 
 /* root dcc directory */
@@ -56,8 +77,8 @@ static int dcc_maxsize = 1024;
 /* maximum number of users can be in the file area at once */
 static int dcc_users = 0;
 
-/* where to put the filedb, if not in a hidden '.filedb' file in */
-/* each directory */
+/* where to put the filedb, if not in a hidden '.filedb' file in
+ * each directory */
 static char filedb_path[121];
 
 static int is_valid();
@@ -102,9 +123,11 @@ static struct user_entry_type USERENTRY_DCCDIR =
   "DCCDIR"
 };
 
-#include "filedb.c"
+#include "filedb3.c"
 #include "files.c"
 #include "tclfiles.c"
+#include "dbcompat.c"
+#include "filelist.c"
 
 /* check for tcl-bound file command, return 1 if found */
 /* fil: proc-name <handle> <dcc-handle> <args...> */
@@ -685,8 +708,6 @@ static char *mktempfile(char *filename)
   make_rand_str(rands, 7);
   l = strlen(filename);
   if ((l + MKTEMPFILE_TOT) > NAME_MAX) {
-    debug2("mktempfile: shortened buffer: %d to %d", l,
-	   (NAME_MAX - MKTEMPFILE_TOT));
     fn[NAME_MAX - MKTEMPFILE_TOT] = 0;
     l = NAME_MAX - MKTEMPFILE_TOT;
     fn = nmalloc(l + 1);
@@ -697,7 +718,6 @@ static char *mktempfile(char *filename)
   sprintf(tempname, "%u-%s-%s", getpid(), rands, fn);
   if (fn != filename)
     nfree(fn);
-  debug2("mktempfile: %s -> %s", filename, tempname);
   return tempname;
 }
 
@@ -792,8 +812,7 @@ static int filesys_DCC_CHAT(char *nick, char *from, char *handle,
   char *param, *ip, *prt, buf[512], *msg = buf;
   int i, sock;
   struct userrec *u = get_user_by_handle(userlist, handle);
-  struct flag_record fr =
-  {FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0};
+  struct flag_record fr = {FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0};
 
   context;
   if (!strncasecmp(text, "SEND ", 5)) {
@@ -983,7 +1002,7 @@ char *filesys_start(Function * global_funcs)
   USERENTRY_DCCDIR.got_share = 0;	/* we dont want it shared tho */
   add_entry_type(&USERENTRY_DCCDIR);
   DCC_FILES_PASS.timeout_val = &password_timeout;
-  add_lang_section("filesys");
+  add_lang_section("files");
   return NULL;
 }
 
@@ -991,6 +1010,3 @@ static int is_valid()
 {
   return dccdir[0];
 }
-
-/* 2 stupid backward compatability functions */
-/* set upload/dnload stats for a user */

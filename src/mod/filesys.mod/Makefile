@@ -30,4 +30,5 @@ clean:
  ../../lang.h ../../eggdrop.h ../../flags.h ../../proto.h \
  ../../../lush.h ../../cmdt.h ../../tclegg.h ../../tclhash.h \
  ../../chan.h ../../users.h ../modvals.h ../../tandem.h filesys.h \
- ../transfer.mod/transfer.h files.h filedb.c files.c tclfiles.c
+ ../transfer.mod/transfer.h files.h filedb3.c filedb3.h files.c \
+ tclfiles.c dbcompat.c filelist.c filelist.h
