@@ -2,7 +2,7 @@
  * irc.c -- part of irc.mod
  *   support for channels within the bot
  *
- * $Id: irc.c,v 1.61 2001/12/22 20:58:34 guppy Exp $
+ * $Id: irc.c,v 1.62 2001/12/29 05:45:12 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -42,10 +42,10 @@ static int net_type;
 static int strict_host;
 static int wait_split = 300;		/* Time to wait for user to return from
 					   net-split. */
-static int max_bans;
+static int max_bans = 20;		/* Modified by net-type 1-4 */
 static int max_exempts = 20;
 static int max_invites = 20;
-static int max_modes;
+static int max_modes = 20;		/* Modified by net-type 1-4 */
 static int bounce_bans = 1;
 static int bounce_exempts = 0;
 static int bounce_invites = 0;
