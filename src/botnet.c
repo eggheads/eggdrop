@@ -7,7 +7,7 @@
  *   linking, unlinking, and relaying to another bot
  *   pinging the bots periodically and checking leaf status
  * 
- * $Id: botnet.c,v 1.26 2000/07/12 21:45:29 fabian Exp $
+ * $Id: botnet.c,v 1.27 2000/08/06 14:53:10 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -931,18 +931,27 @@ int botunlink(int idx, char *nick, char *reason)
     }
   }
   Context;
-  if ((idx >= 0) && (nick[0] != '*')) {
+  if (idx >= 0 && nick[0] != '*')
     dprintf(idx, "%s\n", BOT_NOTCONNECTED);
-
-    /* The internal bot list is desynched from the dcc list
-     * sometimes. While we still search for the bug, provide
-     * an easy way to clear out those `ghost'-bots.  -FK
-     */
+  if (nick[0] != '*') {
     bot = findbot(nick);
     if (bot) {
-      dprintf(idx, "BUG: Found bot `%s' in internal bot list! Removing.\n",
-	      nick);
+      /* The internal bot list is desynched from the dcc list
+         sometimes. While we still search for the bug, provide
+         an easy way to clear out those `ghost'-bots.
+				       Fabian (2000-08-02)  */
+      char *ghost = "BUG!!: Found bot `%s' in internal bot list, but it\n"
+		    "   shouldn't have been there! Removing.\n"
+		    "   This is a known bug we haven't fixed yet. If this\n"
+		    "   bot is the newest eggdrop version available and you\n"
+		    "   know a *reliable* way to reproduce the bug, please\n"
+		    "   contact us - we need your help!\n";
+      if (idx >= 0)
+	dprintf(idx, ghost, nick);
+      else
+	putlog(LOG_MISC, "*", ghost, nick);
       rembot(bot->bot);
+      return 1;
     }
   }
   if (nick[0] == '*') {
