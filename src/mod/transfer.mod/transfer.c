@@ -1,7 +1,7 @@
 /*
  * transfer.c -- part of transfer.mod
  *
- * $Id: transfer.c,v 1.44 2001/12/05 04:12:07 guppy Exp $
+ * $Id: transfer.c,v 1.45 2001/12/21 18:51:11 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1430,18 +1430,21 @@ static void dcc_get_pending(int idx, char *buf, int len)
  *
  * Use raw_dcc_resend() and raw_dcc_send() instead of this function.
  */
+
 static int raw_dcc_resend_send(char *filename, char *nick, char *from,
 			       char *dir, int resend)
 {
   int zz, port, i;
   char *nfn, *buf = NULL;
-  struct stat ss;
-  FILE *f;
-
+  long dccfilesize;
+  FILE *f, *dccfile;
   zz = (-1);
-  stat(filename, &ss);
+  dccfile = fopen(filename,"r");
+  fseek(dccfile, 0, SEEK_END);
+  dccfilesize = ftell(dccfile);
+  fclose(dccfile);
   /* File empty?! */
-  if (ss.st_size == 0)
+  if (dccfilesize == 0)
     return DCCSEND_FEMPTY;
   if (reserved_port_min > 0 && reserved_port_min < reserved_port_max) {
     for (port = reserved_port_min; port <= reserved_port_max; port++) {
@@ -1478,7 +1481,7 @@ static int raw_dcc_resend_send(char *filename, char *nick, char *from,
   strcpy(dcc[i].u.xfer->origname, nfn);
   strcpy(dcc[i].u.xfer->from, from);
   strcpy(dcc[i].u.xfer->dir, dir);
-  dcc[i].u.xfer->length = ss.st_size;
+  dcc[i].u.xfer->length = dccfilesize;
   dcc[i].timeval = now;
   dcc[i].u.xfer->f = f;
   dcc[i].u.xfer->type = resend ? XFER_RESEND_PEND : XFER_SEND;
@@ -1486,8 +1489,8 @@ static int raw_dcc_resend_send(char *filename, char *nick, char *from,
     dprintf(DP_HELP, "PRIVMSG %s :\001DCC %sSEND %s %lu %d %lu\001\n", nick,
 	    resend ? "RE" :  "", nfn,
 	    iptolong(natip[0] ? (IP) inet_addr(natip) : getmyip()), port,
-	    ss.st_size);
-    putlog(LOG_FILES, "*",TRANSFER_BEGIN_DCC, resend ? TRANSFER_RE :  "",
+	    dccfilesize);
+    putlog(LOG_FILES, "*", "Begin DCC %ssend %s to %s", resend ? "re" : "",
 	   nfn, nick);
   }
   if (buf)
