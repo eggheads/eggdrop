@@ -1,7 +1,7 @@
 /*
  * transfer.h -- part of transfer.mod
  *
- * $Id: transfer.h,v 1.12 2001/12/02 07:11:15 guppy Exp $
+ * $Id: transfer.h,v 1.13 2001/12/05 04:12:07 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -113,8 +113,8 @@ typedef struct zarrf {
 #define TRANSFER_FAILED_MOVE        get_language(0xf1a)
 #define TRANSFER_THANKS             get_language(0xf1b)
 #define TRANSFER_NOTICE_THANKS      get_language(0xf1c)
-#define TRANSFER_BYE                get_language(0xf1d)
-#define TRANSFER_USERFILE_LOST      get_language(0xf1e)
+#define TRANSFER_USERFILE_LOST      get_language(0xf1d)
+/* #define TRANSFER_BYE	            get_language(0xf1e) */
 #define TRANSFER_USERFILE_DISCON    get_language(0xf1f)
 #define TRANSFER_LOST_DCCSEND       get_language(0xf20)
 #define TRANSFER_REGET_PACKET       get_language(0xf21)

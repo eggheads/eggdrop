@@ -1,7 +1,7 @@
 /*
  * transfer.c -- part of transfer.mod
  *
- * $Id: transfer.c,v 1.43 2001/12/02 07:35:07 guppy Exp $
+ * $Id: transfer.c,v 1.44 2001/12/05 04:12:07 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -825,7 +825,7 @@ static void eof_dcc_send(int idx)
 	     dcc[y].nick);
       unlink(dcc[idx].u.xfer->filename);
       /* Drop that bot */
-      dprintf(y,TRANSFER_BYE);
+      dprintf(y, "bye\n");
       egg_snprintf(s, sizeof s,TRANSFER_USERFILE_DISCON,
 		   dcc[y].nick);
       botnet_send_unlinked(y, dcc[y].nick, s);
@@ -1056,7 +1056,7 @@ static void eof_dcc_get(int idx)
     /* Note: no need to unlink the xfer file, as it's already unlinked. */
     xnick[0] = 0;
     /* Drop that bot */
-    dprintf(-dcc[y].sock,TRANSFER_BYE);
+    dprintf(-dcc[y].sock, "bye\n");
     egg_snprintf(s, sizeof s, TRANSFER_USERFILE_DISCON,
 		 dcc[y].nick);
     botnet_send_unlinked(y, dcc[y].nick, s);
@@ -1142,7 +1142,7 @@ static void transfer_get_timeout(int i)
     }
     unlink(dcc[i].u.xfer->filename);
     putlog(LOG_BOTS, "*",TRANSFER_USERFILE_TIMEOUT);
-    dprintf(y,TRANSFER_BYE);
+    dprintf(y, "bye\n");
     egg_snprintf(xx, sizeof xx,TRANSFER_DICONNECT_TIMEOUT,
 		 dcc[y].nick);
     botnet_send_unlinked(y, dcc[y].nick, xx);

@@ -33,7 +33,7 @@
 0xf1b,Thanks for the file!\n
 0xf1c,NOTICE %s :Thanks for the file!\n
 0xf1d,Lost userfile transfer from %s; aborting.
-0xf1e,bye\n
+# 0xf1e, < this one is now empty
 0xf1f,Disconnected %s (aborted userfile transfer)
 0xf20,Lost dcc send %s from %s!%s (%lu/%lu)
 0xf21,(!) reget packet from %s for %s is invalid!	
