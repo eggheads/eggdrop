@@ -803,7 +803,7 @@ static int got315(char *from, char *msg)
   chan->status |= CHAN_ACTIVE;
   chan->status &= ~CHAN_PEND;
   /* am *I* on the channel now? if not, well d0h. */
-  if (!ismember(chan, botname) && !ismember(chan, newbotname)) {
+  if (!ismember(chan, botname)) {
     putlog(LOG_MISC | LOG_JOIN, chan->name, "Oops, I'm not really on %s",
 	   chan->name);
     clear_channel(chan, 1);
@@ -1564,14 +1564,10 @@ static int gotquit(char *from, char *msg)
   if (keepnick) {
     if (!rfc_casecmp(nick, origbotname)) {
       putlog(LOG_MISC, "*", IRC_GETORIGNICK, origbotname);
-      strcpy(newbotname, botname);	/* save, just in case */
-      strcpy(botname, origbotname);
-      dprintf(DP_MODE, "NICK %s\n", botname);
+      dprintf(DP_MODE, "NICK %s\n", origbotname);
     } else if (altnick[0] && !rfc_casecmp(nick, altnick) && strcmp(botname, origbotname)) {
       putlog(LOG_MISC, "*", IRC_GETALTNICK, altnick);
-      strcpy(newbotname, botname);	/* save, just in case */
-      strcpy(botname, altnick);
-      dprintf(DP_MODE, "NICK %s\n", botname);
+      dprintf(DP_MODE, "NICK %s\n", altnick);
     }
   }
   return 0;

@@ -18,7 +18,6 @@ static char newserverpass[121];	/* new server password? */
 static time_t trying_server;	/* trying to connect to a server right now? */
 static int server_lag;		/* how lagged (in seconds) is the server? */
 static char altnick[NICKLEN];	/* possible alternate nickname to use */
-static char newbotname[NICKLEN];	/* temporary thing for nick changes */
 static int curserv;		/* current position in server list: */
 static int flud_thr;		/* msg flood threshold */
 static int flud_time;		/* msg flood time */
@@ -483,12 +482,8 @@ static char *nick_change(ClientData cdata, Tcl_Interp * irp, char *name1,
 	       origbotname, new);
       strncpy(origbotname, new, NICKMAX);
       origbotname[NICKMAX] = 0;
-      /* start all over with nick chasing: */
-      strcpy(newbotname, botname);	/* store old nick in case
-					 * something goes wrong */
-      strcpy(botname, origbotname);	/* blah, this is kinda silly */
       if (server_online)
-	dprintf(DP_MODE, "NICK %s\n", botname);
+	dprintf(DP_MODE, "NICK %s\n", origbotname);
     }
   }
   return NULL;
@@ -1179,7 +1174,6 @@ static Function server_table[] =
   (Function) newserver,		/* char * */
   (Function) & newserverport,	/* int */
   (Function) newserverpass,	/* char * */
-  (Function) newbotname,	/* char * */
   /* 24 - 27 */
   (Function) & cycle_time,	/* int */
   (Function) & default_port,	/* int */
@@ -1212,7 +1206,6 @@ char *server_start(Function * global_funcs)
   trying_server = 0L;
   server_lag = 0;
   altnick[0] = 0;
-  newbotname[0] = 0;
   curserv = 0;
   flud_thr = 5;
   flud_time = 60;
@@ -1313,7 +1306,6 @@ char *server_start(Function * global_funcs)
   mq.warned = hq.warned = modeq.warned = 0;
   double_warned = 0;
   context;
-  newbotname[0] = 0;
   newserver[0] = 0;
   newserverport = 0;
   getmyhostname(bothost);

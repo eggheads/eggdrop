@@ -14,14 +14,6 @@ static int gotfake433(char *from)
 {
   char c, *oknicks = "^-_\\[]`", *p;
 
-  /* could be futile attempt to regain nick: */
-  context;
-  if (newbotname[0]) {
-    dprintf(DP_MODE, "NICK %s\n", newbotname);
-    strcpy(botname, newbotname);
-    newbotname[0] = 0;
-    return 0;
-  }
   /* alternate nickname defined? */
   context;
   if ((altnick[0]) && (rfc_casecmp(altnick, botname))) {
@@ -206,9 +198,7 @@ static int check_tcl_flud(char *nick, char *uhost, struct userrec *u,
 
 static int match_my_nick(char *nick)
 {
-  if (newbotname[0] && !rfc_casecmp(nick, newbotname))
-    return 1;
-  else if (!rfc_casecmp(nick, botname))
+  if (!rfc_casecmp(nick, botname))
     return 1;
   return 0;
 }
@@ -713,18 +703,14 @@ static void got303(char *from, char *msg)
       if (!tmp[0] || !strcasecmp(tmp, altnick)) {
 	/* message has no text, or .. the first parm, is our altnick */
 	putlog(LOG_MISC, "*", IRC_GETORIGNICK, origbotname);
-	strcpy(newbotname, botname);	/* save, just in case */
-	strcpy(botname, origbotname);
-	dprintf(DP_MODE, "NICK %s\n", botname);
+	dprintf(DP_MODE, "NICK %s\n", origbotname);
       } else if (strcasecmp(botname, altnick) && !msg[0]) {
 	/* first parm must be our nick we want, otherwise, we'd be using
 	 * that nick ... */
 	/* so, if the second parm, is non-existant, that means our altnick 
 	 * is free ??? */
 	putlog(LOG_MISC, "*", IRC_GETALTNICK, altnick);
-	strcpy(newbotname, botname);	/* save, just in case */
-	strcpy(botname, altnick);
-	dprintf(DP_MODE, "NICK %s\n", botname);
+	dprintf(DP_MODE, "NICK %s\n", altnick);
       }
     }
   }
@@ -737,28 +723,29 @@ static void trace_fail(char *from, char *msg)
   if (!use_ison) {
     if (!strcasecmp(botname, origbotname)) {
       putlog(LOG_MISC, "*", IRC_GETORIGNICK, origbotname);
-      strcpy(newbotname, botname);	/* save, just in case */
-      strcpy(botname, origbotname);
-      dprintf(DP_MODE, "NICK %s\n", botname);
+      dprintf(DP_MODE, "NICK %s\n", origbotname);
     }
   }
 }
 
 /* 432 : bad nickname */
+/* :washington.dc.us.undernet.org 432 guppy_ -guppy :Erroneus Nickname */
 static int got432(char *from, char *msg)
 {
-  putlog(LOG_MISC, "*", IRC_BADBOTNICK);
-  /* make random nick. */
-  if (!newbotname[0]) {
-    /* if it's due to an attempt to change nicks .. */
-    strcpy(newbotname, botname);
-    /* store it, just in case it's raist playing */
-    makepass(botname);
-    botname[NICKMAX] = 0;	/* raist sux :P */
-    dprintf(DP_MODE, "NICK %s\n", botname);
-  } else {			/* go back to old nick */
-    strcpy(botname, newbotname);
-    newbotname[0] = 0;
+  char *erroneus;
+
+  newsplit(&msg);
+  erroneus = newsplit(&msg);
+  if (server_online)
+    putlog(LOG_MISC, "*", "Server says '%s' is invalid (keeping '%s').", erroneus, botname);
+  else {
+    putlog(LOG_MISC, "*", IRC_BADBOTNICK);
+    if (!keepnick) {
+      makepass(erroneus);
+      erroneus[NICKMAX] = 0;
+      dprintf(DP_MODE, "NICK %s\n", erroneus);
+    }
+    return 0;
   }
   return 0;
 }
@@ -895,34 +882,24 @@ static int gotnick(char *from, char *msg)
       putlog(LOG_SERV | LOG_MISC, "*", "Nickname changed to '%s'???", msg);
 	  if (!rfc_casecmp(nick, origbotname)) {
         putlog(LOG_MISC, "*", IRC_GETORIGNICK, origbotname);
-        strcpy(newbotname, botname);	/* save, just in case */
-        strcpy(botname, origbotname);
-        dprintf(DP_MODE, "NICK %s\n", botname);
+        dprintf(DP_MODE, "NICK %s\n", origbotname);
       } else if (altnick[0] && !rfc_casecmp(nick, altnick) &&
   	    strcasecmp(botname, origbotname)) {
         putlog(LOG_MISC, "*", IRC_GETALTNICK, altnick);
-        strcpy(newbotname, botname);	/* save, just in case */
-        strcpy(botname, altnick);
-        dprintf(DP_MODE, "NICK %s\n", botname);
+        dprintf(DP_MODE, "NICK %s\n", altnick);
       } else {
 	  }
-    } else {
+    } else
       putlog(LOG_SERV | LOG_MISC, "*", "Nickname changed to '%s'???", msg);
-    }
-	newbotname[0] = 0;
   } else if ((keepnick) && (rfc_casecmp(nick, msg))) {
     /* only do the below if there was actual nick change, case doesn't count */
     if (!rfc_casecmp(nick, origbotname)) {
       putlog(LOG_MISC, "*", IRC_GETORIGNICK, origbotname);
-      strcpy(newbotname, botname);	/* save, just in case */
-      strcpy(botname, origbotname);
-      dprintf(DP_MODE, "NICK %s\n", botname);
+      dprintf(DP_MODE, "NICK %s\n", origbotname);
     } else if (altnick[0] && !rfc_casecmp(nick, altnick) &&
 	    strcasecmp(botname, origbotname)) {
       putlog(LOG_MISC, "*", IRC_GETALTNICK, altnick);
-      strcpy(newbotname, botname);	/* save, just in case */
-      strcpy(botname, altnick);
-      dprintf(DP_MODE, "NICK %s\n", botname);
+      dprintf(DP_MODE, "NICK %s\n", altnick);
 	} else { }
   }
   return 0;

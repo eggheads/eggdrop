@@ -277,10 +277,7 @@ static int me_op(struct chanset_t *chan)
 {
   memberlist *mx = NULL;
 
-  if (newbotname[0])
-    mx = ismember(chan, newbotname);
-  if (!mx)
-    mx = ismember(chan, botname);
+  mx = ismember(chan, botname);
   if (!mx)
     return 0;
   if (chan_hasop(mx))

@@ -21,26 +21,25 @@
 #define check_tcl_ctcpr ((int(*)(char*,char*,struct userrec*,char*,char*,char*,p_tcl_bind_list))server_funcs[17])
 #define detect_avalanche ((int(*)(char *))server_funcs[18])
 #define nuke_server ((void(*)(char *))server_funcs[19])
-/* 20 - 23 */
+/* 20 - 22 */
 #define newserver ((char *)(server_funcs[20]))
 #define newserverport (*(int *)(server_funcs[21]))
 #define newserverpass ((char *)(server_funcs[22]))
-#define newbotname ((char *)(server_funcs[23]))
-/* 24 - 27 */
-#define cycle_time (*(int *)(server_funcs[24]))
-#define default_port (*(int *)(server_funcs[25]))
-#define server_online (*(int *)(server_funcs[26]))
-#define min_servs (*(int *)(server_funcs[27]))
-/* 28 - 31 */
-#define H_raw (*(p_tcl_bind_list *)(server_funcs[28]))
-#define H_wall (*(p_tcl_bind_list *)(server_funcs[29]))
-#define H_msg (*(p_tcl_bind_list *)(server_funcs[30]))
-#define H_msgm (*(p_tcl_bind_list *)(server_funcs[31]))
-/* 32 - 35 */
-#define H_notc (*(p_tcl_bind_list *)(server_funcs[32]))
-#define H_flud (*(p_tcl_bind_list *)(server_funcs[33]))
-#define H_ctcp (*(p_tcl_bind_list *)(server_funcs[34]))
-#define H_ctcr (*(p_tcl_bind_list *)(server_funcs[35]))
-/* 36 - 39 */
-#define ctcp_reply ((char *)(server_funcs[36]))
+/* 23 - 26 */
+#define cycle_time (*(int *)(server_funcs[23]))
+#define default_port (*(int *)(server_funcs[24]))
+#define server_online (*(int *)(server_funcs[25]))
+#define min_servs (*(int *)(server_funcs[26]))
+/* 27 - 30 */
+#define H_raw (*(p_tcl_bind_list *)(server_funcs[27]))
+#define H_wall (*(p_tcl_bind_list *)(server_funcs[28]))
+#define H_msg (*(p_tcl_bind_list *)(server_funcs[29]))
+#define H_msgm (*(p_tcl_bind_list *)(server_funcs[30]))
+/* 31 - 34 */
+#define H_notc (*(p_tcl_bind_list *)(server_funcs[31]))
+#define H_flud (*(p_tcl_bind_list *)(server_funcs[32]))
+#define H_ctcp (*(p_tcl_bind_list *)(server_funcs[33]))
+#define H_ctcr (*(p_tcl_bind_list *)(server_funcs[34]))
+/* 35 - ??? */
+#define ctcp_reply ((char *)(server_funcs[35]))
 #endif
