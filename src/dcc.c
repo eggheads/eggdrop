@@ -6,7 +6,7 @@
  * 
  * dprintf'ized, 27oct1995
  * 
- * $Id: dcc.c,v 1.24 2000/01/08 21:23:13 per Exp $
+ * $Id: dcc.c,v 1.25 2000/04/04 23:43:08 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1925,7 +1925,7 @@ void dcc_telnet_got_ident(int i, char *host)
   strcpy(dcc[i].u.chat->con_chan, chanset ? chanset->name : "*");
   /* Displays a customizable banner. [seC] */
   if (use_telnet_banner)
-   show_banner(i);  
+    show_banner(i);  
   /* This is so we dont tell someone doing a portscan anything
    * about ourselves. <cybah> */
   if (stealth_telnets) 

@@ -10,7 +10,7 @@
  * 
  * dprintf'ized, 12dec1995
  * 
- * $Id: misc.c,v 1.28 2000/03/04 18:57:42 guppy Exp $
+ * $Id: misc.c,v 1.29 2000/04/04 23:43:08 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1317,11 +1317,13 @@ char *extracthostname(char *hostmask)
 void show_banner(int idx) {
    FILE *vv;
    char s[1024];
-   struct flag_record fr = {FR_GLOBAL|FR_CHAN,0,0,0,0,0};
+   struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
 
-   get_user_flagrec(dcc[idx].user,&fr,dcc[idx].u.chat->con_chan);
+   if (!is_file(bannerfile))
+      return;
+   get_user_flagrec(dcc[idx].user, &fr,dcc[idx].u.chat->con_chan);
    vv = fopen(bannerfile, "r");
-   if (!vv || !is_file(bannerfile))
+   if (!vv)
       return;
    while(!feof(vv)) {
       fgets(s, 120, vv);
