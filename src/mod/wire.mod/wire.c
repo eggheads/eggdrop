@@ -15,7 +15,7 @@
  * 1.4       1997-11-25      1.2.2.0         Added language addition  Kirk
  * 1.5       1998-07-12      1.3.0.0         Fixed ;me and updated    BB
  * 
- * $Id: wire.c,v 1.15 2001/01/16 17:13:24 guppy Exp $
+ * $Id: wire.c,v 1.16 2001/02/27 03:18:24 guppy Exp $
  */
 /* 
  * Copyright (C) 1999, 2000  Eggheads
@@ -44,7 +44,7 @@
 #include "wire.h"
 
 #undef global
-static Function *global = NULL, *blowfish_funcs = NULL;
+static Function *global = NULL, *encryption_funcs = NULL;
 
 typedef struct wire_t {
   int sock;
@@ -601,8 +601,8 @@ char *wire_start(Function * global_funcs)
     module_undepend(MODULE_NAME);
     return "This module requires eggdrop1.6.0 or later";
   }
-  me = module_find("encryption", 2, 0);
-  blowfish_funcs = me->funcs;
+  me = module_find("encryption", 2, 1);
+  encryption_funcs = me->funcs;
   add_builtins(H_dcc, wire_dcc);
   H_temp = find_bind_table("filt");
   add_builtins(H_filt, wire_filt);

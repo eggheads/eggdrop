@@ -1,7 +1,7 @@
 /* 
  * module.h
  * 
- * $Id: module.h,v 1.39 2001/01/22 23:47:33 guppy Exp $
+ * $Id: module.h,v 1.40 2001/02/27 03:18:24 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -435,11 +435,12 @@
 /* This is for blowfish module, couldnt be bothered making a whole new .h
  * file for it ;)
  */
-#ifndef MAKING_BLOWFISH
+#ifndef MAKING_ENCRYPTION
+
 #  define encrypt_string(a, b)						\
-	(((char *(*)(char *,char*))blowfish_funcs[4])(a,b))
+	(((char *(*)(char *,char*))encryption_funcs[4])(a,b))
 #  define decrypt_string(a, b)						\
-	(((char *(*)(char *,char*))blowfish_funcs[5])(a,b))
+	(((char *(*)(char *,char*))encryption_funcs[5])(a,b))
 #endif
 
 #endif				/* _EGG_MOD_MODULE_H */

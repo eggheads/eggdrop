@@ -1,7 +1,7 @@
 /* 
  * modvals.h
  * 
- * $Id: modvals.h,v 1.14 2000/10/27 19:29:10 fabian Exp $
+ * $Id: modvals.h,v 1.15 2001/02/27 03:18:24 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -48,6 +48,8 @@
 #define HOOK_RFC_CASECMP	111
 #define HOOK_DNS_HOSTBYIP	112
 #define HOOK_DNS_IPBYHOST	113
+#define HOOK_ENCRYPT_STRING     114
+#define HOOK_DECRYPT_STRING     115
 
 /* These are FIXED once they are in a release they STAY
  */

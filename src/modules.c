@@ -4,7 +4,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: modules.c,v 1.44 2001/01/22 23:47:33 guppy Exp $
+ * $Id: modules.c,v 1.45 2001/02/27 03:18:23 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -158,6 +158,8 @@ static void null_share(int idx, char *x)
 }
 
 void (*encrypt_pass) (char *, char *) = 0;
+char *(*encrypt_string) (char *, char *) = 0;
+char *(*decrypt_string) (char *, char *) = 0;
 void (*shareout) () = null_func;
 void (*sharein) (int, char *) = null_share;
 void (*qserver) (int, char *, int) = (void (*)(int, char *, int)) null_func;
@@ -916,6 +918,12 @@ void add_hook(int hook_num, Function func)
     case HOOK_ENCRYPT_PASS:
       encrypt_pass = (void (*)(char *, char *)) func;
       break;
+    case HOOK_ENCRYPT_STRING:
+      encrypt_string = (char *(*)(char *, char *)) func;
+      break;
+    case HOOK_DECRYPT_STRING:
+      decrypt_string = (char *(*)(char *, char *)) func;
+      break; 
     case HOOK_SHAREOUT:
       shareout = (void (*)()) func;
       break;
@@ -981,6 +989,14 @@ void del_hook(int hook_num, Function func)
     case HOOK_ENCRYPT_PASS:
       if (encrypt_pass == (void (*)(char *, char *)) func)
 	encrypt_pass = (void (*)(char *, char *)) null_func;
+      break;
+    case HOOK_ENCRYPT_STRING:
+      if (encrypt_string == (char *(*)(char *, char *)) func)
+        encrypt_string = (char *(*)(char *, char *)) null_func;
+      break;
+    case HOOK_DECRYPT_STRING:
+      if (decrypt_string == (char *(*)(char *, char *)) func)
+        decrypt_string = (char *(*)(char *, char *)) null_func;
       break;
     case HOOK_SHAREOUT:
       if (shareout == (void (*)()) func)

@@ -2,7 +2,7 @@
  * blowfish.c -- part of blowfish.mod
  *   encryption and decryption of passwords
  * 
- * $Id: blowfish.c,v 1.15 2001/01/16 17:13:21 guppy Exp $
+ * $Id: blowfish.c,v 1.16 2001/02/27 03:18:24 guppy Exp $
  */
 /* 
  * Copyright (C) 1999  Eggheads
@@ -27,7 +27,8 @@
  */
 
 #define MODULE_NAME "encryption"
-#define MAKING_BLOWFISH
+#define MAKING_ENCRYPTION
+
 #include "src/mod/module.h"
 #include "blowfish.h"
 #include "bf_tab.h"		/* P-box P-array, S-box */
@@ -469,12 +470,14 @@ char *blowfish_start(Function *global_funcs)
       box[i].key[0] = 0;
       box[i].lastuse = 0L;
     }
-    module_register(MODULE_NAME, blowfish_table, 2, 0);
-    if (!module_depend(MODULE_NAME, "eggdrop", 106, 0)) {
+    module_register(MODULE_NAME, blowfish_table, 2, 1);
+    if (!module_depend(MODULE_NAME, "eggdrop", 106, 3)) {
       module_undepend(MODULE_NAME);
-      return "This module requires eggdrop1.6.0 or later";
+      return "This module requires eggdrop1.6.3 or later";
     }
     add_hook(HOOK_ENCRYPT_PASS, (Function) blowfish_encrypt_pass);
+    add_hook(HOOK_ENCRYPT_STRING, (Function) encrypt_string);
+    add_hook(HOOK_DECRYPT_STRING, (Function) decrypt_string);
   }
   add_tcl_commands(mytcls);
   return NULL;
