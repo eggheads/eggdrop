@@ -78,7 +78,7 @@ See also:  +user, +bot, -bot
    Displays a message to everyone currently using the bot's party line
    or file area -- useful for announcing that the bot will go down, etc.
 %{help=binds}%{+m}
-###  %bbinds%b [type]
+###  %bbinds%b [type/match]
    Shows the Tcl bindings in effect, in a list similar to this:
       Command bindings:
         TYPE FLGS COMMAND              HITS BINDING (TCL)
@@ -91,7 +91,10 @@ See also:  +user, +bot, -bot
    If not, go read the file %b'tcl-commands.doc'%b for help on the
    Tcl bind command.  Note that the builtin commands are now shown.
    You may also specify a type of binding to show (ie, 
-   %b'.binds msg'%b) if you want to narrow the field a bit.
+   %b'.binds msg'%b) or you can specify a wild card match (ie, 
+   %b'.binds *seen*'%b) if you want to narrow the field a bit.
+   The wild card matches will match against the TYPE, COMMAND and
+   BINDING fields.
 ###  %bbinds%b [type] %ball%b
    Displays all the Tcl bindings of every type (or the specified 
    type), including the bindings for built in commands such as:
