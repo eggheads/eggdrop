@@ -5,6 +5,9 @@ Changes in eggdrop: (since v1.5.0)
 
 1.5.5
 Foundby   Fixedby   What....
+          Fabian    Minor optimisations in irc.mod:chan.c.
+          Eule      Checking for m->user == NULL in kick_all() and
+                      refresh_ban_kick() now. Minor optimisations.
           guppy     Removed `SERVER SUPPORT LOADED' message.
 Igmar     Fabian    Added missing checks around new_dcc() call. This prevents
                       the bot from crashing under high connection load.

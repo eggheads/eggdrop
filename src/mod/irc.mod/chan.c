@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  * 
- * $Id: chan.c,v 1.48 2000/09/18 20:04:58 fabian Exp $
+ * $Id: chan.c,v 1.49 2000/09/27 19:43:12 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -367,8 +367,8 @@ static void kick_all(struct chanset_t *chan, char *hostmask, char *comment, int 
   kicknick[0] = 0;
   m = chan->channel.member;
   while (m && m->nick[0]) {
-    get_user_flagrec(m->user, &fr, chan->dname);
     sprintf(s, "%s!%s", m->nick, m->userhost);
+    get_user_flagrec(m->user ? m->user : get_user_by_host(s), &fr, chan->dname);
     if (wild_match(hostmask, s) && !chan_sentkick(m) &&
 	!match_my_nick(m->nick) && !chan_issplit(m) &&
 	!glob_friend(fr) && !chan_friend(fr) &&
@@ -407,37 +407,36 @@ static void kick_all(struct chanset_t *chan, char *hostmask, char *comment, int 
  */
 static void refresh_ban_kick(struct chanset_t *chan, char *user, char *nick)
 {
-  maskrec *u;
-  struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
-  memberlist *m;
-  char c[512];			/* The ban comment */
-  int cycle;
+  register maskrec	*b;
+  memberlist		*m;
+  int			 cycle;
 
+  m = ismember(chan, nick);
+  if (!m)
+    return;
+  /* Check channel bans in first cycle and global bans
+     in second cycle. */
   for (cycle = 0; cycle < 2; cycle++) {
-    if (cycle)
-      u = chan->bans;
-    else
-      u = global_bans;
-    for (; u; u = u->next) {
-      if (wild_match(u->mask, user)) {
-	m = ismember(chan, nick);
-	if (!m)
-	  continue;				/* Skip non-existant nick */
-	get_user_flagrec(m->user, &fr, chan->dname);
+    for (b = cycle ? chan->bans : global_bans; b; b = b->next) {
+      if (wild_match(b->mask, user)) {
+	struct flag_record	fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
+	char			c[512];		/* The ban comment.	*/
+	char			s[UHOSTLEN];
+
+	sprintf(s, "%s!%s", m->nick, m->userhost);
+	get_user_flagrec(m->user ? m->user : get_user_by_host(s), &fr,
+			 chan->dname);
 	if (!glob_friend(fr) && !chan_friend(fr))
-	  add_mode(chan, '-', 'o', nick);	/* Guess it can't hurt */
+	  add_mode(chan, '-', 'o', nick);	/* Guess it can't hurt.	*/
 	check_exemptlist(chan, user);
-	do_mask(chan, chan->channel.ban, u->mask, 'b');
-	u->lastactive = now;
-	c[0] = 0;
-	if (u->desc && (u->desc[0] != '@')) {
-	  if (strcmp(IRC_PREBANNED, ""))
-	    sprintf(c, "%s%s", IRC_PREBANNED, u->desc);
-	  else
-	    sprintf(c, "%s", u->desc);
-	}
-	kick_all(chan, u->mask, c[0] ? c : IRC_YOUREBANNED, 0);
-	return;		/* Drop out on 1st ban */
+	do_mask(chan, chan->channel.ban, b->mask, 'b');
+	b->lastactive = now;
+	if (b->desc && b->desc[0] != '@')
+	  egg_snprintf(c, sizeof c, "%s%s", IRC_PREBANNED, b->desc);
+	else
+	  c[0] = 0;
+	kick_all(chan, b->mask, c[0] ? c : IRC_YOUREBANNED, 0);
+	return;					/* Drop out on 1st ban.	*/
       }
     }
   }
@@ -448,47 +447,45 @@ static void refresh_ban_kick(struct chanset_t *chan, char *user, char *nick)
  */
 static void refresh_exempt(struct chanset_t *chan, char *user)
 {
-  maskrec *e;
-  masklist *b;
-  int cycle;
+  maskrec	*e;
+  masklist	*b;
+  int		 cycle;
   
+  /* Check channel exempts in first cycle and global exempts
+     in second cycle. */
   for (cycle = 0; cycle < 2; cycle++) {
-    e = (cycle) ? chan->exempts : global_exempts;
-    while (e) {
+    for (e = cycle ? chan->exempts : global_exempts; e; e = e->next) {
       if (wild_match(user, e->mask) || wild_match(e->mask,user)) {
-        b = chan->channel.ban;
-        while (b && b->mask[0]) {
+        for (b = chan->channel.ban; b && b->mask[0]; b = b->next) {
           if (wild_match(b->mask, user) || wild_match(user, b->mask)) {
             if (e->lastactive < now - 60 && !isexempted(chan, e->mask)) {
               do_mask(chan, chan->channel.exempt, e->mask, 'e');
               e->lastactive = now;
             }
           }
-          b = b->next;
         }
       }
-      e = e->next;
     }
   }
 }
 
 static void refresh_invite(struct chanset_t *chan, char *user)
 {
-  maskrec *i;
-  int cycle;
+  maskrec	*i;
+  int		 cycle;
 
+  /* Check channel invites in first cycle and global invites
+     in second cycle. */
   for (cycle = 0; cycle < 2; cycle++) {
-    i = (cycle) ? chan->invites : global_invites;
-    while (i) {
+    for (i = cycle ? chan->invites : global_invites; i; i = i->next) {
       if (wild_match(i->mask, user) &&
-	  (i->flags & MASKREC_STICKY || (chan->channel.mode & CHANINV))) {
+	  ((i->flags & MASKREC_STICKY) || (chan->channel.mode & CHANINV))) {
         if (i->lastactive < now - 60 && !isinvited(chan, i->mask)) {
           do_mask(chan, chan->channel.invite, i->mask, 'I');
 	  i->lastactive = now;
 	  return;
 	}
       }
-      i = i->next;
     }
   }
 }
@@ -497,19 +494,17 @@ static void refresh_invite(struct chanset_t *chan, char *user)
  */
 static void enforce_bans(struct chanset_t *chan)
 {
-  char me[UHOSTLEN];
-  masklist *b = chan->channel.ban;
+  char		 me[UHOSTLEN];
+  masklist	*b;
 
-  Context;
   if (!me_op(chan))
     return;			/* Can't do it :( */
   simple_sprintf(me, "%s!%s", botname, botuserhost);
   /* Go through all bans, kicking the users. */
-  while (b && b->mask[0]) {
+  for (b = chan->channel.ban; b && b->mask[0]; b = b->next) {
     if (!wild_match(b->mask, me))
       if (!isexempted(chan, b->mask))
 	kick_all(chan, b->mask, IRC_YOUREBANNED, 1);
-    b = b->next;
   }
 }
 
@@ -520,14 +515,17 @@ static void enforce_bans(struct chanset_t *chan)
  */
 static void recheck_bans(struct chanset_t *chan)
 {
-  maskrec *u;
-  int i;
+  maskrec	*u;
+  int		 cycle;
 
-  for (i = 0; i < 2; i++)
-    for (u = i ? chan->bans : global_bans; u; u = u->next)
+  /* Check channel bans in first cycle and global bans
+     in second cycle. */
+  for (cycle = 0; cycle < 2; cycle++) {
+    for (u = cycle ? chan->bans : global_bans; u; u = u->next)
       if (!isbanned(chan, u->mask) && (!channel_dynamicbans(chan) ||
 				       (u->flags & MASKREC_STICKY)))
 	add_mode(chan, '+', 'b', u->mask);
+  }
 }
 
 /* Make sure that all who are exempted on the userlist are actually in fact
@@ -535,24 +533,24 @@ static void recheck_bans(struct chanset_t *chan)
  *
  * Note: Since i was getting an excempt list, i assume i'm chop.
  */
-static void recheck_exempts(struct chanset_t * chan)
+static void recheck_exempts(struct chanset_t *chan)
 {
-  maskrec *e;
-  masklist *b;
-  int i;
+  maskrec	*e;
+  masklist	*b;
+  int		 cycle;
   
-  for (i = 0; i < 2; i++) {
-    for (e = i ? chan->exempts : global_exempts; e; e = e->next) {
+  /* Check channel exempts in first cycle and global exempts
+     in second cycle. */
+  for (cycle = 0; cycle < 2; cycle++) {
+    for (e = cycle ? chan->exempts : global_exempts; e; e = e->next) {
       if (!isexempted(chan, e->mask) && 
-          (!channel_dynamicexempts(chan) || e->flags & MASKREC_STICKY))
+          (!channel_dynamicexempts(chan) || (e->flags & MASKREC_STICKY)))
         add_mode(chan, '+', 'e', e->mask);
-      b = chan->channel.ban;
-      while (b && b->mask[0]) {
+      for (b = chan->channel.ban; b && b->mask[0]; b = b->next) {
         if ((wild_match(b->mask, e->mask) || wild_match(e->mask, b->mask)) &&
             !isexempted(chan, e->mask))
 	  add_mode(chan,'+','e',e->mask);
 	/* do_mask(chan, chan->channel.exempt, e->mask, 'e');*/
-        b = b->next;
       }
     }
   }
@@ -563,12 +561,15 @@ static void recheck_exempts(struct chanset_t * chan)
  *
  * Note: Since i was getting an invite list, i assume i'm chop.
  */
-static void recheck_invites(struct chanset_t * chan) {
-  maskrec *ir;
-  int i;
+static void recheck_invites(struct chanset_t *chan)
+{
+  maskrec	*ir;
+  int		 cycle;
   
-  for (i = 0; i < 2; i++)  {
-    for (ir = i ? chan->invites : global_invites; ir; ir = ir->next) {
+  /* Check channel invites in first cycle and global invites
+     in second cycle. */
+  for (cycle = 0; cycle < 2; cycle++)  {
+    for (ir = cycle ? chan->invites : global_invites; ir; ir = ir->next) {
       /* If invite isn't set and (channel is not dynamic invites and not invite
        * only) or invite is sticky.
        */
@@ -580,8 +581,7 @@ static void recheck_invites(struct chanset_t * chan) {
   }
 }
 
-/* Resets the masks on the channel. This is resetbans(), resetexempts() and
- * resetinvites() all merged together for less bloat. <cybah>
+/* Resets the masks on the channel.
  */
 static void resetmasks(struct chanset_t *chan, masklist *m, maskrec *mrec,
 		       maskrec *global_masks, char mode)
@@ -590,14 +590,13 @@ static void resetmasks(struct chanset_t *chan, masklist *m, maskrec *mrec,
     return;                     /* Can't do it */
     
   /* Remove masks we didn't put there */
-  while (m && m->mask[0]) {
+  for (; m && m->mask[0]; m = m->next) {
     if (!u_equals_mask(global_masks, m->mask) && !u_equals_mask(mrec, m->mask))
       add_mode(chan, '-', mode, m->mask);
-    m = m->next;
   }
   
   /* Make sure the intended masks are still there */
-  switch(mode) {
+  switch (mode) {
     case 'b':
       recheck_bans(chan);
       break;
@@ -608,7 +607,7 @@ static void resetmasks(struct chanset_t *chan, masklist *m, maskrec *mrec,
       recheck_invites(chan);
       break;
     default:
-      putlog(LOG_MISC, "*", "Invalid mode '%c' in resetmasks()", mode);
+      putlog(LOG_MISC, "*", "(!) Invalid mode '%c' in resetmasks()", mode);
       break;
   }
 }
@@ -660,7 +659,7 @@ static void recheck_channel_modes(struct chanset_t *chan)
       add_mode(chan, '+', 'q', "");
     else if ((mns & CHANQUIET) && (cur & CHANQUIET))
       add_mode(chan, '-', 'q', "");
-    if ((chan->limit_prot != (-1)) && (chan->channel.maxmembers == -1)) {
+    if ((chan->limit_prot != -1) && (chan->channel.maxmembers == -1)) {
       char s[50];
 
       sprintf(s, "%d", chan->limit_prot);
