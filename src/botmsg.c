@@ -5,7 +5,7 @@
  *
  * by Darrin Smith (beldin@light.iinet.net.au)
  *
- * $Id: botmsg.c,v 1.30 2004/07/05 07:35:16 wcc Exp $
+ * $Id: botmsg.c,v 1.31 2004/07/25 11:17:34 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -853,7 +853,7 @@ int add_note(char *to, char *from, char *msg, int idx, int echo)
   /* Is user ignoring notes from this source? */
   if (match_noterej(u, from)) {
     if (idx >= 0)
-      dprintf(idx, "%s %s\n", u->handle, "rejected your note.");
+      dprintf(idx, "%s rejected your note.\n", u->handle);
     return NOTE_REJECT;
   }
 

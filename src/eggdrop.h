@@ -4,7 +4,7 @@
  *
  *   IF YOU ALTER THIS FILE, YOU NEED TO RECOMPILE THE BOT.
  *
- * $Id: eggdrop.h,v 1.60 2004/06/14 01:14:06 wcc Exp $
+ * $Id: eggdrop.h,v 1.61 2004/07/25 11:17:34 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -91,10 +91,12 @@
 #define NOTENAMELEN  ((HANDLEN * 2) + 1)
 
 
-
 /* We have to generate compiler errors in a weird way since not all compilers
- * support the #error preprocessor directive.
- */
+ * support the #error preprocessor directive. */
+#ifndef STDC_HEADERS
+#  include "Error: Your system must have standard ANSI C headers."
+#endif
+
 #ifndef HAVE_VPRINTF
 #  include "Error: You need vsprintf to compile eggdrop."
 #endif
@@ -103,14 +105,57 @@
 #  include <unistd.h>
 #endif
 
+/* This allows us to make things a lot less messy in modules.c. */
 #ifndef STATIC
-#  if (!defined(MODULES_OK) || !defined(HAVE_DLOPEN)) && !defined(HPUX_HACKS)
+#  if !defined(MODULES_OK) || (!defined(MOD_USE_DL) && !defined(MOD_USE_SHL) && !defined(MOD_USE_DYLD) && !defined(MOD_USE_RLD) && !defined(MOD_USE_LOADER))
 #    include "Error: You can't compile with module support on this system (try make static)."
+#  else
+#    ifdef MOD_USE_DL
+#      ifndef HAVE_DLOPEN
+#        include "Error: We have detected that dlopen() should be used to load modules on this OS; but it was not found. Please use 'make static'."
+#      endif
+#      undef MOD_USE_SHL
+#      undef MOD_USE_DYLD
+#      undef MOD_USE_RLD
+#      undef MOD_USE_LOADER
+#    endif
+#    ifdef MOD_USE_SHL
+#      ifndef HAVE_SHL_LOAD
+#        include "Error: We have detected that shl_load() should be used to load modules on this OS; but it was not found. Please use 'make static'."
+#      endif
+#      undef MOD_USE_DL
+#      undef MOD_USE_DYLD
+#      undef MOD_USE_RLD
+#      undef MOD_USE_LOADER
+#    endif
+#    ifdef MOD_USE_DYLD
+#      ifndef HAVE_NSLINKMODULE
+#        include "Error: We have detected that NSLinkModule() should be used to load modules on this OS; but it was not found. Please use 'make static'."
+#      endif
+#      undef MOD_USE_DL
+#      undef MOD_USE_SHL
+#      undef MOD_USE_RLD
+#      undef MOD_USE_LOADER
+#    endif
+#    ifdef MOD_USE_RLD
+#      ifndef HAVE_RLD_LOAD
+#        include "Error: We have detected that rld_load() should be used to load modules on this OS; but it was not found. Please use 'make static'."
+#      endif
+#      undef MOD_USE_DL
+#      undef MOD_USE_SHL
+#      undef MOD_USE_DYLD
+#      undef MOD_USE_LOADER
+#    endif
+#    ifdef MOD_USE_LOADER
+#      ifndef HAVE_LOAD
+#        include "Error: We have detected that load() should be used to load modules on this OS; but it was not found. Please use 'make static'."
+#      endif
+#      undef MOD_USE_DL
+#      undef MOD_USE_SHL
+#      undef MOD_USE_DYLD
+#      undef MOD_USE_RLD
+#    endif
 #  endif
-#endif
-
-#ifndef STDC_HEADERS
-#  include "Error: Your system must have standard ANSI C headers."
 #endif
 
 #if (NICKMAX < 9) || (NICKMAX > 32)
@@ -239,6 +284,7 @@ typedef u_32bit_t IP;
 #define egg_isascii(x)  isascii((int)  (unsigned char) (x))
 #define egg_isspace(x)  isspace((int)  (unsigned char) (x))
 #define egg_islower(x)  islower((int)  (unsigned char) (x))
+
 /***********************************************************************/
 
 /* It's used in so many places, let's put it here */
@@ -387,8 +433,7 @@ struct dns_info {
                                  * lookup for                              */
 };
 
-/* Flags for dns_type
- */
+/* Flags for dns_type. */
 #define RES_HOSTBYIP  1         /* hostname to IP address               */
 #define RES_IPBYHOST  2         /* IP address to hostname               */
 
@@ -397,8 +442,7 @@ struct dupwait_info {
   struct chat_info *chat;       /* holds current chat data              */
 };
 
-/* Flags about dcc types
- */
+/* Flags for dcc types. */
 #define DCT_CHAT      0x00000001        /* this dcc type receives botnet
                                          * chatter                          */
 #define DCT_MASTER    0x00000002        /* received master chatter          */
@@ -417,8 +461,7 @@ struct dupwait_info {
                                          * getting = !this                  */
 #define DCT_LISTEN    0x00001000        /* a listening port of some sort    */
 
-/* For dcc chat & files:
- */
+/* For dcc chat & files. */
 #define STAT_ECHO    0x00001    /* echo commands back?                  */
 #define STAT_DENY    0x00002    /* bad username (ignore password & deny
                                  * access)                              */
@@ -429,8 +472,7 @@ struct dupwait_info {
 #define STAT_USRONLY 0x00040    /* telnet on users-only connect         */
 #define STAT_PAGE    0x00080    /* page output to the user              */
 
-/* For stripping out mIRC codes
- */
+/* For stripping out mIRC codes. */
 #define STRIP_COLOR  0x00001    /* remove mIRC color codes              */
 #define STRIP_BOLD   0x00002    /* remove bold codes                    */
 #define STRIP_REV    0x00004    /* remove reverse video codes           */
@@ -439,7 +481,7 @@ struct dupwait_info {
 #define STRIP_BELLS  0x00020    /* remote ctrl-g's                      */
 #define STRIP_ALL    0x00040    /* remove every damn thing!             */
 
-/* for dcc bot links: */
+/* For dcc bot links. */
 #define STAT_PINGED  0x00001    /* waiting for ping to return            */
 #define STAT_SHARE   0x00002    /* sharing user data with the bot        */
 #define STAT_CALLED  0x00004    /* this bot called me                    */
@@ -468,9 +510,9 @@ struct dupwait_info {
 #define FLOOD_GLOBAL_MAX 3
 
 /* For local console: */
-#define STDIN      0
-#define STDOUT     1
-#define STDERR     2
+#define STDIN  0
+#define STDOUT 1
+#define STDERR 2
 
 /* Structure for internal logs */
 typedef struct {
@@ -592,11 +634,8 @@ enum {
 };
 
 /* Telnet codes.  See "TELNET Protocol Specification" (RFC 854) and
- * "TELNET Echo Option" (RFC 875) for details.
- */
-
+ * "TELNET Echo Option" (RFC 875) for details. */
 #define TLN_AYT         246     /* Are You There        */
-
 #define TLN_WILL        251     /* Will                 */
 #define TLN_WILL_C      "\373"
 #define TLN_WONT        252     /* Won't                */

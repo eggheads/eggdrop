@@ -1,5 +1,5 @@
 # Makefile for src/mod/dns.mod/
-# $Id: Makefile.in,v 1.10 2003/11/01 23:26:57 wcc Exp $
+# $Id: Makefile.in,v 1.11 2004/07/25 11:17:34 wcc Exp $
 
 RESLIB = @RESLIB@
 RESINCLUDE = @RESINCLUDE@
@@ -23,7 +23,7 @@ modules: ../../../dns.$(MOD_EXT)
 	mv dns.o ../
 
 ../../../dns.$(MOD_EXT): ../dns.o
-	$(LD) -o ../../../dns.$(MOD_EXT) ../dns.o $(RESLIB)
+	$(LD) -o ../../../dns.$(MOD_EXT) ../dns.o $(RESLIB) $(XLIBS) $(MODULE_XLIBS)
 	$(STRIP) ../../../dns.$(MOD_EXT)
 
 depend:

@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: compiling.html,v 1.29 2004/07/25 03:56:59 wcc Exp $ -->
+<!-- $Id: compiling.html,v 1.30 2004/07/25 11:17:34 wcc Exp $ -->
 
 <html>
   <head>
@@ -219,14 +219,14 @@ collect2: ld returned 1 exit status
           bash/ksh:
           <blockquote>
 <pre>
-export LD_LIBRARY_PATH=&#39;&lt;path to DIRECTORY containing Tcl library&gt;&#39;
+export LD_LIBRARY_PATH=&lt;path to DIRECTORY containing Tcl library&gt;:${LD_LIBRARY_PATH}
 </pre>
           </blockquote>
 
           csh/tcsh/tclsh:
           <blockquote>
 <pre>
-setenv LD_LIBRARY_PATH &#39;&lt;path to DIRECTORY containing Tcl library&gt;&#39;
+setenv LD_LIBRARY_PATH &lt;path to DIRECTORY containing Tcl library&gt;:${LD_LIBRARY_PATH}
 </pre>
           </blockquote></li>
 
@@ -455,14 +455,14 @@ cp /bin/cygminires.dll &#39;C:/eggdrop&#39; (if you selected dns.mod)
           bash/ksh:
           <blockquote>
 <pre>
-export LD_LIBRARY_PATH=&#39;&lt;path to DIRECTORY containing Tcl library&gt;&#39;
+export LD_LIBRARY_PATH=&lt;path to DIRECTORY containing Tcl library&gt;:${LD_LIBRARY_PATH}
 </pre>
           </blockquote>
 
           csh/tcsh/tclsh:
           <blockquote>
 <pre>
-setenv LD_LIBRARY_PATH &#39;&lt;path to DIRECTORY containing Tcl library&gt;&#39;
+setenv LD_LIBRARY_PATH &lt;path to DIRECTORY containing Tcl library&gt;:${LD_LIBRARY_PATH}
 </pre>
           </blockquote>
 

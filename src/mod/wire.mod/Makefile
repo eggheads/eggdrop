@@ -1,5 +1,5 @@
 # Makefile for src/mod/wire.mod/
-# $Id: Makefile,v 1.15 2003/11/01 23:26:58 wcc Exp $
+# $Id: Makefile,v 1.16 2004/07/25 11:17:35 wcc Exp $
 
 srcdir = .
 
@@ -20,7 +20,7 @@ modules: ../../../wire.$(MOD_EXT)
 	mv wire.o ../
 
 ../../../wire.$(MOD_EXT): ../wire.o
-	$(LD) -o ../../../wire.$(MOD_EXT) ../wire.o
+	$(LD) -o ../../../wire.$(MOD_EXT) ../wire.o $(XLIBS) $(MODULE_XLIBS)
 	$(STRIP) ../../../wire.$(MOD_EXT)
 
 depend:
@@ -28,6 +28,7 @@ depend:
 
 clean:
 	@rm -f .depend *.o *.$(MOD_EXT) *~
+
 distclean: clean
 
 #safety hash

@@ -7,7 +7,7 @@
  *   telling the current programmed settings
  *   initializing a lot of stuff and loading the tcl scripts
  *
- * $Id: chanprog.c,v 1.56 2004/06/14 01:14:06 wcc Exp $
+ * $Id: chanprog.c,v 1.57 2004/07/25 11:17:34 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -429,15 +429,16 @@ void reaffirm_owners()
 void chanprog()
 {
   int i;
+  FILE *f;
+  char s[161], rands[8];
 
   admin[0]   = 0;
   helpdir[0] = 0;
   tempdir[0] = 0;
+  conmask    = 0;
 
   for (i = 0; i < max_logs; i++)
     logs[i].flags |= LF_EXPIRING;
-
-  conmask = 0;
 
   /* Turn off read-only variables (make them write-able) for rehash */
   protect_readonly = 0;
@@ -468,13 +469,16 @@ void chanprog()
   /* We should be safe now */
   call_hook(HOOK_REHASH);
   protect_readonly = 1;
-  if (!botnetnick[0]) {
+
+  if (!botnetnick[0])
     strncpyz(botnetnick, origbotname, HANDLEN + 1);
-  }
+
   if (!botnetnick[0])
     fatal("I don't have a botnet nick!!\n", 0);
+
   if (!userfile[0])
     fatal(MISC_NOUSERFILE2, 0);
+
   if (!readuserfile(userfile, &userlist)) {
     if (!make_userfile) {
       char tmp[178];
@@ -490,31 +494,30 @@ void chanprog()
     make_userfile = 0;
     printf("%s\n", MISC_USERFEXISTS);
   }
+
   if (helpdir[0])
     if (helpdir[strlen(helpdir) - 1] != '/')
       strcat(helpdir, "/");
+
   if (tempdir[0])
     if (tempdir[strlen(tempdir) - 1] != '/')
       strcat(tempdir, "/");
-  /* Test tempdir: it's vital */
-  {
-    FILE *f;
-    char s[161], rands[8];
 
-    /* Possible file race condition solved by using a random string
-     * and the process id in the filename.
-     * FIXME: This race is only partitially fixed. We could still be
-     *        overwriting an existing file / following a malicious
-     *        link.
-     */
-    make_rand_str(rands, 7);    /* create random string */
-    sprintf(s, "%s.test-%u-%s", tempdir, getpid(), rands);
-    f = fopen(s, "w");
-    if (f == NULL)
-      fatal(MISC_CANTWRITETEMP, 0);
-    fclose(f);
-    unlink(s);
-  }
+  /* Test tempdir: it's vital. */
+
+  /* Possible file race condition solved by using a random string
+   * and the process id in the filename.
+   * FIXME: This race is only partitially fixed. We could still be
+   *        overwriting an existing file / following a malicious
+   *        link.
+   */
+  make_rand_str(rands, 7); /* create random string */
+  sprintf(s, "%s.test-%u-%s", tempdir, getpid(), rands);
+  f = fopen(s, "w");
+  if (f == NULL)
+    fatal(MISC_CANTWRITETEMP, 0);
+  fclose(f);
+  unlink(s);
   reaffirm_owners();
   check_tcl_event("userfile-loaded");
 }

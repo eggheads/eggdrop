@@ -1,5 +1,5 @@
 # Makefile.in for src/mod/compress.mod/
-# $Id: Makefile.in,v 1.10 2004/06/15 07:20:55 wcc Exp $
+# $Id: Makefile.in,v 1.11 2004/07/25 11:17:34 wcc Exp $
 
 ZLIB = @ZLIB@
 srcdir = .
@@ -22,7 +22,7 @@ modules: ../../../compress.$(MOD_EXT)
 	mv compress.o ../
 
 ../../../compress.$(MOD_EXT): ../compress.o
-	$(LD) -o ../../../compress.$(MOD_EXT) ../compress.o $(ZLIB) $(XLIBS)
+	$(LD) -o ../../../compress.$(MOD_EXT) ../compress.o $(ZLIB) $(XLIBS) $(MODULE_XLIBS)
 	$(STRIP) ../../../compress.$(MOD_EXT)
 
 depend:

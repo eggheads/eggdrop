@@ -1,5 +1,5 @@
 # Makefile for src/mod/notes.mod
-# $Id: Makefile,v 1.14 2003/11/01 23:26:58 wcc Exp $
+# $Id: Makefile,v 1.15 2004/07/25 11:17:35 wcc Exp $
 
 srcdir = .
 
@@ -20,7 +20,7 @@ modules: ../../../notes.$(MOD_EXT)
 	mv notes.o ../
 
 ../../../notes.$(MOD_EXT): ../notes.o
-	$(LD) -o ../../../notes.$(MOD_EXT) ../notes.o $(XLIBS)
+	$(LD) -o ../../../notes.$(MOD_EXT) ../notes.o $(XLIBS) $(MODULE_XLIBS)
 	$(STRIP) ../../../notes.$(MOD_EXT)
 
 depend:
@@ -28,6 +28,7 @@ depend:
 
 clean:
 	@rm -f .depend *.o *.$(MOD_EXT) *~
+
 distclean: clean
 
 #safety hash

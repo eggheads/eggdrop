@@ -1,5 +1,5 @@
 # Makefile for src/mod/transfer.mod/
-# $Id: Makefile,v 1.14 2003/11/01 23:26:58 wcc Exp $
+# $Id: Makefile,v 1.15 2004/07/25 11:17:35 wcc Exp $
 
 srcdir = .
 
@@ -20,7 +20,7 @@ modules: ../../../transfer.$(MOD_EXT)
 	mv transfer.o ../
 
 ../../../transfer.$(MOD_EXT): ../transfer.o
-	$(LD) -o ../../../transfer.$(MOD_EXT) ../transfer.o $(XLIBS)
+	$(LD) -o ../../../transfer.$(MOD_EXT) ../transfer.o $(XLIBS) $(MODULE_XLIBS)
 	$(STRIP) ../../../transfer.$(MOD_EXT)
 
 depend:
@@ -28,6 +28,7 @@ depend:
 
 clean:
 	@rm -f .depend *.o *.$(MOD_EXT) *~
+
 distclean: clean
 
 #safety hash

@@ -1,4 +1,4 @@
-$Id: COMPILING-FAQ,v 1.10 2004/07/25 03:56:58 wcc Exp $
+$Id: COMPILING-FAQ,v 1.11 2004/07/25 11:17:34 wcc Exp $
 
 Eggdrop Compiling Guide
 Last revised: July 09, 2004
@@ -151,10 +151,10 @@ Last revised: July 09, 2004
         1. Depending on what shell your using:
 
             bash/ksh:
-              export LD_LIBRARY_PATH='<path to DIRECTORY containing Tcl library>'
+              export LD_LIBRARY_PATH=<path to DIRECTORY containing Tcl library>:${LD_LIBRARY_PATH}
 
             csh/tcsh/tclsh:
-              setenv LD_LIBRARY_PATH '<path to DIRECTORY containing Tcl library>'
+              setenv LD_LIBRARY_PATH <path to DIRECTORY containing Tcl library>:${LD_LIBRARY_PATH}
 
           2. Run the following command from your Eggdrop compilation directory
              (this is all one command):
@@ -310,10 +310,10 @@ Last revised: July 09, 2004
           1. Depending on what shell your using:
 
             bash/ksh:
-              export LD_LIBRARY_PATH='<path to DIRECTORY containing Tcl library>'
+              export LD_LIBRARY_PATH=<path to DIRECTORY containing Tcl library>:${LD_LIBRARY_PATH}
 
             csh/tcsh/tclsh:
-              setenv LD_LIBRARY_PATH '<path to DIRECTORY containing Tcl library>'
+              setenv LD_LIBRARY_PATH <path to DIRECTORY containing Tcl library>:${LD_LIBRARY_PATH}
 
             Note that some OS's use a different environment variable to tell
             ld where to look for a library. See the notes for your specific OS

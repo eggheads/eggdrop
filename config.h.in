@@ -34,8 +34,14 @@
    */
 #undef HAVE_DIRENT_H
 
-/* Define if we have/need dlopen() (for module support). */
+/* Define to 1 if you have the <dlfcn.h> header file. */
+#undef HAVE_DLFCN_H
+
+/* Define to 1 if you have the `dlopen' function. */
 #undef HAVE_DLOPEN
+
+/* Define to 1 if you have the <dl.h> header file. */
+#undef HAVE_DL_H
 
 /* Define to 1 if you don't have `vprintf' but do have `_doprnt.' */
 #undef HAVE_DOPRNT
@@ -85,8 +91,20 @@
 /* Define to 1 if you have the <limits.h> header file. */
 #undef HAVE_LIMITS_H
 
+/* Define to 1 if you have the `load' function. */
+#undef HAVE_LOAD
+
+/* Define to 1 if you have the <loader.h> header file. */
+#undef HAVE_LOADER_H
+
 /* Define to 1 if you have the <locale.h> header file. */
 #undef HAVE_LOCALE_H
+
+/* Define to 1 if you have the <mach-o/dyld.h> header file. */
+#undef HAVE_MACH_O_DYLD_H
+
+/* Define to 1 if you have the <mach-o/rld.h> header file. */
+#undef HAVE_MACH_O_RLD_H
 
 /* Define to 1 if you have the `mbrlen' function. */
 #undef HAVE_MBRLEN
@@ -112,14 +130,26 @@
 /* Define to 1 if you have the <netinet/in.h> header file. */
 #undef HAVE_NETINET_IN_H
 
+/* Define to 1 if you have the `NSLinkModule' function. */
+#undef HAVE_NSLINKMODULE
+
 /* Define to 1 if you have the `random' function. */
 #undef HAVE_RANDOM
 
 /* Define to 1 if you have the `rename' function. */
 #undef HAVE_RENAME
 
+/* Define to 1 if you have the <rld.h> header file. */
+#undef HAVE_RLD_H
+
+/* Define to 1 if you have the `rld_load' function. */
+#undef HAVE_RLD_LOAD
+
 /* Define to 1 if you have the `setpgid' function. */
 #undef HAVE_SETPGID
+
+/* Define to 1 if you have the `shl_load' function. */
+#undef HAVE_SHL_LOAD
 
 /* Define to 1 if you have the `sigaction' function. */
 #undef HAVE_SIGACTION
@@ -230,20 +260,27 @@
 /* Define to 1 if you have the <wchar.h> header file. */
 #undef HAVE_WCHAR_H
 
-/* Define if running on HPUX 10.x. */
-#undef HPUX10_HACKS
-
-/* Define if running on HPUX that supports dynamic linking. */
-#undef HPUX_HACKS
-
 /* Define if you have a version of libsafe with a broken sscanf(). */
 #undef LIBSAFE_HACKS
 
 /* Define if modules will work on your system. */
 #undef MODULES_OK
 
-/* Define if running on OSF/1 platform. */
-#undef OSF1_HACKS
+/* Define if modules should be loaded using the dl*() functions. */
+#undef MOD_USE_DL
+
+/* Define if modules should be loaded using the NS*() functions. */
+#undef MOD_USE_DYLD
+
+/* Define if modules should be loaded using the ldr*() and *load() functions.
+   */
+#undef MOD_USE_LOADER
+
+/* Define if modules should be loaded using the rld_*() functions. */
+#undef MOD_USE_RLD
+
+/* Define if modules should be loaded using the shl_*() functions. */
+#undef MOD_USE_SHL
 
 /* Define to the address where bug reports for this package should be sent. */
 #undef PACKAGE_BUGREPORT

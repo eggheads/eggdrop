@@ -1,19 +1,18 @@
 dnl configure.ac: this file is processed by autoconf to produce ./configure.
 dnl
-dnl $Id: configure.ac,v 1.1 2004/06/15 07:25:51 wcc Exp $
+dnl $Id: configure.ac,v 1.2 2004/07/25 11:17:34 wcc Exp $
 
 AC_PREREQ(2.59)
 
 sinclude(../eggmod.m4)
 
 AC_INIT([Eggdrop Compress Module],[1.6.17],[bugs@eggheads.org])
-EGG_INIT(compress.c)
 
 AC_CONFIG_SRCDIR(compress.c)
 AC_CONFIG_AUX_DIR(../../../misc)
 
 AC_COPYRIGHT([Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004 Eggheads Development Team])
-AC_REVISION($Revision: 1.1 $)
+AC_REVISION($Revision: 1.2 $)
 
 # Check for gzopen() in -lz.
 AC_CHECK_LIB(z, gzopen, [ZLIB="-lz"], [])

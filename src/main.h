@@ -2,7 +2,7 @@
  * main.h
  *   include file to include most other include files
  *
- * $Id: main.h,v 1.28 2004/06/14 01:14:06 wcc Exp $
+ * $Id: main.h,v 1.29 2004/07/25 11:17:34 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -30,9 +30,9 @@
 #  include "config.h"
 #endif
 
-#include "lush.h" /* We seem to need this everywhere... */
+#include "lush.h"
 
-#if (((TCL_MAJOR_VERSION == 7) && (TCL_MINOR_VERSION >= 5)) || (TCL_MAJOR_VERSION > 7))
+#if ((TCL_MAJOR_VERSION > 7) || ((TCL_MAJOR_VERSION == 7) && (TCL_MINOR_VERSION >= 5)))
 #  define USE_TCL_EVENTS
 #  define USE_TCL_FINDEXEC
 #  define USE_TCL_PACKAGE

@@ -1,5 +1,5 @@
 # Makefile for src/mod/server.mod/
-# $Id: Makefile,v 1.14 2003/11/01 23:26:58 wcc Exp $
+# $Id: Makefile,v 1.15 2004/07/25 11:17:35 wcc Exp $
 
 srcdir = .
 
@@ -20,7 +20,7 @@ modules: ../../../server.$(MOD_EXT)
 	mv server.o ../
 
 ../../../server.$(MOD_EXT): ../server.o
-	$(LD) -o ../../../server.$(MOD_EXT) ../server.o $(XLIBS)
+	$(LD) -o ../../../server.$(MOD_EXT) ../server.o $(XLIBS) $(MODULE_XLIBS)
 	$(STRIP) ../../../server.$(MOD_EXT)
 
 depend:
@@ -28,6 +28,7 @@ depend:
 
 clean:
 	@rm -f .depend *.o *.$(MOD_EXT) *~
+
 distclean: clean
 
 #safety hash

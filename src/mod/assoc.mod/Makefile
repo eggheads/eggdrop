@@ -1,5 +1,5 @@
 # Makefile for src/mod/assoc.mod/
-# $Id: Makefile,v 1.14 2003/11/01 23:26:57 wcc Exp $
+# $Id: Makefile,v 1.15 2004/07/25 11:17:34 wcc Exp $
 
 srcdir = .
 
@@ -20,7 +20,7 @@ modules: ../../../assoc.$(MOD_EXT)
 	mv assoc.o ../
 
 ../../../assoc.$(MOD_EXT): ../assoc.o
-	$(LD) -o ../../../assoc.$(MOD_EXT) ../assoc.o $(XLIBS)
+	$(LD) -o ../../../assoc.$(MOD_EXT) ../assoc.o $(XLIBS) $(MODULE_XLIBS)
 	$(STRIP) ../../../assoc.$(MOD_EXT)
 
 depend:
@@ -28,6 +28,7 @@ depend:
 
 clean:
 	@rm -f .depend *.o *.$(MOD_EXT) *~
+
 distclean: clean
 
 #safety hash

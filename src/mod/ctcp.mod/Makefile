@@ -1,5 +1,5 @@
 # Makefile for src/mod/ctcp.mod/
-# $Id: Makefile,v 1.13 2003/11/01 23:26:57 wcc Exp $
+# $Id: Makefile,v 1.14 2004/07/25 11:17:34 wcc Exp $
 
 srcdir = .
 
@@ -20,7 +20,7 @@ modules: ../../../ctcp.$(MOD_EXT)
 	mv ctcp.o ../
 
 ../../../ctcp.$(MOD_EXT): ../ctcp.o
-	$(LD) -o ../../../ctcp.$(MOD_EXT) ../ctcp.o
+	$(LD) -o ../../../ctcp.$(MOD_EXT) ../ctcp.o $(XLIBS) $(MODULE_XLIBS)
 	$(STRIP) ../../../ctcp.$(MOD_EXT)
 
 depend:
@@ -28,6 +28,7 @@ depend:
 
 clean:
 	@rm -f .depend *.o *.$(MOD_EXT) *~
+
 distclean: clean
 
 #safety hash

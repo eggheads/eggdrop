@@ -1,4 +1,4 @@
-$Id: UPDATES1.6,v 1.583 2004/07/25 03:56:58 wcc Exp $
+$Id: UPDATES1.6,v 1.584 2004/07/25 11:17:34 wcc Exp $
 
 Eggdrop Changes (since v1.6.0)
     _____________________________________________________________________
@@ -11,6 +11,16 @@ Eggdrop Changes (since v1.6.0)
     ftp://ftp.eggheads.org/pub/eggdrop/UPDATES/
 
   1.6.17:
+    - Cleaned up modules.c and the module configure stuff quite a bit.
+    * Patch by: Wcc
+
+    - Detect Tcl in $HOME/lib and $HOME/tcl/lib first, as to make it easier
+      to allow users to override the system's Tcl version.
+    * Found by: various - Patch by: Wcc
+
+    - We now support module loading under Darwin (Mac OS X) and NeXT Step.
+    * Found by: various - Patch by: Wcc
+
     - Don't try to call tcl_notes if the notes module isn't loaded.
     * Found by: Chris Northwood - Patch by: lordares
 

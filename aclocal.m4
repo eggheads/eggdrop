@@ -16,18 +16,24 @@ dnl You should have received a copy of the GNU General Public License
 dnl along with this program; if not, write to the Free Software
 dnl Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 dnl
-dnl $Id: aclocal.m4,v 1.91 2004/06/16 06:53:03 wcc Exp $
+dnl $Id: aclocal.m4,v 1.92 2004/07/25 11:17:33 wcc Exp $
 dnl
+
+
+dnl
+dnl Message functions.
+dnl
+
 
 dnl EGG_MSG_CONFIGURE_START()
 dnl
 AC_DEFUN([EGG_MSG_CONFIGURE_START],
 [
-  AC_MSG_RESULT()
+  AC_MSG_RESULT
   AC_MSG_RESULT([This is Eggdrop's GNU configure script.])
   AC_MSG_RESULT([It's going to run a bunch of tests to hopefully make your compile])
   AC_MSG_RESULT([work without much twiddling.])
-  AC_MSG_RESULT()
+  AC_MSG_RESULT
 ])
 
 
@@ -35,16 +41,64 @@ dnl EGG_MSG_CONFIGURE_END()
 dnl
 AC_DEFUN([EGG_MSG_CONFIGURE_END],
 [
-  AC_MSG_RESULT()
-  AC_MSG_RESULT([Configure is done.])
-  AC_MSG_RESULT()
   AC_MSG_RESULT([Type 'make config' to configure the modules, or type 'make iconfig'])
   AC_MSG_RESULT([to interactively choose which modules to compile.])
-  AC_MSG_RESULT()
+  AC_MSG_RESULT
 ])
 
 
+dnl EGG_MSG_WEIRDOS
+dnl
+dnl Print some messages at the end of configure to give extra information to
+dnl users of 'weird' operating systems.
+dnl
+AC_DEFUN([EGG_MSG_WEIRDOS],
+[
+  AC_MSG_RESULT([Operating System: $egg_cv_var_system_type $egg_cv_var_system_release])
+  AC_MSG_RESULT
+  if test "$UNKNOWN_OS" = "yes"; then
+    AC_MSG_RESULT([Warning:])
+    AC_MSG_RESULT
+    AC_MSG_RESULT([  Unknown Operating System: $egg_cv_var_system_type $egg_cv_var_system_release])
+    AC_MSG_RESULT
+    AC_MSG_RESULT([  Module support has been disabled for this build.])
+    AC_MSG_RESULT
+    AC_MSG_RESULT([  Please let us know what type of system this is by e-mailing])
+    AC_MSG_RESULT([  bugs@eggheads.org. The output of uname -a, and some other basic])
+    AC_MSG_RESULT([  information about the OS should be included.])
+    AC_MSG_RESULT
+  else
+    if test "$WEIRD_OS" = "yes"; then
+      AC_MSG_RESULT([Warning:])
+      AC_MSG_RESULT
+      AC_MSG_RESULT([  The operating system you are using has not yet had a great])
+      AC_MSG_RESULT([  deal of testing with Eggdrop. For this reason, this compile])
+      AC_MSG_RESULT([  will default to "make static".])
+      AC_MSG_RESULT
+      AC_MSG_RESULT([  To enable module support, type "make eggdrop" instead of just])
+      AC_MSG_RESULT([  "make" after you run "make config" (or "make iconfig").])
+      AC_MSG_RESULT
+      AC_MSG_RESULT([  As we have not done a sufficiant ammount of testing on this])
+      AC_MSG_RESULT([  OS, your feedback is greatly appreciated. Please let us know])
+      AC_MSG_RESULT([  at bugs@eggheads.org if there are any problems compiling with])
+      AC_MSG_RESULT([  module support, or if you got it to work :)])
+      AC_MSG_RESULT
+    fi
+    AC_MSG_RESULT([If you experiance any problems compiling Eggdrop, please read the])
+    AC_MSG_RESULT([compile guide, found in doc/COMPILE-FAQ.])
+    AC_MSG_RESULT
+  fi
+])
+
+
+dnl
+dnl Compiler checks.
+dnl
+
+
 dnl EGG_CHECK_CC()
+dnl
+dnl Check for a working C compiler.
 dnl
 AC_DEFUN([EGG_CHECK_CC],
 [
@@ -59,6 +113,24 @@ EOF
     exit 1
   fi
 ])
+
+
+dnl EGG_HEADER_STDC()
+dnl
+AC_DEFUN([EGG_HEADER_STDC],
+[
+  if test "$ac_cv_header_stdc" = "no"; then
+    cat << 'EOF' >&2
+configure: error:
+
+  Your system must support ANSI C Header files.
+  These are required for the language support. Sorry.
+
+EOF
+    exit 1
+  fi
+])
+
 
 dnl EGG_CHECK_CCPIPE()
 dnl
@@ -93,7 +165,44 @@ AC_DEFUN([EGG_CHECK_CCPIPE],
 ])
 
 
+dnl EGG_CHECK_CCWALL()
+dnl
+dnl See if the compiler supports -Wall.
+dnl
+AC_DEFUN([EGG_CHECK_CCWALL],
+[
+  if test -n "$GCC"; then
+    AC_CACHE_CHECK([whether the compiler understands -Wall], egg_cv_var_ccwall, [
+      ac_old_CFLAGS="$CFLAGS"
+      CFLAGS="$CFLAGS -Wall"
+       AC_COMPILE_IFELSE([[
+         int main ()
+         {
+           return(0);
+         }
+       ]], [
+         egg_cv_var_ccwall="yes"
+       ], [
+         egg_cv_var_ccwall="no"
+       ])
+      CFLAGS="$ac_old_CFLAGS"
+    ])
+
+    if test "$egg_cv_var_ccwall" = "yes"; then
+      CFLAGS="$CFLAGS -Wall"
+    fi
+  fi
+])
+
+
+dnl
+dnl Checks for types and functions.
+dnl
+
+
 dnl EGG_CHECK_SOCKLEN_T()
+dnl
+dnl Check for the socklen_t type.
 dnl
 AC_DEFUN([EGG_CHECK_SOCKLEN_T],
 [
@@ -128,6 +237,29 @@ AC_DEFUN([EGG_CHECK_SOCKLEN_T],
     AC_DEFINE(HAVE_SOCKLEN_T, 1, [Define if your system has the `socklen_t' type.])
   fi
 ])
+
+
+dnl EGG_FUNC_VPRINTF()
+dnl
+AC_DEFUN([EGG_FUNC_VPRINTF],
+[
+  AC_FUNC_VPRINTF
+  if test "$ac_cv_func_vprintf" = "no"; then
+    cat << 'EOF' >&2
+configure: error:
+
+  Your system does not have the vprintf/vsprintf/sprintf libraries.
+  These are required to compile almost anything. Sorry.
+
+EOF
+    exit 1
+  fi
+])
+
+
+dnl
+dnl Checks for programs.
+dnl
 
 
 dnl EGG_PROG_HEAD_1()
@@ -241,42 +373,233 @@ EOF
   fi
 ])
 
+
+dnl
+dnl Checks for operating system and module support.
+dnl
+
+
+dnl EGG_OS_VERSION()
+dnl
+AC_DEFUN([EGG_OS_VERSION],
+[
+  AC_CACHE_CHECK([system type], egg_cv_var_system_type, [egg_cv_var_system_type=`$UNAME -s`])
+  AC_CACHE_CHECK([system release], egg_cv_var_system_release, [egg_cv_var_system_release=`$UNAME -r`])
+])
+
+
+dnl EGG_CYGWIN_BINMODE
+dnl
+dnl Check for binmode.o on Cygwin.
+dnl
+AC_DEFUN([EGG_CYGWIN_BINMODE],
+[
+  if test $EGG_CYGWIN = "yes"; then
+    AC_MSG_CHECKING([for /usr/lib/binmode.o])
+    if test -r /usr/lib/binmode.o; then
+      AC_MSG_RESULT([yes])
+      LIBS="$LIBS /usr/lib/binmode.o"
+    else
+      AC_MSG_RESULT([no])
+      AC_MSG_WARN([Make sure the directory Eggdrop is installed into is mounted in binary mode.])
+    fi
+  fi
+])
+
+
+dnl EGG_DARWIN_BUNDLE
+dnl
+dnl Locate bundle1.o on Darwin. Test systems seem to have it in /usr/lib,
+dnl however the official docs say /lib.
+dnl
+AC_DEFUN([EGG_DARWIN_BUNDLE],
+[
+  BUNDLE=""
+  for bundlepath in "/lib" "/usr/lib" "/usr/local/lib"; do
+    AC_MSG_CHECKING([for bundle1.o in ${bundlepath}])
+    if test -r "${bundlepath}/bundle1.o"; then
+      AC_MSG_RESULT([yes])
+      BUNDLE="${bundlepath}/bundle1.o"
+      break
+    else
+      AC_MSG_RESULT([no])
+    fi
+  done
+
+  if test "x${BUNDLE}" = "x"; then
+    cat << 'EOF' >&2
+configure: warning:
+
+  bundle1.o cannot be located. A module build might not compile correctly.
+
+EOF
+  fi
+])
+
+
+dnl EGG_CHECK_MODULE_SUPPORT()
+dnl
+dnl Checks for module support. This should be run after EGG_OS_VERSION.
+dnl
+AC_DEFUN([EGG_CHECK_MODULE_SUPPORT],
+[
+  MODULES_OK="yes"
+  MOD_EXT="so"
+  DEFAULT_MAKE="debug"
+  LOAD_METHOD="dl"
+  WEIRD_OS="yes"
+  UNKNOWN_OS="no"
+  MODULE_XLIBS=""
+
+  AC_MSG_CHECKING([module loading capabilities])
+  AC_MSG_RESULT
+  AC_CHECK_HEADERS([dl.h dlfcn.h loader.h rld.h mach-o/dyld.h mach-o/rld.h])
+  AC_CHECK_FUNCS([dlopen load NSLinkModule shl_load rld_load])
+
+  case "$egg_cv_var_system_type" in
+    BSD/OS)
+      if test "`echo $egg_cv_var_system_release | cut -d . -f 1`" = "2"; then
+        MODULES_OK="no"
+      fi
+    ;;
+    CYGWI*)
+      WEIRD_OS="no"
+      MOD_EXT="dll"
+    ;;
+    HP-UX)
+      LOAD_METHOD="shl"
+    ;;
+    dell)
+      # Fallthrough.
+    ;;
+    IRIX)
+      # Fallthrough.
+    ;;
+    Ultrix)
+      # No dlopen() or similar on Ultrix. We can't use modules.
+      MODULES_OK="no"
+    ;;
+    BeOS)
+      # We don't yet support BeOS's dynamic linking interface.
+      MODULES_OK="no"
+    ;;
+    Linux)
+      WEIRD_OS="no"
+    ;;
+    Lynx)
+      # Fallthrough.
+    ;;
+    QNX)
+      # Fallthrough.
+      # QNX (recent versions at least) support dlopen().
+    ;;
+    OSF1)
+      case "`echo $egg_cv_var_system_release | cut -d . -f 1`" in
+        1.*) LOAD_METHOD="loader" ;;
+      esac
+    ;;
+    SunOS)
+      if test "`echo $egg_cv_var_system_release | cut -d . -f 1`" = "5"; then
+        # We've had quite a bit of testing on Solaris.
+        WEIRD_OS="no"
+      else
+        # SunOS 4
+        AC_DEFINE(DLOPEN_1, 1, [Define if running on SunOS 4.0.])
+      fi
+    ;;
+    *BSD)
+      # FreeBSD/OpenBSD/NetBSD all support dlopen() and have had plenty of
+      # testing with Eggdrop.
+      WEIRD_OS="no"
+    ;;
+    Darwin)
+      # We should support Mac OS X (at least 10.1 and later) now.
+      # Use rld on < 10.1.
+      if test "$ac_cv_func_NSLinkModule" = "no"; then
+        LOAD_METHOD="rld"
+      fi
+      LOAD_METHOD="dyld"
+      EGG_DARWIN_BUNDLE
+      MODULE_XLIBS="${BUNDLE} ${MODULE_XLIBS}"
+    ;;
+    *)
+      if test -r /mach; then
+        # At this point, we're guessing this is NeXT Step. We support rld, so
+        # modules will probably work on NeXT now, but we have absolutly no way
+        # to test this. I've never even seen a NeXT box, let alone do I know of
+        # one I can test this on.
+        LOAD_METHOD="rld"
+      else
+        # QNX apparently supports dlopen()... Fallthrough.
+        if test -r /cmds; then
+          UNKNOWN_OS="yes"
+          MODULES_OK="no"
+        fi
+      fi
+    ;;
+  esac
+
+  if test "$MODULES_OK" = "yes"; then
+    AC_DEFINE(MODULES_OK, 1, [Define if modules will work on your system.])
+    case $LOAD_METHOD in
+      dl)
+        AC_DEFINE(MOD_USE_DL, 1, [Define if modules should be loaded using the dl*() functions.])
+      ;;
+      shl)
+        AC_DEFINE(MOD_USE_SHL, 1, [Define if modules should be loaded using the shl_*() functions.])
+      ;;
+      dyld)
+        AC_DEFINE(MOD_USE_DYLD, 1, [Define if modules should be loaded using the NS*() functions.])
+      ;;
+      loader)
+        AC_DEFINE(MOD_USE_LOADER, 1, [Define if modules should be loaded using the ldr*() and *load() functions.])
+      ;;
+      rld)
+        AC_DEFINE(MOD_USE_RLD, 1, [Define if modules should be loaded using the rld_*() functions.])
+      ;;
+    esac
+  else
+    DEFAULT_MAKE="static"
+  fi
+
+  if test "$WEIRD_OS" = "yes"; then
+    # Default to "make static" for 'weird' operating systems. Will print a
+    # note at the end of configure explaining. This way, Eggdrop should compile
+    # "out of the box" on most every operating system we know of, and they can
+    # do a "make eggdrop" if they want to use(/try to use) module support. - Wcc
+    DEFAULT_MAKE="static"
+  fi
+
+  AC_SUBST(DEFAULT_MAKE)
+  AC_SUBST(MOD_EXT)
+  AC_SUBST(MODULE_XLIBS)
+  AC_DEFINE_UNQUOTED(EGG_MOD_EXT, "$MOD_EXT", [Defines the extension of Eggdrop modules.])
+])
+
+
 dnl EGG_CHECK_OS()
 dnl
-dnl FIXME/NOTICE:
-dnl   This function is obsolete. Any NEW code/checks should be written as
-dnl   individual tests that will be checked on ALL operating systems.
+dnl Various operating system tests.
 dnl
 AC_DEFUN([EGG_CHECK_OS],
 [
-  LINUX="no"
-  IRIX="no"
-  SUNOS="no"
-  HPUX="no"
-  EGG_CYGWIN="no"
   MOD_CC="$CC"
   MOD_LD="$CC"
   MOD_STRIP="$STRIP"
   SHLIB_CC="$CC"
   SHLIB_LD="$CC"
   SHLIB_STRIP="$STRIP"
-  NEED_DL=1
-  DEFAULT_MAKE="debug"
-  MOD_EXT="so"
-
-  AC_CACHE_CHECK([system type],
-                 egg_cv_var_system_type,
-                 [egg_cv_var_system_type=`$UNAME -s`])
-  AC_CACHE_CHECK([system release],
-                 egg_cv_var_system_release,
-                 [egg_cv_var_system_release=`$UNAME -r`])
+  LINUX="no"
+  IRIX="no"
+  SUNOS="no"
+  HPUX="no"
+  EGG_CYGWIN="no"
 
   case "$egg_cv_var_system_type" in
     BSD/OS)
       case "`echo $egg_cv_var_system_release | cut -d . -f 1`" in
         2)
-          NEED_DL=0
-          DEFAULT_MAKE="static"
+          # Fallthrough.
         ;;
         3)
           MOD_CC="shlicc"
@@ -286,46 +609,24 @@ AC_DEFUN([EGG_CHECK_OS],
           fi
           SHLIB_LD="shlicc -r"
           SHLIB_STRIP="touch"
-          AC_DEFINE(MODULES_OK, 1, [Define if modules will work on your system.])
         ;;
         *)
-          CFLAGS="$CFLAGS -Wall"
-          MOD_LD="$CC"
           if test ! "$STRIP" = "touch"; then
             MOD_STRIP="$STRIP -d"
           fi
           SHLIB_CC="$CC -export-dynamic -fPIC"
           SHLIB_LD="$CC -shared -nostartfiles"
-          AC_DEFINE(MODULES_OK, 1, [Define if modules will work on your system.])
         ;;
       esac
     ;;
     CYGWI*)
-      case "`echo $egg_cv_var_system_release | cut -c 1-3`" in
-        1.*)
-          NEED_DL=0
-          SHLIB_LD="$CC -shared"
-          AC_PROG_CC_WIN32
-          CC="$CC $WIN32FLAGS"
-          MOD_CC="$CC"
-          MOD_LD="$CC"
-          AC_MSG_CHECKING([for /usr/lib/binmode.o])
-          if test -r /usr/lib/binmode.o; then
-            AC_MSG_RESULT([yes])
-            LIBS="$LIBS /usr/lib/binmode.o"
-          else
-            AC_MSG_RESULT([no])
-            AC_MSG_WARN([Make sure the directory Eggdrop is installed into is mounted in binary mode.])
-          fi
-          MOD_EXT="dll"
-          AC_DEFINE(MODULES_OK, 1, [Define if modules will work on your system.])
-        ;;
-        *)
-          NEED_DL=0
-          DEFAULT_MAKE="static"
-        ;;
-      esac
+      AC_PROG_CC_WIN32
+      SHLIB_LD="$CC -shared"
+      CC="$CC $WIN32FLAGS"
+      MOD_CC="$CC"
+      MOD_LD="$CC"
       EGG_CYGWIN="yes"
+      EGG_CYGWIN_BINMODE
       AC_DEFINE(CYGWIN_HACKS, 1, [Define if running under Cygwin.])
     ;;
     HP-UX)
@@ -334,96 +635,65 @@ AC_DEFUN([EGG_CHECK_OS],
         # HP-UX ANSI C Compiler.
         MOD_LD="$CC +z"
         SHLIB_CC="$CC +z"
-        AC_DEFINE(MODULES_OK, 1, [Define if modules will work on your system.])
       else
         # GCC
         MOD_LD="$CC -fPIC -shared"
         SHLIB_CC="$CC -fPIC"
       fi
       SHLIB_LD="ld -b"
-      NEED_DL=0
-      AC_DEFINE(HPUX_HACKS, 1, [Define if running on HPUX that supports dynamic linking.])
-      if test "`echo $egg_cv_var_system_release | cut -d . -f 2`" = "10"; then
-        AC_DEFINE(HPUX10_HACKS, 1, [Define if running on HPUX 10.x.])
-      fi
     ;;
     dell)
-      AC_MSG_RESULT(Dell SVR4)
       SHLIB_STRIP="touch"
-      NEED_DL=0
       MOD_LD="$CC -lelf -lucb"
     ;;
     IRIX)
       SHLIB_LD="ld -n32 -shared -rdata_shared"
       IRIX="yes"
       SHLIB_STRIP="touch"
-      NEED_DL=0
-      DEFAULT_MAKE="static"
     ;;
     Ultrix)
-      NEED_DL=0
       SHLIB_STRIP="touch"
       DEFAULT_MAKE="static"
       SHELL="/bin/sh5"
     ;;
     SINIX*)
-      NEED_DL=0
       SHLIB_STRIP="touch"
-      DEFAULT_MAKE="static"
       SHLIB_CC="cc -G"
     ;;
     BeOS)
-      NEED_DL=0
-      DEFAULT_MAKE="static"
+      # Fallthrough.
     ;;
     Linux)
       LINUX="yes"
-      CFLAGS="$CFLAGS -Wall"
       MOD_LD="$CC"
       SHLIB_CC="$CC -fPIC"
       SHLIB_LD="$CC -shared -nostartfiles"
-      AC_DEFINE(MODULES_OK, 1, [Define if modules will work on your system.])
     ;;
     Lynx)
-      NEED_DL=0
-      DEFAULT_MAKE="static"
+      # Fallthrough.
     ;;
     QNX)
-      NEED_DL=0
-      DEFAULT_MAKE="static"
       SHLIB_LD="ld -shared"
     ;;
     OSF1)
       case "`echo $egg_cv_var_system_release | cut -d . -f 1`" in
         V*)
-          # FIXME: we should check this in a separate test
           # Digital OSF uses an ancient version of gawk
           if test "$AWK" = "gawk"; then
             AWK="awk"
           fi
           SHLIB_LD="ld -shared -expect_unresolved \"'*'\""
           SHLIB_STRIP="touch"
-          AC_DEFINE(MODULES_OK, 1, [Define if modules will work on your system.])
         ;;
         1.0|1.1|1.2)
           SHLIB_LD="ld -R -export $@:"
-          AC_DEFINE(BROKEN_SNPRINTF, 1, [Define to use Eggdrop's snprintf functions regardless of HAVE_SNPRINTF.])
-          AC_DEFINE(MODULES_OK, 1, [Define if modules will work on your system.])
-          AC_DEFINE(OSF1_HACKS, 1, [Define if running on OSF/1 platform.])
         ;;
         1.*)
           SHLIB_CC="$CC -fpic"
           SHLIB_LD="ld -shared"
-          AC_DEFINE(BROKEN_SNPRINTF, 1, [Define to use Eggdrop's snprintf functions regardless of HAVE_SNPRINTF.])
-          AC_DEFINE(MODULES_OK, 1, [Define if modules will work on your system.])
-          AC_DEFINE(OSF1_HACKS, 1, [Define if running on OSF/1 platform.])
-        ;;
-        *)
-          AC_DEFINE(BROKEN_SNPRINTF, 1, [Define to use Eggdrop's snprintf functions regardless of HAVE_SNPRINTF.])
-          NEED_DL=0
-          DEFAULT_MAKE="static"
         ;;
       esac
+      AC_DEFINE(BROKEN_SNPRINTF, 1, [Define to use Eggdrop's snprintf functions regardless of HAVE_SNPRINTF.])
       AC_DEFINE(STOP_UAC, 1, [Define if running on OSF/1 platform.])
     ;;
     SunOS)
@@ -441,57 +711,44 @@ AC_DEFUN([EGG_CHECK_OS],
         SUNOS="yes"
         SHLIB_LD="ld"
         SHLIB_CC="$CC -PIC"
-        AC_DEFINE(DLOPEN_1, 1, [Define if running on SunOS 4.0.])
       fi
-      AC_DEFINE(MODULES_OK, 1, [Define if modules will work on your system.])
     ;;
     *BSD)
       # FreeBSD/OpenBSD/NetBSD
       SHLIB_CC="$CC -fPIC"
       SHLIB_LD="ld -Bshareable -x"
-      AC_DEFINE(MODULES_OK, 1, [Define if modules will work on your system.])
     ;;
     Darwin)
       # Mac OS X
       SHLIB_CC="$CC -fPIC"
-      SHLIB_LD="ld -Bshareable -x"
-      AC_DEFINE(MODULES_OK, 1, [Define if modules will work on your system.])
+      SHLIB_LD="ld -bundle -undefined error"
     ;;
     *)
-      AC_MSG_CHECKING([if system is Mach based])
       if test -r /mach; then
-        AC_MSG_RESULT([yes])
-        NEED_DL=0
-        DEFAULT_MAKE="static"
+        # At this point, we're guessing this is NeXT Step.
         AC_DEFINE(BORGCUBES, 1, [Define if running on NeXT Step.])
       else
-        AC_MSG_RESULT([no])
-        AC_MSG_CHECKING([if system is QNX])
         if test -r /cmds; then
-          AC_MSG_RESULT([yes])
+          # Probably QNX.
+          SHLIB_LD="ld -shared"
           SHLIB_STRIP="touch"
-          NEED_DL=0
-          DEFAULT_MAKE="static"
-        else
-          AC_MSG_RESULT([no])
-          AC_MSG_RESULT([unknown])
-          AC_MSG_RESULT([If you get modules to work, be sure to let the development team know how (eggdev@eggheads.org).])
-          NEED_DL=0
-          DEFAULT_MAKE="static"
         fi
       fi
     ;;
   esac
+
   AC_SUBST(MOD_LD)
   AC_SUBST(MOD_CC)
   AC_SUBST(MOD_STRIP)
   AC_SUBST(SHLIB_LD)
   AC_SUBST(SHLIB_CC)
   AC_SUBST(SHLIB_STRIP)
-  AC_SUBST(DEFAULT_MAKE)
-  AC_SUBST(MOD_EXT)
-  AC_DEFINE_UNQUOTED(EGG_MOD_EXT, "$MOD_EXT", [Defines the extension of Eggdrop modules.])
 ])
+
+
+dnl
+dnl Library tests.
+dnl
 
 
 dnl EGG_CHECK_LIBS()
@@ -507,6 +764,7 @@ AC_DEFUN([EGG_CHECK_LIBS],
     AC_CHECK_LIB(dns, gethostbyname)
     AC_CHECK_LIB(dl, dlopen)
     AC_CHECK_LIB(m, tan, EGG_MATH_LIB="-lm")
+
     # This is needed for Tcl libraries compiled with thread support
     AC_CHECK_LIB(pthread, pthread_mutex_init, [
       ac_cv_lib_pthread_pthread_mutex_init="yes"
@@ -538,40 +796,6 @@ AC_DEFUN([EGG_CHECK_LIBS],
         AC_CHECK_LIB(dld, shl_load)
       fi
     fi
-  fi
-])
-
-
-dnl EGG_FUNC_VPRINTF()
-dnl
-AC_DEFUN([EGG_FUNC_VPRINTF],
-[
-  if test "$ac_cv_func_vprintf" = "no"; then
-    cat << 'EOF' >&2
-configure: error:
-
-  Your system does not have the vprintf/vsprintf/sprintf libraries.
-  These are required to compile almost anything. Sorry.
-
-EOF
-    exit 1
-  fi
-])
-
-
-dnl EGG_HEADER_STDC()
-dnl
-AC_DEFUN([EGG_HEADER_STDC],
-[
-  if test "$ac_cv_header_stdc" = "no"; then
-    cat << 'EOF' >&2
-configure: error:
-
-  Your system must support ANSI C Header files.
-  These are required for the language support. Sorry.
-
-EOF
-    exit 1
   fi
 ])
 
@@ -609,6 +833,11 @@ AC_DEFUN([EGG_CHECK_LIBSAFE_SSCANF],
 ])
 
 
+dnl
+dnl Misc checks.
+dnl
+
+
 dnl EGG_EXEEXT()
 dnl
 dnl Test for executable suffix and define Eggdrop's executable name accordingly.
@@ -617,22 +846,23 @@ AC_DEFUN([EGG_EXEEXT], [
   EGGEXEC="eggdrop"
   AC_EXEEXT
   if test ! "${EXEEXT-x}" = "x"; then
-    EGGEXEC="eggdrop$EXEEXT"
+    EGGEXEC="eggdrop${EXEEXT}"
   fi
   AC_SUBST(EGGEXEC)
 ])
+
+
+dnl
+dnl Tcl checks.
+dnl
 
 
 dnl EGG_TCL_ARG_WITH()
 dnl
 AC_DEFUN([EGG_TCL_ARG_WITH],
 [
-  AC_ARG_WITH(tcllib,
-              [  --with-tcllib=PATH      full path to Tcl library],
-              [tcllibname="$withval"])
-  AC_ARG_WITH(tclinc,
-              [  --with-tclinc=PATH      full path to Tcl header],
-              [tclincname="$withval"])
+  AC_ARG_WITH(tcllib, [  --with-tcllib=PATH      full path to Tcl library], [tcllibname="$withval"])
+  AC_ARG_WITH(tclinc, [  --with-tclinc=PATH      full path to Tcl header],  [tclincname="$withval"])
 
   WARN=0
   # Make sure either both or neither $tcllibname and $tclincname are set
@@ -651,6 +881,7 @@ AC_DEFUN([EGG_TCL_ARG_WITH],
       TCLINC=""
     fi
   fi
+
   if test "$WARN" = 1; then
     cat << 'EOF' >&2
 configure: warning:
@@ -685,12 +916,14 @@ AC_DEFUN([EGG_TCL_ENV],
       TCLINC=""
     fi
   fi
+
   if test "$WARN" = 1; then
     cat << EOF >&2
 configure: warning:
 
   Environment variable $WVAR1 was set, but I did not detect ${WVAR2}.
   Please set both TCLLIB and TCLINC correctly if you wish to use them.
+
   configure will now attempt to autodetect both the Tcl library and header.
 
 EOF
@@ -714,6 +947,7 @@ AC_DEFUN([EGG_TCL_WITH_TCLLIB],
 configure: warning:
 
   The file '$tcllibname' given to option --with-tcllib is not valid.
+
   configure will now attempt to autodetect both the Tcl library and header.
 
 EOF
@@ -742,6 +976,7 @@ AC_DEFUN([EGG_TCL_WITH_TCLINC],
 configure: warning:
 
   The file '$tclincname' given to option --with-tclinc is not valid.
+
   configure will now attempt to autodetect both the Tcl library and header.
 
 EOF
@@ -761,34 +996,34 @@ dnl
 AC_DEFUN([EGG_TCL_FIND_LIBRARY],
 [
   # Look for Tcl library: if $TCLLIB is set, check there first
-  if test "${TCLLIBFN-x}" = "x"; then
-    if test ! "${TCLLIB-x}" = "x"; then
-      if test -d "$TCLLIB"; then
-        for tcllibfns in $tcllibnames; do
-          for tcllibext in $tcllibextensions; do
-            if test -r "${TCLLIB}/lib${tcllibfns}${tcllibext}"; then
-              TCLLIBFN="${tcllibfns}${tcllibext}"
-              TCLLIBEXT="$tcllibext"
-              TCLLIBFNS="$tcllibfns"
-              break 2
-            fi
-          done
+  if test "${TCLLIBFN-x}" = "x" && test ! "${TCLLIB-x}" = "x"; then
+    if test -d "$TCLLIB"; then
+      for tcllibfns in $tcllibnames; do
+        for tcllibext in $tcllibextensions; do
+          if test -r "${TCLLIB}/lib${tcllibfns}${tcllibext}"; then
+            TCLLIBFN="${tcllibfns}${tcllibext}"
+            TCLLIBEXT="$tcllibext"
+            TCLLIBFNS="$tcllibfns"
+            break 2
+          fi
         done
-      fi
-      if test "${TCLLIBFN-x}" = "x"; then
-        cat << 'EOF' >&2
+      done
+    fi
+
+    if test "${TCLLIBFN-x}" = "x"; then
+      cat << 'EOF' >&2
 configure: warning:
 
   Environment variable TCLLIB was set, but incorrectly.
   Please set both TCLLIB and TCLINC correctly if you wish to use them.
+
   configure will now attempt to autodetect both the Tcl library and header.
 
 EOF
-        TCLLIB=""
-        TCLLIBFN=""
-        TCLINC=""
-        TCLINCFN=""
-      fi
+      TCLLIB=""
+      TCLLIBFN=""
+      TCLINC=""
+      TCLINCFN=""
     fi
   fi
 ])
@@ -799,30 +1034,30 @@ dnl
 AC_DEFUN([EGG_TCL_FIND_HEADER],
 [
   # Look for Tcl header: if $TCLINC is set, check there first
-  if test "${TCLINCFN-x}" = "x"; then
-    if test ! "${TCLINC-x}" = "x"; then
-      if test -d "$TCLINC"; then
-        for tclheaderfn in $tclheadernames; do
-          if test -r "${TCLINC}/${tclheaderfn}"; then
-            TCLINCFN="$tclheaderfn"
-            break
-          fi
-        done
-      fi
-      if test "${TCLINCFN-x}" = "x"; then
-        cat << 'EOF' >&2
+  if test "${TCLINCFN-x}" = "x" && test ! "${TCLINC-x}" = "x"; then
+    if test -d "$TCLINC"; then
+      for tclheaderfn in $tclheadernames; do
+        if test -r "${TCLINC}/${tclheaderfn}"; then
+          TCLINCFN="$tclheaderfn"
+          break
+        fi
+      done
+    fi
+
+    if test "${TCLINCFN-x}" = "x"; then
+      cat << 'EOF' >&2
 configure: warning:
 
   Environment variable TCLINC was set, but incorrectly.
   Please set both TCLLIB and TCLINC correctly if you wish to use them.
+
   configure will now attempt to autodetect both the Tcl library and header.
 
 EOF
-        TCLLIB=""
-        TCLLIBFN=""
-        TCLINC=""
-        TCLINCFN=""
-      fi
+      TCLLIB=""
+      TCLLIBFN=""
+      TCLINC=""
+      TCLINCFN=""
     fi
   fi
 ])
@@ -858,6 +1093,7 @@ AC_DEFUN([EGG_TCL_CHECK_LIBRARY],
   if test "${TCLLIBFN-x}" = "x"; then
     AC_MSG_RESULT([not found])
   fi
+
   AC_SUBST(TCLLIB)
   AC_SUBST(TCLLIBFN)
 ])
@@ -904,6 +1140,7 @@ AC_DEFUN([EGG_TCL_CHECK_HEADER],
   if test "${TCLINCFN-x}" = "x"; then
     AC_MSG_RESULT({not found})
   fi
+
   AC_SUBST(TCLINC)
   AC_SUBST(TCLINCFN)
 ])
@@ -966,6 +1203,7 @@ AC_DEFUN([EGG_TCL_CHECK_VERSION],
     if test "$egg_tcl_changed" = "yes"; then
       EGG_CACHE_UNSET(egg_cv_var_tcl_version)
     fi
+
     AC_MSG_CHECKING([for Tcl version])
     AC_CACHE_VAL(egg_cv_var_tcl_version, [
       egg_cv_var_tcl_version=`grep TCL_VERSION $TCLINC/$TCLINCFN | $HEAD_1 | $AWK '{gsub(/\"/, "", [$]3); print [$]3}'`
@@ -1005,8 +1243,10 @@ configure: error:
   Eggdrop requires Tcl to compile. If you already have Tcl installed on
   this system, and I just wasn't looking in the right place for it, re-run
   ./configure using the --with-tcllib='/path/to/libtcl.so' and
-  --with-tclinc='/path/to/tcl.h' options. See doc/COMPILING's 'Tcl Detection
-  and Installation' section for more information.
+  --with-tclinc='/path/to/tcl.h' options.
+
+  See doc/COMPILING-FAQ's 'Tcl Detection and Installation' section for more
+  information.
 
 EOF
     exit 1
@@ -1027,8 +1267,10 @@ configure: error:
   Your Tcl version is much too old for Eggdrop to use. You should
   download and compile a more recent version. The most reliable
   current version is $tclrecommendver and can be downloaded from
-  ${tclrecommendsite}. See doc/COMPILING's 'Tcl
-  Detection and Installation' section for more information.
+  ${tclrecommendsite}.
+
+  See doc/COMPILING-FAQ's 'Tcl Detection and Installation' section
+  for more information.
 
 EOF
     exit 1
@@ -1070,10 +1312,7 @@ dnl EGG_TCL_ENABLE_THREADS()
 dnl
 AC_DEFUN([EGG_TCL_ENABLE_THREADS],
 [
-  AC_ARG_ENABLE(tcl-threads,
-                [  --disable-tcl-threads   disable threaded Tcl support if detected ],
-                [enable_tcl_threads="$enableval"],
-                [enable_tcl_threads="yes"])
+  AC_ARG_ENABLE(tcl-threads, [  --disable-tcl-threads   disable threaded Tcl support if detected ], [enable_tcl_threads="$enableval"], [enable_tcl_threads="yes"])
 ])
 
 
@@ -1160,62 +1399,9 @@ EOF
       fi
     fi
   fi
+
   AC_SUBST(TCL_REQS)
   AC_SUBST(TCL_LIBS)
-])
-
-
-dnl EGG_FUNC_DLOPEN()
-dnl
-AC_DEFUN([EGG_FUNC_DLOPEN],
-[
-  if test "$NEED_DL" = 1 && test "$ac_cv_func_dlopen" = "no"; then
-    if test "$LINUX" = "yes"; then
-      cat << 'EOF' >&2
-configure: warning:
-
-  libdl cannot be found. Since you are on a Linux system, this is a known
-  problem. A kludge is known for it,
-EOF
-
-      if test -r "/lib/libdl.so.1"; then
-        cat << 'EOF' >&2
-  and you seem to have it. We'll use that.
-
-EOF
-        AC_DEFINE(HAVE_DLOPEN, 1, [Define if we have/need dlopen() (for module support).])
-        LIBS="/lib/libdl.so.1 $LIBS"
-      else
-        cat << 'EOF' >&2
-  which you DON'T seem to have... doh! If you do have dlopen on your system,
-  and manage to figure out where it's located, add it to your XLIBS= lines
-  and #define HAVE_DLOPEN in config.h. We'll proceed on anyway, but you
-  probably won't be able to 'make eggdrop'. The default make will now be set
-  to static.
-
-  If you do manage to get modules working on this system, please let the
-  development team know how (eggdev@eggheads.org).
-
-EOF
-        DEFAULT_MAKE="static"
-      fi
-    else
-      cat << 'EOF' >&2
-configure: warning:
-
-  dlopen could not be found on this system. If you do have dlopen on your
-  system, and manage to figure out where it's located, add it to your XLIBS=
-  lines and #define HAVE_DLOPEN in config.h. We'll proceed on anyway, but you
-  probably won't be able to 'make eggdrop'. The default make will now be set
-  to static.
-
-  If you do manage to get modules working on this system, please let the
-  development team know how (eggdev@eggheads.org).
-
-EOF
-      DEFAULT_MAKE="static"
-    fi
-  fi
 ])
 
 

@@ -1,5 +1,5 @@
 # Makefile for src/
-# $Id: Makefile.in,v 1.19 2003/12/09 22:21:46 wcc Exp $
+# $Id: Makefile.in,v 1.20 2004/07/25 11:17:34 wcc Exp $
 
 SHELL = @SHELL@
 top_srcdir = @top_srcdir@
@@ -26,6 +26,7 @@ userent.o userrec.o users.o
 MAKE_GENERIC = $(MAKE) 'MAKE=$(MAKE)' 'CC=$(CC)' 'LD=$(LD)' \
 'STRIP=$(STRIP)' 'CFLGS=$(CFLGS)'
 
+
 doofus:
 	@echo ""
 	@echo "Let's try this from the right directory..."
@@ -33,7 +34,7 @@ doofus:
 	@cd .. && $(MAKE)
 
 ../$(EGGEXEC): build_msg $(eggdrop_objs) $(XREQS) compile_md5 compatability
-	@echo "Linking eggdrop: $(EGGBUILD)."
+	@echo "Linking eggdrop $(EGGBUILD)."
 	@echo ""
 	@touch mod/mod.xlibs
 	$(LD) -o ../$(EGGEXEC) $(eggdrop_objs) $(MODOBJS) $(XLIBS) md5/md5c.o compat/*.o `cat mod/mod.xlibs`

@@ -4,7 +4,7 @@
  *
  * by Darrin Smith (beldin@light.iinet.net.au)
  *
- * $Id: modules.c,v 1.94 2004/04/06 06:56:38 wcc Exp $
+ * $Id: modules.c,v 1.95 2004/07/25 11:17:34 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -33,35 +33,52 @@
 #include "users.h"
 
 #ifndef STATIC
-#  ifdef HPUX_HACKS
+#  ifdef MOD_USE_SHL
 #    include <dl.h>
-#  else
-#    ifdef OSF1_HACKS
-#      include <loader.h>
+#  endif
+#  ifdef MOD_USE_DYLD
+#    include <mach-o/dyld.h>
+#    define DYLDFLAGS NSLINKMODULE_OPTION_BINDNOW|NSLINKMODULE_OPTION_PRIVATE|NSLINKMODULE_OPTION_RETURN_ON_ERROR
+#  endif
+#  ifdef MOD_USE_RLD
+#    ifdef HAVE_MACH_O_RLD_H
+#      include <mach-o/rld.h>
 #    else
-#      ifdef DLOPEN_1
+#      ifdef HAVE_RLD_H
+#        indluce <rld.h>
+#      endif
+#    endif
+#  endif
+#  ifdef MOD_USE_LOADER
+#    include <loader.h>
+#  endif
+
+#  ifdef MOD_USE_DL
+#    ifdef DLOPEN_1
 char *dlerror();
 void *dlopen(const char *, int);
 int dlclose(void *);
 void *dlsym(void *, char *);
-#        define DLFLAGS 1
+#      define DLFLAGS 1
+#    else /* DLOPEN_1 */
+#      include <dlfcn.h>
+
+#      ifndef RTLD_GLOBAL
+#        define RTLD_GLOBAL 0
+#      endif
+#      ifndef RTLD_NOW
+#        define RTLD_NOW 1
+#      endif
+#      ifdef RTLD_LAZY
+#        define DLFLAGS RTLD_LAZY|RTLD_GLOBAL
 #      else
-#        include <dlfcn.h>
-#        ifndef RTLD_GLOBAL
-#          define RTLD_GLOBAL 0
-#        endif
-#        ifndef RTLD_NOW
-#          define RTLD_NOW 1
-#        endif
-#        ifdef RTLD_LAZY
-#          define DLFLAGS RTLD_LAZY|RTLD_GLOBAL
-#        else
-#          define DLFLAGS RTLD_NOW|RTLD_GLOBAL
-#        endif
-#      endif /* DLOPEN_1 */
-#    endif /* OSF1_HACKS */
-#  endif /* HPUX_HACKS */
+#        define DLFLAGS RTLD_NOW|RTLD_GLOBAL
+#      endif
+#    endif /* DLOPEN_1 */
+#  endif /* MOD_USE_DL */
 #endif /* !STATIC */
+
+
 
 extern struct dcc_t *dcc;
 extern struct userrec *userlist, *lastuser;
@@ -80,7 +97,6 @@ extern int parties, noshare, dcc_total, egg_numver, userfile_perm, do_restart,
 extern party_t *party;
 extern time_t now, online_since;
 extern tand_t *tandbot;
-
 extern Tcl_Interp *interp;
 extern sock_list *socklist;
 
@@ -89,14 +105,11 @@ int xtra_kill();
 int xtra_unpack();
 static int module_rename(char *name, char *newname);
 
-
 #ifndef STATIC
-
-/* Directory to look for modules */
 char moddir[121] = "modules/";
+#endif
 
-#else
-
+#ifdef STATIC
 struct static_list {
   struct static_list *next;
   char *name;
@@ -113,14 +126,14 @@ void check_static(char *name, char *(*func) ())
   p->next = static_modules;
   static_modules = p;
 }
-
-#endif
+#endif /* STATIC */
 
 
 /* The null functions */
 void null_func()
 {
 }
+
 char *charp_func()
 {
   return NULL;
@@ -137,13 +150,8 @@ int false_func()
 }
 
 
-/*
- *     Various hooks & things
- */
-
-/* The REAL hooks, when these are called, a return of 0 indicates unhandled
- * 1 is handled
- */
+/* The REAL hooks. When these are called, a return of 0 indicates unhandled;
+ * 1 indicates handled. */
 struct hook_entry *hook_list[REAL_HOOKS];
 
 static void null_share(int idx, char *x)
@@ -154,8 +162,9 @@ static void null_share(int idx, char *x)
     if (!(dcc[idx].status & STAT_GETTING)) {
       dcc[idx].status &= ~STAT_SHARE;
     }
-  } else if ((x[0] != 'v') && (x[0] != 'e'))
+  } else if ((x[0] != 'v') && (x[0] != 'e')) {
     dprintf(idx, "s un Not sharing userfile.\n");
+  }
 }
 
 void (*encrypt_pass) (char *, char *) = 0;
@@ -181,7 +190,6 @@ dependancy *dependancy_list = NULL;
  * BUT it makes the whole thing *much* more portable than letting each
  * OS screw up the symbols their own special way :/
  */
-
 Function global_table[] = {
   /* 0 - 3 */
   (Function) mod_malloc,
@@ -573,7 +581,7 @@ void init_modules(void)
   module_list->name = nmalloc(8);
   strcpy(module_list->name, "eggdrop");
   module_list->major = (egg_numver) / 10000;
-  module_list->minor = ((egg_numver) / 100) % 100;
+  module_list->minor = (egg_numver / 100) % 100;
 #ifndef STATIC
   module_list->hand = NULL;
 #endif
@@ -585,18 +593,14 @@ void init_modules(void)
 
 int expmem_modules(int y)
 {
-  int c = 0;
-  int i;
+  int c = 0, i;
   module_entry *p;
   dependancy *d;
   struct hook_entry *q;
-
+  Function *f;
 #ifdef STATIC
   struct static_list *s;
-#endif
-  Function *f;
 
-#ifdef STATIC
   for (s = static_modules; s; s = s->next)
     c += sizeof(struct static_list) + strlen(s->name) + 1;
 #endif
@@ -622,13 +626,15 @@ int module_register(char *name, Function *funcs, int major, int minor)
 {
   module_entry *p;
 
-  for (p = module_list; p && p->name; p = p->next)
+  for (p = module_list; p && p->name; p = p->next) {
     if (!egg_strcasecmp(name, p->name)) {
       p->major = major;
       p->minor = minor;
       p->funcs = funcs;
       return 1;
     }
+  }
+
   return 0;
 }
 
@@ -637,92 +643,131 @@ const char *module_load(char *name)
   module_entry *p;
   char *e;
   Function f;
-
-#ifndef STATIC
-  char workbuf[1024];
-
-#  ifdef HPUX_HACKS
-  shl_t hand;
-#  else
-#    ifdef OSF1_HACKS
-  ldr_module_t hand;
-#    else
-  void *hand;
-#    endif
-#  endif
-#else
+#ifdef STATIC
   struct static_list *sl;
 #endif
 
+#ifndef STATIC
+  char workbuf[1024];
+#  ifdef MOD_USE_SHL
+  shl_t hand;
+#  endif
+#  ifdef MOD_USE_DYLD
+  NSObjectFileImage file;
+  NSObjectFileImageReturnCode ret;
+  NSModule hand;
+  NSSymbol sym;
+#  endif
+#  ifdef MOD_USE_RLD
+  long ret;
+#  endif
+#  ifdef MOD_USE_LOADER
+  ldr_module_t hand;
+#  endif
+#  ifdef MOD_USE_DL
+  void *hand;
+#  endif
+#endif /* !STATIC */
+
   if (module_find(name, 0, 0) != NULL)
     return MOD_ALREADYLOAD;
+
 #ifndef STATIC
   if (moddir[0] != '/') {
     if (getcwd(workbuf, 1024) == NULL)
       return MOD_BADCWD;
     sprintf(&(workbuf[strlen(workbuf)]), "/%s%s." EGG_MOD_EXT, moddir, name);
-  } else
+  } else {
     sprintf(workbuf, "%s%s." EGG_MOD_EXT, moddir, name);
-#  ifdef HPUX_HACKS
+  }
+
+#  ifdef MOD_USE_SHL
   hand = shl_load(workbuf, BIND_IMMEDIATE, 0L);
   if (!hand)
     return "Can't load module.";
-#  else
-#    ifdef OSF1_HACKS
-#      ifdef USE_TCL_PACKAGE
-  hand = (Tcl_PackageInitProc *) load(workbuf, LDR_NOFLAGS);
+  sprintf(workbuf, "%s_start", name);
+  if (shl_findsym(&hand, workbuf, (short) TYPE_PROCEDURE, (void *) &f))
+    f = NULL;
+  if (f == NULL) {
+    /* Some OS's require a _ to be prepended to the symbol name (Darwin, etc). */
+    sprintf(workbuf, "_%s_start", name);
+    if (shl_findsym(&hand, workbuf, (short) TYPE_PROCEDURE, (void *) &f))
+      f = NULL;
+  }
+  if (f == NULL) {
+    shl_unload(hand);
+    return MOD_NOSTARTDEF;
+  }
+#  endif /* MOD_USE_SHL */
+
+#  ifdef MOD_USE_DYLD
+  ret = NSCreateObjectFileImageFromFile(workbuf, &file);
+  if (ret != NSObjectFileImageSuccess)
+    return "Can't load module.";
+  hand = NSLinkModule(file, workbuf, DYLDFLAGS);
+  sprintf(workbuf, "_%s_start", name);
+  sym = NSLookupSymbolInModule(hand, workbuf);
+  if (sym)
+    f = (Function) NSAddressOfSymbol(sym);
+  else
+    f = NULL;
+  if (f == NULL) {
+    NSUnLinkModule(hand, NSUNLINKMODULE_OPTION_NONE);
+    return MOD_NOSTARTDEF;
+  }
+#  endif /* MOD_USE_DYLD */
+
+#  ifdef MOD_USE_RLD
+  ret = rld_load(NULL, (struct mach_header **) 0, workbuf, (const char *) 0);
+  if (!ret)
+    return "Can't load module.";
+  sprintf(workbuf, "_%s_start", name);
+  ret = rld_lookup(NULL, workbuf, &f)
+  if (!ret || f == NULL)
+    return MOD_NOSTARTDEF;
+  /* There isn't a reliable way to unload at this point... just keep it loaded. */
+#  endif /* MOD_USE_DYLD */
+
+#  ifdef MOD_USE_LOADER
+  hand = load(workbuf, LDR_NOFLAGS);
   if (hand == LDR_NULL_MODULE)
     return "Can't load module.";
-#      endif /* USE_TCL_PACKAGE */
-#    else
+  sprintf(workbuf, "%s_start", name);
+  f = (Function) ldr_lookup_package(hand, workbuf);
+  if (f == NULL) {
+    sprintf(workbuf, "_%s_start", name);
+    f = (Function) ldr_lookup_package(hand, workbuf);
+  }
+  if (f == NULL) {
+    unload(hand);
+    return MOD_NOSTARTDEF;
+  }
+#  endif /* MOD_USE_LOADER */
+
+#  ifdef MOD_USE_DL
   hand = dlopen(workbuf, DLFLAGS);
   if (!hand)
     return dlerror();
-#    endif
-#  endif
-
   sprintf(workbuf, "%s_start", name);
-#  ifdef HPUX_HACKS
-  if (shl_findsym(&hand, workbuf, (short) TYPE_PROCEDURE, (void *) &f))
-    f = NULL;
-#  else
-#    ifdef OSF1_HACKS
-  f = (Function) ldr_lookup_package(hand, workbuf);
-#    else
   f = (Function) dlsym(hand, workbuf);
-#    endif
-#  endif
-  if (f == NULL) {              /* some OS's need the _ */
+  if (f == NULL) {
     sprintf(workbuf, "_%s_start", name);
-#  ifdef HPUX_HACKS
-    if (shl_findsym(&hand, workbuf, (short) TYPE_PROCEDURE, (void *) &f))
-      f = NULL;
-#  else
-#    ifdef OSF1_HACKS
-    f = (Function) ldr_lookup_package(hand, workbuf);
-#    else
     f = (Function) dlsym(hand, workbuf);
-#    endif
-#  endif
-    if (f == NULL) {
-#  ifdef HPUX_HACKS
-      shl_unload(hand);
-#  else
-#    ifdef OSF1_HACKS
-#    else
-      dlclose(hand);
-#    endif
-#  endif
-      return MOD_NOSTARTDEF;
-    }
   }
-#  else
-  for (sl = static_modules; sl && egg_strcasecmp(sl->name, name);
-       sl = sl->next);
+  if (f == NULL) {
+    dlclose(hand);
+    return MOD_NOSTARTDEF;
+  }
+#  endif /* MOD_USE_DL */
+#endif /* !STATIC */
+
+#ifdef STATIC
+  for (sl = static_modules; sl && egg_strcasecmp(sl->name, name); sl = sl->next);
   if (!sl)
     return "Unknown module.";
   f = (Function) sl->func;
-#endif
+#endif /* STATIC */
+
   p = nmalloc(sizeof(module_entry));
   if (p == NULL)
     return "Malloc error";
@@ -744,10 +789,12 @@ const char *module_load(char *name)
     return e;
   }
   check_tcl_load(name);
+
   if (exist_lang_section(name))
     putlog(LOG_MISC, "*", MOD_LOADED_WITH_LANG, name);
   else
     putlog(LOG_MISC, "*", MOD_LOADED, name);
+
   return NULL;
 }
 
@@ -758,7 +805,7 @@ char *module_unload(char *name, char *user)
   Function *f;
 
   while (p) {
-    if ((p->name != NULL) && (!strcmp(name, p->name))) {
+    if ((p->name != NULL) && !strcmp(name, p->name)) {
       dependancy *d;
 
       for (d = dependancy_list; d; d = d->next)
@@ -774,15 +821,19 @@ char *module_unload(char *name, char *user)
         if (e != NULL)
           return e;
 #ifndef STATIC
-#  ifdef HPUX_HACKS
+#  ifdef MOD_USE_SHL
         shl_unload(p->hand);
-#  else
-#    ifdef OSF1_HACKS
-#    else
-        dlclose(p->hand);
-#    endif
 #  endif
-#endif /* STATIC */
+#  ifdef MOD_USE_DYLD
+        NSUnLinkModule(p->hand, NSUNLINKMODULE_OPTION_NONE);
+#  endif
+#  ifdef MOD_USE_LOADER
+        unload(p->hand);
+#  endif
+#  ifdef MOD_USE_DL
+        dlclose(p->hand);
+#  endif
+#endif /* !STATIC */
       }
       nfree(p->name);
       if (o == NULL)
@@ -796,6 +847,7 @@ char *module_unload(char *name, char *user)
     o = p;
     p = p->next;
   }
+
   return MOD_NOSUCH;
 }
 
@@ -803,10 +855,11 @@ module_entry *module_find(char *name, int major, int minor)
 {
   module_entry *p;
 
-  for (p = module_list; p && p->name; p = p->next)
+  for (p = module_list; p && p->name; p = p->next) {
     if ((major == p->major || !major) && minor <= p->minor &&
         !egg_strcasecmp(name, p->name))
       return p;
+  }
   return NULL;
 }
 
@@ -818,13 +871,14 @@ static int module_rename(char *name, char *newname)
     if (!egg_strcasecmp(newname, p->name))
       return 0;
 
-  for (p = module_list; p && p->name; p = p->next)
+  for (p = module_list; p && p->name; p = p->next) {
     if (!egg_strcasecmp(name, p->name)) {
       nfree(p->name);
       p->name = nmalloc(strlen(newname) + 1);
       strcpy(p->name, newname);
       return 1;
     }
+  }
   return 0;
 }
 

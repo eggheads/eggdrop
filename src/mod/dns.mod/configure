@@ -1267,28 +1267,6 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 
 
-  # This tells the code in eggmod.sh to search for the file `coredns.c'.
-  # That way we can make sure we're started from the correct directory.
-  ac_egg_uniquefile=coredns.c
-
-  # Scan for out source directory
-  ac_egg_srcdir=.
-  for i in $*; do
-    case "${i}" in
-      --srcdir=*)
-        ac_egg_srcdir=`echo ${i} | sed -e 's/^--srcdir=//'`
-      ;;
-    esac
-  done
-
-  if test -r ${ac_egg_srcdir}/../eggmod.sh; then
-    ${ac_egg_srcdir}/../eggmod.sh
-  else
-    echo "$0: error: failed to locate eggmod.sh in ${ac_egg_srcdir}/.." >&2
-    exit 1
-  fi
-
-
 
 ac_aux_dir=
 for ac_dir in ../../../misc $srcdir/../../../misc; do

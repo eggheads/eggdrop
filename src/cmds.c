@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  *
- * $Id: cmds.c,v 1.108 2004/07/05 05:14:12 wcc Exp $
+ * $Id: cmds.c,v 1.109 2004/07/25 11:17:34 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -2199,7 +2199,6 @@ static void cmd_tcl(struct userrec *u, int idx, char *msg)
 {
   int code;
   char *result;
-
 #ifdef USE_TCL_ENCODING
   Tcl_DString dstr;
 #endif
@@ -2220,7 +2219,7 @@ static void cmd_tcl(struct userrec *u, int idx, char *msg)
   /* use old pre-Tcl 8.1 way. */
   result = interp->result;
 #endif
-  
+
   if (code == TCL_OK)
     dumplots(idx, "Tcl: ", result);
   else
@@ -2236,9 +2235,7 @@ static void cmd_tcl(struct userrec *u, int idx, char *msg)
 static void cmd_set(struct userrec *u, int idx, char *msg)
 {
   int code;
-  char s[512];
-  char *result;
-
+  char s[512], *result;
 #ifdef USE_TCL_ENCODING
   Tcl_DString dstr;
 #endif

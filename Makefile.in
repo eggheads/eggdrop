@@ -2,7 +2,7 @@
 #  This is the Makefile for EGGDROP (the IRC bot)
 #  You should never need to edit this.
 #
-# $Id: Makefile.in,v 1.38 2004/06/17 05:43:28 wcc Exp $
+# $Id: Makefile.in,v 1.39 2004/07/25 11:17:33 wcc Exp $
 
 SHELL = @SHELL@
 top_srcdir = @top_srcdir@
@@ -25,46 +25,53 @@ EGGVERSION = @EGGVERSION@
 #                    or 'make sdebug'
 CFLGS =
 
-# configure SHOULD set these...you may need to tweak them to get modules
-# to compile .. if you do...let the devel-team know the working settings
-# btw to turn STRIP off, do 'STRIP = touch' not 'STRIP ='
+# ./configure SHOULD set these; however you may need to tweak them to
+# get modules to compile. If you do, PLEASE let the development team know,
+# so we can incorporate needed changes into the next release. You can
+# contact us at eggdev@eggheads.org, as always.
 
-# defaults
+# Compiler
 CC = @CC@
-LD = @CC@
-STRIP = @STRIP@
-RANLIB = @RANLIB@
-
-# make eggmod
 MOD_CC = @MOD_CC@
-MOD_LD = @MOD_LD@
-MOD_STRIP = @MOD_STRIP@
-
-# make modules
 SHLIB_CC = @SHLIB_CC@
-SHLIB_LD = @SHLIB_LD@
-SHLIB_STRIP = @SHLIB_STRIP@
-MOD_EXT = @MOD_EXT@
 
-# programs make install uses
+# Linker
+LD = @CC@
+MOD_LD = @MOD_LD@
+SHLIB_LD = @SHLIB_LD@
+
+# Stripping
+# To turn STRIP off, use 'STRIP = touch' not 'STRIP ='.
+STRIP = @STRIP@
+MOD_STRIP = @MOD_STRIP@
+SHLIB_STRIP = @SHLIB_STRIP@
+
+# Programs make install uses
 LN_S = @LN_S@
 INSTALL = @INSTALL@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
 
-# No need to edit anything below this line.
-
+# Misc
+RANLIB = @RANLIB@
+MOD_EXT = @MOD_EXT@
 XREQS = @TCL_REQS@
-XLIBS = @TCL_LIBS@ @LIBS@
 TCLLIB = @TCLLIB@
 TCLLIBFN = @TCLLIBFN@
 
+# Extra libraries
+# XLIBS will be linked with everything; MODULE_XLIBS will only be linked with
+# the actual module objects.
+XLIBS = @TCL_LIBS@ @LIBS@
+MODULE_XLIBS = @MODULE_XLIBS@
+
+# Shouldn't need to touch anything below here.
 DEBCFLAGS = -DDEBUG_ASSERT -DDEBUG_MEM
 
 modconf = $(top_srcdir)/misc/modconfig --top_srcdir=$(top_srcdir)
 
-egg_test_run =  EGG_LANGDIR=$(top_srcdir)/language ./$(EGGEXEC) -v
+egg_test_run = EGG_LANGDIR=$(top_srcdir)/language ./$(EGGEXEC) -v
 
 post_config  =  echo "" && \
 		echo "You can now compile the bot, using \"make\"." && \
@@ -85,7 +92,8 @@ MAKE_MODEGG = $(MAKE) 'MAKE=$(MAKE)' 'CC=$(MOD_CC)' 'LD=$(MOD_LD)' \
 'XLIBS=$(XLIBS)' 'EGGEXEC=$(EGGEXEC)' 'EGGBUILD=(standard build)' 'MODOBJS='
 
 MAKE_MODULES = $(MAKE) 'MAKE=$(MAKE)' 'CC=$(SHLIB_CC)' 'LD=$(SHLIB_LD)' \
-'STRIP=$(SHLIB_STRIP)' 'CFLGS=$(CFLGS)' 'XLIBS=$(XLIBS)' 'MOD_EXT=$(MOD_EXT)'
+'STRIP=$(SHLIB_STRIP)' 'CFLGS=$(CFLGS)' 'XLIBS=$(XLIBS)' 'MOD_EXT=$(MOD_EXT)' \
+'MODULE_XLIBS=$(MODULE_XLIBS)'
 
 MAKE_STATIC = $(MAKE) 'MAKE=$(MAKE)' 'CC=$(CC)' 'LD=$(LD)' \
 'STRIP=$(STRIP)' 'RANLIB=$(RANLIB)' 'CFLGS=$(CFLGS) -DSTATIC' \
@@ -100,7 +108,7 @@ MAKE_DEBEGG = $(MAKE) 'MAKE=$(MAKE)' 'CC=$(MOD_CC)' 'LD=$(MOD_LD) -g' \
 
 MAKE_DEBMODULES = $(MAKE) 'MAKE=$(MAKE)' 'CC=$(SHLIB_CC)' 'LD=$(SHLIB_LD)' \
 'XLIBS=$(XLIBS)' 'STRIP=touch' 'CFLGS=-g3 $(DEBCFLAGS) $(CFLGS)' \
-'MOD_EXT=$(MOD_EXT)'
+'MOD_EXT=$(MOD_EXT)' 'MODULE_XLIBS=$(MODULE_XLIBS)'
 
 MAKE_SDEBUG = $(MAKE) 'MAKE=$(MAKE)' 'CC=$(CC)' 'LD=$(LD) -g' \
 'STRIP=touch' 'RANLIB=$(RANLIB)' 'CFLGS=-g3 $(DEBCFLAGS) -DSTATIC $(CFLGS)' \

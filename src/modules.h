@@ -4,7 +4,7 @@
  *
  * by Darrin Smith (beldin@light.iinet.net.au)
  *
- * $Id: modules.h,v 1.14 2004/01/09 05:56:37 wcc Exp $
+ * $Id: modules.h,v 1.15 2004/07/25 11:17:34 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -34,24 +34,21 @@
 
 #ifndef MAKING_NUMMODS
 
-/* Modules specific functions and functions called by eggdrop
- */
-
+/* Modules specific functions and functions called by Eggdrop */
 void do_module_report(int, int, char *);
-
-int module_register(char *name, Function* funcs, int major, int minor);
-const char *module_load(char *module_name);
-char *module_unload(char *module_name, char *nick);
-module_entry *module_find(char *name, int, int);
-Function *module_depend(char *, char *, int major, int minor);
+int module_register(char *, Function *, int, int);
+const char *module_load(char *);
+char *module_unload(char *, char *);
+module_entry *module_find(char *, int, int);
+Function *module_depend(char *, char *, int, int);
 int module_undepend(char *);
-void *mod_malloc(int size, const char *modname, const char *filename, int line);
-void *mod_realloc(void *ptr, int size, const char *modname,
-                  const char *filename, int line);
-void mod_free(void *ptr, const char *modname, const char *filename, int line);
-void add_hook(int hook_num, Function func);
-void del_hook(int hook_num, Function func);
-void *get_next_hook(int hook_num, void *func);
+void *mod_malloc(int, const char *, const char *, int);
+void *mod_realloc(void *, int, const char *, const char *, int);
+void mod_free(void *, const char *, const char *, int);
+void add_hook(int, Function);
+void del_hook(int, Function);
+void *get_next_hook(int, void *);
+
 extern struct hook_entry {
   struct hook_entry *next;
   int (*func) ();
@@ -65,6 +62,7 @@ extern struct hook_entry {
                 p->func();                                      \
         }                                                       \
 } while (0)
+
 int call_hook_cccc(int, char *, char *, char *, char *);
 
 #endif

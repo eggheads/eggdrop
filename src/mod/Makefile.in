@@ -1,5 +1,5 @@
 # Makefile for src/mod/
-# $Id: Makefile.in,v 1.19 2004/06/17 05:43:29 wcc Exp $
+# $Id: Makefile.in,v 1.20 2004/07/25 11:17:34 wcc Exp $
 
 SHELL = @SHELL@
 top_srcdir = @top_srcdir@
@@ -36,7 +36,8 @@ egg_ac_parameters = @egg_ac_parameters@
 
 MAKE_MOD = $(MAKE) 'MAKE=$(MAKE)' 'CC=$(CC)' 'LD=$(LD)' \
 'STRIP=$(STRIP)' 'CFLAGS=$(MOD_CFLAGS)' 'CPPFLAGS=$(MOD_CPPFLAGS)' \
-'XLIBS=$(XLIBS)' 'MOD_EXT=$(MOD_EXT)' 'SHELL=$(SHELL)'
+'XLIBS=$(XLIBS)' 'MOD_EXT=$(MOD_EXT)' 'SHELL=$(SHELL)' \
+'MODULE_XLIBS=$(MODULE_XLIBS)'
 
 
 doofus:

@@ -1,7 +1,7 @@
 /*
  * modvals.h
  *
- * $Id: modvals.h,v 1.26 2004/01/09 05:56:37 wcc Exp $
+ * $Id: modvals.h,v 1.27 2004/07/25 11:17:34 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -54,8 +54,7 @@
 #define HOOK_ENCRYPT_STRING     114
 #define HOOK_DECRYPT_STRING     115
 
-/* These are FIXED once they are in a release they STAY
- */
+/* These are FIXED once they are in a release they STAY */
 #define MODCALL_START             0
 #define MODCALL_CLOSE             1
 #define MODCALL_EXPMEM            2
@@ -85,8 +84,16 @@
 /* Console */
 #define CONSOLE_DOSTORE           4
 
-#ifdef HPUX_HACKS
+#ifdef MOD_USE_SHL
 #  include <dl.h>
+#endif
+
+#ifdef MOD_USE_DYLD
+#  include <mach-o/dyld.h>
+#endif
+
+#ifdef MOD_USE_LOADER
+#  include <loader.h>
 #endif
 
 typedef struct _module_entry {
@@ -95,11 +102,18 @@ typedef struct _module_entry {
   int major;                    /* Major version number MUST match      */
   int minor;                    /* Minor version number MUST be >=      */
 #ifndef STATIC
-#  ifdef HPUX_HACKS
+#  ifdef MOD_USE_SHL
   shl_t hand;
-#  else /* !HPUX_HACKS */
-  void *hand;                   /* Module handle                        */
-#  endif /* !HPUX_HACKS */
+#  endif
+#  ifdef MOD_USE_DYLD
+  NSModule hand;
+#  endif
+#  ifdef MOD_USE_LOADER
+  ldr_module_t hand;
+#  endif
+#  ifdef MOD_USE_DL
+  void *hand;
+#  endif
 #endif /* STATIC */
   Function *funcs;
 #ifdef DEBUG_MEM

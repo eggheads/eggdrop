@@ -4,7 +4,7 @@
  *   Tcl initialization
  *   getting and setting Tcl/eggdrop variables
  *
- * $Id: tcl.c,v 1.80 2004/07/05 05:14:12 wcc Exp $
+ * $Id: tcl.c,v 1.81 2004/07/25 11:17:34 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -730,7 +730,6 @@ int readtclprog(char *fname)
 {
   int code;
   char *result;
-
 #ifdef USE_TCL_ENCODING
   Tcl_DString dstr;
 #endif
@@ -745,7 +744,7 @@ int readtclprog(char *fname)
   /* properly convert string to system encoding. */
   Tcl_DStringInit(&dstr);
   Tcl_UtfToExternalDString(NULL, result, -1, &dstr);
-  result = Tcl_DStringValue(&dstr);  
+  result = Tcl_DStringValue(&dstr);
 #endif
 
   if (code != TCL_OK) {
