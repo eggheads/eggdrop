@@ -10,7 +10,7 @@
  *
  * dprintf'ized, 9nov1995
  *
- * $Id: users.c,v 1.26 2001/06/30 06:29:55 guppy Exp $
+ * $Id: users.c,v 1.27 2001/07/16 14:59:42 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -108,7 +108,7 @@ int delignore(char *ign)
       char *mask = str_escape(ign, ':', '\\');
 
       if (mask) {
-	shareout(NULL, "-i %s\n", ign);
+	shareout(NULL, "-i %s\n", mask);
 	nfree(mask);
       }
     }
