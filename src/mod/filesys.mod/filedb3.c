@@ -233,7 +233,7 @@ static filedb_entry *filedb_findempty(FILE *fdb, int tot)
 
 	/* Create new entry containing the additional space */ 
 	fdbe_oe = malloc_fdbe();
-	fdbe_oe->stat |= FILE_UNUSED;
+	fdbe_oe->stat = FILE_UNUSED;
 	fdbe_oe->pos = fdbe->pos + sizeof(filedb_header) + tot;
 	fdbe_oe->buf_len = fdbe->buf_len - tot - sizeof(filedb_header);
 	fdbe_oe->_type = TYPE_EXIST;
@@ -884,7 +884,7 @@ static void filedb_ls(FILE *fdb, int idx, char *mask, int showall)
     ok = 1;
     if (fdbe->stat & FILE_UNUSED)
       ok = 0;
-    if ((fdbe->stat & FILE_DIR) && fdbe->flags_req) {
+    if (ok && (fdbe->stat & FILE_DIR) && fdbe->flags_req) {
       /* check permissions */
       struct flag_record req = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
 
@@ -896,9 +896,9 @@ static void filedb_ls(FILE *fdb, int idx, char *mask, int showall)
     }
     if (ok)
       is = 1;
-    if (!wild_match_file(mask, fdbe->filename))
+    if (ok && !wild_match_file(mask, fdbe->filename))
       ok = 0;
-    if ((fdbe->stat & FILE_HIDDEN) && !(showall))
+    if (ok && (fdbe->stat & FILE_HIDDEN) && !(showall))
       ok = 0;
     if (ok) {
       /* display it! */

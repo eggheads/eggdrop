@@ -142,7 +142,7 @@ static void cmd_sort(int idx, char *par)
   if (!p)
     f = filedb_open("", 1);
   filedb_close(f);
-  dprintf(idx, "Current directory has been optimized.\n");
+  dprintf(idx, "Current directory has been optimised.\n");
 }
 
 /* given current directory, and the desired changes, fill 'real' with
@@ -878,9 +878,8 @@ static void cmd_rm(int idx, char *par)
       s = nmalloc(strlen(dccdir) + strlen(dcc[idx].u.file->dir)
 		  + strlen(fdbe->filename) + 2);
       sprintf(s, "%s%s/%s", dccdir, dcc[idx].u.file->dir, fdbe->filename);
-      fdbe->stat |= FILE_UNUSED;
       ok++;
-      filedb_updatefile(fdb, fdbe->pos, fdbe, UPDATE_ALL);
+      filedb_delfile(fdb, fdbe->pos);
       /* shared file links won't be able to be unlinked */
       if (!(fdbe->sharelink))
 	unlink(s);

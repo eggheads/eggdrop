@@ -41,7 +41,8 @@ static void filelist_free(filelist_t *flist) {
   if (!flist)
     return;
   for (i = 0; i < flist->tot; i++) {
-    nfree(flist->elements[i].output);
+    if (flist->elements[i].output)
+      nfree(flist->elements[i].output);
     nfree(flist->elements[i].fn);
   }
   if (flist->elements)
@@ -53,7 +54,7 @@ static void filelist_free(filelist_t *flist) {
 static void filelist_add(filelist_t *flist, char *filename) {
   flist->tot++;
   flist->elements = nrealloc(flist->elements, flist->tot * sizeof(filelist_t));
-  FILELIST_LE(flist).fn = nmalloc(strlen(filename));
+  FILELIST_LE(flist).fn = nmalloc(strlen(filename) + 1);
   strcpy(FILELIST_LE(flist).fn, filename);
   FILELIST_LE(flist).output = NULL;
 }
