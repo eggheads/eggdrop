@@ -26,7 +26,10 @@
 #undef HAVE_DLOPEN
 
 /* Define for pre Tcl 7.5 compat  */
-#undef HAVE_OLD_TCL
+#undef HAVE_PRE7_5_TCL
 
-/* Define for buggy Tcl threads  */
-#undef HAVE_BUGGY_TCL_THREADS
+/* Define for Tcl that has Tcl_Free() (7.5p1 and later)  */
+#undef HAVE_TCL_FREE
+
+/* Define for Tcl that has threads  */
+#undef HAVE_TCL_THREADS

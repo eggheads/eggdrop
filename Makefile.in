@@ -4,17 +4,19 @@
 #
 
 SHELL = /bin/sh
+top_srcdir = @top_srcdir@
 
+@SET_MAKE@
 prefix = @prefix@
 DEST = @DEST@
 EGGEXEC = @EGGEXEC@
 EGGVERSION = @EGGVERSION@
 
 # things you can put here:
-#   -Wall            if you're using gcc and it supports it (configure
-#                      usually detects this anyway now)
+#   -Wall            if you're using gcc and it supports it
+#                    (configure usually detects this anyway now)
 #   -DEBUG_MEM       to be able to debug memory allocation (.debug)
-# this can now be set by using 'make debug'
+#                    this can now be set by using 'make debug' or 'make sdebug'
 CFLGS =
 
 # configure SHOULD set these...you may need to tweak them to get modules
@@ -56,35 +58,42 @@ TCLLIB = @TCLLIB@
 TCLLIBFN = @TCLLIBFN@
 
 CFLAGS = @CFLAGS@ -I.. @DEFS@ $(CFLGS)
-@SET_MAKE@
+DEBCFLAGS = @CFLAGS@ -I.. @DEFS@ -DEBUG_MEM $(CFLGS)
 
-MAKE_STATIC = $(MAKE) 'CC=$(CC)' 'LD=$(LD)' 'STRIP=$(STRIP)' \
-'RANLIB=$(RANLIB)' 'CFLAGS=$(CFLAGS) -DSTATIC' \
-'CPPFLAGS=$(CPPFLAGS)' 'EGGEXEC=$(EGGEXEC)' 'TCLLIB=$(TCLLIB)' \
-'TCLLIBFN=$(TCLLIBFN)' 'XREQS=$(XREQS)' 'XLIBS=$(XLIBS)'
+MAKE_MODEGG = $(MAKE) 'MAKE=$(MAKE)' 'CC=$(MOD_CC)' 'LD=$(MOD_LD)' \
+'STRIP=$(MOD_STRIP)' 'RANLIB=$(RANLIB)' 'CFLAGS=$(CFLAGS)' \
+'CPPFLAGS=$(CPPFLAGS)' 'TCLLIB=$(TCLLIB)' 'TCLLIBFN=$(TCLLIBFN)' \
+'XREQS=$(XREQS)' 'XLIBS=$(XLIBS)' 'EGGEXEC=$(EGGEXEC)' \
+'EGGBUILD=' 'MODOBJS='
 
-MAKE_MODEGG = $(MAKE) 'CC=$(MOD_CC)' 'LD=$(MOD_LD)' 'STRIP=$(MOD_STRIP)' \
-'RANLIB=$(RANLIB)' 'CFLAGS=$(CFLAGS)' \
-'CPPFLAGS=$(CPPFLAGS)' 'EGGEXEC=$(EGGEXEC)' 'TCLLIB=$(TCLLIB)' \
-'TCLLIBFN=$(TCLLIBFN)' 'XREQS=$(XREQS)' 'XLIBS=$(XLIBS)'
-
-MAKE_MODULES = $(MAKE) 'CC=$(SHLIB_CC)' 'LD=$(SHLIB_LD)' \
+MAKE_MODULES = $(MAKE) 'MAKE=$(MAKE)' 'CC=$(SHLIB_CC)' 'LD=$(SHLIB_LD)' \
 'STRIP=$(SHLIB_STRIP)' 'CFLAGS=$(CFLAGS)' 'CPPFLAGS=$(CPPFLAGS)'
 
-MAKE_SDEBUG = $(MAKE) 'CC=$(CC)' 'LD=$(LD)' 'STRIP=touch' \
-'RANLIB=$(RANLIB)' 'CFLAGS=-g3 $(CFLAGS) -DSTATIC -DEBUG_MEM' \
-'CPPFLAGS=$(CPPFLAGS)' 'EGGEXEC=$(EGGEXEC)' 'TCLLIB=$(TCLLIB)' \
-'TCLLIBFN=$(TCLLIBFN)' 'XREQS=$(XREQS)' 'XLIBS=$(XLIBS)'
+MAKE_STATIC = $(MAKE) 'MAKE=$(MAKE)' 'CC=$(CC)' 'LD=$(LD)' \
+'STRIP=$(STRIP)' 'RANLIB=$(RANLIB)' 'CFLAGS=$(CFLAGS) -DSTATIC' \
+'CPPFLAGS=$(CPPFLAGS)' 'TCLLIB=$(TCLLIB)' 'TCLLIBFN=$(TCLLIBFN)' \
+'XREQS=$(XREQS)' 'XLIBS=$(XLIBS)' 'EGGEXEC=$(EGGEXEC)' \
+'EGGBUILD=(static version)' 'MODOBJS=mod/*.o'
 
-MAKE_MEMEGG = $(MAKE) 'CC=$(MOD_CC)' 'LD=$(MOD_LD)' 'STRIP=touch' \
-'RANLIB=$(RANLIB)' 'CFLAGS=-g3 $(CFLAGS) -DEBUG_MEM' \
-'CPPFLAGS=$(CPPFLAGS)' 'EGGEXEC=$(EGGEXEC)' 'TCLLIB=$(TCLLIB)' \
-'TCLLIBFN=$(TCLLIBFN)' 'XREQS=$(XREQS)' 'XLIBS=$(XLIBS)'
+MAKE_DEBEGG = $(MAKE) 'MAKE=$(MAKE)' 'CC=$(MOD_CC)' 'LD=$(MOD_LD) -g' \
+'STRIP=touch' 'RANLIB=$(RANLIB)' 'CFLAGS=-g3 $(DEBCFLAGS)' \
+'CPPFLAGS=$(CPPFLAGS)' 'TCLLIB=$(TCLLIB)' 'TCLLIBFN=$(TCLLIBFN)' \
+'XREQS=$(XREQS)' 'XLIBS=$(XLIBS)' 'EGGEXEC=$(EGGEXEC)' \
+'EGGBUILD=(debug version)' 'MODOBJS='
 
-MAKE_DEBMODULES = $(MAKE) 'CC=$(SHLIB_CC)' 'LD=$(SHLIB_LD)' \
-'STRIP=touch' 'CFLAGS=-g3 $(CFLAGS) -DEBUG_MEM' 'CPPFLAGS=$(CPPFLAGS)'
+MAKE_DEBMODULES = $(MAKE) 'MAKE=$(MAKE)' 'CC=$(SHLIB_CC)' 'LD=$(SHLIB_LD)' \
+'STRIP=touch' 'CFLAGS=-g3 $(DEBCFLAGS)' 'CPPFLAGS=$(CPPFLAGS)'
 
-MAKE_INSTALL = $(MAKE) 'DEST=$(DEST)'
+MAKE_SDEBUG = $(MAKE) 'MAKE=$(MAKE)' 'CC=$(CC)' 'LD=$(LD) -g' \
+'STRIP=touch' 'RANLIB=$(RANLIB)' 'CFLAGS=-g3 $(DEBCFLAGS) -DSTATIC' \
+'CPPFLAGS=$(CPPFLAGS)' 'TCLLIB=$(TCLLIB)' 'TCLLIBFN=$(TCLLIBFN)' \
+'XREQS=$(XREQS)' 'XLIBS=$(XLIBS)' 'EGGEXEC=$(EGGEXEC)' \
+'EGGBUILD=(static and debug version)' 'MODOBJS=mod/*.o'
+
+MAKE_DEPEND = $(MAKE) 'MAKE=$(MAKE)' 'CC=$(CC)' 'LD=$(LD)' \
+'STRIP=$(STRIP)' 'CFLAGS=$(CFLAGS)' 'CPPFLAGS=$(CPPFLAGS)'
+
+MAKE_INSTALL = $(MAKE) 'MAKE=$(MAKE)' 'DEST=$(DEST)'
 
 all: @DEFAULT_MAKE@
 
@@ -112,10 +121,16 @@ distrib: distclean
 	echo "	@echo \" % ./configure\""; \
 	echo "	@echo \"\""; ) > Makefile
 
+depend:
+	@cat /dev/null > lush.h
+	@cd src; $(MAKE_DEPEND) depend
+	@cd src/md5; $(MAKE_DEPEND) depend
+	@cd src/mod; $(MAKE_DEPEND) depend
+
 eggdrop: modegg modules
 
 modegg: modtest
-	@cd src; $(MAKE_MODEGG) modegg
+	@cd src; $(MAKE_MODEGG) $(EGGEXEC)
 	@echo ""
 	@./$(EGGEXEC) -v
 	@ls -l $(EGGEXEC)
@@ -134,7 +149,7 @@ static: eggtest
 	@echo ""
 	@echo "Making core eggdrop for static linking..."
 	@echo ""
-	@cd src; $(MAKE_STATIC) static
+	@cd src; $(MAKE_STATIC) $(EGGEXEC)
 	@echo ""
 	@./$(EGGEXEC) -v
 	@ls -l $(EGGEXEC)
@@ -142,7 +157,7 @@ static: eggtest
 debug: debegg debmodules
 
 debegg: modtest
-	@cd src; $(MAKE_MEMEGG) debegg
+	@cd src; $(MAKE_DEBEGG) $(EGGEXEC)
 	@echo ""
 	@./$(EGGEXEC) -v
 	@ls -l $(EGGEXEC)
@@ -161,7 +176,7 @@ sdebug: eggtest
 	@echo ""
 	@echo "Making core eggdrop for static linking..."
 	@echo ""
-	@cd src; $(MAKE_SDEBUG) sdebug
+	@cd src; $(MAKE_SDEBUG) $(EGGEXEC)
 	@echo ""
 	@./$(EGGEXEC) -v
 	@ls -l $(EGGEXEC)
@@ -218,7 +233,7 @@ install-start:
 	@echo
 	@if test ! -d $(DEST); then \
 		echo "Creating directory: $(DEST)."; \
-		$(INSTALL) -d $(DEST); \
+		$(top_srcdir)/mkinstalldirs $(DEST); \
 	fi
 
 install-bin:
@@ -250,7 +265,7 @@ install-modules:
 	@if test ! "x`echo *.so`" = "x*.so"; then \
 		if test ! -d $(DEST)/modules-$(EGGVERSION); then \
 			echo "Creating modules-$(EGGVERSION) directory and symlink."; \
-			$(INSTALL) -d $(DEST)/modules-$(EGGVERSION); \
+			$(top_srcdir)/mkinstalldirs $(DEST)/modules-$(EGGVERSION); \
 		fi; \
 		(cd $(DEST) && $(LN_S) modules-$(EGGVERSION) modules); \
 		echo "Copying new modules."; \
@@ -263,12 +278,12 @@ install-data:
 	@$(INSTALL_DATA) eggdrop.conf.dist $(DEST)
 	@if test ! -d $(DEST)/logs; then \
 		echo "Creating 'logs' subdirectory."; \
-		$(INSTALL) -d $(DEST)/logs; \
+		$(top_srcdir)/mkinstalldirs $(DEST)/logs; \
 		$(INSTALL_DATA) logs/CONTENTS $(DEST)/logs/; \
 	fi;
 	@if test ! -d $(DEST)/text; then \
 		echo "Creating 'text' subdirectory."; \
-		$(INSTALL) -d $(DEST)/text; \
+		$(top_srcdir)/mkinstalldirs $(DEST)/text; \
 	fi;
 	@if test ! -f $(DEST)/text/motd; then \
 		$(INSTALL_DATA) text/motd $(DEST)/text/; \
@@ -282,7 +297,7 @@ install-help:
 	@if test ! "x`echo help/*.help`" = "xhelp/*.help"; then \
 		if test ! -d $(DEST)/help; then \
 			echo "Creating 'help' subdirectory."; \
-			$(INSTALL) -d $(DEST)/help; \
+			$(top_srcdir)/mkinstalldirs $(DEST)/help; \
 		fi; \
 		for i in help/*.help; do \
 			$(INSTALL_DATA) $$i $(DEST)/help/; \
@@ -291,7 +306,7 @@ install-help:
 	@if test ! "x`echo help/msg/*.help`" = "xhelp/msg/*.help"; then \
 		if test ! -d $(DEST)/help/msg; then \
 			echo "Creating 'help/msg' subdirectory."; \
-			$(INSTALL) -d $(DEST)/help/msg; \
+			$(top_srcdir)/mkinstalldirs $(DEST)/help/msg; \
 		fi; \
 		for i in help/msg/*.help; do \
 			$(INSTALL_DATA) $$i $(DEST)/help/msg/; \
@@ -300,7 +315,7 @@ install-help:
 	@if test ! "x`echo help/set/*.help`" = "xhelp/set/*.help"; then \
 		if test ! -d $(DEST)/help/set; then \
 			echo "Creating 'help/set' subdirectory."; \
-			$(INSTALL) -d $(DEST)/help/set; \
+			$(top_srcdir)/mkinstalldirs $(DEST)/help/set; \
 		fi; \
 		for i in help/set/*.help; do \
 			$(INSTALL_DATA) $$i $(DEST)/help/set/; \
@@ -313,7 +328,7 @@ install-language:
 	@if test ! "x`echo language/*.lang`" = "xlanguage/*.lang"; then \
 		if test ! -d $(DEST)/language; then \
 			echo "Creating 'language' subdirectory."; \
-			$(INSTALL) -d $(DEST)/language; \
+			$(top_srcdir)/mkinstalldirs $(DEST)/language; \
 		fi; \
 		for i in language/*.lang; do \
 			$(INSTALL_DATA) $$i $(DEST)/language/; \
@@ -324,8 +339,8 @@ install-language:
 install-filesys:
 	@if test ! -d $(DEST)/filesys; then \
 		echo "Creating a skeletal filesys subdirectory."; \
-		$(INSTALL) -d $(DEST)/filesys; \
-		$(INSTALL) -d $(DEST)/filesys/incoming; \
+		$(top_srcdir)/mkinstalldirs $(DEST)/filesys; \
+		$(top_srcdir)/mkinstalldirs $(DEST)/filesys/incoming; \
 	fi
 
 install-doc:

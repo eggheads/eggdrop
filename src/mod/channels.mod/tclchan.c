@@ -1191,7 +1191,7 @@ static int tcl_do_masklist(maskrec *m, Tcl_Interp *irp)
     list[5] = m->user;
     p = Tcl_Merge(6, list);
     Tcl_AppendElement(irp, p);
-    n_free(p, "", 0);
+    Tcl_Free((char *) p);
     m = m->next;
   }
   

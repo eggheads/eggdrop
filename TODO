@@ -1,51 +1,6 @@
 WARNING WARNING WARNING WARNING WARNING WARNING
 
-This TODO is more up to date (as of August 26th, 1999) than 
-previous copies. Before working on a TODO item you may wanna
-subscribe to eggdev@eggheads.org (http://scrambled.eggheads.org/
-mailman/listinfo/eggdev) and ask if there is anyone working on 
-that TODO item.
+Please visit http://todo.eggheads.org - this file is almost
+not needed anymore.
 
-*** patches have to be sent to patches@eggheads.org ***
-
-TODO list for eggdrop1.3.29
-
-When you have done something on this list or done anything that
-requires you to send a patch file please do the following:
-
-- make the patch file by diff'ng eggdrop1.3 and your changed
-  eggdrop directory, for example:
-    
-    diff -bur eggdrop1.3 patched1.3 > myfirstpatch
-    
-- please do not patch src/patch.h
-
-- subscribe to the patch list at
-  http://scrambled.eggheads.org/mailman/listinfo/patches
-
-- and when you e-mail the patch (with a description) to
-  patches@eggheads.org, please put
-
-    PATCH: <patch name>
-    
-  in the subject line, this is because it makes it easier for us
-  to track patch files.
-  
-  also send a description of your patch to eggdev@eggheads.org (don't
-  attach your patch to it), so discussion about it will occur there
-
-  do not CC or BCC eggdev@eggheads.org and patches@eggheads.org, the 
-  mail -will- be rejected.
-
-- the patch archives can be found at
-  http://scrambled.eggheads.org/pub_archive/patches/
-
-Thanks a lot
-
-----
-PROBLEM STATUS
-----
-
-The TODO points can be consulted at http://todo.eggheads.org
-
-Don't forget to read http://todo.eggheads.org/info.html
+Eggdev ...

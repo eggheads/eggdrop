@@ -10,4 +10,4 @@
 0xa007,joined wire
 0xa008,left the wire.
 0xa009,WIRE module being unloaded.
-0xa00a,MODULE wire cannot be loaded on Eggdrops prior to version 1.2.2
+0xa00a,This module requires eggdrop1.4.0 or later

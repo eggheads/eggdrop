@@ -234,7 +234,6 @@ char *iptostr(IP);
 void protect_tcl();
 void unprotect_tcl();
 void do_tcl(char *, char *);
-void set_tcl_vars();
 int readtclprog(char *);
 int findidx(int);
 int findanyidx(int);

@@ -539,7 +539,6 @@ static int trigger_bind(char *proc, char *param)
     if (f != NULL)
       fprintf(f, "eval: %s%s\n", proc, param);
   }
-  set_tcl_vars();
   context;
   x = Tcl_VarEval(interp, proc, param, NULL);
   context;
@@ -829,7 +828,6 @@ void check_tcl_listen(char *cmd, int idx)
   context;
   simple_sprintf(s, "%d", idx);
   Tcl_SetVar(interp, "_n", s, 0);
-  set_tcl_vars();
   context;
   x = Tcl_VarEval(interp, cmd, " $_n", NULL);
   context;

@@ -48,7 +48,7 @@ or how to use it -- if you don't know the difference between #channels and
 this bot is not for you.  Choose a simpler bot like Vladbot or Baloobot or
 ComBot, or find one of the many scriptbots to use.
 
-  This is the 1.3.x branch of the Eggdrop Bot.
+  This is the 1.5.xx branch of the Eggdrop Bot.
 
 *** NOTE:
 
@@ -65,7 +65,7 @@ configurations:
 
 MODULE - dynamic
 
-   The MODULE version of Eggdrop 1.3.x provides for the on-the-fly
+   The MODULE version of Eggdrop 1.5.xx provides for the on-the-fly
    loading of extensions to the bot code without having to recompile
    the entire bot.  This is available on OS platforms which support
    dynamically linked/shared libraries in their run-time and TCL
@@ -116,12 +116,12 @@ MODULE - dynamic
 
 MODULE - static
 
-   The STATIC-MODULE version of Eggdrop 1.3.x is pretty much the same
+   The STATIC-MODULE version of Eggdrop 1.5.xx is pretty much the same
    as the module bot, except each individual module is linked into the
    excutable. You still need to 'loadmodule <module>' to turn them on.
   
 See the file doc/MODULES for more specific MODULE information.
-New to 1.3.0:
+New to 1.4.xx (applies to 1.3.xx also):
 
 **** BOTNET
 

@@ -836,7 +836,7 @@ static void xtra_display(int idx, struct user_entry *e)
 	dprintf(idx, "  %s: %s\n", xk->key, xk->data);
     }
   }
-  n_free(list, "", 0);
+  Tcl_Free((char *) list);
   context;
 }
 
@@ -937,7 +937,7 @@ static int xtra_tcl_get(Tcl_Interp * irp, struct userrec *u,
     list[1] = x->data;
     p = Tcl_Merge(2, list);
     Tcl_AppendElement(irp, p);
-    n_free(p, "", 0);
+    Tcl_Free((char *) p);
   }
   return TCL_OK;
 }

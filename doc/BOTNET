@@ -76,10 +76,10 @@ If applicable, there is also the associated command named.
   Passive share bots will accept userfiles from an active/aggressive bot.
 
 
-Note:  With the eggdrop1.3.xx series, active/passive designations are
+Note:  With the eggdrop1.4.xx/1.3.xx series, active/passive designations are
 relative, not absolute like the prior versions of eggdrop bots, like 1.1.5.
-A 1.3.xx bot may be both active and passive at the same time, in relation to
-other bots it is connected to.
+A 1.3.xx/1.4.xx bot may be both active and passive at the same time, in relation
+to other bots it is connected to.
 
 example bottree:
 
@@ -101,7 +101,7 @@ with [sends to] peonbot at the same time.
 
   s   share (Aggressively SEND userfile to a passive bot (assigned +s flag))
   p   share (Passively ACCEPT userfile from an agressive bot (assigned +p flag))
-  g   global share (share all channels)
+  g   global share (share all channels (this works correctly in 1.4.xx))
   h   hub (bot is auto-linked)
   a   alternate (bot is auto-linked if the hub bot can't be linked)
   l   leaf (bot is not allowed to link in other bots)
@@ -146,8 +146,8 @@ III. WHAT IS A BOTNET FOR?
 Basically a botnet is useful if you want to use more then one bot to protect
 your channel.  Bots linked a botnet can perform script controlled tasks.
 Such a script can be get-ops (ops each bot in a botnet) or some kind of a
-prevent-flood stuff. Just take a look at /pub/eggdrop/scripts1.3 on
-ftp.eggheads.org and you'll find a lot of botnet scripts.
+prevent-flood stuff. Just take a look at the script directories on
+ftp://ftp.eggheads.org and you'll find a lot of botnet scripts.
 
 Also, linked bots can share common user records (global or channel specific)
 between each other which helps reduce the time needed to maintain a
@@ -245,12 +245,6 @@ Botflags are needed to assign special functions and tasks to your bots.
         Note that you can use this flag only on +s bots!
 
         command: ".botattr <botname> |s #lamest"
-
-   |+s  You can assign the channel for which the bot will acceppt changes to
-        his userfile from a +p set bot.
-
-        command: ".botattr <botname> |+s #lamest"
-
 
  "p" flag (ACCEPT userfile FROM bots assigned the +p flag)
   If you assign this flag to another bot, your bot will accept userfiles

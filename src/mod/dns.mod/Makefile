@@ -6,19 +6,27 @@ doofus:
 	@echo ""
 	@cd ../../../; make
 
-clean:
-	@rm -f *.o *.so *~
-
 static: ../dns.o
 
 modules: ../../../dns.so
 
-../dns.o: ../module.h ../modvals.h ../../eggdrop.h dns.h dns.c coredns.c
+../dns.o:
 	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c dns.c
+	rm -f ../irc.o
 	mv dns.o ../
 
 ../../../dns.so: ../dns.o
 	$(LD) -o ../../../dns.so ../dns.o $(RESLIB)
 	$(STRIP) ../../../dns.so
 
+depend:
+	$(CC) $(CFLAGS) $(CPPFLAGS) -MM *.c > .depend
+
+clean:
+	@rm -f .depend *.o *.so *~
+
 #safety hash
+../dns.o: dns.c ../module.h ../../../config.h ../../main.h ../../lang.h \
+ ../../eggdrop.h ../../flags.h ../../proto.h ../../../lush.h \
+ ../../cmdt.h ../../tclegg.h ../../tclhash.h ../../chan.h ../../users.h \
+ ../modvals.h ../../tandem.h dns.h coredns.c

@@ -6,15 +6,11 @@ doofus:
 	@echo ""
 	@cd ../../../; make
 
-clean:
-	@rm -f *.o *.so *~
-
 static: ../notes.o
 
 modules: ../../../notes.so
 
-../notes.o: ../module.h ../modvals.h ../../eggdrop.h cmdsnote.c notes.c \
-notes.h ../../tandem.h
+../notes.o:
 	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c notes.c
 	rm -f ../notes.o
 	mv notes.o ../
@@ -23,4 +19,15 @@ notes.h ../../tandem.h
 	$(LD) -o ../../../notes.so ../notes.o
 	$(STRIP) ../../../notes.so
 
+depend:
+	$(CC) $(CFLAGS) $(CPPFLAGS) -MM *.c > .depend
+
+clean:
+	@rm -f .depend *.o *.so *~
+
 #safety hash
+../notes.o: notes.c ../module.h ../../../config.h ../../main.h \
+ ../../lang.h ../../eggdrop.h ../../flags.h ../../proto.h \
+ ../../../lush.h ../../cmdt.h ../../tclegg.h ../../tclhash.h \
+ ../../chan.h ../../users.h ../modvals.h ../../tandem.h notes.h \
+ cmdsnote.c

@@ -1,6 +1,8 @@
 # Makefile for doc/
 
+SHELL = /bin/sh
 top_srcdir = @top_srcdir@
+
 @SET_MAKE@
 INSTALL = @INSTALL@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
@@ -8,7 +10,7 @@ INSTALL_DATA = @INSTALL_DATA@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
 
 DOCS = BOTNET BUG-REPORT CONTENTS KNOWN-PROBLEMS \
-MODULES Ode_To_Beldin UPDATES.pre1.4 UPDATES1.4 \
+MODULES Ode_To_Beldin UPDATES.pre1.5 UPDATES1.5 \
 compiling.FAQ eggdrop.doc patch.howto \
 tcl-commands.doc tricks
 
@@ -28,10 +30,10 @@ clean:
 install:
 	@if test ! -d $(DEST)/doc; then \
 	echo "Creating a doc subdirectory."; \
-		$(INSTALL) -d $(DEST)/doc; \
+		$(top_srcdir)/mkinstalldirs $(DEST)/doc; \
 	fi
 	@if test ! -d $(DEST)/doc/man1; then \
-		$(INSTALL) -d $(DEST)/doc/man1; \
+		$(top_srcdir)/mkinstalldirs $(DEST)/doc/man1; \
 	fi
 	@echo "Copying docs."
 	@for i in $(DOCS); do \

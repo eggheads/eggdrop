@@ -51,7 +51,7 @@ struct {
 #define DP_HELP         0x7FF4
 
 /* prototypes */
-#if !defined(HAVE_OLD_TCL) && defined(__STDC__)
+#if !defined(HAVE_PRE7_5_TCL) && defined(__STDC__)
 void dprintf(int arg1, ...);
 void putlog(int arg1, ...);
 #else

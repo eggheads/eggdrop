@@ -167,7 +167,6 @@ case "$SYSTEM" in
     CFLAGS="$CFLAGS -Wall"
     MOD_LD="${CC}"
     SHLIB_LD="${CC} -shared -nostartfiles"
-    DEFAULT_MAKE=debug
     AC_DEFINE(MODULES_OK)
     ;;
   Lynx)
@@ -181,17 +180,17 @@ case "$SYSTEM" in
 	AC_MSG_RESULT([   Digital OSF])
 	if test "x$AWK" = "xgawk"
 	then
-	  AWK="awk"
+	  AWK=awk
 	fi
 	if test "x$INSTALL" = "x./install-sh"
 	then
-	  INSTALL="installbsd"
+	  INSTALL=installbsd
 	fi
-	MOD_CC="cc"
-	MOD_LD="cc"
-	SHLIB_CC="cc"
+	MOD_CC=cc
+	MOD_LD=cc
+	SHLIB_CC=cc
 	SHLIB_LD="ld -shared -expect_unresolved '*'"
-	SHLIB_STRIP="touch"
+	SHLIB_STRIP=touch
 	AC_DEFINE(MODULES_OK)
 	;;
       1.0|1.1|1.2)
@@ -273,7 +272,9 @@ else
   AC_CHECK_LIB(dns,gethostbyname)
   AC_CHECK_LIB(dl,dlopen)
 dnl this is needed for Tcl compiled with thread support
-  AC_CHECK_LIB(pthread,pthread_create,ac_cv_lib_pthread_pthread_create=yes,ac_cv_lib_pthread_pthread_create=no)
+  AC_CHECK_LIB(pthread,pthread_mutex_init,
+ac_cv_lib_pthread_pthread_mutex_init=yes,
+ac_cv_lib_pthread_pthread_mutex_init=no)
   if test "$SUNOS" = "yes"
   then
     dnl for suns without yp or something like that
@@ -399,8 +400,6 @@ tclheadernames="tcl.h"
 
 tclheaderpaths="/usr/local/include /usr/local/pkgs/tcl/include \
 	/usr/include $HOME/include $HOME/tcl/include $HOME"
-
-tclconfigfile="tclConfig.sh"
 
 dnl oohh new configure --variables for those with multiple tcl libs
 AC_ARG_WITH(tcllib, [  --with-tcllib=PATH      full path to tcl library], tcllibname=$withval)
@@ -678,21 +677,22 @@ if test ! "x${TCLLIBFN}" = "x" && test ! "x${TCLINCFN}" = "x"
 then
 
   # find Tcl's version
-  TCL_PATCH_LEVEL=`grep TCL_PATCH_LEVEL $TCLINC/$TCLINCFN | head -1 | $AWK '{gsub(/\"/, "", $3); print $3}'`
-  if test ! "x${TCL_PATCH_LEVEL}" = "x"
-  then
-    TCL_VERSION=$TCL_PATCH_LEVEL
-  else
     TCL_VERSION=`grep TCL_VERSION $TCLINC/$TCLINCFN | head -1 | $AWK '{gsub(/\"/, "", $3); print $3}'`
-  fi
+  TCL_PATCH_LEVEL=`grep TCL_PATCH_LEVEL $TCLINC/$TCLINCFN | head -1 | $AWK '{gsub(/\"/, "", $3); print $3}'`
 fi
 
 # check if we found Tcl's version
 AC_MSG_CHECKING(for Tcl version)
 if test ! "x${TCL_VERSION}" = "x"
 then
+  if test ! "x${TCL_PATCH_LEVEL}" = "x"
+  then
+    AC_MSG_RESULT($TCL_PATCH_LEVEL)
+    TCL_FOUND=1
+  else
   AC_MSG_RESULT($TCL_VERSION)
   TCL_FOUND=1
+  fi
 else
   AC_MSG_RESULT(not found)
   TCL_FOUND=0
@@ -739,38 +739,73 @@ TCL_VER_PRE75=`echo $TCL_VERSION | $AWK '{split($1, i, "."); if (((i[1] == 7) &&
 changequote([, ])dnl
 if test "x${TCL_VER_PRE75}" = "xyes"
 then
-  AC_DEFINE(HAVE_OLD_TCL)
+  AC_DEFINE(HAVE_PRE7_5_TCL)
 fi
 
-# check for Tcl threads
-AC_MSG_CHECKING(for Tcl threads)
-changequote(,)dnl
-TCL_VER_POST81=`echo $TCL_VERSION | $AWK '{split($1, i, "."); if (((i[1] == 8) && (i[2] >= 1)) || (i[1] >= 9)) print "yes"; else print "no"}'`
-changequote([, ])dnl
-if test "x${TCL_VER_POST81}" = "xyes"
+# set TCL_TESTLIBS for Tcl library tests
+if test ! "x${TCLLIBEXT}" = "x.a"
 then
+  TCL_TESTLIBS="-L$TCLLIB -l$TCLLIBFNS -lm $LIBS"
+else
+  if test ! "x${tcllibname}" = "x"
+  then
+    TCL_TESTLIBS="$TCLLIB/lib$TCLLIBFN -lm $LIBS"
+  else
+    TCL_TESTLIBS="-L$TCLLIB -l$TCLLIBFNS -lm $LIBS"
+  fi
+fi
+if test "x${ac_cv_lib_pthread_pthread_mutex_init}" = "xyes"
+then
+  TCL_TESTLIBS="-lpthread $TCL_TESTLIBS"
+fi
 
-  # check for TclpFinalizeThreadData()
-  if eval "test \"`echo '$''{'ac_cv_var_tcl_threads'+set}'`\" = set"
+# check for Tcl_Free()
+AC_MSG_CHECKING(if Tcl library has Tcl_Free)
+if eval "test \"`echo '$''{'ac_cv_var_tcl_free'+set}'`\" = set"
   then
     echo $ac_n "(cached) $ac_c" 1>&6
   else
     ac_save_LIBS="$LIBS"
-    if test "x${ac_cv_lib_pthread_pthread_create}" = "xyes"
+  LIBS="$TCL_TESTLIBS"
+  cat > conftest.$ac_ext << EOF
+#include "confdefs.h"
+char Tcl_Free();
+
+int main() {
+  Tcl_Free();
+  return 0;
+}
+EOF
+  if { (eval echo configure: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}
     then
-      LIBS="-lpthread $LIBS"
+    rm -rf conftest*
+    eval "ac_cv_var_tcl_free=yes"
+  else
+    echo "configure: failed program was:" >&5
+    cat conftest.$ac_ext >&5
+    rm -rf conftest*
+    eval "ac_cv_var_tcl_free=no"
     fi
-    if test ! "x${TCLLIBEXT}" = "x.a"
+  rm -f conftest*
+  LIBS="$ac_save_LIBS"
+fi
+
+if test "x${ac_cv_var_tcl_free}" = "xyes"
     then
-      LIBS="-L$TCLLIB -l$TCLLIBFNS -lm $LIBS"
+  AC_MSG_RESULT(yes)
+  AC_DEFINE(HAVE_TCL_FREE)
     else
-      if test ! "x${tcllibname}" = "x"
+  AC_MSG_RESULT(no)
+fi
+
+# check for TclpFinalizeThreadData()
+AC_MSG_CHECKING(if Tcl library has threads)
+if eval "test \"`echo '$''{'ac_cv_var_tcl_threads'+set}'`\" = set"
       then
-	LIBS="$TCLLIB/lib$TCLLIBFN -lm $LIBS"
+  echo $ac_n "(cached) $ac_c" 1>&6
       else
-	LIBS="-L$TCLLIB -l$TCLLIBFNS -lm $LIBS"
-      fi
-    fi
+  ac_save_LIBS="$LIBS"
+  LIBS="$TCL_TESTLIBS"
     cat > conftest.$ac_ext << EOF
 #include "confdefs.h"
 char TclpFinalizeThreadData();
@@ -793,7 +828,6 @@ EOF
     rm -f conftest*
     LIBS="$ac_save_LIBS"
   fi
-fi
 
 if test "x${ac_cv_var_tcl_threads}" = "xyes"
 then
@@ -805,10 +839,10 @@ configure: warning:
   There are known problems, but we will attempt to work around them.
 
 EOF
-  AC_DEFINE(HAVE_BUGGY_TCL_THREADS)
+  AC_DEFINE(HAVE_TCL_THREADS)
 
   # add -lpthread to $LIBS if we have it
-  if test "x${ac_cv_lib_pthread_pthread_create}" = "xyes"
+  if test "x${ac_cv_lib_pthread_pthread_mutex_init}" = "xyes"
   then
     LIBS="-lpthread $LIBS"
   fi

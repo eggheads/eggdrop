@@ -57,6 +57,9 @@ void rmspace(char *s)
 #define whitespace(c) ( ((c)==32) || ((c)==9) || ((c)==13) || ((c)==10) )
   char *p;
 
+  if (*s == '\0')
+	return;
+
   /* wipe end of string */
   for (p = s + strlen(s) - 1; ((whitespace(*p)) && (p >= s)); p--);
   if (p != s + strlen(s) - 1)
@@ -611,7 +614,7 @@ void list_timers(Tcl_Interp * irp, tcl_timer_t * stack)
     argv[2] = id;
     x = Tcl_Merge(3, argv);
     Tcl_AppendElement(irp, x);
-    n_free(x, "", 0);
+    Tcl_Free((char *) x);
     mark = mark->next;
   }
 }
