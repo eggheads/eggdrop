@@ -7,7 +7,7 @@
  *   help system
  *   motd display and %var substitution
  * 
- * $Id: misc.c,v 1.30 2000/10/27 19:27:32 fabian Exp $
+ * $Id: misc.c,v 1.31 2000/11/21 04:46:17 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -371,21 +371,21 @@ void maskhost(const char *s, char *nw)
 }
 
 /* Dump a potentially super-long string of text.
- * Assume prefix 20 chars or less.
  */
-void dumplots(int idx, char *prefix, char *data)
+void dumplots(int idx, const char *prefix, char *data)
 {
-  char *p = data, *q, *n, c;
+  char		*p = data, *q, *n, c;
+  const int	 max_data_len = 500 - strlen(prefix);
 
-  if (!(*data)) {
+  if (!*data) {
     dprintf(idx, "%s\n", prefix);
     return;
   }
-  while (strlen(p) > 480) {
-    q = p + 480;
+  while (strlen(p) > max_data_len) {
+    q = p + max_data_len;
     /* Search for embedded linefeed first */
     n = strchr(p, '\n');
-    if ((n != NULL) && (n < q)) {
+    if (n && n < q) {
       /* Great! dump that first line then start over */
       *n = 0;
       dprintf(idx, "%s%s\n", prefix, p);
@@ -393,21 +393,22 @@ void dumplots(int idx, char *prefix, char *data)
       p = n + 1;
     } else {
       /* Search backwards for the last space */
-      while ((*q != ' ') && (q != p))
+      while (*q != ' ' && q != p)
 	q--;
       if (q == p)
-	q = p + 480;
-      /* ^ 1 char will get squashed cos there was no space -- too bad */
+	q = p + max_data_len;
       c = *q;
       *q = 0;
       dprintf(idx, "%s%s\n", prefix, p);
       *q = c;
-      p = q + 1;
+      p = q;
+      if (c == ' ')
+	p++;
     }
   }
   /* Last trailing bit: split by linefeeds if possible */
   n = strchr(p, '\n');
-  while (n != NULL) {
+  while (n) {
     *n = 0;
     dprintf(idx, "%s%s\n", prefix, p);
     *n = '\n';
