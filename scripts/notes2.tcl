@@ -3,7 +3,7 @@
 #                     - a bind apart script from #TSF
 #                     - for eggdrop 1.3.15+
 #
-# $Id: notes2.tcl,v 1.3 2000/08/10 02:06:38 guppy Exp $
+# $Id: notes2.tcl,v 1.4 2000/08/18 19:34:41 guppy Exp $
 #
 ####
 #
@@ -52,7 +52,7 @@ bind   bot  - notes2reply: *bot:notes2reply
 
 ########
 proc n2_notesindex {bot handle idx} {
-    global nick
+    global nick botnet-nick
     switch "([notes $handle])" {
 	"(-2)" { putbot $bot "notes2reply: $handle Notefile failure. $idx" }
 	#"-1" { putbot $bot "notes2reply: $handle I don't know you. $idx" }
@@ -175,7 +175,7 @@ proc *chon:notes2 {handle idx} {
 
 ########
 proc *dcc:notes2 {handle idx arg} {
-    global nick
+    global nick botnet-nick
     if {$arg == ""} {
 	putidx $idx "Usage: notes \[bot|all\] index"
 	putidx $idx "       notes \[bot|all\] read <#|all>"
