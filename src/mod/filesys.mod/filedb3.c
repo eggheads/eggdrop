@@ -231,14 +231,20 @@ static filedb_entry *filedb_findempty(FILE *fdb, int tot)
       if (fdbe->buf_len > (tot + sizeof(filedb_header) + FILEDB_ESTDYN)) {
 	filedb_entry *fdbe_oe;
 
+	/* Create new entry containing the additional space */ 
 	fdbe_oe = malloc_fdbe();
 	fdbe_oe->stat |= FILE_UNUSED;
 	fdbe_oe->pos = fdbe->pos + sizeof(filedb_header) + tot;
 	fdbe_oe->buf_len = fdbe->buf_len - tot - sizeof(filedb_header);
-	fdbe->buf_len = tot;	/* Only give them what they asked for */
-	filedb_updatefile(fdb, fdbe_oe->pos, fdbe_oe, UPDATE_HEADER);
+	fdbe_oe->_type = TYPE_EXIST;
+
+	filedb_updatefile(fdb, fdbe_oe->pos, fdbe_oe, UPDATE_SIZE);
 	free_fdbe(fdbe_oe);
-      }
+
+	/* Cut down buf_len of entry as the rest is now used in the new
+	 * entry. */
+	fdbe->buf_len = tot;
+      } 
       context;
       return fdbe;		
     }
@@ -264,6 +270,9 @@ static filedb_entry *filedb_findempty(FILE *fdb, int tot)
  *     suits our needs.
  *
  * Note that the available space also includes the buffer.
+ *
+ * The file pointer will _always_ position directly after the updated
+ * entry.
  */
 static int _filedb_updatefile(FILE *fdb, long pos, filedb_entry *fdbe,
 			      int update, char *file, int line)
@@ -272,14 +281,13 @@ static int _filedb_updatefile(FILE *fdb, long pos, filedb_entry *fdbe,
   int reposition = 0;
   int ndyntot, odyntot, nbuftot, obuftot;
 
-  context;
   ASSERT(fdbe);
+  context;
   bzero(&fdh, sizeof(filedb_header));
   fdh.uploaded = fdbe->uploaded;
   fdh.size = fdbe->size;
   fdh.stat = fdbe->stat;
   fdh.gots = fdbe->gots;
-  fdh.buffer_len = fdbe->buf_len;
 
   /* Only add the buffer length if the buffer is not empty. Otherwise it
    * would result in lots of 1 byte entries which actually don't contain
@@ -295,16 +303,23 @@ static int _filedb_updatefile(FILE *fdb, long pos, filedb_entry *fdbe,
   if (fdbe->flags_req)
     fdh.flags_req_len = strlen(fdbe->flags_req) + 1;
 
-  ndyntot = filedb_tot_dynspace(fdh);	/* New length of dynamic data	*/
   odyntot = fdbe->dyn_len;		/* Old length of dynamic data	*/
   obuftot = fdbe->buf_len;		/* Old length of spare space	*/
+  ndyntot = filedb_tot_dynspace(fdh);	/* New length of dynamic data	*/
+  nbuftot = obuftot;
 
   if (fdbe->_type == TYPE_EXIST) {
+    ASSERT(pos != POS_NEW);		/* We NEED a position		*/
     /* If we only update the header, we don't need to worry about
      * sizes and just use the old place (i.e. the place pointed
      * to by pos). */
     if (update < UPDATE_ALL) {
-      ASSERT(pos != POS_NEW);		/* We NEED a position		*/
+      /* Unless forced to it, we ignore new buffer sizes if we do not
+       * run in UPDATE_ALL mode. */
+      if (update != UPDATE_SIZE) {
+        ndyntot = odyntot;
+        nbuftot = obuftot;
+      }
     } else {
       /* If we have a given/preferred position */
       if ((pos != POS_NEW) &&
@@ -313,7 +328,6 @@ static int _filedb_updatefile(FILE *fdb, long pos, filedb_entry *fdbe,
 	  * position */
           (ndyntot <= (odyntot + obuftot))) {
 	nbuftot = (odyntot + obuftot) - ndyntot;
-	fdbe->buf_len = fdh.buffer_len = nbuftot;
       } else {
 	/* If we have an existing position, but the new entry doesn't
 	 * fit into it's old home, we need to delete it before
@@ -323,11 +337,10 @@ static int _filedb_updatefile(FILE *fdb, long pos, filedb_entry *fdbe,
 	reposition = 1;
       }
     }
-    fdbe->dyn_len = ndyntot;		/* Update length of dynamic data */
   } else {
-    fdbe->_type = TYPE_EXIST;		/* Update type			 */
-    if (pos == POS_NEW)
-      reposition = 1;
+    ASSERT(pos == POS_NEW);		/* We NEED to reposition	*/
+    fdbe->_type = TYPE_EXIST;		/* Update type			*/
+    reposition = 1;
   }
 
   /* Search for a new home */
@@ -341,17 +354,21 @@ static int _filedb_updatefile(FILE *fdb, long pos, filedb_entry *fdbe,
     if (n_fdbe->buf_len > 0)
       /* Note: empty entries have dyn_len set to zero, so we only
        *       need to consider buf_len. */
-      fdbe->buf_len = fdh.buffer_len = n_fdbe->buf_len - ndyntot;
+      nbuftot = n_fdbe->buf_len - ndyntot;
     else
-      fdbe->buf_len = fdh.buffer_len = 0;
+      nbuftot = 0;
     free_fdbe(n_fdbe);
   }
+
+  /* Set length of dynamic data and buffer */
+  fdbe->dyn_len = ndyntot;
+  fdbe->buf_len = fdh.buffer_len = nbuftot;
 
   /* Write header */
   fseek(fdb, pos, SEEK_SET);
   fwrite(&fdh, 1, sizeof(filedb_header), fdb);
+  /* Write dynamic data */
   if (update == UPDATE_ALL) {
-    /* Write additional data */
     if (fdbe->filename)
       fwrite(fdbe->filename, 1, fdh.filename_len, fdb);
     if (fdbe->desc)
@@ -362,10 +379,9 @@ static int _filedb_updatefile(FILE *fdb, long pos, filedb_entry *fdbe,
       fwrite(fdbe->uploader, 1, fdh.uploader_len, fdb);
     if (fdbe->flags_req)
       fwrite(fdbe->flags_req, 1, fdh.flags_req_len, fdb);
-    /* This positions us, so that we can directly continue writing
-     * the next entry (if we want to). */
-    fseek(fdb, fdh.buffer_len, SEEK_CUR);
-  }
+  } else
+    fseek(fdb, ndyntot, SEEK_CUR);	/* Skip over dynamic data */
+  fseek(fdb, nbuftot, SEEK_CUR);	/* Skip over buffer	  */
   context;
   return 0;
 }
@@ -427,8 +443,10 @@ static filedb_entry *_filedb_getfile(FILE *fdb, long pos, int get,
   /* Read additional data from db */
   if (get >= GET_FILENAME) {
     filedb_read(fdb, fdbe->filename, fdh.filename_len);
+    debug4("filedb_getfile; (%d) filename %s (dyn %d, buf %d)", pos, (fdh.stat & FILE_UNUSED) ? "<UNUSED>" : fdbe->filename, fdbe->dyn_len, fdbe->buf_len);
   } else {
     fseek(fdb, fdh.filename_len, SEEK_CUR);
+    debug3("filedb_getfile; (%d) filename <not read> (dyn %d, buf %d)", pos, fdbe->dyn_len, fdbe->buf_len);
   }
   if ((get < GET_FULL) || (fdh.stat & FILE_UNUSED))
     fseek(fdb, fdh.desc_len + fdh.chan_len + fdh.uploader_len
@@ -533,20 +551,35 @@ static void filedb_mergeempty(FILE *fdb)
     if (fdbe_t) {
       if (fdbe_t->stat & FILE_UNUSED) {
 	modified = 0;
-	while (!feof(fdb)) {
-	  fdbe_i = filedb_getfile(fdb, ftell(fdb), GET_HEADER);
-	  if (!fdbe_i)
-	    break;
-	  if (fdbe_i->stat & FILE_UNUSED) {
-	    /* Woohoo, found an empty entry. Append it's space to
-	     * our target entry's buffer space. */
-	    fdbe_t->buf_len += sizeof(filedb_header) + fdbe_i->buf_len;
-	    modified = 1;
-	  }
+	fdbe_i = filedb_getfile(fdb, ftell(fdb), GET_HEADER);
+	while (fdbe_i) {
+	  /* Is this entry in use? */
+	  if (!(fdbe_i->stat & FILE_UNUSED))
+	    break;	/* It is, exit loop. */
+
+	  /* Woohoo, found an empty entry. Append it's space to
+	   * our target entry's buffer space. */
+	  fdbe_t->buf_len += sizeof(filedb_header) + fdbe_i->buf_len;
+	  modified++;
 	  free_fdbe(fdbe_i);
+	  /* Get next file entry */
+	  fdbe_i = filedb_getfile(fdb, ftell(fdb), GET_HEADER);
 	}
-	if (modified)
-	  filedb_updatefile(fdb, fdbe_t->pos, fdbe_t, UPDATE_HEADER);
+
+	/* Did we exit the loop because of a used entry? */
+	if (fdbe_i) {
+	  free_fdbe(fdbe_i);
+	  /* Did we find any empty entries before? */
+	  if (modified)
+	    filedb_updatefile(fdb, fdbe_t->pos, fdbe_t, UPDATE_SIZE);
+	/* ... or because we hit EOF? */
+	} else {
+	  /* Truncate trailing empty entries and exit. */
+	  ftruncate(fileno(fdb), fdbe_t->pos);
+	  free_fdbe(fdbe_t);
+	  context;
+	  return;
+	}
       }
       free_fdbe(fdbe_t);
     }
@@ -675,14 +708,10 @@ static void filedb_update(char *path, FILE * fdb, int sort)
    *
    * Instead of sorting, we only clean up the db, because sorting is now
    * done on-the-fly when we display the file list.
-   * If we don't clean up, we merge all empty blocks to bigger chunks.
    */
   context;
   if (sort)
     filedb_cleanup(fdb);			/* Cleanup DB		*/
-  else
-    filedb_mergeempty(fdb);			/* Merge empty blocks	*/
-
   filedb_timestamp(fdb);			/* Write new timestamp	*/
   context;
 }
@@ -793,6 +822,10 @@ static FILE *filedb_open(char *path, int sort)
       (fdbt.timestamp < st.st_ctime))
     /* file database isn't up-to-date! */
     filedb_update(npath, fdb, sort & 1);
+
+  if (!sort)
+    filedb_mergeempty(fdb);
+
   count++;
   nfree2(npath, s);
   context;

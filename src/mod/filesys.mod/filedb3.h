@@ -141,6 +141,7 @@ enum {
   GET_FULL,			/* Save all data			*/
 
   UPDATE_HEADER,		/* Only update header			*/
+  UPDATE_SIZE,			/* Update header, enforce new buf sizes	*/
   UPDATE_ALL,			/* Update additional data too		*/
 
   TYPE_NEW,			/* New entry				*/

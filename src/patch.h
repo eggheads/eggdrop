@@ -22,7 +22,7 @@ PATCH("CVS");		/* CVS beta */
  *
  *
  */
-PATCH("filedb_autoconf");	/* last patch applied */
+PATCH("filedb3_fix");	/* last patch applied */
 /*
  *
  *
