@@ -7,7 +7,7 @@
  *   help system
  *   motd display and %var substitution
  *
- * $Id: misc.c,v 1.43 2001/07/29 06:08:04 guppy Exp $
+ * $Id: misc.c,v 1.44 2001/09/23 20:17:47 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -371,38 +371,6 @@ void maskhost(const char *s, char *nw)
     }
   }
 }
-
-#if (TCL_MAJOR_VERSION >= 8 && TCL_MINOR_VERSION >= 1) || (TCL_MAJOR_VERSION >= 9)
-/* Converts an UTF-8 string to unicode safe string
- */
-void str_nutf8tounicode(char *str, int len)
-{
-  Tcl_DString       ds_conversion;
-  Tcl_SavedResult   sr_oldresult;
-
-  /* Don't call this before calling init_tcl() */
-  if (interp) {
-    Tcl_DStringInit(&ds_conversion);
-
-    /* save our old result */
-    Tcl_SaveResult(interp, &sr_oldresult);
-
-    /* clear any previous interp->result */
-    Tcl_ResetResult(interp);
-
-    /* convert UTF-8 to unicode */
-    Tcl_UtfToExternalDString(NULL, str, -1, &ds_conversion);
-    Tcl_DStringResult(interp, &ds_conversion);
-    strncpyz(str, interp->result, len);
-
-    /* restore our old result */
-    Tcl_RestoreResult(interp, &sr_oldresult);
-
-    /* free our DString buffers */
-    Tcl_DStringFree(&ds_conversion);
-  }
-}
-#endif
 
 /* Dump a potentially super-long string of text.
  */

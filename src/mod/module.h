@@ -1,7 +1,7 @@
 /*
  * module.h
  *
- * $Id: module.h,v 1.51 2001/07/29 06:08:04 guppy Exp $
+ * $Id: module.h,v 1.52 2001/09/23 20:17:47 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -437,9 +437,6 @@
 #define str_unescape ((void (*)(char *, register const char))global[264])
 #define egg_strcatn ((int (*)(char *dst, const char *src, size_t max))global[265])
 #define clear_chanlist_member ((void (*)(const char *nick))global[266])
-#if (TCL_MAJOR_VERSION >= 8 && TCL_MINOR_VERSION >= 1) || (TCL_MAJOR_VERSION >= 9)
-#define str_nutf8tounicode ((int (*)(char *str, int len))global[267])
-#endif
 /* 168 - 271 */
 /* Please don't modify socklist directly, unless there's no other way.
  * Its structure might be changed, or it might be completely removed,

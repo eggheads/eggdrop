@@ -6,7 +6,7 @@
  *   memory management for dcc structures
  *   timeout checking for dcc connections
  *
- * $Id: dccutil.c,v 1.32 2001/06/20 14:48:34 poptix Exp $
+ * $Id: dccutil.c,v 1.33 2001/09/23 20:17:47 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -120,10 +120,6 @@ void dprintf EGG_VARARGS_DEF(int, arg1)
    * sizeof(buf) bytes. But we're not doing that anyway.
   */
   buf[sizeof(buf)-1] = 0;
-
-#if (TCL_MAJOR_VERSION >= 8 && TCL_MINOR_VERSION >= 1) || (TCL_MAJOR_VERSION >= 9)
-  str_nutf8tounicode(buf, sizeof buf);
-#endif
   len = strlen(buf);
 
   if (idx < 0) {

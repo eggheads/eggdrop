@@ -3,7 +3,7 @@
  *   Tcl stubs for file system commands
  *   Tcl stubs for everything else
  *
- * $Id: tclmisc.c,v 1.23 2001/07/29 06:08:04 guppy Exp $
+ * $Id: tclmisc.c,v 1.24 2001/09/23 20:17:47 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -40,7 +40,77 @@ extern char		 origbotname[], botnetnick[], quit_msg[];
 extern struct userrec	*userlist;
 extern time_t		 now;
 extern module_entry	*module_list;
+extern int max_logs;
+extern log_t *logs;
+extern Tcl_Interp *interp;
 
+/*
+ *      Logging
+ */
+
+/* logfile [<modes> <channel> <filename>] */
+static int tcl_logfile STDVAR
+{
+  int i;
+  char s[151];
+
+  BADARGS(1, 4, " ?logModes channel logFile?");
+  if (argc == 1) {
+    /* They just want a list of the logfiles and modes */
+    for (i = 0; i < max_logs; i++)
+      if (logs[i].filename != NULL) {
+	strcpy(s, masktype(logs[i].mask));
+	strcat(s, " ");
+	strcat(s, logs[i].chname);
+	strcat(s, " ");
+	strcat(s, logs[i].filename);
+	Tcl_AppendElement(interp, s);
+      }
+    return TCL_OK;
+  }
+  BADARGS(4, 4, " ?logModes channel logFile?");
+  for (i = 0; i < max_logs; i++)
+    if ((logs[i].filename != NULL) && (!strcmp(logs[i].filename, argv[3]))) {
+      logs[i].flags &= ~LF_EXPIRING;
+      logs[i].mask = logmodes(argv[1]);
+      nfree(logs[i].chname);
+      logs[i].chname = NULL;
+      if (!logs[i].mask) {
+	/* ending logfile */
+	nfree(logs[i].filename);
+	logs[i].filename = NULL;
+	if (logs[i].f != NULL) {
+	  fclose(logs[i].f);
+	  logs[i].f = NULL;
+	}
+        logs[i].flags = 0;
+      } else {
+	logs[i].chname = (char *) nmalloc(strlen(argv[2]) + 1);
+	strcpy(logs[i].chname, argv[2]);
+      }
+      Tcl_AppendResult(interp, argv[3], NULL);
+      return TCL_OK;
+    }
+  /* Do not add logfiles without any flags to log ++rtc */
+  if (!logmodes (argv [1])) {
+    Tcl_AppendResult (interp, "can't remove \"", argv[3],
+                     "\" from list: no such logfile", NULL);
+    return TCL_ERROR;
+  }
+  for (i = 0; i < max_logs; i++)
+    if (logs[i].filename == NULL) {
+      logs[i].flags = 0;
+      logs[i].mask = logmodes(argv[1]);
+      logs[i].filename = (char *) nmalloc(strlen(argv[3]) + 1);
+      strcpy(logs[i].filename, argv[3]);
+      logs[i].chname = (char *) nmalloc(strlen(argv[2]) + 1);
+      strcpy(logs[i].chname, argv[2]);
+      Tcl_AppendResult(interp, argv[3], NULL);
+      return TCL_OK;
+    }
+  Tcl_AppendResult(interp, "reached max # of logfiles", NULL);
+  return TCL_ERROR;
+}
 
 static int tcl_putlog STDVAR
 {
@@ -542,6 +612,7 @@ tcl_cmds tclmisc_objcmds[] =
 
 tcl_cmds tclmisc_cmds[] =
 {
+  {"logfile",           tcl_logfile},
   {"putlog",		tcl_putlog},
   {"putcmdlog",		tcl_putcmdlog},
   {"putxferlog",	tcl_putxferlog},

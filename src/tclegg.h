@@ -2,7 +2,7 @@
  * tclegg.h
  *   stuff used by tcl.c and tclhash.c
  *
- * $Id: tclegg.h,v 1.13 2001/07/26 03:59:45 guppy Exp $
+ * $Id: tclegg.h,v 1.14 2001/09/23 20:17:47 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -114,8 +114,16 @@ typedef struct _tcl_cmds {
   Function func;
 } tcl_cmds;
 
+typedef struct _cd_tcl_cmd {
+	char *name;
+	Function callback;
+	void *cdata;
+} cd_tcl_cmd;
+
 void add_tcl_commands(tcl_cmds *);
+void add_cd_tcl_cmds(cd_tcl_cmd *);
 void rem_tcl_commands(tcl_cmds *);
+void rem_cd_tcl_cmds(cd_tcl_cmd *);
 void add_tcl_strings(tcl_strings *);
 void rem_tcl_strings(tcl_strings *);
 void add_tcl_coups(tcl_coups *);
