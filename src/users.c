@@ -10,7 +10,7 @@
  * 
  * dprintf'ized, 9nov1995
  * 
- * $Id: users.c,v 1.17 2000/08/06 14:51:38 fabian Exp $
+ * $Id: users.c,v 1.18 2000/09/05 16:00:30 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -512,9 +512,9 @@ void tell_user(int idx, struct userrec *u, int master)
       else {
 	now2 = now - (ch->laston);
 	if (now2 > 86400)
-	  strftime(s1, 7, "%d %b", localtime(&li->laston));
+	  strftime(s1, 7, "%d %b", localtime(&ch->laston));
 	else
-	  strftime(s1, 6, "%H:%M", localtime(&li->laston));
+	  strftime(s1, 6, "%H:%M", localtime(&ch->laston));
       }
       fr.match = FR_CHAN;
       fr.chan = ch->flags;
