@@ -1,7 +1,7 @@
 # core.french.lang
 #   core language messages for eggdrop
 #
-# $Id: core.french.lang,v 1.24 2002/02/04 05:03:35 wcc Exp $
+# $Id: core.french.lang,v 1.25 2002/03/22 04:06:25 guppy Exp $
 
 
 # General stuff
@@ -90,6 +90,7 @@ consultez le ficher de configuration initiale pour plus de renseignements.\n
 0x50a,Quoi? Essayez '.help'\n
 0x50b,Liaisons de commande:\n
 0x50c,Redémarrage...
+0x50d,s
 0x50e,Rotation des fichiers de log...
 0x50f,propriétaire
 0x510,maître

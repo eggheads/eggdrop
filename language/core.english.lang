@@ -1,7 +1,7 @@
 # core.english.lang
 #   core language messages for eggdrop
 #
-# $Id: core.english.lang,v 1.32 2002/03/10 18:47:52 wcc Exp $
+# $Id: core.english.lang,v 1.33 2002/03/22 04:06:24 guppy Exp $
 
 # General stuff
 0x001,Usage
@@ -89,6 +89,7 @@ module, please consult the default config file for info.\n
 0x50a,What?  You need '.help'\n
 0x50b,Command bindings:\n
 0x50c,Restarting...
+0x50d,es
 0x50e,Switching logfiles...
 0x50f,owner
 0x510,master

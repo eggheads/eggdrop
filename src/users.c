@@ -10,7 +10,7 @@
  *
  * dprintf'ized, 9nov1995
  *
- * $Id: users.c,v 1.31 2002/03/07 15:41:17 guppy Exp $
+ * $Id: users.c,v 1.32 2002/03/22 04:06:25 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -683,7 +683,7 @@ void tell_users_match(int idx, char *mtch, int start, int limit, int master, cha
       spaces[y] = ' ';
   }
 
-  dprintf(idx, MISC_FOUNDMATCH, cnt, cnt == 1 ? "" : "es");
+  dprintf(idx, MISC_FOUNDMATCH, cnt, cnt == 1 ? "" : MISC_MATCH_PLURAL);
 }
 
 /*

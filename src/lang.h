@@ -2,7 +2,7 @@
  * lang.h
  *   Conversion definitions for language support
  *
- * $Id: lang.h,v 1.26 2002/01/02 03:46:35 guppy Exp $
+ * $Id: lang.h,v 1.27 2002/03/22 04:06:25 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -70,7 +70,7 @@
 #define MISC_NOSUCHCMD		get_language(0x50a)
 #define MISC_CMDBINDS		get_language(0x50b)
 #define MISC_RESTARTING		get_language(0x50c)
-/* was: MISC_NOMODULES - 0x50d */
+#define MISC_MATCH_PLURAL	get_language(0x50d)
 #define MISC_LOGSWITCH		get_language(0x50e)
 #define MISC_OWNER		get_language(0x50f)
 #define MISC_MASTER		get_language(0x510)
