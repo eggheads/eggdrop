@@ -7,6 +7,7 @@
 # v1.01      Beldin       11 November  1997  1.3 only version
 # v1.02      Kirk         19 June      1998  extremely small fixes
 # v1.03      guppy        17 March     1999  small fixes again
+# v1.04      Ernst        15 June      1999  fix for egg 1.3.x + TCL 8.0
 #
 # TO USE:  o    Set the desired userinfo field keywords to the
 #       `userinfo-fields' line below where indicated.
@@ -60,6 +61,7 @@ set userinfover "Userinfo v1.02"
 
 # This script is NOT for pre-1.3.0 versions.
 
+catch { set numversion }
 if {![info exists numversion] || ($numversion < 1030000)} {
     if {[string range $version 0 2] != "1.3"} {
     putlog "*** Can't load $userinfover -- At least Eggdrop v1.3.0 required"

@@ -13,6 +13,7 @@ exec tclsh "$0" "$@"
 #  20Feb99: added a '-noemail' setting for [s]
 #  21Feb99: added '-5' '-10' '-15' '-30' to allow people to
 #           use a diff time value then 10 minutes.
+#  10May99: to be compatible, don't use */XX's, etc (Ernst)
 #
 # how to use
 # ----------
@@ -63,6 +64,7 @@ if {$argc == 0} {
   set opt [join [lindex $q $z]]
   switch -- $opt {
    -time -
+   -1 {set delay 1}
    -5 {set delay 5}
    -10 {set delay 10}
    -15 {set delay 15}
@@ -83,6 +85,13 @@ if {$argc == 0} {
     incr z
    }
   }
+ }
+ switch -- $delay {
+  30 { set minutes "0,30" }
+  15 { set minutes "0,15,30,45" }
+   5 { set minutes "0,5,10,15,20,25,30,35,40,45,50,55" }
+   1 { set minutes "*" }
+  default { set minutes "0,10,20,30,40,50" }
  }
  if {![file exists $dir/$x]} {
   puts " *** ERROR: you supplied a non-existant filename\n\n"
@@ -193,13 +202,14 @@ if {$argc == 0} {
  set tmp "[pwd]/.autobotchk"
  if {$delay != "10"} {puts "      *** Using a time delay of $delay minutes."}
  if {$email} {
-  set line "\*\/$delay \* \* \* \* $dir/${botnet-nick}.botchk"
+  set line "$minutes \* \* \* \* $dir/${botnet-nick}.botchk"
  } {
-  set line "\*\/$delay \* \* \* \* $dir/${botnet-nick}.botchk >\/dev\/null 2>&1"
+  set line "$minutes \* \* \* \* $dir/${botnet-nick}.botchk >\/dev\/null 2>&1"
   puts "      *** Making crontab line to NOT send e-mail."
  }
  if {[catch {exec crontab -l > $tmp} error ]} {
-  if {![string match "*no*cron*" [string tolower $error]]} {
+  if {![string match "*no*cron*" [string tolower $error]] &&
+      ![string match "*can't open*" [string tolower $error]]} {
    catch {exec rm -rf $tmp} 0
    puts "      *** ERROR: unable to get crontab listing"
    puts "           *** MSG: $error\n\n"
@@ -226,14 +236,7 @@ if {$argc == 0} {
  }
  catch {exec rm -rf $tmp} 0
  puts "      !! crontab reloaded\n\n"
+ puts "      !! Use 'crontab -r' to remove all your crontab entries"
+ puts "      !!     'crontab -l' to view the current crontabs"
  exit
 }
-
-
-
-
-
-
-
-
-
