@@ -1,5 +1,5 @@
 %{help=+bot}%{+t}
-###  %b+bot%b <bot> <address:botport#[/userport#]> [hostmask]
+###  %b+bot%b <handle> [address[:telnet-port[/relay-port]]] [host]
    Creates a user record for a new bot with the nickname given.
    The hostmask table will have one entry, either that specified,
    a host from a current user with the given nick, or "none",
