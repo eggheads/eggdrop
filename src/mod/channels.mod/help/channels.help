@@ -258,14 +258,14 @@ See also: info
 ###  %binfo%b [channel] none
    removes your info line.
 %{help=stick}%{+o|o}
-###  %bstick%b [ban/exempt/invite] <hostmask OR number>
+###  %bstick%b [ban/exempt/invite] <hostmask OR number> [channel]
    makes a ban/exempt/invite "sticky" -- meaning the bot will
    always try to keep it active on the channel, even if the 
    channel is using dynamic bans.  obviously if the channel isn't
    using dynamic bans, this has no effect.
 see also: bans, exempts, invites, unstick, +ban, +exempt, +invite
 %{help=unstick}%{+o|o}
-###  %bunstick%b [ban/exempt/invite] <hostmask OR number>
+###  %bunstick%b [ban/exempt/invite] <hostmask OR number> [channel]
    turns a "sticky" ban/exempt/invite normal again.
    
 see also: bans, exempts, invites, stick, -ban, -exempt, -invite
