@@ -81,6 +81,7 @@ int simple_sprintf VARARGS(char *, arg1);
 void tandout_but VARARGS(int, arg1);
 char *int_to_base10(unsigned int);
 char *int_to_base64(unsigned int);
+extern int (*match_noterej) (struct userrec*, char *);
 
 /* chanprog.c */
 void tell_verbose_uptime(int);
@@ -223,6 +224,7 @@ int findanyidx(int);
 /* userent.c */
 void list_type_kill(struct list_type *);
 int list_type_expmem(struct list_type *);
+int xtra_set();
 
 /* userrec.c */
 struct userrec *adduser(struct userrec *, char *, char *, char *, int);
@@ -240,10 +242,6 @@ int write_user(struct userrec *u, FILE * f, int shr);
 void write_userfile(int);
 struct userrec *check_dcclist_hand(char *);
 void touch_laston(struct userrec *, char *, time_t);
-int get_note_ignores(struct userrec *, char ***);
-int add_note_ignore(struct userrec *, char *);
-int del_note_ignore(struct userrec *, char *);
-int match_note_ignore(struct userrec *, char *);
 
 /* users.c */
 void addignore(char *, char *, char *, time_t);

@@ -413,6 +413,7 @@ typedef struct {
 #define NOTE_TCL        4	/* tcl binding caught it */
 #define NOTE_AWAY       5	/* away; stored */
 #define NOTE_FWD        6	/* away; forwarded */
+#define NOTE_REJECT     7	/* ignore mask matched */
 
 #define STR_PROTECT     2
 #define STR_DIR         1

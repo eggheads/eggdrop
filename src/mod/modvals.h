@@ -18,6 +18,7 @@
 #define HOOK_ENCRYPT_PASS        107
 #define HOOK_QSERV               108
 #define HOOK_ADD_MODE            109
+#define HOOK_MATCH_NOTEREJ	 110
 
 /* these are FIXED once they are in a relase they STAY
  * well, unless im feeling grumpy ;) */

@@ -10,7 +10,7 @@
    and %b'notes erase'%b erases notes after you are done with them.
      ex: notes erase 2-4;8;16-
 
-see also: note, whom
+see also: note, whom, noteigns
 %{help=notes module}
 ###  help on the %bnotes modules%b
    This module provides the means for storing & retrieving notes
@@ -31,5 +31,26 @@ see also: note, whom
    if the other user doesn't exist, the note is lost. Boohoo.
 %{help=all}
 ###  commands for the %bnotes module%b
-  %bnotes%b%{+m}  %bfwd%b%{-}
+  for users:
+    %bnotes       +noteign        -noteign        noteigns%b
+%{+m}
+  for admins:
+    %bfwd%b
+%{-}
 
+%{help=+noteign}
+###  %b+noteign%b%{+m} [user]%{-} <ignoremask>
+   Add a new ignore to the user's note ignore list.
+
+See also: -noteign noteigns
+%{help=-noteign}
+###  %b-noteign%b%{+m} [user]%{-} <ignoremask>
+   Remove an existing ignore from the user's note ignore list.
+
+See also: +noteign noteigns
+%{help=noteigns}
+###  %bnoteigns%b%{+m} [user]%{-}
+   List all note ignores. All notes sent from users who match one of the
+   ignore masks will be rejected.
+
+See also: +noteign -noteign

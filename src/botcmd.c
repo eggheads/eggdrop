@@ -255,6 +255,10 @@ static void bot_priv(int idx, char *par)
 	  botnet_send_priv(idx, botnetnick, from, NULL,
 			   "%s %s", "Not online; note forwarded to:", to);
 	  break;
+	case NOTE_REJECT:
+	  botnet_send_priv(idx, botnetnick, from, NULL,
+			   "%s %s", to, "rejected your note.");
+          break;
 	case NOTE_TCL:
 	  break;		/* do nothing */
 	case NOTE_OK:

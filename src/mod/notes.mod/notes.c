@@ -19,6 +19,8 @@
 #include "../../tandem.h"
 #undef global
 #include <sys/stat.h> /* chmod(..) */
+#define MAKING_NOTES
+#include "notes.h"
 
 static int maxnotes = 50;	/* Maximum number of notes to allow stored
 				 * for each user */
@@ -28,13 +30,6 @@ static int allow_fwd = 0;	/* allow note forwarding */
 static int notify_users = 0;	/* notify users they have notes every hour? */
 static int notify_onjoin = 1;   /* notify users they have notes on join? - drummer */
 static Function *global = NULL;	/* DAMN fcntl.h */
-
-static void fwd_display(int idx, struct user_entry *e)
-{
-  context;
-  if (dcc[idx].user && (dcc[idx].user->flags & USER_BOTMAST))
-    dprintf(idx, "  Forward notes to: %.70s\n", e->u.string);
-}
 
 static struct user_entry_type USERENTRY_FWD =
 {
@@ -53,6 +48,16 @@ static struct user_entry_type USERENTRY_FWD =
   fwd_display,
   "FWD"
 };
+
+#include "cmdsnote.c"
+
+
+static void fwd_display(int idx, struct user_entry *e)
+{
+  context;
+  if (dcc[idx].user && (dcc[idx].user->flags & USER_BOTMAST))
+    dprintf(idx, "  Forward notes to: %.70s\n", e->u.string);
+}
 
 /* determine how many notes are waiting for a user */
 static int num_notes(char *user)
@@ -433,7 +438,6 @@ static int tcl_listnotes STDVAR
   return TCL_OK;
 }
 
-
 /*
  * srd="+" : index
  * srd="-" : read all msgs
@@ -700,72 +704,6 @@ static int tcl_notes STDVAR
   return TCL_OK;
 }
 
-static void cmd_notes(struct userrec *u, int idx, char *par)
-{
-  char *fcn;
-
-  if (!par[0]) {
-    dprintf(idx, "Usage: notes index\n");
-    dprintf(idx, "       notes read <# or ALL>\n");
-    dprintf(idx, "       notes erase <# or ALL>\n");
-    dprintf(idx, "       # may be numbers and/or intervals separated by ;\n");
-    dprintf(idx, "       ex: notes erase 2-4;8;16-\n");
-    return;
-  }
-  fcn = newsplit(&par);
-  if (!strcasecmp(fcn, "index"))
-    notes_read(dcc[idx].nick, "", "+", idx);
-  else if (!strcasecmp(fcn, "read")) {
-    if (!strcasecmp(par, "all"))
-      notes_read(dcc[idx].nick, "", "-", idx);
-    else
-      notes_read(dcc[idx].nick, "", par, idx);
-  } else if (!strcasecmp(fcn, "erase")) {
-    if (!strcasecmp(par, "all"))
-      notes_del(dcc[idx].nick, "", "-", idx);
-    else
-      notes_del(dcc[idx].nick, "", par, idx);
-  } else {
-    dprintf(idx, "Function must be one of INDEX, READ, or ERASE.\n");
-    return;
-  }
-  putlog(LOG_CMDS, "*", "#%s# notes %s %s", dcc[idx].nick, fcn, par);
-}
-
-static void cmd_fwd(struct userrec *u, int idx, char *par)
-{
-  char *handle;
-  struct userrec *u1;
-
-  if (!par[0]) {
-    dprintf(idx, "Usage: fwd <handle> [user@bot]\n");
-    return;
-  }
-  handle = newsplit(&par);
-  u1 = get_user_by_handle(userlist, handle);
-  if (!u1) {
-    dprintf(idx, "No such user.\n");
-    return;
-  }
-  if ((u1->flags & USER_OWNER) && strcasecmp(handle, dcc[idx].nick)) {
-    dprintf(idx, "Can't change notes forwarding of the bot owner.\n");
-    return;
-  }
-  if (!par[0]) {
-    putlog(LOG_CMDS, "*", "#%s# fwd %s", dcc[idx].nick, handle);
-    dprintf(idx, "Wiped notes forwarding for %s\n", handle);
-    set_user(&USERENTRY_FWD, u1, NULL);
-    return;
-  }
-  /* thanks to vertex & dw */
-  if (strchr(par, '@') == NULL) {
-    dprintf(idx, "You must supply a botname to forward to.\n");
-    return;
-  }
-  putlog(LOG_CMDS, "*", "#%s# fwd %s %s", dcc[idx].nick, handle, par);
-  dprintf(idx, "Changed notes forwarding for %s to: %s\n", handle, par);
-  set_user(&USERENTRY_FWD, u1, par);
-}
 
 /* notes <pass> <func> */
 static int msg_notes(char *nick, char *host, struct userrec *u, char *par)
@@ -959,6 +897,179 @@ static void join_notes(char *nick, char *uhost, char *handle, char *par)
   }
 }
 
+/* return either NULL or a pointer to the xtra_key structure
+   where the not ignores are kept. */
+static struct xtra_key *getnotesentry(struct userrec *u)
+{
+  struct user_entry *ue = find_user_entry(&USERENTRY_XTRA, u);
+  struct xtra_key *xk, *nxk = NULL;
+
+  context;
+  if (!ue)
+    return NULL;
+  /* search for the notes ignore list entry */
+  for (xk = ue->u.extra; xk; xk = xk->next)
+    if (xk->key && !strcasecmp(xk->key, NOTES_IGNKEY)) {
+      nxk = xk;
+      break;
+    }
+  if (!nxk || !nxk->data || !(nxk->data[0]))
+    return NULL;
+  return nxk;
+}
+
+/* parse the NOTES_IGNKEY xtra field. You must free the memory allocated
+   in here: the buffer 'ignores[0]' and the array 'ignores' */
+int get_note_ignores(struct userrec *u, char ***ignores)
+{
+  struct xtra_key *xk;
+  char *buf, *p;
+  int ignoresn;
+
+  context;
+  /* hullo? sanity? */
+  if (!u)
+    return 0;
+  xk = getnotesentry(u);
+  if (!xk)
+    return 0;
+  
+  rmspace(xk->data);
+  buf = user_malloc(strlen(xk->data) + 1);
+  strcpy(buf, xk->data);
+  p = buf;
+  
+  /* split up the string into small parts */
+  *ignores = nmalloc(sizeof(char *) + 100);
+  **ignores = p;
+  ignoresn = 1;
+  while ((p = strchr(p, ' ')) != NULL) {
+    *ignores = nrealloc(*ignores, sizeof(char *) * (ignoresn+1));
+    (*ignores)[ignoresn] = p + 1;
+    ignoresn++;
+    *p = 0;
+    p++;
+  }
+  return ignoresn;
+}
+
+int add_note_ignore(struct userrec *u, char *mask)
+{
+  struct xtra_key *xk;
+  char **ignores;
+  int ignoresn, i;
+
+  context;
+  ignoresn = get_note_ignores(u, &ignores);
+  if (ignoresn > 0) {
+    /* search for existing mask */
+    for (i = 0; i < ignoresn; i++)
+      if (!strcmp(ignores[i], mask)) {
+        nfree(ignores[0]); /* free the string buffer */
+        nfree(ignores); /* free the ptr array */
+        return 0;
+      }
+    nfree(ignores[0]); /* free the string buffer */
+    nfree(ignores); /* free the ptr array */
+  }
+
+  xk = getnotesentry(u);
+  /* first entry? */
+  if (!xk) {
+    struct xtra_key *mxk = user_malloc(sizeof(struct xtra_key));
+    struct user_entry *ue = find_user_entry(&USERENTRY_XTRA, u);
+
+    if (!ue)
+      return 0;
+    mxk->next = 0;
+    mxk->data = user_malloc(strlen(mask) + 1);
+    strcpy(mxk->data, mask);
+    mxk->key = user_malloc(strlen(NOTES_IGNKEY) + 1);
+    strcpy(mxk->key, NOTES_IGNKEY);
+    xtra_set(u, ue, mxk);
+  } else /* we already have other entries */ {
+    xk->data = user_realloc(xk->data, strlen(xk->data) + strlen(mask) + 2);
+    strcat(xk->data, " ");
+    strcat(xk->data, mask);
+  }
+  return 1;
+}
+
+int del_note_ignore(struct userrec *u, char *mask)
+{
+  struct user_entry *ue;
+  struct xtra_key *xk;
+  char **ignores, *buf = NULL;
+  int ignoresn, i, size = 0, foundit = 0;
+
+  context;
+  ignoresn = get_note_ignores(u, &ignores);
+  if (!ignoresn)
+    return 0;
+  
+  buf = user_malloc(1);
+  buf[0] = 0;
+  for (i = 0; i < ignoresn; i++) {
+    if (strcmp(ignores[i], mask)) {
+      size += strlen(ignores[i]);
+      if (buf[0])
+	size++;
+      buf = user_realloc(buf, size+1);
+      if (buf[0])
+	strcat(buf, " ");
+      strcat(buf, ignores[i]);
+    } else
+      foundit = 1;
+  }
+  nfree(ignores[0]); /* free the string buffer */
+  nfree(ignores); /* free the ptr array */
+  /* entry not found */
+  if (!foundit) {
+    nfree(buf);
+    return 0;
+  }
+
+  ue = find_user_entry(&USERENTRY_XTRA, u);
+  /* delete the entry if the buffer is empty */
+  if (!buf[0]) {
+    struct xtra_key xk = { 0, NOTES_IGNKEY, 0 };
+    nfree(buf); /* the allocated byte needs to be free'd too */
+    xtra_set(u, ue, &xk);
+  } else {
+    xk = user_malloc(sizeof(struct xtra_key));
+    xk->next = 0;
+    xk->data = buf;
+    xk->key = user_malloc(strlen(NOTES_IGNKEY)+1);
+    strcpy(xk->key, NOTES_IGNKEY);
+    xtra_set(u, ue, xk);
+  }
+  return 1;
+}
+
+/* returns 1 if the user u has an note ignore which
+   matches from */
+int match_note_ignore(struct userrec *u, char *from)
+{
+  char **ignores;
+  int ignoresn, i;
+  
+  context;
+  putlog(LOG_MISC, "*", "In match_note_ignore!");
+  ignoresn = get_note_ignores(u, &ignores);
+  if (!ignoresn)
+    return 0;
+  for (i = 0; i < ignoresn; i++)
+    if (wild_match(ignores[i], from)) {
+      nfree(ignores[0]);
+      nfree(ignores);
+      return 1;
+    }
+  nfree(ignores[0]); /* free the string buffer */
+  nfree(ignores); /* free the ptr array */
+  return 0;
+}
+
+
 static cmd_t notes_join[] =
 {
   {"*", "", (Function) join_notes, "notes"},
@@ -982,12 +1093,6 @@ static cmd_t notes_chon[] =
 static cmd_t notes_msgs[] =
 {
   {"notes", "", (Function) msg_notes, NULL},
-};
-
-static cmd_t notes_cmds[] =
-{
-  {"fwd", "m", (Function) cmd_fwd, NULL},
-  {"notes", "", (Function) cmd_notes, NULL},
 };
 
 static tcl_ints notes_ints[] =
@@ -1050,12 +1155,13 @@ static char *notes_close()
     rem_builtins(H_temp, notes_msgs, 1);
   if ((H_temp = find_bind_table("join")))
     rem_builtins(H_temp, notes_join, 1);
-  rem_builtins(H_dcc, notes_cmds, 2);
+  rem_builtins(H_dcc, notes_cmds, 5);
   rem_builtins(H_chon, notes_chon, 1);
   rem_builtins(H_away, notes_away, 1);
   rem_builtins(H_nkch, notes_nkch, 1);
   rem_builtins(H_load, notes_load, 2);
   rem_help_reference("notes.help");
+  del_hook(HOOK_MATCH_NOTEREJ, match_note_ignore);
   del_hook(HOOK_HOURLY, notes_hourly);
   del_entry_type(&USERENTRY_FWD);
   module_undepend(MODULE_NAME);
@@ -1099,10 +1205,11 @@ char *notes_start(Function * global_funcs)
   if (!module_depend(MODULE_NAME, "eggdrop", 103, 15))
     return "This module requires eggdrop1.3.15 or later";
   add_hook(HOOK_HOURLY, notes_hourly);
+  add_hook(HOOK_MATCH_NOTEREJ, match_note_ignore);
   add_tcl_ints(notes_ints);
   add_tcl_strings(notes_strings);
   add_tcl_commands(notes_tcls);
-  add_builtins(H_dcc, notes_cmds, 2);
+  add_builtins(H_dcc, notes_cmds, 5);
   add_builtins(H_chon, notes_chon, 1);
   add_builtins(H_away, notes_away, 1);
   add_builtins(H_nkch, notes_nkch, 1);

@@ -97,7 +97,6 @@ void check_static(char *name, char *(*func) ())
 void null_func()
 {
 }
-
 char *charp_func()
 {
   return NULL;
@@ -105,6 +104,10 @@ char *charp_func()
 int minus_func()
 {
   return -1;
+}
+int false_func()
+{
+  return 0;
 }
 
 /* various hooks & things */
@@ -131,6 +134,7 @@ void (*shareout) () = null_func;
 void (*sharein) (int, char *) = null_share;
 void (*qserver) (int, char *, int) = null_func;
 void (*add_mode) () = null_func;
+int (*match_noterej) (struct userrec*, char *) = false_func;
 
 module_entry *module_list;
 dependancy *dependancy_list = NULL;
@@ -444,6 +448,9 @@ Function global_table[] =
   /* 228 - 231 */
   (Function) add_lang_section,
   (Function) _user_realloc,
+  (Function) mod_realloc,
+  (Function) xtra_set,
+  /* 232 - 235 */
 };
 
 void init_modules(void)
@@ -806,6 +813,15 @@ void *mod_malloc(int size, char *modname, char *filename, int line)
   return n_malloc(size, x, line);
 }
 
+void *mod_realloc(void *ptr, int size, char *modname, char *filename, int line)
+{
+  char x[100];
+
+  sprintf(x, "%s:%s", modname, filename);
+  x[19] = 0;
+  return n_realloc(ptr, size, x, line);
+}
+
 void mod_free(void *ptr, char *modname, char *filename, int line)
 {
   char x[100];
@@ -849,6 +865,10 @@ void add_hook(int hook_num, void *func)
       if (add_mode == null_func)
 	add_mode = func;
       break;
+    case HOOK_MATCH_NOTEREJ:
+      if (match_noterej == false_func)
+	match_noterej = func;
+      break;
     }
 }
 
@@ -891,6 +911,10 @@ void del_hook(int hook_num, void *func)
     case HOOK_ADD_MODE:
       if (add_mode == func)
 	add_mode = null_func;
+      break;
+    case HOOK_MATCH_NOTEREJ:
+      if (match_noterej == func)
+	match_noterej = false_func;
       break;
     }
 }
