@@ -3148,7 +3148,7 @@ fi
 
 # Check C compiler characteristics.
 
-  if test -n "$GCC"; then
+  if test -n "$GCC" && test -z "$no_wall"; then
     echo "$as_me:$LINENO: checking whether the compiler understands -Wall" >&5
 echo $ECHO_N "checking whether the compiler understands -Wall... $ECHO_C" >&6
 if test "${egg_cv_var_ccwall+set}" = set; then
@@ -3211,22 +3211,21 @@ echo "${ECHO_T}$egg_cv_var_ccwall" >&6
   fi
 
 
-  if test -z "$no_pipe"; then
-    if test -n "$GCC"; then
-      echo "$as_me:$LINENO: checking whether the compiler understands -pipe" >&5
+  if test -n "$GCC" && test -z "$no_pipe"; then
+    echo "$as_me:$LINENO: checking whether the compiler understands -pipe" >&5
 echo $ECHO_N "checking whether the compiler understands -pipe... $ECHO_C" >&6
 if test "${egg_cv_var_ccpipe+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
 else
 
-         ac_old_CC="$CC"
-         CC="$CC -pipe"
-         cat >conftest.$ac_ext <<_ACEOF
+        ac_old_CC="$CC"
+        CC="$CC -pipe"
+        cat >conftest.$ac_ext <<_ACEOF
 
-           int main ()
-           {
-             return(0);
-           }
+          int main ()
+          {
+            return(0);
+          }
 
 _ACEOF
 rm -f conftest.$ac_objext
@@ -3252,26 +3251,25 @@ if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
   echo "$as_me:$LINENO: \$? = $ac_status" >&5
   (exit $ac_status); }; }; then
 
-           egg_cv_var_ccpipe="yes"
+          egg_cv_var_ccpipe="yes"
 
 else
   echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
 
 
-           egg_cv_var_ccpipe="no"
+          egg_cv_var_ccpipe="no"
 
 fi
 rm -f conftest.err conftest.$ac_objext conftest.$ac_ext
-         CC="$ac_old_CC"
+        CC="$ac_old_CC"
 
 fi
 echo "$as_me:$LINENO: result: $egg_cv_var_ccpipe" >&5
 echo "${ECHO_T}$egg_cv_var_ccpipe" >&6
 
-      if test "$egg_cv_var_ccpipe" = "yes"; then
-        CC="$CC -pipe"
-      fi
+    if test "$egg_cv_var_ccpipe" = "yes"; then
+      CC="$CC -pipe"
     fi
   fi
 
