@@ -2,7 +2,7 @@
  * blowfish.c -- part of blowfish.mod
  *   encryption and decryption of passwords
  *
- * $Id: blowfish.c,v 1.29 2004/06/11 05:53:03 wcc Exp $
+ * $Id: blowfish.c,v 1.30 2004/06/14 01:14:06 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -32,6 +32,7 @@
 #include "src/mod/module.h"
 #include "blowfish.h"
 #include "bf_tab.h"             /* P-box P-array, S-box */
+
 #undef global
 static Function *global = NULL;
 
@@ -396,7 +397,7 @@ static int tcl_encrypt STDVAR
   char *p;
 
   BADARGS(3, 3, " key string");
-  
+
   p = encrypt_string(argv[1], argv[2]);
   Tcl_AppendResult(irp, p, NULL);
   nfree(p);
@@ -408,7 +409,7 @@ static int tcl_decrypt STDVAR
   char *p;
 
   BADARGS(3, 3, " key string");
-  
+
   p = decrypt_string(argv[1], argv[2]);
   Tcl_AppendResult(irp, p, NULL);
   nfree(p);
@@ -418,10 +419,10 @@ static int tcl_decrypt STDVAR
 static int tcl_encpass STDVAR
 {
   BADARGS(2, 2, " string");
-  
+
   if (strlen(argv[1]) > 0) {
     char p[16];
-   
+
     blowfish_encrypt_pass(argv[1], p);
     Tcl_AppendResult(irp, p, NULL);
   } else

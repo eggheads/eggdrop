@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  *
- * $Id: server.c,v 1.116 2004/05/26 00:20:19 wcc Exp $
+ * $Id: server.c,v 1.117 2004/06/14 01:14:07 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -25,6 +25,7 @@
 
 #define MODULE_NAME "server"
 #define MAKING_SERVER
+
 #include "src/mod/module.h"
 #include "server.h"
 

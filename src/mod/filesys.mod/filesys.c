@@ -2,7 +2,7 @@
  * filesys.c -- part of filesys.mod
  *   main file of the filesys eggdrop module
  *
- * $Id: filesys.c,v 1.63 2004/01/09 05:56:38 wcc Exp $
+ * $Id: filesys.c,v 1.64 2004/06/14 01:14:07 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -23,30 +23,34 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#include <fcntl.h>
-#include <sys/stat.h>
 #define MODULE_NAME "filesys"
 #define MAKING_FILESYS
+
 #ifdef HAVE_CONFIG_H
-# include "config.h"
+#  include "config.h"
 #endif
+
+#include <fcntl.h>
+#include <sys/stat.h>
 #include <sys/file.h>
-#if HAVE_DIRENT_H
-# include <dirent.h>
-# define NAMLEN(dirent) strlen((dirent)->d_name)
+
+#ifdef HAVE_DIRENT_H
+#  include <dirent.h>
+#  define NAMLEN(dirent) strlen((dirent)->d_name)
 #else
-# define dirent direct
-# define NAMLEN(dirent) (dirent)->d_namlen
-# if HAVE_SYS_NDIR_H
-#  include <sys/ndir.h>
-# endif
-# if HAVE_SYS_DIR_H
-#  include <sys/dir.h>
-# endif
-# if HAVE_NDIR_H
-#  include <ndir.h>
-# endif
+#  define dirent direct
+#  define NAMLEN(dirent) (dirent)->d_namlen
+#  ifdef HAVE_SYS_NDIR_H
+#    include <sys/ndir.h>
+#  endif
+#  ifdef HAVE_SYS_DIR_H
+#    include <sys/dir.h>
+#  endif
+#  ifdef HAVE_NDIR_H
+#    include <ndir.h>
+#  endif
 #endif
+
 #include "src/mod/module.h"
 #include "filedb3.h"
 #include "filesys.h"
@@ -58,8 +62,7 @@
 static p_tcl_bind_list H_fil;
 static Function *transfer_funcs = NULL;
 
-/* fcntl.h sets this :/ */
-#undef global
+#undef global /* Needs to be undef'd because of fcntl.h. */
 static Function *global = NULL;
 
 /* Root dcc directory */
@@ -496,7 +499,7 @@ static int builtin_fil STDVAR
   Function F = (Function) cd;
 
   BADARGS(4, 4, " hand idx param");
-  
+
   idx = findanyidx(atoi(argv[2]));
   if (idx < 0 && dcc[idx].type != &DCC_FILES) {
     Tcl_AppendResult(irp, "invalid idx", NULL);

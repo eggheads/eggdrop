@@ -1,5 +1,5 @@
 /*
- * $Id: uptime.c,v 1.31 2004/05/27 05:23:40 wcc Exp $
+ * $Id: uptime.c,v 1.32 2004/06/14 01:14:07 wcc Exp $
  *
  * This module reports uptime information about your bot to http://uptime.eggheads.org. The
  * purpose for this is to see how your bot rates against many others (including EnergyMechs
@@ -32,6 +32,7 @@
 
 #define MODULE_NAME "uptime"
 #define MAKING_UPTIME
+
 #include "uptime.h"
 #include "../module.h"
 #include "../server.mod/server.h"
@@ -48,7 +49,7 @@
 
 /*
  * both regnr and cookie are unused; however, they both must be here inorder for
- * us to create a proper struct for the uptime server. 
+ * us to create a proper struct for the uptime server.
  */
 
 typedef struct PackUp {

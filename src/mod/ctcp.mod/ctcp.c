@@ -2,7 +2,7 @@
  * ctcp.c -- part of ctcp.mod
  *   all the ctcp handling (except DCC, it's special ;)
  *
- * $Id: ctcp.c,v 1.22 2004/01/09 05:56:38 wcc Exp $
+ * $Id: ctcp.c,v 1.23 2004/06/14 01:14:07 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -25,6 +25,7 @@
 
 #define MODULE_NAME "ctcp"
 #define MAKING_CTCP
+
 #include "ctcp.h"
 #include "src/mod/module.h"
 #include "server.mod/server.h"

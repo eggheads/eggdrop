@@ -2,7 +2,7 @@
  * irc.c -- part of irc.mod
  *   support for channels within the bot
  *
- * $Id: irc.c,v 1.98 2004/04/05 23:35:20 wcc Exp $
+ * $Id: irc.c,v 1.99 2004/06/14 01:14:07 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -32,7 +32,7 @@
 #include "channels.mod/channels.h"
 
 #ifdef HAVE_UNAME
-# include <sys/utsname.h>
+#  include <sys/utsname.h>
 #endif
 
 static p_tcl_bind_list H_topc, H_splt, H_sign, H_rejn, H_part, H_pub, H_pubm;
@@ -250,7 +250,7 @@ static void maybe_revenge(struct chanset_t *chan, char *whobad,
   mevictim = match_my_nick(victim);
 
   /* Do we want to revenge? */
-  if (want_to_revenge(chan, u, u2, badnick, victim, mevictim)) 
+  if (want_to_revenge(chan, u, u2, badnick, victim, mevictim))
     punish_badguy(chan, whobad, u, badnick, victim, mevictim, type);
 }
 
@@ -686,7 +686,7 @@ static int channels_6char STDVAR
   char x[20];
 
   BADARGS(7, 7, " nick user@host handle desto/chan keyword/nick text");
-  
+
   CHECKVALIDITY(channels_6char);
   sprintf(x, "%d", F(argv[1], argv[2], argv[3], argv[4], argv[5], argv[6]));
   Tcl_AppendResult(irp, x, NULL);
@@ -698,7 +698,7 @@ static int channels_5char STDVAR
   Function F = (Function) cd;
 
   BADARGS(6, 6, " nick user@host handle channel text");
-  
+
   CHECKVALIDITY(channels_5char);
   F(argv[1], argv[2], argv[3], argv[4], argv[5]);
   return TCL_OK;
@@ -709,7 +709,7 @@ static int channels_4char STDVAR
   Function F = (Function) cd;
 
   BADARGS(5, 5, " nick uhost hand chan/param");
-  
+
   CHECKVALIDITY(channels_4char);
   F(argv[1], argv[2], argv[3], argv[4]);
   return TCL_OK;
@@ -720,7 +720,7 @@ static int channels_2char STDVAR
   Function F = (Function) cd;
 
   BADARGS(3, 3, " channel type");
-  
+
   CHECKVALIDITY(channels_2char);
   F(argv[1], argv[2]);
   return TCL_OK;

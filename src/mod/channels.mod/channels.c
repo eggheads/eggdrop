@@ -2,7 +2,7 @@
  * channels.c -- part of channels.mod
  *   support for channels within the bot
  *
- * $Id: channels.c,v 1.86 2004/01/09 05:56:37 wcc Exp $
+ * $Id: channels.c,v 1.87 2004/06/14 01:14:06 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -25,6 +25,7 @@
 
 #define MODULE_NAME "channels"
 #define MAKING_CHANNELS
+
 #include <sys/stat.h>
 #include "src/mod/module.h"
 

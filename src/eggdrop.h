@@ -4,7 +4,7 @@
  *
  *   IF YOU ALTER THIS FILE, YOU NEED TO RECOMPILE THE BOT.
  *
- * $Id: eggdrop.h,v 1.59 2004/06/12 01:24:57 wcc Exp $
+ * $Id: eggdrop.h,v 1.60 2004/06/14 01:14:06 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -125,7 +125,7 @@
 #  include "Error: HANDLEN MUST BE <= NICKMAX."
 #endif
 
-#if HAVE_SYS_PARAM_H
+#ifdef HAVE_SYS_PARAM_H
 #  include <sys/param.h>
 #endif
 

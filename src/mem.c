@@ -3,7 +3,7 @@
  *   memory allocation and deallocation
  *   keeping track of what memory is being used by whom
  *
- * $Id: mem.c,v 1.23 2004/02/06 22:36:28 stdarg Exp $
+ * $Id: mem.c,v 1.24 2004/06/14 01:14:06 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -117,7 +117,7 @@ void tell_mem_status_dcc(int idx)
 void debug_mem_to_dcc(int idx)
 {
 #ifdef DEBUG_MEM
-#define MAX_MEM 13
+#  define MAX_MEM 13
   unsigned long exp[MAX_MEM], use[MAX_MEM], l;
   int i, j;
   char fn[20], sofar[81];
@@ -137,10 +137,13 @@ void debug_mem_to_dcc(int idx)
   exp[10] = expmem_modules(1);
   exp[11] = expmem_tcldcc();
   exp[12] = expmem_dns();
+
   for (me = module_list; me; me = me->next)
     me->mem_work = 0;
+
   for (i = 0; i < MAX_MEM; i++)
     use[i] = 0;
+
   for (i = 0; i < lastused; i++) {
     strcpy(fn, memtbl[i].file);
     p = strchr(fn, ':');
@@ -180,6 +183,7 @@ void debug_mem_to_dcc(int idx)
     } else
       dprintf(idx, "Not logging file %s!\n", fn);
   }
+
   for (i = 0; i < MAX_MEM; i++) {
     switch (i) {
     case 0:
@@ -222,6 +226,7 @@ void debug_mem_to_dcc(int idx)
       strcpy(fn, "dns.c");
       break;
     }
+
     if (use[i] == exp[i])
       dprintf(idx, "File '%-10s' accounted for %lu/%lu (ok)\n", fn, exp[i],
               use[i]);
@@ -255,6 +260,7 @@ void debug_mem_to_dcc(int idx)
       }
     }
   }
+
   for (me = module_list; me; me = me->next) {
     Function *f = me->funcs;
     int expt = 0;
@@ -290,6 +296,7 @@ void debug_mem_to_dcc(int idx)
       }
     }
   }
+
   dprintf(idx, "--- End of debug memory list.\n");
 #else
   dprintf(idx, "Compiled without extensive memory debugging (sorry).\n");

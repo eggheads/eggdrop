@@ -2,7 +2,7 @@
  * files.c - part of filesys.mod
  *   handles all file system commands
  *
- * $Id: files.c,v 1.48 2004/01/09 05:56:38 wcc Exp $
+ * $Id: files.c,v 1.49 2004/06/14 01:14:07 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -23,21 +23,21 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#if HAVE_DIRENT_H
-# include <dirent.h>
-# define NAMLEN(dirent) strlen((dirent)->d_name)
+#ifdef HAVE_DIRENT_H
+#  include <dirent.h>
+#  define NAMLEN(dirent) strlen((dirent)->d_name)
 #else
-# define dirent direct
-# define NAMLEN(dirent) (dirent)->d_namlen
-# if HAVE_SYS_NDIR_H
-#  include <sys/ndir.h>
-# endif
-# if HAVE_SYS_DIR_H
-#  include <sys/dir.h>
-# endif
-# if HAVE_NDIR_H
-#  include <ndir.h>
-# endif
+#  define dirent direct
+#  define NAMLEN(dirent) (dirent)->d_namlen
+#  ifdef HAVE_SYS_NDIR_H
+#    include <sys/ndir.h>
+#  endif
+#  ifdef HAVE_SYS_DIR_H
+#    include <sys/dir.h>
+#  endif
+#  ifdef HAVE_NDIR_H
+#    include <ndir.h>
+#  endif
 #endif
 
 #include "src/stat.h"
@@ -1373,7 +1373,7 @@ static cmd_t myfiles[] = {
   {"share",     "j",  (Function) cmd_share,     NULL},
 /* Since we have spelt optimize wrong for so many years, we will
  * keep the old spelling around for the command name for now to
- * avoid problems with people typing .optimise and wondering 
+ * avoid problems with people typing .optimise and wondering
  * where it went (guppy:28Nov2001) */
   {"optimise",  "j",  (Function) cmd_optimize,  NULL},
   {"optimize",  "j",  (Function) cmd_optimize,  NULL},

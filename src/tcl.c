@@ -4,7 +4,7 @@
  *   Tcl initialization
  *   getting and setting Tcl/eggdrop variables
  *
- * $Id: tcl.c,v 1.78 2004/06/11 05:53:03 wcc Exp $
+ * $Id: tcl.c,v 1.79 2004/06/14 01:14:06 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -277,8 +277,8 @@ static char *tcl_eggstr(ClientData cdata, Tcl_Interp *irp,
       return "read-only variable";
     }
 #ifdef USE_TCL_BYTE_ARRAYS
-#undef malloc
-#undef free
+#  undef malloc
+#  undef free
     {
       Tcl_Obj *obj;
       unsigned char *bytes;

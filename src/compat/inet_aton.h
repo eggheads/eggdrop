@@ -2,7 +2,7 @@
  * inet_aton.h
  *   prototypes for inet_aton.c
  *
- * $Id: inet_aton.h,v 1.9 2004/01/12 07:49:17 wcc Exp $
+ * $Id: inet_aton.h,v 1.10 2004/06/14 01:14:06 wcc Exp $
  */
 /*
  * Copyright (C) 2000, 2001, 2002, 2003, 2004 Eggheads Development Team
@@ -26,7 +26,7 @@
 #define _EGG_COMPAT_INET_ATON_H
 
 #include "src/main.h"
-#if HAVE_SYS_SOCKET_H
+#ifdef HAVE_SYS_SOCKET_H
 #  include <sys/socket.h>
 #endif
 #include <netinet/in.h>

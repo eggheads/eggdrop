@@ -5,7 +5,7 @@
  *   note cmds
  *   note ignores
  *
- * $Id: notes.c,v 1.50 2004/02/14 20:11:08 wcc Exp $
+ * $Id: notes.c,v 1.51 2004/06/14 01:14:07 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -28,12 +28,13 @@
 
 #define MODULE_NAME "notes"
 #define MAKING_NOTES
+
 #include <fcntl.h>
 #include <sys/stat.h>           /* chmod(..) */
 #include "src/mod/module.h"
 #include "src/tandem.h"
-#undef global
 #include "notes.h"
+
 
 static int maxnotes = 50;       /* Maximum number of notes to allow stored
                                  * for each user */
@@ -43,6 +44,8 @@ static int allow_fwd = 0;       /* Allow note forwarding */
 static int notify_users = 0;    /* Notify users they have notes every hour? */
 static int notify_onjoin = 1;   /* Notify users they have notes on join?
                                  * drummer */
+
+#undef global /* Needs to be undef'd because of fcntl.h. */
 static Function *global = NULL; /* DAMN fcntl.h */
 
 static struct user_entry_type USERENTRY_FWD = {

@@ -3,7 +3,7 @@
  *   saved console settings based on console.tcl
  *   by cmwagner/billyjoe/D. Senso
  *
- * $Id: console.c,v 1.30 2004/01/09 05:56:37 wcc Exp $
+ * $Id: console.c,v 1.31 2004/06/14 01:14:06 wcc Exp $
  */
 /*
  * Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004 Eggheads Development Team
@@ -25,6 +25,7 @@
 
 #define MODULE_NAME "console"
 #define MAKING_CONSOLE
+
 #include "src/mod/module.h"
 #include <stdlib.h>
 #include "console.h"

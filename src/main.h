@@ -2,7 +2,7 @@
  * main.h
  *   include file to include most other include files
  *
- * $Id: main.h,v 1.27 2004/05/26 00:20:19 wcc Exp $
+ * $Id: main.h,v 1.28 2004/06/14 01:14:06 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -80,17 +80,21 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
 #ifdef HAVE_STRINGS_H
 #  include <strings.h>
 #endif
+
 #include <sys/types.h>
 #include "lush.h"
 #include "lang.h"
 #include "eggdrop.h"
 #include "flags.h"
+
 #ifndef MAKING_MODS
 #  include "proto.h"
 #endif
+
 #include "cmdt.h"
 #include "tclegg.h"
 #include "tclhash.h"
@@ -114,7 +118,6 @@ extern struct dcc_table DCC_CHAT, DCC_BOT, DCC_LOST, DCC_SCRIPT, DCC_BOT_NEW,
                         DCC_CHAT_PASS, DCC_FORK_BOT, DCC_SOCKET, DCC_TELNET_ID,
                         DCC_TELNET_NEW, DCC_TELNET_PW, DCC_TELNET, DCC_IDENT,
                         DCC_IDENTWAIT, DCC_DNSWAIT;
-
 #endif
 
 #define iptolong(a) (0xffffffff & (long) (htonl((unsigned long) a)))

@@ -7,7 +7,7 @@
  *   telling the current programmed settings
  *   initializing a lot of stuff and loading the tcl scripts
  *
- * $Id: chanprog.c,v 1.55 2004/06/13 21:02:13 wcc Exp $
+ * $Id: chanprog.c,v 1.56 2004/06/14 01:14:06 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -29,15 +29,18 @@
  */
 
 #include "main.h"
-#if HAVE_GETRUSAGE
-#include <sys/resource.h>
-#if HAVE_SYS_RUSAGE_H
-#include <sys/rusage.h>
+
+#ifdef HAVE_GETRUSAGE
+#  include <sys/resource.h>
+#  ifdef HAVE_SYS_RUSAGE_H
+#    include <sys/rusage.h>
+#  endif
 #endif
-#endif
+
 #ifdef HAVE_UNAME
-#include <sys/utsname.h>
+#  include <sys/utsname.h>
 #endif
+
 #include "modules.h"
 
 extern struct userrec *userlist;
@@ -116,6 +119,7 @@ struct chanset_t *findchan_by_dname(const char *name)
       return chan;
   return NULL;
 }
+
 
 /*
  *    "caching" functions
@@ -264,13 +268,12 @@ void tell_verbose_status(int idx)
   char *vers_t, *uni_t;
   int i;
   time_t now2 = now - online_since, hr, min;
-
-#if HAVE_GETRUSAGE
+#ifdef HAVE_GETRUSAGE
   struct rusage ru;
 #else
-# if HAVE_CLOCK
+#  ifdef HAVE_CLOCK
   clock_t cl;
-# endif
+#  endif
 #endif
 #ifdef HAVE_UNAME
   struct utsname un;
@@ -315,20 +318,20 @@ void tell_verbose_status(int idx)
     else
       strcpy(s1, MISC_LOGMODE);
   }
-#if HAVE_GETRUSAGE
+#ifdef HAVE_GETRUSAGE
   getrusage(RUSAGE_SELF, &ru);
   hr = (int) ((ru.ru_utime.tv_sec + ru.ru_stime.tv_sec) / 60);
   min = (int) ((ru.ru_utime.tv_sec + ru.ru_stime.tv_sec) - (hr * 60));
   sprintf(s2, "CPU: %02d:%02d", (int) hr, (int) min);    /* Actally min/sec */
 #else
-# if HAVE_CLOCK
+#  ifdef HAVE_CLOCK
   cl = (clock() / CLOCKS_PER_SEC);
   hr = (int) (cl / 60);
   min = (int) (cl - (hr * 60));
   sprintf(s2, "CPU: %02d:%02d", (int) hr, (int) min);    /* Actually min/sec */
-# else
+#  else
   sprintf(s2, "CPU: unknown");
-# endif
+#  endif
 #endif
   dprintf(idx, "%s %s (%s) - %s - %s: %4.1f%%\n", MISC_ONLINEFOR,
           s, s1, s2, MISC_CACHEHIT,
@@ -352,7 +355,7 @@ void tell_verbose_status(int idx)
           interp->result : "*unknown*", MISC_TCLHVERSION,
           TCL_PATCH_LEVEL ? TCL_PATCH_LEVEL : "*unknown*");
 
-#if HAVE_TCL_THREADS
+#ifdef HAVE_TCL_THREADS
   dprintf(idx, "Tcl is threaded.\n");
 #endif
 

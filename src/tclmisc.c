@@ -2,7 +2,7 @@
  * tclmisc.c -- handles:
  *   Tcl stubs for everything else
  *
- * $Id: tclmisc.c,v 1.51 2004/06/11 05:53:03 wcc Exp $
+ * $Id: tclmisc.c,v 1.52 2004/06/14 01:14:06 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -27,19 +27,22 @@
 #include "modules.h"
 #include "tandem.h"
 #include "md5/md5.h"
+
 #ifdef TIME_WITH_SYS_TIME
-# include <sys/time.h>
-# include <time.h>
-#else
-# ifdef HAVE_SYS_TIME_H
 #  include <sys/time.h>
-# else
 #  include <time.h>
-# endif
+#else
+#  ifdef HAVE_SYS_TIME_H
+#    include <sys/time.h>
+#  else
+#    include <time.h>
+#  endif
 #endif
+
 #include <sys/stat.h>
+
 #ifdef HAVE_UNAME
-#include <sys/utsname.h>
+#  include <sys/utsname.h>
 #endif
 
 extern p_tcl_bind_list bind_table_list;
@@ -57,11 +60,13 @@ int expmem_tclmisc()
 {
   int i, tot = 0;
 
-  for (i = 0; i < max_logs; i++)
+  for (i = 0; i < max_logs; i++) {
     if (logs[i].filename != NULL) {
       tot += strlen(logs[i].filename) + 1;
       tot += strlen(logs[i].chname) + 1;
     }
+  }
+
   return tot;
 }
 

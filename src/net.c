@@ -2,7 +2,7 @@
  * net.c -- handles:
  *   all raw network i/o
  *
- * $Id: net.c,v 1.68 2004/06/11 05:53:03 wcc Exp $
+ * $Id: net.c,v 1.69 2004/06/14 01:14:06 wcc Exp $
  */
 /*
  * This is hereby released into the public domain.
@@ -19,14 +19,14 @@
 #  include <sys/select.h>
 #endif
 #include <netinet/in.h>
-#include <arpa/inet.h>          /* is this really necessary? */
+#include <arpa/inet.h>
 #include <errno.h>
 #if HAVE_UNISTD_H
 #  include <unistd.h>
 #endif
 #include <setjmp.h>
 
-#if !HAVE_GETDTABLESIZE
+#ifndef HAVE_GETDTABLESIZE
 #  ifdef FD_SETSIZE
 #    define getdtablesize() FD_SETSIZE
 #  else
