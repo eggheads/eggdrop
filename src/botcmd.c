@@ -3,7 +3,7 @@
  *   commands that comes across the botnet
  *   userfile transfer and update commands from sharebots
  * 
- * $Id: botcmd.c,v 1.13 2000/01/30 19:26:19 fabian Exp $
+ * $Id: botcmd.c,v 1.14 2000/01/31 23:03:01 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -291,10 +291,15 @@ static void bot_priv(int idx, char *par)
 static void bot_bye(int idx, char *par)
 {
   char s[1024];
+  int users, bots;
 
   Context;
-  simple_sprintf(s, "%s %s (%s)", BOT_DISCONNECTED, dcc[idx].nick, par[0] ?
-		 par : "No reason");
+  bots = bots_in_subtree(findbot(dcc[idx].nick));
+  users = users_in_subtree(findbot(dcc[idx].nick));
+  simple_sprintf(s, "%s %s. %s (lost %d bot%s and %d user%s)",
+		 BOT_DISCONNECTED, dcc[idx].nick, par[0] ?
+		 par : "No reason", bots, (bots != 1) ?
+		 "s" : "", users, (users != 1) ? "s" : "");
   putlog(LOG_BOTS, "*", "%s", s);
   chatout("*** %s\n", s);
   botnet_send_unlinked(idx, dcc[idx].nick, s);
@@ -721,11 +726,16 @@ static void bot_nlinked(int idx, char *par)
 static void bot_linked(int idx, char *par)
 {
   char s[1024];
+  int bots, users;
 
   Context;
+  bots = bots_in_subtree(findbot(dcc[idx].nick));
+  users = users_in_subtree(findbot(dcc[idx].nick));
   putlog(LOG_BOTS, "*", "%s", BOT_OLDBOT);
-  simple_sprintf(s, "%s %s (%s)", MISC_DISCONNECTED,
-		 dcc[idx].nick, MISC_OUTDATED);
+  simple_sprintf(s, "%s %s (%s) (lost %d bot%s and %d user%s",
+  		 MISC_DISCONNECTED, dcc[idx].nick, MISC_OUTDATED,
+		 bots, (bots != 1) ? "s" : "", users,
+		 (users != 1) ? "s" : "");
   chatout("*** %s\n", s);
   botnet_send_unlinked(idx, dcc[idx].nick, s);
   killsock(dcc[idx].sock);

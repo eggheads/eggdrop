@@ -7,7 +7,7 @@
  *   linking, unlinking, and relaying to another bot
  *   pinging the bots periodically and checking leaf status
  * 
- * $Id: botnet.c,v 1.18 2000/01/30 19:26:19 fabian Exp $
+ * $Id: botnet.c,v 1.19 2000/01/31 23:03:01 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -824,12 +824,56 @@ int in_chain(char *who)
   return 0;
 }
 
+int bots_in_subtree(tand_t *bot)
+{
+  int nr = 1;
+  tand_t *b;
+
+  Context;
+  if (!bot)
+    return 0;
+  for (b = tandbot; b; b = b->next) {
+    Context;
+    if (b->bot && (b->uplink == bot)) {
+      nr += bots_in_subtree(b);
+    }
+  }
+  Context;
+  return nr;
+}
+
+int users_in_subtree(tand_t *bot)
+{
+  int i, nr;
+  tand_t *b;
+
+  Context;
+  nr = 0;
+  if (!bot)
+    return 0;
+  for (i = 0; i < parties; i++) {
+    if (!strcmp(party[i].bot, bot->bot)) {
+      nr++;
+    }
+  }
+  for (b = tandbot; b; b = b->next) {
+    Context;
+    if (b->bot && (b->uplink == bot)) {
+      nr += users_in_subtree(b);
+    }
+  }
+  Context;
+  return nr;
+}
+
 /* Break link with a tandembot
  */
 int botunlink(int idx, char *nick, char *reason)
 {
   char s[20];
   register int i;
+  int bots, users;
+  tand_t *bot;
 
   Context;
   if (nick[0] == '*')
@@ -867,12 +911,19 @@ int botunlink(int idx, char *nick, char *reason)
 	  dprintf(idx, "%s %s.\n", BOT_BREAKLINK, dcc[i].nick);
 	else if ((idx == -3) && (b_status(i) & STAT_SHARE) && !share_unlinks)
 	  return -1;
+	bot = findbot(dcc[i].nick);
+	bots = bots_in_subtree(bot);
+	users = users_in_subtree(bot);
 	if (reason && reason[0]) {
-	  simple_sprintf(s, "%s %s (%s)", BOT_UNLINKEDFROM,
-			 dcc[i].nick, reason);
+	  simple_sprintf(s, "%s %s (%s) (lost %d bot%s and %d user%s)",
+	  		 BOT_UNLINKEDFROM, dcc[i].nick, reason, bots,
+			 (bots > 1) ? "s" : "", users, (users > 1) ?
+			 "s" : "");
 	  dprintf(i, "bye %s\n", reason);
 	} else {
-	  simple_sprintf(s, "%s %s", BOT_UNLINKEDFROM, dcc[i].nick);
+	  simple_sprintf(s, "%s %s (lost %d bot%s and %d user%s)",
+	  		 BOT_UNLINKEDFROM, dcc[i].nick, bots, (bots > 1) ?
+			 "s" : "", users, (users > 1) ? "s" : "");
 	  dprintf(i, "bye No reason\n");
 	}
 	chatout("*** %s\n", s);
@@ -894,7 +945,7 @@ int botunlink(int idx, char *nick, char *reason)
     while (parties) {
       parties--;
       /* Assert? */
-      if (party[i].chan >= 0) 
+      if (party[i].chan >= 0)
         check_tcl_chpt(party[i].bot, party[i].nick, party[i].sock,
 		       party[i].chan);
     }
@@ -1526,6 +1577,8 @@ struct dcc_table DCC_PRE_RELAY =
 void check_botnet_pings()
 {
   int i;
+  int bots, users;
+  tand_t *bot;
 
   Context;
   for (i = 0; i < dcc_total; i++)
@@ -1534,7 +1587,12 @@ void check_botnet_pings()
 	char s[1024];
 
 	putlog(LOG_BOTS, "*", "%s: %s", BOT_PINGTIMEOUT, dcc[i].nick);
-	simple_sprintf(s, "%s: %s", BOT_PINGTIMEOUT, dcc[i].nick);
+	bot = findbot(dcc[i].nick);
+	bots = bots_in_subtree(bot);
+	users = users_in_subtree(bot);
+	simple_sprintf(s, "%s: %s (lost %d bot%s and %d user%s)", BOT_PINGTIMEOUT,
+		       dcc[i].nick, bots, (bots != 1) ? "s" : "",
+		       users, (users != 1) ? "s" : "");
 	chatout("*** %s\n", s);
 	botnet_send_unlinked(i, dcc[i].nick, s);
 	killsock(dcc[i].sock);
@@ -1560,8 +1618,13 @@ void check_botnet_pings()
 	    putlog(LOG_BOTS, "*", "%s %s (%s).", BOT_DISCONNECTED,
 		   dcc[i].nick, BOT_BOTNOTLEAFLIKE);
 	    dprintf(i, "bye %s\n", BOT_BOTNOTLEAFLIKE);
-	    simple_sprintf(s, "%s %s (%s)", BOT_DISCONNECTED, dcc[i].nick,
-			   BOT_BOTNOTLEAFLIKE);
+	    bot = findbot(dcc[i].nick);
+	    bots = bots_in_subtree(bot);
+	    users = users_in_subtree(bot);
+	    simple_sprintf(s, "%s %s (%s) (lost %d bot%s and %d user%s)",
+	    		   BOT_DISCONNECTED, dcc[i].nick, BOT_BOTNOTLEAFLIKE,
+			   bots, (bots != 1) ? "s" : "", users, (users != 1) ?
+			   "s" : "");
 	    chatout("*** %s\n", s);
 	    botnet_send_unlinked(i, dcc[i].nick, s);
 	    killsock(dcc[i].sock);
@@ -1581,8 +1644,15 @@ void check_botnet_pings()
 void zapfbot(int idx)
 {
   char s[1024];
+  int bots, users;
+  tand_t *bot;
 
-  simple_sprintf(s, "%s: %s", BOT_BOTDROPPED, dcc[idx].nick);
+  bot = findbot(dcc[idx].nick);
+  bots = bots_in_subtree(bot);
+  users = users_in_subtree(bot);
+  simple_sprintf(s, "%s: %s (lost %d bot%s and %d user%s)", BOT_BOTDROPPED,
+  		 dcc[idx].nick, bots, (bots != 1) ? "s" : "", users,
+		 (users != 1) ? "s" : "");
   chatout("*** %s\n", s);
   botnet_send_unlinked(idx, dcc[idx].nick, s);
   killsock(dcc[idx].sock);

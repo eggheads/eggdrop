@@ -1,7 +1,7 @@
 /* 
  * tandem.h
  * 
- * $Id: tandem.h,v 1.5 2000/01/30 19:26:21 fabian Exp $
+ * $Id: tandem.h,v 1.6 2000/01/31 23:03:01 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -93,6 +93,8 @@ void botnet_send_part_party(int, int, char *, int);
 void botnet_send_bye();
 void botnet_send_nkch_part(int, int, char *);
 void botnet_send_nkch(int, char *);
+int bots_in_subtree(tand_t *);
+int users_in_subtree(tand_t *);
 
 #endif				/* MAKING_MODS */
 

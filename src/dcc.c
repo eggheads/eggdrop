@@ -4,7 +4,7 @@
  *   disconnect on a dcc socket
  *   ...and that's it!  (but it's a LOT)
  * 
- * $Id: dcc.c,v 1.22 2000/01/30 19:26:20 fabian Exp $
+ * $Id: dcc.c,v 1.23 2000/01/31 23:03:01 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -242,6 +242,7 @@ static void cont_link(int idx, char *buf, int i)
 {
   char x[1024];
   int atr = bot_flags(dcc[idx].user);
+  int users, bots;
 
   Context;
   if (atr & BOT_HUB) {
@@ -259,7 +260,11 @@ static void cont_link(int idx, char *buf, int i)
     if (in_chain(dcc[idx].nick)) {
       i = nextbot(dcc[idx].nick);
       if (i > 0) {
-	simple_sprintf(x, "Unlinked %s (restructure)", dcc[i].nick);
+	bots = bots_in_subtree(findbot(dcc[idx].nick));
+	users = users_in_subtree(findbot(dcc[idx].nick));
+	simple_sprintf(x, "Unlinked %s (restructure) (lost %d bot%s and %d \
+	               user%s)", dcc[i].nick, bots, (bots != 1) ? "s" : "",
+		       users, (users != 1) ? "s" : "");
 	chatout("*** %s\n", x);
 	botnet_send_unlinked(i, dcc[i].nick, x);
 	dprintf(i, "bye %s\n", "restructure");
@@ -317,7 +322,7 @@ static void dcc_bot_new(int idx, char *buf, int x)
     putlog(LOG_BOTS, "*", DCC_BADPASS, dcc[idx].nick);
   } else if (!strcasecmp(code, "passreq")) {
     char *pass = get_user(&USERENTRY_PASS, u);
-    
+
     if (!pass || !strcmp(pass, "-")) {
       putlog(LOG_BOTS, "*", DCC_PASSREQ, dcc[idx].nick);
       dprintf(idx, "-\n");
@@ -426,8 +431,13 @@ static void dcc_bot(int idx, char *code, int i)
 static void eof_dcc_bot(int idx)
 {
   char x[1024];
+  int bots, users;
 
-  simple_sprintf(x, "Lost bot: %s", dcc[idx].nick);
+  bots = bots_in_subtree(findbot(dcc[idx].nick));
+  users = users_in_subtree(findbot(dcc[idx].nick));
+  simple_sprintf(x, "Lost bot: %s (lost %d bot%s and %d user%s)",
+  		 dcc[idx].nick, bots, (bots != 1) ? "s" : "", users,
+		 (users != 1) ? "s" : "");
   putlog(LOG_BOTS, "*", "%s.", x);
   chatout("*** %s\n", x);
   botnet_send_unlinked(idx, dcc[idx].nick, x);
@@ -499,9 +509,9 @@ static int dcc_bot_check_digest(int idx, char *remote_digest)
   unsigned char digest[16];
   int           i;
   char          *password = get_user(&USERENTRY_PASS, dcc[idx].user);
-  
+
   MD5Init(&md5context);
-  
+
 #ifdef HAVE_SNPRINTF
   snprintf(digest_string, 33, "<%x%x@", getpid(),
 	   (unsigned int) dcc[idx].timeval);
@@ -1486,7 +1496,7 @@ static void dcc_telnet_pass(int idx, int atr)
     dcc[idx].u.file = get_data_ptr(sizeof(struct file_info));
     dcc[idx].u.file->chat = ci;
   }
-  
+
   if (glob_bot(fr)) {
     /* Must generate a string consisting of our process ID and the current
      * time. The bot will add it's password to the end and use it to generate

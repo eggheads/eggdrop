@@ -1,7 +1,7 @@
 /* 
  * module.h
  * 
- * $Id: module.h,v 1.23 2000/01/30 19:26:21 fabian Exp $
+ * $Id: module.h,v 1.24 2000/01/31 23:03:02 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -391,6 +391,8 @@
 #define userfile_perm (*(int *)global[247])
 /* 248 - 251 */
 #define sock_has_data ((int(*)(int, int))global[248])
+#define bots_in_subtree ((int (*)(tand_t *))global[249])
+#define users_in_subtree ((int (*)(tand_t *))global[250])
 
 
 /* This is for blowfish module, couldnt be bothereed making a whole new .h
