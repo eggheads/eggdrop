@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  *
- * $Id: chan.c,v 1.97 2002/09/22 09:22:10 wcc Exp $
+ * $Id: chan.c,v 1.98 2002/09/22 18:10:21 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -734,9 +734,9 @@ static void check_this_member(struct chanset_t *chan, char *nick, struct flag_re
           m->flags |= SENTOP;
 	}
       } else if (!chan_hasop(m) && !chan_hashalfop(m) && (chan_halfop(*fr) ||
-               (glob_halfop(*fr) && !chan_dehalfop(*fr))) &&
-               (channel_autohalfop(chan) || glob_autohalfop(*fr) ||
-               chan_autohalfop(*fr))) {
+                 (glob_halfop(*fr) && !chan_dehalfop(*fr))) &&
+                 (channel_autohalfop(chan) || glob_autohalfop(*fr) ||
+                 chan_autohalfop(*fr))) {
         if (!chan->aop_min)
           add_mode(chan, '+', 'h', m->nick);
         else {
