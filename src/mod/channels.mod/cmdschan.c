@@ -1251,7 +1251,7 @@ static void cmd_chanset(struct userrec *u, int idx, char *par)
   struct chanset_t *chan = NULL;
 
   if (!par[0])
-    dprintf(idx, "Usage: chanset [#channel] <settings>\n");
+    dprintf(idx, "Usage: chanset [%schannel] <settings>\n", CHANMETA);
   else {
     if (strchr(CHANMETA, par[0])) {
       chname = newsplit(&par);

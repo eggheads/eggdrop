@@ -283,7 +283,7 @@ static int tcl_console STDVAR
 	Tcl_AppendResult(irp, "invalid channel", NULL);
 	return TCL_ERROR;
       }
-      strncpy(dcc[i].u.chat->con_chan, argv[arg], 80);
+      strncpy(dcc[i].u.chat->con_chan, argv[arg], 81);
       dcc[i].u.chat->con_chan[80] = 0;
     } else {
       if ((argv[arg][0] != '+') && (argv[arg][0] != '-'))

@@ -139,9 +139,7 @@ int def_set(struct userrec *u, struct user_entry *e, void *buf)
     nfree(e->u.string);
     e->u.string = NULL;
   }
-
   Assert(u != NULL);
-
   if (!noshare && !(u->flags & (USER_BOT | USER_UNSHARED))) { 
     if (e->type != &USERENTRY_INFO || share_greet) 
       shareout(NULL, "c %s %s %s\n", e->type->name, u->handle, e->u.string ? e->u.string : ""); 
@@ -691,8 +689,8 @@ int xtra_set(struct userrec *u, struct user_entry *e, void *buf)
 {
   struct xtra_key *curr, *old = NULL, *new = buf;
 
-  Assert(new != NULL);
   Context;
+  Assert(new != NULL);
   for (curr = e->u.extra; curr; curr = curr->next) {
     if (curr->key && !strcasecmp(curr->key, new->key)) {
       old = curr;

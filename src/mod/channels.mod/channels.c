@@ -207,7 +207,6 @@ static int ismodeline(masklist *m, char *user)
       return 1;
     m = m->next;
   }
-
   return 0;
 }
 
@@ -219,7 +218,6 @@ static int ismasked(masklist *m, char *user)
       return 1;
     m = m->next;
   }
-
   return 0;
 }
 
@@ -610,10 +608,8 @@ static int expmem_masklist(masklist *m)
         result += strlen(m->mask) + 1;
     if (m->who)
         result += strlen(m->who) + 1;
-
     m = m->next;
   }
-
   return result;
 }
 

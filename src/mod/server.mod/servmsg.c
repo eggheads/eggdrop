@@ -967,7 +967,8 @@ static void kill_server(int idx, void *x)
   module_entry *me;
 
   server_online = 0;
-  killsock(dcc[idx].sock);
+  if (dcc[idx].sock >= 0)
+    killsock(dcc[idx].sock);
   serv = -1;
   if ((me = module_find("channels", 0, 0)) && me->funcs) {
     struct chanset_t *chan;

@@ -1746,7 +1746,7 @@ static int gotmsg(char *from, char *msg)
   struct flag_record fr =
   {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
 
-  if (!strchr("&#@$", msg[0]))
+  if (!strchr("&#+@$", msg[0]))
     return 0;
   ignoring = match_ignore(from);
   to = newsplit(&msg);

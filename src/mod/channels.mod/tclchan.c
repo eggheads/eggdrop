@@ -171,8 +171,8 @@ static int tcl_stickexempt STDVAR
     chan = findchan(argv[2]);
     if (!chan) {
       Tcl_AppendResult(irp, "invalid channel: ", argv[2], NULL);
-    return TCL_ERROR;
-  }
+      return TCL_ERROR;
+    }
     if (u_setsticky_exempt(chan, argv[1], !strncmp(argv[0], "un", 2) ? 0 : 1))
       ok = 1;
   }
@@ -294,7 +294,7 @@ static int tcl_isexemptsticky STDVAR
     if (!chan) {
       Tcl_AppendResult(irp, "invalid channel: ", argv[2], NULL);
       return TCL_ERROR;
-       }
+    }
     if (u_sticky_mask(chan->exempts, argv[1]))
       ok = 1;
   }
@@ -366,8 +366,8 @@ static int tcl_ispermexempt STDVAR
       Tcl_AppendResult(irp, "invalid channel: ", argv[2], NULL);
       return TCL_ERROR;
     }
-      if (u_equals_mask(chan->exempts, argv[1]) == 2)
-	ok = 1;
+    if (u_equals_mask(chan->exempts, argv[1]) == 2)
+      ok = 1;
   }
   if (u_equals_mask(global_exempts,argv[1]) == 2)
     ok = 1;
@@ -427,48 +427,48 @@ static int tcl_matchban STDVAR
 
 static int tcl_matchexempt STDVAR
 {
-   struct chanset_t *chan;
-   int ok = 0;
-    BADARGS(2, 3, " user!nick@host ?channel?");
-   if (argc == 3) {
-      chan = findchan(argv[2]);
-      if (chan == NULL) {
-     Tcl_AppendResult(irp, "invalid channel: ", argv[2], NULL);
-     return TCL_ERROR;
-      }
-      if (u_match_mask(chan->exempts, argv[1]))
+  struct chanset_t *chan;
+  int ok = 0;
+  BADARGS(2, 3, " user!nick@host ?channel?");
+  if (argc == 3) {
+    chan = findchan(argv[2]);
+    if (chan == NULL) {
+      Tcl_AppendResult(irp, "invalid channel: ", argv[2], NULL);
+      return TCL_ERROR;
+    }
+    if (u_match_mask(chan->exempts, argv[1]))
       ok = 1;
-   }
-   if (u_match_mask(global_exempts,argv[1]))
-      ok = 1;
-   if (ok)
-      Tcl_AppendResult(irp, "1", NULL);
-   else
-      Tcl_AppendResult(irp, "0", NULL);
-   return TCL_OK;
+  }
+  if (u_match_mask(global_exempts,argv[1]))
+    ok = 1;
+  if (ok)
+    Tcl_AppendResult(irp, "1", NULL);
+  else
+    Tcl_AppendResult(irp, "0", NULL);
+  return TCL_OK;
 }
 
 static int tcl_matchinvite STDVAR
 {
-   struct chanset_t *chan;
-   int ok = 0;
-    BADARGS(2, 3, " user!nick@host ?channel?");
-   if (argc == 3) {
-      chan = findchan(argv[2]);
-      if (chan == NULL) {
-     Tcl_AppendResult(irp, "invalid channel: ", argv[2], NULL);
-     return TCL_ERROR;
-      }
-      if (u_match_mask(chan->invites, argv[1]))
+  struct chanset_t *chan;
+  int ok = 0;
+  BADARGS(2, 3, " user!nick@host ?channel?");
+  if (argc == 3) {
+    chan = findchan(argv[2]);
+    if (chan == NULL) {
+      Tcl_AppendResult(irp, "invalid channel: ", argv[2], NULL);
+      return TCL_ERROR;
+    }
+    if (u_match_mask(chan->invites, argv[1]))
       ok = 1;
-   }
-   if (u_match_mask(global_invites,argv[1]))
-      ok = 1;
-   if (ok)
-      Tcl_AppendResult(irp, "1", NULL);
-   else
-      Tcl_AppendResult(irp, "0", NULL);
-   return TCL_OK;
+  }
+  if (u_match_mask(global_invites,argv[1]))
+    ok = 1;
+  if (ok)
+    Tcl_AppendResult(irp, "1", NULL);
+  else
+    Tcl_AppendResult(irp, "0", NULL);
+  return TCL_OK;
 }
 
 static int tcl_newchanban STDVAR
@@ -1128,16 +1128,18 @@ static int tcl_channel_modify(Tcl_Interp * irp, struct chanset_t *chan,
   */
   if (protect_readonly || chan_hack) {
     if (((oldstatus ^ chan->status) & CHAN_INACTIVE) &&
-        module_find("irc", 0, 0)) {
-      if (channel_inactive(chan) && (chan->status & (CHAN_ACTIVE | CHAN_PEND)))
-        dprintf(DP_SERVER, "PART %s\n", chan->name);
-      if (!channel_inactive(chan) && !(chan->status & (CHAN_ACTIVE | CHAN_PEND)))
-        dprintf(DP_SERVER, "JOIN %s %s\n", chan->name, chan->key_prot);
+	module_find("irc", 0, 0)) {
+      if (channel_inactive(chan) &&
+	  (chan->status & (CHAN_ACTIVE | CHAN_PEND)))
+	dprintf(DP_SERVER, "PART %s\n", chan->name);
+      if (!channel_inactive(chan) &&
+	  !(chan->status & (CHAN_ACTIVE | CHAN_PEND)))
+	dprintf(DP_SERVER, "JOIN %s %s\n", chan->name, chan->key_prot);
     }
     if ((oldstatus ^ chan->status) &
-        (CHAN_ENFORCEBANS | CHAN_OPONJOIN | CHAN_BITCH | CHAN_AUTOVOICE))
+	(CHAN_ENFORCEBANS | CHAN_OPONJOIN | CHAN_BITCH | CHAN_AUTOVOICE))
       if ((me = module_find("irc", 0, 0)))
-        (me->funcs[IRC_RECHECK_CHANNEL])(chan, 1);
+	(me->funcs[IRC_RECHECK_CHANNEL])(chan, 1);
   }
   if (x > 0) 
     return TCL_ERROR;
@@ -1468,7 +1470,7 @@ static int tcl_channel_add(Tcl_Interp * irp, char *newname, char *options)
   char buf[2048];
   char buf2[256];
 
-  if ((newname[0] != '#') && (newname[0] != '&'))
+  if (!newname || !newname[0] || !strchr(CHANMETA, newname[0]))
     return TCL_ERROR;
   Context;
   convert_element(glob_chanmode, buf2);

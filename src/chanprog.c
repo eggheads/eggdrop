@@ -187,8 +187,7 @@ int expmem_chanprog()
   int tot;
   tcl_timer_t *t;
 
-  
-Context;
+  Context;
   tot = 0;
   for (t = timer; t; t = t->next) {
     tot += sizeof(tcl_timer_t);

@@ -1,25 +1,25 @@
 /* these *were* something, but changed */
-#define HOOK_GET_FLAGREC         0
-#define HOOK_BUILD_FLAGREC       1
-#define HOOK_SET_FLAGREC         2
-#define HOOK_READ_USERFILE       3
-#define HOOK_REHASH              4
-#define HOOK_MINUTELY            5
-#define HOOK_DAILY               6
-#define HOOK_HOURLY              7
-#define HOOK_USERFILE            8
-#define HOOK_SECONDLY            9
-#define HOOK_PRE_REHASH          10
-#define HOOK_IDLE                11
-#define HOOK_5MINUTELY           12
-#define REAL_HOOKS               13
-#define HOOK_SHAREOUT            105
-#define HOOK_SHAREIN             106
-#define HOOK_ENCRYPT_PASS        107
-#define HOOK_QSERV               108
-#define HOOK_ADD_MODE            109
-#define HOOK_MATCH_NOTEREJ	 110
-#define HOOK_RFC_CASECMP	 111
+#define HOOK_GET_FLAGREC	  0
+#define HOOK_BUILD_FLAGREC	  1
+#define HOOK_SET_FLAGREC	  2
+#define HOOK_READ_USERFILE	  3
+#define HOOK_REHASH		  4
+#define HOOK_MINUTELY		  5
+#define HOOK_DAILY		  6
+#define HOOK_HOURLY		  7
+#define HOOK_USERFILE		  8
+#define HOOK_SECONDLY		  9
+#define HOOK_PRE_REHASH		 10
+#define HOOK_IDLE		 11
+#define HOOK_5MINUTELY		 12
+#define REAL_HOOKS		 13
+#define HOOK_SHAREOUT		105
+#define HOOK_SHAREIN		106
+#define HOOK_ENCRYPT_PASS	107
+#define HOOK_QSERV		108
+#define HOOK_ADD_MODE		109
+#define HOOK_MATCH_NOTEREJ	110
+#define HOOK_RFC_CASECMP	111
 
 /* these are FIXED once they are in a release they STAY
  * well, unless im feeling grumpy ;) */

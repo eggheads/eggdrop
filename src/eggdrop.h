@@ -200,8 +200,9 @@ struct dcc_table {
 struct userrec;
 
 struct dcc_t {
-  long sock;			/* this should be a long to keep 64-bit machines sane */
-  IP addr;
+  long sock;			/* this should be a long to keep 64-bit
+				 * machines sane */
+  IP addr;			/* IP address in host byte order */
   unsigned int port;
   struct userrec *user;
   char nick[NICKLEN];
@@ -209,8 +210,8 @@ struct dcc_t {
   struct dcc_table *type;
   time_t timeval;		/* use for any timing stuff 
 				 * - this is used for timeout checking */
-  unsigned long status;		/* A LOT of dcc types have status thingos, this
-				 * makes it more avaliabe */
+  unsigned long status;		/* A LOT of dcc types have status thingos,
+				 * this makes it more avaliabe */
   union {
     struct chat_info *chat;
     struct file_info *file;
@@ -389,14 +390,14 @@ typedef struct {
 #define FILEDB_UNSHARE  4
 
 /* socket flags: */
-#define SOCK_UNUSED     0x01	/* empty socket */
-#define SOCK_BINARY     0x02	/* do not buffer input */
-#define SOCK_LISTEN     0x04	/* listening port */
-#define SOCK_CONNECT    0x08	/* connection attempt */
-#define SOCK_NONSOCK    0x10	/* used for file i/o on debug */
-#define SOCK_STRONGCONN 0x20	/* don't report success until sure */
-#define SOCK_EOFD       0x40	/* it EOF'd recently during a write */
-#define SOCK_PROXYWAIT	0x80	/* waiting for SOCKS traversal */
+#define SOCK_UNUSED     0x001	/* empty socket */
+#define SOCK_BINARY     0x002	/* do not buffer input */
+#define SOCK_LISTEN     0x004	/* listening port */
+#define SOCK_CONNECT    0x008	/* connection attempt */
+#define SOCK_NONSOCK    0x010	/* used for file i/o on debug */
+#define SOCK_STRONGCONN 0x020	/* don't report success until sure */
+#define SOCK_EOFD       0x040	/* it EOF'd recently during a write */
+#define SOCK_PROXYWAIT	0x080	/* waiting for SOCKS traversal */
 
 /* fake idx's for dprintf - these should be ridiculously large +ve nums */
 #define DP_STDOUT       0x7FF1

@@ -63,7 +63,8 @@ static int tcl_puthelp STDVAR
   return TCL_OK;
 }
 
-static int tcl_jump STDVAR {
+static int tcl_jump STDVAR
+{
   BADARGS(1, 4, " ?server? ?port? ?pass?");
   if (argc >= 2) {
     strcpy(newserver, argv[1]);
@@ -84,6 +85,7 @@ static int tcl_clearqueue STDVAR
   struct msgq *q, *qq;
   int msgs;
   char s[20];
+
   msgs = 0;
   BADARGS(2,2, " queue");
   if (!strcmp(argv[1],"all")) {
