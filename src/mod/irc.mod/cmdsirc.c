@@ -187,7 +187,7 @@ static void cmd_kickban(struct userrec *u, int idx, char *par)
 	  s1 = quickban(chan, m->userhost);
 	  break;
       }
-      if (!bantype)
+      if (bantype == '@' || bantype == '!')
 	do_ban(chan, s1);
       if (!par[0])
 	par = "requested";
