@@ -2,7 +2,7 @@
  * channels.c -- part of channels.mod
  *   support for channels within the bot
  *
- * $Id: channels.c,v 1.69 2002/08/08 01:38:57 wcc Exp $
+ * $Id: channels.c,v 1.70 2002/10/08 02:04:03 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -410,6 +410,7 @@ revenge-mode %d \
 need-op %s need-invite %s need-key %s need-unban %s need-limit %s \
 flood-chan %d:%d flood-ctcp %d:%d flood-join %d:%d \
 flood-kick %d:%d flood-deop %d:%d flood-nick %d:%d aop-delay %d:%d \
+ban-time %d exempt-time %d invite-time %d \
 %cenforcebans %cdynamicbans %cuserbans %cautoop %cautohalfop %cbitch \
 %cgreet %cprotectops %cprotecthalfops %cprotectfriends %cdontkickops \
 %cstatuslog %crevenge %crevengebot %cautovoice %csecret \
@@ -430,6 +431,9 @@ flood-kick %d:%d flood-deop %d:%d flood-nick %d:%d aop-delay %d:%d \
         chan->flood_deop_thr, chan->flood_deop_time,
 	chan->flood_nick_thr, chan->flood_nick_time,
 	chan->aop_min, chan->aop_max,
+	chan->ban_time,
+	chan->exempt_time,
+	chan->invite_time,
 	PLSMNS(channel_enforcebans(chan)),
 	PLSMNS(channel_dynamicbans(chan)),
 	PLSMNS(!channel_nouserbans(chan)),
