@@ -4,7 +4,7 @@
  *   Tcl initialization
  *   getting and setting Tcl/eggdrop variables
  * 
- * $Id: tcl.c,v 1.29 2001/01/24 13:43:36 tothwolf Exp $
+ * $Id: tcl.c,v 1.30 2001/01/26 21:18:22 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -25,8 +25,9 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+#include <stdlib.h>		/* getenv()				*/
+#include <locale.h>		/* setlocale()				*/
 #include "main.h"
-#include <locale.h>
 
 /* Used for read/write to internal strings */
 typedef struct {
@@ -505,13 +506,30 @@ void init_tcl(int argc, char **argv)
   char pver[1024] = "";
 #endif
 
-#ifndef HAVE_PRE7_5_TCL 
+/* This must be done *BEFORE* Tcl_SetSystemEncoding(),
+ * or Tcl_SetSystemEncoding() will cause a segfault.
+ */
+#ifndef HAVE_PRE7_5_TCL	
   /* This is used for 'info nameofexecutable'.
    * The filename in argv[0] must exist in a directory listed in
    * the environment variable PATH for it to register anything.
    */
   Tcl_FindExecutable(argv[0]);
 #endif
+
+  /* Initialize the interpreter */
+  interp = Tcl_CreateInterp();
+
+#ifdef DEBUG_MEM
+  /* Initialize Tcl's memory debugging if we want it */
+  Tcl_InitMemory(interp);
+#endif
+
+  /* Set Tcl variable tcl_interactive to 0 */
+  Tcl_SetVar(interp, "tcl_interactive", "0", TCL_GLOBAL_ONLY);
+
+  /* Setup script library facility */
+  Tcl_Init(interp);
 
 /* Code based on Tcl's TclpSetInitialEncodings() */
 #if TCL_MAJOR_VERSION >= 8 && TCL_MINOR_VERSION >= 1
@@ -572,7 +590,7 @@ void init_tcl(int argc, char **argv)
 
   Tcl_SetSystemEncoding(NULL, encoding);
 
-  resetPath:
+resetPath:
 
   /* Initialize the C library's locale subsystem. */
   setlocale(LC_CTYPE, "");
@@ -585,20 +603,6 @@ void init_tcl(int argc, char **argv)
    * gets on a binary channel. */
   Tcl_GetEncoding(NULL, "iso8859-1");
 #endif
-
-  /* Create Tcl interpreter */
-  interp = Tcl_CreateInterp();
-
-#ifdef DEBUG_MEM
-  /* Initialize Tcl's memory debugging if we want it */
-  Tcl_InitMemory(interp);
-#endif
-
-  /* Initialize Tcl interpreter */
-  Tcl_Init(interp);
-
-  /* Set Tcl variable tcl_interactive to 0 */
-  Tcl_SetVar(interp, "tcl_interactive", "0", TCL_GLOBAL_ONLY);
 
 #ifndef HAVE_PRE7_5_TCL
   /* Add eggdrop to Tcl's package list */

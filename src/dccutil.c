@@ -6,7 +6,7 @@
  *   memory management for dcc structures
  *   timeout checking for dcc connections
  * 
- * $Id: dccutil.c,v 1.25 2001/01/22 23:47:33 guppy Exp $
+ * $Id: dccutil.c,v 1.26 2001/01/26 21:18:22 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -39,6 +39,7 @@ extern int		 dcc_total, max_dcc, dcc_flood_thr, backgrd, MAXSOCKS;
 extern char		 botnetnick[], spaces[], version[];
 extern time_t		 now;
 extern sock_list	*socklist;
+extern Tcl_Interp	*interp;
 
 char	motdfile[121] = "text/motd";	/* File where the motd is stored */
 int	connect_timeout = 15;		/* How long to wait before a telnet
@@ -105,12 +106,26 @@ void dprintf EGG_VARARGS_DEF(int, arg1)
   char *format;
   int idx, len;
   va_list va;
+#if TCL_MAJOR_VERSION >= 8 && TCL_MINOR_VERSION >= 1
+  Tcl_DString ds;
+#endif
 
   idx = EGG_VARARGS_START(int, arg1, va);
   format = va_arg(va, char *);
   if ((len = egg_vsnprintf(SBUF, 1023, format, va)) < 0)
     SBUF[len = 1023] = 0;
   va_end(va);
+
+/* Used for unicode text */
+#if TCL_MAJOR_VERSION >= 8 && TCL_MINOR_VERSION >= 1
+  Tcl_DStringInit(&ds);
+  /* Don't call this before calling init_tcl() */
+  Tcl_UtfToExternalDString(NULL, SBUF, -1, &ds);
+  Tcl_DStringResult(interp, &ds);
+  Tcl_DStringFree(&ds);
+  strncpyz(SBUF, interp->result, sizeof SBUF);
+#endif
+
   if (idx < 0) {
     tputs(-idx, SBUF, len);
   } else if (idx > 0x7FF0) {

@@ -7,7 +7,7 @@
  *   help system
  *   motd display and %var substitution
  * 
- * $Id: misc.c,v 1.34 2000/12/18 20:24:16 guppy Exp $
+ * $Id: misc.c,v 1.35 2001/01/26 21:18:22 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -574,7 +574,7 @@ void putlog EGG_VARARGS_DEF(int, arg1)
 	dprintf(i, "%s", out);
     }
   if ((!backgrd) && (!con_chan) && (!term_z))
-    printf("%s", out);
+    dprintf(DP_STDOUT, "%s", out);
   else if ((type & LOG_MISC) && use_stderr) {
     if (shtime)
       out += 8;

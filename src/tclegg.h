@@ -2,7 +2,7 @@
  * tclegg.h
  *   stuff used by tcl.c and tclhash.c
  * 
- * $Id: tclegg.h,v 1.10 2001/01/22 23:41:11 guppy Exp $
+ * $Id: tclegg.h,v 1.11 2001/01/26 21:18:22 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -126,49 +126,49 @@ void rem_tcl_ints(tcl_ints *);
 
 /* From Tcl's tclUnixInit.c */
 /* The following table is used to map from Unix locale strings to
- * encoding files. */
-
+ * encoding files.
+ */
 typedef struct LocaleTable {
-    const char *lang;
-    const char *encoding;
+  const char *lang;
+  const char *encoding;
 } LocaleTable;
 
 static const LocaleTable localeTable[] = {
-    {"ja_JP.SJIS",	"shiftjis"},
-    {"ja_JP.EUC",	"euc-jp"},
-    {"ja_JP.JIS",	"iso2022-jp"},
-    {"ja_JP.mscode",	"shiftjis"},
-    {"ja_JP.ujis",	"euc-jp"},
-    {"ja_JP",		"euc-jp"},
-    {"Ja_JP",		"shiftjis"},
-    {"Jp_JP",		"shiftjis"},
-    {"japan",		"euc-jp"},
+  {"ja_JP.SJIS",	"shiftjis"},
+  {"ja_JP.EUC",		"euc-jp"},
+  {"ja_JP.JIS",		"iso2022-jp"},
+  {"ja_JP.mscode",	"shiftjis"},
+  {"ja_JP.ujis",	"euc-jp"},
+  {"ja_JP",		"euc-jp"},
+  {"Ja_JP",		"shiftjis"},
+  {"Jp_JP",		"shiftjis"},
+  {"japan",		"euc-jp"},
 #ifdef hpux
-    {"japanese",	"shiftjis"},	
-    {"ja",		"shiftjis"},	
+  {"japanese",		"shiftjis"},	
+  {"ja",		"shiftjis"},	
 #else
-    {"japanese",	"euc-jp"},
-    {"ja",		"euc-jp"},
+  {"japanese",		"euc-jp"},
+  {"ja",		"euc-jp"},
 #endif
-    {"japanese.sjis",	"shiftjis"},
-    {"japanese.euc",	"euc-jp"},
-    {"japanese-sjis",	"shiftjis"},
-    {"japanese-ujis",	"euc-jp"},
+  {"japanese.sjis",	"shiftjis"},
+  {"japanese.euc",	"euc-jp"},
+  {"japanese-sjis",	"shiftjis"},
+  {"japanese-ujis",	"euc-jp"},
 
-    {"ko",              "euc-kr"},
-    {"ko_KR",           "euc-kr"},
-    {"ko_KR.EUC",       "euc-kr"},
-    {"ko_KR.euc",       "euc-kr"},
-    {"ko_KR.eucKR",     "euc-kr"},
-    {"korean",          "euc-kr"},
+  {"ko",		"euc-kr"},
+  {"ko_KR",		"euc-kr"},
+  {"ko_KR.EUC",		"euc-kr"},
+  {"ko_KR.euc",		"euc-kr"},
+  {"ko_KR.eucKR",	"euc-kr"},
+  {"korean",		"euc-kr"},
 
-    {"ru",		"iso8859-5"},		
-    {"ru_RU",		"iso8859-5"},		
-    {"ru_SU",		"iso8859-5"},		
+  {"ru",		"iso8859-5"},		
+  {"ru_RU",		"iso8859-5"},		
+  {"ru_SU",		"iso8859-5"},		
 
-    {"zh",		"cp936"},
+  {"zh",		"cp936"},
 
-    {NULL, NULL}
+  {NULL,		NULL}
 };
 
 #endif				/* _EGG_TCLEGG_H */
