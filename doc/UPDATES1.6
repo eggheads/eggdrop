@@ -1,10 +1,14 @@
-$Id: UPDATES1.6,v 1.130 2001/06/28 19:06:44 guppy Exp $
+$Id: UPDATES1.6,v 1.131 2001/06/28 19:21:55 guppy Exp $
     
 Changes in eggdrop: (since v1.6.0)
 ----------------------------------
 
 1.6.5
 Found by  Fixed by  What...
+          zip       we should use errno to detect EAGAIN in net.c
+          guppy     display the proper queue that is full instead of just
+                    DP_MODE
+BenDover  guppy     changed the wording of %bantime <XdXhXm>
           Kirben    mount the eggdrop directory as binary in cygwin
           Kirben    compress.mod/dns.mod now check for the compiler also
           Sup       Made server-timeout match the default value in the code.

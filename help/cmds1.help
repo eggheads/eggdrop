@@ -21,11 +21,11 @@
    to her own record via the %b/MSG IDENT%b command, but it's here if
    you need it.
 %{help=+ignore}%{+m}
-###  %b+ignore%b <hostmask> [%%ignoretime <XdXhXm>] [comment]
+###  %b+ignore%b <hostmask> [%%<XdXhXm>] [comment]
    Adds a hostmask to the ignore list, with your nickname and optional
    comment and ignoretime. This command can be used to either ignore
    users on irc, or to ignore incoming telnet connections. Ignoretime
-   has to be expressed in days, hours and minutes.
+   has to be expressed in days, hours and/or minutes.
    
 See also: -ignore, ignores
 %{help=+user}%{+m}

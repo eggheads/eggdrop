@@ -2,7 +2,7 @@
  * net.c -- handles:
  *   all raw network i/o
  * 
- * $Id: net.c,v 1.30 2001/06/24 20:49:23 poptix Exp $
+ * $Id: net.c,v 1.31 2001/06/28 19:21:55 guppy Exp $
  */
 /* 
  * This is hereby released into the public domain.
@@ -662,7 +662,7 @@ static int sockread(char *s, int *len)
 	else
 	  x = read(socklist[i].sock, s, grab);
 	if (x <= 0) {		/* eof */
-	  if (x == EAGAIN) {
+	  if (errno == EAGAIN) {
 	    s[0] = 0;
 	    *len = 0;
 	    return -3;

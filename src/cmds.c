@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  *
- * $Id: cmds.c,v 1.54 2001/06/20 14:51:00 poptix Exp $
+ * $Id: cmds.c,v 1.55 2001/06/28 19:21:55 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -2298,7 +2298,7 @@ static void cmd_pls_ignore(struct userrec *u, int idx, char *par)
 
   if (!par[0]) {
     dprintf(idx,
-	    "Usage: +ignore <hostmask> [%%ignoretime <XdXhXm>] [comment]\n");
+	    "Usage: +ignore <hostmask> [%%<XdXhXm>] [comment]\n");
     return;
   }
 

@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  *
- * $Id: server.c,v 1.65 2001/06/24 20:50:33 poptix Exp $
+ * $Id: server.c,v 1.66 2001/06/28 19:21:56 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -866,8 +866,27 @@ static void queue_server(int which, char *buf, int len)
     h->warned = 0;
     double_warned = 0;
   } else {
-    if (!h->warned)
+    if (!h->warned) {
+      switch (which) {   
+	case DP_MODE_NEXT:
+ 	/* Fallthrough */
+	case DP_MODE:
       putlog(LOG_MISC, "*", "!!! OVER MAXIMUM MODE QUEUE");
+ 	break;
+    
+	case DP_SERVER_NEXT:
+ 	/* Fallthrough */
+ 	case DP_SERVER:
+	putlog(LOG_MISC, "*", "!!! OVER MAXIMUM SERVER QUEUE");
+	break;
+            
+	case DP_HELP_NEXT:
+	/* Fallthrough */
+	case DP_HELP:
+	putlog(LOG_MISC, "*", "!!! OVER MAXIMUM HELP QUEUE");
+	break;
+      }
+    }
     h->warned = 1;
   }
 

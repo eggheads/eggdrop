@@ -2,7 +2,7 @@
  * cmdschan.c -- part of channels.mod
  *   commands from a user via dcc that cause server interaction
  *
- * $Id: cmdschan.c,v 1.44 2001/06/06 13:20:23 poptix Exp $
+ * $Id: cmdschan.c,v 1.45 2001/06/28 19:21:55 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -38,7 +38,7 @@ static void cmd_pls_ban(struct userrec *u, int idx, char *par)
   module_entry *me;
 
   if (!par[0]) {
-    dprintf(idx, "Usage: +ban <hostmask> [channel] [%%bantime<XdXhXm>] [reason]\n");
+    dprintf(idx, "Usage: +ban <hostmask> [channel] [%%<XdXhXm>] [reason]\n");
   } else {
     who = newsplit(&par);
     if (par[0] && strchr(CHANMETA, par[0]))
@@ -175,7 +175,7 @@ static void cmd_pls_exempt(struct userrec *u, int idx, char *par)
     return;
   }
   if (!par[0]) {
-    dprintf(idx, "Usage: +exempt <hostmask> [channel] [%%exempttime<XdXhXm>] [reason]\n");
+    dprintf(idx, "Usage: +exempt <hostmask> [channel] [%%<XdXhXm>] [reason]\n");
   } else {
     who = newsplit(&par);
     if ((par[0] == '#') || (par[0] == '&') || (par[0] == '+'))
@@ -302,7 +302,7 @@ static void cmd_pls_invite(struct userrec *u, int idx, char *par)
   }
 
   if (!par[0]) {
-    dprintf(idx, "Usage: +invite <hostmask> [channel] [%%invitetime<XdXhXm>] [reason]\n");
+    dprintf(idx, "Usage: +invite <hostmask> [channel] [%%<XdXhXm>] [reason]\n");
   } else {
     who = newsplit(&par);
     if ((par[0] == '#') || (par[0] == '&') || (par[0] == '+'))

@@ -1,29 +1,29 @@
 %{help=+ban}%{+o|o}
-###  %b+ban%b <hostmask> [channel] [%%bantime <XdXhXm>] [comment]
+###  %b+ban%b <hostmask> [channel] [%%<XdXhXm>] [comment]
    Adds a ban to the list of permanent bans stored on the bot,
    with optional comment and bantime.  This ban will be in effect for
    every channel on the bot if no channel is supplied, and is stored
    with your nickname and comment.  Prefixing a comment with @ will
    make it only visible within the bot. Bantime has to be expressed
-   in days, hours and minutes.
+   in days, hours and/or minutes.
 See also: bans, -ban, stick, unstick
 %{help=+exempt}%{+o|o}
-###  %b+exempt%b <hostmask> [channel] [%%exempttime <XdXhXm>] [comment]
+###  %b+exempt%b <hostmask> [channel] [%%<XdXhXm>] [comment]
    Adds a ban exempt to the list of permanent exempts stored on the bot,
    with optional comment and exempttime. This exempt will be in effect for
    every channel on the bot if no channel is supplied, and is stored
    with your nickname and comment.  Prefixing a comment with @ will
    make it only visible within the bot. Exempttime has to be expressed
-   in days, hours and minutes.
+   in days, hours and/or minutes.
 See also: exempts, -exempt, stick, unstick
 %{help=+invite}%{+o|o}
-###  %b+invite%b <hostmask> [channel] [%%invitetime <XdXhXm>] [comment]
+###  %b+invite%b <hostmask> [channel] [%%<XdXhXm>] [comment]
    Adds a invite to the list of permanent invites stored on the bot,
    with optional comment and invitetime. This invite will be in effect for
    every channel on the bot if no channel is supplied, and is stored
    with your nickname and comment.  Prefixing a comment with @ will
    make it only visible within the bot. invitetime has to be expressed
-   in days, hours and minutes.
+   in days, hours and/or minutes.
 See also: invites, -invite, stick, unstick
 %{help=+chan}%{+n}
 ### %b+chan%b <channel>
