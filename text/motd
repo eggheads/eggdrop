@@ -1,3 +1,4 @@
+Connected to %B, running %V  (c)1997 Robey Pointer (c)1999, 2000 Eggheads
      ____                __
     / __/___ _ ___ _ ___/ /____ ___   ___
    / _/ / _ `// _ `// _  // __// _ \ / _ \
@@ -30,3 +31,6 @@ try %.help% to get help
     %.help *somestring*% to get the matching help texts
 
 Have fun.
+
+Commands start with '.' (like '.quit' or '.help')
+Everything else goes out to the party line.

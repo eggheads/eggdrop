@@ -6,7 +6,7 @@
  *   memory management for dcc structures
  *   timeout checking for dcc connections
  * 
- * $Id: dccutil.c,v 1.20 2000/04/05 19:55:12 fabian Exp $
+ * $Id: dccutil.c,v 1.21 2000/05/14 22:16:46 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -195,10 +195,7 @@ void dcc_chatter(int idx)
   struct flag_record fr = {FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0};
 
   get_user_flagrec(dcc[idx].user, &fr, NULL);
-  dprintf(idx, "Connected to %s, running %s\n", botnetnick, version);
   show_motd(idx);
-  dprintf(idx, "Commands start with '.' (like '.quit' or '.help')\n");
-  dprintf(idx, "Everything else goes out to the party line.\n\n");
   i = dcc[idx].u.chat->channel;
   dcc[idx].u.chat->channel = 234567;
   j = dcc[idx].sock;
