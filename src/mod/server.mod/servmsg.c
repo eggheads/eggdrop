@@ -1,7 +1,7 @@
 /* 
  * servmsg.c -- part of server.mod
  * 
- * $Id: servmsg.c,v 1.38 2000/06/10 01:28:50 fabian Exp $
+ * $Id: servmsg.c,v 1.39 2000/07/09 14:07:13 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -253,8 +253,7 @@ static int got001(char *from, char *msg)
   /* Ok...param #1 of 001 = what server thinks my nick is */
   server_online = now;
   fixcolon(msg);
-  strncpy(botname, msg, NICKMAX);
-  botname[NICKMAX] = 0;
+  strncpyz(botname, msg, NICKLEN);
   altnick_char = 0;
   /* Call Tcl init-server */
   if (initserver[0])
@@ -952,8 +951,7 @@ static int gotnick(char *from, char *msg)
   check_queues(nick, msg);
   if (match_my_nick(nick)) {
     /* Regained nick! */
-    strncpy(botname, msg, NICKMAX);
-    botname[NICKMAX] = 0;
+    strncpyz(botname, msg, NICKLEN);
     altnick_char = 0;
     waiting_for_awake = 0;
     if (!strcmp(msg, origbotname)) {
@@ -1127,8 +1125,7 @@ static int gotkick(char *from, char *msg)
   }
   if (!lagged)
     return 0;
-  strncpy(buf2, msg, 510);
-  buf2[510] = 0;
+  strncpyz(buf2, msg, sizeof buf2);
   pbuf = buf2;
   newsplit(&pbuf);
   victim = newsplit(&pbuf);
@@ -1136,10 +1133,8 @@ static int gotkick(char *from, char *msg)
   if (!rfc_casecmp(victim, lagcheckstring)) {
     debug1("I kicked %s, so I think I'm not lagged", victim);
     lagged = 0;
-    nfree(lagcheckstring);
-    lagcheckstring = NULL;
-    nfree(lagcheckstring2);
-    lagcheckstring2 = NULL;
+    free_null(lagcheckstring);
+    free_null(lagcheckstring2);
   }
   return 0;
 }
@@ -1198,10 +1193,8 @@ static int lagcheck_notop(char *from, char *msg)
   if (!lagged)
     return 0;
   debug0("Got 482 (notopped) reply, I guess I'm not lagged.");
-  if (lagcheckstring) {
-    nfree(lagcheckstring);
-    lagcheckstring = NULL;
-  }
+  if (lagcheckstring)
+    free_null(lagcheckstring);
   lagged = 0;
   return 0;
 }
@@ -1212,8 +1205,7 @@ static int lagcheck_367(char *from, char *msg)
 
   if (!lagged || (lagchecktype != LC_BEIMODE))
     return 0;
-  strncpy(buf, msg, 510);
-  buf[510] = 0;
+  strncpyz(buf, msg, sizeof buf);
   mask = buf;
   newsplit(&mask);
   newsplit(&mask);
@@ -1222,10 +1214,8 @@ static int lagcheck_367(char *from, char *msg)
     	!wild_match(lagcheckstring + 3, mask))
       return 0;
   lagged = 0;
-  if (lagcheckstring) {
-    nfree(lagcheckstring);
-    lagcheckstring = NULL;
-  }
+  if (lagcheckstring)
+    free_null(lagcheckstring);
   debug0("mask already set, I guess I'm not lagged");
   return 0;
 }
@@ -1237,8 +1227,7 @@ static int lagcheck_mode (char *from, char *origmsg)
   if (rfc_casecmp(from, botname))
     /* That wasn't my modechange... */
     return 0;
-  strncpy(buf, origmsg, 510);
-  buf[510] = 0;
+  strncpyz(buf, origmsg, sizeof buf);
   msg = buf;
   newsplit(&msg);
   modes = newsplit(&msg);
@@ -1249,7 +1238,7 @@ static int lagcheck_mode (char *from, char *origmsg)
     if (strchr("+-", modes[0]))
       pm = modes[0];
     else if (strchr("ovbeI", modes[0])) {
-      sprintf(buf, "%c%c %s", pm, modes[0], newsplit(&msg));
+      egg_snprintf(buf, sizeof buf, "%c%c %s", pm, modes[0], newsplit(&msg));
       check_notlagged(buf);
     } else if ((modes[0] == 'l') && (pm = '+'))
       newsplit(&msg);
@@ -1266,8 +1255,7 @@ static int lagcheck_401(char *from, char *origmsg)
 
   if (!lagged || lagchecktype != LC_KICK)
     return 0;
-  strncpy(buf, origmsg, 510);
-  buf[510] = 0;
+  strncpyz(buf, origmsg, sizeof buf);
   msg = buf;
   if (rfc_casecmp(newsplit(&msg), botname)) {
     debug1("This shouldn't happen.(%s)", origmsg);
@@ -1275,14 +1263,10 @@ static int lagcheck_401(char *from, char *origmsg)
   }
   if (!rfc_casecmp(lagcheckstring2, newsplit(&msg))) {
     lagged = 0;
-    if (lagcheckstring) {
-      nfree(lagcheckstring);
-      lagcheckstring = NULL;
-    }
-    if (lagcheckstring2) {
-      nfree(lagcheckstring2);
-      lagcheckstring2 = NULL;
-    }
+    if (lagcheckstring)
+      free_null(lagcheckstring);
+    if (lagcheckstring2)
+      free_null(lagcheckstring2);
     debug0("got 401/441 reply, guess I'm not lagged");
   }
   return 0;
@@ -1292,14 +1276,10 @@ static int lagcheck_478(char *from, char *origmsg)
 {
   if (!lagged || lagchecktype == LC_KICK)
     return 0;
-  if (lagcheckstring) {
-    nfree(lagcheckstring);
-    lagcheckstring = NULL;
-  }
-  if (lagcheckstring2) {
-    nfree(lagcheckstring2);
-    lagcheckstring2 = NULL;
-  }
+  if (lagcheckstring)
+    free_null(lagcheckstring);
+  if (lagcheckstring2)
+    free_null(lagcheckstring2);
   lagged = 0;
   debug0("Channel ban list is full, guess I'm not lagged");
   return 0;
@@ -1382,8 +1362,7 @@ static void connect_server(void)
     servidx = new_dcc(&DCC_DNSWAIT, sizeof(struct dns_info));
     dcc[servidx].port = botserverport;
     strcpy(dcc[servidx].nick, "(server)");
-    strncpy(dcc[servidx].host, botserver, UHOSTMAX);
-    dcc[servidx].host[UHOSTMAX] = 0;
+    strncpyz(dcc[servidx].host, botserver, UHOSTLEN);
     dcc[servidx].timeval = now;
     dcc[servidx].sock = (-1);
     dcc[servidx].u.dns->host = get_data_ptr(strlen(dcc[servidx].host) + 1);

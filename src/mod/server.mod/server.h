@@ -1,7 +1,7 @@
 /* 
  * server.h -- part of server.mod
  * 
- * $Id: server.h,v 1.8 2000/05/06 22:02:27 fabian Exp $
+ * $Id: server.h,v 1.9 2000/07/09 14:07:13 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -73,14 +73,44 @@
 #define nick_len (*(int *)(server_funcs[37]))
 #define check_tcl_notc ((int (*)(char *,char *,struct userrec *,char *,char *))server_funcs[38])
 
-#endif				/* MAKING_SERVER */
+#else		/* MAKING_SERVER */
+
+enum {
+	LC_KICK		= 1,	/* Kick lagcheck.		*/
+	LC_OVMODE	= 2,	/* o or v lagcheck.		*/
+	LC_BEIMODE	= 3	/* b, e or I lagcheck.		*/
+} lc_t;
+
+/* Macros for commonly used commands.
+ */
+
+#define free_null(ptr)	do {				\
+	nfree(ptr);					\
+	ptr = NULL;					\
+} while (0)
+
+#define strncpyz(t, s, l)	do {			\
+	strncpy(t, s, l - 1); t[l - 1] = 0;		\
+} while (0)
+
+#endif		/* MAKING_SERVER */
 
 struct server_list {
-  struct server_list *next;
-  char *name;
-  int port;
-  char *pass;
-  char *realname;
+  struct server_list	*next;
+
+  char			*name;
+  int			 port;
+  char			*pass;
+  char			*realname;
 };
 
-#endif				/* _EGG_MOD_SERVER_SERVER_H */
+/* Available net types.  */
+enum {
+	NETT_EFNET		= 0,	/* EfNet except new +e/+I hybrid. */
+	NETT_IRCNET		= 1,	/* Ircnet.			  */
+	NETT_UNDERNET		= 2,	/* Undernet.			  */
+	NETT_DALNET		= 3,	/* Dalnet.			  */
+	NETT_HYBRID_EFNET	= 4	/* new +e/+I Efnet hybrid.	  */
+} nett_t;
+
+#endif		/* _EGG_MOD_SERVER_SERVER_H */
