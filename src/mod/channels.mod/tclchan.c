@@ -1,7 +1,7 @@
 /*
  * tclchan.c -- part of channels.mod
  *
- * $Id: tclchan.c,v 1.85 2003/03/24 02:48:01 wcc Exp $
+ * $Id: tclchan.c,v 1.86 2003/11/01 20:04:32 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1449,7 +1449,7 @@ static int tcl_channel_modify(Tcl_Interp *irp, struct chanset_t *chan,
       }
       if (!found) {
         if (irp && item[i][0])  /* ignore "" */
-          Tcl_AppendResult(irp, "illegal channel option: ", item[i], NULL);
+          Tcl_AppendResult(irp, "illegal channel option: ", item[i], "\n", NULL);
         x++;
       }
     }
