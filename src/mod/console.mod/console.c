@@ -105,6 +105,9 @@ static int console_set(struct userrec *u, struct user_entry *e, void *buf)
 {
   struct console_info *ci = (struct console_info *) e->u.extra;
 
+  if (!ci && !buf)
+    return 1;
+  
   if (ci != buf) {
     if (ci) {
       ASSERT (ci->channel != NULL);
@@ -113,7 +116,7 @@ static int console_set(struct userrec *u, struct user_entry *e, void *buf)
     }
     context;
 
-    e->u.extra = buf;
+    ci = e->u.extra = buf;
   }
 
   /* donut share console info */

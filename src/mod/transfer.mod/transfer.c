@@ -1146,7 +1146,8 @@ static int fstat_unpack(struct userrec *u, struct user_entry *e)
   char *par, *arg;
   struct filesys_stats *fs;
 
-  ASSERT (e != NULL && e->name != NULL);
+  ASSERT (e != NULL);
+  ASSERT (e->name != NULL);
   context;
   fs = user_malloc(sizeof(struct filesys_stats));
   bzero(fs, sizeof(struct filesys_stats));
@@ -1174,7 +1175,9 @@ static int fstat_pack(struct userrec *u, struct user_entry *e)
   register struct filesys_stats *fs;
   struct list_type *l = user_malloc(sizeof(struct list_type));
 
-  ASSERT (e != NULL && e->name == NULL && e->u.extra != NULL);
+  ASSERT (e != NULL);
+  ASSERT (e->name == NULL);
+  ASSERT (e->u.extra != NULL);
   context;
   fs = e->u.extra;
   /* if you set it in the declaration, the ASSERT will be useless. ++rtc */
@@ -1193,7 +1196,8 @@ static int fstat_write_userfile(FILE * f, struct userrec *u,
 {
   register struct filesys_stats *fs;
 
-  ASSERT (e != NULL && e->u.extra != NULL);
+  ASSERT (e != NULL);
+  ASSERT (e->u.extra != NULL);
   context;
   fs = e->u.extra;
   if (fprintf(f, "--FSTAT %09u %09u %09u %09u\n",
@@ -1244,7 +1248,8 @@ static int fstat_tcl_get(Tcl_Interp * irp, struct userrec *u,
   char d[50];
 
   BADARGS(3, 4, " handle FSTAT ?u/d?");
-  ASSERT (e != NULL && e->u.extra != NULL);
+  ASSERT (e != NULL)
+  ASSERT (e->u.extra != NULL);
   fs = e->u.extra;
   if (argc == 3)
     simple_sprintf(d, "%u %u %u %u", fs->uploads, fs->upload_ks,
@@ -1282,7 +1287,9 @@ static void fstat_display(int idx, struct user_entry *e)
 {
   struct filesys_stats *fs;
 
-  ASSERT (e != NULL && e->u.extra != NULL);
+  ASSERT (e != NULL);
+  ASSERT (e->u.extra != NULL);
+
   fs = e->u.extra;
   dprintf(idx, "  FILES: %u download%s (%luk), %u upload%s (%luk)\n",
 	  fs->dnloads, (fs->dnloads == 1) ? "" : "s", fs->dnload_ks,

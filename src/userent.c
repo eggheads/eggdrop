@@ -357,9 +357,9 @@ static int laston_set(struct userrec *u, struct user_entry *e, void *buf)
     }
     contextnote("(sharebug) occurred in laston_set");
 
-    e->u.extra = buf;
+    li = e->u.extra = buf;
   }
-  /* donut share laston unfo */
+  /* donut share laston info */
   return 1;
 }
 
@@ -535,10 +535,10 @@ static int botaddr_set(struct userrec *u, struct user_entry *e, void *buf)
       nfree (bi);
     }
     contextnote("(sharebug) occurred in botaddr_set");
-    e->u.extra = buf;
+    bi = e->u.extra = buf;
   }
-  if (!noshare && !(u && (u->flags & USER_UNSHARED))) {
-    bi = (struct bot_addr *)e->u.extra;
+  ASSERT (u != NULL);
+  if (bi && !noshare && !(u->flags & USER_UNSHARED)) {
     shareout(NULL, "c BOTADDR %s %s %d %d\n", u->handle,
              bi->address, bi->telnet_port, bi->relay_port);
   }
