@@ -1,7 +1,7 @@
 # notes.english.lang
 #   language messages for the notes module
 #
-# $Id: notes.english.lang,v 1.1 2000/09/23 17:45:23 fabian Exp $
+# $Id: notes.english.lang,v 1.2 2001/01/31 05:40:14 guppy Exp $
 
 0xc000,  Forward notes to: %.70s\n
 0xc001,Switched %d note%s from %s to %s.
@@ -27,7 +27,7 @@
 0xc015,Outside note
 0xc016,Note delivered.
 0xc017,For a list:
-0xc018,You have %d note%s waiting on %s.\n
+0xc018,NOTICE %s :You have %d note%s waiting on %s.\n
 0xc019,### You have %d note%s waiting.\n
 0xc01a,### Use '.notes read' to read them.\n
 0xc01b,Notes will be stored.

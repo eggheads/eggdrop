@@ -5,7 +5,7 @@
  *   note cmds
  *   note ignores
  * 
- * $Id: notes.c,v 1.27 2001/01/16 17:13:23 guppy Exp $
+ * $Id: notes.c,v 1.28 2001/01/31 05:40:14 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -846,8 +846,8 @@ static void notes_hourly()
 	      break;
 	    }
 	  if (k) {
-	    dprintf(DP_HELP, NOTES_WAITING_ON, k, k == 1 ? "" : "s",
-                    origbotname);
+	    dprintf(DP_HELP, "NOTICE %s :You have %d note%s waiting on %s.\n", 
+		    m->nick, k, k == 1 ? "" : "s", botname);
 	    dprintf(DP_HELP, "NOTICE %s :%s /MSG %s NOTES [pass] INDEX\n",
 		        m->nick, NOTES_FORLIST, botname);
 	  }
@@ -903,10 +903,10 @@ static void join_notes(char *nick, char *uhost, char *handle, char *par)
 
     i = num_notes(handle);
     if (i) {
-      dprintf(DP_HELP, "NOTICE %s :You have %d note%s waiting on %s.\n",
-	      nick, i, i == 1 ? "" : "s", botname);
+      dprintf(DP_HELP, NOTES_WAITING_ON, nick, i, i == 1 ? "" : "s",
+	      botname);
       dprintf(DP_HELP, "NOTICE %s :%s /MSG %s NOTES [pass] INDEX\n",
-              NOTES_FORLIST, nick, botname);
+	      nick, NOTES_FORLIST, botname);
     }
   }
 }
