@@ -2,7 +2,7 @@
  * filesys.c -- part of filesys.mod
  *   main file of the filesys eggdrop module
  * 
- * $Id: filesys.c,v 1.24 2000/02/29 20:03:57 fabian Exp $
+ * $Id: filesys.c,v 1.25 2000/02/29 20:05:41 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -783,7 +783,8 @@ static void filesys_dcc_send_hostresolved(int i)
   my_free(s1);
   if (f) {
     fclose(f);
-    dprintf(DP_HELP, "NOTICE %s :That file already exists.\n", dcc[i].nick);
+    dprintf(DP_HELP, "NOTICE %s :File `%s' already exists.\n",
+	    dcc[i].nick, dcc[i].u.xfer->origname);
     lostdcc(i);
   } else {
     /* Check for dcc-sends in process with the same filename */
@@ -792,8 +793,8 @@ static void filesys_dcc_send_hostresolved(int i)
         if ((dcc[j].type->flags & (DCT_FILETRAN | DCT_FILESEND))
 	    == (DCT_FILETRAN | DCT_FILESEND)) {
 	  if (!strcmp(dcc[i].u.xfer->origname, dcc[j].u.xfer->origname)) {
-	    dprintf(DP_HELP, "NOTICE %s :That file is already being sent.\n",
-		    dcc[i].nick);
+	    dprintf(DP_HELP, "NOTICE %s :File `%s' is already being sent.\n",
+		    dcc[i].nick, dcc[i].u.xfer->origname);
 	    lostdcc(i);
 	    return;
 	  }
@@ -806,8 +807,8 @@ static void filesys_dcc_send_hostresolved(int i)
     my_free(s1);
     if (dcc[i].u.xfer->f == NULL) {
       dprintf(DP_HELP,
-	      "NOTICE %s :Can't create that file (temp dir error)\n",
-	      dcc[i].nick);
+	      "NOTICE %s :Can't create file `%s' (temp dir error)\n",
+	      dcc[i].nick, dcc[i].u.xfer->origname);
       lostdcc(i);
     } else {
       dcc[i].timeval = now;
