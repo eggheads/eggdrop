@@ -1,24 +1,28 @@
-$Id: UPDATES1.6,v 1.522 2003/12/02 00:37:34 wcc Exp $
+$Id: UPDATES1.6,v 1.523 2003/12/07 21:49:16 wcc Exp $
 
 Changes in Eggdrop: (since v1.6.0)
 ----------------------------------
 
 1.6.16
 Found by     Fixed by  What...
+             Wcc       exported oatoi() to modules since someone somewhere might
+                       find it useful
+BarkerJr     Wcc       fixed a bug preventing masks starting with numbers from
+                       being removed/stuck/unstuck
 wanderer     KuNgFo0/  fixed the very very horrible handling of arguments by
              Wcc       tcl_dnslookup()
              BarkerJr/ don't rejoin +inactive channels when kicked from them.
-             Eule      This can be caused by bot-server connection lag or full 
+             Eule      This can be caused by bot-server connection lag or full
                        queues.
              Wcc       uname fix in msg_status; os should display on freebsd now
              Wcc       fixed a buffer overrun in msg_status()
-             Wcc       coxmetic fixes to .status, .who, and various msgcmds
+             Wcc       cosmetic fixes to .status, .who, and various msgcmds
 R. Ramos     dw        fixed a getdesc segfault when a file has no desc
 various      Wcc       removed IPv6 for now, will be implemented in a more
                        proper way in an upcoming release
              BarkerJr  cleaned up "illegal channel option" Tcl errors
 Darki        Wiktor    .chanset accepts '*', reflect in the docs
-T. Salomäki  Eule      fixed bug 365 (missing call to check_this_user in 
+T. Salomäki  Eule      fixed bug 365 (missing call to check_this_user in
                        tcl_setuser)
 R. Brooklyn  Sven      .-ban number #channel now works correctly
              Sven      a few minor fixes to fakemode kicks
@@ -31,7 +35,7 @@ BarkerJr     Wcc       exported strip_mirc_codes() and check_ansi() from dcc.c
 fbs          stdarg    check to make sure file we want to send exists when
                        resuming a transfer
              Tothwolf  Removed unnecessary quiet_reject checks in msg_ident()
-                       that have been present since 1.3.0+bel17.   
+                       that have been present since 1.3.0+bel17.
              Paladin   fixed exporting of MD5 functions to modules
 various      stdarg    the binary is no longer stripped unless ./configure
                        --enable-strip is used

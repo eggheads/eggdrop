@@ -7,7 +7,7 @@
  *   help system
  *   motd display and %var substitution
  *
- * $Id: misc.c,v 1.65 2003/05/05 00:49:44 wcc Exp $
+ * $Id: misc.c,v 1.66 2003/12/07 21:49:16 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -32,32 +32,37 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <ctype.h>
 #include "chan.h"
 #include "tandem.h"
 #include "modules.h"
+
 #ifdef HAVE_UNAME
 #  include <sys/utsname.h>
 #endif
+
 #include "stat.h"
 
 extern struct dcc_t *dcc;
 extern struct chanset_t *chanset;
+
 extern char helpdir[], version[], origbotname[], botname[], admin[], network[],
             motdfile[], ver[], botnetnick[], bannerfile[], logfile_suffix[],
             textdir[];
-extern int backgrd, con_chan, term_z, use_stderr, dcc_total, keep_all_logs,
-           quick_logs, strict_host;
+extern int  backgrd, con_chan, term_z, use_stderr, dcc_total, keep_all_logs,
+            quick_logs, strict_host;
+
 extern time_t now;
 extern Tcl_Interp *interp;
 
 
-int shtime = 1;                 /* Whether or not to display the time
-                                 * with console output */
+int shtime = 1;                 /* Display the time with console output */
 log_t *logs = 0;                /* Logfiles */
 int max_logs = 5;               /* Current maximum log files */
 int max_logsize = 0;            /* Maximum logfile size, 0 for no limit */
-int conmask = LOG_MODES | LOG_CMDS | LOG_MISC;  /* Console mask */
 int raw_log = 0;                /* Disply output to server to LOG_SERVEROUT */
+
+int conmask = LOG_MODES | LOG_CMDS | LOG_MISC; /* Console mask */
 
 struct help_list_t {
   struct help_list_t *next;
@@ -1478,6 +1483,19 @@ char *strchr_unescape(char *str, const char div, register const char esc_char)
   }
   *p = 0;
   return NULL;
+}
+
+/* Is every character in a string a digit? */
+int str_isdigit(const char *str)
+{
+  if (!*str)
+    return 0;
+
+  for(; *str; ++str) {
+    if (!isdigit(*str))
+      return 0;
+  }
+  return 1;
 }
 
 /* As strchr_unescape(), but converts the complete string, without

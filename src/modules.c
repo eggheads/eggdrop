@@ -4,7 +4,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: modules.c,v 1.88 2003/11/27 03:25:10 wcc Exp $
+ * $Id: modules.c,v 1.89 2003/12/07 21:49:16 wcc Exp $
  */
 /* 
  * Copyright (C) 1997 Robey Pointer
@@ -561,7 +561,10 @@ Function global_table[] = {
   /* 288 - 291 */
   (Function) 0,                   /* IPv6 leftovers: 288                 */
   (Function) strip_mirc_codes,
-  (Function) check_ansi
+  (Function) check_ansi,
+  (Function) oatoi,
+  /* 292 - 295 */
+  (Function) str_isdigit
 };
 
 void init_modules(void)

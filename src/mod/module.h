@@ -1,7 +1,7 @@
 /*
  * module.h
  *
- * $Id: module.h,v 1.78 2003/11/01 23:26:57 wcc Exp $
+ * $Id: module.h,v 1.79 2003/12/07 21:49:16 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -474,6 +474,9 @@
 /* IPv6 leftovers: 288 */
 #define strip_mirc_codes ((void (*)(int, char *))global[289])
 #define check_ansi ((int (*) (char *))global[290])
+#define oatoi ((int (*) (const char *))global[291])
+/* 292 - 295 */
+#define str_isdigit ((int (*) (const char *))global[292])
 
 /* hostmasking */
 #define maskhost(a,b) _maskhost((a),(b),1)
@@ -483,10 +486,9 @@
  * file for it ;)
  */
 #ifndef MAKING_ENCRYPTION
-
-#  define encrypt_string(a, b)                                          \
+# define encrypt_string(a, b)                                          \
         (((char *(*)(char *,char*))encryption_funcs[4])(a,b))
-#  define decrypt_string(a, b)                                          \
+# define decrypt_string(a, b)                                          \
         (((char *(*)(char *,char*))encryption_funcs[5])(a,b))
 #endif
 

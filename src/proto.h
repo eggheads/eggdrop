@@ -7,7 +7,7 @@
  * because they use structures in those
  * (saves including those .h files EVERY time) - Beldin
  *
- * $Id: proto.h,v 1.59 2003/11/01 23:26:57 wcc Exp $
+ * $Id: proto.h,v 1.60 2003/12/07 21:49:16 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -201,16 +201,11 @@ void tell_mem_status_dcc(int);
 void debug_mem_to_dcc(int);
 
 /* misc.c */
-int egg_strcatn(char *dst, const char *src, size_t max);
+int egg_strcatn(char *, const char *, size_t);
 int my_strcpy(char *, char *);
 void putlog EGG_VARARGS(int, arg1);
 void flushlogs();
 void check_logsize();
-void _maskhost(const char *, char *, int);
-
-#define maskhost(a,b) _maskhost((a),(b),1)
-#define maskban(a,b) _maskhost((a),(b),0)
-
 char *stristr(char *, char *);
 void splitc(char *, char *, char);
 void splitcn(char *, char *, char, size_t);
@@ -228,8 +223,8 @@ void tellhelp(int, char *, struct flag_record *, int);
 void tellwildhelp(int, char *, struct flag_record *);
 void tellallhelp(int, char *, struct flag_record *);
 void showhelp(char *, char *, struct flag_record *, int);
-void rem_help_reference(char *file);
-void add_help_reference(char *file);
+void rem_help_reference(char *);
+void add_help_reference(char *);
 void debug_help(int);
 void reload_help_data(void);
 char *extracthostname(char *);
@@ -238,10 +233,15 @@ void make_rand_str(char *, int);
 int oatoi(const char *);
 int is_file(const char *);
 void logsuffix_change(char *);
-char *str_escape(const char *str, const char div, const char mask);
-char *strchr_unescape(char *str, const char div, register const char esc_char);
-void str_unescape(char *str, register const char esc_char);
+char *str_escape(const char *, const char, const char);
+char *strchr_unescape(char *, const char, register const char);
+void str_unescape(char *, register const char);
+int str_isdigit(const char *);
 void kill_bot(char *, char *);
+
+void _maskhost(const char *, char *, int);
+#define maskhost(a,b) _maskhost((a),(b),1)
+#define maskban(a,b)  _maskhost((a),(b),0)
 
 /* net.c */
 IP my_atoul(char *);

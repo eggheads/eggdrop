@@ -1,7 +1,7 @@
 /*
  * userchan.c -- part of channels.mod
  *
- * $Id: userchan.c,v 1.38 2003/03/19 23:44:49 wcc Exp $
+ * $Id: userchan.c,v 1.39 2003/12/07 21:49:17 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -172,9 +172,11 @@ static int u_setsticky_mask(struct chanset_t *chan, maskrec *u, char *uhost,
 {
   int j;
 
-  j = atoi(uhost);
-  if (!j)
+  if (!str_isdigit(uhost))
+    j = atoi(uhost);
+  else
     j = -1;
+
   while (u) {
     if (j >= 0)
       j--;
@@ -184,7 +186,7 @@ static int u_setsticky_mask(struct chanset_t *chan, maskrec *u, char *uhost,
         u->flags |= MASKREC_STICKY;
       else if (!sticky)
         u->flags &= ~MASKREC_STICKY;
-      else                      /* We don't actually want to change, just skip over */
+      else /* We don't actually want to change, just skip over */
         return 0;
       if (!j)
         strcpy(uhost, u->mask);
@@ -197,6 +199,7 @@ static int u_setsticky_mask(struct chanset_t *chan, maskrec *u, char *uhost,
 
     u = u->next;
   }
+
   if (j >= 0)
     return -j;
 
@@ -237,7 +240,8 @@ static int u_delban(struct chanset_t *c, char *who, int doit)
   maskrec **u = (c) ? &c->bans : &global_bans;
   char temp[256];
 
-  if (!strchr(who, '!') && (j = atoi(who))) {
+  if (!strchr(who, '!') && str_isdigit(who)) {
+    j = atoi(who);
     j--;
     for (; (*u) && j; u = &((*u)->next), j--);
     if (*u) {
@@ -291,7 +295,8 @@ static int u_delexempt(struct chanset_t *c, char *who, int doit)
   maskrec *t, **u = c ? &(c->exempts) : &global_exempts;
   char temp[256];
 
-  if (!strchr(who, '!') && (j = atoi(who))) {
+  if (!strchr(who, '!') && str_isdigit(who)) {
+    j = atoi(who);
     j--;
     for (; (*u) && j; u = &((*u)->next), j--);
     if (*u) {
@@ -346,7 +351,8 @@ static int u_delinvite(struct chanset_t *c, char *who, int doit)
   maskrec **u = c ? &(c->invites) : &global_invites;
   char temp[256];
 
-  if (!strchr(who, '!') && (j = atoi(who))) {
+  if (!strchr(who, '!') && str_isdigit(who)) {
+    j = atoi(who);
     j--;
     for (; (*u) && j; u = &((*u)->next), j--);
     if (*u) {
