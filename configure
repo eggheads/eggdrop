@@ -6680,7 +6680,7 @@ echo $ECHO_N "checking for Tcl version... $ECHO_C" >&6
   if test "${egg_cv_var_tcl_version+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
 else
-      egg_cv_var_tcl_version=`grep TCL_VERSION $TCLINC/$TCLINCFN | head -1 | $AWK '{gsub(/\"/, "", $3); print $3}'`
+      egg_cv_var_tcl_version=`grep TCL_VERSION $TCLINC/$TCLINCFN | head -n 1 | $AWK '{gsub(/\"/, "", $3); print $3}'`
 
 fi
 
@@ -6706,7 +6706,7 @@ echo $ECHO_N "checking for Tcl patch level... $ECHO_C" >&6
   if test "${egg_cv_var_tcl_patch_level+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
 else
-      eval "egg_cv_var_tcl_patch_level=`grep TCL_PATCH_LEVEL $TCLINC/$TCLINCFN | head -1 | $AWK '{gsub(/\"/, "", $3); print $3}'`"
+      eval "egg_cv_var_tcl_patch_level=`grep TCL_PATCH_LEVEL $TCLINC/$TCLINCFN | head -n 1 | $AWK '{gsub(/\"/, "", $3); print $3}'`"
 
 fi
 

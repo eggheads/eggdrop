@@ -1,7 +1,7 @@
 dnl aclocal.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: aclocal.m4,v 1.72 2003/11/01 23:26:56 wcc Exp $
+dnl $Id: aclocal.m4,v 1.73 2003/12/01 03:19:37 wcc Exp $
 dnl
 
 
@@ -889,7 +889,7 @@ then
   fi
   AC_MSG_CHECKING(for Tcl version)
   AC_CACHE_VAL(egg_cv_var_tcl_version, [dnl
-    egg_cv_var_tcl_version=`grep TCL_VERSION $TCLINC/$TCLINCFN | head -1 | $AWK '{gsub(/\"/, "", [$]3); print [$]3}'`
+    egg_cv_var_tcl_version=`grep TCL_VERSION $TCLINC/$TCLINCFN | head -n 1 | $AWK '{gsub(/\"/, "", [$]3); print [$]3}'`
   ])
 
   if test ! "${egg_cv_var_tcl_version-x}" = "x"
@@ -907,7 +907,7 @@ then
   fi
   AC_MSG_CHECKING(for Tcl patch level)
   AC_CACHE_VAL(egg_cv_var_tcl_patch_level, [dnl
-    eval "egg_cv_var_tcl_patch_level=`grep TCL_PATCH_LEVEL $TCLINC/$TCLINCFN | head -1 | $AWK '{gsub(/\"/, "", [$]3); print [$]3}'`"
+    eval "egg_cv_var_tcl_patch_level=`grep TCL_PATCH_LEVEL $TCLINC/$TCLINCFN | head -n 1 | $AWK '{gsub(/\"/, "", [$]3); print [$]3}'`"
   ])
 
   if test ! "${egg_cv_var_tcl_patch_level-x}" = "x"
