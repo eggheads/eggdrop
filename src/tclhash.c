@@ -7,7 +7,7 @@
  *   (non-Tcl) procedure lookups for msg/dcc/file commands
  *   (Tcl) binding internal procedures to msg/dcc/file commands
  * 
- * $Id: tclhash.c,v 1.23 2001/01/21 07:49:05 guppy Exp $
+ * $Id: tclhash.c,v 1.24 2001/03/10 22:38:03 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -36,7 +36,7 @@
 extern Tcl_Interp	*interp;
 extern struct dcc_t	*dcc;
 extern struct userrec	*userlist;
-extern int		 debug_tcl, dcc_total;
+extern int		 dcc_total;
 extern time_t		 now;
 
 p_tcl_bind_list		bind_table_list;
@@ -656,44 +656,29 @@ static int builtin_dcc STDVAR
 static int trigger_bind(const char *proc, const char *param)
 {
   int x;
-  FILE *f = 0;
 
-  if (debug_tcl) {
-    f = fopen("DEBUG.TCL", "a");
-    if (f != NULL)
-      fprintf(f, "eval: %s%s\n", proc, param);
-  }
-  {
-    /* We now try to debug the Tcl_VarEval() call below by remembering both
-     * the called proc name and it's parameters. This should render us a bit
-     * less helpless when we see context dumps.
-     */
-    const char *msg = "TCL proc: %s, param: %s";
-    char *buf;
+  /* We now try to debug the Tcl_VarEval() call below by remembering both
+   * the called proc name and it's parameters. This should render us a bit
+   * less helpless when we see context dumps.
+   */
+  const char *msg = "TCL proc: %s, param: %s";
+  char *buf;
 
-    Context;
-    buf = nmalloc(strlen(msg) + (proc ? strlen(proc) : 6)
-		  + (param ? strlen(param) : 6) + 1);
-    sprintf(buf, msg, proc ? proc : "<null>", param ? param : "<null>");
-    ContextNote(buf);
-    nfree(buf);
-  }
+  Context;
+  buf = nmalloc(strlen(msg) + (proc ? strlen(proc) : 6)
+		+ (param ? strlen(param) : 6) + 1);
+  sprintf(buf, msg, proc ? proc : "<null>", param ? param : "<null>");
+  ContextNote(buf);
+  nfree(buf);
+
   x = Tcl_VarEval(interp, proc, param, NULL);
   Context;
   if (x == TCL_ERROR) {
-    if (debug_tcl && (f != NULL)) {
-      fprintf(f, "done eval. error.\n");
-      fclose(f);
-    }
     if (strlen(interp->result) > 400)
       interp->result[400] = 0;
     putlog(LOG_MISC, "*", "Tcl error [%s]: %s", proc, interp->result);
     return BIND_EXECUTED;
   } else {
-    if (debug_tcl && (f != NULL)) {
-      fprintf(f, "done eval. ok.\n");
-      fclose(f);
-    }
     if (!strcmp(interp->result, "break"))
       return BIND_EXEC_BRK;
     return (atoi(interp->result) > 0) ? BIND_EXEC_LOG : BIND_EXECUTED;

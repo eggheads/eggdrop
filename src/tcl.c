@@ -4,7 +4,7 @@
  *   Tcl initialization
  *   getting and setting Tcl/eggdrop variables
  * 
- * $Id: tcl.c,v 1.30 2001/01/26 21:18:22 guppy Exp $
+ * $Id: tcl.c,v 1.31 2001/03/10 22:38:03 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -69,7 +69,6 @@ char	    whois_fields[1025] = "";	/* fields to display in a .whois */
 Tcl_Interp *interp;			/* eggdrop always uses the same
 					   interpreter */
 int	    dcc_flood_thr = 3;
-int	    debug_tcl = 0;
 int	    use_invites = 0;		/* Jason/drummer */
 int	    use_exempts = 0;		/* Jason/drummer */
 int	    force_expire = 0;		/* Rufus */
@@ -432,7 +431,6 @@ static tcl_ints def_tcl_ints[] =
   {"default-flags",		&default_flags,		0},
   /* moved from eggdrop.h */
   {"numversion",		&egg_numver,		2},
-  {"debug-tcl",			&debug_tcl,		1},
   {"die-on-sighup",		&die_on_sighup,		1},
   {"die-on-sigterm",		&die_on_sigterm,	1},
   {"remote-boots",		&remote_boots,		1},
@@ -629,18 +627,8 @@ resetPath:
 void do_tcl(char *whatzit, char *script)
 {
   int code;
-  FILE *f = 0;
 
-  if (debug_tcl) {
-    f = fopen("DEBUG.TCL", "a");
-    if (f != NULL)
-      fprintf(f, "eval: %s\n", script);
-  }
   code = Tcl_Eval(interp, script);
-  if (debug_tcl && (f != NULL)) {
-    fprintf(f, "done eval, result=%d\n", code);
-    fclose(f);
-  }
   if (code != TCL_OK) {
     putlog(LOG_MISC, "*", "Tcl error in script for '%s':", whatzit);
     putlog(LOG_MISC, "*", "%s", interp->result);
