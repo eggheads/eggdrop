@@ -1,10 +1,13 @@
 dnl Process this file with autoconf to produce a configure script.
-AC_INIT(src/eggdrop.h)
+AC_PREREQ(2.59)
+AC_INIT([Eggdrop],[1.6.16],[bugs@eggheads.org])
+AC_COPYRIGHT([Copyright (C) 1999, 2000, 2001, 2002, 2003 Eggheads Development Team])
+AC_REVISION($Id: configure.in,v 1.59 2004/01/09 01:36:38 wcc Exp $)
+AC_CONFIG_SRCDIR(src/eggdrop.h)
 AC_CONFIG_AUX_DIR(misc)
-AC_PREFIX_DEFAULT([\${HOME}/eggdrop])
 AC_CONFIG_HEADER(config.h)
+AC_PREFIX_DEFAULT([\${HOME}/eggdrop])
 
-EGG_MSG_CONFIGURE_START
 EGG_SAVE_PARAMETERS
 
 # Setup build environment
@@ -20,18 +23,15 @@ AC_MINIX
 EGG_CHECK_CCPIPE
 
 # Checks for programs
+AC_PROG_INSTALL
 AC_PROG_MAKE_SET
 AC_PROG_RANLIB
-AC_PROG_INSTALL
 AC_PROG_LN_S
 EGG_PROG_HEAD_1
 EGG_PROG_STRIP
 EGG_PROG_AWK
 EGG_PROG_BASENAME
 AC_CHECK_PROG(UNAME,uname,uname)
-
-# Should -O2 CFLAG be removed? 
-EGG_DISABLE_CC_OPTIMIZATION
 
 # Test the os and set the module linking settings
 EGG_CHECK_OS
@@ -40,28 +40,27 @@ EGG_CHECK_OS
 EGG_CHECK_LIBS
 
 # Checks for header files
+EGG_HEADER_STDC
 AC_HEADER_DIRENT
-AC_HEADER_SYS_WAIT
-AC_CHECK_HEADERS(sys/time.h)
+AC_CHECK_HEADERS([arpa/inet.h fcntl.h limits.h locale.h netdb.h netinet/in.h stddef.h sys/file.h sys/param.h sys/rusage.h sys/select.h sys/socket.h sys/time.h unistd.h wchar.h])
 AC_HEADER_TIME
-AC_CHECK_HEADERS(sys/param.h sys/select.h sys/rusage.h unistd.h stdarg.h std_args.h strings.h limits.h)
 
 # Checks for typedefs, structures, and compiler characteristics
-AC_TYPE_PID_T
-AC_TYPE_SIZE_T
 AC_C_CONST
 AC_C_BIGENDIAN
 AC_C_INLINE
+AC_TYPE_PID_T
+AC_TYPE_SIZE_T
+AC_C_VOLATILE
+
 AC_CHECK_SIZEOF(long, 0)
 AC_CHECK_SIZEOF(int, 0)
 
-# Checks for library functions
-AC_CHECK_FUNCS(clock getrusage setpgid uname sigaction sigemptyset rename strcasecmp strncasecmp getdtablesize)
-AC_CHECK_FUNCS(memset random srandom dlopen dprintf snprintf vsnprintf isascii inet_aton memcpy strftime fsync)
-EGG_CHECK_FUNC_VSPRINTF
-
-# Make sure we have stdc headers, since we can't compile without them
-EGG_HEADER_STDC
+# Checks for functions
+AC_CHECK_FUNCS(clock dlopen dprintf fsync getdtablesize getrusage inet_aton isascii memcpy memset random rename setpgid sigaction sigemptyset snprintf srandom strcasecmp strncasecmp uname vsnprintf)
+AC_FUNC_VPRINTF
+EGG_FUNC_VSPRINTF
+AC_FUNC_STRFTIME
 
 # Make sure we are using the correct result from a broken libsafe sscanf
 EGG_CHECK_LIBSAFE_SSCANF
@@ -69,9 +68,7 @@ EGG_CHECK_LIBSAFE_SSCANF
 # Checks for executable extension
 EGG_EXEEXT
 
-# Where is Tcl?  Is it here?
-# ---------- begin robey's Tcl thingies
-# (well, what used to be robey's Tcl thingies...)
+# Begin Tcl checks
 
 # Latest tested Tcl version to recommend if Tcl isn't found
 tclrecommendver="8.3.4"
@@ -110,7 +107,6 @@ EGG_TCL_FIND_HEADER
 EGG_TCL_CHECK_LIBRARY
 EGG_TCL_CHECK_HEADER
 EGG_TCL_DETECT_CHANGE
-
 EGG_TCL_CHECK_VERSION
 EGG_TCL_CHECK_PRE70
 EGG_TCL_TESTLIBS
@@ -119,15 +115,18 @@ EGG_TCL_ENABLE_THREADS
 EGG_TCL_CHECK_THREADS
 EGG_TCL_LIB_REQS
 EGG_TCL_LUSH
-# ---------- end of (what used to be) robey's Tcl thingies
+
+# End Tcl checks
 
 EGG_FUNC_DLOPEN
 
+# Substitute Makefile variables
 EGG_SUBST_EGGVERSION
 EGG_SUBST_DEST
 EGG_SUBST_MOD_UPDIR
-EGG_CATCH_MAKEFILE_REBUILD
 
-AC_OUTPUT(Makefile doc/Makefile scripts/Makefile src/Makefile src/md5/Makefile src/compat/Makefile src/mod/Makefile)
+EGG_CATCH_MAKEFILE_REBUILD
+AC_CONFIG_FILES([Makefile doc/Makefile scripts/Makefile src/Makefile src/compat/Makefile src/md5/Makefile src/mod/Makefile])
+AC_OUTPUT
 
 EGG_MSG_CONFIGURE_END

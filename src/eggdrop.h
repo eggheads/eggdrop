@@ -4,7 +4,7 @@
  *
  *   IF YOU ALTER THIS FILE, YOU NEED TO RECOMPILE THE BOT.
  *
- * $Id: eggdrop.h,v 1.52 2004/01/06 10:34:16 wcc Exp $
+ * $Id: eggdrop.h,v 1.53 2004/01/09 01:36:38 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -96,7 +96,7 @@
  * compilers support #error or error
  */
 #if !HAVE_VSPRINTF
-#  include "error you need vsprintf to compile eggdrop"
+#  include "Error: You need vsprintf to compile eggdrop."
 #endif
 
 #if HAVE_UNISTD_H
@@ -105,24 +105,24 @@
 
 #ifndef STATIC
 #  if (!defined(MODULES_OK) || !defined(HAVE_DLOPEN)) && !defined(HPUX_HACKS)
-#    include "you can't compile with module support on this system -- try make static"
+#    include "Error: You can't compile with module support on this system (try make static)."
 #  endif
 #endif
 
 #if !defined(STDC_HEADERS)
-#  include "you need to upgrade your compiler to a standard c compiler"
+#  include "Error: Your system must support ANSI C Header files."
 #endif
 
 #if (NICKMAX < 9) || (NICKMAX > 32)
-#  include "invalid NICKMAX value"
+#  include "Error: Invalid NICKMAX value."
 #endif
 
 #if (HANDLEN < 9) || (HANDLEN > 32)
-#  include "invalid HANDLEN value"
+#  include "Error: Invalid HANDLEN value."
 #endif
 
 #if HANDLEN > NICKMAX
-#  include "HANDLEN MUST BE <= NICKMAX"
+#  include "Error: HANDLEN MUST BE <= NICKMAX."
 #endif
 
 /* NAME_MAX is what POSIX defines, but BSD calls it MAXNAMLEN.

@@ -1,17 +1,31 @@
-dnl aclocal.m4
-dnl   macros autoconf uses when building configure from configure.in
+dnl aclocal.m4: macros autoconf uses when building configure from configure.ac
 dnl
-dnl $Id: aclocal.m4,v 1.78 2004/01/06 10:34:16 wcc Exp $
+dnl Copyright (C) 1999, 2000, 2001, 2002, 2003 Eggheads Development Team
 dnl
-
+dnl This program is free software; you can redistribute it and/or
+dnl modify it under the terms of the GNU General Public License
+dnl as published by the Free Software Foundation; either version 2
+dnl of the License, or (at your option) any later version.
+dnl
+dnl This program is distributed in the hope that it will be useful,
+dnl but WITHOUT ANY WARRANTY; without even the implied warranty of
+dnl MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+dnl GNU General Public License for more details.
+dnl
+dnl You should have received a copy of the GNU General Public License
+dnl along with this program; if not, write to the Free Software
+dnl Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+dnl
+dnl $Id: aclocal.m4,v 1.79 2004/01/09 01:36:38 wcc Exp $
+dnl
 
 dnl  EGG_MSG_CONFIGURE_START()
 dnl
 AC_DEFUN(EGG_MSG_CONFIGURE_START, [dnl
 AC_MSG_RESULT()
-AC_MSG_RESULT(This is Eggdrop's GNU configure script.)
-AC_MSG_RESULT(It's going to run a bunch of strange tests to hopefully)
-AC_MSG_RESULT(make your compile work without much twiddling.)
+AC_MSG_RESULT([This is Eggdrop's GNU configure script.])
+AC_MSG_RESULT([It's going to run a bunch of tests to hopefully make your compile]
+AC_MSG_RESULT([work without much twiddling.])
 AC_MSG_RESULT()
 ])dnl
 
@@ -20,10 +34,10 @@ dnl  EGG_MSG_CONFIGURE_END()
 dnl
 AC_DEFUN(EGG_MSG_CONFIGURE_END, [dnl
 AC_MSG_RESULT()
-AC_MSG_RESULT(Configure is done.)
+AC_MSG_RESULT([Configure is done.])
 AC_MSG_RESULT()
 AC_MSG_RESULT([Type 'make config' to configure the modules, or type 'make iconfig'])
-AC_MSG_RESULT(to interactively choose which modules to compile.)
+AC_MSG_RESULT([to interactively choose which modules to compile.])
 AC_MSG_RESULT()
 ])dnl
 
@@ -58,7 +72,7 @@ then
     AC_CACHE_CHECK(whether the compiler understands -pipe, egg_cv_var_ccpipe, [dnl
       ac_old_CC="$CC"
       CC="$CC -pipe"
-      AC_TRY_COMPILE(,, egg_cv_var_ccpipe="yes", egg_cv_var_ccpipe="no")
+      AC_COMPILE_IFELSE([[int main () { return(0); }]],[egg_cv_var_ccpipe="yes"],[egg_cv_var_ccpipe="no"])
       CC="$ac_old_CC"
     ])
     if test "$egg_cv_var_ccpipe" = "yes"
@@ -119,21 +133,16 @@ AC_SUBST(HEAD_1)dnl
 dnl  EGG_PROG_STRIP()
 dnl
 AC_DEFUN(EGG_PROG_STRIP, [dnl
-AC_ARG_ENABLE(strip,
-[  --enable-strip          enable stripping of executables ],
-enable_strip="$enableval",
-enable_strip=no)
-
+AC_ARG_ENABLE(strip, [  --enable-strip          enable stripping of executables ], [enable_strip="$enableval"], [enable_strip="no"])
 if test "$enable_strip" = "yes"
 then
-
-AC_CHECK_PROG(STRIP, strip, strip)
-if test "${STRIP-x}" = "x"
-then
-  STRIP=touch
-else
-  AC_DEFINE(ENABLE_STRIP)
-  cat << 'EOF' >&2
+  AC_CHECK_PROG(STRIP, strip, strip)
+  if test "${STRIP-x}" = "x"
+  then
+    STRIP=touch
+  else
+    AC_DEFINE(ENABLE_STRIP, 1, [Define if stripping is enabled.])
+    cat << 'EOF' >&2
 configure: warning:
 
   Stripping the executable, while saving some disk space, will make bug
@@ -141,8 +150,7 @@ configure: warning:
   a bug, you will need to recompile with stripping disabled.
 
 EOF
-fi
-
+  fi
 else
   STRIP=touch
 fi
@@ -171,7 +179,6 @@ fi
 dnl  EGG_PROG_BASENAME()
 dnl
 AC_DEFUN(EGG_PROG_BASENAME, [dnl
-# basename is needed for Tcl library and header checks
 AC_CHECK_PROG(BASENAME, basename, basename)
 if test "${BASENAME-x}" = "x"
 then
@@ -184,17 +191,6 @@ configure: error:
 EOF
   exit 1
 fi
-])dnl
-
-
-dnl  EGG_DISABLE_CC_OPTIMIZATION()
-dnl
-dnl check if user requested to remove -O2 cflag 
-dnl would be usefull on some weird *nix
-AC_DEFUN(EGG_DISABLE_CC_OPTIMIZATION, [dnl
- AC_ARG_ENABLE(cc-optimization,
-   [  --disable-cc-optimization  disable -O2 cflag],  
-   CFLAGS=`echo $CFLAGS | sed 's/\-O2//'`)
 ])dnl
 
 dnl  EGG_CHECK_OS()
@@ -235,7 +231,7 @@ case "$egg_cv_var_system_type" in
         MOD_STRIP="$STRIP -d"
         SHLIB_LD="shlicc -r"
         SHLIB_STRIP=touch
-        AC_DEFINE(MODULES_OK)dnl
+        AC_DEFINE(MODULES_OK, 1, [Define if modules will work on your system.])dnl
       ;;
       *)
         CFLAGS="$CFLAGS -Wall"
@@ -243,7 +239,7 @@ case "$egg_cv_var_system_type" in
         MOD_STRIP="$STRIP -d"
         SHLIB_CC="$CC -export-dynamic -fPIC"
         SHLIB_LD="$CC -shared -nostartfiles"
-        AC_DEFINE(MODULES_OK)dnl
+        AC_DEFINE(MODULES_OK, 1, [Define if modules will work on your system.])dnl
       ;;
     esac
   ;;
@@ -266,7 +262,7 @@ case "$egg_cv_var_system_type" in
           AC_MSG_WARN(Make sure the directory Eggdrop is installed into is mounted in binary mode.)
         fi
         MOD_EXT=dll
-        AC_DEFINE(MODULES_OK)dnl
+        AC_DEFINE(MODULES_OK, 1, [Define if modules will work on your system.])dnl
       ;;
       *)
         NEED_DL=0
@@ -275,7 +271,7 @@ case "$egg_cv_var_system_type" in
       ;;
     esac
     EGG_CYGWIN=yes
-    AC_DEFINE(CYGWIN_HACKS)
+    AC_DEFINE(CYGWIN_HACKS, 1, [Define if running under Cygwin.])
   ;;
   HP-UX)
     HPUX=yes
@@ -283,11 +279,11 @@ case "$egg_cv_var_system_type" in
     SHLIB_CC="$CC -fPIC"
     SHLIB_LD="ld -b"
     NEED_DL=0
-    AC_DEFINE(MODULES_OK)dnl
-    AC_DEFINE(HPUX_HACKS)dnl
+    AC_DEFINE(MODULES_OK, 1, [Define if modules will work on your system.])dnl
+    AC_DEFINE(HPUX_HACKS, 1, [Define if running on HPUX that supports dynamic linking.])dnl
     if test "`echo $egg_cv_var_system_release | cut -d . -f 2`" = "10"
     then
-      AC_DEFINE(HPUX10_HACKS)dnl
+      AC_DEFINE(HPUX10_HACKS, 1, [Define if running on HPUX 10.x.])dnl
     fi
   ;;
   dell)
@@ -326,7 +322,7 @@ case "$egg_cv_var_system_type" in
     MOD_LD="$CC"
     SHLIB_CC="$CC -fPIC"
     SHLIB_LD="$CC -shared -nostartfiles"
-    AC_DEFINE(MODULES_OK)dnl
+    AC_DEFINE(MODULES_OK, 1, [Define if modules will work on your system.])dnl
   ;;
   Lynx)
     NEED_DL=0
@@ -353,26 +349,26 @@ case "$egg_cv_var_system_type" in
         SHLIB_CC=cc
         SHLIB_LD="ld -shared -expect_unresolved \"'*'\""
         SHLIB_STRIP=touch
-        AC_DEFINE(MODULES_OK)dnl
+        AC_DEFINE(MODULES_OK, 1, [Define if modules will work on your system.])dnl
       ;;
       1.0|1.1|1.2)
         SHLIB_LD="ld -R -export $@:"
-        AC_DEFINE(MODULES_OK)dnl
-        AC_DEFINE(OSF1_HACKS)dnl
+        AC_DEFINE(MODULES_OK, 1, [Define if modules will work on your system.])dnl
+        AC_DEFINE(OSF1_HACKS, 1, [Define if running on OSF/1 platform.])dnl
       ;;
       1.*)
         SHLIB_CC="$CC -fpic"
         SHLIB_LD="ld -shared"
-        AC_DEFINE(MODULES_OK)dnl
-        AC_DEFINE(OSF1_HACKS)dnl
+        AC_DEFINE(MODULES_OK, 1, [Define if modules will work on your system.])dnl
+        AC_DEFINE(OSF1_HACKS, 1, [Define if running on OSF/1 platform.])dnl
       ;;
       *)
         NEED_DL=0
         DEFAULT_MAKE=static
       ;;
     esac
-    AC_DEFINE(STOP_UAC)dnl
-    AC_DEFINE(BROKEN_SNPRINTF)dnl
+    AC_DEFINE(STOP_UAC, 1, [Define if running on OSF/1 platform.])dnl
+    AC_DEFINE(BROKEN_SNPRINTF, 1, [Define to use Eggdrop's snprintf functions regardless of HAVE_SNPRINTF.])dnl
   ;;
   SunOS)
     if test "`echo $egg_cv_var_system_release | cut -d . -f 1`" = "5"
@@ -391,21 +387,21 @@ case "$egg_cv_var_system_type" in
       SUNOS=yes
       SHLIB_LD=ld
       SHLIB_CC="$CC -PIC"
-      AC_DEFINE(DLOPEN_1)dnl
+      AC_DEFINE(DLOPEN_1, 1, [Define if running on SunOS 4.0.])dnl
     fi
-    AC_DEFINE(MODULES_OK)dnl
+    AC_DEFINE(MODULES_OK, 1, [Define if modules will work on your system.])dnl
   ;;
   *BSD)
     # FreeBSD/OpenBSD/NetBSD
     SHLIB_CC="$CC -fPIC"
     SHLIB_LD="ld -Bshareable -x"
-    AC_DEFINE(MODULES_OK)dnl
+    AC_DEFINE(MODULES_OK, 1, [Define if modules will work on your system.])dnl
   ;;
   Darwin)
     # Mac OS X
     SHLIB_CC="$CC -fPIC"
     SHLIB_LD="ld -Bshareable -x"
-    AC_DEFINE(MODULES_OK)dnl
+    AC_DEFINE(MODULES_OK, 1, [Define if modules will work on your system.])dnl
   ;;
   *)
     AC_MSG_CHECKING(if system is Mach based)
@@ -414,7 +410,7 @@ case "$egg_cv_var_system_type" in
       AC_MSG_RESULT(yes)
       NEED_DL=0
       DEFAULT_MAKE=static
-      AC_DEFINE(BORGCUBES)dnl
+      AC_DEFINE(BORGCUBES, 1, [Define if running on NeXT Step.])dnl
     else
       AC_MSG_RESULT(no)
       AC_MSG_CHECKING(if system is QNX)
@@ -427,7 +423,7 @@ case "$egg_cv_var_system_type" in
       else
         AC_MSG_RESULT(no)
         AC_MSG_RESULT(Something unknown!)
-        AC_MSG_RESULT([If you get dynamic modules to work, be sure to let the devel team know HOW :)])
+        AC_MSG_RESULT([If you get modules to work, be sure to let the development team know how (eggdev@eggheads.org).])
         NEED_DL=0
         DEFAULT_MAKE=static
       fi
@@ -442,7 +438,7 @@ AC_SUBST(SHLIB_CC)dnl
 AC_SUBST(SHLIB_STRIP)dnl
 AC_SUBST(DEFAULT_MAKE)dnl
 AC_SUBST(MOD_EXT)dnl
-AC_DEFINE_UNQUOTED(EGG_MOD_EXT, "$MOD_EXT")dnl
+AC_DEFINE_UNQUOTED(EGG_MOD_EXT, "$MOD_EXT", [Defines the extension of Eggdrop modules.])dnl
 ])dnl
 
 
@@ -487,17 +483,16 @@ fi
 ])dnl
 
 
-dnl  EGG_CHECK_FUNC_VSPRINTF()
+dnl  EGG_FUNC_VSPRINTF()
 dnl
-AC_DEFUN(EGG_CHECK_FUNC_VSPRINTF, [dnl
-AC_CHECK_FUNCS(vsprintf)
+AC_DEFUN(EGG_FUNC_VSPRINTF, [dnl
 if test "$ac_cv_func_vsprintf" = "no"
 then
   cat << 'EOF' >&2
 configure: error:
 
-  Your system does not have the sprintf/vsprintf libraries.
-  These are required to compile almost anything.  Sorry.
+  Your system does not have the vprintf/vsprintf/sprintf libraries.
+  These are required to compile almost anything. Sorry.
 
 EOF
   exit 1
@@ -514,7 +509,7 @@ then
 configure: error:
 
   Your system must support ANSI C Header files.
-  These are required for the language support.  Sorry.
+  These are required for the language support. Sorry.
 
 EOF
   exit 1
@@ -526,25 +521,23 @@ dnl  EGG_CHECK_LIBSAFE_SSCANF()
 dnl
 AC_DEFUN(EGG_CHECK_LIBSAFE_SSCANF, [dnl
 AC_CACHE_CHECK(for broken libsafe sscanf, egg_cv_var_libsafe_sscanf, [dnl
-  AC_TRY_RUN([
-#include <stdio.h>
+  AC_RUN_IFELSE([[
+    #include <stdio.h>
 
-int main()
-{
-  char *src = "0x001,guppyism\n";
-  char dst[10];
-  int idx;
+    int main()
+    {
+      char *src = "0x001,guppyism\n", dst[10];
+      int idx;
 
-  if (sscanf(src, "0x%x,%10c", &idx, dst) == 1)
-    exit(1);
-  return 0;
-}
-], egg_cv_var_libsafe_sscanf="no", egg_cv_var_libsafe_sscanf="yes",
-egg_cv_var_libsafe_sscanf="no")
+      if (sscanf(src, "0x%x,%10c", &idx, dst) == 1)
+        exit(1);
+      return 0;
+    }
+  ]], [egg_cv_var_libsafe_sscanf="no"], [egg_cv_var_libsafe_sscanf="yes"], [egg_cv_var_libsafe_sscanf="no"])
 ])
 if test "$egg_cv_var_libsafe_sscanf" = "yes"
 then
-  AC_DEFINE(LIBSAFE_HACKS)dnl
+  AC_DEFINE(LIBSAFE_HACKS, 1, [Define if you have a version of libsafe with a broken sscanf().])dnl
 fi
 ])dnl
 
@@ -567,7 +560,6 @@ AC_SUBST(EGGEXEC)dnl
 dnl  EGG_TCL_ARG_WITH()
 dnl
 AC_DEFUN(EGG_TCL_ARG_WITH, [dnl
-# oohh new configure --variables for those with multiple Tcl libs
 AC_ARG_WITH(tcllib, [  --with-tcllib=PATH      full path to Tcl library], tcllibname="$withval")
 AC_ARG_WITH(tclinc, [  --with-tclinc=PATH      full path to Tcl header], tclincname="$withval")
 
@@ -1005,7 +997,7 @@ then
 configure: error:
 
   Your Tcl version is much too old for Eggdrop to use.
-  I suggest you download and compile a more recent version.
+  You should download and compile a more recent version.
   The most reliable current version is $tclrecommendver and
   can be downloaded from $tclrecommendsite
 
@@ -1042,7 +1034,7 @@ AC_CHECK_LIB($TCL_TEST_LIB, Tcl_Free, egg_cv_var_tcl_free="yes", egg_cv_var_tcl_
 
 if test "$egg_cv_var_tcl_free" = "yes"
 then
-  AC_DEFINE(HAVE_TCL_FREE)dnl
+  AC_DEFINE(HAVE_TCL_FREE, 1, [Define for Tcl that has Tcl_Free() (7.5p1 and later).])dnl
 fi
 ])dnl
 
@@ -1050,10 +1042,7 @@ fi
 dnl  EGG_TCL_ENABLE_THREADS()
 dnl
 AC_DEFUN(EGG_TCL_ENABLE_THREADS, [dnl
-AC_ARG_ENABLE(tcl-threads,
-[  --disable-tcl-threads   disable threaded Tcl support if detected ],
-enable_tcl_threads="$enableval",
-enable_tcl_threads=yes)
+AC_ARG_ENABLE(tcl-threads, [  --disable-tcl-threads   disable threaded Tcl support if detected ], [enable_tcl_threads="$enableval"], [enable_tcl_threads="yes"])
 ])dnl
 
 
@@ -1081,7 +1070,7 @@ configure: warning:
 
 EOF
   else
-    AC_DEFINE(HAVE_TCL_THREADS)dnl
+    AC_DEFINE(HAVE_TCL_THREADS, 1, [Define for Tcl that has threads.])dnl
   fi
 
   # Add pthread library to $LIBS if we need it
@@ -1163,28 +1152,29 @@ then
     cat << 'EOF' >&2
 configure: warning:
 
-  Since you are on a Linux system, this has a known problem...
-  I know a kludge for it,
+  libdl cannot be found. Since you are on a Linux system, this
+  is a known problem. A kludge is known for it,
 EOF
 
     if test -r "/lib/libdl.so.1"
     then
       cat << 'EOF' >&2
-  and you seem to have it, so we'll do that...
+  and you seem to have it. We'll use that.
 
 EOF
-      AC_DEFINE(HAVE_DLOPEN)dnl
+      AC_DEFINE(HAVE_DLOPEN, 1, [Define if we have/need dlopen() (for module support).])dnl
       LIBS="/lib/libdl.so.1 $LIBS"
     else
       cat << 'EOF' >&2
-  which you DON'T seem to have... doh!
-  perhaps you may still have the stuff lying around somewhere
-  if you work out where it is, add it to your XLIBS= lines
-  and #define HAVE_DLOPEN in config.h
+  which you DON'T seem to have... doh! If you do have dlopen
+  on your system, and manage to figure out where it's located,
+  add it to your XLIBS= lines and #define HAVE_DLOPEN in
+  config.h. We'll proceed on anyway, but you probably won't
+  be able to 'make eggdrop'. The default make will now be set
+  to static.
 
-  we'll proceed on anyway, but you probably won't be able
-  to 'make eggdrop' but you might be able to make the
-  static bot (I'll default your make to this version).
+  If you do manage to get modules working on this system,
+  please let the development team know how (eggdev@eggheads.org).
 
 EOF
       DEFAULT_MAKE=static
@@ -1193,9 +1183,15 @@ EOF
     cat << 'EOF' >&2
 configure: warning:
 
-  You don't seem to have libdl anywhere I can find it, this will
-  prevent you from doing dynamic modules, I'll set your default
-  make to static linking.
+  dlopen could not be found on this system. If you do have
+  dlopen on your system, and manage to figure out where it's
+  located, add it to your XLIBS= lines and #define HAVE_DLOPEN
+  in config.h. We'll proceed on anyway, but you probably won't
+  be able to 'make eggdrop'. The default make will now be set
+  to static.
+
+  If you do manage to get modules working on this system,
+  please let the development team know how (eggdev@eggheads.org).
 
 EOF
     DEFAULT_MAKE=static
@@ -1210,7 +1206,7 @@ AC_DEFUN(EGG_SUBST_EGGVERSION, [dnl
 EGGVERSION=`grep 'char.egg_version' $srcdir/src/main.c | $AWK '{gsub(/(\"|\;)/, "", [$]4); print [$]4}'`
 egg_version_num=`echo $EGGVERSION | $AWK 'BEGIN {FS = "."} {printf("%d%02d%02d", [$]1, [$]2, [$]3)}'`
 AC_SUBST(EGGVERSION)dnl
-AC_DEFINE_UNQUOTED(EGG_VERSION, $egg_version_num)dnl
+AC_DEFINE_UNQUOTED(EGG_VERSION, $egg_version_num, [Defines the current Eggdrop version.])dnl
 ])dnl
 
 
@@ -1247,117 +1243,117 @@ AC_SUBST(MOD_UPDIR)dnl
 dnl  EGG_REPLACE_IF_CHANGED(FILE-NAME, CONTENTS-CMDS, INIT-CMDS)
 dnl
 dnl  Replace FILE-NAME if the newly created contents differs from the existing
-dnl  file contents.  Otherwise, leave the file alone.  This avoids needless
+dnl  file contents. Otherwise, leave the file alone. This avoids needless
 dnl  recompiles.
 dnl
 define(EGG_REPLACE_IF_CHANGED, [dnl
-  AC_OUTPUT_COMMANDS([
-egg_replace_file="$1"
-echo "creating $1"
-$2
-if test -f "$egg_replace_file" && cmp -s conftest.out $egg_replace_file
-then
-  echo "$1 is unchanged"
-else
-  mv conftest.out $egg_replace_file
-fi
-rm -f conftest.out], [$3])dnl
+AC_CONFIG_COMMANDS([replace-if-changed],[[
+  egg_replace_file="$1"
+  $2
+  if test -f "$egg_replace_file" && cmp -s conftest.out $egg_replace_file
+  then
+    echo "$1 is unchanged"
+  else
+    echo "creating $1"
+    mv conftest.out $egg_replace_file
+  fi
+  rm -f conftest.out
+]],[[$3]])dnl
 ])dnl
 
 
 dnl  EGG_TCL_LUSH()
 dnl
 AC_DEFUN(EGG_TCL_LUSH, [dnl
-    EGG_REPLACE_IF_CHANGED(lush.h, [
-cat > conftest.out << EGGEOF
+EGG_REPLACE_IF_CHANGED(lush.h, [
+  cat > conftest.out << EOF
+
 /* Ignore me but do not erase me.  I am a kludge. */
 
 #include "$egg_tclinc/$egg_tclincfn"
-EGGEOF], [
-    egg_tclinc="$TCLINC"
-    egg_tclincfn="$TCLINCFN"])dnl
+
+EOF
+], [
+  egg_tclinc="$TCLINC"
+  egg_tclincfn="$TCLINCFN"
+])dnl
 ])dnl
 
 
 dnl  EGG_CATCH_MAKEFILE_REBUILD()
 dnl
 AC_DEFUN(EGG_CATCH_MAKEFILE_REBUILD, [dnl
-  AC_OUTPUT_COMMANDS([
+AC_CONFIG_COMMANDS([catch-make-rebuild],[[
 if test -f .modules
 then
   $srcdir/misc/modconfig --top_srcdir="$srcdir/src" Makefile
-fi])
+fi]])
 ])dnl
 
 
 dnl  EGG_SAVE_PARAMETERS()
+dnl  Remove --cache-file and --srcdir arguments so they do not pile up.
 dnl
 AC_DEFUN(EGG_SAVE_PARAMETERS, [dnl
-  # Remove --cache-file and --srcdir arguments so they do not pile up.
-  egg_ac_parameters=
-  ac_prev=
-  for ac_arg in $ac_configure_args; do
-    if test -n "$ac_prev"; then
-      ac_prev=
-      continue
-    fi
-    case $ac_arg in
-    -cache-file | --cache-file | --cache-fil | --cache-fi \
-    | --cache-f | --cache- | --cache | --cach | --cac | --ca | --c)
-      ac_prev=cache_file ;;
-    -cache-file=* | --cache-file=* | --cache-fil=* | --cache-fi=* \
-    | --cache-f=* | --cache-=* | --cache=* | --cach=* | --cac=* | --ca=* \
-    | --c=*)
-      ;;
-    --config-cache | -C)
-      ;;
-    -srcdir | --srcdir | --srcdi | --srcd | --src | --sr)
-      ac_prev=srcdir ;;
-    -srcdir=* | --srcdir=* | --srcdi=* | --srcd=* | --src=* | --sr=*)
-      ;;
-    *) egg_ac_parameters="$egg_ac_parameters $ac_arg" ;;
-    esac
-  done
+egg_ac_parameters=
+ac_prev=
+for ac_arg in $ac_configure_args; do
+  if test -n "$ac_prev"; then
+    ac_prev=
+    continue
+  fi
+  case $ac_arg in
+  -cache-file | --cache-file | --cache-fil | --cache-fi | --cache-f | --cache- | --cache | --cach | --cac | --ca | --c)
+    ac_prev=cache_file ;;
+  -cache-file=* | --cache-file=* | --cache-fil=* | --cache-fi=* | --cache-f=* | --cache-=* | --cache=* | --cach=* | --cac=* | --ca=* | --c=*)
+    ;;
+  --config-cache | -C)
+    ;;
+  -srcdir | --srcdir | --srcdi | --srcd | --src | --sr)
+    ac_prev=srcdir ;;
+  -srcdir=* | --srcdir=* | --srcdi=* | --srcd=* | --src=* | --sr=*)
+    ;;
+  *) egg_ac_parameters="$egg_ac_parameters $ac_arg" ;;
+  esac
+done
 
-  AC_SUBST(egg_ac_parameters)dnl
+AC_SUBST(egg_ac_parameters)dnl
 ])dnl
 
 
-AC_DEFUN([AC_PROG_CC_WIN32], [
+dnl  AC_PROG_CC_WIN32()
+dnl
+AC_DEFUN(AC_PROG_CC_WIN32, [dnl
 AC_MSG_CHECKING([how to access the Win32 API])
 WIN32FLAGS=
-AC_TRY_COMPILE(,[
-#ifndef WIN32
-# ifndef _WIN32
-#  error WIN32 or _WIN32 not defined
-# endif
-#endif], [
-dnl found windows.h with the current config.
-AC_MSG_RESULT([present by default])
+AC_COMPILE_IFELSE([[
+  #ifndef WIN32
+  #  ifndef _WIN32
+  #    error WIN32 or _WIN32 not defined
+  #  endif
+  #endif
+]], [
+  AC_MSG_RESULT([present by default])
 ], [
-dnl try -mwin32
-ac_compile_save="$ac_compile"
-dnl we change CC so config.log looks correct
-save_CC="$CC"
-ac_compile="$ac_compile -mwin32"
-CC="$CC -mwin32"
-AC_TRY_COMPILE(,[
-#ifndef WIN32
-# ifndef _WIN32
-#  error WIN32 or _WIN32 not defined
-# endif
-#endif], [
-dnl found windows.h using -mwin32
-AC_MSG_RESULT([found via -mwin32])
-ac_compile="$ac_compile_save"
-CC="$save_CC"
-WIN32FLAGS="-mwin32"
-], [
-ac_compile="$ac_compile_save"
-CC="$save_CC"
-AC_MSG_RESULT([not found])
+  ac_compile_save="$ac_compile"
+  save_CC="$CC"
+  ac_compile="$ac_compile -mwin32"
+  CC="$CC -mwin32"
+  AC_COMPILE_IFELSE([[
+    #ifndef WIN32
+    #  ifndef _WIN32
+    #    error WIN32 or _WIN32 not defined
+    #  endif
+    #endif
+  ]], [
+    AC_MSG_RESULT([found via -mwin32])
+    ac_compile="$ac_compile_save"
+    CC="$save_CC"
+    WIN32FLAGS="-mwin32"
+  ], [
+    ac_compile="$ac_compile_save"
+    CC="$save_CC"
+    AC_MSG_RESULT([not found])
+  ])
 ])
-])
-
-])
-dnl
+])dnl

@@ -1,61 +1,28 @@
 /* config.h.in.  Generated from configure.in by autoheader.  */
-#ifndef _EGG_CONFIG_H
-#define _EGG_CONFIG_H
-/* 
- * acconfig.h
- *   template file autoheader uses when building config.h.in
- * 
- * $Id: config.h.in,v 1.35 2004/01/06 10:34:16 wcc Exp $
- */
 
-/* Define if stripping is enabled. */
-#undef ENABLE_STRIP
+/* Define if running on NeXT Step. */
+#undef BORGCUBES
 
-/* Define if modules will work on your system. */
-#undef MODULES_OK
-
-/* Define if running on HPUX that supports dynamic linking. */
-#undef HPUX_HACKS
-
-/* Define if running on HPUX 10.x. */
-#undef HPUX10_HACKS
-
-/* Define if running on OSF/1 platform. */
-#undef OSF1_HACKS
-
-/* Define to use Eggdrop's snprintf functions without regard to HAVE_SNPRINTF. */
+/* Define to use Eggdrop's snprintf functions regardless of HAVE_SNPRINTF. */
 #undef BROKEN_SNPRINTF
 
-/* Define if running on OSF/1 platform. */
-#undef STOP_UAC
+/* Define if running under Cygwin. */
+#undef CYGWIN_HACKS
 
 /* Define if running on SunOS 4.0. */
 #undef DLOPEN_1
 
-/* Define if running on NeXT Step.  */
-#undef BORGCUBES
-
-/* Define if running under Cygwin.  */
-#undef CYGWIN_HACKS
-
-/* Define if you have a version of libsafe with a broken sscanf(). */
-#undef LIBSAFE_HACKS
-
-/* Define if we need dlopen() (for module support).  */
-#undef HAVE_DLOPEN
-
-/* Define for Tcl that has Tcl_Free() (7.5p1 and later).  */
-#undef HAVE_TCL_FREE
-
-/* Define for Tcl that has threads.  */
-#undef HAVE_TCL_THREADS
-
-/* Defines the current Eggdrop version.  */
-#undef EGG_VERSION
-
-/* Defines extension of Eggdrop modules.  */
+/* Defines the extension of Eggdrop modules. */
 #undef EGG_MOD_EXT
 
+/* Defines the current Eggdrop version. */
+#undef EGG_VERSION
+
+/* Define if stripping is enabled. */
+#undef ENABLE_STRIP
+
+/* Define to 1 if you have the <arpa/inet.h> header file. */
+#undef HAVE_ARPA_INET_H
 
 /* Define to 1 if you have the `clock' function. */
 #undef HAVE_CLOCK
@@ -64,11 +31,17 @@
    */
 #undef HAVE_DIRENT_H
 
-/* Define to 1 if you have the `dlopen' function. */
+/* Define if we have/need dlopen() (for module support). */
 #undef HAVE_DLOPEN
+
+/* Define to 1 if you don't have `vprintf' but do have `_doprnt.' */
+#undef HAVE_DOPRNT
 
 /* Define to 1 if you have the `dprintf' function. */
 #undef HAVE_DPRINTF
+
+/* Define to 1 if you have the <fcntl.h> header file. */
+#undef HAVE_FCNTL_H
 
 /* Define to 1 if you have the `fsync' function. */
 #undef HAVE_FSYNC
@@ -106,6 +79,9 @@
 /* Define to 1 if you have the <limits.h> header file. */
 #undef HAVE_LIMITS_H
 
+/* Define to 1 if you have the <locale.h> header file. */
+#undef HAVE_LOCALE_H
+
 /* Define to 1 if you have the `memcpy' function. */
 #undef HAVE_MEMCPY
 
@@ -117,6 +93,12 @@
 
 /* Define to 1 if you have the <ndir.h> header file, and it defines `DIR'. */
 #undef HAVE_NDIR_H
+
+/* Define to 1 if you have the <netdb.h> header file. */
+#undef HAVE_NETDB_H
+
+/* Define to 1 if you have the <netinet/in.h> header file. */
+#undef HAVE_NETINET_IN_H
 
 /* Define to 1 if you have the `random' function. */
 #undef HAVE_RANDOM
@@ -139,17 +121,14 @@
 /* Define to 1 if you have the `srandom' function. */
 #undef HAVE_SRANDOM
 
-/* Define to 1 if you have the <stdarg.h> header file. */
-#undef HAVE_STDARG_H
+/* Define to 1 if you have the <stddef.h> header file. */
+#undef HAVE_STDDEF_H
 
 /* Define to 1 if you have the <stdint.h> header file. */
 #undef HAVE_STDINT_H
 
 /* Define to 1 if you have the <stdlib.h> header file. */
 #undef HAVE_STDLIB_H
-
-/* Define to 1 if you have the <std_args.h> header file. */
-#undef HAVE_STD_ARGS_H
 
 /* Define to 1 if you have the `strcasecmp' function. */
 #undef HAVE_STRCASECMP
@@ -170,6 +149,9 @@
    */
 #undef HAVE_SYS_DIR_H
 
+/* Define to 1 if you have the <sys/file.h> header file. */
+#undef HAVE_SYS_FILE_H
+
 /* Define to 1 if you have the <sys/ndir.h> header file, and it defines `DIR'.
    */
 #undef HAVE_SYS_NDIR_H
@@ -183,6 +165,9 @@
 /* Define to 1 if you have the <sys/select.h> header file. */
 #undef HAVE_SYS_SELECT_H
 
+/* Define to 1 if you have the <sys/socket.h> header file. */
+#undef HAVE_SYS_SOCKET_H
+
 /* Define to 1 if you have the <sys/stat.h> header file. */
 #undef HAVE_SYS_STAT_H
 
@@ -192,8 +177,11 @@
 /* Define to 1 if you have the <sys/types.h> header file. */
 #undef HAVE_SYS_TYPES_H
 
-/* Define to 1 if you have <sys/wait.h> that is POSIX.1 compatible. */
-#undef HAVE_SYS_WAIT_H
+/* Define for Tcl that has Tcl_Free() (7.5p1 and later). */
+#undef HAVE_TCL_FREE
+
+/* Define for Tcl that has threads. */
+#undef HAVE_TCL_THREADS
 
 /* Define to 1 if you have the `uname' function. */
 #undef HAVE_UNAME
@@ -201,11 +189,29 @@
 /* Define to 1 if you have the <unistd.h> header file. */
 #undef HAVE_UNISTD_H
 
+/* Define to 1 if you have the `vprintf' function. */
+#undef HAVE_VPRINTF
+
 /* Define to 1 if you have the `vsnprintf' function. */
 #undef HAVE_VSNPRINTF
 
-/* Define to 1 if you have the `vsprintf' function. */
-#undef HAVE_VSPRINTF
+/* Define to 1 if you have the <wchar.h> header file. */
+#undef HAVE_WCHAR_H
+
+/* Define if running on HPUX 10.x. */
+#undef HPUX10_HACKS
+
+/* Define if running on HPUX that supports dynamic linking. */
+#undef HPUX_HACKS
+
+/* Define if you have a version of libsafe with a broken sscanf(). */
+#undef LIBSAFE_HACKS
+
+/* Define if modules will work on your system. */
+#undef MODULES_OK
+
+/* Define if running on OSF/1 platform. */
+#undef OSF1_HACKS
 
 /* Define to the address where bug reports for this package should be sent. */
 #undef PACKAGE_BUGREPORT
@@ -230,6 +236,9 @@
 
 /* Define to 1 if you have the ANSI C header files. */
 #undef STDC_HEADERS
+
+/* Define if running on OSF/1 platform. */
+#undef STOP_UAC
 
 /* Define to 1 if you can safely include both <sys/time.h> and <time.h>. */
 #undef TIME_WITH_SYS_TIME
@@ -270,4 +279,6 @@
 /* Define to `unsigned' if <sys/types.h> does not define. */
 #undef size_t
 
-#endif /* !_EGG_CONFIG_H */
+/* Define to empty if the keyword `volatile' does not work. Warning: valid
+   code using `volatile' can become incorrect without. Disable with care. */
+#undef volatile
