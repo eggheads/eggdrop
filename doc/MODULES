@@ -1,4 +1,4 @@
-EGGDROP MODULE INFORMATION                                        19 Feb 2000
+EGGDROP MODULE INFORMATION                                        13 Dec 2001
 
 
 INDEX
@@ -61,38 +61,39 @@ To see your currently running modules type '.module'.
 
 IV.   CURRENT MODULES
 
-assoc       : Assoc support.
-blowfish    : Encryption support needed for encrypting your users' passwords.
+assoc       Assoc support.
+blowfish    Encryption support needed for encrypting your users' passwords.
               Also needed for the wire module below. This module can't be
               unloaded once it's loaded.
-channels    : Provides channel related support for the bot, without it, it
+channels    Provides channel related support for the bot, without it, it
               will just sit on irc, it can respond to msg & ctcp commands,
               but that's all.
-compress    : This module provides an zlib support for compress transfer of
+compress    This module provides an zlib support for compress transfer of
               files via the botnet. For Example, compressed userfile transfers
               are possible now.
-console     : This module provides storage of console settings when you exit
+console     This module provides storage of console settings when you exit
               the bot (or .store).
-ctcp        : This provides the normal ctcp replies that you'd expect.
-dns         : This module provides asynchronous dns support which avoids
+ctcp        This provides the normal ctcp replies that you'd expect.
+dns         This module provides asynchronous dns support which avoids
               blocking on dns lookups. Especially useful for busy hub bots.
-filesys     : The file system. If you unload it all users currently using
+filesys     The file system. If you unload it all users currently using
               the it will be disconnected from the bot.
-irc         : This module provides ALL NORMAL IRC INTERACTION, if you want
+irc         This module provides ALL NORMAL IRC INTERACTION, if you want
               the normal join & maintain channels stuff, this is the module.
-notes       : This provides support for storing of notes for users from each
+notes       This provides support for storing of notes for users from each
               other. Notes between currently online users is supported in
               the core, this is only for storing the notes for later
               retrieval, direct user->user notes are built-in.
-seen        : This module provides seen commands via msg, on channel or via
+seen        This module provides seen commands via msg, on channel or via
               dcc, similar to the various scripts.
-server      : This provides the core server support (removing this is
+server      This provides the core server support (removing this is
               equivalent to the old NO_IRC define).
-share       : Userfile sharing.
-transfer    : Handles the transfer of files via botnet or dcc, this is
+share       Userfile sharing.
+transfer    Handles the transfer of files via botnet or dcc, this is
               REQUIRED for file sharing.
-wire        : An encrypted partyline communication.
-woobie      : Just a fun, bizarre test module which serves as an example for
+uptime      Compete with other bots to see who has the highest uptime.
+wire        An encrypted partyline communication.
+woobie      Just a fun, bizarre test module which serves as an example for
               module programming.
 
 
@@ -342,8 +343,9 @@ void rem_builtins (p_tcl_hash_list table, cmd_t *cc);
 
 VI.    WHAT TO DO WITH A MODULE?
 
-   If you have written a module and feel that you want to share
-   it with the rest of the eggdrop community, upload it to the incoming
-   directory on ftp.eggheads.org(/pub/eggdrop/incoming). Place a nice
-   descriptive text with it and makes it way to the modules directory.
-   Don't forgot to write for which eggdrop version this module is for...
+   If you have written a module and feel that you wish to share it with the
+   rest of the eggdrop community, upload it to the incoming directory on
+   incoming.eggheads.org(/incoming/modules/1.6). Place a nice descriptive
+   text with it and it'll make its way to the modules directory on
+   ftp.eggheads.org.  Don't forget to mention in your text file which
+   version eggdrop the module is writen for.
