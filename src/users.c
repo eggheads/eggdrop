@@ -10,7 +10,7 @@
  *
  * dprintf'ized, 9nov1995
  *
- * $Id: users.c,v 1.39 2003/01/30 07:15:14 wcc Exp $
+ * $Id: users.c,v 1.40 2003/02/15 08:59:30 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -82,25 +82,27 @@ int delignore(char *ign)
   int i, j;
   struct igrec **u;
   struct igrec *t;
+  char temp[256];
 
   i = 0;
   if (!strchr(ign, '!') && (j = atoi(ign))) {
     for (u = &global_ign, j--; *u && j; u = &((*u)->next), j--);
     if (*u) {
-      strcpy(ign, (*u)->igmask);
+      strncpyz(temp, (*u)->mask, sizeof temp);
       i = 1;
     }
   } else {
     /* find the matching host, if there is one */
     for (u = &global_ign; *u && !i; u = &((*u)->next))
       if (!rfc_casecmp(ign, (*u)->igmask)) {
+        strncpyz(temp, ign, sizeof temp);
         i = 1;
         break;
       }
   }
   if (i) {
     if (!noshare) {
-      char *mask = str_escape(ign, ':', '\\');
+      char *mask = str_escape(temp, ':', '\\');
 
       if (mask) {
         shareout(NULL, "-i %s\n", mask);
