@@ -1,7 +1,7 @@
 /* 
  * tclchan.c -- part of channels.mod
  * 
- * $Id: tclchan.c,v 1.36 2000/10/27 19:29:10 fabian Exp $
+ * $Id: tclchan.c,v 1.37 2000/11/03 17:04:59 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -768,6 +768,8 @@ static int tcl_channel_info(Tcl_Interp * irp, struct chanset_t *chan)
   Tcl_AppendElement(irp, s);
   simple_sprintf(s, "%d:%d", chan->flood_nick_thr, chan->flood_nick_time);
   Tcl_AppendElement(irp, s);
+  simple_sprintf(s, "%d:%d", chan->aop_min, chan->aop_max);
+  Tcl_AppendElement(irp, s);
   if (chan->status & CHAN_ENFORCEBANS)
     Tcl_AppendElement(irp, "+enforcebans");
   else
@@ -1154,6 +1156,23 @@ static int tcl_channel_modify(Tcl_Interp * irp, struct chanset_t *chan,
       } else {
 	*pthr = atoi(item[i]);
 	*ptime = 1;
+      }
+    } else if (!strncmp(item[i], "aop-delay", 9)) {
+      char *p;
+      i++;
+      if (i >= items) {
+	if (irp)
+	  Tcl_AppendResult(irp, item[i - 1], " needs argument", NULL);
+	return TCL_ERROR;
+      }
+      p = strchr(item[i], ':');
+      if (p) {
+	p++;
+	chan->aop_min = atoi(item[i]);
+	chan->aop_max = atoi(p);
+      } else {
+	chan->aop_min = atoi(item[i]);
+	chan->aop_max = chan->aop_min;
       }
     } else {
       if (!strncmp(item[i] + 1, "udef-flag-", 10))
@@ -1589,6 +1608,8 @@ static int tcl_channel_add(Tcl_Interp *irp, char *newname, char *options)
     chan->flood_nick_time = gfld_nick_time;
     chan->stopnethack_mode = global_stopnethack_mode;
     chan->idle_kick = global_idle_kick;
+    chan->aop_min = global_aop_min;
+    chan->aop_max = global_aop_max;
     
     /* We _only_ put the dname (display name) in here so as not to confuse
      * any code later on. chan->name gets updated with the channel name as

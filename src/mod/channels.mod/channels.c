@@ -2,7 +2,7 @@
  * channels.c -- part of channels.mod
  *   support for channels within the bot
  * 
- * $Id: channels.c,v 1.40 2000/10/30 20:51:22 fabian Exp $
+ * $Id: channels.c,v 1.41 2000/11/03 17:04:59 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -44,6 +44,8 @@ static char glob_chanmode[64];		/* Default chanmode (drummer,990731) */
 static struct udef_struct *udef;
 static int global_stopnethack_mode;
 static int global_idle_kick;		/* Default idle-kick setting. */
+static int global_aop_min;
+static int global_aop_max;
 
 /* Global channel settings (drummer/dw) */
 static char glob_chanset[512];
@@ -397,7 +399,7 @@ static void write_channels()
     fprintf(f, "channel %s %s%schanmode %s idle-kick %d stopnethack-mode %d \
 need-op %s need-invite %s need-key %s need-unban %s need-limit %s \
 flood-chan %d:%d flood-ctcp %d:%d flood-join %d:%d \
-flood-kick %d:%d flood-deop %d:%d flood-nick %d:%d \
+flood-kick %d:%d flood-deop %d:%d flood-nick %d:%d aop-delay %d:%d \
 %cenforcebans %cdynamicbans %cuserbans %cautoop %cbitch \
 %cgreet %cprotectops %cprotectfriends %cdontkickops \
 %cstatuslog %crevenge %crevengebot %cautovoice %csecret \
@@ -416,6 +418,7 @@ flood-kick %d:%d flood-deop %d:%d flood-nick %d:%d \
         chan->flood_kick_thr, chan->flood_kick_time,
         chan->flood_deop_thr, chan->flood_deop_time,
 	chan->flood_nick_thr, chan->flood_nick_time,
+	chan->aop_min, chan->aop_max,
 	PLSMNS(channel_enforcebans(chan)),
 	PLSMNS(channel_dynamicbans(chan)),
 	PLSMNS(!channel_nouserbans(chan)),
@@ -761,6 +764,7 @@ static tcl_coups mychan_tcl_coups[] =
   {"global-flood-join",		&gfld_join_thr,		&gfld_join_time},
   {"global-flood-ctcp",		&gfld_ctcp_thr,		&gfld_ctcp_time},
   {"global-flood-nick",		&gfld_nick_thr, 	&gfld_nick_time},
+  {"global-aop-delay",		&global_aop_min,	&global_aop_max},
   {NULL,			NULL,			NULL}
 };
 
@@ -875,6 +879,8 @@ char *channels_start(Function * global_funcs)
   gfld_ctcp_thr = 5;
   gfld_ctcp_time = 60;
   global_idle_kick = 0;
+  global_aop_min = 5;
+  global_aop_max = 30;
   setstatic = 0;
   use_info = 1;
   ban_time = 60;

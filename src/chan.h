@@ -3,7 +3,7 @@
  *   stuff common to chan.c and mode.c
  *   users.h needs to be loaded too
  * 
- * $Id: chan.h,v 1.17 2000/10/19 16:30:31 fabian Exp $
+ * $Id: chan.h,v 1.18 2000/11/03 17:04:58 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -55,6 +55,7 @@ typedef struct memstruct {
 #define SENTDEVOICE 0x0080	/* a devoice has been sent		*/
 #define WASOP       0x0100	/* was an op before a split		*/
 #define STOPWHO     0x0200
+#define FULL_DELAY  0x0400
 
 #define chan_hasvoice(x) (x->flags & CHANVOICE)
 #define chan_hasop(x) (x->flags & CHANOP)
@@ -144,6 +145,8 @@ struct chanset_t {
   int flood_ctcp_time;
   int flood_nick_thr;
   int flood_nick_time;
+  int aop_min;
+  int aop_max;
   int status;
   int ircnet_status;
   int idle_kick;

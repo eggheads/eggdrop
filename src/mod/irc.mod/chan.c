@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  * 
- * $Id: chan.c,v 1.54 2000/10/27 19:40:53 fabian Exp $
+ * $Id: chan.c,v 1.55 2000/11/03 17:04:59 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1708,7 +1708,28 @@ static int gotjoin(char *from, char *chname)
 	   /* ... and is it op-on-join or is the use marked auto-op? */
 	    (channel_autoop(chan) || glob_autoop(fr) || chan_autoop(fr))) {
 	  /* Yes! do the honors. */
-	  m->delay = now;
+	  if (!chan->aop_min)
+	    add_mode(chan, '+', 'o', nick);
+	  else {
+	    time_t a_delay;
+	    int aop_min = chan->aop_min, aop_max = chan->aop_max, count = 0;
+	    memberlist *m2;
+	    if (aop_min >= aop_max)
+	      a_delay = now + aop_min;
+	    else
+	      a_delay = now + (random() % (aop_max - aop_min)) + aop_min + 1;
+	    for (m2 = chan->channel.member; m2 && m2->nick[0]; m2 = m2->next)
+	      if (m2->delay && !(m2->flags & FULL_DELAY))
+		count++;
+	    if (count)
+	      for (m2 = chan->channel.member; m2 && m2->nick[0]; m2 = m2->next)
+		if (m2->delay && !(m2->flags & FULL_DELAY)) {
+		  m2->delay = a_delay;
+		  if (count + 1 >=  modesperline)
+		    m2->flags |= FULL_DELAY;
+		}
+	    m->delay = a_delay;
+	  }
 	} else if ((channel_autovoice(chan) &&
 		    (chan_voice(fr) || (glob_voice(fr) && !chan_quiet(fr)))) ||
 		   ((glob_gvoice(fr) || chan_gvoice(fr)) && !chan_quiet(fr)))

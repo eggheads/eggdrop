@@ -2,7 +2,7 @@
  * irc.c -- part of irc.mod
  *   support for channels within the bot 
  * 
- * $Id: irc.c,v 1.39 2000/10/27 19:38:50 fabian Exp $
+ * $Id: irc.c,v 1.40 2000/11/03 17:04:59 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -939,9 +939,10 @@ static void flush_modes()
   while (chan != NULL) {
     m = chan->channel.member;
     while (m && m->nick[0]) {
-      if ((m->delay) && (now - m->delay) > 4) {
-        add_mode(chan, '+', 'o', m->nick);
-        m->delay = 0L;
+      if (m->delay && m->delay <= now) {
+	add_mode(chan, '+', 'o', m->nick);
+	m->delay = 0L;
+	m->flags &= ~FULL_DELAY;
       }
       m = m->next;
     }
