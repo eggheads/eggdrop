@@ -2,7 +2,7 @@
  * tclegg.h
  *   stuff used by tcl.c and tclhash.c
  * 
- * $Id: tclegg.h,v 1.7 2000/03/22 00:42:57 fabian Exp $
+ * $Id: tclegg.h,v 1.8 2000/05/06 22:02:27 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -31,46 +31,6 @@
 #ifndef MAKING_MODS
 #  include "proto.h"		/* This file needs this */
 #endif
-
-/* Types of commands
- */
-#define CMD_MSG   0
-#define CMD_DCC   1
-#define CMD_FIL   2
-#define CMD_PUB   3
-#define CMD_MSGM  4
-#define CMD_PUBM  5
-#define CMD_JOIN  6
-#define CMD_PART  7
-#define CMD_SIGN  8
-#define CMD_KICK  9
-#define CMD_TOPC  10
-#define CMD_MODE  11
-#define CMD_CTCP  12
-#define CMD_CTCR  13
-#define CMD_NICK  14
-#define CMD_RAW   15
-#define CMD_BOT   16
-#define CMD_CHON  17
-#define CMD_CHOF  18
-#define CMD_SENT  19
-#define CMD_RCVD  20
-#define CMD_CHAT  21
-#define CMD_LINK  22
-#define CMD_DISC  23
-#define CMD_SPLT  24
-#define CMD_REJN  25
-#define CMD_FILT  26
-#define CMD_FLUD  27
-#define CMD_NOTE  28
-#define CMD_ACT   29
-#define CMD_NOTC  30
-#define CMD_WALL  31
-#define CMD_BCST  32
-#define CMD_CHJN  33
-#define CMD_CHPT  34
-#define CMD_TIME  35
-#define BINDS 36
 
 /* Match types for check_tcl_bind
  */

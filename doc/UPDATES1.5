@@ -5,6 +5,8 @@ Changes in eggdrop: (since v1.5.0)
 
 1.5.3
 Foundby   Fixedby   What....
+          guppy     removed some useless #define's in tclegg.h, and did 
+                      some minor cleanups to egg_strcasecmp and str(n)cmp
 SuperS    Fabian    snprintf.h used wrong declaration for non-stdarg systems.
           Fabian    Various places using strcmp should use strcasecmp or
                       rfc_casecmp instead.

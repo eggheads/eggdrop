@@ -2,7 +2,7 @@
  * userent.c -- handles:
  *   user-entry handling, new stylem more versatile.
  * 
- * $Id: userent.c,v 1.14 2000/03/23 23:17:56 fabian Exp $
+ * $Id: userent.c,v 1.15 2000/05/06 22:02:27 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -847,7 +847,7 @@ static void xtra_display(int idx, struct user_entry *e)
     /* Ok, it's a valid xtra field entry */
     Context;
     for (j = 0; j < lc; j++) {
-      if (egg_strcasecmp(list[j], xk->key) == 0)
+      if (!egg_strcasecmp(list[j], xk->key))
 	dprintf(idx, "  %s: %s\n", xk->key, xk->data);
     }
   }

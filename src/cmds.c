@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  * 
- * $Id: cmds.c,v 1.28 2000/05/06 22:00:31 fabian Exp $
+ * $Id: cmds.c,v 1.29 2000/05/06 22:02:27 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -2181,7 +2181,7 @@ static void cmd_page(struct userrec *u, int idx, char *par)
     return;
   }
   a = atoi(par);
-  if (!egg_strcasecmp(par, "off") || (a == 0 && par[0] == 0)) {
+  if ((a == 0 && par[0] == 0) || !egg_strcasecmp(par, "off")) {
     dcc[idx].status &= ~STAT_PAGE;
     dcc[idx].u.chat->max_line = 0x7ffffff;	/* flush_lines needs this */
     while (dcc[idx].u.chat->buffer)

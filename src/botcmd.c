@@ -3,7 +3,7 @@
  *   commands that comes across the botnet
  *   userfile transfer and update commands from sharebots
  * 
- * $Id: botcmd.c,v 1.15 2000/03/23 23:17:54 fabian Exp $
+ * $Id: botcmd.c,v 1.16 2000/05/06 22:02:27 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -923,7 +923,7 @@ static void bot_reject(int idx, char *par)
 static void bot_thisbot(int idx, char *par)
 {
   Context;
-  if (egg_strcasecmp(par, dcc[idx].nick) != 0) {
+  if (egg_strcasecmp(par, dcc[idx].nick)) {
     char s[1024];
 
     putlog(LOG_BOTS, "*", NET_WRONGBOT, dcc[idx].nick, par);

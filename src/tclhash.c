@@ -7,7 +7,7 @@
  *   (non-Tcl) procedure lookups for msg/dcc/file commands
  *   (Tcl) binding internal procedures to msg/dcc/file commands
  * 
- * $Id: tclhash.c,v 1.14 2000/03/23 23:17:56 fabian Exp $
+ * $Id: tclhash.c,v 1.15 2000/05/06 22:02:27 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -359,9 +359,9 @@ static int tcl_bind STDVAR
   if ((long int) cd == 1) {
     if (!unbind_bind_entry(tp, argv[2], argv[3], argv[4])) {
       /* Don't error if trying to re-unbind a builtin */
-      if ((strcmp(argv[3], &argv[4][5]) != 0) || (argv[4][0] != '*') ||
-	  (strncmp(argv[1], &argv[4][1], 3) != 0) ||
-	  (argv[4][4] != ':')) {
+      if ((argv[4][0] != '*') || (argv[4][4] != ':') ||
+          (strcmp(argv[3], &argv[4][5])) ||
+	      (strncmp(argv[1], &argv[4][1], 3))) {
 	Tcl_AppendResult(irp, "no such binding", NULL);
 	return TCL_ERROR;
       }

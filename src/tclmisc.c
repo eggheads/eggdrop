@@ -3,7 +3,7 @@
  *   Tcl stubs for file system commands
  *   Tcl stubs for everything else
  * 
- * $Id: tclmisc.c,v 1.10 2000/01/30 19:26:21 fabian Exp $
+ * $Id: tclmisc.c,v 1.11 2000/05/06 22:02:27 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -140,7 +140,7 @@ static int tcl_killtimer STDVAR
 {
   Context;
   BADARGS(2, 2, " timerID");
-  if (strncmp(argv[1], "timer", 5) != 0) {
+  if (strncmp(argv[1], "timer", 5)) {
     Tcl_AppendResult(irp, "argument is not a timerID", NULL);
     return TCL_ERROR;
   }
@@ -154,7 +154,7 @@ static int tcl_killutimer STDVAR
 {
   Context;
   BADARGS(2, 2, " timerID");
-  if (strncmp(argv[1], "timer", 5) != 0) {
+  if (strncmp(argv[1], "timer", 5)) {
     Tcl_AppendResult(irp, "argument is not a timerID", NULL);
     return TCL_ERROR;
   }

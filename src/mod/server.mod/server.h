@@ -1,7 +1,7 @@
 /* 
  * server.h -- part of server.mod
  * 
- * $Id: server.h,v 1.7 2000/01/28 22:14:03 fabian Exp $
+ * $Id: server.h,v 1.8 2000/05/06 22:02:27 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -74,5 +74,13 @@
 #define check_tcl_notc ((int (*)(char *,char *,struct userrec *,char *,char *))server_funcs[38])
 
 #endif				/* MAKING_SERVER */
+
+struct server_list {
+  struct server_list *next;
+  char *name;
+  int port;
+  char *pass;
+  char *realname;
+};
 
 #endif				/* _EGG_MOD_SERVER_SERVER_H */

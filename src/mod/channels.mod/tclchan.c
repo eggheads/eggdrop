@@ -1,7 +1,7 @@
 /* 
  * tclchan.c -- part of channels.mod
  * 
- * $Id: tclchan.c,v 1.26 2000/03/23 23:17:57 fabian Exp $
+ * $Id: tclchan.c,v 1.27 2000/05/06 22:02:27 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -626,7 +626,7 @@ static int tcl_newexempt STDVAR
   BADARGS(4, 6, " exempt creator comment ?lifetime? ?options?");
   if (argc == 6) {
     if (!egg_strcasecmp(argv[5], "none"));
-    else if (egg_strcasecmp(argv[5], "sticky") == 0)
+    else if (!egg_strcasecmp(argv[5], "sticky"))
       sticky = 1;
     else {
       Tcl_AppendResult(irp, "invalid option ", argv[5], " (must be one of: ",
@@ -709,7 +709,7 @@ static int tcl_newinvite STDVAR
   BADARGS(4, 6, " invite creator comment ?lifetime? ?options?");
   if (argc == 6) {
     if (!egg_strcasecmp(argv[5], "none"));
-    else if (egg_strcasecmp(argv[5], "sticky") == 0)
+    else if (!egg_strcasecmp(argv[5], "sticky"))
       sticky = 1;
     else {
       Tcl_AppendResult(irp, "invalid option ", argv[5], " (must be one of: ",

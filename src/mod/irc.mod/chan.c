@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  * 
- * $Id: chan.c,v 1.38 2000/04/13 21:38:42 fabian Exp $
+ * $Id: chan.c,v 1.39 2000/05/06 22:02:27 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1988,7 +1988,7 @@ static int gotmsg(char *from, char *msg)
 	      update_idle(chan->dname, nick);
 	    if (!ignoring) {
 	      /* Log DCC, it's to a channel damnit! */
-	      if (strcmp(code, "ACTION") == 0) {
+	      if (!strcmp(code, "ACTION")) {
 		putlog(LOG_PUBLIC, chan->dname, "Action: %s %s", nick, ctcp);
 	      } else {
 		putlog(LOG_PUBLIC, chan->dname,

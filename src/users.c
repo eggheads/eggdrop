@@ -10,7 +10,7 @@
  * 
  * dprintf'ized, 9nov1995
  * 
- * $Id: users.c,v 1.14 2000/03/23 23:17:56 fabian Exp $
+ * $Id: users.c,v 1.15 2000/05/06 22:02:27 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -755,7 +755,7 @@ int readuserfile(char *file, struct userrec **ret)
 	      }
 	    }
 	  }
-	} else if (strcmp(code, "%") == 0) { /* exemptmasks */
+	} else if (!strcmp(code, "%")) { /* exemptmasks */
 	  if (lasthand[0]) {
 	    if (s[0]) {
 	      if ((lasthand[0] == '#') || (lasthand[0] == '+')) {
@@ -769,7 +769,7 @@ int readuserfile(char *file, struct userrec **ret)
 	      }
 	    }
 	  }
-	} else if (strcmp(code, "@") == 0) { /* Invitemasks */
+	} else if (!strcmp(code, "@")) { /* Invitemasks */
 	  if (lasthand[0]) {
 	    if (s[0]) {
 	      if ((lasthand[0] == '#') || (lasthand[0] == '+')) {
@@ -843,7 +843,7 @@ int readuserfile(char *file, struct userrec **ret)
 	      lasthand[0] = 0;
 	    }
 	  }
-	} else if (strncmp(code, "&&", 2) == 0) {
+	} else if (!strncmp(code, "&&", 2)) {
 	  /* channel-specific exempts */
 	  strcpy(lasthand, &code[2]);
 	  u = NULL;
@@ -869,7 +869,7 @@ int readuserfile(char *file, struct userrec **ret)
 	      lasthand[0] = 0;
 	    }
 	  }
-	} else if (strncmp(code, "$$", 2) == 0) {  
+	} else if (!strncmp(code, "$$", 2)) {
 	  /* channel-specific invites */
 	  strcpy(lasthand, &code[2]);
 	  u = NULL;
