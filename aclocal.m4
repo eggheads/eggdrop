@@ -1,7 +1,7 @@
 dnl aclocal.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: aclocal.m4,v 1.53 2002/02/20 22:32:35 guppy Exp $
+dnl $Id: aclocal.m4,v 1.54 2002/02/22 05:26:05 guppy Exp $
 dnl
 
 
@@ -148,6 +148,7 @@ LINUX=no
 IRIX=no
 SUNOS=no
 HPUX=no
+EGG_CYGWIN=no
 MOD_CC="$CC"
 MOD_LD="$CC"
 MOD_STRIP="$STRIP"
@@ -213,6 +214,7 @@ case "$egg_cv_var_system_type" in
         AC_MSG_WARN(Make sure the directory eggdrop is installed into is mounted in binary mode.)
       ;;
     esac
+    EGG_CYGWIN=yes
     AC_DEFINE(CYGWIN_HACKS)
   ;;
   HP-UX)
@@ -1039,7 +1041,7 @@ fi
 dnl  EGG_TCL_LIB_REQS()
 dnl
 AC_DEFUN(EGG_TCL_LIB_REQS, [dnl
-if test "$ac_cv_cygwin" = "yes"
+if test "$EGG_CYGWIN" = "yes"
 then
   TCL_REQS="$TCLLIB/lib$TCLLIBFN"
   TCL_LIBS="-L$TCLLIB -l$TCLLIBFNS $EGG_MATH_LIB"
