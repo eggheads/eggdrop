@@ -1,4 +1,4 @@
-$Id: INSTALL,v 1.22 2004/06/06 00:03:57 stdarg Exp $
+$Id: INSTALL,v 1.23 2004/06/06 00:04:18 stdarg Exp $
 
 Compilation and Installation of Eggdrop
 Last revised: March 08, 2002
@@ -142,7 +142,6 @@ Last revised: March 08, 2002
   the README file. If not, then READ IT!&@#%@!
 
 Have fun with Eggdrop!
-test
 
   ________________________________________________________________________
 
