@@ -1,6 +1,6 @@
 dnl Eggdrop compile-time configuration file for src/mod/dns.mod
 dnl
-dnl $Id: configure.in,v 1.9 2003/11/01 23:26:57 wcc Exp $
+dnl $Id: configure.in,v 1.10 2003/12/20 22:29:51 wcc Exp $
 
 dnl This file is based on the autoconf m4 macros. Special eggdrop
 dnl macros are used to optimise the size of the resulting configure
@@ -72,17 +72,17 @@ AC_CHECK_FUNC(__res_mkquery, ,
 )
 fi
 
-if test "$ac_cv_cygwin" = "yes"
-then
-  AC_MSG_CHECKING(for /usr/local/bind/lib/libbind.a)
-  if test -r /usr/local/bind/lib/libbind.a
-  then
-    AC_MSG_RESULT(yes)
-    RESLIB="${RESLIB} /usr/local/bind/lib/libbind.a"
-    RESINCLUDE="-I/usr/local/bind/include"
-    dns_reslib_avail="true" 
-  else
-    AC_MSG_RESULT(no)
+if test "${dns_reslib_avail}" = false; then
+  if test "$ac_cv_cygwin" = "yes"; then
+    AC_MSG_CHECKING(for /usr/local/bind/lib/libbind.a)
+    if test -r /usr/local/bind/lib/libbind.a; then
+      AC_MSG_RESULT(yes)
+      RESLIB="${RESLIB} -L/usr/local/bind/lib -lbind"
+      RESINCLUDE="-I/usr/local/bind/include"
+      dns_reslib_avail="true" 
+    else
+      AC_MSG_RESULT(no)
+    fi
   fi
 fi
 

@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  *
- * $Id: main.c,v 1.102 2003/11/01 23:26:57 wcc Exp $
+ * $Id: main.c,v 1.103 2003/12/20 22:29:51 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -32,29 +32,28 @@
  */
 
 #include "main.h"
+
 #include <fcntl.h>
-#ifdef TIME_WITH_SYS_TIME
-# include <sys/time.h>
-# include <time.h>
-#else
-# ifdef HAVE_SYS_TIME_H
-#  include <sys/time.h>
-# else
-#  include <time.h>
-# endif
-#endif
 #include <errno.h>
 #include <signal.h>
 #include <netdb.h>
 #include <setjmp.h>
 
-#ifdef STOP_UAC                 /* osf/1 complains a lot */
-#include <sys/sysinfo.h>
-#define UAC_NOPRINT    0x00000001       /* Don't report unaligned fixups */
+#ifdef TIME_WITH_SYS_TIME
+#  include <sys/time.h>
+#  include <time.h>
+#else
+#  ifdef HAVE_SYS_TIME_H
+#    include <sys/time.h>
+#  else
+#    include <time.h>
+#  endif
 #endif
-/* Some systems have a working sys/wait.h even though configure will
- * decide it's not bsd compatable.  Oh well.
- */
+
+#ifdef STOP_UAC				/* osf/1 complains a lot */
+#  include <sys/sysinfo.h>
+#  define UAC_NOPRINT 0x00000001	/* Don't report unaligned fixups */
+#endif
 
 #include "chan.h"
 #include "modules.h"
@@ -62,12 +61,11 @@
 #include "bg.h"
 
 #ifdef CYGWIN_HACKS
-#include <windows.h>
+#  include <windows.h>
 #endif
 
 #ifndef _POSIX_SOURCE
-/* Solaris needs this */
-#define _POSIX_SOURCE 1
+#  define _POSIX_SOURCE 1 /* Solaris needs this */
 #endif
 
 extern char origbotname[], userfile[], botnetnick[];
@@ -79,7 +77,7 @@ extern log_t *logs;
 extern Tcl_Interp *interp;
 extern tcl_timer_t *timer, *utimer;
 extern jmp_buf alarmret;
-
+time_t now;
 
 /*
  * Please use the PATCH macro instead of directly altering the version
@@ -91,46 +89,43 @@ extern jmp_buf alarmret;
 char egg_version[1024] = "1.6.16";
 int egg_numver = 1061600;
 
-char notify_new[121] = "";      /* Person to send a note to for new users */
-int default_flags = 0;          /* Default user flags and */
-int default_uflags = 0;         /* Default userdefinied flags for people
-                                 * who say 'hello' or for .adduser */
+char notify_new[121] = "";	/* Person to send a note to for new users */
+int default_flags = 0;		/* Default user flags                     */
+int default_uflags = 0;		/* Default user-definied flags            */
 
-int backgrd = 1;                /* Run in the background? */
-int con_chan = 0;               /* Foreground: constantly display channel
-                                 * stats? */
-int term_z = 0;                 /* Foreground: use the terminal as a party
-                                 * line? */
-char configfile[121] = "eggdrop.conf";  /* Name of the config file */
-char helpdir[121] = "help/";    /* Directory of help files (if used) */
-char textdir[121] = "text/";    /* Directory for text files that get dumped */
-int keep_all_logs = 0;          /* Never erase logfiles, no matter how old
-                                 * they are? */
-char logfile_suffix[21] = ".%d%b%Y";    /* Format of logfile suffix. */
-time_t online_since;            /* Unix-time that the bot loaded up */
-int make_userfile = 0;          /* Using bot in make-userfile mode? (first
-                                 * user to 'hello' becomes master) */
-char owner[121] = "";           /* Permanent owner(s) of the bot */
-char pid_file[120];             /* Name of the file for the pid to be
-                                 * stored in */
-int save_users_at = 0;          /* How many minutes past the hour to
-                                 * save the userfile? */
-int notify_users_at = 0;        /* How many minutes past the hour to
-                                 * notify users of notes? */
-int switch_logfiles_at = 300;   /* When (military time) to switch logfiles */
-char version[81];               /* Version info (long form) */
-char ver[41];                   /* Version info (short form) */
-char egg_xtra[2048];            /* Patch info */
-int use_stderr = 1;             /* Send stuff to stderr instead of logfiles? */
-int do_restart = 0;             /* .restart has been called, restart asap */
-int die_on_sighup = 0;          /* die if bot receives SIGHUP */
-int die_on_sigterm = 1;         /* die if bot receives SIGTERM */
-int resolve_timeout = 15;       /* hostname/address lookup timeout */
-char quit_msg[1024];            /* quit message */
-time_t now;                     /* duh, now :) */
+int backgrd = 1;	/* Run in the background?                        */
+int con_chan = 0;	/* Foreground: constantly display channel stats? */
+int term_z = 0;		/* Foreground: use the terminal as a partyline?  */
+int use_stderr = 1;     /* Send stuff to stderr instead of logfiles?     */
 
-/* Traffic stats
- */
+char configfile[121] = "eggdrop.conf";	/* Default config file name */
+char pid_file[120];			/* Name of the pid file     */
+char helpdir[121] = "help/";		/* Directory of help files  */
+char textdir[121] = "text/";		/* Directory for text files */
+
+int keep_all_logs = 0;			/* Never erase logfiles?    */
+char logfile_suffix[21] = ".%d%b%Y";	/* Format of logfile suffix */
+int switch_logfiles_at = 300;		/* When to switch logfiles  */
+
+time_t online_since;	/* time that the bot was started */
+
+int make_userfile = 0; /* Using bot in userfile-creation mode? */
+char owner[121] = "";  /* Permanent owner(s) of the bot        */
+
+int save_users_at = 0;   /* Minutes past the hour to save the userfile?     */
+int notify_users_at = 0; /* Minutes past the hour to notify users of notes? */
+
+char version[81];    /* Version info (long form)  */
+char ver[41];        /* Version info (short form) */
+char egg_xtra[2048]; /* Patch info                */
+
+int do_restart = 0;       /* .restart has been called, restart ASAP */
+int die_on_sighup = 0;    /* Die if bot receives SIGHUP             */
+int die_on_sigterm = 1;   /* Die if bot receives SIGTERM            */
+int resolve_timeout = 15; /* Hostname/address lookup timeout        */
+char quit_msg[1024];      /* Quit message                           */
+
+/* Traffic stats */
 unsigned long otraffic_irc = 0;
 unsigned long otraffic_irc_today = 0;
 unsigned long otraffic_bn = 0;
@@ -178,7 +173,6 @@ void fatal(const char *s, int recoverable)
     exit(1);
   }
 }
-
 
 int expmem_chanprog();
 int expmem_users();

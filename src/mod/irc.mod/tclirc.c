@@ -1,7 +1,7 @@
 /*
  * tclirc.c -- part of irc.mod
  *
- * $Id: tclirc.c,v 1.43 2003/02/27 10:18:40 tothwolf Exp $
+ * $Id: tclirc.c,v 1.44 2003/12/20 22:29:51 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -613,7 +613,7 @@ static int tcl_getchanjoin STDVAR
   
   chan = findchan_by_dname(argv[2]);
   if (chan == NULL) {
-    Tcl_AppendResult(irp, "invalid cahnnel: ", argv[2], NULL);
+    Tcl_AppendResult(irp, "invalid channel: ", argv[2], NULL);
     return TCL_ERROR;
   }
   m = ismember(chan, argv[1]);

@@ -4,7 +4,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: modules.c,v 1.89 2003/12/07 21:49:16 wcc Exp $
+ * $Id: modules.c,v 1.90 2003/12/20 22:29:51 wcc Exp $
  */
 /* 
  * Copyright (C) 1997 Robey Pointer
@@ -30,6 +30,7 @@
 #include "tandem.h"
 #include "md5/md5.h"
 #include <ctype.h>
+
 #ifndef STATIC
 #  ifdef HPUX_HACKS
 #    include <dl.h>

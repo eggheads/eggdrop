@@ -1,6 +1,6 @@
-# $Id: modinfo,v 1.2 2003/12/10 19:04:49 wcc Exp $
+# $Id: modinfo,v 1.3 2003/12/20 22:29:51 wcc Exp $
 DESC:The blowfish module provides encryption support for eggdrop. You always
-DESC:need to load an encryption module to run eggdrop.  Currently, blowfish
-DESC:is the only encryption module so you don't have much choice ...
+DESC:need to load an encryption module to run eggdrop. Currently, blowfish
+DESC:is the only encryption module, so you don't have much choice.
 DESC:
 DESC:ENABLE this module.
