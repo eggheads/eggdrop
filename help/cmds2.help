@@ -82,7 +82,7 @@ see also: +ignore, -ignore, set ignore-time
 %{help=modules}%{+n}
 ###  %bmodules%b <botname>
    requests a listing of the modules running on the remote bot
-%{help=motd}   
+%{help=motd}
 ###  %bmotd%b
    will redisplay the party-line message of the day, which was
    shown when you first joined.

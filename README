@@ -4,7 +4,7 @@ README
      Please at least SKIM this document before asking questions. In fact,
      READ IT if you've never successfully set up an eggdrop bot before.
      PLEASE! READ IT! If you haven't read this file, and ask for help
-     expect to be told to READ the README file first! or rotfm :)
+     expect to be told to READ the README file first! or rtfm :)
 
      Contents
 
@@ -15,7 +15,7 @@ README
           2a    CVS usage
      3    Quick startup
      4    Upgrading
-          4a    From a pres-1.3/1.4 version to 1.4
+          4a    From a pre-1.3/1.4 version to 1.4
           4b    From an older 1.3/1.4 version to a newer one
      5    Frequently Asked Questions
             1. What do I do if I get the Error "User file not found"?

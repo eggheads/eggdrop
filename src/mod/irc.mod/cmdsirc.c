@@ -2,7 +2,7 @@
  * chancmds.c -- part of irc.mod
  *   handles commands direclty relating to channel interaction
  * 
- * $Id: cmdsirc.c,v 1.21 2000/06/22 03:45:05 guppy Exp $
+ * $Id: cmdsirc.c,v 1.22 2000/07/23 21:14:42 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -792,12 +792,10 @@ static void cmd_adduser(struct userrec *u, int idx, char *par)
   }
 
   Context;
-  chan = chanset;
-  while (chan != NULL) {
+  for (chan = chanset; chan; chan = chan->next) {
     m = ismember(chan, nick);
     if (m)
       break;
-    chan=chan->next;
   }
   if (!m) {
     dprintf(idx, "%s is not on any channels I monitor\n", nick);
