@@ -23,6 +23,10 @@ autobotchk
 botchk
    A shell script which can be used for auto-starting the bot via 'cron'.
 
+cmd_resolve.tcl
+   adds a dcc command called '.resolve' which can be used to resolve hostnames
+   or ip addresses in the partyline.
+
 compat.tcl
    maps old tcl functions to new ones, for lazy people who can't be bothered
    updating their scripts
