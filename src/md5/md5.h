@@ -2,7 +2,7 @@
  * md5.h
  *   header file for md5c.c
  * 
- * $Id: md5.h,v 1.2 1999/12/15 02:32:58 guppy Exp $
+ * $Id: md5.h,v 1.3 1999/12/22 20:30:03 guppy Exp $
  */
 /* 
  * Copyright (C) 1991, 1992  RSA Data Security, Inc.
@@ -27,6 +27,7 @@
  * These notices must be retained in any copies of any part of this
  * documentation and/or software.
  */
+
 #ifndef _EGG_MD5_MD5_H
 #define _EGG_MD5_MD5_H
 

@@ -5,7 +5,7 @@
  * 
  * dprintf'ized, 10nov1995
  * 
- * $Id: botcmd.c,v 1.11 1999/12/16 04:03:46 guppy Exp $
+ * $Id: botcmd.c,v 1.12 1999/12/22 20:30:03 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1461,7 +1461,7 @@ static void bot_versions(int sock, char *par)
 /* BOT COMMANDS */
 /* function call should be:
  * int bot_whatever(idx,"parameters");
- *
+ * 
  * SORT these, dcc_bot uses a shortcut which requires them sorted
  * 
  * yup, those are tokens there to allow a more efficient botnet as

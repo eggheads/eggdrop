@@ -3,7 +3,7 @@
  *   stuff common to chan.c and mode.c
  *   users.h needs to be loaded too
  * 
- * $Id: chan.h,v 1.10 1999/12/15 02:32:58 guppy Exp $
+ * $Id: chan.h,v 1.11 1999/12/22 20:30:03 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -23,6 +23,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+
 #ifndef _EGG_CHAN_H
 #define _EGG_CHAN_H
 

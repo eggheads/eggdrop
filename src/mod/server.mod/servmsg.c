@@ -1,7 +1,7 @@
 /* 
  * servmsg.c -- part of server.mod
  * 
- * $Id: servmsg.c,v 1.22 1999/12/15 02:33:00 guppy Exp $
+ * $Id: servmsg.c,v 1.23 1999/12/22 20:30:04 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -300,6 +300,7 @@ static void nuke_server(char *reason)
     server_online = 0;
     if (reason && (servidx > 0))
       dprintf(servidx, "QUIT :%s\n", reason);
+    disconnect_server(servidx);
     lostdcc(servidx);
   }
 }
@@ -965,9 +966,19 @@ static int gotmode(char *from, char *msg)
   return 0;
 }
 
+static void disconnect_server(int idx)
+{
+  server_online = 0;
+  if (dcc[idx].sock >= 0)
+    killsock(dcc[idx].sock);
+  dcc[idx].sock = (-1);
+  serv = (-1);
+}
+
 static void eof_server(int idx)
 {
   putlog(LOG_SERV, "*", "%s %s", IRC_DISCONNECTED, dcc[idx].host);
+  disconnect_server(idx);
   lostdcc(idx);
 }
 
@@ -982,10 +993,7 @@ static void kill_server(int idx, void *x)
 {
   module_entry *me;
 
-  server_online = 0;
-  if (dcc[idx].sock >= 0)
-    killsock(dcc[idx].sock);
-  serv = -1;
+  disconnect_server(idx);
   if ((me = module_find("channels", 0, 0)) && me->funcs) {
     struct chanset_t *chan;
 
@@ -998,6 +1006,7 @@ static void kill_server(int idx, void *x)
 static void timeout_server(int idx)
 {
   putlog(LOG_SERV, "*", "Timeout: connect to %s", dcc[idx].host);
+  disconnect_server(idx);
   lostdcc(idx);
 }
 

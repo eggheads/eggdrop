@@ -4,7 +4,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: modules.c,v 1.23 1999/12/15 02:32:58 guppy Exp $
+ * $Id: modules.c,v 1.24 1999/12/22 20:30:03 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -380,7 +380,7 @@ Function global_table[] =
   (Function) in_chain,
   /* 164 - 167 */
   (Function) add_note,
-  (Function) NULL,
+  (Function) removedcc,
   (Function) detect_dcc_flood,
   (Function) flush_lines,
   /* 168 - 171 */

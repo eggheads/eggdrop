@@ -1,7 +1,7 @@
 /* 
  * server.h -- part of server.mod
  * 
- * $Id: server.h,v 1.4 1999/12/15 02:33:00 guppy Exp $
+ * $Id: server.h,v 1.5 1999/12/22 20:30:04 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -21,6 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+
 #ifndef _EGG_MOD_SERVER_SERVER_H
 #define _EGG_MOD_SERVER_SERVER_H
 

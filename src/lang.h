@@ -2,7 +2,7 @@
  * lang.h
  *   Conversion definitions for language support
  * 
- * $Id: lang.h,v 1.7 1999/12/19 23:09:32 guppy Exp $
+ * $Id: lang.h,v 1.8 1999/12/22 20:30:03 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -22,6 +22,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+
 #ifndef _EGG_LANG_H
 #define _EGG_LANG_H
 
@@ -163,7 +164,7 @@
 #define MISC_ROOTWARN	get_language(0x533)
 #define MISC_NOCONFIGFILE get_language(0x534)
 #define MISC_NOUSERFILE	get_language(0x535)
-#define MISC_NOUSERFILE2 get_language(0x536)
+#define MISC_USERFCREATE get_language(0x536)
 #define MISC_USERFCREATE1 get_language(0x537)
 #define MISC_USERFCREATE2 get_language(0x538)
 #define MISC_USERFEXISTS get_language(0x539)
@@ -175,6 +176,7 @@
 #define MISC_CLOGS      get_language(0x53f)
 #define MISC_BANNER_STEALTH get_language(0x540)
 #define MISC_LOGREPEAT  get_language(0x541)
+#define MISC_NOUSERFILE2 get_language(0x542)
 
 /* IRC */
 #define IRC_BANNED	get_language(0x600)

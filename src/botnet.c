@@ -9,7 +9,7 @@
  * 
  * dprintf'ized, 28nov1995
  * 
- * $Id: botnet.c,v 1.7 1999/12/15 02:32:58 guppy Exp $
+ * $Id: botnet.c,v 1.8 1999/12/22 20:30:03 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1456,8 +1456,7 @@ void zapfbot(int idx)
   chatout("*** %s\n", s);
   botnet_send_unlinked(idx, dcc[idx].nick, s);
   killsock(dcc[idx].sock);
-  dcc[idx].sock = (long) dcc[idx].type;
-  dcc[idx].type = &DCC_LOST;
+  lostdcc(idx);
 }
 
 void restart_chons()

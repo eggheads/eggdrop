@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  * 
- * $Id: server.c,v 1.23 1999/12/15 02:33:00 guppy Exp $
+ * $Id: server.c,v 1.24 1999/12/22 20:30:04 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -99,6 +99,7 @@ static p_tcl_bind_list H_wall, H_raw, H_notc, H_msgm, H_msg, H_flud,
 static void empty_msgq(void);
 static void next_server(int *, char *, unsigned int *, char *);
 static char *get_altbotnick(void);
+static void disconnect_server(int);
 
 #include "servmsg.c"
 
@@ -813,6 +814,8 @@ static void server_5minutely()
       /* uh oh!  never got pong from last time, five minutes ago! */
       /* server is probably stoned */
       int servidx = findanyidx(serv);
+
+      disconnect_server(servidx);
       lostdcc(servidx);
       putlog(LOG_SERV, "*", IRC_SERVERSTONED);
     } else if (!trying_server) {

@@ -15,10 +15,9 @@
  * 1.4       1997-11-25      1.2.2.0         Added language addition  Kirk
  * 1.5       1998-07-12      1.3.0.0         Fixed ;me and updated    BB
  * 
- * $Id: wire.c,v 1.8 1999/12/15 02:33:00 guppy Exp $
+ * $Id: wire.c,v 1.9 1999/12/22 20:30:05 guppy Exp $
  */
 /* 
- * Copyright (C) 1997  Robey Pointer
  * Copyright (C) 1999  Eggheads
  * 
  * This program is free software; you can redistribute it and/or
@@ -107,7 +106,7 @@ static void wire_filter(char *from, char *cmd, char *param)
   strcpy(wiretmp, param);
   nsplit(wirereq, param);
 
-/*
+/* 
  * !wire<crypt"wire"> !wirereq <destbotsock> <crypt"destbotnick">
  * -----  wirecrypt    wirereq    wirewho         param
  */
@@ -117,14 +116,16 @@ static void wire_filter(char *from, char *cmd, char *param)
     nsplit(wirewho, param);
     while (w) {
       if (!strcmp(w->crypt, wirecrypt)) {
+	int idx = findanyidx(w->sock);
+
 	reqsock = atoi(wirewho);
-	if (now2 - dcc[findanyidx(w->sock)].timeval > 300) {
+	if (now2 - dcc[idx].timeval > 300) {
 	  unsigned long Days, hrs, mins;
 
-	  Days = (now2 - dcc[findanyidx(w->sock)].timeval) / 86400;
-	  hrs = ((now2 - dcc[findanyidx(w->sock)].timeval) -
+	  Days = (now2 - dcc[idx].timeval) / 86400;
+	  hrs = ((now2 - dcc[idx].timeval) -
 		 (Days * 86400)) / 3600;
-	  mins = ((now2 - dcc[findanyidx(w->sock)].timeval) -
+	  mins = ((now2 - dcc[idx].timeval) -
 		  (hrs * 3600)) / 60;
 	  if (Days > 0)
 	    sprintf(idle, " \[%s %lud%luh]", WIRE_IDLE, Days, hrs);
@@ -135,19 +136,19 @@ static void wire_filter(char *from, char *cmd, char *param)
 	} else
 	  idle[0] = 0;
 	sprintf(wirereq, "----- %c%-9s %-9s  %s%s",
-		geticon(findanyidx(w->sock)),
-		dcc[findanyidx(w->sock)].nick,
+		geticon(idx),
+		dcc[idx].nick,
 		botnetnick,
-		dcc[findanyidx(w->sock)].host, idle);
+		dcc[idx].host, idle);
 	enctmp = encrypt_string(w->key, wirereq);
 	strcpy(wiretmp, enctmp);
 	nfree(enctmp);
 	sprintf(wirereq, "zapf %s %s !wire%s !wireresp %s %s %s",
 		botnetnick, from, wirecrypt, wirewho, param, wiretmp);
 	dprintf(nextbot(from), "%s\n", wirereq);
-	if (dcc[findanyidx(w->sock)].u.chat->away) {
+	if (dcc[idx].u.chat->away) {
 	  sprintf(wirereq, "-----    %s: %s\n", WIRE_AWAY,
-		  dcc[findanyidx(w->sock)].u.chat->away);
+		  dcc[idx].u.chat->away);
 	  enctmp = encrypt_string(w->key, wirereq);
 	  strcpy(wiretmp, enctmp);
 	  nfree(enctmp);
@@ -168,12 +169,14 @@ static void wire_filter(char *from, char *cmd, char *param)
     nsplit(wiretmp2, param);
     while (w) {
       if (w->sock == reqsock) {
+	int idx = findanyidx(reqsock);
+
 	enctmp = decrypt_string(w->key, wiretmp2);
 	strcpy(wirewho, enctmp);
 	nfree(enctmp);
-	if (!strcmp(dcc[findanyidx(reqsock)].nick, wirewho)) {
+	if (!strcmp(dcc[idx].nick, wirewho)) {
 	  enctmp = decrypt_string(w->key, param);
-	  dprintf(findanyidx(reqsock), "%s\n", enctmp);
+	  dprintf(idx, "%s\n", enctmp);
 	  nfree(enctmp);
 	  return;
 	}
@@ -250,12 +253,14 @@ static int cmd_onwire(struct userrec *u, int idx, char *par)
   w2 = wirelist;
   while (w2) {
     if (!strcmp(w2->key, w->key)) {
-      if (now2 - dcc[findanyidx(w2->sock)].timeval > 300) {
+      int idx2 = findanyidx(w2->sock);
+
+      if (now2 - dcc[idx2].timeval > 300) {
 	unsigned long Days, hrs, mins;
 
-	Days = (now2 - dcc[findanyidx(w2->sock)].timeval) / 86400;
-	hrs = ((now2 - dcc[findanyidx(w2->sock)].timeval) - (Days * 86400)) / 3600;
-	mins = ((now2 - dcc[findanyidx(w2->sock)].timeval) - (hrs * 3600)) / 60;
+	Days = (now2 - dcc[idx2].timeval) / 86400;
+	hrs = ((now2 - dcc[idx2].timeval) - (Days * 86400)) / 3600;
+	mins = ((now2 - dcc[idx2].timeval) - (hrs * 3600)) / 60;
 	if (Days > 0)
 	  sprintf(idle, " \[%s %lud%luh]", WIRE_IDLE, Days, hrs);
 	else if (hrs > 0)
@@ -265,12 +270,12 @@ static int cmd_onwire(struct userrec *u, int idx, char *par)
       } else
 	idle[0] = 0;
       dprintf(idx, "----- %c%-9s %-9s  %s%s\n",
-	      geticon(findanyidx(w2->sock)),
-	      dcc[findanyidx(w2->sock)].nick,
-	      botnetnick, dcc[findanyidx(w2->sock)].host, idle);
-      if (dcc[findanyidx(w2->sock)].u.chat->away)
+	      geticon(idx2),
+	      dcc[idx2].nick,
+	      botnetnick, dcc[idx2].host, idle);
+      if (dcc[idx2].u.chat->away)
 	dprintf(idx, "-----    %s: %s\n", WIRE_AWAY,
-		dcc[findanyidx(w2->sock)].u.chat->away);
+		dcc[idx2].u.chat->away);
     }
     w2 = w2->next;
   }

@@ -10,10 +10,9 @@
  * 1.2     1997-08-20      Minor fixes. [BB]
  * 1.2a    1997-08-24      Minor fixes. [BB]
  * 
- * $Id: seen.c,v 1.11 1999/12/15 02:33:00 guppy Exp $
+ * $Id: seen.c,v 1.12 1999/12/22 20:30:04 guppy Exp $
  */
 /* 
- * Copyright (C) 1997  Robey Pointer
  * Copyright (C) 1999  Eggheads
  * 
  * This program is free software; you can redistribute it and/or

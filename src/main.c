@@ -7,7 +7,7 @@
  * 
  * dprintf'ized, 15nov1995
  * 
- * $Id: main.c,v 1.31 1999/12/19 23:09:32 guppy Exp $
+ * $Id: main.c,v 1.32 1999/12/22 20:30:03 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -75,7 +75,7 @@ extern tcl_timer_t *timer, *utimer;
 extern jmp_buf alarmret;
 extern int quick_logs;		/* dw */
 
-/*
+/* 
  * Please use the PATCH macro instead of directly altering the version
  * string from now on (it makes it much easier to maintain patches).
  * Also please read the README file regarding your rights to distribute
@@ -136,7 +136,8 @@ void fatal(char *s, int recoverable)
   putlog(LOG_MISC, "*", "* %s", s);
   flushlogs();
   for (i = 0; i < dcc_total; i++)
-    killsock(dcc[i].sock);
+    if (dcc[i].type != &DCC_LOST)
+      killsock(dcc[i].sock);
   unlink(pid_file);
   if (!recoverable)
     exit(1);
@@ -851,7 +852,8 @@ int main(int argc, char **argv)
       for (i = 0; i < dcc_total; i++) {
 	if (dcc[i].type == &DCC_LOST) {
 	  dcc[i].type = (struct dcc_table *) (dcc[i].sock);
-	  lostdcc(i);
+	  dcc[i].sock = (-1);
+	  removedcc(i);
 	  i--;
 	}
       }
@@ -860,7 +862,6 @@ int main(int argc, char **argv)
       socket_cleanup = 5;
     } else
       socket_cleanup--;
-    /* new net routines: help me mary! */
     xx = sockgets(buf, &i);
     if (xx >= 0) {		/* non-error */
       int idx;

@@ -7,7 +7,7 @@
  * 
  * dprintf'ized, 5aug1996
  * 
- * $Id: notes.c,v 1.13 1999/12/15 02:32:59 guppy Exp $
+ * $Id: notes.c,v 1.14 1999/12/22 20:30:04 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -453,7 +453,7 @@ static int tcl_listnotes STDVAR
   return TCL_OK;
 }
 
-/*
+/* 
  * srd="+" : index
  * srd="-" : read all msgs
  * else    : read msg in list : (ex: .notes read 5-9;12;13;18-)
@@ -564,7 +564,7 @@ static void notes_read(char *hand, char *nick, char *srd, int idx)
   }
 }
 
-/*
+/* 
  * sdl="-" : erase all msgs
  * else    : erase msg in list : (ex: .notes erase 2-4;8;16-)
  * idx=-1  : /msg

@@ -10,7 +10,7 @@
  * config file format changed 27jan1994 (Tcl outdates that)
  * dprintf'ized, 1nov1995
  * 
- * $Id: chanprog.c,v 1.17 1999/12/15 02:32:58 guppy Exp $
+ * $Id: chanprog.c,v 1.18 1999/12/22 20:30:03 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -442,7 +442,7 @@ void chanprog()
   if (!readuserfile(userfile, &userlist)) {
     if (!make_userfile)
       fatal(MISC_NOUSERFILE, 0);
-    printf("\n\n%s\n", MISC_NOUSERFILE2);
+    printf("\n\n%s\n", MISC_USERFCREATE);
     if (module_find("server", 0, 0))
       printf(MISC_USERFCREATE1, origbotname);
     printf("%s\n\n", MISC_USERFCREATE2);

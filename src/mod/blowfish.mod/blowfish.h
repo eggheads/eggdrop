@@ -3,8 +3,9 @@
  * 
  * modified 19jul1996 by robey -- uses autoconf values now
  * 
- * $Id: blowfish.h,v 1.3 1999/12/15 02:32:59 guppy Exp $
+ * $Id: blowfish.h,v 1.4 1999/12/22 20:30:03 guppy Exp $
  */
+
 #ifndef _EGG_MOD_BLOWFISH_BLOWFISH_H
 #define _EGG_MOD_BLOWFISH_BLOWFISH_H
 

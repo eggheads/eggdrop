@@ -8,7 +8,7 @@
  * 
  * dprintf'ized, 28aug1995
  * 
- * $Id: dccutil.c,v 1.8 1999/12/15 02:32:58 guppy Exp $
+ * $Id: dccutil.c,v 1.9 1999/12/22 20:30:03 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -258,8 +258,18 @@ void dcc_chatter(int idx)
   }
 }
 
-/* remove entry from dcc list */
+/* Mark an entry as lost. It will be securely deleted in the main loop. */
 void lostdcc(int n)
+{
+  dcc[n].sock = (long) dcc[n].type;
+  dcc[n].type = &DCC_LOST;
+}
+
+/* Remove entry from dcc list. Think twice before using this function,
+ * because it invalidates any variables that point to a specific dcc
+ * entry!
+ */
+void removedcc(int n)
 {
   if (dcc[n].type && dcc[n].type->kill)
     dcc[n].type->kill(n, dcc[n].u.other);
@@ -486,8 +496,7 @@ void do_boot(int idx, char *by, char *reason)
   check_tcl_chof(dcc[idx].nick, dcc[idx].sock);
   if ((dcc[idx].sock != STDOUT) || backgrd) {
     killsock(dcc[idx].sock);
-    dcc[idx].sock = (long) dcc[idx].type;
-    dcc[idx].type = &DCC_LOST;
+    lostdcc(idx);
     /* entry must remain in the table so it can be logged by the caller */
   } else {
     dprintf(DP_STDOUT, "\n### SIMULATION RESET\n\n");

@@ -3,9 +3,9 @@
  *   wildcard matching functions
  *   (rename to reg.c for ircII)
  * 
- * $Id: match.c,v 1.4 1999/12/15 02:32:58 guppy Exp $
+ * $Id: match.c,v 1.5 1999/12/22 20:30:03 guppy Exp $
  */
-/*
+/* 
  * Once this code was working, I added support for % so that I could
  * use the same code both in Eggdrop and in my IrcII client.
  * Pleased with this, I added the option of a fourth wildcard, ~,
@@ -25,10 +25,12 @@
  * 
  */
 
-/* This will get us around most of the mess and replace the chunk that
+/* 
+ * This will get us around most of the mess and replace the chunk that
  * was removed from the middle of this file.   --+ Dagmar
  */
-/* You'll also want to grab the rfc1459.c file or change all rfc_*()
+/* 
+ * You'll also want to grab the rfc1459.c file or change all rfc_*()
  * calls to the standard library call to make this work with ircII
  * derivatives now.
  */
@@ -40,7 +42,7 @@
 /* Remove the next line to use this in IrcII */
 #define EGGDROP
 
-/*
+/* 
  * Best to leave stuff after this point alone, but go on and change
  * it if you're adventurous...
  */
@@ -60,7 +62,7 @@
 /* The "matches AT LEAST ONE SPACE" wildcard (undef me to disable!) */
 #define WILDT '~'
 
-/*
+/* 
  * This makes sure WILDT doesn't get used in in the IrcII version of
  * this code.  If ya wanna live dangerously, you can remove these 3
  * lines, but WARNING: IT WOULD MAKE THIS CODE INCOMPATIBLE WITH THE
@@ -73,7 +75,7 @@
 #undef WILDT
 #endif
 
-/*
+/* 
  * If you edit below this line and it stops working, don't even THINK
  * about whining to *ME* about it!
  */
@@ -87,7 +89,7 @@
 #define MATCH (match+saved+sofar)
 #define NOMATCH 0
 
-/*
+/* 
  * EGGDROP:   wild_match_per(char *m, char *n)
  * IrcII:     wild_match(char *m, char *n)
  * 
@@ -228,7 +230,7 @@ register unsigned char *ma, *na;
 
 #else
 
-/*
+/* 
  * Remaining code is not used by IrcII
  */
 
@@ -243,7 +245,7 @@ register unsigned char *ma, *na;
 #undef MATCH
 #define MATCH ((match+sofar)&UNQUOTED)
 
-/*
+/* 
  * EGGDROP:   wild_match(char *ma, char *na)
  * IrcII:     NOT USED
  * 

@@ -4,7 +4,7 @@
  * 
  *   IF YOU ALTER THIS FILE, YOU NEED TO RECOMPILE THE BOT.
  * 
- * $Id: eggdrop.h,v 1.16 1999/12/15 02:32:58 guppy Exp $
+ * $Id: eggdrop.h,v 1.17 1999/12/22 20:30:03 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -24,6 +24,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+
 #ifndef _EGG_EGGDROP_H
 #define _EGG_EGGDROP_H
 
@@ -39,7 +40,7 @@
  */
 #define DEBUG_CONTEXT
 
-/*
+/* 
  * define the maximum length a handle on the bot can be.
  * (standard is 9 characters long)
  * (DO NOT MAKE THIS VALUE LESS THAN 9 UNLESS YOU WANT TROUBLE!)

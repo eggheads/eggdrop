@@ -7,7 +7,7 @@
  * because they use structures in those
  * (saves including those .h files EVERY time) - Beldin
  * 
- * $Id: proto.h,v 1.20 1999/12/15 02:32:58 guppy Exp $
+ * $Id: proto.h,v 1.21 1999/12/22 20:30:03 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -27,6 +27,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+
 #ifndef _EGG_PROTO_H
 #define _EGG_PROTO_H
 
@@ -137,6 +138,7 @@ extern void (*sharein) (int, char *);
 void chanout_but EGG_VARARGS(int, arg1);
 void dcc_chatter(int);
 void lostdcc(int);
+void removedcc(int);
 void makepass(char *);
 void tell_dcc(int);
 void not_away(int);

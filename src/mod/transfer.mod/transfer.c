@@ -1,7 +1,7 @@
 /* 
  * transfer.c -- part of transfer.mod
  * 
- * $Id: transfer.c,v 1.17 1999/12/15 02:33:00 guppy Exp $
+ * $Id: transfer.c,v 1.18 1999/12/22 20:30:05 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -74,13 +74,13 @@ static fileq_t *fileq = NULL;
 #define WILDS '*'
 #define WILDQ '?'
 #define NOMATCH 0
-/*========================================================================*
- * EGGDROP:   wild_match_file(char *ma, char *na)                         *
- * IrcII:     NOT USED                                                    *
- *                                                                        *
- * Features:  Forward, case-sensitive, ?, *                               *
- * Best use:  File mask matching, as it is case-sensitive                 *
- *========================================================================*/
+
+/* 
+ * wild_match_file(char *ma, char *na)
+ * 
+ * Features:  Forward, case-sensitive, ?, *
+ * Best use:  File mask matching, as it is case-sensitive
+ */
 static int wild_match_file(register char *m, register char *n)
 {
   char *ma = m, *lsm = 0, *lsn = 0;

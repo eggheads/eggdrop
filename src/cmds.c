@@ -5,7 +5,7 @@
  * 
  * dprintf'ized, 3nov1995
  * 
- * $Id: cmds.c,v 1.30 1999/12/15 02:32:58 guppy Exp $
+ * $Id: cmds.c,v 1.31 1999/12/22 20:30:03 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1343,8 +1343,7 @@ int check_dcc_attrs(struct userrec *u, int oatr)
 	  }
 	} else {
 	  killsock(dcc[i].sock);
-	  dcc[i].sock = (long) dcc[i].type;
-	  dcc[i].type = &DCC_LOST;
+	  lostdcc(i);
 	}
       }
     }

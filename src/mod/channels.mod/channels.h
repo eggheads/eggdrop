@@ -1,7 +1,7 @@
 /* 
  * channels.h -- part of channels.mod
  * 
- * $Id: channels.h,v 1.8 1999/12/15 02:32:59 guppy Exp $
+ * $Id: channels.h,v 1.9 1999/12/22 20:30:04 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -21,6 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+
 #ifndef _EGG_MOD_CHANNELS_CHANNELS_H
 #define _EGG_MOD_CHANNELS_CHANNELS_H
 

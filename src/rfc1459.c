@@ -1,9 +1,9 @@
 /* 
  * rfc1459.c
  * 
- * $Id: rfc1459.c,v 1.3 1999/12/15 02:32:58 guppy Exp $
+ * $Id: rfc1459.c,v 1.4 1999/12/22 20:30:03 guppy Exp $
  */
-/*
+/* 
  * This code was more or less cloned from the ircd-hybrid 5.3 source.
  * The original code was written by Otto Harkoonen and even though it
  * it not entirely in synch with section 2.2 of RFC1459 in that it

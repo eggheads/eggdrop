@@ -2,8 +2,9 @@
  * bf_tab.h -- part of blowfish.mod
  *   Blowfish P-box and S-box tables
  * 
- * $Id: bf_tab.h,v 1.2 1999/12/15 02:32:59 guppy Exp $
+ * $Id: bf_tab.h,v 1.3 1999/12/22 20:30:03 guppy Exp $
  */
+
 #ifndef _EGG_MOD_BLOWFISH_BF_TAB_H
 #define _EGG_MOD_BLOWFISH_BF_TAB_H
 

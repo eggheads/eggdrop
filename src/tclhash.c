@@ -12,7 +12,7 @@
  * dprintf'ized, 15nov1995 (hash.c)
  * dprintf'ized, 4feb1996 (tclhash.c)
  * 
- * $Id: tclhash.c,v 1.11 1999/12/19 23:09:33 guppy Exp $
+ * $Id: tclhash.c,v 1.12 1999/12/22 20:30:03 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -550,7 +550,7 @@ static int trigger_bind(char *proc, char *param)
       fprintf(f, "eval: %s%s\n", proc, param);
   }
   {
-    /*
+    /* 
      * We now try to debug the Tcl_VarEval() call below by remembering both
      * the called proc name and it's parameters. This should render us a bit
      * less helpless when we see context dumps.

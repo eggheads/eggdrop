@@ -6,7 +6,7 @@
  * 
  * dprintf'ized, 27oct1995
  * 
- * $Id: dcc.c,v 1.20 1999/12/15 02:32:58 guppy Exp $
+ * $Id: dcc.c,v 1.21 1999/12/22 20:30:03 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1092,7 +1092,6 @@ static void dcc_telnet(int idx, char *buf, int i)
   if (sock < 0) {
     neterror(s);
     putlog(LOG_MISC, "*", DCC_FAILED, s);
-    killsock(sock);
     return;
   }
   /* <bindle> [09:37] Telnet connection: 168.246.255.191/0
@@ -1797,7 +1796,7 @@ struct dcc_table DCC_IDENTWAIT =
 void dcc_ident(int idx, char *buf, int len)
 {
   char response[512], uid[512], buf1[UHOSTLEN];
-  int i, sock = dcc[idx].sock;
+  int i;
 
   Context;
   sscanf(buf, "%*[^:]:%[^:]:%*[^:]:%[^\n]\n", response, uid);
@@ -1814,7 +1813,6 @@ void dcc_ident(int idx, char *buf, int len)
       simple_sprintf(buf1, "%s@%s", uid, dcc[idx].host);
       dcc_telnet_got_ident(i, buf1);
     }
-  idx = findanyidx(sock);
   dcc[idx].u.other = 0;
   killsock(dcc[idx].sock);
   lostdcc(idx);
@@ -1823,7 +1821,7 @@ void dcc_ident(int idx, char *buf, int len)
 void eof_dcc_ident(int idx)
 {
   char buf[UHOSTLEN];
-  int i, sock = dcc[idx].sock;
+  int i;
 
   for (i = 0; i < dcc_total; i++)
     if ((dcc[i].type == &DCC_IDENTWAIT) &&
@@ -1832,12 +1830,9 @@ void eof_dcc_ident(int idx)
       simple_sprintf(buf, "telnet@%s", dcc[idx].host);
       dcc_telnet_got_ident(i, buf);
     }
-  idx = findanyidx(sock);	/* sanity */
-  if (idx >= 0) {
-    killsock(dcc[idx].sock);
-    dcc[idx].u.other = 0;
-    lostdcc(idx);
-  }
+  killsock(dcc[idx].sock);
+  dcc[idx].u.other = 0;
+  lostdcc(idx);
 }
 
 static void display_dcc_ident(int idx, char *buf)

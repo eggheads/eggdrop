@@ -1,9 +1,10 @@
-/*
+/* 
  * global.h
  *   RSAREF types and constants
  * 
- * $Id: global.h,v 1.3 1999/12/15 02:32:58 guppy Exp $
+ * $Id: global.h,v 1.4 1999/12/22 20:30:03 guppy Exp $
  */
+
 #ifndef _EGG_MD5_GLOBAL_H
 #define _EGG_MD5_GLOBAL_H
 

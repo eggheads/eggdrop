@@ -2,7 +2,7 @@
  * language.c -- handles:
  *   language support code
  * 
- * $Id: language.c,v 1.10 1999/12/15 02:32:58 guppy Exp $
+ * $Id: language.c,v 1.11 1999/12/22 20:30:03 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -23,10 +23,10 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-/*
+/* 
  * DOES:
  *              Nothing <- typical BB code :)
- *
+ * 
  * ENVIRONMENT VARIABLES:
  *              EGG_LANG       - language to use (default: "english")
  *              EGG_LANGDIR    - directory with all lang files
@@ -42,12 +42,12 @@
  *              DCC .relang
  *              DCC .ldump
  *              DCC .lstat
- *
+ * 
  * FILE FORMAT: language.lang
  *              <textidx>,<text>
  * TEXT MESSAGE USAGE:
  *              get_language(<textidx> [,<PARMS>])
- *
+ * 
  * ADDING LANGUAGES:
  *              o       Copy an existing <section>.<oldlanguage>.lang to a
  *                      new .lang file and modify as needed.
@@ -60,7 +60,7 @@
  *              o       Create a <newsection>.english.lang file.
  *              o       Add add_lang_section("<newsection>"); to your module
  *                      startup function.
- *
+ * 
  */
 
 #include "main.h"

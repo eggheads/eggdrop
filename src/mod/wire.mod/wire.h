@@ -1,10 +1,9 @@
 /* 
  * wire.h -- part of wire.mod
  * 
- * $Id: wire.h,v 1.2 1999/12/15 02:33:00 guppy Exp $
+ * $Id: wire.h,v 1.3 1999/12/22 20:30:05 guppy Exp $
  */
 /* 
- * Copyright (C) 1997  Robey Pointer
  * Copyright (C) 1999  Eggheads
  * 
  * This program is free software; you can redistribute it and/or
@@ -22,6 +21,9 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+#ifndef _EGG_MOD_WIRE_WIRE_H
+#define _EGG_MOD_WIRE_WIRE_H
+
 #define WIRE_IDLE		MISC_IDLE
 #define WIRE_AWAY		MISC_AWAY
 #define WIRE_NOTONWIRE		get_language(0xa000)
@@ -35,3 +37,5 @@
 #define WIRE_LEFT		get_language(0xa008)
 #define WIRE_UNLOAD		get_language(0xa009)
 #define WIRE_VERSIONERROR	get_language(0xa00a)
+
+#endif                          /* _EGG_MOD_WIRE_WIRE_H */

@@ -10,7 +10,7 @@
  * 
  * dprintf'ized, 9nov1995
  * 
- * $Id: users.c,v 1.14 1999/12/16 04:03:46 guppy Exp $
+ * $Id: users.c,v 1.15 1999/12/22 20:30:03 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -650,7 +650,7 @@ void tell_users_match(int idx, char *mtch, int start, int limit,
   dprintf(idx, MISC_FOUNDMATCH, cnt, cnt == 1 ? "" : "es");
 }
 
-/*
+/* 
  * tagged lines in the user file:
  * * OLD:
  * #  (comment)

@@ -4,7 +4,7 @@
  * 
  * dprintf'ized, 4nov1995 rewritten, 26feb1996
  * 
- * $Id: files.c,v 1.9 1999/12/15 02:32:59 guppy Exp $
+ * $Id: files.c,v 1.10 1999/12/22 20:30:04 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -25,9 +25,10 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-/* 'configure' is supposed to make things easier for me now */
-/* PLEASE don't fail me, 'configure'! :) */
-
+/* 
+ * 'configure' is supposed to make things easier for me now
+ * PLEASE don't fail me, 'configure'! :)
+ */
 #if HAVE_DIRENT_H
 #include <dirent.h>
 #define NAMLEN(dirent) strlen((dirent)->d_name)

@@ -1,7 +1,7 @@
 /* 
  * module.h
  * 
- * $Id: module.h,v 1.19 1999/12/15 02:32:58 guppy Exp $
+ * $Id: module.h,v 1.20 1999/12/22 20:30:03 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -21,6 +21,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+
 #ifndef _EGG_MOD_MODULE_H
 #define _EGG_MOD_MODULE_H
 
@@ -32,7 +33,7 @@
 #include "modvals.h"
 #include "../tandem.h"
 
-/*
+/* 
  * this file contains all the orrible stuff required to do the lookup
  * table for symbols, rather than getting the OS to do it, since most OS's
  * require all symbols resolved, this can cause a problem with some modules
@@ -269,7 +270,7 @@
 #define in_chain ((int (*)(char *))global[163])
 /* 164 - 167 */
 #define add_note ((int (*)(char *,char*,char*,int,int))global[164])
-/* global[165] is empty now, was cmd_note() */
+#define removedcc ((void (*) (int))global[165])
 #define detect_dcc_flood ((int (*) (time_t *,struct chat_info *,int))global[166])
 #define flush_lines ((void(*)(int,struct chat_info*))global[167])
 /* 168 - 171 */
