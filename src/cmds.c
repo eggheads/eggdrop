@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  *
- * $Id: cmds.c,v 1.78 2002/03/22 03:53:56 guppy Exp $
+ * $Id: cmds.c,v 1.79 2002/03/22 03:57:48 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -94,14 +94,23 @@ static void tell_who(struct userrec *u, int idx, int chan)
   char s[1024];			/* temp fix - 1.4 has a better one */
 
   if (!chan)
-    dprintf(idx, "Party line members:  (* = owner, + = master, @ = op)\n");
+    dprintf(idx, "%s  (* = %s, + = %s, @ = %s)\n",
+		BOT_PARTYMEMBS, MISC_OWNER, MISC_MASTER, MISC_OP);
   else
     {
     simple_sprintf(s, "assoc %d", chan);
     if ((Tcl_Eval(interp, s) != TCL_OK) || !interp->result[0])
-        dprintf(idx, "People on channel %s%d:  (* = owner, + = master, @ = op)\n", (chan < GLOBAL_CHANS) ? "" : "*", chan % GLOBAL_CHANS);
-      else
-        dprintf(idx, "People on channel '%s' (%s%d):  (* = owner, + = master, @ = op)\n", interp->result, (chan < GLOBAL_CHANS) ? "" : "*", chan % GLOBAL_CHANS);
+      dprintf(idx, "%s %s%d:  (* = %s, + = %s, @ = %s)\n",
+		       BOT_PEOPLEONCHAN,
+		       (chan < GLOBAL_CHANS) ? "" : "*",
+		       chan % GLOBAL_CHANS,
+		       MISC_OWNER, MISC_MASTER, MISC_OP);
+    else
+      dprintf(idx, "%s '%s' (%s%d):  (* = %s, + = %s, @ = %s)\n",
+		       BOT_PEOPLEONCHAN, interp->result,
+		       (chan < GLOBAL_CHANS) ? "" : "*",
+		       chan % GLOBAL_CHANS,
+		       MISC_OWNER, MISC_MASTER, MISC_OP);
   }
 
   for (i = 0; i < dcc_total; i++)
