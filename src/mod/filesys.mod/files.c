@@ -2,7 +2,7 @@
  * files.c - part of filesys.mod
  *   handles all file system commands
  *
- * $Id: files.c,v 1.38 2003/02/03 09:48:00 wcc Exp $
+ * $Id: files.c,v 1.39 2003/02/04 06:47:23 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -332,7 +332,7 @@ static void cmd_cancel(int idx, char *par)
 
 static void cmd_chdir(int idx, char *msg)
 {
-  char *s;
+  char *s = NULL;
 
   if (!msg[0]) {
     dprintf(idx, "%s: cd <new-dir>\n", MISC_USAGE);
