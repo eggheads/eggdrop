@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  *
- * $Id: chan.c,v 1.81 2002/02/16 07:22:07 guppy Exp $
+ * $Id: chan.c,v 1.82 2002/02/19 22:19:24 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -165,8 +165,11 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
 
   get_user_flagrec(get_user_by_host(from), &fr, chan->dname);
   if (glob_bot(fr) ||
-      ((which == FLOOD_DEOP) && (glob_master(fr) || chan_master(fr))) ||
-      ((which != FLOOD_DEOP) && (glob_friend(fr) || chan_friend(fr))) ||
+      ((which == FLOOD_DEOP) &&
+       (glob_master(fr) || chan_master(fr)) && (glob_friend(fr) || chan_friend(fr))) ||
+      ((which == FLOOD_KICK) &&
+       (glob_master(fr) || chan_master(fr)) && (glob_friend(fr) || chan_friend(fr))) ||
+      ((which != FLOOD_DEOP) && (which != FLOOD_KICK) && (glob_friend(fr) || chan_friend(fr))) ||
       (channel_dontkickops(chan) &&
        (chan_op(fr) || (glob_op(fr) && !chan_deop(fr)))))	/* arthur2 */
     return 0;
