@@ -13,13 +13,13 @@ modules: ../../../notes.so
 
 static: ../notes.o
 
+notes.o: ../module.h ../modvals.h ../../eggdrop.h cmdsnote.c notes.c \
+notes.h ../../tandem.h
+	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c notes.c
+
 ../../../notes.so: notes.o
 	$(LD) -o ../../../notes.so notes.o
 	$(STRIP) ../../../notes.so
-
-notes.o: ../module.h ../modvals.h ../../eggdrop.h \
-	cmdsnote.c notes.c notes.h ../../tandem.h
-	$(CC) $(CFLAGS) -DMAKING_MODS -c notes.c
 
 ../notes.o: notes.o
 	@rm -f ../notes.o

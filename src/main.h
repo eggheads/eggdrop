@@ -10,8 +10,7 @@
 #endif
 
 /* UGH! Why couldn't Tcl pick a standard? */
-#if !defined(HAVE_OLD_TCL) && (defined(__STDC__) || \
-    (defined(HAVE_STDARG_H) || defined(HAVE_STD_ARGS_H)))
+#if !defined(HAVE_OLD_TCL) && defined(__STDC__)
 #  ifdef HAVE_STDARG_H
 #    include <stdarg.h>
 #  else

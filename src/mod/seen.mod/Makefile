@@ -13,14 +13,13 @@ modules: ../../../seen.so
 
 static: ../seen.o
 
+seen.o: ../module.h ../modvals.h ../../eggdrop.h seen.c \
+../channels.mod/channels.h ../../chan.h ../../users.h
+	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c seen.c
+
 ../../../seen.so: seen.o
 	$(LD) -o ../../../seen.so seen.o
 	$(STRIP) ../../../seen.so
-
-seen.o: ../module.h ../modvals.h ../../eggdrop.h \
-	seen.c ../channels.mod/channels.h \
-	../../chan.h ../../users.h
-	$(CC) $(CFLAGS) -DMAKING_MODS -c seen.c
 
 ../seen.o: seen.o
 	@rm -f ../seen.o

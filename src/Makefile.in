@@ -8,9 +8,9 @@ INSTALL_DATA = @INSTALL_DATA@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
 
 OBJS = botcmd.o botmsg.o botnet.o chanprog.o cmds.o dcc.o \
-	dccutil.o flags.o language.o main.o mem.o misc.o \
-	modules.o net.o rfc1459.o tcl.o tcldcc.o tclhash.o \
-	tclmisc.o tcluser.o userent.o userrec.o users.o md5/md5c.o
+dccutil.o flags.o language.o main.o mem.o misc.o \
+modules.o net.o rfc1459.o tcl.o tcldcc.o tclhash.o \
+tclmisc.o tcluser.o userent.o userrec.o users.o md5/md5c.o
 
 doofus:
 	@echo ""
@@ -61,13 +61,13 @@ botcmd.o:
 
 main.o:
 	$(CC) $(CFLAGS) $(CPPFLAGS) \
-	'-DCCFLAGS="$(CC) $(CFLAGS) $(CPPFLAGS)"' \
-	'-DLDFLAGS="$(LD)"' \
-	'-DSTRIPFLAGS="$(STRIP)"' -c main.c
+'-DCCFLAGS="$(CC) $(CFLAGS) $(CPPFLAGS)"' \
+'-DLDFLAGS="$(LD)"' \
+'-DSTRIPFLAGS="$(STRIP)"' -c main.c
 
 md5/md5c.o:
 	@cd md5; $(MAKE) 'MAKE=$(MAKE)' 'CC=$(CC)' 'LD=$(LD)' \
-	'STRIP=$(STRIP)' 'CFLAGS=$(CFLAGS)' md5
+'STRIP=$(STRIP)' 'CFLAGS=$(CFLAGS)' 'CPPFLAGS=$(CPPFLAGS)' md5
 	@echo "---------- Yeah! that's the compiling, now the linking! ----------"
 
 libtcle.a: $(TCLLIB)/lib$(TCLLIBFN)
@@ -111,7 +111,7 @@ userent.o: main.h users.h
 userrec.o: chan.h main.h modules.h tandem.h users.h
 users.o: chan.h main.h modules.h tandem.h users.h
 main.h: ../config.h chan.h cmdt.h eggdrop.h flags.h lang.h \
-	 proto.h tclegg.h tclhash.h users.h
+proto.h tclegg.h tclhash.h users.h
 modules.h: mod/modvals.h
 proto.h: ../lush.h
 tclegg.h: ../lush.h proto.h

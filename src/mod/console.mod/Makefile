@@ -13,12 +13,12 @@ modules: ../../../console.so
 
 static: ../console.o
 
+console.o: ../module.h ../modvals.h ../../eggdrop.h
+	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c console.c
+
 ../../../console.so: console.o
 	$(LD) -o ../../../console.so console.o
 	$(STRIP) ../../../console.so
-
-console.o: ../module.h ../modvals.h ../../eggdrop.h
-	$(CC) $(CFLAGS) -DMAKING_MODS -c console.c
 
 ../console.o: console.o
 	@rm -f ../console.o

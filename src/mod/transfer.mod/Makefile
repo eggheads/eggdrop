@@ -13,13 +13,13 @@ modules: ../../../transfer.so
 
 static: ../transfer.o
 
+transfer.o: ../module.h ../modvals.h ../../eggdrop.h transfer.h \
+../../tandem.h ../../users.h
+	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c transfer.c
+
 ../../../transfer.so: transfer.o
 	$(LD) -o ../../../transfer.so transfer.o
 	$(STRIP) ../../../transfer.so
-
-transfer.o: ../module.h ../modvals.h ../../eggdrop.h \
-	transfer.h ../../tandem.h ../../users.h
-	$(CC) $(CFLAGS) -DMAKING_MODS -c transfer.c
 
 ../transfer.o: transfer.o
 	@rm -f ../transfer.o

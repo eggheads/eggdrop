@@ -182,7 +182,11 @@ case "$SYSTEM" in
 	AC_MSG_RESULT([   Digital OSF])
 	if test "x$AWK" = "xgawk"
 	then
-          AWK="awk"
+	  AWK="awk"
+	fi
+	if test "x$INSTALL" = "x./install-sh"
+	then
+	  INSTALL="installbsd"
 	fi
 	MOD_CC="cc"
 	MOD_LD="cc"

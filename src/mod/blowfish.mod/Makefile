@@ -13,13 +13,12 @@ modules: ../../../blowfish.so
 
 static: ../blowfish.o
 
+blowfish.o: ../module.h ../modvals.h ../../eggdrop.h bf_tab.h blowfish.h
+	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c blowfish.c
+
 ../../../blowfish.so: blowfish.o
 	$(LD) -o ../../../blowfish.so blowfish.o
 	$(STRIP) ../../../blowfish.so
-
-blowfish.o: ../module.h ../modvals.h ../../eggdrop.h \
-	bf_tab.h blowfish.h
-	$(CC) $(CFLAGS) -DMAKING_MODS -c blowfish.c
 
 ../blowfish.o: blowfish.o
 	@rm -f ../blowfish.o

@@ -57,30 +57,30 @@ CFLAGS = @CFLAGS@ -I.. @DEFS@ $(CFLGS)
 @SET_MAKE@
 
 MAKE_STATIC = $(MAKE) 'CC=$(CC)' 'LD=$(LD)' 'STRIP=$(STRIP)' \
-'RANLIB=$(RANLIB)' 'CFLAGS=$(CFLAGS) -DSTATIC' \
+'RANLIB=$(RANLIB)' 'CFLAGS=$(CFLAGS) -DSTATIC' 'CPPFLAGS=$(CPPFLAGS)' \
 'EGGEXEC=$(EGGEXEC)' 'TCLLIB=$(TCLLIB)' \
 'XREQ=$(XREQ)' 'XLIBS=@TCL_LIBS@ @LIBS@'
 
 MAKE_MODEGG = $(MAKE) 'CC=$(MOD_CC)' 'LD=$(MOD_LD)' 'STRIP=$(MOD_STRIP)' \
-'RANLIB=$(RANLIB)' 'CFLAGS=$(CFLAGS)' \
+'RANLIB=$(RANLIB)' 'CFLAGS=$(CFLAGS)' 'CPPFLAGS=$(CPPFLAGS)' \
 'EGGEXEC=$(EGGEXEC)' 'TCLLIB=$(TCLLIB)' \
 'XREQ=$(XREQ)' 'XLIBS=@TCL_LIBS@ @LIBS@'
 
 MAKE_MODULES = $(MAKE) 'CC=$(SHLIB_CC)' 'LD=$(SHLIB_LD)' \
-'STRIP=$(SHLIB_STRIP)' 'CFLAGS=$(CFLAGS)'
+'STRIP=$(SHLIB_STRIP)' 'CFLAGS=$(CFLAGS)' 'CPPFLAGS=$(CPPFLAGS)'
 
 MAKE_SDEBUG = $(MAKE) 'CC=$(CC)' 'LD=$(LD)' 'STRIP=touch' \
 'RANLIB=$(RANLIB)' 'CFLAGS=-g3 $(CFLAGS) -DSTATIC -DEBUG_MEM' \
-'EGGEXEC=$(EGGEXEC)' 'TCLLIB=$(TCLLIB)' \
+'CPPFLAGS=$(CPPFLAGS)' 'EGGEXEC=$(EGGEXEC)' 'TCLLIB=$(TCLLIB)' \
 'XREQ=$(XREQ)' 'XLIBS=@TCL_LIBS@ @LIBS@'
 
 MAKE_MEMEGG = $(MAKE) 'CC=$(MOD_CC)' 'LD=$(MOD_LD)' 'STRIP=touch' \
 'RANLIB=$(RANLIB)' 'CFLAGS=-g3 $(CFLAGS) -DEBUG_MEM' \
-'EGGEXEC=$(EGGEXEC)' 'TCLLIB=$(TCLLIB)' \
+'CPPFLAGS=$(CPPFLAGS)' 'EGGEXEC=$(EGGEXEC)' 'TCLLIB=$(TCLLIB)' \
 'XREQ=$(XREQ)' 'XLIBS=@TCL_LIBS@ @LIBS@'
 
 MAKE_DEBMODULES = $(MAKE) 'CC=$(SHLIB_CC)' 'LD=$(SHLIB_LD)' \
-'STRIP=touch' 'CFLAGS=-g3 $(CFLAGS) -DEBUG_MEM'
+'STRIP=touch' 'CFLAGS=-g3 $(CFLAGS) -DEBUG_MEM' 'CPPFLAGS=$(CPPFLAGS)'
 
 MAKE_INSTALL = $(MAKE) 'DEST=$(DEST)'
 
@@ -189,12 +189,18 @@ dinstall: eggdrop ainstall
 sinstall: static ainstall
 
 ainstall: install-start install-bin install-modules install-data \
-	install-help install-language install-filesys install-doc \
-	install-scripts install-end
+install-help install-language install-filesys install-doc \
+install-scripts install-end
 
 install-start:
 	@if test ! -f $(EGGEXEC); then \
+		echo ""; \
 		echo "You haven't compiled eggdrop yet."; \
+		echo "To compile eggdrop use:"; \
+		echo "  make <target>"; \
+		echo ""; \
+		echo "  valid targets: eggdrop static debug sdebug"; \
+		echo ""; \
 		exit 1; \
 	fi
 	@if test "x$(DEST)" = "x"; then \
@@ -250,7 +256,6 @@ install-modules:
 	fi
 
 install-data:
-	@$(INSTALL_DATA) README $(DEST)
 	@$(INSTALL_DATA) eggdrop.conf.dist $(DEST)
 	@if test ! -f $(DEST)/motd; then \
 		$(INSTALL_DATA) motd $(DEST); \
@@ -311,6 +316,7 @@ install-filesys:
 	fi
 
 install-doc:
+	@$(INSTALL_DATA) README $(DEST)
 	@cd doc/; $(MAKE_INSTALL) install
 
 install-scripts:

@@ -13,13 +13,12 @@ modules: ../../../assoc.so
 
 static: ../assoc.o
 
+assoc.o: ../module.h ../modvals.h ../../eggdrop.h ../../tandem.h
+	$(CC) $(CFLAGS) $(CPPFLAGS) -DMAKING_MODS -c assoc.c
+
 ../../../assoc.so: assoc.o
 	$(LD) -o ../../../assoc.so assoc.o
 	$(STRIP) ../../../assoc.so
-
-assoc.o: ../module.h ../modvals.h ../../eggdrop.h \
-	../../tandem.h
-	$(CC) $(CFLAGS) -DMAKING_MODS -c assoc.c
 
 ../assoc.o: assoc.o
 	@rm -f ../assoc.o
