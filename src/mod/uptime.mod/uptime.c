@@ -1,5 +1,5 @@
 /*
- * $Id: uptime.c,v 1.13 2001/10/29 20:20:31 guppy Exp $
+ * $Id: uptime.c,v 1.14 2001/10/30 01:24:06 poptix Exp $
  *
  * This module reports uptime information about your bot to http://uptime.eggheads.org. The
  * purpose for this is to see how your bot rates against many others (including EnergyMechs
@@ -13,7 +13,6 @@
  */
 /*
  * Copyright (C) 2001 proton
- * Copyright (C) 2001 Ian Campbell
  * Copyright (C) 2001 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
@@ -100,7 +99,7 @@ unsigned long get_ip()
   /* could be pre-defined */
   if (uptime_host[0]) {
     if ((uptime_host[strlen(uptime_host) - 1] >= '0') && (uptime_host[strlen(uptime_host) - 1] <= '9'))
-      return (IP) inet_addr(uptime_host);    
+        return (IP) inet_addr(uptime_host);    
   }  
   hp = gethostbyname(uptime_host);
   if (hp == NULL)
