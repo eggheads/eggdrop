@@ -37,7 +37,7 @@ static int lastused = 0;
 
 struct {
   void *ptr;
-  short size;
+  int size;
   short line;
   char file[20];
 } memtbl[MEMTBLSIZE];
