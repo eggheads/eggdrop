@@ -19,7 +19,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-# $Id: modconfig,v 1.8 2002/01/02 03:46:35 guppy Exp $
+# $Id: modconfig,v 1.9 2002/02/24 07:37:01 guppy Exp $
 
 
 mc_pn=`echo $0 | sed -e 's/^.*\///'`
@@ -533,10 +533,10 @@ xupdate-depends)
 
 			#  Check wether the dependencies are fulfilled
 			for mc_m_depend in ${mc_mod_depends}; do
-				if ((echo ${mc_sel_modules} | \
+				if (echo ${mc_sel_modules} | \
 					grep " ${mc_m_depend}" 1>&7 2>&7) || \
 				    (echo ${mc_sel_modules} | \
-					grep "^${mc_m_depend}" 1>&7 2>&7))
+					grep "^${mc_m_depend}" 1>&7 2>&7)
 				then
 					:
 				else
@@ -633,8 +633,9 @@ EOF
 
 		#  Note: We need to make sure that we only catch module names
 		#        that match _exactly_. e.g. don't mix bseen and seen.
-		if ((echo ${mc_sel_modules} | grep " ${mc_mod}" 1>&7 2>&7) ||
-		    (echo ${mc_sel_modules} | grep "^${mc_mod}" 1>&7 2>&7))
+		if (echo ${mc_sel_modules} | grep " ${mc_mod}" 1>&7 2>&7) ||
+		    (echo ${mc_sel_modules} | grep "^${mc_mod}" 1>&7 2>&7)
+
 		then
 			#  The module is selected.
 			mc_mstate="enabled"
@@ -667,11 +668,11 @@ EOF
 			#  If the user just presses [return] or
 			#  if the selected state matches the old state,
 			#  then we change nothing.
-			if ((test "x${mc_ask_response}" = x) || \
-			    ((test "${mc_ask_response}" = d) && \
-			     (test "${mc_mstate}" = disabled)) || \
-			    ((test "${mc_ask_response}" = e) && \
-			     (test "${mc_mstate}" = enabled))); then
+			if test "x${mc_ask_response}" = x || \
+			    (test "${mc_ask_response}" = d && \
+			     test "${mc_mstate}" = disabled) || \
+			    (test "${mc_ask_response}" = e && \
+			     test "${mc_mstate}" = enabled); then
 				echo "Changing nothing." 1>&6
 				break;
 			fi
