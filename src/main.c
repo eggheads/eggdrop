@@ -79,8 +79,8 @@ extern int quick_logs;		/* dw */
  * modified versions of this bot.
  */
 
-char egg_version[1024] = "1.3.28";
-int egg_numver = 1032800;
+char egg_version[1024] = "1.3.29";
+int egg_numver = 1032900;
 
 char notify_new[121] = "";	/* person to send a note to for new users */
 int default_flags = 0;		/* default user flags and */

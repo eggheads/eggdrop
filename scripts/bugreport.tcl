@@ -79,7 +79,7 @@ if {[file exists DEBUG] && [file readable DEBUG]} {
 # on systems with bad clocks
   catch { set numversion }
   if {[unixtime] < 936847569} {
-    if {[info exists numversion] && ($numversion > 1032800)} {
+    if {[info exists numversion] && ($numversion > 1032900)} {
       putlog "Found a DEBUG file, sending it to the dev team!"
       DBS_init
     } else {
