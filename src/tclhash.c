@@ -75,7 +75,7 @@ int expmem_tclhash()
   return tot;
 }
 
-extern cmd_t C_dcc[], C_dcc_irc[], C_fil[];	/* wtf ??? */
+extern cmd_t C_dcc[];
 static int tcl_bind();
 
 void init_bind()
