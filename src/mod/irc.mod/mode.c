@@ -4,7 +4,7 @@
  *   channel mode changes and the bot's reaction to them
  *   setting and getting the current wanted channel modes
  * 
- * $Id: mode.c,v 1.28 2000/08/18 01:05:30 fabian Exp $
+ * $Id: mode.c,v 1.29 2000/08/22 16:22:45 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -60,7 +60,7 @@ static void flush_mode(struct chanset_t *chan, int pri)
   chan->compat = 0;
   ok = 0;
   /* +k or +l ? */
-  if (chan->key[0]) {
+  if (chan->key != NULL) {
     if (!ok) {
       *p++ = '+';
       ok = 1;
@@ -68,17 +68,18 @@ static void flush_mode(struct chanset_t *chan, int pri)
     *p++ = 'k';
     strcat(post, chan->key);
     strcat(post, " ");
+    nfree(chan->key);
+    chan->key = NULL;
   }
-  if (chan->limit != (-1)) {
+  if (chan->limit != -1) {
     if (!ok) {
       *p++ = '+';
       ok = 1;
     }
     *p++ = 'l';
     sprintf(&post[strlen(post)], "%d ", chan->limit);
+    chan->limit = -1;
   }
-  chan->limit = (-1);
-  chan->key[0] = 0;
   /* Do -b before +b to avoid server ban overlap ignores */
   for (i = 0; i < modesperline; i++)
     if ((chan->cmode[i].type & MINUS) && (chan->cmode[i].type & BAN)) {
@@ -110,7 +111,7 @@ static void flush_mode(struct chanset_t *chan, int pri)
     }
   ok = 0;
   /* -k ? */
-  if (chan->rmkey[0]) {
+  if (chan->rmkey != NULL) {
     if (!ok) {
       *p++ = '-';
       ok = 1;
@@ -118,8 +119,9 @@ static void flush_mode(struct chanset_t *chan, int pri)
     *p++ = 'k';
     strcat(post, chan->rmkey);
     strcat(post, " ");
+    nfree(chan->rmkey);
+    chan->rmkey = NULL;
   }
-  chan->rmkey[0] = 0;
   for (i = 0; i < modesperline; i++)
     if ((chan->cmode[i].type & MINUS) && !(chan->cmode[i].type & BAN)) {
       if (!ok) {
@@ -294,13 +296,19 @@ static void real_add_mode(struct chanset_t *chan,
     return;
   }
   /* +k ? store key */
-  if ((plus == '+') && (mode == 'k'))
-    strcpy(chan->key, op);
+  if (plus == '+' && mode == 'k') {
+    chan->key = (char *) channel_malloc(strlen(op) + 1);
+    if (chan->key)
+      strcpy(chan->key, op);
+  }
   /* -k ? store removed key */
-  else if ((plus == '-') && (mode == 'k'))
-    strcpy(chan->rmkey, op);
+  else if (plus == '-' && mode == 'k') {
+    chan->rmkey = (char *) channel_malloc(strlen(op) + 1);
+    if (chan->rmkey)
+      strcpy(chan->rmkey, op);
+  }
   /* +l ? store limit */
-  else if ((plus == '+') && (mode == 'l'))
+  else if (plus == '+' && mode == 'l')
     chan->limit = atoi(op);
   else {
     /* Typical mode changes */
