@@ -4,7 +4,7 @@
  *   channel mode changes and the bot's reaction to them
  *   setting and getting the current wanted channel modes
  * 
- * $Id: mode.c,v 1.33 2000/09/07 16:04:44 fabian Exp $
+ * $Id: mode.c,v 1.34 2000/09/09 11:36:59 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -278,12 +278,16 @@ static void real_add_mode(struct chanset_t *chan,
   }
   /* +k ? store key */
   else if (plus == '+' && mode == 'k') {
+    if (chan->key)
+      nfree(chan->key);
     chan->key = (char *) channel_malloc(strlen(op) + 1);
     if (chan->key)
       strcpy(chan->key, op);
   }
   /* -k ? store removed key */
   else if (plus == '-' && mode == 'k') {
+    if (chan->rmkey)
+      nfree(chan->rmkey);
     chan->rmkey = (char *) channel_malloc(strlen(op) + 1);
     if (chan->rmkey)
       strcpy(chan->rmkey, op);

@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  * 
- * $Id: chan.c,v 1.46 2000/09/02 19:34:36 fabian Exp $
+ * $Id: chan.c,v 1.47 2000/09/09 11:36:59 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -673,7 +673,7 @@ static void recheck_channel_modes(struct chanset_t *chan)
 	  add_mode(chan, '-', 'k', chan->channel.key);
         add_mode(chan, '+', 'k', chan->key_prot);
       }
-    } else if ((mns & CHANKEY) && (chan->channel.key))
+    } else if ((mns & CHANKEY) && (chan->channel.key[0]))
       add_mode(chan, '-', 'k', chan->channel.key);
   }
 }
@@ -785,8 +785,8 @@ static void recheck_channel(struct chanset_t *chan, int dobans)
 	!channel_inactive(chan)) /* Spot on guppy, this just keeps the
 	                          * checking sane */
       dprintf(DP_SERVER, "MODE %s\n", chan->name);
+    recheck_channel_modes(chan);
   }
-  recheck_channel_modes(chan);
   stacking--;
 }
 
@@ -868,7 +868,7 @@ static int got324(char *from, char *msg)
     i++;
   }
   if (ok)
-    recheck_channel(chan, 0);
+    recheck_channel_modes(chan);
   return 0;
 }
 
