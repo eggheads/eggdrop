@@ -1,7 +1,7 @@
 #
 # ques5.tcl
 #
-# Copyright (C) 1995, 1996, 1997 Robey Pointer
+# Copyright (C) 1995 - 1997 Robey Pointer
 # Copyright (C) 1999 - 2005 Eggheads Development Team
 #
 # v1 -- 20aug95
@@ -11,7 +11,7 @@
 # v4.00001 nov97 [blurgh]
 # v5-BETA1 -- 26sep99 by rtc
 #
-# $Id: ques5.tcl,v 1.12 2005/01/03 20:01:44 paladin Exp $
+# $Id: ques5.tcl,v 1.13 2005/01/28 03:26:20 wcc Exp $
 #
 # o clean webfile var removal
 # o using timezone variable from config file

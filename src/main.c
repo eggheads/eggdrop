@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  *
- * $Id: main.c,v 1.113 2005/01/03 20:01:44 paladin Exp $
+ * $Id: main.c,v 1.114 2005/01/28 03:26:20 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -734,7 +734,7 @@ int main(int argc, char **argv)
   /* Version info! */
   egg_snprintf(ver, sizeof ver, "eggdrop v%s", egg_version);
   egg_snprintf(version, sizeof version,
-               "Eggdrop v%s (C) 1997 Robey Pointer (C) 2004 Eggheads",
+               "Eggdrop v%s (C) 1997 Robey Pointer (C) 2005 Eggheads",
                egg_version);
   /* Now add on the patchlevel (for Tcl) */
   sprintf(&egg_version[strlen(egg_version)], " %u", egg_numver);
