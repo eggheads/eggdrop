@@ -1,7 +1,7 @@
 dnl aclocal.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: aclocal.m4,v 1.41 2001/07/01 07:19:38 guppy Exp $
+dnl $Id: aclocal.m4,v 1.42 2001/07/03 16:47:14 guppy Exp $
 dnl
 
 
@@ -185,7 +185,7 @@ case "$egg_cv_var_system_type" in
         MOD_CC="$CC"
         MOD_LD="$CC"
         AC_MSG_CHECKING(for /usr/lib/binmode.o)
-        if test -f /usr/lib/binmode.o && test -r /usr/lib/binmode.o
+        if test -r /usr/lib/binmode.o
         then
           AC_MSG_RESULT(yes)
           LIBS="$LIBS /usr/lib/binmode.o"
@@ -956,7 +956,7 @@ dnl
 AC_DEFUN(EGG_TCL_TESTLIBS, [dnl
 # Set variables for Tcl library tests
 TCL_TEST_LIB="$TCLLIBFNS"
-TCL_TEST_OTHERLIBS="-L$TCLLIB $EGG_MATH_LIB $LIBS"
+TCL_TEST_OTHERLIBS="-L$TCLLIB $EGG_MATH_LIB"
 
 if test ! "${ac_cv_lib_pthread-x}" = "x"
 then

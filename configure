@@ -1384,7 +1384,7 @@ EOF
         MOD_LD="$CC"
         echo $ac_n "checking for /usr/lib/binmode.o""... $ac_c" 1>&6
 echo "configure:1387: checking for /usr/lib/binmode.o" >&5
-        if test -f /usr/lib/binmode.o && test -r /usr/lib/binmode.o
+        if test -r /usr/lib/binmode.o
         then
           echo "$ac_t""yes" 1>&6
           LIBS="$LIBS /usr/lib/binmode.o"
@@ -3580,7 +3580,7 @@ fi
 
 # Set variables for Tcl library tests
 TCL_TEST_LIB="$TCLLIBFNS"
-TCL_TEST_OTHERLIBS="-L$TCLLIB $EGG_MATH_LIB $LIBS"
+TCL_TEST_OTHERLIBS="-L$TCLLIB $EGG_MATH_LIB"
 
 if test ! "${ac_cv_lib_pthread-x}" = "x"
 then
