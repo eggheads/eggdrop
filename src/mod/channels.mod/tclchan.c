@@ -1,7 +1,7 @@
 /* 
  * tclchan.c -- part of channels.mod
  * 
- * $Id: tclchan.c,v 1.23 2000/01/17 22:36:08 fabian Exp $
+ * $Id: tclchan.c,v 1.24 2000/01/28 21:51:54 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1112,6 +1112,11 @@ static int tcl_channel_modify(Tcl_Interp * irp, struct chanset_t *chan,
       chan->ircnet_status|= CHAN_NOUSERINVITES;
     else if (!strcmp(item[i], "+userinvites"))
       chan->ircnet_status&= ~CHAN_NOUSERINVITES;
+    /* ignore wasoptest and stopnethack in chanfile, remove these lines later */
+    else if (!strcmp(item[i], "-stopnethack"))  ;
+    else if (!strcmp(item[i], "+stopnethack"))  ;
+    else if (!strcmp(item[i], "-wasoptest"))  ;
+    else if (!strcmp(item[i], "+wasoptest"))  ;  /* Eule 01.2000 */
     else if (!strncmp(item[i], "flood-", 6)) {
       int *pthr = 0, *ptime;
       char *p;
