@@ -1,7 +1,7 @@
 dnl aclocal.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: aclocal.m4,v 1.31 2000/12/21 20:20:02 guppy Exp $
+dnl $Id: aclocal.m4,v 1.32 2001/04/06 22:29:46 guppy Exp $
 dnl
 
 
@@ -320,8 +320,14 @@ case "$egg_cv_var_system" in
     if test "x`${UNAME} -r | cut -d . -f 1`" = "x5"
     then
       AC_MSG_RESULT(Solaris)
+      if test -n "$GCC"
+      then 
+        SHLIB_CC="${CC} -fPIC"
+	SHLIB_LD="${CC}"
+      else	
       SHLIB_CC="${CC} -KPIC"
-      SHLIB_LD="/usr/ccs/bin/ld -G -z text"
+        SHLIB_LD="${CC} -G -z text"
+      fi
     else
       AC_MSG_RESULT(SunOS)
       SUNOS=yes
