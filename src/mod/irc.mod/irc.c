@@ -2,7 +2,7 @@
  * irc.c -- part of irc.mod
  *   support for channels within the bot
  *
- * $Id: irc.c,v 1.72 2002/07/18 19:01:45 guppy Exp $
+ * $Id: irc.c,v 1.73 2002/07/25 21:03:23 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -485,7 +485,7 @@ static void status_log()
   memberlist *m;
   struct chanset_t *chan;
   char s[20], s2[20];
-  int chops, voice, nonops, bans, invites, exempts;
+  int chops, halfops, voice, nonops, bans, invites, exempts;
 
   if (!server_online)
     return;
@@ -495,13 +495,16 @@ static void status_log()
         !channel_inactive(chan)) {
       chops = 0;
       voice = 0;
+      halfops = 0;
       for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
 	if (chan_hasop(m))
 	  chops++;
+        else if (chan_hasvoice(m))
+          halfops++;
 	else if (chan_hasvoice(m))
 	  voice++;
       }
-      nonops = (chan->channel.members - (chops + voice));
+      nonops = (chan->channel.members - (chops + voice + halfops));
 
       for (bans = 0, b = chan->channel.ban; b->mask[0]; b = b->next)
 	bans++;
@@ -514,10 +517,11 @@ static void status_log()
       sprintf(s2, "%d", invites);
 
       putlog(LOG_MISC, chan->dname,
-	     "%s%-10s (%s) : [m/%d o/%d v/%d n/%d b/%d e/%s I/%s]",
-             me_op(chan) ? "@" : me_voice(chan) ? "+" : "", chan->dname,
-             getchanmode(chan), chan->channel.members, chops, voice, nonops,
-	     bans, use_exempts ? s : "-", use_invites ? s2 : "-");
+             "%c%s (%s) : [m/%d o/%d h/%d v/%d n/%d b/%d e/%s I/%s]",
+             me_op(chan) ? '@' : me_voice(chan) ? '+' :
+             me_halfop(chan) ? '%' : '', chan->dname, getchanmode(chan),
+             chan->channel.members, chops, halfops, voice, nonops, bans,
+             use_exempts ? s : "-", use_invites ? s2 : "-");
     }
   }
 }
