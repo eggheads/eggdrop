@@ -6,7 +6,7 @@
  * 
  * dprintf'ized, 27oct1995
  * 
- * $Id: dcc.c,v 1.16 1999/12/25 00:07:50 fabian Exp $
+ * $Id: dcc.c,v 1.17 2000/01/01 19:28:24 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1217,7 +1217,8 @@ static void eof_dcc_telnet(int idx)
 
 static void display_telnet(int idx, char *buf)
 {
-  sprintf(buf, "lstn  %d", dcc[idx].port);
+  sprintf(buf, "lstn  %d%s", dcc[idx].port,
+	  (dcc[idx].status & LSTN_PUBLIC) ? " pub" : "");
 }
 
 struct dcc_table DCC_TELNET =
@@ -2029,6 +2030,8 @@ void dcc_telnet_got_ident(int i, char *host)
     else if (!require_p && !(u->flags & USER_OP))
       ok = 0;
     if (!ok && u && (u->flags & USER_BOT))
+      ok = 1;
+    if (!ok && (dcc[idx].status & LSTN_PUBLIC))
       ok = 1;
     if (!ok) {
       putlog(LOG_MISC, "*", DCC_NOACCESS, dcc[i].host);

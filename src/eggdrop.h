@@ -4,7 +4,7 @@
  * 
  *   IF YOU ALTER THIS FILE, YOU NEED TO RECOMPILE THE BOT.
  * 
- * $Id: eggdrop.h,v 1.20 1999/12/22 12:11:02 fabian Exp $
+ * $Id: eggdrop.h,v 1.21 2000/01/01 19:28:24 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -335,17 +335,17 @@ struct script_info {
 };
 
 struct dns_info {
-  Function dns_success;		/* is called if the dns request succeeds */
-  Function dns_failure;		/* is called if it fails */
-  char *host;			/* hostname */
+  Function dns_success;		/* is called if the dns request succeeds   */
+  Function dns_failure;		/* is called if it fails		   */
+  char *host;			/* hostname				   */
   char *cbuf;			/* temporary buffer. Memory will be free'd
-				   as soon as dns_info is free'd */
-  char *cptr;			/* temporary pointer */
-  IP ip;			/* IP address */
-  int ibuf;			/* temporary buffer for one integer */
-  char dns_type;		/* lookup type, e.g. RES_HOSTBYIP */
+				   as soon as dns_info is free'd	   */
+  char *cptr;			/* temporary pointer			   */
+  IP ip;			/* IP address				   */
+  int ibuf;			/* temporary buffer for one integer	   */
+  char dns_type;		/* lookup type, e.g. RES_HOSTBYIP	   */
   struct dcc_table *type;	/* type of the dcc table we are making the
-				   lookup for */
+				   lookup for				   */
 };
 
 struct dupwait_info {
@@ -354,8 +354,8 @@ struct dupwait_info {
 };
 
 /* flags for dns_type */
-#define RES_HOSTBYIP  1			/* hostname to IP address */
-#define RES_IPBYHOST  2			/* IP address to hostname */
+#define RES_HOSTBYIP  1		/* hostname to IP address		*/
+#define RES_IPBYHOST  2		/* IP address to hostname		*/
 
 /* flags about dcc types */
 #define DCT_CHAT      0x00000001	/* this dcc type receives botnet chatter */
@@ -406,6 +406,9 @@ struct dupwait_info {
 				 * linking stage */
 #define STAT_AGGRESSIVE 0x200	/* aggressively sharing with this bot */
 #define STAT_OVERRIDE   0x400	/* overriding existing bot entries */
+
+/* Flags for listening sockets */
+#define LSTN_PUBLIC  0x01	/* No access restrictions		*/
 
 /* chan & global */
 #define FLOOD_PRIVMSG    0

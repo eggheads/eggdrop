@@ -4,7 +4,7 @@
  * 
  * dprintf'ized, 1aug1996
  * 
- * $Id: tcldcc.c,v 1.9 1999/12/21 17:35:10 fabian Exp $
+ * $Id: tcldcc.c,v 1.10 2000/01/01 19:28:24 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -914,7 +914,7 @@ static int tcl_connect STDVAR
 
 /* create a new listening port (or destroy one) */
 /* listen <port> bots/all/users [mask]
- * listen <port> script <proc>
+ * listen <port> script <proc> [flag]
  * listen <port> off */
 static int tcl_listen STDVAR
 {
@@ -923,7 +923,7 @@ static int tcl_listen STDVAR
   struct portmap *pmap = NULL, *pold = NULL;
 
   Context;
-  BADARGS(3, 4, " port type ?mask/proc?");
+  BADARGS(3, 5, " port type ?mask?/?proc ?flag??");
   port = realport = atoi(argv[1]);
   for (pmap = root; pmap; pold = pmap, pmap = pmap->next)
     if (pmap->realport == port) {
@@ -980,8 +980,18 @@ static int tcl_listen STDVAR
     if (argc < 4) {
       Tcl_AppendResult(irp, "must give proc name for script listen", NULL);
       killsock(dcc[idx].sock);
-      dcc_total--;
+      lostdcc(idx);
       return TCL_ERROR;
+    }
+    if (argc == 5) {
+      if (strcasecmp(argv[4], "pub")) {
+	Tcl_AppendResult(irp, "unknown flag: ", argv[4], ". allowed flags: pub",
+		         NULL);
+	killsock(dcc[idx].sock);
+	lostdcc(idx);
+	return TCL_ERROR;
+      }
+      dcc[idx].status = LSTN_PUBLIC;
     }
     strncpy(dcc[idx].host, argv[3], UHOSTMAX);
     dcc[idx].host[UHOSTMAX] = 0;

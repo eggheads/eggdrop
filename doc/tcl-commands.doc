@@ -731,7 +731,7 @@ specific commands, see later.
       'connect' so no input is lost
     returns: idx of the new connection
 
-  listen <port> <type> [options]
+  listen <port> <type> [options] [flag]
     opens a listening port to accept incoming telnets; type must be one of
       "bots", "all", "users", "script", or "off":
   listen <port> bots [mask]
@@ -749,9 +749,11 @@ specific commands, see later.
       permitted nicknames/botnames; if the mask begins with '@' it is
       interpreted to be a mask of permitted hosts to accept connections from
     returns: port #
-  listen <port> script <proc>
+  listen <port> script <proc> [flag]
     accepts connections which are immediately routed to a proc; the proc
       is called with one parameter: the idx of the new connection
+    flag may currently only be 'pub', which makes the bot allow anyone to
+      connect.
     returns: port #
   listen <port> off
     stop listening at a port
