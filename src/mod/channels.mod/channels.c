@@ -137,7 +137,8 @@ static int getudef(struct udef_chans *ul, char *name)
   return val;
 }
 
-static void setudef(struct udef_struct *us, struct udef_chans *ul, char *name, int value)
+static void setudef(struct udef_struct *us, struct udef_chans *ul, char *name,
+		    int value)
 {
   struct udef_chans *ull;
 
@@ -154,7 +155,7 @@ static void setudef(struct udef_struct *us, struct udef_chans *ul, char *name, i
   while (ul && ul->next)
     ul = ul->next;
   ull = nmalloc(sizeof(struct udef_chans));
-  ull->chan = nmalloc(strlen(name));
+  ull->chan = nmalloc(strlen(name) + 1);
   strcpy(ull->chan, name);
   ull->value = value;
   ull->next = NULL;
@@ -509,7 +510,7 @@ flood-kick %d:%d flood-deop %d:%d \
 %cgreet %cprotectops %cprotectfriends %cdontkickops %cwasoptest \
 %cstatuslog %cstopnethack %crevenge %crevengebot %cautovoice %csecret \
 %cshared %ccycle %cseen %cinactive %cdynamicexempts %cuserexempts \
-%cdynamicinvites %cuserinvites%s\n",
+%cdynamicinvites %cuserinvites ",
 	channel_static(chan) ? "set" : "add",
 	name,
 	channel_static(chan) ? " " : " { ",
@@ -549,8 +550,7 @@ flood-kick %d:%d flood-deop %d:%d \
         PLSMNS(channel_dynamicexempts(chan)),
         PLSMNS(!channel_nouserexempts(chan)),
  	PLSMNS(channel_dynamicinvites(chan)),
-        PLSMNS(!channel_nouserinvites(chan)),
-	channel_static(chan) ? "" : " }");
+        PLSMNS(!channel_nouserinvites(chan)));
     for (ul = udef; ul; ul = ul->next) {
       if (ul->defined && ul->name) {
 	if (ul->type == UDEF_FLAG)
@@ -563,6 +563,7 @@ flood-kick %d:%d flood-deop %d:%d \
 	  debug1("UDEF-ERROR: unknown type %d", ul->type);
       }
     }
+    fprintf(f, "%s\n", channel_static(chan) ? "" : "}");
     if (fflush(f)) {
       putlog(LOG_MISC, "*", "ERROR writing channel file.");
       fclose(f);

@@ -1116,15 +1116,19 @@ static int tcl_channel_modify(Tcl_Interp * irp, struct chanset_t *chan,
       else if (!strncmp(item[i], "udef-int-", 9))
         initudef(UDEF_INT, item[i] + 9, 0);
       for (ul = udef; ul; ul = ul->next) {
-        if ((!strcasecmp(item[i] + 1, ul->name) || (!strncmp(item[i] + 1, "udef-flag-", 10) && !strcasecmp(item[i] + 11, ul->name)))
-            && (ul->type == UDEF_FLAG)) {
+        if ((!strcasecmp(item[i] + 1, ul->name) ||
+	    (!strncmp(item[i] + 1, "udef-flag-", 10) &&
+	     !strcasecmp(item[i] + 11, ul->name))) &&
+	    (ul->type == UDEF_FLAG)) {
           found = 1;
           if (item[i][0] == '+')
             setudef(ul, ul->values, chan->name, 1);
           else
             setudef(ul, ul->values, chan->name, 0);
-        } else if ((!strcasecmp(item[i], ul->name) || (!strncmp(item[i], "udef-int-", 9) && !strcasecmp(item[i] + 9, ul->name))) 
-            && (ul->type == UDEF_INT)) {
+        } else if ((!strcasecmp(item[i], ul->name) ||
+		   (!strncmp(item[i], "udef-int-", 9) &&
+		    !strcasecmp(item[i] + 9, ul->name))) &&
+		   (ul->type == UDEF_INT)) {
           found = 1;
           i++;
           if (i >= items) {
@@ -1142,7 +1146,8 @@ static int tcl_channel_modify(Tcl_Interp * irp, struct chanset_t *chan,
       }
     }
   }
-  if (((oldstatus ^ chan->status) & CHAN_INACTIVE) && module_find("irc", 0, 0)) {
+  if (((oldstatus ^ chan->status) & CHAN_INACTIVE) &&
+      module_find("irc", 0, 0)) {
     if (channel_inactive(chan) && (chan->status & (CHAN_ACTIVE + CHAN_PEND)))
       dprintf(DP_SERVER, "PART %s\n", chan->name);
     if (!channel_inactive(chan) && !(chan->status & (CHAN_ACTIVE + CHAN_PEND)))
