@@ -8,8 +8,10 @@ provide, the easier and more likely it is for the dev team to fix the
 bug. Please add everything that you think is important, in addition
 to the information requested in this form. Thanks.
 
-Note: First check http://www.eggheads.org/bugzilla/ to see if the bug
-      you want to report is already fixed.
+NOTE: First check http://www.eggheads.org/bugzilla/ to see if the
+      bug you want to report is already fixed. Also, please upgrade
+      to the latest eggdrop version to see if the bug is fixed before
+      reporting.
 
 Instructions:
 1]  Please complete as many fields as possible.
@@ -113,6 +115,10 @@ Instructions:
      Keep your core file for at least one week, so that the dev team
      can ask for further information if needed. However, don't send
      us the core file unless we ask for it.
+
+     NOTE: If this is a bug you can reproduce, please compile with
+           make debug and follow the above step. It can greatly help
+           find and fix the bug.
 
 =====================================================================
 

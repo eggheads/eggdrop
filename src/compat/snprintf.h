@@ -1,7 +1,8 @@
 /*
- * snprintf.h --
+ * snprintf.h
+ *   header file for snprintf.c
  *
- *	prototypes for snprintf.c
+ * $Id: snprintf.h,v 1.16 2003/03/05 04:32:25 wcc Exp $
  */
 /*
  * Copyright (C) 2000, 2001, 2002, 2003 Eggheads Development Team
@@ -20,42 +21,43 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-/*
- * $Id: snprintf.h,v 1.15 2003/03/04 22:14:03 wcc Exp $
- */
 
-#ifndef _EGG_SNPRINTF_H
-#define _EGG_SNPRINTF_H
+#ifndef _EGG_COMPAT_SNPRINTF_H_
+#define _EGG_COMPAT_SNPRINTF_H_
 
-#ifdef HAVE_CONFIG_H
-# include "config.h"
+#include "src/main.h"
+#include <stdio.h>
+
+/* Check for broken snprintf versions */
+#ifdef BROKEN_SNPRINTF
+#  ifdef HAVE_VSNPRINTF
+#    undef HAVE_VSNPRINTF
+#  endif
+#  ifdef HAVE_SNPRINTF
+#    undef HAVE_SNPRINTF
+#  endif
 #endif
 
-#include <stdio.h>
-#include <stdarg.h>		/* FIXME: possible varargs.h conflicts */
-
-#if !defined(HAVE_VSNPRINTF) || !defined(HAVE_C99_VSNPRINTF)
-int egg_vsnprintf(char *str, size_t count, const char *fmt, va_list args);
+/* Use the system libraries version of vsnprintf() if available. Otherwise
+ * use our own.
+ */
+#ifndef HAVE_VSNPRINTF
+int egg_vsnprintf(char *str, size_t count, const char *fmt, va_list ap);
 #else
 #  define egg_vsnprintf vsnprintf
 #endif
 
-#if !defined(HAVE_SNPRINTF) || !defined(HAVE_C99_VSNPRINTF)
+/* Use the system libraries version of snprintf() if available. Otherwise
+ * use our own.
+ */
+#ifndef HAVE_SNPRINTF
+#  ifdef __STDC__
 int egg_snprintf(char *str, size_t count, const char *fmt, ...);
+#  else
+int egg_snprintf();
+#  endif
 #else
 #  define egg_snprintf snprintf
 #endif
 
-#ifndef HAVE_VASPRINTF
-int egg_vasprintf(char **ptr, const char *format, va_list ap);
-#else
-#  define egg_vasprintf vasprintf
-#endif
-
-#ifndef HAVE_ASPRINTF
-int egg_asprintf(char **ptr, const char *format, ...);
-#else
-#  define egg_asprintf asprintf
-#endif
-
-#endif				/* !_EGG_SNPRINTF_H */
+#endif /* !_EGG_COMPAT_SNPRINTF_H_ */
