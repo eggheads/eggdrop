@@ -7,7 +7,7 @@
  *   help system
  *   motd display and %var substitution
  * 
- * $Id: misc.c,v 1.32 2000/12/10 15:10:27 guppy Exp $
+ * $Id: misc.c,v 1.33 2000/12/18 20:18:51 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -427,7 +427,7 @@ void daysago(time_t now, time_t then, char *out)
   if (now - then > 86400) {
     int days = (now - then) / 86400;
 
-    egg_snprintf(out, sizeof out, "%d day%s ago", days, (days == 1) ? "" : "s");
+    sprintf(out, "%d day%s ago", days, (days == 1) ? "" : "s");    
     return;
   }
   egg_strftime(out, 6, "%H:%M", localtime(&then));
@@ -441,7 +441,7 @@ void days(time_t now, time_t then, char *out)
   if (now - then > 86400) {
     int days = (now - then) / 86400;
 
-    egg_snprintf(out, sizeof out, "in %d day%s", days, (days == 1) ? "" : "s");
+    sprintf(out, "in %d day%s", days, (days == 1) ? "" : "s");
     return;
   }
   egg_strftime(out, 9, "at %H:%M", localtime(&now));
@@ -452,18 +452,20 @@ void days(time_t now, time_t then, char *out)
  */
 void daysdur(time_t now, time_t then, char *out)
 {
+  char s[81];
   int hrs, mins;
 
   if (now - then > 86400) {
     int days = (now - then) / 86400;
 
-    egg_snprintf(out, sizeof out, "for %d day%s", days, (days == 1) ? "" : "s");
+    sprintf(out, "for %d day%s", days, (days == 1) ? "" : "s");
     return;
   }
   now -= then;
   hrs = (int) (now / 3600);
   mins = (int) ((now - (hrs * 3600)) / 60);
-  egg_snprintf(out, sizeof out, "for %02d:%02d", hrs, mins);
+  sprintf(s, "for %02d:%02d", hrs, mins);
+  strcat(out, s);
 }
 
 
