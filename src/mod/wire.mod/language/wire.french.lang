@@ -1,5 +1,9 @@
+# wire.french.lang
+#   language messages for wire module
+#
 # Traduction par Fraggle, voir core.french.lang pour plus d'informations
-# Language messages for modules `wire'
+#
+# $Id: wire.french.lang,v 1.2 1999/12/21 17:35:32 fabian Exp $
 
 0xa000,Vous n'êtes pas sur un wire.
 0xa001,Actuellement sur wire

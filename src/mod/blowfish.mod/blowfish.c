@@ -1,6 +1,8 @@
 /* 
- * blowfish.c - part of blowfish.mod
- * handles: encryption and decryption of passwords
+ * blowfish.c -- part of blowfish.mod
+ *   encryption and decryption of passwords
+ * 
+ * $Id: blowfish.c,v 1.8 1999/12/21 17:35:11 fabian Exp $
  */
 /* 
  * The first half of this is very lightly edited from public domain

@@ -1,5 +1,8 @@
-
-
+dnl aclocal.m4
+dnl   macros autoconf uses when building configure from configure.in
+dnl
+dnl $Id: aclocal.m4,v 1.4 1999/12/21 17:35:02 fabian Exp $
+dnl
 AC_DEFUN(EGG_MSG_CONFIGURE_START, [dnl
 AC_MSG_RESULT()
 AC_MSG_RESULT(This is eggdrop's GNU configure script.)
@@ -7,8 +10,8 @@ AC_MSG_RESULT(It's going to run a bunch of strange tests to hopefully)
 AC_MSG_RESULT(make your compile work without much twiddling.)
 AC_MSG_RESULT()
 ])dnl
-
-
+dnl
+dnl
 AC_DEFUN(EGG_MSG_CONFIGURE_END, [dnl
 AC_MSG_RESULT()
 AC_MSG_RESULT(Configure is done.)
@@ -21,8 +24,9 @@ else
 fi
 AC_MSG_RESULT()
 ])dnl
-
-# FIXME: make a better test
+dnl
+dnl
+dnl FIXME: make a better test
 AC_DEFUN(EGG_CHECK_CC, [dnl
 if test "x${cross_compiling}" = "x"
 then
@@ -36,8 +40,8 @@ EOF
   exit 1
 fi
 ])dnl
-
-
+dnl
+dnl
 AC_DEFUN(EGG_PROG_STRIP, [dnl
 AC_CHECK_PROG(STRIP,strip,strip)
 if test "x${STRIP}" = "x"
@@ -45,8 +49,8 @@ then
   STRIP=touch
 fi
 ])dnl
-
-
+dnl
+dnl
 AC_DEFUN(EGG_PROG_AWK, [dnl
 # awk is needed for Tcl library and header checks, and eggdrop version subst
 AC_PROG_AWK
@@ -62,8 +66,8 @@ EOF
   exit 1
 fi
 ])dnl
-
-
+dnl
+dnl
 AC_DEFUN(EGG_PROG_BASENAME, [dnl
 # basename is needed for Tcl library and header checks
 AC_CHECK_PROG(BASENAME, basename, basename)
@@ -79,8 +83,8 @@ EOF
   exit 1
 fi
 ])dnl
-
-
+dnl
+dnl
 AC_DEFUN(EGG_CHECK_OS, [dnl
 LINUX=no
 IRIX=no
@@ -257,8 +261,8 @@ AC_SUBST(SHLIB_CC)dnl
 AC_SUBST(SHLIB_STRIP)dnl
 AC_SUBST(DEFAULT_MAKE)dnl
 ])dnl
-
-
+dnl
+dnl
 AC_DEFUN(EGG_CHECK_LIBS, [dnl
 if test "$IRIX" = "yes"
 then
@@ -284,8 +288,8 @@ ac_cv_lib_pthread_pthread_mutex_init=no)
   fi
 fi
 ])dnl
-
-
+dnl
+dnl
 AC_DEFUN(EGG_CHECK_RES_LIBS, [dnl
 AC_CHECK_FUNC(res_init, ,
   AC_CHECK_LIB(bind, res_init, RESLIB="-lbind",
@@ -299,8 +303,8 @@ AC_CHECK_FUNC(res_mkquery, ,
 
 AC_SUBST(RESLIB)
 ])dnl
-
-
+dnl
+dnl
 AC_DEFUN(EGG_CHECK_FUNC_VSPRINTF, [dnl
 AC_CHECK_FUNCS(vsprintf)
 if test "x${ac_cv_func_vsprintf}" = "xno"
@@ -315,8 +319,8 @@ EOF
   exit 1
 fi
 ])dnl
-
-
+dnl
+dnl
 AC_DEFUN(EGG_HEADER_STDC, [dnl
 if test "x${ac_cv_header_stdc}" = "xno"
 then
@@ -330,8 +334,8 @@ EOF
   exit 1
 fi
 ])dnl
-
-
+dnl
+dnl
 AC_DEFUN(EGG_CYGWIN, [dnl
 AC_CYGWIN
 if test ! "x${CYGWIN}" = "x"
@@ -339,8 +343,8 @@ then
   AC_DEFINE(CYGWIN_HACKS)dnl
 fi
 ])dnl
-
-
+dnl
+dnl
 AC_DEFUN(EGG_EXEEXT, [dnl
 EGGEXEC=eggdrop
 AC_EXEEXT
@@ -350,8 +354,8 @@ then
 fi
 AC_SUBST(EGGEXEC)dnl
 ])dnl
-
-
+dnl
+dnl
 AC_DEFUN(EGG_TCL_ARG_WITH, [dnl
 # oohh new configure --variables for those with multiple tcl libs
 AC_ARG_WITH(tcllib, [  --with-tcllib=PATH      full path to tcl library], tcllibname=$withval)
@@ -388,8 +392,8 @@ configure: warning:
 EOF
 fi
 ])dnl
-
-
+dnl
+dnl
 AC_DEFUN(EGG_TCL_ENV, [dnl
 WARN=0
 # Make sure either both or neither $TCLLIB and $TCLINC are set
@@ -423,8 +427,8 @@ configure: warning:
 EOF
 fi
 ])dnl
-
-
+dnl
+dnl
 AC_DEFUN(EGG_TCL_WITH_TCLLIB, [dnl
 # Look for Tcl library: if $tcllibname is set, check there first
 if test ! "x${tcllibname}" = "x"
@@ -452,8 +456,8 @@ EOF
   fi
 fi
 ])dnl
-
-
+dnl
+dnl
 AC_DEFUN(EGG_TCL_WITH_TCLINC, [dnl
 # Look for Tcl header: if $tclincname is set, check there first
 if test ! "x${tclincname}" = "x"
@@ -479,8 +483,8 @@ EOF
   fi
 fi
 ])dnl
-
-
+dnl
+dnl
 AC_DEFUN(EGG_TCL_FIND_LIBRARY, [dnl
 # Look for Tcl library: if $TCLLIB is set, check there first
 if test "x${TCLLIBFN}" = "x"
@@ -521,8 +525,8 @@ EOF
   fi
 fi
 ])dnl
-
-
+dnl
+dnl
 AC_DEFUN(EGG_TCL_FIND_HEADER, [dnl
 # Look for Tcl header: if $TCLINC is set, check there first
 if test "x${TCLINCFN}" = "x"
@@ -558,8 +562,8 @@ EOF
   fi
 fi
 ])dnl
-
-
+dnl
+dnl
 AC_DEFUN(EGG_TCL_CHECK_LIBRARY, [dnl
 AC_MSG_CHECKING(for Tcl library)
 
@@ -596,8 +600,8 @@ fi
 AC_SUBST(TCLLIB)dnl
 AC_SUBST(TCLLIBFN)dnl
 ])dnl
-
-
+dnl
+dnl
 AC_DEFUN(EGG_TCL_CHECK_HEADER, [dnl
 AC_MSG_CHECKING(for Tcl header)
 
@@ -649,8 +653,8 @@ fi
 AC_SUBST(TCLINC)dnl
 AC_SUBST(TCLINCFN)dnl
 ])dnl
-
-
+dnl
+dnl
 AC_DEFUN(EGG_TCL_CHECK_VERSION, [dnl
 # Both TCLLIBFN & TCLINCFN must be set, or we bail
 if test ! "x${TCLLIBFN}" = "x" && test ! "x${TCLINCFN}" = "x"
@@ -713,8 +717,8 @@ EOF
   exit 1
 fi
 ])dnl
-
-
+dnl
+dnl
 AC_DEFUN(EGG_TCL_CHECK_PRE70, [dnl
 # Is this version of Tcl too old for us to use ?
 TCL_VER_PRE70=`echo $egg_cv_var_tcl_version | $AWK '{split([$]1, i, "."); if (i[[1]] < 7) print "yes"; else print "no"}'`
@@ -732,8 +736,8 @@ EOF
   exit 1
 fi
 ])dnl
-
-
+dnl
+dnl
 AC_DEFUN(EGG_TCL_CHECK_PRE75, [dnl
 # Are we using a pre 7.5 Tcl version ?
 TCL_VER_PRE75=`echo $egg_cv_var_tcl_version | $AWK '{split([$]1, i, "."); if (((i[[1]] == 7) && (i[[2]] < 5)) || (i[[1]] < 7)) print "yes"; else print "no"}'`
@@ -742,8 +746,8 @@ then
   AC_DEFINE(HAVE_PRE7_5_TCL)dnl
 fi
 ])dnl
-
-
+dnl
+dnl
 AC_DEFUN(EGG_TCL_TESTLIBS, [dnl
 # Setup TCL_TESTLIBS for Tcl library tests
 if test ! "x${TCLLIBEXT}" = "x.a"
@@ -762,8 +766,8 @@ then
   TCL_TESTLIBS="-lpthread $TCL_TESTLIBS"
 fi
 ])dnl
-
-
+dnl
+dnl
 AC_DEFUN(EGG_TCL_CHECK_FREE, [dnl
 # Check for Tcl_Free()
 AC_MSG_CHECKING(if Tcl library has Tcl_Free)
@@ -804,8 +808,8 @@ else
   AC_MSG_RESULT(no)
 fi
 ])dnl
-
-
+dnl
+dnl
 AC_DEFUN(EGG_TCL_CHECK_THREADS, [dnl
 # Check for TclpFinalizeThreadData()
 AC_MSG_CHECKING(if Tcl library is multithreaded)
@@ -859,8 +863,8 @@ else
   AC_MSG_RESULT(no)
 fi
 ])dnl
-
-
+dnl
+dnl
 AC_DEFUN(EGG_TCL_LIB_REQS, [dnl
 if test ! "x${TCLLIBEXT}" = "x.a"
 then
@@ -911,8 +915,8 @@ fi
 AC_SUBST(TCL_REQS)dnl
 AC_SUBST(TCL_LIBS)dnl
 ])dnl
-
-
+dnl
+dnl
 AC_DEFUN(EGG_FUNC_DLOPEN, [dnl
 if test $NEED_DL = 1 && test "x${ac_cv_func_dlopen}" = "xno"
 then
@@ -960,14 +964,14 @@ EOF
   fi
 fi
 ])dnl
-
-
+dnl
+dnl
 AC_DEFUN(EGG_SUBST_EGGVERSION, [dnl
 EGGVERSION=`grep 'char egg_version' src/main.c | $AWK '{gsub(/(\"|\;)/, "", [$]4); print [$]4}'`
 AC_SUBST(EGGVERSION)dnl
 ])dnl
-
-
+dnl
+dnl
 AC_DEFUN(EGG_SUBST_DEST, [dnl
 if test "x$DEST" = "x"
 then

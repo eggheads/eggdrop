@@ -1,4 +1,5 @@
 # Makefile for src/mod/notes.mod
+# $Id: Makefile,v 1.6 1999/12/21 17:35:30 fabian Exp $
 
 doofus:
 	@echo ""

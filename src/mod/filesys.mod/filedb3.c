@@ -1,30 +1,32 @@
-/*
- * filedb3.c  - low level functions for file db handling.
- */
-/*
- * This file is part of the eggdrop source code.
+/* 
+ * filedb3.c -- part of filesys.mod
+ *   low level functions for file db handling
  * 
+ * Rewritten by Fabian Knittel <fknittel@gmx.de>
+ * 
+ * $Id: filedb3.c,v 1.6 1999/12/21 17:35:16 fabian Exp $
+ */
+/* 
  * Copyright (C) 1997  Robey Pointer
  * Copyright (C) 1999  Eggheads
- * Rewritten by Fabian Knittel <fknittel@gmx.de>
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
+ * 
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ * 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * 
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
 /*  filedb structure:
- *
+ * 
  *  +---------------+                           _
  *  | filedb_top    |                           _|  DB header
  *  |---------------|
@@ -51,11 +53,11 @@
  *  | ...           |
  *  .               .
  *  .               .
- *
+ * 
  *  To know how long the complete entry is, you need to read out the
  *  header first. This concept allows us to have unlimited filename
  *  lengths, unlimited description lengths, etc.
- *
+ * 
  *  Buffer is an area which doesn't contain any information and which
  *  is just skipped. It only serves as a placeholder to allow entries
  *  which shrink in size to maintain their position without messing up
@@ -68,7 +70,7 @@
 static int count = 0;
 
 
-/*
+/* 
  *   Memory management helper functions
  */
 
@@ -116,7 +118,7 @@ static filedb_entry *_malloc_fdbe(char *file, int line)
 }
 
 
-/*
+/* 
  *  File locking
  */
 
@@ -148,7 +150,7 @@ static void unlockfile(FILE * f)
 }
 
 
-/*
+/* 
  *   filedb functions
  */
 
@@ -208,7 +210,7 @@ static int filedb_delfile(FILE *fdb, long pos)
 
 /* Searches for a suitable place to write an entry which uses tot
  * bytes for dynamic data.
- *
+ * 
  *  * If there is no such existing entry, it just points to the
  *    end of the DB.
  *  * If it finds an empty entry and it has enough space to fit
@@ -262,16 +264,16 @@ static filedb_entry *filedb_findempty(FILE *fdb, int tot)
 }
 
 /* Updates or creates entries and information in the filedb.
- *
+ * 
  *   * If the new entry is the same size or smaller than the original
  *     one, we use the old position and just adjust the buffer length
  *     apropriately.
  *   * If the entry is completely _new_ or if the entry's new size is
  *     _bigger_ than the old one, we search for a new position which
  *     suits our needs.
- *
+ * 
  * Note that the available space also includes the buffer.
- *
+ * 
  * The file pointer will _always_ position directly after the updated
  * entry.
  */
@@ -637,7 +639,7 @@ static void filedb_timestamp(FILE * fdb)
 }
 
 /* Updates the specified filedb in several ways:
- *
+ * 
  * 1. Adds all new files from the directory to the db.
  * 2. Removes all stale entries from the db.
  * 3. Optimises the db.
@@ -652,7 +654,7 @@ static void filedb_update(char *path, FILE * fdb, int sort)
   char          *name  = NULL;
   char          *s     = NULL;
 
-  /*
+  /* 
    * FIRST: make sure every real file is in the database
    */
   Context;
@@ -693,7 +695,7 @@ static void filedb_update(char *path, FILE * fdb, int sort)
   }
   closedir(dir);
 
-  /*
+  /* 
    * SECOND: make sure every db file is real
    */
   Context;
@@ -713,9 +715,9 @@ static void filedb_update(char *path, FILE * fdb, int sort)
     fdbe = filedb_getfile(fdb, where, GET_FILENAME);
   }
 
-  /*
+  /* 
    * THIRD: optimise database
-   *
+   * 
    * Instead of sorting, we only clean up the db, because sorting is now
    * done on-the-fly when we display the file list.
    */

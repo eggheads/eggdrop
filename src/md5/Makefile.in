@@ -1,4 +1,5 @@
 # Makefile for src/md5/
+# $Id: Makefile.in,v 1.3 1999/12/21 17:35:10 fabian Exp $
 
 SHELL = /bin/sh
 top_srcdir = @top_srcdir@

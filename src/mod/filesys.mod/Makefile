@@ -1,4 +1,5 @@
 # Makefile for src/mod/filesys.mod/
+# $Id: Makefile,v 1.8 1999/12/21 17:35:16 fabian Exp $
 
 doofus:
 	@echo ""

@@ -3,6 +3,8 @@
 #                     - a bind apart script from #TSF
 #                     - for eggdrop 1.3.15+
 #
+# $Id: notes2.tcl,v 1.2 1999/12/21 17:35:08 fabian Exp $
+#
 ####
 #
 # history:

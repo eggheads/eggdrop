@@ -1,43 +1,44 @@
-/*
- * dnscore.c - This file contains all core functions needed for the
- * eggdrop dns module. Many of them are only minimaly modified from
- * the original source.
- *
+/* 
+ * dnscore.c -- part of dns.mod
+ *   This file contains all core functions needed for the eggdrop dns module.
+ *   Many of them are only minimaly modified from the original source.
+ * 
+ * Modified/written by Fabian Knittel <fknittel@gmx.de>
+ * 
+ * Sun Oct 03 18:34:41 1999  Fabian
+ *     * Initial release
+ * Tue Oct 05 21:52:03 1999  Fabian
+ *     * #include tweaking
+ * 
+ * $Id: coredns.c,v 1.5 1999/12/21 17:35:15 fabian Exp $
+ */
+/* 
  * Portions copyright (C) 1999  Eggheads
- * Written by Fabian Knittel <fknittel@gmx.de>
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
+ * 
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ * 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * 
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-/*
+/* 
  * Borrowed from mtr  --  a network diagnostic tool
  * Copyright (C) 1997,1998  Matt Kimball <mkimball@xmission.com>
  * Released under the GPL, as above.
- *
+ * 
  * Non-blocking DNS portion --
  * Copyright (C) 1998  Simon Kirby <sim@neato.org>
  * Released under the GPL, as above.
  */
-
-/*
- * Tue Oct 05 21:52:03 1999  Fabian
- *     * #include tweaking
- * Sun Oct 03 18:34:41 1999  Fabian
- *     * Initial release
- */ 
-
 
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -162,7 +163,7 @@ typedef struct {
 #define HFIXEDSZ (sizeof(packetheader))
 #endif
 
-/*
+/* 
  * Byte order independent macros for packetheader
  */
 #define getheader_rd(x) (x->databyte_a & 1)
@@ -205,7 +206,7 @@ char stackstring[1024 + 1];
 char nullstring[] = "";
 
 
-/*
+/* 
  *    Miscellaneous helper functions
  */
 
@@ -250,7 +251,7 @@ static struct resolve *allocresolve()
 }
 
 
-/*
+/* 
  *    Hash and linked-list related functions
  */
 
@@ -569,7 +570,7 @@ static struct resolve *findip(IP ip)
 }
 
 
-/*
+/* 
  *    Network and resolver related functions
  */
 

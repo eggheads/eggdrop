@@ -1,16 +1,27 @@
-/*
- * transfer.c  - main file for the transfer module
+/* 
+ * transfer.c -- part of transfer.mod
+ * 
+ * $Id: transfer.c,v 1.12 1999/12/21 17:35:31 fabian Exp $
  */
-/*
- * This file is part of the eggdrop source code.
- *
- * Copyright (C) 1999  Eggheads
+/* 
  * Copyright (C) 1997  Robey Pointer
- *
- * Distributed according to the GNU General Public License. For full
- * details, read the top of 'main.c' or the file called COPYING that
- * was distributed with this code.
- *
+ * Copyright (C) 1999  Eggheads
+ * 
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/* 
  * Small code snippets related to REGET/RESEND support were taken from
  * BitchX, copyright by panasync.
  */
@@ -43,7 +54,7 @@ static int dcc_block = 1024;	/* Size of one dcc block */
 static int quiet_reject;        /* Quietly reject dcc chat or sends from
                                  * users without access? */
 
-/*
+/* 
  * Prototypes
  */
 static void stats_add_dnload(struct userrec *, unsigned long);
@@ -58,7 +69,7 @@ static struct dcc_table DCC_GET_PENDING;
 static fileq_t *fileq = NULL;
 
 
-/*
+/* 
  *   Misc functions
  */
 
@@ -72,13 +83,12 @@ static fileq_t *fileq = NULL;
 #define WILDS '*'
 #define WILDQ '?'
 #define NOMATCH 0
-/*========================================================================*
- * EGGDROP:   wild_match_file(char *ma, char *na)                         *
- * IrcII:     NOT USED                                                    *
- *                                                                        *
- * Features:  Forward, case-sensitive, ?, *                               *
- * Best use:  File mask matching, as it is case-sensitive                 *
- *========================================================================*/
+/* 
+ * wild_match_file(char *ma, char *na)
+ * 
+ * Features:  Forward, case-sensitive, ?, *
+ * Best use:  File mask matching, as it is case-sensitive
+ */
 static int wild_match_file(register char *m, register char *n)
 {
   char *ma = m, *lsm = 0, *lsn = 0;
@@ -169,7 +179,7 @@ static int at_limit(char *nick)
 }
 
 
-/*
+/* 
  *    Tcl sent and rcvd functions
  */
 
@@ -202,7 +212,7 @@ static void check_tcl_sentrcvd(struct userrec *u, char *nick, char *path,
 }
 
 
-/*
+/* 
  *    File queue functions
  */
 
@@ -518,7 +528,7 @@ static int tcl_getfileq STDVAR
 }
 
 
-/*
+/* 
  *    Misc Tcl functions
  */
 
@@ -582,7 +592,7 @@ static tcl_cmds mytcls[] =
 };
 
 
-/*
+/* 
  *    DCC routines
  */
 
@@ -783,7 +793,7 @@ inline static void handle_resend_packet(int idx, transfer_reget *reget_data)
 
 /* Handles DCC packets the client sends us. As soon as the last sent dcc
  * block is fully acknowledged we send the next block.
- *
+ * 
  * Note: The first received packet during reget is a special 8 bit packet
  *       containing special information.
  */
@@ -1282,7 +1292,7 @@ static void dcc_get_pending(int idx, char *buf, int len)
 
 /* Starts a new DCC SEND or DCC RESEND connection to `nick', transferring
  * `filename' from `dir'.
- *
+ * 
  * Use raw_dcc_resend() and raw_dcc_send() instead of this function.
  */
 static int raw_dcc_resend_send(char *filename, char *nick, char *from,
@@ -1359,7 +1369,7 @@ static tcl_ints myints[] =
 };
 
 
-/*
+/* 
  *    fstat functions
  */
 
@@ -1674,7 +1684,7 @@ static int fstat_tcl_set(Tcl_Interp * irp, struct userrec *u,
 }
 
 
-/*
+/* 
  *    CTCP functions
  */
 
@@ -1719,7 +1729,7 @@ static cmd_t transfer_ctcps[] =
 };
 
 
-/*
+/* 
  *   Module functions
  */
 

@@ -1,15 +1,25 @@
-/*
- * share.c  - userfile sharing module
+/* 
+ * share.c -- part of share.mod
+ * 
+ * $Id: share.c,v 1.13 1999/12/21 17:35:31 fabian Exp $
  */
-/*
- * This file is part of the eggdrop source code.
- *
- * Copyright (C) 1999  Eggheads
+/* 
  * Copyright (C) 1997  Robey Pointer
- *
- * Distributed according to the GNU General Public License. For full
- * details, read the top of 'main.c' or the file called COPYING that
- * was distributed with this code.
+ * Copyright (C) 1999  Eggheads
+ * 
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
 #define MODULE_NAME "share"
@@ -63,7 +73,7 @@ static struct tandbuf {
 } tbuf[5];
 
 
-/*
+/* 
  *   Botnet commands
  */
 
@@ -1233,7 +1243,7 @@ static void shareout_but EGG_VARARGS_DEF(struct chanset_t *, arg1)
 }
 
 
-/*
+/* 
  *    Resync buffers
  */
 
@@ -1474,7 +1484,7 @@ static int write_tmp_userfile(char *fn, struct userrec *bu, int idx)
 /* Create a copy of the entire userlist (for sending user lists to clone
  * bots) -- userlist is reversed in the process, which is OK because the
  * receiving bot reverses the list AGAIN when saving.
- *
+ * 
  * t = 0:   copy everything BUT tandem-bots
  * t = 1:   copy only tandem-bots
  * t = 2;   copy all entries
@@ -1578,7 +1588,7 @@ static void finish_share(int idx)
     /* Copy the bots over. The entries will be used in the new user list. */
     u = dup_userlist(1);
 
-  /*
+  /* 
    * This is where we remove all global and channel bans/exempts/invites and
    * ignores since they will be replaced by what our hub gives us.
    */
@@ -1632,7 +1642,7 @@ static void finish_share(int idx)
   userlist = u;			/* Set new user list			*/
   lastuser = NULL;		/* Reset last accessed user ptr		*/
 
-  /*
+  /* 
    * Migrate:
    *   - old channel flags over (unshared channels see)
    *   - unshared (got_share == 0) user entries

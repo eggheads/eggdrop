@@ -1,6 +1,9 @@
-# Copyright (c) 1999 by eggheads
-# translated by rtc
-# FILES_
+# filesys.german.lang
+#   language messages for filesys module
+#
+# german translation by rtc
+#
+# $Id: filesys.german.lang,v 1.2 1999/12/21 17:35:16 fabian Exp $
 
 0x300,Konvertiere Dateisystem-Abbild in %s ...
 0x301,filedb-update: kann Verzeichnis nicht oeffnen!

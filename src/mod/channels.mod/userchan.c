@@ -1,13 +1,25 @@
 /* 
- * userchan.c - part of channels.mod
- *
+ * userchan.c -- part of channels.mod
+ * 
+ * $Id: userchan.c,v 1.9 1999/12/21 17:35:15 fabian Exp $
  */
 /* 
- * This file is part of the eggdrop source code
- * copyright (c) 1997 Robey Pointer
- * and is distributed according to the GNU general public license.
- * For full details, read the top of 'main.c' or the file called
- * COPYING that was distributed with this code.
+ * Copyright (C) 1997  Robey Pointer
+ * Copyright (C) 1999  Eggheads
+ * 
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
 struct chanuserrec *get_chanrec(struct userrec *u, char *chname)
@@ -200,7 +212,7 @@ static int u_setsticky_mask(struct chanset_t *chan, maskrec *u, char *uhost, int
 
 /*        Merge of u_equals_ban(), u_equals_exempt() and u_equals_invite() to
  *      cut down on the duplication in the eggdrop code currently. <cybah>
- *
+ * 
  *      Returns:
  *              0       not a ban
  *              1       temporary ban

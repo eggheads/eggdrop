@@ -1,11 +1,32 @@
-/*
- * language.c - language support code.
+/* 
+ * language.c -- handles:
+ *   language support code
+ * 
+ * $Id: language.c,v 1.6 1999/12/21 17:35:09 fabian Exp $
+ */
+/* 
+ * Copyright (C) 1997  Robey Pointer
+ * Copyright (C) 1999  Eggheads
+ * 
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-/*
+/* 
  * DOES:
  *              Nothing <- typical BB code :)
- *
+ * 
  * ENVIRONMENT VARIABLES:
  *              EGG_LANG       - language to use (default: "english")
  *              EGG_LANGDIR    - directory with all lang files
@@ -21,12 +42,12 @@
  *              DCC .relang
  *              DCC .ldump
  *              DCC .lstat
- *
+ * 
  * FILE FORMAT: language.lang
  *              <textidx>,<text>
  * TEXT MESSAGE USAGE:
  *              get_language(<textidx> [,<PARMS>])
- *
+ * 
  * ADDING LANGUAGES:
  *              o       Copy an existing <section>.<oldlanguage>.lang to a
  *                      new .lang file and modify as needed.
@@ -39,7 +60,7 @@
  *              o       Create a <newsection>.english.lang file.
  *              o       Add add_lang_section("<newsection>"); to your module
  *                      startup function.
- *
+ * 
  */
 
 #include "main.h"

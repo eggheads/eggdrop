@@ -2,6 +2,7 @@
 #  This is the Makefile for EGGDROP (the irc bot)
 #  You should never need to edit this.
 #
+# $Id: Makefile.in,v 1.12 1999/12/21 17:35:01 fabian Exp $
 
 SHELL = /bin/sh
 top_srcdir = @top_srcdir@

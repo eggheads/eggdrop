@@ -1,3 +1,10 @@
+/* 
+ * acconfig.h
+ *   template file autoheader uses when building config.h.in
+ * 
+ * $Id: acconfig.h,v 1.4 1999/12/21 17:35:02 fabian Exp $
+ */
+
 /* Define if modules will work on your system  */
 #undef MODULES_OK
 

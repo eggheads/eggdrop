@@ -1,14 +1,39 @@
+/* 
+ * module.h
+ * 
+ * $Id: module.h,v 1.13 1999/12/21 17:35:10 fabian Exp $
+ */
+/* 
+ * Copyright (C) 1997  Robey Pointer
+ * Copyright (C) 1999  Eggheads
+ * 
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+
+#ifndef _EGG_MOD_MODULE_H
+#define _EGG_MOD_MODULE_H
+
 /* just include *all* the include files...it's slower but EASIER */
-
 #ifdef HAVE_CONFIG_H
-#include "../../config.h"
+#  include "../../config.h"
 #endif
-
 #include "../main.h"
 #include "modvals.h"
 #include "../tandem.h"
 
-/*
+/* 
  * this file contains all the orrible stuff required to do the lookup
  * table for symbols, rather than getting the OS to do it, since most OS's
  * require all symbols resolved, this can cause a problem with some modules
@@ -361,3 +386,5 @@
 #define encrypt_string(a,b) (((char *(*)(char *,char*))blowfish_funcs[4])(a,b))
 #define decrypt_string(a,b) (((char *(*)(char *,char*))blowfish_funcs[5])(a,b))
 #endif
+
+#endif				/* _EGG_MOD_MODULE_H */

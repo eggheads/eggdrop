@@ -1,6 +1,13 @@
-/* modified 19jul1996 by robey -- uses autoconf values now */
-#ifndef _H_BLOWFISH
-#define _H_BLOWFISH
+/* 
+ * blowfish.h -- part of blowfish.mod
+ * 
+ * modified 19jul1996 by robey -- uses autoconf values now
+ * 
+ * $Id: blowfish.h,v 1.3 1999/12/21 17:35:11 fabian Exp $
+ */
+
+#ifndef _EGG_MOD_BLOWFISH_BLOWFISH_H
+#define _EGG_MOD_BLOWFISH_BLOWFISH_H
 
 #define MAXKEYBYTES 56		/* 448 bits */
 #define bf_N             16
@@ -51,4 +58,4 @@ union aword {
 
 #endif				/* !WORDS_BIGENDIAN */
 
-#endif
+#endif				/* _EGG_MOD_BLOWFISH_BLOWFISH_H */

@@ -1,30 +1,31 @@
-/*
- * filedb3.h  - filedb header file
- */
-/*
- * This file is part of the eggdrop source code.
- *
- * Copyright (C) 1999  Eggheads
+/* 
+ * filedb3.h -- part of filesys.mod
+ *   filedb header file
+ * 
  * Written by Fabian Knittel <fknittel@gmx.de>
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
+ * 
+ * $Id: filedb3.h,v 1.4 1999/12/21 17:35:16 fabian Exp $
+ */
+/* 
+ * Copyright (C) 1999  Eggheads
+ * 
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ * 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * 
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-
-#ifndef FILEDB3_H
-#define FILEDB3_H
+#ifndef _EGG_MOD_FILESYS_FILEDB3_H
+#define _EGG_MOD_FILESYS_FILEDB3_H
 
 #include <time.h>	/* for time_t */
 
@@ -73,7 +74,7 @@ typedef struct {
 } filedb_entry;
 
 
-/*
+/* 
  *   Macros
  */
 
@@ -116,7 +117,7 @@ typedef struct {
 #define filedb_movefile(fdb, pos, fdbe) _filedb_movefile(fdb, pos, fdbe, __FILE__, __LINE__)
 
 
-/*
+/* 
  *  Constants
  */
 
@@ -148,7 +149,7 @@ enum {
 };
 
 
-/*
+/* 
  *  filedb3.c prototypes
  */
 
@@ -165,4 +166,4 @@ static filedb_entry *_filedb_getfile(FILE *, long, int, char *, int);
 static filedb_entry *_filedb_matchfile(FILE *, long, char *, char *, int);
 static filedb_entry *filedb_getentry(char *, char *);
 
-#endif 	/* FILEDB3_H */
+#endif				/* _EGG_MOD_FILESYS_FILEDB3_H */

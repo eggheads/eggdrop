@@ -1,4 +1,5 @@
 # Makefile for src/mod/ctcp.mod/
+# $Id: Makefile,v 1.5 1999/12/21 17:35:15 fabian Exp $
 
 doofus:
 	@echo ""

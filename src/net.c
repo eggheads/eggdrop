@@ -1,7 +1,10 @@
-/*
+/* 
  * net.c -- handles:
- * all raw network i/o
+ *   all raw network i/o
  * 
+ * $Id: net.c,v 1.11 1999/12/21 17:35:10 fabian Exp $
+ */
+/* 
  * This is hereby released into the public domain.
  * Robey Pointer, robey@netcom.com
  */
@@ -339,11 +342,11 @@ static int proxy_connect(int sock, char *host, int port, int proxy)
 }
 
 /* starts a connection attempt to a socket
- *
+ * 
  * If given a normal hostname, this will be resolved to the corresponding
  * IP address first. PLEASE try to use the non-blocking dns functions
  * instead and then call this function with the IP address to avoid blocking.
- *
+ * 
  * returns <0 if connection refused:
  *   -1  neterror() type error
  *   -2  can't resolve hostname */

@@ -1,4 +1,5 @@
 # Makefile for doc/
+# $Id: Makefile.in,v 1.4 1999/12/21 17:35:03 fabian Exp $
 
 SHELL = /bin/sh
 top_srcdir = @top_srcdir@
