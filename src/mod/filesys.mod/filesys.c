@@ -2,7 +2,7 @@
  * filesys.c -- part of filesys.mod
  *   main file of the filesys eggdrop module
  * 
- * $Id: filesys.c,v 1.22 2000/01/17 22:36:08 fabian Exp $
+ * $Id: filesys.c,v 1.23 2000/02/01 20:36:18 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -124,8 +124,8 @@ static struct user_entry_type USERENTRY_DCCDIR =
   "DCCDIR"
 };
 
-#include "filedb3.c"
 #include "files.c"
+#include "filedb3.c"
 #include "tclfiles.c"
 #include "dbcompat.c"
 #include "filelist.c"

@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  * 
- * $Id: main.c,v 1.27 2000/01/30 19:26:20 fabian Exp $
+ * $Id: main.c,v 1.28 2000/02/01 20:36:18 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -31,6 +31,7 @@
  * list avaliable at eggheads@eggheads.org.
  */
 
+#include "main.h"
 #include <fcntl.h>
 #include <time.h>
 #include <errno.h>
@@ -38,7 +39,6 @@
 #include <netdb.h>
 #include <setjmp.h>
 
-#include "main.h"
 #ifdef STOP_UAC				/* osf/1 complains a lot */
 #include <sys/sysinfo.h>
 #define UAC_NOPRINT    0x00000001	/* Don't report unaligned fixups */

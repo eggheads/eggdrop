@@ -2,7 +2,7 @@
  * main.h
  *   include file to include most other include files
  * 
- * $Id: main.h,v 1.10 2000/01/30 19:26:20 fabian Exp $
+ * $Id: main.h,v 1.11 2000/02/01 20:36:18 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -109,26 +109,12 @@ extern struct dcc_table DCC_CHAT, DCC_BOT, DCC_LOST, DCC_SCRIPT, DCC_BOT_NEW,
 #define my_ntohl(ln)	swap_long(ln)
 #define my_htonl(ln)	swap_long(ln)
 
-#ifndef O_NONBLOCK
+#ifdef BORGCUBES
+
+/* For net.c */
 #  define O_NONBLOCK	00000004    /* POSIX non-blocking I/O		   */
-#endif
- 
-/* File attributes
- */
-#ifndef S_IFMT
-#  define S_IFMT	0170000	    /* Bitmask for the file type bitfields */
-#endif
-#ifndef S_ISDIR
-#  ifndef S_IFDIR
-#    define S_IFDIR	0040000	    /* Directory			   */
-#  endif
-#  define S_ISDIR(m)      (((m)&(S_IFMT)) == (S_IFDIR))
-#endif
-#ifndef S_IFREG
-#  define S_IFREG	0100000     /* Regular file			   */
-#endif
-#ifndef S_IFLNK
-#  define S_IFLNK   	0120000     /* Symbolic link			   */
-#endif
+
+#endif				/* BORGUBES */
+
 
 #endif				/* _EGG_MAIN_H */

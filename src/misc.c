@@ -8,7 +8,7 @@
  *   help system
  *   motd display and %var substitution
  * 
- * $Id: misc.c,v 1.14 2000/01/30 19:26:21 fabian Exp $
+ * $Id: misc.c,v 1.15 2000/02/01 20:36:18 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -29,14 +29,15 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+#include "main.h"
 #include <sys/stat.h>
 #include <unistd.h>
 #include <fcntl.h>
-#include "main.h"
 #include "chan.h"
 #ifdef HAVE_UNAME
-#include <sys/utsname.h>
+#  include <sys/utsname.h>
 #endif
+#include "stat.h"
 
 extern struct dcc_t	*dcc;
 extern struct chanset_t	*chanset;

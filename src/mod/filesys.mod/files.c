@@ -2,7 +2,7 @@
  * files.c - part of filesys.mod
  *   handles all file system commands
  * 
- * $Id: files.c,v 1.17 2000/01/17 22:36:08 fabian Exp $
+ * $Id: files.c,v 1.18 2000/02/01 20:36:18 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -40,13 +40,8 @@
 # endif
 #endif
 
-/* sunos 4 */
-#ifndef S_IFREG
-#define S_IFREG 0100000
-#endif
-#ifndef S_IFLNK
-#define S_IFLNK 0120000
-#endif
+#include "../../stat.h"
+
 
 /* Are there too many people in the file system?
  */

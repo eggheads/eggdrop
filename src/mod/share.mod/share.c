@@ -1,7 +1,7 @@
 /* 
  * share.c -- part of share.mod
  * 
- * $Id: share.c,v 1.23 2000/01/30 19:26:22 fabian Exp $
+ * $Id: share.c,v 1.24 2000/02/01 20:36:18 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -25,11 +25,12 @@
 #define MODULE_NAME "share"
 #define MAKING_SHARE
 
+#include "../module.h"
+
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <sys/stat.h>
 
-#include "../module.h"
 #include "../../chan.h"
 #include "../../users.h"
 #include "../transfer.mod/transfer.h"
