@@ -25,7 +25,11 @@ experienced users.
      determine how your system is set up, and figure out how to compile
      eggdrop.  It will also try to find Tcl, which is required to compile.
 
-  2. Type 'make' from the eggdrop directory.  Or to force a statically
+  2. Type either 'make config' or 'make iconfig' to determine which modules
+     will be compiled.  'make config' creates the default modules.  If you
+     want to choose which modules to make use 'make iconfig'.
+
+  3. Type 'make' from the eggdrop directory.  Or to force a statically
      linked module bot type 'make static'.  Otherwise the Makefile will
      determin which type of bot your system will support.  Dynamic isalways
      the better way to go if possible. There're also the options debug and
@@ -35,24 +39,30 @@ experienced users.
      to compile and will enlarge the binary a bit, but it's worth if you
      want to support eggdrop development.
 
-  3. Eggdrop must be installed in a directory somewhere.  This is
+  4. Eggdrop must be installed in a directory somewhere.  This is
      accomplished by entering the unix command:
 
+     make install
+     This will install the eggdrop in your home directory in a directory
+     called eggdrop (ie. /home/user/eggdrop).
+
+     If you want to install to a different directory use:
+
      make install DEST=<directory>
-     example make install DEST=/home/egguser/eggdrop
+     example make install DEST=/home/user/otherdir
      (note you must use full path for every file to be correctly installed)
 
      [The following is performed from the directory installed above]
 
-  4. Copy the file 'eggdrop.simple.conf' to a new file, usually the same name
-     as the bot that will use it, e.g. "LamestBot".
+  5. Copy the file 'eggdrop.complete.conf' to a new file, usually the same name
+     as the bot that will use it, e.g. "LamestBot.conf".
 
-  5. Edit your config file LamestBot completely.
+  6. Edit your config file LamestBot.conf completely.
 
-  6. Start the bot with the "-m" option to create a user file, ie 'eggdrop
-     -m LamestBot'.
+  7. Start the bot with the "-m" option to create a user file, ie './eggdrop
+     -m LamestBot.conf'.
 
-  7. When starting the bot in the future, drop the "-m".  If you have
+  8. When starting the bot in the future, drop the "-m".  If you have
      edited your bot script correctly, you can type:
      chmod u+x <my-bot-script-name>
      e.g.
@@ -63,12 +73,12 @@ experienced users.
      start up your bot.  For this to work, the top line of your script MUST
      contain the correct path to eggdrop.
 
-  8. It's advisable to run your bot via crontab so that it will
+  9. It's advisable to run your bot via crontab so that it will
      automatically restart if the machine goes down or (heaven forbid) the
      bot should crash. Look at the file 'scripts/botchk' and
      'scripts/autobotchk' for a great start with crontabbing the bot.
 
-  9. Smile, and if you haven't already read the README file in its
+ 10. Smile, and if you haven't already read the README file in its
      entirety, go take a long walk off a short pier.
 
 (3) MODULES
