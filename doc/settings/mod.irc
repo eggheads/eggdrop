@@ -1,5 +1,5 @@
 IRC Module
-Last revised: February 28, 2002
+Last revised: January 28, 2003
      _________________________________________________________________
 
                                 IRC Module
@@ -27,13 +27,15 @@ There are also some variables you can set in your config file:
   
   
   set max-modes 30
-    Set here the global limit for +b/+e/+I modes on your IRC server. This
-    limit is set to 30 on 2.10 IRCd servers.
+    There is a global limit for +b/+e/+I modes. This limit should be set to the
+    same value as max-bans for networks that do not support +e/+I.
   
   
   set max-bans 20
     Set here the maximum number of bans you want the bot to set on a channel.
-    Eggdrop will not place any more bans if this limit is reached.
+    Eggdrop will not place any more bans if this limit is reached. Undernet
+    currently allows 45 bans, IRCnet allows 30, EFnet allows 25, and DALnet
+    allows 100.
   
   
   set kick-fun 0

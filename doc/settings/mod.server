@@ -24,7 +24,7 @@ There are also some variables you can set in your config file:
       1 = IRCnet
       2 = Undernet
       3 = DALnet
-      4 = EFnet +e/+I Hybrid
+      4 = +e/+I Hybrid
       5 = Others
 
 

@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: mod-irc.html,v 1.17 2002/12/24 02:30:02 wcc Exp $ -->
+<!-- $Id: mod-irc.html,v 1.18 2003/01/30 00:41:24 wcc Exp $ -->
 
 <html>
   <head>
@@ -52,16 +52,18 @@
         <dt><strong>set max-modes 30</strong></dt>
 
         <dd>
-          <p>Set here the global limit for +b/+e/+I modes on your IRC server.
-          This limit is set to 30 on 2.10 IRCd servers.</p>
+          <p>There is a global limit for +b/+e/+I modes. This limit should be
+          set to the same value as max-bans for networks that do not support
+          +e/+I.</p>
         </dd>
 
         <dt><strong>set max-bans 20</strong></dt>
 
         <dd>
-          <p> Set here the maximum number of bans you want the bot to set on a
+          <p>Set here the maximum number of bans you want the bot to set on a
           channel. Eggdrop will not place any more bans if this limit is
-          reached.</p>
+          reached. Undernet currently allows 45 bans, IRCnet allows 30, EFnet
+          allows 25, and DALnet allows 100.</p>
         </dd>
 
         <dt><strong>set kick-fun 0</strong></dt>

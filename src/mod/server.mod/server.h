@@ -1,7 +1,7 @@
 /*
  * server.h -- part of server.mod
  *
- * $Id: server.h,v 1.17 2003/01/29 05:48:42 wcc Exp $
+ * $Id: server.h,v 1.18 2003/01/30 00:41:24 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -97,11 +97,11 @@ struct server_list {
 
 /* Available net types.  */
 enum {
-  NETT_EFNET = 0,               /* EFnet non +e/+I Hybrid. */
-  NETT_IRCNET = 1,              /* IRCnet.                 */
-  NETT_UNDERNET = 2,            /* UnderNet.               */
-  NETT_DALNET = 3,              /* DALnet.                 */
-  NETT_HYBRID_EFNET = 4         /* EFnet +e/+I Hybrid.     */
+  NETT_EFNET = 0,               /* EFnet (non +e/+I Hybrid.) */
+  NETT_IRCNET = 1,              /* IRCnet.                   */
+  NETT_UNDERNET = 2,            /* UnderNet.                 */
+  NETT_DALNET = 3,              /* DALnet.                   */
+  NETT_HYBRID_EFNET = 4         /* +e/+I Hybrid.             */
 } nett_t;
 
 #endif /* _EGG_MOD_SERVER_SERVER_H */

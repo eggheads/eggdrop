@@ -2,7 +2,7 @@
  * irc.c -- part of irc.mod
  *   support for channels within the bot
  *
- * $Id: irc.c,v 1.86 2003/01/28 06:37:26 wcc Exp $
+ * $Id: irc.c,v 1.87 2003/01/30 00:41:24 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -983,8 +983,8 @@ static void do_nettype()
     use_354 = 0;
     use_exempts = 0;
     use_invites = 0;
-    max_bans = 20;
-    max_modes = 20;
+    max_bans = 25;
+    max_modes = 25;
     rfc_compliant = 1;
     include_lk = 0;
     break;
