@@ -9,7 +9,7 @@
  * 
  * dprintf'ized, 28nov1995
  * 
- * $Id: botnet.c,v 1.14 2000/01/01 19:34:13 fabian Exp $
+ * $Id: botnet.c,v 1.15 2000/01/17 21:59:10 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -33,16 +33,12 @@
 #include "main.h"
 #include "tandem.h"
 
-extern int dcc_total, backgrd;
-extern struct dcc_t *dcc;
-extern int connect_timeout;
-extern int max_dcc;
-extern time_t now;
-extern int egg_numver;
+extern char spaces[], spaces2[];
+extern int dcc_total, backgrd, connect_timeout, max_dcc, egg_numver;
 extern struct userrec *userlist;
+extern struct dcc_t *dcc;
+extern time_t now;
 extern Tcl_Interp *interp;
-extern char spaces[];
-extern char spaces2[];
 
 tand_t *tandbot;		/* keep track of tandem bots on the botnet */
 party_t *party;			/* keep track of people on the botnet */

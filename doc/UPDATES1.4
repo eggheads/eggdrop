@@ -4,6 +4,16 @@ Changes in eggdrop: (since v1.4.0)
 
 1.4.2
 Foundby   Fixedby   What....
+david     Fabian    botattr was interpreting relay'ed bots as linked
+          dw        cleaned up a litle to save a few bytes
+mortmann  Jason     +I modes used the wrong queue and was not stacked
+                    also fixed a minor +e prob.
+toot      dw /      fixed problem with .adduser and strict-host = 0
+          drummer
+          Rufus     fixed HQ user creation on eggdrop -nt
+          Wiktor    fixed typo in transfer.mod
+Nils      Fabian    `wire off' displayed the wrong nick. Also fixed a wire
+                    memory accounting bug
           Fabian    added makros EGG_MIN_VER and EGG_MAX_VER so that modules
                     can use one source file for various eggdrop versions
 DVS01     Fabian    transfer module now supports filenames with spaces

@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  * 
- * $Id: chan.c,v 1.21 2000/01/07 21:43:57 fabian Exp $
+ * $Id: chan.c,v 1.22 2000/01/17 21:59:11 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -513,7 +513,8 @@ static void recheck_exempts(struct chanset_t * chan)
       while (b && b->mask[0]) {
         if ((wild_match(b->mask, e->mask) || wild_match(e->mask, b->mask)) &&
             !isexempted(chan, e->mask))
-          do_mask(chan, chan->channel.exempt, e->mask, 'e');
+	  add_mode(chan,'+','e',e->mask);
+	/* do_mask(chan, chan->channel.exempt, e->mask, 'e');*/
         b = b->next;
       }
     }
@@ -536,7 +537,8 @@ static void recheck_invites(struct chanset_t * chan) {
        */
       if (!isinvited(chan, ir->mask) && ((!channel_dynamicinvites(chan) &&
           !(chan->channel.mode & CHANINV)) || ir->flags & MASKREC_STICKY))
-        do_mask(chan, chan->channel.invite, ir->mask, 'I');
+	add_mode(chan, '+', 'I', ir->mask);
+	/* do_mask(chan, chan->channel.invite, ir->mask, 'I');*/
     }
   }
 }

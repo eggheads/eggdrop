@@ -2,7 +2,7 @@
  * net.c -- handles:
  *   all raw network i/o
  * 
- * $Id: net.c,v 1.13 2000/01/06 19:45:03 fabian Exp $
+ * $Id: net.c,v 1.14 2000/01/17 21:59:11 fabian Exp $
  */
 /* 
  * This is hereby released into the public domain.
@@ -34,10 +34,7 @@
 #endif
 #endif
 
-extern int backgrd;
-extern int use_stderr;
-extern int resolve_timeout;
-extern int dcc_total;
+extern int backgrd, use_stderr, resolve_timeout, dcc_total;
 extern struct dcc_t *dcc;
 
 char hostname[121] = "";	/* hostname can be specified in the config

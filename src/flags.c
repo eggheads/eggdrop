@@ -2,7 +2,7 @@
  * flags.c -- handles:
  *   all the flag matching/conversion functions in one neat package :)
  * 
- * $Id: flags.c,v 1.9 1999/12/21 17:35:09 fabian Exp $
+ * $Id: flags.c,v 1.10 2000/01/17 21:59:11 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -25,12 +25,8 @@
 
 #include "main.h"
 
-extern int use_console_r;
-extern int debug_output;
-extern int require_p;
+extern int use_console_r, debug_output, require_p, noshare, allow_dk_cmds;
 extern struct dcc_t *dcc;
-extern int noshare;
-extern int allow_dk_cmds;
 
 int use_console_r = 0;		/* allow users to set their console +r */
 
