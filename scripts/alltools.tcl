@@ -12,8 +12,9 @@
 # rtc       20Sep1999: added isnumber, changes
 # dw        20Sep1999: use regexp for isnumber checking
 # Tothwolf  06Oct1999: optimized completely
+# krbb      09Jun2000: added missing return to randstring
 #
-# $Id: alltools.tcl,v 1.5 1999/12/15 02:32:57 guppy Exp $
+# $Id: alltools.tcl,v 1.6 2000/06/10 07:03:31 guppy Exp $
 #
 ########################################
 # Descriptions of avaliable commands:
@@ -200,6 +201,7 @@ proc randstring {length} {
   for {set i 0} {$i < $length} {incr i} {
     append result [string index $chars [rand $count]]
   }
+  return $result
 }
 
 proc putdccall {text} {

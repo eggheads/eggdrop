@@ -5,7 +5,7 @@
  * 
  * dprintf'ized, 3nov1995
  * 
- * $Id: cmds.c,v 1.35 2000/02/04 19:03:18 per Exp $
+ * $Id: cmds.c,v 1.36 2000/06/10 07:03:31 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -2077,8 +2077,8 @@ static void cmd_su(struct userrec *u, int idx, char *par)
       correct_handle(par);
       putlog(LOG_CMDS, "*", "#%s# su %s", dcc[idx].nick, par);
       if (!(atr & USER_OWNER) ||
-	  ((atr & USER_OWNER) && !(isowner(dcc[idx].nick))) ||
-	  ((u->flags & USER_OWNER) && (isowner(par)))) {
+	  ((u->flags & USER_OWNER) && (isowner(par)) &&
+	   !(isowner(dcc[idx].nick)))) {
 	/* This check is only important for non-owners */
 	if (u_pass_match(u, "-")) {
 	  dprintf(idx, "No password set for user. You may not .su to them\n");

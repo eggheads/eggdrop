@@ -6,7 +6,7 @@
  * 
  * dprintf'ized, 27oct1995
  * 
- * $Id: dcc.c,v 1.25 2000/04/04 23:43:08 guppy Exp $
+ * $Id: dcc.c,v 1.26 2000/06/10 07:03:31 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -148,6 +148,13 @@ static void bot_version(int idx, char *par)
 
   Context;
   dcc[idx].timeval = now;
+  if (in_chain(dcc[idx].nick)) {
+    dprintf(idx, "error Sorry, already connected.\n");
+    dprintf(idx, "bye\n");
+    killsock(dcc[idx].sock);
+    lostdcc(idx);
+    return;
+  }
   if ((par[0] >= '0') && (par[0] <= '9')) {
     char *work;
 
