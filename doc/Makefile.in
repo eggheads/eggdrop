@@ -1,5 +1,5 @@
 # Makefile for doc/
-# $Id: Makefile.in,v 1.15 2001/12/14 18:48:22 guppy Exp $
+# $Id: Makefile.in,v 1.16 2002/01/02 21:51:24 tothwolf Exp $
 
 SHELL = @SHELL@
 top_srcdir = @top_srcdir@
@@ -19,7 +19,7 @@ patch.howto tcl-commands.doc tricks text-substitutions.doc
 MAN1 = man1/eggdrop.1
 
 WEB_DOCS = $(srcdir)/html/*.html
-SETTING_DOCS = core.settings tricks CONTENTS
+SETTING_DOCS = core.settings CONTENTS
 SETTING_MOD_DOCS = $(srcdir)/settings/mod.*
 
 doofus:
