@@ -1,7 +1,7 @@
 /* 
  * servmsg.c -- part of server.mod
  * 
- * $Id: servmsg.c,v 1.39 2000/07/09 14:07:13 fabian Exp $
+ * $Id: servmsg.c,v 1.40 2000/07/12 21:49:41 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1257,18 +1257,12 @@ static int lagcheck_401(char *from, char *origmsg)
     return 0;
   strncpyz(buf, origmsg, sizeof buf);
   msg = buf;
-  if (rfc_casecmp(newsplit(&msg), botname)) {
-    debug1("This shouldn't happen.(%s)", origmsg);
-    return 0;
-  }
-  if (!rfc_casecmp(lagcheckstring2, newsplit(&msg))) {
-    lagged = 0;
-    if (lagcheckstring)
-      free_null(lagcheckstring);
-    if (lagcheckstring2)
-      free_null(lagcheckstring2);
-    debug0("got 401/441 reply, guess I'm not lagged");
-  }
+  lagged = 0;
+  if (lagcheckstring)
+    free_null(lagcheckstring);
+  if (lagcheckstring2)
+    free_null(lagcheckstring2);
+  debug0("got 401/441 reply, guess I'm not lagged");
   return 0;
 }
 

@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  * 
- * $Id: server.c,v 1.45 2000/07/09 14:07:13 fabian Exp $
+ * $Id: server.c,v 1.46 2000/07/12 21:49:40 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -252,6 +252,7 @@ static void check_lag(char *buf)
   char msgstr[511], *msg, *cmd, *chans, *nicks, *nick, *ch, *par, pm, mode,
        *modes;
   struct chanset_t *cs;
+  memberlist *m;
 
   if (lagged || !use_lagcheck)
     return;
@@ -303,8 +304,14 @@ static void check_lag(char *buf)
         lagged = 0;
         return;
       }
-      if (!ismember(cs, par)) {
-        debug0("Target vor o/v mode not on channel, aborting lagcheck.");
+      m = ismember(cs, par);
+      if (!m) {
+        debug0("Target for o/v mode not on channel, aborting lagcheck.");
+        lagged = 0;
+        return;
+      }
+      if (m->split > 0) {
+        debug0("Target for o/v mode is netsplitted, aborting lagcheck.");
         lagged = 0;
         return;
       }
