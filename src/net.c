@@ -290,6 +290,7 @@ static int proxy_connect(int sock, char *host, int port, int proxy)
   unsigned char x[10];
   struct hostent *hp;
   char s[30];
+  int i;
 
   /* socks proxy */
   if (proxy == PROXY_SOCKS) {
@@ -311,6 +312,10 @@ static int proxy_connect(int sock, char *host, int port, int proxy)
 	return -2;
       }
       my_memcpy((char *) x, (char *) hp->h_addr, hp->h_length);
+    }
+    for (i = 0; i < MAXSOCKS; i++) {
+      if (!(socklist[i].flags & SOCK_UNUSED) && (socklist[i].sock == sock))
+	socklist[i].flags |= SOCK_PROXYWAIT; /* drummer */
     }
     sprintf(s, "\004\001%c%c%c%c%c%c%s", (port >> 8) % 256, (port % 256),
 	    x[0], x[1], x[2], x[3], botuser);
@@ -575,8 +580,7 @@ static int sockread(char *s, int *len)
 	  /* listening socket -- don't read, just return activity */
 	  /* same for connection attempt */
 	  /* (for strong connections, require a read to succeed first) */
-	  if ((firewall[0]) && (firewall[0] != '!') &&
-	      (socklist[i].flags & SOCK_CONNECT)) {
+	  if (socklist[i].flags & SOCK_PROXYWAIT) { /* drummer */
 	    /* hang around to get the return code from proxy */
 	    grab = 8;
 	  } else if (!(socklist[i].flags & SOCK_STRONGCONN)) {
@@ -603,7 +607,9 @@ static int sockread(char *s, int *len)
 	}
 	s[x] = 0;
 	*len = x;
-	if ((firewall[0]) && (socklist[i].flags & SOCK_CONNECT)) {
+	if (socklist[i].flags & SOCK_PROXYWAIT) {
+	  debug2("net: socket: %d proxy errno: %d", socklist[i].sock, s[1]);
+	  socklist[i].flags &= ~(SOCK_CONNECT | SOCK_PROXYWAIT);
 	  switch (s[1]) {
 	  case 90:		/* success */
 	    s[0] = 0;
@@ -620,7 +626,6 @@ static int sockread(char *s, int *len)
 	    /* or "identd not working" but this is simplest */
 	  }
 	  *len = socklist[i].sock;
-	  socklist[i].flags &= ~SOCK_CONNECT;
 	  return -1;
 	}
 	return i;
@@ -817,9 +822,12 @@ void tputs(int z, char *s, unsigned int len)
   }
   for (i = 0; i < MAXSOCKS; i++) {
     if (!(socklist[i].flags & SOCK_UNUSED) && (socklist[i].sock == z)) {
-      if (socklist[i].outbuf != NULL) {
-	/* already queueing: just add it */
-	p = (char *) nrealloc(socklist[i].outbuf, socklist[i].outbuflen + len);
+      if ((socklist[i].outbuf != NULL) || (socklist[i].flags & SOCK_PROXYWAIT)) {
+	/* already queueing or waiting for proxy: just add it <drummer> */
+	if (socklist[i].outbuf)
+	  p = (char *) nrealloc(socklist[i].outbuf, socklist[i].outbuflen + len);
+	else
+	  p = (char *) nmalloc(len);
 	my_memcpy(p + socklist[i].outbuflen, s, len);
 	socklist[i].outbuf = p;
 	socklist[i].outbuflen += len;
@@ -850,7 +858,7 @@ void dequeue_sockets()
   int i, x;
 
   for (i = 0; i < MAXSOCKS; i++) {
-    if (!(socklist[i].flags & SOCK_UNUSED) &&
+    if (!(socklist[i].flags & (SOCK_UNUSED | SOCK_PROXYWAIT)) && /* drummer */
 	(socklist[i].outbuf != NULL)) {
       /* trick tputs into doing the work */
       x = write(socklist[i].sock, socklist[i].outbuf,

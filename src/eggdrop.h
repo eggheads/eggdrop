@@ -389,6 +389,7 @@ typedef struct {
 #define SOCK_NONSOCK    0x10	/* used for file i/o on debug */
 #define SOCK_STRONGCONN 0x20	/* don't report success until sure */
 #define SOCK_EOFD       0x40	/* it EOF'd recently during a write */
+#define SOCK_PROXYWAIT	0x80	/* waiting for SOCKS traversal */
 
 /* fake idx's for dprintf - these should be ridiculously large +ve nums */
 #define DP_STDOUT       0x7FF1
