@@ -7,7 +7,7 @@
  *   telling the current programmed settings
  *   initializing a lot of stuff and loading the tcl scripts
  * 
- * $Id: chanprog.c,v 1.13 2000/01/30 19:26:20 fabian Exp $
+ * $Id: chanprog.c,v 1.14 2000/03/23 23:10:26 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -602,22 +602,18 @@ void do_check_timers(tcl_timer_t ** stack)
    * so i'll just clear out the timer list completely, and add any
    * unexpired timers back on.
    */
-  Context;
   *stack = NULL;
   while (mark) {
-    Context;
     if (mark->mins > 0)
       mark->mins--;
     old = mark;
     mark = mark->next;
     if (old->mins == 0) {
-      Context;
       simple_sprintf(x, "timer%d", old->id);
       do_tcl(x, old->cmd);
       nfree(old->cmd);
       nfree(old);
     } else {
-      Context;
       old->next = *stack;
       *stack = old;
     }

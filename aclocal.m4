@@ -1,7 +1,7 @@
 dnl aclocal.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: aclocal.m4,v 1.15 2000/03/22 00:42:56 fabian Exp $
+dnl $Id: aclocal.m4,v 1.16 2000/03/23 23:10:25 fabian Exp $
 dnl
 
 
@@ -162,7 +162,7 @@ case "$egg_cv_var_system" in
   HP-UX)
     AC_MSG_RESULT([HP-UX, just shoot yourself now])
     HPUX=yes
-    MOD_LD="gcc -Wl,-E"
+    MOD_LD="gcc -fPIC -shared"
     SHLIB_CC="gcc -fPIC"
     SHLIB_LD="ld -b"
     NEED_DL=0

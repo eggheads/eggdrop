@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  * 
- * $Id: main.c,v 1.33 2000/03/19 23:58:01 fabian Exp $
+ * $Id: main.c,v 1.34 2000/03/23 23:10:26 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -471,7 +471,9 @@ static int		lastmin = 99;
 static time_t		then;
 static struct tm	nowtm;
 
-/* Called once a second
+/* Called once a second.
+ *
+ * Note:  Try to not put any Context lines in here (guppy 21Mar2000).
  */
 static void core_secondly()
 {
@@ -491,7 +493,6 @@ static void core_secondly()
       tell_mem_status_dcc(DP_STDOUT);
     }
   }
-  Context;
   my_memcpy((char *) &nowtm, (char *) localtime(&now), sizeof(struct tm));
   if (nowtm.tm_min != lastmin) {
     int i = 0;
@@ -505,7 +506,6 @@ static void core_secondly()
     while (nowtm.tm_min != lastmin) {
       /* Timer drift, dammit */
       debug2("timer: drift (lastmin=%d, now=%d)", lastmin, nowtm.tm_min);
-      Context;
       i++;
       lastmin = (lastmin + 1) % 60;
       call_hook(HOOK_MINUTELY);
@@ -513,11 +513,9 @@ static void core_secondly()
     if (i > 1)
       putlog(LOG_MISC, "*", "(!) timer drift -- spun %d minutes", i);
     miltime = (nowtm.tm_hour * 100) + (nowtm.tm_min);
-    Context;
     if (((int) (nowtm.tm_min / 5) * 5) == (nowtm.tm_min)) {	/* 5 min */
       call_hook(HOOK_5MINUTELY);
       check_botnet_pings();
-      Context;
       if (quick_logs == 0) {
 	flushlogs();
 	check_logsize();
@@ -537,10 +535,8 @@ static void core_secondly()
 	}
       }
     }
-    Context;
     if (nowtm.tm_min == notify_users_at)
       call_hook(HOOK_HOURLY);
-    Context;
     /* These no longer need checking since they are all check vs minutely
      * settings and we only get this far on the minute.
      */
@@ -567,10 +563,8 @@ static void core_secondly()
 
 static void core_minutely()
 {
-  Context;
   check_tcl_time(&nowtm);
   do_check_timers(&timer);
-  Context;
   if (quick_logs != 0) {
     flushlogs();
     check_logsize();

@@ -2,7 +2,7 @@
  * tcldcc.c -- handles:
  *   Tcl stubs for the dcc commands
  * 
- * $Id: tcldcc.c,v 1.13 2000/01/30 19:26:21 fabian Exp $
+ * $Id: tcldcc.c,v 1.14 2000/03/23 23:10:26 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -773,7 +773,7 @@ static int tcl_getdccidle STDVAR
   BADARGS(2, 2, " idx");
   i = atoi(argv[1]);
   idx = findidx(i);
-  if ((idx < 0) || (dcc[idx].type == &DCC_SCRIPT)) {
+  if (idx < 0) {
     Tcl_AppendResult(irp, "invalid idx", NULL);
     return TCL_ERROR;
   }
@@ -791,11 +791,7 @@ static int tcl_getdccaway STDVAR
   BADARGS(2, 2, " idx");
   i = atol(argv[1]);
   idx = findidx(i);
-  if (idx < 0) {
-    Tcl_AppendResult(irp, "invalid idx", NULL);
-    return TCL_ERROR;
-  }
-  if (dcc[idx].type != &DCC_CHAT) {
+  if ((idx < 0) || (dcc[idx].type != &DCC_CHAT)) {
     Tcl_AppendResult(irp, "invalid idx", NULL);
     return TCL_ERROR;
   }
@@ -813,11 +809,7 @@ static int tcl_setdccaway STDVAR
   BADARGS(3, 3, " idx message");
   i = atol(argv[1]);
   idx = findidx(i);
-  if (idx < 0) {
-    Tcl_AppendResult(irp, "invalid idx", NULL);
-    return TCL_ERROR;
-  }
-  if (dcc[idx].type != &DCC_CHAT) {
+  if ((idx < 0) || (dcc[idx].type != &DCC_CHAT)) {
     Tcl_AppendResult(irp, "invalid idx", NULL);
     return TCL_ERROR;
   }
