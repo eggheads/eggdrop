@@ -19,21 +19,27 @@ specific commands, see later.
 
 *** OUTPUT COMMANDS ***
 
-  putserv <text>
+  putserv <text> [options]
     sends text to the server, like 'dump' (intended for direct server
       commands); output is queued so that you won't flood yourself off
       the server
+    options are:
+        -next     push messages to the front of the queue
     returns: nothing
 
-  puthelp <text>
+  puthelp <text> [options]
     sends text to the server like 'putserv', but uses a different queue
       (intended for sending messages to channels or people)
+    options are:
+        -next     push messages to the front of the queue
     returns: nothing
 
-  putquick <text>
+  putquick <text> [options]
     sends text to the server, like 'dump' (intended for direct server
     commands); output is queued so that you won't flood yourself off
     the server, using the MODE queue (should be alot faster)
+    options are:
+        -next     push messages to the front of the queue
     returns: nothing
 
   putkick <channel> <nick,nick,...> [reason]
