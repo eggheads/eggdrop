@@ -2,7 +2,7 @@
  * cmdschan.c -- part of channels.mod
  *   commands from a user via dcc that cause server interaction
  *
- * $Id: cmdschan.c,v 1.63 2003/03/04 08:51:45 wcc Exp $
+ * $Id: cmdschan.c,v 1.64 2003/03/07 07:02:17 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1118,14 +1118,17 @@ static void cmd_pls_chan(struct userrec *u, int idx, char *par)
     dprintf(idx, "That channel already exists!\n");
     return;
   } else if ((chan = findchan(chname))) {
-    /* This prevents someone adding a channel by it's unique server
-     * name <cybah>
-     */
     dprintf(idx, "That channel already exists as %s!\n", chan->dname);
+    return;
+  } else if (strchr(CHANMETA, chname[0]) == NULL) {
+    dprintf(idx, "Invalid channel prefix.\n");
+    return;
+  } else if (strchr(chname, ',') != NULL) {
+    dprintf(idx, "Invalid channel name.\n");
     return;
   }
 
-  if (tcl_channel_add(0, chname, par) == TCL_ERROR)     /* drummer */
+  if (tcl_channel_add(0, chname, par) == TCL_ERROR)
     dprintf(idx, "Invalid channel or channel options.\n");
   else
     putlog(LOG_CMDS, "*", "#%s# +chan %s", dcc[idx].nick, chname);
