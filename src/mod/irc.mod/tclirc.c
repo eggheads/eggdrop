@@ -186,7 +186,7 @@ static int tcl_ischanban STDVAR
     Tcl_AppendResult(irp, "illegal channel: ", argv[2], NULL);
     return TCL_ERROR;
   }
-  if (isbanned(chan, argv[1]))
+  if (ischanban(chan, argv[1]))
     Tcl_AppendResult(irp, "1", NULL);
   else
     Tcl_AppendResult(irp, "0", NULL);
@@ -203,7 +203,7 @@ static int tcl_ischanexempt STDVAR
     Tcl_AppendResult(irp, "illegal channel: ", argv[2], NULL);
     return TCL_ERROR;
   }
-  if (isexempted(chan, argv[1]))
+  if (ischanexempt(chan, argv[1]))
     Tcl_AppendResult(irp, "1", NULL);
   else
     Tcl_AppendResult(irp, "0", NULL);
@@ -220,7 +220,7 @@ static int tcl_ischaninvite STDVAR
     Tcl_AppendResult(irp, "illegal channel: ", argv[2], NULL);
     return TCL_ERROR;
   }
-  if (isinvited(chan, argv[1]))
+  if (ischaninvite(chan, argv[1]))
     Tcl_AppendResult(irp, "1", NULL);
   else
     Tcl_AppendResult(irp, "0", NULL);
