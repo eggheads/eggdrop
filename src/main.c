@@ -7,7 +7,7 @@
  * 
  * dprintf'ized, 15nov1995
  * 
- * $Id: main.c,v 1.29 1999/12/15 02:32:58 guppy Exp $
+ * $Id: main.c,v 1.30 1999/12/17 18:28:11 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -82,8 +82,8 @@ extern int quick_logs;		/* dw */
  * modified versions of this bot.
  */
 
-char egg_version[1024] = "1.4.1";
-int egg_numver = 1040100;
+char egg_version[1024] = "1.4.2";
+int egg_numver = 1040200;
 
 char notify_new[121] = "";	/* person to send a note to for new users */
 int default_flags = 0;		/* default user flags and */
