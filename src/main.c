@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  *
- * $Id: main.c,v 1.79 2002/01/03 04:32:55 guppy Exp $
+ * $Id: main.c,v 1.80 2002/01/16 03:24:17 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -263,19 +263,19 @@ void write_debug()
 #endif
 
     /* info library */
-    dprintf(-x, "TCL library: %s\n",
+    dprintf(-x, "Tcl library: %s\n",
 	    ((interp) && (Tcl_Eval(interp, "info library") == TCL_OK)) ?
 	    interp->result : "*unknown*");
 
     /* info tclversion/patchlevel */
-    dprintf(-x, "TCL version: %s (header version %s)\n",
+    dprintf(-x, "Tcl version: %s (header version %s)\n",
 	    ((interp) && (Tcl_Eval(interp, "info patchlevel") == TCL_OK)) ?
      interp->result : (Tcl_Eval(interp, "info tclversion") == TCL_OK) ?
      interp->result : "*unknown*", TCL_PATCH_LEVEL ? TCL_PATCH_LEVEL :
      "*unknown*");
 
 #if HAVE_TCL_THREADS
-    dprintf(-x, "TCL is threaded\n");
+    dprintf(-x, "Tcl is threaded\n");
 #endif
 
 #ifdef CCFLAGS

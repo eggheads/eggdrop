@@ -129,7 +129,7 @@ see also: whom, notes
 %{help=rehash}%{+m}
 ###  %brehash%b
    reloads the config file for the bot, which resets all the %b'set'%b
-   variables and reloads any TCL scripts your config loads.  it
+   variables and reloads any Tcl scripts your config loads.  it
    also saves and reloads the user file from disk, just to give
    your disk a little extra wear.
    
@@ -167,7 +167,7 @@ see also: restart
 ###  %brestart%b
    restarts the Tcl interpreter, wipes all timers and utimers, and
    reloads the config file for the bot, which resets all the %b'set'%b
-   variables and reloads any TCL scripts your config loads.  it
+   variables and reloads any Tcl scripts your config loads.  it
    also saves and reloads the user file from disk, just to give
    your disk a little extra wear. it's also the most risky command
    to run, because it's never ever really worked properly.

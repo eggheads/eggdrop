@@ -4,7 +4,7 @@
  *   Tcl initialization
  *   getting and setting Tcl/eggdrop variables
  *
- * $Id: tcl.c,v 1.44 2002/01/02 03:46:36 guppy Exp $
+ * $Id: tcl.c,v 1.45 2002/01/16 03:24:17 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -657,7 +657,7 @@ void do_tcl(char *whatzit, char *script)
 
   code = Tcl_Eval(interp, script);
   if (code != TCL_OK) {
-    putlog(LOG_MISC, "*", "TCL error in script for '%s':", whatzit);
+    putlog(LOG_MISC, "*", "Tcl error in script for '%s':", whatzit);
     putlog(LOG_MISC, "*", "%s", interp->result);
   }
 }
@@ -676,7 +676,7 @@ int readtclprog(char *fname)
   fclose(f);
 
   if (Tcl_EvalFile(interp, fname) != TCL_OK) {
-    putlog(LOG_MISC, "*", "TCL error in file '%s':", fname);
+    putlog(LOG_MISC, "*", "Tcl error in file '%s':", fname);
     putlog(LOG_MISC, "*", "%s",
 	   Tcl_GetVar(interp, "errorInfo", TCL_GLOBAL_ONLY));
     return 0;

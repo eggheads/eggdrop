@@ -32,7 +32,7 @@ changing the names of some variables (uhost -> userhost maybe).
 
 #
 # Here's the start of the script.
-# The '#' in tcl means this line is a comment and doesn't get executed.
+# The '#' in Tcl means this line is a comment and doesn't get executed.
 #
 
 #

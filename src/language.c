@@ -2,7 +2,7 @@
  * language.c -- handles:
  *   language support code
  *
- * $Id: language.c,v 1.16 2002/01/02 03:46:35 guppy Exp $
+ * $Id: language.c,v 1.17 2002/01/16 03:24:17 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -646,7 +646,7 @@ static int tcl_language STDVAR
 {
   char *lang, *section, *buf;
 
-  putlog(LOG_MISC, "*", "TCL cmd 'language' is obsolete. Use 'addlang' instead.");
+  putlog(LOG_MISC, "*", "The Tcl command 'language' is obsolete. Use 'addlang' instead.");
   BADARGS(2, 2, " language");
 
   buf = nmalloc(strlen(argv[1])+1);

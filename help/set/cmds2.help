@@ -122,7 +122,7 @@ see also: set firewall
 %{help=set enable-simul}%{+n}
 ###  %bset enable-simul%b 0/1
    This questionable setting enables the dccsimul command which
-   allows tcl to simulate a user typing a command, some scripts
+   allows Tcl to simulate a user typing a command, some scripts
    require it.
 %{help=set protect-telnet}%{+n}
 ###  %bset protect-telnet%b 0/1

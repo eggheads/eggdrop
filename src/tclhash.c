@@ -7,7 +7,7 @@
  *   (non-Tcl) procedure lookups for msg/dcc/file commands
  *   (Tcl) binding internal procedures to msg/dcc/file commands
  *
- * $Id: tclhash.c,v 1.32 2002/01/02 20:23:40 guppy Exp $
+ * $Id: tclhash.c,v 1.33 2002/01/16 03:24:17 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -666,7 +666,7 @@ static int trigger_bind(const char *proc, const char *param)
    * less helpless when we see context dumps.
    */
   {
-    const char *msg = "TCL proc: %s, param: %s";
+    const char *msg = "Tcl proc: %s, param: %s";
     char *buf;
 
     Context;
