@@ -1,4 +1,4 @@
-$Id: tcl-commands.doc,v 1.115 2004/08/02 18:50:46 wcc Exp $
+$Id: tcl-commands.doc,v 1.116 2004/08/24 02:37:06 wcc Exp $
 
 Eggdrop Tcl Commands
 Last revised: August 02, 2004
@@ -12,7 +12,7 @@ of the normal Tcl built-in commands are still there, of course, but you
 can also use these to manipulate features of the bot. They are listed
 according to category.
 
-This list is accurate for Eggdrop v1.6.17. Scripts written for v1.3/v1.4
+This list is accurate for Eggdrop v1.6.18. Scripts written for v1.3/v1.4
 series of Eggdrop should probably work with a few minor modifications
 depending on the script. Scripts which were written for  v0.9, v1.0, v1.1
 or v1.2 will probably not work without modification. Commands which have
@@ -909,14 +909,14 @@ marked with vertical bars (|) on the left.
     Module: core
 
   strip <idx> [+/-strip-flags]
-|   Description: modifies the strip-flags for a user. The supported
-|     strip-flags are:
-|       b - remove all boldface codes
-|       c - remove all color codes
-|       r - remove all reverse video codes
-|       u - remove all underline codes
-|       a - remove all ANSI codes
-|       g - remove all ctrl-g (bell) codes
+    Description: modifies the strip-flags for a user. The supported
+      strip-flags are:
+        b - remove all boldface codes
+        c - remove all color codes
+        r - remove all reverse video codes
+        u - remove all underline codes
+        a - remove all ANSI codes
+        g - remove all ctrl-g (bell) codes
     Returns: new strip-flags for the specified user (or the current
       flags, if strip-flags was omitted)
     Module: core
@@ -1517,17 +1517,17 @@ marked with vertical bars (|) on the left.
     Returns: nothing
     Module: core
 
-| stripcodes <strip-flags> <string>
-|   Description: strips specified control characters from the string given.
-|     strip-flags can be any combination of the following:
-|       b - remove all boldface codes
-|       c - remove all color codes
-|       r - remove all reverse video codes
-|       u - remove all underline codes
-|       a - remove all ANSI codes
-|       g - remove all ctrl-g (bell) codes
-|   Returns: the stripped string.
-|   Module: core
+  stripcodes <strip-flags> <string>
+    Description: strips specified control characters from the string given.
+      strip-flags can be any combination of the following:
+        b - remove all boldface codes
+        c - remove all color codes
+        r - remove all reverse video codes
+        u - remove all underline codes
+        a - remove all ANSI codes
+        g - remove all ctrl-g (bell) codes
+    Returns: the stripped string.
+    Module: core
 
 
 *** GLOBAL VARIABLES ***
@@ -1889,8 +1889,8 @@ marked with vertical bars (|) on the left.
            you can't rely on a local user record. The mask is checked against
            the entire line of text and supports wildcards.
 
-|          NOTE: If a BOT says something on the botnet, the BCST bind is
-|          invoked instead.
+           NOTE: If a BOT says something on the botnet, the BCST bind is
+           invoked instead.
          Module: core
 
     (24) LINK (stackable)
@@ -2002,20 +2002,20 @@ marked with vertical bars (|) on the left.
           pass it to bind in its original form.
         Module: server
 
-|   (34) BCST (stackable)
-|        bind bcst <flags> <mask> <proc>
-|        proc-name <botname> <channel#> <text>
-|
-|        Description: when a bot broadcasts something on the botnet (see
-|          'dccbroadcast' above), it invokes this binding. flags are ignored;
-|          the mask is matched against the message text and can contain
-|          wildcards. 'channel' argument will always be '-1' since broadcasts
-|          are not directed to any partyline channel.
-|
-|          It is also invoked when a BOT (not a person, as with the CHAT bind)
-|          'says' something on a channel. In this case, the 'channel' argument
-|          will be a valid channel, and not '-1'.
-|        Module: core
+    (34) BCST (stackable)
+         bind bcst <flags> <mask> <proc>
+         proc-name <botname> <channel#> <text>
+ 
+         Description: when a bot broadcasts something on the botnet (see
+           'dccbroadcast' above), it invokes this binding. flags are ignored;
+           the mask is matched against the message text and can contain
+           wildcards. 'channel' argument will always be '-1' since broadcasts
+           are not directed to any partyline channel.
+ 
+           It is also invoked when a BOT (not a person, as with the CHAT bind)
+           'says' something on a channel. In this case, the 'channel' argument
+           will be a valid channel, and not '-1'.
+         Module: core
 
     (35) CHJN (stackable)
          bind chjn <flags> <mask> <proc>
