@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  * 
- * $Id: cmds.c,v 1.22 2000/01/30 19:26:20 fabian Exp $
+ * $Id: cmds.c,v 1.23 2000/02/03 21:58:28 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -2470,9 +2470,9 @@ static void cmd_pls_host(struct userrec *u, int idx, char *par)
     dprintf(idx, "You can't add hostmasks to share-bots.\n");
     return;
   }
-  if ((u2->flags & USER_OWNER) &&
+  if ((u2->flags & (USER_OWNER|USER_MASTER)) &&
       !(u->flags & USER_OWNER) && strcasecmp(handle, dcc[idx].nick)) {
-    dprintf(idx, "Can't add hostmasks to the bot owner.\n");
+    dprintf(idx, "Can't add hostmasks to the bot owner/master.\n");
     return;
   }
   putlog(LOG_CMDS, "*", "#%s# +host %s %s", dcc[idx].nick, handle, host);
@@ -2513,9 +2513,9 @@ static void cmd_mns_host(struct userrec *u, int idx, char *par)
 	       !(u->flags & USER_OWNER)) {
       dprintf(idx, "You can't remove hostmask from a shared bot.\n");
       return;
-    } else if ((u2->flags & USER_OWNER) && !(u->flags & USER_OWNER) &&
-	       (u2 != u)) {
-      dprintf(idx, "Can't remove hostmasks from the bot owner.\n");
+    } else if ((u2->flags & (USER_OWNER|USER_MASTER)) && 
+	       !(u->flags & USER_OWNER) && (u2 != u)) {
+      dprintf(idx, "Can't remove hostmasks from the bot owner/master.\n");
       return;
     } else if (!(u->flags & USER_BOTMAST) && !chan_master(fr)) {
       dprintf(idx, "Permission denied.\n");

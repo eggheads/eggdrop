@@ -8,7 +8,7 @@
  *   help system
  *   motd display and %var substitution
  * 
- * $Id: misc.c,v 1.15 2000/02/01 20:36:18 fabian Exp $
+ * $Id: misc.c,v 1.16 2000/02/03 21:58:28 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -214,6 +214,7 @@ void maskhost(char *s, char *nw)
   p = (q = strchr(s, '!')) ? q + 1 : s;
   /* Strip of any nick, if a username is found, use last 8 chars */
   if ((q = strchr(p, '@'))) {
+    int fl = 0;
     if ((q - p) > 9) {
       nw[0] = '*';
       p = q - 7;
@@ -221,13 +222,14 @@ void maskhost(char *s, char *nw)
     } else
       i = 0;
     while (*p != '@') {
-      if (strchr("~+-^=", *p))
+      if (!fl && strchr("~+-^=", *p))
         if (strict_host)
 	  nw[i] = '?';
 	else
 	  i--; 
       else
 	nw[i] = *p;
+      fl++;
       p++;
       i++;
     }
