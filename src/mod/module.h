@@ -1,7 +1,7 @@
 /*
  * module.h
  *
- * $Id: module.h,v 1.58 2002/02/24 07:17:57 guppy Exp $
+ * $Id: module.h,v 1.59 2002/09/27 22:55:20 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -452,6 +452,8 @@
 #define module_load ((char *(*)(char *))global[273])
 #define module_unload ((char *(*)(char *, char *))global[274])
 #define parties (*(int *)global[275])
+/* 276 */
+#define tell_bottree ((void (*)(int, int))global[276])
 
 /* This is for blowfish module, couldnt be bothered making a whole new .h
  * file for it ;)
