@@ -3076,6 +3076,18 @@ fi
   test -n "$ac_cv_prog_HEAD_1" && break
 done
 
+if test "${ac_cv_prog_HEAD_1-x}" = "x"
+then
+  cat << 'EOF' >&2
+configure: error:
+
+  This system seems to lack a working 'head -1' or 'head -n 1' command.
+  A working 'head -1' (or equivalent) command is required to compile Eggdrop.
+
+EOF
+  exit 1
+fi
+
 rm -f conftest.head
 HEAD_1=$ac_cv_prog_HEAD_1
 

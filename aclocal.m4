@@ -1,7 +1,7 @@
 dnl aclocal.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: aclocal.m4,v 1.76 2003/12/10 05:21:22 tothwolf Exp $
+dnl $Id: aclocal.m4,v 1.77 2003/12/15 06:18:52 tothwolf Exp $
 dnl
 
 
@@ -97,6 +97,18 @@ do
   fi])dnl
   test -n "$ac_cv_prog_HEAD_1" && break
 done
+
+if test "${ac_cv_prog_HEAD_1-x}" = "x"
+then
+  cat << 'EOF' >&2
+configure: error:
+
+  This system seems to lack a working 'head -1' or 'head -n 1' command.
+  A working 'head -1' (or equivalent) command is required to compile Eggdrop.
+
+EOF
+  exit 1
+fi
 
 rm -f conftest.head
 HEAD_1=$ac_cv_prog_HEAD_1
