@@ -1,0 +1,28 @@
+##### CONSOLE MODULE #####
+
+This module provides storage of console settings when you exit the
+bot (or .store)
+
+Put this line into your eggdrop.conf.dist file to load console module:
+
+loadmodule console
+
+
+There are also some variables you can to set in your config file:
+
+set console-autosave 1
+    save users console settings automatically? (otherwise they have
+    to use .store)
+    Valid settings are 0 for OFF and 1 ON.
+
+
+set force-channel 0
+    If a user doesn't have any console settings saved, which channel
+    do you want them automatically put on.
+    Valid settings are 0-99999
+
+
+set info-party 0
+    Enable this setting if a user's global info line should be displayed
+    when they join a botnet channel.
+    Valid settings are 0 for OFF and 1 ON.

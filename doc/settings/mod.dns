@@ -1,0 +1,9 @@
+##### DNS MODULE #####
+
+This module provides asynchronous dns support. This will avoid long
+periods where the bot just hangs there, waiting for a hostname to
+resolve, which often let it timeout on all other connections.
+
+Put this line into your eggdrop.conf.dist file to load dns module:
+
+loadmodule dns

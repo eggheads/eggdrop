@@ -1,0 +1,8 @@
+##### WIRE MODULE #####
+
+This module provides all the standard .wire commands via dcc.
+It's an encrypted partyline communication tool, compatible with wire.tcl
+
+Put this line into your eggdrop.conf.dist file to load wire module:
+
+loadmodule wire

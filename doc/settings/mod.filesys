@@ -1,0 +1,47 @@
+##### FILESYSTEM MODULE #####
+
+This module provides an area withing the bot where users can store
+files. With this module the bot is useable as a fileserver.
+
+Put this line into your eggdrop.conf.dist file to load filesys module:
+
+loadmodule filesys
+
+
+There are also some variables you can to set in your config file:
+
+set files-path "/home/mydir/eggdrop/filesys"
+    Set here hie 'root' directory for the file system
+
+
+set incoming-path "/home/mydir/eggdrop/filesys/incoming"
+    If you want to allow uploads, set this to the directory uploads
+    should be put into.
+    Set this to "" if you don't want people to upload files to your bot.
+
+
+set upload-to-pwd 0
+    If you don't want to have a central incoming directoy but uploads
+    should go to the current directory that a user is in, set this
+    setting to 1.
+    Valid settings are 0 for OFF and 1 ON.
+
+
+set filedb-path ""
+    Eggdrop creates a '.filedb' file in each subdirectory of your dcc area,
+    to keep track of its own file system info -- if you can't do that (like
+    if the dcc path isn't owned by yours) or you just don't want it to do
+    that, specify a path here where you'd like all the database files to
+    be stored instead (otherwise, just leave it blank)
+
+
+set max-file-users 20
+    Set here maximum number of people that can be in the file area at once
+    (0 to make it effectively infinite)
+    Valid settings are 0-unlimited
+
+
+set max-filesize 1024
+    Set here the maximum allowable file size that will be received, in K
+    (default is 1024K = 1M)
+    Valid settings are 0-unlimited

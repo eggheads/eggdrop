@@ -1,0 +1,12 @@
+##### SEEN MODULE #####
+
+This module provides very basic seen commands via msg, on channel or via dcc.
+Note that this module works only for uesrs in the bot's config file.
+
+Put this line into your eggdrop.conf.dist file to load seen module:
+
+loadmodule seen
+
+
+If you are looking for a better and more advanced seen module, try gseen module
+by G'Quann. You can find it at http://mupfel.infra.de/~gquann/gseen.mod/

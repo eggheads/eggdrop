@@ -1,7 +1,7 @@
 /* 
  * share.c -- part of share.mod
  * 
- * $Id: share.c,v 1.28 2000/03/04 20:49:45 fabian Exp $
+ * $Id: share.c,v 1.29 2000/03/22 00:33:57 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1930,7 +1930,6 @@ static tcl_ints my_ints[] =
 {
   {"allow-resync",	&allow_resync},
   {"resync-time",	&resync_time},
-  {"private-owner",	&private_owner},
   {"private-global",	&private_global},
   {"private-user",	&private_user},
   {"override-bots",	&overr_local_bots},

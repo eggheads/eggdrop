@@ -1,0 +1,20 @@
+##### COMPRESS MODULE #####
+
+This module provides provides support for file compression. This allows the
+bot to transfer compressed user files and therefore save a significant amount
+of bandwidth.
+
+Put this line into your eggdrop.conf.dist file to load compress module:
+
+loadmodule compress
+
+
+There are also some variables you can to set in your config file:
+
+set share-compressed 1 (Disabled by default)
+# [0/1] allow compressed sending of user files. The user files
+# are compressed with the compression level defined in `compress-level'.
+
+set compress-level 9
+    Set here the gzip compression level you wanna use
+

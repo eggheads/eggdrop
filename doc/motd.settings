@@ -1,0 +1,35 @@
+###### MOTD ######
+
+The MOTD (mesasge Of The Day) file is displayed everytime a user opens
+a dcc chat or telnet session with the bot (so it shouldn't be TOO long).
+
+There are a few %-variables you can insert into the motd, which will
+be interpreted by eggdrop:
+
+ %b   display bold
+ %v   display inverse
+ %_   display underline
+ %f   display flashing via telnet, bold underline via irc
+ %B   bot's nickname (ie, "LamestBot")
+ %V   current eggdrop version (ie, "eggdrop v1.5.3+typodoc")
+ %E   long form of %V (ie, "Eggdrop v1.5.3+typodoc  (c)1997 Robey Pointer (c)1999, 2000  Eggheads")
+ %C   channels the bot is on (ie, "#lamest, #botnetcentral")
+ %A   whatever is set in 'admin' (see 'set admin')
+ %T   the current time (ie, "15:00")
+ %N   the current user's nickname (ie, "Robey")
+ %U   the current operating system the bot is on
+ %%   a percent sign ("%")
+
+You can also encode messages which can only be read by people
+with certain flags:
+
+ %{+m}Only masters would see this.%{-}
+ %{+1}Only people with user flag #1 see this.%{-}
+ %{+b}This is only displayed to users doing a remote '.motd'
+ from another bot.%{-}
+ %{+|m}Only channel masters would see this.%{-}
+ Other extended % commands are:
+ %{cols=N}     start splitting output into N columns
+ %{cols=N/W}   same, but use a screen width of W
+ %{end}        end columnated or restricted (ie %{+m}) block
+ %{centre}     center the following text (70 columns)

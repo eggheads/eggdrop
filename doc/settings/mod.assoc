@@ -1,0 +1,7 @@
+##### ASSOC MODULE #####
+
+This module provides assoc support, i.e. naming channels on the botnet
+
+Put this line into your eggdrop.conf.dist file to load assoc module:
+
+loadmodule assoc

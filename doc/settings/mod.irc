@@ -1,0 +1,215 @@
+##### IRC MODULE #####
+
+This module provides basic irc support for your bot.  You have to
+load this if you want your bot to come on irc.
+
+Put this line into your eggdrop.conf.dist file to load irc module:
+
+loadmodule irc
+
+
+There are also some variables you can to set in your config file:
+
+set bounce-bans 1
+    Set this to 1 if you want to bounce all server bans
+    Valid settings are 0 for OFF and 1 ON.
+
+
+set bounce-modes 0
+    Set this to 1 if you want to bounce all the server modes
+    Valid settings are 0 for OFF and 1 ON.
+
+
+set kick-bogus-bans 1
+    Set this to 1 if want the bot to kick users who set bogus bans
+    Valid settings are 0 for OFF and 1 ON.
+
+
+set bounce-bogus-bans 1
+    Set this to 1 if want the bot to remove bogus bans
+    Valid settings are 0 for OFF and 1 ON.
+
+
+set max-modes 30
+    Set here the global limit for +b/+e/+I modes on your irc server. This
+    limit is set to 30 on 2.10 ircd servers.
+
+
+set max-bans 20
+    Set here the maximum number of bans you want eggdrop to put
+    in a channel. Eggdrop wont place any more bans if this limit
+    is reached.
+
+
+set kick-bogus 0
+    Set this to 1 if you want the bot to kick bogus usernames. Remember that
+    if it does, as it won't ban them, it can be at the origin of a nice
+    kick-flood.
+    Valid settings are 0 for OFF and 1 ON.
+
+
+set ban-bogus 0
+    Set this to 1 if you want the bot to ban bogus usernames. Can prevent
+    the above described kick-flood, but can also fill the banlist.
+    Valid settings are 0 for OFF and 1 ON.
+
+
+set kick-fun 0
+    Set this to 1 if you want the bot to kick for control character/ctcp
+    avalanches to a channel. Remember that if it does, as it won't ban
+    them, it can be at the origin of a nice kick-flood.
+    Valid settings are 0 for OFF and 1 ON.
+
+
+set ban-fun 0
+    Set this to 1 if you want the bot to ban for control character/ctcp
+    avalanches to a channel. Can prevent the above described kick-flood,
+    but can also fill the banlist.
+    Valid settings are 0 for OFF and 1 ON.
+
+
+set learn-users 0
+    If you want people to introduce themself to eggdrop via 'hello',
+    set this to 1.
+    Valid settings are 0 for OFF and 1 ON.
+
+
+set wait-split 600
+    Set here the time (in seconds) to wait for someone to return from
+    a netsplit (i.e. wasop will expire afterwards).
+    Hint: Set this to 1500 on IRCNet, since it's nick delay stops after
+          30 minutes.
+
+
+set wait-info 180
+    Set here the time (in seconds) that someone must have been off-channel
+    before re-displaying their info
+
+
+set mode-buf-length 200
+    Set this to the maximum number of bytes to send in the arguments
+    to mode's sent to the server, most servers default this to 200,
+    so it should be sufficient.
+
+
+set no-chanrec-info 0
+    If you are so lame you want the bot to display peoples info lines, even
+    when you are too lazy to add their chanrecs to a channel, set this to 1
+    *NOTE* This means *every* user with an info line will have their info
+    display on EVERY channel they join (provided they have been gone longer
+    than wait-info)
+    Valid settings are 0 for OFF and 1 ON.
+
+
+set revenge-mode 1
+    This settings defines how the bot should punish bad users when
+    revenging.
+    There are four possible settings:
+     0 for deop
+     1 for deop and chattr +d #chan
+     2 for deop, chattr +d #chan and kick
+     3 for deop, chattr +d #chan, kick and ban.
+    Valid settings are 0-3
+
+
+
+These were the core irc module settings. There are more settings for
+'net-type' 1 and 5. net-type has to be set in the server module config
+section.
+
+
+##### IRC MODULE - net-type 1 specific features (IRCNET) #####
+
+Attention: Use this settings *only* if you set 'net-type' to 1!
+
+set bounce-exempts 0
+    Set this to 1 if you want to bounce all server exemptions (+e modes)
+    Valid settings are 0 for OFF and 1 ON.
+
+
+set bounce-invites 0
+    Set this to 1 if you want to bounce all server invitations (+I modes)
+    Valid settings are 0 for OFF and 1 ON.
+
+
+set max-exempts 20
+    Set here the maximum number of exempts you want eggdrop to put
+    in a channel. Eggdrop wont place any more exempts if this limit
+    is reached.
+
+
+set max-invites 20
+    Set here the maximum number of invites you want eggdrop to put
+    in a channel. Eggdrop wont place any more invites if this limit
+    is reached.
+    Valid settings are 0 for OFF and 1 ON.
+
+
+set bounce-bogus-exempts 0
+    Set this to 1 if you want the bot to remove bogus exempts
+    Valid settings are 0 for OFF and 1 ON.
+
+
+set kick-bogus-exempts 0
+    Set this to 1 if you want the bot to kick users who set
+    bogus exempts
+    Valid settings are 0 for OFF and 1 ON.
+
+
+set bounce-bogus-invites 0
+    Set this to 1 if you want the bot to remove bogus invites
+    Valid settings are 0 for OFF and 1 ON.
+
+
+set kick-bogus-invites 0
+    Set this to 1 if you want the bot to kick users who set
+    bogus invites
+    Valid settings are 0 for OFF and 1 ON.
+
+
+set use-exempts 0 (Disabled by Default)
+    If you set this feature to 0 in your eggdrop config file, the bot
+    wont use any exempts. This setting is set to 1 as a default in nettype 1
+    Valid settings are 0 for OFF and 1 ON.
+
+
+set use-invites 0 (Disabled by Default)
+    If you set this feature to 0 in your eggdrop config file, the bot
+    wont use any invites. This setting is set to 1 as a default in nettype 1
+    Valid settings are 0 for OFF and 1 ON.
+
+
+set prevent-mixing 1
+    At the moment the current ircd version (2.10) doesn't support the mix
+    of b,o and v modes with e and I modes. This might be changed in the
+    future, so use 1 at the moment for this flag
+    Valid settings are 0 for OFF and 1 ON.
+
+
+##### IRC MODULE - net-type 5 specific features (other networks) #####
+
+Attention: Use this settings *only* if you set 'net-type' to 5!
+
+set kick-method 1
+    If your network supports more users per kick command then 1, you change
+    this behaviour here: Set X for x users at once or 0 for all at once
+
+
+set modes-per-line 3
+    Some networks allow you to stack lots of channel modes into one line.
+    They're all guaranteed to support at least 3, so that's the default,
+    but if you know your network supports more, you may want to adjust
+    this value.
+    Valid settings are 3-6
+
+
+set use-354 0
+    Set this to 1 if your network uses ircu2.10.01 specific /who requests,
+    eggdrop can therefore ask only for exactly what's needed.
+    Valid settings are 0 for OFF and 1 ON.
+
+
+set rfc-compliant 1 (Disabled by default)
+    If your network doesn't use rfc 1459 compliant string matching routines,
+    turn this to 0. All networks apart from Dalnet comply with rfc 1459, so
+    you should only disable it on Dalnet or networks which use Dalnet's code.

@@ -21,24 +21,13 @@ see also: set resync-time
    the userfile needs to be re-sent.
    
 see also: set allow-resync
-%{help=set private-owner}%{+n}
-###  %bset private-owner%b 0/1
-   If you are sharing userfiles with someone else, and you don't
-   want the owners on the other bots propogated to your bot, 
-   set this.
-
-   %bNOTE%b if you are sharing passively with someone
-   you will lose *ALL* owners unless you also set the %bowner%b
-   setting.
-   
-see also: set owner, set private-global, set private-globals
 %{help=set private-global}%{+n}
 ###  %bset private-global%b 0/1
    If you are sharing userfiles with someone else, and you don't
    want %bany%b global flags on the other bots propogated to your bot, 
    set this.  It overrides the setting of private-globals.
    
-see also: set private-owner, set private-globals
+see also: set private-globals
 %{help=set private-globals}%{+n}
 ###  %bset private-globals%b [flags]
    If you are sharing userfiles with someone else, and you don't
@@ -46,7 +35,7 @@ see also: set private-owner, set private-globals
    set this to the global flags you would like to remain unaffected.
    The setting of private-global will override this.   
    
-see also: set private-owner, set private-global
+see also: set private-global
 %{help=share module}%{+n}
 ###  help on the %bshare module%b
    This module provides userfile sharing between two bots, it
@@ -55,8 +44,7 @@ see also: set private-owner, set private-global
    in sync.
    Commands available: %bflush%b
    Tcl settings      : %ballow-resync%b  %bresync-time%b
-                       %bprivate-owner%b %bprivate-global%b
-                       %bprivate-globals%b
+                       %bprivate-global%b %bprivate-globals%b
    see %b'.help share howto'%b for a step-by-step list of what
    needs to be done to setup sharing.
 %{help=share howto}%{+n}

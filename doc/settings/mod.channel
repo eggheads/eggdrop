@@ -1,0 +1,310 @@
+##### CHANNELS MODULE #####
+
+This module provides channel related support for the bot. Without it
+you wont be able to make the bot join a channel or to save channel
+specific userfile informations.
+
+Put this line into your eggdrop.conf.dist file to load channel module:
+
+loadmodule channels
+
+
+There are also some variables you can to set in your config file:
+
+set chanfile "LamestBot.chan"
+    Enter here the filename where dynmic channel settings are stored
+
+
+set ban-time 120
+    Set here how long temporary bans will last (in minutes). If you
+    set this setting to 0, the bot will never remove them.
+    Valid settings are 0-infinite
+
+
+set exempt-time 60
+    Set here how long temporary exempts will last (in minutes). If you
+    set this setting to 0, the bot will never remove them.
+    The bot will check the exempts every X minutes, but will not remove
+    the exempt if a ban is set on the channel that matches that exempt.
+    Once the ban is removed then the exempt will be removed the next
+    time the bot checks.
+    Please note that this is an IRCNET feature.
+    Valid settings are 0-infinite
+
+
+set invite-time 60
+    Set here how long temporary invites will last (in minutes). If you
+    set this setting to 0, the bot will never remove them.
+    The bot will check the invites every X minutes, but will not remove
+    the invite if a channel is set to +i. Once the channel is -i then
+    the invite will be removed the next time the bot checks.
+    Please note that this is an IRCNET feature.
+    Valid settings are 0-infinite
+
+
+set force-expire 0
+    Set this setting to 1 if you want your bot to expire bans/exempts/invites set
+    by other opped bots on the channel
+    Valid settings are 0 for OFF and 1 ON.
+
+
+set share-greet 0
+    Set this setting to 1 if you want your bot to share user greets with other
+    bots on the channel if sharing user data
+    Valid settings are 0 for OFF and 1 ON.
+
+
+set use-info 1
+    Set this setting to 1 if you want to allow users to store an info line
+    Valid settings are 0 for OFF and 1 ON.
+
+
+channel add #channel { SETTINGS }
+    Add each static channel you want your bot to sit in using this command. 
+    There are many different possible settings you can insert into this
+    command.
+    A complete list of them:
+
+    chanmode +<modes>-<modes>
+     This setting makes the bot enforce some channel modes. It will add
+     always the +<modes> modes and remove the -<modes> modes.
+    Example:
+     chanmode "+nt-likm"
+     This will make the bot enforce the use of t and n and the removal of
+     l, i, k and m. The bot wont care about settings like s.
+
+    idle-kick 0
+     This setting will let the bot check every minute for x minutes idle
+     users. Set this to 0 or leave it out to disable idle check.
+
+    stopnethack-mode 0
+     This setting will make the bot de-op anyone who enters the channel
+     with serverops.
+     There're seven different modes for this settings:
+      0 turn off,
+      1 isoptest (allow serverop if registered op), 
+      2 wasoptest (allow serverop if op before split)
+      3 allow serverop if isop or wasop
+      4 allow serverop if isop and wasop
+      5 if channel -bitch: see stopnethack-mode 3
+        if channel +bitch: see stopnethack-mode 1
+      6 if channel -bitch: see stopnethack-mode 2
+        if channel +bitch: see stopnethack-mode 4
+
+    need-op { putserv "PRIVMSG #lamest :op me cos i'm lame!" }
+     This setting will make the bot do the specified thing in the
+     brackets if it becomes opless.
+     Attention, you put anything that is longer than 120 chars in
+     here!
+     Note that if you use scripts like get-ops, you don't need to
+     set this setting.
+
+    need-invite { putserv "PRIVMSG #lamest :let me in!" }
+     This setting will make the bot do the specified thing in the
+     brackets if it needs an invitation to the channel.
+     Attention, you put anything that is longer than 120 chars in
+     here!
+     Note that if you use scripts like get-ops, you don't need to
+     set this setting.
+
+    need-key { putserv "PRIVMSG #lamest :let me in!" }
+     This setting will make the bot do the specified thing in the
+     brackets if it needs a key to a channel.
+     Attention, you put anything that is longer than 120 chars in
+     here!
+     Note that if you use scripts like get-ops, you don't need to
+     set this setting.
+
+    need-unban { putserv "PRIVMSG #lamest :let me in!" }
+     This setting will make the bot do the specified thing in the
+     brackets if it becomes banned.
+     Attention, you put anything that is longer than 120 chars in
+     here!
+     Note that if you use scripts like get-ops, you don't need to
+     set this setting.
+
+    need-limit { putserv "PRIVMSG #lamest :let me in!" }
+     This setting will make the bot do the specified thing in the
+     brackets if it needs a limit raise.
+     Attention, you put anything that is longer than 120 chars in
+     here!
+     Note that if you use scripts like get-ops, you don't need to
+     set this setting.
+
+    flood-chan 10:60
+     Set here how many channel messages in how many seconds from one
+     host are recognized as a flood. Not specifying or using number = 0
+     will not check against chan floods
+
+    flood-deop 3:10
+     Set here how many deops in how many seconds from one host are
+     recognized as a flood. Not specifying or using number = 0
+     will not check against deop floods
+
+    flood-kick 3:10
+     Set here how many kicks in how many seconds from one host are
+     recognized as a flood. Not specifying or using number = 0
+     will not check against kick floods
+
+    flood-join 5:60
+     Set here how many channel joins in how many seconds are
+     recognized as a flood. Not specifying or using number = 0
+     will not check against join floods
+
+    flood-ctcp 3:60
+     Set here how many channel ctcps in how many seconds from one
+     host are recognized as a flood. Not specifying or using number = 0
+     will not check against ctcp floods
+
+    flood-nick 5:60
+     Set here how many nick changes in how many seconds from one
+     host are recognized as a flood. Not specifying or using number = 0
+     will not check against nick floods
+
+
+channel set <chan> +/-<setting>
+    There are many different options for a channel which you can
+    define. They can be enabled or disabled by a plus or minus
+    infront of them.
+    Examples:
+
+     chanset #lamest +autoop
+     This will make the bot auto-op every registered op on join
+
+     chanset #lamest +autoop -userbans
+     This will make the bot auto-op every registered op on join and
+     enforce all bans to be made through the bots console
+
+    A complete list of all available channel settings:
+
+
+     clearbans
+      clear all channel bans when the bot joins?  (ie, force the
+      channel's ban list to match the bot's internal list)
+
+     enforcebans
+      when a ban is set, kick people who are on the channel and match
+      the new ban?  (ie, they were on the channel before the ban)
+
+     dynamicbans
+      only activate bans on the channel when necessary? (this keeps
+      the channel's ban list from getting excessively long. The bot
+      still remembers every ban, but it only activates a ban on the
+      channel when it sees someone join who matches that ban.)
+
+     userbans
+      allow bans to be made by users directly?  (if turned off, the bot
+      will require all bans to be made through the bot's console)
+
+     dynamicexempts
+      only activate exempts on the channel when necessary?  (this keeps
+      the channel's exempt list from getting excessively long. The bot
+      still remembers every exempt, but it only activates a exempt on
+      the channel when it sees a ban set matching the exempt. The exempt
+      remains active on the channel for as long as the ban is still active.
+
+     userexempts
+     allow exempts to be made by users directly?  (if turned off, the bot
+     will require all exempts to be made through the bot's console)
+
+     dynamicinvites
+      only activate invites on the channel when necessary? (this keeps
+      the channel's invite list from getting excessively long. The bot
+      still remembers every invite, but the invites are only activated
+      when the channel is set to invite only and a user joins after
+      requesting an invite. Once set the invite remains until the
+      channel goes to -i
+
+     userinvites
+      allow invites to be made by users directly?  (if turned off, the bot
+      will require all invites to be made through the bot's console)
+
+     autop
+      op users with the +o (op) flag as soon as they join the channel?
+      (hint: this is a BAD IDEA)
+
+     bitch
+      only let users with +o (op) flag be channel ops?
+
+     greet
+      say a user's info line when they join the channel?
+
+     protectops
+      re-op a user with the +o (op) flag if they get deopped?
+
+     protectfriends
+      re-op a user with the +f (friend) flag if they get deopped?
+
+     statuslog
+      log the channel status line every 5 minutes? (some people think
+      it's annoying; i think it's neat)
+
+     revenge
+      remember people who deop/kick/ban the bot or valid ops, and punish
+      them? Users with +f (friend) flag are exempt from revenge
+
+     autovoice
+      voice users with +v (voice) flag when they join the channel?
+
+     secret
+      prevent this channel from being listed on the botnet?  (for paranoid
+      people)
+
+     shared
+      share user channel info for this channel?
+
+     cycle
+      cycle the channel when it becomes op-less?
+
+     dontkickops
+      do you want the bot not to be able to kick +o flag users ?
+      letting them kick-flood for instance, to protect the channel agaisnt
+      clone attacks
+
+     inactive
+      prevents the bot from joining the channel (or makes it leave the channel
+      if it is already there).
+      Can be useful to make the bot leave a channel without loosing it's
+      settings (flood settings, all these "channel set" settings), user flags
+      for this channel, bans for this channel, and without affecting any
+      sharing
+
+     seen
+      respond to seen requests in the channel?  (seen module must be loaded)
+
+     nodesynch
+      allow non-ops to perform channel modes?  (Stops bot from
+      fighting with services such as ChanServ)
+
+    Please note that you can "create" your own channel setting in
+    tcl (see tcl-commands.doc for a howto)
+
+
+The following setting are used as default values when you .+chan #chan or .tcl
+channel add #chan. Look in the section above for explanation on every option.
+
+set global-flood-chan 10:60
+set global-flood-deop 3:10
+set global-flood-kick 3:10
+set global-flood-join 5:60
+set global-flood-ctcp 3:60
+set global-flood-nick 5:60
+
+set global-chanset {
+        -clearbans      -enforcebans
+        +dynamicbans    +userbans
+        -autoop         -bitch
+        +greet          +protectops
+        +statuslog      -revenge
+        -secret         -autovoice
+        +cycle          +dontkickops
+        -inactive       -protectfriends
+        +shared         -seen
+	+userexempts	+dynamicexempts
+	+userinvites	+dynamicinvites
+	-nodesynch
+}
+
+set global-chanmode "nt-likm"
+
+set global-stopnethack-mode 0

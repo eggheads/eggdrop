@@ -1,0 +1,46 @@
+##### NOTES MODULE #####
+
+This module provides support for storing of notes for users from each
+other notes between currently online users is supported in the core,
+this is only for storing the notes for later retrieval, direct
+user->user notes are built-in
+
+Put this line into your eggdrop.conf.dist file to load notes module:
+
+loadmodule notes
+
+
+There are also some variables you can to set in your config file:
+
+set notefile "LamestBot.notes"
+    Enter here the filename where private notes between users are
+    stored
+
+
+set max-notes 50
+    Set here the maximum number of notes to allow to be stored for
+    each user (to prevent flooding)
+    Valid settings are 0-99999
+
+
+set note-life 60
+    Set here how long (in days) to store notes before expiring them
+    Valid settings are 0-99999
+
+
+set allow-fwd 0
+    Set this to 1 if you want to allow users to specify a forwarding
+    address for forwarding notes to another account on another bot.
+    Valid settings are 0 for OFF and 1 ON.
+
+
+set notify-users 1
+    Set this to 1 if you want the bot to let people know hourly if they
+    have any notes
+    Valid settings are 0 for OFF and 1 ON.
+
+
+set notify-onjoin 1
+    Set this to 1 if you want the bot to let people know on join if they
+    have any notes
+    Valid settings are 0 for OFF and 1 ON.

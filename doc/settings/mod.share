@@ -1,0 +1,57 @@
+##### SHARE MODULE #####
+
+This module provides userfile sharing support between two directly
+linked bots.
+This module requires the channels & transfer modules loaded
+
+Put this line into your eggdrop.conf.dist file to load share module:
+
+loadmodule share
+
+
+There are also some variables you can to set in your config file:
+
+set allow-resync 0 (disabled by default)
+    When two bots get disconnected this setting allows them to create a
+    resync buffer which saves all changes done to the userfile during
+    the disconnect. So, when they reconnect, they will not have to
+    transfer the complete user file, but instead, just send the resync
+    buffer.
+    This feature is a bit buggy at the moment, but it may be fixed soon.
+    Valid settings are 0 for OFF and 1 ON.
+
+
+set resync-time 900 (disabled by default)
+    This setting specifies how long to hold another bots resync data
+    before flushing it.
+    This is a setting for allow-resync
+
+
+set private-global 0 (disabled by default)
+    When sharing user lists, DONT ACCEPT global flag changes from other bots?
+    NOTE: the bot will still send changes made on the bot, it just wont accept
+    any global flag changes from other bots.
+    Valid settings are 0 for OFF and 1 ON.
+
+
+set private-globals "mnot" (disabled by default)
+    When sharing user lists, if private-global isn't set, which global flag
+    changes from other bots should be ignored ?
+    Valid settings are all global flags including private flags (A-Z)
+
+
+set private-user 0 (disabled by default)
+    When sharing user lists, DON'T ACCEPT any userfile changes from other
+    bots?
+    NOTE: paranoid people should use this feature on their hub bot - this
+    will force all +host/+user/chpass/etc. changes to be made via the hub
+    Valid settings are 0 for OFF and 1 ON.
+
+
+set override-bots 0 (disabled by default)
+    This setting makes the bot discard it's own bot records in favor of
+    the ones sent by the hub.
+    Please note, that no passwords or botflags are shared, only ports and
+    adress are added to sharing procedure.
+    Note: This only works with hubs that are v1.5.1 or higher.
+    Valid settings are 0 for OFF and 1 ON.

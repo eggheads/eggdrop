@@ -1,0 +1,25 @@
+##### CTCP MODULE #####
+
+This module provides the normal ctcp replies that you'd expect
+This module requires the channels, irc & server modules loaded
+
+Put this line into your eggdrop.conf.dist file to load ctcp module:
+
+loadmodule ctcp
+
+
+There are also some variables you can to set in your config file:
+
+set ctcp-mode 0
+    Set here, how the ctcp module should work. There are 3 possible
+    operting modes:
+     0: normal behavior.
+     1: bot ignores all CTCPs, except for CTCP CHATs & PINGs requested
+        by +o flag users.
+     2: bot doesn't answer more than C CTCPs in S seconds. C/S are
+        defined by the set flood-ctcp C:S
+    Valid settings are 0-2
+
+There are also several variables to better blend your egg in. they are
+ctcp-version, ctcp-finger, and ctcp-userinfo. You can use set to set
+them to values you like.
