@@ -7,7 +7,7 @@
  *   telling the current programmed settings
  *   initializing a lot of stuff and loading the tcl scripts
  *
- * $Id: chanprog.c,v 1.54 2004/06/12 19:54:04 wcc Exp $
+ * $Id: chanprog.c,v 1.55 2004/06/13 21:02:13 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -77,7 +77,7 @@ void rmspace(char *s)
   for (p = s; egg_isspace(*p); p++);
 
   if (p != s)
-    memmove(s, p, p - q + 2);
+    memmove(s, p, q - p + 2);
 }
 
 
