@@ -4,7 +4,7 @@
  *   disconnect on a dcc socket
  *   ...and that's it!  (but it's a LOT)
  *
- * $Id: dcc.c,v 1.51 2002/01/02 03:46:35 guppy Exp $
+ * $Id: dcc.c,v 1.52 2002/01/08 04:26:10 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -204,6 +204,7 @@ static void bot_version(int idx, char *par)
   chatout("*** Linked to %s\n", dcc[idx].nick);
   botnet_send_nlinked(idx, dcc[idx].nick, botnetnick, '!',
 		      dcc[idx].u.bot->numver);
+  touch_laston(dcc[idx].user, "linked", now);
   dump_links(idx);
   dcc[idx].type = &DCC_BOT;
   addbot(dcc[idx].nick, dcc[idx].nick, botnetnick, '-',
