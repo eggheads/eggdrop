@@ -2,7 +2,7 @@
  * chancmds.c -- part of irc.mod
  *   handles commands direclty relating to channel interaction
  * 
- * $Id: cmdsirc.c,v 1.16 2000/07/12 21:51:32 fabian Exp $
+ * $Id: cmdsirc.c,v 1.17 2000/07/23 20:50:35 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -754,7 +754,7 @@ static void cmd_adduser(struct userrec *u, int idx, char *par)
 {
   char *nick, *hand;
   struct chanset_t *chan;
-  memberlist *m = 0;
+  memberlist *m = NULL;
   char s[121], s1[121];
   int atr = u ? u->flags : 0;
   int statichost = 0;
@@ -793,12 +793,10 @@ static void cmd_adduser(struct userrec *u, int idx, char *par)
   }
 
   Context;
-  chan = chanset;
-  while (chan != NULL) {
+  for (chan = chanset; chan; chan = chan->next) {
     m = ismember(chan, nick);
     if (m)
       break;
-    chan=chan->next;
   }
   if (!m) {
     dprintf(idx, "%s is not on any channels I monitor\n", nick);
@@ -806,7 +804,7 @@ static void cmd_adduser(struct userrec *u, int idx, char *par)
   }
   if (strlen(hand) > HANDLEN)
     hand[HANDLEN] = 0;
-  simple_sprintf(s, "%s!%s", m->nick, m->userhost);
+  egg_snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
   u = get_user_by_host(s);
   if (u) {
     dprintf(idx, "%s is already known as %s.\n", nick, u->handle);
