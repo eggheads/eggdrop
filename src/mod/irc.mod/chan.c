@@ -1583,7 +1583,7 @@ static int gotkick(char *from, char *msg)
 
   chname = newsplit(&msg);
   chan = findchan(chname);
-  if (chan && !channel_pending(chan)) {
+  if (chan && channel_active(chan)) {
     nick = newsplit(&msg);
     fixcolon(msg);
     u = get_user_by_host(from);

@@ -578,6 +578,7 @@ void add_tcl_strings(tcl_strings * list)
     st->str = list[i].buf;
     st->flags = (list[i].flags & STR_DIR);
     tcl_eggstr((ClientData) st, interp, list[i].name, NULL, TCL_TRACE_WRITES);
+    tcl_eggstr((ClientData) st, interp, list[i].name, NULL, TCL_TRACE_READS);
     Tcl_TraceVar(interp, list[i].name, TCL_TRACE_READS | TCL_TRACE_WRITES |
 		 TCL_TRACE_UNSETS, tcl_eggstr, (ClientData) st);
   }
@@ -615,6 +616,7 @@ void add_tcl_ints(tcl_ints * list)
     ii->var = list[i].val;
     ii->ro = list[i].readonly;
     tcl_eggint((ClientData) ii, interp, list[i].name, NULL, TCL_TRACE_WRITES);
+    tcl_eggint((ClientData) ii, interp, list[i].name, NULL, TCL_TRACE_READS);
     Tcl_TraceVar(interp, list[i].name,
 		 TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
 		 tcl_eggint, (ClientData) ii);
@@ -655,6 +657,7 @@ void add_tcl_coups(tcl_coups * list)
     cp->left = list[i].lptr;
     cp->right = list[i].rptr;
     tcl_eggcouplet((ClientData) cp, interp, list[i].name, NULL, TCL_TRACE_WRITES);
+    tcl_eggcouplet((ClientData) cp, interp, list[i].name, NULL, TCL_TRACE_READS);
     Tcl_TraceVar(interp, list[i].name,
 		 TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
 		 tcl_eggcouplet, (ClientData) cp);

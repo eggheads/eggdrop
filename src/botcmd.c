@@ -916,12 +916,12 @@ static void bot_handshake(int idx, char *par)
 
   /* only set a new password if no old one exists */
   context;
-  if (u_pass_match(u, "-")) {
-    noshare = 1;		/* we *don't* want botnet passwords
-				 * migrating */
-    set_user(&USERENTRY_PASS, u, par);
-    noshare = 0;
-  }
+  /* if (u_pass_match(u, "-")) { */
+  noshare = 1;		/* we *don't* want botnet passwords
+			 * migrating */
+  set_user(&USERENTRY_PASS, u, par);
+  noshare = 0;
+  /* } */
 }
 
 /* used to send a direct msg from Tcl on one bot to Tcl on another 

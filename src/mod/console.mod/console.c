@@ -236,10 +236,8 @@ static int console_chon(char *handle, int idx)
     if (i) {
       if (i->channel && i->channel[0])
 	strcpy(dcc[idx].u.chat->con_chan, i->channel);
-      if (i->conflags)
-	dcc[idx].u.chat->con_flags = i->conflags;
-      if (i->stripflags)
-	dcc[idx].u.chat->strip_flags = i->stripflags;
+      dcc[idx].u.chat->con_flags = i->conflags;
+      dcc[idx].u.chat->strip_flags = i->stripflags;
       if (i->echoflags)
 	dcc[idx].status |= STAT_ECHO;
       else

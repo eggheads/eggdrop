@@ -309,7 +309,7 @@ static int tcl_console STDVAR
   Tcl_AppendElement(irp, dcc[i].u.chat->con_chan);
   Tcl_AppendElement(irp, masktype(dcc[i].u.chat->con_flags));
   /* new style autosave -- drummer,07/25/1999*/
-  if ((me = module_find("console", 1, 1))) {
+  if ((argc > 2) && (me = module_find("console", 1, 1))) {
     Function *func = me->funcs;
     (func[CONSOLE_DOSTORE]) (i);
   }
@@ -356,7 +356,7 @@ static int tcl_strip STDVAR
   }
   Tcl_AppendElement(irp, stripmasktype(dcc[i].u.chat->strip_flags));
   /* new style autosave here too -- rtc, 10/07/1999*/
-  if ((me = module_find("console", 1, 1))) {
+  if ((argc > 2) && (me = module_find("console", 1, 1))) {
     Function *func = me->funcs;
     (func[CONSOLE_DOSTORE]) (i);
   }
@@ -391,7 +391,7 @@ static int tcl_echo STDVAR
   else
     Tcl_AppendResult(irp, "0", NULL);
   /* new style autosave here too -- rtc, 10/07/1999*/
-  if ((me = module_find("console", 1, 1))) {
+  if ((argc > 2) && (me = module_find("console", 1, 1))) {
     Function *func = me->funcs;
     (func[CONSOLE_DOSTORE]) (i);
   }
@@ -432,7 +432,7 @@ static int tcl_page STDVAR
   } else
     Tcl_AppendResult(irp, "0", NULL);
   /* new style autosave here too -- rtc, 10/07/1999*/
-  if ((me = module_find("console", 1, 1))) {
+  if ((argc > 2) && (me = module_find("console", 1, 1))) {
     Function *func = me->funcs;
     (func[CONSOLE_DOSTORE]) (i);
   }
