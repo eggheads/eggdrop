@@ -2,7 +2,7 @@
  * cmdsserv.c -- part of server.mod
  *   handles commands from a user via dcc that cause server interaction
  *
- * $Id: cmdsserv.c,v 1.12 2002/01/02 03:46:40 guppy Exp $
+ * $Id: cmdsserv.c,v 1.13 2002/01/21 19:19:56 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -31,7 +31,7 @@ static void cmd_servers(struct userrec *u, int idx, char *par)
 
   putlog(LOG_CMDS, "*", "#%s# servers", dcc[idx].nick);
   if (!x) {
-    dprintf(idx, "No servers.\n");
+    dprintf(idx, "There are no servers in the server list.\n");
   } else {
     dprintf(idx, "Server list:\n");
     i = 0;

@@ -2,7 +2,7 @@
  * chancmds.c -- part of irc.mod
  *   handles commands directly relating to channel interaction
  *
- * $Id: cmdsirc.c,v 1.30 2002/01/02 03:46:39 guppy Exp $
+ * $Id: cmdsirc.c,v 1.31 2002/01/21 19:19:56 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -89,7 +89,7 @@ static void cmd_act(struct userrec *u, int idx, char *par)
     return;
   }
   if ((chan->channel.mode & CHANMODER) && !(m->flags & (CHANOP | CHANVOICE))) {
-    dprintf(idx, "Cannot say to %s, it is moderated.\n", chan->dname);
+    dprintf(idx, "Cannot say to %s: It is moderated.\n", chan->dname);
     return;
   }
   putlog(LOG_CMDS, "*", "#%s# (%s) act %s", dcc[idx].nick,
@@ -135,7 +135,7 @@ static void cmd_say(struct userrec *u, int idx, char *par)
     return;
   }
   if ((chan->channel.mode & CHANMODER) && !(m->flags & (CHANOP | CHANVOICE))) {
-    dprintf(idx, "Cannot say to %s, it is moderated.\n", chan->dname);
+    dprintf(idx, "Cannot say to %s: It is moderated.\n", chan->dname);
     return;
   }
   putlog(LOG_CMDS, "*", "#%s# (%s) say %s", dcc[idx].nick, chan->dname, par);
@@ -204,7 +204,7 @@ static void cmd_kickban(struct userrec *u, int idx, char *par)
       }
       if (use_exempts &&
 	  (u_match_mask(global_exempts,s) || u_match_mask(chan->exempts, s))) {
-	dprintf(idx, "%s is permanent exempted!\n", nick);
+	dprintf(idx, "%s is permanently exempted!\n", nick);
 	return;
       }
       if (m->flags & CHANOP)
@@ -913,15 +913,15 @@ static void cmd_deluser(struct userrec *u, int idx, char *par)
   /* Shouldn't allow people to remove permanent owners (guppy 9Jan1999) */
   if ((glob_owner(victim) && egg_strcasecmp(dcc[idx].nick, nick)) ||
       isowner(u->handle)) {
-    dprintf(idx, "Can't remove the bot owner!\n");
+    dprintf(idx, "You can't remove the bot owner!\n");
   } else if (glob_botmast(victim) && !glob_owner(user)) {
-    dprintf(idx, "Can't delete a master!\n");
+    dprintf(idx, "You can't delete a master!\n");
   } else if (chan_owner(victim) && !glob_owner(user)) {
-    dprintf(idx, "Can't remove a channel owner!\n");
+    dprintf(idx, "You can't remove a channel owner!\n");
   } else if (chan_master(victim) && !(glob_owner(user) || chan_owner(user))) {
-    dprintf(idx, "Can't delete a channel master!\n");
+    dprintf(idx, "You can't delete a channel master!\n");
   } else if (glob_bot(victim) && !glob_owner(user)) {
-    dprintf(idx, "Can't delete a bot!\n");
+    dprintf(idx, "You can't delete a bot!\n");
   } else {
     char buf[HANDLEN + 1];
 

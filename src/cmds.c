@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  *
- * $Id: cmds.c,v 1.71 2002/01/16 03:24:17 guppy Exp $
+ * $Id: cmds.c,v 1.72 2002/01/21 19:19:54 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -837,9 +837,9 @@ static void cmd_chhandle(struct userrec *u, int idx, char *par)
       dprintf(idx, "You can't change shared bot's nick.\n");
     else if ((atr2 & USER_OWNER) && !(atr & USER_OWNER) &&
             egg_strcasecmp(dcc[idx].nick, hand))
-      dprintf(idx, "Can't change the bot owner's handle.\n");
+      dprintf(idx, "You can't change the bot owner's handle.\n");
     else if (isowner(hand) && egg_strcasecmp(dcc[idx].nick, hand))
-      dprintf(idx, "Can't change the permanent bot owner's handle.\n");
+      dprintf(idx, "You can't change the permanent bot owner's handle.\n");
     else if (!egg_strcasecmp(newhand, botnetnick) && (!(atr2 & USER_BOT) ||
              nextbot(hand) != -1))
       dprintf(idx, "Hey! That's MY name!\n");
@@ -2352,7 +2352,7 @@ static void cmd_mns_ignore(struct userrec *u, int idx, char *par)
     putlog(LOG_CMDS, "*", "#%s# -ignore %s", dcc[idx].nick, buf);
     dprintf(idx, "No longer ignoring: %s\n", buf);
   } else
-    dprintf(idx, "Can't find that ignore.\n");
+    dprintf(idx, "That ignore cannot be found.\n");
 }
 
 static void cmd_ignores(struct userrec *u, int idx, char *par)
@@ -2556,7 +2556,7 @@ static void cmd_mns_host(struct userrec *u, int idx, char *par)
       return;
     } else if ((u2->flags & (USER_OWNER|USER_MASTER)) &&
 	       !(u->flags & USER_OWNER) && (u2 != u)) {
-      dprintf(idx, "Can't remove hostmasks from the bot owner/master.\n");
+      dprintf(idx, "You can't remove hostmasks from the bot owner/master.\n");
       return;
     } else if (!(u->flags & USER_BOTMAST) && !chan_master(fr)) {
       dprintf(idx, "Permission denied.\n");

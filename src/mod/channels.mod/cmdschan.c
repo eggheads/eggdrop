@@ -2,7 +2,7 @@
  * cmdschan.c -- part of channels.mod
  *   commands from a user via dcc that cause server interaction
  *
- * $Id: cmdschan.c,v 1.48 2002/01/02 03:46:37 guppy Exp $
+ * $Id: cmdschan.c,v 1.49 2002/01/21 19:19:55 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -824,7 +824,7 @@ static void cmd_chinfo(struct userrec *u, int idx, char *par)
     return;
   }
   if ((u1->flags & USER_OWNER) && !(u->flags & USER_OWNER)) {
-    dprintf(idx, "Can't change info for the bot owner.\n");
+    dprintf(idx, "You can't change info for the bot owner.\n");
     return;
   }
   if (chname) {
@@ -832,7 +832,7 @@ static void cmd_chinfo(struct userrec *u, int idx, char *par)
     get_user_flagrec(u1, &victim, chname);
     if ((chan_owner(victim) || glob_owner(victim)) &&
 	!(glob_owner(user) || chan_owner(user))) {
-      dprintf(idx, "Can't change info for the channel owner.\n");
+      dprintf(idx, "You can't change info for the channel owner.\n");
       return;
     }
   }
