@@ -1,13 +1,16 @@
-$Id: UPDATES1.6,v 1.440 2003/01/15 00:35:01 wcc Exp $
+$Id: UPDATES1.6,v 1.441 2003/01/15 01:03:04 wcc Exp $
 
 Changes in Eggdrop: (since v1.6.0)
 ----------------------------------
 
 1.6.14
 Found by  Fixed by  What...
-          BarkerJr  bind NICK mow gets triggered even if the nickname isn't
+various   darko``   removed strict-servernames -- $server is now always the
+                    server's realname and $serveraddress is it's server list
+                    entry
+          BarkerJr  bind NICK now gets triggered even if the nickname isn't
                     found in any channels (i.e. when the bot's nickname changes
-                    before it joins channels).
+                    before it joins channels)
           darko``   fixed parsing of userhosts in gotwall()
 reed      Wcc       updated UnderNet's max_bans to 45
 various   BarkerJr  config file updates

@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: news.html,v 1.23 2002/12/24 02:30:03 wcc Exp $ -->
+<!-- $Id: news.html,v 1.24 2003/01/15 01:03:04 wcc Exp $ -->
 
 <html>
   <head>
@@ -12,7 +12,7 @@
     </div>
     <hr>
 
-    <p><strong>News - Last revised: June 09, 2002</strong></p>
+    <p><strong>News - Last revised: January 14, 2002</strong></p>
 
     <p>What&#39;s new? First, read the following documents:</p>
 
@@ -186,6 +186,10 @@
            <p>A new &#39;pidfile&#39; setting was added to allow you to
            specify the name of Eggdrop&#39;s pid file.</p>
          </li>
+
+         <li>
+           <p>The &#39;strict-servernames&#39; setting was removed.</p>
+         </li>
        </ul>
      </blockquote>
 
@@ -297,6 +301,17 @@
           HANDLEN define in eggdrop.h. &#39;nick-len&#39; was also renamed to
           &#39;nicklen&#39; (the old variable will remain until version
           1.8.</p>
+        </li>
+
+        <li>
+          <p>The &#39;server&#39; variable now contains the server&#39;s
+          realname instead of its serverlist entry regardless of the
+          &#39;strict-servernames&#39; setting.</p>
+        </li>
+
+        <li>
+          <p>The &#39;serveraddress&#39; variable was added, which contains the
+          server&#39;s serverlist address and port.</p>
         </li>
       </ul>
       <p>For more information about changed or added Tcl commands, see

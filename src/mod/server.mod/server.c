@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  *
- * $Id: server.c,v 1.85 2002/12/24 02:30:08 wcc Exp $
+ * $Id: server.c,v 1.86 2003/01/15 01:03:05 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -68,7 +68,6 @@ static char botrealname[121];	/* realname of bot */
 static int min_servs;		/* minimum number of servers to be around */
 static int server_timeout;	/* server timeout for connecting */
 static int never_give_up;	/* never give up when connecting to servers? */
-static int strict_servernames;	/* don't update server list */
 static struct server_list *serverlist;	/* old-style queue, still used by
 					   server list */
 static int cycle_time;		/* cycle time till next server connect */
@@ -1198,6 +1197,29 @@ static char *altnick_change(ClientData cdata, Tcl_Interp *irp, char *name1,
 }
 
 #if (((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 4)) || (TCL_MAJOR_VERSION > 8))
+static char *traced_serveraddress(ClientData cdata, Tcl_Interp *irp,
+                           CONST char *name1, CONST char *name2, int flags)
+#else
+static char *traced_serveraddress(ClientData cdata, Tcl_Interp *irp, char *name1,
+                           char *name2, int flags)
+#endif
+{
+  char s[1024];
+
+  if (server_online) {
+    int servidx = findanyidx(serv);
+
+    simple_sprintf(s, "%s:%u", dcc[servidx].host, dcc[servidx].port);
+  } else
+    s[0] = 0;
+  Tcl_SetVar2(interp, name1, name2, s, TCL_GLOBAL_ONLY);
+  if (flags & TCL_TRACE_UNSETS)
+    Tcl_TraceVar(irp, name1, TCL_TRACE_READS | TCL_TRACE_WRITES |
+		 TCL_TRACE_UNSETS, traced_serveraddress, cdata);
+  return NULL;
+}
+
+#if (((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 4)) || (TCL_MAJOR_VERSION > 8))
 static char *traced_server(ClientData cdata, Tcl_Interp *irp,
                            CONST char *name1, CONST char *name2, int flags)
 #else
@@ -1209,8 +1231,11 @@ static char *traced_server(ClientData cdata, Tcl_Interp *irp, char *name1,
 
   if (server_online) {
     int servidx = findanyidx(serv);
-
-    simple_sprintf(s, "%s:%u", dcc[servidx].host, dcc[servidx].port);
+    register int i;
+    struct server_list *x = serverlist;
+    for (i=0; i < curserv; x=x->next)
+      i++;
+    simple_sprintf(s, "%s:%u", x->realname, dcc[servidx].port);  /* return real server name */
   } else
     s[0] = 0;
   Tcl_SetVar2(interp, name1, name2, s, TCL_GLOBAL_ONLY);
@@ -1349,7 +1374,6 @@ static tcl_ints my_tcl_ints[] =
   {"server-online",		(int *) &server_online,		2},
   {"never-give-up",		&never_give_up,			0},
   {"keep-nick",			&keepnick,			0},
-  {"strict-servernames",	&strict_servernames,		0},
   {"check-stoned",		&check_stoned,			0},
   {"serverror-quit",		&serverror_quit,		0},
   {"quiet-reject",		&quiet_reject,			0},
@@ -1763,6 +1787,9 @@ static char *server_close()
   Tcl_UntraceVar(interp, "server",
 		 TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
 		 traced_server, NULL);
+  Tcl_UntraceVar(interp, "serveraddress",
+		 TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
+		 traced_serveraddress, NULL);
   Tcl_UntraceVar(interp, "net-type",
 		 TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
 		 traced_nettype, NULL);
@@ -1876,7 +1903,6 @@ char *server_start(Function *global_funcs)
   min_servs = 0;
   server_timeout = 60;
   never_give_up = 0;
-  strict_servernames = 0;
   serverlist = NULL;
   cycle_time = 0;
   default_port = 6667;
@@ -1927,6 +1953,9 @@ char *server_start(Function *global_funcs)
   Tcl_TraceVar(interp, "server",
 	       TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
 	       traced_server, NULL);
+  Tcl_TraceVar(interp, "serveraddress",
+	       TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
+	       traced_serveraddress, NULL);
   Tcl_TraceVar(interp, "net-type",
 	       TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
 	       traced_nettype, NULL);

@@ -1,5 +1,5 @@
 News
-Last revised: June 13, 2002
+Last revised: January 14, 2002
      _________________________________________________________________
 
                                    News
@@ -128,6 +128,8 @@ Changes made to Eggdrop 1.6.x from Eggdrop1.4.x:
      * A new 'pidfile' setting was added to allow you to specify the name
        of Eggdrop's pid file.
 
+     * The 'strict-servernames' setting was removed.
+
   PENALTY CALCULATION
 
      Eggdrop calculates penalty points on IRCnet now, so it won't
@@ -189,6 +191,12 @@ Changes made to Eggdrop 1.6.x from Eggdrop1.4.x:
 
      * The 'channel get' command was added to allow channel settings to be
        easily retrieved.
+
+     * The 'server' variable now contains the server's realname instead of its
+       serverlist entry regardless of the 'strict-servernames' setting.
+
+     * The 'serveraddress' variable was added, which contains the server's
+       serverlist address and port.
 
      For more information about changed or added Tcl commands, see
      doc/tcl-commands.doc.

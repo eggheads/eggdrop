@@ -1,5 +1,5 @@
 Eggdrop Tcl Commands
-Last revised: June 04, 2002
+Last revised: January 14, 2002
      _________________________________________________________________
 
 This is an exhaustive list of all the Tcl commands added to Eggdrop. All
@@ -1499,10 +1499,18 @@ marked with vertical bars (|) on the left.
       "Valis!valis@crappy.com")
     Module: server
 
-  server
-    Value: the current server the bot is using (for example:
-      "irc.math.ufl.edu:6667")
-    Module: server
+| server
+|   Value: the current server's real name (what server calls itself)
+|     and port bot is connected to (for example: "irc.math.ufl.edu:6667")
+|     Note that this does not nececerilly match the servers internet address.
+|   Module: server
+
+| serveraddress
+|   Value: the current server's internet address (hostname or IP) and port bot
+|     is connected to. This will correspond to the entry in server list (for
+|     example: "eu.undernet.org:6667"). Note that this does not necessarily
+|     match the name server calls itself.
+|   Module: server
 
   version
     Value: current bot version "1.1.2+pl1 1010201 pl1";

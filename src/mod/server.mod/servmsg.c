@@ -1,7 +1,7 @@
 /*
  * servmsg.c -- part of server.mod
  *
- * $Id: servmsg.c,v 1.66 2003/01/02 00:07:46 wcc Exp $
+ * $Id: servmsg.c,v 1.67 2003/01/15 01:03:05 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -225,7 +225,7 @@ static int match_my_nick(char *nick)
 static int got001(char *from, char *msg)
 {
   struct server_list *x;
-  int i, servidx = findanyidx(serv);
+  int i;
   struct chanset_t *chan;
 
   /* Ok...param #1 of 001 = what server thinks my nick is */
@@ -250,28 +250,17 @@ static int got001(char *from, char *msg)
 	        (chan->name[0]) ? chan->name : chan->dname,
 	        chan->channel.key[0] ? chan->channel.key : chan->key_prot);
     }
-  if (egg_strcasecmp(from, dcc[servidx].host)) {
-    putlog(LOG_MISC, "*", "(%s claims to be %s; updating server list)",
-	   dcc[servidx].host, from);
-    for (i = curserv; i > 0 && x != NULL; i--)
-      x = x->next;
-    if (x == NULL) {
-      putlog(LOG_MISC, "*", "Invalid server list!");
-      return 0;
-    }
-    if (x->realname)
-      nfree(x->realname);
-    if (strict_servernames == 1) {
-      x->realname = NULL;
-      if (x->name)
-	nfree(x->name);
-      x->name = nmalloc(strlen(from) + 1);
-      strcpy(x->name, from);
-    } else {
-      x->realname = nmalloc(strlen(from) + 1);
-      strcpy(x->realname, from);
-    }
+
+  for (i = curserv; i > 0 && x != NULL; i--)
+    x = x->next;
+  if (x == NULL) {
+    putlog(LOG_MISC, "*", "Invalid server list!");
+    return 0;
   }
+  if (x->realname)
+    nfree(x->realname);
+  x->realname = nmalloc(strlen(from) + 1);
+  strcpy(x->realname, from);
   return 0;
 }
 
@@ -1088,23 +1077,13 @@ static int gotkick(char *from, char *msg)
 static int whoispenalty(char *from, char *msg)
 {
   struct server_list *x = serverlist;
-  int i, ii;
+  int i;
 
   if (x && use_penalties) {
-    i = ii = 0;
-    for (; x; x = x->next) {
-      if (i == curserv) {
-        if ((strict_servernames == 1) || !x->realname) {
-          if (strcmp(x->name, from))
-            ii = 1;
-        } else {
-          if (strcmp(x->realname, from))
-            ii = 1;
-        }
-      }
+    i = 0;
+    for (; x && i < curserv; x = x->next)
       i++;
-    }
-    if (ii) {
+    if (strcmp(x->realname, from)) {
       last_time += 1;
       if (debug_output)
         putlog(LOG_SRVOUT, "*", "adding 1sec penalty (remote whois)");

@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: tcl-commands.html,v 1.24 2003/01/15 00:35:01 wcc Exp $ -->
+<!-- $Id: tcl-commands.html,v 1.25 2003/01/15 01:03:04 wcc Exp $ -->
 
 <html>
   <head>
@@ -3307,11 +3307,25 @@
           <p><strong>Module:</strong> server</p>
         </dd>
 
-        <dt><strong>server</strong></dt>
+        <dt><strong>* server</strong></dt>
 
         <dd>
-          <p><strong>Value:</strong> the current server the bot is using
-          (for example: &quot;irc.math.ufl.edu:6667&quot;)</p>
+          <p><strong>Value:</strong> the current server&#39;s real name (what
+          server calls itself) and port bot is connected to (for example:
+          "irc.math.ufl.edu:6667") Note that this does not nececerilly match
+          the servers internet address.</p>
+
+          <p><strong>Module:</strong> server</p>
+        </dd>
+
+        <dt><strong>* serveraddress</strong></dt>
+
+        <dd>
+          <p><strong>Value:</strong> the current server&#39;s internet address
+          (hostname or IP) and port bot is connected to. This will correspond
+          to the entry in server list (for example: "eu.undernet.org:6667").
+          Note that this does not necessarily match the name server calls
+          itself.</p>
 
           <p><strong>Module:</strong> server</p>
         </dd>

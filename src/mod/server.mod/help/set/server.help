@@ -69,14 +69,6 @@ see also: set username
    will change back to its intended nick within 60 seconds.
    
 see also: set nick, set altnick
-%{help=set strict-servernames}%{+n}
-###  %bset strict-servernames%b <0/1>
-   Some irc servers have different names on the IRC network to 
-   what you use to connect, and this name may not resolve,
-   hence the bot no-longer changes the server name to reflect this
-   (it does record it however), enabling this setting will cause
-   the bot to change the entry for the server the name the server
-   thinks is its name.
 %{help=set check-stoned}%{+n}
 ###  %bset check-stoned%b 0/1
    This setting, when enabled, will cause the bot to ping the server
@@ -188,4 +180,4 @@ see also: default-port
      %bserverror-quit%b       %banswer-ctcp%b    %baltnick%b
      %btrigger-on-ignore%b    %bdefault-port%b   %brealname%b
      %bserver-cycle-wait%b    %bcheck-stoned%b   %bflood-msg%b
-     %bstrict-servernames%b   %bquiet-reject%b   %bkeep-nick
+     %bquiet-reject%b         %bkeep-nick

@@ -70,12 +70,6 @@ There are also some variables you can set in your config file:
     '.jump' or in 'set servers'.
 
 
-  set strict-servernames 0
-    Often, IRC servers call themselves a name other than their actual
-    hostname. If you want Eggdrop to replace your entry in the config
-    file with this name, set this to 1. If you set this setting to 0,
-    Eggdrop will keep a separate list of what IRC servers call themselves.
-
   set server-cycle-wait 60
     This setting defines how long Eggdrop should wait before moving from one
     server to another on disconnect. If you set 0 here, Eggdrop will not wait
