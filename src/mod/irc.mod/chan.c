@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  *
- * $Id: chan.c,v 1.94 2002/08/08 19:31:45 wcc Exp $
+ * $Id: chan.c,v 1.95 2002/08/30 03:07:04 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1603,8 +1603,12 @@ static int gotjoin(char *from, char *chname)
   }
 
   if (!chan || channel_inactive(chan)) {
+    strcpy(uhost, from);
+    nick = splitnick(&uhost);
+    if (match_my_nick(nick)) {
     putlog(LOG_MISC, "*", "joined %s but didn't want to!", chname);
     dprintf(DP_MODE, "PART %s\n", chname);
+    }
   } else if (!channel_pending(chan)) {
     chan->status &= ~CHAN_STOP_CYCLE;
     strcpy(uhost, from);
