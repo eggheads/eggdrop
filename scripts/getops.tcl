@@ -1,7 +1,7 @@
 
 # Getops 2.2f
 
-# $Id: getops.tcl,v 1.7 2000/11/06 04:06:41 guppy Exp $
+# $Id: getops.tcl,v 1.8 2001/04/01 16:02:47 guppy Exp $
 
 # This script is used for bots to request and give ops to each other.
 # For this to work, you'll need:
@@ -76,7 +76,7 @@
 # - I also took that annoying wallop and resynch stuff out :P
 # - And I guess this will with with 1.3.x too
 
-# Previously by The_O, dtM and poptix.
+# Originial incarnation by poptix
 
 # -----------------------------------------------------------------------------
 
