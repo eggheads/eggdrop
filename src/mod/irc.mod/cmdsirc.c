@@ -2,7 +2,7 @@
  * chancmds.c -- part of irc.mod
  *   handles commands directly relating to channel interaction
  *
- * $Id: cmdsirc.c,v 1.43 2002/09/28 00:06:29 wcc Exp $
+ * $Id: cmdsirc.c,v 1.44 2002/11/23 19:34:41 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -114,7 +114,8 @@ static void cmd_act(struct userrec *u, int idx, char *par)
     dprintf(idx, "Cannot say to %s: I'm not on that channel.\n", chan->dname);
     return;
   }
-  if ((chan->channel.mode & CHANMODER) && !(m->flags & (CHANOP | CHANVOICE))) {
+  if ((chan->channel.mode & CHANMODER) && !me_op(chan) && !me_halfop(chan) &&
+      !me_voice(chan)) {
     dprintf(idx, "Cannot say to %s: It is moderated.\n", chan->dname);
     return;
   }
@@ -160,7 +161,8 @@ static void cmd_say(struct userrec *u, int idx, char *par)
     dprintf(idx, "Cannot say to %s: I'm not on that channel.\n", chan->dname);
     return;
   }
-  if ((chan->channel.mode & CHANMODER) && !(m->flags & (CHANOP | CHANVOICE))) {
+  if ((chan->channel.mode & CHANMODER) && !me_op(chan) && !me_halfop(chan) &&
+      !me_voice(chan)) {
     dprintf(idx, "Cannot say to %s: It is moderated.\n", chan->dname);
     return;
   }
