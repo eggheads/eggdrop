@@ -2,7 +2,7 @@
 #  This is the Makefile for EGGDROP (the irc bot)
 #  You should never need to edit this.
 #
-# $Id: Makefile.in,v 1.23 2000/07/23 20:47:12 fabian Exp $
+# $Id: Makefile.in,v 1.24 2000/09/12 15:28:28 fabian Exp $
 
 SHELL = @SHELL@
 top_srcdir = @top_srcdir@
@@ -67,6 +67,8 @@ TCLLIBFN = @TCLLIBFN@
 DEBCFLAGS = -DDEBUG_ASSERT -DDEBUG_MEM 
 
 modconf = $(top_srcdir)/misc/modconfig --top_srcdir=$(top_srcdir)
+
+egg_test_run =  EGG_LANGDIR=$(top_srcdir)/language ./$(EGGEXEC) -v
 
 post_config  =  echo "" && \
 		echo "You can now compile the bot, using \"make\"." && \
@@ -202,7 +204,7 @@ modegg: modtest
 	@rm -f src/mod/mod.xlibs
 	@cd src && $(MAKE_MODEGG) $(EGGEXEC)
 	@echo ""
-	@./$(EGGEXEC) -v
+	@$(egg_test_run)
 	@ls -l $(EGGEXEC)
 
 modules: modtest
@@ -223,7 +225,7 @@ static: eggtest
 	@echo ""
 	@cd src && $(MAKE_STATIC) $(EGGEXEC)
 	@echo ""
-	@./$(EGGEXEC) -v
+	@$(egg_test_run)
 	@ls -l $(EGGEXEC)
 	@$(egg_install_msg)
 
@@ -232,7 +234,7 @@ debug: debegg debmodules
 debegg: modtest
 	@cd src && $(MAKE_DEBEGG) $(EGGEXEC)
 	@echo ""
-	@./$(EGGEXEC) -v
+	@$(egg_test_run)
 	@ls -l $(EGGEXEC)
 
 debmodules: modtest
@@ -253,7 +255,7 @@ sdebug: eggtest
 	@echo ""
 	@cd src && $(MAKE_SDEBUG) $(EGGEXEC)
 	@echo ""
-	@./$(EGGEXEC) -v
+	@$(egg_test_run)
 	@ls -l $(EGGEXEC)
 	@$(egg_install_msg)
 
@@ -303,7 +305,7 @@ install-start:
 		exit 1; \
 	fi
 	@echo ""
-	@./$(EGGEXEC) -v
+	@$(egg_test_run)
 	@echo
 	@echo "Installing in directory: '$(DEST)'."
 	@echo

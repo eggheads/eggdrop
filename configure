@@ -1280,14 +1280,14 @@ NEED_DL=1
 DEFAULT_MAKE=debug
 MOD_EXT=so
 
-echo $ac_n "checking your OS""... $ac_c" 1>&6
-echo "configure:1285: checking your OS" >&5
-if eval "test \"`echo '$''{'egg_cv_var_system'+set}'`\" = set"
-then
+echo $ac_n "checking your os""... $ac_c" 1>&6
+echo "configure:1285: checking your os" >&5
+if eval "test \"`echo '$''{'egg_cv_var_system'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
-  eval "egg_cv_var_system=`${UNAME}`"
+  egg_cv_var_system=`${UNAME}`
 fi
+
 
 case "$egg_cv_var_system" in
   BSD/OS)
@@ -2158,7 +2158,7 @@ EOF
 
 fi
 
-for ac_hdr in sys/select.h sys/rusage.h unistd.h dlfcn.h stdarg.h strings.h
+for ac_hdr in sys/select.h sys/rusage.h unistd.h dlfcn.h stdarg.h strings.h limits.h
 do
 ac_safe=`echo "$ac_hdr" | sed 'y%./+-%__p_%'`
 echo $ac_n "checking for $ac_hdr""... $ac_c" 1>&6
@@ -3226,12 +3226,14 @@ then
   # Check Tcl's version
   echo $ac_n "checking for Tcl version""... $ac_c" 1>&6
 echo "configure:3229: checking for Tcl version" >&5
-  if eval "test \"`echo '$''{'egg_cv_var_tcl_version'+set}'`\" = set"
-  then
-    echo $ac_n "(cached) $ac_c" 1>&6
-  else
-    eval "egg_cv_var_tcl_version=`grep TCL_VERSION $TCLINC/$TCLINCFN | head -1 | $AWK '{gsub(/\"/, "", $3); print $3}'`"
-  fi
+  if eval "test \"`echo '$''{'egg_cv_var_tcl_version'+set}'`\" = set"; then
+  echo $ac_n "(cached) $ac_c" 1>&6
+else
+  
+    egg_cv_var_tcl_version=`grep TCL_VERSION $TCLINC/$TCLINCFN | head -1 | $AWK '{gsub(/\"/, "", $3); print $3}'`
+  
+fi
+
 
   if test ! "x${egg_cv_var_tcl_version}" = "x"
   then
@@ -3243,13 +3245,15 @@ echo "configure:3229: checking for Tcl version" >&5
 
   # Check Tcl's patch level (if avaliable)
   echo $ac_n "checking for Tcl patch level""... $ac_c" 1>&6
-echo "configure:3247: checking for Tcl patch level" >&5
-  if eval "test \"`echo '$''{'egg_cv_var_tcl_patch_level'+set}'`\" = set"
-  then
-    echo $ac_n "(cached) $ac_c" 1>&6
-  else
+echo "configure:3249: checking for Tcl patch level" >&5
+  if eval "test \"`echo '$''{'egg_cv_var_tcl_patch_level'+set}'`\" = set"; then
+  echo $ac_n "(cached) $ac_c" 1>&6
+else
+  
     eval "egg_cv_var_tcl_patch_level=`grep TCL_PATCH_LEVEL $TCLINC/$TCLINCFN | head -1 | $AWK '{gsub(/\"/, "", $3); print $3}'`"
-  fi
+  
+fi
+
 
   if test ! "x${egg_cv_var_tcl_patch_level}" = "x"
   then
@@ -3325,11 +3329,11 @@ fi
 
 # Check for Tcl_Free()
 echo $ac_n "checking if Tcl library has Tcl_Free""... $ac_c" 1>&6
-echo "configure:3329: checking if Tcl library has Tcl_Free" >&5
-if eval "test \"`echo '$''{'egg_cv_var_tcl_free'+set}'`\" = set"
-then
+echo "configure:3333: checking if Tcl library has Tcl_Free" >&5
+if eval "test \"`echo '$''{'egg_cv_var_tcl_free'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
+  
   ac_save_LIBS="$LIBS"
   LIBS="$TCL_TESTLIBS"
   cat > conftest.$ac_ext << EOF
@@ -3344,34 +3348,34 @@ EOF
   if { (eval echo configure: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}
   then
     rm -rf conftest*
-    eval "egg_cv_var_tcl_free=yes"
+    egg_cv_var_tcl_free=yes
   else
     echo "configure: failed program was:" >&5
     cat conftest.$ac_ext >&5
     rm -rf conftest*
-    eval "egg_cv_var_tcl_free=no"
+    egg_cv_var_tcl_free=no
   fi
   rm -f conftest*
   LIBS="$ac_save_LIBS"
+
 fi
+
+echo "$ac_t""$egg_cv_var_tcl_free" 1>&6
 
 if test "x${egg_cv_var_tcl_free}" = "xyes"
 then
-  echo "$ac_t""yes" 1>&6
   cat >> confdefs.h <<\EOF
 #define HAVE_TCL_FREE 1
 EOF
-else
-  echo "$ac_t""no" 1>&6
 fi
 
 # Check for TclpFinalizeThreadData()
 echo $ac_n "checking if Tcl library is multithreaded""... $ac_c" 1>&6
-echo "configure:3371: checking if Tcl library is multithreaded" >&5
-if eval "test \"`echo '$''{'egg_cv_var_tcl_multithreaded'+set}'`\" = set"
-then
+echo "configure:3375: checking if Tcl library is multithreaded" >&5
+if eval "test \"`echo '$''{'egg_cv_var_tcl_multithreaded'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
+  
   ac_save_LIBS="$LIBS"
   LIBS="$TCL_TESTLIBS"
   cat > conftest.$ac_ext << EOF
@@ -3386,20 +3390,22 @@ EOF
   if { (eval echo configure: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}
   then
     rm -rf conftest*
-    eval "egg_cv_var_tcl_multithreaded=yes"
+    egg_cv_var_tcl_multithreaded=yes
   else
     echo "configure: failed program was:" >&5
     cat conftest.$ac_ext >&5
     rm -rf conftest*
-    eval "egg_cv_var_tcl_multithreaded=no"
+    egg_cv_var_tcl_multithreaded=no
   fi
   rm -f conftest*
   LIBS="$ac_save_LIBS"
+
 fi
+
+echo "$ac_t""$egg_cv_var_tcl_multithreaded" 1>&6
 
 if test "x${egg_cv_var_tcl_multithreaded}" = "xyes"
 then
-  echo "$ac_t""yes" 1>&6
   cat << 'EOF' >&2
 configure: warning:
 
@@ -3416,8 +3422,6 @@ EOF
   then
     LIBS="-lpthread $LIBS"
   fi
-else
-  echo "$ac_t""no" 1>&6
 fi
 
 if test ! "x${TCLLIBEXT}" = "x.a"
@@ -3462,7 +3466,7 @@ configure: warning:
 
 EOF
     TCL_REQS="libtcle.a"
-    TCL_LIBS="-L. -ltcle $EGG_MATH_LIB"
+    TCL_LIBS="-L`pwd` -ltcle $EGG_MATH_LIB"
   fi
 fi
 

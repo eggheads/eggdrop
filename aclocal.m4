@@ -1,7 +1,7 @@
 dnl aclocal.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: aclocal.m4,v 1.24 2000/09/05 15:58:40 fabian Exp $
+dnl $Id: aclocal.m4,v 1.25 2000/09/12 15:28:28 fabian Exp $
 dnl
 
 
@@ -119,13 +119,8 @@ NEED_DL=1
 DEFAULT_MAKE=debug
 MOD_EXT=so
 
-AC_MSG_CHECKING(your OS)
-if eval "test \"`echo '$''{'egg_cv_var_system'+set}'`\" = set"
-then
-  echo $ac_n "(cached) $ac_c" 1>&6
-else
-  eval "egg_cv_var_system=`${UNAME}`"
-fi
+AC_MSG_CHECKING(your os)
+AC_CACHE_VAL(egg_cv_var_system, [egg_cv_var_system=`${UNAME}`])
 
 case "$egg_cv_var_system" in
   BSD/OS)
@@ -765,12 +760,9 @@ then
 
   # Check Tcl's version
   AC_MSG_CHECKING(for Tcl version)
-  if eval "test \"`echo '$''{'egg_cv_var_tcl_version'+set}'`\" = set"
-  then
-    echo $ac_n "(cached) $ac_c" 1>&6
-  else
-    eval "egg_cv_var_tcl_version=`grep TCL_VERSION $TCLINC/$TCLINCFN | head -1 | $AWK '{gsub(/\"/, "", [$]3); print [$]3}'`"
-  fi
+  AC_CACHE_VAL(egg_cv_var_tcl_version, [
+    egg_cv_var_tcl_version=`grep TCL_VERSION $TCLINC/$TCLINCFN | head -1 | $AWK '{gsub(/\"/, "", [$]3); print [$]3}'`
+  ])
 
   if test ! "x${egg_cv_var_tcl_version}" = "x"
   then
@@ -782,12 +774,9 @@ then
 
   # Check Tcl's patch level (if avaliable)
   AC_MSG_CHECKING(for Tcl patch level)
-  if eval "test \"`echo '$''{'egg_cv_var_tcl_patch_level'+set}'`\" = set"
-  then
-    echo $ac_n "(cached) $ac_c" 1>&6
-  else
+  AC_CACHE_VAL(egg_cv_var_tcl_patch_level, [
     eval "egg_cv_var_tcl_patch_level=`grep TCL_PATCH_LEVEL $TCLINC/$TCLINCFN | head -1 | $AWK '{gsub(/\"/, "", [$]3); print [$]3}'`"
-  fi
+  ])
 
   if test ! "x${egg_cv_var_tcl_patch_level}" = "x"
   then
@@ -880,11 +869,7 @@ dnl  EGG_TCL_CHECK_FREE()
 dnl
 AC_DEFUN(EGG_TCL_CHECK_FREE, [dnl
 # Check for Tcl_Free()
-AC_MSG_CHECKING(if Tcl library has Tcl_Free)
-if eval "test \"`echo '$''{'egg_cv_var_tcl_free'+set}'`\" = set"
-then
-  echo $ac_n "(cached) $ac_c" 1>&6
-else
+AC_CACHE_CHECK([if Tcl library has Tcl_Free], [egg_cv_var_tcl_free], [
   ac_save_LIBS="$LIBS"
   LIBS="$TCL_TESTLIBS"
   cat > conftest.$ac_ext << EOF
@@ -899,23 +884,20 @@ EOF
   if { (eval echo configure: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}
   then
     rm -rf conftest*
-    eval "egg_cv_var_tcl_free=yes"
+    egg_cv_var_tcl_free=yes
   else
     echo "configure: failed program was:" >&5
     cat conftest.$ac_ext >&5
     rm -rf conftest*
-    eval "egg_cv_var_tcl_free=no"
+    egg_cv_var_tcl_free=no
   fi
   rm -f conftest*
   LIBS="$ac_save_LIBS"
-fi
+])
 
 if test "x${egg_cv_var_tcl_free}" = "xyes"
 then
-  AC_MSG_RESULT(yes)
   AC_DEFINE(HAVE_TCL_FREE)dnl
-else
-  AC_MSG_RESULT(no)
 fi
 ])dnl
 
@@ -924,11 +906,7 @@ dnl  EGG_TCL_CHECK_THREADS()
 dnl
 AC_DEFUN(EGG_TCL_CHECK_THREADS, [dnl
 # Check for TclpFinalizeThreadData()
-AC_MSG_CHECKING(if Tcl library is multithreaded)
-if eval "test \"`echo '$''{'egg_cv_var_tcl_multithreaded'+set}'`\" = set"
-then
-  echo $ac_n "(cached) $ac_c" 1>&6
-else
+AC_CACHE_CHECK([if Tcl library is multithreaded], [egg_cv_var_tcl_multithreaded], [
   ac_save_LIBS="$LIBS"
   LIBS="$TCL_TESTLIBS"
   cat > conftest.$ac_ext << EOF
@@ -943,20 +921,19 @@ EOF
   if { (eval echo configure: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}
   then
     rm -rf conftest*
-    eval "egg_cv_var_tcl_multithreaded=yes"
+    egg_cv_var_tcl_multithreaded=yes
   else
     echo "configure: failed program was:" >&5
     cat conftest.$ac_ext >&5
     rm -rf conftest*
-    eval "egg_cv_var_tcl_multithreaded=no"
+    egg_cv_var_tcl_multithreaded=no
   fi
   rm -f conftest*
   LIBS="$ac_save_LIBS"
-fi
+])
 
 if test "x${egg_cv_var_tcl_multithreaded}" = "xyes"
 then
-  AC_MSG_RESULT(yes)
   cat << 'EOF' >&2
 configure: warning:
 
@@ -971,8 +948,6 @@ EOF
   then
     LIBS="-lpthread $LIBS"
   fi
-else
-  AC_MSG_RESULT(no)
 fi
 ])dnl
 
@@ -1023,7 +998,7 @@ configure: warning:
 
 EOF
     TCL_REQS="libtcle.a"
-    TCL_LIBS="-L. -ltcle $EGG_MATH_LIB"
+    TCL_LIBS="-L`pwd` -ltcle $EGG_MATH_LIB"
   fi
 fi
 AC_SUBST(TCL_REQS)dnl
