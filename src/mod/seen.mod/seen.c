@@ -10,7 +10,7 @@
  * 1.2     1997-08-20      Minor fixes. [BB]
  * 1.2a    1997-08-24      Minor fixes. [BB]
  *
- * $Id: seen.c,v 1.24 2002/01/02 03:46:39 guppy Exp $
+ * $Id: seen.c,v 1.25 2002/04/16 03:51:19 guppy Exp $
  */
 /*
  * Copyright (C) 1999, 2000, 2001, 2002 Eggheads Development Team
@@ -114,11 +114,11 @@ static int seen_expmem()
 static int pub_seen(char *nick, char *host, char *hand,
 		    char *channel, char *text)
 {
-  char prefix[50];
+  char prefix[91]; /* sizeof(name) + strlen("PRIVMSG  :") */
   struct chanset_t *chan = findchan_by_dname(channel);
 
   if ((chan != NULL) && channel_seen(chan)) {
-    sprintf(prefix, "PRIVMSG %s :", chan->name);
+    egg_snprintf(prefix, sizeof prefix, "PRIVMSG %s :", chan->name);
     do_seen(DP_HELP, prefix, nick, hand, chan->dname, text);
   }
   return 0;
