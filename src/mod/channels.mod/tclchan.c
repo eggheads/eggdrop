@@ -1,7 +1,7 @@
 /*
  * tclchan.c -- part of channels.mod
  *
- * $Id: tclchan.c,v 1.47 2001/06/30 06:29:56 guppy Exp $
+ * $Id: tclchan.c,v 1.48 2001/06/30 06:34:44 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1467,6 +1467,33 @@ static int tcl_delchanrec STDVAR
   return TCL_OK;
 }
 
+static int tcl_haschanrec STDVAR
+{
+  struct userrec *u;
+  struct chanset_t *chan;
+  struct chanuserrec *chanrec;
+
+  BADARGS(3, 3, " handle channel");
+
+  chan = findchan_by_dname(argv[2]);
+  if (chan == NULL) {
+    Tcl_AppendResult(irp, "illegal channel: ", argv[2], NULL);
+    return TCL_ERROR;
+  }
+  u = get_user_by_handle(userlist, argv[1]);
+  if (!u) {
+    Tcl_AppendResult(irp, "No such user: ", argv[1], NULL);
+    return TCL_ERROR;
+  }
+  chanrec = get_chanrec(u, chan->dname);
+  if (chanrec) {
+    Tcl_AppendResult(irp, "1", NULL);
+    return TCL_OK;
+  }
+  Tcl_AppendResult(irp, "0", NULL);
+  return TCL_OK;
+}
+
 static void init_masklist(masklist *m)
 {
   m->mask = (char *)nmalloc(1);
@@ -1763,5 +1790,6 @@ static tcl_cmds channels_cmds[] =
   {"setudef",		tcl_setudef},
   {"renudef",		tcl_renudef},
   {"deludef",		tcl_deludef},
+  {"haschanrec",	tcl_haschanrec},
   {NULL,		NULL}
 };

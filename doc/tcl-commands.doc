@@ -192,6 +192,9 @@ specific commands, see later.
     returns: "1" on success, "0" if the user does not exist or if there
       isn't such a channel
 
+| haschanrec <handle> <channel>
+|   returns: "1" if handle has a chanrec for that channel, "0" otherwise
+
   getchaninfo <handle> <channel>
     returns: info line for a specific channel (behaves just like 'getinfo')
 
