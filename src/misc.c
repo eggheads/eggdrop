@@ -7,7 +7,7 @@
  *   help system
  *   motd display and %var substitution
  *
- * $Id: misc.c,v 1.50 2002/09/27 22:44:02 wcc Exp $
+ * $Id: misc.c,v 1.51 2002/09/30 06:32:30 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -482,8 +482,7 @@ void daysdur(time_t now, time_t then, char *out)
 void putlog EGG_VARARGS_DEF(int, arg1)
 {
   int i, type, tsl;
-  char *format, *chname, s[LOGLINELEN], s1[256], *out;
-  char ct[81], *s2, stamp[32];
+  char *format, *chname, s[LOGLINELEN], s1[256], *out, ct[81], *s2, stamp[33];
   va_list va;
   struct tm *t = localtime(&now);
 
@@ -491,6 +490,7 @@ void putlog EGG_VARARGS_DEF(int, arg1)
   chname = va_arg(va, char *);
   format = va_arg(va, char *);
 
+  /* Create the timestamp */
   strftime(&stamp[0], 32, LOG_TS, t);
   sprintf(&stamp[0], "%s ", stamp);
   tsl = strlen(stamp);
@@ -517,6 +517,7 @@ void putlog EGG_VARARGS_DEF(int, arg1)
       }
     }
   }
+  /* Place the timestamp in the string to be printed */
   if ((out[0]) && (shtime)) {
     strncpy(&s[0], stamp, tsl);
     out = s;
@@ -642,7 +643,6 @@ void check_logsize()
 void flushlogs()
 {
   int i;
-  struct tm *t = localtime(&now);
 
   /* Logs may not be initialised yet. */
   if (!logs)
@@ -657,13 +657,10 @@ void flushlogs()
          /* Repeat.. if quicklogs used then display 'last message
           * repeated x times' and reset repeats.
 	  */
-	if (t) {
-	  fprintf(logs[i].f, "[%2.2d:%2.2d] ", t->tm_hour, t->tm_min);
-	  fprintf(logs[i].f, MISC_LOGREPEAT, logs[i].repeats);
-	} else {
-	  fprintf(logs[i].f, "[??:??] ");
-	  fprintf(logs[i].f, MISC_LOGREPEAT, logs[i].repeats);
-	}
+        char stamp[32];
+        strftime(&stamp[0], 32, LOG_TS, localtime(&now));
+	fprintf(logs[i].f, "%s ", stamp);
+	fprintf(logs[i].f, MISC_LOGREPEAT, logs[i].repeats);
 	/* Reset repeats */
 	logs[i].repeats = 0;
       }
