@@ -199,9 +199,6 @@ ainstall:
 	@if test ! -r $(DEST)/motd; then \
 	        $(CP1) motd $(DEST)/; \
         fi
- 	@if test ! -r $(DEST)/telnet-banner; then \
-                 $(CP1) telnet-banner $(DEST)/; \
-        fi
 	@if test -h $(DEST)/modules; then \
 		echo Removing symlink to archival modules directory.; \
 		rm -f $(DEST)/modules; \

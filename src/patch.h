@@ -22,7 +22,7 @@ PATCH("935684717"); /* current "unix" time */
  *
  *
  */
-PATCH("dude-makefile"); /* last patch added */ 
+PATCH("strchrfix"); /* last patch added */ 
 /*
  *
  *
