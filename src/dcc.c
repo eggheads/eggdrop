@@ -1164,7 +1164,7 @@ static void eof_dcc_telnet(int idx)
 
 static void display_telnet(int idx, char *buf)
 {
-  strcpy(buf, "lstn");
+  sprintf(buf, "lstn %d", dcc[idx].port);
 }
 
 struct dcc_table DCC_TELNET =

@@ -273,7 +273,9 @@ else
   AC_CHECK_LIB(dns,gethostbyname)
   AC_CHECK_LIB(dl,dlopen)
 dnl this is needed for Tcl compiled with thread support
-  AC_CHECK_LIB(pthread,pthread_create,ac_cv_lib_pthread_pthread_create=yes,ac_cv_lib_pthread_pthread_create=no)
+  AC_CHECK_LIB(pthread,pthread_mutex_init,
+ac_cv_lib_pthread_pthread_mutex_init=yes,
+ac_cv_lib_pthread_pthread_mutex_init=no)
   if test "$SUNOS" = "yes"
   then
     dnl for suns without yp or something like that
@@ -747,7 +749,7 @@ else
     TCL_TESTLIBS="-L$TCLLIB -l$TCLLIBFNS -lm $LIBS"
   fi
 fi
-if test "x${ac_cv_lib_pthread_pthread_create}" = "xyes"
+if test "x${ac_cv_lib_pthread_pthread_mutex_init}" = "xyes"
 then
   TCL_TESTLIBS="-lpthread $TCL_TESTLIBS"
 fi
@@ -835,7 +837,7 @@ EOF
   AC_DEFINE(HAVE_TCL_THREADS)
 
   # add -lpthread to $LIBS if we have it
-  if test "x${ac_cv_lib_pthread_pthread_create}" = "xyes"
+  if test "x${ac_cv_lib_pthread_pthread_mutex_init}" = "xyes"
   then
     LIBS="-lpthread $LIBS"
   fi
