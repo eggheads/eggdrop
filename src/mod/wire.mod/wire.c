@@ -15,10 +15,10 @@
  * 1.4       1997-11-25      1.2.2.0         Added language addition  Kirk
  * 1.5       1998-07-12      1.3.0.0         Fixed ;me and updated    BB
  *
- * $Id: wire.c,v 1.22 2002/06/06 18:52:26 wcc Exp $
+ * $Id: wire.c,v 1.23 2002/12/24 02:30:09 wcc Exp $
  */
 /*
- * Copyright (C) 1999, 2000, 2001, 2002 Eggheads Development Team
+ * Copyright (C) 1999, 2000, 2001, 2002, 2003 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

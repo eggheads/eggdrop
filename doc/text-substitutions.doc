@@ -23,7 +23,7 @@ respective values:
 
  %V   current Eggdrop version (i.e., "eggdrop v1.6.14")
 
- %E   long form of %V (i.e., "Eggdrop v1.6.14 (C) 1997 Robey Pointer (C) 2002 Eggheads")
+ %E   long form of %V (i.e., "Eggdrop v1.6.14 (C) 1997 Robey Pointer (C) 2003 Eggheads")
 
  %C   channels the bot is on (i.e., "#lamest, #botnetcentral")
 
@@ -69,4 +69,4 @@ Other variables:
  %{center}     center the following text (70 columns)
      _________________________________________________________________
 
-   Copyright (C) 1999, 2000, 2001, 2002 Eggheads Development Team
+   Copyright (C) 1999, 2000, 2001, 2002, 2003 Eggheads Development Team

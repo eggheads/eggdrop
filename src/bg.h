@@ -1,10 +1,10 @@
 /*
  * bg.h
  *
- * $Id: bg.h,v 1.3 2002/01/02 03:46:35 guppy Exp $
+ * $Id: bg.h,v 1.4 2002/12/24 02:30:04 wcc Exp $
  */
 /*
- * Copyright (C) 2000, 2001, 2002 Eggheads Development Team
+ * Copyright (C) 2000, 2001, 2002, 2003 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

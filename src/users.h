@@ -2,11 +2,11 @@
  * users.h
  *   structures and definitions used by users.c and userrec.c
  *
- * $Id: users.h,v 1.10 2002/03/29 05:53:55 guppy Exp $
+ * $Id: users.h,v 1.11 2002/12/24 02:30:05 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999, 2000, 2001, 2002 Eggheads Development Team
+ * Copyright (C) 1999, 2000, 2001, 2002, 2003 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

@@ -1,4 +1,9 @@
-Contents of the doc/settings/ directory:
+Directory Contents - doc/
+Last revised: December 23, 2002
+     _________________________________________________________________
+
+                     Directory Contents - doc/settings
+
 
 core.settings
   All module-independent Eggdrop settings are documented here.

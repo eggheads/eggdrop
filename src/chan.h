@@ -3,11 +3,11 @@
  *   stuff common to chan.c and mode.c
  *   users.h needs to be loaded too
  *
- * $Id: chan.h,v 1.33 2002/11/23 19:40:49 wcc Exp $
+ * $Id: chan.h,v 1.34 2002/12/24 02:30:04 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999, 2000, 2001, 2002 Eggheads Development Team
+ * Copyright (C) 1999, 2000, 2001, 2002, 2003 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

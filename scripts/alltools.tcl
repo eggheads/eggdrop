@@ -4,6 +4,8 @@
 # toolkit was authored by (Someone claim this)[unknown]
 # moretools was authored by David Sesno(walker@shell.pcrealm.net)
 #
+# Copyright (C) 2002, 2003 Eggheads Development Team
+#
 # TG        ?????????: modified for 1.3.0 bots
 # Tothwolf  02May1999: rewritten and updated
 # guppy     02May1999: updated even more
@@ -20,7 +22,7 @@
 # guppy     03Mar2002: optimized
 # Souperman 05Nov2002: added ordnumber
 #
-# $Id: alltools.tcl,v 1.14 2002/11/06 04:10:49 wcc Exp $
+# $Id: alltools.tcl,v 1.15 2002/12/24 02:30:04 wcc Exp $
 #
 ########################################
 # Descriptions of available commands:
