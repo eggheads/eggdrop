@@ -119,13 +119,14 @@ There are also some variables you can set in your config file:
     This setting allows you the logging of all information received from the
     server via console mode 'r'.
     NOTE: This is a large security hole, allowing people to see user passwords.
-    This is now restricted to +n users only. Please choose your owners with
+    This is now restricted to +n users only. Please choose your owners with 
     care.
 
 
   set debug-output 0
     This setting allows you the logging of all information sent to the server
-    via console mode 'v'.
+    via console/log mode 'v'. It also allows logging of botnet traffic via
+    console/log mode 't'.
     NOTE: This is a large security hole, allowing people to see passwords.
     This is now restricted to +n users only. Please choose your owners with
     care.

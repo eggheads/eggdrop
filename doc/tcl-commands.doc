@@ -2080,7 +2080,7 @@ marked with vertical bars (|) on the left.
               (possibly an error message if it doesn't know how to deal with
               it).
 
-    (6) FILT  Return 1 to indicate the text has been processed, and the bot
+    (6) FILT  Return "" to indicate the text has been processed, and the bot
               should just ignore it. Otherwise, it will treat the text like
               any other.
 
