@@ -4,7 +4,7 @@
  *   channel mode changes and the bot's reaction to them
  *   setting and getting the current wanted channel modes
  *
- * $Id: mode.c,v 1.54 2002/01/02 03:46:39 guppy Exp $
+ * $Id: mode.c,v 1.55 2002/02/25 04:37:09 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -499,32 +499,21 @@ static void got_deop(struct chanset_t *chan, char *nick, char *from,
 
     if (glob_master(victim) || chan_master(victim))
       ok = 0;
-    else if ((glob_op(victim) || glob_friend(victim)) && !chan_deop(victim))
+    else if (channel_protectops(chan) && (glob_op(victim) || chan_op(victim)))
       ok = 0;
-    else if (chan_op(victim) || chan_friend(victim))
+    else if (channel_protectfriends(chan) && (glob_friend(victim) ||
+	     chan_friend(victim)))
       ok = 0;
-    if (!ok && !match_my_nick(nick) &&
-       rfc_casecmp(who, nick) && had_op &&
-	!match_my_nick(who)) {	/* added 25mar1996, robey */
-      /* Do we want to reop? */
+    else if (!chan_deop(victim) || (!glob_deop(victim) && !chan_op(victim)))
+      ok = 0;
+
+    /* do we want to reop victim? */
+    if (!ok && had_op && !match_my_nick(nick) && rfc_casecmp(who, nick) && 
+	!match_my_nick(who)) {
       /* Is the deopper NOT a master or bot? */
-      if (!glob_master(user) && !chan_master(user) && !glob_bot(user) &&
-	  /* and is the channel protectops? */
-	  ((channel_protectops(chan) &&
-	    /* and it's not +bitch ... */
-	    (!channel_bitch(chan) ||
-	    /* or the user's a valid op? */
-	     chan_op(victim) || (glob_op(victim) && !chan_deop(victim)))) ||
-	   /* or is the channel protectfriends? */
-           (channel_protectfriends(chan) &&
-	     /* and the users a valid friend? */
-             (chan_friend(victim) || (glob_friend(victim) &&
-				      !chan_deop(victim))))) &&
-       /* and the users not a de-op? */
-       !(chan_deop(victim) || (glob_deop(victim) && !chan_op(victim))))
-	/* Then we'll bless them */
-	add_mode(chan, '+', 'o', who);
-      else if (reversing)
+      if (reversing || (!glob_master(user) && !chan_master(user) && !glob_bot(user) &&
+	  !channel_bitch(chan)))
+	/* Then we'll bless the victim */
 	add_mode(chan, '+', 'o', who);
     }
   }
