@@ -4,7 +4,7 @@
  *   disconnect on a dcc socket
  *   ...and that's it!  (but it's a LOT)
  *
- * $Id: dcc.c,v 1.71 2003/12/09 22:21:46 wcc Exp $
+ * $Id: dcc.c,v 1.72 2003/12/10 01:37:13 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1960,7 +1960,7 @@ struct dcc_table DCC_IDENT = {
   NULL
 };
 
-void dcc_telnet_got_ident(int i, char *host)
+static void dcc_telnet_got_ident(int i, char *host)
 {
   int idx;
   char x[1024];
