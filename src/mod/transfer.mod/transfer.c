@@ -1,7 +1,7 @@
 /*
  * transfer.c -- part of transfer.mod
  *
- * $Id: transfer.c,v 1.51 2002/06/06 18:52:25 wcc Exp $
+ * $Id: transfer.c,v 1.52 2002/08/15 04:51:53 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -609,8 +609,14 @@ static int tcl_dccsend STDVAR
   }
   if (copy_to_tmp) {
     sys = nmalloc(strlen(tempdir) + strlen(nfn) + 1);
-    sprintf(sys, "%s%s", tempdir, nfn);		/* New filename, in /tmp */
-    copyfile(argv[1], sys);
+    sprintf(sys, "%s%s", tempdir, nfn);
+    f = fopen(sys, "r");
+    if (f) {
+      fclose(f);
+      Tcl_AppendResult(irp, "5", NULL);
+      return TCL_OK;
+    } else
+      copyfile(argv[1], sys);
   } else {
     sys = nmalloc(strlen(argv[1]) + 1);
     strcpy(sys, argv[1]);

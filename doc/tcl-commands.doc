@@ -1129,6 +1129,8 @@ marked with vertical bars (|) on the left.
       3 the file doesn't exist
       4 the file was queued for later transfer, which means that person has
         too many file transfers going right now
+      5 copy-to-tmp is enabled and the file already exists in the temp
+        directory
     Module: transfer
 
   filesend <idx> <filename> [ircnick]
