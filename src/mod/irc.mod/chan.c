@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  *
- * $Id: chan.c,v 1.90 2002/06/19 21:13:39 wcc Exp $
+ * $Id: chan.c,v 1.91 2002/07/25 17:40:18 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1340,7 +1340,7 @@ static int got471(char *from, char *msg)
     putlog(LOG_JOIN, chan->dname, IRC_CHANFULL, chan->dname);
     check_tcl_need(chan->dname, "limit");
 
-    chan = findchan(chname); 
+    chan = findchan_by_dname(chname); 
     if (!chan)
       return 0;
 
@@ -1375,7 +1375,7 @@ static int got473(char *from, char *msg)
     putlog(LOG_JOIN, chan->dname, IRC_CHANINVITEONLY, chan->dname);
     check_tcl_need(chan->dname, "invite");
 
-    chan = findchan(chname); 
+    chan = findchan_by_dname(chname); 
     if (!chan)
       return 0;
 
@@ -1410,7 +1410,7 @@ static int got474(char *from, char *msg)
     putlog(LOG_JOIN, chan->dname, IRC_BANNEDFROMCHAN, chan->dname);
     check_tcl_need(chan->dname, "unban");
 
-    chan = findchan(chname); 
+    chan = findchan_by_dname(chname); 
     if (!chan)
       return 0;
 
@@ -1451,9 +1451,9 @@ static int got475(char *from, char *msg)
     } else {
       check_tcl_need(chan->dname, "key");
 
-      chan = findchan(chname); 
+      chan = findchan_by_dname(chname); 
       if (!chan)
-	return 0;
+        return 0;
 
       if (chan->need_key[0])
 	do_tcl("need-key", chan->need_key);
