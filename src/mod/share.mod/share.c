@@ -1,7 +1,7 @@
 /*
  * share.c -- part of share.mod
  *
- * $Id: share.c,v 1.78 2004/01/09 05:56:38 wcc Exp $
+ * $Id: share.c,v 1.79 2004/02/10 01:57:13 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1453,9 +1453,11 @@ static void check_expired_tbufs()
           /* ^ send it again in case they missed it */
         /* If it's a share bot that hasnt been sharing, ask again */
       } else if (!(dcc[i].status & STAT_SHARE)) {
-        if (dcc[i].user && (bot_flags(dcc[i].user) & BOT_AGGRESSIVE))
+	/* Patched from original source by giusc@gbss.it <20040207> */
+        if (dcc[i].user && (bot_flags(dcc[i].user) & BOT_AGGRESSIVE))  {
           dprintf(i, "s u?\n");
-        dcc[i].status |= STAT_OFFERED;
+          dcc[i].status |= STAT_OFFERED;
+        }
       }
     }
 }
