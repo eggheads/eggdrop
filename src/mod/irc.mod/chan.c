@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  * 
- * $Id: chan.c,v 1.53 2000/10/27 19:32:41 fabian Exp $
+ * $Id: chan.c,v 1.54 2000/10/27 19:40:53 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1468,6 +1468,7 @@ static void do_embedded_mode(struct chanset_t *chan, char *nick,
 static int gotjoin(char *from, char *chname)
 {
   char *nick, *p, *newmode, buf[UHOSTLEN], *uhost = buf;
+  char *ch_dname = NULL;
   int ok = 1;
   struct chanset_t *chan;
   memberlist *m;
@@ -1493,9 +1494,15 @@ static int gotjoin(char *from, char *chname)
      * name now. This will happen when we initially join the channel, as we
      * dont know the unique channel name that the server has made up. <cybah>
      */  
-    if (strlen(chname) > (CHANNEL_ID_LEN + 1)) {
-      egg_snprintf(buf, UHOSTLEN, "!%s", chname + (CHANNEL_ID_LEN + 1));
-      chan = findchan_by_dname(buf);
+     int	l_chname = strlen(chname);
+
+    if (l_chname > (CHANNEL_ID_LEN + 1)) {
+      ch_dname = nmalloc(l_chname + 1);
+      if (ch_dname) {
+	egg_snprintf(ch_dname, l_chname + 2, "!%s",
+		     chname + (CHANNEL_ID_LEN + 1));
+	chan = findchan_by_dname(ch_dname);
+      }
     }
   } else if (!chan) {
     /* As this is not a !chan, we need to search for it by display name now.
@@ -1555,11 +1562,28 @@ static int gotjoin(char *from, char *chname)
 	strcpy(m->userhost, uhost);
 	m->user = u;
 	m->flags |= STOPWHO;
+
 	check_tcl_join(nick, uhost, u, chan->dname);
-	/* The tcl binding might have deleted the current user. Use the record
-	 * saved in the channel record as that always gets updated.
-	 */
+
+	/* The tcl binding might have deleted the current user and the
+	 * current channel, so we'll now have to re-check whether they
+	 * both still exist.
+	 */ 
+	chan = findchan(chname);
+	if (!chan) {
+	  if (ch_dname)
+	    chan = findchan_by_dname(ch_dname);
+	  else
+	    chan = findchan_by_dname(chname);
+	}
+	if (!chan)
+	  /* The channel doesn't exist anymore, so get out of here. */
+	  goto exit;
+
+	/* The record saved in the channel record always gets updated,
+	   so we can use that. */
 	u = m->user;
+
 	if (newmode)
 	  do_embedded_mode(chan, nick, m, newmode);
 	if (match_my_nick(nick)) {
@@ -1649,7 +1673,7 @@ static int gotjoin(char *from, char *chname)
 		    dprintf(DP_SERVER, "KICK %s %s :%s\n", chname, m->nick,
 			    IRC_YOUREBANNED);
 		    m->flags |= SENTKICK;
-		    return 0;
+		    goto exit;
 		  }
 	    }
 	  }
@@ -1692,6 +1716,10 @@ static int gotjoin(char *from, char *chname)
       }
     }
   }
+
+exit:
+  if (ch_dname)
+    nfree(ch_dname);
   return 0;
 }
 
