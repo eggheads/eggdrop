@@ -4,7 +4,7 @@
  *   channel mode changes and the bot's reaction to them
  *   setting and getting the current wanted channel modes
  * 
- * $Id: mode.c,v 1.24 2000/06/10 01:03:44 fabian Exp $
+ * $Id: mode.c,v 1.25 2000/06/20 21:41:22 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -740,11 +740,8 @@ static void got_unban(struct chanset_t *chan, char *nick, char *from,
   if ((u_equals_mask(global_bans, who) || u_equals_mask(chan->bans, who)) &&
       me_op(chan) && !channel_dynamicbans(chan)) {
     /* That's a permban! */
-    if (glob_bot(user) && (bot_flags(u) & BOT_SHARE)) {
-      /* Sharebot -- do nothing */
-    } else if ((glob_op(user) && !chan_deop(user)) || chan_op(user)) {
-      dprintf(DP_HELP, "NOTICE %s :%s %s", nick, who, CHAN_PERMBANNED);
-    } else
+    if ((!glob_bot(user) || !(bot_flags(u) & BOT_SHARE)) &&
+        ((!glob_op(user) || chan_deop(user)) && !chan_op(user)))
       add_mode(chan, '+', 'b', who);
   }
 }
