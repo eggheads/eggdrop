@@ -1,11 +1,11 @@
 dnl configure.ac: this file is processed by autoconf to produce ./configure.
 dnl
-dnl $Id: configure.ac,v 1.17 2005/01/03 20:01:42 paladin Exp $
+dnl $Id: configure.ac,v 1.18 2005/02/03 18:07:21 tothwolf Exp $
 
 AC_PREREQ(2.59)
 AC_INIT([Eggdrop],[1.6.18],[bugs@eggheads.org])
 AC_COPYRIGHT([Copyright (C) 1999 - 2005 Eggheads Development Team])
-AC_REVISION($Revision: 1.17 $)
+AC_REVISION($Revision: 1.18 $)
 AC_CONFIG_SRCDIR(src/eggdrop.h)
 AC_CONFIG_AUX_DIR(misc)
 AC_CONFIG_HEADER(config.h)
@@ -102,12 +102,14 @@ EGG_EXEEXT
 tclrecommendver="8.4.6"
 tclrecommendsite="ftp://tcl.activestate.com/pub/tcl/tcl8_4/"
 
-
 # Tcl library filename prefixes, suffixes, and search paths.
-tcllibnames="tcl8.4 tcl84 tcl8.3 tcl83 tcl8.2 tcl82 tcl8.1 tcl81 \
-             tcl8.0 tcl80 tcl tcl7.6 tcl76 tcl7.5 tcl75 tcl7.4 tcl74 tcl7.3 \
-             tcl73 tcl7.2 tcl72 tcl7.1 tcl71 tcl7.0 tcl70 tcl8.5 tcl85"
+tcllibnames="tcl8.5 tcl85 tcl8.4 tcl84 tcl8.3 tcl83 tcl8.2 tcl82 \
+             tcl8.1 tcl81 tcl8.0 tcl80 tcl tcl7.6 tcl76 tcl7.5 tcl75 \
+             tcl7.4 tcl74 tcl7.3 tcl73 tcl7.2 tcl72 tcl7.1 tcl71 \
+             tcl7.0 tcl70"
+
 tcllibextensions=".so .so.1 .so.1.0 .so.1.2 .dll .dylib .sl .a"
+
 tcllibpaths="$HOME/lib $HOME/tcl/lib \
              /usr/local/lib /usr/lib /lib \
              /usr/local/lib/tcl8.5 /usr/lib/tcl8.5 \
@@ -115,8 +117,6 @@ tcllibpaths="$HOME/lib $HOME/tcl/lib \
              /usr/local/lib/tcl8.3 /usr/lib/tcl8.3 \
              /usr/local/pkgs/tcl/lib /sys/lib \
              /usr/i486-linuxaout/lib /beos/system/lib $HOME"
-
-
 
 # Tcl header filenames and search paths.
 tclheadernames="tcl.h"
