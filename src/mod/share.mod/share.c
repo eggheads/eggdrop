@@ -1,7 +1,7 @@
 /*
  * share.c -- part of share.mod
  *
- * $Id: share.c,v 1.82 2004/06/11 05:53:03 wcc Exp $
+ * $Id: share.c,v 1.83 2004/06/16 03:45:41 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -148,8 +148,9 @@ static void check_delay()
 
       nfree(d);
     }
-
-    prev = d;
+    else {
+      prev = d;
+    }
   }
 }
 
