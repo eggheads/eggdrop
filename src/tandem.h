@@ -1,7 +1,7 @@
 /* 
  * tandem.h
  * 
- * $Id: tandem.h,v 1.6 2000/01/31 23:03:01 fabian Exp $
+ * $Id: tandem.h,v 1.7 2000/08/19 14:17:28 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -103,7 +103,5 @@ int users_in_subtree(tand_t *);
 #define b_version(a)	(dcc[a].u.bot->version)
 #define b_linker(a)	(dcc[a].u.bot->linker)
 #define b_numver(a)	(dcc[a].u.bot->numver)
-
-#define safe_str(a)	(a ? a : "")
 
 #endif				/* _EGG_TANDEM_H */

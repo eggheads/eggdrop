@@ -7,7 +7,7 @@
  *   linking, unlinking, and relaying to another bot
  *   pinging the bots periodically and checking leaf status
  * 
- * $Id: botnet.c,v 1.27 2000/08/06 14:53:10 fabian Exp $
+ * $Id: botnet.c,v 1.28 2000/08/19 14:17:27 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -517,7 +517,8 @@ void answer_local_whom(int idx, int chan)
       spaces[len] = ' ';
       spaces2[len2] = ' ';
       if (party[i].status & PLSTAT_AWAY)
-	dprintf(idx, "   %s: %s\n", MISC_AWAY, safe_str(party[i].away));
+	dprintf(idx, "   %s: %s\n", MISC_AWAY,
+		party[i].away ? party[i].away : "");
     }
   }
 }

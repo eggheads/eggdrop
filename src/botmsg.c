@@ -5,7 +5,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: botmsg.c,v 1.13 2000/08/19 14:15:56 fabian Exp $
+ * $Id: botmsg.c,v 1.14 2000/08/19 14:17:27 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -652,13 +652,13 @@ void botnet_send_join_party(int idx, int linking, int useridx, int oldchan)
 		       party[useridx].bot, party[useridx].nick,
 		       party[useridx].chan, party[useridx].flag,
 		       party[useridx].sock,
-		       safe_str(party[useridx].from));
+		       party[useridx].from ? party[useridx].from : "");
     send_tand_but(idx, OBUF, -l);
 #ifndef NO_OLD_BOTNET
     tandout_but(idx, "join %s %s %d %c%d %s\n", party[useridx].bot,
 		party[useridx].nick, party[useridx].chan,
 		party[useridx].flag, party[useridx].sock,
-		safe_str(party[useridx].from));
+		party[useridx].from ? party[useridx].from : "");
     if ((idx < 0) || (!linking && (b_numver(idx) >= NEAT_BOTNET))) {
       tandout_but(idx, "chan %s %d %s %s %s.\n",
 		  party[useridx].bot, party[useridx].chan,
@@ -756,7 +756,7 @@ void botnet_send_nkch_part(int butidx, int useridx, char *oldnick)
     tandout_but(butidx, "join %s %s %d %c%d %s\n", party[useridx].bot,
 		party[useridx].nick, party[useridx].chan,
 		party[useridx].flag, party[useridx].sock,
-		safe_str(party[useridx].from));
+		party[useridx].from ? party[useridx].from : "");
     tandout_but(butidx, "chan %s %d %s : %s -> %s.\n",
 		party[useridx].bot, party[useridx].chan,
 		NET_NICKCHANGE,
