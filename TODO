@@ -10,13 +10,12 @@ concerned part in this file. Don't renumber the other points <arthur2>
 
 Problem status:
 
-        1:      drummer submited a patch to eggdev
         2:      no-one, we need someone who can reproduce this
         3:      cybah
         4:      SegFault
         6:      no-one
         7:      no-one
-       10:      drummer/Mixter
+       10:      no-one
        11:      no-one
        12:      no-one
        13:      no-one
@@ -26,29 +25,20 @@ Problem status:
        18:      slennox
        19:      no-one
        20:      Tothwolf/Cybah
-       21:      no-one is working on this, due for 1.3.28.
+       21:      drummer submitted a patch to eggdev
        24:      no-one
        26:      no-one
        27:      no-one
        30:      no-one
        32:      no-one
        36:      no-one
-       37:      drummer submitted a patch to eggdev
-       39:      drummer
        41:      no-one
        42:      no-one
-       44:      no-one
+       44:      drummer, but need help
        48:      no-one
        49:      drummer submitted a patch to eggdev
 
 ----------
-1. user fields to sharebots not being removed,
-   .info none, sharebots have empty info field,
-   if info-party is 1, will display *empty* info line...
-
-Status: drummer submited a patch to eggdev
-
---
 2. SEGV with sharing. Don't know how to reproduce this bug, but it
 occurs again and again (Found by TheUnknown). Here are two DEBUG files:
 
@@ -121,14 +111,12 @@ Status: noone is working on this
 
 --
 10. should ignore invalid channel options instead of droping the
-    channel when loading the chanfile.
+    channel when loading the chanfile. Now works, but...
+    channel set #chan +bitch -stopnethack +invalidflagsuxx +autoop
+    you wont get error, but channel wont be +autoop, it's too hard to
+    process valid params (+autoop) after an invalid param (+invalidflagsuxx).
 
-<drummer> channel set #chan +bitch -stopnethack +invalidflagsuxx +autoop
-you wont get error, but channel wont be +autoop, it's too hard to
-process valid params (+autoop) after an invalid param (+invalidflagsuxx).
-
-Status: drummer submited a patch to eggdev, applied to cvs.
-        Mixter submited another one.
+Status: noone is working on this
 
 --
 11. +shared/+s flags need to be recoded. The way all this works seems to be
@@ -296,7 +284,7 @@ Status: Tothwolf/Cybah are working on this.
     network, we just point rfc_casecmp at strcasecmp.. otherwise to the proper
     functions <Cybah>
 
-Status: no-one is working on this, due for 1.3.28.
+Status: drummer submitted a patch to eggdev
 
 --
 24. console.mod's console-autosave is buggy (ask Tothwolf for details)
@@ -319,8 +307,8 @@ Status: no-one is working on this
     (Tothwolf)
    =TestBot= [04:12] joined #TestChannel but didn't want to!
 
-   bind time "?0 * * * *" time:join:channel
-   bind time "?5 * * * *" time:join:channel
+   bind time - "?0 * * * *" time:join:channel
+   bind time - "?5 * * * *" time:join:channel
    proc time:join:channel {min hour day month year} {
      test:join:channel
      return 0
@@ -329,7 +317,7 @@ Status: no-one is working on this
    proc test:join:channel {} {
      channel add #TestChannel
      puthelp "PRIVMSG #TestChannel :I'm here!"
-     timer 1 "catch {channel remove $chan}"
+     timer 1 "catch {channel remove #TestChannel}"
      return 0
    }
 
@@ -359,54 +347,6 @@ Status: no-one is working on this
 Status: no-one is working on this
 
 --
-37. notes bug (TheUnknown updated bug report)
-
-[01:56] <me> .note nick ? :)
-[01:56] <bot> Not online; forwarded to nick@bot2.
-[01:56] <bot> *** [bot2] Not online; note stored.
-[01:56] <me> .note nick la lala lalala :)
-[01:56] <bot> [15:56] * Last context: tclhash.c/673 []
-[01:56] <bot> [15:56] * Wrote DEBUG
-[01:56] <bot> [15:56] * SEGMENT VIOLATION -- CRASHING!
-
-Debug (eggdrop v1.3.28) written Tue May 11 15:56:02 1999
-Full Patch List: 
-STATICALLY LINKED
-Using tcl library: /usr/local/lib/tcl8.1 (header version 8.1)
-Compile flags: gcc
-Link flags   : gcc
-Strip flags  : strip
-Context: chanprog.c/542, []
-         main.c/381, []
-         main.c/713, []
-         net.c/666, []
-         net.c/705, []
-         net.c/730, []
-         net.c/752, []
-         net.c/776, []
-         main.c/734, []
-         dcc.c/744, []
-         tclhash.c/787, []
-         tclhash.c/792, []
-         tclhash.c/570, []
-         tclhash.c/642, []
-         tclhash.c/796, []
-         tclhash.c/673 []
-
-Status: drummer submitted a patch to eggdev
-
-Note: this seems to be a bug with tcl 8.0 (it seems the problem doesn't
-occur with tcl 7.5, 7.6, 7.6p2 and 8.1b3)
-
---
-39. .+ban *!*user@*.host.com #channel *comment
-    this adds a stickyban because of the '*' at the beginning of the
-    comment, but sharebots are not getting sent a stick command for the
-    ban (reported by Tothwolf).
-
-Status: drummer submited a patch to eggdev
-
---
 41. .resetbans #channel doesn't work properly (ask Tothwolf for details).
 
 Status: no-one is working on this
@@ -425,13 +365,14 @@ Status: no-one is working on this
 =dcc(bot)= .tcl setuser user HOSTS none
 [dcc(bot)] [01:00] *** ATTEMPTING TO FREE NON-MALLOC'D PTR: tcluser.c (493)
 
-<drummer>
-Nice bug, i tried to fix it...
-If I remove that nfree(e); bot works and doesnt crash... (memleak?)
-but I dont understand who/where allocate memory for 'e'...
-that's too hard for me...
+07/15/1999 workaround bugfix applied to CVS, someone has to recheck it
+	   Also need a patch:
+	   .tcl setuser user XTRA blah "asfdasfd"
+	   ...
+	   .tcl setuser user XTRA blah ""
+	   blah field will be empty, but i should be removed.
 
-Status: no-one is working on this
+Status: drummer, but need help
 
 --
 48. chattr should be patched to work as botattr and demand | being used
