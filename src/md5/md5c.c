@@ -206,7 +206,7 @@ void MD5_Update(MD5_CTX *ctx, void *data, unsigned long size)
 		}
 
 		egg_memcpy(&ctx->buffer[used], data, free);
-		data += free;
+		data = ((unsigned char *)data) + free;
 		size -= free;
 		body(ctx, ctx->buffer, 64);
 	}
