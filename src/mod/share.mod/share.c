@@ -1,7 +1,7 @@
 /* 
  * share.c -- part of share.mod
  * 
- * $Id: share.c,v 1.26 2000/03/01 17:54:37 fabian Exp $
+ * $Id: share.c,v 1.27 2000/03/04 20:31:10 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -447,8 +447,7 @@ static void share_pls_bothost(int idx, char *par)
   if ((dcc[idx].status & STAT_SHARE) && !private_user) {
     hand = newsplit(&par);
     if (!(u = get_user_by_handle(userlist, hand)) ||
-	(!(u->flags & USER_UNSHARED) &&
-	 !((u->flags & USER_BOT) && (bot_flags(u) & BOT_SHARE)))) {
+	!(u->flags & USER_UNSHARED)) {
       if (!(dcc[idx].status & STAT_GETTING))
 	shareout_but(NULL, idx, "+bh %s %s\n", hand, par);
       /* Add bot to userlist if not there */
