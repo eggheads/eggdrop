@@ -1,7 +1,7 @@
 /* 
  * servmsg.c -- part of server.mod
  * 
- * $Id: servmsg.c,v 1.40 2000/07/12 21:49:41 fabian Exp $
+ * $Id: servmsg.c,v 1.41 2000/07/13 21:19:52 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -268,7 +268,8 @@ static int got001(char *from, char *msg)
       chan->status &= ~(CHAN_ACTIVE | CHAN_PEND);
       if (!channel_inactive(chan))
 	dprintf(DP_SERVER, "JOIN %s %s\n",
-	        (chan->name[0]) ? chan->name : chan->dname, chan->key_prot);
+	        (chan->name[0]) ? chan->name : chan->dname,
+	        chan->channel.key[0] ? chan->channel.key : chan->key_prot);
     }
   if (egg_strcasecmp(from, dcc[servidx].host)) {
     putlog(LOG_MISC, "*", "(%s claims to be %s; updating server list)",
@@ -324,7 +325,8 @@ static int got442(char *from, char *msg)
       if (me && me->funcs)
 	(me->funcs[CHANNEL_CLEAR])(chan, 1);
       chan->status &= ~CHAN_ACTIVE;
-      dprintf(DP_MODE, "JOIN %s %s\n", chan->name, chan->key_prot);
+      dprintf(DP_MODE, "JOIN %s %s\n", chan->name,
+      chan->channel.key[0] ? chan->channel.key : chan->key_prot);
     }  
   return 0;
 }

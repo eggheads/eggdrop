@@ -2,7 +2,7 @@
  * channels.c -- part of channels.mod
  *   support for channels within the bot
  * 
- * $Id: channels.c,v 1.30 2000/06/03 12:15:57 fabian Exp $
+ * $Id: channels.c,v 1.31 2000/07/13 21:19:51 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -474,6 +474,7 @@ static void read_channels(int create)
   chan = chanset;
   while (chan != NULL) {
     if (chan->status & CHAN_FLAGGED) {
+      nfree(chan->channel.key);
       putlog(LOG_MISC, "*", "No longer supporting channel %s", chan->dname);
       if (chan->name[0] && !channel_inactive(chan))
         dprintf(DP_SERVER, "PART %s\n", chan->name);

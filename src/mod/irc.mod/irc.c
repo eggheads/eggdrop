@@ -2,7 +2,7 @@
  * irc.c -- part of irc.mod
  *   support for channels within the bot 
  * 
- * $Id: irc.c,v 1.26 2000/06/10 01:03:44 fabian Exp $
+ * $Id: irc.c,v 1.27 2000/07/13 21:19:52 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -446,6 +446,9 @@ static void reset_chan_info(struct chanset_t *chan)
     return;
   }
   if (!channel_pending(chan)) {
+    nfree(chan->channel.key);
+    chan->channel.key = (char *) channel_malloc(1);
+    chan->channel.key[0] = 0;
     clear_channel(chan, 1);
     chan->status |= CHAN_PEND;
     chan->status &= ~(CHAN_ACTIVE | CHAN_ASKEDMODES);
@@ -611,7 +614,8 @@ static void check_expired_chanstuff()
 	!channel_inactive(chan) &&
 	server_online)
       dprintf(DP_MODE, "JOIN %s %s\n",
-              (chan->name[0]) ? chan->name : chan->dname, chan->key_prot);      
+              (chan->name[0]) ? chan->name : chan->dname,
+              chan->channel.key[0] ? chan->channel.key : chan->key_prot);      
     if ((chan->status & (CHAN_ACTIVE | CHAN_PEND)) &&
 	channel_inactive(chan))
       dprintf(DP_MODE, "PART %s\n", chan->name);

@@ -1,7 +1,7 @@
 /* 
  * tclchan.c -- part of channels.mod
  * 
- * $Id: tclchan.c,v 1.29 2000/06/03 12:15:57 fabian Exp $
+ * $Id: tclchan.c,v 1.30 2000/07/13 21:19:52 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1476,21 +1476,23 @@ static void init_masklist(masklist *m)
 
 /* Initialize out the channel record.
  */
-static void init_channel(struct chanset_t *chan)
+static void init_channel(struct chanset_t *chan, int reset)
 {
   chan->channel.maxmembers = (-1);
   chan->channel.mode = 0;
   chan->channel.members = 0;
-  chan->channel.key = (char *) nmalloc(1);
-  chan->channel.key[0] = 0;
+  if (!reset) {
+    chan->channel.key = (char *) nmalloc(1);
+    chan->channel.key[0] = 0;
+  }
 
-  chan->channel.ban = (masklist *)nmalloc(sizeof(masklist));
+  chan->channel.ban = (masklist *) nmalloc(sizeof(masklist));
   init_masklist(chan->channel.ban);
   
-  chan->channel.exempt = (masklist *)nmalloc(sizeof(masklist));
+  chan->channel.exempt = (masklist *) nmalloc(sizeof(masklist));
   init_masklist(chan->channel.exempt);
   
-  chan->channel.invite = (masklist *)nmalloc(sizeof(masklist));
+  chan->channel.invite = (masklist *) nmalloc(sizeof(masklist));
   init_masklist(chan->channel.invite);
 
   chan->channel.member = (memberlist *) nmalloc(sizeof(memberlist));
@@ -1520,7 +1522,6 @@ static void clear_channel(struct chanset_t *chan, int reset)
 {
   memberlist *m, *m1;
 
-  nfree(chan->channel.key);
   if (chan->channel.topic)
     nfree(chan->channel.topic);
   m = chan->channel.member;
@@ -1538,7 +1539,7 @@ static void clear_channel(struct chanset_t *chan, int reset)
   chan->channel.invite = NULL;
 
   if (reset)
-    init_channel(chan);
+    init_channel(chan, 1);
 }
 
 /* Create new channel and parse commands.
@@ -1597,7 +1598,7 @@ static int tcl_channel_add(Tcl_Interp * irp, char *newname, char *options)
     chan->dname[80] = 0;
     
     /* Initialize chan->channel info */
-    init_channel(chan);
+    init_channel(chan, 0);
     list_append((struct list_type **) &chanset, (struct list_type *) chan);
     /* Channel name is stored in xtra field for sharebot stuff */
     join = 1;
