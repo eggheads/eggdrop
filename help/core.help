@@ -55,37 +55,37 @@ using %b'.help all'%b.
 If you only remember a part of the command's name you are searching
 for, just use wildcards (e.g. %b'.help *bot*'%b) and all matching help
 texts will be displayed.
-%{help=+lang}
+%{help=+lang}%{+n}
 ###  %b+lang%b <language>
    Adds a new language to the top of the language list. All sections
    are rechecked to test if there are language files supporting the language.
 
 See also: -lang, +lsec, -lsec, lstat, relang
-%{help=-lang}
+%{help=-lang}%{+n}
 ###  %b-lang%b <language>
    Removes a language from the language list. All sections are checked if
    they are using the language and if so, try to load the next available
    language instead.
 
 See also: +lang, +lsec, -lsec, lstat, relang
-%{help=+lsec}
+%{help=+lsec}%{+n}
 ###  %b+lsec%b <section>
    Adds a new section. The bot tries to load the section with the preferred
    language if possible.
 
 See also: +lang, -lang, -lsec, lstat, relang
-%{help=-lsec}
+%{help=-lsec}%{+n}
 ###  %b-lsec%b <section>
    Removes a section. The language bindings are not removed though.
 
 See also: +lang, -lang, +lsec, lstat, relang
-%{help=lstat}
+%{help=lstat}%{+n}
 ###  %blstat%b
    Shows the language statistics, all selected languages and a list of all
    language sections.
 
 See also: +lang, -lang, +lsec, -lsec, relang
-%{help=relang}
+%{help=relang}%{+n}
 ###  %brelang%b
    Try to find language files with a more preferred language than right now.
 
@@ -112,13 +112,13 @@ The following commands are also available:
 %b%{+x}   files%{-}%b
 Anything you type that doesn't begin with a '.' goes out to
 everyone on the party line.
-%{help=tcl}
+%{help=tcl}%{+n}
 ###  %btcl%b <command>
    executes the command using Tcl.
 
    See doc/tcl-commands.doc for details on Tcl commands added to eggdrop
    and visit http://dev.scriptics.com/ for more information on Tcl.
-%{help=set}
+%{help=set}%{+n}
 ###  %bset%b <variable> [value]
    changes the values of internal settings of the bot, or, if used
    without a value parameter, shows the current value of a setting.
