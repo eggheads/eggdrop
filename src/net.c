@@ -2,7 +2,7 @@
  * net.c -- handles:
  *   all raw network i/o
  *
- * $Id: net.c,v 1.64 2004/01/13 10:04:45 wcc Exp $
+ * $Id: net.c,v 1.65 2004/04/10 03:52:28 stdarg Exp $
  */
 /*
  * This is hereby released into the public domain.
@@ -443,7 +443,7 @@ int open_telnet(char *server, int port)
 int open_address_listen(IP addr, int *port)
  {
   int sock = 0;
-  unsigned int addrlen;
+  socklen_t addrlen;
   struct sockaddr_in name;
 
   if (firewall[0]) {
@@ -536,7 +536,7 @@ int answer(int sock, char *caller, unsigned long *ip, unsigned short *port,
            int binary)
 {
   int new_sock;
-  unsigned int addrlen;
+  socklen_t addrlen;
   struct sockaddr_in from;
 
   addrlen = sizeof(struct sockaddr);
@@ -670,6 +670,8 @@ static int sockread(char *s, int *len)
                                   * otherwise it will connect. */
             *len = socklist[i].sock;
             socklist[i].flags &= ~SOCK_CONNECT;
+	    putlog(LOG_MISC, "*", "socklist[i].inbuflen = %d", socklist[i].inbuflen);
+	    if (socklist[i].inbuf) putlog(LOG_MISC, "*", "inbuf = '%s'", socklist[i].inbuf);
             debug1("net: eof!(read) socket %d", socklist[i].sock);
             return -1;
           } else {

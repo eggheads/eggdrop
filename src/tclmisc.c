@@ -2,7 +2,7 @@
  * tclmisc.c -- handles:
  *   Tcl stubs for everything else
  *
- * $Id: tclmisc.c,v 1.48 2004/04/06 06:56:38 wcc Exp $
+ * $Id: tclmisc.c,v 1.49 2004/04/10 03:52:28 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -642,7 +642,7 @@ static int tcl_md5 STDVAR
     return TCL_ERROR;
   }
 #  ifdef USE_TCL_BYTE_ARRAYS
-  string = Tcl_GetByteArrayFromObj(objv[1], &len);
+  string = (unsigned char *)Tcl_GetByteArrayFromObj(objv[1], &len);
 #  else
   string = Tcl_GetStringFromObj(objv[1], &len);
 #  endif /* USE_TCL_BYTE_ARRAYS */
