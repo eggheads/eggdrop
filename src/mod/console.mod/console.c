@@ -28,9 +28,9 @@ static int console_unpack(struct userrec *u, struct user_entry *e)
   struct console_info *ci = user_malloc(sizeof(struct console_info));
   char *par, *arg;
 
-  Assert(e != NULL);
-  Assert(e->name != NULL);
   Context;
+  Assert(e);
+  Assert(e->name);
   par = e->u.list->extra;
   arg = newsplit(&par);
   ci->channel = user_malloc(strlen(arg) + 1);
@@ -56,9 +56,9 @@ static int console_pack(struct userrec *u, struct user_entry *e)
   struct console_info *ci;
   int l;
 
-  Assert(e != NULL);
-  Assert(e->u.extra != NULL);
-  Assert(e->name == NULL);
+  Assert(e);
+  Assert(e->u.extra);
+  Assert(!e->name);
 
   ci = (struct console_info *) e->u.extra;
 
@@ -110,7 +110,7 @@ static int console_set(struct userrec *u, struct user_entry *e, void *buf)
 
   if (ci != buf) {
     if (ci) {
-      Assert(ci->channel != NULL);
+      Assert(ci->channel);
       nfree(ci->channel);
       nfree(ci);
     }

@@ -1458,7 +1458,7 @@ static void cmd_chattr(struct userrec *u, int idx, char *par)
    * chan: pointer to channel structure, NULL if none found or none specified
    * chg:  pointer to changes, NULL if none specified
    */
-  Assert(!(arg == NULL && chan != NULL));
+  Assert(!(!arg && chan));
   if (arg && !chan) {
     dprintf(idx, "No channel record for %s.\n", arg);
     return;
@@ -1649,13 +1649,11 @@ static void cmd_botattr(struct userrec *u, int idx, char *par)
    * chan: pointer to channel structure, NULL if none found or none specified
    * chg:  pointer to changes, NULL if none specified
    */
-  Assert(!(arg == NULL && chan != NULL));
-
+  Assert(!(!arg && chan));
   if (arg && !chan) {
     dprintf(idx, "No channel record for %s.\n", arg);
     return;
   }
-
   if (chg) {
     if (!arg && strpbrk(chg, "&|")) {
       /* botattr <handle> *[&|]*: use console channel if found... */

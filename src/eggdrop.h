@@ -141,7 +141,7 @@
 #endif
 
 #ifdef DEBUG_ASSERT
-#  define Assert(expr) eggAssert(__FILE__, __LINE__, NULL, expr)
+#  define Assert(expr) eggAssert(__FILE__, __LINE__, NULL, (int)(expr))
 #else
 #  define Assert(expr) {}
 #endif

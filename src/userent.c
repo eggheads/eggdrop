@@ -62,9 +62,9 @@ int def_unpack(struct userrec *u, struct user_entry *e)
 {
   char *tmp;
 
-  Assert(e != NULL);
-  Assert(e->name != NULL);
   Context;
+  Assert(e);
+  Assert(e->name);
   tmp = e->u.list->extra;
   e->u.list->extra = NULL;
   list_type_kill(e->u.list);
@@ -76,8 +76,8 @@ int def_pack(struct userrec *u, struct user_entry *e)
 {
   char *tmp;
 
-  Assert(e != NULL);
-  Assert(e->name == NULL);
+  Assert(e);
+  Assert(!e->name);
   tmp = e->u.string;
   e->u.list = user_malloc(sizeof(struct list_type));
   e->u.list->next = NULL;
@@ -115,8 +115,8 @@ int def_set(struct userrec *u, struct user_entry *e, void *buf)
     string = NULL;
   if (!string && !e->u.string)
     return 1;
-  Assert(string != e->u.string);
   Context;
+  Assert(string != e->u.string);
   if (string) {
     int l = strlen (string);
     char *i;
@@ -139,7 +139,7 @@ int def_set(struct userrec *u, struct user_entry *e, void *buf)
     nfree(e->u.string);
     e->u.string = NULL;
   }
-  Assert(u != NULL);
+  Assert(u);
   if (!noshare && !(u->flags & (USER_BOT | USER_UNSHARED))) { 
     if (e->type != &USERENTRY_INFO || share_greet) 
       shareout(NULL, "c %s %s %s\n", e->type->name, u->handle, e->u.string ? e->u.string : ""); 
@@ -294,11 +294,11 @@ static int laston_unpack(struct userrec *u, struct user_entry *e)
   char *par, *arg;
   struct laston_info *li;
 
-  Assert(e != NULL);
-  Assert(e->name != NULL);
   Context;
+  Assert(e);
+  Assert(e->name);
   par = e->u.list->extra;
-  Assert(par != NULL);
+  Assert(par);
   arg = newsplit (&par);
   if (!par[0])
     par = "???";
@@ -317,9 +317,9 @@ static int laston_pack(struct userrec *u, struct user_entry *e)
   struct laston_info *li;
   int l;
 
-  Assert(e != NULL);
-  Assert(e->u.extra != NULL);
-  Assert(e->name == NULL);
+  Assert(e);
+  Assert(e->u.extra);
+  Assert(!e->name);
   li = (struct laston_info *) e->u.extra;
   l = sprintf(work, "%lu %s", li->laston, li->lastonplace);
   e->u.list = user_malloc(sizeof(struct list_type));
@@ -361,7 +361,7 @@ static int laston_set(struct userrec *u, struct user_entry *e, void *buf)
   Context;
   if (li != buf) {
     if (li) {
-      Assert(li->lastonplace != NULL);
+      Assert(li->lastonplace);
       nfree(li->lastonplace);
       nfree(li);
     }
@@ -473,9 +473,9 @@ static int botaddr_unpack(struct userrec *u, struct user_entry *e)
   char *p, *q;
   struct bot_addr *bi = user_malloc(sizeof(struct bot_addr));
 
-  Assert(e != NULL);
-  Assert(e->name != NULL);
   Context;
+  Assert(e);
+  Assert(e->name);
   bzero (bi, sizeof(struct bot_addr));
 
   if (!(q = strchr ((p = e->u.list->extra), ':'))) {
@@ -505,8 +505,8 @@ static int botaddr_pack(struct userrec *u, struct user_entry *e)
   struct bot_addr *bi;
   int l;
 
-  Assert(e != NULL);
-  Assert(e->name == NULL);
+  Assert(e);
+  Assert(!e->name);
   bi = (struct bot_addr *) e->u.extra;
   l = simple_sprintf(work, "%s:%u/%u", bi->address, bi->telnet_port,
               bi->relay_port);
@@ -549,14 +549,14 @@ static int botaddr_set(struct userrec *u, struct user_entry *e, void *buf)
     return 1;
   if (bi != buf) {
     if (bi) {
-      Assert(bi->address != NULL);
+      Assert(bi->address);
       nfree(bi->address);
       nfree(bi);
     }
     ContextNote("(sharebug) occurred in botaddr_set");
     bi = e->u.extra = buf;
   }
-  Assert(u != NULL);
+  Assert(u);
   if (bi && !noshare && !(u->flags & USER_UNSHARED)) {
     shareout(NULL, "c BOTADDR %s %s %d %d\n", u->handle,
              bi->address, bi->telnet_port, bi->relay_port);
@@ -590,7 +590,7 @@ static int botaddr_tcl_set(Tcl_Interp * irp, struct userrec *u,
       bi = user_malloc(sizeof(struct bot_addr));
       bzero (bi, sizeof (struct bot_addr));
     } else {
-      Assert(bi->address != NULL);
+      Assert(bi->address);
       nfree(bi->address);
     }
     bi->address = user_malloc(strlen(argv[3]) + 1);
@@ -690,7 +690,7 @@ int xtra_set(struct userrec *u, struct user_entry *e, void *buf)
   struct xtra_key *curr, *old = NULL, *new = buf;
 
   Context;
-  Assert(new != NULL);
+  Assert(new);
   for (curr = e->u.extra; curr; curr = curr->next) {
     if (curr->key && !strcasecmp(curr->key, new->key)) {
       old = curr;
@@ -764,10 +764,9 @@ int xtra_unpack(struct userrec *u, struct user_entry *e)
   struct xtra_key *t;
   char *key, *data;
 
-  Assert(e != NULL);
-  Assert(e->name != NULL);
   Context;
-
+  Assert(e);
+  Assert(e->name);
   head = curr = e->u.list;
   e->u.extra = NULL;
   while (curr) {
@@ -793,9 +792,9 @@ static int xtra_pack(struct userrec *u, struct user_entry *e)
   struct list_type *t;
   struct xtra_key *curr, *next;
 
-  Assert(e != NULL);
-  Assert(e->name == NULL);
   Context;
+  Assert(e);
+  Assert(!e->name);
   curr = e->u.extra;
   e->u.list = NULL;
   while (curr) {
@@ -1040,7 +1039,7 @@ static int hosts_set(struct userrec *u, struct user_entry *e, void *buf)
     ContextNote("SEGV with sharing bug track");
     /* when the bot crashes, it's in this part, not in the 'else' part */
     ContextNote(e ? "e is valid" : "e is NULL!");
-    Assert(e != NULL); /* e cannot be null ++rtc */
+    Assert(e);			/* e cannot be null -- rtc */
     ContextNote((e->u.list) ? "(sharebug) e->u.list is valid" : "(sharebug) e->u.list is NULL!");
     list_type_kill(e->u.list);
     ContextNote("(sharebug[c1]) occurred in hosts_set - added 99/03/26");

@@ -685,10 +685,9 @@ static int botfl_unpack(struct userrec *u, struct user_entry *e)
 {
   struct flag_record fr = {FR_BOT, 0, 0, 0, 0, 0};
  
-  Assert(e != NULL);
-  Assert(e->name != NULL);
-
   Context;
+  Assert(e);
+  Assert(e->name);
   break_down_flags(e->u.list->extra, &fr, NULL);
   list_type_kill(e->u.list);
   e->u.ulong = fr.bot;
