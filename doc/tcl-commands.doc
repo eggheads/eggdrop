@@ -7,7 +7,7 @@ of the normal Tcl built-in commands are still there, of course, but you
 can also use these to manipulate features of the bot. They are listed
 according to category.
 
-This list is accurate for Eggdrop v1.6.15. Scripts written for v1.3/v1.4
+This list is accurate for Eggdrop v1.6.16. Scripts written for v1.3/v1.4
 series of Eggdrop should probably work with a few minor modifications
 depending on the script. Scripts which were written for  v0.9, v1.0, v1.1
 or v1.2 will probably not work without modification. Commands which have
@@ -806,25 +806,25 @@ marked with vertical bars (|) on the left.
     Returns: 1 if the channel is a dynamic channel; 0 otherwise
     Module: channels
 
-|  setudef <flag/int/str> <name>
-|    Description: initializes a user defined channel flag, string or integer
-|      setting. You can use it like any other flag/setting. IMPORTANT: Don't
-|      forget to reinitialize your flags/settings after a restart, or it'll be
-|      lost.
-|    Returns: nothing
-|    Module: channels
+  setudef <flag/int/str> <name>
+    Description: initializes a user defined channel flag, string or integer
+      setting. You can use it like any other flag/setting. IMPORTANT: Don't
+      forget to reinitialize your flags/settings after a restart, or it'll be
+      lost.
+    Returns: nothing
+    Module: channels
 
-|  renudef <flag/int/str> <oldname> <newname>
-|    Description: renames a user defined channel flag, string, or integer
-|      setting.
-|    Returns: nothing
-|    Module: channels
+  renudef <flag/int/str> <oldname> <newname>
+    Description: renames a user defined channel flag, string, or integer
+      setting.
+    Returns: nothing
+    Module: channels
 
-|  deludef <flag/int/str> <name>
-|    Description: deletes a user defined channel flag, string, or integer
-|      setting.
-|    Returns: nothing
-|    Module: channels
+  deludef <flag/int/str> <name>
+    Description: deletes a user defined channel flag, string, or integer
+      setting.
+    Returns: nothing
+    Module: channels
 
 *** DCC COMMANDS ***
 
@@ -1519,18 +1519,18 @@ marked with vertical bars (|) on the left.
       "Valis!valis@crappy.com")
     Module: server
 
-| server
-|   Value: the current server's real name (what server calls itself)
-|     and port bot is connected to (for example: "irc.math.ufl.edu:6667")
-|     Note that this does not nececerilly match the servers internet address.
-|   Module: server
+ server
+   Value: the current server's real name (what server calls itself)
+     and port bot is connected to (for example: "irc.math.ufl.edu:6667")
+     Note that this does not nececerilly match the servers internet address.
+   Module: server
 
-| serveraddress
-|   Value: the current server's internet address (hostname or IP) and port bot
-|     is connected to. This will correspond to the entry in server list (for
-|     example: "eu.undernet.org:6667"). Note that this does not necessarily
-|     match the name server calls itself.
-|   Module: server
+ serveraddress
+   Value: the current server's internet address (hostname or IP) and port bot
+     is connected to. This will correspond to the entry in server list (for
+     example: "eu.undernet.org:6667"). Note that this does not necessarily
+     match the name server calls itself.
+   Module: server
 
   version
     Value: current bot version "1.1.2+pl1 1010201 pl1";
@@ -1728,8 +1728,8 @@ marked with vertical bars (|) on the left.
 
          Description: triggered when someone changes nicknames. The mask
            is matched against '#channel newnick' and can contain wildcards.
-|          Channel is "*" if the user isn't on a channel (usually the bot not
-|          yet in a channel).
+           Channel is "*" if the user isn't on a channel (usually the bot not
+           yet in a channel).
          Module: irc
 
     (14) MODE   (stackable)
@@ -1963,17 +1963,17 @@ marked with vertical bars (|) on the left.
            text of the action and can support wildcards.
          Module: core
 
-|   (33) WALL (stackable)
-|        bind wall <flags> <mask> <proc>
-|        proc-name <from> <msg>
-|
-|        Description: when the bot receives a wallops, it invokes this
-|          binding. flags are ignored; the mask is matched against the text
-|          of the wallops msg. Note that RFC shows the server name as a source
-|          of the message, whereas many IRCds send the nick!user@host of the
-|          actual sender, thus, Eggdrop will not parse it at all, but simply
-|          pass it to bind in its original form.
-|        Module: server
+   (33) WALL (stackable)
+        bind wall <flags> <mask> <proc>
+        proc-name <from> <msg>
+
+        Description: when the bot receives a wallops, it invokes this
+          binding. flags are ignored; the mask is matched against the text
+          of the wallops msg. Note that RFC shows the server name as a source
+          of the message, whereas many IRCds send the nick!user@host of the
+          actual sender, thus, Eggdrop will not parse it at all, but simply
+          pass it to bind in its original form.
+        Module: server
 
     (34) BCST (stackable)
          bind bcst <flags> <mask> <proc>

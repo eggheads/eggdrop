@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: tcl-commands.html,v 1.31 2003/05/04 22:04:32 wcc Exp $ -->
+<!-- $Id: tcl-commands.html,v 1.32 2003/05/05 00:22:31 wcc Exp $ -->
 
 <html>
   <head>
@@ -17,7 +17,7 @@
     you can also use these to manipulate features of the bot. They are listed
     according to category.</p>
 
-    <p>This list is accurate for Eggdrop v1.6.15. Scripts written for
+    <p>This list is accurate for Eggdrop v1.6.16. Scripts written for
     v1.3/v1.4 series of Eggdrop should probably work with a few minor
     modifications depending on the script. Scripts which were written for
     v0.9, v1.0, v1.1 or v1.2 will probably not work without modification.
@@ -1710,7 +1710,7 @@
           <p><strong>Module:</strong> channels</p>
         </dd>
 
-        <dt><strong>* setudef &lt;flag/int/str&gt; &lt;name&gt;</strong></dt>
+        <dt><strong>setudef &lt;flag/int/str&gt; &lt;name&gt;</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> initializes a user defined channel
@@ -1723,7 +1723,7 @@
           <p><strong>Module:</strong> channels</p>
         </dd>
 
-        <dt><strong>* renudef &lt;flag/int/str&gt; &lt;oldname&gt;
+        <dt><strong>renudef &lt;flag/int/str&gt; &lt;oldname&gt;
         &lt;newname&gt;</strong></dt>
 
         <dd>
@@ -1735,7 +1735,7 @@
           <p><strong>Module:</strong> channels</p>
         </dd>
 
-        <dt><strong>* deludef &lt;flag/int/str&gt; &lt;name&gt;</strong></dt>
+        <dt><strong>deludef &lt;flag/int/str&gt; &lt;name&gt;</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> deletes a user defined channel
@@ -3307,7 +3307,7 @@
           <p><strong>Module:</strong> server</p>
         </dd>
 
-        <dt><strong>* server</strong></dt>
+        <dt><strong>server</strong></dt>
 
         <dd>
           <p><strong>Value:</strong> the current server&#39;s real name (what
@@ -3318,7 +3318,7 @@
           <p><strong>Module:</strong> server</p>
         </dd>
 
-        <dt><strong>* serveraddress</strong></dt>
+        <dt><strong>serveraddress</strong></dt>
 
         <dd>
           <p><strong>Value:</strong> the current server&#39;s internet address
@@ -3690,7 +3690,7 @@
             </li>
 
             <li>
-              <p><strong>* NICK (stackable)</strong></p>
+              <p><strong>NICK (stackable)</strong></p>
 
               <p><strong>bind nick &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;<br>
               procname &lt;nick&gt; &lt;user@host&gt; &lt;handle&gt;
@@ -4053,7 +4053,7 @@
             </li>
 
             <li>
-              <p><strong>* WALL (stackable)</strong></p>
+              <p><strong>WALL (stackable)</strong></p>
 
               <p><strong>bind wall &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;<br>
               proc-name &lt;handle&gt; &lt;msg&gt;</strong></p>
