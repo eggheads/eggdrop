@@ -15,6 +15,7 @@ be interpreted by eggdrop:
  %E   long form of %V (i.e., "Eggdrop v1.6.0  (c)1997 Robey Pointer (c)1999, 2000  Eggheads")
  %C   channels the bot is on (i.e., "#lamest, #botnetcentral")
  %A   whatever is set in 'admin' (see 'set admin')
+ %n   whatever is set in 'network' (see 'set network')
  %T   the current time (i.e., "15:00")
  %N   the current user's nickname (i.e., "Robey")
  %U   the current operating system the bot is on

@@ -27,6 +27,7 @@ see also: set nick, set altnick (server module variables)
       %%E   long form of %%V (i.e., "%E")
       %%C   channels the bot is on (i.e., "%C")
       %%A   whatever is set in 'admin' (see 'set admin')
+      %%n   whatever is set in 'network' (see 'set network')
       %%T   the current time (i.e., "%T")
       %%N   the current user's nickname (i.e., "%N")
       %%U   the current operating system the bot is on

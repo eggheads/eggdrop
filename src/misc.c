@@ -7,7 +7,7 @@
  *   help system
  *   motd display and %var substitution
  *
- * $Id: misc.c,v 1.44 2001/09/23 20:17:47 guppy Exp $
+ * $Id: misc.c,v 1.45 2001/12/02 07:17:24 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -43,7 +43,7 @@
 extern struct dcc_t	*dcc;
 extern struct chanset_t	*chanset;
 extern char		 helpdir[], version[], origbotname[], botname[],
-			 admin[], motdfile[], ver[], botnetnick[],
+			 admin[], network[], motdfile[], ver[], botnetnick[],
 			 bannerfile[], logfile_suffix[], textdir[];
 extern int		 backgrd, con_chan, term_z, use_stderr, dcc_total,
 			 keep_all_logs, quick_logs, strict_host;
@@ -732,6 +732,7 @@ static void subst_addcol(char *s, char *newcol)
  * %C = list of channels i monitor
  * %E = eggdrop banner
  * %A = admin line
+ * %n = network name
  * %T = current time ("14:15")
  * %N = user's nickname
  * %U = display system name if possible
@@ -870,6 +871,9 @@ void help_subst(char *s, char *nick, struct flag_record *flags,
       break;
     case 'A':
       towrite = admin;
+      break;
+    case 'n':
+      towrite = network;
       break;
     case 'T':
       egg_strftime(sub, 6, "%H:%M", localtime(&now));
