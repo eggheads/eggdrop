@@ -1,7 +1,7 @@
 /* 
  * share.c -- part of share.mod
  * 
- * $Id: share.c,v 1.47 2001/01/16 17:13:24 guppy Exp $
+ * $Id: share.c,v 1.48 2001/02/24 20:11:45 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -570,36 +570,57 @@ static void share_chchinfo(int idx, char *par)
 
 static void share_mns_ban(int idx, char *par)
 {
+  struct chanset_t *chan;
   if (dcc[idx].status & STAT_SHARE) {
     shareout_but(NULL, idx, "-b %s\n", par);
     putlog(LOG_CMDS, "*", "%s: cancel ban %s", dcc[idx].nick, par);
     str_unescape(par, '\\');
     noshare = 1;
-    u_delban(NULL, par, 1);
+    if (u_delban(NULL, par, 1)>0) {
+      chan = chanset;
+      while (chan != NULL) {
+	add_mode(chan, '-', 'b', par);
+	chan = chan->next;
+      }
+    }
     noshare = 0;
   }
 }
 
 static void share_mns_exempt(int idx, char *par)
 {
+  struct chanset_t *chan;
   if (dcc[idx].status & STAT_SHARE) {
     shareout_but(NULL, idx, "-e %s\n", par);
     putlog(LOG_CMDS, "*", "%s: cancel exempt %s", dcc[idx].nick, par);
     str_unescape(par, '\\');
     noshare = 1;
-    u_delexempt(NULL, par, 1);
+    if (u_delexempt(NULL, par, 1)>0) {
+      chan = chanset;
+      while (chan != NULL) {
+	add_mode(chan, '-', 'e', par);
+	chan = chan->next;
+      }
+    }
     noshare = 0;
   }
 }
 
 static void share_mns_invite(int idx, char *par)
 {
+  struct chanset_t *chan;
   if (dcc[idx].status & STAT_SHARE) {
     shareout_but(NULL, idx, "-inv %s\n", par);
     putlog(LOG_CMDS, "*", "%s: cancel invite %s", dcc[idx].nick, par);
     str_unescape(par, '\\');
     noshare = 1;
-    u_delinvite(NULL, par, 1);
+    if (u_delinvite(NULL, par, 1)>0) {
+      chan = chanset;
+      while (chan != NULL) {
+	add_mode(chan, '-', 'I', par);
+	chan = chan->next;
+      }
+    }
     noshare = 0;
   }
 }
@@ -625,7 +646,8 @@ static void share_mns_banchan(int idx, char *par)
 	     par, chname);
       str_unescape(par, '\\');
       noshare = 1;
-      u_delban(chan, par, 1);
+      if (u_delban(chan, par, 1)>0)
+	add_mode(chan, '-', 'b', par);
       noshare = 0;
     }
   }
@@ -652,7 +674,8 @@ static void share_mns_exemptchan(int idx, char *par)
 	     par, chname);
       str_unescape(par, '\\');
       noshare = 1;
-      u_delexempt(chan, par,1);
+      if (u_delexempt(chan, par,1))
+	add_mode(chan, '-', 'e', par);
       noshare = 0;
     }
   }
@@ -679,7 +702,8 @@ static void share_mns_invitechan (int idx, char *par)
 	     par, chname);
       str_unescape(par, '\\');
       noshare = 1;
-      u_delinvite(chan, par,1);
+      if (u_delinvite(chan, par,1)>0)
+	add_mode(chan, '-', 'I', par);
       noshare = 0;
     }
   }
