@@ -4,7 +4,7 @@
  *
  * Rewritten by Fabian Knittel <fknittel@gmx.de>
  *
- * $Id: filedb3.c,v 1.29 2004/01/09 05:56:38 wcc Exp $
+ * $Id: filedb3.c,v 1.30 2004/06/10 20:36:54 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -623,7 +623,7 @@ static void filedb_timestamp(FILE *fdb)
   filedb_top fdbt;
 
   filedb_readtop(fdb, &fdbt);
-  fdbt.timestamp = now;
+  fdbt.timestamp = time(NULL);
   filedb_writetop(fdb, &fdbt);
 }
 
