@@ -15,7 +15,7 @@
  * 1.4       1997-11-25      1.2.2.0         Added language addition  Kirk
  * 1.5       1998-07-12      1.3.0.0         Fixed ;me and updated    BB
  *
- * $Id: wire.c,v 1.18 2001/06/20 14:44:21 poptix Exp $
+ * $Id: wire.c,v 1.19 2001/07/03 01:52:28 poptix Exp $
  */
 /*
  * Copyright (C) 1999, 2000, 2001 Eggheads Development Team
@@ -591,7 +591,6 @@ static Function wire_table[] =
 
 char *wire_start(Function * global_funcs)
 {
-  module_entry *me;
   p_tcl_bind_list H_temp;
 
   global = global_funcs;
@@ -601,8 +600,10 @@ char *wire_start(Function * global_funcs)
     module_undepend(MODULE_NAME);
     return "This module requires eggdrop1.6.0 or later";
   }
-  me = module_find("encryption", 2, 1);
-  encryption_funcs = me->funcs;
+  if (!(encryption_funcs = module_depend(MODULE_NAME, "encryption", 2, 1))) {
+    module_undepend(MODULE_NAME);
+    return "You need an encryption module to use the wire module.";
+  }    
   add_builtins(H_dcc, wire_dcc);
   H_temp = find_bind_table("filt");
   add_builtins(H_filt, wire_filt);
