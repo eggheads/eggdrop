@@ -31,7 +31,7 @@ install:
 	@if test ! -d $(DEST)/scripts; then \
 		echo "Creating a scripts subdirectory."; \
 		$(top_srcdir)/mkinstalldirs $(DEST)/scripts; \
-		echo Copying scripts.; \
+		echo "Copying scripts."; \
 		for i in $(DOCS); do \
 			$(INSTALL_DATA) $$i $(DEST)/scripts/; \
 		done; \

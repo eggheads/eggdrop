@@ -13,7 +13,7 @@ Makefile
 Makefile.in
    help with automated making of bot
 
-NEWTO1.4
+NEWS
    lists significant differences with previous versions, if you're used
    to using a previous version, or upgrading READ IT.
 

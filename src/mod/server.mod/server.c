@@ -1,4 +1,4 @@
-/*
+/* 
  * server.c - part of server.mod
  * basic irc server support
  */

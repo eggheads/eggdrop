@@ -129,7 +129,6 @@ static void null_share(int idx, char *x)
     dprintf(idx, "s un Not sharing userfile.\n");
 }
 
-/* these are obscure ones that I hope to neaten eventually :/ */
 void (*encrypt_pass) (char *, char *) = 0;
 void (*shareout) () = null_func;
 void (*sharein) (int, char *) = null_share;

@@ -1,8 +1,8 @@
-/*
+/* 
  * channels.c - part of channels.mod
  * support for channels within the bot
  */
-/*
+/* 
  * This file is part of the eggdrop source code
  * copyright (c) 1997 Robey Pointer
  * and is distributed according to the GNU general public license.

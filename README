@@ -119,8 +119,8 @@ before. PLEASE! READ IT!
 
     We can't re-iterate this enough, if you are upgrading, and you have
     even a slight possibility of downgrading again later you will HAVE
-    to back up your userfile, or you will lose it. v1.3 of eggdrop radically
-    changed alot of things.
+    to back up your userfile, or you will lose it. v1.3 of eggdrop
+    radically changed alot of things.
 
     There are many major changes between v0.9, v1.0, v1.1 and v1.3/1.4 so
                            PAY ATTENTION
@@ -135,16 +135,16 @@ before. PLEASE! READ IT!
        MAKE A NEW CONFIG FILE from the example, there are some radical
        extras.
 
-    from 0.9/1.0 to 1.4:
+    from 0.9/1.0 to 1.3/1.4:
            * Just redo the whole thing, absolutely everything has changed
 	     including the userfile and config file formats.
-    from 1.1/1.2 to 1.4:
+    from 1.1/1.2 to 1.3/1.4:
            * You will likely want to redo the config file, as much as
              changed. BACK UP!! You will need to run
 	     'tclsh scripts/weed <userfile> c' to convert your userfile
 	     from v3 (1.1/1.2) to v4 (1.3/1.4)
 
-(4b) FROM A 1.3 VERSION TO A NEWER ONE
+(4b) FROM AN OLDER 1.3/1.4 VERSION TO A NEWER ONE
 
     If you followed the INSTALL file and did a 'make install' (or 'make
     install DEST=<path>') after 'make', this will be pretty easy.
@@ -418,7 +418,7 @@ before. PLEASE! READ IT!
 
     There are currently a couple of mailing lists about eggdrop.
     eggheads@eggdheads.org is the one relevant for posts about
-    new eggdrop v1.3.24+ (and bug fixes, and suggestions, etc).
+    eggdrop 1.4 & 1.5 (and bug fixes, and suggestions, etc).
 
     To subscribe to the eggheads mailing list, send email to:
       eggheads-request@eggheads.org

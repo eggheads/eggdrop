@@ -51,7 +51,7 @@ static fileq_t *fileq = NULL;
 #define MATCH (match+sofar)
 
 /* this function SHAMELESSLY :) pinched from match.c in the original
- * source, see that file for info about the authour etc */
+ * source, see that file for info about the author etc */
 
 #define QUOTE '\\'
 #define WILDS '*'

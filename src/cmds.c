@@ -651,7 +651,7 @@ static void cmd_console(struct userrec *u, int idx, char *par)
     dest = idx;
   if (!nick[0])
     nick = newsplit(&par);
-  /* ugly hack for stupid modeless channels ++rtc */
+  /* ugly hack for modeless channels -- rtc */
   if ((nick [0] == '+' && findchan(nick)) || 
       (nick [0] != '+' && strchr(CHANMETA "*", nick[0]))) {
     if (strcmp(nick, "*") && !findchan(nick)) {
@@ -1435,15 +1435,15 @@ static void cmd_chattr(struct userrec *u, int idx, char *par)
 
   /* Parse args */
   if (par[0]) {
-    arg = newsplit (&par);
+    arg = newsplit(&par);
     if (par[0]) {
       /* .chattr <handle> <changes> <channel> */
       chg = arg;
-      arg = newsplit (&par);
-      chan = findchan (arg);
+      arg = newsplit(&par);
+      chan = findchan(arg);
     } else {
-      chan = findchan (arg);
-      /* ugly hack for stupid modeless channels ++rtc */
+      chan = findchan(arg);
+      /* ugly hack for modeless channels -- rtc */
       if (!(arg[0] == '+' && chan) &&
           !(arg[0] != '+' && strchr (CHANMETA, arg[0]))) {
 	/* .chattr <handle> <changes> */
@@ -1469,7 +1469,7 @@ static void cmd_chattr(struct userrec *u, int idx, char *par)
       if (!strcmp ((arg = dcc[idx].u.chat->con_chan), "*"))
         arg = NULL;
       else
-        chan = findchan (arg);
+        chan = findchan(arg);
       if (arg && !chan) {
         dprintf (idx, "Invalid console channel %s.\n", arg);
 	return;
@@ -1626,15 +1626,15 @@ static void cmd_botattr(struct userrec *u, int idx, char *par)
   }
   /* Parse args */
   if (par[0]) {
-    arg = newsplit (&par);
+    arg = newsplit(&par);
     if (par[0]) {
       /* .botattr <handle> <changes> <channel> */
       chg = arg;
-      arg = newsplit (&par);
-      chan = findchan (arg);
+      arg = newsplit(&par);
+      chan = findchan(arg);
     } else {
-      chan = findchan (arg);
-      /* ugly hack for stupid modeless channels ++rtc */
+      chan = findchan(arg);
+      /* ugly hack for modeless channels -- rtc */
       if (!(arg[0] == '+' && chan) &&
           !(arg[0] != '+' && strchr (CHANMETA, arg[0]))) {
 	/* .botattr <handle> <changes> */
@@ -1662,7 +1662,7 @@ static void cmd_botattr(struct userrec *u, int idx, char *par)
       if (!strcmp ((arg = dcc[idx].u.chat->con_chan), "*"))
         arg = NULL;
       else
-        chan = findchan (arg);
+        chan = findchan(arg);
       if (arg && !chan) {
         dprintf (idx, "Invalid console channel %s.\n", arg);
 	return;

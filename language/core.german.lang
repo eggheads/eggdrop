@@ -529,4 +529,3 @@ Baue eine Telnetverbindung zu dem Bot auf und gib 'NEW' als deinen Nickname ein.
 0xe30,Ident-Socket beim Wartern auf die Antwort verloren!!
 0xe31,Telnet verweigert: %s, Kein Zugriff
 0xe32,Telnet-Verbindung von %s zurueckgewiesen (versuchte, meinen botnetnick zu benutzen)
-

@@ -1,8 +1,8 @@
-/*
+/* 
  * blowfish.c - part of blowfish.mod
  * handles: encryption and decryption of passwords
  */
-/*
+/* 
  * The first half of this is very lightly edited from public domain
  * sourcecode.  For simplicity, this entire module will remain public
  * domain.

@@ -1,4 +1,4 @@
-/*
+/* 
  * console.c - part of console.mod
  * saved console settings based on console.tcl by
  * cmwagner/billyjoe/D. Senso

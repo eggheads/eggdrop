@@ -242,6 +242,7 @@ Botflags are needed to assign special functions and tasks to your bots.
 
    |s   With this flag you can define channels, which you want your bots
         to share.
+        Note that you can use this flag only on +s bots!
 
         command: ".botattr <botname> |s #lamest"
 

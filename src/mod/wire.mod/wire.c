@@ -1,13 +1,13 @@
-/*
+/* 
  * wire.c   - An encrypted partyline communication.
  *            Compatible with wire.tcl.
- *
+ * 
  *            by ButchBub - Scott G. Taylor (staylor@mrynet.com)
- *
+ * 
  *      REQUIRED: Eggdrop Modules (see dependancies below).
  *                Wire will only compile and work on the latest Required
  *                Eggdrop version listed below.
- *
+ * 
  *    Version   Date            Req'd Eggver    Notes                    Who
  *    .......   ..........      ............    ....................     ......
  *      1.0     1997-07-17      1.2.0           Initial.                 BB
@@ -16,9 +16,9 @@
  *      1.3     1997-09-24      1.2.2.0         Reprogrammed for 1.2.2   BB
  *      1.4     1997-11-25      1.2.2.0         Added language addition  Kirk
  *      1.5     1998-07-12      1.3.0.0         Fixed ;me and updated    BB
- *
+ * 
  *   This module does not support wire usage in the files area.
- *
+ * 
  */
 
 #define MAKING_WIRE

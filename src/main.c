@@ -1,34 +1,34 @@
-/*
+/* 
  * main.c -- handles:
  * changing nicknames when the desired nick is in use
  * flood detection
  * signal handling
  * command line arguments
- *
+ * 
  * dprintf'ized, 15nov1995
  */
-/*
+/* 
  * This file is part of the eggdrop source code
  * copyright (c) 1997 Robey Pointer
  * and is distributed according to the GNU general public license.
- *
+ * 
  * Parts of this eggdrop source code are copyright (c)1999 Eggheads
  * and is distributed according to the GNU general public license.
- *
+ * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- *
+ * 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * 
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- *
+ * 
  * The author (Robey Pointer) can be reached at:  robey@netcom.com
  * NOTE: Robey is no long working on this code, there is a discussion
  * list avaliable at eggheads@eggheads.org.
@@ -211,8 +211,7 @@ void write_debug()
 	 cx_line[cx_ptr], cx_note[cx_ptr][0] ? cx_note[cx_ptr] : "");
   putlog(LOG_MISC, "*", "* Please REPORT this BUG!");
   putlog(LOG_MISC, "*", "* Check doc/BUG-REPORT on how to do so.");
-
-x = creat("DEBUG", 0644);
+  x = creat("DEBUG", 0644);
   setsock(x, SOCK_NONSOCK);
   if (x < 0) {
     putlog(LOG_MISC, "*", "* Failed to write DEBUG");

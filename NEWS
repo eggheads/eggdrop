@@ -1,4 +1,4 @@
-NEWTO1.4                         08 Nov 99
+NEWS                             08 Nov 1999
 
 Whats new, first read the following documents:
 INSTALL
@@ -23,7 +23,6 @@ CAUTION:
 this is an upgrade from a previous version.
 
 2.  DON'T USE YOUR OLD CONFIG FILE!!  MAKE A NEW ONE.........
-
 
 SHARING
 Sharing has changed a little.  You will notice that a resync buffer is

@@ -371,7 +371,7 @@ static void reset_chan_info(struct chanset_t *chan)
   /* don't reset the channel if we're already resetting it */
   context;
   if (channel_inactive(chan)) {
-    dprintf(DP_MODE,"PART %s\n",chan->name);
+    dprintf(DP_MODE, "PART %s\n", chan->name);
     return;
   }
   if (!channel_pending(chan)) {

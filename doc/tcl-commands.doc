@@ -31,7 +31,7 @@ specific commands, see later.
     returns: nothing
 
 | putquick <text>
-|    sends text to the server, like 'dump' (intended for direct server
+|   sends text to the server, like 'dump' (intended for direct server
 |   commands); output is queued so that you won't flood yourself off
 |   the server, using the MODE queue (should be alot faster)
 |   returns: nothing
@@ -101,33 +101,33 @@ specific commands, see later.
   getuser <handle> <entry-type> [extra info]
     this is a generic interface to the new generic userfile support, it
     return info specific to each entry-type, valid entry types are:
-      BOTFL - returns the current bot-specific flags for the user
-              (if it's a bot :)
+      BOTFL   - returns the current bot-specific flags for the user
+                (if it's a bot :)
       BOTADDR - (another bot-only thing :) returns a list containing
-              the bots address, the bots telnet port, and it's relay port.
-      HOSTS - returns a list of the host for the user
-      LASTON - returns a list containing the unixtime last seen,
-              and the last seen place.
-             OR LASTON #channel returns the time last seen on the channel
-                or 0 if no info
-      INFO   - returns the user's global info line
-      XTRA   - returns the old xtra info
+                the bots address, the bots telnet port, and it's relay port.
+      HOSTS   - returns a list of the host for the user
+      LASTON  - returns a list containing the unixtime last seen,
+                and the last seen place.
+                OR LASTON #channel returns the time last seen on
+                the channel or 0 if no info
+      INFO    - returns the user's global info line
+      XTRA    - returns the old xtra info
       COMMENT - returns the master-visible only comment for the user
-      EMAIL  - returns the users email address
-      URL    - returns the users url address
+      EMAIL   - returns the users email address
+      URL     - returns the users url address
 
   setuser <handle> <entry-type> [extra info]
     this is the counterpart of getuser, it lets you set the various values
     extra ones not supported about :
-      PASS - use this to set a users password (no 3rd arg will clear it)
-      HOSTS - for setting hosts, no extra info = clear, otherwise
-              *1* hostmask is added :P
-      LASTON - 2 forms:
-               setuser <handle> laston <unixtime> <place>
+      PASS    - use this to set a users password (no 3rd arg will clear it)
+      HOSTS   - for setting hosts, no extra info = clear, otherwise
+                *1* hostmask is added :P
+      LASTON  - 2 forms:
+                setuser <handle> laston <unixtime> <place>
                   sets global laston time
-               setuser <handle> laston <unixtime>
+                setuser <handle> laston <unixtime>
                   sets global laston time, leaving the place field empty
-               setuser <handle> laston <unixtime> <channel>
+                setuser <handle> laston <unixtime> <channel>
                   will set a users laston time in a channel record
                   (if it already exists)
 
@@ -211,18 +211,18 @@ specific commands, see later.
 
 | newchanexempt <channel> <exempt> <creator> <comment> [lifetime] [options]
 |   adds a exempt to the enforced exempt list of a channel; creator is
-|     given credit for the exempt in the exempt list; lifetime is specified
-|     in minutes; if lifetime is not specified, exempt-time (usually 60) is
-|     used; setting the lifetime to 0 makes it a permanent exempt; valid
-|     options are:
-|       sticky     forces the exempt to be always active on a channel, even
-|                    with dynamicexempts on
-|       none       (no effect)
+|   given credit for the exempt in the exempt list; lifetime is specified
+|   in minutes; if lifetime is not specified, exempt-time (usually 60) is
+|   used; setting the lifetime to 0 makes it a permanent exempt; valid
+|   options are:
+|     sticky     forces the exempt to be always active on a channel, even
+|                with dynamicexempts on
+|     none       (no effect)
 |   returns: nothing
 |   N.B. The exempt will not be removed until the corresponding ban has been
 |   removed. For timed bans once the time period has expired the exempt will
 |   not be removed until the corresponding ban has either expired or removed
-|
+
 | newexempt <exempt> <creator> <comment> [lifetime] [options]
 |   adds a exempt to the global exempt list (which takes effect on all
 |   channels); other arguments work exactly like newchanexempt
@@ -230,16 +230,16 @@ specific commands, see later.
 
 | newchaninvite <channel> <invite> <creator> <comment> [lifetime] [options]
 |   adds a invite to the enforced invite list of a channel; creator is
-|     given credit for the invite in the invite list; lifetime is specified
-|     in minutes; if lifetime is not specified, invite-time (usually 60) is
-|     used; setting the lifetime to 0 makes it a permanent invite; valid
-|     options are:
-|       sticky     forces the invite to be always active on a channel, even
-|                    with dynamicinvites on
-|       none       (no effect)
+|   given credit for the invite in the invite list; lifetime is specified
+|   in minutes; if lifetime is not specified, invite-time (usually 60) is
+|   used; setting the lifetime to 0 makes it a permanent invite; valid
+|   options are:
+|     sticky     forces the invite to be always active on a channel, even
+|                with dynamicinvites on
+|     none       (no effect)
 |   returns: nothing
 |   N.B. The invite will not be removed until the channel has gone -i.
-|
+
 | newinvite <invite> <creator> <comment> [lifetime] [options]
 |   adds a invite to the global invite list (which takes effect on all
 |   channels); other arguments work exactly like newchaninvite
@@ -446,8 +446,8 @@ specific commands, see later.
     returns: "1" if someone by that nickname is on the bot's channel; "0"
       otherwise
 
-| nick2hand <nickname> [channel]
-|   returns: handle of <nickname> on <channel>
+  nick2hand <nickname> [channel]
+    returns: handle of <nickname> on <channel>
 |   if <channel> is not specified, bot will check all of its channels
 |   if <nickname> not found, returns ""
 |   if <nickname> found but unknown, returns "*"
@@ -456,9 +456,9 @@ specific commands, see later.
     returns: "1" if the the user@host for someone on the channel matches
       for the handle given; "0" otherwise
 
-| hand2nick <handle> [channel]
-|   returns: nickname of the first person on the <channel> whose user@host
-|     matches that handle, if there is one; "" otherwise
+  hand2nick <handle> [channel]
+    returns: nickname of the first person on the <channel> whose user@host
+      matches that handle, if there is one; "" otherwise
 |   if <channel> is not specified, bot will check all of its channels
 
   ischanban <ban> <channel>
@@ -479,14 +479,12 @@ specific commands, see later.
 | chanexempts <channel>
 |   returns: a list of the current exemptions (+e mode) on the channel,
 |     each element is of the form {exemption bywho age} age is seconds
-|     from the bots POV. this is only useful on networks that support
-|     +e
+|     from the bots POV. this is only useful on networks that support +e
 
 | chaninvites <channel>
 |   returns: a list of the current invitations (+I modes) on the channel,
 |     each element is of the form {invitation bywho age} age is seconds
-|     from the bots POV. this is only useful on networks that support
-|     +I
+|     from the bots POV. this is only useful on networks that support +I
 
   resetbans <channel>
     removes all bans on the channel that aren't in the bot's ban list, and
@@ -503,8 +501,8 @@ specific commands, see later.
     rereads in the channel info from the server
     returns: nothing
 
-| getchanhost <nickname> [channel]
-|   returns: user@host of <nickname>
+  getchanhost <nickname> [channel]
+    returns: user@host of <nickname>
 |   if <channel> is not specified, bot will check all of its channels
 |   if <nickname> is not on the channel(s), returns ""
 
@@ -666,7 +664,7 @@ specific commands, see later.
   dcclist ?type?
     returns: a list of active connections, each item in the list will be a sublist
       of six elements:
- 	{<idx> <handle> <hostname> <type> {<other>} <timestamp>}
+        {<idx> <handle> <hostname> <type> {<other>} <timestamp>}
 
       the types are: chat, bot, files, file_receiving, file_sending,
       file_send_pending, script, socket (these are connections that have not
@@ -743,7 +741,7 @@ specific commands, see later.
       yes, you can use the new flag binding method here too, and this is
       where it becomes truely phearfull since you may never need to check
       attr's inside functions again...imagine:
-         bind pub -o&+o command command_proc
+        bind pub -o&+o command command_proc
       to only allow channel-spec ops to use it! no problem! works fine!
     returns: name of the command that was added, or (if proc-name was omitted),
       a list of the current bindings for this command
@@ -1035,7 +1033,7 @@ for the msg-command "stop", use "unbind msg - stop msg_stop".
 |      note that "victim" was added in 1.3.23 and that this will break
 |      tcl scripts that were written for pre-1.3.23 versions and use this
 |      binding. An easy fix (by guppy) is as follows (example):
-|
+
 |      Old script looks as follows:
 |      bind mode - * mode_proc
 |      proc mode_proc {nick uhost hand chan mc} { ... }
@@ -1188,7 +1186,7 @@ for the msg-command "stop", use "unbind msg - stop msg_stop".
        returns 1, no further action is taken on the flood; if the proc
        returns 0, the bot will do its normal "punishment" for the flood;
        the flood type is "pub", "msg", "join", or "ctcp" (and can be
-       masked to "*" for the bind); flags is ignored
+       masked to "*" for the bind); flags are ignored
 
   (30) NOTE
        bind note <flags> <handle> <proc>
@@ -1198,21 +1196,21 @@ for the msg-command "stop", use "unbind msg - stop msg_stop".
        someone on another bot on the botnet) are checked against these
        binds before being process; if a bind exists, the bot will not
        deliver the note; the handle must be an exact match (no wild-
-       cards), but it is not case sensitive; flags is ignored
+       cards), but it is not case sensitive; flags are ignored
 
   (31) ACT   (stackable)
        bind act <flags> <mask> <proc>
        proc-name <handle> <channel#> <action>
 
        when someone does an action on the botnet, it invokes this binding;
-       flags is ignored; the mask is checked against the text of the
+       flags are ignored; the mask is checked against the text of the
        action (this is very similar to the CHAT binding)
 
   (32) WALL   (stackable)
        bind wall <flags> <mask> <proc>
        proc-name <handle> <msg>
 
-       when the bot receives a wallops, it invokes this binding; flags is
+       when the bot receives a wallops, it invokes this binding; flags are
        ignored; the mask is checked against the text of the wallops msg
 
   (33) BCST   (stackable)
@@ -1220,25 +1218,25 @@ for the msg-command "stop", use "unbind msg - stop msg_stop".
        proc-name <botname> <channel#> <text>
 
        when a bot says something on the botnet, it invokes this binding;
-       flags is ignored; the mask is checked against the text
+       flags are ignored; the mask is checked against the text
 
   (34) CHJN   (stackable)
        bind chjn <flags> <mask> <proc>
        proc-name <botname> <handle> <channel#> <flag> <idx> <from>
 
        when someone joins a botnet channel, it invokes this binding;
-       flags is ignored; the mask is checked against the text
+       flags are ignored; the mask is checked against the text
 
   (35) CHPT   (stackable)
-|      bind chpt <flags> <mask> <proc>
+       bind chpt <flags> <mask> <proc>
 |      proc-name <botname> <handle> <idx> <channel#>
 
        when someone parts a botnet channel, it invokes this binding;
-       flags is ignored; the mask is checked against the channel
+       flags are ignored; the mask is checked against the channel
 
   (36) TIME   (stackable)
        bind time - <mask> <proc>
-       proc-name <min> <hour> <day> <month> <year>
+|      proc-name <min> <hour> <day> <month> <year>
 
        allows you to schedule procedure calls at certain times,
        mask matches 5 space seperated integers of the form:
@@ -1279,13 +1277,13 @@ for the msg-command "stop", use "unbind msg - stop msg_stop".
 |
 |      triggered whenever one of these events happens. valid events are:
 |        sighup            (called on a kill -HUP <pid>)
-|        sigterm	   (called on a kill -TERM <pid>)
-|        sigill		   (called on a kill -ILL <pid>)
-|	 sigquit           (called on a kill -QUIT <pid>)
-|	 save		   (called when the userfile is saved)
-|	 rehash            (called just after a rehash)
-|	 prerehash         (called just before a rehash)
-|	 logfile           (called when the logs are switched daily)
+|        sigterm           (called on a kill -TERM <pid>)
+|        sigill            (called on a kill -ILL <pid>)
+|        sigquit           (called on a kill -QUIT <pid>)
+|        save              (called when the userfile is saved)
+|        rehash            (called just after a rehash)
+|        prerehash         (called just before a rehash)
+|        logfile           (called when the logs are switched daily)
 
 (A) RETURN VALUES
 

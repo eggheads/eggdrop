@@ -1104,7 +1104,7 @@ static void cmd_pls_chan(struct userrec *u, int idx, char *par)
   char *chname;
 
   if (!par[0]) {
-    dprintf(idx, "Usage: +chan <#channel>\n");
+    dprintf(idx, "Usage: +chan [%s]<channel>\n", CHANMETA);
     return;
   }
   chname = newsplit(&par);
@@ -1125,7 +1125,7 @@ static void cmd_mns_chan(struct userrec *u, int idx, char *par)
   int i;
 
   if (!par[0]) {
-    dprintf(idx, "Usage: -chan <#channel>\n");
+    dprintf(idx, "Usage: -chan [%s]<channel>\n", CHANMETA);
     return;
   }
   chname = newsplit(&par);

@@ -415,7 +415,7 @@ static int u_addban(struct chanset_t *chan, char *ban, char *from, char *note,
   if ((expire_time == 0L) || (flags & MASKREC_PERM)) {
     flags |= MASKREC_PERM;
     expire_time = 0L;
-  } 
+  }
   /* new format: */
   p = user_malloc(sizeof(maskrec));
 
@@ -824,7 +824,7 @@ static void tell_exempts (int idx, int show_inact, char * match)
   context;
   if (match[0]) {
     chname = newsplit(&match);
-    if ((chname[0] == '#') || (chname[0] == '+') || (chname[0] == '&')) {
+    if (chname[0] && strchr(CHANMETA, chname[0])) {
       chan = findchan(chname);
       if (!chan) {
 	dprintf(idx, "%s.\n", CHAN_NOSUCH);
@@ -919,7 +919,7 @@ static void tell_invites (int idx, int show_inact, char * match)
   context;
   if (match[0]) {
     chname = newsplit(&match);
-    if ((chname[0] == '#') || (chname[0] == '+') || (chname[0] == '&')) {
+    if (chname[0] && strchr(CHANMETA, chname[0])) {
       chan = findchan(chname);
       if (!chan) {
 	dprintf(idx, "%s.\n", CHAN_NOSUCH);
@@ -1236,7 +1236,7 @@ static void check_expired_exempts()
             chan->name);
         else {
           putlog(LOG_MISC, "*", "%s %s %s %s (%s)", EXEMPTS_NOLONGER,
-            (*u)->mask, MISC_ONLOCALE, chan->name, MISC_EXPIRED);
+		 (*u)->mask, MISC_ONLOCALE, chan->name, MISC_EXPIRED);
           add_mode(chan, '-', 'e', (*u)->mask);
           u_delexempt(chan,(*u)->mask,1);
         }
@@ -1275,7 +1275,8 @@ static void check_expired_invites()
     while (*u) {
       if (!((*u)->flags & MASKREC_PERM) && (now >= (*u)->expire)) {
 	putlog(LOG_MISC, "*", "%s %s %s %s (%s)", INVITES_NOLONGER,
-	       (*u)->mask, MISC_ONLOCALE, chan->name, MISC_EXPIRED); 	    add_mode(chan, '-', 'I', (*u)->mask);
+	       (*u)->mask, MISC_ONLOCALE, chan->name, MISC_EXPIRED);
+ 	add_mode(chan, '-', 'I', (*u)->mask);
 	u_delinvite(chan,(*u)->mask,1);
       } else
 	u = &((*u)->next);
