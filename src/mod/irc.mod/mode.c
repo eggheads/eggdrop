@@ -305,7 +305,8 @@ static void got_key(struct chanset_t *chan, char *nick, char *from,
     putlog(LOG_MODES, chan->name, "%s on %s!", CHAN_BADCHANKEY, chan->name);
     dprintf(DP_MODE, "KICK %s %s :%s\n", chan->name, nick, CHAN_BADCHANKEY);
     m = ismember(chan, nick);
-    m->flags |= SENTKICK;
+    if (m)
+      m->flags |= SENTKICK;
   }
   if (((reversing) && !(chan->key_prot[0])) || (bogus) ||
       ((chan->mode_mns_prot & CHANKEY) &&
