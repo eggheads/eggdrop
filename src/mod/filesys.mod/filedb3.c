@@ -4,7 +4,7 @@
  * 
  * Rewritten by Fabian Knittel <fknittel@gmx.de>
  * 
- * $Id: filedb3.c,v 1.11 2000/03/23 23:17:57 fabian Exp $
+ * $Id: filedb3.c,v 1.12 2000/06/20 21:01:20 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1007,7 +1007,7 @@ static void filedb_ls(FILE *fdb, int idx, char *mask, int showall)
 	  malloc_strcpy(s3, fdbe->filename);
 	s4 = nmalloc(69 + strlen(s3 ? s3 : "") + strlen(s1) +
 		     strlen(fdbe->uploader) + strlen(t) + strlen(s2));
-	sprintf(s4, "%-30s %s  %-9s (%s)  %6d%s\n", s3, s1,
+	sprintf(s4, "%-30s %s  %-9s (%s)  %6d%s\n", s3 ? s3 : "", s1,
 		fdbe->uploader, t, fdbe->gots, s2);
 	if (s3)
 	  my_free(s3);
