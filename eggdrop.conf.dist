@@ -65,7 +65,7 @@ set timezone "EST"
 #   b  information about bot linking and userfile sharing
 #   c  commands people use (via msg or dcc)
 #   x  file transfers and file-area commands
-#   r  (if user-console-r defined) EVERYTHING sent to the bot by the server
+#   r  (if use-console-r defined) EVERYTHING sent to the bot by the server
 #   o  other: misc info, errors -- IMPORTANT STUFF
 #   w  wallops: msgs between IRCops (be sure to set the bot +w in init-server)
 # There are others, but you probably shouldnt log them, it'd be rather
@@ -251,11 +251,6 @@ set resolve-timeout 15
 
 # temporary ignores will last how many minutes?
 set ignore-time 15
-
-# [0/1] enable logging of all information sent *to* a server, via console mode 'v'
-# NOTE: This is a large security hole, allowing people to see passwords.
-# This is now restricted to +n users only. Please choose your owners with care.
-set debug-output 0
 
 # this setting affects what part of the hour the 'hourly' calls occur
 # on the bot, this includes such things as note notifying,
@@ -711,6 +706,11 @@ set check-stoned 1
 # This is now restricted to +n users only. Please choose your owners with care.
 set use-console-r 0
 
+# [0/1] enable logging of all information sent *to* a server, via console mode 'v'
+# NOTE: This is a large security hole, allowing people to see passwords.
+# This is now restricted to +n users only. Please choose your owners with care.
+set debug-output 0
+
 # [0/1] exit if the server sends a ERROR message?
 set serverror-quit 1
 
@@ -852,6 +852,12 @@ unbind msg - addhost *msg:addhost
 # wait-info)
 set no-chanrec-info 0
 
+# [0/1/2/3] Defines how the bot should punish bad users when revenging.
+# 0 for deop - 1 for deop and +d - 2 for deop, +d and kick - 3 for deop,
+# chattr +d, kick and ban. Default is 1.
+set revenge-mode 1
+
+
 ##### IRC MODULE - net-type 1 specific features (IRCnet) #####
 
 # Don't modify the following settings if you don't use IRCnet. The defaults following
@@ -901,6 +907,13 @@ set kick-bogus-invites 0
 # [0/1] Do you want to use invites?
 # set use-invites 0
 
+# [0/1] Prevent mixing normal modes and +I/+e invite modes?
+# At the moment (Sep/1999), IRCnet servers do not allow mixing those modes,
+# so leave this flag set to 1. The servers will probably change their
+# behaviour in the future, so you should first check before accepting the
+# default.
+set prevent-mixing 1 
+
 ##### IRC MODULE - net-type 5 specific features (other networks) #####
 
 # kick-method defines how kicks (when enforcing bans) should be made:
@@ -929,6 +942,11 @@ set kick-bogus-invites 0
 # Automatically set to 0 for net-type 0/1/3/4, set to 1 for net-type 2.
 # Only use this if you set net-type 5
 #set use-354 0
+
+# [0/1] use rfc 1459 compliant string matching routines?
+# All networks apart from Dalnet comply with rfc 1459, so you should only
+# disable it on Dalnet or networks which use Dalnet's code.
+#set rfc-compliant 1
 
 
 
@@ -967,11 +985,12 @@ set xfer-timeout 30
 #loadmodule share
 
 ##### variables:
-# [0/1] there are situations where sharebot userfile resynchronization
-# can fail to work correctly.  because of this, it is no longer
-# advised to turn this feature on.  i've lost the mail from the
-# person that spelled out the flaw, so i can't give him/her credit
-# right now or explain it (sorry).
+# [0/1] When two bots get disconnected this flag allows them to create
+# a resync buffer which saves all changes done to the userfile during
+# the disconnect. So, when they reconnect, they will not have to transfer
+# the complete user file, but instead, just send the resync buffer.
+# If you have problems with this feature please tell us. Take a look at
+# doc/BUG-REPORT first though.
 #set allow-resync 0
 
 # this specifies how long to hold another bots resync data for before

@@ -29,10 +29,8 @@ void bzero(char *, int);
 
 struct chanset_t;		/* keeps the compiler warnings down :) */
 struct userrec;
-struct banrec;
+struct maskrec;
 struct igrec;
-struct exemptrec;
-struct inviterec;
 struct flag_record;
 struct list_type;
 struct tand_t_struct;
@@ -41,8 +39,14 @@ struct tand_t_struct;
 extern void (*encrypt_pass) (char *, char *);
 extern char *(*encrypt_string) (char *, char *);
 extern char *(*decrypt_string) (char *, char *);
+extern int (*rfc_casecmp) (const char *, const char *);
+extern int (*rfc_ncasecmp) (const char *, const char *, int);
+extern int (*rfc_toupper) (int);
+extern int (*rfc_tolower) (int);
+extern int (*match_noterej) (struct userrec *, char *);
 
 #endif
+
 /* botcmd.c */
 void bot_share(int, char *);
 int base64_to_int(char *);
@@ -79,7 +83,8 @@ int getparty(char *, int);
 int add_note(char *, char *, char *, int, int);
 int simple_sprintf VARARGS(char *, arg1);
 void tandout_but VARARGS(int, arg1);
-char *int_to_base10(unsigned int);
+char *int_to_base10(int);
+char *unsigned_int_to_base10(unsigned int);
 char *int_to_base64(unsigned int);
 
 /* chanprog.c */
@@ -145,6 +150,7 @@ void add_lang_section(char *);
 void fatal(char *, int);
 int expected_memory();
 void backup_userfile();
+void assert_failed(const char *, const char *, const int);
 
 /* match.c */
 int _wild_match(register unsigned char *, register unsigned char *);
@@ -190,6 +196,7 @@ void reload_help_data(void);
 void remove_gunk(char *);
 char *extracthostname(char *);
 void show_banner(int i);
+void make_rand_str(char *, int);
 
 /* net.c */
 void my_memcpy(char *, char *, int);
@@ -223,10 +230,12 @@ int findanyidx(int);
 /* userent.c */
 void list_type_kill(struct list_type *);
 int list_type_expmem(struct list_type *);
+int xtra_set();
 
 /* userrec.c */
 struct userrec *adduser(struct userrec *, char *, char *, char *, int);
 void addhost_by_handle(char *, char *);
+void clear_masks(struct maskrec *);
 void clear_userlist(struct userrec *);
 int u_pass_match(struct userrec *, char *);
 int delhost_by_handle(char *, char *);
@@ -240,10 +249,6 @@ int write_user(struct userrec *u, FILE * f, int shr);
 void write_userfile(int);
 struct userrec *check_dcclist_hand(char *);
 void touch_laston(struct userrec *, char *, time_t);
-int get_note_ignores(struct userrec *, char ***);
-int add_note_ignore(struct userrec *, char *);
-int del_note_ignore(struct userrec *, char *);
-int match_note_ignore(struct userrec *, char *);
 
 /* users.c */
 void addignore(char *, char *, char *, time_t);
@@ -258,7 +263,9 @@ void tell_users_match(int, char *, int, int, int, char *);
 int readuserfile(char *, struct userrec **);
 
 /* rfc1459.c */
-int rfc_casecmp(char *, char *);
-int rfc_ncasecmp(char *, char *, int);
+int _rfc_casecmp(const char *, const char *);
+int _rfc_ncasecmp(const char *, const char *, int);
+int _rfc_toupper(int);
+int _rfc_tolower(int);
 
 #endif

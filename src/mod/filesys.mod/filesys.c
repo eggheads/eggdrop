@@ -525,6 +525,7 @@ static void out_dcc_files(int idx, char *buf, void *x)
 static cmd_t mydcc[] =
 {
   {"files", "-", cmd_files, NULL},
+  {0, 0, 0, 0}
 };
 
 static tcl_strings mystrings[] =
@@ -753,6 +754,7 @@ static int filesys_DCC_CHAT(char *nick, char *from, char *handle,
 static cmd_t myctcp[] =
 {
   {"DCC", "", filesys_DCC_CHAT, "files:DCC"},
+  {0, 0, 0, 0}
 };
 
 static void init_server_ctcps(char *module)
@@ -760,12 +762,13 @@ static void init_server_ctcps(char *module)
   p_tcl_bind_list H_ctcp;
 
   if ((H_ctcp = find_bind_table("ctcp")))
-    add_builtins(H_ctcp, myctcp, 1);
+    add_builtins(H_ctcp, myctcp);
 }
 
 static cmd_t myload[] =
 {
-  {"server", "", (Function) init_server_ctcps, "filesys:server"}
+  {"server", "", (Function) init_server_ctcps, "filesys:server"},
+  {0, 0, 0, 0}
 };
 
 static int filesys_expmem()
@@ -812,12 +815,12 @@ static char *filesys_close()
   rem_tcl_commands(mytcls);
   rem_tcl_strings(mystrings);
   rem_tcl_ints(myints);
-  rem_builtins(H_dcc, mydcc, 1);
-  rem_builtins(H_load, myload, 1);
-  rem_builtins(H_fil, myfiles, 25);
+  rem_builtins(H_dcc, mydcc);
+  rem_builtins(H_load, myload);
+  rem_builtins(H_fil, myfiles);
   rem_help_reference("filesys.help");
   if ((H_ctcp = find_bind_table("ctcp")))
-    rem_builtins(H_ctcp, myctcp, 1);
+    rem_builtins(H_ctcp, myctcp);
   del_bind_table(H_fil);
   del_entry_type(&USERENTRY_DCCDIR);
   module_undepend(MODULE_NAME);
@@ -859,9 +862,9 @@ char *filesys_start(Function * global_funcs)
   add_tcl_strings(mystrings);
   add_tcl_ints(myints);
   H_fil = add_bind_table("fil", 0, builtin_fil);
-  add_builtins(H_dcc, mydcc, 1);
-  add_builtins(H_fil, myfiles, 25);
-  add_builtins(H_load, myload, 1);
+  add_builtins(H_dcc, mydcc);
+  add_builtins(H_fil, myfiles);
+  add_builtins(H_load, myload);
   add_help_reference("filesys.help");
   init_server_ctcps(0);
   my_memcpy(&USERENTRY_DCCDIR, &USERENTRY_INFO,
@@ -886,14 +889,17 @@ static void set_handle_uploads(struct userrec *bu, char *hand,
 {
   struct userrec *u = get_user_by_handle(bu, hand);
   struct user_entry *ue = find_user_entry(&USERENTRY_FSTAT, u);
+  register struct filesys_stats *fs = NULL;
 
-  if (ue) {
-    register struct filesys_stats *fs = ue->u.extra;
-
-    fs->uploads = ups;
-    fs->upload_ks = upk;
-    set_user(&USERENTRY_FSTAT, u, fs);
+  if (ue)
+    fs = ue->u.extra;
+  if (!fs) {
+    fs = user_malloc(sizeof(struct filesys_stats));
+    bzero(fs, sizeof(struct filesys_stats));
   }
+  fs->uploads = ups;
+  fs->upload_ks = upk;
+  set_user(&USERENTRY_FSTAT, u, fs);
 }
 
 static void set_handle_dnloads(struct userrec *bu, char *hand,
@@ -901,12 +907,15 @@ static void set_handle_dnloads(struct userrec *bu, char *hand,
 {
   struct userrec *u = get_user_by_handle(bu, hand);
   struct user_entry *ue = find_user_entry(&USERENTRY_FSTAT, u);
+  register struct filesys_stats *fs = NULL;
 
-  if (ue) {
-    register struct filesys_stats *fs = ue->u.extra;
-
-    fs->dnloads = dns;
-    fs->dnload_ks = dnk;
-    set_user(&USERENTRY_FSTAT, u, fs);
+  if (ue)
+    fs = ue->u.extra;
+  if (!fs) {
+    fs = user_malloc(sizeof(struct filesys_stats));
+    bzero(fs, sizeof(struct filesys_stats));
   }
+  fs->dnloads = dns;
+  fs->dnload_ks = dnk;
+  set_user(&USERENTRY_FSTAT, u, fs);
 }

@@ -100,6 +100,8 @@ void init_misc()
     /*        Added by cybah  */
     logs[last].szLast[0] = 0;
     logs[last].Repeats = 0;
+    /*        Added by rtc  */
+    logs[last].flags = 0;
   }
 }
 
@@ -298,11 +300,19 @@ int copyfile(char *oldpath, char *newpath)
 
 int movefile(char *oldpath, char *newpath)
 {
-  int x = copyfile(oldpath, newpath);
+  int ret;
+  
+#ifdef HAVE_RENAME
+  /* try to use rename first */
+  if (rename(oldpath, newpath) == 0)
+    return 0;
+#endif /* HAVE_RENAME */
 
-  if (x == 0)
+  /* if that fails, fall back to copying the file */
+  ret = copyfile(oldpath, newpath);
+  if (ret == 0)
     unlink(oldpath);
-  return x;
+  return ret;
 }
 
 /* dump a potentially super-long string of text */
@@ -503,15 +513,15 @@ void putlog VARARGS_DEF(int, arg1)
       }
     }
   }
-  if ((!backgrd) && (!con_chan) && (!term_z))
-    printf("%s", out);
   for (i = 0; i < dcc_total; i++)
     if ((dcc[i].type == &DCC_CHAT) && (dcc[i].u.chat->con_flags & type)) {
       if ((chname[0] == '*') || (dcc[i].u.chat->con_chan[0] == '*') ||
 	  (!rfc_casecmp(chname, dcc[i].u.chat->con_chan)))
 	dprintf(i, "%s", out);
     }
-  if ((type & LOG_MISC) && use_stderr) {
+  if ((!backgrd) && (!con_chan) && (!term_z))
+    printf("%s", out);
+  else if ((type & LOG_MISC) && use_stderr) {
     if (shtime)
       out += 8;
     dprintf(DP_STDERR, "%s", s);
@@ -563,7 +573,7 @@ void check_logsize()
  * if (stat(buf,&ss) == -1) { 
  * * file doesnt exist, lets use it *
  */
-	  rename(logs[i].filename, buf);
+	  movefile(logs[i].filename, buf);
 /* x=0;
  * }
  * } */
@@ -1264,8 +1274,7 @@ void show_motd(int idx)
 /* remove :'s from ignores and bans */
 void remove_gunk(char *par)
 {
-  char *q, *p;
-  char WBUF[strlen(par) + 1];
+  char *q, *p, *WBUF = nmalloc(strlen(par) + 1);
 
   for (p = par, q = WBUF; *p; p++, q++) {
     if (*p == ':')
@@ -1275,6 +1284,7 @@ void remove_gunk(char *par)
   }
   *q = *p;
   strcpy(par, WBUF);
+  nfree(WBUF);
 }
 
 /* This will return a pointer to the first character after the @ in the
@@ -1312,3 +1322,16 @@ void show_banner(int idx) {
    }
 }
 
+/* create a string with random letters and digits */
+void make_rand_str(char *s, int len)
+{
+  int j;
+
+  for (j = 0; j < len; j++) {
+    if (random() % 3 == 0)
+      s[j] = '0' + (random() % 10);
+    else
+      s[j] = 'a' + (random() % 26);
+  }
+  s[len] = 0;
+}

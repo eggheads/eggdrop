@@ -266,7 +266,7 @@ void killsock(int sock)
   int i;
 
   for (i = 0; i < MAXSOCKS; i++) {
-    if (socklist[i].sock == sock) {
+    if ((socklist[i].sock == sock) && !(socklist[i].flags & SOCK_UNUSED)) {
       close(socklist[i].sock);
       if (socklist[i].inbuf != NULL) {
 	nfree(socklist[i].inbuf);
@@ -423,7 +423,7 @@ int open_listen(int *port)
 
   if (firewall[0]) {
     /* FIXME: can't do listen port thru firewall yet */
-    putlog(LOG_ALL, "*", "!! Cant open a listen port (you are using a firewall)\n");
+    putlog(LOG_ALL, "*", "!! Cant open a listen port (you are using a firewall)");
     return -1;
   }
   sock = getsock(SOCK_LISTEN);

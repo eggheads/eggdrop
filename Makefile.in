@@ -4,34 +4,34 @@
 #
 
 prefix = @prefix@
-DEST=@DEST@
-NEWVERSION=`grep 'char egg_version' src/main.c | awk '{print $4}' | sed s/\"//g | sed s/\;// | sed s/.\*=\ //`
+DEST = @DEST@
+NEWVERSION = `grep 'char egg_version' src/main.c | @AWK@ '{gsub(/(\"|\;)/, "", $$4); print $$4}'`
 
-SHELL=/bin/sh
+SHELL = /bin/sh
 
 # things you can put here:
 #   -Wall            if you're using gcc and it supports it (configure
 #                      usually detects this anyway now)
 #   -DEBUG_MEM       to be able to debug memory allocation (.debug)
 # this can now be set by using 'make debugmem'
-CFLGS = -DRFC_COMPLIANT
+CFLGS =
 
 # configure SHOULD set these...you may need to tweak them to get modules
 # to compile .. if you do...let the devel-team know the working settings
-# btw to turn STRIP off, do STRIP=touch not STRIP=
+# btw to turn STRIP off, do 'STRIP = touch' not 'STRIP ='
 
-CC=@CC@
-LD=@CC@
+CC = @CC@
+LD = @CC@
 
 #making eggmod
 MOD_CC = @BEL_MOD_CC@
 MOD_LD = @BEL_MOD_LD@
 MOD_STRIP = @BEL_MOD_STRIP@
-DLFLAGS= @DLFLAGS@
+DLFLAGS = @DLFLAGS@
 
 #making modules
 SHLIB_CC = @SHLIB_CC@
-SHLIB_LD  = @SHLIB_LD@
+SHLIB_LD = @SHLIB_LD@
 SHLIB_STRIP = @SHLIB_STRIP@
 
 # configure SHOULD set these properly if not, modify them appropriately
@@ -41,7 +41,7 @@ CP2 = @CP2@
 CP3 = @CP3@
 
 # With any luck this won't burst into flames or cause sterility
-LN_S = ln -s
+LN_S = @LN_S@
 
 # STOP STOP STOP STOP STOP STOP STOP STOP STOP STOP STOP STOP STOP STOP #
 # - - - - - - - - do not edit anything below this line. - - - - - - - - #
@@ -61,19 +61,28 @@ help:
 	@echo "To make eggdrop :"
 	@echo "   % make "
 
-clean: cleanmods
-	@rm -f eggdrop egg core *.o *.a *.so *~ *.stamp
-	@cd src ; rm -f eggdrop egg core *.o *.a *~ language/*~
-	@cd src/md5 ; ${MAKE} clean
-	
 cleanmods:
-	@cd src/mod ; ${MAKE} clean 'MAKE=${MAKE}'
+	@cd src/mod; ${MAKE} clean 'MAKE=${MAKE}'
 
-dist: clean
+clean: cleanmods
+	@rm -f eggdrop egg core DEBUG *.o *.a *.so *.stamp
+	@cd src; rm -f eggdrop egg core DEBUG *.o *.a
+	@cd src/md5; ${MAKE} clean
+ 
+distclean: clean
 	@rm -f Makefile config.cache config.log config.status config.h lush.h
-	@rm -f doc/*~
-	@echo "all:" >Makefile
-	@echo "	@./configure; make" >>Makefile
+	@rm -f `find . \( -name '*~' -o -name '*#' -o -name '*.orig' \
+		-o -name '*.rej' -o -name '*.bak' \) -print`
+ 
+distrib: distclean Makefile.in
+	@rm -rf `find . \( -name "CVS" \) -print`
+	@(echo "all:"; \
+	echo "  @echo \"\""; \
+	echo "	@echo \"Before you can compile your bot you have to configure it.\""; \
+	echo "	@echo \"So please start the configure script now:\""; \
+	echo "	@echo \"\""; \
+	echo "	@echo \" % ./configure\""; \
+	echo "	@echo \"\""; ) > Makefile
 
 eggdrop: modegg modules
 
@@ -83,11 +92,10 @@ eggdrop.h:
 	@echo You do not have the eggdrop source!
 	@exit 1
 
-OBJS =  botcmd.o botmsg.o botnet.o chanprog.o cmds.o \
-	dcc.o dccutil.o flags.o language.o main.o md5/md5c.o mem.o \
-	misc.o modules.o net.o rfc1459.o \
-	tcl.o tcldcc.o tclhash.o tclmisc.o tcluser.o userent.o \
-	userrec.o users.o
+OBJS =	botcmd.o botmsg.o botnet.o chanprog.o cmds.o dcc.o \
+	dccutil.o flags.o language.o main.o mem.o misc.o \
+	modules.o net.o rfc1459.o tcl.o tcldcc.o tclhash.o \
+	tclmisc.o tcluser.o userent.o userrec.o users.o md5/md5c.o
 
 GMAKE_STATIC = ${MAKE} 'CC=${CC}' 'LD=${LD}' 'OBJS=${OBJS}'\
 'STRIP=${MOD_STRIP}' 'CFLAGS=${CFLAGS} -DSTATIC' 'XLIBS=@TCL_LIBS@ @LIBS@'
@@ -100,45 +108,45 @@ GMAKE_MOD = ${MAKE} 'CC=${MOD_CC}' 'LD=${MOD_LD}' 'OBJS=${OBJS}'\
 'TCLLIB=${TCLLIB}' 'STRIP=${MOD_STRIP}' 'RANLIB=@RANLIB@' \
 'XLIBS=@TCL_LIBS@ @LIBS@'
 
-DMAKE_MEM = ${MAKE} 'CC=${MOD_CC} -DEBUG_MEM' 'LD=${MOD_LD}' \
-'OBJS=${OBJS}' 'CFLAGS=-g3 ${CFLAGS}' 'XREQ=${XREQ}' \
+DMAKE_MEM = ${MAKE} 'CC=${MOD_CC}' 'LD=${MOD_LD}' \
+'OBJS=${OBJS}' 'CFLAGS=-g3 ${CFLAGS} -DEBUG_MEM' 'XREQ=${XREQ}' \
 'TCLLIB=${TCLLIB}' 'STRIP=touch' 'RANLIB=@RANLIB@' \
 'XLIBS=@TCL_LIBS@ @LIBS@'
 
 DMAKE_SHLIB = ${MAKE} 'CC=${SHLIB_CC}' 'LD=${SHLIB_LD}' \
-'STRIP=touch' 'CFLAGS=-g3 ${CFLAGS}'
+'STRIP=touch' 'CFLAGS=-g3 ${CFLAGS} -DEBUG_MEM'
 
 static: eggtest
 	@echo ""
 	@echo "Making module objects for static linking..."
 	@echo ""
 	@rm -f src/main.o
-	@cd src/mod;${GMAKE_STATIC} static
+	@cd src/mod; ${GMAKE_STATIC} static
 	@echo ""
 	@echo "Making core eggdrop for static linking..."
 	@echo ""
-	@cd src;${GMAKE_STATIC} static
+	@cd src; ${GMAKE_STATIC} static
 
 modegg: modtest
-	@cd src;${GMAKE_MOD} eggdrop
+	@cd src; ${GMAKE_MOD} eggdrop
 	@echo
 	@./eggdrop -v
 	@ls -la eggdrop
 	
 modules:  modtest
-	@cd src/mod;${GMAKE_SHLIB} modules
+	@cd src/mod; ${GMAKE_SHLIB} modules
 	@echo
 	@echo "modules made:"
 	@ls -la *.so
 
 debmodules:  modtest
-	@cd src/mod;${DMAKE_SHLIB} modules
+	@cd src/mod; ${DMAKE_SHLIB} modules
 	@echo
 	@echo "modules made:"
 	@ls -la *.so
 
 memegg:  modtest
-	@cd src;${DMAKE_MEM} eggdrop
+	@cd src; ${DMAKE_MEM} eggdrop
 	@echo
 	@./eggdrop -v
 	@ls -la eggdrop
@@ -197,8 +205,8 @@ ainstall:
 		rm -f $(DEST)/oeggdrop; \
 	fi
 	@if test ! -r $(DEST)/motd; then \
-	        $(CP1) motd $(DEST)/; \
-        fi
+		$(CP1) motd $(DEST)/; \
+	fi
 	@if test ! -r $(DEST)/telnet-banner; then \
 		$(CP1) telnet-banner $(DEST)/; \
 	fi
@@ -254,7 +262,7 @@ ainstall:
 		$(CP2) scripts/* $(DEST)/scripts; \
 	fi
 	@echo
-	@${MAKE} REALDEST=`cd $(DEST);pwd` install2
+	@${MAKE} REALDEST=`cd $(DEST); pwd` install2
 	@echo
 	@echo Installation completed.
 	@echo You MUST ensure that you edit/verify your configuration file.
@@ -263,6 +271,6 @@ ainstall:
 
 install2:
 	@echo Installing mods -- DEST = $(REALDEST)
-	@cd src/mod;${MAKE} REALDEST=$(REALDEST) install CP1='${CP1}'; cd ../..
+	@cd src/mod; ${MAKE} REALDEST=$(REALDEST) install CP1='${CP1}'; cd ../..
 
 #safety hash

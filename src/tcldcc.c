@@ -303,9 +303,9 @@ static int tcl_console STDVAR
   Tcl_AppendElement(irp, dcc[i].u.chat->con_chan);
   Tcl_AppendElement(irp, masktype(dcc[i].u.chat->con_flags));
   /* new style autosave -- drummer,07/25/1999*/
-  if ((me = module_find("console", 0, 0))) {
+  if ((me = module_find("console", 1, 1))) {
     Function *func = me->funcs;
-    (func[4]) (i);
+    (func[CONSOLE_DOSTORE]) (i);
   }
   return TCL_OK;
 }
@@ -594,13 +594,14 @@ static int tcl_botlist STDVAR
   return TCL_OK;
 }
 
-/* list of { idx nick host type } */
-/* type: "chat", "files", "script" */
+/* list of { idx nick host type {other}  timestamp} */
+
 static int tcl_dcclist STDVAR
 {
   int i;
   char idxstr[10];
-  char *list[5], *p;
+  char timestamp[15]; /* when will unixtime ever be 14 numbers long */
+  char *list[6], *p;
   char other[160];
 
   context;
@@ -609,6 +610,7 @@ static int tcl_dcclist STDVAR
     if ((argc == 1) ||
 	(dcc[i].type && !strcasecmp(dcc[i].type->name, argv[1]))) {
       sprintf(idxstr, "%ld", dcc[i].sock);
+      sprintf(timestamp, "%ld", dcc[i].timeval);
       if (dcc[i].type && dcc[i].type->display)
 	dcc[i].type->display(i, other);
       else {
@@ -616,12 +618,12 @@ static int tcl_dcclist STDVAR
 	break;
       }
       list[0] = idxstr;
-
       list[1] = dcc[i].nick;
       list[2] = dcc[i].host;
       list[3] = dcc[i].type ? dcc[i].type->name : "*UNKNOWN*";
       list[4] = other;
-      p = Tcl_Merge(5, list);
+      list[5] = timestamp;
+      p = Tcl_Merge(6, list);
       Tcl_AppendElement(irp, p);
       n_free(p, "", 0);
     }
@@ -926,6 +928,7 @@ static int tcl_listen STDVAR
     dcc[idx].addr = iptolong(getmyip());
     dcc[idx].port = port;
     dcc[idx].sock = i;
+    dcc[idx].timeval = now;
   }
   /* script? */
   if (!strcasecmp(argv[2], "script")) {

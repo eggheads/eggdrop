@@ -4,7 +4,7 @@ include ../Makefile.generic
 
 install:
 	@echo Installing filesys language file.
-	@$(CP1) files.english.lang $(REALDEST)/language
+	@$(CP1) *.lang $(REALDEST)/language
 
 filesys.o: \
    ../module.h \

@@ -62,7 +62,7 @@ int base64_to_int(char *buf)
     buf++;
   }
   return i;
-};
+}
 
 /* used for 1.0 compatibility: if a join message arrives with no sock#, */
 /* i'll just grab the next "fakesock" # (incrementing to assure uniqueness) */
@@ -255,6 +255,10 @@ static void bot_priv(int idx, char *par)
 	  botnet_send_priv(idx, botnetnick, from, NULL,
 			   "%s %s", "Not online; note forwarded to:", to);
 	  break;
+	case NOTE_REJECT:
+	  botnet_send_priv(idx, botnetnick, from, NULL,
+			   "%s %s", to, "rejected your note.");
+          break;
 	case NOTE_TCL:
 	  break;		/* do nothing */
 	case NOTE_OK:

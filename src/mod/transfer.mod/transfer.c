@@ -380,7 +380,7 @@ static void eof_dcc_send(int idx)
     simple_sprintf(ofn, "%s%s", tempdir, dcc[idx].u.xfer->filename);
     simple_sprintf(nfn, "%s%s", dcc[idx].u.xfer->dir,
 		   dcc[idx].u.xfer->filename);
-    if (rename(ofn, nfn))
+    if (movefile(ofn, nfn))
       putlog(LOG_MISC | LOG_FILES, "*",
 	     "FAILED move %s from %s ! File lost!",
 	     dcc[idx].u.xfer->filename, tempdir);
@@ -825,7 +825,7 @@ static void out_dcc_xfer(int idx, char *buf, void *x)
 static struct dcc_table DCC_SEND =
 {
   "SEND",
-  DCT_FILETRAN | DCT_FILESEND,
+  DCT_FILETRAN | DCT_FILESEND | DCT_VALIDIDX,
   eof_dcc_send,
   dcc_send,
   &wait_dcc_xfer,
@@ -841,7 +841,7 @@ static void dcc_fork_send(int idx, char *x, int y);
 static struct dcc_table DCC_FORK_SEND =
 {
   "FORK_SEND",
-  DCT_FILETRAN | DCT_FORKTYPE | DCT_FILESEND,
+  DCT_FILETRAN | DCT_FORKTYPE | DCT_FILESEND | DCT_VALIDIDX,
   eof_dcc_fork_send,
   dcc_fork_send,
   &wait_dcc_xfer,
@@ -870,7 +870,7 @@ static void dcc_fork_send(int idx, char *x, int y)
 static struct dcc_table DCC_GET =
 {
   "GET",
-  DCT_FILETRAN,
+  DCT_FILETRAN | DCT_VALIDIDX,
   eof_dcc_get,
   dcc_get,
   &wait_dcc_xfer,
@@ -884,7 +884,7 @@ static struct dcc_table DCC_GET =
 static struct dcc_table DCC_GET_PENDING =
 {
   "GET_PENDING",
-  DCT_FILETRAN,
+  DCT_FILETRAN | DCT_VALIDIDX,
   eof_dcc_get,
   dcc_get_pending,
   &wait_dcc_xfer,
@@ -1150,14 +1150,7 @@ static int fstat_unpack(struct userrec *u, struct user_entry *e)
 
     p = e->u.list->extra;
     e->u.list->extra = NULL;
-    while (e->u.list) {
-      struct list_type *t = e->u.list->next;
-
-      if (e->u.list->extra)
-	nfree(e->u.list->extra);
-      nfree(e->u.list);
-      e->u.list = t;
-    }
+    list_type_kill (e->u.list);
     bzero(fs, sizeof(struct filesys_stats));
 
     q = strchr(p, ' ');
@@ -1178,6 +1171,7 @@ static int fstat_unpack(struct userrec *u, struct user_entry *e)
 	}
       }
     }
+    nfree(p);
     e->u.extra = fs;
   }
   return 1;
@@ -1351,36 +1345,42 @@ static int fstat_dupuser(struct userrec *u, struct userrec *o,
 static void stats_add_dnload(struct userrec *u, unsigned long bytes)
 {
   struct user_entry *ue;
+  register struct filesys_stats *fs = NULL;
 
   if (u) {
     ue = find_user_entry(&USERENTRY_FSTAT, u);
-    if (ue) {
-      register struct filesys_stats *fs = ue->u.extra;
-
-      fs->dnloads++;
-      fs->dnload_ks += ((bytes + 512) / 1024);
-      set_user(&USERENTRY_FSTAT, u, fs);
-      if ((!noshare) && !(u->flags & (USER_BOT | USER_UNSHARED)))
-	shareout(NULL, "ch fstat %s u%lu\n", u->handle, bytes);
+    if (ue)
+      fs = ue->u.extra;
+    if (!fs) {
+      fs = user_malloc(sizeof(struct filesys_stats));
+      bzero(fs, sizeof(struct filesys_stats));
     }
+    fs->dnloads++;
+    fs->dnload_ks += ((bytes + 512) / 1024);
+    set_user(&USERENTRY_FSTAT, u, fs);
+    if ((!noshare) && !(u->flags & (USER_BOT | USER_UNSHARED)))
+      shareout(NULL, "ch fstat %s u%lu\n", u->handle, bytes);
   }
 }
 
 static void stats_add_upload(struct userrec *u, unsigned long bytes)
 {
   struct user_entry *ue;
+  register struct filesys_stats *fs = NULL;
 
   if (u) {
     ue = find_user_entry(&USERENTRY_FSTAT, u);
-    if (ue) {
-      register struct filesys_stats *fs = ue->u.extra;
-
-      fs->uploads++;
-      fs->upload_ks += ((bytes + 512) / 1024);
-      set_user(&USERENTRY_FSTAT, u, fs);
-      if ((!noshare) && !(u->flags & (USER_BOT | USER_UNSHARED)))
-	shareout(NULL, "ch fstat %s u%lu\n", u->handle, bytes);
+    if (ue)
+      fs = ue->u.extra; /* can this be NULL? --rtc */
+    if (!fs) {
+      fs = user_malloc(sizeof(struct filesys_stats));
+      bzero(fs, sizeof(struct filesys_stats));
     }
+    fs->uploads++;
+    fs->upload_ks += ((bytes + 512) / 1024);
+    set_user(&USERENTRY_FSTAT, u, fs);
+    if ((!noshare) && !(u->flags & (USER_BOT | USER_UNSHARED)))
+      shareout(NULL, "ch fstat %s u%lu\n", u->handle, bytes);
   }
 }
 
@@ -1395,12 +1395,18 @@ static int fstat_tcl_set(Tcl_Interp * irp, struct userrec *u,
     f = atoi(argv[4]);
   if (argc > 5)
     k = atoi(argv[5]);
-  if (argv[3][0] == 'u') {
-    fs->uploads = f;
-    fs->upload_ks = k;
-  } else if (argv[3][0] == 'd') {
-    fs->dnloads = f;
-    fs->dnload_ks = k;
+  if (argv[3][0] == 'u' || argv[3][0] == 'd') {
+    if (!fs) {
+      fs = user_malloc(sizeof(struct filesys_stats));
+      bzero(fs, sizeof(struct filesys_stats));
+    }
+    if (argv[3][0] == 'u') {
+      fs->uploads = f;
+      fs->upload_ks = k;
+    } else if (argv[3][0] == 'd') {
+      fs->dnloads = f;
+      fs->dnload_ks = k;
+    }
   }
   set_user(&USERENTRY_FSTAT, u, fs);
   return TCL_OK;

@@ -63,8 +63,8 @@ void check_tcl_loadunld(char *, p_tcl_bind_list);
 #define check_tcl_load(a) check_tcl_loadunld(a,H_load)
 #define check_tcl_unld(a) check_tcl_loadunld(a,H_unld)
 
-void rem_builtins(p_tcl_bind_list, cmd_t *, int);
-void add_builtins(p_tcl_bind_list, cmd_t *, int);
+void rem_builtins(p_tcl_bind_list, cmd_t *);
+void add_builtins(p_tcl_bind_list, cmd_t *);
 
 int check_validity(char *, Function);
 extern p_tcl_bind_list H_chat, H_act, H_bcst, H_chon, H_chof;

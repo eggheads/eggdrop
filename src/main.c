@@ -205,7 +205,10 @@ void write_debug()
     nested_debug = 1;
   putlog(LOG_MISC, "*", "* Last context: %s/%d [%s]", cx_file[cx_ptr],
 	 cx_line[cx_ptr], cx_note[cx_ptr][0] ? cx_note[cx_ptr] : "");
-  x = creat("DEBUG", 0644);
+  putlog(LOG_MISC, "*", "* Please REPORT this BUG!");
+  putlog(LOG_MISC, "*", "* Check doc/BUG-REPORT on how to do so.");
+  
+x = creat("DEBUG", 0644);
   setsock(x, SOCK_NONSOCK);
   if (x < 0) {
     putlog(LOG_MISC, "*", "* Failed to write DEBUG");
@@ -237,6 +240,18 @@ void write_debug()
     close(x);
     putlog(LOG_MISC, "*", "* Wrote DEBUG");
   }
+}
+
+void assert_failed (const char *module, const char *file, const int line)
+{
+  write_debug();
+  if (!module) {
+    putlog (LOG_MISC, "*", "* In file %s, line %u", file, line);
+  } else {
+    putlog (LOG_MISC, "*", "* In file %s:%s, line %u", module, file, line);
+  }
+  fatal ("ASSERT FAILED -- CRASHING!", 1);
+  exit (1);
 }
 
 static void got_bus(int z)
@@ -454,7 +469,7 @@ static void core_secondly()
 	    }
 	    simple_sprintf(s, "%s.yesterday", logs[i].filename);
 	    unlink(s);
-	    rename(logs[i].filename, s);
+	    movefile(logs[i].filename, s);
 	  }
       }
     }
@@ -532,7 +547,7 @@ int main(int argc, char **argv)
   sprintf(ver, "eggdrop v%s", egg_version);
   sprintf(version, "Eggdrop v%s  (c)1997 Robey Pointer (c)1999 Eggheads", egg_version);
   /* now add on the patchlevel (for Tcl) */
-  sprintf(&egg_version[strlen(egg_version)], " %08u", egg_numver);
+  sprintf(&egg_version[strlen(egg_version)], " %u", egg_numver);
   strcat(egg_version, egg_xtra);
   context;
 #ifdef STOP_UAC
@@ -609,7 +624,7 @@ int main(int argc, char **argv)
   i = 0;
   for (chan = chanset; chan; chan = chan->next)
     i++;
-  putlog(LOG_ALL, "*", "=== %s: %d channels, %d users.\n",
+  putlog(LOG_ALL, "*", "=== %s: %d channels, %d users.",
 	 botnetnick, i, count_users(userlist));
   cache_miss = 0;
   cache_hit = 0;
@@ -790,18 +805,17 @@ int main(int argc, char **argv)
 	  else {
 	    putlog(LOG_MISC, "*",
 		   "*** ATTENTION: DEAD SOCKET (%d) OF TYPE %s UNTRAPPED",
-		   xx, dcc[idx].type ? dcc[idx].type->name : "*UNKNOWN*");
-	    killsock(xx);
+		   i, dcc[idx].type ? dcc[idx].type->name : "*UNKNOWN*");
+	    killsock(i);
 	    lostdcc(idx);
 	  }
 	  idx = dcc_total + 1;
 	}
       if (idx == dcc_total) {
 	putlog(LOG_MISC, "*",
-	       "(@) EOF socket %d, not a dcc socket, not anything.",
-	       xx);
-	close(xx);
-	killsock(xx);
+	       "(@) EOF socket %d, not a dcc socket, not anything.", i);
+	close(i);
+	killsock(i);
       }
     } else if ((xx == -2) && (errno != EINTR)) {	/* select() error */
       context;
@@ -859,18 +873,6 @@ int main(int argc, char **argv)
 	  putlog(LOG_MISC, "*", MOD_STAGNANT);
 	context;
 	flushlogs();
-	context;
-	for (i = 0; i < max_logs; i++) {
-	  if (logs[i].f != NULL) {
-	    fclose(logs[i].f);
-	    nfree(logs[i].filename);
-	    nfree(logs[i].chname);
-	    logs[i].filename = NULL;
-	    logs[i].chname = NULL;
-	    logs[i].mask = 0;
-	    logs[i].f = NULL;
-	  }
-	}
 	context;
 	kill_tcl();
 	init_tcl();

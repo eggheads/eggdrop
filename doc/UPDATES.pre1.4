@@ -5,7 +5,117 @@ Changes in eggdrop: (Pre v1.4.0)
 
 1.3.29
 Foundby   Fixedby   What....
-	  Peter     quotes [] were missing in AC_MSG_RESULT in configure.in.
+dw	  Fabian    .chanset wasn't displaying channel limits correctly
+ranjha	  Fabian    .help * is now converted to .help all
+Ben	  Fabian    .su doesn't expect a pwd for the target user anymore, if
+		    called as an owner
+          dw        kicks weren't being logged
+          rtc       added assert debugging feature
+	  Fabian    main() wasn't removing unknown sockets correctly
+          rtc       fixed buffer overrun in simple_sprintf.
+ 	  Fabian/   Changed RFC_COMPLIANT flag to dynamic variable setting
+	  drummer
+	  Fabian    probably fixes the "un-allocated socket" problem
+Ben       Fabian    eggdrop.conf.dist now talks positively about allow-resync
+          rtc       fixed .console to not allow channels starting with '*'.
+SuperS	  Fabian    if run with '-n', eggdrop now only prints every line once
+          Tothwolf  changed the way './configure' checks for Tcl,
+                    check for Tcl on freebsd machines properly,
+                    Makefile changes.
+mc        Fabian    distributed Makefile now only issues a warning instead
+                    of automatically starting to configure and compile
+	  arthur2   duplicate entries removed from core.english.lang.
+Beige	  Fabian    killsock() could accidently free unused socket entries
+          Tothwolf/ fixed way we get version number for Tcl_PkgProvide()
+          ^PRS4^
+          rtc       quesedilla updated to v5
+          rtc       alltools updated 
+dw        Eule      enforcebans with split
+          Tothwolf  Removed obsolete [time] and [date] commands, Tcl7.6 and
+                    later uses [time] to time the execution of code.
+                    Scripts should now use [strftime] or compat.tcl should
+                    be loaded.
+          rtc       german language pack update
+          rtc       fixed wire.mod/filesys.mod install to copy
+                    ALL lang files
+          Tothwolf  fixed cmd_channel() calling get_user_flagrec() twice,
+                    ordering of status char, and removed redundant checking
+          dw        it said 'JOIN flood from @%s!  Banning.'
+                    for nick floods.
+reddawg   rtc       md5 make could fail on some OS
+          dw        Users with chanflag +o could gain access to any
+                    channel using /msg bot invite <pass> #chan
+          Eule      fixed recheck_channel in got_op
+          dw        moved 'msg already queued. skipping...' to a debug
+                    message and added what it skips for debugging reasons.
+Ben	  Fabian    minor doc changes to eggdrop.conf.dist
+          rtc       fixed .whois to properly display local channels in 
+                    console records
+          rtc       .chat should only care about the first argument and
+                    tell the user's current channel if not given one
+          rtc       save console settings on '.page', '.chat', '.echo' and
+                    '.strip', not on '.quit' and dcc disconnect.
+          drummer   misc blowfish bug fixes
+          rtc       tweaked the nick regain code some more
+L0RE      Fabian    console settings are saved on '.quit' and dcc disconnect
+Fabian/   rtc       SEGV with sharing bug track debug messages could
+rtc                 cause SEGV in some cases ;)
+DVS01     DVS01/    the dcc_tables in transfer.mod were missing DCT_VALIDIDX
+          guppy
+          guppy     removed the count argument from add/rem_builtins
+          rtc       the bot now logs syntax errors in the config-file
+	            after a .rehash/.restart before it exits.
+          rtc       more configure.in fixes, removed two out of three warnings
+          rtc       fixed .chat to accept the proper channel range (0-99999)
+          rtc       several putlogs had superflous newlines
+          rtc       fixed memleak in fstat_unpack
+          rtc       fixed tcl setuser crash and filesys stats
+          rtc       small doc corrections/additions
+charvel	  Fabian    got_op/got_deop were not setting the flags correctly
+		    before calling add_mode
+	  Fabian/   Added doc/BUG-REPORT
+	  flash
+          Fabian    moved .note into notes module
+          Fabian    added several exported module functions to modvals.h
+          rtc       fixed signed/unsigned integer mess up (aka .dccstat/
+                    tcl dcclist bug)
+          Eule      find out key-info on IRCu-based Server
+          rtc       updated weed script
+ZiMiaS    dw        dcc enter password wasnt using the lang file.
+rtc       guppy     cmd_chnick and cmd_nick were rewritten to not accept nicks
+                    with spaces in them ...
+rtc       guppy     if a bot tries to link using our botnetnick, its rejected,
+                    and logged.
+Wiktor    Fabian    removed tiny compile warning.
+charvel   Fabian    made the code check the ismember result everywhere now
+toot      Fabian    removed debug message in notes module
+rtc       Fabian    eggdrop.doc fixes
+          rtc       Fixes version variable not to have a leading zero if major
+                    release number <= 9.
+DVS01     guppy     added a timestamp value to the end of tcl_dcclist
+          Fabian    fixed memory accounting problem in the channels module
+mho	  Fabian    rename doesn't handle cross-filesystem moves. Enhanced
+		    movefile to do so now.
+	  Fabian    when compiling, EBUG_MEM gets passed to the modules now
+          Eule      read first channel-modes, before who-list
+          Eule      sentmodememberlistflags now in real_add_mode
+	  Fabian    fixed memory accounting error related to info fields.
+	  G`Quann   Fixes a clearqueue option typo (server and not serv).
+          Cybah     Removed over 450 lines of code by unifying most of the
+                    ban, exempt and invite code.
+          Eule      fixed msg_ident autoop.
+poptix    Fabian    race in tmp-dir test
+SuperS    Fabian    tiny compability fix in misc.c for osf
+          Jason     New .stick handling
+          Fabian    Adjusted +revenge to be sane; added +revengebot flag
+XGen      Fabian    added tcl call putkick
+          Eule      fixed msg_ident-autoop
+okey      Fabian    fixed tcl_dumpfile
+dw	  Fabian    removed string stripping code from set_handle_chaninfo()
+	  Fabian    moved notes reject code to notes module; reorganized module
+          Fabian    added notes ignore feature
+	  rtc       quotes [] were missing in AC_MSG_RESULT in configure.in.
+          Cybah     contextnote() now works for modules.
 Charvel   poptix    nrealloc() called with too few args in non-debugmem mode.
 	  poptix    Removed two FIXME's that need not be.
 	  Fabian    Allows users to ignore messages from others by setting

@@ -235,23 +235,21 @@ static void queue_server(int which, char *buf, int len)
     return;
   }
   if (h->tot < maxqmsg) {
-       if (!doublemsg) {   /* Don't queue msg if it's already queued */
-           tq = tempq.head;
-           while (tq) {
-               tqq = tq->next;
-               if (!strcasecmp(tq->msg, buf)) {
-                   if (!double_warned) {
-                     putlog(LOG_MISC, "*", "msg already queued. skipping...");
-                     double_warned = 1;
-                     }
-                   return;
-                   }
-               tq = tqq;
-               }
-           } 
- 
+    if (!doublemsg) {   /* Don't queue msg if it's already queued */
+      tq = tempq.head;
+      while (tq) {
+	tqq = tq->next;
+	if (!strcasecmp(tq->msg, buf)) {
+	  if (!double_warned) {
+	    debug1("msg already queued. skipping: %s",buf);
+	    double_warned = 1;
+	  }
+	  return;
+	}
+	tq = tqq;
+      }
+    }
     q = nmalloc(sizeof(struct msgq));
-
     q->next = NULL;
     if (h->head)
       h->last->next = q;
@@ -534,7 +532,7 @@ static char *traced_server(ClientData cdata, Tcl_Interp * irp, char *name1,
 
   if (server_online) {
     int servidx = findanyidx(serv);
-    simple_sprintf(s, "%s:%d", dcc[servidx].host, dcc[servidx].port);
+    simple_sprintf(s, "%s:%u", dcc[servidx].host, dcc[servidx].port);
   } else
     s[0] = 0;
   Tcl_SetVar2(interp, name1, name2, s, TCL_GLOBAL_ONLY);
@@ -945,9 +943,10 @@ static void getmyhostname(char *s)
 }
 
 /* update the add/rem_builtins in server.c if you add to this list!! */
-static cmd_t my_ctcps[1] =
+static cmd_t my_ctcps[] =
 {
-  {"DCC", "", ctcp_DCC_CHAT, "server:DCC"}
+  {"DCC", "", ctcp_DCC_CHAT, "server:DCC"},
+  {0, 0, 0, 0}
 };
 
 static int tcl_isbotnick STDVAR {
@@ -1128,7 +1127,7 @@ static int tcl_clearqueue STDVAR
      return TCL_OK;
      }
  Tcl_AppendResult(irp, "unknown clearqueue option: should be one of: ",
- "mode serv help all", NULL);
+ "mode server help all", NULL);
  return TCL_ERROR;
  }
      
@@ -1187,22 +1186,22 @@ static tcl_cmds my_tcl_cmds[] =
 
 static char *server_close()
 {
-  cmd_t C_t[1];
+  cmd_t C_t[] =
+  {
+    {"die", "m", (Function) cmd_die, NULL},
+    {0, 0, 0, 0}
+  };
 
   context;
   cycle_time = 100;
   nuke_server("Connection reset by phear");
   clearq(serverlist);
   context;
-  rem_builtins(H_dcc, C_dcc_serv, 5);
-  rem_builtins(H_raw, my_raw_binds, 19);
-  rem_builtins(H_ctcp, my_ctcps, 1);
+  rem_builtins(H_dcc, C_dcc_serv);
+  rem_builtins(H_raw, my_raw_binds);
+  rem_builtins(H_ctcp, my_ctcps);
   context;
-  C_t[0].name = "die";
-  C_t[0].flags = "m";
-  C_t[0].func = (Function) cmd_die;
-  C_t[0].funcname = NULL;
-  add_builtins(H_dcc, C_t, 1);
+  add_builtins(H_dcc, C_t);
   context;
   del_bind_table(H_wall);
   del_bind_table(H_raw);
@@ -1257,7 +1256,7 @@ static Function server_table[] =
   (Function) server_expmem,
   (Function) server_report,
   /* 4 - 7 */
-  (Function) 0,			/* char * */
+  (Function) 0,			/* char * (points to botname later on) */
   (Function) botuserhost,	/* char * */
   (Function) & quiet_reject,	/* int */
   (Function) & serv,
@@ -1389,9 +1388,9 @@ char *server_start(Function * global_funcs)
   H_ctcr = add_bind_table("ctcr", HT_STACKABLE, server_6char);
   H_ctcp = add_bind_table("ctcp", HT_STACKABLE, server_6char);
   context;
-  add_builtins(H_raw, my_raw_binds, 19);
-  add_builtins(H_dcc, C_dcc_serv, 5);
-  add_builtins(H_ctcp, my_ctcps, 1);
+  add_builtins(H_raw, my_raw_binds);
+  add_builtins(H_dcc, C_dcc_serv);
+  add_builtins(H_ctcp, my_ctcps);
   add_help_reference("server.help");
   context;
   my_tcl_strings[0].buf = botname;

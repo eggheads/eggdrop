@@ -39,7 +39,6 @@
 #include "tclhash.h"
 #include "chan.h"
 #include "users.h"
-#include "rfc1459.h"
 
 #ifndef MAKING_MODS
 extern struct dcc_table DCC_CHAT, DCC_BOT, DCC_LOST, DCC_SCRIPT, DCC_BOT_NEW,

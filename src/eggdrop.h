@@ -91,10 +91,6 @@
 #endif
 #endif
 
-#if !HAVE_RENAME
-#define rename movefile
-#endif
-
 #if !HAVE_SRANDOM
 #define srandom(x) srand(x)
 #endif
@@ -134,6 +130,8 @@
                               cx_line[cx_ptr]=__LINE__; \
                               strncpy(cx_note[cx_ptr],string,255); \
                               cx_note[cx_ptr][255] = 0; }
+#define ASSERT(expr) { if (!(expr)) assert_failed (NULL, __FILE__, __LINE__); }
+
 /* move these here, makes more sense to me :) */
 extern int cx_line[16];
 extern char cx_file[16][30];
@@ -350,6 +348,7 @@ typedef struct {
   char szLast[MAX_LOG_LINE + 1];	/* for 'Last message repeated n times'
 					 * stuff in misc.c/putlog() <cybah> */
   int Repeats;			/* number of times szLast has been repeated */
+  unsigned int flags;		/* other flags <rtc> */
   FILE *f;			/* existing file */
 } log_t;
 
@@ -378,6 +377,8 @@ typedef struct {
 #define LOG_BOTNET 0x200000	/* t   botnet traffic */
 #define LOG_BOTSHARE 0x400000	/* h   share traffic */
 #define LOG_ALL    0x7fffff	/* (dump to all logfiles) */
+/* internal logfile flags */
+#define LF_EXPIRING 0x000001	/* Logfile will be closed soon */
 
 #define FILEDB_HIDE     1
 #define FILEDB_UNHIDE   2
@@ -413,6 +414,7 @@ typedef struct {
 #define NOTE_TCL        4	/* tcl binding caught it */
 #define NOTE_AWAY       5	/* away; stored */
 #define NOTE_FWD        6	/* away; forwarded */
+#define NOTE_REJECT     7	/* ignore mask matched */
 
 #define STR_PROTECT     2
 #define STR_DIR         1

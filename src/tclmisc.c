@@ -220,34 +220,6 @@ static int tcl_unixtime STDVAR
   return TCL_OK;
 }
 
-static int tcl_time STDVAR
-{
-  char s[81];
-
-  context;
-  BADARGS(1, 1, "");
-  strcpy(s, ctime(&now));
-  strcpy(s, &s[11]);
-  s[5] = 0;
-  Tcl_AppendResult(irp, s, NULL);
-  return TCL_OK;
-}
-
-static int tcl_date STDVAR
-{
-  char s[81];
-
-  context;
-  BADARGS(1, 1, "");
-  strcpy(s, ctime(&now));
-  s[10] = s[24] = 0;
-  strcpy(s, &s[8]);
-  strcpy(&s[8], &s[20]);
-  strcpy(&s[2], &s[3]);
-  Tcl_AppendResult(irp, s, NULL);
-  return TCL_OK;
-}
-
 static int tcl_timers STDVAR
 {
   context;
@@ -326,20 +298,21 @@ static int tcl_sendnote STDVAR {
 static int tcl_dumpfile STDVAR
 {
   char nick[NICKLEN];
+  struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
 
   context;
   BADARGS(3, 3, " nickname filename");
   strncpy(nick, argv[1], NICKLEN - 1);
   nick[NICKLEN - 1] = 0;
-  showhelp(argv[1], argv[2], 0, HELP_TEXT);
+  get_user_flagrec(get_user_by_nick(nick), &fr, NULL);
+  showhelp(argv[1], argv[2], &fr, HELP_TEXT);
   return TCL_OK;
 }
 
 static int tcl_dccdumpfile STDVAR
 {
   int idx, i;
-  struct flag_record fr =
-  {FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0};
+  struct flag_record fr = {FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0};
 
   context;
   BADARGS(3, 3, " idx filename");
@@ -516,8 +489,6 @@ tcl_cmds tclmisc_cmds[] =
   {"killtimer", tcl_killtimer},
   {"killutimer", tcl_killutimer},
   {"unixtime", tcl_unixtime},
-  {"time", tcl_time},
-  {"date", tcl_date},
   {"timers", tcl_timers},
   {"utimers", tcl_utimers},
   {"ctime", tcl_ctime},

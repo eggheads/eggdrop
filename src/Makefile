@@ -69,12 +69,9 @@ language.o: language.c
 
 main.o: main.c patch.h 
 	${CC} ${CFLAGS} \
-	'-DCCFLAGS="${CC}"' \
+	'-DCCFLAGS="${CC} ${CFLAGS}"' \
 	'-DLDFLAGS="${LD}"' \
 	'-DSTRIPFLAGS="${STRIP}"' main.c
-
-md5/md5c.o:
-	@cd md5; ${MAKE} md5
 
 mem.o: mem.c
 	${CC} ${CFLAGS} mem.c
@@ -114,6 +111,9 @@ userrec.o: userrec.c
 
 users.o: users.c
 	${CC} ${CFLAGS} users.c
+
+md5/md5c.o:
+	@cd md5; ${GMAKE} md5
 	@echo "---------- Yeah! that's the compiling, now the linking! ----------"
 
 # I orginially had this in another file, but some lame make's can't cope :/ 
@@ -166,6 +166,8 @@ modules.o: \
    modules.h \
    users.h
 net.o: \
+   main.h
+rfc1459.o: \
    main.h
 tcl.o: \
    main.h

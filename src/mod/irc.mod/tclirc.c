@@ -7,10 +7,9 @@ static int tcl_chanlist STDVAR
   memberlist *m;
   struct userrec *u;
   struct chanset_t *chan;
-  struct flag_record plus =
-  {FR_CHAN | FR_GLOBAL | FR_BOT, 0, 0, 0, 0, 0}, minus =
-  {FR_CHAN | FR_GLOBAL | FR_BOT, 0, 0, 0, 0, 0}, user =
-  {FR_CHAN | FR_GLOBAL | FR_BOT, 0, 0, 0, 0, 0};
+  struct flag_record plus = {FR_CHAN | FR_GLOBAL | FR_BOT, 0, 0, 0, 0, 0},
+ 		     minus = {FR_CHAN | FR_GLOBAL | FR_BOT, 0, 0, 0, 0, 0},
+		     user = {FR_CHAN | FR_GLOBAL | FR_BOT, 0, 0, 0, 0, 0};
 
   BADARGS(2, 3, " channel ?flags?");
   context;
@@ -306,11 +305,28 @@ static int tcl_getchanidle STDVAR
   return TCL_OK;
 }
 
+inline int tcl_chanmasks(masklist *m, Tcl_Interp *irp)
+{
+  char *list[3], work[20], *p;
+  
+  while(m && m->mask && m->mask[0]) {
+    list[0] = m->mask;
+    list[1] = m->who;
+    simple_sprintf(work, "%lu", now - m->timer);
+    list[2] = work;
+    p = Tcl_Merge(3, list);
+    Tcl_AppendElement(irp, p);
+    n_free(p, "", 0);
+    
+    m = m->next;
+  }
+  
+  return TCL_OK;
+}
+
 static int tcl_chanbans STDVAR
 {
-  banlist *b;
   struct chanset_t *chan;
-  char *list[3], work[20], *p;
 
   BADARGS(2, 2, " channel");
   chan = findchan(argv[1]);
@@ -318,25 +334,13 @@ static int tcl_chanbans STDVAR
     Tcl_AppendResult(irp, "illegal channel: ", argv[2], NULL);
     return TCL_ERROR;
   }
-  b = chan->channel.ban;
-  while (b->ban[0]) {
-    list[0] = b->ban;
-    list[1] = b->who;
-    simple_sprintf(work, "%lu", now - b->timer);
-    list[2] = work;
-    p = Tcl_Merge(3, list);
-    Tcl_AppendElement(irp, p);
-    n_free(p, "", 0);
-    b = b->next;
-  }
-  return TCL_OK;
+
+  return tcl_chanmasks(chan->channel.ban, irp);
 }
 
 static int tcl_chanexempts STDVAR
 {
-  exemptlist *e;
   struct chanset_t *chan;
-  char *list[3], work[20], *p;
 
   BADARGS(2, 2, " channel");
   chan = findchan(argv[1]);
@@ -344,25 +348,13 @@ static int tcl_chanexempts STDVAR
     Tcl_AppendResult(irp, "illegal channel: ", argv[2], NULL);
     return TCL_ERROR;
   }
-  e = chan->channel.exempt;
-  while (e->exempt[0]) {
-    list[0] = e->exempt;
-    list[1] = e->who;
-    simple_sprintf(work, "%lu", now - e->timer);
-    list[2] = work;
-    p = Tcl_Merge(3, list);
-    Tcl_AppendElement(irp, p);
-    n_free(p, "", 0);
-    e = e->next;
-  }
-  return TCL_OK;
+
+  return tcl_chanmasks(chan->channel.exempt, irp);
 }
 
 static int tcl_chaninvites STDVAR
 {
-  invitelist *inv;
   struct chanset_t *chan;
-  char *list[3], work[20], *p;
 
   BADARGS(2, 2, " channel");
   chan = findchan(argv[1]);
@@ -370,18 +362,8 @@ static int tcl_chaninvites STDVAR
     Tcl_AppendResult(irp, "illegal channel: ", argv[2], NULL);
     return TCL_ERROR;
   }
-  inv = chan->channel.invite;
-  while (inv->invite[0]) {
-    list[0] = inv->invite;
-    list[1] = inv->who;
-    simple_sprintf(work, "%lu", now - inv->timer);
-    list[2] = work;
-    p = Tcl_Merge(3, list);
-    Tcl_AppendElement(irp, p);
-    n_free(p, "", 0);
-    inv = inv->next;
-  }
-  return TCL_OK;
+
+  return tcl_chanmasks(chan->channel.invite, irp);
 }
 
 static int tcl_getchanmode STDVAR
@@ -604,7 +586,7 @@ static int tcl_nick2hand STDVAR
   context;
   while ((chan != NULL) && ((thechan == NULL) || (thechan == chan))) {
     m = ismember(chan, argv[1]);
-    if (m != NULL) {
+    if (m) {
       simple_sprintf(s, "%s!%s", m->nick, m->userhost);
       u = get_user_by_host(s);
       Tcl_AppendResult(irp, u ? u->handle : "*", NULL);
@@ -614,6 +596,66 @@ static int tcl_nick2hand STDVAR
   }
   context;
   return TCL_OK;		/* blank */
+}
+
+/*  sends an optimal number of kicks per command (as defined by
+ *  kick_method) to the server, simialer to kick_all.  Fabian */
+static int tcl_putkick STDVAR
+{
+  struct chanset_t *chan;
+  int k = 0, l;
+  char kicknick[512], *nick, *p, *comment = NULL;
+  memberlist *m;
+
+  context;
+  BADARGS(3, 4, " channel nick?s? ?comment?");
+  chan = findchan(argv[1]);
+  if (chan == NULL) { 
+    Tcl_AppendResult(irp, "illegal channel: ", argv[1], NULL);
+    return TCL_ERROR;
+  }
+  if (argc == 4)
+    comment = argv[3];
+  else
+    comment = "";
+  if (!me_op(chan)) {
+    Tcl_AppendResult(irp, "need op", NULL);
+    return TCL_ERROR;
+  }
+  
+  kicknick[0] = 0;
+  p = argv[2];
+  /* loop through all given nicks */
+  while(p) {
+    nick = p;
+    p = strchr(nick, ',');	/* search for beginning of next nick */
+    if (p) {
+      *p = 0;
+      p++;
+    }
+    
+    m = ismember(chan, nick);
+    if (!m)
+      continue;			/* skip non-existant nicks */
+    m->flags |= SENTKICK;	/* mark as pending kick */
+    if (kicknick[0])
+      strcat(kicknick, ",");
+    strcat(kicknick, nick);	/* add to local queue */
+    k++;
+
+    /* check if we should send the kick command yet */
+    l = strlen(chan->name) + strlen(kicknick) + strlen(comment);
+    if (((kick_method != 0) && (k == kick_method)) || (l > 480)) {
+      dprintf(DP_SERVER, "KICK %s %s :%s\n", chan->name, kicknick, comment);
+      k = 0;
+      kicknick[0] = 0;
+    }
+  }
+  /* clear out all pending kicks in our local kick queue */
+  if (k > 0)
+   dprintf(DP_SERVER, "KICK %s %s :%s\n", chan->name, kicknick, comment);
+  context;
+  return TCL_OK;
 }
 
 static tcl_cmds tclchan_cmds[] =
@@ -647,5 +689,6 @@ static tcl_cmds tclchan_cmds[] =
   {"resetchan", tcl_resetchan},
   {"topic", tcl_topic},
   {"botonchan", tcl_botonchan},
+  {"putkick", tcl_putkick},
   {0, 0}
 };

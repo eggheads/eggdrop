@@ -175,8 +175,8 @@ void console_display(int idx, struct user_entry *e)
     dprintf(idx, "    Console flags: %s, Strip flags: %s, Echo: %s\n",
 	    masktype(i->conflags), stripmasktype(i->stripflags),
 	    i->echoflags ? "yes" : "no");
-    dprintf(idx, "    Page setting: %d, Console channel: %d\n",
-	    i->page, i->conchan);
+    dprintf(idx, "    Page setting: %d, Console channel: %s%d\n",
+	    i->page, (i->conchan < 100000) ? "" : "*", i->conchan % 100000);
   }
 }
 
@@ -294,7 +294,7 @@ static int console_store(struct userrec *u, int idx, char *par)
 }
 
 /* cmds.c:cmd_console calls this, better than chof bind - drummer,07/25/1999 */
-static int console_oncmd(int idx)
+static int console_dostore(int idx)
 {
   if (console_autosave)
     console_store(dcc[idx].user, idx, NULL);
@@ -311,19 +311,21 @@ static tcl_ints myints[] =
 
 static cmd_t mychon[] =
 {
-  {"*", "", console_chon, "console:chon"}
+  {"*", "", console_chon, "console:chon"},
+  {0, 0, 0, 0}
 };
 
 static cmd_t mydcc[] =
 {
-  {"store", "", console_store, NULL}
+  {"store", "", console_store, NULL},
+  {0, 0, 0, 0}
 };
 
 static char *console_close()
 {
   context;
-  rem_builtins(H_chon, mychon, 1);
-  rem_builtins(H_dcc, mydcc, 1);
+  rem_builtins(H_chon, mychon);
+  rem_builtins(H_dcc, mydcc);
   rem_tcl_ints(myints);
   rem_help_reference("console.help");
   del_entry_type(&USERENTRY_CONSOLE);
@@ -339,7 +341,7 @@ static Function console_table[] =
   (Function) console_close,
   (Function) 0,
   (Function) 0,
-  (Function) console_oncmd,
+  (Function) console_dostore,
 };
 
 char *console_start(Function * global_funcs)
@@ -347,11 +349,11 @@ char *console_start(Function * global_funcs)
   global = global_funcs;
 
   context;
-  module_register(MODULE_NAME, console_table, 1, 0);
+  module_register(MODULE_NAME, console_table, 1, 1);
   if (!module_depend(MODULE_NAME, "eggdrop", 104, 0))
     return "This module requires eggdrop1.4.0 or later";
-  add_builtins(H_chon, mychon, 1);
-  add_builtins(H_dcc, mydcc, 1);
+  add_builtins(H_chon, mychon);
+  add_builtins(H_dcc, mydcc);
   add_tcl_ints(myints);
   add_help_reference("console.help");
   USERENTRY_CONSOLE.get = def_get;

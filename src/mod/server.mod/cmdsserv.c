@@ -192,11 +192,12 @@ static void my_cmd_die(struct userrec *u, int idx, char *par)
 /* function call should be: int cmd_whatever(idx,"parameters");
  * as with msg commands, function is responsible for any logging */
 /* update the add/rem_builtins in server.c if you add to this list!! */
-static cmd_t C_dcc_serv[5] =
+static cmd_t C_dcc_serv[] =
 {
   {"die", "n", (Function) my_cmd_die, "server:die"},
   {"dump", "m", (Function) cmd_dump, NULL},
   {"jump", "m", (Function) cmd_jump, NULL},
   {"servers", "o", (Function) cmd_servers, NULL},
   {"clearqueue", "m", (Function)cmd_clearqueue, NULL },
+  {0, 0, 0, 0}
 };

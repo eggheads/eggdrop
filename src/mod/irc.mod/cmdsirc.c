@@ -167,10 +167,8 @@ static void cmd_kickban(struct userrec *u, int idx, char *par)
 	dprintf(idx, "%s is another channel bot!\n", nick);
 	return;
       }
-      if (m->flags & CHANOP) {
+      if (m->flags & CHANOP)
 	add_mode(chan, '-', 'o', m->nick);
-	m->flags |= SENTDEOP;
-      }
       switch (bantype) {
 	case '@':
 	  s1 = strchr(s, '@');
@@ -190,7 +188,7 @@ static void cmd_kickban(struct userrec *u, int idx, char *par)
 	  break;
       }
       if (bantype == '@' || bantype == '-')
-	do_ban(chan, s1);
+	do_mask(chan, chan->channel.ban, s1, 'b');
       if (!par[0])
 	par = "requested";
       dprintf(DP_SERVER, "KICK %s %s :%s\n", chan->name, m->nick, par);
@@ -229,7 +227,6 @@ static void cmd_voice(struct userrec *u, int idx, char *par)
   }
   simple_sprintf(s, "%s!%s", m->nick, m->userhost);
   add_mode(chan, '+', 'v', nick);
-  m->flags |= SENTVOICE;
   dprintf(idx, "Gave voice to %s on %s\n", nick, chan->name);
 }
 
@@ -261,7 +258,6 @@ static void cmd_devoice(struct userrec *u, int idx, char *par)
   }
   simple_sprintf(s, "%s!%s", m->nick, m->userhost);
   add_mode(chan, '-', 'v', nick);
-  m->flags |= SENTDEVOICE;
   dprintf(idx, "Devoiced %s on %s\n", nick, chan->name);
 }
 
@@ -304,7 +300,6 @@ static void cmd_op(struct userrec *u, int idx, char *par)
     return;
   }
   add_mode(chan, '+', 'o', nick);
-  m->flags |= SENTOP;
   dprintf(idx, "Gave op to %s on %s\n", nick, chan->name);
 }
 
@@ -352,7 +347,6 @@ static void cmd_deop(struct userrec *u, int idx, char *par)
     return;
   }
   add_mode(chan, '-', 'o', nick);
-  m->flags |= SENTDEOP;
   dprintf(idx, "Took op from %s on %s\n", nick, chan->name);
 }
 
@@ -516,8 +510,6 @@ static void cmd_channel(struct userrec *u, int idx, char *par)
       }
       get_user_flagrec(m->user, &user, chan->name);
       /* determine status char to use */
-      get_user_flagrec(m->user, &user, chan->name);
-      /* determine status char to use */
       if (glob_bot(user))
 	atrflag = 'b';
       else if (glob_owner(user))
@@ -528,30 +520,30 @@ static void cmd_channel(struct userrec *u, int idx, char *par)
 	atrflag = 'M';
       else if (chan_master(user))
 	atrflag = 'm';
-      else if (glob_op(user) && !chan_deop(user))
-	atrflag = 'O';
-      else if (chan_op(user) && !chan_deop(user))
-	atrflag = 'o';
-      else if (glob_autoop(user) && !chan_deop(user))
-	atrflag = 'A';
-      else if (chan_autoop(user) && !chan_deop(user))
-	atrflag = 'a';
-      else if (glob_deop(user) && !chan_op(user))
+      else if (glob_deop(user))
 	atrflag = 'D';
       else if (chan_deop(user))
 	atrflag = 'd';
-      else if (glob_voice(user) && !chan_quiet(user))
-	atrflag = 'V';
-      else if (chan_voice(user))
-	atrflag = 'v';
-      else if (glob_gvoice(user) && !chan_quiet(user))
-	atrflag = 'G';
-      else if (chan_gvoice(user))
-	atrflag = 'g';
-      else if (glob_quiet(user) && !chan_voice(user))
+      else if (glob_autoop(user))
+	atrflag = 'A';
+      else if (chan_autoop(user))
+	atrflag = 'a';
+      else if (glob_op(user))
+	atrflag = 'O';
+      else if (chan_op(user))
+	atrflag = 'o';
+      else if (glob_quiet(user))
 	atrflag = 'Q';
       else if (chan_quiet(user))
 	atrflag = 'q';
+      else if (glob_gvoice(user))
+	atrflag = 'G';
+      else if (chan_gvoice(user))
+	atrflag = 'g';
+      else if (glob_voice(user))
+	atrflag = 'V';
+      else if (chan_voice(user))
+	atrflag = 'v';
       else
 	atrflag = ' ';
       if (chan_hasop(m))
@@ -725,7 +717,7 @@ static void cmd_adduser(struct userrec *u, int idx, char *par)
   char s[121], s1[121];
   int atr = u ? u->flags : 0;
   int statichost = 0;
-  char *p1 = (char*) &s1;
+  char *p1 = s1;
 
   context;
   if ((!par[0]) || ((par[0]=='!') && (!par[1]))) {
@@ -761,7 +753,7 @@ static void cmd_adduser(struct userrec *u, int idx, char *par)
   chan = chanset;
   while (chan != NULL) {
     m = ismember(chan, nick);
-    if (m!=NULL)
+    if (m)
       break;
     chan=chan->next;
   }
@@ -802,12 +794,9 @@ static void cmd_adduser(struct userrec *u, int idx, char *par)
     dprintf(idx, "Added hostmask %s to %s.\n", p1, u->handle);
     addhost_by_handle(hand,p1);
     get_user_flagrec(u, &user, chan->name);
-    if (!(m->flags & CHANOP) &&
-	(chan_op(user) || (glob_op(user) && !chan_deop(user))) &&
-	(channel_autoop(chan) || glob_autoop(user) || chan_autoop(user))) {
+    if ((chan_op(user) || (glob_op(user) && !chan_deop(user))) &&
+	(channel_autoop(chan) || glob_autoop(user) || chan_autoop(user)))
       add_mode(chan, '+', 'o', m->nick);
-      m->flags |= SENTOP;
-   }
   }
   putlog(LOG_CMDS, "*", "#%s# adduser %s %s", dcc[idx].nick, nick,
 	 hand == nick ? "" : hand);
@@ -914,7 +903,7 @@ static void cmd_reset(struct userrec *u, int idx, char *par)
 }
 
 /* update the add/rem_builtins in irc.c if you add to this list!! */
-static cmd_t irc_dcc[18] =
+static cmd_t irc_dcc[] =
 {
   {"adduser", "m|m", (Function) cmd_adduser, NULL},
   {"deluser", "m|m", (Function) cmd_deluser, NULL},
@@ -934,4 +923,5 @@ static cmd_t irc_dcc[18] =
   {"op", "o|o", (Function) cmd_op, NULL},
   {"say", "o|o", (Function) cmd_say, NULL},
   {"topic", "o|o", (Function) cmd_topic, NULL},
+  {0, 0, 0, 0}
 };

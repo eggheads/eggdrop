@@ -227,7 +227,7 @@ static void filedb_update(char *path, FILE * f, int sort)
       strncat(s1, dd->d_name, NAMLEN(dd));
       s1[strlen(path) + NAMLEN(dd) + 1] = 0;
       sprintf(s2, "%s/%s", path, name);
-      rename(s1, s2);
+      movefile(s1, s2);
     }
     if (name[0] != '.') {
       sprintf(s, "%s/%s", path, name);
@@ -604,8 +604,8 @@ static void remote_filereq(int idx, char *from, char *file)
   }
   /* grab info from dcc struct and bounce real request across net */
   i = dcc_total - 1;
-  simple_sprintf(s, "%d %d %d", iptolong(getmyip()), dcc[i].port,
-		 dcc[i].u.xfer->length);
+  simple_sprintf(s, "%d %u %d", iptolong(getmyip()), dcc[i].port,
+		dcc[i].u.xfer->length);
   botnet_send_filesend(idx, s1, from, s);
   putlog(LOG_FILES, "*", FILES_REMOTEREQ, dir, dir[0] ? "/" : "", what);
 }

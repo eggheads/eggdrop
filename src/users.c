@@ -34,10 +34,6 @@ extern struct dcc_t *dcc;
 extern int dcc_total;
 extern int noshare;
 extern struct userrec *userlist, *lastuser;
-extern struct banrec *global_bans;
-extern struct igrec *global_ign;
-extern struct exemptrec *global_exempts;
-extern struct inviterec *global_invites;
 extern char botnetnick[];
 extern struct chanset_t *chanset;
 extern Tcl_Interp *interp;
@@ -162,7 +158,7 @@ void display_ignore(int idx, int number, struct igrec *ignore)
   if (ignore->msg && ignore->msg[0])
     dprintf(idx, "        %s: %s\n", ignore->user, ignore->msg);
   else
-    dprintf(idx, "        %s %s\n", BANS_PLACEDBY, ignore->user);
+    dprintf(idx, "        %s %s\n", MODES_PLACEDBY, ignore->user);
   if (dates[0])
     dprintf(idx, "        %s\n", dates);
 }
@@ -219,13 +215,16 @@ void check_expired_ignores()
   }
 }
 
-/* channel ban loaded from user file */
-static void addban_fully(struct chanset_t *chan, char *ban, char *from,
+/*        Channel mask loaded from user file. This function is
+ *      add(ban|invite|exempt)_fully merged into one. <cybah>
+ */
+static void addmask_fully(struct chanset_t *chan, maskrec **m, maskrec **global,
+                         char *mask, char *from,
 			 char *note, time_t expire_time, int flags,
 			 time_t added, time_t last)
 {
-  struct banrec *p = user_malloc(sizeof(struct banrec));
-  struct banrec **u = chan ? &chan->bans : &global_bans;
+  maskrec *p = user_malloc(sizeof(maskrec));
+  maskrec **u = (chan) ? m : global;
   char *t;
 
   /* decode gibberish stuff */
@@ -245,78 +244,12 @@ static void addban_fully(struct chanset_t *chan, char *ban, char *from,
   p->added = added;
   p->lastactive = last;
   p->flags = flags;
-  p->banmask = user_malloc(strlen(ban) + 1);
-  strcpy(p->banmask, ban);
+  p->mask = user_malloc(strlen(mask) + 1);
+  strcpy(p->mask, mask);
   p->user = user_malloc(strlen(from) + 1);
   strcpy(p->user, from);
   p->desc = user_malloc(strlen(note) + 1);
   strcpy(p->desc, note);
-}
-
-/* channel exempt loaded from user file */
-static void addexempt_fully (struct chanset_t * chan, char * exempt, char * from,
-			     char * note, time_t expire_time, int flags, time_t added,
-			     time_t last) {
-  struct exemptrec * p = user_malloc(sizeof(struct exemptrec));
-  struct exemptrec ** u = chan? &chan->exempts : &global_exempts;
-  char * t;
-  
-  /* decode gibberish stuff */
-  t = strchr(note, '~');
-  while (t != NULL) {
-    *t = ' ';
-    t = strchr(note, '~');
-  }
-  t = strchr(note, '`');
-  while (t != NULL) {
-    *t = ',';
-    t = strchr(note, '`');
-  }
-  p->next = *u;
-  *u = p;
-  p->expire = expire_time;
-  p->added = added;
-  p->lastactive = last;
-  p->flags = flags;
-  p->exemptmask = user_malloc(strlen(exempt)+1);
-  strcpy(p->exemptmask,exempt);
-  p->user = user_malloc(strlen(from)+1);
-  strcpy(p->user,from);
-  p->desc = user_malloc(strlen(note)+1);
-  strcpy(p->desc,note);
-}
-
-/* channel invite loaded from user file */
-static void addinvite_fully (struct chanset_t * chan, char * invite, char * from,
-			     char * note, time_t expire_time, int flags, time_t added,
-			     time_t last) {
-  struct inviterec * p = user_malloc(sizeof(struct inviterec));
-  struct inviterec ** u = chan? &chan->invites : &global_invites;
-  char * t;
-  
-  /* decode gibberish stuff */
-  t = strchr(note, '~');
-  while (t != NULL) { 
-    *t = ' ';
-    t = strchr(note, '~');
-  }
-  t = strchr(note, '`');
-  while (t != NULL) {   
-    *t = ',';
-    t = strchr(note, '`');
-  }
-  p->next = *u;
-  *u = p;
-  p->expire = expire_time;
-  p->added = added;
-  p->lastactive = last;
-  p->flags = flags;
-  p->invitemask = user_malloc(strlen(invite)+1);
-  strcpy(p->invitemask,invite);
-  p->user = user_malloc(strlen(from)+1);
-  strcpy(p->user,from);
-  p->desc = user_malloc(strlen(note)+1);
-  strcpy(p->desc,note);
 }
 
 static void restore_chanban(struct chanset_t *chan, char *host)
@@ -329,13 +262,13 @@ static void restore_chanban(struct chanset_t *chan, char *host)
     *expi = 0;
     expi++;
     if (*expi == '+') {
-      flags |= BANREC_PERM;
+      flags |= MASKREC_PERM;
       expi++;
     }
     add = strchr(expi, ':');
     if (add) {
       if (add[-1] == '*') {
-	flags |= BANREC_STICKY;
+	flags |= MASKREC_STICKY;
 	add[-1] = 0;
       } else
 	*add = 0;
@@ -353,7 +286,7 @@ static void restore_chanban(struct chanset_t *chan, char *host)
 	    if (desc) {
 	      *desc = 0;
 	      desc++;
-	      addban_fully(chan, host, user, desc, atoi(expi), flags,
+	      addmask_fully(chan, &chan->bans, &global_bans, host, user, desc, atoi(expi), flags,
 			   atoi(add), atoi(last));
 	      return;
 	    }
@@ -364,13 +297,13 @@ static void restore_chanban(struct chanset_t *chan, char *host)
 	if (desc) {
 	  *desc = 0;
 	  desc++;
-	  addban_fully(chan, host, add, desc, atoi(expi), flags, now, 0);
+	  addmask_fully(chan, &chan->bans, &global_bans, host, add, desc, atoi(expi), flags, now, 0);
 	  return;
 	}
       }
     }
   }
-  putlog(LOG_MISC, "*", "*** Malformed banline for %s.\n",
+  putlog(LOG_MISC, "*", "*** Malformed banline for %s.",
 	 chan ? chan->name : "global_bans");
 }
 
@@ -384,13 +317,13 @@ static void restore_chanexempt (struct chanset_t * chan, char * host)
     *expi = 0;
     expi++;
       if (*expi == '+') {
-	flags |= EXEMPTREC_PERM;
+	flags |= MASKREC_PERM;
 	expi++;
       }
     add = strchr(expi,':');
     if (add) { 
       if (add[-1]=='*') {
-	flags |= EXEMPTREC_STICKY;
+	flags |= MASKREC_STICKY;
 	add[-1] = 0;   
       } else
 	*add = 0;
@@ -408,7 +341,7 @@ static void restore_chanexempt (struct chanset_t * chan, char * host)
 	    if (desc) {
 	      *desc = 0;
 	      desc++;
-	      addexempt_fully(chan,host,user,desc,atoi(expi),flags,
+	      addmask_fully(chan, &chan->exempts, &global_exempts, host,user,desc,atoi(expi),flags,
 			      atoi(add), atoi(last));
 	      return;
 	    }
@@ -420,14 +353,14 @@ static void restore_chanexempt (struct chanset_t * chan, char * host)
 	if (desc) {
 	  *desc = 0;
 	  desc++;
-	  addexempt_fully(chan,host,add,desc,atoi(expi),flags,
+	  addmask_fully(chan, &chan->exempts, &global_exempts, host,add,desc,atoi(expi),flags,
 			  now, 0);
 	  return;
 	}
       } 
     }
   }
-  putlog(LOG_MISC,"*","*** Malformed exemptline for %s.\n",
+  putlog(LOG_MISC,"*","*** Malformed exemptline for %s.",
 	 chan?chan->name:"global_exempts");
 }
 
@@ -441,13 +374,13 @@ static void restore_chaninvite (struct chanset_t * chan, char * host)
     *expi = 0;
     expi++;  
     if (*expi == '+') {  
-      flags |= INVITEREC_PERM;  
+      flags |= MASKREC_PERM;  
       expi++;
     }
     add = strchr(expi,':');
     if (add) {
       if (add[-1]=='*') {
-	flags |= INVITEREC_STICKY;
+	flags |= MASKREC_STICKY;
 	add[-1] = 0; 
       } else
 	*add = 0;
@@ -465,8 +398,8 @@ static void restore_chaninvite (struct chanset_t * chan, char * host)
 	    if (desc) {
 	      *desc = 0;
 	      desc++;
-	      addinvite_fully(chan,host,user,desc,atoi(expi),flags,
-			      atoi(add), atoi(last));
+	      addmask_fully(chan, &chan->invites, &global_invites, host, user,
+	                    desc, atoi(expi), flags, atoi(add), atoi(last));
 	      return;
 	    }
 	  }
@@ -477,14 +410,14 @@ static void restore_chaninvite (struct chanset_t * chan, char * host)
 	if (desc) {
 	  *desc = 0;
 	  desc++;
-	  addinvite_fully(chan,host,add,desc,atoi(expi),flags,
-			  now, 0);
+	  addmask_fully(chan, &chan->invites, &global_invites, host, add,
+	                desc,atoi(expi),flags, now, 0);
 	  return;
 	}
       }
     }
   }
-  putlog(LOG_MISC,"*","*** Malformed inviteline for %s.\n",
+  putlog(LOG_MISC,"*","*** Malformed inviteline for %s.",
 	 chan?chan->name:"global_invites");
 }
 
@@ -550,7 +483,7 @@ static void restore_ignore(char *host)
       return;
     }
   }
-  putlog(LOG_MISC, "*", "*** Malformed ignore line.\n");
+  putlog(LOG_MISC, "*", "*** Malformed ignore line.");
 }
 
 void tell_user(int idx, struct userrec *u, int master)
@@ -888,7 +821,7 @@ int readuserfile(char *file, struct userrec **ret)
 		cr->flags = fr.chan;
 		cr->flags_udef = fr.udef_chan;
 		if (s[0]) {
-		  cr->info = (char *) nmalloc(strlen(s) + 1);
+		  cr->info = (char *) user_malloc(strlen(s) + 1);
 		  strcpy(cr->info, s);
 		} else
 		  cr->info = NULL;
@@ -913,18 +846,8 @@ int readuserfile(char *file, struct userrec **ret)
 	     * from another bot & that channel is shared */
 	    cst = findchan(lasthand);
 	    if ((*ret == userlist) || channel_shared(cst)) {
-	      while (cst->bans) {
-		struct banrec *b = cst->bans;
-
-		cst->bans = b->next;
-		if (b->banmask)
-		  nfree(b->banmask);
-		if (b->user)
-		  nfree(b->user);
-		if (b->desc)
-		  nfree(b->desc);
-		nfree(b);
-	      }
+	      clear_masks(cst->bans);
+	      cst->bans = NULL;
 	    } else {
 	      /* otherwise ignore any bans for this channel */
 	      cst = NULL;
@@ -949,18 +872,8 @@ int readuserfile(char *file, struct userrec **ret)
 	     * from another bot & that channel is shared */
 	    cst = findchan(lasthand);
 	    if ((*ret == userlist) || channel_shared(cst)) {
-	      while (cst->exempts) {
-		struct exemptrec * e = cst->exempts;
-		
-		cst->exempts = e->next;
-		if (e->exemptmask)
-		  nfree(e->exemptmask);
-		if (e->user)
-		  nfree(e->user);   
-		if (e->desc)
-		  nfree(e->desc);   
-		nfree(e);
-	      }
+	      clear_masks(cst->exempts);
+	      cst->exempts = NULL;
 	    } else {
 	      /* otherwise ignore any exempts for this channel */
 	      cst = NULL;
@@ -985,18 +898,8 @@ int readuserfile(char *file, struct userrec **ret)
 	     * from another bot & that channel is shared */
 	    cst = findchan(lasthand);
 	    if ((*ret == userlist) || channel_shared(cst)) {
-	      while (cst->invites) {
-		struct inviterec * inv = cst->invites;
-		
-		cst->invites = inv->next;
-		if (inv->invitemask)
-		  nfree(inv->invitemask);
-		if (inv->user)
-		  nfree(inv->user);
-		if (inv->desc)   
-		  nfree(inv->desc);
-		nfree(inv);
-	      }
+	      clear_masks(cst->invites);
+              cst->invites = NULL;
 	    } else {
 	      /* otherwise ignore any invites for this channel */
 	      cst = NULL;

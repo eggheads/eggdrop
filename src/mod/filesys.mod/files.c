@@ -1194,14 +1194,23 @@ static int cmd_filestats(int idx, char *par)
   return 0;
 }
 
-static int filesys_note(int idx, char *par)
+/* this function relays the dcc call to cmd_note() in the notes module,
+ * if loaded */
+static void filesys_note(int idx, char *par)
 {
   struct userrec *u = get_user_by_handle(userlist, dcc[idx].nick);
+  module_entry *me = module_find("notes", 2, 1);
 
-  return cmd_note(u, idx, par);
+  if (me && me->funcs) {
+    Function f = me->funcs[NOTES_CMD_NOTE];
+
+    (f) (u, idx, par);
+  } else {
+    dprintf(idx, "Sending of notes is not supported.\n");
+  }
 }
 
-static cmd_t myfiles[25] =
+static cmd_t myfiles[] =
 {
   {"cancel", "", (Function) cmd_cancel, NULL},
   {"cd", "", (Function) cmd_chdir, NULL},
@@ -1228,6 +1237,7 @@ static cmd_t myfiles[25] =
   {"stats", "", cmd_stats, NULL},
   {"unhide", "j", (Function) cmd_unhide, NULL},
   {"unshare", "j", (Function) cmd_unshare, NULL},
+  {0, 0, 0, 0}
 };
 
 /***** Tcl stub functions *****/

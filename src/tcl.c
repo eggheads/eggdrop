@@ -35,7 +35,7 @@ Tcl_Interp *interp;		/* eggdrop always uses the same interpreter */
 
 extern int backgrd, flood_telnet_thr, flood_telnet_time;
 extern int shtime, share_greet, require_p, keep_all_logs;
-extern int use_stderr, allow_new_telnets, stealth_telnets, use_telnet_banner;
+extern int allow_new_telnets, stealth_telnets, use_telnet_banner;
 extern int default_flags, conmask, switch_logfiles_at, connect_timeout;
 extern int firewallport, reserved_port, notify_users_at;
 extern int flood_thr, ignore_time;
@@ -117,6 +117,7 @@ static int tcl_logfile STDVAR
   BADARGS(4, 4, " ?logModes channel logFile?");
   for (i = 0; i < max_logs; i++)
     if ((logs[i].filename != NULL) && (!strcmp(logs[i].filename, argv[3]))) {
+      logs[i].flags &= ~LF_EXPIRING;
       logs[i].mask = logmodes(argv[1]);
       nfree(logs[i].chname);
       logs[i].chname = NULL;
@@ -128,6 +129,7 @@ static int tcl_logfile STDVAR
 	  fclose(logs[i].f);
 	  logs[i].f = NULL;
 	}
+        logs[i].flags = 0;
       } else {
 	logs[i].chname = (char *) nmalloc(strlen(argv[2]) + 1);
 	strcpy(logs[i].chname, argv[2]);
@@ -135,8 +137,15 @@ static int tcl_logfile STDVAR
       Tcl_AppendResult(interp, argv[3], NULL);
       return TCL_OK;
     }
+  /* do not add logfiles without any flags to log ++rtc */
+  if (!logmodes (argv [1])) {
+    Tcl_AppendResult (interp, "can't remove \"", argv[3], 
+                     "\" from list: no such logfile", NULL);
+    return TCL_ERROR;
+  }
   for (i = 0; i < max_logs; i++)
     if (logs[i].filename == NULL) {
+      logs[i].flags = 0;
       logs[i].mask = logmodes(argv[1]);
       logs[i].filename = (char *) nmalloc(strlen(argv[3]) + 1);
       strcpy(logs[i].filename, argv[3]);
@@ -453,7 +462,8 @@ extern tcl_cmds tcluser_cmds[], tcldcc_cmds[], tclmisc_cmds[];
  * smoking?!) so we gotta initialize the Tcl interpreter */
 void init_tcl()
 {
-  char pver[25];
+  int i;
+  char pver[1024] = "";
 
   /* initialize the interpreter */
   context;
@@ -467,9 +477,12 @@ void init_tcl()
   add_tcl_commands(tcldcc_cmds);
   add_tcl_commands(tclmisc_cmds);
 
-#define Q(A,B) Tcl_CreateCommand(interp,A,B,NULL,NULL)
-  Q("logfile", tcl_logfile);
-  sscanf(egg_version, "%s", pver);
+  Tcl_CreateCommand(interp, "logfile", tcl_logfile, NULL, NULL);
+  for (i = 0; i <= strlen(egg_version); i++) {
+    if ((egg_version[i] == ' ') || (egg_version[i] == '+'))
+      break;
+    pver[strlen(pver)] = egg_version[i];
+  }
   Tcl_PkgProvide(interp, "eggdrop", pver);
 }
 
@@ -519,15 +532,9 @@ int readtclprog(char *fname)
   }
   code = Tcl_EvalFile(interp, fname);
   if (code != TCL_OK) {
-    if (use_stderr) {
-      dprintf(DP_STDERR, "Tcl error in file '%s':\n", fname);
-      dprintf(DP_STDERR, "%s\n",
-	      Tcl_GetVar(interp, "errorInfo", TCL_GLOBAL_ONLY));
-    } else {
-      putlog(LOG_MISC, "*", "Tcl error in file '%s':", fname);
-      putlog(LOG_MISC, "*", "%s\n",
-	     Tcl_GetVar(interp, "errorInfo", TCL_GLOBAL_ONLY));
-    }
+    putlog(LOG_MISC, "*", "Tcl error in file '%s':", fname);
+    putlog(LOG_MISC, "*", "%s",
+          Tcl_GetVar(interp, "errorInfo", TCL_GLOBAL_ONLY));
     /* try to go on anyway (shrug) */
     /* no dont it's to risky now */
     return 0;

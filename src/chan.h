@@ -48,34 +48,38 @@ typedef struct memstruct {
 #define chan_issplit(x) (x->split > 0)
 #define chan_wasop(x) (x->flags & WASOP)
 
-typedef struct banstruct {
-  char *ban;
+/*        Why duplicate this struct for exempts and invites only under another
+ *      name? <cybah>
+ */
+typedef struct maskstruct {
+  char *mask;
   char *who;
   time_t timer;
-  struct banstruct *next;
-} banlist;
+  struct maskstruct *next;
+} masklist;
 
-/* Next 2 structures created for IRCnet server module - Daemus - 2/1/1999 */
-typedef struct exbanstruct {
-  char *exempt;
-  char *who;
-  time_t timer;
-  struct exbanstruct *next;
-} exemptlist;
+/* used for temporary bans, exempts and invites */
+typedef struct maskrec {
+  struct maskrec *next;
+  char *mask,
+       *desc,
+       *user;
+  time_t expire,
+         added,
+         lastactive;
+  int flags;
+} maskrec;
+extern maskrec *global_bans, *global_exempts, *global_invites;
 
-typedef struct exinvitestruct {
-  char *invite;
-  char *who;
-  time_t timer;
-  struct exinvitestruct *next;
-} invitelist;
+#define MASKREC_STICKY 1
+#define MASKREC_PERM   2
 
 /* for every channel i join */
 struct chan_t {
   memberlist *member;
-  banlist *ban;
-  exemptlist *exempt;
-  invitelist *invite;
+  masklist *ban;
+  masklist *exempt;
+  masklist *invite;
   char *topic;
   char *key;
   unsigned short int mode;
@@ -90,7 +94,7 @@ struct chan_t {
 #define CHANTOPIC  0x0010	/* +t */
 #define CHANNOMSG  0x0020	/* +n */
 #define CHANLIMIT  0x0040	/* -l -- used only for protecting modes */
-#define CHANKEY    0x0080	/* -k -- used only for protecting modes */
+#define CHANKEY    0x0080	/* +k */
 #define CHANANON   0x0100	/* +a -- ircd 2.9 */
 #define CHANQUIET  0x0200	/* +q -- ircd 2.9 */
 
@@ -117,9 +121,10 @@ struct chanset_t {
   int status;
   int ircnet_status;
   int idle_kick;
-  struct banrec *bans;		/* temporary channel bans */
-  struct exemptrec *exempts; /* temporary channel exempts */
-  struct inviterec *invites; /* temporary channel invites */
+  /* temporary channel bans, exempts and invites */
+  maskrec *bans,
+          *exempts,
+          *invites;
   /* desired channel modes: */
   int mode_pls_prot;		/* modes to enforce */
   int mode_mns_prot;		/* modes to reject */
@@ -132,6 +137,7 @@ struct chanset_t {
   char rmkey[81];		/* old key to remove */
   int limit;			/* new limit to set */
   int bytes;			/* total bytes so far */
+  int compat;           /* to prevent mixing old/new modes */
   struct {
     char *op;
     char type;
@@ -163,15 +169,20 @@ struct chanset_t {
 					 * when +stopnethack */
 #define CHAN_INACTIVE       0x10000	/* no irc support for this channel - drummer */
 #define CHAN_PROTECTFRIENDS 0x20000     /* re-op any +f people who get deop'd */
+#define CHAN_SHARED         0x40000	/* channel is being shared */
+#define CHAN_SEEN           0x80000
+#define CHAN_REVENGEBOT     0x100000	/* revenge on actions against the bot */
+/*			    0x200000 */
+/*			    0x400000 */
+/*			    0x800000 */
 #define CHAN_ACTIVE         0x1000000	/* like i'm actually on the channel
 					 * and stuff */
 #define CHAN_PEND           0x2000000	/* just joined; waiting for end of
 					 * WHO list */
 #define CHAN_FLAGGED        0x4000000	/* flagged during rehash for delete */
 #define CHAN_STATIC         0x8000000	/* channels that are NOT dynamic */
-#define CHAN_SHARED         0x10000000	/* channel is being shared */
-#define CHAN_ASKEDBANS      0x20000000
-#define CHAN_SEEN           0x40000000
+#define CHAN_ASKEDBANS      0x10000000
+#define CHAN_ASKEDMODES     0x20000000  /* find out key-info on IRCu */
 
 #define CHAN_ASKED_EXEMPTS  0x0001
 #define CHAN_ASKED_INVITED  0x0002
@@ -212,6 +223,7 @@ struct chanset_t *findchan();
 #define channel_cycle(chan) (chan->status & CHAN_CYCLE)
 #define channel_seen(chan) (chan->status & CHAN_SEEN)
 #define channel_inactive(chan) (chan->status & CHAN_INACTIVE)
+#define channel_revengebot(chan) (chan->status & CHAN_REVENGEBOT)
 #define channel_dynamicexempts(chan) (chan->ircnet_status & CHAN_DYNAMICEXEMPTS)
 #define channel_nouserexempts(chan) (chan->ircnet_status & CHAN_NOUSEREXEMPTS)
 #define channel_dynamicinvites(chan) (chan->ircnet_status & CHAN_DYNAMICINVITES)
