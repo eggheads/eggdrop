@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  *
- * $Id: cmds.c,v 1.103 2003/12/14 04:24:02 wcc Exp $
+ * $Id: cmds.c,v 1.104 2003/12/14 04:31:02 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -514,6 +514,7 @@ static void cmd_who(struct userrec *u, int idx, char *par)
 static void cmd_whois(struct userrec *u, int idx, char *par)
 {
   struct flag_record fr = { FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0 };
+  char *handle;
 
   if (!par[0]) {
     dprintf(idx, "Usage: whois <handle>\n");
