@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  * 
- * $Id: chan.c,v 1.20 2000/01/06 19:42:10 fabian Exp $
+ * $Id: chan.c,v 1.21 2000/01/07 21:43:57 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -161,14 +161,15 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
     lapse = chan->flood_ctcp_time;
     strcpy(ftype, "pub");
     break;
-  case FLOOD_JOIN:
   case FLOOD_NICK:
+    thr = chan->flood_nick_thr;
+    lapse = chan->flood_nick_time;
+    strcpy(ftype, "nick");
+    break;
+  case FLOOD_JOIN:
     thr = chan->flood_join_thr;
     lapse = chan->flood_join_time;
-    if (which == FLOOD_JOIN)
       strcpy(ftype, "join");
-    else
-      strcpy(ftype, "nick");
     break;
   case FLOOD_DEOP:
     thr = chan->flood_deop_thr;

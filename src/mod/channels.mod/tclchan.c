@@ -1,7 +1,7 @@
 /* 
  * tclchan.c -- part of channels.mod
  * 
- * $Id: tclchan.c,v 1.20 2000/01/02 02:42:10 fabian Exp $
+ * $Id: tclchan.c,v 1.21 2000/01/07 21:43:57 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -764,6 +764,8 @@ static int tcl_channel_info(Tcl_Interp * irp, struct chanset_t *chan)
   Tcl_AppendElement(irp, s);
   simple_sprintf(s, "%d:%d", chan->flood_deop_thr, chan->flood_deop_time);
   Tcl_AppendElement(irp, s);
+  simple_sprintf(s, "%d:%d", chan->flood_nick_thr, chan->flood_nick_time);
+  Tcl_AppendElement(irp, s);
   if (chan->status & CHAN_CLEARBANS)
     Tcl_AppendElement(irp, "+clearbans");
   else
@@ -1134,6 +1136,9 @@ static int tcl_channel_modify(Tcl_Interp * irp, struct chanset_t *chan,
       } else if (!strcmp(item[i] + 6, "deop")) {
 	pthr = &chan->flood_deop_thr;
 	ptime = &chan->flood_deop_time;
+      } else if (!strcmp(item[i] + 6, "nick")) {
+	pthr = &chan->flood_nick_thr;
+	ptime = &chan->flood_nick_time;
       } else {
 	if (irp)
 	  Tcl_AppendResult(irp, "illegal channel flood type: ", item[i], NULL);
@@ -1573,6 +1578,8 @@ static int tcl_channel_add(Tcl_Interp * irp, char *newname, char *options)
     chan->flood_deop_time = gfld_deop_time;
     chan->flood_kick_thr = gfld_kick_thr;
     chan->flood_kick_time = gfld_kick_time;
+    chan->flood_nick_thr = gfld_nick_time;
+    chan->flood_nick_time = gfld_nick_thr;
     
     /* We _only_ put the dname (display name) in here so as not to confuse
      * any code later on. chan->name gets updated with the channel name as

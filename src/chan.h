@@ -3,7 +3,7 @@
  *   stuff common to chan.c and mode.c
  *   users.h needs to be loaded too
  * 
- * $Id: chan.h,v 1.7 1999/12/24 14:19:24 fabian Exp $
+ * $Id: chan.h,v 1.8 2000/01/07 21:43:57 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -141,6 +141,8 @@ struct chanset_t {
   int flood_kick_time;
   int flood_ctcp_thr;
   int flood_ctcp_time;
+  int flood_nick_thr;
+  int flood_nick_time;
   int status;
   int ircnet_status;
   int idle_kick;

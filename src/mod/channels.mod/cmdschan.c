@@ -2,7 +2,7 @@
  * cmdschan.c -- part of channels.mod
  *   commands from a user via dcc that cause server interaction
  * 
- * $Id: cmdschan.c,v 1.15 2000/01/02 02:42:10 fabian Exp $
+ * $Id: cmdschan.c,v 1.16 2000/01/07 21:43:57 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1300,15 +1300,15 @@ static void cmd_chaninfo(struct userrec *u, int idx, char *par)
     }
     if (ii > 1)
       dprintf(idx, "%s\n", work);
-    dprintf(idx, "flood settings: chan ctcp join kick deop\n");
-    dprintf(idx, "number:          %3d  %3d  %3d  %3d  %3d\n",
+    dprintf(idx, "flood settings: chan ctcp join kick deop nick\n");
+    dprintf(idx, "number:          %3d  %3d  %3d  %3d  %3d  %3d\n",
 	    chan->flood_pub_thr, chan->flood_ctcp_thr,
 	    chan->flood_join_thr, chan->flood_kick_thr,
-	    chan->flood_deop_thr);
-    dprintf(idx, "time  :          %3d  %3d  %3d  %3d  %3d\n",
+	    chan->flood_deop_thr, chan->flood_nick_thr);
+    dprintf(idx, "time  :          %3d  %3d  %3d  %3d  %3d  %3d\n",
 	    chan->flood_pub_time, chan->flood_ctcp_time,
 	    chan->flood_join_time, chan->flood_kick_time,
-	    chan->flood_deop_time);
+	    chan->flood_deop_time, chan->flood_nick_time);
     putlog(LOG_CMDS, "*", "#%s# chaninfo %s", dcc[idx].nick, chname);
   }
 }

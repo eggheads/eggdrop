@@ -2,7 +2,7 @@
  * channels.c -- part of channels.mod
  *   support for channels within the bot
  * 
- * $Id: channels.c,v 1.20 2000/01/06 19:46:55 fabian Exp $
+ * $Id: channels.c,v 1.21 2000/01/07 21:43:57 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -64,6 +64,8 @@ static int gfld_join_thr;
 static int gfld_join_time;
 static int gfld_ctcp_thr;
 static int gfld_ctcp_time;
+static int gfld_nick_thr;
+static int gfld_nick_time;
 
 #include "channels.h"
 #include "cmdschan.c"
@@ -379,7 +381,7 @@ static void write_channels()
     fprintf(f, "channel %s %s%schanmode %s idle-kick %d \
 need-op %s need-invite %s need-key %s need-unban %s need-limit %s \
 flood-chan %d:%d flood-ctcp %d:%d flood-join %d:%d \
-flood-kick %d:%d flood-deop %d:%d \
+flood-kick %d:%d flood-deop %d:%d flood-nick %d:%d \
 %cclearbans %cenforcebans %cdynamicbans %cuserbans %cautoop %cbitch \
 %cgreet %cprotectops %cprotectfriends %cdontkickops %cwasoptest \
 %cstatuslog %cstopnethack %crevenge %crevengebot %cautovoice %csecret \
@@ -396,6 +398,7 @@ flood-kick %d:%d flood-deop %d:%d \
         chan->flood_join_thr, chan->flood_join_time,
         chan->flood_kick_thr, chan->flood_kick_time,
         chan->flood_deop_thr, chan->flood_deop_time,
+	chan->flood_nick_thr, chan->flood_nick_time,
 	PLSMNS(channel_clearbans(chan)),
 	PLSMNS(channel_enforcebans(chan)),
 	PLSMNS(channel_dynamicbans(chan)),
@@ -751,6 +754,7 @@ static tcl_coups mychan_tcl_coups[] =
   {"global-flood-kick",	&gfld_kick_thr,	&gfld_kick_time},
   {"global-flood-join",	&gfld_join_thr,	&gfld_join_time},
   {"global-flood-ctcp",	&gfld_ctcp_thr,	&gfld_ctcp_time},
+  {"global-flood-nick", &gfld_nick_thr, &gfld_nick_time},
   {NULL,		NULL,		NULL}
 };
 
