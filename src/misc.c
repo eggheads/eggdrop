@@ -7,7 +7,7 @@
  *   help system
  *   motd display and %var substitution
  * 
- * $Id: misc.c,v 1.24 2000/08/06 14:51:38 fabian Exp $
+ * $Id: misc.c,v 1.25 2000/08/25 13:14:28 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -128,9 +128,9 @@ int is_file(const char *s)
   return 0;
 }
 
-int my_strcpy(char *a, char *b)
+int my_strcpy(register char *a, register char *b)
 {
-  char *c = b;
+  register char *c = b;
 
   while (*b)
     *a++ = *b++;
@@ -142,11 +142,10 @@ int my_strcpy(char *a, char *b)
  */
 void splitc(char *first, char *rest, char divider)
 {
-  char *p;
+  char *p = strchr(rest, divider);
 
-  p = strchr(rest, divider);
-  if (p == NULL) {
-    if ((first != rest) && (first != NULL))
+  if (p) {
+    if (first != rest && first)
       first[0] = 0;
     return;
   }
@@ -154,6 +153,41 @@ void splitc(char *first, char *rest, char divider)
   if (first != NULL)
     strcpy(first, rest);
   if (first != rest)
+    /*    In most circumstances, strcpy with src and dst being the same buffer
+     *  can produce undefined results. We're safe here, as the src is
+     *  guaranteed to be at least 2 bytes higher in memory than dest. <Cybah>
+     */
+    strcpy(rest, p + 1);
+}
+
+/*    As above, but lets you specify the 'max' number of bytes (EXCLUDING the
+ * terminating null).
+ *
+ * Example of use:
+ *
+ * char buf[HANDLEN + 1];
+ *
+ * splitcn(buf, input, "@", HANDLEN);
+ *
+ * <Cybah>
+ */
+void splitcn(char *first, char *rest, char divider, size_t max)
+{
+  char *p = strchr(rest, divider);
+
+  if (!p) {
+    if (first != rest && first)
+      first[0] = 0;
+    return;
+  }
+  *p = 0;
+  if (first != NULL)
+    strncpy(first, rest, max), first[max] = 0;
+  if (first != rest)
+    /*    In most circumstances, strcpy with src and dst being the same buffer
+     *  can produce undefined results. We're safe here, as the src is
+     *  guaranteed to be at least 2 bytes higher in memory than dest. <Cybah>
+     */
     strcpy(rest, p + 1);
 }
 
@@ -201,6 +235,7 @@ void maskhost(char *s, char *nw)
   /* Strip of any nick, if a username is found, use last 8 chars */
   if ((q = strchr(p, '@'))) {
     int fl = 0;
+
     if ((q - p) > 9) {
       nw[0] = '*';
       p = q - 7;
@@ -377,8 +412,8 @@ void putlog EGG_VARARGS_DEF(int, arg1)
   time_t tt;
   char ct[81], *s2;
   struct tm *t = localtime(&now);
-
   va_list va;
+
   type = EGG_VARARGS_START(int, arg1, va);
   chname = va_arg(va, char *);
   format = va_arg(va, char *);

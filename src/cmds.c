@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  * 
- * $Id: cmds.c,v 1.38 2000/08/18 16:45:51 fabian Exp $
+ * $Id: cmds.c,v 1.39 2000/08/25 13:14:27 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -585,10 +585,9 @@ static void cmd_boot(struct userrec *u, int idx, char *par)
   }
   who = newsplit(&par);
   if (strchr(who, '@') != NULL) {
-    char whonick[512];
+    char whonick[HANDLEN + 1];
 
-    splitc(whonick, who, '@');
-    whonick[20] = 0;
+    splitcn(whonick, who, '@', HANDLEN);
     if (!egg_strcasecmp(who, botnetnick)) {
       cmd_boot(u, idx, whonick);
       return;
@@ -596,8 +595,8 @@ static void cmd_boot(struct userrec *u, int idx, char *par)
     if (remote_boots > 0) {
       i = nextbot(who);
       if (i < 0) {
-	dprintf(idx, "No such bot connected.\n");
-	return;
+        dprintf(idx, "No such bot connected.\n");
+        return;
       }
       botnet_send_reject(i, dcc[idx].nick, botnetnick, whonick,
 			 who, par[0] ? par : dcc[idx].nick);
@@ -608,24 +607,23 @@ static void cmd_boot(struct userrec *u, int idx, char *par)
     return;
   }
   for (i = 0; i < dcc_total; i++)
-    if (!egg_strcasecmp(dcc[i].nick, who) && !ok &&
-	(dcc[i].type->flags & DCT_CANBOOT)) {
+    if (!egg_strcasecmp(dcc[i].nick, who)
+        && !ok && (dcc[i].type->flags & DCT_CANBOOT)) {
       u2 = get_user_by_handle(userlist, dcc[i].nick);
-      if (u2 && (u2->flags & USER_OWNER) &&
-	  egg_strcasecmp(dcc[idx].nick, who)) {
-	dprintf(idx, "Can't boot the bot owner.\n");
-	return;
+      if (u2 && (u2->flags & USER_OWNER)
+          && egg_strcasecmp(dcc[idx].nick, who)) {
+        dprintf(idx, "Can't boot the bot owner.\n");
+        return;
       }
-      if (u2 && (u2->flags & USER_MASTER) &&
-	  !(u && (u->flags & USER_MASTER))) {
-	dprintf(idx, "Can't boot a bot master.\n");
-	return;
+      if (u2 && (u2->flags & USER_MASTER) && !(u && (u->flags & USER_MASTER))) {
+        dprintf(idx, "Can't boot a bot master.\n");
+        return;
       }
       files = (dcc[i].type->flags & DCT_FILES);
       if (files)
-	dprintf(idx, "Booted %s from the file section.\n", dcc[i].nick);
+        dprintf(idx, "Booted %s from the file section.\n", dcc[i].nick);
       else
-	dprintf(idx, "Booted %s from the bot.\n", dcc[i].nick);
+        dprintf(idx, "Booted %s from the bot.\n", dcc[i].nick);
       putlog(LOG_CMDS, "*", "#%s# boot %s %s", dcc[idx].nick, who, par);
       do_boot(i, dcc[idx].nick, par);
       ok = 1;
