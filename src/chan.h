@@ -3,7 +3,7 @@
  *   stuff common to chan.c and mode.c
  *   users.h needs to be loaded too
  * 
- * $Id: chan.h,v 1.13 2000/05/06 22:02:27 fabian Exp $
+ * $Id: chan.h,v 1.14 2000/08/07 10:09:16 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -116,6 +116,8 @@ struct chan_t {
 #define CHANKEY    0x0080	/* +k					*/
 #define CHANANON   0x0100	/* +a -- ircd 2.9			*/
 #define CHANQUIET  0x0200	/* +q -- ircd 2.9			*/
+#define CHANNOCLR  0x0400	/* +c -- bahamut			*/
+#define CHANREGON  0x0800	/* +R -- bahamut			*/
 
 /* For every channel i'm supposed to be active on */
 struct chanset_t {

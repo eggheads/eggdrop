@@ -1,7 +1,7 @@
 dnl aclocal.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: aclocal.m4,v 1.21 2000/07/23 20:47:12 fabian Exp $
+dnl $Id: aclocal.m4,v 1.22 2000/08/07 10:09:16 fabian Exp $
 dnl
 
 
@@ -339,6 +339,7 @@ else
   AC_CHECK_LIB(nsl, connect)
   AC_CHECK_LIB(dns, gethostbyname)
   AC_CHECK_LIB(dl, dlopen)
+  AC_CHECK_LIB(m, tan, EGG_MATH_LIB="-lm")
   # This is needed for Tcl libraries compiled with thread support
   AC_CHECK_LIB(pthread,pthread_mutex_init,
 ac_cv_lib_pthread_pthread_mutex_init=yes,
@@ -837,13 +838,13 @@ AC_DEFUN(EGG_TCL_TESTLIBS, [dnl
 # Setup TCL_TESTLIBS for Tcl library tests
 if test ! "x${TCLLIBEXT}" = "x.a"
 then
-  TCL_TESTLIBS="-L$TCLLIB -l$TCLLIBFNS -lm $LIBS"
+  TCL_TESTLIBS="-L$TCLLIB -l$TCLLIBFNS $EGG_MATH_LIB $LIBS"
 else
   if test ! "x${tcllibname}" = "x"
   then
-    TCL_TESTLIBS="$TCLLIB/lib$TCLLIBFN -lm $LIBS"
+    TCL_TESTLIBS="$TCLLIB/lib$TCLLIBFN $EGG_MATH_LIB $LIBS"
   else
-    TCL_TESTLIBS="-L$TCLLIB -l$TCLLIBFNS -lm $LIBS"
+    TCL_TESTLIBS="-L$TCLLIB -l$TCLLIBFNS $EGG_MATH_LIB $LIBS"
   fi
 fi
 if test "x${ac_cv_lib_pthread_pthread_mutex_init}" = "xyes"
@@ -960,7 +961,7 @@ AC_DEFUN(EGG_TCL_LIB_REQS, [dnl
 if test ! "x${TCLLIBEXT}" = "x.a"
 then
   TCL_REQS="$TCLLIB/lib$TCLLIBFN"
-  TCL_LIBS="-L$TCLLIB -l$TCLLIBFNS -lm"
+  TCL_LIBS="-L$TCLLIB -l$TCLLIBFNS $EGG_MATH_LIB"
 else
 
   # Set default make as static for unshared Tcl library
@@ -986,10 +987,10 @@ EOF
     if test ! "x${tcllibname}" = "x"
     then
       TCL_REQS="$TCLLIB/lib$TCLLIBFN"
-      TCL_LIBS="$TCLLIB/lib$TCLLIBFN -lm"
+      TCL_LIBS="$TCLLIB/lib$TCLLIBFN $EGG_MATH_LIB"
     else
       TCL_REQS="$TCLLIB/lib$TCLLIBFN"
-      TCL_LIBS="-L$TCLLIB -l$TCLLIBFNS -lm"
+      TCL_LIBS="-L$TCLLIB -l$TCLLIBFNS $EGG_MATH_LIB"
     fi
   else
     cat << EOF >&2
@@ -1000,7 +1001,7 @@ configure: warning:
 
 EOF
     TCL_REQS="libtcle.a"
-    TCL_LIBS="-L. -ltcle -lm"
+    TCL_LIBS="-L. -ltcle $EGG_MATH_LIB"
   fi
 fi
 AC_SUBST(TCL_REQS)dnl
