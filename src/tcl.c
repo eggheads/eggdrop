@@ -462,7 +462,7 @@ extern tcl_cmds tcluser_cmds[], tcldcc_cmds[], tclmisc_cmds[];
  * smoking?!) so we gotta initialize the Tcl interpreter */
 void init_tcl()
 {
-  char pver[25];
+  char pver[1024];
 
   /* initialize the interpreter */
   context;
