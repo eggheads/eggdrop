@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  *
- * $Id: main.c,v 1.106 2004/04/06 06:56:38 wcc Exp $
+ * $Id: main.c,v 1.107 2004/05/26 00:20:19 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -778,7 +778,7 @@ int main(int argc, char **argv)
   chanset = NULL;
   egg_memcpy(&nowtm, localtime(&now), sizeof(struct tm));
   lastmin = nowtm.tm_min;
-  srandom(now % (getpid() + getppid()));
+  srandom((unsigned int) (now % (getpid() + getppid())));
   init_mem();
   init_language(1);
   if (argc > 1)

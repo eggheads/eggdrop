@@ -7,7 +7,7 @@
  *   help system
  *   motd display and %var substitution
  *
- * $Id: misc.c,v 1.71 2004/04/07 13:00:39 wcc Exp $
+ * $Id: misc.c,v 1.72 2004/05/26 00:20:19 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1400,10 +1400,10 @@ void make_rand_str(char *s, int len)
   int j;
 
   for (j = 0; j < len; j++) {
-    if (random() % 3 == 0)
-      s[j] = '0' + (random() % 10);
+    if (!randint(3))
+      s[j] = '0' + randint(10);
     else
-      s[j] = 'a' + (random() % 26);
+      s[j] = 'a' + randint(26);
   }
   s[len] = 0;
 }

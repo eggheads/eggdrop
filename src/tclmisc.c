@@ -2,7 +2,7 @@
  * tclmisc.c -- handles:
  *   Tcl stubs for everything else
  *
- * $Id: tclmisc.c,v 1.49 2004/04/10 03:52:28 stdarg Exp $
+ * $Id: tclmisc.c,v 1.50 2004/05/26 00:20:19 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -434,7 +434,8 @@ static int tcl_rand STDVAR
     Tcl_AppendResult(irp, "random limit must be greater than zero", NULL);
     return TCL_ERROR;
   }
-   x = random() % (unsigned long) (atol(argv[1]));
+
+  x = randint((unsigned long) (atol(argv[1])));
 
   egg_snprintf(s, sizeof s, "%lu", x);
   Tcl_AppendResult(irp, s, NULL);

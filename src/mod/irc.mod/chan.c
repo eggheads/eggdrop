@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  *
- * $Id: chan.c,v 1.115 2004/04/05 23:35:20 wcc Exp $
+ * $Id: chan.c,v 1.116 2004/05/26 00:20:19 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1539,7 +1539,7 @@ static void set_delay(struct chanset_t *chan, char *nick)
   if (aop_min >= aop_max)
     a_delay = now + aop_min;
   else
-    a_delay = now + (random() % (aop_max - aop_min)) + aop_min + 1;
+    a_delay = now + randint(aop_max - aop_min) + aop_min + 1;
   for (m2 = chan->channel.member; m2 && m2->nick[0]; m2 = m2->next)
     if (m2->delay && !(m2->flags & FULL_DELAY))
       count++;

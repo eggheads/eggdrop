@@ -1,7 +1,7 @@
 /*
  * servmsg.c -- part of server.mod
  *
- * $Id: servmsg.c,v 1.81 2004/01/09 05:56:38 wcc Exp $
+ * $Id: servmsg.c,v 1.82 2004/05/26 00:20:19 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -78,7 +78,7 @@ static int gotfake433(char *from)
     } else {
       p++;
       if (!*p)
-        altnick_char = 'a' + random() % 26;
+        altnick_char = 'a' + randint(26);
       else
         altnick_char = (*p);
     }
