@@ -2,7 +2,7 @@
  * chancmds.c -- part of irc.mod
  *   handles commands directly relating to channel interaction
  *
- * $Id: cmdsirc.c,v 1.38 2002/08/02 23:50:39 wcc Exp $
+ * $Id: cmdsirc.c,v 1.39 2002/08/05 01:56:12 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -192,8 +192,8 @@ static void cmd_kickban(struct userrec *u, int idx, char *par)
     return;
   }
   if (!me_op(chan) && !me_halfop(chan)) {
-    dprintf(idx, "I can't help you now because I'm not a channel op or halfop on %s.\n",
-	    chan->dname);
+    dprintf(idx, "I can't help you now because I'm not a channel op or halfop"
+	    "on %s.\n", chan->dname);
     return;
   }
   putlog(LOG_CMDS, "*", "#%s# (%s) kickban %s", dcc[idx].nick,
@@ -561,7 +561,7 @@ static void cmd_kick(struct userrec *u, int idx, char *par)
     return;
   }
   if (!me_op(chan) && !me_halfop(chan)) {
-    dprintf(idx, "I can't help you now because I'm not a channel op or halfop %s",
+    dprintf(idx, "I can't help you now because I'm not a channel op or halfop"
 	    "on %s.\n", chan->dname);
     return;
   }
