@@ -2,7 +2,7 @@
 #  This is the Makefile for EGGDROP (the irc bot)
 #  You should never need to edit this.
 #
-# $Id: Makefile.in,v 1.24 2000/09/12 15:28:28 fabian Exp $
+# $Id: Makefile.in,v 1.25 2001/02/26 04:17:09 guppy Exp $
 
 SHELL = @SHELL@
 top_srcdir = @top_srcdir@
@@ -60,7 +60,7 @@ INSTALL_SCRIPT = @INSTALL_SCRIPT@
 
 # stuff for Tcl
 XREQS = @TCL_REQS@
-XLIBS = @TCL_LIBS@ @LIBS@
+XLIBS = @TCL_REQS@ @LIBS@
 TCLLIB = @TCLLIB@
 TCLLIBFN = @TCLLIBFN@
 
