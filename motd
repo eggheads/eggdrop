@@ -23,4 +23,8 @@ to the following help channels:
 #bothelp@Ircnet
 #egghelp@Efnet
 
+try %.help% to get help
+    %.help all% to get the full command list
+    %.help *somestring*% to get the matching help texts
+
 Have fun.
