@@ -1,7 +1,7 @@
 /* 
  * servmsg.c -- part of server.mod
  * 
- * $Id: servmsg.c,v 1.42 2000/08/11 22:42:21 fabian Exp $
+ * $Id: servmsg.c,v 1.43 2000/08/20 11:16:43 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -300,34 +300,41 @@ static int got001(char *from, char *msg)
  */
 static int got442(char *from, char *msg)
 {
-  char *chname;
-  struct chanset_t *chan;
-  struct server_list *x = serverlist;
-  module_entry *me;
-  int i = 0;
+  char			*chname;
+  struct chanset_t	*chan;
+  struct server_list	*x;
+  int			 i;
 
-  while (x != NULL) {
+  for (x = serverlist, i = 0; x; x = x->next, i++)
     if (i == curserv) {
       if (egg_strcasecmp(from, x->realname ? x->realname : x->name))
 	return 0;
       break;
     }
-    x = x->next;
-    i++;
-  }
   newsplit(&msg);
   chname = newsplit(&msg);
   chan = findchan(chname);
   if (chan)
     if (!channel_inactive(chan)) {
+      module_entry	*me = module_find("channels", 0, 0);
+
       putlog(LOG_MISC, chname, IRC_SERVNOTONCHAN, chname);
-      me = module_find("channels", 0, 0);
       if (me && me->funcs)
 	(me->funcs[CHANNEL_CLEAR])(chan, 1);
       chan->status &= ~CHAN_ACTIVE;
       dprintf(DP_MODE, "JOIN %s %s\n", chan->name,
-      chan->channel.key[0] ? chan->channel.key : chan->key_prot);
-    }  
+	      chan->channel.key[0] ? chan->channel.key : chan->key_prot);
+    }
+
+  /* If there was a lagcheck in progress, it probably failed now. */
+  if (lagged) {
+    lagged = 0;
+    if (lagcheckstring)
+      free_null(lagcheckstring);
+    if (lagcheckstring2)
+      free_null(lagcheckstring2);
+    debug0("got 442(not on chan) reply, guess I'm not lagged");
+  }
   return 0;
 }
 
@@ -337,6 +344,7 @@ static void nuke_server(char *reason)
 {
   if (serv >= 0) {
     int servidx = findanyidx(serv);
+
     if (reason && (servidx > 0))
       dprintf(servidx, "QUIT :%s\n", reason);
     disconnect_server(servidx);
