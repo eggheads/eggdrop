@@ -1,6 +1,6 @@
 ###### MOTD ######
 
-The MOTD (message Of The Day) file is displayed every time a user opens
+The MOTD (Message Of The Day) file is displayed every time a user opens
 a dcc chat or telnet session with the bot (so it shouldn't be TOO long).
 
 There are a few %-variables you can insert into the motd, which will
