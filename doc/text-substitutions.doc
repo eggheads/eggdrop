@@ -24,7 +24,7 @@ You can also encode messages which can only be read by people
 with certain flags:
 
  %{+m}Only masters would see this.%{-}
- %{+1}Only people with user flag #1 see this.%{-}
+ %{+A}Only people with user flag #A see this.%{-}
  %{+b}This is only displayed to users doing a remote '.motd'
  from another bot.%{-}
  %{+|m}Only channel masters would see this.%{-}

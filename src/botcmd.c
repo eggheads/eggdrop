@@ -3,7 +3,7 @@
  *   commands that comes across the botnet
  *   userfile transfer and update commands from sharebots
  * 
- * $Id: botcmd.c,v 1.18 2001/01/16 17:13:20 guppy Exp $
+ * $Id: botcmd.c,v 1.19 2001/03/11 07:02:57 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -989,7 +989,7 @@ static void bot_motd(int idx, char *par)
   FILE *vv;
   char *s = TBUF, *who, *p;
   int i;
-  struct flag_record fr = {USER_BOT, 0, 0, 0, 0, 0};
+  struct flag_record fr = {FR_BOT, USER_BOT, 0, 0, 0, 0};
 
   who = newsplit(&par);
   if (!par[0] || !egg_strcasecmp(par, botnetnick)) {

@@ -83,9 +83,10 @@ see also: +ignore, -ignore, set ignore-time
 ###  %bmodules%b <botname>
    requests a listing of the modules running on the remote bot
 %{help=motd}
-###  %bmotd%b
+###  %bmotd%b [botname]
    will redisplay the party-line message of the day, which was
-   shown when you first joined.
+   shown when you first joined. If the name of a remote bot is
+   given as parameter, the respective motd will be displyed.
 %{help=newpass}
 ###  %bnewpass%b <password>
    changes your password on the bot, just like the /msg command
