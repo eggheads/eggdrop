@@ -1,7 +1,7 @@
 /* 
  * tclchan.c -- part of channels.mod
  * 
- * $Id: tclchan.c,v 1.33 2000/09/13 20:49:40 fabian Exp $
+ * $Id: tclchan.c,v 1.34 2000/09/27 19:47:15 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1551,7 +1551,7 @@ static void clear_channel(struct chanset_t *chan, int reset)
 
 /* Create new channel and parse commands.
  */
-static int tcl_channel_add(Tcl_Interp * irp, char *newname, char *options)
+static int tcl_channel_add(Tcl_Interp *irp, char *newname, char *options)
 {
   struct chanset_t *chan;
   int items;

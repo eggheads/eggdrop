@@ -1,5 +1,5 @@
 # Makefile for src/mod/console.mod/
-# $Id: Makefile,v 1.13 2000/09/12 15:26:52 fabian Exp $
+# $Id: Makefile,v 1.14 2000/09/27 19:47:16 fabian Exp $
 
 srcdir = .
 
@@ -40,4 +40,5 @@ distclean: clean
  ../../../src/compat/inet_aton.h ../../../src/compat/snprintf.h \
  ../../../src/compat/memset.h ../../../src/compat/memcpy.h \
  ../../../src/compat/strcasecmp.h ../../../src/compat/strftime.h \
- ../../../src/mod/modvals.h ../../../src/tandem.h
+ ../../../src/mod/modvals.h ../../../src/tandem.h \
+ ../console.mod/console.h

@@ -1,5 +1,5 @@
 # Makefile for src/mod/assoc.mod/
-# $Id: Makefile,v 1.11 2000/09/12 15:26:51 fabian Exp $
+# $Id: Makefile,v 1.12 2000/09/27 19:47:15 fabian Exp $
 
 srcdir = .
 
@@ -40,4 +40,4 @@ distclean: clean
  ../../../src/compat/inet_aton.h ../../../src/compat/snprintf.h \
  ../../../src/compat/memset.h ../../../src/compat/memcpy.h \
  ../../../src/compat/strcasecmp.h ../../../src/compat/strftime.h \
- ../../../src/mod/modvals.h ../../../src/tandem.h
+ ../../../src/mod/modvals.h ../../../src/tandem.h ../assoc.mod/assoc.h

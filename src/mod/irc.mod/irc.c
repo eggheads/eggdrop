@@ -2,7 +2,7 @@
  * irc.c -- part of irc.mod
  *   support for channels within the bot 
  * 
- * $Id: irc.c,v 1.34 2000/09/12 15:26:53 fabian Exp $
+ * $Id: irc.c,v 1.35 2000/09/27 19:47:16 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -519,7 +519,7 @@ static void check_lonely_channel(struct chanset_t *chan)
 
   Context;
   if (channel_pending(chan) || !channel_active(chan) || me_op(chan) ||
-      channel_inactive(chan))
+      channel_inactive(chan) || (chan->channel.mode & CHANANON))
     return;
   /* Count non-split channel members */
   for (m = chan->channel.member; m && m->nick[0]; m = m->next)

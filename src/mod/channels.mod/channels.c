@@ -2,7 +2,7 @@
  * channels.c -- part of channels.mod
  *   support for channels within the bot
  * 
- * $Id: channels.c,v 1.35 2000/09/13 20:49:39 fabian Exp $
+ * $Id: channels.c,v 1.36 2000/09/27 19:47:15 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -30,28 +30,23 @@
 
 static Function *global		= NULL;
 
-static int  setstatic		= 0;
-static int  use_info		= 1;
-static int  ban_time		= 60;
-static int  exempt_time		= 0;	/* If exempt_time = 0, never remove 
+static int  setstatic;
+static int  use_info;
+static int  ban_time;
+static int  exempt_time;		/* If exempt_time = 0, never remove 
 					   them */
-static int  invite_time		= 0;	/* If invite_time = 0, never remove
+static int  invite_time;		/* If invite_time = 0, never remove
 					   them */
-static char chanfile[121]	= "chanfile";
-static int  chan_hack		= 0;
-static int  quiet_save		= 0;
-static char glob_chanmode[64]	= "nt";	/* Default chanmode (drummer,990731) */
-static struct udef_struct *udef	= NULL;
-static int global_stopnethack_mode = 0;
+static char chanfile[121];
+static int  chan_hack;
+static int  quiet_save;
+static char glob_chanmode[64];		/* Default chanmode (drummer,990731) */
+static struct udef_struct *udef;
+static int global_stopnethack_mode;
 static int global_idle_kick;		/* Default idle-kick setting. */
 
 /* Global channel settings (drummer/dw) */
-static char glob_chanset[512]	= "\
--clearbans -enforcebans +dynamicbans +userbans -autoop -bitch +greet \
-+protectops +statuslog -revenge -secret -autovoice +cycle \
-+dontkickops -inactive -protectfriends +shared -seen \
-+userexempts +dynamicexempts +userinvites +dynamicinvites -revengebot \
--nodesynch" /* Do not remove this extra space: */ " ";
+static char glob_chanset[512];
 
 /* Global flood settings */
 static int gfld_chan_thr;
@@ -887,6 +882,23 @@ char *channels_start(Function * global_funcs)
   gfld_ctcp_thr = 5;
   gfld_ctcp_time = 60;
   global_idle_kick = 0;
+  setstatic = 0;
+  use_info = 1;
+  ban_time = 60;
+  exempt_time = 0;
+  invite_time = 0;
+  strcpy(chanfile, "chanfile");
+  chan_hack = 0;
+  quiet_save = 0;
+  strcpy(glob_chanmode, "nt");
+  udef = NULL;
+  global_stopnethack_mode = 0;
+  strcpy(glob_chanset, "\
+-clearbans -enforcebans +dynamicbans +userbans -autoop -bitch +greet \
++protectops +statuslog -revenge -secret -autovoice +cycle \
++dontkickops -inactive -protectfriends +shared -seen \
++userexempts +dynamicexempts +userinvites +dynamicinvites -revengebot \
+-nodesynch" /* Do not remove this extra space: */ " ");
   Context;
   module_register(MODULE_NAME, channels_table, 1, 0);
   if (!module_depend(MODULE_NAME, "eggdrop", 105, 3)) {

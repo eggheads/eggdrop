@@ -2,7 +2,7 @@
  * cmdschan.c -- part of channels.mod
  *   commands from a user via dcc that cause server interaction
  *
- * $Id: cmdschan.c,v 1.31 2000/09/18 20:01:42 fabian Exp $
+ * $Id: cmdschan.c,v 1.32 2000/09/27 19:47:15 fabian Exp $
  */
 /*
  * Copyright (C) 1997  Robey Pointer
@@ -1245,7 +1245,7 @@ static void cmd_chaninfo(struct userrec *u, int idx, char *par)
           tmp = 1;
         }
 	if (ii == 1)
-	  egg_snprintf(work, sizeof work, "     ");
+	  egg_snprintf(work, sizeof work, "    ");
 	work_len = strlen(work);
         egg_snprintf(work + work_len, sizeof(work) - work_len, " %c%s",
 		     getudef(ul->values, chan->dname) ? '+' : '-', ul->name);
