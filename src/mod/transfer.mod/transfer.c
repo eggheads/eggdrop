@@ -1,7 +1,7 @@
 /*
  * transfer.c -- part of transfer.mod
  *
- * $Id: transfer.c,v 1.46 2001/12/29 05:52:35 guppy Exp $
+ * $Id: transfer.c,v 1.47 2001/12/29 21:06:38 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1488,7 +1488,7 @@ static int raw_dcc_resend_send(char *filename, char *nick, char *from,
 	    resend ? "RE" :  "", nfn,
 	    iptolong(natip[0] ? (IP) inet_addr(natip) : getmyip()), port,
 	    dccfilesize);
-    putlog(LOG_FILES, "*", "Begin DCC %ssend %s to %s", resend ? "re" : "",
+    putlog(LOG_FILES, "*",TRANSFER_BEGIN_DCC, resend ? TRANSFER_RE :  "",
 	   nfn, nick);
   }
   if (buf)
