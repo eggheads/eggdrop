@@ -1,7 +1,7 @@
 /*
  * module.h
  *
- * $Id: module.h,v 1.72 2003/02/04 11:07:55 wcc Exp $
+ * $Id: module.h,v 1.73 2003/03/04 14:11:33 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -31,7 +31,7 @@
 #include "src/tandem.h"
 
 /*
- * This file contains all the orrible stuff required to do the lookup
+ * This file contains all the horrible stuff required to do the lookup
  * table for symbols, rather than getting the OS to do it, since most
  * OS's require all symbols resolved, this can cause a problem with
  * some modules.
@@ -92,7 +92,7 @@
 /* Redefine for module-relevance */
 
 /* 0 - 3 */
-#define nmalloc(x) ((void *)(global[0]((x),MODULE_NAME,__FILE__,__LINE__)))
+#define nmalloc(x) (((void *(*)())global[0])((x),MODULE_NAME,__FILE__,__LINE__))
 #define nfree(x) (global[1]((x),MODULE_NAME,__FILE__,__LINE__))
 #ifdef DEBUG_CONTEXT
 #  define Context (global[2](__FILE__, __LINE__, MODULE_NAME))
@@ -383,7 +383,7 @@
 /* 228 - 231 */
 #define add_lang_section ((void(*)(char *))global[228])
 #define user_realloc(x,y) ((void *(*)(void *,int,char *,int))global[229])((x),(y),__FILE__,__LINE__)
-#define nrealloc(x,y) ((void *)(global[230]((x),(y),MODULE_NAME,__FILE__,__LINE__)))
+#define nrealloc(x,y) (((void *(*)())global[230])((x),(y),MODULE_NAME,__FILE__,__LINE__))
 #define xtra_set ((int(*)(struct userrec *,struct user_entry *, void *))global[231])
 /* 232 - 235 */
 #ifdef DEBUG_CONTEXT
