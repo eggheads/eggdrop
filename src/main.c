@@ -7,7 +7,7 @@
  * 
  * dprintf'ized, 15nov1995
  * 
- * $Id: main.c,v 1.25 2000/01/17 22:36:06 fabian Exp $
+ * $Id: main.c,v 1.26 2000/01/22 22:37:47 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -76,8 +76,8 @@ extern jmp_buf alarmret;
  * modified versions of this bot.
  */
 
-char egg_version[1024] = "1.5.1";
-int egg_numver = 1050100;
+char egg_version[1024] = "1.5.2";
+int egg_numver = 1050200;
 
 char notify_new[121] = "";	/* person to send a note to for new users */
 int default_flags = 0;		/* default user flags and */

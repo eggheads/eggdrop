@@ -1,7 +1,7 @@
 /* 
  * module.h
  * 
- * $Id: module.h,v 1.21 2000/01/17 22:36:07 fabian Exp $
+ * $Id: module.h,v 1.22 2000/01/22 22:37:47 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -386,6 +386,7 @@
 #define removedcc ((void (*) (int))global[246])
 #define userfile_perm (*(int *)global[247])
 /* 248 - 251 */
+#define sock_has_data ((int(*)(int, int))global[248])
 
 /* this is for blowfish module, couldnt be bothereed making a whole new .h
  * file for it ;) */

@@ -3,6 +3,13 @@
 Changes in eggdrop: (since v1.5.0)
 ----------------------------------
 
+1.5.2
+Foundby   Fixedby   What....
+          Fabian    added 'outdone' to dcc_table structure - gets called as
+                    soon as the out buffer is emptied. Use sock_has_data() to
+                    check wether one of the sock buffers is empty.
+          Fabian    introduced new userfile feature system for userfile sharing
+
 1.5.1
 Foundby   Fixedby   What....
           G`Quann   fixed the slightly broken penalty calculation code

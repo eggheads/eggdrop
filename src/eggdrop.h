@@ -4,7 +4,7 @@
  * 
  *   IF YOU ALTER THIS FILE, YOU NEED TO RECOMPILE THE BOT.
  * 
- * $Id: eggdrop.h,v 1.22 2000/01/17 22:36:06 fabian Exp $
+ * $Id: eggdrop.h,v 1.23 2000/01/22 22:37:47 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -235,6 +235,7 @@ struct dcc_table {
   int (*expmem) (void *);
   void (*kill) (int, void *);
   void (*output) (int, char *, void *);
+  void (*outdone) (int);
 };
 
 struct userrec;
@@ -394,18 +395,22 @@ struct dupwait_info {
 #define STRIP_ALL    63		/* remove every damn thing! */
 
 /* for dcc bot links: */
-#define STAT_PINGED  0x01	/* waiting for ping to return */
-#define STAT_SHARE   0x02	/* sharing user data with the bot */
-#define STAT_CALLED  0x04	/* this bot called me */
-#define STAT_OFFERED 0x08	/* offered her the user file */
+#define STAT_PINGED  0x01	/* waiting for ping to return		 */
+#define STAT_SHARE   0x02	/* sharing user data with the bot	 */
+#define STAT_CALLED  0x04	/* this bot called me			 */
+#define STAT_OFFERED 0x08	/* offered her the user file		 */
 #define STAT_SENDING 0x10	/* in the process of sending a user list */
 #define STAT_GETTING 0x20	/* in the process of getting a user list */
-#define STAT_WARNED  0x40	/* warned him about unleaflike behavior */
-#define STAT_LEAF    0x80	/* this bot is a leaf only */
-#define STAT_LINKING 0x100	/* the bot is currently going through the
-				 * linking stage */
-#define STAT_AGGRESSIVE 0x200	/* aggressively sharing with this bot */
-#define STAT_OVERRIDE   0x400	/* overriding existing bot entries */
+#define STAT_WARNED  0x40	/* warned him about unleaflike behavior  */
+#define STAT_LEAF    0x80	/* this bot is a leaf only		 */
+#define STAT_LINKING 0x100	/* the bot is currently going through
+				   the linking stage			 */
+#define STAT_AGGRESSIVE   0x200	/* aggressively sharing with this bot	 */
+#define STAT_UFF_OVERRIDE 0x400	/* overriding existing bot entries	 */
+#define STAT_UFF_COMPRESS 0x800	/* compress the userfile when sending	 */
+#define STAT_UFF_ENCRYPT 0x1000	/* encrypt the userfile	when sending	 */
+#define STAT_UFF_INVITE  0x2000	/* send invites in userfile		 */
+#define STAT_UFF_EXEMPT  0x4000	/* send exempts in userfile		 */
 
 /* Flags for listening sockets */
 #define LSTN_PUBLIC  0x01	/* No access restrictions		*/
@@ -481,6 +486,12 @@ typedef struct {
 #define SOCK_EOFD       0x040	/* it EOF'd recently during a write */
 #define SOCK_PROXYWAIT	0x080	/* waiting for SOCKS traversal */
 #define SOCK_PASS	0x100	/* passed on; only notify in case of traffic */
+
+/* Flags to sock_has_data */
+enum {
+  SOCK_DATA_OUTGOING,		/* Data in in-queue?			*/
+  SOCK_DATA_INCOMING		/* Data in out-queue?			*/
+};
 
 /* fake idx's for dprintf - these should be ridiculously large +ve nums */
 #define DP_STDOUT       0x7FF1

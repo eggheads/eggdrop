@@ -2,7 +2,7 @@
  * net.c -- handles:
  *   all raw network i/o
  * 
- * $Id: net.c,v 1.14 2000/01/17 21:59:11 fabian Exp $
+ * $Id: net.c,v 1.15 2000/01/22 22:37:47 fabian Exp $
  */
 /* 
  * This is hereby released into the public domain.
@@ -965,6 +965,16 @@ void dequeue_sockets()
 	socklist[i].outbuflen -= x;
 	nfree(p);
       }
+     
+      /* All queued data was sent. Call handler if one exists and the
+       * dcc entry wants it.
+       */
+      if (!socklist[i].outbuf) {
+	int idx = findanyidx(socklist[i].sock);
+
+	if ((idx > 0) && dcc[idx].type && dcc[idx].type->outdone)
+	  dcc[idx].type->outdone(idx);
+      }
     }
   }
 }
@@ -1068,4 +1078,29 @@ int hostsanitycheck_dcc(char *nick, char *from, IP ip, char *dnsname,
     return 1; /* <- usually happens when we have 
 			a user with an unresolved hostmask! */
   return 0;
+}
+
+/* Checks wether the referenced socket has data queued.
+ *
+ * Returns true if the incoming/outgoing (depending on 'type') queues
+ * contain data, otherwise false.
+ */
+int sock_has_data(int type, int sock)
+{
+  int ret = 0, i;
+
+  for (i = 0; i < MAXSOCKS; i++)
+    if (!(socklist[i].flags & SOCK_UNUSED) && (socklist[i].sock == sock))
+      break;
+  if (i < MAXSOCKS) {
+    switch (type) {
+      case SOCK_DATA_OUTGOING:
+	ret = (socklist[i].outbuf != NULL);
+	break;
+      case SOCK_DATA_INCOMING:
+	ret = (socklist[i].inbuf != NULL);
+	break;
+    }
+  }
+  return ret;
 }

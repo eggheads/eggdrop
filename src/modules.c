@@ -4,7 +4,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: modules.c,v 1.22 2000/01/17 22:36:07 fabian Exp $
+ * $Id: modules.c,v 1.23 2000/01/22 22:37:47 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -492,6 +492,7 @@ Function global_table[] =
   (Function) removedcc,
   (Function) & userfile_perm,	/* int */
   /* 248 - 251 */
+  sock_has_data,
 };
 
 void init_modules(void)
