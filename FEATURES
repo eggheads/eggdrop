@@ -186,8 +186,7 @@ LeafBotC has:
    HubBotA : +ph
    
 how's that look? :)
+
 **** Installation
 
-Putegg has been relegated to the obsolete/ directory.  Use 
-	make install DEST=<directory> 
-now.
+  make install DEST=<directory> 
