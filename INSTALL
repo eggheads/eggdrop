@@ -1,3 +1,5 @@
+$Id: INSTALL,v 1.19 2003/12/11 01:23:50 wcc Exp $
+
 Compilation and Installation of Eggdrop
 Last revised: March 08, 2002
      _________________________________________________________________
@@ -10,10 +12,10 @@ Last revised: March 08, 2002
   experienced users.
 
   Contents:
-    1. What is Eggdrop? 
-    2. Quick startup 
-    3. Modules 
-    4. Frequently asked questions 
+    1. What is Eggdrop?
+    2. Quick startup
+    3. Modules
+    4. Frequently asked questions
 
 
   (1) WHAT IS EGGDROP?
@@ -26,7 +28,7 @@ Last revised: March 08, 2002
     TO YOUR TERMINAL AND BEAT IT WITH A SMELLY SNEAKER! By the way, read the
     README file.
 
-(2) QUICK STARTUP
+  (2) QUICK STARTUP
 
     Eggdrop uses the GNU autoconfigure scripts to make things easier.
 

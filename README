@@ -1,3 +1,5 @@
+$Id: README,v 1.36 2003/12/11 01:23:50 wcc Exp $
+
 Readme
 Last revised: June 5, 2002
      _________________________________________________________________
@@ -159,7 +161,7 @@ Last revised: June 5, 2002
 
       o You don't need to go through this whole process every time. If you
         want to get a CVS version of Eggdrop at a later time, you can just
-        'cd ~/eggdrop1.6' and type 'cvs update -dAP'.
+        'cd ~/eggdrop1.6' and type 'cvs update -CdAP'.
 
       o If you experience errors when using 'export', you might be using tclsh
         as a shell. If so, try using the command 'setenv' instead of 'export':
@@ -551,7 +553,7 @@ Last revised: June 5, 2002
 
     We're trying to keep the documentation up to date. If you feel that
     anything is missing here or that anything should be added, etc, please
-    email eggheads@eggheads.org about it. Thank you.
+    e-mail docteam@eggheads.org about it. Thank you.
 
 
   (11) OBTAINING HELP
