@@ -4,7 +4,7 @@
  *   disconnect on a dcc socket
  *   ...and that's it!  (but it's a LOT)
  * 
- * $Id: dcc.c,v 1.41 2000/12/10 15:10:27 guppy Exp $
+ * $Id: dcc.c,v 1.42 2001/02/24 20:15:17 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -535,6 +535,12 @@ static int dcc_bot_check_digest(int idx, char *remote_digest)
 
 static void dcc_chat_pass(int idx, char *buf, int atr)
 {
+  int ok = 0;
+  char x[1024];
+
+  struct userrec *u = get_user_by_handle(userlist, dcc[idx].nick);
+  struct list_type *q;
+
   if (!atr)
     return;
   strip_telnet(dcc[idx].sock, buf, &atr);
@@ -561,7 +567,18 @@ static void dcc_chat_pass(int idx, char *buf, int atr)
     }
   }
 
-  if (u_pass_match(dcc[idx].user, buf)) {
+  if (u_pass_match(dcc[idx].user, buf) && protect_telnet) {
+    egg_snprintf(x, sizeof x, "-telnet!%s", dcc[idx].host);
+    for (q = get_user(&USERENTRY_HOSTS, u); q; q = q->next) {
+      if (wild_match(q->extra, x)) {
+        ok = 1;
+        break; 
+      }
+    }
+  } else if (u_pass_match(dcc[idx].user, buf))
+    ok = 1;
+
+  if (ok) {
     if (atr & USER_BOT) {
       nfree(dcc[idx].u.chat);
       dcc[idx].type = &DCC_BOT_NEW;
