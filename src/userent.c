@@ -2,7 +2,7 @@
  * userent.c -- handles:
  *   user-entry handling, new stylem more versatile.
  * 
- * $Id: userent.c,v 1.21 2000/01/08 21:23:14 per Exp $
+ * $Id: userent.c,v 1.22 2000/02/02 11:45:27 per Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -147,7 +147,7 @@ int def_set(struct userrec *u, struct user_entry *e, void *buf)
     for (i = e->u.string; *i; i++)
       /* Allow bold, inverse, underline, color text here... 
        * But never add cr or lf!! --rtc */
-      if (*i < 32 && !strchr ("\002\003\026\037", *i))
+      if ((unsigned int)*i < 32 && !strchr ("\002\003\026\037", *i))
         *i = '?';
   } else { /* string == NULL && e->u.string != NULL */
     nfree(e->u.string);
@@ -156,7 +156,8 @@ int def_set(struct userrec *u, struct user_entry *e, void *buf)
   Assert(u);
   if (!noshare && !(u->flags & (USER_BOT | USER_UNSHARED))) { 
     if (e->type != &USERENTRY_INFO || share_greet) 
-      shareout(NULL, "c %s %s %s\n", e->type->name, u->handle, e->u.string ? e->u.string : ""); 
+      shareout(NULL, "c %s %s %s\n", e->type->name,
+	       u->handle, e->u.string ? e->u.string : ""); 
   }
   Context;
   return 1;
