@@ -33,8 +33,24 @@ set admin "Lamer <email: lamer@lamest.lame.org>"
 # your botnet, for human curiosity only.
 set network "I.didnt.edit.my.config.file.net"
 
-# what timezone is your bot in?  this is simply used for scripting purposes.
+# what timezone is your bot in?
+# The timezone string specifies the name of the timezone and
+# must be three or more alphabetic characters.
+# ex. Central European Time(UTC+1) could be "CET"
 set timezone "EST"
+
+# offset specifies the time value to be added to the local time
+# to get Coordinated Universal Time (UTC aka GMT).
+# The offset is positive if the local timezone is west of the
+# Prime Meridian and negative if it is east.
+# The value(hours) must be between 0 and 24
+# ex. if the timezone is UTC+1 the offset is -1
+set offset "5"
+
+# If you dont want to use the timezone setting for scripting
+# purpose only but instead everywhere possible (new) then
+# uncomment the next line.
+#set env(TZ) "$timezone $offset"
 
 # if you're using virtual hosting (your machine has more than 1 IP), you
 # may want to specify the particular IP to bind to.  you can specify

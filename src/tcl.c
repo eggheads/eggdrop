@@ -568,6 +568,7 @@ void add_tcl_strings(tcl_strings * list)
 {
   int i;
   strinfo *st;
+  int tmp;
 
   for (i = 0; list[i].name; i++) {
     st = (strinfo *) nmalloc(sizeof(strinfo));
@@ -577,6 +578,8 @@ void add_tcl_strings(tcl_strings * list)
       st->max = -st->max;
     st->str = list[i].buf;
     st->flags = (list[i].flags & STR_DIR);
+    tmp = protect_readonly;
+    protect_readonly = 0;
     tcl_eggstr((ClientData) st, interp, list[i].name, NULL, TCL_TRACE_WRITES);
     tcl_eggstr((ClientData) st, interp, list[i].name, NULL, TCL_TRACE_READS);
     Tcl_TraceVar(interp, list[i].name, TCL_TRACE_READS | TCL_TRACE_WRITES |
@@ -609,13 +612,17 @@ void add_tcl_ints(tcl_ints * list)
 {
   int i;
   intinfo *ii;
+  int tmp;
 
   for (i = 0; list[i].name; i++) {
     ii = nmalloc(sizeof(intinfo));
     strtot += sizeof(intinfo);
     ii->var = list[i].val;
     ii->ro = list[i].readonly;
+    tmp = protect_readonly;
+    protect_readonly = 0;
     tcl_eggint((ClientData) ii, interp, list[i].name, NULL, TCL_TRACE_WRITES);
+    protect_readonly = tmp;
     tcl_eggint((ClientData) ii, interp, list[i].name, NULL, TCL_TRACE_READS);
     Tcl_TraceVar(interp, list[i].name,
 		 TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
