@@ -1,5 +1,5 @@
 Compiling FAQ
-Last revised: February 25, 2002
+Last revised: February 28, 2002
   ________________________________________________________________________
 
 
@@ -128,7 +128,7 @@ A. Eggdrop Related Questions
 
      On some Unix boxes, this seems to be caused by the linker. It is
      expecting a specific filename format, and when the filename doesn't 
-     live up to it's expectations, it usually barfs. I always see this when 
+     live up to its expectations, it usually barfs. I always see this when 
      the library for Tcl is called libtcl7.4.a or libtcl7.5.a. Rename it to 
      libtcl.a if you installed Tcl yourself; if you didn't and your using 
      the Tcl that the system admin installed, then do this:
@@ -299,7 +299,7 @@ A. Eggdrop Related Questions
 
      There are some known problems with make and Eggdrop on Ultrix systems.
      Try to use gmake instead of make. Additionally, sh5 should be used. A 
-     simple'gmake SHELL=/bin/sh5' should be enough.
+     simple 'gmake SHELL=/bin/sh5' should be enough.
 
 10. BOT CRASHES AT STARTUP WITH THE MESSAGE "net.c/708", FOR EXAMPLE
 
@@ -352,7 +352,7 @@ B. Tcl Related Questions
 
      It seems that configure had a brain fart. Would you believe this was
      the same system as in A.6 and A.7? Heh, it was. Apparently, it thought
-     this system didn't have unistd.h, and was using it's compatible
+     this system didn't have unistd.h, and was using its compatible
      header. The solution is to edit Makefile and change this line:
 
      AC_FLAGS = -DHAVE_________=1 -DSTDC_HEADERS=1 -DNO_UNION_WAIT=1
@@ -480,7 +480,7 @@ B. Tcl Related Questions
 
     If there's really no Tcl installed on your shell, you can install
     it temporarily in /tmp or your /home. Get the latest version of Tcl from
-    ftp://ftp.scriptics.com/pub/tcl/ and follow the installation steps in it's
+    ftp://ftp.scriptics.com/pub/tcl/ and follow the installation steps in its
     README file. After you've installed Tcl, you have to make configure detect 
     Tcl. To achieve this, you have to set either environmental variables:
 

@@ -1,5 +1,5 @@
 Share Module
-Last revised: January 1, 2002
+Last revised: February 28, 2002
      _________________________________________________________________
 
                                Share Module
@@ -48,7 +48,7 @@ There are also some variables you can set in your config file:
   
   
   set override-bots 0
-    This setting makes the bot discard it's own bot records in favor of
+    This setting makes the bot discard its own bot records in favor of
     the ones sent by the hub.
     NOTE: No passwords or botflags are shared, only ports and
     address are added to sharing procedure. This only works with hubs that

@@ -1,5 +1,5 @@
 IRC Module
-Last revised: January 1, 2002
+Last revised: February 28, 2002
      _________________________________________________________________
 
                                 IRC Module
@@ -57,7 +57,7 @@ There are also some variables you can set in your config file:
   set wait-split 600
     Set here the time (in seconds) to wait for someone to return from
     a netsplit (i.e. wasop will expire afterwards). Set this to 1500
-    on IRCnet since it's nick delay stops after 30 minutes.
+    on IRCnet since its nick delay stops after 30 minutes.
   
   
   set wait-info 180

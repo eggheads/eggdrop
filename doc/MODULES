@@ -1,4 +1,4 @@
-EGGDROP MODULE INFORMATION                                        18 Dec 2001
+EGGDROP MODULE INFORMATION                                        01 Mar 2002
 
 
 INDEX
@@ -314,7 +314,7 @@ V. PROGRAMMING MODULES
           int    module_undepend ( char *module_name)
 
                  - marks your module (module_name) as no longer needing any 
-                   of it's dependencies
+                   of its dependencies
 
           void   module_rename (char *old_module_name, char *new_module_name)
 

@@ -58,7 +58,7 @@
 	%bdontkickops%b    never kick +o flag people
 	%binactive%b        never join this channel, or leave if already
 	                    joined. Useful as you can make the bot leave
-                            a channel without loosing it's settings or
+                            a channel without losing it's settings or
                             affecting any sharing.
 	%bstatuslog%b      log the channel status every 5 minutes
 	%bcycle%b          cycle the channel when it becomes op-less

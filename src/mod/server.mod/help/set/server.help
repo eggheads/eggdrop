@@ -76,7 +76,7 @@ see also: set nick, set altnick
    hence the bot no-longer changes the server name to reflect this
    (it does record it however), enabling this setting will cause
    the bot to change the entry for the server the name the server
-   thinks is it's name.
+   thinks is its name.
 %{help=set check-stoned}%{+n}
 ###  %bset check-stoned%b 0/1
    This setting, when enabled, will cause the bot to ping the server

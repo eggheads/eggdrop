@@ -1,5 +1,5 @@
 Channels Module
-Last revised: January 1, 2002
+Last revised: February 28, 2002
      _________________________________________________________________
 
                              Channels Module
@@ -261,7 +261,7 @@ There are also some variables you can set in your config file:
      inactive
        This prevents the bot from joining the channel (or makes it leave
        the channel if it is already there). It can be useful to make the
-       bot leave a channel without loosing it's settings, channel-specific
+       bot leave a channel without losing its settings, channel-specific
        user flags, channel bans, and without affecting sharing.
 
      seen

@@ -218,7 +218,8 @@ marked with vertical bars (|) on the left.
     Module: channels
 
  haschanrec <handle> <channel>
-    Returns: "1" if handle has a chanrec for that channel, "0" otherwise
+    Returns: 1 if the given handle has a chanrec for the specified channel;
+      0 otherwise
     Module: channels
 
   getchaninfo <handle> <channel>

@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: tcl-commands.html,v 1.1 2002/02/28 05:13:56 wcc Exp $ -->
+<!-- $Id: tcl-commands.html,v 1.2 2002/03/01 05:59:40 wcc Exp $ -->
 
 <html>
   <head>
@@ -34,7 +34,7 @@
 
         <li><a href="#dcccmds">DCC commands</a></li>
 
-		<li><a href="#notes">Notes module</a></li>
+        <li><a href="#notes">Notes module</a></li>
 
         <li><a href="#assoc">Assoc module</a></li>
 
@@ -570,8 +570,8 @@
         <dt><strong>haschanrec &lt;handle&gt; &lt;channel&gt;</strong></dt>
 
         <dd>
-          <p><strong>Returns:</strong> &quot;1&quot; if handle has a chanrec
-          for that channel, &quot;0&quot; otherwise</p>
+          <p><strong>Returns:</strong> 1 if the given handle has a chanrec 
+          for the specified channel; 0 otherwise</p>
 
           <p><strong>Module:</strong> channels</p>
         </dd>
@@ -2094,7 +2094,7 @@
       </dl>
     </blockquote>
 
-	<p><a name="notes"></a>5. <strong>Notes module</strong></p>
+    <p><a name="notes"></a>5. <strong>Notes module</strong></p>
 
     <blockquote>
       <dl>
@@ -2149,50 +2149,50 @@
       </dl>
     </blockquote>
 
-	<p><a name="assoc"></a>6. <strong>Assoc module</strong></p>
+    <p><a name="assoc"></a>6. <strong>Assoc module</strong></p>
 
-	<blockquote>
-	  <dl>
-	    <dt><strong>assoc &lt;chan&gt; [name]</strong></dt>
+    <blockquote>
+      <dl>
+        <dt><strong>assoc &lt;chan&gt; [name]</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> sets the name associated with a 
-		  botnet channel, if you specify one</p>
+          botnet channel, if you specify one</p>
 
           <p><strong>Returns:</strong> current name for that channel, if
-		  any</p>
+          any</p>
 
           <p><strong>Module:</strong> assoc</p>
         </dd>
 
-		<dt><strong>killassoc &lt;chan&gt;</strong></dt>
+        <dt><strong>killassoc &lt;chan&gt;</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> removes the name associated 
-		  with a botnet channel, if any exists. Use &#39;killassoc &&#39;
-		  to kill all assocs.</p>
+          with a botnet channel, if any exists. Use &#39;killassoc &&#39;
+          to kill all assocs.</p>
 
           <p><strong>Returns:</strong> nothing</p>
 
           <p><strong>Module:</strong> assoc</p>
         </dd>
       </dl>
-	</blockquote>
+    </blockquote>
 
-	<p><a name="compress"></a>7. <strong>Compress module</strong></p>
+    <p><a name="compress"></a>7. <strong>Compress module</strong></p>
 
-	<blockquote>
-	  <dl>
-	    <dt><strong>compressfile [-level &lt;level&gt;] &lt;src-file&gt; 
-		[target-file]<br>
-		uncompressfile &lt;src-file&gt; [target-file]</strong></dt>
+    <blockquote>
+      <dl>
+        <dt><strong>compressfile [-level &lt;level&gt;] &lt;src-file&gt; 
+        [target-file]<br>
+        uncompressfile &lt;src-file&gt; [target-file]</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> compresses or un-compresses 
-		  files. The level option specifies the compression mode to use 
-		  when compressing. Available modes are from 0 (minimum CPU usage,
-		  minimum compression) all the way up to 9 (maximum CPU usage,
-		  maximum compression). If you don&#39;t specify the target-file,
+          files. The level option specifies the compression mode to use 
+          when compressing. Available modes are from 0 (minimum CPU usage,
+          minimum compression) all the way up to 9 (maximum CPU usage,
+          maximum compression). If you don&#39;t specify the target-file,
           the src-file will be overwritten.</p>
 
           <p><strong>Returns:</strong> nothing</p>
@@ -2200,75 +2200,75 @@
           <p><strong>Module:</strong> compress</p>
         </dd>
 
-		<dt><strong>iscompressed &lt;filename&gt;</strong></dt>
+        <dt><strong>iscompressed &lt;filename&gt;</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> determines whether 
-		  &lt;filename&gt; is gzip compressed. Returns 1 if it is, 0 if it
-		  isn&#39;t, and 2 if some kind of error prevented the checks from
-		  succeeding.</p>
+          &lt;filename&gt; is gzip compressed. Returns 1 if it is, 0 if it
+          isn&#39;t, and 2 if some kind of error prevented the checks from
+          succeeding.</p>
 
           <p><strong>Returns:</strong> nothing</p>
 
           <p><strong>Module:</strong> compress</p>
         </dd>
       </dl>
-	</blockquote>
+    </blockquote>
 
-	<p><a name="filesys"></a>8. <strong>Filesys module</strong></p>
+    <p><a name="filesys"></a>8. <strong>Filesys module</strong></p>
 
-	<blockquote>
-	  <dl>
-	    <dt><strong>setpwd &lt;idx&gt; &lt;dir&gt;</strong></dt>
+    <blockquote>
+      <dl>
+        <dt><strong>setpwd &lt;idx&gt; &lt;dir&gt;</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> changes the directory of a file
-		  system user, in exactly the same way as a &#39;cd&#39; command 
-		  would. The directory can be specified relative or absolute.</p>
+          system user, in exactly the same way as a &#39;cd&#39; command 
+          would. The directory can be specified relative or absolute.</p>
 
           <p><strong>Returns:</strong> nothing</p>
 
           <p><strong>Module:</strong> filesys</p>
         </dd>
 
-		<dt><strong>getpwd &lt;idx&gt;</strong></dt>
+        <dt><strong>getpwd &lt;idx&gt;</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> the current directory of a file 
-		  system user</p>
+          system user</p>
 
           <p><strong>Module:</strong> filesys</p>
         </dd>
 
-		<dt><strong>getfiles &lt;dir&gt;</strong></dt>
+        <dt><strong>getfiles &lt;dir&gt;</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> a list of files in the directory
-		  given; the directory is relative to dcc-path</p>
+          given; the directory is relative to dcc-path</p>
 
           <p><strong>Module:</strong> filesys</p>
         </dd>
 
-		<dt><strong>getdirs &lt;dir&gt;</strong></dt>
+        <dt><strong>getdirs &lt;dir&gt;</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> a list of subdirectories in the 
-		  directory given; the directory is relative to dcc-path</p>
+          directory given; the directory is relative to dcc-path</p>
 
           <p><strong>Module:</strong> filesys</p>
         </dd>
 
-		<dt><strong>dccsend &lt;filename&gt; &lt;ircnick&gt;</strong></dt>
+        <dt><strong>dccsend &lt;filename&gt; &lt;ircnick&gt;</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> attempts to start a dcc file 
-		  transfer to the given nick; the filename must be specified either
-		  by full pathname or in relation to the bot&#39;s startup 
-		  directory</p>
+          transfer to the given nick; the filename must be specified either
+          by full pathname or in relation to the bot&#39;s startup 
+          directory</p>
 
           <p><strong>Returns:</strong></p>
 
-		  <blockquote>
+          <blockquote>
             <table>
               <tr valign="top">
                 <td>
@@ -2300,7 +2300,7 @@
                 </td>
               </tr>
 
-			  <tr valign="top">
+              <tr valign="top">
                 <td>
                   <p><strong>3</strong></p>
                 </td>
@@ -2310,14 +2310,14 @@
                 </td>
               </tr>
 
-			  <tr valign="top">
+              <tr valign="top">
                 <td>
                   <p><strong>4</strong></p>
                 </td>
 
                 <td>
                   <p>the file was queued for later transfer, which means that
-				  person has too many file transfers going right now</p>
+                  person has too many file transfers going right now</p>
                 </td>
               </tr>
             </table>
@@ -2326,115 +2326,115 @@
           <p><strong>Module:</strong> filesys</p>
         </dd>
 
-		<dt><strong>filesend &lt;idx&gt; &lt;filename&gt; 
-		[ircnick]</strong></dt>
+        <dt><strong>filesend &lt;idx&gt; &lt;filename&gt; 
+        [ircnick]</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> like dccsend, except it operates
-		  for a current filesystem user, and the filename is assumed to be
-		  a relative path from that user&#39;s current directory</p>
+          for a current filesystem user, and the filename is assumed to be
+          a relative path from that user&#39;s current directory</p>
 
           <p><strong>Returns:</strong> 0 on failure; 1 on success (either an 
-		  immediate send or a queued send)</p>
+          immediate send or a queued send)</p>
 
           <p><strong>Module:</strong> filesys</p>
         </dd>
 
-		<dt><strong>fileresend &lt;idx&gt; &lt;filename&gt; 
-		[ircnick]</strong></dt>
+        <dt><strong>fileresend &lt;idx&gt; &lt;filename&gt; 
+        [ircnick]</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> functions like filesend, only that
-		  it sends a DCC RESEND instead of a DCC SEND, which allows people
-		  to resume aborted file transfers if their client supports that
-		  protocol. ircII/BitchX/etc. support it; mIRC does not.</p>
+          it sends a DCC RESEND instead of a DCC SEND, which allows people
+          to resume aborted file transfers if their client supports that
+          protocol. ircII/BitchX/etc. support it; mIRC does not.</p>
 
           <p><strong>Returns:</strong> 0 on failure; 1 on success (either
-		  an immediate send or a queued send)</p>
+          an immediate send or a queued send)</p>
 
           <p><strong>Module:</strong> filesys</p>
         </dd>
 
-		<dt><strong>setdesc &lt;dir&gt; &lt;file&gt; &lt;desc&gt;</strong></dt>
+        <dt><strong>setdesc &lt;dir&gt; &lt;file&gt; &lt;desc&gt;</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> sets the description for a file 
-		  in a file system directory; the directory is relative to 
-		  dcc-path</p>
+          in a file system directory; the directory is relative to 
+          dcc-path</p>
 
           <p><strong>Returns:</strong> nothing</p>
 
           <p><strong>Module:</strong> filesys</p>
         </dd>
 
-		<dt><strong>getdesc &lt;dir&gt; &lt;file&gt;</strong></dt>
+        <dt><strong>getdesc &lt;dir&gt; &lt;file&gt;</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> the description for a file in the 
-		  file system, if one exists</p>
+          file system, if one exists</p>
 
           <p><strong>Module:</strong> filesys</p>
         </dd>
 
-		<dt><strong>setowner &lt;dir&gt; &lt;file&gt; 
-		&lt;handle&gt;</strong></dt>
+        <dt><strong>setowner &lt;dir&gt; &lt;file&gt; 
+        &lt;handle&gt;</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> changes the owner for a file in
-		  the file system; the directory is relative to dcc-path</p>
+          the file system; the directory is relative to dcc-path</p>
 
           <p><strong>Returns:</strong> nothing</p>
 
           <p><strong>Module:</strong> filesys</p>
         </dd>
 
-		<dt><strong>getowner &lt;dir&gt; &lt;file&gt;</strong></dt>
+        <dt><strong>getowner &lt;dir&gt; &lt;file&gt;</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> the owner of a file in the file 
-		  system</p>
+          system</p>
 
           <p><strong>Module:</strong> filesys</p>
         </dd>
 
-		<dt><strong>setlink &lt;dir&gt; &lt;file&gt; &lt;link&gt;</strong></dt>
+        <dt><strong>setlink &lt;dir&gt; &lt;file&gt; &lt;link&gt;</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> creates or changes a linked file
-		  (a file that actually exists on another bot); the directory is 
-		  relative to dcc-path</p>
+          (a file that actually exists on another bot); the directory is 
+          relative to dcc-path</p>
 
           <p><strong>Returns:</strong> nothing</p>
 
           <p><strong>Module:</strong> filesys</p>
         </dd>
 
-		<dt><strong>getlink &lt;dir&gt; &lt;file&gt;</strong></dt>
+        <dt><strong>getlink &lt;dir&gt; &lt;file&gt;</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> the link for a linked file, if it
-		  exists</p>
+          exists</p>
 
           <p><strong>Module:</strong> filesys</p>
         </dd>
 
-		<dt><strong>getfileq &lt;handle&gt;</strong></dt>
+        <dt><strong>getfileq &lt;handle&gt;</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> list of files queued by someone;
-		  each item in the list will be a sublist with two elements: nickname
-		  the file is being sent to and the filename</p>
+          each item in the list will be a sublist with two elements: nickname
+          the file is being sent to and the filename</p>
 
           <p><strong>Module:</strong> filesys</p>
         </dd>
 
-		<dt><strong>getfilesendtime &lt;idx&gt;</strong></dt>
+        <dt><strong>getfilesendtime &lt;idx&gt;</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> the unix time when a file transfer
-		  started, or a negative number:</p>
+          started, or a negative number:</p>
 
-		  <blockquote>
+          <blockquote>
             <table>
               <tr valign="top">
                 <td>
@@ -2461,16 +2461,16 @@
           <p><strong>Module:</strong> filesys</p>
         </dd>
 
-		<dt><strong>mkdir &lt;directory&gt; [&lt;required-flags&gt; 
-		[channel]]</strong></dt>
+        <dt><strong>mkdir &lt;directory&gt; [&lt;required-flags&gt; 
+        [channel]]</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> creates a directory in the file
-		  system. Only users with the required flags may access it.</p>
+          system. Only users with the required flags may access it.</p>
 
           <p><strong>Returns:</strong></p>
 
-		  <blockquote>
+          <blockquote>
             <table>
               <tr valign="top">
                 <td>
@@ -2492,7 +2492,7 @@
                 </td>
               </tr>
 
-			  <tr valign="top">
+              <tr valign="top">
                 <td>
                   <p><strong>2</strong></p>
                 </td>
@@ -2507,29 +2507,29 @@
           <p><strong>Module:</strong> filesys</p>
         </dd>
 
-		<dt><strong>rmdir &lt;directory&gt;</strong></dt>
+        <dt><strong>rmdir &lt;directory&gt;</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> removes a directory from the
-		  file system.</p>
+          file system.</p>
 
           <p><strong>Returns:</strong> 0 on success; 1 on failure</p>
 
           <p><strong>Module:</strong> filesys</p>
         </dd>
 
-		<dt><strong>mv &lt;file&gt; &lt;destination&gt;</strong></dt>
+        <dt><strong>mv &lt;file&gt; &lt;destination&gt;</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> moves a file from its source to
-		  the given destination. The file can also be a mask, such as 
-		  /incoming/*, provided the destination is a directory.</p>
+          the given destination. The file can also be a mask, such as 
+          /incoming/*, provided the destination is a directory.</p>
 
           <p><strong>Returns:</strong> If the command was successful, the 
-		  number of files moved will be returned. Otherwise, a negative 
-		  number will be returned:</p>
+          number of files moved will be returned. Otherwise, a negative 
+          number will be returned:</p>
 
-		  <blockquote>
+          <blockquote>
             <table>
               <tr valign="top">
                 <td>
@@ -2551,7 +2551,7 @@
                 </td>
               </tr>
 
-			  <tr valign="top">
+              <tr valign="top">
                 <td>
                   <p><strong>-3</strong></p>
                 </td>
@@ -2561,7 +2561,7 @@
                 </td>
               </tr>
 
-			  <tr valign="top">
+              <tr valign="top">
                 <td>
                   <p><strong>-4</strong></p>
                 </td>
@@ -2576,18 +2576,18 @@
           <p><strong>Module:</strong> filesys</p>
         </dd>
 
-		<dt><strong>cp &lt;file&gt; &lt;destination&gt;</strong></dt>
+        <dt><strong>cp &lt;file&gt; &lt;destination&gt;</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> copies a file from its source
-		  to the given destination. The file can also be a mask, such as
-		  /incoming/*, provided the destination is a directory.</p>
+          to the given destination. The file can also be a mask, such as
+          /incoming/*, provided the destination is a directory.</p>
 
           <p><strong>Returns:</strong> If the command was successful, the 
-		  number of files copied will be returned. Otherwise, a negative 
-		  number will be returned:</p>
+          number of files copied will be returned. Otherwise, a negative 
+          number will be returned:</p>
 
-		  <blockquote>
+          <blockquote>
             <table>
               <tr valign="top">
                 <td>
@@ -2609,7 +2609,7 @@
                 </td>
               </tr>
 
-			  <tr valign="top">
+              <tr valign="top">
                 <td>
                   <p><strong>-3</strong></p>
                 </td>
@@ -2619,7 +2619,7 @@
                 </td>
               </tr>
 
-			  <tr valign="top">
+              <tr valign="top">
                 <td>
                   <p><strong>-4</strong></p>
                 </td>
@@ -2634,28 +2634,28 @@
           <p><strong>Module:</strong> filesys</p>
         </dd>
 
-		<dt><strong>getflags &lt;dir&gt;</strong></dt>
+        <dt><strong>getflags &lt;dir&gt;</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> the flags required to access a 
-		  directory</p>
+          directory</p>
 
           <p><strong>Module:</strong> filesys</p>
         </dd>
 
-		<dt><strong>setflags &lt;dir&gt; [&lt;flags&gt; 
-		[channel]]</strong></dt>
+        <dt><strong>setflags &lt;dir&gt; [&lt;flags&gt; 
+        [channel]]</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> sets the flags required to 
-		  access a directory</p>
+          access a directory</p>
 
           <p><strong>Returns:</strong> 0 on success; -1 on failure</p>
 
           <p><strong>Module:</strong> filesys</p>
         </dd>
-	  </dl>
-	</blockquote>
+      </dl>
+    </blockquote>
 
     <p><a name="misc"></a>9. <strong>Miscellaneous commands</strong></p>
 
@@ -2681,7 +2681,7 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong>dunbind &lt;type&gt; &lt;flags&gt; &lt;keyword/mask&gt;
+        <dt><strong>unbind &lt;type&gt; &lt;flags&gt; &lt;keyword/mask&gt;
         &lt;proc-name&gt;</strong></dt>
 
         <dd>

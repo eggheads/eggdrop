@@ -1,5 +1,5 @@
 Server Module
-Last revised: January 1, 2002
+Last revised: February 28, 2002
      _________________________________________________________________
 
                               Server Module
@@ -180,7 +180,7 @@ There are also some variables you can set in your config file:
 
   set use-penalties 1 (default on net-type 1)
     This enables Eggdrop's penalty calculation. Every command Eggdrop sends to
-    the IRC server raises it's penalty points. If Eggdrop reaches a server limit,
+    the IRC server raises its penalty points. If Eggdrop reaches a server limit,
     it gets disconnected with "excess flood" message. Eggdrop is able to count
     internal those penalty points, too and take measures against excess flooding.
     Note: it's highly advised to turn this on!
