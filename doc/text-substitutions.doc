@@ -21,9 +21,9 @@ respective values:
 
  %B   bot's nickname (i.e., "LamestBot")
 
- %V   current Eggdrop version (i.e., "eggdrop v1.6.8")
+ %V   current Eggdrop version (i.e., "eggdrop v1.6.14")
 
- %E   long form of %V (i.e., "Eggdrop v1.6.8 (C) 1997 Robey Pointer (C) 2002 Eggheads")
+ %E   long form of %V (i.e., "Eggdrop v1.6.14 (C) 1997 Robey Pointer (C) 2002 Eggheads")
 
  %C   channels the bot is on (i.e., "#lamest, #botnetcentral")
 
