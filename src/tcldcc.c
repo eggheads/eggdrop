@@ -2,7 +2,7 @@
  * tcldcc.c -- handles:
  *   Tcl stubs for the dcc commands
  *
- * $Id: tcldcc.c,v 1.37 2002/12/24 03:33:24 wcc Exp $
+ * $Id: tcldcc.c,v 1.38 2003/01/18 01:58:05 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -494,6 +494,7 @@ static int tcl_killdcc STDVAR
     /* Notice is sent to the party line, the script can add a reason. */
   }
   killsock(dcc[idx].sock);
+  killtransfer(idx);
   lostdcc(idx);
   return TCL_OK;
 }

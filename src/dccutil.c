@@ -6,7 +6,7 @@
  *   memory management for dcc structures
  *   timeout checking for dcc connections
  *
- * $Id: dccutil.c,v 1.41 2002/12/24 02:30:04 wcc Exp $
+ * $Id: dccutil.c,v 1.42 2003/01/18 01:58:05 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -252,6 +252,15 @@ void dcc_chatter(int idx)
       chanout_but(-1, dcc[idx].u.chat->channel,
 		  "*** %s joined the channel.\n", dcc[idx].nick);
     }
+  }
+}
+
+/* Closes an open FD for transfer sockets. */
+void killtransfer(int n)
+{
+  if (dcc[n].u.xfer->f) {
+    fclose(dcc[n].u.xfer->f);
+    dcc[n].u.xfer->f = NULL;
   }
 }
 
