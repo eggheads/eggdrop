@@ -4,7 +4,7 @@
  *   Tcl initialization
  *   getting and setting Tcl/eggdrop variables
  * 
- * $Id: tcl.c,v 1.22 2000/06/10 01:00:22 fabian Exp $
+ * $Id: tcl.c,v 1.23 2000/08/03 21:51:33 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -63,7 +63,7 @@ extern tcl_timer_t	*timer, *utimer;
 extern log_t		*logs;
 
 int	    protect_readonly = 0;	/* turn on/off readonly protection */
-char	    whois_fields[121] = "";	/* fields to display in a .whois */
+char	    whois_fields[1025] = "";	/* fields to display in a .whois */
 Tcl_Interp *interp;			/* eggdrop always uses the same
 					   interpreter */
 int	    dcc_flood_thr = 3;
@@ -399,7 +399,7 @@ static tcl_strings def_tcl_strings[] =
   {"my-hostname",	hostname,	120,		0},
   {"my-ip",		myip,		120,		0},
   {"network",		network,	40,		0},
-  {"whois-fields",	whois_fields,	120,		0},
+  {"whois-fields",	whois_fields,	1024,		0},
   {"nat-ip",		natip,		120,		0},
   {"username",		botuser,	10,		0},
   {"version",		egg_version,	0,		0},

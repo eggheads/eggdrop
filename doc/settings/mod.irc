@@ -20,16 +20,6 @@ set bounce-modes 0
     Valid settings are 0 for OFF and 1 ON.
 
 
-set kick-bogus-bans 1
-    Set this to 1 if want the bot to kick users who set bogus bans
-    Valid settings are 0 for OFF and 1 ON.
-
-
-set bounce-bogus-bans 1
-    Set this to 1 if want the bot to remove bogus bans
-    Valid settings are 0 for OFF and 1 ON.
-
-
 set max-modes 30
     Set here the global limit for +b/+e/+I modes on your irc server. This
     limit is set to 30 on 2.10 ircd servers.
@@ -39,19 +29,6 @@ set max-bans 20
     Set here the maximum number of bans you want eggdrop to put
     in a channel. Eggdrop wont place any more bans if this limit
     is reached.
-
-
-set kick-bogus 0
-    Set this to 1 if you want the bot to kick bogus usernames. Remember that
-    if it does, as it won't ban them, it can be at the origin of a nice
-    kick-flood.
-    Valid settings are 0 for OFF and 1 ON.
-
-
-set ban-bogus 0
-    Set this to 1 if you want the bot to ban bogus usernames. Can prevent
-    the above described kick-flood, but can also fill the banlist.
-    Valid settings are 0 for OFF and 1 ON.
 
 
 set kick-fun 0
@@ -142,28 +119,6 @@ set max-invites 20
     Set here the maximum number of invites you want eggdrop to put
     in a channel. Eggdrop wont place any more invites if this limit
     is reached.
-    Valid settings are 0 for OFF and 1 ON.
-
-
-set bounce-bogus-exempts 0
-    Set this to 1 if you want the bot to remove bogus exempts
-    Valid settings are 0 for OFF and 1 ON.
-
-
-set kick-bogus-exempts 0
-    Set this to 1 if you want the bot to kick users who set
-    bogus exempts
-    Valid settings are 0 for OFF and 1 ON.
-
-
-set bounce-bogus-invites 0
-    Set this to 1 if you want the bot to remove bogus invites
-    Valid settings are 0 for OFF and 1 ON.
-
-
-set kick-bogus-invites 0
-    Set this to 1 if you want the bot to kick users who set
-    bogus invites
     Valid settings are 0 for OFF and 1 ON.
 
 

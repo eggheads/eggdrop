@@ -4,7 +4,7 @@
  *   channel mode changes and the bot's reaction to them
  *   setting and getting the current wanted channel modes
  * 
- * $Id: mode.c,v 1.25 2000/06/20 21:41:22 fabian Exp $
+ * $Id: mode.c,v 1.26 2000/08/03 21:51:33 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -328,25 +328,10 @@ static void real_add_mode(struct chanset_t *chan,
 static void got_key(struct chanset_t *chan, char *nick, char *from,
 		    char *key)
 {
-  int bogus = 0, i;
-  memberlist *m;
-
   if ((!nick[0]) && (bounce_modes))
     reversing = 1;
   set_key(chan, key);
-  for (i = 0; i < strlen(key); i++)
-    if (((key[i] < 32) || (key[i] == 127)) &&
-	(key[i] != 2) && (key[i] != 31) && (key[i] != 22))
-      bogus = 1;
-  if (bogus && !match_my_nick(nick)) {
-    putlog(LOG_MODES, chan->dname, "%s on %s!", CHAN_BADCHANKEY, chan->dname);
-    m = ismember(chan, nick);
-    if (m) {
-      dprintf(DP_MODE, "KICK %s %s :%s\n", chan->name, nick, CHAN_BADCHANKEY);
-      m->flags |= SENTKICK;
-    }
-  }
-  if (((reversing) && !(chan->key_prot[0])) || (bogus) ||
+  if (((reversing) && !(chan->key_prot[0])) ||
       ((chan->mode_mns_prot & CHANKEY) &&
        !(glob_master(user) || glob_bot(user) || chan_master(user)))) {
     if (strlen(key) != 0) {
@@ -524,7 +509,7 @@ static void got_deop(struct chanset_t *chan, char *nick, char *from,
    * check to see if they have +v
    */
   if (!(m->flags & (CHANVOICE | STOPWHO))) {
-    dprintf(DP_MODE, "WHO %s\n", m->nick);
+    dprintf(DP_HELP, "WHO %s\n", m->nick);
     m->flags |= STOPWHO;
   }
   /* Was the bot deopped? */
@@ -551,15 +536,13 @@ static void got_ban(struct chanset_t *chan, char *nick, char *from,
 		    char *who)
 {
   char me[UHOSTLEN], s[UHOSTLEN], s1[UHOSTLEN];
-  int check, i, bogus;
+  int check = 1;
   memberlist *m;
   struct userrec *u;
 
   simple_sprintf(me, "%s!%s", botname, botuserhost);
   simple_sprintf(s, "%s!%s", nick, from);
   newban(chan, who, s);
-  bogus = 0;
-  check = 1; 
   if (wild_match(who, me) && me_op(chan)) {
     /* First of all let's check whether some luser banned us ++rtc */
     if (match_my_nick(nick))
@@ -573,52 +556,6 @@ static void got_ban(struct chanset_t *chan, char *nick, char *from,
 	!glob_master(user) && !chan_master(user)) {
       /* No bans made by users */
       add_mode(chan, '-', 'b', who);
-      return;
-    }
-    for (i = 0; who[i]; i++)
-      if (((who[i] < 32) || (who[i] == 127)) &&
-	  (who[i] != 2) && (who[i] != 22) && (who[i] != 31)) {
-	bogus = 1;
-	break;
-      }
-    if (bogus) {
-      if (glob_bot(user) || glob_friend(user) || chan_friend(user) ||
-	  (channel_dontkickops(chan) &&
-	   (chan_op(user) || (glob_op(user) && !chan_deop(user))))) {	/* arthur2 */
-	/* Fix their bogus ban */
-	if (bounce_bogus_bans) {
-	  int ok = 0;
-
-	  strcpy(s1, who);
-	  for (i = 0; i < strlen(s1); i++) {
-	    if (((s1[i] < 32) || (s1[i] == 127)) &&
-		(s1[i] != 2) && (s1[i] != 22) && (s1[i] != 31))
-	      s1[i] = '?';
-	    if ((s1[i] != '?') && (s1[i] != '*') &&
-		(s1[i] != '!') && (s1[i] != '@'))
-	      ok = 1;
-	  }
-	  if (!glob_master(user) && !chan_master(user))
-	    add_mode(chan, '-', 'b', who);
-	  flush_mode(chan, NORMAL);
-	  /* Only re-add it if it has something besides wildcards */
-	  if (ok)
-	    add_mode(chan, '+', 'b', s1);
-	}
-      } else {
-	if (bounce_bogus_bans) {
-	  add_mode(chan, '-', 'b', who);
-	  if (kick_bogus_bans) {
-	    m = ismember(chan, nick);
-	    /* If the user is in the channel and we didn't send a kick yet */
-	    if (m && !chan_sentkick(m)) {
-	      m->flags |= SENTKICK;
-	      dprintf(DP_MODE, "KICK %s %s :%s\n", chan->name, nick,
-		      CHAN_BOGUSBAN);
-	    }
-	  }
-	}
-      }
       return;
     }
     /* Don't enforce a server ban right away -- give channel users a chance
@@ -690,7 +627,6 @@ static void got_ban(struct chanset_t *chan, char *nick, char *from,
 static void got_unban(struct chanset_t *chan, char *nick, char *from,
 		      char *who, struct userrec *u)
 {
-  int i, bogus;
   masklist *b, *old;
 
   b = chan->channel.ban;
@@ -707,29 +643,6 @@ static void got_unban(struct chanset_t *chan, char *nick, char *from,
     nfree(b->mask);
     nfree(b->who);
     nfree(b);
-  }
-  bogus = 0;
-  for (i = 0; i < strlen(who); i++)
-    if (((who[i] < 32) || (who[i] == 127)) &&
-	(who[i] != 2) && (who[i] != 22) && (who[i] != 31))
-      bogus = 1;
-  /* It's bogus, not by me, and in fact didn't exist anyway... */
-  if (bogus && !match_my_nick(nick) && !isbanned(chan, who) &&
-      /* not by valid +f/+b/+o? */
-      !(glob_friend(user) || glob_bot(user) ||
-	(glob_op(user) && !chan_deop(user))) &&
-      !(chan_friend(user) || chan_op(user))) {
-    /* Then lets kick the weenie */
-    memberlist *m = ismember(chan, nick);
-
-    /* No point in kicking someone who doesn't exist or which we are
-     * trying to kick already.
-     */
-    if (m && !chan_sentkick(m)) {
-      m->flags |= SENTKICK;
-      dprintf(DP_MODE, "KICK %s %s :%s\n", chan->name, nick, CHAN_BADBAN);
-    }
-    return;
   }
   if (u_sticky_mask(chan->bans, who) || u_sticky_mask(global_bans, who)) {
     /* That's a sticky ban! No point in being
@@ -749,16 +662,11 @@ static void got_unban(struct chanset_t *chan, char *nick, char *from,
 static void got_exempt(struct chanset_t *chan, char *nick, char *from,
 		       char *who)
 {
-  char me[UHOSTLEN], s[UHOSTLEN], s1[UHOSTLEN];
-  int check, i, bogus;
-  memberlist *m;
+  char s[UHOSTLEN];
 
   Context;
-  simple_sprintf(me, "%s!%s", botname, botuserhost);
   simple_sprintf(s, "%s!%s", nick, from);
   newexempt(chan, who, s);
-  bogus = 0;
-  check = 1;
   if (!match_my_nick(nick)) {	/* It's not my exemption */
     if (channel_nouserexempts(chan) && nick[0] && !glob_bot(user) &&
 	!glob_master(user) && !chan_master(user)) {
@@ -766,58 +674,12 @@ static void got_exempt(struct chanset_t *chan, char *nick, char *from,
       add_mode(chan, '-', 'e', who);
       return;
     }
-    for (i = 0; who[i]; i++)
-      if (((who[i] < 32) || (who[i] == 127)) &&
-	  (who[i] != 2) && (who[i] != 22) && (who[i] != 31))
-	bogus = 1;
-    if (bogus) {
-      if (glob_bot(user) || glob_friend(user) || chan_friend(user) ||
-	  (channel_dontkickops(chan) &&
-	   (chan_op(user) || (glob_op(user) && !chan_deop(user))))) {	/* arthur2 */
-	/* Fix their bogus exemption */
-	if (bounce_bogus_exempts) {
-	  int ok = 0;
-	  
-	  strcpy(s1, who);
-	  for (i = 0; i < strlen(s1); i++) {
-	    if (((s1[i] < 32) || (s1[i] == 127)) &&
-		(s1[i] != 2) && (s1[i] != 22) && (s1[i] != 31))
-	      s1[i] = '?';
-	    if ((s1[i] != '?') && (s1[i] != '*') &&
-		(s1[i] != '!') && (s1[i] != '@'))
-	      ok = 1;
-	  }
-	  add_mode(chan, '-', 'e', who);
-	  flush_mode(chan, NORMAL);
-	  /* Only re-add it if it has something besides wildcards */
-	  if (ok)
-	    add_mode(chan, '+', 'e', s1);
-	}
-      } else {
-	if (bounce_bogus_exempts) {
-	  add_mode(chan, '-', 'e', who);
-	  if (kick_bogus_exempts) {
-	    m = ismember(chan, nick);
-	    /* No point in kicking someone who doesn't exist or which we are
-	     * trying to kick already.
-	     */
-	    if (m && !chan_sentkick(m)) {
-	      m->flags |= SENTKICK;
-	      dprintf(DP_MODE, "KICK %s %s :%s\n", chan->name, nick,
-		      CHAN_BOGUSEXEMPT);
-	    }
-	  }
-	}
-      }
-      return;
-    }
     if ((!nick[0]) && (bounce_modes))
       reversing = 1;
   }
   if (reversing || (bounce_exempts && !nick[0] && 
 		   (!u_equals_mask(global_exempts, who) ||
-		    !u_equals_mask(chan->exempts, who))
-		    && (check)))
+		    !u_equals_mask(chan->exempts, who))))
     add_mode(chan, '-', 'e', who);
 }
 
@@ -874,15 +736,10 @@ static void got_unexempt(struct chanset_t *chan, char *nick, char *from,
 static void got_invite(struct chanset_t *chan, char *nick, char *from,
 		       char *who)
 {
-  char me[UHOSTLEN], s[UHOSTLEN], s1[UHOSTLEN];
-  int check, i, bogus;
-  memberlist *m;
+  char s[UHOSTLEN];
 
-  simple_sprintf(me, "%s!%s", botname, botuserhost);
   simple_sprintf(s, "%s!%s", nick, from);
   newinvite(chan, who, s);
-  bogus = 0;
-  check = 1;
   if (!match_my_nick(nick)) {	/* It's not my invitation */
     if (channel_nouserinvites(chan) && nick[0] && !glob_bot(user) &&
 	!glob_master(user) && !chan_master(user)) {
@@ -890,58 +747,12 @@ static void got_invite(struct chanset_t *chan, char *nick, char *from,
       add_mode(chan, '-', 'I', who);
       return;
     }
-    for (i = 0; who[i]; i++)
-      if (((who[i] < 32) || (who[i] == 127)) &&
-	  (who[i] != 2) && (who[i] != 22) && (who[i] != 31))
-	bogus = 1;
-    if (bogus) {
-      if (glob_bot(user) || glob_friend(user) || chan_friend(user) ||
-	  (channel_dontkickops(chan) &&
-	   (chan_op(user) || (glob_op(user) && !chan_deop(user))))) {	/* arthur2 */
-	/* Fix their bogus invitation */
-	if (bounce_bogus_invites) {
-	  int ok = 0;
-
-	  strcpy(s1, who);
-	  for (i = 0; i < strlen(s1); i++) {
-	    if (((s1[i] < 32) || (s1[i] == 127)) &&
-		(s1[i] != 2) && (s1[i] != 22) && (s1[i] != 31))
-	      s1[i] = '?';
-	    if ((s1[i] != '?') && (s1[i] != '*') &&
-		(s1[i] != '!') && (s1[i] != '@'))
-	      ok = 1;
-	  }
-	  add_mode(chan, '-', 'I', who);
-	  flush_mode(chan, NORMAL);
-	  /* Only re-add it if it has something besides wildcards */
-	  if (ok)
-	    add_mode(chan, '+', 'I', s1);
-	}
-      } else {
-	if (bounce_bogus_invites) {
-	  add_mode(chan, '-', 'I', who);
-	  if (kick_bogus_invites) {
-	    m = ismember(chan, nick);
-	    /* No point in kicking someone who doesn't exist or which we are
-	     * trying to kick already.
-	     */
-	    if (m && !chan_sentkick(m)) {
-	      m->flags |= SENTKICK;
-	      dprintf(DP_MODE, "KICK %s %s :%s\n", chan->name, nick,
-		      CHAN_BOGUSINVITE);
-	    }
-	  }
-	}
-      }
-      return;
-    }
     if ((!nick[0]) && (bounce_modes))
       reversing = 1;
   }
   if (reversing || (bounce_invites && (!nick[0])  && 
 		    (!u_equals_mask(global_invites, who) ||
-		     !u_equals_mask(chan->invites, who))
-		    && (check)))
+		     !u_equals_mask(chan->invites, who))))
     add_mode(chan, '-', 'I', who);
 }
 

@@ -2,7 +2,7 @@
  * lang.h
  *   Conversion definitions for language support
  * 
- * $Id: lang.h,v 1.14 2000/06/21 22:28:13 fabian Exp $
+ * $Id: lang.h,v 1.15 2000/08/03 21:51:33 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -301,24 +301,18 @@
 /* Messages referring to channels
  */
 #define CHAN_NOSUCH		get_language(0x900)
-#define CHAN_BADCHANKEY		get_language(0x901)
 #define CHAN_BADCHANMODE	get_language(0x902)
 #define CHAN_BADCHANMODE_ARGS	chan->dname, who
 #define CHAN_BADCHANMODE_ARGS2	chan->dname, op
 #define CHAN_MASSDEOP		get_language(0x903)
 #define CHAN_MASSDEOP_ARGS	chan->dname, from
 #define CHAN_MASSDEOP_KICK	get_language(0x904)
-#define CHAN_BADBAN		get_language(0x905)
 #define CHAN_FORCEJOIN		get_language(0x907)
 #define CHAN_FAKEMODE		get_language(0x908)
 #define CHAN_FAKEMODE_KICK	get_language(0x909)
 #define CHAN_DESYNCMODE		get_language(0x90a)
 #define CHAN_DESYNCMODE_KICK	get_language(0x90b)
 #define CHAN_FLOOD		get_language(0x90c)
-#define CHAN_BOGUSBAN		get_language(0x90d)
-#define CHAN_BOGUSUSERNAME	get_language(0x90e)
-#define CHAN_BOGUSEXEMPT	get_language(0x90f)
-#define CHAN_BOGUSINVITE	get_language(0x910)
 
 /* Messages referring to ignores
  */

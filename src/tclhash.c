@@ -7,7 +7,7 @@
  *   (non-Tcl) procedure lookups for msg/dcc/file commands
  *   (Tcl) binding internal procedures to msg/dcc/file commands
  * 
- * $Id: tclhash.c,v 1.16 2000/07/12 21:50:35 fabian Exp $
+ * $Id: tclhash.c,v 1.17 2000/08/03 21:51:33 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -39,7 +39,7 @@ extern struct userrec	*userlist;
 extern int		 debug_tcl, dcc_total;
 extern time_t		 now;
 
-static p_tcl_bind_list	bind_table_list;
+p_tcl_bind_list	bind_table_list;
 p_tcl_bind_list		H_chat, H_act, H_bcst, H_chon, H_chof,
 			H_load, H_unld, H_link, H_disc, H_dcc, H_chjn, H_chpt,
 			H_bot, H_time, H_nkch, H_away, H_note, H_filt, H_event;

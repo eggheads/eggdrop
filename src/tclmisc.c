@@ -3,7 +3,7 @@
  *   Tcl stubs for file system commands
  *   Tcl stubs for everything else
  * 
- * $Id: tclmisc.c,v 1.11 2000/05/06 22:02:27 fabian Exp $
+ * $Id: tclmisc.c,v 1.12 2000/08/03 21:51:33 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -36,6 +36,7 @@
 #include "md5/global.h"
 #include "md5/md5.h"
 
+extern p_tcl_bind_list	 bind_table_list;
 extern tcl_timer_t	*timer, *utimer;
 extern struct dcc_t	*dcc;
 extern char		 origbotname[], botnetnick[];
@@ -113,6 +114,44 @@ static int tcl_timer STDVAR
     x = add_timer(&timer, atoi(argv[1]), argv[2], 0L);
     sprintf(s, "timer%lu", x);
     Tcl_AppendResult(irp, s, NULL);
+  }
+  return TCL_OK;
+}
+
+static int tcl_binds STDVAR
+{
+  struct tcl_bind_mask *hm;
+  p_tcl_bind_list p, kind;
+  tcl_cmd_t *tt;
+  char *list[5], *g, flg[100], hits[160];
+  int matching = 0;
+
+  BADARGS(1, 2, " ?type/mask?");
+
+  kind = find_bind_table(argv[1] ? argv[1] : "");
+  if (!kind && argv[1])
+    matching = 1;
+
+  for (p = kind ? kind : bind_table_list; p; p = kind ? 0 : p->next) {
+    Context;
+    for (hm = p->first; hm; hm = hm->next) {
+      for (tt = hm->first; tt; tt = tt->next) {
+        if (matching && !wild_match(argv[1], p->name) && 
+            !wild_match(argv[1], hm->mask) && 
+            !wild_match(argv[1], tt->func_name))
+          continue;
+	build_flags(flg, &(tt->flags), NULL);
+        sprintf(hits, "%i", (int) tt->hits);
+        list[0] = p->name;
+        list[1] = flg;
+        list[2] = hm->mask;
+        list[3] = hits;
+        list[4] = tt->func_name;
+        g = Tcl_Merge(5, list);
+        Tcl_AppendElement(irp, g);
+        Tcl_Free((char *) g);
+      }
+    }
   }
   return TCL_OK;
 }
@@ -547,5 +586,6 @@ tcl_cmds tclmisc_cmds[] =
   {"reloadhelp",	tcl_reloadhelp},
   {"duration",		tcl_duration},
   {"md5",		tcl_md5},
+  {"binds",		tcl_binds},
   {NULL,		NULL}
 };
