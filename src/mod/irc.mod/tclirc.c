@@ -1,7 +1,7 @@
 /*
  * tclirc.c -- part of irc.mod
  *
- * $Id: tclirc.c,v 1.29 2001/12/20 21:05:13 guppy Exp $
+ * $Id: tclirc.c,v 1.30 2001/12/21 00:41:41 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -70,7 +70,7 @@ static int tcl_botisop STDVAR
   struct chanset_t *chan, *thechan = NULL;
 
   BADARGS(1, 2, " ?channel?");
-  if (argc > 2) {
+  if (argc > 1) {
     chan = findchan_by_dname(argv[1]);
     thechan = chan;
     if (!thechan) {
@@ -114,7 +114,7 @@ static int tcl_botisvoice STDVAR
   memberlist *mx;
 
   BADARGS(1, 2, " ?channel?");
-  if (argc > 2) {
+  if (argc > 1) {
     chan = findchan_by_dname(argv[1]);
     thechan = chan;
     if (!thechan) {
@@ -140,7 +140,7 @@ static int tcl_botonchan STDVAR
   struct chanset_t *chan, *thechan = NULL;
 
   BADARGS(1, 2, " ?channel?");
-  if (argc > 2) {
+  if (argc > 1) {
     chan = findchan_by_dname(argv[1]);
     thechan = chan;
     if (!thechan) {
