@@ -2,7 +2,7 @@
  * net.c -- handles:
  *   all raw network i/o
  * 
- * $Id: net.c,v 1.45 2002/09/22 04:11:08 wcc Exp $
+ * $Id: net.c,v 1.46 2002/10/23 04:03:04 wcc Exp $
  */
 /* 
  * This is hereby released into the public domain.
@@ -21,6 +21,7 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>		/* is this really necessary? */
 #include <errno.h>
+#include <tcl.h>
 #if HAVE_UNISTD_H
 #  include <unistd.h>
 #endif
@@ -43,6 +44,7 @@ extern unsigned long	 otraffic_irc_today, otraffic_bn_today,
 char	hostname[121] = "";	/* Hostname can be specified in the config
 				   file					    */
 char	myip[121] = "";		/* IP can be specified in the config file   */
+char	encoding[21] = "iso8859-1"; /* Encoding used by default */
 char	firewall[121] = "";	/* Socks server for firewall		    */
 int	firewallport = 1080;	/* Default port of Sock4/5 firewalls	    */
 char	botuser[21] = "eggdrop"; /* Username of the user running the bot    */
@@ -971,18 +973,26 @@ int sockgets(char *s, int *len)
  * 
  * NOTE: Do NOT put Contexts in here if you want DEBUG to be meaningful!!
  */
-void tputs(register int z, char *s, unsigned int len)
+void tputs(register int z, char *string, unsigned int len)
 {
   register int i, x, idx;
   char *p;
   static int inhere = 0;
+  int encode = 0;
+  char nonutf[1024];
+  Tcl_Encoding NonUtfEnc;
+
+  char *s;
+  s = (char *) nmalloc ( len + 1 );
 
   if (z < 0)
     return;			/* um... HELLO?!  sanity check please! */
   if (((z == STDOUT) || (z == STDERR)) && (!backgrd || use_stderr)) {
-    write(z, s, len);
+    write(z, string, len);
+    nfree(s);
     return;
   }
+
   for (i = 0; i < MAXSOCKS; i++) {
     if (!(socklist[i].flags & SOCK_UNUSED) && (socklist[i].sock == z)) {
       for (idx = 0; idx < dcc_total; idx++) {
@@ -990,13 +1000,13 @@ void tputs(register int z, char *s, unsigned int len)
           if (dcc[idx].type) {
             if (dcc[idx].type->name) {
               if (!strncmp(dcc[idx].type->name, "BOT", 3)) {
-                otraffic_bn_today += len;
+                otraffic_bn_today += len; encode = 1;
                 break;
               } else if (!strcmp(dcc[idx].type->name, "SERVER")) {
-                otraffic_irc_today += len;
+                otraffic_irc_today += len; encode = 1;
                 break;
               } else if (!strncmp(dcc[idx].type->name, "CHAT", 4)) {
-                otraffic_dcc_today += len;
+                otraffic_dcc_today += len; encode = 1;
                 break;
               } else if (!strncmp(dcc[idx].type->name, "FILES", 5)) {
                 otraffic_filesys_today += len;
@@ -1016,6 +1026,27 @@ void tputs(register int z, char *s, unsigned int len)
         }
       }
       
+
+#if ((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 1)) || (TCL_MAJOR_VERSION > 8)
+
+  /* Encode UTF-8 string to encoding chose by user */
+
+  if(encode == 1 && sizeof(string) < 1024) {
+      NonUtfEnc = Tcl_GetEncoding(NULL, encoding);
+      Tcl_UtfToExternal(NULL, NonUtfEnc, string, -1, 0, NULL, nonutf, 1023, NULL, NULL, NULL);
+      strcpy(s, nonutf);
+  } else {
+      strcpy(s, string);
+  }
+
+#else
+
+  /* No encoding needed because of TCL-version, just pass the string... */
+  strcpy(s, string);
+
+#endif
+
+
       if (socklist[i].outbuf != NULL) {
 	/* Already queueing: just add it */
 	p = (char *) nrealloc(socklist[i].outbuf, socklist[i].outbuflen + len);
@@ -1043,10 +1074,12 @@ void tputs(register int z, char *s, unsigned int len)
 
     putlog(LOG_MISC, "*", "!!! writing to nonexistent socket: %d", z);
     s[strlen(s) - 1] = 0;
+    string[strlen(s) - 1] = 0;
     putlog(LOG_MISC, "*", "!-> '%s'", s);
 
     inhere = 0;
   }
+  nfree(s);
 }
 
 /* tputs might queue data for sockets, let's dump as much of it as
