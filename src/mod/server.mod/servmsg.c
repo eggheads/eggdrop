@@ -1,7 +1,7 @@
 /* 
  * servmsg.c -- part of server.mod
  * 
- * $Id: servmsg.c,v 1.25 2000/01/22 22:54:21 fabian Exp $
+ * $Id: servmsg.c,v 1.26 2000/01/24 21:42:28 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -771,7 +771,8 @@ static void got303(char *from, char *msg)
         ison_alt = 1;
     }
     if (!ison_orig) {
-      putlog(LOG_MISC, "*", IRC_GETORIGNICK, origbotname);
+      if (!nick_juped)
+        putlog(LOG_MISC, "*", IRC_GETORIGNICK, origbotname);
       dprintf(DP_MODE, "NICK %s\n", origbotname);
     } else if (alt[0] && !ison_alt && rfc_casecmp(botname, alt)) {
       putlog(LOG_MISC, "*", IRC_GETALTNICK, alt);
@@ -786,7 +787,8 @@ static void got303(char *from, char *msg)
 static void trace_fail(char *from, char *msg)
 {
   if (keepnick && !use_ison  && !strcasecmp (botname, origbotname)) {
-    putlog(LOG_MISC, "*", IRC_GETORIGNICK, origbotname);
+    if (!nick_juped)
+      putlog(LOG_MISC, "*", IRC_GETORIGNICK, origbotname);
     dprintf(DP_MODE, "NICK %s\n", origbotname);
   }
 }
@@ -826,6 +828,7 @@ static int got433(char *from, char *msg)
     newsplit(&msg);
     tmp = newsplit(&msg);
     putlog(LOG_MISC, "*", "NICK IN USE: %s (keeping '%s').", tmp, botname);
+    nick_juped = 0;
     return 0;
   }
   Context;
@@ -852,7 +855,10 @@ static int got437(char *from, char *msg)
       }
     }
   } else if (server_online) {
-    putlog(LOG_MISC, "*", "NICK IS JUPED: %s (keeping '%s').", s, botname);
+    if (!nick_juped)
+      putlog(LOG_MISC, "*", "NICK IS JUPED: %s (keeping '%s').", s, botname);
+    if (!strcmp(s, origbotname))
+      nick_juped = 1;
   } else {
     putlog(LOG_MISC, "*", "%s: %s", IRC_BOTNICKJUPED, s);
     gotfake433(from);
@@ -918,9 +924,10 @@ static int gotnick(char *from, char *msg)
     botname[NICKMAX] = 0;
     altnick_char = 0;
     waiting_for_awake = 0;
-    if (!strcmp(msg, origbotname))
+    if (!strcmp(msg, origbotname)) {
       putlog(LOG_SERV | LOG_MISC, "*", "Regained nickname '%s'.", msg);
-    else if (alt[0] && !strcmp(msg, alt))
+      nick_juped = 0;
+    } else if (alt[0] && !strcmp(msg, alt))
       putlog(LOG_SERV | LOG_MISC, "*", "Regained alternate nickname '%s'.",
 	     msg);
     else if (keepnick && strcmp(nick, msg)) {

@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  * 
- * $Id: server.c,v 1.32 2000/01/22 22:54:21 fabian Exp $
+ * $Id: server.c,v 1.33 2000/01/24 21:42:28 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -52,6 +52,7 @@ static char botuserhost[121];	/* bot's user@host (refreshed whenever the
 				 * how the server sees it */
 static int keepnick;		/* keep trying to regain my intended
 				 * nickname? */
+static int nick_juped = 0;	/* True if origbotname is juped(RPL437) (dw) */
 static int check_stoned;	/* Check for a stoned server? */
 static int serverror_quit;	/* Disconnect from server if ERROR
 				 * messages received? */
@@ -1130,9 +1131,11 @@ static char *nick_change(ClientData cdata, Tcl_Interp * irp, char *name1,
   } else {			/* writes */
     new = Tcl_GetVar2(interp, name1, name2, TCL_GLOBAL_ONLY);
     if (rfc_casecmp(origbotname, new)) {
-      if (origbotname[0])
+      if (origbotname[0]) {
 	putlog(LOG_MISC, "*", "* IRC NICK CHANGE: %s -> %s",
 	       origbotname, new);
+        nick_juped = 0;
+      }
       strncpy(origbotname, new, NICKMAX);
       origbotname[NICKMAX] = 0;
       if (server_online)
@@ -1329,7 +1332,8 @@ static tcl_ints my_tcl_ints[] =
   {"use-penalties",		&use_penalties,			0},
   {"use-fastdeq",		&use_fastdeq,			0},
   {"nick-len",			&nick_len,			0},
-  {"optimize-kicks", &optimize_kicks, 0},
+  {"optimize-kicks",		&optimize_kicks,		0},
+  {"isjuped",			&nick_juped,			0},
   {NULL,			NULL,				0}
 };
 
@@ -1577,6 +1581,9 @@ static void server_report(int idx, int details)
 {
   char s1[128], s[128];
 
+  if (nick_juped)
+    dprintf(idx, "    NICK IS JUPED: %s %s\n", origbotname,
+            keepnick?"(trying)":"");
   dprintf(idx, "    Online as: %s!%s (%s)\n", botname, botuserhost,
 	  botrealname);
   if (!trying_server) {
