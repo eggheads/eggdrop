@@ -5,7 +5,7 @@
  * 
  * dprintf'ized, 3nov1995
  * 
- * $Id: cmds.c,v 1.17 1999/12/22 12:24:58 fabian Exp $
+ * $Id: cmds.c,v 1.18 1999/12/27 18:35:44 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -2054,6 +2054,15 @@ static void cmd_strip(struct userrec *u, int idx, char *par)
     dprintf(dest, "%s set your strip settings to: %s (%s)\n", dcc[idx].nick,
 	    stripmasktype(dcc[dest].u.chat->strip_flags),
 	    stripmaskname(dcc[dest].u.chat->strip_flags));
+  }
+  /* set highlight flag here so user is able to control stripping of
+   * bold also as intended -- dw 27/12/1999
+   */
+  if (dcc[dest].u.chat->strip_flags & STRIP_BOLD && u->flags & USER_HIGHLITE) {
+    u->flags &= ~USER_HIGHLITE;
+  } else if (!(dcc[dest].u.chat->strip_flags & STRIP_BOLD) &&
+	     !(u->flags & USER_HIGHLITE)) {
+    u->flags |= USER_HIGHLITE;
   }
   /* new style autosave here too -- rtc, 09/28/1999*/
   if ((me = module_find("console", 1, 1))) {
