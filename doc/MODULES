@@ -1,10 +1,10 @@
-$Id: MODULES,v 1.29 2004/05/27 05:23:39 wcc Exp $
+$Id: MODULES,v 1.30 2004/07/25 03:56:58 wcc Exp $
 
 Eggdrop Module Information
 Last revised: March 04, 2003
-     _________________________________________________________________
+    _____________________________________________________________________
 
-                        Eggdrop Module Information
+                         Eggdrop Module Information
 
 
   The purpose of this document is to show you how to download, install, create,
@@ -125,7 +125,7 @@ Last revised: March 04, 2003
               for more information, including details on what information is
               sent to the uptime server.
 
-    wire      This module provides all the standard .wire commands via dcc.
+    wire      This module provides all the standard .wire partyline commands.
               It is an encrypted partyline communication tool, compatible with
               wire.tcl.
 
@@ -391,6 +391,6 @@ Last revised: March 04, 2003
      text (modulename.desc) with it, and it'll make its way to the modules
      directory on ftp.eggheads.org. Don't forget to mention in your text file
      which version Eggdrop the module is written for.
-     _________________________________________________________________
+    _____________________________________________________________________
 
-   Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004 Eggheads Development Team
+  Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004 Eggheads Development Team

@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: compiling.html,v 1.28 2004/06/11 18:40:59 wcc Exp $ -->
+<!-- $Id: compiling.html,v 1.29 2004/07/25 03:56:59 wcc Exp $ -->
 
 <html>
   <head>
@@ -14,10 +14,9 @@
 
     <p>This FAQ may help you successfully compile Eggdrop. Suggestions are by
     various contributors. If you think something should be added, please send
-    an e-mail to
-    <a href="mailto:docteam@eggheads.org">docteam@eggheads.org</a>. Note that
-    in this document, text between a &#39;&lt;&#39; and a &#39;&gt;&#39; should
-    be replaced (without the &#39;&lt;&#39; and &#39;&gt;&#39;).</p>
+    an e-mail to <a href="mailto:bugs@eggheads.org">bugs@eggheads.org</a>. Note
+    that in this document, text between a &#39;&lt;&#39; and a &#39;&gt;&#39;
+    should be replaced (without the &#39;&lt;&#39; and &#39;&gt;&#39;).</p>
 
     <p>NOTE: This is not a &#39;quick install&#39; guide. See the INSTALL file
     for basic setup information. This is intended to help you compile the bot
@@ -27,16 +26,24 @@
     <p><strong>Compile Guide</strong></p>
     <blockquote>
       <ol type="A">
-        <li><a href="#cg1">Standard compile process (32-bit Linux, FreeBSD,
-        NetBSD, OpenBSD, etc)</a></li>
+        <li><a href="#cg1">Standard compile process (Linux, FreeBSD, NetBSD,
+        OpenBSD, etc)</a></li>
 
         <li><a href="#cg2">HP-UX B.11.*</a></li>
 
         <li><a href="#cg3">Ultrix</a></li>
 
-        <li><a href="#cg4">Cygwin / Windows</a></li>
+        <li><a href="#cg4">Mac OS X</a></li>
 
-        <li><a href="#cg5">Tcl Detection and Installation</a></li>
+        <li><a href="#cg5">AIX</a></li>
+
+        <li><a href="#cg6">IRIX</a></li>
+
+        <li><a href="#cg7">Ultrix</a></li>
+
+        <li><a href="#cg8">Cygwin / Windows</a></li>
+
+        <li><a href="#cg9">Tcl Detection and Installation</a></li>
       </ol>
     </blockquote>
 
@@ -46,7 +53,8 @@
         <li><a href="#faq1">I get a lot of warnings.</a></li>
 
         <li><a href="#faq2">I get a &#39;strip terminated with signal 6&#39;
-        error during compile/install.</a></li>
+        error during compile/install, or another error related to
+        &#39;strip&#39;.</a></li>
 
         <li><a href="#faq3">&#39;DIR&#39; undeclared (and a whole bunch of
         others) (AIX 4)</a></li>
@@ -80,7 +88,7 @@
     <p>This will tell you how to compile Eggdrop on various operating systems.
     If you have gotten Eggdrop to compile on an operating system not listed
     here, please let the development team know how, at
-    <a href="mailto:docteam@eggheads.org">docteam@eggheads.org</a>.
+    <a href="mailto:eggdev@eggheads.org">eggdev@eggheads.org</a>.
     Please tell us what, if any, special steps were required to compile the
     bot. Also, any compiler warnings/etc, and the &#39;config.log&#39; and
     &#39;config.h&#39; files would be helpful. The development team does not
@@ -129,29 +137,38 @@
         and will enlarge the binary a bit, but it&#39;s worth it if you want to
         support Eggdrop development.<br><br></li>
 
-        <li>Download and install TCL 8.4.1. You can get Tcl for Cygwin at
-        <a href="http://prdownloads.sourceforge.net/windrop/tcl-8.4.1.tar.gz">
-        http://prdownloads.sourceforge.net/windrop/tcl-8.4.1.tar.gz</a>.
-        Extract this to the Cygwin root directory:<br><br>
+        <li>Eggdrop must be installed in a directory somewhere. This is
+        accomplished by typing &#39;make install&#39;.<br><br>
 
-        cd /<br>
-        tar -zxf tcl-8.4.1.tar.gz<br><br>
+        This will install the Eggdrop in your home directory in a directory
+        called &#39;eggdrop&#39; (i.e. /home/user/eggdrop).<br><br>
 
         If you want to install to a different directory, use:
 
-        <blockquote>make install DEST=&lt;directory&gt;</blockquote>
+        <blockquote>
+<pre>
+make install DEST=&lt;directory&gt;
+</pre>
+        </blockquote>
 
         For example:
 
-        <blockquote>make install DEST=/home/user/otherdir</blockquote></li>
+        <blockquote>
+<pre>
+make install DEST=/home/user/otherdir
+</pre>
+        </blockquote>
       </ol>
     </blockquote>
 
     <p><a name="cg2">B. <strong>HP-UX B.11.*</strong></a></p>
 
     <blockquote>
-      <p>Dynamic module support is not currently working properly with HP-UX
-      11.*. During a linking in a dynamic build, you may experience an error
+      <p>Follow the standard compile process in <a href="#cg1">Section A</a>.
+      To compile dynamically (with module support), use &#39;make eggdrop&#39;
+      instead of &#39;make&#39;.</p>
+
+      <p>During a linking in a dynamic build, you may experience an error
       such as:</p>
 
       <blockquote>
@@ -169,37 +186,58 @@ collect2: ld returned 1 exit status
 </pre>
       </blockquote>
 
-      <p>We currently do not know the cause of this. You can compile Eggdrop
-      statically by using &#39;make static&#39; in place of &#39;make&#39;
-      during the standard compile process. If you know the cause of this error,
-      please contact the Eggheads Development Team at
-      <a href="mailto:eggdev@eggheads.org">eggdev@eggheads.org</a>.</p>
+      <p>If you know the cause of this error, please contact the Eggheads
+      Development Team at <a href="mailto:eggdev@eggheads.org">
+      eggdev@eggheads.org</a>.</p>
+
+      <p>Note that on HP-UX, the SHLIB_PATH environment variable should be used
+      instead of LD_LIBRARY_PATH.</p>
     </blockquote>
 
     <p><a name="cg3">C. <strong>Ultrix</strong></a></p>
 
     <blockquote>
-      <p>There are some known problems with make and Eggdrop on Ultrix systems.
-      Following these steps should work:</p>
+      <p>There are some known problems with &#39;make&#39; and Eggdrop on
+      Ultrix systems. We recomend using &#39;gmake&#39; (GNU make) for this
+      reason, as in the steps below.</p>
+
+      <p>If your system does not have &#39;gmake&#39;, you can download it
+      from:</p>
+
+      <blockquote>http://ftp.gnu.org/pub/gnu/make/</blockquote>
+
+      <p>It can be installed in your home directory, as with Tcl, but that is
+      beyond the scope of this document. Read the INSTALL file that comes with
+      gmake.</p>
+
+      <p>Following these steps should work:</p>
 
       <blockquote>
         <ol>
           <li>Depending on what shell your using:<br><br>
 
           bash/ksh:
-          <blockquote>export LD_LIBRARY_PATH=&#39;&lt;path to DIRECTORY
-          containing Tcl library&gt;&#39;</blockquote>
+          <blockquote>
+<pre>
+export LD_LIBRARY_PATH=&#39;&lt;path to DIRECTORY containing Tcl library&gt;&#39;
+</pre>
+          </blockquote>
 
           csh/tcsh/tclsh:
-          <blockquote>setenv LD_LIBRARY_PATH &#39;&lt;path to DIRECTORY
-          containing Tcl library&gt;&#39;</blockquote></li>
+          <blockquote>
+<pre>
+setenv LD_LIBRARY_PATH &#39;&lt;path to DIRECTORY containing Tcl library&gt;&#39;
+</pre>
+          </blockquote></li>
 
           <li>Run the following command from your Eggdrop compilation directory
-          (this is all one command):<br><br>
+          (this is all one command):
 
-          sh5 ./configure --with-tclinc=&#39;&lt;full path to
-          tcl.h&gt;&#39; --with-tcllib=&#39;&lt;full path to Tcl
-          library&gt;&#39;<br><br></li>
+          <blockquote>
+<pre>
+sh5 ./configure --with-tclinc=&#39;&lt;full path to tcl.h&gt;&#39; --with-tcllib=&#39;&lt;full path to Tcl library&gt;&#39;
+</pre>
+          </blockquote></li>
 
           <li>Type &#39;gmake config&#39; or &#39;gmake iconfig&#39; to
           configure modules.<br><br></li>
@@ -215,17 +253,96 @@ collect2: ld returned 1 exit status
 
           If you want to install to a different directory, use:
 
-          <blockquote>make install DEST=&#39;directory&#39;</blockquote>
+          <blockquote>
+<pre>
+gmake install DEST=&#39;directory&#39;
+</pre>
+          </blockquote>
 
           For example:
 
-          <blockquote>make install DEST=/home/user/otherdir</blockquote></li>
+          <blockquote>
+<pre>
+gmake install DEST=/home/user/otherdir
+</pre>
+          </blockquote></li>
         </ol>
       </blockquote>
     </blockquote>
 
+    <p><a name="cg4">D. <strong>Mac OS X</strong></a></p>
 
-    <p><a name="cg4">D. <strong>Cygwin / Windows</strong></a></p>
+    <blockquote>
+      <p>Follow the standard compile process in <a href="#cg1">Section A</a>.
+      To compile dynamically (with module support), use &#39;make eggdrop&#39;
+      instead of &#39;make&#39;.</p>
+
+      <p>To get third-party modules to compile, you may need to edit the
+      module&#39;s Makefile and add &quot;$(XLIBS) $(MODULE_XLIBS)&quot; to the
+      end of the ../../../MODULE.$(MOD_EXT) target&#39;s $(LD) line.</p>
+
+      <p>For example:</p>
+
+      <blockquote>
+<pre>
+../../../mymodule.$(MOD_EXT): ../mymodule.o
+$(LD) -o ../../../mymodule.$(MOD_EXT) ../mymodule.o
+$(STRIP) ../../../mymodule.$(MOD_EXT)
+</pre>
+      </blockquote>
+
+      <p>Would become:</p>
+
+      <blockquote>
+<pre>
+../../../mymodule.$(MOD_EXT): ../mymodule.o
+$(LD) -o ../../../mymodule.$(MOD_EXT) ../mymodule.o $(XLIBS) $(MODULE_XLIBS)
+$(STRIP) ../../../mymodule.$(MOD_EXT)
+</pre>
+      </blockquote>
+
+      <p>If you notice a module that requires these changes, it would probably
+      be a good idea to let the module&#39;s developer know, so it can be fixed.</p>
+
+      <p>Note that on Mac OS X, the DYLD_LIBRARY_PATH environment variable
+      should be used instead of LD_LIBRARY_PATH.</p>
+    </blockquote>
+
+    <p><a name="cg5">E. <strong>AIX</strong></a></p>
+
+    <blockquote>
+      <p>Follow the standard compile process in <a href="#cg1">Section A</a>.
+      To compile dynamically (with module support), use &#39;make eggdrop&#39;
+      instead of &#39;make&#39;.</p>
+
+      <p>Note that on AIX, the LIBPATH environment variable should be used
+      instead of LD_LIBRARY_PATH.</p>
+    </blockquote>
+
+    <p><a name="cg6">F. <strong>IRIX</strong></a></p>
+
+    <blockquote>
+      <p>Follow the standard compile process in <a href="#cg1">Section A</a>.
+      To compile dynamically (with module support), use &#39;make eggdrop&#39;
+      instead of &#39;make&#39;.</p>
+
+      <p>Note that on IRIX, the LD_LIBRARYN32_PATH and LD_LIBRARY64_PATH
+      environment variables should be used instead of LD_LIBRARY_PATH.</p>
+    </blockquote>
+
+    <p><a name="cg7">G. <strong>Solaris / SunOS</strong></a></p>
+
+    <blockquote>
+      <p>Follow the standard compile process in <a href="#cg1">Section A</a>.
+      To compile dynamically (with module support), use &#39;make eggdrop&#39;
+      instead of &#39;make&#39;.</p>
+
+      <p>Note that on Solaris / SunOS, the LD_LIBRARY_PATH_32 and
+      LD_LIBRARY_PATH_64 environment variables may need to be set instead of
+      (or in addition to, to be safe) LD_LIBRARY_PATH.</p>
+    </blockquote>
+
+    <p><a name="cg8">H. <strong>Cygwin / Windows</strong></a></p>
 
     <blockquote>
       <p>To compile and install Eggdrop on windows, preform the steps listed
@@ -245,15 +362,23 @@ collect2: ld returned 1 exit status
           http://prdownloads.sourceforge.net/windrop/tcl-8.4.1.tar.gz</a>.
           Extract this to the Cygwin root directory:
 
-          <blockquote>cd /<br>
-          tar -zxf tcl-8.4.1.tar.gz</blockquote></li>
+          <blockquote>
+<pre>
+cd /
+tar -zxf tcl-8.4.1.tar.gz
+</pre>
+          </blockquote></li>
 
           <li>Download Eggdrop from <a href="www.geteggdrop.com">
           www.geteggdrop.com</a> to your home directory. This is usually
           something like &#39;C:\cygwin\home\&lt;username&gt;\&#39;. After
           downloading, extract the Eggdrop tarball:
 
-          <blockquote>tar -zxf eggdrop1.6.17.tar.gz</blockquote></li>
+          <blockquote>
+<pre>
+tar -zxf eggdrop1.6.17.tar.gz
+</pre>
+          </blockquote></li>
 
           <li>Run &#39;./configure --enable-strip&#39;. Debugging information
           under Windows is basically useless to the development team, and thi
@@ -269,19 +394,26 @@ collect2: ld returned 1 exit status
 
           For example:
 
-          <blockquote>make install DEST=&#39;C:/eggdrop/&#39;</blockquote>
+          <blockquote>
+<pre>
+make install DEST=&#39;C:/eggdrop/&#39;
+</pre>
+          </blockquote>
 
           Make sure to enclose the destination directory/folder in single
           quotes (&#39;&#39;), especially if it contains spaces.<br><br></li>
 
           <li>Preform the following commands:
 
-          <blockquote>cd &#39;C:/&lt;install path&gt;/&#39; (example: cd
-          &#39;C:/eggdrop&#39;)<br>
-          rm modules<br>
-          rm eggdrop.exe<br>
-          mv eggdrop.exe-1.6.17 eggdrop.exe<br>
-          mv modules-1.6.17 modules</blockquote></li>
+          <blockquote>
+<pre>
+cd &#39;C:/&lt;install path&gt;/&#39; (example: cd &#39;C:/eggdrop&#39;)
+rm modules
+rm eggdrop.exe
+mv eggdrop.exe-1.6.17 eggdrop.exe
+mv modules-1.6.17 modules
+</pre>
+          </blockquote></li>
 
           <li>Create a &#39;lib&#39; directory and copy needed libraries using
           the following commands. This assumes that you installed your Eggdrop
@@ -290,25 +422,26 @@ collect2: ld returned 1 exit status
           installation directory, replacing all &#39;\&#39;s with
           &#39;/&#39;s.
 
-          <blockquote>cp /bin/cygwin1.dll &#39;C:/eggdrop&#39;<br>
-          cp /usr/local/bin/tcl84.dll &#39;C:/eggdrop&#39;<br>
-          cp /usr/local/bin/tclpip84.dll &#39;C:/eggdrop&#39;</blockquote>
+          <blockquote>
+<pre>
+cp /bin/cygwin1.dll &#39;C:/eggdrop&#39;
+cp /usr/local/bin/tcl84.dll &#39;C:/eggdrop&#39;
+cp /usr/local/bin/tclpip84.dll &#39;C:/eggdrop&#39;
 
-          <blockquote>mkdir C:/eggdrop/lib<br>
-          cp -r /usr/local/lib/dde1.2 &#39;C:/eggdrop/lib&#39;<br>
-          cp -r /usr/local/lib/reg1.1 &#39;C:/eggdrop/lib&#39;<br>
-          cp -r /usr/local/lib/tcl8.4 &#39;C:/eggdrop/lib&#39;</blockquote>
+mkdir C:/eggdrop/lib
+cp -r /usr/local/lib/dde1.2 &#39;C:/eggdrop/lib&#39;
+cp -r /usr/local/lib/reg1.1 &#39;C:/eggdrop/lib&#39;
+cp -r /usr/local/lib/tcl8.4 &#39;C:/eggdrop/lib&#39;
 
-          <blockquote>cp /bin/cygz.dll &#39;C:/eggdrop&#39; (if you selected
-          compress.mod)</blockquote>
-
-          <blockquote>cp /bin/cygminires.dll &#39;C:/eggdrop&#39; (if you
-          selected dns.mod)</blockquote></li>
+cp /bin/cygz.dll &#39;C:/eggdrop&#39; (if you selected compress.mod)
+cp /bin/cygminires.dll &#39;C:/eggdrop&#39; (if you selected dns.mod)
+</pre>
+          </blockquote></li>
         </ol>
       </blockquote>
     </blockquote>
 
-    <p><a name="cg5">E. <strong>Tcl Detection and Installation</strong></a></p>
+    <p><a name="cg9">I. <strong>Tcl Detection and Installation</strong></a></p>
 
     <blockquote>
       <p>If ./configure does not correctly detect the location of your Tcl
@@ -320,22 +453,34 @@ collect2: ld returned 1 exit status
           <li>Depending on what shell your using:<br><br>
 
           bash/ksh:
-          <blockquote>export LD_LIBRARY_PATH=&#39;&lt;path to DIRECTORY
-          containing Tcl library&gt;&#39;</blockquote>
+          <blockquote>
+<pre>
+export LD_LIBRARY_PATH=&#39;&lt;path to DIRECTORY containing Tcl library&gt;&#39;
+</pre>
+          </blockquote>
 
           csh/tcsh/tclsh:
-          <blockquote>setenv LD_LIBRARY_PATH &#39;&lt;path to DIRECTORY
-          containing Tcl library&gt;&#39;</blockquote></li>
+          <blockquote>
+<pre>
+setenv LD_LIBRARY_PATH &#39;&lt;path to DIRECTORY containing Tcl library&gt;&#39;
+</pre>
+          </blockquote>
+
+          Note that some OS;&#39;s use a different environment variable to tell
+          ld where to look for a library. See the notes for your specific OS
+          above (if applicable).<br><br></li>
 
           <li>Run the following command from your Eggdrop compilation directory
           (this is all one command):<br><br>
 
-          ./configure --with-tclinc=&#39;&lt;full path to
-          tcl.h&gt;&#39; --with-tcllib=&#39;&lt;full path to Tcl
-          library&gt;&#39;<br><br></li>
+          <blockquote>
+<pre>
+./configure --with-tclinc=&#39;&lt;full path to tcl.h&gt;&#39; --with-tcllib=&#39;&lt;full path to Tcl library&gt;&#39;
+</pre>
+          </blockquote></li>
 
-          <li>Continue compiling the bot, starting with &#39;make
-          config&#39;.<br><br></li>
+          <li>Continue compiling the bot as outlined in <a href="#cg1">Section
+          A</a>, starting with &#39;make config&#39;.<br><br></li>
         </ol>
       </blockquote>
 
@@ -409,7 +554,11 @@ make: The error code from the last command is 1.
       had dirent.h and sys/dir.h. The solution is to add -DHAVE_DIRENT_H
       -DHAVE_SYS_DIR_H to the Makefile&#39;s CFLGS line:</p>
 
-      <blockquote>CFLGS = -DHAVE_DIRENT_H -DHAVE_SYS_DIR_H</blockquote>
+      <blockquote>
+<pre>
+CFLGS = -DHAVE_DIRENT_H -DHAVE_SYS_DIR_H
+</pre>
+      </blockquote>
     </blockquote>
 
     <p><a name="faq4">4. <strong>&#39;fd_set&#39; undeclared (and a whole bunch
@@ -432,8 +581,11 @@ make: The error code from the last command is 1.
       detect that this system needed sys/select.h. The solution is to add
       -DHAVE_SYS_SELECT_H to the Makefile&#39;s CFLGS line:</p>
 
-      <blockquote>CFLGS = -DHAVE_DIRENT_H -DHAVE_SYS_DIR_H
-      -DHAVE_SYS_SELECT_H</blockquote>
+      <blockquote>
+<pre>
+CFLGS = -DHAVE_DIRENT_H -DHAVE_SYS_DIR_H -DHAVE_SYS_SELECT_H
+</pre>
+      </blockquote>
     </blockquote>
 
     <p><a name="faq5">5. <strong>Unresolved or undefined symbols: ldclose,

@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: faqs.html,v 1.17 2004/04/13 03:57:51 wcc Exp $ -->
+<!-- $Id: faqs.html,v 1.18 2004/07/25 03:56:59 wcc Exp $ -->
 
 <html>
   <head>
@@ -28,40 +28,37 @@
         &quot;Received terminate signal&quot;. What does that mean, and can I
         prevent it?</a></li>
 
-        <li><a href="#sect5">My compile dies at the last minute with &quot;LD
-        fatal signal 11&quot;!</a></li>
-
-        <li><a href="#sect6">Someone else set up a bot I don&#39;t like. Are
+        <li><a href="#sect5">Someone else set up a bot I don&#39;t like. Are
         there any backdoors I can use to take their bot down?</a></li>
 
-        <li><a href="#sect7">What are modules?</a></li>
+        <li><a href="#sect6">What are modules?</a></li>
 
         <li>
-          <a href="#sect8">Can I compile Eggdrop without dynamic modules?</a>
+          <a href="#sect7">Can I compile Eggdrop without dynamic modules?</a>
 
 
           <ol type="a">
-            <li><a href="#sect8a">Do I still need to &quot;loadmodule&quot;
+            <li><a href="#sect7a">Do I still need to &quot;loadmodule&quot;
             modules?</a></li>
           </ol>
         </li>
 
-        <li><a href="#sect9">Where can I get a pre-compiled Eggdrop for my
+        <li><a href="#sect8">Where can I get a pre-compiled Eggdrop for my
         computer?</a></li>
 
-        <li><a href="#sect10">I get &quot;Makefile:3 : invalid operator&quot;
+        <li><a href="#sect9">I get &quot;Makefile:3 : invalid operator&quot;
         of some such thing When I try to &quot;make&quot;</a></li>
 
-        <li><a href="#sect11">When I &quot;tclsh scripts/weed
+        <li><a href="#sect10">When I &quot;tclsh scripts/weed
         &lt;userfile&gt; c&quot; It barfs chunks at me and dies.</a></li>
 
-        <li><a href="#sect12">I get &quot;ld-elf.so.1: Shared object
+        <li><a href="#sect11">I get &quot;ld-elf.so.1: Shared object
         &quot;libtcl80.so.1&quot; not found&quot; or &quot;eggdrop: error in
         loading shared libraries / libtcl8.1.so: cannot open shared object
         file: No such file or directory&quot; when I try to start my
         bot.</a></li>
 
-        <li><a href="#sect13">I get a whole pile of &quot;unresolved symbol
+        <li><a href="#sect12">I get a whole pile of &quot;unresolved symbol
         &#39;Tcl_AppendResult&#39;&quot; (or some other symbol) when I try to
         load a module.</a></li>
       </ol>
@@ -123,14 +120,7 @@
       he/she doesn&#39;t want bots running on the system.</p>
     </blockquote>
 
-    <p><a name="sect5"></a>5. <strong>My compile dies at the last minute with
-    &quot;ld fatal signal 11&quot;!</strong></p>
-
-    <blockquote>
-      <p>See the <a href="compiling.html">Compiling FAQ</a>.</p>
-    </blockquote>
-
-    <p><a name="sect6"></a>6. <strong>Someone else set up a bot I don&#39;t
+    <p><a name="sect5"></a>5. <strong>Someone else set up a bot I don&#39;t
     like. Are there any backdoors I can use to take their bot down?</strong></p>
 
     <blockquote>
@@ -141,7 +131,7 @@
       not have my/our help.</p>
     </blockquote>
 
-    <p><a name="sect7"></a>7. <strong>What are modules?</strong></p>
+    <p><a name="sect6"></a>6. <strong>What are modules?</strong></p>
 
     <blockquote>
       <p>Modules are a way of adding extra features to the bot, much like Tcl
@@ -149,7 +139,7 @@
       more info.</p>
     </blockquote>
 
-    <p><a name="sect8"></a>8. <strong>Can I compile Eggdrop without dynamic
+    <p><a name="sect7"></a>7. <strong>Can I compile Eggdrop without dynamic
     modules?</strong></p>
 
     <blockquote>
@@ -160,7 +150,7 @@
       modules on a static-only system by using &#39;make eggdrop&#39;.</p>
     </blockquote>
 
-    <p><a name="sect8a"></a>8a. <strong>Do I still need to &#39;loadmodule&#39;
+    <p><a name="sect7a"></a>7a. <strong>Do I still need to &#39;loadmodule&#39;
     modules?</strong></p>
 
     <blockquote>
@@ -170,7 +160,7 @@
       with static modules as with dynamic modules.</p>
     </blockquote>
 
-    <p><a name="sect9"></a>9. <strong>Where can i get a pre-compiled Eggdrop
+    <p><a name="sect8"></a>8. <strong>Where can i get a pre-compiled Eggdrop
     for my computer?</strong></p>
 
     <blockquote>
@@ -184,7 +174,7 @@
       either. =P</p>
     </blockquote>
 
-    <p><a name="sect10"></a>10. <strong>I get &#39;Makefile:3 :invalid
+    <p><a name="sect9"></a>9. <strong>I get &#39;Makefile:3 :invalid
     operator&#39; or some-such-thing when I try to &#39;make&#39;.</strong>
     </p>
 
@@ -192,7 +182,7 @@
       <p>Try &#39;gmake&#39;.</p>
     </blockquote>
 
-    <p><a name="sect11"></a>11. <strong>When I &#39;tclsh scripts/weed
+    <p><a name="sect10"></a>10. <strong>When I &#39;tclsh scripts/weed
     &lt;userfile&gt; c&#39; it barfs chunks at me and dies. :(</strong></p>
 
     <blockquote>
@@ -202,7 +192,7 @@
       with &#39;.&#39; generally) and accept the loss of that data.</p>
     </blockquote>
 
-    <p><a name="sect12"></a>12. <strong>I get &quot;ld-elf.so.1: Shared
+    <p><a name="sect11"></a>11. <strong>I get &quot;ld-elf.so.1: Shared
     object &quot;libtcl80.so.1&quot; not found&quot; or &quot;eggdrop: error
     in loading shared libraries / libtcl8.1.so: cannot open shared object
     file: No such file or directory&quot; when I try to start my bot.
@@ -244,12 +234,12 @@
       (Suggested by dw@Undernet, dw@lixom.nu).</p>
     </blockquote>
 
-    <p><a name="sect13"></a>13. <strong>I get a whole pile of
+    <p><a name="sect12"></a>12. <strong>I get a whole pile of
     &quot;Unresolved symbol &#39;Tcl_AppendResult&#39;&quot; (or some other
     symbol) when I try to load a modules.</strong></p>
 
     <blockquote>
-      <p>Possibility A: See section 12.</p>
+      <p>Possibility A: See section 11.</p>
 
       <p>Possibility B: Some of the standard libraries have been compiled
       for static linking only on your machine, you have 3 options:</p>

@@ -1,4 +1,4 @@
 %{help=wire module}%{+n}
 ###  %bwire module%b
-   This module provides all the standard .wire commands via dcc. It is an
+   This module provides all the standard .wire partyline commands. It is an
    encrypted partyline communication tool, compatible with wire.tcl.

@@ -1,10 +1,11 @@
-$Id: WEIRD-MESSAGES,v 1.3 2004/01/09 05:56:35 wcc Exp $
+$Id: WEIRD-MESSAGES,v 1.4 2004/07/25 03:56:58 wcc Exp $
 
 Weird Messages That Get Logged
-Last revised: March  10, 2003
-     _________________________________________________________________
+Last revised: March 10, 2003
+    _____________________________________________________________________
 
                        Weird Messages That Get Logged
+
 
     Shown below are some messages that Eggdrop might log from time to time
     that may seem a bit strange and have meanings which may not be obvious.
@@ -50,6 +51,6 @@ Last revised: March  10, 2003
         When converted to lowercase, these symbols fail to get processed, and
         joins are not reported, although parts are.
 
-       _________________________________________________________________
+    _____________________________________________________________________
 
-   Copyright (C) 2003, 2004 Eggheads Development Team
+  Copyright (C) 2003, 2004 Eggheads Development Team

@@ -1,15 +1,15 @@
-$Id: COMPILING-FAQ,v 1.9 2004/06/11 18:40:58 wcc Exp $
+$Id: COMPILING-FAQ,v 1.10 2004/07/25 03:56:58 wcc Exp $
 
-Compiling FAQ
-Last revised: January 15, 2004
-  ________________________________________________________________________
+Eggdrop Compiling Guide
+Last revised: July 09, 2004
+    _____________________________________________________________________
 
-                               Compiling FAQ
+                            Eggdrop Compiling Guide
 
 
   This FAQ may help you successfully compile Eggdrop. Suggestions are by
   various contributors. If you think something should be added, please send
-  an e-mail to docteam@eggheads.org. Note that in this document, text between
+  an e-mail to bugs@eggheads.org. Note that in this document, text between
   a '<' and a '>' should be replaced (without the '<' and '>').
 
   NOTE: This is not a 'quick install' guide. See the INSTALL file for basic
@@ -19,15 +19,19 @@ Last revised: January 15, 2004
 
   Contents:
     Compile Guide:
-      A. Standard compile process (32-bit Linux, FreeBSD, NetBSD, OpenBSD, etc)
+      A. Standard compile process (Linux, FreeBSD, NetBSD, OpenBSD, etc)
       B. HP-UX B.11.*
       C. Ultrix
-      D. Cygwin / Windows
-      E. Tcl Detection and Installation
+      D. Mac OS X
+      E. AIX
+      F. IRIX
+      G. Cygwin / Windows
+      H. Tcl Detection and Installation
 
     Frequently Asked Questions:
       1. I get a lot of warnings.
-      2. I get a 'strip terminated with signal 6' error during compile/install.
+      2. I get a 'strip terminated with signal 6' error during compile/install,
+         or another error related to 'strip'.
       3. 'DIR' undeclared (and a whole bunch of others) (AIX 4)
       4. 'fd_set' undeclared (and a whole bunch of others) (AIX 4)
       5. Unresolved or undefined symbols: ldclose, ldopen, ldnshread (AIX 3)
@@ -42,7 +46,7 @@ Last revised: January 15, 2004
   Compile Guide
     This will tell you how to compile Eggdrop on various operating systems.
     If you have gotten Eggdrop to compile on an operating system not listed
-    here, please let the development team know how, at docteam@eggheads.org.
+    here, please let the development team know how, at eggdev@eggheads.org.
     Please tell us what, if any, special steps were required to compile the
     bot. Also, any compiler warnings/etc, and the 'config.log' and 'config.h'
     files would be helpful. The development team does not have access to the
@@ -52,8 +56,12 @@ Last revised: January 15, 2004
     A. Standard compile process (32-bit Linux, FreeBSD, NetBSD, OpenBSD, etc.)
     B. HP-UX B.11.*
     C. Ultrix
-    D. Cygwin / Windows
-    E. Tcl Detection and Installation
+    D. Mac OS X
+    E. AIX
+    F. IRIX
+    G. Solaris / SunOS
+    H. Cygwin / Windows
+    I. Tcl Detection and Installation
 
     A. Standard compile process (32-bit Linux, FreeBSD, NetBSD, OpenBSD, etc.)
       1. Type './configure' from the Eggdrop directory. Some of the options
@@ -102,8 +110,9 @@ Last revised: January 15, 2004
            make install DEST=/home/user/otherdir
 
     B. HP-UX B.11.*
+      Follow the standard compile process in Section A. To compile dynamically
+      (with module support), use 'make eggdrop' instead of 'make'.
 
-      Dynamic module support is not currently working properly with HP-UX 11.*.
       During a linking in a dynamic build, you may experience an error such as:
 
         gcc -pipe -fPIC -shared -o ../eggdrop bg.o botcmd.o botmsg.o botnet.o
@@ -117,14 +126,26 @@ Last revised: January 15, 2004
         collect2: ld returned 1 exit status
         *** Error exit code 1
 
-      We currently do not know the cause of this. You can compile Eggdrop
-      statically by using 'make static' in place of 'make' during the standard
-      compile process. If you know the cause of this error, please contact the
-      Eggheads Development Team at eggdev@eggheads.org.
+      If you know the cause of this error, please contact the Eggheads
+      Development Team at eggdev@eggheads.org.
+
+      Note that on HP-UX, the SHLIB_PATH environment variable should be used
+      instead of LD_LIBRARY_PATH.
 
 
     C. Ultrix
-      There are some known problems with make and Eggdrop on Ultrix systems.
+      There are some known problems with 'make' and Eggdrop on Ultrix systems.
+      We recomend using 'gmake' (GNU make) for this reason, as in the steps
+      below.
+
+      If your system does not have 'gmake', you can download it from:
+
+        http://ftp.gnu.org/pub/gnu/make/
+
+      It can be installed in your home directory, as with Tcl, but that is
+      beyond the scope of this document. Read the INSTALL file that comes with
+      gmake.
+
       Following these steps should work:
 
         1. Depending on what shell your using:
@@ -154,14 +175,67 @@ Last revised: January 15, 2004
 
              If you want to install to a different directory, use:
 
-               make install DEST=<directory>
+               gmake install DEST=<directory>
 
              For example:
 
-               make install DEST=/home/user/otherdir
+               gmake install DEST=/home/user/otherdir
 
 
-    D. Cygwin / Windows
+    D. Mac OS X
+      Follow the standard compile process in Section A. To compile dynamically
+      (with module support), use 'make eggdrop' instead of 'make'.
+
+      To get third-party modules to compile, you may need to edit the module's
+      Makefile and add "$(XLIBS) $(MODULE_XLIBS)" to the end of the
+      ../../../MODULE.$(MOD_EXT) target's $(LD) line.
+
+      For example:
+
+        ../../../mymodule.$(MOD_EXT): ../mymodule.o
+        $(LD) -o ../../../mymodule.$(MOD_EXT) ../mymodule.o
+        $(STRIP) ../../../mymodule.$(MOD_EXT)
+
+      Would become:
+
+        ../../../mymodule.$(MOD_EXT): ../mymodule.o
+        $(LD) -o ../../../mymodule.$(MOD_EXT) ../mymodule.o $(XLIBS) $(MODULE_XLIBS)
+        $(STRIP) ../../../mymodule.$(MOD_EXT)
+
+      If you notice a module that requires these changes, it would probably be
+      a good idea to let the module's developer know, so it can be fixed.
+
+
+      Note that on Mac OS X, the DYLD_LIBRARY_PATH environment variable should
+      be used instead of LD_LIBRARY_PATH.
+
+
+    E. AIX
+      Follow the standard compile process in Section A. To compile dynamically
+      (with module support), use 'make eggdrop' instead of 'make'.
+
+      Note that on AIX, the LIBPATH environment variable should be used instead
+      of LD_LIBRARY_PATH.
+
+
+    F. IRIX
+      Follow the standard compile process in Section A. To compile dynamically
+      (with module support), use 'make eggdrop' instead of 'make'.
+
+      Note that on IRIX, the LD_LIBRARYN32_PATH and LD_LIBRARY64_PATH environment
+      variables should be used instead of LD_LIBRARY_PATH.
+
+
+    G. Solaris / SunOS
+      Follow the standard compile process in Section A. To compile dynamically
+      (with module support), use 'make eggdrop' instead of 'make'.
+
+      Note that on Solaris / SunOS, the LD_LIBRARY_PATH_32 and LD_LIBRARY_PATH_64
+      environment variables may need to be set instead of (or in addition to, to
+      be safe) LD_LIBRARY_PATH.
+
+
+    H. Cygwin / Windows
       To compile and install Eggdrop on windows, preform the steps listed
       below.
 
@@ -228,7 +302,7 @@ Last revised: January 15, 2004
              cp /bin/cygminires.dll 'C:/eggdrop' (if you selected dns.mod)
 
 
-    E. Tcl Detection and Installation
+    I. Tcl Detection and Installation
         If ./configure does not correctly detect the location of your Tcl
         library and header file, or if you experience errors related to Tcl
         during linking, preform these steps:
@@ -241,13 +315,18 @@ Last revised: January 15, 2004
             csh/tcsh/tclsh:
               setenv LD_LIBRARY_PATH '<path to DIRECTORY containing Tcl library>'
 
+            Note that some OS's use a different environment variable to tell
+            ld where to look for a library. See the notes for your specific OS
+            above (if applicable).
+
           2. Run the following command from your Eggdrop compilation directory
              (this is all one command):
 
             ./configure --with-tclinc='<full path to tcl.h>'
             --with-tcllib='<full path to Tcl library>'
 
-          3. Continue compiling the bot, starting with 'make config'.
+          3. Continue compiling the bot as outlined in Section A., starting
+             with 'make config'.
 
         If you do not have Tcl installed on your system, you can compile it in
         your /home directory. Download Tcl from Tcl's SourceForge project page
@@ -268,7 +347,8 @@ Last revised: January 15, 2004
       (as described in doc/PATCH_HOWTO). Thanks.
 
 
-    2. I get a 'strip terminated with signal 6' error during compile/install.
+    2. I get a 'strip terminated with signal 6' error during compile/install,
+       or another error related to 'strip'.
 
       collect2: strip terminated with signal 6 [IOT/Abort trap]
       *** Exit 1
@@ -449,7 +529,7 @@ Last revised: January 15, 2004
       This is caused by a bug in FreeBSD (and possibly other BSDs as well).
       A simple 'cd .', or changing to a different directory and then changing
       back, usually fixes this.
-     _________________________________________________________________
+    _____________________________________________________________________
 
    Copyright (C) 1997 Robey Pointer
    Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004 Eggheads Development Team

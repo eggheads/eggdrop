@@ -1,4 +1,4 @@
-$Id: README,v 1.39 2004/04/13 03:57:51 wcc Exp $
+$Id: README,v 1.40 2004/07/25 03:56:58 wcc Exp $
 
 Readme
 Last revised: June 5, 2002
@@ -27,22 +27,21 @@ Last revised: June 5, 2002
        6c. What the Heck is Tcl?
        6d. My bot dies and the last entry in the logfile is "Received terminate
            signal". What does that mean and can I prevent it?
-       6e. My compile dies at the last minute with "LD fatal signal 11"!
-       6f. Someone else set up a bot I don't like. Are there any backdoors I
+       6e. Someone else set up a bot I don't like. Are there any backdoors I
            can use to take their bot down?
-       6g. What are modules?
-       6h. Can I compile Eggdrop without dynamic modules?
-           6h1. Do I still need to "loadmodule" modules?
-       6i. Where can I get a pre-compiled Eggdrop for my computer?
-       6j. I get "Makefile:3 : invalid operator" or some such thing when I
+       6f. What are modules?
+       6g. Can I compile Eggdrop without dynamic modules?
+           6g1. Do I still need to "loadmodule" modules?
+       6h. Where can I get a pre-compiled Eggdrop for my computer?
+       6i. I get "Makefile:3 : invalid operator" or some such thing when I
            try to "make".
-       6k. When I "tclsh scripts/weed <userfile> c" It barfs chunks at me
+       6j. When I "tclsh scripts/weed <userfile> c" It barfs chunks at me
            and dies.
-       6l. I get "ld-elf.so.1: Shared object "libtcl80.so.1" not found" or
+       6k. I get "ld-elf.so.1: Shared object "libtcl80.so.1" not found" or
            "eggdrop: error in loading shared libraries / libtcl8.1.so: cannot
            open shared object file: No such file or directory" when I try to
            start my bot.
-       6m. I get a whole pile of "unresolved symbol 'Tcl_AppendResult'" (or
+       6l. I get a whole pile of "unresolved symbol 'Tcl_AppendResult'" (or
            some other symbol) when I try to load a module.
     7. Setting up a crontab
        7a. Setting up a crontab using autobotchk
@@ -64,7 +63,7 @@ Last revised: June 5, 2002
 
   (1) WHAT IS EGGDROP?
 
-    Eggdrop is the world's most popular Internet Relay Chat (IRC) bot; it is
+    Eggdrop is the World's most popular Internet Relay Chat (IRC) bot; it is
     freely distributable under the GNU General Public License (GPL). Eggdrop
     is a feature rich program designed to be easily used and expanded upon by
     both novice and advanced IRC users on a variety of hardware and software
@@ -302,11 +301,7 @@ Last revised: June 5, 2002
       kill the bot manually. For example, if he/she doesn't want bots running
       on the system.
 
-    6e. MY COMPILE DIES AT THE LAST MINUTE WITH "LD FATAL SIGNAL 11"!
-      
-      See doc/compiling.FAQ.
-
-    6f. SOMEONE ELSE SET UP A BOT I DON'T LIKE. ARE THERE ANY BACKDOORS I CAN
+    6e. SOMEONE ELSE SET UP A BOT I DON'T LIKE. ARE THERE ANY BACKDOORS I CAN
         USE TO TAKE THEIR BOT DOWN?
 
       No, there have never been any backdoors and there never will be, so
@@ -315,13 +310,13 @@ Last revised: June 5, 2002
       about them. If you want to bring down someone else's bot, you will not
       have my/our help.
 
-    6g. WHAT ARE MODULES?
+    6f. WHAT ARE MODULES?
 
       Modules are a way of adding extra features to the bot, much like Tcl
       scripts, without requiring the bot to be recompiled. See doc/MODULES
       for more information.
 
-    6h. CAN I COMPILE EGGDROP WITHOUT DYNAMIC MODULES?
+    6g. CAN I COMPILE EGGDROP WITHOUT DYNAMIC MODULES?
 
        Yes, you can. If the configure script detects that your system CAN'T
        run modules, it will setup 'make' to link the modules in statically
@@ -329,14 +324,14 @@ Last revised: June 5, 2002
        You can also try to compile dynamic modules on a static-only system
        by using 'make eggdrop'.
 
-    6h1. DO I STILL NEED TO 'loadmodule' MODULES?
+    6g1. DO I STILL NEED TO 'loadmodule' MODULES?
 
       YES, when you compile statically, all the modules are linked into the
       main executable. HOWEVER, they are not enabled until you use loadmodule
       to enable them, hence you get nearly the same functionality with static
       modules as with dynamic modules.
 
-    6i. WHERE CAN I GET A PRE-COMPILED EGGDROP FOR MY COMPUTER?
+    6h. WHERE CAN I GET A PRE-COMPILED EGGDROP FOR MY COMPUTER?
 
       It is HIGHLY recommended AGAINST using pre-compiled Eggdrops from
       un-trusted sources. Eggdrop has been a regular target for hacking and
@@ -346,12 +341,12 @@ Last revised: June 5, 2002
       computer account directly. Don't advertise your pre-compiled Eggdrop
       binary sites on the Eggdrop list either. =P
 
-    6j. I GET 'Makefile:3 :invalid operator' OR SOME-SUCH-THING WHEN I TRY
+    6i. I GET 'Makefile:3 :invalid operator' OR SOME-SUCH-THING WHEN I TRY
         TO 'make'.
 
       Try 'gmake'.
 
-    6k. WHEN I 'tclsh scripts/weed <userfile> c' IT BARFS CHUNKS AT ME AND
+    6j. WHEN I 'tclsh scripts/weed <userfile> c' IT BARFS CHUNKS AT ME AND
         DIES. :(
 
       Upgrade your Tcl. You are probably using Tcl 7.5 or earlier. Some of the
@@ -359,7 +354,7 @@ Last revised: June 5, 2002
       the offending lines from you userfile manually (those starting with '.'
       generally) and accept the loss of that data.
 
-    6l. I GET "ld-elf.so.1: Shared object "libtcl80.so.1" not found" or
+    6k. I GET "ld-elf.so.1: Shared object "libtcl80.so.1" not found" or
         "eggdrop: error in loading shared libraries libtcl8.1.so: \
         cannot open shared object file: No such file or directory" WHEN I TRY
         TO START MY BOT.
@@ -394,10 +389,10 @@ Last revised: June 5, 2002
         If everything else fails, try to install Tcl to your home dir ;)
         (Suggested by dw@Undernet, dw@lixom.nu)
 
-    6m. I GET A WHOLE PILE OF "Unresolved symbol 'Tcl_AppendResult'" (OR SOME
+    6l. I GET A WHOLE PILE OF "Unresolved symbol 'Tcl_AppendResult'" (OR SOME
         OTHER SYMBOL) WHEN I TRY TO LOAD A MODULES.
 
-      POSSIBILITY A: See section 6l.
+      POSSIBILITY A: See section 6k.
 
       POSSIBILITY B:
 
@@ -472,15 +467,15 @@ Last revised: June 5, 2002
 
   (8) BORING LEGAL STUFF
 
-    The Eggdrop bot is copyright (C) by Robey Pointer. As of January, 1997,
+    The Eggdrop bot is Copyright (C) by Robey Pointer. As of January, 1997,
     Eggdrop is distributed according to the GNU General Public License. There
     should be a copy of this license in the file 'COPYING'. If not, write to
     the Free Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    As of eggdrop1.3.28, all changes made by the Eggheads development team to
-    the Eggdrop source code and any related files are copyright (C) by
-    Eggheads. The source code will still be distributed according to the GNU
-    General Public License as Robey Pointer did in the past.
+    As of Eggdrop 1.3.28, all changes made by the Eggheads Development Team to
+    the Eggdrop source code and any related files are Copyright (C) by Eggheads
+    Development Team. The source code will still be distributed according to
+    the GNU General Public License as Robey Pointer did in the past.
 
     Releases previous to 1.0m were made using a different licensing scheme.
     You may, at your option, use the GNU General Public License on those
@@ -553,7 +548,7 @@ Last revised: June 5, 2002
 
     We're trying to keep the documentation up to date. If you feel that
     anything is missing here or that anything should be added, etc, please
-    e-mail docteam@eggheads.org about it. Thank you.
+    e-mail bugs@eggheads.org about it. Thank you.
 
 
   (11) OBTAINING HELP
@@ -585,4 +580,4 @@ Last revised: June 5, 2002
 
 Copyright (C) 1997 Robey Pointer
 Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004 Eggheads Development Team
- 
+

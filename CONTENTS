@@ -1,8 +1,8 @@
-$Id: CONTENTS,v 1.16 2004/01/09 05:56:35 wcc Exp $
+$Id: CONTENTS,v 1.17 2004/07/25 03:56:58 wcc Exp $
 
 Directory Contents - /
 Last revised: April 16, 2003
-     _________________________________________________________________
+    _____________________________________________________________________
 
                            Directory Contents - /
 
@@ -63,6 +63,6 @@ Last revised: April 16, 2003
 
   README
     You should read this file before even trying to compile Eggdrop.
-    ________________________________________________________________________
+    _____________________________________________________________________
 
   Copyright (C) 2003, 2004 Eggheads Development Team

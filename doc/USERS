@@ -1,8 +1,8 @@
-$Id: USERS,v 1.6 2004/01/09 05:56:35 wcc Exp $
+$Id: USERS,v 1.7 2004/07/25 03:56:58 wcc Exp $
 
 Users and Flags
 Last revised: March 07, 2002
-     _________________________________________________________________
+    _____________________________________________________________________
 
                               Users and Flags
 
@@ -88,6 +88,6 @@ Last revised: March 07, 2002
     There are also 26 global user-defined flags and 26 channel user-defined
     flags. These are used by scripts, and their uses very depending on the
     script that uses them.
-       _________________________________________________________________
+    _____________________________________________________________________
 
-   Copyright (C) 2002, 2003, 2004 Eggheads Development Team
+  Copyright (C) 2002, 2003, 2004 Eggheads Development Team

@@ -1,10 +1,11 @@
-$Id: KNOWN-PROBLEMS,v 1.15 2004/01/09 05:56:35 wcc Exp $
+$Id: KNOWN-PROBLEMS,v 1.16 2004/07/25 03:56:58 wcc Exp $
 
 Known Problems
 Last revised: April 16, 2003
-     _________________________________________________________________
+    _____________________________________________________________________
 
                                Known Problems
+
 
   Things that are broken, but aren't getting fixed anytime soon:
 
@@ -22,6 +23,6 @@ Last revised: April 16, 2003
     * Version 8.1 of Tcl doesn't support unicode characters, for example, è.
       If those characters are handled in a script as text, you run into errors.
       Eggdrop can't handle these errors at the moment.
-    ________________________________________________________________________
+    _____________________________________________________________________
 
-    Copyright (C) 2003, 2004 Eggheads Development Team
+  Copyright (C) 2003, 2004 Eggheads Development Team

@@ -1,6 +1,8 @@
+$Id: CONTENTS,v 1.8 2004/07/25 03:57:00 wcc Exp $
+
 Directory Contents - text/
 Last revised: December 02, 2003
-     _________________________________________________________________
+    _____________________________________________________________________
 
                          Directory Contents - text/
 
@@ -12,6 +14,7 @@ Last revised: December 02, 2003
   motd
     The text of this file is displayed anytime a user successfully logs in and
     joins the party line.
-    ________________________________________________________________________
+
+    _____________________________________________________________________
 
   Copyright (C) 2003, 2004 Eggheads Development Team

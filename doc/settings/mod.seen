@@ -1,23 +1,23 @@
+$Id: mod.seen,v 1.12 2004/07/25 03:56:59 wcc Exp $
+
 Seen Module
 Last revised: January 1, 2002
-$Id: mod.seen,v 1.11 2004/05/27 05:23:39 wcc Exp $
-     _________________________________________________________________
+    _____________________________________________________________________
 
-                               Seen Module
+                                Seen Module
 
 
-This module provides very basic seen commands via msg, on channel or via dcc.
-This module works only for users in the bot's userlist. If you are looking for
-a better and more advanced seen module, try the gseen module by G'Quann. You
-can find it at http://www.visions-of-fantasy.de/gseen.mod/.
+  This module provides very basic seen commands via msg, on channel or via dcc.
+  This module works only for users in the bot's userlist. If you are looking
+  for a better and more advanced seen module, try the gseen module by G'Quann.
+  You can find it at http://www.visions-of-fantasy.de/gseen.mod/.
 
-This module requires: none
+  This module requires: none
 
-Put this line into your Eggdrop configuration file to load the seen
-module:
+  Put this line into your Eggdrop configuration file to load the seen module:
 
-  loadmodule seen
+    loadmodule seen
 
-     _________________________________________________________________
+    _____________________________________________________________________
 
-   Copyright (C) 2000, 2001, 2002, 2003, 2004 Eggheads Development Team
+  Copyright (C) 2000, 2001, 2002, 2003, 2004 Eggheads Development Team

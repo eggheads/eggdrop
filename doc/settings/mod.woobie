@@ -1,20 +1,21 @@
+$Id: mod.woobie,v 1.12 2004/07/25 03:56:59 wcc Exp $
+
 Woobie Module
 Last revised: December 31, 2001
-$Id: mod.woobie,v 1.11 2004/05/27 05:23:39 wcc Exp $
-     _________________________________________________________________
+    _____________________________________________________________________
 
-                              Woobie Module
+                               Woobie Module
 
 
-This is for demonstrative purposes only. If you are looking for starting
-point in writing modules, woobie is the right thing.
+  This is for demonstrative purposes only. If you are looking for starting
+  point in writing modules, woobie is the right thing.
 
-This module requires: none
+  This module requires: none
 
-Put this line into your Eggdrop configuration file to load the woobie
-module:
+  Put this line into your Eggdrop configuration file to load the woobie
+  module:
 
-  loadmodule woobie
-     _________________________________________________________________
+    loadmodule woobie
+    _____________________________________________________________________
 
-   Copyright (C) 2000, 2001, 2002, 2003, 2004 Eggheads Development Team
+  Copyright (C) 2000, 2001, 2002, 2003, 2004 Eggheads Development Team

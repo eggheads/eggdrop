@@ -1,8 +1,8 @@
-$Id: tcl-commands.doc,v 1.113 2004/06/11 17:46:14 wcc Exp $
+$Id: tcl-commands.doc,v 1.114 2004/07/25 03:56:58 wcc Exp $
 
 Eggdrop Tcl Commands
 Last revised: January 12, 2004
-     _________________________________________________________________
+    _____________________________________________________________________
 
                            Eggdrop Tcl Commands
 
@@ -2253,6 +2253,6 @@ marked with vertical bars (|) on the left.
      word)
   ~  matches 1 or more space characters (can be used for whitespace between
      words)
-     _________________________________________________________________
+    _____________________________________________________________________
 
-   Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004 Eggheads Development Team
+  Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004 Eggheads Development Team

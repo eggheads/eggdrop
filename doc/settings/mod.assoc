@@ -1,20 +1,21 @@
+$Id: mod.assoc,v 1.12 2004/07/25 03:56:59 wcc Exp $
+
 Assoc Module
 Last revised: January 1, 2002
-$Id: mod.assoc,v 1.11 2004/05/27 05:23:39 wcc Exp $
-     _________________________________________________________________
+    _____________________________________________________________________
 
-                               Assoc Module
+                                 Assoc Module
 
 
-This module provides assoc support, i.e. naming channels on the botnet.
+  This module provides assoc support, i.e. naming channels on the botnet.
 
-This module requires: none
+  This module requires: none
 
-Put this line into your Eggdrop configuration file to load the assoc
-module:
+  Put this line into your Eggdrop configuration file to load the assoc
+  module:
 
-  loadmodule assoc
+    loadmodule assoc
 
-     _________________________________________________________________
+    _____________________________________________________________________
 
-   Copyright (C) 2000, 2001, 2002, 2003, 2004 Eggheads Development Team
+  Copyright (C) 2000, 2001, 2002, 2003, 2004 Eggheads Development Team

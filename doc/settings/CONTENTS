@@ -1,64 +1,65 @@
+$Id: CONTENTS,v 1.10 2004/07/25 03:56:59 wcc Exp $
+
 Directory Contents - doc/settings/
 Last revised: April 16, 2003
-$Id: CONTENTS,v 1.9 2004/05/27 05:23:39 wcc Exp $
-     _________________________________________________________________
+    _____________________________________________________________________
 
-                     Directory Contents - doc/settings
+                      Directory Contents - doc/settings
 
 
-core.settings
-  All module-independent Eggdrop settings are documented here.
+  core.settings
+    All module-independent Eggdrop settings are documented here.
 
-mod.assoc
-  Documentation for the assoc module is provided in this file.
+  mod.assoc
+    Documentation for the assoc module is provided in this file.
 
-mod.blowfish
-  Documentation for the blowfish module is provided in this file.
+  mod.blowfish
+    Documentation for the blowfish module is provided in this file.
 
-mod.channels
-  Documentation for the channels module is provided in this file.
+  mod.channels
+    Documentation for the channels module is provided in this file.
 
-mod.compress
-  Documentation for the compress module is provided in this file.
+  mod.compress
+    Documentation for the compress module is provided in this file.
 
-mod.console
-  Documentation for the console module is provided in this file.
+  mod.console
+    Documentation for the console module is provided in this file.
 
-mod.ctcp
-  Documentation for the ctcp module is provided in this file.
+  mod.ctcp
+    Documentation for the ctcp module is provided in this file.
 
-mod.dns
-  Documentation for the dns module is provided in this file.
+  mod.dns
+    Documentation for the dns module is provided in this file.
 
-mod.filesys
-  Documentation for the filesys module is provided in this file.
+  mod.filesys
+    Documentation for the filesys module is provided in this file.
 
-mod.irc
-  Documentation for the irc module is provided in this file.
+  mod.irc
+    Documentation for the irc module is provided in this file.
 
-mod.notes
-  Documentation for the notes module is provided in this file.
+  mod.notes
+    Documentation for the notes module is provided in this file.
 
-mod.seen
-  Documentation for the seen module is provided in this file.
+  mod.seen
+    Documentation for the seen module is provided in this file.
 
-mod.server
-  Documentation for the server module is provided in this file.
+  mod.server
+    Documentation for the server module is provided in this file.
 
-mod.share
-  Documentation for the share module is provided in this file.
+  mod.share
+    Documentation for the share module is provided in this file.
 
-mod.transfer
-  Documentation for the transfer module is provided in this file.
+  mod.transfer
+    Documentation for the transfer module is provided in this file.
 
-mod.uptime
-  Documentation for the uptime module is provided in this file.
+  mod.uptime
+    Documentation for the uptime module is provided in this file.
 
-mod.wire
-  Documentation for the wire module is provided in this file.
+  mod.wire
+    Documentation for the wire module is provided in this file.
 
-mod.woobie
-  Documentation for the woobie module is provided in this file.
+  mod.woobie
+    Documentation for the woobie module is provided in this file.
     ________________________________________________________________________
 
   Copyright (C) 2003, 2004 Eggheads Development Team

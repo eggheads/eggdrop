@@ -1,15 +1,18 @@
-$Id: INSTALL,v 1.23 2004/06/06 00:04:18 stdarg Exp $
+$Id: INSTALL,v 1.24 2004/07/25 03:56:58 wcc Exp $
 
 Compilation and Installation of Eggdrop
-Last revised: March 08, 2002
-     _________________________________________________________________
+Last revised: July 24, 2004
+    _____________________________________________________________________
 
-                  Compilation and Installation of Eggdrop
+                   Compilation and Installation of Eggdrop
 
 
   This is the quick install guide; if you have had little or no experience
   with UNIX or Eggdrop, READ THE README FILE NOW! This file is only for
   experienced users.
+
+  For more information on compiling Eggdrop, see the Compile Guide in
+  doc/COMPILING-FAQ (and of course, the README FILE).
 
   Contents:
     1. What is Eggdrop?
@@ -141,9 +144,9 @@ Last revised: March 08, 2002
   This is the end. If you read to this point, hopefully you have also read
   the README file. If not, then READ IT!&@#%@!
 
-Have fun with Eggdrop!
+  Have fun with Eggdrop!
 
-  ________________________________________________________________________
+    _____________________________________________________________________
 
-Copyright (C) 1997 Robey Pointer
-Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004 Eggheads Development Team
+  Copyright (C) 1997 Robey Pointer
+  Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004 Eggheads Development Team
