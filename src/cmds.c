@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  * 
- * $Id: cmds.c,v 1.39 2000/08/25 13:14:27 fabian Exp $
+ * $Id: cmds.c,v 1.40 2000/09/02 18:48:41 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -34,7 +34,8 @@ extern struct dcc_t	*dcc;
 extern struct userrec	*userlist;
 extern tcl_timer_t	*timer, *utimer;
 extern int		 dcc_total, remote_boots, backgrd, make_userfile,
-			 do_restart, conmask, require_p, must_be_owner;
+			 do_restart, conmask, require_p, must_be_owner,
+			 strict_host;
 extern unsigned long	 otraffic_irc, otraffic_irc_today,
 			 itraffic_irc, itraffic_irc_today,
 			 otraffic_bn, otraffic_bn_today,
@@ -65,19 +66,22 @@ static int add_bot_hostmask(int idx, char *nick)
       memberlist *m = ismember(chan, nick);
 
       if (m) {
-	char s[UHOSTLEN], s1[UHOSTLEN];
+	char s[UHOSTLEN];
 	struct userrec *u;
 
 	egg_snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
 	u = get_user_by_host(s);
 	if (u) {
-	  dprintf(idx, "(Can't add userhost for %s because it matches %s)\n",
+	  dprintf(idx, "(Can't add hostmask for %s because it matches %s)\n",
 		  nick, u->handle);
 	  return 0;
 	}
-	maskhost(s, s1);
+	if (strchr("~^+=-", m->userhost[0]))
+	  egg_snprintf(s, sizeof s, "*!%s%s", strict_host ? "?" : "", m->userhost+1);
+	else
+	  egg_snprintf(s, sizeof s, "*!%s", m->userhost);
 	dprintf(idx, "(Added hostmask for %s from %s)\n", nick, chan->dname);
-	addhost_by_handle(nick, s1);
+	addhost_by_handle(nick, s);
 	return 1;
       }
     }
