@@ -3,7 +3,7 @@
  *   Tcl stubs for file system commands
  *   Tcl stubs for everything else
  *
- * $Id: tclmisc.c,v 1.18 2001/04/12 02:39:43 guppy Exp $
+ * $Id: tclmisc.c,v 1.19 2001/05/14 16:17:00 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -257,7 +257,7 @@ static int tcl_duration STDVAR
 
 static int tcl_unixtime STDVAR
 {
-  char s[10];
+  char s[11];
 
   BADARGS(1, 1, "");
   egg_snprintf(s, sizeof s, "%lu", (unsigned long) now);

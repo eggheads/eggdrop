@@ -2,7 +2,7 @@
  * tcldcc.c -- handles:
  *   Tcl stubs for the dcc commands
  *
- * $Id: tcldcc.c,v 1.27 2001/04/12 02:39:43 guppy Exp $
+ * $Id: tcldcc.c,v 1.28 2001/05/14 16:17:00 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -587,7 +587,7 @@ static int tcl_dcclist STDVAR
 {
   int i;
   char idxstr[10];
-  char timestamp[10];
+  char timestamp[11];
   char *list[6], *p;
   char other[160];
 
@@ -622,7 +622,7 @@ static int tcl_dcclist STDVAR
  */
 static int tcl_whom STDVAR
 {
-  char c[2], idle[10], work[20], *list[7], *p;
+  char c[2], idle[11], work[20], *list[7], *p;
   int chan, i;
 
   BADARGS(2, 2, " chan");
@@ -846,7 +846,7 @@ static int tcl_connect STDVAR
 static int tcl_listen STDVAR
 {
   int i, j, idx = (-1), port, realport;
-  char s[10];
+  char s[11];
   struct portmap *pmap = NULL, *pold = NULL;
 
   BADARGS(3, 5, " port type ?mask?/?proc ?flag??");

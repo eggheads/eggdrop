@@ -2,7 +2,7 @@
  * tcluser.c -- handles:
  *   Tcl stubs for the user-record-oriented commands
  *
- * $Id: tcluser.c,v 1.19 2001/04/12 02:39:44 guppy Exp $
+ * $Id: tcluser.c,v 1.20 2001/05/14 16:17:00 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -455,7 +455,7 @@ static int tcl_killignore STDVAR
 static int tcl_ignorelist STDVAR
 {
   struct igrec *i;
-  char ts[10], *list[5], *p;
+  char ts[11], *list[5], *p;
 
   BADARGS(1, 1, "");
   for (i = global_ign; i; i = i->next) {
