@@ -30,6 +30,7 @@ For botnet masters:
 %{+m|m}
 For masters:
 %b  chattr       save         backup       reload       status%b
+%b  traffic%b
 %{+m}
 %b  +user        +ignore      comment      binds        ignores%b
 %b  -user        -ignore      dccstat      debug        banner%b
@@ -183,6 +184,7 @@ For botnet masters:
 %{+m|m}
 For masters:
 %b  chattr       save         backup       reload       status%b
+%b  traffic%b
 %{+m}
 %b  +user        +ignore      comment      binds        ignores%b
 %b  -user        -ignore      dccstat      debug        banner%b

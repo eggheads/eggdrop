@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  * 
- * $Id: cmds.c,v 1.45 2000/12/10 15:10:26 guppy Exp $
+ * $Id: cmds.c,v 1.46 2000/12/23 06:11:34 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -52,7 +52,7 @@ extern char		 botnetnick[], origbotname[], ver[], network[],
 extern time_t		 now, online_since;
 
 
-static char	*btos(int);
+static char	*btos(unsigned long);
 
 
 /* Add hostmask to a bot's record if possible.
@@ -2584,7 +2584,7 @@ static void cmd_modules(struct userrec *u, int idx, char *par)
 
 static void cmd_traffic(struct userrec *u, int idx, char *par)
 {
-  int itmp, itmp2;
+  unsigned long itmp, itmp2;
 
   dprintf(idx, "Traffic since last restart\n");
   dprintf(idx, "==========================\n");
@@ -2649,7 +2649,7 @@ static void cmd_traffic(struct userrec *u, int idx, char *par)
 }
 
 static char traffictxt[20];
-static char *btos(int bytes)
+static char *btos(unsigned long  bytes)
 {
   char unit[10];
   float xbytes;
@@ -2675,7 +2675,7 @@ static char *btos(int bytes)
   if (bytes > 1024)
     sprintf(traffictxt, "%.2f %s", xbytes, unit);
   else
-    sprintf(traffictxt, "%d Bytes", bytes);
+    sprintf(traffictxt, "%lu Bytes", bytes);
   return traffictxt;
 }
 

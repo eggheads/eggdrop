@@ -2,7 +2,7 @@
  * net.c -- handles:
  *   all raw network i/o
  * 
- * $Id: net.c,v 1.27 2000/12/10 15:10:27 guppy Exp $
+ * $Id: net.c,v 1.28 2000/12/23 06:11:34 guppy Exp $
  */
 /* 
  * This is hereby released into the public domain.
@@ -35,8 +35,8 @@
 #endif
 
 extern struct dcc_t	*dcc;
-extern int		 backgrd, use_stderr, resolve_timeout, dcc_total,
-			 otraffic_irc_today, otraffic_bn_today,
+extern int		 backgrd, use_stderr, resolve_timeout, dcc_total;
+extern unsigned long	 otraffic_irc_today, otraffic_bn_today,
 			 otraffic_dcc_today, otraffic_filesys_today,
 			 otraffic_trans_today, otraffic_unknown_today;
 
