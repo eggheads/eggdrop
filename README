@@ -26,30 +26,31 @@ before. PLEASE! READ IT!
     priveledged users and let them gain ops, etc.
 
     One of the more unique features of eggdrop is its "party line",
-    accessable via DCC chat, which allows you to talk to other people
+    accessible via DCC chat, which allows you to talk to other people
     lag-free.  Consider it a multi-way DCC chat, or a miniature IRC
     (complete with channels).  You can link up with other bots and
     expand the party line until it actually becomes something very much
     like IRC, in fact.  
 
-    Eggdrop is always being improved and adjusted because the author
-    is never really satisfied with it.  In fact, it existed for several
-    years as v0.7 - v0.9 before finally going 1.0.  A valiant effort has 
-    been made to chase down and destroy bugs.  It is definitely nowhere
-    near as buggy as the ircII client.  Crashes should be rare and
-    surprising (but aren't they always? [surprising anyway]).
+    Eggdrop is always being improved and adjusted because there are bugs
+    to be fixed and features to be added (if the users demand them, and
+    they make actually sense).  In fact, it existed for several years
+    as v0.7 - v0.9 before finally going 1.0.  This version of eggdrop is
+    part of the 1.3 tree.  A valiant effort has been made to chase down
+    and destroy bugs.  It is definitely nowhere near as buggy as the ircII
+    client.  Crashes should be rare and surprising (but aren't they always?
+    [surprising anyway]).
 
     This README file contains information about how to get eggdrop, how to
     quickly compile the bot, what you may need to do when upgrading from 
     older versions, a list of frequently asked questions about compiling,
     how to set up a crontab, some boring legal stuff, info about the mailing
-    list (a great place to ask questions), and a complaint/explanation about
-    the lack of documentation.
+    list (a great place to ask questions, and a good place to report bugs to),
+    some basics about CVS usage and some channels where you might get help
+    with eggdrop.
 
     The preliminary documentation is in "eggdrop.doc" and is intended to be
-    read after you have eggdrop compiled and set up.  It's changing all the
-    time and getting new sections added.  If you'd like to write a 
-    section, then please do!
+    read after you have eggdrop compiled and set up.
 
 
 (2) HOW TO GET EGGDROP
@@ -70,13 +71,56 @@ before. PLEASE! READ IT!
     one that comes on Slackware 3.0 is goofed up and you'll have to
     re-install it for yourself to get it working.
 
+    Currently, the 1.3 tree of eggdrop is developed at eggheads.org. You can
+    get the latest version of eggdrop from ftp.eggheads.org.
+    Current mirrors are:
+      ftp.de.eggheads.org
+      ftp.fr.eggheads.org
+
+    You might try www.eggheads.org for help and information.
+
+(2a) CVS USAGE
+
+    You might obtain the *very latest* version of eggdrop that is still
+    under development by using CVS. CVS means 'Concurrent Versions System'
+    and is a tool for developers to always keep source code up to date.
+    Try 'man cvs' on your shell for more information about CVS ;-)
+
+    This intended only for users that know a fairly bit about eggdrop.
+    Be aware that the versions of eggdrop that you get by CVS are still
+    being developed, and may be buggy. The 1.3 devel team will in *NO WAY*
+    take any responsability for whatever might happen to you or your shell
+    if you use a CVS version of eggdrop.
+
+    To obtain eggdrop over CVS, do as follows:
+
+    (1) log into your shell
+    (2) type 'export CVSROOT=:pserver:anonymous@cvs.eggheads.org:/usr/local/cvsroot'
+    (3) hit enter when it asks for a password.
+    (4) in your home dir, type 'cvs checkout eggdrop1.3'
+    (5) in ~/eggdrop1.3, you should have a copy of the latest CVS version of eggdrop.
+
+    notes:
+
+    (1) you can 'cvs logout', but you don't need to
+    (2) you dont need to go through this whole process every time; if you want to get
+        a CVS version of eggdrop at a later time, you just 'cd ~/eggdrop1.3' and type
+        'cvs update'
+    (3) if you errors when using 'export', you might be using tclsh as a shell; just
+        'setenv CVSROOT :pserver:anonymous@cvs.eggheads.org:/usr/local/cvsroot' instead
+        of using 'export'.
+
+
 (3) QUICK STARTUP
 
     #### NOW INCLUDED IN 'INSTALL' - READ IT *AFTER* FINISHING THIS ####
 
+
 (4) UPGRADING
 
-    #### BACK UP YOUR USERFILE ####
+(4a) FROM A PRE-1.3 VERSION TO 1.3
+ 
+   #### BACK UP YOUR USERFILE ####
     
     We can't re-iterate this enough, if you are upgrading, and you have
     even a slight possibility of downgrading again later you will HAVE
@@ -104,6 +148,17 @@ before. PLEASE! READ IT!
              changed. BACK UP!! You will need to run 
 	     'tclsh scripts/weed <userfile> c' to convert your userfile
 	     from v3 (1.1/1.2) to v4
+
+(4b) FROM AN OLDER 1.3 VERSION TO A NEWER ONE
+
+    If you followed the INSTALL file and did a 'make install' (or 'make
+    install DEST=<path>') after 'make', this will be pretty easy.
+    Just upload the new eggdrop1.3.xx.tar.gz file to the home dir of your
+    shell, gunzip and untar it, and type 'cd ~/eggdrop1.3.xx'. Then,
+    type './configure', 'make', then kill the bot ('.die' on the partyline,
+    or use 'kill' on the shell) and 'make install' to the same directory
+    your bot is currently in. Then, you can just restart your bot.
+
 
 (5) FREQUENTLY ASKED QUESTIONS (or "Why doesn't this thing work?")
 
@@ -340,9 +395,14 @@ before. PLEASE! READ IT!
 
 (8) MAILING LIST
 
-    To subscribe, send email to:
-       majordomo@tacorp.net
-    In the body of the message, put "subscribe eggdrop".
+    There are currently a couple of mailing lists about eggdrop.
+    eggheads@eggdheads.org is the one relevant for posts about
+    eggdrop 1.3 (and bug fixes, and suggestions, etc).
+
+    To subscribe to the eggheads mailing list, send email to:
+      eggheads-request@eggheads.org
+    In the body of the message, put "subscribe eggheads"; or go to
+      http://scrambled.eggheads.org/mailman/listinfo/eggheads   
 
     ### DO NOT SEND ROBEY EMAIL ABOUT EGGDROP ###
     Robey is no longer developing the eggdrop code (although he does put
@@ -356,34 +416,46 @@ before. PLEASE! READ IT!
     make mistakes (heck, look at this document! ;). Don't flame, and
     read/follow the rules.
 
+    This list is not, and never will be a list dedicated to those all too
+    common questions we have all seen on other lists... for example:
+
+    "Why does my bot say this: Please edit your config file."
+    "How do I telnet my bot?"
+    "Where do I get eggdrop for windows????????"
+    etc..
+
+    Bug reports, technical questions, your thoughts or suggestions on new
+    features being added to Eggdrop, things that should be removed or fixed,
+    amazing problems that even stump the guru's, etc... are what we want to
+    see here.
+
+
 (9) DOCUMENTATION
 
-    I've been trying hard to keep the online documentation (in the help/
-    directory) fairly up-to-date.  It should be complete now; you can browse
-    through there for some handy tips.  Please let me know if you find any
-    help files that are incorrect or confusing!
-
-    I know that a unified documentation would REALLY BE HELPFUL.  All I can
-    say is...  I've been pretty busy.  I just graduated in December and I've
-    spent the past several months getting settled into the bay area, getting
-    a job, etc.  So I haven't even had much time to keep updating the bot.
-    But I AM working on it, bit by bit.  Stage one was finishing the online
-    docs.  Now I'm slowly adding bits to the unified documentation. 
-
-    I have seven sections written so far, and I'm not sure how helpful
-    they are, but you can find them in "eggdrop.doc" for now.  Comments and
-    suggestions would be welcome!
+    We're trying to keep the documentation up to date. If you feel that anything
+    is missing here, or that anything should be added etc, please email
+    eggheads@eggheads.org about it, thank you.
 
 
 (10) OBTAINING HELP
     
-		There exists no uniform channel currently in existance to support
-		eggdrop.  At one time, such channels did exist, but they most
-		often esculate into a vanity channel, where no one is willing to help.
-		Maybe in the future, a bot will be put up in a channel to offer
-		answers to commonly asked questions, but until then, your best bet is
-		the eggdrop mailing list.
+    There is currently no uniform channel in existance to support eggdrop.
+    At one time, such channels did exist, but they most often esculate into
+    a vanity channel, where no one is willing to help.
+
+    However, we'll list a few places here where you *might* get help. Note
+    though that we are not responsible for those channels, or neccessarily
+    run those channels ourselves.
+
+    #Eggdrop@Undernet for eggdrop 1.3 and tcl related questions
+    #egghelp@IRCNet
+    #eggdrop@IRCNet
+    #bothelp@IRCNet
+    #EggTCL@EFNet
+    #eggheads@EFNet
+
+    If there are any serious places that should be added, let us know.
 
 
-This is the end.  Good.  You actually read all the way down here.  If you
-meet someone who hasn't, thwop them for me.
+
+The eggdrop 1.3 devel team.

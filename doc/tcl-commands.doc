@@ -134,15 +134,16 @@ specific commands, see later.
     returns: new flags for the user (if you made no changes, returns current
       flags); if a channel was specified, the global AND the channel-specific 
       flags for that channel are returned in the format of the new flagging
-      system (globalflags|channelflags) -- returns "*" if that user does not exist
+      system (globalflags|channelflags) -- returns "*" if that user does not
+      exist
 
   botattr <handle> [changes [channel]]
     similar to chattr except for bot attributes rather than normal user
     attributes, this includes the channel-specific +s share flag
 
-  matchattr <handle> <flags> [channel]
-    returns: "1" if the specified user has the matching flags.
-     (using the new matching system)
+| matchattr <handle> <flags> [channel]
+|   returns: "1" if the specified user has the matching flags.
+|   (using the new matching system)
 
   adduser <handle> <hostmask>
     creates a new user entry with the handle and hostmask given (with no pass-
@@ -224,8 +225,9 @@ specific commands, see later.
       ban list is checked too
 
   isbansticky <ban> [channel]
-    returns: "1" if that ban is a sticky ban in the global ban list, "0" otherwise;
-      if a channel is specified, that channel's ban list is checked too
+    returns: "1" if that ban is a sticky ban in the global ban list, "0"
+      otherwise; if a channel is specified, that channel's ban list is checked
+      too
 
   matchban <nick!user@host> [channel]
     returns: "1" if that user address matches a ban in the global ban list,
@@ -332,20 +334,20 @@ specific commands, see later.
     returns: "1" if someone by that nickname is on the bot's channel; "0"
       otherwise
 
-  nick2hand <nickname> [channel]
-    returns: handle of <nickname> on <channel>
-    if <channel> is not specified, bot will check all of its channels
-    if <nickname> not found, returns ""
-    if <nickname> found but unknown, returns "*"
+| nick2hand <nickname> [channel]
+|   returns: handle of <nickname> on <channel>
+|   if <channel> is not specified, bot will check all of its channels
+|   if <nickname> not found, returns ""
+|   if <nickname> found but unknown, returns "*"
 
   handonchan <handle> <channel>
     returns: "1" if the the user@host for someone on the channel matches
       for the handle given; "0" otherwise
 
-  hand2nick <handle> [channel]
-    returns: nickname of the first person on the <channel> whose user@host
-      matches that handle, if there is one; "" otherwise
-    if <channel> is not specified, bot will check all of its channels
+| hand2nick <handle> [channel]
+|   returns: nickname of the first person on the <channel> whose user@host
+|     matches that handle, if there is one; "" otherwise
+|   if <channel> is not specified, bot will check all of its channels
 
   ischanban <ban> <channel>
     returns: "1" if that is a ban on the bot's channel
@@ -358,9 +360,9 @@ specific commands, see later.
     returns: "1" if that is an invitation (+I mode) on the bot's channel.
       this is an IRCNET feature.
 
-  chanbans <channel>
-    returns: a list of the current bans on the channel, each element is
-      of the form {ban bywho age} age is seconds from the bots POV
+| chanbans <channel>
+|   returns: a list of the current bans on the channel, each element is
+|     of the form {ban bywho age} age is seconds from the bots POV
 
   chanexempts <channel>
     returns: a list of the current exemptions (+e mode) on the channel,
@@ -387,10 +389,10 @@ specific commands, see later.
     rereads in the channel info from the server
     returns: nothing
 
-  getchanhost <nickname> [channel]
-    returns: user@host of <nickname>
-    if <channel> is not specified, bot will check all of its channels
-    if <nickname> is not on the channel(s), returns ""
+| getchanhost <nickname> [channel]
+|   returns: user@host of <nickname>
+|   if <channel> is not specified, bot will check all of its channels
+|   if <nickname> is not on the channel(s), returns ""
 
   getchanjoin <nickname> <channel>
     returns: timestamp of when that person joined the channel
@@ -462,9 +464,11 @@ specific commands, see later.
      boot's a user from the partyline
      returns: nothing
 
-  restart
-    rehash's the bot and kills all timers
-    returns: nothing
+| restart
+|   rehash's the bot and kills all timers
+|   note that as this will also unload and reload all the modules, your bot
+|     will also jump servers.
+|   returns: nothing
 
   rehash
     rehash's the bot
@@ -910,7 +914,7 @@ for the msg-command "stop", use "unbind msg - stop msg_stop".
 
   (14) MODE   (stackable)
        bind mode <flags> <mask> <proc>
-       proc-name <nick> <user@host> <handle> <channel> <mode-change> <victim>
+|      proc-name <nick> <user@host> <handle> <channel> <mode-change> <victim>
 
        mode changes are broken down into their component parts before being
        sent here, so the <mode-change> will always be a single mode, like
@@ -918,6 +922,22 @@ for the msg-command "stop", use "unbind msg - stop msg_stop".
        (for o/v/b) otherwise ""; flags are ignored; the bot's automatic
        response to a mode change will happen AFTER all matching Tcl procs
        are called; the <mask> will have the channel prefixed (ie, "#turtle +m")
+
+       note that "victim" was added in 1.3.23 and that this will break
+       tcl scripts that were written for pre-1.3.23 versions and use this
+       binding. An easy fix (by guppy) is as follows (example):
+
+       Old script looks as follows:
+       bind - * mode_proc
+       proc mode_proc {nick uhost hand chan mc} { ... }
+
+       To make it work with 1.3.23+, do:
+       bind - * mode_proc_fix
+       proc mode_proc_fix {nick uhost hand chan mc victim} {
+         mode_proc $nick $uhost $hand $chan "$mc $victim"
+       }
+       proc mode_proc {nick uhost hand chan mc} { ... }
+
 
   (15) CTCP
        bind ctcp <flags> <keyword> <proc>
@@ -1443,3 +1463,4 @@ users to read later
   setflags <dir> [flags]
     sets the flags required to access the directory
     returns: 0 on success, -1 on failure
+
