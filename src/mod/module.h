@@ -1,7 +1,7 @@
 /*
  * module.h
  *
- * $Id: module.h,v 1.68 2003/01/28 06:37:25 wcc Exp $
+ * $Id: module.h,v 1.69 2003/01/29 05:48:41 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -77,14 +77,14 @@
 #endif
 
 #if defined (__CYGWIN__) && !defined(STATIC)
-#  define EXPORT_SCOPE	__declspec(dllexport)
+#  define EXPORT_SCOPE  __declspec(dllexport)
 #else
 #  define EXPORT_SCOPE
 #endif
 
 /* Version checks for modules. */
-#define EGG_IS_MIN_VER(ver) 		((ver) <= EGG_VERSION)
-#define EGG_IS_MAX_VER(ver)		((ver) >= EGG_VERSION)
+#define EGG_IS_MIN_VER(ver)             ((ver) <= EGG_VERSION)
+#define EGG_IS_MAX_VER(ver)             ((ver) >= EGG_VERSION)
 
 /* Redefine for module-relevance */
 
@@ -386,15 +386,15 @@
 #ifdef DEBUG_CONTEXT
 #  define ContextNote(note) (global[232](__FILE__, __LINE__, MODULE_NAME, note))
 #else
-#  define ContextNote(note)	do {	} while (0)
+#  define ContextNote(note)     do {    } while (0)
 #endif
 #ifdef DEBUG_ASSERT
-#  define Assert(expr)		do {					\
-	if (!(expr))							\
-		(global[233](__FILE__, __LINE__, MODULE_NAME));		\
+#  define Assert(expr)          do {                                    \
+        if (!(expr))                                                    \
+                (global[233](__FILE__, __LINE__, MODULE_NAME));         \
 } while (0)
 #else
-#  define Assert(expr)	do {	} while (0)
+#  define Assert(expr)  do {    } while (0)
 #endif
 #define allocsock ((int(*)(int sock,int options))global[234])
 #define call_hostbyip ((void(*)(IP, char *, int))global[235])
@@ -471,10 +471,10 @@
  */
 #ifndef MAKING_ENCRYPTION
 
-#  define encrypt_string(a, b)						\
-	(((char *(*)(char *,char*))encryption_funcs[4])(a,b))
-#  define decrypt_string(a, b)						\
-	(((char *(*)(char *,char*))encryption_funcs[5])(a,b))
+#  define encrypt_string(a, b)                                          \
+        (((char *(*)(char *,char*))encryption_funcs[4])(a,b))
+#  define decrypt_string(a, b)                                          \
+        (((char *(*)(char *,char*))encryption_funcs[5])(a,b))
 #endif
 
 #endif /* _EGG_MOD_MODULE_H */

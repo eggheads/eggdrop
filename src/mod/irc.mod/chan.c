@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  *
- * $Id: chan.c,v 1.105 2003/01/28 06:37:26 wcc Exp $
+ * $Id: chan.c,v 1.106 2003/01/29 05:48:42 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1755,8 +1755,8 @@ static int gotjoin(char *from, char *chname)
                 if (s[0] == '@')
                   s++;
                 if (s && s[0])
-                  dprintf(DP_HELP, "PRIVMSG %s :[%s] %s\n",
-                          chan->name, nick, s);
+                  dprintf(DP_HELP, "PRIVMSG %s :[%s] %s\n", chan->name, nick,
+                          s);
               }
             }
           }

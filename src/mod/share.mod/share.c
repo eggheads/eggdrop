@@ -1,7 +1,7 @@
 /*
  * share.c -- part of share.mod
  *
- * $Id: share.c,v 1.69 2003/01/28 06:37:26 wcc Exp $
+ * $Id: share.c,v 1.70 2003/01/29 05:48:42 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -206,9 +206,9 @@ static void share_stick_ban(int idx, char *par)
       struct chanuserrec *cr;
 
       if ((chan != NULL) && ((channel_shared(chan) &&
-                              ((cr = get_chanrec(dcc[idx].user, par)) &&
-                               (cr->flags & BOT_AGGRESSIVE))) ||
-                             (bot_flags(dcc[idx].user) & BOT_GLOBAL)))
+          ((cr = get_chanrec(dcc[idx].user, par)) &&
+          (cr->flags & BOT_AGGRESSIVE))) ||
+          (bot_flags(dcc[idx].user) & BOT_GLOBAL)))
         if (u_setsticky_ban(chan, host, yn) > 0) {
           putlog(LOG_CMDS, "*", "%s: %s %s %s", dcc[idx].nick,
                  (yn) ? "stick" : "unstick", host, par);
@@ -247,9 +247,9 @@ static void share_stick_exempt(int idx, char *par)
       struct chanuserrec *cr;
 
       if ((chan != NULL) && ((channel_shared(chan) &&
-                              ((cr = get_chanrec(dcc[idx].user, par)) &&
-                               (cr->flags & BOT_AGGRESSIVE))) ||
-                             (bot_flags(dcc[idx].user) & BOT_GLOBAL)))
+          ((cr = get_chanrec(dcc[idx].user, par)) &&
+          (cr->flags & BOT_AGGRESSIVE))) ||
+          (bot_flags(dcc[idx].user) & BOT_GLOBAL)))
         if (u_setsticky_exempt(chan, host, yn) > 0) {
           putlog(LOG_CMDS, "*", "%s: %s %s %s", dcc[idx].nick,
                  (yn) ? "stick" : "unstick", host, par);
@@ -288,9 +288,9 @@ static void share_stick_invite(int idx, char *par)
       struct chanuserrec *cr;
 
       if ((chan != NULL) && ((channel_shared(chan) &&
-                              ((cr = get_chanrec(dcc[idx].user, par)) &&
-                               (cr->flags & BOT_AGGRESSIVE))) ||
-                             (bot_flags(dcc[idx].user) & BOT_GLOBAL)))
+          ((cr = get_chanrec(dcc[idx].user, par)) &&
+          (cr->flags & BOT_AGGRESSIVE))) ||
+          (bot_flags(dcc[idx].user) & BOT_GLOBAL)))
         if (u_setsticky_invite(chan, host, yn) > 0) {
           putlog(LOG_CMDS, "*", "%s: %s %s %s", dcc[idx].nick,
                  (yn) ? "stick" : "unstick", host, par);
@@ -350,7 +350,8 @@ static void share_chattr(int idx, char *par)
             fr2.match = FR_CHAN;
             break_down_flags(atr, &fr, 0);
             get_user_flagrec(u, &fr2, par);
-            fr.chan = (fr2.chan & BOT_AGGRESSIVE) | (fr.chan & ~BOT_AGGRESSIVE);
+            fr.chan = (fr2.chan & BOT_AGGRESSIVE) |
+                      (fr.chan & ~BOT_AGGRESSIVE);
             set_user_flagrec(u, &fr, par);
             check_dcc_chanattrs(u, par, fr.chan, fr2.chan);
             noshare = 0;
@@ -377,8 +378,7 @@ static void share_chattr(int idx, char *par)
           break_down_flags(atr, &fr, 0);
           bfl = u->flags & USER_BOT;
           ofl = fr.global;
-          fr.global = (fr.global &~pgbm)
-            |(u->flags & pgbm);
+          fr.global = (fr.global &~pgbm) | (u->flags & pgbm);
           fr.global = sanity_check(fr.global |bfl);
 
           set_user_flagrec(u, &fr, 0);
@@ -1460,11 +1460,10 @@ static void check_expired_tbufs()
   for (i = 0; i < dcc_total; i++)
     if (dcc[i].type->flags & DCT_BOT) {
       if (dcc[i].status & STAT_OFFERED) {
-        if (now - dcc[i].timeval > 120) {
-          if (dcc[i].user && (bot_flags(dcc[i].user) & BOT_AGGRESSIVE))
-            dprintf(i, "s u?\n");
+        if ((now - dcc[i].timeval > 120) && (dcc[i].user &&
+            (bot_flags(dcc[i].user) & BOT_AGGRESSIVE)))
+          dprintf(i, "s u?\n");
           /* ^ send it again in case they missed it */
-        }
         /* If it's a share bot that hasnt been sharing, ask again */
       }
       else if (!(dcc[i].status & STAT_SHARE)) {
@@ -1660,10 +1659,7 @@ static struct userrec *dup_userlist(int t)
   for (u = userlist; u; u = u->next)
     /* Only copying non-bot entries? */
     if (((t == 0) && !(u->flags & (USER_BOT | USER_UNSHARED))) ||
-        /* ... or only copying bot entries? */
-        ((t == 1) && (u->flags & (USER_BOT | USER_UNSHARED))) ||
-        /* ... or copying everything? */
-        (t == 2)) {
+        ((t == 1) && (u->flags & (USER_BOT | USER_UNSHARED))) || (t == 2)) {
       p = get_user(&USERENTRY_PASS, u);
       u1 = adduser(NULL, u->handle, 0, p, u->flags);
       u1->flags_udef = u->flags_udef;
@@ -1821,7 +1817,8 @@ static void finish_share(int idx)
       set_user(&USERENTRY_BOTFL, u, get_user(&USERENTRY_BOTFL, u2));
       set_user(&USERENTRY_PASS, u, get_user(&USERENTRY_PASS, u2));
     }
-    else if ((dcc[j].u.bot->uff_flags & UFF_OVERRIDE) && (u->flags & USER_BOT)) {
+    else if ((dcc[j].u.bot->uff_flags & UFF_OVERRIDE) &&
+             (u->flags & USER_BOT)) {
       /* This bot was unknown to us, reset it's flags and password. */
       set_user(&USERENTRY_BOTFL, u, NULL);
       set_user(&USERENTRY_PASS, u, NULL);
@@ -2031,8 +2028,8 @@ static void cancel_user_xfer(int idx, void *x)
       j = 0;
       for (i = 0; i < dcc_total; i++)
         if ((!egg_strcasecmp(dcc[i].host, dcc[idx].nick)) &&
-            ((dcc[i].type->flags & (DCT_FILETRAN | DCT_FILESEND))
-             == DCT_FILETRAN))
+            ((dcc[i].type->flags & (DCT_FILETRAN | DCT_FILESEND)) ==
+            DCT_FILETRAN))
           j = i;
       if (j != 0) {
         killsock(dcc[j].sock);
@@ -2148,13 +2145,12 @@ static void share_report(int idx, int details)
           int ok = 0;
 
           for (j = 0; j < dcc_total; j++)
-            if (((dcc[j].type->flags & (DCT_FILETRAN | DCT_FILESEND))
-                 == (DCT_FILETRAN | DCT_FILESEND)) &&
+            if (((dcc[j].type->flags & (DCT_FILETRAN | DCT_FILESEND)) ==
+                (DCT_FILETRAN | DCT_FILESEND)) &&
                 !egg_strcasecmp(dcc[j].host, dcc[i].nick)) {
               dprintf(idx, "Downloading userlist from %s (%d%% done)\n",
-                      dcc[i].nick,
-                      (int) (100.0 * ((float) dcc[j].status) /
-                             ((float) dcc[j].u.xfer->length)));
+                      dcc[i].nick, (int) (100.0 * ((float) dcc[j].status) /
+                      ((float) dcc[j].u.xfer->length)));
               ok = 1;
               break;
             }

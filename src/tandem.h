@@ -1,7 +1,7 @@
 /*
  * tandem.h
  *
- * $Id: tandem.h,v 1.11 2003/01/28 06:37:24 wcc Exp $
+ * $Id: tandem.h,v 1.12 2003/01/29 05:48:41 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -99,9 +99,9 @@ int users_in_subtree(tand_t *);
 #endif /* MAKING_MODS */
 
 
-#define b_status(a)	(dcc[a].status)
-#define b_version(a)	(dcc[a].u.bot->version)
-#define b_linker(a)	(dcc[a].u.bot->linker)
-#define b_numver(a)	(dcc[a].u.bot->numver)
+#define b_status(a)  (dcc[a].status)
+#define b_version(a) (dcc[a].u.bot->version)
+#define b_linker(a)  (dcc[a].u.bot->linker)
+#define b_numver(a)  (dcc[a].u.bot->numver)
 
 #endif /* _EGG_TANDEM_H */

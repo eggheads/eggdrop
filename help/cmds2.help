@@ -27,7 +27,7 @@
 
    if you use %b'ignores <wildcard>'%b it will list all the ignores
    that match against your wildcard.
-   
+
 see also: +ignore, -ignore, set ignore-time
 %{help=link}%{+t}
 ###  %blink%b [some-bot] <new-bot>
@@ -44,7 +44,7 @@ see also: +ignore, -ignore, set ignore-time
    Loads a module.
 %{help=match}%{+o|o}
 ###  %bmatch%b <attr> [channel] [[start] limit]
-   shows you user records with the attributes requested: 
+   shows you user records with the attributes requested:
    <attr> is of the form:  <+/-><global>[&/|<channel>[&/|<bot>]]
     specifying & as the separator, will cause AND style matching,
     | will cause OR style matching, channel flags are match vs
@@ -52,7 +52,7 @@ see also: +ignore, -ignore, set ignore-time
     is match vs the separate bot flags.
     some examples:
        .match +o     will match any GLOBAL +o's
-       .match -o&+o  will match anyone without a global +o AND 
+       .match -o&+o  will match anyone without a global +o AND
                           with a channel +o on your console channel
        .match +f|+f  will match anyone with a global +f or a
                           channel +f on your console channel
@@ -77,7 +77,7 @@ see also: +ignore, -ignore, set ignore-time
 %{help=module}%{+n}
 ###  %bmodule%b [modulename]
    Reports the names of currently loaded modules, including
-   dependencies & status report, you can get info only on a 
+   dependencies & status report, you can get info only on a
    specific module by specifying it.
 %{help=modules}%{+n}
 ###  %bmodules%b [botname]
@@ -111,7 +111,7 @@ see also: +ignore, -ignore, set ignore-time
    you join the channel, and have notes stored for you on the bot,
    it will tell you.  to send a note to someone on a different bot,
    use "nick@bot" for the nickname.
-   
+
 see also: whom, notes
 %{help=page}
 ### %bpage%b <# or off>
@@ -132,7 +132,7 @@ see also: whom, notes
    variables and reloads any Tcl scripts your config loads.  it
    also saves and reloads the user file from disk, just to give
    your disk a little extra wear.
-   
+
 see also: save, reload, restart
 %{help=rehelp}%{+n}
 ###  %brehelp%b
@@ -145,20 +145,20 @@ see also: save, reload, restart
    connection to this bot will be relayed to the other bot until the
    other bot drops your relay, or until you send "*bye*" on a line by
    itself.
-   
+
 see also: bots
 %{help=reload}%{+m|m}
 ###  %breload%b
    reloads the user file of the bot, discarding any changes made
    since the last %b'.save'%b or hourly user file save.  sharebots
    should probably not ever do this.
-   
+
 see also: rehash, save
 %{help=traffic}%{+m|m}
 ###  %btraffic%b
    shows total and daily net traffic stats since last %b'.restart'%b.
    stats groups are IRC, Botnet, Partyline, Transfer.mod and Misc.
-   
+
 see also: restart
 %{help=whoami}
 ###  %bwhoami%b
@@ -171,14 +171,14 @@ see also: restart
    also saves and reloads the user file from disk, just to give
    your disk a little extra wear. it's also the most risky command
    to run, because it's never ever really worked properly.
-   
+
 see also: rehash, reload, save
 %{help=save}%{+m|m}
 ###  %bsave%b
    makes the bot write its entire user list to the disk.  this is
    useful if you think the bot is about to crash or something, since
    the user file is only written to disk about once an hour.
-   
+
 see also: reload, rehash
 %{help=backup}%{+m|m}
 ###  %bbackup%b
@@ -187,7 +187,7 @@ see also: reload, rehash
    channels file.
    this is useful if you feel the need to backup the user list and
    the channels settings.
-   
+
 see also: reload, rehash
 %{help=simul}%{+n}
 ###  %bsimul%b <nickname> <text>
@@ -215,7 +215,7 @@ see also: reload, rehash
    set their own strip flags without starting the modes with a +/-
 %{help=su}
 ###  %bsu%b <user>
-   changes your username to that of another. If you 
+   changes your username to that of another. If you
    are an owner this does not require a password
    otherwise, you must enter the password of <user>.
 
@@ -229,7 +229,7 @@ see also: reload, rehash
    it's a list of the bots between you and the destination bot.
    it should also return the time in seconds it took for the
    trace to occur.
-   
+
 see also: bots, bottree
 %{help=unlink}%{+t}
 ###  %bunlink%b <bot>
@@ -238,7 +238,7 @@ see also: bots, bottree
    particular) might not allow you to unlink them.
 ###  %bunlink%b *
    disconnects from all bots
-   
+
 see also: link, bots, bottree
 %{help=unloadmod}%{+n}
 ###  %bunloadmod%b <module>
@@ -249,7 +249,7 @@ see also: link, bots, bottree
    line (formed when you have two or more bots linked together).
    it will show each user's nickname, preceded by a "*" if they
    are the owner of their bot, "+" if they are a master, "%%" if
-   they are a botnet master or "@" if they are an op.  in other 
+   they are a botnet master or "@" if they are an op.  in other
    columns it will show which bot the user is on, and his or her host.
 
    if the user is away, the away message will be shown.  likewise,
@@ -259,7 +259,7 @@ see also: link, bots, bottree
    0), then this will show the people on every bot who are on
    your current channel.  you can also optionally give the "channel"
    option to list who is on a particular channel.
-   
+
 see also: who, bots, chat
 %{help=who}
 ###  %bwho%b [bot]
@@ -268,7 +268,7 @@ see also: who, bots, chat
    line, if you haven't changed channels) who are on the bot.
    a '*' next to the nickname means that user is an owner; '+'
    means they're a master; '@' means they're an op, '%%' means
-   they are a botnet master. the user's nickname, hostname, and 
+   they are a botnet master. the user's nickname, hostname, and
    possibly an idle time and/or away message will be displayed:
 %{+n}
    Owners will also see the users dcc idx
@@ -295,13 +295,13 @@ see also: who, bots, chat
    if you specify a bot's name, as in %b'.who valis'%b, the who request
    will be sent to that bot, as long as that bot is on the botnet.
 %{+m}
-  
+
    masters may also see "(con)" after a user's entry, this shows that
    user's console modes (see the %b'.console'%b help page).
-  
+
    in the final section (users that aren't on this channel), masters
    will see the actual channel other users are on.  also, people in
-   the file system will be listed (as being in channel "files") -- 
+   the file system will be listed (as being in channel "files") --
    a '+' next to the nickname here means the user has access to return
    to the party line.
 %{-}
@@ -317,7 +317,7 @@ see also: whom
       FLAGS        the list of flags for this user (see below)
       LAST         the time or date that the user was last on the
                       channel
-   
+
    the valid flags under FLAGS are:
       a   global auto-op (user is opped automatically upon joining a channel)
       b   bot (user is a bot)
@@ -343,9 +343,9 @@ see also: whom
       x   xfer (user has file-area access)
       y   global auto-halfop (user is halfopped automatically upon joining a channel)
       z   global washalfop-test (needs washalfop test for +stopnethack procedure)
-      
+
       (plus 26 user-defined flags, A-Z)
-   
+
    each channel that the user has joined will have a specific record
    for it, with the channel-specific flags and possibly an info
    line.  the channel-specific flags are:
@@ -368,14 +368,14 @@ see also: whom
       z   washalfop-test (needs washalfop test for +stopnethack procedure)
 
       (plus 26 user-defined flags, A-Z)
-   
+
    hostmasks for the user are displayed on the following lines.
    if the user entry is for a bot, there will be a line below which
    says "ADDRESS:" and gives the bot's telnet address.  some user
    entries may have "EMAIL:" and "INFO:" entries too.
-   There may be additional information displayed depending on the 
+   There may be additional information displayed depending on the
    modules loaded.
-   
+
    for bots, there are additional flags seen under the BOTATTR:
    entry, these include:
       s   share (bot is sharing user records, aggressively)
@@ -412,7 +412,7 @@ see also: match
 
    the second line, tell what operating system the bot is running
    under.
-   
+
    the third line, if present, is the contents of your 'admin'
    line in the config file.
 

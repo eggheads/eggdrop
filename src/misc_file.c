@@ -2,7 +2,7 @@
  * misc.c -- handles:
  *   copyfile() movefile() file_readable()
  *
- * $Id: misc_file.c,v 1.9 2003/01/28 06:37:24 wcc Exp $
+ * $Id: misc_file.c,v 1.10 2003/01/29 05:48:40 wcc Exp $
  */
 /*
  * Copyright (C) 1999, 2000, 2001, 2002, 2003 Eggheads Development Team
@@ -32,10 +32,10 @@
 /* Copy a file from one place to another (possibly erasing old copy).
  *
  * returns:  0 if OK
- *	     1 if can't open original file
- *	     2 if can't open new file
- *	     3 if original file isn't normal
- *	     4 if ran out of disk space
+ *           1 if can't open original file
+ *           2 if can't open new file
+ *           3 if original file isn't normal
+ *           4 if ran out of disk space
  */
 int copyfile(char *oldpath, char *newpath)
 {

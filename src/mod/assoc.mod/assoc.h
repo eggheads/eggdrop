@@ -1,7 +1,7 @@
 /*
  * assoc.h -- part of assoc.mod
  *
- * $Id: assoc.h,v 1.6 2003/01/28 06:37:25 wcc Exp $
+ * $Id: assoc.h,v 1.7 2003/01/29 05:48:41 wcc Exp $
  */
 /*
  * Copyright (C) 2000, 2001, 2002, 2003 Eggheads Development Team
@@ -24,22 +24,21 @@
 #ifndef _EGG_MOD_ASSOC_ASSOC_H
 #define _EGG_MOD_ASSOC_ASSOC_H
 
-#define ASSOC_NOSUCHCMD			MISC_NOSUCHCMD
-#define ASSOC_NOCHNAMES			get_language(0xb000)
-#define ASSOC_CHAN				get_language(0xb001)
-#define ASSOC_NAME				get_language(0xb002)
-#define ASSOC_LCHAN_RANGE		get_language(0xb003)
-#define ASSOC_CHAN_RANGE		get_language(0xb004)
-#define ASSOC_PARTYLINE			get_language(0xb005)
-#define ASSOC_NONAME_CHAN		get_language(0xb006)
-#define ASSOC_REMNAME_CHAN		get_language(0xb007)
-#define ASSOC_REMOUT_CHAN		get_language(0xb008)
-#define ASSOC_NEWNAME_CHAN		get_language(0xb009)
-#define ASSOC_NEWOUT_CHAN		get_language(0xb00a)
-#define ASSOC_CHNAME_NAMED		get_language(0xb00b)
-#define ASSOC_CHNAME_NAMED2		get_language(0xb00c)
-#define ASSOC_CHNAME_REM		get_language(0xb00d)
-#define ASSOC_CHNAME_TOOLONG	get_language(0xb00e)
-#define ASSOC_CHNAME_FIRSTCHAR	get_language(0xb00f)
+#define ASSOC_NOCHNAMES        get_language(0xb000)
+#define ASSOC_CHAN             get_language(0xb001)
+#define ASSOC_NAME             get_language(0xb002)
+#define ASSOC_LCHAN_RANGE      get_language(0xb003)
+#define ASSOC_CHAN_RANGE       get_language(0xb004)
+#define ASSOC_PARTYLINE        get_language(0xb005)
+#define ASSOC_NONAME_CHAN      get_language(0xb006)
+#define ASSOC_REMNAME_CHAN     get_language(0xb007)
+#define ASSOC_REMOUT_CHAN      get_language(0xb008)
+#define ASSOC_NEWNAME_CHAN     get_language(0xb009)
+#define ASSOC_NEWOUT_CHAN      get_language(0xb00a)
+#define ASSOC_CHNAME_NAMED     get_language(0xb00b)
+#define ASSOC_CHNAME_NAMED2    get_language(0xb00c)
+#define ASSOC_CHNAME_REM       get_language(0xb00d)
+#define ASSOC_CHNAME_TOOLONG   get_language(0xb00e)
+#define ASSOC_CHNAME_FIRSTCHAR get_language(0xb00f)
 
 #endif /* _EGG_MOD_ASSOC_ASSOC_H */

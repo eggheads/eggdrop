@@ -1,7 +1,7 @@
 /*
  * share.h -- part of share.mod
  *
- * $Id: share.h,v 1.6 2003/01/28 06:37:26 wcc Exp $
+ * $Id: share.h,v 1.7 2003/01/29 05:48:42 wcc Exp $
  */
 /*
  * Copyright (C) 1999, 2000, 2001, 2002, 2003 Eggheads Development Team
@@ -28,15 +28,15 @@
 #define UFF_INVITE    0x000002  /* Send invites in user file        */
 #define UFF_EXEMPT    0x000004  /* Send exempts in user file        */
 /* Currently reserved flags for other modules:
- *      UFF_COMPRESS    0x000008	   Compress the user file
- *      UFF_ENCRYPT	0x000010	   Encrypt the user file
+ *      UFF_COMPRESS    0x000008           Compress the user file
+ *      UFF_ENCRYPT     0x000010           Encrypt the user file
  */
 
 /* Currently used priorities:
- *        0		UFF_OVERRIDE
- *        0		UFF_INVITE
- *        0		UFF_EXEMPT
- *       90		UFF_ENCRYPT
+ *        0             UFF_OVERRIDE
+ *        0             UFF_INVITE
+ *        0             UFF_EXEMPT
+ *       90             UFF_ENCRYPT
  *      100             UFF_COMPRESS
  */
 

@@ -2,7 +2,7 @@
  * strftime.c
  *   Portable strftime implementation. Uses GNU's strftime().
  *
- * $Id: strftime.c,v 1.5 2003/01/28 06:37:25 wcc Exp $
+ * $Id: strftime.c,v 1.6 2003/01/29 05:48:41 wcc Exp $
  */
 /*
  * Copyright (C) 2000, 2001, 2002, 2003 Eggheads Development Team
@@ -29,7 +29,7 @@
 #ifndef HAVE_STRFTIME
 #  undef emacs
 #  undef _LIBC
-#  define strftime	egg_strftime
+#  define strftime egg_strftime
 
 #  include "gnu_strftime.c"
 #endif /* !HAVE_STRFTIME */

@@ -4,7 +4,7 @@
  *   Tcl initialization
  *   getting and setting Tcl/eggdrop variables
  *
- * $Id: tcl.c,v 1.58 2003/01/28 06:37:24 wcc Exp $
+ * $Id: tcl.c,v 1.59 2003/01/29 05:48:41 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -307,11 +307,11 @@ static char *tcl_eggstr(ClientData cdata, Tcl_Interp *irp, char *name1,
 
       obj = Tcl_GetVar2Ex(interp, name1, name2, 0);
       if (!obj)
-        return (NULL);
+        return NULL;
       len = 0;
       bytes = Tcl_GetByteArrayFromObj(obj, &len);
       if (!bytes)
-        return (NULL);
+        return NULL;
       s = malloc(len + 1);
       memcpy(s, bytes, len);
       s[len] = 0;
@@ -383,7 +383,7 @@ static int utf_converter(ClientData cdata, Tcl_Interp *myinterp, int objc,
     nfree(strings[i]);
   nfree(strings);
   utftot += diff;
-  return (retval);
+  return retval;
 }
 
 void cmd_delete_callback(ClientData cdata)

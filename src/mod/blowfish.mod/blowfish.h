@@ -1,7 +1,7 @@
 /*
  * blowfish.h -- part of blowfish.mod
  *
- * $Id: blowfish.h,v 1.9 2003/01/28 06:37:25 wcc Exp $
+ * $Id: blowfish.h,v 1.10 2003/01/29 05:48:41 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -25,11 +25,11 @@
 #ifndef _EGG_MOD_BLOWFISH_BLOWFISH_H
 #define _EGG_MOD_BLOWFISH_BLOWFISH_H
 
-#define MAXKEYBYTES	56      /* 448 bits */
-#define bf_N		16
-#define noErr		 0
-#define DATAERROR	-1
-#define KEYBYTES	 8
+#define MAXKEYBYTES 56 /* 448 bits */
+#define bf_N        16
+#define noErr        0
+#define DATAERROR   -1
+#define KEYBYTES     8
 
 union aword {
   u_32bit_t word;
@@ -40,12 +40,12 @@ union aword {
     unsigned int byte1:8;
     unsigned int byte2:8;
     unsigned int byte3:8;
-#else                           /* !WORDS_BIGENDIAN */
+#else /* !WORDS_BIGENDIAN */
     unsigned int byte3:8;
     unsigned int byte2:8;
     unsigned int byte1:8;
     unsigned int byte0:8;
-#endif                          /* !WORDS_BIGENDIAN */
+#endif /* !WORDS_BIGENDIAN */
   } w;
 };
 

@@ -2,7 +2,7 @@
  * main.h
  *   include file to include most other include files
  *
- * $Id: main.h,v 1.21 2003/01/28 06:37:24 wcc Exp $
+ * $Id: main.h,v 1.22 2003/01/29 05:48:40 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -89,28 +89,24 @@ extern struct dcc_table DCC_CHAT, DCC_BOT, DCC_LOST, DCC_SCRIPT, DCC_BOT_NEW,
 
 #endif
 
-#define iptolong(a)		(0xffffffff & 				\
-				 (long) (htonl((unsigned long) a)))
-#define fixcolon(x)		do {					\
-	if ((x)[0] == ':')			 			\
-		(x)++;							\
-	else								\
-		(x) = newsplit(&(x));					\
+#define iptolong(a) (0xffffffff & (long) (htonl((unsigned long) a)))
+#define fixcolon(x) do {                                                \
+        if ((x)[0] == ':')                                              \
+          (x)++;                                                        \
+        else                                                            \
+          (x) = newsplit(&(x));                                         \
 } while (0)
 
 /* This macro copies (_len - 1) bytes from _source to _target. The
  * target string is NULL-terminated.
  */
-#define strncpyz(_target, _source, _len)	do {			\
-	strncpy((_target), (_source), (_len) - 1);			\
-	(_target)[(_len) - 1] = 0;					\
+#define strncpyz(_target, _source, _len) do {                           \
+        strncpy((_target), (_source), (_len) - 1);                      \
+        (_target)[(_len) - 1] = 0;                                      \
 } while (0)
 
 #ifdef BORGCUBES
-
-/* For net.c */
-#  define O_NONBLOCK	00000004        /* POSIX non-blocking I/O              */
-
+#  define O_NONBLOCK 00000004 /* POSIX non-blocking I/O */
 #endif /* BORGUBES */
 
 

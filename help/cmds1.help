@@ -23,7 +23,7 @@
    comment and ignoretime. This command can be used to either ignore
    users on irc, or to ignore incoming telnet connections. Ignoretime
    has to be expressed in days, hours and/or minutes.
-   
+
 See also: -ignore, ignores
 %{help=+user}%{+m}
 ###  %b+user%b <nickname> <hostmask>
@@ -34,7 +34,7 @@ See also: -ignore, ignores
 ###  %b-bot%b <bot>
    Exactly the same as %b'-user'%b, but is included for convenience.
    It erases a user record.
-   
+
 See also: +bot, +user, -user
 %{help=-host}
 ###  %b-host%b <hostmask>
@@ -48,12 +48,12 @@ See also:  +host
 ###  %b-ignore%b <hostmask OR number>
    Removes the ignore from the list of ignores stored on the bot --
    You may also reference the ignore by the number shown in '.ignores'.
-   
+
 See also: +ignore, ignores
 %{help=-user}%{+m}
 ###  %b-user%b <nickname>
    Erases the user record for the nickname given.
-   
+
 See also:  +user, +bot, -bot
 %{help=addlog}%{+to|o}
 ###  %baddlog%b <text>
@@ -69,7 +69,7 @@ See also:  +user, +bot, -bot
    something on the party line will automatically remove your "away"
    status, or you can type %b'.back'%b or %b'.away'%b by itself.
 %{help=back}
-###  %bback%b 
+###  %bback%b
    This marks you un-away on the party line.
 %{help=banner}%{+t}
 ###  %bbanner%b <text>
@@ -88,13 +88,13 @@ See also:  +user, +bot, -bot
    records the number of times that binding has been called.
    If not, go read the file %b'tcl-commands.doc'%b for help on the
    Tcl bind command.  Note that the builtin commands are now shown.
-   You may also specify a type of binding to show (i.e., 
-   %b'.binds msg'%b) or you can specify a wild card match (i.e., 
+   You may also specify a type of binding to show (i.e.,
+   %b'.binds msg'%b) or you can specify a wild card match (i.e.,
    %b'.binds *seen*'%b) if you want to narrow the field a bit.
    The wild card matches will match against the TYPE, COMMAND and
    BINDING fields.
 ###  %bbinds%b [type] %ball%b
-   Displays all the Tcl bindings of every type (or the specified 
+   Displays all the Tcl bindings of every type (or the specified
    type), including the bindings for built in commands such as:
         msg  -    op                   *msg:op
 %{help=boot}%{+t}
@@ -112,7 +112,7 @@ See also:  +user, +bot, -bot
       .botattr Fred1 +s-h
 
    Whether or not you change any flags, it will show you the bot's
-   attributes afterwards.  
+   attributes afterwards.
    To get a list of the flags possible, do %b'help whois'%b.
    %bNOTE:%b This command is NOT used to replace .chattr,
    it modifies botflags such as +s, +h, +a, +u... bot specific
@@ -139,7 +139,7 @@ See also: whois, chattr
    physically. if 2 bots are sharing, a + will be indicated, or a ?
    if nothing is known.
    Use vbottree if you want to know bot versions as well.
-   
+
 See also: bots, botinfo
 %{help=chaddr}%{+t}
 ###  %bchaddr %b<bot> <address:botport#/userport#>
@@ -147,7 +147,7 @@ See also: bots, botinfo
    your bot will try to telnet to in order to create a connection
    and link up.  If the bot has a separate port for bots and users
    they should be separated with a slash (/).
-   
+
 See also: link, +bot
 %{help=chat}
 ###  %bchat off%b
@@ -156,9 +156,9 @@ See also: link, +bot
    connect to the bot, it places you on channel 0 (the party line).
    You can move to another channel where basically nobody can see
    you (except anyone else who decides to join that channel).  Valid
-   channel numbers are 1 through 99999.  
+   channel numbers are 1 through 99999.
 
-   Some channels may have assigned names if the assoc module is 
+   Some channels may have assigned names if the assoc module is
    loaded.  For those, you can specify the channel by name instead
    of number if you wish.
 
@@ -191,7 +191,7 @@ See also: link, +bot
       .chattr Bill f|o #lamer   (global +f, +o #lamer)
 
    Whether or not you change any flags, it will show you the user's
-   attributes afterwards.  
+   attributes afterwards.
 
    To get a list of the flags possible, do %b'help whois'%b.
 
@@ -219,7 +219,7 @@ See also: whois
    password, the user effectively no longer has a password set.  A
    password is needed to get ops, join the party line, and other
    things (but only required if one is set).
- 
+
    %bNOTE:%b In previous versions, setting a password to "nopass" would
      clear a user's password -- with encrypted passwords, this no
      longer works!
@@ -297,7 +297,7 @@ See also: whois
       conn  pending telnet connection (chat, relay, bot-link, etc)
       new   new user via telnet, entering a handle
       newp  new user via telnet, entering a password
- 
+
    in addition, 'chat' and 'bot' have flags listed for each con-
    nection.  capital letters mean the flag is on, and lowercase
    letters mean the flag is off.  for 'chat', the flags are:

@@ -2,15 +2,15 @@
 ###  %b(the +c 'common' flag)%b
    Sometimes a lot of people use irc from the same account, i.e.
    example, a public telnet site.  In that case, many people can
-   have the same user@host.  For that reason, they can't use a 
-   traditional user record because they will appear to all be 
+   have the same user@host.  For that reason, they can't use a
+   traditional user record because they will appear to all be
    the same person.
-  
+
    In such cases, create a user record for the account, and mark
-   it +c, or "common access".  Marking it as "common access" means 
-   that it shouldn't be used as a definitive address.  When someone 
-   introduces themselves to the bot (i.e., by /msg'ing "hello")and matches 
-   as a +c user, they will be given a new user record which identifies 
+   it +c, or "common access".  Marking it as "common access" means
+   that it shouldn't be used as a definitive address.  When someone
+   introduces themselves to the bot (i.e., by /msg'ing "hello")and matches
+   as a +c user, they will be given a new user record which identifies
    them BY NICKNAME.
 
    Obviously people with that kind of user record shouldn't be given
@@ -66,7 +66,7 @@ See also: -lang, +lsec, -lsec, lstat, relang
    Removes a language from the language list. All sections are checked if
    they are using the language and if so, try to load the next available
    language instead.
- 
+
 See also: +lang, +lsec, -lsec, lstat, relang
 %{help=+lsec}%{+n}
 ###  %b+lsec%b <section>
@@ -106,7 +106,7 @@ See also: +lang, -lang, +lsec, -lsec, lstat
   %b.handle%b <handle>   changes nick on party line
   %b.help%b <command>    get more help on a specific command
 The following commands are also available:
-%b   bots      newpass   email     who       echo   %b    
+%b   bots      newpass   email     who       echo   %b
 %b   info      away      back      strip     trace%b
 %b   page      su        fixcodes  motd      whom%b
 %b%{+x}   files%{-}%b

@@ -2,7 +2,7 @@
  * assoc.c -- part of assoc.mod
  *   the assoc code, moved here mainly from botnet.c for module work
  *
- * $Id: assoc.c,v 1.23 2003/01/28 06:37:25 wcc Exp $
+ * $Id: assoc.c,v 1.24 2003/01/29 05:48:41 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -199,9 +199,8 @@ static int cmd_assoc(struct userrec *u, int idx, char *par)
     putlog(LOG_CMDS, "*", "#%s# assoc", dcc[idx].nick);
     dump_assoc(idx);
   }
-  else if (!u || !(u->flags & USER_BOTMAST)) {
-    dprintf(idx, "%s", ASSOC_NOSUCHCMD);
-  }
+  else if (!u || !(u->flags & USER_BOTMAST))
+    dprintf(idx, "%s", MISC_NOSUCHCMD);
   else {
     num = newsplit(&par);
     if (num[0] == '*') {

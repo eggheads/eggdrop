@@ -7,18 +7,18 @@
 ###  %bcancel%b <file(s)>
    tells the bot to stop sending a file that is pending (either
    queued, waiting, or in the process of being transferred).
-   
+
 see also: pending
-%{help=filesys/cd}%{+x}   
+%{help=filesys/cd}%{+x}
 ###  %bcd%b <directory>
    changes your current directory if possible.  this works exactly
    like the unix command.
-   
+
 see also: pwd
 %{help=filesys/cp}%{+j}
 ###  %bcp%b <source> <dest>
    copies a file or group of files from one place to another.
-   
+
 see also: mv
 %{help=filesys/desc}%{+x}
 ###  %bdesc%b <file> <description>
@@ -54,7 +54,7 @@ see also: mv
    simultaneously, so if you go over this limit, the remainder of
    your file requests will be queued.  as the first files finish
    transferring, the queued files will be sent.
-   
+
 see also: pending, cancel
 %{help=filesys/help}%{+x}
 %B file system commands:   (wildcard expressions are allowed)
@@ -86,7 +86,7 @@ Settings:
 ###  %bhide%b <file(s)>
    marks a file as hidden, so that normal users can't see it.
    only a master or file janitor using %b'lsa'%b can see hidden files.
-   
+
 see also: unhide, lsa
 %{help=filesys/ln}%{+j}
 ###  %bln%b <bot:filepath> <localfile>
@@ -96,7 +96,7 @@ see also: unhide, lsa
    file until that bot connects again.  the local filename can be
    anything you want.
    example:  ln Snowbot:/gifs/uglyman.gif ugly.gif
-   
+
 see also: share, unshare, get
 %{help=filesys/ls}%{+x}
 ###  %bls%b [filemask]
@@ -106,14 +106,14 @@ see also: share, unshare, get
    and how many times each file has been downloaded.  if a description
    of the file exists, it is displayed below the filename.  you can
    restrict the file listing by specifying a mask, just like in unix.
-   
+
 see also: cd, pwd, get
 %{help=filesys/lsa}%{+j}
 ###  %blsa%b [filemask]
    works just like ls, but hidden files are displayed too.
    hidden files are displayed with a "(hid)" next to them, and
    shared files are displayed with a "(shr)" next to them.
-   
+
 see also: hide, share
 %{help=filesys/mkdir}%{+j}
 ###  %bmkdir%b <dir> [flags [channel]]
@@ -122,13 +122,13 @@ see also: hide, share
    even see the directory.  you can even specify a channel that the
    flags are matched against. you can use the %b'mkdir'%b command again
    to alter or remove those flags.
-   
+
 see also: rmdir
 %{help=filesys/mv}%{+j}
 ###  %bmv%b <source> <dest>
    moves a file or group of files from one place to another.  (it
    can also be used to rename files.)
-   
+
 see also: cp
 %{help=filesys/pending}%{+x}
 ###  %bpending%b
@@ -137,12 +137,12 @@ see also: cp
    it shows you the nickname on IRC that the file is being sent
    to, and, if the transfer is in progress, tells you how far
    along the transfer is.
-   
+
 see also: cancel
 %{help=filesys/pwd}%{+x}
 ###  %bpwd%b
    tells you what your current directory is.
-   
+
 see also: cd
 %{help=filesys/quit}%{+x}
 ###  %bquit%b
@@ -153,14 +153,14 @@ see also: cd
 %{help=filesys/rmdir}%{+j}
 ###  %brmdir%b <dir>
    removes an existing directory, if there are no files in it.
-   
+
 see also: mkdir
 %{help=filesys/share}%{+j}
 ###  %bshare%b <file(s)>
    marks a file as shared.  this means that other bots can get
    the file remotely for users on their file systems.  by default,
    files are marked as unshared.
-   
+
 see also: unshare, lsa, ln
 %{help=filesys/optimize}%{+j}
 ###  %boptimize%b
@@ -175,12 +175,12 @@ see also: unshare, lsa, ln
 %{help=filesys/unhide}%{+j}
 ###  %bunhide%b <file(s)>
    makes a file be not hidden any more.
-   
+
 see also: hide, lsa
 %{help=filesys/unshare}%{+j}
 ###  %bunshare%b <file(s)>
    removes the shared tag from a file.
-   
+
 see also: share, lsa, ln
 %{help=filesys module}%{+x}
 ### commands for the %bfilesys module%b

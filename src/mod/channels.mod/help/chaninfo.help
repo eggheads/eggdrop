@@ -1,26 +1,26 @@
 %{help=chaninfo}%{+m|m}
 ###  %bchaninfo%b <channel>
-     This lists all the settings for the bot on the given channel. 
+     This lists all the settings for the bot on the given channel.
      It shows any of the following:
-	%bchanmode%b   which modes are enforced on the channel, both + and -
-	           modes can be enforced
-	%bidle-kick%b  kick idle users (non +f's anyway) on the channel after
-	           how many minutes (use 0, or dont-idle-kick to turn this off)
+        %bchanmode%b   which modes are enforced on the channel, both + and -
+                   modes can be enforced
+        %bidle-kick%b  kick idle users (non +f's anyway) on the channel after
+                   how many minutes (use 0, or dont-idle-kick to turn this off)
 %{+n}
      ATTENTION: Due to security concerns, only permanent owners can set the
                 need-* modes.
-	%bneed-op%b      Tcl command to execute when the bot doesn't have
-	                  ops
-	%bneed-invite%b  Tcl command to execute when the bot needs to be
-	                  invited to the channel (i.e. channel has mode +i)
-	%bneed-key%b     Tcl command to execute when the bot needs to find 
-	             out the key to the channel
-	%bneed-unban%b   Tcl command to execute when the bot is banned and
+        %bneed-op%b      Tcl command to execute when the bot doesn't have
+                          ops
+        %bneed-invite%b  Tcl command to execute when the bot needs to be
+                          invited to the channel (i.e. channel has mode +i)
+        %bneed-key%b     Tcl command to execute when the bot needs to find
+                     out the key to the channel
+        %bneed-unban%b   Tcl command to execute when the bot is banned and
                      can't get on the channel
-	%bneed-limit%b   Tcl command to execute when the bot can't
-	                  join the channel because the channel is full
+        %bneed-limit%b   Tcl command to execute when the bot can't
+                          join the channel because the channel is full
 %{+m|m}
-	%bstopnethack-mode%b    de-op anyone who enters the channel with server
+        %bstopnethack-mode%b    de-op anyone who enters the channel with server
                        ops
                        0 turn off,
                        1 isoptest (allow serverop if registered op)
@@ -31,8 +31,8 @@
                          if channel +bitch: see stopnethack-mode 1
                        6 if channel -bitch: see stopnethack-mode 2
                          if channel +bitch: see stopnethack-mode 4
-	%brevenge-mode%b      defines how the bot should punish bad users when
-	                  revenging
+        %brevenge-mode%b      defines how the bot should punish bad users when
+                          revenging
                        0 for deop
                        1 for deop and +d
                        2 for deop, +d and kick
@@ -42,38 +42,38 @@
                        x:x x sec delaytime
                        x:y random delay, minimum x sec, maximum y sec
      The following can be set + or - (e.g. .chanset #channel -enforcebans)
-	%benforcebans%b    kicks people who match channel bans?
-	%bdynamicbans%b    only activate bans on channel when they are needed
-	%buserbans%b       allow other users to place bans on the channel
-	%bdynamicexempts%b only activate exempts on channel when needed?
-	%buserexempts%b    allow exempts to be set by users directly?
-	%bdynamicinvites%b only activate invites on channel when needed?
-	%buserinvites%b    allow invites to be made by users directly?
-	%bautoop%b         automatically op users when they join the channel
-	%bautohalfop%b     automatically halfop users when they join the channel
-	%bbitch%b          only allow users with the +o flag to be ops on the 
-	               channel
-	%bgreet%b          say a users info line when they join the channel
-	%bprotectops%b     re-op a +o user who gets deopped?
-	%bprotecthalfops%b re-halfop a +l user who gets dehalfopped?
-	%bprotectfriends%b re-op a +f user who gets deopped?
-	%bdontkickops%b    never kick +o flag people
-	%binactive%b        never join this channel, or leave if already
-	                    joined. Useful as you can make the bot leave
+        %benforcebans%b    kicks people who match channel bans?
+        %bdynamicbans%b    only activate bans on channel when they are needed
+        %buserbans%b       allow other users to place bans on the channel
+        %bdynamicexempts%b only activate exempts on channel when needed?
+        %buserexempts%b    allow exempts to be set by users directly?
+        %bdynamicinvites%b only activate invites on channel when needed?
+        %buserinvites%b    allow invites to be made by users directly?
+        %bautoop%b         automatically op users when they join the channel
+        %bautohalfop%b     automatically halfop users when they join the channel
+        %bbitch%b          only allow users with the +o flag to be ops on the
+                       channel
+        %bgreet%b          say a users info line when they join the channel
+        %bprotectops%b     re-op a +o user who gets deopped?
+        %bprotecthalfops%b re-halfop a +l user who gets dehalfopped?
+        %bprotectfriends%b re-op a +f user who gets deopped?
+        %bdontkickops%b    never kick +o flag people
+        %binactive%b        never join this channel, or leave if already
+                            joined. Useful as you can make the bot leave
                             a channel without losing it's settings or
                             affecting any sharing.
-	%bstatuslog%b      log the channel status every 5 minutes
-	%bcycle%b          cycle the channel when it becomes op-less
-	%brevenge%b         take revenge on anyone who deops or kicks friends
-	                or ops
-	%brevengebot%b      take revenge on anyone who deops or kicks the bot
-	%bsecret%b          don't provide info about the channel over the
+        %bstatuslog%b      log the channel status every 5 minutes
+        %bcycle%b          cycle the channel when it becomes op-less
+        %brevenge%b         take revenge on anyone who deops or kicks friends
+                        or ops
+        %brevengebot%b      take revenge on anyone who deops or kicks the bot
+        %bsecret%b          don't provide info about the channel over the
                         botnet
-	%bshared%b         share user settings for this channel 
-	                (NOTE: this can be set online now)
-	%bautovoice%b      this causes the bot to also monitor channel voice
-	               settings, using the +v/+q settings.
-	%bnodesynch%b       allow non-ops to perform channel modes? (Stops bot from
+        %bshared%b         share user settings for this channel
+                        (NOTE: this can be set online now)
+        %bautovoice%b      this causes the bot to also monitor channel voice
+                       settings, using the +v/+q settings.
+        %bnodesynch%b       allow non-ops to perform channel modes? (Stops bot from
                    fighting with services such as ChanServ)
      The following are flood settings, they are set by doing
      .chanset <channel> flood-type number:seconds where number and second are
@@ -81,13 +81,13 @@
      be triggered.
           .chanset <channel> flood-type 0:0
      (or 0:1 or 1:0) will deactivate the respective flood setting.
-	%bflood-chan%b  this defines the flood level for public chatter and
-	            actions
-	%bflood-ctcp%b  this defines the flood level for ctcp's to the channel
-	            (include PING & VERSION), except for ACTION's
-	%bflood-join%b  this defines the number of joins from a give user@host
-	            that constitutes a flood
-	%bflood-kick%b   how many kicks in the given time are a flood
-	%bflood-deop%b   deops in the given time
+        %bflood-chan%b  this defines the flood level for public chatter and
+                    actions
+        %bflood-ctcp%b  this defines the flood level for ctcp's to the channel
+                    (include PING & VERSION), except for ACTION's
+        %bflood-join%b  this defines the number of joins from a give user@host
+                    that constitutes a flood
+        %bflood-kick%b   how many kicks in the given time are a flood
+        %bflood-deop%b   deops in the given time
 %{+n|n}
 See also: %{+n}+chan, -chan,%{+n|n} chansave, chanload, chanset

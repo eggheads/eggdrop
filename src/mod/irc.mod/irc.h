@@ -1,7 +1,7 @@
 /*
  * irc.h -- part of irc.mod
  *
- * $Id: irc.h,v 1.23 2003/01/28 06:37:26 wcc Exp $
+ * $Id: irc.h,v 1.24 2003/01/29 05:48:42 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -60,12 +60,12 @@ static void set_delay(struct chanset_t *, char *);
 /* reset(bans|exempts|invites) are now just macros that call resetmasks
  * in order to reduce the code duplication. <cybah>
  */
-#define resetbans(chan)	    resetmasks((chan), (chan)->channel.ban,	\
-				       (chan)->bans, global_bans, 'b')
-#define resetexempts(chan)  resetmasks((chan), (chan)->channel.exempt,	\
-				       (chan)->exempts, global_exempts, 'e')
-#define resetinvites(chan)  resetmasks((chan), (chan)->channel.invite,	\
-				       (chan)->invites, global_invites, 'I')
+#define resetbans(chan)     resetmasks((chan), (chan)->channel.ban,          \
+                                       (chan)->bans, global_bans, 'b')
+#define resetexempts(chan)  resetmasks((chan), (chan)->channel.exempt,       \
+                                       (chan)->exempts, global_exempts, 'e')
+#define resetinvites(chan)  resetmasks((chan), (chan)->channel.invite,       \
+                                       (chan)->invites, global_invites, 'I')
 
 static void reset_chan_info(struct chanset_t *);
 static void recheck_channel(struct chanset_t *, int);
@@ -86,9 +86,9 @@ static int gotmode(char *, char *);
 
 #define newban(chan, mask, who)         newmask((chan)->channel.ban, mask, who)
 #define newexempt(chan, mask, who)      newmask((chan)->channel.exempt, mask, \
-						who)
+                                                who)
 #define newinvite(chan, mask, who)      newmask((chan)->channel.invite, mask, \
-						who)
+                                                who)
 
 #else
 /* 4 - 7 */

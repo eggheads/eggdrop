@@ -1,7 +1,7 @@
 # transfer.french.lang
 #   language messages for transfer module
 #
-# $Id: transfer.french.lang,v 1.1 2002/03/22 04:01:05 guppy Exp $
+# $Id: transfer.french.lang,v 1.2 2003/01/29 05:48:42 wcc Exp $
 
 0xf00,Refus de réception dcc %s : copie de %s IMPOSSIBLE !
 0xf01,NOTICE %s :Le système de fichier est H.S.; annulation des fichiers en attente.\n
@@ -36,7 +36,7 @@
 # 0xf1e, < this one is now empty
 0xf1f,Déconnexion de %s (Abandon du transfert de la liste d'utilisateurs)
 0xf20,Perte de l'envoi DCC %s de %s!%s (%lu/%lu)
-0xf21,(!) Paquet de reprise invalide de %s pour %s !	
+0xf21,(!) Paquet de reprise invalide de %s pour %s !
 0xf22,!! Reprise du transfert apres la fin du fichier pour %s à %s
 0xf23,!!! Tentative d'abandon du transfert de la liste d'utilisateurs
 0xf24,Reprise du transfert de fichier à %dk de %s à %s

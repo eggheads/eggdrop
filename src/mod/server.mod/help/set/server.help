@@ -4,7 +4,7 @@
    (in 'nick') is in use.  if the alternate nickname is also in
    use, or is blank, the bot will try sticking digits at the end
    of the preferred nick until it gets one that works.
-   
+
 see also: set nick, set botnet-nick
 %{help=set realname}%{+n}
 ###  %bset realname%b <text>
@@ -13,7 +13,7 @@ see also: set nick, set botnet-nick
    one's user@host.  it can be anything you want, but IRC sets
    a maximum length so it might get cut off if you set it too
    long.
-   
+
 see also: set username
 %{help=set init-server}%{+n}
 ###  %bset init-server%b <raw-irc-text>
@@ -67,7 +67,7 @@ see also: set username
    it is forced to change nicks.  if this is on, and you change the bot's
    nick on irc through a Tcl script or the %b'.dump'%b command, then the bot
    will change back to its intended nick within 60 seconds.
-   
+
 see also: set nick, set altnick
 %{help=set check-stoned}%{+n}
 ###  %bset check-stoned%b 0/1
@@ -77,11 +77,11 @@ see also: set nick, set altnick
 %{help=set serverror-quit}%{+n}
 ###  %bset serverror-quit%b 0/1
    Enabling this will cause the bot to assume that an ERROR message
-   from the server indicates it's about to drop the connection, 
+   from the server indicates it's about to drop the connection,
    and so the bot closes the server connection immediately.
 %{help=set quiet-reject}%{+n}
 ###  %bset quiet-reject%b 0/1
-   Some of the message & ctcp commands return negative messages to 
+   Some of the message & ctcp commands return negative messages to
    unknown users, while this is polite & useful, it's also a
    possible detection method, enabling this will cause the bot
    to only send positive responses to know users.
@@ -103,36 +103,36 @@ see also: set nick, set altnick
    This sets the number of seconds to wait between successive server
    connects, this can be used to prevent the throttling problems
    with ircu & connecting too quickly.
-%{help=set default-port}%{+n}   
+%{help=set default-port}%{+n}
 ###  %bset default-port%b <#>
    sets the default port the bot tries to connect to when there
    is not port specified in the server list.
 %{help=set nick}%{+n}
 ###  %bset nick%b <nickname>
    specifies the bot's default nickname to use on IRC and on
-   the botnet, unless botnet-nick is set differently.  
-   
+   the botnet, unless botnet-nick is set differently.
+
 see also: set altnick, set botnet-nick
 %{help=set flood-ctcp}%{+n}
 ###  %bset flood-ctcp%b <#ctcps>[:<#seconds>]
    specifies the flood threshold for CTCP queries (to the bot).
-   if the same host dumps more than this many CTCPs to the bot 
+   if the same host dumps more than this many CTCPs to the bot
    within 60 seconds, they will be placed on automatic ignore.
    you can also specify the number of seconds to scan by adding
    that after a colon (:).  if you set the number of ctcps to 0,
    you disable ctcp flood protection (including avalanche flood
    protection).
-   
+
 see also: set flood-msg
 %{help=set flood-msg}%{+n}
 ###  %bset flood-msg%b <#msgs>[:<#seconds>]
-   specifies the flood threshold for /MSG's. if the same host 
+   specifies the flood threshold for /MSG's. if the same host
    dumps more than this many /MSG's to the bot within 60 seconds,
    it is considered a flood and that host is put on automatic
    ignore.  you can change the scanning time from 60 seconds by
    specifying the number of seconds after a colon (:).  setting
    the # of msgs to 0 turns off msg flood protection.
-  
+
    examples:
      set flood-msg 10
        (10 msgs in 60 seconds is a flood)
@@ -140,7 +140,7 @@ see also: set flood-msg
        (5 msgs in 15 seconds is a flood)
      set flood-msg 0
        (turns off msg flood protection)
-       
+
 see also: set flood-ctcp
 %{help=set servers}%{+n}
 ###  %bset servers%b <server-list>
@@ -154,7 +154,7 @@ see also: set flood-ctcp
       }
    note that if you omit the port, it will assume the value of the
    %bdefault-port%b setting.
-   
+
 see also: default-port
 %{help=set botname}%{+n}
 ###  %bset botname%b

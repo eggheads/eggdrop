@@ -2,7 +2,7 @@
 ###  %bdump%b <text>
    dumps the text to the server.  keep in mind that this bot doesn't
    run through ircII, so ircII commands will most likely not work this
-   way.  they need to be raw irc codes. read rfc1459 from ftp.internic.net 
+   way.  they need to be raw irc codes. read rfc1459 from ftp.internic.net
    for more help.
 %{help=jump}%{+m}
 ###  %bjump%b [server [port [pass]]]
@@ -27,12 +27,12 @@
 ###  help on the %bserver module%b
    This module provides all that's need to get a bot on a server and
    sitting there, it provides server connection, raw irc, private
-   message/notice/ctcp handling. 
+   message/notice/ctcp handling.
    Command(s) avalible: (use %b'.help <command>'%b for more info)
       %bservers%b  %{+m}%bjump%b  %bdump%b
 %{+n}
    There is also a list of Tcl settings available,
-   use %b'.help server settings'%b   
+   use %b'.help server settings'%b
 %{help=all}%{+o|o}
 ###  commands for the %bserver module%b
   %bservers%b  %{+m}%bjump%b  %bdump%b

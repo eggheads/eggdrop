@@ -6,7 +6,7 @@
  * Written by Fabian Knittel <fknittel@gmx.de>. Based on zlib examples
  * by Jean-loup Gailly and Miguel Albrecht.
  *
- * $Id: compress.c,v 1.16 2003/01/28 06:37:25 wcc Exp $
+ * $Id: compress.c,v 1.17 2003/01/29 05:48:41 wcc Exp $
  */
 /*
  * Copyright (C) 2000, 2001, 2002, 2003 Eggheads Development Team
@@ -44,7 +44,7 @@
 #endif /* HAVE_MMAP */
 #include "compress.h"
 
-#define BUFLEN	512
+#define BUFLEN 512
 
 
 static Function *global = NULL, *share_funcs = NULL;

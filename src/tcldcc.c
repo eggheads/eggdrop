@@ -2,7 +2,7 @@
  * tcldcc.c -- handles:
  *   Tcl stubs for the dcc commands
  *
- * $Id: tcldcc.c,v 1.39 2003/01/28 06:37:24 wcc Exp $
+ * $Id: tcldcc.c,v 1.40 2003/01/29 05:48:41 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -113,11 +113,7 @@ static int tcl_dccsimul STDVAR
 {
   BADARGS(3, 3, " idx command");
 
-  if (!enable_simul) {
-    Tcl_AppendResult(irp, "simul disabled", NULL);
-    return TCL_ERROR;
-  }
-  else {
+  if (enable_simul) {
     int idx = findidx(atoi(argv[1]));
 
     if (idx >= 0 && (dcc[idx].type->flags & DCT_SIMUL)) {
@@ -125,19 +121,21 @@ static int tcl_dccsimul STDVAR
 
       if (l > 510) {
         l = 510;
-        argv[2][510] = 0; /* Restrict length of cmd */
+        argv[2][510] = 0;        /* Restrict length of cmd */
       }
       if (dcc[idx].type && dcc[idx].type->activity) {
         dcc[idx].type->activity(idx, argv[2], l);
         return TCL_OK;
       }
     }
-    else {
+    else
       Tcl_AppendResult(irp, "invalid idx", NULL);
-      return TCL_ERROR;
-    }
   }
+  else
+    Tcl_AppendResult(irp, "simul disabled", NULL);
+  return TCL_ERROR;
 }
+
 
 static int tcl_dccbroadcast STDVAR
 {

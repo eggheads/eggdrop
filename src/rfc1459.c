@@ -1,7 +1,7 @@
 /*
  * rfc1459.c
  * 
- * $Id: rfc1459.c,v 1.7 2003/01/28 06:37:24 wcc Exp $
+ * $Id: rfc1459.c,v 1.8 2003/01/29 05:48:41 wcc Exp $
  */
 /* 
  * Copyright (C) 1990 Jarkko Oikarinen
@@ -39,7 +39,7 @@ int _rfc_casecmp(const char *s1, const char *s2)
     str1++;
     str2++;
   }
-  return (res);
+  return res;
 }
 
 int _rfc_ncasecmp(const char *str1, const char *str2, int n)
@@ -55,7 +55,7 @@ int _rfc_ncasecmp(const char *str1, const char *str2, int n)
     if (!n || (*s1 == '\0' && *s2 == '\0'))
       return 0;
   }
-  return (res);
+  return res;
 }
 
 unsigned char rfc_tolowertab[];

@@ -1,7 +1,7 @@
 /*
  * uf_features.c -- part of share.mod
  *
- * $Id: uf_features.c,v 1.11 2003/01/28 06:37:26 wcc Exp $
+ * $Id: uf_features.c,v 1.12 2003/01/29 05:48:42 wcc Exp $
  */
 /*
  * Copyright (C) 2000, 2001, 2002, 2003 Eggheads Development Team
@@ -25,37 +25,37 @@
  * Userfile feature protocol description:
  *
  *
- *		 LEAF				       HUB
+ *               LEAF                                  HUB
  *
  *   uf_features_dump():
- *	Finds out which features
- *	it supports / wants to use
- *	and then dumps those. The
- *	list is appended to the
- *	user file send ack.
+ *      Finds out which features
+ *      it supports / wants to use
+ *      and then dumps those. The
+ *      list is appended to the
+ *      user file send ack.
  *
- *	"s uy <features>"   --+
- *			      |
- *			      +-->   uf_features_parse():
- *					Parses the given list of features,
- *					given in a string, seperated with
- *					spaces. Decides which features to
- *					accept/use. Those features are then
- *					locally set:
+ *      "s uy <features>"   --+
+ *                            |
+ *                            +-->   uf_features_parse():
+ *                                      Parses the given list of features,
+ *                                      given in a string, seperated with
+ *                                      spaces. Decides which features to
+ *                                      accept/use. Those features are then
+ *                                      locally set:
  *
- *					dcc[idx].u.bot->uff_flags |= <feature_flag>
+ *                                      dcc[idx].u.bot->uff_flags |= <feature_flag>
  *
- *					and sent back to the LEAF:
+ *                                      and sent back to the LEAF:
  *
- *				+---	"s feats <accepted_features>"
- *				|
+ *                              +---    "s feats <accepted_features>"
+ *                              |
  *   uf_features_check():    <--+
- *	Checks wether the responded
- *	features are still accepted
- *	by us. If they are, we set
- *	the flags locally:
+ *      Checks wether the responded
+ *      features are still accepted
+ *      by us. If they are, we set
+ *      the flags locally:
  *
- *	dcc[idx].u.bot->uff_flags |= <feature_flag>
+ *      dcc[idx].u.bot->uff_flags |= <feature_flag>
  */
 
 

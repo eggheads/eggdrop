@@ -136,7 +136,7 @@ static const mbstate_t mbstate_zero;
 #ifndef __isleap
 /* Nonzero if YEAR is a leap year (every 4 years,
    except every 100th isn't, and every 400th is).  */
-# define __isleap(year)	\
+# define __isleap(year) \
   ((year) % 4 == 0 && ((year) % 100 != 0 || (year) % 400 == 0))
 #endif
 
@@ -195,66 +195,66 @@ static const char zeroes[16] =  /* "0000000000000000" */
     '0' };
 
 # define memset_space(P, Len) \
-  do {									      \
-    int _len = (Len);							      \
-									      \
-    do									      \
-      {									      \
-	int _this = _len > 16 ? 16 : _len;				      \
-	(P) = MEMPCPY ((P), spaces, _this);				      \
-	_len -= _this;							      \
-      }									      \
-    while (_len > 0);							      \
+  do {                                                                        \
+    int _len = (Len);                                                         \
+                                                                              \
+    do                                                                        \
+      {                                                                       \
+        int _this = _len > 16 ? 16 : _len;                                    \
+        (P) = MEMPCPY ((P), spaces, _this);                                   \
+        _len -= _this;                                                        \
+      }                                                                       \
+    while (_len > 0);                                                         \
   } while (0)
 
 # define memset_zero(P, Len) \
-  do {									      \
-    int _len = (Len);							      \
-									      \
-    do									      \
-      {									      \
-	int _this = _len > 16 ? 16 : _len;				      \
-	(P) = MEMPCPY ((P), zeroes, _this);				      \
-	_len -= _this;							      \
-      }									      \
-    while (_len > 0);							      \
+  do {                                                                        \
+    int _len = (Len);                                                         \
+                                                                              \
+    do                                                                        \
+      {                                                                       \
+        int _this = _len > 16 ? 16 : _len;                                    \
+        (P) = MEMPCPY ((P), zeroes, _this);                                   \
+        _len -= _this;                                                        \
+      }                                                                       \
+    while (_len > 0);                                                         \
   } while (0)
 #else
 # define memset_space(P, Len) (memset ((P), ' ', (Len)), (P) += (Len))
 # define memset_zero(P, Len) (memset ((P), '0', (Len)), (P) += (Len))
 #endif
 
-#define add(n, f)							      \
-  do									      \
-    {									      \
-      int _n = (n);							      \
-      int _delta = width - _n;						      \
-      int _incr = _n + (_delta > 0 ? _delta : 0);			      \
-      if (i + _incr >= maxsize)						      \
-	return 0;							      \
-      if (p)								      \
-	{								      \
-	  if (_delta > 0)						      \
-	    {								      \
-	      if (pad == '0')						      \
-		memset_zero (p, _delta);				      \
-	      else							      \
-		memset_space (p, _delta);				      \
-	    }								      \
-	  f;								      \
-	  p += _n;							      \
-	}								      \
-      i += _incr;							      \
+#define add(n, f)                                                             \
+  do                                                                          \
+    {                                                                         \
+      int _n = (n);                                                           \
+      int _delta = width - _n;                                                \
+      int _incr = _n + (_delta > 0 ? _delta : 0);                             \
+      if (i + _incr >= maxsize)                                               \
+        return 0;                                                             \
+      if (p)                                                                  \
+        {                                                                     \
+          if (_delta > 0)                                                     \
+            {                                                                 \
+              if (pad == '0')                                                 \
+                memset_zero (p, _delta);                                      \
+              else                                                            \
+                memset_space (p, _delta);                                     \
+            }                                                                 \
+          f;                                                                  \
+          p += _n;                                                            \
+        }                                                                     \
+      i += _incr;                                                             \
     } while (0)
 
 #define cpy(n, s) \
-    add ((n),								      \
-	 if (to_lowcase)						      \
-	   memcpy_lowcase (p, (s), _n);					      \
-	 else if (to_uppcase)						      \
-	   memcpy_uppcase (p, (s), _n);					      \
-	 else								      \
-	   memcpy ((PTR) p, (PTR) (s), _n))
+    add ((n),                                                                 \
+         if (to_lowcase)                                                      \
+           memcpy_lowcase (p, (s), _n);                                       \
+         else if (to_uppcase)                                                 \
+           memcpy_uppcase (p, (s), _n);                                       \
+         else                                                                 \
+           memcpy ((PTR) p, (PTR) (s), _n))
 
 
 
@@ -705,11 +705,11 @@ ut_argument_spec
     format_char = *f;
     switch (format_char) {
 #define DO_NUMBER(d, v) \
-	  digits = width == -1 ? d : width;				      \
-	  number_value = v; goto do_number
+          digits = width == -1 ? d : width;                                   \
+          number_value = v; goto do_number
 #define DO_NUMBER_SPACEPAD(d, v) \
-	  digits = width == -1 ? d : width;				      \
-	  number_value = v; goto do_number_spacepad
+          digits = width == -1 ? d : width;                                   \
+          number_value = v; goto do_number_spacepad
 
     case '%':
       if (modifier != 0)

@@ -2,7 +2,7 @@
  * filesys.c -- part of filesys.mod
  *   main file of the filesys eggdrop module
  *
- * $Id: filesys.c,v 1.54 2003/01/28 06:37:26 wcc Exp $
+ * $Id: filesys.c,v 1.55 2003/01/29 05:48:41 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -782,8 +782,8 @@ static void filesys_dcc_send_hostresolved(int i)
     /* Check for dcc-sends in process with the same filename */
     for (j = 0; j < dcc_total; j++)
       if (j != i) {
-        if ((dcc[j].type->flags & (DCT_FILETRAN | DCT_FILESEND))
-            == (DCT_FILETRAN | DCT_FILESEND)) {
+        if ((dcc[j].type->flags & (DCT_FILETRAN | DCT_FILESEND)) ==
+            (DCT_FILETRAN | DCT_FILESEND)) {
           if (!strcmp(dcc[i].u.xfer->origname, dcc[j].u.xfer->origname)) {
             dprintf(DP_HELP, "NOTICE %s :File `%s' is already being sent.\n",
                     dcc[i].nick, dcc[i].u.xfer->origname);

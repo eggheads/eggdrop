@@ -1,7 +1,7 @@
 /*
  * snprintf.c - a portable implementation of snprintf and vsnprintf
  *
- * $Id: snprintf.c,v 1.8 2003/01/28 06:37:25 wcc Exp $
+ * $Id: snprintf.c,v 1.9 2003/01/29 05:48:41 wcc Exp $
  */
 /*
  * Portions Copyright (C) 2000, 2001, 2002, 2003 Eggheads Development Team
@@ -99,23 +99,23 @@
 #    endif
 #  endif
 #  define HAVE_STDARGS          /* let's hope that works everywhere (mj) */
-#  define VA_LOCAL_DECL	va_list ap
-#  define VA_START(f)	va_start(ap, f)
-#  define VA_SHIFT(v,t)	;       /* no-op for ANSI */
-#  define VA_END	va_end(ap)
+#  define VA_LOCAL_DECL va_list ap
+#  define VA_START(f)   va_start(ap, f)
+#  define VA_SHIFT(v,t) ;       /* no-op for ANSI */
+#  define VA_END        va_end(ap)
 #else
 #  include <varargs.h>
 #  undef HAVE_STDARGS
-#  define VA_LOCAL_DECL	va_list ap
-#  define VA_START(f)	va_start(ap)    /* f is ignored! */
-#  define VA_SHIFT(v,t)	v = va_arg(ap,t)
-#  define VA_END	va_end(ap)
+#  define VA_LOCAL_DECL va_list ap
+#  define VA_START(f)   va_start(ap)    /* f is ignored! */
+#  define VA_SHIFT(v,t) v = va_arg(ap,t)
+#  define VA_END        va_end(ap)
 #endif
 
 #ifdef HAVE_LONG_DOUBLE
-#define LDOUBLE	long double
+#define LDOUBLE long double
 #else
-#define LDOUBLE	double
+#define LDOUBLE double
 #endif
 
 static void dopr(char *buffer, size_t maxlen, const char *format, va_list args);
@@ -142,13 +142,13 @@ static void dopr_outch(char *buffer, size_t *currlen, size_t maxlen, char c);
 #define DP_S_DONE    7
 
 /* format flags - Bits */
-#define DP_F_MINUS 	(1 << 0)
-#define DP_F_PLUS  	(1 << 1)
-#define DP_F_SPACE 	(1 << 2)
-#define DP_F_NUM   	(1 << 3)
-#define DP_F_ZERO  	(1 << 4)
-#define DP_F_UP    	(1 << 5)
-#define DP_F_UNSIGNED 	(1 << 6)
+#define DP_F_MINUS      (1 << 0)
+#define DP_F_PLUS       (1 << 1)
+#define DP_F_SPACE      (1 << 2)
+#define DP_F_NUM        (1 << 3)
+#define DP_F_ZERO       (1 << 4)
+#define DP_F_UP         (1 << 5)
+#define DP_F_UNSIGNED   (1 << 6)
 
 /* Conversion Flags */
 #define DP_C_SHORT   1

@@ -2,7 +2,7 @@
  * users.h
  *   structures and definitions used by users.c and userrec.c
  *
- * $Id: users.h,v 1.12 2003/01/28 06:37:24 wcc Exp $
+ * $Id: users.h,v 1.13 2003/01/29 05:48:41 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -32,9 +32,9 @@ struct list_type {
   char *extra;
 };
 
-#define list_insert(a,b) {						\
-    	(b)->next = *(a);						\
-	*(a) = (b);							\
+#define list_insert(a,b) {                                              \
+        (b)->next = *(a);                                               \
+        *(a) = (b);                                                     \
 }
 int list_append(struct list_type **, struct list_type *);
 int list_delete(struct list_type **, struct list_type *);
@@ -112,8 +112,8 @@ void *_user_malloc(int size, const char *file, int line);
 void *_user_realloc(void *ptr, int size, const char *file, int line);
 
 #ifndef MAKING_MODS
-#  define user_malloc(x)	_user_malloc(x, __FILE__, __LINE__)
-#  define user_realloc(x, y)	_user_realloc(x, y, __FILE__, __LINE__)
+#  define user_malloc(x)     _user_malloc(x, __FILE__, __LINE__)
+#  define user_realloc(x, y) _user_realloc(x, y, __FILE__, __LINE__)
 #endif
 
 int add_entry_type(struct user_entry_type *);
@@ -123,9 +123,9 @@ struct user_entry *find_user_entry(struct user_entry_type *, struct userrec *);
 void *get_user(struct user_entry_type *, struct userrec *);
 int set_user(struct user_entry_type *, struct userrec *, void *);
 
-#define bot_flags(u)	((long)get_user(&USERENTRY_BOTFL, (u)))
-#define is_bot(u)	((u) && ((u)->flags & USER_BOT))
-#define is_owner(u)	((u) && ((u)->flags & USER_OWNER))
+#define bot_flags(u) ((long)get_user(&USERENTRY_BOTFL, (u)))
+#define is_bot(u)    ((u) && ((u)->flags & USER_BOT))
+#define is_owner(u)  ((u) && ((u)->flags & USER_OWNER))
 
 /* Fake users used to store ignores and bans
  */

@@ -36,7 +36,7 @@
 # 0xf1e, < this one is now empty
 0xf1f,Disconnected %s (aborted userfile transfer)
 0xf20,Lost dcc send %s from %s!%s (%lu/%lu)
-0xf21,(!) reget packet from %s for %s is invalid!	
+0xf21,(!) reget packet from %s for %s is invalid!
 0xf22,!! Resuming file transfer behind file end for %s to %s
 0xf23,!!! Trying to skip ahead on userfile transfer
 0xf24,Resuming file transfer at %dk for %s to %s

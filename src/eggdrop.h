@@ -4,7 +4,7 @@
  *
  *   IF YOU ALTER THIS FILE, YOU NEED TO RECOMPILE THE BOT.
  *
- * $Id: eggdrop.h,v 1.43 2003/01/28 06:37:24 wcc Exp $
+ * $Id: eggdrop.h,v 1.44 2003/01/29 05:48:40 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -60,38 +60,36 @@
  *       You should leave this at 32 characters and modify nick-len in the
  *       configuration file instead.
  */
-
-#define HANDLEN		  9     /* valid values 9->NICKMAX              */
-#define NICKMAX		 32     /* valid values HANDLEN->32             */
+#define HANDLEN 9   /* valid values 9->NICKMAX  */
+#define NICKMAX 32  /* valid values HANDLEN->32 */
 
 
 /* Handy string lengths */
+#define UHOSTMAX        160  /* reasonable, i think?        */
+#define DIRMAX          512  /* paranoia                    */
+#define LOGLINEMAX      767  /* for misc.c/putlog() <cybah> */
 
-#define UHOSTMAX	160     /* reasonable, i think?                 */
-#define DIRMAX		512     /* paranoia                             */
-#define LOGLINEMAX	767     /* for misc.c/putlog() <cybah>          */
-#define BADHANDCHARS	"-,+*=:!.@#;$%&"
+/* Invalid characters */
+#define BADNICKCHARS "-,+*=:!.@#;$%&"
+#define BADHANDCHARS "-,+*=:!.@#;$%&"
 
 
 /* Language stuff */
+#define LANGDIR  "./language" /* language file directory                   */
+#define BASELANG "english"    /* language which always gets loaded before 
+                                 all other languages. You do not want to
+                                 change this.                              */
 
-#define LANGDIR	"./language"    /* language file directory              */
-#define BASELANG "english"      /* language which always gets loaded
-                                 * before all other languages. You do
-                                 * not want to change this.             */
 
-
-/*
- *     The 'configure' script should make this next part automatic,
- *     so you shouldn't need to adjust anything below.
+/* The 'configure' script should make this next part automatic, so you
+ * shouldn't need to adjust anything below.
  */
+#define NICKLEN      NICKMAX + 1
+#define UHOSTLEN     UHOSTMAX + 1
+#define DIRLEN       DIRMAX + 1
+#define LOGLINELEN   LOGLINEMAX + 1
+#define NOTENAMELEN  ((HANDLEN * 2) + 1)
 
-#define NICKLEN         NICKMAX + 1
-#define UHOSTLEN        UHOSTMAX + 1
-#define DIRLEN          DIRMAX + 1
-#define LOGLINELEN	LOGLINEMAX + 1
-#define NOTENAMELEN     ((HANDLEN * 2) + 1)
-#define BADNICKCHARS	"-,+*=:!.@#;$%&"
 
 
 /* Have to use a weird way to make the compiler error out cos not all
@@ -132,9 +130,9 @@
  */
 #ifndef NAME_MAX
 #  ifdef MAXNAMLEN
-#    define NAME_MAX	MAXNAMLEN
+#    define NAME_MAX    MAXNAMLEN
 #  else
-#    define NAME_MAX	255
+#    define NAME_MAX    255
 #  endif
 #endif
 
@@ -177,32 +175,33 @@
  *    Handy aliases for memory tracking and core dumps
  */
 
-#define nmalloc(x)	n_malloc((x),__FILE__,__LINE__)
-#define nrealloc(x,y)	n_realloc((x),(y),__FILE__,__LINE__)
-#define nfree(x)	n_free((x),__FILE__,__LINE__)
+#define nmalloc(x)    n_malloc((x),__FILE__,__LINE__)
+#define nrealloc(x,y) n_realloc((x),(y),__FILE__,__LINE__)
+#define nfree(x)      n_free((x),__FILE__,__LINE__)
 
 #ifdef DEBUG_CONTEXT
-#  define Context		eggContext(__FILE__, __LINE__, NULL)
-#  define ContextNote(note)	eggContextNote(__FILE__, __LINE__, NULL, note)
+#  define Context           eggContext(__FILE__, __LINE__, NULL)
+#  define ContextNote(note) eggContextNote(__FILE__, __LINE__, NULL, note)
 #else
-#  define Context		{}
-#  define ContextNote(note)	{}
+#  define Context           {}
+#  define ContextNote(note) {}
 #endif
 
 #ifdef DEBUG_ASSERT
-#  define Assert(expr)	do {						\
-	if (!(expr))							\
-		eggAssert(__FILE__, __LINE__, NULL);			\
+#  define Assert(expr) do {                                             \
+          if (!(expr))                                                  \
+            eggAssert(__FILE__, __LINE__, NULL);                        \
 } while (0)
 #else
-#  define Assert(expr)	do {	} while (0)
+#  define Assert(expr) do {                                             \
+} while (0)
 #endif
 
 #ifndef COMPILING_MEM
 #  undef malloc
-#  define malloc(x)	dont_use_old_malloc(x)
+#  define malloc(x) dont_use_old_malloc(x)
 #  undef free
-#  define free(x)	dont_use_old_free(x)
+#  define free(x)   dont_use_old_free(x)
 #endif /* !COMPILING_MEM */
 
 /* 32 bit type */
@@ -222,11 +221,11 @@ typedef unsigned char u_8bit_t;
 /* IP type */
 typedef u_32bit_t IP;
 
-#define debug0(x)		putlog(LOG_DEBUG,"*",x)
-#define debug1(x,a1)		putlog(LOG_DEBUG,"*",x,a1)
-#define debug2(x,a1,a2)		putlog(LOG_DEBUG,"*",x,a1,a2)
-#define debug3(x,a1,a2,a3)	putlog(LOG_DEBUG,"*",x,a1,a2,a3)
-#define debug4(x,a1,a2,a3,a4)	putlog(LOG_DEBUG,"*",x,a1,a2,a3,a4)
+#define debug0(x)             putlog(LOG_DEBUG,"*",x)
+#define debug1(x,a1)          putlog(LOG_DEBUG,"*",x,a1)
+#define debug2(x,a1,a2)       putlog(LOG_DEBUG,"*",x,a1,a2)
+#define debug3(x,a1,a2,a3)    putlog(LOG_DEBUG,"*",x,a1,a2,a3)
+#define debug4(x,a1,a2,a3,a4) putlog(LOG_DEBUG,"*",x,a1,a2,a3,a4)
 
 /***********************************************************************/
 
@@ -400,7 +399,7 @@ struct dupwait_info {
                                          * in tcl                           */
 #define DCT_SIMUL     0x00000020        /* can be tcl_simul'd               */
 #define DCT_CANBOOT   0x00000040        /* can be booted                    */
-#define DCT_GETNOTES  DCT_CHAT  /* can receive notes                */
+#define DCT_GETNOTES  DCT_CHAT          /* can receive notes                */
 #define DCT_FILES     0x00000080        /* gratuitous hack ;)               */
 #define DCT_FORKTYPE  0x00000100        /* a forking type                   */
 #define DCT_BOT       0x00000200        /* a bot connection of some sort... */
@@ -444,8 +443,7 @@ struct dupwait_info {
                                  * the linking stage                     */
 #define STAT_AGGRESSIVE   0x200 /* aggressively sharing with this bot    */
 
-/* Flags for listening sockets
- */
+/* Flags for listening sockets */
 #define LSTN_PUBLIC  0x000001   /* No access restrictions               */
 
 /* chan & global */
@@ -522,11 +520,11 @@ typedef struct {
 #define SOCK_NONSOCK    0x0010  /* used for file i/o on debug           */
 #define SOCK_STRONGCONN 0x0020  /* don't report success until sure      */
 #define SOCK_EOFD       0x0040  /* it EOF'd recently during a write     */
-#define SOCK_PROXYWAIT	0x0080  /* waiting for SOCKS traversal          */
-#define SOCK_PASS	0x0100  /* passed on; only notify in case
+#define SOCK_PROXYWAIT  0x0080  /* waiting for SOCKS traversal          */
+#define SOCK_PASS       0x0100  /* passed on; only notify in case
                                  * of traffic                           */
-#define SOCK_VIRTUAL	0x0200  /* not-connected socket (dont read it!) */
-#define SOCK_BUFFER	0x0400  /* buffer data; don't notify dcc funcs  */
+#define SOCK_VIRTUAL    0x0200  /* not-connected socket (dont read it!) */
+#define SOCK_BUFFER     0x0400  /* buffer data; don't notify dcc funcs  */
 
 /* Flags to sock_has_data
  */
@@ -588,20 +586,20 @@ enum {
  * "TELNET Echo Option" (RFC 875) for details.
  */
 
-#define TLN_AYT		246     /* Are You There        */
+#define TLN_AYT         246     /* Are You There        */
 
-#define TLN_WILL	251     /* Will                 */
-#define TLN_WILL_C	"\373"
-#define TLN_WONT	252     /* Won't                */
-#define TLN_WONT_C	"\374"
-#define TLN_DO		253     /* Do                   */
-#define TLN_DO_C	"\375"
-#define TLN_DONT	254     /* Don't                */
-#define TLN_DONT_C	"\376"
-#define TLN_IAC		255     /* Interpret As Command */
-#define TLN_IAC_C	"\377"
+#define TLN_WILL        251     /* Will                 */
+#define TLN_WILL_C      "\373"
+#define TLN_WONT        252     /* Won't                */
+#define TLN_WONT_C      "\374"
+#define TLN_DO          253     /* Do                   */
+#define TLN_DO_C        "\375"
+#define TLN_DONT        254     /* Don't                */
+#define TLN_DONT_C      "\376"
+#define TLN_IAC         255     /* Interpret As Command */
+#define TLN_IAC_C       "\377"
 
-#define TLN_ECHO	1       /* Echo                 */
-#define TLN_ECHO_C	"\001"
+#define TLN_ECHO        1       /* Echo                 */
+#define TLN_ECHO_C      "\001"
 
 #endif /* _EGG_EGGDROP_H */

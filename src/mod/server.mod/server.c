@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  *
- * $Id: server.c,v 1.89 2003/01/28 06:37:26 wcc Exp $
+ * $Id: server.c,v 1.90 2003/01/29 05:48:42 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1492,13 +1492,13 @@ static char *tcl_eggserver(ClientData cdata, Tcl_Interp *irp, char *name1,
 }
 
 /* Trace the servers */
-#define tcl_traceserver(name, ptr) \
-  Tcl_TraceVar(interp, name, TCL_TRACE_READS | TCL_TRACE_WRITES |	\
-	       TCL_TRACE_UNSETS, tcl_eggserver, (ClientData) ptr)
+#define tcl_traceserver(name, ptr)                                      \
+  Tcl_TraceVar(interp, name, TCL_TRACE_READS | TCL_TRACE_WRITES |       \
+               TCL_TRACE_UNSETS, tcl_eggserver, (ClientData) ptr)
 
-#define tcl_untraceserver(name, ptr) \
-  Tcl_UntraceVar(interp, name, TCL_TRACE_READS | TCL_TRACE_WRITES |	\
-		 TCL_TRACE_UNSETS, tcl_eggserver, (ClientData) ptr)
+#define tcl_untraceserver(name, ptr)                                    \
+  Tcl_UntraceVar(interp, name, TCL_TRACE_READS | TCL_TRACE_WRITES |     \
+                 TCL_TRACE_UNSETS, tcl_eggserver, (ClientData) ptr)
 
 
 /*

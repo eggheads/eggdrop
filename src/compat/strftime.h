@@ -2,7 +2,7 @@
  * strftime.h
  *   header file for strftime.c
  *
- * $Id: strftime.h,v 1.5 2003/01/28 06:37:25 wcc Exp $
+ * $Id: strftime.h,v 1.6 2003/01/29 05:48:41 wcc Exp $
  */
 /* 
  * Copyright (C) 2000, 2001, 2002, 2003 Eggheads Development Team
@@ -36,7 +36,7 @@
 size_t egg_strftime(char *s, size_t maxsize, const char *format,
                     const struct tm *tp);
 #else
-#  define egg_strftime	strftime
+#  define egg_strftime strftime
 #endif
 
 #endif /* !_EGG_COMPAT_STRFTIME_H_ */

@@ -27,38 +27,38 @@ See also: exempts, -exempt, stick, unstick
 See also: invites, -invite, stick, unstick
 %{help=+chan}%{+n}
 ### %b+chan%b <channel>
-     Lets you add another channel to the bot, this cause the bot to 
+     Lets you add another channel to the bot, this cause the bot to
      join the channel, and for you to make changes to it's settings.
      This channel is not permanent unless %b"chanfile"%b has been
      defined in the config file, and is saved every time the userfile
      is saved, or by using %b'.chansave'%b
-     
+
 See also: +chan, -chan, chanload, chanset, chaninfo
 %{help=+chrec}%{+m|m}
 ###  %b+chrec%b <handle> [channel]
    Adds an empty channel record for the user so that channel lastons and info
    lines can be saved.  No flags are associated with the channel.
-   
+
 See also: chattr
 %{help=-ban}%{+lo|lo}
 ###  %b-ban%b <hostmask OR number> [channel]
    Removes the ban from the list of permanent bans stored on the
    bot -- you may reference the ban by the number shown in '.bans'.
-   
+
 See also: bans, +ban, stick, unstick
 %{help=-exempt}%{+lo|lo}
 ###  %b-exempt%b <hostmask OR number>
-   Removes the exemption from the list of permanent exempts stored 
+   Removes the exemption from the list of permanent exempts stored
    on the bot -- you may reference the exempt by the number shown in
    '.exempts'.
-   
+
 See also: exempts, +exempt, stick, unstick
 %{help=-invite}%{+lo|lo}
 ###  %b-invite%b <hostmask OR number>
    Removes the invite from the list of permanent invites stored
    on the bot -- you may reference the ban by the number shown in
    '.invites'.
-   
+
 See also: invites, +invite, stick, unstick
 %{help=-chan}%{+n}
 ### %b-chan%b <channel>
@@ -66,20 +66,20 @@ See also: invites, +invite, stick, unstick
      made permanent unless a channel-file has been defined in the user
      file, in which case it's saved each time the userfile is, or by using
      .chansave.
-     
+
      %f*** IMPORTANT ***%f
-     
+
      This erases ALL information about the channel, including channel
      settings and channel records for users--%bEVERYTHING%b.
-     
+
      %bDO NOT%b use it to have the bot temporarily leave a channel.  This
      command is for abandoning a channel (e.g. the channel will have
      to be redefined and all user flags for that channel will have to
-     be redone. 
+     be redone.
 
      Even if you don't have chanfile defined, it will still erase
      all the channel records for users on the next userfile save.
-     
+
 See also: +chan, chansave, chanload, chanset, chaninfo
 %{help=-chrec}%{+m|m}
 ###  %b-chrec%b <handle> [channel]
@@ -128,7 +128,7 @@ See also: chattr
    currently viewing in the console.  Different bans may be active
    on different channels.  If you specify a channel name, that
    channel will be used instead of your current console channel.
-   
+
 See also: -ban, +ban, console, set ban-time, stick, unstick
 %{help=invites}%{+lo|lo}
 ###  %binvites%b [[channel] wildcard]
@@ -171,13 +171,13 @@ See also: -ban, +ban, console, set ban-time, stick, unstick
    currently viewing in the console.  Different invites may be active
    on different channels.  If you specify a channel name, that
    channel will be used instead of your current console channel.
-   
+
 See also: -invite, +invite, console, set invite-time, stick, unstick
 %{help=exempts}%{+lo|lo}
 ###  %bexempts%b [[channel] wildcard]
 ###  %bexempts%b all
-   Shows you a list of the global ban exemptions active on the current 
-   channel, and the list of channel-specific ban exemptions, as well 
+   Shows you a list of the global ban exemptions active on the current
+   channel, and the list of channel-specific ban exemptions, as well
    as any ban exemptions that are on the channel but weren't placed by
    the bot.
 
@@ -190,7 +190,7 @@ See also: -invite, +invite, console, set invite-time, stick, unstick
    exempted. The "(perm)" means that the ban exemption is "permanent":
    that is, it doesn't automatically expire.  If there is an elapsed time
    showing instead, the time displayed is how long the ban exemption has
-   been active.  Those kind of ban exemptions expire after one hour.  The 
+   been active.  Those kind of ban exemptions expire after one hour.  The
    second line of the ban exemption entry is the comment ("revolving check
    policy" -- it would seem that paulie had to stand in line for a while)
    and who put the ban exemption there (paulie).  The last line shows when
@@ -207,7 +207,7 @@ See also: -invite, +invite, console, set invite-time, stick, unstick
    will show you every ban exemption in memory (with 'perm-exempts' on,
    these are identical).
 
-   If you use 'exempts <wildcard>' it will list all the ban exemptions 
+   If you use 'exempts <wildcard>' it will list all the ban exemptions
    (active or not) that match against your wildcard.  Consider it a 'exempts
    all' list matched against your wildcard.
 
@@ -215,11 +215,11 @@ See also: -invite, +invite, console, set invite-time, stick, unstick
    currently viewing in the console.  Different ban exemptions may be active
    on different channels.  If you specify a channel name, that
    channel will be used instead of your current console channel.
-   
+
 See also: -exempt, +exempt, console, set exempt-time, stick, unstick
 %{help=chanload}%{+n|n}
 ###  %bchanload%b
-     Reloads the channel settings from the file defined by the 
+     Reloads the channel settings from the file defined by the
      %b"chanfile"%b setting.  This allows you to return to
      a previous setting if you've really messed things up.
 See also: %{+n}+chan, -chan,%{+N} chanload, chanset, chaninfo
@@ -234,13 +234,13 @@ See also: %{+n}+chan, -chan%{+N} chanload, chanset, chaninfo
 ###  %bchansave%b
      Saves the channel settings to the file defined by the %b"chanfile"%b
      setting.  This file is reloaded during rehash and restarting the bot.
-     This allows you to change channel modes without having to edit the 
+     This allows you to change channel modes without having to edit the
      config file every time.
 See also: %{+n}+chan, -chan%{+N} chanload, chanset, chaninfo
 %{help=chinfo}%{+m|m}
 ###  %bchinfo%b <user> [channel] [info-line]
    Sets the information line for a user.  This line is shown via /msg
-   commands %b'who'%b and %b'whois'%b, and if you have set greet on, it is 
+   commands %b'who'%b and %b'whois'%b, and if you have set greet on, it is
    shown when a user joins the channel.  If the info line begins with a
    '@', then it is "locked", and that user may no longer change it.
    If the channel name is omitted, the default info line is changed.
@@ -263,14 +263,14 @@ See also: info
 %{help=stick}%{+ol|ol}
 ###  %bstick%b [ban/exempt/invite] <hostmask OR number> [channel]
    makes a ban/exempt/invite "sticky" -- meaning the bot will
-   always try to keep it active on the channel, even if the 
+   always try to keep it active on the channel, even if the
    channel is using dynamic bans.  obviously if the channel isn't
    using dynamic bans, this has no effect.
 see also: bans, exempts, invites, unstick, +ban, +exempt, +invite
 %{help=unstick}%{+ol|ol}
 ###  %bunstick%b [ban/exempt/invite] <hostmask OR number> [channel]
    turns a "sticky" ban/exempt/invite normal again.
-   
+
 see also: bans, exempts, invites, stick, -ban, -exempt, -invite
 %{help=channels module}%{+n}
 ###  help on the %bchannels module%b
@@ -278,7 +278,7 @@ see also: bans, exempts, invites, stick, -ban, -exempt, -invite
    information about users, it DOES NOT provide the means
    for sitting on a channel (this is in the irc module).
    The following commands are provided by the channels module:
-      %binfo%b 
+      %binfo%b
 %{+lo|lo}
    for channel ops or halfops:
       %b+ban%b      %b-ban%b      %bbans%b      %bstick%b
@@ -295,7 +295,7 @@ see also: bans, exempts, invites, stick, -ban, -exempt, -invite
       %b+chan%b     %b-chan%b
    Tcl variables for configuring the channels module:
      %bshare-greet%b  %buse-info%b    %bban-time%b
-     %bexempt-time%b  %binvite-time%b %bchanfile%b     
+     %bexempt-time%b  %binvite-time%b %bchanfile%b
    (Use %b'.help set <variable>'%b for more info)
 %{help=all}%{+n}
 ###  commands for the %bchannels module%b

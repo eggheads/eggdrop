@@ -2,7 +2,7 @@
  * net.c -- handles:
  *   all raw network i/o
  * 
- * $Id: net.c,v 1.52 2003/01/28 06:37:24 wcc Exp $
+ * $Id: net.c,v 1.53 2003/01/29 05:48:41 wcc Exp $
  */
 /* 
  * This is hereby released into the public domain.
@@ -606,7 +606,7 @@ int open_telnet_dcc(int sock, char *server, char *port)
 /* Attempts to read from all the sockets in socklist
  * fills s with up to 511 bytes if available, and returns the array index
  * 
- * 		on EOF:  returns -1, with socket in len
+ *              on EOF:  returns -1, with socket in len
  *     on socket error:  returns -2
  * if nothing is ready:  returns -3
  */

@@ -1,7 +1,7 @@
 /*
  * transfer.h -- part of transfer.mod
  *
- * $Id: transfer.h,v 1.18 2003/01/28 06:37:26 wcc Exp $
+ * $Id: transfer.h,v 1.19 2003/01/29 05:48:42 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -70,7 +70,7 @@ enum dccsend_types {
 #define TRANSFER_THANKS             get_language(0xf1b)
 #define TRANSFER_NOTICE_THANKS      get_language(0xf1c)
 #define TRANSFER_USERFILE_LOST      get_language(0xf1d)
-/* #define TRANSFER_BYE	            get_language(0xf1e) */
+/* #define TRANSFER_BYE             get_language(0xf1e) */
 #define TRANSFER_USERFILE_DISCON    get_language(0xf1f)
 #define TRANSFER_LOST_DCCSEND       get_language(0xf20)
 #define TRANSFER_REGET_PACKET       get_language(0xf21)

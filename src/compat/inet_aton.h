@@ -2,7 +2,7 @@
  * inet_aton.h
  *   prototypes for inet_aton.c
  *
- * $Id: inet_aton.h,v 1.6 2003/01/28 06:37:25 wcc Exp $
+ * $Id: inet_aton.h,v 1.7 2003/01/29 05:48:41 wcc Exp $
  */
 /*
  * Copyright (C) 2000, 2001, 2002, 2003 Eggheads Development Team
@@ -34,7 +34,7 @@
 /* Use our own implementation. */
 int egg_inet_aton(const char *cp, struct in_addr *addr);
 #else
-#  define egg_inet_aton	inet_aton
+#  define egg_inet_aton inet_aton
 #endif
 
 #endif /* !__EGG_COMPAT_INET_ATON_H */

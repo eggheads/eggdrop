@@ -1,5 +1,5 @@
 /*
- * $Id: uptime.c,v 1.26 2003/01/28 06:37:26 wcc Exp $
+ * $Id: uptime.c,v 1.27 2003/01/29 05:48:42 wcc Exp $
  *
  * This module reports uptime information about your bot to http://uptime.eggheads.org. The
  * purpose for this is to see how your bot rates against many others (including EnergyMechs
@@ -135,7 +135,7 @@ int init_uptime(void)
     return ((uptimesock = -1));
   }
   fcntl(uptimesock, F_SETFL, O_NONBLOCK | fcntl(uptimesock, F_GETFL));
-  return (0);
+  return 0;
 }
 
 

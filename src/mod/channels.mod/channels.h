@@ -1,7 +1,7 @@
 /*
  * channels.h -- part of channels.mod
  *
- * $Id: channels.h,v 1.22 2003/01/28 06:37:25 wcc Exp $
+ * $Id: channels.h,v 1.23 2003/01/29 05:48:41 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -29,9 +29,8 @@
 #define UDEF_FLAG 1
 #define UDEF_INT 2
 
-#define MASKREASON_MAX	307	/* Max length of ban/invite/exempt/etc.
-				   reasons.				*/
-#define MASKREASON_LEN	(MASKREASON_MAX + 1)
+#define MASKREASON_MAX 307    /* Max length of ban/invite/exempt/etc reasons. */
+#define MASKREASON_LEN (MASKREASON_MAX + 1)
 
 
 #ifdef MAKING_CHANNELS
@@ -40,22 +39,22 @@
  * structure for each channel where they have a defined value.
  */
 struct udef_chans {
-  struct udef_chans *next;	/* Ptr to next value.			*/
-  char *chan;			/* Dname of channel name.		*/
-  int value;			/* Actual value.			*/
+  struct udef_chans *next;     /* Ptr to next value.                   */
+  char *chan;                  /* Dname of channel name.               */
+  int value;                   /* Actual value.                        */
 };
 
 /* Structure for user defined channel settings.
  */
 struct udef_struct {
-  struct udef_struct *next;	/* Ptr to next setting.			*/
-  char *name;			/* Name of setting.			*/
-  int defined;			/* Boolean that specifies whether this
-				   flag was defined by, e.g. a Tcl
-				   script yet.				*/
-  int type;			/* Type of setting: UDEF_FLAG, UDEF_INT	*/
-  struct udef_chans *values;	/* Ptr to linked list of udef channel
-				   structures.				*/
+  struct udef_struct *next;    /* Ptr to next setting.                 */
+  char *name;                  /* Name of setting.                     */
+  int defined;                 /* Boolean that specifies whether this
+                                * flag was defined by, e.g. a Tcl
+                                * script yet.                          */
+  int type;                    /* Type of setting: UDEF_FLAG, UDEF_INT */
+  struct udef_chans *values;   /* Ptr to linked list of udef channel
+                                * structures.                          */
 };
 
 static void del_chanrec(struct userrec *u, char *);
@@ -64,31 +63,31 @@ static struct chanuserrec *add_chanrec(struct userrec *u, char *chname);
 static void add_chanrec_by_handle(struct userrec *bu, char *hand, char *chname);
 static void get_handle_chaninfo(char *handle, char *chname, char *s);
 static void set_handle_chaninfo(struct userrec *bu, char *handle,
-				char *chname, char *info);
+                                char *chname, char *info);
 static void set_handle_laston(char *chan, struct userrec *u, time_t n);
 static int u_sticky_mask(maskrec *u, char *uhost);
 static int u_setsticky_mask(struct chanset_t *chan, maskrec *m, char *uhost,
-			    int sticky, char *botcmd);
+                            int sticky, char *botcmd);
 
 static int u_equals_mask(maskrec *u, char *uhost);
 static int u_match_mask(struct maskrec *rec, char *mask);
-static int u_delexempt (struct chanset_t *c, char *who, int doit);
-static int u_addexempt (struct chanset_t *chan, char *exempt, char *from,
- 			char *note, time_t expire_time, int flags);
-static int u_delinvite (struct chanset_t *c, char *who, int doit);
-static int u_addinvite (struct chanset_t *chan, char *invite, char *from,
- 			char *note,  time_t expire_time, int flags);
+static int u_delexempt(struct chanset_t *c, char *who, int doit);
+static int u_addexempt(struct chanset_t *chan, char *exempt, char *from,
+                       char *note, time_t expire_time, int flags);
+static int u_delinvite(struct chanset_t *c, char *who, int doit);
+static int u_addinvite(struct chanset_t *chan, char *invite, char *from,
+                       char *note, time_t expire_time, int flags);
 static int u_delban(struct chanset_t *c, char *who, int doit);
 static int u_addban(struct chanset_t *chan, char *ban, char *from, char *note,
-		    time_t expire_time, int flags);
+                    time_t expire_time, int flags);
 static void tell_bans(int idx, int show_inact, char *match);
 static int write_bans(FILE *f, int idx);
 static void check_expired_bans(void);
-static void tell_exempts (int idx, int show_inact, char *match);
-static int write_exempts (FILE *f, int idx);
+static void tell_exempts(int idx, int show_inact, char *match);
+static int write_exempts(FILE *f, int idx);
 static void check_expired_exempts(void);
-static void tell_invites (int idx, int show_inact, char *match);
-static int write_invites (FILE *f, int idx);
+static void tell_invites(int idx, int show_inact, char *match);
+static int write_invites(FILE *f, int idx);
 static void check_expired_invites(void);
 static void write_channels(void);
 static void read_channels(int);
@@ -98,11 +97,11 @@ static void set_mode_protect(struct chanset_t *chan, char *set);
 static int ismasked(masklist *m, char *user);
 static int ismodeline(masklist *m, char *user);
 static int tcl_channel_modify(Tcl_Interp *irp, struct chanset_t *chan,
-			      int items, char **item);
+                              int items, char **item);
 static int tcl_channel_add(Tcl_Interp *irp, char *, char *);
 static char *convert_element(char *src, char *dst);
 static int expmem_udef(struct udef_struct *);
-static int expmem_udef_chans (struct udef_chans *);
+static int expmem_udef_chans(struct udef_chans *);
 static void free_udef(struct udef_struct *);
 static void free_udef_chans(struct udef_chans *);
 static int getudef(struct udef_chans *, char *);
@@ -153,7 +152,7 @@ inline static int chanset_unlink(struct chanset_t *chan);
 /* 32 - 35 */
 /* *HOLE* channels_funcs[32] used to be u_sticky_exempt() <cybah> */
 /* *HOLE* channels_funcs[33] used to be u_match_invite() <cybah> */
-/* *HOLE* channels_funcs[34] used to be killchanset().			*/
+/* *HOLE* channels_funcs[34] used to be killchanset(). */
 #define u_delinvite ((int (*)(struct chanset_t *, char *, int))channels_funcs[35])
 /* 36 - 39 */
 #define u_addinvite ((int (*)(struct chanset_t *, char *, char *, char *, time_t, int))channels_funcs[36])
@@ -173,7 +172,7 @@ inline static int chanset_unlink(struct chanset_t *chan);
 /* 48 - 51 */
 #define global_invite_time (*(int *)(channels_funcs[48]))
 
-#endif				/* MAKING_CHANNELS */
+#endif /* MAKING_CHANNELS */
 
 /* Macro's here because their functions were replaced by something more
  * generic. <cybah>
@@ -190,4 +189,4 @@ inline static int chanset_unlink(struct chanset_t *chan);
 #define u_setsticky_exempt(chan, host, sticky)  u_setsticky_mask(chan, ((struct chanset_t *)chan) ? ((struct chanset_t *)chan)->exempts : global_exempts, host, sticky, "se")
 #define u_setsticky_invite(chan, host, sticky)  u_setsticky_mask(chan, ((struct chanset_t *)chan) ? ((struct chanset_t *)chan)->invites : global_invites, host, sticky, "sInv")
 
-#endif				/* _EGG_MOD_CHANNELS_CHANNELS_H */
+#endif /* _EGG_MOD_CHANNELS_CHANNELS_H */

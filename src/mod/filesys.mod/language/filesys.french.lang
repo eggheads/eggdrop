@@ -1,11 +1,11 @@
 # filesys.french.lang
 #   language messages for filesys module
 #
-# Traduction par Fraggle, merci de me contacter 
+# Traduction par Fraggle, merci de me contacter
 # à benoit_jerome@penguinpowered.com
 # si vous voulez y contribuer.
 #
-# $Id: filesys.french.lang,v 1.2 1999/12/21 17:35:16 fabian Exp $
+# $Id: filesys.french.lang,v 1.3 2003/01/29 05:48:42 wcc Exp $
 
 0x300,Conversion de l'image du système de fichier dans %s ...
 0x301,filedb-update: ne peut ouvrir le répertoire!

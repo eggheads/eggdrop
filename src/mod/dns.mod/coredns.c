@@ -5,7 +5,7 @@
  *
  * Modified/written by Fabian Knittel <fknittel@gmx.de>
  *
- * $Id: coredns.c,v 1.23 2003/01/28 06:37:25 wcc Exp $
+ * $Id: coredns.c,v 1.24 2003/01/29 05:48:41 wcc Exp $
  */
 /*
  * Portions Copyright (C) 1999, 2000, 2001, 2002, 2003 Eggheads Development Team
@@ -45,12 +45,11 @@
 
 /* Defines */
 
-#define BASH_SIZE	 8192   /* Size of hash tables */
-#define HOSTNAMELEN 	  255   /* From RFC */
+#define BASH_SIZE        8192   /* Size of hash tables */
+#define HOSTNAMELEN       255   /* From RFC */
 #define RES_RETRYDELAY      3
 #define RES_MAXSENDS        4
-#define RES_FAILEDDELAY   600   /* TTL for failed records (in
-                                 * seconds). */
+#define RES_FAILEDDELAY   600   /* TTL for failed records (in seconds). */
 #define RES_MAX_TTL     86400   /* Maximum TTL (in seconds). */
 
 #define RES_ERR "DNS Resolver error: "

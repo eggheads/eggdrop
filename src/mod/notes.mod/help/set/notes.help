@@ -9,7 +9,7 @@
    for the user.
 %{help=set allow-fwd}%{+n}
 ###  %bset allow-fwd%b 0/1
-   This setting determines if note forwarding is permitted. If a 
+   This setting determines if note forwarding is permitted. If a
    note is about to be stored (since the user is note currently
    online) and they have a forwarding setting and this value is
    1 the note will be forwarded to the appropriate user.

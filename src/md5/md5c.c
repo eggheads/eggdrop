@@ -25,18 +25,18 @@
  * F is optimized compared to its RFC 1321 definition just like in Colin
  * Plumb's implementation.
  */
-#define F(x, y, z)			((z) ^ ((x) & ((y) ^ (z))))
-#define G(x, y, z)			((y) ^ ((z) & ((x) ^ (y))))
-#define H(x, y, z)			((x) ^ (y) ^ (z))
-#define I(x, y, z)			((y) ^ ((x) | ~(z)))
+#define F(x, y, z)                      ((z) ^ ((x) & ((y) ^ (z))))
+#define G(x, y, z)                      ((y) ^ ((z) & ((x) ^ (y))))
+#define H(x, y, z)                      ((x) ^ (y) ^ (z))
+#define I(x, y, z)                      ((y) ^ ((x) | ~(z)))
 
 /*
  * The MD5 transformation for all four rounds.
  */
 #define STEP(f, a, b, c, d, x, t, s) \
-	(a) += f((b), (c), (d)) + (x) + (t); \
-	(a) = (((a) << (s)) | (((a) & 0xffffffff) >> (32 - (s)))); \
-	(a) += (b);
+        (a) += f((b), (c), (d)) + (x) + (t); \
+        (a) = (((a) << (s)) | (((a) & 0xffffffff) >> (32 - (s)))); \
+        (a) += (b);
 
 /*
  * SET reads 4 input bytes in little-endian byte order and stores them
@@ -48,18 +48,18 @@
  */
 #if defined(__i386__) || defined(__vax__)
 #define SET(n) \
-	(*(MD5_u32plus *)&ptr[(n) * 4])
+        (*(MD5_u32plus *)&ptr[(n) * 4])
 #define GET(n) \
-	SET(n)
+        SET(n)
 #else
 #define SET(n) \
-	(ctx->block[(n)] = \
-	(MD5_u32plus)ptr[(n) * 4] | \
-	((MD5_u32plus)ptr[(n) * 4 + 1] << 8) | \
-	((MD5_u32plus)ptr[(n) * 4 + 2] << 16) | \
-	((MD5_u32plus)ptr[(n) * 4 + 3] << 24))
+        (ctx->block[(n)] = \
+        (MD5_u32plus)ptr[(n) * 4] | \
+        ((MD5_u32plus)ptr[(n) * 4 + 1] << 8) | \
+        ((MD5_u32plus)ptr[(n) * 4 + 2] << 16) | \
+        ((MD5_u32plus)ptr[(n) * 4 + 3] << 24))
 #define GET(n) \
-	(ctx->block[(n)])
+        (ctx->block[(n)])
 #endif
 
 /*

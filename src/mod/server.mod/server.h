@@ -1,7 +1,7 @@
 /*
  * server.h -- part of server.mod
  *
- * $Id: server.h,v 1.16 2003/01/28 06:37:26 wcc Exp $
+ * $Id: server.h,v 1.17 2003/01/29 05:48:42 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -79,9 +79,9 @@
 /* Macros for commonly used commands.
  */
 
-#define free_null(ptr)	do {				\
-	nfree(ptr);					\
-	ptr = NULL;					\
+#define free_null(ptr)  do {                            \
+        nfree(ptr);                                     \
+        ptr = NULL;                                     \
 } while (0)
 
 #endif /* MAKING_SERVER */

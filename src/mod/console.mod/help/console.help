@@ -8,12 +8,12 @@
    The following Tcl variables are available for setting up the
    console module: (%b'.help set <variable>'%b for more info)
      %bconsole-autosave%b   %bforce-channel%b
-     %binfo-party%b         
+     %binfo-party%b
 %{help=store}
 ###  %bstore%b
    Stores you console settings so that they are set automatically
    next time you join the party line.
-   
+
 See Also: set console-autosave
 %{help=all}
 ###  commands for the %bconsole module%b

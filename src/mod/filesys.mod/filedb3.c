@@ -4,7 +4,7 @@
  *
  * Rewritten by Fabian Knittel <fknittel@gmx.de>
  *
- * $Id: filedb3.c,v 1.23 2003/01/28 06:37:26 wcc Exp $
+ * $Id: filedb3.c,v 1.24 2003/01/29 05:48:41 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -417,12 +417,12 @@ static int _filedb_addfile(FILE *fdb, filedb_entry *fdbe, char *file,
 /* Short-cut macro to read an entry from disc to memory. Only
  * useful for filedb_getfile().
  */
-#define filedb_read(fdb, entry, len)	\
-{					\
-  if ((len) > 0) {			\
-    (entry) = nmalloc((len));		\
-    fread((entry), 1, (len), (fdb));	\
-  }					\
+#define filedb_read(fdb, entry, len)    \
+{                                       \
+  if ((len) > 0) {                      \
+    (entry) = nmalloc((len));           \
+    fread((entry), 1, (len), (fdb));    \
+  }                                     \
 }
 
 /* Reads an entry from the fildb at the specified position. The

@@ -4,7 +4,7 @@
  *
  * Written by Fabian Knittel <fknittel@gmx.de>
  *
- * $Id: dns.h,v 1.11 2003/01/28 06:37:26 wcc Exp $
+ * $Id: dns.h,v 1.12 2003/01/29 05:48:41 wcc Exp $
  */
 /*
  * Copyright (C) 1999, 2000, 2001, 2002, 2003 Eggheads Development Team
@@ -65,11 +65,11 @@ enum resolve_states {
 #define IS_A(x)   (x->state == STATE_AREQ)
 
 #ifdef DEBUG_DNS
-# define ddebug0		debug0
-# define ddebug1		debug1
-# define ddebug2		debug2
-# define ddebug3		debug3
-# define ddebug4		debug4
+# define ddebug0                debug0
+# define ddebug1                debug1
+# define ddebug2                debug2
+# define ddebug3                debug3
+# define ddebug4                debug4
 #else /* !DEBUG_DNS */
 # define ddebug0(x)
 # define ddebug1(x, x1)

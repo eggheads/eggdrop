@@ -1,7 +1,7 @@
 /*
  * inet_aton.c -- provides inet_aton() if necessary.
  *
- * $Id: inet_aton.c,v 1.9 2003/01/28 06:37:25 wcc Exp $
+ * $Id: inet_aton.c,v 1.10 2003/01/29 05:48:41 wcc Exp $
  */
 /*
  * Portions Copyright (C) 2000, 2001, 2002, 2003 Eggheads Development Team
@@ -26,7 +26,7 @@
 
 #ifndef HAVE_ISASCII
 /* Let all checks succeed if we don't have isascii(). */
-#  define isascii(x)	1
+#  define isascii(x) 1
 #endif
 
 #ifndef HAVE_INET_ATON
@@ -46,8 +46,8 @@
  *    documentation and/or other materials provided with the distribution.
  * 3. All advertising materials mentioning features or use of this software
  *    must display the following acknowledgement:
- * 	This product includes software developed by the University of
- * 	California, Berkeley and its contributors.
+ *      This product includes software developed by the University of
+ *      California, Berkeley and its contributors.
  * 4. Neither the name of the University nor the names of its contributors
  *    may be used to endorse or promote products derived from this software
  *    without specific prior written permission.
@@ -87,7 +87,7 @@
 #if defined(LIBC_SCCS) && !defined(lint)
 static char sccsid[] = "@(#)inet_addr.c	8.1 (Berkeley) 6/17/93";
 static char rcsid[] =
-  "$-Id: inet_addr.c,v 1.11 1999/04/29 18:19:53 drepper Exp $";
+            "$-Id: inet_addr.c,v 1.11 1999/04/29 18:19:53 drepper Exp $";
 #endif /* LIBC_SCCS and not lint */
 
 #include <sys/types.h>
@@ -180,9 +180,9 @@ struct in_addr *addr;
 
   if (addr)
     addr->s_addr = htonl(val);
-  return (1);
+  return 1;
 
 ret_0:
-  return (0);
+  return 0;
 }
 #endif /* HAVE_INET_ATON */

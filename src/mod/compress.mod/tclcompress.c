@@ -4,7 +4,7 @@
  *
  * Written by Fabian Knittel <fknittel@gmx.de>
  *
- * $Id: tclcompress.c,v 1.7 2003/01/28 06:37:25 wcc Exp $
+ * $Id: tclcompress.c,v 1.8 2003/01/29 05:48:41 wcc Exp $
  */
 /*
  * Copyright (C) 2000, 2001, 2002, 2003 Eggheads Development Team
@@ -25,7 +25,7 @@
  */
 
 
-#define NEXT_ARG	{ curr_arg++; argc--; }
+#define NEXT_ARG { curr_arg++; argc--; }
 
 static int tcl_compress_file STDVAR
 {

@@ -1,7 +1,7 @@
 # notes.french.lang
 #   language messages for the notes module
 #
-# $Id: notes.french.lang,v 1.1 2001/12/02 21:43:28 guppy Exp $
+# $Id: notes.french.lang,v 1.2 2003/01/29 05:48:42 wcc Exp $
 
 0xc000,  Fait suivre les notes à : %.70s\n
 0xc001,%d note%s transférées de %s à %s.
@@ -15,7 +15,7 @@
 0xc009,Vous n'avez pas de messages
 0xc00a, -- EXPIRE AUJOURD'HUI
 0xc00b, -- EXPIRE DANS %d JOUR%s
-0xc00c,Vous avez les notes suivantes en attente 
+0xc00c,Vous avez les notes suivantes en attente
 0xc00d,Vous n'avez pas autant de messages
 0xc00e,Utilisez '.notes read' pour les lire.
 0xc00f,Je ne peux pas modifier le fichier de notes

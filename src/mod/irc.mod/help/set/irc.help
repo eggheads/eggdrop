@@ -10,7 +10,7 @@
    considering a split user as gone for good.
 %{help=set wait-info}%{+n}
 ### %bset wait-info%b <#>
-   allows you to set the number of seconds to wait before 
+   allows you to set the number of seconds to wait before
    redisplaying a users info line when they join the channel
    (only relevant if %buse-info%b is 1).
 %{help=set modes-per-line}%{+n}
@@ -39,7 +39,7 @@
    do you want the bot to reverse all server modes?
 %{help=set max-bans}%{+n}
 ### %bset max-bans%b <#>
-   if there are more than max-bans active bans on a channel, then   
+   if there are more than max-bans active bans on a channel, then
    the bot won't try to put more bans. thus it won't flood the irc
    server.
 %{help=set max-exempts}%{+n}
@@ -59,7 +59,7 @@
 %{help=set kick-bogus}%{+n}
 ### %bset kick-bogus%b 0/1
    do you want the bot to kick bogus usernames?
-%{help=set kick-bogus}%{+n}  
+%{help=set kick-bogus}%{+n}
 ### %bset kick-bogus%b 0/1
    do you want the bot to kick for ctcp avalanches to a channel?
    remember that if it does, as it won't ban them, it can be at the

@@ -1,7 +1,7 @@
 /*
  * transfer.c -- part of transfer.mod
  *
- * $Id: transfer.c,v 1.59 2003/01/28 06:37:26 wcc Exp $
+ * $Id: transfer.c,v 1.60 2003/01/29 05:48:42 wcc Exp $
  *
  * Copyright (C) 1997 Robey Pointer
  * Copyright (C) 1999, 2000, 2001, 2002, 2003 Eggheads Development Team
@@ -234,7 +234,7 @@ static void check_tcl_toutlost(struct userrec *u, char *nick, char *path,
  * Note: To optimize buffer sizes, we default to PMAX_SIZE, but
  *       allocate a smaller buffer for smaller pending_data sizes.
  */
-#define	PMAX_SIZE	4096
+#define PMAX_SIZE 4096
 static unsigned long pump_file_to_sock(FILE *file, long sock,
                                        register unsigned long pending_data)
 {
@@ -1048,8 +1048,7 @@ static int raw_dcc_resend_send(char *filename, char *nick, char *from,
   if (nick[0] != '*') {
     dprintf(DP_HELP, "PRIVMSG %s :\001DCC %sSEND %s %lu %d %lu\001\n", nick,
             resend ? "RE" : "", nfn, iptolong(natip[0] ?
-                                              (IP) inet_addr(natip) :
-                                              getmyip()), port, dccfilesize);
+            (IP) inet_addr(natip) : getmyip()), port, dccfilesize);
     putlog(LOG_FILES, "*", TRANSFER_BEGIN_DCC, resend ? TRANSFER_RE : "", nfn,
            nick);
   }

@@ -7,7 +7,7 @@
  *   telling the current programmed settings
  *   initializing a lot of stuff and loading the tcl scripts
  *
- * $Id: chanprog.c,v 1.38 2003/01/28 06:37:24 wcc Exp $
+ * $Id: chanprog.c,v 1.39 2003/01/29 05:48:40 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -659,9 +659,11 @@ int isowner(char *name)
   char nl, pl;
 
   if (!owner || !*owner)
-    return (0);
+    return 0;
+
   if (!name || !*name)
-    return (0);
+    return 0;
+
   nl = strlen(name);
   pa = owner;
   pb = owner;
@@ -673,14 +675,14 @@ int isowner(char *name)
     }
     pl = (unsigned int) pb - (unsigned int) pa;
     if (pl == nl && !egg_strncasecmp(pa, name, nl))
-      return (1);
+      return 1;
     while (1) {
       if ((*pb == 0) || ((*pb != ',') && (*pb != ' ')))
         break;
       pb++;
     }
     if (*pb == 0)
-      return (0);
+      return 0;
     pa = pb;
   }
 }

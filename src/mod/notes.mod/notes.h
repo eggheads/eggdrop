@@ -1,7 +1,7 @@
 /*
  * notes.h -- part of notes.mod
  *
- * $Id: notes.h,v 1.10 2003/01/28 06:37:26 wcc Exp $
+ * $Id: notes.h,v 1.11 2003/01/29 05:48:42 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -29,50 +29,50 @@
 
 /* language #define's */
 
-#define NOTES_USAGE			MISC_USAGE
-#define NOTES_USERF_UNKNOWN		USERF_UNKNOWN
-#define NOTES_FORWARD_TO		get_language(0xc000)
-#define NOTES_SWITCHED_NOTES		get_language(0xc001)
-#define NOTES_EXPIRED			get_language(0xc002)
-#define NOTES_FORWARD_NOTONLINE		get_language(0xc003)
-#define NOTES_UNSUPPORTED		get_language(0xc004)
-#define NOTES_NOTES2MANY		get_language(0xc005)
-#define NOTES_NOTEFILE_FAILED		get_language(0xc006)
-#define NOTES_NOTEFILE_UNREACHABLE	get_language(0xc007)
-#define NOTES_STORED_MESSAGE		get_language(0xc008)
-#define NOTES_NO_MESSAGES		get_language(0xc009)
-#define NOTES_EXPIRE_TODAY		get_language(0xc00a)
-#define NOTES_EXPIRE_XDAYS		get_language(0xc00b)
-#define NOTES_WAITING			get_language(0xc00c)
-#define NOTES_NOT_THAT_MANY		get_language(0xc00d)
-#define NOTES_DCC_USAGE_READ		get_language(0xc00e)
-#define NOTES_FAILED_CHMOD		get_language(0xc00f)
-#define NOTES_ERASED_ALL		get_language(0xc010)
-#define NOTES_ERASED			get_language(0xc011)
-#define NOTES_LEFT			get_language(0xc012)
-#define NOTES_MAYBE			get_language(0xc013)
-#define NOTES_NOTTO_BOT			get_language(0xc014)
-#define NOTES_OUTSIDE			get_language(0xc015)
-#define NOTES_DELIVERED			get_language(0xc016)
-#define NOTES_FORLIST			get_language(0xc017)
-#define NOTES_WAITING_ON		get_language(0xc018)
-#define NOTES_WAITING2			get_language(0xc019)
-#define NOTES_DCC_USAGE_READ2		get_language(0xc01a)
-#define NOTES_STORED			get_language(0xc01b)
-#define NOTES_IGN_OTHERS		get_language(0xc01c)
-#define NOTES_UNKNOWN_USER		get_language(0xc01d)
-#define NOTES_IGN_NEW			get_language(0xc01e)
-#define NOTES_IGN_ALREADY		get_language(0xc01f)
-#define NOTES_IGN_REM			get_language(0xc020)
-#define NOTES_IGN_NOTFOUND		get_language(0xc021)
-#define NOTES_IGN_NONE			get_language(0xc022)
-#define NOTES_IGN_FOR			get_language(0xc023)
-#define NOTES_NO_SUCH_USER		get_language(0xc024)
-#define NOTES_FWD_OWNER			get_language(0xc025)
-#define NOTES_FWD_FOR			get_language(0xc026)
-#define NOTES_FWD_BOTNAME		get_language(0xc027)
-#define NOTES_FWD_CHANGED		get_language(0xc028)
-#define NOTES_MUSTBE			get_language(0xc029)
+#define NOTES_USAGE                     MISC_USAGE
+#define NOTES_USERF_UNKNOWN             USERF_UNKNOWN
+#define NOTES_FORWARD_TO                get_language(0xc000)
+#define NOTES_SWITCHED_NOTES            get_language(0xc001)
+#define NOTES_EXPIRED                   get_language(0xc002)
+#define NOTES_FORWARD_NOTONLINE         get_language(0xc003)
+#define NOTES_UNSUPPORTED               get_language(0xc004)
+#define NOTES_NOTES2MANY                get_language(0xc005)
+#define NOTES_NOTEFILE_FAILED           get_language(0xc006)
+#define NOTES_NOTEFILE_UNREACHABLE      get_language(0xc007)
+#define NOTES_STORED_MESSAGE            get_language(0xc008)
+#define NOTES_NO_MESSAGES               get_language(0xc009)
+#define NOTES_EXPIRE_TODAY              get_language(0xc00a)
+#define NOTES_EXPIRE_XDAYS              get_language(0xc00b)
+#define NOTES_WAITING                   get_language(0xc00c)
+#define NOTES_NOT_THAT_MANY             get_language(0xc00d)
+#define NOTES_DCC_USAGE_READ            get_language(0xc00e)
+#define NOTES_FAILED_CHMOD              get_language(0xc00f)
+#define NOTES_ERASED_ALL                get_language(0xc010)
+#define NOTES_ERASED                    get_language(0xc011)
+#define NOTES_LEFT                      get_language(0xc012)
+#define NOTES_MAYBE                     get_language(0xc013)
+#define NOTES_NOTTO_BOT                 get_language(0xc014)
+#define NOTES_OUTSIDE                   get_language(0xc015)
+#define NOTES_DELIVERED                 get_language(0xc016)
+#define NOTES_FORLIST                   get_language(0xc017)
+#define NOTES_WAITING_ON                get_language(0xc018)
+#define NOTES_WAITING2                  get_language(0xc019)
+#define NOTES_DCC_USAGE_READ2           get_language(0xc01a)
+#define NOTES_STORED                    get_language(0xc01b)
+#define NOTES_IGN_OTHERS                get_language(0xc01c)
+#define NOTES_UNKNOWN_USER              get_language(0xc01d)
+#define NOTES_IGN_NEW                   get_language(0xc01e)
+#define NOTES_IGN_ALREADY               get_language(0xc01f)
+#define NOTES_IGN_REM                   get_language(0xc020)
+#define NOTES_IGN_NOTFOUND              get_language(0xc021)
+#define NOTES_IGN_NONE                  get_language(0xc022)
+#define NOTES_IGN_FOR                   get_language(0xc023)
+#define NOTES_NO_SUCH_USER              get_language(0xc024)
+#define NOTES_FWD_OWNER                 get_language(0xc025)
+#define NOTES_FWD_FOR                   get_language(0xc026)
+#define NOTES_FWD_BOTNAME               get_language(0xc027)
+#define NOTES_FWD_CHANGED               get_language(0xc028)
+#define NOTES_MUSTBE                    get_language(0xc029)
 
 #ifdef MAKING_NOTES
 static int get_note_ignores(struct userrec *, char ***);

@@ -7,7 +7,7 @@
  *   (non-Tcl) procedure lookups for msg/dcc/file commands
  *   (Tcl) binding internal procedures to msg/dcc/file commands
  *
- * $Id: tclhash.c,v 1.40 2003/01/28 06:37:24 wcc Exp $
+ * $Id: tclhash.c,v 1.41 2003/01/29 05:48:41 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -60,10 +60,10 @@ static int builtin_dcc();
 static inline void *n_malloc_null(int size, const char *file, int line)
 {
 #ifdef DEBUG_MEM
-# define	nmalloc_null(size)	n_malloc_null(size, __FILE__, __LINE__)
+# define nmalloc_null(size) n_malloc_null(size, __FILE__, __LINE__)
   void *ptr = n_malloc(size, file, line);
 #else
-# define	nmalloc_null(size)	n_malloc_null(size, NULL, 0)
+# define nmalloc_null(size) n_malloc_null(size, NULL, 0)
   void *ptr = nmalloc(size);
 #endif
 

@@ -1,7 +1,7 @@
 /*
  * tclhash.h
  *
- * $Id: tclhash.h,v 1.11 2003/01/28 06:37:24 wcc Exp $
+ * $Id: tclhash.h,v 1.12 2003/01/29 05:48:41 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -26,7 +26,7 @@
 #define _EGG_TCLHASH_H
 
 
-#define TC_DELETED	0x0001  /* This command/trigger was deleted.    */
+#define TC_DELETED   0x0001  /* This command/trigger was deleted.    */
 
 typedef struct tcl_cmd_b {
   struct tcl_cmd_b *next;
@@ -39,7 +39,7 @@ typedef struct tcl_cmd_b {
 } tcl_cmd_t;
 
 
-#define TBM_DELETED	0x0001  /* This mask was deleted.               */
+#define TBM_DELETED  0x0001  /* This mask was deleted.               */
 
 typedef struct tcl_bind_mask_b {
   struct tcl_bind_mask_b *next;
@@ -51,10 +51,10 @@ typedef struct tcl_bind_mask_b {
 } tcl_bind_mask_t;
 
 
-#define HT_STACKABLE	0x0001  /* Triggers in this bind list may be
-                                 * stacked.                             */
-#define HT_DELETED	0x0002  /* This bind list was already deleted.
-                                 * Do not use it anymore.               */
+#define HT_STACKABLE 0x0001  /* Triggers in this bind list may be
+                              * stacked.                             */
+#define HT_DELETED   0x0002  /* This bind list was already deleted.
+                              * Do not use it anymore.               */
 
 typedef struct tcl_bind_list_b {
   struct tcl_bind_list_b *next;
@@ -124,12 +124,12 @@ extern p_tcl_bind_list H_away, H_nkch, H_filt, H_disc, H_event;
 #endif
 
 
-#define CHECKVALIDITY(a)	do {					\
-	if (!check_validity(argv[0], (a))) {				\
-		Tcl_AppendResult(irp, "bad builtin command call!",	\
-				 NULL);					\
-		return TCL_ERROR;					\
-	}								\
+#define CHECKVALIDITY(a)        do {                                    \
+        if (!check_validity(argv[0], (a))) {                            \
+                Tcl_AppendResult(irp, "bad builtin command call!",      \
+                                 NULL);                                 \
+                return TCL_ERROR;                                       \
+        }                                                               \
 } while (0)
 
 #endif /* _EGG_TCLHASH_H */

@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  *
- * $Id: cmds.c,v 1.87 2003/01/28 06:37:24 wcc Exp $
+ * $Id: cmds.c,v 1.88 2003/01/29 05:48:40 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -873,7 +873,7 @@ static void cmd_chhandle(struct userrec *u, int idx, char *par)
     else if (isowner(hand) && egg_strcasecmp(dcc[idx].nick, hand))
       dprintf(idx, "You can't change a permanent bot owner's handle.\n");
     else if (!egg_strcasecmp(newhand, botnetnick) && (!(atr2 & USER_BOT) ||
-                                                      nextbot(hand) != -1))
+             nextbot(hand) != -1))
       dprintf(idx, "Hey! That's MY name!\n");
     else if (change_handle(u2, newhand)) {
       putlog(LOG_CMDS, "*", "#%s# chhandle %s %s", dcc[idx].nick,
@@ -1290,8 +1290,8 @@ int check_dcc_attrs(struct userrec *u, int oatr)
         (!egg_strcasecmp(u->handle, dcc[i].nick))) {
       stat = dcc[i].status;
       if ((dcc[i].type == &DCC_CHAT) &&
-          ((u->flags & (USER_OP | USER_MASTER | USER_OWNER | USER_BOTMAST))
-           != (oatr & (USER_OP | USER_MASTER | USER_OWNER | USER_BOTMAST)))) {
+          ((u->flags & (USER_OP | USER_MASTER | USER_OWNER | USER_BOTMAST)) !=
+          (oatr & (USER_OP | USER_MASTER | USER_OWNER | USER_BOTMAST)))) {
         botnet_send_join_idx(i, -1);
       }
       if ((oatr & USER_MASTER) && !(u->flags & USER_MASTER)) {
