@@ -4,7 +4,7 @@
 # Created: 1993-05-16
 # Public domain
 
-# $Id: mkinstalldirs,v 1.1 1999/11/11 16:22:19 segfault Exp $
+# $Id: mkinstalldirs,v 1.1 2000/03/05 23:22:48 fabian Exp $
 
 errstatus=0
 

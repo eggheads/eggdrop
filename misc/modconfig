@@ -1,0 +1,632 @@
+#! /bin/sh
+#
+# modconfig
+#
+# Copyright (C) 2000  Eggheads
+# Written by Fabian Knittel
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
+# $Id: modconfig,v 1.1 2000/03/05 23:22:48 fabian Exp $
+
+
+mc_pn=`echo $0 | sed -e 's/^.*\///'`
+mc_top_srcdir=
+mc_srcdir=
+
+mc_flag_quiet=no
+mc_flag_askextended=no
+
+
+#  Read options
+while true; do
+	case ${1} in
+	--top_srcdir=*)
+		mc_top_srcdir=`echo ${1} | sed -e 's/^--top_srcdir=//'`
+	;;
+	--top_srcdir)
+		shift
+		mc_top_srcdir=${1}
+	;;
+	--srcdir=*)
+		mc_srcdir=`echo ${1} | sed -e 's/^--srcdir=//'`
+	;;
+	--srcdir)
+		shift
+		mc_srcdir=${1}
+	;;
+	--quiet|-q)
+		mc_flag_quiet=yes
+	;;
+	--extended-ask|-x)
+		mc_flag_askextended=yes
+	;;
+	--*)
+		echo "${mc_pn}: warning: unknown option \`${1}'." 2>&1
+	;;
+	*)
+		#  Non-option parameter. 
+		break
+	;;
+	esac
+
+	#  Break out of loop if there are no more arguments to process.
+	if shift; then
+		:
+	else
+		break;
+	fi
+done
+
+#  Find srcdir and top_srcdir
+if test "x${mc_srcdir}" = x; then
+	if test "x${mc_top_srcdir}" != x; then
+		mc_srcdir=${mc_top_srcdir}/src
+	else
+		echo "${mc_pn}: error: could not find src directory." 2>&1
+		exit 1
+	fi
+fi
+if test "x${mc_top_srcdir}" = x; then
+	if test "x${mc_srcdir}" != x; then
+		mc_top_srcdir=${mc_srcdir}/..
+	else
+		echo "${mc_pn}: error: could not find top src directory." 2>&1
+		exit 1
+	fi
+fi
+
+
+#
+#  Files
+#
+
+#  List of all selected modules (including the `.mod' at the end)
+mc_fmodules=${mc_top_srcdir}/.modules
+
+#  List of modules disabled by default
+mc_fdisabledmods=${mc_top_srcdir}/disabled_modules
+
+mc_mod_dir=${mc_srcdir}/mod
+
+mc_fMakefile=${mc_mod_dir}/Makefile
+
+mc_fstatic_h=${mc_mod_dir}/static.h
+
+
+#  File descriptor usage:
+#    1  Standard output
+#    2  Errors
+#
+#    6  Misc messages and warnings
+#    7  Goes to /dev/null
+exec 7>/dev/null
+if test "${mc_flag_quiet}" = yes; then
+	exec 6>&7
+else
+	exec 6>&1
+fi
+
+#  Detect flags needed to achieve 'echo -n' (originally from GNU autoconf) ...
+if (echo "testing\c"; echo 1,2,3) | grep c >/dev/null; then
+	#  Stardent Vistra SVR4 grep lacks -e, says ghazi@caip.rutgers.edu.
+	if (echo -n testing; echo 1,2,3) | sed s/-n/xn/ | grep xn >/dev/null
+	then
+		mc_n= mc_c='
+' mc_t='        '
+	else
+		mc_n=-n mc_c= mc_t=
+	fi
+else
+	mc_n= mc_c='\c' mc_t=
+fi
+
+#  This helps us call ourself.
+mc_self_call="$0 --srcdir=${mc_srcdir} --top_srcdir=${mc_topsrcdir}"
+
+#  Assign parameters
+mc_cmd=$1
+if test "x${mc_cmd}" != x; then
+	shift
+	mc_paras=$*
+fi
+
+case x${mc_cmd} in
+xhelp)
+#
+#  Display help
+#
+
+	cat 1>&6 <<EOF
+Usage: ${mc_pn} [OPTIONS] COMMAND
+
+Commands:
+    add                  Add a module to the list of active eggdrop modules.
+    del                  Remove a module from that list.
+    clear                Clear the list.
+    static.h             Create \`src/mod/static.h'.
+    Makefile             Create \`src/mod/Makefile'.
+    configure            Interactively select modules.
+    is-configured        Exits 0/1 depending on wether modules where
+                           configured or not.
+    update-depends       Check all module dependencies and add modules missing.
+    help                 Displays this information.
+    detect-modules       Find all available modules.
+
+Options:
+    --top_srcdir=DIR     Top directory         (At least one of these two
+    --srcdir=DIR         Source directory       directories MUST be supplied.)
+    --quiet [-q]         Quiet mode. Only show errors.
+
+Options specific to the \`configure' command:
+
+    --extended-ask [-x]  Ask wether to accept the current modules list.
+EOF
+;;
+xis-configured)
+#
+#  Determine wether the modules were configured yet.
+#
+
+	if test -r "${mc_fmodules}"; then
+		exit 0
+	else
+		exit 1
+	fi
+;;
+xdetect-modules)
+#
+#  Detect modules. Active modules will be added to the `.modules' file. The
+#  behaviour changes as soon as `.modules' already exists.
+#
+
+	echo ${mc_n} "detecting modules...${mc_c}" >&6
+
+	if ${mc_self_call} -q is-configured; then
+		mc_mods_configured=yes
+
+		mv ${mc_fmodules} ${mc_fmodules}_old
+		touch ${mc_fmodules}
+
+		mc_fmodules_old=${mc_fmodules}
+		mc_fmodules=${mc_fmodules}_old
+	else
+		mc_mods_configured=no
+
+		mc_fmodules_old=
+	fi
+
+	mc_mods=`echo ${mc_srcdir}/mod/*.mod | sed -e 's/\.mod//g'`
+	if test "${mc_mods}" = "${mc_srcdir}/mod/*"; then
+		echo "${mc_pn}: error: no modules detected." >&2
+		exit 1
+	fi
+
+	#  Add them again.
+	mc_mods=`echo ${mc_mods} | sed -e 's/\.mod//g'`
+	for mc_mod in ${mc_mods}; do
+		mc_mod=`echo ${mc_mod} | sed -e 's/.*\///g'`
+		echo ${mc_n} ".${mc_c}" >&6
+		if (test ${mc_mods_configured} = yes); then
+			if (grep "^${mc_mod}.mod\$" ${mc_fmodules} 1>&7 2>&1)
+			then
+				${mc_self_call} -q add ${mc_mod}
+			fi
+		else
+			if (grep "^${mc_mod}\$" ${mc_fdisabledmods} 1>&7 2>&1)
+			then
+				:
+			else
+				${mc_self_call} -q add ${mc_mod}
+			fi
+		fi
+	done
+
+	if test "x${mc_fmodules_old}" != x; then
+		# mc_fmodules actually points to the .modules_old file.
+		rm ${mc_fmodules}
+	fi
+
+	echo " done." >&6
+;;
+xMakefile)
+#
+#  Build `src/mod/Makefile'
+#
+
+	echo ${mc_n} "building ${mc_fMakefile}... ${mc_c}" 1>&6
+
+	#  Check for selected modules
+	if test -r ${mc_fmodules}; then
+		#  Convert newlines to spaces.
+		mc_sel_modules=`cat ${mc_fmodules} | \
+					awk '{ printf("%s ", $0); }'`
+	else
+		echo "${mc_pn}: error: no modules selected. You did not run \`make config' yet." 1>&2;
+		exit 1
+	fi
+
+	mc_mod_objs=`echo ${mc_sel_modules} | sed -e 's/.mod/.mod_o/g'`
+	mc_mod_libs=`echo ${mc_sel_modules} | sed -e 's/.mod/.mod_so/g'`
+
+	if test ! -f ${mc_fMakefile}; then
+		echo "failed." 1>&6
+		echo "${mc_pn}: error: make file template not found." 1>&2
+		exit 1
+	fi
+
+	#  The following sed expression modifies src/mod/Makefile to
+	#  hold the new module names.
+	if (cat "${mc_fMakefile}" | \
+	    sed -e "s/^\(mods =\).*$/\1 ${mc_sel_modules}/g"  \
+		-e "s/^\(mod_objs =\).*$/\1 ${mc_mod_objs}/g" \
+		-e "s/^\(mod_libs =\).*$/\1 ${mc_mod_libs}/g" \
+	    1> "${mc_fMakefile}_new"); then
+		mv "${mc_fMakefile}_new" "${mc_fMakefile}"
+	else
+		echo "failed." 1>&6
+		echo "${mc_pn}: sed failed to build ${mc_fMakefile}." 1>&2
+		exit 1
+	fi
+
+	echo "done." 1>&6
+;;
+xstatic.h)
+#
+#  Build `static.h'
+#
+
+	echo ${mc_n} "building static.h..." 1>&6
+
+	#  Check for selected modules
+	if test ! -r ${mc_fmodules}; then
+		echo " failed." 1>&6
+		echo "${mc_pn}: error: no modules selected. You did not run \`make config' yet." 1>&2;
+		exit 1
+	fi
+	mc_sel_modules=`cat ${mc_fmodules} | sed -e 's/.mod//g'`
+
+
+	#  Note:  All data is written to `src/mod/static.h' which is
+	#         later included into `src/main.c'.
+
+	#  Remove old static.h
+	rm -f ${mc_fstatic_h}
+
+	#  Header
+	cat 1>> ${mc_fstatic_h} << EOF
+/* src/mod/static.h -- header file for static compiles
+ *
+ * NOTE: Do not edit directly, but instead re-run \`make config'
+ */
+
+EOF
+
+	#  Create declarations for module _start functions
+	for mc_mod in ${mc_sel_modules}; do
+		echo ${mc_n} ".${mc_c}" 1>&6
+		echo "char *${mc_mod}_start();" 1>> ${mc_fstatic_h}
+	done
+	echo 1>> ${mc_fstatic_h}
+
+	#  The link_statics() function ...
+	echo "static void link_statics()" 1>> ${mc_fstatic_h}
+	echo "{" 1>> ${mc_fstatic_h}
+	for mc_mod in ${mc_sel_modules}; do
+		echo "  check_static(\"${mc_mod}\", ${mc_mod}_start);" 1>> ${mc_fstatic_h}
+	done
+	echo "}" 1>> ${mc_fstatic_h}
+
+	echo " done." 1>&6
+;;
+xdel)
+#
+#  Remove a module from the list
+#
+
+	if test "x${mc_paras}" = x; then
+		echo "${mc_pn}: error: no modules specified." 2>&1
+		exit 1
+	fi
+
+	mc_nfmodules="${mc_fmodules}_new"
+
+	#  Remove trailing `.mod'
+	mc_mods=`echo ${mc_paras} | sed -e 's/.mod//g'`
+	for mc_mod in ${mc_mods}; do
+		#  Remove any path information
+		mc_mod=`echo ${mc_mod} | sed -e 's/.*\///'`
+
+		echo "${mc_pn}: disabling eggdrop module: ${mc_mod}" 1>&6
+		if grep -v "^${mc_mod}.mod$" ${mc_fmodules} 1> ${mc_nfmodules}
+		then
+			:
+		else
+			echo "${mc_pn}: error: building new module file failed" 1>&2
+			exit 1
+		fi
+		mv ${mc_nfmodules} ${mc_fmodules}
+	done
+;;
+xadd)
+#
+#  Add a module to the list
+#
+
+	if test "x${mc_paras}" = x; then
+		echo "${mc_pn}: error: no modules specified." 2>&1
+		exit 1
+	fi
+
+	#  Remove trailing `.mod'
+	mc_mods=`echo ${mc_paras} | sed -e 's/.mod//g'`
+	for mc_mod in ${mc_mods}; do
+		#  Remove any path information
+		mc_mod=`echo ${mc_mod} | sed -e 's/.*\///'`
+
+		if grep "^${mc_mod}.mod$" ${mc_fmodules} 1>&7 2>&7; then
+			:
+		else
+			if test ! -d ${mc_mod_dir}/${mc_mod}.mod; then
+				echo "${mc_pn}: warning: module does not exist: \`${mc_mod}', ignoring." 1>&2
+			else
+				echo "${mc_pn}: enabling eggdrop module: ${mc_mod}" 1>&6
+
+				#  Add it to the file
+				echo ${mc_mod}.mod 1>> ${mc_fmodules}
+			fi
+		fi
+	done
+;;
+xclear)
+#
+#  Clear list of modules 
+#
+
+	echo "${mc_pn}: cleared list of eggdrop modules." 1>&6
+	rm -f ${mc_fmodules}
+	touch ${mc_fmodules}
+;;
+xupdate-depends)
+#
+#  Check the dependencies and add modules which are depended on, but
+#  aren't enabled.
+#
+
+	mc_all_depends=
+	mc_missing=
+
+	echo ${mc_n} "calculating dependencies...${mc_c}" 1>&6
+
+	#  Check for selected modules
+	if test ! -r ${mc_fmodules}; then
+		echo " failed." 1>&6
+		echo "${mc_pn}: error: no modules selected. You did not run configure yet." 1>&2
+		exit 1
+	fi
+	mc_sel_modules=`cat ${mc_fmodules}`
+
+	mc_new_mods="${mc_sel_modules}"
+	while (test "x${mc_new_mods}" != x); do
+		mc_mod_list="${mc_new_mods}"
+		mc_new_mods=
+
+		#  Go through every module in the list
+		for mc_mod in ${mc_mod_list}; do
+			echo ${mc_n} ".${mc_c}" 1>&6
+
+			#  We have an info file, don't we?
+			if (test ! -f ${mc_mod_dir}/${mc_mod}/modinfo); then
+				continue
+			fi
+
+			#  Figure out the module's dependencies
+			mc_mod_depends=`grep "^DEPENDS:" ${mc_mod_dir}/${mc_mod}/modinfo | sed -e 's/^DEPENDS://'`
+
+			#  Check wether the dependencies are fulfilled
+			for mc_m_depend in ${mc_mod_depends}; do
+				if ((echo ${mc_sel_modules} | \
+					grep " ${mc_m_depend}" 1>&7 2>&7) || \
+				    (echo ${mc_sel_modules} | \
+					grep "^${mc_m_depend}" 1>&7 2>&7))
+				then
+					:
+				else
+					#  Does the module actually exist?
+					if test ! -d ${mc_mod_dir}/${mc_m_depend}.mod
+					then
+						mc_missing="${mc_missing} ${mc_m_depend}"
+						continue
+					fi
+
+					#  This one is missing. Add it to the
+					#  list.
+					mc_all_depends="${mc_all_depends} ${mc_m_depend}"
+					mc_sel_modules="${mc_sel_modules} ${mc_m_depend}"
+
+					#  Add to list of modules to check in
+					#  next dependency cycle.
+					mc_new_mods="${mc_new_mods} ${mc_m_depend}.mod"
+				fi
+			done
+		done
+	done
+	echo " done." 1>&6
+
+	#  Warn about missing modules.
+	if test "x${mc_missing}" != x; then
+		cat 1>&2 <<EOF
+${mc_pn}: warning:
+
+   The following modules were not found but are needed:
+
+      `echo ${mc_missing} | sed -e 's/ /, /g'`
+
+EOF
+		echo ${mc_n} "Press enter to continue... ${mc_c}"
+		read mc_ask_response
+	fi
+
+	if test "x${mc_all_depends}" != x; then
+		echo ${mc_n} "adding modules needed to match dependencies... ${mc_c}" 1>&6
+		echo ${mc_all_depends} | sed -e 's/ /, /g' 1>&6
+
+		#  Add the modules
+		${mc_self_call} -q add ${mc_all_depends}
+
+		#  Update the makefile
+		${mc_self_call} -q Makefile
+	fi
+;;
+xconfigure)
+#
+#  Interactive module selection
+#
+
+	cat 1>&6 <<EOF
+
+            -*-    Eggdrop Interactive Module Selection    -*-
+
+EOF
+
+	#  Check for selected modules
+	if test ! -r ${mc_fmodules}; then
+		echo "${mc_pn}: error: no modules selected. You did not run configure yet." 1>&2
+		exit 1
+	fi
+
+	#  Ask question wether to accept default?
+	if test "${mc_flag_askextended}" = yes; then
+		mc_ask_response=
+		while true; do
+			echo ${mc_n} "Do you want to accept the current list of enabled modules? [Y/n] ${mc_c}" 1>&6
+			read mc_ask_response
+
+			if ((test "x${mc_ask_response}" = x) || \
+			    (test "${mc_ask_response}" = y) || \
+			    (test "${mc_ask_response}" = Y)); then
+				echo "Using current list." 1>&6
+				echo "" 1>&6
+				exit 0
+			fi
+			if ((test "${mc_ask_response}" = n) || \
+			    (test "${mc_ask_response}" = N)); then
+				#  User wants to select modules.
+				echo "" 1>&6
+				break;
+			fi
+		done
+	fi
+
+
+	#  Read current list
+	mc_sel_modules=`cat ${mc_fmodules}`
+
+	#  Detect available modules
+	mc_mods=`echo ${mc_mod_dir}/*.mod`
+
+	#  Error out if we have no available modules
+	if test "${mc_mods}" = "echo ${mc_mod_dir}/*.mod"; then
+		echo "${mc_pn}: error: no modules found." 1>&2
+		exit 1
+	fi
+
+	#  Loop through each available module
+	for mc_mod in ${mc_mods}; do
+		#  Remove directory information from name
+		mc_mod=`echo ${mc_mod} | sed -e 's/.*\///'`
+		#  Remove .mod ending
+		mc_modname=`echo ${mc_mod} | sed -e 's/.mod//g'`
+
+		#  Note: We need to make sure that we only catch module names
+		#        that match _exactly_. e.g. don't mix bseen and seen.
+		if ((echo ${mc_sel_modules} | grep " ${mc_mod}" 1>&7 2>&7) ||
+		    (echo ${mc_sel_modules} | grep "^${mc_mod}" 1>&7 2>&7))
+		then
+			#  The module is selected.
+			mc_mstate="enabled"
+			mc_mdisp="(E)nable / (d)isable  [E/d]"
+		else
+			#  The module is NOT selected.
+			mc_mstate="disabled"
+			mc_mdisp="(e)nable / (D)isable  [e/D]"
+		fi
+
+		#  Display description
+		if test -r ${mc_mod_dir}/${mc_mod}/modinfo; then
+			echo "" 1>&6
+			grep "^DESC:" ${mc_mod_dir}/${mc_mod}/modinfo | \
+				sed -e 's/^DESC:/   /' 1>&6
+			echo "" 1>&6
+		fi
+
+		while true; do
+			echo ${mc_n} "\`${mc_modname}' is ${mc_mstate}, ${mc_mdisp} ${mc_c}" 1>&6
+			read mc_ask_response;
+
+			if (test "${mc_ask_response}" = D); then
+				mc_ask_response=d;
+			fi
+			if (test "${mc_ask_response}" = E); then
+				mc_ask_response=e;
+			fi
+
+			#  If the user just presses [return] or
+			#  if the selected state matches the old state,
+			#  then we change nothing.
+			if ((test "x${mc_ask_response}" = x) || \
+			    ((test "${mc_ask_response}" = d) && \
+			     (test "${mc_mstate}" = disabled)) || \
+			    ((test "${mc_ask_response}" = e) && \
+			     (test "${mc_mstate}" = enabled))); then
+				echo "Changing nothing." 1>&6
+				break;
+			fi
+			if (test "${mc_ask_response}" = e); then
+				#  Add it to the list.
+				mc_sel_modules="${mc_sel_modules} ${mc_mod}"
+				echo "Enabled module ${mc_modname}." 1>&6
+				break;
+			fi
+			if (test "${mc_ask_response}" = d); then
+				#  Remove module from list.
+				mc_sel_modules=`echo ${mc_sel_modules} | sed -e "s/ ${mc_mod}//g" -e "s/^${mc_mod}//g"`
+				echo "Disabled module ${mc_modname}." 1>&6
+				break;
+			fi
+		done
+		echo "" 1>&6
+	done
+
+	echo ${mc_n} "recreating list of active modules... ${mc_c}" 1>&6
+	${mc_self_call} -q clear
+	if (${mc_self_call} -q add ${mc_sel_modules}); then
+		echo "done." 1>&6
+	else
+		echo "failed!" 1>&6
+		exit 1
+	fi
+;;
+*)
+	if test "x${mc_cmd}" = x; then
+		echo "${mc_pn}: error: no command supplied." 1>&2
+	else
+		echo "${mc_pn}: error: ${mc_cmd}: unknown command." 1>&2
+	fi
+	${mc_self_call} help
+;;
+esac
+
+exit 0

@@ -1,5 +1,5 @@
 # Makefile for src/mod/
-# $Id: Makefile.in,v 1.5 2000/02/29 19:57:27 fabian Exp $
+# $Id: Makefile.in,v 1.6 2000/03/05 23:22:48 fabian Exp $
 
 SHELL = /bin/sh
 top_srcdir = @top_srcdir@
@@ -11,12 +11,12 @@ INSTALL_DATA = @INSTALL_DATA@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
 
 # Note: The following three lines are automatically adjusted by
-#       aux/modconfig. They have to be present here.
+#       misc/modconfig. They have to be present here.
 mods =
 mod_objs =
 mod_libs =
 
-modconfig = $(top_srcdir)/aux/modconfig --top_srcdir=$(top_srcdir)
+modconfig = $(top_srcdir)/misc/modconfig --top_srcdir=$(top_srcdir)
 
 MAKE_MOD = $(MAKE) 'MAKE=$(MAKE)' 'CC=$(CC)' 'LD=$(LD)' \
 'STRIP=$(STRIP)' 'CFLAGS=$(CFLAGS)' 'CPPFLAGS=$(CPPFLAGS)'
@@ -74,10 +74,10 @@ install-help:
 	@echo "Copying module help files."
 	@if test ! -d $(DEST)/help; then \
 		echo "Creating 'help' subdirectory."; \
-		$(top_srcdir)/mkinstalldirs $(DEST)/help; \
+		$(top_srcdir)/misc/mkinstalldirs $(DEST)/help; \
 	fi; \
 	for i in $(mods); do \
-		if ! test "x`echo $$i/help/*.help`" = "x$$i/help/*.help"; then \
+		if test ! "x`echo $$i/help/*.help`" = "x$$i/help/*.help"; then \
 			for h in $$i/help/*.help; do \
 				$(INSTALL_DATA) $$h $(DEST)/help/; \
 			done; \
@@ -85,10 +85,10 @@ install-help:
 	done;
 	@if test ! -d $(DEST)/help/msg; then \
 		echo "Creating 'help/msg' subdirectory."; \
-		$(top_srcdir)/mkinstalldirs $(DEST)/help/msg; \
+		$(top_srcdir)/misc/mkinstalldirs $(DEST)/help/msg; \
 	fi; \
 	for i in $(mods); do \
-		if ! test "x`echo $$i/help/msg/*.help`" = "x$$i/help/msg/*.help"; then \
+		if test ! "x`echo $$i/help/msg/*.help`" = "x$$i/help/msg/*.help"; then \
 			for h in $$i/help/msg/*.help; do \
 				$(INSTALL_DATA) $$h $(DEST)/help/msg/; \
 			done; \
@@ -96,7 +96,7 @@ install-help:
 	done;
 	@if test ! -d $(DEST)/help/set; then \
 		echo "Creating 'help/set' subdirectory."; \
-		$(top_srcdir)/mkinstalldirs $(DEST)/help/set; \
+		$(top_srcdir)/misc/mkinstalldirs $(DEST)/help/set; \
 	fi; \
 	for i in $(mods); do \
 		if test ! "x`echo $$i/help/set/*.help`" = "x$$i/help/set/*.help"; then \
@@ -110,7 +110,7 @@ install-language:
 	@echo "Copying module language files."
 	@if test ! -d $(DEST)/language; then \
 		echo "Creating 'language' subdirectory."; \
-		$(top_srcdir)/mkinstalldirs $(DEST)/language; \
+		$(top_srcdir)/misc/mkinstalldirs $(DEST)/language; \
 	fi; \
 	for i in $(mods); do \
 		if test ! "x`echo $$i/language/*.lang`" = "x$$i/language/*.lang"; then \

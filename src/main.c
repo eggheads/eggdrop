@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  * 
- * $Id: main.c,v 1.31 2000/03/04 20:49:44 fabian Exp $
+ * $Id: main.c,v 1.32 2000/03/05 23:22:48 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -669,17 +669,14 @@ int main(int argc, char **argv)
 
     cdlim.rlim_cur = RLIM_INFINITY;
     cdlim.rlim_max = RLIM_INFINITY;
-    if (!setrlimit(RLIMIT_CORE, &cdlim))
-      printf("setrlimit failed: %s\n", strerror(errno));
-    else
-      printf("setrlimit succeeded.\n");
+    setrlimit(RLIMIT_CORE, &cdlim);
   }
 #endif
 
   /* Initialise context list */
-  for (i = 0; i < 16; i++) {
+  for (i = 0; i < 16; i++)
     Context;
-  }
+
 #include "patch.h"
   /* Version info! */
   sprintf(ver, "eggdrop v%s", egg_version);

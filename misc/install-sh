@@ -3,7 +3,7 @@
 # install - install a program, script, or datafile
 # This comes from X11R5 (mit/util/scripts/install.sh).
 #
-# $Id: install-sh,v 1.2 1999/12/21 17:35:03 fabian Exp $
+# $Id: install-sh,v 1.1 2000/03/05 23:22:48 fabian Exp $
 #
 # Copyright 1991 by the Massachusetts Institute of Technology
 #

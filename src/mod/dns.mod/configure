@@ -13,7 +13,7 @@ ac_egg_uniquefile=coredns.c
 # Standard autoconf commands/tests follow below.
 
 
-RESLIB_AVAIL="true"
+dns_reslib_avail="true"
 echo $ac_n "checking for res_init""... $ac_c" 1>&6
 echo "configure:542: checking for res_init" >&5
 if eval "test \"`echo '$''{'ac_cv_func_res_init'+set}'`\" = set"; then
@@ -136,7 +136,7 @@ if eval "test \"`echo '$ac_cv_lib_'$ac_lib_var`\" = yes"; then
   RESLIB="-lbind"
 else
   echo "$ac_t""no" 1>&6
-      RESLIB_AVAIL="false";
+      dns_reslib_avail="false";
     
 fi
   
@@ -224,7 +224,7 @@ LIBS="$ac_save_LIBS"
 fi
 if eval "test \"`echo '$ac_cv_lib_'$ac_lib_var`\" = yes"; then
   echo "$ac_t""yes" 1>&6
-      if test "${RESLIB}" != "-lresolv"; then
+      if test "x${RESLIB}" != "x-lresolv"; then
       RESLIB="${RESLIB} -lresolv"
     fi
   
@@ -265,13 +265,13 @@ LIBS="$ac_save_LIBS"
 fi
 if eval "test \"`echo '$ac_cv_lib_'$ac_lib_var`\" = yes"; then
   echo "$ac_t""yes" 1>&6
-        if test "${RESLIB}" != "-lbind"; then
+        if test "x${RESLIB}" != "x-lbind"; then
         RESLIB="${RESLIB} -lbind"
       fi
     
 else
   echo "$ac_t""no" 1>&6
-      RESLIB_AVAIL="false";
+      dns_reslib_avail="false";
     
 fi
 
@@ -281,7 +281,7 @@ fi
 
 fi
 
-if test "${RESLIB_AVAIL}" = false; then
+if test "${dns_reslib_avail}" = false; then
   cat >&2 <<EOF
 configure: warning:
 
@@ -289,7 +289,7 @@ configure: warning:
   module will therefore be disabled.
 
 EOF
-  ${srcdir}/../../../aux/modconfig -q --top_srcdir=${srcdir}/../../.. del dns
+  ${srcdir}/../../../misc/modconfig -q --top_srcdir=${srcdir}/../../.. del dns
 fi
 
 

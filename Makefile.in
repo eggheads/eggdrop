@@ -2,7 +2,7 @@
 #  This is the Makefile for EGGDROP (the irc bot)
 #  You should never need to edit this.
 #
-# $Id: Makefile.in,v 1.14 2000/02/29 19:57:27 fabian Exp $
+# $Id: Makefile.in,v 1.15 2000/03/05 23:22:48 fabian Exp $
 
 SHELL = /bin/sh
 top_srcdir = @top_srcdir@
@@ -64,7 +64,7 @@ TCLLIBFN = @TCLLIBFN@
 CFLAGS = @CFLAGS@ -I.. @DEFS@ $(CFLGS)
 DEBCFLAGS = @CFLAGS@ -I.. @DEFS@ -DDEBUG_ASSERT -DDEBUG_MEM $(CFLGS)
 
-modconf = $(top_srcdir)/aux/modconfig --top_srcdir=$(top_srcdir)
+modconf = $(top_srcdir)/misc/modconfig --top_srcdir=$(top_srcdir)
 
 MAKE_MODEGG = $(MAKE) 'MAKE=$(MAKE)' 'CC=$(MOD_CC)' 'LD=$(MOD_LD)' \
 'STRIP=$(MOD_STRIP)' 'RANLIB=$(RANLIB)' 'CFLAGS=$(CFLAGS)' \
@@ -281,7 +281,7 @@ install-start:
 	@echo
 	@if test ! -d $(DEST); then \
 		echo "Creating directory: $(DEST)."; \
-		$(top_srcdir)/mkinstalldirs $(DEST); \
+		$(top_srcdir)/misc/mkinstalldirs $(DEST); \
 	fi
 
 install-bin:
@@ -313,7 +313,7 @@ install-modules:
 	@if test ! "x`echo *.so`" = "x*.so"; then \
 		if test ! -d $(DEST)/modules-$(EGGVERSION); then \
 			echo "Creating modules-$(EGGVERSION) directory and symlink."; \
-			$(top_srcdir)/mkinstalldirs $(DEST)/modules-$(EGGVERSION); \
+			$(top_srcdir)/misc/mkinstalldirs $(DEST)/modules-$(EGGVERSION); \
 		fi; \
 		(cd $(DEST) && $(LN_S) modules-$(EGGVERSION) modules); \
 		echo "Copying new modules."; \
@@ -326,12 +326,12 @@ install-data:
 	@$(INSTALL_DATA) eggdrop.conf.dist $(DEST)
 	@if test ! -d $(DEST)/logs; then \
 		echo "Creating 'logs' subdirectory."; \
-		$(top_srcdir)/mkinstalldirs $(DEST)/logs; \
+		$(top_srcdir)/misc/mkinstalldirs $(DEST)/logs; \
 		$(INSTALL_DATA) logs/CONTENTS $(DEST)/logs/; \
 	fi;
 	@if test ! -d $(DEST)/text; then \
 		echo "Creating 'text' subdirectory."; \
-		$(top_srcdir)/mkinstalldirs $(DEST)/text; \
+		$(top_srcdir)/misc/mkinstalldirs $(DEST)/text; \
 	fi;
 	@if test ! -f $(DEST)/text/motd; then \
 		$(INSTALL_DATA) text/motd $(DEST)/text/; \
@@ -345,7 +345,7 @@ install-help:
 	@if test ! "x`echo help/*.help`" = "xhelp/*.help"; then \
 		if test ! -d $(DEST)/help; then \
 			echo "Creating 'help' subdirectory."; \
-			$(top_srcdir)/mkinstalldirs $(DEST)/help; \
+			$(top_srcdir)/misc/mkinstalldirs $(DEST)/help; \
 		fi; \
 		for i in help/*.help; do \
 			$(INSTALL_DATA) $$i $(DEST)/help/; \
@@ -354,7 +354,7 @@ install-help:
 	@if test ! "x`echo help/msg/*.help`" = "xhelp/msg/*.help"; then \
 		if test ! -d $(DEST)/help/msg; then \
 			echo "Creating 'help/msg' subdirectory."; \
-			$(top_srcdir)/mkinstalldirs $(DEST)/help/msg; \
+			$(top_srcdir)/misc/mkinstalldirs $(DEST)/help/msg; \
 		fi; \
 		for i in help/msg/*.help; do \
 			$(INSTALL_DATA) $$i $(DEST)/help/msg/; \
@@ -363,7 +363,7 @@ install-help:
 	@if test ! "x`echo help/set/*.help`" = "xhelp/set/*.help"; then \
 		if test ! -d $(DEST)/help/set; then \
 			echo "Creating 'help/set' subdirectory."; \
-			$(top_srcdir)/mkinstalldirs $(DEST)/help/set; \
+			$(top_srcdir)/misc/mkinstalldirs $(DEST)/help/set; \
 		fi; \
 		for i in help/set/*.help; do \
 			$(INSTALL_DATA) $$i $(DEST)/help/set/; \
@@ -376,7 +376,7 @@ install-language:
 	@if test ! "x`echo language/*.lang`" = "xlanguage/*.lang"; then \
 		if test ! -d $(DEST)/language; then \
 			echo "Creating 'language' subdirectory."; \
-			$(top_srcdir)/mkinstalldirs $(DEST)/language; \
+			$(top_srcdir)/misc/mkinstalldirs $(DEST)/language; \
 		fi; \
 		for i in language/*.lang; do \
 			$(INSTALL_DATA) $$i $(DEST)/language/; \
@@ -387,8 +387,8 @@ install-language:
 install-filesys:
 	@if test ! -d $(DEST)/filesys; then \
 		echo "Creating a skeletal filesys subdirectory."; \
-		$(top_srcdir)/mkinstalldirs $(DEST)/filesys; \
-		$(top_srcdir)/mkinstalldirs $(DEST)/filesys/incoming; \
+		$(top_srcdir)/misc/mkinstalldirs $(DEST)/filesys; \
+		$(top_srcdir)/misc/mkinstalldirs $(DEST)/filesys/incoming; \
 	fi
 
 install-doc:
