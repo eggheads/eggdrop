@@ -258,7 +258,7 @@
 0x666,C'est l'interface telnet de %s, un bot eggdrop.\nN'en abusez pas, et elle sera ouverte également à tous vos amis.\n
 0x667,Maintenant, vous devez trouver un nick à utiliser sur le bot,\net un mot de passe, ainsi personne ne peut prétendre être vous.\nRetenez les!
 0x668,Maintenant, vous n'avez plus besoin d'utiliser -m pour démarrer le bot.\nEnjoy !!
-0x669,Avalanche de connections telnet de %s!  Je le place en ignore!
+0x669,Avalanche de connexions telnet de %s!  Je le place en ignore!
 0x66a,banni
 0x66b,lemmingbot
 0x66c,touche pas a mon pote
@@ -390,17 +390,17 @@
 0xb50,Vous êtes maintenant de retour sur
 0xb51,Relais abandonné:
 0xb52,vient d'arriver sur la party line.
-0xb53,Connection DCC perdue à
+0xb53,Connexion DCC perdue à
 0xb54,Je laisse tomber la tentative de relais à
 0xb55,Succès!\n\nMAINTENANT CONNECTE AU BOT DE RELAIS
 0xb56,(Vous pouvez taper *BYE* pour fermer la connexion prématurément.)
 0xb57,Lien de relais:
 0xb58,a quitté la party line.
 0xb59,Lien de relais terminé
-0xb5a,CONNECTION RELAIS LAISSEE TOMBEE.\nVous êtes de retour sur
+0xb5a,CONNEXION RELAIS LAISSEE TOMBEE.\nVous êtes de retour sur
 0xb5b,a rejoint la party line.
 0xb5c,Je laisse tomber le lien de relais à
-0xb5d,Je casse la connection à
+0xb5d,Je casse la connexion à
 0xb5e,Relais casseé
 0xb5f,Ping timeout
 0xb60,cela ne ressemble pas à un comportement de leaf
@@ -418,7 +418,7 @@
 0xc08,S'il vous plaît, réessayez plus tard.
 0xc09,Connexion tandem à %s refusée (dupliquée)
 0xc0a,Je n'accepte pas de fichier des étrangers.
-0xc0b,DCC SEND refusé %s (pas d'acces): %s!%s
+0xc0b,DCC SEND refusé %s (pas d'accès): %s!%s
 0xc0c,Désolé, trop de connexions DCC.
 0xc0d,Connexions DCC pleines: %s %s (%s!%s)
 0xc0e,Les tranferts de fichiers par DCC ne sont pas supportés.
@@ -456,34 +456,34 @@
 0xe06,n'est plus absent
 0xe07,Changement de Nick:
 0xe08,Rejecting link from %s
-0xe09,Linked to %s.
-0xe0a,Failed link to %s.
-0xe0b,Bad password on connect attempt to %s. 
-0xe0c,Password required for connection to %s.
-0xe0d,ERROR linking %s: %s
-0xe0e,Lost Bot: %s
+0xe09,Relié à %s.
+0xe0a,Echec lors de la liaison avec %s.
+0xe0b,Mauvais mot de passe lors de la tentative de connexion à %s. 
+0xe0c,Mot de passe requis pour se connecter à %s.
+0xe0d,ERREUR lors de la liaison avec %s: %s
+0xe0e,Bot perdu: %s
 0xe0f,Timeout: bot link to %s at %s:%d
 0xe10,Logged in: %s (%s/%d)
 0xe11,Bad Password: [%s]%s/%d
 0xe12,Negative on that, Houston.\n
 0xe13,*** %s has joined the party line.\n
-0xe14,Lost dcc connection to %s (%s/%d)
+0xe14,Connexion DCC perdue avec %s (%s/%d)
 0xe15,Password timeout on dcc chat: [%s]%s
-0xe16,DCC connection closed (%s!%s)
+0xe16,Connexion DCC fermée (%s!%s)
 0xe17,Failed TELNET incoming (%s)
-0xe18,Refused %s/%d (bad src port)
-0xe19,Refused %s/%d (invalid ip)
+0xe18,Refus %s/%d (mauvais port source)
+0xe19,Refus %s/%d (IP invalide)
 0xe1a,Refused %s (bad hostname)
-0xe1b,Telnet connection: %s/%d
+0xe1b,Connexion telnet: %s/%d
 0xe1c,Ident failed for %s: %s
 0xe1d,(!) Listening port %d abruptly died.
-0xe1e,Refused %s (bad nick)
-0xe1f,Refused %s (non-bot)
-0xe20,Refused %s (non-user)
+0xe1e,Refus %s (mauvais nick)
+0xe1f,Refus %s (ce n'est pas un bot)
+0xe20,Refus %s (ce n'est pas un utilisateur)
 0xe21,Refused %s (invalid handle: %s)
-0xe22,Refused telnet connection from %s (duplicate)
-0xe23,Refused [%s]%s (no password)
-0xe24,Lost telnet connection to %s/%d
+0xe22,Connexion telnet refusée depuis %s (doublon)
+0xe23,Refus [%s]%s (pas de mot de passe)
+0xe24,Connexion telnet perdue vers %s/%d
 0xe25,Ident timeout on telnet: %s
 0xe26,Bot installation complete, first master is %s
 0xe27,New user via telnet: [%s]%s/%d
@@ -491,11 +491,11 @@
 0xe29,Lost new telnet user %s (%s/%d)
 0xe2a,Timeout on new telnet user: %s/%d
 0xe2b,Timeout on new telnet user: [%s]%s/%d
-0xe2c,Tcl error [%s]: %s
+0xe2c,Erreur tcl [%s]: %s
 0xe2d,*** ATTENTION: DEAD SOCKET (%d) OF TYPE %s UNTRAPPED
-0xe2e,Lost connection while identing [%s/%d] 
+0xe2e,Connexion perdue pendant l'identification [%s/%d] 
 0xe2f,Timeout/EOF ident connection
 0xe30,Lost ident wait telnet socket!!
-0xe31,Denied telnet: %s, No Access
+0xe31,Telnet refusé: %s, pas d'accès
 0xe32,Refused telnet connection from %s (tried using my botnetnick)
 
