@@ -1462,6 +1462,7 @@ static int tcl_channel_add(Tcl_Interp * irp, char *newname, char *options)
 {
   struct chanset_t *chan;
   int items;
+  int i_s;
   char **item;
   int ret = TCL_OK;
   int join = 0;
@@ -1481,10 +1482,12 @@ static int tcl_channel_add(Tcl_Interp * irp, char *newname, char *options)
     bzero(chan, sizeof(struct chanset_t));
 
     chan->limit_prot = (-1);
-    chan->status = CHAN_DYNAMICBANS | CHAN_GREET | CHAN_PROTECTOPS |
-		   CHAN_DONTKICKOPS | CHAN_LOGSTATUS | CHAN_STOPNETHACK |
-		   CHAN_CYCLE;
-    chan->ircnet_status= CHAN_DYNAMICEXEMPTS | CHAN_DYNAMICINVITES;
+    for (i_s=0;i_s<20;i_s++)
+      if (strstr(glob_chanset, name_globopt[i_s]))
+        chan->status |= const_globopt[i_s];
+    for (i_s=0;i_s<4;i_s++)
+      if (strstr(glob_chanset, name_ieglobopt[i_s]))
+        chan->ircnet_status |= const_ieglobopt[i_s];
     chan->limit = (-1);
     chan->flood_pub_thr = gfld_chan_thr;
     chan->flood_pub_time = gfld_chan_time;

@@ -27,6 +27,31 @@ static Function *global = NULL;
 static int chan_hack = 0;
 static int must_be_owner = 0;
 
+/* global channel settings (dw) */
+static char glob_chanset[513] = "+dynamicbans +greet +protectops +cycle
+				 +dontkickops +statuslog +stopnethack
+				 +dynamicexempts +dynamicinvites";
+
+static int const_globopt[20] =
+                    {0x0001,0x0002,0x0004,
+                     0x0008,0x0010,0x0020,
+                     0x0040,0x0080,0x0100,
+                     0x0200,0x0400,0x0800,  
+                     0x1000,0x2000,0x4000,  
+                     0x8000,0x10000,0x20000,
+                     0x10000000,0x40000000};
+static char *name_globopt[20] =
+                     {"+clearbans","+enforcebans","+dynamicbans",
+                      "-userbans","+autoop","+bitch",
+                      "+greet","+protectops","+statuslog",
+                      "+stopnethack","+revenge","+secret",
+                      "+autovoice","+cycle","+dontkickops",
+                      "+wasoptest","+inactive","+protectfriends",
+                      "+shared","+seen"};
+static int const_ieglobopt[4] = {0x0004,0x0008,0x0010,0x0020};
+static char *name_ieglobopt[4] = {"+dynamicexempts","-userexempts",
+				  "+dynamicinvites","-userinvites"};
+
 /* global flood settings */
 static int gfld_chan_thr;
 static int gfld_chan_time;
@@ -705,6 +730,7 @@ static tcl_coups mychan_tcl_coups[] =
 static tcl_strings my_tcl_strings[] =
 {
   {"chanfile", chanfile, 120, STR_PROTECT},
+  {"global-chanset", glob_chanset, 512, 0},
   {0, 0, 0, 0}
 };
 

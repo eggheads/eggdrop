@@ -567,7 +567,22 @@ channel add #botcentral {
 }
 channel set #botcentral +bitch +clearbans +enforcebans -greet +revenge
 
-
+# these settings are used as
+# default values when you .+chan #chan
+set global-chanset {
+        -clearbans      -enforcebans
+        +dynamicbans    +userbans   
+        -autoop         -bitch      
+        +greet          +protectops 
+        +statuslog      +stopnethack
+        -revenge        -secret
+        -autovoice      +cycle 
+        +dontkickops    -wasoptest
+        -inactive       -protectfriends
+        +shared         -seen
+	+userexempts	+dynamicexempts
+	+userinvites	+dynamicinvites
+}
 
 ##### SERVER MODULE #####
 
