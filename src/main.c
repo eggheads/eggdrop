@@ -750,8 +750,10 @@ int main(int argc, char **argv)
     int socket_cleanup = 0;
 
     context;
+#if ((TCL_MAJOR_VERSION == 7) && (TCL_MINOR_VERSION >= 5)) || (TCL_MAJOR_VERSION >= 8)
     /* process a single tcl event */
     Tcl_DoOneEvent(TCL_ALL_EVENTS | TCL_DONT_WAIT);
+#endif				/* TCL */
     /* lets move some of this here, reducing the numer of actual
      * calls to periodic_timers */
     now = time(NULL);
