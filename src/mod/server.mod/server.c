@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  *
- * $Id: server.c,v 1.109 2004/01/09 12:07:23 wcc Exp $
+ * $Id: server.c,v 1.110 2004/01/09 12:23:59 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -943,7 +943,7 @@ static void write_to_server(char *buf, int len)
   buf2[len + 1] = '\r';
   buf2[len + 2] = '\n';
   buf2[513] = 0;
-  tputs(serv, buf, len);
+  tputs(serv, buf, len + 2);
 }
 
 /* Add a new server to the server_list.
