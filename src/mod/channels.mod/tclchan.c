@@ -1,7 +1,7 @@
 /*
  * tclchan.c -- part of channels.mod
  *
- * $Id: tclchan.c,v 1.63 2002/09/01 05:07:51 wcc Exp $
+ * $Id: tclchan.c,v 1.64 2002/10/28 22:17:55 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -509,8 +509,12 @@ static int tcl_newchanban STDVAR
   strncpyz(ban, argv[2], sizeof ban);
   strncpyz(from, argv[3], sizeof from);
   strncpyz(cmt, argv[4], sizeof cmt);
-  if (argc == 5)
-    expire_time = now + (60 * chan->ban_time);
+  if (argc == 5) {
+    if (chan->ban_time == 0)
+      expire_time = 0L;
+    else
+      expire_time = now + (60 * chan->ban_time);
+  }
   else {
     if (atoi(argv[5]) == 0)
       expire_time = 0L;
@@ -545,8 +549,12 @@ static int tcl_newban STDVAR
   strncpyz(ban, argv[1], sizeof ban);
   strncpyz(from, argv[2], sizeof from);
   strncpyz(cmt, argv[3], sizeof cmt);
-  if (argc == 4)
-    expire_time = now + (60 * global_ban_time);
+  if (argc == 4) {
+    if (global_ban_time == 0)
+      expire_time = 0L;
+    else
+      expire_time = now + (60 * global_ban_time);
+  }
   else {
     if (atoi(argv[4]) == 0)
       expire_time = 0L;
@@ -586,8 +594,12 @@ static int tcl_newchanexempt STDVAR
   strncpyz(exempt, argv[2], sizeof exempt);
   strncpyz(from, argv[3], sizeof from);
   strncpyz(cmt, argv[4], sizeof cmt);
-  if (argc == 5)
-    expire_time = now + (60 * chan->exempt_time);
+  if (argc == 5) {
+    if (chan->exempt_time == 0)
+      expire_time = 0L;
+    else
+      expire_time = now + (60 * chan->exempt_time);
+  }
   else {
     if (atoi(argv[5]) == 0)
       expire_time = 0L;
@@ -620,8 +632,12 @@ static int tcl_newexempt STDVAR
   strncpyz(exempt, argv[1], sizeof exempt);
   strncpyz(from, argv[2], sizeof from);
   strncpyz(cmt, argv[3], sizeof cmt);
-  if (argc == 4)
-    expire_time = now + (60 * global_exempt_time);
+  if (argc == 4) {
+    if (global_exempt_time == 0)
+      expire_time = 0L;
+    else
+      expire_time = now + (60 * global_exempt_time);
+  }
   else {
     if (atoi(argv[4]) == 0)
       expire_time = 0L;
@@ -660,8 +676,12 @@ static int tcl_newchaninvite STDVAR
   strncpyz(invite, argv[2], sizeof invite);
   strncpyz(from, argv[3], sizeof from);
   strncpyz(cmt, argv[4], sizeof cmt);
-  if (argc == 5)
-    expire_time = now + (60 * chan->invite_time);
+  if (argc == 5) {
+    if (chan->invite_time == 0)
+      expire_time = 0L;
+    else
+      expire_time = now + (60 * chan->invite_time);
+  }
   else {
     if (atoi(argv[5]) == 0)
       expire_time = 0L;
@@ -694,8 +714,12 @@ static int tcl_newinvite STDVAR
   strncpyz(invite, argv[1], sizeof invite);
   strncpyz(from, argv[2], sizeof from);
   strncpyz(cmt, argv[3], sizeof cmt);
-  if (argc == 4)
-     expire_time = now + (60 * global_invite_time);
+  if (argc == 4) {
+    if (global_invite_time == 0)
+      expire_time = 0L;
+    else
+      expire_time = now + (60 * global_invite_time);
+  }
   else {
     if (atoi(argv[4]) == 0)
       expire_time = 0L;
