@@ -2,7 +2,7 @@
  * channels.c -- part of channels.mod
  *   support for channels within the bot
  *
- * $Id: channels.c,v 1.68 2002/08/02 23:50:38 wcc Exp $
+ * $Id: channels.c,v 1.69 2002/08/08 01:38:57 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -680,13 +680,11 @@ static void channels_report(int idx, int details)
         if (chan->revenge_mode)
           dprintf(idx, "      revenge-mode %d\n",
                   chan->revenge_mode);
+	dprintf(idx, "    Bans last %d mins.\n", chan->ban_time);
+	dprintf(idx, "    Exemptions last %d mins.\n", chan->exempt_time);
+	dprintf(idx, "    Invitations last %d mins.\n", chan->invite_time);
       }
     }
-  }
-  if (details) {
-    dprintf(idx, "    Bans last %d mins.\n", chan->ban_time);
-    dprintf(idx, "    Exemptions last %d mins.\n", chan->exempt_time);
-    dprintf(idx, "    Invitations last %d mins.\n", chan->invite_time);
   }
 }
 
