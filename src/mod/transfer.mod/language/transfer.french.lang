@@ -1,0 +1,66 @@
+# transfer.french.lang
+#   language messages for transfer module
+#
+# $Id: transfer.french.lang,v 1.1 2002/03/22 04:01:05 guppy Exp $
+
+0xf00,Refus de réception dcc %s : copie de %s IMPOSSIBLE !
+0xf01,NOTICE %s :Le système de fichier est H.S.; annulation des fichiers en attente.\n
+0xf02,NOTICE %s :Voici un fichier de %s ...\n
+0xf03,Plus de connexions DCC : GET %s [%s]
+0xf04,NOTICE %s :Plus de connexions DCC; annulation des fichiers en attente.\n
+0xf05,Erreur de socket DCC : GET %s [%s]
+0xf06,NOTICE %s :Erreur de socket DCC; annulation des fichiers en attente.\n
+0xf07,Annulation de réception dcc %s : Fichier vide !
+0xf08,NOTICE %s :Fichier %s vide, annulation du transfert.\n
+0xf09,  Destinataire %s  Fichier\n
+0xf0a,  -------------%s  --------------------\n
+0xf0b,  %s%s  %s      [ATTENTE]\n
+0xf0c,  %s%s  %s      (%.1f%% transféré)\n
+0xf0d,Pas de fichier dans la file d'attente.\n
+0xf0e,Total : %d\n
+0xf0f,Annulation : %s à %s\n
+0xf10,Annulation : %s  (envoi dcc annulé)\n
+0xf11,NOTICE %s :Transfert de %s annulé par %s\n
+0xf12,Abandon DCC : GET %s (%s) à %lu/%lu
+0xf13,Non trouvé.\n
+0xf14,Annulation de %d fichier%s.\n
+0xf15,Envoi dcc terminé %s de %s!%s
+0xf16,Longueur de fichier %d. Beaucoup TROP GROS.
+0xf17,NOTICE %s :Longueur du fichier %d beaucoup TROP GROSSE !\n
+0xf18,T'as mal !
+0xf19,NOTICE %s :T'as mal !\n
+0xf1a,Déplacement RATÉ `%s' depuis `%s' ! Fichier perdu !
+0xf1b,Merci pour le fichier !\n
+0xf1c,NOTICE %s : Merci pour le fichier !\n
+0xf1d,Transfert de la liste d'utilisateurs de %s perdu; annulation .
+# 0xf1e, < this one is now empty
+0xf1f,Déconnexion de %s (Abandon du transfert de la liste d'utilisateurs)
+0xf20,Perte de l'envoi DCC %s de %s!%s (%lu/%lu)
+0xf21,(!) Paquet de reprise invalide de %s pour %s !	
+0xf22,!! Reprise du transfert apres la fin du fichier pour %s à %s
+0xf23,!!! Tentative d'abandon du transfert de la liste d'utilisateurs
+0xf24,Reprise du transfert de fichier à %dk de %s à %s
+0xf25,Transfert de la liste d'utilisateur terminé vers %s.
+0xf26,Fin de l'envoi DCC %s à %s
+0xf27,Perte du transfert de la liste d'utilisateurs; abandon.
+0xf28,Perte de la réception DCC %s de %s!%s
+0xf29,NOTICE %s :Longueur de fichier invalide.\n
+0xf2a,Fichier trop gros : abandon de l'envoi DCC %s de %s!%s
+0xf2b,Timeout lors du transfert de la liste d'utilisateurs.
+0xf2c,Déconnexion de %s (timeout du transfert de la liste d'utilisateurs)
+0xf2e,NOTICE %s :Timeout pendant le transfert, abandon %s.\n
+0xf2f,Timeout DCC : GET %s (%s) à %lu/%lu
+0xf30,Timeout DCC : SEND %s (%s) à %lu/%lu
+0xf31,envoi (%lu)/%lu\n    Fichier: %s\n
+0xf32,envoi reçu   %lus\n    Fichier: %s\n
+0xf33,conn  envoi
+0xf34,Connexion DCC : SEND %s (%s)
+0xf35,NOTICE %s :Mauvaise connexion (%s)\n
+0xf36,Mauvaise connexion DCC: GET %s (%s!%s)
+0xf37,Début de %senvoi DCC %s à %s
+0xf38,re
+0xf39,NOTICE %s :J'ignore la reprise de `%s': pas de données demandées.\n
+0xf40,Déchargement du module transfer, fermeture de tous les transferts...
+0xf41,    Taille de bloc DCC : %d%s, num max de d/ls simultanés : %d\n
+0xf42,    Utilise %d octets mémoire\n
+
