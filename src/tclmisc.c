@@ -2,7 +2,7 @@
  * tclmisc.c -- handles:
  *   Tcl stubs for everything else
  *
- * $Id: tclmisc.c,v 1.29 2002/01/02 03:46:36 guppy Exp $
+ * $Id: tclmisc.c,v 1.30 2002/07/18 19:01:44 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -174,8 +174,13 @@ static int tcl_binds STDVAR
   tcl_bind_list_t	*tl, *tl_kind;
   tcl_bind_mask_t	*tm;
   tcl_cmd_t		*tc;
-  char			*list[5], *g, flg[100], hits[11];
+  char			*g, flg[100], hits[11];
   int			 matching = 0;
+#if ((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 4))
+    CONST char *list[5];
+#else
+    char *list[5];
+#endif
 
   BADARGS(1, 2, " ?type/mask?");
   if (argv[1])
@@ -512,9 +517,14 @@ static int tcl_modules STDVAR
 {
   module_entry *current;
   dependancy *dep;
-  char *list[100], *list2[2], *p;
+  char *p;
   char s[24], s2[24];
   int i;
+#if ((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 4))
+    CONST char *list[100], *list2[2];
+#else
+    char *list[100], *list2[2];
+#endif
 
   BADARGS(1, 1, "");
   for (current = module_list; current; current = current->next) {

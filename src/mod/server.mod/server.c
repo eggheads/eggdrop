@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  *
- * $Id: server.c,v 1.78 2002/06/06 18:52:25 wcc Exp $
+ * $Id: server.c,v 1.79 2002/07/18 19:01:45 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1116,8 +1116,14 @@ static int server_raw STDVAR
 
 /* Read/write normal string variable.
  */
+
+#if ((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 4))
 static char *nick_change(ClientData cdata, Tcl_Interp *irp, char *name1,
-			 char *name2, int flags)
+			 CONST char *name2, int flags)
+#else
+static char *nick_change(ClientData cdata, Tcl_Interp *irp, char *name1,
+                         char *name2, int flags)
+#endif
 {
   char *new;
 
@@ -1169,16 +1175,26 @@ static char *get_altbotnick(void)
     return altnick;
 }
 
+#if ((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 4))
 static char *altnick_change(ClientData cdata, Tcl_Interp *irp, char *name1,
-			    char *name2, int flags)
+			    CONST char *name2, int flags)
+#else
+static char *altnick_change(ClientData cdata, Tcl_Interp *irp, char *name1,
+                            char *name2, int flags)
+#endif
 {
   /* Always unset raltnick. Will be regenerated when needed. */
   raltnick[0] = 0;
   return NULL;
 }
 
+#if ((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 4))
 static char *traced_server(ClientData cdata, Tcl_Interp *irp, char *name1,
-			   char *name2, int flags)
+			   CONST char *name2, int flags)
+#else
+static char *traced_server(ClientData cdata, Tcl_Interp *irp, char *name1,
+                           char *name2, int flags)
+#endif
 {
   char s[1024];
 
@@ -1195,8 +1211,13 @@ static char *traced_server(ClientData cdata, Tcl_Interp *irp, char *name1,
   return NULL;
 }
 
+#if ((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 4))
 static char *traced_botname(ClientData cdata, Tcl_Interp *irp, char *name1,
-			    char *name2, int flags)
+			    CONST char *name2, int flags)
+#else
+static char *traced_botname(ClientData cdata, Tcl_Interp *irp, char *name1,
+                            char *name2, int flags)
+#endif
 {
   char s[1024];
 
@@ -1245,15 +1266,26 @@ static void do_nettype(void)
   }
 }
 
+#if ((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 4))
 static char *traced_nettype(ClientData cdata, Tcl_Interp *irp, char *name1,
-			    char *name2, int flags)
+			    CONST char *name2, int flags)
+#else
+static char *traced_nettype(ClientData cdata, Tcl_Interp *irp, char *name1,
+                            char *name2, int flags)
+#endif
 {
   do_nettype();
   return NULL;
 }
 
+#if ((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 4))
 static char *traced_nicklen(ClientData cdata, Tcl_Interp *irp, char *name1,
-			    char *name2, int flags)
+			    CONST char *name2, int flags)
+#else
+static char *traced_nicklen(ClientData cdata, Tcl_Interp *irp, char *name1,
+                            char *name2, int flags)
+#endif
+
 {
   if (flags & (TCL_TRACE_READS | TCL_TRACE_UNSETS)) {
     char s[40];
@@ -1335,13 +1367,24 @@ static tcl_ints my_tcl_ints[] =
 
 /* Read or write the server list.
  */
+
+#if ((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 4))
 static char *tcl_eggserver(ClientData cdata, Tcl_Interp *irp, char *name1,
-			   char *name2, int flags)
+			   CONST char *name2, int flags)
+#else
+static char *tcl_eggserver(ClientData cdata, Tcl_Interp *irp, char *name1,
+                           char *name2, int flags)
+#endif
 {
   Tcl_DString ds;
-  char *slist, **list, x[1024];
+  char *slist, x[1024];
   struct server_list *q;
   int lc, code, i;
+#if ((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 4))
+  CONST char **list;
+#else
+  char **list;
+#endif
 
   if (flags & (TCL_TRACE_READS | TCL_TRACE_UNSETS)) {
     /* Create server list */
@@ -1366,7 +1409,7 @@ static char *tcl_eggserver(ClientData cdata, Tcl_Interp *irp, char *name1,
       if (code == TCL_ERROR)
 	return interp->result;
       for (i = 0; i < lc && i < 50; i++)
-	add_server(list[i]);
+	add_server((char *)list[i]);
 
       /* Tricky way to make the bot reset its server pointers
        * perform part of a '.jump <current-server>':

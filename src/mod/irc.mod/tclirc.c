@@ -1,7 +1,7 @@
 /*
  * tclirc.c -- part of irc.mod
  *
- * $Id: tclirc.c,v 1.35 2002/06/13 20:43:08 wcc Exp $
+ * $Id: tclirc.c,v 1.36 2002/07/18 19:01:45 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -509,7 +509,12 @@ static int tcl_getchanidle STDVAR
 
 static inline int tcl_chanmasks(masklist *m, Tcl_Interp *irp)
 {
-  char *list[3], work[20], *p;
+  char work[20], *p;
+#if ((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 4))
+  CONST char *list[3];
+#else
+  char *list[3];
+#endif
 
   for (; m && m->mask && m->mask[0]; m = m->next) {
     list[0] = m->mask;

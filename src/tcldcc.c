@@ -2,7 +2,7 @@
  * tcldcc.c -- handles:
  *   Tcl stubs for the dcc commands
  *
- * $Id: tcldcc.c,v 1.33 2002/01/02 03:46:36 guppy Exp $
+ * $Id: tcldcc.c,v 1.34 2002/07/18 19:01:44 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -564,8 +564,13 @@ static int tcl_bots STDVAR
 static int tcl_botlist STDVAR
 {
   tand_t *bot;
-  char *list[4], *p;
+  char *p;
   char sh[2], string[20];
+#if ((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 4))
+    CONST char *list[4];
+#else
+    char *list[4];
+#endif
 
   BADARGS(1, 1, "");
   sh[1] = 0;
@@ -590,8 +595,13 @@ static int tcl_dcclist STDVAR
   int i;
   char idxstr[10];
   char timestamp[11];
-  char *list[6], *p;
+  char *p;
   char other[160];
+#if ((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 4))
+    CONST char *list[6];
+#else
+    char *list[6];
+#endif
 
   BADARGS(1, 2, " ?type?");
   for (i = 0; i < dcc_total; i++) {
@@ -624,8 +634,13 @@ static int tcl_dcclist STDVAR
  */
 static int tcl_whom STDVAR
 {
-  char c[2], idle[11], work[20], *list[7], *p;
+  char c[2], idle[11], work[20], *p;
   int chan, i;
+#if ((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 4))
+    CONST char *list[7];
+#else
+    char *list[7];
+#endif
 
   BADARGS(2, 2, " chan");
   if (argv[1][0] == '*')

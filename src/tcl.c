@@ -4,7 +4,7 @@
  *   Tcl initialization
  *   getting and setting Tcl/eggdrop variables
  *
- * $Id: tcl.c,v 1.46 2002/03/11 19:22:30 stdarg Exp $
+ * $Id: tcl.c,v 1.47 2002/07/18 19:01:44 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -135,8 +135,13 @@ typedef struct {
 } coupletinfo;
 
 /* Read/write integer couplets (int1:int2) */
+#if ((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 4))
+static char *tcl_eggcouplet(ClientData cdata, Tcl_Interp *irp, char *name1,
+                            CONST char *name2, int flags)
+#else
 static char *tcl_eggcouplet(ClientData cdata, Tcl_Interp *irp, char *name1,
 			    char *name2, int flags)
+#endif
 {
   char *s, s1[41];
   coupletinfo *cp = (coupletinfo *) cdata;
@@ -149,7 +154,7 @@ static char *tcl_eggcouplet(ClientData cdata, Tcl_Interp *irp, char *name1,
 		   TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
 		   tcl_eggcouplet, cdata);
   } else {			/* writes */
-    s = Tcl_GetVar2(interp, name1, name2, TCL_GLOBAL_ONLY);
+    s = (char *) Tcl_GetVar2(interp, name1, name2, TCL_GLOBAL_ONLY);
     if (s != NULL) {
       int nr1, nr2;
 
@@ -165,8 +170,13 @@ static char *tcl_eggcouplet(ClientData cdata, Tcl_Interp *irp, char *name1,
 
 /* Read or write normal integer.
  */
+#if ((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 4))
 static char *tcl_eggint(ClientData cdata, Tcl_Interp *irp, char *name1,
-			char *name2, int flags)
+			CONST char *name2, int flags)
+#else
+static char *tcl_eggint(ClientData cdata, Tcl_Interp *irp, char *name1,
+                        char *name2, int flags)
+#endif
 {
   char *s, s1[40];
   long l;
@@ -192,7 +202,7 @@ static char *tcl_eggint(ClientData cdata, Tcl_Interp *irp, char *name1,
 		   tcl_eggint, cdata);
     return NULL;
   } else {			/* Writes */
-    s = Tcl_GetVar2(interp, name1, name2, TCL_GLOBAL_ONLY);
+    s = (char *) Tcl_GetVar2(interp, name1, name2, TCL_GLOBAL_ONLY);
     if (s != NULL) {
       if ((int *) ii->var == &conmask) {
 	if (s[0])
@@ -236,8 +246,13 @@ static char *tcl_eggint(ClientData cdata, Tcl_Interp *irp, char *name1,
 
 /* Read/write normal string variable
  */
+#if ((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 4))
+static char *tcl_eggstr(ClientData cdata, Tcl_Interp *irp, char *name1,
+                        CONST char *name2, int flags)
+#else
 static char *tcl_eggstr(ClientData cdata, Tcl_Interp *irp, char *name1,
 			char *name2, int flags)
+#endif
 {
   char *s;
   strinfo *st = (strinfo *) cdata;
@@ -262,7 +277,7 @@ static char *tcl_eggstr(ClientData cdata, Tcl_Interp *irp, char *name1,
       Tcl_SetVar2(interp, name1, name2, st->str, TCL_GLOBAL_ONLY);
       return "read-only variable";
     }
-    s = Tcl_GetVar2(interp, name1, name2, TCL_GLOBAL_ONLY);
+    s = (char *) Tcl_GetVar2(interp, name1, name2, TCL_GLOBAL_ONLY);
     if (s != NULL) {
       if (strlen(s) > abs(st->max))
 	s[abs(st->max)] = 0;

@@ -1,7 +1,7 @@
 /*
  * tclchan.c -- part of channels.mod
  *
- * $Id: tclchan.c,v 1.60 2002/06/13 20:43:08 wcc Exp $
+ * $Id: tclchan.c,v 1.61 2002/07/18 19:01:44 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1340,7 +1340,12 @@ static int tcl_channel_modify(Tcl_Interp * irp, struct chanset_t *chan,
 
 static int tcl_do_masklist(maskrec *m, Tcl_Interp *irp)
 {
-  char ts[21], ts1[21], ts2[21], *list[6], *p;
+  char ts[21], ts1[21], ts2[21], *p;
+#if ((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 4))
+  CONST char *list[6];
+#else
+  char *list[6];
+#endif
 
   for (; m; m = m->next) {
     list[0] = m->mask;
@@ -1674,8 +1679,12 @@ static int tcl_channel_add(Tcl_Interp *irp, char *newname, char *options)
   int items;
   int ret = TCL_OK;
   int join = 0;
-  char **item;
   char buf[2048], buf2[256];
+#if ((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 4))
+  CONST char **item;
+#else
+  char **item;
+#endif
 
   if (!newname || !newname[0] || !strchr(CHANMETA, newname[0])) {
     if (irp)

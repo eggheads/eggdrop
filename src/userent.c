@@ -2,7 +2,7 @@
  * userent.c -- handles:
  *   user-entry handling, new stylem more versatile.
  *
- * $Id: userent.c,v 1.23 2002/01/02 03:46:36 guppy Exp $
+ * $Id: userent.c,v 1.24 2002/07/18 19:01:44 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -780,7 +780,11 @@ static void xtra_display(int idx, struct user_entry *e)
 {
   int code, lc, j;
   struct xtra_key *xk;
+#if ((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 4))
+  CONST char **list;
+#else
   char **list;
+#endif
 
   code = Tcl_SplitList(interp, whois_fields, &lc, &list);
   if (code == TCL_ERROR)
@@ -883,7 +887,12 @@ static int xtra_tcl_get(Tcl_Interp *irp, struct userrec *u,
     return TCL_OK;
   }
   for (x = e->u.extra; x; x = x->next) {
-    char *p, *list[2];
+    char *p;
+#if ((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 4))
+    CONST char *list[2];
+#else
+    char *list[2];
+#endif
 
     list[0] = x->key;
     list[1] = x->data;

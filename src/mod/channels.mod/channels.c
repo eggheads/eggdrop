@@ -2,7 +2,7 @@
  * channels.c -- part of channels.mod
  *   support for channels within the bot
  *
- * $Id: channels.c,v 1.66 2002/06/14 05:30:31 wcc Exp $
+ * $Id: channels.c,v 1.67 2002/07/18 19:01:44 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -734,14 +734,23 @@ static int channels_expmem()
   return tot;
 }
 
+#if ((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 4))
 static char *traced_globchanset(ClientData cdata, Tcl_Interp * irp,
-				char *name1, char *name2, int flags)
+				char *name1, CONST char *name2, int flags)
+#else
+static char *traced_globchanset(ClientData cdata, Tcl_Interp * irp, 
+                                char *name1, char *name2, int flags)
+#endif
 {
   char *s;
   char *t;
   int i;
   int items;
+#if ((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 4))
+  CONST char **item;
+#else
   char **item;
+#endif
 
   if (flags & (TCL_TRACE_READS | TCL_TRACE_UNSETS)) {
     Tcl_SetVar2(interp, name1, name2, glob_chanset, TCL_GLOBAL_ONLY);

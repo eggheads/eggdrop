@@ -5,7 +5,7 @@
  *   note cmds
  *   note ignores
  *
- * $Id: notes.c,v 1.39 2002/06/06 18:52:24 wcc Exp $
+ * $Id: notes.c,v 1.40 2002/07/18 19:01:45 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -664,7 +664,12 @@ static int tcl_notes STDVAR
   FILE *f;
   char s[601], *to, *from, *dt, *s1;
   int count, read, nl[128];	/* Is it enough? */
-  char *list[3], *p;
+  char *p;
+#if ((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 4))
+  CONST char *list[3];
+#else
+  char *list[3];
+#endif
 
   BADARGS(2, 3, " handle ?noteslist#?");
   if (!get_user_by_handle(userlist, argv[1])) {
