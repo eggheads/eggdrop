@@ -2,7 +2,7 @@
  * net.c -- handles:
  *   all raw network i/o
  * 
- * $Id: net.c,v 1.33 2001/11/10 19:45:34 poptix Exp $
+ * $Id: net.c,v 1.34 2001/11/10 19:48:37 poptix Exp $
  */
 /* 
  * This is hereby released into the public domain.
@@ -733,8 +733,6 @@ int sockgets(char *s, int *len)
 {
   char xx[514], *p, *px;
   int ret, i, data = 0;
-  fd_set wfds;
-  struct timeval tv;
 
   for (i = 0; i < MAXSOCKS; i++) {
     /* Check for stored-up data waiting to be processed */
