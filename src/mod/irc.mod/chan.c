@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  * 
- * $Id: chan.c,v 1.26 2000/01/28 22:14:02 fabian Exp $
+ * $Id: chan.c,v 1.27 2000/01/30 17:59:53 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -261,8 +261,7 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
       u_addban(chan, h, origbotname, ftype, now + (60 * ban_time), 0);
       Context;
       /* Don't kick user if exempted */
-      if (!channel_enforcebans(chan) && me_op(chan) && !isexempted(chan, h))
-	{
+      if (!channel_enforcebans(chan) && me_op(chan) && !isexempted(chan, h)) {
 	  char s[UHOSTLEN];
 	  m = chan->channel.member;
 	  
@@ -272,8 +271,12 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
 		(m->joined >= chan->floodtime[which]) &&
 		   !chan_sentkick(m) && !match_my_nick(m->nick)) {
 	      m->flags |= SENTKICK;
+	      if (which == FLOOD_JOIN)
 	      dprintf(DP_SERVER, "KICK %s %s :%s\n", chan->name, m->nick,
-		      IRC_LEMMINGBOT);
+		      IRC_JOIN_FLOOD);
+	      else
+	        dprintf(DP_SERVER, "KICK %s %s :%s\n", chan->name, m->nick,
+		      IRC_NICK_FLOOD);
 	    }
 	    m = m->next;
 	  }
