@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: mod-irc.html,v 1.14 2002/03/09 21:14:15 wcc Exp $ -->
+<!-- $Id: mod-irc.html,v 1.15 2002/10/08 04:25:37 wcc Exp $ -->
 
 <html>
   <head>
@@ -235,7 +235,10 @@
           <p>Some networks allow you to stack lots of channel modes into
           one line. They&#39;re all guaranteed to support at least 3, so
           that&#39;s the default. If you know your network supports more,
-          you may  want to adjust this.</p>
+          you may  want to adjust this. This setting is limited to 6,
+          although if you want to use a higher value, you can modify this
+          by changing the value of MODES_PER_LINE_MAX in src/chan.h and
+          recompiling the bot.</p>
         </dd>
 
         <dt><strong>set include-lk 1</strong></dt>

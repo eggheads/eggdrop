@@ -3,7 +3,7 @@
  *   stuff common to chan.c and mode.c
  *   users.h needs to be loaded too
  *
- * $Id: chan.h,v 1.31 2002/09/27 19:30:02 stdarg Exp $
+ * $Id: chan.h,v 1.32 2002/10/08 04:25:37 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -133,6 +133,8 @@ struct chan_t {
 #define CHANNOCTCP 0x2000      /* +C -- QuakeNet's ircu 2.10           */
 #define CHANLONLY  0x4000      /* +r -- ircu 2.10.11                   */
 
+#define MODES_PER_LINE_MAX 6
+
 /* For every channel i'm supposed to be active on */
 struct chanset_t {
   struct chanset_t *next;
@@ -187,7 +189,7 @@ struct chanset_t {
   struct {
     char *op;
     int type;
-  } cmode[6];			/* parameter-type mode changes -	*/
+  } cmode[MODES_PER_LINE_MAX];			/* parameter-type mode changes -	*/
   /* detect floods */
   char floodwho[FLOOD_CHAN_MAX][81];
   time_t floodtime[FLOOD_CHAN_MAX];

@@ -154,6 +154,9 @@ Attention: Use this settings *only* if you set 'net-type' to 5!
     Some networks allow you to stack lots of channel modes into one line.
     They're all guaranteed to support at least 3, so that's the default.
     If you know your network supports more, you may want to adjust this.
+    This setting is limited to 6, although if you want to use a higher
+    value, you can modify this by changing the value of MODES_PER_LINE_MAX
+    in src/chan.h and recompiling the bot.
 
   set include-lk 1
     Some networks don't include the +l limit and +k or -k key modes
