@@ -10,7 +10,7 @@
  *
  * dprintf'ized, 9nov1995
  *
- * $Id: users.c,v 1.28 2002/01/02 03:46:36 guppy Exp $
+ * $Id: users.c,v 1.29 2002/01/29 21:08:50 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -126,14 +126,24 @@ int delignore(char *ign)
 
 void addignore(char *ign, char *from, char *mnote, time_t expire_time)
 {
-  struct igrec *p;
+  struct igrec *p = NULL, *l;
 
-  if (equals_ignore(ign))
-    delignore(ign);		/* remove old ignore */
-  p = user_malloc(sizeof(struct igrec));
+  for (l = global_ign; l; l = l->next)
+    if (!rfc_casecmp(l->igmask, ign)) {
+      p = l;
+      break;
+    }
 
-  p->next = global_ign;
-  global_ign = p;
+  if (p == NULL) {
+    p = user_malloc(sizeof(struct igrec));
+    p->next = global_ign;
+    global_ign = p;
+  } else {
+    nfree(p->igmask);
+    nfree(p->user);
+    nfree(p->msg);
+  }
+
   p->expire = expire_time;
   p->added = now;
   p->flags = expire_time ? 0 : IGREC_PERM;
