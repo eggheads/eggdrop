@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  *
- * $Id: main.c,v 1.56 2001/04/12 02:39:43 guppy Exp $
+ * $Id: main.c,v 1.57 2001/04/13 19:26:35 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -222,9 +222,9 @@ void write_debug()
     setsock(x, SOCK_NONSOCK);
     if (x >= 0) {
       strncpyz(s, ctime(&now), sizeof s);
-      dprintf(-x, "Debug (%s) written %s", ver, s);
-      dprintf(-x, "Please report problem to eggheads@eggheads.org");
-      dprintf(-x, "after a visit to http://www.eggheads.org/bugs.html");
+      dprintf(-x, "Debug (%s) written %s\n", ver, s);
+      dprintf(-x, "Please report problem to eggheads@eggheads.org\n");
+      dprintf(-x, "after a visit to http://www.eggheads.org/bugzilla/\n");
       dprintf(-x, "Full Patch List: %s\n", egg_xtra);
       dprintf(-x, "Context: ");
       cx_ptr = cx_ptr & 15;
@@ -249,7 +249,7 @@ void write_debug()
     putlog(LOG_MISC, "*", "* Failed to write DEBUG");
   } else {
     strncpyz(s, ctime(&now), sizeof s);
-    dprintf(-x, "Debug (%s) written %s", ver, s);
+    dprintf(-x, "Debug (%s) written %s\n", ver, s);
     dprintf(-x, "Full Patch List: %s\n", egg_xtra);
 #ifdef STATIC
     dprintf(-x, "STATICALLY LINKED\n");
