@@ -134,7 +134,4 @@ void rem_tcl_coups(tcl_coups *);
 void add_tcl_ints(tcl_ints *);
 void rem_tcl_ints(tcl_ints *);
 
-/* set Tcl variables to match eggdrop internal variables */
-#define set_tcl_vars() \
-Tcl_SetVar(interp, "tcl_interactive", "0", TCL_GLOBAL_ONLY)
 #endif

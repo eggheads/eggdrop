@@ -2179,7 +2179,6 @@ static void cmd_tcl(struct userrec *u, int idx, char *msg)
     return;
   }
   debug1("tcl: evaluate (.tcl): %s", msg);
-  set_tcl_vars();
   code = Tcl_GlobalEval(interp, msg);
   if (code == TCL_OK)
     dumplots(idx, "Tcl: ", interp->result);
@@ -2198,7 +2197,6 @@ static void cmd_set(struct userrec *u, int idx, char *msg)
     return;
   }
   putlog(LOG_CMDS, "*", "#%s# set %s", dcc[idx].nick, msg);
-  set_tcl_vars();
   strcpy(s, "set ");
   if (!msg[0]) {
     strcpy(s, "info globals");

@@ -885,7 +885,6 @@ int add_note(char *to, char *from, char *msg, int idx, int echo)
   Tcl_SetVar(interp, "_data", msg, 0);
   simple_sprintf(ss, "%d", dcc[idx].sock);
   Tcl_SetVar(interp, "_idx", ss, 0);
-  set_tcl_vars();
   if (Tcl_VarEval(interp, "storenote", " $_from $_to $_data $_idx", NULL) == TCL_OK) {
     if (interp->result && interp->result[0]) {
       /* strncpy(to, interp->result, NOTENAMELEN);

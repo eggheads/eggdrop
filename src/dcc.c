@@ -1164,7 +1164,7 @@ static void eof_dcc_telnet(int idx)
 
 static void display_telnet(int idx, char *buf)
 {
-  sprintf(buf, "lstn %d", dcc[idx].port);
+  sprintf(buf, "lstn  %d", dcc[idx].port);
 }
 
 struct dcc_table DCC_TELNET =
@@ -1562,7 +1562,6 @@ static int call_tcl_func(char *name, int idx, char *args)
 {
   char s[11];
 
-  set_tcl_vars();
   sprintf(s, "%d", idx);
   Tcl_SetVar(interp, "_n", s, 0);
   Tcl_SetVar(interp, "_a", args, 0);
@@ -1582,7 +1581,6 @@ static void dcc_script(int idx, char *buf, int len)
   if (!len)
     return;
   dcc[idx].timeval = now;
-  set_tcl_vars();
   if (call_tcl_func(dcc[idx].u.script->command, dcc[idx].sock, buf)) {
     context;
     if ((dcc[idx].sock != oldsock) || (idx>max_dcc))

@@ -539,7 +539,8 @@ void check_static(char *, char *(*)());
 #include "mod/static.h"
 #endif
 int init_mem(), init_dcc_max(), init_userent(), init_misc(), init_bots(),
- init_net(), init_modules(), init_tcl(), init_language(int);
+ init_net(), init_modules(), init_tcl(int, char **),
+ init_language(int);
 
 int main(int argc, char **argv)
 {
@@ -616,7 +617,7 @@ int main(int argc, char **argv)
   init_bots();
   init_net();
   init_modules();
-  init_tcl();
+  init_tcl(argc, argv);
   init_language(0);
 #ifdef STATIC
   link_statics();
@@ -893,7 +894,7 @@ int main(int argc, char **argv)
 	flushlogs();
 	context;
 	kill_tcl();
-	init_tcl();
+	init_tcl(argc, argv);
 	init_language(0);
 	x = p->funcs[MODCALL_START];
 	x(0);

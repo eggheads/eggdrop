@@ -76,7 +76,6 @@ int expmem_dccutil()
   return tot;
 }
 
-/* FIXME: should this be here ? */
 static char SBUF[1024];
 
 /* replace \n with \r\n */
@@ -95,6 +94,7 @@ char *add_cr(char *buf)
 }
 
 extern void (*qserver) (int, char *, int);
+
 void dprintf EGG_VARARGS_DEF(int, arg1)
 {
   char *format;

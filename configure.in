@@ -394,8 +394,6 @@ tclheadernames="tcl.h"
 tclheaderpaths="/usr/local/include /usr/local/pkgs/tcl/include \
 	/usr/include $HOME/include $HOME/tcl/include $HOME"
 
-tclconfigfile="tclConfig.sh"
-
 dnl oohh new configure --variables for those with multiple tcl libs
 AC_ARG_WITH(tcllib, [  --with-tcllib=PATH      full path to tcl library], tcllibname=$withval)
 AC_ARG_WITH(tclinc, [  --with-tclinc=PATH      full path to tcl header], tclincname=$withval)

@@ -2829,8 +2829,6 @@ tclheadernames="tcl.h"
 tclheaderpaths="/usr/local/include /usr/local/pkgs/tcl/include \
 	/usr/include $HOME/include $HOME/tcl/include $HOME"
 
-tclconfigfile="tclConfig.sh"
-
 # Check whether --with-tcllib or --without-tcllib was given.
 if test "${with_tcllib+set}" = set; then
   withval="$with_tcllib"
@@ -3029,7 +3027,7 @@ EOF
 fi
 
 echo $ac_n "checking for Tcl library""... $ac_c" 1>&6
-echo "configure:3033: checking for Tcl library" >&5
+echo "configure:3031: checking for Tcl library" >&5
 
 # attempt autodetect for $TCLLIBFN if it's not set
 if test ! "x${TCLLIBFN}" = "x"
@@ -3063,7 +3061,7 @@ then
 fi
 
 echo $ac_n "checking for Tcl header""... $ac_c" 1>&6
-echo "configure:3067: checking for Tcl header" >&5
+echo "configure:3065: checking for Tcl header" >&5
 
 # attempt autodetect for $TCLINCFN if it's not set
 if test ! "x${TCLINCFN}" = "x"
@@ -3122,7 +3120,7 @@ fi
 
 # check if we found Tcl's version
 echo $ac_n "checking for Tcl version""... $ac_c" 1>&6
-echo "configure:3126: checking for Tcl version" >&5
+echo "configure:3124: checking for Tcl version" >&5
 if test ! "x${TCL_VERSION}" = "x"
 then
   if test ! "x${TCL_PATCH_LEVEL}" = "x"
@@ -3202,7 +3200,7 @@ fi
 
 # check for Tcl_Free()
 echo $ac_n "checking if Tcl library has Tcl_Free""... $ac_c" 1>&6
-echo "configure:3206: checking if Tcl library has Tcl_Free" >&5
+echo "configure:3204: checking if Tcl library has Tcl_Free" >&5
 if eval "test \"`echo '$''{'ac_cv_var_tcl_free'+set}'`\" = set"
 then
   echo $ac_n "(cached) $ac_c" 1>&6
@@ -3245,7 +3243,7 @@ fi
 
 # check for TclpFinalizeThreadData()
 echo $ac_n "checking if Tcl library has threads""... $ac_c" 1>&6
-echo "configure:3249: checking if Tcl library has threads" >&5
+echo "configure:3247: checking if Tcl library has threads" >&5
 if eval "test \"`echo '$''{'ac_cv_var_tcl_threads'+set}'`\" = set"
 then
   echo $ac_n "(cached) $ac_c" 1>&6

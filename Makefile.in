@@ -13,10 +13,10 @@ EGGEXEC = @EGGEXEC@
 EGGVERSION = @EGGVERSION@
 
 # things you can put here:
-#   -Wall            if you're using gcc and it supports it (configure
-#                      usually detects this anyway now)
+#   -Wall            if you're using gcc and it supports it
+#                    (configure usually detects this anyway now)
 #   -DEBUG_MEM       to be able to debug memory allocation (.debug)
-# this can now be set by using 'make debug'
+#                    this can now be set by using 'make debug' or 'make sdebug'
 CFLGS =
 
 # configure SHOULD set these...you may need to tweak them to get modules
@@ -58,36 +58,33 @@ TCLLIB = @TCLLIB@
 TCLLIBFN = @TCLLIBFN@
 
 CFLAGS = @CFLAGS@ -I.. @DEFS@ $(CFLGS)
+DEBCFLAGS = @CFLAGS@ -I.. @DEFS@ -DEBUG_MEM $(CFLGS)
 
 MAKE_MODEGG = $(MAKE) 'CC=$(MOD_CC)' 'LD=$(MOD_LD)' 'STRIP=$(MOD_STRIP)' \
-'RANLIB=$(RANLIB)' 'CFLAGS=$(CFLAGS)' \
-'CPPFLAGS=$(CPPFLAGS)' 'EGGEXEC=$(EGGEXEC)' 'TCLLIB=$(TCLLIB)' \
-'TCLLIBFN=$(TCLLIBFN)' 'XREQS=$(XREQS)' 'XLIBS=$(XLIBS)' \
-'EGGBUILD=' 'MODOBJS='
+'RANLIB=$(RANLIB)' 'CFLAGS=$(CFLAGS)' 'CPPFLAGS=$(CPPFLAGS)' \
+'TCLLIB=$(TCLLIB)' 'TCLLIBFN=$(TCLLIBFN)' 'XREQS=$(XREQS)' 'XLIBS=$(XLIBS)' \
+'EGGEXEC=$(EGGEXEC)' 'EGGBUILD=' 'MODOBJS='
 
 MAKE_MODULES = $(MAKE) 'CC=$(SHLIB_CC)' 'LD=$(SHLIB_LD)' \
 'STRIP=$(SHLIB_STRIP)' 'CFLAGS=$(CFLAGS)' 'CPPFLAGS=$(CPPFLAGS)'
 
 MAKE_STATIC = $(MAKE) 'CC=$(CC)' 'LD=$(LD)' 'STRIP=$(STRIP)' \
-'RANLIB=$(RANLIB)' 'CFLAGS=$(CFLAGS) -DSTATIC' \
-'CPPFLAGS=$(CPPFLAGS)' 'EGGEXEC=$(EGGEXEC)' 'TCLLIB=$(TCLLIB)' \
-'TCLLIBFN=$(TCLLIBFN)' 'XREQS=$(XREQS)' 'XLIBS=$(XLIBS)' \
-'EGGBUILD=(static version)' 'MODOBJS=mod/*.o'
+'RANLIB=$(RANLIB)' 'CFLAGS=$(CFLAGS) -DSTATIC' 'CPPFLAGS=$(CPPFLAGS)' \
+'TCLLIB=$(TCLLIB)' 'TCLLIBFN=$(TCLLIBFN)' 'XREQS=$(XREQS)' 'XLIBS=$(XLIBS)' \
+'EGGEXEC=$(EGGEXEC)' 'EGGBUILD=(static version)' 'MODOBJS=mod/*.o'
 
 MAKE_DEBEGG = $(MAKE) 'CC=$(MOD_CC)' 'LD=$(MOD_LD) -g' 'STRIP=touch' \
-'RANLIB=$(RANLIB)' 'CFLAGS=-g3 $(CFLAGS) -DEBUG_MEM' \
-'CPPFLAGS=$(CPPFLAGS)' 'EGGEXEC=$(EGGEXEC)' 'TCLLIB=$(TCLLIB)' \
-'TCLLIBFN=$(TCLLIBFN)' 'XREQS=$(XREQS)' 'XLIBS=$(XLIBS)' \
-'EGGBUILD=(debug version)' 'MODOBJS='
+'RANLIB=$(RANLIB)' 'CFLAGS=-g3 $(DEBCFLAGS)' 'CPPFLAGS=$(CPPFLAGS)' \
+'TCLLIB=$(TCLLIB)' 'TCLLIBFN=$(TCLLIBFN)' 'XREQS=$(XREQS)' 'XLIBS=$(XLIBS)' \
+'EGGEXEC=$(EGGEXEC)' 'EGGBUILD=(debug version)' 'MODOBJS='
 
 MAKE_DEBMODULES = $(MAKE) 'CC=$(SHLIB_CC)' 'LD=$(SHLIB_LD)' \
-'STRIP=touch' 'CFLAGS=-g3 $(CFLAGS) -DEBUG_MEM' 'CPPFLAGS=$(CPPFLAGS)'
+'STRIP=touch' 'CFLAGS=-g3 $(DEBCFLAGS)' 'CPPFLAGS=$(CPPFLAGS)'
 
 MAKE_SDEBUG = $(MAKE) 'CC=$(CC)' 'LD=$(LD) -g' 'STRIP=touch' \
-'RANLIB=$(RANLIB)' 'CFLAGS=-g3 $(CFLAGS) -DSTATIC -DEBUG_MEM' \
-'CPPFLAGS=$(CPPFLAGS)' 'EGGEXEC=$(EGGEXEC)' 'TCLLIB=$(TCLLIB)' \
-'TCLLIBFN=$(TCLLIBFN)' 'XREQS=$(XREQS)' 'XLIBS=$(XLIBS)' \
-'EGGBUILD=(static and debug version)' 'MODOBJS=mod/*.o'
+'RANLIB=$(RANLIB)' 'CFLAGS=-g3 $(DEBCFLAGS) -DSTATIC' 'CPPFLAGS=$(CPPFLAGS)' \
+'TCLLIB=$(TCLLIB)' 'TCLLIBFN=$(TCLLIBFN)' 'XREQS=$(XREQS)' 'XLIBS=$(XLIBS)' \
+'EGGEXEC=$(EGGEXEC)' 'EGGBUILD=(static and debug version)' 'MODOBJS=mod/*.o'
 
 MAKE_INSTALL = $(MAKE) 'DEST=$(DEST)'
 

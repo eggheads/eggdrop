@@ -460,25 +460,44 @@ extern tcl_cmds tcluser_cmds[], tcldcc_cmds[], tclmisc_cmds[];
 
 /* not going through Tcl's crazy main() system (what on earth was he
  * smoking?!) so we gotta initialize the Tcl interpreter */
-void init_tcl()
+void init_tcl(int argc, char **argv)
 {
 #ifndef HAVE_PRE7_5_TCL
   int i;
   char pver[1024] = "";
 #endif
 
-  /* initialize the interpreter */
   context;
+#ifndef HAVE_PRE7_5_TCL
+  /* This is used for 'info nameofexecutable'.
+   * The filename in argv[0] must exist in a directory listed in
+   * the environment variable PATH for it to register anything. */
+  Tcl_FindExecutable(argv[0]);
+#endif
+
+  /* initialize the interpreter */
   interp = Tcl_CreateInterp();
   Tcl_Init(interp);
+
+#ifdef EBUG_MEM
+  /* initialize Tcl's memory debugging if we have it */
+  Tcl_InitMemory(interp);
+#endif
+
+  /* set Tcl variable tcl_interactive to 0 */
+  Tcl_SetVar(interp, "tcl_interactive", "0", TCL_GLOBAL_ONLY);
+
+  /* initialize binds and traces */
   init_bind();
   init_traces();
+
   /* add new commands */
+  Tcl_CreateCommand(interp, "logfile", tcl_logfile, NULL, NULL);
   /* isnt this much neater :) */
   add_tcl_commands(tcluser_cmds);
   add_tcl_commands(tcldcc_cmds);
   add_tcl_commands(tclmisc_cmds);
-  Tcl_CreateCommand(interp, "logfile", tcl_logfile, NULL, NULL);
+
 #ifndef HAVE_PRE7_5_TCL
   /* add eggdrop to Tcl's package list */
   for (i = 0; i <= strlen(egg_version); i++) {
@@ -502,7 +521,6 @@ void do_tcl(char *whatzit, char *script)
     if (f != NULL)
       fprintf(f, "eval: %s\n", script);
   }
-  set_tcl_vars();
   context;
   code = Tcl_Eval(interp, script);
   if (debug_tcl && (f != NULL)) {
@@ -522,7 +540,6 @@ int readtclprog(char *fname)
   int code;
   FILE *f;
 
-  set_tcl_vars();
   f = fopen(fname, "r");
   if (f == NULL)
     return 0;
