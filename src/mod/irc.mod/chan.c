@@ -1043,7 +1043,7 @@ static int got349(char *from, char *msg)
     chname = newsplit(&msg);
     chan = findchan(chname);
     if (chan) {
-      chan->status &= ~CHAN_ASKED_EXEMPTS;
+      chan->ircnet_status &= ~CHAN_ASKED_EXEMPTS;
       if (channel_clearbans(chan))
 	resetexempts(chan);
       else {
@@ -1104,7 +1104,7 @@ static int got347(char *from, char *msg)
     chname = newsplit(&msg);
     chan = findchan(chname);
     if (chan) {
-      chan->status &= ~CHAN_ASKED_INVITED;
+      chan->ircnet_status &= ~CHAN_ASKED_INVITED;
       if (channel_clearbans(chan))
 	resetinvites(chan);
       else {

@@ -3,6 +3,9 @@ Changes in eggdrop: (since v1.3.0)
 
 1.3.28
 Foundby   Fixedby   What....
+Jason     arthur2   chan->ircnet_status &= ~CHAN_ASKED_EXEMPTS/INVITED and
+                    not chan->status &= ~CHAN_ASKED_EXEMPTS/INVITED
+                    (chan.c)
 poptix    poptix    .botinfo buffer overflows (remote/local), cosmetic
                      fixes.
 slennox   poptix    .botinfo dupes
