@@ -369,21 +369,13 @@ static void write_channels()
     if (chan->need_limit[0])
       fprintf(f, "need-limit {%s} ",
 	      chan->need_limit);
-    if (chan->flood_pub_thr)
-      fprintf(f, "flood-chan %d:%d ",
-	      chan->flood_pub_thr, chan->flood_pub_time);
-    if (chan->flood_ctcp_thr)
-      fprintf(f, "flood-ctcp %d:%d ",
-	      chan->flood_ctcp_thr, chan->flood_ctcp_time);
-    if (chan->flood_join_thr)
-      fprintf(f, "flood-join %d:%d ",
-	      chan->flood_join_thr, chan->flood_join_time);
-    if (chan->flood_kick_thr)
-      fprintf(f, "flood-kick %d:%d ",
-	      chan->flood_kick_thr, chan->flood_kick_time);
-    if (chan->flood_deop_thr)
-      fprintf(f, "flood-deop %d:%d ",
-	      chan->flood_deop_thr, chan->flood_deop_time);
+    fprintf(f, "flood-chan %d:%d flood-ctcp %d:%d flood-join %d:%d \
+flood-kick %d:%d flood-deop %d:%d ", 
+	chan->flood_pub_thr, chan->flood_pub_time,
+	chan->flood_ctcp_thr, chan->flood_ctcp_time,
+	chan->flood_join_thr, chan->flood_join_time,
+	chan->flood_kick_thr, chan->flood_kick_time,
+	chan->flood_deop_thr, chan->flood_deop_time);
     fprintf(f, "%cclearbans ",
 	    channel_clearbans(chan) ? '+' : '-');
     fprintf(f, "%cenforcebans ",
