@@ -2,7 +2,7 @@
  * msgcmds.c -- part of irc.mod
  *   all commands entered via /MSG
  * 
- * $Id: msgcmds.c,v 1.15 2000/08/06 14:51:38 fabian Exp $
+ * $Id: msgcmds.c,v 1.16 2000/09/12 15:26:53 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -529,7 +529,7 @@ static int msg_whois(char *nick, char *host, struct userrec *u, char *par)
 	   (glob_op(fr) && !chan_deop(fr)) ||
 	   glob_friend(fr) || chan_op(fr) || chan_friend(fr))) {
 	tt = cr->laston;
-	strftime(s, 14, "%b %d %H:%M", localtime(&tt));
+	egg_strftime(s, 14, "%b %d %H:%M", localtime(&tt));
 	ok = 1;
 	sprintf(s1, "NOTICE %s :[%s] %s %s on %s", nick, u2->handle,
 		IRC_LASTSEENAT, s, chan->dname);

@@ -2,7 +2,7 @@
  * irc.c -- part of irc.mod
  *   support for channels within the bot 
  * 
- * $Id: irc.c,v 1.33 2000/09/02 18:47:47 fabian Exp $
+ * $Id: irc.c,v 1.34 2000/09/12 15:26:53 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -141,7 +141,7 @@ static void punish_badguy(struct chanset_t *chan, char *whobad,
 
   Context;
   /* Get current time into a string */
-  strftime(ct, 7, "%d %b", localtime(&now));
+  egg_strftime(ct, 7, "%d %b", localtime(&now));
 
   /* Put together log and kick messages */
   reason[0] = 0;

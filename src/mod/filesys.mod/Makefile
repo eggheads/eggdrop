@@ -1,5 +1,5 @@
 # Makefile for src/mod/filesys.mod/
-# $Id: Makefile,v 1.14 2000/07/09 14:10:49 fabian Exp $
+# $Id: Makefile,v 1.15 2000/09/12 15:26:53 fabian Exp $
 
 srcdir = .
 
@@ -39,10 +39,11 @@ distclean: clean
  ../../../src/users.h ../../../src/compat/compat.h \
  ../../../src/compat/inet_aton.h ../../../src/compat/snprintf.h \
  ../../../src/compat/memset.h ../../../src/compat/memcpy.h \
- ../../../src/compat/strcasecmp.h ../../../src/mod/modvals.h \
- ../../../src/tandem.h ../filesys.mod/filedb3.h \
- ../filesys.mod/filesys.h ../../../src/mod/transfer.mod/transfer.h \
- ../filesys.mod/files.h ../filesys.mod/dbcompat.h \
- ../filesys.mod/filelist.h ../filesys.mod/files.c ../../../src/stat.h \
- ../filesys.mod/filedb3.c ../filesys.mod/tclfiles.c \
- ../filesys.mod/dbcompat.c ../filesys.mod/filelist.c
+ ../../../src/compat/strcasecmp.h ../../../src/compat/strftime.h \
+ ../../../src/mod/modvals.h ../../../src/tandem.h \
+ ../filesys.mod/filedb3.h ../filesys.mod/filesys.h \
+ ../../../src/mod/transfer.mod/transfer.h ../filesys.mod/files.h \
+ ../filesys.mod/dbcompat.h ../filesys.mod/filelist.h \
+ ../filesys.mod/files.c ../../../src/stat.h ../filesys.mod/filedb3.c \
+ ../filesys.mod/tclfiles.c ../filesys.mod/dbcompat.c \
+ ../filesys.mod/filelist.c

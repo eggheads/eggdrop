@@ -1,5 +1,5 @@
 # Makefile for src/md5/
-# $Id: Makefile.in,v 1.8 2000/09/09 11:39:10 fabian Exp $
+# $Id: Makefile.in,v 1.9 2000/09/12 15:26:51 fabian Exp $
 
 SHELL = @SHELL@
 top_srcdir = @top_srcdir@
@@ -41,10 +41,11 @@ md5: $(OBJS)
 	$(CC) $(CFLAGS) $(CPPFLAGS) -c $<
 
 #safety hash
-md5c.o: ./md5c.c ../../src/main.h ../../src/lang.h ../../src/eggdrop.h \
- ../../src/flags.h ../../src/proto.h ../../lush.h \
+md5c.o: ./md5c.c ../../src/main.h ../../config.h ../../src/lang.h \
+ ../../src/eggdrop.h ../../src/flags.h ../../src/proto.h ../../lush.h \
  ../../src/misc_file.h ../../src/cmdt.h ../../src/tclegg.h \
  ../../src/tclhash.h ../../src/chan.h ../../src/users.h \
  ../../src/compat/compat.h ../../src/compat/inet_aton.h \
  ../../src/compat/snprintf.h ../../src/compat/memset.h \
- ../../src/compat/memcpy.h ../../src/compat/strcasecmp.h md5.h
+ ../../src/compat/memcpy.h ../../src/compat/strcasecmp.h \
+ ../../src/compat/strftime.h md5.h

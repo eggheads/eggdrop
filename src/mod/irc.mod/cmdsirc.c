@@ -2,7 +2,7 @@
  * chancmds.c -- part of irc.mod
  *   handles commands direclty relating to channel interaction
  * 
- * $Id: cmdsirc.c,v 1.20 2000/09/02 19:34:36 fabian Exp $
+ * $Id: cmdsirc.c,v 1.21 2000/09/12 15:26:53 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -533,9 +533,9 @@ static void cmd_channel(struct userrec *u, int idx, char *par)
     while (m && m->nick[0]) {
       if (m->joined > 0) {
 	if ((now - (m->joined)) > 86400)
-	  strftime(s, 6, "%d%b", localtime(&(m->joined)));
+	  egg_strftime(s, 6, "%d%b", localtime(&(m->joined)));
 	else
-	  strftime(s, 6, "%H:%M", localtime(&(m->joined)));
+	  egg_strftime(s, 6, "%H:%M", localtime(&(m->joined)));
       } else
 	strcpy(s, " --- ");
       if (m->user == NULL) {

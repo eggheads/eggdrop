@@ -2,7 +2,7 @@
  * snprintf.h
  *   header file for snprintf.c
  *
- * $Id: snprintf.h,v 1.5 2000/05/13 20:28:02 fabian Exp $
+ * $Id: snprintf.h,v 1.6 2000/09/12 15:26:51 fabian Exp $
  */
 /* 
  * Copyright (C) 2000  Eggheads
@@ -22,8 +22,8 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#ifndef _COMPAT_SNPRINTF_H_
-#define _COMPAT_SNPRINTF_H_
+#ifndef _EGG_COMPAT_SNPRINTF_H_
+#define _EGG_COMPAT_SNPRINTF_H_
 
 #include "src/main.h"
 #include <stdio.h>
@@ -50,4 +50,4 @@ int egg_snprintf();
 #  define egg_snprintf	snprintf
 #endif
 
-#endif
+#endif	/* !_EGG_COMPAT_SNPRINTF_H_ */

@@ -3,7 +3,7 @@
  *   Tcl stubs for file system commands
  *   Tcl stubs for everything else
  * 
- * $Id: tclmisc.c,v 1.13 2000/09/09 11:39:09 fabian Exp $
+ * $Id: tclmisc.c,v 1.14 2000/09/12 15:26:51 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -423,7 +423,7 @@ static int tcl_strftime STDVAR
   else
     t = now;
     tm1 = localtime(&t);
-  if (strftime(buf, sizeof(buf) - 1, argv[1], tm1)) {
+  if (egg_strftime(buf, sizeof(buf) - 1, argv[1], tm1)) {
     Tcl_AppendResult(irp, buf, NULL);
     return TCL_OK;
   }

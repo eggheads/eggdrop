@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  * 
- * $Id: cmds.c,v 1.40 2000/09/02 18:48:41 fabian Exp $
+ * $Id: cmds.c,v 1.41 2000/09/12 15:26:50 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -148,7 +148,7 @@ static void tell_who(struct userrec *u, int idx, int chan)
 	ok = 1;
 	dprintf(idx, "Bots connected:\n");
       }
-      strftime(s, 14, "%d %b %H:%M", localtime(&dcc[i].timeval));
+      egg_strftime(s, 14, "%d %b %H:%M", localtime(&dcc[i].timeval));
       spaces[len = HANDLEN - strlen(dcc[i].nick)] = 0;
       if (atr & USER_OWNER) {
 	dprintf(idx, "  [%.2lu]  %s%c%s%s (%s) %s\n",

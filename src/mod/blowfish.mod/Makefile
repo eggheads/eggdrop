@@ -1,5 +1,5 @@
 # Makefile for src/mod/blowfish.mod/
-# $Id: Makefile,v 1.10 2000/07/09 14:10:49 fabian Exp $
+# $Id: Makefile,v 1.11 2000/09/12 15:26:51 fabian Exp $
 
 srcdir = .
 
@@ -32,12 +32,13 @@ distclean: clean
 
 #safety hash
 ../blowfish.o: .././blowfish.mod/blowfish.c ../../../src/mod/module.h \
- ../../../src/main.h ../../../src/lang.h ../../../src/eggdrop.h \
- ../../../src/flags.h ../../../src/proto.h ../../../lush.h \
- ../../../src/misc_file.h ../../../src/cmdt.h ../../../src/tclegg.h \
- ../../../src/tclhash.h ../../../src/chan.h ../../../src/users.h \
- ../../../src/compat/compat.h ../../../src/compat/inet_aton.h \
- ../../../src/compat/snprintf.h ../../../src/compat/memset.h \
- ../../../src/compat/memcpy.h ../../../src/compat/strcasecmp.h \
+ ../../../src/main.h ../../../config.h ../../../src/lang.h \
+ ../../../src/eggdrop.h ../../../src/flags.h ../../../src/proto.h \
+ ../../../lush.h ../../../src/misc_file.h ../../../src/cmdt.h \
+ ../../../src/tclegg.h ../../../src/tclhash.h ../../../src/chan.h \
+ ../../../src/users.h ../../../src/compat/compat.h \
+ ../../../src/compat/inet_aton.h ../../../src/compat/snprintf.h \
+ ../../../src/compat/memset.h ../../../src/compat/memcpy.h \
+ ../../../src/compat/strcasecmp.h ../../../src/compat/strftime.h \
  ../../../src/mod/modvals.h ../../../src/tandem.h \
  ../blowfish.mod/blowfish.h ../blowfish.mod/bf_tab.h

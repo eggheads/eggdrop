@@ -2,7 +2,7 @@
  * memset.h
  *   prototypes for memset.c
  * 
- * $Id: memset.h,v 1.1 2000/03/23 23:20:07 fabian Exp $
+ * $Id: memset.h,v 1.2 2000/09/12 15:26:51 fabian Exp $
  */
 /* 
  * Copyright (C) 2000  Eggheads
@@ -39,4 +39,4 @@ void *egg_memset(void *dest, int c, size_t n);
  */
 #define egg_bzero(dest, n)	egg_memset(dest, 0, n)
 
-#endif				/* __EGG_COMPAT_MEMSET_H */
+#endif	/* !__EGG_COMPAT_MEMSET_H */

@@ -1,5 +1,5 @@
 # Makefile for src/mod/console.mod/
-# $Id: Makefile,v 1.12 2000/07/11 20:47:28 tothwolf Exp $
+# $Id: Makefile,v 1.13 2000/09/12 15:26:52 fabian Exp $
 
 srcdir = .
 
@@ -32,11 +32,12 @@ distclean: clean
 
 #safety hash
 ../console.o: .././console.mod/console.c ../../../src/mod/module.h \
- ../../../src/main.h ../../../src/lang.h ../../../src/eggdrop.h \
- ../../../src/flags.h ../../../src/proto.h ../../../lush.h \
- ../../../src/misc_file.h ../../../src/cmdt.h ../../../src/tclegg.h \
- ../../../src/tclhash.h ../../../src/chan.h ../../../src/users.h \
- ../../../src/compat/compat.h ../../../src/compat/inet_aton.h \
- ../../../src/compat/snprintf.h ../../../src/compat/memset.h \
- ../../../src/compat/memcpy.h ../../../src/compat/strcasecmp.h \
+ ../../../src/main.h ../../../config.h ../../../src/lang.h \
+ ../../../src/eggdrop.h ../../../src/flags.h ../../../src/proto.h \
+ ../../../lush.h ../../../src/misc_file.h ../../../src/cmdt.h \
+ ../../../src/tclegg.h ../../../src/tclhash.h ../../../src/chan.h \
+ ../../../src/users.h ../../../src/compat/compat.h \
+ ../../../src/compat/inet_aton.h ../../../src/compat/snprintf.h \
+ ../../../src/compat/memset.h ../../../src/compat/memcpy.h \
+ ../../../src/compat/strcasecmp.h ../../../src/compat/strftime.h \
  ../../../src/mod/modvals.h ../../../src/tandem.h

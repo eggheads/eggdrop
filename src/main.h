@@ -2,7 +2,7 @@
  * main.h
  *   include file to include most other include files
  * 
- * $Id: main.h,v 1.14 2000/09/09 11:39:09 fabian Exp $
+ * $Id: main.h,v 1.15 2000/09/12 15:26:50 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -27,7 +27,7 @@
 #define _EGG_MAIN_H
 
 #ifdef HAVE_CONFIG_H
-#  include <config.h>
+#  include "config.h"
 #endif
 
 /* UGH! Why couldn't Tcl pick a standard? */

@@ -2,7 +2,7 @@
  * compat.h
  *   wrap-around header for all compability functions.
  * 
- * $Id: compat.h,v 1.1 2000/03/23 23:20:07 fabian Exp $
+ * $Id: compat.h,v 1.2 2000/09/12 15:26:51 fabian Exp $
  */
 /* 
  * Copyright (C) 2000  Eggheads
@@ -30,5 +30,6 @@
 #include "memset.h"
 #include "memcpy.h"
 #include "strcasecmp.h"
+#include "strftime.h"
 
-#endif				/* __EGG_COMPAT_COMPAT_H */
+#endif	/* !__EGG_COMPAT_COMPAT_H */

@@ -7,7 +7,7 @@
  *   help system
  *   motd display and %var substitution
  * 
- * $Id: misc.c,v 1.26 2000/08/26 16:07:03 fabian Exp $
+ * $Id: misc.c,v 1.27 2000/09/12 15:26:50 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -358,7 +358,7 @@ void daysago(time_t now, time_t then, char *out)
     sprintf(out, "%d day%s ago", days, (days == 1) ? "" : "s");
     return;
   }
-  strftime(out, 6, "%H:%M", localtime(&then));
+  egg_strftime(out, 6, "%H:%M", localtime(&then));
 }
 
 /* Convert an interval (in seconds) to one of:
@@ -372,7 +372,7 @@ void days(time_t now, time_t then, char *out)
     sprintf(out, "in %d day%s", days, (days == 1) ? "" : "s");
     return;
   }
-  strftime(out, 9, "at %H:%M", localtime(&now));
+  egg_strftime(out, 9, "at %H:%M", localtime(&now));
 }
 
 /* Convert an interval (in seconds) to one of:
@@ -428,9 +428,9 @@ void putlog EGG_VARARGS_DEF(int, arg1)
   tt = now;
   if (keep_all_logs) {
     if (!logfile_suffix[0])
-      strftime(ct, 12, ".%d%b%Y", localtime(&tt));
+      egg_strftime(ct, 12, ".%d%b%Y", localtime(&tt));
     else {
-      strftime(ct, 80, logfile_suffix, localtime(&tt));
+      egg_strftime(ct, 80, logfile_suffix, localtime(&tt));
       ct[80] = 0;
       s2 = ct;
       /* replace spaces by underscores */
@@ -442,7 +442,7 @@ void putlog EGG_VARARGS_DEF(int, arg1)
     }
   }
   if ((out[0]) && (shtime)) {
-    strftime(s1, 9, "[%H:%M] ", localtime(&tt));
+    egg_strftime(s1, 9, "[%H:%M] ", localtime(&tt));
     strncpy(&s[0], s1, 8);
     out = s;
   }
@@ -825,7 +825,7 @@ void help_subst(char *s, char *nick, struct flag_record *flags,
       towrite = admin;
       break;
     case 'T':
-      strftime(sub, 6, "%H:%M", localtime(&now));
+      egg_strftime(sub, 6, "%H:%M", localtime(&now));
       towrite = sub;
       break;
     case 'N':
