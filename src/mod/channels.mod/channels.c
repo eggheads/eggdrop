@@ -2,7 +2,7 @@
  * channels.c -- part of channels.mod
  *   support for channels within the bot
  *
- * $Id: channels.c,v 1.54 2001/07/24 14:32:31 guppy Exp $
+ * $Id: channels.c,v 1.55 2001/07/25 03:56:09 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -909,8 +909,8 @@ char *channels_start(Function * global_funcs)
 +dontkickops -inactive -protectfriends +shared -seen \
 +userexempts +dynamicexempts +userinvites +dynamicinvites -revengebot \
 -nodesynch" /* Do not remove this extra space: */ " ");
-  module_register(MODULE_NAME, channels_table, 1, 1);
-  if (!module_depend(MODULE_NAME, "eggdrop", 106, 0)) {
+  module_register(MODULE_NAME, channels_table, 1, 0);
+  if (!module_depend(MODULE_NAME, "eggdrop", 106, 7)) {
     module_undepend(MODULE_NAME);
     return "This module needs eggdrop1.6.0 or later";
   }
