@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: app-weird.html,v 1.12 2002/12/24 02:30:02 wcc Exp $ -->
+<!-- $Id: app-weird.html,v 1.13 2003/03/10 05:26:41 wcc Exp $ -->
 
 <html>
   <head>
@@ -13,8 +13,7 @@
     <hr>
 
     <p>Shown below are some messages that Eggdrop might log from time to time
-    that are a bit strange and don&#39;t make it really that obvious what
-    it&#39;s harping on about:</p>
+    that may seem a bit strange and have meanings which may not be obvious</p>
 
     <p><strong>(!) timer drift -- spun N minutes</strong></p>
 
@@ -24,31 +23,37 @@
 
     <blockquote>
       <ul>
-        <li>Your bot was swapped out of memory for a while, or that for some
-        reason the computer stopped letting the bot run. Once a minute,
-        Eggdrop does a few maintenance things, including counting down any
-        Tcl timers you have going. If for some reason, several minutes pass
-        without Eggdrop getting to do this, it logs this message to let you
-        know what happened. It&#39;s generally a bad thing, because it means
-        that the system your bot is on is very busy, and the bot can hardly
-        keep track of the channel very well when it gets swapped out for
-        minutes at a time.</li>
+        <li>
+          <p>Your bot could have been swapped out of memory for a while, or for
+          some reason the computer could have stopped letting the bot run. Once
+          a minute, Eggdrop does a few maintenance things, including counting
+          down any active Tcl timers. If for some reason, several minutes pass
+          without Eggdrop being able to do this, it logs this message to let
+          you know what happened. It&#39;s generally a bad thing, because it means
+          that the system your bot is on is very busy, and the bot can hardly
+          keep track of the channel very well when it gets swapped out for
+          minutes at a time.</p>
+        </li>
 
-        <li>On some systems (at least Linux) if the dns your bot is using to
-        lookup hostnames is broken, and *very* slow in responding (this can
-        occur if the dns&#39;s uplink doesn&#39;t exist) then you will get
-        4/5 minute time drifts continuously, not much can be done about this,
-        it&#39;s an operating system problem :(</li>
+        <li>
+          <p>On some systems (at least Linux), if the DNS your bot is using to
+          lookup hostnames is broken and *very* slow in responding (this can
+          occur if the DNS server&#39;s uplink doesn&#39;t exist), then you
+          will get 4-5 minute timer drifts continuously. This can be fixed by
+          loading the dns module.</p>
+        </li>
 
-        <li>The clock on your machine has just been changed (e.g. it was
-        running behind by several minutes and was just corrected)</li>
+        <li>
+          <p>The clock on your machine has just been changed. It may have been
+          running behind by several minutes and was just corrected.</p>
+        </li>
       </ul>
     </blockquote>
 
     <p><strong>(!) killmember(Nickname) -&gt; nonexistant</strong></p>
 
     <blockquote>
-      <p>We have yet to track this down. It&#39;s a mildly bad thing, though.
+      <p>We have yet to track this down. It&#39;s a mildly bad thing, however.
       It means the bot just got informed by the server that someone left the
       channel -- but the bot has no record of that person ever being ON the
       channel.</p>
@@ -56,15 +61,18 @@
       <p><a href="mailto:jwilkinson@mail.utexas.edu">
       jwilkinson@mail.utexas.edu</a> had some insight into this one:</p>
 
-      <p>This is not an Eggdrop bug, at least not most of the time. This is a
-      bug in all but perhaps the very latest ircd systems. It&#39;s not
-      uncommon during netsplits and other joins for the server to lose track
-      of killed or collided join notices. Also, in some servers, it is
-      possible to specify non-standard characters, such as carret symbols,
-      which get falsely interpreted as capital letters.</p>
+      <blockquote>
+        <p>This is not an Eggdrop bug, at least not most of the time. This is a
+        bug in all but perhaps the very latest ircd systems. It&#39;s not
+        uncommon during netsplits and other joins for the server to lose track
+        of killed or collided join notices. Also, in some servers, it is
+        possible to specify non-standard characters, such as carret symbols,
+        which get falsely interpreted as capital letters.</p>
 
-      <p>When converted to lowercase, these symbols fail to get processed,
-      and joins are not reported, although parts are.</p>
+
+        <p>When converted to lowercase, these symbols fail to get processed,
+        and joins are not reported, although parts are.</p>
+      </blockquote>
     </blockquote>
     <hr>
 

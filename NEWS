@@ -1,5 +1,5 @@
 News
-Last revised: January 14, 2002
+Last revised: March  10, 2003
      _________________________________________________________________
 
                                    News
@@ -28,7 +28,6 @@ Last revised: January 14, 2002
     2. DON'T USE YOUR OLD CONFIG FILE. MAKE A NEW ONE!
 
      _________________________________________________________________
-
 
 Changes made to Eggdrop 1.6.x from Eggdrop1.4.x:
 
@@ -104,6 +103,8 @@ Changes made to Eggdrop 1.6.x from Eggdrop1.4.x:
        through IRC, the botnet, scripts, and dcc. You can access these
        statistics via the dcc command ".traffic". Please note that the counter
        gets reset every time a restart is done.
+
+     * ".modules" now works locally as well as remotely.
 
   CHANNEL MODES
 
@@ -197,6 +198,10 @@ Changes made to Eggdrop 1.6.x from Eggdrop1.4.x:
 
      * The 'serveraddress' variable was added, which contains the server's
        serverlist address and port.
+
+     * The 'onchan', 'botonchan', 'botisvoice', 'botisop', 'onchansplit',
+       'isop', 'isvoice', and 'handonchan' commands no longer require an
+       argument.
 
      For more information about changed or added Tcl commands, see
      doc/tcl-commands.doc.

@@ -4,6 +4,7 @@ Last revised: March 07, 2002
 
                          Bans, Invites, and Exempts
 
+
     I assume that you know how bans work on IRC. Eggdrop handles bans,
     exempts and invites in various ways, and this file is intended to help
     clarify how these modes are used within the bot. From here on, 'mode'
