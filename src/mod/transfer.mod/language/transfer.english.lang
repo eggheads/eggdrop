@@ -1,5 +1,7 @@
 # transfer.english.lang
 #   langauge messages for transfer module
+#
+# $Id
 
 0xf00,Refused dcc get %s: copy to %s FAILED!
 0xf01,NOTICE %s :File system is broken; aborting queued files.\n
@@ -61,4 +63,3 @@
 0xf40,Unloading transfer module, killing all transfer connections...
 0xf41,    DCC block is %d%s, max concurrent d/ls is %d\n
 0xf42,    Using %d bytes of memory\n
-0xf43,This module requires eggdrop1.6.0 or later
