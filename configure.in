@@ -43,6 +43,8 @@ AC_C_BIGENDIAN
 AC_C_INLINE
 AC_CHECK_SIZEOF(long, 0)
 AC_CHECK_SIZEOF(int, 0)
+AC_CHECK_SIZEOF(char, 0)
+AC_CHECK_SIZEOF(short int, 0)
 
 # Checks for library functions
 AC_CHECK_FUNCS(clock getrusage setpgid uname sigaction sigemptyset rename strcasecmp getdtablesize bzero random srandom dlopen dprintf snprintf vsnprintf)

@@ -124,7 +124,7 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
   m = ismember(chan, floodnick); 
   /* let's not fight against non-existant channel members and
    * IRC services like ChanServ  (Fabian) */
-  if (!m)
+  if ((!m) && (which != FLOOD_JOIN))
     return 0;
   get_user_flagrec(get_user_by_host(from), &fr, chan->name);
   Context;

@@ -2430,17 +2430,95 @@ cat >> confdefs.h <<EOF
 EOF
 
 
+echo $ac_n "checking size of char""... $ac_c" 1>&6
+echo "configure:2435: checking size of char" >&5
+if eval "test \"`echo '$''{'ac_cv_sizeof_char'+set}'`\" = set"; then
+  echo $ac_n "(cached) $ac_c" 1>&6
+else
+  if test "$cross_compiling" = yes; then
+  ac_cv_sizeof_char=0
+else
+  cat > conftest.$ac_ext <<EOF
+#line 2443 "configure"
+#include "confdefs.h"
+#include <stdio.h>
+main()
+{
+  FILE *f=fopen("conftestval", "w");
+  if (!f) exit(1);
+  fprintf(f, "%d\n", sizeof(char));
+  exit(0);
+}
+EOF
+if { (eval echo configure:2454: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext} && (./conftest; exit) 2>/dev/null
+then
+  ac_cv_sizeof_char=`cat conftestval`
+else
+  echo "configure: failed program was:" >&5
+  cat conftest.$ac_ext >&5
+  rm -fr conftest*
+  ac_cv_sizeof_char=0
+fi
+rm -fr conftest*
+fi
+
+fi
+echo "$ac_t""$ac_cv_sizeof_char" 1>&6
+cat >> confdefs.h <<EOF
+#define SIZEOF_CHAR $ac_cv_sizeof_char
+EOF
+
+
+echo $ac_n "checking size of short int""... $ac_c" 1>&6
+echo "configure:2474: checking size of short int" >&5
+if eval "test \"`echo '$''{'ac_cv_sizeof_short_int'+set}'`\" = set"; then
+  echo $ac_n "(cached) $ac_c" 1>&6
+else
+  if test "$cross_compiling" = yes; then
+  ac_cv_sizeof_short_int=0
+else
+  cat > conftest.$ac_ext <<EOF
+#line 2482 "configure"
+#include "confdefs.h"
+#include <stdio.h>
+main()
+{
+  FILE *f=fopen("conftestval", "w");
+  if (!f) exit(1);
+  fprintf(f, "%d\n", sizeof(short int));
+  exit(0);
+}
+EOF
+if { (eval echo configure:2493: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext} && (./conftest; exit) 2>/dev/null
+then
+  ac_cv_sizeof_short_int=`cat conftestval`
+else
+  echo "configure: failed program was:" >&5
+  cat conftest.$ac_ext >&5
+  rm -fr conftest*
+  ac_cv_sizeof_short_int=0
+fi
+rm -fr conftest*
+fi
+
+fi
+echo "$ac_t""$ac_cv_sizeof_short_int" 1>&6
+cat >> confdefs.h <<EOF
+#define SIZEOF_SHORT_INT $ac_cv_sizeof_short_int
+EOF
+
+
 
 # Checks for library functions
 for ac_func in clock getrusage setpgid uname sigaction sigemptyset rename strcasecmp getdtablesize bzero random srandom dlopen dprintf snprintf vsnprintf
 do
 echo $ac_n "checking for $ac_func""... $ac_c" 1>&6
-echo "configure:2439: checking for $ac_func" >&5
+echo "configure:2517: checking for $ac_func" >&5
 if eval "test \"`echo '$''{'ac_cv_func_$ac_func'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 2444 "configure"
+#line 2522 "configure"
 #include "confdefs.h"
 /* System header to define __stub macros and hopefully few prototypes,
     which can conflict with char $ac_func(); below.  */
@@ -2463,7 +2541,7 @@ $ac_func();
 
 ; return 0; }
 EOF
-if { (eval echo configure:2467: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
+if { (eval echo configure:2545: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
   rm -rf conftest*
   eval "ac_cv_func_$ac_func=yes"
 else
@@ -2490,12 +2568,12 @@ done
 for ac_func in vsprintf
 do
 echo $ac_n "checking for $ac_func""... $ac_c" 1>&6
-echo "configure:2494: checking for $ac_func" >&5
+echo "configure:2572: checking for $ac_func" >&5
 if eval "test \"`echo '$''{'ac_cv_func_$ac_func'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 2499 "configure"
+#line 2577 "configure"
 #include "confdefs.h"
 /* System header to define __stub macros and hopefully few prototypes,
     which can conflict with char $ac_func(); below.  */
@@ -2518,7 +2596,7 @@ $ac_func();
 
 ; return 0; }
 EOF
-if { (eval echo configure:2522: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
+if { (eval echo configure:2600: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
   rm -rf conftest*
   eval "ac_cv_func_$ac_func=yes"
 else
@@ -2571,12 +2649,12 @@ fi
 
 # Checks for cygwin
 echo $ac_n "checking for Cygwin environment""... $ac_c" 1>&6
-echo "configure:2575: checking for Cygwin environment" >&5
+echo "configure:2653: checking for Cygwin environment" >&5
 if eval "test \"`echo '$''{'ac_cv_cygwin'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 2580 "configure"
+#line 2658 "configure"
 #include "confdefs.h"
 
 int main() {
@@ -2587,7 +2665,7 @@ int main() {
 return __CYGWIN__;
 ; return 0; }
 EOF
-if { (eval echo configure:2591: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>&5; }; then
+if { (eval echo configure:2669: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>&5; }; then
   rm -rf conftest*
   ac_cv_cygwin=yes
 else
@@ -2611,19 +2689,19 @@ EOF
 fi
 
 echo $ac_n "checking for mingw32 environment""... $ac_c" 1>&6
-echo "configure:2615: checking for mingw32 environment" >&5
+echo "configure:2693: checking for mingw32 environment" >&5
 if eval "test \"`echo '$''{'ac_cv_mingw32'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   cat > conftest.$ac_ext <<EOF
-#line 2620 "configure"
+#line 2698 "configure"
 #include "confdefs.h"
 
 int main() {
 return __MINGW32__;
 ; return 0; }
 EOF
-if { (eval echo configure:2627: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>&5; }; then
+if { (eval echo configure:2705: \"$ac_compile\") 1>&5; (eval $ac_compile) 2>&5; }; then
   rm -rf conftest*
   ac_cv_mingw32=yes
 else
@@ -2643,7 +2721,7 @@ EGGEXEC=eggdrop
 
 
 echo $ac_n "checking for executable suffix""... $ac_c" 1>&6
-echo "configure:2647: checking for executable suffix" >&5
+echo "configure:2725: checking for executable suffix" >&5
 if eval "test \"`echo '$''{'ac_cv_exeext'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -2653,7 +2731,7 @@ else
   rm -f conftest*
   echo 'int main () { return 0; }' > conftest.$ac_ext
   ac_cv_exeext=
-  if { (eval echo configure:2657: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; }; then
+  if { (eval echo configure:2735: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; }; then
     for file in conftest.*; do
       case $file in
       *.c | *.o | *.obj) ;;
@@ -2681,7 +2759,7 @@ fi
 
 # Check how much space is left in filedb (informational purposes)
 echo $ac_n "checking space left in file database struct""... $ac_c" 1>&6
-echo "configure:2685: checking space left in file database struct" >&5
+echo "configure:2763: checking space left in file database struct" >&5
 
 if eval "test \"`echo '$''{'egg_cv_struct_filedb_size'+set}'`\" = set"
 then
@@ -2944,7 +3022,7 @@ EOF
 fi
 
 echo $ac_n "checking for Tcl library""... $ac_c" 1>&6
-echo "configure:2948: checking for Tcl library" >&5
+echo "configure:3026: checking for Tcl library" >&5
 
 # Attempt autodetect for $TCLLIBFN if it's not set
 if test ! "x${TCLLIBFN}" = "x"
@@ -2978,7 +3056,7 @@ then
 fi
 
 echo $ac_n "checking for Tcl header""... $ac_c" 1>&6
-echo "configure:2982: checking for Tcl header" >&5
+echo "configure:3060: checking for Tcl header" >&5
 
 # Attempt autodetect for $TCLINCFN if it's not set
 if test ! "x${TCLINCFN}" = "x"
@@ -3033,7 +3111,7 @@ then
 
   # Check Tcl's version
   echo $ac_n "checking for Tcl version""... $ac_c" 1>&6
-echo "configure:3037: checking for Tcl version" >&5
+echo "configure:3115: checking for Tcl version" >&5
   if eval "test \"`echo '$''{'egg_cv_var_tcl_version'+set}'`\" = set"
   then
     echo $ac_n "(cached) $ac_c" 1>&6
@@ -3051,7 +3129,7 @@ echo "configure:3037: checking for Tcl version" >&5
 
   # Check Tcl's patch level (if avaliable)
   echo $ac_n "checking for Tcl patch level""... $ac_c" 1>&6
-echo "configure:3055: checking for Tcl patch level" >&5
+echo "configure:3133: checking for Tcl patch level" >&5
   if eval "test \"`echo '$''{'egg_cv_var_tcl_patch_level'+set}'`\" = set"
   then
     echo $ac_n "(cached) $ac_c" 1>&6
@@ -3133,7 +3211,7 @@ fi
 
 # Check for Tcl_Free()
 echo $ac_n "checking if Tcl library has Tcl_Free""... $ac_c" 1>&6
-echo "configure:3137: checking if Tcl library has Tcl_Free" >&5
+echo "configure:3215: checking if Tcl library has Tcl_Free" >&5
 if eval "test \"`echo '$''{'egg_cv_var_tcl_free'+set}'`\" = set"
 then
   echo $ac_n "(cached) $ac_c" 1>&6
@@ -3175,7 +3253,7 @@ fi
 
 # Check for TclpFinalizeThreadData()
 echo $ac_n "checking if Tcl library is multithreaded""... $ac_c" 1>&6
-echo "configure:3179: checking if Tcl library is multithreaded" >&5
+echo "configure:3257: checking if Tcl library is multithreaded" >&5
 if eval "test \"`echo '$''{'egg_cv_var_tcl_multithreaded'+set}'`\" = set"
 then
   echo $ac_n "(cached) $ac_c" 1>&6

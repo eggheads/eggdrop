@@ -123,7 +123,7 @@ int die_on_sigterm = 0;		/* die if bot receives SIGTERM */
 int resolve_timeout = 15;	/* hostname/address lookup timeout */
 time_t now;			/* duh, now :) */
 
-#ifdef DEBUG
+#ifdef DEBUG_CONTEXT
 /* context storage for fatal crashes */
 char cx_file[16][30];
 char cx_note[16][256];
@@ -178,7 +178,7 @@ static void check_expired_dcc()
     }
 }
 
-#ifdef DEBUG
+#ifdef DEBUG_CONTEXT
 static int nested_debug = 0;
 
 void write_debug()
@@ -252,7 +252,7 @@ void write_debug()
 
 static void got_bus(int z)
 {
-#ifdef DEBUG
+#ifdef DEBUG_CONTEXT
   write_debug();
 #endif
   fatal("BUS ERROR -- CRASHING!", 1);
@@ -265,7 +265,7 @@ static void got_bus(int z)
 
 static void got_segv(int z)
 {
-#ifdef DEBUG
+#ifdef DEBUG_CONTEXT
   write_debug();
 #endif
   fatal("SEGMENT VIOLATION -- CRASHING!", 1);
@@ -278,7 +278,7 @@ static void got_segv(int z)
 
 static void got_fpe(int z)
 {
-#ifdef DEBUG
+#ifdef DEBUG_CONTEXT
   write_debug();
 #endif
   fatal("FLOATING POINT ERROR -- CRASHING!", 0);
@@ -327,13 +327,13 @@ static void got_alarm(int z)
 static void got_ill(int z)
 {
   check_tcl_event("sigill");
-#ifdef DEBUG
+#ifdef DEBUG_CONTEXT
   putlog(LOG_MISC, "*", "* Context: %s/%d [%s]", cx_file[cx_ptr],
 	 cx_line[cx_ptr], (cx_note[cx_ptr][0]) ? cx_note[cx_ptr] : "");
 #endif
 }
 
-#ifdef DEBUG
+#ifdef DEBUG_CONTEXT
 /* Context */
 void eggContext(char *file, int line, char *module)
 {
@@ -366,12 +366,16 @@ void eggContextNote(char *file, int line, char *module, char *note)
   strncpy(cx_note[cx_ptr], note, 255);
   cx_note[cx_ptr][255] = 0;
 }
+#endif
 
+#ifdef DEBUG_ASSERT
 /* Assert */
 void eggAssert(char *file, int line, char *module, int expr)
 {
   if (!(expr)) {
+#ifdef DEBUG_CONTEXT
     write_debug();
+#endif
     if (!module) {
       putlog(LOG_MISC, "*", "* In file %s, line %u", file, line);
     } else {
@@ -583,6 +587,17 @@ void check_static(char *, char *(*)());
 int init_mem(), init_dcc_max(), init_userent(), init_misc(), init_bots(),
  init_net(), init_modules(), init_tcl(int, char **),
  init_language(int);
+
+void patch(char *str)
+{
+  char *p = strchr(egg_version, '+');
+
+  if (!p)
+    p = &egg_version[strlen(egg_version)];
+  sprintf(p, "+%s", str);
+  egg_numver++;
+  sprintf(&egg_xtra[strlen(egg_xtra)], " %s", str);
+}
 
 int main(int argc, char **argv)
 {

@@ -21,10 +21,10 @@
 #undef NO_OLD_BOTNET
 
 /* 
- * Undefine this to completely disable context/assert debugging.
+ * Undefine this to completely disable context debugging.
  * WARNING: DO NOT send in bug reports if you undefine this!
  */
-#define DEBUG
+#define DEBUG_CONTEXT
 
 /*
  * define the maximum length a handle on the bot can be.
@@ -131,13 +131,18 @@
 #define nmalloc(x) n_malloc((x),__FILE__,__LINE__)
 #define nrealloc(x,y) n_realloc((x),(y),__FILE__,__LINE__)
 #define nfree(x) n_free((x),__FILE__,__LINE__)
-#ifdef DEBUG
+
+#ifdef DEBUG_CONTEXT
 #  define Context eggContext(__FILE__, __LINE__, NULL)
 #  define ContextNote(note) eggContextNote(__FILE__, __LINE__, NULL, note)
-#  define Assert(expr) eggAssert(__FILE__, __LINE__, NULL, expr)
 #else
 #  define Context {}
 #  define ContextNote(note) {}
+#endif
+
+#ifdef DEBUG_ASSERT
+#  define Assert(expr) eggAssert(__FILE__, __LINE__, NULL, expr)
+#else
 #  define Assert(expr) {}
 #endif
 
@@ -146,27 +151,35 @@
 #undef free
 #define free(x) dont_use_old_free(x)
 
-/* IP type */
+/* 32 bit type */
 #if (SIZEOF_INT == 4)
-typedef unsigned int IP;
-
+typedef unsigned int u_32bit_t;
 #else
-#if (SIZEOF_LONG == 4)
-typedef unsigned long IP;
-
-#else
-#include "cant/find/32bit/type"
-#endif
+# if (SIZEOF_LONG == 4)
+typedef unsigned int u_32bit_t;
+# else
+#  include "cant/find/32bit/type"
+# endif
 #endif
 
-/* macro for simplifying patches */
-#define PATCH(str) { \
-  char *p=strchr(egg_version,'+'); \
-  if (p==NULL) p=&egg_version[strlen(egg_version)]; \
-  sprintf(p,"+%s",str); \
-  egg_numver++; \
-  sprintf(&egg_xtra[strlen(egg_xtra)]," %s",str); \
-}
+#if (SIZEOF_SHORT_INT == 2)
+typedef unsigned short int u_16bit_t;
+#else
+# include "cant/find/16bit/type"
+#endif
+
+#if (SIZEOF_CHAR == 1)
+typedef unsigned char u_8bit_t;
+#else
+# include "cant/find/8bit/type"
+#endif
+
+typedef u_8bit_t byte;
+typedef u_16bit_t word;
+typedef u_32bit_t dword;
+
+/* IP type */
+typedef u_32bit_t IP;
 
 #define debug0(x) putlog(LOG_DEBUG,"*",x)
 #define debug1(x,a1) putlog(LOG_DEBUG,"*",x,a1)

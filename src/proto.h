@@ -150,6 +150,7 @@ int del_lang_section(char *);
 /* main.c */
 void fatal(char *, int);
 int expected_memory();
+void patch(char *);
 void eggContext(char *, int, char *);
 void eggContextNote(char *, int, char *, char *);
 void eggAssert(char *, int, char *, int);

@@ -35,7 +35,7 @@
 /* 0 - 3 */
 #define nmalloc(x) ((void *)(global[0]((x),MODULE_NAME,__FILE__,__LINE__)))
 #define nfree(x) (global[1]((x),MODULE_NAME,__FILE__,__LINE__))
-#ifdef DEBUG
+#ifdef DEBUG_CONTEXT
 #  define Context (global[2](__FILE__, __LINE__, MODULE_NAME))
 #else
 #  define Context {}
@@ -329,11 +329,14 @@
 #define nrealloc(x,y) ((void *)(global[230]((x),(y),MODULE_NAME,__FILE__,__LINE__)))
 #define xtra_set ((int(*)(struct userrec *,struct user_entry *, void *))global[231])
 /* 232 - 235 */
-#ifdef DEBUG
+#ifdef DEBUG_CONTEXT
 #  define ContextNote(note) (global[232](__FILE__, __LINE__, MODULE_NAME, note))
-#  define Assert(expr) (global[233](__FILE__, __LINE__, MODULE_NAME, expr))
 #else
 #  define ContextNote(note) {}
+#endif
+#ifdef DEBUG_ASSERT
+#  define Assert(expr) (global[233](__FILE__, __LINE__, MODULE_NAME, expr))
+#else
 #  define Assert(expr) {}
 #endif
 #define protect_readonly (*(int *)(global[234]))

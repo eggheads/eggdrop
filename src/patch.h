@@ -3,24 +3,24 @@
  * 
  * HOW TO DO IT:
  * 
- * replace a  *** PATCH GOES HERE *** line with a PATCH("patchname"); 
+ * replace a  *** PATCH GOES HERE *** line with a patch("patchname"); 
  * statement, leave the rest of the file alone, this allows better 
- * overlapping patches (I.E. dont touch the 4 blank comment lines BB :P)
+ * overlapping patches
  * 
  */
 /*
  *
  *
  */
-PATCH("CVS");		/* CVS beta version */
+patch("CVS");		/* CVS beta version */
 /*
  *
  */
-PATCH("945043450");	/* current unixtime */
+patch("945108834");	/* current unixtime */
 /*
  *
  */
-PATCH("sync-1.4-11Dec1999");
+patch("bytesfix");
 /*
  *
  */

@@ -153,7 +153,7 @@ Function global_table[] =
   /* 0 - 3 */
   (Function) mod_malloc,
   (Function) mod_free,
-#ifdef DEBUG
+#ifdef DEBUG_CONTEXT
   (Function) eggContext,
 #else
   (Function) 0,
@@ -449,11 +449,14 @@ Function global_table[] =
   (Function) mod_realloc,
   (Function) xtra_set,
   /* 232 - 235 */
-#ifdef DEBUG
+#ifdef DEBUG_CONTEXT
   (Function) eggContextNote,
-  (Function) eggAssert,
 #else
   (Function) 0,
+#endif
+#ifdef DEBUG_ASSERT
+  (Function) eggAssert,
+#else
   (Function) 0,
 #endif
   (Function) & protect_readonly, /* int */
