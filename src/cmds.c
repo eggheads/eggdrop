@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  *
- * $Id: cmds.c,v 1.53 2001/06/17 14:09:31 poptix Exp $
+ * $Id: cmds.c,v 1.54 2001/06/20 14:51:00 poptix Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -2695,6 +2695,12 @@ static char *btos(unsigned long  bytes)
   return traffictxt;
 }
 
+static void cmd_whoami(struct userrec *u, int idx, char *par)
+{
+  dprintf(idx, "You are %s@%s\n", dcc[idx].nick, botnetnick);
+  putlog(LOG_CMDS, "*", "#%s# whoami", dcc[idx].nick);
+}
+
 /* DCC CHAT COMMANDS
  */
 /* Function call should be:
@@ -2770,5 +2776,6 @@ cmd_t C_dcc[] =
   {"whois",		"to|o",	(Function) cmd_whois,		NULL},
   {"whom",		"",	(Function) cmd_whom,		NULL},
   {"traffic",		"m|m",	(Function) cmd_traffic,		NULL},
+  {"whoami",		"",	(Function) cmd_whoami,		NULL},
   {NULL,		NULL,	NULL,				NULL}
 };

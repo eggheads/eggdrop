@@ -159,6 +159,9 @@ see also: rehash, save
    stats groups are IRC, Botnet, Partyline, Transfer.mod and Misc.
    
 see also: restart
+%{help=whoami}
+###  %bwhoami%b
+   Shows your handle and to what bot you are connected.
 %{help=restart}%{+m}
 ###  %brestart%b
    restarts the Tcl interpreter, wipes all timers and utimers, and
