@@ -26,11 +26,8 @@ static int reversing = 0;
 #define EXEMPT  32
 #define INVITE  64
 
-static struct flag_record user =
-{FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
-
-static struct flag_record victim =
-{FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
+static struct flag_record user   = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
+static struct flag_record victim = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
 
 static void flush_mode(struct chanset_t *chan, int pri)
 {
@@ -199,13 +196,17 @@ static void real_add_mode(struct chanset_t *chan,
   if ((mode == 'o') || (mode == 'b') || (mode == 'v') ||
       (mode == 'e') || (mode == 'I')) {
     type = (plus == '+' ? PLUS : MINUS) |
-      (mode == 'o' ? CHOP : (mode == 'b' ? BAN : (mode == 'v' ? VOICE : (mode == 'e' ? EXEMPT : INVITE))));
-    /* if -b'n a non-existant ban...nuke it */
-    if ((plus == '-') && (mode == 'b'))
-/* FIXME: some network remove overlapped bans, IrcNet doesnt (poptix/drummer)*/
-      /*if (!isbanned(chan, op))*/
-      if (!ischanban(chan, op))
-	return;
+           (mode == 'o' ? CHOP : (mode == 'b' ? BAN : (mode == 'v' ? VOICE : (mode == 'e' ? EXEMPT : INVITE))));
+    /*
+     * FIXME: some networks remove overlapped bans, IrcNet does not
+     *        (poptix/drummer)
+     */
+    /* If -b'ing a non-existant ban...*/
+    if (((plus == '-') && (mode == 'b') && !ischanban(chan, op)) ||
+        /* or +b'ing an existant ban... */
+        ((plus == '+') && (mode == 'b') && ischanban(chan, op)))
+      return;	/* ...nuke it */
+
     /* if there are already max_bans bans on the channel, don't try to add 
      * one more */
     context;
@@ -216,6 +217,7 @@ static void real_add_mode(struct chanset_t *chan,
     if ((plus == '+') && (mode == 'b'))
       if (bans >= max_bans)
 	return;
+
     /* if there are already max_exempts exemptions on the channel, don't
      * try to add one more */
     context;
@@ -226,6 +228,7 @@ static void real_add_mode(struct chanset_t *chan,
     if ((plus == '+') && (mode == 'e'))
       if (exempts >= max_exempts)
 	return;
+
     /* if there are already max_invites invitations on the channel, don't
      * try to add one more */
     context;
@@ -236,6 +239,7 @@ static void real_add_mode(struct chanset_t *chan,
     if ((plus == '+') && (mode == 'I'))
       if (invites >= max_invites)
 	return;
+
     /* if there are already max_modes +b/+e/+I modes on the channel, don't 
      * try to add one more */
     modes = bans + exempts + invites;
