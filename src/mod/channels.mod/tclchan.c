@@ -1,7 +1,7 @@
 /*
  * tclchan.c -- part of channels.mod
  *
- * $Id: tclchan.c,v 1.80 2003/03/24 00:00:10 wcc Exp $
+ * $Id: tclchan.c,v 1.81 2003/03/24 01:36:34 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -931,7 +931,8 @@ static int tcl_channel_info(Tcl_Interp *irp, struct chanset_t *chan)
 static int tcl_channel_get(Tcl_Interp *irp, struct chanset_t *chan,
                            char *setting)
 {
-  char s[121];
+  char s[121], *str = NULL, **argv = NULL;
+  int argc = 0;
   struct udef_struct *ul;
 
   if (!strcmp(setting, "chanmode"))
@@ -1018,9 +1019,19 @@ static int tcl_channel_get(Tcl_Interp *irp, struct chanset_t *chan,
       return TCL_ERROR;
     }
 
-    /* Flag or int, all the same. */
-    simple_sprintf(s, "%d", getudef(ul->values, chan->dname));
-    Tcl_AppendResult(irp, s, NULL);
+    if (ul->type == UDEF_STR) {
+      str = (char *)getudef(ul->values, chan->dname);
+      if (!str) str = "{}";
+      Tcl_SplitList(irp, str, &argc, &argv);
+      if (argc > 0) Tcl_AppendResult(irp, argv[0], NULL);
+      Tcl_Free((char *)argv);
+    }
+    else {
+    	/* Flag or int, all the same. */
+    	simple_sprintf(s, "%d", getudef(ul->values, chan->dname));
+    	Tcl_AppendResult(irp, s, NULL);
+    }
+
     return TCL_OK;
   }
 
