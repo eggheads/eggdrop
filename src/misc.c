@@ -7,7 +7,7 @@
  *   help system
  *   motd display and %var substitution
  * 
- * $Id: misc.c,v 1.29 2000/09/23 17:49:56 fabian Exp $
+ * $Id: misc.c,v 1.30 2000/10/27 19:27:32 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -295,12 +295,12 @@ void maskhost(const char *s, char *nw)
     } else
       i = 0;
     while (*p != '@') {
-      if (!fl && strchr("~+-^=", *p))
+      if (!fl && strchr("~+-^=", *p)) {
         if (strict_host)
 	  nw[i] = '?';
 	else
 	  i--; 
-      else
+      } else
 	nw[i] = *p;
       fl++;
       p++;
