@@ -1213,7 +1213,7 @@ static int got475(char *from, char *msg)
 
   newsplit(&msg);
   chname = newsplit(&msg);
-  putlog(LOG_JOIN, chname, "%s %s", IRC_BADCHANKEY, chname);
+  putlog(LOG_JOIN, chname, IRC_BADCHANKEY, chname);
   chan = findchan(chname);
   if (chan && chan->need_key[0])
     do_tcl("need-key", chan->need_key);
