@@ -308,7 +308,7 @@ See also: whois
       P     party line access only (no +o access)
       T     telnet connection (instead of dcc chat)
       E     echo is on
-      P     use is paging
+      P     paging is on
    for 'bot', the flags are:
       P     ping sent, waiting for reply
       U     user-file sharing is active

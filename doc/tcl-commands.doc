@@ -1061,7 +1061,7 @@ for the msg-command "stop", use "unbind msg - stop msg_stop".
        only
 
 |      new Tcl procs should be declared as
-|      proc notcproc {nick uhost hand chan text {dest ""}} {
+|      proc notcproc {nick uhost hand text {dest ""}} {
 |        global botnick; if {$dest==""} { set dest $botnick }
 |        ...
 |      }
