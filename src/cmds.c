@@ -966,7 +966,6 @@ static void cmd_chnick(struct userrec *u, int idx, char *par)
       else if ((atr2 & USER_OWNER) && !(atr & USER_OWNER) &&
 	       strcasecmp(dcc[idx].nick, hand))
 	dprintf(idx, "Can't change the bot owner's handle.\n");
-/* FIXME: do we need rfc_casecmp() here ? */
       else if (isowner(hand) && strcasecmp(dcc[idx].nick, hand))
 	dprintf(idx, "Can't change the permanent bot owner's handle.\n");
       else if (change_handle(u2, newhand)) {

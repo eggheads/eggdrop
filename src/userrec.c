@@ -42,7 +42,6 @@ struct exemptrec *global_exempts = NULL;
 struct inviterec *global_invites = NULL;
 int cache_hit = 0, cache_miss = 0;	/* temporary cache accounting */
 
-/* FIXME: rename EBUG_MEM to DEBUG_MEM */
 #ifdef EBUG_MEM
 void *_user_malloc(int size, char *file, int line)
 {
