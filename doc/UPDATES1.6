@@ -1,10 +1,12 @@
-$Id: UPDATES1.6,v 1.357 2002/05/03 18:08:05 guppy Exp $
+$Id: UPDATES1.6,v 1.358 2002/05/04 06:47:37 guppy Exp $
 
 Changes in Eggdrop: (since v1.6.0)
 ----------------------------------
 
 1.6.11
 Found by  Fixed by  What...
+          guppy     uptime.mod will not unload now once loaded (this prevents you from
+                    losing your stats on a .restart .. to remove, you have to .die)
           guppy     uptime.mod now sends the proper pid and also won't send garbage if
                     the bot currently isn't on a server
           Wcc       updated slennox's sentinel.tcl to the latest version

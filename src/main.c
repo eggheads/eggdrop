@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  *
- * $Id: main.c,v 1.82 2002/03/29 20:47:47 wcc Exp $
+ * $Id: main.c,v 1.83 2002/05/04 06:47:37 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1048,23 +1048,31 @@ int main(int argc, char **argv)
 	    }
 	  }
 	}
-	p = module_list;
-	if (p && p->next && p->next->next)
-	  /* Should be only 2 modules now - blowfish (or some other
-	     encryption module) and eggdrop. */
+
+	for (f = 0, p = module_list; p; p = p->next) {
+	  if (!strcmp(p->name, "eggdrop") || !strcmp(p->name, "encryption") ||
+	      !strcmp(p->name, "uptime"))
+	    f = 0;
+	  else 
+	    f = 1;
+	}
+	if (f)
+	  /* Should be only 3 modules now - eggdrop, encryption, and uptime */
 	  putlog(LOG_MISC, "*", MOD_STAGNANT);
+
 	flushlogs();
 	kill_tcl();
 	init_tcl(argc, argv);
 	init_language(0);
-	/* We expect the encryption module as the current module pointed
-	 * to by `module_list'.
-	 */
-	x = p->funcs[MODCALL_START];
-	/* `NULL' indicates that we just recently restarted. The module
-	 * is expected to re-initialise as needed.
-	 */
-	x(NULL);
+
+	/* this resets our modules which we didn't unload (encryption and uptime) */
+	for (p = module_list; p; p = p->next) {
+	  if (p->funcs) {
+	    x = p->funcs[MODCALL_START];
+	    x(NULL);
+	  }
+	}
+
 	rehash();
 	restart_chons();
 	call_hook(HOOK_LOADED);

@@ -1,5 +1,5 @@
 /*
- * $Id: uptime.c,v 1.17 2002/05/03 18:08:06 guppy Exp $
+ * $Id: uptime.c,v 1.18 2002/05/04 06:47:38 guppy Exp $
  *
  * This module reports uptime information about your bot to http://uptime.eggheads.org. The
  * purpose for this is to see how your bot rates against many others (including EnergyMechs
@@ -135,11 +135,12 @@ int init_uptime(void)
 
 int send_uptime(void)
 {
-  struct  sockaddr_in sai;
-  struct  stat st;
-  PackUp  *mem;
-  int     len, servidx;
-  char 	servhost[UHOSTLEN];
+  struct sockaddr_in sai;
+  struct stat st;
+  PackUp *mem;
+  int len, servidx;
+  char servhost[UHOSTLEN] = "none";
+  module_entry *me;
 
   if (uptimeip == -1) {
     uptimeip = get_ip();
@@ -147,16 +148,17 @@ int send_uptime(void)
       return -2;
   }
 
-  if (server_online) {
-    servidx = findanyidx(serv);
-    strncpyz(servhost, dcc[servidx].host, sizeof servhost);
-    upPack.ontime = htonl(server_online);
-  } else {
-    strncpyz(servhost, "none", sizeof servhost);
-    upPack.ontime = 0;
-  }
-
   upPack.now2 = htonl(time(NULL));
+  upPack.ontime = 0;
+
+  if ((me = module_find("server", 1, 0))) {
+    server_funcs = me->funcs;
+    if (server_online) {
+      servidx = findanyidx(serv);
+      strncpyz(servhost, dcc[servidx].host, sizeof servhost);
+      upPack.ontime = htonl(server_online);
+    }
+  }
 
   if (!upPack.pid)
     upPack.pid = htonl(getpid());
@@ -192,14 +194,10 @@ void check_hourly()
 
 static char *uptime_close()
 {
-  nfree(uptime_host);
-  close(uptimesock);
-  del_hook(HOOK_HOURLY, (Function) check_hourly);
-  module_undepend(MODULE_NAME);
-  return NULL;
+  return "You cannot unload the uptime module (doing so will reset your stats)";
 }
 
-EXPORT_SCOPE char *uptime_start();
+EXPORT_SCOPE char *uptime_start(Function *);
 
 static Function uptime_table[] =
 {
@@ -211,13 +209,11 @@ static Function uptime_table[] =
 
 char *uptime_start(Function * global_funcs)
 {
-  global = global_funcs;
-
-  if (!(server_funcs = module_depend(MODULE_NAME, "server", 1, 0)))
-    return "You need the server module to use the uptime module.";
-  
-  module_register(MODULE_NAME, uptime_table, 1, 1);
-  add_hook(HOOK_HOURLY, (Function) check_hourly);
-  init_uptime();
+  if (global_funcs) {
+    global = global_funcs;
+    module_register(MODULE_NAME, uptime_table, 1, 2);
+    add_hook(HOOK_HOURLY, (Function) check_hourly);
+    init_uptime();
+  }  
   return NULL;
 }

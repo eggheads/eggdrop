@@ -2,7 +2,7 @@
  * blowfish.c -- part of blowfish.mod
  *   encryption and decryption of passwords
  *
- * $Id: blowfish.c,v 1.21 2002/01/02 03:46:37 guppy Exp $
+ * $Id: blowfish.c,v 1.22 2002/05/04 06:47:37 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -429,11 +429,9 @@ static tcl_cmds mytcls[] =
   {NULL,	NULL}
 };
 
-/* You CANT -module an encryption module , so -module just resets it.
- */
 static char *blowfish_close()
 {
-  return "You can't unload an encryption module";
+  return "You can't unload the encryption module";
 }
 
 EXPORT_SCOPE char *blowfish_start(Function *);
