@@ -294,7 +294,9 @@ static void check_tcl_sentrcvd(struct userrec *u, char *nick, char *path,
 static void eof_dcc_fork_send(int idx)
 {
   char s1[121];
+  char *s2;
 
+  context;
   fclose(dcc[idx].u.xfer->f);
   if (!strcmp(dcc[idx].nick, "*users")) {
     int x, y = 0;
@@ -316,8 +318,10 @@ static void eof_dcc_fork_send(int idx)
     putlog(LOG_MISC, "*", "%s: SEND %s (%s!%s)", DCC_CONNECTFAILED2,
 	   dcc[idx].u.xfer->filename, dcc[idx].nick, dcc[idx].host);
     putlog(LOG_MISC, "*", "    (%s)", s1);
-    sprintf(s1, "%s%s", tempdir, dcc[idx].u.xfer->filename);
-    unlink(s1);
+    s2 = nmalloc(strlen(tempdir) + strlen(dcc[idx].u.xfer->filename) + 1);
+    sprintf(s2, "%s%s", tempdir, dcc[idx].u.xfer->filename);
+    unlink(s2);
+    nfree(s2);
   }
   killsock(dcc[idx].sock);
   lostdcc(idx);
