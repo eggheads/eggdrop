@@ -1,24 +1,25 @@
 ##### CONSOLE MODULE #####
 
 This module provides storage of console settings when you exit the
-bot (or .store)
+bot or type .store on the partyline.
 
-Put this line into your eggdrop configuration file file to load console module:
+This module requires: none
+
+Put this line into your eggdrop configuration file to load the console module:
 
 loadmodule console
-
 
 There are also some variables you can to set in your config file:
 
 set console-autosave 1
-    save users console settings automatically? (otherwise they have
-    to use .store)
+    Save users console settings automatically? Otherwise, they have
+    to use the .store command.
     Valid settings are 0 for OFF and 1 ON.
 
 
 set force-channel 0
     If a user doesn't have any console settings saved, which channel
-    do you want them automatically put on.
+    do you want them automatically put on?
     Valid settings are 0-99999
 
 

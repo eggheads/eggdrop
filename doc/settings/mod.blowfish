@@ -1,15 +1,15 @@
 ##### BLOWFISH MODULE #####
 
 Eggdrop can encrypt your userfile, so users can have secure passwords.
-Please note, that when you change your encryption method later (i.e.
-using other modules like a md5 module) you can't use your current
-userfile anymore.
-Attention, eggdrop will not start without a chosen encryption method.
+Please note that when you change your encryption method later (i.e.
+using other modules like a md5 module), you can't use your current
+userfile anymore. Eggdrop will not start without an encryption module.
 
-Put this line into your eggdrop configuration file file to load blowfish module:
+This module requires: none
+
+Put this line into your eggdrop configuration file to load the blowfish module:
 
 checkmodule blowfish
 
-
-This is checkmodule, because during .restart the module will already
-be loaded
+This is checkmodule because during .restart the module will already
+be loaded.

@@ -1,23 +1,24 @@
-tweaking tips for your config file
+This document contains tweaking tips for your config file.
 
-As your botnet grows bigger and you have to maintain more and more bots
-with their config files, you might render those little tweaking tips useful,
-since they can make your life configuring, maintaining and adding of bots
-lot's of easier.
+As your botnet grows bigger, and you have to maintain more and more bots
+with their config files, you might render these little tweaking tips useful.
+They can make your life configuring, maintaining and adding of bots a lot
+easier.
 
-well, here we go:
+- Config file split:
+    You can export parts of your config file to separate files. For example,
+    if you have several config files which differ from themselves only by 
+    the nickname and the used servers, you can export them to an own file 
+    and link it with the 'source' Tcl command, similar to a script. The 
+    advantage of this is that you have to edit/upload only the small file 
+    instead of the big one. This technique is also useful if you want to 
+    maintain the same channel settings, etc.
 
-- config file split
-  You can export parts of your config file to separate files. For example, if
-  you have several config files which differ from themselves only by the
-  nickname and the used servers, you can export them to an own file and link
-  it with the 'source' command, similar to a script.
-  The advance of this trick is, that you have to edit / upload only the small
-  file instead of the big one. This technique is also useful if you want to
-  maintain always the same channel settings, etc.
+- Variable usage in the config file:
+  You can use variables in your config file, since it's really just a plain 
+  Tcl file. For example, you can set 'userfile' and 'chanfile' to "yourbot.user" 
+  and "yourbot.chan" using the following method:
 
-- variable usage in the config file
-  you can use variables in your config file since it's a plain tcl file. For
-  example, you can set 'userfile' and 'chanfile' to "$myvar" and define $myvar
-  in the first line by 'set myvar "yourbotname"'. By this way, you can maintain
-  your files by changing just one line.
+  set myvar "yourbot"
+  set userfile "$myvar.user"
+  set chanfile "$myvar.chan"

@@ -1,51 +1,54 @@
 ##### SERVER MODULE #####
 
 This module provides the core server support. You have to load this
-if you want your bot to come on irc.
+if you want your bot to come on IRC. Not loading this is equivalent
+to the old NO_IRC define.
 
-Put this line into your eggdrop configuration file file to load server module:
+This module requires: none
+
+Put this line into your eggdrop configuration file to load the server module:
 
 loadmodule server
-
 
 There are also some variables you can to set in your config file:
 
 set net-type 0
-    Define here the network you use. There are six settings:
-     0 = Efnet (non +e/+I hybrid)
+    What is your network?
+      0 = EFnet (non +e/+I hybrid)
      1 = IRCnet
      2 = Undernet
-     3 = Dalnet
-     4 = Efnet +e/+I hybrid
+      3 = DALnet
+      4 = EFnet +e/+I hybrid
      5 = Others
-    Valid settings are 0-5
+    Valid settings are 0-5.
 
 
 set nick "LamestBot"
-    Set here the nick of the bot, that which it uses on IRC, and
-    on the botnet unless you specify a separate botnet-nick
+    Set the nick the bot uses on IRC, and on the botnet
+    unless you specify a separate botnet-nick, here.
 
 
 set altnick "L?m?stB?t"
-    Set here an alternative nick to use if the nick specified by 'nick'
-    is unavailable. All '?' characters will be replaced by a random number.
+    Set the alternative nick which the bot uses on IRC if the nick specified
+    by 'set nick' is unavailable. All '?' characters will be replaced by random
+    numbers.
 
 
 set keep-nick 1
-    This setting makes the bot try to get his original nickname back (for
-    example, if the intended nickname is already in use).
+    This setting makes the bot try to get his original nickname back if its
+    primary nickname is already in use.
 
 
 set realname "/msg LamestBot hello"
-    Set here what to display in the real-name field for the bot
+    Set here what to display in the real-name field for the bot.
 
 
 set init-server { putserv "MODE $botnick +i-ws" }
-    Set here a script to run (if any) when first connecting to a server
+    Set here a script to run (if any) when first connecting to a server.
 
 
 set servers { IRCSERVER1:PORT IRSERVER2:PORT ... }
-    Set here the list of irc servers you want your bot to connect to. You can
+    Set here the list of IRC servers you want your bot to connect to. You can
     add an optional port for the server.
 
     Example:
@@ -61,77 +64,73 @@ set servers { IRCSERVER1:PORT IRSERVER2:PORT ... }
 
 
 set default-port 6667
-    Set the default port which should be used if no one is specified at
-    '.jump' or in 'server'
+    Set the default port which should be used if none is specified with
+    '.jump' or in 'set servers'.
 
 
 set strict-servernames 0
-    Often irc servers call themselves in another way then there dns is. If
-    you want eggdrop to replace your entry in the config file with this
-    name, set this to 1. If you turn this setting to 0, eggdrop will keep
-    a separate list of the names irc servers call themselves
+    Often, IRC servers call themselves a name other than their actual
+    hostname. If you want eggdrop to replace your entry in the config
+    file with this name, set this to 1. If you set this setting to 0,
+    eggdrop will keep a separate list of what IRC servers call themselves.
     Valid settings are 0 for OFF and 1 ON.
 
 set server-cycle-wait 60
     This setting defines how long eggdrop should wait before moving from one
-    server to another on disconnect.
-    If you set 0 here, eggdrop wont wait at all and connect instantly.
-    Please note, that a too low setting could result in k-line for your host,
-    since many ircops don't like being flooded with connects.
+    server to another on disconnect. If you set 0 here, eggdrop will not wait
+    at all and will connect instantly. Setting this too low could result in
+    your bot being K:Lined.
     Valid settings are 0-infinite
 
 set never-give-up 1
-    This settings makes the bot cycle forever and keep trying to connect to
-    all irc servers in it's current list if they're down.
+    This settings makes the bot cycle forever through the server list until
+    it successfully connects to one.
     Valid settings are 0 for OFF and 1 ON.
 
 
 set server-timeout 60
-    Set here the timeout how long eggdrop should wait for a response when
-    connecting to a server before giving up and moving on to next server
-    in list.
+    Set here how long eggdrop should wait for a response when connecting to a
+    server before giving up and moving on to next server.
 
 
 set servlimit 0
-    If the number of servers on the net gets below this number, it will
-    jump to a new server (i.e., it will assume it's on the losing end of
-    a netsplit) -- set to 0 to turn off
-    Note that most irc networks use Time Stamping or Nick Delay now, so
-    it's to your advantage to turn this off.
+    If the number of servers on the net gets below this number, the bot
+    will jump to a new server (it will assume it's on the losing end of
+    a netsplit). Set this to 0 to turn off. If your bot is running on
+    any major IRC network, this should probably be turned off.
     Valid settings are 0 for OFF and 1 ON.
 
 
 set check-stoned 1
-    Set this to 1 if eggdrop should check for stoned servers? (i.e.
-    Where the server connection has died, but eggdrop hasn't been
-    notified yet).
+    Set this to 1 if eggdrop should check for stoned servers? (where the
+    server connection has died, but eggdrop hasn't been notified yet).
     Valid settings are 0 for OFF and 1 ON.
 
 
 set serverror-quit 1
-    If you want your bot to exit the server if it receives a error msg set
-    this to 1
+    If you want your bot to exit the server if it receives an ERROR message,
+    set this to 1.
     Valid settings are 0 for OFF and 1 ON.
 
 
 set max-queue-msg 300
     Set here the maximum number of lines to queue to the server. If you're
-    going to dump large chunks of text to people over irc, you will probably
-    want to raise this -- most people are fine at 300 though
+    going to dump large chunks of text to people over IRC, you will probably
+    want to raise this. 300 is fine for most people though.
 
 
 set use-console-r 0
-    This setting allows you the logging of all information got from a server,
-    via console mode 'r'
-    NOTE: This is a large security hole, allowing people to see passwords.
+    This setting allows you the logging of all information received from the
+    server via console mode 'r'.
+    NOTE: This is a large security hole, allowing people to see user passwords.
     This is now restricted to +n users only. Please choose your owners with
     care.
     Valid settings are 0 for OFF and 1 ON.
 
 
 set debug-output 0
-    This setting allows you the logging of all information sent to a server,
-    via console mode 'v'
+    This setting allows you the logging of all information sent to the server
+    via console mode 'v'.
     NOTE: This is a large security hole, allowing people to see passwords.
     This is now restricted to +n users only. Please choose your owners with
     care.
@@ -140,7 +139,7 @@ set debug-output 0
 
 set strict-host 0
     Set this to 1 if you don't want your the bot to strip a leading '~'
-    on user@hosts
+    on user@hosts.
     Valid settings are 0 for OFF and 1 ON.
 
 
@@ -153,63 +152,63 @@ set quiet-reject 1
 
 
 set flood-msg 5:60
-     Set here how many msgs in how many seconds from one host are
-     recognized as a flood. Not specifying or using number = 0
-     will not check against msg floods
+     Set here how many msgs in how many seconds from one host constitutes
+     a flood. If you set this to 0:0, msg flood protection will be disabled.
 
 set flood-ctcp 3:60
      Set here how many ctcps in how many seconds from one host are
      recognized as a flood. Not specifying or using number = 0
-     will not check against ctcp floods
+     will not check against ctcp floods.
 
 
 set answer-ctcp 3
-    Set how many ctcps should be answered at once
+    Set how many ctcps should be answered at once.
 
 
 set lowercase-ctcp 0
-    If you want your bot to answer lower case ctcp request (non rfc
-    compliant) set this setting to 1.
-    Please note: mIRC will do this, most other clients will not
+    If you want your bot to answer lower case ctcp requests (non rfc-
+    compliant), set this setting to 1. mIRC will do this, most other
+    clients will not.
     Valid settings are 0 for OFF and 1 ON.
 
 
 set trigger-on-ignore 0
-    If you want eggdrop to trigger binds for ignored users, set this to 1
+    If you want eggdrop to trigger binds for ignored users, set this to 1.
     Valid settings are 0 for OFF and 1 ON.
 
 
 set double-mode 0
-    Allow a msg being twice in mode queue?
+    Allow identical messages in the mode queue?
     Valid settings are 0 for OFF and 1 ON.
 
 
 set double-server 0
-    Allow a msg being twice in server queue?
+    Allow identical messages in the server queue?
     Valid settings are 0 for OFF and 1 ON.
 
 
 set double-help 0
-    Allow a msg being twice in help queue?
+    Allow identical messages in the help queue?
     Valid settings are 0 for OFF and 1 ON.
 
 set use-penalties 1 (default on net-type 1)
     This enables eggdrop's penalty calculation. Every command eggdrop sends to
-    the irc server raises it's penalty points. If eggdrop reaches a server limit,
+    the IRC server raises it's penalty points. If eggdrop reaches a server limit,
     it gets disconnected with "excess flood" message. Eggdrop is able to count
     internal those penalty points, too and take measures against excess flooding.
     Note: it's highly advised to turn this on!
 
 
-
 set optimize-kicks 1
-    Optimize kicks optimizes kick queue. It also traces nick changes and parts in
-    channel and changes the kick queue respectively.
-    There are three different options for this setting:
-     0 = turn it off
-     1 = optimize kick queue by summarizing kicks.
-     2 = trace nick changes and channel parts and change the queue respectively. For
-         example, bot wont try to kick users who have already parted the channel.
+    This optimizes the kick queue. It also traces nick changes and parts in
+    the channel and changes the kick queue accordingly. There are three
+    different options for this setting:
+      0 = Turn it off.
+      1 = Optimize the kick queue by summarizing kicks.
+      2 = Trace nick changes and parts on the channel and change the queue
+          accordingly. For example, bot will not try to kick users who have
+          already parted the channel.
+    ATTENTION: Setting 2 is very CPU intensive.
     Valid settings are 0-2
 
 
@@ -223,16 +222,16 @@ Attention: Use this settings *only* if you set 'net-type' to 5!
 
 set check-mode-r 1
     This settings defines how umode +r is understood by eggdrop. Some
-    networks use +r to mean a restricted connection. If this is your
-    case, and you want your bot to leave restricted servers and jump
-    to the next one on his server list, then set it to 1.
+    networks use +r to indicate a restricted connection. If this is your
+    case, and you want your bot to leave restricted servers and jump to
+    the next server on its list, then set it to 1.
     Please note, this setting is automatically set to 0 for net-type 0/2/3/4,
     and set to 1 for net-type 1.
     Valid settings are 0 for OFF and 1 ON.
 
 
 set nick-len 9
-    This setting enables you to use different nick lengths then the ircd's
-    default 9 (Dalnet uses 32 imo). The maximum supported length by eggdrop is 32.
+    This setting allows you to specify the maximum nick-length supported by
+    your network. The default setting is 9. The maximum supported length by
+    eggdrop is 32.
     Valid settings are 9-32
-
