@@ -15,8 +15,9 @@
 # krbb      09Jun2000: added missing return to randstring
 # Tothwolf  18Jun2000: added ispermowner
 # Sup       02Apr2001: added matchbotattr
+# Tothwolf  13Jun2001: updated/modified several commands
 #
-# $Id: alltools.tcl,v 1.6 2001/04/02 22:50:31 guppy Exp $
+# $Id: alltools.tcl,v 1.7 2001/06/14 00:15:21 tothwolf Exp $
 #
 ########################################
 # Descriptions of avaliable commands:
@@ -101,7 +102,7 @@
 #   else return 0
 #
 # number_to_number <number>
-#   if the given number is between 1 and 15, return its analog representation
+#   if the given number is between 1 and 15, return its text representation
 #   else return the number given
 #
 ## (other commands):
@@ -111,6 +112,10 @@
 #
 # ispermowner <handle>
 #   if the given handle is a permanent owner, return 1
+#   else return 0
+#
+# matchbotattr <bot> <flags>
+#   if the given bot has all the given flags, return 1
 #   else return 0
 #
 ########################################
@@ -149,31 +154,32 @@ proc putact {dest text} {
 #
 
 proc strlwr {string} {
-  string tolower $string
+  return [string tolower $string]
 }
 
 proc strupr {string} {
-  string toupper $string
+  return [string toupper $string]
 }
 
 proc strcmp {string1 string2} {
-  string compare $string1 $string2
+  return [string compare $string1 $string2]
 }
 
 proc stricmp {string1 string2} {
-  string compare [string tolower $string1] [string tolower $string2]
+  return [string compare [string tolower $string1] \
+          [string tolower $string2]]
 }
 
 proc strlen {string} {
-  string length $string
+  return [string length $string]
 }
 
 proc stridx {string index} {
-  string index $string $index
+  return [string index $string $index]
 }
 
 proc iscommand {command} {
-  if {[string compare [info commands $command] ""]} then {
+  if {[string compare "" [info commands $command]]} then {
     return 1
   }
   return 0
@@ -181,7 +187,7 @@ proc iscommand {command} {
 
 proc timerexists {command} {
   foreach i [timers] {
-    if {[string compare $command [lindex $i 1]] == 0} then {
+    if {![string compare $command [lindex $i 1]]} then {
       return [lindex $i 2]
     }
   }
@@ -190,7 +196,7 @@ proc timerexists {command} {
 
 proc utimerexists {command} {
   foreach i [utimers] {
-    if {[string compare $command [lindex $i 1]] == 0} then {
+    if {![string compare $command [lindex $i 1]]} then {
       return [lindex $i 2]
     }
   }
@@ -201,10 +207,9 @@ proc inchain {bot} {
   islinked $bot
 }
 
-proc randstring {length} {
-  set chars abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789
+proc randstring {length {chars abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789}} {
   set count [string length $chars]
-  for {set i 0} {$i < $length} {incr i} {
+  for {set index 0} {$index < $length} {incr index} {
     append result [string index $chars [rand $count]]
   }
   return $result
@@ -249,7 +254,7 @@ proc iso {nick chan} {
 }
 
 proc realtime {args} {
-  switch -exact -- $args {
+  switch -exact -- [lindex $args 0] {
     time {
       strftime "%H:%M"
     }
@@ -269,8 +274,8 @@ proc testip {ip} {
   }
   set index 0
   foreach i $tmp {
-    if {((![regexp \[^0-9\] $i]) || ([string length $i] > 3) ||
-         (($index == 3) && (($i > 254) || ($i < 1))) ||
+    if {((![regexp \[^0-9\] $i]) || ([string length $i] > 3) || \
+         (($index == 3) && (($i > 254) || ($i < 1))) || \
          (($index <= 2) && (($i > 255) || ($i < 0))))} then {
       return 0
     }
@@ -340,7 +345,8 @@ proc number_to_number {number} {
 #
 
 proc isnumber {string} {
-  if {([string compare $string ""]) && (![regexp \[^0-9\] $string])} then {
+  if {([string compare "" $string]) && \
+      (![regexp \[^0-9\] $string])} then {
     return 1
   }
   return 0
@@ -358,8 +364,8 @@ proc ispermowner {hand} {
 }
 
 proc matchbotattr {bot flags} {
-  foreach flag [split $flags {}] {
-    if {[lsearch -exact [split [botattr $bot] {}] $flag] == -1} {
+  foreach flag [split $flags ""] {
+    if {[lsearch -exact [split [botattr $bot] ""] $flag] == -1} then {
       return 0
     }
   }
