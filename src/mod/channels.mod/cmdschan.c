@@ -2,7 +2,7 @@
  * cmdschan.c -- part of channels.mod
  *   commands from a user via dcc that cause server interaction
  *
- * $Id: cmdschan.c,v 1.52 2002/06/13 20:43:08 wcc Exp $
+ * $Id: cmdschan.c,v 1.53 2002/06/13 21:58:06 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1175,7 +1175,7 @@ static void cmd_chaninfo(struct userrec *u, int idx, char *par)
   if (!par[0]) {
     chname = dcc[idx].u.chat->con_chan;
     if (chname[0] == '*') {
-      dprintf(idx, "You console channel is invalid.\n");
+      dprintf(idx, "Your console channel is invalid.\n");
       return;
     }
   } else {
