@@ -6,69 +6,69 @@ Changes in eggdrop: (since v1.3.0)
 1.3.29
 Foundby   Fixedby   What....
 Charvel   poptix    nrealloc() called with too few args in non-debugmem mode.
-          poptix    Removed two FIXME's that need not be.
+	  poptix    Removed two FIXME's that need not be.
 	  Fabian    Allows users to ignore messages from others by setting
 		    note ignore masks. e.g.: .+noteign *@foobot
-          Fabian    Fixed memleak in xtra_set.
-          Fabian    added user_realloc
-          Fabian    New language system. Splitted sections and languages.
-          drummer   -chrec sechole: chan/global masters can remove chan/global 
-                    owners' chanrec.
+	  Fabian    Fixed memleak in xtra_set.
+	  Fabian    added user_realloc
+	  Fabian    New language system. Splitted sections and languages.
+	  drummer   -chrec sechole: chan/global masters can remove chan/global 
+		    owners' chanrec.
 	  Johoho/   doc/BOTNET update.          
-          Ben
+	  Ben
 arthur2   Fabian    refresh_ban_kick doesn't kick friends anymore
-          Fabian    kick_all was counting too many bytes; cleanup
-          mho       tcl_delchanrec can now delete chan recs for non-existant
-                    channels
-          Lucas     changed the default DCC block size from 0 to 1024
+	  Fabian    kick_all was counting too many bytes; cleanup
+	  mho       tcl_delchanrec can now delete chan recs for non-existant
+		    channels
+	  Lucas     changed the default DCC block size from 0 to 1024
 TheUnknown guppy    made cmd_reset(exempts/invites) work like cmd_resetbans
-arthur2   guppy     missing a rem_builtin in filesys.c
+arthur2   guppy     missing a rem_builtin in filesys.
 	  Fabian    Added '.help all' and '.help *somestring*' to the 
 		    standard .help text.
 Dude      Dude      during a make install and sinstall, telnet-banner wasn't
-                    being copied to the DEST dir like it should.
+		    being copied to the DEST dir like it should.
 Tothwolf  Ian/guppy made cmd_resetbans take a channel argument
 drummer   Fabian    Empty xtra fields are deleted now.
 Lucas     Lucas     (very) small change in the config file (example of log).
-          dw        new todo system at http://todo.eggheads.org
+	  dw        new todo system at http://todo.eggheads.org
 Tothwolf  guppy     another +g bug when sharing channel bans/exempts/invites on
-                    link ...
+		    link ...
 arthur2   arthur2   fixes more of the places where quiet_reject should have
 		    been used.
 	  Ian       ignore wrong modes.
-          Fabian    reverse of newsplit.patch, now only removes extraneous 
-                    spaces from dcc and msg commands.
-          Eule      Memberlistflag-fixes
+	  Fabian    reverse of newsplit.patch, now only removes extraneous 
+		    spaces from dcc and msg commands.
+	  Eule      Memberlistflag-fixes
 TheUnknown arthur2  mutliple modes were sent by bot. missing 
-                    SENTDEOP/OP/DEVOICE/VOICE/KICK flags in irc.mod. 
+		    SENTDEOP/OP/DEVOICE/VOICE/KICK flags in irc.mod. 
 Cybah     arthur2   bot could deop itself. 
 toot      Fabian    fixed all(?) strchr(CHANMETA, c) calls to check c != 0
-                    and some minor other stuff
-          Fabian    added env var to define language directory
-          Drummer   .console now saves our console settings not a CHOF bind
+		    and some minor other stuff
+	  Fabian    added env var to define language directory
+	  drummer   .console now saves our console settings not a CHOF bind
 Lucas/    Lucas     Adds a new config option, quiet-save. If set, "Writing user
 NESS                file..." & "Writing channel file ..." aren't logged.
-          Fabian    speeded up '.help all', added help entries
-          Fabian    removed length limitation from language entries
-          drummer/  .chanset drops wrong modes.
-          Mixter
-          Fabian    altnick may contain '?'s which get translated to random
-                    numbers.
-Q         Fabian    added env var to pass language or complete path to file
+	  Fabian    speeded up '.help all', added help entries
+	  Fabian    removed length limitation from language entries
+	  drummer/  .chanset drops wrong modes.
+	  Mixter
+	  Fabian    altnick may contain '?'s which get translated to random
+		    numbers.
+Q	  Fabian    added env var to pass language or complete path to file
 drummer   Fabian    Fixed memory leak in assoc module when restarting
-          mho       Changed the ! prefix in .kickban to - (channel conflicts)
-          Cybah     Challenge/response system using MD5 digests for botnet
+	  mho       Changed the ! prefix in .kickban to - (channel conflicts)
+	  Cybah     Challenge/response system using MD5 digests for botnet
 		    links. No more cleartext passwords while linking :))))
           Fabian    Removed all occurences of movefile
           Fabian    only reading notes file on join when really needed
 Ben/      Fabian    Don't share exempt and invite lists with bots which don't
-Mixter              support these.
-          Fabian/   newsplit() now removes _all_ spaces between the two parts
-          Ian      
-          Fabian    changed nrealloc() to allow ptr == NULL
+Mixter		    support these.
+	  Fabian/   newsplit() now removes _all_ spaces between the two parts
+	  Ian
+	  Fabian    changed nrealloc() to allow ptr == NULL
 slenny    Fabian    Only displaying each skipped Channel once now
-          Fabian    DCC SENDs with long filenames don't lead to SEGV anymore
-          Fabian    added wild match support to help, added '.help all'
+	  Fabian    DCC SENDs with long filenames don't lead to SEGV anymore
+	  Fabian    added wild match support to help, added '.help all'
 slenny    Fabian    Not saving ignore list several times anymore
 
 1.3.28
