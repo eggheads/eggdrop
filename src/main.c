@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  *
- * $Id: main.c,v 1.63 2001/06/20 14:53:36 poptix Exp $
+ * $Id: main.c,v 1.64 2001/07/05 22:19:51 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -279,10 +279,10 @@ void write_debug()
     dprintf(-x, "Compile flags: %s\n", CCFLAGS);
 #endif
 #ifdef LDFLAGS
-    dprintf(-x, "Link flags   : %s\n", LDFLAGS);
+    dprintf(-x, "Link flags: %s\n", LDFLAGS);
 #endif
 #ifdef STRIPFLAGS
-    dprintf(-x, "Strip flags  : %s\n", STRIPFLAGS);
+    dprintf(-x, "Strip flags: %s\n", STRIPFLAGS);
 #endif
 
     dprintf(-x, "Context: ");
