@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  * 
- * $Id: main.c,v 1.29 2000/02/04 23:31:51 fabian Exp $
+ * $Id: main.c,v 1.30 2000/02/18 22:36:12 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1037,8 +1037,14 @@ int main(int argc, char **argv)
 	kill_tcl();
 	init_tcl(argc, argv);
 	init_language(0);
+	/* We expect the encryption module as the current module pointed
+	 * to by `module_list'.
+	 */
 	x = p->funcs[MODCALL_START];
-	x(0);
+	/* `NULL' indicates that we just recently restarted. The module
+	 * is expected to re-initialise as needed.
+	 */
+	x(NULL);
 	rehash();
 	restart_chons();
       }
