@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  *
- * $Id: server.c,v 1.95 2003/03/04 08:51:45 wcc Exp $
+ * $Id: server.c,v 1.96 2003/03/05 02:39:45 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -110,6 +110,7 @@ static void purge_kicks(struct msgq_head *);
 static int deq_kick(int);
 static void msgq_clear(struct msgq_head *qh);
 static int stack_limit;
+static char *realservername;
 
 #include "servmsg.c"
 
@@ -1204,15 +1205,11 @@ static char *traced_server(ClientData cdata, Tcl_Interp *irp,
 {
   char s[1024];
 
-  if (server_online) {
+  if (server_online && realservername) {
     int servidx = findanyidx(serv);
-    register int i;
-    struct server_list *x = serverlist;
 
-    for (i = 0; i < curserv; x = x->next)
-      i++;
     /* return real server name */
-    simple_sprintf(s, "%s:%u", x->realname, dcc[servidx].port);
+    simple_sprintf(s, "%s:%u", realservername, dcc[servidx].port);
   } else
     s[0] = 0;
   Tcl_SetVar2(interp, name1, name2, s, TCL_GLOBAL_ONLY);
@@ -1868,6 +1865,7 @@ char *server_start(Function *global_funcs)
   kick_method = 1;
   optimize_kicks = 0;
   stack_limit = 4;
+  realservername = 0;
 
   server_table[4] = (Function) botname;
   module_register(MODULE_NAME, server_table, 1, 2);

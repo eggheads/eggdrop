@@ -1,7 +1,7 @@
 /*
  * servmsg.c -- part of server.mod
  *
- * $Id: servmsg.c,v 1.74 2003/02/04 11:10:39 wcc Exp $
+ * $Id: servmsg.c,v 1.75 2003/03/05 02:39:45 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -235,6 +235,10 @@ static int got001(char *from, char *msg)
       nfree(x->realname);
     x->realname = nmalloc(strlen(from) + 1);
     strcpy(x->realname, from);
+    if (realservername)
+      nfree(realservername);
+    realservername = nmalloc(strlen(from) + 1);
+    strcpy(realservername, from);
   } else
     putlog(LOG_MISC, "*", "No server list!");
 
@@ -269,15 +273,9 @@ static int got442(char *from, char *msg)
 {
   char *chname;
   struct chanset_t *chan;
-  struct server_list *x;
-  int i;
 
-  for (x = serverlist, i = 0; x; x = x->next, i++)
-    if (i == curserv) {
-      if (egg_strcasecmp(from, x->realname ? x->realname : x->name))
-        return 0;
-      break;
-    }
+  if (!realservername || egg_strcasecmp(from, realservername))
+    return 0;
   newsplit(&msg);
   chname = newsplit(&msg);
   chan = findchan(chname);
@@ -952,6 +950,8 @@ static void disconnect_server(int idx)
   if (server_online > 0)
     check_tcl_event("disconnect-server");
   server_online = 0;
+  nfree(realservername);
+  realservername = 0;
   if (dcc[idx].sock >= 0)
     killsock(dcc[idx].sock);
   dcc[idx].sock = -1;
@@ -1063,14 +1063,8 @@ static int gotkick(char *from, char *msg)
  */
 static int whoispenalty(char *from, char *msg)
 {
-  struct server_list *x = serverlist;
-  int i;
-
-  if (x && use_penalties) {
-    i = 0;
-    for (; x && i < curserv; x = x->next)
-      i++;
-    if (strcmp(x->realname, from)) {
+  if (realservername && use_penalties) {
+    if (strcmp(realservername, from)) {
       last_time += 1;
       if (raw_log)
         putlog(LOG_SRVOUT, "*", "adding 1sec penalty (remote whois)");

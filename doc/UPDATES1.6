@@ -1,10 +1,12 @@
-$Id: UPDATES1.6,v 1.478 2003/03/04 08:51:44 wcc Exp $
+$Id: UPDATES1.6,v 1.479 2003/03/05 02:39:45 wcc Exp $
 
 Changes in Eggdrop: (since v1.6.0)
 ----------------------------------
 
 1.6.14
 Found by  Fixed by  What...
+          Sven      fixed a crash that can happen when the serverlist contains
+                    null strings
           Sven/     added NO_HALFOP_CHANMODES and NOHALFOPS_MODES defines to
           Wcc       chan.h to allow halfop-related mode behavior to be changed
                     on IRCd's that implement halfops differently
