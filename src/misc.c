@@ -7,7 +7,7 @@
  *   help system
  *   motd display and %var substitution
  *
- * $Id: misc.c,v 1.51 2002/09/30 06:32:30 wcc Exp $
+ * $Id: misc.c,v 1.52 2002/10/11 01:37:14 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -491,7 +491,7 @@ void putlog EGG_VARARGS_DEF(int, arg1)
   format = va_arg(va, char *);
 
   /* Create the timestamp */
-  strftime(&stamp[0], 32, LOG_TS, t);
+  egg_strftime(&stamp[0], 32, LOG_TS, t);
   sprintf(&stamp[0], "%s ", stamp);
   tsl = strlen(stamp);
 
@@ -658,7 +658,7 @@ void flushlogs()
           * repeated x times' and reset repeats.
 	  */
         char stamp[32];
-        strftime(&stamp[0], 32, LOG_TS, localtime(&now));
+        egg_strftime(&stamp[0], 32, LOG_TS, localtime(&now));
 	fprintf(logs[i].f, "%s ", stamp);
 	fprintf(logs[i].f, MISC_LOGREPEAT, logs[i].repeats);
 	/* Reset repeats */
