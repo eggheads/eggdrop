@@ -22,7 +22,7 @@ PATCH("932700043"); /* current "unix" time */
  *
  *
  */
-PATCH("tcl8.2-configure.patch"); /* last patch added */ 
+PATCH("tcl82.patch"); /* last patch added */ 
 /*
  *
  *
