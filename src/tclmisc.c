@@ -5,7 +5,7 @@
  * 
  * dprintf'ized, 1aug1996
  * 
- * $Id: tclmisc.c,v 1.5 1999/12/21 17:35:10 fabian Exp $
+ * $Id: tclmisc.c,v 1.6 1999/12/27 19:36:43 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -33,6 +33,10 @@
 #ifdef HAVE_UNAME
 #include <sys/utsname.h>
 #endif
+
+/* includes for the tcl_md5 function <Olrick> */
+#include "md5/global.h"
+#include "md5/md5.h"
 
 extern tcl_timer_t *timer, *utimer;
 extern struct dcc_t *dcc;
@@ -491,6 +495,28 @@ static int tcl_reloadhelp STDVAR
   return TCL_OK;
 }
 
+static int tcl_md5 STDVAR
+{
+  MD5_CTX       Context;
+  char          DigestString[33];       /* 32 for digest in hex + null */
+  unsigned char Digest[16];
+  int           i;
+
+  context;
+  BADARGS(2, 2, " string");
+
+  MD5Init(&Context);
+  MD5Update(&Context, (unsigned char *)argv[1], strlen(argv[1]));
+  MD5Final(Digest, &Context);
+
+  for(i=0; i<16; i++)
+    sprintf(DigestString + (i*2), "%.2x", Digest[i]);
+
+  Tcl_AppendResult(irp, DigestString, NULL);
+
+  return TCL_OK;
+}
+
 tcl_cmds tclmisc_cmds[] =
 {
   {"putlog", tcl_putlog},
@@ -523,5 +549,6 @@ tcl_cmds tclmisc_cmds[] =
   {"unloadhelp", tcl_unloadhelp},
   {"reloadhelp", tcl_reloadhelp},
   {"duration", tcl_duration},
+  {"md5", tcl_md5},
   {0, 0}
 };

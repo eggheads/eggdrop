@@ -930,6 +930,8 @@ GLOBAL VARIABLES:
     The last command binding which triggered.   This allows you to
     identify which command triggered a tcl routine.
 
+| md5 <string>
+|   returns: the 128 bits MD5 "message-digest" of the specified string.
 
 COMMAND EXTENSION:
 
