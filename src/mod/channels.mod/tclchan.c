@@ -1,7 +1,7 @@
 /* 
  * tclchan.c -- part of channels.mod
  * 
- * $Id: tclchan.c,v 1.24 2000/01/28 21:51:54 fabian Exp $
+ * $Id: tclchan.c,v 1.25 2000/01/30 18:02:02 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1578,8 +1578,9 @@ static int tcl_channel_add(Tcl_Interp * irp, char *newname, char *options)
     chan->flood_deop_time = gfld_deop_time;
     chan->flood_kick_thr = gfld_kick_thr;
     chan->flood_kick_time = gfld_kick_time;
-    chan->flood_nick_thr = gfld_nick_time;
-    chan->flood_nick_time = gfld_nick_thr;
+    chan->flood_nick_thr = gfld_nick_thr;
+    chan->flood_nick_time = gfld_nick_time;
+    chan->stopnethack_mode = global_stopnethack_mode;
     
     /* We _only_ put the dname (display name) in here so as not to confuse
      * any code later on. chan->name gets updated with the channel name as

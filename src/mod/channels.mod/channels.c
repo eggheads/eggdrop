@@ -2,7 +2,7 @@
  * channels.c -- part of channels.mod
  *   support for channels within the bot
  * 
- * $Id: channels.c,v 1.23 2000/01/17 22:36:07 fabian Exp $
+ * $Id: channels.c,v 1.24 2000/01/30 18:02:02 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -43,6 +43,7 @@ static int  must_be_owner	= 0;
 static int  quiet_save		= 0;
 static char glob_chanmode[64]	= "nt";	/* Default chanmode (drummer,990731) */
 static struct udef_struct *udef	= NULL;
+static int global_stopnethack_mode = 0;
 
 /* Global channel settings (drummer/dw) */
 static char glob_chanset[512]	= "\
@@ -742,6 +743,7 @@ static tcl_ints my_tcl_ints[] =
   {"invite-time",	&invite_time,	0},
   {"must-be-owner",	&must_be_owner,	0},
   {"quiet-save",	&quiet_save,	0},
+  {"global-stopnethack-mode",	&global_stopnethack_mode,	0},
   {NULL,		NULL,		0}
 };
 
