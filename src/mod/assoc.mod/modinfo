@@ -1,0 +1,7 @@
+DESC:This module allows users to give party-line channels descriptive names
+DESC:instead of using only boring numbers.  The names are also distributed
+DESC:over the botnet.
+DESC:Don't mistaken this type of channel with the IRC channels. They're
+DESC:something totally unrelated.
+DESC:
+DESC:If you don't need this feature, you can safely DISABLE the module.
