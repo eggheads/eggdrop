@@ -1,7 +1,7 @@
 /*
  * share.c -- part of share.mod
  *
- * $Id: share.c,v 1.53 2001/06/30 06:33:10 guppy Exp $
+ * $Id: share.c,v 1.54 2001/07/06 16:38:01 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -54,8 +54,6 @@ static int resync_time = 900;
 static int overr_local_bots = 0;	/* Override local bots?		    */
 
 
-/* Delay calls to add_mode() to prevent flooding (Sup 29Jun2001) */
-
 struct delay_mode {
   struct delay_mode *next;
   struct chanset_t *chan;
@@ -66,6 +64,41 @@ struct delay_mode {
 };
 
 static struct delay_mode *start_delay = NULL;
+
+
+/* Store info for sharebots */
+struct share_msgq {
+  struct chanset_t *chan;
+  char *msg;
+  struct share_msgq *next;
+};
+
+typedef struct tandbuf_t {
+  char bot[HANDLEN + 1];
+  time_t timer;
+  struct share_msgq *q;
+  struct tandbuf_t *next;
+} tandbuf;
+
+tandbuf *tbuf;
+
+/* Prototypes */
+static void start_sending_users(int);
+static void shareout_but EGG_VARARGS(struct chanset_t *, arg1);
+static int flush_tbuf(char *);
+static int can_resync(char *);
+static void dump_resync(int);
+static void q_resync(char *, struct chanset_t *);
+static void cancel_user_xfer(int, void *);
+static int private_globals_bitmask();
+
+#include "share.h"
+
+#include "uf_features.c"
+
+/*
+ *   Sup's delay code
+ */
 
 static void add_delay(struct chanset_t *chan, int plsmns, int mode, char *mask)
 {
@@ -144,38 +177,6 @@ static int delay_expmem()
   }
   return size;
 }
-
-
-/* Store info for sharebots */
-struct share_msgq {
-  struct chanset_t *chan;
-  char *msg;
-  struct share_msgq *next;
-};
-
-typedef struct tandbuf_t {
-  char bot[HANDLEN + 1];
-  time_t timer;
-  struct share_msgq *q;
-  struct tandbuf_t *next;
-} tandbuf;
-
-tandbuf *tbuf;
-
-/* Prototypes */
-static void start_sending_users(int);
-static void shareout_but EGG_VARARGS(struct chanset_t *, arg1);
-static int flush_tbuf(char *);
-static int can_resync(char *);
-static void dump_resync(int);
-static void q_resync(char *, struct chanset_t *);
-static void cancel_user_xfer(int, void *);
-static int private_globals_bitmask();
-
-#include "share.h"
-
-#include "uf_features.c"
-
 
 /*
  *   Botnet commands
@@ -1403,23 +1404,38 @@ static void new_tbuf(char *bot)
       putlog(LOG_BOTS, "*", "Creating resync buffer for %s", bot);
 }
 
-/* Flush a certain bot's tbuf.
- */
-static int flush_tbuf(char *bot)
+static void del_tbuf(tandbuf *goner)
 {
   struct share_msgq *q, *r;
-  tandbuf **old = &tbuf, *t;
+  tandbuf *t = NULL, *old = NULL;
 
-  for (; *old; old = &((*old)->next)) {
-    if (!egg_strcasecmp((*old)->bot, bot)) {
-      t = *old;
-      *old = t->next;
+  for (t = tbuf; t; old = t, t = t->next) {
+    if (t == goner) {
+      if (old)
+        old->next = t->next;
+      else
+        tbuf = t->next;
       for (q = t->q; q && q->msg[0]; q = r) {
 	r = q->next;
 	nfree(q->msg);
 	nfree(q);
       }
       nfree(t);
+      break;
+    }
+  }
+}
+
+/* Flush a certain bot's tbuf.
+ */
+static int flush_tbuf(char *bot)
+{
+  tandbuf *t, *tnext = NULL;
+
+  for (t = tbuf; t; t = tnext) {
+    tnext = t->next;
+    if (!egg_strcasecmp(t->bot, bot)) {
+      del_tbuf(t);
       return 1;
     }
   }
@@ -1431,22 +1447,14 @@ static int flush_tbuf(char *bot)
 static void check_expired_tbufs()
 {
   int i;
-  struct share_msgq *q, *r;
-  tandbuf **old = &tbuf, *t;
+  tandbuf *t, *tnext = NULL;
 
-  for (; *old; old = &((*old)->next)) {
-    if ((now - (*old)->timer) > resync_time) {
-	/* EXPIRED */
-      t = *old;
-      *old = t->next;
-      for (q = t->q; q && q->msg[0]; q = r) {
-	r = q->next;
-	  nfree(q->msg);
-	  nfree(q);
-	}
+  for (t = tbuf; t; t = tnext) {
+    tnext = t->next;
+    if ((now - t->timer) > resync_time) {
 	putlog(LOG_BOTS, "*", "Flushing resync buffer for clonebot %s.",
 	t->bot);
-      nfree(t);
+      del_tbuf(t);
     }
   }
   /* Resend userfile requests */
@@ -2061,12 +2069,9 @@ static cmd_t my_cmds[] =
 static char *share_close()
 {
   int i;
-  tandbuf *t;
+  tandbuf *t, *tnext = NULL;
 
   module_undepend(MODULE_NAME);
-  putlog(LOG_MISC | LOG_BOTS, "*", "Unloaded sharing module, flushing tbuf's...");
-  for (t = tbuf; t && t->bot[0]; t = t->next)
-    flush_tbuf(t->bot);
   putlog(LOG_MISC | LOG_BOTS, "*", "Sending 'share end' to all sharebots...");
   for (i = 0; i < dcc_total; i++)
     if ((dcc[i].type->flags & DCT_BOT) && (dcc[i].status & STAT_SHARE)) {
@@ -2077,6 +2082,11 @@ static char *share_close()
 			 STAT_OFFERED | STAT_AGGRESSIVE);
       dcc[i].u.bot->uff_flags = 0;
     }
+  putlog(LOG_MISC | LOG_BOTS, "*", "Unloaded sharing module, flushing tbuf's...");
+  for (t = tbuf; t; t = tnext) {
+    tnext = t->next; 
+    del_tbuf(t);                                  
+  }  
   del_hook(HOOK_SHAREOUT, (Function) shareout_mod);
   del_hook(HOOK_SHAREIN, (Function) sharein_mod);
   del_hook(HOOK_MINUTELY, (Function) check_expired_tbufs);
