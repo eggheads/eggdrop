@@ -64,6 +64,7 @@ help:
 clean: cleanmods
 	@rm -f eggdrop egg core *.o *.a *.so *~ *.stamp
 	@cd src ; rm -f eggdrop egg core *.o *.a *~ language/*~
+	@cd src/md5 ; ${MAKE} clean
 	
 cleanmods:
 	@cd src/mod ; ${MAKE} clean 'MAKE=${MAKE}'
@@ -83,8 +84,8 @@ eggdrop.h:
 	@exit 1
 
 OBJS =  botcmd.o botmsg.o botnet.o chanprog.o cmds.o \
-	dcc.o dccutil.o flags.o language.o main.o mem.o misc.o \
-	modules.o net.o rfc1459.o \
+	dcc.o dccutil.o flags.o language.o main.o md5/md5c.o mem.o \
+	misc.o modules.o net.o rfc1459.o \
 	tcl.o tcldcc.o tclhash.o tclmisc.o tcluser.o userent.o \
 	userrec.o users.o
 

@@ -19,6 +19,10 @@
 #include "modules.h"
 #include "tandem.h"
 
+/* includes for botnet md5 challenge/response code <cybah> */
+#include "md5/global.h"
+#include "md5/md5.h"
+
 extern struct userrec *userlist;
 extern struct chanset_t *chanset;
 extern Tcl_Interp *interp;
@@ -212,8 +216,7 @@ void failed_link(int idx)
 
 static void cont_link(int idx, char *buf, int i)
 {
-  char *s, x[1024];
-  struct userrec *u = get_user_by_handle(userlist, dcc[idx].nick);
+  char x[1024];
   int atr = bot_flags(dcc[idx].user);
 
   context;
@@ -245,12 +248,36 @@ static void cont_link(int idx, char *buf, int i)
   }
   dcc[idx].type = &DCC_BOT_NEW;
   dcc[idx].u.bot->numver = 0;
-  s = get_user(&USERENTRY_PASS, u);
-  if (!s || !strcmp(s, "-"))
-    dprintf(idx, "%s\n", botnetnick);
-  else
-    dprintf(idx, "%s\n%s\n", botnetnick, s);
+
+  /*    Don't send our password here, just the username. The code later on
+   *  will determine if the password needs to be sent in cleartext or if we
+   *  can send an MD5 digest. <cybah>
+   */
+
+  dprintf(idx, "%s\n", botnetnick);
   return;
+}
+
+/*    This function generates a digest by combining 'challenge' with
+ *  'password' and then sends it to the other bot. <Cybah>
+ */
+static void dcc_bot_digest(int idx, char *challenge, char *password)
+{
+  MD5_CTX       Context;
+  char          DigestString[33];       /* 32 for digest in hex + null */
+  unsigned char Digest[16];
+  int           i;
+
+  MD5Init(&Context);
+  MD5Update(&Context, (unsigned char *)challenge, strlen(challenge));
+  MD5Update(&Context, (unsigned char *)password, strlen(password));
+  MD5Final(Digest, &Context);
+  
+  for(i=0;i<16;i++)
+    sprintf(DigestString + (i*2), "%.2x", Digest[i]);
+ 
+  dprintf(idx, "digest %s\n", DigestString);  
+  putlog(LOG_BOTS, "*", "Received challenge from %s... sending response ...", dcc[idx].nick);  
 }
 
 static void dcc_bot_new(int idx, char *buf, int x)
@@ -268,9 +295,20 @@ static void dcc_bot_new(int idx, char *buf, int x)
     /* we entered the wrong password */
     putlog(LOG_BOTS, "*", DCC_BADPASS, dcc[idx].nick);
   } else if (!strcasecmp(code, "passreq")) {
-    if (u_pass_match(u, "-")) {
+    char *pass = get_user(&USERENTRY_PASS, u);
+    
+    if (!pass || !strcmp(pass, "-")) {
       putlog(LOG_BOTS, "*", DCC_PASSREQ, dcc[idx].nick);
       dprintf(idx, "-\n");
+    } else {
+      /*    Determine if the other end supports an MD5 digest instead of a
+       *  cleartext password. <Cybah>
+       */
+      if(buf && buf[0] && strchr(buf, '<') && strchr(buf+1, '>')) {
+        dcc_bot_digest(idx, buf, pass);
+      } else {
+        dprintf(idx, "%s\n", pass);
+      }
     }
   } else if (!strcasecmp(code, "error")) {
     putlog(LOG_BOTS, "*", DCC_LINKERROR, dcc[idx].nick, buf);
@@ -426,12 +464,67 @@ struct dcc_table DCC_FORK_BOT =
   0
 };
 
+/*    This function generates a digest by combining a challenge consisting of
+ *  our process id + connection time + botnetnick. The digest is then compared
+ *  to the one given by the remote bot. Returns 1 if the digest matches,
+ *  otherwise returns 0. <Cybah>
+ */
+static int dcc_bot_check_digest(int idx, char *digest)
+{
+  MD5_CTX       Context;
+  char          DigestString[33];       /* 32 for digest in hex + null */
+  unsigned char Digest[16];
+  int           i;
+  char          *password = get_user(&USERENTRY_PASS, dcc[idx].user);
+  
+  MD5Init(&Context);
+  
+  snprintf(DigestString, 33, "<%x%x@", getpid(), (unsigned int)dcc[idx].timeval);
+  MD5Update(&Context, (unsigned char *)DigestString, strlen(DigestString));
+  MD5Update(&Context, (unsigned char *)botnetnick, strlen(botnetnick));
+  MD5Update(&Context, (unsigned char *)">", 1);
+  MD5Update(&Context, (unsigned char *)password, strlen(password));
+
+  MD5Final(Digest, &Context);
+  
+  for(i=0;i<16;i++)
+    sprintf(DigestString + (i*2), "%.2x", Digest[i]);
+  
+  if(!strcmp(DigestString, digest)) {
+    return 1;
+  }
+  putlog(LOG_BOTS, "*", "Response (password hash) from %s incorrect", dcc[idx].nick);
+  return 0;
+}
+
 static void dcc_chat_pass(int idx, char *buf, int atr)
 {
   if (!atr)
     return;
   strip_telnet(dcc[idx].sock, buf, &atr);
   atr = dcc[idx].user ? dcc[idx].user->flags : 0;
+
+  /* Check for MD5 digest from remote _bot_. <cybah> */
+  if ((atr & USER_BOT) && !strncasecmp(buf, "digest ", 7)) {
+    if(dcc_bot_check_digest(idx, buf+7)) {
+      nfree(dcc[idx].u.chat);
+      dcc[idx].type = &DCC_BOT_NEW;
+      dcc[idx].u.bot = get_data_ptr(sizeof(struct bot_info));
+      dcc[idx].status = STAT_CALLED;
+      dprintf(idx, "*hello!\n");
+      greet_new_bot(idx);
+      return;
+    } else {
+      /* invalid password/digest */
+      dprintf(idx, "badpass\n");
+      putlog(LOG_MISC, "*", DCC_BADLOGIN, dcc[idx].nick, dcc[idx].host,
+             dcc[idx].port);
+      killsock(dcc[idx].sock);
+      lostdcc(idx);
+      return;
+    }
+  }
+
   if (u_pass_match(dcc[idx].user, buf)) {
     if (atr & USER_BOT) {
       nfree(dcc[idx].u.chat);
@@ -1216,9 +1309,25 @@ putlog(LOG_BOTS, "*", DCC_BADNICK, dcc[idx].host);
   }
   correct_handle(buf);
   strcpy(dcc[idx].nick, buf);
-  if (glob_bot(fr))
-    dprintf(idx, "passreq\n");
-  else {
+  
+  if (glob_bot(fr)) {
+    /*    Must generate a string consisting of our process ID and the current
+     *  time. The bot will add it's password to the end and use it to generate
+     *  an MD5 checksum (always 128bit). The checksum is sent back and this
+     *  end does the same. The remote bot is only allowed access if the
+     *  checksums match. Please don't fuck with 'timeval', or the digest we
+     *  generate later for authentication will not be correct - you've been
+     *  warned ;) <Cybah>
+     */
+    putlog(LOG_BOTS, "*", "Challenging %s...", dcc[idx].nick);
+    dprintf(idx, "passreq <%x%x@%s>\n", getpid(), dcc[idx].timeval, botnetnick);
+  } else {
+    /*    *note* The MD5 digest used above to prevent cleartext passwords
+     *  being sent across the net will _only_ work when we have the cleartext
+     *  password. User passwords are encrypted (with blowfish usually) so the
+     *  same thing cant be done. Botnet passwords are always stored in
+     *  cleartext, or at least something that can be reversed. <Cybah>
+     */
     dprintf(idx, "\nEnter your password.\377\373\001\n");
     /* turn off remote telnet echo: IAC WILL ECHO */
   }

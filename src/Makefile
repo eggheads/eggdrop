@@ -73,6 +73,9 @@ main.o: main.c patch.h
 	'-DLDFLAGS="${LD}"' \
 	'-DSTRIPFLAGS="${STRIP}"' main.c
 
+md5/md5c.o:
+	@cd md5; ${MAKE} md5
+
 mem.o: mem.c
 	${CC} ${CFLAGS} mem.c
 	
@@ -136,7 +139,9 @@ cmds.o: \
 dcc.o: \
    main.h \
    modules.h \
-   tandem.h
+   tandem.h \
+   md5/global.h \
+   md5/md5.h
 dccutil.o: \
    main.h \
    chan.h \
