@@ -1,7 +1,7 @@
 /*
  * servmsg.c -- part of server.mod
  *
- * $Id: servmsg.c,v 1.84 2005/01/03 20:01:46 paladin Exp $
+ * $Id: servmsg.c,v 1.85 2005/02/03 15:34:21 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -327,6 +327,14 @@ static int detect_flood(char *floodnick, char *floodhost, char *from, int which)
   struct userrec *u;
   int thr = 0, lapse = 0, atr;
 
+  /* Okay, make sure i'm not flood-checking myself */
+  if (match_my_nick(floodnick))
+    return 0;
+
+  /* My user@host (?) */
+  if (!egg_strcasecmp(floodhost, botuserhost))
+    return 0;
+
   u = get_user_by_host(from);
   atr = u ? u->flags : 0;
   if (atr & (USER_BOT | USER_FRIEND))
@@ -348,11 +356,7 @@ static int detect_flood(char *floodnick, char *floodhost, char *from, int which)
   }
   if ((thr == 0) || (lapse == 0))
     return 0;                   /* No flood protection */
-  /* Okay, make sure i'm not flood-checking myself */
-  if (match_my_nick(floodnick))
-    return 0;
-  if (!egg_strcasecmp(floodhost, botuserhost))
-    return 0;                   /* My user@host (?) */
+
   p = strchr(floodhost, '@');
   if (p) {
     p++;
@@ -695,7 +699,7 @@ static void minutely_checks()
      * check that it's not just a truncation of the full nick.
      */
     if (strncmp(botname, origbotname, strlen(botname))) {
-      /* See if my nickname is in use and if if my nick is right.  */
+      /* See if my nickname is in use and if if my nick is right. */
       alt = get_altbotnick();
       if (alt[0] && egg_strcasecmp(botname, alt))
         dprintf(DP_SERVER, "ISON :%s %s %s\n", botname, origbotname, alt);

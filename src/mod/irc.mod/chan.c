@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  *
- * $Id: chan.c,v 1.119 2005/01/25 18:08:25 wcc Exp $
+ * $Id: chan.c,v 1.120 2005/02/03 15:34:21 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -168,7 +168,17 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
 
   if (!chan || (which < 0) || (which >= FLOOD_CHAN_MAX))
     return 0;
+
+  /* Okay, make sure i'm not flood-checking myself */
+  if (match_my_nick(floodnick))
+    return 0;
+
+  /* My user@host (?) */
+  if (!egg_strcasecmp(floodhost, botuserhost))
+    return 0;
+
   m = ismember(chan, floodnick);
+
   /* Do not punish non-existant channel members and IRC services like
    * ChanServ
    */
@@ -221,12 +231,7 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
   }
   if ((thr == 0) || (lapse == 0))
     return 0;                   /* no flood protection */
-  /* Okay, make sure i'm not flood-checking myself */
-  if (match_my_nick(floodnick))
-    return 0;
-  if (!egg_strcasecmp(floodhost, botuserhost))
-    return 0;
-  /* My user@host (?) */
+
   if ((which == FLOOD_KICK) || (which == FLOOD_DEOP))
     p = floodnick;
   else {

@@ -1,4 +1,4 @@
-$Id: UPDATES1.6,v 1.602 2005/02/02 00:02:27 tothwolf Exp $
+$Id: UPDATES1.6,v 1.603 2005/02/03 15:34:21 tothwolf Exp $
 
 Eggdrop Changes (since v1.6.0)
     _____________________________________________________________________
@@ -12,6 +12,14 @@ Eggdrop Changes (since v1.6.0)
 
 
   1.6.18:
+    - Use flagrec_eq() instead of flagrec_ok() in help_subst()
+      since lower flags are automatically added now.
+    * Patch by: Tothwolf
+
+    - Check for bot's nick and user@host earlier in detect_flood()
+      and detect_chan_flood().
+    * Patch by: Tothwolf
+
     - Allow wildcard matching and stacking for note binds.
     * Patch by: Tothwolf
 

@@ -7,7 +7,7 @@
  *   help system
  *   motd display and %var substitution
  *
- * $Id: misc.c,v 1.75 2005/01/03 20:01:44 paladin Exp $
+ * $Id: misc.c,v 1.76 2005/02/03 15:34:21 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -946,7 +946,11 @@ void help_subst(char *s, char *nick, struct flag_record *flags,
             struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
 
             break_down_flags(q + 1, &fr, NULL);
-            if (!flagrec_ok(&fr, flags))
+
+            /* We used to check flagrec_ok(), but we can use flagrec_eq()
+             * instead because lower flags are automatically added now.
+             */
+            if (!flagrec_eq(&fr, flags))
               blind |= 1;
             else
               blind &= ~1;
