@@ -21,11 +21,11 @@ DCC COMMANDS for %B, %V:
 %b  who          away         quit         whom         me%b
 %b  whois        page         match        motd         bots%b
 %b  addlog       newpass      bottree      console      chat%b
-%b  nick         echo         botinfo      strip        su%b
+%b  handle       echo         botinfo      strip        su%b
 %b  trace        fixcodes%b
 %{+t}
 For botnet masters:
-%b  +bot         chattr       chnick       chpass       +host%b
+%b  +bot         chattr       chhandle     chpass       +host%b
 %b  -bot         link         chaddr       relay        -host%b
 %b  unlink       boot%b
 %{+m|m}
@@ -102,7 +102,7 @@ See also: +lang, -lang, +lsec, -lsec, lstat
   %b.me%b <action>       do an action on the party line
   %b.note%b <who> <msg>  send a private note to someone else on the
                         party line
-  %b.nick%b <nick>       changes nick on party line
+  %b.handle%b <handle>   changes nick on party line
   %b.help%b <command>    get more help on a specific command
 The following commands are also available:
 %b   bots      newpass   email     who       echo   %b    
@@ -169,11 +169,11 @@ telnet-flood
 %b  who          away         quit         whom         me%b
 %b  whois        page         match        motd         bots%b
 %b  addlog       newpass      bottree      console      chat%b
-%b  nick         echo         botinfo      strip        su%b
+%b  handle       echo         botinfo      strip        su%b
 %b  trace        fixcodes%b
 %{+t}
 For botnet masters:
-%b  +bot         chattr       chnick       chpass       +host%b
+%b  +bot         chattr       chhandle     chpass       +host%b
 %b  -bot         link         chaddr       relay        -host%b
 %b  unlink       boot%b
 %{+m|m}

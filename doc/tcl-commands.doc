@@ -138,10 +138,10 @@ specific commands, see later.
                   will set a users laston time in a channel record
                   (if it already exists)
 
-  chnick <old-handle> <new-handle>
-    changes a user's handle
-    returns: "1" on success; "0" if the handle is already used, the handle
-      is invalid, or the user can't be found
+|  chhandle <old-handle> <new-handle>
+|    changes a user's handle
+|    returns: "1" on success; "0" if the handle is already used, the handle
+|      is invalid, or the user can't be found
 
   chattr <handle> [changes [channel]]
     changes the attributes for a user record, if you include any -- changes

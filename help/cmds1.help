@@ -208,11 +208,11 @@ See also: link, +bot
    This command can no longer be used to change bot flags, they
    are a seprated entity, changeable with the %b'.botattr'%b command.
 See also: whois
-%{help=chnick}%{+t}
-###  %bchnick%b <oldnick> <newnick>
-   Changes the handle/nickname of a user record.  For example, to
-   change the nickname of user 'gavroche' to 'jamie', you would
-   type: 'chnick gavroche jamie'
+%{help=chhandle}%{+t}
+###  %bchhandle%b <oldhandle> <newhandle>
+   Changes the handle of a user record. For example, to
+   change the handle of user 'gavroche' to 'jamie', you would
+   type: 'chhandle gavroche jamie'
 %{help=chpass}%{+t}
 ###  %bchpass%b <handle> [newpassword]
    Changes a user's password on the bot.  If you leave off the new

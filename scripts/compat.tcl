@@ -1,12 +1,14 @@
 # compat.tcl
 #   This script just quickly maps old tcl functions to the new ones,
 #   use this is you are to lazy to get of your butt and update your scripts :D
+#   by the way it binds some old command to the new ones
 #
+# Wiktor    31Mar2000: added binds and chnick proc
 # Tothwolf  25May1999: cleanup
 # Tothwolf  06Oct1999: optimized
 # rtc       10Oct1999: added [set|get][dn|up]loads functions
 #
-# $Id: compat.tcl,v 1.4 1999/12/21 17:35:08 fabian Exp $
+# $Id: compat.tcl,v 1.5 2000/04/05 19:25:34 fabian Exp $
 
 proc gethosts {hand} {
   getuser $hand HOSTS
@@ -18,6 +20,11 @@ proc addhost {hand host} {
 
 proc chpass {hand pass} {
   setuser $hand PASS $pass
+}
+
+
+proc chnick {oldnick newnick} { 
+  chhandle $oldnick $newnick
 }
 
 # setxtra is no longer relevant 
@@ -97,3 +104,9 @@ proc getuploads {hand} {
 # as you can see it takes a lot of effort to simulate all the old commands
 # and adapting your scripts will take such an effort you better include
 # this file forever and a day :D
+
+# the following section is for all those old guys who are since '96 in touch
+# and can't get used to new command names which make things more logical for newbies
+
+bind dcc - nick *dcc:handle
+bind dcc t chnick *dcc:chhandle

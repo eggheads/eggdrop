@@ -2,7 +2,7 @@
  * tcluser.c -- handles:
  *   Tcl stubs for the user-record-oriented commands
  * 
- * $Id: tcluser.c,v 1.15 2000/03/23 23:17:56 fabian Exp $
+ * $Id: tcluser.c,v 1.16 2000/04/05 19:25:34 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -385,7 +385,7 @@ static int tcl_reload STDVAR
   return TCL_OK;
 }
 
-static int tcl_chnick STDVAR
+static int tcl_chhandle STDVAR
 {
   struct userrec *u;
   char newhand[HANDLEN + 1];
@@ -591,7 +591,8 @@ tcl_cmds tcluser_cmds[] =
   {"userlist",		tcl_userlist},
   {"save",		tcl_save},
   {"reload",		tcl_reload},
-  {"chnick",		tcl_chnick},
+  {"chhandle",		tcl_chhandle},
+  {"chnick",		tcl_chhandle},
   {"getting-users",	tcl_getting_users},
   {"isignore",		tcl_isignore},
   {"newignore",		tcl_newignore},

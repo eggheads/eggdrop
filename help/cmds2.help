@@ -90,10 +90,10 @@ see also: +ignore, -ignore, set ignore-time
 ###  %bnewpass%b <password>
    changes your password on the bot, just like the /msg command
    'pass', except you don't need to type your old password.
-%{help=nick}
-###  %bnick%b <new-nick>
-   changes your nickname on the bot.  that's the handle that the bot
-   will know you as forever and ever, and what you have to use when
+%{help=handle}
+###  %bhandle%b <new-handle>
+   changes your handle on the bot. That's the handle(nickname) that the
+   bot will know you as forever and ever, and what you have to use when
    telnetting in or IDENT'ing yourself, so remember it.
 %{help=note}
 ###  %bnote%b <nickname[@bot]> <message>

@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  * 
- * $Id: cmds.c,v 1.26 2000/03/23 23:17:55 fabian Exp $
+ * $Id: cmds.c,v 1.27 2000/04/05 19:25:34 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -815,7 +815,7 @@ static void cmd_pls_bot(struct userrec *u, int idx, char *par)
   }
 }
 
-static void cmd_chnick(struct userrec *u, int idx, char *par)
+static void cmd_chhandle(struct userrec *u, int idx, char *par)
 {
   char hand[HANDLEN + 1], newhand[HANDLEN + 1];
   int i, atr = u ? u->flags : 0, atr2;
@@ -827,7 +827,7 @@ static void cmd_chnick(struct userrec *u, int idx, char *par)
   newhand[HANDLEN] = 0;
 
   if (!hand[0] || !newhand[0]) {
-    dprintf(idx, "Usage: chnick <oldnick> <newnick>\n");
+    dprintf(idx, "Usage: chhandle <oldhandle> <newhandle>\n");
     return;
   }
   for (i = 0; i < strlen(newhand); i++)
@@ -856,7 +856,7 @@ static void cmd_chnick(struct userrec *u, int idx, char *par)
              nextbot(hand) != -1))
       dprintf(idx, "Hey! That's MY name!\n");
     else if (change_handle(u2, newhand)) {
-      putlog(LOG_CMDS, "*", "#%s# chnick %s %s", dcc[idx].nick,
+      putlog(LOG_CMDS, "*", "#%s# chhandle %s %s", dcc[idx].nick,
             hand, newhand);
       dprintf(idx, "Changed.\n");
     } else
@@ -864,34 +864,34 @@ static void cmd_chnick(struct userrec *u, int idx, char *par)
   }
 }
 
-static void cmd_nick(struct userrec *u, int idx, char *par)
+static void cmd_handle(struct userrec *u, int idx, char *par)
 {
-  char oldnick[HANDLEN + 1], newnick[HANDLEN + 1];
+  char oldhandle[HANDLEN + 1], newhandle[HANDLEN + 1];
   int i;
 
-  strncpy(newnick, newsplit(&par), HANDLEN);
-  newnick[HANDLEN] = 0;
+  strncpy(newhandle, newsplit(&par), HANDLEN);
+  newhandle[HANDLEN] = 0;
 
-  if (!newnick[0]) {
-    dprintf(idx, "Usage: nick <new-handle>\n");
+  if (!newhandle[0]) {
+    dprintf(idx, "Usage: handle <new-handle>\n");
     return;
   }
-  for (i = 0; i < strlen(newnick); i++)
-    if ((newnick[i] <= 32) || (newnick[i] >= 127) || (newnick[i] == '@'))
-      newnick[i] = '?';
-  if (strchr(BADHANDCHARS, newnick[0]) != NULL) {
-    dprintf(idx, "Bizarre quantum forces prevent nicknames from starting with '%c'\n",
-	    newnick[0]);
-  } else if (get_user_by_handle(userlist, newnick) &&
-	     egg_strcasecmp(dcc[idx].nick, newnick)) {
-    dprintf(idx, "Somebody is already using %s.\n", newnick);
-  } else if (!egg_strcasecmp(newnick, botnetnick)) {
+  for (i = 0; i < strlen(newhandle); i++)
+    if ((newhandle[i] <= 32) || (newhandle[i] >= 127) || (newhandle[i] == '@'))
+      newhandle[i] = '?';
+  if (strchr(BADHANDCHARS, newhandle[0]) != NULL) {
+    dprintf(idx, "Bizarre quantum forces prevent handle from starting with '%c'\n",
+	    newhandle[0]);
+  } else if (get_user_by_handle(userlist, newhandle) &&
+	     egg_strcasecmp(dcc[idx].nick, newhandle)) {
+    dprintf(idx, "Somebody is already using %s.\n", newhandle);
+  } else if (!egg_strcasecmp(newhandle, botnetnick)) {
     dprintf(idx, "Hey!  That's MY name!\n");
   } else {
-    strncpy(oldnick, dcc[idx].nick, HANDLEN);
-    oldnick[HANDLEN] = 0;
-    if (change_handle(u, newnick)) {
-      putlog(LOG_CMDS, "*", "#%s# nick %s", oldnick, newnick);
+    strncpy(oldhandle, dcc[idx].nick, HANDLEN);
+    oldhandle[HANDLEN] = 0;
+    if (change_handle(u, newhandle)) {
+      putlog(LOG_CMDS, "*", "#%s# handle %s", oldhandle, newhandle);
       dprintf(idx, "Okay, changed.\n");
     } else
       dprintf(idx, "Failed.\n");
@@ -2697,7 +2697,8 @@ cmd_t C_dcc[] =
   {"chaddr",		"t",	(Function) cmd_chaddr,		NULL},
   {"chat",		"",	(Function) cmd_chat,		NULL},
   {"chattr",		"m|m",	(Function) cmd_chattr,		NULL},
-  {"chnick",		"t",	(Function) cmd_chnick,		NULL},
+  {"chhandle",		"t",	(Function) cmd_chhandle,	NULL},
+  {"chnick",		"t",	(Function) cmd_chhandle,	NULL}, 
   {"chpass",		"t",	(Function) cmd_chpass,		NULL},
   {"comment",		"m",	(Function) cmd_comment,		NULL},
   {"console",		"to|o",	(Function) cmd_console,		NULL},
@@ -2716,7 +2717,8 @@ cmd_t C_dcc[] =
   {"modules",		"n",	(Function) cmd_modules,		NULL},
   {"motd",		"",	(Function) cmd_motd,		NULL},
   {"newpass",		"",	(Function) cmd_newpass,		NULL},
-  {"nick",		"",	(Function) cmd_nick,		NULL},
+  {"handle",		"",	(Function) cmd_handle,		NULL},
+  {"nick",		"",	(Function) cmd_handle,		NULL},
   {"page",		"",	(Function) cmd_page,		NULL},
   {"quit",		"",	(Function) NULL,		NULL},
   {"rehash",		"m",	(Function) cmd_rehash,		NULL},
