@@ -2,7 +2,7 @@
  * files.c - part of filesys.mod
  *   handles all file system commands
  *
- * $Id: files.c,v 1.39 2003/02/04 06:47:23 stdarg Exp $
+ * $Id: files.c,v 1.40 2003/02/04 07:10:51 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -182,7 +182,7 @@ static int resolve_dir(char *current, char *change, char **real, int idx)
         if (!(*real)[0]) {
           my_free(elem);
           my_free(new);
-          strcpy(*real, current);
+          malloc_strcpy(*real, current);
           return 0;
         }
         (*real)[0] = 0;
@@ -195,7 +195,7 @@ static int resolve_dir(char *current, char *change, char **real, int idx)
         /* Non-existent starting point! */
         my_free(elem);
         my_free(new);
-        strcpy(*real, current);
+        malloc_strcpy(*real, current);
         return 0;
       }
       filedb_readtop(fdb, NULL);
@@ -206,7 +206,7 @@ static int resolve_dir(char *current, char *change, char **real, int idx)
         my_free(elem);
         my_free(new);
         my_free(s);
-        strcpy(*real, current);
+        malloc_strcpy(*real, current);
         return 0;
       }
       if (!(fdbe->stat & FILE_DIR) || fdbe->sharelink) {
@@ -215,7 +215,7 @@ static int resolve_dir(char *current, char *change, char **real, int idx)
         my_free(elem);
         my_free(new);
         my_free(s);
-        strcpy(*real, current);
+        malloc_strcpy(*real, current);
         return 0;
       }
       if (idx >= 0)
@@ -231,7 +231,7 @@ static int resolve_dir(char *current, char *change, char **real, int idx)
           my_free(elem);
           my_free(new);
           my_free(s);
-          strcpy(*real, current);
+          malloc_strcpy(*real, current);
           return 0;
         }
       }
@@ -242,7 +242,7 @@ static int resolve_dir(char *current, char *change, char **real, int idx)
           strcat(s, "/");
       work = nmalloc(strlen(s) + strlen(elem) + 1);
       sprintf(work, "%s%s", s, elem);
-      strcpy(*real, work);
+      malloc_strcpy(*real, work);
       s = nrealloc(s, strlen(dccdir) + strlen(*real) + 1);
       sprintf(s, "%s%s", dccdir, *real);
     }
