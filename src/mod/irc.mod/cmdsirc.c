@@ -2,7 +2,7 @@
  * chancmds.c -- part of irc.mod
  *   handles commands directly relating to channel interaction
  *
- * $Id: cmdsirc.c,v 1.41 2002/08/08 20:49:32 wcc Exp $
+ * $Id: cmdsirc.c,v 1.42 2002/09/11 02:14:45 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1025,15 +1025,15 @@ static void cmd_deluser(struct userrec *u, int idx, char *par)
   /* Shouldn't allow people to remove permanent owners (guppy 9Jan1999) */
   if ((glob_owner(victim) && egg_strcasecmp(dcc[idx].nick, nick)) ||
       isowner(u->handle)) {
-    dprintf(idx, "You can't remove the bot owner!\n");
+    dprintf(idx, "You can't remove a bot owner!\n");
   } else if (glob_botmast(victim) && !glob_owner(user)) {
-    dprintf(idx, "You can't delete a master!\n");
+    dprintf(idx, "You can't remove a bot master!\n");
   } else if (chan_owner(victim) && !glob_owner(user)) {
     dprintf(idx, "You can't remove a channel owner!\n");
   } else if (chan_master(victim) && !(glob_owner(user) || chan_owner(user))) {
-    dprintf(idx, "You can't delete a channel master!\n");
+    dprintf(idx, "You can't remove a channel master!\n");
   } else if (glob_bot(victim) && !glob_owner(user)) {
-    dprintf(idx, "You can't delete a bot!\n");
+    dprintf(idx, "You can't remove a bot!\n");
   } else {
     char buf[HANDLEN + 1];
 
