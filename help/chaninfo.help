@@ -25,7 +25,11 @@
 	               channel?
 	%benforcebans%b    kicks people who match channel bans?
 	%bdynamicbans%b    only activate bans on channel when they are needed
-	%buserbans%b       allow other users to place bans on the channl
+	%buserbans%b       allow other users to place bans on the channel
+	%bdynamicexempts%b only activate exempts on channel when needed?
+	%buserexempts%b    allow exempts to be set by users directly?
+	%bdynamicinvites%b only activate invites on channel when needed?
+	%buserinvites%b    allow invites to be made by users directly?
 	%bautoop%b         automatically op users when they join the channel
 	%bbitch%b          only allow users with the +o flag to be ops on the 
 	               channel
