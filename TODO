@@ -1,7 +1,13 @@
-TODO list for 1.3.29
+WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING
 
-Please send any patches to eggdev@eggheads.org or they wont make it into
-the next release <Cybah>
+This TODO file is not up-to-date. Before working on a TODO point,
+subscribe to eggdev@eggheads.org (information at www.eggheads.org), then
+inform the list you wish to work on which point, and ask if someone else
+is not already working on it. A better system (web interfaced) system is
+going to be run in a few days in order to deal with those TODO points.
+Thanks for your patience <arthur2>
+
+TODO list for 1.3.29
 
 When you commit a patch about those TODO points, just remove the
 concerned part in this file. Don't renumber the other points <arthur2>
