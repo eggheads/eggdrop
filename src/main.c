@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  *
- * $Id: main.c,v 1.91 2003/01/21 00:53:27 wcc Exp $
+ * $Id: main.c,v 1.92 2003/01/23 02:41:48 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -33,7 +33,16 @@
 
 #include "main.h"
 #include <fcntl.h>
-#include <time.h>
+#ifdef TIME_WITH_SYS_TIME
+# include <sys/time.h>
+# include <time.h>
+#else
+# ifdef HAVE_SYS_TIME_H
+#  include <sys/time.h>
+# else
+#  include <time.h>
+# endif
+#endif
 #include <errno.h>
 #include <signal.h>
 #include <netdb.h>

@@ -2,7 +2,7 @@
  * tclmisc.c -- handles:
  *   Tcl stubs for everything else
  *
- * $Id: tclmisc.c,v 1.34 2003/01/18 00:40:05 wcc Exp $
+ * $Id: tclmisc.c,v 1.35 2003/01/23 02:41:48 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -23,12 +23,21 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-#include <sys/stat.h>
-#include <time.h>
 #include "main.h"
 #include "modules.h"
 #include "tandem.h"
 #include "md5/md5.h"
+#ifdef TIME_WITH_SYS_TIME
+# include <sys/time.h>
+# include <time.h>
+#else
+# ifdef HAVE_SYS_TIME_H
+#  include <sys/time.h>
+# else
+#  include <time.h>
+# endif
+#endif
+#include <sys/stat.h>
 #ifdef HAVE_UNAME
 #include <sys/utsname.h>
 #endif

@@ -10,7 +10,7 @@
  * 1.2     1997-08-20      Minor fixes. [BB]
  * 1.2a    1997-08-24      Minor fixes. [BB]
  *
- * $Id: seen.c,v 1.27 2002/12/24 02:30:08 wcc Exp $
+ * $Id: seen.c,v 1.28 2003/01/23 02:41:48 wcc Exp $
  */
 /*
  * Copyright (C) 1999, 2000, 2001, 2002, 2003 Eggheads Development Team
@@ -73,7 +73,20 @@
 #define MODULE_NAME "seen"
 #define MAKING_SEEN
 
-#include <time.h>
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+
+#ifdef TIME_WITH_SYS_TIME
+# include <sys/time.h>
+# include <time.h>
+#else
+# ifdef HAVE_SYS_TIME_H
+#  include <sys/time.h>
+# else
+#  include <time.h>
+# endif
+#endif
 
 #include "src/mod/module.h"
 #include "src/users.h"

@@ -4,7 +4,7 @@
  *
  *   IF YOU ALTER THIS FILE, YOU NEED TO RECOMPILE THE BOT.
  *
- * $Id: eggdrop.h,v 1.41 2002/12/24 02:30:04 wcc Exp $
+ * $Id: eggdrop.h,v 1.42 2003/01/23 02:41:48 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -139,15 +139,15 @@
 #endif
 
 /* Almost every module needs some sort of time thingy, so... */
-#if TIME_WITH_SYS_TIME
-#  include <sys/time.h>
-#  include <time.h>
+#ifdef TIME_WITH_SYS_TIME
+# include <sys/time.h>
+# include <time.h>
 #else
-#  if HAVE_SYS_TIME_H
-#    include <sys/time.h>
-#  else
-#    include <time.h>
-#  endif
+# ifdef HAVE_SYS_TIME_H
+#  include <sys/time.h>
+# else
+#  include <time.h>
+# endif
 #endif
 
 #if !HAVE_SRANDOM

@@ -15,7 +15,7 @@
  * 1.4       1997-11-25      1.2.2.0         Added language addition  Kirk
  * 1.5       1998-07-12      1.3.0.0         Fixed ;me and updated    BB
  *
- * $Id: wire.c,v 1.24 2003/01/21 00:53:27 wcc Exp $
+ * $Id: wire.c,v 1.25 2003/01/23 02:41:48 wcc Exp $
  */
 /*
  * Copyright (C) 1999, 2000, 2001, 2002, 2003 Eggheads Development Team
@@ -37,10 +37,25 @@
 
 #define MODULE_NAME "wire"
 #define MAKING_WIRE
+
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+
+#ifdef TIME_WITH_SYS_TIME
+# include <sys/time.h>
+# include <time.h>
+#else
+# ifdef HAVE_SYS_TIME_H
+#  include <sys/time.h>
+# else
+#  include <time.h>
+# endif
+#endif
+
 #include "src/mod/module.h"
 #include "src/users.h"
 #include "src/chan.h"
-#include <time.h>
 #include "wire.h"
 
 #undef global
