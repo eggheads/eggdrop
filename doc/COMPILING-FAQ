@@ -1,4 +1,4 @@
-$Id: COMPILING-FAQ,v 1.7 2004/06/02 06:58:58 wcc Exp $
+$Id: COMPILING-FAQ,v 1.8 2004/06/10 20:03:19 wcc Exp $
 
 Compiling FAQ
 Last revised: January 15, 2004
@@ -128,10 +128,10 @@ Last revised: January 15, 2004
         1. Depending on what shell your using:
 
             bash/ksh:
-              export LB_LIBRARY_PATH='<path to DIRECTORY containing Tcl library>'
+              export LD_LIBRARY_PATH='<path to DIRECTORY containing Tcl library>'
 
             csh/tcsh/tclsh:
-              setenv LB_LIBRARY_PATH '<path to DIRECTORY containing Tcl library>'
+              setenv LD_LIBRARY_PATH '<path to DIRECTORY containing Tcl library>'
 
           2. Run the following command from your Eggdrop compilation directory
              (this is all one command):
@@ -234,10 +234,10 @@ Last revised: January 15, 2004
           1. Depending on what shell your using:
 
             bash/ksh:
-              export LB_LIBRARY_PATH='<path to DIRECTORY containing Tcl library>'
+              export LD_LIBRARY_PATH='<path to DIRECTORY containing Tcl library>'
 
             csh/tcsh/tclsh:
-              setenv LB_LIBRARY_PATH '<path to DIRECTORY containing Tcl library>'
+              setenv LD_LIBRARY_PATH '<path to DIRECTORY containing Tcl library>'
 
           2. Run the following command from your Eggdrop compilation directory
              (this is all one command):
