@@ -1,5 +1,5 @@
 # Makefile for src/mod/server.mod/
-# $Id: Makefile,v 1.9 2000/03/24 23:00:25 fabian Exp $
+# $Id: Makefile,v 1.10 2000/03/31 23:04:22 fabian Exp $
 
 srcdir = .
 
@@ -24,15 +24,14 @@ modules: ../../../server.so
 	$(STRIP) ../../../server.so
 
 depend:
-	$(CC) $(CFLAGS) $(CPPFLAGS) -MM $(srcdir)/*.c > .depend
+	$(CC) $(CFLAGS) $(CPPFLAGS) -MM $(srcdir)/server.c > .depend
 
 clean:
 	@rm -f .depend *.o *.so *~
 distclean: clean
 
 #safety hash
-cmdsserv.o: .././server.mod/cmdsserv.c
-server.o: .././server.mod/server.c ../../../src/mod/module.h \
+../server.o: .././server.mod/server.c ../../../src/mod/module.h \
  ../../../src/main.h ../../../src/lang.h ../../../src/eggdrop.h \
  ../../../src/flags.h ../../../src/proto.h ../../../lush.h \
  ../../../src/misc_file.h ../../../src/cmdt.h ../../../src/tclegg.h \
@@ -43,5 +42,3 @@ server.o: .././server.mod/server.c ../../../src/mod/module.h \
  ../../../src/mod/modvals.h ../../../src/tandem.h \
  ../server.mod/server.h ../server.mod/servmsg.c \
  ../server.mod/cmdsserv.c ../server.mod/tclserv.c
-servmsg.o: .././server.mod/servmsg.c
-tclserv.o: .././server.mod/tclserv.c

@@ -1,5 +1,5 @@
 # Makefile for src/mod/filesys.mod/
-# $Id: Makefile,v 1.12 2000/03/24 23:00:25 fabian Exp $
+# $Id: Makefile,v 1.13 2000/03/31 23:04:22 fabian Exp $
 
 srcdir = .
 
@@ -24,18 +24,14 @@ modules: ../../../filesys.so
 	$(STRIP) ../../../filesys.so
 
 depend:
-	$(CC) $(CFLAGS) $(CPPFLAGS) -MM $(srcdir)/*.c > .depend
+	$(CC) $(CFLAGS) $(CPPFLAGS) -MM $(srcdir)/filesys.c > .depend
 
 clean:
 	@rm -f .depend *.o *.so *~
 distclean: clean
 
 #safety hash
-dbcompat.o: .././filesys.mod/dbcompat.c
-filedb3.o: .././filesys.mod/filedb3.c
-filelist.o: .././filesys.mod/filelist.c ../filesys.mod/filelist.h
-files.o: .././filesys.mod/files.c ../../../src/stat.h
-filesys.o: .././filesys.mod/filesys.c ../../../config.h \
+../filesys.o: .././filesys.mod/filesys.c ../../../config.h \
  ../../../src/mod/module.h ../../../src/main.h ../../../src/lang.h \
  ../../../src/eggdrop.h ../../../src/flags.h ../../../src/proto.h \
  ../../../lush.h ../../../src/misc_file.h ../../../src/cmdt.h \
@@ -50,4 +46,3 @@ filesys.o: .././filesys.mod/filesys.c ../../../config.h \
  ../filesys.mod/filelist.h ../filesys.mod/files.c ../../../src/stat.h \
  ../filesys.mod/filedb3.c ../filesys.mod/tclfiles.c \
  ../filesys.mod/dbcompat.c ../filesys.mod/filelist.c
-tclfiles.o: .././filesys.mod/tclfiles.c

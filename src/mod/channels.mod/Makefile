@@ -1,5 +1,5 @@
 # Makefile for src/mod/channels.mod/
-# $Id: Makefile,v 1.9 2000/03/24 23:00:25 fabian Exp $
+# $Id: Makefile,v 1.10 2000/03/31 23:04:22 fabian Exp $
 
 srcdir = .
 
@@ -24,14 +24,14 @@ modules: ../../../channels.so
 	$(STRIP) ../../../channels.so
 
 depend:
-	$(CC) $(CFLAGS) $(CPPFLAGS) -MM $(srcdir)/*.c > .depend
+	$(CC) $(CFLAGS) $(CPPFLAGS) -MM $(srcdir)/channels.c > .depend
 
 clean:
 	@rm -f .depend *.o *.so *~
 distclean: clean
 
 #safety hash
-channels.o: .././channels.mod/channels.c ../../../src/mod/module.h \
+../channels.o: .././channels.mod/channels.c ../../../src/mod/module.h \
  ../../../src/main.h ../../../src/lang.h ../../../src/eggdrop.h \
  ../../../src/flags.h ../../../src/proto.h ../../../lush.h \
  ../../../src/misc_file.h ../../../src/cmdt.h ../../../src/tclegg.h \
@@ -43,7 +43,3 @@ channels.o: .././channels.mod/channels.c ../../../src/mod/module.h \
  ../channels.mod/channels.h ../channels.mod/cmdschan.c \
  ../channels.mod/tclchan.c ../channels.mod/userchan.c \
  ../channels.mod/udefchan.c
-cmdschan.o: .././channels.mod/cmdschan.c
-tclchan.o: .././channels.mod/tclchan.c
-udefchan.o: .././channels.mod/udefchan.c
-userchan.o: .././channels.mod/userchan.c
