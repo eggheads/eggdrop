@@ -5,7 +5,7 @@
  * 
  * dprintf'ized, 3nov1995
  * 
- * $Id: cmds.c,v 1.31 1999/12/22 20:30:03 guppy Exp $
+ * $Id: cmds.c,v 1.32 2000/01/02 18:05:31 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -905,7 +905,7 @@ static void cmd_chpass(struct userrec *u, int idx, char *par)
 	     strcasecmp(handle, dcc[idx].nick))
       dprintf(idx, "Can't change the bot owner's password.\n");
     else if (isowner(handle) && strcasecmp(dcc[idx].nick, handle))
-      dprintf(idx, "Can't change the permanent bot owner's handle.\n");
+      dprintf(idx, "Can't change the permanent bot owner's password.\n");
     else if (!par[0]) {
       putlog(LOG_CMDS, "*", "#%s# chpass %s [nothing]", dcc[idx].nick,
 	     handle);
