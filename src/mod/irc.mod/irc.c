@@ -2,7 +2,7 @@
  * irc.c -- part of irc.mod
  *   support for channels within the bot
  *
- * $Id: irc.c,v 1.74 2002/07/25 21:54:55 wcc Exp $
+ * $Id: irc.c,v 1.75 2002/07/26 02:18:28 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -499,7 +499,7 @@ static void status_log()
       for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
 	if (chan_hasop(m))
 	  chops++;
-        else if (chan_hasvoice(m))
+        else if (chan_hashalfop(m))
           halfops++;
 	else if (chan_hasvoice(m))
 	  voice++;
