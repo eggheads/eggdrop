@@ -1,4 +1,4 @@
-#!/bin/sh
+#! /bin/sh
 # ^-- little trick to restart using tclsh \
 exec tclsh "$0" "$@"
 #
@@ -139,7 +139,7 @@ if {$argc == 0} {
   puts "      !! without this, this program is useless\n\n"
   exit
  }
- puts $fd "#!/bin/sh\n#"
+ puts $fd "#! /bin/sh\n#"
  puts $fd "# Created on: [clock format [clock seconds] -format "%B %d, %Y @ %I:%M%p"]"
  puts $fd "# Created by: AutoBotchk 1.05 (C)1999 Jeff Fisher\n#"
  puts $fd "# (this is basically botchk from scripts/, credits to the author(s)\n#"

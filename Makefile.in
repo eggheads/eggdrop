@@ -182,7 +182,7 @@ ainstall:
 		echo "You must specify a destination directory with DEST="; \
 		exit 1; \
 	fi
-	@if test ! -x eggdrop; then \
+	@if test ! -f eggdrop; then \
 		echo "You haven't compiled eggdrop yet."; \
 		exit 1; \
 	fi
@@ -201,13 +201,13 @@ ainstall:
 		mkdir $(DEST)/language; \
 	fi
 	@$(CP2) language/* src/mod/*.mod/*.lang $(DEST)/language/
-	@if test -r $(DEST)/eggdrop; then \
+	@if test -f $(DEST)/eggdrop; then \
 		rm -f $(DEST)/oeggdrop; \
 	fi
-	@if test ! -r $(DEST)/motd; then \
+	@if test ! -f $(DEST)/motd; then \
 		$(CP1) motd $(DEST)/; \
 	fi
-	@if test ! -r $(DEST)/telnet-banner; then \
+	@if test ! -f $(DEST)/telnet-banner; then \
 		$(CP1) telnet-banner $(DEST)/; \
 	fi
 	@if test -h $(DEST)/modules; then \
@@ -224,7 +224,7 @@ ainstall:
 		mkdir $(DEST)/modules\-${NEWVERSION}; \
 	fi
 	@$(LN_S) modules\-${NEWVERSION} $(DEST)/modules
-	@if test -r assoc.so; then \
+	@if test -f assoc.so; then \
 		echo Copying new modules.; \
 		$(CP3) *.so $(DEST)/modules/; \
 	fi
@@ -232,7 +232,7 @@ ainstall:
 		echo Removing symlink to archival eggdrop binary.; \
 		rm -f $(DEST)/eggdrop; \
 	fi
-	@if test -r $(DEST)/eggdrop; then \
+	@if test -f $(DEST)/eggdrop; then \
 		echo Renamed the old \'eggdrop\' executable to \'oeggdrop\'.; \
 		mv -f $(DEST)/eggdrop $(DEST)/oeggdrop; \
 	fi

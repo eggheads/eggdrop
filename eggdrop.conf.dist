@@ -1,5 +1,5 @@
-#!/path/to/eggdrop
-# ^- set that to the directory eggdrop is in ie "#!/users/lamest/egg/eggdrop"
+#! /path/to/eggdrop
+# ^- set that to the directory eggdrop is in ie "#! /users/lamest/egg/eggdrop"
 #
 # This is a sample configuration file for your bot.  You will definitely
 # want to edit this, to set up your bot.  Right now it creates a bot called
