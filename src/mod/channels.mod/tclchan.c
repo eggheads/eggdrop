@@ -1,7 +1,7 @@
 /* 
  * tclchan.c -- part of channels.mod
  * 
- * $Id: tclchan.c,v 1.30 2000/07/13 21:19:52 fabian Exp $
+ * $Id: tclchan.c,v 1.31 2000/08/06 14:49:56 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1215,7 +1215,8 @@ static int tcl_channel_modify(Tcl_Interp * irp, struct chanset_t *chan,
 	  !(chan->status & (CHAN_ACTIVE | CHAN_PEND)))
 	dprintf(DP_SERVER, "JOIN %s %s\n", (chan->name[0]) ?
 					   chan->name : chan->dname,
-					   chan->key_prot);
+					   chan->channel.key[0] ?
+					   chan->channel.key : chan->key_prot);
     }
     if ((old_status ^ chan->status) &
 	(CHAN_ENFORCEBANS | CHAN_OPONJOIN | CHAN_BITCH | CHAN_AUTOVOICE)) {
