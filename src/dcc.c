@@ -4,7 +4,7 @@
  *   disconnect on a dcc socket
  *   ...and that's it!  (but it's a LOT)
  *
- * $Id: dcc.c,v 1.78 2004/06/09 17:34:16 wcc Exp $
+ * $Id: dcc.c,v 1.79 2004/07/02 20:48:51 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1104,7 +1104,11 @@ static void dcc_telnet(int idx, char *buf, int i)
   /* Buffer data received on this socket.  */
   sockoptions(sock, EGG_OPTION_SET, SOCK_BUFFER);
 
+#if (SIZEOF_SHORT == 2)
+  if (port < 1024) {
+#else
   if (port < 1024 || port > 65535) {
+#endif
     putlog(LOG_BOTS, "*", DCC_BADSRC, s, port);
     killsock(sock);
     return;

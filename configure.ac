@@ -1,11 +1,11 @@
 dnl configure.ac: this file is processed by autoconf to produce ./configure.
 dnl
-dnl $Id: configure.ac,v 1.11 2004/06/16 06:53:03 wcc Exp $
+dnl $Id: configure.ac,v 1.12 2004/07/02 20:48:51 wcc Exp $
 
 AC_PREREQ(2.59)
 AC_INIT([Eggdrop],[1.6.17],[bugs@eggheads.org])
 AC_COPYRIGHT([Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004 Eggheads Development Team])
-AC_REVISION($Revision: 1.11 $)
+AC_REVISION($Revision: 1.12 $)
 AC_CONFIG_SRCDIR(src/eggdrop.h)
 AC_CONFIG_AUX_DIR(misc)
 AC_CONFIG_HEADER(config.h)
@@ -74,9 +74,10 @@ AC_C_VOLATILE
 EGG_CHECK_SOCKLEN_T
 
 
-# Check the sizes of int and long
+# Check the sizes of various types
 AC_CHECK_SIZEOF(long, 0)
 AC_CHECK_SIZEOF(int, 0)
+AC_CHECK_SIZEOF(short, 0)
 
 
 # Checks for functions and their arguments

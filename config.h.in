@@ -275,6 +275,9 @@
 /* The size of a `long', as computed by sizeof. */
 #undef SIZEOF_LONG
 
+/* The size of a `short', as computed by sizeof. */
+#undef SIZEOF_SHORT
+
 /* Define to 1 if you have the ANSI C header files. */
 #undef STDC_HEADERS
 
