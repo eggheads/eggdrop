@@ -12,7 +12,7 @@
  * dprintf'ized, 15nov1995 (hash.c)
  * dprintf'ized, 4feb1996 (tclhash.c)
  * 
- * $Id: tclhash.c,v 1.15 2000/02/27 19:21:40 guppy Exp $
+ * $Id: tclhash.c,v 1.16 2000/03/20 19:50:02 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -591,7 +591,7 @@ int check_tcl_bind(p_tcl_bind_list bind, char *match,
 {
   struct tcl_bind_mask *hm, *ohm = NULL, *hmp = NULL;
   int cnt = 0;
-  char *proc = NULL;
+  char *proc = NULL, *fullmatch = NULL;
   tcl_cmd_t *tt, *htt = NULL;
   int f = 0, atrok, x;
 
@@ -631,7 +631,7 @@ int check_tcl_bind(p_tcl_bind_list bind, char *match,
 	    cnt++;
 	    tt->hits++;
 	    hmp = ohm;
-	    Tcl_SetVar(interp, "lastbind", match, TCL_GLOBAL_ONLY);
+	    Tcl_SetVar(interp, "lastbind", hm->mask, TCL_GLOBAL_ONLY);
 	    x = trigger_bind(tt->func_name, param);
 	    if ((match_type & BIND_WANTRET) &&
 		!(match_type & BIND_ALTER_ARGS) && (x == BIND_EXEC_LOG))
@@ -659,6 +659,7 @@ int check_tcl_bind(p_tcl_bind_list bind, char *match,
 	if (atrok) {
 	  cnt++;
 	  proc = tt->func_name;
+         fullmatch = hm->mask;	  
 	  htt = tt;
 	  hmp = ohm;
 	  if (((match_type & 3) != MATCH_PARTIAL) ||
@@ -686,7 +687,7 @@ int check_tcl_bind(p_tcl_bind_list bind, char *match,
   }
   if (cnt > 1)
     return BIND_AMBIGUOUS;
-  Tcl_SetVar(interp, "lastbind", match, TCL_GLOBAL_ONLY);
+  Tcl_SetVar(interp, "lastbind", fullmatch, TCL_GLOBAL_ONLY);
   return trigger_bind(proc, param);
 }
 
