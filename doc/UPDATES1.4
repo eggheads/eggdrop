@@ -3,8 +3,20 @@ Changes in eggdrop: (since v1.4.0)
 
 1.4.1
 Foundby   Fixedby   What....
-          drummer   encryption/decryption functions now return plaintext
-                    if the key is empty.
+toot	  Eule	    missing work wasoptest if user with globalopflag/
+		    channelopflag
+	  guppy     moved the tcl functions in the server module to tclserv.c
+		    and fixed a small bug in clearqueue
+Nils	  guppy     made tcl_stick/tcl_unstick smaller, added stick functions
+		    for exempts and invites
+toot	  drummer   share-greet was broken
+toot	  Fabian    broken logic in xtra_set() caused invalid free() attempts
+flammable Fabian    unchecked fopen() return caused crash on failed open
+	  drummer   fixed a small buffer overflow in set_chanlist
+	  drummer   tcl_adduser doesn't require a hostmask anymore
+Ehrenberg Fabian    crash in gotnotice for invalid channels as notice target
+	  drummer   encryption/decryption functions now return plaintext
+		    if the key is empty.
  	  Eule      fixed nickfloodprotect
  	  Tothwolf  no PART sending for inactive channels anymore
 arthur2	  Fabian    added several sanity checks to avoid crashs in obscure
@@ -12,7 +24,7 @@ arthur2	  Fabian    added several sanity checks to avoid crashs in obscure
 	  Fabian    not sending ISON during irc login now
 Ben	  Fabian    now properly uses and adjusts altnicks
 various   Tothwolf/ sharing crash bug
-          Fabian/
+	  Fabian/
 	  ^PRS4^
 SuperS	  drummer   note bug that killed the listening ports
 	  guppy	    made modules with lang files delete their sections

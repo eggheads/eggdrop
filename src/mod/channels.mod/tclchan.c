@@ -115,7 +115,6 @@ static int tcl_stick STDVAR
 {
   struct chanset_t *chan;
   int ok = 0;
-  int yn = 1;
   
   BADARGS(2, 3, " ban ?channel?");
   if (argc == 3) {
@@ -124,10 +123,11 @@ static int tcl_stick STDVAR
       Tcl_AppendResult(irp, "invalid channel: ", argv[2], NULL);
       return TCL_ERROR;
     }
-    if (u_setsticky_ban(chan, argv[1], yn))
+    if (u_setsticky_ban(chan, argv[1], !strncmp(argv[0], "un", 2) ? 0 : 1))
       ok = 1;
   }
-  if (u_setsticky_ban(NULL, argv[1], yn))
+  if (!ok && u_setsticky_ban(NULL, argv[1],
+      !strncmp(argv[0], "un", 2) ? 0 : 1))
     ok = 1;
   if (ok)
     Tcl_AppendResult(irp, "1", NULL);
@@ -136,11 +136,10 @@ static int tcl_stick STDVAR
   return TCL_OK;
 }
 
-static int tcl_unstick STDVAR
+static int tcl_stickinvite STDVAR
 {
   struct chanset_t *chan;
   int ok = 0;
-  int yn = 0;
 
   BADARGS(2, 3, " ban ?channel?");
   if (argc == 3) {
@@ -149,10 +148,36 @@ static int tcl_unstick STDVAR
       Tcl_AppendResult(irp, "invalid channel: ", argv[2], NULL);
       return TCL_ERROR;
     }
-    if (u_setsticky_ban(chan, argv[1], yn))
+    if (u_setsticky_invite(chan, argv[1], !strncmp(argv[0], "un", 2) ? 0 : 1))
       ok = 1;
   }
-  if (u_setsticky_ban(NULL, argv[1], yn))
+  if (!ok && u_setsticky_invite(NULL, argv[1],
+      !strncmp(argv[0], "un", 2) ? 0 : 1))
+    ok = 1;
+  if (ok)
+    Tcl_AppendResult(irp, "1", NULL);
+  else
+    Tcl_AppendResult(irp, "0", NULL);
+  return TCL_OK;
+}
+
+static int tcl_stickexempt STDVAR
+{
+  struct chanset_t *chan;
+  int ok = 0;
+
+  BADARGS(2, 3, " ban ?channel?");
+  if (argc == 3) {
+    chan = findchan_by_dname(argv[2]);
+    if (!chan) {
+      Tcl_AppendResult(irp, "invalid channel: ", argv[2], NULL);
+      return TCL_ERROR;
+    }
+    if (u_setsticky_exempt(chan, argv[1], !strncmp(argv[0], "un", 2) ? 0 : 1))
+      ok = 1;
+  }
+  if (!ok && u_setsticky_exempt(NULL, argv[1],
+      !strncmp(argv[0], "un", 2) ? 0 : 1))
     ok = 1;
   if (ok)
     Tcl_AppendResult(irp, "1", NULL);
@@ -1691,7 +1716,11 @@ static tcl_cmds channels_cmds[] =
   {"addchanrec", tcl_addchanrec},
   {"delchanrec", tcl_delchanrec},
   {"stick", tcl_stick},
-  {"unstick", tcl_unstick},
+  {"unstick", tcl_stick},
+  {"stickinvite", tcl_stickinvite},
+  {"unstickinvite", tcl_stickinvite},
+  {"stickexempt", tcl_stickexempt},
+  {"unstickexempt", tcl_stickexempt},
   {"setudef", tcl_setudef},
   {"renudef", tcl_renudef},
   {"deludef", tcl_deludef},
