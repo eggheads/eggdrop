@@ -7,7 +7,7 @@
  *   telling the current programmed settings
  *   initializing a lot of stuff and loading the tcl scripts
  * 
- * $Id: chanprog.c,v 1.18 2000/10/19 16:32:20 fabian Exp $
+ * $Id: chanprog.c,v 1.19 2000/11/16 02:49:14 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -446,8 +446,12 @@ void chanprog()
     printf("\n\n%s\n", MISC_ROOTWARN);
   }
   if (!readuserfile(userfile, &userlist)) {
-    if (!make_userfile)
-      fatal(MISC_NOUSERFILE, 0);
+    if (!make_userfile) {
+      char tmp[178];
+
+      egg_snprintf(tmp, sizeof tmp, MISC_NOUSERFILE, configfile);
+      fatal(tmp, 0);
+    }
     printf("\n\n%s\n", MISC_NOUSERFILE2);
     if (module_find("server", 0, 0))
       printf(MISC_USERFCREATE1, origbotname);

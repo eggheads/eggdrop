@@ -6,7 +6,7 @@
 # Modified by Michael for 1.3.25.
 # Modified by rtc for 1.4.0
 #
-# $Id: core.german.lang,v 1.16 2000/10/27 19:34:53 fabian Exp $
+# $Id: core.german.lang,v 1.17 2000/11/16 02:49:14 guppy Exp $
 
 # General stuff
 0x001,Gebrauch
@@ -142,7 +142,7 @@ die mitgelieferte Konfigurationsdatei.\n
 0x532,Permanente Botbesitzer
 0x533,WARNUNG! Du laesst Eggdrop als root laufen!
 0x534,KONFIGURATIONSDATEI NICHT GELADEN (NICHT GEFUNDEN ODER FEHLER)
-0x535,BENUTZERDATEI NICHT GEFUNDEN!  (probier mal './eggdrop -m', das erstellt eine)
+0x535,BENUTZERDATEI NICHT GEFUNDEN!  (probier mal './eggdrop -m %s', das erstellt eine)\n
 0x536,STARTE DEN BOT IM BENUTZERDATEI-ERSTELLUNGS-MODUS.\n\
 Baue eine Telnetverbindung zu dem Bot auf und gib 'NEW' als deinen Nickname ein.
 0x537,ODER gehe ins IRC und:  /msg %s hello\n
