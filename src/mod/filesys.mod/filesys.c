@@ -2,7 +2,7 @@
  * filesys.c -- part of filesys.mod
  *   main file of the filesys eggdrop module
  * 
- * $Id: filesys.c,v 1.27 2000/03/23 23:17:57 fabian Exp $
+ * $Id: filesys.c,v 1.28 2000/04/25 20:46:16 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -71,7 +71,9 @@ static char dccin[121] = "";
 /* Let all uploads go to the user's current directory? */
 static int upload_to_cd = 0;
 
-/* Maximum allowable file size for dcc send (1M) */
+/* Maximum allowable file size for dcc send (1M). 0 indicates
+ * unlimited file size.
+ */
 static int dcc_maxsize = 1024;
 
 /* Maximum number of users can be in the file area at once */
@@ -666,10 +668,9 @@ static void filesys_dcc_send(char *nick, char *from, struct userrec *u,
 	      nick);
       putlog(LOG_FILES, "*", "Refused dcc send %s (%s): no file size",
 	     param, nick);
-    } else if (atoi(msg) > (dcc_maxsize * 1024)) {
+    } else if (dcc_maxsize && (atoi(msg) > (dcc_maxsize * 1024))) {
       dprintf(DP_HELP, "NOTICE %s :Sorry, file too large.\n", nick);
-      putlog(LOG_FILES, "*",
-	     "Refused dcc send %s (%s): file too large", param,
+      putlog(LOG_FILES, "*", "Refused dcc send %s (%s): file too large", param,
 	     nick);
     } else {
       /* This looks like a good place for a sanity check. */
