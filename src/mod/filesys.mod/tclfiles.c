@@ -2,7 +2,7 @@
  * tclfiles.c -- part of filesys.mod
  *   Tcl stubs for file system commands moved here to support modules
  * 
- * $Id: tclfiles.c,v 1.9 2000/01/17 22:36:08 fabian Exp $
+ * $Id: tclfiles.c,v 1.10 2000/08/31 18:11:40 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -614,12 +614,12 @@ static int tcl_fileresend_send(ClientData cd, Tcl_Interp *irp, int argc,
 	       		       char *argv[], int resend)
 {
   int i, idx;
-  char s[HANDLEN + 1];
+  char s[21];
 
   BADARGS(3, 4, " idx filename ?nick?");
   i = atoi(argv[1]);
   idx = findanyidx(i);
-  if ((idx < 0) || (dcc[idx].type != &DCC_FILES)) {
+  if (idx < 0 || dcc[idx].type != &DCC_FILES) {
     Tcl_AppendResult(irp, "invalid idx", NULL);
     return TCL_ERROR;
   }

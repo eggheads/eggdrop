@@ -2,7 +2,7 @@
  * filesys.c -- part of filesys.mod
  *   main file of the filesys eggdrop module
  * 
- * $Id: filesys.c,v 1.31 2000/08/31 18:08:56 fabian Exp $
+ * $Id: filesys.c,v 1.32 2000/08/31 18:11:40 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -361,8 +361,8 @@ static int _dcc_send(int idx, char *filename, char *nick, char *dir,
   char *nfn, *buf = NULL;
 
   Context;
-  if (strlen(nick) > HANDLEN)
-    nick[HANDLEN] = 0;
+  if (strlen(nick) > NICKMAX)
+    nick[NICKMAX] = 0;
   if (resend)
     x = raw_dcc_resend(filename, nick, dcc[idx].nick, dir);
   else
@@ -416,8 +416,6 @@ static int _dcc_send(int idx, char *filename, char *nick, char *dir,
   if (egg_strcasecmp(nick, dcc[idx].nick))
     dprintf(DP_HELP, "NOTICE %s :Here is %s file from %s %s...\n", nick,
 	    resend ? "the" : "a", dcc[idx].nick, resend ? "again " : "");
-  dprintf(idx, "Type '/DCC %sGET %s %s' to receive.\n", resend ? "RE" : "",
-	  botname, nfn);
   dprintf(idx, "%sending: %s to %s\n", resend ? "Res" : "S", nfn, nick);
   my_free(buf);
   return 1;
@@ -430,7 +428,7 @@ static int do_dcc_send(int idx, char *dir, char *fn, char *nick, int resend)
   int x;
 
   Context;
-  if (nick && (strlen(nick) > NICKMAX))
+  if (nick && strlen(nick) > NICKMAX)
     nick[NICKMAX] = 0;
   if (dccdir[0] == 0) {
     dprintf(idx, "DCC file transfers not supported.\n");
