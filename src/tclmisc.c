@@ -5,7 +5,7 @@
  * 
  * dprintf'ized, 1aug1996
  * 
- * $Id: tclmisc.c,v 1.6 1999/12/27 19:36:43 fabian Exp $
+ * $Id: tclmisc.c,v 1.7 1999/12/27 19:56:20 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -497,22 +497,22 @@ static int tcl_reloadhelp STDVAR
 
 static int tcl_md5 STDVAR
 {
-  MD5_CTX       Context;
-  char          DigestString[33];       /* 32 for digest in hex + null */
-  unsigned char Digest[16];
+  MD5_CTX       context;
+  char          digest_string[33];       /* 32 for digest in hex + null */
+  unsigned char digest[16];
   int           i;
 
-  context;
+  Context;
   BADARGS(2, 2, " string");
 
-  MD5Init(&Context);
-  MD5Update(&Context, (unsigned char *)argv[1], strlen(argv[1]));
-  MD5Final(Digest, &Context);
+  MD5Init(&context);
+  MD5Update(&context, (unsigned char *)argv[1], strlen(argv[1]));
+  MD5Final(digest, &context);
 
   for(i=0; i<16; i++)
-    sprintf(DigestString + (i*2), "%.2x", Digest[i]);
+    sprintf(digest_string + (i*2), "%.2x", digest[i]);
 
-  Tcl_AppendResult(irp, DigestString, NULL);
+  Tcl_AppendResult(irp, digest_string, NULL);
 
   return TCL_OK;
 }
