@@ -1,7 +1,7 @@
 /*
  * module.h
  *
- * $Id: module.h,v 1.47 2001/06/24 20:49:24 poptix Exp $
+ * $Id: module.h,v 1.48 2001/07/16 14:54:02 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -358,7 +358,7 @@
 #define rem_tcl_coups ((void (*) (tcl_coups *))global[210])
 #define botname ((char *)(global[211]))
 /* 212 - 215 */
-#define remove_gunk ((void(*)(char *))global[212])
+/* 212: remove_gunk() -- UNUSED (drummer) */
 #define check_tcl_chjn ((void (*) (const char *,const char *,int,char,int,const char *))global[213])
 #define sanitycheck_dcc ((int (*)(char *, char *, char *, char *))global[214])
 #define isowner ((int (*)(char *))global[215])

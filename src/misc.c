@@ -7,7 +7,7 @@
  *   help system
  *   motd display and %var substitution
  *
- * $Id: misc.c,v 1.41 2001/06/16 01:33:03 poptix Exp $
+ * $Id: misc.c,v 1.42 2001/07/16 14:54:01 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1354,23 +1354,6 @@ void show_motd(int idx)
     fclose(vv);
     dprintf(idx, "\n");
   }
-}
-
-/* Remove :'s from ignores and bans
- */
-void remove_gunk(char *par)
-{
-  char *q, *p, *WBUF = nmalloc(strlen(par) + 1);
-
-  for (p = par, q = WBUF; *p; p++, q++) {
-    if (*p == ':')
-      q--;
-    else
-      *q = *p;
-  }
-  *q = *p;
-  strcpy(par, WBUF);
-  nfree(WBUF);
 }
 
 /* This will return a pointer to the first character after the @ in the

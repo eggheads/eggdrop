@@ -4,7 +4,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: modules.c,v 1.51 2001/06/30 06:29:55 guppy Exp $
+ * $Id: modules.c,v 1.52 2001/07/16 14:54:01 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -453,7 +453,7 @@ Function global_table[] =
   (Function) rem_tcl_coups,
   (Function) botname,
   /* 212 - 215 */
-  (Function) remove_gunk,
+  (Function) 0,			/* remove_gunk() -- UNUSED! (drummer)	*/
   (Function) check_tcl_chjn,
   (Function) sanitycheck_dcc,
   (Function) isowner,
