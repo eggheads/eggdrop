@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  *
- * $Id: cmds.c,v 1.109 2004/07/25 11:17:34 wcc Exp $
+ * $Id: cmds.c,v 1.110 2004/07/25 21:37:32 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1362,13 +1362,15 @@ int check_dcc_attrs(struct userrec *u, int oatr)
         }
       }
     }
+
     if (dcc[i].type == &DCC_BOT && !egg_strcasecmp(u->handle, dcc[i].nick)) {
-      if ((dcc[i].status & STAT_LEAF) && !(u->flags & BOT_LEAF))
+      if ((dcc[i].status & STAT_LEAF) && !(bot_flags(u) & BOT_LEAF))
         dcc[i].status &= ~(STAT_LEAF | STAT_WARNED);
-      if (!(dcc[i].status & STAT_LEAF) && (u->flags & BOT_LEAF))
+      if (!(dcc[i].status & STAT_LEAF) && (bot_flags(u) & BOT_LEAF))
         dcc[i].status |= STAT_LEAF;
     }
   }
+
   return u->flags;
 }
 
