@@ -3,7 +3,7 @@
  *   saved console settings based on console.tcl
  *   by cmwagner/billyjoe/D. Senso
  *
- * $Id: console.c,v 1.23 2002/02/19 22:21:28 guppy Exp $
+ * $Id: console.c,v 1.24 2002/03/22 03:53:57 guppy Exp $
  */
 /*
  * Copyright (C) 1999, 2000, 2001, 2002 Eggheads Development Team
@@ -205,8 +205,8 @@ static void console_display(int idx, struct user_entry *e)
 	    stripmasktype(i->stripflags), CONSOLE_ECHO,
 	    i->echoflags ? CONSOLE_YES : CONSOLE_NO);
     dprintf(idx, "    %s %d, %s %s%d\n", CONSOLE_PAGE_SETTING, i->page,
-            CONSOLE_CHANNEL2, (i->conchan < 100000) ? "" : "*",
-            i->conchan % 100000);
+            CONSOLE_CHANNEL2, (i->conchan < GLOBAL_CHANS) ? "" : "*",
+            i->conchan % GLOBAL_CHANS);
   }
 }
 

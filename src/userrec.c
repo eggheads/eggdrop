@@ -4,7 +4,7 @@
  *   a bunch of functions to find and change user records
  *   change and check user (and channel-specific) flags
  *
- * $Id: userrec.c,v 1.38 2002/01/14 21:23:50 guppy Exp $
+ * $Id: userrec.c,v 1.39 2002/03/22 03:53:57 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -579,7 +579,7 @@ int change_handle(struct userrec *u, char *newh)
       if (dcc[i].type == &DCC_CHAT && dcc[i].u.chat->channel >= 0) {
 	chanout_but(-1, dcc[i].u.chat->channel,
 		    "*** Handle change: %s -> %s\n", s, newh);
-	if (dcc[i].u.chat->channel < 100000)
+	if (dcc[i].u.chat->channel < GLOBAL_CHANS)
 	  botnet_send_nkch(i, s);
       }
     }

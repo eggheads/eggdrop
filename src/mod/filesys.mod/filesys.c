@@ -2,7 +2,7 @@
  * filesys.c -- part of filesys.mod
  *   main file of the filesys eggdrop module
  *
- * $Id: filesys.c,v 1.48 2002/02/25 03:34:16 wcc Exp $
+ * $Id: filesys.c,v 1.49 2002/03/22 03:53:57 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -254,7 +254,7 @@ static void dcc_files(int idx, char *buf, int i)
       if (dcc[idx].u.chat->channel >= 0) {
 	chanout_but(-1, dcc[idx].u.chat->channel,
 		    "*** %s has returned.\n", dcc[idx].nick);
-	if (dcc[idx].u.chat->channel < 100000)
+	if (dcc[idx].u.chat->channel < GLOBAL_CHANS)
 	  botnet_send_join_idx(idx, -1);
       }
     } else {
@@ -320,7 +320,7 @@ static int cmd_files(struct userrec *u, int idx, char *par)
 	chanout_but(-1, dcc[idx].u.chat->channel,
 		    "*** %s has left: file system\n",
 		    dcc[idx].nick);
-	if (dcc[idx].u.chat->channel < 100000)
+	if (dcc[idx].u.chat->channel < GLOBAL_CHANS)
 	  botnet_send_part_idx(idx, "file system");
       }
       ci = dcc[idx].u.chat;
@@ -340,7 +340,7 @@ static int cmd_files(struct userrec *u, int idx, char *par)
 	  chanout_but(-1, dcc[idx].u.chat->channel,
 		      "*** %s has returned.\n",
 		      dcc[idx].nick);
-	  if (dcc[idx].u.chat->channel < 100000)
+	  if (dcc[idx].u.chat->channel < GLOBAL_CHANS)
 	    botnet_send_join_idx(idx, -1);
 	}
       } else

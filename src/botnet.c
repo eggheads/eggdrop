@@ -7,7 +7,7 @@
  *   linking, unlinking, and relaying to another bot
  *   pinging the bots periodically and checking leaf status
  *
- * $Id: botnet.c,v 1.41 2002/03/07 04:22:59 guppy Exp $
+ * $Id: botnet.c,v 1.42 2002/03/22 03:53:56 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -440,11 +440,11 @@ void answer_local_whom(int idx, int chan)
     simple_sprintf(idle, "assoc %d", chan);
     if ((Tcl_Eval(interp, idle) != TCL_OK) || !interp->result[0])
       dprintf(idx, "%s %s%d:\n", BOT_USERSONCHAN,
-	      (chan < 100000) ? "" : "*", chan % 100000);
+	      (chan < GLOBAL_CHANS) ? "" : "*", chan % GLOBAL_CHANS);
     else
       dprintf(idx, "%s '%s%s' (%s%d):\n", BOT_USERSONCHAN,
-	      (chan < 100000) ? "" : "*", interp->result,
-	      (chan < 100000) ? "" : "*", chan % 100000);
+	      (chan < GLOBAL_CHANS) ? "" : "*", interp->result,
+	      (chan < GLOBAL_CHANS) ? "" : "*", chan % GLOBAL_CHANS);
   }
   /* Find longest nick and botnick */
   nicklen = botnicklen = 0;
@@ -496,7 +496,7 @@ void answer_local_whom(int idx, int chan)
         total++;
 	dprintf(idx, "%c%s%s %c %s%s  %s%s\n", c, dcc[i].nick, spaces,
 		(dcc[i].u.chat->channel == 0) && (chan == (-1)) ? '+' :
-		(dcc[i].u.chat->channel > 100000) &&
+		(dcc[i].u.chat->channel > GLOBAL_CHANS) &&
 		(chan == (-1)) ? '*' : ' ',
 		botnetnick, spaces2, dcc[i].host, idle);
 	spaces[len] = ' ';
@@ -764,7 +764,7 @@ void dump_links(int z)
     for (i = 0; i < dcc_total; i++) {
       if (dcc[i].type == &DCC_CHAT) {
 	if ((dcc[i].u.chat->channel >= 0) &&
-	    (dcc[i].u.chat->channel < 100000)) {
+	    (dcc[i].u.chat->channel < GLOBAL_CHANS)) {
 #ifndef NO_OLD_BOTNET
 	  if (b_numver(z) < NEAT_BOTNET)
 	    l = simple_sprintf(x, "join %s %s %d %c%d %s\n",
@@ -1359,7 +1359,7 @@ static void cont_tandem_relay(int idx, char *buf, register int i)
   if (dcc[uidx].u.chat->channel >= 0) {
     chanout_but(-1, dcc[uidx].u.chat->channel, "*** %s %s\n",
 		dcc[uidx].nick, BOT_PARTYLEFT);
-    if (dcc[uidx].u.chat->channel < 100000)
+    if (dcc[uidx].u.chat->channel < GLOBAL_CHANS)
       botnet_send_part_idx(uidx, NULL);
     check_tcl_chpt(botnetnick, dcc[uidx].nick, dcc[uidx].sock,
 		   dcc[uidx].u.chat->channel);
@@ -1396,7 +1396,7 @@ static void eof_dcc_relay(int idx)
   if (dcc[j].u.chat->channel >= 0) {
     chanout_but(-1, dcc[j].u.chat->channel, "*** %s %s.\n",
 		dcc[j].nick, BOT_PARTYREJOINED);
-    if (dcc[j].u.chat->channel < 100000)
+    if (dcc[j].u.chat->channel < GLOBAL_CHANS)
       botnet_send_join_idx(j, -1);
   }
   check_tcl_chon(dcc[j].nick, dcc[j].sock);
@@ -1487,7 +1487,7 @@ static void dcc_relaying(int idx, char *buf, int j)
   if (dcc[idx].u.relay->chat->channel >= 0) {
     chanout_but(-1, dcc[idx].u.relay->chat->channel,
 		"*** %s joined the party line.\n", dcc[idx].nick);
-    if (dcc[idx].u.relay->chat->channel < 100000)
+    if (dcc[idx].u.relay->chat->channel < GLOBAL_CHANS)
       botnet_send_join_idx(idx, -1);
   }
   ci = dcc[idx].u.relay->chat;

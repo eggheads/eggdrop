@@ -4,7 +4,7 @@
  *   disconnect on a dcc socket
  *   ...and that's it!  (but it's a LOT)
  *
- * $Id: dcc.c,v 1.54 2002/02/28 05:28:40 guppy Exp $
+ * $Id: dcc.c,v 1.55 2002/03/22 03:53:56 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -609,7 +609,7 @@ static void dcc_chat_pass(int idx, char *buf, int atr)
       dcc[idx].u.chat->away = NULL;
       dcc[idx].u.chat->su_nick = NULL;
       dcc[idx].type = &DCC_CHAT;
-      if (dcc[idx].u.chat->channel < 100000)
+      if (dcc[idx].u.chat->channel < GLOBAL_CHANS)
 	botnet_send_join_idx(idx, -1);
       chanout_but(-1, dcc[idx].u.chat->channel, DCC_JOIN, dcc[idx].nick);
     } else {
@@ -853,7 +853,7 @@ static void eof_dcc_chat(int idx)
   if (dcc[idx].u.chat->channel >= 0) {
     chanout_but(idx, dcc[idx].u.chat->channel, "*** %s lost dcc link.\n",
 		dcc[idx].nick);
-    if (dcc[idx].u.chat->channel < 100000)
+    if (dcc[idx].u.chat->channel < GLOBAL_CHANS)
       botnet_send_part_idx(idx, "lost dcc link");
     check_tcl_chpt(botnetnick, dcc[idx].nick, dcc[idx].sock,
 		   dcc[idx].u.chat->channel);
@@ -932,7 +932,7 @@ static void dcc_chat(int idx, char *buf, int i)
 	    chanout_but(-1, dcc[idx].u.chat->channel,
 			"*** %s left the party line%s%s\n",
 			dcc[idx].nick, buf[0] ? ": " : ".", buf);
-	    if (dcc[idx].u.chat->channel < 100000)
+	    if (dcc[idx].u.chat->channel < GLOBAL_CHANS)
 	      botnet_send_part_idx(idx, buf);
 	  }
 	  if (dcc[idx].u.chat->su_nick) {
@@ -945,7 +945,7 @@ static void dcc_chat(int idx, char *buf, int i)
 	    nfree(dcc[idx].u.chat->su_nick);
 	    dcc[idx].u.chat->su_nick = NULL;
 	    dcc_chatter(idx);
-	    if (dcc[idx].u.chat->channel < 100000 &&
+	    if (dcc[idx].u.chat->channel < GLOBAL_CHANS &&
 		dcc[idx].u.chat->channel >= 0)
 	      botnet_send_join_idx(idx, -1);
 	    return;

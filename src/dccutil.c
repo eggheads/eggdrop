@@ -6,7 +6,7 @@
  *   memory management for dcc structures
  *   timeout checking for dcc connections
  *
- * $Id: dccutil.c,v 1.36 2002/03/07 15:41:17 guppy Exp $
+ * $Id: dccutil.c,v 1.37 2002/03/22 03:53:56 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -238,7 +238,7 @@ void dcc_chatter(int idx)
 	i = 0;
       dcc[idx].u.chat->channel = i;
       if (dcc[idx].u.chat->channel >= 0) {
-	if (dcc[idx].u.chat->channel < 100000) {
+	if (dcc[idx].u.chat->channel < GLOBAL_CHANS) {
 	  botnet_send_join_idx(idx, -1);
 	}
       }
@@ -371,7 +371,7 @@ void not_away(int idx)
   if (dcc[idx].u.chat->channel >= 0) {
     chanout_but(-1, dcc[idx].u.chat->channel,
 		"*** %s is no longer away.\n", dcc[idx].nick);
-    if (dcc[idx].u.chat->channel < 100000) {
+    if (dcc[idx].u.chat->channel < GLOBAL_CHANS) {
       botnet_send_away(-1, botnetnick, dcc[idx].sock, NULL, idx);
     }
   }
@@ -398,7 +398,7 @@ void set_away(int idx, char *s)
   if (dcc[idx].u.chat->channel >= 0) {
     chanout_but(-1, dcc[idx].u.chat->channel,
 		"*** %s is now away: %s\n", dcc[idx].nick, s);
-    if (dcc[idx].u.chat->channel < 100000) {
+    if (dcc[idx].u.chat->channel < GLOBAL_CHANS) {
       botnet_send_away(-1, botnetnick, dcc[idx].sock, s, idx);
     }
   }
@@ -516,7 +516,7 @@ int detect_dcc_flood(time_t * timer, struct chat_info *chat, int idx)
 
 	egg_snprintf(x, sizeof x, DCC_FLOODBOOT, dcc[idx].nick);
 	chanout_but(idx, chat->channel, "*** %s", x);
-	if (chat->channel < 100000)
+	if (chat->channel < GLOBAL_CHANS)
 	  botnet_send_part_idx(idx, x);
       }
       check_tcl_chof(dcc[idx].nick, dcc[idx].sock);
@@ -552,7 +552,7 @@ void do_boot(int idx, char *by, char *reason)
     egg_snprintf(x, sizeof x, DCC_BOOTED3, by, dcc[idx].nick,
 		 reason[0] ? ": " : "", reason);
     chanout_but(idx, dcc[idx].u.chat->channel, "*** %s.\n", x);
-    if (dcc[idx].u.chat->channel < 100000)
+    if (dcc[idx].u.chat->channel < GLOBAL_CHANS)
       botnet_send_part_idx(idx, x);
   }
   check_tcl_chof(dcc[idx].nick, dcc[idx].sock);

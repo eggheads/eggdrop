@@ -2,7 +2,7 @@
  * assoc.c -- part of assoc.mod
  *   the assoc code, moved here mainly from botnet.c for module work
  *
- * $Id: assoc.c,v 1.19 2002/01/02 08:06:14 tothwolf Exp $
+ * $Id: assoc.c,v 1.20 2002/03/22 03:53:57 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -185,8 +185,8 @@ static void dump_assoc(int idx)
   }
   dprintf(idx, " %s  %s\n", ASSOC_CHAN, ASSOC_NAME);
   for (; a && a->name[0]; a = a->next)
-      dprintf(idx, "%c%5d %s\n", (a->channel < 100000) ? ' ' : '*',
-	      a->channel % 100000, a->name);
+      dprintf(idx, "%c%5d %s\n", (a->channel < GLOBAL_CHANS) ? ' ' : '*',
+	      a->channel % GLOBAL_CHANS, a->name);
   return;
 }
 
@@ -203,8 +203,8 @@ static int cmd_assoc(struct userrec *u, int idx, char *par)
   } else {
     num = newsplit(&par);
     if (num[0] == '*') {
-      chan = 100000 + atoi(num + 1);
-      if ((chan < 100000) || (chan > 199999)) {
+      chan = GLOBAL_CHANS + atoi(num + 1);
+      if ((chan < GLOBAL_CHANS) || (chan > 199999)) {
 	   dprintf(idx, "%s\n", ASSOC_LCHAN_RANGE);
 	return 0;
       }
@@ -221,16 +221,16 @@ static int cmd_assoc(struct userrec *u, int idx, char *par)
     if (!par[0]) {
       /* Remove an association */
       if (get_assoc_name(chan) == NULL) {
-	    dprintf(idx, ASSOC_NONAME_CHAN, (chan < 100000) ? "" : "*",
-	            chan % 100000);
+	    dprintf(idx, ASSOC_NONAME_CHAN, (chan < GLOBAL_CHANS) ? "" : "*",
+	            chan % GLOBAL_CHANS);
 	return 0;
       }
       kill_assoc(chan);
       putlog(LOG_CMDS, "*", "#%s# assoc %d", dcc[idx].nick, chan);
-      dprintf(idx, ASSOC_REMNAME_CHAN, (chan < 100000) ? "" : "*",
-              chan % 100000);
+      dprintf(idx, ASSOC_REMNAME_CHAN, (chan < GLOBAL_CHANS) ? "" : "*",
+              chan % GLOBAL_CHANS);
       chanout_but(-1, chan, ASSOC_REMOUT_CHAN, dcc[idx].nick);
-      if (chan < 100000)
+      if (chan < GLOBAL_CHANS)
 	botnet_send_assoc(-1, chan, dcc[idx].nick, "0");
       return 0;
     }
@@ -244,11 +244,11 @@ static int cmd_assoc(struct userrec *u, int idx, char *par)
     }
     add_assoc(par, chan);
     putlog(LOG_CMDS, "*", "#%s# assoc %d %s", dcc[idx].nick, chan, par);
-    dprintf(idx, ASSOC_NEWNAME_CHAN, (chan < 100000) ? "" : "*",
-            chan % 100000, par);
+    dprintf(idx, ASSOC_NEWNAME_CHAN, (chan < GLOBAL_CHANS) ? "" : "*",
+            chan % GLOBAL_CHANS, par);
     chanout_but(-1, chan, ASSOC_NEWOUT_CHAN, dcc[idx].nick,
 		par);
-    if (chan < 100000)
+    if (chan < GLOBAL_CHANS)
       botnet_send_assoc(-1, chan, dcc[idx].nick, par);
   }
   return 0;

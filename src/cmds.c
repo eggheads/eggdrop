@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  *
- * $Id: cmds.c,v 1.77 2002/03/07 15:41:17 guppy Exp $
+ * $Id: cmds.c,v 1.78 2002/03/22 03:53:56 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -99,9 +99,9 @@ static void tell_who(struct userrec *u, int idx, int chan)
     {
     simple_sprintf(s, "assoc %d", chan);
     if ((Tcl_Eval(interp, s) != TCL_OK) || !interp->result[0])
-        dprintf(idx, "People on channel %s%d:  (* = owner, + = master, @ = op)\n", (chan < 100000) ? "" : "*", chan % 100000);
+        dprintf(idx, "People on channel %s%d:  (* = owner, + = master, @ = op)\n", (chan < GLOBAL_CHANS) ? "" : "*", chan % GLOBAL_CHANS);
       else
-        dprintf(idx, "People on channel '%s' (%s%d):  (* = owner, + = master, @ = op)\n", interp->result, (chan < 100000) ? "" : "*", chan % 100000);
+        dprintf(idx, "People on channel '%s' (%s%d):  (* = owner, + = master, @ = op)\n", interp->result, (chan < GLOBAL_CHANS) ? "" : "*", chan % GLOBAL_CHANS);
   }
 
   for (i = 0; i < dcc_total; i++)
@@ -1377,7 +1377,7 @@ int check_dcc_attrs(struct userrec *u, int oatr)
 	  if (dcc[i].u.chat->channel >= 0) {
 	    chanout_but(-1, dcc[i].u.chat->channel,
 			"*** %s has returned.\n", dcc[i].nick);
-	    if (dcc[i].u.chat->channel < 100000)
+	    if (dcc[i].u.chat->channel < GLOBAL_CHANS)
 	      botnet_send_join_idx(i, -1);
 	  }
 	} else {
@@ -1806,7 +1806,7 @@ static void cmd_chat(struct userrec *u, int idx, char *par)
       chanout_but(-1, dcc[idx].u.chat->channel,
 		  "*** %s left the party line.\n",
 		  dcc[idx].nick);
-      if (dcc[idx].u.chat->channel < 100000)
+      if (dcc[idx].u.chat->channel < GLOBAL_CHANS)
 	botnet_send_part_idx(idx, "");
     }
     dcc[idx].u.chat->channel = (-1);
@@ -1828,8 +1828,8 @@ static void cmd_chat(struct userrec *u, int idx, char *par)
 	  return;
 	}
       } else
-	newchan = 100000 + atoi(arg + 1);
-      if (newchan < 100000 || newchan > 199999) {
+	newchan = GLOBAL_CHANS + atoi(arg + 1);
+      if (newchan < GLOBAL_CHANS || newchan > 199999) {
 	dprintf(idx, "Channel number out of range: local channels must be *0-*99999.\n");
 	return;
       }
@@ -1867,7 +1867,7 @@ static void cmd_chat(struct userrec *u, int idx, char *par)
         return;
       } else {
 	dprintf(idx, "You're already on channel %s%d!\n",
-		(newchan < 100000) ? "" : "*", newchan % 100000);
+		(newchan < GLOBAL_CHANS) ? "" : "*", newchan % GLOBAL_CHANS);
         return;
       }
     } else {
@@ -1889,9 +1889,9 @@ static void cmd_chat(struct userrec *u, int idx, char *par)
       }
       check_tcl_chjn(botnetnick, dcc[idx].nick, newchan, geticon(idx),
 		     dcc[idx].sock, dcc[idx].host);
-      if (newchan < 100000)
+      if (newchan < GLOBAL_CHANS)
 	botnet_send_join_idx(idx, oldchan);
-      else if (oldchan < 100000)
+      else if (oldchan < GLOBAL_CHANS)
 	botnet_send_part_idx(idx, "");
     }
   }
@@ -2122,7 +2122,7 @@ static void cmd_su(struct userrec *u, int idx, char *par)
 	  dprintf(idx, "No password set for user. You may not .su to them.\n");
 	  return;
 	}
-	if (dcc[idx].u.chat->channel < 100000)
+	if (dcc[idx].u.chat->channel < GLOBAL_CHANS)
 	  botnet_send_part_idx(idx, "");
 	chanout_but(-1, dcc[idx].u.chat->channel,
 		    "*** %s left the party line.\n", dcc[idx].nick);
@@ -2143,7 +2143,7 @@ static void cmd_su(struct userrec *u, int idx, char *par)
 	       					  TLN_ECHO_C : "");
 	dcc[idx].type = &DCC_CHAT_PASS;
       } else if (atr & USER_OWNER) {
-	if (dcc[idx].u.chat->channel < 100000)
+	if (dcc[idx].u.chat->channel < GLOBAL_CHANS)
 	  botnet_send_part_idx(idx, "");
 	chanout_but(-1, dcc[idx].u.chat->channel,
 		    "*** %s left the party line.\n", dcc[idx].nick);

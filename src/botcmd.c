@@ -3,7 +3,7 @@
  *   commands that comes across the botnet
  *   userfile transfer and update commands from sharebots
  *
- * $Id: botcmd.c,v 1.27 2002/03/10 18:47:52 wcc Exp $
+ * $Id: botcmd.c,v 1.28 2002/03/22 03:53:56 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -358,7 +358,8 @@ static void remote_tell_who(int idx, char *nick, int chan)
       botnet_send_priv(idx, botnetnick, nick, NULL,
 		       "%s '%s' (%s%d):  (* = %s, + = %s, @ = %s)\n",
 		       BOT_PEOPLEONCHAN, interp->result,
-		       (chan < 100000) ? "" : "*", chan % 100000,
+		       (chan < GLOBAL_CHANS) ? "" : "*",
+		       chan % GLOBAL_CHANS,
 		       MISC_OWNER, MISC_MASTER, MISC_OP);
   }
   for (i = 0; i < dcc_total; i++)
