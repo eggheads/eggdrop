@@ -1,4 +1,4 @@
-%{help=help}
+%{help=help}%{-}
 DCC commands for %B, %V:
    For all users:
       %bwho          away         quit         whom%b
@@ -50,26 +50,25 @@ You may receive a list of commands provided by all loaded modules by
 using %b'.help all'%b. If you only remember a part of the command's
 name you are searching for, just use wildcards (e.g. %b'.help *bot*'%b),
 and all matching help texts will be displayed.
-%{help=partyline}
+%{help=partyline}%{-}
 %B party-line commands:
-  %b.quit%b              Use this command to leave the party line.
-  %b.whom%b [channel]    Shows a list of all users on the party line, or on a
+   %b.quit%b             Use this command to leave the party line.
+   %b.whom%b [channel]   Shows a list of all users on the party line, or on a
                      particular channel.
-  %b.whom *%b            Shows a list of all users, indicating which ones are
+   %b.whom *%b           Shows a list of all users, indicating which ones are
                      on the party line.
-  %b.chat%b <channel>    Makes you leave the main partyline channel and join a
+   %b.chat%b <channel>   Makes you leave the main partyline channel and join a
                      specific channel (valid channels are 1 to 99999, channel 0
                      is the party line).
-  %b.me%b <action>       Preform an action to the party line.
-  %b.handle%b <handle>   Changes your nick on party line.
-  %b.help%b <command>    Shows more help on a specific command.
-The following commands are also available:
-%b  who          away         quit          page        match%b
-%b  motd         bots         newpass       whoami      echo%b
-%b  strip        su           trace        fixcodes     bottree%b
-%b  vbottree     botinfo      relay        -host%b
-Anything you type that doesn't begin with a '.' goes out to everyone on the
-party line.
+   %b.me%b <action>      Preform an action to the party line.
+   %b.handle%b <handle>  Changes your nick on party line.
+   %b.help%b <command>   Shows more help on a specific command.
+
+See '%b.help all%b' for a complete list of commands.
+All commands begin with '.', and all else goes to the party line.
+%{+m}
+
+Text starting with ',' is sent ONLY to bot-masters.
 %{help=common}%{+o|o}
 ###  %bcommon (the +c 'common' flag)%b
    Sometimes a lot of people use IRC from the same account, for example, a
