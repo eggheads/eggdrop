@@ -1,7 +1,7 @@
 /*
  * tclchan.c -- part of channels.mod
  *
- * $Id: tclchan.c,v 1.82 2003/03/24 01:52:24 wcc Exp $
+ * $Id: tclchan.c,v 1.83 2003/03/24 02:18:06 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1027,8 +1027,7 @@ static int tcl_channel_get(Tcl_Interp *irp, struct chanset_t *chan,
       if (argc > 0)
         Tcl_AppendResult(irp, argv[0], NULL);
       Tcl_Free((char *) argv);
-    }
-    else {
+    } else {
       /* Flag or int, all the same. */
       simple_sprintf(s, "%d", getudef(ul->values, chan->dname));
       Tcl_AppendResult(irp, s, NULL);
