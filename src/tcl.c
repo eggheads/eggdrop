@@ -4,7 +4,7 @@
  *   Tcl initialization
  *   getting and setting Tcl/eggdrop variables
  *
- * $Id: tcl.c,v 1.33 2001/04/12 02:39:43 guppy Exp $
+ * $Id: tcl.c,v 1.34 2001/06/16 01:33:03 poptix Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -54,7 +54,7 @@ extern char	origbotname[], botuser[], motdfile[], admin[], userfile[],
 		firewall[], helpdir[], notify_new[], hostname[], myip[],
 		moddir[], tempdir[], owner[], network[], botnetnick[],
 		bannerfile[], egg_version[], natip[], configfile[],
-		logfile_suffix[];
+		logfile_suffix[], textdir[];
 extern int	die_on_sighup, die_on_sigterm, max_logs, max_logsize,
 		enable_simul, dcc_total, debug_output, identtimeout,
 		protect_telnet, dupwait_timeout, egg_numver, share_unlinks,
@@ -391,6 +391,7 @@ static tcl_strings def_tcl_strings[] =
   {"admin",		admin,		120,		0},
   {"help-path",		helpdir,	120,		STR_DIR | STR_PROTECT},
   {"temp-path",		tempdir,	120,		STR_DIR | STR_PROTECT},
+  {"text-path",		textdir,	120,		STR_DIR | STR_PROTECT},
 #ifndef STATIC
   {"mod-path",		moddir,		120,		STR_DIR | STR_PROTECT},
 #endif

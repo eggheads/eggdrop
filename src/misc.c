@@ -7,7 +7,7 @@
  *   help system
  *   motd display and %var substitution
  *
- * $Id: misc.c,v 1.40 2001/06/01 22:00:05 guppy Exp $
+ * $Id: misc.c,v 1.41 2001/06/16 01:33:03 poptix Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -42,7 +42,7 @@ extern struct dcc_t	*dcc;
 extern struct chanset_t	*chanset;
 extern char		 helpdir[], version[], origbotname[], botname[],
 			 admin[], motdfile[], ver[], botnetnick[],
-			 bannerfile[], logfile_suffix[];
+			 bannerfile[], logfile_suffix[], textdir[];
 extern int		 backgrd, con_chan, term_z, use_stderr, dcc_total,
 			 keep_all_logs, quick_logs, strict_host;
 extern time_t		 now;
@@ -1148,13 +1148,15 @@ void debug_help(int idx)
 
 FILE *resolve_help(int dcc, char *file)
 {
-  char s[1024], *p;
+
+  char s[1024];
   FILE *f;
   struct help_ref *current;
   struct help_list_t *item;
 
   /* Somewhere here goes the eventual substituation */
   if (!(dcc & HELP_TEXT))
+  {
     for (current = help_list; current; current = current->next)
       for (item = current->first; item; item = item->next)
 	if (!strcmp(item->name, file)) {
@@ -1171,31 +1173,15 @@ FILE *resolve_help(int dcc, char *file)
 	      return f;
 	  }
 	}
-  for (p = s + simple_sprintf(s, "%s%s", helpdir, dcc ? "" : "msg/");
-       *file && (p < s + 1023); file++, p++) {
-    switch (*file) {
-    case ' ':
-    case '.':
-      *p = '/';
-      break;
-    case '-':
-      *p = '-';
-      break;
-    case '+':
-      *p = 'P';
-      break;
-    default:
-      *p = *file;
-    }
+    /* No match was found, so we better return NULL */
+    return NULL;
   }
-  *p = 0;
-  if (!is_file(s)) {
-    strcat(s, "/");
-    strcat(s, file);
-    if (!is_file(s))
-      return NULL;
-  }
-  return fopen(s, "r");
+  /* Since we're not dealing with help files, we should just prepend the filename with textdir */
+  simple_sprintf(s, "%s%s", textdir, file);
+  if (is_file(s))
+    return fopen(s, "r");
+  else
+    return NULL;
 }
 
 void showhelp(char *who, char *file, struct flag_record *flags, int fl)
