@@ -10,7 +10,7 @@
  * 
  * dprintf'ized, 12dec1995
  * 
- * $Id: misc.c,v 1.22 1999/12/28 01:46:26 guppy Exp $
+ * $Id: misc.c,v 1.23 2000/01/06 21:03:45 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -68,15 +68,15 @@ int max_logsize = 0;		/* maximum logfile size, 0 for no limit */
 int conmask = LOG_MODES | LOG_CMDS | LOG_MISC;	/* console mask */
 int debug_output = 0;		/* disply output to server to LOG_SERVEROUT */
 
-struct help_list {
-  struct help_list *next;
+struct help_list_t {
+  struct help_list_t *next;
   char *name;
   int type;
 };
 
 static struct help_ref {
   char *name;
-  struct help_list *first;
+  struct help_list_t *first;
   struct help_ref *next;
 } *help_list = NULL;
 
@@ -84,14 +84,14 @@ static struct help_ref {
 int expmem_misc()
 {
   struct help_ref *current;
-  struct help_list *item;
+  struct help_list_t *item;
   int tot = 0;
 
   for (current = help_list; current; current = current->next) {
     tot += sizeof(struct help_ref) + strlen(current->name) + 1;
 
     for (item = current->first; item; item = item->next)
-      tot += sizeof(struct help_list) + strlen(item->name) + 1;
+      tot += sizeof(struct help_list_t) + strlen(item->name) + 1;
   }
   return tot + (max_logs * sizeof(log_t));
 }
@@ -467,7 +467,7 @@ void putlog EGG_VARARGS_DEF(int, arg1)
     ct[7] = 0;
     strcpy(&ct[2], &ct[4]);
     ct[24] = 0;
-    strcpy(&ct[5], &ct[22]);
+    strcpy(&ct[5], &ct[20]);
     if (ct[0] == ' ')
       ct[0] = '0';
   }
@@ -961,7 +961,7 @@ static void scan_help_file(struct help_ref *current, char *filename, int type)
 {
   FILE *f;
   char s[HELP_BUF_LEN + 1], *p, *q;
-  struct help_list *list;
+  struct help_list_t *list;
 
   if (is_file(filename) && (f = fopen(filename, "r"))) {
     while (!feof(f)) {
@@ -972,7 +972,7 @@ static void scan_help_file(struct help_ref *current, char *filename, int type)
 	  q += 7;
 	  if ((p = strchr(q, '}'))) {
 	    *p = 0;
-	    list = nmalloc(sizeof(struct help_list));
+	    list = nmalloc(sizeof(struct help_list_t));
 
 	    list->name = nmalloc(p - q + 1);
 	    strcpy(list->name, q);
@@ -1010,12 +1010,12 @@ void add_help_reference(char *file)
   scan_help_file(current, s, 1);
   simple_sprintf(s, "%sset/%s", helpdir, file);
   scan_help_file(current, s, 2);
-};
+}
 
 void rem_help_reference(char *file)
 {
   struct help_ref *current, *last = NULL;
-  struct help_list *item;
+  struct help_list_t *item;
 
   for (current = help_list; current; last = current, current = current->next)
     if (!strcmp(current->name, file)) {
@@ -1037,7 +1037,7 @@ void rem_help_reference(char *file)
 void reload_help_data(void)
 {
   struct help_ref *current = help_list, *next;
-  struct help_list *item;
+  struct help_list_t *item;
 
   help_list = NULL;
   while (current) {
@@ -1057,7 +1057,7 @@ void reload_help_data(void)
 void debug_help(int idx)
 {
   struct help_ref *current;
-  struct help_list *item;
+  struct help_list_t *item;
 
   for (current = help_list; current; current = current->next) {
     dprintf(idx, "HELP FILE(S): %s\n", current->name);
@@ -1073,7 +1073,7 @@ FILE *resolve_help(int dcc, char *file)
   char s[1024], *p;
   FILE *f;
   struct help_ref *current;
-  struct help_list *item;
+  struct help_list_t *item;
 
   /* somewhere here goes the eventual substituation */
   if (!(dcc & HELP_TEXT))
@@ -1190,7 +1190,7 @@ void tellhelp(int idx, char *file, struct flag_record *flags, int fl)
 void tellwildhelp(int idx, char *match, struct flag_record *flags)
 {
   struct help_ref *current;
-  struct help_list *item;
+  struct help_list_t *item;
   FILE *f;
   char s[1024];
 
@@ -1213,7 +1213,7 @@ void tellwildhelp(int idx, char *match, struct flag_record *flags)
 void tellallhelp(int idx, char *match, struct flag_record *flags)
 {
   struct help_ref *current;
-  struct help_list *item;
+  struct help_list_t *item;
   FILE *f;
   char s[1024];
 

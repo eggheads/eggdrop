@@ -7,7 +7,7 @@
  * 
  * dprintf'ized, 5aug1996
  * 
- * $Id: notes.c,v 1.14 1999/12/22 20:30:04 guppy Exp $
+ * $Id: notes.c,v 1.15 2000/01/06 21:03:46 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1183,8 +1183,8 @@ static char *notes_close()
   rem_builtins(H_nkch, notes_nkch);
   rem_builtins(H_load, notes_load);
   rem_help_reference("notes.help");
-  del_hook(HOOK_MATCH_NOTEREJ, match_note_ignore);
-  del_hook(HOOK_HOURLY, notes_hourly);
+  del_hook(HOOK_MATCH_NOTEREJ, (Function) match_note_ignore);
+  del_hook(HOOK_HOURLY, (Function) notes_hourly);
   del_entry_type(&USERENTRY_FWD);
   module_undepend(MODULE_NAME);
   return NULL;
@@ -1227,8 +1227,8 @@ char *notes_start(Function * global_funcs)
   module_register(MODULE_NAME, notes_table, 2, 1);
   if (!module_depend(MODULE_NAME, "eggdrop", 104, 0))
     return "This module requires eggdrop1.4.0 or later";
-  add_hook(HOOK_HOURLY, notes_hourly);
-  add_hook(HOOK_MATCH_NOTEREJ, match_note_ignore);
+  add_hook(HOOK_HOURLY, (Function) notes_hourly);
+  add_hook(HOOK_MATCH_NOTEREJ, (Function) match_note_ignore);
   add_tcl_ints(notes_ints);
   add_tcl_strings(notes_strings);
   add_tcl_commands(notes_tcls);

@@ -1,7 +1,7 @@
 /* 
  * transfer.c -- part of transfer.mod
  * 
- * $Id: transfer.c,v 1.20 1999/12/30 23:23:46 guppy Exp $
+ * $Id: transfer.c,v 1.21 2000/01/06 21:03:46 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -468,8 +468,8 @@ static void eof_dcc_send(int idx)
 
 static void dcc_get(int idx, char *buf, int len)
 {
-  char xnick[NICKLEN];
-  unsigned char bbuf[4], *bf;
+  char xnick[NICKLEN], *bf;
+  unsigned char bbuf[4];
   unsigned long cmp, l;
   int w = len + dcc[idx].u.xfer->sofar, p = 0;
 
@@ -565,7 +565,7 @@ static void dcc_get(int idx, char *buf, int len)
   l = dcc_block;
   if ((l == 0) || (dcc[idx].status + l > dcc[idx].u.xfer->length))
     l = dcc[idx].u.xfer->length - dcc[idx].status;
-  bf = (unsigned char *) nmalloc(l + 1);
+  bf = (char *) nmalloc(l + 1);
   fread(bf, l, 1, dcc[idx].u.xfer->f);
   tputs(dcc[idx].sock, bf, l);
   nfree(bf);

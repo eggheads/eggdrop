@@ -2,7 +2,7 @@
  * channels.c -- part of channels.mod
  *   support for channels within the bot
  * 
- * $Id: channels.c,v 1.32 1999/12/15 02:32:59 guppy Exp $
+ * $Id: channels.c,v 1.33 2000/01/06 21:03:46 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -731,12 +731,12 @@ static char *channels_close()
   rem_tcl_strings(my_tcl_strings);
   rem_tcl_ints(my_tcl_ints);
   rem_tcl_coups(mychan_tcl_coups);
-  del_hook(HOOK_USERFILE, channels_writeuserfile);
-  del_hook(HOOK_REHASH, channels_rehash);
-  del_hook(HOOK_PRE_REHASH, channels_prerehash);
-  del_hook(HOOK_MINUTELY, check_expired_bans);
-  del_hook(HOOK_MINUTELY,check_expired_exempts);
-  del_hook(HOOK_MINUTELY,check_expired_invites);
+  del_hook(HOOK_USERFILE, (Function) channels_writeuserfile);
+  del_hook(HOOK_REHASH, (Function) channels_rehash);
+  del_hook(HOOK_PRE_REHASH, (Function) channels_prerehash);
+  del_hook(HOOK_MINUTELY, (Function) check_expired_bans);
+  del_hook(HOOK_MINUTELY, (Function) check_expired_exempts);
+  del_hook(HOOK_MINUTELY, (Function) check_expired_invites);
   Tcl_UntraceVar(interp, "global-chanset",
 		 TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
 		 traced_globchanset, NULL);
@@ -827,12 +827,12 @@ char *channels_start(Function * global_funcs)
   module_register(MODULE_NAME, channels_table, 1, 0);
   if (!module_depend(MODULE_NAME, "eggdrop", 104, 0))
     return "This module needs eggdrop1.4.0 or later";
-  add_hook(HOOK_MINUTELY, check_expired_bans);
-  add_hook(HOOK_MINUTELY,check_expired_exempts);
-  add_hook(HOOK_MINUTELY,check_expired_invites);
-  add_hook(HOOK_USERFILE, channels_writeuserfile);
-  add_hook(HOOK_REHASH, channels_rehash);
-  add_hook(HOOK_PRE_REHASH, channels_prerehash);
+  add_hook(HOOK_MINUTELY, (Function) check_expired_bans);
+  add_hook(HOOK_MINUTELY, (Function) check_expired_exempts);
+  add_hook(HOOK_MINUTELY, (Function) check_expired_invites);
+  add_hook(HOOK_USERFILE, (Function) channels_writeuserfile);
+  add_hook(HOOK_REHASH, (Function) channels_rehash);
+  add_hook(HOOK_PRE_REHASH, (Function) channels_prerehash);
   Tcl_TraceVar(interp, "global-chanset",
 	       TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
 	       traced_globchanset, NULL);

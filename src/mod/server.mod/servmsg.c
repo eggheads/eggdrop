@@ -1,7 +1,7 @@
 /* 
  * servmsg.c -- part of server.mod
  * 
- * $Id: servmsg.c,v 1.26 1999/12/30 23:23:46 guppy Exp $
+ * $Id: servmsg.c,v 1.27 2000/01/06 21:03:46 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1074,7 +1074,8 @@ static void connect_server(void)
 {
   char s[121], pass[121], botserver[UHOSTLEN];
   static int oldserv = -1;
-  int servidx, botserverport;
+  int servidx;
+  unsigned int botserverport;
 
   waiting_for_awake = 0;
   trying_server = now;

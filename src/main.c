@@ -7,7 +7,7 @@
  * 
  * dprintf'ized, 15nov1995
  * 
- * $Id: main.c,v 1.35 1999/12/30 23:23:45 guppy Exp $
+ * $Id: main.c,v 1.36 2000/01/06 21:03:45 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -820,13 +820,13 @@ int main(int argc, char **argv)
   add_help_reference("cmds1.help");
   add_help_reference("cmds2.help");
   add_help_reference("core.help");
-  add_hook(HOOK_SECONDLY, core_secondly);
-  add_hook(HOOK_MINUTELY, core_minutely);
-  add_hook(HOOK_HOURLY, core_hourly);
-  add_hook(HOOK_REHASH, event_rehash);
-  add_hook(HOOK_PRE_REHASH, event_prerehash);
-  add_hook(HOOK_USERFILE, event_save);
-  add_hook(HOOK_DAILY, event_logfile);
+  add_hook(HOOK_SECONDLY, (Function) core_secondly);
+  add_hook(HOOK_MINUTELY, (Function) core_minutely);
+  add_hook(HOOK_HOURLY, (Function) core_hourly);
+  add_hook(HOOK_REHASH, (Function) event_rehash);
+  add_hook(HOOK_PRE_REHASH, (Function) event_prerehash);
+  add_hook(HOOK_USERFILE, (Function) event_save);
+  add_hook(HOOK_DAILY, (Function) event_logfile);
 
   debug0("main: entering loop");
   while (1) {

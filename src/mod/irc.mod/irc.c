@@ -2,7 +2,7 @@
  * irc.c -- part of irc.mod
  *   support for channels withing the bot 
  * 
- * $Id: irc.c,v 1.34 1999/12/25 01:49:25 guppy Exp $
+ * $Id: irc.c,v 1.35 2000/01/06 21:03:46 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1048,7 +1048,7 @@ static void do_nettype()
     break;
   }
   /* Update all rfc_ function pointers */
-  add_hook(HOOK_RFC_CASECMP, (void *) rfc_compliant);
+  add_hook(HOOK_RFC_CASECMP, (Function) rfc_compliant);
 }
 
 static char *traced_nettype(ClientData cdata, Tcl_Interp * irp, char *name1,
@@ -1064,7 +1064,7 @@ static char *traced_rfccompliant(ClientData cdata, Tcl_Interp * irp,
   /* This hook forces eggdrop core to change the rfc_ match function
    * links to point to the rfc compliant versions if rfc_compliant
    * is 1, or to the normal version if it's 0 */
-  add_hook(HOOK_RFC_CASECMP, (void *) rfc_compliant);
+  add_hook(HOOK_RFC_CASECMP, (Function) rfc_compliant);
   return NULL;
 }
 
@@ -1102,10 +1102,10 @@ static char *irc_close()
   rem_tcl_commands(tclchan_cmds);
   rem_help_reference("irc.help");
   Context;
-  del_hook(HOOK_MINUTELY, check_expired_chanstuff);
-  del_hook(HOOK_5MINUTELY, log_chans);
-  del_hook(HOOK_ADD_MODE, real_add_mode);
-  del_hook(HOOK_IDLE, flush_modes);
+  del_hook(HOOK_MINUTELY, (Function) check_expired_chanstuff);
+  del_hook(HOOK_5MINUTELY, (Function) log_chans);
+  del_hook(HOOK_ADD_MODE, (Function) real_add_mode);
+  del_hook(HOOK_IDLE, (Function) flush_modes);
   Tcl_UntraceVar(interp, "rfc-compliant",
 		 TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
 		 traced_rfccompliant, NULL);
@@ -1170,10 +1170,10 @@ char *irc_start(Function * global_funcs)
     chan->ircnet_status &= ~(CHAN_ASKED_INVITED | CHAN_ASKED_EXEMPTS);
   }
   Context;
-  add_hook(HOOK_MINUTELY, check_expired_chanstuff);
-  add_hook(HOOK_5MINUTELY, log_chans);
-  add_hook(HOOK_ADD_MODE, real_add_mode);
-  add_hook(HOOK_IDLE, flush_modes);
+  add_hook(HOOK_MINUTELY, (Function) check_expired_chanstuff);
+  add_hook(HOOK_5MINUTELY, (Function) log_chans);
+  add_hook(HOOK_ADD_MODE, (Function) real_add_mode);
+  add_hook(HOOK_IDLE, (Function) flush_modes);
   Tcl_TraceVar(interp, "net-type",
 	       TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
 	       traced_nettype, NULL);

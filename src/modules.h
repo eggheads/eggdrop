@@ -4,7 +4,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: modules.h,v 1.4 1999/12/22 20:30:03 guppy Exp $
+ * $Id: modules.h,v 1.5 2000/01/06 21:03:45 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -49,8 +49,8 @@ int module_undepend(char *);
 void *mod_malloc(int, char *, char *, int);
 void *mod_realloc(void *, int, char *, char *, int);
 void mod_free(void *ptr, char *modname, char *filename, int line);
-void add_hook(int hook_num, void *func);
-void del_hook(int hook_num, void *func);
+void add_hook(int hook_num, Function func);
+void del_hook(int hook_num, Function func);
 void *get_next_hook(int hook_num, void *func);
 extern struct hook_entry {
   struct hook_entry *next;

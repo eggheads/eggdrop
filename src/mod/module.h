@@ -1,7 +1,7 @@
 /* 
  * module.h
  * 
- * $Id: module.h,v 1.21 1999/12/25 01:49:25 guppy Exp $
+ * $Id: module.h,v 1.22 2000/01/06 21:03:46 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -279,8 +279,8 @@
 #define do_restart (*(int *)(global[170]))
 #define check_tcl_filt ((char *(*)(int, char *))global[171])
 /* 172 - 175 */
-#define add_hook(a,b) (((void (*) (int, void *))global[172])(a,b))
-#define del_hook(a,b) (((void (*) (int, void *))global[173])(a,b))
+#define add_hook(a,b) (((void (*) (int, Function))global[172])(a,b))
+#define del_hook(a,b) (((void (*) (int, Function))global[173])(a,b))
 #define H_dcc (*(p_tcl_bind_list *)(global[174]))
 #define H_filt (*(p_tcl_bind_list *)(global[175]))
 /* 176 - 179 */

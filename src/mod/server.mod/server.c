@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  * 
- * $Id: server.c,v 1.28 1999/12/30 23:23:46 guppy Exp $
+ * $Id: server.c,v 1.29 2000/01/06 21:03:46 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -979,9 +979,10 @@ static char *server_close()
 {
   cmd_t C_t[] =
   {
-    {"die", "m", (Function) cmd_die, NULL},
+    {"die", "m", NULL, NULL},
     {0, 0, 0, 0}
   };
+  C_t[0].func = (Function) cmd_die;
 
   Context;
   cycle_time = 100;
@@ -1027,12 +1028,12 @@ static char *server_close()
   Context;
   empty_msgq();
   Context;
-  del_hook(HOOK_SECONDLY, server_secondly);
-  del_hook(HOOK_5MINUTELY, server_5minutely);
-  del_hook(HOOK_QSERV, queue_server);
-  del_hook(HOOK_MINUTELY, minutely_checks);
-  del_hook(HOOK_PRE_REHASH, server_prerehash);
-  del_hook(HOOK_REHASH, server_postrehash);
+  del_hook(HOOK_SECONDLY, (Function) server_secondly);
+  del_hook(HOOK_5MINUTELY, (Function) server_5minutely);
+  del_hook(HOOK_QSERV, (Function) queue_server);
+  del_hook(HOOK_MINUTELY, (Function) minutely_checks);
+  del_hook(HOOK_PRE_REHASH, (Function) server_prerehash);
+  del_hook(HOOK_REHASH, (Function) server_postrehash);
   Context;
   module_undepend(MODULE_NAME);
   return NULL;
@@ -1192,12 +1193,12 @@ char *server_start(Function * global_funcs)
   add_tcl_commands(my_tcl_cmds);
   add_tcl_coups(my_tcl_coups);
   Context;
-  add_hook(HOOK_SECONDLY, server_secondly);
-  add_hook(HOOK_5MINUTELY, server_5minutely);
-  add_hook(HOOK_MINUTELY, minutely_checks);
-  add_hook(HOOK_QSERV, queue_server);
-  add_hook(HOOK_PRE_REHASH, server_prerehash);
-  add_hook(HOOK_REHASH, server_postrehash);
+  add_hook(HOOK_SECONDLY, (Function) server_secondly);
+  add_hook(HOOK_5MINUTELY, (Function) server_5minutely);
+  add_hook(HOOK_MINUTELY, (Function) minutely_checks);
+  add_hook(HOOK_QSERV, (Function) queue_server);
+  add_hook(HOOK_PRE_REHASH, (Function) server_prerehash);
+  add_hook(HOOK_REHASH, (Function) server_postrehash);
   Context;
   mq.head = hq.head = modeq.head = 0;
   mq.last = hq.last = modeq.last = 0;
