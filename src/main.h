@@ -18,17 +18,14 @@
 #      include <std_args.h>
 #    endif
 #  endif
-#  define VARARGS(type, name) (type name, ...)
-#  define VARARGS_DEF(type, name) (type name, ...)
-#  define VARARGS_START(type, name, list) (va_start(list, name), name)
+#  define EGG_VARARGS(type, name) (type name, ...)
+#  define EGG_VARARGS_DEF(type, name) (type name, ...)
+#  define EGG_VARARGS_START(type, name, list) (va_start(list, name), name)
 #else
 #  include <varargs.h>
-#  ifdef VARARGS
-#    undef VARARGS
-#  endif
-#  define VARARGS(type, name) ()
-#  define VARARGS_DEF(type, name) (va_alist) va_dcl
-#  define VARARGS_START(type, name, list) (va_start(list), va_arg(list,type))
+#  define EGG_VARARGS(type, name) ()
+#  define EGG_VARARGS_DEF(type, name) (va_alist) va_dcl
+#  define EGG_VARARGS_START(type, name, list) (va_start(list), va_arg(list,type))
 #endif
 
 #include <stdio.h>

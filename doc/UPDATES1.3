@@ -4,6 +4,11 @@ Changes in eggdrop: (since v1.3.0)
 
 1.3.29
 Foundby   Fixedby   What....
+          Tothwolf  various configure/Makefile changes again
+          rtc       fixed one more SEGV case that was revealed by another patch
+IpAddress Fabian    flood protection attempted to punish non-existant channel
+		    members and IRC services
+Ian	  Fabian    flushlogs caused segv if called before init_misc()
           Tothwolf  we use autoheader to make config.h.in now
 Tothwolf  guppy     added some #ifdef's for snprintf
           rtc       .chnick can now rename any +b to the bots nick if

@@ -14,7 +14,7 @@ EGGVERSION = @EGGVERSION@
 #   -Wall            if you're using gcc and it supports it (configure
 #                      usually detects this anyway now)
 #   -DEBUG_MEM       to be able to debug memory allocation (.debug)
-# this can now be set by using 'make debugmem'
+# this can now be set by using 'make debug'
 CFLGS =
 
 # configure SHOULD set these...you may need to tweak them to get modules
@@ -52,19 +52,20 @@ INSTALL_SCRIPT = @INSTALL_SCRIPT@
 # stuff for Tcl
 XREQ = @TCL_REQS@
 TCLLIB = @TCLLIB@
+TCLLIBFN = @TCLLIBFN@
 
 CFLAGS = @CFLAGS@ -I.. @DEFS@ $(CFLGS)
 @SET_MAKE@
 
 MAKE_STATIC = $(MAKE) 'CC=$(CC)' 'LD=$(LD)' 'STRIP=$(STRIP)' \
-'RANLIB=$(RANLIB)' 'CFLAGS=$(CFLAGS) -DSTATIC' 'CPPFLAGS=$(CPPFLAGS)' \
-'EGGEXEC=$(EGGEXEC)' 'TCLLIB=$(TCLLIB)' \
-'XREQ=$(XREQ)' 'XLIBS=@TCL_LIBS@ @LIBS@'
+'RANLIB=$(RANLIB)' 'CFLAGS=$(CFLAGS) -DSTATIC' \
+'CPPFLAGS=$(CPPFLAGS)' 'EGGEXEC=$(EGGEXEC)' 'TCLLIB=$(TCLLIB)' \
+'TCLLIBFN=$(TCLLIBFN)' 'XREQ=$(XREQ)' 'XLIBS=@TCL_LIBS@ @LIBS@'
 
 MAKE_MODEGG = $(MAKE) 'CC=$(MOD_CC)' 'LD=$(MOD_LD)' 'STRIP=$(MOD_STRIP)' \
-'RANLIB=$(RANLIB)' 'CFLAGS=$(CFLAGS)' 'CPPFLAGS=$(CPPFLAGS)' \
-'EGGEXEC=$(EGGEXEC)' 'TCLLIB=$(TCLLIB)' \
-'XREQ=$(XREQ)' 'XLIBS=@TCL_LIBS@ @LIBS@'
+'RANLIB=$(RANLIB)' 'CFLAGS=$(CFLAGS)' \
+'CPPFLAGS=$(CPPFLAGS)' 'EGGEXEC=$(EGGEXEC)' 'TCLLIB=$(TCLLIB)' \
+'TCLLIBFN=$(TCLLIBFN)' 'XREQ=$(XREQ)' 'XLIBS=@TCL_LIBS@ @LIBS@'
 
 MAKE_MODULES = $(MAKE) 'CC=$(SHLIB_CC)' 'LD=$(SHLIB_LD)' \
 'STRIP=$(SHLIB_STRIP)' 'CFLAGS=$(CFLAGS)' 'CPPFLAGS=$(CPPFLAGS)'
@@ -72,12 +73,12 @@ MAKE_MODULES = $(MAKE) 'CC=$(SHLIB_CC)' 'LD=$(SHLIB_LD)' \
 MAKE_SDEBUG = $(MAKE) 'CC=$(CC)' 'LD=$(LD)' 'STRIP=touch' \
 'RANLIB=$(RANLIB)' 'CFLAGS=-g3 $(CFLAGS) -DSTATIC -DEBUG_MEM' \
 'CPPFLAGS=$(CPPFLAGS)' 'EGGEXEC=$(EGGEXEC)' 'TCLLIB=$(TCLLIB)' \
-'XREQ=$(XREQ)' 'XLIBS=@TCL_LIBS@ @LIBS@'
+'TCLLIBFN=$(TCLLIBFN)' 'XREQ=$(XREQ)' 'XLIBS=@TCL_LIBS@ @LIBS@'
 
 MAKE_MEMEGG = $(MAKE) 'CC=$(MOD_CC)' 'LD=$(MOD_LD)' 'STRIP=touch' \
 'RANLIB=$(RANLIB)' 'CFLAGS=-g3 $(CFLAGS) -DEBUG_MEM' \
 'CPPFLAGS=$(CPPFLAGS)' 'EGGEXEC=$(EGGEXEC)' 'TCLLIB=$(TCLLIB)' \
-'XREQ=$(XREQ)' 'XLIBS=@TCL_LIBS@ @LIBS@'
+'TCLLIBFN=$(TCLLIBFN)' 'XREQ=$(XREQ)' 'XLIBS=@TCL_LIBS@ @LIBS@'
 
 MAKE_DEBMODULES = $(MAKE) 'CC=$(SHLIB_CC)' 'LD=$(SHLIB_LD)' \
 'STRIP=touch' 'CFLAGS=-g3 $(CFLAGS) -DEBUG_MEM' 'CPPFLAGS=$(CPPFLAGS)'
@@ -137,7 +138,7 @@ static: eggtest
 	@./$(EGGEXEC) -v
 	@ls -l $(EGGEXEC)
 
-debugmem: memegg debmodules
+debug: memegg debmodules
 
 memegg: modtest
 	@cd src; $(MAKE_MEMEGG) memegg

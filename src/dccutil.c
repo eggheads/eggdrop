@@ -95,13 +95,13 @@ char *add_cr(char *buf)
 }
 
 extern void (*qserver) (int, char *, int);
-void dprintf VARARGS_DEF(int, arg1)
+void dprintf EGG_VARARGS_DEF(int, arg1)
 {
   char *format;
   int idx, len;
 
   va_list va;
-  idx = VARARGS_START(int, arg1, va);
+  idx = EGG_VARARGS_START(int, arg1, va);
   format = va_arg(va, char *);
 
 #ifdef HAVE_VSNPRINTF
@@ -148,14 +148,14 @@ void dprintf VARARGS_DEF(int, arg1)
   }
 }
 
-void chatout VARARGS_DEF(char *, arg1)
+void chatout EGG_VARARGS_DEF(char *, arg1)
 {
   int i;
   char *format;
   char s[601];
 
   va_list va;
-  format = VARARGS_START(char *, arg1, va);
+  format = EGG_VARARGS_START(char *, arg1, va);
 
 #ifdef HAVE_VSNPRINTF
   if (vsnprintf(s, 511, format, va) < 0)
@@ -171,14 +171,14 @@ void chatout VARARGS_DEF(char *, arg1)
 }
 
 /* print to all on this channel but one */
-void chanout_but VARARGS_DEF(int, arg1)
+void chanout_but EGG_VARARGS_DEF(int, arg1)
 {
   int i, x, chan;
   char *format;
   char s[601];
 
   va_list va;
-  x = VARARGS_START(int, arg1, va);
+  x = EGG_VARARGS_START(int, arg1, va);
   chan = va_arg(va, int);
   format = va_arg(va, char *);
 

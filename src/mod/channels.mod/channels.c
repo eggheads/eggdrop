@@ -283,11 +283,31 @@ static int channels_chon(char *handle, int idx)
   return 0;
 }
 
+static char *convert_element(char *src, char *dst)
+{
+/*
+  char *out = dst;
+  while (src && src[0]) {
+    if (strchr("[];$\\", *src))
+      *out++ = '\\';
+    *out++ = *src++;
+  }
+  *out = 0;
+  return dst;
+*/
+  int flags;
+  Tcl_ScanElement(src, &flags);
+  Tcl_ConvertElement(src, dst, flags);
+  return dst;
+}
+
+#define PLSMNS(x) (x ? '+' : '-')
+
 static void write_channels()
 {
   FILE *f;
-  char s[121], w[1024], name[163];
-  int i, j;
+  char s[121], w[1024], w2[1024], name[163];
+  char need1[242], need2[242], need3[242], need4[242], need5[242];
   struct chanset_t *chan;
 
   context;
@@ -305,99 +325,64 @@ static void write_channels()
   fprintf(f, "#Dynamic Channel File for %s (%s) -- written %s\n",
 	  origbotname, ver, ctime(&now));
   for (chan = chanset; chan; chan = chan->next) {
-    for (i = 0, j = 0; i < strlen(chan->name); i++, j++) {
-      if (strchr("[];$", chan->name[i])) {
-	name[j] = '\\';
-	j++;
-      }
-      name[j] = chan->name[i];
-    }
-    name[j++] = '\0';
-    if (channel_static(chan)) {
-      fprintf(f, "channel set %s ", name);
-    } else {
-      fprintf(f, "channel add %s {", name);
-    }
+    convert_element(chan->name, name);
     get_mode_protect(chan, w);
-    if (w[0])
-      fprintf(f, "chanmode \"%s\" ", w);
-    if (chan->idle_kick)
-      fprintf(f, "idle-kick %d ", chan->idle_kick);
-    else
-      fprintf(f, "dont-idle-kick ");
-    if (chan->need_op[0])
-      fprintf(f, "need-op {%s} ", chan->need_op);
-    if (chan->need_invite[0])
-      fprintf(f, "need-invite {%s} ",
-	      chan->need_invite);
-    if (chan->need_key[0])
-      fprintf(f, "need-key {%s} ",
-	      chan->need_key);
-    if (chan->need_unban[0])
-      fprintf(f, "need-unban {%s} ",
-	      chan->need_unban);
-    if (chan->need_limit[0])
-      fprintf(f, "need-limit {%s} ",
-	      chan->need_limit);
-    fprintf(f, "flood-chan %d:%d flood-ctcp %d:%d flood-join %d:%d \
-flood-kick %d:%d flood-deop %d:%d ", 
+    convert_element(w, w2);
+    convert_element(chan->need_op, need1);
+    convert_element(chan->need_invite, need2);
+    convert_element(chan->need_key, need3);
+    convert_element(chan->need_unban, need4);
+    convert_element(chan->need_limit, need5);
+    fprintf(f, "channel %s %s%schanmode %s idle-kick %d \
+need-op %s need-invite %s need-key %s need-unban %s need-limit %s \
+flood-chan %d:%d flood-ctcp %d:%d flood-join %d:%d \
+flood-kick %d:%d flood-deop %d:%d \
+%cclearbans %cenforcebans %cdynamicbans %cuserbans %cautoop %cbitch \
+%cgreet %cprotectops %cprotectfriends %cdontkickops %cwasoptest \
+%cstatuslog %cstopnethack %crevenge %crevengebot %cautovoice %csecret \
+%cshared %ccycle %cseen %cinactive %cdynamicexempts %cuserexempts \
+%cdynamicinvites %cuserinvites%s\n",
+	channel_static(chan) ? "set" : "add",
+	name,
+	channel_static(chan) ? " " : " { ",
+	w2,
+/* now bot write chanmode "" too,
+ * so bot wont use default-chanmode instead of "" -- bugfix
+ */
+	chan->idle_kick, /* idle-kick 0 is same as dont-idle-kick (less code)*/
+	need1, need2, need3, need4, need5,
+/* yes we will write empty need-xxxx too, why not? (less code + lazyness) */
 	chan->flood_pub_thr, chan->flood_pub_time,
-	chan->flood_ctcp_thr, chan->flood_ctcp_time,
-	chan->flood_join_thr, chan->flood_join_time,
-	chan->flood_kick_thr, chan->flood_kick_time,
-	chan->flood_deop_thr, chan->flood_deop_time);
-    fprintf(f, "%cclearbans ",
-	    channel_clearbans(chan) ? '+' : '-');
-    fprintf(f, "%cenforcebans ",
-	    channel_enforcebans(chan) ? '+' : '-');
-    fprintf(f, "%cdynamicbans ",
-	    channel_dynamicbans(chan) ? '+' : '-');
-    fprintf(f, "%cuserbans ",
-	    channel_nouserbans(chan) ? '-' : '+');
-    fprintf(f, "%cautoop ",
-	    channel_autoop(chan) ? '+' : '-');
-    fprintf(f, "%cbitch ",
-	    channel_bitch(chan) ? '+' : '-');
-    fprintf(f, "%cgreet ",
-	    channel_greet(chan) ? '+' : '-');
-    fprintf(f, "%cprotectops ",
-	    channel_protectops(chan) ? '+' : '-');
-    fprintf(f, "%cprotectfriends ",
-            channel_protectfriends(chan) ? '+' : '-');
-    fprintf(f, "%cdontkickops ",
-	    channel_dontkickops(chan) ? '+' : '-');
-    fprintf(f, "%cwasoptest ",
-	    channel_wasoptest(chan) ? '+' : '-');
-    fprintf(f, "%cstatuslog ",
-	    channel_logstatus(chan) ? '+' : '-');
-    fprintf(f, "%cstopnethack ",
-	    channel_stopnethack(chan) ? '+' : '-');
-    fprintf(f, "%crevenge ",
-	    channel_revenge(chan) ? '+' : '-');
-    fprintf(f, "%crevengebot ",
-	    channel_revengebot(chan) ? '+' : '-');
-    fprintf(f, "%cautovoice ",
-	    channel_autovoice(chan) ? '+' : '-');
-    fprintf(f, "%csecret ",
-	    channel_secret(chan) ? '+' : '-');
-    fprintf(f, "%cshared ",
-	    channel_shared(chan) ? '+' : '-');
-    fprintf(f, "%ccycle ",
-	    channel_cycle(chan) ? '+' : '-');
-    fprintf(f, "%cseen ",
-	    channel_seen(chan) ? '+' : '-');
-    fprintf(f, "%cinactive ",
-	    channel_inactive(chan) ? '+' : '-');
-    fprintf(f, "%cdynamicexempts ", 
-            channel_dynamicexempts(chan) ? '+' : '-');
-    fprintf(f, "%cuserexempts ", 
-            channel_nouserexempts(chan) ? '-' : '+');
-    fprintf(f, "%cdynamicinvites ", 
- 	    channel_dynamicinvites(chan) ? '+' : '-');
-    fprintf(f, "%cuserinvites ", 
-            channel_nouserinvites(chan) ? '-' : '+');
-
-    fprintf(f, "%c\n", channel_static(chan) ? ' ' : '}');
+        chan->flood_ctcp_thr, chan->flood_ctcp_time,
+        chan->flood_join_thr, chan->flood_join_time,
+        chan->flood_kick_thr, chan->flood_kick_time,
+        chan->flood_deop_thr, chan->flood_deop_time,
+	PLSMNS(channel_clearbans(chan)),
+	PLSMNS(channel_enforcebans(chan)),
+	PLSMNS(channel_dynamicbans(chan)),
+	PLSMNS(!channel_nouserbans(chan)),
+	PLSMNS(channel_autoop(chan)),
+	PLSMNS(channel_bitch(chan)),
+	PLSMNS(channel_greet(chan)),
+	PLSMNS(channel_protectops(chan)),
+        PLSMNS(channel_protectfriends(chan)),
+	PLSMNS(channel_dontkickops(chan)),
+	PLSMNS(channel_wasoptest(chan)),
+	PLSMNS(channel_logstatus(chan)),
+	PLSMNS(channel_stopnethack(chan)),
+	PLSMNS(channel_revenge(chan)),
+	PLSMNS(channel_revengebot(chan)),
+	PLSMNS(channel_autovoice(chan)),
+	PLSMNS(channel_secret(chan)),
+	PLSMNS(channel_shared(chan)),
+	PLSMNS(channel_cycle(chan)),
+	PLSMNS(channel_seen(chan)),
+	PLSMNS(channel_inactive(chan)),
+        PLSMNS(channel_dynamicexempts(chan)),
+        PLSMNS(!channel_nouserexempts(chan)),
+ 	PLSMNS(channel_dynamicinvites(chan)),
+        PLSMNS(!channel_nouserinvites(chan)),
+	channel_static(chan) ? "" : " }");
     if (fflush(f)) {
       putlog(LOG_MISC, "*", "ERROR writing channel file.");
       fclose(f);

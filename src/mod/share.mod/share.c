@@ -20,7 +20,7 @@ static struct flag_record fr = {0, 0, 0, 0, 0, 0};
 static int resync_time = 900;
 static Function *global = NULL, *transfer_funcs = NULL, *channels_funcs = NULL;
 static void start_sending_users(int);
-static void shareout_but VARARGS(struct chanset_t *, arg1);
+static void shareout_but EGG_VARARGS(struct chanset_t *, arg1);
 static int flush_tbuf(char *bot);
 static int can_resync(char *bot);
 static void dump_resync(int idx);
@@ -1107,7 +1107,7 @@ static void sharein_mod(int idx, char *msg)
   }
 }
 
-static void shareout_mod VARARGS_DEF(struct chanset_t *, arg1)
+static void shareout_mod EGG_VARARGS_DEF(struct chanset_t *, arg1)
 {
   int i, l;
   char *format;
@@ -1115,7 +1115,7 @@ static void shareout_mod VARARGS_DEF(struct chanset_t *, arg1)
   struct chanset_t *chan;
 
   va_list va;
-  chan = VARARGS_START(struct chanset_t *, arg1, va);
+  chan = EGG_VARARGS_START(struct chanset_t *, arg1, va);
 
   if (!chan || channel_shared(chan)) {
     format = va_arg(va, char *);
@@ -1143,7 +1143,7 @@ static void shareout_mod VARARGS_DEF(struct chanset_t *, arg1)
   va_end(va);
 }
 
-static void shareout_but VARARGS_DEF(struct chanset_t *, arg1)
+static void shareout_but EGG_VARARGS_DEF(struct chanset_t *, arg1)
 {
   int i, x, l;
   char *format;
@@ -1151,7 +1151,7 @@ static void shareout_but VARARGS_DEF(struct chanset_t *, arg1)
   struct chanset_t *chan;
 
   va_list va;
-  chan = VARARGS_START(struct chanset_t *, arg1, va);
+  chan = EGG_VARARGS_START(struct chanset_t *, arg1, va);
   x = va_arg(va, int);
   format = va_arg(va, char *);
 

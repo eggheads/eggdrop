@@ -156,7 +156,8 @@ case "$SYSTEM" in
     ;;
   IRIX64)
     AC_MSG_RESULT(IRIX64)
-    SHLIB_STRIP=touch
+    IRIX=yes
+    SHLIB_STRIP=strip
     NEED_DL=0
     DEFAULT_MAKE=static
     ;;
@@ -166,7 +167,7 @@ case "$SYSTEM" in
     CFLAGS="$CFLAGS -Wall"
     MOD_LD="${CC}"
     SHLIB_LD="${CC} -shared -nostartfiles"
-    DEFAULT_MAKE=debugmem
+    DEFAULT_MAKE=debug
     AC_DEFINE(MODULES_OK)
     ;;
   Lynx)
@@ -242,13 +243,23 @@ case "$SYSTEM" in
       AC_MSG_RESULT([NeXT...We are borg, you will be assimilated])
       AC_MSG_RESULT([break out the static modules, it's all you'll ever get :P])
       AC_MSG_RESULT(Hiya DK :P)
+      NEED_DL=0
+      DEFAULT_MAKE=static
       AC_DEFINE(BORGCUBES)
     else
-      AC_MSG_RESULT(Something unknown!!)
-      AC_MSG_RESULT([If you get dynamic modules to work, be sure to let the devel team know HOW :)])
+      if test -r "/cmds"
+      then
+	AC_MSG_RESULT(QNX)
+	NEED_DL=0
+	SHLIB_STRIP=touch
+	DEFAULT_MAKE=static
+      else
+	AC_MSG_RESULT(Something unknown!)
+	AC_MSG_RESULT([If you get dynamic modules to work, be sure to let the devel team know HOW :)])
+	NEED_DL=0
+	DEFAULT_MAKE=static
+      fi
     fi
-    NEED_DL=0
-    DEFAULT_MAKE=static
     ;;
 esac
 
@@ -640,8 +651,25 @@ then
   AC_MSG_RESULT(not found)
 fi
 
-# done looking, now either TCLLIBFN & TCLINCFN are both set, or we bail
-if test "x${TCLLIBFN}" = "x" || test "x${TCLINCFN}" = "x"
+# done looking, now either TCLLIBFN & TCLINCFN are both set, or we will bail
+if test ! "x${TCLLIBFN}" = "x" && test ! "x${TCLINCFN}" = "x"
+then
+  # is this really Tcl ?
+  TCL_VERSION=`grep TCL_VERSION $TCLINC/$TCLINCFN | head -1 | $AWK '{gsub(/\"/, "", $3); print $3}'`
+fi
+
+# check Tcl version
+AC_MSG_CHECKING(for Tcl version)
+if test ! "x${TCL_VERSION}" = "x"
+then
+  AC_MSG_RESULT($TCL_VERSION)
+  TCL_FOUND=1
+else
+  AC_MSG_RESULT(not found)
+  TCL_FOUND=0
+fi
+
+if test $TCL_FOUND = 0
 then
   cat << 'EOF' >&2
 configure: error:
@@ -659,103 +687,12 @@ configure: error:
 
 EOF
   exit 1
-else # TCLLIBFN || TCLINCFN
+else
 
-  # is this really Tcl ?
-  TCLFOUND=`grep TCL_VERSION $TCLINC/$TCLINCFN | wc -l`
-  if test $TCLFOUND = 1
+  # is this Tcl version too old for us to use ?
+  TCL_VER_PRE70=`echo $TCL_VERSION | $AWK '{split($1, i, "."); if (i[1] < 7) print "yes"; else print "no"}'`
+  if test "$TCL_VER_PRE70" = "xyes"
   then
-
-    # check Tcl version
-    AC_MSG_CHECKING(for Tcl version)
-    TCLVER=`grep TCL_VERSION $TCLINC/$TCLINCFN | $AWK '{gsub(/\"/, "", $3); print $3}' | head -1`
-    if test ! "x${TCLVER}" = "x"
-    then
-      AC_MSG_RESULT($TCLVER)
-    else
-      AC_MSG_RESULT(hmm... unknown version)
-    fi
-
-    # are we using a pre 7.5 Tcl version ?
-changequote(,)dnl
-    OLD_TCL=`echo $TCLVER | $AWK '{split($1, i, "."); if (((i[1] == 7) && (i[2] >= 5)) || (i[1] >= 8)) print "no"; else print "yes"}'`
-changequote([, ])dnl
-    if test "x${OLD_TCL}" = "xyes"
-    then
-      AC_DEFINE(HAVE_OLD_TCL)
-    else
-      # detect buggy Tcl 8.1 compiled with threads
-changequote(,)dnl
-      BUGGY_TCL=`echo $TCLVER | $AWK '{split($1, i, "."); if ((i[1] == 8) && (i[2] == 1)) print "yes"; else print "no"}'`
-changequote([, ])dnl
-      if test "x${BUGGY_TCL}" = "xyes"
-      then
-	AC_MSG_CHECKING(for buggy Tcl 8.1 threads)
-	if test -f "$TCLLIB/$tclconfigfile"
-	then
-	  HASTHREADS=`grep 'TCL_DEFS' $TCLLIB/$tclconfigfile | grep 'TCL_THREADS=1' | wc -l`
-	  if test $HASTHREADS = 1
-	  then
-	    AC_MSG_RESULT(yes...using a workaround...)
-	    AC_DEFINE(HAVE_BUGGY_TCL_THREADS)
-	  else
-	    AC_MSG_RESULT(no)
-	  fi
-	else
-	  AC_MSG_RESULT(${tclconfigfile} is missing...better safe then sorry...)
-	  AC_DEFINE(HAVE_BUGGY_TCL_THREADS)
-	fi
-      fi # BUGGYTCL
-    fi # OLDTCL
-
-    if test ! "x${TCLLIBEXT}" = "x.a"
-    then
-      TCL_REQS="$TCLLIB/lib$TCLLIBFN"
-      TCL_LIBS="-L$TCLLIB -l$TCLLIBFNS -lm"
-    else
-
-      # set default make as static for unshared Tcl library
-      if test ! "$DEFAULT_MAKE" = "static"
-      then
-	cat << 'EOF' >&2
-configure: warning:
-
-  Your libtcl is not a shared library.
-  configure will set default make type to static...
-
-EOF
-	DEFAULT_MAKE=static
-      fi
-
-      # are we using a pre 7.4 Tcl version ?
-changequote(,)dnl
-      VERYOLDTCL=`echo $TCLVER | $AWK '{split($1, i, "."); print ((i[1] <= 7) && (i[2] <= 3)) ? "yes" : "no"}'`
-changequote([, ])dnl
-      if test "x${VERYOLDTCL}" = "xno"
-      then
-	# was the --with-tcllib option given ?
-	if test ! "x${tcllibname}" = "x"
-	then
-	  TCL_REQS="$TCLLIB/lib$TCLLIBFN"
-	  TCL_LIBS="$TCLLIB/lib$TCLLIBFN -lm"
-	else
-	  TCL_REQS="$TCLLIB/lib$TCLLIBFN"
-	  TCL_LIBS="-L$TCLLIB -l$TCLLIBFNS -lm"
-	fi
-      else
-	cat << EOF >&2
-configure: warning:
-
-  Your Tcl version ($TCLVER) is older then 7.4.
-  There is a known problem, but we will use a workaround.
-
-EOF
-	TCL_REQS="libtcle.a"
-	TCL_LIBS="-L. -ltcle -lm"
-      fi
-    fi
-
-  else # TCLFOUND
     cat << EOF >&2
 configure: error:
 
@@ -765,9 +702,89 @@ configure: error:
 
 EOF
     exit 1
-  fi # TCLFOUND
+  fi
 
-fi # TCLLIBFN || TCLINCFN
+  # are we using a pre 7.5 Tcl version ?
+changequote(,)dnl
+  TCL_VER_PRE75=`echo $TCL_VERSION | $AWK '{split($1, i, "."); if (((i[1] == 7) && (i[2] >= 5)) || (i[1] >= 8)) print "no"; else print "yes"}'`
+changequote([, ])dnl
+  if test "x${TCL_VER_PRE75}" = "xyes"
+  then
+    AC_DEFINE(HAVE_OLD_TCL)
+  else
+
+    # detect buggy Tcl 8.1 compiled with threads
+changequote(,)dnl
+    TCL_VER_81=`echo $TCL_VERSION | $AWK '{split($1, i, "."); if ((i[1] == 8) && (i[2] == 1)) print "yes"; else print "no"}'`
+changequote([, ])dnl
+    if test "x${TCL_VER_81}" = "xyes"
+    then
+      AC_MSG_CHECKING(for buggy Tcl 8.1 threads)
+      if test -f "$TCLLIB/$tclconfigfile"
+      then
+	TCL_HAS_THREADS=`grep 'TCL_DEFS' $TCLLIB/$tclconfigfile | grep 'TCL_THREADS=1' | wc -l`
+	if test $TCL_HAS_THREADS = 1
+	then
+	  AC_MSG_RESULT(yes...using a workaround.)
+	  AC_DEFINE(HAVE_BUGGY_TCL_THREADS)
+	else
+	  AC_MSG_RESULT(no)
+	fi
+      else
+	AC_MSG_RESULT(${tclconfigfile} is missing...better to be safe then sorry.)
+	AC_DEFINE(HAVE_BUGGY_TCL_THREADS)
+      fi
+    fi
+  fi
+
+  if test ! "x${TCLLIBEXT}" = "x.a"
+  then
+    TCL_REQS="$TCLLIB/lib$TCLLIBFN"
+    TCL_LIBS="-L$TCLLIB -l$TCLLIBFNS -lm"
+  else
+
+    # set default make as static for unshared Tcl library
+    if test ! "$DEFAULT_MAKE" = "static"
+    then
+      cat << 'EOF' >&2
+configure: warning:
+
+  Your libtcl is not a shared library.
+  configure will set default make type to static.
+
+EOF
+      DEFAULT_MAKE=static
+    fi
+
+    # are we using a pre 7.4 Tcl version ?
+changequote(,)dnl
+    TCL_VER_PRE74=`echo $TCL_VERSION | $AWK '{split($1, i, "."); if (((i[1] == 7) && (i[2] <= 3)) || (i[1] <= 6)) print "yes"; else print "no"}'`
+changequote([, ])dnl
+    if test "x${TCL_VER_PRE74}" = "xno"
+    then
+
+      # was the --with-tcllib option given ?
+      if test ! "x${tcllibname}" = "x"
+      then
+	TCL_REQS="$TCLLIB/lib$TCLLIBFN"
+	TCL_LIBS="$TCLLIB/lib$TCLLIBFN -lm"
+      else
+	TCL_REQS="$TCLLIB/lib$TCLLIBFN"
+	TCL_LIBS="-L$TCLLIB -l$TCLLIBFNS -lm"
+      fi
+    else
+      cat << EOF >&2
+configure: warning:
+
+  Your Tcl version ($TCL_VERSION) is older then 7.4.
+  There are known problems, but we will work around them.
+
+EOF
+      TCL_REQS="libtcle.a"
+      TCL_LIBS="-L. -ltcle -lm"
+    fi
+  fi
+fi
 
 AC_SUBST(TCLLIB)
 AC_SUBST(TCLLIBFN)

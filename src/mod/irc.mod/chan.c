@@ -117,12 +117,15 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
   struct userrec *u;
   memberlist *m;
   int thr = 0, lapse = 0;
-  struct flag_record fr =
-  {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
+  struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
 
   if (!chan || (which < 0) || (which >= FLOOD_CHAN_MAX))
     return 0;
   m = ismember(chan, floodnick); 
+  /* let's not fight against non-existant channel members and
+   * IRC services like ChanServ  (Fabian) */
+  if (!m)
+    return 0;
   get_user_flagrec(get_user_by_host(from), &fr, chan->name);
   context;
   if (glob_bot(fr) ||
@@ -220,7 +223,7 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
     case FLOOD_NOTICE:
     case FLOOD_CTCP:
       /* flooding chan! either by public or notice */
-      if (m && me_op(chan)) {
+      if (me_op(chan) && !chan_sentkick(m)) {
 	putlog(LOG_MODES, chan->name, IRC_FLOODKICK, floodnick);
 	dprintf(DP_MODE, "KICK %s %s :%s\n", chan->name, floodnick,
 		CHAN_FLOOD);
@@ -264,7 +267,7 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
 	}
       return 1;
     case FLOOD_KICK:
-      if (me_op(chan)) {
+      if (me_op(chan) && !chan_sentkick(m)) {
 	putlog(LOG_MODES, chan->name, "Kicking %s, for mass kick.", floodnick);
 	dprintf(DP_MODE, "KICK %s %s :%s\n", chan->name, floodnick,
 		IRC_MASSKICK);
@@ -272,7 +275,7 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
       }
     return 1;
     case FLOOD_DEOP:
-      if (me_op(chan)) {
+      if (me_op(chan) && !chan_sentkick(m)) {
 	putlog(LOG_MODES, chan->name,
 	       CHAN_MASSDEOP, CHAN_MASSDEOP_ARGS); 
 	dprintf(DP_MODE, "KICK %s %s :%s\n",
@@ -772,8 +775,7 @@ static int got324(char *from, char *msg)
 static int got352or4(struct chanset_t *chan, char *user, char *host,
 		     char *nick, char *flags)
 {
-  struct flag_record fr =
-  {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
+  struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
   char userhost[UHOSTLEN], *p;
   memberlist *m;
   int waschanop;
@@ -935,8 +937,7 @@ static int got367(char *from, char *msg)
   char s[UHOSTLEN], *ban, *who, *chname;
   struct chanset_t *chan;
   struct userrec *u;
-  struct flag_record fr =
-  {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
+  struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
 
   newsplit(&msg);
   chname = newsplit(&msg);
@@ -1316,8 +1317,7 @@ static int got332(char *from, char *msg)
 static void do_embedded_mode(struct chanset_t *chan, char *nick,
 			     memberlist * m, char *mode)
 {
-  struct flag_record fr =
-  {0, 0, 0, 0, 0, 0};
+  struct flag_record fr = {0, 0, 0, 0, 0, 0};
   int servidx = findanyidx(serv);
 
   while (*mode) {
@@ -1534,7 +1534,7 @@ static int gotjoin(char *from, char *chname)
 	    if (ok && !chan_sentkick(m)) {
 	      dprintf(DP_SERVER, "KICK %s %s :%s\n", chname, m->nick,
 		      IRC_YOUREBANNED);
-	      m->flags |= SENTKICK;    
+	      m->flags |= SENTKICK;
             }
 	  }
 	}

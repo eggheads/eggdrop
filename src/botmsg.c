@@ -26,14 +26,14 @@ static char OBUF[1024];
 
 #ifndef NO_OLD_BOTNET
 /* ditto for tandem bots */
-void tandout_but VARARGS_DEF(int, arg1)
+void tandout_but EGG_VARARGS_DEF(int, arg1)
 {
   int i, x, l;
   char *format;
   char s[601];
 
   va_list va;
-  x = VARARGS_START(int, arg1, va);
+  x = EGG_VARARGS_START(int, arg1, va);
   format = va_arg(va, char *);
 
 #ifdef HAVE_VSNPRINTF
@@ -124,13 +124,13 @@ char *unsigned_int_to_base10(unsigned int val)
   return buf_base10 + i;
 }
 
-int simple_sprintf VARARGS_DEF(char *,arg1)
+int simple_sprintf EGG_VARARGS_DEF(char *,arg1)
 {
   char *buf, *format, *s;
   int c = 0, i;
 
   va_list va;
-  buf = VARARGS_START(char *, arg1, va);
+  buf = EGG_VARARGS_START(char *, arg1, va);
   format = va_arg(va, char *);
 
   while (*format && (c < 1023)) {
@@ -277,14 +277,14 @@ void botnet_send_pong(int idx)
     tputs(dcc[idx].sock, "po\n", 3);
 }
 
-void botnet_send_priv VARARGS_DEF(int, arg1)
+void botnet_send_priv EGG_VARARGS_DEF(int, arg1)
 {
   int idx, l;
   char *from, *to, *tobot, *format;
   char tbuf[1024];
 
   va_list va;
-  idx = VARARGS_START(int, arg1, va);
+  idx = EGG_VARARGS_START(int, arg1, va);
   from = va_arg(va, char *);
   to = va_arg(va, char *);
   tobot = va_arg(va, char *);

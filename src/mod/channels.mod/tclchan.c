@@ -1437,15 +1437,16 @@ static int tcl_channel_add(Tcl_Interp * irp, char *newname, char *options)
   int ret = TCL_OK;
   int join = 0;
   char buf[2048];
+  char buf2[256];
 
   if ((newname[0] != '#') && (newname[0] != '&'))
     return TCL_ERROR;
   context;
-  simple_sprintf(buf, "chanmode \"%s\" ", glob_chanmode);
+  convert_element(glob_chanmode, buf2);
+  simple_sprintf(buf, "chanmode %s ", buf2);
   strncat(buf, glob_chanset, 2047 - strlen(buf));
   strncat(buf, options, 2047 - strlen(buf));
   buf[2047] = 0;
-  /* drummer: Tcl8.0: Tcl_SplitList does not use irp, can be NULL */
   if (Tcl_SplitList(NULL, buf, &items, &item) != TCL_OK)
     return TCL_ERROR;
   context;
@@ -1487,6 +1488,7 @@ static int tcl_channel_add(Tcl_Interp * irp, char *newname, char *options)
   if ((tcl_channel_modify(irp, chan, items, item) != TCL_OK) && !chan_hack) {
     ret = TCL_ERROR;
   }
+  Tcl_Free((char*) item);
   if (join && !channel_inactive(chan) && module_find("irc", 0, 0))
     dprintf(DP_SERVER, "JOIN %s %s\n", chan->name, chan->key_prot);
   return ret; 
