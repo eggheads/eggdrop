@@ -119,6 +119,7 @@ EGG_FUNC_DLOPEN
 
 EGG_SUBST_EGGVERSION
 EGG_SUBST_DEST
+EGG_SUBST_MOD_UPDIR
 EGG_CATCH_MAKEFILE_REBUILD
 
 AC_OUTPUT(Makefile doc/Makefile scripts/Makefile src/Makefile src/md5/Makefile src/compat/Makefile src/mod/Makefile)

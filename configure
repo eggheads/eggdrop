@@ -3640,6 +3640,11 @@ then
   DEST=\${prefix}
 fi
 
+case "$srcdir" in
+  [\\/]* | ?:[\\/]* ) MOD_UPDIR="" ;;
+  * )                     MOD_UPDIR="../" ;;
+esac
+
   
 
 
@@ -3807,6 +3812,7 @@ s%@TCL_REQS@%$TCL_REQS%g
 s%@TCL_LIBS@%$TCL_LIBS%g
 s%@EGGVERSION@%$EGGVERSION%g
 s%@DEST@%$DEST%g
+s%@MOD_UPDIR@%$MOD_UPDIR%g
 
 CEOF
 EOF

@@ -1,10 +1,11 @@
 # Makefile for src/mod/
-# $Id: Makefile.in,v 1.12 2000/07/23 20:47:13 fabian Exp $
+# $Id: Makefile.in,v 1.13 2000/12/21 20:20:03 guppy Exp $
 
 SHELL = @SHELL@
 top_srcdir = @top_srcdir@
 srcdir = @srcdir@
 VPATH = @srcdir@
+MOD_UPDIR = @MOD_UPDIR@
 
 @SET_MAKE@
 INSTALL = @INSTALL@
@@ -17,8 +18,8 @@ LD = @CC@
 STRIP = @STRIP@
 CFLAGS = @CFLAGS@ -I../.. -I$(top_srcdir) @DEFS@ $(CFLGS)
 CPPFLAGS = @CPPFLAGS@
-MOD_CFLAGS = @CFLAGS@ -I. -I../../.. -I../$(top_srcdir) \
-  -I../$(top_srcdir)/src/mod @DEFS@ $(CFLGS)
+MOD_CFLAGS = @CFLAGS@ -I. -I../../.. -I$(MOD_UPDIR)$(top_srcdir) \
+  -I$(MOD_UPDIR)$(top_srcdir)/src/mod @DEFS@ $(CFLGS)
 MOD_CPPFLAGS = @CPPFLAGS@
 XLIBS = @XLIBS@
 MOD_EXT = @MOD_EXT@
@@ -59,14 +60,14 @@ static: $(mod_objs)
 	if test ! -r $*.mod/Makefile; then \
 		cp $(srcdir)/$*.mod/Makefile $*.mod/Makefile; \
 	fi; \
-	cd $*.mod && $(MAKE_MOD) 'VPATH=../$(srcdir)/$*.mod' 'srcdir=../$(srcdir)/$*.mod' 'MAKE=$(MAKE)' modules;
+	cd $*.mod && $(MAKE_MOD) 'VPATH=$(MOD_UPDIR)$(srcdir)/$*.mod' 'srcdir=$(MOD_UPDIR)$(srcdir)/$*.mod' 'MAKE=$(MAKE)' modules;
 
 .mod.mod_o:
 	@if test ! -d $*.mod; then mkdir $*.mod; fi; \
 	if test ! -r $*.mod/Makefile; then \
 		cp $(srcdir)/$*.mod/Makefile $*.mod/Makefile; \
 	fi; \
-	cd $*.mod && $(MAKE_MOD) 'VPATH=../$(srcdir)/$*.mod' 'srcdir=../$(srcdir)/$*.mod' 'MAKE=$(MAKE)' static;
+	cd $*.mod && $(MAKE_MOD) 'VPATH=$(MOD_UPDIR)$(srcdir)/$*.mod' 'srcdir=$(MOD_UPDIR)$(srcdir)/$*.mod' 'MAKE=$(MAKE)' static;
 
 depend:
 	@for i in $(mods); do \
@@ -74,7 +75,7 @@ depend:
 		if test ! -r $$i/Makefile; then \
 			cp $(srcdir)/$$i/Makefile $$i/Makefile; \
 		fi; \
-		(cd $$i && $(MAKE_MOD) "VPATH=../$(srcdir)/$$i" "srcdir=../$(srcdir)/$$i" depend); \
+		(cd $$i && $(MAKE_MOD) "VPATH=$(MOD_UPDIR)$(srcdir)/$$i" "srcdir=$(MOD_UPDIR)$(srcdir)/$$i" depend); \
 	done
 
 config:
@@ -85,7 +86,7 @@ config:
 			echo "Configuring module $${modname} ..."; \
 			echo ""; \
 			if test ! -d $$i; then mkdir $$i; fi; \
-			(cd $$i && ../$(srcdir)/$$i/configure $(egg_ac_parameters) --cache-file=../../../config.cache --srcdir=../$(top_srcdir)/src/mod/$$i); \
+			(cd $$i && $(MOD_UPDIR)$(srcdir)/$$i/configure $(egg_ac_parameters) --cache-file=../../../config.cache --srcdir=$(MOD_UPDIR)$(top_srcdir)/src/mod/$$i); \
 		fi; \
 	done; \
 	echo ""
@@ -99,7 +100,7 @@ clean:
 			cp $(srcdir)/$$i/Makefile $$i/Makefile; \
 		fi; \
 		if (test -r $$i/Makefile); then \
-			(cd $$i; $(MAKE) "VPATH=../$(srcdir)/$$i" "srcdir=../$(srcdir)/$$i" 'MAKE=$(MAKE)' clean); \
+			(cd $$i; $(MAKE) "VPATH=$(MOD_UPDIR)$(srcdir)/$$i" "srcdir=$(MOD_UPDIR)$(srcdir)/$$i" 'MAKE=$(MAKE)' clean); \
 		fi; \
 	done
 
@@ -112,7 +113,7 @@ distclean:
 			cp $(srcdir)/$$i/Makefile $$i/Makefile; \
 		fi; \
 		if (test -r $$i/Makefile); then \
-			(cd $$i; $(MAKE) "VPATH=../$(srcdir)/$$i" "srcdir=../$(srcdir)/$$i" 'MAKE=$(MAKE)' distclean); \
+			(cd $$i; $(MAKE) "VPATH=$(MOD_UPDIR)$(srcdir)/$$i" "srcdir=$(MOD_UPDIR)$(srcdir)/$$i" 'MAKE=$(MAKE)' distclean); \
 		fi; \
 	done
 
