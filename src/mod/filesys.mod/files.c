@@ -2,7 +2,7 @@
  * files.c - part of filesys.mod
  *   handles all file system commands
  *
- * $Id: files.c,v 1.46 2003/12/14 06:26:11 stdarg Exp $
+ * $Id: files.c,v 1.47 2003/12/14 06:44:25 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1187,23 +1187,23 @@ static void cmd_mv_cp(int idx, char *par, int copy)
   }
 
   if (only_first) {
-	  /* If the source file contains a wildcard and the dest is not a dir,
-	   * then we check for multiple source files and if they are there,
-	   * abort. Otherwise, proceed. */
-	  filedb_entry *check_for_more;
-	  check_for_more = filedb_matchfile(fdb_old, ftell(fdb_old), fn);
-	  if (check_for_more) {
-		  dprintf(idx, FILES_ILLDEST);
-		  free_fdbe(&fdbe_old);
-		  free_fdbe(&check_for_more);
-		  if (fdb_new != fdb_old) filedb_close(fdb_new);
-		  filedb_close(fdb_old);
-		  my_free(oldpath);
-		  my_free(newpath);
-		  my_free(newfn);
-		  return;
-	  }
-	  fseek(fdb_old, where, SEEK_SET);
+    /* If the source file contains a wildcard and the dest is not a dir,
+     * then we check for multiple source files and if they are there,
+     * abort. Otherwise, proceed. */
+    filedb_entry *check_for_more;
+    check_for_more = filedb_matchfile(fdb_old, ftell(fdb_old), fn);
+    if (check_for_more) {
+      dprintf(idx, FILES_ILLDEST);
+      free_fdbe(&fdbe_old);
+      free_fdbe(&check_for_more);
+      if (fdb_new != fdb_old) filedb_close(fdb_new);
+      filedb_close(fdb_old);
+      my_free(oldpath);
+      my_free(newpath);
+      my_free(newfn);
+      return;
+    }
+    fseek(fdb_old, where, SEEK_SET);
   }
 
   while (fdbe_old) {
