@@ -4,9 +4,9 @@
  */
 
 #ifndef MAKING_MODS
-#ifdef HAVE_CONFIG_H
-#include "../config.h"
-#endif
+#  ifdef HAVE_CONFIG_H
+#    include "../config.h"
+#  endif
 #endif
 
 /* UGH! Why couldn't Tcl pick a standard? */

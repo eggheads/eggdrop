@@ -145,9 +145,9 @@ static void blowfish_init(UBYTE_08bits * key, int keybytes)
   UWORD_32bits datar;
   union aword temp;
 
-  /* drummer: fixes crash if key is longer than 80 char */  
+  /* drummer: fixes crash if key is longer than 80 char */
   if (keybytes > 80)
-    keybytes = 80; 
+    keybytes = 80;
   /* this may cause key wont end with \00 but it isnt problem */
   /* strNcpy(), strNcmp()... */
 
@@ -391,7 +391,7 @@ static int tcl_encpass STDVAR
     char p[16];
     blowfish_encrypt_pass(argv[1], p);
     Tcl_AppendResult(irp, p, NULL);
-  } else 
+  } else
     Tcl_AppendResult(irp, "", NULL);
   return TCL_OK;
 }

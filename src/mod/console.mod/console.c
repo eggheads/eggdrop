@@ -61,7 +61,7 @@ static int console_pack(struct userrec *u, struct user_entry *e)
   ASSERT (e->name == NULL);
 
   ci = (struct console_info *) e->u.extra;
-  
+
   l = simple_sprintf(work, "%s %s %s %d %d %d",
 		     ci->channel, masktype(ci->conflags),
 		     stripmasktype(ci->stripflags), ci->echoflags,
@@ -107,7 +107,7 @@ static int console_set(struct userrec *u, struct user_entry *e, void *buf)
 
   if (!ci && !buf)
     return 1;
-  
+
   if (ci != buf) {
     if (ci) {
       ASSERT (ci->channel != NULL);
@@ -236,8 +236,8 @@ static int console_chon(char *handle, int idx)
     if (i) {
       if (i->channel && i->channel[0])
 	strcpy(dcc[idx].u.chat->con_chan, i->channel);
-	dcc[idx].u.chat->con_flags = i->conflags;
-	dcc[idx].u.chat->strip_flags = i->stripflags;
+      dcc[idx].u.chat->con_flags = i->conflags;
+      dcc[idx].u.chat->strip_flags = i->stripflags;
       if (i->echoflags)
 	dcc[idx].status |= STAT_ECHO;
       else

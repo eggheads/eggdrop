@@ -1,44 +1,44 @@
 /* 
  * seen.c   - Implement the seen.tcl script functionality via module.
- *
- *            by ButchBub - Scott G. Taylor (staylor@mrynet.com) 
- *
+ * 
+ *            by ButchBub - Scott G. Taylor (staylor@mrynet.com)
+ * 
  *      REQUIRED: Eggdrop Module version 1.2.0
- *
+ * 
  *      0.1     1997-07-29      Initial. [BB]
  *      1.0     1997-07-31      Release. [BB]
  *      1.1     1997-08-05      Add nick->handle lookup for NICK's. [BB]
  *      1.2     1997-08-20      Minor fixes. [BB]
  *      1.2a    1997-08-24      Minor fixes. [BB]
- *
+ * 
  */
 
 /* 
  *  Currently, PUB, DCC and MSG commands are supported.  No party-line
  *      filtering is performed.
- *
+ * 
  *  For boyfriend/girlfriend support, this module relies on the XTRA
  *      fields in the userfile to use BF and GF, respectively, for
- *      these fields.  
- *
- *  userinfo1.0.tcl nicely compliments this script by providing 
+ *      these fields.
+ * 
+ *  userinfo1.0.tcl nicely compliments this script by providing
  *      the necessary commands to facilitate modification of these
  *      fields via DCC and IRC MSG commands.
- *
+ * 
  *  A basic definition of the parsing syntax follows:
- *
+ * 
  *      trigger :: seen [ <key> [ [ and | or ] <key> [...]]]
- *
+ * 
  *        <key> :: <keyword> [ <keyarg> ]
- *
+ * 
  *    <keyword> :: god | jesus | shit | me | yourself | my | <nick>'s |
  *                 your
  *       <nick> :: (any current on-channel IRC nick or userlist nick or handle)
- *
+ * 
  *     <keyarg> :: (see below)
- *
+ * 
  *              KEYWORD KEYARG
- *
+ * 
  *              my      boyfriend
  *                      bf
  *                      girlfriend
@@ -46,11 +46,11 @@
  *              your    owner
  *                      admin
  *                      (other)
- *              NICK's  boyfriend   
+ *              NICK's  boyfriend
  *                      bf
  *                      girlfriend
  *                      gf
- *
+ * 
  */
 
 #define MAKING_SEEN
@@ -650,8 +650,7 @@ char *seen_start(Function * egg_func_table)
   context;
   module_register(MODULE_NAME, seen_table, 2, 0);
   if (!module_depend(MODULE_NAME, "eggdrop", 105, 0))
-    return
-      "MODULE `seen' cannot be loaded on Eggdrops prior to version 1.5.0";
+    return "This module needs eggdrop1.5.0 or later";
   add_builtins(H_load, seen_load);
   add_builtins(H_dcc, seen_dcc);
   add_help_reference("seen.help");

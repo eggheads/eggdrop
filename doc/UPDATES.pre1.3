@@ -1,0 +1,848 @@
+Changes in eggdrop: (since v1.1.5)
+==================
+	  
+1.3.0 let's do it
+Foundby   Fixedby   What....
+          TheGhost  Added some more stuff msg status
+          TheGhost  Cosmetic changes to dcc status
+       KK/TheGhost  The Kewl new default motd
+|mmortal  TheGhost  Fixed tcl-commands.doc 
+          TheGhost  Made configure fail if the system
+                    doesn't support ANSI headers.
+          KingKurly something small in the config file, can't remember what
+          KingKurly bunch of minute junk in docs, i decided to polish them
+                    up for the eventual release of 1.3.0
+          KingKurly spelling errors in english.lang and blowfish
+          Beldin    fixes for the move of text/ 
+          TheGhost  added .voice .devoice
+          TheGhost  Help files to reflect the above change
+          Beldin    console.so memory leak, console_pack wasnt freeing old mem
+	  Beldin    shouldnt erase core hooks during .restart
+          Beldin    tcl_rehash from within a proc was being bizzare, moved
+	            rehash handling out to the main loop
+Bogus     Beldin    bands of the form 6!*@* cause *major* headstress with share
+          Beldin    bowed to pressure like the llama I am, 
+	            chattr nick +o #channel now works the old way
+Bogus     Beldin    anybody could use console +th, +/- in .console was fr0ke
+|mm       Beldin    tcl_newchanban was doing wrong comment, 'none' wasnt a 
+                    valid newban option
+          Beldin    updated userinfo1.0 and moved email into it 
+	  Beldin    move dcc chat handling where it should be
+          Beldin    SIGSEGV's & SIGBUS's now dump core in -DEBUG mode
+          Beldin    -host on a user with no hosts SEGV'd
+	  
+Foundby   Fixedby   What...
+^You^     Beldin    .chat local-channel wasnt working right
+Dtm       Beldin    minor fixes to my own stupidity
+TG        Beldin    static portions should work in makefile now, also
+                    BSDI's gmake is called all the time now
+          Beldin    channel attr's were not being relayed (complex)
+          Kirk      made variable substition in the 'text' files, which
+                    were moved into english.lang, possible
+          Kirk      fixed niggly formatting errors when doing .whois
+                    commands, etc..
+BB        Beldin    you could .link to an already '.link'n bot, causing quite
+                    a few probs
+	  Beldin    remove userfile upraging support, weed does that now
+	  Beldin    DalNet in their infinite lameness make a new +r, handle
+|mmortal  Beldin    .simul was simuling the simuler not the simulee :)
+Bogus     Beldin    nick changes on the botnet were sick
+
+"v1.3.0gamma"
+Foundby   Fixedby   What...
+TheGhost/Beldin     %U gives OS/version in motd
+KK        Beldin    tcl_killdcc is consistent at least now
+DK        Beldin    SEGV's on server signon (fixfrom wasnt fixed), removed
+                    3 excess fixfrom calls too
+          TheGhost  added the system name to the .status display
+          TheGhost  Added a Botnet document for instructions on the new
+                    flags and how to link bots for sharing
+          TheGhost  Removed all the text files from /text and placed them
+                    in enlgish.lang for easy language changes. (this was
+                    harder that it looks :) )
+          TheGhost  Finished up the rest of the uname functions added
+                    a new tcl variable called uames to complet all the
+                    possible ways to use the system name and version
+          TheGhost  Worked on moving some of the files from the text 
+                    directory into english.lang (I will eliminate this
+                    beast oneday.)
+          Kirk      HANDLEN #define added
+	  Beldin    found just a few cases where HANDLEN need to be added
+	  Beldin    bots will only accept links with same-HANDLEN bots
+	  Beldin    optionally uses buffer-safer vsnprintf over vsprintf if
+	            avaliable, cleaned up some extra contexts & language
+		    entries
+          Beldin    partyline from & away stored dynamically 
+
+v1.3.0beta
+Foundby   Fixedby   What...
+|mmortal  Beldin    .tcl set botnick WOULD change the value
+          BB        Language'ised wire.mod.
+          BB        I forget.
+          Beldin    moved JOIN's to the MODE queue
+          Beldin    set topic were not being stored correctly on join
+DK        Beldin    compat's setxtra was SEGV'n 
+|mmortal  Beldin    channels.mod chon binding was hosing all other
+                    console channel settings
+BB        Beldin    user-get, user-set slightly hosed, map to getuser/setuser
+|mmortal  Beldin    renamed module could be reloaded.
+BB        Beldin    tcl_loadlanguage was logging incorrectly
+          Beldin    ident lookups were causing SEGV's at bizzare times
+          Beldin    server.mod wasnt cleaning server list on unload
+          Beldin    mod_malloc was assuming the file entry was 21 chars not 20
+          Beldin    .page off wasnt flushing held lines very neatly at all
+Kirk      Beldin    files get with no nick failed
+Kirk      Beldin    beldin fr0ke .sort *slap*
+          Beldin    .chinfo wasnt clearing info lines correctly
+TheGhost  Beldin    .status didnt need the Mode(s) line anymore
+TheGhost  Beldin    bot user@host wasnt displaying correctly in .status
+Bogus     Beldin    owners could be boot by non-owners
+BB        Beldin    mising break; in strip_mirc_codes
+BB/Beldin Beldin    optomised periodic_timers, dcc_activity, eof_dcc &
+                    call_hook just a little, removing a few function calls
+						  at least
+	  Beldin    who replies were not handling strict-host properly
+
++bel1
+Foundby   Fixedby   What...
+          Beldin    tweaked seen.so to work they way I like it, Sorry BB :)
+dtm       Beldin    newbotname wasnt being initialised in server.so
+BB        Beldin    -bc wasnt being passed correctly on the botnet
+BB        Beldin    double dependancy modules need to cleanup after 
+                    themselves
+BB        Beldin    xtra_unpack was slooooooooooooooooooooow
+          Beldin    fix of xtra_unpack can cleanup all other xtra handling
+	            to include sharing (minor incompatibility with 
+		    pervious versions)
+	  Beldin    minutely channel checks still occured when
+	            server was offline
+|mmortal  Beldin    tcl_banlist had messed up list elements
+
++TG2      
+Foundby   Fixedby   What...
+          TheGhost  Fixed my configure error (Phear autoconf)
+          TheGhost  Moved clientinfo defines into ctcp.h
+          TheGhost  Added a define for have uname to configure
+	  
++TG
+Foundby   Fixedby   What...
+          TheGhost  Moved the last bit of defines for ctcp into ctcp.c
+                    from lang.h.
+          TheGhost  fixed some spelling errors :P
+KK        DK        crashing when trying to build a channel list
+DK        DK        gets the banlist when it joins a channel instead of
+                    ignoring it
+          KK        More document fixes
+
+BBub1 (does not affect eggdrop patchlevel)
+Foundby   Fixedby   What...
+          BB        First hashing of install rule in Makefile.
+          BB        Inclusion of Ode_To_Beldin.
+          BB        Rework of wire.mod for the current, and changing of
+                    internal tables from idx to sock.
+          BB        gamespak.mod reworked for current (dist'd separately).
+          BB        putegg relegated to obsolete/ -- kept, JIC...
+		    
+v1.pre3.0 <- getting closer <G>
+Foundby   Fixedby   What...
+Daklop    Beldin    netsplits were not detected as such 
+          Beldin    -ban for global +m's wasnt handling channels right
+          Beldin    redid help for ctcp, filesys
+          Beldin    add module_rename function call allows a module
+	            to be compiled&loaded under one name, and run under 
+		    another, e.g. blowfish rename's itself to a more
+		    suitable 'encryption'
+          Beldin    strip_mirc_codes wasnt adding the \0 on the end
+          Beldin    help blind flag toggles 2 settings now
+	            (one for %help= one for %{+flags})
+          Beldin    ident wasnt always kill sockets upon startup
+          Beldin    nick change notices didnt include source bot
+KK        Beldin    ctcp avalanche's were SEGV'n
+          Beldin    sanity check no longer needs to check against BOT_MASK
+BB        Beldin    dolt, it helps to check your nick minutely
+poptix    Beldin    booted .page'rs were being booted using bots IRC nick
+
++bel5     
+Foundby   Fixedby   What...
+          Beldin    .info none wasnt totally erasing the info line
+          Beldin    .topic #gumbyville now works
+BB        Beldin    tcl_killdcc wasnt kill anything
+          Beldin    major help file lookup overhaul, added %b/%v/%_/%f
+	            for bold/inverse/underline/flash with ircii or ansi
+		    codings depending on the STAT_TELNET setting.
+		    add/rem_help_reference (tcl equivs to)
+		    to add/remove 'help files' from a repository
+		    multiple help information within 1 file using
+		    %{help=topic} with a .rehelp to re-read the help data
+		    changed modules: assoc, blowfish, channels, compat,
+		    console
+          Beldin    added tcl_modules returns bucketsloads of info about
+	            modules & their dependancies
+	  Beldin    select error sockets are much more aggressively killed
+	            now, hopefully fixing 1 of the nasty CPU spikes
+	  Beldin    it really helps to load languages *after* memory
+	            debugging starts
+	  Beldin    removed a couple more cases of LOST_DCC
+		    
++bel4
+Foundby   Fixedby   What...
+          Beldin    gotkick bug *slap*
+Daklop    Beldin    *finally* found the laston time bug (/quit did it)
+BB        Beldin    INVITE wasnt working
+BB        Beldin    MODE #channel wasnt working 
+
++bel3
+Foundby   Fixedby   What...
+          dtM       channels.c channel_malloc typo
+          Beldin    more relay fixes
+Melvan	  Beldin    take_revenge on a kicking user was passed wrong
+                    nick!user@host
+	  Beldin    check-stoned's value should matter now
+          Beldin    .filestats <user> clear now reports it's doing it.
+Melvan    Beldin    new nick change message chanout wasn't working
+|mmortal  Beldin    tcl_storenote was getting it's idx's mixed up
+BB        Beldin    module_depend now returns the module function table
+                    for ereet fast setting of values
+          Q         doembeddedmode was calling get_op with wrong args
+Melvan    Beldin    /msg op <channel> has permissions btf
+Melvan    Beldin    .kick wasnt giving the given reason
+Daklop    Beldin    strict-host didnt work
+Daklop    Beldin    minutely calls to recheck_channel just didnt work
+Q         Beldin    ircd2.9 uses : in it's umode msg
+TheGhost  Beldin    flag changes were not being shared through a hub
+|mmortal  Beldin    newchanban & newban has broken comments
+BB        Beldin    bots were pinging out somethinges (-ve clock adjustment)
+Melvan    Beldin    info line wasnt showing up on local bot if enable in
+                    console.so
+          Beldin    ircu's shorter who replies used on channel-join
+	  
++bel2
+Foundby   Fixedby   What...
+          Beldin    compats shareout !n needed a \n
+	  Beldin    slumos 4 needs an #include <sys/stat.h> in transfer.c
+          Beldin    bots were getting confused about aggressive/passive
+	            status of connected sharebots
+Zarni     Beldin    wrong displayed message on eggdrop -m
+Zarni     Beldin    wrongly added hosts on NEW from telnet (: != . doofus)
+          Beldin    psuedo-memory leak in channels.c
+          Beldin    passive bots were loosing entires for channels marked
+	            +shared but not shared with their active partner
+          Beldin    improved memory debugging under -DEBUG_MEM
+          Beldin    found one of the steenking userrec.c mem leaks
+          Beldin    found the other steenking userrec.c mem leak
+	  
++bel1
+Foundby   Fixedby   What...
+Zarni     Beldin    error in list item 1 of tcl_botlist
+          Beldin    console.so wasnt sending a botnet join
+	  Beldin    added checks in botmsg.c so i wont bother even
+	            building messages unlessed linked
+		    
+1.2.2
+Foundby   Fixedby   What...
+DK        Beldin    bzero clash in src/mod/module.h
+Zarni     Beldin    since some bindings are called multi-levelled, we need
+                    different variable names for each binding 
+          Beldin    tcl_botlist added, returns all locally stored
+	            info on bots (this ones for the llamas ;)
+          Beldin    cleanups of the new tables
+Melvan    Beldin    some setxtra's in werent working (basically since-string
+                    entries)
+Zarni     Beldin    ctcp replies weren't happening
+          BB        nuke pre 7.3 tcl support
+          Beldin    segv in .tcl servers
+          Beldin    implemented local.tcl in the code
+          Beldin    converted console.tcl to console.so
+	  Beldin    fixed recursive call loop to recheck_channel
+	  Beldin    fixed seen SEGV on 'seen bf' with no xtra info
+BB	  Beldin    +chan was setting channels static 
+	  
++bel26
+Foundby   Fixedby   What...
+          Beldin    the +d/+k debate continues? in or out,it's upto you
+	            (allow-dk-cmds)
+          Beldin    finished switching modules back to a table lookup system
+	            and it's faster, neater, smaller, why did I every
+		    rely on the llama OS's ;)
+          Beldin    chattr was erasing 'b' flag on sharing
+	  Beldin    .console was setting mode to (none) if no +/- arg
+	            specified 
+Zarni     Beldin    various header file problems with the new tables
+Zarni     Beldin    .fwd'n code was fr0ke
+melvan    Beldin    unset +l/-l mode protect wasnt handled right.
+
++bel25
+Foundby   Fixedby   What...
+melvan    Beldin    new telnet users were'nt haveing their dcc[].user record
+                    updated
+melvan    Beldin    /msg's werent being logged correctly 
+Q         Beldin    add *!user@host for bots rather than *!user@*.domain
+DK        Beldin    option 3rd arg to +bot for hostmask
+|mm       Beldin    tcl_userlist takes a channel argument now
+          Beldin    tcl_chanbans returns who & age values now
+          Beldin    started switching back to table lookup for symbols
+	            since this appears to be more useable & portable
+Q         Beldin    .chnick handle   newhandle was messy
+
++BBub5
+Foundby   Fixedby   What...
+          BB        tcl_chanlist wasn't working.
+          BB        Pitched all the vanitee do-nothing commands from
+                    woobie.so.   This novelty has worn off.  woobie.so
+                    is a skeletal/example module for programming.
+          Beldin    Fix in servmsg.c for reversed args to strcpy.
+          BB        Moved eggdrop.conf to eggdrop.conf.dist.  It is unuseable
+                    as distributed, and prompts to "overwrite?" are silly.
+          BB        Slight fix and change for message when creating chanfile.
+          BB        Continued language system conversion.
+BB        Beldin    Missing declarative for KICK binding in tclhash.h.
+zarni     BB        Fixed message when changing password vi /MSG.
+          BB        Fixed MSGb1f message when linking.
+          BB        botchk is in scripts where it belongs.  Copying it to
+                    the base install directory is pointless, since it is
+                    unuseable as distributed.
+          Beldin    Missing <errno.h> in dcc.c.
+
++bel24
+Foundby   Fixedby   What...
+          Beldin    .unlink of a forking bot caused SEGV
+	  Beldin    pass & xtra sent before newuser info to sharebots
+Zarni     Beldin    implemented note forwarding in notes.so
+          Beldin    a blank setting of fstat caused mucho spewo
+BB        Beldin    +n's should be able to change just about anything
+BB        Beldin    chan +m's couldnt kick/kickban +o's (now they can)
+BB        Beldin    .link <thisbot> otherbot said no such bot online
+BB        Beldin    squelched the bot change messages on share startup
+          Beldin    you can no longer set a bot +as (you're asking for
+	            trouble if you do anyway ;)
+          Beldin    bot now logs WHAT error occured when writing userfile 
+          Beldin    .info SEGV, check the char ptr doofus
+          Beldin    .stick <number> wasnt reporting correclty
+	  Beldin    cascaded sharing implemented...
+	            +s = share aggressively with this bot
+		    +p = share passively with this bot
+		    the bot will only accept 1 +p link at a time, any
+		    number of +s's
+          Beldin    siphoned off server.so & channels.so
+	  Beldin    +d/+k couldn't use dcc commands, even if they had +p
+          Beldin    nuke msgcmds.so, chancmds.so, FINALLY added server.so
+	            channels.so & irc.so
+		    
++bel23
+Foundby   Fixedby   What...
+BB        Beldin    .restart is fragged again :/
+          Beldin    server queue not being flush in .restart
+KingKurly Beldin    module directory can now be set (mod-dir) Happy now KK :P
+          Cfusion   put 'set telnet [listen...]' in the config file
+dtM       Beldin    1st msg hello wasnt setting all the flags right
+BB        Beldin    some parts need to be silent still
+Q_        Beldin    +user could still have invalid handles
+          Beldin    console.tcl was causing multiple join/part msgs
+	            cause dcc_chatter was assuming too much
+Bogus     Beldin    you can leave notes to the bot with /msg notes
+BB        Beldin    +host <handle> "" should give help response
+
++kk4
+* modules now compile to modules/
+* updated putegg and make install/make installquick for new modules path
+* fixed spelling errors in this file (why? ;)
+* added an INSTALL file for dumb llamas who can't read the entire README
+
++bel22
+Foundby   Fixedby   What...
+BB        BB        .vbottree show patchlevel now
+BB        Beldin    .su didnt update .user record
+BB        Beldin    .die was trying to re-connect server immediately
+BB        Beldin    .jump eof'n straight after connect
+          Beldin    removed the user of tcl hashtables from tclhash.c
+	            hence (a) sorting the binding list (b) allow
+		    some bindings to be quited before check *every* binding
+                    (c) less reliance on silly tcl ;)
+          Beldin    .strip wasn't reporting correctly
+          Beldin    bind chpt now matches vs channel rather than nick
+BB        Beldin    was check wrong user when it got a ban, therefore
+                    kicking *any* user when banned
+
++kk3
+
+* I actually read the entire stinking source fixing every spelling in
+  comments! Geez I was bored! [kingkurly]
+
++bel21
+Foundby   Fixedby   What...
+BB        Beldin    woops bind blah "m" command was letting *anyone*
+                    execute it 
+BB        Beldin    servidx is unreliable since idx's move :/
+          Beldin    added server-online r/o variable for how long
+	            the current server has been up
+BB        Beldin    +ban over sharenet wasnt logging
+BB        Beldin    gotjoin wasnt rebuilding the nick!user@host before
+                    testing bans
+BB        BB        nicer def_display
+
++bel20
+Foundby   Fixedby   What...
+          Beldin    NEW telnet users get a telnet!user@*.domain mask now
+          Beldin    added a few extra bot/quiet-reject checks to msgcmds
+Scuzzi/Beldin       /msg help was handling quiet-rejects round the wrong way
+Zarni     Beldin    not all tcl's have TCL_PATCH_LEVEL, use TCL_VERSION
+          Beldin    dcc[].user entries need to be cleared during
+                    .rehash/.reload & partially cleared on finish_share
+Daklop    Beldin    chan masters could still see other channels in .status
+????????? Beldin    .whois now only shows channels a user has at least
+                    +o access too 
+BB        BB        segv in cmd_mv_cp
+BB        BB        typo in .filestats
+BB        BB        .nick was logging to old nick
+LSC       Beldin    error in tcl-commands.doc about time binding
+          Beldin    time binding uses 2 digits even for single digit #'s now
+Kinslayer Beldin    without ctcp.so a known dcc chatter should get something
+                    meaningfull
+BB        Beldin    cp <file> <dir> && .tcl cp <file> <dir> were a bit sick
+BB        Beldin    .modulestat <module> was fr0k3
+          Beldin    queue_sockets only reallocs a buffer when something
+	            is sent, not every call, also detects EOF on socket
+	  Beldin    minutely rejoins of channels online occurs *after*
+	            the server has set msg 001 (server_online updated then too)
+	  Beldin    created the SERVER_SOCKET dcc type, server is now
+	            just like all the rest
+	  Beldin    msgcmds now a module
+	  Beldin    removed modmalloc/modcontext, use nmalloc/context now
+	  Beldin    chancmds.so contains all the channel *interaction*
+	            flags (not the management ones)
+		    
++bel19
+Foundby   Fixedby   What...
+          Beldin    .su'rs didnt have their .user entry updated
+	  Beldin    tinkering with bot links trying to avoid occasional boogers
+	  Beldin    get_user_by_handle now checks the dcclist aswell 
+	  Beldin    more tinkering with deq_msg in an attempt to balance
+	            output to server
+	  Beldin    remote who wast showing chaters
+	  Beldin    resync wasnt sending channel data
+	  Beldin    resync wasnt sending botnet update info
+BB        Beldin    display tcl library version in .status & DEBUG 
+BB        Beldin    display compile/link/strip flags in DEBUG
+BB        Beldin    display tcl include file version in DEBUG
+EraseMe   Beldin    +g strip flag (for ^g's)
+
++bel18
+Foundby   Fixedby   What...
+BB        Beldin    .rehash/.reload was broadcast -ban/ignore
+Prez      Beldin    .relay's from telnet showed passwords up
+Zarni     Beldin    .who showed wrong sock # for users to owners
+BB        BB        /msg who fix *again *
+BB        Beldin    unlinks were passing chat msgs incorrectly
+Prez      Beldin    autolink_cycle was fr0k3
+          Beldin    remote 'linked to <bot>' message was sick
+Zarni     Beldin    private_owner needed work
+          Beldin    woops potential buffer overflow in dcc_ident
+	  Beldin    remote filesharing fixed
+BB        Beldin    .+ignore sharing was corrupting
+BB        Beldin    /dcc send with no filesys was being interpreted as failed
+                    dcc chat
+		    
++bel17
+
+Foundby   Fixedby   What...
+Prez      Beldin    matchattr was br0ke
+KingKurly Beldin    bogus unban caused mass kicks of bots in some cases
+dtM       Beldin    added sanity_check on load, help old userfiles migrate
+dtM       Beldin    chanout's were missing their ***'s
+          Beldin    added quiet_reject checks to msg_ident
+dtM       Beldin    msg_ident wasn't responding correctly to unknown ident
+                    by unknown user
+	  Beldin    msg_ident doesnt allow ident vs a botnick
+
++bel16
+
+Foundby   Fixedby   What...
+Immortal  Beldin    .-user with invalid console user segv'd 
+BB        BB        /msg info segv'd 
+BB        Beldin    unlink in 1.2.1 portion of a botnet might cause fake msgs's
+                    in other sections
+BB        Beldin    .flush context'd (wally) 
+BB        Beldin    /dcc chat for non require_p + !+o was sick
+BB        Beldin    .relay was going ballistic if it couldnt find the port
+
++kk2
+
+Foundby   Fixedby   What...
+KingKurly KingKurly Added a r33t make install/make installquick - try it!
+KingKurly KingKurly LOTS of general cosmetic/spelling/grammar stuff
+KingKurly KingKurly Totally redid eggdrop.conf [kingkurly]
+
++bel15
+
+Foundby   Fixedby What...
+BB        Beldin  dcc chat's where nick != handle caused segv's
+KingKurly Beldin  dcc chatters show up in who as files users
+          Beldin  static linked share tries to start transfer module
+	  Beldin  private-owner wasnt working right
+          Beldin  .reset should only work on active channels
+	  Beldin  .+ban wasnt adding the ban from the correct variable
+
++bel14
+
+Foundby Fixedby What...
+        Beldin  cleaned up /dcc chat&sends a little
+DarkDruid Beldin No remote .unlink of sharebots, share-unlink values
+poptix  poptix  remote bots could link already linked bot
+
++bel13
+
+Foundby Fixedby What...
+        Beldin  remove telnet! from ident'd users no botnet
+        Beldin  fix my breaks to raist's ident
+        Beldin  *very* quick repetative userfile transfers overwrote eachother
+        Beldin  max-dcc is 20 by default, less is real problems
+        Beldin  many minor fixes to new filesys flags.
+        Beldin  files ls neater for dirs now
+Melvan  Beldin  dcc chat wasnt work 
+OldGroo Beldin  .unlink during a .link was SEGV'n
+OldGroo Beldin  .-host broke for first host
+BB      BB      tcl_getchanhost was returning nick aswell
+BB      Beldin  tcl_matchattr wasnt handling no -ve falgs
+OldGroo Beldin  .-ban wasnt deleting the 1st ban
+Beldin  Beldin  .bans display was broken (channel bans weren't registering)
+Beldin  Beldin  .reset was erasing bans without re-requesting them
+EraseMe Beldin  .su from +n to non +n wasnt always setting up correctly
+BB      Beldin  msg_who forgot the unknowns! 
+
++bel12
+
+Foundby Fixedby What...
+        Beldin  /msg who could buffer overflow on big channels
+BB      Beldin  /msg who <channel> segv's
+BB      Beldin  *slap* tcl_userlist crash *slap* 
+        Beldin  filedb overhauld, bye bye 230 redundant lines
+Kirk    Beldin  channel specific access added to file area  
+                [this one uses .filedb]
+Raist   Beldin  ctcp.so added, most ctcp stuff is in it
+
++bel11
+
+* user feedback for msg/act/say added [beldin]
+* added msg_voice for /msg voice support [beldin]
+* users without chanrecs were having their info shown all the time [beldin]
+* made the channel file use a little less space [beldin]
+* flood-join, flood-chan, flood-kick, flood-deop, flood-ctcp are now
+  channel-specific settings, globals are flood-msg & flood-nick [beldin]
+* check_tcl_msg[m] was being passed the wrong uhost [beldin]
+* ^H in dcc_chat was hanging again [beldin]
+* simple_sprintf %c needed to use int not char [beldin - with thanks
+  to Mr. gdb-via-irc Oldgroo]
+* index doesnt return the same on sunos, use strchr [beldin]
+* some systems cant handle non-consants in structure defs
+  (occurs in struct flag_record defs) [beldin]
+
++kkdoc
+
+* readded the addpatch and delpatch from earlier patch, not included in
+  later versions for some reason [kingkurly]
+* fixed up a whole heck of a lot of docs, including zillions of spelling
+  errors, etc etc [kingkurly]
+
++bel10
+
+* .-user wasnt reporting unknown user correctly [beldin]
+* .+bot segv in add_bot_hostmask*slap* [beldin]
+* sending userfile wasnt storing channer records [beldin]
+* fixed seen.so crashed [beldin]
+* .op was newspit'n in the wrong place [beldin]
+* neat->old botnet away msgs were geting garbled [beldin]
+
++BBub4 
+
+* Fixed /MSG OP for +o-f's [beldin]
+* Fixed .op. [BB]
+* Fixed +o-f deopping himself and being -o'd in the userfile on +bitch [beldin]
+* Fixed .kickban [BB]
+
++bel9
+
+* fixed return from relay sending bad botnet channel join [beldin]
+* some documentation overhaul (much more needed) [beldin]
+* added neat_botnet nick-change message, make change nicks over
+  the 1.2.1 portion of the botnet smaller [beldin]
+* removed chanout, all calls can use chanout_but [beldin]
+* fixed a bug in check_chanlist (->next twice) [beldin] <--- Thief! [BB]
+  (can I put it down to absent mindedness pwease? [beldin])
+* +host wasnt letting owners add their own hostmask [beldin] 
+* detect_flood was assumin chan was valid [beldin]
+* assoc modules wasnt chanout'n right [beldin]
+* fixed compile time error if no RTLD_NOW defined [beldin]
+* zero length info line were being displayed [beldin]
+* moved reject_bot into autolink_cycle since that's where it was used [beldin]
+
++bel8 
+
+* fixed .nick/.chnick bugs [beldin]
+* .motd wasnt broadcasting to old bots correctly [beldin]
+
++ident
+
+* telnet identd verification.  Yes, this thwarts botscans. [raist]
+* fixes & tidying up [beldin] (and adding of my own bugs!! :)
+
++BBlang3
+
+* Fixed crash on non-ident'd MSG OP requests [BB]
+* Fixed spewed info line length on channel [BB]
+* Moved setlaston below showinfo - time(NULL) - laston was always 0. 
+  (broke in bel6)  [BB]
+* Fixed a silly bug in action.fix.tcl [BB]
+* Insignificant change to ques3.tcl, and really not worth mention [BB]
+* Yet another insignificant change.  This time in wire.mod [BB]
+* Fixed woobie.mod for missing DCC command parameters [BB]
+* Minor fixed to seen [BB]
+* Wire.mod fully operational [BB]
+
++bel7+pop1
+
+* .loadmodule that didnt find a _start function wasn't unloading the
+  module [beldin]
+* -ignore <hostmask> was SEGV'n [beldin]
+* +autovoice +v(oice)/+q(uiet) are now all valid settings [beldin]
+* Yet more language conversion stuff [BB]
+* Added HOOK_SECONDLY for adding the equivalent of TCL 'utimer' [BB/beldin]
+* botinfo/bottree are bot +t commands, llamas may gain unwanted info from
+  them [beldin]
+* +d/+k could use -|- bound commands [beldin]
+* added flags.c with better flags/binding/match support [beldin]
+* raw_dcc_send was reversing the IP on send [beldin]
+* minor .console hole which allowed +m flag access to non +m channels [beldin]
+* add local bot to .botinfo replies [poptix]
+* enhancements to .invite [poptix]
+* .chansave/.chanload were trying to work even without a channel file [poptix]
+* flush shouldnt be in help anymore, cosmetic fix to addpatch [poptix]
+
++bel6
+
+* update dependancies, fix nlinked pass-on to old botnet bots,
+  fix duplicate botnet act's [beldin]
+* botnet handshake now comes after version (incompatability, get
+  old ver bot to link to new ver bot first time) [beldin]
+* merged mprintf/hprintf fully into dprintf, use [beldin]
+  dprintf(DP_SERVER) for mprintf, dprintf(DP_HELP) for hprintf
+* added mode-buf-length & debug-output tcl vars [beldin]
+* neatened up the config file layout a little [beldin]
+* notes.so allow optional note storage support now [beldin]
+* relay wasnt triggering all the chon/chfn etc bindings quite right 
+  also scripts now trigger chon/choff [beldin]
+* new binding types: away - botnet away msg, nkch - user changing
+  their handle [beldin]
+  
++BBlang2
+
+* Yet more language conversion stuff [BB]
+* Fixed .su [BB]
+* Fixed .relay [BB]
+* Fixed NICKLEN (We needed to add 1) [BB]
+* Changed NEAT_BOTNET to 1020107 from 1020100 to handle pre-bel5 bots [BB]
+
++bel5
+
+* Dunno... ask beldin [BB]
+* honest, I did lotsa work! [beldin]
+
++bel4
+
+* assoc.so now uses zapf & tcl calls rather than 5 hooks [beldin]
+  (robey was right about that ;)
+* out_dcc_general, out_dcc_chat, out_dcc_script
+  weren't using the cr-added string to send [beldin]
+* Fix to add_server [BB] 
+* Fix to clearq [beldin]
+* tcl "ischanban" not "ischan" DOOFUS 
+
++bel3+BBlang+kk
+
+* Fixed general spelling errors in src/ [kk]
+* Fixed some language in src/ for our younger users [kk]
+* Redid eggdrop.conf, fixing spelling, grammar, and logic errors, and
+  adding comments to attempt to make it easier to understand [kk]
+* Added a .back command, self explanatory. You can still use the old
+  way to set yourself back if you want, this just makes sense :) [kk]
+* Fixed .console, only +n could use it to change flags [beldin]
+* Fixed a bug where if you didn't load the share module, the bots would
+  constantly send each other messages, which caused some problems [beldin]
+* removed the requirement of at least 1 irc channel [beldin]
+* buffer overflow in net.c [beldin]
+* fixes to .sort [kirk]
+* some command permissions were screwy in the filesys [kirk]
+* new passwords via telnet should be 15 bytes [kirk]
+* only botmaster of better can change +b console log [beldin]
+* serverlist is now a structure rather than a packed string [beldin]
+* .unlink * & unlinking of a bot weren't calling check_tcl_chpt/check_tcl_disc
+  as is logical [beldin]
+* botnet 'joins' for channel changes weren't calling check_tcl_chpt [beldin]
+* all irc related got's should now check vs the correct botnick [beldin]
+* removed tprintf totally (now use dprintf/mprintf) [beldin]
+* missing \n in cmd_simul help [beldin]
+* server-cycle-wait added to slowdown server connects [beldin]
+* found a memory leak that's been around for years with
+  userfile sharing [beldin]
+* MAJOR overhall of ban/ignore handling - structures rather than
+  packed strings [beldin]
+* fixed my own ./putegg stupidity [beldin]
+* userlists are now much easier to extend [beldin]
+* started overhauling botnet 
+  - tokens & 64bit ints between bots >= 1.2.1 [beldin]
+  - no broadcast of redundant bot garbage 
+    (e.g.  *** (Bot) Linked to fred    when nlinked is being sent *aswell*)
+    [beldin]
+  - support for 15 char nicks [beldin] *note* this doesnt mean they will
+    work yet
+    
+v1.2.0+bel2+BBlang
+
+* TCL "language" command for startup script language loading.
+* DCC ldump command for debugging messages.
+* Implemented language.so and new function get_language() for accessing
+  the message language system. [BB]
+* More changes converting text output messages to #defines for language
+  support. [BB]
+* Pondered correcting beldin's grammar regarding a particular soft-drink,
+  but didn't get THAT anal.  (Them Ozzies are so lazy, they can't even
+  bother pushing the shift-key when they should *Sn0rT*  TWO occurances,
+  BTW :) [BB]
+* changed rembot back, since order DID matter [beldin]
+* fixed a few tcl function name typos [beldin]
+
+v1.2.0+bel1
+
+* fixed lame vbottree error [beldin]
+* optomised unvia & delparty at the expence of order [beldin]
+* fixed a whole pile of OSF warnings [beldin]
+* fixed eraseme's whines: .filestats is now a .files command,
+  .chaninfo restricts +m ness [beldin]
+* .filestats wasnt reporting nick [beldin]
+* english & slang still in config file [beldin]
+* mkdir $1/modules missing from putegg [beldin]
+* excess print in write_debug [beldin]
+* share wasn't sending error right if there wasn't enough dcc slots
+  to SEND a userfile + missing #include [beldin]
+* geticon clash in wire.c [beldin]
+* #ifdef EBUG messup in tclhash.c [beldin]
+* typoed name of validuser tcl command [beldin]
+* '.binds <type> all' now works as you might expect [beldin]
+* .wire off was SEGV'n in some cases (plus a few missing \n's) [beldin]
+* bitch wasnt being bitchy enough on join :) [beldin]
+* various bugfixes to bothost sharing, lastbind, [beldin]
+
+v1.2.0alpha:
+
+* legendary seen.so [BB]
+* +/-chanrec should propagate on the sharebot's now [beldin]
+* .adduser & /msg hello now add relvant chanrec's [beldin]
+* removed +bothost/-bothost/botattr since they arent needed now[beldin]
+* channel +m's can only see channel's they have access to in .status
+  [beldin]
+* now a static linking option, link in all modules at link time
+  [this ones for you somni :P] [beldin]
+* .bottree upgarde (also try .vbottree) [beldin]
+* laton times on a bot a prefixed by @ [beldin]
+* AT LAST laston times should update on quit [beldin]
+* use-console-r, max-dcc & enable-simul now tcl vars [beldin]
+* .set/.tcl/.simul are now just un-bound commands in the config file
+  [beldin]
+* .act/.say/.kick/.kickban can now take a channel argument [beldin]
+* any user can now -host themselves [beldin]
+* remote-boots, bounce-bans, use-silence, private-owner & allow-resync 
+  are now tcl vars [beldin]
+* share.so added - which includes channel specific +s [beldin]
+* help files updated to new binding format [beldin]
+* you can ONLY make a module bot now [beldin]
+* .sort comand for filesys [ikaney@trouty.demon.co.uk]
+* tcl-commands updates for various commands [????]
+* dcc chat connections weren't logging [beldin]
+* woops, fixed up the ctcp's I messed up [beldin]
+* console +r is +n only now [beldin]
+* modules now live in modules/ [beldin]
+* fixed sticky bans sharing finally [beldin]
+* .su was broadcasting parts/joins for local channels & wasnt
+  showing returns upon channel return [beldin]
+* static channels settings are now save (using channel set) in
+  the channel file [beldin] (yes removal from config should work)
+* removed NO_FILE_SYSTEM, if you want to run the bot without it,
+  use modules [beldin]
+* chanset/chaninfo will use your console channel if no channel
+  provided [beldin]
+* raw binding now use exact matching of codes [beldin]
+* lastonchan now is a char * & is updated for the botnet & file
+  areas too [beldin]
+* lowercase-ctcp, answer-ctcp, trigger-on-ignore, debug-tcl, raw-binds
+  die-on-sighup & die-on-sigterm are now tcl settings [beldin]
+  (answer-ctcp is maximum ctcp's to answer)
+* complete rehashed the way modules are done, relying more on the OS
+  to resolve functions, this should be nearly transparent to actual
+  modules [beldin]
+* removed support for ancient compilers [beldin]
+* .adduser would let you add the dumb characters in a handle [beldin]
+* fixed dcc chat for +x only users [beldin]
+* swapped the args in msg_* to make it fit the hashtable patern [beldin]
+* server queues now prioritised, mode queue has precedence [beldin]
+* DCC_ types are handled a function-call table now rather than (stupid)
+  huge case statements..allows more versatility with connects [beldin]
+* +u is now checked at the RECEIVING end of sharing [beldin]
+* binding change (is it time to jump to 1.2?) ->
+  the flags section of bindings is now in the form:
+    [globalflags][operator[chanflags]]
+  global flags matches vs global flags only, operator is one of & or |
+  & implies EXACT match i.e. if you use o&n it will match only global +o AND
+  channel +n, whereas | is or, i.e. any will trrigger it eg: Bo|o will
+  trigger by a botnet master OR a global op OR a channel op. [beldin]
+  THIS WILL BREAK ANY SCRIPT that uses O/M/N in bindings (woohoo ;)
+  (OR is the default take note)
+* also applies to help/text outputs (someone go through and change these all 
+  please) [beldin]
+* Made global variable to specify whether the server connection should be
+  closed when an ERROR from the server is received. (found by EraseMe) [BB]
+* Merged hash.c into tclhash.c [beldin]
+* .save now displays a confirmation [robey]
+* modules can now create their own hash tables [beldin]
+* added load/unld <module> bindings to allow scripts to configure when
+  a module is loaded [beldin]
+* Added MODULE hooks in blowfish for `encrypt_string' and `decrypt_string'. [BB]
+* New module `woobie' to serve as a skeletal/sample module. [BB]
+* New module `wire.so' which replaces `wire.tcl'. [BB]
+* Minor fixes for NO_IRC. [BB]
+* More work on converting messages to `english.h' definitions for language 
+  support.  Currently, only user messages are being converted (not TCL or 
+  party-line messages). [Raistlin/BB]
+* Moved CLIENTINFO definitions to `english.h' for language support.
+* QUIET_REJECTION definition has been changed from a compile-time option
+  to a run-time variable `quiet-reject.' [BB]
+* If MODULES are being compiled, the NO_FILE_SYSTEM definition is now
+  undefined.  (e.g. just don't `loadmodule filesystem') [BB]
+* `CHECK_STONED' definition has been changed from a compile-time option
+  to a run-time variable `check-stoned.' [BB]
+* Installed a working wire.tcl for 1.1+ bots. (Yes, it was still broke
+  here) [BB]
+* FEATURES.1.1.x added, and README updated with MODULE information. [BB]
+* `userinfo1.0.tcl' script added to add commands and `whois' output 
+  fields for additional user information. [BB]
+* New global variable `numversion' containing the numeric source
+  version from `version.' [BB]
+* New global variable `lastbind' for identifying what bound command
+  triggered a tcl routine. [BB]
+* If a permanant owner was -mn'ed, the +n would be retained, but that
+  owner would not be able to effect .chattr's because he would not have
+  a +m himself.  Hence, he could not even +m himself to fix it. [BB]
+* .who now reports DCC socket numbers to OWNERs. [BB]
+* DCC socket numbers ONCE AGAIN removed from inter-bot note displays. [BB]
+* Bug in filesys module when no files-path caused a crash. (added a new 
+  call to the filesys module: FILESYS_ISVALID). [BB]
+* Makefiles modified and cleaned to not relink when unnecessary. 
+  (eggdrop and *.so's are no longer mv'd, but are -o'd to the base
+  source directory for dependancy) [BB]
+* Added `strict-servernames' variable from to not update the
+  server list when servers identify themselves differently. [BB]
+* More fun help file grammar changes... Still not done yet. [BB]
+* new tcl var: dcc-flood-thr - dcc flood threshold [BB/beldin]
+* Removed #define OWNER - always an owner now [BB/beldin]
+* tcl_chpass needed 16 byte password buffers [paranorml]
+* small change to tcl-commands.doc [beldin]
+* change to configure for helping deal with fr0k3 linux libdl.so setup [beldin]
+

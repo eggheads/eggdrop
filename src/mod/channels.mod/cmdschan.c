@@ -1108,7 +1108,7 @@ static void cmd_pls_chan(struct userrec *u, int idx, char *par)
     dprintf(idx, "Usage: +chan [%s]<channel>\n", CHANMETA);
     return;
   }
-  
+
   chname = newsplit(&par);
   if (findchan_by_dname(chname)) {
     dprintf(idx, "That channel already exists!\n");
@@ -1118,7 +1118,7 @@ static void cmd_pls_chan(struct userrec *u, int idx, char *par)
     dprintf(idx, "That channel already exists as %s!\n", chan->dname);
     return;
   }
-  
+
   if (tcl_channel_add(0, chname, par) == TCL_ERROR) /* drummer */
     dprintf(idx, "Invalid channel.\n");
   else

@@ -505,8 +505,8 @@ int answer(int sock, char *caller, unsigned long *ip,
 {
   int new_sock, addrlen;
   struct sockaddr_in from;
-
   addrlen = sizeof(struct sockaddr);
+
   new_sock = accept(sock, (struct sockaddr *) &from, &addrlen);
   if (new_sock < 0)
     return -1;

@@ -650,7 +650,7 @@ static void cmd_console(struct userrec *u, int idx, char *par)
     dest = idx;
   if (!nick[0])
     nick = newsplit(&par);
-  /* ugly hack for stupid modeless channels ++rtc */
+  /* ugly hack for modeless channels -- rtc */
   if ((nick [0] == '+' && findchan_by_dname(nick)) || 
       (nick [0] != '+' && strchr(CHANMETA "*", nick[0]))) {
     if (strcmp(nick, "*") && !findchan_by_dname(nick)) {
@@ -1442,7 +1442,7 @@ static void cmd_chattr(struct userrec *u, int idx, char *par)
       chan = findchan_by_dname(arg);
     } else {
       chan = findchan_by_dname(arg);
-      /* ugly hack for stupid modeless channels ++rtc */
+      /* ugly hack for modeless channels -- rtc */
       if (!(arg[0] == '+' && chan) &&
           !(arg[0] != '+' && strchr (CHANMETA, arg[0]))) {
 	/* .chattr <handle> <changes> */
@@ -1624,15 +1624,15 @@ static void cmd_botattr(struct userrec *u, int idx, char *par)
   }
   /* Parse args */
   if (par[0]) {
-    arg = newsplit (&par);
+    arg = newsplit(&par);
     if (par[0]) {
       /* .botattr <handle> <changes> <channel> */
       chg = arg;
-      arg = newsplit (&par);
+      arg = newsplit(&par);
       chan = findchan_by_dname(arg);
     } else {
       chan = findchan_by_dname(arg);
-      /* ugly hack for stupid modeless channels ++rtc */
+      /* ugly hack for modeless channels -- rtc */
       if (!(arg[0] == '+' && chan) &&
           !(arg[0] != '+' && strchr (CHANMETA, arg[0]))) {
 	/* .botattr <handle> <changes> */

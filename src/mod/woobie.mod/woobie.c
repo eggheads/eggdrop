@@ -1,7 +1,7 @@
 /* 
  * woobie.c   - a nonsensical command to exemplify module programming
- *
- *                By ButchBub - 15 July 1997    
+ * 
+ *                By ButchBub - 15 July 1997
  */
 
 #define MAKING_WOOBIE

@@ -1338,7 +1338,6 @@ static int gottopic(char *from, char *msg)
     set_topic(chan, msg);
     check_tcl_topc(nick, from, u, chan->dname, msg);
   }
-  
   return 0;
 }
 

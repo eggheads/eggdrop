@@ -94,6 +94,7 @@ char *add_cr(char *buf)
 }
 
 extern void (*qserver) (int, char *, int);
+
 void dprintf EGG_VARARGS_DEF(int, arg1)
 {
   char *format;
@@ -426,7 +427,6 @@ void changeover_dcc(int i, struct dcc_table *type, int xtra_size)
     bzero(dcc[i].u.other, xtra_size);
   }
 }
-
 
 int detect_dcc_flood(time_t * timer, struct chat_info *chat, int idx)
 {

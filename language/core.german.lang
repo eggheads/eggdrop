@@ -299,7 +299,7 @@ Baue eine Telnetverbindung zu dem Bot auf und gib 'NEW' als deinen Nickname ein.
   -c   (mit -n) zeige alle 10 Sekunden die Channelstatistiken an\n\
   -t   (mit -n) Terminal benutzen, um einen DCC chat zu simulieren\n\
   -m   Benutzerdatei-Erstellungs-Modus\n\
-  optionaler Konfigurationsdateiname (Standard 'egg.config')\n
+  optionaler Konfigurationsdateiname (Standard 'eggdrop.conf')\n
 
 0x701,%s scheint in diesem Verzeichnis bereits zu laufen.\n
 0x702,Loesche '%s' wenn das nicht stimmt\n
@@ -529,4 +529,3 @@ Baue eine Telnetverbindung zu dem Bot auf und gib 'NEW' als deinen Nickname ein.
 0xe30,Ident-Socket beim Wartern auf die Antwort verloren!!
 0xe31,Telnet verweigert: %s, Kein Zugriff
 0xe32,Telnet-Verbindung von %s zurueckgewiesen (versuchte, meinen botnetnick zu benutzen)
-

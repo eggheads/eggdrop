@@ -504,4 +504,3 @@ Telnet to the bot and enter 'NEW' as your nickname.
 0xe30,Lost ident wait telnet socket!!
 0xe31,Denied telnet: %s, No Access
 0xe32,Refused telnet connection from %s (tried using my botnetnick)
-

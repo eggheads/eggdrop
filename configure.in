@@ -248,15 +248,15 @@ case "$SYSTEM" in
     else
       if test -r "/cmds"
       then
-       AC_MSG_RESULT(QNX)
-       NEED_DL=0
-       SHLIB_STRIP=touch
-       DEFAULT_MAKE=static
+	AC_MSG_RESULT(QNX)
+	NEED_DL=0
+	SHLIB_STRIP=touch
+	DEFAULT_MAKE=static
       else
-       AC_MSG_RESULT(Something unknown!)
-       AC_MSG_RESULT([If you get dynamic modules to work, be sure to let the devel team know HOW :)])
-       NEED_DL=0
-       DEFAULT_MAKE=static
+	AC_MSG_RESULT(Something unknown!)
+	AC_MSG_RESULT([If you get dynamic modules to work, be sure to let the devel team know HOW :)])
+	NEED_DL=0
+	DEFAULT_MAKE=static
       fi
     fi
     ;;
@@ -677,7 +677,7 @@ if test ! "x${TCLLIBFN}" = "x" && test ! "x${TCLINCFN}" = "x"
 then
 
   # find Tcl's version
-    TCL_VERSION=`grep TCL_VERSION $TCLINC/$TCLINCFN | head -1 | $AWK '{gsub(/\"/, "", $3); print $3}'`
+  TCL_VERSION=`grep TCL_VERSION $TCLINC/$TCLINCFN | head -1 | $AWK '{gsub(/\"/, "", $3); print $3}'`
   TCL_PATCH_LEVEL=`grep TCL_PATCH_LEVEL $TCLINC/$TCLINCFN | head -1 | $AWK '{gsub(/\"/, "", $3); print $3}'`
 fi
 
@@ -690,8 +690,8 @@ then
     AC_MSG_RESULT($TCL_PATCH_LEVEL)
     TCL_FOUND=1
   else
-  AC_MSG_RESULT($TCL_VERSION)
-  TCL_FOUND=1
+    AC_MSG_RESULT($TCL_VERSION)
+    TCL_FOUND=1
   fi
 else
   AC_MSG_RESULT(not found)
@@ -762,10 +762,10 @@ fi
 # check for Tcl_Free()
 AC_MSG_CHECKING(if Tcl library has Tcl_Free)
 if eval "test \"`echo '$''{'ac_cv_var_tcl_free'+set}'`\" = set"
-  then
-    echo $ac_n "(cached) $ac_c" 1>&6
-  else
-    ac_save_LIBS="$LIBS"
+then
+  echo $ac_n "(cached) $ac_c" 1>&6
+else
+  ac_save_LIBS="$LIBS"
   LIBS="$TCL_TESTLIBS"
   cat > conftest.$ac_ext << EOF
 #include "confdefs.h"
@@ -777,7 +777,7 @@ int main() {
 }
 EOF
   if { (eval echo configure: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}
-    then
+  then
     rm -rf conftest*
     eval "ac_cv_var_tcl_free=yes"
   else
@@ -785,28 +785,28 @@ EOF
     cat conftest.$ac_ext >&5
     rm -rf conftest*
     eval "ac_cv_var_tcl_free=no"
-    fi
+  fi
   rm -f conftest*
   LIBS="$ac_save_LIBS"
 fi
 
 if test "x${ac_cv_var_tcl_free}" = "xyes"
-    then
+then
   AC_MSG_RESULT(yes)
   AC_DEFINE(HAVE_TCL_FREE)
-    else
+else
   AC_MSG_RESULT(no)
 fi
 
 # check for TclpFinalizeThreadData()
 AC_MSG_CHECKING(if Tcl library has threads)
 if eval "test \"`echo '$''{'ac_cv_var_tcl_threads'+set}'`\" = set"
-      then
+then
   echo $ac_n "(cached) $ac_c" 1>&6
-      else
+else
   ac_save_LIBS="$LIBS"
   LIBS="$TCL_TESTLIBS"
-    cat > conftest.$ac_ext << EOF
+  cat > conftest.$ac_ext << EOF
 #include "confdefs.h"
 char TclpFinalizeThreadData();
 
@@ -815,19 +815,19 @@ int main() {
   return 0;
 }
 EOF
-    if { (eval echo configure: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}
-    then
-      rm -rf conftest*
-      eval "ac_cv_var_tcl_threads=yes"
-    else
-      echo "configure: failed program was:" >&5
-      cat conftest.$ac_ext >&5
-      rm -rf conftest*
-      eval "ac_cv_var_tcl_threads=no"
-    fi
-    rm -f conftest*
-    LIBS="$ac_save_LIBS"
+  if { (eval echo configure: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}
+  then
+    rm -rf conftest*
+    eval "ac_cv_var_tcl_threads=yes"
+  else
+    echo "configure: failed program was:" >&5
+    cat conftest.$ac_ext >&5
+    rm -rf conftest*
+    eval "ac_cv_var_tcl_threads=no"
   fi
+  rm -f conftest*
+  LIBS="$ac_save_LIBS"
+fi
 
 if test "x${ac_cv_var_tcl_threads}" = "xyes"
 then

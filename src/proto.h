@@ -128,6 +128,7 @@ void tell_dcc(int);
 void not_away(int);
 void set_away(int, char *);
 void *_get_data_ptr(int, char *, int);
+
 #define get_data_ptr(x) _get_data_ptr(x,__FILE__,__LINE__)
 void flush_lines(int, struct chat_info *);
 struct dcc_t *find_idx(int);

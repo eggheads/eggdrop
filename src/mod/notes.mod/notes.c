@@ -209,7 +209,7 @@ static int tcl_storenote STDVAR
      p = strchr(fwd, '@');
     if (p && !strcasecmp(p + 1, botnetnick)) {
       *p = 0;
-      if (!strcasecmp(fwd, argv[2]))	
+      if (!strcasecmp(fwd, argv[2]))
 	/* they're forward to themselves on the same bot, llama's */
 	ok = 0;
       strcpy(fwd2, fwd);
@@ -877,7 +877,7 @@ static void join_notes(char *nick, char *uhost, char *handle, char *par)
 {
   int i = -1, j;
   struct chanset_t *chan = chanset;
-   
+
   if (notify_onjoin) { /* drummer */
     for (j = 0; j < dcc_total; j++)
       if ((dcc[j].type->flags & DCT_CHAT)
@@ -890,7 +890,7 @@ static void join_notes(char *nick, char *uhost, char *handle, char *par)
         return;			/* they already know they have notes */
       chan = chan->next;
     }
-    
+
     i = num_notes(handle);
     if (i) {
       dprintf(DP_HELP, "NOTICE %s :You have %d note%s waiting on %s.\n",
@@ -937,12 +937,12 @@ int get_note_ignores(struct userrec *u, char ***ignores)
   xk = getnotesentry(u);
   if (!xk)
     return 0;
-  
+
   rmspace(xk->data);
   buf = user_malloc(strlen(xk->data) + 1);
   strcpy(buf, xk->data);
   p = buf;
-  
+
   /* split up the string into small parts */
   *ignores = nmalloc(sizeof(char *) + 100);
   **ignores = p;
@@ -1056,7 +1056,7 @@ int match_note_ignore(struct userrec *u, char *from)
 {
   char **ignores;
   int ignoresn, i;
-  
+
   context;
   ignoresn = get_note_ignores(u, &ignores);
   if (!ignoresn)

@@ -1,6 +1,6 @@
 /* 
  * channels.c - part of channels.mod
- * support for channels within the bot 
+ * support for channels within the bot
  */
 /* 
  * This file is part of the eggdrop source code
@@ -373,10 +373,9 @@ static int ismodeline(masklist *m, char *user)
       return 1;
     m = m->next;
   }
-  
   return 0;
 }
-  
+
 /* returns true if user matches one of the masklist -- drummer */
 static int ismasked(masklist *m, char *user)
 {
@@ -385,10 +384,9 @@ static int ismasked(masklist *m, char *user)
       return 1;
     m = m->next;
   }
-  
   return 0;
 }
-  
+
 /* destroy a chanset in the list */
 /* does NOT free up memory associated with channel data inside the chanset! */
 static int killchanset(struct chanset_t *chan)
@@ -489,7 +487,7 @@ static void write_channels()
     putlog(LOG_MISC, "*", "ERROR writing channel file.");
     return;
   }
-  if (!quiet_save)  
+  if (!quiet_save)
     putlog(LOG_MISC, "*", "Writing channel file ...");
   fprintf(f, "#Dynamic Channel File for %s (%s) -- written %s\n",
 	  origbotname, ver, ctime(&now));
@@ -714,7 +712,7 @@ static void channels_report(int idx, int details)
 	}
       } else {
 	dprintf(idx, "    %-10s: no IRC support for this channel\n", chan->dname);
-      }      
+      }
       if (details) {
 	s[0] = 0;
 	i = 0;
@@ -735,7 +733,7 @@ static void channels_report(int idx, int details)
 	if (channel_protectops(chan))
 	  i += my_strcpy(s + i, "protect-ops ");
         if (channel_protectfriends(chan))
-          i += my_strcpy(s + i, "protect-friends ");  
+          i += my_strcpy(s + i, "protect-friends ");
 	if (channel_dontkickops(chan))
 	  i += my_strcpy(s + i, "dont-kick-ops ");
 	if (channel_wasoptest(chan))
@@ -758,11 +756,11 @@ static void channels_report(int idx, int details)
 	  i += my_strcpy(s + i, "cycle ");
 	if (channel_seen(chan))
 	  i += my_strcpy(s + i, "seen ");
-	if (channel_dynamicexempts(chan)) 
+	if (channel_dynamicexempts(chan))
 	  i += my_strcpy(s + i, "dynamic-exempts ");
 	if (channel_nouserexempts(chan))
 	  i += my_strcpy(s + i, "forbid-user-exempts ");
-	if (channel_dynamicinvites(chan)) 
+	if (channel_dynamicinvites(chan))
 	  i += my_strcpy(s + i, "dynamic-invites ");
 	if (channel_nouserinvites(chan))
 	  i += my_strcpy(s + i, "forbid-user-invites ");
@@ -795,17 +793,15 @@ static void channels_report(int idx, int details)
 static int expmem_masklist(masklist *m)
 {
   int result = 0;
-        
+
   while (m) {
     result += sizeof(masklist);
     if (m->mask)
         result += strlen(m->mask) + 1;
     if (m->who)
         result += strlen(m->who) + 1;
-    
     m = m->next;
   }
-  
   return result;
 }
 
@@ -841,7 +837,7 @@ static char *traced_globchanset(ClientData cdata, Tcl_Interp * irp,
   int i;
   int items;
   char **item;
-  
+
   context;
   if (flags & (TCL_TRACE_READS | TCL_TRACE_UNSETS)) {
     Tcl_SetVar2(interp, name1, name2, glob_chanset, TCL_GLOBAL_ONLY);
@@ -870,7 +866,7 @@ static char *traced_globchanset(ClientData cdata, Tcl_Interp * irp,
       }
     }
     if (item) /* hmm it cant be 0 */
-      Tcl_Free((char*) item);
+      Tcl_Free((char *) item);
     Tcl_SetVar2(interp, name1, name2, glob_chanset, TCL_GLOBAL_ONLY);
   }
   return NULL;

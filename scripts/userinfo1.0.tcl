@@ -69,9 +69,9 @@ set userinfover "Userinfo TCL v1.05"
 # This script is NOT for pre-1.3.0 versions.
 
 catch { set numversion }
-if {![info exists numversion] || ($numversion < 1040000)} {
+if {![info exists numversion] || ($numversion < 1030000)} {
     if {[string range $version 0 2] != "1.3"} {
-    putlog "*** Can't load $userinfover -- At least Eggdrop v1.4.0 required"
+    putlog "*** Can't load $userinfover -- At least Eggdrop v1.3.0 required"
     return 0
   }
 }

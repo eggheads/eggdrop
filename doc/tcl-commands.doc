@@ -65,7 +65,7 @@ specific commands, see later.
 
   queuesize [queue]
     returns: the number of msgs in all queues. If a queue is specified, only
-      the size of this queue is returned. valid queues are: mode, server, 
+      the size of this queue is returned. valid queues are: mode, server,
       help, or all.
 
    clearqueue <queue>
@@ -101,35 +101,35 @@ specific commands, see later.
   getuser <handle> <entry-type> [extra info]
     this is a generic interface to the new generic userfile support, it
     return info specific to each entry-type, valid entry types are:
-      BOTFL - returns the current bot-specific flags for the user
-	      (if it's a bot :)
+      BOTFL   - returns the current bot-specific flags for the user
+                (if it's a bot :)
       BOTADDR - (another bot-only thing :) returns a list containing
-	      the bots address, the bots telnet port, and it's relay port.
-      HOSTS - returns a list of the host for the user
-      LASTON - returns a list containing the unixtime last seen,
-	      and the last seen place.
-	     OR LASTON #channel returns the time last seen on the channel
-		or 0 if no info
-      INFO   - returns the user's global info line
-      XTRA   - returns the old xtra info
+                the bots address, the bots telnet port, and it's relay port.
+      HOSTS   - returns a list of the host for the user
+      LASTON  - returns a list containing the unixtime last seen,
+                and the last seen place.
+                OR LASTON #channel returns the time last seen on
+                the channel or 0 if no info
+      INFO    - returns the user's global info line
+      XTRA    - returns the old xtra info
       COMMENT - returns the master-visible only comment for the user
-      EMAIL  - returns the users email address
-      URL    - returns the users url address
+      EMAIL   - returns the users email address
+      URL     - returns the users url address
 
   setuser <handle> <entry-type> [extra info]
     this is the counterpart of getuser, it lets you set the various values
     extra ones not supported about :
-      PASS - use this to set a users password (no 3rd arg will clear it)
-      HOSTS - for setting hosts, no extra info = clear, otherwise
-	      *1* hostmask is added :P
-      LASTON - 2 forms:
-	       setuser <handle> laston <unixtime> <place>
-		  sets global laston time
-	       setuser <handle> laston <unixtime>
-		  sets global laston time, leaving the place field empty
-	       setuser <handle> laston <unixtime> <channel>
-		  will set a users laston time in a channel record
-		  (if it already exists)
+      PASS    - use this to set a users password (no 3rd arg will clear it)
+      HOSTS   - for setting hosts, no extra info = clear, otherwise
+                *1* hostmask is added :P
+      LASTON  - 2 forms:
+                setuser <handle> laston <unixtime> <place>
+                  sets global laston time
+                setuser <handle> laston <unixtime>
+                  sets global laston time, leaving the place field empty
+                setuser <handle> laston <unixtime> <channel>
+                  will set a users laston time in a channel record
+                  (if it already exists)
 
   chnick <old-handle> <new-handle>
     changes a user's handle
@@ -142,7 +142,7 @@ specific commands, see later.
       specified, the channel-specific flags for that channel are altered
       you can now use the +o|-o #channel format here too.
     returns: new flags for the user (if you made no changes, returns current
-      flags); if a channel was specified, the global AND the channel-specific 
+      flags); if a channel was specified, the global AND the channel-specific
       flags for that channel are returned in the format of the new flagging
       system (globalflags|channelflags) -- returns "*" if that user does not
       exist
@@ -421,7 +421,7 @@ specific commands, see later.
 
   channels
     returns: list of the channels the bot is monitoring (or trying to)
- 
+
   isbotnick <nick>
     returns: "1" if the nick matches the botnick; "0" otherwise
 
@@ -479,14 +479,12 @@ specific commands, see later.
   chanexempts <channel>
     returns: a list of the current exemptions (+e mode) on the channel,
       each element is of the form {exemption bywho age} age is seconds
-      from the bots POV. this is only useful on networks that support
-      +e
+      from the bots POV. this is only useful on networks that support +e
 
   chaninvites <channel>
     returns: a list of the current invitations (+I modes) on the channel,
       each element is of the form {invitation bywho age} age is seconds
-      from the bots POV. this is only useful on networks that support
-      +I
+      from the bots POV. this is only useful on networks that support +I
 
   resetbans <channel>
     removes all bans on the channel that aren't in the bot's ban list, and
@@ -675,10 +673,10 @@ specific commands, see later.
   dccused
     returns: number of dcc connections currently in use
 
-   dcclist ?type?
+  dcclist ?type?
     returns: a list of active connections, each item in the list will be a sublist
       of six elements:
-	{<idx> <handle> <hostname> <type> {<other>} <timestamp>}
+        {<idx> <handle> <hostname> <type> {<other>} <timestamp>}
 
       the types are: chat, bot, files, file_receiving, file_sending,
       file_send_pending, script, socket (these are connections that have not
@@ -755,7 +753,7 @@ specific commands, see later.
       yes, you can use the new flag binding method here too, and this is
       where it becomes truely phearfull since you may never need to check
       attr's inside functions again...imagine:
-	 bind pub -o&+o command command_proc
+        bind pub -o&+o command command_proc
       to only allow channel-spec ops to use it! no problem! works fine!
     returns: name of the command that was added, or (if proc-name was omitted),
       a list of the current bindings for this command
@@ -1020,10 +1018,10 @@ for the msg-command "stop", use "unbind msg - stop msg_stop".
        procname <nick> <user@host> <handle> <channel> <target> <reason>
 
        triggered when someone is kicked off the channel; the <mask> is
-       matched against "#channel target" where the target is the nickname of 
-       the person who got kicked off (can use wildcards); the proc is 
-       called with the nick, user@host, and handle of the kicker, plus the 
-       channel, the nickname of the person who was kicked, and the 
+       matched against "#channel target" where the target is the nickname of
+       the person who got kicked off (can use wildcards); the proc is
+       called with the nick, user@host, and handle of the kicker, plus the
+       channel, the nickname of the person who was kicked, and the
        reason; <flags> is unused here
 
   (13) NICK   (stackable)
@@ -1153,7 +1151,7 @@ for the msg-command "stop", use "unbind msg - stop msg_stop".
        bind link <flags> <mask> <proc>
        proc-name <botname> <via>
 
-       triggered when a bot links into the botnet; botname is the botnetnick 
+       triggered when a bot links into the botnet; botname is the botnetnick
        of the bot that just linked in; via is the bot it linked through; the
        mask is checked against the bot that linked; flags are ignored
 
@@ -1200,7 +1198,7 @@ for the msg-command "stop", use "unbind msg - stop msg_stop".
        returns 1, no further action is taken on the flood; if the proc
        returns 0, the bot will do its normal "punishment" for the flood;
        the flood type is "pub", "msg", "join", or "ctcp" (and can be
-       masked to "*" for the bind); flags is ignored
+       masked to "*" for the bind); flags are ignored
 
   (30) NOTE
        bind note <flags> <handle> <proc>
@@ -1210,21 +1208,21 @@ for the msg-command "stop", use "unbind msg - stop msg_stop".
        someone on another bot on the botnet) are checked against these
        binds before being process; if a bind exists, the bot will not
        deliver the note; the handle must be an exact match (no wild-
-       cards), but it is not case sensitive; flags is ignored
+       cards), but it is not case sensitive; flags are ignored
 
   (31) ACT   (stackable)
        bind act <flags> <mask> <proc>
        proc-name <handle> <channel#> <action>
 
        when someone does an action on the botnet, it invokes this binding;
-       flags is ignored; the mask is checked against the text of the
+       flags are ignored; the mask is checked against the text of the
        action (this is very similar to the CHAT binding)
 
   (32) WALL   (stackable)
        bind wall <flags> <mask> <proc>
        proc-name <handle> <msg>
 
-       when the bot receives a wallops, it invokes this binding; flags is
+       when the bot receives a wallops, it invokes this binding; flags are
        ignored; the mask is checked against the text of the wallops msg
 
   (33) BCST   (stackable)
@@ -1232,21 +1230,21 @@ for the msg-command "stop", use "unbind msg - stop msg_stop".
        proc-name <botname> <channel#> <text>
 
        when a bot says something on the botnet, it invokes this binding;
-       flags is ignored; the mask is checked against the text
+       flags are ignored; the mask is checked against the text
 
   (34) CHJN   (stackable)
        bind chjn <flags> <mask> <proc>
        proc-name <botname> <handle> <channel#> <flag> <idx> <from>
 
        when someone joins a botnet channel, it invokes this binding;
-       flags is ignored; the mask is checked against the text
+       flags are ignored; the mask is checked against the text
 
   (35) CHPT   (stackable)
        bind chpt <flags> <mask> <proc>
        proc-name <botname> <handle> <idx> <channel#>
 
        when someone parts a botnet channel, it invokes this binding;
-       flags is ignored; the mask is checked against the channel
+       flags are ignored; the mask is checked against the channel
 
   (36) TIME   (stackable)
        bind time - <mask> <proc>
@@ -1287,17 +1285,17 @@ for the msg-command "stop", use "unbind msg - stop msg_stop".
 
   (40) EVNT   (stackable)
        bind evnt - <type> <proc>
-       proc-name <type> 
+       proc-name <type>
 
        triggered whenever one of these events happens. valid events are:
          sighup            (called on a kill -HUP <pid>)
-         sigterm	   (called on a kill -TERM <pid>)
-         sigill		   (called on a kill -ILL <pid>)
-	 sigquit           (called on a kill -QUIT <pid>)
-	 save		   (called when the userfile is saved)
-	 rehash            (called just after a rehash)
-	 prerehash         (called just before a rehash)
-	 logfile           (called when the logs are switched daily)
+         sigterm           (called on a kill -TERM <pid>)
+         sigill            (called on a kill -ILL <pid>)
+         sigquit           (called on a kill -QUIT <pid>)
+         save              (called when the userfile is saved)
+         rehash            (called just after a rehash)
+         prerehash         (called just before a rehash)
+         logfile           (called when the logs are switched daily)
 
 (A) RETURN VALUES
 

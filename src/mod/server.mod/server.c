@@ -198,7 +198,7 @@ static int calc_penalty(char * msg)
   char * par2;
   char * par3;
   int penalty, i, ii;
-  
+
   context;
   if (!use_penalties)
     return 0;
@@ -340,7 +340,7 @@ static int fast_deq(int which)
     case DP_HELP:
       h = &hq;
       break;
-    default:  
+    default:
       return 0;
   }
   m = h->head;
@@ -1350,7 +1350,7 @@ static int tcl_jump STDVAR {
   return TCL_OK;
 }
 
-static int tcl_clearqueue STDVAR  
+static int tcl_clearqueue STDVAR
 {
  struct msgq *q, *qq;
  int msgs;
@@ -1359,8 +1359,8 @@ static int tcl_clearqueue STDVAR
  BADARGS(2,2, " queue");
  if (strcmp(argv[1],"all") == 0) {
      msgs = (int) (modeq.tot + mq.tot + hq.tot);
-     q = modeq.head;   
-     while (q) {  
+     q = modeq.head;
+     while (q) {
          qq = q->next;
          nfree(q->msg);
          nfree(q);
@@ -1368,7 +1368,7 @@ static int tcl_clearqueue STDVAR
          }
      q = mq.head;
      while (q) {
-         qq = q->next; 
+         qq = q->next;
          nfree(q->msg);
          nfree(q);
          q = qq;
@@ -1377,8 +1377,8 @@ static int tcl_clearqueue STDVAR
      while (q) {
          qq = q->next;
          nfree(q->msg);
-         nfree(q);     
-         q = qq;  
+         nfree(q);
+         q = qq;
          }
      modeq.tot = mq.tot = hq.tot = modeq.warned = mq.warned = hq.warned = 0;
      mq.head = hq.head = modeq.head = mq.last = hq.last = modeq.last = 0;
@@ -1386,16 +1386,16 @@ static int tcl_clearqueue STDVAR
      burst = 0;
      simple_sprintf(s, "%d", msgs);
      Tcl_AppendResult(irp, s, NULL);
-     return TCL_OK;    
+     return TCL_OK;
      }
  if (strcmp(argv[1],"server") == 0) {
      msgs = mq.tot;
      q = mq.head;
-     while (q) { 
+     while (q) {
          qq = q->next;
          nfree(q->msg);
          nfree(q);
-         q = qq;       
+         q = qq;
          mq.tot = mq.warned = 0;
          mq.head = mq.last = 0;
          if (modeq.tot == 0) {
@@ -1406,14 +1406,14 @@ static int tcl_clearqueue STDVAR
      mq.tot = mq.warned = 0;
      mq.head = mq.last = 0;
      simple_sprintf(s, "%d", msgs);
-     Tcl_AppendResult(irp, s, NULL); 
+     Tcl_AppendResult(irp, s, NULL);
      return TCL_OK;
      }
  if (strcmp(argv[1],"mode") == 0) {
      msgs = modeq.tot;
-     q = modeq.head;   
-     while (q) {  
-         qq = q->next; 
+     q = modeq.head;
+     while (q) {
+         qq = q->next;
          nfree(q->msg);
          nfree(q);
          q = qq;
@@ -1423,16 +1423,16 @@ static int tcl_clearqueue STDVAR
          }
      double_warned = 0;
      modeq.tot = modeq.warned = 0;
-     modeq.head = modeq.last = 0;  
-     simple_sprintf(s, "%d", msgs);  
+     modeq.head = modeq.last = 0;
+     simple_sprintf(s, "%d", msgs);
      Tcl_AppendResult(irp, s, NULL);
      return TCL_OK;
      }
  if (strcmp(argv[1],"help") == 0) {
-     msgs = hq.tot;    
-     q = hq.head; 
+     msgs = hq.tot;
+     q = hq.head;
      while (q) {
-         qq = q->next; 
+         qq = q->next;
          nfree(q->msg);
          nfree(q);
          q = qq;
@@ -1448,14 +1448,14 @@ static int tcl_clearqueue STDVAR
  "mode server help all", NULL);
  return TCL_ERROR;
  }
-     
+
  static int tcl_queuesize STDVAR
  {
     char s[20];
     int x;
-         
+
      BADARGS(1, 2, " ?queue?");
-    if (argc == 1) {   
+    if (argc == 1) {
        x = (int) (modeq.tot + hq.tot + mq.tot);
        simple_sprintf(s, "%d", x);
        Tcl_AppendResult(irp, s, NULL);
@@ -1489,7 +1489,7 @@ static int tcl_clearqueue STDVAR
              "mode serv help", NULL);
     return TCL_ERROR;
  }
-       
+
 static tcl_cmds my_tcl_cmds[] =
 {
   {"jump", tcl_jump},

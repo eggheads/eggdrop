@@ -1236,7 +1236,7 @@ static void check_expired_exempts()
             chan->dname);
         else {
           putlog(LOG_MISC, "*", "%s %s %s %s (%s)", EXEMPTS_NOLONGER,
-            (*u)->mask, MISC_ONLOCALE, chan->dname, MISC_EXPIRED);
+		 (*u)->mask, MISC_ONLOCALE, chan->dname, MISC_EXPIRED);
           add_mode(chan, '-', 'e', (*u)->mask);
           u_delexempt(chan,(*u)->mask,1);
         }
@@ -1275,7 +1275,8 @@ static void check_expired_invites()
     while (*u) {
       if (!((*u)->flags & MASKREC_PERM) && (now >= (*u)->expire)) {
 	putlog(LOG_MISC, "*", "%s %s %s %s (%s)", INVITES_NOLONGER,
-	       (*u)->mask, MISC_ONLOCALE, chan->dname, MISC_EXPIRED); 	    add_mode(chan, '-', 'I', (*u)->mask);
+	       (*u)->mask, MISC_ONLOCALE, chan->dname, MISC_EXPIRED);
+        add_mode(chan, '-', 'I', (*u)->mask);
 	u_delinvite(chan,(*u)->mask,1);
       } else
 	u = &((*u)->next);
