@@ -16,7 +16,7 @@ dnl You should have received a copy of the GNU General Public License
 dnl along with this program; if not, write to the Free Software
 dnl Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 dnl
-dnl $Id: aclocal.m4,v 1.93 2004/08/08 18:16:59 wcc Exp $
+dnl $Id: aclocal.m4,v 1.94 2004/08/20 07:10:40 wcc Exp $
 dnl
 
 
@@ -139,27 +139,25 @@ dnl which speeds up the compilation.
 dnl
 AC_DEFUN([EGG_CHECK_CCPIPE],
 [
-  if test -z "$no_pipe"; then
-    if test -n "$GCC"; then
-      AC_CACHE_CHECK([whether the compiler understands -pipe], egg_cv_var_ccpipe, [
-         ac_old_CC="$CC"
-         CC="$CC -pipe"
-         AC_COMPILE_IFELSE([[
-           int main ()
-           {
-             return(0);
-           }
-         ]], [
-           egg_cv_var_ccpipe="yes"
-         ], [
-           egg_cv_var_ccpipe="no"
-         ])
-         CC="$ac_old_CC"
-      ])
-
-      if test "$egg_cv_var_ccpipe" = "yes"; then
+  if test -n "$GCC" && test -z "$no_pipe"; then
+    AC_CACHE_CHECK([whether the compiler understands -pipe], egg_cv_var_ccpipe, [
+        ac_old_CC="$CC"
         CC="$CC -pipe"
-      fi
+        AC_COMPILE_IFELSE([[
+          int main ()
+          {
+            return(0);
+          }
+        ]], [
+          egg_cv_var_ccpipe="yes"
+        ], [
+          egg_cv_var_ccpipe="no"
+        ])
+        CC="$ac_old_CC"
+    ])
+
+    if test "$egg_cv_var_ccpipe" = "yes"; then
+      CC="$CC -pipe"
     fi
   fi
 ])
@@ -171,7 +169,7 @@ dnl See if the compiler supports -Wall.
 dnl
 AC_DEFUN([EGG_CHECK_CCWALL],
 [
-  if test -n "$GCC"; then
+  if test -n "$GCC" && test -z "$no_wall"; then
     AC_CACHE_CHECK([whether the compiler understands -Wall], egg_cv_var_ccwall, [
       ac_old_CFLAGS="$CFLAGS"
       CFLAGS="$CFLAGS -Wall"
