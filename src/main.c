@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  *
- * $Id: main.c,v 1.109 2004/06/14 01:14:06 wcc Exp $
+ * $Id: main.c,v 1.110 2004/06/20 02:28:09 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -59,6 +59,10 @@
 #include "modules.h"
 #include "tandem.h"
 #include "bg.h"
+
+#ifndef ENABLE_STRIP
+#  include <sys/resource.h>
+#endif
 
 #ifdef CYGWIN_HACKS
 #  include <windows.h>
@@ -710,7 +714,6 @@ int main(int argc, char **argv)
   struct chanset_t *chan;
 
 #ifndef ENABLE_STRIP
-#include <sys/resource.h>
   /* Make sure it can write core, if you make debug. Else it's pretty
    * useless (dw)
    */
