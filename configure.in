@@ -331,7 +331,7 @@ else
 	then
 	  if test "$TCLLIBFN" = ""
 	  then
-	    TCLLIBFN=lib$libtclfn$tcllibext
+	    TCLLIBFN=$libtclfn$tcllibext
 	    TCLLIBEXT=$tcllibext
 	    TCLLIBVER=`echo $tcllibfn | cut -c4-`
 	    break 2
@@ -364,7 +364,7 @@ else
 	    then
 	      AC_MSG_RESULT(found in $tcllibpath/lib$tcllibfn$tcllibext)
 	      TCLLIB=$tcllibpath
-	      TCLLIBFN=lib$tcllibfn$tcllibext
+	      TCLLIBFN=$tcllibfn$tcllibext
 	      TCLLIBEXT=$tcllibext
 	      TCLLIBVER=`echo $tcllibfn | cut -c4-`
 	      break 3
@@ -492,7 +492,7 @@ else
 
   if test $TCLVERFOUND = 1
   then
-    TCL_REQS="$TCLLIB/$TCLLIBFN"
+    TCL_REQS="$TCLLIB/lib$TCLLIBFN"
     TCL_LIBS="-L$TCLLIB -ltcl$TCLLIBVER -lm"
   else
     echo ""
