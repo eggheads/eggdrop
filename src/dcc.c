@@ -4,7 +4,7 @@
  *   disconnect on a dcc socket
  *   ...and that's it!  (but it's a LOT)
  *
- * $Id: dcc.c,v 1.72 2003/12/10 01:37:13 tothwolf Exp $
+ * $Id: dcc.c,v 1.73 2003/12/12 00:06:04 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -2031,7 +2031,7 @@ static void dcc_telnet_got_ident(int i, char *host)
   /* Copy acceptable-nick/host mask */
   strncpyz(dcc[i].nick, dcc[idx].host, HANDLEN);
   dcc[i].timeval = now;
-  strcpy(dcc[i].u.chat->con_chan, chanset ? chanset->name : "*");
+  strcpy(dcc[i].u.chat->con_chan, chanset ? chanset->dname : "*");
   /* Displays a customizable banner. */
   if (use_telnet_banner)
     show_banner(i);

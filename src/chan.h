@@ -3,7 +3,7 @@
  *   stuff common to chan.c and mode.c
  *   users.h needs to be loaded too
  *
- * $Id: chan.h,v 1.37 2003/03/04 08:51:44 wcc Exp $
+ * $Id: chan.h,v 1.38 2003/12/12 00:06:04 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -149,8 +149,9 @@ struct chan_t {
 struct chanset_t {
   struct chanset_t *next;
   struct chan_t channel;
-  char dname[81];        /* display name (!eggdev)               */
-  char name[81];         /* actual name (!ABCDEeggdev)           */
+  char dname[81]; /* display name (!eggdev) - THIS IS ALWAYS SET*/
+  char name[81];  /* actual name (!ABCDEeggdev) - THIS IS SET WHEN THE BOT
+                   * ACTUALLY JOINS THE CHANNEL */
   char need_op[121];
   char need_key[121];
   char need_limit[121];
