@@ -34,7 +34,7 @@
 
 #define HANDLEN		9	/* valid values 9->NICKMAX */
 #define BADHANDCHARS  "-,+*=:!.@#;$%&"
-#define NICKMAX       15	/* valid values HANDLEN->32 */
+#define NICKMAX        9	/* valid values HANDLEN->32 */
 #define UHOSTMAX     160        /* reasonable, i think? */
 #define DIRMAX       256	/* paranoia */
 #define MAX_LOG_LINE 767	/* for misc.c/putlog() <cybah> */

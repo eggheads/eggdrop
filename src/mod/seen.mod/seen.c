@@ -358,7 +358,7 @@ static void do_seen(int idx, char *prefix, char *nick, char *hand, char *channel
     chan = chanset;
     while (chan) {
       m = chan->channel.member;
-      while (m->nick[0]) {
+      while (m && m->nick[0]) {
 	sprintf(word2, "%s!%s", m->nick, m->userhost);
 	urec = get_user_by_host(word2);
 	if (urec && !strcasecmp(urec->handle, whotarget)) {

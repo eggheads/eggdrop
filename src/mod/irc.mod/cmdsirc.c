@@ -485,7 +485,7 @@ static void cmd_channel(struct userrec *u, int idx, char *par)
 	    spaces, spaces2);
     spaces[NICKMAX - 9] = ' ';
     spaces2[HANDLEN - 9] = ' ';
-    while (m->nick[0]) {
+    while (m && m->nick[0]) {
       if (m->joined > 0) {
 	strcpy(s, ctime(&(m->joined)));
 	if ((now - (m->joined)) > 86400) {
@@ -807,10 +807,7 @@ static void cmd_deluser(struct userrec *u, int idx, char *par)
   char *nick, s[1024];
   struct chanset_t *chan;
   memberlist *m;
-  struct flag_record victim =
-  {
-    FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0
-  };
+  struct flag_record victim = {FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0};
 
   if (!par[0]) {
     dprintf(idx, "Usage: deluser <nick>\n");

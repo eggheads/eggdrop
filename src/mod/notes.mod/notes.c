@@ -822,7 +822,7 @@ static void notes_hourly()
     chan = chanset;
     while (chan != NULL) {
       m = chan->channel.member;
-      while (m->nick[0]) {
+      while (m && m->nick[0]) {
 	sprintf(s1, "%s!%s", m->nick, m->userhost);
 	u = get_user_by_host(s1);
 	if (u) {
