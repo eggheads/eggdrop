@@ -2,7 +2,7 @@
  * net.c -- handles:
  *   all raw network i/o
  * 
- * $Id: net.c,v 1.41 2002/07/25 20:00:18 wcc Exp $
+ * $Id: net.c,v 1.42 2002/07/26 17:55:18 guppy Exp $
  */
 /* 
  * This is hereby released into the public domain.
@@ -747,7 +747,6 @@ int sockgets(char *s, int *len)
 {
   char xx[514], *p, *px;
   int ret, i, data = 0;
-  int chk = 0;
 
   for (i = 0; i < MAXSOCKS; i++) {
     /* Check for stored-up data waiting to be processed */
@@ -755,51 +754,29 @@ int sockgets(char *s, int *len)
 	!(socklist[i].flags & SOCK_BUFFER) && (socklist[i].inbuf != NULL)) {
       if (!(socklist[i].flags & SOCK_BINARY)) {
 	/* look for \r too cos windows can't follow RFCs */
-        while (chk == 0) {
-	  p = strchr(socklist[i].inbuf, '\n');
-	  if (p == NULL)
-	    p = strchr(socklist[i].inbuf, '\r');
-	  if (p != NULL) {
-	    *p = 0;
-	    if (strlen(socklist[i].inbuf) > 510)
-	      socklist[i].inbuf[510] = 0;
-	    strcpy(s, socklist[i].inbuf);
-	    px = (char *) nmalloc(strlen(p + 1) + 1);
-	    strcpy(px, p + 1);
-	    nfree(socklist[i].inbuf);
-	    if (px[0])
-	      socklist[i].inbuf = px;
-	    else {
-	      nfree(px);
-	      socklist[i].inbuf = NULL;
-	    }
-	    /* Strip CR if this was CR/LF combo */
-	    if (s[strlen(s) - 1] == '\r')
-	      s[strlen(s) - 1] = 0;
-            /* if s is null, we can't use it... */
-	    if ((s[0] == 0) || (s == NULL)) {
-              if (socklist[i].inbuf == NULL)
-                chk = 1;
-            } else
-              chk = 1;
-            if (chk) {
-              *len = strlen(s);
-       	      return socklist[i].sock;
-  	    }
-          } else {
-            if ((s[0] == 0) || (s == NULL)) {
-              if (socklist[i].inbuf != NULL) {
-                strcpy(s, socklist[i].inbuf);
-                *len = strlen(s);
-                nfree(socklist[i].inbuf);
-                socklist[i].inbuf = NULL;
-                socklist[i].inbuflen = 0;
-                return socklist[i].sock;
-              }
-            }
-            chk = 1;
-          }
-        }
+	p = strchr(socklist[i].inbuf, '\n');
+	if (p == NULL)
+	  p = strchr(socklist[i].inbuf, '\r');
+	if (p != NULL) {
+	  *p = 0;
+	  if (strlen(socklist[i].inbuf) > 510)
+	    socklist[i].inbuf[510] = 0;
+	  strcpy(s, socklist[i].inbuf);
+	  px = (char *) nmalloc(strlen(p + 1) + 1);
+	  strcpy(px, p + 1);
+	  nfree(socklist[i].inbuf);
+	  if (px[0])
+	    socklist[i].inbuf = px;
+	  else {
+	    nfree(px);
+	    socklist[i].inbuf = NULL;
+	  }
+	  /* Strip CR if this was CR/LF combo */
+	  if (s[strlen(s) - 1] == '\r')
+	    s[strlen(s) - 1] = 0;
+	  *len = strlen(s);
+	  return socklist[i].sock;
+	}
       } else {
 	/* Handling buffered binary data (must have been SOCK_BUFFER before). */
 	if (socklist[i].inbuflen <= 510) {
@@ -916,9 +893,9 @@ int sockgets(char *s, int *len)
   *len = strlen(s);
   /* Anything left that needs to be saved? */
   if (!xx[0]) {
-    if (data) {
+    if (data)
       return socklist[ret].sock;
-    } else
+    else
       return -3;
   }
   /* Prepend old data back */
@@ -930,22 +907,11 @@ int sockgets(char *s, int *len)
     strcat(socklist[ret].inbuf, p);
     nfree(p);
   } else {
-    if ((xx[0] || xx[1]) && (data != 1))
-      data = 1;
     socklist[ret].inbuflen = strlen(xx);
     socklist[ret].inbuf = (char *) nmalloc(socklist[ret].inbuflen + 1);
     strcpy(socklist[ret].inbuf, xx);
   }
   if (data) {
-    if ((s[0] == 0) || (s == NULL)) {
-      if (socklist[ret].inbuf != NULL) {
-        strcpy(s, socklist[ret].inbuf);
-        *len = strlen(s);
-        nfree(socklist[ret].inbuf);
-        socklist[ret].inbuf = NULL;
-        socklist[ret].inbuflen = 0;
-      }
-    }
     return socklist[ret].sock;
   } else {
     return -3;
