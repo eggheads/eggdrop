@@ -1,28 +1,33 @@
-$Id: UPDATES1.6,v 1.143 2001/07/06 16:36:40 guppy Exp $
-    
+$Id: UPDATES1.6,v 1.144 2001/07/07 01:49:24 tothwolf Exp $
+
 Changes in eggdrop: (since v1.6.0)
 ----------------------------------
 
 1.6.5
 Found by  Fixed by  What...
+          Tothwolf  Readded missing std_args.h check.
 Sup       guppy     removed an old ircd limit hack (legacy stuff owns)
           ejm       Fixed password checks in msg commands
-          poptix    ctcr had the wrong args for 'uh', maybe this will break something, 
-                    I doubt it.
+          poptix    ctcr had the wrong args for 'uh', maybe this will break
+                    something, I doubt it.
 FumBa     guppy     wire.mod now checks if an encryption module is loaded
           poptix    guppy broke chattr's isowner() check
           dw        bot op status was not shown in .channel
-KuNgFo0   Sup       Showing `inactive' in .status when the bot is not on the channel
-                    was a bit confusing. Also added #eggfaq@EFNet to docs.
+          Tothwolf  Simplified and cleaned up variable usage and several
+                    tests in configure.
+          Tothwolf  Fixed broken pthreads checking.
+KuNgFo0   Sup       Showing `inactive' in .status when the bot is not on the
+                    channel was a bit confusing. Also added #eggfaq@EFNet to
+                    docs.
 Abraham   guppy     added: tcl_haschanrec
 various   Sup       Prevent -b/-e/-I flooding by using random delays.
           guppy     misc cleanups in while() loops
           guppy     updated getops.tcl to v2.3
           guppy     updated recommended tcl version to 8.3.3 and changed the
-                    ftp site for tcl to ftp.eggheads.org since ftp.scriptics.com
-                    can be fairly picky these days.
+                    ftp site for tcl to ftp.eggheads.org since
+                    ftp.scriptics.com can be fairly picky these days.
           guppy     don't try to use null pointers in tbuf code *duh*
-SegFault  guppy     small fix to what nickname we can use when we type "new" 
+SegFault  guppy     small fix to what nickname we can use when we type "new"
           zip       we should use errno to detect EAGAIN in net.c
           guppy     display the proper queue that is full instead of just
                     DP_MODE
@@ -32,39 +37,45 @@ BenDover  guppy     changed the wording of %bantime <XdXhXm>
           Sup       Made server-timeout match the default value in the code.
 Amun      Sup       Added few missing brackets to channels.mod/channels.h
                     and exported remove_channel().
-          Kirben/   check for pthread_mutex_init as a function instead of in a
-          guppy     library
+          Kirben/   check for pthread_mutex_init as a function instead of
+          guppy     in a library
           Kirben    detect __res_mkquery since we detect __res_init now
-Sup       G`Quann   Fixed empty line on LOG_SRVOUT and removed a debug-output
-                    which confused users
+Sup       G`Quann   Fixed empty line on LOG_SRVOUT and removed a
+                    debug-output which confused users
           G`Quann   flush_inbuf and a killsock bug
           ITE       some access checking in msg commands
           guppy     tbuf fix
           guppy     check a bit harder for pthread_mutex_init
-various   Oliver/   small fix to sscanf for libsafe systems 
-          guppy 
+various   Oliver/   small fix to sscanf for libsafe systems
+          guppy
           Sup       Made srandom() use getpid() and getppid()
           Sup       added .whoami command
           stdarg    more utf problems, buffer overflow(s)
           Kirben/   More Cygwin fixes
           RebuM
           NML_375   Fix for dccdumpfile/dumpfile
-          poptix    Calling a proc from a bind, that modified the user record of
-                    the person that triggered the bind, could cause a crash. 
+          poptix    Calling a proc from a bind, that modified the user
+                    record of the person that triggered the bind, could
+                    cause a crash.
           poptix    Memory leak in filesys.mod, that's been there since 1.3.x
           poptix    'setflags' never accepted all the aruements, fixed.
 Tothwolf  Sup       tcl_ignorelist was showing the wrong expiration time.
 poptix    poptix    Info locking was broken, and .info wasn't in .help
           Tothwolf  additions/clarifications to tcl-commands.doc
-          poptix    getops.tcl problem due to ircnet hack support for ! channels
-          Sup       Don't try to relay to bots without proper address or relay-port.
-          Sup       Fixed .chaddr from changing the telnet-port and relay-port.
+          poptix    getops.tcl problem due to ircnet hack support for
+                    ! channels
+          Sup       Don't try to relay to bots without proper address or
+                    relay-port.
+          Sup       Fixed .chaddr from changing the telnet-port and
+                    relay-port.
           timothy   new evnt: loaded
-          poptix    tcl command mkdir had wrong BADARGS (didnt allow channel flags)
+          poptix    tcl command mkdir had wrong BADARGS (didnt allow channel
+                    flags)
           poptix    when tcl var servers was empty, we had problems.
 guppy     Sup       new bugs e-mail address: bugs@eggheads.org
-          Sup       Added a setting for default console flags to eggdrop.simple.conf,
-                    and made console-autosave disabled by default.
+          Sup       Added a setting for default console flags to
+                    eggdrop.simple.conf, and made console-autosave
+                    disabled by default.
 Abraham   guppy     new evnt: prerestart (restart is tricky)
 various   drummer/  we now detect __res_init for glibc2.2
           guppy
@@ -76,7 +87,7 @@ slennox   Sup       Updated the help channels in the docs.
           Eule      changed the way we check for sticky bans (saves cpu)
           Eugene    fixed various formatting mistakes
           SuperS    made the IRIX5,6 and 6-64bit OS detection into one check
- 
+
 1.6.4 (13 April 2001)
 Found by  Fixed by  What...
           Sup       Minor fixes to write_debug() function.
@@ -103,23 +114,23 @@ guruz     Sup       Added matchbotattr to alltools.tcl.
           Abraham   fixed a small remote-boots issue
           ITE       fixed the remote motd bug
 blaster   ITE       fixed a small dns.c bug with hostname resolving
-          Wingman   removed debug-tcl, since this is something noone uses and is
-                    more bloat than anything
-Darude    Darude/   encrypt/decrypt with highbit character messed up the string
-          Wingman
-KingBob   Tothwolf/ Fixed rest of the problems with utf8 characters. 
+          Wingman   removed debug-tcl, since this is something noone uses
+                    and is more bloat than anything
+Darude    Darude/   encrypt/decrypt with highbit character messed up the
+          Wingman   string
+KingBob   Tothwolf/ Fixed rest of the problems with utf8 characters.
           Wingman
 
 1.6.3 (27 February 2001)
 Found by  Fixed by  What...
-          guppy     made blowfish.mod a bit more friendly with other encryption
-                    modules and also added hooks in the core for string
-                    encryption/decryption
+          guppy     made blowfish.mod a bit more friendly with other
+                    encryption modules and also added hooks in the core
+                    for string encryption/decryption
 G`Quann   symband   Fixed a memleak within the XTRA field.
-	  Habeeb    if my-ip is wrong, tell the user that as the error msg
+          Habeeb    if my-ip is wrong, tell the user that as the error msg
           slennox   updated sentinel to v2.50
-	  Jason     actually remove a ban from irc when a sharebot removes it
-	  Tothwolf  do not allow eggdrop to run as root
+          Jason     actually remove a ban from irc when a sharebot removes it
+          Tothwolf  do not allow eggdrop to run as root
 darkfall  Sup       msg_hello() was unable to add users with long nicks.
                     Also slightly cleaned up irc.mod/msgcmds.c.
           Jason     Fixed misformed notices in notes module. Corrected use
@@ -127,7 +138,7 @@ darkfall  Sup       msg_hello() was unable to add users with long nicks.
           Tothwolf  shutdown once getting a SIGTERM by default
           Tothwolf  Improved Tcl version reporting
 habeeb    Sup       Updated the help channels in README.
-PPSlim    PPSlim/   +revengebot no longer requires that the bot has a 
+PPSlim    PPSlim/   +revengebot no longer requires that the bot has a
           guppy/    user-record for itself.
           Fabian
 project10 guppy     made the reserved-port setting into reserved-portrange
@@ -144,11 +155,11 @@ Found by  Fixed by  What...
 S Wilcox  Sup       Fixed a minor typo in got432().
           blaster   fixed cmd_binds when doing '.binds all'
 various   guppy     cmd_chaddr was broken thanks to a patch of mine
-SuperS    ITE       fixed the traffic accounting code when dealing 
+SuperS    ITE       fixed the traffic accounting code when dealing
                     high amounts of traffic
           ITE       made configure work properly when called with an
                     absolute path
-Ian	  Ian/      share.mod now uses .share.nick.unixtime.users as a
+Ian       Ian/      share.mod now uses .share.nick.unixtime.users as a
           guppy     temp file when recieving the userfile
           toot      fixed XTRA info from not working
           toot      fixed my bug that made revenge-mode get set back to
@@ -165,15 +176,15 @@ many      Wingman   Added proper support for tcl unicode changes since 8.1.
           guppy     did some cleanup in tcl[user/misc/dcc].c
           Sup       Added a channel option to .[un]stick and slightly
                     cleaned up channels.mod/cmdschan.c.
-fabulous  Fabian    Two calls to fclose() were missing in transfer.mod, causing
-                    eggdrop to leak file descriptors.
+fabulous  Fabian    Two calls to fclose() were missing in transfer.mod,
+                    causing eggdrop to leak file descriptors.
           Eule      hopefully fixed the cycle-flood problem on some efnet
                     servers
           Eule      autovoice now uses autoop delay also
           Tothwolf  cleaned up some language entries
-          Sup       default-port was set in the wrong location. 
+          Sup       default-port was set in the wrong location.
           ITE/      added '--disable-tcl-threads' to configure
-          Tothwolf  
+          Tothwolf
 
 1.6.1 (November 22, 2000)
 Found by  Fixed by  What...
@@ -192,13 +203,14 @@ various   Fabian    Channel masks for unsupported channels weren't properly
           Bob/      Now using lines with up to 500 instead of only 480
           Fabian    characters. Not truncating message anymore if it's longer
                     than 500 characters and doesn't contain spaces.
-paran0id  Fabian    Fixed crash in expired_mask() when checking ops not present
-                    in the user-list.
+paran0id  Fabian    Fixed crash in expired_mask() when checking ops not
+                    present in the user-list.
 
 1.6.0 (November 15, 2000)
 Found by  Fixed by  What...
 Paladin   guppy     MISC_NOUSERFILE includes the actual config filename now
-          dw        strict-host's default did not match the config default of 0
+          dw        strict-host's default did not match the config default
+                    of 0
           ITE       do not force +f on masters or owners
           Eule      removed legacy code for an ircd2.9 bug
           Wiktor/   removed the remaining lagcheck leftovers
@@ -216,7 +228,7 @@ guruz/    Fabian    Detect id-channel-names used as channel names (e.g. added
 Evo|ver             with .+chan) during IRC session.
           Sup       Removed left-over command `.resolve' from dns.mod/dns.c.
           Sup       Made `.[de]op' and `.[de]voice' get nick if it wasn't
-                    specified and added few missing flags to `.channel' 
+                    specified and added few missing flags to `.channel'
                     output. Also slightly cleaned up irc.mod/cmdsirc.c.
 ReBEL     guppy     Increased the length of ban reasons from 65 to 160 (I
                     think this is what RFC1459 allows for default).
@@ -233,8 +245,8 @@ Abraham   Fabian    Fixed compiler warnings about 'const' for tcl libraries
 Tothwolf  Fabian    Could not remove joining channel from procs called by
                     JOIN bind.
 fabulous  Fabian    The filesys module did not support remotely linked files.
-                    Instead, the bot crashed in various places and didn't even
-                    attempt to save/load the link information.
+                    Instead, the bot crashed in various places and didn't
+                    even attempt to save/load the link information.
           Eule      Removed duplicate servlimit check from irc.mod.
           Eule      Added `e' as global- and channel-flag for users exempted
                     from the stopnethack checks.
@@ -246,10 +258,11 @@ fabulous  Fabian    The filesys module did not support remotely linked files.
 Abraham,  Fabian    Changed failure of socket() to non-fatal event.
 TaKeDa
 TheUnknown Fabian   Fixed support for SunOS / Solaris.
-          Fabian    Don't actually delete the bind structures immediately, use
-                    centralised garbage collector instead. Cleaned up various
-                    aspects of the bind list handling.
-Sup       Fabian    Don't insist on proper domainname during hostname detection.
+          Fabian    Don't actually delete the bind structures immediately,
+                    use centralised garbage collector instead. Cleaned up
+                    various aspects of the bind list handling.
+Sup       Fabian    Don't insist on proper domainname during hostname
+                    detection.
 Sup       Fabian    Properly call PART bind when removing channel and the bot
                     will therefore leave the channel shortly. Also slightly
                     reworked channel removal.
@@ -258,7 +271,8 @@ Sup       Fabian    Properly call PART bind when removing channel and the bot
 NigtHuntr Fabian    Removed small compile warning about ambigious if/else.
 Abraham   Eule      Fixed and optimised ban/exempt and invite expiration code
                     for global and channel specific masks.
-zart      Sup       DCC send and chat requests send to channels are now ignored.
+zart      Sup       DCC send and chat requests send to channels are now
+                    ignored.
           Looser^   Fixed typo in irc.mod/irc.h me_op export macro.
           Eule      Made the bot recognise modes during CHAN_PEND. Allows us to
                     properly recognise bans/other masks and call mode binds.
@@ -307,16 +321,18 @@ Mnemonic
           guppy     Added language support to assoc.mod, console.mod and
                     notes.mod. Cosmetic fix to "module loaded" message.
           guppy     Removed some unneeded language macros.
-          guppy     Cleaned up ctcp.mod. Reordered some of the ctcp_mode checks.
+          guppy     Cleaned up ctcp.mod. Reordered some of the ctcp_mode
+                    checks.
           guppy     Added the [pass] argument in the .jump help reference.
 Ben       Fabian    Added IPv6-masks support (bans/exempts/invites/ignores).
-Abraham   Fabian    Fixed minor, newly introduced mess-up in `.chaninfo' output.
+Abraham   Fabian    Fixed minor, newly introduced mess-up in `.chaninfo'
+                    output.
 Abraham/  Fabian    User defined flags weren't displayed correctly for
 Kelvin              inactive channels, which the bot hadn't joined to yet.
 Joker     Fabian    Fixed further places where +/-revengebot was not properly
                     integrated or documented.
-          Fabian    Fixed eggdrop test-run for vpath. Using autoconf macros for
-                    caching in aclocal.m4. Changed -L. to -L`pwd` for
+          Fabian    Fixed eggdrop test-run for vpath. Using autoconf macros
+                    for caching in aclocal.m4. Changed -L. to -L`pwd` for
                     libtcls < 7.4 support hack.
           Fabian    Added strftime compatibility function.
           Eule      Re-added bell character to note message. This can be
@@ -327,16 +343,16 @@ Joker     Fabian    Fixed further places where +/-revengebot was not properly
 guppy     Fabian    Fixed a few format string bugs. Cleaned up style.
 Wiktor    Fabian    Fixed crash when a received user file failed to load.
 Wiktor    Fabian    compress module didn't indicate errors correctly.
-          Fabian    Unified generic int types. Replaced my_?to?l() with ?to?l().
-                    Replaced obsolete macros. Various cleanups.
+          Fabian    Unified generic int types. Replaced my_?to?l() with
+                    ?to?l(). Replaced obsolete macros. Various cleanups.
           Fabian    Made sure only <module>_start function symbols were
                     exported by modules. Fixed channels, console, dns, irc,
                     notes and transfer modules. Removed unneeded data in
                     non-debug mode from dns module compile.
           Eule      Fixed memory leak in channel key handling. Optimized use
                     of recheck_channel and recheck_channel_modes.
-ridens    Fabian/   fixed `.whois'/`.match' crash for users without laston data,
-          SuperS    caused by strftime changes.
+ridens    Fabian/   fixed `.whois'/`.match' crash for users without laston
+          SuperS    data, caused by strftime changes.
           Fabian    finish_share() cleanups and optimizations.
           SuperS    Fixed configure problems on 64bit IRIX.
 SuperS    Fabian    Removed connect_server() call in nuke_server() to avoid
@@ -345,24 +361,26 @@ SuperS    Fabian    Removed connect_server() call in nuke_server() to avoid
           Eule      Fixed various aspects of exempt handling.
 toot      Sup       add_bot_hostmask now adds static hostmasks for bots.
           Fabian    Minor cleanups and optimizations in the irc module.
-          Eule      Included +l and +k modes in modesperline-calculation. Added
-                    `include-lk' setting to control this.
-          SuperS    Fixed compatibility issues on IRIX. Added SINIX to configure.
-                    Removed unneeded header std_args.h.
+          Eule      Included +l and +k modes in modesperline-calculation.
+                    Added `include-lk' setting to control this.
+          SuperS    Fixed compatibility issues on IRIX. Added SINIX to
+                    configure. Removed unneeded header std_args.h.
           FirebaII  Fixed filesys module to use NICKMAX instead of HANDLEN in
                     one place.
           Fabian    Minor fixups in filesys module.
           G`Quann   Removed lagcheck feature because it caused too many
                     problems.
 Kool Cat  Fabian    Added meaningful error message for disabled tcl_dccsimul.
-dirtymac  Fabian    Lowered retry timeout for failed DNS requests to 10 minutes.
+dirtymac  Fabian    Lowered retry timeout for failed DNS requests to 10
+                    minutes.
           Eule      Fixed possible memleaks related to chan->channel.key,
                     chan->cmode[] and chan->key.
-various   Fabian    Under certain circumstances, the old user file was deleted
-                    and the new user file wasn't correctly created.
+various   Fabian    Under certain circumstances, the old user file was
+                    deleted and the new user file wasn't correctly created.
           blaster   Fixed crash in splitc().
           Tothwolf  Removed checks for bogus masks in +ban, +exempt, and
                     +invite. Minor error message fixes. Minor source cleanups.
-          Cybah     Added splitcn() to limit how many bytes get copied to first.
+          Cybah     Added splitcn() to limit how many bytes get copied to
+                    first.
                     Shrunk buffer size in cmd_boot(), using the new function.
           Shaun     Fixed crash with handles larger than 19 characters.
