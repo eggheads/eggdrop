@@ -4,7 +4,7 @@
  *   channel mode changes and the bot's reaction to them
  *   setting and getting the current wanted channel modes
  *
- * $Id: mode.c,v 1.55 2002/02/25 04:37:09 guppy Exp $
+ * $Id: mode.c,v 1.56 2002/02/25 15:57:37 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -504,8 +504,8 @@ static void got_deop(struct chanset_t *chan, char *nick, char *from,
     else if (channel_protectfriends(chan) && (glob_friend(victim) ||
 	     chan_friend(victim)))
       ok = 0;
-    else if (!chan_deop(victim) || (!glob_deop(victim) && !chan_op(victim)))
-      ok = 0;
+    else if (chan_deop(victim) || (glob_deop(victim) && !chan_op(victim)))
+      ok = 1;
 
     /* do we want to reop victim? */
     if (!ok && had_op && !match_my_nick(nick) && rfc_casecmp(who, nick) && 
