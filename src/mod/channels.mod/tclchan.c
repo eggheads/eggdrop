@@ -1,7 +1,7 @@
 /*
  * tclchan.c -- part of channels.mod
  *
- * $Id: tclchan.c,v 1.54 2002/01/02 03:46:37 guppy Exp $
+ * $Id: tclchan.c,v 1.55 2002/02/22 13:25:45 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -832,7 +832,10 @@ static int tcl_channel_info(Tcl_Interp * irp, struct chanset_t *chan)
     Tcl_AppendElement(irp, "+nodesynch");
   else
     Tcl_AppendElement(irp, "-nodesynch");
-  for (ul = udef; ul && ul->defined && ul->name; ul = ul->next) {
+  for (ul = udef; ul; ul = ul->next) {
+      /* If it's undefined, skip it. */
+      if (!ul->defined || !ul->name) continue;
+
       if (ul->type == UDEF_FLAG) {
         simple_sprintf(s, "%c%s", getudef(ul->values, chan->dname) ? '+' : '-',
 		       ul->name);
