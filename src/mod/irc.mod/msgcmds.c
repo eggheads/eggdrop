@@ -2,7 +2,7 @@
  * msgcmds.c -- part of irc.mod
  *   all commands entered via /MSG
  *
- * $Id: msgcmds.c,v 1.47 2003/11/27 06:15:06 wcc Exp $
+ * $Id: msgcmds.c,v 1.48 2004/01/06 10:34:16 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -853,14 +853,14 @@ static int msg_status(char *nick, char *host, struct userrec *u, char *par)
   s[0] = 0;
   strncpyz(s, "Channels: ", sizeof s);
   for (chan = chanset; chan; chan = chan->next) {
-    strncat(s, chan->dname, sizeof s);
+    strncat(s, chan->dname, sizeof(s) - 1 - strlen(s));
     if (!channel_active(chan))
-      strncat(s, " (trying)", sizeof s);
+      strncat(s, " (trying)", sizeof(s) - 1 - strlen(s));
     else if (channel_pending(chan))
-      strncat(s, " (pending)", sizeof s);
+      strncat(s, " (pending)", sizeof(s) - 1 - strlen(s));
     else if (!me_op(chan))
-      strncat(s, " (need ops)", sizeof s);
-    strncat(s, ", ", sizeof s);
+      strncat(s, " (need ops)", sizeof(s) - 1 - strlen(s));
+    strncat(s, ", ", sizeof(s) - 1 - strlen(s));
     if (strlen(s) > 140) {
       s[strlen(s) - 2] = 0; /* remove ', ' */
       dprintf(DP_HELP, "NOTICE %s :%s\n", nick, s);

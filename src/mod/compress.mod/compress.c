@@ -6,7 +6,7 @@
  * Written by Fabian Knittel <fknittel@gmx.de>. Based on zlib examples
  * by Jean-loup Gailly and Miguel Albrecht.
  *
- * $Id: compress.c,v 1.20 2003/03/08 04:29:43 wcc Exp $
+ * $Id: compress.c,v 1.21 2004/01/06 10:34:16 wcc Exp $
  */
 /*
  * Copyright (C) 2000, 2001, 2002, 2003 Eggheads Development Team
@@ -38,6 +38,7 @@
 
 #include "compress_config.h"
 #ifdef HAVE_MMAP
+#  undef panic
 #  include <sys/types.h>
 #  include <sys/mman.h>
 #  include <sys/stat.h>

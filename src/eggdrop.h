@@ -4,7 +4,7 @@
  *
  *   IF YOU ALTER THIS FILE, YOU NEED TO RECOMPILE THE BOT.
  *
- * $Id: eggdrop.h,v 1.51 2003/12/09 22:21:46 wcc Exp $
+ * $Id: eggdrop.h,v 1.52 2004/01/06 10:34:16 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -128,6 +128,9 @@
 /* NAME_MAX is what POSIX defines, but BSD calls it MAXNAMLEN.
  * Use 255 if we can't find anything else.
  */
+#if HAVE_SYS_PARAM_H
+#  include <sys/param.h>
+#endif
 #ifndef NAME_MAX
 #  ifdef MAXNAMLEN
 #    define NAME_MAX    MAXNAMLEN

@@ -1,7 +1,7 @@
 dnl aclocal.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: aclocal.m4,v 1.77 2003/12/15 06:18:52 tothwolf Exp $
+dnl $Id: aclocal.m4,v 1.78 2004/01/06 10:34:16 wcc Exp $
 dnl
 
 
@@ -397,6 +397,12 @@ case "$egg_cv_var_system_type" in
   ;;
   *BSD)
     # FreeBSD/OpenBSD/NetBSD
+    SHLIB_CC="$CC -fPIC"
+    SHLIB_LD="ld -Bshareable -x"
+    AC_DEFINE(MODULES_OK)dnl
+  ;;
+  Darwin)
+    # Mac OS X
     SHLIB_CC="$CC -fPIC"
     SHLIB_LD="ld -Bshareable -x"
     AC_DEFINE(MODULES_OK)dnl
