@@ -1,7 +1,7 @@
 # core.english.lang
 #   core language messages for eggdrop
 #
-# $Id: core.english.lang,v 1.21 2000/05/29 02:29:09 guppy Exp $
+# $Id: core.english.lang,v 1.22 2000/06/17 19:55:13 guppy Exp $
 
 # General stuff
 0x001,Usage
@@ -292,7 +292,6 @@ Telnet to the bot and enter 'NEW' as your nickname.
 0x903,Mass deop on %s by %s
 0x904,Mass deop.  Go sit in a corner.
 0x905,Bogus ban
-0x906,is in my permban list.  You need to use .-ban' in dcc chat if you want it gone for good.\n
 0x907,Oops.   Someone made me join %s... leaving...
 0x908,Mode change by fake op on %s!  Reversing...
 0x909,Abusing ill-gained server ops

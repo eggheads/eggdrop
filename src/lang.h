@@ -2,7 +2,7 @@
  * lang.h
  *   Conversion definitions for language support
  * 
- * $Id: lang.h,v 1.12 2000/06/04 08:42:09 guppy Exp $
+ * $Id: lang.h,v 1.13 2000/06/17 19:55:13 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -301,7 +301,6 @@
 #define CHAN_MASSDEOP_ARGS	chan->name, from
 #define CHAN_MASSDEOP_KICK	get_language(0x904)
 #define CHAN_BADBAN	get_language(0x905)
-#define CHAN_PERMBANNED	get_language(0x906)
 #define CHAN_FORCEJOIN	get_language(0x907)
 #define CHAN_FAKEMODE	get_language(0x908)
 #define CHAN_FAKEMODE_KICK	get_language(0x909)

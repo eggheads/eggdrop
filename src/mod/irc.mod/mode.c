@@ -8,7 +8,7 @@
  * multi-channel, 6feb1996
  * stopped the bot deopping masters and bots in bitch mode, pteron 23Mar1997
  * 
- * $Id: mode.c,v 1.37 2000/02/27 19:21:41 guppy Exp $
+ * $Id: mode.c,v 1.38 2000/06/17 19:55:13 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -714,11 +714,8 @@ static void got_unban(struct chanset_t *chan, char *nick, char *from,
   if ((u_equals_mask(global_bans, who) || u_equals_mask(chan->bans, who)) &&
       me_op(chan) && !channel_dynamicbans(chan)) {
     /* that's a permban! */
-    if (glob_bot(user) && (bot_flags(u) & BOT_SHARE)) {
-      /* sharebot -- do nothing */
-    } else if ((glob_op(user) && !chan_deop(user)) || chan_op(user)) {
-      dprintf(DP_HELP, "NOTICE %s :%s %s", nick, who, CHAN_PERMBANNED);
-    } else
+      if ((!glob_bot(user) && !bot_flags(u) & BOT_SHARE) ||
+          (!glob_op(user) && chan_deop(user)) || !chan_op(user))
       add_mode(chan, '+', 'b', who);
   }
 }

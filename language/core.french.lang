@@ -12,7 +12,7 @@
 # arthur2@demoniak.hay-france.com ou benoit_jerome@penguinpowered.com
 # si vous voulez l'améliorer
 #
-# $Id: core.french.lang,v 1.15 2000/05/29 02:29:09 guppy Exp $
+# $Id: core.french.lang,v 1.16 2000/06/17 19:55:13 guppy Exp $
 
 
 # General stuff
@@ -300,7 +300,6 @@ Faites un Telnet sur le bot et entrez 'NEW' comme surnom.
 0x903,Deop en masse sur %s par %s
 0x904,Deop en masse.  Va t'asseoir dans un coin.
 0x905,Interdiction incorrecte.
-0x906,est dans ma liste des interdictions permanentes.  Vous devez utiliser .-ban' en DCC chat si vous voulez l'enlever pour de bon.\n
 0x907,Oops.   Quelqu'un m'a fait rejoindre %s... départ...
 0x908,Changement de mode par un faux op sur %s!  Annulation...
 0x909,Abus d'un op mal gagné par serveur
