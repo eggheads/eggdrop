@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  *
- * $Id: chan.c,v 1.80 2002/02/12 04:00:46 guppy Exp $
+ * $Id: chan.c,v 1.81 2002/02/16 07:22:07 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -691,7 +691,7 @@ static void check_this_member(struct chanset_t *chan, char *nick, struct flag_re
   char s[UHOSTLEN], *p;
 
   m = ismember(chan, nick);
-  if (!m || match_my_nick(nick))
+  if (!m || match_my_nick(nick) || !me_op(chan))
     return;
 
   sprintf(s, "%s!%s", m->nick, m->userhost);
