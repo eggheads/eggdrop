@@ -1,7 +1,7 @@
 /* 
  * userchan.c -- part of channels.mod
  * 
- * $Id: userchan.c,v 1.20 2000/11/21 22:30:24 guppy Exp $
+ * $Id: userchan.c,v 1.21 2000/12/06 02:35:18 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1274,7 +1274,7 @@ static int expired_mask(struct chanset_t *chan, char *who)
   if (!m || !chan_hasop(m) || !rfc_casecmp(m->nick, botname))
     return 1;
 
-  /* At this point we now the person/bot who set the mask is currently
+  /* At this point we know the person/bot who set the mask is currently
    * present in the channel and has op.
    */
 

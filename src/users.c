@@ -10,7 +10,7 @@
  * 
  * dprintf'ized, 9nov1995
  * 
- * $Id: users.c,v 1.21 2000/11/21 04:55:45 guppy Exp $
+ * $Id: users.c,v 1.22 2000/12/06 02:35:18 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -870,14 +870,13 @@ int readuserfile(char *file, struct userrec **ret)
 	    }
 	  } 
 	} else if (!strncmp(code, "--", 2)) {
-	  /* new format storage */
-	  struct user_entry *ue;
-	  int ok = 0;
-
-	  Context;
 	  if (u) {
-	    ue = u->entries;
-	    for (; ue && !ok; ue = ue->next)
+	    /* new format storage */
+	    struct user_entry *ue;
+	    int ok = 0;
+
+	    Context;
+	    for (ue = u->entries; ue && !ok; ue = ue->next)
 	      if (ue->name && !egg_strcasecmp(code + 2, ue->name)) {
 		struct list_type *list;
 

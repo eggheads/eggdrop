@@ -4,6 +4,8 @@ Changes in eggdrop: (since v1.6.0)
 
 1.6.2
 Found by  Fixed by  What...
+fabulous  Fabian    Two calls to fclose() were missing in transfer.mod, causing
+                    eggdrop to leak file descriptors.
           Eule      hopefully fixed the cycle-flood problem on some efnet
                     servers
           Eule      autovoice now uses autoop delay also

@@ -1,7 +1,7 @@
 /* 
  * transfer.c -- part of transfer.mod
  * 
- * $Id: transfer.c,v 1.31 2000/11/06 04:06:45 guppy Exp $
+ * $Id: transfer.c,v 1.32 2000/12/06 02:35:18 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -160,8 +160,10 @@ static void wipe_tmp_filename(char *fn, int idx)
   for (i = 0; i < dcc_total; i++)
     if (i != idx)
       if (dcc[i].type == &DCC_GET || dcc[i].type == &DCC_GET_PENDING)
-	if (!strcmp(dcc[i].u.xfer->filename, fn))
+	if (!strcmp(dcc[i].u.xfer->filename, fn)) {
 	  ok = 0;
+	  break;
+	}
   if (ok)
     unlink(fn);
 }
@@ -746,12 +748,12 @@ static void eof_dcc_send(int idx)
   struct userrec *u;
 
   Context;
+  fclose(dcc[idx].u.xfer->f);
   if (dcc[idx].u.xfer->length == dcc[idx].status) {
     int l;
 
     /* Success */
     ok = 0;
-    fclose(dcc[idx].u.xfer->f);
     if (!strcmp(dcc[idx].nick, "*users")) {
       module_entry *me = module_find("share", 0, 0);
 
@@ -825,7 +827,6 @@ static void eof_dcc_send(int idx)
   }
   /* Failure :( */
   Context;
-  fclose(dcc[idx].u.xfer->f);
   if (!strcmp(dcc[idx].nick, "*users")) {
     int x, y = 0;
 
@@ -1149,6 +1150,7 @@ static void transfer_get_timeout(int i)
   char xx[1024];
 
   Context;
+  fclose(dcc[i].u.xfer->f);
   if (strcmp(dcc[i].nick, "*users") == 0) {
     int x, y = 0;
 
@@ -1395,6 +1397,7 @@ static void dcc_get_pending(int idx, char *buf, int len)
     dprintf(DP_HELP, "NOTICE %s :Bad connection (%s)\n", dcc[idx].nick, s);
     putlog(LOG_FILES, "*", "DCC bad connection: GET %s (%s!%s)",
 	   dcc[idx].u.xfer->origname, dcc[idx].nick, dcc[idx].host);
+    fclose(dcc[idx].u.xfer->f);
     lostdcc(idx);
     return;
   }
