@@ -4,7 +4,7 @@
  * 
  * dprintf'ized, 4nov1995 rewritten, 26feb1996
  * 
- * $Id: files.c,v 1.11 2000/01/08 21:23:15 per Exp $
+ * $Id: files.c,v 1.12 2000/01/11 13:37:19 per Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -461,13 +461,7 @@ static void cmd_get(int idx, char *par)
 	  fwrite(&fdb, sizeof(filedb), 1, f);
 	}
       } else {
-	char xx[161];
-
-	if (par[0])
-	  sprintf(xx, "%s %s", fdb.filename, par);
-	else
-	  strcpy(xx, fdb.filename);
-	do_dcc_send(idx, destdir, xx);
+	do_dcc_send(idx, destdir, fdb.filename, par);
 	/* don't increase got count till later */
       }
     }
@@ -1386,11 +1380,7 @@ static int files_get(int idx, char *fn, char *nick)
     }
   }
   filedb_close(f);
-  if (nick[0])
-    sprintf(what, "%s %s", fdb.filename, nick);
-  else
-    strcpy(what, fdb.filename);
-  do_dcc_send(idx, destdir, what);
+  do_dcc_send(idx, destdir, fdb.filename, nick);
   /* don't increase got count till later */
   return 1;
 }

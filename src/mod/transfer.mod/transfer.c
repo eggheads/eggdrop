@@ -1,7 +1,7 @@
 /* 
  * transfer.c -- part of transfer.mod
  * 
- * $Id: transfer.c,v 1.23 2000/01/08 21:23:17 per Exp $
+ * $Id: transfer.c,v 1.24 2000/01/11 13:37:19 per Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -140,6 +140,20 @@ static int wild_match_file(register char *m, register char *n)
   while (*m == WILDS)
     m++;			/* Zap leftover *s       */
   return (*m) ? NOMATCH : MATCH;	/* End of both = match   */
+}
+
+/* Replaces all spaces with underscores (' ' -> '_').  The returned buffer
+ * needs to be freed after use.
+ */
+static char *replace_spaces(char *fn)
+{
+  register char *ret, *p;
+
+  p = ret = nmalloc(strlen(fn) + 1);
+  strcpy(ret, fn);
+  while ((p = strchr(p, ' ')) != NULL)
+    *p = '_';
+  return ret;
 }
 
 static int builtin_sentrcvd STDVAR {
@@ -538,6 +552,8 @@ static void dcc_get(int idx, char *buf, int len)
       module_entry *fs = module_find("filesys", 0, 0);
       struct userrec *u = get_user_by_handle(userlist,
 					     dcc[idx].u.xfer->from);
+      char *nfn = NULL;
+
       check_tcl_sentrcvd(u, dcc[idx].nick,
 			 dcc[idx].u.xfer->dir, H_sent);
       if (fs != NULL) {
@@ -548,8 +564,12 @@ static void dcc_get(int idx, char *buf, int len)
       /* download is credited to the user who requested it
        * (not the user who actually received it) */
       stats_add_dnload(u, dcc[idx].u.xfer->length);
+      if (strchr(dcc[idx].u.xfer->filename, ' '))
+	nfn = replace_spaces(dcc[idx].u.xfer->filename);
       putlog(LOG_FILES, "*", "Finished dcc send %s to %s",
-	     dcc[idx].u.xfer->filename, dcc[idx].nick);
+	     nfn ? nfn : dcc[idx].u.xfer->filename, dcc[idx].nick);
+      if (nfn)
+	nfree(nfn);
       wipe_tmp_filename(dcc[idx].u.xfer->filename, idx);
       strcpy((char *) xnick, dcc[idx].nick);
     }
@@ -752,16 +772,21 @@ static void transfer_get_timeout(int i)
     lostdcc(y);
     xx[0] = 0;
   } else {
-    char *p;
+    char *p, *nfn, *buf = NULL;
 
     strcpy(xx, dcc[i].u.xfer->filename);
     p = strrchr(xx, '/');
+    nfn = p ? p + 1 : xx;
+    if (strchr(nfn, ' '))
+      nfn = buf = replace_spaces(nfn);
     dprintf(DP_HELP, "NOTICE %s :Timeout during transfer, aborting %s.\n",
-	    dcc[i].nick, p ? p + 1 : xx);
-    putlog(LOG_FILES, "*", "DCC timeout: GET %s (%s) at %lu/%lu", p ? p + 1 : xx,
+	    dcc[i].nick, nfn);
+    putlog(LOG_FILES, "*", "DCC timeout: GET %s (%s) at %lu/%lu", nfn,
 	   dcc[i].nick, dcc[i].status, dcc[i].u.xfer->length);
     wipe_tmp_filename(dcc[i].u.xfer->filename, i);
     strcpy(xx, dcc[i].nick);
+    if (buf)
+      nfree(buf);
   }
   killsock(dcc[i].sock);
   lostdcc(i);
@@ -785,15 +810,20 @@ static void tout_dcc_send(int idx)
     unlink(dcc[idx].u.xfer->filename);
     putlog(LOG_BOTS, "*", "Timeout on userfile transfer.");
   } else {
-    char xx[1024];
+    char xx[1024], *nfn, *buf = NULL;
 
+    nfn = dcc[idx].u.xfer->filename;
+    if (strchr(nfn, ' '))
+      nfn = buf = replace_spaces(nfn);
     dprintf(DP_HELP, "NOTICE %s :Timeout during transfer, aborting %s.\n",
-	    dcc[idx].nick, dcc[idx].u.xfer->filename);
+	    dcc[idx].nick, nfn);
     putlog(LOG_FILES, "*", "DCC timeout: SEND %s (%s) at %lu/%lu",
-	   dcc[idx].u.xfer->filename, dcc[idx].nick, dcc[idx].status,
+	   nfn, dcc[idx].nick, dcc[idx].status,
 	   dcc[idx].u.xfer->length);
     sprintf(xx, "%s%s", tempdir, dcc[idx].u.xfer->filename);
     unlink(xx);
+    if (buf)
+      nfree(buf);
   }
   killsock(dcc[idx].sock);
   lostdcc(idx);
@@ -1141,10 +1171,16 @@ static int raw_dcc_send(char *filename, char *nick, char *from, char *dir)
   dcc[i].timeval = now;
   dcc[i].u.xfer->f = f;
   if (nick[0] != '*') {
+    char *buf = NULL;
+
+    if (strchr(nfn, ' '))
+      nfn = buf = replace_spaces(nfn);
     dprintf(DP_HELP, "PRIVMSG %s :\001DCC SEND %s %lu %d %lu\001\n", nick, nfn,
 	    iptolong(natip[0] ? (IP) inet_addr(natip) : getmyip()),
 	    port, ss.st_size);
     putlog(LOG_FILES, "*", "Begin DCC send %s to %s", nfn, nick);
+    if (buf)
+      nfree(buf);
   }
   return DCCSEND_OK;
 }

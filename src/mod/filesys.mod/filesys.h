@@ -1,7 +1,7 @@
 /* 
  * filesys.h -- part of filesys.mod
  * 
- * $Id: filesys.h,v 1.5 2000/01/08 21:23:16 per Exp $
+ * $Id: filesys.h,v 1.6 2000/01/11 13:37:19 per Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -50,7 +50,7 @@ static void filedb_getfiles(Tcl_Interp *, char *);
 static void filedb_getdirs(Tcl_Interp *, char *);
 static void filedb_change(char *, char *, int);
 static void tell_file_stats(int, char *);
-static int do_dcc_send(int, char *, char *);
+static int do_dcc_send(int, char *, char *, char *);
 static int files_get(int, char *, char *);
 static void files_setpwd(int, char *);
 static int resolve_dir(char *, char *, char *, int);
