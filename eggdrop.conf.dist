@@ -188,10 +188,9 @@ set require-p 0
 # (If you set this to 1, you must set protect-telnet 0)
 set open-telnets 0
 
-# [0/1/2] Display 'Nickname.' instead of identifying ourselves when people
+# [0/1] Display 'Nickname.' instead of identifying ourselves when people
 # telnet in. Set to 1 to only display Nickname.
 # (usefull if someone portscans your machine, they wont know we're here)
-# Set this to 2 to use the custom banner file set in telnet-banner above.
 set stealth-telnets 0
 
 # how long (in seconds) should i wait for a connect (dcc chat, telnet,

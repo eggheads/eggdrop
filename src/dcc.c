@@ -32,7 +32,8 @@ int dcc_total = 0;		/* total dcc's */
 char tempdir[121] = "";		/* temporary directory (default: current dir) */
 int require_p = 0;		/* require 'p' access to get on the party line? */
 int allow_new_telnets = 0;	/* allow people to introduce themselves via telnet */
-int stealth_telnets = 0;	/* display telnet banner? <cybah> */
+int stealth_telnets = 0;	/* be paranoid? <cybah> */
+int use_telnet_banner = 0;	/* display telnet banner? [seC] */
 char network[41] = "unknown-net";	/* name of the IRC network you're on */
 int password_timeout = 180;	/* time to wait for a password from a user */
 int bot_timeout = 60;		/* bot timeout value */
@@ -1794,12 +1795,13 @@ void dcc_telnet_got_ident(int i, char *host)
   dcc[i].nick[HANDLEN] = 0;
   dcc[i].timeval = now;
   strcpy(dcc[i].u.chat->con_chan, chanset ? chanset->name : "*");
+  /* Displays a customizable banner. [seC] */
+  if (use_telnet_banner)
+   show_banner(i);  
   /* This is so we dont tell someone doing a portscan anything
    * about ourselves. <cybah> */
-  if (stealth_telnets == 1) 
+  if (stealth_telnets) 
     sub_lang(i, MISC_BANNER_STEALTH);
-  else if (stealth_telnets == 2)
-    show_banner(i);
   else {
     dprintf(i, "\r\n\r\n");
     sub_lang(i, MISC_BANNER);

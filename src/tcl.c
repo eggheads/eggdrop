@@ -35,7 +35,7 @@ Tcl_Interp *interp;		/* eggdrop always uses the same interpreter */
 
 extern int backgrd, flood_telnet_thr, flood_telnet_time;
 extern int shtime, share_greet, require_p, keep_all_logs;
-extern int use_stderr, allow_new_telnets, stealth_telnets;
+extern int use_stderr, allow_new_telnets, stealth_telnets, use_telnet_banner;
 extern int default_flags, conmask, switch_logfiles_at, connect_timeout;
 extern int firewallport, reserved_port, notify_users_at;
 extern int flood_thr, ignore_time;
@@ -386,6 +386,7 @@ static tcl_ints def_tcl_ints[] =
   {"keep-all-logs", &keep_all_logs, 0},
   {"open-telnets", &allow_new_telnets, 0},
   {"stealth-telnets", &stealth_telnets, 0},
+  {"use-telnet-banner", &use_telnet_banner, 0},
   {"uptime", (int *) &online_since, 2},
   {"console", &conmask, 0},
   {"default-flags", &default_flags, 0},

@@ -1247,23 +1247,16 @@ void show_banner(int idx) {
 
    get_user_flagrec(dcc[idx].user,&fr,dcc[idx].u.chat->con_chan);
    vv = fopen(bannerfile, "r");
-   if (!vv || !is_file(bannerfile)) {
-      dprintf(idx, "\r\n\r\n");
-      sub_lang(idx, MISC_BANNER);
+   if (!vv || !is_file(bannerfile))
       return;
-   }
    while(!feof(vv)) {
       fgets(s, 120, vv);
       if (!feof(vv)) {
-        if (s[strlen(s) - 1] == '\n')
-          s[strlen(s) - 1] = 0;
         if (!s[0])
           strcpy(s, " \n");
         help_subst(s, dcc[idx].nick, &fr, 1, botnetnick);
-        if (s[0])
-          dprintf(idx, "%s", s);
+        dprintf(idx, "%s", s);
       }
    }
-   dprintf(idx, "\r\nNickname.\r\n");
 }
 

@@ -1545,6 +1545,7 @@ static int gotpart(char *from, char *chname)
   fixcolon(chname);
   chan = findchan(chname);
   if (chan && channel_inactive(chan)) {
+    clear_channel(chan, 1);  
     chan->status &= ~(CHAN_ACTIVE | CHAN_PEND);
     return 0;
   }

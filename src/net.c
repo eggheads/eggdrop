@@ -319,10 +319,10 @@ static int proxy_connect(int sock, char *host, int port, int proxy)
     }
     sprintf(s, "\004\001%c%c%c%c%c%c%s", (port >> 8) % 256, (port % 256),
 	    x[0], x[1], x[2], x[3], botuser);
-    write(sock, s, strlen(botuser) + 9);
+    tputs(sock, s, strlen(botuser) + 9); /* drummer */
   } else if (proxy == PROXY_SUN) {
     sprintf(s, "%s %d\n", host, port);
-    write(sock, s, strlen(s));
+    tputs(sock, s, strlen(s)); /* drummer */
   }
   return sock;
 }
@@ -582,7 +582,7 @@ static int sockread(char *s, int *len)
 	  /* (for strong connections, require a read to succeed first) */
 	  if (socklist[i].flags & SOCK_PROXYWAIT) { /* drummer */
 	    /* hang around to get the return code from proxy */
-	    grab = 8;
+	    grab = 10;
 	  } else if (!(socklist[i].flags & SOCK_STRONGCONN)) {
 	    debug1("net: connect! sock %d", socklist[i].sock);
 	    s[0] = 0;
@@ -822,12 +822,9 @@ void tputs(int z, char *s, unsigned int len)
   }
   for (i = 0; i < MAXSOCKS; i++) {
     if (!(socklist[i].flags & SOCK_UNUSED) && (socklist[i].sock == z)) {
-      if ((socklist[i].outbuf != NULL) || (socklist[i].flags & SOCK_PROXYWAIT)) {
-	/* already queueing or waiting for proxy: just add it <drummer> */
-	if (socklist[i].outbuf)
-	  p = (char *) nrealloc(socklist[i].outbuf, socklist[i].outbuflen + len);
-	else
-	  p = (char *) nmalloc(len);
+      if (socklist[i].outbuf != NULL) {
+	/* already queueing: just add it */
+	p = (char *) nrealloc(socklist[i].outbuf, socklist[i].outbuflen + len);
 	my_memcpy(p + socklist[i].outbuflen, s, len);
 	socklist[i].outbuf = p;
 	socklist[i].outbuflen += len;
@@ -857,8 +854,8 @@ void dequeue_sockets()
 {
   int i, x;
 
-  for (i = 0; i < MAXSOCKS; i++) {
-    if (!(socklist[i].flags & (SOCK_UNUSED | SOCK_PROXYWAIT)) && /* drummer */
+  for (i = 0; i < MAXSOCKS; i++) { 
+    if (!(socklist[i].flags & SOCK_UNUSED) &&
 	(socklist[i].outbuf != NULL)) {
       /* trick tputs into doing the work */
       x = write(socklist[i].sock, socklist[i].outbuf,
