@@ -1,9 +1,9 @@
 #
-# notes2.tcl - v2.1.0 - released by MHT <mht@mygale.org>
+# notes2.tcl - v2.1.1 - released by MHT <mht@mygale.org>
 #                     - a bind apart script from #TSF
 #                     - for eggdrop 1.3.15+
 #
-# $Id: notes2.tcl,v 1.2 1999/12/15 02:32:57 guppy Exp $
+# $Id: notes2.tcl,v 1.3 2000/08/10 02:06:38 guppy Exp $
 #
 ####
 #
@@ -26,6 +26,9 @@
 #         if a multiple connected user quits before receiving notes check.
 #         Generally never happens, except in case of 'Chriphil's syndrome' ;-p
 #       - Added missing 'You don't have that many messages.'
+#
+# 2.1.1 - fixed a couple of small bugs pertaining to $nick being used instead of
+#         $botnet-nick (found by takeda, fixed by guppy)
 #
 ####
 # Check your notes on every shared bot of the hub.
@@ -66,7 +69,7 @@ proc n2_notesindex {bot handle idx} {
 		    putbot $bot "notes2reply: $handle %$index. $sender ($date) $idx"
 		}
 	    }
-	    putbot $bot "notes2reply: $handle ### Use '.notes $nick read' to read them. $idx"
+	    putbot $bot "notes2reply: $handle ### Use '.notes ${botnet-nick} read' to read them. $idx"
 	}
     }
     return 1
@@ -179,7 +182,7 @@ proc *dcc:notes2 {handle idx arg} {
 	putidx $idx "       notes \[bot|all\] erase <#|all>"
 	putidx $idx "       # may be numbers and/or intervals separated by ;"
 	putidx $idx "       ex: notes erase 2-4;8;16-"
-	putidx $idx "           notes $nick read all"
+	putidx $idx "           notes ${botnet-nick} read all"
     } else {
 	set bot [string tolower [lindex $arg 0]]
 	set cmd [string tolower [lindex $arg 1]]
