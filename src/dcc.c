@@ -42,12 +42,17 @@ char network[41] = "unknown-net";	/* name of the IRC network you're on */
 int password_timeout = 180;	/* time to wait for a password from a user */
 int bot_timeout = 60;		/* bot timeout value */
 int identtimeout = 5;		/* timeout value for ident lookups */
+int dupwait_timeout = 5;	/* timeout for rejecting duplicate entries */
 int protect_telnet = 1;		/* even bother with ident lookups :) */
 int flood_telnet_thr = 5;	/* number of telnet connections to be considered a flood */
 int flood_telnet_time = 60;	/* in how many seconds? */
 extern int min_dcc_port, max_dcc_port;	/* valid portrange for telnets */
 extern int par_telnet_flood;    /* trigger telnet flood for +f ppl? */
 char bannerfile[121] = "text/banner"; /* file displayed on telnet login */
+
+static void dcc_telnet_hostresolved(int);
+static void dcc_telnet_got_ident(int, char *);
+static void dcc_telnet_pass(int, int);
 
 static void strip_telnet(int sock, char *buf, int *len)
 {
@@ -410,6 +415,7 @@ static void eof_dcc_bot(int idx)
   chatout("*** %s\n", x);
   botnet_send_unlinked(idx, dcc[idx].nick, x);
   killsock(dcc[idx].sock);
+  strcpy(x, dcc[idx].nick);
   lostdcc(idx);
 }
 
@@ -1055,8 +1061,6 @@ static int detect_telnet_flood(char *floodhost)
   return 0;
 }
 
-static void dcc_telnet_hostresolved(int);
-
 static void dcc_telnet(int idx, char *buf, int i)
 {
   unsigned long ip;
@@ -1115,8 +1119,6 @@ static void dcc_telnet(int idx, char *buf, int i)
 
   dns_hostbyip(ip);
 }
-
-static void dcc_telnet_got_ident(int, char *);
 
 static void dcc_telnet_hostresolved(int i)
 {
@@ -1221,6 +1223,97 @@ struct dcc_table DCC_TELNET =
   0
 };
 
+static void eof_dcc_dupwait(int idx)
+{
+  putlog(LOG_BOTS, "*", DCC_LOSTDUP, dcc[idx].host);
+  killsock(dcc[idx].sock);
+  lostdcc(idx);
+}
+
+static void dcc_dupwait(int idx, char *buf, int i)
+{
+  /* We just ignore any data at this point. */
+  return;
+}
+
+/* We now check again. If the bot is still marked as duplicate, there is no
+ * botnet lag we could push it on, so we just drop the connection.
+ */
+static void timeout_dupwait(int idx)
+{
+  context;
+  /* Still duplicate? */
+  if (in_chain(dcc[idx].nick)) {
+    dprintf(idx, "error Already connected.\n");
+    putlog(LOG_BOTS, "*", DCC_DUPLICATE, dcc[idx].host);
+    killsock(dcc[idx].sock);
+    lostdcc(idx);
+  } else {
+    /* Ha! Now it's gone and we can grant this bot access. */
+    dcc_telnet_pass(idx, dcc[idx].u.dupwait->atr);
+  }
+}
+
+static void display_dupwait(int idx, char *buf)
+{
+  sprintf(buf, "wait  duplicate?");
+}
+
+static int expmem_dupwait(void *x)
+{
+  register struct dupwait_info *p = (struct dupwait_info *) x;
+  int tot = sizeof(struct dupwait_info);
+
+  context;
+  if (p && p->chat && DCC_CHAT.expmem)
+    tot += DCC_CHAT.expmem(p->chat);
+  return tot;
+}
+
+static void kill_dupwait(int idx, void *x)
+{
+  register struct dupwait_info *p = (struct dupwait_info *) x;
+
+  context;
+  if (p) {
+    if (p->chat && DCC_CHAT.kill)
+      DCC_CHAT.kill(idx, p->chat);
+    nfree(p);
+  }
+}
+
+struct dcc_table DCC_DUPWAIT =
+{
+  "DUPWAIT",
+  DCT_VALIDIDX,
+  eof_dcc_dupwait,
+  dcc_dupwait,
+  &dupwait_timeout,
+  timeout_dupwait,
+  display_dupwait,
+  expmem_dupwait,
+  kill_dupwait,
+  0
+};
+
+/* This function is called if a bot gets removed from the list. It checks
+ * wether we have a pending duplicate connection for that bot and continues
+ * with the login in that case.
+ */
+void dupwait_notify(char *who)
+{
+  register int idx;
+
+  context;
+  ASSERT(who);
+  for (idx = 0; idx < dcc_total; idx++)
+    if ((dcc[idx].type == &DCC_DUPWAIT) &&
+	!strcmp(dcc[idx].nick, who)) {
+      dcc_telnet_pass(idx, dcc[idx].u.dupwait->atr);
+      break;
+    }
+}
+
 static void dcc_telnet_id(int idx, char *buf, int atr)
 {
   int ok = 0;
@@ -1284,22 +1377,36 @@ static void dcc_telnet_id(int idx, char *buf, int atr)
     lostdcc(idx);
     return;
   }
+  correct_handle(buf);
+  strcpy(dcc[idx].nick, buf);
   if (glob_bot(fr)) {
-    if (!strcasecmp(botnetnick, buf)) {
+    if (!strcasecmp(botnetnick, dcc[idx].nick)) {
       dprintf(idx, "error You cannot link using my botnetnick.\n");
       putlog(LOG_BOTS, "*", DCC_MYBOTNETNICK, dcc[idx].host);
       killsock(dcc[idx].sock);
       lostdcc(idx);
       return;
-    } else if (in_chain(buf)) {
-      dprintf(idx, "error Already connected.\n");
-      putlog(LOG_BOTS, "*", DCC_DUPLICATE,
-	     dcc[idx].host);
-      killsock(dcc[idx].sock);
-      lostdcc(idx);
+    } else if (in_chain(dcc[idx].nick)) {
+      struct chat_info *ci;
+
+      ci = dcc[idx].u.chat;
+      dcc[idx].type = &DCC_DUPWAIT;
+      dcc[idx].u.dupwait = get_data_ptr(sizeof(struct dupwait_info));
+      dcc[idx].u.dupwait->chat = ci;
+      dcc[idx].u.dupwait->atr = atr;
       return;
     }
   }
+  dcc_telnet_pass(idx, atr);
+}
+
+static void dcc_telnet_pass(int idx, int atr)
+{
+  int ok = 0;
+  struct flag_record fr = {FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0};
+
+  context;
+  get_user_flagrec(dcc[idx].user, &fr, NULL);
   /* no password set? */
   if (u_pass_match(dcc[idx].user, "-")) {
     if (glob_bot(fr)) {
@@ -1307,12 +1414,8 @@ static void dcc_telnet_id(int idx, char *buf, int atr)
 
       makepass(ps);
       set_user(&USERENTRY_PASS, dcc[idx].user, ps);
-      correct_handle(buf);
-      strcpy(dcc[idx].nick, buf);
-      nfree(dcc[idx].u.chat);
-      dcc[idx].u.bot = get_data_ptr(sizeof(struct bot_info));
+      changeover_dcc(idx, &DCC_BOT_NEW, sizeof(struct bot_info));
 
-      dcc[idx].type = &DCC_BOT_NEW;
       dcc[idx].status = STAT_CALLED;
       dprintf(idx, "*hello!\n");
       greet_new_bot(idx);
@@ -1324,12 +1427,19 @@ static void dcc_telnet_id(int idx, char *buf, int atr)
       return;
     }
     dprintf(idx, "Can't telnet until you have a password set.\r\n");
-    putlog(LOG_MISC, "*", DCC_NOPASS, buf, dcc[idx].host);
+    putlog(LOG_MISC, "*", DCC_NOPASS, dcc[idx].nick, dcc[idx].host);
     killsock(dcc[idx].sock);
     lostdcc(idx);
     return;
   }
   ok = 0;
+  if (dcc[idx].type == &DCC_DUPWAIT) {
+    struct chat_info *ci;
+
+    ci = dcc[idx].u.dupwait->chat;
+    nfree(dcc[idx].u.dupwait);
+    dcc[idx].u.chat = ci;
+  }
   dcc[idx].type = &DCC_CHAT_PASS;
   dcc[idx].timeval = now;
   if (glob_botmast(fr))
@@ -1350,11 +1460,8 @@ static void dcc_telnet_id(int idx, char *buf, int atr)
 
     ci = dcc[idx].u.chat;
     dcc[idx].u.file = get_data_ptr(sizeof(struct file_info));
-
     dcc[idx].u.file->chat = ci;
   }
-  correct_handle(buf);
-  strcpy(dcc[idx].nick, buf);
   
   if (glob_bot(fr)) {
     /*    Must generate a string consisting of our process ID and the current

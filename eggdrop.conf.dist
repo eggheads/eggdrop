@@ -350,6 +350,13 @@ set enable-simul 1
 # [0/1] allow +d & +k users to use commands bound as -|- ?
 set allow-dk-cmds 1
 
+# If a bot connects which already seems to be connected, I wait
+# dupwait-timeout seconds before I check again and then finally reject
+# the bot. This is useful to stop hubs from rejecting bots that actually
+# have already disconnected from another hub, but the disconnect information
+# has not yet spread over the botnet due to lag.
+set dupwait-timeout 5
+
 
 
 # You MUST remove this line for this config file to work.  This has been

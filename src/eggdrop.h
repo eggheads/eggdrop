@@ -240,6 +240,7 @@ struct dcc_t {
     struct relay_info *relay;
     struct script_info *script;
     struct dns_info *dns;
+    struct dupwait_info *dupwait;
     int ident_sock;
     void *other;
   } u;				/* special use depending on type */
@@ -312,6 +313,11 @@ struct dns_info {
   char dns_type;		/* lookup type, e.g. RES_HOSTBYIP */
   struct dcc_table *type;	/* type of the dcc table we are making the
 				   lookup for */
+};
+
+struct dupwait_info {
+  int atr;			/* the bots attributes			*/
+  struct chat_info *chat;	/* holds current chat data		*/
 };
 
 /* flags for dns_type */

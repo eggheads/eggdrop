@@ -114,6 +114,7 @@ char *stripmasktype(int);
 
 /* dcc.c */
 void failed_link(int);
+void dupwait_notify(char *);
 
 /* dccutil.c */
 void dprintf EGG_VARARGS(int, arg1);

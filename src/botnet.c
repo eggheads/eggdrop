@@ -303,6 +303,8 @@ void rembot(char *who)
   *ptr = ptr2->next;
   nfree(ptr2);
   tands--;
+
+  dupwait_notify(who);
 }
 
 void remparty(char *bot, int sock)

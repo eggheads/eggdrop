@@ -40,10 +40,12 @@ extern int default_flags, conmask, switch_logfiles_at, connect_timeout;
 extern int firewallport, reserved_port, notify_users_at;
 extern int flood_thr, ignore_time;
 extern char origbotname[], botuser[], motdfile[], admin[], userfile[],
- firewall[], helpdir[], notify_new[], hostname[], myip[], moddir[],
- tempdir[], owner[], network[], botnetnick[], bannerfile[];
+	    firewall[], helpdir[], notify_new[], hostname[], myip[],
+	    moddir[], tempdir[], owner[], network[], botnetnick[],
+	    bannerfile[];
 extern int die_on_sighup, die_on_sigterm, max_logs, max_logsize, enable_simul;
-extern int dcc_total, debug_output, identtimeout, protect_telnet;
+extern int dcc_total, debug_output, identtimeout, protect_telnet,
+	   dupwait_timeout;
 extern int egg_numver, share_unlinks, dcc_sanitycheck, sort_users;
 extern struct dcc_t *dcc;
 extern char egg_version[];
@@ -427,6 +429,7 @@ static tcl_ints def_tcl_ints[] =
   {"use-invites", &use_invites, 0}, /* Jason/drummer */
   {"quiet-save", &quiet_save, 0}, /* Lucas */
   {"force-expire", &force_expire, 0}, /* Rufus */
+  {"dupwait-timeout", &dupwait_timeout, 0},
   {0, 0, 0}			/* arthur2 */
 };
 
