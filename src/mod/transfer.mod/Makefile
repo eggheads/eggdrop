@@ -1,5 +1,5 @@
 # Makefile for src/mod/transfer.mod/
-# $Id: Makefile,v 1.12 2003/01/23 02:13:29 wcc Exp $
+# $Id: Makefile,v 1.13 2003/04/01 05:33:41 wcc Exp $
 
 srcdir = .
 
@@ -37,9 +37,10 @@ distclean: clean
  ../../../lush.h ../../../src/misc_file.h ../../../src/cmdt.h \
  ../../../src/tclegg.h ../../../src/tclhash.h ../../../src/chan.h \
  ../../../src/users.h ../../../src/compat/compat.h \
- ../../../src/compat/inet_aton.h ../../../src/compat/snprintf.h \
- ../../../src/compat/memset.h ../../../src/compat/memcpy.h \
- ../../../src/compat/strcasecmp.h ../../../src/compat/strftime.h \
- ../../../src/mod/modvals.h ../../../src/tandem.h \
- ../transfer.mod/transfer.h  ../transfer.mod/tcltransfer.c \
- ../transfer.mod/transferqueue.c ../transfer.mod/transferfstat.c
+ ../../../src/compat/inet_aton.h ../../../src/compat/inet_ntop.h \
+ ../../../src/compat/snprintf.h  ../../../src/compat/memset.h \
+ ../../../src/compat/memcpy.h ../../../src/compat/strcasecmp.h \
+ ../../../src/compat/strftime.h ../../../src/mod/modvals.h \
+ ../../../src/tandem.h ../transfer.mod/transfer.h \
+ ../transfer.mod/tcltransfer.c ../transfer.mod/transferqueue.c \
+ ../transfer.mod/transferfstat.c

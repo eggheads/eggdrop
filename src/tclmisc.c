@@ -2,7 +2,7 @@
  * tclmisc.c -- handles:
  *   Tcl stubs for everything else
  *
- * $Id: tclmisc.c,v 1.41 2003/03/31 12:01:07 wcc Exp $
+ * $Id: tclmisc.c,v 1.42 2003/04/01 05:33:40 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -52,6 +52,24 @@ extern module_entry *module_list;
 extern int max_logs;
 extern log_t *logs;
 extern Tcl_Interp *interp;
+#ifdef USE_IPV6
+extern char myipv6host[120];
+
+static int tcl_myip6 STDVAR      
+{
+  char s[120];
+
+  getmyip();
+
+  BADARGS(1, 1, "");
+
+  s[0] = 0;
+  if(strlen(myipv6host) < 120)
+    strcpy(s, myipv6host);
+  Tcl_AppendResult(irp, s, NULL);
+  return TCL_OK;
+}
+#endif
 
 int expmem_tclmisc()
 {
@@ -683,6 +701,9 @@ tcl_cmds tclmisc_cmds[] = {
   {"strftime",         tcl_strftime},
   {"ctime",               tcl_ctime},
   {"myip",                 tcl_myip},
+#ifdef USE_IPV6
+  {"myip6",               tcl_myip6},
+#endif
   {"rand",                 tcl_rand},
   {"sendnote",         tcl_sendnote},
   {"dumpfile",         tcl_dumpfile},

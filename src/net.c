@@ -1,10 +1,10 @@
-/* 
+/*
  * net.c -- handles:
  *   all raw network i/o
- * 
- * $Id: net.c,v 1.55 2003/03/04 08:51:45 wcc Exp $
+ *
+ * $Id: net.c,v 1.56 2003/04/01 05:33:40 wcc Exp $
  */
-/* 
+/*
  * This is hereby released into the public domain.
  * Robey Pointer, robey@netcom.com
  */
@@ -40,17 +40,28 @@ extern unsigned long otraffic_irc_today, otraffic_bn_today, otraffic_dcc_today,
                      otraffic_filesys_today, otraffic_trans_today,
                      otraffic_unknown_today;
 
-char hostname[121] = "";        /* Hostname can be specified in the config
-                                 * file                                     */
-char myip[121] = "";            /* IP can be specified in the config file   */
-char firewall[121] = "";        /* Socks server for firewall                */
-int firewallport = 1080;        /* Default port of Sock4/5 firewalls        */
-char botuser[21] = "eggdrop";   /* Username of the user running the bot    */
-int dcc_sanitycheck = 0;        /* We should do some sanity checking on dcc
-                                 * connections.                             */
-sock_list *socklist = NULL;     /* Enough to be safe                        */
+char hostname[121] = "";      /* Hostname can be specified in the config file */
+char myip[121] = "";          /* IP can be specified in the config file       */
+
+#ifdef USE_IPV6
+char myip6[121] = "";         /* IP can be specified in the config file       */
+char hostname6[121] = "";     /* Hostname can be specified in the config file */
+#endif
+
+char firewall[121] = "";      /* Socks server for firewall                    */
+int firewallport = 1080;      /* Default port of Sock4/5 firewalls            */
+char botuser[21] = "eggdrop"; /* Username of the user running the bot         */
+int dcc_sanitycheck = 0;      /* We should do some sanity checking on dcc
+                               * connections.                                 */
+sock_list *socklist = NULL;   /* Enough to be safe                            */
 int MAXSOCKS = 0;
-jmp_buf alarmret;               /* Env buffer for alarm() returns           */
+jmp_buf alarmret;             /* Env buffer for alarm() returns               */
+
+#ifdef USE_IPV6
+struct hostent *myipv6he;
+char myipv6host[120];
+unsigned long notalloc = 0;
+#endif
 
 /* Types of proxy */
 #define PROXY_SOCKS   1
@@ -69,6 +80,33 @@ IP my_atoul(char *s)
     s++;
   }
   return ret;
+}
+
+int getprotocol(char *host)
+{
+#ifdef USE_IPV6
+  struct hostent *he;
+#ifndef HAVE_GETHOSTBYNAME2
+  int error_num;
+#endif
+
+  if (!setjmp(alarmret)) {
+    alarm(resolve_timeout);
+
+#ifdef HAVE_GETHOSTBYNAME2
+    he = gethostbyname2(host, AF_INET6);
+#else
+    he = getipnodebyname(host, AF_INET6, AI_DEFAULT, &error_num);
+#endif
+    alarm(0);
+  } else
+    he = NULL;
+  if (!he)
+    return AF_INET;
+  return AF_INET6;
+#else
+  return 0;
+#endif
 }
 
 /* Initialize the socklist
@@ -105,8 +143,30 @@ IP getmyip()
   char s[121];
   IP ip;
   struct in_addr *in;
+#if defined(USE_IPV6) && !defined(HAVE_GETHOSTBYNAME2)
+  int error_num;
+#endif
 
+#ifdef USE_IPV6
+  myipv6he = NULL;
   /* Could be pre-defined */
+  if (myip6[0]) {
+#ifdef HAVE_GETHOSTBYNAME2
+    myipv6he = gethostbyname2(myip6, AF_INET6);
+#else
+    myipv6he = getipnodebyname(myip6, AF_INET6, AI_DEFAULT, &error_num);
+#endif
+    if (myipv6he == NULL)
+      fatal("Hostname IPV6 self-lookup failed.", 0);
+  }
+  if (hostname6[0]) {
+    myipv6he = gethostbyname2(hostname6, AF_INET6);
+    if (myipv6he == NULL)
+      fatal("Hostname IPV6 self-lookup failed.", 0);
+  }
+  if (myipv6he != NULL)
+    egg_inet_ntop(AF_INET6, &myipv6he, myipv6host, 119);
+#endif
   if (myip[0]) {
     if ((myip[strlen(myip) - 1] >= '0') && (myip[strlen(myip) - 1] <= '9'))
       return (IP) inet_addr(myip);
@@ -118,9 +178,17 @@ IP getmyip()
     gethostname(s, 120);
     hp = gethostbyname(s);
   }
+#ifdef USE_IPV6
+  if (hp == NULL && myipv6he==NULL)
+#else
   if (hp == NULL)
+#endif
     fatal("Hostname self-lookup failed. Please set 'my-ip' in the config "
           "file.", 0);
+#ifdef USE_IPV6
+  if(hp == NULL)
+    return 0;
+#endif
   in = (struct in_addr *) (hp->h_addr_list[0]);
   ip = (IP) (in->s_addr);
   return ip;
@@ -205,7 +273,7 @@ void neterror(char *s)
 }
 
 /* Sets/Unsets options for a specific socket.
- * 
+ *
  * Returns:  0   - on success
  *           -1  - socket not found
  *           -2  - illegal operation
@@ -229,7 +297,11 @@ int sockoptions(int sock, int operation, int sock_options)
 
 /* Return a free entry in the socket entry
  */
+#ifdef USE_IPV6
+int allocsock(int sock, int options, int af_ty)
+#else
 int allocsock(int sock, int options)
+#endif
 {
   int i;
 
@@ -240,6 +312,9 @@ int allocsock(int sock, int options)
       socklist[i].inbuflen = socklist[i].outbuflen = 0;
       socklist[i].flags = options;
       socklist[i].sock = sock;
+#ifdef USE_IPV6
+      socklist[i].af = af_ty;
+#endif
       return i;
     }
   }
@@ -249,10 +324,15 @@ int allocsock(int sock, int options)
 
 /* Request a normal socket for i/o
  */
+#ifdef USE_IPV6
+void setsock(int sock, int options, int af_ty)
+{
+  int i = allocsock(sock, options, af_ty), parm;
+#else
 void setsock(int sock, int options)
 {
-  int i = allocsock(sock, options);
-  int parm;
+  int i = allocsock(sock, options), parm;
+#endif
 
   if (((sock != STDOUT) || backgrd) && !(socklist[i].flags & SOCK_NONSOCK)) {
     parm = 1;
@@ -270,12 +350,22 @@ void setsock(int sock, int options)
   fcntl(sock, F_SETFL, O_NONBLOCK);
 }
 
+#ifdef USE_IPV6
+int getsock(int options, int af_def)
+{
+  int sock = socket(af_def, SOCK_STREAM, 0);
+#else
 int getsock(int options)
 {
   int sock = socket(AF_INET, SOCK_STREAM, 0);
+#endif
 
   if (sock >= 0)
+#ifdef USE_IPV6
+    setsock(sock, options, af_def);
+#else
     setsock(sock, options);
+#endif
   else
     putlog(LOG_MISC, "*", "Warning: Can't create new socket!");
   return sock;
@@ -313,24 +403,42 @@ void killsock(register int sock)
  */
 static int proxy_connect(int sock, char *host, int port, int proxy)
 {
+#ifdef USE_IPV6
+  unsigned char x[32];
+  int af_ty;
+#else
   unsigned char x[10];
+#endif
   struct hostent *hp;
   char s[256];
   int i;
 
+#ifdef USE_IPV6
+  af_ty = getprotocol(host);
+#endif
   /* socks proxy */
   if (proxy == PROXY_SOCKS) {
     /* numeric IP? */
+#ifdef USE_IPV6
+    if ((host[strlen(host) - 1] >= '0' && host[strlen(host) - 1] <= '9') && af_ty != AF_INET6) {
+#else
     if (host[strlen(host) - 1] >= '0' && host[strlen(host) - 1] <= '9') {
-      IP ip = ((IP) inet_addr(host));   /* drummer */
-
-      egg_memcpy(x, &ip, 4);    /* Beige@EFnet */
+#endif
+      IP ip = ((IP) inet_addr(host)); /* drummer */
+      egg_memcpy(x, &ip, 4);  /* Beige@Efnet */
     } else {
       /* no, must be host.domain */
       if (!setjmp(alarmret)) {
+#ifdef USE_IPV6
         alarm(resolve_timeout);
-        hp = gethostbyname(host);
+        if (af_ty == AF_INET6)
+          hp = gethostbyname(host);
+        else
+#endif
+          hp = gethostbyname(host);
+#ifdef USE_IPV6
         alarm(0);
+#endif
       } else
         hp = NULL;
       if (hp == NULL) {
@@ -342,8 +450,17 @@ static int proxy_connect(int sock, char *host, int port, int proxy)
     for (i = 0; i < MAXSOCKS; i++)
       if (!(socklist[i].flags & SOCK_UNUSED) && socklist[i].sock == sock)
         socklist[i].flags |= SOCK_PROXYWAIT;    /* drummer */
-    egg_snprintf(s, sizeof s, "\004\001%c%c%c%c%c%c%s", (port >> 8) % 256,
-                 (port % 256), x[0], x[1], x[2], x[3], botuser);
+#ifdef USE_IPV6
+    if (af_ty == AF_INET6)
+      egg_snprintf(s, sizeof s,
+                   "\004\001%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%s",
+                   (port >> 8) % 256, (port % 256), x[0], x[1], x[2], x[3],
+                   x[4], x[5], x[6], x[7], x[9], x[9], x[10], x[11],  x[12],
+                   x[13], x[14], x[15], botuser);
+    else
+#endif
+      egg_snprintf(s, sizeof s, "\004\001%c%c%c%c%c%c%s", (port >> 8) % 256,
+                   (port % 256), x[0], x[1], x[2], x[3], botuser);
     tputs(sock, s, strlen(botuser) + 9);        /* drummer */
   } else if (proxy == PROXY_SUN) {
     egg_snprintf(s, sizeof s, "%s %d\n", host, port);
@@ -352,12 +469,30 @@ static int proxy_connect(int sock, char *host, int port, int proxy)
   return sock;
 }
 
+
+/* Return protocol of socket
+ */
+int getsockproto(int sock)
+{
+#ifdef USE_IPV6
+  int i;
+  for (i = 0; i < MAXSOCKS; i++) {
+    if (socklist[i].sock == sock)
+      return socklist[i].af;
+  }
+  return AF_INET;
+#else
+  return 0;
+#endif
+}
+
+
 /* Starts a connection attempt to a socket
- * 
+ *
  * If given a normal hostname, this will be resolved to the corresponding
  * IP address first. PLEASE try to use the non-blocking dns functions
  * instead and then call this function with the IP address to avoid blocking.
- * 
+ *
  * returns <0 if connection refused:
  *   -1  neterror() type error
  *   -2  can't resolve hostname
@@ -365,9 +500,17 @@ static int proxy_connect(int sock, char *host, int port, int proxy)
 int open_telnet_raw(int sock, char *server, int sport)
 {
   struct sockaddr_in name;
+#ifdef USE_IPV6
+  struct sockaddr_in6 name6;
+  unsigned long succ;
+  int af_ty;
+#ifndef HAVE_GETHOSTBYNAME2
+  int error_num;
+#endif
+#endif
   struct hostent *hp;
   char host[121];
-  int i, port;
+  int i, port, rc;
   volatile int proxy;
 
   /* firewall?  use socks */
@@ -385,41 +528,90 @@ int open_telnet_raw(int sock, char *server, int sport)
     strcpy(host, server);
     port = sport;
   }
-  /* patch by tris for multi-hosted machines: */
-  egg_bzero((char *) &name, sizeof(struct sockaddr_in));
+#ifdef USE_IPV6
+  af_ty = getprotocol(host);
+  if (af_ty == AF_INET6) {
+    succ = getmyip();
+    bzero((char *) &name6, sizeof(struct sockaddr_in6));
 
-  name.sin_family = AF_INET;
-  name.sin_addr.s_addr = (myip[0] ? getmyip() : INADDR_ANY);
-  if (bind(sock, (struct sockaddr *) &name, sizeof(name)) < 0)
-    return -1;
-  egg_bzero((char *) &name, sizeof(struct sockaddr_in));
-
-  name.sin_family = AF_INET;
-  name.sin_port = htons(port);
-  /* Numeric IP? */
-  if ((host[strlen(host) - 1] >= '0') && (host[strlen(host) - 1] <= '9'))
-    name.sin_addr.s_addr = inet_addr(host);
-  else {
-    /* No, must be host.domain */
-    debug0("WARNING: open_telnet_raw() is about to block in gethostbyname()!");
+    name6.sin6_family = AF_INET6;
+    if (myip6[0]) {
+      if (myipv6he == NULL)
+        memcpy(&name6.sin6_addr, &in6addr_any, 16);
+      else
+        memcpy(&name6.sin6_addr, myipv6he->h_addr, myipv6he->h_length);
+    }
+    if (bind(sock, (struct sockaddr *) &name6, sizeof(name6)) < 0) {
+      killsock(sock);
+      return -1;
+    }
+    bzero((char *) &name6, sizeof(struct sockaddr_in6));
+    name6.sin6_family = AF_INET6;
+    name6.sin6_port = htons(port);
     if (!setjmp(alarmret)) {
       alarm(resolve_timeout);
-      hp = gethostbyname(host);
+#ifdef HAVE_GETHOSTBYNAME2
+      hp = gethostbyname2(host, AF_INET6);
+#else
+      hp = getipnodebyname(host, AF_INET6, AI_DEFAULT, &error_num);
+#endif
       alarm(0);
     } else
       hp = NULL;
-    if (hp == NULL)
+    if (hp == NULL) {
+      killsock(sock);
       return -2;
-    egg_memcpy(&name.sin_addr, hp->h_addr, hp->h_length);
-    name.sin_family = hp->h_addrtype;
+    }
+    egg_memcpy((char *) &name6.sin6_addr, hp->h_addr, hp->h_length);
+    name6.sin6_family = hp->h_addrtype;
+#ifndef HAVE_GETHOSTBYNAME2
+    freehostent(myipv6he);
+#endif
+  } else {
+#endif
+    egg_bzero((char *) &name, sizeof(struct sockaddr_in));
+
+    name.sin_family = AF_INET;
+    name.sin_addr.s_addr = (myip[0] ? getmyip() : INADDR_ANY);
+    if (bind(sock, (struct sockaddr *) &name, sizeof(name)) < 0)
+      return -1;
+    egg_bzero((char *) &name, sizeof(struct sockaddr_in));
+
+    name.sin_family = AF_INET;
+    name.sin_port = htons(port);
+    /* Numeric IP? */
+    if ((host[strlen(host) - 1] >= '0') && (host[strlen(host) - 1] <= '9'))
+      name.sin_addr.s_addr = inet_addr(host);
+    else {
+      /* No, must be host.domain */
+      debug0("WARNING: open_telnet_raw() is about to block in gethostbyname()!");
+      if (!setjmp(alarmret)) {
+        alarm(resolve_timeout);
+        hp = gethostbyname(host);
+        alarm(0);
+      } else
+        hp = NULL;
+      if (hp == NULL)
+        return -2;
+      egg_memcpy(&name.sin_addr, hp->h_addr, hp->h_length);
+      name.sin_family = hp->h_addrtype;
+    }
+#ifdef USE_IPV6
   }
+#endif
   for (i = 0; i < MAXSOCKS; i++) {
     if (!(socklist[i].flags & SOCK_UNUSED) && (socklist[i].sock == sock))
       socklist[i].flags = (socklist[i].flags & ~SOCK_VIRTUAL) | SOCK_CONNECT;
   }
-  if (connect(sock, (struct sockaddr *) &name,
-      sizeof(struct sockaddr_in)) < 0) {
-    if (errno == EINPROGRESS) {
+#ifdef USE_IPV6
+  if(af_ty == AF_INET6)
+    rc = connect(sock, (struct sockaddr *) &name6,
+                 sizeof(struct sockaddr_in6));
+  else
+#endif
+    rc = connect(sock, (struct sockaddr *) &name,
+                 sizeof(struct sockaddr_in));
+  if (rc < 0) {    if (errno == EINPROGRESS) {
       /* Firewall?  announce connect attempt to proxy */
       if (firewall[0])
         return proxy_connect(sock, server, sport, proxy);
@@ -436,7 +628,11 @@ int open_telnet_raw(int sock, char *server, int sport)
 /* Ordinary non-binary connection attempt */
 int open_telnet(char *server, int port)
 {
+#ifdef USE_IPV6
+  int sock = getsock(0, getprotocol(server)), ret = open_telnet_raw(sock, server, port);
+#else
   int sock = getsock(0), ret = open_telnet_raw(sock, server, port);
+#endif
 
   if (ret < 0)
     killsock(sock);
@@ -445,11 +641,21 @@ int open_telnet(char *server, int port)
 
 /* Returns a socket number for a listening socket that will accept any
  * connection on a certain address -- port # is returned in port
+ *
+ * 'addr' is ignored if af_def is AF_INET6 -poptix (02/03/03)
  */
+#ifdef USE_IPV6
+int open_address_listen(IP addr, int af_def, int *port)
+#else
 int open_address_listen(IP addr, int *port)
-{
-  int sock;
+#endif
+ {
+  int sock = 0;
   unsigned int addrlen;
+#ifdef USE_IPV6
+  unsigned long ipp;
+  struct sockaddr_in6 name6;
+#endif
   struct sockaddr_in name;
 
   if (firewall[0]) {
@@ -458,33 +664,66 @@ int open_address_listen(IP addr, int *port)
            "firewall)");
     return -1;
   }
+#ifdef USE_IPV6
+  if (af_def == AF_INET6) {
+    ipp = getmyip();
+    if(af_def == AF_INET6 && myipv6he != NULL) {
 
-  sock = getsock(SOCK_LISTEN);
-  if (sock < 1)
-    return -1;
+      sock = getsock(SOCK_LISTEN, af_def);
+      bzero((char *) &name6, sizeof(name6));
+      name6.sin6_family = af_def;
+      name6.sin6_port = htons(*port);
+      memcpy(&name6.sin6_addr, &in6addr_any, 16);
+      /* memcpy(&name6.sin6_addr,myipv6he->h_addr,myipv6he->h_length); */
+      if (bind(sock, (struct sockaddr *) &name6, sizeof(name6)) < 0) {
+        killsock(sock);
+        return -1;
+      }
+      addrlen = sizeof(name6);
+      if (getsockname(sock, (struct sockaddr *) &name6, &addrlen) < 0) {
+        killsock(sock);
+        return -1;
+      }
+      *port = ntohs(name6.sin6_port);
+      if (listen(sock, 1) < 0) {
+        killsock(sock);
+        return -1;
+      }
+    }
+  } else {
+#endif
+    if(getmyip() > 0) {
+#ifdef USE_IPV6
+      sock = getsock(SOCK_LISTEN, AF_INET);
+#else
+      sock = getsock(SOCK_LISTEN);
+#endif
+      if (sock < 1)
+        return -1;
 
-  egg_bzero((char *) &name, sizeof(struct sockaddr_in));
-  name.sin_family = AF_INET;
-  name.sin_port = htons(*port); /* 0 = just assign us a port */
-  name.sin_addr.s_addr = addr;
-  if (bind(sock, (struct sockaddr *) &name, sizeof(name)) < 0) {
-    killsock(sock);
-    if (errno == EADDRNOTAVAIL || errno == EAFNOSUPPORT)
-      return -2;
-    else
-      return -1;
+      egg_bzero((char *) &name, sizeof(struct sockaddr_in));
+      name.sin_family = AF_INET;
+      name.sin_port = htons(*port); /* 0 = just assign us a port */
+      name.sin_addr.s_addr = addr;
+      if (bind(sock, (struct sockaddr *) &name, sizeof(name)) < 0) {
+        killsock(sock);
+	return -1;
+      }
+      /* what port are we on? */
+      addrlen = sizeof(name);
+      if (getsockname(sock, (struct sockaddr *) &name, &addrlen) < 0) {
+        killsock(sock);
+        return -1;
+      }
+      *port = ntohs(name.sin_port);
+      if (listen(sock, 1) < 0) {
+        killsock(sock);
+	return -1;
+      }
+    }
+#ifdef USE_IPV6
   }
-  /* what port are we on? */
-  addrlen = sizeof(name);
-  if (getsockname(sock, (struct sockaddr *) &name, &addrlen) < 0) {
-    killsock(sock);
-    return -1;
-  }
-  *port = ntohs(name.sin_port);
-  if (listen(sock, 1) < 0) {
-    killsock(sock);
-    return -1;
-  }
+#endif
   return sock;
 }
 
@@ -493,12 +732,29 @@ int open_address_listen(IP addr, int *port)
  */
 inline int open_listen(int *port)
 {
+#ifdef USE_IPV6
+  return open_address_listen(myip[0] ? getmyip() : INADDR_ANY, AF_INET, port);
+#else
   return open_address_listen(myip[0] ? getmyip() : INADDR_ANY, port);
+#endif
+}
+
+/* Same as above, except this one can be called with an AF_ type
+ * the above is being left in for compatibility, and should NOT LONGER BE USED IN THE CORE CODE.
+ */
+
+inline int open_listen_by_af(int *port, int af_def)
+{
+#ifdef USE_IPV6
+  return open_address_listen(myip[0] ? getmyip() : INADDR_ANY, af_def, port);
+#else
+  return 0;
+#endif
 }
 
 /* Given a network-style IP address, returns the hostname. The hostname
  * will be in the "##.##.##.##" format if there was an error.
- * 
+ *
  * NOTE: This function is depreciated. Try using the async dns approach
  *       instead.
  */
@@ -546,24 +802,56 @@ int answer(int sock, char *caller, unsigned long *ip, unsigned short *port,
   int new_sock;
   unsigned int addrlen;
   struct sockaddr_in from;
+#ifdef USE_IPV6
+  int af_ty = getsockproto(sock);
+  struct sockaddr_in6 from6;
 
-  addrlen = sizeof(struct sockaddr);
-  new_sock = accept(sock, (struct sockaddr *) &from, &addrlen);
+  if (af_ty == AF_INET6) {
+    addrlen = sizeof(from6);
+    new_sock = accept(sock, (struct sockaddr *) &from6, &addrlen);
+  } else {
+#endif
+    addrlen = sizeof(struct sockaddr);
+    new_sock = accept(sock, (struct sockaddr *) &from, &addrlen);
+#ifdef USE_IPV6
+  }
+#endif
+
   if (new_sock < 0)
     return -1;
   if (ip != NULL) {
-    *ip = from.sin_addr.s_addr;
-    /* This is now done asynchronously. We now only provide the IP address.
-     *
-     * strncpy(caller, hostnamefromip(*ip), 120);
-     */
-    strncpyz(caller, iptostr(*ip), 121);
-    *ip = ntohl(*ip);
+#ifdef USE_IPV6
+    if (af_ty == AF_INET6) {
+      *ip = notalloc;
+      egg_inet_ntop(AF_INET6, &from6, caller, 119);
+      caller[120] = 0;
+    } else {
+#endif
+      *ip = from.sin_addr.s_addr;
+      /* This is now done asynchronously. We now only provide the IP address.
+       *
+       * strncpy(caller, hostnamefromip(*ip), 120);
+       */
+      strncpyz(caller, iptostr(*ip), 121);
+      *ip = ntohl(*ip);
+#ifdef USE_IPV6
+    }
+#endif
   }
-  if (port != NULL)
-    *port = ntohs(from.sin_port);
+  if (port != NULL) {
+#ifdef USE_IPV6
+      if (af_ty == AF_INET6)
+        *port = ntohs(from6.sin6_port);
+      else
+#endif
+        *port = ntohs(from.sin_port);
+    }
   /* Set up all the normal socket crap */
+#ifdef USE_IPV6
+  setsock(new_sock, (binary ? SOCK_BINARY : 0), af_ty);
+#else
   setsock(new_sock, (binary ? SOCK_BINARY : 0));
+#endif
   return new_sock;
 }
 
@@ -571,34 +859,51 @@ int answer(int sock, char *caller, unsigned long *ip, unsigned short *port,
  */
 int open_telnet_dcc(int sock, char *server, char *port)
 {
+#ifdef DEBUG_IPV6
+  debug1("open_telnet_dcc %s", server);
+#endif
   int p;
   unsigned long addr;
-  char sv[121];
+  char sv[500];
   unsigned char c[4];
-
   if (port != NULL)
     p = atoi(port);
   else
     p = 2000;
-  if (server != NULL)
-    addr = my_atoul(server);
-  else
-    addr = 0L;
-  if (addr < (1 << 24))
-    return -3;                  /* fake address */
-  c[0] = (addr >> 24) & 0xff;
-  c[1] = (addr >> 16) & 0xff;
-  c[2] = (addr >> 8) & 0xff;
-  c[3] = addr & 0xff;
-  sprintf(sv, "%u.%u.%u.%u", c[0], c[1], c[2], c[3]);
+#ifdef USE_IPV6
+  if (getprotocol(server) == AF_INET6) {
+#ifdef DEBUG_IPV6
+    debug0("open_telnet_dcc, af_inet6!");
+#endif
+    strncpyz(sv, server, sizeof sv);
+    debug2("%s should be %s",sv,server);
+  } else {
+#endif
+    if (server != NULL)
+      addr = my_atoul(server);
+    else
+      addr = 0L;
+    if (addr < (1 << 24))
+      return -3;                  /* fake address */
+    c[0] = (addr >> 24) & 0xff;
+    c[1] = (addr >> 16) & 0xff;
+    c[2] = (addr >> 8) & 0xff;
+    c[3] = addr & 0xff;
+    sprintf(sv, "%u.%u.%u.%u", c[0], c[1], c[2], c[3]);
+#ifdef USE_IPV6
+    }
   /* strcpy(sv,hostnamefromip(addr)); */
+#ifdef DEBUG_IPV6
+  debug3("open_telnet_raw %s %d %d", sv, sock,p);
+#endif
+#endif
   p = open_telnet_raw(sock, sv, p);
   return p;
 }
 
 /* Attempts to read from all the sockets in socklist
  * fills s with up to 511 bytes if available, and returns the array index
- * 
+ *
  *              on EOF:  returns -1, with socket in len
  *     on socket error:  returns -2
  * if nothing is ready:  returns -3
@@ -626,13 +931,13 @@ static int sockread(char *s, int *len)
         fdtmp = STDIN;
       else
         fdtmp = socklist[i].sock;
-      /* 
+      /*
        * Looks like that having more than a call, in the same
        * program, to the FD_SET macro, triggers a bug in gcc.
        * SIGBUS crashing binaries used to be produced on a number
        * (prolly all?) of 64 bits architectures.
        * Make your best to avoid to make it happen again.
-       * 
+       *
        * ITE
        */
       FD_SET(fdtmp, &fd);
@@ -728,7 +1033,7 @@ static int sockread(char *s, int *len)
 }
 
 /* sockgets: buffer and read from sockets
- * 
+ *
  * Attempts to read from all registered sockets for up to one second.  if
  * after one second, no complete data has been received from any of the
  * sockets, 's' will be empty, 'len' will be 0, and sockgets will return -3.
@@ -921,7 +1226,7 @@ int sockgets(char *s, int *len)
 }
 
 /* Dump something to a socket
- * 
+ *
  * NOTE: Do NOT put Contexts in here if you want DEBUG to be meaningful!!
  */
 void tputs(register int z, char *s, unsigned int len)
@@ -1133,7 +1438,7 @@ void tell_netdebug(int idx)
  * before you attempt the connection, and this will make an attempt at
  * figuring out if the connection is really that person, or someone screwing
  * around.  It's not foolproof, but anything that fails this check probably
- * isn't going to work anyway due to masquerading firewalls, NAT routers, 
+ * isn't going to work anyway due to masquerading firewalls, NAT routers,
  * or bugs in mIRC.
  */
 int sanitycheck_dcc(char *nick, char *from, char *ipaddy, char *port)
@@ -1141,6 +1446,11 @@ int sanitycheck_dcc(char *nick, char *from, char *ipaddy, char *port)
   /* According to the latest RFC, the clients SHOULD be able to handle
    * DNS names that are up to 255 characters long.  This is not broken.
    */
+
+  /* This function needs to be updated for IPv6 IP's, although it doesn't
+   * currently harm them (afaik)
+   */
+
   char badaddress[16];
   IP ip = my_atoul(ipaddy);
   int prt = atoi(port);
@@ -1148,6 +1458,12 @@ int sanitycheck_dcc(char *nick, char *from, char *ipaddy, char *port)
   /* It is disabled HERE so we only have to check in *one* spot! */
   if (!dcc_sanitycheck)
     return 1;
+
+#ifdef USE_IPV6
+  if (getprotocol(ipaddy) == AF_INET6)
+    return 1;
+#endif
+
   if (prt < 1) {
     putlog(LOG_MISC, "*", "ALERT: (%s!%s) specified an impossible port of %u!",
            nick, from, prt);
@@ -1190,7 +1506,7 @@ int hostsanitycheck_dcc(char *nick, char *from, IP ip, char *dnsname,
            "information of %s port %s. %s does not resolve to %s!", nick, from,
            badaddress, prt, from, badaddress);
   else
-    return 1;                   /* <- usually happens when we have 
+    return 1;                   /* <- usually happens when we have
                                  * a user with an unresolved hostmask! */
   return 0;
 }

@@ -4,7 +4,7 @@
 #                GNU autoconf scripts with the help of special eggdrop
 #                m4 macros.
 #
-# $Id: eggautoconf,v 1.5 2002/12/24 02:30:06 wcc Exp $
+# $Id: eggautoconf,v 1.6 2003/04/01 05:33:40 wcc Exp $
 #
 # Copyright (C) 2000, 2001, 2002, 2003 Eggheads Development Team
 # Written by Fabian Knittel
@@ -18,7 +18,11 @@ if test ! -f ../eggmod.sh; then
 	echo "$0: \`../eggmod.sh' not found. Not calling from module directory?"
 	exit 1
 fi
-autoconf
+if test "x$1" = "x"; then
+	autoconf
+else
+	$1
+fi
 if test ! -f configure; then
 	echo "$0: error: autoconf did not produce \`configure' script."
 	exit 1

@@ -2,7 +2,7 @@
  * tcldcc.c -- handles:
  *   Tcl stubs for the dcc commands
  *
- * $Id: tcldcc.c,v 1.45 2003/03/04 08:51:45 wcc Exp $
+ * $Id: tcldcc.c,v 1.46 2003/04/01 05:33:40 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -842,7 +842,11 @@ static int tcl_connect STDVAR
     Tcl_AppendResult(irp, "out of dcc table space", NULL);
     return TCL_ERROR;
   }
+#ifdef USE_IPV6
+  sock = getsock(0, getprotocol(argv[1]));
+#else
   sock = getsock(0);
+#endif
 
   if (sock < 0) {
     Tcl_AppendResult(irp, MISC_NOFREESOCK, NULL);
@@ -918,7 +922,14 @@ static int tcl_listen STDVAR
     j = port + 20;
     i = -1;
     while (port < j && i < 0) {
+#ifdef USE_IPV6
+	/* dum de dum, listen needs an af_def option, on linux this 
+         * will listen on both ipv6 and ipv4 
+         */
+      i = open_listen_by_af(&port, AF_INET6);
+#else
       i = open_listen(&port);
+#endif
       if (i == -1)
         port++;
       else if (i == -2)
@@ -933,7 +944,11 @@ static int tcl_listen STDVAR
       return TCL_ERROR;
     }
     idx = new_dcc(&DCC_TELNET, 0);
+#ifdef USE_IPV6
+    dcc[idx].addr = 0x00000000; /* it's not big enough to hold '0xffffffffffffffffffffffffffffffff' =P */
+#else
     dcc[idx].addr = iptolong(getmyip());
+#endif
     dcc[idx].port = port;
     dcc[idx].sock = i;
     dcc[idx].timeval = now;

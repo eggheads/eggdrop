@@ -1,7 +1,7 @@
 dnl aclocal.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: aclocal.m4,v 1.65 2003/03/05 04:32:24 wcc Exp $
+dnl $Id: aclocal.m4,v 1.66 2003/04/01 05:33:40 wcc Exp $
 dnl
 
 
@@ -46,6 +46,61 @@ EOF
 fi
 ])dnl
 
+dnl  EGG_IPV6_SUPPORTED()
+dnl
+AC_DEFUN(EGG_IPV6_SUPPORTED, [dnl
+AC_MSG_CHECKING(for kernel IPv6 support)
+AC_CACHE_VAL(egg_cv_ipv6_supported,[
+ AC_TRY_RUN([
+#include <fcntl.h>
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <netinet/in.h>
+#include <unistd.h>
+#include <errno.h>
+#include <stdio.h>
+
+int main()
+{
+  struct sockaddr_in6 sin6;
+  int s = socket(AF_INET6, SOCK_STREAM, 0);
+
+  if (s != -1)
+    close(s);
+  return (s == -1);
+}
+], egg_cv_ipv6_supported=yes, egg_cv_ipv6_supported=no,
+egg_cv_ipv6_supported=no)])
+if test "$egg_cv_ipv6_supported" = "yes"
+then
+  AC_MSG_RESULT(yes)
+else
+  AC_MSG_RESULT(no)
+fi
+])dnl
+
+dnl  EGG_IPV6_OPTIONS()
+dnl
+AC_DEFUN(EGG_IPV6_OPTIONS, [dnl
+AC_MSG_CHECKING(whether or not you enabled IPv6 support)
+AC_ARG_ENABLE(ipv6, [  --enable-ipv6           enable IPv6 support],
+[ ac_cv_ipv6="yes"
+  if test "$egg_cv_ipv6_supported" = "no"
+  then
+    ac_cv_ipv6="no"
+  fi
+  AC_MSG_RESULT($ac_cv_ipv6)
+],
+[ ac_cv_ipv6="no"
+  AC_MSG_RESULT(no)
+])
+if test "$ac_cv_ipv6" = "yes"
+then
+  AC_DEFINE(HAVE_IPV6)
+  ENABLEIPV6="--enable-ipv6"
+fi
+AC_SUBST(ENABLEIPV6)
+])dnl
 
 dnl  EGG_CHECK_CCPIPE()
 dnl
@@ -126,7 +181,7 @@ dnl check if user requested to remove -O2 cflag
 dnl would be usefull on some weird *nix
 AC_DEFUN(EGG_DISABLE_CC_OPTIMIZATION, [dnl
  AC_ARG_ENABLE(cc-optimization,
-   [  --disable-cc-optimization   disable -O2 cflag],  
+   [  --disable-cc-optimization  disable -O2 cflag],  
    CFLAGS=`echo $CFLAGS | sed 's/\-O2//'`)
 ])dnl
 
@@ -461,6 +516,7 @@ int main()
   char *src = "0x001,guppyism\n";
   char dst[10];
   int idx;
+
   if (sscanf(src, "0x%x,%10c", &idx, dst) == 1)
     exit(1);
   return 0;
@@ -977,8 +1033,7 @@ dnl  EGG_TCL_ENABLE_THREADS()
 dnl
 AC_DEFUN(EGG_TCL_ENABLE_THREADS, [dnl
 AC_ARG_ENABLE(tcl-threads,
-[  --disable-tcl-threads   Disable threaded Tcl support if detected. (Ignore this
-                          option unless you know what you are doing)],
+[  --disable-tcl-threads   disable threaded Tcl support if detected ],
 enable_tcl_threads="$enableval",
 enable_tcl_threads=yes)
 ])dnl

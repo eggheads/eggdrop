@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  *
- * $Id: server.c,v 1.100 2003/03/08 04:29:44 wcc Exp $
+ * $Id: server.c,v 1.101 2003/04/01 05:33:41 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -933,8 +933,7 @@ static void queue_server(int which, char *buf, int len)
 static void add_server(char *ss)
 {
   struct server_list *x, *z;
-  char *p, *q;
-
+  char *p, *q, *r;
   for (z = serverlist; z && z->next; z = z->next);
   while (ss) {
     p = strchr(ss, ',');
@@ -956,6 +955,14 @@ static void add_server(char *ss)
       x->name = nmalloc(strlen(ss) + 1);
       strcpy(x->name, ss);
     } else {
+      if (ss[0] == '[') {
+        *ss++;
+        q = strchr(ss, ']');
+        *q++ = 0; /* intentional */
+        r = strchr(q, ':');
+	if (!r)
+          x->port = default_port;
+      }
       *q++ = 0;
       x->name = nmalloc(q - ss);
       strcpy(x->name, ss);
@@ -968,11 +975,14 @@ static void add_server(char *ss)
         x->pass = nmalloc(strlen(q) + 1);
         strcpy(x->pass, q);
       }
-      x->port = atoi(ss);
+      if (!x->port) {
+        x->port = atoi(ss);
+      }
     }
     ss = p;
   }
 }
+
 
 /* Clear out the given server_list.
  */
@@ -1465,26 +1475,48 @@ static int ctcp_DCC_CHAT(char *nick, char *from, char *handle,
               DCC_CONNECTFAILED1);
     putlog(LOG_MISC, "*", "%s: CHAT (%s!%s)", DCC_CONNECTFAILED3, nick, from);
   } else {
+#ifndef USE_IPV6 /* Don't bother.. */
     if (!sanitycheck_dcc(nick, from, ip, prt))
       return 1;
+#endif
     i = new_dcc(&DCC_DNSWAIT, sizeof(struct dns_info));
     if (i < 0) {
       putlog(LOG_MISC, "*", "DCC connection: CHAT (%s!%s)", dcc[i].nick, ip);
       return 1;
     }
-    dcc[i].addr = my_atoul(ip);
+#ifdef USE_IPV6
+    if (ip[4] == ':') {
+      debug1("ipv6 addr: %s",ip);
+      strcpy(dcc[i].addr6,ip);
+      debug1("ipv6 addr: %s",dcc[i].addr6);
+      dcc[i].af_type = AF_INET6;
+    } else {
+#endif
+      dcc[i].addr = my_atoul(ip);
+#ifdef USE_IPV6
+    }
+#endif
     dcc[i].port = atoi(prt);
     dcc[i].sock = -1;
     strcpy(dcc[i].nick, u->handle);
     strcpy(dcc[i].host, from);
     dcc[i].timeval = now;
     dcc[i].user = u;
-    dcc[i].u.dns->ip = dcc[i].addr;
-    dcc[i].u.dns->dns_type = RES_HOSTBYIP;
-    dcc[i].u.dns->dns_success = dcc_chat_hostresolved;
-    dcc[i].u.dns->dns_failure = dcc_chat_hostresolved;
-    dcc[i].u.dns->type = &DCC_CHAT_PASS;
-    dcc_dnshostbyip(dcc[i].addr);
+#ifdef USE_IPV6
+    if (dcc[i].af_type != AF_INET6) {
+#endif
+/* remove me? */
+      dcc[i].addr = my_atoul(ip);
+      dcc[i].u.dns->ip = dcc[i].addr;
+      dcc[i].u.dns->dns_type = RES_HOSTBYIP;
+      dcc[i].u.dns->dns_success = dcc_chat_hostresolved;
+      dcc[i].u.dns->dns_failure = dcc_chat_hostresolved;
+      dcc[i].u.dns->type = &DCC_CHAT_PASS;
+      dcc_dnshostbyip(dcc[i].addr);
+#ifdef USE_IPV6
+    } else
+      dcc_chat_hostresolved(i); /* Don't try to look it up */
+#endif
   }
   return 1;
 }
@@ -1495,13 +1527,35 @@ static void dcc_chat_hostresolved(int i)
   struct flag_record fr = { FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0 };
 
   egg_snprintf(buf, sizeof buf, "%d", dcc[i].port);
+#ifndef USE_IPV6
   if (!hostsanitycheck_dcc(dcc[i].nick, dcc[i].host, dcc[i].addr,
-                           dcc[i].u.dns->host, buf)) {
+      dcc[i].u.dns->host, buf)) {
     lostdcc(i);
     return;
   }
-  egg_snprintf(ip, sizeof ip, "%lu", iptolong(htonl(dcc[i].addr)));
+#else
+  if (dcc[i].af_type == AF_INET6) {
+    strcpy(ip,dcc[i].addr6); /* safe, addr6 is 121 */
+    debug0("afinet6, af_type, strcpy");
+  } else
+#endif
+    egg_snprintf(ip, sizeof ip, "%lu", iptolong(htonl(dcc[i].addr)));
+#ifdef USE_IPV6
+  if (dcc[i].af_type == AF_INET6) {
+#ifdef IPV6_DEBUG
+    debug2("af_inet6 %s / %s", dcc[i].addr6, ip);
+#endif
+    dcc[i].sock = getsock(0, AF_INET6);
+  } else {
+#ifdef IPV6_DEBUG
+    debug0("af_inet");
+#endif
+    dcc[i].sock = getsock(0, AF_INET);
+  }
+#else
   dcc[i].sock = getsock(0);
+  debug2("sock: %d %s", dcc[i].sock, ip);
+#endif
   if (dcc[i].sock < 0 || open_telnet_dcc(dcc[i].sock, ip, buf) < 0) {
     neterror(buf);
     if (!quiet_reject)

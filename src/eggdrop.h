@@ -4,7 +4,7 @@
  *
  *   IF YOU ALTER THIS FILE, YOU NEED TO RECOMPILE THE BOT.
  *
- * $Id: eggdrop.h,v 1.45 2003/02/21 05:01:56 wcc Exp $
+ * $Id: eggdrop.h,v 1.46 2003/04/01 05:33:40 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -27,6 +27,16 @@
 
 #ifndef _EGG_EGGDROP_H
 #define _EGG_EGGDROP_H
+
+/*
+ * Enable IPv6 support?
+ */
+#define USE_IPV6
+
+/*
+ * Enable IPv6 debugging?
+ */
+#define DEBUG_IPV6
 
 /*
  * If you're *only* going to link to new version bots (1.3.0 or higher)
@@ -96,7 +106,23 @@
  * compilers support #error or error
  */
 #if !HAVE_VSPRINTF
-#  include "error_you_need_vsprintf_to_compile_eggdrop"
+#  include "error you need vsprintf to compile eggdrop"
+#endif
+
+/* IPv6 sanity checks. */
+#ifdef USE_IPV6
+#  ifndef HAVE_IPV6
+#    undef USE_IPV6
+#  endif
+#  ifndef HAVE_GETHOSTBYNAME2
+#    ifndef HAVE_GETIPNODEBYNAME
+#      undef USE_IPV6
+#    endif
+#  endif
+#endif
+
+#ifndef USE_IPV6
+#  undef DEBUG_IPV6
 #endif
 
 #if HAVE_UNISTD_H
@@ -105,12 +131,12 @@
 
 #ifndef STATIC
 #  if (!defined(MODULES_OK) || !defined(HAVE_DLOPEN)) && !defined(HPUX_HACKS)
-#    include "you_can't_compile_with_module_support_on_this_system_try_make_static"
+#    include "you can't compile with module support on this system -- try make static"
 #  endif
 #endif
 
 #if !defined(STDC_HEADERS)
-#  include "you_need_to_upgrade_your_compiler_to_a_standard_c_one_mate!"
+#  include "you need to upgrade your compiler to a standard c compiler"
 #endif
 
 #if (NICKMAX < 9) || (NICKMAX > 32)
@@ -138,14 +164,14 @@
 
 /* Almost every module needs some sort of time thingy, so... */
 #ifdef TIME_WITH_SYS_TIME
-# include <sys/time.h>
-# include <time.h>
-#else
-# ifdef HAVE_SYS_TIME_H
 #  include <sys/time.h>
-# else
 #  include <time.h>
-# endif
+#else
+#  ifdef HAVE_SYS_TIME_H
+#    include <sys/time.h>
+#  else
+#    include <time.h>
+#  endif
 #endif
 
 #if !HAVE_SRANDOM
@@ -156,7 +182,7 @@
 #  define random() (rand()/16)
 #endif
 
-#if !HAVE_SIGACTION             /* old "weird signals" */
+#if !HAVE_SIGACTION /* old "weird signals" */
 #  define sigaction sigvec
 #  ifndef sa_handler
 #    define sa_handler sv_handler
@@ -166,7 +192,6 @@
 #endif
 
 #if !HAVE_SIGEMPTYSET
-/* and they probably won't have sigemptyset, dammit */
 #  define sigemptyset(x) ((*(int *)(x))=0)
 #endif
 
@@ -260,6 +285,10 @@ struct dcc_t {
   long sock;                    /* This should be a long to keep 64-bit
                                  * machines sane                         */
   IP addr;                      /* IP address in host byte order         */
+#ifdef USE_IPV6
+  char addr6[121];		/* easier.. ipv6 address in regular notation (3ffe:80c0:225::) */
+  int af_type;			/* AF_INET or AF_INET6 */
+#endif
   unsigned int port;
   struct userrec *user;
   char nick[NICKLEN];
@@ -575,6 +604,9 @@ typedef struct {
   char *outbuf;
   unsigned long outbuflen;      /* Outbuf could be binary data  */
   unsigned long inbuflen;       /* Inbuf could be binary data   */
+#ifdef USE_IPV6
+  unsigned int af;
+#endif
 } sock_list;
 
 enum {

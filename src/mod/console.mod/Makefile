@@ -1,5 +1,5 @@
 # Makefile for src/mod/console.mod/
-# $Id: Makefile,v 1.14 2000/09/27 19:47:16 fabian Exp $
+# $Id: Makefile,v 1.15 2003/04/01 05:33:41 wcc Exp $
 
 srcdir = .
 
@@ -37,8 +37,8 @@ distclean: clean
  ../../../lush.h ../../../src/misc_file.h ../../../src/cmdt.h \
  ../../../src/tclegg.h ../../../src/tclhash.h ../../../src/chan.h \
  ../../../src/users.h ../../../src/compat/compat.h \
- ../../../src/compat/inet_aton.h ../../../src/compat/snprintf.h \
- ../../../src/compat/memset.h ../../../src/compat/memcpy.h \
- ../../../src/compat/strcasecmp.h ../../../src/compat/strftime.h \
- ../../../src/mod/modvals.h ../../../src/tandem.h \
- ../console.mod/console.h
+ ../../../src/compat/inet_aton.h ../../../src/compat/inet_ntop.h \
+ ../../../src/compat/snprintf.h ../../../src/compat/memset.h \
+ ../../../src/compat/memcpy.h ../../../src/compat/strcasecmp.h \
+ ../../../src/compat/strftime.h ../../../src/mod/modvals.h \
+ ../../../src/tandem.h ../console.mod/console.h

@@ -1,5 +1,5 @@
 # Makefile for src/mod/uptime.mod/
-# $Id: Makefile,v 1.2 2001/06/12 17:44:42 poptix Exp $
+# $Id: Makefile,v 1.3 2003/04/01 05:33:41 wcc Exp $
 srcdir = .
 
 
@@ -36,8 +36,8 @@ distclean: clean
  ../../../src/proto.h ../../../lush.h ../../../src/misc_file.h \
  ../../../src/cmdt.h ../../../src/tclegg.h ../../../src/tclhash.h \
  ../../../src/chan.h ../../../src/users.h ../../../src/compat/compat.h \
- ../../../src/compat/inet_aton.h ../../../src/compat/snprintf.h \
- ../../../src/compat/memset.h ../../../src/compat/memcpy.h \
- ../../../src/compat/strcasecmp.h ../../../src/compat/strftime.h \
- ../../../src/mod/modvals.h ../../../src/tandem.h \
- ../../../src/mod/server.mod/server.h
+ ../../../src/compat/inet_aton.h ../../../src/compat/inet_ntop.h \
+ ../../../src/compat/snprintf.h ../../../src/compat/memset.h \
+ ../../../src/compat/memcpy.h ../../../src/compat/strcasecmp.h \
+ ../../../src/compat/strftime.h ../../../src/mod/modvals.h \
+ ../../../src/tandem.h ../../../src/mod/server.mod/server.h

@@ -54,8 +54,13 @@ AC_C_INLINE
 AC_CHECK_SIZEOF(long, 0)
 AC_CHECK_SIZEOF(int, 0)
 
+# Check for IPv6 support
+EGG_IPV6_SUPPORTED
+EGG_IPV6_OPTIONS
+
 # Checks for library functions
-AC_CHECK_FUNCS(clock getrusage setpgid uname sigaction sigemptyset rename strcasecmp strncasecmp getdtablesize memset random srandom dlopen dprintf snprintf vsnprintf isascii inet_aton memcpy strftime fsync)
+AC_CHECK_FUNCS(clock getrusage setpgid uname sigaction sigemptyset rename strcasecmp strncasecmp getdtablesize memset random srandom)
+AC_CHECK_FUNCS(dlopen dprintf snprintf vsnprintf isascii inet_aton inet_ntop memcpy strftime fsync gethostbyname2 getipnodebyname)
 EGG_CHECK_FUNC_VSPRINTF
 
 # Make sure we have stdc headers, since we can't compile without them
@@ -97,7 +102,7 @@ tclheadernames="tcl.h"
 # Tcl header search paths
 tclheaderpaths="/usr/local/include /usr/local/pkgs/tcl/include \
 	/usr/include /beos/system/include /beos/devel/include \
-       /sys/include $HOME/include $HOME/tcl/include $HOME"
+	/sys/include $HOME/include $HOME/tcl/include $HOME"
 
 EGG_TCL_ARG_WITH
 EGG_TCL_ENV

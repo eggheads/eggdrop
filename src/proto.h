@@ -7,7 +7,7 @@
  * because they use structures in those
  * (saves including those .h files EVERY time) - Beldin
  *
- * $Id: proto.h,v 1.55 2003/02/04 11:07:55 wcc Exp $
+ * $Id: proto.h,v 1.56 2003/04/01 05:33:40 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -246,14 +246,26 @@ IP my_atoul(char *);
 unsigned long iptolong(IP);
 IP getmyip();
 void neterror(char *);
+#ifdef USE_IPV6
+void setsock(int, int, int);
+int allocsock(int, int, int);
+int getsock(int, int);
+#else
 void setsock(int, int);
 int allocsock(int, int);
 int getsock(int);
+#endif
+int getprotocol(char *);
 char *hostnamefromip(unsigned long);
 void killsock(int);
 int answer(int, char *, unsigned long *, unsigned short *, int);
 inline int open_listen(int *);
-int open_address_listen(IP addr, int *port);
+inline int open_listen_by_af(int *, int);
+#ifdef USE_IPV6
+int open_address_listen(IP addr, int af_def, int *);
+#else
+int open_address_listen(IP addr, int *);
+#endif
 int open_telnet(char *, int);
 int open_telnet_dcc(int, char *, char *);
 int open_telnet_raw(int, char *, int);

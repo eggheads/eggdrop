@@ -4,7 +4,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: modules.c,v 1.82 2003/03/08 04:29:43 wcc Exp $
+ * $Id: modules.c,v 1.83 2003/04/01 05:33:40 wcc Exp $
  */
 /* 
  * Copyright (C) 1997 Robey Pointer
@@ -72,8 +72,11 @@ extern struct chanset_t *chanset;
 
 extern char tempdir[], botnetnick[], botname[], natip[], hostname[],
             origbotname[], botuser[], admin[], userfile[], ver[], notify_new[],
+#ifdef USE_IPV6
+            helpdir[], version[], quit_msg[], hostname6[];
+#else
             helpdir[], version[], quit_msg[];
-
+#endif
 extern int parties, noshare, dcc_total, egg_numver, userfile_perm, do_restart,
            ignore_time, must_be_owner, raw_log, max_dcc, make_userfile,
            default_flags, require_p, share_greet, use_invites, use_exempts,
@@ -86,6 +89,7 @@ extern tand_t *tandbot;
 
 extern Tcl_Interp *interp;
 extern sock_list *socklist;
+extern int getprotocol(char *);
 
 int cmd_die();
 int xtra_kill();
@@ -555,7 +559,10 @@ Function global_table[] = {
   (Function) & copy_to_tmp,       /* int                                 */
   /* 284 - 287 */
   (Function) & quiet_reject,      /* int                                 */
-  (Function) file_readable
+  (Function) file_readable,
+  (Function) getprotocol,
+  (Function) open_listen_by_af,
+  (Function) egg_inet_ntop
 };
 
 void init_modules(void)

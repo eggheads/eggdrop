@@ -1,7 +1,7 @@
 /*
  * inet_aton.c -- provides inet_aton() if necessary.
  *
- * $Id: inet_aton.c,v 1.12 2003/03/04 08:51:45 wcc Exp $
+ * $Id: inet_aton.c,v 1.13 2003/04/01 05:33:40 wcc Exp $
  */
 /*
  * Portions Copyright (C) 2000, 2001, 2002, 2003 Eggheads Development Team
@@ -181,4 +181,4 @@ struct in_addr *addr;
 ret_0:
   return 0;
 }
-#endif /* HAVE_INET_ATON */
+#endif /* !HAVE_INET_ATON */

@@ -4,7 +4,7 @@
  *   disconnect on a dcc socket
  *   ...and that's it!  (but it's a LOT)
  *
- * $Id: dcc.c,v 1.65 2003/03/13 01:05:56 wcc Exp $
+ * $Id: dcc.c,v 1.66 2003/04/01 05:33:40 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -234,7 +234,11 @@ void failed_link(int idx)
 
   /* Try next port */
   killsock(dcc[idx].sock);
+#ifdef USE_IPV6
+  dcc[idx].sock = getsock(SOCK_STRONGCONN, getprotocol(dcc[idx].host));
+#else
   dcc[idx].sock = getsock(SOCK_STRONGCONN);
+#endif
   dcc[idx].port++;
   dcc[idx].timeval = now;
   if (dcc[idx].sock < 0 ||

@@ -1,7 +1,7 @@
 /*
  * servmsg.c -- part of server.mod
  *
- * $Id: servmsg.c,v 1.77 2003/03/07 03:36:10 wcc Exp $
+ * $Id: servmsg.c,v 1.78 2003/04/01 05:33:41 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1202,7 +1202,11 @@ static void connect_server(void)
     /* I'm resolving... don't start another server connect request */
     resolvserv = 1;
     /* Resolve the hostname. */
+#ifdef USE_IPV6
+    server_resolve_success(servidx);
+#else
     dcc_dnsipbyhost(dcc[servidx].host);
+#endif
   }
 }
 
@@ -1224,7 +1228,11 @@ static void server_resolve_success(int servidx)
   dcc[servidx].addr = dcc[servidx].u.dns->ip;
   strcpy(pass, dcc[servidx].u.dns->cbuf);
   changeover_dcc(servidx, &SERVER_SOCKET, 0);
+#ifdef USE_IPV6
+  serv = open_telnet(dcc[servidx].host, dcc[servidx].port);
+#else
   serv = open_telnet(iptostr(htonl(dcc[servidx].addr)), dcc[servidx].port);
+#endif
   if (serv < 0) {
     neterror(s);
     putlog(LOG_SERV, "*", "%s %s (%s)", IRC_FAILEDCONNECT, dcc[servidx].host,

@@ -1,5 +1,5 @@
 # Makefile for src/mod/
-# $Id: Makefile.in,v 1.13 2000/12/21 20:20:03 guppy Exp $
+# $Id: Makefile.in,v 1.14 2003/04/01 05:33:40 wcc Exp $
 
 SHELL = @SHELL@
 top_srcdir = @top_srcdir@
@@ -23,6 +23,7 @@ MOD_CFLAGS = @CFLAGS@ -I. -I../../.. -I$(MOD_UPDIR)$(top_srcdir) \
 MOD_CPPFLAGS = @CPPFLAGS@
 XLIBS = @XLIBS@
 MOD_EXT = @MOD_EXT@
+ENABLEIPV6 = @ENABLEIPV6@
 
 # Note: The following three lines are automatically adjusted by
 #       misc/modconfig. They have to be present here.
@@ -86,7 +87,7 @@ config:
 			echo "Configuring module $${modname} ..."; \
 			echo ""; \
 			if test ! -d $$i; then mkdir $$i; fi; \
-			(cd $$i && $(MOD_UPDIR)$(srcdir)/$$i/configure $(egg_ac_parameters) --cache-file=../../../config.cache --srcdir=$(MOD_UPDIR)$(top_srcdir)/src/mod/$$i); \
+			(cd $$i && $(MOD_UPDIR)$(srcdir)/$$i/configure $(egg_ac_parameters) $(ENABLEIPV6) --cache-file=../../../config.cache --srcdir=$(MOD_UPDIR)$(top_srcdir)/src/mod/$$i); \
 		fi; \
 	done; \
 	echo ""

@@ -4,7 +4,7 @@
  *
  * Written by Fabian Knittel <fknittel@gmx.de>
  *
- * $Id: dns.c,v 1.31 2003/03/08 04:29:43 wcc Exp $
+ * $Id: dns.c,v 1.32 2003/04/01 05:33:41 wcc Exp $
  */
 /*
  * Copyright (C) 1999, 2000, 2001, 2002, 2003 Eggheads Development Team
@@ -29,6 +29,11 @@
 #include "src/mod/module.h"
 #include "dns.h"
 
+/* No async IPv6 dns in 1.6 */
+#ifdef USE_IPV6
+  #include "You cannot use the dns module with IPv6, re-run make iconfig and disable the dns module!"
+#endif
+
 static void dns_event_success(struct resolve *rp, int type);
 static void dns_event_failure(struct resolve *rp, int type);
 
@@ -41,7 +46,6 @@ static Function *global = NULL;
 /*
  *    DNS event related code
  */
-
 static void dns_event_success(struct resolve *rp, int type)
 {
   if (!rp)
