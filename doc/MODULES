@@ -124,16 +124,21 @@ Note: This is for a simple module of 1 source file, if you're doing a
            You MUST use this, it's required by several short cuts in the
 	   code, it's gotta be the name you will be using in .loadmodule
 
-       (ii)  #include "../module.h"
+       (ii)  #define MAKING_MODULENAME
+           You MUST also include this, or else the module won't work. 
+           MODULENAME is the name of your module(MODULE_NAME), but in
+           caps
+
+       (iii)  #include "../module.h"
 
            This provides all the accessible functions in eggdrop,
 	   examine closely src/mod/module.h to find a list of functions
 	   available.
 
-       (iii) and other standard c include files you might need (Note
+       (iv) and other standard c include files you might need (Note
              stdio.h string.h stdlib.h & sys/types.h are already included)
 
-       (iv)  Function *global; 
+       (v)  Function *global; 
 
            This variable provides access to all the eggdrop functions, without
 	   it you can't call any eggdrop functions (heck, the module wont
@@ -247,7 +252,7 @@ int    module_depend ( char *module_name, char *needed_module,
 	      - marks your module (module_name) as needing needed_module
 	        (matching major, >= minor) and tries to load said module
 		if it's not already loaded. returns 1 on success
-int    module_undpend ( char *module_name)
+int    module_undepend ( char *module_name)
               - marks your module as no longer needing any of it's
                 dependancies
 void   module_rename (char *old_module_name, char *new_module_name)
@@ -295,8 +300,8 @@ void rem_tcl_ints(tcl_ints *);
    provides a way to add/remove links from c variables to tcl variables
    (add checks to see if the tcl already exists and copies it over the C one)
    format of table is :
-      { char *variable_name, int *variable }
-   terminate with {0,0};
+      { char *variable_name, int *variable, int readonly }
+   terminate with {0,0,0};
    
 void add_tcl_strings(tcl_strings *);
 void rem_tcl_strings(tcl_strings *);
