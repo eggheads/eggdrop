@@ -2,7 +2,7 @@
  * net.c -- handles:
  *   all raw network i/o
  * 
- * $Id: net.c,v 1.28 2000/12/23 06:11:34 guppy Exp $
+ * $Id: net.c,v 1.29 2001/02/25 07:33:35 guppy Exp $
  */
 /* 
  * This is hereby released into the public domain.
@@ -465,7 +465,10 @@ int open_address_listen(IP addr, int *port)
   name.sin_addr.s_addr = addr;
   if (bind(sock, (struct sockaddr *) &name, sizeof(name)) < 0) {
     killsock(sock);
-    return -1;
+    if (errno == EADDRNOTAVAIL || errno == EAFNOSUPPORT)
+      return -2;
+    else
+      return -1;
   }
   /* what port are we on? */
   addrlen = sizeof(name);

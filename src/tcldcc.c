@@ -2,7 +2,7 @@
  * tcldcc.c -- handles:
  *   Tcl stubs for the dcc commands
  * 
- * $Id: tcldcc.c,v 1.24 2000/12/10 15:10:27 guppy Exp $
+ * $Id: tcldcc.c,v 1.25 2001/02/25 07:33:35 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -887,11 +887,16 @@ static int tcl_listen STDVAR
     i = (-1);
     while (port < j && i < 0) {
       i = open_listen(&port);
-      if (i < 0)
+      if (i == -1)
 	port++;
+      else if (i == -2)
+        break;
     }
-    if (i < 0) {
-      Tcl_AppendResult(irp, "couldn't grab nearby port", NULL);
+    if (i == -1) {
+      Tcl_AppendResult(irp, "Couldn't grab nearby port", NULL);
+      return TCL_ERROR;
+    } else if (i == -2) {
+      Tcl_AppendResult(irp, "Couldn't assign the requested IP. Please make sure 'my-ip' is set properly.", NULL);
       return TCL_ERROR;
     }
     idx = new_dcc(&DCC_TELNET, 0);
