@@ -19,14 +19,14 @@ Charvel   poptix    nrealloc() called with too few args in non-debugmem mode.
 	  Ben
 arthur2   Fabian    refresh_ban_kick doesn't kick friends anymore
 	  Fabian    kick_all was counting too many bytes; cleanup
-	  mho       tcl_delchanrec can now delete chan recs for non-existant
+	  mho	    tcl_delchanrec can now delete chan recs for non-existant
 		    channels
 	  Lucas     changed the default DCC block size from 0 to 1024
 TheUnknown guppy    made cmd_reset(exempts/invites) work like cmd_resetbans
 arthur2   guppy     missing a rem_builtin in filesys.
 	  Fabian    Added '.help all' and '.help *somestring*' to the 
 		    standard .help text.
-Dude      Dude      during a make install and sinstall, telnet-banner wasn't
+Dude      Dude	    during a make install and sinstall, telnet-banner wasn't
 		    being copied to the DEST dir like it should.
 Tothwolf  Ian/guppy made cmd_resetbans take a channel argument
 drummer   Fabian    Empty xtra fields are deleted now.
@@ -36,10 +36,10 @@ Tothwolf  guppy     another +g bug when sharing channel bans/exempts/invites on
 		    link ...
 arthur2   arthur2   fixes more of the places where quiet_reject should have
 		    been used.
-	  Ian       ignore wrong modes.
+	  Ian	    ignore wrong modes.
 	  Fabian    reverse of newsplit.patch, now only removes extraneous 
 		    spaces from dcc and msg commands.
-	  Eule      Memberlistflag-fixes
+	  Eule	    Memberlistflag-fixes
 TheUnknown arthur2  mutliple modes were sent by bot. missing 
 		    SENTDEOP/OP/DEVOICE/VOICE/KICK flags in irc.mod. 
 Cybah     arthur2   bot could deop itself. 
@@ -57,7 +57,7 @@ thx-1138  Fabian    altnick may contain '?'s which get translated to random
 		    numbers.
 Q	  Fabian    added env var to pass language or complete path to file
 drummer   Fabian    Fixed memory leak in assoc module when restarting
-	  mho       Changed the ! prefix in .kickban to - (channel conflicts)
+	  mho	    Changed the ! prefix in .kickban to - (channel conflicts)
 	  Cybah     Challenge/response system using MD5 digests for botnet
 		    links. No more cleartext passwords while linking :))))
 	  Fabian    Removed all occurences of movefile
@@ -75,7 +75,7 @@ slenny    Fabian    Not saving ignore list several times anymore
 1.3.28
 Foundby   Fixedby   What....
 dude      Fabian    telnet banner added to config file
-jkw       jkw       64 bit *nix fix for dcc chat problems
+jkw       jkw	    64 bit *nix fix for dcc chat problems
 	  drummer   usermode_r fix
 	  drummer   DCC Log fix
 	  Fabian    telnet-banner was broken; added use-telnet-banner flag
@@ -128,14 +128,14 @@ John`     guppy     help_subst wasn't using botname for irc help.
 poptix    poptix    default Makefile that runs ./configure then make, 
 		    changed 'make dist' so that the default is as above
 		    instead of './configure ; make install' 
-	  Eule      enforce flood protect against ignored hosts
-Eule	  Eule      Patch to fix kicking bug in joinflood
+	  Eule	    enforce flood protect against ignored hosts
+Eule	  Eule	    Patch to fix kicking bug in joinflood
 \-\iTman  Jason     Adds use-exempts/use-invites.
 		    +I modes set when a user wants to join a +i channel
 		    (by messaging the bot).
 		    +e modes set when a matching ban is set, and expires
 		    after the ban has been removed.
-Dude	  Dude      lots of changes to userinfo1.0.tcl (too many to name).
+Dude	  Dude	    lots of changes to userinfo1.0.tcl (too many to name).
 	  arthur2   './eggdrop -m' instead of 'eggdrop -m' in language
 		    files.
 Jason     arthur2   chan->ircnet_status &= ~CHAN_ASKED_EXEMPTS/INVITED and
@@ -156,7 +156,7 @@ various   guppy     more nick regain stuff
 drummer   drummer   .say fixes/improvements
 	  poptix    unresolved hosts got rejected by dcc-sanitycheck
 dude	  poptix    0x660 language file fix.
-	  matt      minor language file fixes
+	  matt	    minor language file fixes
 	  Mixter    fix for the tcl static check
 	  Jason     new channel settings for the +e/+I support.
 	  slennox   removed unused 'recycle' stuff.
@@ -199,7 +199,7 @@ John`	            for the changed MODE bind (the fix is by guppy)
 	  Fabian    Added a telnet banner much like motd (customizable)
 Ernst     Ernst     autobotchk fixes (for SCO and SunOS)
 Ernst     Ernst     userinfo1.0 with TCL 8.0 fix
-	  Alex      If started with -m and usefile exists, warn and
+	  Alex	    If started with -m and usefile exists, warn and
 		    continue instead of exiting.  Minor cosmetic lang fixes
 	  dw	    Added setting to allow +f users to override
 		    telnet flood protection
@@ -210,7 +210,7 @@ Ernst     Ernst     userinfo1.0 with TCL 8.0 fix
 	  drummer   Fixed multiple 'password required' msgs during linking.
 	  drummer   irc.c fixes.
       SKY/Michael   fixed cmds.c, .loadmod can be used only by permowner now
-	  Eule      flush_mode fix for I/e modes.
+	  Eule	    flush_mode fix for I/e modes.
 	  arthur2   CHAN_BOGUSBAN and CHAN_BOGUSUSERNAME were inverted.
 michael   cybah     Fixed problems with lang patch.
 	  michael   Update to man pages - still had Robey's mail address.
@@ -302,7 +302,7 @@ slennox   poptix    chan->next being NULL on chan_autoop() in adduser
 		    identd, and try it to identd, it wont fail.
 	  Tothwolf  src cleaning and indenting. A 2 space per level indent,
 		    with a Kernighan & Ritchie coding style.
-	  Al3X      Adds #define BADNICKCHARS and #define EGG_NOWRITE 
+	  Al3X	    Adds #define BADNICKCHARS and #define EGG_NOWRITE 
 		    get_language(0x703).
 
 1.3.27
@@ -327,8 +327,8 @@ hath      arthur2   .su' .quit rejoined message was redundant.
 		    though quiet_reject was turned on.
 	  drummer   .adduser !<nick> will add nick using a static hostmask.
 		    bugfixes to .deluser.
-	  hath      More spelling mistakes in cmds1.help.
-	  hath      Spelling mistakes in notes.help.
+	  hath	    More spelling mistakes in cmds1.help.
+	  hath	    Spelling mistakes in notes.help.
 	  slennox   private-user now works much more effectively
 	  Tothwolf  fixed overflow problems in masktype() and maskname()
 	  Tothwolf  small cleanup of allow_dk_cmds in flagrec_ok()
@@ -337,7 +337,7 @@ hath      arthur2   .su' .quit rejoined message was redundant.
 	  arthur2   ctcp-mode 2 now uses flood-ctcp setting.
 		    there was a confusion between flood_thr and flud_thr 
 		    in the src.
-	  Hath      adds wire module to eggdrop.conf.dist file.
+	  Hath	    adds wire module to eggdrop.conf.dist file.
 	  dw/vertex fixed 'read/write integer couplets' in tcl.c
 		    no more corrupted set var x:y read from the conf file
 		    now should global-flood-..setting for .+chan work, enjoy.
@@ -382,7 +382,7 @@ dw	  guppy     made the bot regain its altnick
 	  guppy     must-be-owner is now read only ...
 	  Tothwolf  minor fixes to Makefile.in and src/Makefile
 	  drummer   blowfish "" fix, and added putdccraw tcl command.
-	  Al3X      Cosmetic changes to net.c
+	  Al3X	    Cosmetic changes to net.c
 Daemus    guppy     alltool's number_to_number had a small bug
 	  guppy     typos in some of the doc files
 bass      guppy     english.lang, number 0x906 was screwy ..
@@ -442,7 +442,7 @@ drummer   cybah     Fixes crash if someone is stupid enough to killdcc their
 		    with the large log-file problem.
 	  michael   Small share helpfile update.
 mho       arthur2   deop for join flood was buggy.
-	  Eule      Better nick-flood protection. Tries to kick the actual 
+	  Eule	    Better nick-flood protection. Tries to kick the actual 
 		    nick, and not the old one, as nick chasing is not
 		    efficient after a few seconds.
 dw/	  dw/	    '+bot *!login@hostmask #channel comment' crashed the bot.
@@ -499,7 +499,7 @@ Dude      arthur2   Silence bug must be fixed.
 herz      arthur2   Bot kicks exempted banned users when coming back from
 		    a split.
 toot      arthur2   Fixes the net-type problems.
-	  Bass      Fixed a typo 'begining' -> 'beginning'.
+	  Bass	    Fixed a typo 'begining' -> 'beginning'.
 	  CHaiNeSS  Fixed +w flag addition
 	  arthur2/  Adds the tcl-var ctcp-mode to the ctcp module. Set it
 	  Crotale   to "paranoid" to make the bot answers only to CTCP
@@ -516,7 +516,7 @@ John`     CHaiNeSS  Bot crashed receiving a +l server mode with no
 1.3.24
 Foundby   Fixedby   What....
 	  arthur2   Adds a ban-fun flag.
-	  vod       Adds a ban-bogus flag.
+	  vod	    Adds a ban-bogus flag.
 	  Tothwolf  Fixes a problem in #define CLIENTINFO, in CTCP module.
 Shayne    arthur2   Most efnet servers only allow 4 kicks per command.
 		    This may change to 1 for most servers when they
@@ -528,7 +528,7 @@ Daemus    arthur2/  Adds a tcl variable: net-type. 0 = EfNet, 1 = IrcNet,
 	  arthur2   core.french' to load it.
 	  arthur2   Reorganisation of the eggdrop.conf.dist SERVER and IRC
 		    module sections.
-	  Dude      In cmds1.help, %{+B} should be %{+t}, since +B is no
+	  Dude	    In cmds1.help, %{+B} should be %{+t}, since +B is no
 		    longer the flag for botnet masters.
 slennox   guppy     Added two new tcl commands, "stick" and "unstick"
 deadgrrrl guppy     .fwd user user doesn't work anymore, must supply
@@ -630,9 +630,9 @@ Nobody    Dagmar    Sanity checking now optionally performed on DCC
 		    connections to prevent spoofing foolishness.
 	  Beldin    BSDI 4.0 configure broken
 Eraseme   Beldin    .unload wire didnt clean up the dcc bindings
-	  Kirk      more HPUX fixes
-	  smok      lang'd a string in .info
-Unknown   smok      msg info would add info for non-existant channels.
+	  Kirk	    more HPUX fixes
+	  smok	    lang'd a string in .info
+Unknown   smok	    msg info would add info for non-existant channels.
 	  vod/capster Simple Quoting of silly channel names in channel files
 		    implemented.
 	  Arthur2   eggdrop.conf additions
@@ -670,8 +670,8 @@ Butthead  Beldin    chon calls for notes was still slightly broken
 poptix    Beldin    .deluser was using u after it was deleted.
 various   Beldin    flood-chan & flood-ctcp for a channel use global on 0:0
 		    and are turned off on 0:1
-	  Kirk      HP-UX fixes
-toot      Kirk      fixed problem where bot crashed when taking revenge
+	  Kirk	    HP-UX fixes
+toot      Kirk	    fixed problem where bot crashed when taking revenge
 	  Butthead  Made alarm timeouts for hostname/addy lookup actually work
 		    rather than hang the bot.  New TCL var resolve-timeout
 		    allows setting this.
@@ -728,8 +728,8 @@ Foundby   Fixedby   What....
 	  Beldin    Me & my bloody maskhost typos
 Q	 Beldin    tweaking of sharebot host/chattr/-user handling
 	  RogerStone .deluser was deleting nick, not handle
-QuakeMstr Vod       .status was missing online time
-	  Vod       tcl8.1 fixes
+QuakeMstr Vod	    .status was missing online time
+	  Vod	    tcl8.1 fixes
 [secret]  Raistlin  seen module unload was causing SEGV on irc module reload
 	  SuperS    server.c wasnt adding all the RAW binds
 	  AdamSpiers private-global flags
@@ -737,11 +737,11 @@ QuakeMstr Vod       .status was missing online time
 	  
 1.3.18
 Foundby   Fixedby   What....
-	  Adze      Added set private-globals to share module
-	  smok      Fix for silly programmers who forget details in mode 
+	  Adze	    Added set private-globals to share module
+	  smok	    Fix for silly programmers who forget details in mode 
 		    handling
-Toon      Kirk      +ban could be used to crash the bot in certain circumstances
-	  Kirk      the +ignore command could lock the bot into a nasty loop
+Toon      Kirk	    +ban could be used to crash the bot in certain circumstances
+	  Kirk	    the +ignore command could lock the bot into a nasty loop
 Flattie   Beldin    .console could be used to get chan+m only flags if user
 		    had +m on another chan.
 BB/Beldin	    adduser /msg addhost command, and unbound /msg indent by
@@ -753,17 +753,17 @@ PaulBoehm Beldin    buffer overflows in botnet version handling, +ignore,
 		    .note, .+ban, .-ban(similar to .-ignore bug), HOSTNAME,
 		    .jump, & mkdir (to some degree)
 Fasticus  Beldin    ctcp_reply had an obscure SEGV case
-	  smok      allow-desync variable added.
-	  smok      better looking for tcl libraries added to configure
+	  smok	    allow-desync variable added.
+	  smok	    better looking for tcl libraries added to configure
 	  
 1.3.17
 Foundby   Fixedby   What....
-	  smok      potential error with tld's in new maskhost
+	  smok	    potential error with tld's in new maskhost
 smok      beldin    private_owner was not being handled in finish_share
-	  mht       notes2.tcl fixes
+	  mht	    notes2.tcl fixes
 Daklop    Beldin    refinement of maskhost to deal with that nasty 
 		    4 component hosts
-	  Kirk      extremely small fixes to userinfo1.0.tcl
+	  Kirk	    extremely small fixes to userinfo1.0.tcl
 BB	  Beldin    args for mode bind tabe seperate mode change from victim
 BB	  Beldin    gamespak wants me_op exported from irc.mod
 	  BB	    .channel differentiates global vs channel flags
@@ -779,8 +779,8 @@ Various   Segfault  +m's can .deluser +n's (actually the fix is much shorter,
 	  GoodGuy   Added ability for using '*' as the channel in INVITE
 		    msg command to invite person to all +i channels that
 		    they have access to and the bot is on
-	  smok      respect CFLAGS in configure
-	  smok      clear a few ptrs in net.c (much better patch ;)
+	  smok	    respect CFLAGS in configure
+	  smok	    clear a few ptrs in net.c (much better patch ;)
 MANY      Beldin    finally got around to fixing -ignore <number>
 	  Wylie     filesys.help typo
 plan9     Beldin    only ban 1st ban on banlist of a joiner
@@ -797,7 +797,7 @@ Daklop    Beldin    newuser wasnt being share-relayed correclty
 	  Beldin    bots should not accept links for bots > HANDLEN, it's bogus
 [Eazy|E]  Beldin    getuser botfl returning no flags at all times
 	  poptix    some cosmetic fixes
-	  NC 	    added telnet-flood to config file
+	  NC	    added telnet-flood to config file
 	  NC	    add channel arg to .invite
 	  NC	    shared no-perm/no-sticky bans were missing an arg
 	  NC	    botname is better than origbotname for whoto /msg to
@@ -851,11 +851,11 @@ NC	  Beldin    incoming chattr's where not being checked for owner changes
 		    ignore
 	  Daklop    added a +seen channel setting
 Daklop    Beldin    probably solution to ident timeouts causing SEGV's
-	  MHT       implemented smart read and erase notes
+	  MHT	    implemented smart read and erase notes
 
 1.3.12
 Foundby   Fixedby   What....
-	  Mloe      socks firewall fixes
+	  Mloe	    socks firewall fixes
 Absnthe	  easton    display of invalid nick char was wrong
 Giga      Beldin    bots was checking nickname for bogus username
 Daklop/Beldin       botflag +i added, isolates the party line across a botlink
@@ -890,7 +890,7 @@ wheely    Beldin    shouldnt be able to su to users without partyline access
 		    (unless an owner ;)
 	  Absinthe  remote boots were totally disabled on a setting of 1
 wheely    Beldin    chof binding called whilst relaying had an invalid idx 
-	  vod       getparty in bot_part should check vs -1 not 0
+	  vod	    getparty in bot_part should check vs -1 not 0
 Ernst     Beldin    setuser * HOSTS wasn't sharing
 wheely    Beldin    tcl_setchan was broadcast parts from channels > GLOBALCHANS
 Roger S   Beldin    console flags for a user were'nt being unset on certain
@@ -902,7 +902,7 @@ Roger S   Beldin    console flags for a user were'nt being unset on certain
 Foundby   Fixedby   What....
 	  easton    userfile writing error neaten
 Ernst     Beldin    chanlist wasnt returning non-userlisted people on -ve mtchs
-	  Kirk      %{cols=} settings which didnt fill a line were lost, 
+	  Kirk	    %{cols=} settings which didnt fill a line were lost, 
 		    (beldin "I modded this slightly so you can still have
 		     tags after %{end}")
 Waulok    Beldin    +/-host for +t's with chan +m wasnt allowing them to 
@@ -930,9 +930,9 @@ Q	  Beldin    lets fix chanfile = "" properly
 Thomas    Beldin    setuser laston global time setting
 Daklop    Beldin    console.mod stored local channels still got broadcast join
 	  aaronwl   config file name made avaliable to scripts
-KingKurly Kirk      setting sticky bans using * as the first character of the
+KingKurly Kirk	    setting sticky bans using * as the first character of the
 		    comment has been tarted up a bit
-	  Kirk      mapping of listening ports has been changed, to stop the
+	  Kirk	    mapping of listening ports has been changed, to stop the
 		    problem with eggdrop grabbing more ports when rehashing 
 		    when it couldn't get the specified listening port
 	  Beldin    learn to delete from link lists kirk :P
@@ -951,8 +951,8 @@ Foundby   Fixedby   What....
 	  Beldin    -host on yourself still got checked for permissions
 Daklop    Beldin    SEGV on +ban from a sharebot
 Daklop    Beldin    a bit more info on revenge taking helps sometimes
-Q	  Kirk      extern CR when switching notes
-Toblerone Kirk      sillyness in filedb.c
+Q	  Kirk	    extern CR when switching notes
+Toblerone Kirk	    sillyness in filedb.c
 Melvan/Daklop Beldin console still not saving correctly (masktype changed)
 ????????? Beldin    seen module getxtra was looking up null user
 ????????? Beldin    xtra lines now have a 500 byte limit per key/data combo
@@ -960,14 +960,14 @@ Melvan/Daklop Beldin console still not saving correctly (masktype changed)
 
 1.3.7
 Foundby   Fixedby   What....
-Toblerone Kirk      pub & pubm messages were being passed n!u@h not u@h
-Ernst     Kirk      +/-cycle added
+Toblerone Kirk	    pub & pubm messages were being passed n!u@h not u@h
+Ernst     Kirk	    +/-cycle added
 Daklop    Beldin    lastons were back-the-front
 	  Ernst     buildstatic failure to execute bug
 Daklop    Beldin    glad I didnt release 1.3.6 public (no sharing at all :/)
 TheGhost  Beldin    channels should default to +cycle, and +/-cycle should
 		    only effect cycling
-	  Kirk      .su fix
+	  Kirk	    .su fix
 
 1.3.6 (patch released for testing only)
 Foundby   Fixedby   What....
@@ -975,7 +975,7 @@ tdmarti   Beldin    tcl_addbot was still using old bot address storage method
 tdmarti   Beldin    botaddr_tcl_set wasnt handling empty bot address info well
 	  Beldin    sped up language idx lookup a little
 tdmarti   Beldin    failed .su wast changing back the .nick of dcc_
-	  aXs       checks if bot is opped before sending some kicks/bans
+	  aXs	    checks if bot is opped before sending some kicks/bans
 	  Beldin    general cleanup of tclusers.c while I was in there
 BB	  Beldin    .match +<unknown flag> will tell you that now :P
 deadgrrrl Beldin    filedb's were not being updated correctly when files were
@@ -1009,11 +1009,11 @@ BB	  Beldin    lets get make install right
 	  BB	    .ignores are check before even ident lookup occurs
 GSCEGO    Beldin    getuser LASTON #channel was sick (wrong arg)
 	  Beldin    .bottree bizzarely broken
-	  Kirk      an enforced mode of -l was being interpreted as -p
-	  Kirk      automation of adding a language file for modules
-	  Kirk      wire.mod loads it's own .lang file
-	  Kirk      filesys.mod has it's own .lang file (moved out of core)
-	  Kirk      added install entries for installing .lang files
+	  Kirk	    an enforced mode of -l was being interpreted as -p
+	  Kirk	    automation of adding a language file for modules
+	  Kirk	    wire.mod loads it's own .lang file
+	  Kirk	    filesys.mod has it's own .lang file (moved out of core)
+	  Kirk	    added install entries for installing .lang files
 Prime     Beldin    /msg whois response was incorrectly showing o/b/m
 	  Beldin    all channels were being set static on startup
 Daklop    Beldin    'private-owner's could have their other flags changed.
@@ -1028,7 +1028,7 @@ Scuzzi    Beldin    you gotta worry about someone who stops 1/2 through
 1.3.4
 Foundby   Fixedby   What....
 	  Darkfox   make install messup
-	  aXs       revenge added extra *!
+	  aXs	    revenge added extra *!
 wheely    beldin    messed up the protect modes
 	  DK	    stuff to fix the borg
 	  DK	    better cp handling
@@ -1060,14 +1060,14 @@ various   Beldin    notify-users added to notes module, turns on/off hourly
 		    
 1.3.2
 Foundby   Fixedby   What....
-	  Kirk      compat.so removed from eggdrop.conf
+	  Kirk	    compat.so removed from eggdrop.conf
 BB	  Beldin    FreeBSD uses SA_RESETHAND
 	  Beldin    various help file tweakes wrt userinfo1.0.tcl
 	  Beldin    .stick with long host buffer overflowed
 TheGhost  Beldin    tcl_getuser/setuser were not silently ignore user *
 Kirk      Beldin    woops, didnt need +x to get into file area
-	  Kirk      added klined.tcl
-	  Kirk      quite a few typos
+	  Kirk	    added klined.tcl
+	  Kirk	    quite a few typos
 Daklop    Beldin    some channel flags were not being updated on userfile
 		    download
 	  Beldin    share-greet = 0 bot's wont send chan info lines on uf send
