@@ -1,4 +1,4 @@
-$Id: UPDATES1.6,v 1.552 2004/05/20 21:44:09 wcc Exp $
+$Id: UPDATES1.6,v 1.553 2004/05/20 22:39:20 wcc Exp $
 
 Eggdrop Changes (since v1.6.0)
      _________________________________________________________________
@@ -11,6 +11,10 @@ Eggdrop Changes (since v1.6.0)
     ftp://ftp.eggheads.org/pub/eggdrop/UPDATES/
 
   1.6.16:
+    - Fix text sent to the server being terminated with "\x00\x0d\x0a"
+      instead of just "\x0d\x0a".
+    * Patch by: Sven
+
     - Small fix to transfer.mod lang files.
     * Patch by: winkey
 

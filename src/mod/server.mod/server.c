@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  *
- * $Id: server.c,v 1.113 2004/02/10 02:10:50 wcc Exp $
+ * $Id: server.c,v 1.114 2004/05/20 22:39:20 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -795,6 +795,7 @@ static void queue_server(int which, char *buf, int len)
    */
   remove_crlf(&buf);
   buf[510] = 0;
+  len = strlen(buf);
 
   /* No queue for PING and PONG - drummer */
   if (!egg_strncasecmp(buf, "PING", 4) || !egg_strncasecmp(buf, "PONG", 4)) {
