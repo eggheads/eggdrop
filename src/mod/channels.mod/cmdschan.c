@@ -2,7 +2,7 @@
  * cmdschan.c -- part of channels.mod
  *   commands from a user via dcc that cause server interaction
  *
- * $Id: cmdschan.c,v 1.43 2001/04/26 03:38:51 guppy Exp $
+ * $Id: cmdschan.c,v 1.44 2001/06/06 13:20:23 poptix Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -779,8 +779,8 @@ static void cmd_info(struct userrec *u, int idx, char *par)
     }
     return;
   }
-  if (par[0] == '@')
-    par++;
+/*  if (par[0] == '@')    This is stupid, and prevents a users info from being locked */
+/*    par++;              without .tcl, or a tcl script, aka, 'half-assed' -poptix 4Jun01 */
   if (chname) {
     set_handle_chaninfo(userlist, dcc[idx].nick, chname, par);
     dprintf(idx, "Your info on %s is now: %s\n", chname, par);

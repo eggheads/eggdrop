@@ -255,6 +255,9 @@ See also: info
    if you omit the channel name, your default info line will be
    displayed/changed.  (this is the info line shown for channels
    where you have no specific info line set.)
+
+   Note that by beginning a users info line with '@' it will be locked
+   and they will not be able to change it.
 ###  %binfo%b [channel] none
    removes your info line.
 %{help=stick}%{+o|o}

@@ -22,6 +22,7 @@ DCC COMMANDS for %B, %V:
 %b  whois        page         match        motd         bots%b
 %b  addlog       newpass      console      chat         handle%b
 %b  echo         strip        su           trace        fixcodes%b
+%b  info%b
 %{+t}
 For botnet masters:
 %b  +bot         botattr      chhandle     chpass       +host%b
