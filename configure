@@ -2822,18 +2822,19 @@ echo "$ac_t""   (standard is currently 48/512 bytes)" 1>&6
 # (well, what used to be robey's tcl thingies...)
 
 # Latest tested Tcl version to recommend if Tcl isn't found
-tclrecommendver="8.2.2"
+tclrecommendver="8.3.1"
 
 # Site recommended to download Tcl from
-tclrecommendsite="ftp://ftp.scriptics.com/pub/tcl/tcl8_2/"
+tclrecommendsite="ftp://ftp.scriptics.com/pub/tcl/tcl8_3/"
 
 # Tcl library filename prefixes (also used for Tcl header dir on FreeBSD)
-tcllibnames="tcl tcl8.3 tcl83 tcl8.2 tcl82 tcl8.1 tcl81 \
-	tcl8.0 tcl80 tcl7.6 tcl76 tcl7.5 tcl75 tcl7.4 tcl74 \
-	tcl7.3 tcl73 tcl7.2 tcl72 tcl7.1 tcl71 tcl7.0 tcl70"
+tcllibnames="tcl tcl8.4 tcl84 tcl8.3 tcl83 tcl8.2 tcl82 tcl8.1 \
+	tcl81 tcl8.0 tcl80 tcl7.6 tcl76 tcl7.5 tcl75 tcl7.4 \
+	tcl74 tcl7.3 tcl73 tcl7.2 tcl72 tcl7.1 tcl71 tcl7.0 \
+	tcl70"
 
 # Tcl library filename suffixes
-tcllibextensions=".so .so.1 .so.1.0 .so.1.2 .a .sl"
+tcllibextensions=".so .so.1 .so.1.0 .so.1.2 .a .sl .dll"
 
 # Tcl library search paths
 tcllibpaths="/usr/local/lib /usr/local/pkgs/tcl/lib \
@@ -3050,7 +3051,7 @@ EOF
 fi
 
 echo $ac_n "checking for Tcl library""... $ac_c" 1>&6
-echo "configure:3054: checking for Tcl library" >&5
+echo "configure:3055: checking for Tcl library" >&5
 
 # Attempt autodetect for $TCLLIBFN if it's not set
 if test ! "x${TCLLIBFN}" = "x"
@@ -3084,7 +3085,7 @@ then
 fi
 
 echo $ac_n "checking for Tcl header""... $ac_c" 1>&6
-echo "configure:3088: checking for Tcl header" >&5
+echo "configure:3089: checking for Tcl header" >&5
 
 # Attempt autodetect for $TCLINCFN if it's not set
 if test ! "x${TCLINCFN}" = "x"
@@ -3140,7 +3141,7 @@ then
 
   # Check Tcl's version
   echo $ac_n "checking for Tcl version""... $ac_c" 1>&6
-echo "configure:3144: checking for Tcl version" >&5
+echo "configure:3145: checking for Tcl version" >&5
   if eval "test \"`echo '$''{'egg_cv_var_tcl_version'+set}'`\" = set"
   then
     echo $ac_n "(cached) $ac_c" 1>&6
@@ -3158,7 +3159,7 @@ echo "configure:3144: checking for Tcl version" >&5
 
   # Check Tcl's patch level (if avaliable)
   echo $ac_n "checking for Tcl patch level""... $ac_c" 1>&6
-echo "configure:3162: checking for Tcl patch level" >&5
+echo "configure:3163: checking for Tcl patch level" >&5
   if eval "test \"`echo '$''{'egg_cv_var_tcl_patch_level'+set}'`\" = set"
   then
     echo $ac_n "(cached) $ac_c" 1>&6
@@ -3240,7 +3241,7 @@ fi
 
 # Check for Tcl_Free()
 echo $ac_n "checking if Tcl library has Tcl_Free""... $ac_c" 1>&6
-echo "configure:3244: checking if Tcl library has Tcl_Free" >&5
+echo "configure:3245: checking if Tcl library has Tcl_Free" >&5
 if eval "test \"`echo '$''{'egg_cv_var_tcl_free'+set}'`\" = set"
 then
   echo $ac_n "(cached) $ac_c" 1>&6
@@ -3282,7 +3283,7 @@ fi
 
 # Check for TclpFinalizeThreadData()
 echo $ac_n "checking if Tcl library is multithreaded""... $ac_c" 1>&6
-echo "configure:3286: checking if Tcl library is multithreaded" >&5
+echo "configure:3287: checking if Tcl library is multithreaded" >&5
 if eval "test \"`echo '$''{'egg_cv_var_tcl_multithreaded'+set}'`\" = set"
 then
   echo $ac_n "(cached) $ac_c" 1>&6

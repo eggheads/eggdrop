@@ -66,18 +66,19 @@ EGG_CHECK_FILEDB_STRUCT
 # (well, what used to be robey's tcl thingies...)
 
 # Latest tested Tcl version to recommend if Tcl isn't found
-tclrecommendver="8.2.2"
+tclrecommendver="8.3.1"
 
 # Site recommended to download Tcl from
-tclrecommendsite="ftp://ftp.scriptics.com/pub/tcl/tcl8_2/"
+tclrecommendsite="ftp://ftp.scriptics.com/pub/tcl/tcl8_3/"
 
 # Tcl library filename prefixes (also used for Tcl header dir on FreeBSD)
-tcllibnames="tcl tcl8.3 tcl83 tcl8.2 tcl82 tcl8.1 tcl81 \
-	tcl8.0 tcl80 tcl7.6 tcl76 tcl7.5 tcl75 tcl7.4 tcl74 \
-	tcl7.3 tcl73 tcl7.2 tcl72 tcl7.1 tcl71 tcl7.0 tcl70"
+tcllibnames="tcl tcl8.4 tcl84 tcl8.3 tcl83 tcl8.2 tcl82 tcl8.1 \
+	tcl81 tcl8.0 tcl80 tcl7.6 tcl76 tcl7.5 tcl75 tcl7.4 \
+	tcl74 tcl7.3 tcl73 tcl7.2 tcl72 tcl7.1 tcl71 tcl7.0 \
+	tcl70"
 
 # Tcl library filename suffixes
-tcllibextensions=".so .so.1 .so.1.0 .so.1.2 .a .sl"
+tcllibextensions=".so .so.1 .so.1.0 .so.1.2 .a .sl .dll"
 
 # Tcl library search paths
 tcllibpaths="/usr/local/lib /usr/local/pkgs/tcl/lib \
