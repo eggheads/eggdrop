@@ -21,32 +21,33 @@
 	             channel because the channel is full
 %{+m|m}
      The following can be set + or - (eg .chanset #channel -clearbans)
-        %bclearbans%b    clear all the channel bans when the bot joins the 
-	             channel?
-	%benforcebans%b  kicks people who match channel bans?
-	%bdynamicbans%b  only activate bans on channel when they are needed
-	%buserbans%b     allow other users to place bans on the channl
-	%bautoop%b       automatically op users when they join the channel
-	%bbitch%b        only allow users with the +o flag to be ops on the 
-	             channel
-	%bgreet%b        say a users info line when they join the channel
-	%bprotectops%b   re-op a +o user who gets deopped?
-	%bdontkickops%b  never kick +o flag people
-        %bwasoptest%b    does a wasop test for +stopnethacks
-	%binactive%b     never join this channel, or leave if already joined.
-                     Usefull as you can make the bot leave a channel without
-                     loosing it's settings or affecting any sharing.
-        %bstatuslog%b    log the channel status every 5 minutes
-	%bstopnethack%b  de-op anyone who enters the channel with server
-	             ops
-	%bcycle%b        cycle the channel when it becomes op-less
-	%brevenge%b      take revenge on anyone who deops, kicks or
-	             bans the bot or any valid user
-	%bsecret%b       don't provide info about the channel over the botnet
-	%bshared%b       share user settings for this channel 
-	             (%bNOTE%b: this can be set online now)
-	%bautovoice%b    this causes the bot to also monitor channel voice
-	             settings, using the +v/+q settings.
+        %bclearbans%b      clear all the channel bans when the bot joins the 
+	               channel?
+	%benforcebans%b    kicks people who match channel bans?
+	%bdynamicbans%b    only activate bans on channel when they are needed
+	%buserbans%b       allow other users to place bans on the channl
+	%bautoop%b         automatically op users when they join the channel
+	%bbitch%b          only allow users with the +o flag to be ops on the 
+	               channel
+	%bgreet%b          say a users info line when they join the channel
+	%bprotectops%b     re-op a +o user who gets deopped?
+        %bprotectfriends%b re-op a +f user who gets deopped?
+	%bdontkickops%b    never kick +o flag people
+        %bwasoptest%b      does a wasop test for +stopnethacks
+	%binactive%b       never join this channel, or leave if already joined.
+                       Usefull as you can make the bot leave a channel without
+                       loosing it's settings or affecting any sharing.
+        %bstatuslog%b      log the channel status every 5 minutes
+	%bstopnethack%b    de-op anyone who enters the channel with server
+	               ops
+	%bcycle%b          cycle the channel when it becomes op-less
+	%brevenge%b        take revenge on anyone who deops, kicks or
+	               bans the bot or any valid user
+	%bsecret%b         don't provide info about the channel over the botnet
+	%bshared%b         share user settings for this channel 
+	               (%bNOTE%b: this can be set online now)
+	%bautovoice%b      this causes the bot to also monitor channel voice
+	               settings, using the +v/+q settings.
      The following are flood settings, they are set by going
            .chanset <channel> flood-type number:seconds
           where number & seconds are integers indicating the number of

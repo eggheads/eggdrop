@@ -405,12 +405,16 @@ static void got_deop(struct chanset_t *chan, char *nick, char *from,
       /* is the deopper NOT a master or bot? */
       if (!glob_master(user) && !chan_master(user) && !glob_bot(user) &&
       /* is the channel protectops? */
-	  channel_protectops(chan) &&
+	  ((channel_protectops(chan) &&
       /* provided it's not +bitch ... */
-	  (!channel_bitch(chan) ||
+	    (!channel_bitch(chan) ||
       /* or the users a valid op */
-	   chan_op(victim) || (glob_op(victim) && !chan_deop(victim))) &&
-      /* and provied the users not a de-op */
+	     chan_op(victim) || (glob_op(victim) && !chan_deop(victim)))) ||
+      /* is the channel protectfriends? */
+           (channel_protectfriends(chan) &&
+      /* and the users a valid friend */
+             chan_friend(victim) || (glob_friend(victim) && !chan_deop(victim)))) &&
+      /* and provided the users not a de-op */
        !(chan_deop(victim) || (glob_deop(victim) && !chan_op(victim))) &&
       /* and we havent sent it already */
 	  !chan_sentdeop(m)) {

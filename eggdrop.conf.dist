@@ -492,6 +492,9 @@ channel set #lamest +greet
 #   re-op a user with the +o (op) flag if they get deopped?
 channel set #lamest +protectops
 
+#   re-op a user with the +f (friend) flag if they get deopped?
+channel set #lamest +protectfriends
+
 #   log the channel status line every 5 minutes? (some people think
 #   it's annoying; i think it's neat)
 channel set #lamest +statuslog

@@ -669,6 +669,8 @@ static void cmd_chaninfo(struct userrec *u, int idx, char *par)
 	    (chan->status & CHAN_DONTKICKOPS) ? '+' : '-',
 	    (chan->status & CHAN_WASOPTEST) ? '+' : '-',
 	    (chan->status & CHAN_INACTIVE) ? '+' : '-');
+    dprintf(idx, "     %cprotectfriends\n",
+            (chan->status & CHAN_PROTECTFRIENDS) ? '+' : '-');
     dprintf(idx, "flood settings: chan ctcp join kick deop\n");
     dprintf(idx, "number:          %3d  %3d  %3d  %3d  %3d\n",
 	    chan->flood_pub_thr, chan->flood_ctcp_thr,

@@ -157,6 +157,7 @@ struct chanset_t {
 #define CHAN_WASOPTEST      0x8000	/* wasop test for all +o user
 					 * when +stopnethack */
 #define CHAN_INACTIVE       0x10000	/* no irc support for this channel - drummer */
+#define CHAN_PROTECTFRIENDS 0x20000     /* re-op any +f people who get deop'd */
 #define CHAN_ACTIVE         0x1000000	/* like i'm actually on the channel
 					 * and stuff */
 #define CHAN_PEND           0x2000000	/* just joined; waiting for end of
@@ -192,6 +193,7 @@ struct chanset_t *findchan();
 #define channel_dynamicbans(chan) (chan->status & CHAN_DYNAMICBANS)
 #define channel_nouserbans(chan) (chan->status & CHAN_NOUSERBANS)
 #define channel_protectops(chan) (chan->status & CHAN_PROTECTOPS)
+#define channel_protectfriends(chan) (chan->status & CHAN_PROTECTFRIENDS)
 #define channel_dontkickops(chan) (chan->status & CHAN_DONTKICKOPS)
 #define channel_stopnethack(chan) (chan->status & CHAN_STOPNETHACK)
 #define channel_secret(chan) (chan->status & CHAN_SECRET)
