@@ -1,7 +1,7 @@
 /* 
  * flags.h
  * 
- * $Id: flags.h,v 1.4 2000/01/30 19:26:20 fabian Exp $
+ * $Id: flags.h,v 1.5 2000/09/23 17:46:08 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -53,9 +53,9 @@ struct flag_record {
  *   unused letters: cdefjkmnoqtuvwxyz
  * 
  * chanflags:
- *             a??d?fg???k?mno?q?s?uv????
+ *             a??d?fg???k?mno?q???uv????
  * + user defined A-Z
- *   unused letters: bchijlprtwxyz
+ *   unused letters: bcehijlprstwxyz
  */
 #define USER_VALID    0x00f9f6ef	/* all USER_ flags in use	 */
 #define CHAN_VALID    0x00757469	/* all flags that can be chan
