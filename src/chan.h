@@ -3,7 +3,7 @@
  *   stuff common to chan.c and mode.c
  *   users.h needs to be loaded too
  * 
- * $Id: chan.h,v 1.6 1999/12/22 12:21:42 fabian Exp $
+ * $Id: chan.h,v 1.7 1999/12/24 14:19:24 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -195,7 +195,7 @@ struct chanset_t {
 #define CHAN_SHARED         0x40000	/* channel is being shared */
 #define CHAN_SEEN           0x80000
 #define CHAN_REVENGEBOT     0x100000	/* revenge on actions against the bot */
-/*			    0x200000 */
+#define CHAN_NODESYNCH      0x200000
 /*			    0x400000 */
 /*			    0x800000 */
 #define CHAN_ACTIVE         0x1000000	/* like i'm actually on the channel
@@ -214,7 +214,6 @@ struct chanset_t {
 #define CHAN_NOUSEREXEMPTS  0x0008
 #define CHAN_DYNAMICINVITES 0x0010
 #define CHAN_NOUSERINVITES  0x0020
-#define CHAN_NODESYNCH      0x0040
 
 /* prototypes */
 memberlist *ismember(struct chanset_t *, char *);
