@@ -1,7 +1,7 @@
 /*
  * servmsg.c -- part of server.mod
  *
- * $Id: servmsg.c,v 1.55 2001/06/30 06:29:57 guppy Exp $
+ * $Id: servmsg.c,v 1.56 2001/07/04 19:27:37 poptix Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -598,16 +598,16 @@ static int gotnotice(char *from, char *msg)
 	  if (!ignoring)
 	    putlog(LOG_PUBLIC, "*",
 		   "CTCP reply %s: %s from %s (%s) to %s", code, ctcp,
-		   nick, from, to);
+		   nick, uhost, to);
 	} else {
 	  u = get_user_by_host(from);
 	  if (!ignoring || trigger_on_ignore) {
-	    check_tcl_ctcr(nick, from, u, to, code, ctcp);
+	    check_tcl_ctcr(nick, uhost, u, to, code, ctcp);
 	    if (!ignoring)
 	      /* Who cares? */
 	      putlog(LOG_MSGS, "*",
 		     "CTCP reply %s: %s from %s (%s) to %s",
-		     code, ctcp, nick, from, to);
+		     code, ctcp, nick, uhost, to);
 	  }
 	}
       }
