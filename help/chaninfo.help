@@ -5,7 +5,7 @@
         %bchanmode%b     which modes are enforced on the channel, both + and
 	             - modes can be enforced
 	%bidle-kick%b    kick idle users (non +f's anyway) on the channel 
-	             after how many minutes (use 0, or no-idle-kick
+	             after how many minutes (use 0, or dont-idle-kick
 		     to turn this off)
 %{+n}
         ATTENTION: Due to security concerns, only permanent owners can 
