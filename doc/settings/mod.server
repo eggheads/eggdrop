@@ -217,7 +217,6 @@ set optimize-kicks 1
      1 = optimize kick queue by sumarizing kicks.
      2 = trace nick changes and channel parts and change the queue respectively. For
          example, bot wont try to kick users who have already parted the channel.
-    Please note, this setting is not needed if you set 'use-lagcheck' to 1.
     Valid settings are 0-2
 
 

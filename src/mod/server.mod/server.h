@@ -1,7 +1,7 @@
 /* 
  * server.h -- part of server.mod
  * 
- * $Id: server.h,v 1.10 2000/11/03 17:06:35 fabian Exp $
+ * $Id: server.h,v 1.11 2000/11/08 20:11:05 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -74,12 +74,6 @@
 #define check_tcl_notc ((int (*)(char *,char *,struct userrec *,char *,char *))server_funcs[38])
 
 #else		/* MAKING_SERVER */
-
-enum {
-	LC_KICK		= 1,	/* Kick lagcheck.		*/
-	LC_OVMODE	= 2,	/* o or v lagcheck.		*/
-	LC_BEIMODE	= 3	/* b, e or I lagcheck.		*/
-} lc_t;
 
 /* Macros for commonly used commands.
  */
