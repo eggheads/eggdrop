@@ -1,4 +1,8 @@
-##### SEEN MODULE #####
+Seen Module
+Last revised: December 31, 2001
+   ________________________________________________________________________
+
+                                  Seen Module
 
 This module provides very basic seen commands via msg, on channel or via dcc.
 This module works only for users in the bot's userlist. If you are looking for
@@ -7,6 +11,10 @@ can find it at http://www.visions-of-fantasy.de/gseen.mod/.
 
 This module requires: none
 
-Put this line into your eggdrop configuration file to load the seen module:
+Put this line into your Eggdrop configuration file to load the seen module:
 
 loadmodule seen
+
+  ________________________________________________________________________
+
+Copyright (C) 2002 Eggheads Development Team

@@ -1,11 +1,15 @@
-##### SHARE MODULE #####
+Share Module
+Last revised: December 31, 2001
+   ________________________________________________________________________
+
+                                  Share Module
 
 This module provides userfile sharing support between two directly
 linked bots.
 
 This module requires: transfer, channels
 
-Put this line into your eggdrop configuration file to load the share module:
+Put this line into your Eggdrop configuration file to load the share module:
 
 loadmodule share
 
@@ -52,3 +56,9 @@ set override-bots 0
     address are added to sharing procedure. This only works with hubs that
     are v1.5.1 or higher.
     Valid settings are 0 for OFF and 1 ON.
+
+    
+  ________________________________________________________________________
+
+Copyright (C) 2002 Eggheads Development Team
+

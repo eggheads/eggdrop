@@ -1,10 +1,10 @@
-This is an exhaustive list of all the Tcl commands added to eggdrop. All
+This is an exhaustive list of all the Tcl commands added to Eggdrop. All
 of the normal Tcl built-in commands are still there, of course. But you
 can also use these to manipulate features of the bot. They are listed
 according to category.
 
-NOTICE: This list is accurate for eggdrop v1.6.0! Scripts written for
-  v1.3/v1.4 series of eggdrop should probably work with a few minor
+NOTICE: This list is accurate for Eggdrop v1.6.8! Scripts written for
+  v1.3/v1.4 series of Eggdrop should probably work with a few minor
   modifications depending on the script.
 
 Scripts which were written for v0.9, v1.0, v1.1 or v1.2 will probably not work
@@ -13,7 +13,7 @@ without modification. Commands which have been changed in the v1.6 series
 
 ***### CORE EGGDROP COMMANDS ###***
 
-these are commands provided in the core part of eggdrop, for module
+these are commands provided in the core part of Eggdrop, for module
 specific commands, see later.
 
 
@@ -1193,14 +1193,14 @@ for the msg-command "stop", use 'unbind msg - stop msg_stop'.
        bind raw <flags> <keyword-mask> <proc>
        procname <from> <keyword> <text...>
 
-       previous versions of eggdrop required a special compile option to
+       previous versions of Eggdrop required a special compile option to
        enable this binding, but it's now standard; the mask is checked
        against the keyword (either a numeric like "368" or a keyword like
        "PRIVMSG"); from will be the server name or the source user (depending
        on the keyword); flags are ignored; the order of the arguments is
        identical to the order that the IRC server sends to the bot -- the
        pre-processing only splits it apart enough to determine the keyword;
-       if the proc returns 1, eggdrop will not process the line any further
+       if the proc returns 1, Eggdrop will not process the line any further
        (This could cause your bot to behave oddly in some cases.)
 
   (18) BOT
@@ -1309,7 +1309,7 @@ for the msg-command "stop", use 'unbind msg - stop msg_stop'.
 
       this bind is triggered on certain events, like when the bot needs
       operator status or the key for a channel; the types are: op, unban,
-|      invite, limit, and key; the <mask> in the bind is matched against 
+|     invite, limit, and key; the <mask> in the bind is matched against 
       "#channel type" and can contain wildcards; flags are ignored
 
       example: bind need - "% op" needop < handles only need op
@@ -1421,9 +1421,9 @@ for the msg-command "stop", use 'unbind msg - stop msg_stop'.
          save              (called when the userfile is saved)
          rehash            (called just after a rehash)
          prerehash         (called just before a rehash)
-        prerestart        (called just before a restart)
+         prerestart        (called just before a restart)
          logfile           (called when the logs are switched daily)
-        loaded            (called when the bot is done loading itself)
+         loaded            (called when the bot is done loading itself)
 
         connect-server    (called just before we connect to an irc server)
         init-server       (called when we actually get on our irc server)
@@ -1516,7 +1516,7 @@ for the msg-command "stop", use 'unbind msg - stop msg_stop'.
     call killdcc on the idx when text is blank, it will always fail with
     "invalid idx".
 
-    If you want to hand control of your connection back to eggdrop, your
+    If you want to hand control of your connection back to Eggdrop, your
     proc should return 1. Otherwise, return 0 to retain control.
 
 
@@ -1553,7 +1553,7 @@ for the msg-command "stop", use 'unbind msg - stop msg_stop'.
     the new idx (see the section above). From then on, the connection
     will act just like a normal DCC connection that has been put under
     the control of a script. If you ever return "1" from the control
-    proc (indicating that you want control to return to eggdrop), the bot
+    proc (indicating that you want control to return to Eggdrop), the bot
     will just close the connection and dispose of it. Other commands
     that work on normal DCC connections, like 'killdcc' and 'putdcc',
     will work on this idx too. 'killdcc' will fail with "invalid idx" if
@@ -1564,7 +1564,7 @@ for the msg-command "stop", use 'unbind msg - stop msg_stop'.
     which will create a new listening port at 6667, and assign it to the
     script 'grabproc'.
 
-    When a new connection arrives, eggdrop will connect it up and create
+    When a new connection arrives, Eggdrop will connect it up and create
     a new idx for the connection. That idx is sent to 'grabproc'. The
     proc will generally want to immediately put this idx under control:
        proc grabproc {newidx} {
@@ -1757,3 +1757,7 @@ users to read later
   setflags <dir> [<flags> [channel]]
     sets the flags required to access the directory
     returns: 0 on success, -1 on failure
+
+  ________________________________________________________________________
+
+Copyright (C) 2002 Eggheads Development Team

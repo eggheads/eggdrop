@@ -1,14 +1,14 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: mod-blowfish.html,v 1.6 2001/12/26 04:43:56 tothwolf Exp $ -->
+<!-- $Id: mod-blowfish.html,v 1.7 2002/01/02 03:46:33 guppy Exp $ -->
 
 <html>
   <head>
-    <title>Eggdrop Documentation: Blowfish module</title>
+    <title>Eggdrop Documentation: Blowfish Module</title>
   </head>
 
   <body>
     <div align="center">
-      <p><strong>Blowfish module</strong></p>
+      <p><strong>Blowfish Module</strong></p>
     </div>
     <hr>
 
@@ -21,6 +21,8 @@
     <blockquote>
       <ol>
         <li><a href="#config">Config file settings</a></li>
+
+        <li><a href="#tclcmds">Tcl commands</a></li>
       </ol>
     </blockquote>
     <hr>
@@ -29,19 +31,38 @@
 
     <blockquote>
       <p>Lines in <strong>bold</strong> are the lines that need to be
-      included in the eggdrop config file if you want to use the share
-      module.<br>
-       Lines in bold <strong><em>italics</em></strong> are optional and only
-      required if you wish to change the default behaviour for that
-      particular feature.</p>
+      included in the Eggdrop config file if you want to use the share
+      module. Lines in bold <strong><em>italics</em></strong> are optional
+      and only required if you wish to change the default behaviour for 
+      that particular feature.</p>
 
-      <p>Put this line into your config file to load blowfish module:</p>
+      <p>Put this line into your Eggdrop configuration file to load the 
+      blowfish module:</p>
 
       <p><strong>checkmodule blowfish</strong></p>
+
+      <p>This is checkmodule because during .restart the module will already
+      be loaded.</p>
+    </blockquote>
+
+       <p><a name="tclcmds"></a>2. <strong>Tcl commands</strong></p>
+    
+       <p>See doc/tcl-commands.doc for information on each of these 
+       commands.</p>
+
+    <blockquote>
+      <ul>
+        <li><strong>encrypt &lt;key&gt; &lt;string&gt;</strong></li>
+
+        <li><strong>decrypt &lt;key&gt; &lt;string&gt;</strong></li>
+
+        <li><strong>encpass &lt;string&gt;</strong></li>
+      </ul>
     </blockquote>
     <hr>
 
     <p><em>© 1997 Robey Pointer<br>
-     © 1999, 2000, 2001 <a href="http://www.eggheads.org/">Eggheads Development Team</a></em></p>
+     &copy; 1999, 2000, 2001, 2002 <a href="http://www.eggheads.org/">
+     Eggheads Development Team</a></em></p>
   </body>
 </html>

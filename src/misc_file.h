@@ -2,10 +2,10 @@
  * misc_file.h
  *   prototypes for misc_file.c
  *
- * $Id: misc_file.h,v 1.2 2001/04/12 02:39:43 guppy Exp $
+ * $Id: misc_file.h,v 1.3 2002/01/02 03:46:36 guppy Exp $
  */
 /*
- * Copyright (C) 2000, 2001 Eggheads Development Team
+ * Copyright (C) 2000, 2001, 2002 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

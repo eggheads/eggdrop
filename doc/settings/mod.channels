@@ -1,4 +1,8 @@
-##### CHANNELS MODULE #####
+Channels Module
+Last revised: December 31, 2001
+   ________________________________________________________________________
+
+                                Channels Module
 
 This module provides channel related support for the bot. Without it,
 you wont be able to make the bot join a channel or save channel
@@ -6,79 +10,74 @@ specific userfile information.
 
 This module requires: none
 
-Put this line into your eggdrop configuration file to load the channels module:
+Put this line into your Eggdrop configuration file to load the channels module:
 
 loadmodule channels
 
 There are also some variables you can to set in your config file:
 
-set chanfile "LamestBot.chan"
+  set chanfile "LamestBot.chan"
     Enter here the filename where dynamic channel settings are stored.
 
 
-set ban-time 120
+  set ban-time 120
     Set here how long temporary bans will last (in minutes). If you
     set this setting to 0, the bot will never remove them.
-    Valid settings are 0-infinite.
 
 
-set exempt-time 60
+  set exempt-time 60
     Set here how long temporary exempts will last (in minutes). If you
     set this setting to 0, the bot will never remove them. The bot will
     check the exempts every X minutes, but will not remove the exempt if
     a ban is set on the channel that matches that exempt. Once the ban is
     removed, then the exempt will be removed the next time the bot checks.
+
     Please note that this is an IRCnet feature.
-    Valid settings are 0-infinite.
 
 
-set invite-time 60
+  set invite-time 60
     Set here how long temporary invites will last (in minutes). If you
     set this setting to 0, the bot will never remove them.
     The bot will check the invites every X minutes, but will not remove
-    the invite if a channel is set to +i. Once the channel is -i then
+    the invite if a channel is set to +i. Once the channel is -i, then
     the invite will be removed the next time the bot checks.
+
     Please note that this is an IRCnet feature.
-    Valid settings are 0-infinite.
 
 
-set force-expire 0
-    Set this setting to 1 if you want your bot to expire bans/exempts/invites set
-    by other opped bots on the channel.
-    Valid settings are 0 for OFF and 1 ON.
+  set force-expire 0
+    Set this setting to 1 if you want your bot to expire bans/exempts/invites 
+    set by other opped bots on the channel.
 
 
-set share-greet 0
-    Set this setting to 1 if you want your bot to share user greets with other
-    bots on the channel if sharing user data.
-    Valid settings are 0 for OFF and 1 ON.
+  set share-greet 0
+    Set this setting to 1 if you want your bot to share user greets with 
+    other bots on the channel if sharing user data.
 
 
-set use-info 1
+  set use-info 1
     Set this setting to 1 if you want to allow users to store an info line.
-    Valid settings are 0 for OFF and 1 ON.
 
 
-channel add #channel { SETTINGS }
+  channel add #channel { SETTINGS }
     Add each static channel you want your bot to sit in using this command.
     There are many different possible settings you can insert into this
     command, which are explained below.
 
     chanmode +/-<modes>
-       This setting makes the bot enforce channel modes. It will always add
-       the +<modes> and remove the -<modes> modes.
+      This setting makes the bot enforce channel modes. It will always add
+      the +<modes> and remove the -<modes> modes.
 
     idle-kick 0
-       This setting will make the bot check every minute for idle
-       users. Set this to 0 to disable idle check.
-       Valid settings are 0 for OFF and 1 ON.
+      This setting will make the bot check every minute for idle
+      users. Set this to 0 to disable idle check.
 
     stopnethack-mode 0
        This setting will make the bot de-op anyone who enters the channel
        with serverops. There're seven different modes for this settings:
-         0 turn off,
+         0 turn off
          1 isoptest (allow serverop if registered op)
-         2 wasoptest (allow serverop if op before split)
+         2 wasoptest (allow serverop if user had op before split)
          3 allow serverop if isop or wasop
          4 allow serverop if isop and wasop.
          5 If the channel is -bitch, see stopnethack-mode 3
@@ -165,7 +164,7 @@ channel add #channel { SETTINGS }
        protection for the channel.
 
 
-channel set <chan> +/-<setting>
+  channel set <chan> +/-<setting>
     There are many different options for channels which you can
     define. They can be enabled or disabled by a plus or minus
     in front of them.
@@ -275,21 +274,21 @@ channel set <chan> +/-<setting>
        setting channel modes without having ops.
 
 
-The following settings are used as default values when you .+chan #chan or .tcl
-channel add #chan. Look in the section above for explanation of every option.
+  The following settings are used as default values when you .+chan #chan or .tcl
+  channel add #chan. Look in the section above for explanation of every option.
 
-set global-flood-chan 10:60
-set global-flood-deop 3:10
-set global-flood-kick 3:10
-set global-flood-join 5:60
-set global-flood-ctcp 3:60
-set global-flood-nick 5:60
+  set global-flood-chan 10:60
+  set global-flood-deop 3:10
+  set global-flood-kick 3:10
+  set global-flood-join 5:60
+  set global-flood-ctcp 3:60
+  set global-flood-nick 5:60
 
-set global-chanmode "nt-likm"
-set global-stopnethack-mode 0
-set global-revenge-mode 1
+  set global-chanmode "nt-likm"
+  set global-stopnethack-mode 0
+  set global-revenge-mode 1
 
-set global-chanset {
+  set global-chanset {
         -autoop         -autovoice
         -bitch          +cycle
         +dontkickops    +dynamicbans
@@ -302,4 +301,8 @@ set global-chanset {
         +shared         +statuslog
         +userbans       +userexempts
         +userinvites
-}
+  }
+
+  ________________________________________________________________________
+
+Copyright (C) 2002 Eggheads Development Team

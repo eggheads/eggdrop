@@ -1,11 +1,15 @@
-##### TRANSFER MODULE #####
+Transfer Module
+Last revised: December 31, 2001
+   ________________________________________________________________________
+
+                                Transfer Module
 
 The transfer module provides dcc send/get support and userfile transfer
 support for userfile sharing.
 
 This module requires: none
 
-Put this line into your eggdrop configuration file to load the transfer module:
+Put this line into your Eggdrop configuration file to load the transfer module:
 
 loadmodule transfer
 
@@ -37,3 +41,8 @@ set xfer-timeout 30
     Set here the time (in seconds) to wait before an inactive transfer
     times out.
     Valid settings are 0-infinite.
+
+    
+  ________________________________________________________________________
+
+Copyright (C) 2002 Eggheads Development Team

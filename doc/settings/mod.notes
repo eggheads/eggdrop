@@ -1,4 +1,8 @@
-##### NOTES MODULE #####
+Notes Module
+Last revised: December 31, 2001
+   ________________________________________________________________________
+
+                                 Notes Module
 
 This module provides support for storing of notes for users from each
 other. Note sending between currently online users is supported in the core,
@@ -6,7 +10,7 @@ this is only for storing the notes for later retrieval.
 
 This module requires: none
 
-Put this line into your eggdrop configuration file to load the notes module:
+Put this line into your Eggdrop configuration file to load the notes module:
 
 loadmodule notes
 
@@ -43,3 +47,8 @@ set notify-onjoin 1
     Set this to 1 if you want the bot to let people know on join if they
     have any notes.
     Valid settings are 0 for OFF and 1 ON.
+    
+  ________________________________________________________________________
+
+Copyright (C) 2002 Eggheads Development Team
+

@@ -1,7 +1,7 @@
 Contents of the doc/settings/ directory:
 
 core.settings
-  All module-independent eggdrop settings are documented here.
+  All module-independent Eggdrop settings are documented here.
 
 mod.assoc
   Documentation for the assoc module is provided in this file.

@@ -1,171 +1,415 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: botnet.html,v 1.6 2001/12/26 04:43:56 tothwolf Exp $ -->
+<!-- $Id: botnet.html,v 1.7 2002/01/02 03:46:33 guppy Exp $ -->
 
 <html>
   <head>
-    <title>Eggdrop Documentation: Botnet</title>
+    <title>Eggdrop Documentation: Botnet Sharing and Linking</title>
   </head>
 
   <body>
     <div align="center">
-      <p><strong>Botnet</strong></p>
+      <p><strong>Botnet Sharing and Linking</strong></p>
     </div>
     <hr>
 
-    <p>People starting up an Eggdrop bot for the first time are usually
-    confused about the &quot;botnet&quot; support -- i.e., the ability to
-    link two or more bots together and have them merge party lines, and form
-    a sort of miniature IRC.</p>
+    <p>The purpose of this document is to show you what a botnet is and how
+    it could be useful to you. It also covers botflags userfile sharing.</p>
 
-    <p>In order to link to other bots, your bot needs to have a telnet port
-    defined in the config file. The default is usually something like 2222 or
-    3333, but it&#39;s wise to choose something else, especially if a lot of
-    other people are using the same machine. If other Eggdrop bots are
-    running from that machine, try to pick telnet ports at least 5-10
-    apart.</p>
-
-    <p>Sometimes you will specify a port, like 3333, but that&#39;s not
-    available when Eggdrop starts up. On most operating systems, it just
-    means the port was in use recently (probably by your bot!) and it
-    hasn&#39;t had time to reset it yet. So Eggdrop will try 3334, and maybe
-    even 3335, until it gets one. Other bots are aware of this, and when they
-    try to connect, if the specified port (3333 in this example) doesn&#39;t
-    work, they&#39;ll try the next few before giving up. If you have one bot
-    on 3333, and another on 3334, they will always be bumping into each
-    other, and other bots will get confused. That&#39;s bad.</p>
-
-    <p>When you first connect two bots together, you need to tell each bot
-    about the other one. To do this, use the &quot;+bot&quot; command. You
-    need to know:</p>
+    <p><strong>Terms</strong></p>
 
     <blockquote>
-      <ul>
-        <li>the nickname of the other bot, like &#39;Lamestbot&#39;</li>
+      <p>The following are some common terms used in this document:</p>
 
-        <li>the hostname, like &#39;maverick.math.uic.edu&#39;</li>
-
-        <li>the telnet port it&#39;s using, like 2222 or 3454</li>
-      </ul>
-    </blockquote>
-
-    <p>The format of the &#39;+bot&#39; command is:</p>
-
-    <blockquote>
-      <p><em>.+bot &lt;nickname&gt; &lt;hostname&gt;:&lt;port&gt;</em></p>
-    </blockquote>
-
-    <p>This creates a &quot;bot record&quot; for the bot, in your userfile.
-    It&#39;s kind of like a user record, but a little different. For example,
-    Lamestbot, running from connected.com on port 3454, would be:</p>
-
-    <blockquote>
-      <p><em>.+bot Lamestbot connected.com:3454</em></p>
-    </blockquote>
-
-    <p>Now to connect the bots, one of you (but not both!) needs to type:</p>
-
-    <blockquote>
-      <p><em>.link &lt;botname&gt;</em></p>
-    </blockquote>
-
-    <p>The first time two bots connect, they set a password for each other,
-    so that after that, nobody can &quot;fake&quot; a connection between the
-    two. You can reset that password later with the command:</p>
-
-    <blockquote>
-      <p><em>.chpass &lt;botname&gt;</em></p>
-    </blockquote>
-
-    <p>The bot record is like a user record except for two things:</p>
-
-    <blockquote>
-      <ul>
-        <li>If you share userfiles with another bot (see below), only user
-        records are shared. The bot records will stay on this bot only.</li>
-
-        <li>There are special flags that can be set for bots, which can&#39;t
-        be set for users.</li>
-      </ul>
-    </blockquote>
-
-    <p>The special flags you can set for bots are:</p>
-
-    <blockquote>
       <dl>
-        <dt><strong>h (hub)</strong></dt>
+        <dt><strong>Botnet</strong></dt>
 
         <dd>
-          <p>Your bot will try about once a minute to link to a hub bot,
-          until it succeeds. Once it&#39;s linked to one hub, it will no
-          longer try to connect to others.</p>
+          <p>A botnet consists of one or more bots connected together.</p>
         </dd>
 
-        <dt><strong>a (alternate)</strong></dt>
+        <dt><strong>Link</strong></dt>
 
         <dd>
-          <p>If no hub bots can be linked, your bot will try to link to one
-          of these instead. Once one alternate bot is linked, it won&#39;t
-          try to connect any others -- although it will still try to link to
-          hub bots. If a hub bot connects later, any alternate bot could be
-          dropped.</p>
+          <p>Link is the term used to describe a bot connecting to another
+          bot.</p>
         </dd>
 
-        <dt><strong>s (share)</strong></dt>
+        <dt><strong>Hub</strong></dt>
 
         <dd>
-          <p>This means that the bot is sharing user records
-          aggressively.</p>
+          <p>A bot is described as a hub-bot if one or more bots are linked 
+          to it.</p>
         </dd>
 
-        <dt><strong>p (passive)</strong></dt>
+        <dt><strong>Hub</strong></dt>
 
         <dd>
-          <p>This means that the bot is to share user records passively with
-          this bot.</p>
+          <p>A leaf is a non-hub bot connecting to a hub-bot. A leaf has 
+          only one other bot connected to it, its hub. Leaf bots can be 
+          assigned the &quot;l&quot; botflag to prevent other bots from 
+          linking to them.</p>
         </dd>
 
-        <dt><strong>l (leaf)</strong></dt>
+        <dt><strong>Link Bot</strong></dt>
 
         <dd>
-          <p>If a bot is marked as a leaf, that means you don&#39;t want it
-          to link any other bots behind it. In other words, it can only be
-          connected to the botnet in one place, and no other bots may be
-          connected through it.</p>
+          <p>A link-bot is a bot that is linked to another bot. It may or 
+          may not be a hub-bot.</p>
         </dd>
 
-        <dt><strong>r (reject)</strong></dt>
+        <dt><strong>Share</strong></dt>
 
         <dd>
-          <p>Any bot that has this flag will not be permitted on the botnet
-          at all, no matter where it connects. This is equivalent to an
-          IRC&#39;s &quot;Q-line&quot;.</p>
+          <p>Share is the term used to describe the sharing of user records.
+          </p>
+        </dd>
+
+        <dt><strong>Share Bot</strong></dt>
+
+        <dd>
+          <p>A share-bot is a bot which shares user records with one or more
+          linked bots.</p>
+        </dd>
+
+        <dt><strong>Aggressive Share</strong></dt>
+
+        <dd>
+          <p>Aggressive share is a term used to describe the direction of 
+          sharing user-files. Aggressive share bots will SEND userfiles to
+          another passive bot.</p>
+        </dd>
+
+        <dt><strong>Passive Share</strong></dt>
+
+        <dd>
+          <p>Passive share is a term used to describe the direction of 
+          sharing user-files. Passive share bots will accept userfiles from
+          an aggressive share bot.</p>
+        </dd>
+
+        <dt><strong>Passive Share</strong></dt>
+
+        <dd>
+          <p>Passive share is a term used to describe the direction of 
+          sharing user-files. Passive share bots will accept userfiles from
+          an aggressive share bot.</p>
+
+          <p>Example bottree:</p>
+
+<pre>
+     BotA
+       |-+BotB
+         `-+BotC
+</pre>
+        
+
+          <p>BotB is linked to a master sharebot, BotA, and a slave 
+          sharebot, BotC. BotB shares passively with &#91;receives from&#93;
+          BotA and shares aggressively with &#91;sends to&#93; BotC.</p>
+       </dd>
+
+        <dt><strong>Flags</strong></dt>
+
+        <dd>
+          <p>Flags are attributes that determine what a bot can or is 
+          allowed to do. Flags can be either global (such as +s) or channel
+          specific (such as |+s #lamest). See &#39;.help botattr&#39; for 
+          help with setting these flags.</p>
+
+          <blockquote>
+            <table border=0>
+              <tr>
+                <td>s</td>
+                <td>share aggressively (SEND userfile to a passive bot)</td>
+              </tr>
+
+              <tr>
+                <td>p</td>
+                <td>share passively (ACCEPT userfile from an aggressive bot)
+                </td>
+              </tr>
+
+              <tr>
+                <td>g</td>
+                <td>global share (share all channels)</td>
+              </tr>
+
+              <tr>
+                <td>h</td>
+                <td>hub (automatically link to this bot)</td>
+              </tr>
+
+              <tr>
+                <td>a</td>
+                <td>alternate (automatically link to this bot if the hub bot 
+                can&#39;t be linked)</td>
+              </tr>
+
+              <tr>
+                <td>l</td>
+                <td>leaf (bot is not allowed to link in other bots)</td>
+              </tr>
+
+              <tr>
+                <td>r</td>
+                <td>reject (bot will not be allowed to link)</td>
+              </tr>
+
+              <tr>
+                <td>i</td>
+                <td>isolate (isolate the party line across a bot link)</td>
+              </tr>
+
+              <tr>
+                <td>0-9</td>
+                <td>user defined flags</td>
+              </tr>
+            </table>
+          </blockquote>
+
+        </dd>
+
+        <dt><strong>Address</strong></dt>
+
+        <dd>
+          <p>The physical address, containing the address and port of the 
+          bot. For example: lame.org:3333. You can change a bot&#39;s 
+          address with &#39;.chaddr &lt;botname&gt; &lt;hostaddress:botport
+          &#91;/userport&#93;&gt;&#39;.</p>
+        </dd>
+
+        <dt><strong>Relay Port</strong></dt>
+
+        <dd>
+          <p>The relay port number of the bot is defined in the config file.
+          Note that you can define one port for bots and another for user 
+          connections.</p>
+        </dd>
+
+        <dt><strong>Relay</strong></dt>
+
+        <dd>
+          <p>A relay connection is used to relay (jump) to another bot via 
+          telnet or DCC chat. You can relay to another bot even if the remote
+          bot is not linked. You can use &quot;.relay &lt;botname&gt;&quot; to
+          relay to another bot.</p>
+        </dd>
+
+
+        <dt><strong>Port</strong></dt>
+
+        <dd>
+          <p>The telnet port is used by the bot to communicate with other 
+          bots and/or users. Note that you can define separate ports for 
+          user and bot connections.</p>
         </dd>
       </dl>
     </blockquote>
 
-    <p>There are also 10 user-defined flags (0-9) available for use with bots
-    only.</p>
+    <p><strong>Adding and linking bots</strong></p>
 
-    <p><strong>N.B.</strong>: There&#39;s a full explanation of these flags
-    and how to use them in the section called <em>&quot;Userfile
-    Sharing&quot;.</em></p>
-
-    <p>These flags can all be changed by the &#39;.botattr&#39; command just
-    like for users. For example:</p>
+    <p>With the common terms out of the way, we can start with the process of
+    linking two bots. Before you start, you need to know the address and
+    port of each bot you wish to link. Here is an example senario:</p>
 
     <blockquote>
-      <p><em>.botattr Valis +sh</em></p>
+      <p>BotA is on lame.org listening on port 3333, and BotB is on irc.org 
+      listening on port 4444. First, you have to add each Bot to the other&#39;s 
+      userfile. On BotA, you would type &#39;.+bot BotB irc.org:4444&#39;. 
+      If BotB is on a common channel with BotA, BotB&#39;s hostmask is 
+      automatically added. Otherwise, you have to add the hostmask manually
+      with the &#39;.+host&#39; command. On BotB, you would type &#39;.+bot 
+      BotA lame.org:3333&#39;.</p>
+
+      <p>At this point, you can link the two bots by typing &#39;.link 
+      BotA&#39; on BotB (or &#39;.link BotB&#39; on BotA). The bots will 
+      now give themselves random passwords which are <strong>not</strong>
+      stored encrypted in the userfile. Note that you can link as many bots 
+      as you wish to your botnet.</p>
     </blockquote>
 
-    <p>There are several chains of connected bots out there. See the
-    &#39;nets&#39; file for a list of the various botnets around. If the
-    flags above seem confusing, don&#39;t worry. Usually the only one you
-    need to worry about is the +h flag. And most botnets have a policy about
-    what flags you should set when hooking in, and they&#39;ll tell you what
-    to set.</p>
+    <p><strong>Using botflags</strong></p>
+
+    <p>Botflags are needed to assign special functions and tasks to your
+    bots. Bot flags are set with the &#39;.botattr&#39; command. See
+    &#39;.help botattr&#39; for help with this command. The following is
+    a list of botflags and their functions:</p>
+
+    <blockquote>
+      <p><strong>&quot;h&quot; (hub)</strong></p>
+      
+      <p>If you want your bot(s) to automatically link/relink, you can
+      assign the +h botflag each bot&#39;s hub. Note that if you set 
+      multiple bots +h, the bot only attempts to link to one.</p>
+
+
+      <p><strong>&quot;a&quot; (alternate)</strong></p>
+    
+      <p>If your bots are, for some reason, unable to link to their hub,
+      they will attempt to connect to an alternate hub. You can assign a
+      bot as an alternate hub by giving it the +a botflag.</p>
+
+
+      <p><strong>&quot;l&quot; (leaf)</strong></p>
+
+      <p>This flag, assigned to a link bot, will prevent the link bot from
+      linking other bots to your botnet.</p>
+
+
+      <p><strong>&quot;r&quot; (reject)</strong></p>
+    
+      <p>If you assign this flag to a link bot, the link bot will not be 
+      allowed to link to the botnet.</p>
+
+
+      <p><strong>&quot;i&quot; (isolate)</strong></p>
+
+      <p>This flag isolates a link bot&#39;s partyline from the rest of the
+      botnet. Anything said on the link bot&#39;s partyline won&#39;t appear
+      on the rest of the botnet.</p>
+
+
+      <p><strong>&quot;s&quot;  (SEND userfile to)</strong></p>
+
+      <p>+s -  Giving a link bot this flag will make the bot share
+      aggressively with the link bot. See &#39;Aggressive Share&#39; in the
+      &#39;Terms&#39; section of this document for more information on 
+      aggressive sharing.</p>
+
+      <p>|s -  +s bots need this flag for each channel you want to share.
+      </p>
+
+
+      <p><strong>&quot;p&quot; (ACCEPT userfile from)</strong></p>
+
+      <p>Giving a link bot this flag will make the bot share passively 
+      with the link bot. See &#39;Passive Share&#39; in the &#39;Terms&#39; 
+      section of this document for more information on passive sharing.</p>
+
+
+      <p><strong>&quot;g&quot; (global share)</strong></p>
+     
+      <p>This flag allows the sharing of all channels with a link bot.</p>
+
+
+      <p><strong>&quot;0-9&quot; (user-defined)</strong></p>
+      
+      <p>These 10 flags are user-defined can be used by scripters.</p>
+    </blockquote>
+
+    <p><strong>Making bots share user records</strong></p>
+
+
+    <p>Before you start preparing your bots for sharing, make sure that
+    you've loaded the transfer and share modules. You also have to ensure
+    that each channel you wish to share is set +shared (see &#39;.help 
+    chanset&#39; and &#39;.help chaninfo&#39;).</p>
+
+    <p>By using specific botflags, you can cause your bot to share 
+    aggressively with some link bots, and passively with others. For 
+    sharing to work, flags must be set properly on both the passive and 
+    the aggressive bots. An aggressive  bot will not share userfiles with
+    another aggressive bot; a passive bot will not share userfiles with
+    another passive bot.</p>
+
+    <p>First off, let&#39;s say we have two bots we want to link. We will
+    call one Lamestbot, and the other Lameshare. The first thing that needs
+    to be done is each bot needs the other bot added to it&#39;s user record.
+    Your botnet should have a hub bot. This will have them connect
+    automatically whenever they are started. Without a hub, you would have to
+    manually link them with the .link command. For this situation we will
+    make Lamestbot the hub for our small botnet. Let&#39;s also use a channel
+    called #eggdrop as the one we want to share user channel flags with. Do
+    the following:</p>
+
+    <p>On Lamestbot:</p>
+
+    <blockquote>
+      <p>.+bot Lameshare eggdrop.com:3333 (This command adds a user record to
+      Lamestbot for Lameshare. Lameshare is running from eggdrop.com and is
+      on port 3333. If Lameshare were to have a separate port for
+      users/relays we would just add a &#39;/&#39; and the port number, i.e.
+      3333/5555.)</p>
+
+      <p>.botattr Lameshare +s (This tells us that Lamestbot will only send
+      user files to Lameshare; Lameshare will not send them to it.)</p>
+
+      <p>.botattr Lameshare |s #eggdrop (this sets up sharing of the channel
+      flags for #eggdrop between the bots. Without this, they will not share
+      channel flags only global flags for the users.)</p>
+    </blockquote>
+
+    <p>On Lameshare:</p>
+
+    <blockquote>
+      <p>.+bot Lamestbot best.com:3333/5555 (Again this will add a user on
+      Lameshare called Lamestbot with the domain of best.com. The bot has two
+      ports, 3333 for bot communications and 5555 for users/relays.)</p>
+
+      <p>.botattr Lamestbot +hp (This command sets Lamestbot as the hub and
+      also as a passive share, which means Lameshare will accept user files
+      from Lamestbot.</p>
+
+      <p>.botattr Lamestbot |s #eggdrop (This sets #eggdrop as a share
+      channel.)</p>
+    </blockquote>
+
+    <p>Our botnet:</p>
+
+<pre>
+     Lamestbot
+       `-+Lameshare
+</pre>
+
+    <p>Let&#39;s add a third bot called beldin to this scenario:</p>
+
+    <p>On Lamestbot:</p>
+
+    <blockquote>
+      .+bot beldin llama.com:3333 
+
+      <p>.botattr beldin s|s #eggdrop (Notice how i piped (the | character)
+      the channel flag also saving time.)</p>
+    </blockquote>
+
+    <p>Also note that you don&#39;t have to add beldin on Lameshare. Since
+    they are already sharing, it was added automatically. The one thing that
+    you should note is that no bot flags will be shared. If you set beldin as
+    +s (Aggressive share) on the hub (Lamestbot) he will not be set on the 
+    other bots as that. The same with the channel +s flag. All other flags 
+    will be shared such as the o, f, etc. Now that we have three bots, we 
+    can also set up one as an alternate hub. The alternate hub is the bot 
+    that the bots will auto-connect to in the event the hub goes down or
+    is unreachable.</p>
+
+    <p>Let&#39;s make beldin an alternate hub for our little botnet.</p>
+
+    <p>On Lameshare:</p>
+
+    <blockquote>
+      <p>.botattr beldin +a</p>
+    </blockquote>
+
+    <p>That&#39;s all there is to it. Again, since bot flags are not shared,
+    you would have to add the bot flag +a for beldin on them all. The only
+    ones you would not have to do this on are beldin and the hub (Lamestbot).
+    Of course, if you had more bots, you would have to add beldin as a +a on 
+    them, but you would not do it on the hub or beldin.</p>
+
+    <blockquote>
+    <p>Our botnet:</p>
+
+<pre>
+     Lamestbot
+       |-+beldin
+       `-+Lameshare
+</pre>
+    </blockquote>
+
     <hr>
 
     <p><em>© 1997 Robey Pointer<br>
-     © 1999, 2000, 2001 <a href="http://www.eggheads.org/">Eggheads Development Team</a></em></p>
+     &copy; 1999, 2000, 2001, 2002 <a href="http://www.eggheads.org/">
+     Eggheads Development Team</a></em></p>
   </body>
 </html>

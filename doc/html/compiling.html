@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: compiling.html,v 1.10 2001/12/26 04:43:56 tothwolf Exp $ -->
+<!-- $Id: compiling.html,v 1.11 2002/01/02 03:46:33 guppy Exp $ -->
 
 <html>
   <head>
@@ -12,17 +12,15 @@
     </div>
     <hr>
 
-    <p><strong>Eggdrop and Tcl compiling errors and resolution
-    FAQ</strong><br>
-     (in other words, maybe this FAQ will help you get Eggdrop compiled).
-    Suggestions by various contributors. If you think something should be
-    added, please send an e-mail to <a href="mailto:eggheads@eggheads.org">
-    eggheads@eggheads.org</a></p>
+    <p>This FAQ may help you successfully compile Eggdrop. Suggestions 
+    are by various contributors. If you think something should be added, 
+    please send an e-mail to <a href="mailto:eggheads@eggheads.org">
+    eggheads@eggheads.org</a>.</p>
 
-    <p>Last revised: March 21 2000</p>
+    <p>Last revised: December 29, 2001</p>
     <hr>
 
-    <p><a href="#egg">Eggdrop related questions</a></p>
+    <p><a href="#egg">Eggdrop Related Questions</a></p>
 
     <blockquote>
       <ol>
@@ -34,7 +32,7 @@
         <li><a href="#egg3">ld: -ltcl7.4: Expected libx.so(.major.minor.xxx)
         (various)</a></li>
 
-        <li><a href="#egg4">Strip terminated with signal (various)</a></li>
+        <li><a href="#egg4">Strip terminated with signal 6 (various)</a></li>
 
         <li><a href="#egg5">&#39;dir&#39; undeclared (and a whole bunch of
         others) (AIX 4)</a></li>
@@ -47,10 +45,17 @@
 
         <li><a href="#egg8">Unsatisfied symbols &#39;shl_findsym&#39; and
         &#39;shl_load&#39; (HP-UX 9)</a></li>
+
+        <li><a href="#egg9">Bot doesn't compile on Ultrix</a></li>
+
+        <li><a href="#egg10">Bot crashes at startup with the message 
+        "net.c/708", for example</a></li>
+
+        <li><a href="#egg11">I get lot's of warnings</a></li>
       </ol>
     </blockquote>
 
-    <p><a href="#tcl">Tcl related questions</a></p>
+    <p><a href="#tcl">Tcl Related Questions</a></p>
 
     <blockquote>
       <ol>
@@ -79,27 +84,28 @@
 
     <blockquote>
 <pre>
-       Undefined      first
-        symbol     referenced
-                     in file
-     socket        net.o
-     gethostbyname net.o
-     accept        net.o
-     bind          net.o
-     setsockopt    net.o
-     gethostbyaddr net.o
-     getsockname   net.o
-     gethostname   net.o
-     listen        net.o
-     connect       net.o
+                     First
+      Undefined    Referenced
+       Symbol       In file
+
+     socket          net.o
+     gethostbyname   net.o
+     accept          net.o
+     bind            net.o
+     setsockopt      net.o
+     gethostbyaddr   net.o
+     getsockname     net.o
+     gethostname     net.o
+     listen          net.o
+     connect         net.o
      ld: fatal: Symbol referencing errors. No output written to eggdrop
 </pre>
     </blockquote>
 
-    <p>This seems to be caused by a few libraries not being detected by the
-    auto-configure program, it is relatively easy to fix. Edit your Makefile,
-    note that yours may be slightly different than this one when it comes to
-    the Tcl library, but here is the way it probably is:</p>
+         <p>This seems to be caused by a few libraries not being detected by the
+         auto-configure script; it is relatively easy to fix. Edit your Makefile.
+         Note that yours may be slightly different than this one when it comes to
+         the Tcl library, but here is the way it probably is:</p>
 
     <blockquote>
 <pre>
@@ -109,7 +115,7 @@
 </pre>
     </blockquote>
 
-    <p>And here is what you need to change:</p>
+    <p>Here is what you need to change it to:</p>
 
     <blockquote>
 <pre>
@@ -119,7 +125,7 @@
 </pre>
     </blockquote>
 
-    <p>You are adding in three libraries to be linked in, socket, dl, and
+    <p>You are adding three libraries to be linked in: socket, dl, and
     nsl. This will resolve the net.o errors.</p>
 
     <p><a name="egg2">2. <strong>Compile stops at the last minute with
@@ -127,43 +133,46 @@
 
     <p>This seems to be caused by a non-ELF Tcl library binary, and the
     compiler doesn&#39;t seem to like it. The first thing you want to do is
-    download and compile Tcl yourself. And then follow this set of commands
+    download and compile Tcl yourself. Then, follow this set of commands
     to help you reconfigure Eggdrop using the newly compiled Tcl library (all
     of this should be done from your home directory):</p>
 
     <blockquote>
-      <p>cd<br>
-       mkdir lib<br>
-       mkdir include<br>
-       find . -name libtcl*</p>
+      <ol>
+         <li>cd</li>
+         <li>mkdir lib</li>
+         <li>mkdir include</li>
+         <li>find . -name libtcl*</li>
+       </ol>
     </blockquote>
 
     <p>The output from the find command should give you the location of the
-    library, take the output of that and do the next command with the output
+    library. Take the output of that and do the next command with the output
     of find replacing $$find$$:</p>
 
     <blockquote>
       <p>mv $$find$$ lib/libtcl.a</p>
     </blockquote>
 
-    <p>Now we continue with another find to help us locate tcl.h:</p>
+    <p>Now, we continue with another find to help us locate tcl.h:</p>
 
     <blockquote>
       <p>find . -name tcl.h</p>
     </blockquote>
 
     <p>The output from the find command should give you the location of the
-    header file, take the output of that and do the next command with the
+    header file. Take the output of that, and do the next command with the
     output of find replacing $$find$$:</p>
 
     <blockquote>
       <p>mv $$find$$ include</p>
     </blockquote>
 
-    <p>Hopefully you know what shell you are using and can pick out which
-    commands to use, if the first two setenv commands give command not found
-    then use the next two, if not then don&#39;t use the next two. First set
-    are for csh/tcsh users, following set is for bash/ksh users.</p>
+    <p>Hopefully, you know what shell you are using and can pick out which
+    commands to use. If the first two setenv commands give a 'command not 
+    found' error, then use the next two. If not, then don&#39;t use the next 
+    two. The first set of commands is for csh/tcsh users; the next set is for 
+    bash/ksh users.</p>
 
     <blockquote>
       <dl>
@@ -183,8 +192,8 @@
       </dl>
     </blockquote>
 
-    <p>And then finally run configure again for Eggdrop and then make, and
-    hopefully it will work.</p>
+    <p>Finally, run ./configure again, then make, and hopefully it will 
+    work.</p>
 
     <p><a name="egg3">3. <strong>ld: -ltcl7.4: Expected
     libx.so(.major.minor.xxx) (various)</strong></a></p>
@@ -198,15 +207,15 @@
 </pre>
     </blockquote>
 
-    <p>On some Unix boxes this seems to be caused by the linker, it is
-    expecting a specific filename format and when it doesn&#39;t live up to
-    it&#39;s expectations it usually barfs. I always see this caused by when
-    the library for Tcl is called libtcl7.4.a or libtcl7.5.a, rename it to
-    simply libtcl.a if you installed Tcl yourself, if you didn&#39;t and your
-    using the Tcl that the system installed then do this:</p>
+    <p>On some Unix boxes, this seems to be caused by the linker. It is
+    expecting a specific filename format, and when the filename doesn&#39;t 
+    live up to it&#39;s expectations, it usually barfs. I always see this when 
+    the library for Tcl is called libtcl7.4.a or libtcl7.5.a. Rename it to 
+    libtcl.a if you installed Tcl yourself; if you didn&#39;t and your using 
+    the Tcl that the system admin installed, then do this:</p>
 
     <p>View your Makefile, look for the line (should be close to the top)
-    that says</p>
+    that says:</p>
 
     <blockquote>
       <p>XREQ = /usr/local/lib/libtcl7.4.a</p>
@@ -216,17 +225,19 @@
     following:</p>
 
     <blockquote>
-      <p>mkdir lib<br>
-       cd lib<br>
-       ln -s $$xreq$$ libtcl.a</p>
+       <ol>
+         <li>mkdir lib</li>
+         <li>cd lib</li>
+         <li>ln -s $$xreq$$ libtcl.a</li>
+       </ol>
     </blockquote>
 
-    <p>Replace $$xreq$$ with the full pathname from the XREQ line from the
+    <p>Replace $$xreq$$ with the full pathname from the XREQ line in the
     Makefile.</p>
 
-    <p>And finally the next thing you want to do depending on what shell your
-    using is: (try the first one, if it gives bad command then use the
-    second)</p>
+    <p>The next thing you want to do, depending on what shell your using, 
+    is (if the first two setenv commands give a 'command not found' 
+    error, then use the next two.):</p>
 
     <blockquote>
       <dl>
@@ -244,10 +255,10 @@
       </dl>
     </blockquote>
 
-    <p>Did I say finally? Heh, finally run configure and then make again.</p>
+    <p>Finally, run ./configure and then make again.</p>
 
-    <p><a name="egg4">4. <strong>Strip terminated with signal
-    (various)</strong></a></p>
+    <p><a name="egg4">4. <strong>Strip terminated with signal 6</strong></a>
+    </p>
 
     <blockquote>
 <pre>
@@ -260,8 +271,8 @@
     </blockquote>
 
     <p>I don&#39;t really know what the hell is causing this, but I find that
-    if you don&#39;t strip the binary you cut out the problem (obviously),
-    edit your Makefile and change this line from:</p>
+    if you don&#39;t strip the binary, you cut out the problem (obviously).
+    Edit your Makefile, and change this line from:</p>
 
     <blockquote>
 <pre>
@@ -271,9 +282,8 @@
 </pre>
     </blockquote>
 
-    <p>To this line below: (your lines may differ, but what you are doing is
-    changing &#39;STRIP=-s&#39; to &#39;STRIP=&#39;)</p>
-
+    <p>To (your lines may differ, but what you are doing is
+     changing &#39;STRIP=-s&#39; to &#39;STRIP=&#39;):</p>
     <blockquote>
 <pre>
      GMAKE = ${MAKE} &#39;CC=gcc&#39; &#39;AWK=awk&#39; &#39;OBJS=${OBJS}&#39; &#39;TCLLIBFN=tcl.a&#39;\
@@ -314,8 +324,8 @@
 
     <p>This seems like one of the components of configure was broken, because
     what apparently happened was it didn&#39;t detect that this particular
-    system had dirent.h and sys/dir.h, solution was to add -DHAVE_DIRENT_H
-    -DHAVE_SYS_DIR_H to the Makefile&#39;s CFLGS line...</p>
+    system had dirent.h and sys/dir.h. The solution is to add -DHAVE_DIRENT_H
+    -DHAVE_SYS_DIR_H to the Makefile&#39;s CFLGS line:</p>
 
     <blockquote>
       <p>CFLGS = -DHAVE_DIRENT_H -DHAVE_SYS_DIR_H</p>
@@ -339,16 +349,16 @@
 
     <p>Again, this seems that one of configure&#39;s components (sed, awk, or
     something along those lines) was broken, and it failed to detect that
-    this system needed sys/select.h, solution was to add -DHAVE_SYS_SELECT_H
-    to the Makefile&#39;s CFLGS line...</p>
+    this system needed sys/select.h. The solution is to add -DHAVE_SYS_SELECT_H
+    to the Makefile&#39;s CFLGS line:</p>
 
     <blockquote>
       <p>CFLGS = -DHAVE_DIRENT_H -DHAVE_SYS_DIR_H -DHAVE_SYS_SELECT_H</p>
     </blockquote>
 
-    <p>(I suppose they thought a minor error would deter anyone from
-    continuing onward, but I am not just anyone, I am a blockhead...
-    &lt;grin&gt;)</p>
+    <p>I suppose they thought a minor error would deter anyone from
+     continuing onward, but I am not just anyone, I am a blockhead...
+    &lt;grin&gt;</p>
 
     <p><a name="egg7">7. <strong>Unresolved or undefined symbols: ldclose,
     ldopen, ldnshread (AIX 3)</strong></a></p>
@@ -369,9 +379,9 @@
 </pre>
     </blockquote>
 
-    <p>Apparently what is happening is a library called ld is required, and
-    either configure doesn&#39;t know it is needed or it simple can&#39;t
-    find it, or maybe this is a unique case, solution was to have ld linked
+    <p>Apparently, what is happening is a library called ld is required.
+    Either configure doesn&#39;t know it is needed, it simply can&#39;t
+    find it, or maybe this is a unique case. The solution is to have ld linked
     in with the final binary.</p>
 
     <p>Edit your Makefile and find the line that looks something like
@@ -380,19 +390,17 @@
     <blockquote>
 <pre>
      GMAKE = ${MAKE} &#39;CC=cc&#39; &#39;AWK=awk&#39; &#39;OBJS=${OBJS}&#39; &#39;TCLLIBFN=tcl7.5.a&#39;\
-             &#39;CFLAGS=${CFLAGS}&#39; &#39;XREQ=${XREQ}&#39; &#39;XLIBS=
-     -L/home2/f/foster/lib -ltcl7.5 -lm&#39;\
+             &#39;CFLAGS=${CFLAGS}&#39; &#39;XREQ=${XREQ}&#39; &#39;XLIBS= -L/home2/f/foster/lib -ltcl7.5 -lm&#39;\
              &#39;TCLLIB=${TCLLIB}&#39; &#39;RANLIB=ranlib&#39; &#39;STRIP=-s&#39;
 </pre>
     </blockquote>
 
-    <p>And add in -lld into the XLIBS assignment, like this...</p>
+    <p>Add in -lld into the XLIBS assignment, like this:</p>
 
     <blockquote>
 <pre>
      GMAKE = ${MAKE} &#39;CC=cc&#39; &#39;AWK=awk&#39; &#39;OBJS=${OBJS}&#39; &#39;TCLLIBFN=tcl7.5.a&#39;\
-             &#39;CFLAGS=${CFLAGS}&#39; &#39;XREQ=${XREQ}&#39; &#39;XLIBS=-lld
-     -L/home2/f/foster/lib -ltcl7.5 -lm&#39;\
+             &#39;CFLAGS=${CFLAGS}&#39; &#39;XREQ=${XREQ}&#39; &#39;XLIBS=-lld -L/home2/f/foster/lib -ltcl7.5 -lm&#39;\
              &#39;TCLLIB=${TCLLIB}&#39; &#39;RANLIB=ranlib&#39; &#39;STRIP=-s&#39;
 </pre>
     </blockquote>
@@ -416,10 +424,7 @@
 </pre>
     </blockquote>
 
-    <p>I forwarded this one to Robey and he said that Tcl 7.5 the dl library,
-    and that apparently configure couldn&#39;t detect that this was required
-    in this case. So try this fix, and if it works, great, if not then use
-    Tcl 7.4, I hear this works. :)</p>
+    <p>Upgrade to a later version of Tcl. The following should also work:</p>
 
     <blockquote>
 <pre>
@@ -429,7 +434,7 @@
 </pre>
     </blockquote>
 
-    <p>And here is what you need to change:</p>
+    <p>Add in -lld into the XLIBS assignment, like this:</p>
 
     <blockquote>
 <pre>
@@ -439,12 +444,36 @@
 </pre>
     </blockquote>
 
-    <p>Basically what you are doing is adding in -ldl to the XLIBS
-    declaration, essentially at link time you are tell it to also link in the
-    dl library which apparently resolves this problem.</p>
-    <hr>
+    <p><a name="egg9">9. <strong>Bot doesn't compile on Ultrix</strong></a></p>
 
-    <p><a name="tcl"><strong>Tcl related questions</strong></a></p>
+     <p>There are some known problems with make and Eggdrop on Ultrix systems.
+     Try to use gmake instead of make. Additionally, sh5 should be used. A 
+     simple'gmake SHELL=/bin/sh5' should be enough.</p>
+
+    <p><a name="egg10">10. <strong>Bot crashes at startup with the message 
+    "net.c/708", for example</strong></a></p>
+
+     <p>On some non IA32 systems, the gcc options -O2 and -O3 can cause that. We 
+     don't know why this happens, but sometimes it helps to remove those flags 
+     from the Makefile. To disable them, use:</p>
+
+    <blockquote>
+      <p>./configure --disable-cc-optimization</p>
+    </blockquote>
+        
+     <p>Ah well, drop us a note if you know why, so we can extend the info 
+     here.</p>
+
+    <p><a name="egg11">11. <strong>I get lot's of warnings</strong></a></p>
+
+     <p>Well, warnings are warnings, nothing really bad. As long as the compile 
+     runs through, there is nothing to worry about. Generally, we try to avoid
+     warnings, but we do not have time to fix all of them in the code. This
+     might change in the future, but at the moment you have to live with them.
+     If you feel like fixing them, do so and send us a patch (as described in
+     doc/patch.howto). Thanks.</p>
+
+    <p><a name="tcl"><strong>Tcl Related Questions</strong></a></p>
 
     <p><a name="tcl1">1. <strong>Redeclaration in compat/unistd.h (Tcl
     7.4/AIX 4)</strong></a></p>
@@ -476,10 +505,10 @@
 </pre>
     </blockquote>
 
-    <p>Seems that configure had a brain fart... Would you believe this was
-    the same system as in A.6 and A.7, heh, it was. Apparently it thought
+    <p>It seems that configure had a brain fart. Would you believe this was
+    the same system as in A.6 and A.7? Heh, it was. Apparently, it thought
     this system didn&#39;t have unistd.h, and was using it&#39;s compatible
-    header, solution was to edit Makefile and change this line:</p>
+    header. The solution is to edit Makefile and change this line:</p>
 
     <blockquote>
       <p>AC_FLAGS = -DHAVE_________=1 -DSTDC_HEADERS=1 -DNO_UNION_WAIT=1
@@ -530,8 +559,8 @@
 </pre>
     </blockquote>
 
-    <p>We are deleting the waitpid.o object file. The problem was that
-    configure didn&#39;t detect that waitpid() wasn&#39;t necessary, so it
+    <p>We are deleting the waitpid.o object file. The problem is that
+    configure didn&#39;t detect that waitpid() isn&#39;t necessary, so it
     caused a compatible waitpid() function to be compiled.</p>
 
     <p><a name="tcl3">3. <strong>Undefined symbols in tclUnixChan.o -- and
@@ -541,8 +570,9 @@
 <pre>
         gcc  tclAppInit.o -L/export/home/rewt/tcl7.5/unix -ltcl7.5 -ldl -lm -lc \
                  -o tclsh
-        Undefined                       first referenced
-         symbol                             in file
+        Undefined                       First Referenced
+         Symbol                             In File
+
         socket
      /export/home/rewt/tcl7.5/unix/libtcl7.5.a(tclUnixChan.o)
         getpeername
@@ -577,14 +607,15 @@
      /export/home/rewt/tcl7.5/unix/libtcl7.5.a(tclUnixChan.o)
         connect
      /export/home/rewt/tcl7.5/unix/libtcl7.5.a(tclUnixChan.o)
+
         ld: fatal: Symbol referencing errors. No output written to tclsh
         make: *** [tclsh] Error 1
 </pre>
     </blockquote>
 
-    <p>Configure couldn&#39;t find or detect that nsl and socket libraries
-    were required, so we have to force it to use them. The solution is to
-    edit Makefile and change the following line:</p>
+    <p>Configure couldn&#39;t find or detect that the nsl and socket libraries
+    were required, so we have to force it to use them. The solution is to edit 
+    Makefile and change the following line:</p>
 
     <blockquote>
       <p>LIBS = -ldl</p>
@@ -603,10 +634,12 @@
 <pre>
         gcc  tclAppInit.o -L/export/home/rewt/tcl7.5/unix -ltcl7.5 -ldl -lnsl -lsocket -lm -lc \
                  -o tclsh
-        Undefined                       first referenced
-         symbol                             in file
+        Undefined                       First Referenced
+         Symbol                             In File
+
         getwd
      /export/home/rewt/tcl7.5/unix/libtcl7.5.a(getcwd.o)
+
         ld: fatal: Symbol referencing errors. No output written to tclsh
         make: *** [tclsh] Error 1
 </pre>
@@ -623,7 +656,7 @@
 </pre>
     </blockquote>
 
-    <p>To the following:</p>
+    <p>To:</p>
 
     <blockquote>
 <pre>
@@ -640,12 +673,11 @@
     shell</strong></a></p>
 
     <p>If there&#39;s really no Tcl installed on your shell, you can install
-    it temporary in /tmp or your home. Get the latest version of Tcl from <a
-    href="ftp://ftp.scriptics.com/pub/tcl/">
-    ftp://ftp.scriptics.com/pub/tcl/</a> and follow the installation steps in
-    it&#39;s README file. After you&#39;ve installed Tcl, you have to make
-    configure detect Tcl. To achieve this, you have to set either
-    environmental variables:</p>
+    it temporarily in /tmp or your /home. Get the latest version of Tcl from <a
+    href="ftp://ftp.scriptics.com/pub/tcl/"> ftp://ftp.scriptics.com/pub/tcl/</a>
+    and follow the installation steps in it&#39;s README file. After you&#39;ve 
+    installed Tcl, you have to make configure detect Tcl. To achieve this, you 
+    have to set either environmental variables:</p>
 
     <blockquote>
       <dl>
@@ -670,6 +702,7 @@
     <hr>
 
     <p><em>© 1997 Robey Pointer<br>
-     © 1999, 2000, 2001 <a href="http://www.eggheads.org/">Eggheads Development Team</a></em></p>
+     &copy; 1999, 2000, 2001, 2002 <a href="http://www.eggheads.org/">
+     Eggheads Development Team</a></em></p>
   </body>
 </html>

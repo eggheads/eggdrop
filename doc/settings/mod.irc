@@ -1,11 +1,15 @@
-##### IRC MODULE #####
+Seen Module
+Last revised: December 31, 2001
+   ________________________________________________________________________
+
+                                  Seen Module
 
 This module provides basic IRC support for your bot.  You have to
 load this if you want your bot to come on IRC.
 
 This module requires: server, channels
 
-Put this line into your eggdrop configuration file to load the irc module:
+Put this line into your Eggdrop configuration file to load the irc module:
 
 loadmodule irc
 
@@ -113,26 +117,26 @@ set bounce-invites 0
 
 
 set max-exempts 20
-    Set here the maximum number of exempts you want eggdrop to set
+    Set here the maximum number of exempts you want Eggdrop to set
     on a channel. Eggdrop will not place any more exempts if this
     limit is reached.
 
 
 set max-invites 20
-    Set here the maximum number of invites you want eggdrop  to set
+    Set here the maximum number of invites you want Eggdrop  to set
     on a channel. Eggdrop will not place any more invites if this
     limit is reached.
 
 
 set use-exempts 0
-    If you set this feature to 0 in your eggdrop config file, the bot
+    If you set this feature to 0 in your Eggdrop config file, the bot
     will not use any exempts. This setting is set to 1 as a default in
     nettype 1.
     Valid settings are 0 for OFF and 1 ON.
 
 
 set use-invites 0
-    If you set this feature to 0 in your eggdrop config file, the bot
+    If you set this feature to 0 in your Eggdrop config file, the bot
     wont use any invites. This setting is set to 1 as a default in
     nettype 1.
     Valid settings are 0 for OFF and 1 ON.
@@ -175,3 +179,7 @@ set use-354 0
 set rfc-compliant 1
     If your network doesn't use rfc 1459 compliant string matching routines,
     set this to 0.
+    
+  ________________________________________________________________________
+
+Copyright (C) 2002 Eggheads Development Team

@@ -1,4 +1,8 @@
-##### COMPRESS MODULE #####
+Compress Module
+Last revised: December 31, 2001
+   ________________________________________________________________________
+
+                                Compress Module
 
 This module provides provides support for file compression. This allows the
 bot to transfer compressed user files and, therefore, save a significant amount
@@ -6,7 +10,7 @@ of bandwidth.
 
 This module requires: share
 
-Put this line into your eggdrop configuration file to load the compress module:
+Put this line into your Eggdrop configuration file to load the compress module:
 
 loadmodule compress
 
@@ -18,3 +22,7 @@ set share-compressed 1 (Disabled by default)
 
 set compress-level 9
    This is the default compression level used.
+   
+  ________________________________________________________________________
+
+Copyright (C) 2002 Eggheads Development Team

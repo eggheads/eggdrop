@@ -31,7 +31,7 @@ II. TERMS USED
 
 
     Link
-      The term that means the actual linking of a bot
+      Link is the term used to describe a bot connecting to another bot.
 
 
     Hub
@@ -42,7 +42,7 @@ II. TERMS USED
     Leaf
       A leaf is a non-hub bot connecting to a hub-bot. A leaf has only
       one other bot connected to it, its hub. Leaf bots can be assigned
-      the "l" botattr flag to prevent other bots from linking to them.
+      the "l" botflag to prevent other bots from linking to them.
 
 
     Link Bot
@@ -54,7 +54,7 @@ II. TERMS USED
       Share is the term used to describe the sharing of user records.
 
 
-    Share Bots
+    Share Bot
       A share-bot is a bot which shares user records with one or more 
       linked bots.
 
@@ -76,9 +76,9 @@ II. TERMS USED
           |-+BotB
             `-+BotC
 
-        BotB is linked to a master sharebot, BotA, and a slave sharebot, BotC. 
-	BotB shares passively with [receives from] BotA and shares aggressive 
-	with [sends to] BotC.
+        BotB is linked to a master sharebot, BotA, and a slave sharebot, 
+        BotC. BotB shares passively with [receives from] BotA and shares 
+        aggressively with [sends to] BotC.
 
 
     Bot Flags
@@ -93,7 +93,7 @@ II. TERMS USED
         g   global share (share all channels)
         h   hub (automatically link to this bot)
         a   alternate (automatically link to this bot if the hub bot can't be 
-	    linked)
+            linked)
         l   leaf (bot is not allowed to link in other bots)
         r   reject (bot will not be allowed to link)
         i   isolate (isolate the party line across a bot link)
@@ -110,11 +110,10 @@ II. TERMS USED
     Relay
       The relay port number of the bot is defined in the config file.
       Note that you can define one port for bots and another for user 
-      connections. You can use ".relay <botname>" to relay to another 
-      bot.
+      connections.
 
 
-    Relay Connection
+    Relay
       A relay connection is used to relay (jump) to another bot via telnet
       or DCC chat. You can relay to another bot even if the remote bot is
       not linked. You can use ".relay <botname>" to relay to another bot.
@@ -196,7 +195,7 @@ V. USING BOTFLAGS
     "s" (SEND userfile to)
       +s   Giving a link bot this flag will make the bot share aggressively 
            with the link bot. See 'Aggressive Share' in section II of this 
-	   document for more information on aggressive sharing.
+           document for more information on aggressive sharing.
 
       |s     +s bots need this flag for each channel you want to share.
 
@@ -219,35 +218,96 @@ V. USING BOTFLAGS
 VI. MAKING BOTS SHARE USER RECORDS
 
   Before you start preparing your bots for sharing, make sure that
-  you've loaded the transfer and share modules. You also have to ensure 
-  that each channel you wish to share is set +shared (see '.help chanset'
-  and '.help chaninfo').
+  you've loaded the transfer and share modules. You also have to ensure
+  that each channel you wish to share is set +shared (see '.help 
+  chanset' and '.help chaninfo').
 
-  By using specific botflags, you can cause your bot to share aggressively
-  with some link bots, and passively with others. For sharing to work, flags
-  must be set properly on both the passive and the aggressive bots. An aggressive 
-  bot will not share userfiles with another aggressive bot; a passive bot will 
-  not share userfiles with another passive bot.
+  By using specific botflags, you can cause your bot to share 
+  aggressively with some link bots, and passively with others. For 
+  sharing to work, flags must be set properly on both the passive and 
+  the aggressive bots. An aggressive  bot will not share userfiles with
+  another aggressive bot; a passive bot will not share userfiles with
+  another passive bot.
 
-  A bot will send userfiles to any bots with the +s botflag.
+  First off, let's say we have two bots we want to link. We will
+  call one Lamestbot, and the other Lameshare. The first thing that needs
+  to be done is each bot needs the other bot added to it's user record.
+  Your botnet should have a hub bot. This will have them connect
+  automatically whenever they are started. Without a hub, you would have to
+  manually link them with the .link command. For this situation we will
+  make Lamestbot the hub for our small botnet. Let's also use a channel
+  called #eggdrop as the one we want to share user channel flags with. Do
+  the following:
 
-  A bot will accept userfiles from any bot with the +p botflag.
+    On Lamestbot:
 
-  Giving BotB the +s botflag on BotA will not make BotB accept BotA's userfile. 
-  It will only make BotA attempt to send its userfile to BotB.
+      .+bot Lameshare eggdrop.com:3333 (This command adds a user record to
+      Lamestbot for Lameshare. Lameshare is running from eggdrop.com and is
+      on port 3333. If Lameshare were to have a separate port for users/relays
+      we would just add a '/' and the port number, i.e. 3333/5555.)
 
-  Giving BotA the +p botflag on BotB will not make BotA send its userfile
-  to BotB. It will only give BotA permission to send BotB a userfile.
+      .botattr Lameshare +s (This tells us that Lamestbot will only send
+      user files to Lameshare; Lameshare will not send them to it.)
 
-  If the flags on both bots do not create a +s+p pair, the bots will link but
-  will not share. If the +s+p pair is set properly, but the userfile transfer
-  fails for some reason, the bots will unlink.
+      .botattr Lameshare |s #eggdrop (this sets up sharing of the channel
+      flags for #eggdrop between the bots. Without this, they will not share
+      channel flags only global flags for the users.)
 
-  Note that by sharing user records, bans, invites, exempts and
-  ignores will automatically be shared. Botflags are *not* shared.
+    On Lameshare:
 
+      .+bot Lamestbot best.com:3333/5555 (Again this will add a user on
+      Lameshare called Lamestbot with the domain of best.com. The bot has two
+      ports, 3333 for bot communications and 5555 for users/relays.)
 
+      .botattr Lamestbot +hp (This command sets Lamestbot as the hub and
+      also as a passive share, which means Lameshare will accept user files
+      from Lamestbot.
 
-Hope that this document helped you in some way...
+      .botattr Lamestbot |s #eggdrop (This sets #eggdrop as a share
+      channel.)
 
-The Dev-Team
+    Our botnet:
+
+     Lamestbot
+       `-+Lameshare
+
+    Let's add a third bot called beldin to this scenario:
+
+    On Lamestbot:
+
+      .+bot beldin llama.com:3333 
+
+      .botattr beldin s|s #eggdrop (Notice how i piped (the | character)
+      the channel flag also saving time.)
+
+    Also note that you don't have to add beldin on Lameshare. Since
+    they are already sharing, it was added automatically. The one thing that
+    you should note is that no bot flags will be shared. If you set beldin as
+    +s (Aggressive share) on the hub (Lamestbot) he will not be set on the 
+    other bots as that. The same with the channel +s flag. All other flags 
+    will be shared such as the o, f, etc. Now that we have three bots, we 
+    can also set up one as an alternate hub. The alternate hub is the bot 
+    that the bots will auto-connect to in the event the hub goes down or
+    is unreachable.
+
+    Let's make beldin an alternate hub for our little botnet.
+
+    On Lameshare:
+
+      .botattr beldin +a
+
+    That's all there is to it. Again, since bot flags are not shared,
+    you would have to add the bot flag +a for beldin on them all. The only
+    ones you would not have to do this on are beldin and the hub (Lamestbot).
+    Of course, if you had more bots, you would have to add beldin as a +a on 
+    them, but you would not do it on the hub or beldin.
+
+    Our botnet:
+
+     Lamestbot
+       |-+beldin
+       `-+Lameshare
+
+   _________________________________________________________________
+
+   Copyright (C) 2002 Eggheads Development Team

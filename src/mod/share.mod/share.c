@@ -1,11 +1,11 @@
 /*
  * share.c -- part of share.mod
  *
- * $Id: share.c,v 1.61 2001/12/29 05:49:47 guppy Exp $
+ * $Id: share.c,v 1.62 2002/01/02 03:46:40 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999, 2000, 2001 Eggheads Development Team
+ * Copyright (C) 1999, 2000, 2001, 2002 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: mod-server.html,v 1.14 2001/12/26 04:43:57 tothwolf Exp $ -->
+<!-- $Id: mod-server.html,v 1.15 2002/01/02 03:46:34 guppy Exp $ -->
 
 <html>
   <head>
@@ -31,11 +31,10 @@
 
     <blockquote>
       <p>Lines in <strong>bold</strong> are the lines that need to be
-      included in the eggdrop config file if you want to use the share
-      module.<br>
-       Lines in bold <strong><em>italics</em></strong> are optional and only
-      required if you wish to change the default behaviour for that
-      particular feature.</p>
+      included in the Eggdrop config file if you want to use the share
+      module. Lines in bold <strong><em>italics</em></strong> are optional
+      and only required if you wish to change the default behaviour for 
+      that particular feature.</p>
 
       <p>This module provides the core server support. You have to load this
       if you want your bot to come on irc.<br>
@@ -140,9 +139,9 @@
 
         <dd>
           <p>Often an irc server call itself something other then what its
-          real dns name is. If you want eggdrop to replace your server entry
+          real dns name is. If you want Eggdrop to replace your server entry
           in the config file with this name, set this to 1. If you turn this
-          setting to 0, eggdrop will keep this name separate from the server
+          setting to 0, Eggdrop will keep this name separate from the server
           list.</p>
 
           <p>Valid settings are 0 and 1.</p>
@@ -151,10 +150,10 @@
         <dt><strong>set server-cycle-wait 60</strong></dt>
 
         <dd>
-          <p>This setting defines how long eggdrop should wait before moving
+          <p>This setting defines how long Eggdrop should wait before moving
           from one server to another on disconnect.</p>
 
-          <p>If you set 0 here, eggdrop wont wait at all and reconnect
+          <p>If you set 0 here, Eggdrop wont wait at all and reconnect
           instantly. Please note, that a too low setting could result in
           k-line for your host, since many ircops don&#39;t like being
           flooded with connects.</p>
@@ -175,7 +174,7 @@
         <dt><strong>set server-timeout 60</strong></dt>
 
         <dd>
-          <p>Set here the timeout how long eggdrop should wait for a response
+          <p>Set here the timeout how long Eggdrop should wait for a response
           when connecting to a server before giving up and moving on to next
           server in list.</p>
         </dd>
@@ -196,8 +195,8 @@
         <dt><strong><em>set check-stoned 1</em></strong></dt>
 
         <dd>
-          <p>Set this to 1 if eggdrop should check for stoned servers? (i.e.
-          Where the server connection has died, but eggdrop hasn&#39;t been
+          <p>Set this to 1 if Eggdrop should check for stoned servers? (i.e.
+          Where the server connection has died, but Eggdrop hasn&#39;t been
           notified yet).</p>
 
           <p>Valid settings are 0 and 1.</p>
@@ -306,7 +305,7 @@
         <dt><strong><em>set trigger-on-ignore 0</em></strong></dt>
 
         <dd>
-          <p>If you want eggdrop to trigger binds for ignored users, set this
+          <p>If you want Eggdrop to trigger binds for ignored users, set this
           to 1</p>
 
           <p>Valid settings are 0 and 1.</p>
@@ -341,9 +340,9 @@
         <dt>(default on net-type 1)</dt>
 
         <dd>
-          <p>This enables eggdrop&#39;s penalty calculation. Every command
-          eggdrop sends to the irc server raises it&#39;s penalty points. If
-          eggdrop reaches a server limit, it gets disconnected with
+          <p>This enables Eggdrop&#39;s penalty calculation. Every command
+          Eggdrop sends to the irc server raises it&#39;s penalty points. If
+          Eggdrop reaches a server limit, it gets disconnected with
           &quot;excess flood&quot; message. Eggdrop is able to count internal
           those penalty points, too and take measures against excess
           flooding.</p>
@@ -382,7 +381,7 @@
         <dt><strong><em>set check-mode-r 1</em></strong></dt>
 
         <dd>
-          <p>This settings defines how umode +r is understood by eggdrop.
+          <p>This settings defines how umode +r is understood by Eggdrop.
           Some networks use +r to mean a restricted connection. If this is
           your case, and you want your bot to leave restricted servers and
           jump to the next one on his server list, then set it to 1.</p>
@@ -398,7 +397,7 @@
         <dd>
           <p>This setting enables you to use different nick lengths then the
           ircd&#39;s default 9 (Dalnet uses 32 imo). The maximum supported
-          length by eggdrop is 32.</p>
+          length by Eggdrop is 32.</p>
 
           <p>Valid settings are 9-32</p>
         </dd>
@@ -566,7 +565,7 @@
            &nbsp; ...<br>
            }</p>
 
-          <p>for compatibility with older eggdrop versions</p>
+          <p>for compatibility with older Eggdrop versions</p>
         </dd>
 
         <dt><strong>CTCP</strong></dt>
@@ -599,7 +598,7 @@
           <p>bind raw &lt;flags&gt; &lt;keyword-mask&gt; &lt;proc&gt;<br>
            proc-name &lt;from&gt; &lt;keyword&gt; &lt;args...&gt;</p>
 
-          <p>previous versions of eggdrop required a special compile option
+          <p>previous versions of Eggdrop required a special compile option
           to enable this binding, but it&#39;s now standard; the mask is
           checked against the keyword (either a numeric like &quot;368&quot;
           or a keyword like &quot;PRIVMSG&quot;); from will be the server
@@ -607,7 +606,7 @@
           ignored; the order of the arguments is identical to the order that
           the IRC server sends to the bot -- the pre-processing only splits
           it apart enough to determine the keyword; if the proc returns 1,
-          eggdrop will not process the line any further. <strong>This could
+          Eggdrop will not process the line any further. <strong>This could
           cause your bot to behave oddly in some cases.</strong></p>
         </dd>
 
@@ -642,6 +641,7 @@
     <hr>
 
     <p><em>© 1997 Robey Pointer<br>
-     © 1999, 2000, 2001 <a href="http://www.eggheads.org/">Eggheads Development Team</a></em></p>
+     &copy; 1999, 2000, 2001, 2002 <a href="http://www.eggheads.org/">
+     Eggheads Development Team</a></em></p>
   </body>
 </html>

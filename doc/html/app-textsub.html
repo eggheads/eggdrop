@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: app-textsub.html,v 1.11 2001/12/26 05:03:31 tothwolf Exp $ -->
+<!-- $Id: app-textsub.html,v 1.12 2002/01/02 03:46:33 guppy Exp $ -->
 
 <html>
   <head>
@@ -8,12 +8,14 @@
 
   <body>
     <div align="center">
-      <p><strong>Textfile substitutions</strong></p>
+      <p><strong>Textfile Substitutions</strong></p>
     </div>
     <hr>
 
-    <p>There are some special variables that can be added to the motd,
-    banner and help files that will be interpreted by eggdrop:</p>
+    <p>These %-variables can be inserted into help files, the banner, the
+    MOTD, and other text files.</p>
+
+    <p>There are four variables that can be used to format text:</p>
 
     <blockquote>
       <dl>
@@ -31,44 +33,48 @@
 
         <dt><strong>%f</strong></dt>
 
-        <dd>display flashing via telnet, bold underline via irc</dd>
+        <dd>display flashing via telnet; bold underline via irc</dd>
+      </dl>
+    </blockquote>
+    
+    <p>These variables will be interpreted by Eggdrop and replaced by their 
+    respective values:</p>
 
+    <blockquote>
+      <dl>
         <dt><strong>%B</strong></dt>
 
-        <dd>bot&#39;s nickname (&quot;LamestBot&quot;)</dd>
+        <dd>bot&#39;s nickname (i.e., &quot;LamestBot&quot;)</dd>
 
         <dt><strong>%V</strong></dt>
 
-        <dd>current eggdrop version (&quot;eggdrop
-        v1.6.0&quot;)</dd>
+        <dd>current Eggdrop version (i.e., &quot;eggdrop v1.6.8&quot;)</dd>
 
         <dt><strong>%E</strong></dt>
 
-        <dd>long form of %V (&quot;Eggdrop v1.6.0 (C) 1997 Robey
-        Pointer (C) 2001 Eggheads&quot;)</dd>
+        <dd>long form of %V (i.e., &quot;Eggdrop v1.6.8 (C) 1997 Robey Pointer 
+        (C) 2002 Eggheads&quot;)</dd>
 
         <dt><strong>%C</strong></dt>
 
-        <dd>channels the bot is on (&quot;#lamest,
+        <dd>channels the bot is on (i.e., &quot;#lamest, 
         #botnetcentral&quot;)</dd>
 
         <dt><strong>%A</strong></dt>
 
-        <dd>whatever is set in &#39;admin&#39; (see &#39;set
-        admin&#39;)</dd>
+        <dd>whatever is set in the config file by &#39;set admin&#39;</dd>
 
         <dt><strong>%n</strong></dt>
 
-        <dd>whatever is set in &#39;network&#39; (see &#39;set
-        network&#39;)</dd>
+        <dd>whatever is set in the config file by &#39;set network&#39;</dd>
 
         <dt><strong>%T</strong></dt>
 
-        <dd>the current time (&quot;15:00&quot;)</dd>
+        <dd>the current time (i.e., &quot;15:00&quot;)</dd>
 
         <dt><strong>%N</strong></dt>
 
-        <dd>the current user&#39;s nickname (&quot;Robey&quot;)</dd>
+        <dd>the current user&#39;s nickname (i.e., &quot;Robey&quot;)</dd>
 
         <dt><strong>%U</strong></dt>
 
@@ -76,7 +82,7 @@
 
         <dt><strong>%%</strong></dt>
 
-        <dd>a literal percent sign (&quot;%&quot;)</dd>
+        <dd>a percent sign (&quot;%&quot;)</dd>
       </dl>
     </blockquote>
 
@@ -89,9 +95,9 @@
 
         <dd>Only masters would see this.</dd>
 
-        <dt><strong>%{+1}some text%{-}</strong></dt>
+        <dt><strong>%{+A}some text%{-}</strong></dt>
 
-        <dd>Only people with user flag #1 see this.</dd>
+        <dd>Only people with the user flag +A see this.</dd>
 
         <dt><strong>%{+b}some text%{-}</strong></dt>
 
@@ -104,7 +110,7 @@
       </dl>
     </blockquote>
 
-    <p>Other extended % commands are:</p>
+    <p>Other variables:</p>
 
     <blockquote>
       <dl>
@@ -114,7 +120,7 @@
 
         <dt><strong>%{cols=N/W}</strong></dt>
 
-        <dd>same, but use a screen width of W</dd>
+        <dd>same as above, but use a screen width of W</dd>
 
         <dt><strong>%{end}</strong></dt>
 
@@ -128,6 +134,7 @@
     <hr>
 
     <p><em>© 1997 Robey Pointer<br>
-     © 1999, 2000, 2001 <a href="http://www.eggheads.org/">Eggheads Development Team</a></em></p>
+     &copy; 1999, 2000, 2001, 2002 <a href="http://www.eggheads.org/">
+     Eggheads Development Team</a></em></p>
   </body>
 </html>

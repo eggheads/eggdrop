@@ -21,11 +21,11 @@ BUG-REPORT
    in Eggdrop.
 
 compiling.FAQ
-   If you have trouble compiling your eggdrop, take a look
+   If you have trouble compiling your Eggdrop, take a look
    in this file.
 
 eggdrop.doc
-   The primary documentation on running an eggdrop bot (to be used
+   The primary documentation on running an Eggdrop bot (to be used
    AFTER you get it compiled) is in this file. It is unfinished, but 
    a good starter course.
 
@@ -34,13 +34,13 @@ KNOWN-PROBLEMS
    fixed anytime soon
 
 MODULES
-     Information on writing eggdrop modules can be found in this document.
+     Information on writing Eggdrop modules can be found in this document.
 
 patch.howto
-   This is a how-to on applying and creating eggdrop patches.
+   This is a how-to on applying and creating Eggdrop patches.
 
 tcl-commands.doc
-   Documentation on eggdrop Tcl commands available to scripters can be 
+   Documentation on Eggdrop Tcl commands available to scripters can be 
    found here.
 
 text-substitutions.doc
@@ -48,14 +48,14 @@ text-substitutions.doc
    and BANNER files.
 
 tricks
-   Some advanced tips on making eggdrop do what you want it to do can be found
+   Some advanced tips on making Eggdrop do what you want it to do can be found
    here. It also contains tweaking tips for your config file.
    
 UPDATES1.6
-   This is a complete list of changes made to eggdrop 1.6.
+   This is a complete list of changes made to Eggdrop 1.6.
 
 UPDATES1.5
-   This is a complete list of changes made to eggdrop 1.5.
+   This is a complete list of changes made to Eggdrop 1.5.
 
 UPDATES.pre1.5
-   This is a complete list of changes made to eggdrop before version 1.5.
+   This is a complete list of changes made to Eggdrop before version 1.5.

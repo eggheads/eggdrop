@@ -25,7 +25,7 @@ II. WHY USE MODULES?
 
   Modules allow C coders to add their own enhancements to the
   bot without recompiling the whole thing, and without increasing
-  the size of the eggdrop core.
+  the size of the Eggdrop core.
 
 
 III. HOW TO INSTALL A MODULE
@@ -34,7 +34,7 @@ III. HOW TO INSTALL A MODULE
   installing a module. Please read any and all directions included with
   the module you wish to install.
 
-    1. Download and un-tar the eggdrop source code.
+    1. Download and un-tar the Eggdrop source code.
 
     2. Place the new module in its own directory (in the format of 
        (modulename).mod) in src/mod.
@@ -63,17 +63,17 @@ IV. MODULES INCLUDED WITH EGGDROP
 
   blowfish    Eggdrop can encrypt your userfile, so users can have secure 
               passwords. Please note that when you change your encryption 
-	      method later (i.e. using other modules like a md5 module), 
-	      you can't use your current userfile anymore. Eggdrop will not 
-	      start without an encryption module.
+              method later (i.e. using other modules like a md5 module), 
+              you can't use your current userfile anymore. Eggdrop will not 
+              start without an encryption module.
 
   channels    This module provides channel related support for the bot. 
               Without it, you wont be able to make the bot join a channel 
-	      or save channel specific userfile information.
+              or save channel specific userfile information.
 
   compress    This module provides provides support for file compression. 
               This allows the bot to transfer compressed user files and, 
-	      therefore, save a significant amount of bandwidth.
+              therefore, save a significant amount of bandwidth.
 
   console     This module provides storage of console settings when you exit 
               the bot or type .store on the partyline.
@@ -83,30 +83,30 @@ IV. MODULES INCLUDED WITH EGGDROP
 
   dns         This module provides asynchronous dns support. This will avoid
               long periods where the bot just hangs there, waiting for a 
-	      hostname to resolve, which will often let it timeout on all 
-	      other connections.
+              hostname to resolve, which will often let it timeout on all 
+              other connections.
 
   filesys     This module provides an area within the bot where users can 
               store files. With this module, the bot is usable as a file 
-	      server.
+              server.
 
   irc         This module provides basic IRC support for your bot. You have
               to load this if you want your bot to come on IRC.
 
   notes       This module provides support for storing of notes for users 
               from each other. Note sending between currently online users 
-	      is supported in the core, this is only for storing the notes 
-	      for later retrieval.
+              is supported in the core, this is only for storing the notes 
+              for later retrieval.
 
   seen        This module provides very basic seen commands via msg, on 
               channel or via dcc. This module works only for users in the 
-	      bot's userlist. If you are looking for a better and more 
-	      advanced seen module, try the gseen module by G'Quann. You 
-	      can find it at http://www.visions-of-fantasy.de/gseen.mod/.
+              bot's userlist. If you are looking for a better and more 
+              advanced seen module, try the gseen module by G'Quann. You 
+              can find it at http://www.visions-of-fantasy.de/gseen.mod/.
 
   server      This module provides the core server support. You have to load 
               this if you want your bot to come on IRC. Not loading this is 
-	      equivalent to the old NO_IRC define.
+              equivalent to the old NO_IRC define.
 
   share       This module provides userfile sharing support between two 
               directly linked bots.
@@ -116,13 +116,13 @@ IV. MODULES INCLUDED WITH EGGDROP
 
   uptime      This module reports uptime statistics to http://uptime.eggheads.org.
               Go look and see what your uptime is! It takes about 9 hours to 
-	      show up, so if your bot isn't listed, try again later. See 
-	      doc/settings/mod.uptime for more information, including details
-	      on what information is sent to the uptime server.
+              show up, so if your bot isn't listed, try again later. See 
+              doc/settings/mod.uptime for more information, including details
+              on what information is sent to the uptime server.
 
   wire        This module provides all the standard .wire commands via dcc. 
               It is an encrypted partyline communication tool, compatible 
-	      with wire.tcl.
+              with wire.tcl.
 
   woobie      This is for demonstrative purposes only. If you are looking for starting
               point in writing modules, woobie is the right thing.
@@ -139,7 +139,7 @@ V. PROGRAMMING MODULES
         multiple source file module, you shouldn't need to read this
         anyway. ;)
 
-  (a) Create a src/mod/MODULE.mod directory in your eggdrop distro
+  (a) Create a src/mod/MODULE.mod directory in your Eggdrop distro
       (where MODULE is the module name) and cd to it.
 
   (b) Copy the file `Makefile' from src/mod/woobie.mod and replace all
@@ -163,7 +163,7 @@ V. PROGRAMMING MODULES
 
          (iii)  #include "../module.h"
 
-             This provides all the accessible functions in eggdrop.
+             This provides all the accessible functions in Eggdrop.
              Examine src/mod/module.h closely to find a list of functions
              available.
 
@@ -172,9 +172,9 @@ V. PROGRAMMING MODULES
 
        (v)  Function *global;
 
-             This variable provides access to all the eggdrop functions; without
-             it, you can't call any eggdrop functions (heck, the module wont even 
-	     load).
+             This variable provides access to all the Eggdrop functions; without
+             it, you can't call any Eggdrop functions (heck, the module wont even 
+             load).
 
      (2) CORE functions every module needs.
 
@@ -187,29 +187,29 @@ V. PROGRAMMING MODULES
        (i) char *MODULE_start(Function *func_table)
            - This function is called when the module is first loaded.
            You MUST do several things in this function:
-             (a) global = func_table;  (so you can make eggdrop calls)
+             (a) global = func_table;  (so you can make Eggdrop calls)
 
              (b) module_register(MODULE_NAME, MODULE_table, major, minor);
                  This records details about the module for other modules
-                 and eggdrop itself to access. Major is a major version 
-		 number, minor is a minor version number, and MODULE_table 
-		 is a function table (see below).
+                 and Eggdrop itself to access. Major is a major version 
+                 number, minor is a minor version number, and MODULE_table 
+                 is a function table (see below).
 
              (c) module_depend(MODULE_NAME, "another-module", major, minor);
-                 This lets eggdrop know that your module NEEDS "another-module"
+                 This lets Eggdrop know that your module NEEDS "another-module"
                  of major version 'major' and at least minor version 'minor'
                  to run, and hence should try to load it if it's not already 
-		 here. This will return 1 on success, or 0 if it can't be done
+                 here. This will return 1 on success, or 0 if it can't be done
                  (at which stage you should return an error).
 
              (d) Any other initialization stuff you desire should be included
-	         in this function. See below for various things you can do.
+                 in this function. See below for various things you can do.
 
              (e) a return value of some sort
-	         Returning NULL implies the module loaded successfully, 
-		 therefor the bot can continue. Returning a non-NULL STRING 
-		 is an error message. The module (and any other dependant 
-		 modules) will stop loading and an error will be returned.
+                 Returning NULL implies the module loaded successfully, 
+                 therefor the bot can continue. Returning a non-NULL STRING 
+                 is an error message. The module (and any other dependant 
+                 modules) will stop loading and an error will be returned.
 
        (ii) static Function *MODULE_table = {
                 MODULE_start,
@@ -223,62 +223,62 @@ V. PROGRAMMING MODULES
             other module can call up, so you can provide services for other
             modules (e.g. transfer has raw_dcc_send in it's table to allow
             the filesys to send files to others). The first 4 functions are 
-	    FIXED. You MUST have them; they provide important system info.
+            FIXED. You MUST have them; they provide important system info.
 
        (iii) static char *MODULE_close ()
             - This is called when the module is unloaded.
               Apart from tidying any relevant data (I suggest you be thorough,
               we don't want any trailing garbage from modules), you MUST do 
-	      the following:
+              the following:
 
                 (a) module_undepend(MODULE_NAME);
-                    This lets eggdrop know your module no longer depends on
+                    This lets Eggdrop know your module no longer depends on
                     any other modules.
 
                 (b) Return a value. NULL implies success; any non-NULL STRING 
-		    implies that the module cannot be unloaded for some reason, 
-		    and hence the bot should not unload it (see blowfish for 
-		    an example).
+                    implies that the module cannot be unloaded for some reason, 
+                    and hence the bot should not unload it (see blowfish for 
+                    an example).
 
        (iv) static int MODULE_expmem ()
             This should tally all memory you allocate/deallocate within
             the module (using modmalloc & modfree). It's used by memory
             debugging to track memory faults, and it is used by .status 
-	    to  total up memory usage.
+            to  total up memory usage.
 
        (v) static void MODULE_report (int idx)
             This should provide a relatively short report of the module's 
-	    status (for .module/.status).
+            status (for .module/.status).
 
      (3) AVAILABLE FUNCTIONS
        
        (i) Reliable ones:
              You can RELY on these functions being available. This is just a 
-	     short list of the ones you need to make a mildly useful module. 
-	     A good portion of the remaining eggdrop functions are available, 
-	     check src/mod/module.h for more information.
+             short list of the ones you need to make a mildly useful module. 
+             A good portion of the remaining Eggdrop functions are available, 
+             check src/mod/module.h for more information.
 
                void *nmalloc (int a);
-	       
-	         - allocates a bytes
+               
+                 - allocates a bytes
 
                void   nfree (void *a);
-	       
-	         - frees a modmalloc'd block
+               
+                 - frees a modmalloc'd block
 
                context;
-	       
-	         - actually a #define; records the current position in
-		   execution (for debugging)
+               
+                 - actually a #define; records the current position in
+                   execution (for debugging)
 
                void   dprintf (int idx,char *format, ... ) 
-	       
-	         - just like normal printf; outputs to a dcc/socket/server
+               
+                 - just like normal printf; outputs to a dcc/socket/server
 
                    idx is a normal dcc idx OR if < 0 is a sock #
 
                    other options:
-		     DP_LOG (send to log file)
+                     DP_LOG (send to log file)
                      DP_STDOUT (send to stdout)
                      DP_MODE   (send via mode queue to server) *fast*
                      DP_SERVER (send via normal queue to server) *normal*
@@ -286,7 +286,7 @@ V. PROGRAMMING MODULES
                                for mass outputs to users
 
                int    module_register ( char *module_name, 
-	                                Function *function_table,
+                                        Function *function_table,
                                         int major, int minor )
 
                  - see above
@@ -295,8 +295,8 @@ V. PROGRAMMING MODULES
 
                  - look for a module (matching major, >= minor), and return
                    info about it. 
-		   
-		   Members of module_entry:
+                   
+                   Members of module_entry:
 
                      char *name; - module name (duh)
                      int major;   - real major version
@@ -307,14 +307,14 @@ V. PROGRAMMING MODULES
                                  int major, int minor )
 
                  - marks your module (module_name) as dependent upon 
-		   needed_module (matching major, >= minor) and tries to 
-		   load the required module if it's not already loaded. 
-		   returns 1 on success
+                   needed_module (matching major, >= minor) and tries to 
+                   load the required module if it's not already loaded. 
+                   returns 1 on success
 
           int    module_undepend ( char *module_name)
 
                  - marks your module (module_name) as no longer needing any 
-		   of it's dependencies
+                   of it's dependencies
 
           void   module_rename (char *old_module_name, char *new_module_name)
 
@@ -323,9 +323,9 @@ V. PROGRAMMING MODULES
           void add_hook (int hook_num, Function *funcs)
           void del_hook (int hook_num, Function *funcs)
 
-                 - used for adding removing hooks into eggdrop code on 
-		   various events, these functions are called depending 
-		   on the hook
+                 - used for adding removing hooks into Eggdrop code on 
+                   various events, these functions are called depending 
+                   on the hook
 
                    Valid hooks:
 
@@ -333,103 +333,107 @@ V. PROGRAMMING MODULES
                      HOOK_MINUTELY      - called every minute
                      HOOK_5MINUTELY     - called every 5 minutes
                      HOOK_HOURLY        - called every hour (hourly-updates
-		                          minutes past)
+                                          minutes past)
                      HOOK_DAILY         - called when the logfiles are switched
                      HOOK_READ_USERFILE - called when the userfile is read
                      HOOK_USERFILE      - called when the userfile is written
                      HOOK_PRE_REHASH    - called just *before* rehash
                      HOOK_REHASH        - called just after rehash
                      HOOK_IDLE          - called whenever the dcc connections 
-		                          have been idle for a whole second
+                                          have been idle for a whole second
                      HOOK_BACKUP        - called when a user/channel file 
-		                          backup is done
-                     HOOK_LOADED        - called when eggdrop is first loaded
-                     HOOK_DIE           - called when eggdrop is about to die
+                                          backup is done
+                     HOOK_LOADED        - called when Eggdrop is first loaded
+                     HOOK_DIE           - called when Eggdrop is about to die
 
           
-	  char *module_load ( char *module_name );  
-	  
-	         - tries to load the given module; returns 0 on success, or 
-		   an error message
+          char *module_load ( char *module_name );  
+          
+                 - tries to load the given module; returns 0 on success, or 
+                   an error message
 
           char *module_unload ( char *module_name );
-	  
-	         - tries to unload the given module; returns 0 on success, or 
-		   an error message
+          
+                 - tries to unload the given module; returns 0 on success, or 
+                   an error message
 
 
           void add_tcl_commands(tcl_cmds *tab);
           void rem_tcl_commands(tcl_cmds *tab);
 
-	         - provides a quick way to create and remove a list of Tcl 
-		   commands. the table is in the form:
+                 - provides a quick way to create and remove a list of Tcl 
+                   commands. the table is in the form:
      
                     { char *func_name, Function *function_to_call }
                    
-		   These are normal Tcl commands (as done in tcl*.c).
+                   These are normal Tcl commands (as done in tcl*.c).
                    Use { 0, 0 } to indicate the end of the list.
 
           void add_tcl_ints(tcl_ints *);
           void rem_tcl_ints(tcl_ints *);
 
-	         - provides a way to add/remove links from c variables to Tcl 
-		   variables (add checks to see if the Tcl variable already 
-		   exists and copies it over the C one). the format of table is:
+                 - provides a way to add/remove links from c variables to Tcl 
+                   variables (add checks to see if the Tcl variable already 
+                   exists and copies it over the C one). the format of table is:
 
                     { char *variable_name, int *variable, int readonly }
 
-		    Use {0,0,0}; to indicate the end of the list.
+                    Use {0,0,0}; to indicate the end of the list.
 
           void add_tcl_strings(tcl_strings *);
           void rem_tcl_strings(tcl_strings *);
 
-	         - provides a way to add/remove links from c strings to Tcl 
-		   strings (also copies existing Tcl values). the format is:
+                 - provides a way to add/remove links from c strings to Tcl 
+                   strings (also copies existing Tcl values). the format is:
 
                     { char * variable_name, char *string, int length, int flags }
 
-		    Use { 0, 0, 0, 0 } to indicate the end of the list.
+                    Use { 0, 0, 0, 0 } to indicate the end of the list.
 
-		    length: set to 0 if you want a const string.
+                    length: set to 0 if you want a const string.
 
-		    flags:  use STR_DIR if you want a / constantly appended;
-		            use STR_PROTECT if you want the variable set 
-			    in the config file, not during normal usage.
+                    flags:  use STR_DIR if you want a / constantly appended;
+                            use STR_PROTECT if you want the variable set 
+                            in the config file, not during normal usage.
 
           void putlog (int logmode, char *channel, char *format, ... )
   
-	         - logs a comment. see src/eggdrop.h for logmodes.
+                 - logs a comment. see src/eggdrop.h for logmodes.
 
           void add_builtins (p_tcl_hash_list table, cmd_t *cc);
           void rem_builtins (p_tcl_hash_list table, cmd_t *cc);
 
-	         - the method of adding/remove bindings for Tcl hash tables
+                 - the method of adding/remove bindings for Tcl hash tables
 
-	           Table is a hash table you find with find_hash_table.
+                   Table is a hash table you find with find_hash_table.
 
-	           cc format:
+                   cc format:
 
                     { char *command, char *flags, Function *function }
 
                     terminate with { 0, 0, 0, 0 }
 
                     this is EXACTLY like a bind command in Tcl (heck, tcl_bind 
-		    calls the same function this does).
+                    calls the same function this does).
 
                     function is called with exactly the same args as a Tcl 
-		    binding is (except for dcc, which does include the handle 
-		    in C) with type conversion taken into account (e.g. idx's 
-		    are ints). return is much the same as Tcl bindings, use int 
-		    0/1 for those which require 0/1, or char * for those which 
-		    require a string (e.g. filt). return nothing if no return 
-		    is required. return is also in src/tclhash.c
+                    binding is (except for dcc, which does include the handle 
+                    in C) with type conversion taken into account (e.g. idx's 
+                    are ints). return is much the same as Tcl bindings, use int 
+                    0/1 for those which require 0/1, or char * for those which 
+                    require a string (e.g. filt). return nothing if no return 
+                    is required. return is also in src/tclhash.c
 
 
 VI. WHAT TO DO WITH A MODULE?
 
    If you have written a module and feel that you wish to share it with the
-   rest of the eggdrop community, upload it to the incoming directory on
+   rest of the Eggdrop community, upload it to the incoming directory on
    incoming.eggheads.org(/incoming/modules/1.6). Place a nice descriptive
    text with it, and it'll make its way to the modules directory on
    ftp.eggheads.org. Don't forget to mention in your text file which
-   version eggdrop the module is written for.
+   version Eggdrop the module is written for.
+
+  ________________________________________________________________________
+
+Copyright (C) 2002 Eggheads Development Team

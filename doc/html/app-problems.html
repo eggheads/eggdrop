@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: app-problems.html,v 1.6 2001/12/26 04:43:56 tothwolf Exp $ -->
+<!-- $Id: app-problems.html,v 1.7 2002/01/02 03:46:33 guppy Exp $ -->
 
 <html>
   <head>
@@ -13,26 +13,39 @@
     <hr>
 
     <p><strong>Things that are broke, but aren&#39;t getting fixed anytime
-    soon</strong></p>
-
-    <p>Solve to non-working alarm(10) in Linux (calls to gethostbyaddr/name()
-    have blocked for long periods when bind/named doesn&#39;t resolve
-    quickly, and the alarm does not interrupt it).</p>
-
+    soon:</strong></p>
     <blockquote>
-      <p>Note: This should now work if you use the dns module.</p>
+      <ul>
+        <li>
+          <p>Non-working alarm(10) in Linux (calls to gethostbyaddr/name()
+          have blocked for long periods when bind/named doesn't resolve 
+          quickly, and the alarm does not interrupt it).</p>
+
+          <blockquote>
+            <p>Note: This should now work if you use the dns module.</p>
+          </blockquote>
+        </li>
+
+        <li>
+          <p>High-bit characters are being filtered from channel names. 
+          This is a fault of the Tcl interpreter, and not Eggdrop. The Tcl
+          interpreter filters the characters when it reads a file for 
+          interpreting. Update your Tcl to version 8.1 or higher.</p>
+        </li>
+
+        <li>
+          <p>Version 8.1 of Tcl doesn&#39;t support unicode characters, for
+          example, &egrave;. If those characters are handled in a script as 
+          text, you run into errors. Eggdrop can&#39;t handle these errors at
+          the moment.</p>
+        </li>
+      </ul>
     </blockquote>
 
-    <p>High-bit characters are being filtered from channel names. This is a
-    fault of the Tcl interpreter, and not Eggdrop. The Tcl interpreter
-    filters the characters when it reads a file for interpreting.</p>
-
-    <blockquote>
-      <p>Note: This should now work if you use Tcl 8.1 or later.</p>
-    </blockquote>
     <hr>
 
     <p><em>© 1997 Robey Pointer<br>
-     © 1999, 2000, 2001 <a href="http://www.eggheads.org/">Eggheads Development Team</a></em></p>
+     &copy; 1999, 2000, 2001, 2002 <a href="http://www.eggheads.org/">
+     Eggheads Development Team</a></em></p>
   </body>
 </html>

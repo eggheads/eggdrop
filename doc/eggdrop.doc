@@ -26,11 +26,11 @@ e-mail to eggheads@eggheads.org (after subscribing). Thanks.
     Eggdrop was created around December 1993 to help stop the incessant
     wars on #gayteen.  It spawned from another bot I had been writing
     at the time called "Unrest".  The purpose of Unrest was to answer
-    help requests from other bots (the equivalent of eggdrop's current
+    help requests from other bots (the equivalent of Eggdrop's current
     helpbot option).  The first public release was (I think) v0.6, and
     it's grown a lot since then.
 
-    To use eggdrop, you need:
+    To use Eggdrop, you need:
     * some sort of Unix account -- it does not compile for Windows or
       Mac machines, nor will it probably ever compile there
     * pretty good knowledge of IRC and Unix, including how to compile
@@ -45,7 +45,7 @@ e-mail to eggheads@eggheads.org (after subscribing). Thanks.
     Before starting, ask yourself if you really need a bot.  Most IRC
     servers allow only a handful of bots -- some forbid them outright.
     The reason?  Too many people run bots as "toys" or as a means of
-    destruction.  If you want to use eggdrop for destructive purposes,
+    destruction.  If you want to use Eggdrop for destructive purposes,
     go ahead and erase this directory now.  It's almost impossible to
     do what you want with this bot.
 
@@ -79,19 +79,19 @@ e-mail to eggheads@eggheads.org (after subscribing). Thanks.
     tells you how to quickly compile and start up the bot.
 
     If you've read this far, then, I'll assume you have successfully
-    compiled eggdrop and edited the config file.
+    compiled Eggdrop and edited the config file.
 
-    First of all, eggdrop has some command-line options -- not many,
+    First of all, Eggdrop has some command-line options -- not many,
     because most things should be defined through the config file.
     However sometimes you may want to start up the bot in a different
     mode, and the command-line options let you do that.  Basically,
-    the command line for eggdrop is:
+    the command line for Eggdrop is:
 
     % eggdrop <options> <config-file>
 
     The options available are:
 
-    -n   Don't background.  Normally eggdrop will move itself into the
+    -n   Don't background.  Normally Eggdrop will move itself into the
          background when you start it up, meaning you'll get another
          shell prompt and you can do other things while the bot is going.
          With -n, you won't return to the shell prompt until the bot
@@ -108,7 +108,7 @@ e-mail to eggheads@eggheads.org (after subscribing). Thanks.
          status, sort of like "top".
 
     -m   Create userfile.  If you don't have a userfile, this will make
-         eggdrop create one, and give master/owner status to the first
+         Eggdrop create one, and give master/owner status to the first
          person that introduces himself or herself to it.  You'll need
          to do this when you first set up your bot, and never again.
 
@@ -120,13 +120,13 @@ e-mail to eggheads@eggheads.org (after subscribing). Thanks.
     It's advisable to run your bot from its own directory.  That way
     upgrading to a new version is somewhat painless.  You can put your
     config file and user file in that directory, and then when you
-    compile a new version of eggdrop, you just have to do:
+    compile a new version of Eggdrop, you just have to do:
        make install DEST=<directory>
     and it will copy eggdrop, modules, scripts, and the help files. Please
     note, that you need to specify an absolute path here, relative paths
     like '../mydir' for example will not copy everything.
 
-    There are three config files shipped with your eggdrop,
+    There are three config files shipped with your Eggdrop,
     eggdrop.simple.conf, eggdrop.advanced.conf and eggdrop.complete.conf.
     The names of the files already indicate their use, so no need here
     explain this further on. You need to edit that file and change almost
@@ -141,7 +141,7 @@ e-mail to eggheads@eggheads.org (after subscribing). Thanks.
     of the script to say:
        #!./eggdrop
     which tells the operating system which program to run when executing
-    this script.  (Obviously, it needs to run eggdrop.)  If you're too
+    this script.  (Obviously, it needs to run Eggdrop.)  If you're too
     lazy to do this, or just don't feel like it, you can still start up
     your bot this way:
        eggdrop <options> <config-file>
@@ -167,14 +167,14 @@ e-mail to eggheads@eggheads.org (after subscribing). Thanks.
     People on irc are recognized by the bot according to their user@host.
     That is, if I am on irc as:
        *** Robey is robey@hubcap.clemson.edu (i hate milk)
-    then eggdrop will identify me according to "robey@hubcap.clemson.edu"
+    then Eggdrop will identify me according to "robey@hubcap.clemson.edu"
     and not by my nickname.  I can change nicknames at will and it won't
     forget me.
 
     For convenience, it's useful to have a "handle" which always identifies
     the same person.  Usually the "handle" is just whatever nickname some-
     one was using when the bot first learned them.  The nickname you had
-    when you first said "hello" to eggdrop is the handle it will know you
+    when you first said "hello" to Eggdrop is the handle it will know you
     by, regardless of whatever nickname you may be using at a given time.
 
     Because of this, only one person can have a given handle on your bot.
@@ -308,7 +308,7 @@ e-mail to eggheads@eggheads.org (after subscribing). Thanks.
 
 (6) BOTNET
 
-    People starting up an eggdrop bot for the first time are usually confused
+    People starting up an Eggdrop bot for the first time are usually confused
     about the "botnet" support -- ie, the ability to link two or more bots
     together and have them merge party lines, and form a sort of miniature
     irc.
@@ -316,13 +316,13 @@ e-mail to eggheads@eggheads.org (after subscribing). Thanks.
     In order to link to other bots, your bot needs to have a telnet port
     defined in the config file.  The default is usually something like 2222
     or 3333, but it's wise to choose something else, especially if a lot of
-    other people are using the same machine.  If other eggdrop bots are
+    other people are using the same machine.  If other Eggdrop bots are
     running from that machine, try to pick telnet ports at least 5-10 apart.
 
     Sometimes you will specify a port, like 3333, but that's not available
-    when eggdrop starts up.  On most operating systems, it just means the
+    when Eggdrop starts up.  On most operating systems, it just means the
     port was in use recently (probably by your bot!) and it hasn't had time
-    to reset it yet.  So eggdrop will try 3334, and maybe even 3335, until
+    to reset it yet.  So Eggdrop will try 3334, and maybe even 3335, until
     it gets one.  Other bots are aware of this, and when they try to connect,
     if the specified port (3333 in this example) doesn't work, they'll try
     the next few before giving up.  If you have one bot on 3333, and another
@@ -470,7 +470,7 @@ e-mail to eggheads@eggheads.org (after subscribing). Thanks.
 
 (9) LANGUAGE SUPPORT
 
-    Large parts of what eggdrop outputs have been translated to other
+    Large parts of what Eggdrop outputs have been translated to other
     languages. At the moment we have English, French and German; however,
     English is loaded by default.
 
@@ -493,12 +493,12 @@ e-mail to eggheads@eggheads.org (after subscribing). Thanks.
     <language> is either "english", "french", "german" or possibly
     another language file.
 
-    The last added language is the most preferred language, so eggdrop will
+    The last added language is the most preferred language, so Eggdrop will
     try to find all messages in that language first and then check other
     languages.
 
     You can add several languages, e.g. english, french and german. If a
-    message is not found in german, eggdrop searches for a french version,
+    message is not found in german, Eggdrop searches for a french version,
     and if that doesn't succeed it falls back to the english message.
 
     You can remove languages with the '-lang' command on the party line.
@@ -519,7 +519,7 @@ e-mail to eggheads@eggheads.org (after subscribing). Thanks.
 (Y) BUGS AND BUG REPORTING
 
     Although we try hard to remove all bugs, there are probably a few bugs
-    left in the eggdrop. Sometimes this may even lead to a complete crash
+    left in the Eggdrop. Sometimes this may even lead to a complete crash
     of the bot and make a restart necessary. Usually, if a crash occurs,
     a file named DEBUG is created in the bots directory, containing valuable
     information for the development team to fix that bug.
@@ -536,9 +536,9 @@ e-mail to eggheads@eggheads.org (after subscribing). Thanks.
 
      (a) Your bot was swapped out of memory for a while, or that
      for some reason the computer stopped letting the bot run.  Once a minute,
-     eggdrop does a few maintenance things, including counting down any Tcl
+     Eggdrop does a few maintenance things, including counting down any Tcl
      timers you have going.  If for some reason, several minutes pass without
-     eggdrop getting to do this, it logs this message to let you know what
+     Eggdrop getting to do this, it logs this message to let you know what
      happened.  It's generally a bad thing, because it means that the system
      your bot is on is very busy, and the bot can hardly keep track of the
      channel very well when it gets swapped out for minutes at a time.
@@ -561,7 +561,7 @@ e-mail to eggheads@eggheads.org (after subscribing). Thanks.
 
     jwilkinson@mail.utexas.edu had some insight into this one:
 
-       This is not an eggdrop bug, at least not most of the time.  This is
+       This is not an Eggdrop bug, at least not most of the time.  This is
        a bug in all but perhaps the very latest ircd systems.  It's not
        uncommon during netsplits and other joins for the server to lose
        track of killed or collided join notices.  Also, in some servers,

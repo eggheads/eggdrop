@@ -25,16 +25,16 @@ II. TERMS USED
   If applicable, there is also the associated command named.
   
    patch
-    A patch is an update for a sourcecode of a program (here eggdrop). Be
-    careful, every patch is designed for a special eggdrop version and
+    A patch is an update for a sourcecode of a program (here Eggdrop). Be
+    careful, every patch is designed for a special Eggdrop version and
     cannot be applied on every bot!
 
 
 III. APPLYING A PATCH
 
-  To apply a patch to an eggdrop, you have to first obtain the eggdrop
+  To apply a patch to an Eggdrop, you have to first obtain the Eggdrop
   sourcecode. You should always keep a tar.gz archive with the source of 
-  your current eggdrop on your shell. In the next step, you have to change 
+  your current Eggdrop on your shell. In the next step, you have to change 
   to your source directory (i.e.: /home/user/eggdrop1.6.0/) and type
   the following command:
 
@@ -50,14 +50,14 @@ III. APPLYING A PATCH
   re-download the patch to ensure that the patch is not corrupted.
 
   If the patch applied properly, the only thing left to do is to recompile
-  your eggdrop and install the new modules and binaries.
+  your Eggdrop and install the new modules and binaries.
 
 
 IV. CREATING AND SUBMITTING A PATCH
 
-  If you fixed a bug and changed something in eggdrop's source code, it would
+  If you fixed a bug and changed something in Eggdrop's source code, it would
   be really nice to let the dev team know about it, so they can possibly apply 
-  it to next release of eggdrop.
+  it to next release of Eggdrop.
 
   There are several steps to submit a patch to the eggdev team:
 
@@ -82,3 +82,7 @@ V. DOWNLOADING A PATCH
 All patches for eggdrop1.6.x can be found at the following location:
 
 ftp.eggheads.org/pub/eggdrop/patches/1.6
+
+  ________________________________________________________________________
+
+Copyright (C) 2002 Eggheads Development Team

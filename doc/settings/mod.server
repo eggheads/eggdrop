@@ -1,4 +1,8 @@
-##### SERVER MODULE #####
+Server Module
+Last revised: December 31, 2001
+   ________________________________________________________________________
+
+                                  Server Module
 
 This module provides the core server support. You have to load this
 if you want your bot to come on IRC. Not loading this is equivalent
@@ -6,7 +10,7 @@ to the old NO_IRC define.
 
 This module requires: none
 
-Put this line into your eggdrop configuration file to load the server module:
+Put this line into your Eggdrop configuration file to load the server module:
 
 loadmodule server
 
@@ -67,14 +71,14 @@ set default-port 6667
 
 set strict-servernames 0
     Often, IRC servers call themselves a name other than their actual
-    hostname. If you want eggdrop to replace your entry in the config
+    hostname. If you want Eggdrop to replace your entry in the config
     file with this name, set this to 1. If you set this setting to 0,
-    eggdrop will keep a separate list of what IRC servers call themselves.
+    Eggdrop will keep a separate list of what IRC servers call themselves.
     Valid settings are 0 for OFF and 1 ON.
 
 set server-cycle-wait 60
-    This setting defines how long eggdrop should wait before moving from one
-    server to another on disconnect. If you set 0 here, eggdrop will not wait
+    This setting defines how long Eggdrop should wait before moving from one
+    server to another on disconnect. If you set 0 here, Eggdrop will not wait
     at all and will connect instantly. Setting this too low could result in
     your bot being K:Lined.
     Valid settings are 0-infinite
@@ -86,7 +90,7 @@ set never-give-up 1
 
 
 set server-timeout 60
-    Set here how long eggdrop should wait for a response when connecting to a
+    Set here how long Eggdrop should wait for a response when connecting to a
     server before giving up and moving on to next server.
 
 
@@ -99,8 +103,8 @@ set servlimit 0
 
 
 set check-stoned 1
-    Set this to 1 if eggdrop should check for stoned servers? (where the
-    server connection has died, but eggdrop hasn't been notified yet).
+    Set this to 1 if Eggdrop should check for stoned servers? (where the
+    server connection has died, but Eggdrop hasn't been notified yet).
     Valid settings are 0 for OFF and 1 ON.
 
 
@@ -170,7 +174,7 @@ set lowercase-ctcp 0
 
 
 set trigger-on-ignore 0
-    If you want eggdrop to trigger binds for ignored users, set this to 1.
+    If you want Eggdrop to trigger binds for ignored users, set this to 1.
     Valid settings are 0 for OFF and 1 ON.
 
 
@@ -189,8 +193,8 @@ set double-help 0
     Valid settings are 0 for OFF and 1 ON.
 
 set use-penalties 1 (default on net-type 1)
-    This enables eggdrop's penalty calculation. Every command eggdrop sends to
-    the IRC server raises it's penalty points. If eggdrop reaches a server limit,
+    This enables Eggdrop's penalty calculation. Every command Eggdrop sends to
+    the IRC server raises it's penalty points. If Eggdrop reaches a server limit,
     it gets disconnected with "excess flood" message. Eggdrop is able to count
     internal those penalty points, too and take measures against excess flooding.
     Note: it's highly advised to turn this on!
@@ -218,7 +222,7 @@ These were the core irc module settings. There are more settings for
 Attention: Use this settings *only* if you set 'net-type' to 5!
 
 set check-mode-r 1
-    This settings defines how umode +r is understood by eggdrop. Some
+    This settings defines how umode +r is understood by Eggdrop. Some
     networks use +r to indicate a restricted connection. If this is your
     case, and you want your bot to leave restricted servers and jump to
     the next server on its list, then set it to 1.
@@ -230,5 +234,10 @@ set check-mode-r 1
 set nick-len 9
     This setting allows you to specify the maximum nick-length supported by
     your network. The default setting is 9. The maximum supported length by
-    eggdrop is 32.
+    Eggdrop is 32.
     Valid settings are 9-32
+    
+  ________________________________________________________________________
+
+Copyright (C) 2002 Eggheads Development Team
+

@@ -10,18 +10,21 @@ Hey %b%N!%b  My name is %b%B%b and I am running %b%V%b, on %b%U%b.
 Local time is now %b%T%b
 %{+n}
 You are an owner of this bot. Only +n users can see this! For more info,
-try %b.help set motd%b (please edit the %bmotd%b file in your bot's directory)
+see %b.help set motd%b. Please edit the %bmotd%b file in your bot's 'text'
+directory.
 %{-}
-If you need help with this eggdrop you can go
-to the following help channels:
+If you need help with this eggdrop, you can go
+to one of the following help channels:
 
   Undernet - #eggdrop, #eggheads
-  EFNet - #egghelp, #eggfaq
-  IRCNet - #eggdrop
+  EFnet - #egghelp, #eggfaq
+  IRCnet - #eggdrop
+  DALnet - #eggdrop
 
-try %.help% to get help
-    %.help all% to get the full command list
-    %.help *somestring*% to get the matching help texts
+Use %b.help%b for basic help.
+Use %b.help <command>%b for help on a specific command.
+Use %b.help all%b to get a full command list.
+Use %b.help *somestring*%b to list any help texts containing "somestring".
 
 Have fun.
 

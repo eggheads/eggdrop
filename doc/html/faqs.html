@@ -1,5 +1,5 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: faqs.html,v 1.8 2001/12/26 04:43:56 tothwolf Exp $ -->
+<!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 3.2 Final//EN">
+<!-- $Id: faqs.html,v 1.9 2002/01/02 03:46:33 guppy Exp $ -->
 
 <html>
   <head>
@@ -22,10 +22,10 @@
         <li><a href="#sect2">My Eggdrop won&#39;t run; It just says
         &quot;Can&#39;t find your hostname!&quot;</a></li>
 
-        <li><a href="#sect3">What the Heck is Tcl?</a></li>
+        <li><a href="#sect3">What the heck is Tcl?</a></li>
 
-        <li><a href="#sect4">My bot dies and the last entry in the logfile is
-        &quot;Received terminate signal&quot;. What does that mean and can I
+        <li><a href="#sect4">My bot dies, and the last entry in the logfile is
+        &quot;Received terminate signal&quot;. What does that mean, and can I
         prevent it?</a></li>
 
         <li><a href="#sect5">My compile dies at the last minute with &quot;LD
@@ -73,13 +73,13 @@
     <blockquote>
       <ul>
         <li>Run Eggdrop with the &quot;-m&quot; option (i.e., &quot;eggdrop
-        -m mybot&quot;).</li>
+        -m eggdrop.conf&quot;).</li>
 
         <li>Go to IRC and send &quot;hello&quot; to your bot (i.e.,
         &quot;/msg mybot hello&quot;).</li>
 
         <li>You will become an owner on your bot. You can leave the bot
-        running (nobody else will become a master if they say
+        running (nobody else will become an owner if they say
         &quot;hello&quot;), but in the future, don&#39;t use the
         &quot;-m&quot; option when running the bot.</li>
       </ul>
@@ -90,34 +90,23 @@
 
     <blockquote>
       Your machine is set up strangely, and Eggdrop can&#39;t figure out its
-      network hostname. You can get around this by setting an environment
-      variable called HOSTNAME. 
-
-      <p>In sh or ksh:<br>
-       $ HOSTNAME=myhost.domain.edu<br>
-       $ export HOSTNAME</p>
-
-      <p>In csh or tcsh:<br>
-       % setenv HOSTNAME myhost.domain.edu</p>
-
-      <p>It should work after that. You may want to bug your system
-      administrator to set up her /etc/hosts file correctly, or add those
-      above commands to your &#39;.login&#39; file (sh or ksh:
-      &#39;.profile&#39;).</p>
+      network hostname. You can get around this by setting the my-ip setting
+      in the config file correctly. 
     </blockquote>
 
     <p><a name="sect3"></a>3. <strong>What the heck is Tcl?</strong></p>
 
     <blockquote>
       <p>Tcl is a scripting language written by John Ousterhout. It&#39;s
-      much better than most &quot;in-built&quot; script languages (like the
-      one in ircII) and is meant to be linked with anything needing a script
-      language. So I linked it with Eggdrop. The file
-      &quot;tcl-commands.doc&quot; in the Eggdrop directory contains a list
-      of the commands added to Tcl by Eggdrop. There are also several example
-      scripts in the scripts/ directory, and there are gobs of scripts
-      floating around on the ftp sites if you like working by example (which
-      is typically the best way).</p>
+      much better than most &quot;built-in&quot; script languages (like the
+      one in ircII) and is meant to be linked with anything needing a 
+      scripting language, so I linked it with Eggdrop. The file
+      &quot;tcl-commands.doc&quot; in the doc directory contains a list of
+      additional Tcl commands provided by Eggdrop. There are also several 
+      example scripts in the scripts/ directory, and one in the doc directory
+      called first_script.txt. There are also hundreds of scripts floating 
+      around on the ftp/web sites if you like working by example (which is 
+      typically the best way).</p>
     </blockquote>
 
     <p><a name="sect4"></a>4. <strong>My bot dies and the last entry in the
@@ -126,11 +115,11 @@
 
     <blockquote>
       <p>There&#39;s nothing you can do to prevent it. It means the system
-      administrator is killing the Eggdrop process. Most of the time,
+      administrator is killing the Eggdrop process. Most of the time, 
       it&#39;s an automatic thing that happens when the system is being
       rebooted, so it&#39;s harmless. If you have a crontab running, the bot
-      will get restarted when the system is back online. Occasionally the
-      system administrator will kill the bot manually -- for example, if
+      will get restarted when the system is back online. Occasionally, the
+      system administrator will kill the bot manually. For example, if
       he/she doesn&#39;t want bots running on the system.</p>
     </blockquote>
 
@@ -138,33 +127,7 @@
     &quot;ld fatal signal 11&quot;!</strong></p>
 
     <blockquote>
-      <p>This happens on Linux machines that have recently been converted to
-      ELF by upgrading to Slackware 3.0. Apparently Slackware 3.0 comes with
-      a non-ELF (a.out) Tcl library, and the compiler doesn&#39;t handle that
-      well. (It should give you an error; instead it barfs.) Fixing it is
-      tricky because even if you recompile libtcl.a, the linker will most
-      likely find the &quot;bad&quot; one first, and your work will be in
-      vain.</p>
-
-      <p>Here&#39;s a fix that&#39;s been floating around on the Eggdrop
-      list:</p>
-
-      <ol>
-        <li>Recompile &#39;libtcl.a&#39; for yourself, to make sure an ELF
-        librar is created.</li>
-
-        <li>Copy it into your eggdrop/src directory, naming it
-        &#39;libtcl2.a&#39;.</li>
-
-        <li>Edit the Makefile and change the line that says &#39;-L/usr/lib
-        -ltcl&#39; to &#39;-L. -ltcl2&#39;.</li>
-
-        <li>Recompile Eggdrop.</li>
-      </ol>
-
-      <p>Also send hate-mail to the Slackware guy telling him to stop f***ing
-      up the libraries. He seemed to assume that everyone would still want to
-      compile old-style (a.out) binaries.</p>
+      <p>See the <a href="compiling.html">Compiling FAQ</a></p>
     </blockquote>
 
     <p><a name="sect6"></a>6. <strong>Someone else set up a bot I don&#39;t
@@ -183,19 +146,19 @@
 
     <blockquote>
       <p>Modules are a way of adding extra C code from the bot, much like Tcl
-      scripts, without requiring the bot recompiling, see doc/MODULES for
+      scripts, without requiring the bot to be recompiled. See doc/MODULES for
       more info.</p>
     </blockquote>
 
-    <p><a name="sect8"></a>8. <strong>Can I compile eggdrop without dynamic
+    <p><a name="sect8"></a>8. <strong>Can I compile Eggdrop without dynamic
     modules?</strong></p>
 
     <blockquote>
-      <p>Yes, you can, if ./configure detects that your system CAN&#39;T run
-      modules it will setup &#39;make&#39; to link the modules in statically
-      for you, you can also choose this option if you can do dynamic modules
-      by typing &#39;make static&#39;. You can also try to compile dynamic
-      modules on a static-only system by typing &#39;make eggdrop&#39;.</p>
+      <p>Yes, you can. If ./configure detects that your system CAN&#39;T run 
+      modules, it will setup &#39;make&#39; to link the modules in statically for 
+      you. You can also choose this option yourself by typing &#39;make static&#39;. 
+      You can also try to compile dynamic modules on a static-only system by 
+      using &#39;make eggdrop&#39;.</p>
     </blockquote>
 
     <p><a name="sect8a"></a>8a. <strong>Do I still need to &#39;loadmodule
@@ -203,48 +166,48 @@
 
     <blockquote>
       <p>YES, when you compile statically, all the modules are linked into
-      the main executable *but* they are not enabled until you use loadmodule
-      to enable then, hence you get nearly the same functionality with static
-      modules as dynamic modules.</p>
+      the main executable. HOWEVER, they are not enabled until you use 
+      loadmodule to enable them, hence you get nearly the same functionality 
+      with static modules as with dynamic modules.</p>
     </blockquote>
 
-    <p><a name="sect9"></a>9. <strong>Where can i get a pre-compiled eggdrop
+    <p><a name="sect9"></a>9. <strong>Where can i get a pre-compiled Eggdrop
     for my computer?</strong></p>
 
     <blockquote>
       <p>It is <strong>HIGHLY</strong> recommended <strong>AGAINST</strong>
       using pre-compiled Eggdrops from un-trusted sources. Eggdrop has been a
       regular target for hacking and crashing. Distribution of pre-compiled
-      (binary) versions of Eggdrop are the easiest way of hackers to provide
-      you with the easiest (and most dangerous) way of gaining access to not
+      (binary) versions of Eggdrop are the easiest way for hackers to provide
+      you with the easiest (and most dangerous) way of gaining access to, not
       only your bot, but to your computer account directly. Don&#39;t
       advertise your pre-compiled Eggdrop binary sites on the Eggdrop list
-      either =P</p>
+      either. =P</p>
     </blockquote>
 
     <p><a name="sect10"></a>10. <strong>I get &#39;Makefile:3 :invalid
-    operator&#39; or some-such-thing when I try to
-    &#39;make&#39;</strong></p>
+    operator&#39; or some-such-thing when I try to &#39;make&#39;</strong>
+    </p>
 
     <blockquote>
-      <p>Try &#39;gmake&#39;</p>
+      <p>Try &#39;gmake&#39;.</p>
     </blockquote>
 
     <p><a name="sect11"></a>11. <strong>When I &#39;tclsh scripts/weed
     &lt;userfile&gt; c&#39; it barfs chunks at me and dies :(</strong></p>
 
     <blockquote>
-      <p>UPGRADE YOUR TCL, you are probably using Tcl 7.5 or earlier, some of
-      the commands in weed require Tcl7.6 to run, so either upgrade it, or
-      removing the offending lines from you userfile (those starting with
-      &#39;.&#39; generally) and accept the loss of that data.</p>
+      <p>UPGRADE YOUR TCL, you are probably using Tcl 7.5 or earlier. Some 
+      of the commands in weed require Tcl7.6 to run, so either upgrade it or
+      remove the offending lines from you userfile manually (those starting
+      with &#39;.&#39; generally) and accept the loss of that data.</p>
     </blockquote>
 
     <p><a name="sect12"></a>12. <strong>I get &quot;ld-elf.so.1: Shared
     object &quot;libtcl80.so.1&quot; not found&quot; or &quot;eggdrop: error
     in loading shared libraries / libtcl8.1.so: cannot open shared object
-    file: No such file or directory&quot; when I try to start my
-    bot.</strong></p>
+    file: No such file or directory&quot; when I try to start my bot.
+     </strong></p>
 
     <blockquote>
       <p>&#39;./configure&#39; is looking in the wrong place for Tcl; it
@@ -252,10 +215,10 @@
       another. Maybe your sysadmin upgraded Tcl and didn&#39;t tell you. In
       that case, you should just need to recompile your bot.</p>
 
-      <p>Or maybe when upgrading he didn&#39;t clean the old version of Tcl,
+      <p>Maybe, when upgrading, he didn&#39;t clean the old version of Tcl,
       and &#39;./configure&#39; is looking for the files in the wrong places,
       or trying to use different versions of tcl.h and libtcl*. Smack your
-      admin and have him install Tcl properly ;) Or try to:</p>
+      admin and have him install Tcl properly ;) You can also try:</p>
 
       <p><em>./configure --with-tcllib=&lt;path-to-tcl-lib&gt;
       --with-tclinc=&lt;path-to-tcl-inc&gt;</em></p>
@@ -279,7 +242,7 @@
     symbol) when I try to load a modules.</strong></p>
 
     <blockquote>
-      <p>Possibility A: see 12.</p>
+      <p>Possibility A: See section 12.</p>
     </blockquote>
 
     <blockquote>
@@ -295,17 +258,18 @@
         by using &#39;./configure --enable-shared&#39; when you configure Tcl
         (not the bot) and then remake, &amp; reinstall</li>
 
-        <li>If it&#39;s not you machine, you make have to resort to &#39;make
-        static&#39; and &#39;make DEST=&quot;path&quot; install&#39; to make
+        <li>If it&#39;s not your machine, you make have to resort to &#39;make
+        static&#39; and &#39;make install DEST=&quot;path&quot;&#39; to make
         and install your bot.</li>
 
         <li>If you are of a more aggressive sense of mind, go beat the
-        stuffing out of your admin for have lame static libraries :)</li>
+        stuffing out of your admin for having lame static libraries :)</li>
       </ol>
     </blockquote>
     <hr>
 
     <p><em>© 1997 Robey Pointer<br>
-     © 1999, 2000, 2001 <a href="http://www.eggheads.org/">Eggheads Development Team</a></em></p>
+     &copy; 1999, 2000, 2001, 2002 <a href="http://www.eggheads.org/">
+     Eggheads Development Team</a></em></p>
   </body>
 </html>

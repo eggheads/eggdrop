@@ -49,7 +49,7 @@ Here are some little tricks that you may or may not know about.
   config file to make it keeping one logfile all the time. However, 
   this is not recommended on high traffic channels.
 
-- You can modify eggdrop's output in the partyline, kick messages, 
+- You can modify Eggdrop's output in the partyline, kick messages, 
   and other texts by editing core.english.lang in the language directory.
 
 As your botnet grows bigger, and you have to maintain more and more bots
@@ -72,3 +72,7 @@ with their config files, you might render these little tweaking tips useful:
   set myvar "yourbot"
   set userfile "$myvar.user"
   set chanfile "$myvar.chan"
+
+  ________________________________________________________________________
+
+Copyright (C) 2002 Eggheads Development Team

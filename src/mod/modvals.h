@@ -1,11 +1,11 @@
 /*
  * modvals.h
  *
- * $Id: modvals.h,v 1.21 2001/12/04 19:58:06 guppy Exp $
+ * $Id: modvals.h,v 1.22 2002/01/02 03:46:37 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999, 2000, 2001 Eggheads Development Team
+ * Copyright (C) 1999, 2000, 2001, 2002 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

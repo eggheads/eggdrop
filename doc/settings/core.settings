@@ -1,6 +1,6 @@
 ##### EGGDROP CORE SETTINGS #####
 
-This file describes the syntax and all the settings of your eggdrop
+This file describes the syntax and all the settings of your Eggdrop
 configuration file. Please note that you don't need to set all of these
 variables to make your bot work properly.
 
@@ -8,8 +8,8 @@ variables to make your bot work properly.
 ##### EGGDROP CORE SETTINGS #####
 
 
-The first line in an eggdrop configuration file should contain
-a fully qualified path to your eggdrop executable. It has to be
+The first line in an Eggdrop configuration file should contain
+a fully qualified path to your Eggdrop executable. It has to be
 implemented in the way the example shows to make the config file
 work as a shell script.
 
@@ -20,7 +20,7 @@ Example:
 
 ##### BASIC STUFF #####
 
-You can change the basic eggdrop appearance and behavior in this section.
+You can change the basic Eggdrop appearance and behavior in this section.
 
 
 set username "lamest"
@@ -60,7 +60,7 @@ set env(TZ) "$timezone $offset" (disabled by default)
 
 
 addlang "english"
-    If you want to have your eggdrop messages displayed in another language,
+    If you want to have your Eggdrop messages displayed in another language,
     change this command to match your preferences. An alternative would be
     to set the environment variable EGG_LANG to that value.
 
@@ -147,7 +147,7 @@ set keep-all-logs 0
 
 
 set switch-logfiles-at 300
-    You can specifiy when eggdrop should switch logfiles and start fresh. 
+    You can specifiy when Eggdrop should switch logfiles and start fresh. 
     You must use military time for this setting. 300 is default and 
     describes 00:00.
     Note that a leading 0 will make Tcl think this is an octal value,
@@ -174,7 +174,7 @@ set userfile "LamestBot.user"
     Specify here the filename your userfile should be saved as.
 
 set pidfile "pid.LamestBot"
-    Specify here the filename eggdrop will save its pid to.
+    Specify here the filename Eggdrop will save its pid to.
 
 set sort-users 0
      If you want your userfile to be sorted upon saving, enable this setting. 
@@ -183,11 +183,11 @@ set sort-users 0
 
 
 set help-path "help/"
-    Specify here where eggdrop should look for help files.
+    Specify here where Eggdrop should look for help files.
     Don't modify this setting unless you know what you're doing!
 
 set text-path "text/"
-     Specify here where eggdrop should look for text files. This is
+     Specify here where Eggdrop should look for text files. This is
      used for certain Tcl and DCC commands.
 
 set temp-path "/tmp"
@@ -221,7 +221,7 @@ set userfile-perm 0600
 
 
 set mod-path "modules/"
-    This path specifies the path were eggdrop should look for its modules.
+    This path specifies the path were Eggdrop should look for its modules.
     If you run the bot from the compilation directory, you will want to set
     this to "". If you use 'make install' (like all good kiddies do ;), this
     is a fine default. Otherwise, use your head :).
@@ -243,7 +243,7 @@ set botnet-nick "LlamaBot" (disabled by default)
 
 listen <port> <mode>
     The listen command opens a telnet port by which you or other bots can
-    interact with the eggdrop by telneting in.
+    interact with the Eggdrop by telneting in.
 
     Valid ports are typically anything between 1025 and 65535 assuming the 
     port is not already in use.
@@ -266,7 +266,7 @@ listen <port> <mode>
 
 
 set remote-boots 2
-    This setting defines whether or not people can boot users on the eggdrop
+    This setting defines whether or not people can boot users on the Eggdrop
     from other bots in your botnet. Valid settings are:
      0 - allow *no* outside boots
      1 - allow boots from sharebots
@@ -274,7 +274,7 @@ set remote-boots 2
 
 
 set share-unlinks 1
-    This setting prohibits eggdrop to unlink from share bots if an remote bots
+    This setting prohibits Eggdrop to unlink from share bots if an remote bots
     tells so.
 
 
@@ -303,13 +303,13 @@ set protect-telnet 0
 
 
 set stealth-telnets 0
-    If you don't want eggdrop to identify itself as an eggdrop on a telnet connection, 
+    If you don't want Eggdrop to identify itself as an Eggdrop on a telnet connection, 
     set this setting to 1. Eggdrop will display 'Nickname' instead.
     Valid settings are 0 for OFF and 1 ON.
 
 
 set use-telnet-banner 0
-    If you want eggdrop to display a banner when telneting in, set this setting
+    If you want Eggdrop to display a banner when telneting in, set this setting
     to 1. The telnet banner is set by 'set telnet-banner'.
 
 
@@ -356,11 +356,11 @@ set my-ip "99.99.0.0"
     If you're using virtual hosting (your machine has more than 1 IP), you
     may want to specify the particular IP to bind to. You can specify either
     by hostname or by IP. You may also want to set the hostname here if
-    eggdrop has trouble detecting it when it starts up.
+    Eggdrop has trouble detecting it when it starts up.
 
 
 set firewall "host:port"
-    Set this to your socks host if your eggdrop sits behind a firewall.
+    Set this to your socks host if your Eggdrop sits behind a firewall.
 
     Example:
 
@@ -389,7 +389,7 @@ set reserved-portrange 2010:2020
     here.
 
 set dupwait-timeout 5
-    If your eggdrop rejects bots that actually have already disconnected from
+    If your Eggdrop rejects bots that actually have already disconnected from
     another hub, but the disconnect information has not yet spread over the
     botnet due to lag, use this setting. The bot will wait dupwait-timeout 
     seconds before it checks again and then finally reject the bot.
@@ -413,7 +413,7 @@ set ignore-time 15
 
 
 set hourly-updates 00
-    Define here what eggdrop considers 'hourly'. All calls to it, including such
+    Define here what Eggdrop considers 'hourly'. All calls to it, including such
     things as note notifying or userfile saving are affected by this.
 
     Example:
@@ -462,14 +462,14 @@ set whois-fields "url birthday"
 
 
 set die-on-sighup 0
-    Enable this setting if you want your eggdrop to die upon receiving a SIGHUP
-    kill signal. Otherwise, the eggdrop will just save its userfile and rehash.
+    Enable this setting if you want your Eggdrop to die upon receiving a SIGHUP
+    kill signal. Otherwise, the Eggdrop will just save its userfile and rehash.
     Valid settings are 0 for OFF and 1 ON.
 
 
 set die-on-sigterm 0
-    Enable this setting if you want your eggdrop to die upon receiving a SIGTERM
-    kill signal. Otherwise, the eggdrop will just save its userfile and rehash.
+    Enable this setting if you want your Eggdrop to die upon receiving a SIGTERM
+    kill signal. Otherwise, the Eggdrop will just save its userfile and rehash.
     Valid settings are 0 for OFF and 1 ON.
 
 
@@ -527,7 +527,7 @@ The scripts section should be placed at the end of the config file. All modules
 should be loaded and their variables should be set at this point.
 
 source scripts/script.tcl
-    This line loads script.tcl from the scripts directory inside your eggdrop's
+    This line loads script.tcl from the scripts directory inside your Eggdrop's
     directory. All scripts should be put there, although you can place them where
     you like as long as you can supply a fully qualified path to them.
 
@@ -536,3 +536,8 @@ source scripts/script.tcl
 
     source scripts/alltools.tcl
     source scripts/action.fix.tcl
+
+
+  ________________________________________________________________________
+
+Copyright (C) 2002 Eggheads Development Team
