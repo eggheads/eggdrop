@@ -413,7 +413,7 @@ static void got_deop(struct chanset_t *chan, char *nick, char *from,
       /* is the channel protectfriends? */
            (channel_protectfriends(chan) &&
       /* and the users a valid friend */
-             chan_friend(victim) || (glob_friend(victim) && !chan_deop(victim)))) &&
+             (chan_friend(victim) || (glob_friend(victim) && !chan_deop(victim))))) &&
       /* and provided the users not a de-op */
        !(chan_deop(victim) || (glob_deop(victim) && !chan_op(victim))) &&
       /* and we havent sent it already */
