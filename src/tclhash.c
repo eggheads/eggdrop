@@ -7,7 +7,7 @@
  *   (non-Tcl) procedure lookups for msg/dcc/file commands
  *   (Tcl) binding internal procedures to msg/dcc/file commands
  *
- * $Id: tclhash.c,v 1.45 2004/01/09 05:56:37 wcc Exp $
+ * $Id: tclhash.c,v 1.46 2004/04/05 23:35:20 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -759,11 +759,8 @@ int check_tcl_bind(tcl_bind_list_t *tl, const char *match,
         }
       }
 
-      /* Apart from MATCH_MASK, currently no match type allows us to match
-       * against more than one bind. So if this isn't MATCH_MASK then exit
-       * the loop now. */
-      /* This will suffice until we have stackable partials. */
-      if ((match_type & 3) != MATCH_MASK)
+      /* If it's stackable search for more binds. */
+      if (!(match_type & BIND_STACKABLE))
         finish = 1;
     } else {
       /* Search for valid entry. */

@@ -2,7 +2,7 @@
  * irc.c -- part of irc.mod
  *   support for channels within the bot
  *
- * $Id: irc.c,v 1.97 2004/01/09 05:56:38 wcc Exp $
+ * $Id: irc.c,v 1.98 2004/04/05 23:35:20 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -68,6 +68,8 @@ static int keepnick = 1;        /* Keep nick */
 static int prevent_mixing = 1;  /* Prevent mixing old/new modes */
 static int rfc_compliant = 1;   /* Value depends on net-type. */
 static int include_lk = 1;      /* For correct calculation in real_add_mode. */
+
+static char opchars[8];         /* the chars in a /who reply meaning op */
 
 #include "chan.c"
 #include "mode.c"
@@ -860,6 +862,11 @@ static void check_tcl_need(char *chname, char *type)
                  MATCH_MASK | BIND_STACKABLE);
 }
 
+static tcl_strings mystrings[] = {
+  {"opchars", opchars, 7, 0},
+  {NULL,      NULL,    0, 0}
+};
+
 static tcl_ints myints[] = {
   {"learn-users",     &learn_users,     0}, /* arthur2 */
   {"wait-split",      &wait_split,      0},
@@ -1082,6 +1089,7 @@ static char *irc_close()
   del_bind_table(H_pubm);
   del_bind_table(H_pub);
   del_bind_table(H_need);
+  rem_tcl_strings(mystrings);
   rem_tcl_ints(myints);
   rem_builtins(H_dcc, irc_dcc);
   rem_builtins(H_msg, C_msg);
@@ -1175,6 +1183,8 @@ char *irc_start(Function *global_funcs)
   Tcl_TraceVar(interp, "rfc-compliant",
                TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
                traced_rfccompliant, NULL);
+  strcpy(opchars, "@");
+  add_tcl_strings(mystrings);
   add_tcl_ints(myints);
   add_builtins(H_dcc, irc_dcc);
   add_builtins(H_msg, C_msg);

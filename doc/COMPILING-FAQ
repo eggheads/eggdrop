@@ -1,4 +1,4 @@
-$Id: COMPILING-FAQ,v 1.4 2004/01/18 02:11:39 wcc Exp $
+$Id: COMPILING-FAQ,v 1.5 2004/04/05 23:35:19 wcc Exp $
 
 Compiling FAQ
 Last revised: January 15, 2004
@@ -63,7 +63,7 @@ Last revised: January 15, 2004
            --enable-strip
              If you want to create a smaller binary, you can use this option.
              HOWEVER, this will remove debugging symbols and make bug reports
-             almost completely useless, and is not recomended. If disk space
+             almost completely useless, and is not recommended. If disk space
              is very limited, however, it might help to enable this.
 
            --disable-tcl-threads
@@ -105,7 +105,7 @@ Last revised: January 15, 2004
     B.HP-UX B.11.*
 
       Dynamic module support is not currently working properly with HP-UX 11.*.
-      During a linking in a dynamic build, you may experiance an error such as:
+      During a linking in a dynamic build, you may experience an error such as:
 
         gcc -pipe -fPIC -shared -o ../eggdrop bg.o botcmd.o botmsg.o botnet.o
 	chanprog.o cmds.o dcc.o dccutil.o dns.o flags.o language.o match.o
@@ -231,7 +231,7 @@ Last revised: January 15, 2004
 
     E. Tcl Detection and Installation
         If ./configure does not correctly detect the location of your Tcl
-        library and header file, or if you experiance errors related to Tcl
+        library and header file, or if you experience errors related to Tcl
         during linking, preform these steps:
 
           1. Depending on what shell your using:

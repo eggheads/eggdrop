@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  *
- * $Id: chan.c,v 1.114 2004/01/10 08:41:38 wcc Exp $
+ * $Id: chan.c,v 1.115 2004/04/05 23:35:20 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -985,8 +985,7 @@ static int got352or4(struct chanset_t *chan, char *user, char *host,
     strcpy(botuserhost, m->userhost);   /* Yes, save my own userhost */
     m->joined = now;            /* set this to keep the whining masses happy */
   }
-  if ((strchr(flags, '@') != NULL) || (strchr(flags, '&') != NULL) ||
-      (strchr(flags, '~') != NULL))
+  if (strpbrk(flags, opchars) != NULL)
     m->flags |= (CHANOP | WASOP);
   else
     m->flags &= ~(CHANOP | WASOP);
