@@ -21,13 +21,14 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /*
- * $Id: inet_ntop.h,v 1.2 2003/05/07 04:45:10 wcc Exp $
+ * $Id: inet_ntop.h,v 1.3 2003/05/14 05:27:48 stdarg Exp $
  */
 
 #ifndef _EGG_COMPAT_INET_NTOP_H
 #define _EGG_COMPAT_INET_NTOP_H
 
 #include "src/main.h"
+#include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
