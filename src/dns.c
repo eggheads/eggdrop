@@ -4,7 +4,7 @@
  *   provides the code used by the bot if the DNS module is not loaded
  *   DNS Tcl commands
  * 
- * $Id: dns.c,v 1.9 1999/12/25 00:07:50 fabian Exp $
+ * $Id: dns.c,v 1.10 1999/12/25 15:05:27 fabian Exp $
  */
 /* 
  * Written by Fabian Knittel <fknittel@gmx.de>
@@ -51,7 +51,7 @@ devent_t *dns_events = NULL;
 
 void dcc_dnswait(int idx, char *buf, int len)
 {
-  /* ignore anything now */
+  /* Ignore anything now. */
   Context;
 }
 
@@ -206,7 +206,6 @@ void dcc_dnsipbyhost(char *hostn)
   de->lookup = RES_IPBYHOST;
   de->res_data.hostname = nmalloc(strlen(hostn) + 1);
   strcpy(de->res_data.hostname, hostn);
-  de->timeout = 0;
 
   /* Send request. */
   dns_ipbyhost(hostn);
@@ -237,7 +236,6 @@ void dcc_dnshostbyip(IP ip)
   de->type = &DNS_DCCEVENT_HOSTBYIP;
   de->lookup = RES_HOSTBYIP;
   de->res_data.ip_addr = ip;
-  de->timeout = 0;
 
   /* Send request. */
   dns_hostbyip(ip);
@@ -283,12 +281,14 @@ devent_type DNS_TCLEVENT_IPBYHOST = {
   dns_tcl_iporhostres
 };
 
-static void tcl_dnsipbyhost(char *hostn, char *proc, time_t timeout)
+static void tcl_dnsipbyhost(char *hostn, char *proc)
 {
-  devent_t *de = nmalloc(sizeof(devent_t));
+  devent_t *de;
 
   Context;
+  de = nmalloc(sizeof(devent_t));
   memset(de, 0, sizeof(devent_t));
+
   /* Link into list. */
   de->next = dns_events;
   dns_events = de;
@@ -297,20 +297,21 @@ static void tcl_dnsipbyhost(char *hostn, char *proc, time_t timeout)
   de->lookup = RES_IPBYHOST;
   de->res_data.hostname = nmalloc(strlen(hostn) + 1);
   strcpy(de->res_data.hostname, hostn);
-  de->misc.proc = nmalloc(strlen(proc) + 1);
-  strcpy(de->misc.proc, proc);
-  de->timeout = timeout;
+  de->other = nmalloc(strlen(proc) + 1);
+  strcpy(de->other, proc);
 
   /* Send request. */
   dns_ipbyhost(hostn);
 }
 
-static void tcl_dnshostbyip(IP ip, char *proc, time_t timeout)
+static void tcl_dnshostbyip(IP ip, char *proc)
 {
-  devent_t *de = nmalloc(sizeof(devent_t));
+  devent_t *de;
 
   Context;
+  de = nmalloc(sizeof(devent_t));
   memset(de, 0, sizeof(devent_t));
+
   /* Link into list. */
   de->next = dns_events;
   dns_events = de;
@@ -318,9 +319,8 @@ static void tcl_dnshostbyip(IP ip, char *proc, time_t timeout)
   de->type = &DNS_TCLEVENT_HOSTBYIP;
   de->lookup = RES_HOSTBYIP;
   de->res_data.ip_addr = ip;
-  de->misc.proc = nmalloc(strlen(proc) + 1);
-  strcpy(de->misc.proc, proc);
-  de->timeout = timeout;
+  de->other = nmalloc(strlen(proc) + 1);
+  strcpy(de->other, proc);
 
   /* Send request. */
   dns_hostbyip(ip);
@@ -342,7 +342,7 @@ inline static int dnsevent_expmem(void)
     if ((de->lookup == RES_IPBYHOST) && de->res_data.hostname)
       tot += strlen(de->res_data.hostname) + 1;
     if (de->type && de->type->expmem)
-      tot += de->type->expmem(de->misc.other);
+      tot += de->type->expmem(de->other);
     de = de->next;
   }
   return tot;
@@ -365,7 +365,7 @@ void call_hostbyip(IP ip, char *hostn, int ok)
 	dns_events = de->next;
 
       if (de->type && de->type->event)
-	de->type->event(ip, hostn, ok, de->misc.other);
+	de->type->event(ip, hostn, ok, de->other);
       else
 	putlog(LOG_MISC, "*", "(!) Unknown DNS event type found: %s",
 	       (de->type && de->type->name) ? de->type->name : "<empty>");
@@ -394,7 +394,7 @@ void call_ipbyhost(char *hostn, IP ip, int ok)
 	dns_events = de->next;
 
       if (de->type && de->type->event)
-	de->type->event(ip, hostn, ok, de->misc.other);
+	de->type->event(ip, hostn, ok, de->other);
       else
 	putlog(LOG_MISC, "*", "(!) Unknown DNS event type found: %s",
 	       (de->type && de->type->name) ? de->type->name : "<empty>");
@@ -434,7 +434,7 @@ void block_dns_hostbyip(IP ip)
     hp = NULL;
     strcpy(s, iptostr(addr));
   }
-  /* call hooks */
+  /* Call hooks. */
   call_hostbyip(ip, s, hp ? 1 : 0);
   Context;
 }
@@ -486,40 +486,23 @@ int expmem_dns(void)
  *   Tcl functions
  */
 
-/* dnsip2host <ip-address> <proc> */
-static int tcl_dnsip2host STDVAR
+/* dnslookup <ip-address> <proc> */
+static int tcl_dnslookup STDVAR
 {
   struct in_addr inaddr;
   
   Context;
-  BADARGS(3, 3, " ip-address proc");
+  BADARGS(3, 3, " ip-address/hostname proc");
 
-  if (inet_aton(argv[1], &inaddr)) {
-    tcl_dnshostbyip(ntohl(inaddr.s_addr), argv[2], 0);
-    return TCL_OK;
-  } else {
-    Tcl_AppendResult(irp, "invalid ip address: ", argv[1], NULL);
-    return TCL_ERROR;
-  }
-}
-
-/* dnshost2ip <host> <proc> */
-static int tcl_dnshost2ip STDVAR
-{
-  Context;
-  BADARGS(3, 3, " host proc");
-
-  if (argv[1][0] == 0) {
-    Tcl_AppendResult(irp, "invalid hostname", NULL);
-    return TCL_ERROR;
-  }
-  tcl_dnsipbyhost(argv[1], argv[2], 0);
+  if (inet_aton(argv[1], &inaddr))
+    tcl_dnshostbyip(ntohl(inaddr.s_addr), argv[2]);
+  else
+    tcl_dnsipbyhost(argv[1], argv[2]);
   return TCL_OK;
 }
 
 tcl_cmds tcldns_cmds[] =
 {
-  {"dnsip2host",	tcl_dnsip2host},
-  {"dnshost2ip",	tcl_dnshost2ip},
-  {NULL,		NULL}
+  {"dnslookup",	tcl_dnslookup},
+  {NULL,	NULL}
 };

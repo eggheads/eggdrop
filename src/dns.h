@@ -2,7 +2,7 @@
  * dns.h
  *   stuff used by dns.c
  * 
- * $Id: dns.h,v 1.1 1999/12/25 00:36:15 fabian Exp $
+ * $Id: dns.h,v 1.2 1999/12/25 15:05:27 fabian Exp $
  */
 /* 
  * Written by Fabian Knittel <fknittel@gmx.de>
@@ -29,23 +29,19 @@
 
 typedef struct {
   char *name;
-  int (*expmem)(void *);
+  int  (*expmem)(void *);
   void (*event)(IP, char *, int, void *);
 } devent_type;
 
 typedef struct devent_str {
-  struct devent_str *next;	/* Pointer to next dns_event	   */
+  struct devent_str *next;	/* Pointer to next dns_event	  */
   devent_type	*type;
-  byte		lookup;
-  time_t	timeout;	/* Timeout of this dns request	   */
+  byte		lookup;		/* RES_IPBYHOST or RES_HOSTBYIP	  */
   union {
-    IP		ip_addr;	/* IP address			   */
-    char	*hostname; 	/* Hostname			   */
+    IP		ip_addr;	/* IP address			  */
+    char	*hostname; 	/* Hostname			  */
   } res_data;
-  union {
-    char	*proc;		/* Tcl proc			   */
-    void	*other;
-  } misc;
+  void		*other;		/* Data specific to the event type */
 } devent_t;
 
 #endif	/* _EGG_DNS_H */
