@@ -2,7 +2,7 @@
  * flags.c -- handles:
  *   all the flag matching/conversion functions in one neat package :)
  *
- * $Id: flags.c,v 1.23 2003/01/30 07:15:14 wcc Exp $
+ * $Id: flags.c,v 1.24 2003/02/02 10:19:33 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -26,10 +26,8 @@
 #include "main.h"
 
 
-extern int use_console_r, debug_output, require_p, noshare, allow_dk_cmds;
+extern int raw_log, require_p, noshare, allow_dk_cmds;
 extern struct dcc_t *dcc;
-
-int use_console_r = 0;          /* Allow users to set their console +r  */
 
 
 int logmodes(char *s)
@@ -69,7 +67,7 @@ int logmodes(char *s)
       break;
     case 'r':
     case 'R':
-      res |= use_console_r ? LOG_RAW : 0;
+      res |= raw_log ? LOG_RAW : 0;
       break;
     case 'w':
     case 'W':
@@ -89,15 +87,15 @@ int logmodes(char *s)
       break;
     case 'v':
     case 'V':
-      res |= debug_output ? LOG_SRVOUT : 0;
+      res |= raw_log ? LOG_SRVOUT : 0;
       break;
     case 't':
     case 'T':
-      res |= debug_output ? LOG_BOTNET : 0;
+      res |= raw_log ? LOG_BOTNET : 0;
       break;
     case 'h':
     case 'H':
-      res |= debug_output ? LOG_BOTSHARE : 0;
+      res |= raw_log ? LOG_BOTSHARE : 0;
       break;
     case '1':
       res |= LOG_LEV1;
@@ -149,7 +147,7 @@ char *masktype(int x)
     *p++ = 'o';
   if (x & LOG_BOTS)
     *p++ = 'b';
-  if ((x & LOG_RAW) && use_console_r)
+  if ((x & LOG_RAW) && raw_log)
     *p++ = 'r';
   if (x & LOG_FILES)
     *p++ = 'x';
@@ -159,11 +157,11 @@ char *masktype(int x)
     *p++ = 'd';
   if (x & LOG_WALL)
     *p++ = 'w';
-  if ((x & LOG_SRVOUT) && debug_output)
+  if ((x & LOG_SRVOUT) && raw_log)
     *p++ = 'v';
-  if ((x & LOG_BOTNET) && debug_output)
+  if ((x & LOG_BOTNET) && raw_log)
     *p++ = 't';
-  if ((x & LOG_BOTSHARE) && debug_output)
+  if ((x & LOG_BOTSHARE) && raw_log)
     *p++ = 'h';
   if (x & LOG_LEV1)
     *p++ = '1';
@@ -207,7 +205,7 @@ char *maskname(int x)
     i += my_strcpy(s + i, "misc, ");
   if (x & LOG_BOTS)
     i += my_strcpy(s + i, "bots, ");
-  if ((x & LOG_RAW) && use_console_r)
+  if ((x & LOG_RAW) && raw_log)
     i += my_strcpy(s + i, "raw, ");
   if (x & LOG_FILES)
     i += my_strcpy(s + i, "files, ");
@@ -217,11 +215,11 @@ char *maskname(int x)
     i += my_strcpy(s + i, "debug, ");
   if (x & LOG_WALL)
     i += my_strcpy(s + i, "wallops, ");
-  if ((x & LOG_SRVOUT) && debug_output)
+  if ((x & LOG_SRVOUT) && raw_log)
     i += my_strcpy(s + i, "server output, ");
-  if ((x & LOG_BOTNET) && debug_output)
+  if ((x & LOG_BOTNET) && raw_log)
     i += my_strcpy(s + i, "botnet traffic, ");
-  if ((x & LOG_BOTSHARE) && debug_output)
+  if ((x & LOG_BOTSHARE) && raw_log)
     i += my_strcpy(s + i, "share traffic, ");
   if (x & LOG_LEV1)
     i += my_strcpy(s + i, "level 1, ");

@@ -7,7 +7,7 @@
  *   help system
  *   motd display and %var substitution
  *
- * $Id: misc.c,v 1.59 2003/01/30 07:15:14 wcc Exp $
+ * $Id: misc.c,v 1.60 2003/02/02 10:19:33 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -57,7 +57,7 @@ log_t *logs = 0;                /* Logfiles */
 int max_logs = 5;               /* Current maximum log files */
 int max_logsize = 0;            /* Maximum logfile size, 0 for no limit */
 int conmask = LOG_MODES | LOG_CMDS | LOG_MISC;  /* Console mask */
-int debug_output = 0;           /* Disply output to server to LOG_SERVEROUT */
+int raw_log = 0;                /* Disply output to server to LOG_SERVEROUT */
 
 struct help_list_t {
   struct help_list_t *next;

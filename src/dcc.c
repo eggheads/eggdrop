@@ -4,7 +4,7 @@
  *   disconnect on a dcc socket
  *   ...and that's it!  (but it's a LOT)
  *
- * $Id: dcc.c,v 1.61 2003/01/30 07:15:14 wcc Exp $
+ * $Id: dcc.c,v 1.62 2003/02/02 10:19:33 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -40,7 +40,7 @@ extern Tcl_Interp *interp;
 extern time_t now;
 extern char botnetnick[], ver[], origbotname[], notify_new[];
 extern int egg_numver, connect_timeout, conmask, backgrd, max_dcc,
-           make_userfile, default_flags, debug_output, ignore_time,
+           make_userfile, default_flags, raw_log, ignore_time,
            par_telnet_flood;
 
 struct dcc_t *dcc = NULL;       /* DCC list                                */
@@ -404,7 +404,7 @@ static void dcc_bot(int idx, char *code, int i)
   int f;
 
   strip_telnet(dcc[idx].sock, code, &i);
-  if (debug_output) {
+  if (raw_log) {
     if (code[0] == 's')
       putlog(LOG_BOTSHARE, "*", "{%s} %s", dcc[idx].nick, code + 2);
     else

@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: mod-server.html,v 1.25 2003/01/30 00:41:24 wcc Exp $ -->
+<!-- $Id: mod-server.html,v 1.26 2003/02/02 10:19:33 wcc Exp $ -->
 
 <html>
   <head>
@@ -176,24 +176,16 @@
           though.</p>
         </dd>
 
-        <dt><strong>set use-console-r 0</strong></dt>
+        <dt><strong>set raw-log 0</strong></dt>
 
         <dd>
-          <p>This setting allows you the logging of all information received
-          from the server via console mode &#39;r&#39;. <strong>NOTE:</strong>
-          This is a large security hole, allowing people to see user passwords.
-          This is now restricted to +n users only. Please choose your owners
-          with care.</p>
-        </dd>
-
-        <dt><strong>set debug-output 0</strong></dt>
-
-        <dd>
-          <p>This setting allows you the logging of all information sent to the
-          server via console/log mode &#39;v&#39;. It also allows logging of
-          botnet traffic via  console/log mode &#39;t&#39;. NOTE: This is a
-          large security hole, allowing people to see passwords. This is now
-          restricted to +n users only. Please choose your owners with care.</p>
+          <p>This setting allows you the logging of raw incoming server
+          traffic via console/log flag &#39;r&#39;, raw outgoing server
+          traffic via console/log mode &#39;v&#39;, raw botnet traffic via
+          console/log mode &#39;t&#39;, and raw share traffic via console/log
+          mode &#39;h&#39;. These flags can create a large security hole,
+          allowing people to see user passwords. This is now restricted to +n
+          users only. Please choose your owners with care.</p>
         </dd>
 
         <dt><strong>set strict-host 0</strong></dt>

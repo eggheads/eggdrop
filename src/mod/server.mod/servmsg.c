@@ -1,7 +1,7 @@
 /*
  * servmsg.c -- part of server.mod
  *
- * $Id: servmsg.c,v 1.71 2003/01/30 07:15:15 wcc Exp $
+ * $Id: servmsg.c,v 1.72 2003/02/02 10:19:33 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1027,13 +1027,9 @@ static void server_activity(int idx, char *msg, int len)
     from = newsplit(&msg);
   }
   code = newsplit(&msg);
-  if (use_console_r) {
-    if (!strcmp(code, "PRIVMSG") || !strcmp(code, "NOTICE")) {
-      if (!match_ignore(from))
-        putlog(LOG_RAW, "*", "[@] %s %s %s", from, code, msg);
-    } else
-      putlog(LOG_RAW, "*", "[@] %s %s %s", from, code, msg);
-  }
+  if (raw_log && ((strcmp(code, "PRIVMSG") && strcmp(code, "NOTICE")) ||
+      !match_ignore(from))
+    putlog(LOG_RAW, "*", "[@] %s %s %s", from, code, msg);
   /* This has GOT to go into the raw binding table, * merely because this
    * is less effecient.
    */
@@ -1057,7 +1053,7 @@ static int gotkick(char *from, char *msg)
     return 0;
   if (use_penalties) {
     last_time += 2;
-    if (debug_output)
+    if (raw_log)
       putlog(LOG_SRVOUT, "*", "adding 2secs penalty (successful kick)");
   }
   return 0;
@@ -1076,7 +1072,7 @@ static int whoispenalty(char *from, char *msg)
       i++;
     if (strcmp(x->realname, from)) {
       last_time += 1;
-      if (debug_output)
+      if (raw_log)
         putlog(LOG_SRVOUT, "*", "adding 1sec penalty (remote whois)");
     }
   }

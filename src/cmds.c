@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  *
- * $Id: cmds.c,v 1.90 2003/01/31 02:53:08 wcc Exp $
+ * $Id: cmds.c,v 1.91 2003/02/02 10:19:33 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -797,8 +797,7 @@ static void cmd_pls_bot(struct userrec *u, int idx, char *par)
       strcpy(bi->address, addr);
       bi->telnet_port = 3333;
       bi->relay_port = 3333;
-    }
-    else {
+    } else {
       bi->address = user_malloc(q - addr + 1);
       strncpy(bi->address, addr, q - addr);
       bi->address[q - addr] = 0;

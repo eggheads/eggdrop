@@ -4,7 +4,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: modules.c,v 1.77 2003/01/30 07:15:14 wcc Exp $
+ * $Id: modules.c,v 1.78 2003/02/02 10:19:33 wcc Exp $
  */
 /* 
  * Copyright (C) 1997 Robey Pointer
@@ -73,11 +73,12 @@ extern struct chanset_t *chanset;
 extern char tempdir[], botnetnick[], botname[], natip[], hostname[],
             origbotname[], botuser[], admin[], userfile[], ver[], notify_new[],
             helpdir[], version[], quit_msg[];
+
 extern int parties, noshare, dcc_total, egg_numver, userfile_perm, do_restart,
-           use_console_r, ignore_time, must_be_owner, debug_output, max_dcc,
-           make_userfile, default_flags, require_p, share_greet, use_invites,
-           password_timeout, use_exempts, force_expire, protect_readonly,
-           reserved_port_min, reserved_port_max, copy_to_tmp, quiet_reject;
+           ignore_time, must_be_owner, raw_log, max_dcc, make_userfile,
+           default_flags, require_p, share_greet, use_invites, use_exempts,
+           password_timeout, force_expire, protect_readonly, reserved_port_min,
+           reserved_port_max, copy_to_tmp, quiet_reject;
 
 extern party_t *party;
 extern time_t now, online_since;
@@ -305,53 +306,53 @@ Function global_table[] = {
   (Function) my_atoul,
   (Function) my_strcpy,
   /* 92 - 95 */
-  (Function) & dcc,             /* struct dcc_t *                      */
-  (Function) & chanset,         /* struct chanset_t *                  */
-  (Function) & userlist,        /* struct userrec *                    */
-  (Function) & lastuser,        /* struct userrec *                    */
+  (Function) & dcc,               /* struct dcc_t *                      */
+  (Function) & chanset,           /* struct chanset_t *                  */
+  (Function) & userlist,          /* struct userrec *                    */
+  (Function) & lastuser,          /* struct userrec *                    */
   /* 96 - 99 */
-  (Function) & global_bans,     /* struct banrec *                     */
-  (Function) & global_ign,      /* struct igrec *                      */
-  (Function) & password_timeout,        /* int                                 */
-  (Function) & share_greet,     /* int                                 */
+  (Function) & global_bans,       /* struct banrec *                     */
+  (Function) & global_ign,        /* struct igrec *                      */
+  (Function) & password_timeout,  /* int                                 */
+  (Function) & share_greet,       /* int                                 */
   /* 100 - 103 */
-  (Function) & max_dcc,         /* int                                 */
-  (Function) & require_p,       /* int                                 */
-  (Function) & ignore_time,     /* int                                 */
-  (Function) & use_console_r,   /* int                                 */
+  (Function) & max_dcc,           /* int                                 */
+  (Function) & require_p,         /* int                                 */
+  (Function) & ignore_time,       /* int                                 */
+  (Function) 0,                   /* was use_console_r <Wcc[02/02/03]>   */
   /* 104 - 107 */
   (Function) & reserved_port_min,
   (Function) & reserved_port_max,
-  (Function) & debug_output,    /* int                                 */
-  (Function) & noshare,         /* int                                 */
+  (Function) & raw_log,           /* int                                 */
+  (Function) & noshare,           /* int                                 */
   /* 108 - 111 */
-  (Function) 0,                 /* gban_total -- UNUSED! (Eule) */
-  (Function) & make_userfile,   /* int                                 */
-  (Function) & default_flags,   /* int                                 */
-  (Function) & dcc_total,       /* int                                 */
+  (Function) 0,                   /* gban_total -- UNUSED! (Eule)        */
+  (Function) & make_userfile,     /* int                                 */
+  (Function) & default_flags,     /* int                                 */
+  (Function) & dcc_total,         /* int                                 */
   /* 112 - 115 */
-  (Function) tempdir,           /* char *                              */
-  (Function) natip,             /* char *                              */
-  (Function) hostname,          /* char *                              */
-  (Function) origbotname,       /* char *                              */
+  (Function) tempdir,             /* char *                              */
+  (Function) natip,               /* char *                              */
+  (Function) hostname,            /* char *                              */
+  (Function) origbotname,         /* char *                              */
   /* 116 - 119 */
-  (Function) botuser,           /* char *                              */
-  (Function) admin,             /* char *                              */
-  (Function) userfile,          /* char *                              */
-  (Function) ver,               /* char *                              */
+  (Function) botuser,             /* char *                              */
+  (Function) admin,               /* char *                              */
+  (Function) userfile,            /* char *                              */
+  (Function) ver,                 /* char *                              */
   /* 120 - 123 */
-  (Function) notify_new,        /* char *                              */
-  (Function) helpdir,           /* char *                              */
-  (Function) version,           /* char *                              */
-  (Function) botnetnick,        /* char *                              */
+  (Function) notify_new,          /* char *                              */
+  (Function) helpdir,             /* char *                              */
+  (Function) version,             /* char *                              */
+  (Function) botnetnick,          /* char *                              */
   /* 124 - 127 */
-  (Function) & DCC_CHAT_PASS,   /* struct dcc_table *                  */
-  (Function) & DCC_BOT,         /* struct dcc_table *                  */
-  (Function) & DCC_LOST,        /* struct dcc_table *                  */
-  (Function) & DCC_CHAT,        /* struct dcc_table *                  */
+  (Function) & DCC_CHAT_PASS,     /* struct dcc_table *                  */
+  (Function) & DCC_BOT,           /* struct dcc_table *                  */
+  (Function) & DCC_LOST,          /* struct dcc_table *                  */
+  (Function) & DCC_CHAT,          /* struct dcc_table *                  */
   /* 128 - 131 */
-  (Function) & interp,          /* Tcl_Interp *                        */
-  (Function) & now,             /* time_t                              */
+  (Function) & interp,            /* Tcl_Interp *                        */
+  (Function) & now,               /* time_t                              */
   (Function) findanyidx,
   (Function) findchan,
   /* 132 - 135 */
@@ -391,7 +392,7 @@ Function global_table[] = {
   (Function) rem_help_reference,
   /* 160 - 163 */
   (Function) touch_laston,
-  (Function) & add_mode,        /* Function *                           */
+  (Function) & add_mode,          /* Function *                          */
   (Function) rmspace,
   (Function) in_chain,
   /* 164 - 167 */
@@ -402,40 +403,40 @@ Function global_table[] = {
   /* 168 - 171 */
   (Function) expected_memory,
   (Function) tell_mem_status,
-  (Function) & do_restart,      /* int                                  */
+  (Function) & do_restart,        /* int                                 */
   (Function) check_tcl_filt,
   /* 172 - 175 */
   (Function) add_hook,
   (Function) del_hook,
-  (Function) & H_dcc,           /* p_tcl_bind_list *                    */
-  (Function) & H_filt,          /* p_tcl_bind_list *                    */
+  (Function) & H_dcc,             /* p_tcl_bind_list *                   */
+  (Function) & H_filt,            /* p_tcl_bind_list *                   */
   /* 176 - 179 */
-  (Function) & H_chon,          /* p_tcl_bind_list *                    */
-  (Function) & H_chof,          /* p_tcl_bind_list *                    */
-  (Function) & H_load,          /* p_tcl_bind_list *                    */
-  (Function) & H_unld,          /* p_tcl_bind_list *                    */
+  (Function) & H_chon,            /* p_tcl_bind_list *                   */
+  (Function) & H_chof,            /* p_tcl_bind_list *                   */
+  (Function) & H_load,            /* p_tcl_bind_list *                   */
+  (Function) & H_unld,            /* p_tcl_bind_list *                   */
   /* 180 - 183 */
-  (Function) & H_chat,          /* p_tcl_bind_list *                    */
-  (Function) & H_act,           /* p_tcl_bind_list *                    */
-  (Function) & H_bcst,          /* p_tcl_bind_list *                    */
-  (Function) & H_bot,           /* p_tcl_bind_list *                    */
+  (Function) & H_chat,            /* p_tcl_bind_list *                   */
+  (Function) & H_act,             /* p_tcl_bind_list *                   */
+  (Function) & H_bcst,            /* p_tcl_bind_list *                   */
+  (Function) & H_bot,             /* p_tcl_bind_list *                   */
   /* 184 - 187 */
-  (Function) & H_link,          /* p_tcl_bind_list *                    */
-  (Function) & H_disc,          /* p_tcl_bind_list *                    */
-  (Function) & H_away,          /* p_tcl_bind_list *                    */
-  (Function) & H_nkch,          /* p_tcl_bind_list *                    */
+  (Function) & H_link,            /* p_tcl_bind_list *                   */
+  (Function) & H_disc,            /* p_tcl_bind_list *                   */
+  (Function) & H_away,            /* p_tcl_bind_list *                   */
+  (Function) & H_nkch,            /* p_tcl_bind_list *                   */
   /* 188 - 191 */
-  (Function) & USERENTRY_BOTADDR,       /* struct user_entry_type *     */
-  (Function) & USERENTRY_BOTFL, /* struct user_entry_type *     */
-  (Function) & USERENTRY_HOSTS, /* struct user_entry_type *     */
-  (Function) & USERENTRY_PASS,  /* struct user_entry_type *     */
+  (Function) & USERENTRY_BOTADDR, /* struct user_entry_type *            */
+  (Function) & USERENTRY_BOTFL,   /* struct user_entry_type *            */
+  (Function) & USERENTRY_HOSTS,   /* struct user_entry_type *            */
+  (Function) & USERENTRY_PASS,    /* struct user_entry_type *            */
   /* 192 - 195 */
-  (Function) & USERENTRY_XTRA,  /* struct user_entry_type *     */
+  (Function) & USERENTRY_XTRA,    /* struct user_entry_type *            */
   (Function) user_del_chan,
-  (Function) & USERENTRY_INFO,  /* struct user_entry_type *     */
-  (Function) & USERENTRY_COMMENT,       /* struct user_entry_type *     */
+  (Function) & USERENTRY_INFO,    /* struct user_entry_type *            */
+  (Function) & USERENTRY_COMMENT, /* struct user_entry_type *            */
   /* 196 - 199 */
-  (Function) & USERENTRY_LASTON,        /* struct user_entry_type *     */
+  (Function) & USERENTRY_LASTON,  /* struct user_entry_type *            */
   (Function) putlog,
   (Function) botnet_send_chan,
   (Function) list_type_kill,
@@ -446,7 +447,7 @@ Function global_table[] = {
   (Function) stripmasktype,
   /* 204 - 207 */
   (Function) sub_lang,
-  (Function) & online_since,    /* time_t *                             */
+  (Function) & online_since,      /* time_t *                            */
   (Function) cmd_loadlanguage,
   (Function) check_dcc_attrs,
   /* 208 - 211 */
@@ -455,25 +456,25 @@ Function global_table[] = {
   (Function) rem_tcl_coups,
   (Function) botname,
   /* 212 - 215 */
-  (Function) 0,                 /* remove_gunk() -- UNUSED! (drummer)   */
+  (Function) 0,                   /* remove_gunk() -- UNUSED! (drummer)  */
   (Function) check_tcl_chjn,
   (Function) sanitycheck_dcc,
   (Function) isowner,
   /* 216 - 219 */
-  (Function) 0,                 /* min_dcc_port -- UNUSED! (guppy) */
-  (Function) 0,                 /* max_dcc_port -- UNUSED! (guppy) */
-  (Function) & rfc_casecmp,     /* Function *                           */
-  (Function) & rfc_ncasecmp,    /* Function *                           */
+  (Function) 0,                   /* min_dcc_port -- UNUSED! (guppy)     */
+  (Function) 0,                   /* max_dcc_port -- UNUSED! (guppy)     */
+  (Function) & rfc_casecmp,       /* Function *                          */
+  (Function) & rfc_ncasecmp,      /* Function *                          */
   /* 220 - 223 */
-  (Function) & global_exempts,  /* struct exemptrec *                   */
-  (Function) & global_invites,  /* struct inviterec *                   */
-  (Function) 0,                 /* ginvite_total -- UNUSED! (Eule) */
-  (Function) 0,                 /* gexempt_total -- UNUSED! (Eule) */
+  (Function) & global_exempts,    /* struct exemptrec *                  */
+  (Function) & global_invites,    /* struct inviterec *                  */
+  (Function) 0,                   /* ginvite_total -- UNUSED! (Eule)     */
+  (Function) 0,                   /* gexempt_total -- UNUSED! (Eule)     */
   /* 224 - 227 */
-  (Function) & H_event,         /* p_tcl_bind_list *                    */
-  (Function) & use_exempts,     /* int                                  */
-  (Function) & use_invites,     /* int                                  */
-  (Function) & force_expire,    /* int                                  */
+  (Function) & H_event,           /* p_tcl_bind_list *                   */
+  (Function) & use_exempts,       /* int                                 */
+  (Function) & use_invites,       /* int                                 */
+  (Function) & force_expire,      /* int                                 */
   /* 228 - 231 */
   (Function) add_lang_section,
   (Function) _user_realloc,
@@ -495,7 +496,7 @@ Function global_table[] = {
   /* 236 - 239 */
   (Function) call_ipbyhost,
   (Function) iptostr,
-  (Function) & DCC_DNSWAIT,     /* struct dcc_table *                  */
+  (Function) & DCC_DNSWAIT,       /* struct dcc_table *                  */
   (Function) hostsanitycheck_dcc,
   /* 240 - 243 */
   (Function) dcc_dnsipbyhost,
@@ -503,10 +504,10 @@ Function global_table[] = {
   (Function) changeover_dcc,
   (Function) make_rand_str,
   /* 244 - 247 */
-  (Function) & protect_readonly,        /* int                                 */
+  (Function) & protect_readonly,  /* int                                 */
   (Function) findchan_by_dname,
   (Function) removedcc,
-  (Function) & userfile_perm,   /* int                                 */
+  (Function) & userfile_perm,     /* int                                 */
   /* 248 - 251 */
   (Function) sock_has_data,
   (Function) bots_in_subtree,
@@ -520,10 +521,10 @@ Function global_table[] = {
   /* 256 - 259 */
   (Function) egg_strncasecmp,
   (Function) is_file,
-  (Function) & must_be_owner,   /* int                                  */
-  (Function) & tandbot,         /* tand_t *                             */
+  (Function) & must_be_owner,     /* int                                 */
+  (Function) & tandbot,           /* tand_t *                            */
   /* 260 - 263 */
-  (Function) & party,           /* party_t *                            */
+  (Function) & party,             /* party_t *                           */
   (Function) open_address_listen,
   (Function) str_escape,
   (Function) strchr_unescape,
@@ -533,15 +534,15 @@ Function global_table[] = {
   (Function) clear_chanlist_member,
   (Function) fixfrom,
   /* 268 - 271 */
-  (Function) & socklist,        /* sock_list *                          */
+  (Function) & socklist,          /* sock_list *                         */
   (Function) sockoptions,
   (Function) flush_inbuf,
   (Function) kill_bot,
   /* 272 - 275 */
-  (Function) quit_msg,          /* char *                               */
+  (Function) quit_msg,            /* char *                              */
   (Function) module_load,
   (Function) module_unload,
-  (Function) & parties,         /* int                                  */
+  (Function) & parties,           /* int                                 */
   /* 276 - 279 */
   (Function) tell_bottree,
   (Function) MD5_Init,
@@ -551,9 +552,9 @@ Function global_table[] = {
   (Function) _wild_match_per,
   (Function) killtransfer,
   (Function) write_ignores,
-  (Function) & copy_to_tmp,     /* int                                  */
+  (Function) & copy_to_tmp,       /* int                                 */
   /* 284 - 287 */
-  (Function) & quiet_reject,    /* int                                  */
+  (Function) & quiet_reject,      /* int                                 */
   (Function) file_readable
 };
 

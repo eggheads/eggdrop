@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  *
- * $Id: server.c,v 1.91 2003/01/30 07:15:15 wcc Exp $
+ * $Id: server.c,v 1.92 2003/02/02 10:19:33 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -172,7 +172,7 @@ static void deq_msg()
         continue;
       }
       tputs(serv, modeq.head->msg, modeq.head->len);
-      if (debug_output) {
+      if (raw_log) {
         modeq.head->msg[strlen(modeq.head->msg) - 1] = 0;       /* delete the "\n" */
         putlog(LOG_SRVOUT, "*", "[m->] %s", modeq.head->msg);
       }
@@ -198,7 +198,7 @@ static void deq_msg()
     if (fast_deq(DP_SERVER))
       return;
     tputs(serv, mq.head->msg, mq.head->len);
-    if (debug_output) {
+    if (raw_log) {
       mq.head->msg[strlen(mq.head->msg) - 1] = 0;       /* delete the "\n" */
       putlog(LOG_SRVOUT, "*", "[s->] %s", mq.head->msg);
     }
@@ -222,7 +222,7 @@ static void deq_msg()
   if (fast_deq(DP_HELP))
     return;
   tputs(serv, hq.head->msg, hq.head->len);
-  if (debug_output) {
+  if (raw_log) {
     hq.head->msg[strlen(hq.head->msg) - 1] = 0; /* delete the "\n" */
     putlog(LOG_SRVOUT, "*", "[h->] %s", hq.head->msg);
   }
@@ -361,7 +361,7 @@ static int calc_penalty(char *msg)
     putlog(LOG_SRVOUT, "*", "Penalty < 2sec, that's impossible!");
     penalty = 2;
   }
-  if (debug_output && penalty != 0)
+  if (raw_log && penalty != 0)
     putlog(LOG_SRVOUT, "*", "Adding penalty: %i", penalty);
   return penalty;
 }
@@ -482,7 +482,7 @@ static int fast_deq(int which)
     if (!h->head)
       h->last = 0;
     h->tot--;
-    if (debug_output) {
+    if (raw_log) {
       tosend[len - 1] = 0;
       switch (which) {
       case DP_MODE:
@@ -741,7 +741,7 @@ static int deq_kick(int which)
   egg_snprintf(newmsg, sizeof newmsg, "KICK %s %s %s\n", chan, newnicks + 1,
                reason);
   tputs(serv, newmsg, strlen(newmsg));
-  if (debug_output) {
+  if (raw_log) {
     newmsg[strlen(newmsg) - 1] = 0;
     switch (which) {
     case DP_MODE:
@@ -793,7 +793,7 @@ static void queue_server(int which, char *buf, int len)
     if (buf[1] == 'I' || buf[1] == 'i')
       lastpingtime = now;       /* lagmeter */
     tputs(serv, buf, len);
-    if (debug_output) {
+    if (raw_log) {
       if (buf[len - 1] == '\n')
         buf[len - 1] = 0;
       putlog(LOG_SRVOUT, "*", "[m->] %s", buf);
@@ -897,7 +897,7 @@ static void queue_server(int which, char *buf, int len)
     h->warned = 1;
   }
 
-  if (debug_output && !h->warned) {
+  if (raw_log && !h->warned) {
     if (buf[len - 1] == '\n')
       buf[len - 1] = 0;
     switch (which) {
@@ -1360,7 +1360,6 @@ static tcl_coups my_tcl_coups[] = {
 };
 
 static tcl_ints my_tcl_ints[] = {
-  {"use-console-r",     NULL,                       1},
   {"servlimit",         &min_servs,                 0},
   {"server-timeout",    &server_timeout,            0},
   {"lowercase-ctcp",    &lowercase_ctcp,            0},
@@ -1965,7 +1964,6 @@ char *server_start(Function *global_funcs)
   add_help_reference("server.help");
   my_tcl_strings[0].buf = botname;
   add_tcl_strings(my_tcl_strings);
-  my_tcl_ints[0].val = &use_console_r;
   add_tcl_ints(my_tcl_ints);
   add_tcl_commands(my_tcl_cmds);
   add_tcl_coups(my_tcl_coups);
