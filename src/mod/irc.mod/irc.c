@@ -2,7 +2,7 @@
  * irc.c -- part of irc.mod
  *   support for channels within the bot
  *
- * $Id: irc.c,v 1.95 2003/11/27 05:45:06 wcc Exp $
+ * $Id: irc.c,v 1.96 2003/11/27 06:15:06 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -926,7 +926,7 @@ static void flush_modes()
 static void irc_report(int idx, int details)
 {
   struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
-  char ch[1024], q[160], *p;
+  char ch[1024], q[256], *p;
   int k, l;
   struct chanset_t *chan;
 
@@ -951,7 +951,7 @@ static void irc_report(int idx, int details)
                          p ? p : "", p ? ")" : "");
       if ((k + l) > 70) {
         dprintf(idx, "    %s\n", q);
-        strcpy(q, "            ");
+        strcpy(q, "          ");
         k = 10;
       }
       k += my_strcpy(q + k, ch);
@@ -959,7 +959,7 @@ static void irc_report(int idx, int details)
   }
   if (k > 10) {
     q[k - 2] = 0;
-    dprintf(idx, "   %s\n", q);
+    dprintf(idx, "    %s\n", q);
   }
 }
 

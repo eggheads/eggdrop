@@ -2,7 +2,7 @@
  * msgcmds.c -- part of irc.mod
  *   all commands entered via /MSG
  *
- * $Id: msgcmds.c,v 1.46 2003/11/27 05:48:12 wcc Exp $
+ * $Id: msgcmds.c,v 1.47 2003/11/27 06:15:06 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -864,6 +864,7 @@ static int msg_status(char *nick, char *host, struct userrec *u, char *par)
     if (strlen(s) > 140) {
       s[strlen(s) - 2] = 0; /* remove ', ' */
       dprintf(DP_HELP, "NOTICE %s :%s\n", nick, s);
+      s[0] = 0;
     }
   }
   if (strlen(s) > 10) {
