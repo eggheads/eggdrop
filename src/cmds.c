@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  * 
- * $Id: cmds.c,v 1.42 2000/09/18 20:01:41 fabian Exp $
+ * $Id: cmds.c,v 1.43 2000/11/08 19:43:46 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -2428,6 +2428,7 @@ static void cmd_pls_user(struct userrec *u, int idx, char *par)
 
 static void cmd_mns_user(struct userrec *u, int idx, char *par)
 {
+  int idx2;
   char *handle;
   struct userrec *u2;
 
@@ -2449,10 +2450,19 @@ static void cmd_mns_user(struct userrec *u, int idx, char *par)
     dprintf(idx, "Can't remove the bot owner!\n");
     return;
   }
-  if ((u2->flags & USER_BOT) && (bot_flags(u2) & BOT_SHARE) &&
-      !(u->flags & USER_OWNER)) {
-    dprintf(idx, "You can't remove shared bots.\n");
-    return;
+  if (u2->flags & USER_BOT) {
+    if ((bot_flags(u2) & BOT_SHARE) && !(u->flags & USER_OWNER)) {
+      dprintf(idx, "You can't remove shared bots.\n");
+      return;
+    }
+    for (idx2 = 0; idx2 < dcc_total; idx2++)
+      if (dcc[idx2].type != &DCC_RELAY && dcc[idx2].type != &DCC_FORK_BOT &&
+          !egg_strcasecmp(dcc[idx2].nick, handle))
+        break;
+    if (idx2 != dcc_total) {
+      dprintf(idx, "You can't remove a directly linked bot.\n");
+      return;
+    }     
   }
   if ((u->flags & USER_BOTMAST) && !(u->flags & USER_MASTER) &&
       !(u2->flags & USER_BOT)) {
