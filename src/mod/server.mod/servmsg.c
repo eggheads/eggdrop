@@ -1,7 +1,7 @@
 /* 
  * servmsg.c -- part of server.mod
  * 
- * $Id: servmsg.c,v 1.47 2000/09/09 17:31:27 fabian Exp $
+ * $Id: servmsg.c,v 1.48 2000/09/27 19:40:44 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1230,13 +1230,19 @@ static void connect_server(void)
   if (!cycle_time) {
     struct chanset_t *chan;
 
+    servidx = new_dcc(&DCC_DNSWAIT, sizeof(struct dns_info));
+    if (servidx < 0) {
+      putlog(LOG_SERV, "*",
+	     "NO MORE DCC CONNECTIONS -- Can't create server connection.");
+      return;
+    }
+
     if (connectserver[0])	/* drummer */
       do_tcl("connect-server", connectserver);
     check_tcl_event("connect-server");
     next_server(&curserv, botserver, &botserverport, pass);
     putlog(LOG_SERV, "*", "%s %s:%d", IRC_SERVERTRY, botserver, botserverport);
 
-    servidx = new_dcc(&DCC_DNSWAIT, sizeof(struct dns_info));
     dcc[servidx].port = botserverport;
     strcpy(dcc[servidx].nick, "(server)");
     strncpyz(dcc[servidx].host, botserver, UHOSTLEN);

@@ -1,7 +1,7 @@
 /* 
  * share.c -- part of share.mod
  * 
- * $Id: share.c,v 1.40 2000/09/18 20:01:43 fabian Exp $
+ * $Id: share.c,v 1.41 2000/09/27 19:40:44 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1035,7 +1035,6 @@ static void share_ufsend(int idx, char *par)
       zapfbot(idx);
     } else {
       i = new_dcc(&DCC_FORK_SEND, sizeof(struct xfer_info));
-
       dcc[i].addr = my_atoul(ip);
       dcc[i].port = atoi(port);
       dcc[i].sock = (-1);

@@ -2,7 +2,7 @@
  * tcldcc.c -- handles:
  *   Tcl stubs for the dcc commands
  * 
- * $Id: tcldcc.c,v 1.19 2000/09/09 11:39:09 fabian Exp $
+ * $Id: tcldcc.c,v 1.20 2000/09/27 19:40:43 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -875,7 +875,6 @@ static int tcl_connect STDVAR
     Tcl_AppendResult(irp, "out of dcc table space", NULL);
     return TCL_ERROR;
   }
-  i = dcc_total;
   sock = getsock(0);
   z = open_telnet_raw(sock, argv[1], atoi(argv[2]));
   if (z < 0) {

@@ -4,7 +4,7 @@
  * 
  * Written by Fabian Knittel <fknittel@gmx.de>
  * 
- * $Id: dns.c,v 1.16 2000/09/09 11:39:10 fabian Exp $
+ * $Id: dns.c,v 1.17 2000/09/27 19:40:44 fabian Exp $
  */
 /* 
  * Copyright (C) 1999, 2000  Eggheads
@@ -234,9 +234,13 @@ char *dns_start(Function *global_funcs)
     return "This module requires eggdrop1.5.3 or later";
   }
 
-  if (!init_dns_core())
-    return "DNS initialisation failed.";
   idx = new_dcc(&DCC_DNS, 0);
+  if (idx < 0)
+    return "NO MORE DCC CONNECTIONS -- Can't create DNS socket.";
+  if (!init_dns_core()) {
+    lostdcc(idx);
+    return "DNS initialisation failed.";
+  }
   dcc[idx].sock = resfd;
   dcc[idx].timeval = now;
   strcpy(dcc[idx].nick, "(dns)");

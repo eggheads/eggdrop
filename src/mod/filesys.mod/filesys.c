@@ -2,7 +2,7 @@
  * filesys.c -- part of filesys.mod
  *   main file of the filesys eggdrop module
  * 
- * $Id: filesys.c,v 1.34 2000/09/09 11:39:11 fabian Exp $
+ * $Id: filesys.c,v 1.35 2000/09/27 19:40:44 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -678,7 +678,6 @@ static void filesys_dcc_send(char *nick, char *from, struct userrec *u,
 	return;
       }
       i = new_dcc(&DCC_DNSWAIT, sizeof(struct dns_info));
-
       if (i < 0) {
 	dprintf(DP_HELP, "NOTICE %s :Sorry, too many DCC connections.\n",
 		nick);
@@ -875,7 +874,6 @@ static int filesys_DCC_CHAT(char *nick, char *from, char *handle,
 
     } else {
       i = new_dcc(&DCC_FILES_PASS, sizeof(struct file_info));
-
       dcc[i].addr = my_atoul(ip);
       dcc[i].port = atoi(prt);
       dcc[i].sock = sock;

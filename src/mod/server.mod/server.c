@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  * 
- * $Id: server.c,v 1.52 2000/09/09 17:29:08 fabian Exp $
+ * $Id: server.c,v 1.53 2000/09/27 19:40:44 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1417,7 +1417,6 @@ static int ctcp_DCC_CHAT(char *nick, char *from, char *handle,
     if (!sanitycheck_dcc(nick, from, ip, prt))
       return 1;
     i = new_dcc(&DCC_DNSWAIT, sizeof(struct dns_info));
-
     if (i < 0) {
       putlog(LOG_MISC, "*", "DCC connection: CHAT (%s!%s)", dcc[i].nick, ip);
       return 1;

@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  * 
- * $Id: main.c,v 1.41 2000/08/24 21:03:49 fabian Exp $
+ * $Id: main.c,v 1.42 2000/09/27 19:40:43 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -854,7 +854,7 @@ int main(int argc, char **argv)
   }
 
   /* Terminal emulating dcc chat */
-  if ((!backgrd) && (term_z)) {
+  if (!backgrd && term_z) {
     int n = new_dcc(&DCC_CHAT, sizeof(struct chat_info));
 
     dcc[n].addr = iptolong(getmyip());
