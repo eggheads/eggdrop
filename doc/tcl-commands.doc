@@ -941,6 +941,9 @@ specific commands, see later.
   md5 <string>
     returns: the 128 bits MD5 "message-digest" of the specified string.
 
+| callevent <event>
+|   Triggers the evnt bind manually for a certain event. For example:
+|     callevent "rehash"
 
 GLOBAL VARIABLES:
   (All config-file variables are global, too.  But these variables
@@ -1396,6 +1399,7 @@ for the msg-command "stop", use "unbind msg - stop msg_stop".
          save              (called when the userfile is saved)
          rehash            (called just after a rehash)
          prerehash         (called just before a rehash)
+|        prerestart        (called just before a restart)
          logfile           (called when the logs are switched daily)
 |
 |        connect-server    (called just before we connect to an irc server)

@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  *
- * $Id: main.c,v 1.58 2001/04/13 22:27:14 guppy Exp $
+ * $Id: main.c,v 1.59 2001/05/19 22:19:02 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1004,6 +1004,9 @@ int main(int argc, char **argv)
 	module_entry *p;
 	Function x;
 	char xx[256];
+
+ 	/* oops, I guess we should call this event before tcl is restarted */
+   	check_tcl_event("prerestart");
 
 	while (f) {
 	  f = 0;
