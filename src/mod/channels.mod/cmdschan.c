@@ -2,7 +2,7 @@
  * cmdschan.c -- part of channels.mod
  *   commands from a user via dcc that cause server interaction
  *
- * $Id: cmdschan.c,v 1.45 2001/06/28 19:21:55 guppy Exp $
+ * $Id: cmdschan.c,v 1.46 2001/11/15 14:11:02 poptix Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1140,10 +1140,6 @@ static void cmd_mns_chan(struct userrec *u, int idx, char *par)
     return;
   }
 
-  remove_channel(chan);
-  dprintf(idx, "Channel %s removed from the bot.\n", chname);
-  dprintf(idx, "This includes any channel specific bans, invites, exemptions and user records that you set.\n");
-  putlog(LOG_CMDS, "*", "#%s# -chan %s", dcc[idx].nick, chname);
   for (i = 0; i < dcc_total; i++)
     if ((dcc[i].type->flags & DCT_CHAT) &&
 	!rfc_casecmp(dcc[i].u.chat->con_chan, chan->dname)) {
@@ -1151,6 +1147,10 @@ static void cmd_mns_chan(struct userrec *u, int idx, char *par)
 	      chname);
       strcpy(dcc[i].u.chat->con_chan, "*");
     }
+  remove_channel(chan);
+  dprintf(idx, "Channel %s removed from the bot.\n", chname);
+  dprintf(idx, "This includes any channel specific bans, invites, exemptions and user records that you set.\n");
+  putlog(LOG_CMDS, "*", "#%s# -chan %s", dcc[idx].nick, chname);
 }
 
 static void cmd_chaninfo(struct userrec *u, int idx, char *par)
