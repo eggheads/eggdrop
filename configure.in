@@ -50,7 +50,7 @@ AC_CHECK_SIZEOF(char, 0)
 AC_CHECK_SIZEOF(short int, 0)
 
 # Checks for library functions
-AC_CHECK_FUNCS(clock getrusage setpgid uname sigaction sigemptyset rename strcasecmp strncasecmp getdtablesize memset random srandom dlopen dprintf snprintf vsnprintf isascii inet_aton memcpy)
+AC_CHECK_FUNCS(clock getrusage setpgid uname sigaction sigemptyset rename strcasecmp strncasecmp getdtablesize memset random srandom dlopen dprintf snprintf vsnprintf isascii inet_aton memcpy strftime)
 EGG_CHECK_FUNC_VSPRINTF
 
 # Make sure we have stdc headers, since we can't compile without them

@@ -4,7 +4,7 @@
  *   Tcl initialization
  *   getting and setting Tcl/eggdrop variables
  * 
- * $Id: tcl.c,v 1.19 2000/05/06 22:02:27 fabian Exp $
+ * $Id: tcl.c,v 1.20 2000/05/06 22:04:55 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -51,7 +51,8 @@ extern int	flood_thr, ignore_time;
 extern char	origbotname[], botuser[], motdfile[], admin[], userfile[],
 		firewall[], helpdir[], notify_new[], hostname[], myip[],
 		moddir[], tempdir[], owner[], network[], botnetnick[],
-		bannerfile[], egg_version[], natip[], configfile[];
+		bannerfile[], egg_version[], natip[], configfile[],
+		logfile_suffix[];
 extern int	die_on_sighup, die_on_sigterm, max_logs, max_logsize,
 		enable_simul, dcc_total, debug_output, identtimeout,
 		protect_telnet, dupwait_timeout, egg_numver, share_unlinks,
@@ -345,7 +346,10 @@ static char *tcl_eggstr(ClientData cdata, Tcl_Interp *irp, char *name1,
 	s[abs(st->max)] = 0;
       if (st->str == botnetnick)
 	botnet_change(s);
-      else if (st->str == firewall) {
+      else if (st->str == logfile_suffix) {
+	logsuffix_change();
+	strcpy(logfile_suffix, s);
+      } else if (st->str == firewall) {
 	splitc(firewall, s, ':');
 	if (!firewall[0])
 	  strcpy(firewall, s);
@@ -405,6 +409,7 @@ static tcl_strings def_tcl_strings[] =
 /* confvar patch by aaronwl */
   {"config",		configfile,	0,		0},
   {"telnet-banner",	bannerfile,	120,		STR_PROTECT},
+  {"logfile-suffix",	logfile_suffix,	20,		0},
   {NULL,		NULL,		0,		0}
 };
 
