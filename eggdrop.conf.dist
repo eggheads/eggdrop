@@ -92,9 +92,10 @@ set quick-logs 0
 # belong to all channels by assigning it to channel "*".  there are also
 # five user-defined levels ('1'..'5') which are used by Tcl scripts.
 
-# in 'eggdrop.log' put msgs, commands, and errors from any channel:
+# in 'eggdrop.log' put private msgs/ctcps, commands, misc info, and
+# errors from any channel:
 logfile mco * "eggdrop.log"
-# in 'lame.log' put joins, parts, and mode changes from #lame:
+# in 'lame.log' put joins, parts, kicks, bans, and mode changes from #lamest:
 logfile jk #lamest "lamest.log"
 
 # [0/1] timestamp entries in the log file? (generally a good idea)
