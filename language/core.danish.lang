@@ -1,7 +1,7 @@
 # core.danish.lang
 #   core language messages for eggdrop
 #
-# $Id: core.danish.lang,v 1.1 2003/02/16 08:59:57 wcc Exp $
+# $Id: core.danish.lang,v 1.2 2003/03/07 21:32:52 wcc Exp $
 
 # General stuff
 0x001,Brug
@@ -242,7 +242,7 @@ Telnet botten og skriv 'NEW' som dit nick.
 0x667,Du skal nu vælge et nick at bruge på botten,\nog et password, så ingen andre kan give sig ud for at være dig.\nVenligst husk begge dele!
 0x668,Fra nu af, behøver du ikke at starte botten med -m.\nEnjoy !!
 0x669,Telnet forbindelses flood fra %s!  Smider på ignore!
-0x66a,bannet: 
+0x66a,bannet:
 0x66b,join flood
 0x66c,kick ikke mine venner
 0x66d,...og kom ikke tilbage.
@@ -330,7 +330,7 @@ Telnet botten og skriv 'NEW' som dit nick.
 0xb3d,Træ for komplekst!
 0xb3e,Afbryder links til alle bots...
 0xb3f,Dræbte link forsøg til
-0xb40,Forsøger ikke længere at linke: 
+0xb40,Forsøger ikke længere at linke:
 0xb41,Afbryder link med
 0xb42,Afbrudt link fra:
 0xb43,Ikke forbundet til den bot.

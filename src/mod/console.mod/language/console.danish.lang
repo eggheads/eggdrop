@@ -1,7 +1,7 @@
 # console.danish.lang
 #   language messages for the console module
 #
-# $Id console.danish.lang,v 1.0 2003/02/012 03:00:00 TheAvatar Exp $
+# $Id: console.danish.lang,v 1.2 2003/03/07 21:32:52 wcc Exp $
 
 0xb040,Gemte konsolindstillinger:
 0xb041,Dine konsolindstillinger er gemt:

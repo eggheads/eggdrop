@@ -1,7 +1,7 @@
 # core.french.lang
 #   core language messages for eggdrop
 #
-# $Id: core.french.lang,v 1.25 2002/03/22 04:06:25 guppy Exp $
+# $Id: core.french.lang,v 1.26 2003/03/07 21:32:52 wcc Exp $
 
 
 # General stuff
@@ -243,7 +243,7 @@ Faites un Telnet sur le bot et entrez 'NEW' comme surnom.
 0x667,Maintenant vous devez trouver un nick à utiliser sur le bot,\net un mot de passe, ainsi personne ne peut prétendre être vous.\nRetenez les!
 0x668,Dorénavant, vous n'avez plus besoin d'utiliser l'option -m pour démarrer le bot.\nAmusez-vous bien !!
 0x669,Flood de connexions telnet de %s!  On ignore!
-0x66a,banni: 
+0x66a,banni:
 0x66b,avalanche de surnom
 0x66c,touches pas à mon pote
 0x66d,...pas la peine de revenir.

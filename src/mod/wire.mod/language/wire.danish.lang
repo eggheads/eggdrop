@@ -1,7 +1,7 @@
 # wire.danish.lang
 #   language messages for wire module
 #
-# $Id: wire.danish.lang,v 1.1 2003/02/16 08:59:58 wcc Exp $
+# $Id: wire.danish.lang,v 1.2 2003/03/07 21:32:52 wcc Exp $
 
 0xa000,Du er ikke på en krypteret linie.
 0xa001,For øjeblikket på krypteret linie
