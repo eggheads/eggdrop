@@ -1,7 +1,7 @@
 /*
  * userchan.c -- part of channels.mod
  *
- * $Id: userchan.c,v 1.34 2003/01/30 22:39:24 wcc Exp $
+ * $Id: userchan.c,v 1.35 2003/02/10 00:25:19 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -241,7 +241,7 @@ static int u_delban(struct chanset_t *c, char *who, int doit)
     j--;
     for (; (*u) && j; u = &((*u)->next), j--);
     if (*u) {
-      strncpyz(temp, (*u)->mask, strlen((*u)->mask));
+      strncpyz(temp, (*u)->mask, sizeof temp);
       i = 1;
     } else
       return -j - 1;
@@ -291,7 +291,7 @@ static int u_delexempt(struct chanset_t *c, char *who, int doit)
     j--;
     for (; (*u) && j; u = &((*u)->next), j--);
     if (*u) {
-      strncpyz(temp, (*u)->mask, strlen((*u)->mask));
+      strncpyz(temp, (*u)->mask, sizeof temp);
       i = 1;
     } else
       return -j - 1;
@@ -342,7 +342,7 @@ static int u_delinvite(struct chanset_t *c, char *who, int doit)
     j--;
     for (; (*u) && j; u = &((*u)->next), j--);
     if (*u) {
-      strncpyz(temp, (*u)->mask, strlen((*u)->mask));
+      strncpyz(temp, (*u)->mask, sizeof temp);
       i = 1;
     } else
       return -j - 1;
