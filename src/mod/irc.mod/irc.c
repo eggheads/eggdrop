@@ -2,7 +2,7 @@
  * irc.c -- part of irc.mod
  *   support for channels within the bot 
  * 
- * $Id: irc.c,v 1.31 2000/08/21 18:28:11 guppy Exp $
+ * $Id: irc.c,v 1.32 2000/09/02 18:46:34 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -41,7 +41,7 @@ static int ctcp_mode;
 static int net_type;
 static int strict_host;
 static int wait_split = 300;		/* Time to wait for user to return from
-					 * net-split. */
+					   net-split. */
 static int max_bans = 20;
 static int max_exempts = 20;
 static int max_invites = 20;
@@ -57,18 +57,21 @@ static int no_chanrec_info = 0;
 static int modesperline = 3;		/* Number of modes per line to send. */
 static int mode_buf_len = 200;		/* Maximum bytes to send in 1 mode. */
 static int use_354 = 0;			/* Use ircu's short 354 /who
-					 * responses */
+					   responses. */
 static int kick_method = 1;		/* How many kicks does the irc network
-					 * support at once?
-					 * 0 = as many as possible. 
-					 *     (Ernst 18/3/1998) */
+					   support at once?
+					   0 = as many as possible. 
+					       (Ernst 18/3/1998) */
 static int kick_fun = 0;
 static int ban_fun = 0;
 static int keepnick = 1;		/* Keep nick */
 static int prevent_mixing = 1;		/* To prevent mixing old/new modes */
 static int revenge_mode = 1;		/* 0 = deop, 1 = and +d, 2 = and kick,
-					 * 3 = and ban */
+					   3 = and ban. */
 static int rfc_compliant = 1;		/* net-type changing modifies this */
+
+static int include_lk = 1;		/* For correct calculation
+					   in real_add_mode. */
 
 #include "chan.c"
 #include "mode.c"
@@ -987,6 +990,7 @@ static tcl_ints myints[] =
   {"prevent-mixing",		&prevent_mixing,	0},
   {"revenge-mode",		&revenge_mode,		0},
   {"rfc-compliant",		&rfc_compliant,		0},
+  {"include-lk",		&include_lk,		0},
   {NULL,			NULL,			0}	/* arthur2 */
 };
 
@@ -1062,6 +1066,7 @@ static void do_nettype()
     use_exempts = 0;
     use_invites = 0;
     rfc_compliant = 1;
+    include_lk = 0;
     break;
   case 1:		/* Ircnet */
     kick_method = 4;
@@ -1070,6 +1075,7 @@ static void do_nettype()
     use_exempts = 1;
     use_invites = 1;
     rfc_compliant = 1;
+    include_lk = 1;
     break;
   case 2:		/* Undernet */
     kick_method = 1;
@@ -1078,6 +1084,7 @@ static void do_nettype()
     use_exempts = 0;
     use_invites = 0;
     rfc_compliant = 1;
+    include_lk = 1;
     break;
   case 3:		/* Dalnet */
     kick_method = 1;
@@ -1086,6 +1093,7 @@ static void do_nettype()
     use_exempts = 0;
     use_invites = 0;
     rfc_compliant = 0;
+    include_lk = 1;
     break;
   case 4:		/* hybrid-6+ */
     kick_method = 1;
@@ -1094,6 +1102,7 @@ static void do_nettype()
     use_exempts = 1;
     use_invites = 0;
     rfc_compliant = 1;
+    include_lk = 0;
     break;
   default:
     break;
