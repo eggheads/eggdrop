@@ -1,7 +1,7 @@
 # core.english.lang
 #   core language messages for eggdrop
 #
-# $Id: core.english.lang,v 1.15 2000/08/03 21:51:33 fabian Exp $
+# $Id: core.english.lang,v 1.16 2000/09/23 17:40:17 fabian Exp $
 
 # General stuff
 0x001,Usage
@@ -50,7 +50,7 @@
 0x20D,You have installed modules but have not selected an encryption\n\
 module, please consult the default config file for info.\n
 0x20E,Filesys module not loaded.
-0x20F,Module loaded: %s\t\t(with lang support)
+0x20F,Module loaded: %s \t\t(with lang support)
 0x210,Module loaded: %s
 
 # USERF_
@@ -304,27 +304,8 @@ Telnet to the bot and enter 'NEW' as your nickname.
 0xb00,That bot isn't here.\n
 0xb01,That's a bot.  You can't leave notes for a bot.\n
 0xb02,is away
-0xb03,Notes are not supported by this bot.\n
-0xb04,Sorry, that user has too many notes already.\n
-0xb05,Can't create notefile.  Sorry.\n
-0xb06,Notefile unreachable!
 0xb07,Note arrived for you
 0xb08,Stored message
-0xb09,Note delivered.
-0xb0a,Outside note
-0xb0b,NOTES function must be one of:
-0xb0c,You have no messages
-0xb0d, -- EXPIRES TODAY
-0xb0e, -- EXPIRES IN %d DAY%s
-0xb0f,You have the following notes waiting
-0xb10,You don't have that many messages
-0xb11,Use '.notes read' to read them.
-0xb12,Can't modify the note file
-0xb13,Erased all notes
-0xb14,NOTICE %s :You have %d note%s waiting on %s.\n
-0xb15,For a list:
-0xb16,### You have %d note%s waiting.\n
-0xb17,### Use '.notes read' to read them.\n
 0xb18,Bot shut down beginning....
 0xb19,No such user
 0xb1a,no channels

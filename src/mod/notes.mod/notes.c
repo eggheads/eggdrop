@@ -5,7 +5,7 @@
  *   note cmds
  *   note ignores
  * 
- * $Id: notes.c,v 1.23 2000/09/18 20:04:59 fabian Exp $
+ * $Id: notes.c,v 1.24 2000/09/23 17:40:18 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -70,7 +70,7 @@ static void fwd_display(int idx, struct user_entry *e)
 {
   Context;
   if (dcc[idx].user && (dcc[idx].user->flags & USER_BOTMAST))
-    dprintf(idx, "  Forward notes to: %.70s\n", e->u.string);
+    dprintf(idx, "%s", NOTES_FORWARD_TO, e->u.string);
 }
 
 /* Determine how many notes are waiting for a user.
@@ -149,8 +149,8 @@ static void notes_change(char *oldnick, char *newnick)
   unlink(notefile);
   sprintf(s, "%s~new", notefile);
   movefile(s, notefile);
-  putlog(LOG_MISC, "*", "Switched %d note%s from %s to %s.", tot,
-	 tot == 1 ? "" : "s", oldnick, newnick);
+  putlog(LOG_MISC, "*", NOTES_SWITCHED_NOTES, tot, tot == 1 ? "" : "s",
+         oldnick, newnick);
 }
 
 /* Get rid of old useless notes.
@@ -201,7 +201,7 @@ static void expire_notes()
   sprintf(s, "%s~new", notefile);
   movefile(s, notefile);
   if (tot > 0)
-    putlog(LOG_MISC, "*", "Expired %d note%s", tot, tot == 1 ? "" : "s");
+    putlog(LOG_MISC, "*", NOTES_EXPIRED, tot, tot == 1 ? "" : "s");
 }
 
 /* Add note to notefile.
@@ -275,7 +275,7 @@ static int tcl_storenote STDVAR
       ok = 0;
     if (ok) {
       if ((add_note(fwd, p, work, idx, 0) == NOTE_OK) && (idx >= 0))
-	dprintf(idx, "Not online; forwarded to %s.\n", f1);
+	dprintf(idx, NOTES_FORWARD_NOTONLINE, f1);
       Tcl_AppendResult(irp, f1, NULL);
       to = NULL;
     } else {
@@ -287,18 +287,18 @@ static int tcl_storenote STDVAR
   if (to) {
     if (notefile[0] == 0) {
       if (idx >= 0)
-	dprintf(idx, BOT_NOTEUNSUPP);
+	dprintf(idx, "%s\n", NOTES_UNSUPPORTED);
     } else if (num_notes(to) >= maxnotes) {
       if (idx >= 0)
-	dprintf(idx, BOT_NOTES2MANY);
+	dprintf(idx, "%s\n", NOTES_NOTES2MANY);
     } else {			/* Time to unpack it meaningfully */
       f = fopen(notefile, "a");
       if (f == NULL)
 	f = fopen(notefile, "w");
       if (f == NULL) {
 	if (idx >= 0)
-	  dprintf(idx, BOT_NOTESERROR1);
-	putlog(LOG_MISC, "*", BOT_NOTESERROR2);
+	  dprintf(idx, "%s\n", NOTES_NOTEFILE_FAILED);
+	putlog(LOG_MISC, "*", "%s", NOTES_NOTEFILE_UNREACHABLE);
       } else {
 	char *p, *from = argv[1];
 	int l = 0;
@@ -315,7 +315,7 @@ static int tcl_storenote STDVAR
 		l ? work : "", argv[3]);
 	fclose(f);
 	if (idx >= 0)
-	  dprintf(idx, "%s.\n", BOT_NOTESTORED);
+	  dprintf(idx, "%s.\n", NOTES_STORED_MESSAGE);
       }
     }
   }
@@ -478,17 +478,17 @@ static void notes_read(char *hand, char *nick, char *srd, int idx)
     srd = "-";
   if (!notefile[0]) {
     if (idx >= 0)
-      dprintf(idx, "%s.\n", BOT_NOMESSAGES);
+      dprintf(idx, "%s.\n", NOTES_NO_MESSAGES);
     else
-      dprintf(DP_HELP, "NOTICE %s :%s.\n", nick, BOT_NOMESSAGES);
+      dprintf(DP_HELP, "NOTICE %s :%s.\n", nick, NOTES_NO_MESSAGES);
     return;
   }
   f = fopen(notefile, "r");
   if (f == NULL) {
     if (idx >= 0)
-      dprintf(idx, "%s.\n", BOT_NOMESSAGES);
+      dprintf(idx, "%s.\n", NOTES_NO_MESSAGES);
     else
-      dprintf(DP_HELP, "NOTICE %s :%s.\n", nick, BOT_NOMESSAGES);
+      dprintf(DP_HELP, "NOTICE %s :%s.\n", nick, NOTES_NO_MESSAGES);
     return;
   }
   notes_parse(rd, srd);
@@ -513,16 +513,15 @@ static void notes_read(char *hand, char *nick, char *srd, int idx)
 	  lapse = (int) ((now - tt) / 86400);
 	  if (lapse > note_life - 7) {
 	    if (lapse >= note_life)
-	      strcat(dt, BOT_NOTEEXP1);
+	      strcat(dt, NOTES_EXPIRE_TODAY);
 	    else
-	      sprintf(&dt[strlen(dt)], BOT_NOTEEXP2,
-		      note_life - lapse,
+	      sprintf(&dt[strlen(dt)], NOTES_EXPIRE_XDAYS, note_life - lapse,
 		      (note_life - lapse) == 1 ? "" : "S");
 	  }
 	  if (srd[0] == '+') {
 	    if (idx >= 0) {
 	      if (ix == 1)
-		dprintf(idx, "### %s:\n", BOT_NOTEWAIT);
+		dprintf(idx, "### %s:\n", NOTES_WAITING);
 	      dprintf(idx, "  %2d. %s (%s)\n", ix, from, dt);
 	    } else {
 	      dprintf(DP_HELP, "NOTICE %s :%2d. %s (%s)\n",
@@ -544,27 +543,27 @@ static void notes_read(char *hand, char *nick, char *srd, int idx)
   fclose(f);
   if ((srd[0] != '+') && (ir == 0) && (ix > 1)) {
     if (idx >= 0)
-      dprintf(idx, "%s.\n", BOT_NOTTHATMANY);
+      dprintf(idx, "%s.\n", NOTES_NOT_THAT_MANY);
     else
-      dprintf(DP_HELP, "NOTICE %s :%s.\n", nick, BOT_NOTTHATMANY);
+      dprintf(DP_HELP, "NOTICE %s :%s.\n", nick, NOTES_NOT_THAT_MANY);
   }
   if (srd[0] == '+') {
     if (ix == 1) {
       if (idx >= 0)
-	dprintf(idx, "%s.\n", BOT_NOMESSAGES);
+	dprintf(idx, "%s.\n", NOTES_NO_MESSAGES);
       else
-	dprintf(DP_HELP, "NOTICE %s :%s.\n", nick, BOT_NOMESSAGES);
+	dprintf(DP_HELP, "NOTICE %s :%s.\n", nick, NOTES_NO_MESSAGES);
     } else {
       if (idx >= 0)
-	dprintf(idx, "### %s.\n", BOT_NOTEUSAGE);
+	dprintf(idx, "### %s.\n", NOTES_DCC_USAGE_READ);
       else
 	dprintf(DP_HELP, "NOTICE %s :(%d %s)\n", nick, ix - 1, MISC_TOTAL);
     }
   } else if ((ir == 0) && (ix == 1)) {
     if (idx >= 0)
-      dprintf(idx, "%s.\n", BOT_NOMESSAGES);
+      dprintf(idx, "%s.\n", NOTES_NO_MESSAGES);
     else
-      dprintf(DP_HELP, "NOTICE %s :%s.\n", nick, BOT_NOMESSAGES);
+      dprintf(DP_HELP, "NOTICE %s :%s.\n", nick, NOTES_NO_MESSAGES);
   }
 }
 
@@ -585,26 +584,26 @@ static void notes_del(char *hand, char *nick, char *sdl, int idx)
     sdl = "-";
   if (!notefile[0]) {
     if (idx >= 0)
-      dprintf(idx, "%s.\n", BOT_NOMESSAGES);
+      dprintf(idx, "%s.\n", NOTES_NO_MESSAGES);
     else
-      dprintf(DP_HELP, "NOTICE %s :%s.\n", nick, BOT_NOMESSAGES);
+      dprintf(DP_HELP, "NOTICE %s :%s.\n", nick, NOTES_NO_MESSAGES);
     return;
   }
   f = fopen(notefile, "r");
   if (f == NULL) {
     if (idx >= 0)
-      dprintf(idx, "%s.\n", BOT_NOMESSAGES);
+      dprintf(idx, "%s.\n", NOTES_NO_MESSAGES);
     else
-      dprintf(DP_HELP, "NOTICE %s :%s.\n", nick, BOT_NOMESSAGES);
+      dprintf(DP_HELP, "NOTICE %s :%s.\n", nick, NOTES_NO_MESSAGES);
     return;
   }
   sprintf(s, "%s~new", notefile);
   g = fopen(s, "w");
   if (g == NULL) {
     if (idx >= 0)
-      dprintf(idx, "%s. :(\n", BOT_CANTMODNOTE);
+      dprintf(idx, "%s. :(\n", NOTES_FAILED_CHMOD);
     else
-      dprintf(DP_HELP, "NOTICE %s :%s. :(\n", nick, BOT_CANTMODNOTE);
+      dprintf(DP_HELP, "NOTICE %s :%s. :(\n", nick, NOTES_FAILED_CHMOD);
     fclose(f);
     return;
   }
@@ -638,27 +637,27 @@ static void notes_del(char *hand, char *nick, char *sdl, int idx)
   movefile(s, notefile);
   if ((er == 0) && (in > 1)) {
     if (idx >= 0)
-      dprintf(idx, "%s.\n", BOT_NOTTHATMANY);
+      dprintf(idx, "%s.\n", NOTES_NOT_THAT_MANY);
     else
-      dprintf(DP_HELP, "NOTICE %s :%s.\n", nick, BOT_NOTTHATMANY);
+      dprintf(DP_HELP, "NOTICE %s :%s.\n", nick, NOTES_NOT_THAT_MANY);
   } else if (in == 1) {
     if (idx >= 0)
-      dprintf(idx, "%s.\n", BOT_NOMESSAGES);
+      dprintf(idx, "%s.\n", NOTES_NO_MESSAGES);
     else
-      dprintf(DP_HELP, "NOTICE %s :%s.\n", nick, BOT_NOMESSAGES);
+      dprintf(DP_HELP, "NOTICE %s :%s.\n", nick, NOTES_NO_MESSAGES);
   } else {
     if (er == (in - 1)) {
       if (idx >= 0)
-	dprintf(idx, "%s.\n", BOT_NOTESERASED);
+	dprintf(idx, "%s.\n", NOTES_ERASED_ALL);
       else
-	dprintf(DP_HELP, "NOTICE %s :%s.\n", nick, BOT_NOTESERASED);
+	dprintf(DP_HELP, "NOTICE %s :%s.\n", nick, NOTES_ERASED_ALL);
     } else {
       if (idx >= 0)
-	dprintf(idx, "%s %d note%s; %d left.\n", MISC_ERASED, er, (er > 1) ? "s" : "",
-		in - 1 - er, MISC_LEFT);
+	dprintf(idx, "%s %d note%s; %d %s.\n", NOTES_ERASED, er, (er > 1) ? "s" : "",
+		in - 1 - er, NOTES_LEFT);
       else
 	dprintf(DP_HELP, "NOTICE %s :%s %d note%s; %d %s.\n", nick, MISC_ERASED,
-		er, (er > 1) ? "s" : "", in - 1 - er, MISC_LEFT);
+		er, (er > 1) ? "s" : "", in - 1 - er, NOTES_LEFT);
     }
   }
 }
@@ -737,11 +736,11 @@ static int msg_notes(char *nick, char *host, struct userrec *u, char *par)
   if (u->flags & (USER_BOT | USER_COMMON))
     return 1;
   if (!par[0]) {
-    dprintf(DP_HELP, "NOTICE %s :%s: NOTES [pass] INDEX\n", nick, MISC_USAGE);
+    dprintf(DP_HELP, "NOTICE %s :%s: NOTES [pass] INDEX\n", nick, NOTES_USAGE);
     dprintf(DP_HELP, "NOTICE %s :       NOTES [pass] TO <hand> <msg>\n", nick);
     dprintf(DP_HELP, "NOTICE %s :       NOTES [pass] READ <# or ALL>\n", nick);
     dprintf(DP_HELP, "NOTICE %s :       NOTES [pass] ERASE <# or ALL>\n", nick);
-    dprintf(DP_HELP, "NOTICE %s :       # may be numbers and/or intervals separated by ;\n", nick);
+    dprintf(DP_HELP, "NOTICE %s :       %s\n", nick, NOTES_MAYBE);
     dprintf(DP_HELP, "NOTICE %s :       ex: NOTES mypass ERASE 2-4;8;16-\n", nick);
     return 1;
   }
@@ -773,15 +772,15 @@ static int msg_notes(char *nick, char *host, struct userrec *u, char *par)
     to = newsplit(&par);
     if (!par[0]) {
       dprintf(DP_HELP, "NOTICE %s :%s: NOTES [pass] TO <hand> <message>\n",
-	      nick, MISC_USAGE);
+	      nick, NOTES_USAGE);
       return 0;
     }
     u2 = get_user_by_handle(userlist, to);
     if (!u2) {
-      dprintf(DP_HELP, "NOTICE %s :%s\n", nick, USERF_UNKNOWN);
+      dprintf(DP_HELP, "NOTICE %s :%s\n", nick, NOTES_USERF_UNKNOWN);
       return 1;
     } else if (is_bot(u2)) {
-      dprintf(DP_HELP, "NOTICE %s :%s\n", nick, BOT_NONOTES);
+      dprintf(DP_HELP, "NOTICE %s :%s\n", nick, NOTES_NOTTO_BOT);
       return 1;
     }
     for (i = 0; i < dcc_total; i++) {
@@ -796,32 +795,32 @@ static int msg_notes(char *nick, char *host, struct userrec *u, char *par)
 	  aok = 0;		/* Assume non dcc-chat == something weird, so
 				 * store notes for later */
 	if (aok) {
-	  dprintf(i, "\007%s [%s]: %s\n", u->handle, BOT_NOTEOUTSIDE, par);
-	  dprintf(DP_HELP, "NOTICE %s :%s\n", nick, BOT_NOTEDELIV);
+	  dprintf(i, "\007%s [%s]: %s\n", u->handle, NOTES_OUTSIDE, par);
+	  dprintf(DP_HELP, "NOTICE %s :%s\n", nick, NOTES_DELIVERED);
 	  return 1;
 	}
       }
     }
     if (notefile[0] == 0) {
-      dprintf(DP_HELP, "NOTICE %s :%s\n", nick, BOT_NOTEUNSUPP);
+      dprintf(DP_HELP, "NOTICE %s :%s\n", nick, NOTES_UNSUPPORTED);
       return 1;
     }
     f = fopen(notefile, "a");
     if (f == NULL)
       f = fopen(notefile, "w");
     if (f == NULL) {
-      dprintf(DP_HELP, "NOTICE %s :%s", nick, BOT_NOTESERROR1);
-      putlog(LOG_MISC, "*", "* %s", BOT_NOTESERROR2);
+      dprintf(DP_HELP, "NOTICE %s :%s", nick, NOTES_NOTEFILE_FAILED);
+      putlog(LOG_MISC, "*", "* %s", NOTES_NOTEFILE_UNREACHABLE);
       return 1;
     }
     chmod(notefile, userfile_perm);	/* Use userfile permissions. */
     fprintf(f, "%s %s %lu %s\n", to, u->handle, now, par);
     fclose(f);
-    dprintf(DP_HELP, "NOTICE %s :%s\n", nick, BOT_NOTEDELIV);
+    dprintf(DP_HELP, "NOTICE %s :%s\n", nick, NOTES_DELIVERED);
     return 1;
   } else
     dprintf(DP_HELP, "NOTICE %s :%s INDEX, READ, ERASE, TO\n",
-	    nick, BOT_NOTEUSAGE);
+	    nick, NOTES_DCC_USAGE_READ);
   putlog(LOG_CMDS, "*", "(%s!%s) !%s! NOTES %s %s", nick, host, u->handle, fcn,
 	 par[0] ? "..." : "");
   return 1;
@@ -851,10 +850,10 @@ static void notes_hourly()
 	      k = 0;		/* They already know they have notes */
 	  }
 	  if (k) {
-	    dprintf(DP_HELP, BOT_NOTESWAIT1, m->nick, k, k == 1 ? "" : "s", 
+	    dprintf(DP_HELP, NOTES_WAITING_ON, m->nick, k, k == 1 ? "" : "s",
                     origbotname);
 	    dprintf(DP_HELP, "NOTICE %s :%s /MSG %s NOTES [pass] INDEX\n",
-		    m->nick, BOT_NOTESWAIT2, botname);
+		        m->nick, NOTES_FORLIST, botname);
 	  }
 	}
 	m = m->next;
@@ -864,8 +863,8 @@ static void notes_hourly()
     for (l = 0; l < dcc_total; l++) {
       k = num_notes(dcc[l].nick);
       if ((k > 0) && (dcc[l].type->flags & DCT_CHAT)) {
-	dprintf(l, BOT_NOTESWAIT3, k, k == 1 ? "" : "s");
-	dprintf(l, BOT_NOTESWAIT4);
+	dprintf(l, NOTES_WAITING2, k, k == 1 ? "" : "s");
+	dprintf(l, NOTES_DCC_USAGE_READ2);
       }
     }
   }
@@ -879,7 +878,7 @@ static void away_notes(char *bot, int sock, char *msg)
   if (egg_strcasecmp(bot, botnetnick))
     return;
   if (msg && msg[0])
-    dprintf(idx, "Notes will be stored.\n");
+    dprintf(idx, "%s\n", NOTES_STORED);
   else
     notes_read(dcc[idx].nick, 0, "+", idx);
 }
@@ -914,8 +913,8 @@ static void join_notes(char *nick, char *uhost, char *handle, char *par)
     if (i) {
       dprintf(DP_HELP, "NOTICE %s :You have %d note%s waiting on %s.\n",
 	      nick, i, i == 1 ? "" : "s", botname);
-      dprintf(DP_HELP, "NOTICE %s :For a list, /MSG %s NOTES [pass] INDEX\n",
-	      nick, botname);
+      dprintf(DP_HELP, "NOTICE %s :%s /MSG %s NOTES [pass] INDEX\n",
+              NOTES_FORLIST, nick, botname);
     }
   }
 }
@@ -1196,6 +1195,7 @@ static char *notes_close()
   del_hook(HOOK_MATCH_NOTEREJ, (Function) match_note_ignore);
   del_hook(HOOK_HOURLY, (Function) notes_hourly);
   del_entry_type(&USERENTRY_FWD);
+  del_lang_section("notes");
   module_undepend(MODULE_NAME);
   return NULL;
 }
@@ -1249,6 +1249,7 @@ char *notes_start(Function * global_funcs)
   add_builtins(H_nkch, notes_nkch);
   add_builtins(H_load, notes_load);
   add_help_reference("notes.help");
+  add_lang_section("notes");
   notes_server_setup(0);
   notes_irc_setup(0);
   my_memcpy(&USERENTRY_FWD, &USERENTRY_INFO, sizeof(void *) * 12);
@@ -1256,3 +1257,4 @@ char *notes_start(Function * global_funcs)
   Context;
   return NULL;
 }
+

@@ -1,7 +1,7 @@
 # core.french.lang
 #   core language messages for eggdrop
 #
-# $Id: core.french.lang,v 1.13 2000/08/03 21:51:33 fabian Exp $
+# $Id: core.french.lang,v 1.14 2000/09/23 17:40:17 fabian Exp $
 
 
 # General stuff
@@ -51,7 +51,7 @@
 0x20D,Vous avez installé des modules, mais n'avez pas choisi de module de cryptage,\n\
 consultez le ficher de configuration initiale pour plus de renseignements.\n
 0x20E,Module Filesys non chargé.
-0x20F,Module chargé: %s\t\t(avec support internationnal)
+0x20F,Module chargé: %s \t\t(avec support internationnal)
 0x210,Module chargé: %s
 
 # USERF_
@@ -305,27 +305,8 @@ Faites un Telnet sur le bot et entrez 'NEW' comme surnom.
 0xb00,Ce bot n'est pas là.\n
 0xb01,C'est un bot.  Vous ne pouvez laisser de notes à un bot.\n
 0xb02,est absent
-0xb03,Les notes ne sont pas supportées par ce bot.\n
-0xb04,Désolé, cet utilisateur a déjà trop de notes.\n
-0xb05,Création du fichier de notes impossible.  Désolé.\n
-0xb06,Fichier de notes introuvable!
 0xb07,Une note est arrivée pour vous
 0xb08,Message stocké
-0xb09,Note envoyée.
-0xb0a,Note externe
-0xb0b,Les fonctions de NOTES doivent être l'une de:
-0xb0c,Vous n'avez pas de messages
-0xb0d, -- EXPIRE AUJOURD'HUI
-0xb0e, -- EXPIRE DANS %d JOUR%s
-0xb0f,Vous avez des notes en attente
-0xb10,Vous n'avez pas autant de messages
-0xb11,Utilisez '.notes read' pour les lire.
-0xb12,Modification du ficher de notes impossible
-0xb13,Suppression de toutes vos notes
-0xb14,NOTICE %s :Vous avez %d note%s en attente sur %s.\n
-0xb15,Pour une liste:
-0xb16,### Vous avez %d note%s en attente.\n
-0xb17,### Utilisez '.notes read' pour les lire.\n
 0xb18,L'arrêt du bot commence....
 0xb19,Aucun utilisateur de ce nom
 0xb1a,Aucuns canaux

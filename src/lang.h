@@ -2,7 +2,7 @@
  * lang.h
  *   Conversion definitions for language support
  * 
- * $Id: lang.h,v 1.16 2000/09/18 20:04:57 fabian Exp $
+ * $Id: lang.h,v 1.17 2000/09/23 17:40:17 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -311,27 +311,7 @@
 #define BOT_NOTHERE		get_language(0xb00)
 #define BOT_NONOTES		get_language(0xb01)
 #define BOT_USERAWAY		get_language(0xb02)
-#define BOT_NOTEUNSUPP		get_language(0xb03)
-#define BOT_NOTES2MANY		get_language(0xb04)
-#define BOT_NOTESERROR1		get_language(0xb05)
-#define BOT_NOTESERROR2		get_language(0xb06)
 #define BOT_NOTEARRIVED		get_language(0xb07)
-#define BOT_NOTESTORED		get_language(0xb08)
-#define BOT_NOTEDELIV		get_language(0xb09)
-#define BOT_NOTEOUTSIDE		get_language(0xb0a)
-#define BOT_NOTESUSAGE		get_language(0xb0b)
-#define BOT_NOMESSAGES		get_language(0xb0c)
-#define BOT_NOTEEXP1		get_language(0xb0d)
-#define BOT_NOTEEXP2		get_language(0xb0e)
-#define BOT_NOTEWAIT		get_language(0xb0f)
-#define BOT_NOTTHATMANY		get_language(0xb10)
-#define BOT_NOTEUSAGE		get_language(0xb11)
-#define BOT_CANTMODNOTE		get_language(0xb12)
-#define BOT_NOTESERASED		get_language(0xb13)
-#define BOT_NOTESWAIT1		get_language(0xb14)
-#define BOT_NOTESWAIT2		get_language(0xb15)
-#define BOT_NOTESWAIT3		get_language(0xb16)
-#define BOT_NOTESWAIT4		get_language(0xb17)
 #define BOT_MSGDIE		get_language(0xb18)
 #define BOT_NOSUCHUSER		get_language(0xb19)
 #define BOT_NOCHANNELS		get_language(0xb1a)
