@@ -21,7 +21,7 @@
  */
 
 #ifndef lint
-static const char rcsid[] = "$Id: inet_ntop.c,v 1.1 2003/04/01 22:58:08 wcc Exp $";
+static const char rcsid[] = "$Id: inet_ntop.c,v 1.2 2003/04/02 21:16:22 wcc Exp $";
 #endif
 
 #if defined(LIBC_SCCS) && !defined(lint)
@@ -187,7 +187,7 @@ egg_inet_ntop6(src, dst, size)
 		/* Is this address an encapsulated IPv4? */
 		if (i == 6 && best.base == 0 &&
 		    (best.len == 6 || (best.len == 5 && words[5] == 0xffff))) {
-			if (!inet_ntop4(src+12, tp, sizeof tmp - (tp - tmp)))
+			if (!egg_inet_ntop4(src+12, tp, sizeof tmp - (tp - tmp)))
 				return (NULL);
 			tp += strlen(tp);
 			break;
