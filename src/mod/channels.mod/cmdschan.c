@@ -2,7 +2,7 @@
  * cmdschan.c -- part of channels.mod
  *   commands from a user via dcc that cause server interaction
  *
- * $Id: cmdschan.c,v 1.65 2003/03/10 05:57:10 wcc Exp $
+ * $Id: cmdschan.c,v 1.66 2003/03/24 05:47:07 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -441,8 +441,9 @@ static void cmd_mns_ban(struct userrec *u, int idx, char *par)
     if (!chname)
       chname = dcc[idx].u.chat->con_chan;
     get_user_flagrec(u, &user, chname);
-    if (!((glob_op(user) && !chan_deop(user)) || (glob_halfop(user) &&
-        !chan_dehalfop(user)) || chan_op(user) || chan_halfop(user))) {
+
+    if ((!chan_op(user) && (!glob_op(user) || chan_deop(user))) &&
+        (!chan_halfop(user) && (!glob_halfop(user) || chan_dehalfop(user)))) {
       dprintf(idx, "You don't have access to remove bans on %s.\n", chname);
       return;
     }
@@ -546,8 +547,8 @@ static void cmd_mns_exempt(struct userrec *u, int idx, char *par)
     if (!chname)
       chname = dcc[idx].u.chat->con_chan;
     get_user_flagrec(u, &user, chname);
-    if (!((glob_op(user) && !chan_deop(user)) || (glob_halfop(user) &&
-        !chan_dehalfop(user)) || chan_op(user) || chan_halfop(user))) {
+    if ((!chan_op(user) && (!glob_op(user) || chan_deop(user))) &&
+        (!chan_halfop(user) && (!glob_halfop(user) || chan_dehalfop(user)))) {
       dprintf(idx, "You don't have access to remove exempts on %s.\n", chname);
       return;
     }
@@ -653,8 +654,8 @@ static void cmd_mns_invite(struct userrec *u, int idx, char *par)
     if (!chname)
       chname = dcc[idx].u.chat->con_chan;
     get_user_flagrec(u, &user, chname);
-    if (!((glob_op(user) && !chan_deop(user)) || (glob_halfop(user) &&
-        !chan_dehalfop(user)) || chan_op(user) || chan_halfop(user))) {
+    if ((!chan_op(user) && (!glob_op(user) || chan_deop(user))) &&
+        (!chan_halfop(user) && (!glob_halfop(user) || chan_dehalfop(user)))) {
       dprintf(idx, "You don't have access to remove invites on %s.\n", chname);
       return;
     }
