@@ -4,7 +4,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: modules.c,v 1.85 2003/05/07 04:45:10 wcc Exp $
+ * $Id: modules.c,v 1.86 2003/08/16 20:12:36 wcc Exp $
  */
 /* 
  * Copyright (C) 1997 Robey Pointer
@@ -564,7 +564,9 @@ Function global_table[] = {
   (Function) getprotocol,
   (Function) open_listen_by_af,
   /* 288 - 291 */
-  (Function) egg_inet_ntop
+  (Function) egg_inet_ntop,
+  (Function) strip_mirc_codes,
+  (Function) check_ansi
 };
 
 void init_modules(void)

@@ -1,7 +1,7 @@
 /*
  * module.h
  *
- * $Id: module.h,v 1.76 2003/07/01 04:36:26 wcc Exp $
+ * $Id: module.h,v 1.77 2003/08/16 20:12:36 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -479,6 +479,8 @@
 #define open_listen_by_af ((int (*) (int *, int))global[287])
 /* 288 - 291 */
 #define egg_inet_ntop ((int (*)(int af, const void *src, char *dst, socklen_t size))global[288])
+#define strip_mirc_codes ((void (*)(int, char *))global[289])
+#define check_ansi ((int (*) (char *))global[290])
 
 /* hostmasking */
 #define maskhost(a,b) _maskhost((a),(b),1)

@@ -7,7 +7,7 @@
  * because they use structures in those
  * (saves including those .h files EVERY time) - Beldin
  *
- * $Id: proto.h,v 1.57 2003/04/17 01:55:57 wcc Exp $
+ * $Id: proto.h,v 1.58 2003/08/16 20:12:36 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -125,6 +125,8 @@ char *stripmasktype(int);
 
 /* dcc.c */
 void failed_link(int);
+void strip_mirc_codes(int, char *);
+int check_ansi(char *);
 void dupwait_notify(char *);
 
 /* dccutil.c */

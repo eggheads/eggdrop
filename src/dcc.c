@@ -4,7 +4,7 @@
  *   disconnect on a dcc socket
  *   ...and that's it!  (but it's a LOT)
  *
- * $Id: dcc.c,v 1.67 2003/04/17 01:55:57 wcc Exp $
+ * $Id: dcc.c,v 1.68 2003/08/16 20:12:36 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -684,7 +684,7 @@ static void kill_dcc_general(int idx, void *x)
  * guy, but when you added this feature you forced people to either
  * use your *SHAREWARE* client or face screenfulls of crap!)
  */
-static void strip_mirc_codes(int flags, char *text)
+void strip_mirc_codes(int flags, char *text)
 {
   char *dd = text;
 
@@ -821,7 +821,7 @@ struct dcc_table DCC_CHAT_PASS = {
 
 /* Make sure ansi code is just for color-changing
  */
-static int check_ansi(char *v)
+int check_ansi(char *v)
 {
   int count = 2;
 
