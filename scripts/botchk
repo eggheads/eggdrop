@@ -1,0 +1,71 @@
+#!/bin/sh
+#
+# new botchk  (for eggdrop 1.1)
+#
+# This is a script suitable for use in a crontab.  It checks to make sure
+# your bot is running.  YOU NEED A SEPARATE CRON JOB FOR EACH BOT.  If your
+# bot isn't found, it'll try to start it back up.
+#
+# You'll need to edit this script for your bot.
+#
+# To check for your bot every 10 minutes, put the following line in your
+# crontab:
+#    0,10,20,30,40,50 * * * *   /home/mydir/botchk
+# And if you don't want to get email from crontab when it checks you bot,
+# put the following in your crontab:
+#    0,10,20,30,40,50 * * * *   /home/mydir/botchk >/dev/null 2>&1
+#
+
+# change this to the directory you run your bot from:
+botdir="/home/mydir/mybot"
+
+# change this to the name of your bot's script in that directory:
+botscript="mybot"
+
+# change this to the nickname of your bot (capitalization COUNTS)
+botname="Doofy"
+
+# change this to the name of your bot's userfile (capitalization COUNTS)
+userfile="Doofy.user"
+
+########## you probably don't need to change anything below here ##########
+
+cd $botdir
+if test -r pid.$botname; then
+  # there is a pid file -- is it current?
+  botpid=`cat pid.$botname`
+  if `kill -CHLD $botpid >/dev/null 2>&1`; then
+    # it's still going
+    # back out quietly
+    exit 0
+  fi
+  echo ""
+  echo "Stale pid.$botname file (erasing it)"
+  rm -f pid.$botname
+fi
+echo ""
+echo "Couldn't find the bot running.  Reloading it..."
+echo ""
+# Check for userfile first
+if test -r $userfile; then
+   # It's there, load the bot
+  ./$botscript
+  exit 0
+fi
+if test -r $userfile~new; then
+   # Bot f*@!ed up while saving the userfile last time.  Move it over.
+   echo "Userfile missing.  Using last saved userfile..."
+   mv $userfile~new $userfile
+  ./$botscript
+  exit 0
+fi
+if test -r $userfile~bak; then
+   # Userfile is missing, use backup userfile.
+   echo "Userfile missing.  Using backup userfile..."
+   cp $userfile~bak $userfile
+  ./$botscript
+  exit 0
+fi
+# Well, nothing to work with...
+echo "No userfile.  Could not reload the bot.."
+exit 0

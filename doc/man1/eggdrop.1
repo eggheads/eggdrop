@@ -1,0 +1,92 @@
+.TH EGGDROP 1 "5 June, 1999"
+.UC 4
+.SH NAME
+eggdrop \- an IRC robot program
+.SH SYNOPSIS
+.B eggdrop
+[
+options
+]
+[
+config-file
+]
+.SH DESCRIPTION
+.I eggdrop
+is a fully-functional IRC robot program.  It is
+stand-alone, and does not require the ircII client.  It currently
+supports all known IRC nets, including EFnet and Undernet.
+.PP
+By itself,
+.I eggdrop
+does nothing.  It needs a config file
+(usually named after your bot)
+to tell it how to behave.  The
+config file is actually a script written in enhanced
+.I Tcl
+(Tcl
+with extra commands and variables defined by eggdrop).  A sample
+Tcl config file,
+.I eggdrop.conf
+, is given with the distribution.
+.PP
+There is
+.B extensive
+online documentation.  Once you get the bot
+running, open a DCC chat with it, and send it a DCC message like:
+.PP
+   /msg =MyBot .help
+.PP
+.I eggdrop
+options include:
+.TP
+.B \-h
+displays a list of command-line options.
+.TP
+.B \-v
+displays the current version of eggdrop, as well as any patches that have
+been loaded.
+.TP
+.B \-n
+.I Eggdrop
+normally automatically moves into the background upon loading.  This
+option makes it stay in the foreground and display console entries
+to the console terminal.
+.TP
+.B \-nc
+Like
+.B \-n
+the bot won't move into the background.  However, the console terminal
+will display channel status every 10 seconds, instead of log entries.
+.TP
+.B \-nt
+As above, the bot won't move into the background.  The console terminal
+simulates a local DCC chat which never ends (as long as the bot is
+running).  The nickname used for the DCC chat is "HQ" (a master).
+.TP
+.B \-s
+Console and log output will be "squelched".
+.TP
+.B \-m
+The first time you run
+.I eggdrop
+, you need to use the -m option, to
+put eggdrop in "userfile creation" mode.  Follow the directions
+and it will build a user record database, with you listed as a
+"master" (person who runs the bot).
+.SH FILES
+.ta 2i
+.br
+eggdrop.conf.dist          sample configuration file
+.br
+weed               Tcl script to sort eggdrop userfiles
+.br
+botchk             csh script suitable for crontab job
+.br
+scripts/           some example Tcl-eggdrop scripts
+.SH "SEE ALSO"
+ircII(1), tclsh(1)
+.SH AUTHOR
+Robey Pointer 1997
+.SH BUGS
+If you find any, email to eggheads@eggheads.org !
+

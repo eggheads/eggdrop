@@ -1,0 +1,388 @@
+From: Chad Wagner <cmwagner@laker.net>
+Subject: %Eggdrop compiling.FAQ 7/4/96
+To: eggdrop@sodre.net
+Date: Thu, 4 Jul 1996 19:57:15 -0400 (EDT)
+
+As a preface to this, I just want to say that I haven't come up with all
+of these solutions, one I know for a fact is from this mailing list (don't
+know the originator of it -- it is the net.o one), another is from the
+eggdrop.doc (rephrased), and the others are solutions that I have come
+up with for problems.  (TCL_DONT_WAIT was one that Robey recommend to
+users using a 7.5 beta release of Tcl).  I will hopefully try to
+give credit where credit is due, but essentially I have just claimed it
+as contributors.  If anything is to be contributed I will place e-mail
+addresses with it on future contributions.
+
+
+
+EGGDROP AND TCL COMPILING ERRORS AND RESOLUTION FAQ
+(in other words, maybe this FAQ will help you get eggdrop compiled).
+by Chad Wagner <cmwagner@sodre.net> and contributors
+Last revised: July 4, 1996
+
+
+A. EGGDROP
+ 1. UNDEFINED REFERENCES IN NET.O  (SunOS)
+
+   Undefined			first referenced
+    symbol  			    in file
+   socket                              net.o
+   gethostbyname                       net.o
+   accept                              net.o
+   bind                                net.o
+   setsockopt                          net.o
+   gethostbyaddr                       net.o
+   getsockname                         net.o
+   gethostname                         net.o
+   listen                              net.o
+   connect                             net.o
+   ld: fatal: Symbol referencing errors. No output written to eggdrop
+
+This seems to be caused by a few libraries not being detected by the
+auto-configure program, it is relatively easy to fix.  Edit your Makefile,
+note that yours may be slightly different than this one when it comes to
+the tcl library, but here is the way it probably is:
+
+GMAKE = ${MAKE} 'CC=gcc' 'AWK=awk' 'OBJS=${OBJS}' 'TCLLIBFN=tcl.a'\
+        'CFLAGS=${CFLAGS}' 'XREQ=${XREQ}' 'XLIBS= -L/usr/local/lib -ltcl -lm'\
+        'TCLLIB=${TCLLIB}' 'RANLIB=:' 'STRIP='
+
+And here is what you need to change:
+
+GMAKE = ${MAKE} 'CC=gcc' 'AWK=awk' 'OBJS=${OBJS}' 'TCLLIBFN=tcl.a'\
+        'CFLAGS=${CFLAGS}' 'XREQ=${XREQ}' 'XLIBS=-lsocket -ldl -lnsl -L/usr/local/lib -ltcl -lm'\
+        'TCLLIB=${TCLLIB}' 'RANLIB=:' 'STRIP='
+
+You are adding in three libraries to be linked in, socket, dl, and nsl.  This
+will resolve the net.o errors.
+
+
+ 2. COMPILE STOPS AT THE LAST MINUTE WITH "LD FATAL SIGNAL 11"!  (Linux)
+
+This seems to be caused by a non-ELF Tcl library binary, and the compiler
+doesn't seem to like it.  The first thing you want to do is download and
+compile tcl yourself.  And then follow this set of commands to help you
+reconfigure eggdrop using the newly compiled Tcl library (all of this
+should be done from your home directory):
+
+cd
+mkdir lib
+mkdir include
+find . -name libtcl*
+
+The output from the find command should give you the location of the library,
+take the output of that and do the next command with the output of find 
+replacing $$find$$:
+
+mv $$find$$ lib/libtcl.a
+
+Now we continue with another find to help us locate tcl.h:
+
+find . -name tcl.h
+
+The output from the find command should give you the location of the header
+file, take the output of that and do the next command with the output of
+find replacing $$find$$:
+
+mv $$find$$ include
+
+Hopefully you know what shell you are using and can pick out which commands
+to use, if the first two setenv commands give command not found then use
+the next two, if not then don't use the next two.  First set are for csh/tcsh
+users, following set is for bash/ksh users.
+
+csh/tcsh:
+setenv TCLLIB '$HOME/lib'
+setenv TCLINC '$HOME/include'
+
+bash/ksh:
+export TCLLIB='$HOME/lib'
+export TCLINC='$HOME/include'
+
+And then finally run configure again for eggdrop and then make, and hopefully
+it will work.
+
+
+ 3. LD: -ltcl7.4: EXPECTED LIBX.SO(.MAJOR.MINOR.XXX)  (various)
+
+   ld: -ltcl7.4: expected libx.so(.major.minor.xxx)
+   collect2: ld returned 4 exit status
+   *** Error code 1
+   make: Fatal error: Command failed for target `eggdrop'
+
+
+On some Unix boxes this seems to be caused by the linker, it is expecting
+a specific filename format and when it doesn't live up to it's expectations
+it usually barfs.  I always see this caused by when the library for Tcl is
+called libtcl7.4.a or libtcl7.5.a, rename it to simply libtcl.a if you
+installed Tcl yourself, if you didn't and your using the Tcl that the
+system installed then do this:
+
+View your Makefile, look for the line (should be close to the top) that says
+
+XREQ = /usr/local/lib/libtcl7.4.a
+
+And remember that FULL pathname.  Go to your home directory, and do the
+following:
+
+mkdir lib
+cd lib
+ln -s $$xreq$$ libtcl.a
+
+Replace $$xreq$$ with the full pathname from the XREQ line from the Makefile.
+
+And finally the next thing you want to do depending on what shell your
+using is: (try the first one, if it gives bad command then use the second)
+
+csh/tcsh:
+setenv TCLLIB '$HOME/lib'
+
+bash/ksh:
+export TCLLIB='$HOME/lib'
+
+Did I say finally?  Heh, finally run configure and then make again.
+
+
+ 4. STRIP TERMINATED WITH SIGNAL 6  (various)
+
+   collect2: strip terminated with signal 6 [IOT/Abort trap]
+   *** Exit 1
+   Stop.
+   *** Exit 1
+   Stop.
+
+I don't really know what the hell is causing this, but I find that if you
+don't strip the binary you cut out the problem (obviously), edit your
+Makefile and change this line from:
+
+GMAKE = ${MAKE} 'CC=gcc' 'AWK=awk' 'OBJS=${OBJS}' 'TCLLIBFN=tcl.a'\
+        'CFLAGS=${CFLAGS}' 'XREQ=${XREQ}' 'XLIBS= -L/usr/local/lib -ltcl -lm' \
+        'TCLLIB=${TCLLIB}' 'RANLIB=ranlib' 'STRIP=-s'
+
+To this line below:  (your lines may differ, but what you are doing is
+changing 'STRIP=-s' to 'STRIP=')
+
+GMAKE = ${MAKE} 'CC=gcc' 'AWK=awk' 'OBJS=${OBJS}' 'TCLLIBFN=tcl.a'\
+        'CFLAGS=${CFLAGS}' 'XREQ=${XREQ}' 'XLIBS= -L/usr/local/lib -ltcl -lm' \
+        'TCLLIB=${TCLLIB}' 'RANLIB=ranlib' 'STRIP='
+
+ 5. 'DIR' UNDECLARED (AND A WHOLE BUNCH OF OTHERS)   (AIX 4)
+
+   gcc -c -O2 -fno-strength-reduce -I.. -DHAVE_CONFIG_H  filedb.c
+   filedb.c: In function `filedb_update':
+   filedb.c:209: `DIR' undeclared (first use this function)
+   filedb.c:209: (Each undeclared identifier is reported only once
+   filedb.c:209: for each function it appears in.)
+   filedb.c:209: `dir' undeclared (first use this function)
+   filedb.c:209: parse error before `*'
+   filedb.c:217: warning: assignment makes pointer from integer without a cast
+   filedb.c:218: `name' undeclared (first use this function)
+   filedb.c:218: dereferencing pointer to incomplete type
+   filedb.c:220: dereferencing pointer to incomplete type
+   filedb.c:220: dereferencing pointer to incomplete type
+   filedb.c:224: dereferencing pointer to incomplete type
+   filedb.c:224: dereferencing pointer to incomplete type
+   filedb.c:225: dereferencing pointer to incomplete type
+   filedb.c:230: `s' undeclared (first use this function)
+   filedb.c:231: `st' undeclared (first use this function)
+   filedb.c:232: `fdb' undeclared (first use this function)
+   filedb.c:232: `where' undeclared (first use this function)
+   filedb.c:237: `fdb1' undeclared (first use this function)
+   filedb.c:253: warning: assignment makes pointer from integer without a cast
+   make: The error code from the last command is 1.
+
+This seems like one of the components of configure was broken, because what
+apparently happened was it didn't detect that this particular system had
+dirent.h and sys/dir.h, solution was to add -DHAVE_DIRENT_H -DHAVE_SYS_DIR_H
+to the Makefile's CFLGS line...
+
+CFLGS = -DHAVE_DIRENT_H -DHAVE_SYS_DIR_H
+
+ 6. 'FD_SET' UNDECLARED (AND A WHOLE BUNCH OF OTHERS)   (AIX 4)
+
+   gcc -c -O2 -fno-strength-reduce -I.. -DHAVE_CONFIG_H -DHAVE_DIRENT_H -DHAVE_SYS_DIR_H net.c
+   net.c: In function `sockread':
+   net.c:390: `fd_set' undeclared (first use this function)
+   net.c:390: (Each undeclared identifier is reported only once
+   net.c:390: for each function it appears in.)
+   net.c:390: parse error before `fd'
+   net.c:396: `fd' undeclared (first use this function)
+   make: The error code from the last command is 1.
+
+Again, this seems that one of configure's components (sed, awk, or something
+along those lines) was broken, and it failed to detect that this system needed
+sys/select.h, solution was to add -DHAVE_SYS_SELECT_H to the Makefile's CFLGS
+line...
+
+CFLGS = -DHAVE_DIRENT_H -DHAVE_SYS_DIR_H -DHAVE_SYS_SELECT_H
+
+(I suppose they thought a minor error would deter anyone from continuing
+onward, but I am not just anyone, I am a blockhead... <grin>)
+
+ 7. UNRESOLVED OR UNDEFINED SYMBOLS: ldclose, ldopen, ldnshread  (AIX 3)
+
+   cc -s -o eggdrop chan.o chanprog.o chanset.o cmds.o dcc.o dccutil.o filedb.o fileq.o files.o gotdcc.o hash.o main.o match.o mem.o misc.o mode.o msgcmds.o msgnotice.o net.o tandcmd.o tandem.o tcl.o tclhash.o userrec.o users.o -L/home2/f/foster/lib -ltcl7.5 -lm
+   0706-317 ERROR: Unresolved or undefined symbols detected:
+                    Symbols in error (followed by references) are
+                    dumped to the load map.
+                    The -bloadmap:<filename> option will create a load map.
+   .ldclose
+   .ldopen
+   .ldnshread
+   make: 1254-004 The error code from the last command is 8.
+
+Apparently what is happening is a library called ld is required, and either
+configure doesn't know it is needed or it simple can't find it, or maybe
+this is a unique case, solution was to have ld linked in with the final
+binary.
+
+Edit your Makefile and find the line that looks something like this:
+
+GMAKE = ${MAKE} 'CC=cc' 'AWK=awk' 'OBJS=${OBJS}' 'TCLLIBFN=tcl7.5.a'\
+        'CFLAGS=${CFLAGS}' 'XREQ=${XREQ}' 'XLIBS= -L/home2/f/foster/lib -ltcl7.5 -lm'\
+        'TCLLIB=${TCLLIB}' 'RANLIB=ranlib' 'STRIP=-s'
+
+And add in -lld into the XLIBS assignment, like this...
+
+GMAKE = ${MAKE} 'CC=cc' 'AWK=awk' 'OBJS=${OBJS}' 'TCLLIBFN=tcl7.5.a'\
+        'CFLAGS=${CFLAGS}' 'XREQ=${XREQ}' 'XLIBS=-lld -L/home2/f/foster/lib -ltcl7.5 -lm'\
+        'TCLLIB=${TCLLIB}' 'RANLIB=ranlib' 'STRIP=-s'
+
+ 8. UNSATISFIED SYMBOLS 'shl_findsym' and 'shl_load'  (HP-UX 9)
+
+   gcc -s -o eggdrop chan.o chanprog.o chanset.o cmds.o dcc.o dccutil.o filedb.o fileq.o files.o gotdcc.o hash.o main.o match.o mem.o misc.o mode.o msgcmds.o msgnotice.o net.o tandcmd.o tandem.o tcl.o tclhash.o userrec.o users.o -L/home/hltran/tcl/lib -ltcl7.5 -lm
+   /bin/ld: Unsatisfied symbols:
+      shl_findsym (code)
+      shl_load (code)
+   collect2: ld returned 1 exit status
+   *** Error code 1
+   Stop.
+
+I forwarded this one to Robey and he said that Tcl 7.5 the dl library, and that
+apparently configure couldn't detect that this was required in this case.  So
+try this fix, and if it works, great, if not then use Tcl 7.4, I hear this
+works.  :)
+
+GMAKE = ${MAKE} 'CC=gcc' 'AWK=awk' 'OBJS=${OBJS}' 'TCLLIBFN=tcl7.5.a'\
+        'CFLAGS=${CFLAGS}' 'XREQ=${XREQ}' 'XLIBS= -L/usr/local/lib -ltcl7.5 -lm'\
+        'TCLLIB=${TCLLIB}' 'RANLIB=:' 'STRIP='
+
+And here is what you need to change:
+
+GMAKE = ${MAKE} 'CC=gcc' 'AWK=awk' 'OBJS=${OBJS}' 'TCLLIBFN=tcl7.5.a'\
+        'CFLAGS=${CFLAGS}' 'XREQ=${XREQ}' 'XLIBS=-ldl -L/usr/local/lib -ltcl7.5 -lm'\
+        'TCLLIB=${TCLLIB}' 'RANLIB=:' 'STRIP='
+
+Basically what you are doing is adding in -ldl to the XLIBS declaration,
+essentially at link time you are tell it to also link in the dl library which
+apparently resolves this problem.
+
+
+B. TCL
+
+ 1. REDECLARATION IN COMPAT/UNISTD.H   (Tcl 7.4/AIX 4)
+
+   cc -c -O -I. -I. -DHAVE_________=1 -DSTDC_HEADERS=1 -DNO_UNION_WAIT=1 -DNEED_MATHERR=1 -Dvfork=fork        -DTCL_LIBRARY=\"/usr/local/lib/tcl7.4\" regexp.c
+   "compat/unistd.h", line 42.12: 1506-343 (S) Redeclaration of execl differs from previous declaration on line 121 of "/usr/include/unistd.h".
+   "compat/unistd.h", line 42.12: 1506-378 (I) Prototype for function execl cannot contain "..." when mixed with a nonprototype declaration.
+   "compat/unistd.h", line 43.12: 1506-343 (S) Redeclaration of execle differs from previous declaration on line 123 of "/usr/include/unistd.h".
+   "compat/unistd.h", line 43.12: 1506-378 (I) Prototype for function execle cannot contain "..." when mixed with a nonprototype declaration.
+   "compat/unistd.h", line 44.12: 1506-343 (S) Redeclaration of execlp differs from previous declaration on line 125 of "/usr/include/unistd.h".
+   "compat/unistd.h", line 44.12: 1506-378 (I) Prototype for function execlp cannot contain "..." when mixed with a nonprototype declaration.
+   make: The error code from the last command is 1.
+
+Seems that configure had a brain fart...  Would you believe this was the same
+system as in A.6 and A.7, heh, it was.  Apparently it thought this system
+didn't have unistd.h, and was using it's compatible header, solution was to
+edit Makefile and change this line:
+
+AC_FLAGS = -DHAVE_________=1 -DSTDC_HEADERS=1 -DNO_UNION_WAIT=1 -DNEED_MATHERR=1 -Dvfork=fork
+
+to the following:
+
+AC_FLAGS = -DHAVE_UNISTD_H=1 -DSTDC_HEADERS=1 -DNO_UNION_WAIT=1 -DNEED_MATHERR=1 -Dvfork=fork
+
+
+ 2. CONFLICTING TYPES FOR 'waitpid'   (Tcl 7.5/SunOS 5.4)
+
+   cc -c -O  -I./../generic -I. -DNO_STRERROR=1 -DNO_GETWD=1 -DNO_WAIT3=1 -DNO_UNAME=1 -DNO_DIRENT_H=1 -DHAVE_UNISTD_H=1 -DHAVE_SYS_TIME_H=1 -DTIME_WITH_SYS_TIME=1 -DHAVE_TIMEZONE_VAR=1 -DUSE_DIRENT2_H=1 -DNO_UNION_WAIT=1 -DNEED_MATHERR=1 -Dvfork=fork -DNO_GETTOD=1 -DGETTOD_NOT_DECLARED=1       -DTCL_SHLIB_EXT=\".so\"
+   ./../compat/waitpid.c
+   ./../compat/waitpid.c:69: conflicting types for `waitpid'
+   /usr/include/sys/wait.h:80: previous declaration of `waitpid'
+   make: *** [waitpid.o] Error 1
+
+Configure apparently couldn't figure this one out, probably because the system
+it was configured on sucks badly.  Change the following line in Makefile:
+
+COMPAT_OBJS =          getcwd.o opendir.o strstr.o strtol.o tmpnam.o waitpid.o strstr.o strtoul.o strtod.o strncasecmp.o
+
+To the following
+
+COMPAT_OBJS =          getcwd.o opendir.o strstr.o strtol.o tmpnam.o strstr.o strtoul.o strtod.o strncasecmp.o
+
+We are deleting the waitpid.o object file.  The problem was that configure
+didn't detect that waitpid() wasn't necessary, so it caused a compatible
+waitpid() function to be compiled.
+
+
+ 3. UNDEFINED SYMBOLS IN tclUnixChan.o -- AND MANY OTHERS   (Tcl 7.5/SunOS 5.4)
+
+   gcc  tclAppInit.o -L/export/home/rewt/tcl7.5/unix -ltcl7.5 -ldl  -lm -lc \
+            -o tclsh
+   Undefined                       first referenced
+    symbol                             in file
+   socket                              /export/home/rewt/tcl7.5/unix/libtcl7.5.a(tclUnixChan.o)
+   getpeername                         /export/home/rewt/tcl7.5/unix/libtcl7.5.a(tclUnixChan.o)
+   recv                                /export/home/rewt/tcl7.5/unix/libtcl7.5.a(tclUnixChan.o)
+   gethostbyname                       /export/home/rewt/tcl7.5/unix/libtcl7.5.a(tclUnixChan.o)
+   accept                              /export/home/rewt/tcl7.5/unix/libtcl7.5.a(tclUnixChan.o)
+   send                                /export/home/rewt/tcl7.5/unix/libtcl7.5.a(tclUnixChan.o)
+   bind                                /export/home/rewt/tcl7.5/unix/libtcl7.5.a(tclUnixChan.o)
+   setsockopt                          /export/home/rewt/tcl7.5/unix/libtcl7.5.a(tclUnixChan.o)
+   getwd                               /export/home/rewt/tcl7.5/unix/libtcl7.5.a(getcwd.o)
+   getservbyname                       /export/home/rewt/tcl7.5/unix/libtcl7.5.a(tclIOSock.o)
+   gethostbyaddr                       /export/home/rewt/tcl7.5/unix/libtcl7.5.a(tclUnixChan.o)
+   getsockopt                          /export/home/rewt/tcl7.5/unix/libtcl7.5.a(tclIOSock.o)
+   inet_addr                           /export/home/rewt/tcl7.5/unix/libtcl7.5.a(tclUnixChan.o)
+   inet_ntoa                           /export/home/rewt/tcl7.5/unix/libtcl7.5.a(tclUnixChan.o)
+   getsockname                         /export/home/rewt/tcl7.5/unix/libtcl7.5.a(tclUnixChan.o)
+   listen                              /export/home/rewt/tcl7.5/unix/libtcl7.5.a(tclUnixChan.o)
+   connect                             /export/home/rewt/tcl7.5/unix/libtcl7.5.a(tclUnixChan.o)
+   ld: fatal: Symbol referencing errors. No output written to tclsh
+   make: *** [tclsh] Error 1
+
+Configure couldn't find or detect that nsl and socket libraries were required,
+so we have to force it to use them.  The solution is to edit Makefile and
+change the following line:
+
+LIBS = -ldl
+
+To the following:
+
+LIBS = -ldl -lnsl -lsocket
+
+
+ 4. UNDEFINED SYMBOL 'getwd' IN getcwd.o   (Tcl 7.5/SunOS 5.4)
+
+   gcc  tclAppInit.o -L/export/home/rewt/tcl7.5/unix -ltcl7.5 -ldl -lnsl -lsocket -lm -lc \
+            -o tclsh
+   Undefined                       first referenced
+    symbol                             in file
+   getwd                               /export/home/rewt/tcl7.5/unix/libtcl7.5.a(getcwd.o)
+   ld: fatal: Symbol referencing errors. No output written to tclsh
+   make: *** [tclsh] Error 1
+
+
+Configure apparently couldn't figure this one out, probably because the system
+it was configured on sucks badly.  Change the following line in Makefile:
+
+COMPAT_OBJS =          getcwd.o opendir.o strstr.o strtol.o tmpnam.o strstr.o strtoul.o strtod.o strncasecmp.o
+
+To the following
+
+COMPAT_OBJS =          opendir.o strstr.o strtol.o tmpnam.o strstr.o strtoul.o strtod.o strncasecmp.o
+
+We are deleting the getcwd.o object file.  The problem was that configure
+didn't detect that getcwd() wasn't necessary, so it caused a compatible
+getcwd() function to be compiled.
+

@@ -1,0 +1,74 @@
+PATCH HOWTO v1.1			                  03 Jun 1999
+
+
+
+INDEX
+
+I	ABOUT THIS DOCUMENT
+II	TERMS USED
+III	APPLYING A PATCH
+IV	DOWNLOADING A PATCH
+
+
+
+
+
+
+I. ABOUT THIS DOCUMENT
+
+The purpose of this document is to show you what a patch is and how you
+can apply a patch.
+
+
+
+
+II. TERMS USED
+
+The following are some common terms used in this document.  
+If applicable, there is also the associated command named.
+
+
+ patch
+  A patch is an update for a sourcecode of a program (here eggdrop). Be
+  carefull, every patch is designed for a speciall eggdrop version and
+  cannot be applied on every bot!
+
+
+
+
+
+III	APPLYING A PATCH
+
+To apply a patch to an eggdrop you have to get first the sourcecode of
+it (you should always keep a tar.gz archieve with the source of your
+current eggdrop on your shell). In the next step you have to change to
+your current source directory (i.e.: /home/user/eggdrop1.3.27/) and type
+the following command:
+
+patch -p1 < ../path.to.the/patch
+
+Once this is complete, execute the following command:
+
+find . -name "*.rej" -print
+
+If it returns a list with filenames ending with .rej extension then the
+patch didn't apply properly. Ensure that the patch is intended for your
+version and that you have the original source. You should also try to
+re-download the patch to ensure, that the patch is not corrupted.
+
+If the patch applied properly the only thing left to do is to recompile
+your eggdrop and install the new modules and binaries.
+
+
+
+
+IV	DOWNLOADING A PATCH
+
+All patches for eggdrop1.3.x can be found on ftp.eggheads.org in /pub/eggdrop/patches1.3.
+
+
+
+Hope that this document helped you in some way...
+
+Johoho@IRCNET
+comments: wodecki@gmx.de

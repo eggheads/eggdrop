@@ -1,0 +1,38 @@
+Some little tricks that you may or may not know about...
+
+*  You can "lock" a user's info line by putting a '@' as the first letter.
+   They won't be able to change it any more.
+
+*  '.status all' will dump out virtually everything you have configured on
+   your bot
+
+*  TCL has a command 'info body <proc>' that will list the contents of a
+   proc.  'info args <proc>' shows what you have defined as the parameters
+   for the proc.
+
+*  You can rename a builtin command by binding over it.  To rename '.status'
+   to '.report', you'd do:
+     unbind dcc - status *dcc:status
+     bind dcc m report *dcc:status
+   The first line removes the builtin binding on '.status', and the second
+   line binds '.report' to the builtin status function.  Other built-in command
+   examples include:
+     unbind msg - status *msg:status
+     bind msg m report *msg:status
+   and:
+     unbind fil - share *fil:share
+     bind fil m link *fil:share
+
+*  You can unlink all bots and clear out the botnet info from memory by
+   using '.unlink *'.  It erases all channel assoc's and everything.
+
+*  You can automagically make a ban sticky by adding a * as the first
+   character in the ban reason.
+
+*  You can add a user with a static hostmask when using .adduser by prefixing
+   their nick by !. 
+	ie with a hostmask of drummer!ident@some.host.com
+		.adduser drummer
+			uses *!ident@*.host.com
+		.adduser !drummer
+			uses *!ident@some.host.com
