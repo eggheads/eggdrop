@@ -2,7 +2,7 @@
  * filesys.c -- part of filesys.mod
  *   main file of the filesys eggdrop module
  *
- * $Id: filesys.c,v 1.47 2002/01/02 03:46:38 guppy Exp $
+ * $Id: filesys.c,v 1.48 2002/02/25 03:34:16 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -306,8 +306,8 @@ static int cmd_files(struct userrec *u, int idx, char *par)
   if (dccdir[0] == 0)
     dprintf(idx, "There is no file transfer area.\n");
   else if (too_many_filers()) {
-    dprintf(idx, "The maximum of %d people are in the file area right now.\n",
-	    dcc_users);
+    dprintf(idx, "The maximum of %d %s in the file area right now.\n",
+	    dcc_users, (dcc_users != 1) ? "people are" : "person is");
     dprintf(idx, "Please try again later.\n");
   } else {
     if (!(atr & (USER_MASTER | USER_XFER)))

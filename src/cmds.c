@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  *
- * $Id: cmds.c,v 1.75 2002/02/20 03:32:20 wcc Exp $
+ * $Id: cmds.c,v 1.76 2002/02/25 03:34:16 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -2151,7 +2151,8 @@ static void cmd_page(struct userrec *u, int idx, char *par)
     dprintf(idx, "Paging turned off.\n");
     putlog(LOG_CMDS, "*", "#%s# page off", dcc[idx].nick);
   } else if (a > 0) {
-    dprintf(idx, "Paging turned on, stopping every %d lines.\n", a);
+    dprintf(idx, "Paging turned on, stopping every %d line%s.\n", a,
+        (a != 1) ? "s" : "");
     dcc[idx].status |= STAT_PAGE;
     dcc[idx].u.chat->max_line = a;
     dcc[idx].u.chat->line_count = 0;

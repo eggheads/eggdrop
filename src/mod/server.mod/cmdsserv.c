@@ -2,7 +2,7 @@
  * cmdsserv.c -- part of server.mod
  *   handles commands from a user via dcc that cause server interaction
  *
- * $Id: cmdsserv.c,v 1.13 2002/01/21 19:19:56 wcc Exp $
+ * $Id: cmdsserv.c,v 1.14 2002/02/25 03:34:16 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -101,26 +101,30 @@ static void cmd_clearqueue(struct userrec *u, int idx, char *par)
     msgq_clear(&mq);
     msgq_clear(&hq);
     double_warned = burst = 0;
-    dprintf(idx, "Removed %d msgs from all queues\n", msgs);
+    dprintf(idx, "Removed %d message%s from all queues.\n", msgs, 
+        (msgs != 1) ? "s" : "");
   } else if (!egg_strcasecmp(par, "mode")) {
     msgs = modeq.tot;
     msgq_clear(&modeq);
     if (mq.tot == 0)
       burst = 0;
     double_warned = 0;
-    dprintf(idx, "Removed %d msgs from the %s queue\n", msgs, "mode");
+    dprintf(idx, "Removed %d message%s from the mode queue.\n", msgs, 
+        (msgs != 1) ? "s" : "");
   } else if (!egg_strcasecmp(par, "help")) {
     msgs = hq.tot;
     msgq_clear(&hq);
     double_warned = 0;
-    dprintf(idx, "Removed %d msgs from the %s queue\n", msgs, "help");
+    dprintf(idx, "Removed %d message%s from the help queue.\n", msgs,
+        (msgs != 1) ? "s" : "");
   } else if (!egg_strcasecmp(par, "server")) {
     msgs = mq.tot;
     msgq_clear(&mq);
     if (modeq.tot == 0)
       burst = 0;
     double_warned = 0;
-    dprintf(idx, "Removed %d msgs from the %s queue\n", msgs, "server");
+    dprintf(idx, "Removed %d message%s from the server queue.\n", msgs,
+        (msgs != 1) ? "s" : "");
   } else {
     dprintf(idx, "Usage: clearqueue <mode|server|help|all>\n");
     return;
