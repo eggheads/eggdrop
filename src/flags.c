@@ -2,7 +2,7 @@
  * flags.c -- handles:
  *   all the flag matching/conversion functions in one neat package :)
  * 
- * $Id: flags.c,v 1.15 2000/10/27 19:32:40 fabian Exp $
+ * $Id: flags.c,v 1.16 2000/11/10 19:39:38 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -265,9 +265,9 @@ int sanity_check(int atr)
   /* Can't be owner without also being master */
   if (atr & USER_OWNER)
     atr |= USER_MASTER;
-  /* Master implies botmaster, op, friend and janitor */
+  /* Master implies botmaster, op and janitor */
   if (atr & USER_MASTER)
-    atr |= USER_BOTMAST | USER_OP | USER_FRIEND | USER_JANITOR;
+    atr |= USER_BOTMAST | USER_OP | USER_JANITOR;
   /* Can't be botnet master without party-line access */
   if (atr & USER_BOTMAST)
     atr |= USER_PARTY;
@@ -292,9 +292,9 @@ int chan_sanity_check(int chatr, int atr)
   /* Can't be channel owner without also being channel master */
   if (chatr & USER_OWNER)
     chatr |= USER_MASTER;
-  /* Master implies friend & op */
+  /* Master implies op */
   if (chatr & USER_MASTER)
-    chatr |= USER_OP | USER_FRIEND;
+    chatr |= USER_OP ;
   /* Can't be +s on chan unless you're a bot */
   if (!(atr & USER_BOT))
     chatr &= ~BOT_SHARE;
