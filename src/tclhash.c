@@ -7,7 +7,7 @@
  *   (non-Tcl) procedure lookups for msg/dcc/file commands
  *   (Tcl) binding internal procedures to msg/dcc/file commands
  * 
- * $Id: tclhash.c,v 1.24 2001/03/10 22:38:03 guppy Exp $
+ * $Id: tclhash.c,v 1.25 2001/04/06 22:39:52 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -661,16 +661,17 @@ static int trigger_bind(const char *proc, const char *param)
    * the called proc name and it's parameters. This should render us a bit
    * less helpless when we see context dumps.
    */
-  const char *msg = "TCL proc: %s, param: %s";
-  char *buf;
+  {
+    const char *msg = "TCL proc: %s, param: %s";
+    char *buf;
 
-  Context;
-  buf = nmalloc(strlen(msg) + (proc ? strlen(proc) : 6)
-		+ (param ? strlen(param) : 6) + 1);
-  sprintf(buf, msg, proc ? proc : "<null>", param ? param : "<null>");
-  ContextNote(buf);
-  nfree(buf);
-
+    Context;
+    buf = nmalloc(strlen(msg) + (proc ? strlen(proc) : 6)
+		  + (param ? strlen(param) : 6) + 1);
+    sprintf(buf, msg, proc ? proc : "<null>", param ? param : "<null>");
+    ContextNote(buf);
+    nfree(buf);
+  }
   x = Tcl_VarEval(interp, proc, param, NULL);
   Context;
   if (x == TCL_ERROR) {
