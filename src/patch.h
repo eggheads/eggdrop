@@ -17,12 +17,12 @@ PATCH("CVS");    /* CVS beta */
  *
  *
  */
-PATCH("939507453"); /* current "unix" time */
+PATCH("939574072"); /* current "unix" time */
 /*
  *
  *
  */
-PATCH("helpall"); /* last patch added */ 
+PATCH("ischanYYY"); /* last patch added */ 
 /*
  *
  *
