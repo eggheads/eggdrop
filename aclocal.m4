@@ -1,7 +1,7 @@
 dnl aclocal.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: aclocal.m4,v 1.23 2000/09/02 18:45:15 fabian Exp $
+dnl $Id: aclocal.m4,v 1.24 2000/09/05 15:58:40 fabian Exp $
 dnl
 
 
@@ -132,12 +132,12 @@ case "$egg_cv_var_system" in
     bsd_version=`${UNAME} -r | cut -d . -f 1`
     case "$bsd_version" in
       2)
-        AC_MSG_RESULT(BSD/OS 2! statically linked modules are the only choice)
+        AC_MSG_RESULT(BSD/OS 2)
         NEED_DL=0
         DEFAULT_MAKE=static
       ;;
       3)
-        AC_MSG_RESULT(BSD/OS 3! stuck with an old OS ...)
+        AC_MSG_RESULT(BSD/OS 3)
         MOD_CC=shlicc
         MOD_LD=shlicc
         MOD_STRIP="${STRIP} -d"
@@ -146,7 +146,7 @@ case "$egg_cv_var_system" in
         AC_DEFINE(MODULES_OK)dnl
       ;;
       *)
-        AC_MSG_RESULT(BSD/OS 4+! ok I spose)
+        AC_MSG_RESULT(BSD/OS 4+)
         CFLAGS="$CFLAGS -Wall"
         MOD_LD="${CC} "
         MOD_STRIP="${STRIP} -d"
@@ -174,7 +174,7 @@ case "$egg_cv_var_system" in
     esac
     ;;
   HP-UX)
-    AC_MSG_RESULT([HP-UX, just shoot yourself now])
+    AC_MSG_RESULT([HP-UX])
     HPUX=yes
     MOD_LD="gcc -fPIC -shared"
     SHLIB_CC="gcc -fPIC"
@@ -200,7 +200,8 @@ case "$egg_cv_var_system" in
     NEED_DL=0
     DEFAULT_MAKE=static
     ;;
-        IRIX-5.*|IRIX-6.*|IRIX64-6.5*)
+  IRIX-5.*|IRIX-6.*)
+    AC_MSG_RESULT(IRIX 5 OR 6)
         SHLIB_LD="ld -n32 -shared -rdata_shared"
     IRIX=yes
         SHLIB_STRIP=touch
@@ -208,12 +209,21 @@ case "$egg_cv_var_system" in
     DEFAULT_MAKE=static
     ;;
         IRIX-6.3)
+    AC_MSG_RESULT(IRIX6.3)
         IRIX=yes
         SHLIB_STRIP=touch
         NEED_DL=0
         DEFAULT_MAKE=static
         SHLIB_LD="ld -n32 -D_OLD_TERMIOS"
    ;;
+  IRIX64*)
+    AC_MSG_RESULT(64-BIT IRIX)
+    IRIX=yes
+    SHLIB_STRIP=touch
+    NEED_DL=0
+    DEFAULT_MAKE=static
+    SHLIB_LD="ld -32 -shared -rdata_shared"
+    ;;
   Ultrix)
     AC_MSG_RESULT(Ultrix)
     NEED_DL=0
@@ -308,8 +318,7 @@ case "$egg_cv_var_system" in
   *)
     if test -r "/mach"
     then
-      AC_MSG_RESULT([NeXT...We are borg, you will be assimilated])
-      AC_MSG_RESULT([break out the static modules, it's all you'll ever get :P])
+      AC_MSG_RESULT([NeXT])
       NEED_DL=0
       DEFAULT_MAKE=static
       AC_DEFINE(BORGCUBES)dnl
