@@ -12,17 +12,16 @@
  *
  *
  */
-PATCH("CVS");    /* CVS beta */
-/*
- *
- *
- */
 PATCH("936820158"); /* current "unix" time */
 /*
  *
  *
  */
-PATCH("nrealloc.patch"); /* last patch added */ 
+PATCH("CVS");    /* CVS beta */
+/*
+ *
+ *
+ */
 /*
  *
  *
