@@ -7,7 +7,7 @@
  *   help system
  *   motd display and %var substitution
  *
- * $Id: misc.c,v 1.47 2002/01/02 03:46:35 guppy Exp $
+ * $Id: misc.c,v 1.48 2002/07/09 05:43:27 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -852,7 +852,7 @@ void help_subst(char *s, char *nick, struct flag_record *flags,
       break;
     case 'U':
 #ifdef HAVE_UNAME
-      if (!uname(&uname_info)) {
+      if (uname(&uname_info) >= 0) {
 	egg_snprintf(sub, sizeof sub, "%s %s", uname_info.sysname,
 		       uname_info.release);
 	towrite = sub;
