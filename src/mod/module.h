@@ -1,7 +1,7 @@
 /*
  * module.h
  *
- * $Id: module.h,v 1.75 2003/04/17 01:55:57 wcc Exp $
+ * $Id: module.h,v 1.76 2003/07/01 04:36:26 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -464,7 +464,7 @@
 #define parties (*(int *)global[275])
 /* 276 - 279 */
 #define tell_bottree ((void (*)(int, int))global[276])
-#define MD5_Init ((void (*)(MD5_CTX))global[277])
+#define MD5_Init ((void (*)(MD5_CTX *))global[277])
 #define MD5_Update ((void (*)(MD5_CTX *, void *, unsigned long))global[278])
 #define MD5_Final ((void (*)(unsigned char *, MD5_CTX *))global[279])
 /* 280 - 283 */

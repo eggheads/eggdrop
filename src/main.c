@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  *
- * $Id: main.c,v 1.100 2003/06/10 15:16:08 stdarg Exp $
+ * $Id: main.c,v 1.101 2003/07/01 04:36:26 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -722,11 +722,11 @@ int main(int argc, char **argv)
   struct chanset_t *chan;
 
 #ifndef ENABLE_STRIP
+#include <sys/resource.h>
   /* Make sure it can write core, if you make debug. Else it's pretty
    * useless (dw)
    */
   {
-#include <sys/resource.h>
     struct rlimit cdlim;
 
     cdlim.rlim_cur = RLIM_INFINITY;
