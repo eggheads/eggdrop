@@ -7,7 +7,7 @@
  *   (non-Tcl) procedure lookups for msg/dcc/file commands
  *   (Tcl) binding internal procedures to msg/dcc/file commands
  * 
- * $Id: tclhash.c,v 1.11 2000/02/25 22:05:58 fabian Exp $
+ * $Id: tclhash.c,v 1.12 2000/03/04 21:05:06 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -974,7 +974,7 @@ void tell_binds(int idx, char *par)
   kind = find_bind_table(name);
   if (!strcasecmp(s, "all") || !strcasecmp(name, "all"))
     showall = 1;
-  if (kind == NULL && strcasecmp(name, "all")) {
+  if (kind == NULL && strcasecmp(name, "all") && name[0]) {
     patmatc = 1;
     dprintf(idx, "Bind type %s not found, using wild card match.\n", name);
   }
