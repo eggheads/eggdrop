@@ -1488,6 +1488,7 @@ static void finish_share(int idx)
     /* this is where we remove all global and channel bans/exempts/invites and
      * ignores since they will be replaced by what our hub gives us. */
 
+    fr.match = (FR_CHAN | FR_BOT);
     while (global_bans)
       u_delban(NULL, global_bans->banmask, 1);
     while (global_ign)
@@ -1497,12 +1498,17 @@ static void finish_share(int idx)
     while (global_exempts)
       u_delexempt(NULL, global_exempts->exemptmask, 1);
     for (chan = chanset;chan;chan=chan->next) {
+      if (channel_shared(chan)) {
+        get_user_flagrec(dcc[j].user, &fr, chan->name);
+        if (bot_chan(fr) || bot_global(fr)) {
       while (chan->bans)
 	    u_delban(chan, chan->bans->banmask, 1);
       while (chan->exempts)
 	    u_delexempt(chan,chan->exempts->exemptmask,1);
       while (chan->invites)
         u_delinvite(chan,chan->invites->invitemask,1);
+        }
+      }
     }
     noshare = 0;
     ou = userlist;
