@@ -1,5 +1,5 @@
 Patch Howto
-Last revised: June 4, 2002
+Last revised: March  04, 2003
      _________________________________________________________________
 
                                Patch Howto
@@ -30,7 +30,7 @@ Last revised: June 4, 2002
     To apply a patch to an Eggdrop, you have to first obtain the Eggdrop
     sourcecode. You should always keep a tar.gz archive with the source of
     your current Eggdrop on your shell. In the next step, you have to change
-    to your source directory (i.e.: /home/user/eggdrop1.6.0/) and type
+    to your source directory (i.e.: /home/user/eggdrop1.6.14/) and type
     the following command:
 
       patch -p1 < ../path.to.the/patch
@@ -50,8 +50,8 @@ Last revised: June 4, 2002
 
   3. Creating and submitting a patch
 
-    If you fixed a bug and/or changed something in Eggdrop's source code,
-    it would be really nice to let the dev team know about it, so they can
+    If you fixed a bug and/or changed something in Eggdrop's source code, it
+    would be really nice to let the dev team know about it, so they can
     possibly apply it to next release of Eggdrop.
 
     There are several steps to submit a patch to the eggdev team:
@@ -61,18 +61,21 @@ Last revised: June 4, 2002
 
       2. Run the following:
 
-           diff -bur eggdrop1.6.original eggdrop1.6.modified > patchname.patch
+           diff -urN eggdrop1.6.original eggdrop1.6.modified > patchname.patch
 
-         If your changes created any new files, use 'diff -burN' instead.
+         DO NOT add any other diff options.
 
       3. Send an email to patches@eggheads.org with the patch attached. The
          body should contain a detailed description of what you changed and
          why you changed it. Don't forget to include the botversion for which
-         your patch was made. Also, please send a second email with same info
-         to eggdev@eggheads.org, this time without the patch attached.
+         your patch was made.
 
-    Please, never patch src/patch.h or one of the UPDATES files. We will do
-    it. Thank you.
+    Never modify src/patch.h or one of the UPDATES files. We will do it. If
+    your patch includes changes related to autotools (./configure, etc), do
+    NOT run autoconf, autoheader, etc; we will do this as well.
+    
+    Also, please don't add credit lines all over the source when patching.
+    Patch contributers will receive credit in UPDATES1.6 and ChangeLog.
 
 
   4. Downloading a patch
