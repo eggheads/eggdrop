@@ -708,15 +708,15 @@ static void got303(char *from, char *msg)
     newsplit(&msg);
     fixcolon(msg);
     tmp = newsplit(&msg);
-    if (rfc_casecmp(botname, origbotname)) {
+    if (strncmp(botname, origbotname, strlen(botname))) {
       /* we dont have our nick, so we care about this ISON */
-      if (!tmp[0] || !rfc_casecmp(tmp, altnick)) {
+      if (!tmp[0] || !strcasecmp(tmp, altnick)) {
 	/* message has no text, or .. the first parm, is our altnick */
 	putlog(LOG_MISC, "*", IRC_GETORIGNICK, origbotname);
 	strcpy(newbotname, botname);	/* save, just in case */
 	strcpy(botname, origbotname);
 	dprintf(DP_MODE, "NICK %s\n", botname);
-      } else if (rfc_casecmp(botname, altnick) && !msg[0]) {
+      } else if (strcasecmp(botname, altnick) && !msg[0]) {
 	/* first parm must be our nick we want, otherwise, we'd be using
 	 * that nick ... */
 	/* so, if the second parm, is non-existant, that means our altnick 
@@ -735,7 +735,7 @@ static void got303(char *from, char *msg)
 static void trace_fail(char *from, char *msg)
 {
   if (!use_ison) {
-    if (!rfc_casecmp(botname, origbotname)) {
+    if (!strcasecmp(botname, origbotname)) {
       putlog(LOG_MISC, "*", IRC_GETORIGNICK, origbotname);
       strcpy(newbotname, botname);	/* save, just in case */
       strcpy(botname, origbotname);
@@ -814,6 +814,21 @@ static int got437(char *from, char *msg)
   return 0;
 }
 
+/* 438 : nick change too fast */
+/* Arlington.VA.US.Undernet.Org 438 Guppy guppy :Nick change too fast. Please wait 26 seconds. */
+/* Arlington.VA.US.Undernet.Org 433 Fred guppy :Nickname is already in use. */
+static int got438(char *from, char *msg)
+{
+  context;
+  newsplit(&msg);
+  newsplit(&msg);
+  fixcolon(msg);
+  putlog(LOG_MISC, "*", "%s", msg);
+  return 0;
+}
+
+
+
 static int got451(char *from, char *msg)
 {
   /* usually if we get this then we really messed up somewhere
@@ -874,22 +889,43 @@ static int gotnick(char *from, char *msg)
     strncpy(botname, msg, NICKMAX);
     botname[NICKMAX] = 0;
     waiting_for_awake = 0;
-    if (newbotname[0])
+    if (!strcmp(msg, origbotname))
       putlog(LOG_SERV | LOG_MISC, "*", "Regained nickname '%s'.", msg);
-    else
+    else if (altnick[0] && !strcmp(msg, altnick))
+      putlog(LOG_SERV | LOG_MISC, "*", "Regained alternate nickname '%s'.", msg);
+    else if (keepnick && strcmp(nick, msg)) {
       putlog(LOG_SERV | LOG_MISC, "*", "Nickname changed to '%s'???", msg);
-    newbotname[0] = 0;
-  } else if (keepnick && !rfc_casecmp(nick, origbotname)) {
-    putlog(LOG_MISC, "*", IRC_GETORIGNICK, origbotname);
-    strcpy(newbotname, botname);	/* save, just in case */
-    strcpy(botname, origbotname);
-    dprintf(DP_MODE, "NICK %s\n", botname);
-  } else if (keepnick && !rfc_casecmp(nick, altnick) &&
-	     rfc_casecmp(botname, origbotname)) {
-    putlog(LOG_MISC, "*", IRC_GETALTNICK, altnick);
-    strcpy(newbotname, botname);	/* save, just in case */
-    strcpy(botname, altnick);
-    dprintf(DP_MODE, "NICK %s\n", botname);
+	  if (!rfc_casecmp(nick, origbotname)) {
+        putlog(LOG_MISC, "*", IRC_GETORIGNICK, origbotname);
+        strcpy(newbotname, botname);	/* save, just in case */
+        strcpy(botname, origbotname);
+        dprintf(DP_MODE, "NICK %s\n", botname);
+      } else if (altnick[0] && !rfc_casecmp(nick, altnick) &&
+  	    strcasecmp(botname, origbotname)) {
+        putlog(LOG_MISC, "*", IRC_GETALTNICK, altnick);
+        strcpy(newbotname, botname);	/* save, just in case */
+        strcpy(botname, altnick);
+        dprintf(DP_MODE, "NICK %s\n", botname);
+      } else {
+	  }
+    } else {
+      putlog(LOG_SERV | LOG_MISC, "*", "Nickname changed to '%s'???", msg);
+    }
+	newbotname[0] = 0;
+  } else if ((keepnick) && (rfc_casecmp(nick, msg))) {
+    /* only do the below if there was actual nick change, case doesn't count */
+    if (!rfc_casecmp(nick, origbotname)) {
+      putlog(LOG_MISC, "*", IRC_GETORIGNICK, origbotname);
+      strcpy(newbotname, botname);	/* save, just in case */
+      strcpy(botname, origbotname);
+      dprintf(DP_MODE, "NICK %s\n", botname);
+    } else if (altnick[0] && !rfc_casecmp(nick, altnick) &&
+	    strcasecmp(botname, origbotname)) {
+      putlog(LOG_MISC, "*", IRC_GETALTNICK, altnick);
+      strcpy(newbotname, botname);	/* save, just in case */
+      strcpy(botname, altnick);
+      dprintf(DP_MODE, "NICK %s\n", botname);
+	} else { }
   }
   return 0;
 }
@@ -1009,7 +1045,7 @@ static int gotping(char *from, char *msg)
 }
 
 /* update the add/rem_builtins in server.c if you add to this list!! */
-static cmd_t my_raw_binds[18] =
+static cmd_t my_raw_binds[19] =
 {
   {"PRIVMSG", "", (Function) gotmsg, NULL},
   {"NOTICE", "", (Function) gotnotice, NULL},
@@ -1026,6 +1062,7 @@ static cmd_t my_raw_binds[18] =
   {"432", "", (Function) got432, NULL},
   {"433", "", (Function) got433, NULL},
   {"437", "", (Function) got437, NULL},
+  {"438", "", (Function) got438, NULL},
   {"451", "", (Function) got451, NULL},
   {"NICK", "", (Function) gotnick, NULL},
   {"ERROR", "", (Function) goterror, NULL},

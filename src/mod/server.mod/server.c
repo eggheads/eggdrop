@@ -1096,7 +1096,7 @@ static char *server_close()
   clearq(serverlist);
   context;
   rem_builtins(H_dcc, C_dcc_serv, 5);
-  rem_builtins(H_raw, my_raw_binds, 18);
+  rem_builtins(H_raw, my_raw_binds, 19);
   rem_builtins(H_ctcp, my_ctcps, 1);
   context;
   C_t[0].name = "die";
@@ -1287,7 +1287,7 @@ char *server_start(Function * global_funcs)
   H_ctcr = add_bind_table("ctcr", HT_STACKABLE, server_6char);
   H_ctcp = add_bind_table("ctcp", HT_STACKABLE, server_6char);
   context;
-  add_builtins(H_raw, my_raw_binds, 18);
+  add_builtins(H_raw, my_raw_binds, 19);
   add_builtins(H_dcc, C_dcc_serv, 5);
   add_builtins(H_ctcp, my_ctcps, 1);
   add_help_reference("server.help");

@@ -1567,7 +1567,7 @@ static int gotquit(char *from, char *msg)
       strcpy(newbotname, botname);	/* save, just in case */
       strcpy(botname, origbotname);
       dprintf(DP_MODE, "NICK %s\n", botname);
-    } else if (!rfc_casecmp(nick, altnick) && rfc_casecmp(botname, origbotname)) {
+    } else if (altnick[0] && !rfc_casecmp(nick, altnick) && strcmp(botname, origbotname)) {
       putlog(LOG_MISC, "*", IRC_GETALTNICK, altnick);
       strcpy(newbotname, botname);	/* save, just in case */
       strcpy(botname, altnick);
