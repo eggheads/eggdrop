@@ -928,13 +928,14 @@ for the msg-command "stop", use "unbind msg - stop msg_stop".
        binding. An easy fix (by guppy) is as follows (example):
 
        Old script looks as follows:
-       bind - * mode_proc
+       bind mode - * mode_proc
        proc mode_proc {nick uhost hand chan mc} { ... }
 
-       To make it work with 1.3.23+, do:
-       bind - * mode_proc_fix
-       proc mode_proc_fix {nick uhost hand chan mc victim} {
-         mode_proc $nick $uhost $hand $chan "$mc $victim"
+       To make it work with 1.3.23+ and stay compatible with older bots, do:
+       bind mode - * mode_proc_fix
+       proc mode_proc_fix {nick uhost hand chan mc {victim ""}} {
+         if {$victim!=""} { append mc " $victim" }
+         mode_proc $nick $uhost $hand $chan $mc
        }
        proc mode_proc {nick uhost hand chan mc} { ... }
 
