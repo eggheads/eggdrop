@@ -9,7 +9,7 @@
  * dprintf'ized, 27oct1995
  * multi-channel, 8feb1996
  * 
- * $Id: chan.c,v 1.15 1999/12/21 17:35:16 fabian Exp $
+ * $Id: chan.c,v 1.16 1999/12/27 20:39:24 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -805,7 +805,6 @@ static int got352or4(struct chanset_t *chan, char *user, char *host,
   strcpy(m->nick, nick);	/* Store the nick in list */
   /* Store the userhost */
   simple_sprintf(m->userhost, "%s@%s", user, host);
-  fixfrom(m->userhost);		/* Dump non-identd ~ */
   simple_sprintf(userhost, "%s!%s", nick, m->userhost);
   /* Combine n!u@h */
   m->user = NULL;		/* No handle match (yet) */

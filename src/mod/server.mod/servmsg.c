@@ -1,7 +1,7 @@
 /* 
  * servmsg.c -- part of server.mod
  * 
- * $Id: servmsg.c,v 1.17 1999/12/25 02:37:37 fabian Exp $
+ * $Id: servmsg.c,v 1.18 1999/12/27 20:39:24 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -887,27 +887,6 @@ static int goterror(char *from, char *msg)
   return 1;
 }
 
-/* make nick!~user@host into nick!user@host if necessary */
-/* also the new form: nick!+user@host or nick!-user@host */
-static void fixfrom(char *s)
-{
-  char *p;
-
-  if (strict_host)
-    return;
-  if (s == NULL)
-    return;
-  if ((p = strchr(s, '!')))
-    p++;
-  else
-    p = s;			/* sometimes we get passed just a
-				 * user@host here... */
-  /* these are ludicrous. */
-  if (strchr("~+-^=", *p) && (p[1] != '@')) /* added check for @ - drummer */
-    strcpy(p, p + 1);
-  /* bug was: n!~@host -> n!@host  now: n!~@host */
-}
-
 /* nick change */
 static int gotnick(char *from, char *msg)
 {
@@ -1060,8 +1039,6 @@ static void server_activity(int idx, char *msg, int len)
     } else
       putlog(LOG_RAW, "*", "[@] %s %s %s", from, code, msg);
   }
-  if (from[0])
-    fixfrom(from);
   Context;
   /* this has GOT to go into the raw binding table, * merely because this
    * is less effecient */

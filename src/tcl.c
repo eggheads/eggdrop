@@ -6,7 +6,7 @@
  * 
  * dprintf'ized, 4feb1996
  * 
- * $Id: tcl.c,v 1.12 1999/12/25 00:07:50 fabian Exp $
+ * $Id: tcl.c,v 1.13 1999/12/27 20:39:23 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -69,6 +69,7 @@ extern int tands;
 extern int resolve_timeout;
 extern char natip[];
 extern int default_uflags; /* drummer */
+extern int strict_host;
 
 /* confvar patch by aaronwl */
 extern char configfile[];
@@ -436,14 +437,15 @@ static tcl_ints def_tcl_ints[] =
   {"allow-dk-cmds", &allow_dk_cmds, 0},
   {"resolve-timeout", &resolve_timeout, 0},
   {"must-be-owner", &must_be_owner, 1},
-  {"use-silence", &use_silence, 0},	/* arthur2 */
+  {"use-silence", &use_silence, 0},			/* arthur2 */
   {"paranoid-telnet-flood", &par_telnet_flood, 0},
-  {"use-exempts", &use_exempts, 0}, /* Jason/drummer */
-  {"use-invites", &use_invites, 0}, /* Jason/drummer */
-  {"quiet-save", &quiet_save, 0}, /* Lucas */
-  {"force-expire", &force_expire, 0}, /* Rufus */
+  {"use-exempts", &use_exempts, 0},			/* Jason/drummer */
+  {"use-invites", &use_invites, 0},			/* Jason/drummer */
+  {"quiet-save", &quiet_save, 0},			/* Lucas */
+  {"force-expire", &force_expire, 0},			/* Rufus */
   {"dupwait-timeout", &dupwait_timeout, 0},
-  {0, 0, 0}			/* arthur2 */
+  {"strict-host", &strict_host, 0}, 			/* drummer */
+  {0, 0, 0}						/* arthur2 */
 };
 
 static tcl_coups def_tcl_coups[] =

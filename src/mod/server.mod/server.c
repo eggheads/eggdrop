@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  * 
- * $Id: server.c,v 1.25 1999/12/25 02:37:37 fabian Exp $
+ * $Id: server.c,v 1.26 1999/12/27 20:39:24 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -968,7 +968,6 @@ static tcl_ints my_tcl_ints[] =
   {"server-timeout", &server_timeout, 0},
   {"lowercase-ctcp", &lowercase_ctcp, 0},
   {"server-online", (int *) &server_online, 2},
-  {"strict-host", &strict_host, 0},
   {"never-give-up", &never_give_up, 0},
   {"keep-nick", &keepnick, 0},
   {"strict-servernames", &strict_servernames, 0},
@@ -1428,7 +1427,7 @@ static Function server_table[] =
   /* 12 - 15 */
   (Function) match_my_nick,
   (Function) check_tcl_flud,
-  (Function) fixfrom,
+  (Function) NULL, /* fixfrom */ /* moved to the core !!! (drummer) */
   (Function) & answer_ctcp,	/* int */
   /* 16 - 19 */
   (Function) & trigger_on_ignore,	/* int */

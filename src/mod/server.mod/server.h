@@ -1,7 +1,7 @@
 /* 
  * server.h -- part of server.mod
  * 
- * $Id: server.h,v 1.4 1999/12/22 12:11:03 fabian Exp $
+ * $Id: server.h,v 1.5 1999/12/27 20:39:24 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -41,7 +41,7 @@
 /* 12 - 15 */
 #define match_my_nick ((int(*)(char *))server_funcs[12])
 #define check_tcl_flud ((int (*)(char *,char *,struct userrec *,char *,char *))server_funcs[13])
-#define fixfrom ((void (*)(char *))server_funcs[14])
+/* #define fixfrom ((void (*)(char *))server_funcs[14]) -- moved to core */
 #define answer_ctcp (*(int *)(server_funcs[15]))
 /* 16 - 19 */
 #define trigger_on_ignore (*(int *)(server_funcs[16]))
