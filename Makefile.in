@@ -2,7 +2,7 @@
 #  This is the Makefile for EGGDROP (the irc bot)
 #  You should never need to edit this.
 #
-# $Id: Makefile.in,v 1.17 2000/03/22 00:42:56 fabian Exp $
+# $Id: Makefile.in,v 1.18 2000/03/22 01:04:25 fabian Exp $
 
 SHELL = /bin/sh
 top_srcdir = @top_srcdir@
@@ -338,7 +338,9 @@ install-modules:
 	fi
 
 install-data:
-	@$(INSTALL_DATA) $(srcdir)/eggdrop.conf.dist $(DEST)
+	@$(INSTALL_DATA) $(srcdir)/eggdrop.advanced.conf $(DEST)
+	@$(INSTALL_DATA) $(srcdir)/eggdrop.complete.conf $(DEST)
+	@$(INSTALL_DATA) $(srcdir)/eggdrop.simple.conf $(DEST)
 	@if test ! -d $(DEST)/logs; then \
 		echo "Creating 'logs' subdirectory."; \
 		$(top_srcdir)/misc/mkinstalldirs $(DEST)/logs; \
