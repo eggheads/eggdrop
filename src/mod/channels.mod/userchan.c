@@ -96,12 +96,6 @@ static void set_handle_chaninfo(struct userrec *bu, char *handle,
   if (info) {
     if (strlen(info) > 80)
       info[80] = 0;
-    for (p = info; *p;) {
-      if ((*p < 32) || (*p == 127))
-	strcpy(p, p + 1);
-      else
-	p++;
-    }
   }
   if (ch->info != NULL)
     nfree(ch->info);
