@@ -1,6 +1,6 @@
 dnl aclocal.m4: macros autoconf uses when building configure from configure.ac
 dnl
-dnl Copyright (C) 1999, 2000, 2001, 2002, 2003 Eggheads Development Team
+dnl Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004 Eggheads Development Team
 dnl
 dnl This program is free software; you can redistribute it and/or
 dnl modify it under the terms of the GNU General Public License
@@ -16,10 +16,11 @@ dnl You should have received a copy of the GNU General Public License
 dnl along with this program; if not, write to the Free Software
 dnl Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 dnl
-dnl $Id: aclocal.m4,v 1.89 2004/06/04 14:07:48 wcc Exp $
+dnl $Id: aclocal.m4,v 1.90 2004/06/16 06:47:10 wcc Exp $
 dnl
 
 dnl EGG_MSG_CONFIGURE_START()
+dnl
 AC_DEFUN([EGG_MSG_CONFIGURE_START],
 [
   AC_MSG_RESULT()
@@ -31,6 +32,7 @@ AC_DEFUN([EGG_MSG_CONFIGURE_START],
 
 
 dnl EGG_MSG_CONFIGURE_END()
+dnl
 AC_DEFUN([EGG_MSG_CONFIGURE_END],
 [
   AC_MSG_RESULT()
@@ -43,6 +45,7 @@ AC_DEFUN([EGG_MSG_CONFIGURE_END],
 
 
 dnl EGG_CHECK_CC()
+dnl
 AC_DEFUN([EGG_CHECK_CC],
 [
   if test "${cross_compiling-x}" = "x"; then
@@ -61,20 +64,27 @@ dnl EGG_CHECK_CCPIPE()
 dnl
 dnl This function checks whether or not the compiler supports the `-pipe' flag,
 dnl which speeds up the compilation.
+dnl
 AC_DEFUN([EGG_CHECK_CCPIPE],
 [
   if test -z "$no_pipe"; then
     if test -n "$GCC"; then
-      AC_CACHE_CHECK([whether the compiler understands -pipe],
-                     egg_cv_var_ccpipe,
-      [
+      AC_CACHE_CHECK([whether the compiler understands -pipe], egg_cv_var_ccpipe, [
          ac_old_CC="$CC"
          CC="$CC -pipe"
-         AC_COMPILE_IFELSE([[int main () { return(0); }]],
-                           [egg_cv_var_ccpipe="yes"],
-                           [egg_cv_var_ccpipe="no"])
+         AC_COMPILE_IFELSE([[
+           int main ()
+           {
+             return(0);
+           }
+         ]], [
+           egg_cv_var_ccpipe="yes"
+         ], [
+           egg_cv_var_ccpipe="no"
+         ])
          CC="$ac_old_CC"
       ])
+
       if test "$egg_cv_var_ccpipe" = "yes"; then
         CC="$CC -pipe"
       fi
@@ -84,13 +94,13 @@ AC_DEFUN([EGG_CHECK_CCPIPE],
 
 
 dnl EGG_CHECK_SOCKLEN_T()
-AC_DEFUN(EGG_CHECK_SOCKLEN_T,
+dnl
+AC_DEFUN([EGG_CHECK_SOCKLEN_T],
 [
-  AC_CACHE_CHECK([for socklen_t], [egg_cv_socklen_t],
-  [
-    AC_RUN_IFELSE(
-    [[
+  AC_CACHE_CHECK([for socklen_t], egg_cv_socklen_t, [
+    AC_RUN_IFELSE([[
       #include <unistd.h>
+      #include <sys/param.h>
       #include <sys/types.h>
       #include <sys/socket.h>
       #include <netinet/in.h>
@@ -100,6 +110,9 @@ AC_DEFUN(EGG_CHECK_SOCKLEN_T,
       {
         socklen_t test = 55;
 
+        if (test != 55)
+          exit(1);
+
         return(0);
       }
     ]], [
@@ -107,9 +120,10 @@ AC_DEFUN(EGG_CHECK_SOCKLEN_T,
     ], [
       egg_cv_socklen_t="no"
     ], [
-      egg_cv_socklen_t="no"
+      egg_cv_socklen_t="cross"
     ])
   ])
+
   if test "$egg_cv_socklen_t" = "yes"; then
     AC_DEFINE(HAVE_SOCKLEN_T, 1, [Define if your system has the `socklen_t' type.])
   fi
@@ -119,6 +133,7 @@ AC_DEFUN(EGG_CHECK_SOCKLEN_T,
 dnl EGG_PROG_HEAD_1()
 dnl
 dnl This function checks for the proper 'head -1' command variant to use.
+dnl
 AC_DEFUN([EGG_PROG_HEAD_1],
 [
   cat << 'EOF' > conftest.head
@@ -129,8 +144,7 @@ EOF
 
   for ac_prog in 'head -n 1' 'head -1' 'sed 1q'; do
     AC_MSG_CHECKING([whether $ac_prog works])
-    AC_CACHE_VAL([ac_cv_prog_HEAD_1],
-    [
+    AC_CACHE_VAL([ac_cv_prog_HEAD_1], [
       if test -n "$HEAD_1"; then
         # Let the user override the test.
         ac_cv_prog_HEAD_1="$HEAD_1"
@@ -164,6 +178,7 @@ EOF
 
 
 dnl EGG_PROG_STRIP()
+dnl
 AC_DEFUN([EGG_PROG_STRIP],
 [
   AC_ARG_ENABLE([strip],
@@ -192,6 +207,7 @@ EOF
 
 
 dnl EGG_PROG_AWK()
+dnl
 AC_DEFUN([EGG_PROG_AWK],
 [
   AC_PROG_AWK
@@ -209,6 +225,7 @@ EOF
 
 
 dnl EGG_PROG_BASENAME()
+dnl
 AC_DEFUN([EGG_PROG_BASENAME],
 [
   AC_CHECK_PROG(BASENAME, basename, basename)
@@ -229,6 +246,7 @@ dnl
 dnl FIXME/NOTICE:
 dnl   This function is obsolete. Any NEW code/checks should be written as
 dnl   individual tests that will be checked on ALL operating systems.
+dnl
 AC_DEFUN([EGG_CHECK_OS],
 [
   LINUX="no"
@@ -477,11 +495,11 @@ AC_DEFUN([EGG_CHECK_OS],
 
 
 dnl EGG_CHECK_LIBS()
+dnl
 AC_DEFUN([EGG_CHECK_LIBS],
 [
   # FIXME: this needs to be fixed so that it works on IRIX
-  if test "$IRIX" = "yes"
-  then
+  if test "$IRIX" = "yes"; then
     AC_MSG_WARN([Skipping library tests because they CONFUSE IRIX.])
   else
     AC_CHECK_LIB(socket, socket)
@@ -490,23 +508,19 @@ AC_DEFUN([EGG_CHECK_LIBS],
     AC_CHECK_LIB(dl, dlopen)
     AC_CHECK_LIB(m, tan, EGG_MATH_LIB="-lm")
     # This is needed for Tcl libraries compiled with thread support
-    AC_CHECK_LIB(pthread, pthread_mutex_init,
-    [
+    AC_CHECK_LIB(pthread, pthread_mutex_init, [
       ac_cv_lib_pthread_pthread_mutex_init="yes"
       ac_cv_lib_pthread="-lpthread"
     ], [
-      AC_CHECK_LIB(pthread, __pthread_mutex_init,
-      [
+      AC_CHECK_LIB(pthread, __pthread_mutex_init, [
         ac_cv_lib_pthread_pthread_mutex_init="yes"
         ac_cv_lib_pthread="-lpthread"
       ], [
-        AC_CHECK_LIB(pthreads, pthread_mutex_init,
-        [
+        AC_CHECK_LIB(pthreads, pthread_mutex_init, [
           ac_cv_lib_pthread_pthread_mutex_init="yes"
           ac_cv_lib_pthread="-lpthreads"
         ], [
-          AC_CHECK_FUNC(pthread_mutex_init,
-          [
+          AC_CHECK_FUNC(pthread_mutex_init, [
             ac_cv_lib_pthread_pthread_mutex_init="yes"
             ac_cv_lib_pthread=""
           ], [
@@ -515,6 +529,7 @@ AC_DEFUN([EGG_CHECK_LIBS],
         )]
       )]
     )])
+
     if test "$SUNOS" = "yes"; then
       # For suns without yp
       AC_CHECK_LIB(dl, main)
@@ -528,6 +543,7 @@ AC_DEFUN([EGG_CHECK_LIBS],
 
 
 dnl EGG_FUNC_VPRINTF()
+dnl
 AC_DEFUN([EGG_FUNC_VPRINTF],
 [
   if test "$ac_cv_func_vprintf" = "no"; then
@@ -544,6 +560,7 @@ EOF
 
 
 dnl EGG_HEADER_STDC()
+dnl
 AC_DEFUN([EGG_HEADER_STDC],
 [
   if test "$ac_cv_header_stdc" = "no"; then
@@ -560,12 +577,11 @@ EOF
 
 
 dnl EGG_CHECK_LIBSAFE_SSCANF()
+dnl
 AC_DEFUN([EGG_CHECK_LIBSAFE_SSCANF],
 [
-  AC_CACHE_CHECK([for broken libsafe sscanf], [egg_cv_var_libsafe_sscanf],
-  [
-    AC_RUN_IFELSE(
-    [[
+  AC_CACHE_CHECK([for broken libsafe sscanf], egg_cv_var_libsafe_sscanf, [
+    AC_RUN_IFELSE([[
       #include <stdio.h>
 
       int main()
@@ -575,16 +591,18 @@ AC_DEFUN([EGG_CHECK_LIBSAFE_SSCANF],
 
         if (sscanf(src, "0x%x,%10c", &idx, dst) == 1)
           exit(1);
-        return 0;
+
+        return(0);
       }
     ]], [
       egg_cv_var_libsafe_sscanf="no"
     ], [
       egg_cv_var_libsafe_sscanf="yes"
     ], [
-      egg_cv_var_libsafe_sscanf="no"
+      egg_cv_var_libsafe_sscanf="cross"
     ])
   ])
+
   if test "$egg_cv_var_libsafe_sscanf" = "yes"; then
     AC_DEFINE(LIBSAFE_HACKS, 1, [Define if you have a version of libsafe with a broken sscanf().])
   fi
@@ -594,6 +612,7 @@ AC_DEFUN([EGG_CHECK_LIBSAFE_SSCANF],
 dnl EGG_EXEEXT()
 dnl
 dnl Test for executable suffix and define Eggdrop's executable name accordingly.
+dnl
 AC_DEFUN([EGG_EXEEXT], [
   EGGEXEC="eggdrop"
   AC_EXEEXT
@@ -605,6 +624,7 @@ AC_DEFUN([EGG_EXEEXT], [
 
 
 dnl EGG_TCL_ARG_WITH()
+dnl
 AC_DEFUN([EGG_TCL_ARG_WITH],
 [
   AC_ARG_WITH(tcllib,
@@ -645,6 +665,7 @@ EOF
 
 
 dnl EGG_TCL_ENV()
+dnl
 AC_DEFUN([EGG_TCL_ENV],
 [
   WARN=0
@@ -678,6 +699,7 @@ EOF
 
 
 dnl EGG_TCL_WITH_TCLLIB()
+dnl
 AC_DEFUN([EGG_TCL_WITH_TCLLIB],
 [
   # Look for Tcl library: if $tcllibname is set, check there first
@@ -707,6 +729,7 @@ EOF
 
 
 dnl EGG_TCL_WITH_TCLINC()
+dnl
 AC_DEFUN([EGG_TCL_WITH_TCLINC],
 [
   # Look for Tcl header: if $tclincname is set, check there first
@@ -734,6 +757,7 @@ EOF
 
 
 dnl EGG_TCL_FIND_LIBRARY()
+dnl
 AC_DEFUN([EGG_TCL_FIND_LIBRARY],
 [
   # Look for Tcl library: if $TCLLIB is set, check there first
@@ -771,6 +795,7 @@ EOF
 
 
 dnl EGG_TCL_FIND_HEADER()
+dnl
 AC_DEFUN([EGG_TCL_FIND_HEADER],
 [
   # Look for Tcl header: if $TCLINC is set, check there first
@@ -804,6 +829,7 @@ EOF
 
 
 dnl EGG_TCL_CHECK_LIBRARY()
+dnl
 AC_DEFUN([EGG_TCL_CHECK_LIBRARY],
 [
   AC_MSG_CHECKING([for Tcl library])
@@ -838,6 +864,7 @@ AC_DEFUN([EGG_TCL_CHECK_LIBRARY],
 
 
 dnl EGG_TCL_CHECK_HEADER()
+dnl
 AC_DEFUN([EGG_TCL_CHECK_HEADER],
 [
   AC_MSG_CHECKING([for Tcl header])
@@ -886,6 +913,7 @@ dnl EGG_CACHE_UNSET(CACHE-ID)
 dnl
 dnl Unsets a certain cache item. Typically called before using the AC_CACHE_*()
 dnl macros.
+dnl
 AC_DEFUN([EGG_CACHE_UNSET], [unset $1])
 
 
@@ -896,6 +924,7 @@ dnl Set egg_tcl_changed accordingly.
 dnl
 dnl Tcl related feature and version checks should re-run their checks as soon
 dnl as egg_tcl_changed is set to "yes".
+dnl
 AC_DEFUN([EGG_TCL_DETECT_CHANGE],
 [
   AC_MSG_CHECKING([whether the Tcl system has changed])
@@ -903,8 +932,7 @@ AC_DEFUN([EGG_TCL_DETECT_CHANGE],
   egg_tcl_id="${TCLLIB}:${TCLLIBFN}:${TCLINC}:${TCLINCFN}"
   if test ! "$egg_tcl_id" = ":::"; then
     egg_tcl_cached="yes"
-    AC_CACHE_VAL(egg_cv_var_tcl_id,
-    [
+    AC_CACHE_VAL(egg_cv_var_tcl_id, [
       egg_cv_var_tcl_id="$egg_tcl_id"
       egg_tcl_cached="no"
     ])
@@ -926,6 +954,7 @@ AC_DEFUN([EGG_TCL_DETECT_CHANGE],
 
 
 dnl EGG_TCL_CHECK_VERSION()
+dnl
 AC_DEFUN([EGG_TCL_CHECK_VERSION],
 [
   # Both TCLLIBFN & TCLINCFN must be set, or we bail
@@ -938,8 +967,7 @@ AC_DEFUN([EGG_TCL_CHECK_VERSION],
       EGG_CACHE_UNSET(egg_cv_var_tcl_version)
     fi
     AC_MSG_CHECKING([for Tcl version])
-    AC_CACHE_VAL(egg_cv_var_tcl_version,
-    [
+    AC_CACHE_VAL(egg_cv_var_tcl_version, [
       egg_cv_var_tcl_version=`grep TCL_VERSION $TCLINC/$TCLINCFN | $HEAD_1 | $AWK '{gsub(/\"/, "", [$]3); print [$]3}'`
     ])
 
@@ -955,8 +983,7 @@ AC_DEFUN([EGG_TCL_CHECK_VERSION],
       EGG_CACHE_UNSET(egg_cv_var_tcl_patch_level)
     fi
     AC_MSG_CHECKING([for Tcl patch level])
-    AC_CACHE_VAL(egg_cv_var_tcl_patch_level,
-    [
+    AC_CACHE_VAL(egg_cv_var_tcl_patch_level, [
       eval "egg_cv_var_tcl_patch_level=`grep TCL_PATCH_LEVEL $TCLINC/$TCLINCFN | $HEAD_1 | $AWK '{gsub(/\"/, "", [$]3); print [$]3}'`"
     ])
 
@@ -988,6 +1015,7 @@ EOF
 
 
 dnl EGG_TCL_CHECK_PRE70()
+dnl
 AC_DEFUN([EGG_TCL_CHECK_PRE70],
 [
   # Is this version of Tcl too old for us to use ?
@@ -1009,6 +1037,7 @@ EOF
 
 
 dnl EGG_TCL_TESTLIBS()
+dnl
 AC_DEFUN([EGG_TCL_TESTLIBS],
 [
   # Set variables for Tcl library tests
@@ -1021,6 +1050,7 @@ AC_DEFUN([EGG_TCL_TESTLIBS],
 
 
 dnl EGG_TCL_CHECK_FREE()
+dnl
 AC_DEFUN([EGG_TCL_CHECK_FREE],
 [
   if test "$egg_tcl_changed" = "yes"; then
@@ -1028,11 +1058,7 @@ AC_DEFUN([EGG_TCL_CHECK_FREE],
   fi
 
   # Check for Tcl_Free()
-  AC_CHECK_LIB($TCL_TEST_LIB,
-               Tcl_Free,
-               [egg_cv_var_tcl_free="yes"],
-               [egg_cv_var_tcl_free="no"],
-               $TCL_TEST_OTHERLIBS)
+  AC_CHECK_LIB($TCL_TEST_LIB, Tcl_Free, [egg_cv_var_tcl_free="yes"], [egg_cv_var_tcl_free="no"], $TCL_TEST_OTHERLIBS)
 
   if test "$egg_cv_var_tcl_free" = "yes"; then
     AC_DEFINE(HAVE_TCL_FREE, 1, [Define for Tcl that has Tcl_Free() (7.5p1 and later).])
@@ -1041,6 +1067,7 @@ AC_DEFUN([EGG_TCL_CHECK_FREE],
 
 
 dnl EGG_TCL_ENABLE_THREADS()
+dnl
 AC_DEFUN([EGG_TCL_ENABLE_THREADS],
 [
   AC_ARG_ENABLE(tcl-threads,
@@ -1051,6 +1078,7 @@ AC_DEFUN([EGG_TCL_ENABLE_THREADS],
 
 
 dnl EGG_TCL_CHECK_THREADS()
+dnl
 AC_DEFUN([EGG_TCL_CHECK_THREADS],
 [
   if test "$egg_tcl_changed" = "yes"; then
@@ -1058,11 +1086,7 @@ AC_DEFUN([EGG_TCL_CHECK_THREADS],
   fi
 
   # Check for TclpFinalizeThreadData()
-  AC_CHECK_LIB($TCL_TEST_LIB,
-               TclpFinalizeThreadData,
-               [egg_cv_var_tcl_threaded="yes"],
-               [egg_cv_var_tcl_threaded="no"],
-               $TCL_TEST_OTHERLIBS)
+  AC_CHECK_LIB($TCL_TEST_LIB, TclpFinalizeThreadData, [egg_cv_var_tcl_threaded="yes"], [egg_cv_var_tcl_threaded="no"], $TCL_TEST_OTHERLIBS)
 
   if test "$egg_cv_var_tcl_threaded" = "yes"; then
     if test "$enable_tcl_threads" = "no"; then
@@ -1087,6 +1111,7 @@ EOF
 
 
 dnl EGG_TCL_LIB_REQS()
+dnl
 AC_DEFUN([EGG_TCL_LIB_REQS],
 [
   if test "$EGG_CYGWIN" = "yes"; then
@@ -1141,6 +1166,7 @@ EOF
 
 
 dnl EGG_FUNC_DLOPEN()
+dnl
 AC_DEFUN([EGG_FUNC_DLOPEN],
 [
   if test "$NEED_DL" = 1 && test "$ac_cv_func_dlopen" = "no"; then
@@ -1194,6 +1220,7 @@ EOF
 
 
 dnl EGG_SUBST_EGGVERSION()
+dnl
 AC_DEFUN([EGG_SUBST_EGGVERSION],
 [
   EGGVERSION=`grep 'char.egg_version' $srcdir/src/main.c | $AWK '{gsub(/(\"|\;)/, "", [$]4); print [$]4}'`
@@ -1218,6 +1245,7 @@ dnl
 dnl Since module's Makefiles aren't generated by configure, some paths in
 dnl src/mod/Makefile.in take care of them. For correct path "calculation", we
 dnl need to keep absolute paths in mind (which don't need a "../" pre-pended).
+dnl
 AC_DEFUN([EGG_SUBST_MOD_UPDIR], [
   case "$srcdir" in
     [[\\/]]* | ?:[[\\/]]*)
@@ -1236,10 +1264,10 @@ dnl
 dnl Replace FILE-NAME if the newly created contents differs from the existing
 dnl file contents. Otherwise, leave the file alone. This avoids needless
 dnl recompiles.
+dnl
 m4_define(EGG_REPLACE_IF_CHANGED,
 [
-  AC_CONFIG_COMMANDS([replace-if-changed],
-  [[
+  AC_CONFIG_COMMANDS([replace-if-changed], [[
     egg_replace_file="$1"
     $2
     if test -f "$egg_replace_file" && cmp -s conftest.out $egg_replace_file; then
@@ -1255,10 +1283,10 @@ m4_define(EGG_REPLACE_IF_CHANGED,
 
 
 dnl EGG_TCL_LUSH()
+dnl
 AC_DEFUN([EGG_TCL_LUSH],
 [
-  EGG_REPLACE_IF_CHANGED(lush.h,
-  [
+  EGG_REPLACE_IF_CHANGED(lush.h, [
     cat > conftest.out << EOF
 
 /* Ignore me but do not erase me. I am a kludge. */
@@ -1274,10 +1302,10 @@ EOF
 
 
 dnl EGG_CATCH_MAKEFILE_REBUILD()
+dnl
 AC_DEFUN([EGG_CATCH_MAKEFILE_REBUILD],
 [
-  AC_CONFIG_COMMANDS([catch-make-rebuild],
-  [[
+  AC_CONFIG_COMMANDS([catch-make-rebuild], [[
     if test -f .modules; then
       $srcdir/misc/modconfig --top_srcdir="$srcdir/src" Makefile
     fi
@@ -1288,6 +1316,7 @@ AC_DEFUN([EGG_CATCH_MAKEFILE_REBUILD],
 dnl EGG_SAVE_PARAMETERS()
 dnl
 dnl Remove --cache-file and --srcdir arguments so they do not pile up.
+dnl
 AC_DEFUN([EGG_SAVE_PARAMETERS],
 [
   egg_ac_parameters=
@@ -1317,6 +1346,7 @@ AC_DEFUN([EGG_SAVE_PARAMETERS],
 
 
 dnl AC_PROG_CC_WIN32()
+dnl
 AC_DEFUN([AC_PROG_CC_WIN32],
 [
   AC_MSG_CHECKING([how to access the Win32 API])
