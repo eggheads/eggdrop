@@ -229,11 +229,11 @@ static char *strtdiff(char *d, long signeddiff)
 	else
 	    *d = '\0';
 	if (hours)
-	    sprintf(d + strlen(d), "%luh", hours);
+	    sprintf(d + strlen(d), "%uh", hours);
 	if (minutes)
-	    sprintf(d + strlen(d), "%lum", minutes);
+	    sprintf(d + strlen(d), "%um", minutes);
 	if (seconds)
-	    sprintf(d + strlen(d), "%lus", seconds);
+	    sprintf(d + strlen(d), "%us", seconds);
     } else
 	sprintf(d, "0s");
     return d;

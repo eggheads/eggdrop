@@ -156,18 +156,35 @@
 #undef free
 #define free(x) dont_use_old_free(x)
 
-/* IP type */
+/* 32 bit type */
 #if (SIZEOF_INT == 4)
-typedef unsigned int IP;
-
+typedef unsigned int u_32bit_t;
 #else
-#if (SIZEOF_LONG == 4)
-typedef unsigned long IP;
+# if (SIZEOF_LONG == 4)
+typedef unsigned int u_32bit_t;
+# else
+#  include "cant/find/32bit/type"
+# endif
+#endif
 
+#if (SIZEOF_SHORT_INT == 2)
+typedef unsigned short int u_16bit_t;
 #else
-#include "cant/find/32bit/type"
+# include "cant/find/16bit/type"
 #endif
+
+#if (SIZEOF_CHAR == 1)
+typedef unsigned char u_8bit_t;
+#else
+# include "cant/find/8bit/type"
 #endif
+
+typedef u_8bit_t byte;
+typedef u_16bit_t word;
+typedef u_32bit_t dword;
+
+/* IP type */
+typedef u_32bit_t IP;
 
 /* macro for simplifying patches */
 #define PATCH(str) { \

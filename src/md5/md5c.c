@@ -23,6 +23,11 @@ These notices must be retained in any copies of any part of this
 documentation and/or software.
  */
 
+#ifdef HAVE_CONFIG_H
+# include "../../config.h"
+#endif
+#include "main.h"
+#include "eggdrop.h"
 #include "global.h"
 #include "md5.h"
 

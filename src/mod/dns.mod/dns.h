@@ -32,10 +32,7 @@
 #ifndef MOD_DNS_H
 #define MOD_DNS_H
 
-typedef unsigned char byte;
-typedef unsigned short word;
-typedef unsigned long dword;
-typedef unsigned int ip_t;
+typedef u_32bit_t ip_t;
 
 struct resolve {
     struct resolve *next;
@@ -65,4 +62,3 @@ enum {
 #define IS_A(x)   (x->state == STATE_AREQ)
 
 #endif /* MOD_DNS_H */
-
