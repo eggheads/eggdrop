@@ -1,7 +1,7 @@
 /* 
  * transfer.c -- part of transfer.mod
  * 
- * $Id: transfer.c,v 1.18 2000/01/09 14:59:29 fabian Exp $
+ * $Id: transfer.c,v 1.19 2000/01/09 15:06:38 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -675,8 +675,10 @@ static void eof_dcc_send(int idx)
 
 	(f) (idx);
       }
+      Context;
       killsock(dcc[idx].sock);
       lostdcc(idx);
+      Context;
       return;
     }
     putlog(LOG_FILES, "*", "Completed dcc send %s from %s!%s",

@@ -1,7 +1,7 @@
 /* 
  * share.c -- part of share.mod
  * 
- * $Id: share.c,v 1.19 2000/01/09 14:59:29 fabian Exp $
+ * $Id: share.c,v 1.20 2000/01/09 15:06:38 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1017,7 +1017,7 @@ static void share_ufsend(int idx, char *par)
       dcc[i].type = &DCC_FORK_SEND;
       strcpy(dcc[i].nick, "*users");
       strcpy(dcc[i].host, dcc[idx].nick);
-      dcc[i].u.xfer->filename = nmalloc(strlen(s));
+      dcc[i].u.xfer->filename = nmalloc(strlen(s) + 1);
       strcpy(dcc[i].u.xfer->filename, s);
       dcc[i].u.xfer->origname = dcc[i].u.xfer->filename;
       dcc[i].u.xfer->length = atoi(par);
