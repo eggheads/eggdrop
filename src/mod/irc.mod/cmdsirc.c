@@ -2,7 +2,7 @@
  * chancmds.c -- part of irc.mod
  *   handles commands directly relating to channel interaction
  *
- * $Id: cmdsirc.c,v 1.31 2002/01/21 19:19:56 wcc Exp $
+ * $Id: cmdsirc.c,v 1.32 2002/03/07 15:41:18 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -504,64 +504,102 @@ static void cmd_invite(struct userrec *u, int idx, char *par)
 
 static void cmd_channel(struct userrec *u, int idx, char *par)
 {
-  char handle[HANDLEN + 1], s[UHOSTLEN], s1[UHOSTLEN], atrflag, chanflag,
-       *chname;
+  char handle[HANDLEN + 1], s[UHOSTLEN], s1[UHOSTLEN], atrflag, chanflag, *chname;
   struct chanset_t *chan;
   memberlist *m;
+ /* try without it and taste a difference! (=
   static char spaces[33] = "                              ";
   static char spaces2[33] = "                              ";
-  int len, len2;
+ */
+  int x = 0, x2 = 0, y;
 
   if (!has_op(idx, par))
     return;
+
   chname = newsplit(&par);
-  putlog(LOG_CMDS, "*", "#%s# (%s) channel %s", dcc[idx].nick,
-	 dcc[idx].u.chat->con_chan, chname);
+  putlog(LOG_CMDS, "*", "#%s# (%s) channel %s", dcc[idx].nick, dcc[idx].u.chat->con_chan, chname);
   if (!chname[0])
     chan = findchan_by_dname(dcc[idx].u.chat->con_chan);
   else
     chan = findchan_by_dname(chname);
-  if (chan == NULL) {
+  if (chan == NULL)
+    {
     dprintf(idx, "%s %s\n", IRC_NOTACTIVECHAN, chname);
     return;
   }
   strncpyz(s, getchanmode(chan), sizeof s);
+
   if (channel_pending(chan))
     egg_snprintf(s1, sizeof s1, "%s %s", IRC_PROCESSINGCHAN, chan->dname);
   else if (channel_active(chan))
     egg_snprintf(s1, sizeof s1, "%s %s", IRC_CHANNEL, chan->dname);
   else
     egg_snprintf(s1, sizeof s1, "%s %s", IRC_DESIRINGCHAN, chan->dname);
-  dprintf(idx, "%s, %d member%s, mode %s:\n", s1, chan->channel.members,
-	  chan->channel.members == 1 ? "" : "s", s);
+
+  dprintf(idx, "%s, %d member%s, mode %s:\n", s1, chan->channel.members, chan->channel.members == 1 ? "" : "s", s);
+
   if (chan->channel.topic)
     dprintf(idx, "%s: %s\n", IRC_CHANNELTOPIC, chan->channel.topic);
-  if (channel_active(chan)) {
+
+  if (channel_active(chan))
+    {
     dprintf(idx, "(n = owner, m = master, o = op, d = deop, b = bot)\n");
-    spaces[nick_len - 9] = 0;
-    spaces2[HANDLEN - 9] = 0;
-    dprintf(idx, " NICKNAME %s HANDLE   %s JOIN   IDLE  USER@HOST\n",
-	    spaces, spaces2);
-    spaces[nick_len - 9] = ' ';
-    spaces2[HANDLEN - 9] = ' ';
-    for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
-      if (m->joined > 0) {
+
+ /* looking for max. size of nickname and handle */
+      for (m = chan->channel.member; m && m->nick[0]; m = m->next)
+        {
+          if ((y = strlen(m->nick)) > x)
+            {
+              x = y;
+            }
+          if ((m->user != NULL) && ((y = strlen(m->user->handle)) > x2))
+            {
+              x2 = y;
+            }
+        }
+
+ /* x contains the longest nickname size;
+    x2  does same for the handler and both are bounded inside 9...32 */
+      if (x < 9)
+        x = 9;
+      else if (x > 32)
+        x = 32;
+
+      if (x2 < 9)
+        x2 = 9;
+      else if (x2 > 32)
+        x2 = 32;
+
+      dprintf(idx, " %-*s %-*s JOIN   IDLE  USER@HOST\n", x, "NICKNAME", x2, "HANDLE");
+
+      for (m = chan->channel.member; m && m->nick[0]; m = m->next)
+        {
+          if (m->joined > 0)
+            {
 	if ((now - (m->joined)) > 86400)
 	  egg_strftime(s, 6, "%d%b", localtime(&(m->joined)));
 	else
 	  egg_strftime(s, 6, "%H:%M", localtime(&(m->joined)));
-      } else
+            }
+          else
 	strncpyz(s, " --- ", sizeof s);
-      if (m->user == NULL) {
+
+          if (m->user == NULL)
+            {
 	egg_snprintf(s1, sizeof s1, "%s!%s", m->nick, m->userhost);
 	m->user = get_user_by_host(s1);
       }
-      if (m->user == NULL) {
+          if (m->user == NULL)
+            {
 	strncpyz(handle, "*", sizeof handle);
-      } else {
+            }
+          else
+            {
 	strncpyz(handle, m->user->handle, sizeof handle);
       }
+
       get_user_flagrec(m->user, &user, chan->dname);
+
       /* Determine status char to use */
       if (glob_bot(user) && (glob_op(user)||chan_op(user)))
 	atrflag = 'B';
@@ -617,22 +655,20 @@ static void cmd_channel(struct userrec *u, int idx, char *par)
         atrflag = 'e';
       else
 	atrflag = ' ';
+
       if (chan_hasop(m))
 	chanflag = '@';
       else if (chan_hasvoice(m))
 	chanflag = '+';
       else
 	chanflag = ' ';
-      spaces[len = (nick_len - strlen(m->nick))] = 0;
-      spaces2[len2 = (HANDLEN - strlen(handle))] = 0;
+
       if (chan_issplit(m))
-	dprintf(idx, "%c%s%s %s%s %s %c     <- netsplit, %lus\n", chanflag,
-		m->nick, spaces, handle, spaces2, s, atrflag,
-		now - (m->split));
+            dprintf(idx, "%c%-*s %-*s %s %c     <- netsplit, %lus\n", chanflag, x, m->nick, x2, handle, s, atrflag, now - (m->split));
       else if (!rfc_casecmp(m->nick, botname))
-	dprintf(idx, "%c%s%s %s%s %s %c     <- it's me!\n", chanflag, m->nick,
-		spaces, handle, spaces2, s, atrflag);
-      else {
+            dprintf(idx, "%c%-*s %-*s %s %c     <- it's me!\n", chanflag, x, m->nick, x2, handle, s, atrflag);
+          else
+            {
 	/* Determine idle time */
 	if (now - (m->last) > 86400)
 	  egg_snprintf(s1, sizeof s1, "%2lud", ((now - (m->last)) / 86400));
@@ -642,11 +678,10 @@ static void cmd_channel(struct userrec *u, int idx, char *par)
 	  egg_snprintf(s1, sizeof s1, "%2lum", ((now - (m->last)) / 60));
 	else
 	  strncpyz(s1, "   ", sizeof s1);
-	dprintf(idx, "%c%s%s %s%s %s %c %s  %s\n", chanflag, m->nick,
-		spaces, handle, spaces2, s, atrflag, s1, m->userhost);
+
+              dprintf(idx, "%c%-*s %-*s %s %c %s  %s\n", chanflag, x, m->nick, x2, handle, s, atrflag, s1, m->userhost);
       }
-      spaces[len] = ' ';
-      spaces2[len2] = ' ';
+
       if (chan_fakeop(m))
 	dprintf(idx, "    (%s)\n", IRC_FAKECHANOP);
       if (chan_sentop(m))
