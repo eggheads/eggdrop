@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  *
- * $Id: main.c,v 1.110 2004/06/20 02:28:09 wcc Exp $
+ * $Id: main.c,v 1.111 2004/07/02 21:21:08 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -899,11 +899,12 @@ int main(int argc, char **argv)
     dcc[n].status = STAT_ECHO;
     strcpy(dcc[n].nick, "HQ");
     strcpy(dcc[n].host, "llama@console");
-    dcc[n].user = get_user_by_handle(userlist, "HQ");
+    /* HACK: Workaround not to pass literal "HQ" as a non-const arg */
+    dcc[n].user = get_user_by_handle(userlist, dcc[n].nick);
     /* Make sure there's an innocuous HQ user if needed */
     if (!dcc[n].user) {
-      userlist = adduser(userlist, "HQ", "none", "-", USER_PARTY);
-      dcc[n].user = get_user_by_handle(userlist, "HQ");
+      userlist = adduser(userlist, dcc[n].nick, "none", "-", USER_PARTY);
+      dcc[n].user = get_user_by_handle(userlist, dcc[n].nick);
     }
     setsock(STDOUT, 0);          /* Entry in net table */
     dprintf(n, "\n### ENTERING DCC CHAT SIMULATION ###\n\n");
