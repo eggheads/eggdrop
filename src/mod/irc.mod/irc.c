@@ -2,7 +2,7 @@
  * irc.c -- part of irc.mod
  *   support for channels within the bot
  *
- * $Id: irc.c,v 1.81 2002/11/21 23:53:08 wcc Exp $
+ * $Id: irc.c,v 1.82 2002/11/27 21:31:34 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -392,20 +392,6 @@ static int me_halfop(struct chanset_t *chan)
     return 0;
 }
 
-/* Check if there are any ops on the channel. Returns boolean 1 or 0.
- */
-static int any_ops(struct chanset_t *chan)
-{
-  memberlist *x;
-
-  for (x = chan->channel.member; x && x->nick[0]; x = x->next)
-    if (chan_hasop(x))
-      break;
-  if (!x || !x->nick[0])
-    return 0;
-  return 1;
-}
-
 /* Check whether I'm voice. Returns boolean 1 or 0.
  */
 static int me_voice(struct chanset_t *chan)
@@ -419,6 +405,20 @@ static int me_voice(struct chanset_t *chan)
     return 1;
   else
     return 0;
+}
+
+/* Check if there are any ops on the channel. Returns boolean 1 or 0.
+ */
+static int any_ops(struct chanset_t *chan)
+{
+  memberlist *x;
+
+  for (x = chan->channel.member; x && x->nick[0]; x = x->next)
+    if (chan_hasop(x))
+      break;
+  if (!x || !x->nick[0])
+    return 0;
+  return 1;
 }
 
 /* Reset the channel information.
@@ -1155,6 +1155,7 @@ static Function irc_table[] =
   (Function) check_this_ban,
   (Function) check_this_user,
   (Function) me_halfop,
+  (Function) me_voice,
 };
 
 char *irc_start(Function * global_funcs)
