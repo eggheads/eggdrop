@@ -4,7 +4,7 @@
  *   Tcl initialization
  *   getting and setting Tcl/eggdrop variables
  *
- * $Id: tcl.c,v 1.65 2003/02/28 07:20:58 tothwolf Exp $
+ * $Id: tcl.c,v 1.66 2003/02/28 09:21:35 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -324,7 +324,7 @@ static char *tcl_eggstr(ClientData cdata, Tcl_Interp *irp,
 #ifdef USE_TCL_BYTE_ARRAYS
 
 static int utf_converter(ClientData cdata, Tcl_Interp *myinterp, int objc,
-                         Tcl_Obj *EGG_CONST objv[])
+                         Tcl_Obj *CONST objv[])
 {
   char **strings, *byteptr;
   int i, len, retval, diff;
@@ -372,7 +372,7 @@ void add_tcl_commands(tcl_cmds *table)
     clientdata_stuff += sizeof(void *) * 2;
     cdata[0] = table->func;
     cdata[1] = NULL;
-    Tcl_CreateObjCommand(interp, table->name, (Function) utf_converter, (ClientData) cdata,
+    Tcl_CreateObjCommand(interp, table->name, utf_converter, (ClientData) cdata,
                          cmd_delete_callback);
     table++;
   }
@@ -387,7 +387,7 @@ void add_cd_tcl_cmds(cd_tcl_cmd *table)
     clientdata_stuff += sizeof(void *) * 2;
     cdata[0] = table->callback;
     cdata[1] = table->cdata;
-    Tcl_CreateObjCommand(interp, table->name, (Function) utf_converter, (ClientData) cdata,
+    Tcl_CreateObjCommand(interp, table->name, utf_converter, (ClientData) cdata,
                          cmd_delete_callback);
     table++;
   }

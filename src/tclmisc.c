@@ -2,7 +2,7 @@
  * tclmisc.c -- handles:
  *   Tcl stubs for everything else
  *
- * $Id: tclmisc.c,v 1.39 2003/02/27 10:18:40 tothwolf Exp $
+ * $Id: tclmisc.c,v 1.40 2003/02/28 09:21:35 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -623,7 +623,7 @@ static int tcl_md5(cd, irp, objc, objv)
 ClientData cd;
 Tcl_Interp *irp;
 int objc;
-Tcl_Obj *EGG_CONST objv[];
+Tcl_Obj *CONST objv[];
 {
 #else
 static int tcl_md5 STDVAR
