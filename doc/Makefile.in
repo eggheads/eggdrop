@@ -1,5 +1,5 @@
 # Makefile for doc/
-# $Id: Makefile.in,v 1.7 1999/12/15 02:32:57 guppy Exp $
+# $Id: Makefile.in,v 1.8 1999/12/28 01:25:27 guppy Exp $
 
 SHELL = /bin/sh
 top_srcdir = @top_srcdir@
@@ -11,8 +11,8 @@ INSTALL_DATA = @INSTALL_DATA@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
 
 DOCS = BOTNET BUG-REPORT CONTENTS KNOWN-PROBLEMS MODULES \
-Ode_To_Beldin UPDATES.pre1.3 UPDATES1.3 UPDATES1.4 \
-compiling.FAQ eggdrop.doc patch.howto tcl-commands.doc tricks
+UPDATES.pre1.3 UPDATES1.3 UPDATES1.4 compiling.FAQ eggdrop.doc \
+ patch.howto tcl-commands.doc tricks
 
 MAN1 = man1/eggdrop.1
 

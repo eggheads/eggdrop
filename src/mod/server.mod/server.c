@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  * 
- * $Id: server.c,v 1.25 1999/12/25 01:49:25 guppy Exp $
+ * $Id: server.c,v 1.26 1999/12/28 01:25:27 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -816,7 +816,7 @@ static void server_5minutely()
       int servidx = findanyidx(serv);
 
       disconnect_server(servidx);
-      lostdcc(servidx);
+      removedcc(servidx);
       putlog(LOG_SERV, "*", IRC_SERVERSTONED);
     } else if (!trying_server) {
       /* check for server being stoned */
@@ -988,7 +988,6 @@ static char *server_close()
   cycle_time = 100;
   nuke_server("Connection reset by phear");
   clearq(serverlist);
-  dcc_remove_lost();		/* Remove lost dcc entries. */
   Context;
   rem_builtins(H_dcc, C_dcc_serv);
   rem_builtins(H_raw, my_raw_binds);

@@ -7,7 +7,7 @@
  * 
  * dprintf'ized, 15nov1995
  * 
- * $Id: main.c,v 1.33 1999/12/25 01:49:24 guppy Exp $
+ * $Id: main.c,v 1.34 1999/12/28 01:25:27 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -437,7 +437,7 @@ void backup_userfile()
 /* timer info: */
 static int lastmin = 99;
 static time_t then;
-static struct tm *nowtm;
+static struct tm nowtm;
 
 /* rally BB, this is not QUITE as bad as it seems <G> */
 /* ONCE A SECOND */
@@ -460,8 +460,8 @@ static void core_secondly()
     }
   }
   Context;
-  nowtm = localtime(&now);
-  if (nowtm->tm_min != lastmin) {
+  memcpy(&nowtm, localtime(&now), sizeof(struct tm));
+  if (nowtm.tm_min != lastmin) {
     int i = 0;
 
     /* once a minute */
@@ -470,9 +470,9 @@ static void core_secondly()
     check_expired_ignores();
     autolink_cycle(NULL);	/* attempt autolinks */
     /* in case for some reason more than 1 min has passed: */
-    while (nowtm->tm_min != lastmin) {
+    while (nowtm.tm_min != lastmin) {
       /* timer drift, dammit */
-      debug2("timer: drift (lastmin=%d, now=%d)", lastmin, nowtm->tm_min);
+      debug2("timer: drift (lastmin=%d, now=%d)", lastmin, nowtm.tm_min);
       Context;
       i++;
       lastmin = (lastmin + 1) % 60;
@@ -480,9 +480,9 @@ static void core_secondly()
     }
     if (i > 1)
       putlog(LOG_MISC, "*", "(!) timer drift -- spun %d minutes", i);
-    miltime = (nowtm->tm_hour * 100) + (nowtm->tm_min);
+    miltime = (nowtm.tm_hour * 100) + (nowtm.tm_min);
     Context;
-    if (((int) (nowtm->tm_min / 5) * 5) == (nowtm->tm_min)) {	/* 5 min */
+    if (((int) (nowtm.tm_min / 5) * 5) == (nowtm.tm_min)) {	/* 5 min */
       call_hook(HOOK_5MINUTELY);
       check_botnet_pings();
       Context;
@@ -506,7 +506,7 @@ static void core_secondly()
       }
     }
     Context;
-    if (nowtm->tm_min == notify_users_at)
+    if (nowtm.tm_min == notify_users_at)
       call_hook(HOOK_HOURLY);
     Context;			/* these no longer need checking since they are
 				 * all check vs minutely settings and we only
@@ -535,7 +535,7 @@ static void core_secondly()
 static void core_minutely()
 {
   Context;
-  check_tcl_time(nowtm);
+  check_tcl_time(&nowtm);
   do_check_timers(&timer);
   Context;
   if (quick_logs != 0) {
@@ -668,8 +668,8 @@ int main(int argc, char **argv)
   /* initialize variables and stuff */
   now = time(NULL);
   chanset = NULL;
-  nowtm = localtime(&now);
-  lastmin = nowtm->tm_min;
+  memcpy(&nowtm, localtime(&now), sizeof(struct tm));
+  lastmin = nowtm.tm_min;
   srandom(now);
   init_mem();
   init_language(1);

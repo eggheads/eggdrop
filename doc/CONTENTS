@@ -23,9 +23,6 @@ eggdrop.doc
 man1/
    unix man pages, should you ever need them
 
-Ode_To_Beldin
-   A tribute to the latest acheiver in eggdrop coding.
-
 patch.howto
    a how-to on applying patches to eggdrop, snagged from ftp.sodre.net
    (patches are a popular way to modify parts of eggdrop)

@@ -902,7 +902,7 @@ GLOBAL VARIABLES:
     unixtime value for when the bot was started
 
 | server-online
-|    unixtime value for how long the bot has been on its server
+|    unixtime value for when the bot connected to its current server
 
   lastbind
     The last command binding which triggered.   This allows you to
