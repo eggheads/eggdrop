@@ -2,7 +2,7 @@
  * irc.c -- part of irc.mod
  *   support for channels within the bot
  *
- * $Id: irc.c,v 1.70 2002/06/16 04:42:48 wcc Exp $
+ * $Id: irc.c,v 1.71 2002/06/16 04:45:44 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -670,8 +670,8 @@ static void check_expired_chanstuff()
 	      get_user_flagrec(m->user ? m->user : get_user_by_host(s),
 			       &fr, chan->dname);
 	      if ((!(glob_bot(fr) || glob_friend(fr) || (glob_op(fr) &&
-		      !chan_deop(fr)) || chan_friend(fr) || chan_op(fr))) &&
-		      (me_op(chan) || (me_halfop(chan) && !chan_hasop(m)))) {
+		  !chan_deop(fr)) || chan_friend(fr) || chan_op(fr))) &&
+		  (me_op(chan) || (me_halfop(chan) && !chan_hasop(m)))) {
 		dprintf(DP_SERVER, "KICK %s %s :idle %d min\n", chan->name,
 			m->nick, chan->idle_kick);
 		m->flags |= SENTKICK;
