@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  * 
- * $Id: server.c,v 1.24 1999/12/25 00:07:51 fabian Exp $
+ * $Id: server.c,v 1.25 1999/12/25 02:37:37 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1133,7 +1133,7 @@ static void dcc_chat_hostresolved(int i)
   sprintf(buf, "%d", dcc[i].port);
   if (!hostsanitycheck_dcc(dcc[i].nick, dcc[i].host, dcc[i].addr,
 			  dcc[i].u.dns->host, buf)) {
-    lostdcc(i);
+    removedcc(i);
     return;
   }
   dcc[i].sock = getsock(0);
@@ -1147,7 +1147,7 @@ static void dcc_chat_hostresolved(int i)
 	   dcc[i].nick, dcc[i].host);
     putlog(LOG_MISC, "*", "    (%s)", buf);
     killsock(dcc[i].sock);
-    lostdcc(i);
+    removedcc(i);
   } else {
     changeover_dcc(i, &DCC_CHAT_PASS, sizeof(struct chat_info));
     dcc[i].status = STAT_ECHO;
@@ -1182,7 +1182,7 @@ static void server_5minutely()
       int servidx = findanyidx(serv);
 
       disconnect_server(servidx);
-      lostdcc(servidx);
+      removedcc(servidx);
       putlog(LOG_SERV, "*", IRC_SERVERSTONED);
     } else if (!trying_server) {
       /* check for server being stoned */
@@ -1353,7 +1353,6 @@ static char *server_close()
   cycle_time = 100;
   nuke_server("Connection reset by phear");
   clearq(serverlist);
-  dcc_remove_lost();		/* Remove lost dcc entries. */
   Context;
   rem_builtins(H_dcc, C_dcc_serv);
   rem_builtins(H_raw, my_raw_binds);

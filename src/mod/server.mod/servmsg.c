@@ -1,7 +1,7 @@
 /* 
  * servmsg.c -- part of server.mod
  * 
- * $Id: servmsg.c,v 1.16 1999/12/25 00:07:51 fabian Exp $
+ * $Id: servmsg.c,v 1.17 1999/12/25 02:37:37 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -310,7 +310,7 @@ static void nuke_server(char *reason)
     if (reason && (servidx > 0))
       dprintf(servidx, "QUIT :%s\n", reason);
     disconnect_server(servidx);
-    lostdcc(servidx);
+    removedcc(servidx);
   }
 }
 
@@ -988,7 +988,7 @@ static void eof_server(int idx)
 {
   putlog(LOG_SERV, "*", "%s %s", IRC_DISCONNECTED, dcc[idx].host);
   disconnect_server(idx);
-  lostdcc(idx);
+  removedcc(idx);
 }
 
 static void display_server(int idx, char *buf)
@@ -1016,7 +1016,7 @@ static void timeout_server(int idx)
 {
   putlog(LOG_SERV, "*", "Timeout: connect to %s", dcc[idx].host);
   disconnect_server(idx);
-  lostdcc(idx);
+  removedcc(idx);
 }
 
 static void server_activity(int idx, char *msg, int len);
@@ -1229,7 +1229,7 @@ static void server_resolve_failure(int servidx)
   resolvserv = 0;
   putlog(LOG_SERV, "*", "%s %s (%s)", IRC_FAILEDCONNECT, dcc[servidx].host,
 	 IRC_DNSFAILED);
-  lostdcc(servidx);
+  removedcc(servidx);
 }
 
 static void server_resolve_success(int servidx)
@@ -1246,7 +1246,7 @@ static void server_resolve_success(int servidx)
     neterror(s);
     putlog(LOG_SERV, "*", "%s %s (%s)", IRC_FAILEDCONNECT, dcc[servidx].host,
 	   s);
-    lostdcc(servidx);
+    removedcc(servidx);
       if ((oldserv == curserv) && !(never_give_up))
 	fatal("NO SERVERS WILL ACCEPT MY CONNECTION.", 0);
   } else {
