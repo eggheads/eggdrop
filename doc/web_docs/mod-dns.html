@@ -1,0 +1,31 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.7 [en] (WinNT; U) [Netscape]">
+   <meta name="Author" content="Jason Ede">
+   <title>Eggdrop Documentation: DNS Module</title>
+</head>
+<body text="#000000" bgcolor="#FFFFFF" link="#3333FF" vlink="#3333FF" alink="#3333FF">
+<b><font face="Arial, Helvetica"><font color="#FF0000"><font size=-1>DNS
+MODULE
+<hr>TCL COMMANDS:</font></font></font></b>
+<blockquote><b><font face="Arial,Helvetica"><font size=-1>dnslookup &lt;ip-address/hostname>
+&lt;proc> [[arg1] [arg2] ... [argn]]</font></font></b>
+<br><font face="Arial,Helvetica"><font size=-1>Issues an asynchronous dns
+lookup request. The command will block if dns module is not loaded, otherwise
+it will either return immediately or immediately call the proc (e.g. if
+the lookup is already cached).</font></font>
+<br><font face="Arial,Helvetica"><font size=-1>As soon as the request completes,
+&lt;proc> will be called as follows:</font></font>
+<blockquote><font face="Arial,Helvetica"><font size=-1>&lt;proc> ipaddress
+hostname status [[arg1] [arg2] ... [argn]]</font></font></blockquote>
+<font face="Arial,Helvetica"><font size=-1>Status is 1 if the lookup was
+successful and 0 if it wasn't. All additional parameters (called arg1,
+arg2 and argn above) get appended to the proc's other parameters.</font></font></blockquote>
+
+<hr><i><font face="Arial, Helvetica"><font size=-1>(c) 1997 Robey Pointer</font></font></i>
+<br><i><font face="Arial, Helvetica"><font size=-1>(c) 2000 Eggheads Development
+Team</font></font></i>
+</body>
+</html>

@@ -26,9 +26,9 @@ usage</a></font></font></ol>
 startup</a></font></font>
 <br><font face="Arial, Helvetica"><font size=-1>4&nbsp;&nbsp;&nbsp; <a href="#item4">Upgrading</a></font></font>
 <ol><font face="Arial, Helvetica"><font size=-1>4a&nbsp;&nbsp;&nbsp; <a href="#item4a">From
-a pres-1.3/1.4 version to 1.4</a></font></font>
+a pres-1.3/1.4/1.5 version to 1.5</a></font></font>
 <br><font face="Arial, Helvetica"><font size=-1>4b&nbsp;&nbsp;&nbsp; <a href="#item4b">From
-an older 1.3/1.4 version to a newer one</a></font></font></ol>
+an older 1.3/1.4/1.5 version to a newer one</a></font></font></ol>
 <font face="Arial, Helvetica"><font size=-1>5&nbsp;&nbsp;&nbsp; <a href="#item5">Frequently
 Asked Questions</a></font></font>
 <ol>
@@ -124,7 +124,7 @@ like IRC, in fact.</font></font>
 improved and adjusted because there are bugs to be fixed and features to
 be added (if the users demand them, and they make actually sense). In fact,
 it existed for several years as v0.7 - v0.9 before finally going 1.0. This
-version of eggdrop is part of the 1.4 tree. A valiant effort has been made
+version of eggdrop is part of the 1.5 tree. A valiant effort has been made
 to chase down and destroy bugs.</font></font>
 <p><font face="Arial, Helvetica"><font size=-1>This README file contains
 information about how to get eggdrop, how to quickly compile the bot, what
@@ -152,7 +152,7 @@ best ftp site is:</font></font>
 <p><font face="Arial, Helvetica"><font size=-1>Tcl comes with the Slackware
 distribution of Linux. HOWEVER, the one that comes on Slackware 3.0 is
 goofed up and you'll have to re-install it for yourself to get it working.</font></font>
-<p><font face="Arial, Helvetica"><font size=-1>Currently, the 1.4 tree
+<p><font face="Arial, Helvetica"><font size=-1>Currently, the 1.5 tree
 of eggdrop is developed at eggheads.org. You can get the latest version
 of eggdrop from ftp.eggheads.org.</font></font>
 <p><font face="Arial, Helvetica"><font size=-1>You might try www.eggheads.org
@@ -179,15 +179,15 @@ shell</font></font>
 <br><font face="Arial, Helvetica"><font size=-1>(4) press &lt;enter> when
 it asks for a password.</font></font>
 <br><font face="Arial, Helvetica"><font size=-1>(5) in your home dir, type
-'cvs checkout eggdrop1.4'</font></font>
-<br><font face="Arial, Helvetica"><font size=-1>(6) in ~/eggdrop1.4, you
+'cvs checkout eggdrop1.5'</font></font>
+<br><font face="Arial, Helvetica"><font size=-1>(6) in ~/eggdrop1.5, you
 should have a copy of the latest CVS version of eggdrop.</font></font></blockquote>
 <b><font face="Arial, Helvetica"><font size=-1>Notes:</font></font></b>
 <blockquote><font face="Arial, Helvetica"><font size=-1>(1) you can 'cvs
 logout', but you don't need to.</font></font>
 <br><font face="Arial, Helvetica"><font size=-1>(2) you don't need to go
 through this whole process every time; if you want to get a CVS version
-of eggdrop at a later time, you can just 'cd ~/eggdrop1.4' and type 'cvs
+of eggdrop at a later time, you can just 'cd ~/eggdrop1.5' and type 'cvs
 update -A'.</font></font>
 <br><font face="Arial, Helvetica"><font size=-1>(3) if you experience errors
 when using 'export', you might be using tclsh as a shell. If so, try using
@@ -202,7 +202,7 @@ IN 'INSTALL' - READ IT *<u>AFTER</u>* FINISHING THIS ####</font></font></b></cen
 <a NAME="item4"></a><b><font face="Arial, Helvetica"><font color="#FF0000"><font size=-1>(4)
 UPGRADING</font></font></font></b>
 <blockquote><a NAME="item4a"></a><b><font face="Arial, Helvetica"><font color="#FF0000"><font size=-1>(4a)
-FROM A PRE-1.3/1.4 VERSION TO 1.4</font></font></font></b>
+FROM A PRE-1.3/1.4/1.5 VERSION TO 1.5</font></font></font></b>
 <blockquote><font face="Arial, Helvetica"><font size=-1>#### BACK UP YOUR
 USERFILE ####</font></font>
 <p><font face="Arial, Helvetica"><font size=-1>We can't re-iterate this
@@ -210,28 +210,28 @@ enough, if you are upgrading, and you have even a slight possibility of
 downgrading again later you will HAVE to back up your userfile, or you
 will lose it. v1.3 of eggdrop radically changed alot of things.</font></font>
 <p><font face="Arial, Helvetica"><font size=-1>There are many major changes
-between v0.9, v1.0, v1.1 and v1.3/1.4 so PAY ATTENTION to this part if
-you have a v0.9, 1.0 or 1.1 bot already. If you're just starting out, you
-can skip this section.</font></font>
-<p><font face="Arial, Helvetica"><font size=-1>to 1.3/1.4: * If you run
-sharebots, you will need to upgrade them all at the same time because of
-the new userfile format. Older bots will be able to link in, but will not
-get or send a userfile. 1.2's will also tend to refuse to share with another
-pre1.2. MAKE A NEW CONFIG FILE from the example, there are some radical
-extras.</font></font>
-<p><font face="Arial, Helvetica"><font size=-1>from 0.9/1.0 to 1.3/1.4:
+between v0.9, v1.0, v1.1 and v1.3/1.4/1.5 so PAY ATTENTION to this part
+if you have a v0.9, 1.0 or 1.1 bot already. If you're just starting out,
+you can skip this section.</font></font>
+<p><font face="Arial, Helvetica"><font size=-1>to 1.3/1.4/1.5: * If you
+run sharebots, you will need to upgrade them all at the same time because
+of the new userfile format. Older bots will be able to link in, but will
+not get or send a userfile. 1.2's will also tend to refuse to share with
+another pre1.2. MAKE A NEW CONFIG FILE from the example, there are some
+radical extras.</font></font>
+<p><font face="Arial, Helvetica"><font size=-1>from 0.9/1.0 to 1.3/1.4/1.5:
 * Just redo the whole thing, absolutely everything has changed including
 the userfile and config file formats.</font></font>
-<p><font face="Arial, Helvetica"><font size=-1>from 1.1/1.2 to 1.3/1.4:
+<p><font face="Arial, Helvetica"><font size=-1>from 1.1/1.2 to 1.3/1.4/1.5:
 * You will likely want to redo the config file, as much as changed. BACK
 UP!! You will need to run 'tclsh scripts/weed/&lt;userfile> c' to convert
-your userfile from v3 (1.1/1.2) to v4 (1.3/1.4)</font></font></blockquote>
+your userfile from v3 (1.1/1.2) to v4 (1.3/1.4/1.5)</font></font></blockquote>
 <a NAME="item4b"></a><b><font face="Arial, Helvetica"><font color="#FF0000"><font size=-1>(4b)
-FROM AN OLDER 1.3/1.4 VERSION TO A NEWER ONE</font></font></font></b>
+FROM AN OLDER 1.3/1.4/1.5 VERSION TO A NEWER ONE</font></font></font></b>
 <blockquote><font face="Arial, Helvetica"><font size=-1>If you followed
 the INSTALL file and did a 'make install' (or 'make install DEST=&lt;path>')
-after 'make', this will be pretty easy. Just upload the new eggdrop1.4.xx.tar.gz
-file to the home dir of your shell, gunzip and untar it, and type 'cd ~/eggdrop1.4.xx'.
+after 'make', this will be pretty easy. Just upload the new eggdrop1.5.xx.tar.gz
+file to the home dir of your shell, gunzip and untar it, and type 'cd ~/eggdrop1.5.xx'.
 Then, type './configure', 'make', then kill the bot ('.die' on the partyline,
 or use 'kill' on the shell) and 'make install' to the same directory your
 bot is currently in. Then, you can just restart your bot.</font></font></blockquote>

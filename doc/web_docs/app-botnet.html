@@ -12,7 +12,7 @@ SHARING AND LINKING</font></font></font></b>
 <p><font face="Arial,Helvetica"><font size=-1>This document is designed
 to help you with a working knowledge of botnets.</font></font>
 <p><font face="Arial,Helvetica"><font size=-1>This document includes bot
-flags, sharing and linking bots.&nbsp; This only covers the&nbsp; 1.4.X
+flags, sharing and linking bots.&nbsp; This only covers the&nbsp; 1.5.X
 version of eggdrop.&nbsp; Many things have changed in the way flags are
 handled and the way user-files are shared.&nbsp; The code has been stream-lined
 and made more efficient.&nbsp; Even if you have used previous version you
@@ -102,10 +102,10 @@ one we want to share user channel flags with.&nbsp; Do the following:</font></fo
 eggdrop.com:3333 (This command adds a user record to Lamestbot for LameShare.&nbsp;
 LameShare is running from eggdrop.com and is on port 3333. If LameShare
 were to have a seperate port for users/relays we would just add a '/' and
-the port number i.e. 3333/5555)</font></font><font face="Arial,Helvetica"><font size=-1></font></font>
+the port number i.e. 3333/5555)</font></font>
 <p><font face="Arial,Helvetica"><font size=-1>.botattr LameShare +s (this
 tells us that Lamestbot will only send user files to LameShare, LameShare
-will not send them to it)</font></font><font face="Arial,Helvetica"><font size=-1></font></font>
+will not send them to it)</font></font>
 <p><font face="Arial,Helvetica"><font size=-1>.botattr LameShare |s #eggdrop
 (this sets up sharing of the channel flags for #eggdrop between the bots.
 Without this they will not share channel flags only global flags for the
@@ -114,10 +114,10 @@ users.)</font></font></blockquote>
 <blockquote><font face="Arial,Helvetica"><font size=-1>.+bot Lamestbot
 best.com:3333/5555 (Again this will add a user on LameShare called Lamestbot
 with the domain of best.com.&nbsp; The bot has two ports, 3333 for bot
-communications and 5555 for users/relays)</font></font><font face="Arial,Helvetica"><font size=-1></font></font>
+communications and 5555 for users/relays)</font></font>
 <p><font face="Arial,Helvetica"><font size=-1>.botattr Lamestbot +hp (this
 command sets Lamestbot as the hub and also as a passive share which means
-LameShare will accept user files from Lamestbot.</font></font><font face="Arial,Helvetica"><font size=-1></font></font>
+LameShare will accept user files from Lamestbot.</font></font>
 <p><font face="Arial,Helvetica"><font size=-1>.botattr Lamestbot |+s #eggdrop
 (again sets #eggdrop as a share channel and that channel flags will be
 passed to LameShare from Lamestbot)</font></font></blockquote>
@@ -139,7 +139,7 @@ LameShare</font></font>
 <p><font face="Arial,Helvetica"><font size=-1>Let's add a third bot called
 beldin to this scenario:</font></font>
 <p><font face="Arial,Helvetica"><font size=-1>On Lamestbot:</font></font>
-<blockquote><font face="Arial,Helvetica"><font size=-1>.+bot beldin llama.com:3333</font></font><font face="Arial,Helvetica"><font size=-1></font></font>
+<blockquote><font face="Arial,Helvetica"><font size=-1>.+bot beldin llama.com:3333</font></font>
 <p><font face="Arial,Helvetica"><font size=-1>.botattr beldin s|s #eggdrop
 (notice how i piped (the | character) the channel flag also saving time.)</font></font></blockquote>
 <font face="Arial,Helvetica"><font size=-1>Also note that you don't have

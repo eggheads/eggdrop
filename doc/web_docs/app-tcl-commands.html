@@ -12,7 +12,7 @@ to eggdrop. All of the normal Tcl built-in commands are still there, of
 course. But you can also use these to manipulate features of the bot. They
 are listed according to category.</font></font>
 <p><font face="Arial, Helvetica"><font size=-1><b>NOTICE:</b> This list
-is accurate for the v1.4 series of eggdrop!</font></font>
+is accurate for the v1.5 series of eggdrop!</font></font>
 <p><b><font face="Arial, Helvetica"><font size=-1>SCRIPTS WHICH WERE WRITTEN
 FOR EARLIER VERSIONS WILL PROBABLY NOT WORK WITHOUT MODIFICATION. ALTHOUGH
 SOME CAN BE MADE TO WORK USING THE COMPAT.TCL DISTRIBUTED WITH EGGDROP.
@@ -68,6 +68,14 @@ Module</a></font></font></li>
 
 <li>
 <font face="Arial, Helvetica"><font size=-1><a href="mod-channels.html">Channels
+Module</a></font></font></li>
+
+<li>
+<font face="Arial, Helvetica"><font size=-1><a href="mod-compress.html">Compression
+Module</a></font></font></li>
+
+<li>
+<font face="Arial, Helvetica"><font size=-1><a href="mod-dns.html">DNS
 Module</a></font></font></li>
 
 <li>
@@ -350,6 +358,21 @@ user with that idx</font></font></i>
 <p><b><font face="Arial, Helvetica"><font size=-1>valididx &lt;idx></font></font></b>
 <br><i><font face="Arial, Helvetica"><font size=-1>returns: "1" if the
 idx currently exists; "0" if not</font></font></i>
+<p><b><font face="Arial,Helvetica"><font size=-1>botlist</font></font></b>
+<br><i><font face="Arial,Helvetica"><font size=-1>returns: a list of bots
+currently on the botnet; each item in the list will be a sublist with four
+elements: bot, uplink, version, sharing status.</font></font></i>
+<blockquote><font face="Arial,Helvetica"><font size=-1>bot&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+: the bot's nickname</font></font>
+<br><font face="Arial,Helvetica"><font size=-1>uptlink : who the bot is
+connected through</font></font>
+<br><font face="Arial,Helvetica"><font size=-1>version : its current numeric
+version</font></font>
+<br><font face="Arial,Helvetica"><font size=-1>sharing : a "+" if the bot
+is sharing, "-" otherwise</font></font></blockquote>
+<b><font face="Arial,Helvetica"><font size=-1>islinked &lt;bot></font></font></b>
+<br><i><font face="Arial,Helvetica"><font size=-1>returns: "1" if the bot
+is currently linked, "0" otherwise</font></font></i>
 <p><b><font face="Arial, Helvetica"><font size=-1>getchan &lt;idx></font></font></b>
 <br><i><font face="Arial, Helvetica"><font size=-1>returns: the current
 party line channel for a user on the party line -- "0" indicates he's on
@@ -399,13 +422,46 @@ for a dcc chat user (or "" if the user is not set away)</font></font></i>
 <br><font face="Arial, Helvetica"><font size=-1>sets a party line user's
 away message and marks them away; if set to "", the user is marked un-away</font></font>
 <br><i><font face="Arial, Helvetica"><font size=-1>returns: nothing</font></font></i>
-<p><b><font face="Arial, Helvetica"><font size=-1>listen &lt;port> [mask]</font></font></b>
+<p><b><font face="Arial,Helvetica"><font size=-1>connect &lt;host> &lt;port></font></font></b>
+<br><font face="Arial,Helvetica"><font size=-1>makes an outgoing connection
+attempt and creates a dcc entry for it; a 'control' command should be used
+immediately after a successful 'connect' so no input is lost</font></font>
+<br><i><font face="Arial,Helvetica"><font size=-1>returns: idx of the new
+connection</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>listen &lt;port> &lt;type>
+[options] [flag]</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>opens a listening port
+to accept incoming telnets; type must be one of "bots", "all", "users",
+"script", or "off":</font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>listen &lt;port> bots
+[mask]</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>accepts connections from
+bots only; the optional mask is used to identify permitted bot names; if
+the mask begins with '@' it is interpreted to be a mask of permitted hosts
+to accept connections from</font></font>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: port #</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>listen &lt;port> users
+[mask]</font></font></b>
 <br><font face="Arial, Helvetica"><font size=-1>accepts connections from
 users only (no bots); the optional mask is used to identify permitted nicknames;
 if the mask begins with '@' it is interpreted to be a mask of permitted
 hosts to accept connections from</font></font>
 <br><i><font face="Arial, Helvetica"><font size=-1>returns: port #</font></font></i>
-<br><b><font face="Arial, Helvetica"><font size=-1>listen &lt;port> off</font></font></b>
+<p><b><font face="Arial, Helvetica"><font size=-1>listen &lt;port> all
+[mask]</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>accepts connections from
+anyone; the optional mask is used to identify permitted nicknames/botnames;
+if the mask begins with '@' it is interpreted to be a mask of permitted
+hosts to accept connections from</font></font>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: port #</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>listen &lt;port> script
+&lt;proc> [flag]</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>accepts connections which
+are immediately routed to a proc; the proc is called with one parameter:
+the idx of the new connection flag may currently only be 'pub', which makes
+the bot allow anyone to connect.</font></font>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: port #</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>listen &lt;port> off</font></font></b>
 <br><font face="Arial, Helvetica"><font size=-1>stop listening at a port</font></font>
 <br><i><font face="Arial, Helvetica"><font size=-1>returns: nothing</font></font></i>
 <p><b><font face="Arial, Helvetica"><font size=-1>dccdumpfile &lt;idx>
@@ -413,6 +469,29 @@ hosts to accept connections from</font></font>
 <br><font face="Arial, Helvetica"><font size=-1>dumps out a file from the
 text directory to a dcc chat user; the flag matching that's used everywhere
 else works here too</font></font>
+<p><b><font face="Arial,Helvetica"><font size=-1>link [via-bot] &lt;bot></font></font></b>
+<br><font face="Arial,Helvetica"><font size=-1>attempts to link to another
+bot directly (or, if you give a via-bot, it tells the via-bot to try</font></font>
+<br><i><font face="Arial,Helvetica"><font size=-1>returns: "1" if it looks
+okay and it will try; "0" if not</font></font></i>
+<p><b><font face="Arial,Helvetica"><font size=-1>unlink &lt;bot></font></font></b>
+<br><font face="Arial,Helvetica"><font size=-1>attempts to remove a bot
+from the botnet</font></font>
+<br><i><font face="Arial,Helvetica"><font size=-1>returns: "1" if it will
+try or has passed the request on; "0" if not</font></font></i>
+<p><b><font face="Arial,Helvetica"><font size=-1>encrypt &lt;key> &lt;string></font></font></b>
+<br><i><font face="Arial,Helvetica"><font size=-1>returns: encrypted string
+(using blowfish), encoded into ascii using base-64 so it can be sent over
+the botnet</font></font></i>
+<p><b><font face="Arial,Helvetica"><font size=-1>decrypt &lt;key> &lt;encrypted-base64-string></font></font></b>
+<br><i><font face="Arial,Helvetica"><font size=-1>returns: decrypted string
+(using blowfish)</font></font></i>
+<p><b><font face="Arial,Helvetica"><font size=-1>encpass &lt;password></font></font></b>
+<br><i><font face="Arial,Helvetica"><font size=-1>returns: encrypted string
+(using blowfish)</font></font></i>
+<p><b><font face="Arial,Helvetica"><font size=-1>md5 &lt;string></font></font></b>
+<br><i><font face="Arial,Helvetica"><font size=-1>returns: the 128 bits
+MD5 "message-digest" of the specified string.</font></font></i>
 <p><a NAME="Core-Misc"></a>
 <hr><b><font face="Arial, Helvetica"><font color="#FF0000"><font size=-1>MISCELLANEOUS
 COMMANDS</font></font></font></b>
@@ -671,6 +750,28 @@ or comes back on the botnet (msg == "" when returning)</font></font>
 &lt;newnick></font></font></blockquote>
 <font face="Arial, Helvetica"><font size=-1>triggered whenever a local
 users nick is changed (in the userfile)</font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>EVNT&nbsp;&nbsp; (stackable)</font></font></b>
+<blockquote><font face="Arial, Helvetica"><font size=-1>bind evnt - &lt;type>
+&lt;proc></font></font>
+<br><font face="Arial, Helvetica"><font size=-1>proc-name &lt;type></font></font></blockquote>
+<font face="Arial, Helvetica"><font size=-1>triggered whenever one of these
+events happens. valid events are:</font></font>
+<br><font face="Arial, Helvetica"><font size=-1>sighup&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(called on a kill -HUP &lt;pid>)</font></font>
+<br><font face="Arial, Helvetica"><font size=-1>sigterm&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(called on a kill -TERM &lt;pid>)</font></font>
+<br><font face="Arial, Helvetica"><font size=-1>sigill&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(called on a kill -ILL &lt;pid>)</font></font>
+<br><font face="Arial, Helvetica"><font size=-1>sigquit&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(called on a kill -QUIT &lt;pid>)</font></font>
+<br><font face="Arial, Helvetica"><font size=-1>save&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(called when the userfile is saved)</font></font>
+<br><font face="Arial, Helvetica"><font size=-1>rehash&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(called just after a rehash)</font></font>
+<br><font face="Arial, Helvetica"><font size=-1>prerehash&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(called just before a rehash)</font></font>
+<br><font face="Arial, Helvetica"><font size=-1>logfile&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(called when the logs are switched daily)</font></font>
 <p><a NAME="Core-ReturnV"></a>
 <hr><b><font face="Arial, Helvetica"><font color="#FF0000"><font size=-1>RETURN
 VALUES</font></font></font></b>

@@ -18,7 +18,19 @@ specified) number of notes for user, -1 if no such user, -2 if notefile
 failure (if a note number specified) the number'th note for the user, -1
 if no such user, -2 if notefile failure, 0 if no such note. the note is
 a list, first element from, 2nd element timestamp, 3rd element the note
-itself</font></font></i>
+itself</font></font></i><i><font face="Arial, Helvetica"><font size=-1></font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>erasenotes &lt;user>
+&lt;numberlist></font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>erases some or all stored
+notes for a user</font></font>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: -1 if no such
+user, -2 if notefile failure, 0 if no such note, or number of erased notes.
+'erasenote mynick "-"' erase all notes for mynick.</font></font></i><font face="Arial, Helvetica"><font size=-1></font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>listnotes &lt;user> &lt;numberlist></font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>lists existing notes according
+to the numberlist (ex: "2-4;8;16-")</font></font>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: -1 if no such
+user, -2 if notefile failure, 0 if no such note, list of existing notes.</font></font></i>
 <p><b><font face="Arial, Helvetica"><font size=-1>storenote &lt;from> &lt;to>
 &lt;msg> &lt;idx></font></font></b>
 <br><font face="Arial, Helvetica"><font size=-1>stores a note for later

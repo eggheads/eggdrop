@@ -14,11 +14,29 @@ MODULE
 like 'dump' (intended for direct server commands); output is queued so
 that you won't flood yourself off the server</font></font>
 <br><i><font face="Arial, Helvetica"><font size=-1>returns: nothing</font></font></i>
+<p><b><font face="Arial,Helvetica"><font size=-1>putquick &lt;text></font></font></b>
+<br><font face="Arial,Helvetica"><font size=-1>sends text to the server,
+like 'dump' (intended for direct server commands); output is queued so
+that you won't flood yourself off the server, using the MODE queue (should
+be alot faster)</font></font>
+<br><i><font face="Arial,Helvetica"><font size=-1>returns: nothing</font></font></i>
+<p><b><font face="Arial,Helvetica"><font size=-1>putkick &lt;channel> &lt;nick,nick,...>
+[reason]</font></font></b>
+<br><font face="Arial,Helvetica"><font size=-1>sends kicks to the server
+and tries to put as many nicks into one kick command as possible.</font></font>
+<br><i><font face="Arial,Helvetica"><font size=-1>returns: nothing</font></font></i>
 <p><b><font face="Arial, Helvetica"><font size=-1>puthelp &lt;text></font></font></b>
 <br><font face="Arial, Helvetica"><font size=-1>sends text to the server
 like 'putserv', but uses a different queue (intended for sending messages
 to channels or people)</font></font>
 <br><i><font face="Arial, Helvetica"><font size=-1>returns: nothing</font></font></i>
+<p><b><font face="Arial,Helvetica"><font size=-1>queuesize [queue]</font></font></b>
+<br><i><font face="Arial,Helvetica"><font size=-1>returns: the number of
+msgs in all queues. If a queue is specified, only the size of this queue
+is returned. valid queues are: mode, server help, or all.</font></font></i>
+<p><b><font face="Arial,Helvetica"><font size=-1>clearqueue &lt;queue></font></font></b>
+<br><i><font face="Arial,Helvetica"><font size=-1>returns: number of deleted
+lines from the specified queue</font></font></i>
 <p><b><font face="Arial, Helvetica"><font size=-1>dumpfile &lt;nick> &lt;filename></font></font></b>
 <br><font face="Arial, Helvetica"><font size=-1>dumps out a file from the
 help/text directory to a user on IRC via msg (one line per msg); the user
@@ -35,10 +53,16 @@ VARIABLES:</font></font></font></b>
 is using, ie 'Sisko' or 'Sisko0', etc</font></font>
 <p><b><font face="Arial, Helvetica"><font size=-1>botname</font></font></b>
 <br><font face="Arial, Helvetica"><font size=-1>current nick!user@host
-that the server sees, ie 'Sisko!ikaney@uk.defiant.org'</font></font>
+that
+the server sees, ie 'Sisko!ikaney@uk.defiant.org'</font></font>
+<p><b>isjuped</b>
+<br>value is 1 if bots nick is juped(437) 0 otherwise.
 <p><b><font face="Arial, Helvetica"><font size=-1>server</font></font></b>
 <br><font face="Arial, Helvetica"><font size=-1>current server the bot
-is using, ie 'irc.math.ufl.edu:6667'</font></font></blockquote>
+is using, ie 'irc.math.ufl.edu:6667'</font></font><font face="Arial, Helvetica"><font size=-1></font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>server-online</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>unixtime value for when
+the bot connected to its current server</font></font></blockquote>
 
 <hr><b><font face="Arial, Helvetica"><font color="#FF0000"><font size=-1>BINDING(S)
 TABLE(S):</font></font></font></b>
@@ -62,11 +86,21 @@ to words or phrases spoken anywhere within a line of text</font></font>
 <blockquote><font face="Arial, Helvetica"><font size=-1>bind notc &lt;flags>
 &lt;mask> &lt;proc></font></font>
 <br><font face="Arial, Helvetica"><font size=-1>proc-name &lt;nick> &lt;user@host>
-&lt;handle> &lt;text></font></font></blockquote>
-<font face="Arial, Helvetica"><font size=-1>matches the entire line of
-text from a /notice with the mask; it is considered a breach of protocol
-to respond to a /notice on IRC, so this is intended for internal use (ie,
-logging, etc) only</font></font>
+&lt;handle> &lt;text> &lt;dest></font></font></blockquote>
+<font face="Arial, Helvetica"><font size=-1>destination will be a nickname
+(the bot's nickname, obviously) or a channel name; matches the entire line
+of text from a /notice with the mask; it is considered a breach of protocol
+to respond to a&nbsp; /notice on IRC, so this is intended for internal
+use (ie, logging, etc) only</font></font><font face="Arial, Helvetica"><font size=-1></font></font>
+<p><font face="Arial, Helvetica"><font size=-1>new Tcl procs should be
+declared as</font></font>
+<blockquote><font face="Arial, Helvetica"><font size=-1>proc notcproc {nick
+uhost hand chan text {dest ""}} {</font></font>
+<br><font face="Arial, Helvetica"><font size=-1>&nbsp; global botnick;
+if {$dest==""} { set dest $botnick }</font></font>
+<br><font face="Arial, Helvetica"><font size=-1>&nbsp; ...</font></font>
+<br><font face="Arial, Helvetica"><font size=-1>}</font></font></blockquote>
+<font face="Arial, Helvetica"><font size=-1>for compatiblity</font></font>
 <p><b><font face="Arial, Helvetica"><font size=-1>CTCP</font></font></b>
 <blockquote><font face="Arial, Helvetica"><font size=-1>bind ctcp &lt;flags>
 &lt;keyword-mask> &lt;proc></font></font>
@@ -97,7 +131,8 @@ source user (depending on the keyword); flags are ignored; the order of
 the arguments is identical to the order that the IRC server sends to the
 bot -- the pre-processing only splits it apart enough to determine the
 keyword; if the proc returns 1, eggdrop will not process the line any further
-<b>(THIS COULD CAUSE YOUR BOT TO BEHAVE ODDLY IN SOME CASES)</b></font></font>
+<b>(THIS
+COULD CAUSE YOUR BOT TO BEHAVE ODDLY IN SOME CASES)</b></font></font>
 <p><b><font face="Arial, Helvetica"><font size=-1>FLUD (stackable)</font></font></b>
 <blockquote><font face="Arial, Helvetica"><font size=-1>bind flud &lt;flags>
 &lt;type> &lt;proc></font></font>

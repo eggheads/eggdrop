@@ -30,6 +30,14 @@ in the directory given; the directory is relative to dcc-path</font></font></i>
 operates for a current filesystem user, and the filename is assumed to
 be a relative path from that user's current directory</font></font>
 <br><i><font face="Arial, Helvetica"><font size=-1>returns: "0" on failure;
+"1" on success (either an immediate send or a queued send)</font></font></i><i><font face="Arial, Helvetica"><font size=-1></font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>fileresend &lt;idx> &lt;filename>
+[ircnick]</font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>like filesend, only that
+it starts a DCC RESEND instead of a DCC SEND, which allows people to resume
+aborted file transfers if their client supports that protocol. ircII/BitchX/etc.
+support it, mIRC does not.</font></font>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: "0" on failure;
 "1" on success (either an immediate send or a queued send)</font></font></i>
 <p><b><font face="Arial, Helvetica"><font size=-1>setdesc &lt;dir> &lt;file>
 &lt;desc></font></font></b>

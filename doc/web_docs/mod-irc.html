@@ -23,11 +23,20 @@ by that nickname is on the channel and has voice (+v); "0" otherwise</font></fon
 &lt;channel></font></font></b>
 <br><i><font face="Arial, Helvetica"><font size=-1>returns: "1" if someone
 by that nickname is on the bot's channel; "0" otherwise</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>botonchan &lt;channel></font></font></b>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: "1" if the
+bot is on that channel; "0" otherwise</font></font></i>
 <p><b><font face="Arial, Helvetica"><font size=-1>nick2hand &lt;nickname>
 &lt;channel></font></font></b>
 <br><i><font face="Arial, Helvetica"><font size=-1>returns: handle of the
 person on the channel with that nickname, if someone by that nickname is
 on the channel; "" otherwise</font></font></i>
+<br><font face="Arial, Helvetica"><font size=-1>if &lt;channel> is not
+specified, bot will check all of its channels</font></font>
+<br><font face="Arial, Helvetica"><font size=-1>if &lt;nickname> not found,
+returns ""</font></font>
+<br><font face="Arial, Helvetica"><font size=-1>if &lt;nickname> found
+but unknown, returns "*"</font></font>
 <p><b><font face="Arial, Helvetica"><font size=-1>handonchan &lt;handle>
 &lt;channel></font></font></b>
 <br><i><font face="Arial, Helvetica"><font size=-1>returns: "1" if the
@@ -58,11 +67,14 @@ age} age is seconds from the bots POV</font></font></i>
 &lt;channel></font></font></b>
 <br><i><font face="Arial, Helvetica"><font size=-1>returns: "1" if that
 is a exempt on the bot's channel</font></font></i>
+<p><b><font face="Arial, Helvetica"><font size=-1>ischanjuped [channel]</font></font></b>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: "1" if the
+channel is juped and bot is unable to join, "0" otherwise.</font></font></i>
 <p><b><font face="Arial, Helvetica"><font size=-1>resetexempts &lt;channel></font></font></b>
 <br><font face="Arial, Helvetica"><font size=-1>removes all exempts on
 the channel that aren't in the bot's exempt list, and refreshes any exempts
 that should be on the channel but aren't</font></font>
-<br><i><font face="Arial, Helvetica"><font size=-1>returns: nothing</font></font></i><i><font face="Arial, Helvetica"><font size=-1></font></font></i>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: nothing</font></font></i>
 <p><b><font face="Arial, Helvetica"><font size=-1>chaninvites &lt;channel></font></font></b>
 <br><i><font face="Arial, Helvetica"><font size=-1>returns: a list of the
 current invites on the channel, each element is of the form {invite bywho
@@ -159,10 +171,18 @@ and can contain wildcards</font></font>
 <blockquote><font face="Arial, Helvetica"><font size=-1>bind part &lt;flags>
 &lt;mask> &lt;proc></font></font>
 <br><font face="Arial, Helvetica"><font size=-1>proc-name &lt;nick> &lt;user@host>
-&lt;handle> &lt;channel></font></font></blockquote>
+&lt;handle> &lt;channel> &lt;msg></font></font></blockquote>
 <font face="Arial, Helvetica"><font size=-1>triggered by someone leaving
 the channel; as in JOIN, the &lt;mask> is matched against "#channel nick!user@host"
-and can contain wildcards</font></font>
+and can contain wildcards. If no part message is specified msg will be
+set to "".</font></font>
+<br><font face="Arial, Helvetica"><font size=-1>&nbsp;</font></font>
+<br><font face="Arial, Helvetica"><font size=-1>new Tcl procs should be
+declared as</font></font>
+<br><font face="Arial, Helvetica"><font size=-1>&nbsp;&nbsp; proc partproc
+{nick uhost hand chan {msg ""}} { ... }</font></font>
+<br><font face="Arial, Helvetica"><font size=-1>for compatiblity</font></font>
+<br><font face="Arial, Helvetica"><font size=-1></font></font>&nbsp;
 <p><b><font face="Arial, Helvetica"><font size=-1>SIGN (stackable)</font></font></b>
 <blockquote><font face="Arial, Helvetica"><font size=-1>bind sign &lt;flags>
 &lt;mask> &lt;proc></font></font>
@@ -203,13 +223,29 @@ newnick"</font></font>
 <blockquote><font face="Arial, Helvetica"><font size=-1>bind mode &lt;flags>
 &lt;mask> &lt;proc></font></font>
 <br><font face="Arial, Helvetica"><font size=-1>proc-name &lt;nick> &lt;user@host>
-&lt;handle> &lt;channel> &lt;mode-change></font></font></blockquote>
+&lt;handle> &lt;channel> &lt;mode-change> &lt;victim></font></font></blockquote>
 <font face="Arial, Helvetica"><font size=-1>mode changes are broken down
 into their component parts before being sent here, so the &lt;mode-change>
-will always be a single mode, like "+m" or "-o snowbot"; flags are ignored;
-the bot's automatic response to a mode change will happen AFTER all matching
-Tcl procs are called; the &lt;mask> will have the channel prefixed (i.e.,
-"#turtle +m")</font></font>
+will always be a single mode, like "+m" or "-o", and the victims nick is
+contained in &lt;victim>; flags are ignored; the bot's automatic response
+to a mode change will happen AFTER all matching Tcl procs are called; the
+&lt;mask> will have the channel prefixed (i.e., "#turtle +m")</font></font>
+<p>if it is a server mode &lt;nick> will be "", &lt;user@host> is the server
+address and handle is *
+<p>note that "victim" was added in 1.3.23 and that this will break tcl
+scripts that were written for pre-1.3.23 versions and use this binding.
+An easy fix (by guppy) is as follows (example):
+<p>Old script looks as follows:
+<br>bind mode - * mode_proc
+<br>proc mode_proc {nick uhost hand chan mc} { ... }
+<p>To make it work with 1.3.23+ and stay compatible with older bots, do:bind
+mode - * mode_proc_fix
+<p>proc mode_proc_fix {nick uhost hand chan mc {victim ""}} {
+<br>&nbsp; if {$victim != ""} { append mc " $victim" }
+<br>&nbsp; mode_proc $nick $uhost $hand $chan $mc
+<br>}
+<br>proc mode_proc {nick uhost hand chan mc} { ... }
+<br>&nbsp;
 <p><b><font face="Arial, Helvetica"><font size=-1>SPLT (stackable)</font></font></b>
 <blockquote><font face="Arial, Helvetica"><font size=-1>bind splt &lt;flags>
 &lt;mask> &lt;proc></font></font>

@@ -180,7 +180,8 @@ global invite list</font></font>
 <p><b><font face="Arial, Helvetica"><font size=-1>isinvite &lt;invite>
 [channel]</font></font></b>
 <br><i><font face="Arial, Helvetica"><font size=-1>returns: "1" if that
-invite is in the global invite list, "0" otherwise; if a channel is specified,
+invite
+is in the global invite list, "0" otherwise; if a channel is specified,
 that channel's invite list is checked too</font></font></i>
 <p><b><font face="Arial, Helvetica"><font size=-1>isperminvite &lt;invite>
 [channel]</font></font></b>
@@ -218,13 +219,28 @@ a specific channel (behaves just like 'getinfo')</font></font></i>
 &lt;channel> &lt;info></font></font></b>
 <br><font face="Arial, Helvetica"><font size=-1>sets the info line on a
 specific channel for a user</font></font>
-<br><i><font face="Arial, Helvetica"><font size=-1>returns: nothing</font></font></i>
+<br><i><font face="Arial, Helvetica"><font size=-1>returns: nothing</font></font></i><font size=-1></font>
 <p><b><font face="Arial, Helvetica"><font size=-1>setlaston &lt;handle>
 [channel] [time]</font></font></b>
 <br><font face="Arial, Helvetica"><font size=-1>sets the laston time for
 a user, if a channel is specified then the channel laston time is set,
 otherwise the global one is set, if no time is given the current time is
-used.</font></font></blockquote>
+used.</font></font><font face="Arial, Helvetica"><font size=-1></font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>setudef &lt;flag/int>
+&lt;name></font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>initializes a user defined
+channel flag or integer setting. You can use it like any other flag/setting.</font></font>
+<br><font face="Arial, Helvetica"><font size=-1><b>IMPORTANT</b>: Don't
+forget to reinitialize your flags/settings after a restart, or it'll be
+lost.</font></font><font face="Arial, Helvetica"><font size=-1></font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>renudef &lt;flag/int>
+&lt;oldname> &lt;newname></font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>renames a user defined
+channel flag or integer setting.</font></font><font face="Arial, Helvetica"><font size=-1></font></font>
+<p><b><font face="Arial, Helvetica"><font size=-1>deludef &lt;flag/int>
+&lt;name></font></font></b>
+<br><font face="Arial, Helvetica"><font size=-1>deletes a user defined
+channel flag or integer setting.</font></font></blockquote>
 
 <hr><b><font face="Arial, Helvetica"><font color="#FF0000"><font size=-1>TCL
 VARIABLES:</font></font></font></b>
@@ -240,10 +256,10 @@ channel info lines</font></font>
 be kept on a dynamicbans channel</font></font>
 <p><b><font face="Arial, Helvetica"><font size=-1>exempt-time &lt;mins></font></font></b>
 <br><font face="Arial, Helvetica"><font size=-1>Set the time an exempt
-will be kept on a dynamicexempts channel</font></font><font face="Arial, Helvetica"><font size=-1></font></font>
+will be kept on a dynamicexempts channel</font></font>
 <p><b><font face="Arial, Helvetica"><font size=-1>invite-time &lt;mins></font></font></b>
 <br><font face="Arial, Helvetica"><font size=-1>Set the time an invite
-will be kept on a dynamicinvites channel</font></font><font face="Arial, Helvetica"><font size=-1></font></font>
+will be kept on a dynamicinvites channel</font></font>
 <p><b><font face="Arial, Helvetica"><font size=-1>chanfile</font></font></b>
 <br><font face="Arial, Helvetica"><font size=-1>Where to store settings
 set using +/-chan, settings in this file OVERRIDE config file settings.
