@@ -1,5 +1,5 @@
 # Makefile for src/mod/
-# $Id: Makefile.in,v 1.18 2003/12/13 19:18:50 wcc Exp $
+# $Id: Makefile.in,v 1.19 2004/06/17 05:43:29 wcc Exp $
 
 SHELL = @SHELL@
 top_srcdir = @top_srcdir@
@@ -122,7 +122,7 @@ install-help:
 	@echo "Copying module help files."
 	@if test ! -d $(DEST)/help; then \
 		echo "Creating 'help' subdirectory."; \
-		$(top_srcdir)/misc/mkinstalldirs $(DEST)/help; \
+		$(top_srcdir)/misc/mkinstalldirs $(DEST)/help >/dev/null; \
 	fi; \
 	for i in $(mods); do \
 		if test ! "x`echo $(srcdir)/$$i/help/*.help`" = "x$(srcdir)/$$i/help/*.help"; then \
@@ -133,7 +133,7 @@ install-help:
 	done;
 	@if test ! -d $(DEST)/help/msg; then \
 		echo "Creating 'help/msg' subdirectory."; \
-		$(top_srcdir)/misc/mkinstalldirs $(DEST)/help/msg; \
+		$(top_srcdir)/misc/mkinstalldirs $(DEST)/help/msg >/dev/null; \
 	fi; \
 	for i in $(mods); do \
 		if test ! "x`echo $(srcdir)/$$i/help/msg/*.help`" = "x$(srcdir)/$$i/help/msg/*.help"; then \
@@ -144,7 +144,7 @@ install-help:
 	done;
 	@if test ! -d $(DEST)/help/set; then \
 		echo "Creating 'help/set' subdirectory."; \
-		$(top_srcdir)/misc/mkinstalldirs $(DEST)/help/set; \
+		$(top_srcdir)/misc/mkinstalldirs $(DEST)/help/set >/dev/null; \
 	fi; \
 	for i in $(mods); do \
 		if test ! "x`echo $(srcdir)/$$i/help/set/*.help`" = "x$(srcdir)/$$i/help/set/*.help"; then \
@@ -158,7 +158,7 @@ install-language:
 	@echo "Copying module language files."
 	@if test ! -d $(DEST)/language; then \
 		echo "Creating 'language' subdirectory."; \
-		$(top_srcdir)/misc/mkinstalldirs $(DEST)/language; \
+		$(top_srcdir)/misc/mkinstalldirs $(DEST)/language >/dev/null; \
 	fi; \
 	for i in $(mods); do \
 		if test ! "x`echo $(srcdir)/$$i/language/*.lang`" = "x$(srcdir)/$$i/language/*.lang"; then \
