@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  *
- * $Id: main.c,v 1.72 2001/09/28 14:07:26 guppy Exp $
+ * $Id: main.c,v 1.73 2001/11/10 19:45:33 poptix Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -934,14 +934,14 @@ int main(int argc, char **argv)
       dcc_remove_lost();
 
       /* Check for server or dcc activity. */
-      dequeue_sockets();
+      dequeue_sockets();		
     } else
       socket_cleanup--;
 
     /* Free unused structures. */
     garbage_collect();
 
-    xx = sockgets(buf, &i);
+    xx = sockgets(buf, &i); 
     if (xx >= 0) {		/* Non-error */
       int idx;
 

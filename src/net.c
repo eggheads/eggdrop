@@ -2,7 +2,7 @@
  * net.c -- handles:
  *   all raw network i/o
  * 
- * $Id: net.c,v 1.32 2001/07/24 14:32:31 guppy Exp $
+ * $Id: net.c,v 1.33 2001/11/10 19:45:34 poptix Exp $
  */
 /* 
  * This is hereby released into the public domain.
@@ -662,15 +662,14 @@ static int sockread(char *s, int *len)
 	else
 	  x = read(socklist[i].sock, s, grab);
 	if (x <= 0) {		/* eof */
-	  if (errno == EAGAIN) {
-	    s[0] = 0;
-	    *len = 0;
-	    return -3;
+	  if (errno != EAGAIN) { /* EAGAIN happens when the operation would block 
+				    on a non-blocking socket, if the socket is going
+				    to die, it will die later, otherwise it will connect */
+	    *len = socklist[i].sock;
+	    socklist[i].flags &= ~SOCK_CONNECT;
+	    debug1("net: eof!(read) socket %d", socklist[i].sock);
+	    return -1;
 	  }
-	  *len = socklist[i].sock;
-	  socklist[i].flags &= ~SOCK_CONNECT;
-	  debug1("net: eof!(read) socket %d", socklist[i].sock);
-	  return -1;
 	}
 	s[x] = 0;
 	*len = x;
@@ -734,6 +733,8 @@ int sockgets(char *s, int *len)
 {
   char xx[514], *p, *px;
   int ret, i, data = 0;
+  fd_set wfds;
+  struct timeval tv;
 
   for (i = 0; i < MAXSOCKS; i++) {
     /* Check for stored-up data waiting to be processed */
@@ -992,11 +993,29 @@ void tputs(register int z, char *s, unsigned int len)
  */
 void dequeue_sockets()
 {
-  int i, x;
-
+  int i, x, z=0;
+/* start poptix test code, this should avoid writes to sockets not ready to be written to. */
+  fd_set wfds;
+  struct timeval tv;
+  FD_ZERO(&wfds);
+  tv.tv_sec = 0;
+  tv.tv_usec = 0; /* we only want to see if it's ready for writing, no need to actually wait.. */
   for (i = 0; i < MAXSOCKS; i++) { 
     if (!(socklist[i].flags & SOCK_UNUSED) &&
 	socklist[i].outbuf != NULL) {
+	  FD_SET(socklist[i].sock, &wfds);
+	  z=1; 
+	}
+  }
+  if (!z) { 
+	return; /* nothing to write */
+  }
+  select(MAXSOCKS, NULL, &wfds, NULL, &tv);
+/* end poptix */
+
+  for (i = 0; i < MAXSOCKS; i++) { 
+    if (!(socklist[i].flags & SOCK_UNUSED) &&
+	(socklist[i].outbuf != NULL) && (FD_ISSET(socklist[i].sock, &wfds))) {
       /* Trick tputs into doing the work */
       x = write(socklist[i].sock, socklist[i].outbuf,
 		socklist[i].outbuflen);
