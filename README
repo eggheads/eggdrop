@@ -1,4 +1,4 @@
-$Id: README,v 1.38 2004/01/13 01:30:25 wcc Exp $
+$Id: README,v 1.39 2004/04/13 03:57:51 wcc Exp $
 
 Readme
 Last revised: June 5, 2002
@@ -397,7 +397,7 @@ Last revised: June 5, 2002
     6m. I GET A WHOLE PILE OF "Unresolved symbol 'Tcl_AppendResult'" (OR SOME
         OTHER SYMBOL) WHEN I TRY TO LOAD A MODULES.
 
-      POSSIBILITY A: See section 12.
+      POSSIBILITY A: See section 6l.
 
       POSSIBILITY B:
 
@@ -408,7 +408,7 @@ Last revised: June 5, 2002
              using './configure --enable-shared' when you configure Tcl (not
              the bot) and then remake, and reinstall.
 
-          2. If it's not your machine, you make have to resort to 'make static'
+          2. If it's not your machine, you may have to resort to 'make static'
              and 'make install DEST="path"' to make and install your bot.
 
           3. If you are of a more aggressive sense of mind, go beat the
