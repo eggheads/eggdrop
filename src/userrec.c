@@ -4,7 +4,7 @@
  *   a bunch of functions to find and change user records
  *   change and check user (and channel-specific) flags
  * 
- * $Id: userrec.c,v 1.27 2000/10/27 19:32:41 fabian Exp $
+ * $Id: userrec.c,v 1.28 2000/11/10 19:43:30 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -49,7 +49,7 @@ maskrec		*global_bans = NULL,
 struct igrec	*global_ign = NULL;
 int		cache_hit = 0,
 		cache_miss = 0;		/* temporary cache accounting	    */
-int		strict_host = 1;
+int		strict_host = 0;
 int		userfile_perm = 0600;	/* Userfile permissions,
 					   default rw-------		    */
 
