@@ -2,7 +2,7 @@
  * channels.c -- part of channels.mod
  *   support for channels within the bot
  * 
- * $Id: channels.c,v 1.16 1999/12/22 12:21:42 fabian Exp $
+ * $Id: channels.c,v 1.17 1999/12/22 13:17:55 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -536,7 +536,7 @@ flood-kick %d:%d flood-deop %d:%d \
 %cgreet %cprotectops %cprotectfriends %cdontkickops %cwasoptest \
 %cstatuslog %cstopnethack %crevenge %crevengebot %cautovoice %csecret \
 %cshared %ccycle %cseen %cinactive %cdynamicexempts %cuserexempts \
-%cdynamicinvites %cuserinvites %cnodesynch%s ",
+%cdynamicinvites %cuserinvites %cnodesynch ",
 	channel_static(chan) ? "set" : "add",
 	name,
 	channel_static(chan) ? " " : " { ",
@@ -576,8 +576,8 @@ flood-kick %d:%d flood-deop %d:%d \
         PLSMNS(channel_dynamicexempts(chan)),
         PLSMNS(!channel_nouserexempts(chan)),
  	PLSMNS(channel_dynamicinvites(chan)),
-        PLSMNS(!channel_nouserinvites(chan)));
-	PLSMNS(channel_nodesynch(chan)),
+        PLSMNS(!channel_nouserinvites(chan)),
+	PLSMNS(channel_nodesynch(chan)));
     for (ul = udef; ul; ul = ul->next) {
       if (ul->defined && ul->name) {
 	if (ul->type == UDEF_FLAG)
