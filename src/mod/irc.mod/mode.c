@@ -489,7 +489,7 @@ static void got_ban(struct chanset_t *chan, char *nick, char *from,
   bogus = 0;
   check = 1;
   if (!match_my_nick(nick)) {	/* it's not my ban */
-    if (channel_nouserbans(chan) && !nick[0] && !glob_bot(user) &&
+    if (channel_nouserbans(chan) && nick[0] && !glob_bot(user) &&
 	!glob_master(user) && !chan_master(user)) {
       /* no bans made by users */
       add_mode(chan, '-', 'b', who);
@@ -682,7 +682,7 @@ static void got_exempt(struct chanset_t *chan, char *nick, char *from,
   bogus = 0;
   check = 1;
   if (!match_my_nick(nick)) {	/* it's not my exemption */
-    if (channel_nouserexempts(chan) && !nick[0] && !glob_bot(user) &&
+    if (channel_nouserexempts(chan) && nick[0] && !glob_bot(user) &&
 	!glob_master(user) && !chan_master(user)) {
       /* no exempts made by users */
       add_mode(chan, '-', 'e', who);
@@ -807,7 +807,7 @@ static void got_invite(struct chanset_t *chan, char *nick, char *from,
   bogus = 0;
   check = 1;
   if (!match_my_nick(nick)) {	/* it's not my invitation */
-    if (channel_nouserinvites(chan) && !nick[0] && !glob_bot(user) &&
+    if (channel_nouserinvites(chan) && nick[0] && !glob_bot(user) &&
 	!glob_master(user) && !chan_master(user)) {
       /* no exempts made by users */
       add_mode(chan, '-', 'I', who);
@@ -969,49 +969,41 @@ static void gotmode(char *from, char *msg)
 	  todo = CHANINV;
 	  if ((!nick[0]) && (bounce_modes))
 	    reversing = 1;
-	  /* add_mode(chan, ms2[0] == '+' ? '-' : '+', 'i', ""); */
 	  break;
 	case 'p':
 	  todo = CHANPRIV;
 	  if ((!nick[0]) && (bounce_modes))
 	    reversing = 1;
-	  /* add_mode(chan, ms2[0] == '+' ? '-' : '+', 'p', ""); */
 	  break;
 	case 's':
 	  todo = CHANSEC;
 	  if ((!nick[0]) && (bounce_modes))
 	    reversing = 1;
-	  /* add_mode(chan, ms2[0] == '+' ? '-' : '+', 's', ""); */
 	  break;
 	case 'm':
 	  todo = CHANMODER;
 	  if ((!nick[0]) && (bounce_modes))
 	    reversing = 1;
-	  /* add_mode(chan, ms2[0] == '+' ? '-' : '+', 'm', ""); */
 	  break;
 	case 't':
 	  todo = CHANTOPIC;
 	  if ((!nick[0]) && (bounce_modes))
 	    reversing = 1;
-	  /* add_mode(chan, ms2[0] == '+' ? '-' : '+', 't', ""); */
 	  break;
 	case 'n':
 	  todo = CHANNOMSG;
 	  if ((!nick[0]) && (bounce_modes))
 	    reversing = 1;
-	  /* add_mode(chan, ms2[0] == '+' ? '-' : '+', 'n', ""); */
 	  break;
 	case 'a':
 	  todo = CHANANON;
 	  if ((!nick[0]) && (bounce_modes))
 	    reversing = 1;
-	  /* add_mode(chan, ms2[0] == '+' ? '-' : '+', 'a', ""); */
 	  break;
 	case 'q':
 	  todo = CHANQUIET;
 	  if ((!nick[0]) && (bounce_modes))
 	    reversing = 1;
-	  /* add_mode(chan, ms2[0] == '+' ? '-' : '+', 'q', ""); */
 	  break;
 	case 'l':
 	  if ((!nick[0]) && (bounce_modes))
