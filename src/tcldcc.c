@@ -4,7 +4,7 @@
  * 
  * dprintf'ized, 1aug1996
  * 
- * $Id: tcldcc.c,v 1.18 2000/03/22 04:24:42 guppy Exp $
+ * $Id: tcldcc.c,v 1.19 2000/03/29 14:56:08 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1033,7 +1033,7 @@ static int tcl_listen STDVAR
 
 static int tcl_boot STDVAR
 {
-  char who[NOTENAMELEN];
+  char who[NOTENAMELEN + 1];
   int i, ok = 0;
 
   Context;
@@ -1041,7 +1041,7 @@ static int tcl_boot STDVAR
   strncpy(who, argv[1], NOTENAMELEN);
   who[NOTENAMELEN] = 0;
   if (strchr(who, '@') != NULL) {
-    char whonick[HANDLEN];
+    char whonick[HANDLEN + 1];
      splitc(whonick, who, '@');
      whonick[HANDLEN] = 0;
     if (!strcasecmp(who, botnetnick))
