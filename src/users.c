@@ -10,7 +10,7 @@
  *
  * dprintf'ized, 9nov1995
  *
- * $Id: users.c,v 1.42 2004/01/09 05:56:37 wcc Exp $
+ * $Id: users.c,v 1.43 2004/01/20 18:39:37 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1005,7 +1005,7 @@ void autolink_cycle(char *start)
   }                             /* new run through the user list */
   while (u && !autc) {
     while (u && !autc) {
-      if (u->flags & USER_BOT) {
+      if (u->flags & USER_BOT && strcmp(u->handle, botnetnick)) {              /* ignore our own user record */
         bfl = bot_flags(u);
         if (bfl & (BOT_HUB | BOT_ALT)) {
           linked = 0;
