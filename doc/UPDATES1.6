@@ -1,10 +1,13 @@
-$Id: UPDATES1.6,v 1.126 2001/06/24 20:50:33 poptix Exp $
+$Id: UPDATES1.6,v 1.127 2001/06/25 21:32:08 guppy Exp $
     
 Changes in eggdrop: (since v1.6.0)
 ----------------------------------
 
 1.6.5
 Found by  Fixed by  What...
+          Kirben/   check for pthread_mutex_init as a function instead of in a
+          guppy     library
+          Kirben    detect __res_mkquery since we detect __res_init now
 Sup       G`Quann   Fixed empty line on LOG_SRVOUT and removed a debug-output
                     which confused users
           G`Quann   flush_inbuf and a killsock bug

@@ -1,7 +1,7 @@
 dnl aclocal.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: aclocal.m4,v 1.38 2001/06/25 04:34:03 guppy Exp $
+dnl $Id: aclocal.m4,v 1.39 2001/06/25 21:32:07 guppy Exp $
 dnl
 
 
@@ -380,6 +380,11 @@ else
   fi
   if test "$ac_cv_lib_pthread_pthread_mutex_init" = "no"; then
     AC_CHECK_LIB(pthreads,pthread_mutex_init,
+      ac_cv_lib_pthreads_pthread_mutex_init=yes,
+      ac_cv_lib_pthreads_pthread_mutex_init=no)
+  fi
+  if test "$ac_cv_lib_pthread_pthread_mutex_init" = "no"; then
+    AC_CHECK_FUNC(pthread_mutex_init,
       ac_cv_lib_pthreads_pthread_mutex_init=yes,
       ac_cv_lib_pthreads_pthread_mutex_init=no)
   fi
@@ -951,11 +956,14 @@ else
     TCL_TESTLIBS="-L$TCLLIB -l$TCLLIBFNS $EGG_MATH_LIB $LIBS"
   fi
 fi
-if test "x${ac_cv_lib_pthread_pthread_mutex_init}" = "xyes"; then
-  TCL_TESTLIBS="-lpthread $TCL_TESTLIBS"
-else
-  if text "x${ac_cv_lib_pthreads_pthread_mutex_init}" = "xyes"; then
-    TCL_TESTLIBS="-lpthreads $TCL_TESTLIBS"
+if test "x${CYGWIN}" = "x"
+then
+  if test "x${ac_cv_lib_pthread_pthread_mutex_init}" = "xyes"; then
+    TCL_TESTLIBS="-lpthread $TCL_TESTLIBS"
+  else
+    if text "x${ac_cv_lib_pthreads_pthread_mutex_init}" = "xyes"; then
+      TCL_TESTLIBS="-lpthreads $TCL_TESTLIBS"
+    fi
   fi
 fi
 ])dnl
