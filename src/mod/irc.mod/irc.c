@@ -2,7 +2,7 @@
  * irc.c -- part of irc.mod
  *   support for channels withing the bot
  *
- * $Id: irc.c,v 1.37 2000/02/27 19:21:41 guppy Exp $
+ * $Id: irc.c,v 1.38 2000/02/28 02:06:15 guppy Exp $
  */
 /*
  * Copyright (C) 1997  Robey Pointer
@@ -269,13 +269,23 @@ static void punish_badguy(struct chanset_t *chan, char *whobad,
 static void maybe_revenge(struct chanset_t *chan, char *whobad,
 			  char *whovictim, int type)
 {
-  char *badnick, *victim;
+  char *badnick, *victim, *buf1, *buf2;
   int mevictim;
   struct userrec *u, *u2;
 
   Context;
   if (!chan || (type < 0))
     return;
+
+  /* Copy strings into local buffers and adjust pointers to point to
+   * those buffers.
+   */
+  buf1 = nmalloc(strlen(whobad) + 1);
+  strcpy(buf1, whobad);
+  whobad = buf1;
+  buf2 = nmalloc(strlen(whovictim) + 1);
+  strcpy(buf2, whovictim);
+  whovictim = buf2;
 
   /* Get info about offender */
   u = get_user_by_host(whobad);
@@ -287,11 +297,17 @@ static void maybe_revenge(struct chanset_t *chan, char *whobad,
   mevictim = match_my_nick(victim);
 
   /* Do we want to revenge? */
-  if (!want_to_revenge(chan, u, u2, badnick, victim, mevictim))
+  if (!want_to_revenge(chan, u, u2, badnick, victim, mevictim)) {
+    nfree(buf1);
+    nfree(buf2);
     return;	/* No, leave them alone ... */
+  }
 
-  /* Haha! Do the vengeful thing ... */
+  /* Harhar! Do the vengeful thing ... */
   punish_badguy(chan, whobad, u, badnick, victim, mevictim, type);
+
+  nfree(buf1);
+  nfree(buf2);
 }
 
 /* set the key */

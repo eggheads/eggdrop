@@ -4,6 +4,8 @@ Changes in eggdrop: (since v1.4.0)
 
 1.4.3
 Foundby   Fixedby   What....
+G`Quann   Fabian    maybe_revenge() was changing the `from' buffer, causing
+                      problems when later binds accessed it.
           Tothwolf  configure fixes for vpath compiles
           Jason     multiple exempts were not set correctly
 Wiktor    Eule      tcl_chanmask's time output was broken
@@ -11,12 +13,12 @@ BarkerJr  Fabian    rand_nick used wrong random number generator family
           david     tcl_setuser was not saving console settings correctly
 toot      drummer   bot was removing non-existant +I/+e/+b masks.
           SuperS    added OS support for Ultrix and BeOS and tcl fixes when
-                    finding tcl on those systems
+                     finding tcl on those systems
 Tom       Fabian    filesys tcl_hide/_unhide/_share/_unshare didn't work at all
           david     .binds now supports wildcard matches
           toot      changed "This command can only be used on IRCnet" to
-                    say they need use-exempts/invites and fixed hybrid
-                    net-type to not use invites by default.
+                     say they need use-exempts/invites and fixed hybrid
+                     net-type to not use invites by default.
           Eule      issplit-check for kick_all and idle_kick
           Wiktor    invalid putlog msg in share module.
           dw        chanmaster could use .adduser to add host to globmaster.
