@@ -1,5 +1,5 @@
 Eggdrop Tcl Commands
-Last revised: February 27, 2002
+Last revised: March 01, 2002
      _________________________________________________________________
      
 This is an exhaustive list of all the Tcl commands added to Eggdrop. All
@@ -1406,6 +1406,13 @@ marked with vertical bars (|) on the left.
       traffic usage in bytes. Each sublist contains five elements: type, 
       in-traffic today, in-traffic total, out-traffic today, out-traffic 
       total (in that order).
+    Module: core
+
+  modules
+    Returns: a list of sublists containing information about the bot's 
+      currently loaded modules. Each sublist contains three elements: module,
+      version, and dependencies. Each dependency is also a sublist containing
+      the module name and version.
     Module: core
 
 *** GLOBAL VARIABLES ***
