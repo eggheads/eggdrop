@@ -1,0 +1,331 @@
+%{help=+bot}%{+t}
+###  %b+bot%b <bot> <address:botport#[/userport#]> [hostmask]
+   Creates a user record for a new bot with the nickname given.
+   The hostmask table will have one entry, either that specified,
+   a host from a current user with the given nick, or "none",
+   and the bot (b) flag will be set for the user.  The internet
+   address field of the user will also be set to the address given.
+   You can use this command and %b'chpass'%b to completely set up a
+   record for a future bot, or you can let the two bots negotiate
+   a password for themselves the first time they link.  If the bot
+   has a seperate port for bots and users they should be seperated
+   with a slash (/).
+%{help=+host}%{+m|m}
+###  %b+host%b <nickname> <hostmask>
+   Adds a hostmask to a user's record on the bot.  The hostmasks
+   are where the bot will identify that user from.  Usually you
+   will not need to use this command since a user can add hostmasks
+   to her own record via the %b/MSG IDENT%b command, but it's here if
+   you need it.
+%{help=+ignore}%{+m}
+###  %b+ignore%b <hostmask> [comment]
+   Adds a hostmask to the ignore list, with your nickname and an
+   optional comment.  An ignore added manually like this becomes
+   "permenent", ie, it will not expire automatically.  To make
+   the bot stop ignoring this hostmask, you must eventually use
+   a %b'-ignore'%b command.  This command can be used to either ignore
+   users on irc, or to ignore incoming telnet connections.
+   
+See also: -ignore, ignores
+%{help=+user}%{+m}
+###  %b+user%b <nickname> <hostmask>
+   Creates a new user record for the nickname given, with one entry
+   in the hostmask table.  The new user record will have no flags
+   (i.e. not be a master, op, friend, etc) and no password.
+%{help=-bot}%{+t}
+###  %b-bot%b <bot>
+   Exactly the same as %b'-user'%b, but is included for convenience.
+   It erases a user record.
+   
+See also: +bot, +user, -user
+%{help=-host}
+###  %b-host%b <hostmask>
+   Allows you to remove a host for yourself.
+%{+m|m}
+###  %b-host%b <nickname> <hostmask>
+   Removes a hostmask from another user's record on the bot.
+See also:  +host
+%{-}
+%{help=-ignore}%{+m}
+###  %b-ignore%b <hostmask OR number>
+   Removes the ignore from the list of ignores stored on the bot --
+   You may also reference the ignore by the number shown in '.ignores'.
+   
+See also: +ignore, ignores
+%{help=-user}%{+m}
+###  %b-user%b <nickname>
+   Erases the user record for the nickname given.
+   
+See also:  +user, +bot, -bot
+%{help=addlog}%{+to|o}
+###  %baddlog%b <text>
+   Writes your comment into the bot's log file.  Bot masters can go
+   back later and review the log, and will see your comment (with your
+   handle attached).  This is useful for explaining confusing activity.
+%{help=away}
+###  %baway%b [away-message]
+   Marks you as "away" on the party line.  Your away message will
+   show up in the %b'.who'%b list, and will be displayed to anyone who
+   tries to send you a note.  Your notes will be stored, and then
+   displayed to you as soon as you are no longer away.  Saying
+   something on the party line will automatically remove your "away"
+   status, or you can type %b'.back'%b or %b'.away'%b by itself.
+%{help=back}
+###  %bback%b 
+   This marks you un-away on the party line.
+%{help=banner}%{+t}
+###  %bbanner%b <text>
+   Displays a message to everyone currently using the bot's party line
+   or file area -- useful for announcing that the bot will go down, etc.
+%{help=binds}%{+m}
+###  %bbinds%b [type]
+   Shows the Tcl bindings in effect, in a list similar to this:
+      Command bindings:
+        TYPE FLGS COMMAND              HITS BINDING (TCL)
+        msg  -|-  rose                    0 msg_rose
+        msg  -|-  go                      0 msg_go
+        dcc  m|-  bind                    0 cmd_bind
+        pub  -|-  gross                   0 pub_gross
+   The fields should be self-explanatory, except for HITS, which
+   records the number of times that binding has been called.
+   If not, go read the file %b'tcl-commands.doc'%b for help on the
+   Tcl bind command.  Note that the builtin commands are now shown.
+   You may also specify a type of binding to show (ie, 
+   %b'.binds msg'%b) if you want to narrow the field a bit.
+###  %bbinds%b [type] %ball%b
+   Displays all the Tcl bindings of every type (or the specified 
+   type), including the bindings for built in commands such as:
+        msg  -    op                   *msg:op
+%{help=boot}%{+t}
+###  %bboot%b <nickname> [reason]
+###  %bboot%b <nick@bot> [reason]
+   Will kick a user off the party line, and display the reason if you
+   give one.  You can attempt to boot someone from another bot (in a
+   botnet), though it may be rejected if that bot does not allow remote
+   boots. You can not boot the bot's owner.
+%{help=botattr}%{+t}
+###  %bbotattr%b <nickname> [attributes] [channel]
+   Lets you view and change the attributes (flags) field for a bot.
+   Example:
+   Sets Fred1 +share and -hub.
+      .botattr Fred1 +s-h
+
+   Whether or not you change any flags, it will show you the bot's
+   attributes afterwards.  
+   To get a list of the flags possible, do %b'help whois'%b.
+   %bNOTE:%b This command is NOT used to replace .chattr,
+   it modifies botflags such as +s, +h, +a, +u... bot specific
+   flags only.
+   %bNOTE:%b You can't use this command on bots which are directly
+   linked to your bot at the current moment.
+
+See also: whois, chattr
+%{help=botinfo}%{+t}
+###  %bbotinfo%b
+   Requests information from every bot currently in the botnet.
+   Each bot should eventually send you one line listing its version
+   and other information.
+%{help=bots}
+###  %bbots%b
+   Shows the list of bots currently in the botnet.  Example:
+      Bots: cEvin, ruthie, Killa1
+   There is no indication of which bots are directly connected to
+   this one.  Use %b'who'%b %{+t}or %b'bottree'%b%{-} for that information.
+%{help=bottree}%{+t}
+###  %b[v]bottree%b
+   Shows a tree-format diagram of the bots currently in the botnet.
+   It's just a nice way to get a feel for how the bots are connected
+   physically. if 2 bots are sharing, a + will be indicated, or a ?
+   if nothing is known.
+   Use vbottree if you want to know bot versions as well.
+   
+See also: bots, botinfo
+%{help=chaddr}%{+t}
+###  %bchaddr %b<bot> <address:botport#/userport#>
+   Changes the internet address for a bot.  This is the address
+   your bot will try to telnet to in order to create a connection
+   and link up.  If the bot has a seperate port for bots and users
+   they should be seperated with a slash (/).
+   
+See also: link, +bot
+%{help=chat}
+###  %bchat off%b
+###  %bchat <channel # or name>%b
+   Changes your channel on the dcc chat connection.  when you first
+   connect to the bot, it places you on channel 0 (the party line).
+   You can move to another channel where basically nobody can see
+   you (except anyone else who decides to join that channel).  Valid
+   channel numbers are 1 thru 99999.  
+
+   Some channels may have assigned names if the assoc module is 
+   loaded.  For those, you can specify the channel by name instead
+   of number if you wish.
+
+   %b'chat off'%b removes you from any channel at all.  You can still
+   use normal bot commands and see the console, but you can't talk
+   to anyone except via %b'.note'%b
+
+   %b'chat on'%b returns you to the party line (channel 0) if you were
+   elsewhere.
+
+###  %bchat%b <*channel# or name>
+   Same as above, but for channels available only to the bot you
+   are on.
+%{help=chattr}%{+m|m}
+###  %bchattr%b <nickname> [attributes] [channel]
+   Lets you view and change the attributes (flags) field for a user.
+   For example, to give Lamer the p and f flags:
+      .chattr Lamer +pf
+   Or to remove Denali from the global op list:
+      .chattr Denali -o
+   You may also do any combination of the above:
+      .chattr Fred1 -m+xj-o
+
+   You can also change the flags for Usagi on a specific channel by
+   supplying the channel after the attributes:
+      .chattr Usagi -m+dk-o #blah
+
+   Changing global and channel specific flags within the same command
+   line is now possible! Example:
+      .chattr Bill f|o #lamer   (global +f, +o #lamer)
+
+   Whether or not you change any flags, it will show you the user's
+   attributes afterwards.  
+
+   To get a list of the flags possible, do %b'help whois'%b.
+
+   %bNOTES:%b
+   Only the owner may add or remove the 'n' (owner), 'm' (master)
+   and 't' (botnet master) flags.
+   It is pointless to -n a permanant owner.  You must remove the
+   permanant owner in the config file.
+   This command can no longer be used to change bot flags, they
+   are a seprated entity, changeable with the %b'.botattr'%b command.
+See also: whois
+%{help=chnick}%{+t}
+###  %bchnick%b <oldnick> <newnick>
+   Changes the handle/nickname of a user record.  For example, to
+   change the nickname of user 'gavroche' to 'jamie', you would
+   type: 'chnick gavroche jamie'
+%{help=chpass}%{+t}
+###  %bchpass%b <handle> [newpassword]
+   Changes a user's password on the bot.  If you leave off the new
+   password, the user effectively no longer has a password set.  A
+   password is needed to get ops, join the party line, and other
+   things (but only required if one is set).
+ 
+   %bNOTE:%b In previous versions, setting a password to "nopass" would
+     clear a user's password -- with encrypted passwords, this no
+     longer works!
+%{help=comment}%{+m}
+###  %bcomment%b <user> <comment...>
+   Creates or changes the comment field for a user.  The comment field
+   can only be seen via 'user' or 'match'.  Non-masters cannot see the
+   comment field.
+%{help=console}%{+to|o}
+###  %bconsole%b [channel] [modes]
+   Changes your console level, so that you will see only those types
+   of console messages that you want to.  Your current console channel
+   is the channel (that the bot is on) which you can view from the
+   party line, and which channel-specific commands (like 'say' and
+   'op') take affect on.  valid levels are:
+      m  display private msgs/ctcps to the bot
+      p  display public talk and ctcps on the channel
+      k  display kicks/bans/mode changes on the channel
+      j  display joins/parts/nick changes/signoffs/etc on the channel
+      b  display bot links/unlinks/userfile-sharing
+      s  display server messages and connect/disconnects
+      w  display msgs between IRCops (wallops)
+%{+m|m}
+   channel master only:
+      c  display user commands (dcc and msg)
+      o  display other bot notices [HIGHLY RECOMMENDED]
+%{+m}
+   master only:
+      x  display file transfers and file-area commands
+      d  display debug messages that only coders would care about
+%{+n}
+   owner only:
+      r  display all raw text from the server (if enabled)
+      v  display raw text SENT to the server (if enabled)
+   -- There are also 8 user-defined console modes '1' thru '8' --
+%{+o|o}
+   The mode can also be a modifier like '+p' or '-jk' or '+mp-b'.  If
+   you omit the channel and modes, it will show your current console
+   channel and setting.
+%{+m|m}
+###  %bconsole%b <user> [channel] [modes]
+   Is used to set the console level of another user.  This can even
+   be used on users who normally would not be able to set their own
+   console mode.
+%{help=dccstat}%{+m}
+###  %bdccstat%b
+   displays a table-format list of all the "dcc" connections the bot
+   is handling.  "dcc" means "direct client-to-client communication"
+   and eggdrop expands this to cover every open socket.  so any type
+   of network connection to the bot is considered a "dcc" connection.
+   the headings of the table are:
+      SOCK  the socket of this connection (always unique)
+      ADDR  the IP-number of the host the connection is to, if
+            applicable
+      PORT  the port number being used for communication
+      NICK  the nickname of the user or bot, if it's a user or bot
+      HOST  sometimes, the hostname corresponding to the IP address
+      TYPE  the type of dcc connection (see below)
+
+   the types of connection currently possible are as follows (but
+   more are being added literally all the time):
+      chat  user in dcc-chat command mode
+      pass  user entering dcc chat (being asked for her password)
+      send  raw data connection: user sending a file
+      get   raw data connection: sending a file to a user
+      getp  pending get (waiting for the user to acknowledge)
+      lstn  telnet listening port (in place of a hostname, it will
+              show the proc to call, or mask of acceptable nicks)
+      t-in  incoming telnet user (being asked for his nickname)
+      file  user in dcc-chat file area
+      bot   bot linked in (aka botnet connection)
+      bot*  pending bot link (waiting for acknowledgement)
+      rela  user in relay connection to another bot
+      >rly  bot being relay'd to (one for each "rela")
+      conn  pending telnet connection (chat, relay, bot-link, etc)
+      new   new user via telnet, entering a handle
+      newp  new user via telnet, entering a password
+ 
+   in addition, 'chat' and 'bot' have flags listed for each con-
+   nection.  capital letters mean the flag is on, and lowercase
+   letters mean the flag is off.  for 'chat', the flags are:
+      C     in file area, but allowed to return to party line
+      P     party line access only (no +o access)
+      T     telnet connection (instead of dcc chat)
+      E     echo is on
+      P     use is paging
+   for 'bot', the flags are:
+      P     ping sent, waiting for reply
+      U     user-file sharing is active
+      C     this bot initiated the connection
+      O     user-file offered, waiting for reply
+      S     in the process of sending the user-file
+      G     in the process of getting the user-file
+      W     warned this bot to stop hubbing
+      L     leafed bot (not allowed to hub)
+      I     bot is currently in the 'linking' stage
+      A     bot is being agressively shared with
+   for 'chat' users, the party-line channel is also listed.
+%{help=debug}%{+m}
+###  %bdebug%b
+   will display a dump of memory allocation, assuming the bot was
+   compiled with DEBUG defined.  it's useless to anyone but program-
+   mers hacking on the bot and trying to find memory leaks.
+%{help=echo}
+###  %becho%b <on/off>
+   sets whether you want your messages echoed back to you.  if it's
+   on, then when you say something on the party line, it will be
+   displayed to you just like everyone else will see it.  if it's off,
+   then that won't happen.
+%{help=die}%{+n}
+###  %bdie%b [reason]
+   kills the bot.  the bot goes offline immediately, logging who gave
+   the 'die' command.  you shouldn't have to use this too often.  if you
+   specify a reason, it's logged, otherwise the reason is "authorized by
+   <nickname>".

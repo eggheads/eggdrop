@@ -1,0 +1,21 @@
+%{help=console module}
+###  help for the %bconsole module%b
+   The console module provides the ability to store your console
+   settings so that next time you use the party line they are set.
+   You can use the %b'.store'%b command at any time to store
+   it, or it may be configured to save automatically.
+%{+n}
+   The following tcl variables are avaliable for setting up the
+   console module: (%b'.help set <variable>'%b for more info)
+     %bconsole-autosave%b   %bforce-channel%b
+     %binfo-party%b         
+%{help=store}
+###  %bstore%b
+   Stores you console settings so that they are set automatically
+   next time you join the party line.
+   
+See Also: set console-autosave
+%{help=all}
+###  commands for the %bconsole module%b
+  %bstore%b
+

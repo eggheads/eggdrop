@@ -1,0 +1,27 @@
+%{help=assoc module}
+###  help on the %bassoc module%b
+   This module provides botnet channel naming, see help on the
+   %b'.assoc'%b command.
+%{help=assoc}
+###  %bassoc%b 
+   Displays a list of current botnet channel names. 
+%{+t}
+###  %bassoc%b <channel #> <name>
+   Creates a name for a channel.  The name will propagate across your
+   botnet (if you're hooked into one) and can be used instead of the
+   channel # when changing chat channels (see '.chat').  If you omit
+   the channel # and name, it will just dump a list of the current
+   named channels.
+
+###  %bassoc%b <*channel #> <name>
+   Creates a name for a local channel.  These channels are local to
+   the bot itself.
+ 
+###  %bassoc%b <[*]channel #>
+   Wipes out the name for a channel, if there was one.
+%{end}
+%{help=all}
+%{+t}
+###  commands for the %bassoc module%b
+  %bassoc%b
+%{end}
