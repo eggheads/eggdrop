@@ -2,7 +2,7 @@
  * net.c -- handles:
  *   all raw network i/o
  *
- * $Id: net.c,v 1.65 2004/04/10 03:52:28 stdarg Exp $
+ * $Id: net.c,v 1.66 2004/04/10 04:53:42 wcc Exp $
  */
 /*
  * This is hereby released into the public domain.
@@ -670,8 +670,6 @@ static int sockread(char *s, int *len)
                                   * otherwise it will connect. */
             *len = socklist[i].sock;
             socklist[i].flags &= ~SOCK_CONNECT;
-	    putlog(LOG_MISC, "*", "socklist[i].inbuflen = %d", socklist[i].inbuflen);
-	    if (socklist[i].inbuf) putlog(LOG_MISC, "*", "inbuf = '%s'", socklist[i].inbuf);
             debug1("net: eof!(read) socket %d", socklist[i].sock);
             return -1;
           } else {

@@ -16,7 +16,7 @@ dnl You should have received a copy of the GNU General Public License
 dnl along with this program; if not, write to the Free Software
 dnl Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 dnl
-dnl $Id: aclocal.m4,v 1.86 2004/01/18 03:57:26 wcc Exp $
+dnl $Id: aclocal.m4,v 1.87 2004/04/10 04:53:41 wcc Exp $
 dnl
 
 dnl EGG_MSG_CONFIGURE_START()
@@ -279,14 +279,20 @@ AC_DEFUN([EGG_CHECK_OS],
     ;;
     HP-UX)
       HPUX="yes"
-      MOD_LD="$CC -fPIC -shared"
-      SHLIB_CC="$CC -fPIC"
+      if test "$CC" = "cc"; then
+        # HP-UX ANSI C Compiler.
+        MOD_LD="$CC +z"
+        SHLIB_CC="$CC +z"
+        AC_DEFINE(MODULES_OK, 1, [Define if modules will work on your system.])
+      else
+        # GCC
+        MOD_LD="$CC -fPIC -shared"
+        SHLIB_CC="$CC -fPIC"
+      fi
       SHLIB_LD="ld -b"
       NEED_DL=0
-      AC_DEFINE(MODULES_OK, 1, [Define if modules will work on your system.])
       AC_DEFINE(HPUX_HACKS, 1, [Define if running on HPUX that supports dynamic linking.])
-      if test "`echo $egg_cv_var_system_release | cut -d . -f 2`" = "10"
-      then
+      if test "`echo $egg_cv_var_system_release | cut -d . -f 2`" = "10"; then
         AC_DEFINE(HPUX10_HACKS, 1, [Define if running on HPUX 10.x.])
       fi
     ;;
