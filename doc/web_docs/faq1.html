@@ -1,0 +1,1874 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<title>Eggdrop Documentation: Frequently asked questions</title>
+</head>
+<body>
+<div align="center">
+<p><strong>Frequently asked questions</strong></p>
+</div>
+<hr>
+THE EGGDROP FAQ (Frequently Asked Questions)<br>
+Version 0.2  16-May-1998 by Ernesto Baschny <br>
+Version 0.3  11-April-2000 by Jason Ede <br>
+<p>
+<hr>
+<center><b>Sections</b></center>
+<hr>
+<b>Contents</b>
+
+
+<ol type="A">
+<p><li>A set of links to Internet resources that have something to do with
+eggdrop.</li></p>
+
+<p><li>Compiling the bot:
+   Not very comprehensive, but this sections brings some details about things
+   you need to know to compile your bot successfully.  This does not intend to
+   include any system-specific problems.  See the compiling.FAQ for those
+   answers.</li></p>
+
+<p><li>Running the bot:
+   Soon you will want to start your bot.  You already have compiled the bot
+   and edited the config file.  This section covers some tips about running
+   your bot, setting up the crontab, and what can go wrong.</li></p>
+
+<p><li>Using the bot:
+   Now the bot is running, and you are happy with it.  But what about using
+   it?  You know some basics already, but need some help in some specific
+   situations.  Also you are wanting some tips to improve the way you interact
+   with eggdrop.</li></p>
+
+<p><li>Linking and sharing:
+   You are a master with honours in the matter "eggdrop", know every command
+   and their syntax, and you think you are ready to link two bots, and maybe
+   even make them share a userfile.  This is not very easy, so this section
+   tries to decypher and explain simple situations and errors you might
+   encounter on your sharing way.</li></p>
+
+<p><li>TCL-Scripting:
+   The bot is running, everything is linked and sharing, and you are happy.
+   But you are bored!  You want to make some funny things in TCL.  But things
+   does not always work as you like, so this section tries to answer the most
+   common mistakes that you will face, and gives you some nice tips about
+   improving the bots capabilities.</li></p>
+
+<p><li>Miscellaneous:
+   Some assorted things that doesn't fit anywhere else are found in this
+   section.</li></p>
+</ol>
+
+<hr>
+<center><b>Index</b></center>
+<hr>
+
+<ol type="A">
+<li><a href="#secta">Internet Links</a></li>
+<br><br>
+<li>Compiling the bot
+<ol type="1">
+  <li><a href="#sectb1">What do I need to apply a .patch file to the eggdrop's source?</a></li>
+  <li><a href="#secctb2">Where do I find the latest eggdrop patches?</a></li>
+  <li><a href="#sectb3">How do I apply a patch to my source?</a></li>
+  <li><a href="#sectb4">What kind of shell am I using anyway?</a></li>
+  <li><a href="#sectb5">How can I find TCL on my system?</a></li>
+  <li><a href="#sectb6">Where do I find the TCL sources and what version should I take?</a></li>
+  <li><a href="#sectb7">How do I compile my own TCL?</a></li>
+  <li><a href="#sectb8">My compile dies at the last minute with &quot;LD fatal signal 11&quot;!</a></li>
+  <li><a href="#sectb9">Where can I get a precompiled Eggdrop for my computer?</a></li>
+  <li><a href="#sectb10">I get &quot;Makefile:3 : invalid operator&quot; of some such thing When I try to &quot;make&quot;</a></li>
+  </ol></li><br>
+  
+<li>Running the bot
+<ol type="1">
+  <li><a href="#sectc1">My bot needs a nick with the '[' ('$', '"', etc) char in it, but it just keeps giving errors when starting...</a></li>
+  <li><a href="#sectc2">I get '*** Can't load Userinfo v1.01 -- At least Eggdrop v1.3.0 required' when starting the bot!</a></li>
+  <li><a href="#sectc3">What do I need to make the bot join a channel with a key?</a></li>
+  <li><a href="#sectc4">When I try to start the bot from the config file it says "Permission denied". How can I start my bot simply by executing the config file?</a></li>
+  <li><a href="#sectc5">How do I set up my bot to come back after it dies?</a></li>
+  <li><a href="#sectc6">My bot is making clones! It joins with a different nick each 10 minutes!</a></li>
+  <li><a href="#sectc7">My bot is writing 1000Mb log files! Help!</a></li>
+  <li><a href="#sectc8">Can I make the bot mail me the logs from yesterday?</a></li>
+  <li><a href="#sectc9">How can I set up eggdrops file-area?</a></li>
+  <li><a href="#sectc10">I get '-NOTICE- No Ident response' when trying to connect to a server.</a></li>
+  <li><a href="#sectc11">How can my eggdrop know about nicks >9 chars on IRC?</a></li>
+  <li><a href="#sectc12">I just compiled my bot, and tried to start it, but I get 'eggdrop: command not found'.  What should I do?</a></li>
+  <li><a href="#sectc13">How can I kill my bot from the Unix command prompt?</a></li>
+  <li><a href="#sectc14">While loading my bot it says something about:</a></li>
+  <li><a href="#sectc15">Can I use the userfile from my 1.0 bot on a 1.3/1.4/1.5 bot?</a></li>
+  <li><a href="#sectc16">I sometimes get '(!) timer drift -- spun 5 minutes', what does this mean?</a></li>
+  <li><a href="#sectc17">What do I do if I get the Error &quot;User file not found&quot;?</a></li>
+  <li><a href="#sectc18">My Eggdrop won&#39;t run; It just says &quot;Can&#39;t find your hostname!&quot;</a></li>
+  
+  <li><a href="#sectc19">My bot dies and the last entry in the logfile is &quot;Received terminate signal&quot;. What does that mean and can I prevent it?</a></li>
+  
+  <li><a href="#sectc20">Someone else set up a bot I don&#39;t like. Are there any backdoors I can use to take their bot down?</a></li>
+  <li><a href="#sectc21">What are modules?</a></li>
+  <li><a href="#sectc22">Can I compile Eggdrop without dynamic modules?</a>
+  <ol type="a">
+  <li><a href="#sectc22a">Do I still need to &quot;loadmodule modules&quot;?</a></li>
+  </ol>
+  </li>
+   <li><a href="#sectc23">When I &quot;tclsh scripts/weed&lt;userfile&gt; c&quot; It barfs chunks at me and dies.</a></li>
+  <li><a href="#sectc24">I get &quot;ld-elf.so.1: Shared object &quot;libtcl80.so.1&quot; not found&quot; or &quot;eggdrop: error in loading shared libraries / libtcl8.1.so: cannot open shared object file: No such file or directory&quot; when I try to start my bot.</a></li>
+  <li><a href="#sectc25">I get a whole pile of &quot;unresolved symbol &#39;Tcl_AppendResult&#39;&quot; (or some other symbol) when I try to load a module.</a></li>
+
+</ol></li>
+<br>
+<li>Using the bot
+<ol type="1">
+  <li><a href="#sectd1">I need a TCL script to...</a></li>
+  <li><a href="#sectd2">I don't want certain people to be kicked by "idle-kick". How?</a></li>
+  <li><a href="#sectd3">I try to add an user, and eggdrop says "user isn't on the channel"</a></li>
+  <li><a href="#sectd4">I just edited my configuration, changed a channel setting, and .rehash'ed,but the old settings are back!  Why?</a></li>
+  <li><a href="#sectd5">When I relay to another bot the bold and characters are not shown correctly</a></li>
+  <li><a href="#sectd6">What does the "cache hits" in the .status all mean?</a></li>
+  <li><a href="#sectd7">I type '.match |thenick|' and although |thenick| exists, it returns nothing!  Why?</a></li>
+  <li><a href="#sectd8">Does eggdrop currently supports DCC RESUMES?</a></li>
+  <li><a href="#sectd9">When I use the .+ban command I want it to add the hostmask of that nick, but it doesn't!</a></li>
+	</ol></li>
+<br>    
+<li>Linking and Sharing
+<ol type="1">
+
+  <li><a href="#secte1">How do I link two bots?</a></li>
+  <li><a href="#secte2">How can I find out in which port one bot is listening on?</a></li>
+  <li><a href="#secte3">What if my bots won't link for some reason?</a></li>
+  <li><a href="#secte4">How can I make my bots always connect to each other when they start (+h)?</a></li>
+  <li><a href="#secte5">Why would I want alternate HUBS (+a)?</a></li>
+  <li><a href="#secte6">How do I share a userfile between two bots?</a></li>
+  <li><a href="#secte7">I get "Rejected flags for unshared channel #channel from Hub_Bot". Why?</a></li>
+  <li><a href="#secte8">I always get 'wrong password' when relinking two bots that were just connected, why?</a></li>
+  <li><a href="#secte9">Sharing users between bots (an example)</a></li>
+  </ol></li>
+<br>
+
+<li>TCL-Scripting
+<ol type="1">
+
+  <li><a href="#sectf1">How can I learn the secrets to be an eggdrop TCL scripter?</a></li>
+  <li><a href="#sectf2">How do I add mIRC colours/bolds/etc to my scripts output?</a></li>
+  <li><a href="#sectf3">How can I match users in my script with this AND that flag?</a></li>
+  <li><a href="#sectf4">How can I bind an event to an ACTION  (/me text)?</a></li>
+  <li><a href="#sectf5">I miss the addhost command in 1.3.x!</a></li>
+  <li><a href="#sectf6">How to bind an event to occur at a specific time of the day?</a></li>
+  <li><a href="#sectf7">How to make the bot execute a TCL procedure every XX minutes?</a></li>
+  <li><a href="#sectf8">The RAW binding does not work after switching from 1.1 to 1.3!</a></li>
+  <li><a href="#sectf9">How can I remove all hosts from an user in one command?</a></li>
+  <li><a href="#sectf10">What should I be aware of when I port my scripts from 1.1 to 1.3?</a></li>
+  <li><a href="#sectf11">What new features are available on 1.3 bots that were not found in 1.1?</a></li>     
+  <li><a href="#sectf12">How to bind an event to NOTICEs?</a></li>
+  <li><a href="#sectf13">I have a proc with an parameter called 'args' and I always get '{' and '}' around the text passed to it.  Why?</a></li>
+  <li><a href="#sectf14">How to find out how long time one's bot has been online (connected to a server) in a TCL script?</a></li>
+  <li><a href="#sectf15">Why does 'putserv "PRIVMSG $nick :[OP]"' gives an error 'invalid command name</a></li>
+  <li><a href="#sectf16">I tried the 'exec' TCL command and it tells me 'couldn't execute "command blah":  no such file or directory', but 'command' is a valid command!</a></li>
+</ol></li><br>
+    
+<li>Misc
+<ol type="1">
+  <li><a href="#sectg1">Where do I find the latest releases and patches?</a></li>
+  <li><a href="#sectg2">I found a bug, here is the output of DEBUG. Please fix!</a></li>
+  <li><a href="#sectg3">How can I find out with what version of TCL my bot was really compiled?</a></li>
+  <li><a href="#sectg4">Can you recommend a good shell provider?</a></li>
+  </ol></li>
+</ol>
+
+<hr>
+<a name="secta"></a><center><b>A. Internet Links</b></center>
+<hr>
+
+  Eggdrop sources
+  <blockquote>
+    <a href="ftp://ftp.eggdrop.net/pub/eggdrop/official/">ftp://ftp.eggdrop.net/pub/eggdrop/official/</a> - eggdrop 1.3<br>
+	<a href="ftp://ftp.eggheads.org/pub/eggdrop/GNU/">ftp://ftp.eggheads.org/pub/eggdrop/GNU/</a> - eggdrop 1.4<br>
+<a href="ftp://ftp.eggheads.org/pub/eggdrop/GNU/beta/">ftp://ftp.eggheads.org/pub/eggdrop/GNU/beta/</a> - eggdrop1.5<br>
+	</blockquote>
+
+  TCL sources
+  <blockquote>
+    <a href="ftp://ftp.scriptics.com/pub/tcl/">ftp://ftp.scriptics.com/pub/tcl/</a>
+	</blockquote>
+  Eggdrop 1.3.x patches
+  <blockquote>
+    <a href="ftp://ftp.eggdrop.net/pub/eggdrop/unofficial/patches1.3">ftp://ftp.eggdrop.net/pub/eggdrop/unofficial/patches1.3</a><br>
+	<a href="ftp://ftp.eggheads.org/pub/eggdrop/patches1.3/">ftp://ftp.eggheads.org/pub/eggdrop/patches1.3/</a>
+</blockquote>
+Eggdrop 1.4.x patches
+  <blockquote>
+	<a href="ftp://ftp.eggheads.org/pub/eggdrop/patches1.4/">ftp://ftp.eggheads.org/pub/eggdrop/patches1.4/</a>
+</blockquote>
+Eggdrop 1.5.x patches
+  <blockquote>
+	<a href="ftp://ftp.eggheads.org/pub/eggdrop/patches1.5/">ftp://ftp.eggheads.org/pub/eggdrop/patches1.5/</a>
+</blockquote>
+
+
+  Beginners guide to TCL with eggdrop
+  <blockquote>
+      <a href="http://www.cdc.net/~asn/guide2tcl.html">http://www.cdc.net/~asn/guide2tcl.html</a><br>
+	  </blockquote>
+  TCL man pages
+  	 <blockquote>
+    <a href="http://www.sco.com/Technology/tcl/man-7.6-4.2/tcl7.6/contents.html">http://www.sco.com/Technology/tcl/man-7.6-4.2/tcl7.6/contents.html</a><br>
+<a href="http://dev.scriptics.com/man/">http://dev.scriptics.com/man/</a><br>
+	</blockquote>
+
+
+<hr>
+<center><b>B. Compiling the bot</b></center>
+<hr>
+<a name="sectb1"></a>
+<b>1. What do I need to apply a .patch file to the eggdrop's source?</b><br>
+<blockquote>
+  You need to make sure you have the 'patch' utility, and that it is at least
+  version 2.1.  Type:<br>
+<br>
+    patch -v
+<br><br>
+  to find this out.  If you don't see the output of a version number, you
+  probably have the wrong file.  Take a look at:<br><br>
+
+    not valid - http://tick.informatik.uni-stuttgart.de/~baschneo/eggdrop/patch
+<br><br>
+  and see if you find a proper 'patch' for your system.
+</blockquote>
+<a name="sectb2"></a>
+<b>2. Where do I find the latest eggdrop patches?</b>
+<blockquote>
+    <a href="ftp://ftp.eggdrop.net/pub/eggdrop/unofficial/patches1.3">ftp://ftp.eggdrop.net/pub/eggdrop/unofficial/patches1.3</a> - eggdrop 1.3<br>
+	<a href="ftp://ftp.eggheads.org/pub/eggdrop/patches1.3/">ftp://ftp.eggheads.org/pub/eggdrop/patches1.3/</a> - eggdrop 1.3<br>
+	<a href="ftp://ftp.eggheads.org/pub/eggdrop/patches1.4/">ftp://ftp.eggheads.org/pub/eggdrop/patches1.4/</a> - eggdrop 1.4<br>
+	<a href="ftp://ftp.eggheads.org/pub/eggdrop/patches1.5/">ftp://ftp.eggheads.org/pub/eggdrop/patches1.5/</a> - eggdrop 1.5<br>
+</blockquote>
+<a name="sectb3"></a>
+<b>3. How do I apply a patch to my source?</b>
+<blockquote>
+  Make sure that you are applying the patch file to the correct version of
+  eggdrop.<br><br>
+
+  <ol type="1"><li>'gzip -d' the .patch file, if it ends with .gz</li>
+  <li>enter your eggdrop's source root directory</li>
+  <li>apply the patch with:  patch -p1 < eggdrop1.3.xx+demo.patch</li>
+  <li>find things that might have gone wrong: find . -name "*.rej" -print</li>
+</ol>
+  If the patch utility asked you about "What file to patch", then you probably
+  do not have the correct version of the patch utility.  If you do, then it
+  also may be that you are trying to apply the patch file to an incorrect
+  version of eggdrop.  Make sure the eggdrop source you have match the version
+  of the patch file you are trying to apply.<br>
+</blockquote>
+<a name="sectb4"></a>
+<b>4. What kind of shell am I using anyway?</b>
+<blockquote>
+  For some things you do on your shell account you need to know what kind of
+  shell you are using.  The easiest way is to type:  echo $SHELL<br><br>
+
+  If this do not work, use 'ps' and see what processes are running.  Find the
+  one that starts with a dash '-', this is probably your login shell.<br><br>
+
+  This shell can be:  sh, bash, ksh, csh or tcsh (or others...).
+  </blockquote>
+<a name="sectb5"></a>
+<b>5. How can I find TCL on my system?</b>
+<blockquote>
+  <p>To compile the bot you need the TCL libraries and header somewhere on your
+  system.  The ./configure script will try to find them for you.  If this
+  fails, you might try to search them on your own.
+</p>
+  <p>The library is called libtclX.X.so or libtclX.X.a.  The "X.X" will be the
+  version of the library.  The extension '.so' means it is a "dynamically
+  loadable library" and the '.a' mean it will be "statically linked".</p>
+
+  You can try to find it using:  find /usr -name "libtcl*" -print
+  This can take a HUGE amount of time.<br>
+  Do the same to find the header file:  find /usr -name "tcl.h" -print<br><br>
+
+  Once you've found them, you must tell the ./configure script where they are.
+  This should be done setting the TCLLIB and TCLINC variables.  Do this:<br>
+<br>
+  On sh/bash/ksh shells:
+  <blockquote>
+      TCLLIB=/directory/of/the/library<br>
+      TCLINC=/directory/of/the/header<br>
+      export TCLLIB TCLINC
+</blockquote>
+  On csh/tcsh shells:
+  <blockquote>
+      setenv TCLLIB /directory/of/the/library<br>
+      setenv TCLINC /directory/of/the/header
+</blockquote>
+  Next use ./configure again, and it should locate the files in the
+  directories you specified.
+</blockquote>
+<a name="sectb6"></a>
+<b>6. Where do I find the TCL sources and what version should I take?</b>
+<blockquote>
+  If your machine does not have TCL installed, you should get the sources and
+  compile them by your own.<br><br>
+
+  TCL 7.6p2:
+  <a href="ftp://ftp.scriptics.com/pub/tcl/tcl7_6/tcl7.6p2.patch.gz">ftp://ftp.scriptics.com/pub/tcl/tcl7_6/tcl7.6p2.patch.gz</a>
+<br>
+
+  TCL 8.0.5:
+    <a href="ftp://ftp.scriptics.com/pub/tcl/tcl8_0/tcl8.0.5.tar.gz">ftp://ftp.scriptics.com/pub/tcl/tcl8_0/tcl8.0.5.tar.gz</a>
+<br>
+TCL 8.2
+<a href="ftp://ftp.scriptics.com/pub/tcl/tcl8_2/tcl8.2.3.tar.gz">ftp://ftp.scriptics.com/pub/tcl/tcl8_2/tcl8.2.3.tar.gz</a>
+<br><br>
+  The currently recommended version is TCL 8.2. However, the bot will run with any of the versions listed here.
+  
+</blockquote>
+<a name="sectb7"></a>
+<b>7. How do I compile my own TCL?</b>
+<blockquote>
+  <p>You can compile TCL 7.6 on your HOME directory, if you have the space for
+  it.  Or compile in /tmp, there you should have plenty of space.  Do it like
+  this:</p>
+<blockquote>
+  % mkdir /tmp/tcl<br>
+  % cd /tmp/tcl<br>
+  % ftp ftp.scriptics.com<br>
+  Login: ftp<br>
+  Password: your@email<br>
+  ftp> cd /pub/tcl/tcl8_2<br>
+  ftp> bin<br>
+  ftp> get tcl8.2.3.tar.gz<br>
+  </blockquote>
+  ..wait for the file to arrive. Then:
+<blockquote>
+  % gzip -dc tcl8.2.3.tar.gz | tar xvf -<br>
+  % cd tcl8.2.3/unix<br>
+  % ./configure --prefix=/tmp/tcl --exec-prefix=/tmp/tcl --disable-shared
+</blockquote>
+  ..wait for configure to run through... Then:
+<blockquote>
+  % make    (and wait...)<br>
+  % make install    (and wait more...)
+</blockquote>
+  So now you have the TCL libraries in /tmp/tcl.  Now tell eggdrop where to
+  find it, by setting the environment:<br>
+<br>
+  On bash/sh/ksh shells:
+<blockquote>
+  % TCLINC=/tmp/tcl/include<br>
+  % TCLLIB=/tmp/tcl/lib<br>
+  % export TCLINC TCLLIB
+</blockquote>
+  On csh/tcsh shells:
+<blockquote>
+  % setenv TCLINC /tmp/tcl/include<br>
+  % setenv TCLLIB /tmp/tcl/lib
+</blockquote>
+  After setting this, just run eggdrops 'configure' script and make sure it
+  detects the TCL version 7.6.  If it does (and it should, if you followed all
+  the steps carefully), you can compile the bot as usual, and it will include
+  the TCL 7.6 libraries.  After the bot is compiled, you can delete everything
+  in /tmp/tcl, since it will already be included in your bot.  Or leave it
+  there, if your provider don't delete it you will be able to compile future
+  bots using it, too.  If you have space you could have done the whole /tmp
+  thing somewhere in your $HOME directory.
+</blockquote>
+<p><a name="sectb8"></a><strong>8. My compile dies at the last minute with
+    &quot;ld fatal signal 11&quot;!</strong></p>
+
+    <blockquote>
+      <p>This happens on Linux machines that have recently been converted to
+      ELF by upgrading to Slackware 3.0. Apparently Slackware 3.0 comes with
+      a non-ELF (a.out) Tcl library, and the compiler doesn&#39;t handle that
+      well. (It should give you an error; instead it barfs.) Fixing it is
+      tricky because even if you recompile libtcl.a, the linker will most
+      likely find the &quot;bad&quot; one first, and your work will be in
+      vain.</p>
+
+      <p>Here&#39;s a fix that&#39;s been floating around on the Eggdrop
+      list:</p>
+
+      <ol>
+        <li>Recompile &#39;libtcl.a&#39; for yourself, to make sure an ELF
+        librar is created.</li>
+
+        <li>Copy it into your eggdrop/src directory, naming it
+        &#39;libtcl2.a&#39;.</li>
+
+        <li>Edit the Makefile and change the line that says &#39;-L/usr/lib
+        -ltcl&#39; to &#39;-L. -ltcl2&#39;.</li>
+
+        <li>Recompile Eggdrop.</li>
+      </ol>
+
+      <p>Also send hate-mail to the Slackware guy telling him to stop f***ing
+      up the libraries. He seemed to assume that everyone would still want to
+      compile old-style (a.out) binaries.</p>
+    </blockquote>
+<p><a name="sectb9"></a><strong>9. Where can i get a precompiled eggdrop
+    for my computer?</strong></p>
+
+    <blockquote>
+      <p>It is <strong>HIGHLY</strong> recommended <strong>AGAINST</strong>
+      using precompiled Eggdrops from untrusted sources. Eggdrop has been a
+      regular target for hacking and crashing. Distribution of precompiled
+      (binary) versions of Eggdrop are the easiest way of hackers to provide
+      you with the easiest (and most dangerous) way of gaining access to not
+      only your bot, but to your computer account directly. Don&#39;t
+      advertise your precompiled Eggdrop binary sites on the Eggdrop list
+      either =P</p>
+    </blockquote>
+
+    <p><a name="sectb10"></a><strong>10. I get &#39;Makefile:3 :invalid
+    operator&#39; or some-such-thing when I try to
+    &#39;make&#39;</strong></p>
+
+    <blockquote>
+      <p>Try &#39;gmake&#39;</p>
+    </blockquote>
+
+
+
+<hr>
+<center><b>C. Running the bot</b></center>
+<hr>
+<a name="sectc1"></a>
+<b>1. My bot needs a nick with the '[' ('$', '"', etc) char in it, but it just keeps
+giving errors when starting...</b>
+<blockquote>
+  <p>Some characters are reserved for special uses in TCL.  Since the eggdrop
+  configuration is TCL script, you need to make sure it can be read by the TCL
+  interpreter.</p>
+<p>
+  Quote strange characters by adding a slash '/' before it.  The chars you
+  surely will want to quote that way are:</p>
+
+  [ ] { } " \ $<br><br>
+
+  If you are unsure, quote all dubious chars.  It won't hurt.
+</blockquote>
+<a name="sectc2"></a>
+<b>2. I get '*** Can't load Userinfo v1.01 -- At least Eggdrop v1.3.0 required' when
+starting the bot!</b>
+<blockquote>
+  <p>This is a problem when you run the bot with TCL 8.0 libraries.  Just edit
+  the scripts/userinfo1.0.tcl file and remove the lines that do this checking:</p>
+
+    if {![info exists numversion] || ($numversion < 1030000)} {<br>
+      putlog "*** Can't load $userinfover -- At least Eggdrop v1.3.0 required"<br>
+      return 0<br>
+    }<br>
+</blockquote>
+<a name="sectc3"></a>
+<b>3. What do I need to make the bot join a channel with a key?</b>
+<blockquote>
+  In your channel settings set the key as usual:<br><br>
+
+    channel add #thechannel { chanmode "+k theKey" }<br><br>
+
+  This will not only make the bot enforce this mode, it will also be used by
+  your bot to join this specific channel.
+</blockquote>
+<a name="sectc4"></a>
+<b>4. When I try to start the bot from the config file it says "Permission denied". How can I start my bot simply by executing the config file?</b>
+<blockquote>
+  To do this, you need to edit the first line of the config to make it point
+  to the full path of where your eggdrop binary is.  For example you have<br><br>
+
+   your eggdrop binary in:     /home/justme/eggdrop/eggdrop<br>
+   your bots configuration in: /home/justme/eggdrop/mybot.conf
+<br><br>
+  So you edit the configuration and replace its first line with:<br><br>
+
+    #!/home/justme/eggdrop/eggdrop
+<br><br>
+  Next set the file as executable using:  chmod +x mybot.conf<br>
+  Test it, by running it:  ./mybot.conf<br>
+  This should start your eggdrop bot.
+</blockquote>
+<a name="sectc5"></a>
+<b>5. How do I set up my bot to come back after it dies?</b>
+<blockquote>
+  You must set up a crontab which checks every 10 minutes if your bot is still
+  alive.  If the script detect that it is not, it should reload the bot.<br><br>
+
+  <b><u>Setting up the botchk script</u></b>
+  <p>There is a script included with the eggdrop distribution to do this.  It is
+  the scripts/autobotchk file.  You should set the following to make the script
+  work:</p>
+
+  <p>Make sure your bots config file is runnable (see previous question).</p>
+
+  <p>Make sure you are in the directory containing the config file. Then type:</p>
+  <blockquote>
+  			  ./scripts/autobotchk &lt;configfilename&gt; [-noemail] [-5|-10|-15|-30]
+  </blockquote>
+  <p>This will create a script to start up the bot, and set up a cron job to check the bot every 5,10,15 or 30 
+  minutes depending on what you specify. If you do not want mail to be sent to the account every time the
+  bot restarts add the switch -noemail<p>
+			  
+  </blockquote>
+<a name="sectc6"></a>
+<b>6. My bot is making clones! Another joins with a different nick each 10 minutes!</b>
+<blockquote>
+  <p>This means your bot checking script that is run in your crontab isn't
+  working.  It is never able to detect your bot running, and simply runs
+  another copy.</p>
+
+  <p>Two main causes:</p>
+<ol type="1">
+ <li>You didn't edit the configuration correctly as explained in the previous question.  Read it again and recheck everything.</li>
+
+  <li>Your quota is exceeded.  To solve this problem, you need to add some
+     checking to your botchk script.  If your system has the 'quota' command,
+     see if you have the 'X days left' output somewhere when your quota is
+     exceeded.  If it does, you can try adding the following at the top of
+     your botchk script. If created automatically by following the instructions in the
+	 last question then the file will be called configfilename.botchk:
+	 <blockquote>
+     if [ -n `quota -v | grep days` ]; then<br>
+       echo Quota exceeded!<br>
+       exit 0<br>
+     fi</blockquote></li>
+	 </ol>
+</blockquote>
+<a name="sectc7"></a>
+<b>7. My bot is writing 1000Mb log files! Help!</b>
+<blockquote>
+  <p>For some reason the bots net connection might have gone mad, and the bot is
+  cycling at one or another step until eternity, while logging it's action
+  happily to your log files.  Since this can go VERY fast, your log file will
+  rapidly grow to terrible sizes.</p>
+
+<p>  There are no known ways to prevent this.  You might try to disable the
+  logging of server disconnect/connect notices if you are totally scared
+  (remove the '+s' from the logfile command in your config).  Or simply pray
+  for it not to happen one more time.  This is not very usual.</p>
+
+  <p>You might take a look at your scripts, maybe one of them makes this mess.
+  If you have scripts that use the 'control/listen' procedures, they might be
+  your problem.</p>
+</blockquote>
+<a name="sectc8"></a>
+<b>8. Can I make the bot mail me the logs from yesterday?</b>
+<blockquote>
+  <p>If you set the bot to rotate logs at 5am, you can try to add to your crontab:</p>
+
+  <p>5 3 * * * mail your@email.here < /home/justme/eggdrop/mybot.log.yesterday</p>
+
+  This will mail you the specified file at 5:03am.
+</blockquote>
+<a name="sectc9"></a>
+<b>9. How can I set up eggdrops file-area?</b>
+<blockquote>
+  <p>To enable eggdrop's filesystem, you need to make sure you have set the
+  following in your bots configuration file:</p>
+<blockquote>
+    loadmodule transfer
+</blockquote>
+  This will enable DCC SEND and DCC GET from your bot.
+<blockquote>
+    loadmodule filesys<br>
+    set files-path "/home/justme/eggdrop/filesys"<br>
+    set incoming-path "/home/justme/eggdrop/filesys/incoming"
+</blockquote
+  <p>The loadmodule filesys' will load the filesystem feature.  The next settings
+  will tell the bot which is the root of your filesystem.  You can also enter
+  paths relative to your bots directory:</p>
+<blockquote>
+    set files-path "filesys"<br>
+    set incoming-path "filesys/incoming"
+</blockquote>
+  Make sure these directories exist (filesys and filesys/incoming are created
+  by default by the eggdrop installation) and the filesystem should work.
+</blockquote>
+<a name="sectc10"></a>
+<b>10. I get '-NOTICE- No Ident response' when trying to connect to a server.</b>
+<blockquote>
+<p>  If you get notices like this:</p>
+
+  [18:24] -NOTICE- Looking up your hostname...<br>
+  [18:24] -NOTICE- Found your hostname, cached<br>
+  [18:24] -NOTICE- Checking Ident<br>
+  [18:24] -NOTICE- No Ident response<br>
+
+  <p>when trying connecting to a server, this is not eggdrop's fault, it is that
+  your machine does not have a identd server to answer ident queries.  Some
+  irc servers require this for you to connect.  Simply ask your system
+  administrator to install a identd server.  Non super-user users do not have
+  permissions to install this, since it must be listening at a privileged port
+  (113).</p>
+</blockquote>
+<a name="sectc11"></a>
+<b>11. How can my eggdrop know about nicks >9 chars on IRC?</b>
+<blockquote>
+<p>New to eggdrop1.5 is the ability to have bots with different length nicks able to link to each other.
+This setting can only be changed when net-type is set to 5. Refer to the server module documentation
+for more information.
+</p>
+</blockquote>
+<a name="sectc12"></a>
+<b>12. I just compiled my bot, and tried to start it, but I get 'eggdrop: command
+not found'.  What should I do?</b>
+<blockquote>
+  <p>Try calling it using './eggdrop', this should start it.  This means that the
+  current directory is not in your PATH.  You can add it, before calling
+  eggdrop:</p>
+
+  If your shell is csh/tcsh:
+  <blockquote>
+    setenv PATH ".:$PATH"
+</blockquote>
+  If your shell is sh/bash/ksh:
+  <blockquote>
+    PATH=".:$PATH"<br>
+    export PATH
+</blockquote>
+  Then you can call eggdrop directly, without the './'.
+</blockquote>
+<a name="sectc13"></a>
+<b>13. How can I kill my bot from the Unix command prompt?</b>
+<blockquote>
+  Simplest way:  kill -9 `cat pid.Botname`<br>
+  <p>Note the use of backquotes.  Change the "Botname" to the name of your bot.
+  If this do not work, telling you "no such process", go ahead:</p>
+<ul>
+  <li>Find the bot
+
+    <p>Use the 'ps' utility to find running processes.  The syntax differs from
+    Unix to Unix, you can try these, until you find one that works:</p>
+  
+     ps -axu | grep yourusername<br>
+     ps -Af  | grep yourusername<br>
+     ps -ef  | grep yourusername<br>
+  
+    <p>This will show all your processes that are running.  Find your eggdrop and
+    locate the process number.  It is usually one of the first 3 or 4 digit
+    number that appears in the output of the 'ps' command.</p></li>  
+  <li>Kill the bot
+
+    <p>Use the command:  kill -9 process-number</p>
+    <p>This should kill the running bot.  Change the 'process-number' with the
+    number you found out in the previous step, of course.</p></li>
+</ul>
+</blockquote>
+<a name="sectc14"></a>
+<b>14. While loading my bot it says something about: 'Tcl error in file 'eggdrop.conf': invalid command name "channel"'</b>
+<blockquote>
+  You probably did not 'make install', which places the modules in the right
+  directory.
+</blockquote>
+<a name="sectc15"></a>
+
+<b>15. Can I use the userfile from my 1.0 bot on a 1.3/1.4/1.5 bot?</b>
+<blockquote>
+  This will involve two conversions.
+
+  <p>1) convert the userfile from the 1.0 format to the 1.1 format.<br>
+  2) convert the 1.1 userfile to the 1.3/1.4/1.5 format.</p>
+
+  <p>Step 1) is the most difficult one, since you will need a running 1.1.x bot.
+  Get and compile eggdrop 1.1.5 and load the userfile with this bot.  It will
+  auto-convert the file to the 1.1 format.  Make the bot save the file (issue
+  a .save command) and kill the bot.</p>
+
+  <p>In step 2) you can use the scripts/weed script included with the 1.3.x
+  distribution, which can read the 1.1 userfile and convert it to the 1.3
+  format.  Use it like this:  tclsh scripts/weed userfile.old c
+  The 'c' will tell it to "convert".  The new userfile will be called
+  'userfile.old.weed', just rename and use it. The later versions of eggdrop will update
+  the userfile from the 1.3 version automatically</p>
+</blockquote>
+<a name="sectc16"></a>
+<b>16. I sometimes get '(!) timer drift -- spun 5 minutes', what does this mean?</b>
+<blockquote>
+<p>  This can mean several things:</p>
+<ul>
+  <li>Your bot was unable to do anything in the last 5 minutes for some reason.
+    Maybe some script is making things that take too long, or maybe there is
+    an error while it resolves the address of some hostname.</li>
+  <li>The machine your bot is on has changed it's clock.  This will confuse the
+    bot, thinking the time has past and he has not noticed.</li>
+</ul>
+  <p>If you get this very often, this is bad, and probably means the machine your
+  eggdrop is running on is very busy doing other things or you have some buggy
+  script doing strange things.  Unload all dubious scripts, and see if the
+  problem vanishes.</p>
+</blockquote>
+<p><a name="sectc17"></a><strong>17. What do I do if I get the error &quot;User file not found&quot;?</strong></p>
+
+    <blockquote>
+      <ul>
+        <li>Run Eggdrop with the &quot;-m&quot; option (i.e., &quot;eggdrop
+        -m mybot&quot;).</li>
+
+        <li>Go to IRC and send &quot;hello&quot; to your bot (i.e.,
+        &quot;/msg mybot hello&quot;).</li>
+
+        <li>You will become an owner on your bot. You can leave the bot
+        running (nobody else will become a master if they say
+        &quot;hello&quot;), but in the future, don&#39;t use the
+        &quot;-m&quot; option when running the bot.</li>
+      </ul>
+    </blockquote>
+
+    <p><a name="sectc18"></a><strong>18. My Eggdrop won&#39;t run; it just says
+    &quot;can&#39;t find your hostname!&quot;</strong></p>
+
+    <blockquote>
+      Your machine is set up strangely, and Eggdrop can&#39;t figure out its
+      network hostname. You can get around this by setting an environment
+      variable called HOSTNAME. 
+
+      <p>In sh or ksh:<br>
+       $ HOSTNAME=myhost.domain.edu<br>
+       $ export HOSTNAME</p>
+
+      <p>In csh or tcsh:<br>
+       % setenv HOSTNAME myhost.domain.edu</p>
+
+      <p>It should work after that. You may want to bug your system
+      administrator to set up her /etc/hosts file correctly, or add those
+      above commands to your &#39;.login&#39; file (sh or ksh:
+      &#39;.profile&#39;).</p>
+    </blockquote>
+    <p><a name="sectc19"></a><strong>19. My bot dies and the last entry in the
+    logfile is &quot;received terminate signal&quot;. What does that mean and
+    can i prevent it?</strong></p>
+
+    <blockquote>
+      <p>There&#39;s nothing you can do to prevent it. It means the system
+      administrator is killing the Eggdrop process. Most of the time,
+      it&#39;s an automatic thing that happens when the system is being
+      rebooted, so it&#39;s harmless. If you have a crontab running, the bot
+      will get restarted when the system is back online. Occasionally the
+      system administrator will kill the bot manually -- for example, if
+      he/she doesn&#39;t want bots running on the system.</p>
+    </blockquote>
+
+    <p><a name="sectc20"></a><strong>20. Someone else set up a bot I don&#39;t
+    like. Are there any backdoors I can use to take their bot
+    down?</strong></p>
+
+    <blockquote>
+      <p>No, there have never been any backdoors and there never will be, so
+      please stop asking. Every once in a while, someone finds a way to
+      exploit a bug in Eggdrop, but we fix these bugs as soon as we find out
+      about them. If you want to bring down someone else&#39;s bot, you will
+      not have our help.</p>
+    </blockquote>
+
+    <p><a name="sectc21"></a><strong>21. What are modules?</strong></p>
+
+    <blockquote>
+      <p>Modules are a way of adding extra C code from the bot, much like Tcl
+      scripts, without requiring the bot recompiling, see doc/MODULES for
+      more info.</p>
+    </blockquote>
+
+    <p><a name="sectc22"></a><strong>22. Can I compile eggdrop without dynamic
+    modules?</strong></p>
+
+    <blockquote>
+      <p>Yes, you can, if ./configure detects that your system CAN&#39;T run
+      modules it will setup &#39;make&#39; to link the modules in statically
+      for you, you can also choose this option if you can do dynamic modules
+      by typing &#39;make static&#39;. You can also try to compile dynamic
+      modules on a static-only system by typing &#39;make eggdrop&#39;.</p>
+    </blockquote>
+
+    <p><a name="sectc22a"></a><strong>22a. Do I still need to &#39;loadmodule
+    modules&#39;?</strong></p>
+
+    <blockquote>
+      <p>YES, when you compile statically, all the modules are linked into
+      the main executable *but* they are not enabled until you use loadmodule
+      to enable then, hence you get nearly the same functionality with static
+      modules as dynamic modules.</p>
+    </blockquote>
+
+    <p><a name="sectc23"></a><strong>23. When I &#39;tclsh scripts/weed
+    &lt;userfile&gt; c&#39; it barfs chunks at me and dies :(</strong></p>
+
+    <blockquote>
+      <p>UPGRADE YOUR TCL, you are probably using Tcl 7.5 or earlier, some of
+      the commands in weed require tcl7.6 or later to run, so either upgrade it, or
+      removing the offending lines from you userfile (those starting with
+      &#39;.&#39; generally) and accept the loss of that data.</p>
+    </blockquote>
+
+    <p><a name="sectc24"></a><strong>24. I get &quot;ld-elf.so.1: Shared
+    object &quot;libtcl80.so.1&quot; not found&quot; or &quot;eggdrop: error
+    in loading shared libraries / libtcl8.1.so: cannot open shared object
+    file: No such file or directory&quot; when I try to start my
+    bot.</strong></p>
+
+    <blockquote>
+      <p>&#39;./configure&#39; is looking in the wrong place for Tcl; it
+      looks like it compiled with one version of Tcl and tries to load
+      another. Maybe your sysadmin upgraded Tcl and didn&#39;t tell you. In
+      that case, you should just need to recompile your bot.</p>
+
+      <p>Or maybe when upgrading he didn&#39;t clean the old version of Tcl,
+      and &#39;./configure&#39; is looking for the files in the wrong places,
+      or trying to use different versions of tcl.h and libtcl*. Smack your
+      admin and have him install Tcl properly ;) Or try to:</p>
+
+      <p><em>./configure --with-tcllib=&lt;path-to-tcl-lib&gt;
+      --with-tclinc=&lt;path-to-tcl-inc&gt;</em></p>
+
+      <p>Tell configure where to look for the Tcl files.</p>
+
+      <p>Try looking for libtcl by:<br>
+       ls /usr/lib/libtcl*<br>
+       ls /usr/local/lib/libtcl*</p>
+
+      <p>Try looking for tcl.h by:<br>
+       ls /usr/include/*/tcl.h<br>
+       ls /usr/local/include/*/tcl.h</p>
+      <p>If everything else fails, try to install Tcl to your home dir ;)</p>
+	  
+      (Suggested by dw@Undernet, dw@lixom.nu)
+    </blockquote>
+
+    <p><a name="sectc25"></a><strong>25. I get a whole pile of
+    &quot;Unresolved symbol &#39;Tcl_AppendResult&#39;&quot; (or some other
+    symbol) when I try to load a modules.</strong></p>
+
+    <blockquote>
+      <p>Possibility A: see 12.</p>
+    </blockquote>
+
+    <blockquote>
+      <p>Possibility B:</p>
+
+      <p>Some of the standard libraries have been compiled for static linking
+      only on your machine, you have 3 options:</p>
+    </blockquote>
+
+    <blockquote>
+      <ol>
+        <li>If it&#39;s your own machine, recompile TCL using dynamic linking
+        by using &#39;./configure --enable-shared&#39; when you configure TCL
+        (not the bot) and then remake, &amp; reinstall</li>
+
+        <li>If it&#39;s not you machine, you make have to resort to &#39;make
+        static&#39; and &#39;make DEST=&quot;path&quot; install&#39; to make
+        and install your bot.</li>
+
+        <li>If you are of a more aggressive sense of mind, go beat the
+        stuffing out of your admin for have lame static libraries :)</li>
+      </ol>
+    </blockquote>
+<hr>
+<center><b>D. Using the bot</b></center>
+<hr>
+<a name="sectd1"></a>
+<b>1. I need a TCL script to...</b>
+<blockquote>
+<ul>
+    <li>watch for "bad words" in the channel<br>
+    ftp://ftp.eggheads.org/pub/eggdrop/scripts1.3/badw*</li>
+
+  <li>let bots get ops from each other in a safe way (no autoop)<br>
+    This is already bundled in the eggdrop distribution and you can find it 
+    in the 'scripts/getops*.tcl' file.</li>
+
+  <li>check for clones in my channel<br>
+    ftp://ftp.eggheads.org/pub/eggdrop/scripts1.3/clone_detect*.tcl.gz</li>
+
+  <li>autoaway's user in the partyline<br>
+    ftp://ftp.eggheads.org/pub/eggdrop/scripts1.3/autoaway.tcl.gz</li>
+	</ul>
+</blockquote>
+<a name="sectd2"></a>
+<b>2. I don't want certain people to be kicked by "idle-kick". How?</b>
+<blockquote>
+  Just set the +f flag (friend) for those, and they will not be kicked.
+</blockquote>
+<a name="sectd3"></a>
+<b>3. I try to add an user, and eggdrop says "user isn't on the channel"</b>
+<blockquote>
+<p>  When you use .adduser, the given nick but be in the channel of your current
+  console.  Check out by typing .channel if the bot sees him there.  If you
+  are in the incorrect console channel, switch to the correct one using
+  .console #channel and then use .adduser nick.</p>
+
+<p>  An alternative way is to use the .+user nick host command.  There the bot
+  will only create the user record, without any hostmask or flags, so you will
+  have to do it on your own.  For example:</p>
+<blockquote>
+   .+user NewUser *!*new@*.ibm.net<br>
+   .chattr NewUser +xph
+   </blockquote>
+</blockquote>
+<a name="sectd4"></a>
+<b>4. I just edited my configuration, changed a channel setting, and .rehash'ed, but
+the old settings are back! Why?</b>
+<blockquote>
+  Try to delete your channel file before .rehash'ing, because these settings
+  are loaded after your configuration file, and they will override them.
+</blockquote>
+<a name="sectd5"></a>
+<b>5. When I relay to another bot the bold and characters are not shown correctly</b>
+<blockquote>
+  <p>If the output looks something like:</p>
+
+  <p>&lt;bot&gt; Hey [1mNick![0m  My name is [1mBot1.1[0m and I</p>
+
+ <p> It means you should use:  .fixcodes off</p>
+</blockquote>
+<a name="sectd6"></a>
+<b>6. What does the "cache hits" in the .status all mean?</b>
+<blockquote>
+  Date: Mon, 30 Mar 1998 17:49:44 +0100<br>
+  From: Q <Q@ping.be><br><br>
+
+  <p>To be short, cache hit depends on how many users he knows from those who
+  are on the channel. So when their are a lot of users, and he doesn't
+  know anybody of them, cache hit is low, when their are few, and he knows
+  them all, cache hit is high.</p>
+</blockquote>
+<a name="sectd7"></a>
+<b>7. I type '.match |thenick|' and although |thenick| exists, it returns nothing! Why?</b>
+<blockquote>
+  The '|' and '&' characters have a special meaning when matching users.  It
+  is a separator for global/channel flags.  So use<br>
+<blockquote>
+    .whois |thenick|
+</blockquote>
+  <p>instead to see the information about this nick.  If you need to search for
+  nicks with the '|' character, try:</p>
+<blockquote>
+    .match \|thenick\|
+	</blockquote>
+</blockquote>
+<a name="sectd8"></a>
+<b>8. Does eggdrop currently support DCC RESUMES?</b>
+<blockquote>
+  Yes. This is a new feature in eggdrop1.5
+</blockquote>
+<a name="sectd9"></a>
+<b>9. When I use the .+ban command I want it to add the hostmask of that nick, but it doesn't!</b>
+<blockquote>
+  <p>The .+ban command is used to add a ban-mask to the channels, and not to ban
+  a specific user.  If you need to use it, you will have to find out the
+  hostmask before using the .+ban command.  The syntax is:</p>
+<blockquote>
+    .+ban *!*the@*.ban.mask #channel Comment
+</blockquote>
+ <p> You can omit the #channel if you want to make a global ban.
+</p>
+  <p>If you use the kickban command, it will kick the specified nick, and set a
+  proper (temporary) ban with its hostmask:</p>
+<blockquote>
+    .kickban Nick #channel
+	</blockquote>
+</blockquote>
+<hr>
+<center><b>E. Linking and Sharing</b></center>
+<hr>
+<a name="secte1"></a>
+<b>1. How do I link two bots?</b>
+<blockquote>
+  <p>Two bots can link through a TCP connection (telnet) and you will then be
+  able to talk to the people on others bots partyline.  You will need at least
+  Botnet Master access on both bots to link them, or have someone do their
+  stuff on the other side.  You will have to know the address and port each
+  bot is listening to.</p>
+
+  <p>Then, all you need to link them is to set the following:</p>
+<ul>
+ <li>Decide which bot you will want to link to which one.  Let's say it is BotA
+    and BotB.</li>
+  <li>On BotA, add an bot record for BotB.
+<blockquote>
+    .+bot BotB botb.telnetaddress.here:port
+</blockquote>
+    (if you already have a BotB user without the +b flag, remove it, and readd
+    it this way.  You cannot simply do a .chattr BotB +b to turn it into a
+    bot)</li>
+
+  </li>On BotB, do the same for BotA:
+<blockquote>
+    .+bot BotA bota.telnetaddress.here:port
+</blockquote></li>
+  <li>Link both bots, from any side. For example from BotA, type:
+<blockquote>
+    .link BotB
+</blockquote></li>
+  <li>They should link and tell you that it was successful.</li>
+  </ul>
+</blockquote>
+<a name="secte2"></a>
+<b>2. How can I find out in which port one bot is listening on?</b>
+<blockquote>
+<p>  Use the .dccstat command, it will give you some output similar to:</p>
+<pre>
+  SOCK ADDR     PORT  NICK      HOST              TYPE
+  ---- -------- ----- --------- ----------------- ----
+  3    D01E1C15  2323 (telnet)  *                 lstn
+  4    D01E1C15  8080 (script)  http:new_idx      lstn
+  8    00000000  6667 (server)  irc.trends.ca     serv  (lag: -1)
+  6    00000000  5555 OtherBot  lamesthost.org    bot   flags: pucOsgwliA
+  22   D01E1C15  1357 (users)   *                 lstn
+  11   81451FAA  1684 Ernst     .uni-stuttgart.de chat  flags: cPtEp/429496
+  14   00000000  2324 LagBot    host.lagnet.net   conn  bot
+  34   C8F1E217  1083 *         200.241.226.23    scri  http:readsock
+</pre>
+<p>  You can see that it is listening at port 2323 for telnet connections.  The
+  TYPE = "lstn" and NICK = "(telnet)" gives you that indication.
+</p></blockquote>
+<a name="secte3"></a>
+<b>3. What if my bots won't link for some reason?</b>
+<blockquote>
+<ol type="1">
+<li>The password is incorrect.
+<ul>
+     <li>Remove the password on both bots:<br>
+       on BotB:  .chpass BotA<br>
+       on BotA:  .chpass BotB</li>
+     <li>Link again</li></ul></li>
+
+  <li>Some other error occurred:
+  <ul>
+     <li>Check if you have set the telnet-addresses and the port number correct.</li>
+     <li>Use the .dccstat command on both bots to see if they are really
+       listening "(telnet) * lstn" on the ports you specified.</li>
+     <li>Make sure you are not using a firewall, if you are, you need to
+       guarantee that the telnet connection from one bot to the other can come
+       through it.  See some settings in the sample configuration file for
+       further help.</li></ul></li>
+</ol>
+</blockquote>
+<a name="secte4"></a>
+<b>4. How can I make my bots always connect to each other when they start (+h)?</b>
+<blockquote>
+  <p>You will want to make one of the bots the HUB of your little botnet, that
+  is, other bots will *always* try to connect to it first.  For this, you must
+  set it with the +h bot flag on all other bots.  In the case you have BotA
+  and BotB, and want BotA to connect to BotB and vice-versa, you set the +h
+  flag to the opposite bot:</p>
+
+    on BotB:  .botattr +h BotA<br>
+    on BotA:  .botattr +h BotB
+</blockquote>
+<a name="secte5"></a>
+<b>5. Why would I want alternate HUBS (+a)?</b>
+<blockquote>
+  <p>If your botnet is getting bigger, you should try to decide over two or three
+  bots which have fast connections to all others, and set one of them as your
+  HUB and the other(s) as your ALTERNATE HUB(s), in case the main HUB is dead.</p>
+
+  <p>Say your botnet looks like</p>
+<pre>
+    BotHUB
+     |-- BotA
+     |-- BotB
+     `-- BotC
+</pre>
+<p>  And you have alread set BotHUB as your main HUB with:</p>
+
+    on BotA:    .botattr +h BotHUB<br>
+    on BotB:    .botattr +h BotHUB<br>
+    on BotC:    .botattr +h BotHUB<br>
+    on BotHUB:  .botattr +h BotA   (in case BotHUB dies and comes back)<br>
+
+<p>  Now you want BotA to become the alternate HUB.</p>
+
+    on BotB:    .botattr +a BotA<br>
+    on BotC:    .botattr +a BotA<br>
+
+<p>  So if BotHUB dies, BotB and BotC will try to connect to their alternate HUB,
+  BotA. For this to work, you must make sure they have linked to each other
+  at least one time.  Do this one time manually (link BotB and BotC to BotA,
+  so that they can their password.</p>
+  </blockquote>
+<a name="secte6"></a>
+<b>6. How do I share a userfile between two bots?</b>
+<blockquote>
+  From: David Fedoruk &lt;kittkat@cascadia-net.com&gt;<br><br>
+
+  on your Hub bot (BotHUB) do this:
+  <blockquote>
+    .botattr ShareBot +s|+s #sharedchannel
+</blockquote>
+  on your passive bot (ShareBot) do this:
+  <blockquote>
+    .botattr BotHUB +p|+s #sharedchannel
+    .botattr BotHUB +h   (only do this when you want the bots to connect)
+</blockquote>
+  <p>The |+s is used to make the bot also share flags for the given channel.  For
+  this to work, you must also set the channel in your configuration file to be
+  "shared".</p>
+<blockquote>
+    channel set #sharedchannel +shared
+</blockquote>
+  in both bots configuration.
+</blockquote>
+<a name="secte7"></a>
+<b>7. I get "Rejected flags for unshared channel #channel from Hub_Bot". Why?</b>
+<blockquote>
+<ul>
+  <li><p>In the bots config, make sure you have the channel set as "+shared". This
+    can be confusing if you have a dynamic channel file, so to make sure,
+    type .chaninfo #channel in your bot, and see what the bot really is using.</p>
+
+    <p>Change the setting with '.chanset #channel +shared' (on ALL your bots) and
+    do a '.save' to store your changes.</p></li>
+
+  <li>Check if you have given the +s flag for this channel to the hub bot on
+    all leaf bots, and to all leaf bots on your hub bot:
+<blockquote>
+      .botattr botname -|+s #sharedchannel
+	  </blockquote></li></ul>
+</blockquote>
+<a name="secte8"></a>
+<b>8. I always get 'wrong password' when relinking two bots that were just connected, why?</b>
+<blockquote>
+  <p>If you are trying to link bots with different major version numbers (for
+  example linking a 1.3 bot with an 1.0 one, there is a problem with the
+  passwords, when the bots make the first link without a pass.  So to be sure,
+  set the password on your own on both bots.  Say you have BotA (1.3.x) and
+  BotB (1.0s),  you do:</p>
+
+    on BotA:  .chpass BotB mylink<br>
+    on BotB:  .chpass BotA mylink
+</blockquote>
+<a name="secte9"></a>
+<b>9. Sharing users between bots (an example)</b>
+<blockquote>
+  04/08/98<br>
+  ArmrOfGod<br>
+  send comments to: silas@technologist.com<br><br>
+
+  <p>This is NOT an introduction to setting up a botnet.  This document expects
+  that you already know how to set up bots to link to hubs and alternate hubs,
+  and that know how to use the Get-Ops scripts.  If you don't know these
+  things, don't even bother to read this document.</p>
+
+  <p>For our first example, we will be using three bots.  We will call them
+  Peter, Paul, and Mary.  We will also use three channels:  #Music, #Folk,
+  #GetReal.  Here is the way the bots live in the channels:</p>
+
+    #Music      Peter, Paul, Mary<br>
+    #Folk       Peter, Mary<br>
+    #GetReal    Peter, Paul<br>
+
+  <p>Here is the way the bots will be linked:</p>
+<pre>
+     Peter
+      |-- Paul
+      `-- Mary
+</pre>
+ <p> The records for each bot are listed below:</p>
+
+<center>---Peter---</center><br>
+<pre>
+  &lt;Peter&gt; #ArmrOfGod# whois Paul
+  &lt;Peter&gt; HANDLE    PASS NOTES FLAGS
+  &lt;Peter&gt; Paul       yes     0 b
+  &lt;Peter&gt;   #Music             sof
+  &lt;Peter&gt;   #GetReal           sof
+  &lt;Peter&gt;   #Folk              of
+  &lt;Peter&gt;   BOT FLAGS: p
+
+  &lt;Peter&gt; #ArmrOfGod# whois Mary
+  &lt;Peter&gt; HANDLE    PASS NOTES FLAGS
+  &lt;Peter&gt; Mary      yes      0 b
+  &lt;Peter&gt;   #Music             sof
+  &lt;Peter&gt;   #GetReal           of
+  &lt;Peter&gt;   #Folk              sof
+  &lt;Peter&gt;   BOT FLAGS: p
+</pre>
+<center>---Paul---</center>
+<pre>
+  &lt;Paul&gt; #ArmrOfGod# whois Peter
+  &lt;Paul&gt; HANDLE    PASS NOTES FLAGS
+  &lt;Paul&gt; Paul       yes     0 b
+  &lt;Paul&gt;   #Music             sof
+  &lt;Paul&gt;   #GetReal           sof
+  &lt;Paul&gt;   #Folk
+  &lt;Paul&gt;   BOT FLAGS: sh
+</pre>
+ <center>---Mary---</center>
+<pre>
+  &lt;Mary&gt; #ArmrOfGod# whois Peter
+  &lt;Mary&gt; HANDLE    PASS NOTES FLAGS
+  &lt;Mary&gt; Mary       yes     0 b
+  &lt;Mary&gt;   #Music             sof
+  &lt;Mary&gt;   #GetReal
+  &lt;Mary&gt;   #Folk              sof
+  &lt;Mary&gt;   BOT FLAGS: sh
+</pre>
+  <p>Peter, (the hub bot) contains the master userfile for all three channels.
+  However, we only want to share some of that information with the other two
+  bots, not all of it.  In the bot's config files, each channel must have the
+  'channel set <#channelname> +shared' for each channel it will be sharing.</p>
+
+  <p>In this case, Peter will have:</p>
+<blockquote>
+	channel set #Music +shared<br>
+  	channel set #GetReal +shared<br>
+  	channel set #Folk +shared
+</blockquote>
+<p>  Paul will have:</p>
+<blockquote>
+  	channel set #Music +shared<br>
+  	channel set #GetReal +shared
+</blockquote>
+<p>  Mary will have:</p>
+<blockquote>
+  	channel set #Music +shared<br>
+  	channel set #Folk +shared
+</blockquote>
+  <p>Since Peter is in all three channels, we must define those channels as being
+  shared, since Peter is sharing user records with the other two bots.</p>
+
+  <p>Now, here is the tricky part of the .whois fields.  The +p (passive share)
+  and +s (active share) flags are often confusing.</p>
+
+  <p>When a bot is set with BOT FLAG: p</p>
+<pre>
+  &lt;Peter&gt; #ArmrOfGod# whois Paul
+  &lt;Peter&gt; HANDLE    PASS NOTES FLAGS
+  &lt;Peter&gt; Paul       yes     0 b  
+  &lt;Peter&gt;   #Music             sof
+  &lt;Peter&gt;   #GetReal           sof
+  &lt;Peter&gt;   #Folk                 
+  &lt;Peter&gt;   BOT FLAGS: p
+</pre>
+<p>  This means "this bot (Paul) will accept user files that I (Peter) send it."</p>
+
+<p>  When a bot is set with BOT FLAG: s</p>
+<pre>
+  &lt;Paul&gt; #ArmrOfGod# whois Peter
+  &lt;Paul&gt; HANDLE    PASS NOTES FLAGS
+  &lt;Paul&gt; Paul       yes     0 b    
+  &lt;Paul&gt;   #Music             sof  
+  &lt;Paul&gt;   #GetReal           sof  
+  &lt;Paul&gt;   #Folk                   
+  &lt;Paul&gt;   BOT FLAGS: s
+</pre>
+  <p>This means "I (Paul) expect to get a user file from this bot (Peter)."</p>
+
+  <p>So, looking at the above two listings, we can see that Paul expects Peter to
+  send it a user file, and Peter expects Paul to receive the user file.  THIS
+  IS ONE OF TWO CRITICAL POINTS TO GET RIGHT!  If you reverse or don't get
+  these flags correct, your user files WILL NOT TRANSFER.  This flags is set
+  with the .botattr command.</p>
+
+    On Paul:  .botattr Peter +s<br>
+    On Peter: .botattr Paul +p<br>
+
+  <p>The second step is the `s' flags for each channel.  This is simpler.  It
+  means "I'm sharing user records for this channel."  If you don't get these
+  right, no user records will be sent or accepted for the channel in question.
+  Here is a more detailed explanation:</p>
+<pre>
+  &lt;Peter&gt; #ArmrOfGod# whois Paul
+  &lt;Peter&gt; HANDLE    PASS NOTES FLAGS
+  &lt;Peter&gt; Paul       yes     0 b    
+  &lt;Peter&gt;   #Music             sof  
+  &lt;Peter&gt;   #GetReal           sof  
+  &lt;Peter&gt;   #Folk                   
+  &lt;Peter&gt;   BOT FLAGS: p
+
+  &lt;Peter&gt; #ArmrOfGod# whois Mary
+  &lt;Peter&gt; HANDLE    PASS NOTES FLAGS
+  &lt;Peter&gt; Mary      yes      0 b    
+  &lt;Peter&gt;   #Music             sof  
+  &lt;Peter&gt;   #GetReal                
+  &lt;Peter&gt;   #Folk              sof  
+  &lt;Peter&gt;   BOT FLAGS: p
+</pre>
+  <p>Peter expects bots Mary and Paul to accept user files (the 'p' BOT FLAG).
+  The specific channels it will share with each bot is identified with the `s'
+  channel flag ('s' == share).  Peter will attempt to send Paul all flags that
+  users have for both #Music and #GetReal, and will send Mary all flags that
+  users have for #Music and #Folk.  Mary will receive nothing regarding
+  #GetReal, because even though there is a channel record, the 's' flag is not
+  present.</p>
+
+  <center>---Mary---</center>
+<pre>
+  &lt;Mary&gt; #ArmrOfGod# whois Peter
+  &lt;Mary&gt; HANDLE    PASS NOTES FLAGS
+  &lt;Mary&gt; Mary       yes     0 b    
+  &lt;Mary&gt;   #Music             sof  
+  &lt;Mary&gt;   #GetReal                
+  &lt;Mary&gt;   #Folk              sof  
+  &lt;Mary&gt;   BOT FLAGS: sh
+</pre>
+  <p>Mary expects Peter to send her ('s' BOT FLAG) user flags and info for #Music
+  and #Folk.  If Peter were to send anything for #GetReal, Mary would
+  automatically reject it, since the 's' flag is missing for that channel.</p>
+
+  <p>You can share the entire userfile for all channels by typing</p>
+  <blockquote>
+  .botattr botname +g
+  </blockquote>
+</blockquote>
+
+<hr>
+<center><b>F. TCL-Scripting</b></center>
+<hr>
+<a name="sectf1"></a>
+<b>1. How can I learn the secrets to be an eggdrop TCL scripter?</b>
+<blockquote>
+<ol type="1">
+  <li>Learn more about TCL.<br>
+     Resource:  <a href="http://www.tclconsortium.org">http://www.tclconsortium.org</a></li>
+  <li>Learn about what specific commands are added by eggdrop to TCL<br>
+     Resource:  docs/tcl-commands.doc that comes with every eggdrop distribution</li>
+  <li>Get other scripts that do something similar than what you intend to do,
+     and learn by following these examples<br>
+     Resource:  <a href="ftp://ftp.eggheads.org/pub/eggdrop/scripts1.3">ftp://ftp.eggheads.org/pub/eggdrop/scripts1.3</a><br>
+	      Resource:  <a href="ftp://ftp.eggheads.org/pub/eggdrop/scripts1.4">ftp://ftp.eggheads.org/pub/eggdrop/scripts1.4</a><br>
+		       Resource:  <a href="ftp://ftp.eggheads.org/pub/eggdrop/scripts1.5">ftp://ftp.eggheads.org/pub/eggdrop/scripts1.5</a>
+	 </li>
+</blockquote>
+<a name="sectf2"></a>
+<b>2. How do I add mIRC colours/bolds/etc to my scripts output?</b>
+<blockquote>
+  These can be added using the following code:
+<pre>
+  meaning     key in    TCL
+              mIRC      equivalent
+  ---------------------------------
+  colour      CTRL-K    /003
+  bold        CTRL-B    /002
+  underline   CTRL-U    /031
+  reverse     CTRL-R    /022
+</pre>
+  So you can use:  putserv "PRIVMSG #chan :/00312,4BLUE ON RED!/003"
+</blockquote>
+<a name="sectf3"></a>
+<b>3. How can I match users in my script with this AND that flag?</b>
+<blockquote>
+  <p>Use the 'userlist flags channel' command to get persons with the specified
+  flags.  If you use:</p>
+
+    userlist AB<br>
+
+  <p>You will get all users that have flags A *or* B. If you want it to be A
+  *and* B, you must use:</p> 
+
+    <p>userlist AB&</p>
+
+  <p>The default matching method used in eggdrop is OR, so you must tell it when
+  you want another thing (an AND).  '|' and '&' are equivalent separators, one
+  meaning OR, one meaning AND.</p>
+</blockquote>
+<a name="sectf4"></a>
+<b>4. How can I bind an event to an ACTION  (/me text)?</b>
+<blockquote>
+    bind ctcp - "ACTION" action_proc
+
+  <p>This will trigger 'action_proc' when someone does an action to the channel
+  or to the bot in private.  You need to pick up what you want inside your
+  proc.</p>
+
+  <p>Send to the bot privately:</p>
+
+    proc action_bind { nick uhost hand dest keyword text } {<br>
+       if {[string index $dest 0] == "#"} { return 0 }<br>
+       ...<br>
+    }<br>
+
+  <p>Send to a channel:</p>
+
+    proc action_bind { nick uhost hand dest keyword text } {<br>
+       if {[string index $dest 0] != "#"} { return 0 }<br>
+       ...<br>
+    }<br>
+
+  <p>The ACTION will be triggered if sent to a channel or when sent to the bot
+  privately, that's why you need to check which was the destination right at
+  the beginning of the proc.  The '$dest' will be a channel name or the
+  nickname of your bot.</p>
+</blockquote>
+<a name="sectf5"></a>
+<b>5. I miss the addhost command in 1.3.x!</b>
+<blockquote>
+  This was replaced with:  setuser &lt;nick&gt; HOST &lt;hostmask&gt;
+</blockquote>
+<a name="sectf6"></a>
+<b>6. How to bind an event to occur at a specific time of the day?</b>
+<blockquote>
+  Use the time binding:<br><br>
+
+    bind time - &lt;mask&gt; time:proc<br>
+    proc time:proc { min hour day moth year } {<br>
+	}<br>
+
+  <p>The &lt;mask&gt; should be a set of 5 integer numbers, in the form:
+  "min hour day month year".  Examples:</p>
+<ul>
+  <li>each full hour:<br>
+    bind time - "00 * * * *" proc</li>
+  <li>every day at 5:05am:<br>
+    bind time - "05 05 * * *" proc</li>
+
+  <li>every 10 minutes at 'xx:x0':<br>
+    bind time - "?0 * * * *" proc</li>
+	</ul>
+</blockquote>
+<a name="sectf7"></a>
+<b>7. How to make the bot execute a TCL procedure every XX minutes?</b>
+<blockquote>
+  if {![info exists myproc_running]} {<br>
+    timer 20 myproc<br>
+    set myproc_running 1<br>
+  }<br><br>
+
+  proc myproc {} {<br>
+      # your stuff here ...<br>
+	  # ...<br>
+      timer 20 myproc<br>
+      return 1<br>
+  }<br>
+
+  <p>This will guarantee that your script will not start another timer if the
+  owner rehashes the bot.</p>
+</blockquote>
+<a name="sectf8"></a>
+<b>8. The RAW binding does not work after switching from 1.1 to 1.3!</b>
+<blockquote>
+  The syntax was changed:<br><br>
+
+  In 1.1.x:<br>
+    bind raw - "% 372 %" proc<br><br>
+	
+  In 1.2.x and 1.3.x:<br>
+    bind raw - "372" proc<br><br>
+
+  <p>The matched mask now just includes the "keyword" of the raw command, and it
+  can be a numeric, or another thing (NOTICE, PRIVMSG, etc).</p>
+</blockquote>
+<a name="sectf9"></a>
+<b>9. How can I remove all hosts from an user in one command?</b>
+<blockquote>
+  bind dcc n|- zaphosts dcc:zaphosts<br><br>
+
+  proc dcc:zaphosts { idx hand text } {<br>
+    foreach host [getuser $text hosts] { delhost $text $host }<br>
+    return 1<br>
+  }
+</blockquote>
+<a name="sectf10"></a>
+<b>10. What should I be aware of when I port my scripts from 1.1 to 1.3?</b>
+<blockquote>
+  <p>This will try to make a summary of *all* changes that you must consider when
+  you port a script from an 1.1 bot to a 1.3 bot.</p>
+<ol type="1">
+  <li>Numeric flags are gone<br>
+     <p>Search for the use of the +1 - +9 flags and eventual redefinitions to
+     other names with the 'set flagX Y' command or the 'newflag' procedure.
+     If you have something like these, you must now use the new flaging
+     standard:</p>
+	 <ul> 
+     <li>Lowercase flags are for eggdrops own use</li>
+     <li>All uppercase letters are custom flags and can be used by scripts</li>
+     <li>Numerical flags are gone</li></ul>
+	 </li>
+<br>
+  <li>Userflag matching system<br>
+     <p>The way you match for channel flags has changed.  All commands now use
+     the same matching method, where you have:</p>
+
+<p>       [globalflags]{&/|}[channelflags]{&/|}[botflags] #channel</p>
+
+<p>     The '|' means an OR concatenation, the '&' an AND.  For example:</p>
+<pre>
+       +op|+o #channel  -> global +o OR global +p OR channel +o
+       +n&+o #channel   -> global +n AND channel +o
+       +mn&             -> global +m AND global +n
+</pre>
+     <p>This makes some old commands break, but opens many new possibilities to
+     simplify and shorten pieces of scripts.</p>
+
+     <p>The commands you need to check if they need - or would benefit from - an
+     update:</p>
+<ul>
+     <li>matchattr<br>
+       <p>'matchchanattr' is NOT usable anymore.  Change it to the 'matchattr'
+       with the proper syntax for checking for channel flags.</p>
+
+	   In 1.1:  matchattr nick +globalflag<br>
+       In 1.3:  matchattr nick +globalflag<br><br>
+
+	   In 1.1:  matchchanattr nick +chanflag #channel<br>
+       In 1.3:  matchattr nick |+chanflag #channel<br><br>
+
+       <p>New in 1.3:  matchattr nick +globalflag|+chanflag #channel</p></li>
+
+     <li>userlist<br>
+<p>       Was only extended in 1.3, channel matching wasn't possible in 1.1</p>
+
+	   In 1.1:  userlist +globalflag<br>
+       In 1.3:  userlist +globalflag<br><br>
+
+       <p>New in 1.3:  userlist |+chanflag #channel</p>
+       New in 1.3:  userlist +globalflag|+chanflag #channel<br><br></li>
+
+     <li>chattr<br>
+       <p>Don't forget to add the '|' before the flag you are checking for, if
+       you are checking for a channel flag.  Otherwise it will only check for
+       global flags.</p>
+
+       In 1.1:  chattr nick +globalflag<br>
+	   In 1.3:  chattr nick +globalflag<br><br>
+
+       In 1.1:  chattr nick +chanflag #channel<br>
+       In 1.3:  chattr nick |+chanflag #channel<br><br>
+
+       New in 1.3:  chattr +globalflag|+chanflag #channel<br>
+       New in 1.3:  botattr +botflags [#channel]<br><br></li>
+
+     <li>chanlist<br>
+       <p>Was extended in 1.3 to also allow '|' (OR) matches</p>
+
+       In 1.1:  chanlist #channel [+globalflag&+chanflag]<br>
+       In 1.3:  chanlist #channel [+globalflag&+chanflag]<br><br>
+
+       <p>New in 1.3:  chanlist #channel +globalflag|+chanflag</p></li>
+
+     <li>bind<br>
+       <p>Uppercase flags that were used to match for channel owners, channel
+       masters and channel ops (+N, +M and +O) should be changed to the new
+       matching system!  Uppercase flags now are custom flags!!</p>
+
+       In 1.1:  bind type +globalflag command proc<br>
+       In 1.3:  bind type +globalflag command proc<br><br>
+
+       In 1.1:  bind type +CHANFLAG command proc   (flag in UPPER-case)<br>
+       In 1.3:  bind type |+chanflag command proc  (flag in lower-case)<br><br>
+
+       New in 1.3:  bind type +globalflag|+chanflag command proc</li></ul></li><br>
+
+  <li>User information<br>
+     <p>There used to be dozens of procs to get and set the various information
+     stored with each user.  Now there are only two procs to handle this:
+     'getuser' and 'setuser'.</p>
+
+     PASSWORD:<br>
+	   In 1.1:  chpass &lt;handle&gt; [pass]<br>
+	   In 1.3:  setuser &lt;handle&gt; PASS [pass]<br><br>
+
+     INFO LINE:<br>
+       In 1.1:  setinfo &lt;handle&gt; &lt;info&gt;<br>
+       In 1.3:  setuser &lt;handle&gt; INFO &lt;info&gt;<br><br>
+
+       In 1.1:  getinfo &lt;handle&gt;<br>
+       In 1.3:  getuser &lt;handle&gt; INFO<br><br>
+
+       In 1.1:  setchaninfo &lt;handle&gt; &lt;channel&gt; &lt;info&gt;<br>
+       In 1.3:  setchaninfo &lt;handle&gt; &lt;channel&gt; &lt;info&gt;<br><br>
+
+       In 1.1:  getchaninfo &lt;handle&gt; &lt;channel&gt;<br>
+       In 1.3:  getchaninfo &lt;handle&gt; &lt;channel&gt;<br><br>
+
+     COMMENT:<br>
+       In 1.1:  getcomment &lt;handle&gt;<br>
+       In 1.3:  getuser &lt;handle&gt; COMMENT<br><br>
+
+       In 1.1:  setcomment &lt;handle&gt; &lt;comment&gt;<br>
+       In 1.3:  setuser &lt;handle&gt; COMMENT &lt;comment&gt;<br><br>
+
+     DCCDIR:<br>
+       In 1.1:  getdccdir &lt;handle&gt;<br>
+       In 1.3:  setuser &lt;handle&gt; DCCDIR<br><br>
+
+       In 1.1:  setdccdir &lt;handle&gt; &lt;dccdir&gt;<br>
+       In 1.3:  setuser &lt;handle&gt; DCCDIR &lt;dccdir&gt;<br><br>
+
+     EMAIL:<br>
+       In 1.1:  getemail &lt;handle&gt;<br>
+       In 1.3:  getuser &lt;handle&gt; XTRA EMAIL<br><br>
+
+       In 1.1:  setemail &lt;handle&gt; &lt;email&gt;<br>
+       In 1.3:  setuser &lt;handle&gt; XTRA EMAIL &lt;email&gt;<br><br>
+
+     LASTON:<br>
+       In 1.1:  getlaston &lt;handle&gt; &lt;channel&gt;<br>
+       In 1.3:  getuser &lt;handle&gt; LASTON &lt;channel&gt;<br><br>
+
+       In 1.1:  getchanlaston &lt;handle&gt;<br>
+       In 1.3:  lindex [getuser &lt;handle&gt; LASTON] 1<br><br>
+
+       In 1.1:  getlaston &lt;handle&gt;                  (global laston)<br>
+       In 1.3:  lindex [getuser &lt;handle&gt; LASTON] 0<br><br>
+
+       In 1.1:  setlaston &lt;handle&gt; &lt;channel&gt; &lt;unixtime&gt;<br>
+       In 1.3:  setuser &lt;handle&gt; LASTON &lt;unixtime&gt; &lt;place&gt;<br>
+                (&lt;place&gt; can also be 'partyline' or '@otherbot')<br><br>
+
+       New in 1.3:  setuser &lt;handle&gt; LASTON &lt;unixtime&gt; &lt;place&gt; *<br>
+                (only sets laston for specified place, don't set global laston)<br><br>
+
+     HOSTS:<br>
+       In 1.1:  gethosts &lt;handle&gt;<br>
+       In 1.3:  getuser &lt;handle&gt; HOSTS<br><br>
+
+       In 1.1:  addhost &lt;handle&gt; &lt;hostmask&gt;<br>
+       In 1.3:  setuser &lt;handle&gt; HOSTS &lt;hostmask&gt;<br><br>
+
+       New in 1.3:  setuser &lt;handle&gt; HOSTS<br>
+                (clears all hostmasks for that user)<br><br>
+
+       In 1.1:  delhost &lt;handle&gt; &lt;hostmask&gt;<br>
+       In 1.3:  delhost &lt;handle&gt; &lt;hostmask&gt; (only command that remained in 1.3)<br><br>
+
+     BOTADDR:<br>
+       In 1.1:  getaddr &lt;handle&gt;<br>
+       In 1.3:  getuser &lt;handle&gt; BOTADDR<br><br>
+
+       In 1.1:  setaddr &lt;handle&gt; &lt;addr&gt;<br>
+       In 1.3:  setuser &lt;handle&gt; BOTADDR &lt;addr&gt;<br><br>
+
+     XTRA FIELD:<br>
+       In 1.1:  getxtra &lt;handle&gt;<br>
+       In 1.1:  setxtra &lt;handle&gt; &lt;xtrastuff&gt;<br><br>
+
+       <p>The access to the XTRA field was uncoordinated and scripts could do
+       with it whatever they liked.  So some standard use was adopted with the
+       following commands from the scripts/toolkit.tcl:</p>
+
+       In 1.1:  user-get &lt;handle&gt; &lt;key&gt;<br>
+       In 1.3:  getuser &lt;handle&gt; XTRA &lt;key&gt;<br><br>
+
+       In 1.1:  user-set &lt;handle&gt; &lt;key&gt; &lt;data&gt;<br>
+       In 1.3:  setuser &lt;handle&gt; XTRA &lt;key&gt; &lt;data&gt;<br><br>
+
+       <p>If your script uses 'getxtra' and 'setxtra' directly, you should port
+       it to use this structured access now.  If your script used 'user-get'
+       and 'user-set', then you can just switch over to the new commands.</p></li>
+
+  <li>Bindings<br>
+     <p>Some bindings have changed their mask matching and/or the number of
+     arguments of the procs they call:</p>
+<ul>
+     <li>RAW<br>
+       In 1.1:  bind raw - "% 372 %" proc<br>
+       In 1.3:  bind raw - "372" proc<br></li><br>
+
+     <li>CHPT
+	   <p>Now the mask is checked agains the text the user used to leave, and the
+	   channel is given as a further argument to your proc.</p>
+                bind chpt &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;<br>
+       In 1.1:  proc &lt;proc&gt; &lt;bot&gt; &lt;nick&gt; &lt;sock&gt;<br>
+       In 1.3:  proc &lt;proc&gt; &lt;bot&gt; &lt;nick&gt; &lt;sock&gt; &lt;chan&gt;<br><br></li>
+
+     <li>TIME
+	   <p>The first argument was &lt;bot&gt;, this is useless and was removed.</p>
+                bind time - &lt;mask&gt; &lt;proc&gt;<br>
+       In 1.1:  proc &lt;proc&gt; &lt;bot&gt; &lt;min&gt; &lt;hour&gt; &lt;day&gt; &lt;month&gt; &lt;year&gt;<br>
+       In 1.3:  proc &lt;proc&gt; &lt;min&gt; &lt;hour&gt; &lt;day&gt; &lt;month&gt; &lt;year&gt;<br><br>
+	   </li></ul></li>
+
+  <li>Misc<br>
+<ul>
+     <li>dumpfile<br>
+       Now the file should be in the 'help/text' and not in the 'text'
+       directory.</li><br><br>
+
+     <li>putidx &lt;idx&gt; &lt;text&gt;<br>
+       Was removed in 1.3</li></ul></li>
+</ol>
+</blockquote>
+<a name="sectf11"></a>
+<b>11. What new features are avaliable on 1.3 bots that were not found in 1.1?</b>       
+<blockquote>
+  <p>Some things were already pointed out in the last question, you can recognize
+  them by the 'New in 1.3'.  Here are other new things you might want to use:</p>
+<ol type="1">
+  <li>New commands<br>
+<ul>
+     <li>botattr &lt;handle&gt; [changes [channel]]<br>
+       Similar to chattr except for bot attributes rather than normal user
+       attributes, this includes the channel-specific +s share flag</li><br><br>
+   
+     <li>addchanrec &lt;handle&gt; &lt;channel&gt;<br>
+       Add a channel record for the user</li><br><br>
+   
+     <li>delchanrec &lt;handle&gt; &lt;channel&gt;<br>
+       Removes a channel record for the user; this includes all associated
+       channel flags</li><br><br>
+   
+     <li>unames<br>
+       Returns the current operating system the bot is using.</li><br><br>
+
+     <li>storenote &lt;from&gt; &lt;to&gt; &lt;msg&gtl &lt;idx&gt;<br>
+       stores a note for later reading, notify idx of any results (use idx ==
+       -1 for no notify).</li><br><br></ul></li>
+
+  <li>New possibilities<br>
+<ul>
+     <li>whom &lt;chan&gt;<br>
+       if you specify a channel of * every user on the botnet is returned with
+       an extra argument indicating the channel the user is on</li><br><br>
+
+     <li>killassoc &lt;chan&gt;<br>
+       use 'killassoc &' to kill all assocs.</li><br><br></ul></li>
+
+  <li>New global variables<br>
+  <ul>
+     <li>numversion<br>
+       current numeric bot version (ie: "1031401" = 1.3.14, patch #1);<br>
+       Numerical version is "MMNNRRPP" where:
+	   <blockquote>
+        MM Major release	NN Minor release
+        RR sub-release	PP patch level
+		</blockquote></li>
+     <li>server-online<br>
+       Unixtime when the bot was started</li><br><br>
+
+     <li>lastbind<br>
+       The last command binding which triggered.  This allows you to identify
+       which command triggered a tcl routine.</li><br><br></ul></li>
+
+  <li>New bindings<br>
+<ul>
+     <li>AWAY
+	 <blockquote>
+       bind away - &lt;mask&gt; &lt;proc&gt;<br>
+	   proc &lt;proc&gt; &lt;bot&gt; &lt;idx&gt; &lt;msg&gt;<br>
+       triggers when a user goes away or comes back on the botnet<br>
+       (msg == "" when returning)<br>
+</blockquote></li>
+     <li>NKCH
+	 <blockquote>
+       bind nkch - &lt;mask&gt; &lt;proc&gt;<br>
+       proc &lt;proc&gt; &lt;oldnick&gt; &lt;newnick&gt;<br>
+       triggered whenever a local users nick is changed (in the userfile)
+</blockquote></li>
+     <li>LOAD
+	 <blockquote>
+       bind load - &lt;mask&gt; &lt;proc&gt;<br>
+       proc &lt;proc&gt; &lt;module&gt;<br>
+       triggers when a module is loaded.
+</blockquote></li>
+     <li>UNLD
+	 <blockquote>
+       bind unld - &lt;mask&gt; &lt;proc&gt;<br>
+       proc &lt;proc&gt; &lt;module;&gt;<br>
+       triggers when a module is unloaded.
+</blockquote></li></ul></li></ol>
+  <p>There may be more things, almost all of this was extracted from the
+  documentation changes.</p>
+</blockquote>
+<a name="sectf12"></a>
+<b>12. How to bind an event to NOTICEs?</b>
+<blockquote>
+  Send to the bot:<br>
+    bind notc &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;<br>
+
+</blockquote>
+<a name="sectf13"></a>
+<b>13. I have a proc with an parameter called 'args' and I always get '{' and '}'
+around the text passed to it.  Why?</b>
+<blockquote>
+  <p>When you use the parameter name "args", it has a special meaning to TCL.  It
+  means:  Accept any number of parameters here, and put each argument into a
+  separate list item.  If you pass just one argument, it still makes a list of
+  it.</p>
+
+  <p>If you are confused, just avoid using 'args', use 'arg' or something else
+  instead.</p>
+</blockquote>
+<a name="sectf14"></a>
+<b>14. How to find out how long time one's bot has been online (connected to a server) in a TCL script?</b>
+<blockquote>
+  <p>You can use the (undocummented) TCL global variable "server-online" to find
+  out the timestamp of when your bot connected to the server.</p>
+
+    set time [expr [unixtime] - ${server-online}]<br><br>
+
+  would give you the ammount of seconds your bot is connected.
+</blockquote>
+<a name="sectf15"></a>
+<b>15. Why does 'putserv "PRIVMSG $nick :[OP]"' gives an error 'invalid command name "OP"'?</b>
+<blockquote>
+  Use a bachslash to "quote" characters that might be misinterpreted by TCL,
+  like "[", "{", "$" or sometimes "(".
+</blockquote>
+<a name="sectf16"></a>
+<b>16. I tried the 'exec' TCL command and it tells me 'couldn't execute "command bla":  no such file or directory', but 'command' is a valid command!</b>
+<blockquote>
+  <p>Don't quote the whole command, pass each argument separately.  So if you
+  want to execute 'ls -l DEBUG':</p>
+
+    WRONG:  exec "ls -l DEBUG"  -> this will give you an error<br>
+    RIGHT:  exec ls -l DEBUG<br>
+</blockquote>
+<hr>
+<center>G. Misc</center>
+<hr>
+<a name="sectg1"></a>
+<b>1. Where do I find the latest releases and patches?</b>
+<blockquote>
+<ul>
+  <li>Eggdrop releases:<br>
+  <blockquote>
+  <a href="ftp://ftp.eggdrop.net/pub/eggdrop/official/">ftp://ftp.eggdrop.net/pub/eggdrop/official/</a> - eggdrop 1.3<br>
+	<a href="ftp://ftp.eggheads.org/pub/eggdrop/GNU/">ftp://ftp.eggheads.org/pub/eggdrop/GNU/</a> - eggdrop 1.4<br>
+<a href="ftp://ftp.eggheads.org/pub/eggdrop/GNU/beta/">ftp://ftp.eggheads.org/pub/eggdrop/GNU/beta/</a> - eggdrop1.5<br>
+</blockquote></li>
+<li>Eggdrop 1.3.x patches
+  <blockquote>
+    <a href="ftp://ftp.eggdrop.net/pub/eggdrop/unofficial/patches1.3">ftp://ftp.eggdrop.net/pub/eggdrop/unofficial/patches1.3</a><br>
+	<a href="ftp://ftp.eggheads.org/pub/eggdrop/patches1.3/">ftp://ftp.eggheads.org/pub/eggdrop/patches1.3/</a>
+</blockquote></li>
+<li>Eggdrop 1.4.x patches
+  <blockquote>
+	<a href="ftp://ftp.eggheads.org/pub/eggdrop/patches1.4/">ftp://ftp.eggheads.org/pub/eggdrop/patches1.4/</a>
+</blockquote></li>
+<li>Eggdrop 1.5.x patches
+  <blockquote>
+	<a href="ftp://ftp.eggheads.org/pub/eggdrop/patches1.5/">ftp://ftp.eggheads.org/pub/eggdrop/patches1.5/</a>
+</blockquote></li>
+</blockquote>
+<a name="sectg2"></a>
+<b>2. I found a bug, here is the output of DEBUG. Please fix!</b>
+<blockquote>
+  <p>You should first try to reproduce the bug, and find a pattern that will
+  trigger the bot's crashing (or whatever) in a consistant manner.  Just
+  sending one copy of your DEBUG file will not help very much, you need to see
+  if you can reproduce the error over and over.</p>
+  
+  <p>Having that, describe exactly the situation, append relevant DEBUG
+  information and information about your system (output of the 'uname -a'
+  command, for example) and the TCL version your bot was compiled with, and
+  send it to one of the main mailing lists:</p>
+
+    eggheads@eggheads.org<br>
+    eggdev@eggheads.org
+</blockquote>
+<a name="sectg3"></a>
+<b>3. How can I find out with what version of TCL my bot was really compiled?</b>
+<blockquote>
+  <p>In your partyline, type:  .tcl info tclversion</p>
+  <p>If this gives you an error that the .tcl command is not avaliable, you can
+  append a line to your bots configuration file:</p>
+
+    putlog "TCL Version: [info tclversion]"<br>
+
+  <p>Do a .rehash or restart the bot, and pay attention, after loading everything
+  you will see it telling you the version number.</p>
+</blockquote>
+<a name="sectg4"></a>
+<b>4. Can you recommend a good shell provider?</b>
+<blockquote>
+  From: Chuck Byam &lt;crb6x@virginia.edu&gt;<br>
+  Date: Wed, 11 Feb 98 20:54:39 -0500<br>
+
+  <p>For a listing of nearly 4000 ISP's worldwide see:</p>
+
+	http://thelist.internet.com<br>
+
+  <p>Don't come to the mailing lists asking for suggestions.  The best shell is
+  the shell that works best for you.</p>
+</blockquote>
+<hr>
+$Id: faq1.html,v 1.1 2000/04/12 15:25:23 jason Exp $<br>
+<em>© 1998 Ernst &lt;ernst@studbox.uni-stuttgart.de&gt<br>
+© 2000 Eggheads Development Team</em>
+</body>
+</html>
