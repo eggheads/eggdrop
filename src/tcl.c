@@ -4,7 +4,7 @@
  *   Tcl initialization
  *   getting and setting Tcl/eggdrop variables
  *
- * $Id: tcl.c,v 1.52 2002/11/21 07:59:24 wcc Exp $
+ * $Id: tcl.c,v 1.53 2002/11/21 23:53:08 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -139,7 +139,7 @@ typedef struct {
 } coupletinfo;
 
 /* Read/write integer couplets (int1:int2) */
-#if ((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 4))
+#if (((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 4)) || (TCL_MAJOR_VERSION > 8))
 static char *tcl_eggcouplet(ClientData cdata, Tcl_Interp *irp, CONST char *name1,
                             CONST char *name2, int flags)
 #else
@@ -174,7 +174,7 @@ static char *tcl_eggcouplet(ClientData cdata, Tcl_Interp *irp, char *name1,
 
 /* Read or write normal integer.
  */
-#if ((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 4))
+#if (((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 4)) || (TCL_MAJOR_VERSION > 8))
 static char *tcl_eggint(ClientData cdata, Tcl_Interp *irp, CONST char *name1,
 			CONST char *name2, int flags)
 #else
@@ -250,7 +250,7 @@ static char *tcl_eggint(ClientData cdata, Tcl_Interp *irp, char *name1,
 
 /* Read/write normal string variable
  */
-#if ((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 4))
+#if (((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 4)) || (TCL_MAJOR_VERSION > 8))
 static char *tcl_eggstr(ClientData cdata, Tcl_Interp *irp, CONST char *name1,
                         CONST char *name2, int flags)
 #else
@@ -563,7 +563,7 @@ extern tcl_cmds tcluser_cmds[], tcldcc_cmds[], tclmisc_cmds[], tclmisc_objcmds[]
  */
 void init_tcl(int argc, char **argv)
 {
-#if (TCL_MAJOR_VERSION >= 8 && TCL_MINOR_VERSION >= 1) || (TCL_MAJOR_VERSION > 8)
+#if (TCL_MAJOR_VERSION == 8 && TCL_MINOR_VERSION >= 1) || (TCL_MAJOR_VERSION > 8)
   const char *encoding;
   int i;
   char *langEnv;
@@ -599,7 +599,7 @@ void init_tcl(int argc, char **argv)
   Tcl_Init(interp);
 
 /* Code based on Tcl's TclpSetInitialEncodings() */
-#if (TCL_MAJOR_VERSION >= 8 && TCL_MINOR_VERSION >= 1) || (TCL_MAJOR_VERSION > 8)
+#if (TCL_MAJOR_VERSION == 8 && TCL_MINOR_VERSION >= 1) || (TCL_MAJOR_VERSION > 8)
   /* Determine the current encoding from the LC_* or LANG environment
    * variables.
    */

@@ -2,7 +2,7 @@
  * tcluser.c -- handles:
  *   Tcl stubs for the user-record-oriented commands
  *
- * $Id: tcluser.c,v 1.30 2002/07/18 19:01:44 guppy Exp $
+ * $Id: tcluser.c,v 1.31 2002/11/21 23:53:08 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -455,7 +455,7 @@ static int tcl_ignorelist STDVAR
 {
   struct igrec *i;
   char expire[11], added[11], *p;
-#if ((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 4))
+#if (((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 4)) || (TCL_MAJOR_VERSION > 8))
     CONST char *list[5];
 #else
     char *list[5];

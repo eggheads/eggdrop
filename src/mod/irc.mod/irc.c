@@ -2,7 +2,7 @@
  * irc.c -- part of irc.mod
  *   support for channels within the bot
  *
- * $Id: irc.c,v 1.80 2002/11/21 07:59:24 wcc Exp $
+ * $Id: irc.c,v 1.81 2002/11/21 23:53:08 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1049,7 +1049,7 @@ static void do_nettype()
   add_hook(HOOK_RFC_CASECMP, (Function) rfc_compliant);
 }
 
-#if ((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 4))
+#if (((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 4)) || (TCL_MAJOR_VERSION > 8))
 static char *traced_nettype(ClientData cdata, Tcl_Interp *irp,
                             CONST char *name1, CONST char *name2, int flags)
 #else
@@ -1061,7 +1061,7 @@ static char *traced_nettype(ClientData cdata, Tcl_Interp *irp, char *name1,
   return NULL;
 }
 
-#if ((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 4))
+#if (((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 4)) || (TCL_MAJOR_VERSION > 8))
 static char *traced_rfccompliant(ClientData cdata, Tcl_Interp *irp,
                                  CONST char *name1, CONST char *name2,
                                  int flags)

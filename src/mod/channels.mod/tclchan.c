@@ -1,7 +1,7 @@
 /*
  * tclchan.c -- part of channels.mod
  *
- * $Id: tclchan.c,v 1.67 2002/11/21 07:59:24 wcc Exp $
+ * $Id: tclchan.c,v 1.68 2002/11/21 23:53:08 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -735,7 +735,7 @@ static int tcl_newinvite STDVAR
 static int tcl_channel_info(Tcl_Interp * irp, struct chanset_t *chan)
 {
   char a[121], b[121], s[121];
-#if ((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 4))
+#if (((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 4)) || (TCL_MAJOR_VERSION > 8))
   CONST char *args[2];
 #else
   char *args[2];
@@ -1408,7 +1408,7 @@ static int tcl_channel_modify(Tcl_Interp * irp, struct chanset_t *chan,
 static int tcl_do_masklist(maskrec *m, Tcl_Interp *irp)
 {
   char ts[21], ts1[21], ts2[21], *p;
-#if ((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 4))
+#if (((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 4)) || (TCL_MAJOR_VERSION > 8))
   CONST char *list[6];
 #else
   char *list[6];
@@ -1747,7 +1747,7 @@ static int tcl_channel_add(Tcl_Interp *irp, char *newname, char *options)
   int ret = TCL_OK;
   int join = 0;
   char buf[2048], buf2[256];
-#if ((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 4))
+#if (((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 4)) || (TCL_MAJOR_VERSION > 8))
   CONST char **item;
 #else
   char **item;
@@ -1825,7 +1825,7 @@ static int tcl_channel_add(Tcl_Interp *irp, char *newname, char *options)
    * if a user goes back to an eggdrop that no-longer supports certain
    * (channel) options.
    */
-#if ((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 4))
+#if (((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 4)) || (TCL_MAJOR_VERSION > 8))
   if ((tcl_channel_modify(irp, chan, items, (char **)item) != TCL_OK) && !chan_hack) {
 #else
   if ((tcl_channel_modify(irp, chan, items, item) != TCL_OK) && !chan_hack) {

@@ -5,7 +5,7 @@
  *   note cmds
  *   note ignores
  *
- * $Id: notes.c,v 1.40 2002/07/18 19:01:45 guppy Exp $
+ * $Id: notes.c,v 1.41 2002/11/21 23:53:08 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -665,7 +665,7 @@ static int tcl_notes STDVAR
   char s[601], *to, *from, *dt, *s1;
   int count, read, nl[128];	/* Is it enough? */
   char *p;
-#if ((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 4))
+#if (((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 4)) || (TCL_MAJOR_VERSION > 8))
   CONST char *list[3];
 #else
   char *list[3];

@@ -2,7 +2,7 @@
  * tclmisc.c -- handles:
  *   Tcl stubs for everything else
  *
- * $Id: tclmisc.c,v 1.30 2002/07/18 19:01:44 guppy Exp $
+ * $Id: tclmisc.c,v 1.31 2002/11/21 23:53:08 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -176,7 +176,7 @@ static int tcl_binds STDVAR
   tcl_cmd_t		*tc;
   char			*g, flg[100], hits[11];
   int			 matching = 0;
-#if ((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 4))
+#if (((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 4)) || (TCL_MAJOR_VERSION > 8))
     CONST char *list[5];
 #else
     char *list[5];
@@ -520,7 +520,7 @@ static int tcl_modules STDVAR
   char *p;
   char s[24], s2[24];
   int i;
-#if ((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 4))
+#if (((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 4)) || (TCL_MAJOR_VERSION > 8))
     CONST char *list[100], *list2[2];
 #else
     char *list[100], *list2[2];
