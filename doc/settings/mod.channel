@@ -4,7 +4,7 @@ This module provides channel related support for the bot. Without it
 you wont be able to make the bot join a channel or to save channel
 specific userfile informations.
 
-Put this line into your eggdrop.conf.dist file to load channel module:
+Put this line into your eggdrop configuration file file to load channel module:
 
 loadmodule channels
 

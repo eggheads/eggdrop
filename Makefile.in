@@ -2,7 +2,7 @@
 #  This is the Makefile for EGGDROP (the irc bot)
 #  You should never need to edit this.
 #
-# $Id: Makefile.in,v 1.20 2000/04/25 20:49:48 fabian Exp $
+# $Id: Makefile.in,v 1.21 2000/05/28 18:59:24 fabian Exp $
 
 SHELL = /bin/sh
 top_srcdir = @top_srcdir@
@@ -431,7 +431,7 @@ install-end:
 	@echo "Installation completed."
 	@echo ""
 	@echo "You MUST ensure that you edit/verify your configuration file."
-	@echo "'eggdrop.conf.dist' lists current options."
+	@echo "Use one of the three configuration files (eggdrop.simple.conf, eggdrop.advanced.conf and eggdrop.complete.conf) distributed with your bot."
 	@echo ""
 	@echo "Remember to change directory to $(DEST) before you proceed."
 	@echo ""

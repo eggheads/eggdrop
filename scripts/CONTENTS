@@ -18,7 +18,7 @@ alltools.tcl
 
 autobotchk
    tcl script used to crontab your Eggdrop
-   usage: ./autobotchk eggdrop.conf.dist
+   usage: ./autobotchk <eggdrop config file>
 
 botchk
    A shell script which can be used for auto-starting the bot via 'cron'.

@@ -419,7 +419,7 @@ specific commands, see later.
 
   channel add <name> <option-list>
     adds a channel record for the bot to monitor; the full list of possible
-      options is given in the "eggdrop.conf.dist" sample config file; note
+      options is given in the "eggdrop.complete.conf" sample config file; note
       that the channel options must be in a list (enclosed in {})
     returns: nothing
 

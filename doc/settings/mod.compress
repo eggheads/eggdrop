@@ -4,7 +4,7 @@ This module provides provides support for file compression. This allows the
 bot to transfer compressed user files and therefore save a significant amount
 of bandwidth.
 
-Put this line into your eggdrop.conf.dist file to load compress module:
+Put this line into your eggdrop configuration file file to load compress module:
 
 loadmodule compress
 

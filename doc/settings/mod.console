@@ -3,7 +3,7 @@
 This module provides storage of console settings when you exit the
 bot (or .store)
 
-Put this line into your eggdrop.conf.dist file to load console module:
+Put this line into your eggdrop configuration file file to load console module:
 
 loadmodule console
 

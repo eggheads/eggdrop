@@ -44,7 +44,7 @@ experienced users.
 
      [The following is performed from the directory installed above]
 
-  4. Copy the file 'eggdrop.conf.dist' to a new file, usually the same name
+  4. Copy the file 'eggdrop.simple.conf' to a new file, usually the same name
      as the bot that will use it, e.g. "LamestBot".
 
   5. Edit your config file LamestBot completely.

@@ -4,7 +4,7 @@ This module provides userfile sharing support between two directly
 linked bots.
 This module requires the channels & transfer modules loaded
 
-Put this line into your eggdrop.conf.dist file to load share module:
+Put this line into your eggdrop configuration file file to load share module:
 
 loadmodule share
 

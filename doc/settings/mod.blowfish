@@ -6,7 +6,7 @@ using other modules like a md5 module) you can't use your current
 userfile anymore.
 Attention, eggdrop will not start without a chosen encryption method.
 
-Put this line into your eggdrop.conf.dist file to load blowfish module:
+Put this line into your eggdrop configuration file file to load blowfish module:
 
 checkmodule blowfish
 

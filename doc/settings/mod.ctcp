@@ -3,7 +3,7 @@
 This module provides the normal ctcp replies that you'd expect
 This module requires the channels, irc & server modules loaded
 
-Put this line into your eggdrop.conf.dist file to load ctcp module:
+Put this line into your eggdrop configuration file file to load ctcp module:
 
 loadmodule ctcp
 

@@ -3,7 +3,7 @@
 This module provides the core server support. You have to load this
 if you want your bot to come on irc.
 
-Put this line into your eggdrop.conf.dist file to load server module:
+Put this line into your eggdrop configuration file file to load server module:
 
 loadmodule server
 

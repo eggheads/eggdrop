@@ -27,8 +27,14 @@ config*
 doc/
    lots of IMPORTANT DOCUMENTATION that you must read!
 
-eggdrop.conf.dist
-   sample configuration for your bot
+eggdrop.simple.conf
+   a simple configuration file for your bot
+
+eggdrop.advanced.conf
+   an advanced configuration file for your bot
+
+eggdrop.complete.conf
+   a configuration file including all options for your bot
 
 filesys/
    sample filesystem

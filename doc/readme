@@ -372,7 +372,7 @@ before. PLEASE! READ IT!
     want a list of autobotchk options, type './autobotchk'. An example
     with options would be:
 
-      ./autobotchk eggdrop.conf.dist -noemail -5
+      ./autobotchk <eggdrop config file> -noemail -5
 
     This would setup crontab to run the botchk every 5 minutes and also to
     not send you e-mail saying that it restarted your bot.

@@ -5,7 +5,7 @@ other notes between currently online users is supported in the core,
 this is only for storing the notes for later retrieval, direct
 user->user notes are built-in
 
-Put this line into your eggdrop.conf.dist file to load notes module:
+Put this line into your eggdrop configuration file file to load notes module:
 
 loadmodule notes
 

@@ -3,7 +3,7 @@
 This module provides basic irc support for your bot.  You have to
 load this if you want your bot to come on irc.
 
-Put this line into your eggdrop.conf.dist file to load irc module:
+Put this line into your eggdrop configuration file file to load irc module:
 
 loadmodule irc
 

@@ -122,14 +122,18 @@ at <eggheads@eggheads.org> (after subscribing).  Thanks.
     config file and user file in that directory, and then when you
     compile a new version of eggdrop, you just have to do:
        make install DEST=<directory>
-    and it will copy eggdrop, modules, scripts, and the help files.
+    and it will copy eggdrop, modules, scripts, and the help files. Please
+    note, that you need to specify an absolute path here, relative paths
+    like '../mydir' for example will not copy everything.
 
-    The config file that comes with eggdrop is called "eggdrop.conf.dist".
-    You need to edit that file and change almost everything.  It specifies
-    the bot's nickname, server list, and pretty much everything else about
-    how your bot will work.  You should also rename it from "eggdrop.conf"
-    to something resembling your bot's name, for convenience.  I call mine
-    "snow" since my bot is "Snowbot".
+    There are three config files shipped with your eggdrop, 
+    eggdrop.simple.conf, eggdrop.advanced.conf and eggdrop.complete.conf.
+    The names of the files already indicate their use, so no need here 
+    explain this further on. You need to edit that file and change almost
+    everything.  It specifies the bot's nickname, server list, and pretty
+    much everything else about how your bot will work.  You should also
+    rename it from "eggdrop.conf" to something resembling your bot's name,
+    for convenience.  I call mine "snow" since my bot is "Snowbot".
 
     You can execute the script to start the bot.  For example, I use:
        chmod u+x snow

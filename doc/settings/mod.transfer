@@ -3,7 +3,7 @@
 the transfer module provides dcc send/get support and bot userfile
 transfer support (not sharing).
 
-Put this line into your eggdrop.conf.dist file to load transfer module:
+Put this line into your eggdrop configuration file file to load transfer module:
 
 loadmodule transfer
 

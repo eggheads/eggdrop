@@ -3,7 +3,7 @@
 This module provides an area withing the bot where users can store
 files. With this module the bot is useable as a fileserver.
 
-Put this line into your eggdrop.conf.dist file to load filesys module:
+Put this line into your eggdrop configuration file file to load filesys module:
 
 loadmodule filesys
 
