@@ -1,10 +1,12 @@
-$Id: UPDATES1.6,v 1.308 2002/02/12 00:35:23 wcc Exp $
+$Id: UPDATES1.6,v 1.309 2002/02/12 04:00:44 guppy Exp $
 
 Changes in Eggdrop: (since v1.6.0)
 ----------------------------------
 
 1.6.9
 Found by  Fixed by  What...
+Paladinz  guppy     ircu2.10.11 properly formats PART messages; however, eggdrop did not
+                    understand them
           Wcc       fixed a couple of cosmetic problems in cmd_pls_user
           Wcc       do not eval init-server on rehash since this variable is used for
                     performing tcl commands on a succesful server connection
