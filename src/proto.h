@@ -7,7 +7,7 @@
  * because they use structures in those
  * (saves including those .h files EVERY time) - Beldin
  *
- * $Id: proto.h,v 1.54 2003/01/28 06:37:24 wcc Exp $
+ * $Id: proto.h,v 1.55 2003/02/04 11:07:55 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -204,7 +204,11 @@ int my_strcpy(char *, char *);
 void putlog EGG_VARARGS(int, arg1);
 void flushlogs();
 void check_logsize();
-void maskhost(const char *, char *);
+void _maskhost(const char *, char *, int);
+
+#define maskhost(a,b) _maskhost((a),(b),1)
+#define maskban(a,b) _maskhost((a),(b),0)
+
 char *stristr(char *, char *);
 void splitc(char *, char *, char);
 void splitcn(char *, char *, char, size_t);

@@ -7,7 +7,7 @@
  *   help system
  *   motd display and %var substitution
  *
- * $Id: misc.c,v 1.60 2003/02/02 10:19:33 wcc Exp $
+ * $Id: misc.c,v 1.61 2003/02/04 11:07:54 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -278,7 +278,7 @@ char *newsplit(char **rest)
  * or "abc!user@3ffe:604:2:b02e:6174:7265:6964:6573" into
  *    "*!user@3ffe:604:2:b02e:6174:7265:6964:*"
  */
-void maskhost(const char *s, char *nw)
+void _maskhost(const char *s, char *nw, int host)
 {
   register const char *p, *q, *e, *f;
   int i;
@@ -300,6 +300,8 @@ void maskhost(const char *s, char *nw)
       if (!fl && strchr("~+-^=", *p)) {
         if (strict_host)
           nw[i] = '?';
+        else if (!host)
+          nw[i] = '*';
         else
           i--;
       } else

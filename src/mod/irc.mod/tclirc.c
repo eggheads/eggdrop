@@ -1,7 +1,7 @@
 /*
  * tclirc.c -- part of irc.mod
  *
- * $Id: tclirc.c,v 1.41 2003/01/30 07:15:15 wcc Exp $
+ * $Id: tclirc.c,v 1.42 2003/02/04 11:07:55 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -499,7 +499,7 @@ static int tcl_maskhost STDVAR
 
   BADARGS(2, 2, " nick!user@host");
    
-  maskhost(argv[1], new);
+  maskban(argv[1], new);
   Tcl_AppendResult(irp, new, NULL);
   return TCL_OK;
 }

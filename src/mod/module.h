@@ -1,7 +1,7 @@
 /*
  * module.h
  *
- * $Id: module.h,v 1.71 2003/02/02 18:36:37 wcc Exp $
+ * $Id: module.h,v 1.72 2003/02/04 11:07:55 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -51,6 +51,9 @@
 #undef dprintf
 #undef get_data_ptr
 #undef wild_match
+#undef wild_match_per
+#undef maskhost
+#undef maskban
 #undef user_realloc
 #undef Context
 #undef ContextNote
@@ -285,7 +288,7 @@
 /* 152 - 155 */
 #define makepass ((void (*) (char *))global[152])
 #define wild_match ((int (*)(const char *, const char *))global[153])
-#define maskhost ((void (*)(const char *, char *))global[154])
+#define _maskhost ((void (*)(const char *, char *, int))global[154])
 #define show_motd ((void(*)(int))global[155])
 /* 156 - 159 */
 #define tellhelp ((void(*)(int, char *, struct flag_record *, int))global[156])
@@ -465,6 +468,10 @@
 /* 284 - 287 */
 #define quiet_reject (*(int *)(global[284]))
 #define file_readable ((int (*) (char *))global[285])
+
+/* hostmasking */
+#define maskhost(a,b) _maskhost((a),(b),1)
+#define maskban(a,b) _maskhost((a),(b),0)
 
 /* This is for blowfish module, couldnt be bothered making a whole new .h
  * file for it ;)

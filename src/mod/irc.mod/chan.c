@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  *
- * $Id: chan.c,v 1.107 2003/01/30 07:15:15 wcc Exp $
+ * $Id: chan.c,v 1.108 2003/02/04 11:07:55 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -339,9 +339,7 @@ static char *quickban(struct chanset_t *chan, char *uhost)
 {
   static char s1[512];
 
-  maskhost(uhost, s1);
-  if ((strlen(s1) != 1) && (strict_host == 0))
-    s1[2] = '*';                /* arthur2 */
+  maskban(uhost, s1);
   do_mask(chan, chan->channel.ban, s1, 'b');
   return s1;
 }
