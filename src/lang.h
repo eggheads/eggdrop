@@ -2,7 +2,7 @@
  * lang.h
  *   Conversion definitions for language support
  * 
- * $Id: lang.h,v 1.9 2000/01/08 21:23:14 per Exp $
+ * $Id: lang.h,v 1.10 2000/01/30 22:21:18 per Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -298,7 +298,7 @@
 #define IRC_LIMBO               get_language(0x668)
 #define IRC_TELNETFLOOD         get_language(0x669)
 #define IRC_PREBANNED           get_language(0x66a)
-#define IRC_LEMMINGBOT          get_language(0x66b)
+#define IRC_JOIN_FLOOD          get_language(0x66b)
 #define IRC_KICK_PROTECT        get_language(0x66c)
 #define IRC_DEOP_PROTECT        get_language(0x66f)
 #define IRC_COMMENTKICK         get_language(0x66d)
@@ -306,6 +306,7 @@
 #define IRC_REMOVEDEXEMPT       get_language(0x670)
 #define IRC_REMOVEDINVITE       get_language(0x671)
 #define IRC_FLOODIGNORE4        get_language(0x672)
+#define IRC_NICK_FLOOD          get_language(0x673)
 
 /* Eggdrop command line usage */
 #define EGG_USAGE	get_language(0x700)

@@ -93,9 +93,9 @@ specific commands, see later.
       the default is or.
 
   passwdok <handle> <pass>
-    checks the password given against the user's password -- if the user has
-      not set a password, will always return "1"; check against the password
-      "" (a blank string) to find out if a user has no password set
+    checks the password given against the user's password
+    check against the password "" (a blank string) or "-" to find out
+    if a user has no password set.
     returns: "1" if password matches for that user; "0" if not
 
   getuser <handle> <entry-type> [extra info]

@@ -6,7 +6,7 @@
  * 
  * dprintf'ized, 10nov1995
  * 
- * $Id: userrec.c,v 1.23 2000/01/17 16:14:45 per Exp $
+ * $Id: userrec.c,v 1.24 2000/01/30 22:21:18 per Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -387,9 +387,9 @@ int u_pass_match(struct userrec *u, char *pass)
   if (!u)
     return 0;
   cmp = get_user(&USERENTRY_PASS, u);
-  if (!cmp)
+  if (!cmp && (!pass[0] || (pass[0] == '-')))
     return 1;
-  if (!pass || !pass[0] || (pass[0] == '-'))
+  if (!cmp || !pass || !pass[0] || (pass[0] == '-'))
     return 0;
   if (u->flags & USER_BOT) {
     if (!strcmp(cmp, pass))

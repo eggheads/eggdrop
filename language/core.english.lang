@@ -1,7 +1,7 @@
 # core.english.lang
 #   core language messages for eggdrop
 #
-# $Id: core.english.lang,v 1.19 2000/01/22 23:28:20 per Exp $
+# $Id: core.english.lang,v 1.20 2000/01/30 22:21:18 per Exp $
 
 # General stuff
 0x001,Usage
@@ -255,7 +255,7 @@ Telnet to the bot and enter 'NEW' as your nickname.
 0x668,From now on, you dont need to use the -m option to start the bot.\nEnjoy !!
 0x669,Telnet connection flood from %s!  Placing on ignore!
 0x66a,banned: 
-0x66b,nick flood
+0x66b,join flood
 0x66c,don't kick my friends, bud
 0x66d,...and don't come back.
 0x66e,Switching back to altnick %s
@@ -263,6 +263,7 @@ Telnet to the bot and enter 'NEW' as your nickname.
 0x670,Removed exempt
 0x671,Removed invite
 0x672,NICK flood from @%s!  Banning.
+0x673,nick flood
 
 # EGG_
 0x700,Command line arguments:\n\

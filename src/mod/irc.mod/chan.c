@@ -9,7 +9,7 @@
  * dprintf'ized, 27oct1995
  * multi-channel, 8feb1996
  * 
- * $Id: chan.c,v 1.55 2000/01/22 23:31:54 per Exp $
+ * $Id: chan.c,v 1.56 2000/01/30 22:21:18 per Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -262,8 +262,7 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
       u_addban(chan, h, origbotname, ftype, now + (60 * ban_time), 0);
       Context;
       /* don't kick user if exempted */
-      if (!channel_enforcebans(chan) && me_op(chan) && !isexempted(chan, h))
-	{
+      if (!channel_enforcebans(chan) && me_op(chan) && !isexempted(chan, h)) {
 	  char s[UHOSTLEN];
 	  m = chan->channel.member;
 	  
@@ -273,8 +272,12 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
 		(m->joined >= chan->floodtime[which]) &&
 		   !chan_sentkick(m) && !match_my_nick(m->nick)) {
 	      m->flags |= SENTKICK;
+	      if (which == FLOOD_JOIN)
 	      dprintf(DP_SERVER, "KICK %s %s :%s\n", chan->name, m->nick,
-		      IRC_LEMMINGBOT);
+		      IRC_JOIN_FLOOD);
+	      else
+	        dprintf(DP_SERVER, "KICK %s %s :%s\n", chan->name, m->nick,
+		      IRC_NICK_FLOOD);
 	    }
 	    m = m->next;
 	  }

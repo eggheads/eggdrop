@@ -4,7 +4,7 @@
  * 
  * dprintf'ized, 1aug1996
  * 
- * $Id: tcluser.c,v 1.12 2000/01/17 16:14:45 per Exp $
+ * $Id: tcluser.c,v 1.13 2000/01/30 22:21:18 per Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -205,8 +205,7 @@ static int tcl_botattr STDVAR {
     }
     user.bot = sanity_check((user.bot | pls.bot) & ~mns.bot);
     if (chan) {
-      user.chan = chan_sanity_check((user.chan | pls.chan) & ~mns.chan,
-				    user.global);
+      user.chan = (user.chan | pls.chan) & ~mns.chan;
       user.udef_chan = (user.udef_chan | pls.udef_chan) & ~mns.udef_chan;
     }
     set_user_flagrec(u, &user, chan);
