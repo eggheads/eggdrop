@@ -32,7 +32,7 @@ int dcc_total = 0;		/* total dcc's */
 char tempdir[121] = "";		/* temporary directory (default: current dir) */
 int require_p = 0;		/* require 'p' access to get on the party line? */
 int allow_new_telnets = 0;	/* allow people to introduce themselves via telnet */
-int stealth_telnets = 1;	/* display telnet banner? <cybah> */
+int stealth_telnets = 0;	/* display telnet banner? <cybah> */
 char network[41] = "unknown-net";	/* name of the IRC network you're on */
 int password_timeout = 180;	/* time to wait for a password from a user */
 int bot_timeout = 60;		/* bot timeout value */
@@ -42,7 +42,7 @@ int flood_telnet_thr = 5;	/* number of telnet connections to be considered a flo
 int flood_telnet_time = 60;	/* in how many seconds? */
 extern int min_dcc_port, max_dcc_port;	/* valid portrange for telnets */
 extern int par_telnet_flood;    /* trigger telnet flood for +f ppl? */
-char bannerfile[121] = "banner"; /* file displayed on telnet login */
+char bannerfile[121] = "telnet-banner"; /* file displayed on telnet login */
 
 static void strip_telnet(int sock, char *buf, int *len)
 {
