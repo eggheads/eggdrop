@@ -1,9 +1,26 @@
-$Id: UPDATES1.6,v 1.363 2002/06/04 05:03:26 wcc Exp $
+$Id: UPDATES1.6,v 1.364 2002/06/04 07:02:45 wcc Exp $
 
 Changes in Eggdrop: (since v1.6.0)
 ----------------------------------
 
-1.6.10
+1.6.11
+Found by  Fixed by  What...
+          Wcc       more doc updates
+          TaKeDa    fix for !channels when people quit or change nicks
+          aXs/      made all the commands use CHANMETA instead of hardcoding channel types
+          Eule
+various   stdarg/   added 'channel get <chan> <setting>' (backported from 1.7)
+          Mo-Ize
+          guppy     uptime.mod will not unload now once loaded (this prevents you from
+                    losing your stats on a .restart .. to remove, you have to .die)
+          guppy     uptime.mod now sends the proper pid and also won't send garbage if
+                    the bot currently isn't on a server
+          Wcc       updated slennox's sentinel.tcl to the latest version
+guppy     Wcc       added support for +r on Undernet's ircu 2.10.11
+          upstream  fixed a crash in seen.mod with long channel names
+          slug      added support for the +C channel mode (noctcp) on QuakeNet's ircu
+
+1.6.10 (29 March 2002)
 Found by  Fixed by  What...
 (^Baron^) Eule      protect(ops|friends) works with +bitch now
           guppy     reverted the handlen friendly patches
