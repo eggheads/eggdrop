@@ -1030,7 +1030,7 @@ static int msg_jump(char *nick, char *host, struct userrec *u, char *par)
 
   if (match_my_nick(nick))
     return 1;
-  if (!u_pass_match(u, "-")) {
+  if (u_pass_match(u, "-")) {
     putlog(LOG_CMDS, "*", "(%s!%s) !%s! failed JUMP", nick, host, u->handle);
     if (!quiet_reject)
       dprintf(DP_HELP, "NOTICE %s :%s\n", nick, IRC_NOPASS);
