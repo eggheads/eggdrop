@@ -48,7 +48,11 @@ Extra help relating to loaded modules may be obtained by typing
   %bassoc%b  %bchannels%b  %bconsole%b  %bctcp%b    %btransfer%b
   %birc%b    %bnotes%b     %bseen%b     %bserver%b  %bshare%b
 These are distributed with the bot, and they may be loaded, others can
-be added also.
+be added also. You may receive a list of cmds in all loaded modules by
+using %b'.help all'%b.
+If you only remember a part of the command's name you are searching
+for, just use wildcards (e.g. %b'.help *bot*'%b) and all matching help
+texts will be displayed.
 %{help=helpparty}
 %B party-line commands:
   %b.quit%b              leave the party line
