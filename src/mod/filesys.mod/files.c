@@ -2,7 +2,7 @@
  * files.c - part of filesys.mod
  *   handles all file system commands
  * 
- * $Id: files.c,v 1.26 2000/10/27 19:39:30 fabian Exp $
+ * $Id: files.c,v 1.27 2001/01/16 17:13:22 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -156,7 +156,6 @@ static int resolve_dir(char *current, char *change, char **real, int idx)
   struct flag_record user = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0},
 		     req  = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
 
-  Context;
   *real = NULL;
   malloc_strcpy(*real, current);
   if (!change[0])
@@ -261,7 +260,6 @@ static int resolve_dir(char *current, char *change, char **real, int idx)
   if (!dir)
     return 0;
   closedir(dir);
-  Context;
   return 1;
 }
 
@@ -351,7 +349,6 @@ static void cmd_chdir(int idx, char *msg)
   putlog(LOG_FILES, "*", "files: #%s# cd /%s", dcc[idx].nick,
 	 dcc[idx].u.file->dir);
   dprintf(idx, "%s: /%s\n", FILES_NEWCURDIR, dcc[idx].u.file->dir);
-  Context;
 }
 
 static void files_ls(int idx, char *par, int showall)
@@ -359,7 +356,6 @@ static void files_ls(int idx, char *par, int showall)
   char *p, *s = NULL, *destdir = NULL, *mask = NULL;
   FILE *fdb;
 
-  Context;
   if (par[0]) {
     putlog(LOG_FILES, "*", "files: #%s# ls %s", dcc[idx].nick, par);
     p = strrchr(par, '/');
@@ -406,7 +402,6 @@ static void files_ls(int idx, char *par, int showall)
     } else
       dprintf(idx, FILES_ILLDIR);
   }
-  Context;
 }
 
 static void cmd_ls(int idx, char *par)
@@ -1295,7 +1290,6 @@ static int cmd_filestats(int idx, char *par)
   char *nick;
   struct userrec *u;
 
-  Context;
   if (!par[0]) {
     dprintf(idx, "Usage: filestats <user>\n");
     return 0;

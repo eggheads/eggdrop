@@ -3,7 +3,7 @@
  *   saved console settings based on console.tcl
  *   by cmwagner/billyjoe/D. Senso
  * 
- * $Id: console.c,v 1.17 2000/11/06 04:06:43 guppy Exp $
+ * $Id: console.c,v 1.18 2001/01/16 17:13:22 guppy Exp $
  */
 /* 
  * Copyright (C) 1999, 2000  Eggheads
@@ -51,9 +51,6 @@ static int console_unpack(struct userrec *u, struct user_entry *e)
   struct console_info *ci = user_malloc(sizeof(struct console_info));
   char *par, *arg;
 
-  Context;
-  Assert(e);
-  Assert(e->name);
   par = e->u.list->extra;
   arg = newsplit(&par);
   ci->channel = user_malloc(strlen(arg) + 1);
@@ -79,10 +76,6 @@ static int console_pack(struct userrec *u, struct user_entry *e)
   struct console_info *ci;
   int l;
 
-  Assert(e);
-  Assert(e->u.extra);
-  Assert(!e->name);
-
   ci = (struct console_info *) e->u.extra;
 
   l = simple_sprintf(work, "%s %s %s %d %d %d",
@@ -104,7 +97,6 @@ static int console_kill(struct user_entry *e)
 {
   struct console_info *i = e->u.extra;
 
-  Context;
   nfree(i->channel);
   nfree(i);
   nfree(e);
@@ -116,7 +108,6 @@ static int console_write_userfile(FILE *f, struct userrec *u,
 {
   struct console_info *i = e->u.extra;
 
-  Context;
   if (fprintf(f, "--CONSOLE %s %s %s %d %d %d\n",
 	      i->channel, masktype(i->conflags),
 	      stripmasktype(i->stripflags), i->echoflags,
@@ -134,12 +125,9 @@ static int console_set(struct userrec *u, struct user_entry *e, void *buf)
 
   if (ci != buf) {
     if (ci) {
-      Assert(ci->channel);
       nfree(ci->channel);
       nfree(ci);
     }
-    Context;
-
     ci = e->u.extra = buf;
   }
 
@@ -202,7 +190,6 @@ static int console_expmem(struct user_entry *e)
 {
   struct console_info *i = e->u.extra;
 
-  Context;
   return sizeof(struct console_info) + strlen(i->channel) + 1;
 }
 
@@ -210,7 +197,6 @@ static void console_display(int idx, struct user_entry *e)
 {
   struct console_info *i = e->u.extra;
 
-  Context;
   if (dcc[idx].user && (dcc[idx].user->flags & USER_MASTER)) {
     dprintf(idx, "  %s\n", CONSOLE_SAVED_SETTINGS);
     dprintf(idx, "    %s %s\n", CONSOLE_CHANNEL, i->channel);
@@ -367,7 +353,6 @@ static cmd_t mydcc[] =
 
 static char *console_close()
 {
-  Context;
   rem_builtins(H_chon, mychon);
   rem_builtins(H_dcc, mydcc);
   rem_tcl_ints(myints);
@@ -393,7 +378,6 @@ char *console_start(Function * global_funcs)
 {
   global = global_funcs;
 
-  Context;
   module_register(MODULE_NAME, console_table, 1, 1);
   if (!module_depend(MODULE_NAME, "eggdrop", 106, 0)) {
     module_undepend(MODULE_NAME);

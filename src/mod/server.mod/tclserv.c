@@ -1,7 +1,7 @@
 /* 
  * tclserv.c -- part of server.mod
  * 
- * $Id: tclserv.c,v 1.6 2000/03/23 23:17:58 fabian Exp $
+ * $Id: tclserv.c,v 1.7 2001/01/16 17:13:23 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -36,7 +36,6 @@ static int tcl_putquick STDVAR
 {
   char s[511], *p;
 
-  Context;
   BADARGS(2, 3, " text ?options?");
   if ((argc == 3) &&
       egg_strcasecmp(argv[2], "-next") && egg_strcasecmp(argv[2], "-normal")) {
@@ -63,7 +62,6 @@ static int tcl_putserv STDVAR
 {
   char s[511], *p;
 
-  Context;
   BADARGS(2, 3, " text ?options?");
   if ((argc == 3) &&
     egg_strcasecmp(argv[2], "-next") && egg_strcasecmp(argv[2], "-normal")) {
@@ -90,7 +88,6 @@ static int tcl_puthelp STDVAR
 {
   char s[511], *p;
 
-  Context;
   BADARGS(2, 3, " text ?options?");
   if ((argc == 3) &&
     egg_strcasecmp(argv[2], "-next") && egg_strcasecmp(argv[2], "-normal")) {

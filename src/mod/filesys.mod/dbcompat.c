@@ -4,7 +4,7 @@
  * 
  * Written for filedb3 by Fabian Knittel <fknittel@gmx.de>
  * 
- * $Id: dbcompat.c,v 1.8 2000/10/27 19:39:30 fabian Exp $
+ * $Id: dbcompat.c,v 1.9 2001/01/16 17:13:22 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -43,7 +43,6 @@ static int convert_old_files(char *path, char *newfiledb)
   int in_file = 0, i;
   struct stat st;
 
-  Context;
   s = nmalloc(strlen(path) + 8);
   sprintf(s, "%s/.files", path);
   f = fopen(s, "r");
@@ -51,7 +50,6 @@ static int convert_old_files(char *path, char *newfiledb)
   if (f == NULL)
     return 0;
 
-  Context;
   fdb = fopen(newfiledb, "w+b");
   if (!fdb) {
     putlog(LOG_MISC, "(!) Can't create filedb in %s", newfiledb);
@@ -90,7 +88,6 @@ static int convert_old_files(char *path, char *newfiledb)
 	} else {
 	  if (fdbe) {
 	    /* File pending. Write to DB */
-	    Context;
 	    filedb_addfile(fdb, fdbe);
 	    free_fdbe(&fdbe);
 	  }
@@ -134,7 +131,6 @@ static int convert_old_files(char *path, char *newfiledb)
   }
   if (fdbe) {
     /* File pending. Write to DB */
-    Context;
     filedb_addfile(fdb, fdbe);
     free_fdbe(&fdbe);
   }
@@ -143,7 +139,6 @@ static int convert_old_files(char *path, char *newfiledb)
   unlockfile(fdb);
   fclose(fdb);
   fclose(f);
-  Context;
   return 1;
 }
 
@@ -241,13 +236,11 @@ static int convert_old_db(FILE **fdb_s, char *filedb)
   FILE *fdb_t;
   int ret = 0;					/* Default to 'failure'	*/
 
-  Context;
   filedb_readtop(*fdb_s, &fdbt);
   /* Old DB version? */
   if (fdbt.version > 0 && fdbt.version < FILEDB_VERSION3) {
     char *tempdb;
 
-    Context;
     putlog(LOG_MISC, "*", "Converting old filedb %s to newest format.",
 	   filedb);
     /* Create temp DB name */
@@ -287,14 +280,11 @@ static int convert_old_db(FILE **fdb_s, char *filedb)
         putlog(LOG_MISC, "*", "(!) Reopening db %s failed.", filedb);
     }
     my_free(tempdb);
-    Context;
   /* Database already at the newest version? */
   } else if (fdbt.version == FILEDB_VERSION3) {
-    Context;
     ret = 1;					/* Always successfull	*/
   /* Unknown version? */
   } else {
-    Context;
     putlog(LOG_MISC, "*", "(!) Unknown db version: %d", fdbt.version);
   }
   if (!ret)

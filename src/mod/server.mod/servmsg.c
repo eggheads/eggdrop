@@ -1,7 +1,7 @@
 /* 
  * servmsg.c -- part of server.mod
  * 
- * $Id: servmsg.c,v 1.50 2001/01/08 03:43:06 guppy Exp $
+ * $Id: servmsg.c,v 1.51 2001/01/16 17:13:23 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -46,7 +46,6 @@ static int gotfake433(char *from)
 {
   int l = strlen(botname) - 1;
 
-  Context;
   /* First run? */
   if (altnick_char == 0) {
     char *alt = get_altbotnick();
@@ -101,16 +100,13 @@ static int check_tcl_msg(char *cmd, char *nick, char *uhost,
   char *hand = u ? u->handle : "*";
   int x;
 
-  Context;
   get_user_flagrec(u, &fr, NULL);
   Tcl_SetVar(interp, "_msg1", nick, 0);
   Tcl_SetVar(interp, "_msg2", uhost, 0);
   Tcl_SetVar(interp, "_msg3", hand, 0);
   Tcl_SetVar(interp, "_msg4", args, 0);
-  Context;
   x = check_tcl_bind(H_msg, cmd, &fr, " $_msg1 $_msg2 $_msg3 $_msg4",
 		     MATCH_EXACT | BIND_HAS_BUILTINS | BIND_USE_ATTR);
-  Context;
   if (x == BIND_EXEC_LOG)
     putlog(LOG_CMDS, "*", "(%s!%s) !%s! %s %s", nick, uhost, hand,
 	   cmd, args);
@@ -122,17 +118,14 @@ static void check_tcl_notc(char *nick, char *uhost, struct userrec *u,
 {
   struct flag_record fr = {FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0};
 
-  Context;
   get_user_flagrec(u, &fr, NULL);
   Tcl_SetVar(interp, "_notc1", nick, 0);
   Tcl_SetVar(interp, "_notc2", uhost, 0);
   Tcl_SetVar(interp, "_notc3", u ? u->handle : "*", 0);
   Tcl_SetVar(interp, "_notc4", arg, 0);
   Tcl_SetVar(interp, "_notc5", dest, 0);
-  Context;
   check_tcl_bind(H_notc, arg, &fr, " $_notc1 $_notc2 $_notc3 $_notc4 $_notc5",
 		 MATCH_MASK | BIND_USE_ATTR | BIND_STACKABLE);
-  Context;
 }
 
 static void check_tcl_msgm(char *cmd, char *nick, char *uhost,
@@ -141,7 +134,6 @@ static void check_tcl_msgm(char *cmd, char *nick, char *uhost,
   struct flag_record fr = {FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0};
   char args[1024];
 
-  Context;
   if (arg[0])
     simple_sprintf(args, "%s %s", cmd, arg);
   else
@@ -151,10 +143,8 @@ static void check_tcl_msgm(char *cmd, char *nick, char *uhost,
   Tcl_SetVar(interp, "_msgm2", uhost, 0);
   Tcl_SetVar(interp, "_msgm3", u ? u->handle : "*", 0);
   Tcl_SetVar(interp, "_msgm4", args, 0);
-  Context;
   check_tcl_bind(H_msgm, args, &fr, " $_msgm1 $_msgm2 $_msgm3 $_msgm4",
 		 MATCH_MASK | BIND_USE_ATTR | BIND_STACKABLE);
-  Context;
 }
 
 /* Return 1 if processed.
@@ -163,14 +153,11 @@ static int check_tcl_raw(char *from, char *code, char *msg)
 {
   int x;
 
-  Context;
   Tcl_SetVar(interp, "_raw1", from, 0);
   Tcl_SetVar(interp, "_raw2", code, 0);
   Tcl_SetVar(interp, "_raw3", msg, 0);
-  Context;
   x = check_tcl_bind(H_raw, code, 0, " $_raw1 $_raw2 $_raw3",
 		     MATCH_EXACT | BIND_STACKABLE | BIND_WANTRET);
-  Context;
   return (x == BIND_EXEC_LOG);
 }
 
@@ -181,7 +168,6 @@ static int check_tcl_ctcpr(char *nick, char *uhost, struct userrec *u,
   struct flag_record fr = {FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0};
   int x;
 
-  Context;
   get_user_flagrec(u, &fr, NULL);
   Tcl_SetVar(interp, "_ctcpr1", nick, 0);
   Tcl_SetVar(interp, "_ctcpr2", uhost, 0);
@@ -194,7 +180,6 @@ static int check_tcl_ctcpr(char *nick, char *uhost, struct userrec *u,
 		     (lowercase_ctcp ? MATCH_EXACT : MATCH_CASE)
 		     | BIND_USE_ATTR | BIND_STACKABLE |
 		     ((table == H_ctcp) ? BIND_WANTRET : 0));
-  Context;
   return (x == BIND_EXEC_LOG) || (table == H_ctcr);
 }
 
@@ -202,13 +187,10 @@ static int check_tcl_wall(char *from, char *msg)
 {
   int x;
 
-  Context;
   Tcl_SetVar(interp, "_wall1", from, 0);
   Tcl_SetVar(interp, "_wall2", msg, 0);
-  Context;
   x = check_tcl_bind(H_wall, msg, 0, " $_wall1 $_wall2",
 		     MATCH_MASK | BIND_STACKABLE);
-  Context;
   if (x == BIND_EXEC_LOG) {
     putlog(LOG_WALL, "*", "!%s! %s", from, msg);
     return 1;
@@ -221,17 +203,14 @@ static int check_tcl_flud(char *nick, char *uhost, struct userrec *u,
 {
   int x;
 
-  Context;
   Tcl_SetVar(interp, "_flud1", nick, 0);
   Tcl_SetVar(interp, "_flud2", uhost, 0);
   Tcl_SetVar(interp, "_flud3", u ? u->handle : "*", 0);
   Tcl_SetVar(interp, "_flud4", ftype, 0);
   Tcl_SetVar(interp, "_flud5", chname, 0);
-  Context;
   x = check_tcl_bind(H_flud, ftype, 0,
 		     " $_flud1 $_flud2 $_flud3 $_flud4 $_flud5",
 		     MATCH_MASK | BIND_STACKABLE | BIND_WANTRET);
-  Context;
   return (x == BIND_EXEC_LOG);
 }
 
@@ -357,7 +336,6 @@ static int detect_flood(char *floodnick, char *floodhost, char *from, int which)
   struct userrec *u;
   int thr = 0, lapse = 0, atr;
 
-  Context;
   u = get_user_by_host(from);
   atr = u ? u->flags : 0;
   if (atr & (USER_BOT | USER_FRIEND))
@@ -695,7 +673,6 @@ static int gotwall(char *from, char *msg)
   char *p;
   int r;
 
-  Context;
   fixcolon(msg);
   p = strchr(from, '!');
   if (p && (p == strrchr(from, '!'))) {
@@ -1094,7 +1071,6 @@ static void server_activity(int idx, char *msg, int len)
     } else
       putlog(LOG_RAW, "*", "[@] %s %s %s", from, code, msg);
   }
-  Context;
   /* This has GOT to go into the raw binding table, * merely because this
    * is less effecient.
   */

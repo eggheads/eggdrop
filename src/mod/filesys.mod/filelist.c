@@ -4,7 +4,7 @@
  * 
  * Written by Fabian Knittel <fknittel@gmx.de>
  * 
- * $Id: filelist.c,v 1.7 2000/01/17 22:36:08 fabian Exp $
+ * $Id: filelist.c,v 1.8 2001/01/16 17:13:22 guppy Exp $
  */
 /* 
  * Copyright (C) 1999, 2000  Eggheads
@@ -122,7 +122,6 @@ static void filelist_qsort(filelist_t *flist, int l, int r)
  */
 static void filelist_sort(filelist_t *flist)
 {
-  Assert(flist);
   if (flist->tot < 2)
     return;
   filelist_qsort(flist, 0, (flist->tot - 1));

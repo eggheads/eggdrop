@@ -5,7 +5,7 @@
  *   note cmds
  *   note ignores
  * 
- * $Id: notes.c,v 1.26 2000/11/06 04:06:44 guppy Exp $
+ * $Id: notes.c,v 1.27 2001/01/16 17:13:23 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -68,7 +68,6 @@ static struct user_entry_type USERENTRY_FWD =
 
 static void fwd_display(int idx, struct user_entry *e)
 {
-  Context;
   if (dcc[idx].user && (dcc[idx].user->flags & USER_BOTMAST))
     dprintf(idx, NOTES_FORWARD_TO, e->u.string);
 }
@@ -377,7 +376,6 @@ static int tcl_erasenotes STDVAR
   int read, erased;
   int nl[128];			/* Is it enough ? */
 
-  Context;
   BADARGS(3, 3, " handle noteslist#");
   if (!get_user_by_handle(userlist, argv[1])) {
     Tcl_AppendResult(irp, "-1", NULL);
@@ -441,7 +439,6 @@ static int tcl_listnotes STDVAR
   int ln[128];			/* Is it enough? */
   char s[8];
 
-  Context;
   BADARGS(3, 3, " handle noteslist#");
   if (!get_user_by_handle(userlist, argv[1])) {
     Tcl_AppendResult(irp, "-1", NULL);
@@ -669,7 +666,6 @@ static int tcl_notes STDVAR
   int count, read, nl[128];	/* Is it enough? */
   char *list[3], *p;
 
-  Context;
   BADARGS(2, 3, " handle ?noteslist#?");
   if (!get_user_by_handle(userlist, argv[1])) {
     Tcl_AppendResult(irp, "-1", NULL);
@@ -872,7 +868,6 @@ static void away_notes(char *bot, int sock, char *msg)
 {
   int idx = findanyidx(sock);
 
-  Context;
   if (egg_strcasecmp(bot, botnetnick))
     return;
   if (msg && msg[0])
@@ -883,7 +878,6 @@ static void away_notes(char *bot, int sock, char *msg)
 
 static int chon_notes(char *nick, int idx)
 {
-  Context;
   if (dcc[idx].type == &DCC_CHAT)
     notes_read(nick, 0, "+", idx);
   return 0;
@@ -925,7 +919,6 @@ static struct xtra_key *getnotesentry(struct userrec *u)
   struct user_entry *ue = find_user_entry(&USERENTRY_XTRA, u);
   struct xtra_key *xk, *nxk = NULL;
 
-  Context;
   if (!ue)
     return NULL;
   /* Search for the notes ignore list entry */
@@ -948,7 +941,6 @@ int get_note_ignores(struct userrec *u, char ***ignores)
   char *buf, *p;
   int ignoresn;
 
-  Context;
   /* Hullo? sanity? */
   if (!u)
     return 0;
@@ -981,7 +973,6 @@ int add_note_ignore(struct userrec *u, char *mask)
   char **ignores;
   int ignoresn, i;
 
-  Context;
   ignoresn = get_note_ignores(u, &ignores);
   if (ignoresn > 0) {
     /* Search for existing mask */
@@ -1025,7 +1016,6 @@ int del_note_ignore(struct userrec *u, char *mask)
   char **ignores, *buf = NULL;
   int ignoresn, i, size = 0, foundit = 0;
 
-  Context;
   ignoresn = get_note_ignores(u, &ignores);
   if (!ignoresn)
     return 0;
@@ -1077,7 +1067,6 @@ int match_note_ignore(struct userrec *u, char *from)
   char **ignores;
   int ignoresn, i;
 
-  Context;
   ignoresn = get_note_ignores(u, &ignores);
   if (!ignoresn)
     return 0;
@@ -1229,7 +1218,6 @@ char *notes_start(Function * global_funcs)
 
   global = global_funcs;
 
-  Context;
   notefile[0] = 0;
   module_register(MODULE_NAME, notes_table, 2, 1);
   if (!module_depend(MODULE_NAME, "eggdrop", 106, 0)) {
@@ -1252,7 +1240,6 @@ char *notes_start(Function * global_funcs)
   notes_irc_setup(0);
   my_memcpy(&USERENTRY_FWD, &USERENTRY_INFO, sizeof(void *) * 12);
   add_entry_type(&USERENTRY_FWD);
-  Context;
   return NULL;
 }
 

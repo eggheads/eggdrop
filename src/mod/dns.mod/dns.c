@@ -4,7 +4,7 @@
  * 
  * Written by Fabian Knittel <fknittel@gmx.de>
  * 
- * $Id: dns.c,v 1.20 2000/11/06 04:06:43 guppy Exp $
+ * $Id: dns.c,v 1.21 2001/01/16 17:13:22 guppy Exp $
  */
 /* 
  * Copyright (C) 1999, 2000  Eggheads
@@ -47,7 +47,6 @@ static void dns_event_success(struct resolve *rp, int type)
   if (!rp)
     return;
 
-  Context;
   if (type == T_PTR) {
     debug2("DNS resolved %s to %s", iptostr(rp->ip), rp->hostn);
     call_hostbyip(ntohl(rp->ip), rp->hostn, 1);
@@ -62,7 +61,6 @@ static void dns_event_failure(struct resolve *rp, int type)
   if (!rp)
     return;
 
-  Context;
   if (type == T_PTR) {
     static char s[UHOSTLEN];
 
@@ -85,7 +83,6 @@ static void dns_event_failure(struct resolve *rp, int type)
 
 static void eof_dns_socket(int idx)
 {
-  Context;
   putlog(LOG_MISC, "*", "DNS Error: socket closed.");
   killsock(dcc[idx].sock);
   /* Try to reopen socket */
@@ -130,7 +127,6 @@ static void dns_free_cache(void)
 {
   struct resolve *rp, *rpnext;
 
-  Context;
   for (rp = expireresolves; rp; rp = rpnext) {
     rpnext = rp->next;
     if (rp->hostn)
@@ -170,7 +166,6 @@ static char *dns_close()
 {
   int i;
 
-  Context;
   del_hook(HOOK_DNS_HOSTBYIP, (Function) dns_lookup);
   del_hook(HOOK_DNS_IPBYHOST, (Function) dns_forward);
   del_hook(HOOK_SECONDLY, (Function) dns_check_expires);
@@ -186,7 +181,6 @@ static char *dns_close()
 
   dns_free_cache();
   module_undepend(MODULE_NAME);
-  Context;
   return NULL;
 }
 
@@ -207,7 +201,6 @@ char *dns_start(Function *global_funcs)
   int idx;
   
   global = global_funcs;
-  Context;
   module_register(MODULE_NAME, dns_table, 1, 0);
   if (!module_depend(MODULE_NAME, "eggdrop", 106, 0)) {
     module_undepend(MODULE_NAME);
@@ -228,6 +221,5 @@ char *dns_start(Function *global_funcs)
   add_hook(HOOK_SECONDLY, (Function) dns_check_expires);
   add_hook(HOOK_DNS_HOSTBYIP, (Function) dns_lookup);
   add_hook(HOOK_DNS_IPBYHOST, (Function) dns_forward);
-  Context;
   return NULL;
 }

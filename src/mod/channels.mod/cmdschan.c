@@ -2,7 +2,7 @@
  * cmdschan.c -- part of channels.mod
  *   commands from a user via dcc that cause server interaction
  *
- * $Id: cmdschan.c,v 1.39 2000/12/06 02:45:37 guppy Exp $
+ * $Id: cmdschan.c,v 1.40 2001/01/16 17:13:21 guppy Exp $
  */
 /*
  * Copyright (C) 1997  Robey Pointer
@@ -991,7 +991,6 @@ static void cmd_pls_chrec(struct userrec *u, int idx, char *par)
   struct userrec *u1;
   struct chanuserrec *chanrec;
 
-  Context;
   if (!par[0]) {
     dprintf(idx, "Usage: +chrec <user> [channel]\n");
     return;
@@ -1038,7 +1037,6 @@ static void cmd_mns_chrec(struct userrec *u, int idx, char *par)
   struct userrec *u1;
   struct chanuserrec *chanrec;
 
-  Context;
   if (!par[0]) {
     dprintf(idx, "Usage: -chrec <user> [channel]\n");
     return;

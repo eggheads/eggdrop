@@ -10,7 +10,7 @@
  * 1.2     1997-08-20      Minor fixes. [BB]
  * 1.2a    1997-08-24      Minor fixes. [BB]
  * 
- * $Id: seen.c,v 1.19 2000/11/21 05:18:05 guppy Exp $
+ * $Id: seen.c,v 1.20 2001/01/16 17:13:23 guppy Exp $
  */
 /* 
  * Copyright (C) 1999, 2000  Eggheads
@@ -117,7 +117,6 @@ static int pub_seen(char *nick, char *host, char *hand,
   char prefix[50];
   struct chanset_t *chan = findchan_by_dname(channel);
 
-  Context;
   if ((chan != NULL) && channel_seen(chan)) {
     sprintf(prefix, "PRIVMSG %s :", chan->name);
     do_seen(DP_HELP, prefix, nick, hand, chan->dname, text);
@@ -129,7 +128,6 @@ static int msg_seen(char *nick, char *host, struct userrec *u, char *text)
 {
   char prefix[50];
 
-  Context;
   if (!u) {
     putlog(LOG_CMDS, "*", "[%s!%s] seen %s", nick, host, text);
     return 0;
@@ -142,7 +140,6 @@ static int msg_seen(char *nick, char *host, struct userrec *u, char *text)
 
 static int dcc_seen(struct userrec *u, int idx, char *par)
 {
-  Context;
   putlog(LOG_CMDS, "*", "#%s# seen %s", dcc[idx].nick, par);
   do_seen(idx, "", dcc[idx].nick, dcc[idx].nick, "", par);
   return 0;
@@ -182,7 +179,6 @@ static void do_seen(int idx, char *prefix, char *nick, char *hand,
   /* Have we got a NICK's target? */
   if (oix == word1)
     return;			/* Skip anything starting with ' */
-  Context;
   if (oix && *oix &&
       ((oix[1] && (oix[1] == 's' || oix[1] == 'S') && !oix[2]) ||
        (!oix[1] &&
@@ -391,7 +387,6 @@ targetcont:
     }
   }
   /* Check if the target was on the channel, but is netsplit */
-  Context;
   chan = findchan_by_dname(channel);
   if (chan) {
     m = ismember(chan, whotarget);
@@ -661,7 +656,6 @@ char *seen_start(Function * egg_func_table)
 {
   global = egg_func_table;
 
-  Context;
   module_register(MODULE_NAME, seen_table, 2, 0);
   if (!module_depend(MODULE_NAME, "eggdrop", 106, 0)) {
     module_undepend(MODULE_NAME);

@@ -2,7 +2,7 @@
  * blowfish.c -- part of blowfish.mod
  *   encryption and decryption of passwords
  * 
- * $Id: blowfish.c,v 1.14 2000/11/06 04:06:42 guppy Exp $
+ * $Id: blowfish.c,v 1.15 2001/01/16 17:13:21 guppy Exp $
  */
 /* 
  * Copyright (C) 1999  Eggheads
@@ -63,7 +63,6 @@ static int blowfish_expmem()
 {
   int i, tot = 0;
 
-  Context;
   for (i = 0; i < BOXES; i++)
     if (box[i].P != NULL) {
       tot += ((bf_N + 2) * sizeof(u_32bit_t));
@@ -470,7 +469,6 @@ char *blowfish_start(Function *global_funcs)
       box[i].key[0] = 0;
       box[i].lastuse = 0L;
     }
-    Context;
     module_register(MODULE_NAME, blowfish_table, 2, 0);
     if (!module_depend(MODULE_NAME, "eggdrop", 106, 0)) {
       module_undepend(MODULE_NAME);

@@ -15,7 +15,7 @@
  * 1.4       1997-11-25      1.2.2.0         Added language addition  Kirk
  * 1.5       1998-07-12      1.3.0.0         Fixed ;me and updated    BB
  * 
- * $Id: wire.c,v 1.14 2000/11/06 04:06:45 guppy Exp $
+ * $Id: wire.c,v 1.15 2001/01/16 17:13:24 guppy Exp $
  */
 /* 
  * Copyright (C) 1999, 2000  Eggheads
@@ -69,7 +69,6 @@ static int wire_expmem()
   wire_list *w = wirelist;
   int size = 0;
 
-  Context;
   while (w) {
     size += sizeof(wire_list);
     size += strlen(w->crypt) + 1;
@@ -101,7 +100,6 @@ static void wire_filter(char *from, char *cmd, char *param)
   char idle[20];
   char *enctmp;
 
-  Context;
   strcpy(wirecrypt, &cmd[5]);
   strcpy(wiretmp, param);
   nsplit(wirereq, param);
@@ -112,7 +110,6 @@ static void wire_filter(char *from, char *cmd, char *param)
  */
 
   if (!strcmp(wirereq, "!wirereq")) {
-    Context;
     nsplit(wirewho, param);
     while (w) {
       if (!strcmp(w->crypt, wirecrypt)) {
@@ -162,7 +159,6 @@ static void wire_filter(char *from, char *cmd, char *param)
     return;
   }
   if (!strcmp(wirereq, "!wireresp")) {
-    Context;
     nsplit(wirewho, param);
     reqsock = atoi(wirewho);
     w = wirelist;
@@ -185,7 +181,6 @@ static void wire_filter(char *from, char *cmd, char *param)
     }
     return;
   }
-  Context;
   while (w) {
     if (!strcmp(wirecrypt, w->crypt))
       wire_display(findanyidx(w->sock), w->key, wirereq, param);
@@ -197,7 +192,6 @@ static void wire_display(int idx, char *key, char *from, char *message)
 {
   char *enctmp;
 
-  Context;
   enctmp = decrypt_string(key, message);
   if (from[0] == '!')
     dprintf(idx, "----- > %s %s\n", &from[1], enctmp + 1);
@@ -211,7 +205,6 @@ static int cmd_wirelist(struct userrec *u, int idx, char *par)
   wire_list *w = wirelist;
   int entry = 0;
 
-  Context;
   dprintf(idx, "Current Wire table:  (Base table address = %p)\n", w);
   while (w) {
     dprintf(idx, "entry %d: w=%p  idx=%d  sock=%d  next=%p\n",
@@ -228,7 +221,6 @@ static int cmd_onwire(struct userrec *u, int idx, char *par)
   char idle[20], *enctmp;
   time_t now2 = now;
 
-  Context;
   w = wirelist;
   while (w) {
     if (w->sock == dcc[idx].sock)
@@ -286,7 +278,6 @@ static int cmd_wire(struct userrec *u, int idx, char *par)
 {
   wire_list *w = wirelist;
 
-  Context;
   if (!par[0]) {
     dprintf(idx, "%s: .wire [<encrypt-key>|OFF|info]\n", MISC_USAGE);
     return 0;
@@ -339,7 +330,6 @@ static void wire_join(int idx, char *key)
   char *enctmp;
   wire_list *w = wirelist, *w2;
 
-  Context;
   while (w) {
     if (w->next == 0)
       break;
@@ -356,7 +346,6 @@ static void wire_join(int idx, char *key)
   w->key = (char *) nmalloc(strlen(key) + 1);
   strcpy(w->key, key);
   w->next = 0;
-  Context;
   enctmp = encrypt_string(w->key, "wire");
   strcpy(wiretmp, enctmp);
   nfree(enctmp);
@@ -406,7 +395,6 @@ static void wire_leave(int sock)
   wire_list *w2 = wirelist;
   wire_list *wlast = wirelist;
 
-  Context;
   while (w) {
     if (w->sock == sock)
       break;
@@ -483,7 +471,6 @@ static char *cmd_putwire(int idx, char *message)
   char wiretmp2[512];
   char *enctmp;
 
-  Context;
   while (w) {
     if (w->sock == dcc[idx].sock)
       break;
@@ -526,7 +513,6 @@ static void wire_report(int idx, int details)
   int wiretot = 0;
   wire_list *w = wirelist;
 
-  Context;
   while (w) {
     wiretot++;
     w = w->next;
@@ -566,7 +552,6 @@ static char *wire_close()
   /* Remove any current wire encrypt bindings for now, don't worry
    * about duplicate unbinds.
    */
-  Context;
   while (w) {
     enctmp = encrypt_string(w->key, "wire");
     sprintf(wiretmp, "!wire%s", enctmp);
@@ -611,7 +596,6 @@ char *wire_start(Function * global_funcs)
 
   global = global_funcs;
 
-  Context;
   module_register(MODULE_NAME, wire_table, 2, 0);
   if (!module_depend(MODULE_NAME, "eggdrop", 106, 0)) {
     module_undepend(MODULE_NAME);

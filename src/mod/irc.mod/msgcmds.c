@@ -2,7 +2,7 @@
  * msgcmds.c -- part of irc.mod
  *   all commands entered via /MSG
  * 
- * $Id: msgcmds.c,v 1.18 2000/10/19 16:31:30 fabian Exp $
+ * $Id: msgcmds.c,v 1.19 2001/01/16 17:13:23 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -404,7 +404,6 @@ static int msg_who(char *nick, char *host, struct userrec *u, char *par)
     dprintf(DP_HELP, "NOTICE %s :%s\n", nick, IRC_CHANHIDDEN);
     return 1;
   }
-  Context;
   putlog(LOG_CMDS, "*", "(%s!%s) !%s! WHO", nick, host, u->handle);
   also[0] = 0;
   i = 0;
@@ -458,7 +457,6 @@ static int msg_who(char *nick, char *host, struct userrec *u, char *par)
   if (i) {
     dprintf(DP_HELP, "NOTICE %s :No info: %s\n", nick, also);
   }
-  Context;
   return 1;
 }
 
@@ -802,7 +800,6 @@ static int msg_status(char *nick, char *host, struct userrec *u, char *par)
   /* Fixed previous lame code. Well it's still lame, will overflow the
    * buffer with a long channel-name. <cybah>
    */
-  Context;
   strcpy(s, "Channels: ");
   l = 10;
   for (chan = chanset; chan; chan = chan->next) {
@@ -826,7 +823,6 @@ static int msg_status(char *nick, char *host, struct userrec *u, char *par)
     s[l] = 0;
     dprintf(DP_HELP, "NOTICE %s :%s\n", nick, s);
   }
-  Context;
   i = count_users(userlist);
   dprintf(DP_HELP, "NOTICE %s :%d user%s  (mem: %uk)\n", nick, i,
 	  i == 1 ? "" : "s", (int) (expected_memory() / 1024));

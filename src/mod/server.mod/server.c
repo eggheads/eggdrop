@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  * 
- * $Id: server.c,v 1.59 2000/11/06 04:06:44 guppy Exp $
+ * $Id: server.c,v 1.60 2001/01/16 17:13:23 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -240,7 +240,6 @@ static int calc_penalty(char * msg)
   char *cmd, *par1, *par2, *par3;
   register int penalty, i, ii;
 
-  Context;
   if (!use_penalties &&
       net_type != NETT_UNDERNET && net_type != NETT_HYBRID_EFNET)
     return 0;
@@ -395,7 +394,6 @@ static int fast_deq(int which)
        *msg, *nextmsg, *cmd, *nextcmd, *to, *nextto, *stckbl;
   int len, doit = 0, found = 0, who_count =0;
 
-  Context;
   if (!use_fastdeq)
     return 0;
   switch (which) {
@@ -494,13 +492,11 @@ static int fast_deq(int which)
     last_time += calc_penalty(tosend);
     return 1;
   }
-  Context;
   return 0;
 }
 
 static void check_queues(char *oldnick, char *newnick)
 {
-  Context;
   if (optimize_kicks == 2) {
     if (modeq.head)
       parse_q(&modeq, oldnick, newnick);
@@ -509,7 +505,6 @@ static void check_queues(char *oldnick, char *newnick)
     if (hq.head)
       parse_q(&hq, oldnick, newnick);
   }
-  Context;
 }
 
 static void parse_q(struct msgq_head *q, char *oldnick, char *newnick)
@@ -518,7 +513,6 @@ static void parse_q(struct msgq_head *q, char *oldnick, char *newnick)
   char buf[511], *msg, *nicks, *nick, *chan, newnicks[511], newmsg[511];
   int changed;
 
-  Context;
   for (m = q->head; m;) {
     changed = 0;
     if (optimize_kicks == 2 && !egg_strncasecmp(m->msg, "KICK ", 5)) {
@@ -569,7 +563,6 @@ static void parse_q(struct msgq_head *q, char *oldnick, char *newnick)
     else
       m = q->head;
   }
-  Context;
 }
 
 static void purge_kicks(struct msgq_head *q)
@@ -580,7 +573,6 @@ static void purge_kicks(struct msgq_head *q)
   int changed, found;
   struct chanset_t *cs;
 
-  Context;
   for (m = q->head; m;) {
     if (!egg_strncasecmp(m->msg, "KICK", 4)) {
       newnicks[0] = 0;
@@ -641,7 +633,6 @@ static void purge_kicks(struct msgq_head *q)
     else
       m = q->head;
   }
-  Context;
 }
 
 static int deq_kick(int which)
@@ -652,7 +643,6 @@ static int deq_kick(int which)
        newnicks[511], newnicks2[511], newmsg[511];
   int changed = 0, nr = 0;
 
-  Context;
   if (!optimize_kicks)
     return 0;
   newnicks[0] = 0;
@@ -915,7 +905,6 @@ static void add_server(char *ss)
   struct server_list *x, *z = serverlist;
   char *p, *q;
 
-  Context;
   while (z && z->next)
     z = z->next;
   while (ss) {
@@ -1138,7 +1127,6 @@ static void rand_nick(char *nick)
  */
 static char *get_altbotnick(void)
 {
-  Context;
   /* A random-number nick? */
   if (strchr(altnick, '?')) {
     if (!raltnick[0]) {
@@ -1153,7 +1141,6 @@ static char *get_altbotnick(void)
 static char *altnick_change(ClientData cdata, Tcl_Interp *irp, char *name1,
 			    char *name2, int flags)
 {
-  Context;
   /* Always unset raltnick. Will be regenerated when needed. */
   raltnick[0] = 0;
   return NULL;
@@ -1319,7 +1306,6 @@ static char *tcl_eggserver(ClientData cdata, Tcl_Interp *irp, char *name1,
   struct server_list *q;
   int lc, code, i;
 
-  Context;
   if (flags & (TCL_TRACE_READS | TCL_TRACE_UNSETS)) {
     /* Create server list */
     Tcl_DStringInit(&ds);
@@ -1357,7 +1343,6 @@ static char *tcl_eggserver(ClientData cdata, Tcl_Interp *irp, char *name1,
       Tcl_Free((char *) list);
     }
   }
-  Context;
   return NULL;
 }
 
@@ -1392,7 +1377,6 @@ static int ctcp_DCC_CHAT(char *nick, char *from, char *handle,
   param = newsplit(&msg);
   ip = newsplit(&msg);
   prt = newsplit(&msg);
-  Context;
   if (egg_strcasecmp(action, "CHAT") || egg_strcasecmp(object, botname) || !u)
     return 0;
   get_user_flagrec(u, &fr, 0);
@@ -1621,7 +1605,6 @@ static int server_expmem()
   int			 tot = 0;
   struct server_list	*s = serverlist;
 
-  Context;
   for (; s; s = s->next) {
     if (s->name)
       tot += strlen(s->name) + 1;
@@ -1679,18 +1662,14 @@ static char *server_close()
   };
   C_t[0].func = (Function) cmd_die;
 
-  Context;
   cycle_time = 100;
-  nuke_server("Connection reset by phear");
+  nuke_server("Connection reset by peer");
   clearq(serverlist);
-  Context;
   rem_builtins(H_dcc, C_dcc_serv);
   rem_builtins(H_raw, my_raw_binds);
   rem_builtins(H_ctcp, my_ctcps);
-  Context;
   /* Restore original commands. */
   add_builtins(H_dcc, C_t);
-  Context;
   del_bind_table(H_wall);
   del_bind_table(H_raw);
   del_bind_table(H_notc);
@@ -1699,13 +1678,11 @@ static char *server_close()
   del_bind_table(H_flud);
   del_bind_table(H_ctcr);
   del_bind_table(H_ctcp);
-  Context;
   rem_tcl_coups(my_tcl_coups);
   rem_tcl_strings(my_tcl_strings);
   rem_tcl_ints(my_tcl_ints);
   rem_help_reference("server.help");
   rem_tcl_commands(my_tcl_cmds);
-  Context;
   Tcl_UntraceVar(interp, "nick",
 		 TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
 		 nick_change, NULL);
@@ -1724,16 +1701,13 @@ static char *server_close()
 		 TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
 		 traced_nicklen, NULL);
   tcl_untraceserver("servers", NULL);
-  Context;
   empty_msgq();
-  Context;
   del_hook(HOOK_SECONDLY, (Function) server_secondly);
   del_hook(HOOK_5MINUTELY, (Function) server_5minutely);
   del_hook(HOOK_QSERV, (Function) queue_server);
   del_hook(HOOK_MINUTELY, (Function) minutely_checks);
   del_hook(HOOK_PRE_REHASH, (Function) server_prerehash);
   del_hook(HOOK_REHASH, (Function) server_postrehash);
-  Context;
   module_undepend(MODULE_NAME);
   return NULL;
 }
@@ -1855,7 +1829,6 @@ char *server_start(Function *global_funcs)
   kick_method = 1;
   optimize_kicks = 0;
 
-  Context;
   server_table[4] = (Function) botname;
   module_register(MODULE_NAME, server_table, 1, 1);
   if (!module_depend(MODULE_NAME, "eggdrop", 106, 0)) {
@@ -1863,7 +1836,6 @@ char *server_start(Function *global_funcs)
     return "This module requires eggdrop1.6.0 or later";
   }
 
-  Context;
   /* Fool bot in reading the values. */
   tcl_eggserver(NULL, interp, "servers", NULL, 0);
   tcl_traceserver("servers", NULL);
@@ -1888,7 +1860,6 @@ char *server_start(Function *global_funcs)
 	       TCL_TRACE_READS | TCL_TRACE_WRITES | TCL_TRACE_UNSETS,
 	       traced_nicklen, NULL);
 
-  Context;
   H_wall = add_bind_table("wall", HT_STACKABLE, server_2char);
   H_raw = add_bind_table("raw", HT_STACKABLE, server_raw);
   H_notc = add_bind_table("notc", HT_STACKABLE, server_6char);
@@ -1897,36 +1868,30 @@ char *server_start(Function *global_funcs)
   H_flud = add_bind_table("flud", HT_STACKABLE, server_5char);
   H_ctcr = add_bind_table("ctcr", HT_STACKABLE, server_6char);
   H_ctcp = add_bind_table("ctcp", HT_STACKABLE, server_6char);
-  Context;
   add_builtins(H_raw, my_raw_binds);
   add_builtins(H_dcc, C_dcc_serv);
   add_builtins(H_ctcp, my_ctcps);
   add_help_reference("server.help");
-  Context;
   my_tcl_strings[0].buf = botname;
   add_tcl_strings(my_tcl_strings);
   my_tcl_ints[0].val = &use_console_r;
   add_tcl_ints(my_tcl_ints);
   add_tcl_commands(my_tcl_cmds);
   add_tcl_coups(my_tcl_coups);
-  Context;
   add_hook(HOOK_SECONDLY, (Function) server_secondly);
   add_hook(HOOK_5MINUTELY, (Function) server_5minutely);
   add_hook(HOOK_MINUTELY, (Function) minutely_checks);
   add_hook(HOOK_QSERV, (Function) queue_server);
   add_hook(HOOK_PRE_REHASH, (Function) server_prerehash);
   add_hook(HOOK_REHASH, (Function) server_postrehash);
-  Context;
   mq.head = hq.head = modeq.head = NULL;
   mq.last = hq.last = modeq.last = NULL;
   mq.tot = hq.tot = modeq.tot = 0;
   mq.warned = hq.warned = modeq.warned = 0;
   double_warned = 0;
-  Context;
   newserver[0] = 0;
   newserverport = 0;
   getmyhostname(bothost);
-  Context;
   /* Wishful thinking ... */
   egg_snprintf(botuserhost, sizeof botuserhost, "%s@%s", botuser, bothost);
   curserv = 999;

@@ -2,7 +2,7 @@
  * filesys.c -- part of filesys.mod
  *   main file of the filesys eggdrop module
  * 
- * $Id: filesys.c,v 1.38 2000/11/06 04:06:43 guppy Exp $
+ * $Id: filesys.c,v 1.39 2001/01/16 17:13:22 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -141,7 +141,6 @@ static int check_tcl_fil(char *cmd, int idx, char *args)
   char s[5];
   struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
 
-  Context;
   get_user_flagrec(dcc[idx].user, &fr, dcc[idx].u.file->chat->con_chan);
   sprintf(s, "%ld", dcc[idx].sock);
   Tcl_SetVar(interp, "_fil1", dcc[idx].nick, 0);
@@ -209,7 +208,6 @@ static int got_files_cmd(int idx, char *msg)
 {
   char *code;
 
-  Context;
   strcpy(msg, check_tcl_filt(idx, msg));
   if (!msg[0])
     return 1;
@@ -221,7 +219,6 @@ static int got_files_cmd(int idx, char *msg)
 
 static void dcc_files(int idx, char *buf, int i)
 {
-  Context;
   if (buf[0] &&
       detect_dcc_flood(&dcc[idx].timeval, dcc[idx].u.file->chat, idx))
     return;
@@ -306,7 +303,6 @@ static int cmd_files(struct userrec *u, int idx, char *par)
   int atr = u ? u->flags : 0;
   static struct chat_info *ci;
 
-  Context;
   if (dccdir[0] == 0)
     dprintf(idx, "There is no file transfer area.\n");
   else if (too_many_filers()) {
@@ -360,7 +356,6 @@ static int _dcc_send(int idx, char *filename, char *nick, char *dir,
   int x;
   char *nfn, *buf = NULL;
 
-  Context;
   if (strlen(nick) > NICKMAX)
     nick[NICKMAX] = 0;
   if (resend)
@@ -427,7 +422,6 @@ static int do_dcc_send(int idx, char *dir, char *fn, char *nick, int resend)
   FILE *f;
   int x;
 
-  Context;
   if (nick && strlen(nick) > NICKMAX)
     nick[NICKMAX] = 0;
   if (dccdir[0] == 0) {
@@ -507,7 +501,6 @@ static int builtin_fil STDVAR
   int idx;
   Function F = (Function) cd;
 
-  Context;
   BADARGS(4, 4, " hand idx param");
   idx = findanyidx(atoi(argv[2]));
   if (idx < 0 && dcc[idx].type != &DCC_FILES) {
@@ -525,7 +518,6 @@ static int builtin_fil STDVAR
 
 static void tout_dcc_files_pass(int i)
 {
-  Context;
   dprintf(i, "Timeout.\n");
   putlog(LOG_MISC, "*", "Password timeout on dcc chat: [%s]%s", dcc[i].nick,
 	 dcc[i].host);
@@ -633,7 +625,6 @@ static void filesys_dcc_send(char *nick, char *from, struct userrec *u,
   char *param, *ip, *prt, *buf = NULL, *msg;
   int atr = u ? u->flags : 0, i;
 
-  Context;
   buf = nmalloc(strlen(text) + 1);
   msg = buf;
   strcpy(buf, text);
@@ -777,7 +768,6 @@ static void filesys_dcc_send_hostresolved(int i)
   s1 = nmalloc(strlen(dcc[i].u.xfer->dir) +
 	       strlen(dcc[i].u.xfer->origname) + 1);
   sprintf(s1, "%s%s", dcc[i].u.xfer->dir, dcc[i].u.xfer->origname);
-  Context;      
   f = fopen(s1, "r");
   my_free(s1);
   if (f) {
@@ -828,7 +818,6 @@ static int filesys_DCC_CHAT(char *nick, char *from, char *handle,
   struct userrec *u = get_user_by_handle(userlist, handle);
   struct flag_record fr = {FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0};
 
-  Context;
   if (egg_strcasecmp(object, botname))
     return 0;
   if (!egg_strncasecmp(text, "SEND ", 5)) {
@@ -943,7 +932,6 @@ static char *filesys_close()
   int i;
   p_tcl_bind_list H_ctcp;
 
-  Context;
   putlog(LOG_MISC, "*", "Unloading filesystem, killing all filesystem connections..");
   for (i = 0; i < dcc_total; i++)
     if (dcc[i].type == &DCC_FILES) {
@@ -994,7 +982,6 @@ char *filesys_start(Function * global_funcs)
 {
   global = global_funcs;
 
-  Context;
   module_register(MODULE_NAME, filesys_table, 2, 0);
   if (!module_depend(MODULE_NAME, "eggdrop", 106, 0)) {
     module_undepend(MODULE_NAME);

@@ -1,7 +1,7 @@
 /* 
  * share.c -- part of share.mod
  * 
- * $Id: share.c,v 1.46 2000/12/21 20:12:43 guppy Exp $
+ * $Id: share.c,v 1.47 2001/01/16 17:13:24 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -449,7 +449,6 @@ static void share_pls_bothost(int idx, char *par)
   char *hand, p[32];
   struct userrec *u;
 
-  Context;
   if ((dcc[idx].status & STAT_SHARE) && !private_user) {
     hand = newsplit(&par);
     if (!(u = get_user_by_handle(userlist, hand)) ||
@@ -476,7 +475,6 @@ static void share_mns_host(int idx, char *par)
   char *hand;
   struct userrec *u;
 
-  Context;
   if ((dcc[idx].status & STAT_SHARE) && !private_user) {
     hand = newsplit(&par);
     if ((u = get_user_by_handle(userlist, hand)) &&
@@ -953,7 +951,6 @@ static void share_ufno(int idx, char *par)
 
 static void share_ufyes(int idx, char *par)
 {
-  Context;
   if (dcc[idx].status & STAT_OFFERED) {
     dcc[idx].status &= ~STAT_OFFERED;
     dcc[idx].status |= STAT_SHARE;
@@ -1011,7 +1008,6 @@ static void share_ufsend(int idx, char *par)
   int i, sock;
   FILE *f;
 
-  Context;
   egg_snprintf(s, sizeof s, ".share.%s.%lu.users", botnetnick, now);
   if (!(b_status(idx) & STAT_SHARE)) {
     dprintf(idx, "s e You didn't ask; you just started sending.\n");
@@ -1202,7 +1198,6 @@ static void sharein_mod(int idx, char *msg)
   char *code;
   int f, i;
 
-  Context;
   code = newsplit(&msg);
   for (f = 0, i = 0; C_share[i].name && !f; i++) {
     int y = egg_strcasecmp(code, C_share[i].name);
@@ -1447,7 +1442,6 @@ static void dump_resync(int idx)
   int i;
   struct share_msgq *q;
 
-  Context;
   for (i = 0; i < 5; i++)
     if (!egg_strcasecmp(dcc[idx].nick, tbuf[i].bot)) {
       while (tbuf[i].q) {
@@ -1539,7 +1533,6 @@ static struct userrec *dup_userlist(int t)
   char *p;
 
   nu = retu = NULL;
-  Context;
   noshare = 1;
   for (u = userlist; u; u = u->next)
     /* Only copying non-bot entries? */
@@ -1568,42 +1561,32 @@ static struct userrec *dup_userlist(int t)
 	}
       }
       for (ue = u->entries; ue; ue = ue->next) {
-	Context;
 	if (ue->name) {
 	  struct list_type *lt;
 	  struct user_entry *nue;
 
-	  Context;
 	  nue = user_malloc(sizeof(struct user_entry));
-
 	  nue->name = user_malloc(strlen(ue->name) + 1);
 	  nue->type = NULL;
 	  nue->u.list = NULL;
 	  strcpy(nue->name, ue->name);
 	  list_insert((&nu->entries), nue);
-	  Context;
 	  for (lt = ue->u.list; lt; lt = lt->next) {
 	    struct list_type *list;
 
-	    Context;
 	    list = user_malloc(sizeof(struct list_type));
-
 	    list->next = NULL;
 	    list->extra = user_malloc(strlen(lt->extra) + 1);
 	    strcpy(list->extra, lt->extra);
 	    list_append((&nue->u.list), list);
-	    Context;
 	  }
 	} else {
-	  Context;		/* arthur2: SEGV with sharing bug track */
 	  if (ue->type->dup_user && (t || ue->type->got_share))
 	    ue->type->dup_user(nu, u, ue);
-	  Context;
 	}
       }
     }
   noshare = 0;
-  Context;
   return retu;
 }
 
@@ -1628,7 +1611,6 @@ static void finish_share(int idx)
     return;
   }
   
-  Context;
   if (dcc[j].u.bot->uff_flags & UFF_OVERRIDE)
     debug1("NOTE: Sharing passively with %s, overriding local bots.",
 	   dcc[j].nick);
@@ -1641,7 +1623,6 @@ static void finish_share(int idx)
    * ignores since they will be replaced by what our hub gives us.
    */
 
-  Context;
   noshare = 1;
   fr.match = (FR_CHAN | FR_BOT);
   while (global_bans)
@@ -1668,7 +1649,6 @@ static void finish_share(int idx)
   ou = userlist;		/* Save old user list			*/
   userlist = (void *) -1;	/* Do this to prevent .user messups	*/
 
-  Context;
   /* Bot user pointers are updated to point to the new list, all others
    * are set to NULL. If our userfile will be overriden, just set _all_
    * to NULL directly.
@@ -1694,7 +1674,6 @@ static void finish_share(int idx)
     lastuser = NULL;		/* Reset last accessed user ptr.	*/
     return;
   }
-  Context;
   putlog(LOG_BOTS, "*", "%s.", USERF_XFERDONE);
 
   clear_chanlist();		/* Remove all user references from the
@@ -1726,7 +1705,6 @@ static void finish_share(int idx)
       struct chanuserrec *cr, *cr_next, *cr_old = NULL;
       struct user_entry *ue;
 
-      Context;
       if (private_global) {
 	u->flags = u2->flags;
 	u->flags_udef = u2->flags_udef;
@@ -1759,7 +1737,6 @@ static void finish_share(int idx)
 	    u->chanrec = cr;
 	  } else {
 	    /* Shared channel, still keep old laston time */
-	    Context;
 	    for (cr_old = u->chanrec; cr_old; cr_old = cr_old->next)
 	      if (!rfc_casecmp(cr_old->channel, cr->channel)) {
 		cr_old->laston = cr->laston;
@@ -1770,7 +1747,6 @@ static void finish_share(int idx)
 	}
       }
       /* Any unshared user entries need copying over */
-      Context;
       for (ue = u2->entries; ue; ue = ue->next)
 	if (ue->type && !ue->type->got_share && ue->type->dup_user)
 	  ue->type->dup_user(u, u2, ue);
@@ -1780,12 +1756,10 @@ static void finish_share(int idx)
     } else
       u->flags = (u->flags & ~private_globals_bitmask());
   }
-  Context;
   clear_userlist(ou);
   unlink(dcc[idx].u.xfer->filename);	/* Done with you!		*/
   reaffirm_owners();			/* Make sure my owners are +n	*/
   updatebot(-1, dcc[j].nick, '+', 0);
-  Context;
 }
 
 /* Begin the user transfer process.
@@ -1798,7 +1772,6 @@ static void start_sending_users(int idx)
   struct chanuserrec *ch;
   struct chanset_t *cst;
 
-  Context;
   egg_snprintf(share_file, sizeof share_file, ".share.%s.%lu", dcc[idx].nick,
 	       now);
   if (dcc[idx].u.bot->uff_flags & UFF_OVERRIDE) {
@@ -1815,7 +1788,6 @@ static void start_sending_users(int idx)
     dprintf(idx, "s e %s\n", "uff parsing failed");
     putlog(LOG_BOTS, "*", "uff parsing failed");
     dcc[idx].status &= ~(STAT_SHARE | STAT_SENDING | STAT_AGGRESSIVE);
-    Context;
     return;
   }
 
@@ -1893,7 +1865,6 @@ static void start_sending_users(int idx)
      */
     unlink(share_file);
   }
-  Context;
 }
 
 static void (*def_dcc_bot_kill) (int, void *) = 0;
@@ -1902,7 +1873,6 @@ static void cancel_user_xfer(int idx, void *x)
 {
   int i, j, k = 0;
 
-  Context;
   if (idx < 0) {
     idx = -idx;
     k = 1;
@@ -1942,10 +1912,8 @@ static void cancel_user_xfer(int idx, void *x)
 	(!(dcc[idx].status & STAT_SENDING)))
       new_tbuf(dcc[idx].nick);
   }
-  Context;
   if (!k)
     def_dcc_bot_kill(idx, x);
-  Context;
 }
 
 static tcl_ints my_ints[] =
@@ -1984,9 +1952,7 @@ static char *share_close()
 {
   int i;
 
-  Context;
   module_undepend(MODULE_NAME);
-  Context;
   putlog(LOG_MISC | LOG_BOTS, "*", "Unloaded sharing module, flushing tbuf's...");
   for (i = 0; i < 5; i++)
     if (tbuf[i].bot[0])
@@ -2107,7 +2073,6 @@ char *share_start(Function *global_funcs)
 
   global = global_funcs;
 
-  Context;
   module_register(MODULE_NAME, share_table, 2, 3);
   if (!module_depend(MODULE_NAME, "eggdrop", 106, 0)) {
     module_undepend(MODULE_NAME);
@@ -2137,8 +2102,6 @@ char *share_start(Function *global_funcs)
   add_builtins(H_dcc, my_cmds);
   uff_init();
   uff_addtable(internal_uff_table);
-
-  Context;
   return NULL;
 }
 

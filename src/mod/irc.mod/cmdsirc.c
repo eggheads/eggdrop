@@ -2,7 +2,7 @@
  * chancmds.c -- part of irc.mod
  *   handles commands direclty relating to channel interaction
  * 
- * $Id: cmdsirc.c,v 1.22 2000/11/03 17:17:16 fabian Exp $
+ * $Id: cmdsirc.c,v 1.23 2001/01/16 17:13:22 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -29,7 +29,6 @@ static struct chanset_t *has_op(int idx, char *chname)
 {
   struct chanset_t *chan;
 
-  Context;
   if (chname && chname[0]) {
     chan = findchan_by_dname(chname);
     if (!chan) {
@@ -790,7 +789,6 @@ static void cmd_adduser(struct userrec *u, int idx, char *par)
   int statichost = 0;
   char *p1 = s1;
 
-  Context;
   if ((!par[0]) || ((par[0]=='!') && (!par[1]))) {
     dprintf(idx, "Usage: adduser <nick> [handle]\n");
     return;
@@ -822,7 +820,6 @@ static void cmd_adduser(struct userrec *u, int idx, char *par)
     hand = par;
   }
 
-  Context;
   for (chan = chanset; chan; chan = chan->next) {
     m = ismember(chan, nick);
     if (m)

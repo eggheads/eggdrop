@@ -4,7 +4,7 @@
  *   channel mode changes and the bot's reaction to them
  *   setting and getting the current wanted channel modes
  * 
- * $Id: mode.c,v 1.39 2000/12/17 21:37:46 guppy Exp $
+ * $Id: mode.c,v 1.40 2001/01/16 17:13:23 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -177,7 +177,6 @@ static void real_add_mode(struct chanset_t *chan,
   memberlist *mx;
   char s[21];
   
-  Context;
   if (!me_op(chan))
     return;			/* No point in queueing the mode */
 
@@ -699,7 +698,6 @@ static void got_exempt(struct chanset_t *chan, char *nick, char *from,
 {
   char s[UHOSTLEN];
 
-  Context;
   simple_sprintf(s, "%s!%s", nick, from);
   newexempt(chan, who, s);
 
@@ -729,7 +727,6 @@ static void got_unexempt(struct chanset_t *chan, char *nick, char *from,
   masklist *b ;
   int match = 0;
 
-  Context;
   e = chan->channel.exempt;
   old = NULL;
   while (e && e->mask[0] && rfc_casecmp(e->mask, who)) {

@@ -3,7 +3,7 @@
  *   commands that comes across the botnet
  *   userfile transfer and update commands from sharebots
  * 
- * $Id: botcmd.c,v 1.17 2000/09/09 17:29:07 fabian Exp $
+ * $Id: botcmd.c,v 1.18 2001/01/16 17:13:20 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -98,7 +98,6 @@ static void bot_chan2(int idx, char *msg)
   char *from, *p;
   int i, chan;
 
-  Context;
   if (bot_flags(dcc[idx].user) & BOT_ISOLATE)
     return;
   from = newsplit(&msg);
@@ -153,7 +152,6 @@ static void bot_chat(int idx, char *par)
   char *from;
   int i;
 
-  Context;
   if (bot_flags(dcc[idx].user) & BOT_ISOLATE)
     return;
   from = newsplit(&par);
@@ -178,7 +176,6 @@ static void bot_actchan(int idx, char *par)
   char *from, *p;
   int i, chan;
 
-  Context;
   if (bot_flags(dcc[idx].user) & BOT_ISOLATE)
     return;
   from = newsplit(&par);
@@ -225,7 +222,6 @@ static void bot_priv(int idx, char *par)
   char *from, *p, *to = TBUF, *tobot;
   int i;
 
-  Context;
   from = newsplit(&par);
   tobot = newsplit(&par);
   splitc(to, tobot, '@');
@@ -293,7 +289,6 @@ static void bot_bye(int idx, char *par)
   char s[1024];
   int users, bots;
 
-  Context;
   bots = bots_in_subtree(findbot(dcc[idx].nick));
   users = users_in_subtree(findbot(dcc[idx].nick));
   simple_sprintf(s, "%s %s. %s (lost %d bot%s and %d user%s)",
@@ -314,7 +309,6 @@ static void remote_tell_who(int idx, char *nick, int chan)
   char s[1024];
   struct chanset_t *c;
 
-  Context;
   strcpy(s, "Channels: ");
   for (c = chanset; c; c = c->next)
     if (!channel_secret(c)) {
@@ -428,7 +422,6 @@ static void bot_who(int idx, char *par)
   char *from, *to, *p;
   int i, chan;
 
-  Context;
   from = newsplit(&par);
   p = strchr(from, '@');
   if (!p) {
@@ -467,7 +460,6 @@ static void bot_infoq(int idx, char *par)
   time_t now2;
   int hr, min;
 
-  Context;
   chan = chanset;
   now2 = now - online_since;
   s2[0] = 0;
@@ -515,13 +507,11 @@ static void bot_infoq(int idx, char *par)
 
 static void bot_ping(int idx, char *par)
 {
-  Context;
   botnet_send_pong(idx);
 }
 
 static void bot_pong(int idx, char *par)
 {
-  Context;
   dcc[idx].status &= ~STAT_PINGED;
 }
 
@@ -532,7 +522,6 @@ static void bot_link(int idx, char *par)
   char *from, *bot, *rfrom;
   int i;
 
-  Context;
   from = newsplit(&par);
   bot = newsplit(&par);
 
@@ -562,7 +551,6 @@ static void bot_unlink(int idx, char *par)
   char *from, *bot, *rfrom, *p, *undes;
   int i;
 
-  Context;
   from = newsplit(&par);
   bot = newsplit(&par);
   undes = newsplit(&par);
@@ -620,7 +608,6 @@ static void bot_update(int idx, char *par)
   char *bot, x;
   int vnum;
 
-  Context;
   bot = newsplit(&par);
   x = par[0];
   if (x)
@@ -643,7 +630,6 @@ static void bot_nlinked(int idx, char *par)
   int bogus = 0, i;
   struct userrec *u;
 
-  Context;
   newbot = newsplit(&par);
   next = newsplit(&par);
   s[0] = 0;
@@ -726,7 +712,6 @@ static void bot_linked(int idx, char *par)
   char s[1024];
   int bots, users;
 
-  Context;
   bots = bots_in_subtree(findbot(dcc[idx].nick));
   users = users_in_subtree(findbot(dcc[idx].nick));
   putlog(LOG_BOTS, "*", "%s", BOT_OLDBOT);
@@ -746,7 +731,6 @@ static void bot_unlinked(int idx, char *par)
   int i;
   char *bot;
 
-  Context;
   bot = newsplit(&par);
   i = nextbot(bot);
   if ((i >= 0) && (i != idx))	/* Bot is NOT downstream along idx, so
@@ -769,7 +753,6 @@ static void bot_trace(int idx, char *par)
   char *from, *dest;
   int i;
 
-  Context;
   from = newsplit(&par);
   dest = newsplit(&par);
   simple_sprintf(TBUF, "%s:%s", par, botnetnick);
@@ -785,7 +768,6 @@ static void bot_traced(int idx, char *par)
   char *to, *p;
   int i, sock;
 
-  Context;
   to = newsplit(&par);
   p = strchr(to, '@');
   if (p == NULL)
@@ -837,7 +819,6 @@ static void bot_reject(int idx, char *par)
   struct userrec *u;
   int i;
 
-  Context;
   if (bot_flags(dcc[idx].user) & BOT_ISOLATE)
     return;
   from = newsplit(&par);
@@ -920,7 +901,6 @@ static void bot_reject(int idx, char *par)
 
 static void bot_thisbot(int idx, char *par)
 {
-  Context;
   if (egg_strcasecmp(par, dcc[idx].nick)) {
     char s[1024];
 
@@ -948,7 +928,6 @@ static void bot_handshake(int idx, char *par)
 {
   struct userrec *u = get_user_by_handle(userlist, dcc[idx].nick);
 
-  Context;
   /* We *don't* want botnet passwords migrating */
   noshare = 1;		
   set_user(&USERENTRY_PASS, u, par);
@@ -963,7 +942,6 @@ static void bot_zapf(int idx, char *par)
   char *from, *to;
   int i;
 
-  Context;
   from = newsplit(&par);
   to = newsplit(&par);
   i = nextbot(from);
@@ -992,7 +970,6 @@ static void bot_zapfbroad(int idx, char *par)
   char *from, *opcode;
   int i;
 
-  Context;
   from = newsplit(&par);
   opcode = newsplit(&par);
 
@@ -1013,8 +990,6 @@ static void bot_motd(int idx, char *par)
   char *s = TBUF, *who, *p;
   int i;
   struct flag_record fr = {USER_BOT, 0, 0, 0, 0, 0};
-
-  Context;
 
   who = newsplit(&par);
   if (!par[0] || !egg_strcasecmp(par, botnetnick)) {
@@ -1073,7 +1048,6 @@ static void bot_filereject(int idx, char *par)
   char *path, *to, *tobot, *p;
   int i;
 
-  Context;
   path = newsplit(&par);
   to = newsplit(&par);
   if ((tobot = strchr(to, '@')))
@@ -1106,7 +1080,6 @@ static void bot_filereq(int idx, char *tobot)
   char *from, *path;
   int i;
 
-  Context;
   from = newsplit(&tobot);
   if ((path = strchr(tobot, ':'))) {
     *path++ = 0;
@@ -1138,7 +1111,6 @@ static void bot_filesend(int idx, char *par)
   int i;
   char *nfn;
 
-  Context;
   botpath = newsplit(&par);
   to = newsplit(&par);
   if ((tobot = strchr(to, '@'))) {
@@ -1174,7 +1146,6 @@ static void bot_filesend(int idx, char *par)
 
 static void bot_error(int idx, char *par)
 {
-  Context;
   putlog(LOG_MISC | LOG_BOTS, "*", "%s: %s", dcc[idx].nick, par);
 }
 
@@ -1185,7 +1156,6 @@ static void bot_nickchange(int idx, char *par)
   char *bot, *ssock, *newnick;
   int sock, i;
 
-  Context;
   if (bot_flags(dcc[idx].user) & BOT_ISOLATE)
     return;
   bot = newsplit(&par);
@@ -1221,7 +1191,6 @@ static void bot_join(int idx, char *par)
   struct userrec *u;
   int i, sock, chan, i2, linking = 0;
 
-  Context;
   if (bot_flags(dcc[idx].user) & BOT_ISOLATE)
     return;
   bot = newsplit(&par);
@@ -1278,9 +1247,7 @@ static void bot_join(int idx, char *par)
     touch_laston(u, TBUF, now);
   }
   i = addparty(bot, nick, chan, y[0], sock, par, &i2);
-  Context;
   botnet_send_join_party(idx, linking, i2, i);
-  Context;
   if (i != chan) {
     if (i >= 0) {
       if (b_numver(idx) >= NEAT_BOTNET)
@@ -1293,7 +1260,6 @@ static void bot_join(int idx, char *par)
 		  chan ? "channel" : "party line");
     check_tcl_chjn(bot, nick, chan, y[0], sock, par);
   }
-  Context;
 }
 
 /* part <bot> <nick> <sock> [etc..]
@@ -1305,7 +1271,6 @@ static void bot_part(int idx, char *par)
   int sock, partyidx;
   int silent = 0;
 
-  Context;
   if (bot_flags(dcc[idx].user) & BOT_ISOLATE)
     return;
   bot = newsplit(&par);
@@ -1347,7 +1312,6 @@ static void bot_part(int idx, char *par)
     botnet_send_part_party(idx, partyidx, par, silent);
     remparty(bot, sock);
   }
-  Context;
 }
 
 /* away <bot> <sock> <message>
@@ -1358,7 +1322,6 @@ static void bot_away(int idx, char *par)
   char *bot, *etc;
   int sock, partyidx, linking = 0;
 
-  Context;
   if (bot_flags(dcc[idx].user) & BOT_ISOLATE)
     return;
   bot = newsplit(&par);
@@ -1410,7 +1373,6 @@ static void bot_idle(int idx, char *par)
   char *bot, *work;
   int sock, idle;
 
-  Context;
   if (bot_flags(dcc[idx].user) & BOT_ISOLATE)
     return;
   bot = newsplit(&par);
@@ -1442,7 +1404,6 @@ static void bot_idle(int idx, char *par)
 
 static void bot_ufno(int idx, char *par)
 {
-  Context;
   putlog(LOG_BOTS, "*", "%s %s: %s", USERF_REJECTED, dcc[idx].nick, par);
   dcc[idx].status &= ~STAT_OFFERED;
   if (!(dcc[idx].status & STAT_GETTING))
@@ -1451,7 +1412,6 @@ static void bot_ufno(int idx, char *par)
 
 static void bot_old_userfile(int idx, char *par)
 {
-  Context;
   putlog(LOG_BOTS, "*", "%s %s", USERF_OLDSHARE, dcc[idx].nick);
   dprintf(idx, "uf-no %s\n", USERF_ANTIQUESHARE);
 }
@@ -1460,7 +1420,6 @@ static void bot_old_userfile(int idx, char *par)
 
 void bot_share(int idx, char *par)
 {
-  Context;
   sharein(idx, par);
 }
 

@@ -1,7 +1,7 @@
 /* 
  * uf_features.c -- part of share.mod
  * 
- * $Id: uf_features.c,v 1.5 2000/12/14 04:11:54 guppy Exp $
+ * $Id: uf_features.c,v 1.6 2001/01/16 17:13:24 guppy Exp $
  */
 /* 
  * Copyright (C) 2000  Eggheads
@@ -92,7 +92,6 @@ static int uff_expmem(void)
   uff_list_t *ul;
   int tot = 0;
 
-  Context;
   for (ul = uff_list.start; ul; ul = ul->next)
     tot += sizeof(uff_list_t);
   return tot;
@@ -106,7 +105,6 @@ static uff_list_t *uff_findentry_byflag(int flag)
 {
   uff_list_t *ul;
 
-  Context;
   for (ul = uff_list.start; ul; ul = ul->next)
     if (ul->entry->flag & flag)
       return ul;
@@ -120,7 +118,6 @@ static uff_list_t *uff_findentry_byname(char *feature)
 {
   uff_list_t *ul;
 
-  Context;
   for (ul = uff_list.start; ul; ul = ul->next)
     if (!strcmp(ul->entry->feature, feature))
       return ul;
@@ -133,7 +130,6 @@ static void uff_insert_entry(uff_list_t *nul)
 {
   uff_list_t	*ul, *lul = NULL;
 
-  Context;
   ul = uff_list.start;
   while (ul && ul->entry->priority < nul->entry->priority) {
     lul = ul;
@@ -154,14 +150,12 @@ static void uff_insert_entry(uff_list_t *nul)
     uff_list.start = nul;
   if (!nul->next)
     uff_list.end = nul;
-  Context;
 }
 
 /* Remove entry from sorted list.
  */
 static void uff_remove_entry(uff_list_t *ul)
 {
-  Context;
   if (!ul->next)
     uff_list.end = ul->prev;
   else
@@ -178,7 +172,6 @@ static void uff_addfeature(uff_table_t *ut)
 {
   uff_list_t	*ul;
 
-  Context;
   if (uff_findentry_byname(ut->feature)) {
     putlog(LOG_MISC, "*", "(!) share: same feature name used twice: %s",
 	   ut->feature);
@@ -211,7 +204,6 @@ static int uff_delfeature(uff_table_t *ut)
 {
   uff_list_t *ul;
 
-  Context;
   for (ul = uff_list.start; ul; ul = ul->next)
     if (!strcmp(ul->entry->feature, ut->feature)) {
       uff_remove_entry(ul);
@@ -244,7 +236,6 @@ static void uf_features_parse(int idx, char *par)
   char *buf, *s, *p;
   uff_list_t *ul;
 
-  Context;
   uff_sbuf[0] = 0;				/* Reset static buffer	*/
   p = s = buf = nmalloc(strlen(par) + 1);	/* Allocate temp buffer	*/
   strcpy(buf, par);
@@ -278,7 +269,6 @@ static char *uf_features_dump(int idx)
 {
   uff_list_t *ul;
 
-  Context;
   uff_sbuf[0] = 0;
   for (ul = uff_list.start; ul; ul = ul->next)
     if (ul->entry->ask_func == NULL || ul->entry->ask_func(idx)) {
@@ -293,7 +283,6 @@ static int uf_features_check(int idx, char *par)
   char *buf, *s, *p;
   uff_list_t *ul;
 
-  Context;
   uff_sbuf[0] = 0;				/* Reset static buffer	*/
   p = s = buf = nmalloc(strlen(par) + 1);	/* Allocate temp buffer	*/
   strcpy(buf, par);
@@ -337,7 +326,6 @@ static int uff_call_sending(int idx, char *user_file)
 {
   uff_list_t *ul;
 
-  Context;
   for (ul = uff_list.start; ul; ul = ul->next)
     if (ul->entry && ul->entry->snd &&
 	(dcc[idx].u.bot->uff_flags & ul->entry->flag))
@@ -354,7 +342,6 @@ static int uff_call_receiving(int idx, char *user_file)
 {
   uff_list_t *ul;
 
-  Context;
   for (ul = uff_list.end; ul; ul = ul->prev)
     if (ul->entry && ul->entry->rcv &&
 	(dcc[idx].u.bot->uff_flags & ul->entry->flag))

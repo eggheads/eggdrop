@@ -2,7 +2,7 @@
  * channels.c -- part of channels.mod
  *   support for channels within the bot
  * 
- * $Id: channels.c,v 1.45 2000/12/17 21:37:46 guppy Exp $
+ * $Id: channels.c,v 1.46 2001/01/16 17:13:21 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -374,7 +374,6 @@ static void write_channels()
   struct chanset_t *chan;
   struct udef_struct *ul;
 
-  Context;
   if (!chanfile[0])
     return;
   sprintf(s, "%s~new", chanfile);
@@ -687,7 +686,6 @@ static int channels_expmem()
   int tot = 0, i;
   struct chanset_t *chan = chanset;
 
-  Context;
   while (chan != NULL) {
     tot += sizeof(struct chanset_t);
 
@@ -722,7 +720,6 @@ static char *traced_globchanset(ClientData cdata, Tcl_Interp * irp,
   int items;
   char **item;
 
-  Context;
   if (flags & (TCL_TRACE_READS | TCL_TRACE_UNSETS)) {
     Tcl_SetVar2(interp, name1, name2, glob_chanset, TCL_GLOBAL_ONLY);
     if (flags & TCL_TRACE_UNSETS)
@@ -732,13 +729,11 @@ static char *traced_globchanset(ClientData cdata, Tcl_Interp * irp,
   } else { /* Write */
     s = Tcl_GetVar2(interp, name1, name2, TCL_GLOBAL_ONLY);
     Tcl_SplitList(interp, s, &items, &item);
-    Context;
     for (i = 0; i<items; i++) {
       if (!(item[i]) || (strlen(item[i]) < 2)) continue;
       s = glob_chanset;
       while (s[0]) {
 	t = strchr(s, ' '); /* Can't be NULL coz of the extra space */
-	Context;
 	t[0] = 0;
 	if (!strcmp(s + 1, item[i] + 1)) {
 	  s[0] = item[i][0]; /* +- */
@@ -791,7 +786,6 @@ static tcl_strings my_tcl_strings[] =
 
 static char *channels_close()
 {
-  Context;
   write_channels();
   free_udef(udef);
   rem_builtins(H_chon, my_chon);
@@ -913,7 +907,6 @@ char *channels_start(Function * global_funcs)
 +dontkickops -inactive -protectfriends +shared -seen \
 +userexempts +dynamicexempts +userinvites +dynamicinvites -revengebot \
 -nodesynch" /* Do not remove this extra space: */ " ");
-  Context;
   module_register(MODULE_NAME, channels_table, 1, 0);
   if (!module_depend(MODULE_NAME, "eggdrop", 106, 0)) {
     module_undepend(MODULE_NAME);

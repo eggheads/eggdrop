@@ -2,7 +2,7 @@
  * ctcp.c -- part of ctcp.mod
  *   all the ctcp handling (except DCC, it's special ;)
  * 
- * $Id: ctcp.c,v 1.10 2000/11/06 04:06:43 guppy Exp $
+ * $Id: ctcp.c,v 1.11 2001/01/16 17:13:22 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -217,7 +217,6 @@ char *ctcp_start(Function * global_funcs)
 {
   global = global_funcs;
 
-  Context;
   module_register(MODULE_NAME, ctcp_table, 1, 0);
   if (!module_depend(MODULE_NAME, "eggdrop", 106, 0)) {
     module_undepend(MODULE_NAME);

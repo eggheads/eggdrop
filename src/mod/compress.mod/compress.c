@@ -6,7 +6,7 @@
  * Written by Fabian Knittel <fknittel@gmx.de>. Based on zlib examples
  * by Jean-loup Gailly and Miguel Albrecht.
  * 
- * $Id: compress.c,v 1.7 2000/11/06 04:06:42 guppy Exp $
+ * $Id: compress.c,v 1.8 2001/01/16 17:13:21 guppy Exp $
  */
 /* 
  * Copyright (C) 2000  Eggheads
@@ -75,7 +75,6 @@ static int is_compressedfile(char *filename)
   FILE		 *fin;
   register int    len1, len2, i;
 
-  Context;
   egg_memset(buf1, 0, 50);
   egg_memset(buf2, 0, 50);
   if (!is_file(filename))
@@ -125,7 +124,6 @@ static int uncompress_to_file(char *f_src, char *f_target)
   int len;
   FILE *fin, *fout;
 
-  Context;
   if (!is_file(f_src)) {
     putlog(LOG_MISC, "*", "Failed to uncompress file `%s': not a file.",
 	   f_src);
@@ -193,7 +191,6 @@ static int compress_to_file_mmap(FILE *fout, FILE *fin)
     char	 *buf;
     struct stat	  st;
 
-    Context;
     /* Find out size of file */
     if (fstat(ifd, &st) < 0)
       return COMPF_ERROR;
@@ -226,7 +223,6 @@ static int compress_to_file(char *f_src, char *f_target, int mode_num)
   FILE *fin, *fout;
   int   len;
 
-  Context;
   adjust_mode_num(&mode_num);
   egg_snprintf(mode, sizeof mode, "wb%d", mode_num);
 
@@ -294,7 +290,6 @@ static int compress_file(char *filename, int mode_num)
   char *temp_fn, randstr[5];
   int   ret;
 
-  Context;
   /* Create temporary filename. */
   temp_fn = nmalloc(strlen(filename) + 5);
   make_rand_str(randstr, 4);
@@ -321,7 +316,6 @@ static int uncompress_file(char *filename)
   char *temp_fn, randstr[5];
   int   ret;
 
-  Context;
   /* Create temporary filename. */
   temp_fn = nmalloc(strlen(filename) + 5);
   make_rand_str(randstr, 4);
@@ -396,15 +390,12 @@ static int compress_report(int idx, int details)
 
 static char *compress_close()
 {
-  Context;
   rem_help_reference("compress.help");
   rem_tcl_commands(my_tcl_cmds);
   rem_tcl_ints(my_tcl_ints);
   uff_deltable(compress_uff_table);
 
-  Context;
   module_undepend(MODULE_NAME);
-  Context;
   return NULL;
 }
 
@@ -429,13 +420,11 @@ static Function compress_table[] =
 char *compress_start(Function *global_funcs)
 {
   global = global_funcs;
-  Context;
   compressed_files	= 0;
   uncompressed_files	= 0;
   share_compressed	= 0;
   compress_level	= 9;
 
-  Context;
   module_register(MODULE_NAME, compress_table, 1, 1);
   if (!module_depend(MODULE_NAME, "eggdrop", 106, 0)) {
     module_undepend(MODULE_NAME);
@@ -447,12 +436,9 @@ char *compress_start(Function *global_funcs)
     return "You need share module version 2.3 to use the compress module.";
   }
 
-  Context;
   uff_addtable(compress_uff_table);
   add_tcl_ints(my_tcl_ints);
   add_tcl_commands(my_tcl_cmds);
   add_help_reference("compress.help");
-
-  Context;
   return NULL;
 }

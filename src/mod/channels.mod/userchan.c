@@ -1,7 +1,7 @@
 /* 
  * userchan.c -- part of channels.mod
  * 
- * $Id: userchan.c,v 1.21 2000/12/06 02:35:18 guppy Exp $
+ * $Id: userchan.c,v 1.22 2001/01/16 17:13:21 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -762,7 +762,6 @@ static void tell_bans(int idx, int show_inact, char *match)
   maskrec *u;
 
   /* Was a channel given? */
-  Context;
   if (match[0]) {
     chname = newsplit(&match);
     if (chname[0] && (strchr(CHANMETA, chname[0]) != NULL)) {
@@ -782,7 +781,6 @@ static void tell_bans(int idx, int show_inact, char *match)
 	    MODES_NOTACTIVE, chan->dname);
   else
     dprintf(idx, "%s:\n", BANS_GLOBAL);
-  Context;
   for (u = global_bans; u; u = u->next) {
     if (match[0]) {
       if ((wild_match(match, u->mask)) ||
@@ -855,7 +853,6 @@ static void tell_exempts(int idx, int show_inact, char *match)
   maskrec *u;
   
   /* Was a channel given? */
-  Context;
   if (match[0]) {
     chname = newsplit(&match);
     if (chname[0] && strchr(CHANMETA, chname[0])) {
@@ -875,7 +872,6 @@ static void tell_exempts(int idx, int show_inact, char *match)
 	    MODES_NOTACTIVE, chan->dname);
   else
     dprintf(idx, "%s:\n", EXEMPTS_GLOBAL);
-  Context;
   for (u = global_exempts; u; u = u->next) {
     if (match[0]) {
       if ((wild_match(match, u->mask)) ||
@@ -949,7 +945,6 @@ static void tell_invites(int idx, int show_inact, char *match)
   maskrec *u;
   
   /* Was a channel given? */
-  Context;
   if (match[0]) {
     chname = newsplit(&match);
     if (chname[0] && strchr(CHANMETA, chname[0])) {
@@ -969,7 +964,6 @@ static void tell_invites(int idx, int show_inact, char *match)
 	    MODES_NOTACTIVE, chan->dname);
   else
     dprintf(idx, "%s:\n", INVITES_GLOBAL);
-  Context;
   for (u = global_invites; u; u = u->next) {
     if (match[0]) {
       if ((wild_match(match, u->mask)) ||

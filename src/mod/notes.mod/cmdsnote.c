@@ -2,7 +2,7 @@
  * cmdsnote.c -- part of notes.mod
  *   handles all notes interaction over the party line
  * 
- * $Id: cmdsnote.c,v 1.8 2000/09/23 17:40:18 fabian Exp $
+ * $Id: cmdsnote.c,v 1.9 2001/01/16 17:13:23 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -113,7 +113,6 @@ static void cmd_noteigns(struct userrec *u, int idx, char *par)
   char **ignores;
   int ignoresn, i;
 
-  Context;
   if (par[0]) {
     u2 = get_user_by_handle(userlist, par);
     if (u != u2) {
@@ -141,7 +140,6 @@ static void cmd_noteigns(struct userrec *u, int idx, char *par)
   for (i = 0; i < ignoresn; i++)
     dprintf(idx, " %s", ignores[i]);
   dprintf(idx, "\n");
-  Context;
   nfree(ignores[0]);		/* Free the string buffer	*/
   nfree(ignores);		/* Free the ptr array		*/
 }

@@ -7,7 +7,7 @@
  *   linking, unlinking, and relaying to another bot
  *   pinging the bots periodically and checking leaf status
  * 
- * $Id: botnet.c,v 1.31 2000/10/27 19:34:54 fabian Exp $
+ * $Id: botnet.c,v 1.32 2001/01/16 17:13:20 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -58,7 +58,6 @@ int expmem_botnet()
 
   for (bot = tandbot; bot; bot = bot->next)
     size += sizeof(tand_t);
-  Context;
   size += (maxparty * sizeof(party_t));
   for (i = 0; i < parties; i++) {
     if (party[i].away)
@@ -95,7 +94,6 @@ void addbot(char *who, char *from, char *next, char flag, int vernum)
 {
   tand_t **ptr = &tandbot, *ptr2;
 
-  Context;
   while (*ptr) {
     if (!egg_strcasecmp((*ptr)->bot, who))
       putlog(LOG_BOTS, "*", "!!! Duplicate botnet bot entry!!");
@@ -121,7 +119,6 @@ void updatebot(int idx, char *who, char share, int vernum)
 {
   tand_t *ptr = findbot(who);
 
-  Context;
   if (ptr) {
     if (share)
       ptr->share = share;
@@ -153,7 +150,6 @@ int addparty(char *bot, char *nick, int chan, char flag, int sock,
 {
   int i;
 
-  Context;
   for (i = 0; i < parties; i++) {
     /* Just changing the channel of someone already on? */
     if (!egg_strcasecmp(party[i].bot, bot) &&
@@ -310,7 +306,6 @@ void rembot(char *who)
 {
   tand_t **ptr = &tandbot, *ptr2;
 
-  Context;
   while (*ptr) {
     if (!egg_strcasecmp((*ptr)->bot, who))
       break;
@@ -333,7 +328,6 @@ void remparty(char *bot, int sock)
 {
   int i;
 
-  Context;
   for (i = 0; i < parties; i++)
     if ((!egg_strcasecmp(party[i].bot, bot)) &&
 	(party[i].sock == sock)) {
@@ -436,7 +430,6 @@ void answer_local_whom(int idx, int chan)
   char c, idle[40], spaces2[33] = "                               ";
   int i, len, len2;
 
-  Context;
   if (chan == (-1))
     dprintf(idx, "%s (+: %s, *: %s)\n", BOT_BOTNETUSERS, BOT_PARTYLINE,
 	    BOT_LOCALCHAN);
@@ -723,7 +716,6 @@ void dump_links(int z)
   char x[1024];
   tand_t *bot;
 
-  Context;
   for (bot = tandbot; bot; bot = bot->next) {
     char *p;
 
@@ -741,7 +733,6 @@ void dump_links(int z)
 			 bot->share, bot->ver);
     tputs(dcc[z].sock, x, l);
   }
-  Context;
   if (!(bot_flags(dcc[z].user) & BOT_ISOLATE)) {
     /* Dump party line members */
     for (i = 0; i < dcc_total; i++) {
@@ -779,7 +770,6 @@ void dump_links(int z)
 	}
       }
     }
-    Context;
     for (i = 0; i < parties; i++) {
 #ifndef NO_OLD_BOTNET
       if (b_numver(z) < NEAT_BOTNET)
@@ -813,7 +803,6 @@ void dump_links(int z)
       }
     }
   }
-  Context;
 }
 
 int in_chain(char *who)
@@ -830,16 +819,13 @@ int bots_in_subtree(tand_t *bot)
   int nr = 1;
   tand_t *b;
 
-  Context;
   if (!bot)
     return 0;
   for (b = tandbot; b; b = b->next) {
-    Context;
     if (b->bot && (b->uplink == bot)) {
       nr += bots_in_subtree(b);
     }
   }
-  Context;
   return nr;
 }
 
@@ -848,7 +834,6 @@ int users_in_subtree(tand_t *bot)
   int i, nr;
   tand_t *b;
 
-  Context;
   nr = 0;
   if (!bot)
     return 0;
@@ -858,7 +843,6 @@ int users_in_subtree(tand_t *bot)
   for (b = tandbot; b; b = b->next)
     if (b->bot && (b->uplink == bot))
       nr += users_in_subtree(b);
-  Context;
   return nr;
 }
 
@@ -871,7 +855,6 @@ int botunlink(int idx, char *nick, char *reason)
   int bots, users;
   tand_t *bot;
 
-  Context;
   if (nick[0] == '*')
     dprintf(idx, "%s\n", BOT_UNLINKALL);
   for (i = 0; i < dcc_total; i++) {
@@ -901,8 +884,6 @@ int botunlink(int idx, char *nick, char *reason)
       } else if (dcc[i].type == &DCC_BOT) {
 	char s[1024];
 
-	Context;
-
 	if (idx >= 0)
 	  dprintf(idx, "%s %s.\n", BOT_BREAKLINK, dcc[i].nick);
 	else if ((idx == -3) && (b_status(i) & STAT_SHARE) && !share_unlinks)
@@ -931,7 +912,6 @@ int botunlink(int idx, char *nick, char *reason)
       }
     }
   }
-  Context;
   if (idx >= 0 && nick[0] != '*')
     dprintf(idx, "%s\n", BOT_NOTCONNECTED);
   if (nick[0] != '*') {
@@ -983,7 +963,6 @@ int botlink(char *linker, int idx, char *nick)
   struct userrec *u;
   register int i;
 
-  Context;
   u = get_user_by_handle(userlist, nick);
   if (!u || !(u->flags & USER_BOT)) {
     if (idx >= 0)
@@ -1015,7 +994,6 @@ int botlink(char *linker, int idx, char *nick)
       if (idx >= 0)
 	dprintf(idx, "%s\n", DCC_TOOMANYDCCS1);
     } else {
-      Context;
       correct_handle(nick);
 
       if (idx > -2)
@@ -1076,7 +1054,6 @@ static void failed_tandem_relay(int idx)
 {
   int uidx = (-1), i;
 
-  Context;
   for (i = 0; i < dcc_total; i++)
     if ((dcc[i].type == &DCC_PRE_RELAY) &&
 	(dcc[i].u.relay->sock == dcc[idx].sock))
@@ -1124,7 +1101,6 @@ void tandem_relay(int idx, char *nick, register int i)
   struct bot_addr *bi;
   struct chat_info *ci;
 
-  Context;
   u = get_user_by_handle(userlist, nick);
   if (!u || !(u->flags & USER_BOT)) {
     dprintf(idx, "%s %s\n", nick, BOT_BOTUNKNOWN);
@@ -1186,7 +1162,6 @@ static void tandem_relay_resolve_failure(int idx)
   struct chat_info *ci;
   register int uidx = (-1), i;
 
-  Context;
   for (i = 0; i < dcc_total; i++)
     if ((dcc[i].type == &DCC_PRE_RELAY) &&
 	(dcc[i].u.relay->sock == dcc[idx].sock)) {
@@ -1208,14 +1183,12 @@ static void tandem_relay_resolve_failure(int idx)
   dcc[uidx].type = &DCC_CHAT;
   killsock(dcc[idx].sock);
   lostdcc(idx);
-  Context;
 }
 
 static void tandem_relay_resolve_success(int i)
 {
   int sock = dcc[i].u.dns->ibuf;
 
-  Context;
   dcc[i].addr = dcc[i].u.dns->ip;
   changeover_dcc(i, &DCC_FORK_RELAY, sizeof(struct relay_info));
   dcc[i].u.relay->chat = get_data_ptr(sizeof(struct chat_info));
@@ -1241,7 +1214,6 @@ static void pre_relay(int idx, char *buf, register int i)
 {
   register int tidx = (-1);
 
-  Context;
   for (i = 0; i < dcc_total; i++)
     if ((dcc[i].type == &DCC_FORK_RELAY) &&
 	(dcc[i].u.relay->sock == dcc[idx].sock)) {
@@ -1264,7 +1236,6 @@ static void pre_relay(int idx, char *buf, register int i)
     lostdcc(idx);
     return;
   }
-  Context;
   if (!egg_strcasecmp(buf, "*bye*")) {
     /* Disconnect */
     struct chat_info *ci = dcc[idx].u.relay->chat;
@@ -1281,7 +1252,6 @@ static void pre_relay(int idx, char *buf, register int i)
     lostdcc(tidx);
     return;
   }
-  Context;
 }
 
 /* User disconnected before her relay had finished connecting
@@ -1290,7 +1260,6 @@ static void failed_pre_relay(int idx)
 {
   register int tidx = (-1), i;
 
-  Context;
   for (i = 0; i < dcc_total; i++)
     if ((dcc[i].type == &DCC_FORK_RELAY) &&
 	(dcc[i].u.relay->sock == dcc[idx].sock)) {
@@ -1337,7 +1306,6 @@ static void cont_tandem_relay(int idx, char *buf, register int i)
   register int uidx = (-1);
   struct relay_info *ri;
 
-  Context;
   for (i = 0; i < dcc_total; i++)
     if ((dcc[i].type == &DCC_PRE_RELAY) &&
 	(dcc[i].u.relay->sock == dcc[idx].sock))
@@ -1399,7 +1367,6 @@ static void eof_dcc_relay(int idx)
   if (dcc[j].u.chat->channel >= 0) {
     chanout_but(-1, dcc[j].u.chat->channel, "*** %s %s.\n",
 		dcc[j].nick, BOT_PARTYREJOINED);
-    Context;
     if (dcc[j].u.chat->channel < 100000)
       botnet_send_join_idx(j, -1);
   }
@@ -1491,7 +1458,6 @@ static void dcc_relaying(int idx, char *buf, int j)
   if (dcc[idx].u.relay->chat->channel >= 0) {
     chanout_but(-1, dcc[idx].u.relay->chat->channel,
 		"*** %s joined the party line.\n", dcc[idx].nick);
-    Context;
     if (dcc[idx].u.relay->chat->channel < 100000)
       botnet_send_join_idx(idx, -1);
   }
@@ -1620,7 +1586,6 @@ void check_botnet_pings()
   int bots, users;
   tand_t *bot;
 
-  Context;
   for (i = 0; i < dcc_total; i++)
     if (dcc[i].type == &DCC_BOT)
       if (dcc[i].status & STAT_PINGED) {
@@ -1638,13 +1603,11 @@ void check_botnet_pings()
 	killsock(dcc[i].sock);
 	lostdcc(i);
       }
-  Context;
   for (i = 0; i < dcc_total; i++)
     if (dcc[i].type == &DCC_BOT) {
       botnet_send_ping(i);
       dcc[i].status |= STAT_PINGED;
     }
-  Context;
   for (i = 0; i < dcc_total; i++)
     if ((dcc[i].type == &DCC_BOT) && (dcc[i].status & STAT_LEAF)) {
       tand_t *bot, *via = findbot(dcc[i].nick);
@@ -1678,7 +1641,6 @@ void check_botnet_pings()
 	  dcc[i].status &= ~STAT_WARNED;
       }
     }
-  Context;
 }
 
 void zapfbot(int idx)
@@ -1704,7 +1666,6 @@ void restart_chons()
   int i;
 
   /* Dump party line members */
-  Context;
   for (i = 0; i < dcc_total; i++) {
     if (dcc[i].type == &DCC_CHAT) {
       check_tcl_chon(dcc[i].nick, dcc[i].sock);
@@ -1716,5 +1677,4 @@ void restart_chons()
     check_tcl_chjn(party[i].bot, party[i].nick, party[i].chan,
 		   party[i].flag, party[i].sock, party[i].from);
   }
-  Context;
 }

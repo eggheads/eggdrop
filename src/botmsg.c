@@ -5,7 +5,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: botmsg.c,v 1.17 2000/09/13 20:49:39 fabian Exp $
+ * $Id: botmsg.c,v 1.18 2001/01/16 17:13:20 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -373,8 +373,6 @@ void botnet_send_unlinked(int idx, char *bot, char *args)
 {
   int l;
 
-  Context;
-
   if (tands > 0) {
     l = simple_sprintf(OBUF, "un %s %s\n", bot, args ? args : "");
     send_tand_but(idx, OBUF, l);
@@ -552,7 +550,6 @@ void botnet_send_idle(int idx, char *bot, int sock, int idle, char *away)
 {
   int l;
 
-  Context;
   if (tands > 0) {
     l = simple_sprintf(OBUF, "i %s %D %D %s\n", bot, sock, idle,
 		       away ? away : "");
@@ -641,7 +638,6 @@ void botnet_send_join_party(int idx, int linking, int useridx, int oldchan)
 {
   int l;
 
-  Context;
   if (tands > 0) {
     l = simple_sprintf(OBUF, "j %s%s %s %D %c%D %s\n", linking ? "!" : "",
 		       party[useridx].bot, party[useridx].nick,

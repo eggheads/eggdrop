@@ -1,7 +1,7 @@
 /* 
  * tclirc.c -- part of irc.mod
  * 
- * $Id: tclirc.c,v 1.16 2000/09/09 11:37:53 fabian Exp $
+ * $Id: tclirc.c,v 1.17 2001/01/16 17:13:23 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -36,13 +36,11 @@ static int tcl_chanlist STDVAR
 		     user = {FR_CHAN | FR_GLOBAL | FR_BOT, 0, 0, 0, 0, 0};
 
   BADARGS(2, 3, " channel ?flags?");
-  Context;
   chan = findchan_by_dname(argv[1]);
   if (!chan) {
     Tcl_AppendResult(irp, "invalid channel: ", argv[1], NULL);
     return TCL_ERROR;
   }
-  Context;
   m = chan->channel.member;
   if (argc == 2) {
     /* No flag restrictions so just whiz it thru quick */
@@ -292,7 +290,6 @@ static int tcl_getchanhost STDVAR
   struct chanset_t *thechan = NULL;
   memberlist *m;
 
-  Context;
   BADARGS(2, 3, " nickname ?channel?");	/* drummer */
   if (argv[2]) {
     thechan = findchan_by_dname(argv[2]);
@@ -301,7 +298,6 @@ static int tcl_getchanhost STDVAR
       return TCL_ERROR;
     }
   }
-  Context;
   chan = chanset;
   while (chan != NULL) {
     m = ismember(chan, argv[1]);
@@ -460,7 +456,6 @@ static int tcl_channame2dname STDVAR
 {
   struct chanset_t *chan;
 
-  Context;
   BADARGS(2, 2, " channel-name");
   chan = findchan(argv[1]);
   if (chan) {
@@ -476,7 +471,6 @@ static int tcl_chandname2name STDVAR
 {
   struct chanset_t *chan;
 
-  Context;
   BADARGS(2, 2, " channel-dname");
   chan = findchan_by_dname(argv[1]);
   if (chan) {
@@ -586,7 +580,6 @@ static int tcl_resetchan STDVAR
 {
   struct chanset_t *chan;
 
-  Context;
   BADARGS(2, 2, " channel");
   chan = findchan_by_dname(argv[1]);
   if (chan == NULL) {
@@ -601,7 +594,6 @@ static int tcl_topic STDVAR
 {
   struct chanset_t *chan;
 
-  Context;
   BADARGS(2, 2, " channel");
   chan = findchan_by_dname(argv[1]);
   if (chan == NULL) {
@@ -620,7 +612,6 @@ static int tcl_hand2nick STDVAR
   struct chanset_t *thechan = NULL;
   struct userrec *u;
 
-  Context;
   BADARGS(2, 3, " handle ?channel?");	/* drummer */
   if (argv[2]) {
     chan = findchan_by_dname(argv[2]);
@@ -632,7 +623,6 @@ static int tcl_hand2nick STDVAR
   } else {
     chan = chanset;
   }
-  Context;
   while ((chan != NULL) && ((thechan == NULL) || (thechan == chan))) {
     m = chan->channel.member;
     while (m && m->nick[0]) {
@@ -657,7 +647,6 @@ static int tcl_nick2hand STDVAR
   struct chanset_t *thechan = NULL;
   struct userrec *u;
 
-  Context;
   BADARGS(2, 3, " nick ?channel?");	/* drummer */
   if (argv[2]) {
     chan = findchan_by_dname(argv[2]);
@@ -669,7 +658,6 @@ static int tcl_nick2hand STDVAR
   } else {
     chan = chanset;
   }
-  Context;
   while ((chan != NULL) && ((thechan == NULL) || (thechan == chan))) {
     m = ismember(chan, argv[1]);
     if (m) {
@@ -680,7 +668,6 @@ static int tcl_nick2hand STDVAR
     }
     chan = chan->next;
   }
-  Context;
   return TCL_OK;		/* blank */
 }
 
@@ -694,7 +681,6 @@ static int tcl_putkick STDVAR
   char kicknick[512], *nick, *p, *comment = NULL;
   memberlist *m;
 
-  Context;
   BADARGS(3, 4, " channel nick?s? ?comment?");
   chan = findchan_by_dname(argv[1]);
   if (chan == NULL) { 
@@ -741,7 +727,6 @@ static int tcl_putkick STDVAR
   /* Clear out all pending kicks in our local kick queue */
   if (k > 0)
     dprintf(DP_SERVER, "KICK %s %s :%s\n", chan->name, kicknick, comment);
-  Context;
   return TCL_OK;
 }
 
