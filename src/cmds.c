@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  *
- * $Id: cmds.c,v 1.69 2002/01/02 03:46:35 guppy Exp $
+ * $Id: cmds.c,v 1.70 2002/01/08 04:28:59 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1720,7 +1720,7 @@ static void cmd_botattr(struct userrec *u, int idx, char *par)
     if (work[0] != '-')
       dprintf(idx, "Bot flags for %s are now +%s\n", hand, work);
     else
-      dprintf(idx, "No bot flags for %s.\n", hand);
+      dprintf(idx, "There are no bot flags for %s.\n", hand);
   }
   if (chan) {
     user.match = FR_CHAN;
@@ -1731,7 +1731,8 @@ static void cmd_botattr(struct userrec *u, int idx, char *par)
       dprintf(idx, "Bot flags for %s on %s are now +%s\n", hand,
 	      chan->dname, work);
     else
-      dprintf(idx, "No bot flags for %s on %s.\n", hand, chan->dname);
+      dprintf(idx, "There are no bot flags for %s on %s.\n",
+	      hand, chan->dname);
   }
   if (tmpchg)
     nfree(tmpchg);
