@@ -6659,15 +6659,6 @@ EOF
   exit 1
 fi
 
-# Are we using a pre 7.5 Tcl version ?
-TCL_VER_PRE75=`echo $egg_cv_var_tcl_version | $AWK '{split($1, i, "."); if (((i[1] == 7) && (i[2] < 5)) || (i[1] < 7)) print "yes"; else print "no"}'`
-if test "$TCL_VER_PRE75" = "yes"
-then
-  cat >>confdefs.h <<\_ACEOF
-#define HAVE_PRE7_5_TCL 1
-_ACEOF
-fi
-
 # Set variables for Tcl library tests
 TCL_TEST_LIB="$TCLLIBFNS"
 TCL_TEST_OTHERLIBS="-L$TCLLIB $EGG_MATH_LIB"
