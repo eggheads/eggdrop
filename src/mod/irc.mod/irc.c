@@ -2,7 +2,7 @@
  * irc.c -- part of irc.mod
  *   support for channels within the bot 
  * 
- * $Id: irc.c,v 1.30 2000/08/18 01:05:30 fabian Exp $
+ * $Id: irc.c,v 1.31 2000/08/21 18:28:11 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -801,7 +801,7 @@ static int channels_2char STDVAR
 {
   Function F = (Function) cd;
 
-  BADARGS(2, 2, " channel type");
+  BADARGS(3, 3, " channel type");
   CHECKVALIDITY(channels_2char);
   F(argv[1], argv[2]);
   return TCL_OK;
