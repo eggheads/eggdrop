@@ -67,7 +67,7 @@ EGG_EXEEXT
 # (well, what used to be robey's tcl thingies...)
 
 # Latest tested Tcl version to recommend if Tcl isn't found
-tclrecommendver="8.3.1"
+tclrecommendver="8.3.2"
 
 # Site recommended to download Tcl from
 tclrecommendsite="ftp://ftp.scriptics.com/pub/tcl/tcl8_3/"
