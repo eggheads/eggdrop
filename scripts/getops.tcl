@@ -1,7 +1,7 @@
 
-# Getops 2.3
+# Getops 2.3a
 
-# $Id: getops.tcl,v 1.12 2001/07/15 05:26:41 guppy Exp $
+# $Id: getops.tcl,v 1.13 2001/08/08 17:29:59 guppy Exp $
 
 # This script is used for bots to request and give ops to each other.
 # For this to work, you'll need:
@@ -21,6 +21,9 @@
 # hostmasks up-to-date).
 
 # -----------------------------------------------------------------------------
+
+# 2.3a by guppy <guppy@eggheads.org>
+#  - fix for bind need
 
 # 2.3 by guppy <guppy@eggheads.org>
 #  - minor cleanup to use some 1.6 tcl functions
@@ -327,11 +330,7 @@ proc gop_need {chan type} {
  gain_entrance $type $chan
 }
 
-bind need - op gop_need
-bind need - key gop_need
-bind need - invite gop_need
-bind need - unban gop_need
-bind need - limit gop_need
+bind need - * gop_need
 bind bot - gop botnet_request
 bind bot - gop_resp gop_resp
 bind join - * gop_join
@@ -362,4 +361,4 @@ proc gop_join { nick uhost hand chan } {
 
 set getops_loaded 1
 
-putlog "GetOps v2.3 loaded."
+putlog "GetOps v2.3a loaded."
