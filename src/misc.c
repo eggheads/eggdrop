@@ -7,7 +7,7 @@
  *   help system
  *   motd display and %var substitution
  * 
- * $Id: misc.c,v 1.33 2000/12/18 20:18:51 guppy Exp $
+ * $Id: misc.c,v 1.34 2000/12/18 20:24:16 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -461,10 +461,11 @@ void daysdur(time_t now, time_t then, char *out)
     sprintf(out, "for %d day%s", days, (days == 1) ? "" : "s");
     return;
   }
+  strcpy(out, "for ");
   now -= then;
   hrs = (int) (now / 3600);
   mins = (int) ((now - (hrs * 3600)) / 60);
-  sprintf(s, "for %02d:%02d", hrs, mins);
+  sprintf(s, "%02d:%02d", hrs, mins);
   strcat(out, s);
 }
 
