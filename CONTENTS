@@ -1,4 +1,4 @@
-$Id: CONTENTS,v 1.14 2003/12/11 01:23:50 wcc Exp $
+$Id: CONTENTS,v 1.15 2004/01/09 02:01:44 wcc Exp $
 
 Directory Contents - /
 Last revised: April 16, 2003
@@ -31,11 +31,10 @@ Last revised: April 16, 2003
   text/
     This contains the motd and banner files.
 
-  acconfig.h
   aclocal.m4
   config.h.in
   configure
-  configure.in
+  configure.ac
     These are scripts for automatic configure of the bot.
 
   ChangeLog

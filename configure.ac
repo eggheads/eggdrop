@@ -1,12 +1,12 @@
-dnl Process this file with autoconf to produce a configure script.
+dnl configure.ac: this file is processed by autoconf to produce ./configure.
 dnl
-dnl $Id: configure.in,v 1.60 2004/01/09 01:50:22 wcc Exp $
+dnl $Id: configure.ac,v 1.1 2004/01/09 02:01:44 wcc Exp $
 dnl
 
 AC_PREREQ(2.59)
 AC_INIT([Eggdrop],[1.6.16],[bugs@eggheads.org])
 AC_COPYRIGHT([Copyright (C) 1999, 2000, 2001, 2002, 2003 Eggheads Development Team])
-AC_REVISION($Revision: 1.60 $)
+AC_REVISION($Revision: 1.1 $)
 AC_CONFIG_SRCDIR(src/eggdrop.h)
 AC_CONFIG_AUX_DIR(misc)
 AC_CONFIG_HEADER(config.h)
@@ -74,7 +74,6 @@ EGG_CHECK_LIBSAFE_SSCANF
 EGG_EXEEXT
 
 # Begin Tcl checks
-
 # Latest tested Tcl version to recommend if Tcl isn't found
 tclrecommendver="8.3.4"
 
@@ -92,8 +91,7 @@ tcllibextensions=".so .so.1 .so.1.0 .so.1.2 .a .sl .dll .dylib"
 # Tcl library search paths
 tcllibpaths="/usr/local/lib /usr/local/pkgs/tcl/lib \
 	/usr/lib /lib /usr/i486-linuxaout/lib \
-	/beos/system/lib /sys/lib \
-	$HOME/lib $HOME/tcl/lib $HOME"
+	/beos/system/lib /sys/lib $HOME/lib $HOME/tcl/lib $HOME"
 
 # Tcl header filenames
 tclheadernames="tcl.h"
@@ -120,7 +118,6 @@ EGG_TCL_ENABLE_THREADS
 EGG_TCL_CHECK_THREADS
 EGG_TCL_LIB_REQS
 EGG_TCL_LUSH
-
 # End Tcl checks
 
 EGG_FUNC_DLOPEN
