@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  *
- * $Id: server.c,v 1.98 2003/03/07 03:36:10 wcc Exp $
+ * $Id: server.c,v 1.99 2003/03/07 04:40:46 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1685,11 +1685,11 @@ static int server_expmem()
       tot += strlen(s->pass) + 1;
     if (s->realname)
       tot += strlen(s->realname) + 1;
-    if (realservername)
-      tot += strlen(realservername) + 1;
     tot += sizeof(struct server_list);
   }
 
+  if (realservername)
+    tot += strlen(realservername) + 1;
   tot += msgq_expmem(&mq) + msgq_expmem(&hq) + msgq_expmem(&modeq);
 
   return tot;
