@@ -1,7 +1,7 @@
 /* 
  * transfer.c -- part of transfer.mod
  * 
- * $Id: transfer.c,v 1.24 2000/01/11 13:37:19 per Exp $
+ * $Id: transfer.c,v 1.25 2000/01/14 12:15:30 per Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -451,7 +451,7 @@ static void eof_dcc_send(int idx)
 	  (dcc[x].type->flags & DCT_BOT))
 	y = x;
     if (y) {
-      putlog(LOG_BOTS, "*", "Lost userfile transfer to %s; aborting.",
+      putlog(LOG_BOTS, "*", "Lost userfile transfer from %s; aborting.",
 	     dcc[y].nick);
       unlink(dcc[idx].u.xfer->filename);
       /* drop that bot */

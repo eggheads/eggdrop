@@ -9,7 +9,7 @@
  * dprintf'ized, 27oct1995
  * multi-channel, 8feb1996
  * 
- * $Id: chan.c,v 1.52 2000/01/08 21:23:16 per Exp $
+ * $Id: chan.c,v 1.53 2000/01/14 12:15:30 per Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -505,7 +505,7 @@ static void recheck_exempts(struct chanset_t * chan) {
       while (b && b->mask[0]) {
         if ((wild_match(b->mask, e->mask) || wild_match(e->mask, b->mask)) &&
             !isexempted(chan, e->mask))
-          do_mask(chan, chan->channel.exempt, e->mask, 'e');
+	  add_mode(chan,'+','e',e->mask);
         b = b->next;
       }
     }
@@ -523,7 +523,7 @@ static void recheck_invites(struct chanset_t * chan) {
        * only) or invite is sticky */
       if (!isinvited(chan, ir->mask) && ((!channel_dynamicinvites(chan) &&
           !(chan->channel.mode & CHANINV)) || ir->flags & MASKREC_STICKY))
-        do_mask(chan, chan->channel.invite, ir->mask, 'I');
+	add_mode(chan, '+', 'I', ir->mask);
     }
   }
 }

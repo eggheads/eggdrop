@@ -7,7 +7,7 @@
  * 
  * dprintf'ized, 15nov1995
  * 
- * $Id: main.c,v 1.38 2000/01/08 21:23:14 per Exp $
+ * $Id: main.c,v 1.39 2000/01/14 12:15:30 per Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -808,7 +808,7 @@ int main(int argc, char **argv)
     dcc[n].user = get_user_by_handle(userlist, "HQ");
     /* make sure there's an innocuous HQ user if needed */
     if (!dcc[n].user) {
-      adduser(userlist, "HQ", "none", "-", USER_PARTY);
+      userlist = adduser(userlist, "HQ", "none", "-", USER_PARTY);
       dcc[n].user = get_user_by_handle(userlist, "HQ");
     }
     setsock(STDOUT, 0);		/* entry in net table */
