@@ -2,7 +2,7 @@
  * lang.h
  *   Conversion definitions for language support
  * 
- * $Id: lang.h,v 1.13 2000/06/20 21:41:22 fabian Exp $
+ * $Id: lang.h,v 1.14 2000/06/21 22:28:13 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -26,8 +26,8 @@
 #ifndef _EGG_LANG_H
 #define _EGG_LANG_H
 
-#define USAGE			get_language(0x001)
-#define FAILED			get_language(0x002)
+#define MISC_USAGE		get_language(0x001)
+#define MISC_FAILED		get_language(0x002)
 
 /* Userfile messages
  */

@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  * 
- * $Id: cmds.c,v 1.33 2000/06/20 19:54:54 fabian Exp $
+ * $Id: cmds.c,v 1.34 2000/06/21 22:28:13 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -2274,7 +2274,7 @@ static void cmd_loadmod(struct userrec *u, int idx, char *par)
      }
   Context;
   if (!par[0]) {
-    dprintf(idx, "%s: loadmod <module>\n", USAGE);
+    dprintf(idx, "%s: loadmod <module>\n", MISC_USAGE);
   } else {
     p = module_load(par);
     if (p)
@@ -2298,7 +2298,7 @@ static void cmd_unloadmod(struct userrec *u, int idx, char *par)
      }
   Context;
   if (!par[0]) {
-    dprintf(idx, "%s: unloadmod <module>\n", USAGE);
+    dprintf(idx, "%s: unloadmod <module>\n", MISC_USAGE);
   } else {
     p = module_unload(par, dcc[idx].nick);
     if (p)
