@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  * 
- * $Id: chan.c,v 1.23 2000/01/17 22:36:09 fabian Exp $
+ * $Id: chan.c,v 1.24 2000/01/22 23:01:55 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -394,7 +394,7 @@ static void refresh_ban_kick(struct chanset_t *chan, char *user, char *nick)
 	c[0] = 0;
 	if (u->desc && (u->desc[0] != '@')) {
 	  if (strcmp(IRC_PREBANNED, ""))
-	    sprintf(c, "%s: %s", IRC_PREBANNED, u->desc);
+	    sprintf(c, "%s%s", IRC_PREBANNED, u->desc);
 	  else
 	    sprintf(c, "%s", u->desc);
 	}
