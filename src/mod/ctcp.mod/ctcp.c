@@ -2,7 +2,7 @@
  * ctcp.c -- part of ctcp.mod
  *   all the ctcp handling (except DCC, it's special ;)
  *
- * $Id: ctcp.c,v 1.17 2002/01/02 03:46:38 guppy Exp $
+ * $Id: ctcp.c,v 1.18 2002/06/06 18:52:23 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -227,11 +227,11 @@ char *ctcp_start(Function * global_funcs)
   module_register(MODULE_NAME, ctcp_table, 1, 0);
   if (!module_depend(MODULE_NAME, "eggdrop", 106, 0)) {
     module_undepend(MODULE_NAME);
-    return "You need an eggdrop of at least v1.6.0 to use this ctcp module.";
+    return "This module requires Eggdrop 1.6.0 or later.";
   }
   if (!(server_funcs = module_depend(MODULE_NAME, "server", 1, 0))) {
     module_undepend(MODULE_NAME);
-    return "You need the server module to use the ctcp module.";
+    return "This module requires server module 1.0 or later.";
   }
   add_tcl_strings(mystrings);
   add_tcl_ints(myints);

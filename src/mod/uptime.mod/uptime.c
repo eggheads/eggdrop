@@ -1,5 +1,5 @@
 /*
- * $Id: uptime.c,v 1.23 2002/05/11 06:55:39 guppy Exp $
+ * $Id: uptime.c,v 1.24 2002/06/06 18:52:26 wcc Exp $
  *
  * This module reports uptime information about your bot to http://uptime.eggheads.org. The
  * purpose for this is to see how your bot rates against many others (including EnergyMechs
@@ -221,7 +221,7 @@ char *uptime_start(Function * global_funcs)
     module_register(MODULE_NAME, uptime_table, 1, 2);
     if (!module_depend(MODULE_NAME, "eggdrop", 106, 11)) {
       module_undepend(MODULE_NAME);
-      return "This module requires eggdrop1.6.11 or later";
+      return "This module requires Eggdrop 1.6.11 or later.";
     }
 
     add_hook(HOOK_HOURLY, (Function) check_hourly);

@@ -1,7 +1,7 @@
 /*
  * share.c -- part of share.mod
  *
- * $Id: share.c,v 1.63 2002/01/02 08:06:16 tothwolf Exp $
+ * $Id: share.c,v 1.64 2002/06/06 18:52:25 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -2194,15 +2194,15 @@ char *share_start(Function *global_funcs)
   module_register(MODULE_NAME, share_table, 2, 3);
   if (!module_depend(MODULE_NAME, "eggdrop", 106, 0)) {
     module_undepend(MODULE_NAME);
-    return "You need an eggdrop of at least v1.6.0 to use this share module.";
+    return "This module requires Eggdrop 1.6.0 or later.";
   }
   if (!(transfer_funcs = module_depend(MODULE_NAME, "transfer", 2, 0))) {
     module_undepend(MODULE_NAME);
-    return "You need the transfer module to use userfile sharing.";
+    return "This module requires transfer module 2.0 or later.";
   }
   if (!(channels_funcs = module_depend(MODULE_NAME, "channels", 1, 0))) {
     module_undepend(MODULE_NAME);
-    return "You need the channels module to use userfile sharing";
+    return "This module requires channels module 1.0 or later.";
   }
   add_hook(HOOK_SHAREOUT, (Function) shareout_mod);
   add_hook(HOOK_SHAREIN, (Function) sharein_mod);

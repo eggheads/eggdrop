@@ -2,7 +2,7 @@
  * channels.c -- part of channels.mod
  *   support for channels within the bot
  *
- * $Id: channels.c,v 1.62 2002/04/16 19:56:33 guppy Exp $
+ * $Id: channels.c,v 1.63 2002/06/06 18:52:22 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -927,7 +927,7 @@ char *channels_start(Function * global_funcs)
   module_register(MODULE_NAME, channels_table, 1, 0);
   if (!module_depend(MODULE_NAME, "eggdrop", 106, 7)) {
     module_undepend(MODULE_NAME);
-    return "This module needs eggdrop1.6.7 or later";
+    return "This module requires Eggdrop 1.6.7 or later.";
   }
   add_hook(HOOK_MINUTELY, (Function) check_expired_bans);
   add_hook(HOOK_MINUTELY, (Function) check_expired_exempts);

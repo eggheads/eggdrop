@@ -2,7 +2,7 @@
  * blowfish.c -- part of blowfish.mod
  *   encryption and decryption of passwords
  *
- * $Id: blowfish.c,v 1.22 2002/05/04 06:47:37 guppy Exp $
+ * $Id: blowfish.c,v 1.23 2002/06/06 18:52:22 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -472,7 +472,7 @@ char *blowfish_start(Function *global_funcs)
     module_register(MODULE_NAME, blowfish_table, 2, 1);
     if (!module_depend(MODULE_NAME, "eggdrop", 106, 3)) {
       module_undepend(MODULE_NAME);
-      return "This module requires eggdrop1.6.3 or later";
+      return "This module requires Eggdrop 1.6.3 or later.";
     }
     add_hook(HOOK_ENCRYPT_PASS, (Function) blowfish_encrypt_pass);
     add_hook(HOOK_ENCRYPT_STRING, (Function) encrypt_string);
