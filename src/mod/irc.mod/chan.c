@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  *
- * $Id: chan.c,v 1.100 2002/10/23 04:11:33 wcc Exp $
+ * $Id: chan.c,v 1.101 2002/11/23 19:40:49 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -95,7 +95,7 @@ static char *getchanmode(struct chanset_t *chan)
     s[i++] = 'R';
   if (atr & CHANTOPIC)
     s[i++] = 't';
-  if (atr & CHANMODR)
+  if (atr & CHANMODREG)
     s[i++] = 'M';
   if (atr & CHANLONLY)
     s[i++] = 'r';
@@ -663,9 +663,9 @@ static void recheck_channel_modes(struct chanset_t *chan)
       add_mode(chan, '+', 'R', "");
     else if (mns & CHANREGON && cur & CHANREGON)
       add_mode(chan, '-', 'R', "");
-    if (pls & CHANMODR && !(cur & CHANMODR))
+    if (pls & CHANMODREG && !(cur & CHANMODREG))
       add_mode(chan, '+', 'M', "");
-    else if (mns & CHANMODR && cur & CHANMODR)
+    else if (mns & CHANMODREG && cur & CHANMODREG)
       add_mode(chan, '-', 'M', "");
     if (pls & CHANLONLY && !(cur & CHANLONLY))
       add_mode(chan, '+', 'r', "");
@@ -893,7 +893,7 @@ static int got324(char *from, char *msg)
     if (msg[i] == 'R')
       chan->channel.mode |= CHANREGON;
     if (msg[i] == 'M')
-      chan->channel.mode |= CHANMODR;
+      chan->channel.mode |= CHANMODREG;
     if (msg[i] == 'r')
       chan->channel.mode |= CHANLONLY;
     if (msg[i] == 't')

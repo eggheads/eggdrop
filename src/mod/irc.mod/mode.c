@@ -4,7 +4,7 @@
  *   channel mode changes and the bot's reaction to them
  *   setting and getting the current wanted channel modes
  *
- * $Id: mode.c,v 1.65 2002/08/10 02:24:49 wcc Exp $
+ * $Id: mode.c,v 1.66 2002/11/23 19:40:49 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1068,7 +1068,7 @@ static int gotmode(char *from, char *origmsg)
 	    reversing = 1;
 	  break;
 	case 'M':
-	  todo = CHANMODR;
+	  todo = CHANMODREG;
 	  if ((!nick[0]) && (bounce_modes))
 	    reversing = 1;
 	  break;
