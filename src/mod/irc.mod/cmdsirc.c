@@ -2,7 +2,7 @@
  * chancmds.c -- part of irc.mod
  *   handles commands direclty relating to channel interaction
  * 
- * $Id: cmdsirc.c,v 1.15 2000/06/20 20:54:00 fabian Exp $
+ * $Id: cmdsirc.c,v 1.16 2000/07/12 21:51:32 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -853,33 +853,29 @@ static void cmd_deluser(struct userrec *u, int idx, char *par)
 {
   char *nick, s[1024];
   struct chanset_t *chan;
-  memberlist *m;
+  memberlist *m = NULL;
   struct flag_record victim = {FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0};
 
   if (!par[0]) {
     dprintf(idx, "Usage: deluser <nick>\n");
     return;
   }
-  chan = findchan_by_dname(dcc[idx].u.chat->con_chan);
-  if (!chan) {
-    dprintf(idx, "Your console channel is invalid.\n");
-    return;
-  }
-  if (!channel_active(chan)) {
-    dprintf(idx, "I'm not on %s!\n", chan->dname);
-    return;
-  }
   nick = newsplit(&par);
-  m = ismember(chan, nick);
+
+  for (chan = chanset; chan; chan = chan->next) {
+    m = ismember(chan, nick);
+    if (m)
+      break;
+  }
   if (!m) {
-    dprintf(idx, "%s is not on %s.\n", nick, chan->dname);
+    dprintf(idx, "%s is not on any channels I monitor\n", nick);
     return;
   }
   get_user_flagrec(u, &user, chan->dname);
-  simple_sprintf(s, "%s!%s", m->nick, m->userhost);
+  egg_snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
   u = get_user_by_host(s);
   if (!u) {
-    dprintf(idx, "%s is not in a valid user.\n", nick);
+    dprintf(idx, "%s is not a valid user.\n", nick);
     return;
   }
   get_user_flagrec(u, &victim, NULL);
@@ -903,6 +899,7 @@ static void cmd_deluser(struct userrec *u, int idx, char *par)
     dprintf(idx, "Can't delete a bot!\n");
   } else {
     char buf[HANDLEN + 1];
+
     strncpy(buf, u->handle, HANDLEN);
     buf[HANDLEN] = 0;
     if (deluser(u->handle)) {
