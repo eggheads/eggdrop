@@ -7,7 +7,7 @@
  *   help system
  *   motd display and %var substitution
  *
- * $Id: misc.c,v 1.39 2001/04/12 02:39:43 guppy Exp $
+ * $Id: misc.c,v 1.40 2001/06/01 22:00:05 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1393,13 +1393,8 @@ void remove_gunk(char *par)
  */
 char *extracthostname(char *hostmask)
 {
-  char *ptr = strrchr(hostmask, '@');
-
-  if (ptr) {
-    ptr = ptr + 1;
-    return ptr;
-  }
-  return "";
+  char *p = strrchr(hostmask, '@');
+  return p ? p + 1 : "";
 }
 
 /* Show banner to telnet user (very simialer to show_motd)
