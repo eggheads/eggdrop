@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  *
- * $Id: server.c,v 1.101 2003/04/01 05:33:41 wcc Exp $
+ * $Id: server.c,v 1.102 2003/04/16 21:25:16 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -943,6 +943,7 @@ static void add_server(char *ss)
 
     x->next = 0;
     x->realname = 0;
+    x->port = 0;
     if (z)
       z->next = x;
     else
