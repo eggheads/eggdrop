@@ -7,7 +7,7 @@
  *   (non-Tcl) procedure lookups for msg/dcc/file commands
  *   (Tcl) binding internal procedures to msg/dcc/file commands
  *
- * $Id: tclhash.c,v 1.29 2001/09/23 20:17:47 guppy Exp $
+ * $Id: tclhash.c,v 1.30 2001/09/25 23:11:59 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -207,8 +207,8 @@ extern cmd_t C_dcc[];
 static int tcl_bind();
 
 static cd_tcl_cmd cd_cmd_table[] = {
-	{"bind", tcl_bind, (void *)0},
-	{"unbind", tcl_bind, (void *)1}
+  {"bind", tcl_bind, (void *)0},
+  {"unbind", tcl_bind, (void *)1}
 };
 
 void init_bind(void)

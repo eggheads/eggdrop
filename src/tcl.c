@@ -4,7 +4,7 @@
  *   Tcl initialization
  *   getting and setting Tcl/eggdrop variables
  *
- * $Id: tcl.c,v 1.38 2001/09/24 04:25:40 guppy Exp $
+ * $Id: tcl.c,v 1.39 2001/09/25 23:11:59 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -291,111 +291,115 @@ static char *tcl_eggstr(ClientData cdata, Tcl_Interp *irp, char *name1,
 
 #if ((TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 1)) || (TCL_MAJOR_VERSION > 8)
 
-static int utf_converter(ClientData cdata, Tcl_Interp *myinterp, int objc, Tcl_Obj *CONST objv[])
+static int utf_converter(ClientData cdata, Tcl_Interp *myinterp, int objc,
+			 Tcl_Obj *CONST objv[])
 {
-	char **strings, *byteptr;
-	int i, len, retval, *intarray, diff;
-	Function func;
-	ClientData cd;
+  char **strings, *byteptr;
+  int i, len, retval, *intarray, diff;
+  Function func;
+  ClientData cd;
 
-	strings = (char **)nmalloc(sizeof(char *) * objc);
-	diff = utftot;
-	utftot += sizeof(char *) * objc;
-	for (i = 0; i < objc; i++) {
-		byteptr = (char *)Tcl_GetByteArrayFromObj(objv[i], &len);
-		strings[i] = (char *)nmalloc(len+1);
-		utftot += len+1;
-		strncpy(strings[i], byteptr, len);
-		strings[i][len] = 0;
-	}
-	intarray = (int *)cdata;
-	func = (Function) intarray[0];
-	cd = (ClientData) intarray[1];
-	diff -= utftot;
-	retval = func(cd, myinterp, objc, strings);
-	for (i = 0; i < objc; i++) nfree(strings[i]);
-	nfree(strings);
-	utftot += diff;
-	return(retval);
+  strings = (char **)nmalloc(sizeof(char *) * objc);
+  diff = utftot;
+  utftot += sizeof(char *) * objc;
+  for (i = 0; i < objc; i++) {
+    byteptr = (char *)Tcl_GetByteArrayFromObj(objv[i], &len);
+    strings[i] = (char *)nmalloc(len+1);
+    utftot += len+1;
+    strncpy(strings[i], byteptr, len);
+    strings[i][len] = 0;
+  }
+  intarray = (int *)cdata;
+  func = (Function) intarray[0];
+  cd = (ClientData) intarray[1];
+  diff -= utftot;
+  retval = func(cd, myinterp, objc, strings);
+  for (i = 0; i < objc; i++) nfree(strings[i]);
+  nfree(strings);
+  utftot += diff;
+  return(retval);
 }
 
 void cmd_delete_callback(ClientData cdata)
 {
-	nfree(cdata);
-	clientdata_stuff -= sizeof(int) * 2;
+  nfree(cdata);
+  clientdata_stuff -= sizeof(int) * 2;
 }
 
-void add_tcl_commands(tcl_cmds *tab)
+void add_tcl_commands(tcl_cmds *table)
 {
-	int *cdata;
+  int *cdata;
 
-	while (tab->name) {
-		cdata = (int *)nmalloc(sizeof(int) * 2);
-		clientdata_stuff += sizeof(int) * 2;
-		cdata[0] = (int) tab->func;
-		cdata[1] = (int) NULL;
-		Tcl_CreateObjCommand(interp, tab->name, utf_converter, (ClientData) cdata, cmd_delete_callback);
-		tab++;
-	}
+  while (table->name) {
+    cdata = (int *)nmalloc(sizeof(int) * 2);
+    clientdata_stuff += sizeof(int) * 2;
+    cdata[0] = (int) table->func;
+    cdata[1] = (int) NULL;
+    Tcl_CreateObjCommand(interp, table->name, utf_converter, (ClientData) cdata,
+			 cmd_delete_callback);
+    table++;
+  }
 }
 
 void add_cd_tcl_cmds(cd_tcl_cmd *table)
 {
-	int *cdata;
+  int *cdata;
 
-	while (table->name) {
-		cdata = (int *)nmalloc(sizeof(int) * 2);
-		clientdata_stuff += sizeof(int) * 2;
-		cdata[0] = (int) table->callback;
-		cdata[1] = (int) table->cdata;
-		Tcl_CreateObjCommand(interp, table->name, utf_converter, (ClientData) cdata, cmd_delete_callback);
-		table++;
-	}
+  while (table->name) {
+    cdata = (int *)nmalloc(sizeof(int) * 2);
+    clientdata_stuff += sizeof(int) * 2;
+    cdata[0] = (int) table->callback;
+    cdata[1] = (int) table->cdata;
+    Tcl_CreateObjCommand(interp, table->name, utf_converter, (ClientData) cdata, 
+			 cmd_delete_callback);
+    table++;
+  }
 }
 
 #else
 
-void add_tcl_commands(tcl_cmds *tab)
+void add_tcl_commands(tcl_cmds *table)
 {
   int i;
 
-  for (i = 0; tab[i].name; i++)
-    Tcl_CreateCommand(interp, tab[i].name, tab[i].func, NULL, NULL);
+  for (i = 0; table[i].name; i++)
+    Tcl_CreateCommand(interp, table[i].name, table[i].func, NULL, NULL);
 }
 
 void add_cd_tcl_cmds(cd_tcl_cmd *table)
 {
-	while (table->name) {
-		Tcl_CreateCommand(interp, table->name, table->callback, (ClientData) table->cdata, NULL);
-		table++;
-	}
+  while (table->name) {
+    Tcl_CreateCommand(interp, table->name, table->callback, 
+		      (ClientData) table->cdata, NULL);
+    table++;
+  }
 }
 
 #endif
 
-void rem_tcl_commands(tcl_cmds *tab)
+void rem_tcl_commands(tcl_cmds *table)
 {
   int i;
 
-  for (i = 0; tab[i].name; i++)
-    Tcl_DeleteCommand(interp, tab[i].name);
+  for (i = 0; table[i].name; i++)
+    Tcl_DeleteCommand(interp, table[i].name);
 }
 
 void rem_cd_tcl_cmds(cd_tcl_cmd *table)
 {
-	while (table->name) {
-		Tcl_DeleteCommand(interp, table->name);
-		table++;
-	}
+  while (table->name) {
+    Tcl_DeleteCommand(interp, table->name);
+    table++;
+  }
 }
 
-void add_tcl_objcommands(tcl_cmds *tab)
+void add_tcl_objcommands(tcl_cmds *table)
 {
 #if (TCL_MAJOR_VERSION >= 8)
   int i;
 
-  for (i = 0; tab[i].name; i++)
-    Tcl_CreateObjCommand(interp, tab[i].name, tab[i].func, (ClientData) 0, NULL);
+  for (i = 0; table[i].name; i++)
+    Tcl_CreateObjCommand(interp, table[i].name, table[i].func, (ClientData) 0, NULL);
 #endif
 }
 
