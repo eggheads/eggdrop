@@ -322,6 +322,7 @@
 /* 232 - 235 */
 #define contextnote(note) (global[232](MODULE_NAME, __FILE__, __LINE__, note))
 #define assert_failed (global[233])
+#define protect_readonly (*(int *)(global[234]))
 
 #define ASSERT(expr) { if (!(expr)) assert_failed (MODULE_NAME, __FILE__, __LINE__); }
 

@@ -16,6 +16,10 @@
 # now, and you need to redo the config file every time, using your last
 # config file as a model.
 
+# IMPORTANT: Remember to make install and cd to the directory it created
+# (~/eggdrop by default) before you continue, running the bot from
+# eggdrop1.3.xx/ will not work.
+
 ##### GENERAL STUFF #####
 
 # the username the bot uses, this is only used if identd isn't working
@@ -782,6 +786,7 @@ set max-bans 20
 set max-modes 30
 
 # [0/1] define this to allow modes from non-op users (ChanServ)
+# or if you use services like X/W to avoid fake op messages
 set allow-desync 0
 
 # [0/1] Do you want the bot to kick bogus usernames?
@@ -808,7 +813,7 @@ set ban-fun 0
 set learn-users 0
 
 # time (in seconds) to wait for someone to return from a netsplit
-set wait-split 300
+set wait-split 600
 
 # time (in seconds) that someone must have been off-channel before
 # re-displaying their info

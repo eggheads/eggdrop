@@ -1099,15 +1099,25 @@ static int tcl_channel_modify(Tcl_Interp * irp, struct chanset_t *chan,
 	x++;
     }
   }
-  if (((oldstatus ^ chan->status) & CHAN_INACTIVE) && module_find("irc", 0, 0)) {
-    if (channel_inactive(chan) && (chan->status & (CHAN_ACTIVE + CHAN_PEND)))
-      dprintf(DP_SERVER, "PART %s\n", chan->name);
-    if (!channel_inactive(chan) && !(chan->status & (CHAN_ACTIVE + CHAN_PEND)))
-      dprintf(DP_SERVER, "JOIN %s %s\n", chan->name, chan->key_prot);
+  /* if protect_readonly == 0 and chan_hack == 0 then
+     bot is now processing the configfile, so dont do anything,
+     we've to wait the channelfile that maybe override these settings
+     (note: it may cause problems if there is no chanfile!)
+     <drummer/1999/10/21>
+  */
+  if (protect_readonly || chan_hack) {
+    if (((oldstatus ^ chan->status) & CHAN_INACTIVE) &&
+        module_find("irc", 0, 0)) {
+      if (channel_inactive(chan) && (chan->status & (CHAN_ACTIVE | CHAN_PEND)))
+        dprintf(DP_SERVER, "PART %s\n", chan->name);
+      if (!channel_inactive(chan) && !(chan->status & (CHAN_ACTIVE | CHAN_PEND)))
+        dprintf(DP_SERVER, "JOIN %s %s\n", chan->name, chan->key_prot);
+    }
+    if ((oldstatus ^ chan->status) &
+        (CHAN_ENFORCEBANS | CHAN_OPONJOIN | CHAN_BITCH | CHAN_AUTOVOICE))
+      if ((me = module_find("irc", 0, 0)))
+        (me->funcs[IRC_RECHECK_CHANNEL])(chan, 1);
   }
-  if ((oldstatus ^ chan->status) & (CHAN_ENFORCEBANS+CHAN_OPONJOIN+CHAN_BITCH+CHAN_AUTOVOICE))
-    if ((me = module_find("irc", 0, 0)))
-      (me->funcs[IRC_RECHECK_CHANNEL])(chan, 1);
   if (x > 0) 
     return TCL_ERROR;
   return TCL_OK;

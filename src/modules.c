@@ -66,6 +66,7 @@ extern int force_expire; /* Rufus */
 extern int do_restart;
 extern time_t now, online_since;
 extern struct chanset_t *chanset;
+extern int protect_readonly;
 int cmd_die(), xtra_kill(), xtra_unpack();
 static int module_rename(char *name, char *newname);
 
@@ -471,6 +472,7 @@ Function global_table[] =
   /* 232 - 235 */
   (Function) mod_contextnote,
   (Function) assert_failed,
+  (Function) & protect_readonly, /* int */
 };
 
 void init_modules(void)

@@ -384,27 +384,24 @@ static void got_op(struct chanset_t *chan, char *nick, char *from,
       add_mode(chan, '-', 'o', who);
   } else if (reversing && !match_my_nick(who))
     add_mode(chan, '-', 'o', who);
-  if ((chan_wasoptest(victim) || glob_wasoptest(victim) ||
-      chan_autoop(victim) || glob_autoop(victim) ||
-      channel_autoop(chan) ||	/* drummer */
-      channel_wasoptest(chan)) && !match_my_nick(who)) {
-    /* 1.3.21 behavior: wasop test needed for stopnethack */
-    if (!nick[0] && !chan_wasop(m) &&
-	me_op(chan) && channel_stopnethack(chan)) {
-      add_mode(chan, '-', 'o', who);
-      m->flags |= FAKEOP;
-    } else {
-      m->flags &= ~FAKEOP;
+  if (!nick[0] && me_op(chan) && !match_my_nick(who)) {
+    if (channel_stopnethack(chan) &&
+    !(chan_op(victim) || (glob_op(victim) && !chan_deop(victim)))) {
+      if (chan_wasoptest(victim) || glob_wasoptest(victim) ||
+      channel_wasoptest(chan)) {
+        if (!chan_wasop(m)) {
+          add_mode(chan, '-', 'o', who);
+          m->flags |= FAKEOP;
+        }
+      } else {
+        add_mode(chan, '-', 'o', who);
+        m->flags |= FAKEOP;
+      }
     }
-  } else {			/* 1.3.20 behavior: wasop test unwanted
-				 * for stopnethack */
-    if (!nick[0] &&
-	!(chan_op(victim) || (glob_op(victim) && !chan_deop(victim))) &&
-	me_op(chan) && channel_stopnethack(chan) && !match_my_nick(who)) {
+    if (!channel_stopnethack(chan) &&
+    (chan_deop(victim) || (glob_deop(victim) && !chan_op(victim)))) {
       add_mode(chan, '-', 'o', who);
       m->flags |= FAKEOP;
-    } else {
-      m->flags &= ~FAKEOP;
     }
   }
   m->flags &= ~WASOP;
