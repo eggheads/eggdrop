@@ -11512,8 +11512,8 @@ echo "${ECHO_T}" >&6
     fi
     echo "$as_me:$LINENO: result: If you experiance any problems compiling Eggdrop, please read the" >&5
 echo "${ECHO_T}If you experiance any problems compiling Eggdrop, please read the" >&6
-    echo "$as_me:$LINENO: result: compile guide, found in doc/COMPILE-FAQ." >&5
-echo "${ECHO_T}compile guide, found in doc/COMPILE-FAQ." >&6
+    echo "$as_me:$LINENO: result: compile guide, found in doc/COMPILE-GUIDE." >&5
+echo "${ECHO_T}compile guide, found in doc/COMPILE-GUIDE." >&6
     echo "$as_me:$LINENO: result: " >&5
 echo "${ECHO_T}" >&6
   fi
