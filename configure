@@ -2623,6 +2623,16 @@ echo "configure:2599: checking for Tcl version" >&5
   fi
 fi # option 
 
+  echo $ac_n "checking if tcl is statically linked""... $ac_c" 1>&6
+echo "configure:2628: checking if tcl is statically linked" >&5
+  if test `file -L $TCLLIB/lib$TCLLIBFN | awk '{print $10}'` = statically
+   then
+    echo "$ac_t""yes" 1>&6
+    DEFAULT_MAKE=static
+   else
+    echo "$ac_t""no (good)" 1>&6
+  fi
+
   if test $need_dl = 1 -a "${ac_cv_func_dlopen}" = "no"
   then
     if test "$LINUX" = "yes"

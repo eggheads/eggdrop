@@ -493,6 +493,15 @@ else
   fi
 fi # option 
 
+  AC_MSG_CHECKING(if tcl is statically linked)
+  if test `file -L $TCLLIB/lib$TCLLIBFN | awk '{print $10}'` = statically
+   then
+    AC_MSG_RESULT(yes, making static)
+    DEFAULT_MAKE=static
+   else
+    AC_MSG_RESULT(no (good))
+  fi
+
   if test $need_dl = 1 -a "${ac_cv_func_dlopen}" = "no"
   then
     if test "$LINUX" = "yes"
