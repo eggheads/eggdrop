@@ -1,7 +1,7 @@
 /*
  * tclirc.c -- part of irc.mod
  *
- * $Id: tclirc.c,v 1.21 2001/06/30 06:29:56 guppy Exp $
+ * $Id: tclirc.c,v 1.22 2001/06/30 14:51:16 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -300,7 +300,6 @@ static int tcl_getchanhost STDVAR
       Tcl_AppendResult(irp, m->userhost, NULL);
       return TCL_OK;
     }
-    chan = chan->next;
   }
   return TCL_OK;
 }
