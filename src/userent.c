@@ -681,20 +681,17 @@ static int xtra_set(struct userrec *u, struct user_entry *e, void *buf)
       break;
     }
   }
-  if (y && (!z->data || (z != y) || !z->data[0])) {
+  if (y && (!z->data || (z != y))) {
     nfree(y->key);
     nfree(y->data);
     list_delete((struct list_type **) (&e->u.extra),
 		(struct list_type *) y);
     nfree(y);
   }
-  
-  if (z->data && z->data[0] && (z != y))
+  if (z->data && (z != y))
     list_insert((&e->u.extra), z);
-  
   if (!noshare && !(u->flags & (USER_BOT | USER_UNSHARED)))
-    shareout(NULL, "c XTRA %s %s %s\n", u->handle, z->key,
-	     z->data ? z->data : "");
+    shareout(NULL, "c XTRA %s %s %s\n", u->handle, z->key, z->data ? z->data : "");
   return TCL_OK;
 }
 
@@ -1020,9 +1017,9 @@ static int hosts_set(struct userrec *u, struct user_entry *e, void *buf)
   if (!buf || !strcasecmp(buf, "none")) {
     contextnote("SEGV with sharing bug track");
     /* when the bot crashes, it's in this part, not in the 'else' part */
-    contextnote(e ? "e is valid" : "e is NULL!");
     contextnote((e->u.list) ? "e->u.list is valid" : "e->u.list is NULL!");
-    if (e) {
+      contextnote(e ? "e is valid" : "e is NULL!");
+      if (e) {
       list_type_kill(e->u.list);
       contextnote("SEGV with sharing bug track - added 99/03/26");
       e->u.list = NULL;
