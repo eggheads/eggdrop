@@ -1,40 +1,51 @@
 %{help=help}
-DCC COMMANDS for %B, %V:
-%b  who          away         quit         whom         me%b
-%b  page         match        motd         bots         newpass%b
-%b  chat         handle       whoami       echo         strip%b
-%b  su           trace        fixcodes     bottree      vbottree%b
-%b  botinfo      relay        -host%b
+DCC commands for %B, %V:
+   For all users:
+      %bwho          away         quit         whom%b
+      %bme           page         match        motd%b
+      %bbots         newpass      chat         handle%b
+      %bwhoami       echo         strip        su%b
+      %btrace        fixcodes     bottree      vbottree%b
+      %bbotinfo      relay        -host%b
 %{o|o}
-For ops:
-%b  addlog       console      match        whois%b
+   For ops:
+      %baddlog       console      match        whois%b
 %{+t}
-For botnet masters:
-%b  +bot         botattr      chhandle     chpass       +host%b
-%b  -bot         link         chaddr       boot         %b
-%b  unlink       banner       dccstat%b
+   For botnet masters:
+      %b+bot         botattr      chhandle     chpass%b
+      %b+host        -bot         link         chaddr%b
+      %bboot         unlink       banner       dccstat%b
 %{+m|m}
-For masters:
-%b  chattr       save         backup       reload       status%b
-%b  traffic      uptime%b
+   For channel masters:
+      %bchattr       save         backup       reload%b
+      %bstatus       traffic      uptime%b
 %{+m}
-%b  +user        +ignore      comment      binds        ignores%b
-%b  -user        -ignore      dccstat      debug        rehash%b
-%b  restart      module%b
+   For global masters:
+      %b+user        +ignore      comment      binds%b
+      %bignores      -user        -ignore      dccstat%b
+      %bdebug        rehash       restart      module%b
 %{+n}
-For owners:
-%b  die          simul        loadmod      unloadmod    language%b
-%b  set          tcl          rehelp       modules      +lang%b
-%b  -lang        +lsec        -lsec        lstat        relang%b
-%b  ldump%b
+   For owners:
+      %bdie          simul        loadmod      unloadmod%b
+      %blanguage     set          tcl          rehelp%b
+      %bmodules      +lang        -lang        +lsec%b
+      %b-lsec        lstat        relang       ldump%b
 %{-}
 All commands begin with '.', and all else goes to the party line.
-%{+m}Text starting with ',' is sent ONLY to bot-masters.%{end}
-You can get help on individual commands: %b'.help <command>'%b
+%{+m}
+
+Text starting with ',' is sent ONLY to bot-masters.
+%{-}
+
+You can get help on individual commands: %b'.help <command>'%b.
+%{+n}
 Extra help relating to loaded modules may be obtained by typing
 %b'.help <module> module'%b. Possible modules include:
-%b  assoc        channels     console      transfer     irc%b
-%b  filesys      notes        seen         server       share%b
+   %bassoc      channels     compress      console      ctcp%b
+   %bfilesys    irc          notes         seen         server%b
+   %bshare      transfer     uptime        wire%b
+%{-}
+
 You may receive a list of commands provided by all loaded modules by
 using %b'.help all'%b. If you only remember a part of the command's
 name you are searching for, just use wildcards (e.g. %b'.help *bot*'%b),
