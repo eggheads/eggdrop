@@ -554,6 +554,9 @@ specific commands, see later.
     returns: list of nicknames currently on the bot's channel that have all
        of the flags specified; if no flags are given, all of the nicknames
        are returned
+    Please note, that if you're executing chanlist after a part or sign bind,
+    the gone user will still be listed so you can check for wasop, isop, etc.
+   
 
   getchanidle <nickname> <channel>
     returns: number of minutes that person has been idle; "0" if the speci-

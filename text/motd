@@ -21,9 +21,17 @@ try %b.help set motd%b (please edit the %bmotd%b file in your bot's directory)
 If you need help with this eggdrop you can go
 to the following help channels:
 
-#eggdrop@Undernet
-#bothelp@Ircnet
-#egghelp@Efnet
+  Undernet - #eggdrop
+  EFNet - #eggheads, #eggtcl
+  IRCNet - #eggdrop, #bothelp
+
+  However, if you are going to ask some questions there, we can give
+  you some important advices:
+    - don't ask if you may ask or anyone awake, just ask and wait
+    - don't msg people without their agreement, if they know help and 
+      have time, they will answer.
+    - don't repeat yourself. This will result in being kicked
+    - don't use !!, colours or only CAPITAL letters.
 
 try %.help% to get help
     %.help all% to get the full command list
