@@ -5,7 +5,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: botmsg.c,v 1.11 2000/03/23 23:17:54 fabian Exp $
+ * $Id: botmsg.c,v 1.12 2000/05/06 21:59:24 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -779,7 +779,7 @@ int add_note(char *to, char *from, char *msg, int idx, int echo)
   /* note length + PRIVMSG header + nickname + date  must be <512  */
   p = strchr(to, '@');
   if (p != NULL) {		/* Cross-bot note */
-    char x[20];
+    char x[21];
 
     *p = 0;
     strncpy(x, to, 20);
