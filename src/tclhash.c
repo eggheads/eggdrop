@@ -7,7 +7,7 @@
  *   (non-Tcl) procedure lookups for msg/dcc/file commands
  *   (Tcl) binding internal procedures to msg/dcc/file commands
  *
- * $Id: tclhash.c,v 1.31 2002/01/02 03:46:36 guppy Exp $
+ * $Id: tclhash.c,v 1.32 2002/01/02 20:23:40 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -746,10 +746,6 @@ int check_tcl_bind(tcl_bind_list_t *tl, const char *match,
 	  if (match_type & BIND_ALTER_ARGS) {
 	    if (interp->result == NULL || !interp->result[0])
 	      return x;
-	    /* This is such an amazingly ugly hack: */
-	    Tcl_SetVar(interp, "_a", (char *) interp->result, 0);
-	    /* Note: If someone knows what the above tries to
-	       achieve, please tell me! (Fabian, 2000-10-14) */
 	  } else if ((match_type & BIND_WANTRET) && x == BIND_EXEC_LOG)
 	    return x;
 	}
