@@ -1,7 +1,7 @@
 ]dnl aclocal.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: aclocal.m4,v 1.7 2000/02/27 19:21:40 guppy Exp $
+dnl $Id: aclocal.m4,v 1.8 2000/03/05 16:18:03 guppy Exp $
 dnl
 AC_DEFUN(EGG_MSG_CONFIGURE_START, [dnl
 AC_MSG_RESULT()
@@ -688,6 +688,7 @@ dnl
 dnl
 AC_DEFUN(EGG_TCL_CHECK_VERSION, [dnl
 # Both TCLLIBFN & TCLINCFN must be set, or we bail
+TCL_FOUND=0
 if test ! "x${TCLLIBFN}" = "x" && test ! "x${TCLINCFN}" = "x"
 then
   TCL_FOUND=1
@@ -753,7 +754,7 @@ dnl
 AC_DEFUN(EGG_TCL_CHECK_PRE70, [dnl
 # Is this version of Tcl too old for us to use ?
 TCL_VER_PRE70=`echo $egg_cv_var_tcl_version | $AWK '{split([$]1, i, "."); if (i[[1]] < 7) print "yes"; else print "no"}'`
-if test "$TCL_VER_PRE70" = "xyes"
+if test "x$TCL_VER_PRE70" = "xyes"
 then
   cat << EOF >&2
 configure: error:
