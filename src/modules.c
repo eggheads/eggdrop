@@ -4,7 +4,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: modules.c,v 1.29 2000/05/23 21:06:16 guppy Exp $
+ * $Id: modules.c,v 1.30 2000/05/29 02:29:09 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -683,7 +683,10 @@ const char *module_load(char *name)
     return e;
   }
   check_tcl_load(name);
-  putlog(LOG_MISC, "*", "%s %s", MOD_LOADED, name);
+  if (exist_lang_section(name))
+    putlog(LOG_MISC, "*", MOD_LOADED_WITH_LANG, name);
+  else
+    putlog(LOG_MISC, "*", MOD_LOADED, name);
   Context;
   return NULL;
 }

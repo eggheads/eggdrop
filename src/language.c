@@ -2,7 +2,7 @@
  * language.c -- handles:
  *   language support code
  * 
- * $Id: language.c,v 1.13 2000/01/08 21:23:14 per Exp $
+ * $Id: language.c,v 1.14 2000/05/29 02:29:09 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -94,6 +94,7 @@ static void recheck_lang_sections(void);
 static void read_lang(char *);
 void add_lang_section(char *);
 int del_lang_section(char *);
+int exist_lang_section(char *);
 static char *get_specific_langfile(char *, lang_sec *);
 static char *get_langfile(lang_sec *);
 static int split_lang(char *, char **, char **);
@@ -133,7 +134,7 @@ void add_lang(char *lang)
   if (langpriority)
     lp->next = langpriority;
   langpriority = lp;
-  putlog(LOG_MISC, "*", "LANG: Language loaded: %s", lang);
+  debug1("LANG: Language loaded: %s", lang);
 }
 
 /* remove a language from the list of preferred languages. */
@@ -152,8 +153,7 @@ static int del_lang(char *lang)
       if (lp->lang)
         nfree(lp->lang);
       nfree(lp);
-      putlog(LOG_MISC, "*", "LANG: Language unloaded: %s",
-	     lang); 
+      debug1("LANG: Language unloaded: %s", lang); 
       return 1;
     }
     lpo = lp;
@@ -262,8 +262,11 @@ static void read_lang(char *langfile)
 	ctmp = ltext;
 	ctmp1 = ltext;
 	while (*ctmp1) {
-	  if (*ctmp1 == '\\' && *(ctmp1 + 1) == 'n') {
+	  if ((*ctmp1 == '\\') && (*(ctmp1 + 1) == 'n')) {
 	    *ctmp = '\n';
+	    ctmp1++;
+	  } else if ((*ctmp1 == '\\') && (*(ctmp1 + 1) == 't')) {
+	    *ctmp = '\t';
 	    ctmp1++;
 	  } else
 	    *ctmp = *ctmp1;
@@ -285,10 +288,21 @@ static void read_lang(char *langfile)
   nfree(ltext);
   fclose(FLANG);
 
-  putlog(LOG_MISC, "*", "LANG: %d messages of %d lines loaded from %s",
-	 ltexts, lline, langfile);
-  putlog(LOG_MISC, "*", "LANG: %d adds, %d updates to message table",
-	 ladd, lupdate);
+  debug3("LANG: %d messages of %d lines loaded from %s", ltexts, lline,
+	 langfile);
+  debug2("LANG: %d adds, %d updates to message table", ladd, lupdate);
+}
+
+/* Returns 1 if the section exists, otherwise 0.
+ */
+int exist_lang_section(char *section)
+{
+  lang_sec *ls;
+
+  for (ls = langsection; ls; ls = ls->next)
+    if (!strcmp(section, ls->section))
+      return 1;
+  return 0;
 }
 
 /* Add a new language section. e.g. section "core"
@@ -297,17 +311,14 @@ static void read_lang(char *langfile)
 void add_lang_section(char *section)
 {
   char *langfile = NULL;
-  lang_sec *ls = langsection, *ols = NULL;
+  lang_sec	*ls, *ols = NULL;
   int ok = 0;
 
   Context;
-  while (ls) {
+  for (ls = langsection; ls; ols = ls, ls = ls->next)
     /* already know of that section? */
     if (!strcmp(section, ls->section))
       return;
-    ols = ls;
-    ls = ls->next;
-  }
 
   /* create new section entry */
   ls = nmalloc(sizeof(lang_sec));
@@ -321,7 +332,7 @@ void add_lang_section(char *section)
     ols->next = ls;
   else
     langsection = ls;
-  putlog(LOG_MISC, "*", "LANG: Section loaded: %s", section);  
+  debug1("LANG: Section loaded: %s", section);
   /* Always load base language */
   langfile = get_specific_langfile(BASELANG, ls);
   if (langfile) {
@@ -343,9 +354,9 @@ void add_lang_section(char *section)
 
 int del_lang_section(char *section)
 {
-  lang_sec *ls = langsection, *ols = NULL;
+  lang_sec *ls, *ols = NULL;
 
-  while (ls) {
+  for (ls = langsection, ols = NULL; ls; ols = ls, ls = ls->next) 
     if (ls->section && !strcmp(ls->section, section)) {
       if (ols)
 	ols->next = ls->next;
@@ -355,12 +366,9 @@ int del_lang_section(char *section)
       if (ls->lang)
 	nfree(ls->lang);
       nfree(ls);
-      putlog(LOG_MISC, "*", "LANG: Section unloaded: %s", section);
+      debug1("LANG: Section unloaded: %s", section);
       return 1;
     }
-    ols = ls;
-    ls = ls->next;
-  }
   return 0;
 }
 
@@ -397,9 +405,8 @@ static char *get_langfile(lang_sec *sec)
   Context;
   while (lp) {
     /* there is no need to reload the same language */
-    if (sec->lang && !strcmp(sec->lang, lp->lang)) {
+    if (sec->lang && !strcmp(sec->lang, lp->lang))
       return NULL;
-    }
     langfile = get_specific_langfile(lp->lang, sec);
     if (langfile)
       return langfile;
@@ -654,6 +661,8 @@ static int cmd_languagestatus(struct userrec *u, int idx, char *par)
 static int tcl_language STDVAR
 {
   char *lang, *section, *buf;
+
+  putlog(LOG_MISC, "*", "Tcl cmd 'language' is obsolete. Use 'addlang' instead.");
   BADARGS(2, 2, " language");
 
   buf = nmalloc(strlen(argv[1])+1);

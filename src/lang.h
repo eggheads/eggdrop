@@ -2,7 +2,7 @@
  * lang.h
  *   Conversion definitions for language support
  * 
- * $Id: lang.h,v 1.10 2000/01/30 22:21:18 per Exp $
+ * $Id: lang.h,v 1.11 2000/05/29 02:29:09 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -481,7 +481,6 @@
 #define MOD_ALREADYLOAD	get_language(0x200)
 #define MOD_BADCWD	get_language(0x201)
 #define MOD_NOSTARTDEF	get_language(0x202)
-#define MOD_LOADED	get_language(0x203)
 #define MOD_NEEDED	get_language(0x204)
 #define MOD_NOCLOSEDEF	get_language(0x205)
 #define MOD_UNLOADED	get_language(0x206)
@@ -493,6 +492,8 @@
 #define MOD_STAGNANT	get_language(0x20c)
 #define MOD_NOCRYPT	get_language(0x20d)
 #define MOD_NOFILESYSMOD get_language(0x20e)
+#define MOD_LOADED_WITH_LANG	get_language(0x20f)
+#define MOD_LOADED		get_language(0x210)
 
 #define DCC_NOSTRANGERS	get_language(0xc00)
 #define DCC_REFUSED	get_language(0xc01)
