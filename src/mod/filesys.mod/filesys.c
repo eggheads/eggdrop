@@ -1,4 +1,4 @@
-/* 
+/*
  * This file is part of the eggdrop source code copyright (c) 1997 Robey
  * Pointer and is distributed according to the GNU general public license.
  * For full details, read the top of 'main.c' or the file called COPYING
@@ -635,7 +635,7 @@ static void filesys_dcc_send(char *nick, char *from, struct userrec *u,
 	strcpy(dcc[i].u.xfer->dir, dccin);
       dcc[i].u.xfer->length = atoi(msg);
       sprintf(s1, "%s%s", dcc[i].u.xfer->dir, param);
-      context;      
+      context;
       f = fopen(s1, "r");
       if (f) {
 	fclose(f);
@@ -856,8 +856,8 @@ char *filesys_start(Function * global_funcs)
   module_register(MODULE_NAME, filesys_table, 2, 0);
   if (!(transfer_funcs = module_depend(MODULE_NAME, "transfer", 2, 0)))
     return "You need the transfer module to user the file system.";
-  if (!module_depend(MODULE_NAME, "eggdrop", 103, 15))
-    return "You need at least eggdrop1.3.15 to run this module.";
+  if (!module_depend(MODULE_NAME, "eggdrop", 104, 0))
+    return "You need at least eggdrop1.4.0 to run this module.";
   add_tcl_commands(mytcls);
   add_tcl_strings(mystrings);
   add_tcl_ints(myints);

@@ -24,7 +24,7 @@ can apply a patch.
 
 II. TERMS USED
 
-The following are some common terms used in this document.  
+The following are some common terms used in this document.
 If applicable, there is also the associated command named.
 
 
@@ -64,7 +64,7 @@ your eggdrop and install the new modules and binaries.
 
 IV	DOWNLOADING A PATCH
 
-All patches for eggdrop1.3.x can be found on ftp.eggheads.org in /pub/eggdrop/patches1.3.
+All patches for eggdrop1.4.x can be found on ftp.eggheads.org in /pub/eggdrop/patches1.4.
 
 
 

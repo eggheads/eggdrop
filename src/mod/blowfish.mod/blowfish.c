@@ -1,8 +1,8 @@
-/* 
+/*
  * blowfish.c - part of blowfish.mod
  * handles: encryption and decryption of passwords
  */
-/* 
+/*
  * The first half of this is very lightly edited from public domain
  * sourcecode.  For simplicity, this entire module will remain public
  * domain.
@@ -145,9 +145,9 @@ static void blowfish_init(UBYTE_08bits * key, int keybytes)
   UWORD_32bits datar;
   union aword temp;
 
-  /* drummer: fixes crash if key is longer than 80 char */  
+  /* drummer: fixes crash if key is longer than 80 char */
   if (keybytes > 80)
-    keybytes = 80; 
+    keybytes = 80;
   /* this may cause key wont end with \00 but it isnt problem */
   /* strNcpy(), strNcmp()... */
 
@@ -391,7 +391,7 @@ static int tcl_encpass STDVAR
     char p[16];
     blowfish_encrypt_pass(argv[1], p);
     Tcl_AppendResult(irp, p, NULL);
-  } else 
+  } else
     Tcl_AppendResult(irp, "", NULL);
   return TCL_OK;
 }
@@ -442,8 +442,8 @@ char *blowfish_start(Function * global_funcs)
     }
     context;
     module_register(MODULE_NAME, blowfish_table, 2, 0);
-    if (!module_depend(MODULE_NAME, "eggdrop", 103, 0))
-      return "This module requires eggdrop1.3.0 or later";
+    if (!module_depend(MODULE_NAME, "eggdrop", 104, 0))
+      return "This module requires eggdrop1.4.0 or later";
     add_hook(HOOK_ENCRYPT_PASS, blowfish_encrypt_pass);
   }
   add_tcl_commands(mytcls);

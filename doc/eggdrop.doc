@@ -17,7 +17,7 @@ Appendices:
 
 
 If you have questions or comments about this file, please send me email
-at <eggdrop@sodre.net> (after subscribing).  Thanks.
+at <eggheads@eggheads.org> (after subscribing).  Thanks.
 
 
 
@@ -226,11 +226,11 @@ at <eggdrop@sodre.net> (after subscribing).  Thanks.
     b  (bot)     marks a user that is really a bot
 
     u  (unshare) user record is not sent to other bots
-  
-    h  (hilite)  use nice bolds & inverse in the help files? 
-    
+
+    h  (hilite)  use nice bolds & inverse in the help files?
+
     Also, there are 26 user-defined flags numbered A-Z (capitals).
-    Bots can have additional flags which are explained later on.  
+    Bots can have additional flags which are explained later on.
     The channel flags for the bot are: (these can also be applied
     globally, or on a channel-specific basis)
 
@@ -253,10 +253,10 @@ at <eggdrop@sodre.net> (after subscribing).  Thanks.
 
     a  (auto-op) automatically op the person when they join the channel
                  even if the channel isnt +autoop
-		 
+
     v  (auto-voice) automatically give this person a voice it they
                  join a +autovoice channel.
-		 
+
     q  (quiet)   do not allow this person to get a voice on a +autovoice
                  channel
 
@@ -285,7 +285,7 @@ at <eggdrop@sodre.net> (after subscribing).  Thanks.
     user joining that channel anywhere on the botnet will be able to chat
     with you, Channels *0-*99,999 are local bot-only channels, only people
     on the current bot you are on can chat to you on there channels.
-    
+
     Commands for the console start with a dot (.), similar to the slash (/)
     used for irc.  At any time you can type ".help" to get a list of the
     possible commands.  To find out what a command does, use ".help
@@ -378,7 +378,7 @@ at <eggdrop@sodre.net> (after subscribing).  Thanks.
 
     There are also 10 user-defined flags (0-9) avaliable for use with
     bots only.
-    
+
     These flags can all be changed by the '.botattr' command just like for
     users.  For example:
        .botattr Valis +sh
@@ -386,7 +386,7 @@ at <eggdrop@sodre.net> (after subscribing).  Thanks.
     There are several chains of connected bots out there.  See the 'nets'
     file for a list of the ones I've heard of...  If the flags above seem
     confusing, don't worry.  Usually the only one you need to worry about
-    is the +h flag.  And most botnets have a policy about what flags you 
+    is the +h flag.  And most botnets have a policy about what flags you
     should set when hooking in, and they'll tell you what to set.
 
 
@@ -397,7 +397,7 @@ at <eggdrop@sodre.net> (after subscribing).  Thanks.
     When you link, one bot is going to lose its userfile!  (It will be
     overwritten by the other bot's userfile.)
 
-    To do userfile sharing, you have to make sure the share module is 
+    To do userfile sharing, you have to make sure the share module is
     loaded. Otherwise, your bot will automatically reject all userfile
     share attempts by other bots.  (It's a safety feature.)
 
@@ -408,7 +408,7 @@ at <eggdrop@sodre.net> (after subscribing).  Thanks.
     and on the PASSIVE you set the ACTIVE +p to idicate passive sharing,
     the bot will only share passively with 1 bot at once, but can
     share actively with any number of bots.
-    
+
     Next go through all the channels you want shared between the 2
     bots and make sure they are +shared in the config file, and also
     that each bot has the other bot make +s for each channel,
@@ -423,7 +423,7 @@ at <eggdrop@sodre.net> (after subscribing).  Thanks.
     for each other.  If they get reconnected within 15 minutes, they can
     resync from the buffers and not have to re-download the userfile.
     ** this may not work reliably ** :(
-    
+
     You can mark a bot both +s and +a (share user files, but only link
     as an alternate).  This is very odd and should probably only be used
     as a backup when you have a lot of bots sharing to one central hub.
@@ -464,9 +464,9 @@ at <eggdrop@sodre.net> (after subscribing).  Thanks.
 (9) LANGUAGE SUPPORT
 
     Large parts of what eggdrop outputs have been translated to other
-    languages. At the moment we have English, French and German; however, 
+    languages. At the moment we have English, French and German; however,
     English is loaded by default.
-    
+
     There are three ways to set your preferred language:
 
     * Set the environment variable EGG_LANG:
@@ -503,7 +503,7 @@ at <eggdrop@sodre.net> (after subscribing).  Thanks.
     apropriately.
 
     csh/tcsh:
-       setenv EGG_LANGDIR <directory> 
+       setenv EGG_LANGDIR <directory>
     bash/ksh:
        export EGG_LANGDIR=<directory>
 
@@ -526,7 +526,7 @@ at <eggdrop@sodre.net> (after subscribing).  Thanks.
     (!) timer drift -- spun N minutes
 
     This is caused by one of several know things..
-    
+
      (a) Your bot was swapped out of memory for a while, or that
      for some reason the computer stopped letting the bot run.  Once a minute,
      eggdrop does a few maintanance things, including counting down any Tcl
@@ -541,10 +541,10 @@ at <eggdrop@sodre.net> (after subscribing).  Thanks.
      can occur if the dns's uplink doesnt exist) then you will get 4/5
      minute time drifts continuously, not much can be done about this,
      it's an operating system problem :(
-    
+
      (c) the clock on your machine has just been changed (e.g. it was running
      behind by several minutes and was just corrected)
-     
+
     (!) killmember(Nickname) -> nonexistant
 
     We have yet to track this down.  It's a mildly bad thing, though.

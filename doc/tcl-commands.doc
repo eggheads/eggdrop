@@ -3,9 +3,12 @@ of the normal Tcl built-in commands are still there, of course.  But you
 can also use these to manipulate features of the bot.  They are listed
 according to category.
 
-NOTICE:  This list is accurate for the v1.3 series of eggdrop!
+NOTICE:  This list is accurate for the v1.4 series of eggdrop! Scripts
+  written for v1.3 series of eggdrop should probably work with a few
+  minor modifications depending on the script.
+
 SCRIPTS WHICH WERE WRITTEN FOR v0.9 OR v1.0 OR v1.1 WILL PROBABLY NOT WORK
-WITHOUT MODIFICATION.  Commands which have been changed in the v1.3 series
+WITHOUT MODIFICATION.  Commands which have been changed in the v1.4 series
 (or are just new commands) are marked with vertical bars on the left.
 
 ***### CORE EGGDROP COMMANDS ###***
@@ -28,7 +31,7 @@ specific commands, see later.
     returns: nothing
 
 | putquick <text>
-|   sends text to the server, like 'dump' (intended for direct server
+|    sends text to the server, like 'dump' (intended for direct server
 |   commands); output is queued so that you won't flood yourself off
 |   the server, using the MODE queue (should be alot faster)
 |   returns: nothing
@@ -62,7 +65,7 @@ specific commands, see later.
 
 | queuesize [queue]
 |   returns: the number of msgs in all queues. If a queue is specified, only
-|     the size of this queue is returned. valid queues are: mode, server, 
+|     the size of this queue is returned. valid queues are: mode, server,
 |     help, or all.
 
 |  clearqueue <queue>
@@ -83,11 +86,11 @@ specific commands, see later.
 
   userlist [flags]
     returns: a list of the handles of users on the bot
-|     you can use the new flag matching system here,
-|     usage: [global]{&/|}[chan]{&/|}[bot]
-|     matchs the flags relvantly, (chan matches vs anywhere), & specifies
-|     and when match, | specifies or, only the first of these is relevant
-|     the default is or.
+      you can use the new flag matching system here,
+      usage: [global]{&/|}[chan]{&/|}[bot]
+      matchs the flags relvantly, (chan matches vs anywhere), & specifies
+      and when match, | specifies or, only the first of these is relevant
+      the default is or.
 
   passwdok <handle> <pass>
     checks the password given against the user's password -- if the user has
@@ -95,38 +98,38 @@ specific commands, see later.
       "" (a blank string) to find out if a user has no password set
     returns: "1" if password matches for that user; "0" if not
 
-| getuser <handle> <entry-type> [extra info]
-|   this is a generic interface to the new generic userfile support, it
-|   return info specific to each entry-type, valid entry types are:
-|     BOTFL - returns the current bot-specific flags for the user
-|             (if it's a bot :)
-|     BOTADDR - (another bot-only thing :) returns a list containing
-|             the bots address, the bots telnet port, and it's relay port.
-|     HOSTS - returns a list of the host for the user
-|     LASTON - returns a list containing the unixtime last seen,
-|             and the last seen place.
-|            OR LASTON #channel returns the time last seen on the channel
-|               or 0 if no info
-|     INFO   - returns the user's global info line
-|     XTRA   - returns the old xtra info
-|     COMMENT - returns the master-visible only comment for the user
-|     EMAIL  - returns the users email address
-|     URL    - returns the users url address
+  getuser <handle> <entry-type> [extra info]
+    this is a generic interface to the new generic userfile support, it
+    return info specific to each entry-type, valid entry types are:
+      BOTFL - returns the current bot-specific flags for the user
+              (if it's a bot :)
+      BOTADDR - (another bot-only thing :) returns a list containing
+              the bots address, the bots telnet port, and it's relay port.
+      HOSTS - returns a list of the host for the user
+      LASTON - returns a list containing the unixtime last seen,
+              and the last seen place.
+             OR LASTON #channel returns the time last seen on the channel
+                or 0 if no info
+      INFO   - returns the user's global info line
+      XTRA   - returns the old xtra info
+      COMMENT - returns the master-visible only comment for the user
+      EMAIL  - returns the users email address
+      URL    - returns the users url address
 
-| setuser <handle> <entry-type> [extra info]
-|   this is the counterpart of getuser, it lets you set the various values
-|   extra ones not supported about :
-|     PASS - use this to set a users password (no 3rd arg will clear it)
-|     HOSTS - for setting hosts, no extra info = clear, otherwise
-|             *1* hostmask is added :P
-|     LASTON - 2 forms:
-|              setuser <handle> laston <unixtime> <place>
-|                 sets global laston time
-|              setuser <handle> laston <unixtime>
-|                 sets global laston time, leaving the place field empty
-|              setuser <handle> laston <unixtime> <channel>
-|                 will set a users laston time in a channel record
-|                 (if it already exists)
+  setuser <handle> <entry-type> [extra info]
+    this is the counterpart of getuser, it lets you set the various values
+    extra ones not supported about :
+      PASS - use this to set a users password (no 3rd arg will clear it)
+      HOSTS - for setting hosts, no extra info = clear, otherwise
+              *1* hostmask is added :P
+      LASTON - 2 forms:
+               setuser <handle> laston <unixtime> <place>
+                  sets global laston time
+               setuser <handle> laston <unixtime>
+                  sets global laston time, leaving the place field empty
+               setuser <handle> laston <unixtime> <channel>
+                  will set a users laston time in a channel record
+                  (if it already exists)
 
   chnick <old-handle> <new-handle>
     changes a user's handle
@@ -137,9 +140,9 @@ specific commands, see later.
     changes the attributes for a user record, if you include any -- changes
       are of the form "+f", "-o", "+dk", "-o+d", etc; if a channel is
       specified, the channel-specific flags for that channel are altered
-|     you can now use the +o|-o #channel format here too.
+      you can now use the +o|-o #channel format here too.
     returns: new flags for the user (if you made no changes, returns current
-      flags); if a channel was specified, the global AND the channel-specific 
+      flags); if a channel was specified, the global AND the channel-specific
       flags for that channel are returned in the format of the new flagging
       system (globalflags|channelflags) -- returns "*" if that user does not
       exist
@@ -148,9 +151,9 @@ specific commands, see later.
     similar to chattr except for bot attributes rather than normal user
     attributes, this includes the channel-specific +s share flag
 
-| matchattr <handle> <flags> [channel]
-|   returns: "1" if the specified user has the matching flags.
-|   (using the new matching system)
+  matchattr <handle> <flags> [channel]
+    returns: "1" if the specified user has the matching flags.
+    (using the new matching system)
 
   adduser <handle> <hostmask>
     creates a new user entry with the handle and hostmask given (with no pass-
@@ -242,13 +245,13 @@ specific commands, see later.
 |   channels); other arguments work exactly like newchaninvite
 |   returns: nothing
 
-| stick <ban> [channel]
-|   makes a ban sticky, or if a channel is specified, then it is set sticky
-|   on that channel. returns: "1" is successful, "0" otherwise
+  stick <ban> [channel]
+    makes a ban sticky, or if a channel is specified, then it is set sticky
+    on that channel. returns: "1" is successful, "0" otherwise
 
-| unstick <ban> [channel]
-|   makes a ban unstuck, or if a channel is specified, then it is unstuck
-|   on that channel. returns: "1" is successful, "0" otherwise
+  unstick <ban> [channel]
+    makes a ban unstuck, or if a channel is specified, then it is unstuck
+    on that channel. returns: "1" is successful, "0" otherwise
 
   killchanban <channel> <ban>
     removes a ban from the enforced ban list for a channel
@@ -418,8 +421,8 @@ specific commands, see later.
 
   channels
     returns: list of the channels the bot is monitoring (or trying to)
- 
-  isbotnick <nick>
+
+| isbotnick <nick>
 |   returns: "1" if the nick matches the botnick; "0" otherwise
 
   botisop <channel>
@@ -517,8 +520,8 @@ specific commands, see later.
        n         (Botowner)
        &n        (Channel owner)
        o&m       (Global op, Channel master)
-|   now you can use even more complex matching of flags, including +&- flags
-|   and & or | (and or or) matching
+    now you can use even more complex matching of flags, including +&- flags
+    and & or | (and or or) matching
     returns: list of nicknames currently on the bot's channel that have all
        of the flags specified; if no flags are given, all of the nicknames
        are returned
@@ -575,11 +578,11 @@ specific commands, see later.
      boot's a user from the partyline
      returns: nothing
 
-| restart
-|   rehash's the bot and kills all timers
-|   note that as this will also unload and reload all the modules, your bot
-|     will also jump servers.
-|   returns: nothing
+  restart
+    rehash's the bot and kills all timers
+    note that as this will also unload and reload all the modules, your bot
+      will also jump servers.
+    returns: nothing
 
   rehash
     rehash's the bot
@@ -660,10 +663,10 @@ specific commands, see later.
   dccused
     returns: number of dcc connections currently in use
 
-|  dcclist ?type?
+  dcclist ?type?
     returns: a list of active connections, each item in the list will be a sublist
-|     of six elements:
-|	{<idx> <handle> <hostname> <type> {<other>} <timestamp>}
+      of six elements:
+ 	{<idx> <handle> <hostname> <type> {<other>} <timestamp>}
 
       the types are: chat, bot, files, file_receiving, file_sending,
       file_send_pending, script, socket (these are connections that have not
@@ -675,8 +678,8 @@ specific commands, see later.
       with six elements: nickname, bot, hostname, access flag ('-', '@',
       '+', or '*'), minutes idle, and away message (blank if the user is
       not away)
-|     if you specify a channel of * every user on the botnet is returned
-|     with an extra argument indicating the channel the user is on
+      if you specify a channel of * every user on the botnet is returned
+      with an extra argument indicating the channel the user is on
 
   getdccidle <idx>
     returns: number of seconds the dcc chat/file system/script user has
@@ -737,11 +740,11 @@ specific commands, see later.
       format of the procedure call); if the proc-name is omitted, no binding
       is added -- instead, the current binding is returned (if it's stackable,
       a list of the current bindings is returned)
-|     yes, you can use the new flag binding method here too, and this is
-|     where it becomes truely phearfull since you may never need to check
-|     attr's inside functions again...imagine:
-|        bind pub -o&+o command command_proc
-|     to only allow channel-spec ops to use it! no problem! works fine!
+      yes, you can use the new flag binding method here too, and this is
+      where it becomes truely phearfull since you may never need to check
+      attr's inside functions again...imagine:
+         bind pub -o&+o command command_proc
+      to only allow channel-spec ops to use it! no problem! works fine!
     returns: name of the command that was added, or (if proc-name was omitted),
       a list of the current bindings for this command
 
@@ -844,8 +847,8 @@ specific commands, see later.
   decrypt <key> <encrypted-base64-string>
     returns: decrypted string (using blowfish)
 
-  encpass <password>
-    returns: encrypted string (using blowfish)
+| encpass <password>
+|   returns: encrypted string (using blowfish)
 
   die [reason]
     causes the bot to log a fatal error and exit completely; if no reason
@@ -887,9 +890,9 @@ GLOBAL VARIABLES:
 | server-online
 |    unixtime value for how long the bot has been on its server
 
-| lastbind
-|   The last command binding which triggered.   This allows you to
-|   identify which command triggered a tcl routine.
+  lastbind
+    The last command binding which triggered.   This allows you to
+    identify which command triggered a tcl routine.
 
 
 COMMAND EXTENSION:
@@ -1005,10 +1008,10 @@ for the msg-command "stop", use "unbind msg - stop msg_stop".
        procname <nick> <user@host> <handle> <channel> <target> <reason>
 
        triggered when someone is kicked off the channel; the <mask> is
-       matched against "#channel target" where the target is the nickname of 
-       the person who got kicked off (can use wildcards); the proc is 
-       called with the nick, user@host, and handle of the kicker, plus the 
-       channel, the nickname of the person who was kicked, and the 
+       matched against "#channel target" where the target is the nickname of
+       the person who got kicked off (can use wildcards); the proc is
+       called with the nick, user@host, and handle of the kicker, plus the
+       channel, the nickname of the person who was kicked, and the
        reason; <flags> is unused here
 
   (13) NICK   (stackable)
@@ -1138,7 +1141,7 @@ for the msg-command "stop", use "unbind msg - stop msg_stop".
        bind link <flags> <mask> <proc>
        proc-name <botname> <via>
 
-       triggered when a bot links into the botnet; botname is the botnetnick 
+       triggered when a bot links into the botnet; botname is the botnetnick
        of the bot that just linked in; via is the bot it linked through; the
        mask is checked against the bot that linked; flags are ignored
 
@@ -1272,7 +1275,7 @@ for the msg-command "stop", use "unbind msg - stop msg_stop".
 
 | (40) EVNT   (stackable)
 |      bind evnt - <type> <proc>
-|      proc-name <type> 
+|      proc-name <type>
 |
 |      triggered whenever one of these events happens. valid events are:
 |        sighup            (called on a kill -HUP <pid>)

@@ -2,7 +2,7 @@
 ###  %bset ignore-time%b <#>
    specifies how long (in minutes) a temporary ignore will last
    on the bot before being purged.
-   
+
 see also: ignores, +ignore, set ban-time
 %{help=set dcc-flood-thr}%{+n}
 ###  %bset dcc-flood-thr%b <#>
@@ -32,7 +32,7 @@ see also: set switch-logfiles-at
    (please note that a leading zero will make it think you're
    specifying the time in octal, which is almost certainly not
    what you want.)
-   
+
 see also: set save-users-at
 %{help=set connect-timeout}%{+n}
 ###  %bset connect-timeout%b <seconds>
@@ -48,7 +48,7 @@ see also: set save-users-at
    go through the peephole.  (normally, DCC file transfers grab
    the nearest unused port.)  there are also various other security
    uses for this.
-   
+
 see also: set firewall
 %{help=set require-p}%{+n}
 ###  %bset require-p%b <0/1>
@@ -93,8 +93,8 @@ see also: set firewall
 ###  %bset numversion%b
    This read-only variable returns the current version in numeric
    form:  abbccdd, where a = major version, bb = minor version,
-   cc = release version, dd = patch version, 
-   so version 1.3.29+pl5 would be 1032905
+   cc = release version, dd = patch version,
+   so version 1.4.0+pl5 would be 1040005
 %{help=set die-on-sighup}%{+n}
 ###  %bset die-on-sighup%b 0/1
    This config-file-only variable determines whether the bot will
@@ -116,12 +116,12 @@ see also: set firewall
    always helps to have a few spare.
 %{help=set max-logs}%{+n}
 ###  %bset max-logs%b <#>
-   This sets the maximum number of log files you can have at any one 
-   time, this value can only ever be increase, and it always helps 
+   This sets the maximum number of log files you can have at any one
+   time, this value can only ever be increase, and it always helps
    to have a few spare.
 %{help=set enable-simul}%{+n}
 ###  %bset enable-simul%b 0/1
-   This questionable setting enables the dccsimul command which 
+   This questionable setting enables the dccsimul command which
    allows tcl to simulate a user typing a command, some scripts
    require it.
 %{help=set protect-telnet}%{+n}

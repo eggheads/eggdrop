@@ -4,7 +4,7 @@ Eggdrop is the most advanced IRC robot available.  It has been under
 development since December 1993, and, unlike most other bots, it is
 still regularly updated.  Its features include:
 
-  * completely different channel user lists like having a seperate bot for 
+  * completely different channel user lists like having a seperate bot for
     each channel.
 
   * complete channel protection, customizable via config file: permanently
@@ -13,12 +13,12 @@ still regularly updated.  Its features include:
   * user records saved on disk and alterable via dcc chat: each user can
     have a password (encrypted), a list of valid hostmasks, a set of access
     flags, etc
-  
+
   * the ability to "learn" new users (if you choose to have the bot do so)
     by letting users /MSG the bot "hello" and granting them automatic access
     of whatever type you specify (or even no access at all)
 
-  * a "party line" available through dcc chat or telnet, with multiple 
+  * a "party line" available through dcc chat or telnet, with multiple
     channels, giving you the ability to talk to people without being affected
     by netsplits
 
@@ -48,7 +48,7 @@ or how to use it -- if you don't know the difference between #channels and
 this bot is not for you.  Choose a simpler bot like Vladbot or Baloobot or
 ComBot, or find one of the many scriptbots to use.
 
-  This is the 1.3.x branch of the Eggdrop Bot.
+  This is the 1.4.xx branch of the Eggdrop Bot.
 
 *** NOTE:
 
@@ -65,7 +65,7 @@ configurations:
 
 MODULE - dynamic
 
-   The MODULE version of Eggdrop 1.3.x provides for the on-the-fly
+   The MODULE version of Eggdrop 1.4.xx provides for the on-the-fly
    loading of extensions to the bot code without having to recompile
    the entire bot.  This is available on OS platforms which support
    dynamically linked/shared libraries in their run-time and TCL
@@ -108,7 +108,7 @@ MODULE - dynamic
                         requires the channels & transfer modules).
         transfer        This module performs the bot-to-bot userfile
                         sharing necessary for sharebots.  It is
-                        loaded automatically when filesys is loaded.  
+                        loaded automatically when filesys is loaded.
         wire            This provides an encrypted partyline
                         communication.
         woobie          This is a example/skeletal module for writing
@@ -116,12 +116,12 @@ MODULE - dynamic
 
 MODULE - static
 
-   The STATIC-MODULE version of Eggdrop 1.3.x is pretty much the same
+   The STATIC-MODULE version of Eggdrop 1.4.xx is pretty much the same
    as the module bot, except each individual module is linked into the
    excutable. You still need to 'loadmodule <module>' to turn them on.
-  
+
 See the file doc/MODULES for more specific MODULE information.
-New to 1.3.0:
+New to 1.4.xx (applies to 1.3.xx also):
 
 **** BOTNET
 
@@ -144,7 +144,7 @@ compatible once written (it can still READ old userlists take note).
 
 **** FLAGS
 
-Flags have multiplied & split up: normal user/channel flags still exist 
+Flags have multiplied & split up: normal user/channel flags still exist
 and are setable by .chattr.  You can also now use .chattr +o|-o #channel.
 New are the "user-defined" flags which are all of A-Z for users & channels.
 Also, bot attributes are seperated now and are set using .botattr.
@@ -157,7 +157,7 @@ userfile.
 *BIG CHANGE* well, big in use, small in code ;)
 
 There are now 2 sharing flags, +p = passive share, +s = aggressive share.
-Your bot will only accept sharing with passively with 1 bot at a time, 
+Your bot will only accept sharing with passively with 1 bot at a time,
 although any number of aggressive shares is fine.
 
 Consider the botnet:
@@ -167,7 +167,7 @@ HubBotA
   `-+HubBotB
        |-+LeafBotB
   `-or `-+LeafBotC
-       
+
 Flags would be set as such:
 
 HubBotA has:
@@ -184,9 +184,9 @@ LeafBotB has:
 LeafBotC has:
    HubBotB : +ph
    HubBotA : +ph
-   
+
 how's that look? :)
 
 **** Installation
 
-  make install DEST=<directory> 
+  make install DEST=<directory>

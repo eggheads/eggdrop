@@ -1,4 +1,4 @@
-/* 
+/*
  * console.c - part of console.mod
  * saved console settings based on console.tcl by
  * cmwagner/billyjoe/D. Senso
@@ -61,7 +61,7 @@ static int console_pack(struct userrec *u, struct user_entry *e)
   ASSERT (e->name == NULL);
 
   ci = (struct console_info *) e->u.extra;
-  
+
   l = simple_sprintf(work, "%s %s %s %d %d %d",
 		     ci->channel, masktype(ci->conflags),
 		     stripmasktype(ci->stripflags), ci->echoflags,
@@ -107,7 +107,7 @@ static int console_set(struct userrec *u, struct user_entry *e, void *buf)
 
   if (!ci && !buf)
     return 1;
-  
+
   if (ci != buf) {
     if (ci) {
       ASSERT (ci->channel != NULL);
@@ -365,8 +365,8 @@ char *console_start(Function * global_funcs)
 
   context;
   module_register(MODULE_NAME, console_table, 1, 1);
-  if (!module_depend(MODULE_NAME, "eggdrop", 103, 0))
-    return "This module requires eggdrop1.3.0 or later";
+  if (!module_depend(MODULE_NAME, "eggdrop", 104, 0))
+    return "This module requires eggdrop1.4.0 or later";
   add_builtins(H_chon, mychon);
   add_builtins(H_dcc, mydcc);
   add_tcl_ints(myints);

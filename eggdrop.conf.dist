@@ -18,7 +18,7 @@
 
 # IMPORTANT: Remember to make install and cd to the directory it created
 # (~/eggdrop by default) before you continue, running the bot from
-# eggdrop1.3.xx/ will not work.
+# eggdrop1.4.xx/ will not work.
 
 ##### GENERAL STUFF #####
 
@@ -324,7 +324,7 @@ set max-dcc 50
 # this setting is so that people can't send fake ports to your bot when
 # they try to dcc it. irc clients should never use a port below 1024 and
 # well 65535 is the highest port possible. this setting is used for telnet
-# too. 
+# too.
 set dcc-portrange 1024:65535
 
 # [0/1] add the 'dccsimul' tcl command (needed by certain scripts like
@@ -377,14 +377,14 @@ set ban-time 120
 # temporary exemptions (+e modes) will last how many minutes? if set to 0,
 # bot never removes them. This is an IRCNET feature. The bot will check the
 # exempts every X minutes, but will not remove the exempt if a ban is set on
-# the channel that matches that exempt. Once the ban is removed then the 
-# exempt will be removed the next time the bot checks. 
+# the channel that matches that exempt. Once the ban is removed then the
+# exempt will be removed the next time the bot checks.
 set exempt-time 60
 
 # temporary invitations (+I modes) will last how many minutes? if set to
 # 0, bot never removes them. This is an IRCNET feature. The bot will check the
 # invites every X minutes, but will not remove them if the channel is +i. Once
-# the channel is -i then the bot will remove then invite mode next time it 
+# the channel is -i then the bot will remove then invite mode next time it
 # checks this counter
 set invite-time 60
 
@@ -409,12 +409,12 @@ set global-flood-ctcp 3:60
 
 set global-chanset {
         -clearbans      -enforcebans
-        +dynamicbans    +userbans   
-        -autoop         -bitch      
-        +greet          +protectops 
+        +dynamicbans    +userbans
+        -autoop         -bitch
+        +greet          +protectops
         +statuslog      +stopnethack
         -revenge        -secret
-        -autovoice      +cycle 
+        -autovoice      +cycle
         +dontkickops    -wasoptest
         -inactive       -protectfriends
         +shared         -seen
@@ -512,7 +512,7 @@ channel set #lamest +dynamicbans
 channel set #lamest +userbans
 
 #   only activate exempts on the channel when necessary?  (this keeps the
-#   channel's exempt list from getting excessively long.  the bot still 
+#   channel's exempt list from getting excessively long.  the bot still
 #   remembers every exempt, but it only activates a exempt on the channel
 #   when it sees a ban set matching the exempt. The exempt remains active
 #   on the channel for as long as the ban is still active.
@@ -523,9 +523,9 @@ channel set #lamest +dynamicexempts
 channel set #lamest +userexempts
 
 #   only activate invites on the channel when necessary?  (this keeps the
-#   channel's invite list from getting excessively long.  the bot still 
-#   remembers every invite, but the invites are only activated when the 
-#   channel is set to invite only and a user joins aftre requesting an 
+#   channel's invite list from getting excessively long.  the bot still
+#   remembers every invite, but the invites are only activated when the
+#   channel is set to invite only and a user joins aftre requesting an
 #   invite. Once set the invite remains until the channel goes to -i
 channel set #lamest +dynamicinvites
 
@@ -911,7 +911,7 @@ set kick-bogus-invites 0
 # so leave this flag set to 1. The servers will probably change their
 # behaviour in the future, so you should first check before accepting the
 # default.
-set prevent-mixing 1 
+set prevent-mixing 1
 
 ##### IRC MODULE - net-type 5 specific features (other networks) #####
 
@@ -929,10 +929,10 @@ set prevent-mixing 1
 # some networks allow you to stack lots of channel modes into one
 # line.
 # they're all guaranteed to support at least 3, so that's the default,
-# but if you know your network supports more, you may want to adjust  
+# but if you know your network supports more, you may want to adjust
 # this value. this value must be less than or equal to 6.
 # Automatically set to 4 for net-type 0/4, set to 3 for net-type 1, set to
-# 6 for net-type 2/3. 
+# 6 for net-type 2/3.
 # Only use this if you set net-type 5
 #set modes-per-line 3
 

@@ -3,8 +3,8 @@
  / _ \ / _` |/ _` |/ _` | '__|/ _ \| '_ \
 |  __/| (_| | (_| | (_| | |  | (_) | |_) |
  \___| \__, |\__, |\__,_|_|   \___/| .__/
-       |___/ |___/                 |_|     v1.3
-       
+       |___/ |___/                 |_|     v1.4
+
 This is the quick install guide, if you have had little or no
 experience with unix or eggdrop, READ THE README FILE NOW!
 This file is only for experienced users.
@@ -28,13 +28,13 @@ This file is only for experienced users.
        eggdrop.  It will also try to find Tcl, which is required to
        compile.
 
-    2. Type 'make' from the eggdrop directory.  Or to force a statically 
+    2. Type 'make' from the eggdrop directory.  Or to force a statically
        linked module bot type 'make static'.  Otherwise the Makefile will
-       determin which type of bot your system will support.  Dynamic is 
+       determin which type of bot your system will support.  Dynamic is
        aways the better way to go if possible.  And for the brave with
-       off the wall operating systems you can type 'make eggmod' but be 
+       off the wall operating systems you can type 'make eggmod' but be
        warned that it might not work.  If it does please contact the dev
-       team and let them know it did or/and what you did to make it work.  
+       team and let them know it did or/and what you did to make it work.
 
     3. Eggdrop must be installed in a directory somewhere.  This is
        accomplished by entering the unix command:
@@ -49,8 +49,8 @@ This file is only for experienced users.
     5. Start the bot with the "-m" option to create a user file, ie
        'eggdrop -m LamestBot'.
 
-    6. When starting the bot in the future, drop the "-m".  If you have 
-       edited your bot script correctly, you can type: 
+    6. When starting the bot in the future, drop the "-m".  If you have
+       edited your bot script correctly, you can type:
            chmod u+x <my-bot-script-name>
        e.g.
            chmod u+x LamestBot

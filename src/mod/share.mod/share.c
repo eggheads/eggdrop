@@ -85,7 +85,7 @@ static void share_stick_ban(int idx, char *par)
 static void share_stick_exempt (int idx, char * par) {
   char *host, *val;
   int yn;
-  
+
   if (dcc[idx].status & STAT_SHARE) {
     host = newsplit(&par);
     val = newsplit(&par);
@@ -123,7 +123,7 @@ static void share_stick_exempt (int idx, char * par) {
 static void share_stick_invite (int idx, char * par) {
   char *host, *val;
   int yn;
-  
+
   if (dcc[idx].status & STAT_SHARE) {
     host = newsplit(&par);
     val = newsplit(&par);
@@ -423,7 +423,7 @@ static void share_mns_host(int idx, char *par)
     if ((u = get_user_by_handle(userlist, hand)) &&
 	!(u->flags & USER_UNSHARED)) {
       shareout_but(NULL, idx, "-h %s %s\n", hand, par);
-      noshare = 1;      
+      noshare = 1;
       delhost_by_handle(hand, par);
       noshare = 0;
       putlog(LOG_CMDS, "*", "%s: -host %s %s", dcc[idx].nick, hand, par);
@@ -570,7 +570,7 @@ static void share_mns_banchan(int idx, char *par)
 
 static void share_mns_exemptchan (int idx, char * par) {
   char *chname;
-  struct chanset_t *chan;    
+  struct chanset_t *chan;
   if (dcc[idx].status & STAT_SHARE) {
     chname = newsplit(&par);
     chan = findchan(chname);
@@ -589,13 +589,13 @@ static void share_mns_exemptchan (int idx, char * par) {
 	u_delexempt(chan, par,1);
 	noshare = 0;
       }
-    } 
+    }
 }
 
 static void share_mns_invitechan (int idx, char * par) {
   char *chname;
   struct chanset_t *chan;
-  
+
   if (dcc[idx].status & STAT_SHARE) {
     chname = newsplit(&par);
     chan = findchan(chname);
@@ -699,7 +699,7 @@ static void share_pls_exempt (int idx, char * par) {
   time_t expire_time;
   char *exempt, *tm, *from;
   int flags = 0;
-  
+
   if (dcc[idx].status & STAT_SHARE) {
     shareout_but(NULL,idx, "+e %s\n", par);
     noshare = 1;
@@ -726,7 +726,7 @@ static void share_pls_exemptchan (int idx, char * par) {
   int flags = 0;
   struct chanset_t *chan;
   char *exempt, *tm, *chname, *from;
-  
+
   if (dcc[idx].status & STAT_SHARE) {
     exempt = newsplit(&par);
     tm = newsplit(&par);
@@ -734,9 +734,9 @@ static void share_pls_exemptchan (int idx, char * par) {
     chan = findchan(chname);
     fr.match = (FR_CHAN | FR_BOT);
     get_user_flagrec(dcc[idx].user,&fr,chname);
-    if (!chan || !channel_shared(chan) || 
+    if (!chan || !channel_shared(chan) ||
 	!(bot_chan(fr) || bot_global(fr)))
-      putlog(LOG_CMDS, "*", 
+      putlog(LOG_CMDS, "*",
 	     "Channel exempt %s on %s rejected - channel not shared.",
 	     exempt, chname);
     else {
@@ -764,7 +764,7 @@ static void share_pls_invite (int idx, char * par) {
   time_t expire_time;
   char *invite, *tm, *from;
   int flags = 0;
-  
+
   if (dcc[idx].status & STAT_SHARE) {
     shareout_but(NULL,idx, "+inv %s\n", par);
     noshare = 1;
@@ -791,7 +791,7 @@ static void share_pls_invitechan (int idx, char * par) {
   int flags = 0;
   struct chanset_t *chan;
   char *invite, *tm, *chname, *from;
-  
+
   if (dcc[idx].status & STAT_SHARE) {
     invite = newsplit(&par);
     tm = newsplit(&par);
@@ -799,9 +799,9 @@ static void share_pls_invitechan (int idx, char * par) {
      chan = findchan(chname);
      fr.match = (FR_CHAN | FR_BOT);
      get_user_flagrec(dcc[idx].user,&fr,chname);
-     if (!chan || !channel_shared(chan) || 
+     if (!chan || !channel_shared(chan) ||
 	 !(bot_chan(fr) || bot_global(fr)))
-       putlog(LOG_CMDS, "*", 
+       putlog(LOG_CMDS, "*",
 	      "Channel invite %s on %s rejected - channel not shared.",
 	      invite, chname);
      else {
@@ -1907,8 +1907,8 @@ char *share_start(Function * global_funcs)
 
   context;
   module_register(MODULE_NAME, share_table, 2, 0);
-  if (!module_depend(MODULE_NAME, "eggdrop", 103, 13))
-    return "You need an eggdrop of at least v1.3.13 to use this share module.";
+  if (!module_depend(MODULE_NAME, "eggdrop", 104, 0))
+    return "This module needs eggdrop1.4.0 or later";
   if (!(transfer_funcs = module_depend(MODULE_NAME, "transfer", 2, 0))) {
     module_undepend(MODULE_NAME);
     return "You need the transfer module to use userfile sharing.";

@@ -4,7 +4,7 @@
    nickname used on IRC.  if not set, this will default to being
    the same as 'nick'. if the server module is not loaded and
    you don't set a botnet-nick the bot will not start
-   
+
 see also: set nick, set altnick (server module variables)
 %{help=set userfile}%{+n}
 ###  %bset userfile%b <filename>
@@ -67,7 +67,7 @@ see also: set nick, set altnick (server module variables)
 ###  %bset mod-path%b <path>
    Specifies the path to the modules directory for the bot, modules
    are chunks of C code that can be loaded & unloaded from the bot.
-   if you're reading this, it's highly likely you've got this 
+   if you're reading this, it's highly likely you've got this
    setup correctly, the default modules/ is usually sufficient.
 %{help=set notify-newusers}%{+n}
 ###  %bset notify-newusers%b <nickname-list>
@@ -94,7 +94,7 @@ see also: set nick, set altnick (server module variables)
    has multiple hostnames and you would like the bot to use a
    particular one, or if the bot has trouble detecting your
    hostname automatically.
-   
+
 see also: set my-ip
 %{help=set my-ip}%{+n}
 ###  %bset my-ip%b <ip-address>
@@ -103,7 +103,7 @@ see also: set my-ip
    machine has multiple IPs and you would like the bot to use
    a particular one, or if the bot has trouble detecing your
    IP automatically.
-   
+
 see also: set my-hostname
 %{help=set nat-ip}%{+n}
 ###  %bset nat-ip%b <ip-address>
@@ -133,8 +133,8 @@ see also: set my-hostname
 see also: set realname
 %{help=set version}%{+n}
 ### %bset version%b
-   this read-only variable returns the current version of the bot 
-   in the form v1.3.0+<lastpatch> <versionnumber> <patch list>.
+   this read-only variable returns the current version of the bot
+   in the form v1.4.0+<lastpatch> <versionnumber> <patch list>.
 %{help=set filewall}%{+n}
 ###  %bset firewall%b <host:port>
    specifies your telnet proxy server if you're behind a firewall.
@@ -143,10 +143,10 @@ see also: set realname
    proxy server.  it may start with a '!' if you're on a sun telnet
    passthru server (this barely works, if at all -- consider using
    socks).
-   
+
 see also: set reserved-port
 %{help=set telnet-flood}%{+n}
 ###  %bset telnet-flood <times:seconds>%b
-   this setting will cause the bot to ignore any futher telnets it 
-   receives from any given host that connects any more than the 
+   this setting will cause the bot to ignore any futher telnets it
+   receives from any given host that connects any more than the
    given times in the given number of seconds

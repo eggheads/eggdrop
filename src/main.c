@@ -1,17 +1,17 @@
-/* 
+/*
  * main.c -- handles:
  * changing nicknames when the desired nick is in use
  * flood detection
  * signal handling
  * command line arguments
- * 
+ *
  * dprintf'ized, 15nov1995
  */
 /*
  * This file is part of the eggdrop source code
  * copyright (c) 1997 Robey Pointer
  * and is distributed according to the GNU general public license.
- * 
+ *
  * Parts of this eggdrop source code are copyright (c)1999 Eggheads
  * and is distributed according to the GNU general public license.
  *
@@ -19,7 +19,7 @@
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -83,8 +83,8 @@ extern int quick_logs;		/* dw */
  * modified versions of this bot.
  */
 
-char egg_version[1024] = "1.3.29";
-int egg_numver = 1032900;
+char egg_version[1024] = "1.4.0";
+int egg_numver = 1040000;
 
 char notify_new[121] = "";	/* person to send a note to for new users */
 int default_flags = 0;		/* default user flags and */
@@ -211,7 +211,7 @@ void write_debug()
 	 cx_line[cx_ptr], cx_note[cx_ptr][0] ? cx_note[cx_ptr] : "");
   putlog(LOG_MISC, "*", "* Please REPORT this BUG!");
   putlog(LOG_MISC, "*", "* Check doc/BUG-REPORT on how to do so.");
-  
+
 x = creat("DEBUG", 0644);
   setsock(x, SOCK_NONSOCK);
   if (x < 0) {

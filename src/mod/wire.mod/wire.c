@@ -1,10 +1,10 @@
-/* 
+/*
  * wire.c   - An encrypted partyline communication.
  *            Compatible with wire.tcl.
  *
- *            by ButchBub - Scott G. Taylor (staylor@mrynet.com) 
+ *            by ButchBub - Scott G. Taylor (staylor@mrynet.com)
  *
- *      REQUIRED: Eggdrop Modules (see dependancies below).  
+ *      REQUIRED: Eggdrop Modules (see dependancies below).
  *                Wire will only compile and work on the latest Required
  *                Eggdrop version listed below.
  *
@@ -590,7 +590,7 @@ char *wire_start(Function * global_funcs)
 
   context;
   module_register(MODULE_NAME, wire_table, 2, 0);
-  if (!module_depend(MODULE_NAME, "eggdrop", 103, 0)) {
+  if (!module_depend(MODULE_NAME, "eggdrop", 104, 0)) {
     module_undepend(MODULE_NAME);
     return WIRE_VERSIONERROR;
   }

@@ -1,8 +1,8 @@
-/* 
+/*
  * assoc.c - the assoc module, moved here mainly from botnet.c
  *           for module work
  */
-/* 
+/*
  * This file is part of the eggdrop source code
  * copyright (c) 1997 Robey Pointer
  * and is distributed according to the GNU general public license.
@@ -431,8 +431,8 @@ char *assoc_start(Function * global_funcs)
 
   context;
   module_register(MODULE_NAME, assoc_table, 2, 0);
-  if (!module_depend(MODULE_NAME, "eggdrop", 103, 0))
-    return "This module requires eggdrop1.3.0 or later";
+  if (!module_depend(MODULE_NAME, "eggdrop", 104, 0))
+    return "This module requires eggdrop1.4.0 or later";
   assoc = NULL;
   add_builtins(H_dcc, mydcc);
   add_builtins(H_bot, mybot);
