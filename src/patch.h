@@ -12,7 +12,7 @@
  *
  *
  */
-PATCH("944059671");	/* current "unix" time */
+PATCH("944495518");	/* current "unix" time */
 /*
  *
  *
@@ -22,7 +22,7 @@ PATCH("CVS");		/* CVS beta */
  *
  *
  */
-PATCH("newconfigure");	/* last patch applied */
+PATCH("configure-with-fixes");	/* last patch applied */
 /*
  *
  *
