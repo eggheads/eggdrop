@@ -151,8 +151,11 @@ void block_dns_hostbyip(IP ip)
     alarm(resolve_timeout);
     hp = gethostbyaddr((char *) &addr, sizeof(addr), AF_INET);
     alarm(0);
-    strncpy(s, hp->h_name, UHOSTLEN - 1);
-    s[UHOSTLEN - 1] = 0;
+    if (hp) {
+      strncpy(s, hp->h_name, UHOSTLEN - 1);
+      s[UHOSTLEN - 1] = 0;
+    } else
+      strcpy(s, iptostr(addr));
   } else {
     hp = NULL;
     strcpy(s, iptostr(addr));
