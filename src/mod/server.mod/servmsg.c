@@ -1,7 +1,7 @@
 /* 
  * servmsg.c -- part of server.mod
  * 
- * $Id: servmsg.c,v 1.33 2000/03/23 23:17:58 fabian Exp $
+ * $Id: servmsg.c,v 1.34 2000/04/13 21:38:42 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -296,6 +296,40 @@ static int got001(char *from, char *msg)
       strcpy(x->realname, from);
     }
   }
+  return 0;
+}
+
+/* Got 442: not on channel
+ */
+static int got442(char *from, char *msg)
+{
+  char *chname;
+  struct chanset_t *chan;
+  struct server_list *x = serverlist;
+  module_entry *me;
+  int i = 0;
+
+  while (x != NULL) {
+    if (i == curserv) {
+      if (strcasecmp(from, x->realname ? x->realname : x->name))
+	return 0;
+      break;
+    }
+    x = x->next;
+    i++;
+  }
+  newsplit(&msg);
+  chname = newsplit(&msg);
+  chan = findchan(chname);
+  if (chan)
+    if (!channel_inactive(chan)) {
+      putlog(LOG_MISC, chname, IRC_SERVNOTONCHAN, chname);
+      me = module_find("channels", 0, 0);
+      if (me && me->funcs)
+	(me->funcs[CHANNEL_CLEAR])(chan, 1);
+      chan->status &= ~CHAN_ACTIVE;
+      dprintf(DP_MODE, "JOIN %s %s\n", chan->name, chan->key_prot);
+    }  
   return 0;
 }
 
@@ -1279,6 +1313,7 @@ static cmd_t my_raw_binds[] =
   {"437",	"",	(Function) got437,		NULL},
   {"438",	"",	(Function) got438,		NULL},
   {"451",	"",	(Function) got451,		NULL},
+  {"442",	"",	(Function) got442,		NULL},
   {"NICK",	"",	(Function) gotnick,		NULL},
   {"ERROR",	"",	(Function) goterror,		NULL},
   {"KICK",	"",	(Function) gotkick,		NULL},
