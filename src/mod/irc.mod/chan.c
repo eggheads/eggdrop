@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  *
- * $Id: chan.c,v 1.111 2003/08/20 04:52:14 wcc Exp $
+ * $Id: chan.c,v 1.112 2003/12/01 02:54:17 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1928,7 +1928,8 @@ static int gotkick(char *from, char *origmsg)
   if (!chan)
     return 0;
   nick = newsplit(&msg);
-  if (match_my_nick(nick) && channel_pending(chan)) {
+  if (match_my_nick(nick) && channel_pending(chan) &&
+      !channel_inactive(chan)) {
     chan->status &= ~(CHAN_ACTIVE | CHAN_PEND);
     dprintf(DP_MODE, "JOIN %s %s\n",
             (chan->name[0]) ? chan->name : chan->dname,
@@ -1971,7 +1972,7 @@ static int gotkick(char *from, char *origmsg)
     putlog(LOG_MODES, chan->dname, "%s kicked from %s by %s: %s", s1,
            chan->dname, from, msg);
     /* Kicked ME?!? the sods! */
-    if (match_my_nick(nick)) {
+    if (match_my_nick(nick) && !channel_inactive(chan)) {
       chan->status &= ~(CHAN_ACTIVE | CHAN_PEND);
       dprintf(DP_MODE, "JOIN %s %s\n",
               (chan->name[0]) ? chan->name : chan->dname,

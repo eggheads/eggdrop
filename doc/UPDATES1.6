@@ -1,10 +1,13 @@
-$Id: UPDATES1.6,v 1.517 2003/11/30 21:39:30 wcc Exp $
+$Id: UPDATES1.6,v 1.518 2003/12/01 02:54:17 wcc Exp $
 
 Changes in Eggdrop: (since v1.6.0)
 ----------------------------------
 
 1.6.16
 Found by     Fixed by  What...
+             BarkerJr/ don't rejoin +inactive channels when kicked from them.
+	     Eule      This can be caused by bot-server connection lag or full 
+		       queues.
              Wcc       uname fix in msg_status; os should display on freebsd now
              Wcc       fixed a buffer overrun in msg_status()
              Wcc       coxmetic fixes to .status, .who, and various msgcmds
