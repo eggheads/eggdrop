@@ -1,12 +1,12 @@
 dnl configure.ac: this file is processed by autoconf to produce ./configure.
 dnl
-dnl $Id: configure.ac,v 1.4 2004/01/18 02:11:39 wcc Exp $
+dnl $Id: configure.ac,v 1.5 2004/04/09 04:18:07 wcc Exp $
 dnl
 
 AC_PREREQ(2.59)
 AC_INIT([Eggdrop],[1.6.16],[bugs@eggheads.org])
 AC_COPYRIGHT([Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004 Eggheads Development Team])
-AC_REVISION($Revision: 1.4 $)
+AC_REVISION($Revision: 1.5 $)
 AC_CONFIG_SRCDIR(src/eggdrop.h)
 AC_CONFIG_AUX_DIR(misc)
 AC_CONFIG_HEADER(config.h)
@@ -82,9 +82,9 @@ tclrecommendver="8.3.4"
 tclrecommendsite="ftp://tcl.activestate.com/pub/tcl/tcl8_3/"
 
 # Tcl library filename prefixes (also used for Tcl header dir on FreeBSD)
-tcllibnames="tcl tcl8.4 tcl84 tcl8.3 tcl83 tcl8.2 tcl82 tcl8.1 tcl81 \
-	tcl8.0 tcl80 tcl7.6 tcl76 tcl7.5 tcl75 tcl7.4 tcl74 \
-	tcl7.3 tcl73 tcl7.2 tcl72 tcl7.1 tcl71 tcl7.0 tcl70"
+tcllibnames="tcl tcl8.5 tcl85 tcl8.4 tcl84 tcl8.3 tcl83 tcl8.2 \
+        tcl82 tcl8.1 tcl81 tcl8.0 tcl80 tcl7.6 tcl76 tcl7.5 tcl75 \
+        tcl7.4 tcl74 tcl7.3 tcl73 tcl7.2 tcl72 tcl7.1 tcl71 tcl7.0 tcl70"
 
 # Tcl library filename suffixes
 tcllibextensions=".so .so.1 .so.1.0 .so.1.2 .a .sl .dll .dylib"
