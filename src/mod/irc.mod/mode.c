@@ -4,7 +4,7 @@
  *   channel mode changes and the bot's reaction to them
  *   setting and getting the current wanted channel modes
  *
- * $Id: mode.c,v 1.71 2003/03/04 08:51:45 wcc Exp $
+ * $Id: mode.c,v 1.72 2003/03/16 05:01:21 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -360,12 +360,18 @@ static void got_key(struct chanset_t *chan, char *nick, char *from, char *key)
   if (!nick[0] && bounce_modes)
     reversing = 1;
 
-  if ((reversing && !chan->key_prot[0]) || ((chan->mode_mns_prot & CHANKEY) &&
-      !(glob_master(user) || glob_bot(user) || chan_master(user)))) {
-    if (strlen(key) != 0)
-      add_mode(chan, '-', 'k', key);
-    else
-      add_mode(chan, '-', 'k', "");
+  if (!(glob_master(user) || glob_bot(user) || chan_master(user)) &&
+      !match_my_nick(nick)) {
+    if ((reversing && !chan->key_prot[0]) || (chan->mode_mns_prot & CHANKEY)) {
+      if (strlen(key) != 0)
+        add_mode(chan, '-', 'k', key);
+      else
+        add_mode(chan, '-', 'k', "");
+    }
+    if ((chan->mode_pls_prot & CHANKEY) && (chan->key_prot[0] != 0) &&
+        strcmp(key, chan->key_prot)) {
+      add_mode(chan, '+', 'k', chan->key_prot);
+    }
   }
 }
 
@@ -411,7 +417,8 @@ static void got_op(struct chanset_t *chan, char *nick, char *from,
   if (channel_pending(chan))
     return;
 
-  if (nick[0] && HALFOP_CANDOMODE('o') && !match_my_nick(who)) {
+  if (nick[0] && HALFOP_CANDOMODE('o') && !match_my_nick(who) &&
+      !match_my_nick(nick)) {
     if (channel_bitch(chan) && !(glob_master(*opper) || glob_bot(*opper)) &&
         !chan_master(*opper) && !(glob_op(victim) || glob_bot(victim)) &&
         !chan_op(victim))
@@ -421,7 +428,8 @@ static void got_op(struct chanset_t *chan, char *nick, char *from,
       add_mode(chan, '-', 'o', who);
     else if (reversing)
       add_mode(chan, '-', 'o', who);
-  } else if (reversing && HALFOP_CANDOMODE('o') && !match_my_nick(who))
+  } else if (reversing && HALFOP_CANDOMODE('o') && !match_my_nick(who) &&
+             !match_my_nick(nick))
     add_mode(chan, '-', 'o', who);
   if (!nick[0] && HALFOP_CANDOMODE('o') && !match_my_nick(who)) {
     if (chan_deop(victim) || (glob_deop(victim) && !chan_op(victim))) {
@@ -494,7 +502,8 @@ static void got_halfop(struct chanset_t *chan, char *nick, char *from,
   if (channel_pending(chan))
     return;
 
-  if (nick[0] && HALFOP_CANDOMODE('h') && !match_my_nick(who)) {
+  if (nick[0] && HALFOP_CANDOMODE('h') && !match_my_nick(who) &&
+      !match_my_nick(nick)) {
     if (channel_bitch(chan) && !(glob_master(*opper) || glob_bot(*opper)) &&
         !chan_master(*opper) && !(glob_halfop(victim) || glob_op(victim) ||
         glob_bot(victim)) && !chan_op(victim) && !chan_halfop(victim))
@@ -505,7 +514,8 @@ static void got_halfop(struct chanset_t *chan, char *nick, char *from,
       add_mode(chan, '-', 'h', who);
     else if (reversing)
       add_mode(chan, '-', 'h', who);
-  } else if (reversing && HALFOP_CANDOMODE('h') && !match_my_nick(who))
+  } else if (reversing && HALFOP_CANDOMODE('h') && !match_my_nick(who) &&
+             !match_my_nick(nick))
     add_mode(chan, '-', 'h', who);
   if (!nick[0] && HALFOP_CANDOMODE('h') && !match_my_nick(who)) {
     if (chan_dehalfop(victim) || (glob_dehalfop(victim) &&
@@ -955,7 +965,7 @@ static int gotmode(char *from, char *origmsg)
       if (m && channel_active(chan) && (me_op(chan) || (me_halfop(chan) &&
           !chan_hasop(m))) && !(glob_friend(user) || chan_friend(user) ||
           (channel_dontkickops(chan) && (chan_op(user) || (glob_op(user) &&
-          !chan_deop(user)))))) {
+          !chan_deop(user))))) && !match_my_nick(from)) {
         if (chan_fakeop(m) || chan_fakehalfop(m)) {
           putlog(LOG_MODES, ch, CHAN_FAKEMODE, ch);
           dprintf(DP_MODE, "KICK %s %s :%s\n", ch, nick, CHAN_FAKEMODE_KICK);
@@ -1056,7 +1066,7 @@ static int gotmode(char *from, char *origmsg)
                 simple_sprintf(s, "%d", chan->channel.maxmembers);
                 add_mode(chan, '+', 'l', s);
               } else if ((chan->limit_prot != 0) && !glob_master(user) &&
-                         !chan_master(user)) {
+                         !chan_master(user) && !match_my_nick(nick)) {
                 simple_sprintf(s, "%d", chan->limit_prot);
                 add_mode(chan, '+', 'l', s);
               }
@@ -1076,8 +1086,7 @@ static int gotmode(char *from, char *origmsg)
                 ((chan->mode_mns_prot & CHANLIMIT) && !glob_master(user) &&
                 !chan_master(user)))
               add_mode(chan, '-', 'l', "");
-            if (!me_op(chan) &&
-                (chan->limit_prot != chan->channel.maxmembers) &&
+            if ((chan->limit_prot != chan->channel.maxmembers) &&
                 (chan->mode_pls_prot & CHANLIMIT) && (chan->limit_prot != 0) &&
                 !glob_master(user) && !chan_master(user)) {
               simple_sprintf(s, "%d", chan->limit_prot);
@@ -1105,7 +1114,7 @@ static int gotmode(char *from, char *origmsg)
               if (reversing && chan->channel.key[0])
                 add_mode(chan, '+', 'k', chan->channel.key);
               else if (chan->key_prot[0] && !glob_master(user) &&
-                       !chan_master(user))
+                       !chan_master(user) && !match_my_nick(nick))
                 add_mode(chan, '+', 'k', chan->key_prot);
             }
             set_key(chan, NULL);
@@ -1145,9 +1154,9 @@ static int gotmode(char *from, char *origmsg)
               m->flags |= CHANVOICE;
               check_tcl_mode(nick, from, u, chan->dname, ms2, op);
               if (channel_active(chan) && !glob_master(user) &&
-                  !chan_master(user)) {
-                if (channel_autovoice(chan) && (chan_quiet(victim) ||
-                    (glob_quiet(victim) && !chan_voice(victim))))
+                  !chan_master(user) && !match_my_nick(nick)) {
+                if (chan_quiet(victim) ||
+                    (glob_quiet(victim) && !chan_voice(victim)))
                   add_mode(chan, '-', 'v', op);
                 else if (reversing)
                   add_mode(chan, '-', 'v', op);
@@ -1157,7 +1166,7 @@ static int gotmode(char *from, char *origmsg)
               m->flags &= ~CHANVOICE;
               check_tcl_mode(nick, from, u, chan->dname, ms2, op);
               if (channel_active(chan) && !glob_master(user) &&
-                  !chan_master(user)) {
+                  !chan_master(user) && !match_my_nick(nick)) {
                 if ((channel_autovoice(chan) && !chan_quiet(victim) &&
                     (chan_voice(victim) || glob_voice(victim))) ||
                     (!chan_quiet(victim) && (glob_gvoice(victim) ||
@@ -1206,7 +1215,8 @@ static int gotmode(char *from, char *origmsg)
           if (channel_active(chan)) {
             if ((((ms2[0] == '+') && (chan->mode_mns_prot & todo)) ||
                 ((ms2[0] == '-') && (chan->mode_pls_prot & todo))) &&
-                !glob_master(user) && !chan_master(user))
+                !glob_master(user) && !chan_master(user) &&
+                !match_my_nick(nick))
               add_mode(chan, ms2[0] == '+' ? '-' : '+', *chg, "");
             else if (reversing && ((ms2[0] == '+') ||
                      (chan->mode_pls_prot & todo)) && ((ms2[0] == '-') ||
