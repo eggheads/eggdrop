@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: mod-server.html,v 1.9 2001/06/28 19:01:13 guppy Exp $ -->
+<!-- $Id: mod-server.html,v 1.10 2001/11/05 04:08:26 guppy Exp $ -->
 
 <html>
   <head>
@@ -18,11 +18,11 @@
       <ol>
         <li><a href="#config">Config file settings</a></li>
 
-        <li><a href="#tclcmds">Tcl commands</a></li>
+        <li><a href="#tclcmds">TCL commands</a></li>
 
-        <li><a href="#tclvars">Tcl variables</a></li>
+        <li><a href="#tclvars">TCL variables</a></li>
 
-        <li><a href="#tclbinds">Tcl bindings</a></li>
+        <li><a href="#tclbinds">TCL bindings</a></li>
       </ol>
     </blockquote>
     <hr>
@@ -103,7 +103,7 @@
         }</strong></dt>
 
         <dd>
-          <p>This setting allows the bot to evaluate Tcl commands when it
+          <p>This setting allows the bot to evaluate TCL commands when it
           first connects to a server.</p>
         </dd>
 
@@ -138,7 +138,7 @@
         <dt><strong><em>set strict-servernames 0</em></strong></dt>
 
         <dd>
-          <p>Often an irc server call itself somthing other then what its
+          <p>Often an irc server call itself something other then what its
           real dns name is. If you want eggdrop to replace your server entry
           in the config file with this name, set this to 1. If you turn this
           setting to 0, eggdrop will keep this name separate from the server
@@ -183,7 +183,7 @@
 
         <dd>
           <p>If the number of servers on the net gets below this number, it
-          will jump to a new server (ie, it will assume it&#39;s on the
+          will jump to a new server (i.e., it will assume it&#39;s on the
           losing end of a netsplit) -- set to 0 to turn off</p>
 
           <p>Note that most irc networks use Time Stamping or Nick Delay now,
@@ -341,13 +341,13 @@
 
         <dd>
           <p>This enables eggdrop&#39;s penalty calculation. Every command
-          eggdrop sends to the irc server raises it&#39;s penatly points. If
+          eggdrop sends to the irc server raises it&#39;s penalty points. If
           eggdrop reaches a server limit, it gets disconnected with
           &quot;excess flood&quot; message. Eggdrop is able to count internal
           those penalty points, too and take measures against excess
           flooding.</p>
 
-          <p>Note: it&#39;s highly adviced to turn this on!</p>
+          <p>Note: it&#39;s highly advised to turn this on!</p>
         </dd>
 
         <dt><strong><em>set optimize-kicks 1</em></strong></dt>
@@ -358,7 +358,7 @@
 
           <p>There are three different options for this setting:<br>
            0 = disable<br>
-           1 = optimize kick queue by sumarizing kicks.<br>
+           1 = optimize kick queue by summarizing kicks.<br>
            2 = trace nick changes and channel parts and change the queue
           respectively. For example, bot wont try to kick users who have
           already parted the channel.</p>
@@ -405,7 +405,7 @@
     </blockquote>
     <hr>
 
-    <p><a name="tclcmds"></a>2. <strong>Tcl commands</strong></p>
+    <p><a name="tclcmds"></a>2. <strong>TCL commands</strong></p>
 
     <blockquote>
       <dl>
@@ -423,7 +423,7 @@
         <dd>
           <p>sends text to the server, like &#39;dump&#39; (intended for
           direct server commands); output is queued so that you won&#39;t
-          flood yourself off the server, using the MODE queue (should be alot
+          flood yourself off the server, using the MODE queue (should be a lot
           faster)<br>
            returns: nothing</p>
         </dd>
@@ -478,21 +478,21 @@
       </dl>
     </blockquote>
 
-    <p><a name="tclvars"></a>3. <strong>Tcl variables</strong></p>
+    <p><a name="tclvars"></a>3. <strong>TCL variables</strong></p>
 
     <blockquote>
       <dl>
         <dt><strong>botnick</strong></dt>
 
         <dd>
-          <p>current nickname the bot is using, ie &#39;Sisko&#39; or
+          <p>current nickname the bot is using, i.e. &#39;Sisko&#39; or
           &#39;Sisko0&#39;, etc</p>
         </dd>
 
         <dt><strong>botname</strong></dt>
 
         <dd>
-          <p>current nick!user@host that the server sees, ie
+          <p>current nick!user@host that the server sees, i.e.
           &#39;Sisko!ikaney@uk.defiant.org&#39;</p>
         </dd>
 
@@ -505,7 +505,7 @@
         <dt><strong>server</strong></dt>
 
         <dd>
-          <p>current server the bot is using, ie
+          <p>current server the bot is using, i.e.
           &#39;irc.math.ufl.edu:6667&#39;</p>
         </dd>
 
@@ -519,7 +519,7 @@
     </blockquote>
     <hr>
 
-    <p><a name="tclbinds"></a>4. <strong>Tcl bindings</strong></p>
+    <p><a name="tclbinds"></a>4. <strong>TCL bindings</strong></p>
 
     <blockquote>
       <dl>
@@ -542,7 +542,7 @@
           &lt;text&gt;</p>
 
           <p>matches the entire line of text from a /msg with the mask; this
-          is more useful for binding Tcl procs to words or phrases spoken
+          is more useful for binding TCL procs to words or phrases spoken
           anywhere within a line of text</p>
         </dd>
 
@@ -557,15 +557,15 @@
           obviously) or a channel name; matches the entire line of text from
           a /notice with the mask; it is considered a breach of protocol to
           respond to a /notice on IRC, so this is intended for internal use
-          (ie, logging, etc) only</p>
+          (i.e., logging, etc) only</p>
 
-          <p>new Tcl procs should be declared as:</p>
+          <p>new TCL procs should be declared as:</p>
 
           <p>proc notcproc {nick uhost hand chan text {dest $botnick}} {<br>
            &nbsp; ...<br>
            }</p>
 
-          <p>for compatiblity with older eggdrop versions</p>
+          <p>for compatibility with older eggdrop versions</p>
         </dd>
 
         <dt><strong>CTCP</strong></dt>
@@ -588,7 +588,7 @@
            proc-name &lt;nick&gt; &lt;user@host&gt; &lt;handle&gt;
           &lt;dest&gt; &lt;keyword&gt; &lt;args...&gt;</p>
 
-          <p>just like ctcp, but this is triggered for a ctcp-reply (ie, ctcp
+          <p>just like ctcp, but this is triggered for a ctcp-reply (i.e., ctcp
           embedded in a notice instead of a privmsg)</p>
         </dd>
 

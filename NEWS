@@ -1,7 +1,7 @@
 News - Updated 08 November 2000
   ------------------------------------------------------------------------
 
-Whats new, first read the following documents:
+What's new, first read the following documents:
 
      INSTALL
      README
@@ -13,7 +13,7 @@ All of these documents combined will fill you in on the latest changes to
 eggdrop in version 1.6.x. All files are also available in html in doc/html/.
 
 A lot of things have changed in this version so at a minimum read the
-UPDATES1.5 and UPDATES1.6 text file. UPDATES shows whats been added and fixed
+UPDATES1.5 and UPDATES1.6 text file. UPDATES shows what's been added and fixed
 along the way.
 
 
@@ -35,7 +35,7 @@ Changes made to Eggdrop 1.6.x from Eggdrop1.4.x
 +/-NODESYNCH
 
      This new channel setting replaces the old 'allow-desync' setting
-     from global to channel functionality. This setting is usefull if
+     from global to channel functionality. This setting is useful if
      you use some kind of chanserv or if you don't care about your
      channel being desynch.
 
@@ -63,9 +63,9 @@ DCC COMMANDS
 
 DOCUMENTATION
 
-     A lot has happend to the documentation, nearly every file was changed
+     A lot has happened to the documentation, nearly every file was changed
      or modified, so keep a look at them. Also we discovered html now and
-     full html documentation is avilable now in doc/html.
+     full html documentation is available now in doc/html.
      Additionally all possible settings in eggdrop are documented in
      doc/settings
 
@@ -105,7 +105,7 @@ TCL COMMANDS
 
      * chnick was renamed to chhandle. The use of chnick is deprecated.
        chnick will is still accessible if you load compat.tcl
-     * All three commands to add stuff to the queus (puthelp, putserv
+     * All three commands to add stuff to the queues (puthelp, putserv
        and putquick) support the '-next' parameter now which pushes
        data to the front of the queues.
      * A command to calculate md5 checksums was added (md5).
@@ -130,7 +130,7 @@ TCL COMMANDS
 TRAFFIC ACCOUNTING
 
      Eggdrop counts the whole traffic which it generates and receives
-     through irc,botnet and dcc now. You can access these statistica
+     through irc,botnet and dcc now. You can access these statistics
      via the dcc command '.traffic'. Please note, that the counter
      gets reset every time a restart is done.
 

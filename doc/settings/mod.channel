@@ -2,7 +2,7 @@
 
 This module provides channel related support for the bot. Without it
 you wont be able to make the bot join a channel or to save channel
-specific userfile informations.
+specific userfile information.
 
 Put this line into your eggdrop configuration file file to load channel module:
 
@@ -12,7 +12,7 @@ loadmodule channels
 There are also some variables you can to set in your config file:
 
 set chanfile "LamestBot.chan"
-    Enter here the filename where dynmic channel settings are stored
+    Enter here the filename where dynamic channel settings are stored
 
 
 set ban-time 120
@@ -175,7 +175,7 @@ channel add #channel { SETTINGS }
 channel set <chan> +/-<setting>
     There are many different options for a channel which you can
     define. They can be enabled or disabled by a plus or minus
-    infront of them.
+    in front of them.
     Examples:
 
      chanset #lamest +autoop
@@ -190,7 +190,7 @@ channel set <chan> +/-<setting>
 
      enforcebans
       when a ban is set, kick people who are on the channel and match
-      the new ban?  (ie, they were on the channel before the ban)
+      the new ban?  (i.e., they were on the channel before the ban)
 
      dynamicbans
       only activate bans on the channel when necessary? (this keeps
@@ -268,7 +268,7 @@ channel set <chan> +/-<setting>
 
      dontkickops
       do you want the bot not to be able to kick +o flag users ?
-      letting them kick-flood for instance, to protect the channel agaisnt
+      letting them kick-flood for instance, to protect the channel against
       clone attacks
 
      inactive
@@ -318,4 +318,3 @@ set global-chanset {
         +userbans       +userexempts
         +userinvites
 }
-

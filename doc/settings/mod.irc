@@ -46,7 +46,7 @@ set ban-fun 0
 
 
 set learn-users 0
-    If you want people to introduce themself to eggdrop via 'hello',
+    If you want people to introduce themselves to eggdrop via 'hello',
     set this to 1.
     Valid settings are 0 for OFF and 1 ON.
 

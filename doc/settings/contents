@@ -11,7 +11,7 @@ mod.assoc
   commands / variables in this file
 
 mod.blowfish
-  The blowfisg module is documented, including it's settings and tcl
+  The blowfish module is documented, including it's settings and tcl
   commands / variables in this file
 
 mod.channel

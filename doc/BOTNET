@@ -100,13 +100,13 @@ with [sends to] peonbot at the same time.
   Botnet affecting flags are:
 
   s   share (Aggressively SEND userfile to a passive bot (assigned +s flag))
-  p   share (Passively ACCEPT userfile from an agressive bot (assigned +p flag))
+  p   share (Passively ACCEPT userfile from an aggressive bot (assigned +p flag))
   g   global share (share all channels (this works correctly in 1.4.xx))
   h   hub (bot is auto-linked)
   a   alternate (bot is auto-linked if the hub bot can't be linked)
   l   leaf (bot is not allowed to link in other bots)
   r   reject (bot will not be allowed on the net)
-  i   isolate (isolate the party line across a botlink)
+  i   isolate (isolate the party line across a bot link)
   0-9 user (user defined flags)
 
   command: ".botattr <botname> [(.+<flag> [#channel]) or (.-<flag> [#channel])]"
@@ -116,7 +116,7 @@ with [sends to] peonbot at the same time.
   The physical address, containing the host and port address of the bot.
   i.e. lame.org:3333
 
-  command: ".chaddr <botname> <hostaddress:botport[/userport]>"
+  command: ".cheddar <botname> <hostaddress:botport[/userport]>"
 
 
  Relay
@@ -228,7 +228,7 @@ Botflags are needed to assign special functions and tasks to your bots.
 
 
  "0-9" flag (user)
-  These 10 flags aren't hardcoded into eggdrop and can be assigned by scripts
+  These 10 flags aren't hard-coded into eggdrop and can be assigned by scripts
   or just for fun :-)
 
   command: ".botattr <botname> +(0-9)"
@@ -255,7 +255,7 @@ Botflags are needed to assign special functions and tasks to your bots.
 
  "g" flag (global share)
   If you set this flag on your +s or +p bot, |s and |+s are getting obsolete.
-  Every ban and every user on every single channel will be transfered/accepted.
+  Every ban and every user on every single channel will be transferred/accepted.
 
         command: ".botattr <botname> +g"
 
@@ -275,13 +275,13 @@ how the other link bots will react by setting botattr flag for them in
 yourbot.  You can only control how you want yourbot to react to those bots
 when they link.
 
-By setting specific botattr flags, you can cause yourbot to be aggressive
+By setting specific botattr flags, you can cause your bot to be aggressive
 with some link bots and to be passive with other link bots.
 
 But remember, no botattr settings in yourbot have any control over how the
 other bots will react with yourbot.
 
-For sharing to work, the flags must be cordinated with one bot agreeing to
+For sharing to work, the flags must be coordinated with one bot agreeing to
 be passive and accept and the other link bot agreeing to send or share it's
 userfile.  No setting in yourbot can force another bot to accept files
 yourbot tries to send nor can any such flag force another bot to send or
@@ -309,7 +309,7 @@ to yourbot.  The +p flag only gives masterbot permission to send yourbot a
 userfile, if masterbot chooses to send one.
 
 If you set slavebot +s, then yourbot will try to send slavebot your
-userfile, once a minute until a successful tranfer is made.  If slavebot has
+userfile, once a minute until a successful transfer is made.  If slavebot has
 not given you write/send permission by adding the +p for yourbot, then
 slavebot will refuse to accept yourbot's repeated offer to send.  Each and
 every minute you will see this message repeated on yourbot's console:
@@ -335,7 +335,7 @@ If the flags in both bots do not make a +s+p pair, the bots will link but
 will not share.  If the +s+p pair is set properly, but the userfile transfer
 fails for some reason, the bots will unlink.  If with has a +h or +a hub
 flag set for the other, that bot will seek to relink and upon connection,
-another attempt to share will be made.  If sucessful, the bots will then
+another attempt to share will be made.  If successful, the bots will then
 stay linked and all will be well with the world.  :)
 
 

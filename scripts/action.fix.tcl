@@ -3,9 +3,9 @@
 # Tothwolf  25May1999: cleanup
 # Tothwolf  04Oct1999: changed proc names slightly
 #
-# $Id: action.fix.tcl,v 1.3 1999/12/21 17:35:07 fabian Exp $
+# $Id: action.fix.tcl,v 1.4 2001/11/05 04:08:28 guppy Exp $
 
-# fix for mirc dcc chat /me's
+# fix for mIRC dcc chat /me's
 bind filt - "\001ACTION *\001" filt:dcc_action
 proc filt:dcc_action {idx text} {
   return ".me [string trim [join [lrange [split $text] 1 end]] \001]"

@@ -105,7 +105,7 @@ see also: set firewall
    die on receiving a TERM signal, or just save the userfile.
 %{help=set remote-boots}%{+n}
 ###  %bset remote-boots%b 0/1
-   This config-file-only variable has 3 settings, 0 means dont allow
+   This config-file-only variable has 3 settings, 0 means don't allow
    anyone else to boot people of your bot, 1 means allow people on
    other sharebots to boot people of you bot, 2 means allow any bot
    to boot people of your bot.
@@ -133,7 +133,7 @@ see also: set firewall
 %{help=set ident-timeout}%{+n}
 ###  %bset ident-timeout%b <#>
    Sets the number of seconds to wait before discarding an ident
-   attempt for a connectiong user.
+   attempt for a connecting user.
 %{help=set share-unlinks}%{+n}
 ###  %bset share-unlinks%b 0/1
    If you wish to prevent other bots/users from unlinking a sharebot

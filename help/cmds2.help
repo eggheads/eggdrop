@@ -46,10 +46,10 @@ see also: +ignore, -ignore, set ignore-time
 ###  %bmatch%b <attr> [channel] [[start] limit]
    shows you user records with the attributes requested: 
    <attr> is of the form:  <+/-><global>[&/|<channel>[&/|<bot>]]
-    specifying & as the speperator, will cause AND style matching,
+    specifying & as the separator, will cause AND style matching,
     | will cause OR style matching, channel flags are match vs
     the specified channel (or your console channel), and bot
-    is match vs the sepreate bot flags.
+    is match vs the separate bot flags.
     some examples:
        .match +o     will match any GLOBAL +o's
        .match -o&+o  will match anyone without a global +o AND 
@@ -69,7 +69,7 @@ see also: +ignore, -ignore, set ignore-time
    hostmasks from clemson.edu:
       .match *clemson.edu 15
    to get the next 10 (if there are more than 15), you ask to list
-   numbers 16 thru 25:
+   numbers 16 through 25:
       .match *clemson.edu 16 25
 %{help=me}
 ###  %bme%b <text>
@@ -77,7 +77,7 @@ see also: +ignore, -ignore, set ignore-time
 %{help=module}%{+n}
 ###  %bmodule%b [modulename]
    Reports the names of currently loaded modules, including
-   dependancies & status report, you can get info only on a 
+   dependencies & status report, you can get info only on a 
    specific module by specifying it.
 %{help=modules}%{+n}
 ###  %bmodules%b <botname>
@@ -86,7 +86,7 @@ see also: +ignore, -ignore, set ignore-time
 ###  %bmotd%b [botname]
    will redisplay the party-line message of the day, which was
    shown when you first joined. If the name of a remote bot is
-   given as parameter, the respective motd will be displyed.
+   given as parameter, the respective motd will be displayed.
 %{help=newpass}
 ###  %bnewpass%b <password>
    changes your password on the bot, just like the /msg command
@@ -98,7 +98,7 @@ see also: +ignore, -ignore, set ignore-time
    telnetting in or IDENT'ing yourself, so remember it.
 %{help=nick}
 ###  %bnick%b
-   Please note, that this command has been superceeded by
+   Please note, that this command has been superceded by
    'handle'. If you still want to use 'nick', load compat.tcl
    into your bot.
 %{help=note}
@@ -155,7 +155,7 @@ see also: bots
 see also: rehash, save
 %{help=traffic}%{+m|m}
 ###  %btraffic%b
-   shows total and dayly net traffic stats since last %b'.restart'%b.
+   shows total and daily net traffic stats since last %b'.restart'%b.
    stats groups are IRC, Botnet, Partyline, Transfer.mod and Misc.
    
 see also: restart
@@ -431,7 +431,7 @@ see also: match
    working.  (the cache is an attempt to keep the CPU time down, and
    anything over 50%% or so is just great.)
 
-   if you do %b'.status all'%b you will see another pageful of info,
+   if you do %b'.status all'%b you will see another page-full of info,
    showing every internal setting as specified in the config file.
    it should be self-explanatory to anyone who needs to use it.
 

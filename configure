@@ -14,11 +14,11 @@ ac_default_prefix=/usr/local
 ac_default_prefix=\${HOME}/eggdrop
   egg_ac_parameters="$*"
   ac_help="$ac_help
-  --with-tcllib=PATH      full path to tcl library"
+  --with-tcllib=PATH      full path to TCL library"
 ac_help="$ac_help
-  --with-tclinc=PATH      full path to tcl header"
+  --with-tclinc=PATH      full path to TCL header"
 ac_help="$ac_help
-  --disable-tcl-threads   Disable threaded tcl support if detected. (Ignore this
+  --disable-tcl-threads   Disable threaded TCL support if detected. (Ignore this
                           option unless you know what you are doing)"
 
 # Initialize some variables set by options.
@@ -1192,7 +1192,7 @@ then
   STRIP=touch
 fi
 
-# awk is needed for Tcl library and header checks, and eggdrop version subst
+# awk is needed for TCL library and header checks, and eggdrop version subst
 for ac_prog in gawk mawk nawk awk
 do
 # Extract the first word of "$ac_prog", so it can be a program name with args.
@@ -1239,7 +1239,7 @@ EOF
   exit 1
 fi
 
-# basename is needed for Tcl library and header checks
+# basename is needed for TCL library and header checks
 # Extract the first word of "basename", so it can be a program name with args.
 set dummy basename; ac_word=$2
 echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
@@ -1891,7 +1891,7 @@ else
   echo "$ac_t""no" 1>&6
 fi
 
-  # This is needed for Tcl libraries compiled with thread support
+  # This is needed for TCL libraries compiled with thread support
   echo $ac_n "checking for pthread_mutex_init in -lpthread""... $ac_c" 1>&6
 echo "configure:1897: checking for pthread_mutex_init in -lpthread" >&5
 ac_lib_var=`echo pthread'_'pthread_mutex_init | sed 'y%./+-%__p_%'`
@@ -3203,39 +3203,39 @@ then
 fi
 
 
-# Where is tcl?  Is it here?
-# ---------- begin robey's tcl thingies
-# (well, what used to be robey's tcl thingies...)
+# Where is TCL?  Is it here?
+# ---------- begin robey's TCL thingies
+# (well, what used to be robey's TCL thingies...)
 
-# Latest tested Tcl version to recommend if Tcl isn't found
+# Latest tested TCL version to recommend if TCL isn't found
 tclrecommendver="8.3.3"
 
-# Site recommended to download Tcl from
+# Site recommended to download TCL from
 tclrecommendsite="ftp://ftp.eggheads.org/pub/tcl/tcl8_3/"
 
-# Tcl library filename prefixes (also used for Tcl header dir on FreeBSD)
+# TCL library filename prefixes (also used for TCL header dir on FreeBSD)
 tcllibnames="tcl tcl8.4 tcl84 tcl8.3 tcl83 tcl8.2 tcl82 tcl8.1 tcl81 \
 	tcl8.0 tcl80 tcl7.6 tcl76 tcl7.5 tcl75 tcl7.4 tcl74 \
 	tcl7.3 tcl73 tcl7.2 tcl72 tcl7.1 tcl71 tcl7.0 tcl70"
 
-# Tcl library filename suffixes
+# TCL library filename suffixes
 tcllibextensions=".so .so.1 .so.1.0 .so.1.2 .a .sl .dll"
 
-# Tcl library search paths
+# TCL library search paths
 tcllibpaths="/usr/local/lib /usr/local/pkgs/tcl/lib \
 	/usr/lib /lib /usr/i486-linuxaout/lib \
 	/beos/system/lib /sys/lib \
 	$HOME/lib $HOME/tcl/lib $HOME"
 
-# Tcl header filenames
+# TCL header filenames
 tclheadernames="tcl.h"
 
-# Tcl header search paths
+# TCL header search paths
 tclheaderpaths="/usr/local/include /usr/local/pkgs/tcl/include \
 	/usr/include /beos/system/include /beos/devel/include \
        /sys/include $HOME/include $HOME/tcl/include $HOME"
 
-# oohh new configure --variables for those with multiple tcl libs
+# oohh new configure --variables for those with multiple TCL libs
 # Check whether --with-tcllib or --without-tcllib was given.
 if test "${with_tcllib+set}" = set; then
   withval="$with_tcllib"
@@ -3275,7 +3275,7 @@ then
 configure: warning:
 
   You must specify both --with-tcllib and --with-tclinc for them to work.
-  configure will now attempt to autodetect both the Tcl library and header...
+  configure will now attempt to autodetect both the TCL library and header...
 
 EOF
 fi
@@ -3307,12 +3307,12 @@ configure: warning:
 
   Environment variable $WVAR1 was set, but I did not detect ${WVAR2}.
   Please set both TCLLIB and TCLINC correctly if you wish to use them.
-  configure will now attempt to autodetect both the Tcl library and header...
+  configure will now attempt to autodetect both the TCL library and header...
 
 EOF
 fi
 
-# Look for Tcl library: if $tcllibname is set, check there first
+# Look for TCL library: if $tcllibname is set, check there first
 if test ! "${tcllibname-x}" = "x"
 then
   if test -f "$tcllibname" && test -r "$tcllibname"
@@ -3326,7 +3326,7 @@ then
 configure: warning:
 
   The file '$tcllibname' given to option --with-tcllib is not valid.
-  configure will now attempt to autodetect both the Tcl library and header...
+  configure will now attempt to autodetect both the TCL library and header...
 
 EOF
     tcllibname=""
@@ -3338,7 +3338,7 @@ EOF
   fi
 fi
 
-# Look for Tcl header: if $tclincname is set, check there first
+# Look for TCL header: if $tclincname is set, check there first
 if test ! "${tclincname-x}" = "x"
 then
   if test -f "$tclincname" && test -r "$tclincname"
@@ -3350,7 +3350,7 @@ then
 configure: warning:
 
   The file '$tclincname' given to option --with-tclinc is not valid.
-  configure will now attempt to autodetect both the Tcl library and header...
+  configure will now attempt to autodetect both the TCL library and header...
 
 EOF
     tcllibname=""
@@ -3362,7 +3362,7 @@ EOF
   fi
 fi
 
-# Look for Tcl library: if $TCLLIB is set, check there first
+# Look for TCL library: if $TCLLIB is set, check there first
 if test "${TCLLIBFN-x}" = "x"
 then
   if test ! "${TCLLIB-x}" = "x"
@@ -3390,7 +3390,7 @@ configure: warning:
 
   Environment variable TCLLIB was set, but incorrect.
   Please set both TCLLIB and TCLINC correctly if you wish to use them.
-  configure will now attempt to autodetect both the Tcl library and header...
+  configure will now attempt to autodetect both the TCL library and header...
 
 EOF
       TCLLIB=""
@@ -3401,7 +3401,7 @@ EOF
   fi
 fi
 
-# Look for Tcl header: if $TCLINC is set, check there first
+# Look for TCL header: if $TCLINC is set, check there first
 if test "${TCLINCFN-x}" = "x"
 then
   if test ! "${TCLINC-x}" = "x"
@@ -3424,7 +3424,7 @@ configure: warning:
 
   Environment variable TCLINC was set, but incorrect.
   Please set both TCLLIB and TCLINC correctly if you wish to use them.
-  configure will now attempt to autodetect both the Tcl library and header...
+  configure will now attempt to autodetect both the TCL library and header...
 
 EOF
       TCLLIB=""
@@ -3435,8 +3435,8 @@ EOF
   fi
 fi
 
-echo $ac_n "checking for Tcl library""... $ac_c" 1>&6
-echo "configure:3440: checking for Tcl library" >&5
+echo $ac_n "checking for TCL library""... $ac_c" 1>&6
+echo "configure:3440: checking for TCL library" >&5
 
 # Attempt autodetect for $TCLLIBFN if it's not set
 if test ! "${TCLLIBFN-x}" = "x"
@@ -3469,8 +3469,8 @@ then
   echo "$ac_t""not found" 1>&6
 fi
 
-echo $ac_n "checking for Tcl header""... $ac_c" 1>&6
-echo "configure:3474: checking for Tcl header" >&5
+echo $ac_n "checking for TCL header""... $ac_c" 1>&6
+echo "configure:3474: checking for TCL header" >&5
 
 # Attempt autodetect for $TCLINCFN if it's not set
 if test ! "${TCLINCFN-x}" = "x"
@@ -3518,8 +3518,8 @@ then
   echo "$ac_t""not found" 1>&6
 fi
 
-  echo $ac_n "checking whether the tcl system has changed""... $ac_c" 1>&6
-echo "configure:3523: checking whether the tcl system has changed" >&5
+  echo $ac_n "checking whether the TCL system has changed""... $ac_c" 1>&6
+echo "configure:3523: checking whether the TCL system has changed" >&5
   egg_tcl_changed=yes
   egg_tcl_id="$TCLLIB:$TCLLIBFN:$TCLINC:$TCLINCFN"
   if test ! "$egg_tcl_id" = ":::"
@@ -3557,14 +3557,14 @@ if test ! "${TCLLIBFN-x}" = "x" && test ! "${TCLINCFN-x}" = "x"
 then
   TCL_FOUND=1
 
-  # Check Tcl's version
+  # Check TCL's version
   if test "$egg_tcl_changed" = "yes"
   then
       unset egg_cv_var_tcl_version
 
   fi
-  echo $ac_n "checking for Tcl version""... $ac_c" 1>&6
-echo "configure:3568: checking for Tcl version" >&5
+  echo $ac_n "checking for TCL version""... $ac_c" 1>&6
+echo "configure:3568: checking for TCL version" >&5
   if eval "test \"`echo '$''{'egg_cv_var_tcl_version'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -3581,14 +3581,14 @@ fi
     TCL_FOUND=0
   fi
 
-  # Check Tcl's patch level (if avaliable)
+  # Check TCL's patch level (if avaliable)
   if test "$egg_tcl_changed" = "yes"
   then
       unset egg_cv_var_tcl_patch_level
 
   fi
-  echo $ac_n "checking for Tcl patch level""... $ac_c" 1>&6
-echo "configure:3592: checking for Tcl patch level" >&5
+  echo $ac_n "checking for TCL patch level""... $ac_c" 1>&6
+echo "configure:3592: checking for TCL patch level" >&5
   if eval "test \"`echo '$''{'egg_cv_var_tcl_patch_level'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -3606,35 +3606,35 @@ fi
   fi
 fi
 
-# Check if we found Tcl's version
+# Check if we found TCL's version
 if test "$TCL_FOUND" = 0
 then
   cat << 'EOF' >&2
 configure: error:
 
-  I can't find Tcl on this system.
+  I can't find TCL on this system.
 
-  Eggdrop requires Tcl to compile.  If you already have Tcl installed
+  Eggdrop requires TCL to compile.  If you already have TCL installed
   on this system, and I just wasn't looking in the right place for it,
   set the environment variables TCLLIB and TCLINC so I will know where
   to find 'libtcl.a' (or 'libtcl.so') and 'tcl.h' (respectively). Then
   run 'configure' again.
 
-  Read the README file if you don't know what Tcl is or how to get it
+  Read the README file if you don't know what TCL is or how to get it
   and install it.
 
 EOF
   exit 1
 fi
 
-# Is this version of Tcl too old for us to use ?
+# Is this version of TCL too old for us to use ?
 TCL_VER_PRE70=`echo $egg_cv_var_tcl_version | $AWK '{split($1, i, "."); if (i[1] < 7) print "yes"; else print "no"}'`
 if test "$TCL_VER_PRE70" = "yes"
 then
   cat << EOF >&2
 configure: error:
 
-  Your Tcl version is much too old for eggdrop to use.
+  Your TCL version is much too old for eggdrop to use.
   I suggest you download and complie a more recent version.
   The most reliable current version is $tclrecommendver and
   can be downloaded from $tclrecommendsite
@@ -3643,7 +3643,7 @@ EOF
   exit 1
 fi
 
-# Are we using a pre 7.5 Tcl version ?
+# Are we using a pre 7.5 TCL version ?
 TCL_VER_PRE75=`echo $egg_cv_var_tcl_version | $AWK '{split($1, i, "."); if (((i[1] == 7) && (i[2] < 5)) || (i[1] < 7)) print "yes"; else print "no"}'`
 if test "$TCL_VER_PRE75" = "yes"
 then
@@ -3652,7 +3652,7 @@ then
 EOF
 fi
 
-# Set variables for Tcl library tests
+# Set variables for TCL library tests
 TCL_TEST_LIB="$TCLLIBFNS"
 TCL_TEST_OTHERLIBS="-L$TCLLIB $EGG_MATH_LIB"
 
@@ -3783,8 +3783,8 @@ then
     cat << 'EOF' >&2
 configure: warning:
 
-  You have disabled threads support on a system with a threaded Tcl library.
-  Tcl features that rely on scheduled events may not function properly.
+  You have disabled threads support on a system with a threaded TCL library.
+  TCL features that rely on scheduled events may not function properly.
 
 EOF
   else
@@ -3811,20 +3811,20 @@ then
   TCL_LIBS="-L$TCLLIB -l$TCLLIBFNS $EGG_MATH_LIB"
 else
 
-  # Set default make as static for unshared Tcl library
+  # Set default make as static for unshared TCL library
   if test ! "$DEFAULT_MAKE" = "static"
   then
     cat << 'EOF' >&2
 configure: warning:
 
-  Your Tcl library is not a shared lib.
+  Your TCL library is not a shared lib.
   configure will now set default make type to static...
 
 EOF
     DEFAULT_MAKE=static
       fi
 
-  # Are we using a pre 7.4 Tcl version ?
+  # Are we using a pre 7.4 TCL version ?
   TCL_VER_PRE74=`echo $egg_cv_var_tcl_version | $AWK '{split($1, i, "."); if (((i[1] == 7) && (i[2] < 4)) || (i[1] < 7)) print "yes"; else print "no"}'`
   if test "$TCL_VER_PRE74" = "no"
   then
@@ -3842,7 +3842,7 @@ EOF
     cat << EOF >&2
 configure: warning:
 
-  Your Tcl version ($egg_cv_var_tcl_version) is older then 7.4.
+  Your TCL version ($egg_cv_var_tcl_version) is older then 7.4.
   There are known problems, but we will attempt to work around them.
 
 EOF
@@ -3853,7 +3853,7 @@ fi
 fi
 
       
-# ---------- end of (what used to be) robey's tcl thingies
+# ---------- end of (what used to be) robey's TCL thingies
 
 if test "$NEED_DL" = 1 && test "$ac_cv_func_dlopen" = "no"
 then

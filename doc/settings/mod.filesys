@@ -1,7 +1,7 @@
 ##### FILESYSTEM MODULE #####
 
-This module provides an area withing the bot where users can store
-files. With this module the bot is useable as a fileserver.
+This module provides an area within the bot where users can store
+files. With this module the bot is useable as a file server.
 
 Put this line into your eggdrop configuration file file to load filesys module:
 
@@ -21,7 +21,7 @@ set incoming-path "/home/mydir/eggdrop/filesys/incoming"
 
 
 set upload-to-pwd 0
-    If you don't want to have a central incoming directoy but uploads
+    If you don't want to have a central incoming directory but uploads
     should go to the current directory that a user is in, set this
     setting to 1.
     Valid settings are 0 for OFF and 1 ON.

@@ -28,7 +28,7 @@ set resync-time 900 (disabled by default)
 
 
 set private-global 0 (disabled by default)
-    When sharing user lists, DONT ACCEPT global flag changes from other bots?
+    When sharing user lists, DON'T ACCEPT global flag changes from other bots?
     NOTE: the bot will still send changes made on the bot, it just wont accept
     any global flag changes from other bots.
     Valid settings are 0 for OFF and 1 ON.
@@ -52,6 +52,6 @@ set override-bots 0 (disabled by default)
     This setting makes the bot discard it's own bot records in favor of
     the ones sent by the hub.
     Please note, that no passwords or botflags are shared, only ports and
-    adress are added to sharing procedure.
+    address are added to sharing procedure.
     Note: This only works with hubs that are v1.5.1 or higher.
     Valid settings are 0 for OFF and 1 ON.

@@ -22,7 +22,7 @@ Example:
 
 ##### BASIC STUFF #####
 
-You can change the basic eggdrop appearence and behaviour in this section.
+You can change the basic eggdrop appearance and behaviour in this section.
 
 
 set username "lamest"
@@ -57,14 +57,14 @@ set offset "5"
 
 
 set env(TZ) "$timezone $offset" (disabled by default)
-    If you dont want to use the timezone setting for scripting purpose only
+    If you don't want to use the timezone setting for scripting purpose only
     but instead everywhere possible then use this setting.
 
 
 addlang "english"
     if you want to have your eggdrop messages displayed in another language
     change the below command to match your preferences. An alternative would
-    be to set the environment variabel EGG_LANG to that value.
+    be to set the environment variable EGG_LANG to that value.
 
 
 
@@ -73,7 +73,7 @@ addlang "english"
 Eggdrop is capable of logging various stuff, from channel chatter to
 commands people use on the bot or file transfers.
 
-Logfiles are kept normaly for 24 hours. Afterwards they'll be renamed
+Logfiles are kept for 24 hours normally. Afterwards they'll be renamed
 to "(logfilename).yesterday". After 48 hours they'll get overwritten by the
 logfile of the next day.
 
@@ -91,7 +91,7 @@ set max-logsize 0
 
 
 set quick-logs 0
-    Defaultly eggdrop writes every 5 minutes its logfiles to disk. You can
+    Defaultly, eggdrop writes every 5 minutes its logfiles to disk. You can
     change this behaviour by turning this setting to 1 (ON). Eggdrop will
     write and check the logfiles for size every minute.
     Note that this setting might increase the cpu usage of your bot (on the
@@ -99,7 +99,7 @@ set quick-logs 0
 
 
 logfile <logflags> <channel> "logs/logfile"
-    This setting actually tells the bot what should be loged from where in
+    This setting actually tells the bot what should be logged from where in
     which file. (duh!).
 
     The most common log file flags are:
@@ -114,7 +114,7 @@ logfile <logflags> <channel> "logs/logfile"
       r  (if use-console-r enabled) EVERYTHING sent to the bot by the server
       o  other: misc info, errors -- IMPORTANT STUFF
       w  wallops: msgs between IRCops (be sure to set the bot +w in init-server)
-    There are others, but you probably shouldnt log them, it'd be
+    There are others, but you probably shouldn't log them, it'd be
     rather unethical ;). There are also five user-defined levels ('1'..'5') which
     are used by Tcl scripts.
 
@@ -228,13 +228,13 @@ set mod-path "modules/"
 ##### BOTNET, DCC AND NETWORK #####
 
 Settings in this section should be unimportant fur you until you deal
-with botnets (multiple eggdrops conected together to maximize efficency).
+with botnets (multiple eggdrops connected together to maximize efficiency).
 You should read doc/BOTNET before modifying these settings.
 
 
 set botnet-nick "LlamaBot" (disabled by default)
-    If you want to use a differnt nickname on the botnet than you use on
-    IRC (i.e. if you're in an untrusted botnet) set it here.
+    If you want to use a different nickname on the botnet than you use on
+    IRC (i.e. if you're in an un-trusted botnet) set it here.
 
 
 listen <port> <mode>
@@ -381,7 +381,7 @@ set nat-ip "127.0.0.1"
     10.0.0.0-10.255.255.255 and your firewall transparently changes your
     address to a unique address for your box.) or you have IP masquerading
     between you and the rest of the world, and /dcc chat,/ctcp chat or
-    userfile shareing aren't working. Enter your outside IP here.
+    userfile sharing aren't working. Enter your outside IP here.
     Do not enter anything for my-ip or my-hostname if you use this setting.
 
 
@@ -504,7 +504,7 @@ share module.
 
 Limbo Bot:
 A limbo bot (bot serves as a botnet hub outside irc) just needs channels, console,
-dns and maybe notes or share module loaded. Of course blowfist needs to be loaded
+dns and maybe notes or share module loaded. Of course blowfish needs to be loaded
 here, too.
 
 
@@ -521,7 +521,7 @@ source scripts/script.tcl
     long as you can supply a fully qualified path to them.
 
     Some commonly loaded scripts are alltools.tcl and action.fix.tcl. The
-    aproperiate source lines are looking so:
+    appropriate source lines are looking so:
 
     source scripts/alltools.tcl
     source scripts/action.fix.tcl

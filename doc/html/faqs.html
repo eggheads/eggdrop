@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: faqs.html,v 1.4 2000/10/11 10:27:55 tothwolf Exp $ -->
+<!-- $Id: faqs.html,v 1.5 2001/11/05 04:08:26 guppy Exp $ -->
 
 <html>
   <head>
@@ -46,7 +46,7 @@
           </ol>
         </li>
 
-        <li><a href="#sect9">Where can I get a precompiled Eggdrop for my
+        <li><a href="#sect9">Where can I get a pre-compiled Eggdrop for my
         computer?</a></li>
 
         <li><a href="#sect10">I get &quot;Makefile:3 : invalid operator&quot;
@@ -106,15 +106,15 @@
       &#39;.profile&#39;).</p>
     </blockquote>
 
-    <p><a name="sect3"></a>3. <strong>What the heck is Tcl?</strong></p>
+    <p><a name="sect3"></a>3. <strong>What the heck is TCL?</strong></p>
 
     <blockquote>
-      <p>Tcl is a scripting language written by John Ousterhout. It&#39;s
+      <p>TCL is a scripting language written by John Ousterhout. It&#39;s
       much better than most &quot;in-built&quot; script languages (like the
       one in ircII) and is meant to be linked with anything needing a script
       language. So I linked it with Eggdrop. The file
       &quot;tcl-commands.doc&quot; in the Eggdrop directory contains a list
-      of the commands added to Tcl by Eggdrop. There are also several example
+      of the commands added to TCL by Eggdrop. There are also several example
       scripts in the scripts/ directory, and there are gobs of scripts
       floating around on the ftp sites if you like working by example (which
       is typically the best way).</p>
@@ -140,7 +140,7 @@
     <blockquote>
       <p>This happens on Linux machines that have recently been converted to
       ELF by upgrading to Slackware 3.0. Apparently Slackware 3.0 comes with
-      a non-ELF (a.out) Tcl library, and the compiler doesn&#39;t handle that
+      a non-ELF (a.out) TCL library, and the compiler doesn&#39;t handle that
       well. (It should give you an error; instead it barfs.) Fixing it is
       tricky because even if you recompile libtcl.a, the linker will most
       likely find the &quot;bad&quot; one first, and your work will be in
@@ -182,7 +182,7 @@
     <p><a name="sect7"></a>7. <strong>What are modules?</strong></p>
 
     <blockquote>
-      <p>Modules are a way of adding extra C code from the bot, much like Tcl
+      <p>Modules are a way of adding extra C code from the bot, much like TCL
       scripts, without requiring the bot recompiling, see doc/MODULES for
       more info.</p>
     </blockquote>
@@ -208,17 +208,17 @@
       modules as dynamic modules.</p>
     </blockquote>
 
-    <p><a name="sect9"></a>9. <strong>Where can i get a precompiled eggdrop
+    <p><a name="sect9"></a>9. <strong>Where can i get a pre-compiled eggdrop
     for my computer?</strong></p>
 
     <blockquote>
       <p>It is <strong>HIGHLY</strong> recommended <strong>AGAINST</strong>
-      using precompiled Eggdrops from untrusted sources. Eggdrop has been a
-      regular target for hacking and crashing. Distribution of precompiled
+      using pre-compiled Eggdrops from un-trusted sources. Eggdrop has been a
+      regular target for hacking and crashing. Distribution of pre-compiled
       (binary) versions of Eggdrop are the easiest way of hackers to provide
       you with the easiest (and most dangerous) way of gaining access to not
       only your bot, but to your computer account directly. Don&#39;t
-      advertise your precompiled Eggdrop binary sites on the Eggdrop list
+      advertise your pre-compiled Eggdrop binary sites on the Eggdrop list
       either =P</p>
     </blockquote>
 
@@ -234,8 +234,8 @@
     &lt;userfile&gt; c&#39; it barfs chunks at me and dies :(</strong></p>
 
     <blockquote>
-      <p>UPGRADE YOUR TCL, you are probably using Tcl 7.5 or earlier, some of
-      the commands in weed require tcl7.6 to run, so either upgrade it, or
+      <p>UPGRADE YOUR TCL, you are probably using TCL 7.5 or earlier, some of
+      the commands in weed require TCL7.6 to run, so either upgrade it, or
       removing the offending lines from you userfile (those starting with
       &#39;.&#39; generally) and accept the loss of that data.</p>
     </blockquote>
@@ -247,20 +247,20 @@
     bot.</strong></p>
 
     <blockquote>
-      <p>&#39;./configure&#39; is looking in the wrong place for Tcl; it
-      looks like it compiled with one version of Tcl and tries to load
-      another. Maybe your sysadmin upgraded Tcl and didn&#39;t tell you. In
+      <p>&#39;./configure&#39; is looking in the wrong place for TCL; it
+      looks like it compiled with one version of TCL and tries to load
+      another. Maybe your sysadmin upgraded TCL and didn&#39;t tell you. In
       that case, you should just need to recompile your bot.</p>
 
-      <p>Or maybe when upgrading he didn&#39;t clean the old version of Tcl,
+      <p>Or maybe when upgrading he didn&#39;t clean the old version of TCL,
       and &#39;./configure&#39; is looking for the files in the wrong places,
       or trying to use different versions of tcl.h and libtcl*. Smack your
-      admin and have him install Tcl properly ;) Or try to:</p>
+      admin and have him install TCL properly ;) Or try to:</p>
 
       <p><em>./configure --with-tcllib=&lt;path-to-tcl-lib&gt;
       --with-tclinc=&lt;path-to-tcl-inc&gt;</em></p>
 
-      <p>Tell configure where to look for the Tcl files.</p>
+      <p>Tell configure where to look for the TCL files.</p>
 
       <p>Try looking for libtcl by:<br>
        ls /usr/lib/libtcl*<br>
@@ -270,7 +270,7 @@
        ls /usr/include/*/tcl.h<br>
        ls /usr/local/include/*/tcl.h</p>
 
-      <p>If everything else fails, try to install Tcl to your home dir ;)
+      <p>If everything else fails, try to install TCL to your home dir ;)
       (Suggested by dw@Undernet, dw@lixom.nu)</p>
     </blockquote>
 

@@ -48,7 +48,7 @@ Instructions:
      ( ) Other - Which? ____
 
 2.2) TCL library patchlevel: ___
-  eg; p1, p2, etc for Tcl versions up to 8.0p2
+  eg; p1, p2, etc for TCL versions up to 8.0p2
       or the 3rd part of the version number for 8.0.3 and newer
 
 2.3) TCL scripts used:

@@ -65,34 +65,34 @@ EGG_CHECK_LIBSAFE_SSCANF
 EGG_CYGWIN
 EGG_EXEEXT
 
-# Where is tcl?  Is it here?
-# ---------- begin robey's tcl thingies
-# (well, what used to be robey's tcl thingies...)
+# Where is TCL?  Is it here?
+# ---------- begin robey's TCL thingies
+# (well, what used to be robey's TCL thingies...)
 
-# Latest tested Tcl version to recommend if Tcl isn't found
+# Latest tested TCL version to recommend if TCL isn't found
 tclrecommendver="8.3.3"
 
-# Site recommended to download Tcl from
+# Site recommended to download TCL from
 tclrecommendsite="ftp://ftp.eggheads.org/pub/tcl/tcl8_3/"
 
-# Tcl library filename prefixes (also used for Tcl header dir on FreeBSD)
+# TCL library filename prefixes (also used for TCL header dir on FreeBSD)
 tcllibnames="tcl tcl8.4 tcl84 tcl8.3 tcl83 tcl8.2 tcl82 tcl8.1 tcl81 \
 	tcl8.0 tcl80 tcl7.6 tcl76 tcl7.5 tcl75 tcl7.4 tcl74 \
 	tcl7.3 tcl73 tcl7.2 tcl72 tcl7.1 tcl71 tcl7.0 tcl70"
 
-# Tcl library filename suffixes
+# TCL library filename suffixes
 tcllibextensions=".so .so.1 .so.1.0 .so.1.2 .a .sl .dll"
 
-# Tcl library search paths
+# TCL library search paths
 tcllibpaths="/usr/local/lib /usr/local/pkgs/tcl/lib \
 	/usr/lib /lib /usr/i486-linuxaout/lib \
 	/beos/system/lib /sys/lib \
 	$HOME/lib $HOME/tcl/lib $HOME"
 
-# Tcl header filenames
+# TCL header filenames
 tclheadernames="tcl.h"
 
-# Tcl header search paths
+# TCL header search paths
 tclheaderpaths="/usr/local/include /usr/local/pkgs/tcl/include \
 	/usr/include /beos/system/include /beos/devel/include \
        /sys/include $HOME/include $HOME/tcl/include $HOME"
@@ -116,7 +116,7 @@ EGG_TCL_ENABLE_THREADS
 EGG_TCL_CHECK_THREADS
 EGG_TCL_LIB_REQS
 EGG_TCL_LUSH
-# ---------- end of (what used to be) robey's tcl thingies
+# ---------- end of (what used to be) robey's TCL thingies
 
 EGG_FUNC_DLOPEN
 

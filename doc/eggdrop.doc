@@ -38,7 +38,7 @@ e-mail to eggheads@eggheads.org (after subscribing). Thanks.
     * about 500k of disk space, or more, depending on your system (on
       Linux, the executable takes up about 400k currently -- it will
       be a lot larger on a RISC system)
-    * the Tcl libraries -- if you don't have them (and most systems
+    * the TCL libraries -- if you don't have them (and most systems
       should), check the README file on info about how to install it
       yourself (you don't need to be root)
 
@@ -73,7 +73,7 @@ e-mail to eggheads@eggheads.org (after subscribing). Thanks.
 (2) STARTING OUT
 
     Obviously the first thing you want to do is compile the bot.  The
-    README file tells you what to do and answers some frequenty-asked
+    README file tells you what to do and answers some frequently-asked
     questions about compiling.  If you're in a rush and you know what
     you're doing, you don't have to read this at all -- the README file
     tells you how to quickly compile and start up the bot.
@@ -199,7 +199,7 @@ e-mail to eggheads@eggheads.org (after subscribing). Thanks.
 
     Eggdrop does not have access levels like some bots.  There are no
     meaningless numbers or titles.  Instead, each user has "flags" that
-    entitle them to certain priveledges.  Think of a flag as a badge.
+    entitle them to certain privileges.  Think of a flag as a badge.
     Any user can have any number of flags -- you can have no flags, or
     you can have all of them.  Some flags are good, some are bad.  Each
     flag is identified by a letter.  The standard flags are:
@@ -217,7 +217,7 @@ e-mail to eggheads@eggheads.org (after subscribing). Thanks.
                  bot (if it exists) and can send and receive files to/from
                  the bot
 
-    j  (janitor) someone who can perform maintanence in the file area of
+    j  (janitor) someone who can perform maintenance in the file area of
                  the bot (if it exists) -- like a "master" of the file
                  area
 
@@ -256,7 +256,7 @@ e-mail to eggheads@eggheads.org (after subscribing). Thanks.
     n  (owner)   someone who owns the channel
 
     a  (auto-op) automatically op the person when they join the channel
-                 even if the channel isnt +autoop
+                 even if the channel isn't +autoop
 
     v  (auto-voice) automatically give this person a voice it they
                  join a +autovoice channel.
@@ -271,7 +271,7 @@ e-mail to eggheads@eggheads.org (after subscribing). Thanks.
 (5) THE PARTY LINE
 
     The most important way you will communicate with your bot is through
-    the party line.  The party line is accessable via DCC chat or telnet.
+    the party line.  The party line is accessible via DCC chat or telnet.
     It's pretty much just a miniature lagless irc (see "Botnet" below),
     but it also consists of a console through which you can watch channel
     activity and give commands.
@@ -380,7 +380,7 @@ e-mail to eggheads@eggheads.org (after subscribing). Thanks.
                     botnet at all, no matter where it connects.  This is
                     equivalent to irc's "Q-line".
 
-    There are also 10 user-defined flags (0-9) avaliable for use with
+    There are also 10 user-defined flags (0-9) available for use with
     bots only.
 
     These flags can all be changed by the '.botattr' command just like for
@@ -407,9 +407,9 @@ e-mail to eggheads@eggheads.org (after subscribing). Thanks.
 
     Next you need to decide which bot will be ACTIVE and which will
     be PASSIVE, the ACTIVE bot will send its userfile and overwrite
-    the PASSIVE's userfile, so be carefull. Once you've decided, on
-    the ACTIVE bot you set the PASSIVE bot +s, to idicate sharing,
-    and on the PASSIVE you set the ACTIVE +p to idicate passive sharing,
+    the PASSIVE's userfile, so be careful. Once you've decided, on
+    the ACTIVE bot you set the PASSIVE bot +s, to indicate sharing,
+    and on the PASSIVE you set the ACTIVE +p to indicate passive sharing,
     the bot will only share passively with 1 bot at once, but can
     share actively with any number of bots.
 
@@ -504,7 +504,7 @@ e-mail to eggheads@eggheads.org (after subscribing). Thanks.
 
     The default language directory is "./language". If you want to specify
     another directory just set the environment variable EGG_LANGDIR
-    apropriately.
+    appropriately.
 
     csh/tcsh:
        setenv EGG_LANGDIR <directory>
@@ -533,7 +533,7 @@ e-mail to eggheads@eggheads.org (after subscribing). Thanks.
 
      (a) Your bot was swapped out of memory for a while, or that
      for some reason the computer stopped letting the bot run.  Once a minute,
-     eggdrop does a few maintanance things, including counting down any Tcl
+     eggdrop does a few maintenance things, including counting down any Tcl
      timers you have going.  If for some reason, several minutes pass without
      eggdrop getting to do this, it logs this message to let you know what
      happened.  It's generally a bad thing, because it means that the system
@@ -542,7 +542,7 @@ e-mail to eggheads@eggheads.org (after subscribing). Thanks.
 
      (b) on some systems (at least Linux), if the dns your bot is using to
      lookup hostnames is broken, and *very* slow in responding (this
-     can occur if the dns's uplink doesnt exist) then you will get 4/5
+     can occur if the dns's uplink doesn't exist) then you will get 4/5
      minute time drifts continuously, not much can be done about this,
      it's an operating system problem :(
 

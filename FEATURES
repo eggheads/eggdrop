@@ -8,7 +8,7 @@ development since December 1993, and, unlike most other bots, it is still
 regularly updated. Its features include:
 
 
-   * completely different channel user lists like having a seperate bot for
+   * completely different channel user lists like having a separate bot for
      each channel.
    * complete channel protection, customizable via config file: permanently
      store a ban list with comments, etc
@@ -27,7 +27,7 @@ regularly updated. Its features include:
    * a file system where people can upload and download files, in an
      environment that looks and acts (for the most part) like a typical
      unix system -- plus the ability to mark directories as hidden /
-     unaccessable to people without certain user flags
+     unaccessible to people without certain user flags
    * bot network: link two or more bots together for a party line that can
      stretch not only across channels, but across irc networks (one bot on
      EFnet, one bot on Undernet, etc)
@@ -74,7 +74,7 @@ The base loadable modules distributed with this Eggdrop version are:
      party `chat' lines. It also serves as an example for writing your own
      modules.
    * blowfish The standard Eggdrop encrypting routines for passwords and
-     other encrytions. This can be replaced with a user-written module to
+     other encryption. This can be replaced with a user-written module to
      perform their own encrypting algorithms.
    * channels This allows eggdrop to have channel info stored and used on
      that server that you allowed for with the server module
@@ -108,7 +108,7 @@ The base loadable modules distributed with this Eggdrop version are:
 MODULE - static
 
 The STATIC-MODULE version of Eggdrop 1.6.x is pretty much the same as the
-module bot, except each individual module is linked into the excutable. You
+module bot, except each individual module is linked into the executable. You
 still need to 'loadmodule <module>' to turn them on.
 
 See the file MODULES for more specific MODULE information.
@@ -138,7 +138,7 @@ compatible once written (it can still READ old userlists take note).
 Flags have multiplied & split up: normal user/channel flags still exist and
 are setable by .chattr. You can also now use .chattr +o|-o #channel. New
 are the "user-defined" flags which are all of A-Z for users & channels.
-Also, bot attributes are seperated now and are set using .botattr. Bots
+Also, bot attributes are separated now and are set using .botattr. Bots
 have "user-defined" flags 0-9. The old 0-9 user defined flags will be
 converted to A-J when you upgrade your userfile.
 

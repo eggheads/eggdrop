@@ -9,7 +9,7 @@
    In such cases, create a user record for the account, and mark
    it +c, or "common access".  Marking it as "common access" means 
    that it shouldn't be used as a definitive address.  When someone 
-   introduces themself to the bot (ie, by /msg'ing "hello")and matches 
+   introduces themselves to the bot (i.e., by /msg'ing "hello")and matches 
    as a +c user, they will be given a new user record which identifies 
    them BY NICKNAME.
 

@@ -11,7 +11,7 @@
 # v4.00001 nov97 [blurgh]
 # v5-BETA1 -- 26sep99 by rtc
 #
-# $Id: ques5.tcl,v 1.5 2001/04/12 02:39:43 guppy Exp $
+# $Id: ques5.tcl,v 1.6 2001/11/05 04:08:28 guppy Exp $
 #
 # o clean webfile var removal
 # o using timezone variable from config file
@@ -76,7 +76,7 @@ set web_update 5
 
 # Which characters should be allowed in URLs?
 # DO NOT MODIFY unless you really know what you are doing.
-# Expecially never add '<', '"' and '>'
+# Especially never add '<', '"' and '>'
 set web_urlchars "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890 :+-/!\$%&()=[]{}#^~*.:,;\\|?_@"
 
 # IRC -> HTML color translation table

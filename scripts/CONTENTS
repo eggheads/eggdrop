@@ -1,6 +1,6 @@
 These are the example scripts that come with eggdrop.  They're meant
-to be useful AND to introduce Tcl to those who haven't dealt with it
-before.  Even people who program in Tcl may be confused by eggdrop's
+to be useful AND to introduce TCL to those who haven't dealt with it
+before.  Even people who program in TCL may be confused by eggdrop's
 implementation at first, because so many commands were added to
 interface the bot.
 
@@ -12,12 +12,12 @@ alltools.tcl
    toolbox.tcl
       cmwagner's collection of handy procs
    toolkit.tcl
-      a few useful procs that may be required by other Tcl scripts
+      a few useful procs that may be required by other TCL scripts
    moretools.tcl
       more useful procs from David Sesno
 
 autobotchk
-   tcl script used to crontab your Eggdrop
+   TCL script used to crontab your Eggdrop
    usage: ./autobotchk <eggdrop config file>
 
 botchk
@@ -28,10 +28,10 @@ cmd_resolve.tcl
    or ip addresses in the partyline.
 
 compat.tcl
-   maps old tcl functions to new ones, for lazy people who can't be bothered
+   maps old TCL functions to new ones, for lazy people who can't be bothered
    updating their scripts
    
-getops-2.2d.tcl
+getops.tcl
    a way to get ops from other bots on the botnet (if they're on the
    same channel)
 
@@ -51,7 +51,7 @@ sentinel.tcl (by slennox)
    this script is designed to provide strong protection for your bot and
    channels against large floodnets and proxy floods.
 
-userinfo1.0.tcl
+userinfo.tcl
    cute user info settings things 
  
 weed

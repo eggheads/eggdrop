@@ -23,7 +23,7 @@ experienced users.
 
   1. Type './configure' from the eggdrop directory.  That script will
      determine how your system is set up, and figure out how to compile
-     eggdrop.  It will also try to find Tcl, which is required to compile.
+     eggdrop.  It will also try to find TCL, which is required to compile.
 
   2. Type either 'make config' or 'make iconfig' to determine which modules
      will be compiled.  'make config' creates the default modules.  If you
@@ -31,7 +31,7 @@ experienced users.
 
   3. Type 'make' from the eggdrop directory.  Or to force a statically
      linked module bot type 'make static'.  Otherwise the Makefile will
-     determin which type of bot your system will support.  Dynamic isalways
+     determine which type of bot your system will support.  Dynamic is always
      the better way to go if possible. There're also the options debug and
      sdebug (static-debug) which will give more detailed output on (a
      highly unlikely :) crash. This might help the devteam to track down
@@ -44,7 +44,7 @@ experienced users.
 
      make install
      This will install the eggdrop in your home directory in a directory
-     called eggdrop (ie. /home/user/eggdrop).
+     called eggdrop (i.e.. /home/user/eggdrop).
 
      If you want to install to a different directory use:
 
@@ -59,7 +59,7 @@ experienced users.
 
   6. Edit your config file LamestBot.conf completely.
 
-  7. Start the bot with the "-m" option to create a user file, ie './eggdrop
+  7. Start the bot with the "-m" option to create a user file, i.e. './eggdrop
      -m LamestBot.conf'.
 
   8. When starting the bot in the future, drop the "-m".  If you have
@@ -84,10 +84,10 @@ experienced users.
 (3) MODULES
 
   1. Modules are small pieces of code that can either be compiled into the
-     binary or can be compiled seperatly in a file.  This allows for a much
+     binary or can be compiled separately in a file.  This allows for a much
      smaller binary and a way of choosing which options you want installed
      in the bot.  Before you compile the bot you can remove any *.mod
-     directory in the src/mod that you dont wish to be compiled.  Use
+     directory in the src/mod that you don't wish to be compiled.  Use
      caution though most of the modules that come with eggdrop the are
      required.  The exception is woobie.mod and seen.mod.  If you do not
      want these modules it is safe to delete those directories.
@@ -96,7 +96,7 @@ experienced users.
      can add them to the bot by placing them in the /src/mod directory with
      a mod extension.  They will be automatically compiled during the make
      for you.  They must have a valid make file and of course be
-     compatiable with the rest of the eggdrop source.
+     compatible with the rest of the eggdrop source.
 
   3. If you wish to add a module at a latter time follow the same steps in
      paragraph 2.  After you have moved the appropriate files you will only
@@ -114,8 +114,8 @@ experienced users.
   3. I still don't know how to....
      Well, go to www.egghelp.org or www.eggheads.org and see if you can
      find there what you're looking for. There're also lots of IRC help
-     channels (usually #eggdrop) and various mailinglists. Try Eggheads
-     mailinglist http://scrambled.eggheads.org/mailman/listinfo/eggheads
+     channels (usually #eggdrop) and various mailing lists. Try Eggheads
+     mailing list http://scrambled.eggheads.org/mailman/listinfo/eggheads
 
 This is the end. If you read to this point, hopefully you have also read
 the README file. If not, then READ IT!&@#%@!

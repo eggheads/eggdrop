@@ -11,7 +11,7 @@
 #  05Nov2000: fixed a nasty security hole, .resolve [die] <grin>
 #  04Nov2000: first version
 #
-# $Id: cmd_resolve.tcl,v 1.1 2000/11/05 21:36:47 fabian Exp $
+# $Id: cmd_resolve.tcl,v 1.2 2001/11/05 04:08:28 guppy Exp $
 
 bind dcc -|- resolve resolve_cmd
 bind dcc -|- dns resolve_cmd
@@ -45,4 +45,3 @@ proc resolve_callback {ip host status idx hostip} {
 loadhelp cmd_resolve.help
 
 putlog " * Loaded [file tail [info script]] successfully."
-

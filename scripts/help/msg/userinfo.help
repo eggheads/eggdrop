@@ -32,7 +32,7 @@
 %{help=irl}
 %b/MSG%b %B %bIRL%b <my real name>
    This will set your real name. just for the information
-   of others :). If you dn't specify a real name, the bot will
+   of others :). If you don't specify a real name, the bot will
    show you the real name it currently has set for you (if any).
 %b/MSG%b %B %bIRL%b none
    This clears your real name.

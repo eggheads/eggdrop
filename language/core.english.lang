@@ -1,7 +1,7 @@
 # core.english.lang
 #   core language messages for eggdrop
 #
-# $Id: core.english.lang,v 1.25 2001/09/24 04:25:39 guppy Exp $
+# $Id: core.english.lang,v 1.26 2001/11/05 04:08:27 guppy Exp $
 
 # General stuff
 0x001,Usage
@@ -32,7 +32,7 @@
 0x124,Global invites
 0x126,Channel invites for
 0x129,Use '.invites all' to see the total list
-0x12a,No longer inviteing
+0x12a,No longer inviting
 
 # MOD_
 0x200,Already loaded.
@@ -239,7 +239,7 @@ Telnet to the bot and enter 'NEW' as your nickname.
 0x665,NOTICE %s :All major commands are used from DCC chat. From now on, you don't need to use the -m option when starting the bot.  Enjoy !!!\n
 0x666,This is the telnet interface to %s, an eggdrop bot.\nDon't abuse it, and it will be open for all your friends, too.\n
 0x667,You now get to pick a nick to use on the bot,\nand a password so nobody else can pretend to be you.\nPlease remember both!
-0x668,From now on, you dont need to use the -m option to start the bot.\nEnjoy !!
+0x668,From now on, you don't need to use the -m option to start the bot.\nEnjoy !!
 0x669,Telnet connection flood from %s!  Placing on ignore!
 0x66a,banned: 
 0x66b,join flood

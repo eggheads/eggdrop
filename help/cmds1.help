@@ -8,7 +8,7 @@
    You can use this command and %b'chpass'%b to completely set up a
    record for a future bot, or you can let the two bots negotiate
    a password for themselves the first time they link.  If the bot
-   has a seperate port for bots and users they should be seperated
+   has a separate port for bots and users they should be separated
    with a slash (/).
 %{help=+host}
 ###  %b+host%b <hostmask>
@@ -91,8 +91,8 @@ See also:  +user, +bot, -bot
    records the number of times that binding has been called.
    If not, go read the file %b'tcl-commands.doc'%b for help on the
    Tcl bind command.  Note that the builtin commands are now shown.
-   You may also specify a type of binding to show (ie, 
-   %b'.binds msg'%b) or you can specify a wild card match (ie, 
+   You may also specify a type of binding to show (i.e., 
+   %b'.binds msg'%b) or you can specify a wild card match (i.e., 
    %b'.binds *seen*'%b) if you want to narrow the field a bit.
    The wild card matches will match against the TYPE, COMMAND and
    BINDING fields.
@@ -148,8 +148,8 @@ See also: bots, botinfo
 ###  %bchaddr %b<bot> <address:botport#/userport#>
    Changes the internet address for a bot.  This is the address
    your bot will try to telnet to in order to create a connection
-   and link up.  If the bot has a seperate port for bots and users
-   they should be seperated with a slash (/).
+   and link up.  If the bot has a separate port for bots and users
+   they should be separated with a slash (/).
    
 See also: link, +bot
 %{help=chat}
@@ -159,7 +159,7 @@ See also: link, +bot
    connect to the bot, it places you on channel 0 (the party line).
    You can move to another channel where basically nobody can see
    you (except anyone else who decides to join that channel).  Valid
-   channel numbers are 1 thru 99999.  
+   channel numbers are 1 through 99999.  
 
    Some channels may have assigned names if the assoc module is 
    loaded.  For those, you can specify the channel by name instead
@@ -201,10 +201,10 @@ See also: link, +bot
    %bNOTES:%b
    Only the owner may add or remove the 'n' (owner), 'm' (master)
    and 't' (botnet master) flags.
-   It is pointless to -n a permanant owner.  You must remove the
-   permanant owner in the config file.
+   It is pointless to -n a permanent owner.  You must remove the
+   permanent owner in the config file.
    This command can no longer be used to change bot flags, they
-   are a seprated entity, changeable with the %b'.botattr'%b command.
+   are a separated entity, changeable with the %b'.botattr'%b command.
 See also: whois
 %{help=chhandle}%{+t}
 ###  %bchhandle%b <oldhandle> <newhandle>
@@ -213,7 +213,7 @@ See also: whois
    type: 'chhandle gavroche jamie'
 %{help=chnick}%{+t}
 ###  %bchnick%b
-   Please note, that this command has been superceeded by
+   Please note, that this command has been superceded by
    'chhandle'. If you still want to use 'chnick', load compat.tcl
    into your bot.
 %{help=chpass}%{+t}
@@ -257,7 +257,7 @@ See also: whois
    owner only:
       r  display all raw text from the server (if enabled)
       v  display raw text SENT to the server (if enabled)
-   -- There are also 8 user-defined console modes '1' thru '8' --
+   -- There are also 8 user-defined console modes '1' through '8' --
 %{+o|o}
    The mode can also be a modifier like '+p' or '-jk' or '+mp-b'.  If
    you omit the channel and modes, it will show your current console
@@ -319,7 +319,7 @@ See also: whois
       W     warned this bot to stop hubbing
       L     leafed bot (not allowed to hub)
       I     bot is currently in the 'linking' stage
-      A     bot is being agressively shared with
+      A     bot is being aggressively shared with
    for 'chat' users, the party-line channel is also listed.
 %{help=debug}%{+m}
 ###  %bdebug%b

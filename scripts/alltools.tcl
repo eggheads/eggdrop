@@ -17,10 +17,10 @@
 # Sup       02Apr2001: added matchbotattr
 # Tothwolf  13Jun2001: updated/modified several commands
 #
-# $Id: alltools.tcl,v 1.10 2001/06/15 05:31:38 tothwolf Exp $
+# $Id: alltools.tcl,v 1.11 2001/11/05 04:08:28 guppy Exp $
 #
 ########################################
-# Descriptions of avaliable commands:
+# Descriptions of available commands:
 ## (toolkit):
 # putmsg <nick/chan> <text>
 #   send a privmsg to the given nick or channel
@@ -124,7 +124,7 @@
 set alltools_loaded 1
 set allt_version 204
 
-# For backward comptibility.
+# For backward compatibility.
 set toolbox_revision 1007
 set toolbox_loaded 1
 set toolkit_loaded 1

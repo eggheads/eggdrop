@@ -22,13 +22,13 @@ see also: set nick, set altnick (server module variables)
       %%v   display inverse
       %%_   display underline
       %%f   display flashing via telnet, bold underline via irc
-      %%B   bot's nickname (ie, "%B")
-      %%V   current eggdrop version (ie, "%V")
-      %%E   long form of %%V (ie, "%E")
-      %%C   channels the bot is on (ie, "%C")
+      %%B   bot's nickname (i.e., "%B")
+      %%V   current eggdrop version (i.e., "%V")
+      %%E   long form of %%V (i.e., "%E")
+      %%C   channels the bot is on (i.e., "%C")
       %%A   whatever is set in 'admin' (see 'set admin')
-      %%T   the current time (ie, "%T")
-      %%N   the current user's nickname (ie, "%N")
+      %%T   the current time (i.e., "%T")
+      %%N   the current user's nickname (i.e., "%N")
       %%U   the current operating system the bot is on
       %%%%   a percent sign ("%%")
    you can also encode messages which can only be read by people
@@ -41,8 +41,8 @@ see also: set nick, set altnick (server module variables)
    Other extended %% commands are:
       %%{cols=N}     start splitting output into N columns
       %%{cols=N/W}   same, but use a screen width of W
-      %%{end}        end columnated or restricted (ie %%{+m}) block
-      %%{centre}     center the following text (70 columns)
+      %%{end}        end columnated or restricted (i.e. %%{+m}) block
+      %%{center}     center the following text (70 columns)
 %{help=set admin}%{+n}
 ###  %bset admin%b <admin-info>
    specifies the admin info for your bot.  it's just human-
@@ -101,7 +101,7 @@ see also: set my-ip
    overrides the network IP used by the bot to identify itself
    over dcc connections.  this is really only useful if your
    machine has multiple IPs and you would like the bot to use
-   a particular one, or if the bot has trouble detecing your
+   a particular one, or if the bot has trouble detecting your
    IP automatically.
 
 see also: set my-hostname
@@ -135,7 +135,7 @@ see also: set realname
 ### %bset version%b
    this read-only variable returns the current version of the bot
    in the form v1.4.0+<lastpatch> <versionnumber> <patch list>.
-%{help=set filewall}%{+n}
+%{help=set firewall}%{+n}
 ###  %bset firewall%b <host:port>
    specifies your telnet proxy server if you're behind a firewall.
    leave this blank if you have a normal (direct) net connection.
@@ -147,6 +147,6 @@ see also: set realname
 see also: set reserved-portrange
 %{help=set telnet-flood}%{+n}
 ###  %bset telnet-flood <times:seconds>%b
-   this setting will cause the bot to ignore any futher telnets it
+   this setting will cause the bot to ignore any further telnets it
    receives from any given host that connects any more than the
    given times in the given number of seconds

@@ -5,4 +5,3 @@ banner
 motd
    anytime a user logs in successfully and joins the party line, he
    is show the text from this file
-

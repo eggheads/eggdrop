@@ -3,7 +3,7 @@
 #                     - a bind apart script from #TSF
 #                     - for eggdrop 1.3.15+
 #
-# $Id: notes2.tcl,v 1.5 2001/03/17 23:20:57 guppy Exp $
+# $Id: notes2.tcl,v 1.6 2001/11/05 04:08:28 guppy Exp $
 #
 ####
 #
@@ -197,7 +197,7 @@ proc *dcc:notes2 {handle idx arg} {
 		    return [*dcc:notes $handle $idx $arg]
 		}
 	    } else {
-		putidx $idx "I don't know anybot by that name."
+		putidx $idx "I don't know any bot by that name."
 		return 0
 	    }
 	} elseif {($cmd != "index") && ($cmd != "read") && ($cmd != "erase")} {

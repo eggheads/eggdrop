@@ -18,8 +18,16 @@ BOTNET
 BUG-REPORT
    a guide how to send bug-reports
 
+compiling.FAQ
+   if you have troubles compiling your eggdrop, take a look
+   into this file
+
 CONTENTS
    this file
+
+eggdrop.doc
+   the primary documentation on running an eggdrop bot -- to be used
+   AFTER you get it compiled  (unfinished, but a good starter course)
 
 KNOWN-PROBLEMS
    i.e. things that are broken, but aren't getting fixed anytime soon
@@ -27,38 +35,24 @@ KNOWN-PROBLEMS
 MODULES
    module information (not finished yet, but getting there).
 
+patch.howto
+   a how-to on applying and making patches to eggdrop
+   (patches are a popular way to fix bugs in programs)
+
+tcl-commands.doc
+   documentation for eggdrop/TCL script programmers
+
+text-substitutions.doc
+   documentation for the motd file
+
+tricks
+   some advanced tips on making eggdrop do what you want it to do
+   
 UPDATES1.6
    a list of what's changed in 1.6 versions
 
 UPDATES1.5
    a list of what's changed in 1.5 versions
 
-UPDATES1.4
-   a list of what's changed in 1.4 versions
-
-UPDATES1.3
-   a list of what's changed in 1.3 versions
-
-UPDATES.pre1.3
-   a list of what's changed in pre 1.3 versions
-
-compiling.FAQ
-   if you have troubles compiling your eggdrop, take a look
-   into this file
-
-eggdrop.doc
-   the primary documentation on running an eggdrop bot -- to be used
-   AFTER you get it compiled  (unfinished, but a good starter course)
-
-patch.howto
-   a how-to on applying and making patches to eggdrop
-   (patches are a popular way to fix bugs in programs)
-
-text-substitutions.doc
-   documentation for the motd file
-
-tcl-commands.doc
-   documentation for eggdrop/Tcl script programmers
-
-tricks
-   some advanced tips on making eggdrop do what you want it to do
+UPDATES.pre1.5
+   a list of what's changed in pre 1.5 versions

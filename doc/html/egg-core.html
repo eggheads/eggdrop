@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: egg-core.html,v 1.9 2001/09/28 14:07:25 guppy Exp $ -->
+<!-- $Id: egg-core.html,v 1.10 2001/11/05 04:08:26 guppy Exp $ -->
 
 <html>
   <head>
@@ -12,8 +12,8 @@
     </div>
     <hr>
 
-    <p>This is an exhaustive list of all the Tcl commands added by eggdrop.
-    All of the normal Tcl built-in commands are still there, of course. But
+    <p>This is an exhaustive list of all the TCL commands added by eggdrop.
+    All of the normal TCL built-in commands are still there, of course. But
     you can also use these to manipulate features of the bot. Please see the
     module files for TCL commands relating to each module.</p>
 
@@ -99,7 +99,7 @@
     <p><a name="sect1b"></a>1b. <strong>Basic settings</strong></p>
 
     <blockquote>
-      <p>You can change the basic eggdrop appearence and behaviour in this
+      <p>You can change the basic eggdrop appearance and behaviour in this
       section.</p>
     </blockquote>
 
@@ -158,7 +158,7 @@
         by default)</em></strong></dt>
 
         <dd>
-          <p>If you dont want to use the timezone setting for scripting
+          <p>If you don't want to use the timezone setting for scripting
           purpose only but instead everywhere possible then use this
           setting.</p>
         </dd>
@@ -168,7 +168,7 @@
         <dd>
           <p>If you want to have your eggdrop messages displayed in another
           language change the below command to match your preferences. An
-          alternative would be to set the environment variabel EGG_LANG to
+          alternative would be to set the environment variable EGG_LANG to
           that value.</p>
         </dd>
       </dl>
@@ -179,7 +179,7 @@
     <p>Eggdrop is capable of logging various stuff, from channel chatter to
     commands people use on the bot or file transfers.</p>
 
-    <p>Logfiles are kept normaly for 24 hours. Afterwards they&#39;ll be
+    <p>Logfiles are kept normally for 24 hours. Afterwards they&#39;ll be
     renamed to &quot;(logfilename).yesterday&quot;. After 48 hours
     they&#39;ll get overwritten by the logfile of the next day.</p>
 
@@ -219,7 +219,7 @@
         &quot;logs/logfile&quot;</strong></dt>
 
         <dd>
-          <p>This setting actually tells the bot what should be loged from
+          <p>This setting actually tells the bot what should be logged from
           where in which file.</p>
 
           <p>The most common log file flags are:</p>
@@ -238,9 +238,9 @@
            w wallops: msgs between IRCops (be sure to set the bot +w in
           init-server)</p>
 
-          <p>There are others, but you probably shouldnt log them, it&#39;d
+          <p>There are others, but you probably shouldn't log them, it&#39;d
           be rather unethical ;). There are also five user-defined levels
-          (&#39;1&#39;..&#39;5&#39;) which are used by Tcl scripts.</p>
+          (&#39;1&#39;..&#39;5&#39;) which are used by TCL scripts.</p>
 
           <p>Each logfile belongs to a certain channel. Events of type
           &#39;k&#39;, &#39;j&#39;, and &#39;p&#39; are logged to whatever
@@ -288,7 +288,7 @@
           <p>You have to use military time in here. 300 is default and
           describes 00:00.</p>
 
-          <p>Note that a leading 0 will make Tcl think this is an octal
+          <p>Note that a leading 0 will make TCL think this is an octal
           value, something you probably don&#39;t want.</p>
         </dd>
 
@@ -394,7 +394,7 @@
     <p><a name="sect1e"></a>1e. <strong>Botnet, dcc and network</strong></p>
 
     <p>Settings in this section should be unimportant fur you until you deal
-    with botnets (multiple eggdrops conected together to maximize efficency).
+    with botnets (multiple eggdrops connected together to maximize efficiency).
     You should read doc/BOTNET before modifying these settings.</p>
 
     <blockquote>
@@ -403,8 +403,8 @@
         (disabled by default)</dt>
 
         <dd>
-          <p>If you want to use a differnt nickname on the botnet than you
-          use on IRC (i.e. if you&#39;re in an untrusted botnet) set it
+          <p>If you want to use a different nickname on the botnet than you
+          use on IRC (i.e. if you&#39;re in an un-trusted botnet) set it
           here.</p>
         </dd>
 
@@ -623,7 +623,7 @@
           172.16.0.0-172.31.255.255, 10.0.0.0-10.255.255.255 and your
           firewall transparently changes your address to a unique address for
           your box.) or you have IP masquerading between you and the rest of
-          the world, and /dcc chat,/ctcp chat or userfile shareing aren&#39;t
+          the world, and /dcc chat,/ctcp chat or userfile sharing aren&#39;t
           working. Enter your outside IP here.</p>
 
           <p>Do not enter anything for my-ip or my-hostname if you use this
@@ -751,7 +751,7 @@
 
         <dd>
           <p>Enable this setting, if you want to enable the
-          &#39;dccsimul&#39; tcl command</p>
+          &#39;dccsimul&#39; TCL command</p>
 
           <p>Valid settings are 0 and 1.</p>
         </dd>
@@ -832,7 +832,7 @@
       <p>Some commonly loaded scripts are alltools.tcl and
       action.fix.tcl.</p>
 
-      <p>The aproperiate source lines are:</p>
+      <p>The appropriate source lines are:</p>
 
       <p><strong>source scripts/alltools.tcl<br>
        source scripts/action.fix.tcl</strong></p>
@@ -1235,7 +1235,7 @@
           <dd>
             <p>sends your message to everyone on a certain channel on the bot
             net, in a form exactly like dccbroadcast does -- valid channels
-            are 0 thru 99999</p>
+            are 0 through 99999</p>
 
             <p>returns: nothing</p>
           </dd>
@@ -1297,7 +1297,7 @@
             version, sharing status.</p>
 
             <p>bot&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : the bot&#39;s nickname<br>
-             uptlink : who the bot is connected through<br>
+             uplink : who the bot is connected through<br>
              version : its currentnumeric version<br>
              sharing : a &quot;+&quot; if the bot is sharing, &quot;-&quot;
             otherwise</p>
@@ -1306,7 +1306,7 @@
           <dt><strong>islinked &lt;bot&gt;</strong></dt>
 
           <dd>
-            <p>returns: &quot;1&quot; if thebot is currently linked,
+            <p>returns: &quot;1&quot; if the bot is currently linked,
             &quot;0&quot; otherwise</p>
           </dd>
 
@@ -1333,7 +1333,7 @@
           [console-modes]</strong></dt>
 
           <dd>
-            <p>changes a dcc user&#39;s consolemode, either to an absolute
+            <p>changes a dcc user&#39;s console mode, either to an absolute
             mode (like &quot;mpj&quot;) or just adding/removing flags (like
             &quot;+pj&quot; or &quot;-moc&quot; or &quot;+mp-c&quot;); the
             user&#39;s console channel view can be changed also (as long as
@@ -1545,13 +1545,13 @@
             <p>adds a new keyword command to the bot; valid types are listed
             below; the &lt;attr(s)&gt; are the flags that a user must have to
             trigger this command; the &lt;command-name&gt; for each type is
-            listed below; &lt;proc-name&gt; is the name of the Tcl procedure
+            listed below; &lt;proc-name&gt; is the name of the TCL procedure
             to call for this command (see below for the format of the
             procedure call); if the proc-name is omitted, no binding is added
             -- instead, the current binding is returned (if it&#39;s
             stackable, a list of the current bindings is returned) yes, you
             can use the new flag binding method here too, and this is where
-            it becomes truely phearful since you may never need to check
+            it becomes truly phearful since you may never need to check
             attr&#39;s inside functions again...imagine:</p>
 
             <p>bind pub -o&amp;+o command command_proc</p>
@@ -1685,7 +1685,7 @@
 
           <dd>
             <p>The last command binding which triggered. This allows you to
-            identify which command triggered a tcl routine.</p>
+            identify which command triggered a TCL routine.</p>
           </dd>
         </dl>
       </blockquote>
@@ -1694,21 +1694,21 @@
       <p><a name="sect7"></a>7. <strong>Command extension</strong></p>
 
       <blockquote>
-        <p>You can use the &#39;bind&#39; command to attach Tcl procedures to
-        certain events. For example, you can write a Tcl procedure that gets
+        <p>You can use the &#39;bind&#39; command to attach TCL procedures to
+        certain events. For example, you can write a TCL procedure that gets
         called every time a user says &quot;danger&quot; on the channel. The
         following is a list of the types of bindings, and how they work.
         Under each binding type is the format of the bind command, the list
-        of arguments sent to the Tcl proc, and an explanation.</p>
+        of arguments sent to the TCL proc, and an explanation.</p>
 
         <p>Some bindings are marked as &quot;stackable&quot;. That means that
         you can bind multiple commands to the same trigger. Normally, for
         example, a binding of &quot;bind msg - stop msg_stop&quot; (which
-        makes a msg-command &quot;stop&quot; call the Tcl proc
+        makes a msg-command &quot;stop&quot; call the TCL proc
         &quot;msg_stop&quot;) will overwrite any previous binding you had for
         the msg-command &quot;stop&quot;. With stackable bindings, like
         &#39;msgm&#39; for example, you can bind to the same command or mask
-        again and again. When the binding is triggered, ALL the Tcl procs
+        again and again. When the binding is triggered, ALL the TCL procs
         that are bound to it will be called, one after another.</p>
 
         <p>To remove a binding, use &quot;unbind&quot;. For example, to
@@ -1869,7 +1869,7 @@
             &lt;year&gt;</p>
 
             <p>allows you to schedule procedure calls at certain times, mask
-            matches 5 space seperated integers of the form: &quot;min hour
+            matches 5 space separated integers of the form: &quot;min hour
             day month year&quot;</p>
           </dd>
 

@@ -1,7 +1,7 @@
 # userinfo.tcl v1.06 for Eggdrop 1.4.3 and higher
 #           Scott G. Taylor -- ButchBub!staylor@mrynet.com
 #
-# $Id: userinfo.tcl,v 1.3 2001/08/27 23:25:15 poptix Exp $
+# $Id: userinfo.tcl,v 1.4 2001/11/05 04:08:28 guppy Exp $
 #
 # v1.00      ButchBub     14 July      1997 -Original release.  Based on
 #                                            whois.tcl "URL" commands.
@@ -31,7 +31,7 @@
 #               the IRC command: /MSG <botnick> irl Joe Blow.
 #          o    See the new information now appear with the whois command.
 #
-# This script enhances the `whois' output utilising the `whois-fields'
+# This script enhances the `whois' output utilizing the `whois-fields'
 # option of eggdrop 1.1-grant and later versions.  It adds the functionality
 # of whois.tcl used in pre-1.1-grant versions.
 #
@@ -274,7 +274,7 @@ proc cleanarg {arg} {
   return $response
 }
 
-# Set userinfo_loaded variable to indicate that the script was sucessfully
+# Set userinfo_loaded variable to indicate that the script was successfully
 # loaded. this can be used in scripts that make use of the userinfo tcl.
 
 set userinfo_loaded 1

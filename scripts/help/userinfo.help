@@ -99,7 +99,7 @@
    shows currently loaded user info fields.
 %{help=userinfo}%{+m}
 ###  %buserinfo script%b
-   this nifty little script lets you define arbritary strings for each
+   this nifty little script lets you define arbitrary strings for each
    user that they can set themselves or a master can set.  the default
    script contains the entries URL, BF (boyfriend), GF (girlfriend),
    IRL (in real life name), EMAIL, and DOB (date of birth).  each entry

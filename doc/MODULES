@@ -13,15 +13,15 @@ VI    WHAT TO DO WITH A MODULE?
 
 I.    WHAT ARE MODULES?
 
-Modules are portions of code which are loaded seperately to the
-bot itself, which provided extra services. eg. filesys module
+Modules are portions of code which are loaded separately to the
+bot itself, which provided extra services. e.g. filesys module
 provides the entire file system.
 
 
 II.   WHY USE MODULES?
 
 It allows the core eggdrop, that which is minimally required to be
-reduced, and allows C coders to add their own ehancements to the
+reduced, and allows C coders to add their own enhancements to the
 bot without recompiling the whole thing.
 
 
@@ -46,7 +46,7 @@ Next do one of two things to load the module:
 
    from the partyline (as an owner) type:
       .loadmod <module-name>
-   or in a tcl script:
+   or in a TCL script:
       loadmodule <module-name>
 
    module-name is the part BEFORE .so, e.g filesys.so module
@@ -111,7 +111,7 @@ Note: This is for a simple module of 1 source file, if you're doing a
     (where MODULE is the module name) and cd to it.
 
 (b) Copy the file `Makefile' from src/mod/woobie.mod and replace all
-    occurences of `woobie' with your module name. This should ensure
+    occurrences of `woobie' with your module name. This should ensure
     that your module gets compiled.
 
 (c) Next you want to create a file called MODULE.c (again MODULE is the
@@ -185,7 +185,7 @@ drastically reduce the size of modules on decent systems.
             };
             ok, it's not a function, it's a list of functions, which any
             other module can call up, so you can provide services for other
-            modules (eg transfer has raw_dcc_send in it's table to allow
+            modules (e.g. transfer has raw_dcc_send in it's table to allow
             the filesys to send files to others)
             the first 4 functions are FIXED, you MUST have them, they
             provide important system info.
@@ -218,21 +218,21 @@ drastically reduce the size of modules on decent systems.
            in progress) but they will be there...
            This is just a short list of the ones you need to make
            a mildly useful module, a goodly portion of the remaining
-           eggdrop functions are avaliable, check src/mod/module.h for
+           eggdrop functions are available, check src/mod/module.h for
            info.
 
 void *nmalloc (int a);      - allocates a bytes
 void   nfree (void *a);     - frees a modmalloc'd block
        context;             - actually a #define, records the current
-                            - possition in execution, for debugging
+                            - position in execution, for debugging
 void   dprintf (int idx,char *format, ... ) - just like normal printf,
                             outputs to a dcc/socket/server,
                             idx is a normal dcc idx OR if < 0 is a sock #
                             OR one of: DP_LOG (send to log file)
                             DP_STDOUT (send to stdout)
-                            DP_MODE   (send via mode queue to sever) *fast*
-                            DP_SERVER (send via normal queue to sever) *normal*
-                            DP_HELP   (send via help queue to sever) - use this
+                            DP_MODE   (send via mode queue to server) *fast*
+                            DP_SERVER (send via normal queue to server) *normal*
+                            DP_HELP   (send via help queue to server) - use this
                                       for mass outputs to users
 
 int    module_register ( char *module_name,
@@ -254,9 +254,9 @@ int    module_depend ( char *module_name, char *needed_module,
                 if it's not already loaded. returns 1 on success
 int    module_undepend ( char *module_name)
               - marks your module as no longer needing any of it's
-                dependancies
+                dependencies
 void   module_rename (char *old_module_name, char *new_module_name)
-              - renames a module, this works so that for exmaple, you
+              - renames a module, this works so that for example, you
                 could have efnet.so, undernet.so, ircnet.so & dalnet.so
                 and they called all rename themselves as server.so which
                 is what you really want
@@ -292,24 +292,24 @@ char *module_unload ( char *module_name );  tries to unload the given module,
 
 void add_tcl_commands(tcl_cmds *tab);
 void rem_tcl_commands(tcl_cmds *tab);
-   provides a quick way to load & unload a list of tcl commands, the
+   provides a quick way to load & unload a list of TCL commands, the
    table is in the form :
       { char *func_name, Function *function_to_call }
-   these are normal tcl commands (as done in tcl*.c)
+   these are normal TCL commands (as done in tcl*.c)
    use { 0, 0 } to indicate the end of the list
 
 void add_tcl_ints(tcl_ints *);
 void rem_tcl_ints(tcl_ints *);
-   provides a way to add/remove links from c variables to tcl variables
-   (add checks to see if the tcl already exists and copies it over the C one)
+   provides a way to add/remove links from c variables to TCL variables
+   (add checks to see if the TCL already exists and copies it over the C one)
    format of table is :
       { char *variable_name, int *variable, int readonly }
    terminate with {0,0,0};
 
 void add_tcl_strings(tcl_strings *);
 void rem_tcl_strings(tcl_strings *);
-   provides a way to add/remove links from c strings to tcl strings
-   (also copies exists tcl values)
+   provides a way to add/remove links from c strings to TCL strings
+   (also copies exists TCL values)
    format:
       { char * variable_name, char *string, int length, int flags }
    terminate with { 0, 0, 0, 0 }
@@ -324,18 +324,18 @@ void putlog (int logmode, char *channel, char *format, ... )
 
 void add_builtins (p_tcl_hash_list table, cmd_t *cc);
 void rem_builtins (p_tcl_hash_list table, cmd_t *cc);
-   the method of adding/remove bindings for tcl hash tables.
+   the method of adding/remove bindings for TCL hash tables.
    table is a hash table you find with find_hash_table,
    cc format:
    { char *command, char *flags, Function *function }
    terminate with { 0, 0, 0, 0 }
-   this is EXACTLY like a bind command in tcl, (heck, tcl_bind calls
+   this is EXACTLY like a bind command in TCL, (heck, tcl_bind calls
    the same function this does),
-   function is called with exactly the same args as a tcl binding is
+   function is called with exactly the same args as a TCL binding is
    (except for dcc which does include the handle in C) with type conversion
    taken into account (e.g. idx's are ints)
-   return much the same as tcl bindings, use int 0/1 for those
-   which require 0/1 or char * for those which require a string (eg filt)
+   return much the same as TCL bindings, use int 0/1 for those
+   which require 0/1 or char * for those which require a string (e.g. filt)
    or nothing if no return is required.
    return is also in src/tclhash.c
 
@@ -343,7 +343,7 @@ void rem_builtins (p_tcl_hash_list table, cmd_t *cc);
 VI.    WHAT TO DO WITH A MODULE?
 
    If you have written a module and feel that you want to share
-   it with the rest of the eggdrop comunity, upload it to the incoming
+   it with the rest of the eggdrop community, upload it to the incoming
    directory on ftp.eggheads.org(/pub/eggdrop/incoming). Place a nice
    descriptive text with it and makes it way to the modules directory.
    Don't forgot to write for which eggdrop version this module is for...

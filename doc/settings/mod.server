@@ -23,7 +23,7 @@ set net-type 0
 
 set nick "LamestBot"
     Set here the nick of the bot, that which it uses on IRC, and
-    on the botnet unless you specify a sperate botnet-nick
+    on the botnet unless you specify a separate botnet-nick
 
 
 set altnick "L?m?stB?t"
@@ -56,7 +56,7 @@ set servers { IRCSERVER1:PORT IRSERVER2:PORT ... }
      }
 
     This will make the bot connect on startup to irc.netw.ork using
-    'default-port'. On deconnect or a '.jump' it will try to connect
+    'default-port'. On disconnect or a '.jump' it will try to connect
     to irc.kwor.ten on port 6668.
 
 
@@ -66,10 +66,10 @@ set default-port 6667
 
 
 set strict-servernames 0
-    Often irc server call themself in another way then there dns is. If
+    Often irc servers call themselves in another way then there dns is. If
     you want eggdrop to replace your entry in the config file with this
     name, set this to 1. If you turn this setting to 0, eggdrop will keep
-    a seperate list of the names irc servers call themselves
+    a separate list of the names irc servers call themselves
     Valid settings are 0 for OFF and 1 ON.
 
 set server-cycle-wait 60
@@ -94,7 +94,7 @@ set server-timeout 60
 
 set servlimit 0
     If the number of servers on the net gets below this number, it will
-    jump to a new server (ie, it will assume it's on the losing end of
+    jump to a new server (i.e., it will assume it's on the losing end of
     a netsplit) -- set to 0 to turn off
     Note that most irc networks use Time Stamping or Nick Delay now, so
     it's to your advantage to turn this off.
@@ -170,7 +170,7 @@ set answer-ctcp 3
 set lowercase-ctcp 0
     If you want your bot to answer lower case ctcp request (non rfc
     compliant) set this setting to 1.
-    Please note: mIRAC will do this, most other clients will not
+    Please note: mIRC will do this, most other clients will not
     Valid settings are 0 for OFF and 1 ON.
 
 
@@ -195,10 +195,10 @@ set double-help 0
 
 set use-penalties 1 (default on net-type 1)
     This enables eggdrop's penalty calculation. Every command eggdrop sends to
-    the irc server raises it's penatly points. If eggdrop reaches a server limit,
+    the irc server raises it's penalty points. If eggdrop reaches a server limit,
     it gets disconnected with "excess flood" message. Eggdrop is able to count
     internal those penalty points, too and take measures against excess flooding.
-    Note: it's highly adviced to turn this on!
+    Note: it's highly advised to turn this on!
 
 
 
@@ -207,7 +207,7 @@ set optimize-kicks 1
     channel and changes the kick queue respectively.
     There are three different options for this setting:
      0 = turn it off
-     1 = optimize kick queue by sumarizing kicks.
+     1 = optimize kick queue by summarizing kicks.
      2 = trace nick changes and channel parts and change the queue respectively. For
          example, bot wont try to kick users who have already parted the channel.
     Valid settings are 0-2

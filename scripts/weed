@@ -29,11 +29,11 @@ do \
 done; \
 exec tclsh$lastver "$0" "$@"
 #
-# $Id: weed,v 1.6 2001/04/13 19:19:14 guppy Exp $
+# $Id: weed,v 1.7 2001/11/05 04:08:28 guppy Exp $
 #
 # weed out certain undesirables from an eggdrop userlist
 # try just typing 'tclsh weed' to find out the options
-#    Robey Pointer, november 1994
+#    Robey Pointer, November 1994
 #
 # <cmwagner@gate.net>:
 # I did a few bug fixes to the original weed script, things changed...
@@ -70,11 +70,11 @@ exec tclsh$lastver "$0" "$@"
 #       (the use of "lrange" where you aren't sure if it's a list is bad)
 #     fixed --CONSOLE item not being included, creating "user" --CONSOLE
 # <Ernst 1apr1998>:
-#     two more improper ocurrences of "lrange" removed
+#     two more improper occurrences of "lrange" removed
 # <rtc 20sep1999>:
 #     removed ancient way of determining the current time.
 # <Tothwolf 21oct1999>:
-#     [clock] isn't in all versions of Tcl...
+#     [clock] isn't in all versions of TCL...
 # <guppy 12Apr2001>:
 #     borrowed code from Tothwolf's Wolfpack to find tclsh better
 #
@@ -113,11 +113,11 @@ if {$argc < 1} {
   puts stdout "  +<days>        weed: haven't been seen in N days"
   puts stdout "  :n             weed: haven't EVER been seen"
   puts stdout "  :o  :m         weed: ops or masters with no password set"
-  puts stdout "  :a             weed: anyone with no pasword set"
+  puts stdout "  :a             weed: anyone with no password set"
   puts stdout "  o   m          unop/unmaster: ops or masters with no pass."
   puts stdout "  b<days>        weed: bans not used in N days"
   puts stdout "  i<days>        weed: ignores created over N days ago"
-  puts stdout "  =<chan>        weed: channels nolonger supported"
+  puts stdout "  =<chan>        weed: channels no longer supported"
   puts stdout "  c              convert v3 eggdrop userfile"
   puts stdout ""
   exit

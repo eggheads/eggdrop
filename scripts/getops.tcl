@@ -1,7 +1,7 @@
 
 # Getops 2.3b
 
-# $Id: getops.tcl,v 1.14 2001/08/10 23:14:54 guppy Exp $
+# $Id: getops.tcl,v 1.15 2001/11/05 04:08:28 guppy Exp $
 
 # This script is used for bots to request and give ops to each other.
 # For this to work, you'll need:
@@ -91,7 +91,7 @@
 
 # Previously by The_O, dtM.
 
-# Originial incarnation by poptix (poptix@poptix.net)
+# Original incarnation by poptix (poptix@poptix.net)
 
 # -----------------------------------------------------------------------------
 

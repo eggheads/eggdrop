@@ -31,7 +31,7 @@ README
             7. What are modules?
             8. Can I compile eggdrop without dynamic modules?
                8.1    Do I still need to "loadmodule modules"???
-            9. Where can I get a precompiled Eggdrop for my computer?
+            9. Where can I get a pre-compiled Eggdrop for my computer?
            10. I get "Makefile:3 : invalid operator" of some such thing
                When I try to "make"
            11. When I "tclsh scripts/weed <userfile> c" It barfs chunks at
@@ -99,18 +99,18 @@ README
 
      (2) HOW TO GET EGGDROP
 
-          Before you can compile eggdrop, you need to have Tcl
-          installed on your system. Most systems should have Tcl on
+          Before you can compile eggdrop, you need to have TCL
+          installed on your system. Most systems should have TCL on
           them by now -- you can check by trying the command "tclsh".
           If it works, you will be given a "%" prompt, and you can
-          type "exit" to exit the program. That means Tcl is on your
-          system. If tclsh doesn't load, then Tcl probably isn't on
+          type "exit" to exit the program. That means TCL is on your
+          system. If tclsh doesn't load, then TCL probably isn't on
           your system, and you will need to ftp it. The best ftp site
           is:
 
                          ftp://ftp.scriptics.com/pub/tcl
 
-          Tcl comes with the Slackware distribution of Linux. HOWEVER,
+          TCL comes with the Slackware distribution of Linux. HOWEVER,
           the one that comes on Slackware 3.0 is goofed up and you'll
           have to re-install it for yourself to get it working.
 
@@ -177,7 +177,7 @@ README
                upgrading, and you have even a slight possibility
                of downgrading again later you will HAVE to back
                up your userfile, or you will lose it. v1.3 of
-               eggdrop radically changed alot of things.
+               eggdrop radically changed a lot of things.
 
                There are many major changes between v0.9, v1.0,
                v1.1 and v1.6 so PAY ATTENTION to this part if you
@@ -258,13 +258,13 @@ README
 
           3. WHAT THE HECK IS TCL?
 
-               Tcl is a scripting language written by John
+               TCL is a scripting language written by John
                Ousterhout. It's much better than most "in-built"
                script languages (like the one in ircII) and is
                meant to be linked with anything needing a script
                language. So I linked it with eggdrop. The file
                "tcl-commands.doc" in the eggdrop directory
-               contains a list of the commands added to Tcl by
+               contains a list of the commands added to TCL by
                eggdrop. There are also several example scripts in
                the scripts/ directory, and there are gobs of
                scripts floating around on the ftp sites if you
@@ -291,7 +291,7 @@ README
                This happens on Linux machines that have recently
                been converted to ELF by upgrading to Slackware
                3.0. Apparently Slackware 3.0 comes with a non-ELF
-               (a.out) Tcl library, and the compiler doesn't
+               (a.out) TCL library, and the compiler doesn't
                handle that well. (It should give you an error;
                instead it barfs.) Fixing it is tricky because
                even if you recompile libtcl.a, the linker will
@@ -328,7 +328,7 @@ README
           7. WHAT ARE MODULES?
 
                Modules are a way of adding extra C code from the
-               bot, much like Tcl scripts, without requiring the
+               bot, much like TCL scripts, without requiring the
                bot recompiling, see doc/MODULES for more info.
 
           8. CAN I COMPILE EGGDROP WITHOUT DYNAMIC MODULES?
@@ -351,17 +351,17 @@ README
                     functionality with static modules as
                     dynamic modules.
 
-          9. WHERE CAN I GET A PRECOMPILED EGGDROP FOR MY COMPUTER?
+          9. WHERE CAN I GET A PRE-COMPILED EGGDROP FOR MY COMPUTER?
 
-               It is HIGHLY recommended AGAINST using precompiled
-               Eggdrops from untrusted sources. Eggdrop has been
+               It is HIGHLY recommended AGAINST using pre-compiled
+               Eggdrops from un-trusted sources. Eggdrop has been
                a regular target for hacking and crashing.
-               Distribution of precompiled (binary) versions of
+               Distribution of pre-compiled (binary) versions of
                Eggdrop are the easiest way of hackers to provide
                you with the easiest (and most dangerous) way of
                gaining access to not only your bot, but to your
                computer account directly. Don't advertise your
-               precompiled eggdrop binary sites on the eggdrop
+               pre-compiled eggdrop binary sites on the eggdrop
                list either =P
 
           10. I GET 'Makefile:3 :invalid operator' OR SOME-SUCH-THING
@@ -527,7 +527,7 @@ README
           easily be ported to other applications -- the other parts of
           the bot generally don't.
 
-          Tcl is by John Ousterhout and is in no way affiliated with
+          TCL is by John Ousterhout and is in no way affiliated with
           eggdrop, and likely has its own set of copyrights and
           whatnots.
 
@@ -565,7 +565,7 @@ README
           spelling), or even substantive issues either for that
           matter. Please read and follow the mailing list rules.
 
-          The eggheads@eggheads.org maillist is not dedicated to those
+          The eggheads@eggheads.org mailing list is not dedicated to those
           all too common questions we have all seen on other lists...
           for example:
 
@@ -610,7 +610,7 @@ README
           - don't msg people without their agreement, if they know help and
             have time, they will answer.
           - don't repeat yourself. This will result in being kicked
-          - don't use !!, colours or only CAPITAL letters.
+          - don't use !!, colors or only CAPITAL letters.
 
           If there are any serious places that should be added, let us
           know.
