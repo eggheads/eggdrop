@@ -1,7 +1,7 @@
 /*
  * tclirc.c -- part of irc.mod
  *
- * $Id: tclirc.c,v 1.26 2001/12/19 06:29:21 guppy Exp $
+ * $Id: tclirc.c,v 1.27 2001/12/20 17:37:20 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -191,18 +191,27 @@ static int tcl_wasop STDVAR
 
 static int tcl_onchan STDVAR
 {
-  struct chanset_t *chan;
+  struct chanset_t *chan, *thechan = NULL;
 
-  BADARGS(3, 3, " nickname channel");
+  BADARGS(2, 3, " nickname ?channel?");
+  if (argc > 2) {
   chan = findchan_by_dname(argv[2]);
-  if (chan == NULL) {
+    thechan = chan;
+    if (!thechan) {
     Tcl_AppendResult(irp, "illegal channel: ", argv[2], NULL);
     return TCL_ERROR;
   }
-  if (!ismember(chan, argv[1]))
-    Tcl_AppendResult(irp, "0", NULL);
-  else
+  } else
+   chan = chanset;
+
+  while (chan && (thechan == NULL || thechan == chan)) {
+    if (ismember(chan, argv[1])) {
     Tcl_AppendResult(irp, "1", NULL);
+  return TCL_OK;
+    }
+    chan = chan->next;
+  }
+  Tcl_AppendResult(irp, "0", NULL);
   return TCL_OK;
 }
 
@@ -280,24 +289,27 @@ static int tcl_ischaninvite STDVAR
 
 static int tcl_getchanhost STDVAR
 {
-  struct chanset_t *chan;
-  struct chanset_t *thechan = NULL;
+  struct chanset_t *chan, *thechan = NULL;
   memberlist *m;
 
   BADARGS(2, 3, " nickname ?channel?");	/* drummer */
   if (argc > 2) {
-    thechan = findchan_by_dname(argv[2]);
+    chan = findchan_by_dname(argv[2]);
+    thechan = chan;
     if (!thechan) {
       Tcl_AppendResult(irp, "illegal channel: ", argv[2], NULL);
       return TCL_ERROR;
     }
-  }
-  for (chan = chanset; chan; chan = chan->next) {
+  } else 
+    chan = chanset;
+
+  while (chan && (thechan == NULL || thechan == chan)) {
     m = ismember(chan, argv[1]);
-    if (m && ((chan == thechan) || (thechan == NULL))) {
+    if (m) {
       Tcl_AppendResult(irp, m->userhost, NULL);
       return TCL_OK;
     }
+    chan = chan->next;
   }
   return TCL_OK;
 }

@@ -498,9 +498,9 @@ specific commands, see later.
     returns: "1" if someone by that nickname is on the channel and has voice
       (+v); "0" otherwise
 
-  onchan <nickname> <channel>
-    returns: "1" if someone by that nickname is on the bot's channel; "0"
-      otherwise
+  onchan <nickname> [channel]
+    returns: "1" if someone by that nickname is on the bot's channel (or 
+      channels if none is specified); "0" otherwise
 
   nick2hand <nickname> [channel]
     returns: handle of <nickname> on <channel>
