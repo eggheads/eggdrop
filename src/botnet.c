@@ -940,6 +940,7 @@ int botlink(char *linker, int idx, char *nick)
       dcc[i].u.dns->type = &DCC_FORK_BOT;
 
       dns_ipbyhost(bi->address);
+      return 1;
     }
   }
   return 0;
