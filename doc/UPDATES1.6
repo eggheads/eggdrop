@@ -1,4 +1,4 @@
-$Id: UPDATES1.6,v 1.507 2003/08/18 03:27:05 wcc Exp $
+$Id: UPDATES1.6,v 1.508 2003/08/18 18:37:58 tothwolf Exp $
 
 Changes in Eggdrop: (since v1.6.0)
 ----------------------------------
@@ -13,6 +13,8 @@ BarkerJr  Wcc       exported strip_mirc_codes() and check_ansi() from dcc.c
           stdarg
 fbs       stdarg    check to make sure file we want to send exists when
                     resuming a transfer
+          Tothwolf  Removed unnecessary quiet_reject checks in msg_ident()
+                    that have been present since 1.3.0+bel17.
           Paladin   fixed exporting of MD5 functions to modules
 various   stdarg    the binary is no longer stripped unless ./configure
                     --enable-strip is used
