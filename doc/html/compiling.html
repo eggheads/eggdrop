@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: compiling.html,v 1.27 2004/06/10 20:03:19 wcc Exp $ -->
+<!-- $Id: compiling.html,v 1.28 2004/06/11 18:40:59 wcc Exp $ -->
 
 <html>
   <head>
@@ -67,6 +67,10 @@
 
         <li><a href="#faq9">I experience problems starting the configure script
         (AIX/various)</a></li>
+
+        <li><a href="#faq10">I get a &#39;make: Permission denied&#39; error
+        when I type &#39;make config&#39; or &#39;make&#39; (FreeBSD /
+        *BSD)</a></li>
       </ol>
     </blockquote>
     <br>
@@ -584,6 +588,16 @@ GMAKE = ${MAKE} &#39;CC=gcc&#39; &#39;AWK=awk&#39; &#39;OBJS=${OBJS}&#39; &#39;T
       configure&#39; or &#39;bash configure&#39; instead of
       &#39;./configure&#39;. This problem seems to show up on many AIX
       machines.</p>
+    </blockquote>
+
+    <p><a name="faq10">10. <strong>I get a &#39;make: Permission denied&#39;
+    error when I type &#39;make config&#39; or &#39;make&#39; (FreeBSD /
+    *BSD)</strong></a></p>
+
+    <blockquote>
+      <p>This is caused by a bug in FreeBSD (and possibly other BSDs as well).
+      A simple &#39;cd .&#39;, or changing to a different directory and then
+      changing back, usually fixes this.</p>
     </blockquote>
 
     <p><em>Copyright &copy; 1997 Robey Pointer<br>

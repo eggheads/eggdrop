@@ -1,4 +1,4 @@
-$Id: COMPILING-FAQ,v 1.8 2004/06/10 20:03:19 wcc Exp $
+$Id: COMPILING-FAQ,v 1.9 2004/06/11 18:40:58 wcc Exp $
 
 Compiling FAQ
 Last revised: January 15, 2004
@@ -35,6 +35,8 @@ Last revised: January 15, 2004
       7. Compile stops at the last minute with "ld fatal signal 11"! (Linux)
       8. Undefined references in net.o (Sun OS)
       9. I experience problems starting the configure script (AIX/various)
+     10. I get a 'make: Permission denied' error when I type 'make config'
+         or 'make' (FreeBSD / *BSD)
 
 
   Compile Guide
@@ -439,6 +441,14 @@ Last revised: January 15, 2004
       to run the configure script, try running 'sh configure' or 'bash configure'
       instead of './configure'. This problem seems to show up on many AIX
       machines.
+
+
+    10. I get a 'make: Permission denied' error when I type 'make config' or
+        'make' (FreeBSD / *BSD)
+
+      This is caused by a bug in FreeBSD (and possibly other BSDs as well).
+      A simple 'cd .', or changing to a different directory and then changing
+      back, usually fixes this.
      _________________________________________________________________
 
    Copyright (C) 1997 Robey Pointer
