@@ -1,7 +1,7 @@
 dnl aclocal.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: aclocal.m4,v 1.67 2003/05/07 04:45:10 wcc Exp $
+dnl $Id: aclocal.m4,v 1.68 2003/05/07 20:41:32 wcc Exp $
 dnl
 
 
@@ -105,7 +105,9 @@ AC_DEFUN(EGG_CHECK_SOCKLEN_T, [dnl
 AC_MSG_CHECKING(for socklen_t)
 AC_CACHE_VAL(egg_cv_socklen_t,[
   AC_TRY_RUN([
+#include <unistd.h>
 #include <sys/socket.h>
+#include <sys/types.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
@@ -113,7 +115,7 @@ int main()
 {
   socklen_t test = sizeof(int);
 
-  return test;
+  return 0;
 }
   ],
 egg_cv_socklen_t=yes, egg_cv_socklen_t=no, egg_cv_socklen_t=no)])
