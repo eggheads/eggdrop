@@ -2,7 +2,7 @@
  * chancmds.c -- part of irc.mod
  *   handles commands directly relating to channel interaction
  *
- * $Id: cmdsirc.c,v 1.53 2003/03/19 00:13:22 wcc Exp $
+ * $Id: cmdsirc.c,v 1.54 2003/05/08 00:20:09 stdarg Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -528,8 +528,12 @@ static void cmd_voice(struct userrec *u, int idx, char *par)
 
   get_user_flagrec(dcc[idx].user, &user, chan->dname);
   m = ismember(chan, nick);
-  if (m && !chan_op(user) && !chan_halfop(user) && ((!glob_op(user) ||
-      chan_deop(user)) || (!glob_halfop(user) || chan_dehalfop(user)))) {
+
+  /* By factoring out a !, this code becomes a lot clearer.
+   * If you are... not a (channel op, or a channel half op, or a global op
+   * without channel deop, or a global halfop without channel dehalfop)...
+   * - stdarg */
+  if (m && !(chan_op(user) || chan_halfop(user) || (glob_op(user) && !chan_deop(user)) || (glob_halfop(user) && !chan_dehalfop(user)))) {
     egg_snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
     u2 = m->user ? m->user : get_user_by_host(s);
 
@@ -582,8 +586,7 @@ static void cmd_devoice(struct userrec *u, int idx, char *par)
 
   get_user_flagrec(dcc[idx].user, &user, chan->dname);
   m = ismember(chan, nick);
-  if (m && !chan_op(user) && !chan_halfop(user) && ((!glob_op(user) ||
-      chan_deop(user)) || (!glob_halfop(user) || chan_dehalfop(user)))) {
+  if (m && !(chan_op(user) || chan_halfop(user) || (glob_op(user) && !chan_deop(user)) || (glob_halfop(user) && !chan_dehalfop(user)))) {
     egg_snprintf(s, sizeof s, "%s!%s", m->nick, m->userhost);
     u2 = m->user ? m->user : get_user_by_host(s);
 
