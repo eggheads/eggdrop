@@ -2,7 +2,7 @@
  * filesys.c -- part of filesys.mod
  *   main file of the filesys eggdrop module
  * 
- * $Id: filesys.c,v 1.35 2000/09/27 19:40:44 fabian Exp $
+ * $Id: filesys.c,v 1.36 2000/10/27 19:24:44 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -829,6 +829,8 @@ static int filesys_DCC_CHAT(char *nick, char *from, char *handle,
   struct flag_record fr = {FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0};
 
   Context;
+  if (egg_strcasecmp(object, botname))
+    return 0;
   if (!egg_strncasecmp(text, "SEND ", 5)) {
     filesys_dcc_send(nick, from, u, text + 5);
     return 1;
