@@ -446,6 +446,9 @@ typedef struct {
 #define DP_HELP         0x7FF4
 #define DP_STDERR       0x7FF5
 #define DP_MODE         0x7FF6
+#define DP_MODE_NEXT    0x7FF7
+#define DP_SERVER_NEXT  0x7FF8
+#define DP_HELP_NEXT    0x7FF9
 
 #define NORMAL          0
 #define QUICK           1

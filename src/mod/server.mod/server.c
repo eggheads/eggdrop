@@ -469,6 +469,7 @@ static void queue_server(int which, char *buf, int len)
   struct msgq_head tempq;
   struct msgq *tq, *tqq;
   int doublemsg;
+  int qnext = 0;
   doublemsg = 0;
   if (serv < 0)
     return;			/* don't even BOTHER if there's no server
@@ -482,16 +483,22 @@ static void queue_server(int which, char *buf, int len)
     return;
   }
   switch (which) {
+  case DP_MODE_NEXT:
+    qnext = 1;
   case DP_MODE:
     h = &modeq;
     tempq = modeq;
     if (double_mode) doublemsg = 1;
     break;
+  case DP_SERVER_NEXT:
+    qnext = 1;
   case DP_SERVER:
     h = &mq;
     tempq = mq;
     if (double_server) doublemsg = 1;
     break;
+  case DP_HELP_NEXT:
+    qnext = 1;
   case DP_HELP:
     h = &hq;
     tempq = hq;
@@ -519,11 +526,21 @@ static void queue_server(int which, char *buf, int len)
       }
     }
     q = nmalloc(sizeof(struct msgq));
-    q->next = NULL;
-    if (h->head)
-      h->last->next = q;
-    else
+    if (qnext) {
+      q->next = h->head;
+    } else {
+      q->next = NULL;
+    }
+    if (h->head){
+      if (!qnext){
+        h->last->next = q;
+      }
+    } else {
       h->head = q;
+    }
+    if (qnext) {
+       h->head = q;
+    }
     h->last = q;
     q->len = len;
     q->msg = nmalloc(len + 1);
@@ -543,15 +560,24 @@ static void queue_server(int which, char *buf, int len)
     case DP_MODE:
       putlog(LOG_SRVOUT, "*", "[!m] %s", buf);
       break;
+    case DP_MODE_NEXT:
+      putlog(LOG_SRVOUT, "*", "[!!m] %s", buf);
+      break;
     case DP_SERVER:
       putlog(LOG_SRVOUT, "*", "[!s] %s", buf);
+      break;
+    case DP_SERVER_NEXT:
+      putlog(LOG_SRVOUT, "*", "[!!s] %s", buf);
       break;
     case DP_HELP:
       putlog(LOG_SRVOUT, "*", "[!h] %s", buf);
       break;
+    case DP_HELP_NEXT:
+      putlog(LOG_SRVOUT, "*", "[!!h] %s", buf);
+      break;
     }
   }
-  if (which == DP_MODE)
+  if ((which == DP_MODE) || (which == DP_MODE_NEXT))
     deq_msg();			/* DP_MODE needs to be ASAP, flush if
 				 * possible */
 }
@@ -1285,7 +1311,13 @@ static int tcl_putquick STDVAR
   char s[511], *p;
 
   context;
-  BADARGS(2, 2, " text");
+  BADARGS(2, 3, " text ?options?");
+  if ((argc == 3) &&
+    !(!strcasecmp(argv[2], "-next") || !strcasecmp(argv[2], "-normal"))) {
+      Tcl_AppendResult(irp, "unknown putquick option: should be one of: ",
+                       "-normal -next", NULL);
+      return TCL_ERROR;
+    }
   strncpy(s, argv[1], 510);
   s[510] = 0;
   p = strchr(s, '\n');
@@ -1294,8 +1326,11 @@ static int tcl_putquick STDVAR
    p = strchr(s, '\r');
   if (p != NULL)
     *p = 0;
+  if (argc == 3 && !strcasecmp(argv[2], "-next"))
+    dprintf(DP_MODE_NEXT, "%s\n", s);
+  else
    dprintf(DP_MODE, "%s\n", s);
-   return TCL_OK;
+  return TCL_OK;
 }
 
 static int tcl_putserv STDVAR
@@ -1303,7 +1338,13 @@ static int tcl_putserv STDVAR
   char s[511], *p;
 
   context;
-  BADARGS(2, 2, " text");
+  BADARGS(2, 3, " text ?options?");
+  if ((argc == 3) &&
+    !(!strcasecmp(argv[2], "-next") || !strcasecmp(argv[2], "-normal"))) {
+      Tcl_AppendResult(irp, "unknown putserv option: should be one of: ",
+                       "-normal -next", NULL);
+      return TCL_ERROR;
+    }
   strncpy(s, argv[1], 510);
   s[510] = 0;
   p = strchr(s, '\n');
@@ -1312,8 +1353,11 @@ static int tcl_putserv STDVAR
    p = strchr(s, '\r');
   if (p != NULL)
     *p = 0;
-   dprintf(DP_SERVER, "%s\n", s);
-   return TCL_OK;
+  if (argc == 3 && !strcasecmp(argv[2], "-next"))
+    dprintf(DP_SERVER_NEXT, "%s\n", s);
+  else
+    dprintf(DP_SERVER, "%s\n", s);
+  return TCL_OK;
 }
 
 static int tcl_puthelp STDVAR
@@ -1321,7 +1365,13 @@ static int tcl_puthelp STDVAR
   char s[511], *p;
 
   context;
-  BADARGS(2, 2, " text");
+  BADARGS(2, 3, " text ?options?");
+  if ((argc == 3) &&
+    !(!strcasecmp(argv[2], "-next") || !strcasecmp(argv[2], "-normal"))) {
+      Tcl_AppendResult(irp, "unknown puthelp option: should be one of: ",
+                       "-normal -next", NULL);
+      return TCL_ERROR;
+    }
   strncpy(s, argv[1], 510);
   s[510] = 0;
   p = strchr(s, '\n');
@@ -1330,8 +1380,11 @@ static int tcl_puthelp STDVAR
    p = strchr(s, '\r');
   if (p != NULL)
     *p = 0;
-   dprintf(DP_HELP, "%s\n", s);
-   return TCL_OK;
+  if (argc == 3 && !strcasecmp(argv[2], "-next"))
+    dprintf(DP_HELP_NEXT, "%s\n", s);
+  else
+    dprintf(DP_HELP, "%s\n", s);
+  return TCL_OK;
 }
 
 static int tcl_jump STDVAR {

@@ -127,6 +127,9 @@ void dprintf EGG_VARARGS_DEF(int, arg1)
     case DP_SERVER:
     case DP_HELP:
     case DP_MODE:
+    case DP_MODE_NEXT:
+    case DP_SERVER_NEXT:
+    case DP_HELP_NEXT:
       qserver(idx, SBUF, len);
       break;
     }
