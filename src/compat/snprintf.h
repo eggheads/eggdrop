@@ -2,7 +2,7 @@
  * snprintf.h
  *   header file for snprintf.c
  *
- * $Id: snprintf.h,v 1.1 2000/03/22 00:42:57 fabian Exp $
+ * $Id: snprintf.h,v 1.2 2000/04/05 19:40:31 fabian Exp $
  */
 /* 
  * Copyright (C) 2000  Eggheads
@@ -32,7 +32,7 @@
  * use our own.
  */
 #ifndef HAVE_VSNPRINTF
-int egg_vsnprintf(char *str, size_t str_m, const char *fmt, va_list ap);
+int egg_vsnprintf(char *str, size_t count, const char *fmt, va_list ap);
 #else
 #  define egg_vsnprintf	vsnprintf
 #endif
@@ -41,8 +41,7 @@ int egg_vsnprintf(char *str, size_t str_m, const char *fmt, va_list ap);
  * use our own.
  */
 #ifndef HAVE_SNPRINTF
-/* int egg_snprintf(char *str, size_t str_m, const char *fmt, ...); */
-int egg_snprintf EGG_VARARGS(char *, str);
+int egg_snprintf(char *str, size_t count, const char *fmt, ...);
 #else
 #  define egg_snprintf	snprintf
 #endif

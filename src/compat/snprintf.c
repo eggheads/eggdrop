@@ -1,7 +1,7 @@
 /*
  * snprintf.c - a portable implementation of snprintf and vsnprintf
  *
- * $Id: snprintf.c,v 1.2 2000/03/23 23:17:56 fabian Exp $
+ * $Id: snprintf.c,v 1.3 2000/04/05 19:40:31 fabian Exp $
  */
 /* Portions Copyright (C) 2000  Eggheads
  *
@@ -24,529 +24,699 @@
 #include "snprintf.h"
 
 
-#ifndef HAVE_VSNPRINTF
-/* NOTE
- *   The following vsnprintf() routine is a slightly modified version
- *   of the original snprintf() from Mark Martinec.
+/*
+ * Copyright Patrick Powell 1995
+ * This code is based on code written by Patrick Powell (papowell@astart.com)
+ * It may be used for any purpose as long as this notice remains intact
+ * on all source code distributions
  */
+
+/**************************************************************
+ * Original:
+ * Patrick Powell Tue Apr 11 09:48:21 PDT 1995
+ * A bombproof version of doprnt (dopr) included.
+ * Sigh.  This sort of thing is always nasty do deal with.  Note that
+ * the version here does not include floating point...
+ *
+ * snprintf() is used instead of sprintf() as it does limit checks
+ * for string length.  This covers a nasty loophole.
+ *
+ * The other functions are there to prevent NULL pointers from
+ * causing nast effects.
+ *
+ * More Recently:
+ *  Brandon Long <blong@fiction.net> 9/15/96 for mutt 0.43
+ *  This was ugly.  It is still ugly.  I opted out of floating point
+ *  numbers, but the formatter understands just about everything
+ *  from the normal C string format, at least as far as I can tell from
+ *  the Solaris 2.5 printf(3S) man page.
+ *
+ *  Brandon Long <blong@fiction.net> 10/22/97 for mutt 0.87.1
+ *    Ok, added some minimal floating point support, which means this
+ *    probably requires libm on most operating systems.  Don't yet
+ *    support the exponent (e,E) and sigfig (g,G).  Also, fmtint()
+ *    was pretty badly broken, it just wasn't being exercised in ways
+ *    which showed it, so that's been fixed.  Also, formated the code
+ *    to mutt conventions, and removed dead code left over from the
+ *    original.  Also, there is now a builtin-test, just compile with:
+ *           gcc -DTEST_SNPRINTF -o snprintf snprintf.c -lm
+ *    and run snprintf for results.
+ * 
+ *  Thomas Roessler <roessler@guug.de> 01/27/98 for mutt 0.89i
+ *    The PGP code was using unsigned hexadecimal formats. 
+ *    Unfortunately, unsigned formats simply didn't work.
+ *
+ *  Michael Elkins <me@cs.hmc.edu> 03/05/98 for mutt 0.90.8
+ *    The original code assumed that both snprintf() and vsnprintf() were
+ *    missing.  Some systems only have snprintf() but not vsnprintf(), so
+ *    the code is now broken down under HAVE_SNPRINTF and HAVE_VSNPRINTF.
+ *
+ *  Andrew Tridgell (tridge@samba.org) Oct 1998
+ *    fixed handling of %.0f
+ *    added test for HAVE_LONG_DOUBLE
+ *
+ *  Fabian Knittel <fknittel@gmx.de> Apr 2000 for eggdrop 1.5.3
+ *    Indented code to match eggdrop style. Adjusted to fit into eggdrops
+ *    build environment. Added `egg_' prefixes to snprintf and vsnprintf.
+ *
+ **************************************************************/
+
+#include <string.h>
+#include <ctype.h>
+#include <sys/types.h>
+
+#ifndef HAVE_VSNPRINTF
+
+/* varargs declarations: */
+
+#if defined(__STDC__)
+#  ifdef HAVE_STDARG_H
+#    include <stdarg.h>
+#  else
+#    ifdef HAVE_STD_ARGS_H
+#      include <std_args.h>
+#    endif
+#  endif
+#  include <stdarg.h>
+#  define HAVE_STDARGS		/* let's hope that works everywhere (mj) */
+#  define VA_LOCAL_DECL	va_list ap
+#  define VA_START(f)	va_start(ap, f)
+#  define VA_SHIFT(v,t)	;	/* no-op for ANSI */
+#  define VA_END	va_end(ap)
+#else
+#  include <varargs.h>
+#  undef HAVE_STDARGS
+#  define VA_LOCAL_DECL	va_list ap
+#  define VA_START(f)	va_start(ap)	/* f is ignored! */
+#  define VA_SHIFT(v,t)	v = va_arg(ap,t)
+#  define VA_END	va_end(ap)
+#endif
+
+#ifdef HAVE_LONG_DOUBLE
+#define LDOUBLE	long double
+#else
+#define LDOUBLE	double
+#endif
+
+static void dopr(char *buffer, size_t maxlen, const char *format,
+		 va_list args);
+static void fmtstr(char *buffer, size_t * currlen, size_t maxlen,
+		   char *value, int flags, int min, int max);
+static void fmtint(char *buffer, size_t * currlen, size_t maxlen,
+		   long value, int base, int min, int max, int flags);
+static void fmtfp(char *buffer, size_t * currlen, size_t maxlen,
+		  LDOUBLE fvalue, int min, int max, int flags);
+static void dopr_outch(char *buffer, size_t * currlen, size_t maxlen,
+		       char c);
 
 /*
- * AUTHOR
- *   Mark Martinec <mark.martinec@ijs.si>, April 1999
- *   Copyright: Mark Martinec
- *
- * TERMS AND CONDITIONS
- *   for copying, distribution and modification, NO WARRANTY:
- *   GNU GENERAL PUBLIC LICENSE, Version 2 or later
- *   (see file LICENSE in the distribution kit)
- *
- * FEATURES
- * - careful adherence to specs regarding flags, field width and precision;
- * - good performance for large string handling (large format, large
- *   argument or large paddings). Performance is similar to system's sprintf
- *   and in several cases significantly better (make sure you compile with
- *   optimizations turned on, tell the compiler the code is strict ANSI
- *   if necessary to give it more freedom for optimizations);
- * - written in standard ANSI C - requires an ANSI C compiler.
- *
- * SUPPORTED FORMATS AND DATA TYPES
- *
- * This snprintf only supports format specifiers:
- * s, c, d, o, u, x, X, p  (and synonyms: i, D, U, O - see below)
- * with flags: '-', '+', ' ', '0' and '#'.
- * An asterisk is supported for field width as well as precision.
- *
- * Data type modifiers 'h' (short int), 'l' (long int)
- * and 'll' (long long int) are supported.
- * NOTE:
- *   If macro SNPRINTF_LONGLONG_SUPPORT is not defined (default) the
- *   data type modifier 'll' is recognized but treated the same as 'l',
- *   which may cause argument value truncation! Defining
- *   SNPRINTF_LONGLONG_SUPPORT requires that your system's sprintf also
- *   handles data type modifier 'll'. long long int is a language
- *   extension which may not be portable.
- *
- * Conversion of numeric data (formats d, o, u, x, X, p) with data type
- * modifiers (none or h, l, ll) is left to the system routine sprintf,
- * but all handling of flags, field width and precision as well as c and
- * s formats is done very carefully by this portable routine. If a string
- * precision (truncation) is specified (e.g. %.8s) it is guaranteed the
- * string beyond the specified precision will not be referenced.
- *
- * Data type modifiers h, l and ll are ignored for c and s formats (data
- * types wint_t and wchar_t are not supported).
- *
- * The following common synonyms for conversion characters are supported:
- *   - i is a synonym for d
- *   - D is a synonym for ld, explicit data type modifiers are ignored
- *   - U is a synonym for lu, explicit data type modifiers are ignored
- *   - O is a synonym for lo, explicit data type modifiers are ignored
- *
- * The following is specifically not supported:
- *   - flag ' (thousands' grouping character) is recognized but ignored
- *   - numeric formats: f, e, E, g, G and synonym F
- *   - data type modifier 'L' (long double) and 'q' (quad - use 'll' instead)
- *   - wide character/string formats: C, lc, S, ls
- *   - writeback of converted string length: conversion character n
- *   - the n$ specification for direct reference to n-th argument
- *   - locales
- *
- * AVAILABILITY
- *   http://www.ijs.si/software/snprintf/
- *
- * REVISION HISTORY
- *    Apr 1999	V0.9  Mark Martinec
- *		- initial version, some modifications after comparing printf
- *		  man pages for Digital Unix 4.0, Solaris 2.6 and HPUX 10,
- *		  and checking how Perl handles sprintf (differently!);
- *  9 Apr 1999	V1.0  Mark Martinec <mark.martinec@ijs.si>
- *		- added main test program, fixed remaining inconsistencies,
- *                added optional (long long int) support;
- * 12 Apr 1999  V1.1  Mark Martinec <mark.martinec@ijs.si>
- *		- support the 'p' format (pointer to void);
- *		- if a string precision is specified
- *		  make sure the string beyond the specified precision
- *                will not be referenced (e.g. by strlen);
- * 13 Apr 1999  V1.2  Mark Martinec <mark.martinec@ijs.si>
- *		- support synonyms %D=%ld, %U=%lu, %O=%lo;
- *		- speed up the case of long format string with few conversions;
- * 30 Jun 1999  V1.3  Mark Martinec <mark.martinec@ijs.si>
- *		- fixed runaway loop (eventually crashing when str_l wraps
- *		  beyond 2*31) while copying format string without
- *		  conversion specifiers to a buffer that is too short
- *		  (thanks to Edwin Young <edwiny@autonomy.com> for
- *		  spoting the problem)
- *		- added macros PORTABLE_SNPRINTF_VERSION_(MAJOR|MINOR)
- *		  to snprintf.h
+ * dopr(): poor man's version of doprintf
  */
 
+/* format read states */
+#define DP_S_DEFAULT 0
+#define DP_S_FLAGS   1
+#define DP_S_MIN     2
+#define DP_S_DOT     3
+#define DP_S_MAX     4
+#define DP_S_MOD     5
+#define DP_S_CONV    6
+#define DP_S_DONE    7
 
-/* Define the following macros if desired:
- *   SOLARIS_COMPATIBLE, SOLARIS_BUG_COMPATIBLE,
- *   HPUX_COMPATIBLE, HPUX_BUG_COMPATIBLE,
- *   DIGITAL_UNIX_COMPATIBLE, DIGITAL_UNIX_BUG_COMPATIBLE,
- *   PERL_COMPATIBLE, PERL_BUG_COMPATIBLE,
- *
- * - For portable applications it is best not to rely on peculiarities
- *   of a given implementation so it may be best not to define any
- *   of the macros that select compatibility and to avoid features
- *   that vary among the systems.
- *
- * - Selecting compatibility with more than one operating system
- *   is not strictly forbidden but is not recommended.
- *
- * - 'x'_BUG_COMPATIBLE implies 'x'_COMPATIBLE .
- *
- * - 'x'_COMPATIBLE refers to (and enables) a behaviour that is
- *   documented in a sprintf man page on a given operating system
- *   and actually adhered to by the system's sprintf (but not on
- *   most other operating systems). It may also refer to and enable
- *   a behaviour that is declared 'undefined' or 'implementation specific'
- *   in the man page but a given implementation behaves predictably
- *   in a certain way.
- *
- * - 'x'_BUG_COMPATIBLE refers to (and enables) a behaviour of system's sprintf
- *   that contradicts the sprintf man page on the same operating system.
- */
+/* format flags - Bits */
+#define DP_F_MINUS 	(1 << 0)
+#define DP_F_PLUS  	(1 << 1)
+#define DP_F_SPACE 	(1 << 2)
+#define DP_F_NUM   	(1 << 3)
+#define DP_F_ZERO  	(1 << 4)
+#define DP_F_UP    	(1 << 5)
+#define DP_F_UNSIGNED 	(1 << 6)
 
-#if defined(SOLARIS_BUG_COMPATIBLE) && !defined(SOLARIS_COMPATIBLE)
-#define SOLARIS_COMPATIBLE
-#endif
+/* Conversion Flags */
+#define DP_C_SHORT   1
+#define DP_C_LONG    2
+#define DP_C_LDOUBLE 3
 
-#if defined(HPUX_BUG_COMPATIBLE) && !defined(HPUX_COMPATIBLE)
-#define HPUX_COMPATIBLE
-#endif
+#define char_to_int(p) (p - '0')
+#define MAX(p,q) ((p >= q) ? p : q)
 
-#if defined(DIGITAL_UNIX_BUG_COMPATIBLE) && !defined(DIGITAL_UNIX_COMPATIBLE)
-#define DIGITAL_UNIX_COMPATIBLE
-#endif
-
-#if defined(PERL_BUG_COMPATIBLE) && !defined(PERL_COMPATIBLE)
-#define PERL_COMPATIBLE
-#endif
-
-#include <sys/types.h>
-#include <string.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <stdarg.h>
-
-#ifdef isdigit
-#undef isdigit
-#endif
-#define isdigit(c) ((c) >= '0' && (c) <= '9')
-
-/* prototype */
-int egg_vsnprintf(char *str, size_t str_m, const char *fmt, va_list ap);
-
-/* declaration */
-int egg_vsnprintf(char *str, size_t str_m, const char *fmt, va_list ap)
+static void dopr(char *buffer, size_t maxlen, const char *format,
+		 va_list args)
 {
-  size_t str_l = 0;
-  const char *p = fmt;
+  char ch;
+  long value;
+  LDOUBLE fvalue;
+  char *strvalue;
+  int min;
+  int max;
+  int state;
+  int flags;
+  int cflags;
+  size_t currlen;
 
-  if (str_m < 1) return -1;
+  state = DP_S_DEFAULT;
+  currlen = flags = cflags = min = 0;
+  max = -1;
+  ch = *format++;
 
-  if (!p) p = "";
-  while (*p) {
-    if (*p != '%') {
-   /* if (str_l < str_m) str[str_l++] = *p++;    -- this would be sufficient */
-   /* but the following code achieves better performance for cases
-    * where format string is long and contains few conversions */
-      const char *q = strchr(p+1,'%');
-      int n = !q ? strlen(p) : (q-p);
-      int avail = (int)(str_m-str_l);
-      if (avail > 0) {
-        register int k; register char *r; register const char* p1;
-        for (p1=p, r=str+str_l, k=(n>avail?avail:n); k>0; k--) *r++ = *p1++;
-      }
-      p += n; str_l += n;
-    } else {
-      const char *starting_p;
-      int min_field_width = 0, precision = 0;
-      int zero_padding = 0, precision_specified = 0, justify_left = 0;
-      int alternative_form = 0, force_sign = 0;
-      int space_for_positive = 1; /* If both the ' ' and '+' flags appear,
-                                     the ' ' flag should be ignored. */
-      char data_type_modifier = '\0';      /* allowed valued: \0, h, l, L, p */
-      char tmp[32];/* temporary buffer for simple numeric->string conversion */
+  while (state != DP_S_DONE) {
+    if ((ch == '\0') || (currlen >= maxlen))
+      state = DP_S_DONE;
 
-      const char *str_arg = 0;/* string address in case of string arguments  */
-      int str_arg_l;  /* natural field width of arg without padding and sign */
-
-      long int long_arg;  /* long int argument value - always defined
-        in case of numeric arguments, regardless of data type modifiers.
-        In case of data type modifier 'll' the value is stored in long_long_arg
-        and only the sign of long_arg is guaranteed to be correct */
-      void *ptr_arg; /* pointer argument value - only defined for p format   */
-      int int_arg;   /* int argument value - only defined if no h or l modif.*/
-      int number_of_zeros_to_pad = 0;
-      int zero_padding_insertion_ind = 0;
-      char fmt_spec = '\0';            /* current format specifier character */
-
-      starting_p = p; p++;  /* skip '%' */
-   /* parse flags */
-      while (*p == '0' || *p == '-' || *p == '+' ||
-             *p == ' ' || *p == '#' || *p == '\'') {
-        switch (*p) {
-        case '0': zero_padding = 1; break;
-        case '-': justify_left = 1; break;
-        case '+': force_sign = 1; space_for_positive = 0; break;
-        case ' ': force_sign = 1;
-     /* If both the ' ' and '+' flags appear, the ' ' flag should be ignored */
-#ifdef PERL_COMPATIBLE
-     /* ... but in Perl the last of ' ' and '+' applies */
-                  space_for_positive = 1;
-#endif
-                  break;
-        case '#': alternative_form = 1; break;
-        case '\'': break;
-        }
-        p++;
+    switch (state) {
+    case DP_S_DEFAULT:
+      if (ch == '%')
+	state = DP_S_FLAGS;
+      else
+	dopr_outch(buffer, &currlen, maxlen, ch);
+      ch = *format++;
+      break;
+    case DP_S_FLAGS:
+      switch (ch) {
+      case '-':
+	flags |= DP_F_MINUS;
+	ch = *format++;
+	break;
+      case '+':
+	flags |= DP_F_PLUS;
+	ch = *format++;
+	break;
+      case ' ':
+	flags |= DP_F_SPACE;
+	ch = *format++;
+	break;
+      case '#':
+	flags |= DP_F_NUM;
+	ch = *format++;
+	break;
+      case '0':
+	flags |= DP_F_ZERO;
+	ch = *format++;
+	break;
+      default:
+	state = DP_S_MIN;
+	break;
       }
-   /* If the '0' and '-' flags both appear, the '0' flag should be ignored. */
-
-   /* parse field width */
-      if (*p == '*') {
-        p++; min_field_width = va_arg(ap, int);
-        if (min_field_width < 0)
-          { min_field_width = -min_field_width; justify_left = 1; }
-      } else if (isdigit((int)(*p))) {
-        min_field_width = *p++ - '0';
-        while (isdigit((int)(*p)))
-          min_field_width = 10*min_field_width + (*p++ - '0');
+      break;
+    case DP_S_MIN:
+      if (isdigit(ch)) {
+	min = 10 * min + char_to_int(ch);
+	ch = *format++;
+      } else if (ch == '*') {
+	min = va_arg(args, int);
+	ch = *format++;
+	state = DP_S_DOT;
+      } else
+	state = DP_S_DOT;
+      break;
+    case DP_S_DOT:
+      if (ch == '.') {
+	state = DP_S_MAX;
+	ch = *format++;
+      } else
+	state = DP_S_MOD;
+      break;
+    case DP_S_MAX:
+      if (isdigit(ch)) {
+	if (max < 0)
+	  max = 0;
+	max = 10 * max + char_to_int(ch);
+	ch = *format++;
+      } else if (ch == '*') {
+	max = va_arg(args, int);
+	ch = *format++;
+	state = DP_S_MOD;
+      } else
+	state = DP_S_MOD;
+      break;
+    case DP_S_MOD:
+      /* Currently, we don't support Long Long, bummer */
+      switch (ch) {
+      case 'h':
+	cflags = DP_C_SHORT;
+	ch = *format++;
+	break;
+      case 'l':
+	cflags = DP_C_LONG;
+	ch = *format++;
+	break;
+      case 'L':
+	cflags = DP_C_LDOUBLE;
+	ch = *format++;
+	break;
+      default:
+	break;
       }
-   /* parse precision */
-      if (*p == '.') {
-        p++; precision_specified = 1;
-        if (*p == '*') {
-          p++; precision = va_arg(ap, int);
-          if (precision < 0) {
-            precision_specified = 0; precision = 0;
-         /* NOTE:
-          *   Solaris 2.6 man page claims that in this case the precision
-          *   should be set to 0.  Digital Unix 4.0 and HPUX 10 man page
-          *   claim that this case should be treated as unspecified precision,
-          *   which is what we do here.
-          */
-          }
-        } else if (isdigit((int)(*p))) {
-          precision = *p++ - '0';
-          while (isdigit((int)(*p))) precision = 10*precision + (*p++ - '0');
-        }
-      }
-   /* parse 'h', 'l' and 'll' data type modifiers */
-      if (*p == 'h' || *p == 'l') {
-        data_type_modifier = *p; p++;
-        if (data_type_modifier == 'l' && *p == 'l') {/* double l = long long */
-          data_type_modifier = 'l';                /* treat it as single 'l' */
-          p++;
-        }
-      }
-      fmt_spec = *p;
-   /* common synonyms: */
-      switch (fmt_spec) {
-      case 'i': fmt_spec = 'd'; break;
-      case 'D': fmt_spec = 'd'; data_type_modifier = 'l'; break;
-      case 'U': fmt_spec = 'u'; data_type_modifier = 'l'; break;
-      case 'O': fmt_spec = 'o'; data_type_modifier = 'l'; break;
-      default: break;
-      }
-   /* get parameter value, do initial processing */
-      switch (fmt_spec) {
-      case '%': /* % behaves similar to 's' regarding flags and field widths */
-      case 'c': /* c behaves similar to 's' regarding flags and field widths */
+      state = DP_S_CONV;
+      break;
+    case DP_S_CONV:
+      switch (ch) {
+      case 'd':
+      case 'i':
+	if (cflags == DP_C_SHORT)
+	  value = va_arg(args, short int);
+	else if (cflags == DP_C_LONG)
+	  value = va_arg(args, long int);
+	else
+	  value = va_arg(args, int);
+	fmtint(buffer, &currlen, maxlen, value, 10, min, max, flags);
+	break;
+      case 'o':
+	flags |= DP_F_UNSIGNED;
+	if (cflags == DP_C_SHORT)
+	  value = va_arg(args, unsigned short int);
+	else if (cflags == DP_C_LONG)
+	  value = va_arg(args, unsigned long int);
+	else
+	  value = va_arg(args, unsigned int);
+	fmtint(buffer, &currlen, maxlen, value, 8, min, max, flags);
+	break;
+      case 'u':
+	flags |= DP_F_UNSIGNED;
+	if (cflags == DP_C_SHORT)
+	  value = va_arg(args, unsigned short int);
+	else if (cflags == DP_C_LONG)
+	  value = va_arg(args, unsigned long int);
+	else
+	  value = va_arg(args, unsigned int);
+	fmtint(buffer, &currlen, maxlen, value, 10, min, max, flags);
+	break;
+      case 'X':
+	flags |= DP_F_UP;
+      case 'x':
+	flags |= DP_F_UNSIGNED;
+	if (cflags == DP_C_SHORT)
+	  value = va_arg(args, unsigned short int);
+	else if (cflags == DP_C_LONG)
+	  value = va_arg(args, unsigned long int);
+	else
+	  value = va_arg(args, unsigned int);
+	fmtint(buffer, &currlen, maxlen, value, 16, min, max, flags);
+	break;
+      case 'f':
+	if (cflags == DP_C_LDOUBLE)
+	  fvalue = va_arg(args, LDOUBLE);
+	else
+	  fvalue = va_arg(args, double);
+	/* um, floating point? */
+	fmtfp(buffer, &currlen, maxlen, fvalue, min, max, flags);
+	break;
+      case 'E':
+	flags |= DP_F_UP;
+      case 'e':
+	if (cflags == DP_C_LDOUBLE)
+	  fvalue = va_arg(args, LDOUBLE);
+	else
+	  fvalue = va_arg(args, double);
+	break;
+      case 'G':
+	flags |= DP_F_UP;
+      case 'g':
+	if (cflags == DP_C_LDOUBLE)
+	  fvalue = va_arg(args, LDOUBLE);
+	else
+	  fvalue = va_arg(args, double);
+	break;
+      case 'c':
+	dopr_outch(buffer, &currlen, maxlen, va_arg(args, int));
+	break;
       case 's':
-        data_type_modifier = '\0';       /* wint_t and wchar_t not supported */
-     /* the result of zero padding flag with non-numeric format is undefined */
-     /* Solaris and HPUX 10 does zero padding in this case, Digital Unix not */
-#ifdef DIGITAL_UNIX_COMPATIBLE
-        zero_padding = 0;        /* turn zero padding off for string formats */
-#endif
-        str_arg_l = 1;
-        switch (fmt_spec) {
-        case '%':
-          str_arg = p; break;
-        case 'c':
-          { int j = va_arg(ap, int); str_arg = (const char*) &j; }
-          break;
-        case 's':
-          str_arg = va_arg(ap, const char *);
-          if (!str_arg) str_arg_l = 0;
-       /* make sure not to address string beyond the specified precision !!! */
-          else if (!precision_specified) str_arg_l = strlen(str_arg);
-       /* truncate string if necessary as requested by precision */
-          else if (precision <= 0) str_arg_l = 0;
-          else {
-            const char *q = memchr(str_arg,'\0',(size_t)precision);
-            str_arg_l = !q ? precision : (q-str_arg);
-          }
-          break;
-        default: break;
-        }
-        break;
-      case 'd': case 'o': case 'u': case 'x': case 'X': case 'p':
-        long_arg = 0; int_arg = 0; ptr_arg = NULL;
-        if (fmt_spec == 'p') {
-        /* HPUX 10: An l, h, ll or L before any other conversion character
-         *   (other than d, i, o, u, x, or X) is ignored.
-         * Digital Unix:
-         *   not specified, but seems to behave as HPUX does.
-         * Solaris: If an h, l, or L appears before any other conversion
-         *   specifier (other than d, i, o, u, x, or X), the behavior
-         *   is undefined. (Actually %hp converts only 16-bits of address
-         *   and %llp treats address as 64-bit data which is incompatible
-         *   with (void *) argument on a 32-bit system).
-         */
-#ifdef SOLARIS_COMPATIBLE
-#  ifdef SOLARIS_BUG_COMPATIBLE
-          /* keep data type modifiers even if it represents 'll' */
-#  else
-          if (data_type_modifier == '2') data_type_modifier = '\0';
-#  endif
-#else
-          data_type_modifier = '\0';
-#endif
-          ptr_arg = va_arg(ap, void *); long_arg = !ptr_arg ? 0 : 1;
-        } else {
-          switch (data_type_modifier) {
-          case '\0':
-          case 'h':
-         /* It is non-portable to specify a second argument of char or short
-          * to va_arg, because arguments seen by the called function
-          * are not char or short.  C converts char and short arguments
-          * to int before passing them to a function.
-          */
-            int_arg = va_arg(ap, int); long_arg = int_arg; break;
-          case 'l':
-            long_arg = va_arg(ap, long int); break;
-          }
-        }
-        str_arg = tmp; str_arg_l = 0;
-     /* NOTE:
-      *   For d, i, o, u, x, and X conversions, if precision is specified,
-      *   the '0' flag should be ignored. This is so with Solaris 2.6,
-      *   Digital UNIX 4.0 and HPUX 10;  but not with Perl.
-      */
-#ifndef PERL_COMPATIBLE
-        if (precision_specified) zero_padding = 0;
-#endif
-        if (fmt_spec == 'd') {
-          if (force_sign && long_arg >= 0)
-            tmp[str_arg_l++] = space_for_positive ? ' ' : '+';
-         /* leave negative numbers for sprintf to handle,
-            to avoid handling tricky cases like (short int)(-32768) */
-        } else if (alternative_form) {
-          if (long_arg != 0 && (fmt_spec == 'x' || fmt_spec == 'X') )
-            { tmp[str_arg_l++] = '0'; tmp[str_arg_l++] = fmt_spec; }
-#ifdef HPUX_COMPATIBLE
-          else if (fmt_spec == 'p'
-         /* HPUX 10: for an alternative form of p conversion,
-          *          a nonzero result is prefixed by 0x. */
-#ifndef HPUX_BUG_COMPATIBLE
-         /* Actually it uses 0x prefix even for a zero value. */
-                   && long_arg != 0
-#endif
-                  ) { tmp[str_arg_l++] = '0'; tmp[str_arg_l++] = 'x'; }
-#endif
-        }
-        zero_padding_insertion_ind = str_arg_l;
-        if (!precision_specified) precision = 1;   /* default precision is 1 */
-        if (precision == 0 && long_arg == 0
-#ifdef HPUX_BUG_COMPATIBLE
-            && fmt_spec != 'p'
-         /* HPUX 10 man page claims: With conversion character p the result of
-          * converting a zero value with a precision of zero is a null string.
-          * Actually it returns all zeroes. */
-#endif
-        ) {  /* converted to null string */  }
-        else {
-          char f[5]; int f_l = 0;
-          f[f_l++] = '%';
-          if (!data_type_modifier) { }
-          else if (data_type_modifier=='2') { f[f_l++] = 'l'; f[f_l++] = 'l'; }
-          else f[f_l++] = data_type_modifier;
-          f[f_l++] = fmt_spec; f[f_l++] = '\0';
-          if (fmt_spec == 'p') str_arg_l+=sprintf(tmp+str_arg_l, f, ptr_arg);
-          else {
-            switch (data_type_modifier) {
-            case '\0':
-            case 'h': str_arg_l+=sprintf(tmp+str_arg_l, f, int_arg);  break;
-            case 'l': str_arg_l+=sprintf(tmp+str_arg_l, f, long_arg); break;
-            }
-          }
-          if (zero_padding_insertion_ind < str_arg_l &&
-              tmp[zero_padding_insertion_ind] == '-')
-            zero_padding_insertion_ind++;
-        }
-        { int num_of_digits = str_arg_l - zero_padding_insertion_ind;
-          if (alternative_form && fmt_spec == 'o'
-#ifdef HPUX_COMPATIBLE                                  /* ("%#.o",0) -> ""  */
-              && (str_arg_l > 0)
-#endif
-#ifdef DIGITAL_UNIX_BUG_COMPATIBLE                      /* ("%#o",0) -> "00" */
-#else
-              && !(zero_padding_insertion_ind < str_arg_l
-                   && tmp[zero_padding_insertion_ind] == '0')
-#endif
-          ) {      /* assure leading zero for alternative-form octal numbers */
-            if (!precision_specified || precision < num_of_digits+1)
-              { precision = num_of_digits+1; precision_specified = 1; }
-          }
-       /* zero padding to specified precision? */
-          if (num_of_digits < precision) 
-            number_of_zeros_to_pad = precision - num_of_digits;
-        }
-     /* zero padding to specified minimal field width? */
-        if (!justify_left && zero_padding) {
-          int n = min_field_width - (str_arg_l+number_of_zeros_to_pad);
-          if (n > 0) number_of_zeros_to_pad += n;
-        }
-        break;
-      default:  /* unrecognized format, keep format string unchanged */
-        zero_padding = 0;   /* turn zero padding off for non-numeric formats */
-#ifndef DIGITAL_UNIX_COMPATIBLE
-        justify_left = 1; min_field_width = 0;                /* reset flags */
-#endif
-#ifdef PERL_COMPATIBLE
-     /* keep the entire format string unchanged */
-        str_arg = starting_p; str_arg_l = p - starting_p;
-#else
-     /* discard the unrecognized format, just keep the unrecognized fmt char */
-        str_arg = p; str_arg_l = 0;
-#endif
-        if (*p) str_arg_l++;  /* include invalid fmt specifier if not at EOS */
-        break;
+	strvalue = va_arg(args, char *);
+	if (max < 0)
+	  max = maxlen;		/* ie, no max */
+	fmtstr(buffer, &currlen, maxlen, strvalue, flags, min, max);
+	break;
+      case 'p':
+	strvalue = va_arg(args, void *);
+	fmtint(buffer, &currlen, maxlen, (long) strvalue, 16, min, max,
+	       flags);
+	break;
+      case 'n':
+	if (cflags == DP_C_SHORT) {
+	  short int *num;
+	  num = va_arg(args, short int *);
+	  *num = currlen;
+	} else if (cflags == DP_C_LONG) {
+	  long int *num;
+	  num = va_arg(args, long int *);
+	  *num = currlen;
+	} else {
+	  int *num;
+	  num = va_arg(args, int *);
+	  *num = currlen;
+	}
+	break;
+      case '%':
+	dopr_outch(buffer, &currlen, maxlen, ch);
+	break;
+      case 'w':
+	/* not supported yet, treat as next char */
+	ch = *format++;
+	break;
+      default:
+	/* Unknown, skip */
+	break;
       }
-      if (*p) p++;          /* step over the just processed format specifier */
-   /* insert padding to the left as requested by min_field_width */
-      if (!justify_left) {                /* left padding with blank or zero */
-        int n = min_field_width - (str_arg_l+number_of_zeros_to_pad);
-        if (n > 0) {
-          int avail = (int)(str_m-str_l);
-          if (avail > 0) {      /* memset(str+str_l, zp, (n>avail?avail:n)); */
-            const char zp = (zero_padding ? '0' : ' ');
-            register int k; register char *r;
-            for (r=str+str_l, k=(n>avail?avail:n); k>0; k--) *r++ = zp;
-          }
-          str_l += n;
-        }
-      }
-   /* zero padding as requested by the precision for numeric formats requred?*/
-      if (number_of_zeros_to_pad <= 0) {
-     /* will not copy first part of numeric here,   *
-      * force it to be copied later in its entirety */
-        zero_padding_insertion_ind = 0;
-      } else {
-     /* insert first part of numerics (sign or '0x') before zero padding */
-        int n = zero_padding_insertion_ind;
-        if (n > 0) {
-          int avail = (int)(str_m-str_l);
-          if (avail > 0) memcpy(str+str_l, str_arg, (size_t)(n>avail?avail:n));
-          str_l += n;
-        }
-     /* insert zero padding as requested by the precision */
-        n = number_of_zeros_to_pad;
-        if (n > 0) {
-          int avail = (int)(str_m-str_l);
-          if (avail > 0) {     /* memset(str+str_l, '0', (n>avail?avail:n)); */
-            register int k; register char *r;
-            for (r=str+str_l, k=(n>avail?avail:n); k>0; k--) *r++ = '0';
-          }
-          str_l += n;
-        }
-      }
-   /* insert formatted string (or unmodified format for unknown formats) */
-      { int n = str_arg_l - zero_padding_insertion_ind;
-        if (n > 0) {
-          int avail = (int)(str_m-str_l);
-          if (avail > 0) memcpy(str+str_l, str_arg+zero_padding_insertion_ind,
-                                (size_t)(n>avail ? avail : n) );
-          str_l += n;
-        }
-      }
-   /* insert right padding */
-      if (justify_left) {          /* right blank padding to the field width */
-        int n = min_field_width - (str_arg_l+number_of_zeros_to_pad);
-        if (n > 0) {
-          int avail = (int)(str_m-str_l);
-          if (avail > 0) {     /* memset(str+str_l, ' ', (n>avail?avail:n)); */
-            register int k; register char *r;
-            for (r=str+str_l, k=(n>avail?avail:n); k>0; k--) *r++ = ' ';
-          }
-          str_l += n;
-        }
-      }
+      ch = *format++;
+      state = DP_S_DEFAULT;
+      flags = cflags = min = 0;
+      max = -1;
+      break;
+    case DP_S_DONE:
+      break;
+    default:
+      /* hmm? */
+      break;			/* some picky compilers need this */
     }
   }
-  if (str_m > 0)  /* make sure the string is null-terminated
-                     even at the expense of overwriting the last character */
-    str[str_l <= str_m-1 ? str_l : str_m-1] = '\0';
-  return str_l;  /* return the number of characters formatted
-                    (excluding trailing null character),
-                    that is, the number of characters that would have been
-                    written to the buffer if it were large enough */
+  if (currlen < maxlen - 1)
+    buffer[currlen] = '\0';
+  else
+    buffer[maxlen - 1] = '\0';
 }
-#endif /* HAVE_VSNPRINTF */
 
+static void fmtstr(char *buffer, size_t * currlen, size_t maxlen,
+		   char *value, int flags, int min, int max)
+{
+  int padlen,
+      strln;			/* amount to pad */
+  int cnt = 0;
+
+  if (value == 0) {
+    value = "<NULL>";
+  }
+
+  for (strln = 0; value[strln]; ++strln);	/* strlen */
+  padlen = min - strln;
+  if (padlen < 0)
+    padlen = 0;
+  if (flags & DP_F_MINUS)
+    padlen = -padlen;		/* Left Justify */
+
+  while ((padlen > 0) && (cnt < max)) {
+    dopr_outch(buffer, currlen, maxlen, ' ');
+    --padlen;
+    ++cnt;
+  }
+  while (*value && (cnt < max)) {
+    dopr_outch(buffer, currlen, maxlen, *value++);
+    ++cnt;
+  }
+  while ((padlen < 0) && (cnt < max)) {
+    dopr_outch(buffer, currlen, maxlen, ' ');
+    ++padlen;
+    ++cnt;
+  }
+}
+
+/* Have to handle DP_F_NUM (ie 0x and 0 alternates) */
+
+static void fmtint(char *buffer, size_t * currlen, size_t maxlen,
+		   long value, int base, int min, int max, int flags)
+{
+  int signvalue = 0;
+  unsigned long uvalue;
+  char convert[20];
+  int place = 0;
+  int spadlen = 0;		/* amount to space pad */
+  int zpadlen = 0;		/* amount to zero pad */
+  int caps = 0;
+
+  if (max < 0)
+    max = 0;
+
+  uvalue = value;
+
+  if (!(flags & DP_F_UNSIGNED)) {
+    if (value < 0) {
+      signvalue = '-';
+      uvalue = -value;
+    } else if (flags & DP_F_PLUS)	/* Do a sign (+/i) */
+      signvalue = '+';
+    else if (flags & DP_F_SPACE)
+      signvalue = ' ';
+  }
+
+  if (flags & DP_F_UP)
+    caps = 1;			/* Should characters be upper case? */
+
+  do {
+    convert[place++] = (caps ? "0123456789ABCDEF" : "0123456789abcdef")
+	[uvalue % (unsigned) base];
+    uvalue = (uvalue / (unsigned) base);
+  }
+  while (uvalue && (place < 20));
+  if (place == 20)
+    place--;
+  convert[place] = 0;
+
+  zpadlen = max - place;
+  spadlen = min - MAX(max, place) - (signvalue ? 1 : 0);
+  if (zpadlen < 0)
+    zpadlen = 0;
+  if (spadlen < 0)
+    spadlen = 0;
+  if (flags & DP_F_ZERO) {
+    zpadlen = MAX(zpadlen, spadlen);
+    spadlen = 0;
+  }
+  if (flags & DP_F_MINUS)
+    spadlen = -spadlen;		/* Left Justifty */
+
+#ifdef DEBUG_SNPRINTF
+  dprint(1,
+	 (debugfile, "zpad: %d, spad: %d, min: %d, max: %d, place: %d\n",
+	  zpadlen, spadlen, min, max, place));
+#endif
+
+  /* Spaces */
+  while (spadlen > 0) {
+    dopr_outch(buffer, currlen, maxlen, ' ');
+    --spadlen;
+  }
+
+  /* Sign */
+  if (signvalue)
+    dopr_outch(buffer, currlen, maxlen, signvalue);
+
+  /* Zeros */
+  if (zpadlen > 0) {
+    while (zpadlen > 0) {
+      dopr_outch(buffer, currlen, maxlen, '0');
+      --zpadlen;
+    }
+  }
+
+  /* Digits */
+  while (place > 0)
+    dopr_outch(buffer, currlen, maxlen, convert[--place]);
+
+  /* Left Justified spaces */
+  while (spadlen < 0) {
+    dopr_outch(buffer, currlen, maxlen, ' ');
+    ++spadlen;
+  }
+}
+
+static LDOUBLE abs_val(LDOUBLE value)
+{
+  LDOUBLE result = value;
+
+  if (value < 0)
+    result = -value;
+
+  return result;
+}
+
+static LDOUBLE pow10(int exp)
+{
+  LDOUBLE result = 1;
+
+  while (exp) {
+    result *= 10;
+    exp--;
+  }
+
+  return result;
+}
+
+static long round(LDOUBLE value)
+{
+  long intpart;
+
+  intpart = value;
+  value = value - intpart;
+  if (value >= 0.5)
+    intpart++;
+
+  return intpart;
+}
+
+static void fmtfp(char *buffer, size_t * currlen, size_t maxlen,
+		  LDOUBLE fvalue, int min, int max, int flags)
+{
+  int signvalue = 0;
+  LDOUBLE ufvalue;
+  char iconvert[20];
+  char fconvert[20];
+  int iplace = 0;
+  int fplace = 0;
+  int padlen = 0;		/* amount to pad */
+  int zpadlen = 0;
+  int caps = 0;
+  long intpart;
+  long fracpart;
+
+  /* 
+   * AIX manpage says the default is 0, but Solaris says the default
+   * is 6, and sprintf on AIX defaults to 6
+   */
+  if (max < 0)
+    max = 6;
+
+  ufvalue = abs_val(fvalue);
+
+  if (fvalue < 0)
+    signvalue = '-';
+  else if (flags & DP_F_PLUS)	/* Do a sign (+/i) */
+    signvalue = '+';
+  else if (flags & DP_F_SPACE)
+    signvalue = ' ';
+
+#if 0
+  if (flags & DP_F_UP)
+    caps = 1;			/* Should characters be upper case? */
+#endif
+
+  intpart = ufvalue;
+
+  /* 
+   * Sorry, we only support 9 digits past the decimal because of our 
+   * conversion method
+   */
+  if (max > 9)
+    max = 9;
+
+  /* We "cheat" by converting the fractional part to integer by
+   * multiplying by a factor of 10
+   */
+  fracpart = round((pow10(max)) * (ufvalue - intpart));
+
+  if (fracpart >= pow10(max)) {
+    intpart++;
+    fracpart -= pow10(max);
+  }
+
+  /* Convert integer part */
+  do {
+    iconvert[iplace++] =
+	(caps ? "0123456789ABCDEF" : "0123456789abcdef")[intpart % 10];
+    intpart = (intpart / 10);
+  }
+  while (intpart && (iplace < 20));
+  if (iplace == 20)
+    iplace--;
+  iconvert[iplace] = 0;
+
+  /* Convert fractional part */
+  do {
+    fconvert[fplace++] =
+	(caps ? "0123456789ABCDEF" : "0123456789abcdef")[fracpart % 10];
+    fracpart = (fracpart / 10);
+  }
+  while (fracpart && (fplace < 20));
+  if (fplace == 20)
+    fplace--;
+  fconvert[fplace] = 0;
+
+  /* -1 for decimal point, another -1 if we are printing a sign */
+  padlen = min - iplace - max - 1 - ((signvalue) ? 1 : 0);
+  zpadlen = max - fplace;
+  if (zpadlen < 0)
+    zpadlen = 0;
+  if (padlen < 0)
+    padlen = 0;
+  if (flags & DP_F_MINUS)
+    padlen = -padlen;		/* Left Justifty */
+
+  if ((flags & DP_F_ZERO) && (padlen > 0)) {
+    if (signvalue) {
+      dopr_outch(buffer, currlen, maxlen, signvalue);
+      --padlen;
+      signvalue = 0;
+    }
+    while (padlen > 0) {
+      dopr_outch(buffer, currlen, maxlen, '0');
+      --padlen;
+    }
+  }
+  while (padlen > 0) {
+    dopr_outch(buffer, currlen, maxlen, ' ');
+    --padlen;
+  }
+  if (signvalue)
+    dopr_outch(buffer, currlen, maxlen, signvalue);
+
+  while (iplace > 0)
+    dopr_outch(buffer, currlen, maxlen, iconvert[--iplace]);
+
+  /*
+   * Decimal point.  This should probably use locale to find the correct
+   * char to print out.
+   */
+  if (max > 0) {
+    dopr_outch(buffer, currlen, maxlen, '.');
+
+    while (fplace > 0)
+      dopr_outch(buffer, currlen, maxlen, fconvert[--fplace]);
+  }
+
+  while (zpadlen > 0) {
+    dopr_outch(buffer, currlen, maxlen, '0');
+    --zpadlen;
+  }
+
+  while (padlen < 0) {
+    dopr_outch(buffer, currlen, maxlen, ' ');
+    ++padlen;
+  }
+}
+
+static void dopr_outch(char *buffer, size_t * currlen, size_t maxlen,
+		       char c)
+{
+  if (*currlen < maxlen)
+    buffer[(*currlen)++] = c;
+}
+
+int egg_vsnprintf(char *str, size_t count, const char *fmt, va_list args)
+{
+  str[0] = 0;
+  dopr(str, count, fmt, args);
+  return (strlen(str));
+}
+#endif				/* !HAVE_VSNPRINTF */
 
 #ifndef HAVE_SNPRINTF
-/* int egg_snprintf(char *str, size_t str_m, const char *fmt, ...)
- */
-int egg_snprintf EGG_VARARGS_DEF(char *, arg1)
+#  ifdef HAVE_STDARGS
+int egg_snprintf(char *str, size_t count, const char *fmt, ...)
+#  else
+int egg_snprintf(va_alist) va_dcl
+#  endif
 {
-  va_list	 ap;
-  register int	 ret;
-  char		*str;
-  size_t	 str_m;
-  const char	*fmt;
+#  ifndef HAVE_STDARGS
+  char *str;
+  size_t count;
+  char *fmt;
+#  endif
+  VA_LOCAL_DECL;
 
-  str   = EGG_VARARGS_START(char *, arg1, ap);
-  str_m = va_arg(ap, size_t);
-  fmt   = va_arg(ap, const char *);
-
-  ret = egg_vsnprintf(str, str_m, fmt, ap);
-  va_end(ap);
-  return ret;
+  VA_START(fmt);
+  VA_SHIFT(str, char *);
+  VA_SHIFT(count, size_t);
+  VA_SHIFT(fmt, char *);
+  (void) egg_vsnprintf(str, count, fmt, ap);
+  VA_END;
+  return (strlen(str));
 }
-#endif /* !HAVE_SNPRINTF */
+#endif				/* !HAVE_SNPRINTF */
