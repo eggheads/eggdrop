@@ -980,11 +980,12 @@ set xfer-timeout 30
 #loadmodule share
 
 ##### variables:
-# [0/1] there are situations where sharebot userfile resynchronization
-# can fail to work correctly.  because of this, it is no longer
-# advised to turn this feature on.  i've lost the mail from the
-# person that spelled out the flaw, so i can't give him/her credit
-# right now or explain it (sorry).
+# [0/1] When two bots get disconnected this flag allows them to create
+# a resync buffer which saves all changes done to the userfile during
+# the disconnect. So, when they reconnect, they will not have to transfer
+# the complete user file, but instead, just send the resync buffer.
+# If you have problems with this feature please tell us. Take a look at
+# doc/BUG-REPORT first though.
 #set allow-resync 0
 
 # this specifies how long to hold another bots resync data for before

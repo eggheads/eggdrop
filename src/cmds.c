@@ -645,7 +645,7 @@ static void cmd_console(struct userrec *u, int idx, char *par)
   if (!nick[0])
     nick = newsplit(&par);
   if (strchr("#&*", nick[0])) {
-    if ((nick[0] != '*') && !findchan(nick)) {
+    if (strcmp(nick, "*") && !findchan(nick)) {
       dprintf(idx, "Invalid console channel: %s\n", nick);
       return;
     }

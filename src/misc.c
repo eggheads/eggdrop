@@ -513,15 +513,15 @@ void putlog VARARGS_DEF(int, arg1)
       }
     }
   }
-  if ((!backgrd) && (!con_chan) && (!term_z))
-    printf("%s", out);
   for (i = 0; i < dcc_total; i++)
     if ((dcc[i].type == &DCC_CHAT) && (dcc[i].u.chat->con_flags & type)) {
       if ((chname[0] == '*') || (dcc[i].u.chat->con_chan[0] == '*') ||
 	  (!rfc_casecmp(chname, dcc[i].u.chat->con_chan)))
 	dprintf(i, "%s", out);
     }
-  if ((type & LOG_MISC) && use_stderr) {
+  if ((!backgrd) && (!con_chan) && (!term_z))
+    printf("%s", out);
+  else if ((type & LOG_MISC) && use_stderr) {
     if (shtime)
       out += 8;
     dprintf(DP_STDERR, "%s", s);

@@ -932,7 +932,7 @@ EOF
 fi
 
 
-if test ! x${cross_compiling} = xno
+if ! test "x${cross_compiling}" = "xno"
 then
   echo ""
   echo "This system does not appear to have a working C compiler."
@@ -1128,7 +1128,7 @@ EOF
     DLOPEN_1=
     ;;
   BSD/OS)
-    if test x`uname -r | cut -d . -f 1` = "x2"
+    if test "x`uname -r | cut -d . -f 1`" = "x2"
     then
       echo "$ac_t""BSD/OS 2! statically linked modules are the only choice" 1>&6
       need_dl=0
@@ -1193,7 +1193,7 @@ EOF
     DLOPEN_1=
     ;;
   SunOS)
-    if test x`uname -r | cut -d . -f 1` = "x5"
+    if test "x`uname -r | cut -d . -f 1`" = "x5"
     then
       echo "$ac_t""Solaris!" 1>&6
       SHLIB_LD="/usr/ccs/bin/ld -G -z text"
@@ -1314,7 +1314,7 @@ EOF
 #define HPUX_HACKS 1
 EOF
 
-    if test x`uname -r | cut -d . -f 2` = "x10"
+    if test "x`uname -r | cut -d . -f 2`" = "x10"
     then
        cat >> confdefs.h <<\EOF
 #define HPUX10_HACKS 1
@@ -1334,7 +1334,7 @@ EOF
     DEFAULT_MAKE=static
     ;;
   *)
-    if test -r /mach
+    if test -r "/mach"
     then
       echo "$ac_t""NeXT...We are borg, you will be assimilated" 1>&6
       echo "$ac_t""break out the static modules, it's all you'll ever get :P" 1>&6
@@ -1352,7 +1352,7 @@ EOF
     ;;
 esac
 
-if test ${IRIX} = yes
+if test "${IRIX}" = "yes"
 then
   echo Skipping library tests because they CONFUSE Irix.
 else
@@ -1544,11 +1544,11 @@ else
   echo "$ac_t""no" 1>&6
 fi
 
-  if test x`${UNAME}` = "xSunOS"
+  if test "x`${UNAME}`" = "xSunOS"
   then
     echo $ac_n "checking for SunOS 4""... $ac_c" 1>&6
 echo "configure:1551: checking for SunOS 4" >&5
-    if test x`uname -r | cut -d . -f 1` = "x5"
+    if test "x`uname -r | cut -d . -f 1`" = "x5"
     then
       echo "$ac_t""Solaris -- "*bollocks*" zarni " 1>&6
     else
@@ -2349,13 +2349,26 @@ echo "$ac_t""$FILEDB_SPACE bytes" 1>&6
 rm -f abacab abacab.o abacab.c
 echo "   (standard is currently 48/512 bytes)"
 
-
 # ---------- begin robey's tcl thingies
+# (well, what used to be robey's tcl thingies...)
+
+# Check whether --with-tcllib or --without-tcllib was given.
+if test "${with_tcllib+set}" = set; then
+  withval="$with_tcllib"
+  tcllibname=$withval
+fi
+
+# Check whether --with-tclinc or --without-tclinc was given.
+if test "${with_tclinc+set}" = set; then
+  withval="$with_tclinc"
+  tclincname=$withval
+fi
+
 
 # Extract the first word of "basename", so it can be a program name with args.
 set dummy basename; ac_word=$2
 echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
-echo "configure:2359: checking for $ac_word" >&5
+echo "configure:2372: checking for $ac_word" >&5
 if eval "test \"`echo '$''{'ac_cv_prog_BASENAME'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -2384,7 +2397,7 @@ fi
 # Extract the first word of "dirname", so it can be a program name with args.
 set dummy dirname; ac_word=$2
 echo $ac_n "checking for $ac_word""... $ac_c" 1>&6
-echo "configure:2388: checking for $ac_word" >&5
+echo "configure:2401: checking for $ac_word" >&5
 if eval "test \"`echo '$''{'ac_cv_prog_DIRNAME'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
@@ -2410,24 +2423,24 @@ else
   echo "$ac_t""no" 1>&6
 fi
 
-if test $BASENAME = "" || test $DIRNAME = ""
+if test "$BASENAME" = "" || test "$DIRNAME" = ""
 then
-  echo ack...no basename or dirname, we cant configure tcl without em.
+  echo "ack...no basename or dirname, we can't configure Tcl without them."
   exit 1
 fi
 
-# Check whether --with-tcllib or --without-tcllib was given.
-if test "${with_tcllib+set}" = set; then
-  withval="$with_tcllib"
-  tcllibname=$withval
-fi
+tcllibnames="tcl tcl8.2 tcl82 tcl8.1 tcl81 \
+	tcl8.0 tcl80 tcl7.6 tcl76 tcl7.5 tcl75"
 
-# Check whether --with-tclinc or --without-tclinc was given.
-if test "${with_tclinc+set}" = set; then
-  withval="$with_tclinc"
-  tclincname=$withval
-fi
+tcllibextensions=".so .so.1 .so.1.0 .so.1.2 .a"
 
+tcllibpaths="$HOME/lib $HOME/tcl/lib $HOME \
+	/usr/local/lib /usr/local/pkgs/tcl/lib \
+	/usr/lib /lib /usr/i486-linuxaout/lib"
+
+tclheaderpaths="$HOME/include $HOME/tcl/include $HOME \
+	/usr/local/include /usr/local/pkgs/tcl/include \
+	/usr/include"
 
 if test -r "$tcllibname"
 then
@@ -2436,69 +2449,63 @@ then
   echo "using tcllib $TCLLIB/lib$TCLLIBFN"
 else
 
- libnames="tcl.so tcl.so.1\
-	tcl8.2.so tcl8.2.so.1 tcl82.so.1.0 tcl82.so.1\
-	tcl8.1.so tcl8.1.so.1 tcl81.so.1.0 tcl81.so.1\
-	tcl8.0.so tcl8.0.so.1 tcl80.so.1.0 tcl80.so.1\
-	tcl7.6.so tcl7.6.so.1 tcl76.so.1.0 tcl76.so.1\
-	tcl7.5.so tcl7.5.so.1 tcl75.so.1.0 tcl75.so.1\
-	tcl.a\
-	tcl8.2.a tcl82.a\
-	tcl8.1.a tcl81.a\
-	tcl8.0.a tcl80.a\
-	tcl7.6.a tcl76.a\
-	tcl7.5.a tcl75.a\
-	tcl7.4.a tcl74.a"
+  # look for libtcl: if TCLLIB is set, check there first
+  if test ! "$TCLLIB" = ""
+  then
+    for tcllibfn in $tcllibnames
+    do
+      for tcllibext in $tcllibextensions
+      do
+	if test -r "$TCLLIB/lib$tcllibfn$tcllibext"
+	then
+	  if test "$TCLLIBFN" = ""
+	  then
+	    TCLLIBFN=lib$libtclfn$tcllibext
+	    TCLLIBEXT=$tcllibext
+	    TCLLIBVER=`echo $tcllibfn | cut -c4-`
+	    break 2
+	  fi
+	fi
+      done
+    done
+    if test "$TCLLIBFN" = ""
+    then
+      echo "Environment variable TCLLIB is set, but incorrect."
+      unset TCLLIB
+    fi
+  fi
 
- # look for libtcl: if TCLLIB is set, check there first
- if test "$TCLLIB" != ""
- then
-   TCLLIBFN=notfound
-   for checkfn in $libnames
-   do
-     if test -r $TCLLIB/lib$checkfn
-     then
-       if test $TCLLIBFN = notfound
-       then
-	 TCLLIBFN=$checkfn
-       fi
-     fi
-   done
-   if test $TCLLIBFN = notfound
-   then
-     echo "Environment variable TCLLIB is set, but incorrect."
-     unset TCLLIB
-   fi
- fi
+  # check in common places now
+  echo $ac_n "checking for libtcl""... $ac_c" 1>&6
+echo "configure:2481: checking for libtcl" >&5
+  if test ! "$TCLLIB" = ""
+  then
+    echo "$ac_t""found in $TCLLIB/$TCLLIBFN" 1>&6
+  else
+    for tcllibfn in $tcllibnames
+    do
+      for tcllibext in $tcllibextensions
+      do
+	for tcllibpath in $tcllibpaths
+	do
+	  if test -r "$tcllibpath/lib$tcllibfn$tcllibext"
+	  then
+	    if test "$TCLLIB" = ""
+	    then
+	      echo "$ac_t""found in $tcllibpath/lib$tcllibfn$tcllibext" 1>&6
+	      TCLLIB=$tcllibpath
+	      TCLLIBFN=lib$tcllibfn$tcllibext
+	      TCLLIBEXT=$tcllibext
+	      TCLLIBVER=`echo $tcllibfn | cut -c4-`
+	      break 3
+	    fi
+	  fi
+	done
+      done
+    done
+  fi
 
- # check in common places now
- echo $ac_n "checking for libtcl""... $ac_c" 1>&6
-echo "configure:2477: checking for libtcl" >&5
- if test "$TCLLIB" = ""
- then
-   for checkfn in $libnames
-   do
-     if test "$TCLLIB" = ""
-     then
-       for check in /usr/local/lib /usr/local/lib/tcl /usr/local/pkgs/tcl/lib /usr/lib /usr/i486-linuxaout/lib $HOME/lib $HOME/tcl $HOME/tcl/lib $HOME /lib
-       do
-	 if test -r $check/lib$checkfn
-         then
-	   if test "$TCLLIB" = ""
-           then
-	     echo "$ac_t""found in $check/lib$checkfn" 1>&6
-	     TCLLIB=$check
-	     TCLLIBFN=$checkfn
-	   fi
-	 fi
-       done
-     fi
-   done
- else
-   echo "$ac_t""found in $TCLLIB/lib$TCLLIBFN" 1>&6
- fi
-
-fi # option
+fi # test tcllibname
 
 # give up if they don't even have that
 if test "$TCLLIB" = ""
@@ -2513,10 +2520,12 @@ then
   TCLINCFN=`$BASENAME $tclincname`
   echo "using TCL header $TCLINC/$TCLINCFN"
 else
+
   TCLINCFN=tcl.h
-  if test "$TCLINC" != ""
+
+  if test ! "$TCLINC" = ""
   then
-    if test ! -r $TCLINC/$TCLINCFN
+    if test ! -r "$TCLINC/$TCLINCFN"
     then
       echo "Environment variable TCLINC is set, but incorrect."
       unset TCLINC
@@ -2525,41 +2534,38 @@ else
 
   # check in common places now
   echo $ac_n "checking for $TCLINCFN""... $ac_c" 1>&6
-echo "configure:2529: checking for $TCLINCFN" >&5
-  if test "$TCLINC" = ""
+echo "configure:2538: checking for $TCLINCFN" >&5
+  if test ! "$TCLINC" = ""
   then
-    for check in /usr/local/include /usr/local/include/tcl /usr/local/pkgs/tcl/include /usr/include /usr/include/tcl $HOME/include $HOME/tcl $HOME/tcl/include $HOME
+    echo "$ac_t""found in $TCLINC/$TCLINCFN" 1>&6
+  else
+    for headerpath in $tclheaderpaths
     do
-      if test -r $check/$TCLINCFN
+      if test -r "$headerpath/$TCLINCFN"
       then
-	if test "$TCLINC" != ""
-        then
+	if test "$TCLINC" = ""
+	then
+	  echo "$ac_t""found in $headerpath/$TCLINCFN" 1>&6
+	  TCLINC=$headerpath
 	  break
 	fi
-	echo "$ac_t""found in $check/$TCLINCFN" 1>&6
-	TCLINC=$check
-	break
       fi
     done
-    # freebsd hack
     if test "$TCLINC" = ""
     then
-      for ver in 8.2 8.1 8.0 7.6 7.5 7.4
+      for tcllibfn in $tcllibnames
       do
-	if test -r /usr/local/include/tcl$ver/$TCLINCFN
-        then
-	  if test "$TCLINC" != ""
-          then
-	    break
+	for headerpath in $tclheaderpaths
+	do
+	  if test -r "$headerpath/$tcllibfn/$TCLINCFN"
+	  then
+	    echo "$ac_t""found in $headerpath/$TCLINCFN" 1>&6
+	    TCLINC=$headerpath
+	    break 2
 	  fi
-	  echo "$ac_t""found in /usr/local/include/tcl$ver/$TCLINCFN" 1>&6
-	  TCLINC=/usr/local/include/tcl$ver
-	  break
-	fi
+	done
       done
     fi
-  else
-    echo "$ac_t""found in $TCLINC/$TCLINCFN" 1>&6
   fi
 
   # had TCLLIB but not TCLINC?  so close... :(
@@ -2568,8 +2574,11 @@ echo "configure:2529: checking for $TCLINCFN" >&5
     echo "$ac_t""not found" 1>&6
     unset TCLLIB
     unset TCLLIBFN
+    unset TCLLIBEXT
+    unset TCLLIBVER
   fi
-fi # option
+
+fi # test tclincname
 
 # done looking, now either TCLLIB & TCLINC are both set, or neither is set
 
@@ -2589,89 +2598,52 @@ then
   echo ""
   exit 1
 else
-  echo Checking $TCLINC directory for tcl version
   echo $ac_n "checking for Tcl version""... $ac_c" 1>&6
-echo "configure:2595: checking for Tcl version" >&5
-  tclver=`grep TCL_VERSION $TCLINC/$TCLINCFN | grep "7.5" | wc -l`
-  if test $tclver = 0; then
-    tclver=`grep TCL_VERSION $TCLINC/$TCLINCFN | grep "7.6" | wc -l`
-    if test $tclver = 0; then
-      tclver=`grep TCL_VERSION $TCLINC/$TCLINCFN | grep "8.0" | wc -l`
-      if test $tclver = 0; then
-	tclver=`grep TCL_VERSION $TCLINC/$TCLINCFN | grep "8.1" | wc -l`
-	if test $tclver = 0; then
-	  tclver=`grep TCL_VERSION $TCLINC/$TCLINCFN | grep "8.2" | wc -l`
-	  if test $tclver = 1; then
-	    echo "$ac_t""8.2 found" 1>&6	
-	  else
-	    echo "$ac_t""hmm... unknown version" 1>&6
-          fi
-	else
-	  echo "$ac_t""8.1 found" 1>&6
-	fi
-      else
-	echo "$ac_t""8.0 found!" 1>&6
-      fi
-    else
-      echo "$ac_t""7.6 found!" 1>&6
-    fi
-  else      
-    echo "$ac_t""7.5 found" 1>&6
-  fi
-fi # option 
+echo "configure:2603: checking for Tcl version" >&5
 
-  if test $need_dl = 1 -a "${ac_cv_func_dlopen}" = "no"
-  then
-    if test "$LINUX" = "yes"
+  for ver in $tcllibnames
+  do
+    ver=`echo $ver | cut -c4-`
+    if test ! "$ver" = ""
     then
-      echo "Since you are on a Linux system, this has a known problem,"
-      if test -r /lib/libdl.so.1
+      TCLVERFOUND=`grep TCL_VERSION $TCLINC/$TCLINCFN | grep $ver | wc -l`
+      if test ! $TCLVERFOUND = 0
       then
-	echo "and you seem to have it, I know a kludge for it,"
-	echo "so we'll do that..."
-	echo ""
-	cat >> confdefs.h <<\EOF
-#define HAVE_DLOPEN 1
-EOF
-
-	LIBS="/lib/libdl.so.1 $LIBS"
-	got_dl=1
-      else 
-	echo "which you DONT seem to have... doh!"
-	echo "perhaps you may still have the stuff lying around somewhere"
-	echo "if you work out where it is, add it to your XLIBS= lines"
-	echo "and #define HAVE_DLOPEN in config.h"
-	echo ""
-	echo "we'll proceed on anyways, but you probably won't be able"
-	echo "to 'make eggdrop' but you might be able to make the"
-	echo "static bot (I'll default your make to this version)."
-	DEFAULT_MAKE=static
+      TCLVER=$ver
+      break
       fi
-    else 
-      echo "You don't seem to have libdl anywhere I can find it, this will"
-      echo "prevent you from doing dynamic modules, I'll set your default"
-      echo "make to static linking."
-      DEFAULT_MAKE=static
     fi
+  done
+
+  if test ! "$TCLVER" = ""
+  then
+    echo "$ac_t""$TCLVER found" 1>&6
+  else
+    echo "$ac_t""hmm... unknown version" 1>&6
   fi
 
-  TCLLIBFNS=`basename $TCLLIBFN .a`
-  TCLLIBFNS=`basename $TCLLIBFNS .so.1.2`
-  TCLLIBFNS=`basename $TCLLIBFNS .so.1.0`
-  TCLLIBFNS=`basename $TCLLIBFNS .so.1`
-  TCLLIBFNS=`basename $TCLLIBFNS .so`
-  if test $tclver = 1
+  if test $TCLVERFOUND = 1
   then
-    TCL_REQS="$TCLLIB/lib$TCLLIBFN"
-    TCL_LIBS="-L$TCLLIB -l$TCLLIBFNS -lm"
+    TCL_REQS="$TCLLIB/$TCLLIBFN"
+    TCL_LIBS="-L$TCLLIB -ltcl$TCLLIBVER -lm"
   else
     echo ""
-    echo "You're tcl version is way too old - Version 7.4 or earlier"
+    echo "Your tcl version is too old - version 7.4 or earlier"
     echo "I suggest you download and complie a more recent version"
-    echo "The most reliable current version is 8.2b1"
+    echo "The most reliable current version is 8.2.0"
     echo ""
     exit 1
   fi
+
+  if test "$TCLLIBEXT" = ".a"
+  then
+    echo ""
+    echo "Your libtcl is not a shared library, eggdrop will build static."
+    echo ""
+    DEFAULT_MAKE=static
+  fi
+
+fi # test TCLLIB
 
 
 
@@ -2682,6 +2654,41 @@ EOF
 
 # ---------- end of robey's tcl thingies
 
+if test $need_dl = 1 && test "${ac_cv_func_dlopen}" = "no"
+then
+  if test "$LINUX" = "yes"
+  then
+    echo "Since you are on a Linux system, this has a known problem,"
+    if test -r "/lib/libdl.so.1"
+    then
+      echo "and you seem to have it, I know a kludge for it,"
+      echo "so we'll do that..."
+      echo ""
+      cat >> confdefs.h <<\EOF
+#define HAVE_DLOPEN 1
+EOF
+
+      LIBS="/lib/libdl.so.1 $LIBS"
+      got_dl=1
+    else
+      echo "which you DONT seem to have... doh!"
+      echo "perhaps you may still have the stuff lying around somewhere"
+      echo "if you work out where it is, add it to your XLIBS= lines"
+      echo "and #define HAVE_DLOPEN in config.h"
+      echo ""
+      echo "we'll proceed on anyways, but you probably won't be able"
+      echo "to 'make eggdrop' but you might be able to make the"
+      echo "static bot (I'll default your make to this version)."
+      DEFAULT_MAKE=static
+    fi
+  else
+    echo "You don't seem to have libdl anywhere I can find it, this will"
+    echo "prevent you from doing dynamic modules, I'll set your default"
+    echo "make to static linking."
+    DEFAULT_MAKE=static
+  fi
+fi
+
 if test ! "x$GMAKE" = "x"
 then
   SET_MAKE="MAKE=gmake"
@@ -2691,7 +2698,6 @@ if test -z "$DEST"
 then
   DEST=\${prefix}
 fi
-
 
 
 
@@ -3082,8 +3088,11 @@ rm -fr confdefs* $ac_clean_files
 test "$no_create" = yes || ${CONFIG_SHELL-/bin/sh} $CONFIG_STATUS || exit 1
 
 
-# if you configure again, you must re-make everything.  tough shit.
-make clean
+# make sure we start with a clean build tree
+if test -r "eggdrop"
+then
+  make clean
+fi
 
 echo ""
 echo "Configure is done."

@@ -786,9 +786,6 @@ specific commands, see later.
   unixtime
     returns: a long integer which is the current time according to unix
 
-  time
-    returns: the current time in 24-hour format (ie "14:15")
-
   duration <seconds>
     returns: the number of seconds converted into years, weeks, days, hours, minutes,
       and seconds (ie: 804600secs is turned into 1wk 2days 7hrs 30mins).
@@ -796,9 +793,6 @@ specific commands, see later.
   strftime <formatstring> [time]
     returns: a formatted string of time using standard strftime
       format, uses the value of time, or now if no time specified
-
-  date
-    returns: the current date in standard format (ie "21 Dec 1994")
 
   ctime <unixtime>
     returns: a string of the date/time represented by the unix time given
