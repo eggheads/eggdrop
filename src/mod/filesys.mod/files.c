@@ -2,7 +2,7 @@
  * files.c - part of filesys.mod
  *   handles all file system commands
  * 
- * $Id: files.c,v 1.25 2000/08/31 18:08:56 fabian Exp $
+ * $Id: files.c,v 1.26 2000/10/27 19:39:30 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -436,7 +436,8 @@ static void cmd_reget_get(int idx, char *par, int resend)
       nicklen = (int) me->funcs[SERVER_NICKLEN];
   }
   if (!par[0]) {
-    dprintf(idx, "%s: %sget <file(s)> [nickname]\n", MISC_USAGE, resend ? "re" : "");
+    dprintf(idx, "%s: %sget <file(s)> [nickname]\n", MISC_USAGE,
+	    resend ? "re" : "");
     return;
   }
   what = newsplit(&par);
@@ -723,7 +724,7 @@ static void cmd_unshare(int idx, char *par)
  */
 static void cmd_ln(int idx, char *par)
 {
-  char *share, *newpath, *newfn = NULL, *p;
+  char *share, *newpath = NULL, *newfn = NULL, *p;
   FILE *fdb;
   filedb_entry *fdbe;
 

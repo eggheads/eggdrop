@@ -4,7 +4,7 @@
  * 
  * Rewritten by Fabian Knittel <fknittel@gmx.de>
  * 
- * $Id: filedb3.c,v 1.15 2000/09/12 15:26:53 fabian Exp $
+ * $Id: filedb3.c,v 1.16 2000/10/27 19:39:30 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -39,14 +39,14 @@
  *  | filename      |      |                     |
  *  |- - - - - - - -|      |                     |
  *  | description   |      |                     |
- *  |- - - - - - - -|      |                     |
- *  | share link    |      |                     |
  *  |- - - - - - - -|      |  Dynamic length     |  Complete entry
  *  | channel name  |      |                     |
  *  |- - - - - - - -|      |                     |
  *  | uploader      |      |                     |
  *  |- - - - - - - -|      |                     |
  *  | flags_req     |      |                     |
+ *  |- - - - - - - -|      |                     |
+ *  | share link    |      |                     |
  *  |- - - - - - - -|      |                     |
  *  | buffer        |     _|                    _|
  *  |---------------|
@@ -310,6 +310,8 @@ static int _filedb_updatefile(FILE *fdb, long pos, filedb_entry *fdbe,
     fdh.uploader_len = strlen(fdbe->uploader) + 1;
   if (fdbe->flags_req)
     fdh.flags_req_len = strlen(fdbe->flags_req) + 1;
+  if (fdbe->sharelink)
+    fdh.sharelink_len = strlen(fdbe->sharelink) + 1;
 
   odyntot = fdbe->dyn_len;		/* Old length of dynamic data	*/
   obuftot = fdbe->buf_len;		/* Old length of spare space	*/
@@ -393,6 +395,8 @@ static int _filedb_updatefile(FILE *fdb, long pos, filedb_entry *fdbe,
       fwrite(fdbe->uploader, 1, fdh.uploader_len, fdb);
     if (fdbe->flags_req)
       fwrite(fdbe->flags_req, 1, fdh.flags_req_len, fdb);
+    if (fdbe->sharelink)
+      fwrite(fdbe->sharelink, 1, fdh.sharelink_len, fdb);
   } else
     fseek(fdb, ndyntot, SEEK_CUR);	/* Skip over dynamic data */
   fseek(fdb, nbuftot, SEEK_CUR);	/* Skip over buffer	  */
@@ -464,19 +468,27 @@ static filedb_entry *_filedb_getfile(FILE *fdb, long pos, int get,
   fdbe->pos = pos;			/* Save position		*/
   fdbe->_type = TYPE_EXIST;		/* Entry exists in DB		*/
 
+  /* This is useful for cases where we don't read the rest of the
+   * data, but need to know whether the file is a link.
+   */
+  if (fdh.sharelink_len > 0)
+    fdbe->stat |= FILE_ISLINK;
+  else
+    fdbe->stat &= ~FILE_ISLINK;
+
   /* Read additional data from db */
   if (get >= GET_FILENAME) {
     filedb_read(fdb, fdbe->filename, fdh.filename_len);
   } else
     fseek(fdb, fdh.filename_len, SEEK_CUR);
-  if ((get < GET_FULL) || (fdh.stat & FILE_UNUSED))
-    fseek(fdb, fdh.desc_len + fdh.chan_len + fdh.uploader_len
-	  + fdh.flags_req_len, SEEK_CUR);
+  if (get < GET_FULL || (fdh.stat & FILE_UNUSED))
+    fseek(fdb, filedb_tot_dynspace(fdh) - fdh.filename_len, SEEK_CUR);
   else if (get == GET_FULL) {
     filedb_read(fdb, fdbe->desc, fdh.desc_len);
     filedb_read(fdb, fdbe->chan, fdh.chan_len);
     filedb_read(fdb, fdbe->uploader, fdh.uploader_len);
     filedb_read(fdb, fdbe->flags_req, fdh.flags_req_len);
+    filedb_read(fdb, fdbe->sharelink, fdh.sharelink_len);
   }
   fseek(fdb, fdh.buffer_len, SEEK_CUR);	/* Skip buffer			*/
   Context;
@@ -633,7 +645,7 @@ static void filedb_initdb(FILE *fdb)
 {
   filedb_top fdbt;
 
-  fdbt.version = FILEDB_VERSION3;
+  fdbt.version = FILEDB_NEWEST_VER;
   fdbt.timestamp = now;
   filedb_writetop(fdb, &fdbt);
 }
@@ -712,8 +724,9 @@ static void filedb_update(char *path, FILE *fdb, int sort)
   fdbe = filedb_getfile(fdb, ftell(fdb), GET_FILENAME);
   while (fdbe) {
     where = ftell(fdb);
-    if (!(fdbe->stat & FILE_UNUSED) && !(fdbe->sharelink) && fdbe->filename) {
-      s = nmalloc(strlen(path) + strlen(fdbe->filename) + 2);
+    if (!(fdbe->stat & FILE_UNUSED) && !(fdbe->stat & FILE_ISLINK) &&
+	fdbe->filename) {
+      s = nmalloc(strlen(path) + 1 + strlen(fdbe->filename) + 1);
       sprintf(s, "%s/%s", path, fdbe->filename);
       if (stat(s, &st) != 0)
 	/* gone file */
@@ -810,7 +823,7 @@ static FILE *filedb_open(char *path, int sort)
 	return NULL;
       }
       lockfile(fdb);
-      fdbt.version = FILEDB_VERSION3;
+      fdbt.version = FILEDB_NEWEST_VER;
       fdbt.timestamp = now;
       filedb_writetop(fdb, &fdbt);
       filedb_update(npath, fdb, sort);
@@ -824,7 +837,7 @@ static FILE *filedb_open(char *path, int sort)
   
   lockfile(fdb);			/* Lock it from other bots */
   filedb_readtop(fdb, &fdbt);
-  if (fdbt.version < FILEDB_VERSION3) {
+  if (fdbt.version < FILEDB_NEWEST_VER) {
     if (!convert_old_db(&fdb, s)) {
       /* Conversion failed. Unlock file again and error out.
        * (convert_old_db() could have modified fdb, so check
@@ -1084,7 +1097,6 @@ static void remote_filereq(int idx, char *from, char *file)
     if (!fdbe) {
       reject = FILES_FILEDNE;
     } else {
-      free_fdbe(&fdbe);
       if ((!(fdbe->stat & FILE_SHARE)) ||
 	  (fdbe->stat & (FILE_HIDDEN | FILE_DIR)))
 	reject = FILES_NOSHARE;
@@ -1107,6 +1119,7 @@ static void remote_filereq(int idx, char *from, char *file)
 	  my_free(s);
 	my_free(s1);
       }
+      free_fdbe(&fdbe);
     }
   }
   s1 = nmalloc(strlen(botnetnick) + strlen(dir) + strlen(what) + 3);

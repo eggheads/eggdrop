@@ -4,7 +4,7 @@
  * 
  * Written by Fabian Knittel <fknittel@gmx.de>
  * 
- * $Id: filedb3.h,v 1.8 2000/09/09 11:39:11 fabian Exp $
+ * $Id: filedb3.h,v 1.9 2000/10/27 19:39:30 fabian Exp $
  */
 /* 
  * Copyright (C) 1999, 2000  Eggheads
@@ -61,7 +61,8 @@ typedef struct {
   unsigned short int _type;		/* Type of entry (private)	*/
 
   /* NOTE: These three are only valid during one db open/close. Entry
-   *       movements often invalidate them too.
+   *       movements often invalidate them too, so make sure you know
+   *       what you're doing before using/relying on them.
    */
   long pos;				/* Last position in the filedb	*/
   unsigned short int dyn_len;		/* Length of dynamic data in DB	*/
@@ -69,7 +70,8 @@ typedef struct {
 
   char *filename;			/* Filename			*/
   char *desc;				/* Description			*/
-  char *sharelink;			/* Share link			*/
+  char *sharelink;			/* Share link. Points to remote
+		 			   file on linked bot.		*/
   char *chan;				/* Channel name			*/
   char *uploader;			/* Uploader			*/
   char *flags_req;			/* Required flags		*/
@@ -99,15 +101,18 @@ do {									\
     my_free(target);							\
 } while (0)
 
+/* Macro to calculate the total length of dynamic data. */
 #define filedb_tot_dynspace(fdh) ((fdh).filename_len + (fdh).desc_len +	\
-	(fdh).chan_len + (fdh).uploader_len + (fdh).flags_req_len)
+	(fdh).chan_len + (fdh).uploader_len + (fdh).flags_req_len + \
+	(fdh).sharelink_len)
 
 #define filedb_zero_dynspace(fdh) {					\
-	(fdh).filename_len  = 0;					\
-	(fdh).desc_len	    = 0;					\
-	(fdh).chan_len	    = 0;					\
-	(fdh).uploader_len  = 0;					\
-	(fdh).flags_req_len = 0;					\
+	(fdh).filename_len	= 0;					\
+	(fdh).desc_len		= 0;					\
+	(fdh).chan_len		= 0;					\
+	(fdh).uploader_len	= 0;					\
+	(fdh).flags_req_len	= 0;					\
+	(fdh).sharelink_len	= 0;					\
 }
 
 /* Memory debugging makros */
@@ -124,16 +129,18 @@ do {									\
  */
 
 #define FILEDB_VERSION1	0x0001
-#define FILEDB_VERSION2	0x0002
-#define FILEDB_VERSION3	0x0003	/* Newest DB version			*/
+#define FILEDB_VERSION2	0x0002	/* DB version used for 1.3, 1.4		*/
+#define FILEDB_VERSION3	0x0003
+#define FILEDB_NEWEST_VER FILEDB_VERSION3	/* Newest DB version	*/
 
 #define POS_NEW		0	/* Position which indicates that the
-				 * entry wants to be repositioned.	*/
+				   entry wants to be repositioned.	*/
 
-#define FILE_UNUSED	0x0001	/* Deleted entry */
-#define FILE_DIR	0x0002	/* It's actually a directory */
-#define FILE_SHARE	0x0004	/* Can be shared on the botnet */
-#define FILE_HIDDEN	0x0008	/* Hidden file */
+#define FILE_UNUSED	0x0001	/* Deleted entry.			*/
+#define FILE_DIR	0x0002	/* It's actually a directory.		*/
+#define FILE_SHARE	0x0004	/* Can be shared on the botnet.		*/
+#define FILE_HIDDEN	0x0008	/* Hidden file.				*/
+#define FILE_ISLINK	0x0010	/* The file is a link to another bot.	*/
 
 #define FILEDB_ESTDYN	50	/* Estimated dynamic length of an entry	*/
 

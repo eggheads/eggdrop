@@ -4,7 +4,7 @@
  * 
  * Written for filedb3 by Fabian Knittel <fknittel@gmx.de>
  * 
- * $Id: dbcompat.c,v 1.7 2000/03/04 20:38:20 fabian Exp $
+ * $Id: dbcompat.c,v 1.8 2000/10/27 19:39:30 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -244,7 +244,7 @@ static int convert_old_db(FILE **fdb_s, char *filedb)
   Context;
   filedb_readtop(*fdb_s, &fdbt);
   /* Old DB version? */
-  if ((fdbt.version > 0) && (fdbt.version < FILEDB_VERSION3)) {
+  if (fdbt.version > 0 && fdbt.version < FILEDB_VERSION3) {
     char *tempdb;
 
     Context;
