@@ -1,7 +1,7 @@
 /* 
  * module.h
  * 
- * $Id: module.h,v 1.33 2000/09/18 20:01:42 fabian Exp $
+ * $Id: module.h,v 1.34 2000/09/23 17:49:57 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -427,8 +427,9 @@
 #define strchr_unescape ((char *(*)(char *, const char, register const char))global[263])
 /* 264 - 267 */
 #define str_unescape ((void (*)(char *, register const char))global[264])
+#define egg_strcatn ((int (*)(char *dst, const char *src, size_t max))global[265])
 
-/* This is for blowfish module, couldnt be bothereed making a whole new .h
+/* This is for blowfish module, couldnt be bothered making a whole new .h
  * file for it ;)
  */
 #ifndef MAKING_BLOWFISH
