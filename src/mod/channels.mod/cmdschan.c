@@ -738,7 +738,7 @@ static void cmd_exempts (struct userrec * u, int idx, char * par)
     putlog(LOG_CMDS, "*", "#%s# exempts all", dcc[idx].nick);
     tell_exempts(idx, 1, "");
   } else {
-    putlog(LOG_CMDS, "*", "#%# exempts %s", dcc[idx].nick, par);
+    putlog(LOG_CMDS, "*", "#%s# exempts %s", dcc[idx].nick, par);
     tell_exempts(idx, 0, par);
   }
 }
