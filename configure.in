@@ -459,7 +459,7 @@ then
   echo "Eggdrop now requires Tcl to compile.  If you already have Tcl"
   echo "installed on this system, and I just wasn't looking in the right"
   echo "place for it, set the environment variables TCLLIB and TCLINC so"
-  echo "I will know where to find 'libtcl.a' (or 'libtcl.so') and '$TCLINCFN'"
+  echo "I will know where to find 'libtcl.a' (or 'libtcl.so') and 'tcl.h'"
   echo "(respectively).  Then run 'configure' again."
   echo ""
   echo "Read the README file if you don't know what Tcl is or how to get"
