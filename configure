@@ -7506,8 +7506,8 @@ echo "$as_me:7505: result: Configure is done." >&5
 echo "${ECHO_T}Configure is done." >&6
 echo "$as_me:7507: result: " >&5
 echo "${ECHO_T}" >&6
-echo "$as_me:7509: result: Type 'make config' to configure the modules" >&5
-echo "${ECHO_T}Type 'make config' to configure the modules" >&6
+echo "$as_me:7509: result: Type 'make config' to configure the modules, or type 'make iconfig'" >&5
+echo "${ECHO_T}Type 'make config' to configure the modules, or type 'make iconfig'" >&6
 echo "$as_me:7511: result: to interactively choose which modules to compile." >&5
 echo "${ECHO_T}to interactively choose which modules to compile." >&6
 echo "$as_me:7513: result: " >&5

@@ -1,7 +1,7 @@
 dnl aclocal.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: aclocal.m4,v 1.56 2002/02/25 03:39:56 wcc Exp $
+dnl $Id: aclocal.m4,v 1.57 2002/03/12 19:11:32 guppy Exp $
 dnl
 
 
@@ -22,7 +22,7 @@ AC_DEFUN(EGG_MSG_CONFIGURE_END, [dnl
 AC_MSG_RESULT()
 AC_MSG_RESULT(Configure is done.)
 AC_MSG_RESULT()
-AC_MSG_RESULT(Type 'make config' to configure the modules, or type 'make iconfig')
+AC_MSG_RESULT([Type 'make config' to configure the modules, or type 'make iconfig'])
 AC_MSG_RESULT(to interactively choose which modules to compile.)
 AC_MSG_RESULT()
 if test -f "./$EGGEXEC"
