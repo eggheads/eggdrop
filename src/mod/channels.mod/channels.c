@@ -2,7 +2,7 @@
  * channels.c -- part of channels.mod
  *   support for channels within the bot
  *
- * $Id: channels.c,v 1.64 2002/06/13 20:43:08 wcc Exp $
+ * $Id: channels.c,v 1.65 2002/06/14 04:10:46 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -927,32 +927,31 @@ char *channels_start(Function * global_funcs)
   global_stopnethack_mode = 0;
   global_revenge_mode = 1;
   strcpy(glob_chanset,
-         "-enforcebans"
-	 "+dynamicbans"
-	 "+userbans"
-	 "-autoop"
-	 "-bitch"
-	 "+greet"
-	 "+protectops"
-	 "+statuslog"
-	 "-revenge"
-	 "-secret"
-	 "-autovoice"
-	 "+cycle"
-	 "+dontkickops"
-	 "-inactive"
-	 "-protectfriends"
-	 "+shared"
-	 "-seen"
-	 "+userexempts"
-	 "+dynamicexempts"
-	 "+userinvites"
-	 "+dynamicinvites"
-	 "-revengebot"
-	 "-protecthalfops"
-	 "-autohalfop"
-	 "-nodesync"
-	 " ");
+         "-enforcebans "
+	 "+dynamicbans "
+	 "+userbans "
+	 "-autoop "
+	 "-bitch "
+	 "+greet "
+	 "+protectops "
+	 "+statuslog "
+	 "-revenge "
+	 "-secret "
+	 "-autovoice "
+	 "+cycle "
+	 "+dontkickops "
+	 "-inactive "
+	 "-protectfriends "
+	 "+shared "
+	 "-seen "
+	 "+userexempts "
+	 "+dynamicexempts "
+	 "+userinvites "
+	 "+dynamicinvites "
+	 "-revengebot "
+	 "-protecthalfops "
+	 "-autohalfop "
+	 "-nodesync ");
   module_register(MODULE_NAME, channels_table, 1, 0);
   if (!module_depend(MODULE_NAME, "eggdrop", 106, 7)) {
     module_undepend(MODULE_NAME);
