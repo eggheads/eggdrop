@@ -19,7 +19,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-# $Id: modconfig,v 1.4 2000/04/25 20:49:48 fabian Exp $
+# $Id: modconfig,v 1.5 2000/08/18 01:06:44 fabian Exp $
 
 
 mc_pn=`echo $0 | sed -e 's/^.*\///'`
@@ -271,7 +271,7 @@ xdetect-modules)
 				fi
 			fi
 		else
-			if (grep "^${mc_mod}\$" ${mc_fdisabledmods} 1>&7 2>&1)
+			if (sed s/\ //g ${mc_fdisabledmods} 2>&1 | grep "^${mc_mod}\$" 1>&7 2>&1)
 			then
 				:
 			else
