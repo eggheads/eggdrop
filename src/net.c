@@ -2,7 +2,7 @@
  * net.c -- handles:
  *   all raw network i/o
  *
- * $Id: net.c,v 1.72 2004/08/24 15:44:13 wcc Exp $
+ * $Id: net.c,v 1.73 2004/08/28 06:50:35 wcc Exp $
  */
 /*
  * This is hereby released into the public domain.
@@ -489,35 +489,6 @@ inline int open_listen(int *port)
   return open_address_listen(myip[0] ? getmyip() : INADDR_ANY, port);
 }
 
-/* Given a network-style IP address, returns the hostname. The hostname
- * will be in the "##.##.##.##" format if there was an error.
- *
- * NOTE: This function is depreciated. Try using the async dns approach
- *       instead.
- */
-char *hostnamefromip(unsigned long ip)
-{
-  struct hostent *hp;
-  unsigned long addr = ip;
-  unsigned char *p;
-  static char s[UHOSTLEN];
-
-  if (!setjmp(alarmret)) {
-    alarm(resolve_timeout);
-    hp = gethostbyaddr((char *) &addr, sizeof(addr), AF_INET);
-    alarm(0);
-  } else {
-    hp = NULL;
-  }
-  if (hp == NULL) {
-    p = (unsigned char *) &addr;
-    sprintf(s, "%u.%u.%u.%u", p[0], p[1], p[2], p[3]);
-    return s;
-  }
-  strncpyz(s, hp->h_name, sizeof s);
-  return s;
-}
-
 /* Returns the given network byte order IP address in the
  * dotted format - "##.##.##.##"
  */
@@ -547,10 +518,7 @@ int answer(int sock, char *caller, unsigned long *ip, unsigned short *port,
     return -1;
   if (ip != NULL) {
     *ip = from.sin_addr.s_addr;
-    /* This is now done asynchronously. We now only provide the IP address.
-     *
-     * strncpy(caller, hostnamefromip(*ip), 120);
-     */
+    /* DNS is now done asynchronously. We now only provide the IP address. */
     strncpyz(caller, iptostr(*ip), 121);
     *ip = ntohl(*ip);
   }

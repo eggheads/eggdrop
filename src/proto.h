@@ -7,7 +7,7 @@
  * because they use structures in those
  * (saves including those .h files EVERY time) - Beldin
  *
- * $Id: proto.h,v 1.64 2004/08/25 06:57:46 wcc Exp $
+ * $Id: proto.h,v 1.65 2004/08/28 06:50:35 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -249,7 +249,6 @@ void neterror(char *);
 void setsock(int, int);
 int allocsock(int, int);
 int getsock(int);
-char *hostnamefromip(unsigned long);
 void killsock(int);
 int answer(int, char *, unsigned long *, unsigned short *, int);
 inline int open_listen(int *);

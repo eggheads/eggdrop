@@ -2,7 +2,7 @@
  * tclmisc.c -- handles:
  *   Tcl stubs for everything else
  *
- * $Id: tclmisc.c,v 1.54 2004/08/02 18:50:47 wcc Exp $
+ * $Id: tclmisc.c,v 1.55 2004/08/28 06:50:35 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -48,7 +48,7 @@
 extern p_tcl_bind_list bind_table_list;
 extern tcl_timer_t *timer, *utimer;
 extern struct dcc_t *dcc;
-extern char origbotname[], botnetnick[], quit_msg[];
+extern char botnetnick[], quit_msg[];
 extern struct userrec *userlist;
 extern time_t now;
 extern module_entry *module_list;

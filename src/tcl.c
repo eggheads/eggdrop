@@ -4,7 +4,7 @@
  *   Tcl initialization
  *   getting and setting Tcl/eggdrop variables
  *
- * $Id: tcl.c,v 1.81 2004/07/25 11:17:34 wcc Exp $
+ * $Id: tcl.c,v 1.82 2004/08/28 06:50:35 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -51,7 +51,7 @@ extern char origbotname[], botuser[], motdfile[], admin[], userfile[],
             egg_version[], natip[], configfile[], logfile_suffix[], textdir[],
             pid_file[];
 
-extern int backgrd, flood_telnet_thr, flood_telnet_time, shtime, share_greet,
+extern int flood_telnet_thr, flood_telnet_time, shtime, share_greet,
            require_p, keep_all_logs, allow_new_telnets, stealth_telnets,
            use_telnet_banner, default_flags, conmask, switch_logfiles_at,
            connect_timeout, firewallport, notify_users_at, flood_thr, tands,
