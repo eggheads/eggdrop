@@ -5,7 +5,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: botmsg.c,v 1.12 2000/05/06 21:59:24 fabian Exp $
+ * $Id: botmsg.c,v 1.13 2000/08/19 14:15:56 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -880,7 +880,7 @@ int add_note(char *to, char *from, char *msg, int idx, int echo)
 	if (idx == -2 || (!egg_strcasecmp(from, botnetnick)))
 	  dprintf(i, "*** [%s] %s%s\n", fr, l ? work : "", msg);
 	else
-	  dprintf(i, "%cNote [%s]: %s%s\n", 7, fr, l ? work : "", msg);
+	  dprintf(i, "Note [%s]: %s%s\n", fr, l ? work : "", msg);
 	if ((idx >= 0) && (echo))
 	  dprintf(idx, "-> %s: %s\n", to, msg);
 	return NOTE_OK;
