@@ -636,7 +636,7 @@ void set_user_flagrec(struct userrec *u, struct flag_record *fr,
 void get_user_flagrec(struct userrec *u, struct flag_record *fr,
 		      char *chname)
 {
-  struct chanuserrec *cr;
+  struct chanuserrec *cr = NULL;
 
   if (!u) {
     fr->global = fr->udef_global = fr->chan = fr->udef_chan = fr->bot = 0;
