@@ -2,7 +2,7 @@
  * chancmds.c -- part of irc.mod
  *   handles commands direclty relating to channel interaction
  * 
- * $Id: cmdsirc.c,v 1.7 1999/12/24 14:25:57 fabian Exp $
+ * $Id: cmdsirc.c,v 1.8 2000/01/01 19:22:33 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -23,7 +23,8 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-/* Do we have any flags that will allow us ops on a channel? */
+/* Do we have any flags that will allow us ops on a channel?
+ */
 static struct chanset_t *has_op(int idx, char *chname)
 {
   struct chanset_t *chan;
@@ -429,12 +430,12 @@ static void cmd_invite(struct userrec *u, int idx, char *par)
   char *nick;
 
   if (!par[0])
-    par = dcc[idx].nick;	/* doh, it's been without this since .9 ! */
-  /* (1.2.0+pop3) - poptix */
+    par = dcc[idx].nick;
   nick = newsplit(&par);
   if (!(chan = has_op(idx, par)))
     return;
-  putlog(LOG_CMDS, "*", "#%s# (%s) invite %s", dcc[idx].nick, chan->dname, nick);
+  putlog(LOG_CMDS, "*", "#%s# (%s) invite %s", dcc[idx].nick, chan->dname,
+	 nick);
   if (!me_op(chan)) {
     if (chan->channel.mode & CHANINV) {
       dprintf(idx, "I'm not chop on %s, so I can't invite anyone.\n",
@@ -523,7 +524,7 @@ static void cmd_channel(struct userrec *u, int idx, char *par)
 	strcpy(handle, m->user->handle);
       }
       get_user_flagrec(m->user, &user, chan->dname);
-      /* determine status char to use */
+      /* Determine status char to use */
       if (glob_bot(user))
 	atrflag = 'b';
       else if (glob_owner(user))
@@ -576,7 +577,7 @@ static void cmd_channel(struct userrec *u, int idx, char *par)
 	dprintf(idx, "%c%s%s %s%s %s %c     <- it's me!\n", chanflag, m->nick,
 		spaces, handle, spaces2, s, atrflag);
       else {
-	/* determine idle time */
+	/* Determine idle time */
 	if (now - (m->last) > 86400)
 	  sprintf(s1, "%2lud", ((now - (m->last)) / 86400));
 	else if (now - (m->last) > 3600)
@@ -670,7 +671,6 @@ static void cmd_resetexempts(struct userrec *u, int idx, char *par)
 
   chname = newsplit(&par);
   rmspace(chname);
-    
   if (chname[0]) {
     chan = findchan_by_dname(chname);
     if (!chan) {
@@ -700,7 +700,6 @@ static void cmd_resetinvites(struct userrec *u, int idx, char *par)
 
   chname = newsplit(&par);
   rmspace(chname);
-    
   if (chname[0]) {
     chan = findchan_by_dname(chname);
     if (!chan) {
@@ -739,11 +738,13 @@ static void cmd_adduser(struct userrec *u, int idx, char *par)
     return;
   }
   nick = newsplit(&par);
-  /* patch that allow to create users with static host (drummer,20Apr99) */
+
+  /* This flag allows users to have static host (added by drummer, 20Apr99) */
   if (nick[0] == '!') {
     statichost = 1;
     nick++;
   }
+
   if (!par[0]) {
     hand = nick;
   } else {
@@ -774,9 +775,7 @@ static void cmd_adduser(struct userrec *u, int idx, char *par)
   if (!m) {
     dprintf(idx, "%s is not on any channels I monitor\n", nick);
     return;
-  } /* else
-    dprintf(idx,"I found %s on %s as %s\n", nick, chan->name, m->userhost);
-    */
+  }
   if (strlen(hand) > HANDLEN)
     hand[HANDLEN] = 0;
   simple_sprintf(s, "%s!%s", m->nick, m->userhost);
@@ -850,9 +849,9 @@ static void cmd_deluser(struct userrec *u, int idx, char *par)
     return;
   }
   get_user_flagrec(u, &victim, NULL);
-  /* this maybe should allow glob +n's to deluser glob +n's but I don't
+  /* This maybe should allow glob +n's to deluser glob +n's but I don't
    * like that - beldin */
-  /* checks vs channel owner/master ANYWHERE now -
+  /* Checks vs channel owner/master ANYWHERE now -
    * so deluser on a channel they're not on should work */
   /* Shouldn't allow people to remove permanent owners (guppy 9Jan1999) */
   if ((glob_owner(victim) && strcasecmp(dcc[idx].nick, nick)) ||
@@ -913,26 +912,25 @@ static void cmd_reset(struct userrec *u, int idx, char *par)
   }
 }
 
-/* update the add/rem_builtins in irc.c if you add to this list!! */
 static cmd_t irc_dcc[] =
 {
-  {"adduser", "m|m", (Function) cmd_adduser, NULL},
-  {"deluser", "m|m", (Function) cmd_deluser, NULL},
-  {"reset", "m|m", (Function) cmd_reset, NULL},
-  {"resetbans", "o|o", (Function) cmd_resetbans, NULL},
-  {"resetexempts", "o|o", (Function) cmd_resetexempts, NULL},
-  {"resetinvites", "o|o", (Function) cmd_resetinvites, NULL},
-  {"act", "o|o", (Function) cmd_act, NULL},
-  {"channel", "o|o", (Function) cmd_channel, NULL},
-  {"deop", "o|o", (Function) cmd_deop, NULL},
-  {"invite", "o|o", (Function) cmd_invite, NULL},
-  {"kick", "o|o", (Function) cmd_kick, NULL},
-  {"kickban", "o|o", (Function) cmd_kickban, NULL},
-  {"msg", "o", (Function) cmd_msg, NULL},
-  {"voice", "o|o", (Function) cmd_voice, NULL},
-  {"devoice", "o|o", (Function) cmd_devoice, NULL},
-  {"op", "o|o", (Function) cmd_op, NULL},
-  {"say", "o|o", (Function) cmd_say, NULL},
-  {"topic", "o|o", (Function) cmd_topic, NULL},
-  {0, 0, 0, 0}
+  {"adduser",		"m|m",	(Function) cmd_adduser,		NULL},
+  {"deluser",		"m|m",	(Function) cmd_deluser,		NULL},
+  {"reset",		"m|m",	(Function) cmd_reset,		NULL},
+  {"resetbans",		"o|o",	(Function) cmd_resetbans,	NULL},
+  {"resetexempts",	"o|o",	(Function) cmd_resetexempts,	NULL},
+  {"resetinvites",	"o|o",	(Function) cmd_resetinvites,	NULL},
+  {"act",		"o|o",	(Function) cmd_act,		NULL},
+  {"channel",		"o|o",	(Function) cmd_channel,		NULL},
+  {"deop",		"o|o",	(Function) cmd_deop,		NULL},
+  {"invite",		"o|o",	(Function) cmd_invite,		NULL},
+  {"kick",		"o|o",	(Function) cmd_kick,		NULL},
+  {"kickban",		"o|o",	(Function) cmd_kickban,		NULL},
+  {"msg",		"o",	(Function) cmd_msg,		NULL},
+  {"voice",		"o|o",	(Function) cmd_voice,		NULL},
+  {"devoice",		"o|o",	(Function) cmd_devoice,		NULL},
+  {"op",		"o|o",	(Function) cmd_op,		NULL},
+  {"say",		"o|o",	(Function) cmd_say,		NULL},
+  {"topic",		"o|o",	(Function) cmd_topic,		NULL},
+  {NULL,		NULL,	NULL,				NULL}
 };
