@@ -1,0 +1,21 @@
+# assoc.danish.lang
+#   language messages for the assoc module
+#
+# $Id assoc.danish.lang,v 1.0 2003/02/012 03:00:00 TheAvatar Exp $
+
+0xb000,Ingen kanal navne
+0xb001,Kanal
+0xb002,Navn
+0xb003,Kanal # ugyldigt område: skal være *0-*99999
+0xb004,Kanal # ugyldigt område: skal være 1-99999
+0xb005,Du kan ikke navngive hoved party line; Det er bare en party line.
+0xb006,Kanalen %s%d har intet navn.\n
+0xb007,Okay, fjernede navn for kanalen %s%d.\n
+0xb008,--- %s fjernede denne kanals navn.\n
+0xb009,Okay, kanalen %s%d er nu '%s'.\n
+0xb00a,--- %s navngav denne kanal '%s'\n
+0xb00b,--- (%s) navngav denne kanal '%s'.\n
+0xb00c,--- (%s) %s navngav denne kanal  '%s'.\n
+0xb00d,--- (%s) %s fjernede denne kanals navn.\n
+0xb00e,Kanalens kan ikke være så lange (max 20 tegn).
+0xb00f,Første tegn i kanalnavnet må ikke være et tal.

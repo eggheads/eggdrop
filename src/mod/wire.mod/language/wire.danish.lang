@@ -1,0 +1,15 @@
+# wire.danish.lang
+#   language messages for wire module
+#
+# $Id: wire.danish.lang,v 1.1 2003/02/16 08:59:58 wcc Exp $
+
+0xa000,Du er ikke på en krypteret linie.
+0xa001,For øjeblikket på krypteret linie
+0xa002,Du benytter ikke længere en krypteret linie.
+0xa003,Skifter den krypterede linies krypteringsnøgle til
+0xa004,Al tekst, som starter med ; vil nu gå over den krypterede linie.
+0xa005,For at se hvem der er på den krypterede linie, skriv '.onwire'.
+0xa006,For at forlade, skriv '.wire off'.
+0xa007,joined wire
+0xa008,left the wire.
+0xa009,WIRE modulet bliver fjernet.

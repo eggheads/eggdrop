@@ -1,0 +1,15 @@
+# console.danish.lang
+#   language messages for the console module
+#
+# $Id console.danish.lang,v 1.0 2003/02/012 03:00:00 TheAvatar Exp $
+
+0xb040,Gemte konsolindstillinger:
+0xb041,Dine konsolindstillinger er gemt:
+0xb042,Kanal:
+0xb043,Konsol flags:
+0xb044,Fjern flags:
+0xb045,Ekko:
+0xb046,Sideindstilling:
+0xb047,Konsolkanal:
+0xb048,ja
+0xb049,nej
