@@ -4,7 +4,7 @@
  * 
  *   IF YOU ALTER THIS FILE, YOU NEED TO RECOMPILE THE BOT.
  * 
- * $Id: eggdrop.h,v 1.29 2000/04/05 19:31:38 fabian Exp $
+ * $Id: eggdrop.h,v 1.30 2000/06/20 19:54:54 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -576,5 +576,26 @@ typedef struct {
   char		*outbuf;
   unsigned long  outbuflen;	/* Outbuf could be binary data */
 } sock_list;
+
+
+/* Telnet codes.  See "TELNET Protocol Specification" (RFC 854) and
+ * "TELNET Echo Option" (RFC 875) for details.
+ */
+
+#define TLN_AYT		246		/* Are You There	*/
+
+#define TLN_WILL	251		/* Will			*/
+#define TLN_WILL_C	"\373"
+#define TLN_WONT	252		/* Won't		*/
+#define TLN_WONT_C	"\374"
+#define TLN_DO		253		/* Do			*/
+#define TLN_DO_C	"\375"
+#define TLN_DONT	254		/* Don't		*/
+#define TLN_DONT_C	"\376"
+#define TLN_IAC		255		/* Interpret As Command	*/
+#define TLN_IAC_C	"\377"
+
+#define TLN_ECHO	1		/* Echo			*/
+#define TLN_ECHO_C	"\001"
 
 #endif				/* _EGG_EGGDROP_H */

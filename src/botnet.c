@@ -7,7 +7,7 @@
  *   linking, unlinking, and relaying to another bot
  *   pinging the bots periodically and checking leaf status
  * 
- * $Id: botnet.c,v 1.24 2000/05/28 17:32:43 fabian Exp $
+ * $Id: botnet.c,v 1.25 2000/06/20 19:54:54 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1081,10 +1081,10 @@ static void failed_tandem_relay(int idx)
     struct chat_info *ci = dcc[uidx].u.relay->chat;
 
     dprintf(uidx, "%s %s.\n", BOT_CANTLINKTO, dcc[idx].nick);
+    dcc[uidx].status = dcc[uidx].u.relay->old_status;
     nfree(dcc[uidx].u.relay);
     dcc[uidx].u.chat = ci;
     dcc[uidx].type = &DCC_CHAT;
-    dcc[uidx].status = dcc[uidx].u.relay->old_status;
     killsock(dcc[idx].sock);
     lostdcc(idx);
     return;
@@ -1131,18 +1131,17 @@ void tandem_relay(int idx, char *nick, register int i)
 
     return;
   }
-  if (dcc_total == max_dcc) {
+  i = new_dcc(&DCC_DNSWAIT, sizeof(struct dns_info));
+  if (i < 0) {
     dprintf(idx, "%s\n", DCC_TOOMANYDCCS1);
     return;
   }
-  i = new_dcc(&DCC_DNSWAIT, sizeof(struct dns_info));
 
   dcc[i].port = bi->relay_port;
   dcc[i].addr = 0L;
   strcpy(dcc[i].nick, nick);
   dcc[i].user = u;
   strcpy(dcc[i].host, bi->address);
-  dcc[i].status = 0;
   dprintf(idx, "%s %s @ %s:%d ...\n", BOT_CONNECTINGTO, nick,
 	  bi->address, bi->relay_port);
   dprintf(idx, "%s\n", BOT_BYEINFO1);
@@ -1150,6 +1149,7 @@ void tandem_relay(int idx, char *nick, register int i)
   ci = dcc[idx].u.chat;
   dcc[idx].u.relay = get_data_ptr(sizeof(struct relay_info));
   dcc[idx].u.relay->chat = ci;
+  dcc[idx].u.relay->old_status = dcc[idx].status;
   dcc[i].sock = getsock(SOCK_STRONGCONN | SOCK_VIRTUAL);
   dcc[idx].u.relay->sock = dcc[i].sock;
   dcc[i].timeval = now;
@@ -1184,10 +1184,10 @@ static void tandem_relay_resolve_failure(int idx)
   }
   ci = dcc[uidx].u.relay->chat;
   dprintf(uidx, "%s %s.\n", BOT_CANTLINKTO, dcc[idx].nick);
+  dcc[uidx].status = dcc[uidx].u.relay->old_status;
   nfree(dcc[uidx].u.relay);
   dcc[uidx].u.chat = ci;
   dcc[uidx].type = &DCC_CHAT;
-  dcc[uidx].status = dcc[uidx].u.relay->old_status;
   killsock(dcc[idx].sock);
   lostdcc(idx);
   Context;
@@ -1197,6 +1197,7 @@ static void tandem_relay_resolve_success(int i)
 {
   int sock = dcc[i].u.dns->ibuf;
 
+  Context;
   dcc[i].addr = dcc[i].u.dns->ip;
   changeover_dcc(i, &DCC_FORK_RELAY, sizeof(struct relay_info));
   dcc[i].u.relay->chat = get_data_ptr(sizeof(struct chat_info));
@@ -1204,8 +1205,6 @@ static void tandem_relay_resolve_success(int i)
   dcc[i].u.relay->sock = sock;
   dcc[i].u.relay->port = dcc[i].port;
   dcc[i].u.relay->chat->away = NULL;
-  dcc[i].u.relay->old_status = dcc[i].status;
-  dcc[i].status = 0;
   dcc[i].u.relay->chat->msgs_per_sec = 0;
   dcc[i].u.relay->chat->con_flags = 0;
   dcc[i].u.relay->chat->buffer = NULL;
@@ -1232,6 +1231,7 @@ static void pre_relay(int idx, char *buf, register int i)
       break;
     }
   if (tidx < 0) {
+    /* Now try to find it among the DNSWAIT sockets instead. */
     for (i = 0; i < dcc_total; i++)
       if ((dcc[i].type == &DCC_DNSWAIT) &&
 	  (dcc[i].sock == dcc[idx].u.relay->sock)) {
@@ -1280,7 +1280,7 @@ static void failed_pre_relay(int idx)
       break;
     }
   if (tidx < 0) {
-    /* Now try to find it among the DNSWAIT sockets instead */
+    /* Now try to find it among the DNSWAIT sockets instead. */
     for (i = 0; i < dcc_total; i++)
       if ((dcc[i].type == &DCC_DNSWAIT) &&
 	  (dcc[i].sock == dcc[idx].u.relay->sock)) {
@@ -1359,10 +1359,18 @@ static void eof_dcc_relay(int idx)
   register int j;
   struct chat_info *ci;
 
-  for (j = 0; dcc[j].sock != dcc[idx].u.relay->sock; j++);
-  /* In case echo was off, turn it back on: */
+  for (j = 0; j < dcc_total; j++)
+    if (dcc[j].sock == dcc[idx].u.relay->sock)
+      break;
+  if (j == dcc_total) {
+    killsock(dcc[idx].sock);
+    lostdcc(idx);
+    return;
+  }
+  dcc[j].status = dcc[j].u.relay->old_status;
+  /* In case echo was off, turn it back on (send IAC WON'T ECHO): */
   if (dcc[j].status & STAT_TELNET)
-    dprintf(j, "\377\374\001\r\n");
+    dprintf(j, TLN_IAC_C TLN_WONT_C TLN_ECHO_C "\r\n");
   putlog(LOG_MISC, "*", "%s: %s -> %s", BOT_ENDRELAY1, dcc[j].nick,
 	 dcc[idx].nick);
   dprintf(j, "\n\n*** %s %s\n", BOT_ENDRELAY2, botnetnick);
@@ -1377,7 +1385,6 @@ static void eof_dcc_relay(int idx)
     if (dcc[j].u.chat->channel < 100000)
       botnet_send_join_idx(j, -1);
   }
-  dcc[j].status = dcc[j].u.relay->old_status;
   check_tcl_chon(dcc[j].nick, dcc[j].sock);
   check_tcl_chjn(botnetnick, dcc[j].nick, dcc[j].u.chat->channel,
 		 geticon(j), dcc[j].sock, dcc[j].host);
@@ -1446,9 +1453,10 @@ static void dcc_relaying(int idx, char *buf, int j)
   }
   for (j = 0; (dcc[j].sock != dcc[idx].u.relay->sock) ||
        (dcc[j].type != &DCC_RELAY); j++);
-  /* In case echo was off, turn it back on: */
+  dcc[idx].status = dcc[idx].u.relay->old_status;
+  /* In case echo was off, turn it back on (send IAC WON'T ECHO): */
   if (dcc[idx].status & STAT_TELNET)
-    dprintf(idx, "\377\374\001\r\n");
+    dprintf(idx, TLN_IAC_C TLN_WONT_C TLN_ECHO_C "\r\n");
   dprintf(idx, "\n(%s %s.)\n", BOT_BREAKRELAY, dcc[j].nick);
   dprintf(idx, "%s %s.\n\n", BOT_ABORTRELAY2, botnetnick);
   putlog(LOG_MISC, "*", "%s: %s -> %s", BOT_RELAYBROKEN,
@@ -1464,7 +1472,6 @@ static void dcc_relaying(int idx, char *buf, int j)
   nfree(dcc[idx].u.relay);
   dcc[idx].u.chat = ci;
   dcc[idx].type = &DCC_CHAT;
-  dcc[idx].status = dcc[idx].u.relay->old_status;
   check_tcl_chon(dcc[idx].nick, dcc[idx].sock);
   if (dcc[idx].u.chat->channel >= 0)
     check_tcl_chjn(botnetnick, dcc[idx].nick, dcc[idx].u.chat->channel,

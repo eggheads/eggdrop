@@ -6,7 +6,7 @@
  *   memory management for dcc structures
  *   timeout checking for dcc connections
  * 
- * $Id: dccutil.c,v 1.21 2000/05/14 22:16:46 fabian Exp $
+ * $Id: dccutil.c,v 1.22 2000/06/20 19:54:54 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -441,10 +441,11 @@ int new_dcc(struct dcc_table *type, int xtra_size)
   return i;
 }
 
-/* Changes the given dcc entry to another type */
+/* Changes the given dcc entry to another type.
+ */
 void changeover_dcc(int i, struct dcc_table *type, int xtra_size)
 {
-  /* Free old structure */
+  /* Free old structure. */
   if (dcc[i].type && dcc[i].type->kill)
     dcc[i].type->kill(i, dcc[i].u.other);
   else if (dcc[i].u.other) {

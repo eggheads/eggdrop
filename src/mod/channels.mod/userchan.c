@@ -1,7 +1,7 @@
 /* 
  * userchan.c -- part of channels.mod
  * 
- * $Id: userchan.c,v 1.13 2000/06/10 01:03:43 fabian Exp $
+ * $Id: userchan.c,v 1.14 2000/06/20 19:54:54 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -412,6 +412,8 @@ static int u_addban(struct chanset_t *chan, char *ban, char *from, char *note,
     putlog(LOG_MISC, "*", IRC_IBANNEDME);
     return 0;
   }
+  if (expire_time == now)
+    return 1;
   if (u_equals_mask(*u, host))
     u_delban(chan, host, 1);	/* Remove old ban */
   /* It shouldn't expire and be sticky also */

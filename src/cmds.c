@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  * 
- * $Id: cmds.c,v 1.32 2000/06/14 11:18:08 johoho Exp $
+ * $Id: cmds.c,v 1.33 2000/06/20 19:54:54 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1646,7 +1646,8 @@ static void cmd_botattr(struct userrec *u, int idx, char *par)
     return;
   }
   for (idx2 = 0; idx2 < dcc_total; idx2++)
-    if (dcc[idx2].type != &DCC_RELAY && !egg_strcasecmp(dcc[idx2].nick, hand))
+    if (dcc[idx2].type != &DCC_RELAY && dcc[idx2].type != &DCC_FORK_BOT &&
+	!egg_strcasecmp(dcc[idx2].nick, hand))
       break;
   if (idx2 != dcc_total) {
     dprintf(idx, "You may not change the attributes of a directly linked bot.\n");
@@ -2127,8 +2128,10 @@ static void cmd_su(struct userrec *u, int idx, char *par)
 	strcpy(dcc[idx].u.chat->su_nick, dcc[idx].nick);
 	dcc[idx].user = u;
 	strcpy(dcc[idx].nick, par);
+	/* Display password prompt and turn off echo (send IAC WILL ECHO). */
 	dprintf(idx, "Enter password for %s%s\n", par,
-		(dcc[idx].status & STAT_TELNET) ? "\377\373\001" : "");
+		(dcc[idx].status & STAT_TELNET) ? TLN_IAC_C TLN_WILL_C
+	       					  TLN_ECHO_C : "");
 	dcc[idx].type = &DCC_CHAT_PASS;
       } else if (atr & USER_OWNER) {
 	if (dcc[idx].u.chat->channel < 100000)
