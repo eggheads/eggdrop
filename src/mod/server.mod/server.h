@@ -1,7 +1,7 @@
 /* 
  * server.h -- part of server.mod
  * 
- * $Id: server.h,v 1.9 2000/07/09 14:07:13 fabian Exp $
+ * $Id: server.h,v 1.10 2000/11/03 17:06:35 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -87,10 +87,6 @@ enum {
 #define free_null(ptr)	do {				\
 	nfree(ptr);					\
 	ptr = NULL;					\
-} while (0)
-
-#define strncpyz(t, s, l)	do {			\
-	strncpy(t, s, l - 1); t[l - 1] = 0;		\
 } while (0)
 
 #endif		/* MAKING_SERVER */

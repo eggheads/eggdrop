@@ -2,7 +2,7 @@
  * main.h
  *   include file to include most other include files
  * 
- * $Id: main.h,v 1.15 2000/09/12 15:26:50 fabian Exp $
+ * $Id: main.h,v 1.16 2000/11/03 17:06:35 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -89,6 +89,14 @@ extern struct dcc_table DCC_CHAT, DCC_BOT, DCC_LOST, DCC_SCRIPT, DCC_BOT_NEW,
 		(x)++;							\
 	else								\
 		(x) = newsplit(&(x));					\
+} while (0)
+
+/* This macro copies (_len - 1) bytes from _source to _target. The
+ * target string is NULL-terminated.
+ */
+#define strncpyz(_target, _source, _len)	do {			\
+	strncpy((_target), (_source), (_len) - 1);			\
+	(_target)[(_len) - 1] = 0;					\
 } while (0)
 
 #ifdef BORGCUBES
