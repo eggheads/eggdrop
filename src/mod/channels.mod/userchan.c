@@ -1147,7 +1147,9 @@ static int write_bans(FILE * f, int idx)
 
       if ((idx >= 0) && !(fr.bot & BOT_GLOBAL))
 	get_user_flagrec(dcc[idx].user, &fr, chan->name);
-      if ((fr.chan & BOT_SHARE) || (fr.bot & BOT_GLOBAL)) {
+      else
+	fr.chan = BOT_SHARE;
+      if (fr.chan & BOT_SHARE) {
 	if (fprintf(f, "::%s bans\n", chan->name) == EOF)
 	  return 0;
 	for (b = chan->bans; b; b = b->next)
@@ -1183,7 +1185,9 @@ static int write_exempts (FILE * f, int idx)
       struct flag_record fr = {FR_CHAN|FR_GLOBAL|FR_BOT,0,0,0,0,0};
       if ((idx >= 0) && !(fr.bot & BOT_GLOBAL))
 	get_user_flagrec(dcc[idx].user,&fr,chan->name);
-      if ((fr.chan & BOT_SHARE) || (fr.bot & BOT_GLOBAL)) {
+      else
+	fr.chan = BOT_SHARE;
+      if (fr.chan & BOT_SHARE) {
 	if (fprintf(f, "&&%s exempts\n", chan->name) == EOF)
 	  return 0;
 	for (e = chan->exempts;e;e=e->next) 
@@ -1219,7 +1223,9 @@ static int write_invites (FILE * f, int idx)
       struct flag_record fr = {FR_CHAN|FR_GLOBAL|FR_BOT,0,0,0,0,0};
       if ((idx >= 0) && !(fr.bot & BOT_GLOBAL))
 	get_user_flagrec(dcc[idx].user,&fr,chan->name);
-      if ((fr.chan & BOT_SHARE) || (fr.bot & BOT_GLOBAL)) {
+      else
+	fr.chan = BOT_SHARE;
+      if (fr.chan & BOT_SHARE) {
 	if (fprintf(f, "$$%s invites\n", chan->name) == EOF)
 	  return 0;
 	for (ir = chan->invites;ir;ir=ir->next) 
