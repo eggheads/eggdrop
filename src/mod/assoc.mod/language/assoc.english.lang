@@ -1,0 +1,21 @@
+# assoc.english.lang
+#   language messages for the assoc module
+#
+# $Id: assoc.english.lang,v 1.1 2000/09/23 17:45:23 fabian Exp $
+
+0xb000,No channel names
+0xb001,Chan
+0xb002,Name
+0xb003,Channel # out of range: must be *0-*99999
+0xb004,Channel # out of range: must be 1-99999
+0xb005,You can't name the main party line; it's just a party line.
+0xb006,Channel %s%d has no name.\n
+0xb007,Okay, removed name for channel %s%d.\n
+0xb008,--- %s removed this channel's name.\n
+0xb009,Okay, channel %s%d is '%s' now.\n
+0xb00a,--- %s named this channel '%s'\n
+0xb00b,--- (%s) named this channel '%s'.\n
+0xb00c,--- (%s) %s named this channel '%s'.\n
+0xb00d,--- (%s) %s removed this channel's name.\n
+0xb00e,Channel's name can't be that long (20 chars max).
+0xb00f,First character of the channel name can't be a digit.
