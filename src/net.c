@@ -2,7 +2,7 @@
  * net.c -- handles:
  *   all raw network i/o
  *
- * $Id: net.c,v 1.63 2004/01/13 01:30:26 wcc Exp $
+ * $Id: net.c,v 1.64 2004/01/13 10:04:45 wcc Exp $
  */
 /*
  * This is hereby released into the public domain.
@@ -630,7 +630,7 @@ static int sockread(char *s, int *len)
       FD_SET(fdtmp, &fd);
     }
   }
-  x = select(SELECT_TYPE_ARG1 fds, SELECT_TYPE_ARG234 &fd,
+  x = select((SELECT_TYPE_ARG1) fds, SELECT_TYPE_ARG234 &fd,
              SELECT_TYPE_ARG234 NULL, SELECT_TYPE_ARG234 NULL,
              SELECT_TYPE_ARG5 &t);
   if (x > 0) {

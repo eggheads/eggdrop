@@ -16,7 +16,7 @@ dnl You should have received a copy of the GNU General Public License
 dnl along with this program; if not, write to the Free Software
 dnl Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 dnl
-dnl $Id: aclocal.m4,v 1.82 2004/01/13 01:30:25 wcc Exp $
+dnl $Id: aclocal.m4,v 1.83 2004/01/13 10:04:44 wcc Exp $
 dnl
 
 dnl  EGG_MSG_CONFIGURE_START()
@@ -352,9 +352,6 @@ case "$egg_cv_var_system_type" in
         then
           AWK=awk
         fi
-        MOD_CC=cc
-        MOD_LD=cc
-        SHLIB_CC=cc
         SHLIB_LD="ld -shared -expect_unresolved \"'*'\""
         SHLIB_STRIP=touch
         AC_DEFINE(MODULES_OK, 1, [Define if modules will work on your system.])dnl
