@@ -1,0 +1,47 @@
+# notes.finnish.lang
+#   kieli tiedostot viesti moduuliin
+#
+# $Id: notes.finnish.lang,v 1.1 2004/07/05 04:37:33 wcc Exp $
+
+0xc000,  Siirrettu viestit: %.70s\n
+0xc001,Vaihdettu %d note%s %s %s.
+0xc002,Erääntyvät %d note%s
+0xc003,Ei paikalla; siirretään %s.\n
+0xc004,Viestit eivät ole tuettu tällä botilla.
+0xc005,Sori, tällä käyttäjällä on liian monta vietiä ennestään.
+0xc006,Ei pysty luomaan viestitiedostoa. Anteeksi.
+0xc007,Viestitiedosto saavuttamaton!
+0xc008,Varastoitu viesti
+0xc009,Sinulle ei ole viestejä
+0xc00a, -- ERÄÄNTYVÄT TÄNÄÄN
+0xc00b, -- ERÄÄNTYVÄT %d PÄIVÄNÄ%s
+0xc00c,Sinulla on seuraavat viesti(t) odottamassa
+0xc00d,Sinullea ei ole näin monta viestiä
+0xc00e,Käytä '.notes read' lukeaksesi ne.\n
+0xc00f,Ei pysty muuttamaan viesti tiedostoa
+0xc010,Kaikki viestit poistettu
+0xc011,Poistettu
+0xc012,läljellä
+0xc013,'#' ehkä numerot ja/tai eritetty erilleen ';'.
+0xc014,Tämä on botti. Et pysty jättämään viestejä botille.
+0xc015,Ulkopuolinen viesti
+0xc016,Note toimitettu.
+0xc017,Listalla:
+0xc019,### Sinulla on %d viestiä%s odottamassa.\n
+0xc01b,Viestit on varastoitu.
+0xc01c,Sinun ei ole sallitty vaihtaa viestejä %s\n
+0xc01d,Käyttäjä %s ei ole paikalla.\n
+0xc01e,Nyt huomioitavia viestejä %s\n
+0xc01f,Valmiiksi ei huomioitu %s\n
+0xc020,Ei pitkiä huomioitavia viestejä %s\n
+0xc021,Huomaa huomioitavat %s eivät löydy listalta.\n
+0xc022,Ei esittää huomioitavia viestejä.\n
+0xc023,Ei huomioitavaa %s:\n
+0xc024,Ei sellaista käyttäjää.
+0xc025,Et pysty vaihtamaan viestien ohjausta botin omistajalle.\n
+0xc026,Pyyhitty viestit ohjautumaan %s\n
+0xc027,Sinun täytyy hankkia botinnimi ohjaukseen.
+0xc028,Viestien uudelleenohjaus vaihdettu %s %s\n
+0xc029,Function täytyy olla yksi näistä INDEX, READ, tai ERASE.
+0xc02a,Käytä komentoa '.notes read' lukeaksesi sen.
+0xc02b,NOTICE %s :Sinulla on %d note%s odottamassa.\n

@@ -1,0 +1,58 @@
+# filesys.finnish.lang
+#   kieli tiedostot tiedostoj‰rjestelm‰ moduuliin
+#
+# $Id: filesys.finnish.lang,v 1.1 2004/07/05 04:37:33 wcc Exp $
+
+0x300,Muutetaan tiedostoj‰rjestelm‰ imagea %s ...
+0x301,filedb-update: Ei pysty avata kansiota!
+0x302,(!) Rikkin‰inen muunnos filedbst‰ %s
+0x303,Tiedostonimi                    Koko  L‰hetetty/P‰iv‰      # Ota\n
+0x304,------------------------------  ----  -------------------  ------\n
+0x305,Ei tiedostoja t‰ss‰ kansiossa.\n
+0x306,Ei vastaavia tiedostoja.\n
+0x307,Kansiota ei ole olemassa
+0x308,Tiedosto ei ole olemassa
+0x309,Tiedosto ei jaettu
+0x30a,(et‰inen)
+0x30b,Ongelmia tiedoston l‰hetys yrityksess‰
+0x30c,(l‰hetetty)
+0x30d,Et‰inen pyyntˆ /%s%s%s (l‰hetet‰‰n)
+0x30e,\nTiedostoj‰rjestelm‰ vaikuttaa rikkin‰iselt‰ juuri nyt.\n
+0x30f,(Tiedosto-polku on asetettu vialliseen kansioon.)\n
+0x310,Nykyinen hakemisto
+0x311,Uusi nykyinen hakemisto
+0x312,Ei sellaista kansiota.\n
+0x313,Laiton kansio.\n
+0x314,Ole j‰rkev‰.\n
+0x315,%s ei ole saatavissa juuri nyt.\n
+0x316,Pyyntˆ %s  %s lta...\n
+0x317,%s on jo normaali tiedosto.\n
+0x318,Vaihdettu linkki %s\n
+0x319,Sin‰ et uploadaa %s\n
+0x31a,Kansio luotu
+0x31b,Tarvitsee +%s oikeuden\n
+0x31c,Vaihdettu %s/ tarvittavaan +%s oikeuteen\n
+0x31d,Vaihdettu %s/ tarvittavat merkit oikeuksiin\n
+0x31e,Kansio poistettu
+0x31f,Laiton l‰hde kansio.\n
+0x320,Laiton m‰‰r‰np‰‰ kansio.\n
+0x321,Et voi %s tiedostoja huipulle itselt‰‰n.\n
+0x322,kansio on olemassa -- ohitetaan
+0x323,itselleen?  huh huh.
+0x324,M‰‰r‰np‰‰
+0x325,kopioi
+0x326,Kopioitu
+0x327,liiku
+0x328,Liikutettu
+0x329,Ei pysty kirjoittamaan
+0x32a,vaatia
+0x32b,Piilotettu
+0x32c,Ei piilotettu
+0x32d,Jaettu
+0x32e,Ei jaettu
+0x32f,Lis‰tty linkki
+0x330,Vaihdettu
+0x331,Tyhjennetty
+0x332,Tyhjennetty
+0x33a,Tervetuloa %B tiedosto serveriin\n
+0x33b,Kaikki tiedonsiirrot l‰hetet‰‰n '%N' vakiona.\n(Voit m‰‰ritell‰ vaihtoehtoisen nickkin 'get' komennolla.)\nKomennolla 'help' saat

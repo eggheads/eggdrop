@@ -1,0 +1,65 @@
+# transfer.finnish.lang
+#   kieli viestit siirto moduuliin
+#
+# $Id: transfer.finnish.lang,v 1.1 2004/07/05 04:37:34 wcc Exp $
+
+0xf00,Evätään dcc saanti %s: kopiointi %s PERUTTU!
+0xf01,NOTICE %s :Tiedostojärjestelmä on rikkoontunut; perutaan queue tiedostot.\n
+0xf02,NOTICE %s :Täällä on tiedosto  %s lta ...\n
+0xf03,DCC yhteydet täynnä: GET %s [%s]
+0xf04,NOTICE %s :DCC yhteydet täynnä; perutaan queue tiedostot.\n
+0xf05,DCC hylsy virhe: GET %s [%s]
+0xf06,NOTICE %s :DCC hylsy virhe; peruutetaan queue tiedostot.\n
+0xf07,Perutaan dcc get %s: Tiedosto on tyhjä!
+0xf08,NOTICE %s :Tiedosto %s on tyhjä, peruutetaan siirto.\n
+0xf09,  Lähettää %s  Tiedostoni\n
+0xf0a,  ---------%s  --------------------\n
+0xf0b,  %s%s  %s  [WAITING]\n
+0xf0c,  %s%s  %s  (%.1f%% done)\n
+0xf0d,Ei tiedostoja queuessa.\n
+0xf0e,Yhteensä: %d\n
+0xf0f,Peruutettuja: %s %s lle\n
+0xf10,Peruutettuja: %s  (peruutetaan dcc lähetys)\n
+0xf11,NOTICE %s :Siirto %s peruutettu %s\n
+0xf12,DCC peruutettu: GET %s (%s) %lu/%lu lta
+0xf13,Ei vastaavia.\n
+0xf14,Peruutettu %d file%s.\n
+0xf15,dcc lähetys onnistunut %s %s!%s lta
+0xf16,Tiedostonimen %d pituus. Liian PITKÄ.
+0xf17,NOTICE %s :Tiedostonimen %d pituus liian PITKÄ!\n
+0xf18,Liian Huono Kuten Isäsi!
+0xf19,NOTICE %s :Liian Huono Kuten Isäsi!\n
+0xf1a,PERUUTETTU siirto `%s' `%s'! Tiedosto kadonnut!
+0xf1b,Kiitos tiedostosta!\n
+0xf1c,NOTICE %s :Kiitos tiedostosta!\n
+0xf1d,Hukataan käyttäjätiedoston siirto %s; perutaan.
+# 0xf1e, < Tämä yksi on nyt tyhjä
+0xf1f,Katkaistiin %s (käyttäjätiedoston siirto peruttiin)
+0xf20,dcc lähetys hukattu %s %s!%s (%lu/%lu)
+0xf21,(!) paketit %s %s on viallinen!
+0xf22,!! Jatketaan tiedoston siirtoa %s %s
+0xf23,!!! Yritetään ohittaa edellä oleva käyttäjätiedoston siirto
+0xf24,Jatketaan tiedoston siirtoa%dk %s %s
+0xf25,käyttäjätiedoston siirto onnistunut %s lle.
+0xf26,lähetys onnistunut DCC %s %s lle
+0xf27,käyttäjätiedoston siirto hukattu; peruutetaan.
+0xf28,dcc get hukkunut %s %s!%s lta
+0xf29,NOTICE %s :Outo tiedoston koko.\n
+0xf2a,Tiedosto liian iso: tiputetaan dcc lähetys %s %s!%s lta
+0xf2b,Tiputus käyttäjätiedoston siirrossa.
+0xf2c,Katkaistaan %s (tiputus käyttäjätiedoston siirrossa)
+0xf2d,NOTICE %s :Tauko siirron aikana, peruutetaan %s.\n
+0xf2f,DCC tauko: GET %s (%s)  %lu/%lu lle
+0xf30,DCC tauko: SEND %s (%s) %lu/%lu lle
+0xf31,lägettää  (%lu)/%lu\n    Tiedostonimi: %s\n
+0xf32,lähettää  odottaa %lus\n    Tiedostonimi: %s\n
+0xf33,yhteis  lähetys
+0xf34,DCC yhteys: SEND %s (%s)
+0xf35,NOTICE %s :Huono yhteys (%s)\n
+0xf36,DCC huono yhteys: GET %s (%s!%s)
+0xf37,Aloitetaan DCC %slähetys %s %slle
+0xf38,koskien
+0xf39,NOTICE %s :Ei huomioida jatkamista `%s'lta: ei data anomuksia.\n
+0xf40,Poistetaan siirto moduuli, suljetaan kaikki siirto yhteydet...
+0xf41,    DCC jakso koko: %d%s\n
+0xf42,    Maksimit samanaikaiset kopioinnit per käyttäjä: %d\n

@@ -1,0 +1,15 @@
+# console.finnish.lang
+#   kieli viestit konsoli moduuliin
+#
+# $Id: console.finnish.lang,v 1.1 2004/07/05 04:37:33 wcc Exp $
+
+0xb040,Tallennettu Konsoli Asetukset:
+0xb041,Tallennettu Sinun Konsoli Asetuksesi:
+0xb042,Kanava:
+0xb043,Konsoli merkit:
+0xb044,Lista merkit:
+0xb045,Kaiku:
+0xb046,Sivu asetukset:
+0xb047,Konsoli kanava:
+0xb048,kyllä
+0xb049,ei

@@ -1,6 +1,6 @@
 Eggdrop Core Settings
 Last revised: April 17, 2003
-$Id: core.settings,v 1.28 2004/05/27 05:23:39 wcc Exp $
+$Id: core.settings,v 1.29 2004/07/05 04:37:33 wcc Exp $
      _________________________________________________________________
 
                            Eggdrop Core Settings
@@ -77,6 +77,8 @@ You can change the basic Eggdrop appearance and behavior in this section.
     If you want to have your Eggdrop messages displayed in another language,
     change this command to match your preferences. An alternative would be
     to set the environment variable EGG_LANG to that value.
+
+    Languages included with Eggdrop: Danish, English, French, Finnish, German.
 
 
 

@@ -1,0 +1,24 @@
+Yhdistetty %B, pyörii %Vlla
+     ____                __
+    / __/___ _ ___ _ ___/ /____ ___   ___
+   / _/ / _ `// _ `// _  // __// _ \ / _ \
+  /___/ \_, / \_, / \_,_//_/   \___// .__/
+       /___/ /___/                 /_/
+
+Hei %b%N!%b  Minun nimeni on %b%B%b ja minä toimin %b%V%b, %b%U%blla.
+
+Paikallisaika on nyt %b%T%b
+%{+n}
+Olet tämän botin omistaja. Vain +n käyttäjät voivat nähdä tämän! Lisää tietoa,
+saat komennolla %b.help set motd%b. Editoi %bmotd%b tiedosto botillesi 'text'
+kansiosta.
+%{-}
+Käytä komentoa %b.help%b saadaksesi perus apua.
+Käytä komentoa %b.help <komento>%b saadaksesi apua eikoisempiin komentoihin.
+Käytä komentoa %b.help all%b saadaksesi täydellisen listan komennoista.
+Käytä komentoa %b.help *jokinsana*%b listataksesi kaikki komennot aiheesta "jokinsana".
+
+Pidä hauskaa.
+
+Komennot alkavat merkillä piste '.' (kuten '.quit' or '.help')
+Kaikki muut menevät pois party linjalta.

@@ -1,0 +1,21 @@
+# assoc.finnish.lang
+#   kieli viestit assoc moduuliin
+#
+# $Id: assoc.finnish.lang,v 1.1 2004/07/05 04:37:33 wcc Exp $
+
+0xb000,Ei kanava nime‰
+0xb001,Kanava
+0xb002,Nimi
+0xb003,Kanava # v‰‰r‰ et‰isyys: t‰ytyy olla *0-*99999
+0xb004,Kanava # v‰‰r‰ et‰isyys: t‰ytyy olla 1-99999
+0xb005,Et voi nimet‰ p‰‰ party rivi‰; Se on juuri party rivi.
+0xb006,Kanavalla %s%d ei ole nime‰.\n
+0xb007,Okei, kanavan %s%d nimi poistettu.\n
+0xb008,--- %s poistettu t‰m‰n kanavan nimi.\n
+0xb009,Okei, kanava %s%d on nyt '%s'.\n
+0xb00a,--- %s nimetty t‰m‰ kanava '%s'\n
+0xb00b,--- (%s) nimetty t‰m‰ kanava '%s'.\n
+0xb00c,--- (%s) %s nimetty t‰m‰ kanava '%s'.\n
+0xb00d,--- (%s) %s poistettu t‰m‰n kanavan nimi.\n
+0xb00e,Kanavan nimi ei voi olla n‰in pitk‰ (maksimi pituus 20 merkki‰).
+0xb00f,Ensimm‰inen merkki kanavan nimess‰ ei voi olla numero.

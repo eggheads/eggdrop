@@ -1,0 +1,15 @@
+# wire.finnish.lang
+#   kieli tiedostot wire moduuliin
+#
+# $Id: wire.finnish.lang,v 1.1 2004/07/05 04:37:34 wcc Exp $
+
+0xa000,You are not on a wire.
+0xa001,Nyky‰‰n wirella
+0xa002,Et ole pitk‰‰n wire.
+0xa003,Wire kryptaus avain vaihdettu
+0xa004,Kaikki teksti aloitettu ; Nyt on menty wiren yli.
+0xa005,N‰et kuka on wiressa komennolla '.onwire'.
+0xa006,L‰hde komennolla '.wire off'.
+0xa007,liitytty wireen
+0xa008,l‰hdetty wirest‰.
+0xa009,WIRE moduuli ei ladattu.
