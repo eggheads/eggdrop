@@ -7,7 +7,7 @@
  * 
  * dprintf'ized, 15nov1995
  * 
- * $Id: main.c,v 1.30 1999/12/17 18:28:11 guppy Exp $
+ * $Id: main.c,v 1.31 1999/12/19 23:09:32 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -604,6 +604,16 @@ int main(int argc, char **argv)
   FILE *f;
   struct sigaction sv;
   struct chanset_t *chan;
+
+#ifdef DEBUG_MEM
+  {
+#include <sys/resource.h>
+    struct rlimit cdlim;
+    cdlim.rlim_cur = RLIM_INFINITY;
+    cdlim.rlim_max = RLIM_INFINITY;
+    setrlimit(RLIMIT_CORE, &cdlim);
+  }
+#endif
 
   /* initialise context list */
   for (i = 0; i < 16; i++) {

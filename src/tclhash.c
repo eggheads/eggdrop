@@ -12,7 +12,7 @@
  * dprintf'ized, 15nov1995 (hash.c)
  * dprintf'ized, 4feb1996 (tclhash.c)
  * 
- * $Id: tclhash.c,v 1.10 1999/12/15 02:32:58 guppy Exp $
+ * $Id: tclhash.c,v 1.11 1999/12/19 23:09:33 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -549,6 +549,21 @@ static int trigger_bind(char *proc, char *param)
     if (f != NULL)
       fprintf(f, "eval: %s%s\n", proc, param);
   }
+  {
+    /*
+     * We now try to debug the Tcl_VarEval() call below by remembering both
+     * the called proc name and it's parameters. This should render us a bit
+     * less helpless when we see context dumps.
+     */
+    char *buf, *msg = "TCL proc: %s, param: %s";
+
+    Context;
+    buf = nmalloc(strlen(msg) + (proc ? strlen(proc) : 6)
+		  + (param ? strlen(param) : 6) + 1);
+    sprintf(buf, msg, proc ? proc : "<null>", param ? param : "<null>");
+    ContextNote(buf);
+    nfree(buf);
+  }
   Context;
   x = Tcl_VarEval(interp, proc, param, NULL);
   Context;
@@ -582,7 +597,8 @@ int check_tcl_bind(p_tcl_bind_list bind, char *match,
   int f = 0, atrok, x;
 
   Context;
-  for (hm = bind->first; hm && !f; ohm = hm, hm = hm->next) {
+  
+  for (hm = bind->first; hm && !f && bind->first; ohm = hm, hm = hm->next) {
     int ok = 0;
 
     switch (match_type & 0x03) {

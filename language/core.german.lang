@@ -6,7 +6,7 @@
 # Modified by Michael for 1.3.25.
 # Modified by rtc for 1.4.0
 #
-# $Id: core.german.lang,v 1.12 1999/12/15 02:32:57 guppy Exp $
+# $Id: core.german.lang,v 1.13 1999/12/19 23:09:32 guppy Exp $
 
 # General stuff
 0x001,Gebrauch
@@ -283,6 +283,7 @@ Baue eine Telnetverbindung zu dem Bot auf und gib 'NEW' als deinen Nickname ein.
 0x66c,schmeiss meine Freunde nicht hier raus, mein Lieber
 0x66d,...und komm nicht zurueck.
 0x66e,wechsle zurueck zum altnick %s
+0x66c,deop meine Freunde nicht, mein Lieber
 # Exempt/invite uebersetzen?
 0x670,Ausnahme entfernt
 0x671,Einladung entfernt

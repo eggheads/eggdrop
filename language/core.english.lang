@@ -1,7 +1,7 @@
 # core.english.lang
 #   core language messages for eggdrop
 #
-# $Id: core.english.lang,v 1.16 1999/12/15 02:32:57 guppy Exp $
+# $Id: core.english.lang,v 1.17 1999/12/19 23:09:32 guppy Exp $
 
 # General stuff
 0x001,Usage
@@ -258,6 +258,7 @@ Telnet to the bot and enter 'NEW' as your nickname.
 0x66c,don't kick my friends, bud
 0x66d,...and don't come back.
 0x66e,Switching back to altnick %s
+0x66f,don't deop my friends, bud
 0x670,Removed exempt
 0x671,Removed invite
 0x672,NICK flood from @%s!  Banning.

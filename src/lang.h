@@ -2,7 +2,7 @@
  * lang.h
  *   Conversion definitions for language support
  * 
- * $Id: lang.h,v 1.6 1999/12/15 02:32:58 guppy Exp $
+ * $Id: lang.h,v 1.7 1999/12/19 23:09:32 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -297,7 +297,8 @@
 #define IRC_TELNETFLOOD         get_language(0x669)
 #define IRC_PREBANNED           get_language(0x66a)
 #define IRC_LEMMINGBOT          get_language(0x66b)
-#define IRC_PROTECT             get_language(0x66c)
+#define IRC_KICK_PROTECT        get_language(0x66c)
+#define IRC_DEOP_PROTECT        get_language(0x66f)
 #define IRC_COMMENTKICK         get_language(0x66d)
 #define IRC_GETALTNICK	get_language(0x66e)
 #define IRC_REMOVEDEXEMPT       get_language(0x670)
