@@ -62,9 +62,9 @@ void *_user_malloc(int size, char *file, int line)
 {
   return nmalloc(size);
 }
-void *_user_realloc(int size, char *file, int line)
+void *_user_realloc(void *ptr, int size, char *file, int line)
 {
-  return nrealloc(size);
+  return nrealloc(ptr, size);
 }
 #endif
 
