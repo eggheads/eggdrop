@@ -901,41 +901,11 @@ static void cmd_stick_yn(int idx, char *par, int yn)
   struct chanset_t *chan;
   char s[UHOSTLEN + 1], * stick_type;
   stick_type=newsplit(&par);
-  if (!par[0] || (!strcasecmp(stick_type,"ban") &&
-		  !strcasecmp(stick_type,"invite") &&
-		  !strcasecmp(stick_type,"exempt") )) {
-    dprintf(idx, "Usage: %sstick [ban/exempt/invite] <num or mask>\n", yn ? "" : "un");
-    return;
-  }
   strncpy(s, par, UHOSTLEN);
   s[UHOSTLEN] = 0;
-  if (!strcasecmp(stick_type,"ban")) {
-    i = u_setsticky_ban(NULL, s,
-			(dcc[idx].user->flags & USER_MASTER) ? yn : -1);
-    if (i > 0) {
-      putlog(LOG_CMDS, "*", "#%s# %sstick ban %s", 
-	     dcc[idx].nick, yn ? "" : "un", s);
-      dprintf(idx, "%stuck ban: %s\n", yn ? "S" : "Uns", s);
-      return;
-    }
-    /* channel-specific ban? */
-    chan = findchan(dcc[idx].u.chat->con_chan);
-    if (!chan) {
-      dprintf(idx, "Invalid console channel.\n");
-      return;
-    }
-    if (i)
-      simple_sprintf(s, "%d", -i);
-    j = u_setsticky_ban(chan, s, yn);
-    if (j > 0) {
-      putlog(LOG_CMDS, "*", "#%s# %sstick ban %s", dcc[idx].nick,
-	     yn ? "" : "un", s);
-      dprintf(idx, "%stuck ban: %s\n", yn ? "S" : "Uns", s);
-      return;
-    }
-    dprintf(idx, "No such ban.\n");     
+       
     /* now deal with exemptions */
-  } else if (!strcasecmp(stick_type,"exempt")) {
+  if (!strcasecmp(stick_type,"exempt")) {
     i = u_setsticky_exempt(NULL, s,
 			   (dcc[idx].user->flags & USER_MASTER) ? yn : -1);
     if (i > 0) {
@@ -960,7 +930,7 @@ static void cmd_stick_yn(int idx, char *par, int yn)
       return;
     }
     dprintf(idx, "No such exempt.\n");
-    
+    return;
     /* now the invites */
   } else if (!strcasecmp(stick_type,"invite")) {
     i = u_setsticky_invite(NULL, s,
@@ -987,10 +957,40 @@ static void cmd_stick_yn(int idx, char *par, int yn)
       return;
     }
     dprintf(idx, "No such invite.\n");
+    return;
   }
+  if (strcasecmp(stick_type,"ban")) {
+    strncpy(s, stick_type, UHOSTLEN);
+    s[UHOSTLEN] = 0;    
+  }
+  i = u_setsticky_ban(NULL, s,
+		      (dcc[idx].user->flags & USER_MASTER) ? yn : -1);
+  if (i > 0) {
+    putlog(LOG_CMDS, "*", "#%s# %sstick ban %s", 
+	   dcc[idx].nick, yn ? "" : "un", s);
+    dprintf(idx, "%stuck ban: %s\n", yn ? "S" : "Uns", s);
+    return;
+  }
+  /* channel-specific ban? */
+  chan = findchan(dcc[idx].u.chat->con_chan);
+  if (!chan) {
+    dprintf(idx, "Invalid console channel.\n");
+    return;
+  }
+  if (i)
+    simple_sprintf(s, "%d", -i);
+  j = u_setsticky_ban(chan, s, yn);
+  if (j > 0) {
+    putlog(LOG_CMDS, "*", "#%s# %sstick ban %s", dcc[idx].nick,
+	   yn ? "" : "un", s);
+    dprintf(idx, "%stuck ban: %s\n", yn ? "S" : "Uns", s);
+    return;
+  }
+  dprintf(idx, "No such ban.\n");
+  dprintf(idx, "Usage: %sstick [ban/exempt/invite] <num or mask>\n", yn ? "" : "un");
 }
 
-  
+
 static void cmd_stick(struct userrec *u, int idx, char *par)
 {
   cmd_stick_yn(idx, par, 1);
