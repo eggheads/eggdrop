@@ -695,10 +695,10 @@ static void got303(char *from, char *msg)
     fixcolon(msg);
     tmp = newsplit(&msg);
     if (strncmp(botname, origbotname, strlen(botname))) {
-      if (!tmp[0] || (altnick[0] && !strcasecmp(tmp, altnick))) {
+      if (!tmp[0] || (altnick[0] && !rfc_casecmp(tmp, altnick))) {
 	putlog(LOG_MISC, "*", IRC_GETORIGNICK, origbotname);
 	dprintf(DP_MODE, "NICK %s\n", origbotname);
-      } else if (altnick[0] && strcasecmp(botname, altnick) && !msg[0]) {
+      } else if (altnick[0] && !msg[0] && strcasecmp(botname, altnick)) {
 	putlog(LOG_MISC, "*", IRC_GETALTNICK, altnick);
 	dprintf(DP_MODE, "NICK %s\n", altnick);
       }
