@@ -1,7 +1,7 @@
 
 # Getops 2.2f
 
-# $Id: getops.tcl,v 1.2 2000/07/09 13:51:56 fabian Exp $
+# $Id: getops.tcl,v 1.3 2000/08/06 14:52:25 fabian Exp $
 
 # This script is used for bots to request and give ops to each other. 
 # For this to work, you'll need:
@@ -262,7 +262,11 @@ proc botnet_request {bot com args} {
    putlog "GetOps: $bot gave me the key to $chan! ($nick)"
    foreach channel [string tolower [channels]] {
     if {$chan == $channel} {
-     putserv "JOIN $idchan $nick"
+     if {$idchan != ""} {
+      putserv "JOIN $idchan $nick"
+     } else {
+      putserv "JOIN $channel $nick"
+     }
      return 1
     }
    }
