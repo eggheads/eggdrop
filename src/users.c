@@ -754,8 +754,8 @@ void tell_users_match(int idx, char *mtch, int start, int limit,
  * *Invite global Invites
  * && channel-specific exempts
  * &&#chan channel exempts
- * || channel-specific Invites
- * ||#chan channel Invites
+ * $$ channel-specific Invites
+ * $$#chan channel Invites
  */
 
 int noxtra = 0;
@@ -959,7 +959,7 @@ int readuserfile(char *file, struct userrec **ret)
 	      lasthand[0] = 0;
 	    }
 	  }
-	} else if (strncmp(code, "||", 2) == 0) {  
+	} else if (strncmp(code, "$$", 2) == 0) {  
 	  /* channel-specific invites */
 	  strcpy(lasthand, &code[2]);
 	  if (!findchan(lasthand)) {   

@@ -30,7 +30,7 @@ extern char botnetnick[], origbotname[], ver[];
 extern char network[], owner[], spaces[];
 extern time_t now, online_since;
 
-#define BADNICKCHARS "-,+*=:!.@#;$"
+#define BADNICKCHARS "-,+*=:!.@#;$%&"
 
 /* add hostmask to a bot's record if possible */
 static int add_bot_hostmask(int idx, char *nick)
