@@ -2,7 +2,7 @@
  * tclfiles.c -- part of filesys.mod
  *   Tcl stubs for file system commands moved here to support modules
  *
- * $Id: tclfiles.c,v 1.22 2004/01/09 05:56:38 wcc Exp $
+ * $Id: tclfiles.c,v 1.23 2004/06/04 16:41:08 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -357,11 +357,12 @@ static int tcl_mkdir STDVAR
   } else if (fdbe->chan)
     my_free(fdbe->chan);
 
-  if (fdbe->pos)
-    filedb_addfile(fdb, fdbe);
-  else
-    filedb_updatefile(fdb, fdbe->pos, fdbe, UPDATE_ALL);
+  if (!fdbe->pos)
+    fdbe->pos = POS_NEW;
+  filedb_updatefile(fdb, fdbe->pos, fdbe, UPDATE_ALL);
   filedb_close(fdb);
+  free_fdbe(&fdbe);
+
   Tcl_AppendResult(irp, "0", NULL);
   return TCL_OK;
 }

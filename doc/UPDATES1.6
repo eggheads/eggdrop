@@ -1,4 +1,4 @@
-$Id: UPDATES1.6,v 1.560 2004/06/04 14:07:48 wcc Exp $
+$Id: UPDATES1.6,v 1.561 2004/06/04 16:41:08 wcc Exp $
 
 Eggdrop Changes (since v1.6.0)
      _________________________________________________________________
@@ -11,6 +11,9 @@ Eggdrop Changes (since v1.6.0)
     ftp://ftp.eggheads.org/pub/eggdrop/UPDATES/
 
   1.6.17:
+    - Don't let .tcl mkdir create duplicate filedb entries.
+    * Found by: fabulous - Patch by: Wingman
+
     - Fixed a compile error related to varargs when using old Tcl versions.
     * Found by: Thomas Neumayer - Patch by: Wcc
 
@@ -20,7 +23,6 @@ Eggdrop Changes (since v1.6.0)
     - Suppress configure warnings on systems that use newer versions of GNU
       coreutils.
     * Patch by: Wcc
-
 
   1.6.16 (31 May 2004):
     + Final released on May 31, 2004.
