@@ -7,7 +7,7 @@
  *   telling the current programmed settings
  *   initializing a lot of stuff and loading the tcl scripts
  *
- * $Id: chanprog.c,v 1.48 2004/02/04 02:40:42 stdarg Exp $
+ * $Id: chanprog.c,v 1.49 2004/02/10 02:10:50 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -75,12 +75,12 @@ void rmspace(char *s)
   /* Wipe end of string */
   for (p = s + strlen(s) - 1; ((whitespace(*p)) && (p >= s)); p--);
   *(p + 1) = 0;
-  len = p+1 - s;
+  len = p + 1 - s;
   for (p = s; ((whitespace(*p)) && (*p)); p++);
   len -= (p - s);
   if (p != s) {
     /* +1 to include the null in the copy */
-    memmove(s, p, len+1);
+    memmove(s, p, len + 1);
   }
 }
 

@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  *
- * $Id: server.c,v 1.112 2004/02/04 02:40:42 stdarg Exp $
+ * $Id: server.c,v 1.113 2004/02/10 02:10:50 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -866,12 +866,15 @@ static void queue_server(int which, char *buf, int len)
     if (qnext) {
       q->next = h->head;
       h->head = q;
-      if (!h->last) h->last = q;
+      if (!h->last)
+        h->last = q;
     }
     else {
       q->next = NULL;
-      if (h->last) h->last->next = q;
-      else h->head = q;
+      if (h->last)
+        h->last->next = q;
+      else
+        h->head = q;
       h->last = q;
     }
 
