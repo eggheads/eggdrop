@@ -2,7 +2,7 @@
  * msgcmds.c -- part of irc.mod
  *   all commands entered via /MSG
  *
- * $Id: msgcmds.c,v 1.25 2001/12/04 19:58:07 guppy Exp $
+ * $Id: msgcmds.c,v 1.26 2001/12/16 14:56:00 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -216,7 +216,7 @@ static int msg_ident(char *nick, char *host, struct userrec *u, char *par)
       maskhost(s, s1);
       dprintf(DP_HELP, "NOTICE %s :%s: %s\n", nick, IRC_ADDHOSTMASK, s1);
       addhost_by_handle(who, s1);
-      check_this_user(who);
+      check_this_user(who, 0, NULL);
       return 1;
     }
   }
@@ -256,7 +256,7 @@ static int msg_addhost(char *nick, char *host, struct userrec *u, char *par)
       putlog(LOG_CMDS, "*", "(%s!%s) !*! ADDHOST %s", nick, host, par);
       dprintf(DP_HELP, "NOTICE %s :%s: %s\n", nick, IRC_ADDHOSTMASK, par);
       addhost_by_handle(u->handle, par);
-      check_this_user(u->handle);
+      check_this_user(u->handle, 0, NULL);
       return 1;
     }
   }

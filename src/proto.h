@@ -7,7 +7,7 @@
  * because they use structures in those
  * (saves including those .h files EVERY time) - Beldin
  *
- * $Id: proto.h,v 1.46 2001/09/23 20:17:47 guppy Exp $
+ * $Id: proto.h,v 1.47 2001/12/16 14:55:59 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -291,6 +291,7 @@ void write_userfile(int);
 struct userrec *check_dcclist_hand(char *);
 void touch_laston(struct userrec *, char *, time_t);
 void user_del_chan(char *);
+char *fixfrom(char *);
 
 /* users.c */
 void addignore(char *, char *, char *, time_t);

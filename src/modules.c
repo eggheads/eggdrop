@@ -4,7 +4,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: modules.c,v 1.59 2001/10/21 07:06:08 guppy Exp $
+ * $Id: modules.c,v 1.60 2001/12/16 14:55:59 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -528,7 +528,7 @@ Function global_table[] =
   (Function) str_unescape,
   (Function) egg_strcatn,
   (Function) clear_chanlist_member,
-  (Function) 0,
+  (Function) fixfrom,
   /* 268 - 271 */
   (Function) & socklist,	/* sock_list *				*/
   (Function) sockoptions,

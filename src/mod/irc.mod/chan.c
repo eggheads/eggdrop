@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  *
- * $Id: chan.c,v 1.73 2001/12/04 19:58:06 guppy Exp $
+ * $Id: chan.c,v 1.74 2001/12/16 14:56:00 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -763,7 +763,7 @@ static void check_this_member(struct chanset_t *chan, char *nick, struct flag_re
   }
 }
 
-static void check_this_user(char *hand)
+static void check_this_user(char *hand, int delete, char *host)
 {
   char s[UHOSTLEN];
   memberlist *m;
@@ -775,7 +775,9 @@ static void check_this_user(char *hand)
     for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
       sprintf(s, "%s!%s", m->nick, m->userhost);
       u = m->user ? m->user : get_user_by_host(s);
-      if (u && !egg_strcasecmp(u->handle, hand)) {
+      if ((u && !egg_strcasecmp(u->handle, hand) && delete < 2) ||
+	  (!u && delete == 2 && wild_match(host, fixfrom(s)))) {
+	u = delete ? NULL : u;
 	get_user_flagrec(u, &fr, chan->dname);
 	check_this_member(chan, m->nick, &fr);
       }
@@ -1867,10 +1869,12 @@ static int gotnick(char *from, char *msg)
   memberlist *m, *mm;
   struct chanset_t *chan;
   struct userrec *u;
+  struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
 
   strcpy(uhost, from);
   nick = splitnick(&uhost);
   fixcolon(msg);
+  clear_chanlist_member(nick);	/* Cache for nick 'nick' is meaningless now. */
   for (chan = chanset; chan; chan = chan->next) { 
     m = ismember(chan, nick);
     if (m) {
@@ -1895,25 +1899,23 @@ static int gotnick(char *from, char *msg)
        */
       /* Compose a nick!user@host for the new nick */
       sprintf(s1, "%s!%s", msg, uhost);
-      /* Enforcing bans & haven't already kicked them? */
-      if (channel_enforcebans(chan) && chan_sentkick(m) &&
-	  (u_match_mask(global_bans, s1) ||
-	   u_match_mask(chan->bans, s1)) &&
-	  !(use_exempts &&
-	   (u_match_mask(global_exempts,s1) ||
-	    u_match_mask(chan->exempts, s1))))
-	refresh_ban_kick(chan, s1, msg);
       strcpy(m->nick, msg);
       detect_chan_flood(msg, uhost, from, chan, FLOOD_NICK, NULL);
       /* Any pending kick to the old nick is lost. Ernst 18/3/1998 */
-      if (chan_sentkick(m))
+      if (chan_sentkick(m)) {
 	m->flags &= ~SENTKICK;
+	m->flags |= STOPCHECK;
+      }
+      /* nick-ban or nick is +k or something? */
+      if (!chan_stopcheck(m)) {
+	get_user_flagrec(m->user ? m->user : get_user_by_host(s1), &fr, chan->dname);
+	check_this_member(chan, m->nick, &fr);
+      }
       u = get_user_by_host(from); /* make sure this is in the loop, someone could have changed the record
                                      in an earlier iteration of the loop */
       check_tcl_nick(nick, uhost, u, chan->dname, msg);
     }
   }
-  clear_chanlist_member(msg);	/* Cache for nick 'msg' is meaningless now. */
   return 0;
 }
 
