@@ -128,13 +128,21 @@ void tell_dcc(int);
 void not_away(int);
 void set_away(int, char *);
 void *_get_data_ptr(int, char *, int);
-
 #define get_data_ptr(x) _get_data_ptr(x,__FILE__,__LINE__)
 void flush_lines(int, struct chat_info *);
 struct dcc_t *find_idx(int);
 int new_dcc(struct dcc_table *, int);
 void del_dcc(int);
 char *add_cr(char *);
+void changeover_dcc(int, struct dcc_table *, int);
+
+/* dns.c */
+extern void (*dns_hostbyip) (IP);
+extern void (*dns_ipbyhost) (char *);
+void block_dns_hostbyip(IP);
+void block_dns_ipbyhost(char *);
+void call_hostbyip(IP, char *, int);
+void call_ipbyhost(char *, IP, int);
 
 /* gotdcc.c */
 void gotdcc(char *, char *, struct userrec *, char *);
@@ -205,7 +213,9 @@ unsigned long iptolong(IP);
 IP getmyip();
 void neterror(char *);
 void setsock(int, int);
+int allocsock(int, int);
 int getsock(int);
+char *hostnamefromip(unsigned long);
 void killsock(int);
 int answer(int, char *, unsigned long *, unsigned short *, int);
 int open_listen(int *);
@@ -217,6 +227,8 @@ void dequeue_sockets();
 int sockgets(char *, int *);
 void tell_netdebug(int);
 int sanitycheck_dcc(char *, char *, char *, char *);
+int hostsanitycheck_dcc(char *, char *, IP, char *, char *);
+char *iptostr(IP);
 
 /* tcl.c */
 void protect_tcl();

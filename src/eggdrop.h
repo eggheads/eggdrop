@@ -173,6 +173,9 @@ typedef unsigned long IP;
 
 /***********************************************************************/
 
+/* it's used in so many places, let's put it here */
+typedef int (*Function) ();
+
 /* public structure for the listening port map */
 struct portmap {
   int realport;
@@ -216,6 +219,7 @@ struct dcc_t {
     struct bot_info *bot;
     struct relay_info *relay;
     struct script_info *script;
+    struct dns_info *dns;
     int ident_sock;
     void *other;
   } u;				/* special use depending on type */
@@ -274,6 +278,22 @@ struct script_info {
   } u;
   char command[121];
 };
+
+struct dns_info {
+  Function dns_success;		/* is called if the dns request succeeds */
+  Function dns_failure;		/* is called if it fails */
+  char *host;			/* hostname */
+  char *cbuf;			/* temporary buffer. Memory will be free'd
+				   as soon as dns_info is free'd */
+  char *cptr;			/* temporary pointer */
+  IP ip;			/* IP address */
+  int ibuf;			/* temporary buffer for one integer */
+  char dns_type;		/* lookup type, e.g. RES_HOSTBYIP */
+};
+
+/* flags for dns_type */
+#define RES_HOSTBYIP  1			/* hostname to IP address */
+#define RES_IPBYHOST  2			/* IP address to hostname */
 
 /* flags about dcc types */
 #define DCT_CHAT      0x00000001	/* this dcc type receives botnet chatter */
@@ -386,14 +406,15 @@ typedef struct {
 #define FILEDB_UNSHARE  4
 
 /* socket flags: */
-#define SOCK_UNUSED     0x01	/* empty socket */
-#define SOCK_BINARY     0x02	/* do not buffer input */
-#define SOCK_LISTEN     0x04	/* listening port */
-#define SOCK_CONNECT    0x08	/* connection attempt */
-#define SOCK_NONSOCK    0x10	/* used for file i/o on debug */
-#define SOCK_STRONGCONN 0x20	/* don't report success until sure */
-#define SOCK_EOFD       0x40	/* it EOF'd recently during a write */
-#define SOCK_PROXYWAIT	0x80	/* waiting for SOCKS traversal */
+#define SOCK_UNUSED     0x001	/* empty socket */
+#define SOCK_BINARY     0x002	/* do not buffer input */
+#define SOCK_LISTEN     0x004	/* listening port */
+#define SOCK_CONNECT    0x008	/* connection attempt */
+#define SOCK_NONSOCK    0x010	/* used for file i/o on debug */
+#define SOCK_STRONGCONN 0x020	/* don't report success until sure */
+#define SOCK_EOFD       0x040	/* it EOF'd recently during a write */
+#define SOCK_PROXYWAIT	0x080	/* waiting for SOCKS traversal */
+#define SOCK_PASS	0x100	/* passed on; only notify in case of traffic */
 
 /* fake idx's for dprintf - these should be ridiculously large +ve nums */
 #define DP_STDOUT       0x7FF1
@@ -423,14 +444,11 @@ typedef struct {
 #define HELP_TEXT       2
 #define HELP_IRC        16
 
-/* it's used in so many places, let's put it here */
-typedef int (*Function) ();
-
 /* this is used by the net module to keep track of sockets and what's
  * queued on them */
 typedef struct {
   int sock;
-  char flags;
+  short flags;
   char *inbuf;
   char *outbuf;
   unsigned long outbuflen;	/* outbuf could be binary data */

@@ -1,6 +1,6 @@
 # Source-make
 
-GMAKE=${MAKE} 'LD=${LD}' 'STRIP=${STRIP}' 'CC=${CC}' 'CFLAGS=${CFLAGS}'
+GMAKE=${MAKE} 'LD=${LD}' 'STRIP=${STRIP}' 'CC=${CC}' 'CFLAGS=${CFLAGS}' 'RESLIB=${RESLIB}'
 
 doofus:
 	@echo ""

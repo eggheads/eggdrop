@@ -358,6 +358,13 @@ die "Please edit your config file."
 set mod-path "modules/"
 
 
+#### DNS MODULE #####
+
+# this module provides asynchronous dns support. This will avoid long
+# periods where the bot just hangs there, waiting for a hostname to
+# resolve, which often let it timeout on all other connections.
+#loadmodule dns
+
 
 #### CHANNELS MODULE #####
 

@@ -61,6 +61,9 @@ dcc.o: dcc.c
 dccutil.o: dccutil.c
 	${CC} ${CFLAGS} dccutil.c
 
+dns.o: dns.c
+	${CC} ${CFLAGS} dns.c
+
 flags.o: flags.c
 	${CC} ${CFLAGS} flags.c
 
@@ -147,6 +150,8 @@ dccutil.o: \
    chan.h \
    modules.h \
    tandem.h
+dns.o: \
+   main.h
 flags.o: \
    main.h
 language.o: \

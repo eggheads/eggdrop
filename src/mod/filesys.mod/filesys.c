@@ -558,13 +558,16 @@ static struct dcc_table DCC_FILES_PASS =
   out_dcc_files
 };
 
+
+static void filesys_dcc_send_lookupfailure(int);
+static void filesys_dcc_send_lookupsuccess(int);
+	
 /* received a ctcp-dcc */
 static void filesys_dcc_send(char *nick, char *from, struct userrec *u,
 			     char *text)
 {
-  char *param, *ip, *prt, buf[512], s1[512], *msg = buf;
-  FILE *f;
-  int atr = u ? u->flags : 0, i, j;
+  char *param, *ip, *prt, buf[512], *msg = buf;
+  int atr = u ? u->flags : 0, i;
 
   context;
   strcpy(buf, text);
@@ -607,25 +610,62 @@ static void filesys_dcc_send(char *nick, char *from, struct userrec *u,
       /* This looks like a good place for a sanity check. */
       if (!sanitycheck_dcc(nick, from, ip, prt))
 	return;
-      i = new_dcc(&DCC_FORK_SEND, sizeof(struct xfer_info));
+      i = new_dcc(&DCC_DNSWAIT, sizeof(struct dns_info));
 
       if (i < 0) {
 	dprintf(DP_HELP, "NOTICE %s :Sorry, too many DCC connections.\n",
 		nick);
 	putlog(LOG_MISC, "*", "DCC connections full: SEND %s (%s!%s)",
 	       param, nick, from);
+	return;
       }
       dcc[i].addr = my_atoul(ip);
       dcc[i].port = atoi(prt);
       dcc[i].sock = -1;
+      dcc[i].user = u;
       strcpy(dcc[i].nick, nick);
       strcpy(dcc[i].host, from);
+      dcc[i].u.dns->cbuf = get_data_ptr(strlen(param) + 1);
+      strcpy(dcc[i].u.dns->cbuf, param);
+      dcc[i].u.dns->ibuf = atoi(msg);
+      dcc[i].u.dns->ip = dcc[i].addr;
+      dcc[i].u.dns->dns_type = RES_HOSTBYIP;
+      dcc[i].u.dns->dns_success = (Function) filesys_dcc_send_lookupsuccess;
+      dcc[i].u.dns->dns_failure = (Function) filesys_dcc_send_lookupfailure;
+      
+      dns_hostbyip(dcc[i].addr);
+    }
+  }
+}
+
+static void filesys_dcc_send_lookupfailure(int i)
+{
+    putlog(LOG_DEBUG, "*", "Reverse lookup failed for %s",
+           iptostr(my_htonl(dcc[i].addr)));
+    lostdcc(i);
+}
+
+static void filesys_dcc_send_lookupsuccess(int i)
+{
+  FILE *f;
+  char s1[512], param[512];
+  int len = dcc[i].u.dns->ibuf, j;
+
+  strncpy(param, dcc[i].u.dns->cbuf, 511);
+  sprintf(s1, "%d", dcc[i].port);
+  if (!hostsanitycheck_dcc(dcc[i].nick, dcc[i].host, dcc[i].addr,
+                           dcc[i].u.dns->host, s1)) {
+    lostdcc(i);
+    return;
+  }
+
+  changeover_dcc(i, &DCC_FORK_SEND, sizeof(struct xfer_info));
       if (param[0] == '.')
 	param[0] = '_';
       strncpy(dcc[i].u.xfer->filename, param, 120);
       dcc[i].u.xfer->filename[120] = 0;
       if (upload_to_cd) {
-	char *p = get_user(&USERENTRY_DCCDIR, u);
+    char *p = get_user(&USERENTRY_DCCDIR, dcc[i].user);
 
 	if (p)
 	  sprintf(dcc[i].u.xfer->dir, "%s%s/", dccdir, p);
@@ -633,13 +673,13 @@ static void filesys_dcc_send(char *nick, char *from, struct userrec *u,
 	  sprintf(dcc[i].u.xfer->dir, "%s", dccdir);
       } else
 	strcpy(dcc[i].u.xfer->dir, dccin);
-      dcc[i].u.xfer->length = atoi(msg);
+  dcc[i].u.xfer->length = len;
       sprintf(s1, "%s%s", dcc[i].u.xfer->dir, param);
       context;      
       f = fopen(s1, "r");
       if (f) {
 	fclose(f);
-	dprintf(DP_HELP, "NOTICE %s :That file already exists.\n", nick);
+    dprintf(DP_HELP, "NOTICE %s :That file already exists.\n", dcc[i].nick);
 	lostdcc(i);
       } else {
 	/* check for dcc-sends in process with the same filename */
@@ -648,8 +688,8 @@ static void filesys_dcc_send(char *nick, char *from, struct userrec *u,
 	    if ((dcc[j].type->flags & (DCT_FILETRAN | DCT_FILESEND))
 		== (DCT_FILETRAN | DCT_FILESEND)) {
 	      if (!strcmp(param, dcc[j].u.xfer->filename)) {
-		dprintf(DP_HELP,
-		  "NOTICE %s :That file is already being sent.\n", nick);
+	    dprintf(DP_HELP, "NOTICE %s :That file is already being sent.\n",
+		    dcc[i].nick);
 		lostdcc(i);
 		return;
 	      }
@@ -661,15 +701,17 @@ static void filesys_dcc_send(char *nick, char *from, struct userrec *u,
 	if (dcc[i].u.xfer->f == NULL) {
 	  dprintf(DP_HELP,
 		  "NOTICE %s :Can't create that file (temp dir error)\n",
-		  nick);
+	      dcc[i].nick);
 	  lostdcc(i);
 	} else {
+      char prt[100], ip[100];
+
 	  dcc[i].timeval = now;
 	  dcc[i].sock = getsock(SOCK_BINARY);
+      sprintf(prt, "%d", dcc[i].port);
+      sprintf(ip, "%lu", iptolong(my_ntohl(dcc[i].addr)));
 	  if (open_telnet_dcc(dcc[i].sock, ip, prt) < 0) {
 	    dcc[i].type->eof(i);
-	  }
-	}
       }
     }
   }

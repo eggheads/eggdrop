@@ -44,7 +44,7 @@
 extern struct dcc_table DCC_CHAT, DCC_BOT, DCC_LOST, DCC_SCRIPT, DCC_BOT_NEW,
  DCC_RELAY, DCC_RELAYING, DCC_FORK_RELAY, DCC_PRE_RELAY, DCC_CHAT_PASS,
  DCC_FORK_BOT, DCC_SOCKET, DCC_TELNET_ID, DCC_TELNET_NEW, DCC_TELNET_PW,
- DCC_TELNET, DCC_IDENT, DCC_IDENTWAIT;
+ DCC_TELNET, DCC_IDENT, DCC_IDENTWAIT, DCC_DNSWAIT;
 
 #endif
 
@@ -60,6 +60,11 @@ extern struct dcc_table DCC_CHAT, DCC_BOT, DCC_LOST, DCC_SCRIPT, DCC_BOT_NEW,
 #endif
 #define iptolong(a) (0xffffffff & (long)(swap_long((unsigned long)a)))
 #define fixcolon(x) if (x[0]==':') {x++;} else {x=newsplit(&x);}
+
+#define my_ntohs(sh) swap_short(sh)
+#define my_htons(sh) swap_short(sh)
+#define my_ntohl(ln) swap_long(ln)
+#define my_htonl(ln) swap_long(ln)
 
 /* Stupid Borg Cube crap ;p */
 #ifdef BORGCUBES

@@ -14,7 +14,7 @@ modules: ../../../${FILENAME}.so
 static: ../${FILENAME}.o
 	
 ../../../${FILENAME}.so: ${FILENAME}.o
-	${LD} -o ../../../${FILENAME}.so ${FILENAME}.o
+	${LD} ${LDFLAGS} -o ../../../${FILENAME}.so ${FILENAME}.o
 	${STRIP} ../../../${FILENAME}.so
        
 ${FILENAME}.o: ${FILENAME}.c ../module.h ../modvals.h ../../eggdrop.h

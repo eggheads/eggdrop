@@ -250,6 +250,14 @@ else
   fi
 fi
 
+AC_CHECK_FUNC(res_init, ,
+  AC_CHECK_LIB(bind, res_init, RESLIB="-lbind",
+   AC_CHECK_LIB(resolv, res_init, RESLIB="-lresolv", AC_MSG_ERROR(No resolver library found))))
+
+AC_CHECK_FUNC(res_mkquery, ,
+  AC_CHECK_LIB(bind, res_mkquery, RESLIB="-lbind",
+   AC_CHECK_LIB(resolv, res_mkquery, RESLIB="-lresolv", AC_MSG_ERROR(No resolver library found))))
+
 AC_C_BIGENDIAN
 AC_CHECK_SIZEOF(long,0)
 AC_CHECK_SIZEOF(int,0)
@@ -599,6 +607,7 @@ AC_SUBST(CP2)
 AC_SUBST(CP3)
 AC_SUBST(EGGEXEC)
 AC_SUBST(CC)
+AC_SUBST(RESLIB)
 AC_SUBST(SHLIB_LD)
 AC_SUBST(SHLIB_CC)
 AC_SUBST(SHLIB_STRIP)

@@ -322,6 +322,17 @@
 /* 232 - 235 */
 #define contextnote(note) (global[232](MODULE_NAME, __FILE__, __LINE__, note))
 #define assert_failed (global[233])
+#define allocsock ((int(*)(int sock,int options))global[234])
+#define call_hostbyip ((void(*)(IP, char *, int))global[235])
+/* 236 - 239 */
+#define call_ipbyhost ((void(*)(char *, IP, int))global[236])
+#define iptostr ((char *(*)(IP))global[237])
+#define DCC_DNSWAIT (*(struct dcc_table *)(global[238]))
+#define hostsanitycheck_dcc ((int(*)(char *, char *, IP, char *, char *))global[239])
+/* 240 - 243 */
+#define dns_ipbyhost ((void (*)(char *))(*(Function**)(global[240])))
+#define dns_hostbyip ((void (*)(IP))(*(Function**)(global[241])))
+#define changeover_dcc ((void (*)(int, struct dcc_table *, int))global[242])
 
 #define ASSERT(expr) { if (!(expr)) assert_failed (MODULE_NAME, __FILE__, __LINE__); }
 

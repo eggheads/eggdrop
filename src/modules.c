@@ -128,7 +128,6 @@ static void null_share(int idx, char *x)
     dprintf(idx, "s un Not sharing userfile.\n");
 }
 
-/* these are obscure ones that I hope to neaten eventually :/ */
 void (*encrypt_pass) (char *, char *) = 0;
 void (*shareout) () = null_func;
 void (*sharein) (int, char *) = null_share;
@@ -139,6 +138,8 @@ int (*rfc_casecmp) (const char *, const char *) = _rfc_casecmp;
 int (*rfc_ncasecmp) (const char *, const char *, int) = _rfc_ncasecmp;
 int (*rfc_toupper) (int) = _rfc_toupper;
 int (*rfc_tolower) (int) = _rfc_tolower;
+void (*dns_hostbyip) (IP) = block_dns_hostbyip;
+void (*dns_ipbyhost) (char *) = block_dns_ipbyhost;
 
 module_entry *module_list;
 dependancy *dependancy_list = NULL;
@@ -467,6 +468,17 @@ Function global_table[] =
   /* 232 - 235 */
   (Function) mod_contextnote,
   (Function) assert_failed,
+  (Function) allocsock,
+  (Function) call_hostbyip,
+  /* 236 - 239 */
+  (Function) call_ipbyhost,
+  (Function) iptostr,
+  (Function) & DCC_DNSWAIT,	/* struct dcc_table * */
+  (Function) hostsanitycheck_dcc,
+  /* 240 - 243 */
+  (Function) & dns_ipbyhost,	/* Function * */
+  (Function) & dns_hostbyip,	/* Function * */
+  (Function) changeover_dcc,  
 };
 
 void init_modules(void)
@@ -899,6 +911,14 @@ void add_hook(int hook_num, void *func)
       if (match_noterej == false_func)
 	match_noterej = func;
       break;
+    case HOOK_DNS_HOSTBYIP:
+      if (dns_hostbyip == block_dns_hostbyip)
+	dns_hostbyip = func;
+      break;
+    case HOOK_DNS_IPBYHOST:
+      if (dns_ipbyhost == block_dns_ipbyhost)
+	dns_ipbyhost = func;
+      break;
     }
 }
 
@@ -945,6 +965,14 @@ void del_hook(int hook_num, void *func)
     case HOOK_MATCH_NOTEREJ:
       if (match_noterej == func)
 	match_noterej = false_func;
+      break;
+    case HOOK_DNS_HOSTBYIP:
+      if (dns_hostbyip == func)
+	dns_hostbyip = block_dns_hostbyip;
+      break;
+    case HOOK_DNS_IPBYHOST:
+      if (dns_ipbyhost == func)
+	dns_ipbyhost = block_dns_ipbyhost;
       break;
     }
 }

@@ -65,11 +65,6 @@ IP my_atoul(char *s)
   return ret;
 }
 
-#define my_ntohs(sh) swap_short(sh)
-#define my_htons(sh) swap_short(sh)
-#define my_ntohl(ln) swap_long(ln)
-#define my_htonl(ln) swap_long(ln)
-
 /* i read somewhere that memcpy() is broken on some machines */
 /* it's easy to replace, so i'm not gonna take any chances, because
  * it's pretty important that it work correctly here */
@@ -214,12 +209,12 @@ void neterror(char *s)
   }
 }
 
-/* request a normal socket for i/o */
-void setsock(int sock, int options)
+/* return a free entry in the socket entry */
+int allocsock(int sock, int options)
 {
   int i;
-  int parm;
 
+  context;
   for (i = 0; i < MAXSOCKS; i++) {
     if (socklist[i].flags & SOCK_UNUSED) {
       /* yay!  there is table space */
@@ -227,11 +222,23 @@ void setsock(int sock, int options)
       socklist[i].outbuflen = 0;
       socklist[i].flags = options;
       socklist[i].sock = sock;
+      return i;
+    }
+  }
+  fatal("Socket table is full!", 0);
+  return -1; /* never reached */
+}
+
+/* request a normal socket for i/o */
+void setsock(int sock, int options)
+{
+  int i = allocsock(sock, options);
+  int parm;
+
       if (((sock != STDOUT) || backgrd) &&
 	  !(socklist[i].flags & SOCK_NONSOCK)) {
 	parm = 1;
-	setsockopt(sock, SOL_SOCKET, SO_KEEPALIVE, (void *) &parm,
-		   sizeof(int));
+    setsockopt(sock, SOL_SOCKET, SO_KEEPALIVE, (void *) &parm, sizeof(int));
 
 	parm = 0;
 	setsockopt(sock, SOL_SOCKET, SO_LINGER, (void *) &parm, sizeof(int));
@@ -244,10 +251,6 @@ void setsock(int sock, int options)
       }
       /* yay async i/o ! */
       fcntl(sock, F_SETFL, O_NONBLOCK);
-      return;
-    }
-  }
-  fatal("Socket table is full!", 0);
 }
 
 int getsock(int options)
@@ -328,6 +331,11 @@ static int proxy_connect(int sock, char *host, int port, int proxy)
 }
 
 /* starts a connection attempt to a socket
+ *
+ * If given a normal hostname, this will be resolved to the corresponding
+ * IP address first. PLEASE try to use the non-blocking dns functions
+ * instead and then call this function with the IP address to avoid blocking.
+ *
  * returns <0 if connection refused:
  *   -1  neterror() type error
  *   -2  can't resolve hostname */
@@ -372,6 +380,7 @@ int open_telnet_raw(int sock, char *server, int sport)
     name.sin_addr.s_addr = inet_addr(host);
   else {
     /* no, must be host.domain */
+    debug0("Warning: open_telnet_raw() is about to block in gethostbyname()!");
     if (!setjmp(alarmret)) {
       alarm(resolve_timeout);
       hp = gethostbyname(host);
@@ -450,14 +459,17 @@ int open_listen(int *port)
   return sock;
 }
 
-/* given network-style IP address, return hostname */
-/* hostname will be "##.##.##.##" format if there was an error */
+/* Given a network-style IP address, returns the hostname. The hostname
+ * will be in the "##.##.##.##" format if there was an error.
+ * 
+ * NOTE: This function is depreciated. Try using the async dns approach
+ *       instead. */
 char *hostnamefromip(unsigned long ip)
 {
   struct hostent *hp;
   unsigned long addr = ip;
   unsigned char *p;
-  static char s[121];
+  static char s[UHOSTLEN];
 
   if (!setjmp(alarmret)) {
     alarm(resolve_timeout);
@@ -471,9 +483,19 @@ char *hostnamefromip(unsigned long ip)
     sprintf(s, "%u.%u.%u.%u", p[0], p[1], p[2], p[3]);
     return s;
   }
-  strncpy(s, hp->h_name, 120);
-  s[120] = 0;
+  strncpy(s, hp->h_name, UHOSTLEN - 1);
+  s[UHOSTLEN - 1] = 0;
   return s;
+}
+
+/* returns a given network-style IP address as a string in the
+ * "##.##.##.##" format */
+char *iptostr(IP ip)
+{
+  struct in_addr a;
+
+  a.s_addr = ip;
+  return inet_ntoa(a);
 }
 
 /* short routine to answer a connect received on a socket made previously
@@ -484,14 +506,18 @@ int answer(int sock, char *caller, unsigned long *ip,
 {
   int new_sock, addrlen;
   struct sockaddr_in from;
-  addrlen = sizeof(struct sockaddr);
 
+  addrlen = sizeof(struct sockaddr);
   new_sock = accept(sock, (struct sockaddr *) &from, &addrlen);
   if (new_sock < 0)
     return -1;
   if (ip != NULL) {
     *ip = from.sin_addr.s_addr;
-    strncpy(caller, hostnamefromip(*ip), 120);
+    /* This is now done asynchronously. Instead, we just provide the
+     * IP address.
+     * strncpy(caller, hostnamefromip(*ip), 120);
+     */
+    strncpy(caller, iptostr(*ip), 120);
     caller[120] = 0;
     *ip = my_ntohl(*ip);
   }
@@ -589,6 +615,10 @@ static int sockread(char *s, int *len)
 	    *len = 0;
 	    return i;
 	  }
+	} else if (socklist[i].flags & SOCK_PASS) {
+	  s[0] = 0;
+	  *len = 0;
+	  return i;
 	}
 	if ((socklist[i].sock == STDOUT) && !backgrd)
 	  x = read(STDIN, s, grab);
@@ -711,6 +741,7 @@ int sockgets(char *s, int *len)
     return ret;
   }
   /* binary and listening sockets don't get buffered */
+  /* passed on sockets don't get buffered either  (Fabian)*/
   if (socklist[ret].flags & SOCK_CONNECT) {
     if (socklist[ret].flags & SOCK_STRONGCONN) {
       socklist[ret].flags &= ~SOCK_STRONGCONN;
@@ -726,7 +757,8 @@ int sockgets(char *s, int *len)
     my_memcpy(s, xx, *len);
     return socklist[ret].sock;
   }
-  if (socklist[ret].flags & SOCK_LISTEN)
+  if ((socklist[ret].flags & SOCK_LISTEN) ||
+      (socklist[ret].flags & SOCK_PASS))
     return socklist[ret].sock;
   context;
   /* might be necessary to prepend stored-up data! */
@@ -905,6 +937,8 @@ void tell_netdebug(int idx)
 	strcat(s, " (binary)");
       if (socklist[i].flags & SOCK_LISTEN)
 	strcat(s, " (listen)");
+      if (socklist[i].flags & SOCK_PASS)
+	strcat(s, " (passed on)");
       if (socklist[i].flags & SOCK_CONNECT)
 	strcat(s, " (connecting)");
       if (socklist[i].flags & SOCK_STRONGCONN)
@@ -933,7 +967,7 @@ int sanitycheck_dcc(char *nick, char *from, char *ipaddy, char *port)
 {
   /* According to the latest RFC, the clients SHOULD be able to handle
    * DNS names that are up to 255 characters long.  This is not broken.  */
-  char hostname[256], dnsname[256], badaddress[16];
+  char badaddress[16];
   IP ip = my_atoul(ipaddy);
   int prt = atoi(port);
 
@@ -942,23 +976,39 @@ int sanitycheck_dcc(char *nick, char *from, char *ipaddy, char *port)
     return 1;
   context;			/* This should be pretty solid, but
 				 * something _might_ break. */
-  sprintf(badaddress, "%u.%u.%u.%u", (ip >> 24) & 0xff, (ip >> 16) & 0xff,
-	  (ip >> 8) & 0xff, ip & 0xff);
   if (prt < 1) {
     putlog(LOG_MISC, "*", "ALERT: (%s!%s) specified an impossible port of %u!",
 	   nick, from, prt);
     return 0;
   }
+  sprintf(badaddress, "%u.%u.%u.%u", (ip >> 24) & 0xff, (ip >> 16) & 0xff,
+	  (ip >> 8) & 0xff, ip & 0xff);
   if (ip < (1 << 24)) {
     putlog(LOG_MISC, "*", "ALERT: (%s!%s) specified an impossible IP of %s!",
 	   nick, from, badaddress);
     return 0;
   }
+  return 1;
+}
+
+int hostsanitycheck_dcc(char *nick, char *from, IP ip, char *dnsname,
+		        char *prt)
+{
+  /* According to the latest RFC, the clients SHOULD be able to handle
+   * DNS names that are up to 255 characters long.  This is not broken.  */
+  char hostname[256], badaddress[16];
+
+  /* It is disabled HERE so we only have to check in *one* spot! */
+  if (!dcc_sanitycheck)
+    return 1;
+  context;			/* This should be pretty solid, but
+				 * something _might_ break. */
+  sprintf(badaddress, "%u.%u.%u.%u", (ip >> 24) & 0xff, (ip >> 16) & 0xff,
+	  (ip >> 8) & 0xff, ip & 0xff);
   /* These should pad like crazy with zeros, since 120 bytes or so is
    * where the routines providing our data currently lose interest. I'm
    * using the n-variant in case someone changes that... */
   strncpy(hostname, extracthostname(from), 256);
-  strncpy(dnsname, hostnamefromip(my_htonl(ip)), 256);
   if (!strcasecmp(hostname, dnsname)) {
     putlog(LOG_DEBUG, "*", "DNS information for submitted IP checks out.");
     return 1;

@@ -1040,13 +1040,16 @@ static cmd_t my_raw_binds[] =
   {0, 0, 0, 0}
 };
 
+static void server_resolve_success(int);
+static void server_resolve_failure(int);
+
 /* hook up to a server */
 /* works a little differently now... async i/o is your friend */
 static void connect_server(void)
 {
-  char s[121], pass[121], botserver[UHOSTLEN + 1];
+  char pass[121], botserver[UHOSTLEN + 1];
   static int oldserv = -1;
-  int servidx, botserverport;
+  int servidx, botserverport = 0;
 
   waiting_for_awake = 0;
   trying_server = now;
@@ -1063,29 +1066,67 @@ static void connect_server(void)
     newserverport = 0;
     newserverpass[0] = 0;
     oldserv = (-1);
-  }
+  } else
+    pass[0] = 0;
   if (!cycle_time) {
     if (connectserver[0])	/* drummer */
       do_tcl("connect-server", connectserver);
     next_server(&curserv, botserver, &botserverport, pass);
     putlog(LOG_SERV, "*", "%s %s:%d", IRC_SERVERTRY, botserver, botserverport);
-    serv = open_telnet(botserver, botserverport);
+
+    servidx = new_dcc(&DCC_DNSWAIT, sizeof(struct dns_info));
+    dcc[servidx].port = botserverport;
+    strcpy(dcc[servidx].nick, "(server)");
+    strncpy(dcc[servidx].host, botserver, UHOSTLEN);
+    dcc[servidx].host[UHOSTLEN] = 0;
+    dcc[servidx].timeval = now;
+    dcc[servidx].u.dns->host = get_data_ptr(strlen(dcc[servidx].host) + 1);
+    strcpy(dcc[servidx].u.dns->host, dcc[servidx].host);
+    dcc[servidx].u.dns->cbuf = get_data_ptr(strlen(pass) + 1);
+    strcpy(dcc[servidx].u.dns->cbuf, pass);
+    dcc[servidx].u.dns->dns_success = (Function) server_resolve_success;
+    dcc[servidx].u.dns->dns_failure = (Function) server_resolve_failure;
+    dcc[servidx].u.dns->dns_type = RES_IPBYHOST;
+
+    resolvserv = 1;
+    dns_ipbyhost(dcc[servidx].host);
+    if (server_cycle_wait)
+      /* back to 1st server & set wait time */
+      /* put it here, just in case the server quits on us quickly */
+      cycle_time = server_cycle_wait;
+  }
+} 
+
+static void server_resolve_failure(int servidx)
+{
+  serv = -1;
+  resolvserv = 0;
+  putlog(LOG_SERV, "*", "%s %s (%s)", IRC_FAILEDCONNECT, dcc[servidx].host,
+	 IRC_DNSFAILED);
+  lostdcc(servidx);
+}
+
+static void server_resolve_success(int servidx)
+{
+  int oldserv = dcc[servidx].u.dns->ibuf;
+  char s[121], pass[121];
+
+  resolvserv = 0;
+  dcc[servidx].addr = dcc[servidx].u.dns->ip;
+  strcpy(pass, dcc[servidx].u.dns->cbuf);
+  changeover_dcc(servidx, &SERVER_SOCKET, 0);
+  serv = open_telnet(iptostr(my_ntohl(dcc[servidx].addr)),
+				    dcc[servidx].port);
     if (serv < 0) {
-      if (serv == (-2))
-	strcpy(s, IRC_DNSFAILED);
-      else
 	neterror(s);
-      putlog(LOG_SERV, "*", "%s %s (%s)", IRC_FAILEDCONNECT, botserver, s);
+    putlog(LOG_SERV, "*", "%s %s (%s)", IRC_FAILEDCONNECT, dcc[servidx].host,
+	   s);
+    lostdcc(servidx);
       if ((oldserv == curserv) && !(never_give_up))
 	fatal("NO SERVERS WILL ACCEPT MY CONNECTION.", 0);
     } else {
-      /* queue standard login */
-      servidx = new_dcc(&SERVER_SOCKET, 0);
       dcc[servidx].sock = serv;
-      dcc[servidx].port = botserverport;
-      strcpy(dcc[servidx].nick, "(server)");
-      strncpy(dcc[servidx].host, botserver, UHOSTLEN);
-      dcc[servidx].host[UHOSTLEN] = 0;
+    /* queue standard login */
       dcc[servidx].timeval = now;
       SERVER_SOCKET.timeout_val = &server_timeout;
       strcpy(botname, origbotname);
@@ -1094,14 +1135,9 @@ static void connect_server(void)
       if (pass[0])
 	dprintf(DP_MODE, "PASS %s\n", pass);
       dprintf(DP_MODE, "USER %s %s %s :%s\n",
-	      botuser, bothost, botserver, botrealname);
+	    botuser, bothost, dcc[servidx].host, botrealname);
       cycle_time = 0;
       /* We join channels AFTER getting the 001 -Wild */
       /* wait for async result now */
-    }
-    if (server_cycle_wait)
-      /* back to 1st server & set wait time */
-      /* put it here, just in case the server quits on us quickly */
-      cycle_time = server_cycle_wait;
   }
 }

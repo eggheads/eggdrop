@@ -62,6 +62,7 @@ static int net_type;
 static int must_be_owner;	/* arthur2 */
 static char connectserver[121];	/* what, if anything, to do before connect
 				 * to the server */
+static int resolvserv = 0;	/* in the process of resolving a server host */
 
 /* allow a msgs being twice in a queue ? */
 static int double_mode;
@@ -697,16 +698,17 @@ static char *tcl_eggserver(ClientData cdata, Tcl_Interp * irp, char *name1,
   Tcl_UntraceVar(interp,name,TCL_TRACE_READS|TCL_TRACE_WRITES|TCL_TRACE_UNSETS, \
 	       tcl_eggserver,(ClientData)ptr)
 
+static void dcc_chat_failure(int);
+static void dcc_chat_success(int);
 
 /* this only handles CHAT requests, otherwise it's handled in filesys */
 static int ctcp_DCC_CHAT(char *nick, char *from, char *handle,
 			 char *object, char *keyword, char *text)
 {
   char *action, *param, *ip, *prt, buf[512], *msg = buf;
-  int i, sock;
+  int i;
   struct userrec *u = get_user_by_handle(userlist, handle);
-  struct flag_record fr =
-  {FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0};
+  struct flag_record fr = {FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0};
 
   strcpy(msg, text);
   action = newsplit(&msg);
@@ -741,36 +743,74 @@ static int ctcp_DCC_CHAT(char *nick, char *from, char *handle,
   } else {
     if (!sanitycheck_dcc(nick, from, ip, prt))
       return 1;
-    sock = getsock(0);
-    if (open_telnet_dcc(sock, ip, prt) < 0) {
+    i = new_dcc(&DCC_DNSWAIT, sizeof(struct dns_info));
+
+    if (i < 0) {
+      putlog(LOG_MISC, "*", "DCC connection: CHAT (%s!%s)", dcc[i].nick, ip);
+      return 1;
+    }
+    dcc[i].addr = my_atoul(ip);
+    dcc[i].port = atoi(prt);
+    dcc[i].sock = -1;
+    strcpy(dcc[i].nick, u->handle);
+    strcpy(dcc[i].host, from);
+    dcc[i].timeval = now;
+    dcc[i].user = u;
+    dcc[i].u.dns->ip = dcc[i].addr;
+    dcc[i].u.dns->dns_type = RES_HOSTBYIP;
+    dcc[i].u.dns->dns_success = (Function) dcc_chat_success;
+    dcc[i].u.dns->dns_failure = (Function) dcc_chat_failure;
+
+    dns_hostbyip(dcc[i].addr);
+  }
+  return 1;
+}
+
+static void dcc_chat_failure(int i)
+{
+  putlog(LOG_DEBUG, "*", "Reverse lookup failed %s",
+	 iptostr(my_htonl(dcc[i].addr)));
+  lostdcc(i);
+}
+
+static void dcc_chat_success(int i)
+{
+  char buf[512], ip[512];
+  struct flag_record fr = {FR_GLOBAL | FR_CHAN | FR_ANYWH, 0, 0, 0, 0, 0};
+
+  sprintf(buf, "%d", dcc[i].port);
+  if (!hostsanitycheck_dcc(dcc[i].nick, dcc[i].host, dcc[i].addr,
+			  dcc[i].u.dns->host, buf)) {
+    lostdcc(i);
+    return;
+  }
+
+  dcc[i].sock = getsock(0);
+  sprintf(ip, "%lu", iptolong(my_ntohl(dcc[i].addr)));
+  if (open_telnet_dcc(dcc[i].sock, ip, buf) < 0) {
       neterror(buf);
       if(!quiet_reject)
-	dprintf(DP_HELP, "NOTICE %s :%s (%s)\n", nick,
+      dprintf(DP_HELP, "NOTICE %s :%s (%s)\n", dcc[i].nick,
 		DCC_CONNECTFAILED1, buf);
       putlog(LOG_MISC, "*", "%s: CHAT (%s!%s)", DCC_CONNECTFAILED2,
-	     nick, from);
+	   dcc[i].nick, dcc[i].host);
       putlog(LOG_MISC, "*", "    (%s)", buf);
-      killsock(sock);
+    killsock(dcc[i].sock);
+    lostdcc(i);
     } else {
-      i = new_dcc(&DCC_CHAT_PASS, sizeof(struct chat_info));
-
-      dcc[i].addr = my_atoul(ip);
-      dcc[i].port = atoi(prt);
-      dcc[i].sock = sock;
-      strcpy(dcc[i].nick, u->handle);
-      strcpy(dcc[i].host, from);
+    changeover_dcc(i, &DCC_CHAT_PASS, sizeof(struct chat_info));
       dcc[i].status = STAT_ECHO;
+    get_user_flagrec(dcc[i].user, &fr, 0);
       if (glob_party(fr))
 	dcc[i].status |= STAT_PARTY;
       strcpy(dcc[i].u.chat->con_chan, chanset ? chanset->name : "*");
       dcc[i].timeval = now;
-      dcc[i].user = u;
       /* ok, we're satisfied with them now: attempt the connect */
-      putlog(LOG_MISC, "*", "DCC connection: CHAT (%s!%s)", nick, from);
+    putlog(LOG_MISC, "*", "DCC connection: CHAT (%s!%s)", dcc[i].nick,
+	   dcc[i].host);
       dprintf(i, "%s\n", DCC_ENTERPASS);
     }
-  }
-  return 1;
+  return;
 }
 
 static void server_secondly()
@@ -778,7 +818,7 @@ static void server_secondly()
   if (cycle_time)
     cycle_time--;
   deq_msg();
-  if (serv < 0)
+  if (!resolvserv && serv < 0)
     connect_server();
 }
 
