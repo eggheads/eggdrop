@@ -7,7 +7,7 @@
  *   telling the current programmed settings
  *   initializing a lot of stuff and loading the tcl scripts
  *
- * $Id: chanprog.c,v 1.50 2004/02/25 23:08:12 stdarg Exp $
+ * $Id: chanprog.c,v 1.51 2004/04/06 07:15:18 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -654,38 +654,31 @@ void list_timers(Tcl_Interp *irp, tcl_timer_t *stack)
   }
 }
 
-/* Oddly enough, written by proton (Emech's coder)
+/* Oddly enough, written by Sup (former(?) Eggdrop coder)
  */
 int isowner(char *name)
 {
-  char *pa, *pb;
-  char nl, pl;
+  register char *ptr = NULL, *s = NULL, *n = NULL;
 
-  if (!owner || !*owner)
+  if (!owner || !name)
     return 0;
 
-  if (!name || !*name)
-    return 0;
+  ptr = owner - 1;
 
-  nl = strlen(name);
-  pa = owner;
-  pb = owner;
-  while (1) {
-    while (1) {
-      if ((*pb == 0) || (*pb == ',') || (*pb == ' '))
-        break;
-      pb++;
+  do {
+    ptr++;
+    if (*ptr && !egg_isspace(*ptr) && *ptr != ',') {
+      if (!s)
+        s = ptr;
+    } else if (s) {
+      for (n = name; *n && *s && s < ptr && tolower(*n) == tolower(*s); n++, s++);
+
+      if (s == ptr && !*n)
+        return 1;
+
+      s = NULL;
     }
-    pl = (unsigned int) pb - (unsigned int) pa;
-    if (pl == nl && !egg_strncasecmp(pa, name, nl))
-      return 1;
-    while (1) {
-      if ((*pb == 0) || ((*pb != ',') && (*pb != ' ')))
-        break;
-      pb++;
-    }
-    if (*pb == 0)
-      return 0;
-    pa = pb;
-  }
+  } while (*ptr);
+
+  return 0;
 }
