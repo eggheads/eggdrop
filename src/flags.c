@@ -671,7 +671,7 @@ void get_user_flagrec(struct userrec *u, struct flag_record *fr,
 	for (cr = u->chanrec; cr; cr = cr->next)
 	  if (!rfc_casecmp(chname, cr->channel))
 	    break;
-      if (chname && cr) {
+      if (cr) {
 	fr->chan = cr->flags;
 	fr->udef_chan = cr->flags_udef;
       } else {

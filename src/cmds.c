@@ -1388,8 +1388,7 @@ int check_dcc_chanattrs(struct userrec *u, char *chname, int chflags,
 	   (!(chflags & (USER_OP | USER_MASTER | USER_OWNER)))) ||
 	  ((chflags & (USER_OP | USER_MASTER | USER_OWNER)) &&
 	   (!(ochatr & (USER_OP | USER_MASTER | USER_OWNER))))) {
-	struct flag_record fr =
-	{FR_CHAN, 0, 0, 0, 0, 0};
+	struct flag_record fr = {FR_CHAN, 0, 0, 0, 0, 0};
 
 	while (chan && !found) {
 	  get_user_flagrec(u, &fr, chan->dname);
@@ -1476,8 +1475,8 @@ static void cmd_chattr(struct userrec *u, int idx, char *par)
     } else if (arg && !strpbrk(chg, "&|")) {
       context;
       tmpchg = nmalloc(strlen(chg) + 2);
-      strcpy (tmpchg, "|");
-      strcat (tmpchg, chg);
+      strcpy(tmpchg, "|");
+      strcat(tmpchg, chg);
       chg = tmpchg;
     }
   }

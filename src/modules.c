@@ -422,7 +422,7 @@ Function global_table[] =
   (Function) & USERENTRY_PASS,
   /* 192 - 195 */
   (Function) & USERENTRY_XTRA,
-  (Function) null_func,				/* EMPTY */
+  (Function) user_del_chan,
   (Function) & USERENTRY_INFO,
   (Function) & USERENTRY_COMMENT,
   /* 196 - 199 */
