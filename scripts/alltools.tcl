@@ -17,7 +17,7 @@
 # Sup       02Apr2001: added matchbotattr
 # Tothwolf  13Jun2001: updated/modified several commands
 #
-# $Id: alltools.tcl,v 1.7 2001/06/14 00:15:21 tothwolf Exp $
+# $Id: alltools.tcl,v 1.8 2001/06/14 00:19:14 tothwolf Exp $
 #
 ########################################
 # Descriptions of avaliable commands:
@@ -204,7 +204,7 @@ proc utimerexists {command} {
 }
 
 proc inchain {bot} {
-  islinked $bot
+  return [islinked $bot]
 }
 
 proc randstring {length {chars abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789}} {
@@ -250,19 +250,19 @@ proc killdccbut {idx} {
 #
 
 proc iso {nick chan} {
-  matchattr [nick2hand $nick $chan] o|o $chan
+  return [matchattr [nick2hand $nick $chan] o|o $chan]
 }
 
 proc realtime {args} {
   switch -exact -- [lindex $args 0] {
     time {
-      strftime "%H:%M"
+      return [strftime %H:%M]
     }
     date {
-      strftime "%d %b %Y"
+      return [strftime "%d %b %Y"]
     }
     default {
-      strftime "%I:%M %P"
+      return [strftime "%I:%M %P"]
     }
   }
 }
