@@ -1,7 +1,7 @@
 /* 
  * share.c -- part of share.mod
  * 
- * $Id: share.c,v 1.38 2000/09/09 17:29:08 fabian Exp $
+ * $Id: share.c,v 1.39 2000/09/09 17:30:31 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1774,40 +1774,35 @@ static void finish_share(int idx)
 static void start_sending_users(int idx)
 {
   struct userrec *u;
-  char s[1024], s1[64];
+  char share_file[1024], s1[64];
   int i = 1;
   struct chanuserrec *ch;
   struct chanset_t *cst;
 
   Context;
-  sprintf(s, ".share.%s.%lu", dcc[idx].nick, now);
-  Context;
+  egg_snprintf(share_file, sizeof share_file, ".share.%s.%lu", dcc[idx].nick,
+	       now);
   if (dcc[idx].u.bot->uff_flags & UFF_OVERRIDE) {
     debug1("NOTE: Sharing aggressively with %s, overriding its local bots.",
 	   dcc[idx].nick);
     u = dup_userlist(2);		/* All entries		*/
   } else
     u = dup_userlist(0);		/* Only non-bots	*/
-  write_tmp_userfile(s, u, idx);
-  Context;
+  write_tmp_userfile(share_file, u, idx);
   clear_userlist(u);
 
-  Context;
-  if (!uff_call_sending(idx, s)) {
-    Context;
-    unlink(s);
+  if (!uff_call_sending(idx, share_file)) {
+    unlink(share_file);
     dprintf(idx, "s e %s\n", "uff parsing failed");
     putlog(LOG_BOTS, "*", "uff parsing failed");
     dcc[idx].status &= ~(STAT_SHARE | STAT_SENDING | STAT_AGGRESSIVE);
+    Context;
     return;
   }
 
-  Context;
-  if ((i = raw_dcc_send(s, "*users", "(users)", s)) > 0) {
-    unlink(s);
-    Context;
+  if ((i = raw_dcc_send(share_file, "*users", "(users)", share_file)) > 0) {
+    unlink(share_file);
     dprintf(idx, "s e %s\n", USERF_CANTSEND);
-    Context;
     putlog(LOG_BOTS, "*", "%s -- can't send userfile",
 	   i == DCCSEND_FULL   ? "NO MORE DCC CONNECTIONS" :
 	   i == DCCSEND_NOSOCK ? "CAN'T OPEN A LISTENING SOCKET" :
@@ -1815,12 +1810,10 @@ static void start_sending_users(int idx)
 	   i == DCCSEND_FEMPTY ? "EMPTY FILE" : "UNKNOWN REASON!");
     dcc[idx].status &= ~(STAT_SHARE | STAT_SENDING | STAT_AGGRESSIVE);
   } else {
-    Context;
     updatebot(-1, dcc[idx].nick, '+', 0);
     dcc[idx].status |= STAT_SENDING;
     i = dcc_total - 1;
     strcpy(dcc[i].host, dcc[idx].nick);		/* Store bot's nick */
-    Context;
     dprintf(idx, "s us %lu %d %lu\n",
 	    iptolong(natip[0] ? (IP) inet_addr(natip) : getmyip()),
 	    dcc[i].port, dcc[i].u.xfer->length);
@@ -1835,26 +1828,26 @@ static void start_sending_users(int idx)
       for (u = userlist; u; u = u->next) {
         if ((u->flags & USER_BOT) && !(u->flags & USER_UNSHARED)) {
 	  struct bot_addr *bi = get_user(&USERENTRY_BOTADDR, u);
-	  struct list_type *t = get_user(&USERENTRY_HOSTS, u);
+	  struct list_type *t;
+	  char s2[1024];
 
 	  /* Send hostmasks */
-	  for (; t; t = t->next) {
-	    simple_sprintf(s, "s +bh %s %s\n", u->handle, t->extra);
-	    q_tbuf(dcc[idx].nick, s, NULL);
+	  for (t = get_user(&USERENTRY_HOSTS, u); t; t = t->next) {
+	    egg_snprintf(s2, sizeof s2, "s +bh %s %s\n", u->handle, t->extra);
+	    q_tbuf(dcc[idx].nick, s2, NULL);
 	  }
 	  /* Send address */
 	  if (bi)
-	    simple_sprintf(s, "s c BOTADDR %s %s %d %d\n", u->handle,
-			   bi->address, bi->telnet_port, bi->relay_port);
-	  q_tbuf(dcc[idx].nick, s, NULL);
+	    egg_snprintf(s2, sizeof s2, "s c BOTADDR %s %s %d %d\n", u->handle,
+			 bi->address, bi->telnet_port, bi->relay_port);
+	  q_tbuf(dcc[idx].nick, s2, NULL);
 	  fr.match = FR_GLOBAL;
 	  fr.global = u->flags;
 
 	  fr.udef_global = u->flags_udef;
 	  build_flags(s1, &fr, NULL);
-	  simple_sprintf(s, "s a %s %s\n", u->handle, s1);
-	  q_tbuf(dcc[idx].nick, s, NULL);
-	  Context;
+	  egg_snprintf(s2, sizeof s2, "s a %s %s\n", u->handle, s1);
+	  q_tbuf(dcc[idx].nick, s2, NULL);
 	  for (ch = u->chanrec; ch; ch = ch->next) {
 	    if ((ch->flags & ~BOT_SHARE) &&
 		((cst = findchan_by_dname(ch->channel)) &&
@@ -1866,9 +1859,9 @@ static void start_sending_users(int idx)
 	        fr.chan = ch->flags & ~BOT_SHARE;
 	        fr.udef_chan = ch->flags_udef;
 	        build_flags(s1, &fr, NULL);
-	        simple_sprintf(s, "s a %s %s %s\n", u->handle, s1, ch->channel);
-	        q_tbuf(dcc[idx].nick, s, cst);
-	        Context;
+	        egg_snprintf(s2, sizeof s2, "s a %s %s %s\n", u->handle, s1,
+			     ch->channel);
+	        q_tbuf(dcc[idx].nick, s2, cst);
 	      }
 	    }
 	  }
@@ -1876,11 +1869,12 @@ static void start_sending_users(int idx)
       }
     }
     q_tbuf(dcc[idx].nick, "s !\n", NULL);
-    /* Wish could unlink the file here to avoid possibly leaving it lying
-     * around, but that messes up NFS clients.
+    /* Unlink the file. We don't really care whether this causes problems
+     * for NFS setups. It's not worth the trouble.
      */
-    Context;
+    unlink(share_file);
   }
+  Context;
 }
 
 static void (*def_dcc_bot_kill) (int, void *) = 0;
