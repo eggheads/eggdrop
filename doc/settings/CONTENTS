@@ -1,0 +1,58 @@
+Contents of the doc/settings/ directory:
+
+core.settings
+  All module-independent eggdrop settings are documented here.
+
+mod.assoc
+  Documentation for the assoc module is provided in this file.
+
+mod.blowfish
+  Documentation for the blowfish module is provided in this file.
+
+mod.channels
+  Documentation for the channels module is provided in this file.
+
+mod.compress
+  Documentation for the compress module is provided in this file.
+
+mod.console
+  Documentation for the console module is provided in this file.
+
+mod.ctcp
+  Documentation for the ctcp module is provided in this file.
+
+mod.dns
+  Documentation for the dns module is provided in this file.
+
+mod.filesys
+  Documentation for the filesys module is provided in this file.
+
+mod.irc
+  Documentation for the irc module is provided in this file.
+
+mod.notes
+  Documentation for the notes module is provided in this file.
+
+mod.seen
+  Documentation for the seen module is provided in this file.
+
+mod.server
+  Documentation for the server module is provided in this file.
+
+mod.share
+  Documentation for the share module is provided in this file.
+
+mod.transfer
+  Documentation for the transfer module is provided in this file.
+
+mod.uptime
+  Documentation for the uptime module is provided in this file.
+
+mod.wire
+  Documentation for the wire module is provided in this file.
+
+mod.woobie
+  Documentation for the woobie module is provided in this file.
+
+tricks
+  This document contains tweaking tips for your config file.
