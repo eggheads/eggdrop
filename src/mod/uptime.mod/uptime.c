@@ -1,6 +1,6 @@
 /* Original Copyright (c) 2000-2001 proton
  * 
- * $Id: uptime.c,v 1.10 2001/08/23 00:40:18 poptix Exp $
+ * $Id: uptime.c,v 1.11 2001/10/03 15:58:07 poptix Exp $
  * Borrowed from Emech, reports to http://uptime.energymech.net, feel free to opt out if you
  * dont like it by not loading the module.
  * 
@@ -161,7 +161,6 @@ int send_uptime(void)
 			return -2;
 	}
 	len = sizeof(upPack) + strlen(botnetnick) + strlen(s) + strlen(uptime_version);
-	putlog(LOG_DEBUG, "*", "len = %d",len);
 	mem = (PackUp*)nmalloc(len);
 	memcpy(mem,&upPack,sizeof(upPack));
 	sprintf(mem->string,"%s %s %s",botnetnick,s,uptime_version);
