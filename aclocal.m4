@@ -1,7 +1,7 @@
 dnl aclocal.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: aclocal.m4,v 1.20 2000/07/09 14:10:49 fabian Exp $
+dnl $Id: aclocal.m4,v 1.21 2000/07/23 20:47:12 fabian Exp $
 dnl
 
 
@@ -212,6 +212,7 @@ case "$egg_cv_var_system" in
     NEED_DL=0
     SHLIB_STRIP=touch
     DEFUALT_MAKE=static
+    SHELL=/bin/sh5
     ;;
   BeOS)
     AC_MSG_RESULT(BeOS)
