@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  * 
- * $Id: server.c,v 1.41 2000/05/06 22:08:38 fabian Exp $
+ * $Id: server.c,v 1.42 2000/05/28 17:32:44 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1326,7 +1326,7 @@ static char *nick_change(ClientData cdata, Tcl_Interp * irp, char *name1,
       strncpy(origbotname, new, NICKMAX);
       origbotname[NICKMAX] = 0;
       if (server_online)
-	dprintf(DP_MODE, "NICK %s\n", origbotname);
+	dprintf(DP_SERVER, "NICK %s\n", origbotname);
     }
   }
   return NULL;
@@ -1754,7 +1754,7 @@ static void server_postrehash()
        && !rfc_casecmp(oldnick, get_altbotnick())) {
     /* Change botname back, don't be premature. */
     strcpy(botname, oldnick);
-    dprintf(DP_MODE, "NICK %s\n", origbotname);
+    dprintf(DP_SERVER, "NICK %s\n", origbotname);
   }
   /* Change botname back incase we were using altnick previous to rehash. */
   else if (oldnick[0])

@@ -20,7 +20,7 @@
 	%bneed-limit%b   tcl command to execute when the bot can't join the
 	             channel because the channel is full
 %{+m|m}
-	%stopnethack-mode%b    de-op anyone who enters the channel with server
+	%bstopnethack-mode%b    de-op anyone who enters the channel with server
 	               ops
                        0 turn off,
                        1 isoptest (allow serverop if registered op)

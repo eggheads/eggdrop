@@ -2,7 +2,7 @@
  * irc.c -- part of irc.mod
  *   support for channels within the bot 
  * 
- * $Id: irc.c,v 1.22 2000/03/23 23:17:58 fabian Exp $
+ * $Id: irc.c,v 1.23 2000/05/28 17:32:44 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -159,12 +159,12 @@ static void punish_badguy(struct chanset_t *chan, char *whobad,
   reason[0] = 0;
   switch (type) {
   case REVENGE_KICK:
-    kick_msg = IRC_DEOP_PROTECT;
+    kick_msg = IRC_KICK_PROTECT;
     simple_sprintf(reason, "kicked %s off %s", victim, chan->dname);
     break;
   case REVENGE_DEOP:
     simple_sprintf(reason, "deopped %s on %s", victim, chan->dname);
-    kick_msg = IRC_KICK_PROTECT;
+    kick_msg = IRC_DEOP_PROTECT;
     break;
   default:
     kick_msg = "revenge!";
@@ -420,6 +420,21 @@ static int any_ops(struct chanset_t *chan)
   return 1;
 }
 
+/* Check whether I'm voice. Returns boolean 1 or 0.
+ */
+static int me_voice(struct chanset_t *chan)
+{
+  memberlist	*mx;
+
+  mx = ismember(chan, botname);
+  if (!mx)
+    return 0;
+  if (chan_hasvoice(mx))
+    return 1;
+  else
+    return 0;
+}
+
 /* Reset the channel information.
  */
 static void reset_chan_info(struct chanset_t *chan)
@@ -460,45 +475,46 @@ static void reset_chan_info(struct chanset_t *chan)
   }
 }
 
-/* Log the channel members.
+/* Report the channel status of every active channel to dcc chat every
+ * 5 minutes.
  */
-static void log_chans()
+static void status_log()
 {
   masklist *b;
   memberlist *m;
   struct chanset_t *chan;
-  int chops, bans, invites, exempts;
+  char s[20], s2[20];
+  int chops, voice, nonops, bans, invites, exempts;
   
   for (chan = chanset; chan != NULL; chan = chan->next) {
     if (channel_active(chan) && channel_logstatus(chan) &&
         !channel_inactive(chan)) {
+
       chops = 0;
+      voice = 0;
       for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
 	if (chan_hasop(m))
 	  chops++;
+	else if (chan_hasvoice(m))
+	  voice++;
       }
+      nonops = (chan->channel.members - (chops + voice));
 
-      bans = 0;
-      for (b = chan->channel.ban; b->mask[0]; b = b->next)
+      for (bans = 0, b = chan->channel.ban; b->mask[0]; b = b->next)
 	bans++;
-      exempts = 0;
-      for (b = chan->channel.exempt; b->mask[0]; b = b->next)
+      for (exempts = 0, b = chan->channel.exempt; b->mask[0]; b = b->next)
 	exempts++;
-      invites = 0;
-      for (b = chan->channel.invite; b->mask[0]; b = b->next)
+      for (invites = 0, b = chan->channel.invite; b->mask[0]; b = b->next)
 	invites++;
 
-      putlog(LOG_MISC, chan->dname,
-	     "%-10s: %d member%c (%d chop%s, %2d ba%s %s",
-	     chan->dname, chan->channel.members,
-	     chan->channel.members == 1 ? ' ' : 's',
-	     chops, chops == 1 ? ")" : "s)", bans, bans == 1 ? "n" : "ns",
-	     me_op(chan) ? "" : "(not op'd)");
-      if ((use_invites == 1) || (use_exempts == 1)) {
-	putlog(LOG_MISC, chan->dname, "%-10s: %d exemptio%s, %d invit%s",
-	       chan->dname, exempts,
-	       exempts == 1 ? "n" : "ns", invites, invites == 1 ? "e" : "es");
-      }
+      sprintf(s, "%d", exempts);
+      sprintf(s2, "%d", invites);
+
+      putlog(LOG_MISC, chan->name,
+	     "%s%-10s (%s) : [m/%d o/%d v/%d n/%d b/%d e/%s I/%s]",
+             me_op(chan) ? "@" : me_voice(chan) ? "+" : " ", chan->name,
+             getchanmode(chan), chan->channel.members, chops, voice, nonops,
+	     bans, use_exempts ? s : "-", use_invites ? s2 : "-");
     }
   }
 }
@@ -1138,7 +1154,7 @@ static char *irc_close()
   rem_help_reference("irc.help");
   Context;
   del_hook(HOOK_MINUTELY, (Function) check_expired_chanstuff);
-  del_hook(HOOK_5MINUTELY, (Function) log_chans);
+  del_hook(HOOK_5MINUTELY, (Function) status_log);
   del_hook(HOOK_ADD_MODE, (Function) real_add_mode);
   del_hook(HOOK_IDLE, (Function) flush_modes);
   Tcl_UntraceVar(interp, "rfc-compliant",
@@ -1179,6 +1195,7 @@ static Function irc_table[] =
   (Function) recheck_channel,
   /* 16 - 19 */
   (Function) me_op,
+  (Function) recheck_channel_modes,
 };
 
 char *irc_start(Function * global_funcs)
@@ -1188,7 +1205,7 @@ char *irc_start(Function * global_funcs)
   global = global_funcs;
 
   Context;
-  module_register(MODULE_NAME, irc_table, 1, 1);
+  module_register(MODULE_NAME, irc_table, 1, 2);
   if (!module_depend(MODULE_NAME, "eggdrop", 105, 3)) {
     module_undepend(MODULE_NAME);
     return "This module needs eggdrop1.5.3 or later";
@@ -1211,7 +1228,7 @@ char *irc_start(Function * global_funcs)
   }
   Context;
   add_hook(HOOK_MINUTELY, (Function) check_expired_chanstuff);
-  add_hook(HOOK_5MINUTELY, (Function) log_chans);
+  add_hook(HOOK_5MINUTELY, (Function) status_log);
   add_hook(HOOK_ADD_MODE, (Function) real_add_mode);
   add_hook(HOOK_IDLE, (Function) flush_modes);
   Tcl_TraceVar(interp, "net-type",

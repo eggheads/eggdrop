@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  * 
- * $Id: chan.c,v 1.39 2000/05/06 22:02:27 fabian Exp $
+ * $Id: chan.c,v 1.40 2000/05/28 17:32:44 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -236,7 +236,7 @@ static int detect_chan_flood(char *floodnick, char *floodhost, char *from,
     if (which == FLOOD_DEOP)
       chan->deopd[0] = 0;
     u = get_user_by_host(from);
-    if (check_tcl_flud(floodnick, from, u, ftype, chan->dname))
+    if (check_tcl_flud(floodnick, floodhost, u, ftype, chan->dname))
       return 0;
     switch (which) {
     case FLOOD_PRIVMSG:
@@ -583,6 +583,63 @@ static void resetmasks(struct chanset_t *chan, masklist *m, maskrec *mrec,
   }
 }
 
+static void recheck_channel_modes(struct chanset_t *chan)
+{
+  int cur = chan->channel.mode,
+      mns = chan->mode_mns_prot,
+      pls = chan->mode_pls_prot;
+ 
+  if (!(chan->status & CHAN_ASKEDMODES)) {
+    if (pls & CHANINV && !(cur & CHANINV))
+      add_mode(chan, '+', 'i', "");
+    else if (mns & CHANINV && cur & CHANINV)
+      add_mode(chan, '-', 'i', "");
+    if (pls & CHANPRIV && !(cur & CHANPRIV))
+      add_mode(chan, '+', 'p', "");
+    else if (mns & CHANPRIV && cur & CHANPRIV)
+      add_mode(chan, '-', 'p', "");
+    if (pls & CHANSEC && !(cur & CHANSEC))
+      add_mode(chan, '+', 's', "");
+    else if (mns & CHANSEC && cur & CHANSEC)
+      add_mode(chan, '-', 's', "");
+    if (pls & CHANMODER && !(cur & CHANMODER))
+      add_mode(chan, '+', 'm', "");
+    else if (mns & CHANMODER && cur & CHANMODER)
+      add_mode(chan, '-', 'm', "");
+    if (pls & CHANTOPIC && !(cur & CHANTOPIC))
+      add_mode(chan, '+', 't', "");
+    else if (mns & CHANTOPIC && cur & CHANTOPIC)
+      add_mode(chan, '-', 't', "");
+    if (pls & CHANNOMSG && !(cur & CHANNOMSG))
+      add_mode(chan, '+', 'n', "");
+    else if ((mns & CHANNOMSG) && (cur & CHANNOMSG))
+      add_mode(chan, '-', 'n', "");
+    if ((pls & CHANANON) && !(cur & CHANANON))
+      add_mode(chan, '+', 'a', "");
+    else if ((mns & CHANANON) && (cur & CHANANON))
+      add_mode(chan, '-', 'a', "");
+    if ((pls & CHANQUIET) && !(cur & CHANQUIET))
+      add_mode(chan, '+', 'q', "");
+    else if ((mns & CHANQUIET) && (cur & CHANQUIET))
+      add_mode(chan, '-', 'q', "");
+    if ((chan->limit_prot != (-1)) && (chan->channel.maxmembers == -1)) {
+      char s[50];
+
+      sprintf(s, "%d", chan->limit_prot);
+      add_mode(chan, '+', 'l', s);
+    } else if ((mns & CHANLIMIT) && (chan->channel.maxmembers >= 0))
+      add_mode(chan, '-', 'l', "");
+    if (chan->key_prot[0]) {
+      if (rfc_casecmp(chan->channel.key, chan->key_prot) != 0) {
+        if (chan->channel.key[0])
+	  add_mode(chan, '-', 'k', chan->channel.key);
+        add_mode(chan, '+', 'k', chan->key_prot);
+      }
+    } else if ((mns & CHANKEY) && (chan->channel.key))
+      add_mode(chan, '-', 'k', chan->channel.key);
+  }
+}
+
 /* Things to do when i just became a chanop:
  */
 static void recheck_channel(struct chanset_t *chan, int dobans)
@@ -590,7 +647,6 @@ static void recheck_channel(struct chanset_t *chan, int dobans)
   memberlist *m;
   char s[UHOSTLEN], *p;
   struct flag_record fr = {FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0};
-  int cur, pls, mns;
   static int stacking = 0;
 
   if (stacking)
@@ -683,56 +739,7 @@ static void recheck_channel(struct chanset_t *chan, int dobans)
   }
   if (dobans && channel_enforcebans(chan))
     enforce_bans(chan);
-  pls = chan->mode_pls_prot;
-  mns = chan->mode_mns_prot;
-  cur = chan->channel.mode;
-  if (!(chan->status & CHAN_ASKEDMODES)) {
-    if (pls & CHANINV && !(cur & CHANINV))
-      add_mode(chan, '+', 'i', "");
-    else if (mns & CHANINV && cur & CHANINV)
-      add_mode(chan, '-', 'i', "");
-    if (pls & CHANPRIV && !(cur & CHANPRIV))
-      add_mode(chan, '+', 'p', "");
-    else if (mns & CHANPRIV && cur & CHANPRIV)
-      add_mode(chan, '-', 'p', "");
-    if (pls & CHANSEC && !(cur & CHANSEC))
-      add_mode(chan, '+', 's', "");
-    else if (mns & CHANSEC && cur & CHANSEC)
-      add_mode(chan, '-', 's', "");
-    if (pls & CHANMODER && !(cur & CHANMODER))
-      add_mode(chan, '+', 'm', "");
-    else if (mns & CHANMODER && cur & CHANMODER)
-      add_mode(chan, '-', 'm', "");
-    if (pls & CHANTOPIC && !(cur & CHANTOPIC))
-      add_mode(chan, '+', 't', "");
-    else if (mns & CHANTOPIC && cur & CHANTOPIC)
-      add_mode(chan, '-', 't', "");
-    if (pls & CHANNOMSG && !(cur & CHANNOMSG))
-      add_mode(chan, '+', 'n', "");
-    else if ((mns & CHANNOMSG) && (cur & CHANNOMSG))
-      add_mode(chan, '-', 'n', "");
-    if ((pls & CHANANON) && !(cur & CHANANON))
-      add_mode(chan, '+', 'a', "");
-    else if ((mns & CHANANON) && (cur & CHANANON))
-      add_mode(chan, '-', 'a', "");
-    if ((pls & CHANQUIET) && !(cur & CHANQUIET))
-      add_mode(chan, '+', 'q', "");
-    else if ((mns & CHANQUIET) && (cur & CHANQUIET))
-      add_mode(chan, '-', 'q', "");
-    if ((chan->limit_prot != (-1)) && (chan->channel.maxmembers == -1)) {
-      sprintf(s, "%d", chan->limit_prot);
-      add_mode(chan, '+', 'l', s);
-    } else if ((mns & CHANLIMIT) && (chan->channel.maxmembers >= 0))
-      add_mode(chan, '-', 'l', "");
-    if (chan->key_prot[0]) {
-      if (rfc_casecmp(chan->channel.key, chan->key_prot) != 0) {
-        if (chan->channel.key[0])
-	  add_mode(chan, '-', 'k', chan->channel.key);
-        add_mode(chan, '+', 'k', chan->key_prot);
-      }
-    } else if ((mns & CHANKEY) && (chan->channel.key))
-      add_mode(chan, '-', 'k', chan->channel.key);
-  }
+  recheck_channel_modes(chan);
   if ((chan->status & CHAN_ASKEDMODES) && dobans &&
      !channel_inactive(chan)) /* Spot on guppy, this just keeps the
  	                       * checking sane */
@@ -1890,11 +1897,11 @@ static int gotquit(char *from, char *msg)
     alt = get_altbotnick();
     if (!rfc_casecmp(nick, origbotname)) {
       putlog(LOG_MISC, "*", IRC_GETORIGNICK, origbotname);
-      dprintf(DP_MODE, "NICK %s\n", origbotname);
+      dprintf(DP_SERVER, "NICK %s\n", origbotname);
     } else if (alt[0]) {
       if (!rfc_casecmp(nick, alt) && strcmp(botname, origbotname)) {
 	putlog(LOG_MISC, "*", IRC_GETALTNICK, alt);
-	dprintf(DP_MODE, "NICK %s\n", alt);
+	dprintf(DP_SERVER, "NICK %s\n", alt);
       }
     }
   }

@@ -4,6 +4,19 @@ Changes in eggdrop: (since v1.4.0)
 
 1.4.4
 Foundby   Fixedby   What....
+          guppy     changed the output of +statuslog to be more effective.
+          blaster   bind flud was getting the nickname passed in the
+                      user@host information
+kirben    guppy     changed the userinfo version from 1.05 to 1.06
+Wiktor    guppy     added three new events, 'init-server', 'connect-server'
+                      and 'disconnect-server'.
+LtGen     Fabian    Enhanced `.unlink' to remove ghost bots (as a temporary
+                      work-around).
+Ben       Fabian    Lowered server-queue priority of nick-regain commands from
+                      DP_MODE to DP_SERVER.
+Felix3339 Fabian    `chanset chanmode' now forces the bot to immediately
+                      recheck the currently set channel modes.
+paravoid  Eugene    revenge message used "kick" for deop and "deop" for kick.
 guppy     Fabian    fixed 1 byte buffer overflow in add_note().
           Eule      in got442: if remote-server return.
 
@@ -15,7 +28,7 @@ Foundby   Fixedby   What....
           Wiktor    modified the docs to show the proper CVS usage
           guppy     removed some excessive Context calls in core_secondly
           aba       minor fixes for HPUX
-          Eule      fixed +host sharing bug
+Felix3339 Eule      fixed +host sharing bug
           guppy     tcl_getdccidle now can be used on all idx types
           guppy     tcl_boot now uses strncpy
           Jason     added HTML documentation to doc/web_docs/.

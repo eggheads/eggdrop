@@ -7,7 +7,7 @@
  *   linking, unlinking, and relaying to another bot
  *   pinging the bots periodically and checking leaf status
  * 
- * $Id: botnet.c,v 1.23 2000/05/07 00:08:03 fabian Exp $
+ * $Id: botnet.c,v 1.24 2000/05/28 17:32:43 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -931,8 +931,20 @@ int botunlink(int idx, char *nick, char *reason)
     }
   }
   Context;
-  if ((idx >= 0) && (nick[0] != '*'))
+  if ((idx >= 0) && (nick[0] != '*')) {
     dprintf(idx, "%s\n", BOT_NOTCONNECTED);
+
+    /* The internal bot list is desynched from the dcc list
+     * sometimes. While we still search for the bug, provide
+     * an easy way to clear out those `ghost'-bots.  -FK
+     */
+    bot = findbot(nick);
+    if (bot) {
+      dprintf(idx, "BUG: Found bot `%s' in internal bot list! Removing.\n",
+	      nick);
+      rembot(bot->bot);
+    }
+  }
   if (nick[0] == '*') {
     dprintf(idx, "%s\n", BOT_WIPEBOTTABLE);
     while (tandbot)

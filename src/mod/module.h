@@ -1,7 +1,7 @@
 /* 
  * module.h
  * 
- * $Id: module.h,v 1.28 2000/04/05 19:58:11 fabian Exp $
+ * $Id: module.h,v 1.29 2000/05/28 17:32:44 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -197,8 +197,7 @@
 #define get_data_ptr(x) ((void *(*)(int,char*,int))global[86])(x,__FILE__,__LINE__)
 #define open_telnet ((int (*) (char *, int))global[87])
 /* 88 - 91 */
-/* global[88] is now EMPTY. Was bzero(). Use egg_memset or egg_bzero instead.
- */
+#define check_tcl_event ((void * (*) (char *))global[88])
 #define my_memcpy ((void * (*) (void *, const void *, size_t))global[89])
 #define my_atoul ((IP(*)(char *))global[90])
 #define my_strcpy ((int (*)(char *, const char *))global[91])
