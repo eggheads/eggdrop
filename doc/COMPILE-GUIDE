@@ -1,13 +1,13 @@
-$Id: COMPILE-GUIDE,v 1.1 2004/08/08 18:16:59 wcc Exp $
+$Id: COMPILE-GUIDE,v 1.2 2004/08/21 00:16:55 wcc Exp $
 
-Eggdrop Compiling Guide
-Last revised: July 09, 2004
+Eggdrop Compile Guide and FAQ
+Last revised: August 20, 2004
     _____________________________________________________________________
 
-                            Eggdrop Compiling Guide
+                        Eggdrop Compile Guide and FAQ
 
 
-  This FAQ may help you successfully compile Eggdrop. Suggestions are by
+  This guide may help you successfully compile Eggdrop. Suggestions are by
   various contributors. If you think something should be added, please send
   an e-mail to bugs@eggheads.org. Note that in this document, text between
   a '<' and a '>' should be replaced (without the '<' and '>').

@@ -16,7 +16,7 @@ dnl You should have received a copy of the GNU General Public License
 dnl along with this program; if not, write to the Free Software
 dnl Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 dnl
-dnl $Id: aclocal.m4,v 1.94 2004/08/20 07:10:40 wcc Exp $
+dnl $Id: aclocal.m4,v 1.95 2004/08/21 00:16:55 wcc Exp $
 dnl
 
 
@@ -85,7 +85,7 @@ AC_DEFUN([EGG_MSG_WEIRDOS],
       AC_MSG_RESULT
     fi
     AC_MSG_RESULT([If you experiance any problems compiling Eggdrop, please read the])
-    AC_MSG_RESULT([compile guide, found in doc/COMPILE-FAQ.])
+    AC_MSG_RESULT([compile guide, found in doc/COMPILE-GUIDE.])
     AC_MSG_RESULT
   fi
 ])
