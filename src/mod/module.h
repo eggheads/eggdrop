@@ -1,7 +1,7 @@
 /*
  * module.h
  *
- * $Id: module.h,v 1.77 2003/08/16 20:12:36 wcc Exp $
+ * $Id: module.h,v 1.78 2003/11/01 23:26:57 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -62,9 +62,6 @@
 /* Compability functions. */
 #ifdef egg_inet_aton
 #  undef egg_inet_aton
-#endif
-#ifdef egg_inet_ntop
-#  undef egg_inet_ntop
 #endif
 #ifdef egg_vsnprintf
 #  undef egg_vsnprintf
@@ -201,11 +198,7 @@
 /* 80 - 83 */
 #define new_dcc ((int (*) (struct dcc_table *, int))global[80])
 #define lostdcc ((void (*) (int))global[81])
-#ifdef USE_IPV6
-#  define getsock ((int (*) (int,int))global[82])
-#else
-#  define getsock ((int (*) (int))global[82])
-#endif /* USE_IPV6 */
+#define getsock ((int (*) (int))global[82])
 #define killsock ((void (*) (int))global[83])
 /* 84 - 87 */
 #define open_listen ((int (*) (int *))global[84])
@@ -475,10 +468,10 @@
 /* 284 - 287 */
 #define quiet_reject (*(int *)(global[284]))
 #define file_readable ((int (*) (char *))global[285])
-#define getprotocol ((int (*)(char *))global[286])
-#define open_listen_by_af ((int (*) (int *, int))global[287])
+/* IPv6 leftovers: 286 */
+/* IPv6 leftovers: 287 */
 /* 288 - 291 */
-#define egg_inet_ntop ((int (*)(int af, const void *src, char *dst, socklen_t size))global[288])
+/* IPv6 leftovers: 288 */
 #define strip_mirc_codes ((void (*)(int, char *))global[289])
 #define check_ansi ((int (*) (char *))global[290])
 

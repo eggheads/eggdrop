@@ -1,7 +1,7 @@
 dnl aclocal.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: aclocal.m4,v 1.71 2003/06/10 15:16:07 stdarg Exp $
+dnl $Id: aclocal.m4,v 1.72 2003/11/01 23:26:56 wcc Exp $
 dnl
 
 
@@ -43,87 +43,6 @@ configure: error:
 
 EOF
   exit 1
-fi
-])dnl
-
-dnl  EGG_IPV6_SUPPORTED()
-dnl
-AC_DEFUN(EGG_IPV6_SUPPORTED, [dnl
-AC_MSG_CHECKING(for kernel IPv6 support)
-AC_CACHE_VAL(egg_cv_ipv6_supported,[
- AC_TRY_RUN([
-#include <fcntl.h>
-#include <sys/socket.h>
-#include <sys/types.h>
-#include <netinet/in.h>
-#include <unistd.h>
-#include <errno.h>
-#include <stdio.h>
-
-int main()
-{
-  struct sockaddr_in6 sin6;
-  int s = socket(AF_INET6, SOCK_STREAM, 0);
-
-  if (s != -1)
-    close(s);
-  return (s == -1);
-}
-], egg_cv_ipv6_supported=yes, egg_cv_ipv6_supported=no,
-egg_cv_ipv6_supported=no)])
-if test "$egg_cv_ipv6_supported" = "yes"; then
-  AC_MSG_RESULT(yes)
-else
-  AC_MSG_RESULT(no)
-fi
-])dnl
-
-dnl  EGG_IPV6_OPTIONS()
-dnl
-AC_DEFUN(EGG_IPV6_OPTIONS, [dnl
-AC_MSG_CHECKING(whether or not you enabled IPv6 support)
-AC_ARG_ENABLE(ipv6, [  --enable-ipv6           enable IPv6 support],
-[ ac_cv_ipv6="yes"
-  if test "$egg_cv_ipv6_supported" = "no"; then
-    ac_cv_ipv6="no"
-  fi
-  AC_MSG_RESULT($ac_cv_ipv6)
-],
-[ ac_cv_ipv6="no"
-  AC_MSG_RESULT(no)
-])
-if test "$ac_cv_ipv6" = "yes"; then
-  AC_DEFINE(HAVE_IPV6)
-  ENABLEIPV6="--enable-ipv6"
-fi
-AC_SUBST(ENABLEIPV6)
-])dnl
-
-dnl  EGG_CHECK_SOCKLEN_T()
-dnl
-AC_DEFUN(EGG_CHECK_SOCKLEN_T, [dnl
-AC_MSG_CHECKING(for socklen_t)
-AC_CACHE_VAL(egg_cv_socklen_t,[
-  AC_TRY_RUN([
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-
-int main()
-{
-  socklen_t test = sizeof(int);
-
-  return 0;
-}
-  ],
-egg_cv_socklen_t=yes, egg_cv_socklen_t=no, egg_cv_socklen_t=no)])
-if test "$egg_cv_socklen_t" = "yes"; then
-  AC_DEFINE(HAVE_SOCKLEN_T)
-  AC_MSG_RESULT(yes)
-else
-  AC_MSG_RESULT(no)
 fi
 ])dnl
 

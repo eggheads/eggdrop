@@ -1,7 +1,7 @@
 /*
  * transfer.c -- part of transfer.mod
  *
- * $Id: transfer.c,v 1.67 2003/08/06 18:17:56 stdarg Exp $
+ * $Id: transfer.c,v 1.68 2003/11/01 23:26:58 wcc Exp $
  *
  * Copyright (C) 1997 Robey Pointer
  * Copyright (C) 1999, 2000, 2001, 2002, 2003 Eggheads Development Team
@@ -967,10 +967,6 @@ static void dcc_get_pending(int idx, char *buf, int len)
  * `filename' from `dir'.
  *
  * Use raw_dcc_resend() and raw_dcc_send() instead of this function.
- *
- * This function is NOT fully IPv6 capable, the DCC CHAT/SEND specs for
- * IPv6 aren't clear between all the different clients, but irssi and
- * KSIRC(?) appear to use the IPv6 in the 'long' format (hex w/o colons)
  * 
  */
 static int raw_dcc_resend_send(char *filename, char *nick, char *from,
@@ -994,19 +990,11 @@ static int raw_dcc_resend_send(char *filename, char *nick, char *from,
 
   if (reserved_port_min > 0 && reserved_port_min < reserved_port_max) {
     for (port = reserved_port_min; port <= reserved_port_max; port++)
-#ifdef USE_IPV6
-      if ((zz = open_listen_by_af(&port, AF_INET6)) != -1) /* no idea how we want to handle this -poptix 02/03/03 */
-#else
       if ((zz = open_listen(&port)) != -1)
-#endif /* USE_IPV6 */
         break;
   } else {
     port = reserved_port_min;
-#ifdef USE_IPV6
-    zz = open_listen_by_af(&port, AF_INET6);
-#else
     zz = open_listen(&port);
-#endif /* USE_IPV6 */
   }
 
   if (zz == -1)

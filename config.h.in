@@ -5,17 +5,11 @@
  * acconfig.h
  *   template file autoheader uses when building config.h.in
  * 
- * $Id: config.h.in,v 1.33 2003/06/10 19:05:37 wcc Exp $
+ * $Id: config.h.in,v 1.34 2003/11/01 23:26:56 wcc Exp $
  */
 
 /* Define if stripping is enabled. */
 #undef ENABLE_STRIP
-
-/* Define if you want to enable IPv6 support. */
-#undef HAVE_IPV6
-
-/* Define if you have support for socklen_t. */
-#undef HAVE_SOCKLEN_T
 
 /* Define if modules will work on your system. */
 #undef MODULES_OK
@@ -82,20 +76,11 @@
 /* Define to 1 if you have the `getdtablesize' function. */
 #undef HAVE_GETDTABLESIZE
 
-/* Define to 1 if you have the `gethostbyname2' function. */
-#undef HAVE_GETHOSTBYNAME2
-
-/* Define to 1 if you have the `getipnodebyname' function. */
-#undef HAVE_GETIPNODEBYNAME
-
 /* Define to 1 if you have the `getrusage' function. */
 #undef HAVE_GETRUSAGE
 
 /* Define to 1 if you have the `inet_aton' function. */
 #undef HAVE_INET_ATON
-
-/* Define to 1 if you have the `inet_ntop' function. */
-#undef HAVE_INET_NTOP
 
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H

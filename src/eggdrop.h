@@ -4,7 +4,7 @@
  *
  *   IF YOU ALTER THIS FILE, YOU NEED TO RECOMPILE THE BOT.
  *
- * $Id: eggdrop.h,v 1.48 2003/05/07 04:45:10 wcc Exp $
+ * $Id: eggdrop.h,v 1.49 2003/11/01 23:26:57 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -27,16 +27,6 @@
 
 #ifndef _EGG_EGGDROP_H
 #define _EGG_EGGDROP_H
-
-/*
- * Enable IPv6 support?
- */
-#define USE_IPV6
-
-/*
- * Enable IPv6 debugging?
- */
-#define DEBUG_IPV6
 
 /*
  * If you're *only* going to link to new version bots (1.3.0 or higher)
@@ -109,22 +99,6 @@
 #  include "error you need vsprintf to compile eggdrop"
 #endif
 
-/* IPv6 sanity checks. */
-#ifdef USE_IPV6
-#  ifndef HAVE_IPV6
-#    undef USE_IPV6
-#  endif
-#  ifndef HAVE_GETHOSTBYNAME2
-#    ifndef HAVE_GETIPNODEBYNAME
-#      undef USE_IPV6
-#    endif
-#  endif
-#endif
-
-#ifndef USE_IPV6
-#  undef DEBUG_IPV6
-#endif
-
 #if HAVE_UNISTD_H
 #  include <unistd.h>
 #endif
@@ -193,10 +167,6 @@
 
 #if !HAVE_SIGEMPTYSET
 #  define sigemptyset(x) ((*(int *)(x))=0)
-#endif
-
-#if !HAVE_SOCKLEN_T
-typedef int socklen_t;
 #endif
 
 /*
@@ -287,10 +257,6 @@ struct userrec;
 struct dcc_t {
   long sock;                    /* This should be a long to keep 64-bit machines sane */
   IP addr;                      /* IP address in host byte order */
-#ifdef USE_IPV6
-  char addr6[121];              /* easier.. ipv6 address in regular notation (3ffe:80c0:225::) */
-  int af_type;                  /* AF_INET or AF_INET6 */
-#endif /* USE_IPV6 */
   unsigned int port;
   struct userrec *user;
   char nick[NICKLEN];
@@ -604,9 +570,6 @@ typedef struct {
   char *outbuf;
   unsigned long outbuflen;      /* Outbuf could be binary data  */
   unsigned long inbuflen;       /* Inbuf could be binary data   */
-#ifdef USE_IPV6
-  unsigned int af;
-#endif /* USE_IPV6 */
 } sock_list;
 
 enum {

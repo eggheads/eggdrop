@@ -72,12 +72,6 @@ You can change the basic Eggdrop appearance and behavior in this section.
     Eggdrop has trouble detecting it when it starts up.
 
 
-  set my-hostname6 "virtual.host.com"
-  set my-ip6 "2001:1:1:1::1"
-    If you're using IPv6 support, set the IPv6 IP address and hostname to bind
-    to here. You still need to set my-ip.
-
-
   addlang "english"
     If you want to have your Eggdrop messages displayed in another language,
     change this command to match your preferences. An alternative would be

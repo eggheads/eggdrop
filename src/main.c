@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  *
- * $Id: main.c,v 1.101 2003/07/01 04:36:26 wcc Exp $
+ * $Id: main.c,v 1.102 2003/11/01 23:26:57 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -241,11 +241,7 @@ void write_debug()
      *       _not_ safe <cybah>
      */
     x = creat("DEBUG.DEBUG", 0644);
-#ifdef USE_IPV6
-    setsock(x, SOCK_NONSOCK, AF_INET);
-#else
     setsock(x, SOCK_NONSOCK);
-#endif /* USE_IPV6 */
     if (x >= 0) {
       strncpyz(s, ctime(&now), sizeof s);
       dprintf(-x, "Debug (%s) written %s\n", ver, s);
@@ -270,11 +266,7 @@ void write_debug()
   putlog(LOG_MISC, "*", "* Please REPORT this BUG!");
   putlog(LOG_MISC, "*", "* Check doc/BUG-REPORT on how to do so.");
   x = creat("DEBUG", 0644);
-#ifdef USE_IPV6
-  setsock(x, SOCK_NONSOCK, AF_INET);
-#else
   setsock(x, SOCK_NONSOCK);
-#endif /* USE_IPV6 */
   if (x < 0) {
     putlog(LOG_MISC, "*", "* Failed to write DEBUG");
   } else {
@@ -914,11 +906,7 @@ int main(int argc, char **argv)
       userlist = adduser(userlist, "HQ", "none", "-", USER_PARTY);
       dcc[n].user = get_user_by_handle(userlist, "HQ");
     }
-#ifdef USE_IPV6
-    setsock(STDOUT, 0, AF_INET); /* Entry in net table */
-#else
     setsock(STDOUT, 0);          /* Entry in net table */
-#endif /* USE_IPV6 */
     dprintf(n, "\n### ENTERING DCC CHAT SIMULATION ###\n\n");
     dcc_chatter(n);
   }

@@ -4,7 +4,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: modules.c,v 1.86 2003/08/16 20:12:36 wcc Exp $
+ * $Id: modules.c,v 1.87 2003/11/01 23:26:57 wcc Exp $
  */
 /* 
  * Copyright (C) 1997 Robey Pointer
@@ -72,11 +72,7 @@ extern struct chanset_t *chanset;
 
 extern char tempdir[], botnetnick[], botname[], natip[], hostname[],
             origbotname[], botuser[], admin[], userfile[], ver[], notify_new[],
-#ifdef USE_IPV6
-            helpdir[], version[], quit_msg[], hostname6[];
-#else
             helpdir[], version[], quit_msg[];
-#endif /* USE_IPV6 */
 
 extern int parties, noshare, dcc_total, egg_numver, userfile_perm, do_restart,
            ignore_time, must_be_owner, raw_log, max_dcc, make_userfile,
@@ -90,7 +86,6 @@ extern tand_t *tandbot;
 
 extern Tcl_Interp *interp;
 extern sock_list *socklist;
-extern int getprotocol(char *);
 
 int cmd_die();
 int xtra_kill();
@@ -561,10 +556,10 @@ Function global_table[] = {
   /* 284 - 287 */
   (Function) & quiet_reject,      /* int                                 */
   (Function) file_readable,
-  (Function) getprotocol,
-  (Function) open_listen_by_af,
+  (Function) 0,                   /* IPv6 leftovers: 286                 */
+  (Function) 0,                   /* IPv6 leftovers: 287                 */
   /* 288 - 291 */
-  (Function) egg_inet_ntop,
+  (Function) 0,                   /* IPv6 leftovers: 288                 */
   (Function) strip_mirc_codes,
   (Function) check_ansi
 };

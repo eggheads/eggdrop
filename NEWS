@@ -56,11 +56,6 @@ Changes made to Eggdrop 1.6.x from Eggdrop1.4.x:
     gzip support to Eggdrop (via Tcl commands) and enables compressed
     userfile transfer. See doc/settings/mod.compress for more information.
 
-  IPV6 SUPPORT
-
-    Eggdrop now supports version 6 of the IP protocol. See doc/IPV6 for
-    information about how to enable Eggdrop's support for IPv6.
-
   SHARE MODULE
 
     The share module has a new setting now (override-bots) which allows

@@ -5,17 +5,11 @@
  * acconfig.h
  *   template file autoheader uses when building config.h.in
  * 
- * $Id: acconfig.h,v 1.18 2003/06/10 15:16:07 stdarg Exp $
+ * $Id: acconfig.h,v 1.19 2003/11/01 23:26:56 wcc Exp $
  */
 
 /* Define if stripping is enabled. */
 #undef ENABLE_STRIP
-
-/* Define if you want to enable IPv6 support. */
-#undef HAVE_IPV6
-
-/* Define if you have support for socklen_t. */
-#undef HAVE_SOCKLEN_T
 
 /* Define if modules will work on your system. */
 #undef MODULES_OK

@@ -76,9 +76,6 @@ There are also some variables you can set in your config file:
    set servers {
      you.need.to.change.this:6667
      another.example.com:7000:password
-     {[3ffe:1234:2345::ABCD]}
-     {[3ffe:1234:2345::BCDE]:6668}
-     {[3ffe:1234:2345::CDEF]:6667:password}
    }
      This is the bot's server list. The bot will start at the first server
      listed, and cycle through them whenever it gets disconnected. You need to

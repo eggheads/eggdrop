@@ -54,14 +54,9 @@ AC_C_INLINE
 AC_CHECK_SIZEOF(long, 0)
 AC_CHECK_SIZEOF(int, 0)
 
-# Check for IPv6 support
-EGG_IPV6_SUPPORTED
-EGG_IPV6_OPTIONS
-EGG_CHECK_SOCKLEN_T
-
 # Checks for library functions
-AC_CHECK_FUNCS(clock getrusage setpgid uname sigaction sigemptyset rename strcasecmp strncasecmp getdtablesize memset random srandom)
-AC_CHECK_FUNCS(dlopen dprintf snprintf vsnprintf isascii inet_aton inet_ntop memcpy strftime fsync gethostbyname2 getipnodebyname)
+AC_CHECK_FUNCS(clock getrusage setpgid uname sigaction sigemptyset rename strcasecmp strncasecmp getdtablesize)
+AC_CHECK_FUNCS(memset random srandom dlopen dprintf snprintf vsnprintf isascii inet_aton memcpy strftime fsync)
 EGG_CHECK_FUNC_VSPRINTF
 
 # Make sure we have stdc headers, since we can't compile without them

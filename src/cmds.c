@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  *
- * $Id: cmds.c,v 1.100 2003/04/17 04:52:48 wcc Exp $
+ * $Id: cmds.c,v 1.101 2003/11/01 23:26:57 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -947,11 +947,7 @@ static void cmd_chpass(struct userrec *u, int idx, char *par)
 static void cmd_chaddr(struct userrec *u, int idx, char *par)
 {
   int telnet_port = 3333, relay_port = 3333;
-#ifdef USE_IPV6
-  char *handle, *addr, *p, *q, *r;
-#else
   char *handle, *addr, *p, *q;
-#endif /* USE_IPV6 */
   struct bot_addr *bi;
   struct userrec *u1;
 
@@ -991,31 +987,6 @@ static void cmd_chaddr(struct userrec *u, int idx, char *par)
     bi->telnet_port = telnet_port;
     bi->relay_port = relay_port;
   } else {
-#ifdef USE_IPV6
-    r = strchr(addr, '[');
-    if (r) { /* ipv6 notation [3ffe:80c0:225::] */
-      *addr++;
-      r = strchr(addr, ']');
-      bi->address = user_malloc(r - addr + 1);
-      strncpyz(bi->address, addr, r - addr + 1);
-      addr = r;
-      *addr++;
-    } else {
-      bi->address = user_malloc(q - addr + 1);
-      strncpyz(bi->address, addr, q - addr + 1);
-    }
-    q = strchr(addr, ':');
-    if (q) {
-      p = q + 1;
-      bi->telnet_port = atoi(p);
-      q = strchr(p, '/');
-      if (!q) {
-        bi->relay_port = telnet_port;
-      } else {
-        bi->relay_port = atoi(q + 1);
-      }
-    }
-#else
     bi->address = user_malloc(q - addr + 1);
     strncpyz(bi->address, addr, q - addr + 1);
     p = q + 1;
@@ -1025,7 +996,6 @@ static void cmd_chaddr(struct userrec *u, int idx, char *par)
       bi->relay_port = bi->telnet_port;
     else
       bi->relay_port = atoi(q + 1);
-#endif /* USE_IPV6 */
   }
   set_user(&USERENTRY_BOTADDR, u1, bi);
 }

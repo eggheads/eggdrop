@@ -4,7 +4,7 @@
  *   Tcl initialization
  *   getting and setting Tcl/eggdrop variables
  *
- * $Id: tcl.c,v 1.73 2003/04/17 04:38:33 wcc Exp $
+ * $Id: tcl.c,v 1.74 2003/11/01 23:26:57 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -49,11 +49,7 @@ extern char origbotname[], botuser[], motdfile[], admin[], userfile[],
             firewall[], helpdir[], notify_new[], hostname[], myip[], moddir[],
             tempdir[], owner[], network[], botnetnick[], bannerfile[],
             egg_version[], natip[], configfile[], logfile_suffix[], textdir[],
-#ifdef USE_IPV6
-            pid_file[], hostname6[], myip6[];
-#else
             pid_file[];
-#endif /* USE_IPV6 */
 
 extern int backgrd, flood_telnet_thr, flood_telnet_time, shtime, share_greet,
            require_p, keep_all_logs, allow_new_telnets, stealth_telnets,
@@ -464,10 +460,6 @@ static tcl_strings def_tcl_strings[] = {
   {"owner",           owner,          120,           STR_PROTECT},
   {"my-ip",           myip,           120,                     0},
   {"my-hostname",     hostname,       120,                     0},
-#ifdef USE_IPV6
-  {"my-ip6",          myip6,          120,                     0},
-  {"my-hostname6",    hostname6,      120,                     0},
-#endif /* USE_IPV6 */
   {"network",         network,        40,                      0},
   {"whois-fields",    whois_fields,   1024,                    0},
   {"nat-ip",          natip,          120,                     0},
