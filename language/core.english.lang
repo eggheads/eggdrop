@@ -1,7 +1,7 @@
 # core.english.lang
 #   core language messages for eggdrop
 #
-# $Id: core.english.lang,v 1.35 2003/03/08 04:29:43 wcc Exp $
+# $Id: core.english.lang,v 1.36 2003/03/11 01:22:25 wcc Exp $
 
 # General stuff
 0x001,Usage
@@ -211,7 +211,8 @@ Telnet to the bot and enter 'NEW' as your nickname.
 0x647,Mode queue is at
 0x648,Server queue is at
 0x649,Help queue is at
-0x64b,Not active on channel
+# 0x64a - unused
+# 0x64b - unused
 0x64c,Processing channel
 0x64d,Channel
 0x64e,Desiring channel

@@ -6,7 +6,7 @@
 # Modified by Michael for 1.3.25.
 # Modified by rtc for 1.4.0
 #
-# $Id: core.german.lang,v 1.31 2003/03/08 04:29:43 wcc Exp $
+# $Id: core.german.lang,v 1.32 2003/03/11 01:22:25 wcc Exp $
 
 # General stuff
 0x001,Gebrauch
@@ -218,7 +218,8 @@ Baue eine Telnetverbindung zu dem Bot auf und gib 'NEW' als Deinen Nickname ein.
 0x647,Mode-Queue ist bei
 0x648,Server-Queue ist bei
 0x649,Hilfe-Queue ist bei
-0x64b,Nicht aktiv auf Channel
+# 0x64a - unused
+# 0x64b - unused
 0x64c,Bearbeite Channel
 0x64d,Channel
 #need context

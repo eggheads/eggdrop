@@ -1,7 +1,7 @@
 # core.french.lang
 #   core language messages for eggdrop
 #
-# $Id: core.french.lang,v 1.27 2003/03/08 04:29:43 wcc Exp $
+# $Id: core.french.lang,v 1.28 2003/03/11 01:22:25 wcc Exp $
 
 
 # General stuff
@@ -212,7 +212,8 @@ Faites un Telnet sur le bot et entrez 'NEW' comme surnom.
 0x647,La file d'attente des modes est à
 0x648,La file d'attente des serveurs est à
 0x649,La file d'attente d'aide est à
-0x64b,Non actif sur le canal
+# 0x64a - unused
+# 0x64b - unused
 0x64c,Traitement du canal
 0x64d,Canal
 0x64e,Je désire le canal

@@ -2,7 +2,7 @@
  * lang.h
  *   Conversion definitions for language support
  *
- * $Id: lang.h,v 1.30 2003/01/29 05:48:40 wcc Exp $
+ * $Id: lang.h,v 1.31 2003/03/11 01:22:25 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -201,7 +201,7 @@
 #define IRC_SERVERQUEUE         get_language(0x648)
 #define IRC_HELPQUEUE           get_language(0x649)
 /* was: IRC_BOTNOTONIRC         0x64a            */
-#define IRC_NOTACTIVECHAN       get_language(0x64b)
+/* was: IRC_NOTACTIVECHAN       0x64b            */
 #define IRC_PROCESSINGCHAN      get_language(0x64c)
 #define IRC_CHANNEL             get_language(0x64d)
 #define IRC_DESIRINGCHAN        get_language(0x64e)

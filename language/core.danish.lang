@@ -1,7 +1,7 @@
 # core.danish.lang
 #   core language messages for eggdrop
 #
-# $Id: core.danish.lang,v 1.3 2003/03/08 04:29:43 wcc Exp $
+# $Id: core.danish.lang,v 1.4 2003/03/11 01:22:25 wcc Exp $
 
 # General stuff
 0x001,Brug
@@ -211,7 +211,8 @@ Telnet botten og skriv 'NEW' som dit nick.
 0x647,Modekø er på
 0x648,Serverkø er på
 0x649,Hjælpekø er på
-0x64b,Ikke aktiv på kanalen
+# 0x64a - unused
+# 0x64b - unused
 0x64c,Behandler kanal
 0x64d,Kanal
 0x64e,Ønsker kanal
