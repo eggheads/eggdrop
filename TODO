@@ -20,9 +20,6 @@ requires you to send a patch file please do the following:
     
 - please do not patch src/patch.h
 
-- please do not renumber the TODO, instead just remove what you
-  fixed or say that you have submitted a patch
-
 - subscribe to the patch list at
   http://scrambled.eggheads.org/mailman/listinfo/patches
 
@@ -37,10 +34,11 @@ requires you to send a patch file please do the following:
   also send a description of your patch to eggdev@eggheads.org (don't
   attach your patch to it), so discussion about it will occur there
 
+  do not CC or BCC eggdev@eggheads.org and patches@eggheads.org, the 
+  mail -will- be rejected.
+
 - the patch archives can be found at
   http://scrambled.eggheads.org/pub_archive/patches/
-
-
 
 Thanks a lot
 
