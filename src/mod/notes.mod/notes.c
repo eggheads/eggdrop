@@ -5,7 +5,7 @@
  *   note cmds
  *   note ignores
  *
- * $Id: notes.c,v 1.29 2001/04/12 02:39:47 guppy Exp $
+ * $Id: notes.c,v 1.30 2001/04/12 02:41:37 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1041,21 +1041,22 @@ int del_note_ignore(struct userrec *u, char *mask)
     nfree(buf);
     return 0;
   }
-
   ue = find_user_entry(&USERENTRY_XTRA, u);
   /* Delete the entry if the buffer is empty */
+
+  xk = user_malloc(sizeof(struct xtra_key));
+  xk->key = user_malloc(strlen(NOTES_IGNKEY)+1);
+  xk->next = 0;
+
   if (!buf[0]) {
-    struct xtra_key xk = { 0, NOTES_IGNKEY, 0 };
     nfree(buf); /* The allocated byte needs to be free'd too */
-    xtra_set(u, ue, &xk);
-  } else {
-    xk = user_malloc(sizeof(struct xtra_key));
-    xk->next = 0;
-    xk->data = buf;
-    xk->key = user_malloc(strlen(NOTES_IGNKEY)+1);
     strcpy(xk->key, NOTES_IGNKEY);
-    xtra_set(u, ue, xk);
+    xk->data = 0;
+  } else {
+    xk->data = buf;
+    strcpy(xk->key, NOTES_IGNKEY);
   }
+  xtra_set(u, ue, xk);
   return 1;
 }
 
