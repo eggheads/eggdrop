@@ -2,7 +2,7 @@
  * irc.c -- part of irc.mod
  *   support for channels within the bot 
  * 
- * $Id: irc.c,v 1.40 2000/11/03 17:04:59 fabian Exp $
+ * $Id: irc.c,v 1.41 2000/11/05 21:37:57 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1074,10 +1074,9 @@ static char *irc_close()
   struct chanset_t *chan;
 
   Context;
-  for (chan = chanset; chan; chan = chan->next) {
-    dprintf(DP_MODE, "PART %s\n", chan->name);
+  dprintf(DP_MODE, "JOIN 0\n");
+  for (chan = chanset; chan; chan = chan->next)
     clear_channel(chan, 1);
-  }
   Context;
   del_bind_table(H_topc);
   del_bind_table(H_splt);
