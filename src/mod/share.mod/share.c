@@ -1,7 +1,7 @@
 /* 
  * share.c -- part of share.mod
  * 
- * $Id: share.c,v 1.16 2000/01/02 02:42:13 fabian Exp $
+ * $Id: share.c,v 1.17 2000/01/06 19:42:10 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -356,7 +356,7 @@ static void share_mns_chrec(int idx, char *par)
 
 static void share_newuser(int idx, char *par)
 {
-  char *etc, *etc2, *etc3;
+  char *etc, *etc2, *etc3, s[100];
   struct userrec *u;
 
   if ((dcc[idx].status & STAT_SHARE) && !private_user) {
@@ -379,13 +379,20 @@ static void share_newuser(int idx, char *par)
 
 	if (private_global)
 	  fr.global &= USER_BOT;
+	else {
+	  int pgbm = private_globals_bitmask();
+
+	  fr.match = FR_GLOBAL;
+	  fr.global &=~pgbm;
+	}
+	build_flags(s, &fr, 0);
 	userlist = adduser(userlist, etc, etc2, etc3, 0);
 	/* Support for userdefinedflag share - drummer */
 	u = get_user_by_handle(userlist, etc);
 	set_user_flagrec(u, &fr, 0);
 	fr.match = FR_CHAN; /* why?? */
 	noshare = 0;
-        putlog(LOG_CMDS, "*", "%s: newuser %s %s", dcc[idx].nick, etc, par);
+	putlog(LOG_CMDS, "*", "%s: newuser %s %s", dcc[idx].nick, etc, s);
       }
     }
   }

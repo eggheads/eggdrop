@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  * 
- * $Id: chan.c,v 1.19 2000/01/02 02:42:12 fabian Exp $
+ * $Id: chan.c,v 1.20 2000/01/06 19:42:10 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1515,7 +1515,7 @@ static int gotjoin(char *from, char *chname)
 	m->split = 0;
 	m->last = now;
 	m->delay = 0L;
-        m->flags &= ~WASOP; /* drummer */
+        m->flags = (chan_hasop(m) ? WASOP : 0);
 	m->user = u;
 	set_handle_laston(chname, u, now);
 	m->flags |= STOPWHO;

@@ -10,7 +10,7 @@
  * 
  * dprintf'ized, 12dec1995
  * 
- * $Id: misc.c,v 1.8 1999/12/27 20:39:23 fabian Exp $
+ * $Id: misc.c,v 1.9 2000/01/06 19:42:09 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -467,7 +467,7 @@ void putlog EGG_VARARGS_DEF(int, arg1)
     ct[7] = 0;
     strcpy(&ct[2], &ct[4]);
     ct[24] = 0;
-    strcpy(&ct[5], &ct[22]);
+    strcpy(&ct[5], &ct[20]);
     if (ct[0] == ' ')
       ct[0] = '0';
   }

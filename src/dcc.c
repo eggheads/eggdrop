@@ -6,7 +6,7 @@
  * 
  * dprintf'ized, 27oct1995
  * 
- * $Id: dcc.c,v 1.18 2000/01/01 19:34:13 fabian Exp $
+ * $Id: dcc.c,v 1.19 2000/01/06 19:42:09 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -926,16 +926,18 @@ static void dcc_chat(int idx, char *buf, int i)
 	      botnet_send_part_idx(idx, buf);
 	  }
 	  if (dcc[idx].u.chat->su_nick) {
-	    dcc[idx].user = get_user_by_handle(userlist, dcc[idx].u.chat->su_nick);
+	    dcc[idx].user = get_user_by_handle(userlist,
+					       dcc[idx].u.chat->su_nick);
 	    strcpy(dcc[idx].nick, dcc[idx].u.chat->su_nick);
 	    dcc[idx].type = &DCC_CHAT;
-	    if (dcc[idx].u.chat->channel < 100000)
-	      botnet_send_join_idx(idx, -1);
-	    dprintf(idx, "Returning to real nick %s!\r\n", dcc[idx].u.chat->su_nick);
+	    dprintf(idx, "Returning to real nick %s!\r\n",
+		    dcc[idx].u.chat->su_nick);
 	    nfree(dcc[idx].u.chat->su_nick);
 	    dcc[idx].u.chat->su_nick = NULL;
-	    /* chanout_but(-1, dcc[idx].u.chat->channel, "*** %s has rejoined the party line.\n", dcc[idx].nick); */
 	    dcc_chatter(idx);
+	    if (dcc[idx].u.chat->channel < 100000 &&
+		dcc[idx].u.chat->channel >= 0)
+	      botnet_send_join_idx(idx, -1);
 	    return;
 	  } else if ((dcc[idx].sock != STDOUT) || backgrd) {
 	    killsock(dcc[idx].sock);
