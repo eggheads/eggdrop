@@ -1,0 +1,8 @@
+##### UPTIME MODULE #####
+
+This module reports uptime statistics to http://uptime.energymech.net.
+Go look and see what your uptime is! (it will show up after 9 hours or so)
+
+Put this line into your eggdrop configuration file file to load uptime module:
+
+loadmodule uptime
