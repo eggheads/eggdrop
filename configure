@@ -3800,6 +3800,11 @@ EOF
   fi
 fi
 
+if test "$ac_cv_cygwin" = "yes"
+then
+  TCL_REQS="$TCLLIB/lib$TCLLIBFN"
+  TCL_LIBS="-L$TCLLIB -l$TCLLIBFNS $EGG_MATH_LIB"
+else
 if test ! "$TCLLIBEXT" = ".a"
 then
   TCL_REQS="$TCLLIB/lib$TCLLIBFN"
@@ -3844,6 +3849,7 @@ EOF
     TCL_REQS="libtcle.a"
     TCL_LIBS="-L`pwd` -ltcle $EGG_MATH_LIB"
   fi
+fi
 fi
 
       

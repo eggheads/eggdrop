@@ -1,7 +1,7 @@
 dnl aclocal.m4
 dnl   macros autoconf uses when building configure from configure.in
 dnl
-dnl $Id: aclocal.m4,v 1.44 2001/07/26 03:55:33 guppy Exp $
+dnl $Id: aclocal.m4,v 1.45 2001/08/09 04:00:25 guppy Exp $
 dnl
 
 
@@ -1040,6 +1040,11 @@ fi
 dnl  EGG_TCL_LIB_REQS()
 dnl
 AC_DEFUN(EGG_TCL_LIB_REQS, [dnl
+if test "$ac_cv_cygwin" = "yes"
+then
+  TCL_REQS="$TCLLIB/lib$TCLLIBFN"
+  TCL_LIBS="-L$TCLLIB -l$TCLLIBFNS $EGG_MATH_LIB"
+else
 if test ! "$TCLLIBEXT" = ".a"
 then
   TCL_REQS="$TCLLIB/lib$TCLLIBFN"
@@ -1085,6 +1090,7 @@ EOF
     TCL_REQS="libtcle.a"
     TCL_LIBS="-L`pwd` -ltcle $EGG_MATH_LIB"
   fi
+fi
 fi
 AC_SUBST(TCL_REQS)dnl
 AC_SUBST(TCL_LIBS)dnl
