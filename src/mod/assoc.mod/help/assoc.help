@@ -5,14 +5,14 @@
    The following commands are provided by the assoc module:
 
    For botnet masters:
-     %bassoc%b
+      %bassoc%b
 
 See also: assoc
 %{help=assoc}%{-}
 ###  %bassoc%b
    This displays a list of current botnet channel names.
-
 %{+t}
+
 ###  %bassoc%b [<[*]channel number> <name>]
    This creates a name for a channel. The name will propagate across the botnet
    and can be used instead of the channel number when changing chat channels.
@@ -25,4 +25,4 @@ See also: chat
 %{help=all}%{+t}
 ###  %bassoc module%b commands
    For botnet masters:
-     %bassoc%b
+      %bassoc%b

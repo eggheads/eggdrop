@@ -256,41 +256,43 @@ See also: bans, exempts, invites, stick, -ban, -exempt, -invite
    userfile information.
 
    The following commands are provided by the channels module:
-     %binfo%b
+
+   For all users:
+      %binfo%b
 
 %{+lo|lo}
    For channel ops or halfops:
-     %b+ban         -ban         bans         stick%b
-     %b+exempt      -exempt      exempts      unstick%b
-     %b+invite      -invite      invites%b
+      %b+ban         -ban         bans         stick%b
+      %b+exempt      -exempt      exempts      unstick%b
+      %b+invite      -invite      invites%b
 
 %{+m|m}
    For channel masters:
-     %b+chrec       -chrec       chaninfo     chinfo%b
+      %b+chrec       -chrec       chaninfo     chinfo%b
 
 %{+n|n}
    For channel owners:
-     %bchanload     chansave     chanset%b
+      %bchanload     chansave     chanset%b
 
 %{+n}
    For global owners:
-     %b+chan        -chan%b
+      %b+chan        -chan%b
 
    Config file variables for configuring the channels module:
-     %bshare-greet%b  %buse-info%b  %bforce-expire%b  %bchanfile%b
+      %bshare-greet%b  %buse-info%b  %bforce-expire%b
    (Use %b'.help set <variable>'%b for more info)
 %{help=all}%{+o|o}
 ###  %bchannels module%b commands
    For channel ops:
-     %b+ban         -ban         bans         stick%b
-     %b+exempt      -exempt      exempts      unstick%b
-     %b+invite      -invite      invites%b
+      %b+ban         -ban         bans         stick%b
+      %b+exempt      -exempt      exempts      unstick%b
+      %b+invite      -invite      invites%b
 %{+m|m}
    For channel masters:
-     %b+chrec       -chrec       chaninfo     chinfo%b
+      %b+chrec       -chrec       chaninfo     chinfo%b
 %{+n|n}
    For channel owners:
-     %bchanload     chansave     chanset%b
+      %bchanload     chansave     chanset%b
 %{+n}
    For global owners:
-     %b+chan        -chan%b
+      %b+chan        -chan%b

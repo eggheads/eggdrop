@@ -1,12 +1,13 @@
-$Id: UPDATES1.6,v 1.516 2003/11/27 03:25:10 wcc Exp $
+$Id: UPDATES1.6,v 1.517 2003/11/30 21:39:30 wcc Exp $
 
 Changes in Eggdrop: (since v1.6.0)
 ----------------------------------
 
 1.6.16
 Found by     Fixed by  What...
-             Wcc       coxmetic fixes to .status
-             Wcc       coxmetic fixes to .who
+             Wcc       uname fix in msg_status; os should display on freebsd now
+             Wcc       fixed a buffer overrun in msg_status()
+             Wcc       coxmetic fixes to .status, .who, and various msgcmds
 R. Ramos     dw        fixed a getdesc segfault when a file has no desc
 various      Wcc       removed IPv6 for now, will be implemented in a more
                        proper way in an upcoming release
