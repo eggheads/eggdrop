@@ -2,7 +2,7 @@
  * net.c -- handles:
  *   all raw network i/o
  * 
- * $Id: net.c,v 1.24 2000/10/27 19:34:54 fabian Exp $
+ * $Id: net.c,v 1.25 2000/10/27 19:35:51 fabian Exp $
  */
 /* 
  * This is hereby released into the public domain.
@@ -199,6 +199,30 @@ void neterror(char *s)
   }
 }
 
+/* Sets/Unsets options for a specific socket.
+ * 
+ * Returns:  0   - on success
+ *           -1  - socket not found
+ *           -2  - illegal operation
+ */
+int sockoptions(int sock, int operation, int sock_options)
+{
+  int i;
+
+  Context;
+  for (i = 0; i < MAXSOCKS; i++)
+    if (socklist[i].sock == sock) {
+      if (operation == EGG_OPTION_SET)
+	      socklist[i].flags |= sock_options;
+      else if (operation == EGG_OPTION_UNSET)
+	      socklist[i].flags &= ~sock_options;
+      else
+	      return -2;
+      return 0;
+    }
+  return -1;
+}
+
 /* Return a free entry in the socket entry
  */
 int allocsock(int sock, int options)
@@ -209,7 +233,7 @@ int allocsock(int sock, int options)
     if (socklist[i].flags & SOCK_UNUSED) {
       /* yay!  there is table space */
       socklist[i].inbuf = socklist[i].outbuf = NULL;
-      socklist[i].outbuflen = 0;
+      socklist[i].inbuflen = socklist[i].outbuflen = 0;
       socklist[i].flags = options;
       socklist[i].sock = sock;
       return i;
@@ -519,8 +543,8 @@ int answer(int sock, char *caller, unsigned long *ip, unsigned short *port,
   int new_sock;
   unsigned int addrlen;
   struct sockaddr_in from;
-  addrlen = sizeof(struct sockaddr);
 
+  addrlen = sizeof(struct sockaddr);
   new_sock = accept(sock, (struct sockaddr *) &from, &addrlen);
   if (new_sock < 0)
     return -1;
@@ -703,6 +727,9 @@ static int sockread(char *s, int *len)
  * if an EOF is detected from any of the sockets, that socket number will be
  * put in len, and -1 will be returned.
  * the maximum length of the string returned is 512 (including null)
+ *
+ * Returns -4 if we handled something that shouldn't be handled by the
+ * dcc functions. Simply ignore it.
  */
 
 int sockgets(char *s, int *len)
@@ -713,29 +740,49 @@ int sockgets(char *s, int *len)
   Context;
   for (i = 0; i < MAXSOCKS; i++) {
     /* Check for stored-up data waiting to be processed */
-    if (!(socklist[i].flags & SOCK_UNUSED) && (socklist[i].inbuf != NULL)) {
-      /* look for \r too cos windows can't follow RFCs */
-      p = strchr(socklist[i].inbuf, '\n');
-      if (p == NULL)
-	p = strchr(socklist[i].inbuf, '\r');
-      if (p != NULL) {
-	*p = 0;
-	if (strlen(socklist[i].inbuf) > 510)
-	  socklist[i].inbuf[510] = 0;
-	strcpy(s, socklist[i].inbuf);
-	px = (char *) nmalloc(strlen(p + 1) + 1);
-	strcpy(px, p + 1);
-	nfree(socklist[i].inbuf);
-	if (px[0])
-	  socklist[i].inbuf = px;
-	else {
-	  nfree(px);
-	  socklist[i].inbuf = NULL;
+    if (!(socklist[i].flags & SOCK_UNUSED) &&
+	!(socklist[i].flags & SOCK_BUFFER) && (socklist[i].inbuf != NULL)) {
+      if (!(socklist[i].flags & SOCK_BINARY)) {
+	/* look for \r too cos windows can't follow RFCs */
+	p = strchr(socklist[i].inbuf, '\n');
+	if (p == NULL)
+	  p = strchr(socklist[i].inbuf, '\r');
+	if (p != NULL) {
+	  *p = 0;
+	  if (strlen(socklist[i].inbuf) > 510)
+	    socklist[i].inbuf[510] = 0;
+	  strcpy(s, socklist[i].inbuf);
+	  px = (char *) nmalloc(strlen(p + 1) + 1);
+	  strcpy(px, p + 1);
+	  nfree(socklist[i].inbuf);
+	  if (px[0])
+	    socklist[i].inbuf = px;
+	  else {
+	    nfree(px);
+	    socklist[i].inbuf = NULL;
+	  }
+	  /* Strip CR if this was CR/LF combo */
+	  if (s[strlen(s) - 1] == '\r')
+	    s[strlen(s) - 1] = 0;
+	  *len = strlen(s);
+	  return socklist[i].sock;
 	}
-	/* Strip CR if this was CR/LF combo */
-	if (s[strlen(s) - 1] == '\r')
-	  s[strlen(s) - 1] = 0;
-	*len = strlen(s);
+      } else {
+	/* Handling buffered binary data (must have been SOCK_BUFFER before). */
+	if (socklist[i].inbuflen <= 510) {
+	  *len = socklist[i].inbuflen;
+	  egg_memcpy(s, socklist[i].inbuf, socklist[i].inbuflen);
+	  nfree(socklist[i].inbuf);
+	  socklist[i].inbuflen = 0;
+	} else {
+	  /* Split up into chunks of 510 bytes. */
+	  *len = 510;
+	  egg_memcpy(s, socklist[i].inbuf, *len);
+	  egg_memcpy(socklist[i].inbuf, socklist[i].inbuf + *len, *len);
+	  socklist[i].inbuflen -= *len;
+	  socklist[i].inbuf = nrealloc(socklist[i].inbuf,
+				       socklist[i].inbuflen);
+	}
 	return socklist[i].sock;
       }
     }
@@ -760,9 +807,12 @@ int sockgets(char *s, int *len)
   if (socklist[ret].flags & SOCK_CONNECT) {
     if (socklist[ret].flags & SOCK_STRONGCONN) {
       socklist[ret].flags &= ~SOCK_STRONGCONN;
-      /* Buffer any data that came in, for future read */
-      socklist[ret].inbuf = (char *) nmalloc(strlen(xx) + 1);
-      strcpy(socklist[ret].inbuf, xx);
+      /* Buffer any data that came in, for future read. */
+      socklist[ret].inbuflen = *len;
+      socklist[ret].inbuf = (char *) nmalloc(*len + 1);
+      /* It might be binary data. You never know. */
+      egg_memcpy(socklist[ret].inbuf, xx, *len);
+      socklist[ret].inbuf[*len] = 0;
     }
     socklist[ret].flags &= ~SOCK_CONNECT;
     s[0] = 0;
@@ -775,6 +825,16 @@ int sockgets(char *s, int *len)
   if ((socklist[ret].flags & SOCK_LISTEN) ||
       (socklist[ret].flags & SOCK_PASS))
     return socklist[ret].sock;
+  if (socklist[ret].flags & SOCK_BUFFER) {
+    socklist[ret].inbuf = (char *) nrealloc(socklist[ret].inbuf,
+		    			    socklist[ret].inbuflen + *len + 1);
+    egg_memcpy(socklist[ret].inbuf + socklist[ret].inbuflen, xx, *len);
+    socklist[ret].inbuflen += *len;
+    /* We don't know whether it's binary data. Make sure normal strings
+       will be handled properly later on too. */
+    socklist[ret].inbuf[socklist[ret].inbuflen] = 0;
+    return -4;	/* Ignore this one. */
+  }
   Context;
   /* Might be necessary to prepend stored-up data! */
   if (socklist[ret].inbuf != NULL) {
@@ -787,9 +847,11 @@ int sockgets(char *s, int *len)
       strcpy(xx, socklist[ret].inbuf);
       nfree(socklist[ret].inbuf);
       socklist[ret].inbuf = NULL;
+      socklist[ret].inbuflen = 0;
     } else {
       p = socklist[ret].inbuf;
-      socklist[ret].inbuf = (char *) nmalloc(strlen(p) - 509);
+      socklist[ret].inbuflen = strlen(p) - 510;
+      socklist[ret].inbuf = (char *) nmalloc(socklist[ret].inbuflen + 1);
       strcpy(socklist[ret].inbuf, p + 510);
       *(p + 510) = 0;
       strcpy(xx, p);
@@ -835,13 +897,15 @@ int sockgets(char *s, int *len)
   if (socklist[ret].inbuf != NULL) {
     Context;
     p = socklist[ret].inbuf;
-    socklist[ret].inbuf = (char *) nmalloc(strlen(p) + strlen(xx) + 1);
+    socklist[ret].inbuflen = strlen(p) + strlen(xx);
+    socklist[ret].inbuf = (char *) nmalloc(socklist[ret].inbuflen + 1);
     strcpy(socklist[ret].inbuf, xx);
     strcat(socklist[ret].inbuf, p);
     nfree(p);
   } else {
     Context;
-    socklist[ret].inbuf = (char *) nmalloc(strlen(xx) + 1);
+    socklist[ret].inbuflen = strlen(xx);
+    socklist[ret].inbuf = (char *) nmalloc(socklist[ret].inbuflen + 1);
     strcpy(socklist[ret].inbuf, xx);
   }
   Context;

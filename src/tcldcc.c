@@ -2,7 +2,7 @@
  * tcldcc.c -- handles:
  *   Tcl stubs for the dcc commands
  * 
- * $Id: tcldcc.c,v 1.21 2000/10/27 19:34:54 fabian Exp $
+ * $Id: tcldcc.c,v 1.22 2000/10/27 19:35:52 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -486,6 +486,9 @@ static int tcl_control STDVAR
   dcc[idx].u.script->u.other = hold;
   dcc[idx].u.script->type = dcc[idx].type;
   dcc[idx].type = &DCC_SCRIPT;
+  /* Do not buffer data anymore. All received and stored data is passed
+     over to the dcc functions from now on.  */
+  sockoptions(dcc[idx].sock, EGG_OPTION_UNSET, SOCK_BUFFER);
   strncpy(dcc[idx].u.script->command, argv[2], 120);
   dcc[idx].u.script->command[120] = 0;
   return TCL_OK;

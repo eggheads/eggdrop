@@ -4,7 +4,7 @@
  * 
  *   IF YOU ALTER THIS FILE, YOU NEED TO RECOMPILE THE BOT.
  * 
- * $Id: eggdrop.h,v 1.35 2000/10/27 19:28:21 fabian Exp $
+ * $Id: eggdrop.h,v 1.36 2000/10/27 19:35:51 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -519,6 +519,7 @@ typedef struct {
 #define SOCK_PASS	0x0100	/* passed on; only notify in case
 				   of traffic				*/
 #define SOCK_VIRTUAL	0x0200	/* not-connected socket (dont read it!)	*/
+#define SOCK_BUFFER	0x0400	/* buffer data; don't notify dcc funcs	*/
 
 /* Flags to sock_has_data
  */
@@ -567,9 +568,14 @@ typedef struct {
   short		 flags;
   char		*inbuf;
   char		*outbuf;
-  unsigned long  outbuflen;	/* Outbuf could be binary data */
+  unsigned long  outbuflen;	/* Outbuf could be binary data	*/
+  unsigned long	 inbuflen;	/* Inbuf could be binary data	*/
 } sock_list;
 
+enum {
+  EGG_OPTION_SET	= 1,	/* Set option(s).		*/
+  EGG_OPTION_UNSET	= 2	/* Unset option(s).		*/
+};
 
 /* Telnet codes.  See "TELNET Protocol Specification" (RFC 854) and
  * "TELNET Echo Option" (RFC 875) for details.

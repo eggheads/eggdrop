@@ -4,7 +4,7 @@
  *   disconnect on a dcc socket
  *   ...and that's it!  (but it's a LOT)
  * 
- * $Id: dcc.c,v 1.38 2000/10/27 19:34:54 fabian Exp $
+ * $Id: dcc.c,v 1.39 2000/10/27 19:35:51 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -1124,6 +1124,9 @@ static void dcc_telnet(int idx, char *buf, int i)
     putlog(LOG_MISC, "*", DCC_FAILED, s);
     return;
   }
+  /* Buffer data received on this socket.  */
+  sockoptions(sock, EGG_OPTION_SET, SOCK_BUFFER);
+
   /* <bindle> [09:37] Telnet connection: 168.246.255.191/0
    * <bindle> [09:37] Lost connection while identing [168.246.255.191/0]
    */
@@ -2091,6 +2094,10 @@ void dcc_telnet_got_ident(int i, char *host)
     check_tcl_listen(dcc[idx].host, dcc[i].sock);
     return;
   }
+  /* Do not buffer data anymore. All received and stored data is passed
+     over to the dcc functions from now on.  */
+  sockoptions(dcc[i].sock, EGG_OPTION_UNSET, SOCK_BUFFER);
+
   dcc[i].type = &DCC_TELNET_ID;
   dcc[i].u.chat = get_data_ptr(sizeof(struct chat_info));
   egg_bzero(dcc[i].u.chat, sizeof(struct chat_info));
