@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  * 
- * $Id: server.c,v 1.39 2000/03/23 23:17:58 fabian Exp $
+ * $Id: server.c,v 1.40 2000/04/05 19:58:11 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -80,7 +80,6 @@ static char bothost[81];	/* dont mind me, Im stupid */
 static int check_mode_r;	/* check for IRCNET +r modes */
 static int use_ison;		/* arthur2 static */
 static int net_type;
-static int must_be_owner;	/* arthur2 */
 static char connectserver[121];	/* what, if anything, to do before connect
 				 * to the server */
 static int resolvserv;		/* in the process of resolving a server host */
@@ -1510,7 +1509,6 @@ static tcl_ints my_tcl_ints[] =
   {"check-mode-r",		&check_mode_r,			0},
   {"use-ison",			&use_ison,			0},
   {"net-type",			&net_type,			0},
-  {"must-be-owner",		&must_be_owner,			0},/* arthur2 */
   {"ctcp-mode",			&ctcp_mode,			0},
   {"double-mode",		&double_mode,			0},/* G`Quann */
   {"double-server",		&double_server,			0},
@@ -2096,9 +2094,9 @@ char *server_start(Function * global_funcs)
   Context;
   server_table[4] = (Function) botname;
   module_register(MODULE_NAME, server_table, 1, 1);
-  if (!module_depend(MODULE_NAME, "eggdrop", 105, 0)) {
+  if (!module_depend(MODULE_NAME, "eggdrop", 105, 3)) {
     module_undepend(MODULE_NAME);
-    return "This module requires eggdrop1.5.0 or later";
+    return "This module requires eggdrop1.5.3 or later";
   }
 
   Context;

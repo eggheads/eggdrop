@@ -2,7 +2,7 @@
  * channels.c -- part of channels.mod
  *   support for channels within the bot
  * 
- * $Id: channels.c,v 1.28 2000/03/23 23:17:56 fabian Exp $
+ * $Id: channels.c,v 1.29 2000/04/05 19:58:11 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -39,7 +39,6 @@ static int  invite_time		= 0;	/* If invite_time = 0, never remove
 					   them */
 static char chanfile[121]	= "chanfile";
 static int  chan_hack		= 0;
-static int  must_be_owner	= 0;
 static int  quiet_save		= 0;
 static char glob_chanmode[64]	= "nt";	/* Default chanmode (drummer,990731) */
 static struct udef_struct *udef	= NULL;
@@ -741,7 +740,6 @@ static tcl_ints my_tcl_ints[] =
   {"ban-time",			&ban_time,			0},
   {"exempt-time",		&exempt_time,			0},
   {"invite-time",		&invite_time,			0},
-  {"must-be-owner",		&must_be_owner,			0},
   {"quiet-save",		&quiet_save,			0},
   {"global-stopnethack-mode",	&global_stopnethack_mode,	0},
   {NULL,			NULL,				0}

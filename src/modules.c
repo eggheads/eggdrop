@@ -4,7 +4,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: modules.c,v 1.30 2000/04/05 19:55:13 fabian Exp $
+ * $Id: modules.c,v 1.31 2000/04/05 19:58:11 fabian Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -77,7 +77,7 @@ extern int		 reserved_port, noshare, dcc_total, egg_numver,
 			 require_p, max_dcc, share_greet, password_timeout,
 			 min_dcc_port, max_dcc_port, use_invites, use_exempts,
 			 force_expire, do_restart, protect_readonly,
-			 userfile_perm;
+			 userfile_perm, must_be_owner;
 extern time_t now, online_since;
 extern struct chanset_t *chanset;
 
@@ -513,6 +513,7 @@ Function global_table[] =
   /* 256 - 259 */
   (Function) egg_strncasecmp,
   (Function) is_file,
+  (Function) & must_be_owner,	/* int */
 };
 
 void init_modules(void)
