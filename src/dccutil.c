@@ -6,7 +6,7 @@
  *   memory management for dcc structures
  *   timeout checking for dcc connections
  * 
- * $Id: dccutil.c,v 1.28 2001/03/10 06:36:20 guppy Exp $
+ * $Id: dccutil.c,v 1.29 2001/03/18 23:00:31 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -122,7 +122,7 @@ void dprintf EGG_VARARGS_DEF(int, arg1)
   buf[len + 1] = 0;
 
 #if TCL_MAJOR_VERSION >= 8 && TCL_MINOR_VERSION >= 1
-  len = str_utf8tounicode(buf);
+  str_nutf8tounicode(buf, sizeof buf);
 #endif
 
   if (idx < 0) {
@@ -180,10 +180,6 @@ void chatout EGG_VARARGS_DEF(char *, arg1)
     len = 511;
   s[len + 1] = 0;    
 
-#if TCL_MAJOR_VERSION >= 8 && TCL_MINOR_VERSION >= 1
-  len = str_utf8tounicode(s);
-#endif
-
   for (i = 0; i < dcc_total; i++)
     if (dcc[i].type == &DCC_CHAT)
       if (dcc[i].u.chat->channel >= 0)
@@ -210,10 +206,6 @@ void chanout_but EGG_VARARGS_DEF(int, arg1)
     len = 511;
   s[len + 1] = 0; 
     
-#if TCL_MAJOR_VERSION >= 8 && TCL_MINOR_VERSION >= 1
-  len = str_utf8tounicode(s);
-#endif  
-
   for (i = 0; i < dcc_total; i++)
     if ((dcc[i].type == &DCC_CHAT) && (i != x))
       if (dcc[i].u.chat->channel == chan)

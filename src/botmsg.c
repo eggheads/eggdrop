@@ -5,7 +5,7 @@
  * 
  * by Darrin Smith (beldin@light.iinet.net.au)
  * 
- * $Id: botmsg.c,v 1.19 2001/03/10 06:36:20 guppy Exp $
+ * $Id: botmsg.c,v 1.20 2001/03/18 23:00:31 guppy Exp $
  */
 /* 
  * Copyright (C) 1997  Robey Pointer
@@ -59,7 +59,7 @@ void tandout_but EGG_VARARGS_DEF(int, arg1)
   s[len + 1] = 0;  
 
 #if TCL_MAJOR_VERSION >= 8 && TCL_MINOR_VERSION >= 1
-  len = str_utf8tounicode(s);
+  str_nutf8tounicode(s, sizeof s);
 #endif    
 
   for (i = 0; i < dcc_total; i++)
@@ -313,7 +313,7 @@ void botnet_send_priv EGG_VARARGS_DEF(int, arg1)
   tbuf[len + 1] = 0;    
 
 #if TCL_MAJOR_VERSION >= 8 && TCL_MINOR_VERSION >= 1
-  len = str_utf8tounicode(tbuf);
+  str_nutf8tounicode(tbuf, sizeof tbuf);
 #endif    
 
   if (tobot) {
