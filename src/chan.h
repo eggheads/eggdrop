@@ -3,7 +3,7 @@
  *   stuff common to chan.c and mode.c
  *   users.h needs to be loaded too
  *
- * $Id: chan.h,v 1.35 2003/01/28 06:37:24 wcc Exp $
+ * $Id: chan.h,v 1.36 2003/03/01 08:31:49 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -31,7 +31,7 @@ typedef struct memstruct {
   char nick[NICKLEN];
   char userhost[UHOSTLEN];
   time_t joined;
-  unsigned short flags;
+  unsigned long flags;
   time_t split; /* in case they were just netsplit */
   time_t last;  /* for measuring idle time         */
   time_t delay; /* for delayed autoop              */
@@ -50,7 +50,7 @@ typedef struct memstruct {
 #define SENTDEOP     0x00010 /* a mode -o was already sent out for this user */
 #define SENTKICK     0x00020 /* a kick was already sent out for this user    */
 #define SENTVOICE    0x00040 /* a mode +v was already sent out for this user */
-#define SENTDEVOICE  0x00080 /* a devoice has been sent                      */
+#define SENTDEVOICE  0x00080 /* a mode -v was already sent out for this user */
 #define WASOP        0x00100 /* was an op before a split                     */
 #define STOPWHO      0x00200
 #define FULL_DELAY   0x00400
@@ -61,22 +61,22 @@ typedef struct memstruct {
 #define SENTDEHALFOP 0x08000 /* a mode -h was already sent out for this user */
 #define WASHALFOP    0x10000 /* was a halfop before a split                  */
 
-#define chan_hasvoice(x) (x->flags & CHANVOICE)
-#define chan_hasop(x) (x->flags & CHANOP)
-#define chan_hashalfop(x) (x->flags & CHANHALFOP)
-#define chan_fakeop(x) (x->flags & FAKEOP)
-#define chan_fakehalfop(x) (x->flags & FAKEHALFOP)
-#define chan_sentop(x) (x->flags & SENTOP)
-#define chan_sentdeop(x) (x->flags & SENTDEOP)
-#define chan_senthalfop(x) (x->flags & SENTHALFOP)
+#define chan_hasvoice(x)     (x->flags & CHANVOICE)
+#define chan_hasop(x)        (x->flags & CHANOP)
+#define chan_hashalfop(x)    (x->flags & CHANHALFOP)
+#define chan_fakeop(x)       (x->flags & FAKEOP)
+#define chan_fakehalfop(x)   (x->flags & FAKEHALFOP)
+#define chan_sentop(x)       (x->flags & SENTOP)
+#define chan_sentdeop(x)     (x->flags & SENTDEOP)
+#define chan_senthalfop(x)   (x->flags & SENTHALFOP)
 #define chan_sentdehalfop(x) (x->flags & SENTDEHALFOP)
-#define chan_sentkick(x) (x->flags & SENTKICK)
-#define chan_sentvoice(x) (x->flags & SENTVOICE)
-#define chan_sentdevoice(x) (x->flags & SENTDEVOICE)
-#define chan_issplit(x) (x->split > 0)
-#define chan_wasop(x) (x->flags & WASOP)
-#define chan_washalfop(x) (x->flags & WASHALFOP)
-#define chan_stopcheck(x) (x->flags & STOPCHECK)
+#define chan_sentkick(x)     (x->flags & SENTKICK)
+#define chan_sentvoice(x)    (x->flags & SENTVOICE)
+#define chan_sentdevoice(x)  (x->flags & SENTDEVOICE)
+#define chan_issplit(x)      (x->split > 0)
+#define chan_wasop(x)        (x->flags & WASOP)
+#define chan_washalfop(x)    (x->flags & WASHALFOP)
+#define chan_stopcheck(x)    (x->flags & STOPCHECK)
 
 /* Why duplicate this struct for exempts and invites only under another
  * name? <cybah>
