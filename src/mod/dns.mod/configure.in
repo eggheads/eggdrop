@@ -1,6 +1,6 @@
 dnl Eggdrop compile-time configuration file for src/mod/dns.mod
 dnl
-dnl $Id: configure.in,v 1.5 2001/06/25 21:17:03 guppy Exp $
+dnl $Id: configure.in,v 1.6 2001/06/28 19:04:28 guppy Exp $
 
 dnl This file is based on the autoconf m4 macros. Special eggdrop
 dnl macros are used to optimise the size of the resulting configure
@@ -13,6 +13,8 @@ dnl Instead of AC_INIT, we call EGG_INIT().
 sinclude(../eggmod.m4)
 EGG_INIT(coredns.c)
 
+
+AC_PROG_CC
 
 dns_reslib_avail="true"
 AC_CHECK_FUNC(res_init, ,
