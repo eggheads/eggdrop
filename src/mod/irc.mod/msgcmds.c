@@ -764,7 +764,7 @@ static int msg_status(char *nick, char *host, struct userrec *u, char *par)
   if (!uname(&un) < 0) {
 #endif
     ve_t = " ";
-    un_t = "*unkown*";
+    un_t = "*unknown*";
 #ifdef HAVE_UNAME
   } else {
     ve_t = un.release;
