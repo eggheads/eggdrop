@@ -1,0 +1,48 @@
+# notes.german.lang
+#   language messages for the notes module
+#
+# $Id: notes.german.lang,v 1.1 2001/04/13 06:22:11 guppy Exp $
+
+0xc000,  Befoerdere Nachrichten weiter an: %.70s\n
+0xc001,%d Nachrichten[%s] von %s an %s uebermittelt.
+0xc002,%d Nachricht[%s] verfallen
+0xc003,Nicht online; weiter befoerdert zu %s.\n
+0xc004,Nachrichten werden von diesem Bot nicht unterstuetzt.
+0xc005,Tut mir leid, dieser Benutzer hat schon zu viele Nachrichten.
+0xc006,Kann Nachrichten-Datei nicht erzeugen.  Tut mir leid.
+0xc007,Nachrichten-Datei unerreichbar!
+0xc008,Nachricht gespeichert
+0xc009,Du hast keine Nachrichten
+0xc00a, -- VERFAELLT HEUTE
+0xc00b, -- VERFAELLT IN %d TAGEN[%s]
+0xc00c,Die folgenden Nachrichten warten auf Dich
+0xc00d,Du hast nicht so viele Nachrichten
+0xc00e,Benutze '.notes read' um sie zu lesen.
+0xc00f,Kann Nachrichten-Datei nicht modifizieren
+0xc010,Alle Nachrichten geloescht
+0xc011,Geloescht
+0xc012,uebrig
+0xc013,# koennen Zahlen und/oder Intervalle getrennt duch ; sein
+0xc014,Dies ist ein Bot.  Du kannst einem Bot keine Nachricht hinterlassen.
+0xc015,Outside Nachricht
+0xc016,Nachricht zugestellt.
+0xc017,Fuer eine Liste:
+0xc018,NOTIZ %s :Auf Dich warten %d Nachricht[%s] auf %s.\n
+0xc019,### Auf Dich warten %d Nachricht[%s].\n
+0xc01a,### benutze '.notes read' um sie zu lesen.\n
+0xc01b,Nachrichten werden gspeichert.
+0xc01c,Du darfst Nachrichten ignores fuer %s nicht aendern\n
+0xc01d,Benutzer %s existiert nicht.\n
+0xc01e,Ignoriere nun Nachrichten von %s\n
+0xc01f,Ignoriere schon %s\n
+0xc020,Ignoriere Nachrichten nicht mehr von %s\n
+0xc021,Nachrichten ignore %s in Liste nicht gefunden.\n
+0xc022,keine Nachrichten ignores vorhanden.\n
+0xc023,Nachrichten ignores fuer %s:\n
+0xc024,kein solcher Benutzer.
+0xc025,Kann Nachrichten-Weiterbefoerderung des Bot-Besitzers nicht aendern.\n
+0xc026,Nachrichten-Weiterbefoerderung geloscht fuer %s\n
+0xc027,Du musst einen Botnamen zur Weiterbefoerderung bereitstellen.
+0xc028,Aenderte Nachrichten-Weiterbefoerderung fuer %s auf: %s\n
+0xc029,Funktion muss eine sein von INDEX, READ, oder ERASE.
+

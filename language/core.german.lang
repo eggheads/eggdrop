@@ -6,7 +6,7 @@
 # Modified by Michael for 1.3.25.
 # Modified by rtc for 1.4.0
 #
-# $Id: core.german.lang,v 1.22 2001/03/17 23:20:57 guppy Exp $
+# $Id: core.german.lang,v 1.23 2001/04/13 06:22:10 guppy Exp $
 
 # General stuff
 0x001,Gebrauch
@@ -16,10 +16,10 @@
 0x130,Erstellt
 0x131,letzter Gebrauch
 0x132,inaktiv
-0x133,hinzugefuegt von
+0x133,gesetzt von
 0x135,nicht aktiv auf
 0x137,nicht aktiv
-0x138,nicht vom Bot
+0x138,nicht vom Bot gesetzt
 
 # BANS_
 0x104,Globale Banns
@@ -59,9 +59,8 @@ die mitgelieferte Konfigurationsdatei.\n
 0x210,Module geladen: %s
 
 # USERF_
-# 0x400 Scheint falsch zu sein
-0x400,Unvollstaendige Uebertragung der Benutzerliste; umgeschaltet zur neuen Benutzerliste
-0x402,ICH KANN DIE NEUE USERDATEI NICHT LESEN!
+0x400,Uebertragung der Benutzerliste vollstaendig; dazu uebergegangen
+0x402,ICH KANN DIE NEUE BENUTZERDATEI NICHT LESEN!
 0x403,Ich kann die Benutzerdatei nicht schicken (interner Fehler)
 0x404,Ich kann keinen passenden Eintrag finden
 0x405,Alte Benutzerdatei, bitte mit 'tclsh scripts/weed <benutzerdatei> c' konvertieren
@@ -110,7 +109,6 @@ die mitgelieferte Konfigurationsdatei.\n
 0x51a,von
 0x51b,veraltet
 0x51c,abgewiesen
-# Babylon meint 'Steuererlass':
 0x51d,Aufdraenger
 0x51e,versuche
 0x51f,MOTD-Datei:
@@ -133,14 +131,14 @@ die mitgelieferte Konfigurationsdatei.\n
 0x534,KONFIGURATIONSDATEI NICHT GELADEN (NICHT GEFUNDEN ODER FEHLER)
 0x535,BENUTZERDATEI NICHT GEFUNDEN!  (probier mal './eggdrop -m %s', das erstellt eine)\n
 0x536,STARTE DEN BOT IM BENUTZERDATEI-ERSTELLUNGS-MODUS.\n\
-Baue eine Telnetverbindung zu dem Bot auf und gib 'NEW' als deinen Nickname ein.
+Baue eine Telnetverbindung zu dem Bot auf und gib 'NEW' als Deinen Nickname ein.
 0x537,ODER gehe ins IRC und:  /msg %s hello\n
-0x538,Dies macht dich zum Master des Bots.
+0x538,Dies macht Dich zum Master des Bots.
 0x539,BENUTZERDATEI EXISTIERT BEREITS (bitte das '-m' weglassen)
 0x53a,KANN NICHT IN DAS TEMPORAERE VERZEICHNIS SCHREIBEN
 0x53b,Kann die Benutzerdatei nicht neu laden!
 0x53c,Benutzerdatei fehlt!
-0x53e,%B  (%E)\n\nBitte gib deinen Nickname ein:\n
+0x53e,%B  (%E)\n\nBitte gib Deinen Nickname ein:\n
 0x53f,Rotiere Logdatei %s da groesser als max-logsize (%d)
 0x540,\nNickname.\n
 0x541,Die letzte Meldung wiederholte sich %d mal.\n
@@ -162,9 +160,9 @@ Baue eine Telnetverbindung zu dem Bot auf und gib 'NEW' als deinen Nickname ein.
 0x608,Bekanntschaft gemacht mit
 0x609,kein eigener Client
 0x60a,NOTICE %s :Hallo %s!  Ich bin %s, ein Eggdrop Bot.\n
-0x60b,NOTICE %s :Ich erkenne dich von nun an anhand deiner Hostmask '%s'.\n
+0x60b,NOTICE %s :Ich erkenne Dich von nun an anhand Deiner Hostmask '%s'.\n
 0x60c,Da Du keinen eigenen Client benutzt, bedeutet das, dass Du
-0x60d,immer diesen Nickname benutzen solltest, wenn du mit mir chattest.
+0x60d,immer diesen Nickname benutzen solltest, wenn Du mit mir chattest.
 0x60e,DU BIST VON NUN AN DER BESITZER DIESES BOTS
 0x60f,Botinstallation vollstaendig, der erste Master ist %s
 0x610,Willkommen zu Eggdrop! =]
@@ -176,17 +174,17 @@ Baue eine Telnetverbindung zu dem Bot auf und gib 'NEW' als deinen Nickname ein.
 0x617,Passwort gesetzt auf:
 0x618,Falsches Passwort.
 0x619,Passwort geaendert zu:
-0x61a,Du hast keinen eigenen Client; du kannst IDENT nicht benutzen.
+0x61a,Du hast keinen eigenen Client; Du kannst IDENT nicht benutzen.
 0x61b,NOTICE %s :Du bist nicht %s, Du bist %s.\n
 0x61c,Zugriff verweigert.
-0x61d,Ich erkenne dich dort.
+0x61d,Ich erkenne Dich dort.
 0x61e,Habe Hostmask hinzugefuegt:
 0x620,Im Moment:
 0x621,Jetzt:
 0x622,Um sie zu entfernen:
 0x624,Deine Info-Zeile ist gesperrt.
-0x625,Habe deine Info-Zeile entfernt fuer
-0x626,Habe deine Info-Zeile entfernt.
+0x625,Habe Deine Info-Zeile entfernt fuer
+0x626,Habe Deine Info-Zeile entfernt.
 0x627,Du hast keine Info gesetzt fuer
 0x628,Du hast keine Info gesetzt.
 0x629,Ich ueberwache diesen Channel nicht.
@@ -245,15 +243,15 @@ Baue eine Telnetverbindung zu dem Bot auf und gib 'NEW' als deinen Nickname ein.
 0x65d,Channel nur auf Einladung -- kann %s nicht betreten
 0x65e,Vom channel verbannt -- kann %s nicht betreten
 0x65f,Server meint, ich sei nicht auf dem Channel: %s
-0x660,Falsche Schluessel -- kann %s nicht betreten
+0x660,Falscher Schluessel -- kann %s nicht betreten
 0x661,NOTICE %s :Alle Befehle erfolgen via /MSG. Fuer eine vollstaendige Liste, /MSG %s help   CU!\n
 0x662,NOTICE %s :Ich erkenne Dich nicht mit diesem Host.\n
 0x663,NOTICE %s :Entweder Du benutzt den Nicknamen von jemand anders oder Du musst eingeben: /MSG %s IDENT (passwort)\n
-0x664,NOTICE %s :Als Master solltest Du nun wirklich ein Passwort setzen: mit /MSG %s pass <dein-neues-passwort>.\n
-0x665,NOTICE %s :Alle wichtigen Befehle werden per DCC Chat eingegeben. Von nun an brauchst Du nicht mehr die -m Option zu verwenden wenn du den Bot startest. Viel Spass !!!\n
-0x666,Dies ist die Telnet-Schnittstelle zu %s, einem Eggdrop Bot.\nMissbrauche sie nicht, and sie wird auch allen deinen Freunden offenstehen.\n
+0x664,NOTICE %s :Als Master solltest Du nun wirklich ein Passwort setzen: mit /MSG %s pass <Dein-neues-passwort>.\n
+0x665,NOTICE %s :Alle wichtigen Befehle werden per DCC Chat eingegeben. Von nun an brauchst Du nicht mehr die -m Option zu verwenden wenn Du den Bot startest. Viel Spass !!!\n
+0x666,Dies ist die Telnet-Schnittstelle zu %s, einem Eggdrop Bot.\nMissbrauche sie nicht, and sie wird auch allen Deinen Freunden offenstehen.\n
 0x667,Du musst Dir jetzt einen Nickname aussuchen, den Du auf dem Bot benutzt\nund ein Passwort, damit niemand sonst vorgeben kann, er sei Du.\nBitte behalte an beides!
-0x668,Von nun an brauchst Du nicht mehr die -m Option zu verwenden wenn du den Bot startest.\nViel Spass !!!
+0x668,Von nun an brauchst Du nicht mehr die -m Option zu verwenden wenn Du den Bot startest.\nViel Spass !!!
 0x669,Telnet-Verbindungsaufbau-Flood von %s!  Wird ab sofort ignoriert!
 0x66a,gebannt: 
 0x66b,join Flood
@@ -261,12 +259,12 @@ Baue eine Telnetverbindung zu dem Bot auf und gib 'NEW' als deinen Nickname ein.
 0x66d,...und komm nicht zurueck.
 0x66e,wechsle zurueck zum altnick %s
 0x66f,deop meine Freunde nicht, mein Lieber
-# Exempt/invite uebersetzen?
 0x670,Ausnahme entfernt
 0x671,Einladung entfernt
 0x672,NICK flood von @%s!  Wird gebannt.
 0x673,nick Flood
 
+# EGG_
 0x700,Kommandozeilen - Optionen:\n\
   -h   Hilfe\n\
   -v   Version ausgeben und beenden\n\
@@ -301,36 +299,15 @@ Baue eine Telnetverbindung zu dem Bot auf und gib 'NEW' als deinen Nickname ein.
 
 0xb00,Dieser Bot ist nicht hier.\n
 0xb01,Das ist ein Bot.  Du kannst einem Bot keine Nachrichten hinterlassen.\n
-0xb02,ist nicht da
-0xb03,Nachtichten werden von diesem Bot nicht unterstuetzt.\n
-0xb04,Sorry, dieser Benutzer hat schon zu viele Nachrichten.\n
-0xb05,Kann Nachrichtendatei nicht erstellen.  Sorry.\n
-0xb06,Nachrichtendatei unerreichbar!
-0xb07,Eine Nachricht fuer Dich ist angekommen
+0xb02,ist weg
+0xb07,Eine Nachricht fuer Dich kam an
 0xb08,Nachricht gespeichert
-0xb09,Nachricht ausgeliefert.
-0xb0a,Nachricht von aussen
-0xb0b,NOTES Funktion muss eine sein von:
-0xb0c,Du hast keine Nachrichten
-0xb0d, -- VERFAELLT HEUTE
-# LANGSPEC
-0xb0e, -- VERFAELLT IN %d TAGE%s
-0xb0f,Auf Dich warten folgende Nachrichten
-0xb10,Du hast nicht so viele Nachrichten
-0xb11,Benutze '.notes read' um sie zu lesen.
-0xb12,Kann die Nachrichtendatei nicht veraendern
-0xb13,Alle Nachrichten geloescht
-0xb14,NOTICE %s :Auf Dich warten %d Nachrichte%s auf %s.\n
-0xb15,Um eine Liste gezeigt zu bekommen:
-0xb16,### Auf Dich warten %d Nachrichte%s %s.\n
-0xb17,### Benutze '.notes read' um sie zu lesen.\n
 0xb18,Bot wird heruntergefahren....
 0xb19,Kein solcher Benutzer
 0xb1a,Keine Channels
 0xb1b,Im Moment auf der Partyline:
 0xb1c,Verbundene Bots
 0xb1d,Andere Leute auf dem Bot
-#veraltete?
 0xb1f,Versuche Verbindung herzustellen zu
 0xb20,Nicht online; Nachricht gespeichert.
 0xb21,Nachrichtenkorb ist volll, tut mir leid.
@@ -342,7 +319,6 @@ Baue eine Telnetverbindung zu dem Bot auf und gib 'NEW' als deinen Nickname ein.
 0xb27,Kann die Verbindung nicht trennen zu
 0xb28,Ring entdeckt
 0xb29,Falsche Verbindungsmitteilung von
-#???
 0xb2b,Verbindung getrennt zu den verbliebenen
 0xb2c,Verbunden mit
 0xb2d,Illegale Verbindung vom Leaf
@@ -368,7 +344,7 @@ Baue eine Telnetverbindung zu dem Bot auf und gib 'NEW' als deinen Nickname ein.
 0xb42,Verbindung getrennt zu:
 0xb43,Nicht mit diesem Bot verbunden.
 #Hae?
-0xb44,Smooshing bot tables and assocs...
+0xb44,Smooshing Bot-Tabellen und assocs...
 0xb45,ist kein bekannter Bot.
 0xb46,Zu mir selbst eine Verbindung aufbauen?  Mein Junge, Sigmund Freud haette seine Freude.
 0xb47,Dieser Bot ist bereits angebunden.
@@ -410,7 +386,7 @@ Baue eine Telnetverbindung zu dem Bot auf und gib 'NEW' als deinen Nickname ein.
 0xc0d,DCC Verbindungen ueberfuellt: %s %s (%s!%s)
 0xc19,Verbindung nicht zustandegekommen
 0xc1a,DCC Verbindung nicht zustandegekommen
-0xc1c,Gib dein Passwort ein.
+0xc1c,Gib Dein Passwort ein.
 0xc1d,%s wurde gewaltsam entfernt wegen Flood.\n
 0xc1e,-=- poof -=-\n
 0xc1f,Du wurdest von dem %s runtergeworfen von %s%s%s\n
@@ -438,7 +414,7 @@ Baue eine Telnetverbindung zu dem Bot auf und gib 'NEW' als deinen Nickname ein.
 0xe0c,Zum Verbindungsaufbau mit %s wird ein Passwort benoetigt.
 0xe0d,FEHLER beim Verbindungsaufbau mit %s: %s
 0xe0e,Bot verlohren: %s
-0xe0f,Zeitueberschreitung: Verbindungsaufbau mit bot %s bei %s:%d
+0xe0f,Zeitueberschreitung: Verbindungsaufbau mit Bot %s bei %s:%d
 0xe10,Eingeloggt: %s (%s/%d)
 0xe11,Falsches Passwort: [%s]%s/%d
 0xe12,Negativ, Houston.\n
