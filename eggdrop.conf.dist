@@ -940,7 +940,7 @@ set max-dloads 3
 # set the block size for dcc transfers (ircII uses 512 bytes, but admits
 # that may be too small -- 1024 is standard these days)
 # set this to 0 to use turbo-dcc (recommended)
-set dcc-block 0
+set dcc-block 1024
 
 # [0/1] copy files into the /tmp directory before sending them?  this is
 # useful on most systems for file stability.  (someone could move a file

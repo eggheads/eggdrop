@@ -1369,10 +1369,6 @@ static int tcl_delchanrec STDVAR
     Tcl_AppendResult(irp, "0", NULL);
     return TCL_OK;
   }
-  if (!findchan(argv[2])) {
-    Tcl_AppendResult(irp, "0", NULL);
-    return TCL_OK;
-  }
   if (get_chanrec(u, argv[2]) == NULL) {
     Tcl_AppendResult(irp, "0", NULL);
     return TCL_OK;
