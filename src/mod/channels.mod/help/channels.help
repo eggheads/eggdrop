@@ -205,9 +205,11 @@ See also: -exempt, +exempt, console, chanset, chaninfo, stick, unstick
 See also:%{+n} +chan, -chan,%{+n|n} chansave, chanset, chaninfo
 %{help=chanset}%{+n|n}
 ###  %bchanset%b <channel> <settings>
-   Allows you to change the channel settings for a channel (see %b'chaninfo'%b
-   for the settings). These are used until the next rehash/chanload/restart,
-   and are saved whenever the channel settings are saved.
+   Allows you to change the channel settings (see %b'chaninfo'%b for the
+   settings) for one specific channel or all channels. Use '*' to to apply the
+   change to all channels.
+   Changes are used until the next rehash/chanload/restart, and are saved
+   whenever the channel settings are saved.
 
 See also: %{+n}+chan, -chan%{+n|n} chanload, chansave, chaninfo
 %{help=chansave}%{+n|n}
