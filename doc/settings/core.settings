@@ -221,8 +221,7 @@ logfile <logflags> <channel> "logs/logfile"
 
   set motd "text/motd"
     The MOTD (Message Of The day) is displayed when people dcc chat or telnet
-    to the bot. Look at doc/settings.motd or type '.help set motd' in DCC 
-    CHAT or telnet connection for options.
+    to the bot. Look at doc/text-substitutions.doc for options.
 
 
   set telnet-banner "text/banner"
