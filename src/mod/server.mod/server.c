@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  *
- * $Id: server.c,v 1.61 2001/04/12 02:39:47 guppy Exp $
+ * $Id: server.c,v 1.62 2001/05/12 20:48:36 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1863,7 +1863,7 @@ char *server_start(Function *global_funcs)
   H_wall = add_bind_table("wall", HT_STACKABLE, server_2char);
   H_raw = add_bind_table("raw", HT_STACKABLE, server_raw);
   H_notc = add_bind_table("notc", HT_STACKABLE, server_6char);
-  H_msgm = add_bind_table("msgm", HT_STACKABLE, server_5char);
+  H_msgm = add_bind_table("msgm", HT_STACKABLE, server_msg);
   H_msg = add_bind_table("msg", 0, server_msg);
   H_flud = add_bind_table("flud", HT_STACKABLE, server_5char);
   H_ctcr = add_bind_table("ctcr", HT_STACKABLE, server_6char);
