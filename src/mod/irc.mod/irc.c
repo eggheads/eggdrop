@@ -2,7 +2,7 @@
  * irc.c -- part of irc.mod
  *   support for channels within the bot
  *
- * $Id: irc.c,v 1.66 2002/02/19 22:14:24 guppy Exp $
+ * $Id: irc.c,v 1.67 2002/03/10 17:34:32 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -900,6 +900,8 @@ static void flush_modes()
   struct chanset_t *chan;
   memberlist *m;
 
+  if (modesperline > 6)
+    modesperline = 6; 
   for (chan = chanset; chan; chan = chan->next) {
     for (m = chan->channel.member; m && m->nick[0]; m = m->next) {
       if (m->delay && m->delay <= now) {
