@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  *
- * $Id: main.c,v 1.114 2005/01/28 03:26:20 wcc Exp $
+ * $Id: main.c,v 1.115 2005/04/16 03:01:05 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -80,7 +80,7 @@ extern struct chanset_t *chanset;
 extern log_t *logs;
 extern Tcl_Interp *interp;
 extern tcl_timer_t *timer, *utimer;
-extern jmp_buf alarmret;
+extern sigjmp_buf alarmret;
 time_t now;
 
 /*
@@ -390,7 +390,7 @@ static void got_hup(int z)
  */
 static void got_alarm(int z)
 {
-  longjmp(alarmret, 1);
+  siglongjmp(alarmret, 1);
 
   /* -Never reached- */
 }

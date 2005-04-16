@@ -2,7 +2,7 @@
  * net.c -- handles:
  *   all raw network i/o
  *
- * $Id: net.c,v 1.75 2005/02/08 06:51:59 tothwolf Exp $
+ * $Id: net.c,v 1.76 2005/04/16 03:01:05 wcc Exp $
  */
 /*
  * This is hereby released into the public domain.
@@ -67,7 +67,7 @@ int dcc_sanitycheck = 0;      /* Do some sanity checking on dcc connections.  */
 
 sock_list *socklist = NULL;   /* Enough to be safe.                           */
 int MAXSOCKS = 0;
-jmp_buf alarmret;             /* Env buffer for alarm() returns.              */
+sigjmp_buf alarmret;             /* Env buffer for alarm() returns.              */
 
 /* Types of proxies */
 #define PROXY_SOCKS   1
@@ -341,7 +341,7 @@ static int proxy_connect(int sock, char *host, int port, int proxy)
       egg_memcpy(x, &ip, 4);
     } else {
       /* no, must be host.domain */
-      if (!setjmp(alarmret)) {
+      if (!sigsetjmp(alarmret, 1)) {
         alarm(resolve_timeout);
         hp = gethostbyname(host);
         alarm(0);
@@ -415,7 +415,7 @@ int open_telnet_raw(int sock, char *server, int sport)
   else {
     /* No, must be host.domain */
     debug0("WARNING: open_telnet_raw() is about to block in gethostbyname()!");
-    if (!setjmp(alarmret)) {
+    if (!sigsetjmp(alarmret, 1)) {
       alarm(resolve_timeout);
       hp = gethostbyname(host);
       alarm(0);
