@@ -7,7 +7,7 @@
  *   (non-Tcl) procedure lookups for msg/dcc/file commands
  *   (Tcl) binding internal procedures to msg/dcc/file commands
  *
- * $Id: tclhash.c,v 1.54 2005/02/08 01:08:19 tothwolf Exp $
+ * $Id: tclhash.c,v 1.55 2005/07/31 02:18:36 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -684,10 +684,10 @@ static inline int trigger_bind(const char *proc, const char *param,
   ContextNote(buf);
   nfree(buf);
 #endif /* DEBUG_CONTEXT */
+  Tcl_SetVar(interp, "lastbind", (char *) mask, TCL_GLOBAL_ONLY);
   x = Tcl_VarEval(interp, proc, param, NULL);
   Context;
 
-  Tcl_SetVar(interp, "lastbind", (char *) mask, TCL_GLOBAL_ONLY);
 
   if (x == TCL_ERROR) {
     /* FIXME: we really should be able to log longer errors */
@@ -812,6 +812,7 @@ int check_tcl_bind(tcl_bind_list_t *tl, const char *match,
            */
 
           tc->hits++;
+          Tcl_SetVar(interp, "lastbind", (char *) tm->mask, TCL_GLOBAL_ONLY);
           x = trigger_bind(tc->func_name, param, tm->mask);
 
           if (match_type & BIND_ALTER_ARGS) {
