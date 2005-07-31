@@ -1,7 +1,7 @@
 /*
  * tclchan.c -- part of channels.mod
  *
- * $Id: tclchan.c,v 1.91 2005/07/31 06:32:57 wcc Exp $
+ * $Id: tclchan.c,v 1.92 2005/07/31 07:01:51 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -955,7 +955,7 @@ static int tcl_channel_get(Tcl_Interp *irp, struct chanset_t *chan,
     s[120] = 0;
   } else if (!strcmp(setting, "idle-kick"))
     simple_sprintf(s, "%d", chan->idle_kick);
-  else if (!strcmp(setting, "stopnethack-mode"))
+  else if (!strcmp(setting, "stopnethack-mode") || !strcmp(setting, "stop-net-hack"))
     simple_sprintf(s, "%d", chan->stopnethack_mode);
   else if (!strcmp(setting, "revenge-mode"))
     simple_sprintf(s, "%d", chan->revenge_mode);

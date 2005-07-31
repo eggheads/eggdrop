@@ -1,7 +1,7 @@
 /*
  * servmsg.c -- part of server.mod
  *
- * $Id: servmsg.c,v 1.86 2005/02/04 14:15:27 tothwolf Exp $
+ * $Id: servmsg.c,v 1.87 2005/07/31 07:01:51 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1299,6 +1299,8 @@ static void server_resolve_success(int servidx)
     if (pass[0])
       dprintf(DP_MODE, "PASS %s\n", pass);
     dprintf(DP_MODE, "NICK %s\n", botname);
+    if (botrealname[0] == 0 || (botrealname[0] == ' ' && botrealname[1] == 0))
+      strcpy(botrealname, "/msg LamestBot hello");
     dprintf(DP_MODE, "USER %s . . :%s\n", botuser, botrealname);
     /* Wait for async result now */
   }
