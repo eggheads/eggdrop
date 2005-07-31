@@ -43,8 +43,10 @@
    firewall transparently changes your address to a unique address
    for your box) or you have IP masquerading between you and the
    rest of the world, and /dcc chat, /ctcp chat or userfile sharing
-   aren't working, enter your outside IP here. Do not enter anything
-   for my-ip or my-hostname if you use this setting.
+   aren't working, enter your outside IP here. This IP is used for
+   transfers only, and has nothing to do with the my-ip or
+   my-hostname settings. You may still need to set my-ip and/or
+   my-hostname.
 %{help=set dcc-sanitycheck}%{+n}
 ###  %bset dcc-sanitycheck%b <0/1>
    This setting will make the bot ignore DCC chat requests which
