@@ -5315,6 +5315,11 @@ _ACEOF
       # Mac OS X
       SHLIB_CC="$CC -fPIC"
       SHLIB_LD="ld -bundle -undefined error"
+
+cat >>confdefs.h <<\_ACEOF
+#define BIND_8_COMPAT 1
+_ACEOF
+
     ;;
     *)
       if test -r /mach; then

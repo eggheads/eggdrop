@@ -3,6 +3,9 @@
 #ifndef _EGG_CONFIG_H
 #define _EGG_CONFIG_H
 
+/* Define if running on Mac OS X with dns.mod. */
+#undef BIND_8_COMPAT
+
 /* Define if running on NeXT Step. */
 #undef BORGCUBES
 
