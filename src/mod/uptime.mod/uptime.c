@@ -1,5 +1,5 @@
 /*
- * $Id: uptime.c,v 1.33 2005/01/03 20:01:46 paladin Exp $
+ * $Id: uptime.c,v 1.34 2005/08/20 21:27:31 wcc Exp $
  *
  * This module reports uptime information about your bot to http://uptime.eggheads.org. The
  * purpose for this is to see how your bot rates against many others (including EnergyMechs
@@ -72,7 +72,7 @@ static int hours = 0;
 static int uptimesock;
 static int uptimecount;
 static unsigned long uptimeip;
-static char uptime_version[50] = "";
+static char uptime_version[48] = "";
 
 static int uptime_expmem()
 {
@@ -114,7 +114,7 @@ unsigned long get_ip()
 int init_uptime(void)
 {
   struct sockaddr_in sai;
-  char temp[50] = "";
+  char x[64], *z = x;
 
   upPack.regnr = 0;  /* unused */
   upPack.pid = 0;    /* must set this later */
@@ -124,9 +124,9 @@ int init_uptime(void)
   uptimecount = 0;
   uptimeip = -1;
 
-  strncpyz(temp, ver, sizeof temp);
-  splitc(uptime_version, temp, ' ');
-  strncpyz(uptime_version, temp, sizeof uptime_version);
+  strncpyz(x, ver, sizeof x);
+  newsplit(&z);
+  strncpyz(uptime_version, z, sizeof uptime_version);
 
   if ((uptimesock = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
     putlog(LOG_DEBUG, "*", "init_uptime socket returned < 0 %d", uptimesock);

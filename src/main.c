@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  *
- * $Id: main.c,v 1.115 2005/04/16 03:01:05 wcc Exp $
+ * $Id: main.c,v 1.116 2005/08/20 21:27:30 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -460,7 +460,7 @@ void eggAssert(const char *file, int line, const char *module)
 
 static void do_arg(char *s)
 {
-  char x[1024], *z = x;
+  char x[512], *z = x;
   int i;
 
   if (s[0] == '-')
