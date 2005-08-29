@@ -7,7 +7,7 @@
  *   (non-Tcl) procedure lookups for msg/dcc/file commands
  *   (Tcl) binding internal procedures to msg/dcc/file commands
  *
- * $Id: tclhash.c,v 1.55 2005/07/31 02:18:36 wcc Exp $
+ * $Id: tclhash.c,v 1.56 2005/08/29 04:39:24 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -642,7 +642,7 @@ static int builtin_dcc STDVAR
 
   /* FIXME: This is an ugly hack. It is not documented as a
    *        'feature' because it will eventually go away.
-   */ 
+   */
   if (F == CMD_LEAVE) {
     Tcl_AppendResult(irp, "break", NULL);
     return TCL_OK;

@@ -2,7 +2,7 @@
  * filesys.c -- part of filesys.mod
  *   main file of the filesys eggdrop module
  *
- * $Id: filesys.c,v 1.68 2005/02/08 01:08:19 tothwolf Exp $
+ * $Id: filesys.c,v 1.69 2005/08/29 04:39:25 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -509,7 +509,7 @@ static int builtin_fil STDVAR
 
   BADARGS(4, 4, " hand idx param");
 
-  CHECKVALIDITY(builtin_fil);  
+  CHECKVALIDITY(builtin_fil);
   idx = findanyidx(atoi(argv[2]));
   if (idx < 0 && dcc[idx].type != &DCC_FILES) {
     Tcl_AppendResult(irp, "invalid idx", NULL);

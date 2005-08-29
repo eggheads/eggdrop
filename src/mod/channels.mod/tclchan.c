@@ -1,7 +1,7 @@
 /*
  * tclchan.c -- part of channels.mod
  *
- * $Id: tclchan.c,v 1.92 2005/07/31 07:01:51 wcc Exp $
+ * $Id: tclchan.c,v 1.93 2005/08/29 04:39:25 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -910,11 +910,11 @@ static int tcl_channel_info(Tcl_Interp *irp, struct chanset_t *chan)
       args[1] = b;
       x = Tcl_Merge(2, args);
       egg_snprintf(s, sizeof s, "%s", x);
-      Tcl_Free((char *) x); 
+      Tcl_Free((char *) x);
       Tcl_AppendElement(irp, s);
     } else if (ul->type == UDEF_STR) {
       char *p = (char *) getudef(ul->values, chan->dname), *buf;
-      
+
       if (!p)
         p = "{}";
 
