@@ -1,4 +1,4 @@
-$Id: core.settings,v 1.32 2005/07/31 17:37:29 wcc Exp $
+$Id: core.settings,v 1.33 2005/08/29 03:45:41 wcc Exp $
 
 Eggdrop Core Settings
 Last revised: April 17, 2003
@@ -321,9 +321,7 @@ Last revised: April 17, 2003
 
 
     set protect-telnet 0
-      This setting will drop telnet connections not matching a known host. It
-      greatly improves protection from IRCops, but makes it impossible to add
-      hosts on limbo (NOIRC) bots or have NEW as a valid login.
+      This setting will drop telnet connections not matching a known host.
 
     set dcc-sanitycheck 0
       This setting will make the bot ignore DCC chat requests which appear to

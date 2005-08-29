@@ -227,9 +227,7 @@
 %{help=set protect-telnet}%{+n}
 ###  %bset protect-telnet%b <0/1>
    This setting will drop telnet connections not matching a known
-   host. It greatly improves protection from IRCops, but makes it
-   impossible to add hosts on limbo (NOIRC) bots or have NEW as a
-   valid login.
+   host.
 %{help=set ident-timeout}%{+n}
 ###  %bset ident-timeout%b <timeout>
    This settings defines a time in seconds that the bot should wait
