@@ -1,4 +1,4 @@
-$Id: core.settings,v 1.33 2005/08/29 03:45:41 wcc Exp $
+$Id: core.settings,v 1.34 2005/08/29 03:51:36 wcc Exp $
 
 Eggdrop Core Settings
 Last revised: April 17, 2003
@@ -323,12 +323,13 @@ Last revised: April 17, 2003
     set protect-telnet 0
       This setting will drop telnet connections not matching a known host.
 
+
     set dcc-sanitycheck 0
       This setting will make the bot ignore DCC chat requests which appear to
       have bogus information on the grounds that the user may have been trying
       to make the bot connect to somewhere that will get it into trouble, or
-      that the user has a broken client (like mIRC tends to do), in which case
-      the connect wouldn't work anyway. It's suggested that you turn this on.
+      that the user has a broken client, in which case the connect wouldn't
+      work anyway.
 
 
     set ident-timeout 5

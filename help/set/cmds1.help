@@ -52,9 +52,8 @@
    This setting will make the bot ignore DCC chat requests which
    appear to have bogus information on the grounds that the user may
    have been trying to make the bot connect to somewhere that will
-   get it into trouble, or that the user has a broken client (like
-   mIRC tends to do), in which case the connect wouldn't work anyway.
-   It's suggested that you turn this on.
+   get it into trouble, or that the user has a broken client, in
+   which case the connect wouldn't work anyway.
 %{help=set network}%{+n}
 ###  %bset network%b <net-name>
    This setting is used only for info to share with others on your
