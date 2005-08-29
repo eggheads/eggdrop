@@ -1,4 +1,4 @@
-$Id: UPDATES1.6,v 1.617 2005/08/20 21:27:30 wcc Exp $
+$Id: UPDATES1.6,v 1.618 2005/08/29 04:48:19 wcc Exp $
 
 Eggdrop Changes (since v1.6.0)
     _____________________________________________________________________
@@ -12,6 +12,10 @@ Eggdrop Changes (since v1.6.0)
 
 
   1.6.18:
+    - Fixed putlog() of an uninitialized (and incorrect) variable in
+      dcc_telnet_hostresolved().
+    * Patch by: lordares
+
     - Valgrind doesn't bitch about init_uptime() now.
     * Patch by: Wcc
 

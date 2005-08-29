@@ -4,7 +4,7 @@
  *   disconnect on a dcc socket
  *   ...and that's it!  (but it's a LOT)
  *
- * $Id: dcc.c,v 1.82 2005/01/03 20:01:44 paladin Exp $
+ * $Id: dcc.c,v 1.83 2005/08/29 04:48:19 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1152,7 +1152,7 @@ static void dcc_telnet_hostresolved(int i)
   if (dcc[idx].host[0] == '@') {
     /* Restrict by hostname */
     if (!wild_match(dcc[idx].host + 1, dcc[i].host)) {
-      putlog(LOG_BOTS, "*", DCC_BADHOST, s);
+      putlog(LOG_BOTS, "*", DCC_BADHOST, dcc[i].host);
       killsock(dcc[i].sock);
       lostdcc(i);
       return;
