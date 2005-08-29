@@ -4,7 +4,7 @@
  *
  *   IF YOU ALTER THIS FILE, YOU NEED TO RECOMPILE THE BOT.
  *
- * $Id: eggdrop.h,v 1.63 2005/01/03 20:01:44 paladin Exp $
+ * $Id: eggdrop.h,v 1.64 2005/08/29 23:44:33 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -304,7 +304,7 @@ struct dcc_table {
   void (*eof) (int);
   void (*activity) (int, char *, int);
   int *timeout_val;
-  void (*timeout) ();
+  void (*timeout) (int);
   void (*display) (int, char *);
   int (*expmem) (void *);
   void (*kill) (int, void *);
