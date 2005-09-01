@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  *
- * $Id: server.c,v 1.121 2005/02/04 14:15:27 tothwolf Exp $
+ * $Id: server.c,v 1.122 2005/09/01 02:23:49 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1485,7 +1485,7 @@ static int ctcp_DCC_CHAT(char *nick, char *from, char *handle,
       return 1;
     i = new_dcc(&DCC_DNSWAIT, sizeof(struct dns_info));
     if (i < 0) {
-      putlog(LOG_MISC, "*", "DCC connection: CHAT (%s!%s)", dcc[i].nick, ip);
+      putlog(LOG_MISC, "*", "DCC connection: CHAT (%s!%s)", nick, ip);
       return 1;
     }
     dcc[i].addr = my_atoul(ip);
@@ -1495,7 +1495,6 @@ static int ctcp_DCC_CHAT(char *nick, char *from, char *handle,
     strcpy(dcc[i].host, from);
     dcc[i].timeval = now;
     dcc[i].user = u;
-    dcc[i].addr = my_atoul(ip);
     dcc[i].u.dns->ip = dcc[i].addr;
     dcc[i].u.dns->dns_type = RES_HOSTBYIP;
     dcc[i].u.dns->dns_success = dcc_chat_hostresolved;
