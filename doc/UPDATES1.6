@@ -1,4 +1,4 @@
-$Id: UPDATES1.6,v 1.620 2005/08/29 23:44:33 wcc Exp $
+$Id: UPDATES1.6,v 1.621 2005/09/04 18:53:58 wcc Exp $
 
 Eggdrop Changes (since v1.6.0)
     _____________________________________________________________________
@@ -12,12 +12,9 @@ Eggdrop Changes (since v1.6.0)
 
 
   1.6.18:
+    - Fixed possibility of referencing a NULL pointer in rembot().
     - Added a missing param cast for dcc_table.timeout.
-    * Patch by: lordares
-
     - Fixed a memleak / other nasty stuff when MODES_PER_LINE_MAX != 6.
-    * Patch by: lordares
-
     - Fixed putlog() of an uninitialized (and incorrect) variable in
       dcc_telnet_hostresolved().
     * Patch by: lordares
