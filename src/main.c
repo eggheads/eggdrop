@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  *
- * $Id: main.c,v 1.116 2005/08/20 21:27:30 wcc Exp $
+ * $Id: main.c,v 1.117 2005/09/05 03:38:32 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1043,8 +1043,8 @@ int main(int argc, char **argv)
         /* Unload as many modules as possible */
         int f = 1;
         module_entry *p;
-        Function x;
-        char xx[256];
+        Function startfunc;
+        char name[256];
 
         /* oops, I guess we should call this event before tcl is restarted */
         check_tcl_event("prerestart");
@@ -1061,8 +1061,8 @@ int main(int argc, char **argv)
               d = d->next;
             }
             if (ok) {
-              strcpy(xx, p->name);
-              if (module_unload(xx, botnetnick) == NULL) {
+              strcpy(name, p->name);
+              if (module_unload(name, botnetnick) == NULL) {
                 f = 1;
                 break;
               }
@@ -1070,16 +1070,18 @@ int main(int argc, char **argv)
           }
         }
 
+        /* Make sure we don't have any modules left hanging around other than
+         * "eggdrop" and the two that are supposed to be.
+         */
         for (f = 0, p = module_list; p; p = p->next) {
-          if (!strcmp(p->name, "eggdrop") || !strcmp(p->name, "encryption") ||
-              !strcmp(p->name, "uptime"))
-            f = 0;
-          else
-            f = 1;
+          if (strcmp(p->name, "eggdrop") && strcmp(p->name, "encryption") &&
+              strcmp(p->name, "uptime")) {
+            f++;
+          }
         }
-        if (f)
-          /* Should be only 3 modules now - eggdrop, encryption, and uptime */
+        if (f != 0) {
           putlog(LOG_MISC, "*", MOD_STAGNANT);
+        }
 
         flushlogs();
         kill_tcl();
@@ -1089,8 +1091,8 @@ int main(int argc, char **argv)
         /* this resets our modules which we didn't unload (encryption and uptime) */
         for (p = module_list; p; p = p->next) {
           if (p->funcs) {
-            x = p->funcs[MODCALL_START];
-            x(NULL);
+            startfunc = p->funcs[MODCALL_START];
+            startfunc(NULL);
           }
         }
 
@@ -1098,6 +1100,7 @@ int main(int argc, char **argv)
         restart_chons();
         call_hook(HOOK_LOADED);
       }
+
       do_restart = 0;
     }
   }

@@ -1,7 +1,7 @@
 # core.english.lang
 #   core language messages for eggdrop
 #
-# $Id: core.english.lang,v 1.43 2004/08/09 04:39:44 wcc Exp $
+# $Id: core.english.lang,v 1.44 2005/09/05 03:38:31 wcc Exp $
 
 # General stuff
 0x001,Usage
@@ -45,7 +45,7 @@
 0x209,Error loading module:
 0x20a,Error unloading module:
 0x20b,Can't load modules
-0x20c,Stagnant module; there WILL be memory leaks!
+0x20c,Stagnant modules; there WILL be memory leaks!
 0x20d,You have installed modules but have not selected an encryption\n\
 module, please consult the default config file for info.\n
 0x20e,Filesys module not loaded.
