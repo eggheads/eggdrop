@@ -1,11 +1,11 @@
 dnl configure.ac: this file is processed by autoconf to produce ./configure.
 dnl
-dnl $Id: configure.ac,v 1.18 2005/02/03 18:07:21 tothwolf Exp $
+dnl $Id: configure.ac,v 1.19 2005/10/21 01:56:33 wcc Exp $
 
 AC_PREREQ(2.59)
 AC_INIT([Eggdrop],[1.6.18],[bugs@eggheads.org])
 AC_COPYRIGHT([Copyright (C) 1999 - 2005 Eggheads Development Team])
-AC_REVISION($Revision: 1.18 $)
+AC_REVISION($Revision: 1.19 $)
 AC_CONFIG_SRCDIR(src/eggdrop.h)
 AC_CONFIG_AUX_DIR(misc)
 AC_CONFIG_HEADER(config.h)
@@ -115,7 +115,7 @@ tcllibpaths="$HOME/lib $HOME/tcl/lib \
              /usr/local/lib/tcl8.5 /usr/lib/tcl8.5 \
              /usr/local/lib/tcl8.4 /usr/lib/tcl8.4 \
              /usr/local/lib/tcl8.3 /usr/lib/tcl8.3 \
-             /usr/local/pkgs/tcl/lib /sys/lib \
+             /usr/local/pkgs/tcl/lib /sys/lib /usr/pkg/lib \
              /usr/i486-linuxaout/lib /beos/system/lib $HOME"
 
 # Tcl header filenames and search paths.
@@ -126,7 +126,7 @@ tclheaderpaths="$HOME/include $HOME/tcl/include \
                 /usr/local/include/tcl8.4 /usr/include/tcl8.4 \
                 /usr/local/include/tcl8.3 /usr/include/tcl8.3 \
                 /usr/local/pkgs/tcl/include /sys/include \
-                /beos/system/include /beos/devel/include $HOME"
+                /usr/pkg/lib /beos/system/include /beos/devel/include $HOME"
 
 
 # Misc Tcl checks. We save the cache (if used) here to speed things up if we
