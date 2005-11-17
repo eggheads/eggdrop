@@ -2,7 +2,7 @@
  * flags.c -- handles:
  *   all the flag matching/conversion functions in one neat package :)
  *
- * $Id: flags.c,v 1.30 2005/02/03 15:34:21 tothwolf Exp $
+ * $Id: flags.c,v 1.31 2005/11/17 17:58:26 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -546,7 +546,7 @@ int flagrec_ok(struct flag_record *req, struct flag_record *have)
     int hav = have->global;
 
     /* Exception 1 - global +d/+k cant use -|-, unless they are +p */
-    if (!req->chan && !req->global &&!req->udef_global && !req->udef_chan) {
+    if (!req->chan && !req->global && !req->udef_global && !req->udef_chan) {
       if (!allow_dk_cmds) {
         if (glob_party(*have))
           return 1;

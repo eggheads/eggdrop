@@ -7,7 +7,7 @@
  *   (non-Tcl) procedure lookups for msg/dcc/file commands
  *   (Tcl) binding internal procedures to msg/dcc/file commands
  *
- * $Id: tclhash.c,v 1.57 2005/11/17 05:21:34 tothwolf Exp $
+ * $Id: tclhash.c,v 1.58 2005/11/17 17:58:26 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -824,12 +824,9 @@ int check_tcl_bind(tcl_bind_list_t *tl, const char *match,
           x = trigger_bind(tc->func_name, param, tm->mask);
 
           if (match_type & BIND_ALTER_ARGS) {
-
             if (interp->result == NULL || !interp->result[0])
               return x;
-
           } else if ((match_type & BIND_STACKRET) && x == BIND_EXEC_LOG) {
-
             /* If we have multiple commands/triggers, and if any of the
              * commands return 1, we store the result so we can return it
              * after processing all stacked binds.
@@ -837,9 +834,7 @@ int check_tcl_bind(tcl_bind_list_t *tl, const char *match,
             if (!result)
               result = x;
             continue;
-
           } else if ((match_type & BIND_WANTRET) && x == BIND_EXEC_LOG)
-
             /* Return immediately if any commands return 1 */
             return x;
         }

@@ -5,7 +5,7 @@
  *
  * by Darrin Smith (beldin@light.iinet.net.au)
  *
- * $Id: botmsg.c,v 1.33 2005/02/08 16:13:11 tothwolf Exp $
+ * $Id: botmsg.c,v 1.34 2005/11/17 17:58:26 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -754,7 +754,7 @@ void botnet_send_nkch_part(int butidx, int useridx, char *oldnick)
 }
 
 /* This part of add_note is more relevant to the botnet than
- * to the notes file
+ * to the notes file.
  */
 int add_note(char *to, char *from, char *msg, int idx, int echo)
 {
@@ -762,12 +762,17 @@ int add_note(char *to, char *from, char *msg, int idx, int echo)
   char *p, botf[81], ss[81], ssf[81];
   struct userrec *u;
 
-  /* note length + PRIVMSG header + nickname + date  must be <512  */
+  /* Notes have a length limit. Note + PRIVMSG header + nick + date must
+   * be less than 512.
+   */
   if (strlen(msg) > 450)
-    msg[450] = 0;               /* Notes have a limit */
+    msg[450] = 0;
 
+  /* Is this a cross-bot note? If it is, 'to' will be of the format
+   * 'user@bot'.
+   */
   p = strchr(to, '@');
-  if (p != NULL) {              /* Cross-bot note */
+  if (p != NULL) {
     char x[21];
 
     *p = 0;
@@ -868,7 +873,7 @@ int add_note(char *to, char *from, char *msg, int idx, int echo)
 
       if (dcc[i].type == &DCC_CHAT) {
 
-        /* Only check away if it's not from a bot */
+        /* Only check away if it's not from a bot. */
         if (dcc[i].u.chat->away != NULL && idx != -2) {
           aok = 0;
 
@@ -909,19 +914,14 @@ int add_note(char *to, char *from, char *msg, int idx, int echo)
   }
 
   if (idx == -2)
-    return NOTE_OK;             /* Error msg from a tandembot: don't store */
+    return NOTE_OK; /* Error msg from a tandembot: don't store. */
 
-  /* Call tcl_storenote */
+  /* Call 'storenote' Tcl command. */
+  simple_sprintf(ss, "%d", (idx >= 0) ? dcc[idx].sock : -1);
   Tcl_SetVar(interp, "_from", from, 0);
-  Tcl_SetVar(interp, "_to", to, 0);
-  Tcl_SetVar(interp, "_data", msg, 0);
-  if (idx >= 0)
-    simple_sprintf(ss, "%d", dcc[idx].sock);
-  else
-    simple_sprintf(ss, "%d", -1);
-
-  Tcl_SetVar(interp, "_idx", ss, 0);
-
+  Tcl_SetVar(interp, "_to",   to,   0);
+  Tcl_SetVar(interp, "_data", msg,  0);
+  Tcl_SetVar(interp, "_idx",  ss,   0);
   if (Tcl_VarEval(interp, "storenote", " $_from $_to $_data $_idx", NULL) ==
       TCL_OK) {
 
@@ -929,7 +929,7 @@ int add_note(char *to, char *from, char *msg, int idx, int echo)
       status = NOTE_FWD;
 
     /* User is away in all sessions -- just notify the user that a
-     * message arrived and was stored. (only oldest session is notified.)
+     * message arrived and was stored (only oldest session is notified).
      */
     if (status == NOTE_AWAY)
       dprintf(iaway, "*** %s.\n", BOT_NOTEARRIVED);
@@ -937,5 +937,6 @@ int add_note(char *to, char *from, char *msg, int idx, int echo)
     return status;
   }
 
+  /* If we haven't returned anything else by now, assume an error occurred. */
   return NOTE_ERROR;
 }

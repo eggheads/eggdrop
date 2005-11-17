@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  *
- * $Id: server.c,v 1.122 2005/09/01 02:23:49 wcc Exp $
+ * $Id: server.c,v 1.123 2005/11/17 17:58:26 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -461,7 +461,7 @@ static int fast_deq(int which)
     nextcmd = newsplit(&nextmsg);
     nextto = newsplit(&nextmsg);
     len = strlen(nextto);
-    if (strcmp(to, nextto) &&!strcmp(cmd, nextcmd) && !strcmp(msg, nextmsg) &&
+    if (strcmp(to, nextto) && !strcmp(cmd, nextcmd) && !strcmp(msg, nextmsg) &&
         ((strlen(cmd) + strlen(victims) + strlen(nextto) + strlen(msg) + 2) <
         510) && (!stack_limit || cmd_count < stack_limit - 1)) {
       cmd_count++;

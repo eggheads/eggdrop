@@ -4,7 +4,7 @@
  *   Tcl initialization
  *   getting and setting Tcl/eggdrop variables
  *
- * $Id: tcl.c,v 1.84 2005/02/08 01:08:19 tothwolf Exp $
+ * $Id: tcl.c,v 1.85 2005/11/17 17:58:26 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -444,7 +444,7 @@ void add_tcl_objcommands(tcl_cmds *table)
     Tcl_CreateObjCommand(interp, table[i].name, table[i].func, (ClientData) 0,
                          NULL);
 }
-#endif /* USE_TCL_OBJ */
+#endif
 
 static tcl_strings def_tcl_strings[] = {
   {"botnet-nick",     botnetnick,     HANDLEN,                 0},
@@ -687,7 +687,7 @@ resetPath:
   add_tcl_commands(tclmisc_cmds);
 #ifdef USE_TCL_OBJ
   add_tcl_objcommands(tclmisc_objcmds);
-#endif /* USE_TCL_OBJ */
+#endif
   add_tcl_commands(tcldns_cmds);
 }
 

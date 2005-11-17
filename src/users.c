@@ -10,7 +10,7 @@
  *
  * dprintf'ized, 9nov1995
  *
- * $Id: users.c,v 1.47 2005/01/03 20:01:45 paladin Exp $
+ * $Id: users.c,v 1.48 2005/11/17 17:58:26 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -577,10 +577,10 @@ void tell_users_match(int idx, char *mtch, int start, int limit,
     user.match = pls.match = FR_GLOBAL | FR_BOT | FR_CHAN;
     break_down_flags(mtch, &pls, &mns);
     mns.match = pls.match ^ (FR_AND | FR_OR);
-    if (!mns.global &&!mns.udef_global && !mns.chan && !mns.udef_chan &&
+    if (!mns.global && !mns.udef_global && !mns.chan && !mns.udef_chan &&
         !mns.bot) {
       nomns = 1;
-      if (!pls.global &&!pls.udef_global && !pls.chan && !pls.udef_chan &&
+      if (!pls.global && !pls.udef_global && !pls.chan && !pls.udef_chan &&
           !pls.bot) {
         /* happy now BB you weenie :P */
         dprintf(idx, "Unknown flag specified for matching!!\n");

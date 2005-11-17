@@ -1,7 +1,7 @@
 /*
  * tclirc.c -- part of irc.mod
  *
- * $Id: tclirc.c,v 1.47 2005/08/29 04:39:25 wcc Exp $
+ * $Id: tclirc.c,v 1.48 2005/11/17 17:58:26 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -51,7 +51,7 @@ static int tcl_chanlist STDVAR
   f = (minus.global || minus.udef_global || minus.chan || minus.udef_chan ||
        minus.bot);
   /* Return empty set if asked for flags but flags don't exist */
-  if (!plus.global &&!plus.udef_global && !plus.chan && !plus.udef_chan &&
+  if (!plus.global && !plus.udef_global && !plus.chan && !plus.udef_chan &&
       !plus.bot && !f)
     return TCL_OK;
   minus.match = plus.match ^ (FR_AND | FR_OR);

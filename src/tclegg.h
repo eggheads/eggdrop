@@ -2,7 +2,7 @@
  * tclegg.h
  *   stuff used by tcl.c and tclhash.c
  *
- * $Id: tclegg.h,v 1.28 2005/02/08 01:08:19 tothwolf Exp $
+ * $Id: tclegg.h,v 1.29 2005/11/17 17:58:26 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -26,10 +26,10 @@
 #ifndef _EGG_TCLEGG_H
 #define _EGG_TCLEGG_H
 
-#include "lush.h"    /* Include this here, since it's needed in this file */
+#include "lush.h"
 
 #ifndef MAKING_MODS
-#  include "proto.h" /* This file needs this */
+#  include "proto.h"
 #endif
 
 
@@ -37,25 +37,23 @@
  * Wow, this is old...CMD_LEAVE goes back to before version 0.9.
  * This is for partyline and filesys 'quit'.
  */
-#define CMD_LEAVE    (Function)(-1)
+#define CMD_LEAVE (Function)(-1)
 
 
-/*
- * Match types for check_tcl_bind
- */
-#define MATCH_PARTIAL       0
-#define MATCH_EXACT         1
-#define MATCH_MASK          2
-#define MATCH_CASE          3
+/* Match types for check_tcl_bind(). */
+#define MATCH_PARTIAL   0
+#define MATCH_EXACT     1
+#define MATCH_MASK      2
+#define MATCH_CASE      3
 
 /*
  * Bitwise 'or' these:
  */
 
-/* Check flags; make sure the user has the flags required */
+/* Check flags; make sure the user has the flags required. */
 #define BIND_USE_ATTR       0x04
 
-/* Bind is stackable; more than one bind can have the same name */
+/* Bind is stackable; more than one bind can have the same name. */
 #define BIND_STACKABLE      0x08
 
 /* Additional flag checking; check for +d, +k, etc.
@@ -66,14 +64,16 @@
 /* FIXME: Should this really be used for the dcc and fil types since
  *        they are only available to the partyline/filesys (+p/+x)?
  *        Eggdrop's revenge code does not add default flags when
- *        adding a user record for +d or +k flags. */
+ *        adding a user record for +d or +k flags.
+ */
 /* FIXME: This type actually seems to be obsolete. This was originally
- *        used to check built-in types in Eggdrop version 1.0. */
+ *        used to check built-in types in Eggdrop version 1.0.
+ */
 #define BIND_HAS_BUILTINS   0x10
 
-/* Want return; we want to know if the proc returns 1
+/* Want return; we want to know if the proc returns 1.
  * Side effect: immediate return; don't do any further
- * processing of stacked binds
+ * processing of stacked binds.
  */
 #define BIND_WANTRET        0x20
 
@@ -81,14 +81,12 @@
 #define BIND_ALTER_ARGS     0x40
 
 /* Stacked return; we want to know if any proc returns 1,
- * and also want to process all stacked binds
+ * and also want to process all stacked binds.
  */
 #define BIND_STACKRET       0x80
 
 
-/*
- * Return values
- */
+/* Return values. */
 #define BIND_NOMATCH    0
 #define BIND_AMBIGUOUS  1
 #define BIND_MATCHED    2       /* But the proc couldn't be found */
@@ -97,7 +95,7 @@
 #define BIND_QUIT       5       /* CMD_LEAVE 'quit' from partyline or filesys */
 
 /* Extra commands are stored in Tcl hash tables (one hash table for each type
- * of command: msg, dcc, etc)
+ * of command: msg, dcc, etc).
  */
 typedef struct timer_str {
   struct timer_str *next;
