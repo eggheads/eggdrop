@@ -7,7 +7,7 @@
  *   (non-Tcl) procedure lookups for msg/dcc/file commands
  *   (Tcl) binding internal procedures to msg/dcc/file commands
  *
- * $Id: tclhash.c,v 1.56 2005/08/29 04:39:24 wcc Exp $
+ * $Id: tclhash.c,v 1.57 2005/11/17 05:21:34 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -669,7 +669,7 @@ static inline int trigger_bind(const char *proc, const char *param,
                                char *mask)
 {
   int x;
-  #ifdef DEBUG_CONTEXT
+#ifdef DEBUG_CONTEXT
   const char *msg = "Tcl proc: %s, param: %s";
   char *buf;
 
@@ -684,10 +684,15 @@ static inline int trigger_bind(const char *proc, const char *param,
   ContextNote(buf);
   nfree(buf);
 #endif /* DEBUG_CONTEXT */
+
+  /* Set the lastbind variable before evaluating the proc so that the name
+   * of the command that triggered the bind will be available to the proc.
+   * This feature is used by scripts such as userinfo.tcl
+   */
   Tcl_SetVar(interp, "lastbind", (char *) mask, TCL_GLOBAL_ONLY);
+
   x = Tcl_VarEval(interp, proc, param, NULL);
   Context;
-
 
   if (x == TCL_ERROR) {
     /* FIXME: we really should be able to log longer errors */
@@ -811,8 +816,11 @@ int check_tcl_bind(tcl_bind_list_t *tl, const char *match,
            *       BIND_STACKRET will only be used for stackable binds.
            */
 
+          /* We will only return if BIND_ALTER_ARGS or BIND_WANTRET was
+           * specified because we want to trigger all binds in a stack.
+           */
+
           tc->hits++;
-          Tcl_SetVar(interp, "lastbind", (char *) tm->mask, TCL_GLOBAL_ONLY);
           x = trigger_bind(tc->func_name, param, tm->mask);
 
           if (match_type & BIND_ALTER_ARGS) {
