@@ -4,7 +4,7 @@
  *   disconnect on a dcc socket
  *   ...and that's it!  (but it's a LOT)
  *
- * $Id: dcc.c,v 1.83 2005/08/29 04:48:19 wcc Exp $
+ * $Id: dcc.c,v 1.84 2005/11/28 17:23:40 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1322,7 +1322,7 @@ static void dcc_telnet_id(int idx, char *buf, int atr)
   strip_telnet(dcc[idx].sock, buf, &atr);
   buf[HANDLEN] = 0;
   /* Toss out bad nicknames */
-  if ((dcc[idx].nick[0] != '@') && (!wild_match(dcc[idx].nick, buf))) {
+  if (dcc[idx].nick[0] != '@' && !wild_match(dcc[idx].nick, buf)) {
     dprintf(idx, "Sorry, that nickname format is invalid.\n");
     putlog(LOG_BOTS, "*", DCC_BADNICK, dcc[idx].host);
     killsock(dcc[idx].sock);
@@ -1347,8 +1347,7 @@ static void dcc_telnet_id(int idx, char *buf, int atr)
     return;
   }
   dcc[idx].status &= ~(STAT_BOTONLY | STAT_USRONLY);
-  if ((!egg_strcasecmp(buf, "NEW")) && ((allow_new_telnets) ||
-      (make_userfile))) {
+  if (!egg_strcasecmp(buf, "NEW") && (allow_new_telnets || make_userfile)) {
     dcc[idx].type = &DCC_TELNET_NEW;
     dcc[idx].timeval = now;
     dprintf(idx, "\n");
