@@ -1,4 +1,4 @@
-$Id: UPDATES1.6,v 1.623 2005/11/17 17:58:26 wcc Exp $
+$Id: UPDATES1.6,v 1.624 2005/12/01 21:51:08 wcc Exp $
 
 Eggdrop Changes (since v1.6.0)
     _____________________________________________________________________
@@ -12,6 +12,10 @@ Eggdrop Changes (since v1.6.0)
 
 
   1.6.18:
+    * Fixed a type conversion problem in snprintf.c causing Eggdrop to not
+      compile on OSF1.
+    * Found by: Joker - Patch by: Wcc
+
     - Detect NetBSD Tcl in /usr/pkg/lib and /usr/pkg/include.
     * Found by: mish - Patch by: Wcc
 
