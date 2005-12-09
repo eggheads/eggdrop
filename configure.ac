@@ -1,11 +1,11 @@
 dnl configure.ac: this file is processed by autoconf to produce ./configure.
 dnl
-dnl $Id: configure.ac,v 1.19 2005/10/21 01:56:33 wcc Exp $
+dnl $Id: configure.ac,v 1.20 2005/12/09 09:24:58 wcc Exp $
 
 AC_PREREQ(2.59)
 AC_INIT([Eggdrop],[1.6.18],[bugs@eggheads.org])
 AC_COPYRIGHT([Copyright (C) 1999 - 2005 Eggheads Development Team])
-AC_REVISION($Revision: 1.19 $)
+AC_REVISION($Revision: 1.20 $)
 AC_CONFIG_SRCDIR(src/eggdrop.h)
 AC_CONFIG_AUX_DIR(misc)
 AC_CONFIG_HEADER(config.h)
@@ -97,7 +97,7 @@ EGG_CHECK_LIBSAFE_SSCANF
 EGG_EXEEXT
 
 
-# Tcl version to recomend if no Tcl is found, and the site where it can be
+# Tcl version to recommend if no Tcl is found, and the site where it can be
 # found for download.
 tclrecommendver="8.4.6"
 tclrecommendsite="ftp://tcl.activestate.com/pub/tcl/tcl8_4/"
