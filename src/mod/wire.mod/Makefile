@@ -1,5 +1,5 @@
 # Makefile for src/mod/wire.mod/
-# $Id: Makefile,v 1.17 2004/08/28 06:43:23 wcc Exp $
+# $Id: Makefile,v 1.18 2005/12/09 09:29:11 wcc Exp $
 
 srcdir = .
 
@@ -32,12 +32,14 @@ clean:
 distclean: clean
 
 #safety hash
-../wire.o: ../wire.mod/wire.c ../../../src/mod/module.h \
+../wire.o: .././wire.mod/wire.c ../../../src/mod/module.h \
   ../../../src/main.h ../../../config.h ../../../lush.h \
   ../../../src/lang.h ../../../src/eggdrop.h ../../../src/flags.h \
   ../../../src/cmdt.h ../../../src/tclegg.h ../../../src/tclhash.h \
   ../../../src/chan.h ../../../src/users.h ../../../src/compat/compat.h \
-  ../../../src/compat/inet_aton.h ../../../src/compat/snprintf.h \
-  ../../../src/compat/memset.h ../../../src/compat/memcpy.h \
-  ../../../src/compat/strcasecmp.h ../../../src/compat/strftime.h \
-  ../../../src/mod/modvals.h ../../../src/tandem.h ../wire.mod/wire.h
+  ../../../src/compat/inet_aton.h ../../../src/main.h \
+  ../../../src/compat/snprintf.h ../../../src/compat/memset.h \
+  ../../../src/compat/memcpy.h ../../../src/compat/strcasecmp.h \
+  ../../../src/compat/strftime.h ../../../src/mod/modvals.h \
+  ../../../src/tandem.h ../../../src/users.h ../../../src/chan.h \
+  .././wire.mod/wire.h

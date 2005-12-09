@@ -1,5 +1,5 @@
 # Makefile for src/mod/channels.mod/
-# $Id: Makefile,v 1.16 2004/08/28 06:43:22 wcc Exp $
+# $Id: Makefile,v 1.17 2005/12/09 09:29:11 wcc Exp $
 
 srcdir = .
 
@@ -32,15 +32,15 @@ clean:
 distclean: clean
 
 #safety hash
-../channels.o: ../channels.mod/channels.c ../../../src/mod/module.h \
+../channels.o: .././channels.mod/channels.c ../../../src/mod/module.h \
   ../../../src/main.h ../../../config.h ../../../lush.h \
   ../../../src/lang.h ../../../src/eggdrop.h ../../../src/flags.h \
   ../../../src/cmdt.h ../../../src/tclegg.h ../../../src/tclhash.h \
   ../../../src/chan.h ../../../src/users.h ../../../src/compat/compat.h \
-  ../../../src/compat/inet_aton.h ../../../src/compat/snprintf.h \
-  ../../../src/compat/memset.h ../../../src/compat/memcpy.h \
-  ../../../src/compat/strcasecmp.h ../../../src/compat/strftime.h \
-  ../../../src/mod/modvals.h ../../../src/tandem.h \
-  ../channels.mod/channels.h ../channels.mod/cmdschan.c \
-  ../channels.mod/tclchan.c ../channels.mod/userchan.c \
-  ../channels.mod/udefchan.c
+  ../../../src/compat/inet_aton.h ../../../src/main.h \
+  ../../../src/compat/snprintf.h ../../../src/compat/memset.h \
+  ../../../src/compat/memcpy.h ../../../src/compat/strcasecmp.h \
+  ../../../src/compat/strftime.h ../../../src/mod/modvals.h \
+  ../../../src/tandem.h .././channels.mod/channels.h \
+  .././channels.mod/cmdschan.c .././channels.mod/tclchan.c \
+  .././channels.mod/userchan.c .././channels.mod/udefchan.c

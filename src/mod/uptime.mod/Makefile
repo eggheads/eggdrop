@@ -1,5 +1,5 @@
 # Makefile for src/mod/uptime.mod/
-# $Id: Makefile,v 1.6 2004/08/28 06:43:23 wcc Exp $
+# $Id: Makefile,v 1.7 2005/12/09 09:29:11 wcc Exp $
 srcdir = .
 
 
@@ -31,12 +31,14 @@ clean:
 distclean: clean
 
 #safety hash
-../uptime.o: ../uptime.mod/uptime.c ../uptime.mod/uptime.h ../module.h \
-  ../../../src/main.h ../../../config.h ../../../lush.h \
-  ../../../src/lang.h ../../../src/eggdrop.h ../../../src/flags.h \
-  ../../../src/cmdt.h ../../../src/tclegg.h ../../../src/tclhash.h \
-  ../../../src/chan.h ../../../src/users.h ../../../src/compat/compat.h \
-  ../../../src/compat/inet_aton.h ../../../src/compat/snprintf.h \
+../uptime.o: .././uptime.mod/uptime.c .././uptime.mod/uptime.h \
+  .././uptime.mod/../module.h ../../../src/main.h ../../../config.h \
+  ../../../lush.h ../../../src/lang.h ../../../src/eggdrop.h \
+  ../../../src/flags.h ../../../src/cmdt.h ../../../src/tclegg.h \
+  ../../../src/tclhash.h ../../../src/chan.h ../../../src/users.h \
+  ../../../src/compat/compat.h ../../../src/compat/inet_aton.h \
+  ../../../src/main.h ../../../src/compat/snprintf.h \
   ../../../src/compat/memset.h ../../../src/compat/memcpy.h \
   ../../../src/compat/strcasecmp.h ../../../src/compat/strftime.h \
-  ../modvals.h ../../../src/tandem.h ../server.mod/server.h
+  .././uptime.mod/../modvals.h ../../../src/tandem.h \
+  .././uptime.mod/../server.mod/server.h
