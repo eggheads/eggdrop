@@ -1,4 +1,4 @@
-$Id: mod.woobie,v 1.13 2005/01/03 20:01:44 paladin Exp $
+$Id: mod.woobie,v 1.14 2006/03/28 02:35:49 wcc Exp $
 
 Woobie Module
 Last revised: December 31, 2001
@@ -18,4 +18,4 @@ Last revised: December 31, 2001
     loadmodule woobie
     _____________________________________________________________________
 
-  Copyright (C) 2000 - 2005 Eggheads Development Team
+  Copyright (C) 2000 - 2006 Eggheads Development Team

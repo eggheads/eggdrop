@@ -1,4 +1,4 @@
-$Id: mod.irc,v 1.22 2005/01/03 20:01:43 paladin Exp $
+$Id: mod.irc,v 1.23 2006/03/28 02:35:49 wcc Exp $
 
 IRC Module
 Last revised: August 21, 2004
@@ -185,4 +185,4 @@ Last revised: August 21, 2004
       set this to 0.
     _____________________________________________________________________
 
-  Copyright (C) 2000 - 2005 Eggheads Development Team
+  Copyright (C) 2000 - 2006 Eggheads Development Team

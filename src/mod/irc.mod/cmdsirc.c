@@ -2,11 +2,11 @@
  * chancmds.c -- part of irc.mod
  *   handles commands directly relating to channel interaction
  *
- * $Id: cmdsirc.c,v 1.59 2005/08/30 01:52:49 wcc Exp $
+ * $Id: cmdsirc.c,v 1.60 2006/03/28 02:35:51 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2005 Eggheads Development Team
+ * Copyright (C) 1999 - 2006 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

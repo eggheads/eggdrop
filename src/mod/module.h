@@ -1,11 +1,11 @@
 /*
  * module.h
  *
- * $Id: module.h,v 1.82 2005/01/03 20:01:45 paladin Exp $
+ * $Id: module.h,v 1.83 2006/03/28 02:35:50 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2005 Eggheads Development Team
+ * Copyright (C) 1999 - 2006 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

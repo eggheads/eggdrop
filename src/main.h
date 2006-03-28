@@ -2,11 +2,11 @@
  * main.h
  *   include file to include most other include files
  *
- * $Id: main.h,v 1.33 2005/02/08 01:08:19 tothwolf Exp $
+ * $Id: main.h,v 1.34 2006/03/28 02:35:50 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2005 Eggheads Development Team
+ * Copyright (C) 1999 - 2006 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

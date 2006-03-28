@@ -2,11 +2,11 @@
  * filesysc.h -- part of filesys.mod
  *   header file for the filesys2 eggdrop module
  *
- * $Id: filesys.h,v 1.14 2005/01/03 20:01:46 paladin Exp $
+ * $Id: filesys.h,v 1.15 2006/03/28 02:35:51 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2005 Eggheads Development Team
+ * Copyright (C) 1999 - 2006 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

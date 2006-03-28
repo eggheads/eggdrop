@@ -2,10 +2,10 @@
  * misc_file.h
  *   prototypes for misc_file.c
  *
- * $Id: misc_file.h,v 1.8 2005/01/03 20:01:44 paladin Exp $
+ * $Id: misc_file.h,v 1.9 2006/03/28 02:35:50 wcc Exp $
  */
 /*
- * Copyright (C) 2000 - 2005 Eggheads Development Team
+ * Copyright (C) 2000 - 2006 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

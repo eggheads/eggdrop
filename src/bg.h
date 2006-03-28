@@ -1,10 +1,10 @@
 /*
  * bg.h
  *
- * $Id: bg.h,v 1.7 2005/01/03 20:01:44 paladin Exp $
+ * $Id: bg.h,v 1.8 2006/03/28 02:35:49 wcc Exp $
  */
 /*
- * Copyright (C) 2000 - 2005 Eggheads Development Team
+ * Copyright (C) 2000 - 2006 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
