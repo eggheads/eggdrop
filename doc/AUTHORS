@@ -1,7 +1,7 @@
-$Id: AUTHORS,v 1.31 2006/03/29 00:52:53 wcc Exp $
+$Id: AUTHORS,v 1.32 2006/04/14 22:18:27 wcc Exp $
 
 Eggdrop Developers and Contributors
-Last revised: March 28, 2006
+Last revised: April 14, 2006
     _____________________________________________________________________
 
                      Eggdrop Developers and Contributors
@@ -19,6 +19,7 @@ Last revised: March 28, 2006
     BarkerJr   Bryon Eldridge
     Beldin     Darrin Smith
     Ben        Ben Dover
+    bhab       Kelsey Hudson
     ButchBub   Scott Taylor
     Cybah      Jonathan Miles
     darko``    Darko Ilic
@@ -43,9 +44,11 @@ Last revised: March 28, 2006
     lordares   Bryan Drewery
     Lucas      Lucas Nussbaum
     nakee      Ely Levy
+    Paladin    Alan Cameron
     poptix     Matthew Hallacy
     Raistlin   Jason Slagle
     RebuM      Martin Matuska
+    robey      Robey Pointer
     rtc        Peter 'Rattacresh' Backes
     SegFault   Ryan Butler
     SET        Sven Trenkel
@@ -53,7 +56,7 @@ Last revised: March 28, 2006
     slennox    Shayne Lennox
     stdarg
     Sup        Teemu Hjelt
-    SuperS
+    SuperS     Kevin Lamothe
     TaKeDa     Dariusz Kulinski
     TheGhost   James Simmons
     TheUnknown
