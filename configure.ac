@@ -1,11 +1,11 @@
 dnl configure.ac: this file is processed by autoconf to produce ./configure.
 dnl
-dnl $Id: configure.ac,v 1.21 2006/03/27 06:48:57 wcc Exp $
+dnl $Id: configure.ac,v 1.22 2006/05/21 20:31:17 wcc Exp $
 
 AC_PREREQ(2.59)
 AC_INIT([Eggdrop],[1.6.18],[bugs@eggheads.org])
 AC_COPYRIGHT([Copyright (C) 1999 - 2006 Eggheads Development Team])
-AC_REVISION($Revision: 1.21 $)
+AC_REVISION($Revision: 1.22 $)
 AC_CONFIG_SRCDIR(src/eggdrop.h)
 AC_CONFIG_AUX_DIR(misc)
 AC_CONFIG_HEADER(config.h)
@@ -111,7 +111,7 @@ tcllibnames="tcl8.5 tcl85 tcl8.4 tcl84 tcl8.3 tcl83 tcl8.2 tcl82 \
 tcllibextensions=".so .so.1 .so.1.0 .so.1.2 .dll .dylib .sl .a"
 
 tcllibpaths="$HOME/lib $HOME/tcl/lib \
-             /usr/local/lib /usr/lib /lib \
+             /usr/local/lib /usr/lib /lib /lib64 /usr/lib64 \
              /usr/local/lib/tcl8.5 /usr/lib/tcl8.5 \
              /usr/local/lib/tcl8.4 /usr/lib/tcl8.4 \
              /usr/local/lib/tcl8.3 /usr/lib/tcl8.3 \
