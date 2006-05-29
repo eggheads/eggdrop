@@ -2,7 +2,7 @@
  * filesys.c -- part of filesys.mod
  *   main file of the filesys eggdrop module
  *
- * $Id: filesys.c,v 1.70 2006/03/28 02:35:51 wcc Exp $
+ * $Id: filesys.c,v 1.71 2006/05/29 01:56:08 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -632,7 +632,20 @@ static void filesys_dcc_send(char *nick, char *from, struct userrec *u,
                              char *text)
 {
   char *param, *ip, *prt, *buf = NULL, *msg;
-  int atr = u ? u->flags : 0, i;
+  int atr = u ? u->flags : 0, i, j = 0;
+
+  if (text[j] == '"') {
+    text[j] = ' ';
+
+    for (j = 1; text[j] != '"' && text[j] != '\0'; j++) {
+      if (text[j] == ' ')
+      {
+        text[j] = '_';
+      }
+    }
+
+    text[j] = ' ';
+  }
 
   buf = nmalloc(strlen(text) + 1);
   msg = buf;
