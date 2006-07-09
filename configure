@@ -5778,7 +5778,8 @@ fi
 
 
 
-for ac_header in arpa/inet.h fcntl.h limits.h locale.h netdb.h netinet/in.h std_args.h stdarg.h stddef.h sys/file.h sys/param.h sys/rusage.h sys/select.h sys/socket.h sys/time.h unistd.h wchar.h
+
+for ac_header in arpa/inet.h fcntl.h limits.h locale.h netdb.h netinet/in.h stdio.h std_args.h stdarg.h stddef.h sys/file.h sys/param.h sys/rusage.h sys/select.h sys/socket.h sys/time.h unistd.h wchar.h
 do
 as_ac_Header=`echo "ac_cv_header_$ac_header" | $as_tr_sh`
 if eval "test \"\${$as_ac_Header+set}\" = set"; then

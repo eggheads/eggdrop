@@ -7,7 +7,7 @@
  * because they use structures in those
  * (saves including those .h files EVERY time) - Beldin
  *
- * $Id: proto.h,v 1.69 2006/03/28 02:35:50 wcc Exp $
+ * $Id: proto.h,v 1.70 2006/07/09 22:00:18 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -34,9 +34,7 @@
 #include "lush.h"
 #include "misc_file.h"
 
-#ifdef HAVE_DPRINTF
-#  define dprintf dprintf_eggdrop
-#endif
+#define dprintf dprintf_eggdrop
 
 struct chanset_t;               /* keeps the compiler warnings down :) */
 struct userrec;
