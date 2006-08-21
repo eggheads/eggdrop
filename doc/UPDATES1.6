@@ -1,4 +1,4 @@
-$Id: UPDATES1.6,v 1.630 2006/07/09 22:14:07 wcc Exp $
+$Id: UPDATES1.6,v 1.631 2006/08/21 17:40:08 wcc Exp $
 
 Eggdrop Changes (since v1.6.0)
     _____________________________________________________________________
@@ -11,13 +11,19 @@ Eggdrop Changes (since v1.6.0)
     ftp://ftp.eggheads.org/pub/eggdrop/UPDATES/
 
 
-  1.6.18 (09 July 2006)
-    * Look for Tcl in /lib64 and /usr/lib64.
+  1.6.19:
+    - Complete raw traffic wasn't getting logged in some cases; only the raw
+      command itself was. Fixed.
+    * Patch by: mrBuG
+
+
+  1.6.18 (09 July 2006):
+    - Look for Tcl in /lib64 and /usr/lib64.
     * Patch by: Kuja
 
     + RC1 released on April 3rd, 2006.
 
-    * Fixed a type conversion problem in snprintf.c causing Eggdrop to not
+    - Fixed a type conversion problem in snprintf.c causing Eggdrop to not
       compile on OSF1.
     * Found by: Joker - Patch by: Wcc
 

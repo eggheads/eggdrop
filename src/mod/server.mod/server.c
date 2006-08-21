@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  *
- * $Id: server.c,v 1.124 2006/03/28 02:35:51 wcc Exp $
+ * $Id: server.c,v 1.125 2006/08/21 17:40:08 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -178,10 +178,10 @@ static void deq_msg()
         continue;
       }
       write_to_server(modeq.head->msg, modeq.head->len);
-      modeq.tot--;
-      last_time += calc_penalty(modeq.head->msg);
       if (raw_log)
         putlog(LOG_SRVOUT, "*", "[m->] %s", modeq.head->msg);
+      modeq.tot--;
+      last_time += calc_penalty(modeq.head->msg);
       q = modeq.head->next;
       nfree(modeq.head->msg);
       nfree(modeq.head);
@@ -207,10 +207,10 @@ static void deq_msg()
       return;
 
     write_to_server(mq.head->msg, mq.head->len);
-    mq.tot--;
-    last_time += calc_penalty(mq.head->msg);
     if (raw_log)
       putlog(LOG_SRVOUT, "*", "[s->] %s", mq.head->msg);
+    mq.tot--;
+    last_time += calc_penalty(mq.head->msg);
     q = mq.head->next;
     nfree(mq.head->msg);
     nfree(mq.head);
@@ -233,10 +233,10 @@ static void deq_msg()
     return;
 
   write_to_server(hq.head->msg, hq.head->len);
-  hq.tot--;
-  last_time += calc_penalty(hq.head->msg);
   if (raw_log)
     putlog(LOG_SRVOUT, "*", "[h->] %s", hq.head->msg);
+  hq.tot--;
+  last_time += calc_penalty(hq.head->msg);
   q = hq.head->next;
   nfree(hq.head->msg);
   nfree(hq.head);
@@ -483,14 +483,6 @@ static int fast_deq(int which)
     simple_sprintf(tosend, "%s %s %s", cmd, victims, msg);
     len = strlen(tosend);
     write_to_server(tosend, len);
-    m = h->head->next;
-    nfree(h->head->msg);
-    nfree(h->head);
-    h->head = m;
-    if (!h->head)
-      h->last = 0;
-    h->tot--;
-    last_time += calc_penalty(tosend);
     if (raw_log) {
       switch (which) {
       case DP_MODE:
@@ -504,6 +496,14 @@ static int fast_deq(int which)
         break;
       }
     }
+    m = h->head->next;
+    nfree(h->head->msg);
+    nfree(h->head);
+    h->head = m;
+    if (!h->head)
+      h->last = 0;
+    h->tot--;
+    last_time += calc_penalty(tosend);
     return 1;
   }
   return 0;
@@ -746,8 +746,6 @@ static int deq_kick(int which)
   egg_snprintf(newmsg, sizeof newmsg, "KICK %s %s %s", chan, newnicks + 1,
                reason);
   write_to_server(newmsg, strlen(newmsg));
-  h->tot--;
-  last_time += calc_penalty(newmsg);
   if (raw_log) {
     switch (which) {
     case DP_MODE:
@@ -762,6 +760,8 @@ static int deq_kick(int which)
     }
     debug3("Changed: %d, kick-method: %d, nr: %d", changed, kick_method, nr);
   }
+  h->tot--;
+  last_time += calc_penalty(newmsg);
   m = h->head->next;
   nfree(h->head->msg);
   nfree(h->head);
