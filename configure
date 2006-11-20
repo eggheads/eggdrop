@@ -9372,7 +9372,7 @@ _ACEOF
 
 # Tcl version to recommend if no Tcl is found, and the site where it can be
 # found for download.
-tclrecommendver="8.4.6"
+tclrecommendver="8.4.14"
 tclrecommendsite="ftp://tcl.activestate.com/pub/tcl/tcl8_4/"
 
 # Tcl library filename prefixes, suffixes, and search paths.

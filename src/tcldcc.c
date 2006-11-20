@@ -2,7 +2,7 @@
  * tcldcc.c -- handles:
  *   Tcl stubs for the dcc commands
  *
- * $Id: tcldcc.c,v 1.58 2006/11/20 11:38:25 tothwolf Exp $
+ * $Id: tcldcc.c,v 1.59 2006/11/20 14:09:31 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -701,9 +701,10 @@ static int tcl_whom STDVAR
       c[1] = 0;
       if (party[i].timer == 0L)
         strcpy(idle, "0");
-      else
+      else {
         tv = (now - party[i].timer) / 60;
         egg_snprintf(idle, sizeof idle, "%li", tv);
+      }
       list[0] = party[i].nick;
       list[1] = party[i].bot;
       list[2] = party[i].from ? party[i].from : "";
