@@ -1,5 +1,5 @@
 # Makefile for src/
-# $Id: Makefile.in,v 1.22 2006/03/28 02:35:49 wcc Exp $
+# $Id: Makefile.in,v 1.23 2006/11/20 11:38:25 tothwolf Exp $
 
 SHELL = @SHELL@
 top_srcdir = @top_srcdir@
@@ -52,6 +52,7 @@ clean:
 	@rm -f .depend *.o *.a *~
 
 build_msg:
+	@echo ""
 	@echo "This may take a while. Go get some runts."
 	@echo ""
 

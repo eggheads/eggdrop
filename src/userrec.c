@@ -4,7 +4,7 @@
  *   a bunch of functions to find and change user records
  *   change and check user (and channel-specific) flags
  *
- * $Id: userrec.c,v 1.54 2006/03/28 02:35:50 wcc Exp $
+ * $Id: userrec.c,v 1.55 2006/11/20 11:38:25 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -385,6 +385,7 @@ int u_pass_match(struct userrec *u, char *pass)
 int write_user(struct userrec *u, FILE *f, int idx)
 {
   char s[181];
+  long tv;
   struct chanuserrec *ch;
   struct chanset_t *cst;
   struct user_entry *ue;
@@ -409,7 +410,8 @@ int write_user(struct userrec *u, FILE *f, int idx)
         fr.chan = ch->flags;
         fr.udef_chan = ch->flags_udef;
         build_flags(s, &fr, NULL);
-        if (fprintf(f, "! %-20s %lu %-10s %s\n", ch->channel, ch->laston, s,
+        tv = ch->laston;
+        if (fprintf(f, "! %-20s %lu %-10s %s\n", ch->channel, tv, s,
             (((idx < 0) || share_greet) && ch->info) ? ch->info : "") == EOF)
           return 0;
       }
@@ -432,16 +434,19 @@ int write_ignores(FILE *f, int idx)
 {
   struct igrec *i;
   char *mask;
+  long expire, added;
 
   if (global_ign)
     if (fprintf(f, IGNORE_NAME " - -\n") == EOF)        /* Daemus */
       return 0;
   for (i = global_ign; i; i = i->next) {
     mask = str_escape(i->igmask, ':', '\\');
+    expire = i->expire;
+    added = i->added;
     if (!mask ||
         fprintf(f, "- %s:%s%lu:%s:%lu:%s\n", mask,
-                (i->flags & IGREC_PERM) ? "+" : "", i->expire,
-                i->user ? i->user : botnetnick, i->added,
+                (i->flags & IGREC_PERM) ? "+" : "", expire,
+                i->user ? i->user : botnetnick, added,
                 i->msg ? i->msg : "") == EOF) {
       if (mask)
         nfree(mask);
@@ -612,6 +617,7 @@ struct userrec *adduser(struct userrec *bu, char *handle, char *host,
   struct userrec *u, *x;
   struct xtra_key *xk;
   int oldshare = noshare;
+  long tv;
 
   noshare = 1;
   u = nmalloc(sizeof *u);
@@ -635,9 +641,10 @@ struct userrec *adduser(struct userrec *bu, char *handle, char *host,
     xk->key = nmalloc(8);
     strcpy(xk->key, "created");
     now2 = nmalloc(15);
-    sprintf(now2, "%li", now);
+    tv = now;
+    sprintf(now2, "%li", tv);
     xk->data = nmalloc(strlen(now2) + 1);
-    sprintf(xk->data, "%li", now);
+    sprintf(xk->data, "%li", tv);
     set_user(&USERENTRY_XTRA, u, xk);
     nfree(now2);
   }

@@ -16,7 +16,7 @@ dnl You should have received a copy of the GNU General Public License
 dnl along with this program; if not, write to the Free Software
 dnl Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 dnl
-dnl $Id: aclocal.m4,v 1.100 2006/03/27 06:48:57 wcc Exp $
+dnl $Id: aclocal.m4,v 1.101 2006/11/20 11:38:25 tothwolf Exp $
 dnl
 
 
@@ -232,7 +232,7 @@ AC_DEFUN([EGG_CHECK_SOCKLEN_T],
   ])
 
   if test "$egg_cv_socklen_t" = "yes"; then
-    AC_DEFINE(HAVE_SOCKLEN_T, 1, [Define if your system has the `socklen_t' type.])
+    AC_DEFINE(HAVE_SOCKLEN_T, 1, [Define to 1 if you have the `socklen_t' type.])
   fi
 ])
 

@@ -2,7 +2,7 @@
  * userent.c -- handles:
  *   user-entry handling, new stylem more versatile.
  *
- * $Id: userent.c,v 1.33 2006/03/28 02:35:50 wcc Exp $
+ * $Id: userent.c,v 1.34 2006/11/20 11:38:25 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -308,11 +308,13 @@ static int laston_unpack(struct userrec *u, struct user_entry *e)
 static int laston_pack(struct userrec *u, struct user_entry *e)
 {
   char work[1024];
+  long tv;
   struct laston_info *li;
   int l;
 
   li = (struct laston_info *) e->u.extra;
-  l = sprintf(work, "%lu %s", li->laston, li->lastonplace);
+  tv = li->laston;
+  l = sprintf(work, "%lu %s", tv, li->lastonplace);
   e->u.list = user_malloc(sizeof(struct list_type));
   e->u.list->next = NULL;
   e->u.list->extra = user_malloc(l + 1);
@@ -325,9 +327,11 @@ static int laston_pack(struct userrec *u, struct user_entry *e)
 static int laston_write_userfile(FILE *f, struct userrec *u,
                                  struct user_entry *e)
 {
+  long tv;
   struct laston_info *li = (struct laston_info *) e->u.extra;
 
-  if (fprintf(f, "--LASTON %lu %s\n", li->laston,
+  tv = li->laston;
+  if (fprintf(f, "--LASTON %lu %s\n", tv,
               li->lastonplace ? li->lastonplace : "") == EOF)
     return 0;
   return 1;
@@ -363,6 +367,7 @@ static int laston_tcl_get(Tcl_Interp * irp, struct userrec *u,
 {
   struct laston_info *li = (struct laston_info *) e->u.extra;
   char number[20];
+  long tv;
   struct chanuserrec *cr;
 
   BADARGS(3, 4, " handle LASTON ?channel?");
@@ -376,7 +381,8 @@ static int laston_tcl_get(Tcl_Interp * irp, struct userrec *u,
     if (!cr)
       Tcl_AppendResult(irp, "0", NULL);
   } else {
-    sprintf(number, "%lu ", li->laston);
+    tv = li->laston;
+    sprintf(number, "%lu ", tv);
     Tcl_AppendResult(irp, number, li->lastonplace, NULL);
   }
   return TCL_OK;

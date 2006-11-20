@@ -10,7 +10,7 @@
  * 1.2     1997-08-20      Minor fixes. [BB]
  * 1.2a    1997-08-24      Minor fixes. [BB]
  *
- * $Id: seen.c,v 1.37 2006/03/28 02:35:51 wcc Exp $
+ * $Id: seen.c,v 1.38 2006/11/20 11:38:27 tothwolf Exp $
  */
 /*
  * Copyright (C) 1999 - 2006 Eggheads Development Team
@@ -163,6 +163,7 @@ static void do_seen(int idx, char *prefix, char *nick, char *hand,
   struct chanuserrec *cr;
   memberlist *m = NULL;
   int onchan = 0, i;
+  long tv;
   time_t laston = 0, work;
 
   whotarget[0]   = 0;
@@ -472,18 +473,19 @@ targetcont:
   word2[0] = 0;
   work = now - laston;
   if (work >= 86400) {
-    sprintf(word2, "%lu day%s, ", work / 86400,
-            ((work / 86400) == 1) ? "" : "s");
+    tv = work / 86400;
+    sprintf(word2, "%lu day%s, ", tv, (tv == 1) ? "" : "s");
     work = work % 86400;
   }
   if (work >= 3600) {
-    sprintf(word2 + strlen(word2), "%lu hour%s, ", work / 3600,
-            ((work / 3600) == 1) ? "" : "s");
+    tv = work / 3600;
+    sprintf(word2 + strlen(word2), "%lu hour%s, ", tv, (tv == 1) ? "" : "s");
     work = work % 3600;
   }
   if (work >= 60) {
-    sprintf(word2 + strlen(word2), "%lu minute%s, ", work / 60,
-            ((work / 60) == 1) ? "" : "s");
+    tv = work / 60;
+    sprintf(word2 + strlen(word2), "%lu minute%s, ", tv,
+            (tv == 1) ? "" : "s");
   }
   if (!word2[0] && (work < 60)) {
     strcpy(word2, "just moments ago!!");
