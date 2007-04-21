@@ -1,4 +1,4 @@
-$Id: mod.blowfish,v 1.15 2006/03/28 02:35:49 wcc Exp $
+$Id: mod.blowfish,v 1.16 2007/04/21 04:38:22 wcc Exp $
 
 Blowfish Module
 Last revised: January 28, 2003
@@ -21,4 +21,4 @@ Last revised: January 28, 2003
 
     _____________________________________________________________________
 
-  Copyright (C) 2000 - 2006 Eggheads Development Team
+  Copyright (C) 2000 - 2007 Eggheads Development Team

@@ -1,4 +1,4 @@
-$Id: mod.ctcp,v 1.15 2006/03/28 02:35:49 wcc Exp $
+$Id: mod.ctcp,v 1.16 2007/04/21 04:38:22 wcc Exp $
 
 CTCP Module
 Last revised: February 12, 2002
@@ -34,4 +34,4 @@ Last revised: February 12, 2002
 
     _____________________________________________________________________
 
-  Copyright (C) 2000 - 2006 Eggheads Development Team
+  Copyright (C) 2000 - 2007 Eggheads Development Team

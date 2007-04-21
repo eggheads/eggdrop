@@ -2,11 +2,11 @@
  * channels.c -- part of channels.mod
  *   support for channels within the bot
  *
- * $Id: channels.c,v 1.93 2006/03/28 02:35:50 wcc Exp $
+ * $Id: channels.c,v 1.94 2007/04/21 04:38:27 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2006 Eggheads Development Team
+ * Copyright (C) 1999 - 2007 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

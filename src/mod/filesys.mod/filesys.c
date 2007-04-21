@@ -2,11 +2,11 @@
  * filesys.c -- part of filesys.mod
  *   main file of the filesys eggdrop module
  *
- * $Id: filesys.c,v 1.72 2006/11/20 11:38:26 tothwolf Exp $
+ * $Id: filesys.c,v 1.73 2007/04/21 04:38:28 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2006 Eggheads Development Team
+ * Copyright (C) 1999 - 2007 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

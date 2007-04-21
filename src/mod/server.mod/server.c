@@ -2,11 +2,11 @@
  * server.c -- part of server.mod
  *   basic irc server support
  *
- * $Id: server.c,v 1.125 2006/08/21 17:40:08 wcc Exp $
+ * $Id: server.c,v 1.126 2007/04/21 04:38:29 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2006 Eggheads Development Team
+ * Copyright (C) 1999 - 2007 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

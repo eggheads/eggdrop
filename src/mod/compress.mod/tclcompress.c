@@ -4,10 +4,10 @@
  *
  * Written by Fabian Knittel <fknittel@gmx.de>
  *
- * $Id: tclcompress.c,v 1.13 2006/03/28 02:35:50 wcc Exp $
+ * $Id: tclcompress.c,v 1.14 2007/04/21 04:38:27 wcc Exp $
  */
 /*
- * Copyright (C) 2000 - 2006 Eggheads Development Team
+ * Copyright (C) 2000 - 2007 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

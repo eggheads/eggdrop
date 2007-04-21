@@ -1,12 +1,12 @@
 # action.fix.tcl
 #
-# Copyright (C) 2002 - 2006 Eggheads Development Team
+# Copyright (C) 2002 - 2007 Eggheads Development Team
 #
 # Tothwolf  25May1999: cleanup
 # Tothwolf  04Oct1999: changed proc names slightly
 # poptix    07Dec2001: handle irssi (and some others) "correct" messages for DCC CTCP
 #
-# $Id: action.fix.tcl,v 1.9 2006/03/28 02:35:49 wcc Exp $
+# $Id: action.fix.tcl,v 1.10 2007/04/21 04:38:23 wcc Exp $
 
 # Fix for mIRC dcc chat /me's:
 bind filt - "\001ACTION *\001" filt:dcc_action

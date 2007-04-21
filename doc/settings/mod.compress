@@ -1,4 +1,4 @@
-$Id: mod.compress,v 1.16 2006/03/28 02:35:49 wcc Exp $
+$Id: mod.compress,v 1.17 2007/04/21 04:38:22 wcc Exp $
 
 Compress Module
 Last revised: May 27, 2004
@@ -30,4 +30,4 @@ Last revised: May 27, 2004
 
     _____________________________________________________________________
 
-  Copyright (C) 2000 - 2006 Eggheads Development Team
+  Copyright (C) 2000 - 2007 Eggheads Development Team

@@ -1,4 +1,4 @@
-$Id: INSTALL,v 1.27 2006/03/27 06:48:57 wcc Exp $
+$Id: INSTALL,v 1.28 2007/04/21 04:38:19 wcc Exp $
 
 Compilation and Installation of Eggdrop
 Last revised: July 24, 2004
@@ -149,4 +149,4 @@ Last revised: July 24, 2004
     _____________________________________________________________________
 
   Copyright (C) 1997 Robey Pointer
-  Copyright (C) 1999 - 2006 Eggheads Development Team
+  Copyright (C) 1999 - 2007 Eggheads Development Team

@@ -1,11 +1,11 @@
 /*
  * strcasecmp.c -- provides strcasecmp() and strncasecmp if necessary.
  *
- * $Id: strcasecmp.c,v 1.7 2006/03/28 02:35:50 wcc Exp $
+ * $Id: strcasecmp.c,v 1.8 2007/04/21 04:38:26 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2006 Eggheads Development Team
+ * Copyright (C) 1999 - 2007 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

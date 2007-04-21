@@ -2,10 +2,10 @@
  * bf_tab.h -- part of blowfish.mod
  *   Blowfish P-box and S-box tables
  *
- * $Id: bf_tab.h,v 1.10 2006/03/28 02:35:50 wcc Exp $
+ * $Id: bf_tab.h,v 1.11 2007/04/21 04:38:27 wcc Exp $
  */
 /*
- * Copyright (C) 1999 - 2006 Eggheads Development Team
+ * Copyright (C) 1999 - 2007 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

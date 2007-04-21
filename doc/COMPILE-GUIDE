@@ -1,4 +1,4 @@
-$Id: COMPILE-GUIDE,v 1.5 2006/03/27 06:48:58 wcc Exp $
+$Id: COMPILE-GUIDE,v 1.6 2007/04/21 04:38:19 wcc Exp $
 
 Eggdrop Compile Guide and FAQ
 Last revised: August 20, 2004
@@ -532,4 +532,4 @@ Last revised: August 20, 2004
     _____________________________________________________________________
 
    Copyright (C) 1997 Robey Pointer
-   Copyright (C) 1999 - 2006 Eggheads Development Team
+   Copyright (C) 1999 - 2007 Eggheads Development Team

@@ -1,4 +1,4 @@
-$Id: TRICKS,v 1.5 2006/03/27 06:48:58 wcc Exp $
+$Id: TRICKS,v 1.6 2007/04/21 04:38:20 wcc Exp $
 
 Eggdrop Tricks
 Last revised: December 08, 2003
@@ -44,5 +44,5 @@ Last revised: December 08, 2003
       set chanfile "$myvar.chan"
     _____________________________________________________________________
 
-  Copyright (C) 1999 - 2006 Eggheads Development Team
+  Copyright (C) 1999 - 2007 Eggheads Development Team
 
