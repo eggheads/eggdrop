@@ -1,7 +1,7 @@
 /*
  * servmsg.c -- part of server.mod
  *
- * $Id: servmsg.c,v 1.92 2007/04/21 04:38:29 wcc Exp $
+ * $Id: servmsg.c,v 1.93 2007/10/17 07:42:40 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -461,7 +461,7 @@ static int gotmsg(char *from, char *msg)
   to = newsplit(&msg);
   fixcolon(msg);
   /* Only check if flood-ctcp is active */
-  strcpy(uhost, from);
+  strncpyz(uhost, from, sizeof(buf));
   nick = splitnick(&uhost);
   if (flud_ctcp_thr && detect_avalanche(msg)) {
     if (!ignoring) {
@@ -471,7 +471,7 @@ static int gotmsg(char *from, char *msg)
         p++;
       else
         p = uhost;
-      simple_sprintf(ctcpbuf, "*!*@%s", p);
+      egg_snprintf(ctcpbuf, sizeof(ctcpbuf), "*!*@%s", p);
       addignore(ctcpbuf, botnetnick, "ctcp avalanche",
                 now + (60 * ignore_time));
     }
@@ -486,8 +486,12 @@ static int gotmsg(char *from, char *msg)
       p++;
     if (*p == 1) {
       *p = 0;
-      ctcp = strcpy(ctcpbuf, p1);
-      strcpy(p1 - 1, p + 1);
+      strncpyz(ctcpbuf, p1, sizeof(ctcpbuf));
+      ctcp = p1;
+      /* copy the part after the second : in front of it after
+       * the first :, this is temporary copied to ctcpbuf */
+      strncpy(p1 - 1, p + 1, strlen(ctcpbuf) - 1);
+
       if (!ignoring)
         detect_flood(nick, uhost, from,
                      strncmp(ctcp, "ACTION ", 7) ? FLOOD_CTCP : FLOOD_PRIVMSG);
