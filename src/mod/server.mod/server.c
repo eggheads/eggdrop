@@ -2,7 +2,7 @@
  * server.c -- part of server.mod
  *   basic irc server support
  *
- * $Id: server.c,v 1.126 2007/04/21 04:38:29 wcc Exp $
+ * $Id: server.c,v 1.127 2007/10/17 06:42:49 wcc Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -142,7 +142,7 @@ static int burst;
  *
  * 'mode' queue gets priority now.
  *
- * Most servers will allow 'busts' of upto 5 msgs, so let's put something
+ * Most servers will allow 'bursts' of upto 5 msgs, so let's put something
  * in to support flushing modeq a little faster if possible.
  * Will send upto 4 msgs from modeq, and then send 1 msg every time
  * it will *not* send anything from hq until the 'burst' value drops
