@@ -1,7 +1,7 @@
 /*
  * servmsg.c -- part of server.mod
  *
- * $Id: servmsg.c,v 1.93 2007/10/17 07:42:40 wcc Exp $
+ * $Id: servmsg.c,v 1.94 2008/02/05 00:14:50 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -487,7 +487,7 @@ static int gotmsg(char *from, char *msg)
     if (*p == 1) {
       *p = 0;
       strncpyz(ctcpbuf, p1, sizeof(ctcpbuf));
-      ctcp = p1;
+      ctcp = ctcpbuf;
       /* copy the part after the second : in front of it after
        * the first :, this is temporary copied to ctcpbuf */
       strncpy(p1 - 1, p + 1, strlen(ctcpbuf) - 1);
