@@ -1,6 +1,6 @@
 #
 # quotepass.tcl
-#   written by simple, stdarg, and guppy
+#   written by simple, [sL], and guppy
 #
 # Some servers on the Undernet will make you send 'PASS <numbers>' before you
 # can connect if you did not return an identd response. This script will
@@ -10,7 +10,7 @@
 # -------
 #  10Feb08: initial version
 #
-# $Id: quotepass.tcl,v 1.1 2008/02/11 01:23:14 guppy Exp $
+# $Id: quotepass.tcl,v 1.2 2008/02/11 01:43:30 guppy Exp $
 
 bind evnt - init-server quotepass_unbind
 bind evnt - disconnect-server quotepass_unbind
