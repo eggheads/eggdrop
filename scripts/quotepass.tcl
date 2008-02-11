@@ -10,14 +10,18 @@
 # -------
 #  10Feb08: initial version
 #
-# $Id: quotepass.tcl,v 1.2 2008/02/11 01:43:30 guppy Exp $
+# $Id: quotepass.tcl,v 1.3 2008/02/11 02:28:41 guppy Exp $
+
+set quotepass_resyntax "must type /QUOTE PASS (\[^\" \]*)"
 
 bind evnt - init-server quotepass_unbind
 bind evnt - disconnect-server quotepass_unbind
 bind evnt - connect-server quotepass_bind
 
 proc quotepass_notice {from cmd text} {
-  if {[regexp "PASS (.*)" $text - pass]} {
+  global quotepass_resyntax
+  if {[regexp -nocase $quotepass_resyntax $text - pass]} {
+    putlog "Got a QUOTE PASS request from the server, sending \"PASS $pass\"" 
     putserv "PASS $pass"
   }
   return 0
