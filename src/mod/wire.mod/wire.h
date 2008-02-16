@@ -1,10 +1,10 @@
 /*
  * wire.h -- part of wire.mod
  *
- * $Id: wire.h,v 1.13 2007/04/21 04:38:31 wcc Exp $
+ * $Id: wire.h,v 1.14 2008/02/16 21:41:11 guppy Exp $
  */
 /*
- * Copyright (C) 1999 - 2007 Eggheads Development Team
+ * Copyright (C) 1999 - 2008 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

@@ -1,4 +1,4 @@
-$Id: mod.uptime,v 1.13 2007/04/21 04:38:22 wcc Exp $
+$Id: mod.uptime,v 1.14 2008/02/16 21:41:02 guppy Exp $
 
 Uptime Module
 Last revised: January 1, 2002
@@ -27,4 +27,4 @@ Last revised: January 1, 2002
 
     _____________________________________________________________________
 
-  Copyright (C) 2001 - 2007 Eggheads Development Team
+  Copyright (C) 2001 - 2008 Eggheads Development Team

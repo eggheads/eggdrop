@@ -1,6 +1,6 @@
 dnl configure.ac: this file is processed by autoconf to produce ./configure.
 dnl
-dnl $Id: configure.ac,v 1.7 2007/10/17 08:02:21 wcc Exp $
+dnl $Id: configure.ac,v 1.8 2008/02/16 21:41:07 guppy Exp $
 
 AC_PREREQ(2.59)
 
@@ -11,8 +11,8 @@ AC_INIT([Eggdrop DNS Module],[1.6.19],[bugs@eggheads.org])
 AC_CONFIG_SRCDIR(coredns.c)
 AC_CONFIG_AUX_DIR(../../../misc)
 
-AC_COPYRIGHT([Copyright (C) 1999 - 2007 Eggheads Development Team])
-AC_REVISION($Revision: 1.7 $)
+AC_COPYRIGHT([Copyright (C) 1999 - 2008 Eggheads Development Team])
+AC_REVISION($Revision: 1.8 $)
 
 dns_reslib_avail="true"
 

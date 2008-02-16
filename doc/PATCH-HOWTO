@@ -1,4 +1,4 @@
-$Id: PATCH-HOWTO,v 1.10 2007/10/17 08:02:19 wcc Exp $
+$Id: PATCH-HOWTO,v 1.11 2008/02/16 21:40:56 guppy Exp $
 
 Patch Howto
 Last revised: July 23, 2004
@@ -119,4 +119,4 @@ Last revised: July 23, 2004
       ftp://ftp.eggheads.org/pub/eggdrop/patches/1.6
     _____________________________________________________________________
 
-  Copyright (C) 1999 - 2007 Eggheads Development Team
+  Copyright (C) 1999 - 2008 Eggheads Development Team

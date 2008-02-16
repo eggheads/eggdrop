@@ -1,10 +1,10 @@
 /*
  * uf_features.c -- part of share.mod
  *
- * $Id: uf_features.c,v 1.17 2007/04/21 04:38:30 wcc Exp $
+ * $Id: uf_features.c,v 1.18 2008/02/16 21:41:11 guppy Exp $
  */
 /*
- * Copyright (C) 2000 - 2007 Eggheads Development Team
+ * Copyright (C) 2000 - 2008 Eggheads Development Team
  * Written by Fabian Knittel <fknittel@gmx.de>
  *
  * This program is free software; you can redistribute it and/or

@@ -10,10 +10,10 @@
  * 1.2     1997-08-20      Minor fixes. [BB]
  * 1.2a    1997-08-24      Minor fixes. [BB]
  *
- * $Id: seen.c,v 1.39 2007/04/21 04:38:29 wcc Exp $
+ * $Id: seen.c,v 1.40 2008/02/16 21:41:10 guppy Exp $
  */
 /*
- * Copyright (C) 1999 - 2007 Eggheads Development Team
+ * Copyright (C) 1999 - 2008 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

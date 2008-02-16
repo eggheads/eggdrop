@@ -1,4 +1,4 @@
-$Id: PARTYLINE,v 1.11 2007/04/21 04:38:19 wcc Exp $
+$Id: PARTYLINE,v 1.12 2008/02/16 21:40:56 guppy Exp $
 
 The Party Line
 Last revised: December 31, 2001
@@ -40,4 +40,4 @@ Last revised: December 31, 2001
     channels with ".chat off".
     _____________________________________________________________________
 
-  Copyright (C) 2002 - 2007 Eggheads Development Team
+  Copyright (C) 2002 - 2008 Eggheads Development Team

@@ -1,10 +1,10 @@
 /*
  * snprintf.c - a portable implementation of snprintf and vsnprintf
  *
- * $Id: snprintf.c,v 1.24 2007/04/21 04:38:26 wcc Exp $
+ * $Id: snprintf.c,v 1.25 2008/02/16 21:41:05 guppy Exp $
  */
 /*
- * Portions Copyright (C) 2000 - 2007 Eggheads Development Team
+ * Portions Copyright (C) 2000 - 2008 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

@@ -1,7 +1,7 @@
-$Id: AUTHORS,v 1.34 2007/10/17 07:52:33 wcc Exp $
+$Id: AUTHORS,v 1.35 2008/02/16 21:40:56 guppy Exp $
 
 Eggdrop Developers and Contributors
-Last revised: April 14, 2006
+Last revised: February 16, 2008
     _____________________________________________________________________
 
                      Eggdrop Developers and Contributors
@@ -53,6 +53,7 @@ Last revised: April 14, 2006
     SegFault   Ryan Butler
     SET        Sven Trenkel
     Shaun      Shaun Braun
+    [sL]
     slennox    Shayne Lennox
     stdarg
     Sup        Teemu Hjelt
@@ -60,6 +61,7 @@ Last revised: April 14, 2006
     TaKeDa     Dariusz Kulinski
     TheGhost   James Simmons
     TheUnknown
+    thommey    Thomas Sader
     toot       Toby Verrall
     Tothwolf
     wayhigh    Kevin Lynn
@@ -74,4 +76,4 @@ Last revised: April 14, 2006
   Development Team at eggdev@eggheads.org.
     _____________________________________________________________________
 
-  Copyright (C) 1999 - 2007 Eggheads Development Team
+  Copyright (C) 1999 - 2008 Eggheads Development Team

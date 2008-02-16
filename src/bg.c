@@ -3,11 +3,11 @@
  *   moving the process to the background, i.e. forking, while keeping threads
  *   happy.
  *
- * $Id: bg.c,v 1.13 2007/04/21 04:38:23 wcc Exp $
+ * $Id: bg.c,v 1.14 2008/02/16 21:41:02 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
- * Copyright (C) 1999 - 2007 Eggheads Development Team
+ * Copyright (C) 1999 - 2008 Eggheads Development Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
