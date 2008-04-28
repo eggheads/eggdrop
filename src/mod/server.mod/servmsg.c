@@ -1,7 +1,7 @@
 /*
  * servmsg.c -- part of server.mod
  *
- * $Id: servmsg.c,v 1.95 2008/02/16 21:41:10 guppy Exp $
+ * $Id: servmsg.c,v 1.96 2008/04/28 23:54:24 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -325,7 +325,7 @@ static int got442(char *from, char *msg)
       if (me && me->funcs)
         (me->funcs[CHANNEL_CLEAR]) (chan, 1);
       chan->status &= ~CHAN_ACTIVE;
-      dprintf(DP_MODE, "JOIN %s %s\n", chan->name,
+      dprintf(DP_SERVER, "JOIN %s %s\n", chan->name,
               chan->channel.key[0] ? chan->channel.key : chan->key_prot);
     }
 

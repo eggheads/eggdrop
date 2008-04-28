@@ -2,7 +2,7 @@
  * irc.c -- part of irc.mod
  *   support for channels within the bot
  *
- * $Id: irc.c,v 1.106 2008/02/16 21:41:09 guppy Exp $
+ * $Id: irc.c,v 1.107 2008/04/28 23:54:23 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1182,7 +1182,7 @@ char *irc_start(Function *global_funcs)
   }
   for (chan = chanset; chan; chan = chan->next) {
     if (!channel_inactive(chan))
-      dprintf(DP_MODE, "JOIN %s %s\n",
+      dprintf(DP_SERVER, "JOIN %s %s\n",
               (chan->name[0]) ? chan->name : chan->dname, chan->key_prot);
     chan->status &= ~(CHAN_ACTIVE | CHAN_PEND | CHAN_ASKEDBANS);
     chan->ircnet_status &= ~(CHAN_ASKED_INVITED | CHAN_ASKED_EXEMPTS);
