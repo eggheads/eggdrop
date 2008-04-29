@@ -1,7 +1,7 @@
 /*
  * tclirc.c -- part of irc.mod
  *
- * $Id: tclirc.c,v 1.51 2008/02/16 21:41:09 guppy Exp $
+ * $Id: tclirc.c,v 1.52 2008/04/29 17:29:45 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -495,12 +495,11 @@ static int tcl_onchansplit STDVAR
 
 static int tcl_maskhost STDVAR
 {
-  char new[121];
-
   BADARGS(2, 2, " nick!user@host");
-
+  char *new = nmalloc(strlen(argv[1]) + 5);
   maskban(argv[1], new);
   Tcl_AppendResult(irp, new, NULL);
+  nfree(new);
   return TCL_OK;
 }
 
