@@ -1,7 +1,7 @@
 /*
  * servmsg.c -- part of server.mod
  *
- * $Id: servmsg.c,v 1.96 2008/04/28 23:54:24 guppy Exp $
+ * $Id: servmsg.c,v 1.97 2008/04/30 01:07:37 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1088,8 +1088,12 @@ static void server_activity(int idx, char *msg, int len)
   }
   code = newsplit(&msg);
   if (raw_log && ((strcmp(code, "PRIVMSG") && strcmp(code, "NOTICE")) ||
-      !match_ignore(from)))
-    putlog(LOG_RAW, "*", "[@] %s %s %s", from, code, msg);
+      !match_ignore(from))) {
+    if (!strcmp(from, ""))
+      putlog(LOG_RAW, "*", "[@] %s %s", code, msg);
+    else
+      putlog(LOG_RAW, "*", "[@] %s %s %s", from, code, msg);
+  }
   /* This has GOT to go into the raw binding table, * merely because this
    * is less effecient.
    */
