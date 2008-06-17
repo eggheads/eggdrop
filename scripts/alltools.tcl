@@ -24,7 +24,7 @@
 # Tothwolf  27Dec2003: added matchbotattrany, optimized ordnumber,
 #                      more minor changes
 #
-# $Id: alltools.tcl,v 1.21 2008/02/16 21:41:02 guppy Exp $
+# $Id: alltools.tcl,v 1.22 2008/06/17 11:13:33 tothwolf Exp $
 #
 ########################################
 #
@@ -241,9 +241,18 @@ proc inchain {bot} {
 }
 
 proc randstring {length {chars abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789}} {
-  set count [string length $chars]
-  for {set index 0} {$index < $length} {incr index} {
-    append result [string index $chars [rand $count]]
+  if {([string compare "" $length]) && \
+      (![regexp \[^0-9\] $length])} then {
+    set count [string length $chars]
+    if {$count} then {
+      for {set index 0} {$index < $length} {incr index} {
+        append result [string index $chars [rand $count]]
+      }
+    } else {
+      error "empty character string"
+    }
+  } else {
+    error "invalid random string length"
   }
   return $result
 }
