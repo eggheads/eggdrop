@@ -1,4 +1,4 @@
-$Id: UPDATES1.6,v 1.650 2008/06/17 11:13:33 tothwolf Exp $
+$Id: UPDATES1.6,v 1.651 2008/06/18 06:03:21 tothwolf Exp $
 
 Eggdrop Changes (since v1.6.0)
     _____________________________________________________________________
@@ -33,6 +33,21 @@ Eggdrop Changes (since v1.6.0)
     - Added argument checking to randstring proc in alltools.tcl to
       make it a little more robust.
     * Found by: thommey - Patch by: Tothwolf
+
+    - Completely rewrote EGG_TCL_CHECK_THREADS autoconf macro to make
+      --enable-tcl-threads and --disable-tcl-threads threaded Tcl library
+      configure options more robust.
+    - Fixed --enable-tcl-threads configure option so it will enable threaded
+      Tcl library support even if we don't autodetect a threaded Tcl library.
+    - Explicitly offer both --enable-tcl-threads and --disable-tcl-threads
+      configure options that can forcefully enable or disable threaded Tcl
+      library support. Previously either worked but only showing
+      --disable-tcl-threads in --help could be confusing.
+    - Added code to print an explicit message to show if threaded Tcl library
+      support will be enabled or not.
+    - We no longer link against pthread library unless threaded Tcl library
+      support is enabled.
+    * Patch by: Tothwolf
 
 
   1.6.19 (18 April 2008):
