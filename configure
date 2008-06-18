@@ -678,6 +678,18 @@ STRIP
 AWK
 BASENAME
 UNAME
+build
+build_cpu
+build_vendor
+build_os
+host
+host_cpu
+host_vendor
+host_os
+target
+target_cpu
+target_vendor
+target_os
 DEFAULT_MAKE
 MOD_EXT
 MODULE_XLIBS
@@ -1267,6 +1279,11 @@ Fine tuning of the installation directories:
 _ACEOF
 
   cat <<\_ACEOF
+
+System types:
+  --build=BUILD     configure for building on BUILD [guessed]
+  --host=HOST       cross-compile to build programs to run on HOST [BUILD]
+  --target=TARGET   configure for building compilers for TARGET [HOST]
 _ACEOF
 fi
 
@@ -2736,7 +2753,7 @@ ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $
 ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 
-  if test "${cross_compiling-x}" = "x"; then
+  if test "x$cross_compiling" = "x"; then
     cat << 'EOF' >&2
 configure: error:
 
@@ -4026,7 +4043,7 @@ fi
     test -n "$ac_cv_prog_HEAD_1" && break
   done
 
-  if test "${ac_cv_prog_HEAD_1-x}" = "x"; then
+  if test "x$ac_cv_prog_HEAD_1" = "x"; then
     cat << 'EOF' >&2
 configure: error:
 
@@ -4087,7 +4104,7 @@ echo "${ECHO_T}no" >&6; }
 fi
 
 
-    if test "${STRIP-x}" = "x"; then
+    if test "x$STRIP" = "x"; then
       STRIP=touch
     else
 
@@ -4151,7 +4168,7 @@ fi
   test -n "$AWK" && break
 done
 
-  if test "${AWK-x}" = "x"; then
+  if test "x$AWK" = "x"; then
     cat << 'EOF' >&2
 configure: error:
 
@@ -4200,7 +4217,7 @@ echo "${ECHO_T}no" >&6; }
 fi
 
 
-  if test "${BASENAME-x}" = "x"; then
+  if test "x$BASENAME" = "x"; then
     cat << 'EOF' >&2
 configure: error:
 
@@ -5062,7 +5079,7 @@ fi
 
 # Test the OS and set the module linking settings.
 
-  { echo "$as_me:$LINENO: checking system type" >&5
+    { echo "$as_me:$LINENO: checking system type" >&5
 echo $ECHO_N "checking system type... $ECHO_C" >&6; }
 if test "${egg_cv_var_system_type+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
@@ -5080,6 +5097,133 @@ else
 fi
 { echo "$as_me:$LINENO: result: $egg_cv_var_system_release" >&5
 echo "${ECHO_T}$egg_cv_var_system_release" >&6; }
+
+  # Make sure we can run config.sub.
+$SHELL "$ac_aux_dir/config.sub" sun4 >/dev/null 2>&1 ||
+  { { echo "$as_me:$LINENO: error: cannot run $SHELL $ac_aux_dir/config.sub" >&5
+echo "$as_me: error: cannot run $SHELL $ac_aux_dir/config.sub" >&2;}
+   { (exit 1); exit 1; }; }
+
+{ echo "$as_me:$LINENO: checking build system type" >&5
+echo $ECHO_N "checking build system type... $ECHO_C" >&6; }
+if test "${ac_cv_build+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  ac_build_alias=$build_alias
+test "x$ac_build_alias" = x &&
+  ac_build_alias=`$SHELL "$ac_aux_dir/config.guess"`
+test "x$ac_build_alias" = x &&
+  { { echo "$as_me:$LINENO: error: cannot guess build type; you must specify one" >&5
+echo "$as_me: error: cannot guess build type; you must specify one" >&2;}
+   { (exit 1); exit 1; }; }
+ac_cv_build=`$SHELL "$ac_aux_dir/config.sub" $ac_build_alias` ||
+  { { echo "$as_me:$LINENO: error: $SHELL $ac_aux_dir/config.sub $ac_build_alias failed" >&5
+echo "$as_me: error: $SHELL $ac_aux_dir/config.sub $ac_build_alias failed" >&2;}
+   { (exit 1); exit 1; }; }
+
+fi
+{ echo "$as_me:$LINENO: result: $ac_cv_build" >&5
+echo "${ECHO_T}$ac_cv_build" >&6; }
+case $ac_cv_build in
+*-*-*) ;;
+*) { { echo "$as_me:$LINENO: error: invalid value of canonical build" >&5
+echo "$as_me: error: invalid value of canonical build" >&2;}
+   { (exit 1); exit 1; }; };;
+esac
+build=$ac_cv_build
+ac_save_IFS=$IFS; IFS='-'
+set x $ac_cv_build
+shift
+build_cpu=$1
+build_vendor=$2
+shift; shift
+# Remember, the first character of IFS is used to create $*,
+# except with old shells:
+build_os=$*
+IFS=$ac_save_IFS
+case $build_os in *\ *) build_os=`echo "$build_os" | sed 's/ /-/g'`;; esac
+
+
+  { echo "$as_me:$LINENO: checking host system type" >&5
+echo $ECHO_N "checking host system type... $ECHO_C" >&6; }
+if test "${ac_cv_host+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  if test "x$host_alias" = x; then
+  ac_cv_host=$ac_cv_build
+else
+  ac_cv_host=`$SHELL "$ac_aux_dir/config.sub" $host_alias` ||
+    { { echo "$as_me:$LINENO: error: $SHELL $ac_aux_dir/config.sub $host_alias failed" >&5
+echo "$as_me: error: $SHELL $ac_aux_dir/config.sub $host_alias failed" >&2;}
+   { (exit 1); exit 1; }; }
+fi
+
+fi
+{ echo "$as_me:$LINENO: result: $ac_cv_host" >&5
+echo "${ECHO_T}$ac_cv_host" >&6; }
+case $ac_cv_host in
+*-*-*) ;;
+*) { { echo "$as_me:$LINENO: error: invalid value of canonical host" >&5
+echo "$as_me: error: invalid value of canonical host" >&2;}
+   { (exit 1); exit 1; }; };;
+esac
+host=$ac_cv_host
+ac_save_IFS=$IFS; IFS='-'
+set x $ac_cv_host
+shift
+host_cpu=$1
+host_vendor=$2
+shift; shift
+# Remember, the first character of IFS is used to create $*,
+# except with old shells:
+host_os=$*
+IFS=$ac_save_IFS
+case $host_os in *\ *) host_os=`echo "$host_os" | sed 's/ /-/g'`;; esac
+
+
+  { echo "$as_me:$LINENO: checking target system type" >&5
+echo $ECHO_N "checking target system type... $ECHO_C" >&6; }
+if test "${ac_cv_target+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  if test "x$target_alias" = x; then
+  ac_cv_target=$ac_cv_host
+else
+  ac_cv_target=`$SHELL "$ac_aux_dir/config.sub" $target_alias` ||
+    { { echo "$as_me:$LINENO: error: $SHELL $ac_aux_dir/config.sub $target_alias failed" >&5
+echo "$as_me: error: $SHELL $ac_aux_dir/config.sub $target_alias failed" >&2;}
+   { (exit 1); exit 1; }; }
+fi
+
+fi
+{ echo "$as_me:$LINENO: result: $ac_cv_target" >&5
+echo "${ECHO_T}$ac_cv_target" >&6; }
+case $ac_cv_target in
+*-*-*) ;;
+*) { { echo "$as_me:$LINENO: error: invalid value of canonical target" >&5
+echo "$as_me: error: invalid value of canonical target" >&2;}
+   { (exit 1); exit 1; }; };;
+esac
+target=$ac_cv_target
+ac_save_IFS=$IFS; IFS='-'
+set x $ac_cv_target
+shift
+target_cpu=$1
+target_vendor=$2
+shift; shift
+# Remember, the first character of IFS is used to create $*,
+# except with old shells:
+target_os=$*
+IFS=$ac_save_IFS
+case $target_os in *\ *) target_os=`echo "$target_os" | sed 's/ /-/g'`;; esac
+
+
+# The aliases save the names the user supplied, while $host etc.
+# will get canonicalized.
+test -n "$target_alias" &&
+  test "$program_prefix$program_suffix$program_transform_name" = \
+    NONENONEs,x,x, &&
+  program_prefix=${target_alias}-
 
 
   MODULES_OK="yes"
@@ -5426,7 +5570,7 @@ echo "${ECHO_T}no" >&6; }
     fi
   done
 
-  if test "x${BUNDLE}" = "x"; then
+  if test "x$BUNDLE" = "x"; then
     cat << 'EOF' >&2
 configure: WARNING:
 
@@ -5435,7 +5579,7 @@ configure: WARNING:
 EOF
   fi
 
-      MODULE_XLIBS="${BUNDLE} ${MODULE_XLIBS}"
+      MODULE_XLIBS="$BUNDLE $MODULE_XLIBS"
     ;;
     *)
       if test -r /mach; then
@@ -9730,7 +9874,7 @@ _ACEOF
 
   EGGEXEC="eggdrop"
 
-  if test ! "${EXEEXT-x}" = "x"; then
+  if test ! "x$EXEEXT" = "x"; then
     EGGEXEC="eggdrop${EXEEXT}"
   fi
 
@@ -9860,15 +10004,15 @@ fi
 
   WARN=0
   # Make sure either both or neither $tcllibname and $tclincname are set
-  if test ! "${tcllibname-x}" = "x"; then
-    if test "${tclincname-x}" = "x"; then
+  if test ! "x$tcllibname" = "x"; then
+    if test "x$tclincname" = "x"; then
       WARN=1
       tcllibname=""
       TCLLIB=""
       TCLINC=""
     fi
   else
-    if test ! "${tclincname-x}" = "x"; then
+    if test ! "x$tclincname" = "x"; then
       WARN=1
       tclincname=""
       TCLLIB=""
@@ -9890,15 +10034,15 @@ EOF
 
   WARN=0
   # Make sure either both or neither $TCLLIB and $TCLINC are set
-  if test ! "${TCLLIB-x}" = "x"; then
-    if test "${TCLINC-x}" = "x"; then
+  if test ! "x$TCLLIB" = "x"; then
+    if test "x$TCLINC" = "x"; then
       WARN=1
       WVAR1=TCLLIB
       WVAR2=TCLINC
       TCLLIB=""
     fi
   else
-    if test ! "${TCLINC-x}" = "x"; then
+    if test ! "x$TCLINC" = "x"; then
       WARN=1
       WVAR1=TCLINC
       WVAR2=TCLLIB
@@ -9920,7 +10064,7 @@ EOF
 
 
   # Look for Tcl library: if $tcllibname is set, check there first
-  if test ! "${tcllibname-x}" = "x"; then
+  if test ! "x$tcllibname" = "x"; then
     if test -f "$tcllibname" && test -r "$tcllibname"; then
       TCLLIB=`echo $tcllibname | sed 's%/[^/][^/]*$%%'`
       TCLLIBFN=`$BASENAME $tcllibname | cut -c4-`
@@ -9946,7 +10090,7 @@ EOF
 
 
   # Look for Tcl header: if $tclincname is set, check there first
-  if test ! "${tclincname-x}" = "x"; then
+  if test ! "x$tclincname" = "x"; then
     if test -f "$tclincname" && test -r "$tclincname"; then
       TCLINC=`echo $tclincname | sed 's%/[^/][^/]*$%%'`
       TCLINCFN=`$BASENAME $tclincname`
@@ -9970,7 +10114,7 @@ EOF
 
 
   # Look for Tcl library: if $TCLLIB is set, check there first
-  if test "${TCLLIBFN-x}" = "x" && test ! "${TCLLIB-x}" = "x"; then
+  if test "x$TCLLIBFN" = "x" && test ! "x$TCLLIB" = "x"; then
     if test -d "$TCLLIB"; then
       for tcllibfns in $tcllibnames; do
         for tcllibext in $tcllibextensions; do
@@ -9984,7 +10128,7 @@ EOF
       done
     fi
 
-    if test "${TCLLIBFN-x}" = "x"; then
+    if test "x$TCLLIBFN" = "x"; then
       cat << 'EOF' >&2
 configure: WARNING:
 
@@ -10003,7 +10147,7 @@ EOF
 
 
   # Look for Tcl header: if $TCLINC is set, check there first
-  if test "${TCLINCFN-x}" = "x" && test ! "${TCLINC-x}" = "x"; then
+  if test "x$TCLINCFN" = "x" && test ! "x$TCLINC" = "x"; then
     if test -d "$TCLINC"; then
       for tclheaderfn in $tclheadernames; do
         if test -r "${TCLINC}/${tclheaderfn}"; then
@@ -10013,7 +10157,7 @@ EOF
       done
     fi
 
-    if test "${TCLINCFN-x}" = "x"; then
+    if test "x$TCLINCFN" = "x"; then
       cat << 'EOF' >&2
 configure: WARNING:
 
@@ -10035,7 +10179,7 @@ EOF
 echo $ECHO_N "checking for Tcl library... $ECHO_C" >&6; }
 
   # Attempt autodetect for $TCLLIBFN if it's not set
-  if test ! "${TCLLIBFN-x}" = "x"; then
+  if test ! "x$TCLLIBFN" = "x"; then
     { echo "$as_me:$LINENO: result: using ${TCLLIB}/lib${TCLLIBFN}" >&5
 echo "${ECHO_T}using ${TCLLIB}/lib${TCLLIBFN}" >&6; }
   else
@@ -10057,7 +10201,7 @@ echo "${ECHO_T}found ${tcllibpath}/lib${tcllibfns}${tcllibext}" >&6; }
   fi
 
   # Show if $TCLLIBFN wasn't found
-  if test "${TCLLIBFN-x}" = "x"; then
+  if test "x$TCLLIBFN" = "x"; then
     { echo "$as_me:$LINENO: result: not found" >&5
 echo "${ECHO_T}not found" >&6; }
   fi
@@ -10070,7 +10214,7 @@ echo "${ECHO_T}not found" >&6; }
 echo $ECHO_N "checking for Tcl header... $ECHO_C" >&6; }
 
   # Attempt autodetect for $TCLINCFN if it's not set
-  if test ! "${TCLINCFN-x}" = "x"; then
+  if test ! "x$TCLINCFN" = "x"; then
     { echo "$as_me:$LINENO: result: using ${TCLINC}/${TCLINCFN}" >&5
 echo "${ECHO_T}using ${TCLINC}/${TCLINCFN}" >&6; }
   else
@@ -10087,7 +10231,7 @@ echo "${ECHO_T}found ${tclheaderpath}/${tclheaderfn}" >&6; }
     done
 
     # FreeBSD hack ...
-    if test "${TCLINCFN-x}" = "x"; then
+    if test "x$TCLINCFN" = "x"; then
       for tcllibfns in $tcllibnames; do
         for tclheaderpath in $tclheaderpaths; do
           for tclheaderfn in $tclheadernames; do
@@ -10104,16 +10248,16 @@ echo "${ECHO_T}found ${tclheaderpath}/${tcllibfns}/${tclheaderfn}" >&6; }
     fi
   fi
 
-  if test "${TCLINCFN-x}" = "x"; then
-    { echo "$as_me:$LINENO: result: {not found}" >&5
-echo "${ECHO_T}{not found}" >&6; }
+  if test "x$TCLINCFN" = "x"; then
+    { echo "$as_me:$LINENO: result: not found" >&5
+echo "${ECHO_T}not found" >&6; }
   fi
 
 
 
 
 
-  { echo "$as_me:$LINENO: checking whether the Tcl system has changed" >&5
+      { echo "$as_me:$LINENO: checking whether the Tcl system has changed" >&5
 echo $ECHO_N "checking whether the Tcl system has changed... $ECHO_C" >&6; }
   egg_tcl_changed="yes"
   egg_tcl_id="${TCLLIB}:${TCLLIBFN}:${TCLINC}:${TCLINCFN}"
@@ -10129,7 +10273,7 @@ else
 fi
 
     if test "$egg_tcl_cached" = "yes"; then
-      if test "${egg_cv_var_tcl_id-x}" = "${egg_tcl_id-x}"; then
+      if test "x$egg_cv_var_tcl_id" = "x$egg_tcl_id"; then
         egg_tcl_changed="no"
       else
         egg_cv_var_tcl_id="$egg_tcl_id"
@@ -10148,7 +10292,7 @@ echo "${ECHO_T}no" >&6; }
 
   # Both TCLLIBFN & TCLINCFN must be set, or we bail
   TCL_FOUND=0
-  if test ! "${TCLLIBFN-x}" = "x" && test ! "${TCLINCFN-x}" = "x"; then
+  if test ! "x$TCLLIBFN" = "x" && test ! "x$TCLINCFN" = "x"; then
     TCL_FOUND=1
 
     # Check Tcl's version
@@ -10167,7 +10311,7 @@ else
 fi
 
 
-    if test ! "${egg_cv_var_tcl_version-x}" = "x"; then
+    if test ! "x$egg_cv_var_tcl_version" = "x"; then
       { echo "$as_me:$LINENO: result: $egg_cv_var_tcl_version" >&5
 echo "${ECHO_T}$egg_cv_var_tcl_version" >&6; }
     else
@@ -10191,7 +10335,7 @@ else
 fi
 
 
-    if test ! "${egg_cv_var_tcl_patch_level-x}" = "x"; then
+    if test ! "x$egg_cv_var_tcl_patch_level" = "x"; then
       { echo "$as_me:$LINENO: result: $egg_cv_var_tcl_patch_level" >&5
 echo "${ECHO_T}$egg_cv_var_tcl_patch_level" >&6; }
     else
@@ -10243,7 +10387,7 @@ EOF
   # Set variables for Tcl library tests
   TCL_TEST_LIB="$TCLLIBFNS"
   TCL_TEST_OTHERLIBS="-L$TCLLIB $EGG_MATH_LIB"
-  if test ! "${ac_cv_lib_pthread-x}" = "x"; then
+  if test ! "x$ac_cv_lib_pthread" = "x"; then
     TCL_TEST_OTHERLIBS="$TCL_TEST_OTHERLIBS $ac_cv_lib_pthread"
   fi
 
@@ -10493,7 +10637,7 @@ _ACEOF
 
 
     # Add pthread library to $LIBS if we need it for threaded Tcl
-    if test ! "${ac_cv_lib_pthread-x}" = "x"; then
+    if test ! "x$ac_cv_lib_pthread" = "x"; then
       LIBS="$ac_cv_lib_pthread $LIBS"
     fi
   else
@@ -10528,7 +10672,7 @@ EOF
       if test "$TCL_VER_PRE74" = "no"; then
 
         # Was the --with-tcllib option given ?
-        if test ! "${tcllibname-x}" = "x"; then
+        if test ! "x$tcllibname" = "x"; then
           TCL_REQS="${TCLLIB}/lib${TCLLIBFN}"
           TCL_LIBS="${TCLLIB}/lib${TCLLIBFN} $EGG_MATH_LIB"
         else
@@ -10572,7 +10716,7 @@ _ACEOF
 
 
 
-  if test "${DEST-x}" = "x"; then
+  if test "x$DEST" = "x"; then
     DEST=\${prefix}
   fi
 
@@ -11295,6 +11439,18 @@ STRIP!$STRIP$ac_delim
 AWK!$AWK$ac_delim
 BASENAME!$BASENAME$ac_delim
 UNAME!$UNAME$ac_delim
+build!$build$ac_delim
+build_cpu!$build_cpu$ac_delim
+build_vendor!$build_vendor$ac_delim
+build_os!$build_os$ac_delim
+host!$host$ac_delim
+host_cpu!$host_cpu$ac_delim
+host_vendor!$host_vendor$ac_delim
+host_os!$host_os$ac_delim
+target!$target$ac_delim
+target_cpu!$target_cpu$ac_delim
+target_vendor!$target_vendor$ac_delim
+target_os!$target_os$ac_delim
 DEFAULT_MAKE!$DEFAULT_MAKE$ac_delim
 MOD_EXT!$MOD_EXT$ac_delim
 MODULE_XLIBS!$MODULE_XLIBS$ac_delim
@@ -11318,7 +11474,7 @@ LIBOBJS!$LIBOBJS$ac_delim
 LTLIBOBJS!$LTLIBOBJS$ac_delim
 _ACEOF
 
-  if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 80; then
+  if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 92; then
     break
   elif $ac_last_try; then
     { { echo "$as_me:$LINENO: error: could not make $CONFIG_STATUS" >&5

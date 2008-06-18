@@ -16,7 +16,7 @@ dnl You should have received a copy of the GNU General Public License
 dnl along with this program; if not, write to the Free Software
 dnl Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 dnl
-dnl $Id: aclocal.m4,v 1.105 2008/06/18 07:36:29 tothwolf Exp $
+dnl $Id: aclocal.m4,v 1.106 2008/06/18 09:42:50 tothwolf Exp $
 dnl
 
 
@@ -102,7 +102,7 @@ dnl Check for a working C compiler.
 dnl
 AC_DEFUN([EGG_CHECK_CC],
 [
-  if test "${cross_compiling-x}" = "x"; then
+  if test "x$cross_compiling" = "x"; then
     cat << 'EOF' >&2
 configure: error:
 
@@ -290,7 +290,7 @@ EOF
     test -n "$ac_cv_prog_HEAD_1" && break
   done
 
-  if test "${ac_cv_prog_HEAD_1-x}" = "x"; then
+  if test "x$ac_cv_prog_HEAD_1" = "x"; then
     cat << 'EOF' >&2
 configure: error:
 
@@ -317,7 +317,7 @@ AC_DEFUN([EGG_PROG_STRIP],
                 [enable_strip="no"])
   if test "$enable_strip" = "yes"; then
     AC_CHECK_PROG(STRIP, strip, strip)
-    if test "${STRIP-x}" = "x"; then
+    if test "x$STRIP" = "x"; then
       STRIP=touch
     else
       AC_DEFINE(ENABLE_STRIP, 1, [Define if stripping is enabled.])
@@ -341,7 +341,7 @@ dnl
 AC_DEFUN([EGG_PROG_AWK],
 [
   AC_PROG_AWK
-  if test "${AWK-x}" = "x"; then
+  if test "x$AWK" = "x"; then
     cat << 'EOF' >&2
 configure: error:
 
@@ -359,7 +359,7 @@ dnl
 AC_DEFUN([EGG_PROG_BASENAME],
 [
   AC_CHECK_PROG(BASENAME, basename, basename)
-  if test "${BASENAME-x}" = "x"; then
+  if test "x$BASENAME" = "x"; then
     cat << 'EOF' >&2
 configure: error:
 
@@ -381,8 +381,13 @@ dnl EGG_OS_VERSION()
 dnl
 AC_DEFUN([EGG_OS_VERSION],
 [
+  dnl FIXME: Eventually replace these with the results of AC_CANONICAL_* below
   AC_CACHE_CHECK([system type], egg_cv_var_system_type, [egg_cv_var_system_type=`$UNAME -s`])
   AC_CACHE_CHECK([system release], egg_cv_var_system_release, [egg_cv_var_system_release=`$UNAME -r`])
+
+  AC_CANONICAL_BUILD
+  AC_CANONICAL_HOST
+  AC_CANONICAL_TARGET
 ])
 
 
@@ -424,7 +429,7 @@ AC_DEFUN([EGG_DARWIN_BUNDLE],
     fi
   done
 
-  if test "x${BUNDLE}" = "x"; then
+  if test "x$BUNDLE" = "x"; then
     cat << 'EOF' >&2
 configure: WARNING:
 
@@ -518,7 +523,7 @@ AC_DEFUN([EGG_CHECK_MODULE_SUPPORT],
       fi
       LOAD_METHOD="dyld"
       EGG_DARWIN_BUNDLE
-      MODULE_XLIBS="${BUNDLE} ${MODULE_XLIBS}"
+      MODULE_XLIBS="$BUNDLE $MODULE_XLIBS"
     ;;
     *)
       if test -r /mach; then
@@ -848,7 +853,7 @@ dnl
 AC_DEFUN([EGG_EXEEXT], [
   EGGEXEC="eggdrop"
   AC_EXEEXT
-  if test ! "${EXEEXT-x}" = "x"; then
+  if test ! "x$EXEEXT" = "x"; then
     EGGEXEC="eggdrop${EXEEXT}"
   fi
   AC_SUBST(EGGEXEC)
@@ -869,15 +874,15 @@ AC_DEFUN([EGG_TCL_ARG_WITH],
 
   WARN=0
   # Make sure either both or neither $tcllibname and $tclincname are set
-  if test ! "${tcllibname-x}" = "x"; then
-    if test "${tclincname-x}" = "x"; then
+  if test ! "x$tcllibname" = "x"; then
+    if test "x$tclincname" = "x"; then
       WARN=1
       tcllibname=""
       TCLLIB=""
       TCLINC=""
     fi
   else
-    if test ! "${tclincname-x}" = "x"; then
+    if test ! "x$tclincname" = "x"; then
       WARN=1
       tclincname=""
       TCLLIB=""
@@ -904,15 +909,15 @@ AC_DEFUN([EGG_TCL_ENV],
 [
   WARN=0
   # Make sure either both or neither $TCLLIB and $TCLINC are set
-  if test ! "${TCLLIB-x}" = "x"; then
-    if test "${TCLINC-x}" = "x"; then
+  if test ! "x$TCLLIB" = "x"; then
+    if test "x$TCLINC" = "x"; then
       WARN=1
       WVAR1=TCLLIB
       WVAR2=TCLINC
       TCLLIB=""
     fi
   else
-    if test ! "${TCLINC-x}" = "x"; then
+    if test ! "x$TCLINC" = "x"; then
       WARN=1
       WVAR1=TCLINC
       WVAR2=TCLLIB
@@ -939,7 +944,7 @@ dnl
 AC_DEFUN([EGG_TCL_WITH_TCLLIB],
 [
   # Look for Tcl library: if $tcllibname is set, check there first
-  if test ! "${tcllibname-x}" = "x"; then
+  if test ! "x$tcllibname" = "x"; then
     if test -f "$tcllibname" && test -r "$tcllibname"; then
       TCLLIB=`echo $tcllibname | sed 's%/[[^/]][[^/]]*$%%'`
       TCLLIBFN=`$BASENAME $tcllibname | cut -c4-`
@@ -970,7 +975,7 @@ dnl
 AC_DEFUN([EGG_TCL_WITH_TCLINC],
 [
   # Look for Tcl header: if $tclincname is set, check there first
-  if test ! "${tclincname-x}" = "x"; then
+  if test ! "x$tclincname" = "x"; then
     if test -f "$tclincname" && test -r "$tclincname"; then
       TCLINC=`echo $tclincname | sed 's%/[[^/]][[^/]]*$%%'`
       TCLINCFN=`$BASENAME $tclincname`
@@ -999,7 +1004,7 @@ dnl
 AC_DEFUN([EGG_TCL_FIND_LIBRARY],
 [
   # Look for Tcl library: if $TCLLIB is set, check there first
-  if test "${TCLLIBFN-x}" = "x" && test ! "${TCLLIB-x}" = "x"; then
+  if test "x$TCLLIBFN" = "x" && test ! "x$TCLLIB" = "x"; then
     if test -d "$TCLLIB"; then
       for tcllibfns in $tcllibnames; do
         for tcllibext in $tcllibextensions; do
@@ -1013,7 +1018,7 @@ AC_DEFUN([EGG_TCL_FIND_LIBRARY],
       done
     fi
 
-    if test "${TCLLIBFN-x}" = "x"; then
+    if test "x$TCLLIBFN" = "x"; then
       cat << 'EOF' >&2
 configure: WARNING:
 
@@ -1037,7 +1042,7 @@ dnl
 AC_DEFUN([EGG_TCL_FIND_HEADER],
 [
   # Look for Tcl header: if $TCLINC is set, check there first
-  if test "${TCLINCFN-x}" = "x" && test ! "${TCLINC-x}" = "x"; then
+  if test "x$TCLINCFN" = "x" && test ! "x$TCLINC" = "x"; then
     if test -d "$TCLINC"; then
       for tclheaderfn in $tclheadernames; do
         if test -r "${TCLINC}/${tclheaderfn}"; then
@@ -1047,7 +1052,7 @@ AC_DEFUN([EGG_TCL_FIND_HEADER],
       done
     fi
 
-    if test "${TCLINCFN-x}" = "x"; then
+    if test "x$TCLINCFN" = "x"; then
       cat << 'EOF' >&2
 configure: WARNING:
 
@@ -1073,7 +1078,7 @@ AC_DEFUN([EGG_TCL_CHECK_LIBRARY],
   AC_MSG_CHECKING([for Tcl library])
 
   # Attempt autodetect for $TCLLIBFN if it's not set
-  if test ! "${TCLLIBFN-x}" = "x"; then
+  if test ! "x$TCLLIBFN" = "x"; then
     AC_MSG_RESULT([using ${TCLLIB}/lib${TCLLIBFN}])
   else
     for tcllibfns in $tcllibnames; do
@@ -1093,7 +1098,7 @@ AC_DEFUN([EGG_TCL_CHECK_LIBRARY],
   fi
 
   # Show if $TCLLIBFN wasn't found
-  if test "${TCLLIBFN-x}" = "x"; then
+  if test "x$TCLLIBFN" = "x"; then
     AC_MSG_RESULT([not found])
   fi
 
@@ -1109,7 +1114,7 @@ AC_DEFUN([EGG_TCL_CHECK_HEADER],
   AC_MSG_CHECKING([for Tcl header])
 
   # Attempt autodetect for $TCLINCFN if it's not set
-  if test ! "${TCLINCFN-x}" = "x"; then
+  if test ! "x$TCLINCFN" = "x"; then
     AC_MSG_RESULT([using ${TCLINC}/${TCLINCFN}])
   else
     for tclheaderpath in $tclheaderpaths; do
@@ -1124,7 +1129,7 @@ AC_DEFUN([EGG_TCL_CHECK_HEADER],
     done
 
     # FreeBSD hack ...
-    if test "${TCLINCFN-x}" = "x"; then
+    if test "x$TCLINCFN" = "x"; then
       for tcllibfns in $tcllibnames; do
         for tclheaderpath in $tclheaderpaths; do
           for tclheaderfn in $tclheadernames; do
@@ -1140,8 +1145,8 @@ AC_DEFUN([EGG_TCL_CHECK_HEADER],
     fi
   fi
 
-  if test "${TCLINCFN-x}" = "x"; then
-    AC_MSG_RESULT({not found})
+  if test "x$TCLINCFN" = "x"; then
+    AC_MSG_RESULT([not found])
   fi
 
   AC_SUBST(TCLINC)
@@ -1167,6 +1172,8 @@ dnl as egg_tcl_changed is set to "yes".
 dnl
 AC_DEFUN([EGG_TCL_DETECT_CHANGE],
 [
+  dnl NOTE: autoconf 2.50+ disables config.cache by default.
+  dnl       These checks don't do us much good if cache is disabled.
   AC_MSG_CHECKING([whether the Tcl system has changed])
   egg_tcl_changed="yes"
   egg_tcl_id="${TCLLIB}:${TCLLIBFN}:${TCLINC}:${TCLINCFN}"
@@ -1177,7 +1184,7 @@ AC_DEFUN([EGG_TCL_DETECT_CHANGE],
       egg_tcl_cached="no"
     ])
     if test "$egg_tcl_cached" = "yes"; then
-      if test "${egg_cv_var_tcl_id-x}" = "${egg_tcl_id-x}"; then
+      if test "x$egg_cv_var_tcl_id" = "x$egg_tcl_id"; then
         egg_tcl_changed="no"
       else
         egg_cv_var_tcl_id="$egg_tcl_id"
@@ -1199,7 +1206,7 @@ AC_DEFUN([EGG_TCL_CHECK_VERSION],
 [
   # Both TCLLIBFN & TCLINCFN must be set, or we bail
   TCL_FOUND=0
-  if test ! "${TCLLIBFN-x}" = "x" && test ! "${TCLINCFN-x}" = "x"; then
+  if test ! "x$TCLLIBFN" = "x" && test ! "x$TCLINCFN" = "x"; then
     TCL_FOUND=1
 
     # Check Tcl's version
@@ -1212,7 +1219,7 @@ AC_DEFUN([EGG_TCL_CHECK_VERSION],
       egg_cv_var_tcl_version=`grep TCL_VERSION $TCLINC/$TCLINCFN | $HEAD_1 | $AWK '{gsub(/\"/, "", [$]3); print [$]3}'`
     ])
 
-    if test ! "${egg_cv_var_tcl_version-x}" = "x"; then
+    if test ! "x$egg_cv_var_tcl_version" = "x"; then
       AC_MSG_RESULT([$egg_cv_var_tcl_version])
     else
       AC_MSG_RESULT([not found])
@@ -1228,7 +1235,7 @@ AC_DEFUN([EGG_TCL_CHECK_VERSION],
       eval "egg_cv_var_tcl_patch_level=`grep TCL_PATCH_LEVEL $TCLINC/$TCLINCFN | $HEAD_1 | $AWK '{gsub(/\"/, "", [$]3); print [$]3}'`"
     ])
 
-    if test ! "${egg_cv_var_tcl_patch_level-x}" = "x"; then
+    if test ! "x$egg_cv_var_tcl_patch_level" = "x"; then
       AC_MSG_RESULT([$egg_cv_var_tcl_patch_level])
     else
       egg_cv_var_tcl_patch_level="unknown"
@@ -1288,7 +1295,7 @@ AC_DEFUN([EGG_TCL_TESTLIBS],
   # Set variables for Tcl library tests
   TCL_TEST_LIB="$TCLLIBFNS"
   TCL_TEST_OTHERLIBS="-L$TCLLIB $EGG_MATH_LIB"
-  if test ! "${ac_cv_lib_pthread-x}" = "x"; then
+  if test ! "x$ac_cv_lib_pthread" = "x"; then
     TCL_TEST_OTHERLIBS="$TCL_TEST_OTHERLIBS $ac_cv_lib_pthread"
   fi
 ])
@@ -1394,7 +1401,7 @@ EOF
     AC_DEFINE(HAVE_TCL_THREADS, 1, [Define if Tcl library is threads-enabled.])
 
     # Add pthread library to $LIBS if we need it for threaded Tcl
-    if test ! "${ac_cv_lib_pthread-x}" = "x"; then
+    if test ! "x$ac_cv_lib_pthread" = "x"; then
       LIBS="$ac_cv_lib_pthread $LIBS"
     fi
   else
@@ -1433,7 +1440,7 @@ EOF
       if test "$TCL_VER_PRE74" = "no"; then
 
         # Was the --with-tcllib option given ?
-        if test ! "${tcllibname-x}" = "x"; then
+        if test ! "x$tcllibname" = "x"; then
           TCL_REQS="${TCLLIB}/lib${TCLLIBFN}"
           TCL_LIBS="${TCLLIB}/lib${TCLLIBFN} $EGG_MATH_LIB"
         else
@@ -1473,7 +1480,7 @@ AC_DEFUN([EGG_SUBST_EGGVERSION],
 dnl EGG_SUBST_DEST()
 AC_DEFUN([EGG_SUBST_DEST],
 [
-  if test "${DEST-x}" = "x"; then
+  if test "x$DEST" = "x"; then
     DEST=\${prefix}
   fi
   AC_SUBST(DEST)
