@@ -4096,7 +4096,7 @@ cat >>confdefs.h <<\_ACEOF
 _ACEOF
 
       cat << 'EOF' >&2
-configure: warning:
+configure: WARNING:
 
   Stripping the executable, while saving some disk space, will make bug
   reports nearly worthless. If Eggdrop crashes and you wish to report
@@ -5428,7 +5428,7 @@ echo "${ECHO_T}no" >&6; }
 
   if test "x${BUNDLE}" = "x"; then
     cat << 'EOF' >&2
-configure: warning:
+configure: WARNING:
 
   bundle1.o cannot be located. A module build might not compile correctly.
 
@@ -9878,7 +9878,7 @@ fi
 
   if test "$WARN" = 1; then
     cat << 'EOF' >&2
-configure: warning:
+configure: WARNING:
 
   You must specify both --with-tcllib and --with-tclinc for either to work.
 
@@ -9908,7 +9908,7 @@ EOF
 
   if test "$WARN" = 1; then
     cat << EOF >&2
-configure: warning:
+configure: WARNING:
 
   Environment variable $WVAR1 was set, but I did not detect ${WVAR2}.
   Please set both TCLLIB and TCLINC correctly if you wish to use them.
@@ -9928,7 +9928,7 @@ EOF
       TCLLIBFNS=`$BASENAME $tcllibname $TCLLIBEXT | cut -c4-`
     else
       cat << EOF >&2
-configure: warning:
+configure: WARNING:
 
   The file '$tcllibname' given to option --with-tcllib is not valid.
 
@@ -9952,7 +9952,7 @@ EOF
       TCLINCFN=`$BASENAME $tclincname`
     else
       cat << EOF >&2
-configure: warning:
+configure: WARNING:
 
   The file '$tclincname' given to option --with-tclinc is not valid.
 
@@ -9986,7 +9986,7 @@ EOF
 
     if test "${TCLLIBFN-x}" = "x"; then
       cat << 'EOF' >&2
-configure: warning:
+configure: WARNING:
 
   Environment variable TCLLIB was set, but incorrectly.
   Please set both TCLLIB and TCLINC correctly if you wish to use them.
@@ -10015,7 +10015,7 @@ EOF
 
     if test "${TCLINCFN-x}" = "x"; then
       cat << 'EOF' >&2
-configure: warning:
+configure: WARNING:
 
   Environment variable TCLINC was set, but incorrectly.
   Please set both TCLLIB and TCLINC correctly if you wish to use them.
@@ -10513,7 +10513,7 @@ echo "${ECHO_T}no" >&6; }
       # Set default make as static for unshared Tcl library
       if test ! "$DEFAULT_MAKE" = "static"; then
         cat << 'EOF' >&2
-configure: warning:
+configure: WARNING:
 
   Your Tcl library is not a shared lib.
   configure will now set default make type to static.
@@ -10537,9 +10537,9 @@ EOF
         fi
       else
         cat << EOF >&2
-configure: warning:
+configure: WARNING:
 
-  Your Tcl version ($egg_cv_var_tcl_version) is older then 7.4.
+  Your Tcl version ($egg_cv_var_tcl_version) is older than 7.4.
   There are known problems, but we will attempt to work around them.
 
 EOF
@@ -11788,8 +11788,8 @@ echo "${ECHO_T}Operating System: $egg_cv_var_system_type $egg_cv_var_system_rele
   { echo "$as_me:$LINENO: result: " >&5
 echo "${ECHO_T}" >&6; }
   if test "$UNKNOWN_OS" = "yes"; then
-    { echo "$as_me:$LINENO: result: Warning:" >&5
-echo "${ECHO_T}Warning:" >&6; }
+    { echo "$as_me:$LINENO: result: WARNING:" >&5
+echo "${ECHO_T}WARNING:" >&6; }
     { echo "$as_me:$LINENO: result: " >&5
 echo "${ECHO_T}" >&6; }
     { echo "$as_me:$LINENO: result:   Unknown Operating System: $egg_cv_var_system_type $egg_cv_var_system_release" >&5
@@ -11810,8 +11810,8 @@ echo "${ECHO_T}  information about the OS should be included." >&6; }
 echo "${ECHO_T}" >&6; }
   else
     if test "$WEIRD_OS" = "yes"; then
-      { echo "$as_me:$LINENO: result: Warning:" >&5
-echo "${ECHO_T}Warning:" >&6; }
+      { echo "$as_me:$LINENO: result: WARNING:" >&5
+echo "${ECHO_T}WARNING:" >&6; }
       { echo "$as_me:$LINENO: result: " >&5
 echo "${ECHO_T}" >&6; }
       { echo "$as_me:$LINENO: result:   The operating system you are using has not yet had a great" >&5

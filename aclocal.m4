@@ -16,7 +16,7 @@ dnl You should have received a copy of the GNU General Public License
 dnl along with this program; if not, write to the Free Software
 dnl Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 dnl
-dnl $Id: aclocal.m4,v 1.104 2008/06/18 06:03:20 tothwolf Exp $
+dnl $Id: aclocal.m4,v 1.105 2008/06/18 07:36:29 tothwolf Exp $
 dnl
 
 
@@ -57,7 +57,7 @@ AC_DEFUN([EGG_MSG_WEIRDOS],
   AC_MSG_RESULT([Operating System: $egg_cv_var_system_type $egg_cv_var_system_release])
   AC_MSG_RESULT
   if test "$UNKNOWN_OS" = "yes"; then
-    AC_MSG_RESULT([Warning:])
+    AC_MSG_RESULT([WARNING:])
     AC_MSG_RESULT
     AC_MSG_RESULT([  Unknown Operating System: $egg_cv_var_system_type $egg_cv_var_system_release])
     AC_MSG_RESULT
@@ -69,7 +69,7 @@ AC_DEFUN([EGG_MSG_WEIRDOS],
     AC_MSG_RESULT
   else
     if test "$WEIRD_OS" = "yes"; then
-      AC_MSG_RESULT([Warning:])
+      AC_MSG_RESULT([WARNING:])
       AC_MSG_RESULT
       AC_MSG_RESULT([  The operating system you are using has not yet had a great])
       AC_MSG_RESULT([  deal of testing with Eggdrop. For this reason, this compile])
@@ -322,7 +322,7 @@ AC_DEFUN([EGG_PROG_STRIP],
     else
       AC_DEFINE(ENABLE_STRIP, 1, [Define if stripping is enabled.])
       cat << 'EOF' >&2
-configure: warning:
+configure: WARNING:
 
   Stripping the executable, while saving some disk space, will make bug
   reports nearly worthless. If Eggdrop crashes and you wish to report
@@ -426,7 +426,7 @@ AC_DEFUN([EGG_DARWIN_BUNDLE],
 
   if test "x${BUNDLE}" = "x"; then
     cat << 'EOF' >&2
-configure: warning:
+configure: WARNING:
 
   bundle1.o cannot be located. A module build might not compile correctly.
 
@@ -887,7 +887,7 @@ AC_DEFUN([EGG_TCL_ARG_WITH],
 
   if test "$WARN" = 1; then
     cat << 'EOF' >&2
-configure: warning:
+configure: WARNING:
 
   You must specify both --with-tcllib and --with-tclinc for either to work.
 
@@ -922,7 +922,7 @@ AC_DEFUN([EGG_TCL_ENV],
 
   if test "$WARN" = 1; then
     cat << EOF >&2
-configure: warning:
+configure: WARNING:
 
   Environment variable $WVAR1 was set, but I did not detect ${WVAR2}.
   Please set both TCLLIB and TCLINC correctly if you wish to use them.
@@ -947,7 +947,7 @@ AC_DEFUN([EGG_TCL_WITH_TCLLIB],
       TCLLIBFNS=`$BASENAME $tcllibname $TCLLIBEXT | cut -c4-`
     else
       cat << EOF >&2
-configure: warning:
+configure: WARNING:
 
   The file '$tcllibname' given to option --with-tcllib is not valid.
 
@@ -976,7 +976,7 @@ AC_DEFUN([EGG_TCL_WITH_TCLINC],
       TCLINCFN=`$BASENAME $tclincname`
     else
       cat << EOF >&2
-configure: warning:
+configure: WARNING:
 
   The file '$tclincname' given to option --with-tclinc is not valid.
 
@@ -1015,7 +1015,7 @@ AC_DEFUN([EGG_TCL_FIND_LIBRARY],
 
     if test "${TCLLIBFN-x}" = "x"; then
       cat << 'EOF' >&2
-configure: warning:
+configure: WARNING:
 
   Environment variable TCLLIB was set, but incorrectly.
   Please set both TCLLIB and TCLINC correctly if you wish to use them.
@@ -1049,7 +1049,7 @@ AC_DEFUN([EGG_TCL_FIND_HEADER],
 
     if test "${TCLINCFN-x}" = "x"; then
       cat << 'EOF' >&2
-configure: warning:
+configure: WARNING:
 
   Environment variable TCLINC was set, but incorrectly.
   Please set both TCLLIB and TCLINC correctly if you wish to use them.
@@ -1418,7 +1418,7 @@ AC_DEFUN([EGG_TCL_LIB_REQS],
       # Set default make as static for unshared Tcl library
       if test ! "$DEFAULT_MAKE" = "static"; then
         cat << 'EOF' >&2
-configure: warning:
+configure: WARNING:
 
   Your Tcl library is not a shared lib.
   configure will now set default make type to static.
@@ -1442,9 +1442,9 @@ EOF
         fi
       else
         cat << EOF >&2
-configure: warning:
+configure: WARNING:
 
-  Your Tcl version ($egg_cv_var_tcl_version) is older then 7.4.
+  Your Tcl version ($egg_cv_var_tcl_version) is older than 7.4.
   There are known problems, but we will attempt to work around them.
 
 EOF
