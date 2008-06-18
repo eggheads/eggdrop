@@ -1,11 +1,18 @@
 #! /bin/sh
 # This trick is borrowed from Tothwolf's Wolfpack \
+# Check for working 'grep -E' before using 'egrep' \
+if echo a | (grep -E '(a|b)') >/dev/null 2>&1; \
+then \
+  egrep="grep -E"; \
+else \
+  egrep=egrep; \
+fi; \
 # Search for tclsh[0-9].[0-9] in each valid dir in PATH \
 for dir in $(echo $PATH | sed 's/:/ /g'); \
 do \
   if test -d $dir; \
   then \
-    files=$(/bin/ls $dir | egrep '^tclsh[0-9]\.[0-9]$'); \
+    files=$(/bin/ls $dir | $egrep '^tclsh[0-9]\.[0-9]$'); \
     if test "$files" != ""; \
     then \
       versions="${versions:+$versions }$(echo $files | sed 's/tclsh//g')"; \
@@ -27,7 +34,7 @@ do \
     lasttmpver=$tmpver; \
   fi; \
 done; \
-exec tclsh$lastver "$0" "$@"
+exec tclsh$lastver "$0" ${1+"$@"}
 #
 # AutoBotchk - An eggdrop utility to autogenerate botchk/crontab entries
 #
@@ -60,7 +67,7 @@ exec tclsh$lastver "$0" "$@"
 #   15Apr2003: cleaned up a few things, fixed a few bugs, and made a little
 #              love! j/k
 #
-# $Id: autobotchk,v 1.11 2003/04/15 17:41:57 guppy Exp $
+# $Id: autobotchk,v 1.12 2008/06/18 10:12:22 tothwolf Exp $
 #
 
 if {$argc == 0} {

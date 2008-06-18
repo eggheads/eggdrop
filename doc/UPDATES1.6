@@ -1,4 +1,4 @@
-$Id: UPDATES1.6,v 1.651 2008/06/18 06:03:21 tothwolf Exp $
+$Id: UPDATES1.6,v 1.652 2008/06/18 10:12:22 tothwolf Exp $
 
 Eggdrop Changes (since v1.6.0)
     _____________________________________________________________________
@@ -47,6 +47,13 @@ Eggdrop Changes (since v1.6.0)
       support will be enabled or not.
     - We no longer link against pthread library unless threaded Tcl library
       support is enabled.
+    * Patch by: Tothwolf
+
+    - Updated exec magic tricks in the autobotchk and weed scripts.
+    - Check for a working 'grep -E' before resorting to 'egrep'.
+    - Use "$0" ${1+"$@"} in place of "$0" "$@" to avoid problems with
+      broken sh implementations that expand "$@" into a single empty
+      argument when there are no other arguments.
     * Patch by: Tothwolf
 
 
