@@ -78,6 +78,7 @@ Wiktor    guppy     msg_die now sends the reason along with the BOT SHUTDOWN
                       debug level. Each "Module loaded:" message also states
                       wether the module has language support. \t is supported
                       in language entries. tcl_language is depreciated.
+          Lucas     updated french core language file
           guppy     changed the output of +statuslog to be more effective
 Ben       Fabian/   Lowered server-queue priority of nick-regain commands from
           guppy       DP_MODE to DP_SERVER (both ISON and TRACE methods)
@@ -137,7 +138,7 @@ Tom       Fabian    filesys tcl_hide/_unhide/_share/_unshare didn't work at all
           dw        chanmaster could use .adduser to add host to globmaster.
 toot      dw        .adduser !nick didn't care of strict-host settings.
           mho       ',' in ban reason could fuck up the userlist.
-          eugene    irc.help missed %b in a cpl of places.
+          Eugene    irc.help missed %b in a cpl of places.
 deaf      dw        channel owner could +host/-host global master.
 scott     Wiktor    usefull is spelled useful.
           dw        maskhost removed valid chars in the middle of the username
@@ -167,7 +168,7 @@ toot      dw        .who <bot> did only show first chan.
 david     Fabian    botattr was interpreting relay'ed bots as linked
           Wiktor    fixed typo in transfer.mod
           Rufus     fixed HQ user creation on eggdrop -nt
-mortmann  Jason	    +I modes used the wrong queue and was not stacked
+Eugene    Jason     +I modes used the wrong queue and was not stacked
 		      also fixed a minor +e prob.
           Wiktor    updated INSTALL & compiling.FAQ documents
 toot      dw /      fixed problem with .adduser and strict-host = 0
@@ -226,6 +227,7 @@ LtGen     Fabian    unsynced tandem list caused crash when trying to reject
           Tothwolf  added GPL header and cvs id tag to source files
           Tothwolf  fixed/added many #ifndefs in various header files
           Tothwolf  changed 'Assert(ptr != NULL)' references to 'Assert(prt)'
+          drummer   fixed a tiny join flood bug
           Tothwolf  converted the PATCH macro to a function; DEBUG_ASSERT
                     now compiles with DEBUG_MEM
           Fabian    made 32bit variable usage consistent throughout the code
