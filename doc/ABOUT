@@ -1,4 +1,4 @@
-$Id: ABOUT,v 1.16 2008/02/16 21:40:56 guppy Exp $
+$Id: ABOUT,v 1.17 2008/06/21 03:49:14 guppy Exp $
 
 About Eggdrop
 Last revised: January 12, 2002
@@ -52,7 +52,7 @@ Last revised: January 12, 2002
     * A pretty good knowledge of IRC and Unix, including how to compile
       programs, how to read, and what DCC chat is, at absolute minimum.
 
-    * About 5-7 MB of disk space. The Eggdrop tarball is about 4.8 MB
+    * About 5-7 MB of disk space. The Eggdrop tarball is about 5.4 MB
       unpacked.
 
     * Tcl -- Eggdrop cannot compile without Tcl installed on your shell.
