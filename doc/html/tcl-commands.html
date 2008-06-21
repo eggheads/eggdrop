@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!-- $Id: tcl-commands.html,v 1.54 2008/04/19 14:57:10 guppy Exp $ -->
+<!-- $Id: tcl-commands.html,v 1.55 2008/06/21 03:50:24 guppy Exp $ -->
 
 <html>
   <head>
@@ -69,7 +69,7 @@
 
     <blockquote>
       <dl>
-        <dt><strong>putserv &lt;text&gt; [options]</strong></dt>
+        <dt><strong><a name="cmd_putserv"></a>putserv &lt;text&gt; [options]</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> sends text to the server, like
@@ -89,7 +89,7 @@
           <p><strong>Module:</strong> server</p>
         </dd>
 
-        <dt><strong>puthelp &lt;text&gt; [options]</strong></dt>
+        <dt><strong><a name="cmd_puthelp"></a>puthelp &lt;text&gt; [options]</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> sends text to the server, like
@@ -109,7 +109,7 @@
           <p><strong>Module:</strong> server</p>
         </dd>
 
-        <dt><strong>putquick &lt;text&gt; [options]</strong></dt>
+        <dt><strong><a name="cmd_putquick"></a>putquick &lt;text&gt; [options]</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> sends text to the server, like
@@ -128,7 +128,7 @@
           <p><strong>Module:</strong> server</p>
         </dd>
 
-        <dt><strong>putkick &lt;channel&gt; &lt;nick,nick,...&gt;
+        <dt><strong><a name="cmd_putkick"></a>putkick &lt;channel&gt; &lt;nick,nick,...&gt;
         [reason]</strong></dt>
 
         <dd>
@@ -140,7 +140,7 @@
           <p><strong>Module:</strong> irc</p>
         </dd>
 
-        <dt><strong>putlog &lt;text&gt;</strong></dt>
+        <dt><strong><a name="cmd_putlog"></a>putlog &lt;text&gt;</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> sends text to the bot&#39;s
@@ -151,7 +151,7 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong>putcmdlog &lt;text&gt;</strong></dt>
+        <dt><strong><a name="cmd_putcmdlog"></a>putcmdlog &lt;text&gt;</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> sends text to the bot&#39;s
@@ -162,7 +162,7 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong>putxferlog &lt;text&gt;</strong></dt>
+        <dt><strong><a name="cmd_putxferlog"></a>putxferlog &lt;text&gt;</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> sends text to the bot&#39;s
@@ -173,7 +173,7 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong>putloglev &lt;level(s)&gt; &lt;channel&gt;
+        <dt><strong><a name="cmd_putloglev"></a>putloglev &lt;level(s)&gt; &lt;channel&gt;
         &lt;text&gt;</strong></dt>
 
         <dd>
@@ -186,7 +186,7 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong>dumpfile &lt;nick&gt; &lt;filename&gt;</strong></dt>
+        <dt><strong><a name="cmd_dumpfile"></a>dumpfile &lt;nick&gt; &lt;filename&gt;</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> dumps file from the help/text
@@ -199,7 +199,7 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong>queuesize [queue]</strong></dt>
+        <dt><strong><a name="cmd_queuesize"></a>queuesize [queue]</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> the number of messages in all queues.
@@ -209,7 +209,7 @@
           <p><strong>Module:</strong> server</p>
         </dd>
 
-        <dt><strong>clearqueue &lt;queue&gt;</strong></dt>
+        <dt><strong><a name="cmd_clearqueue"></a>clearqueue &lt;queue&gt;</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> removes all messages from a
@@ -228,7 +228,7 @@
 
     <blockquote>
       <dl>
-        <dt><strong>countusers</strong></dt>
+        <dt><strong><a name="cmd_countusers"></a>countusers</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> number of users in the bot&#39;s
@@ -237,7 +237,7 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong>validuser &lt;handle&gt;</strong></dt>
+        <dt><strong><a name="cmd_validuser"></a>validuser &lt;handle&gt;</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> 1 if a user by that name exists;
@@ -246,7 +246,7 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong>finduser &lt;nick!user@host&gt;</strong></dt>
+        <dt><strong><a name="cmd_finduser"></a>finduser &lt;nick!user@host&gt;</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> finds the user record which most
@@ -258,7 +258,7 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong>userlist [flags]</strong></dt>
+        <dt><strong><a name="cmd_userlist"></a>userlist [flags]</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> a list of users on the bot. You
@@ -269,7 +269,7 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong>passwdok &lt;handle&gt; &lt;pass&gt;</strong></dt>
+        <dt><strong><a name="cmd_passwdok"></a>passwdok &lt;handle&gt; &lt;pass&gt;</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> checks the password given against
@@ -283,7 +283,7 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong>getuser &lt;handle&gt; &lt;entry-type&gt;
+        <dt><strong><a name="cmd_getuser"></a>getuser &lt;handle&gt; &lt;entry-type&gt;
         [extra info]</strong></dt>
 
         <dd>
@@ -414,7 +414,7 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong>setuser &lt;handle&gt; &lt;entry-type&gt;
+        <dt><strong><a name="cmd_setuser"></a>setuser &lt;handle&gt; &lt;entry-type&gt;
         [extra info]</strong></dt>
 
         <dd>
@@ -468,7 +468,7 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong>chhandle &lt;old-handle&gt;
+        <dt><strong><a name="cmd_chhandle"></a>chhandle &lt;old-handle&gt;
         &lt;new-handle&gt;</strong></dt>
 
         <dd>
@@ -480,7 +480,7 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong>chattr &lt;handle&gt; [changes [channel]]</strong></dt>
+        <dt><strong><a name="cmd_chattr"></a>chattr &lt;handle&gt; [changes [channel]]</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> changes the attributes for a user
@@ -499,7 +499,7 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong>botattr &lt;handle&gt; [changes [channel]]</strong></dt>
+        <dt><strong><a name="cmd_botattr"></a>botattr &lt;handle&gt; [changes [channel]]</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> similar to chattr except this
@@ -514,7 +514,7 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong>matchattr &lt;handle&gt; &lt;flags&gt;
+        <dt><strong><a name="cmd_matchattr"></a>matchattr &lt;handle&gt; &lt;flags&gt;
         [channel]</strong></dt>
 
         <dd>
@@ -524,7 +524,7 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong>adduser &lt;handle&gt; [hostmask]</strong></dt>
+        <dt><strong><a name="cmd_adduser"></a>adduser &lt;handle&gt; [hostmask]</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> creates a new user entry with the
@@ -537,7 +537,7 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong>addbot &lt;handle&gt; &lt;address&gt;</strong></dt>
+        <dt><strong><a name="cmd_addbot"></a>addbot &lt;handle&gt; &lt;address&gt;</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> adds a new bot to the userlist
@@ -550,7 +550,7 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong>deluser &lt;handle&gt;</strong></dt>
+        <dt><strong><a name="cmd_deluser"></a>deluser &lt;handle&gt;</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> attempts to erase the user record
@@ -562,7 +562,7 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong>delhost &lt;handle&gt; &lt;hostmask&gt;</strong></dt>
+        <dt><strong><a name="cmd_delhost"></a>delhost &lt;handle&gt; &lt;hostmask&gt;</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> deletes a hostmask from a
@@ -574,7 +574,7 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong>addchanrec &lt;handle&gt; &lt;channel&gt;</strong></dt>
+        <dt><strong><a name="cmd_addchanrec"></a>addchanrec &lt;handle&gt; &lt;channel&gt;</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> adds a channel record for a
@@ -586,7 +586,7 @@
           <p><strong>Module:</strong> channels</p>
         </dd>
 
-        <dt><strong>delchanrec &lt;handle&gt; &lt;channel&gt;</strong></dt>
+        <dt><strong><a name="cmd_delchanrec"></a>delchanrec &lt;handle&gt; &lt;channel&gt;</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> removes a channel record for a
@@ -598,7 +598,7 @@
           <p><strong>Module:</strong> channels</p>
         </dd>
 
-        <dt><strong>haschanrec &lt;handle&gt; &lt;channel&gt;</strong></dt>
+        <dt><strong><a name="cmd_haschanrec"></a>haschanrec &lt;handle&gt; &lt;channel&gt;</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> 1 if the given handle has a chanrec
@@ -607,7 +607,7 @@
           <p><strong>Module:</strong> channels</p>
         </dd>
 
-        <dt><strong>getchaninfo &lt;handle&gt; &lt;channel&gt;</strong></dt>
+        <dt><strong><a name="cmd_getchaninfo"></a>getchaninfo &lt;handle&gt; &lt;channel&gt;</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> info line for a specific channel
@@ -616,7 +616,7 @@
           <p><strong>Module:</strong> channels</p>
         </dd>
 
-        <dt><strong>setchaninfo &lt;handle&gt; &lt;channel&gt;
+        <dt><strong><a name="cmd_setchaninfo"></a>setchaninfo &lt;handle&gt; &lt;channel&gt;
         &lt;info&gt;</strong></dt>
 
         <dd>
@@ -629,7 +629,7 @@
           <p><strong>Module:</strong> channels</p>
         </dd>
 
-        <dt><strong>newchanban &lt;channel&gt; &lt;ban&gt; &lt;creator&gt;
+        <dt><strong><a name="cmd_newchanban"></a>newchanban &lt;channel&gt; &lt;ban&gt; &lt;creator&gt;
         &lt;comment&gt; [lifetime] [options]</strong></dt>
 
         <dd>
@@ -652,7 +652,7 @@
           <p><strong>Module:</strong> channels</p>
         </dd>
 
-        <dt><strong>newban &lt;ban&gt; &lt;creator&gt; &lt;comment&gt;
+        <dt><strong><a name="cmd_newban"></a>newban &lt;ban&gt; &lt;creator&gt; &lt;comment&gt;
         [lifetime] [options]</strong></dt>
 
         <dd>
@@ -675,7 +675,7 @@
           <p><strong>Module:</strong> channels</p>
         </dd>
 
-        <dt><strong>newchanexempt &lt;channel&gt; &lt;exempt&gt;
+        <dt><strong><a name="cmd_newchanexempt"></a>newchanexempt &lt;channel&gt; &lt;exempt&gt;
         &lt;creator&gt; &lt;comment&gt; [lifetime] [options]</strong></dt>
 
         <dd>
@@ -701,7 +701,7 @@
           <p><strong>Module:</strong> channels</p>
         </dd>
 
-        <dt><strong>newexempt &lt;exempt&gt; &lt;creator&gt; &lt;comment&gt;
+        <dt><strong><a name="cmd_newexempt"></a>newexempt &lt;exempt&gt; &lt;creator&gt; &lt;comment&gt;
         [lifetime] [options]</strong></dt>
 
         <dd>
@@ -726,7 +726,7 @@
           <p><strong>Module:</strong> channels</p>
         </dd>
 
-        <dt><strong>newchaninvite &lt;channel&gt; &lt;invite&gt;
+        <dt><strong><a name="cmd_newchaninvite"></a>newchaninvite &lt;channel&gt; &lt;invite&gt;
         &lt;creator&gt; &lt;comment&gt; [lifetime] [options]</strong></dt>
 
         <dd>
@@ -750,7 +750,7 @@
           <p><strong>Module:</strong> channels</p>
         </dd>
 
-        <dt><strong>newinvite &lt;invite&gt; &lt;creator&gt; &lt;comment&gt;
+        <dt><strong><a name="cmd_newinvite"></a>newinvite &lt;invite&gt; &lt;creator&gt; &lt;comment&gt;
         [lifetime] [options]</strong></dt>
 
         <dd>
@@ -774,7 +774,7 @@
           <p><strong>Module:</strong> channels</p>
         </dd>
 
-        <dt><strong>stick &lt;banmask&gt; [channel]</strong></dt>
+        <dt><strong><a name="cmd_stick"></a>stick &lt;banmask&gt; [channel]</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> makes a ban sticky, or, if a
@@ -786,7 +786,7 @@
           <p><strong>Module:</strong> channels</p>
         </dd>
 
-        <dt><strong>unstick &lt;banmask&gt; [channel]</strong></dt>
+        <dt><strong><a name="cmd_unstick"></a>unstick &lt;banmask&gt; [channel]</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> makes a ban no longer sticky,
@@ -798,7 +798,7 @@
           <p><strong>Module:</strong> channels</p>
         </dd>
 
-        <dt><strong>stickexempt &lt;exemptmask&gt; [channel]</strong></dt>
+        <dt><strong><a name="cmd_stickexempt"></a>stickexempt &lt;exemptmask&gt; [channel]</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> makes an exempt sticky, or, if
@@ -810,7 +810,7 @@
           <p><strong>Module:</strong> channels</p>
         </dd>
 
-        <dt><strong>unstickexempt &lt;exemptmask&gt; [channel]</strong></dt>
+        <dt><strong><a name="cmd_unstickexempt"></a>unstickexempt &lt;exemptmask&gt; [channel]</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> makes an exempt no longer sticky,
@@ -822,7 +822,7 @@
           <p><strong>Module:</strong> channels</p>
         </dd>
 
-        <dt><strong>stickinvite &lt;invitemask&gt; [channel]</strong></dt>
+        <dt><strong><a name="cmd_stickinvite"></a>stickinvite &lt;invitemask&gt; [channel]</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> makes an invite sticky, or, if
@@ -834,7 +834,7 @@
           <p><strong>Module:</strong> channels</p>
         </dd>
 
-        <dt><strong>unstickinvite &lt;invitemask&gt; [channel]</strong></dt>
+        <dt><strong><a name="cmd_unstickinvite"></a>unstickinvite &lt;invitemask&gt; [channel]</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> makes an invite no longer sticky,
@@ -846,7 +846,7 @@
           <p><strong>Module:</strong> channels</p>
         </dd>
 
-        <dt><strong>killchanban &lt;channel&gt; &lt;ban&gt;</strong></dt>
+        <dt><strong><a name="cmd_killchanban"></a>killchanban &lt;channel&gt; &lt;ban&gt;</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> removes a ban from the ban list
@@ -857,7 +857,7 @@
           <p><strong>Module:</strong> channels</p>
         </dd>
 
-        <dt><strong>killban &lt;ban&gt;</strong></dt>
+        <dt><strong><a name="cmd_killban"></a>killban &lt;ban&gt;</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> removes a ban from the global
@@ -868,7 +868,7 @@
           <p><strong>Module:</strong> channels</p>
         </dd>
 
-        <dt><strong>killchanexempt &lt;channel&gt;
+        <dt><strong><a name="cmd_killchanexempt"></a>killchanexempt &lt;channel&gt;
         &lt;exempt&gt;</strong></dt>
 
         <dd>
@@ -880,7 +880,7 @@
           <p><strong>Module:</strong> channels</p>
         </dd>
 
-        <dt><strong>killexempt &lt;exempt&gt;</strong></dt>
+        <dt><strong><a name="cmd_killexempt"></a>killexempt &lt;exempt&gt;</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> removes an exempt from the global
@@ -891,7 +891,7 @@
           <p><strong>Module:</strong> channels</p>
         </dd>
 
-        <dt><strong>killchaninvite &lt;channel&gt; &lt;invite&gt;</strong></dt>
+        <dt><strong><a name="cmd_killchaninvite"></a>killchaninvite &lt;channel&gt; &lt;invite&gt;</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> removes an invite from the invite
@@ -902,7 +902,7 @@
           <p><strong>Module:</strong> channels</p>
         </dd>
 
-        <dt><strong>killinvite &lt;invite&gt;</strong></dt>
+        <dt><strong><a name="cmd_killinvite"></a>killinvite &lt;invite&gt;</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> removes an invite from the global
@@ -913,7 +913,7 @@
           <p><strong>Module:</strong> channels</p>
         </dd>
 
-        <dt><strong>ischanjuped &lt;channel&gt;</strong></dt>
+        <dt><strong><a name="cmd_ischanjuped"></a>ischanjuped &lt;channel&gt;</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> 1 if the channel is juped, and the
@@ -922,7 +922,7 @@
           <p><strong>Module:</strong> channels</p>
         </dd>
 
-        <dt><strong>isban &lt;ban&gt; [channel]</strong></dt>
+        <dt><strong><a name="cmd_isban"></a>isban &lt;ban&gt; [channel]</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> 1 if the specified ban is in the
@@ -932,7 +932,7 @@
           <p><strong>Module:</strong> channels</p>
         </dd>
 
-        <dt><strong>ispermban &lt;ban&gt; [channel]</strong></dt>
+        <dt><strong><a name="cmd_ispermban"></a>ispermban &lt;ban&gt; [channel]</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> 1 if the specified ban is in the
@@ -943,7 +943,7 @@
           <p><strong>Module:</strong> channels</p>
         </dd>
 
-        <dt><strong>isexempt &lt;exempt&gt; [channel]</strong></dt>
+        <dt><strong><a name="cmd_isexempt"></a>isexempt &lt;exempt&gt; [channel]</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> 1 if the specified exempt is in the
@@ -953,7 +953,7 @@
           <p><strong>Module:</strong> channels</p>
         </dd>
 
-        <dt><strong>ispermexempt &lt;exempt&gt; [channel]</strong></dt>
+        <dt><strong><a name="cmd_ispermexempt"></a>ispermexempt &lt;exempt&gt; [channel]</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> 1 if the specified exempt is in the
@@ -964,7 +964,7 @@
           <p><strong>Module:</strong> channels</p>
         </dd>
 
-        <dt><strong>isinvite &lt;invite&gt; [channel]</strong></dt>
+        <dt><strong><a name="cmd_isinvite"></a>isinvite &lt;invite&gt; [channel]</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> 1 if the specified invite is in
@@ -974,7 +974,7 @@
           <p><strong>Module:</strong> channels</p>
         </dd>
 
-        <dt><strong>isperminvite &lt;invite&gt; [channel]</strong></dt>
+        <dt><strong><a name="cmd_isperminvite"></a>isperminvite &lt;invite&gt; [channel]</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> 1 if the specified invite is in
@@ -985,7 +985,7 @@
           <p><strong>Module:</strong> channels</p>
         </dd>
 
-        <dt><strong>isbansticky &lt;ban&gt; [channel]</strong></dt>
+        <dt><strong><a name="cmd_isbansticky"></a>isbansticky &lt;ban&gt; [channel]</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> 1 if the specified ban is marked as
@@ -995,7 +995,7 @@
           <p><strong>Module:</strong> channels</p>
         </dd>
 
-        <dt><strong>isexemptsticky &lt;exempt&gt; [channel]</strong></dt>
+        <dt><strong><a name="cmd_isexemptsticky"></a>isexemptsticky &lt;exempt&gt; [channel]</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> 1 if the specified exempt is marked
@@ -1005,7 +1005,7 @@
           <p><strong>Module:</strong> channels</p>
         </dd>
 
-        <dt><strong>isinvitesticky &lt;invite&gt; [channel]</strong></dt>
+        <dt><strong><a name="cmd_isinvitesticky"></a>isinvitesticky &lt;invite&gt; [channel]</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> 1 if the specified invite is marked
@@ -1015,7 +1015,7 @@
           <p><strong>Module:</strong> channels</p>
         </dd>
 
-        <dt><strong>matchban &lt;nick!user@host&gt; [channel]</strong></dt>
+        <dt><strong><a name="cmd_matchban"></a>matchban &lt;nick!user@host&gt; [channel]</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> 1 if the specified nick!user@host
@@ -1025,7 +1025,7 @@
           <p><strong>Module:</strong> channels</p>
         </dd>
 
-        <dt><strong>matchexempt &lt;nick!user@host&gt;
+        <dt><strong><a name="cmd_matchexempt"></a>matchexempt &lt;nick!user@host&gt;
         [channel]</strong></dt>
 
         <dd>
@@ -1037,7 +1037,7 @@
           <p><strong>Module:</strong> channels</p>
         </dd>
 
-        <dt><strong>matchinvite &lt;nick!user@host&gt; [channel]</strong></dt>
+        <dt><strong><a name="cmd_matchinvite"></a>matchinvite &lt;nick!user@host&gt; [channel]</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> 1 if the specified nick!user@host
@@ -1048,7 +1048,7 @@
           <p><strong>Module:</strong> channels</p>
         </dd>
 
-        <dt><strong>banlist [channel]</strong></dt>
+        <dt><strong><a name="cmd_banlist"></a>banlist [channel]</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> a list of global bans, or, if a
@@ -1060,7 +1060,7 @@
           <p><strong>Module:</strong> channels</p>
         </dd>
 
-        <dt><strong>exemptlist [channel]</strong></dt>
+        <dt><strong><a name="cmd_exemptlist"></a>exemptlist [channel]</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> a list of global exempts, or, if a
@@ -1072,7 +1072,7 @@
           <p><strong>Module:</strong> channels</p>
         </dd>
 
-        <dt><strong>invitelist [channel]</strong></dt>
+        <dt><strong><a name="cmd_invitelist"></a>invitelist [channel]</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> a list of global invites, or, if a
@@ -1084,7 +1084,7 @@
           <p><strong>Module:</strong> channels</p>
         </dd>
 
-        <dt><strong>newignore &lt;hostmask&gt; &lt;creator&gt;
+        <dt><strong><a name="cmd_newignore"></a>newignore &lt;hostmask&gt; &lt;creator&gt;
         &lt;comment&gt; [lifetime]</strong></dt>
 
         <dd>
@@ -1099,7 +1099,7 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong>killignore &lt;hostmask&gt;</strong></dt>
+        <dt><strong><a name="cmd_killignore"></a>killignore &lt;hostmask&gt;</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> removes an entry from the ignore
@@ -1110,7 +1110,7 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong>ignorelist</strong></dt>
+        <dt><strong><a name="cmd_ignorelist"></a>ignorelist</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> a list of ignores. Each entry is a
@@ -1120,7 +1120,7 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong>isignore &lt;hostmask&gt;</strong></dt>
+        <dt><strong><a name="cmd_isignore"></a>isignore &lt;hostmask&gt;</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> 1 if the ignore is in the list;
@@ -1129,7 +1129,7 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong>save</strong></dt>
+        <dt><strong><a name="cmd_save"></a>save</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> writes the user and channel files
@@ -1140,7 +1140,7 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong>reload</strong></dt>
+        <dt><strong><a name="cmd_reload"></a>reload</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> loads the userfile from disk,
@@ -1151,7 +1151,7 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong>backup</strong></dt>
+        <dt><strong><a name="cmd_backup"></a>backup</strong></dt>*
 
         <dd>
           <p><strong>Description:</strong> makes a simple backup of the
@@ -1163,7 +1163,7 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong>getting-users</strong></dt>
+        <dt><strong><a name="cmd_getting-users"></a>getting-users</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> 1 if the bot is currently downloading
@@ -1175,11 +1175,11 @@
       </dl>
     </blockquote>
 
-    <p><a name="chancmds"></a>3. <strong>Channel commands</strong></p>
+    <p><a name="chancmds"></a><a name="cmd_channel"></a>3. <strong>Channel commands</strong></p>
 
     <blockquote>
       <dl>
-        <dt><strong>channel add &lt;name&gt; [option-list]</strong></dt>
+        <dt><strong><a name="cmd_channel_add"></a>channel add &lt;name&gt; [option-list]</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> adds a channel record for the
@@ -1192,7 +1192,7 @@
           <p><strong>Module:</strong> channels</p>
         </dd>
 
-        <dt><strong>channel set &lt;name&gt; &lt;options...&gt;</strong></dt>
+        <dt><strong><a name="cmd_channel_set"></a>channel set &lt;name&gt; &lt;options...&gt;</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> sets options for the channel
@@ -1204,7 +1204,7 @@
           <p><strong>Module:</strong> channels</p>
         </dd>
 
-        <dt><strong>channel info &lt;name&gt;</strong></dt>
+        <dt><strong><a name="cmd_channel_info"></a>channel info &lt;name&gt;</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> a list of info about the specified
@@ -1213,7 +1213,7 @@
           <p><strong>Module:</strong> channels</p>
         </dd>
 
-        <dt><strong>channel get &lt;name&gt; &lt;setting&gt;</strong></dt>
+        <dt><strong><a name="cmd_channel_get"></a>channel get &lt;name&gt; &lt;setting&gt;</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> The value of the setting you specify.
@@ -1223,7 +1223,7 @@
           <p><strong>Module:</strong> channels</p>
         </dd>
 
-        <dt><strong>channel remove &lt;name&gt;</strong></dt>
+        <dt><strong><a name="cmd_channel_remove"></a>channel remove &lt;name&gt;</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> removes a channel record from
@@ -1234,7 +1234,7 @@
           <p><strong>Module:</strong> channels</p>
         </dd>
 
-        <dt><strong>savechannels</strong></dt>
+        <dt><strong><a name="cmd_savechannels"></a>savechannels</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> saves the channel settings to
@@ -1245,7 +1245,7 @@
           <p><strong>Module:</strong> channels</p>
         </dd>
 
-        <dt><strong>loadchannels</strong></dt>
+        <dt><strong><a name="cmd_loadchannels"></a>loadchannels</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> reloads the channel settings from
@@ -1256,7 +1256,7 @@
           <p><strong>Module:</strong> channels</p>
         </dd>
 
-        <dt><strong>channels</strong></dt>
+        <dt><strong><a name="cmd_channels"></a>channels</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> a list of the channels the bot has
@@ -1265,8 +1265,8 @@
           <p><strong>Module:</strong> channels</p>
         </dd>
 
-        <dt><strong>channame2dname &lt;channel-name&gt;</strong></dt>
-        <dt><strong>chandname2name &lt;channel-dname&gt;</strong></dt>
+        <dt><strong><a name="cmd_channame2dname"></a>channame2dname &lt;channel-name&gt;</strong></dt>
+        <dt><strong><a name="cmd_chandname2name"></a>chandname2name &lt;channel-dname&gt;</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> these two functions are important
@@ -1291,7 +1291,7 @@
           <p><strong>Module:</strong> irc</p>
         </dd>
 
-        <dt><strong>isbotnick &lt;nick&gt;</strong></dt>
+        <dt><strong><a name="cmd_isbotnick"></a>isbotnick &lt;nick&gt;</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> 1 if the nick matches the botnick;
@@ -1300,7 +1300,7 @@
           <p><strong>Module:</strong> server</p>
         </dd>
 
-        <dt><strong>botisop [channel]</strong></dt>
+        <dt><strong><a name="cmd_botisop"></a>botisop [channel]</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> 1 if the bot has ops on the specified
@@ -1310,7 +1310,7 @@
           <p><strong>Module:</strong> irc</p>
         </dd>
 
-        <dt><strong>botishalfop [channel]</strong></dt>
+        <dt><strong><a name="cmd_botishalfop"></a>botishalfop [channel]</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> 1 if the bot has halfops on the
@@ -1320,7 +1320,7 @@
           <p><strong>Module:</strong> irc</p>
         </dd>
 
-        <dt><strong>botisvoice [channel]</strong></dt>
+        <dt><strong><a name="cmd_botisvoice"></a>botisvoice [channel]</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> 1 if the bot has a voice on the
@@ -1330,7 +1330,7 @@
           <p><strong>Module:</strong> irc</p>
         </dd>
 
-        <dt><strong>botonchan [channel]</strong></dt>
+        <dt><strong><a name="cmd_botonchan"></a>botonchan [channel]</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> 1 if the bot is on the specified
@@ -1340,7 +1340,7 @@
           <p><strong>Module:</strong> irc</p>
         </dd>
 
-        <dt><strong>isop &lt;nickname&gt; [channel]</strong></dt>
+        <dt><strong><a name="cmd_isop"></a>isop &lt;nickname&gt; [channel]</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> 1 if someone by the specified
@@ -1350,7 +1350,7 @@
           <p><strong>Module:</strong> irc</p>
         </dd>
 
-        <dt><strong>ishalfop &lt;nickname&gt; [channel]</strong></dt>
+        <dt><strong><a name="cmd_ishalfop"></a>ishalfop &lt;nickname&gt; [channel]</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> 1 if someone by the specified
@@ -1360,7 +1360,7 @@
           <p><strong>Module:</strong> irc</p>
         </dd>
 
-        <dt><strong>wasop &lt;nickname&gt; &lt;channel&gt;</strong></dt>
+        <dt><strong><a name="cmd_wasop"></a>wasop &lt;nickname&gt; &lt;channel&gt;</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> 1 if someone that just got
@@ -1370,7 +1370,7 @@
           <p><strong>Module:</strong> irc</p>
         </dd>
 
-        <dt><strong>washalfop &lt;nickname&gt; &lt;channel&gt;</strong></dt>
+        <dt><strong><a name="cmd_washalfop"></a>washalfop &lt;nickname&gt; &lt;channel&gt;</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> 1 if someone that just got
@@ -1380,7 +1380,7 @@
           <p><strong>Module:</strong> irc</p>
         </dd>
 
-        <dt><strong>isvoice &lt;nickname&gt; [channel]</strong></dt>
+        <dt><strong><a name="cmd_isvoice"></a>isvoice &lt;nickname&gt; [channel]</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> 1 if someone by that nickname is on
@@ -1390,7 +1390,7 @@
           <p><strong>Module:</strong> irc</p>
         </dd>
 
-        <dt><strong>onchan &lt;nickname&gt; [channel]</strong></dt>
+        <dt><strong><a name="cmd_onchan"></a>onchan &lt;nickname&gt; [channel]</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> 1 if someone by that nickname is on
@@ -1400,7 +1400,7 @@
           <p><strong>Module:</strong> irc</p>
         </dd>
 
-        <dt><strong>nick2hand &lt;nickname&gt; [channel]</strong></dt>
+        <dt><strong><a name="cmd_nick2hand"></a>nick2hand &lt;nickname&gt; [channel]</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> the handle of a nickname on a channel.
@@ -1412,7 +1412,7 @@
           <p><strong>Module:</strong> irc</p>
         </dd>
 
-        <dt><strong>hand2nick &lt;handle&gt; [channel]</strong></dt>
+        <dt><strong><a name="cmd_hand2nick"></a>hand2nick &lt;handle&gt; [channel]</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> nickname of the first person on the
@@ -1423,7 +1423,7 @@
           <p><strong>Module:</strong> irc</p>
         </dd>
 
-        <dt><strong>handonchan &lt;handle&gt; [channel]</strong></dt>
+        <dt><strong><a name="cmd_handonchan"></a>handonchan &lt;handle&gt; [channel]</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> 1 if the the nick!user@host for
@@ -1433,7 +1433,7 @@
           <p><strong>Module:</strong> irc</p>
         </dd>
 
-        <dt><strong>ischanban &lt;ban&gt; &lt;channel&gt;</strong></dt>
+        <dt><strong><a name="cmd_ischanban"></a>ischanban &lt;ban&gt; &lt;channel&gt;</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> 1 if the specified ban is on the
@@ -1443,7 +1443,7 @@
           <p><strong>Module:</strong> irc</p>
         </dd>
 
-        <dt><strong>ischanexempt &lt;exempt&gt; &lt;channel&gt;</strong></dt>
+        <dt><strong><a name="cmd_ischanexempt"></a>ischanexempt &lt;exempt&gt; &lt;channel&gt;</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> 1 if the specified exempt is on the
@@ -1453,7 +1453,7 @@
           <p><strong>Module:</strong> irc</p>
         </dd>
 
-        <dt><strong>ischaninvite &lt;invite&gt; &lt;channel&gt;</strong></dt>
+        <dt><strong><a name="cmd_ischaninvite"></a>ischaninvite &lt;invite&gt; &lt;channel&gt;</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> 1 if the specified invite is on the
@@ -1463,7 +1463,7 @@
           <p><strong>Module:</strong> irc</p>
         </dd>
 
-        <dt><strong>chanbans &lt;channel&gt;</strong></dt>
+        <dt><strong><a name="cmd_chanbans"></a>chanbans &lt;channel&gt;</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> a list of the current bans on the
@@ -1474,7 +1474,7 @@
           <p><strong>Module:</strong> irc</p>
         </dd>
 
-        <dt><strong>chanexempts &lt;channel&gt;</strong></dt>
+        <dt><strong><a name="cmd_chanexempts"></a>chanexempts &lt;channel&gt;</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> a list of the current exempts on the
@@ -1485,7 +1485,7 @@
           <p><strong>Module:</strong> irc</p>
         </dd>
 
-        <dt><strong>chaninvites &lt;channel&gt;</strong></dt>
+        <dt><strong><a name="cmd_chaninvites"></a>chaninvites &lt;channel&gt;</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> a list of the current invites on the
@@ -1496,7 +1496,7 @@
           <p><strong>Module:</strong> irc</p>
         </dd>
 
-        <dt><strong>resetbans &lt;channel&gt;</strong></dt>
+        <dt><strong><a name="cmd_resetbans"></a>resetbans &lt;channel&gt;</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> removes all bans on the channel
@@ -1508,7 +1508,7 @@
           <p><strong>Module:</strong> irc</p>
         </dd>
 
-        <dt><strong>resetexempts [channel]</strong></dt>
+        <dt><strong><a name="cmd_resetexempts"></a>resetexempts [channel]</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> removes all exempt on the channel
@@ -1520,7 +1520,7 @@
           <p><strong>Module:</strong> irc</p>
         </dd>
 
-        <dt><strong>resetinvites [channel]</strong></dt>
+        <dt><strong><a name="cmd_resetinvites"></a>resetinvites [channel]</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> removes all invites on the channel
@@ -1532,7 +1532,7 @@
           <p><strong>Module:</strong> irc</p>
         </dd>
 
-        <dt><strong>resetchan &lt;channel&gt;</strong></dt>
+        <dt><strong><a name="cmd_resetchan"></a>resetchan &lt;channel&gt;</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> </p>
@@ -1543,7 +1543,7 @@
           <p><strong>Module:</strong> irc</p>
         </dd>
 
-        <dt><strong>getchanhost &lt;nickname&gt; [channel]</strong></dt>
+        <dt><strong><a name="cmd_getchanhost"></a>getchanhost &lt;nickname&gt; [channel]</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> user@host of the specified nickname
@@ -1554,7 +1554,7 @@
           <p><strong>Module:</strong> irc</p>
         </dd>
 
-        <dt><strong>getchanjoin &lt;nickname&gt; &lt;channel&gt;</strong></dt>
+        <dt><strong><a name="cmd_getchanjoin"></a>getchanjoin &lt;nickname&gt; &lt;channel&gt;</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> timestamp (unixtime format) of when
@@ -1563,7 +1563,7 @@
           <p><strong>Module:</strong> irc</p>
         </dd>
 
-        <dt><strong>onchansplit &lt;nick&gt; [channel]</strong></dt>
+        <dt><strong><a name="cmd_onchansplit"></a>onchansplit &lt;nick&gt; [channel]</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> 1 if that nick is split from the
@@ -1573,7 +1573,7 @@
           <p><strong>Module:</strong> irc</p>
         </dd>
 
-        <dt><strong>chanlist &lt;channel&gt;
+        <dt><strong><a name="cmd_chanlist"></a>chanlist &lt;channel&gt;
         [flags[&amp;chanflags]]</strong></dt>
 
         <dd>
@@ -1625,7 +1625,7 @@
           <p><strong>Module:</strong> irc</p>
         </dd>
 
-        <dt><strong>getchanidle &lt;nickname&gt; &lt;channel&gt;</strong></dt>
+        <dt><strong><a name="cmd_getchanidle"></a>getchanidle &lt;nickname&gt; &lt;channel&gt;</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> number of minutes that person has
@@ -1634,7 +1634,7 @@
           <p><strong>Module:</strong> irc</p>
         </dd>
 
-        <dt><strong>getchanmode &lt;channel&gt;</strong></dt>
+        <dt><strong><a name="cmd_getchanmode"></a>getchanmode &lt;channel&gt;</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> string of the type &quot;+ntik
@@ -1643,7 +1643,7 @@
           <p><strong>Module:</strong> irc</p>
         </dd>
 
-        <dt><strong>jump [server [port [password]]]</strong></dt>
+        <dt><strong><a name="cmd_jump"></a>jump [server [port [password]]]</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> jumps to the server specified,
@@ -1655,7 +1655,7 @@
           <p><strong>Module:</strong> server</p>
         </dd>
 
-        <dt><strong>pushmode &lt;channel&gt; &lt;mode&gt; [arg]</strong></dt>
+        <dt><strong><a name="cmd_pushmode"></a>pushmode &lt;channel&gt; &lt;mode&gt; [arg]</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> sends out a channel mode change
@@ -1669,7 +1669,7 @@
           <p><strong>Module:</strong> irc</p>
         </dd>
 
-        <dt><strong>flushmode &lt;channel&gt;</strong></dt>
+        <dt><strong><a name="cmd_flushmode"></a>flushmode &lt;channel&gt;</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> forces all previously pushed
@@ -1681,7 +1681,7 @@
           <p><strong>Module:</strong> irc</p>
         </dd>
 
-        <dt><strong>topic &lt;channel&gt;</strong></dt>
+        <dt><strong><a name="cmd_topic"></a>topic &lt;channel&gt;</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> string containing the current topic
@@ -1690,7 +1690,7 @@
           <p><strong>Module:</strong> irc</p>
         </dd>
 
-        <dt><strong>validchan &lt;channel&gt;</strong></dt>
+        <dt><strong><a name="cmd_validchan"></a>validchan &lt;channel&gt;</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> checks if the bot has a channel
@@ -1702,7 +1702,7 @@
           <p><strong>Module:</strong> nothing</p>
         </dd>
 
-        <dt><strong>isdynamic &lt;channel&gt;</strong></dt>
+        <dt><strong><a name="cmd_isdynamic"></a>isdynamic &lt;channel&gt;</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> 1 if the channel is a dynamic
@@ -1711,7 +1711,7 @@
           <p><strong>Module:</strong> channels</p>
         </dd>
 
-        <dt><strong>setudef &lt;flag/int/str&gt; &lt;name&gt;</strong></dt>
+        <dt><strong><a name="cmd_setudef"></a>setudef &lt;flag/int/str&gt; &lt;name&gt;</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> initializes a user defined channel
@@ -1724,7 +1724,7 @@
           <p><strong>Module:</strong> channels</p>
         </dd>
 
-        <dt><strong>renudef &lt;flag/int/str&gt; &lt;oldname&gt;
+        <dt><strong><a name="cmd_renudef"></a>renudef &lt;flag/int/str&gt; &lt;oldname&gt;
         &lt;newname&gt;</strong></dt>
 
         <dd>
@@ -1736,7 +1736,7 @@
           <p><strong>Module:</strong> channels</p>
         </dd>
 
-        <dt><strong>deludef &lt;flag/int/str&gt; &lt;name&gt;</strong></dt>
+        <dt><strong><a name="cmd_deludef"></a>deludef &lt;flag/int/str&gt; &lt;name&gt;</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> deletes a user defined channel
@@ -1753,7 +1753,7 @@
 
     <blockquote>
       <dl>
-        <dt><strong>putdcc &lt;idx&gt; &lt;text&gt;</strong></dt>
+        <dt><strong><a name="cmd_putdcc"></a>putdcc &lt;idx&gt; &lt;text&gt;</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> sends text to the idx specified</p>
@@ -1763,7 +1763,7 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong>dccbroadcast &lt;message&gt;</strong></dt>
+        <dt><strong><a name="cmd_dccbroadcast"></a>dccbroadcast &lt;message&gt;</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> sends a message to everyone on
@@ -1776,7 +1776,7 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong>dccputchan &lt;channel&gt; &lt;message&gt;</strong></dt>
+        <dt><strong><a name="cmd_dccputchan"></a>dccputchan &lt;channel&gt; &lt;message&gt;</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> sends your message to everyone
@@ -1788,7 +1788,7 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong>boot &lt;user@bot&gt; [reason]</strong></dt>
+        <dt><strong><a name="cmd_boot"></a>boot &lt;user@bot&gt; [reason]</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> boots a user from the partyline</p>
@@ -1798,7 +1798,7 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong>dccsimul &lt;idx&gt; &lt;text&gt;</strong></dt>
+        <dt><strong><a name="cmd_dccsimul"></a>dccsimul &lt;idx&gt; &lt;text&gt;</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> simulates text typed in by the
@@ -1811,7 +1811,7 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong>hand2idx &lt;handle&gt;</strong></dt>
+        <dt><strong><a name="cmd_hand2idx"></a>hand2idx &lt;handle&gt;</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> the idx (a number greater than or
@@ -1824,7 +1824,7 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong>idx2hand &lt;idx&gt;</strong></dt>
+        <dt><strong><a name="cmd_idx2hand"></a>idx2hand &lt;idx&gt;</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> handle of the user with the given
@@ -1833,7 +1833,7 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong>valididx &lt;idx&gt;</strong></dt>
+        <dt><strong><a name="cmd_valididx"></a>valididx &lt;idx&gt;</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> 1 if the idx currently exists; 0
@@ -1842,7 +1842,7 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong>getchan &lt;idx&gt;</strong></dt>
+        <dt><strong><a name="cmd_getchan"></a>getchan &lt;idx&gt;</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> the current party line channel
@@ -1853,7 +1853,7 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong>setchan &lt;idx&gt; &lt;channel&gt;</strong></dt>
+        <dt><strong><a name="cmd_setchan"></a>setchan &lt;idx&gt; &lt;channel&gt;</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> sets a party line user&#39;s
@@ -1865,7 +1865,7 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong>console &lt;idx&gt; [channel]
+        <dt><strong><a name="cmd_console"></a>console &lt;idx&gt; [channel]
         [console-modes]</strong></dt>
 
         <dd>
@@ -1882,7 +1882,7 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong>echo &lt;idx&gt; [status]</strong></dt>
+        <dt><strong><a name="cmd_echo"></a>echo &lt;idx&gt; [status]</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> turns a user&#39;s echo on or
@@ -1894,7 +1894,7 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong>strip &lt;idx&gt; [+/-strip-flags]</strong></dt>
+        <dt><strong><a name="cmd_strip"></a>strip &lt;idx&gt; [+/-strip-flags]</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> modifies the strip-flags for a
@@ -1971,7 +1971,7 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong>putbot &lt;bot-nick&gt; &lt;message&gt;</strong></dt>
+        <dt><strong><a name="cmd_putbot"></a>putbot &lt;bot-nick&gt; &lt;message&gt;</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> sends a message across the
@@ -1983,7 +1983,7 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong>putallbots &lt;message&gt;</strong></dt>
+        <dt><strong><a name="cmd_putallbots"></a>putallbots &lt;message&gt;</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> sends a message across the botnet
@@ -1995,7 +1995,7 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong>killdcc &lt;idx&gt;</strong></dt>
+        <dt><strong><a name="cmd_killdcc"></a>killdcc &lt;idx&gt;</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> kills a partyline or file area
@@ -2006,7 +2006,7 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong>bots</strong></dt>
+        <dt><strong><a name="cmd_bots"></a>bots</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> list of the bots currently connected
@@ -2015,7 +2015,7 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong>botlist</strong></dt>
+        <dt><strong><a name="cmd_botlist"></a>botlist</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> a list of bots currently on the
@@ -2070,18 +2070,7 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong>killdcc &lt;idx&gt;</strong></dt>
-
-        <dd>
-          <p><strong>Description:</strong> kills a partyline or file area
-          connection</p>
-
-          <p><strong>Returns:</strong> nothing</p>
-
-          <p><strong>Module:</strong> core</p>
-        </dd>
-
-        <dt><strong>islinked &lt;bot&gt;</strong></dt>
+        <dt><strong><a name="cmd_islinked"></a>islinked &lt;bot&gt;</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> 1 if the bot is currently linked; 0
@@ -2090,7 +2079,7 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong>dccused</strong></dt>
+        <dt><strong><a name="cmd_dccused"></a>dccused</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> number of dcc connections currently
@@ -2099,7 +2088,7 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong>dcclist [type]</strong></dt>
+        <dt><strong><a name="cmd_dcclist"></a>dcclist [type]</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> a list of active connections, each
@@ -2115,7 +2104,7 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong>whom &lt;chan&gt;</strong></dt>
+        <dt><strong><a name="cmd_whom"></a>whom &lt;chan&gt;</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> list of people on the botnet who are
@@ -2130,7 +2119,7 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong>getdccidle &lt;idx&gt;</strong></dt>
+        <dt><strong><a name="cmd_getdccidle"></a>getdccidle &lt;idx&gt;</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> number of seconds the dcc chat/file
@@ -2139,7 +2128,7 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong>getdccaway &lt;idx&gt;</strong></dt>
+        <dt><strong><a name="cmd_getdccaway"></a>getdccaway &lt;idx&gt;</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> away message for a dcc chat user
@@ -2148,7 +2137,7 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong>setdccaway &lt;idx&gt; &lt;message&gt;</strong></dt>
+        <dt><strong><a name="cmd_setdccaway"></a>setdccaway &lt;idx&gt; &lt;message&gt;</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> sets a party line user&#39;s away
@@ -2160,7 +2149,7 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong>connect &lt;host&gt; &lt;port&gt;</strong></dt>
+        <dt><strong><a name="cmd_connect"></a>connect &lt;host&gt; &lt;port&gt;</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> makes an outgoing connection
@@ -2173,7 +2162,7 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong>listen &lt;port&gt; &lt;type&gt; [options]
+        <dt><strong><a name="cmd_listen"></a>listen &lt;port&gt; &lt;type&gt; [options]
         [flag]</strong></dt>
 
         <dd>
@@ -2246,7 +2235,7 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong>dccdumpfile &lt;idx&gt; &lt;filename&gt;</strong></dt>
+        <dt><strong><a name="cmd_dccdumpfile"></a>dccdumpfile &lt;idx&gt; &lt;filename&gt;</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> dumps out a file from the text
@@ -2264,7 +2253,7 @@
 
     <blockquote>
       <dl>
-        <dt><strong>notes &lt;user&gt; [numberlist]</strong></dt>
+        <dt><strong><a name="cmd_notes"></a>notes &lt;user&gt; [numberlist]</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> -1 if no such user, -2 if notefile
@@ -2277,7 +2266,7 @@
           <p><strong>Module:</strong> notes</p>
         </dd>
 
-        <dt><strong>erasenotes &lt;user&gt; &lt;numberlist&gt;</strong></dt>
+        <dt><strong><a name="cmd_erasenotes"></a>erasenotes &lt;user&gt; &lt;numberlist&gt;</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> erases some or all stored notes
@@ -2289,7 +2278,7 @@
           <p><strong>Module:</strong> notes</p>
         </dd>
 
-        <dt><strong>listnotes &lt;user&gt; &lt;numberlist&gt;</strong></dt>
+        <dt><strong><a name="cmd_listnotes"></a>listnotes &lt;user&gt; &lt;numberlist&gt;</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> lists existing notes according
@@ -2301,7 +2290,7 @@
           <p><strong>Module:</strong> notes</p>
         </dd>
 
-        <dt><strong>storenote &lt;from&gt; &lt;to&gt; &lt;msg&gt;
+        <dt><strong><a name="cmd_storenote"></a>storenote &lt;from&gt; &lt;to&gt; &lt;msg&gt;
         &lt;idx&gt;</strong></dt>
 
         <dd>
@@ -2319,7 +2308,7 @@
 
     <blockquote>
       <dl>
-        <dt><strong>assoc &lt;chan&gt; [name]</strong></dt>
+        <dt><strong><a name="cmd_assoc"></a>assoc &lt;chan&gt; [name]</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> sets the name associated with a
@@ -2331,7 +2320,7 @@
           <p><strong>Module:</strong> assoc</p>
         </dd>
 
-        <dt><strong>killassoc &lt;chan&gt;</strong></dt>
+        <dt><strong><a name="cmd_killassoc"></a>killassoc &lt;chan&gt;</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> removes the name associated
@@ -2349,7 +2338,7 @@
 
     <blockquote>
       <dl>
-        <dt><strong>compressfile [-level &lt;level&gt;] &lt;src-file&gt;
+        <dt><strong><a name="cmd_compressfile"></a>compressfile [-level &lt;level&gt;] &lt;src-file&gt;
         [target-file]<br>
         uncompressfile &lt;src-file&gt; [target-file]</strong></dt>
 
@@ -2366,7 +2355,7 @@
           <p><strong>Module:</strong> compress</p>
         </dd>
 
-        <dt><strong>iscompressed &lt;filename&gt;</strong></dt>
+        <dt><strong><a name="cmd_iscompressed"></a>iscompressed &lt;filename&gt;</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> determines whether
@@ -2385,7 +2374,7 @@
 
     <blockquote>
       <dl>
-        <dt><strong>setpwd &lt;idx&gt; &lt;dir&gt;</strong></dt>
+        <dt><strong><a name="cmd_setpwd"></a>setpwd &lt;idx&gt; &lt;dir&gt;</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> changes the directory of a file
@@ -2397,7 +2386,7 @@
           <p><strong>Module:</strong> filesys</p>
         </dd>
 
-        <dt><strong>getpwd &lt;idx&gt;</strong></dt>
+        <dt><strong><a name="cmd_getpwd"></a>getpwd &lt;idx&gt;</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> the current directory of a file
@@ -2406,7 +2395,7 @@
           <p><strong>Module:</strong> filesys</p>
         </dd>
 
-        <dt><strong>getfiles &lt;dir&gt;</strong></dt>
+        <dt><strong><a name="cmd_getfiles"></a>getfiles &lt;dir&gt;</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> a list of files in the directory
@@ -2415,7 +2404,7 @@
           <p><strong>Module:</strong> filesys</p>
         </dd>
 
-        <dt><strong>getdirs &lt;dir&gt;</strong></dt>
+        <dt><strong><a name="cmd_getdirs"></a>getdirs &lt;dir&gt;</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> a list of subdirectories in the
@@ -2424,7 +2413,7 @@
           <p><strong>Module:</strong> filesys</p>
         </dd>
 
-        <dt><strong>dccsend &lt;filename&gt; &lt;ircnick&gt;</strong></dt>
+        <dt><strong><a name="cmd_dccsend"></a>dccsend &lt;filename&gt; &lt;ircnick&gt;</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> attempts to start a dcc file
@@ -2503,7 +2492,7 @@
           <p><strong>Module:</strong> transfer</p>
         </dd>
 
-        <dt><strong>filesend &lt;idx&gt; &lt;filename&gt;
+        <dt><strong><a name="cmd_filesend"></a>filesend &lt;idx&gt; &lt;filename&gt;
         [ircnick]</strong></dt>
 
         <dd>
@@ -2517,7 +2506,7 @@
           <p><strong>Module:</strong> filesys</p>
         </dd>
 
-        <dt><strong>fileresend &lt;idx&gt; &lt;filename&gt;
+        <dt><strong><a name="cmd_fileresend"></a>fileresend &lt;idx&gt; &lt;filename&gt;
         [ircnick]</strong></dt>
 
         <dd>
@@ -2532,7 +2521,7 @@
           <p><strong>Module:</strong> filesys</p>
         </dd>
 
-        <dt><strong>setdesc &lt;dir&gt; &lt;file&gt; &lt;desc&gt;</strong></dt>
+        <dt><strong><a name="cmd_setdesc"></a>setdesc &lt;dir&gt; &lt;file&gt; &lt;desc&gt;</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> sets the description for a file
@@ -2544,7 +2533,7 @@
           <p><strong>Module:</strong> filesys</p>
         </dd>
 
-        <dt><strong>getdesc &lt;dir&gt; &lt;file&gt;</strong></dt>
+        <dt><strong><a name="cmd_getdesc"></a>getdesc &lt;dir&gt; &lt;file&gt;</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> the description for a file in the
@@ -2553,7 +2542,7 @@
           <p><strong>Module:</strong> filesys</p>
         </dd>
 
-        <dt><strong>setowner &lt;dir&gt; &lt;file&gt;
+        <dt><strong><a name="cmd_setowner"></a>setowner &lt;dir&gt; &lt;file&gt;
         &lt;handle&gt;</strong></dt>
 
         <dd>
@@ -2565,7 +2554,7 @@
           <p><strong>Module:</strong> filesys</p>
         </dd>
 
-        <dt><strong>getowner &lt;dir&gt; &lt;file&gt;</strong></dt>
+        <dt><strong><a name="cmd_getowner"></a>getowner &lt;dir&gt; &lt;file&gt;</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> the owner of a file in the file
@@ -2574,7 +2563,7 @@
           <p><strong>Module:</strong> filesys</p>
         </dd>
 
-        <dt><strong>setlink &lt;dir&gt; &lt;file&gt; &lt;link&gt;</strong></dt>
+        <dt><strong><a name="cmd_setlink"></a>setlink &lt;dir&gt; &lt;file&gt; &lt;link&gt;</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> creates or changes a linked file
@@ -2586,7 +2575,7 @@
           <p><strong>Module:</strong> filesys</p>
         </dd>
 
-        <dt><strong>getlink &lt;dir&gt; &lt;file&gt;</strong></dt>
+        <dt><strong><a name="cmd_getlink"></a>getlink &lt;dir&gt; &lt;file&gt;</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> the link for a linked file, if it
@@ -2595,7 +2584,7 @@
           <p><strong>Module:</strong> filesys</p>
         </dd>
 
-        <dt><strong>getfileq &lt;handle&gt;</strong></dt>
+        <dt><strong><a name="cmd_getfileq"></a>getfileq &lt;handle&gt;</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> list of files queued by someone;
@@ -2605,7 +2594,7 @@
           <p><strong>Module:</strong> transfer</p>
         </dd>
 
-        <dt><strong>getfilesendtime &lt;idx&gt;</strong></dt>
+        <dt><strong><a name="cmd_getfilesendtime"></a>getfilesendtime &lt;idx&gt;</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> the unixtime value for when a file
@@ -2638,7 +2627,7 @@
           <p><strong>Module:</strong> transfer</p>
         </dd>
 
-        <dt><strong>mkdir &lt;directory&gt; [&lt;required-flags&gt;
+        <dt><strong><a name="cmd_mkdir"></a>mkdir &lt;directory&gt; [&lt;required-flags&gt;
         [channel]]</strong></dt>
 
         <dd>
@@ -2694,7 +2683,7 @@
           <p><strong>Module:</strong> filesys</p>
         </dd>
 
-        <dt><strong>rmdir &lt;directory&gt;</strong></dt>
+        <dt><strong><a name="cmd_rmdir"></a>rmdir &lt;directory&gt;</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> removes a directory from the
@@ -2705,7 +2694,7 @@
           <p><strong>Module:</strong> filesys</p>
         </dd>
 
-        <dt><strong>mv &lt;file&gt; &lt;destination&gt;</strong></dt>
+        <dt><strong><a name="cmd_mv"></a>mv &lt;file&gt; &lt;destination&gt;</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> moves a file from its source to
@@ -2763,7 +2752,7 @@
           <p><strong>Module:</strong> filesys</p>
         </dd>
 
-        <dt><strong>cp &lt;file&gt; &lt;destination&gt;</strong></dt>
+        <dt><strong><a name="cmd_cp"></a>cp &lt;file&gt; &lt;destination&gt;</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> copies a file from its source
@@ -2821,7 +2810,7 @@
           <p><strong>Module:</strong> filesys</p>
         </dd>
 
-        <dt><strong>getflags &lt;dir&gt;</strong></dt>
+        <dt><strong><a name="cmd_getflags"></a>getflags &lt;dir&gt;</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> the flags required to access a
@@ -2830,7 +2819,7 @@
           <p><strong>Module:</strong> filesys</p>
         </dd>
 
-        <dt><strong>setflags &lt;dir&gt; [&lt;flags&gt;
+        <dt><strong><a name="cmd_setflags"></a>setflags &lt;dir&gt; [&lt;flags&gt;
         [channel]]</strong></dt>
 
         <dd>
@@ -2848,7 +2837,7 @@
 
     <blockquote>
       <dl>
-        <dt><strong>bind &lt;type&gt; &lt;flags&gt; &lt;keyword/mask&gt;
+        <dt><strong><a name="cmd_bind"></a>bind &lt;type&gt; &lt;flags&gt; &lt;keyword/mask&gt;
         [proc-name]</strong></dt>
 
         <dd>
@@ -2868,7 +2857,7 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong>unbind &lt;type&gt; &lt;flags&gt; &lt;keyword/mask&gt;
+        <dt><strong><a name="cmd_unbind"></a>unbind &lt;type&gt; &lt;flags&gt; &lt;keyword/mask&gt;
         &lt;proc-name&gt;</strong></dt>
 
         <dd>
@@ -2881,7 +2870,7 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong>binds [type/mask]</strong></dt>
+        <dt><strong><a name="cmd_binds"></a>binds [type/mask]</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> a list of Tcl binds, each item in the
@@ -2891,7 +2880,7 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong>logfile [&lt;modes&gt; &lt;channel&gt;
+        <dt><strong><a name="cmd_logfile"></a>logfile [&lt;modes&gt; &lt;channel&gt;
         &lt;filename&gt;]</strong></dt>
 
         <dd>
@@ -2910,7 +2899,7 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong>maskhost &lt;nick!user@host&gt;</strong></dt>
+        <dt><strong><a name="cmd_maskhost"></a>maskhost &lt;nick!user@host&gt;</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> masked hostmask for the string
@@ -2921,7 +2910,7 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong>timer &lt;minutes&gt; &lt;tcl-command&gt;</strong></dt>
+        <dt><strong><a name="cmd_timer"></a>timer &lt;minutes&gt; &lt;tcl-command&gt;</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> executes the given Tcl command
@@ -2932,7 +2921,7 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong>utimer &lt;seconds&gt; &lt;tcl-command&gt;</strong></dt>
+        <dt><strong><a name="cmd_utimer"></a>utimer &lt;seconds&gt; &lt;tcl-command&gt;</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> executes the given Tcl command
@@ -2943,7 +2932,7 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong>timers</strong></dt>
+        <dt><strong><a name="cmd_timers"></a>timers</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> a list of active minutely timers.
@@ -2953,7 +2942,7 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong>utimers</strong></dt>
+        <dt><strong><a name="cmd_utimers"></a>utimers</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> a list of active secondly timers.
@@ -2963,7 +2952,7 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong>killtimer &lt;timerID&gt;</strong></dt>
+        <dt><strong><a name="cmd_killtimer"></a>killtimer &lt;timerID&gt;</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> removes a minutely timer from
@@ -2974,7 +2963,7 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong>killutimer &lt;timerID&gt;</strong></dt>
+        <dt><strong><a name="cmd_killutimer"></a>killutimer &lt;timerID&gt;</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> removes a secondly timer from
@@ -2985,7 +2974,7 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong>unixtime</strong></dt>
+        <dt><strong><a name="cmd_unixtime"></a>unixtime</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> a long integer which represents the
@@ -2994,7 +2983,7 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong>duration &lt;seconds&gt;</strong></dt>
+        <dt><strong><a name="cmd_duration"></a>duration &lt;seconds&gt;</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> the number of seconds converted
@@ -3004,7 +2993,7 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong>strftime &lt;formatstring&gt; [time]</strong></dt>
+        <dt><strong><a name="cmd_strftime"></a>strftime &lt;formatstring&gt; [time]</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> a formatted string of time using
@@ -3014,7 +3003,7 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong>ctime &lt;unixtime&gt;</strong></dt>
+        <dt><strong><a name="cmd_ctime"></a>ctime &lt;unixtime&gt;</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> a formatted date/time string based
@@ -3024,7 +3013,7 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong>myip</strong></dt>
+        <dt><strong><a name="cmd_myip"></a>myip</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> a long number representing the
@@ -3034,7 +3023,7 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong>rand &lt;limit&gt;</strong></dt>
+        <dt><strong><a name="cmd_rand"></a>rand &lt;limit&gt;</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> a random integer between 0 and
@@ -3043,7 +3032,7 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong>control &lt;idx&gt; &lt;command&gt;</strong></dt>
+        <dt><strong><a name="cmd_control"></a>control &lt;idx&gt; &lt;command&gt;</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> removes an idx from the party line
@@ -3061,7 +3050,7 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong>sendnote &lt;from&gt; &lt;to[@bot]&gt;
+        <dt><strong><a name="cmd_sendnote"></a>sendnote &lt;from&gt; &lt;to[@bot]&gt;
         &lt;message&gt;</strong></dt>
 
         <dd>
@@ -3138,7 +3127,7 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong>link [via-bot] &lt;bot&gt;</strong></dt>
+        <dt><strong><a name="cmd_link"></a>link [via-bot] &lt;bot&gt;</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> attempts to link to another bot
@@ -3151,7 +3140,7 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong>unlink &lt;bot&gt;</strong></dt>
+        <dt><strong><a name="cmd_unlink"></a>unlink &lt;bot&gt;</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> attempts to unlink a bot from
@@ -3162,7 +3151,7 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong>encrypt &lt;key&gt; &lt;string&gt;</strong></dt>
+        <dt><strong><a name="cmd_encrypt"></a>encrypt &lt;key&gt; &lt;string&gt;</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> encrypted string (using the currently
@@ -3171,7 +3160,7 @@
           <p><strong>Module:</strong> encryption</p>
         </dd>
 
-        <dt><strong>decrypt &lt;key&gt;
+        <dt><strong><a name="cmd_decrypt"></a>decrypt &lt;key&gt;
         &lt;encrypted-base64-string&gt;</strong></dt>
 
         <dd>
@@ -3181,7 +3170,7 @@
           <p><strong>Module:</strong> encryption</p>
         </dd>
 
-        <dt><strong>encpass &lt;password&gt;</strong></dt>
+        <dt><strong><a name="cmd_encpass"></a>encpass &lt;password&gt;</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> encrypted string (using the currently
@@ -3190,7 +3179,7 @@
           <p><strong>Module:</strong> encryption</p>
         </dd>
 
-        <dt><strong>die [reason]</strong></dt>
+        <dt><strong><a name="cmd_die"></a>die [reason]</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> causes the bot to log a fatal
@@ -3202,7 +3191,7 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong>unames</strong></dt>
+        <dt><strong><a name="cmd_unames"></a>unames</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> the current operating system the
@@ -3211,7 +3200,7 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong>dnslookup &lt;ip-address/hostname&gt; &lt;proc&gt;
+        <dt><strong><a name="cmd_dnslookup"></a>dnslookup &lt;ip-address/hostname&gt; &lt;proc&gt;
         [[arg1] [arg2] ... [argN]]</strong></dt>
 
         <dd>
@@ -3233,7 +3222,7 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong>md5 &lt;string&gt;</strong></dt>
+        <dt><strong><a name="cmd_md5"></a>md5 &lt;string&gt;</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> the 128 bit MD5 message-digest of
@@ -3242,7 +3231,7 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong>callevent &lt;event&gt;</strong></dt>
+        <dt><strong><a name="cmd_callevent"></a>callevent &lt;event&gt;</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> triggers the evnt bind manually
@@ -3253,7 +3242,7 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong>traffic</strong></dt>
+        <dt><strong><a name="cmd_traffic"></a>traffic</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> a list of sublists containing
@@ -3265,7 +3254,7 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong>modules</strong></dt>
+        <dt><strong><a name="cmd_modules"></a>modules</strong></dt>
 
         <dd>
           <p><strong>Returns:</strong> a list of sublists containing
@@ -3277,7 +3266,7 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong>loadmodule &lt;module&gt;</strong></dt>
+        <dt><strong><a name="cmd_loadmodule"></a>loadmodule &lt;module&gt;</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> attempts to load the specified
@@ -3290,7 +3279,7 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong>unloadmodule &lt;module&gt;</strong></dt>
+        <dt><strong><a name="cmd_unloadmodule"></a>unloadmodule &lt;module&gt;</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> attempts to unload the specified
@@ -3302,7 +3291,7 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong>loadhelp &lt;helpfile-name&gt;</strong></dt>
+        <dt><strong><a name="cmd_loadhelp"></a>loadhelp &lt;helpfile-name&gt;</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> attempts to load the specified
@@ -3313,7 +3302,7 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong>unloadhelp &lt;helpfile-name&gt;</strong></dt>
+        <dt><strong><a name="cmd_unloadhelp"></a>unloadhelp &lt;helpfile-name&gt;</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> attempts to unload the specified
@@ -3324,7 +3313,7 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong>reloadhelp</strong></dt>
+        <dt><strong><a name="cmd_reloadhelp"></a>reloadhelp</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> reloads the bot&#39;s help
@@ -3335,7 +3324,7 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong>restart</strong></dt>
+        <dt><strong><a name="cmd_restart"></a>restart</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> rehashes the bot, kills all
@@ -3347,7 +3336,7 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong>rehash</strong></dt>
+        <dt><strong><a name="cmd_rehash"></a>rehash</strong></dt>
 
         <dd>
           <p><strong>Description:</strong> rehashes the bot</p>
@@ -3357,7 +3346,7 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong>stripcodes &lt;strip-flags&gt; &lt;string&gt;</strong></dt>
+        <dt><strong><a name="cmd_stripcodes"></a>stripcodes &lt;strip-flags&gt; &lt;string&gt;</strong></dt>
         <dd>
           <p><strong>Description:</strong> strips specified control characters
           from the string given. strip-flags can be any combination of the
@@ -3441,7 +3430,7 @@
       <p><strong>NOTE:</strong> All config file variables are also global.</p>
 
       <dl>
-        <dt><strong>botnick</strong></dt>
+        <dt><strong><a name="globvar_botnick"></a>botnick</strong></dt>
 
         <dd>
           <p><strong>Value:</strong> the current nickname the bot is using
@@ -3450,7 +3439,7 @@
           <p><strong>Module:</strong> server</p>
         </dd>
 
-        <dt><strong>botname</strong></dt>
+        <dt><strong><a name="globvar_botname"></a>botname</strong></dt>
 
         <dd>
           <p><strong>Value:</strong> the current nick!user@host that the
@@ -3459,7 +3448,7 @@
           <p><strong>Module:</strong> server</p>
         </dd>
 
-        <dt><strong>server</strong></dt>
+        <dt><strong><a name="globvar_server"></a>server</strong></dt>
 
         <dd>
           <p><strong>Value:</strong> the current server&#39;s real name (what
@@ -3470,7 +3459,7 @@
           <p><strong>Module:</strong> server</p>
         </dd>
 
-        <dt><strong>serveraddress</strong></dt>
+        <dt><strong><a name="globvar_serveraddress"></a>serveraddress</strong></dt>
 
         <dd>
           <p><strong>Value:</strong> the current server&#39;s internet address
@@ -3482,7 +3471,7 @@
           <p><strong>Module:</strong> server</p>
         </dd>
 
-        <dt><strong>version</strong></dt>
+        <dt><strong><a name="globvar_version"></a>version</strong></dt>
 
         <dd>
           <p><strong>Value:</strong> current bot version &quot;1.1.2+pl1
@@ -3493,7 +3482,7 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong>numversion</strong></dt>
+        <dt><strong><a name="globvar_numversion"></a>numversion</strong></dt>
 
         <dd>
           <p><strong>Value:</strong> the current numeric bot version (for
@@ -3547,7 +3536,7 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong>uptime</strong></dt>
+        <dt><strong><a name="globvar_uptime" id="globvar_uptime"></a>uptime</strong></dt>
 
         <dd>
           <p><strong>Value:</strong> the unixtime value for when the bot
@@ -3556,7 +3545,7 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong>server-online</strong></dt>
+        <dt><strong><a name="globvar_server-online"></a>server-online</strong></dt>
 
         <dd>
           <p><strong>Value:</strong> the unixtime value for when the bot
@@ -3565,7 +3554,7 @@
           <p><strong>Module:</strong> server</p>
         </dd>
 
-        <dt><strong>lastbind</strong></dt>
+        <dt><strong><a name="globvar_lastbind"></a>lastbind</strong></dt>
 
         <dd>
           <p><strong>Value:</strong> the last command binding which was
@@ -3575,7 +3564,7 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong>isjuped</strong></dt>
+        <dt><strong><a name="globvar_isjuped"></a>isjuped</strong></dt>
 
         <dd>
           <p><strong>Value:</strong> 1 if bot&#39;s nick is juped(437);
@@ -3584,7 +3573,7 @@
           <p><strong>Module:</strong> server</p>
         </dd>
 
-        <dt><strong>handlen</strong></dt>
+        <dt><strong><a name="globvar_handlen"></a>handlen</strong></dt>
 
         <dd>
           <p><strong>Value:</strong> the value of the HANDLEN define in
@@ -3593,7 +3582,7 @@
           <p><strong>Module:</strong> core</p>
         </dd>
 
-        <dt><strong>config</strong></dt>
+        <dt><strong><a name="globvar_config"></a>config</strong></dt>
 
         <dd>
           <p><strong>Value:</strong> the filename of the config file Eggdrop
@@ -3632,7 +3621,7 @@
 
           <ol>
             <li>
-              <p><strong>MSG</strong></p>
+              <p><a name="binda_msg"></a><strong>MSG</strong></p>
 
               <p><strong>bind msg &lt;flags&gt; &lt;command&gt;
               &lt;proc&gt;<br>
@@ -3647,7 +3636,7 @@
             </li>
 
             <li>
-              <p><strong>DCC</strong></p>
+              <p><a name="binda_dcc"></a><strong>DCC</strong></p>
 
               <p><strong>bind dcc &lt;flags&gt; &lt;command&gt;
               &lt;proc&gt;<br>
@@ -3663,7 +3652,7 @@
             </li>
 
             <li>
-              <p><strong>FIL</strong></p>
+              <p><a name="binda_fil"></a><strong>FIL</strong></p>
 
               <p><strong>bind fil &lt;flags&gt; &lt;command&gt;
               &lt;proc&gt;<br>
@@ -3677,7 +3666,7 @@
             </li>
 
             <li>
-              <p><strong>PUB</strong></p>
+              <p><a name="binda_pub"></a><strong>PUB</strong></p>
 
               <p><strong>bind pub &lt;flags&gt; &lt;command&gt;
               &lt;proc&gt;<br>
@@ -3692,7 +3681,7 @@
             </li>
 
             <li>
-              <p><strong>MSGM (stackable)</strong></p>
+              <p><a name="binda_msgm"></a><strong>MSGM (stackable)</strong></p>
 
               <p><strong>bind msgm &lt;flags&gt; &lt;mask&gt;
               &lt;proc&gt;<br>
@@ -3712,7 +3701,7 @@
             </li>
 
             <li>
-              <p><strong>PUBM (stackable)</strong></p>
+              <p><a name="binda_pubm"></a><strong>PUBM (stackable)</strong></p>
 
               <p><strong>bind pubm &lt;flags&gt; &lt;mask&gt;
               &lt;proc&gt;<br>
@@ -3733,7 +3722,7 @@
             </li>
 
             <li>
-              <p><strong>NOTC (stackable)</strong></p>
+              <p><a name="binda_notc"></a><strong>NOTC (stackable)</strong></p>
 
               <p><strong>bind notc &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;<br>
               procname &lt;nick&gt; &lt;user@host&gt; &lt;handle&gt;
@@ -3763,7 +3752,7 @@
             </li>
 
             <li>
-              <p><strong>JOIN (stackable)</strong></p>
+              <p><a name="binda_join"></a><strong>JOIN (stackable)</strong></p>
 
               <p><strong>bind join &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;<br>
               procname &lt;nick&gt; &lt;user@host&gt; &lt;handle&gt;
@@ -3778,7 +3767,7 @@
             </li>
 
             <li>
-              <p><strong>PART (stackable)</strong></p>
+              <p><a name="binda_part"></a><strong>PART (stackable)</strong></p>
 
               <p><strong>bind part &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;<br>
               procname &lt;nick&gt; &lt;user@host&gt; &lt;handle&gt;
@@ -3801,7 +3790,7 @@
             </li>
 
             <li>
-              <p><strong>SIGN (stackable)</strong></p>
+              <p><a name="binda_sign"></a><strong>SIGN (stackable)</strong></p>
 
               <p><strong>bind sign &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;<br>
               procname &lt;nick&gt; &lt;user@host&gt; &lt;handle&gt;
@@ -3817,7 +3806,7 @@
             </li>
 
             <li>
-              <p><strong>TOPC (stackable)</strong></p>
+              <p><a name="binda_topc"></a><strong>TOPC (stackable)</strong></p>
 
               <p><strong>bind topc &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;<br>
               procname &lt;nick&gt; &lt;user@host&gt; &lt;handle&gt;
@@ -3831,7 +3820,7 @@
             </li>
 
             <li>
-              <p><strong>KICK (stackable)</strong></p>
+              <p><a name="binda_kick"></a><strong>KICK (stackable)</strong></p>
 
               <p><strong>bind kick &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;<br>
               procname &lt;nick&gt; &lt;user@host&gt; &lt;handle&gt;
@@ -3849,7 +3838,7 @@
             </li>
 
             <li>
-              <p><strong>NICK (stackable)</strong></p>
+              <p><a name="binda_nick"></a><strong>NICK (stackable)</strong></p>
 
               <p><strong>bind nick &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;<br>
               procname &lt;nick&gt; &lt;user@host&gt; &lt;handle&gt;
@@ -3864,7 +3853,7 @@
             </li>
 
             <li>
-              <p><strong>MODE (stackable)</strong></p>
+              <p><a name="binda_mode"></a><strong>MODE (stackable)</strong></p>
 
               <p><strong>bind mode &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;<br>
               proc-name &lt;nick&gt; &lt;user@host&gt; &lt;handle&gt;
@@ -3916,7 +3905,7 @@
             </li>
 
             <li>
-              <p><strong>CTCP (stackable)</strong></p>
+              <p><a name="binda_ctcp"></a><strong>CTCP (stackable)</strong></p>
 
               <p><strong>bind ctcp &lt;flags&gt; &lt;keyword&gt;
               &lt;proc&gt;<br>
@@ -3933,7 +3922,7 @@
             </li>
 
             <li>
-              <p><strong>CTCR (stackable)</strong></p>
+              <p><a name="binda_ctcr"></a><strong>CTCR (stackable)</strong></p>
 
               <p><strong>bind ctcr &lt;flags&gt; &lt;keyword&gt;
               &lt;proc&gt;<br>
@@ -3948,7 +3937,7 @@
             </li>
 
             <li>
-              <p><strong>RAW (stackable)</strong></p>
+              <p><a name="binda_raw"></a><strong>RAW (stackable)</strong></p>
 
               <p><strong>bind raw &lt;flags&gt; &lt;keyword-mask&gt;
               &lt;proc&gt;<br>
@@ -3970,7 +3959,7 @@
             </li>
 
             <li>
-              <p><strong>BOT</strong></p>
+              <p><a name="binda_bot"></a><strong>BOT</strong></p>
 
               <p><strong>bind bot &lt;flags&gt; &lt;command&gt;
               &lt;proc&gt;<br>
@@ -3984,7 +3973,7 @@
               <p><strong>Module:</strong> core</p>
             </li>
             <li>
-              <p><strong>CHON (stackable)</strong></p>
+              <p><a name="binda_chon"></a><strong>CHON (stackable)</strong></p>
 
               <p><strong>bind chon &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;<br>
               proc-name &lt;handle&gt; &lt;idx&gt;</strong></p>
@@ -4001,7 +3990,7 @@
             </li>
 
             <li>
-              <p><strong>CHOF (stackable)</strong></p>
+              <p><a name="binda_chof"></a><strong>CHOF (stackable)</strong></p>
 
               <p><strong>bind chof &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;<br>
               proc-name &lt;handle&gt; &lt;idx&gt;</strong></p>
@@ -4016,7 +4005,7 @@
             </li>
 
             <li>
-              <p><strong>SENT (stackable)</strong></p>
+              <p><a name="binda_sent"></a><strong>SENT (stackable)</strong></p>
 
               <p><strong>bind sent &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;<br>
               proc-name &lt;handle&gt; &lt;nick&gt;
@@ -4035,7 +4024,7 @@
             </li>
 
             <li>
-              <p><strong>RCVD (stackable)</strong></p>
+              <p><a name="binda_rcvd"></a><strong>RCVD (stackable)</strong></p>
 
               <p><strong>bind rcvd &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;<br>
               proc-name &lt;handle&gt; &lt;nick&gt;
@@ -4052,7 +4041,7 @@
             </li>
 
             <li>
-              <p><strong>CHAT (stackable)</strong></p>
+              <p><a name="binda_chat"></a><strong>CHAT (stackable)</strong></p>
 
               <p><strong>bind chat &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;<br>
               proc-name &lt;handle&gt; &lt;channel#&gt;
@@ -4072,7 +4061,7 @@
             </li>
 
             <li>
-              <p><strong>LINK (stackable)</strong></p>
+              <p><a name="binda_link"></a><strong>LINK (stackable)</strong></p>
 
               <p><strong>bind link &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;<br>
               proc-name &lt;botname&gt; &lt;via&gt;</strong></p>
@@ -4087,7 +4076,7 @@
             </li>
 
             <li>
-              <p><strong>DISC (stackable)</strong></p>
+              <p><a name="binda_disc"></a><strong>DISC (stackable)</strong></p>
 
               <p><strong>bind disc &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;<br>
               proc-name &lt;botname&gt;</strong></p>
@@ -4102,7 +4091,7 @@
             </li>
 
             <li>
-              <p><strong>SPLT (stackable)</strong></p>
+              <p><a name="binda_splt"></a><strong>SPLT (stackable)</strong></p>
 
               <p><strong>bind splt &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;<br>
               procname &lt;nick&gt; &lt;user@host&gt; &lt;handle&gt;
@@ -4120,7 +4109,7 @@
             </li>
 
             <li>
-              <p><strong>REJN (stackable)</strong></p>
+              <p><a name="binda_rejn"></a><strong>REJN (stackable)</strong></p>
 
               <p><strong>bind rejn &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;<br>
               procname &lt;nick&gt; &lt;user@host&gt; &lt;handle&gt;
@@ -4134,7 +4123,7 @@
             </li>
 
             <li>
-              <p><strong>FILT (stackable)</strong></p>
+              <p><a name="binda_filt"></a><strong>FILT (stackable)</strong></p>
 
               <p><strong>bind filt &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;<br>
               procname &lt;idx&gt; &lt;text&gt;</strong></p>
@@ -4149,7 +4138,7 @@
             </li>
 
             <li>
-              <p><strong>NEED (stackable)</strong></p>
+              <p><a name="binda_need"></a><strong>NEED (stackable)</strong></p>
 
               <p><strong>bind need &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;<br>
               procname &lt;channel&gt; &lt;type&gt;</strong></p>
@@ -4170,7 +4159,7 @@
             </li>
 
             <li>
-              <p><strong>FLUD (stackable)</strong></p>
+              <p><a name="binda_flud"></a><strong>FLUD (stackable)</strong></p>
 
               <p><strong>bind flud &lt;flags&gt; &lt;type&gt; &lt;proc&gt;<br>
               procname &lt;nick&gt; &lt;user@host&gt; &lt;handle&gt;
@@ -4188,7 +4177,7 @@
             </li>
 
             <li>
-              <p><strong>NOTE (stackable)</strong></p>
+              <p><a name="binda_note"></a><strong>NOTE (stackable)</strong></p>
 
               <p><strong>bind note &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;<br>
               procname &lt;from&gt; &lt;to&gt; &lt;text&gt;</strong></p>
@@ -4204,7 +4193,7 @@
             </li>
 
             <li>
-              <p><strong>ACT (stackable)</strong></p>
+              <p><a name="binda_act"></a><strong>ACT (stackable)</strong></p>
 
               <p><strong>bind act &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;<br>
               proc-name &lt;handle&gt; &lt;channel#&gt;
@@ -4219,7 +4208,7 @@
             </li>
 
             <li>
-              <p><strong>WALL (stackable)</strong></p>
+              <p><a name="binda_wall"></a><strong>WALL (stackable)</strong></p>
 
               <p><strong>bind wall &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;<br>
               proc-name &lt;handle&gt; &lt;msg&gt;</strong></p>
@@ -4237,7 +4226,7 @@
             </li>
 
             <li>
-              <p><strong>BCST (stackable)</strong></p>
+              <p><a name="binda_bcst"></a><strong>BCST (stackable)</strong></p>
 
               <p><strong>bind bcst &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;<br>
               proc-name &lt;botname&gt; &lt;channel#&gt;
@@ -4259,7 +4248,7 @@
             </li>
 
             <li>
-              <p><strong>CHJN (stackable)</strong></p>
+              <p><a name="binda_chjn"></a><strong>CHJN (stackable)</strong></p>
 
               <p><strong>bind chjn &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;<br>
               proc-name &lt;botname&gt; &lt;handle&gt; &lt;channel#&gt;
@@ -4275,7 +4264,7 @@
             </li>
 
             <li>
-              <p><strong>CHPT (stackable)</strong></p>
+              <p><a name="binda_chpt"></a><strong>CHPT (stackable)</strong></p>
 
               <p><strong>bind chpt &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;<br>
               proc-name &lt;botname&gt; &lt;handle&gt; &lt;idx&gt;
@@ -4289,7 +4278,7 @@
             </li>
 
             <li>
-              <p><strong>TIME (stackable)</strong></p>
+              <p><a name="binda_time"></a><strong>TIME (stackable)</strong></p>
 
               <p><strong>bind time &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;<br>
               proc-name &lt;minute&gt; &lt;hour&gt; &lt;day&gt; &lt;month&gt;
@@ -4306,7 +4295,7 @@
             </li>
 
             <li>
-              <p><strong>AWAY (stackable)</strong></p>
+              <p><a name="binda_away"></a><strong>AWAY (stackable)</strong></p>
 
               <p><strong>bind away &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;<br>
               proc-name &lt;botname&gt; &lt;idx&gt; &lt;text&gt;</strong></p>
@@ -4321,7 +4310,7 @@
             </li>
 
             <li>
-              <p><strong>LOAD (stackable)</strong></p>
+              <p><a name="binda_load"></a><strong>LOAD (stackable)</strong></p>
 
               <p><strong>bind load &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;<br>
               proc-name &lt;module&gt;</strong></p>
@@ -4334,7 +4323,7 @@
             </li>
 
             <li>
-              <p><strong>UNLD (stackable)</strong></p>
+              <p><a name="binda_unld"></a><strong>UNLD (stackable)</strong></p>
 
               <p><strong>bind unld &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;<br>
               proc-name &lt;module&gt;</strong></p>
@@ -4347,7 +4336,7 @@
             </li>
 
             <li>
-              <p><strong>NKCH (stackable)</strong></p>
+              <p><a name="binda_nkch"></a><strong>NKCH (stackable)</strong></p>
 
               <p><strong>bind nkch &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;<br>
               proc-name &lt;oldhandle&gt; &lt;newhandle&gt;</strong></p>
@@ -4361,7 +4350,7 @@
             </li>
 
             <li>
-              <p><strong>EVNT (stackable)</strong></p>
+              <p><a name="binda_evnt"></a><strong>EVNT (stackable)</strong></p>
 
               <p><strong>bind evnt &lt;flags&gt; &lt;type&gt; &lt;proc&gt;<br>
               proc-name &lt;type&gt;</strong></p>
@@ -4522,7 +4511,7 @@
             </li>
 
             <li>
-              <p><strong>LOST (stackable)</strong></p>
+              <p><a name="binda_lost"></a><strong>LOST (stackable)</strong></p>
 
               <p><strong>bind lost &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;<br>
               proc-name &lt;handle&gt; &lt;nick&gt; &lt;path&gt;
@@ -4537,7 +4526,7 @@
             </li>
 
             <li>
-              <p><strong>TOUT (stackable)</strong></p>
+              <p><a name="binda_tout"></a><strong>TOUT (stackable)</strong></p>
 
               <p><strong>bind tout &lt;flags&gt; &lt;mask&gt; &lt;proc&gt;<br>
               proc-name &lt;handle&gt; &lt;nick&gt; &lt;path&gt;
@@ -4569,7 +4558,7 @@
 
           <ol>
             <li>
-              <p><strong>MSG</strong></p>
+              <p><a name="bindb_msg"></a><strong>MSG</strong></p>
 
               <p>Return 1 to make Eggdrop log the command as:</p>
 
@@ -4579,7 +4568,7 @@
             </li>
 
             <li>
-              <p><strong>DCC</strong></p>
+              <p><a name="bindb_dcc"></a><strong>DCC</strong></p>
 
               <p>Return 1 to make Eggdrop log the command as:</p>
 
@@ -4589,7 +4578,7 @@
             </li>
 
             <li>
-              <p><strong>FIL</strong></p>
+              <p><a name="bindb_fil"></a><strong>FIL</strong></p>
 
               <p>Return 1 to make Eggdrop log the command as:</p>
 
@@ -4599,7 +4588,7 @@
             </li>
 
             <li>
-              <p><strong>PUB</strong></p>
+              <p><a name="bindb_pub"></a><strong>PUB</strong></p>
 
               <p>Return 1 to make Eggdrop log the command as:</p>
 
@@ -4609,7 +4598,7 @@
             </li>
 
             <li>
-              <p><strong>CTCP</strong></p>
+              <p><a name="bindb_ctcp"></a><strong>CTCP</strong></p>
 
               <p>Return 1 to ask the bot not to process the CTCP command on
               its own. Otherwise, it would send its own response to the CTCP
@@ -4618,7 +4607,7 @@
             </li>
 
             <li>
-              <p><strong>FILT</strong></p>
+              <p><a name="bindb_filt"></a><strong>FILT</strong></p>
 
               <p>Return "" to indicate the text has been processed, and the
               bot should just ignore it. Otherwise, it will treat the text
@@ -4626,14 +4615,14 @@
             </li>
 
             <li>
-              <p><strong>FLUD</strong></p>
+              <p><a name="bindb_flud"></a><strong>FLUD</strong></p>
 
               <p>Return 1 to ask the bot not to take action on the flood.
               Otherwise it will do its normal punishment.</p>
             </li>
 
             <li>
-              <p><strong>RAW</strong></p>
+              <p><a name="bindb_raw"></a><strong>RAW</strong></p>
 
               <p>Return 1 to ask the bot not to process the server text.
               This can affect the bot&#39;s performance by causing it to
@@ -4642,28 +4631,28 @@
             </li>
 
             <li>
-              <p><strong>CHON</strong></p>
+              <p><a name="bindb_chon"></a><strong>CHON</strong></p>
 
               <p>Return 1 to ask the bot not to process the partyline join
               event.</p>
             </li>
 
             <li>
-              <p><strong>CHOF</strong></p>
+              <p><a name="bindb_chof"></a><strong>CHOF</strong></p>
 
               <p>Return 1 to ask the bot not to process the partyline part
               event.</p>
             </li>
 
             <li>
-              <p><strong>WALL</strong></p>
+              <p><a name="bindb_wall"></a><strong>WALL</strong></p>
 
               <p>Return 1 to make Eggdrop not log the message that
               triggered this bind.</p>
             </li>
 
             <li>
-              <p><strong>NOTE</strong></p>
+              <p><a name="bindb_note"></a><strong>NOTE</strong></p>
 
               <p>Return 1 to make Eggdrop not process the note any
               further. This includes stacked note bindings that would
@@ -4672,21 +4661,21 @@
             </li>
 
             <li>
-              <p><strong>MSGM</strong></p>
+              <p><a name="bindb_msgm"></a><strong>MSGM</strong></p>
 
               <p>Return 1 to make Eggdrop not log the message that
               triggered this bind.</p>
             </li>
 
             <li>
-              <p><strong>PUBM</strong></p>
+              <p><a name="bindb_pubm"></a><strong>PUBM</strong></p>
 
               <p>Return 1 to make Eggdrop not log the message that
               triggered this bind.</p>
             </li>
 
             <li>
-              <p><strong>NOTC</strong></p>
+              <p><a name="bindb_notc"></a><strong>NOTC</strong></p>
 
               <p>Return 1 to make Eggdrop not log the message that
               triggered this bind.</p>
