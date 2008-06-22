@@ -1,4 +1,4 @@
-$Id: UPDATES1.6,v 1.654 2008/06/21 18:24:08 guppy Exp $
+$Id: UPDATES1.6,v 1.655 2008/06/22 16:17:20 tothwolf Exp $
 
 Eggdrop Changes (since v1.6.0)
     _____________________________________________________________________
@@ -15,27 +15,12 @@ Eggdrop Changes (since v1.6.0)
     - minor documentation updates
     * Patch by: skiidoo
 
-    - minor raw logging fix when the server sends the command
-    * Found by: simple - Patch by: guppy
-
-    - tcl_maskhost could crash the bot
-    * Patch by: FireEgl
-
-    - changed some JOINs to use DP_SERVER instead of DP_MODE
-    * Found by: Komandar - Patch by: guppy
-
-    - Updated config.guess and config.sub build system triplet
-      detection scripts to the latest versions.
-      These were nearly 7 years old and way overdue for an update.
+    - Updated exec magic tricks in the autobotchk and weed scripts.
+    - Check for a working 'grep -E' before resorting to 'egrep'.
+    - Use "$0" ${1+"$@"} in place of "$0" "$@" to avoid problems with
+      broken sh implementations that expand "$@" into a single empty
+      argument when there are no other arguments.
     * Patch by: Tothwolf
-
-    - Modified releaseprep script to run cvs2cl so we will (hopefully)
-      have an up-to-date ChangeLog file before each release.
-    * Patch by: Tothwolf
-
-    - Added argument checking to randstring proc in alltools.tcl to
-      make it a little more robust.
-    * Found by: thommey - Patch by: Tothwolf
 
     - Completely rewrote EGG_TCL_CHECK_THREADS autoconf macro to make
       --enable-tcl-threads and --disable-tcl-threads threaded Tcl library
@@ -52,12 +37,27 @@ Eggdrop Changes (since v1.6.0)
       support is enabled.
     * Patch by: Tothwolf
 
-    - Updated exec magic tricks in the autobotchk and weed scripts.
-    - Check for a working 'grep -E' before resorting to 'egrep'.
-    - Use "$0" ${1+"$@"} in place of "$0" "$@" to avoid problems with
-      broken sh implementations that expand "$@" into a single empty
-      argument when there are no other arguments.
+    - Added argument checking to randstring proc in alltools.tcl to
+      make it a little more robust.
+    * Found by: thommey - Patch by: Tothwolf
+
+    - Modified releaseprep script to run cvs2cl so we will (hopefully)
+      have an up-to-date ChangeLog file before each release.
     * Patch by: Tothwolf
+
+    - Updated config.guess and config.sub build system triplet
+      detection scripts to the latest versions.
+      These were nearly 7 years old and way overdue for an update.
+    * Patch by: Tothwolf
+
+    - minor raw logging fix when the server sends the command
+    * Found by: simple - Patch by: guppy
+
+    - tcl_maskhost could crash the bot
+    * Patch by: FireEgl
+
+    - changed some JOINs to use DP_SERVER instead of DP_MODE
+    * Found by: Komandar - Patch by: guppy
 
 
   1.6.19 (18 April 2008):
@@ -1129,6 +1129,7 @@ slennox   Sup       Updated the help channels in the docs.
 
 1.6.4 (13 April 2001)
 Found by  Fixed by  What...
+          Sup       Minor fixes to write_debug() function.
           Eugene    more German translations and some typo fixes
           guppy     modified weed and autobotchk to find tclsh better
 NaTaS     ITE       fixed weed's b<days> switch
@@ -1158,7 +1159,6 @@ Darude    Darude/   encrypt/decrypt with highbit character messed up the
           Wingman   string
 KingBob   Tothwolf/ Fixed rest of the problems with utf8 characters.
           Wingman
-          Sup       Minor fixes to write_debug() function.
 
 
 1.6.3 (27 February 2001)
