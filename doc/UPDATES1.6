@@ -1,4 +1,4 @@
-$Id: UPDATES1.6,v 1.655 2008/06/22 16:17:20 tothwolf Exp $
+$Id: UPDATES1.6,v 1.656 2008/06/29 16:39:41 guppy Exp $
 
 Eggdrop Changes (since v1.6.0)
     _____________________________________________________________________
@@ -12,6 +12,11 @@ Eggdrop Changes (since v1.6.0)
 
 
   1.6.20:
+    - always send a "WHO chname" instead of sending a "WHO nick" which doesn't
+      have the same behaviour across all irc daemons.
+    - improved use_354 support as we weren't using it everywhere we could
+    * Patch by: thommey
+
     - minor documentation updates
     * Patch by: skiidoo
 

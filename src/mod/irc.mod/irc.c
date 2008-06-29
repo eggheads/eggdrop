@@ -2,7 +2,7 @@
  * irc.c -- part of irc.mod
  *   support for channels within the bot
  *
- * $Id: irc.c,v 1.107 2008/04/28 23:54:23 guppy Exp $
+ * $Id: irc.c,v 1.108 2008/06/29 16:39:42 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -281,6 +281,15 @@ static int hand_on_chan(struct chanset_t *chan, struct userrec *u)
   return 0;
 }
 
+static void refresh_who_chan(char *channame)
+{
+  if (use_354)
+    dprintf(DP_MODE, "WHO %s c%%chnuf\n", channame);
+  else
+    dprintf(DP_MODE, "WHO %s\n", channame);
+  return;
+}
+
 /* Adds a ban, exempt or invite mask to the list
  * m should be chan->channel.(exempt|invite|ban)
  */
@@ -431,10 +440,7 @@ static void reset_chan_info(struct chanset_t *chan)
     }
     /* These 2 need to get out asap, so into the mode queue */
     dprintf(DP_MODE, "MODE %s\n", chan->name);
-    if (use_354)
-      dprintf(DP_MODE, "WHO %s %%c%%h%%n%%u%%f\n", chan->name);
-    else
-      dprintf(DP_MODE, "WHO %s\n", chan->name);
+    refresh_who_chan(chan->name);
     /* clear_channel nuked the data...so */
     dprintf(DP_MODE, "TOPIC %s\r\n", chan->name);
   }

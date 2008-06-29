@@ -4,7 +4,7 @@
  *   channel mode changes and the bot's reaction to them
  *   setting and getting the current wanted channel modes
  *
- * $Id: mode.c,v 1.83 2008/02/16 21:41:09 guppy Exp $
+ * $Id: mode.c,v 1.84 2008/06/29 16:39:42 guppy Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -388,7 +388,7 @@ static void got_op(struct chanset_t *chan, char *nick, char *from,
     if (channel_pending(chan))
       return;
     putlog(LOG_MISC, chan->dname, CHAN_BADCHANMODE, chan->dname, who);
-    dprintf(DP_MODE, "WHO %s\n", who);
+    refresh_who_chan(chan->name);
     return;
   }
   /* Did *I* just get opped? */
@@ -479,7 +479,7 @@ static void got_halfop(struct chanset_t *chan, char *nick, char *from,
     if (channel_pending(chan))
       return;
     putlog(LOG_MISC, chan->dname, CHAN_BADCHANMODE, chan->dname, who);
-    dprintf(DP_MODE, "WHO %s\n", who);
+    refresh_who_chan(chan->name);
     return;
   }
   if (!me_op(chan) && match_my_nick(who))
@@ -566,7 +566,7 @@ static void got_deop(struct chanset_t *chan, char *nick, char *from,
     if (channel_pending(chan))
       return;
     putlog(LOG_MISC, chan->dname, CHAN_BADCHANMODE, chan->dname, who);
-    dprintf(DP_MODE, "WHO %s\n", who);
+    refresh_who_chan(chan->name);
     return;
   }
 
@@ -614,11 +614,11 @@ static void got_deop(struct chanset_t *chan, char *nick, char *from,
    * check to see if they have +v or +h
    */
   if (!(m->flags & (CHANVOICE | STOPWHO))) {
-    dprintf(DP_HELP, "WHO %s\n", m->nick);
+    refresh_who_chan(chan->name);
     m->flags |= STOPWHO;
   }
   if (!(m->flags & (CHANHALFOP | STOPWHO))) {
-    dprintf(DP_HELP, "WHO %s\n", m->nick);
+    refresh_who_chan(chan->name);
     m->flags |= STOPWHO;
   }
   /* Was the bot deopped? */
@@ -653,7 +653,7 @@ static void got_dehalfop(struct chanset_t *chan, char *nick, char *from,
     if (channel_pending(chan))
       return;
     putlog(LOG_MISC, chan->dname, CHAN_BADCHANMODE, chan->dname, who);
-    dprintf(DP_MODE, "WHO %s\n", who);
+    refresh_who_chan(chan->name);
     return;
   }
 
@@ -698,7 +698,7 @@ static void got_dehalfop(struct chanset_t *chan, char *nick, char *from,
     putlog(LOG_MODES, chan->dname, "TS resync (%s): %s deopped by %s",
            chan->dname, who, from);
   if (!(m->flags & (CHANVOICE | STOPWHO))) {
-    dprintf(DP_HELP, "WHO %s\n", m->nick);
+    refresh_who_chan(chan->name);
     m->flags |= STOPWHO;
   }
 }
@@ -1167,7 +1167,7 @@ static int gotmode(char *from, char *origmsg)
             if (channel_pending(chan))
               break;
             putlog(LOG_MISC, chan->dname, CHAN_BADCHANMODE, chan->dname, op);
-            dprintf(DP_MODE, "WHO %s\n", op);
+            refresh_who_chan(chan->name);
           } else {
             simple_sprintf(s, "%s!%s", m->nick, m->userhost);
             get_user_flagrec(m->user ? m->user : get_user_by_host(s),
