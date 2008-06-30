@@ -2,7 +2,7 @@
  * irc.c -- part of irc.mod
  *   support for channels within the bot
  *
- * $Id: irc.c,v 1.109 2008/06/30 18:45:42 tothwolf Exp $
+ * $Id: irc.c,v 1.110 2008/06/30 19:12:27 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -684,7 +684,7 @@ static void check_expired_chanstuff()
       }
       check_lonely_channel(chan);
     } else if (!channel_inactive(chan) && !channel_pending(chan))
-      dprintf(DP_MODE, "JOIN %s %s\n",
+      dprintf(DP_SERVER, "JOIN %s %s\n",
               (chan->name[0]) ? chan->name : chan->dname,
               chan->channel.key[0] ? chan->channel.key : chan->key_prot);
   }

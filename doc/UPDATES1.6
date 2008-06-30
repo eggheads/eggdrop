@@ -1,4 +1,4 @@
-$Id: UPDATES1.6,v 1.658 2008/06/30 18:45:42 tothwolf Exp $
+$Id: UPDATES1.6,v 1.659 2008/06/30 19:12:27 tothwolf Exp $
 
 Eggdrop Changes (since v1.6.0)
     _____________________________________________________________________
@@ -12,6 +12,10 @@ Eggdrop Changes (since v1.6.0)
 
 
   1.6.20:
+    - Make the JOIN in check_expired_chanstuff() use DP_SERVER instead of
+      DP_MODE to prevent the bot from sending multiple JOIN requests.
+    * Found by: simple - Patch by: thommey
+
     - Refactored reset_chan_info() to make it a little easier on maintainers.
     - Removed a useless '\r' from the dprintf() TOPIC check in
       reset_chan_info(). This was from the "Request topic on channel reset"
@@ -23,7 +27,7 @@ Eggdrop Changes (since v1.6.0)
       No need to duplicate the entire test, just add 'CHANHALFOP'.
     * Patch by: Tothwolf
 
-    - set CHAN_PEND when calling refresh_who_chan() to avoid possibly sending
+    - Set CHAN_PEND when calling refresh_who_chan() to avoid possibly sending
       extra WHO requests to the server if a WHO was already sent.
     * Found by: Tothwolf - Patch by: thommey
 
