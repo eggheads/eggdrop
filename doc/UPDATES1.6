@@ -1,4 +1,4 @@
-$Id: UPDATES1.6,v 1.656 2008/06/29 16:39:41 guppy Exp $
+$Id: UPDATES1.6,v 1.657 2008/06/30 16:41:47 tothwolf Exp $
 
 Eggdrop Changes (since v1.6.0)
     _____________________________________________________________________
@@ -12,6 +12,10 @@ Eggdrop Changes (since v1.6.0)
 
 
   1.6.20:
+    - set CHAN_PEND when calling refresh_who_chan() to avoid possibly sending
+      extra WHO requests to the server if a WHO was already sent.
+    * Found by: Tothwolf - Patch by: thommey
+
     - always send a "WHO chname" instead of sending a "WHO nick" which doesn't
       have the same behaviour across all irc daemons.
     - improved use_354 support as we weren't using it everywhere we could

@@ -4,7 +4,7 @@
  *   channel mode changes and the bot's reaction to them
  *   setting and getting the current wanted channel modes
  *
- * $Id: mode.c,v 1.84 2008/06/29 16:39:42 guppy Exp $
+ * $Id: mode.c,v 1.85 2008/06/30 16:41:47 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -388,6 +388,7 @@ static void got_op(struct chanset_t *chan, char *nick, char *from,
     if (channel_pending(chan))
       return;
     putlog(LOG_MISC, chan->dname, CHAN_BADCHANMODE, chan->dname, who);
+    chan->status |= CHAN_PEND;
     refresh_who_chan(chan->name);
     return;
   }
@@ -479,6 +480,7 @@ static void got_halfop(struct chanset_t *chan, char *nick, char *from,
     if (channel_pending(chan))
       return;
     putlog(LOG_MISC, chan->dname, CHAN_BADCHANMODE, chan->dname, who);
+    chan->status |= CHAN_PEND;
     refresh_who_chan(chan->name);
     return;
   }
@@ -566,6 +568,7 @@ static void got_deop(struct chanset_t *chan, char *nick, char *from,
     if (channel_pending(chan))
       return;
     putlog(LOG_MISC, chan->dname, CHAN_BADCHANMODE, chan->dname, who);
+    chan->status |= CHAN_PEND;
     refresh_who_chan(chan->name);
     return;
   }
@@ -614,10 +617,12 @@ static void got_deop(struct chanset_t *chan, char *nick, char *from,
    * check to see if they have +v or +h
    */
   if (!(m->flags & (CHANVOICE | STOPWHO))) {
+    chan->status |= CHAN_PEND;
     refresh_who_chan(chan->name);
     m->flags |= STOPWHO;
   }
   if (!(m->flags & (CHANHALFOP | STOPWHO))) {
+    chan->status |= CHAN_PEND;
     refresh_who_chan(chan->name);
     m->flags |= STOPWHO;
   }
@@ -653,6 +658,7 @@ static void got_dehalfop(struct chanset_t *chan, char *nick, char *from,
     if (channel_pending(chan))
       return;
     putlog(LOG_MISC, chan->dname, CHAN_BADCHANMODE, chan->dname, who);
+    chan->status |= CHAN_PEND;
     refresh_who_chan(chan->name);
     return;
   }
@@ -698,6 +704,7 @@ static void got_dehalfop(struct chanset_t *chan, char *nick, char *from,
     putlog(LOG_MODES, chan->dname, "TS resync (%s): %s deopped by %s",
            chan->dname, who, from);
   if (!(m->flags & (CHANVOICE | STOPWHO))) {
+    chan->status |= CHAN_PEND;
     refresh_who_chan(chan->name);
     m->flags |= STOPWHO;
   }
@@ -1167,6 +1174,7 @@ static int gotmode(char *from, char *origmsg)
             if (channel_pending(chan))
               break;
             putlog(LOG_MISC, chan->dname, CHAN_BADCHANMODE, chan->dname, op);
+            chan->status |= CHAN_PEND;
             refresh_who_chan(chan->name);
           } else {
             simple_sprintf(s, "%s!%s", m->nick, m->userhost);
