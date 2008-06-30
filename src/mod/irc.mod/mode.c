@@ -4,7 +4,7 @@
  *   channel mode changes and the bot's reaction to them
  *   setting and getting the current wanted channel modes
  *
- * $Id: mode.c,v 1.85 2008/06/30 16:41:47 tothwolf Exp $
+ * $Id: mode.c,v 1.86 2008/06/30 18:45:42 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -392,6 +392,7 @@ static void got_op(struct chanset_t *chan, char *nick, char *from,
     refresh_who_chan(chan->name);
     return;
   }
+
   /* Did *I* just get opped? */
   if (!me_op(chan) && match_my_nick(who))
     check_chan = 1;
@@ -484,7 +485,9 @@ static void got_halfop(struct chanset_t *chan, char *nick, char *from,
     refresh_who_chan(chan->name);
     return;
   }
-  if (!me_op(chan) && match_my_nick(who))
+
+  /* Did *I* just get halfopped? */
+  if (!me_op(chan) && !me_halfop(chan) && match_my_nick(who))
     check_chan = 1;
 
   if (!m->user) {
@@ -610,22 +613,20 @@ static void got_deop(struct chanset_t *chan, char *nick, char *from,
   if (!nick[0])
     putlog(LOG_MODES, chan->dname, "TS resync (%s): %s deopped by %s",
            chan->dname, who, from);
+
   /* Check for mass deop */
   if (nick[0])
     detect_chan_flood(nick, from, s1, chan, FLOOD_DEOP, who);
-  /* Having op hides your +v and +h  status -- so now that someone's lost ops,
+
+  /* Having op hides your +v and +h status -- so now that someone's lost ops,
    * check to see if they have +v or +h
    */
-  if (!(m->flags & (CHANVOICE | STOPWHO))) {
+  if (!(m->flags & (CHANVOICE | CHANHALFOP | STOPWHO))) {
     chan->status |= CHAN_PEND;
     refresh_who_chan(chan->name);
     m->flags |= STOPWHO;
   }
-  if (!(m->flags & (CHANHALFOP | STOPWHO))) {
-    chan->status |= CHAN_PEND;
-    refresh_who_chan(chan->name);
-    m->flags |= STOPWHO;
-  }
+
   /* Was the bot deopped? */
   if (match_my_nick(who)) {
     /* Cancel any pending kicks and modes */

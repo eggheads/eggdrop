@@ -1,4 +1,4 @@
-$Id: UPDATES1.6,v 1.657 2008/06/30 16:41:47 tothwolf Exp $
+$Id: UPDATES1.6,v 1.658 2008/06/30 18:45:42 tothwolf Exp $
 
 Eggdrop Changes (since v1.6.0)
     _____________________________________________________________________
@@ -12,6 +12,17 @@ Eggdrop Changes (since v1.6.0)
 
 
   1.6.20:
+    - Refactored reset_chan_info() to make it a little easier on maintainers.
+    - Removed a useless '\r' from the dprintf() TOPIC check in
+      reset_chan_info(). This was from the "Request topic on channel reset"
+      patch in 1.6.18, which re-added the TOPIC check that someone
+      needlessly removed in 1.6.7.
+    - got_halfop() was improperly checking !me_op() to see if it should call
+      recheck_channel(). Now it checks !me_halfop() in addition to !me_op()
+    - Removed duplicate code in got_deop() for hidden +v / +h checking.
+      No need to duplicate the entire test, just add 'CHANHALFOP'.
+    * Patch by: Tothwolf
+
     - set CHAN_PEND when calling refresh_who_chan() to avoid possibly sending
       extra WHO requests to the server if a WHO was already sent.
     * Found by: Tothwolf - Patch by: thommey
