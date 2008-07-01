@@ -2,7 +2,7 @@
  * irc.c -- part of irc.mod
  *   support for channels within the bot
  *
- * $Id: irc.c,v 1.110 2008/06/30 19:12:27 tothwolf Exp $
+ * $Id: irc.c,v 1.111 2008/07/01 00:20:04 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -536,9 +536,14 @@ static void check_lonely_channel(struct chanset_t *chan)
     if (chan->name[0] != '+') { /* Its pointless to cycle + chans for ops */
       putlog(LOG_MISC, "*", "Trying to cycle %s to regain ops.", chan->dname);
       dprintf(DP_MODE, "PART %s\n", chan->name);
+
       /* If it's a !chan, we need to recreate the channel with !!chan <cybah> */
-      dprintf(DP_MODE, "JOIN %s%s %s\n", (chan->dname[0] == '!') ? "!" : "",
-              chan->dname, chan->key_prot);
+      if (chan->key_prot[0])
+        dprintf(DP_MODE, "JOIN %s%s %s\n", (chan->dname[0] == '!') ? "!" : "",
+                chan->dname, chan->key_prot);
+      else
+        dprintf(DP_MODE, "JOIN %s%s\n", (chan->dname[0] == '!') ? "!" : "",
+                chan->dname);
       whined = 0;
     }
   } else if (any_ops(chan)) {
@@ -587,7 +592,7 @@ static void check_expired_chanstuff()
 {
   masklist *b, *e;
   memberlist *m, *n;
-  char s[UHOSTLEN];
+  char *key, s[UHOSTLEN];
   struct chanset_t *chan;
   struct flag_record fr = { FR_GLOBAL | FR_CHAN, 0, 0, 0, 0, 0 };
 
@@ -683,10 +688,16 @@ static void check_expired_chanstuff()
         m = n;
       }
       check_lonely_channel(chan);
-    } else if (!channel_inactive(chan) && !channel_pending(chan))
-      dprintf(DP_SERVER, "JOIN %s %s\n",
-              (chan->name[0]) ? chan->name : chan->dname,
-              chan->channel.key[0] ? chan->channel.key : chan->key_prot);
+    } else if (!channel_inactive(chan) && !channel_pending(chan)) {
+
+      key = chan->channel.key[0] ? chan->channel.key : chan->key_prot;
+      if (key[0])
+        dprintf(DP_SERVER, "JOIN %s %s\n",
+                chan->name[0] ? chan->name : chan->dname, key);
+      else
+        dprintf(DP_SERVER, "JOIN %s\n",
+                chan->name[0] ? chan->name : chan->dname);
+    }
   }
 }
 
@@ -1097,7 +1108,9 @@ static char *irc_close()
 {
   struct chanset_t *chan;
 
+  /* Force bot to part all channels */
   dprintf(DP_MODE, "JOIN 0\n");
+
   for (chan = chanset; chan; chan = chan->next)
     clear_channel(chan, 1);
   del_bind_table(H_topc);
@@ -1190,9 +1203,14 @@ char *irc_start(Function *global_funcs)
     return "This module requires channels module 1.0 or later.";
   }
   for (chan = chanset; chan; chan = chan->next) {
-    if (!channel_inactive(chan))
-      dprintf(DP_SERVER, "JOIN %s %s\n",
-              (chan->name[0]) ? chan->name : chan->dname, chan->key_prot);
+    if (!channel_inactive(chan)) {
+      if (chan->key_prot[0])
+        dprintf(DP_SERVER, "JOIN %s %s\n",
+                chan->name[0] ? chan->name : chan->dname, chan->key_prot);
+      else
+        dprintf(DP_SERVER, "JOIN %s\n",
+                chan->name[0] ? chan->name : chan->dname);
+    }
     chan->status &= ~(CHAN_ACTIVE | CHAN_PEND | CHAN_ASKEDBANS);
     chan->ircnet_status &= ~(CHAN_ASKED_INVITED | CHAN_ASKED_EXEMPTS);
   }

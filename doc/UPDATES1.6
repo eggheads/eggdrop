@@ -1,4 +1,4 @@
-$Id: UPDATES1.6,v 1.659 2008/06/30 19:12:27 tothwolf Exp $
+$Id: UPDATES1.6,v 1.660 2008/07/01 00:20:03 tothwolf Exp $
 
 Eggdrop Changes (since v1.6.0)
     _____________________________________________________________________
@@ -12,6 +12,10 @@ Eggdrop Changes (since v1.6.0)
 
 
   1.6.20:
+    - Bot would send 'JOIN #chan ' to the server with trailing whitespace
+      when joining channels that didn't require a key.
+    * Found by: simple - Patch by: Tothwolf
+
     - Make the JOIN in check_expired_chanstuff() use DP_SERVER instead of
       DP_MODE to prevent the bot from sending multiple JOIN requests.
     * Found by: simple - Patch by: thommey

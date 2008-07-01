@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  *
- * $Id: chan.c,v 1.126 2008/04/28 23:54:23 guppy Exp $
+ * $Id: chan.c,v 1.127 2008/07/01 00:20:03 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1099,7 +1099,7 @@ static int got354(char *from, char *msg)
  */
 static int got315(char *from, char *msg)
 {
-  char *chname;
+  char *chname, *key;
   struct chanset_t *chan;
 
   newsplit(&msg);
@@ -1115,9 +1115,14 @@ static int got315(char *from, char *msg)
            chan->dname);
     clear_channel(chan, 1);
     chan->status &= ~CHAN_ACTIVE;
-    dprintf(DP_SERVER, "JOIN %s %s\n",
-            (chan->name[0]) ? chan->name : chan->dname,
-            chan->channel.key[0] ? chan->channel.key : chan->key_prot);
+
+    key = chan->channel.key[0] ? chan->channel.key : chan->key_prot;
+    if (key[0])
+      dprintf(DP_SERVER, "JOIN %s %s\n",
+              chan->name[0] ? chan->name : chan->dname, key);
+    else
+      dprintf(DP_SERVER, "JOIN %s\n",
+              chan->name[0] ? chan->name : chan->dname);
   } else if (me_op(chan))
     recheck_channel(chan, 1);
   else if (chan->channel.members == 1)
@@ -1446,7 +1451,11 @@ static int got475(char *from, char *msg)
       nfree(chan->channel.key);
       chan->channel.key = (char *) channel_malloc(1);
       chan->channel.key[0] = 0;
-      dprintf(DP_SERVER, "JOIN %s %s\n", chan->dname, chan->key_prot);
+
+      if (chan->key_prot[0])
+        dprintf(DP_SERVER, "JOIN %s %s\n", chan->dname, chan->key_prot);
+      else
+        dprintf(DP_SERVER, "JOIN %s\n", chan->dname);
     } else {
       check_tcl_need(chan->dname, "key");
 
@@ -1466,7 +1475,7 @@ static int got475(char *from, char *msg)
  */
 static int gotinvite(char *from, char *msg)
 {
-  char *nick;
+  char *nick, *key;
   struct chanset_t *chan;
 
   newsplit(&msg);
@@ -1486,9 +1495,16 @@ static int gotinvite(char *from, char *msg)
 
   if (chan && (channel_pending(chan) || channel_active(chan)))
     dprintf(DP_HELP, "NOTICE %s :I'm already here.\n", nick);
-  else if (chan && !channel_inactive(chan))
-    dprintf(DP_SERVER, "JOIN %s %s\n", (chan->name[0]) ? chan->name : chan->dname,
-            chan->channel.key[0] ? chan->channel.key : chan->key_prot);
+  else if (chan && !channel_inactive(chan)) {
+
+    key = chan->channel.key[0] ? chan->channel.key : chan->key_prot;
+    if (key[0])
+      dprintf(DP_SERVER, "JOIN %s %s\n",
+              chan->name[0] ? chan->name : chan->dname, key);
+    else
+      dprintf(DP_SERVER, "JOIN %s\n",
+              chan->name[0] ? chan->name : chan->dname);
+  }
   return 0;
 }
 
@@ -1894,7 +1910,7 @@ exit:
  */
 static int gotpart(char *from, char *msg)
 {
-  char *nick, *chname;
+  char *nick, *chname, *key;
   struct chanset_t *chan;
   struct userrec *u;
 
@@ -1939,10 +1955,16 @@ static int gotpart(char *from, char *msg)
     if (match_my_nick(nick)) {
       clear_channel(chan, 1);
       chan->status &= ~(CHAN_ACTIVE | CHAN_PEND);
-      if (!channel_inactive(chan))
-        dprintf(DP_SERVER, "JOIN %s %s\n",
-                (chan->name[0]) ? chan->name : chan->dname,
-                chan->channel.key[0] ? chan->channel.key : chan->key_prot);
+      if (!channel_inactive(chan)) {
+
+        key = chan->channel.key[0] ? chan->channel.key : chan->key_prot;
+        if (key[0])
+          dprintf(DP_SERVER, "JOIN %s %s\n",
+                  chan->name[0] ? chan->name : chan->dname, key);
+        else
+          dprintf(DP_SERVER, "JOIN %s\n",
+                  chan->name[0] ? chan->name : chan->dname);
+      }
     } else
       check_lonely_channel(chan);
   }
@@ -1954,7 +1976,7 @@ static int gotpart(char *from, char *msg)
 static int gotkick(char *from, char *origmsg)
 {
   char *nick, *whodid, *chname, s1[UHOSTLEN], buf[UHOSTLEN], *uhost = buf;
-  char buf2[511], *msg;
+  char buf2[511], *msg, *key;
   memberlist *m;
   struct chanset_t *chan;
   struct userrec *u;
@@ -1971,9 +1993,14 @@ static int gotkick(char *from, char *origmsg)
   if (match_my_nick(nick) && channel_pending(chan) &&
       !channel_inactive(chan)) {
     chan->status &= ~(CHAN_ACTIVE | CHAN_PEND);
-    dprintf(DP_SERVER, "JOIN %s %s\n",
-            (chan->name[0]) ? chan->name : chan->dname,
-            chan->channel.key[0] ? chan->channel.key : chan->key_prot);
+
+    key = chan->channel.key[0] ? chan->channel.key : chan->key_prot;
+    if (key[0])
+      dprintf(DP_SERVER, "JOIN %s %s\n",
+              chan->name[0] ? chan->name : chan->dname, key);
+    else
+      dprintf(DP_SERVER, "JOIN %s\n",
+              chan->name[0] ? chan->name : chan->dname);
     clear_channel(chan, 1);
     return 0;                   /* rejoin if kicked before getting needed info <Wcc[08/08/02]> */
   }
@@ -2014,9 +2041,14 @@ static int gotkick(char *from, char *origmsg)
     /* Kicked ME?!? the sods! */
     if (match_my_nick(nick) && !channel_inactive(chan)) {
       chan->status &= ~(CHAN_ACTIVE | CHAN_PEND);
-      dprintf(DP_SERVER, "JOIN %s %s\n",
-              (chan->name[0]) ? chan->name : chan->dname,
-              chan->channel.key[0] ? chan->channel.key : chan->key_prot);
+
+      key = chan->channel.key[0] ? chan->channel.key : chan->key_prot;
+      if (key[0])
+        dprintf(DP_SERVER, "JOIN %s %s\n",
+                chan->name[0] ? chan->name : chan->dname, key);
+      else
+        dprintf(DP_SERVER, "JOIN %s\n",
+                chan->name[0] ? chan->name : chan->dname);
       clear_channel(chan, 1);
     } else {
       killmember(chan, nick);

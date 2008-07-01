@@ -1,7 +1,7 @@
 /*
  * tclchan.c -- part of channels.mod
  *
- * $Id: tclchan.c,v 1.97 2008/02/16 21:41:07 guppy Exp $
+ * $Id: tclchan.c,v 1.98 2008/07/01 00:20:03 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1466,10 +1466,17 @@ static int tcl_channel_modify(Tcl_Interp *irp, struct chanset_t *chan,
       if (channel_inactive(chan) && (chan->status & (CHAN_ACTIVE | CHAN_PEND)))
         dprintf(DP_SERVER, "PART %s\n", chan->name);
       if (!channel_inactive(chan) &&
-          !(chan->status & (CHAN_ACTIVE | CHAN_PEND)))
-        dprintf(DP_SERVER, "JOIN %s %s\n", (chan->name[0]) ?
-                chan->name : chan->dname,
-                chan->channel.key[0] ? chan->channel.key : chan->key_prot);
+          !(chan->status & (CHAN_ACTIVE | CHAN_PEND))) {
+        char *key;
+
+        key = chan->channel.key[0] ? chan->channel.key : chan->key_prot;
+        if (key[0])
+          dprintf(DP_SERVER, "JOIN %s %s\n",
+                  chan->name[0] ? chan->name : chan->dname, key);
+        else
+          dprintf(DP_SERVER, "JOIN %s\n",
+                  chan->name[0] ? chan->name : chan->dname);
+      }
     }
     if ((old_status ^ chan->status) & (CHAN_ENFORCEBANS | CHAN_OPONJOIN |
                                        CHAN_BITCH | CHAN_AUTOVOICE |
@@ -1924,8 +1931,12 @@ static int tcl_channel_add(Tcl_Interp *irp, char *newname, char *options)
     ret = TCL_ERROR;
   }
   Tcl_Free((char *) item);
-  if (join && !channel_inactive(chan) && module_find("irc", 0, 0))
-    dprintf(DP_SERVER, "JOIN %s %s\n", chan->dname, chan->key_prot);
+  if (join && !channel_inactive(chan) && module_find("irc", 0, 0)) {
+    if (chan->key_prot[0])
+      dprintf(DP_SERVER, "JOIN %s %s\n", chan->dname, chan->key_prot);
+    else
+      dprintf(DP_SERVER, "JOIN %s\n", chan->dname);
+  }
   return ret;
 }
 

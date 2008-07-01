@@ -1,7 +1,7 @@
 /*
  * servmsg.c -- part of server.mod
  *
- * $Id: servmsg.c,v 1.97 2008/04/30 01:07:37 guppy Exp $
+ * $Id: servmsg.c,v 1.98 2008/07/01 00:20:04 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -255,9 +255,10 @@ static int match_my_nick(char *nick)
 /* 001: welcome to IRC (use it to fix the server name) */
 static int got001(char *from, char *msg)
 {
-  struct server_list *x = serverlist;
   int i;
+  char *key;
   struct chanset_t *chan;
+  struct server_list *x = serverlist;
 
   /* FIXME - x should never be NULL anywhere in this function, but
    * apparently it sometimes is. */
@@ -295,9 +296,14 @@ static int got001(char *from, char *msg)
     for (chan = chanset; chan; chan = chan->next) {
       chan->status &= ~(CHAN_ACTIVE | CHAN_PEND);
       if (!channel_inactive(chan)) {
-        dprintf(DP_SERVER, "JOIN %s %s\n", (chan->name[0]) ? chan->name :
-                chan->dname, chan->channel.key[0] ? chan->channel.key :
-                chan->key_prot);
+
+        key = chan->channel.key[0] ? chan->channel.key : chan->key_prot;
+        if (key[0])
+          dprintf(DP_SERVER, "JOIN %s %s\n",
+                  chan->name[0] ? chan->name : chan->dname, key);
+        else
+          dprintf(DP_SERVER, "JOIN %s\n",
+                  chan->name[0] ? chan->name : chan->dname);
       }
     }
   }
@@ -309,7 +315,7 @@ static int got001(char *from, char *msg)
  */
 static int got442(char *from, char *msg)
 {
-  char *chname;
+  char *chname, *key;
   struct chanset_t *chan;
 
   if (!realservername || egg_strcasecmp(from, realservername))
@@ -317,18 +323,20 @@ static int got442(char *from, char *msg)
   newsplit(&msg);
   chname = newsplit(&msg);
   chan = findchan(chname);
-  if (chan)
-    if (!channel_inactive(chan)) {
-      module_entry *me = module_find("channels", 0, 0);
+  if (chan && !channel_inactive(chan)) {
+    module_entry *me = module_find("channels", 0, 0);
 
-      putlog(LOG_MISC, chname, IRC_SERVNOTONCHAN, chname);
-      if (me && me->funcs)
-        (me->funcs[CHANNEL_CLEAR]) (chan, 1);
-      chan->status &= ~CHAN_ACTIVE;
-      dprintf(DP_SERVER, "JOIN %s %s\n", chan->name,
-              chan->channel.key[0] ? chan->channel.key : chan->key_prot);
-    }
+    putlog(LOG_MISC, chname, IRC_SERVNOTONCHAN, chname);
+    if (me && me->funcs)
+      (me->funcs[CHANNEL_CLEAR]) (chan, 1);
+    chan->status &= ~CHAN_ACTIVE;
 
+    key = chan->channel.key[0] ? chan->channel.key : chan->key_prot;
+    if (key[0])
+      dprintf(DP_SERVER, "JOIN %s %s\n", chan->name, key);
+    else
+      dprintf(DP_SERVER, "JOIN %s\n", chan->name);
+  }
   return 0;
 }
 
