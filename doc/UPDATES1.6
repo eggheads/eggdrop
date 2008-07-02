@@ -1,4 +1,4 @@
-$Id: UPDATES1.6,v 1.660 2008/07/01 00:20:03 tothwolf Exp $
+$Id: UPDATES1.6,v 1.661 2008/07/02 07:31:27 tothwolf Exp $
 
 Eggdrop Changes (since v1.6.0)
     _____________________________________________________________________
@@ -12,6 +12,12 @@ Eggdrop Changes (since v1.6.0)
 
 
   1.6.20:
+    - Fixed EGG_PROG_HEAD_1 autoconf macro cache checking. You can't use
+      AC_MSG_RESULT() within AC_CACHE_VAL().
+    - Moved --enable-strip configure check from EGG_PROG_STRIP to it's own
+      macro: EGG_ENABLE_STRIP()
+    * Patch by: Tothwolf
+
     - Bot would send 'JOIN #chan ' to the server with trailing whitespace
       when joining channels that didn't require a key.
     * Found by: simple - Patch by: Tothwolf

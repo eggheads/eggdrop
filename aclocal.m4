@@ -16,7 +16,7 @@ dnl You should have received a copy of the GNU General Public License
 dnl along with this program; if not, write to the Free Software
 dnl Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 dnl
-dnl $Id: aclocal.m4,v 1.106 2008/06/18 09:42:50 tothwolf Exp $
+dnl $Id: aclocal.m4,v 1.107 2008/07/02 07:31:26 tothwolf Exp $
 dnl
 
 
@@ -280,14 +280,16 @@ EOF
         ac_cv_prog_HEAD_1="$HEAD_1"
       else
         if test "`cat conftest.head | $ac_prog`" = "a"; then
-          AC_MSG_RESULT([yes])
           ac_cv_prog_HEAD_1="$ac_prog"
-        else
-          AC_MSG_RESULT([no])
         fi
       fi
     ])
-    test -n "$ac_cv_prog_HEAD_1" && break
+    if test -n "$ac_cv_prog_HEAD_1"; then
+      AC_MSG_RESULT([yes])
+      break
+    else
+      AC_MSG_RESULT([no])
+    fi
   done
 
   if test "x$ac_cv_prog_HEAD_1" = "x"; then
@@ -311,26 +313,8 @@ dnl EGG_PROG_STRIP()
 dnl
 AC_DEFUN([EGG_PROG_STRIP],
 [
-  AC_ARG_ENABLE([strip],
-                [  --enable-strip          enable stripping of executables ],
-                [enable_strip="$enableval"],
-                [enable_strip="no"])
-  if test "$enable_strip" = "yes"; then
-    AC_CHECK_PROG(STRIP, strip, strip)
-    if test "x$STRIP" = "x"; then
-      STRIP=touch
-    else
-      AC_DEFINE(ENABLE_STRIP, 1, [Define if stripping is enabled.])
-      cat << 'EOF' >&2
-configure: WARNING:
-
-  Stripping the executable, while saving some disk space, will make bug
-  reports nearly worthless. If Eggdrop crashes and you wish to report
-  a bug, you will need to recompile with stripping disabled.
-
-EOF
-    fi
-  else
+  AC_CHECK_PROG(STRIP, strip, strip)
+  if test "x$STRIP" = "x"; then
     STRIP=touch
   fi
 ])
@@ -368,6 +352,31 @@ configure: error:
 
 EOF
     exit 1
+  fi
+])
+
+
+dnl EGG_ENABLE_STRIP()
+dnl
+AC_DEFUN([EGG_ENABLE_STRIP],
+[
+  AC_ARG_ENABLE([strip],
+                [  --enable-strip          enable stripping of executables ],
+                [enable_strip="$enableval"],
+                [enable_strip="no"])
+  if test "$enable_strip" = "yes"; then
+    AC_DEFINE(ENABLE_STRIP, 1, [Define if stripping is enabled.])
+    cat << 'EOF' >&2
+
+configure: WARNING:
+
+  Stripping the executable, while saving some disk space, will make bug
+  reports nearly worthless. If Eggdrop crashes and you wish to report
+  a bug, you will need to recompile with stripping disabled.
+
+EOF
+  else
+    STRIP="touch"
   fi
 ])
 

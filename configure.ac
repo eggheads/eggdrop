@@ -1,11 +1,11 @@
 dnl configure.ac: this file is processed by autoconf to produce ./configure.
 dnl
-dnl $Id: configure.ac,v 1.29 2008/04/19 14:57:10 guppy Exp $
+dnl $Id: configure.ac,v 1.30 2008/07/02 07:31:27 tothwolf Exp $
 
 AC_PREREQ(2.59)
 AC_INIT([Eggdrop],[1.6.20],[bugs@eggheads.org])
 AC_COPYRIGHT([Copyright (C) 1999 - 2008 Eggheads Development Team])
-AC_REVISION($Revision: 1.29 $)
+AC_REVISION($Revision: 1.30 $)
 AC_CONFIG_SRCDIR(src/eggdrop.h)
 AC_CONFIG_AUX_DIR(misc)
 AC_CONFIG_HEADER(config.h)
@@ -45,6 +45,11 @@ EGG_PROG_STRIP
 EGG_PROG_AWK
 EGG_PROG_BASENAME
 AC_CHECK_PROG(UNAME,uname,uname)
+
+
+# Check if we will strip the binary
+# Do this *before* EGG_CHECK_OS
+EGG_ENABLE_STRIP
 
 
 # Checks for system libraries.
