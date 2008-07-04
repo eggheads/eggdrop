@@ -1,4 +1,4 @@
-$Id: UPDATES1.6,v 1.663 2008/07/04 02:41:43 tothwolf Exp $
+$Id: UPDATES1.6,v 1.664 2008/07/04 03:25:08 tothwolf Exp $
 
 Eggdrop Changes (since v1.6.0)
     _____________________________________________________________________
@@ -12,6 +12,19 @@ Eggdrop Changes (since v1.6.0)
 
 
   1.6.20:
+    - Require autoconf 2.60 now.
+    - Added AC_PRESERVE_HELP_ORDER macro to configure.ac
+    - Added new autoconf macros to aclocal.m4 and configure.ac:
+      EGG_DEBUG_ENABLE EGG_DEBUG_DEFAULTS EGG_DEBUG_OPTIONS EGG_DEBUG_CFLAGS
+      EGG_ENABLE_DEBUG_CONTEXT
+    - Added new configure options: --enable-debug --enable-debug-mem
+      --enable-debug-assert --enable-debug-context
+    - Replaced ENABLE_STRIP define with DEBUG
+    - DEBUG_CONTEXT is now defined in config.h instead of eggdrop.h
+    - Refactored DEBUG and DEBUG_CONTEXT conditional code in main.c.
+    - Don't default set unlimited core file size for non-debug builds.
+    * Patch by: Tothwolf
+
     - Added EGG_APPEND_VAR and EGG_CHECK_ICC autoconf macros to aclocal.m4.
     - Replaced autoconf 'var="$var <string>"' with EGG_APPEND_VAR macro.
     - Replaced no_pipe and no_wall variable hacks with a proper test for the
