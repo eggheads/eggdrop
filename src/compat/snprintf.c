@@ -1,7 +1,7 @@
 /*
  * snprintf.c - a portable implementation of snprintf and vsnprintf
  *
- * $Id: snprintf.c,v 1.25 2008/02/16 21:41:05 guppy Exp $
+ * $Id: snprintf.c,v 1.26 2008/07/04 02:41:43 tothwolf Exp $
  */
 /*
  * Portions Copyright (C) 2000 - 2008 Eggheads Development Team
@@ -93,10 +93,6 @@
 #if defined(__STDC__)
 #  ifdef HAVE_STDARG_H
 #    include <stdarg.h>
-#  else
-#    ifdef HAVE_STD_ARGS_H
-#      include <std_args.h>
-#    endif
 #  endif
 #  define HAVE_STDARGS          /* let's hope that works everywhere (mj) */
 #  define VA_LOCAL_DECL va_list ap

@@ -1,18 +1,37 @@
 dnl configure.ac: this file is processed by autoconf to produce ./configure.
 dnl
-dnl $Id: configure.ac,v 1.31 2008/07/04 01:52:55 tothwolf Exp $
+dnl $Id: configure.ac,v 1.32 2008/07/04 02:41:42 tothwolf Exp $
 
 AC_PREREQ(2.59)
 AC_INIT([Eggdrop],[1.6.20],[bugs@eggheads.org])
 AC_COPYRIGHT([Copyright (C) 1999 - 2008 Eggheads Development Team])
-AC_REVISION($Revision: 1.31 $)
+AC_REVISION($Revision: 1.32 $)
 AC_CONFIG_SRCDIR(src/eggdrop.h)
 AC_CONFIG_AUX_DIR(misc)
 AC_CONFIG_HEADER(config.h)
 AC_PREFIX_DEFAULT([\${HOME}/eggdrop])
 
 dnl config.h stuff
-AH_TOP([#ifndef _EGG_CONFIG_H
+AH_TOP([/*
+ * Copyright (C) 1997 Robey Pointer
+ * Copyright (C) 1999 - 2008 Eggheads Development Team
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+
+#ifndef _EGG_CONFIG_H
 #define _EGG_CONFIG_H])
 AH_BOTTOM([#endif /* !_EGG_CONFIG_H */])
 
@@ -31,6 +50,7 @@ AC_ISC_POSIX
 AC_MINIX
 
 # Check C compiler characteristics.
+EGG_CHECK_ICC
 EGG_CHECK_CCPIPE
 EGG_CHECK_CCWALL
 
@@ -70,7 +90,7 @@ EGG_CHECK_OS
 EGG_HEADER_STDC
 AC_HEADER_DIRENT
 AC_HEADER_TIME
-AC_CHECK_HEADERS([arpa/inet.h fcntl.h limits.h locale.h netdb.h netinet/in.h stdio.h std_args.h stdarg.h stddef.h sys/file.h sys/param.h sys/rusage.h sys/select.h sys/socket.h sys/time.h unistd.h wchar.h])
+AC_CHECK_HEADERS([arpa/inet.h fcntl.h limits.h locale.h netdb.h netinet/in.h stdio.h stdarg.h stddef.h sys/file.h sys/param.h sys/rusage.h sys/select.h sys/socket.h sys/time.h unistd.h wchar.h])
 
 
 # Checks for typedefs, structures, and compiler characteristics.

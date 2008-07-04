@@ -1,4 +1,4 @@
-$Id: UPDATES1.6,v 1.662 2008/07/04 01:52:55 tothwolf Exp $
+$Id: UPDATES1.6,v 1.663 2008/07/04 02:41:43 tothwolf Exp $
 
 Eggdrop Changes (since v1.6.0)
     _____________________________________________________________________
@@ -12,6 +12,15 @@ Eggdrop Changes (since v1.6.0)
 
 
   1.6.20:
+    - Added EGG_APPEND_VAR and EGG_CHECK_ICC autoconf macros to aclocal.m4.
+    - Replaced autoconf 'var="$var <string>"' with EGG_APPEND_VAR macro.
+    - Replaced no_pipe and no_wall variable hacks with a proper test for the
+      Intel C Compiler (icc).
+    - Put '-pipe' in CFLAGS not CC.
+    - Added GPL header to AH_TOP macro in configure.ac for config.h.in.
+    - Removed unused std_args.h header check and HAVE_STD_ARGS_H conditionals.
+    * Patch by: Tothwolf
+
     - Refactored root Makefile.in variables.
     - Removed unnecessary '-g' flag from LD variables (-g is ignored).
     - Renamed DEBCFLAGS to DEBCFLGS

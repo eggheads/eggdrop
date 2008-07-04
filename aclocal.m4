@@ -16,7 +16,7 @@ dnl You should have received a copy of the GNU General Public License
 dnl along with this program; if not, write to the Free Software
 dnl Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 dnl
-dnl $Id: aclocal.m4,v 1.108 2008/07/04 01:52:55 tothwolf Exp $
+dnl $Id: aclocal.m4,v 1.109 2008/07/04 02:41:42 tothwolf Exp $
 dnl
 
 
@@ -91,6 +91,25 @@ AC_DEFUN([EGG_MSG_WEIRDOS],
 ])
 
 
+dnl EGG_APPEND_VAR()
+dnl
+dnl Append a non-empty string to a variable
+dnl
+dnl $1 = variable
+dnl $2 = string 
+dnl
+AC_DEFUN([EGG_APPEND_VAR],
+[
+  if test "x$2" != x; then
+    if test "x$$1" = x; then
+      $1="$2"
+    else
+      $1="$$1 $2"
+    fi
+  fi
+])   
+
+
 dnl
 dnl Compiler checks.
 dnl
@@ -132,6 +151,33 @@ EOF
 ])
 
 
+dnl EGG_CHECK_ICC()
+dnl
+dnl Check for Intel's C compiler. It attempts to emulate gcc but doesn't
+dnl accept all the standard gcc options.
+dnl
+dnl
+AC_DEFUN([EGG_CHECK_ICC],[
+  AC_CACHE_CHECK([for icc], egg_cv_var_cc_icc, [
+    AC_COMPILE_IFELSE([[
+#if !(defined(__ICC) || defined(__ECC) || defined(__INTEL_COMPILER))
+  "Toto, I've a feeling we're not in Kansas anymore."
+#endif
+    ]], [
+      egg_cv_var_cc_icc="yes"
+    ], [
+      egg_cv_var_cc_icc="no"
+    ])
+  ])
+
+  if test "$egg_cv_var_cc_icc" = yes; then
+    ICC="yes"
+  else
+    ICC="no"
+  fi
+])
+
+
 dnl EGG_CHECK_CCPIPE()
 dnl
 dnl This macro checks whether or not the compiler supports the `-pipe' flag,
@@ -139,7 +185,7 @@ dnl which speeds up the compilation.
 dnl
 AC_DEFUN([EGG_CHECK_CCPIPE],
 [
-  if test -n "$GCC" && test -z "$no_pipe"; then
+  if test "$GCC" = yes && test "$ICC" = no; then
     AC_CACHE_CHECK([whether the compiler understands -pipe], egg_cv_var_ccpipe, [
         ac_old_CC="$CC"
         CC="$CC -pipe"
@@ -157,7 +203,7 @@ AC_DEFUN([EGG_CHECK_CCPIPE],
     ])
 
     if test "$egg_cv_var_ccpipe" = yes; then
-      CC="$CC -pipe"
+      EGG_APPEND_VAR(CFLAGS, -pipe)
     fi
   fi
 ])
@@ -169,7 +215,7 @@ dnl See if the compiler supports -Wall.
 dnl
 AC_DEFUN([EGG_CHECK_CCWALL],
 [
-  if test -n "$GCC" && test -z "$no_wall"; then
+  if test "$GCC" = yes && test "$ICC" = no; then
     AC_CACHE_CHECK([whether the compiler understands -Wall], egg_cv_var_ccwall, [
       ac_old_CFLAGS="$CFLAGS"
       CFLAGS="$CFLAGS -Wall"
@@ -187,7 +233,7 @@ AC_DEFUN([EGG_CHECK_CCWALL],
     ])
 
     if test "$egg_cv_var_ccwall" = yes; then
-      CFLAGS="$CFLAGS -Wall"
+      EGG_APPEND_VAR(CFLAGS, -Wall)
     fi
   fi
 ])
@@ -411,7 +457,7 @@ AC_DEFUN([EGG_CYGWIN_BINMODE],
     AC_MSG_CHECKING([for /usr/lib/binmode.o])
     if test -r /usr/lib/binmode.o; then
       AC_MSG_RESULT([yes])
-      LIBS="$LIBS /usr/lib/binmode.o"
+      EGG_APPEND_VAR(LIBS, /usr/lib/binmode.o)
     else
       AC_MSG_RESULT([no])
       AC_MSG_WARN([Make sure the directory Eggdrop is installed into is mounted in binary mode.])
@@ -535,7 +581,7 @@ AC_DEFUN([EGG_CHECK_MODULE_SUPPORT],
       fi
       LOAD_METHOD="dyld"
       EGG_DARWIN_BUNDLE
-      MODULE_XLIBS="$BUNDLE $MODULE_XLIBS"
+      EGG_APPEND_VAR(MODULE_XLIBS, $BUNDLE)
     ;;
     *)
       if test -r /mach; then
@@ -1414,7 +1460,7 @@ EOF
 
     # Add pthread library to $LIBS if we need it for threaded Tcl
     if test "x$ac_cv_lib_pthread" != x; then
-      LIBS="$ac_cv_lib_pthread $LIBS"
+      EGG_APPEND_VAR(LIBS, $ac_cv_lib_pthread)
     fi
   else
     AC_MSG_RESULT([no])

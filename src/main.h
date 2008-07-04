@@ -2,7 +2,7 @@
  * main.h
  *   include file to include most other include files
  *
- * $Id: main.h,v 1.36 2008/02/16 21:41:03 guppy Exp $
+ * $Id: main.h,v 1.37 2008/07/04 02:41:43 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -62,10 +62,6 @@
 #if defined(USE_TCL_VARARGS) && (defined(__STDC__) || defined(HAS_STDARG))
 #  ifdef HAVE_STDARG_H
 #    include <stdarg.h>
-#  else
-#    ifdef HAVE_STD_ARGS_H
-#      include <std_args.h>
-#    endif
 #  endif
 #  define EGG_VARARGS(type, name) (type name, ...)
 #  define EGG_VARARGS_DEF(type, name) (type name, ...)
