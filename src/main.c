@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  *
- * $Id: main.c,v 1.122 2008/04/19 14:57:11 guppy Exp $
+ * $Id: main.c,v 1.123 2008/07/04 01:52:55 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -50,7 +50,7 @@
 #  endif
 #endif
 
-#ifdef STOP_UAC                         /* osf/1 complains a lot */
+#ifdef STOP_UAC                         /* OSF/1 complains a lot */
 #  include <sys/sysinfo.h>
 #  define UAC_NOPRINT 0x00000001        /* Don't report unaligned fixups */
 #endif
@@ -69,7 +69,7 @@
 #endif
 
 #ifndef _POSIX_SOURCE
-#  define _POSIX_SOURCE 1 /* Solaris needs this */
+#  define _POSIX_SOURCE 1               /* Solaris needs this */
 #endif
 
 extern char origbotname[], userfile[], botnetnick[];

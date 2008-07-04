@@ -1,11 +1,11 @@
 dnl configure.ac: this file is processed by autoconf to produce ./configure.
 dnl
-dnl $Id: configure.ac,v 1.30 2008/07/02 07:31:27 tothwolf Exp $
+dnl $Id: configure.ac,v 1.31 2008/07/04 01:52:55 tothwolf Exp $
 
 AC_PREREQ(2.59)
 AC_INIT([Eggdrop],[1.6.20],[bugs@eggheads.org])
 AC_COPYRIGHT([Copyright (C) 1999 - 2008 Eggheads Development Team])
-AC_REVISION($Revision: 1.30 $)
+AC_REVISION($Revision: 1.31 $)
 AC_CONFIG_SRCDIR(src/eggdrop.h)
 AC_CONFIG_AUX_DIR(misc)
 AC_CONFIG_HEADER(config.h)
@@ -31,8 +31,12 @@ AC_ISC_POSIX
 AC_MINIX
 
 # Check C compiler characteristics.
-EGG_CHECK_CCWALL
 EGG_CHECK_CCPIPE
+EGG_CHECK_CCWALL
+
+
+# Check for executable extension.
+EGG_EXEEXT
 
 
 # Checks for programs.
@@ -98,10 +102,6 @@ AC_FUNC_MMAP
 EGG_CHECK_LIBSAFE_SSCANF
 
 
-# Check for executable extension.
-EGG_EXEEXT
-
-
 # Tcl version to recommend if no Tcl is found, and the site where it can be
 # found for download.
 tclrecommendver="8.5.X"
@@ -134,9 +134,10 @@ tclheaderpaths="$HOME/include $HOME/tcl/include \
                 /usr/pkg/lib /beos/system/include /beos/devel/include $HOME"
 
 
-# Misc Tcl checks. We save the cache (if used) here to speed things up if we
-# can't find Tcl.
+# We save the cache (if used) here to speed things up if we can't find Tcl.
 AC_CACHE_SAVE
+
+# Misc Tcl checks.
 EGG_TCL_ARG_WITH
 EGG_TCL_ENV
 EGG_TCL_WITH_TCLLIB

@@ -16,12 +16,12 @@ dnl You should have received a copy of the GNU General Public License
 dnl along with this program; if not, write to the Free Software
 dnl Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 dnl
-dnl $Id: aclocal.m4,v 1.107 2008/07/02 07:31:26 tothwolf Exp $
+dnl $Id: aclocal.m4,v 1.108 2008/07/04 01:52:55 tothwolf Exp $
 dnl
 
 
 dnl
-dnl Message functions.
+dnl Message macros.
 dnl
 
 
@@ -47,7 +47,7 @@ AC_DEFUN([EGG_MSG_CONFIGURE_END],
 ])
 
 
-dnl EGG_MSG_WEIRDOS
+dnl EGG_MSG_WEIRDOS()
 dnl
 dnl Print some messages at the end of configure to give extra information to
 dnl users of 'weird' operating systems.
@@ -56,7 +56,7 @@ AC_DEFUN([EGG_MSG_WEIRDOS],
 [
   AC_MSG_RESULT([Operating System: $egg_cv_var_system_type $egg_cv_var_system_release])
   AC_MSG_RESULT
-  if test "$UNKNOWN_OS" = "yes"; then
+  if test "$UNKNOWN_OS" = yes; then
     AC_MSG_RESULT([WARNING:])
     AC_MSG_RESULT
     AC_MSG_RESULT([  Unknown Operating System: $egg_cv_var_system_type $egg_cv_var_system_release])
@@ -68,7 +68,7 @@ AC_DEFUN([EGG_MSG_WEIRDOS],
     AC_MSG_RESULT([  information about the OS should be included.])
     AC_MSG_RESULT
   else
-    if test "$WEIRD_OS" = "yes"; then
+    if test "$WEIRD_OS" = yes; then
       AC_MSG_RESULT([WARNING:])
       AC_MSG_RESULT
       AC_MSG_RESULT([  The operating system you are using has not yet had a great])
@@ -102,7 +102,7 @@ dnl Check for a working C compiler.
 dnl
 AC_DEFUN([EGG_CHECK_CC],
 [
-  if test "x$cross_compiling" = "x"; then
+  if test "x$cross_compiling" = x; then
     cat << 'EOF' >&2
 configure: error:
 
@@ -119,7 +119,7 @@ dnl EGG_HEADER_STDC()
 dnl
 AC_DEFUN([EGG_HEADER_STDC],
 [
-  if test "$ac_cv_header_stdc" = "no"; then
+  if test "$ac_cv_header_stdc" = no; then
     cat << 'EOF' >&2
 configure: error:
 
@@ -134,7 +134,7 @@ EOF
 
 dnl EGG_CHECK_CCPIPE()
 dnl
-dnl This function checks whether or not the compiler supports the `-pipe' flag,
+dnl This macro checks whether or not the compiler supports the `-pipe' flag,
 dnl which speeds up the compilation.
 dnl
 AC_DEFUN([EGG_CHECK_CCPIPE],
@@ -156,7 +156,7 @@ AC_DEFUN([EGG_CHECK_CCPIPE],
         CC="$ac_old_CC"
     ])
 
-    if test "$egg_cv_var_ccpipe" = "yes"; then
+    if test "$egg_cv_var_ccpipe" = yes; then
       CC="$CC -pipe"
     fi
   fi
@@ -186,7 +186,7 @@ AC_DEFUN([EGG_CHECK_CCWALL],
       CFLAGS="$ac_old_CFLAGS"
     ])
 
-    if test "$egg_cv_var_ccwall" = "yes"; then
+    if test "$egg_cv_var_ccwall" = yes; then
       CFLAGS="$CFLAGS -Wall"
     fi
   fi
@@ -231,7 +231,7 @@ AC_DEFUN([EGG_CHECK_SOCKLEN_T],
     ])
   ])
 
-  if test "$egg_cv_socklen_t" = "yes"; then
+  if test "$egg_cv_socklen_t" = yes; then
     AC_DEFINE(HAVE_SOCKLEN_T, 1, [Define to 1 if you have the `socklen_t' type.])
   fi
 ])
@@ -242,7 +242,7 @@ dnl
 AC_DEFUN([EGG_FUNC_VPRINTF],
 [
   AC_FUNC_VPRINTF
-  if test "$ac_cv_func_vprintf" = "no"; then
+  if test "$ac_cv_func_vprintf" = no; then
     cat << 'EOF' >&2
 configure: error:
 
@@ -262,7 +262,7 @@ dnl
 
 dnl EGG_PROG_HEAD_1()
 dnl
-dnl This function checks for the proper 'head -1' command variant to use.
+dnl This macro checks for the proper 'head -1' command variant to use.
 dnl
 AC_DEFUN([EGG_PROG_HEAD_1],
 [
@@ -279,7 +279,7 @@ EOF
         # Let the user override the test.
         ac_cv_prog_HEAD_1="$HEAD_1"
       else
-        if test "`cat conftest.head | $ac_prog`" = "a"; then
+        if test `cat conftest.head | $ac_prog` = a; then
           ac_cv_prog_HEAD_1="$ac_prog"
         fi
       fi
@@ -292,7 +292,7 @@ EOF
     fi
   done
 
-  if test "x$ac_cv_prog_HEAD_1" = "x"; then
+  if test "x$ac_cv_prog_HEAD_1" = x; then
     cat << 'EOF' >&2
 configure: error:
 
@@ -314,7 +314,7 @@ dnl
 AC_DEFUN([EGG_PROG_STRIP],
 [
   AC_CHECK_PROG(STRIP, strip, strip)
-  if test "x$STRIP" = "x"; then
+  if test "x$STRIP" = x; then
     STRIP=touch
   fi
 ])
@@ -325,7 +325,7 @@ dnl
 AC_DEFUN([EGG_PROG_AWK],
 [
   AC_PROG_AWK
-  if test "x$AWK" = "x"; then
+  if test "x$AWK" = x; then
     cat << 'EOF' >&2
 configure: error:
 
@@ -343,7 +343,7 @@ dnl
 AC_DEFUN([EGG_PROG_BASENAME],
 [
   AC_CHECK_PROG(BASENAME, basename, basename)
-  if test "x$BASENAME" = "x"; then
+  if test "x$BASENAME" = x; then
     cat << 'EOF' >&2
 configure: error:
 
@@ -361,10 +361,11 @@ dnl
 AC_DEFUN([EGG_ENABLE_STRIP],
 [
   AC_ARG_ENABLE([strip],
-                [  --enable-strip          enable stripping of executables ],
+                [  --enable-strip          enable stripping of binaries],
                 [enable_strip="$enableval"],
                 [enable_strip="no"])
-  if test "$enable_strip" = "yes"; then
+
+  if test "$enable_strip" = yes; then
     AC_DEFINE(ENABLE_STRIP, 1, [Define if stripping is enabled.])
     cat << 'EOF' >&2
 
@@ -406,7 +407,7 @@ dnl Check for binmode.o on Cygwin.
 dnl
 AC_DEFUN([EGG_CYGWIN_BINMODE],
 [
-  if test $EGG_CYGWIN = "yes"; then
+  if test "$EGG_CYGWIN" = yes; then
     AC_MSG_CHECKING([for /usr/lib/binmode.o])
     if test -r /usr/lib/binmode.o; then
       AC_MSG_RESULT([yes])
@@ -438,7 +439,7 @@ AC_DEFUN([EGG_DARWIN_BUNDLE],
     fi
   done
 
-  if test "x$BUNDLE" = "x"; then
+  if test "x$BUNDLE" = x; then
     cat << 'EOF' >&2
 configure: WARNING:
 
@@ -468,9 +469,11 @@ AC_DEFUN([EGG_CHECK_MODULE_SUPPORT],
   AC_CHECK_HEADERS([dl.h dlfcn.h loader.h rld.h mach-o/dyld.h mach-o/rld.h])
   AC_CHECK_FUNCS([dlopen load NSLinkModule shl_load rld_load])
 
+  # Note to other maintainers:
+  # Bourne shell has no concept of "fall through"
   case "$egg_cv_var_system_type" in
     BSD/OS)
-      if test "`echo $egg_cv_var_system_release | cut -d . -f 1`" = "2"; then
+      if test `echo "$egg_cv_var_system_release" | cut -d . -f 1` = 2; then
         MODULES_OK="no"
       fi
     ;;
@@ -482,10 +485,10 @@ AC_DEFUN([EGG_CHECK_MODULE_SUPPORT],
       LOAD_METHOD="shl"
     ;;
     dell)
-      # Fallthrough.
+      # do nothing
     ;;
     IRIX)
-      # Fallthrough.
+      # do nothing
     ;;
     Ultrix)
       # No dlopen() or similar on Ultrix. We can't use modules.
@@ -499,19 +502,19 @@ AC_DEFUN([EGG_CHECK_MODULE_SUPPORT],
       WEIRD_OS="no"
     ;;
     Lynx)
-      # Fallthrough.
+      # do nothing
     ;;
     QNX)
-      # Fallthrough.
+      # do nothing
       # QNX (recent versions at least) support dlopen().
     ;;
     OSF1)
-      case "`echo $egg_cv_var_system_release | cut -d . -f 1`" in
+      case `echo "$egg_cv_var_system_release" | cut -d . -f 1` in
         1.*) LOAD_METHOD="loader" ;;
       esac
     ;;
     SunOS)
-      if test "`echo $egg_cv_var_system_release | cut -d . -f 1`" = "5"; then
+      if test `echo "$egg_cv_var_system_release" | cut -d . -f 1` = 5; then
         # We've had quite a bit of testing on Solaris.
         WEIRD_OS="no"
       else
@@ -527,7 +530,7 @@ AC_DEFUN([EGG_CHECK_MODULE_SUPPORT],
     Darwin)
       # We should support Mac OS X (at least 10.1 and later) now.
       # Use rld on < 10.1.
-      if test "$ac_cv_func_NSLinkModule" = "no"; then
+      if test "$ac_cv_func_NSLinkModule" = no; then
         LOAD_METHOD="rld"
       fi
       LOAD_METHOD="dyld"
@@ -551,7 +554,7 @@ AC_DEFUN([EGG_CHECK_MODULE_SUPPORT],
     ;;
   esac
 
-  if test "$MODULES_OK" = "yes"; then
+  if test "$MODULES_OK" = yes; then
     AC_DEFINE(MODULES_OK, 1, [Define if modules will work on your system.])
     case $LOAD_METHOD in
       dl)
@@ -574,7 +577,7 @@ AC_DEFUN([EGG_CHECK_MODULE_SUPPORT],
     DEFAULT_MAKE="static"
   fi
 
-  if test "$WEIRD_OS" = "yes"; then
+  if test "$WEIRD_OS" = yes; then
     # Default to "make static" for 'weird' operating systems. Will print a
     # note at the end of configure explaining. This way, Eggdrop should compile
     # "out of the box" on most every operating system we know of, and they can
@@ -610,21 +613,21 @@ AC_DEFUN([EGG_CHECK_OS],
 
   case "$egg_cv_var_system_type" in
     BSD/OS)
-      case "`echo $egg_cv_var_system_release | cut -d . -f 1`" in
+      case `echo "$egg_cv_var_system_release" | cut -d . -f 1` in
         2)
-          # Fallthrough.
+          # do nothing
         ;;
         3)
           MOD_CC="shlicc"
           MOD_LD="shlicc"
-          if test ! "$STRIP" = "touch"; then
+          if test "$STRIP" != touch; then
             MOD_STRIP="$STRIP -d"
           fi
           SHLIB_LD="shlicc -r"
           SHLIB_STRIP="touch"
         ;;
         *)
-          if test ! "$STRIP" = "touch"; then
+          if test "$STRIP" != touch; then
             MOD_STRIP="$STRIP -d"
           fi
           SHLIB_CC="$CC -export-dynamic -fPIC"
@@ -644,7 +647,7 @@ AC_DEFUN([EGG_CHECK_OS],
     ;;
     HP-UX)
       HPUX="yes"
-      if test "$CC" = "cc"; then
+      if test "$CC" = cc; then
         # HP-UX ANSI C Compiler.
         MOD_LD="$CC +z"
         SHLIB_CC="$CC +z"
@@ -674,7 +677,7 @@ AC_DEFUN([EGG_CHECK_OS],
       SHLIB_CC="cc -G"
     ;;
     BeOS)
-      # Fallthrough.
+      # do nothing
     ;;
     Linux)
       LINUX="yes"
@@ -683,16 +686,16 @@ AC_DEFUN([EGG_CHECK_OS],
       SHLIB_LD="$CC -shared -nostartfiles"
     ;;
     Lynx)
-      # Fallthrough.
+      # do nothing
     ;;
     QNX)
       SHLIB_LD="ld -shared"
     ;;
     OSF1)
-      case "`echo $egg_cv_var_system_release | cut -d . -f 1`" in
+      case `echo "$egg_cv_var_system_release" | cut -d . -f 1` in
         V*)
           # Digital OSF uses an ancient version of gawk
-          if test "$AWK" = "gawk"; then
+          if test "$AWK" = gawk; then
             AWK="awk"
           fi
           SHLIB_LD="ld -shared -expect_unresolved \"'*'\""
@@ -710,7 +713,7 @@ AC_DEFUN([EGG_CHECK_OS],
       AC_DEFINE(STOP_UAC, 1, [Define if running on OSF/1 platform.])
     ;;
     SunOS)
-      if test "`echo $egg_cv_var_system_release | cut -d . -f 1`" = "5"; then
+      if test `echo "$egg_cv_var_system_release" | cut -d . -f 1` = 5; then
         # Solaris
         if test -n "$GCC"; then
           SHLIB_CC="$CC -fPIC"
@@ -773,7 +776,7 @@ dnl
 AC_DEFUN([EGG_CHECK_LIBS],
 [
   # FIXME: this needs to be fixed so that it works on IRIX
-  if test "$IRIX" = "yes"; then
+  if test "$IRIX" = yes; then
     AC_MSG_WARN([Skipping library tests because they CONFUSE IRIX.])
   else
     AC_CHECK_LIB(socket, socket)
@@ -805,11 +808,11 @@ AC_DEFUN([EGG_CHECK_LIBS],
       )]
     )])
 
-    if test "$SUNOS" = "yes"; then
+    if test "$SUNOS" = yes; then
       # For suns without yp
       AC_CHECK_LIB(dl, main)
     else
-      if test "$HPUX" = "yes"; then
+      if test "$HPUX" = yes; then
         AC_CHECK_LIB(dld, shl_load)
       fi
     fi
@@ -844,7 +847,7 @@ AC_DEFUN([EGG_CHECK_LIBSAFE_SSCANF],
     ])
   ])
 
-  if test "$egg_cv_var_libsafe_sscanf" = "yes"; then
+  if test "$egg_cv_var_libsafe_sscanf" = yes; then
     AC_DEFINE(LIBSAFE_HACKS, 1, [Define if you have a version of libsafe with a broken sscanf().])
   fi
 ])
@@ -862,7 +865,7 @@ dnl
 AC_DEFUN([EGG_EXEEXT], [
   EGGEXEC="eggdrop"
   AC_EXEEXT
-  if test ! "x$EXEEXT" = "x"; then
+  if test "x$EXEEXT" != x; then
     EGGEXEC="eggdrop${EXEEXT}"
   fi
   AC_SUBST(EGGEXEC)
@@ -883,15 +886,15 @@ AC_DEFUN([EGG_TCL_ARG_WITH],
 
   WARN=0
   # Make sure either both or neither $tcllibname and $tclincname are set
-  if test ! "x$tcllibname" = "x"; then
-    if test "x$tclincname" = "x"; then
+  if test "x$tcllibname" != x; then
+    if test "x$tclincname" = x; then
       WARN=1
       tcllibname=""
       TCLLIB=""
       TCLINC=""
     fi
   else
-    if test ! "x$tclincname" = "x"; then
+    if test "x$tclincname" != x; then
       WARN=1
       tclincname=""
       TCLLIB=""
@@ -918,15 +921,15 @@ AC_DEFUN([EGG_TCL_ENV],
 [
   WARN=0
   # Make sure either both or neither $TCLLIB and $TCLINC are set
-  if test ! "x$TCLLIB" = "x"; then
-    if test "x$TCLINC" = "x"; then
+  if test "x$TCLLIB" != x; then
+    if test "x$TCLINC" = x; then
       WARN=1
       WVAR1=TCLLIB
       WVAR2=TCLINC
       TCLLIB=""
     fi
   else
-    if test ! "x$TCLINC" = "x"; then
+    if test "x$TCLINC" != x; then
       WARN=1
       WVAR1=TCLINC
       WVAR2=TCLLIB
@@ -953,7 +956,7 @@ dnl
 AC_DEFUN([EGG_TCL_WITH_TCLLIB],
 [
   # Look for Tcl library: if $tcllibname is set, check there first
-  if test ! "x$tcllibname" = "x"; then
+  if test "x$tcllibname" != x; then
     if test -f "$tcllibname" && test -r "$tcllibname"; then
       TCLLIB=`echo $tcllibname | sed 's%/[[^/]][[^/]]*$%%'`
       TCLLIBFN=`$BASENAME $tcllibname | cut -c4-`
@@ -984,7 +987,7 @@ dnl
 AC_DEFUN([EGG_TCL_WITH_TCLINC],
 [
   # Look for Tcl header: if $tclincname is set, check there first
-  if test ! "x$tclincname" = "x"; then
+  if test "x$tclincname" != x; then
     if test -f "$tclincname" && test -r "$tclincname"; then
       TCLINC=`echo $tclincname | sed 's%/[[^/]][[^/]]*$%%'`
       TCLINCFN=`$BASENAME $tclincname`
@@ -1013,7 +1016,7 @@ dnl
 AC_DEFUN([EGG_TCL_FIND_LIBRARY],
 [
   # Look for Tcl library: if $TCLLIB is set, check there first
-  if test "x$TCLLIBFN" = "x" && test ! "x$TCLLIB" = "x"; then
+  if test "x$TCLLIBFN" = x && test "x$TCLLIB" != x; then
     if test -d "$TCLLIB"; then
       for tcllibfns in $tcllibnames; do
         for tcllibext in $tcllibextensions; do
@@ -1027,7 +1030,7 @@ AC_DEFUN([EGG_TCL_FIND_LIBRARY],
       done
     fi
 
-    if test "x$TCLLIBFN" = "x"; then
+    if test "x$TCLLIBFN" = x; then
       cat << 'EOF' >&2
 configure: WARNING:
 
@@ -1051,7 +1054,7 @@ dnl
 AC_DEFUN([EGG_TCL_FIND_HEADER],
 [
   # Look for Tcl header: if $TCLINC is set, check there first
-  if test "x$TCLINCFN" = "x" && test ! "x$TCLINC" = "x"; then
+  if test "x$TCLINCFN" = x && test "x$TCLINC" != x; then
     if test -d "$TCLINC"; then
       for tclheaderfn in $tclheadernames; do
         if test -r "${TCLINC}/${tclheaderfn}"; then
@@ -1061,7 +1064,7 @@ AC_DEFUN([EGG_TCL_FIND_HEADER],
       done
     fi
 
-    if test "x$TCLINCFN" = "x"; then
+    if test "x$TCLINCFN" = x; then
       cat << 'EOF' >&2
 configure: WARNING:
 
@@ -1087,7 +1090,7 @@ AC_DEFUN([EGG_TCL_CHECK_LIBRARY],
   AC_MSG_CHECKING([for Tcl library])
 
   # Attempt autodetect for $TCLLIBFN if it's not set
-  if test ! "x$TCLLIBFN" = "x"; then
+  if test "x$TCLLIBFN" != x; then
     AC_MSG_RESULT([using ${TCLLIB}/lib${TCLLIBFN}])
   else
     for tcllibfns in $tcllibnames; do
@@ -1107,7 +1110,7 @@ AC_DEFUN([EGG_TCL_CHECK_LIBRARY],
   fi
 
   # Show if $TCLLIBFN wasn't found
-  if test "x$TCLLIBFN" = "x"; then
+  if test "x$TCLLIBFN" = x; then
     AC_MSG_RESULT([not found])
   fi
 
@@ -1123,7 +1126,7 @@ AC_DEFUN([EGG_TCL_CHECK_HEADER],
   AC_MSG_CHECKING([for Tcl header])
 
   # Attempt autodetect for $TCLINCFN if it's not set
-  if test ! "x$TCLINCFN" = "x"; then
+  if test "x$TCLINCFN" != x; then
     AC_MSG_RESULT([using ${TCLINC}/${TCLINCFN}])
   else
     for tclheaderpath in $tclheaderpaths; do
@@ -1138,7 +1141,7 @@ AC_DEFUN([EGG_TCL_CHECK_HEADER],
     done
 
     # FreeBSD hack ...
-    if test "x$TCLINCFN" = "x"; then
+    if test "x$TCLINCFN" = x; then
       for tcllibfns in $tcllibnames; do
         for tclheaderpath in $tclheaderpaths; do
           for tclheaderfn in $tclheadernames; do
@@ -1154,7 +1157,7 @@ AC_DEFUN([EGG_TCL_CHECK_HEADER],
     fi
   fi
 
-  if test "x$TCLINCFN" = "x"; then
+  if test "x$TCLINCFN" = x; then
     AC_MSG_RESULT([not found])
   fi
 
@@ -1186,13 +1189,13 @@ AC_DEFUN([EGG_TCL_DETECT_CHANGE],
   AC_MSG_CHECKING([whether the Tcl system has changed])
   egg_tcl_changed="yes"
   egg_tcl_id="${TCLLIB}:${TCLLIBFN}:${TCLINC}:${TCLINCFN}"
-  if test ! "$egg_tcl_id" = ":::"; then
+  if test "$egg_tcl_id" != ":::"; then
     egg_tcl_cached="yes"
     AC_CACHE_VAL(egg_cv_var_tcl_id, [
       egg_cv_var_tcl_id="$egg_tcl_id"
       egg_tcl_cached="no"
     ])
-    if test "$egg_tcl_cached" = "yes"; then
+    if test "$egg_tcl_cached" = yes; then
       if test "x$egg_cv_var_tcl_id" = "x$egg_tcl_id"; then
         egg_tcl_changed="no"
       else
@@ -1201,7 +1204,7 @@ AC_DEFUN([EGG_TCL_DETECT_CHANGE],
     fi
   fi
 
-  if test "$egg_tcl_changed" = "yes"; then
+  if test "$egg_tcl_changed" = yes; then
     AC_MSG_RESULT([yes])
   else
     AC_MSG_RESULT([no])
@@ -1215,11 +1218,11 @@ AC_DEFUN([EGG_TCL_CHECK_VERSION],
 [
   # Both TCLLIBFN & TCLINCFN must be set, or we bail
   TCL_FOUND=0
-  if test ! "x$TCLLIBFN" = "x" && test ! "x$TCLINCFN" = "x"; then
+  if test "x$TCLLIBFN" != x && test "x$TCLINCFN" != x; then
     TCL_FOUND=1
 
     # Check Tcl's version
-    if test "$egg_tcl_changed" = "yes"; then
+    if test "$egg_tcl_changed" = yes; then
       EGG_CACHE_UNSET(egg_cv_var_tcl_version)
     fi
 
@@ -1228,7 +1231,7 @@ AC_DEFUN([EGG_TCL_CHECK_VERSION],
       egg_cv_var_tcl_version=`grep TCL_VERSION $TCLINC/$TCLINCFN | $HEAD_1 | $AWK '{gsub(/\"/, "", [$]3); print [$]3}'`
     ])
 
-    if test ! "x$egg_cv_var_tcl_version" = "x"; then
+    if test "x$egg_cv_var_tcl_version" != x; then
       AC_MSG_RESULT([$egg_cv_var_tcl_version])
     else
       AC_MSG_RESULT([not found])
@@ -1236,7 +1239,7 @@ AC_DEFUN([EGG_TCL_CHECK_VERSION],
     fi
 
     # Check Tcl's patch level (if available)
-    if test "$egg_tcl_changed" = "yes"; then
+    if test "$egg_tcl_changed" = yes; then
       EGG_CACHE_UNSET(egg_cv_var_tcl_patch_level)
     fi
     AC_MSG_CHECKING([for Tcl patch level])
@@ -1244,7 +1247,7 @@ AC_DEFUN([EGG_TCL_CHECK_VERSION],
       eval "egg_cv_var_tcl_patch_level=`grep TCL_PATCH_LEVEL $TCLINC/$TCLINCFN | $HEAD_1 | $AWK '{gsub(/\"/, "", [$]3); print [$]3}'`"
     ])
 
-    if test ! "x$egg_cv_var_tcl_patch_level" = "x"; then
+    if test "x$egg_cv_var_tcl_patch_level" != x; then
       AC_MSG_RESULT([$egg_cv_var_tcl_patch_level])
     else
       egg_cv_var_tcl_patch_level="unknown"
@@ -1279,7 +1282,7 @@ AC_DEFUN([EGG_TCL_CHECK_PRE70],
 [
   # Is this version of Tcl too old for us to use ?
   TCL_VER_PRE70=`echo $egg_cv_var_tcl_version | $AWK '{split([$]1, i, "."); if (i[[1]] < 7) print "yes"; else print "no"}'`
-  if test "$TCL_VER_PRE70" = "yes"; then
+  if test "$TCL_VER_PRE70" = yes; then
     cat << EOF >&2
 configure: error:
 
@@ -1304,7 +1307,7 @@ AC_DEFUN([EGG_TCL_TESTLIBS],
   # Set variables for Tcl library tests
   TCL_TEST_LIB="$TCLLIBFNS"
   TCL_TEST_OTHERLIBS="-L$TCLLIB $EGG_MATH_LIB"
-  if test ! "x$ac_cv_lib_pthread" = "x"; then
+  if test "x$ac_cv_lib_pthread" != x; then
     TCL_TEST_OTHERLIBS="$TCL_TEST_OTHERLIBS $ac_cv_lib_pthread"
   fi
 ])
@@ -1314,14 +1317,14 @@ dnl EGG_TCL_CHECK_FREE()
 dnl
 AC_DEFUN([EGG_TCL_CHECK_FREE],
 [
-  if test "$egg_tcl_changed" = "yes"; then
+  if test "$egg_tcl_changed" = yes; then
     EGG_CACHE_UNSET(egg_cv_var_tcl_free)
   fi
 
   # Check for Tcl_Free()
   AC_CHECK_LIB($TCL_TEST_LIB, Tcl_Free, [egg_cv_var_tcl_free="yes"], [egg_cv_var_tcl_free="no"], $TCL_TEST_OTHERLIBS)
 
-  if test "$egg_cv_var_tcl_free" = "yes"; then
+  if test "$egg_cv_var_tcl_free" = yes; then
     AC_DEFINE(HAVE_TCL_FREE, 1, [Define for Tcl that has Tcl_Free() (7.5p1 and later).])
   fi
 ])
@@ -1331,8 +1334,8 @@ dnl EGG_TCL_ENABLE_THREADS()
 dnl
 AC_DEFUN([EGG_TCL_ENABLE_THREADS],
 [
-  AC_ARG_ENABLE(tcl-threads, [  --enable-tcl-threads    force threaded Tcl library support enabled], [enable_tcl_threads="$enableval"], [enable_tcl_threads="auto"])
-  AC_ARG_ENABLE(tcl-threads, [  --disable-tcl-threads   force threaded Tcl library support disabled], [enable_tcl_threads="$enableval"], [enable_tcl_threads="auto"])
+  AC_ARG_ENABLE(tcl-threads, [  --enable-tcl-threads    enable threaded Tcl library support (autodetect)], [enable_tcl_threads="$enableval"], [enable_tcl_threads="auto"])
+  AC_ARG_ENABLE(tcl-threads, [  --disable-tcl-threads   disable threaded Tcl library support], [enable_tcl_threads="$enableval"], [enable_tcl_threads="auto"])
 ])
 
 
@@ -1340,7 +1343,7 @@ dnl EGG_TCL_CHECK_THREADS()
 dnl
 AC_DEFUN([EGG_TCL_CHECK_THREADS],
 [
-  if test "$egg_tcl_changed" = "yes"; then
+  if test "$egg_tcl_changed" = yes; then
     EGG_CACHE_UNSET(egg_cv_var_tcl_threaded)
   fi
 
@@ -1352,25 +1355,25 @@ AC_DEFUN([EGG_TCL_CHECK_THREADS],
   # Do this check first just in case someone tries to use both
   # --enable-tcl-threads and --disable-tcl-threads or gives an
   # invalid --enable-tcl-threads=foo option.
-  if test "$egg_cv_var_tcl_threaded" = "yes"; then
+  if test "$egg_cv_var_tcl_threaded" = yes; then
     WANT_TCL_THREADS=1
   fi
 
   # Check if either --enable-tcl-threads or --disable-tcl-threads was used
-  if test ! "$enable_tcl_threads" = "auto"; then
+  if test "$enable_tcl_threads" != auto; then
 
     # Make sure an invalid option wasn't passed as --enable-tcl-threads=foo
-    if test ! "$enable_tcl_threads" = "yes" && test ! "$enable_tcl_threads" = "no"; then
+    if test "$enable_tcl_threads" != yes && test "$enable_tcl_threads" != no; then
       AC_MSG_WARN([Invalid option '$enable_tcl_threads' passed to --enable-tcl-threads, defaulting to 'yes'])
 
       enable_tcl_threads=yes
     fi
 
     # The --enable-tcl-threads option was used
-    if test "$enable_tcl_threads" = "yes"; then
+    if test "$enable_tcl_threads" = yes; then
       WANT_TCL_THREADS=1
 
-      if test "$egg_cv_var_tcl_threaded" = "no"; then
+      if test "$egg_cv_var_tcl_threaded" = no; then
         cat << 'EOF' >&2
 configure: WARNING:
 
@@ -1385,10 +1388,10 @@ EOF
     fi
 
     # The --disable-tcl-threads option was used
-    if test "$enable_tcl_threads" = "no"; then
+    if test "$enable_tcl_threads" = no; then
       WANT_TCL_THREADS=0
 
-      if test "$egg_cv_var_tcl_threaded" = "yes"; then
+      if test "$egg_cv_var_tcl_threaded" = yes; then
         cat << 'EOF' >&2
 configure: WARNING:
 
@@ -1410,7 +1413,7 @@ EOF
     AC_DEFINE(HAVE_TCL_THREADS, 1, [Define if Tcl library is threads-enabled.])
 
     # Add pthread library to $LIBS if we need it for threaded Tcl
-    if test ! "x$ac_cv_lib_pthread" = "x"; then
+    if test "x$ac_cv_lib_pthread" != x; then
       LIBS="$ac_cv_lib_pthread $LIBS"
     fi
   else
@@ -1423,16 +1426,16 @@ dnl EGG_TCL_LIB_REQS()
 dnl
 AC_DEFUN([EGG_TCL_LIB_REQS],
 [
-  if test "$EGG_CYGWIN" = "yes"; then
+  if test "$EGG_CYGWIN" = yes; then
     TCL_REQS="${TCLLIB}/lib${TCLLIBFN}"
     TCL_LIBS="-L$TCLLIB -l$TCLLIBFNS $EGG_MATH_LIB"
   else
-    if test ! "$TCLLIBEXT" = ".a"; then
+    if test "$TCLLIBEXT" != ".a"; then
       TCL_REQS="${TCLLIB}/lib${TCLLIBFN}"
       TCL_LIBS="-L$TCLLIB -l$TCLLIBFNS $EGG_MATH_LIB"
     else
       # Set default make as static for unshared Tcl library
-      if test ! "$DEFAULT_MAKE" = "static"; then
+      if test "$DEFAULT_MAKE" != static; then
         cat << 'EOF' >&2
 configure: WARNING:
 
@@ -1446,10 +1449,10 @@ EOF
 
       # Are we using a pre 7.4 Tcl version ?
       TCL_VER_PRE74=`echo $egg_cv_var_tcl_version | $AWK '{split([$]1, i, "."); if (((i[[1]] == 7) && (i[[2]] < 4)) || (i[[1]] < 7)) print "yes"; else print "no"}'`
-      if test "$TCL_VER_PRE74" = "no"; then
+      if test "$TCL_VER_PRE74" = no; then
 
         # Was the --with-tcllib option given ?
-        if test ! "x$tcllibname" = "x"; then
+        if test "x$tcllibname" != x; then
           TCL_REQS="${TCLLIB}/lib${TCLLIBFN}"
           TCL_LIBS="${TCLLIB}/lib${TCLLIBFN} $EGG_MATH_LIB"
         else
@@ -1489,7 +1492,7 @@ AC_DEFUN([EGG_SUBST_EGGVERSION],
 dnl EGG_SUBST_DEST()
 AC_DEFUN([EGG_SUBST_DEST],
 [
-  if test "x$DEST" = "x"; then
+  if test "x$DEST" = x; then
     DEST=\${prefix}
   fi
   AC_SUBST(DEST)

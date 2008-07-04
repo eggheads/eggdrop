@@ -2,7 +2,7 @@
 #  This is the Makefile for EGGDROP (the IRC bot)
 #  You should never need to edit this.
 #
-# $Id: Makefile.in,v 1.40 2004/08/28 06:43:21 wcc Exp $
+# $Id: Makefile.in,v 1.41 2008/07/04 01:52:55 tothwolf Exp $
 
 SHELL = @SHELL@
 top_srcdir = @top_srcdir@
@@ -15,7 +15,10 @@ DEST = @DEST@
 EGGEXEC = @EGGEXEC@
 EGGVERSION = @EGGVERSION@
 
-# things you can put here:
+# Extra compiler flags
+#
+# Things you can put here:
+#
 #   -Wall            if you're using gcc and it supports it
 #                    (configure usually detects this anyway now)
 #
@@ -24,27 +27,29 @@ EGGVERSION = @EGGVERSION@
 #                    These can both be set by using 'make debug'
 #                    or 'make sdebug'
 CFLGS =
+DEBCFLGS = -g3 -DDEBUG_ASSERT -DDEBUG_MEM
 
-# ./configure SHOULD set these; however you may need to tweak them to
-# get modules to compile. If you do, PLEASE let the development team know,
-# so we can incorporate needed changes into the next release. You can
-# contact us at eggdev@eggheads.org, as always.
+# ./configure SHOULD set these; however you may need to tweak them to get
+# modules to compile. If you do, PLEASE let the development team know so
+# we can incorporate any required changes into the next release. You can
+# contact us via eggdev@eggheads.org
 
-# Compiler
+# Defaults
 CC = @CC@
-MOD_CC = @MOD_CC@
-SHLIB_CC = @SHLIB_CC@
-
-# Linker
 LD = @CC@
-MOD_LD = @MOD_LD@
-SHLIB_LD = @SHLIB_LD@
-
-# Stripping
-# To turn STRIP off, use 'STRIP = touch' not 'STRIP ='.
 STRIP = @STRIP@
+RANLIB = @RANLIB@
+
+# make 'modegg'
+MOD_CC = @MOD_CC@
+MOD_LD = @MOD_LD@
 MOD_STRIP = @MOD_STRIP@
+
+# make 'modules'
+SHLIB_CC = @SHLIB_CC@
+SHLIB_LD = @SHLIB_LD@
 SHLIB_STRIP = @SHLIB_STRIP@
+MOD_EXT = @MOD_EXT@
 
 # Programs make install uses
 LN_S = @LN_S@
@@ -53,21 +58,18 @@ INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
 
-# Misc
-RANLIB = @RANLIB@
-MOD_EXT = @MOD_EXT@
-XREQS = @TCL_REQS@
+# Stuff for Tcl
 TCLLIB = @TCLLIB@
 TCLLIBFN = @TCLLIBFN@
+XREQS = @TCL_REQS@
 
 # Extra libraries
-# XLIBS will be linked with everything; MODULE_XLIBS will only be linked with
-# the actual module objects.
+# XLIBS will be linked with everything
+# MODULE_XLIBS will only be linked with the module objects
 XLIBS = @TCL_LIBS@ @LIBS@
 MODULE_XLIBS = @MODULE_XLIBS@
 
-# Shouldn't need to touch anything below here.
-DEBCFLAGS = -DDEBUG_ASSERT -DDEBUG_MEM
+# You shouldn't need to edit anything below this line.
 
 modconf = $(top_srcdir)/misc/modconfig --top_srcdir=$(top_srcdir)
 
@@ -92,8 +94,8 @@ MAKE_MODEGG = $(MAKE) 'MAKE=$(MAKE)' 'CC=$(MOD_CC)' 'LD=$(MOD_LD)' \
 'XLIBS=$(XLIBS)' 'EGGEXEC=$(EGGEXEC)' 'EGGBUILD=(standard build)' 'MODOBJS='
 
 MAKE_MODULES = $(MAKE) 'MAKE=$(MAKE)' 'CC=$(SHLIB_CC)' 'LD=$(SHLIB_LD)' \
-'STRIP=$(SHLIB_STRIP)' 'CFLGS=$(CFLGS)' 'XLIBS=$(XLIBS)' 'MOD_EXT=$(MOD_EXT)' \
-'MODULE_XLIBS=$(MODULE_XLIBS)'
+'STRIP=$(SHLIB_STRIP)' 'CFLGS=$(CFLGS)' 'XLIBS=$(XLIBS)' \
+'MOD_EXT=$(MOD_EXT)' 'MODULE_XLIBS=$(MODULE_XLIBS)'
 
 MAKE_STATIC = $(MAKE) 'MAKE=$(MAKE)' 'CC=$(CC)' 'LD=$(LD)' \
 'STRIP=$(STRIP)' 'RANLIB=$(RANLIB)' 'CFLGS=$(CFLGS) -DSTATIC' \
@@ -101,17 +103,17 @@ MAKE_STATIC = $(MAKE) 'MAKE=$(MAKE)' 'CC=$(CC)' 'LD=$(LD)' \
 'XLIBS=$(XLIBS)' 'EGGEXEC=$(EGGEXEC)' 'EGGBUILD=(static version)' \
 'MODOBJS=mod/*.o'
 
-MAKE_DEBEGG = $(MAKE) 'MAKE=$(MAKE)' 'CC=$(MOD_CC)' 'LD=$(MOD_LD) -g' \
-'STRIP=touch' 'RANLIB=$(RANLIB)' 'CFLGS=-g3 $(DEBCFLAGS) $(CFLGS)' \
+MAKE_DEBEGG = $(MAKE) 'MAKE=$(MAKE)' 'CC=$(MOD_CC)' 'LD=$(MOD_LD)' \
+'STRIP=touch' 'RANLIB=$(RANLIB)' 'CFLGS=$(DEBCFLGS) $(CFLGS)' \
 'TCLLIB=$(TCLLIB)' 'TCLLIBFN=$(TCLLIBFN)' 'XREQS=$(XREQS)' \
 'XLIBS=$(XLIBS)' 'EGGEXEC=$(EGGEXEC)' 'EGGBUILD=(debug version)' 'MODOBJS='
 
 MAKE_DEBMODULES = $(MAKE) 'MAKE=$(MAKE)' 'CC=$(SHLIB_CC)' 'LD=$(SHLIB_LD)' \
-'XLIBS=$(XLIBS)' 'STRIP=touch' 'CFLGS=-g3 $(DEBCFLAGS) $(CFLGS)' \
+'XLIBS=$(XLIBS)' 'STRIP=touch' 'CFLGS=$(DEBCFLGS) $(CFLGS)' \
 'MOD_EXT=$(MOD_EXT)' 'MODULE_XLIBS=$(MODULE_XLIBS)'
 
-MAKE_SDEBUG = $(MAKE) 'MAKE=$(MAKE)' 'CC=$(CC)' 'LD=$(LD) -g' \
-'STRIP=touch' 'RANLIB=$(RANLIB)' 'CFLGS=-g3 $(DEBCFLAGS) -DSTATIC $(CFLGS)' \
+MAKE_SDEBUG = $(MAKE) 'MAKE=$(MAKE)' 'CC=$(CC)' 'LD=$(LD)' \
+'STRIP=touch' 'RANLIB=$(RANLIB)' 'CFLGS=$(DEBCFLGS) $(CFLGS) -DSTATIC' \
 'TCLLIB=$(TCLLIB)' 'TCLLIBFN=$(TCLLIBFN)' 'XREQS=$(XREQS)' 'XLIBS=$(XLIBS)' \
 'EGGEXEC=$(EGGEXEC)' 'EGGBUILD=(static debug version)' 'MODOBJS=mod/*.o'
 
