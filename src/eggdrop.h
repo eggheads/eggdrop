@@ -4,7 +4,7 @@
  *
  *   IF YOU ALTER THIS FILE, YOU NEED TO RECOMPILE THE BOT.
  *
- * $Id: eggdrop.h,v 1.67 2008/02/16 21:41:03 guppy Exp $
+ * $Id: eggdrop.h,v 1.68 2008/07/04 03:17:25 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -34,11 +34,7 @@
  */
 #undef NO_OLD_BOTNET
 
-/*
- * Undefine this to completely disable context debugging.
- * WARNING: DO NOT send in bug reports if you undefine this!
- */
-#define DEBUG_CONTEXT
+/* DEBUG_CONTEXT is now set in config.h by configure */
 
 /*
  * Set the following to the timestamp for the logfile entries.

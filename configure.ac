@@ -1,15 +1,16 @@
 dnl configure.ac: this file is processed by autoconf to produce ./configure.
 dnl
-dnl $Id: configure.ac,v 1.32 2008/07/04 02:41:42 tothwolf Exp $
+dnl $Id: configure.ac,v 1.33 2008/07/04 03:17:25 tothwolf Exp $
 
-AC_PREREQ(2.59)
+AC_PREREQ(2.60)
 AC_INIT([Eggdrop],[1.6.20],[bugs@eggheads.org])
 AC_COPYRIGHT([Copyright (C) 1999 - 2008 Eggheads Development Team])
-AC_REVISION($Revision: 1.32 $)
+AC_REVISION($Revision: 1.33 $)
 AC_CONFIG_SRCDIR(src/eggdrop.h)
 AC_CONFIG_AUX_DIR(misc)
 AC_CONFIG_HEADER(config.h)
 AC_PREFIX_DEFAULT([\${HOME}/eggdrop])
+AC_PRESERVE_HELP_ORDER
 
 dnl config.h stuff
 AH_TOP([/*
@@ -175,6 +176,14 @@ EGG_TCL_ENABLE_THREADS
 EGG_TCL_CHECK_THREADS
 EGG_TCL_LIB_REQS
 EGG_TCL_LUSH
+
+
+# Debug options
+EGG_DEBUG_ENABLE
+EGG_DEBUG_DEFAULTS
+EGG_DEBUG_OPTIONS 
+EGG_DEBUG_CFLAGS  
+EGG_ENABLE_DEBUG_CONTEXT
 
 
 # Substitute Makefile variables.

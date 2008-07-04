@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  *
- * $Id: main.c,v 1.123 2008/07/04 01:52:55 tothwolf Exp $
+ * $Id: main.c,v 1.124 2008/07/04 03:17:25 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -60,8 +60,8 @@
 #include "tandem.h"
 #include "bg.h"
 
-#ifndef ENABLE_STRIP
-#  include <sys/resource.h>
+#ifdef DEBUG                            /* For debug compile */
+#  include <sys/resource.h>             /* setrlimit() */
 #endif
 
 #ifdef CYGWIN_HACKS
@@ -222,10 +222,12 @@ static void check_expired_dcc()
     }
 }
 
-#ifdef DEBUG_CONTEXT
 static int nested_debug = 0;
 
-void write_debug()
+#ifndef DEBUG_CONTEXT
+#define write_debug() do {} while (0)
+#else
+static void write_debug()
 {
   int x;
   char s[25];
@@ -322,9 +324,7 @@ void write_debug()
 
 static void got_bus(int z)
 {
-#ifdef DEBUG_CONTEXT
   write_debug();
-#endif
   fatal("BUS ERROR -- CRASHING!", 1);
 #ifdef SA_RESETHAND
   kill(getpid(), SIGBUS);
@@ -336,9 +336,7 @@ static void got_bus(int z)
 
 static void got_segv(int z)
 {
-#ifdef DEBUG_CONTEXT
   write_debug();
-#endif
   fatal("SEGMENT VIOLATION -- CRASHING!", 1);
 #ifdef SA_RESETHAND
   kill(getpid(), SIGSEGV);
@@ -350,9 +348,7 @@ static void got_segv(int z)
 
 static void got_fpe(int z)
 {
-#ifdef DEBUG_CONTEXT
   write_debug();
-#endif
   fatal("FLOATING POINT ERROR -- CRASHING!", 0);
 }
 
@@ -447,9 +443,7 @@ void eggContextNote(const char *file, int line, const char *module,
  */
 void eggAssert(const char *file, int line, const char *module)
 {
-#ifdef DEBUG_CONTEXT
   write_debug();
-#endif
   if (!module)
     putlog(LOG_MISC, "*", "* In file %s, line %u", file, line);
   else
@@ -712,18 +706,21 @@ int main(int argc, char **argv)
   FILE *f;
   struct sigaction sv;
   struct chanset_t *chan;
+#ifdef DEBUG
+  struct rlimit cdlim;
+#endif
 
-#ifndef ENABLE_STRIP
-  /* Make sure it can write core, if you make debug. Else it's pretty
-   * useless (dw)
-   */
-  {
-    struct rlimit cdlim;
-
-    cdlim.rlim_cur = RLIM_INFINITY;
-    cdlim.rlim_max = RLIM_INFINITY;
-    setrlimit(RLIMIT_CORE, &cdlim);
-  }
+/* Make sure it can write core, if you make debug. Else it's pretty
+ * useless (dw)
+ *
+ * Only allow unlimited size core files when compiled with DEBUG defined.
+ * This is not a good idea for normal builds -- in these cases, use the
+ * default system resource limits instead.
+ */
+#ifdef DEBUG
+  cdlim.rlim_cur = RLIM_INFINITY;
+  cdlim.rlim_max = RLIM_INFINITY;
+  setrlimit(RLIMIT_CORE, &cdlim);
 #endif
 
   /* Initialise context list */

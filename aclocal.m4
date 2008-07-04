@@ -16,7 +16,7 @@ dnl You should have received a copy of the GNU General Public License
 dnl along with this program; if not, write to the Free Software
 dnl Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 dnl
-dnl $Id: aclocal.m4,v 1.109 2008/07/04 02:41:42 tothwolf Exp $
+dnl $Id: aclocal.m4,v 1.110 2008/07/04 03:17:25 tothwolf Exp $
 dnl
 
 
@@ -412,7 +412,6 @@ AC_DEFUN([EGG_ENABLE_STRIP],
                 [enable_strip="no"])
 
   if test "$enable_strip" = yes; then
-    AC_DEFINE(ENABLE_STRIP, 1, [Define if stripping is enabled.])
     cat << 'EOF' >&2
 
 configure: WARNING:
@@ -1603,6 +1602,167 @@ EOF
     egg_tclinc="$TCLINC"
     egg_tclincfn="$TCLINCFN"
   ])
+])
+
+
+dnl EGG_DEBUG_ENABLE()
+dnl
+AC_DEFUN([EGG_DEBUG_ENABLE],
+[
+  AC_ARG_ENABLE(debug,         [  --enable-debug          enable generic debug code (default for 'make debug')], [enable_debug="$enableval"], [enable_debug="auto"])
+  AC_ARG_ENABLE(debug,         [  --disable-debug         disable generic debug code], [enable_debug="$enableval"], [enable_debug="auto"])
+  AC_ARG_ENABLE(debug-assert,  [  --enable-debug-assert   enable assert debug code (default for 'make debug')], [enable_debug_assert="$enableval"], [enable_debug_assert="auto"])
+  AC_ARG_ENABLE(debug-assert,  [  --disable-debug-assert  disable assert debug code], [enable_debug_assert="$enableval"], [enable_debug_assert="auto"])
+  AC_ARG_ENABLE(debug-mem,     [  --enable-debug-mem      enable memory debug code (default for 'make debug')], [enable_debug_mem="$enableval"], [enable_debug_mem="auto"])
+  AC_ARG_ENABLE(debug-mem,     [  --disable-debug-mem     disable memory debug code], [enable_debug_mem="$enableval"], [enable_debug_mem="auto"])
+  AC_ARG_ENABLE(debug-context, [  --enable-debug-context  enable context debug code (default)], [enable_debug_context="$enableval"], [enable_debug_context="auto"])
+  AC_ARG_ENABLE(debug-context, [  --disable-debug-context disable context debug code], [enable_debug_context="$enableval"], [enable_debug_context="auto"])
+])
+
+
+dnl EGG_DEBUG_DEFAULTS()
+dnl
+AC_DEFUN([EGG_DEBUG_DEFAULTS],
+[
+  # Defaults:
+
+  # make: 'eggdrop' or 'static'
+  default_std_debug="no"
+  default_std_debug_assert="no"
+  default_std_debug_mem="no"
+  default_std_debug_context="yes"
+
+  # make: 'debug' or 'sdebug'
+  default_deb_debug="yes"
+  default_deb_debug_assert="yes"
+  default_deb_debug_mem="yes"
+  default_deb_debug_context="yes"
+
+  if test "$DEFAULT_MAKE" = eggdrop || test "$DEFAULT_MAKE" = static; then
+    default_debug="$default_std_debug" 
+    default_debug_assert="$default_std_debug_assert" 
+    default_debug_mem="$default_std_debug_mem" 
+    default_debug_context="$default_std_debug_context"
+  else
+    default_debug="$default_deb_debug"
+    default_debug_assert="$default_deb_debug_assert"
+    default_debug_mem="$default_deb_debug_mem"
+    default_debug_context="$default_deb_debug_context"
+  fi
+
+  debug_options="debug debug_assert debug_mem"
+
+  debug_cflags_debug="-g3 -DDEBUG"
+  debug_cflags_debug_assert="-DDEBUG_ASSERT"
+  debug_cflags_debug_mem="-DDEBUG_MEM"
+  debug_stdcflags_debug=""
+  debug_stdcflags_debug_assert=""
+  debug_stdcflags_debug_mem=""
+  debug_debcflags_debug=""
+  debug_debcflags_debug_assert=""
+  debug_debcflags_debug_mem=""
+])
+
+
+dnl EGG_DEBUG_OPTIONS()
+dnl
+AC_DEFUN([EGG_DEBUG_OPTIONS],
+[
+  for enable_option in $debug_options; do
+
+    eval enable_value=\$enable_$enable_option
+
+    # Check if either --enable-<opt> or --disable-<opt> was used
+    if test "$enable_value" != auto; then
+      # Make sure an invalid option wasn't passed as --enable-<opt>=foo
+      if test "$enable_value" != yes && test "$enable_value" != no; then
+        opt_name=`echo $enable_option | sed s/_/-/g`
+        eval opt_default=\$default_$enable_option
+        AC_MSG_WARN([Invalid option '$enable_value' passed to --enable-${opt_name}, defaulting to '$opt_default'])
+        eval enable_$enable_option="auto"
+      fi
+    fi
+
+    if test "$enable_value" = auto; then
+      # Note: options generally should not end up in both std and deb but
+      # there may be options in the future where this behavior is desired.
+      if test `eval echo '${'default_std_$enable_option'}'` = yes; then
+        eval `echo debug_stdcflags_$enable_option`=\$debug_cflags_$enable_option
+      fi
+      if test `eval echo '${'default_deb_$enable_option'}'` = yes; then
+        eval `echo debug_debcflags_$enable_option`=\$debug_cflags_$enable_option
+      fi
+    else
+      if test "$enable_value" = yes; then
+        # If option defaults to 'yes' for debug, always put it in stdcflags
+        # when the option is forced on because someone may want it enabled
+        # for a non-debug build.
+        if test `eval echo '${'default_deb_$enable_option'}'` = yes; then
+          eval `echo debug_stdcflags_$enable_option`=\$debug_cflags_$enable_option
+        else
+          # option defaulted to 'no' so put it in debcflags
+          eval `echo debug_debcflags_$enable_option`=\$debug_cflags_$enable_option
+        fi
+      fi
+    fi
+  done
+])
+
+
+dnl EGG_DEBUG_CFLAGS()
+dnl
+AC_DEFUN([EGG_DEBUG_CFLAGS],
+[
+  for cflg_option in $debug_options; do
+    eval stdcflg_value=\$debug_stdcflags_$cflg_option
+    EGG_APPEND_VAR(CFLGS, $stdcflg_value)
+
+    eval debcflg_value=\$debug_debcflags_$cflg_option
+    EGG_APPEND_VAR(DEBCFLGS, $debcflg_value)
+  done
+
+  # Disable debug symbol stripping if compiled with --enable-debug
+  # This will result in core dumps that are actually useful.
+  if test "x$debug_stdcflags_debug" != x; then
+    STRIP="touch"
+    MOD_STRIP="touch"
+    SHLIB_STRIP="touch"
+  fi
+
+  AC_SUBST(CFLGS)
+  AC_SUBST(DEBCFLGS)
+])
+
+
+dnl EGG_ENABLE_DEBUG_CONTEXT()
+dnl
+AC_DEFUN([EGG_ENABLE_DEBUG_CONTEXT],
+[
+  # Check if either --enable-debug-context or --disable-debug-context was used
+  if test "$enable_debug_context" != auto; then
+
+    # Make sure an invalid option wasn't passed as --enable-debug-context=foo
+    if test "$enable_debug_context" != yes && test "$enable_debug_context" != no; then
+      AC_MSG_WARN([Invalid option '$enable_debug_context' passed to --enable-debug-context, defaulting to '$default_debug_context'])
+      enable_debug_context="$default_debug_context"
+    fi
+  else
+    enable_debug_context="$default_debug_context"
+  fi
+
+  if test "$enable_debug_context" = yes; then
+    AC_DEFINE(DEBUG_CONTEXT, 1, [Define for context debugging.])
+  else
+    cat << 'EOF' >&2
+configure: WARNING:
+
+  You have disabled context debugging.
+
+  Eggdrop will not be able to provide context information if it crashes.
+  Bug reports without context are less helpful when tracking down bugs.
+
+EOF
+  fi
 ])
 
 

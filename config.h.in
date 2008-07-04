@@ -34,6 +34,9 @@
 /* Define if running under Cygwin. */
 #undef CYGWIN_HACKS
 
+/* Define for context debugging. */
+#undef DEBUG_CONTEXT
+
 /* Define if running on SunOS 4.0. */
 #undef DLOPEN_1
 
@@ -42,9 +45,6 @@
 
 /* Defines the current Eggdrop version. */
 #undef EGG_VERSION
-
-/* Define if stripping is enabled. */
-#undef ENABLE_STRIP
 
 /* Define to 1 if you have the <arpa/inet.h> header file. */
 #undef HAVE_ARPA_INET_H

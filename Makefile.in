@@ -2,7 +2,7 @@
 #  This is the Makefile for EGGDROP (the IRC bot)
 #  You should never need to edit this.
 #
-# $Id: Makefile.in,v 1.41 2008/07/04 01:52:55 tothwolf Exp $
+# $Id: Makefile.in,v 1.42 2008/07/04 03:17:25 tothwolf Exp $
 
 SHELL = @SHELL@
 top_srcdir = @top_srcdir@
@@ -22,12 +22,15 @@ EGGVERSION = @EGGVERSION@
 #   -Wall            if you're using gcc and it supports it
 #                    (configure usually detects this anyway now)
 #
+#   -DDEBUG          generic debugging code
 #   -DDEBUG_ASSERT   to enable assert debugging
 #   -DDEBUG_MEM      to be able to debug memory allocation (.debug)
-#                    These can both be set by using 'make debug'
-#                    or 'make sdebug'
-CFLGS =
-DEBCFLGS = -g3 -DDEBUG_ASSERT -DDEBUG_MEM
+#
+# Debug defines can be set with configure now.
+# See ./configure --help for more information.
+
+CFLGS = @CFLGS@
+DEBCFLGS = @DEBCFLGS@
 
 # ./configure SHOULD set these; however you may need to tweak them to get
 # modules to compile. If you do, PLEASE let the development team know so
