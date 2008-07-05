@@ -1,0 +1,277 @@
+$Id: Changes0.6,v 1.1 2008/07/05 02:14:01 tothwolf Exp $
+
+Eggdrop Changes (starting with 0.6c)
+
+    _____________________________________________________________________
+
+0.6r (April 4, 1994):
+
+  # New version from Robey Pointer <rpointe@eng.clemson.edu>
+
+  - When switching servers, it used to think it was on the channel again
+    even if it wasn't -- fixed
+
+  - Used to crash when receiving really long one-word msgs -- fixed
+
+
+0.6q (April 2, 1994):
+
+  # New version from Robey Pointer <rpointe@eng.clemson.edu>
+
+  - 'pass' with 2 parameters changes your password now
+
+  - 'info' with no parameters shows your current info
+
+  - Host masking is better now
+
+  - Master-command '.info' to retrieve someone's info
+
+  - New msg command 'who' to show all users info
+
+
+0.6p (April 1, 1994):
+
+  # New version from Robey Pointer <rpointe@eng.clemson.edu>
+
+  - 'help' works a little better but is still sparse
+
+  - 'pass', 'info', 'ident' cleaned up and show standard-looking console
+    entries now
+
+  - 'op' and 'invite' converted to standard console entries
+
+  - Can't set your password too long now
+
+  - New command '.match' to look up users by matching a nickname wildcard,
+    or by attributes (precede with '+': ie, '+m' to find masters)
+
+
+0.6o (March 31, 1994):
+
+  # New version from Robey Pointer <rpointe@eng.clemson.edu>
+
+  - 'hello' actually programmed in :)
+
+  - People recognized by the bot (who have a password set) can get a new
+    hostmask recognized via msg: 'ident <password>'
+
+  - People who get lost in netsplits aren't logged with log-joins=off now
+    (oops)
+
+  - New file misc.c created to better modularize the code
+
+  - 'pass <password>' from someone the bot knows who doesn't have a password
+    set, will set a password for them
+
+  - 'info <etc>' will set your join info, assuming the bot is using infofile
+
+
+0.6n (March 30, 1994):
+
+  # New version from Robey Pointer <rpointe@eng.clemson.edu>
+
+  - (happy birthday brandon!)
+
+  - 'yes'/'no'/'true'/'false'/'y'/'n'/'t'/'f' can be used in SET
+
+  - learn-users (new set variable) allows new members to the channel to send
+    a 'hello' to the bot and get in the user list (if not already there)
+
+  - Very pointless old helpbot code removed -- no plans for any helpbot
+    support in the future
+
+
+0.6m (March 28, 1994):
+
+  # New version from Robey Pointer <rpointe@eng.clemson.edu>
+
+  - 'host unreachable' trapped now
+
+
+0.6l (March 22, 1994):
+
+  # New version from Robey Pointer <rpointe@eng.clemson.edu>
+
+  - New configfile variable 'infofile' for user info lines
+
+  - New configfile set 'greet' to turn on/off auto-greet using the infofile
+    (will check the infofile for a handle that matches the one found for the
+    user joining, and if found, will dump that line to the channel)
+
+
+0.6k (March 17, 1994):
+
+  # New version from Robey Pointer <rpointe@eng.clemson.edu>
+
+  - Remembers what dcc directory you were last in (stored in user file)
+
+  - Fixed extra-space bug in updating file list
+
+  - Will show handle in '.channel' if it can find one for that user
+
+  - Can change description now, but still can't add one
+
+  - Time/date stamps notes in the notefile
+
+  - desc works now
+
+
+0.6j (March 16, 1994):
+
+  # New version from Robey Pointer <rpointe@eng.clemson.edu>
+
+  - '.note' works for non-masters now (it was supposed to all along)
+
+  - A '.note' while that user is online is treated like a private message --
+    that was always true -- but now it looks more like one
+
+  - Ban list in '.channel' tries to conserve space now, and should show bans
+    placed by servers (instead of claiming "unknown")
+
+  - Acknowledges successful file receive and adds it to the incoming
+    directory list now
+
+
+0.6i (March 14, 1994):
+
+  # New version from Robey Pointer <rpointe@eng.clemson.edu>
+
+  - Won't babble about how it's reversing illegal mode changes if it's not
+    even op'd
+
+  - mkdir/rmdir work now
+
+  - 60 seconds flood instead of 1 for flood detect (and it works now)
+
+
+0.6h (March 11, 1994):
+
+  # New version from Robey Pointer <rpointe@eng.clemson.edu>
+
+  - Fixed dcc chat connection to IP numbers -- it works now (hostname lookup
+    not required)
+
+  - Config parameter 'dccdir' changed to 'dcc-path' (this is the start
+    location of any file transfer user)
+
+  - New config parameter 'dcc-incoming' which is the path to store uploaded
+    files -- if you leave it undefined, nobody can upload
+
+  - Made it so the master-only file system commands actually require you to
+    be a master (oops)
+
+  - New file system commands: 'import', 'hide', 'rm', 'mkdir', 'rmdir' for
+    masters (file system is starting to become a bit more respectable)
+
+  - Eggdrop will warn you if it doesn't understand (and therefore is going
+    to ignore) a line in its config file
+
+  - Extra frivolous command '.me' added (public actions)
+
+
+0.6g (March 10, 1994):
+
+  # New version from Robey Pointer <rpointe@eng.clemson.edu>
+
+  - Removed old clumsy and stupid ignore code
+
+  - People on the ignore list only have msgs, notices, and ctcp's ignored
+    now, not vital information like kicks, joins, etc (duh)
+
+  - Flooding via msg or notice is activated by 5 from the same host in 1
+    second, and results in that host being added to the ingore list
+
+  - Flooding a channel with msgs, notices, or nick changes is activated by
+    10 from the same host in 1 second, and results in a kick from the
+    channel
+
+  - Flooding via ctcp (to the bot or channel) is activated by 5 from the
+    same host in 1 second, and results in that host being added to the
+    ignore list, AND the user being kicked from the channel, if they are on
+    it
+
+
+0.6f (March 9, 1994):
+
+  # New version from Robey Pointer <rpointe@eng.clemson.edu>
+
+  - New command line option -c when used with -n, which will dump a
+    '.channel' and '.status' output to the terminal every 10 seconds
+
+  - New command line option -t when used with -n, which makes the terminal
+    appear as another member of the party line
+
+  - Mode changes made by someone who gained ops via server (and isn't in the
+    op-list) are reversed and a kick is sent out for them -- an auto-deop is
+    sent out for each invalid server op but sometimes users can make quick
+    mode changes before the deop propogates -- this controls the damage
+
+
+0.6e (March 7, 1994):
+
+  # New version from Robey Pointer <rpointe@eng.clemson.edu>
+
+  - Got rid of warning messages from net.c
+
+  - Only shows nickname of person who placed the ban in '.channel'
+
+  - Shortened date/time listing in '.channel' of when a user joined the
+    channel -- now it's "15:45" or "14Mar" or "dunno"
+
+  - No longer crashes horribly when it can't get the telnet port it wants
+    (used to go into an infinite loop!)
+
+  - The 'log' command now can be used as 'log <from> <to>' which will show
+    you log entries from <from> mins ago until <to> mins ago
+
+  - Fixed ignore bug (ignore works now on users who also have an entry in
+    the user list)
+
+  - If it can't get the telnet port it wants, it will keep trying the next
+    port till it's tried 20 -- THEN it will give up; ie configfile port 2000
+    could get assigned port 2000 through 2020
+
+  - Five msgs/etc from the same host in one second are now considered a
+    flood and get that host put on the ignore list
+
+  - Closes dcc sockets on dying now (oops!)
+
+
+0.6d (March 3, 1994):
+
+  # New version from Robey Pointer <rpointe@eng.clemson.edu>
+
+  - IP number connections were using negative values (eek!) - fixed
+
+  - No more "mode change on nonexistant" when kickbanning
+
+  - 'op' and 'deop' won't let you op/deop people not on the channel, or op a
+    deop-listed person, or deop and op-listed person
+
+  - Now supports server entries like 'hub.cs.jmu.edu:6665' to allow other
+    ports besides 6667
+
+  - Can msg bot 'invite [pass]' to get invited to a +i channel
+
+  - Separated a new file 'users.c' from 'chanprog.c' to keep modularity
+
+  - New notes function... store notes for masters or op-listers when they're
+    offline: configfile 'notefile <etc>' -- command '.note <to> <msg>'
+
+  - New command 'log [#]' will show the log file for the past # minutes (or
+    default of 60 = 1 hour)
+
+
+0.6c (March 2, 1994):
+
+  # New version from Robey Pointer <rpointe@eng.clemson.edu>
+
+  - Tried to fix hostname lookup for dcc chat - will attempt to connect via
+    IP number now
+
+  - New +console,-console to turn on/off console for non-masters
+
+  - Fixed (?) bus error when -ignore or -ban on the last ignore/ban
+
+  - Using -master or +master on someone on the party line will now have an
+    immediate effect (no more leaving & rejoining)

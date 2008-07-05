@@ -1,0 +1,169 @@
+$Id: Changes0.7,v 1.1 2008/07/05 02:14:01 tothwolf Exp $
+
+Eggdrop Changes (since version 0.6)
+
+    _____________________________________________________________________
+
+0.7d (April 11, 1994):
+
+  # New version from Robey Pointer <rpointe@eng.clemson.edu>
+
+  - Msg-command 'who' wasn't looking up info by hostmask, it was using the
+    nicknames -- fixed
+
+  - Asking for 'info' via msg when you have none will tell you that now
+
+  TO-DO:
+
+  - Make '.user' match possibly by last join time
+  - BUG: can crash (infinite loop) somewhere in file system
+  - Actually the file system still needs major improvement (sigh) - it sucks
+    -- and it now causes PIPE FAULTS (ugh!!!!)
+  - Finish installing tandem-bot support (big job)
+
+
+0.7c (April 11, 1994):
+
+  # New version from Robey Pointer <rpointe@eng.clemson.edu>
+
+  - Tacking on the '[Nick]' in front of an auto-greet is done if the current
+    nickname isn't in the greeting, not if the handle isn't in it (oops)
+
+  - Telnet works again (it wasn't initializing a variable... good grief!)
+
+  - New user flag 't' (tandem) for marking users who are actually other bots
+    which will be running in tandem (shared user list)
+
+  - Can '+tandem' and '-tandem' on the party line now, but no actual
+    difference in behaviour yet
+
+  - Preliminary support for userinfo (autogreets) being stored in the
+    userlist instead of a separate file
+
+  - Notes aren't logged any more (was getting annoying)
+
+  - '.info' with one parameter works the same (shows info for a user), but
+    with 2 parameters, it now sets info for a user: using user-file field
+
+  - auto-greet uses the userfile now instead of a separate file
+
+
+0.7b (April 7, 1994):
+
+  # New version from Robey Pointer <rpointe@eng.clemson.edu>
+
+  - Doesn't double-send help lines anymore in /msg (ACK!)
+
+  - Automatic console mode for masters on the party line now
+
+  - Help files for dcc chat are prepended with "dcc." now (ie, '.help axe' =
+    "dcc.axe")
+
+  - All dcc help files external now
+
+  - Can use 'jump' with a parameter: of the form "irc.edu" or "irc.edu 6665"
+    and it will move to that server directly -- if it's not in the internal
+    server list, it will add it
+
+  - Should ignore incoming data from a nonexistant port (i hope)
+
+
+0.7a (April 7, 1994):
+
+  # New version from Robey Pointer <rpointe@eng.clemson.edu>
+
+  - File system will ignore leading '.' in commands now
+
+  - '?' == 'help' in file system and party line now
+
+  - If it can't find a '.files' in a dcc directory, it will create one when
+    a file is uploaded or imported, etc
+
+  - Will create infofile if it's defined and can't find it
+
+  - '.match' will count the number of matches now
+
+  - If the first line of a helpfile is '!op', it will only be shown to
+    people with op status
+
+  - If the first line of a helpfile is '!master', it will only be shown to
+    people with master status
+
+  - An unknown help query on the party line will check the help directory
+    now
+
+  - Valis reinstated.
+
+
+0.7 (April 7, 1994):
+
+  # New version from Robey Pointer <rpointe@eng.clemson.edu>
+
+  - Non-command msgs from ops and masters used to not get into the log --
+    fixed
+
+  - Configfile: 'helpbot' = name of helpbot, if applicable
+
+  - Radically changed internal server list movement... now keeps new
+    pointers, one for the bot, and one for the helpbot
+
+  - Helpbot is now logged in and changes servers on reconnect so far
+
+  - If the nickname isn't in the join info for a user when they join, it's
+    tacked on to the beginning: "[Robey] 20" instead of "20" which is
+    confusing
+
+  - dcc info taken out of '.status' and moved to '.dccstat'
+
+  - Helpbot info shown in '.status' now
+
+  - '.set' (aka configfile-set) modes shown in '.status' now
+
+  - If the bot is alone on a channel and doesn't have ops, it will leave and
+    rejoin to gain ops
+
+  - Won't send out the gain-ops string if it joins a channel and gets auto
+    ops for creating the channel (was a bug)
+
+  - Not setting 'dcc-path' actually disables dcc (was a bug)
+
+  - '.channel' doesn't show boring ban stats any more (use '.channelbans')
+
+  - Doing a channel reset shouldn't make people appear randomly split
+    anymore
+
+  - Helpbot changes nicks now if the default nick is in use
+
+  - 'who' msg queries are done via the helpbot if available
+
+  - Response to a new-user 'hello' is done via helpbot if available
+
+  - 'hello' tells the new user about the 'who' command
+
+  - Most configfile settings can't overflow their internal space now
+
+  - Removed dysfunctional configfile 'do' command
+
+  - dcc flooding should be thwarted now (more than 7 msgs in 1 second)
+
+  - New configfile setting: 'helpdir', which is the directory the help files
+    are stored in -- if not defined, the standard one line responses are
+    used -- otherwise, the file "help" is shown for default help, and all
+    other help requests are displayed only if there is a corresponding file
+    in the directory (error message ortherwise)
+
+  - Default help responses are done through the helpbot if available
+
+  - Status of message queue (and helpbot msg queue) displayed in '.status'
+
+  - If learn-users is on, and a help request is received from someone the
+    bot doesn't know, it will suggest they try 'hello'
+
+  - (end of Valis, which was still running 0.6r)
+
+  - dcc flood limit set to 3 (was 7)
+
+  - Can send notes to 'HQ' now (hq = terminal console)
+
+  - msg queues empty 1 msg per 2 seconds now, in sync with server flood
+    control

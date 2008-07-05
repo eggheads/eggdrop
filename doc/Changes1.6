@@ -1,0 +1,2570 @@
+$Id: Changes1.6,v 1.1 2008/07/05 02:14:03 tothwolf Exp $
+
+Eggdrop Changes (since version 1.6.0)
+
+    _____________________________________________________________________
+
+1.6.20 (CVS):
+
+  - Added doc/Changes* files created from all the various UPDATES* files
+    that were available. Change history after 0.7d (April 11, 1994) to 0.9
+    (July 23, 1994) seems to have been lost but it may eventually be located.
+  - Added doc/Versions file that contains a list of Eggdrop versions,
+    release dates, and other important notes in reverse chronological order.
+    Patch by: Tothwolf
+
+  - Require autoconf 2.60 now.
+  - Added AC_PRESERVE_HELP_ORDER macro to configure.ac
+  - Added new autoconf macros to aclocal.m4 and configure.ac:
+    EGG_DEBUG_ENABLE EGG_DEBUG_DEFAULTS EGG_DEBUG_OPTIONS EGG_DEBUG_CFLAGS
+    EGG_ENABLE_DEBUG_CONTEXT
+  - Added new configure options: --enable-debug --enable-debug-mem
+    --enable-debug-assert --enable-debug-context
+  - Replaced ENABLE_STRIP define with DEBUG
+  - DEBUG_CONTEXT is now defined in config.h instead of eggdrop.h
+  - Refactored DEBUG and DEBUG_CONTEXT conditional code in main.c.
+  - Don't default set unlimited core file size for non-debug builds.
+    Patch by: Tothwolf
+
+  - Added EGG_APPEND_VAR and EGG_CHECK_ICC autoconf macros to aclocal.m4.
+  - Replaced autoconf 'var="$var <string>"' with EGG_APPEND_VAR macro.
+  - Replaced no_pipe and no_wall variable hacks with a proper test for the
+    Intel C Compiler (icc).
+  - Put '-pipe' in CFLAGS not CC.
+  - Added GPL header to AH_TOP macro in configure.ac for config.h.in.
+  - Removed unused std_args.h header check and HAVE_STD_ARGS_H conditionals.
+    Patch by: Tothwolf
+
+  - Refactored root Makefile.in variables.
+  - Removed unnecessary '-g' flag from LD variables (-g is ignored).
+  - Renamed DEBCFLAGS to DEBCFLGS
+  - Moved -g3 compiler flag to DEBCFLGS variable.
+  - Removed double quoting "`command`" in autoconf macro tests.
+  - Changed autoconf macro 'test ! foo = bar' tests to 'test foo !=  bar'.
+    Both are portable but '!=' is now more common in autoconf macros and
+    is easier to read.
+    Patch by: Tothwolf
+
+  - Fixed EGG_PROG_HEAD_1 autoconf macro cache checking. You can't use
+    AC_MSG_RESULT() within AC_CACHE_VAL().
+  - Moved --enable-strip configure check from EGG_PROG_STRIP to it's own
+    macro: EGG_ENABLE_STRIP()
+    Patch by: Tothwolf
+
+  - Bot would send 'JOIN #chan ' to the server with trailing whitespace
+    when joining channels that didn't require a key.
+    Found by: simple / Patch by: Tothwolf
+
+  - Make the JOIN in check_expired_chanstuff() use DP_SERVER instead of
+    DP_MODE to prevent the bot from sending multiple JOIN requests.
+    Found by: simple / Patch by: thommey
+
+  - Refactored reset_chan_info() to make it a little easier on maintainers.
+  - Removed a useless '\r' from the dprintf() TOPIC check in
+    reset_chan_info(). This was from the "Request topic on channel reset"
+    patch in 1.6.18, which re-added the TOPIC check that someone
+    needlessly removed in 1.6.7.
+  - got_halfop() was improperly checking !me_op() to see if it should call
+    recheck_channel(). Now it checks !me_halfop() in addition to !me_op()
+  - Removed duplicate code in got_deop() for hidden +v / +h checking.
+    No need to duplicate the entire test, just add 'CHANHALFOP'.
+    Patch by: Tothwolf
+
+  - Set CHAN_PEND when calling refresh_who_chan() to avoid possibly sending
+    extra WHO requests to the server if a WHO was already sent.
+    Found by: Tothwolf / Patch by: thommey
+
+  - always send a "WHO chname" instead of sending a "WHO nick" which doesn't
+    have the same behaviour across all irc daemons.
+  - improved use_354 support as we weren't using it everywhere we could
+    Patch by: thommey
+
+  - Minor documentation updates
+    Patch by: skiidoo
+
+  - Updated exec magic tricks in the autobotchk and weed scripts.
+  - Check for a working 'grep -E' before resorting to 'egrep'.
+  - Use "$0" ${1+"$@"} in place of "$0" "$@" to avoid problems with broken
+    sh implementations that expand "$@" into a single empty argument when
+    there are no other arguments.
+    Patch by: Tothwolf
+
+  - Completely rewrote EGG_TCL_CHECK_THREADS autoconf macro to make the
+    --enable-tcl-threads and --disable-tcl-threads threaded Tcl library
+    configure options more robust.
+  - Fixed --enable-tcl-threads configure option so it will enable threaded
+    Tcl library support even if we don't autodetect a threaded Tcl library.
+  - Explicitly offer both --enable-tcl-threads and --disable-tcl-threads
+    configure options that can forcefully enable or disable threaded Tcl
+    library support. Previously either worked but only showing
+    --disable-tcl-threads in --help could be confusing.
+  - Added code to print an explicit message to show if threaded Tcl library
+    support will be enabled or not.
+  - We no longer link against pthread library unless threaded Tcl library
+    support is enabled.
+    Patch by: Tothwolf
+
+  - Added argument checking to randstring proc in alltools.tcl to make it a
+    little more robust.
+    Found by: thommey / Patch by: Tothwolf
+
+  - Modified releaseprep script to run cvs2cl so we will (hopefully) have an
+    up-to-date ChangeLog file before each release.
+    Patch by: Tothwolf
+
+  - Updated config.guess and config.sub build system triplet detection
+    scripts to the latest versions.
+    These were nearly 7 years old and way overdue for an update.
+    Patch by: Tothwolf
+
+  - Minor raw logging fix when the server sends the command
+    Found by: simple / Patch by: guppy
+
+  - tcl_maskhost could crash the bot
+    Patch by: FireEgl
+
+  - Changed some JOINs to use DP_SERVER instead of DP_MODE
+    Found by: Komandar / Patch by: guppy
+
+
+1.6.19 (April 18, 2008):
+
+  - Update the recommended Tcl version to 8.5
+    Patch by: guppy
+
+  - Updated Copyright dates
+  - Added [sL] and thommey to the AUTHORS file
+    Patch by: guppy
+
+  - Load blowfish by default
+    Patch by: guppy
+
+  - Added a Tcl script to handle the PONG :<cookie> junk on some EFnet servers
+    Patch by: [sL], guppy
+
+  - Add a simple Tcl script to handle the PASS <numbers> junk on some Undernet
+    servers
+    Patch by: guppy
+
+  - Add support for chanmode +T
+    Patch by: Thomas "thommey" Sader
+
+  - CTCP parsing was broken by the servmsg.c buffer overflow patch
+    Patch by: Thomas "thommey" Sader
+
+  - Fixed a couple of typos in the FEATURES file.
+    Patch by: Tomas Szaniszlo
+
+  - Fixed two buffer overflows in servmsg.c (CVE-2007-2807).
+    Found by: Bow Sineath / Patch by: Nico Golde, Wcc
+
+  - Fixed compatibility problems with certain time_t implementations.
+    Found by: various / Patch by: Tothwolf
+
+  - Complete raw traffic wasn't getting logged in some cases; only the raw
+    command itself was. Fixed.
+    Patch by: mrBuG
+
+
+1.6.18 (July 09, 2006):
+
+  - Look for Tcl in /lib64 and /usr/lib64.
+    Patch by: Kuja
+
+  + RC1 released on April 3rd, 2006.
+
+  - Fixed a type conversion problem in snprintf.c causing Eggdrop to not
+    compile on OSF1.
+    Found by: Joker / Patch by: Wcc
+
+  - Detect NetBSD Tcl in /usr/pkg/lib and /usr/pkg/include.
+    Found by: mish / Patch by: Wcc
+
+  - Fixed possibility of referencing a NULL pointer in rembot().
+  - Added a missing param cast for dcc_table.timeout.
+  - Fixed a memleak / other nasty stuff when MODES_PER_LINE_MAX != 6.
+  - Fixed putlog() of an uninitialized (and incorrect) variable in
+    dcc_telnet_hostresolved().
+    Patch by: lordares
+
+  - Valgrind doesn't bitch about init_uptime() now.
+    Patch by: Wcc
+
+  - Dns.mod should compile on Mac OS X now. Thanks to Netscrape @ EFnet for
+    testing.
+    Found by: various / Patch by: Wcc
+
+  - Corrected nat-ip setting documentation.
+    Found by: BarkerJr / Patch by: Wcc
+
+  - Don't allow realname to be blank or whitespace.
+    Found by: Jesse M / Patch by: BarkerJr, Wcc
+
+  - Fixed an error in channel get. You can now, correctly, do a
+    channel get #channel stopnethack-mode.
+    Found by: Chris Northwood / Patch by: Wcc
+
+  - The pushmode command should work properly for bans now.
+    Patch by: thommey
+
+  - Apparently we broke lastbind.
+    Found by: bUrN / Patch by: thommey
+
+  - Request topic on channel reset.
+    Found by: De Kus / Patch by: Darko
+
+  - Fixed a situation where noshare could be set to 1 and never restored.
+    Patch by: lordares
+
+  - Fixed a socklist leak in net.c.
+    Patch by: lordares
+
+  - Hopefully fixed dns lockups.
+    Found by: various / Patch by: Sven Trenkel
+
+  - Fixed remote note bug in add_note() that was introduced in 1.6.17.
+    Fixes Bugzilla Bug # 433 "Remote Notes Always Say User is Offline"
+    Found by: alex323 / Patch by: Tothwolf
+
+  - Completely rewrote check_tcl_bind().
+  - Added inline check_bind_flags() for flag checking for check_tcl_bind().
+  - Added inline check_bind_match() for match checking for check_tcl_bind().
+  - Rewrote trigger_bind() and made it inline for check_tcl_bind().
+  - Fixed pointless calling of nmalloc() and nfree() for ContextNote in
+    trigger_bind() when DEBUG_CONTEXT isn't defined.
+  - Moved findidx() from tcl.c to dccutil.c.
+  - Moved findanyidx() from tclhash.c to dccutil.c.
+  - Moved CHECKVALIDITY from tclhash.h to tclegg.h.
+  - Added CHECKVALIDITY checks to builtin_dcc() and builtin_fil().
+  - Moved CMD_LEAVE from cmdt.h to tclegg.h.
+  - Changed NULL to CMD_LEAVE for partyline quit in cmds.c.
+  - Renamed BIND_EXEC_BRK to BIND_QUIT.
+  - Fixed misc typos.
+    Patch by: Tothwolf
+
+  - Added support to MSGM, PUBM, NOTC, and WALL binds to support bound procs
+    returning 1 to prevent logging of the trigger message text. Fixes
+    Bugzilla Bug # 334 "msgm bind return values"
+  - Added BIND_STACKRET bit mask and support for stacked bind return values
+    to check_tcl_bind(). This allows check_tcl_bind() to check if any
+    stacked bound procs return 1 while allowing all matching stacked binds
+    to be processed. Previously if BIND_WANTRET was used to check the return
+    value of stacked binds, only the first match would be triggered.
+  - Modified irc.mod gotmsg() function to trigger PUBM binds before
+    triggering PUB binds. MSGM and MSG binds already worked this way.
+  - Modified irc.mod gotmsg() function to allow a message to trigger both
+    PUBM and PUB binds. Previously if a message triggered a PUB bind, any
+    PUBM binds that might match the message text would not be triggered.
+    Fixes Bugzilla Bug # 351 "bind pub hogs pubm"
+  - Added exclusive-binds setting and code to gotmsg() functions to allow
+    MSGM and PUBM binds to be exclusive of MSG and PUB binds.
+  - Fixed logging for WALL bind. It had been broken since it was originally
+    implemented in eggdrop-hayes. Wallops messages were always logged
+    regardless of the return value of a bound proc. Returning '1' from a
+    bound proc now causes Eggdrop to not log the Wallops message.
+    Patch by: Tothwolf
+
+  - Check for Tcl 8.5 before older versions.
+    Patch by: Tothwolf
+
+  - Use flagrec_eq() instead of flagrec_ok() in help_subst()
+    since lower flags are automatically added now.
+    Patch by: Tothwolf
+
+  - Check for bot's nick and user@host earlier in detect_flood()
+    and detect_chan_flood().
+    Patch by: Tothwolf
+
+  - Allow wildcard matching and stacking for note binds.
+    Patch by: Tothwolf
+
+  - Use CHANMETA to define valid channel prefixes in gotmsg().
+    Found by: zathras3 at hotmail.com / Patch by: Wcc
+
+  - Fix for problems created when loading long user-defined channel setting
+    names from the channel file.
+    Patch by: Stream
+
+  - Help file update related to sharing.
+    Patch by: Shawn888, slennox
+
+  - Fix for randint() on Solaris / SunOS.
+    Patch by: Mikael Hedberg
+
+  - Updated Copyright Dates.
+    Patch by: Paladin
+
+  - Fixed 3 invalid reads in notes.c.
+    Patch by: rush at winkey.oompah.org
+
+  - Corrected a few of the error messages in neterror().
+    Found by: Steven Nikkel / Patch by: Wcc
+
+  - Corrected the order of our search paths for Tcl. This should help stop
+    version mismatches between the headers and libraries.
+    Patch by: CoderX2
+
+
+1.6.17 (August 22, 2004):
+
+  - Lots of doc updates.
+    Patch by: dollar, Wcc
+
+  + RC1 released on August 2nd, 2004.
+
+  - Added a "stripcodes" Tcl command. See doc/tcl-commands.doc for more
+    information.
+    Patch by: BarkerJr
+
+  - Bot idx's should be considered valid to tcl_valididx.
+    Found by: SteppenWolf / Patch by: Wcc
+
+  - Always try to detect shared Tcl libraries before static ones.
+    Patch by: Wcc
+
+  - We now correctly differentiate the +l user flag from the +l bot flag.
+    Found by: Joker / Patch by: Wcc, darko``
+
+  - Cleaned up modules.c and the module configure stuff quite a bit.
+    Patch by: Wcc
+
+  - Detect Tcl in $HOME/lib and $HOME/tcl/lib first, as to make it easier to
+    allow users to override the system's Tcl version.
+    Found by: various / Patch by: Wcc
+
+  - We now support module loading under Darwin (Mac OS X) and NeXT Step.
+    Found by: various / Patch by: Wcc
+
+  - Don't try to call tcl_notes if the notes module isn't loaded.
+    Found by: Chris Northwood / Patch by: lordares
+
+  - Show a more descriptive error message when a listen socket can't be
+    opened.
+    Found by: various / Patch by: Wcc
+
+  - Fixed Tcl encoding issues with .tcl and .set.
+    Found by: fabulous, Miguel Ventura / Patch by: CoderX2
+
+  - Added a set of Finnish language files and a Finnish MOTD.
+    Patch by: Mikko Vester
+
+  - time_t isn't unsigned, and therefor %lu should not be used as a
+    conversion specifier.
+    Patch by: lordares
+
+  - Fixed a gcc warning in dcc.c.
+    Patch by: BarkerJr
+
+  - Added support for Quakenet channel modes.
+    Patch by: thommey
+
+  - Removed an invalid killsock() in dcc.c.
+    Patch by: lordares
+
+  - Fixed extra spaces being written to chan file.
+    Patch by: lordares
+
+  - Reworked 'make config' / module configure process.
+    Found by: various / Patch by: Wcc
+
+  - Op (+o) implies halfop (+l) now.
+    Patch by: darko``
+
+  - Cleaned up and optimized rmspace() and fixfrom().
+    Patch by: Sup
+
+  - Updated recomended Tcl version to 8.4.6.
+    Patch by: Wcc
+
+  - Fix behavior of the BCST bind. BCST is now correctly triggered for
+    dccbroadcasts, as well as when a bot "says" something on a channel.
+    See doc/tcl-commands.doc for more information.
+    Found by: FireEgl / Patch by: Wingman
+
+  - Remove some unneeded casts.
+    Patch by: darko``
+
+  - Fixed performance issues with mv/cp when a lot of files are in the file
+    area.
+    Found by: fabulous / Patch by: Wingman
+
+  - Typo in doc/COMPILING-FAQ, It's LD_LIBRARY_PATH, not LB_LIBRARY_PATH
+    Found by: NoPleX / Patch by: Wcc
+
+  - Fix a possible issue with ident code.
+    Found by: various / Patch by: darko``
+
+  - Don't let .tcl mkdir create duplicate filedb entries.
+    Found by: fabulous, Ze / Patch by: Wingman
+
+  - Fixed a compile error related to varargs when using old Tcl versions.
+    Found by: Thomas Neumayer / Patch by: Wcc
+
+  - Fixed a compile error on systems that don't have socklen_t.
+    Found by: Brad Edwards / Patch by: Wcc
+
+  - Suppress configure warnings on systems that use newer versions of GNU
+    coreutils.
+    Patch by: Wcc
+
+
+1.6.16 (May 31, 2004):
+
+  + Final released on May 31, 2004.
+
+  - Added back a missing alarm call (removed accidentally with IPv6).
+    Patch by: TaKeDa
+
+  - Doc updates.
+  - Help file improvements.
+    Patch by: Wcc
+
+  - Use high-order bits for random numbers.
+  - Cleaned up and optimized delay code in share.c.
+    Patch by: Sup
+
+  - Change Undernet nicklen to 12, as it has been changed on Undernet.
+    Patch by: Wcc
+
+  - Fix text sent to the server being terminated with "\x00\x0d\x0a"
+    instead of just "\x0d\x0a".
+    Patch by: Sven
+
+  - Small fix to transfer.mod lang files.
+    Patch by: winkey
+
+  - More HP ANSI C fixes.
+    Patch by: Wcc
+
+  - Fixed a few warnings. We also should compile correctly with HP's ANSI C
+    compiler now.
+    Patch by: stdarg
+
+  + RC1 released on April 9th, 2004.
+
+  - Missing '\n' on language entry in notes.mod.
+    Found by: dollar / Patch by: Wcc
+
+  - Detect Tcl 8.5.
+    Patch by: Juvenal
+
+  - Fixed a crash in savechannels/loadchannels.
+    Found by: Stu Jones / Patch by: TaKeDa
+
+  - Fixed a crash in putlog() that appears when timestamps are turned off.
+    Patch by: darko``
+
+  - Rewrote isowner() completely.
+    Patch by: Sup
+
+  - Better support for non-standard "op" prefixes (UnrealIRCD, etc.).
+    Patch by: Sven
+
+  - Terminate wire_bot[] in wire.mod, fixing a crash.
+    Patch by: Bryan Dolan
+
+  - Fixed a segfault in dcc.c.
+    Patch by: daimonic
+
+  - Various crash fixes:
+  - Fixed _wild_match() to not try to read before the beginning of the mask.
+  - Small fix to correct_handle().
+  - queue_server() wasn't adding messages to the queue correctly.
+  - Fixed errors reported by valgrind in n_free() and notes module.
+  - Fixed crash in dcc_chat regarding the filt bind.
+    Patch by: stdarg
+
+  - Don't always set SHARE_OFFERED status in check_expired_tbufs() for
+    linking bots.
+    Fixes Secunia Advisory: SA10858
+    Originally reported to Full-Disclosure by Giuseppe Caulo
+    Patch by: Luca De Roberto, Dania Stolfi, Giuseppe Caulo
+
+  - Cosmetic fixes to notes.mod.
+    Found by: BarkerJr / Patch by: Wcc
+
+  - Don't check the bot's own user record when looking for a hub/althub to
+    link to.
+    Found by: poptix / Patch by: lordares
+
+  - Portibility and build process fixes/updates.
+    Patch by: Wcc
+
+  - Mac OS X fixes.
+    Found by: hobb / Patch by: Wcc
+
+  - Truncate passwords at 30 chars instead of 15.
+    Found by: ting / Patch by: Paladin
+
+  - Be aware of 'cp/mv * this.file' possibility in filesys.mod.
+    Found by: fabulous / Patch by: stdarg
+
+  - Allow any user to .whois their own handle.
+    Found by: ZeveRoaRe / Patch by: Wcc
+
+  - Added a new EVNT type, "userfile-loaded", which is called after the
+    bot's userfile has been loaded.
+    Found by: wanderer / Patch by: darko``
+
+  - Fixed a few places where chan->name was being used instead of
+    chan->dname.
+    Found by: wanderer / Patch by: Wcc
+
+  - hand2idx works for bots now
+    Found by: BarkerJr / Patch by: Wcc
+
+  - .stick/.unstick <number> now works for channel masks
+    Patch by: Sven
+
+  - Properly escape IPv6 masks in write_exempts() and write_invites().
+    Found by: J Lehto / Patch by: TaKeDa
+
+  - Fix for nonworking 'head -1' in GNU Coreutils 5.0.
+    Patch by: Tothwolf
+
+  - ctype.h is*() functions are apparently unsafe unless recasted.
+    Found by: Sup / Patch by: Wcc
+
+  - Cosmetic updates to the build process.
+    Patch by: Wcc
+
+  - Exported oatoi() to modules since someone somewhere might find it useful.
+    Patch by: Wcc
+
+  - Fixed a bug preventing masks starting with numbers from being
+    removed/stuck/unstuck.
+    Found by: BarkerJr / Patch by: Wcc
+
+  - Fixed the very very horrible handling of arguments by tcl_dnslookup().
+    Found by: wanderer / Patch by: KuNgFo0, Wcc
+
+  - Don't rejoin +inactive channels when kicked from them. This can be
+    caused by bot-server connection lag or full queues.
+    Patch by: BarkerJr, Eule
+
+  - uname fix in msg_status; OS should display on freebsd now.
+    Patch by: Wcc
+
+  - Fixed a buffer overrun in msg_status().
+    Patch by: Wcc
+
+  - Fixed a getdesc segfault when a file has no desc.
+    Found by: R. Ramos / Patch by: dw
+
+  - Removed IPv6 for now, will be implemented in a more proper way in an
+    upcoming release.
+    Found by: various / Patch by: Wcc
+
+  - Cleaned up "illegal channel option" Tcl errors.
+    Patch by: BarkerJr
+
+  - .chanset accepts '*'; reflect in the docs.
+    Found by: Darki / Patch by: Wiktor
+
+  - Fixed bug 365 (missing call to check_this_user in tcl_setuser).
+    Found by: T. Salomäki / Patch by: Eule
+
+  - Description: .-ban number #channel now works correctly.
+    Found by: R. Brooklyn / Patch by: Sven
+
+  - A few minor fixes to fakemode kicks.
+    Patch by: Sven
+
+  - Made appropriate changes to accommodate for EFnet's implementation of
+    exempts and invites.
+    Patch by: Wcc
+
+  - bind documentation updates.
+    Found by: |SmAsH| / Patch by: Wcc
+
+  - Exported strip_mirc_codes() and check_ansi() from dcc.c to modules.
+    Found by: BarkerJr / Patch by: Wcc
+
+  - H_notc used wrong handler
+    Patch by: Paul E., stdarg
+
+  - Check to make sure file we want to send exists when resuming a transfer.
+    Found by: fbs / Patch by: stdarg
+
+  - Removed unnecessary quiet_reject checks in msg_ident() that have been
+    present since 1.3.0+bel17.
+    Patch by: Tothwolf
+
+  - Fixed exporting of MD5 functions to modules.
+    Patch by: Paladin
+
+  - The binary is no longer stripped unless ./configure --enable-strip is
+    used.
+    Found by: various / Patch by: stdarg
+
+  - Small fix to n_realloc().
+    Patch by: tchaika
+
+  - Fixed output of tcl_duration to not return extra spaces.
+    Found by: wanderer / Patch by: Wcc
+
+  - cmd_topic works for halfops now.
+    Patch by: stdarg
+
+  - Fixed cmd_(de)voice logic.
+    Found by: various / Patch by: stdarg
+
+  - Fixed an uninitialized variable in putlog().
+    Found by: various / Patch by: TaKeDa
+
+  - New UPDATES1.6 format to allow for longer found by/patched by fields and
+    less wrapping of description.
+    Patch by: Wcc
+
+
+1.6.15 (May 04, 2003):
+
+  - Fixed a patch.h compile error
+    Found by: MORA / Patch by: Wcc
+
+
+1.6.14 (May 04, 2003):
+
+  - Added support for the IPv6 protocol
+    Patch by: poptix, Wcc
+
+  - Fixed a couple of bugs in autobotchk and made the output cleaner
+    Patch by: guppy
+
+  - Updated the logic of .fixcodes
+    Patch by: PPSlim
+
+  - Added a missing cast in tcl_rand
+    Patch by: KuNgFo0
+
+  - Fixed getops timer handling
+    Patch by: PPSlim
+
+  - Fixed access checking in -ban, -exempt, and -invite
+    Found by: Paladin / Patch by: Wcc
+
+  - Fixed a Tcl_Merge memleak
+    Patch by: TaKeDa
+
+  - Fixed a crash related to the cd command in filesys.mod
+    Patch by: M. Koszik
+
+  - Channel keys are now handled correctly in flush_mode()
+    Patch by: Eule
+
+  - Locking a channel key/limit now enforces it from being changed as well
+    as unset
+    Patch by: Sven
+
+  - Don't bounce our own modes
+    Patch by: Sven
+
+  - q|q users can no longer obtain a channel voice, regardless of +autovoice
+    Patch by: Sven
+
+  - Users with appropriate flags can now halfop and voice themselves
+    Patch by: Eule
+
+  - -ban <number> now works for channel bans
+    Patch by: Sven
+
+  - -ban <number> now removes the ban from the channel
+    Patch by: Sven
+
+  - Cleaned up the output of .status
+    Patch by: Wcc
+
+  - Added a german language file for the transfer module
+    Patch by: Felix
+
+  - Show a meaningful error message when adding an invalid channel with
+    '.+chan'
+    Patch by: Wcc
+
+  - Don't use memcpy() and memset() directly
+    Patch by: Wcc
+
+  - Fixed a crash that can happen when the serverlist contains null strings
+    Patch by: Sven
+
+  - Added NO_HALFOP_CHANMODES and NOHALFOPS_MODES defines to chan.h to allow
+    halfop-related mode behavior to be changed on IRCd's that implement
+    halfops differently
+    Patch by: Sven, Wcc
+
+  - Fixed a compile error on Tru64 UNIX
+    Found by: Shane0 / Patch by: Wcc
+
+  - The WASHALFOP flag now works correctly
+    Patch by: Sven
+
+  - Kill a transfer connection after sending a TRANSFER_DCC_IGNORED notice
+    to a user
+    Found by: fbs / Patch by: Wcc
+
+  - flood-pub should be flood-chan when using 'channel get'
+    Patch by: PPSlim
+
+  - '~' and '&' are now correctly recognized as a meaning a user has ops on
+    a channel
+    Patch by: BarkerJr
+
+  - Fixed uhost buffer length
+    Patch by: winkey
+
+  - Don't use help queue for dcc sends or gets
+    Found by: winkey / Patch by: Wcc
+
+  - case-changes should be traced when the 'nick' Tcl variable is modified
+    Patch by: Wcc
+
+  - Added a set of Danish language files
+    Patch by: TheAvatar
+
+  - Fixed an out-of-bounds error in delignore()
+    Patch by: Wcc
+
+  - Argument checking for cmd_comment() and cmd_botaddr() was incorrect
+    Found by: Tothwolf / Patch by: Wcc
+
+  - GLOBAL_CHANS is now used where it should be to make changing the number
+    of botnet channels easier
+    Patch by: Wcc
+
+  - Fixed a logic problem when reversing in got_[op|halfop]()
+    Patch by: Wcc
+
+  - User-punishing and tcl_maskhost not use matching banmasks regardless of
+    strict-host
+    Found by: |SmAsH| / Patch by: Wcc
+
+  - Fixed a few memory leaks in the filesystem module
+    Found by: Wcc / Patch by: stdarg
+
+  - Updated recomended Tcl version to 8.3.4 and changed Tcl's url to
+    tcl.activestate.com (also updated autoconf to 2.57)
+    Found by: guppy / Patch by: Wcc
+
+  - Merged use-console-r and debug-output into one new setting named raw-log
+    Found by: Tothwolf / Patch by: Wcc
+
+  - Backported user-defined channel strings from 1.7
+    Found by: Tothwolf / Patch by: Wcc
+
+  - Removed enable-simul
+    Patch by: Wcc
+
+  - Fixed a cosmetic problem with cmd_pls_bot
+    Patch by: Wcc
+
+  - Fixed a crash in u_delban (bug 267) caused by trying to strcpy to an
+    initialized pointer char
+    Found by: Cosmo / Patch by: Wcc, BarkerJr
+
+  - Use movefile() instead of copyfile() and unlink() when moving files in
+    filesys.mod
+    Found by: fbs / Patch by: Wcc
+
+  - Changed EFnet's max-bans/max-modes to 25
+    Patch by: Wcc
+
+  - Moved debug-output and use-console-r to the logging section of the
+    config file where they belong
+    Found by: Tothwolf / Patch by: Wcc
+
+  - Don't tell users to /msg the bot hello when they don't have access if
+    learn-users is disabled
+    Found by: Tothwolf / Patch by: Wcc
+
+  - Fixed a few header problems with time.h
+    Patch by: Tothwolf
+
+  - Cleaned up transfer.mod a bit
+    Patch by: Wcc
+
+  - Several misc code cleanups and bugfixes
+    Patch by: M. Koszik
+
+  - Files copied to /tmp from file transfers are now deleted if the transfer
+    connection is killed (makes resends and resumes function correctly)
+    Patch by: Wcc
+
+  - Ignores are now saved if channels.mod is not loaded
+    Found by: BarkerJr / Patch by: Wcc
+
+  - Open file descriptors are now closed when the killdcc Tcl command is
+    used on a transfer socket
+    Found by: fbs / Patch by: fbs, Wcc
+
+  - unixtime was not increased when Eggdrop was blocked during a series of
+    in-line Tcl commands
+    Found by: never, thommey / Patch by: Wcc
+
+  - Exported getchanmode()
+    Found by: lee / Patch by: Wcc
+
+  - Removed strict-servernames -- $server is now always the server's
+    realname and $serveraddress is it's server list entry
+    Found by: various / Patch by: darko``
+
+  - bind NICK now gets triggered even if the nickname isn't found in any
+    channels (when the bot's nickname changes before it joins channels)
+    Patch by: BarkerJr
+
+  - Fixed parsing of userhosts in gotwall()
+    Patch by: darko``
+
+  - Updated UnderNet's max_bans to 45
+    Found by: reed / Patch by: Wcc
+
+  - Config file updates
+    Found by: various / Patch by: BarkerJr
+
+  - Removed quoting support from wild_match() which fixes several bugs with
+    '\' characters
+    Found by: various / Wcc, zip
+
+  - Show who unlinked a bot when unlinked remotely
+    Patch by: BarkerJr
+
+  - Fixed default setting for the help-path and text-path settings
+    Patch by: poptix
+
+  - Fixed a problem in cmd_kick()/cmd_kickban() where the victim's access is
+    checked instead of the user's
+    Patch by: The_Dawn
+
+  - Exported MD5 functions to modules
+    Found by: Paladin / Wcc
+
+  - Exported me_voice() in irc_table
+    Patch by: Wcc
+
+  - '.say' and '.act' now allow you to send a message to a moderated channel
+    when the bot has halfop status
+    Patch by: Wcc
+
+
+1.6.13 (November 22, 2002):
+
+  - doc/MODULES updates
+    Patch by: BarkerJr
+
+  - Fixed utf-8 handling for config file strings (such as realname)
+    Patch by: stdarg
+
+  - Added a proc to alltools that returns the ordinal number for a number
+    Patch by: Souperman
+
+  - Added support for EMFILE (errno 24 - Too many files open) in neterror()
+    Patch by: Wcc
+
+  - Fixed the list format returned by tcl_channel_info()
+    Patch by: MC_8
+
+  - Don't ban users when not going to kick in refresh_ban_kick()
+    Patch by: Eule
+
+  - Added a stacking limit for fastdeq
+    Patch by: Eule
+
+  - Made the modes-per-line limit definable in src/chan.h
+    Patch by: Eule
+
+  - [ban/exempt/invite]-time were not being saved to the channel file
+    Patch by: BarkerJr
+
+  - Halfops were not honored in flush_modes()
+    Found by: Eule / Wcc
+
+  - Fixed cosmetic problems with logging in some irc module commands
+    Patch by: NeoN
+
+  - Exported tell_bottree() to modues
+    Patch by: Mo-Ize
+
+  - Optimized logging functions
+    Patch by: BarkerJr
+
+  - Removed eggdrop.advanced.conf and eggdrop.simple.conf
+    Found by: various / Patch by: Wcc
+
+  - Adding a missing killsock and lostdcc in eof_dcc_send() and eof_dcc_get()
+    Found by: TaKeDa / Patch by: Eule
+
+  - Fixed the logic in check_this_member()
+    Patch by: Wcc
+
+  - Made the timestamp style definable in src/eggdrop.h
+    Patch by: BarkerJr
+
+  - Added a missing return in bot_actchan()
+    Patch by: Eule
+
+  - Fixed a problem with 'connect' and 'control' where the script would
+    abort prematurely
+    Found by: various / Patch by: [sL]
+
+  - Don't "want ops" in modeless (+) channels
+    Patch by: BarkerJr
+
+  - Tell the user to set 'my-ip' when hostname self-lookup fails
+    Found by: guppy / Patch by: Wcc
+
+  - Improved access checking in -host/+host
+    Found by: ridens / Patch by: Wcc
+
+  - Fixed a possible buffer overflow in raw_dcc_resend_send()
+    Found by: Jerome / Patch by: Wcc
+
+  - Fixed a missing escape in some regexps in misc/modconfig
+    Patch by: darko``
+
+  - Channel set #chan chanmode $var corrupted $var in Tcl8.x
+    Found by: [sL] / Patch by: Wcc
+
+  - Don't log "joined #chan but didn't want to" in certain cases where the
+    channel was newly removed or set inactive
+    Patch by: blaster^
+
+  - Cosmetic changes to share_stick_[exempt/invite/ban]
+    Patch by: Wcc
+
+  - msg_key and msg_invite did not work properly for !channels
+    Found by: J Lehto / Patch by: TaKeDa
+
+  - Show the number of hops in .trace's output
+    Patch by: BarkerJr
+
+  - Use the proper dynamic lib extention on Mac OSX
+    Patch by: Mo-Ize
+
+  - Return 5 from dccsend if the file exists in the temp directory and
+    copy-to-tmp is enabled
+    Patch by: Wiktor
+
+  - Fixed a possible exploit in reaffirm_owners()
+    Patch by: poptix
+
+  - Friends/ops/bots are now correctly unbanned when a ban is set on a
+    channel that matches their host
+    Found by: KuNgFo0 / Patch by: Wcc, [sL]
+
+  - Compile fix for systems that do not support snprintf()
+    Patch by: BHAB
+
+  - Fixed a bug where if the bot is kicked while channel information is
+    still being received, the bot will think it's still on the channel and
+    not rejoin
+    Found by: various / Patch by: Wcc, [sL]
+
+  - Removed names parsing, as it causes many problems and was only added for
+    compatability with an old version of unrealircd
+    Found by: ble / Patch by: Wcc
+
+  - More broken dprintf's in irc commands
+    Found by: [sL] / Patch by: Wcc
+
+  - Fixed a broken dprintf in cmd_kick()
+    Found by: ble / Patch by: Wcc
+
+  - Made [ban/invite/exempt]-time a channel int
+    Patch by: Wcc
+
+  - Documentation updates related to the PUBM bind
+    Patch by: BarkerJr
+
+
+1.6.12 (July 26, 2002):
+
+  - Reverted the sockfix patches from 1.6.11
+    Patch by: Segfault
+
+
+1.6.11 (July 26, 2002):
+
+  - need-[limit/invite/unban/key] work now
+    Found by: various / Patch by: Wcc
+
+  - Fixed a problem with 'connect' and 'control' where the script would
+    abort prematurely
+    Patch by: [sL]
+
+  - Improved the logic in cmd_mnsban when specifying what happen to remove
+    and where to remove it from
+    Patch by: Wcc
+
+  - Fixed cmd_kickban so it works
+    Patch by: Eule
+
+  - Fixed a bug causing "[HH:MM] !!! OVER MAXIMUM <queue> QUEUE" to be
+    logged to LOG_SVROUT
+    Patch by: Wcc, [sL]
+
+  - Log PINGs/PONGs sent to the server in LOG_SVROUT
+    Patch by: Wcc
+
+  - Some small changes to make Eggdrop work with Tcl 8.4b1 (it won't work
+    with Tcl 8.4a1 or 8.4a2 anymore though)
+    Patch by: guppy
+
+  - Fixed a crash while doing .kickban -nick
+    Found by: dork / Patch by: TaKeDa
+
+  - The return values of uname() are now properly checked
+    Patch by: Zart
+
+  - Added handlen friendly code to various commands (this is a new patch to
+    replace the handlen friendly patch reverted in 1.6.10
+    Patch by: Zart
+
+  - Don't show +inactive channels in a remote .who
+    Patch by: BarkerJr
+
+  - Changed the .status output a bit (it includes the name of the config
+    file now)
+    Patch by: guppy
+
+  - msg_whois should require an argument.
+    Found by: guppy / Patch by: Wcc
+
+  - Added support for halfops (channel mode +h)
+    Patch by: Wcc
+
+  - Don't allow channels containing commas to be added.. also made an error
+    message more clear
+    Found by: MaSsKilla / Patch by: Wcc
+
+  - Updates to doc/MODULES
+    Patch by: BarkerJr
+
+  - More doc updates
+    Patch by: Wcc
+
+  - Fix for !channels when people quit or change nicks
+    Patch by: TaKeDa
+
+  - Made all the commands use CHANMETA instead of hardcoding channel types
+    Patch by: aXs, Eule
+
+  - Added 'channel get <chan> <setting>' (backported from 1.7)
+    Found by: various / Patch by: stdarg, Mo-Ize
+
+  - uptime.mod will not unload now once loaded (this prevents you from
+    losing your stats on a .restart .. to remove, you have to .die)
+    Patch by: guppy
+
+  - uptime.mod now sends the proper pid and also won't send garbage if the
+    bot currently isn't on a server
+    Patch by: guppy
+
+  - Updated slennox's sentinel.tcl to the latest version
+    Patch by: Wcc
+
+  - Added support for +r on Undernet's ircu 2.10.11
+    Found by: guppy / Patch by: Wcc
+
+  - Fixed a crash in seen.mod with long channel names
+    Patch by: upstream
+
+  - Added support for the +C channel mode (noctcp) on QuakeNet's ircu
+    Patch by: slug
+
+
+1.6.10 (March 29, 2002):
+
+  - protect(ops|friends) works with +bitch now
+    Found by: (^Baron^) / Patch by: Eule
+
+  - Reverted the handlen friendly patches
+    Patch by: guppy
+
+  - Fixed a crash when trying to add an invalid chan using .+chan
+    Found by: MaSsKilla / Patch by: dw
+
+  - nick2hand didn't return "" on a nick that wasn't in the channel
+    Found by: various / Patch by: guppy
+
+  - Fixed a few config file problems
+    Found by: slennox / Patch by: Wcc
+
+  - chattr's description in tcl-commands.doc was unclear relating to
+    channel-specific flag changes
+    Found by: Paladin / Patch by: Wcc
+
+  - transfer.french.lang was created
+    Patch by: NetIrc
+
+  - cmd_who is now languagified! (nice word eh?)
+    Patch by: Noyga
+
+  - Made it easier to change the number of global partyline channels
+    Patch by: Noyga
+
+  - More tcl-commands.doc fixes
+    Found by: MC_8 / Patch by: Wcc
+
+  - Added some missing command options to tcl-commands.doc
+    Found by: MC_8 / Patch by: Wcc
+
+  - cd_cmd_table was missing a null entry at the end of the list
+    Patch by: Uwe
+
+
+1.6.9 (March 10, 2002):
+
+  - "Detected loop: two bots exist named bot2: disconnecting bot3"
+    sounds better than:
+    "Detected loop: disconnecting (bot2): Disconnected bot3".
+    Patch by: BarkerJr, Wcc
+
+  - Added a few channels to the README and readme.html and made references
+    to other docs in the html files links to their respective html files.
+    Patch by: Wcc, SiDEWiNDR
+
+  - modes-per-line is limited to a max of 6 modes per line
+    Found by: various / Patch by: Eule
+
+  - More doc fixes
+    Patch by: Wcc
+
+  - Removed an extra space from the "Writing channel file..." message
+    Patch by: Wcc
+
+  - Fixed a problem with uff not adding entries properly
+    Patch by: Amir
+
+  - Made cmd_channel, cmd_dccstat, cmd_who, cmd_whois, cmd_match handlen
+    friendly
+    Patch by: Boing
+
+  - botlink() now safely copies the linker string
+    Patch by: Amir
+
+  - Fixed crashes relating to flushmodes
+    Found by: various / Patch by: Eule
+
+  - Tcl command modules missing in doc/tcl-commands.doc
+    Found by: Wanderer| / Patch by: dw
+
+  - Users with only +x can now only login via dcc chat, they cannot use
+    telnet
+    Patch by: guppy
+
+  - More documentation updates
+    Patch by: Wcc
+
+  - Changed how protectops and protectfriends works a bit:
+    If the user has either glob +d or chan +d then no protection,
+    protectfriends now only protects +f users,
+    protectops now only protects +m and +o users
+    Patch by: Eule, guppy
+
+  - doc/compiling.FAQ now includes info about setting LD_LIBRARY_PATH
+    Found by: various / Patch by: guppy
+
+  - Fixed +protectops from reopping users with only +f and +protectfriends
+    from reopping users with only +o
+    Found by: Boing / Patch by: guppy
+
+  - Made a few cosmetic changes to the configure script
+    Patch by: Wcc
+
+  - More plural fixes for commands and error messages
+    Patch by: Wcc
+
+  - "channel remove" will not crash the bot anymore if you are removing the
+    channel for which the bind was called
+    Found by: Xerxes / Patch by: guppy
+
+  - "channel info" will properly list all user-defined settings
+    Found by: MC_8 / Patch by: stdarg
+
+  - Fixed a problem with modconfig not being found when rerunning ./configure
+    Found by: various / Patch by: guppy
+
+  - Made modconfig more portable across various bourne shell flavours
+    Patch by: ITE
+
+  - Removed gban_total, gexempt_total and ginvite_total since they were unused
+    Patch by: Eule
+
+  - configure should recognize a dynamic Tcl library now on cygwin
+    Patch by: TaKeDa, ITE
+
+  - Fixed a crash that would happen when we disconnected from our server but
+    did not reconnect to a server before we checked if a server was stoned
+    Found by: dw / Patch by: guppy
+
+  - Lets compile on solaris now
+    Patch by: BHAB
+
+  - Update a bot's laston info when the bot unlinks
+    Found by: BarkerJr / Patch by: TaKeDa
+
+  - More cosmetic fixes to src/cmds.c
+    Patch by: Wcc
+
+  - Small cosmetic fix to cmd_store
+    Patch by: Eule
+
+  - Changed how kicking flooders works when -dontkickops
+    flood-kick: don't punish people with +mf
+    flood-deop: don't punish people with +mf
+    other floods: don't punish people with +f
+    Patch by: TaKeDa
+
+  - Fixed a bug where revenge-mode > 1 wouldn't kick users if dontkickops
+    was set
+    Patch by: TaKeDa
+
+  - Missing sanity check in check_this_member
+    Patch by: Eule
+
+  - ircu2.10.11 properly formats PART messages; however, Eggdrop did not
+    understand them
+    Found by: Paladinz / Patch by: guppy
+
+  - Fixed a couple of cosmetic problems in cmd_pls_user
+    Patch by: Wcc
+
+  - Do not eval init-server on rehash since this variable is used for
+    performing Tcl commands on a succesful server connection
+    Patch by: Wcc
+
+  - Couldn't introduce new users through telnet if a handle named "new"
+    existed.
+    Found by: MaSsKilla / Patch by: dw
+
+  - MISC_USERFCREATE1 should use origbotname instead of botnetnick
+    Found by: SiD3WiNDR / Patch by: Wcc
+
+  - Added a warning about allow-resync in the config file
+    Patch by: Wcc
+
+  - Prevent botnet flooding when adding ignores which already exist
+    Patch by: TaKeDa
+
+  - Some docs were not getting installed correctly
+    Patch by: Wcc
+
+  - [pass] should be <pass> in usage notices
+    Patch by: Wcc
+
+  - More cosmetic changes
+    Patch by: Wcc
+
+  - A bunch of little cosmetic changes
+    Patch by: Wcc
+
+  - More doc updates
+    Patch by: Wcc
+
+  - Fixed a memleak when adding users
+    Found by: blaster^ / Patch by: Eule
+
+  - More 64bit arch fixes
+    Patch by: ITE
+
+  - Lets log remote botinfo calls
+    Patch by: BarkerJr
+
+  - Update a bot's laston info when the bot links
+    Patch by: BarkerJr
+
+  - Some more remote boot fixes
+    Found by: jedis / Patch by: guppy
+
+  - hand2nick, nick2hand, handonchan, and chanlist might not always return
+    that a user is known even if we know they are -- this has been fixed
+    Found by: |^Raven^| / Patch by: stdarg, guppy
+
+
+1.6.8 (January 2, 2002):
+
+  - Removed a legacy Tcl hack that probably no one but old Eggdrop users
+    knew about <g>
+    Found by: PPSlim / Patch by: guppy
+
+  - More copyright updates and documentation changes
+    Patch by: Tothwolf
+
+  - Raised the kick reason length to 307 for DALnet
+    Patch by: blaster^
+
+  - Fixed some cosmetic bugs relating to either 1 user or X users, stuff
+    like that
+    Patch by: Wcc
+
+  - Updated slennox's sentinel.tcl to the latest version
+    Patch by: Wcc
+
+  - Updated the html docs to be in sync with the text ones
+    Patch by: Wcc
+
+  - Updated the copyright info for 2002
+    Patch by: Wcc
+
+  - Removed the checks for ips with 0 or 255 in them
+    Patch by: guppy
+
+  - When a leaf is thinking that uses a different HANDLEN then ours log it
+    and then drop the connection instead of just silently dropping the
+    connection
+    Found by: various / Patch by: guppy
+
+  - Changed checkmodule to loadmodule in the configs (checkmodule still
+    works for backwards compat)
+    Patch by: guppy
+
+  - Renamed nick-len to nicklen (nick-len still exists for backwards compat)
+    to follow the standard that handlen uses
+    Patch by: guppy
+
+  - Updated doc/BOTNET and added doc/first_script.txt
+    Patch by: Wcc
+
+  - Removed some old debugging information
+    Patch by: Wcc
+
+  - Prevent the bot from losing channel flags when allow-resync is set
+    Found by: various / Patch by: zip
+
+  - Some small cosmetic changes
+    Patch by: Wcc
+
+  - Added handlen for scripters to get the current length of handles from
+    src/eggdrop.h (this setting does not adjust handle lengths however)
+    Patch by: Wcc
+
+  - cmd_whom now displays a sum of all the partyline users
+    Patch by: BarkerJr
+
+  - Copyright updates
+    Patch by: Tothwolf
+
+  - Fixed tcl_boot when kicking someone on another bot without a reason from
+    screwing up the boot reason
+    Found by: jedis / Patch by: guppy
+
+  - max-modes and max-modes are automatically set by net-type now
+    Patch by: Wcc
+
+  - origbotname was being wrongly used in some locations
+    Patch by: guppy
+
+  - Fixed a bug that prevented MODE from being sent when we get ops on a
+    channel to retrieve the proper channel key
+    Patch by: guppy
+
+  - Don't try to open a dcc chat when people do /ctcp <bot> chat without a
+    password set, instead send an error message
+    Found by: VYOinlove / Patch by: guppy
+
+  - Fixed a problem on osx with files being shown as bytecount/-1
+    Patch by: quest, stdarg
+
+  - Log the remote .who command
+    Patch by: BarkerJr
+
+  - Fixed a small bug in guppy's last patch
+    Patch by: BarkerJr
+
+  - Tcl commands botisvoice, botisop, botonchan, onchansplit, isop, isvoice,
+    and handonchan all take channel as an optional argument now
+    Found by: various / Patch by: guppy
+
+  - tcl_onchan can now be used without a channel to check all the bot's
+    channels
+    Found by: Abraham / Patch by: guppy
+
+  - Added tcl_traffic (a modified copy of stdarg's original patch)
+    Found by: various / Patch by: stdarg, guppy
+
+  - .servers doesn't trunicate server names anymore
+    Found by: Tothwolf / Patch by: guppy
+
+  - Made cmd_modules work locally as well as remotely
+    Found by: Wcc / Patch by: guppy
+
+  - Made show_banner reset the help_subst arguments like show_motd does and
+    if the motd isn't a regular file, just return instead of giving an error
+    like show_banner does
+    Patch by: guppy
+
+  - tcl_jump could easily crash the bot
+    Patch by: guppy
+
+  - tcl_pushmode now accepts any irc modes instead of the standard ones
+    Found by: various / Patch by: guppy
+
+  - Made tcl_chanlist (when matching chanflags), tcl_handonchan, and
+    tcl_nick2hand much faster
+    Patch by: guppy
+
+  - A bunch of small fixes to gotjoin, gotkick, got367, a modes-per-line
+    calcuation, and to include_lk
+    Patch by: Eule
+
+  - Yet more documentation updates
+    Patch by: Wcc
+
+  - Documentation doesn't cover how to connect to servers with a password;
+    documentation added to sample config files.
+    Found by: ziffie / Patch by: BHAB
+
+  - Made tcl_hand2nick _a lot_ faster
+    Found by: |^Raven^| / Patch by: guppy
+
+  - More membercheck fixes for nick bans, nick +k users, -user, and -host
+    Patch by: Eule
+
+  - Only show fake alerts once every 10 seconds to prevent flooding
+    Patch by: BarkerJr
+
+  - Small make install bug related to doc cleanups
+    Found by: DFrank / Patch by: guppy
+
+  - Major cleanup of config files and related documents
+    Patch by: Wcc
+
+  - Updated doc/MODULES a bit
+    Patch by: BarkerJr
+
+  - Show the user port as users instead of telnet and the bot port as a bot
+    port instead of a relay port
+    Found by: RandomAPB / Patch by: Wcc
+
+  - Small fix to the notes module
+    Found by: various / Patch by: stdarg
+
+  - Updated the uptime url
+    Patch by: BarkerJr
+
+
+1.6.7 (December 7, 2001):
+
+  - Don't show status_log if we don't have a server
+    Patch by: guppy
+
+  - Lets make Eggdrop work on cygwin again
+    Found by: Wcc / Patch by: ITE
+
+  - Fixed a mixed up transfer language entry that caused a crash
+    Found by: Wcc / Patch by: guppy
+
+  - Added '--disable-cc-optimization' to disable -O2 flags
+    Found by: various / Patch by: nakee
+
+  - Added a missing channel membercheck in a few commands
+    Found by: Abraham / Patch by: Eule
+
+  - tcl_newban had some silly guppy logic which caused a crash
+    Found by: S7reaM / Patch by: guppy
+
+  - Added French language files for: assoc, console, notes
+    Patch by: Noyga
+
+  - Added %n for $network to the list of motd text substitutions
+    Patch by: Noyga
+
+  - Added language support to transfer.mod
+    Patch by: nakee
+
+  - Got rid of bad language
+    Found by: ClubCX / Patch by: guppy
+
+  - Rebound some commands to proper bindings (relay, bottree, vbottree)
+    Patch by: poptix
+
+  - Made our build system work with newer autoconf versions
+    Patch by: ITE
+
+  - Make the default bot a bit more secure in regards to the ability to
+    execute Tcl commands from the partyline
+    Patch by: guppy
+
+  - tcl_newban and tcl_newchanban didn't always add the bans
+    Found by: various / Patch by: guppy
+
+  - cmd_optimise is now cmd_optimize
+    Patch by: Wcc
+
+  - Fixed testip in alltools.tcl
+    Patch by: Hanno
+
+  - Some more doc changes
+    Patch by: Wcc
+
+  - Actually fixed stopnethack and a wasop bug
+    Patch by: Eule
+
+  - Added support for DALnet's +M chanmode
+    Found by: various / Patch by: Wcc
+
+  - Fixed +a for !channels
+    Patch by: Lam
+
+  - Fixed tcl_botattr
+    Patch by: TaKaDa
+
+  - Fixed a bogus memory leak
+    Found by: various / Patch by: stdarg
+
+  - Removed some leftovers in uptime.mod
+    Patch by: guppy
+
+  - Yet ANOTHER stupid bug. (crash in .-chan)
+    Found by: blaster^ / Patch by: poptix
+
+  - Minor changes to autobotchk (v1.09.1)
+    Patch by: guppy
+
+  - Fixed a small crash in notes.mod
+    Found by: TaKeDa / Patch by: stdarg
+
+  - Fix 'setuser <hand> PASS' from crashing
+    Patch by: TaKeDa
+
+  - stop_nethack_mode 4 oddity when a +a bot returns from a split getting a
+    -o+o (double negating mode)
+    Found by: boro / Patch by: bhab
+
+  - Testing some better socket code (++)++
+    Patch by: poptix
+
+  - More typo fixing in the config files
+    Patch by: Wcc
+
+  - More typo fixes
+    Patch by: BarkerJr
+
+  - Fixed several tons of spelling errors (really)
+    Patch by: Wcc
+
+  - tcl_chattr now lets you remove global flags
+    Found by: guppy / Patch by: stdarg
+
+  - Fixed some issues with utf-8 dealing with how we handle Tcl arguments
+    Found by: various / Patch by: stdarg
+
+  - Small fix to let tcl_adduser accept only a handle
+    Patch by: Wcc
+
+  - Show '#channel is active but has no ops :(' only if channel is set
+    +statuslog.
+    Found by: FeaRx, DarkReap1 / Patch by: Sup
+
+  - Fixed up some spelling mistakes in tcl-commands.doc
+    Patch by: Wcc
+
+  - Lots of argv[] fixes that caused crashes
+    Patch by: poptix
+
+  - 'chattr hand' no longer crashes (legacy bug)
+    Found by: dfrank / Patch by: stdarg
+
+  - Finally fixed the banreason bug
+    Patch by: poptix
+
+  - Small fix for ircu servers that send 'ERROR:' instead of 'ERROR :'
+    Found by: zip / Patch by: guppy
+
+  - Don't get GO if the channel is -cycle
+    Patch by: fuchs
+
+  - Couple of small uptime.mod backports from 1.7
+    Patch by: guppy
+
+  - Exported module_load and module_unload for modules.
+    Found by: DrDeath / Patch by: Sup
+
+  - Fixed a potential sendnote crash when the notes module is unloaded
+    Found by: various / Patch by: stdarg
+
+  - Bad pointers are evil in tcl_userlist
+    Patch by: poptix
+
+  - Re-fix adduser overflow
+    Patch by: poptix
+
+  - Don't attempt to flood check server notices
+    Patch by: Tothwolf
+
+  - Display global bans, exempts and invites even if not on a channel
+    Patch by: Tothwolf
+
+  - Removed unused "existant" check from tell_bans(), tell_exempts(), and
+    tell_invites()
+    Patch by: Tothwolf
+
+  - Fixed buffer overflow in adduser()
+    Patch by: Tothwolf
+
+  - Fixed typo in filedb3.c: EBUG_MEM -> DEBUG_MEM
+    Patch by: Tothwolf
+
+  - Removed extra egg_bzero call from filesys.c
+    Patch by: Tothwolf
+
+  - Properly check argv[]/argc before using it
+    Patch by: poptix
+
+  - Added missing memory check for tclmisc.c
+    Patch by: Tothwolf
+
+  - New setting: pidfile (detaults to pid.botnetnick)
+    Found by: Tothwolf / Patch by: guppy
+
+  - Oops, .kickban -nick didn't work.
+    Patch by: poptix
+
+  - Backported a check for -dynamicbans to new[ban|exempt|invite]
+    Patch by: BarkerJr
+
+  - Replaced old md5 routines with new ones (backport from 1.7)
+    Patch by: guppy
+
+  - Cleaned up our Tcl information on .status (backport from 1.7)
+    Patch by: guppy
+
+  - Removed dcc-portrange since it was useless (backport from 1.7)
+    Patch by: guppy
+
+  - Show our proper user@host in cmd_status (backport from 1.7)
+    Patch by: drummer
+
+  - Proper utf-8 support
+    Found by: various / Patch by: stdarg
+
+  - Small wasop fix
+    Patch by: TaKeDa
+
+  - Fixed booting with full length handles
+    Found by: bleah / Patch by: PPSlim
+
+  - Allow wildcard CTCP binds
+    Patch by: BarkerJr
+
+  - CTCP replies go to the HELP queue..
+    Patch by: BarkerJr
+
+  - Don't bother sending server in the uptime packets
+    Found by: proton / Patch by: poptix
+
+  - We weren't looking the user record back up on iterations on channels
+    in the NICK bind, causing the chance of a bad pointer reference =P
+    (stdarg gave me the idea to look =)
+    Found by: stdarg / Patch by: poptix
+
+  - Oh, look, SIGN and SPLT binds actually pass on the user record now, and
+    allow flag bindings =P
+    Patch by: poptix
+
+  - The documentation for the need bind was slightly screwy
+    Found by: various / Patch by: guppy
+
+  - Don't check for static Tcl under cygwin
+    Patch by: Kirben
+
+  - Helpfile says nodesync (invalid mode) instead of nodesynch.
+    Patch by: dw
+
+  - Makes .whom more handlen friendly
+    Patch by: Zart
+
+  - Fixes/Additions to command stacking
+    Patch by: Noyga
+
+  - PRIVMSGs with the same message to the same destination are no longer
+    stacked also USERHOST/USERIP are not stacked using a comma
+    Found by: |^Raven^| / Patch by: Noyga
+
+  - Added HOOK_DIE to allow tcl_die to have a quit message.
+    Patch by: Sup
+
+  - Small resync fix
+    Patch by: TaKeDa
+
+  - Fixed tcl_md5, it was broken on Tcl 8.1+
+    Patch by: TaKaDa
+
+  - Check whether cygwin requires -mwin32 to support old versions of cygwin
+    Patch by: Kirben
+
+  - Check for bind in /usr/local/bind when using cygwin
+    Patch by: Kirben
+
+  - A banreason wasn't used in some cases.
+    Found by: NeoN- / Patch by: dw
+
+  - Bot sent a useless TOPIC command to the server when it joined a channel.
+    Found by: Noyga / Patch by: Sup
+
+  - Added QNX support
+    Patch by: SuperS
+
+  - host-sanity-check had a type mismatch
+    Patch by: stdarg
+
+  - Some small fixes
+    Patch by: Kirben
+
+  - The channel file is now backed up
+    Found by: Abraham / Patch by: Noyga
+
+  - Small fix for binds and unicode characters
+    Found by: various / Patch by: strolchi
+
+
+1.6.6 (July 20, 2001):
+
+  - A few minor doc updates
+    Patch by: Paladin
+
+  - Fixed a slight problem with how we export modules
+    Found by: various / Patch by: ITE
+
+  - Ignore removals are now shared properly
+    Patch by: drummer
+
+  - Got rid of remove_gunk since it was unused
+    Patch by: drummer
+
+  - Fixed a small buffer overflow in cmd_whois
+    Found by: [joco] / Patch by: Sup
+
+  - Fixed a small getops bug
+    Patch by: LethalWP
+
+  - .conf cleanups, added Tcl threaded info in DEBUG
+    Patch by: ITE
+
+
+1.6.5 (July 10, 2001):
+
+  - Fixed 'make config' for some disabled_modules cases.
+    Found by: TaKeDa / Patch by: Fabian
+
+  - Readded missing std_args.h check.
+    Patch by: Tothwolf
+
+  - Removed an old ircd limit hack (legacy stuff owns)
+    Found by: Sup / Patch by: guppy
+
+  - Fixed password checks in msg commands
+    Patch by: ejm
+
+  - CTCR had the wrong args for 'uh', maybe this will break something,
+    I doubt it.
+    Patch by: poptix
+
+  - wire.mod now checks if an encryption module is loaded
+    Found by: FumBa / Patch by: guppy
+
+  - guppy broke chattr's isowner() check
+    Patch by: poptix
+
+  - Bot op status was not shown in .channel
+    Patch by: dw
+
+  - Simplified and cleaned up variable usage and several tests in configure.
+    Patch by: Tothwolf
+
+  - Fixed broken pthreads checking.
+    Patch by: Tothwolf
+
+  - Showing 'inactive' in .status when the bot is not on the channel was a
+    bit confusing. Also added #eggfaq@EFnet to docs.
+    Found by: KuNgFo0 / Patch by: Sup
+
+  - Added: tcl_haschanrec
+    Found by: Abraham / Patch by: guppy
+
+  - Prevent -b/-e/-I flooding by using random delays.
+    Found by: various / Patch by: Sup
+
+  - Misc cleanups in while() loops
+    Patch by: guppy
+
+  - Updated getops.tcl to v2.3
+    Patch by: guppy
+
+  - Updated recommended Tcl version to 8.3.3 and changed the ftp site for
+    Tcl to ftp.eggheads.org since ftp.scriptics.com can be fairly picky
+    these days.
+    Patch by: guppy
+
+  - Don't try to use null pointers in tbuf code *duh*
+    Patch by: guppy
+
+  - Small fix to what nickname we can use when we type "new"
+    Found by: SegFault / Patch by: guppy
+
+  - We should use errno to detect EAGAIN in net.c
+    Patch by: zip
+
+  - Display the proper queue that is full instead of just DP_MODE
+    Patch by: guppy
+
+  - Changed the wording of %bantime <XdXhXm>
+    Found by: BenDover / Patch by: guppy
+
+  - Mount the Eggdrop directory as binary in cygwin
+    Patch by: Kirben
+
+  - compress.mod/dns.mod now check for the compiler also
+    Patch by: Kirben
+
+  - Made server-timeout match the default value in the code.
+    Patch by: Sup
+
+  - Added few missing brackets to channels.mod/channels.h and exported
+    remove_channel().
+    Found by: Amun / Patch by: Sup
+
+  - Check for pthread_mutex_init as a function instead of in a library
+    Patch by: Kirben, guppy
+
+  - Detect __res_mkquery since we detect __res_init now
+    Patch by: Kirben
+
+  - Fixed empty line on LOG_SRVOUT and removed a debug-output which
+    confused users
+    Found by: Sup / Patch by: G`Quann
+
+  - flush_inbuf and a killsock bug
+    Patch by: G`Quann
+
+  - Some access checking in msg commands
+    Patch by: ITE
+
+  - tbuf fix
+    Patch by: guppy
+
+  - Check a bit harder for pthread_mutex_init
+    Patch by: guppy
+
+  - Small fix to sscanf for libsafe systems
+    Found by: various / Patch by: Oliver, guppy
+
+  - Made srandom() use getpid() and getppid()
+    Patch by: Sup
+
+  - Added .whoami command
+    Patch by: Sup
+
+  - More utf problems, buffer overflow(s)
+    Patch by: stdarg
+
+  - More Cygwin fixes
+    Patch by: Kirben, RebuM
+
+  - Fix for dccdumpfile/dumpfile
+    Patch by: NML_375
+
+  - Calling a proc from a bind, that modified the user record of the person
+    that triggered the bind, could cause a crash.
+    Patch by: poptix
+
+  - Memory leak in filesys.mod, that's been there since 1.3.x
+    Patch by: poptix
+
+  - 'setflags' never accepted all the aruements, fixed.
+    Patch by: poptix
+
+  - tcl_ignorelist was showing the wrong expiration time.
+    Found by: Tothwolf / Patch by: Sup
+
+  - Info locking was broken, and .info wasn't in .help
+    Found by: poptix / Patch by: poptix
+
+  - Additions/clarifications to tcl-commands.doc
+    Patch by: Tothwolf
+
+  - getops.tcl problem due to ircnet hack support for ! channels
+    Patch by: poptix
+
+  - Don't try to relay to bots without proper address or relay-port.
+    Patch by: Sup
+
+  - Fixed .chaddr from changing the telnet-port and relay-port.
+    Patch by: Sup
+
+  - New evnt: loaded
+    Patch by: timothy
+
+  - Tcl command mkdir had wrong BADARGS (didnt allow channel flags)
+    Patch by: poptix
+
+  - When Tcl var servers was empty, we had problems.
+    Patch by: poptix
+
+  - New bugs e-mail address: bugs@eggheads.org
+    Found by: guppy / Patch by: Sup
+
+  - Added a setting for default console flags to eggdrop.simple.conf, and
+    made console-autosave disabled by default.
+    Patch by: Sup
+
+  - New evnt: prerestart (restart is tricky)
+    Found by: Abraham / Patch by: guppy
+
+  - We now detect __res_init for glibc2.2
+    Found by: various / Patch by: drummer, guppy
+
+  - Removed legacy /trace support for keep-nick
+    Patch by: guppy
+
+  - Fixed a little bug that will happen in September of 2001
+    Patch by: guppy
+
+  - Show the handle when rejecting a duplicate bot connection
+    Patch by: TaKeDa
+
+  - Small fix to MSGM's bind table
+    Patch by: fuchs
+
+  - Updated the help channels in the docs.
+    Found by: slennox / Patch by: Sup
+
+  - Changed the way we check for sticky bans (saves cpu)
+    Patch by: Eule
+
+  - Fixed various formatting mistakes
+    Patch by: Eugene
+
+  - Made the IRIX5,6 and 6-64bit OS detection into one check
+    Patch by: SuperS
+
+
+1.6.4 (April 13, 2001):
+
+  - Minor fixes to write_debug() function.
+    Patch by: Sup
+
+  - More German translations and some typo fixes
+    Patch by: Eugene
+
+  - Modified weed and autobotchk to find tclsh better
+    Patch by: guppy
+
+  - Fixed weed's b<days> switch
+    Found by: NaTaS / Patch by: ITE
+
+  - When rejecting bots don't try to execute rembot() for bots that match
+    bot's botnet-nick.
+    Patch by: Sup
+
+  - Improved the German translations
+    Patch by: Eugene
+
+  - Dcc resumes with no requested data are now ignored properly
+    Found by: fabulous / Patch by: guppy
+
+  - Call sync() after saving the userfile
+    Patch by: Krome
+
+  - Fixed .-noteign from crashing the bot
+    Found by: various / Patch by: Krome
+
+  - Updated all the copyright info for 2001
+    Patch by: Wingman, guppy
+
+  - modes-per-line works now when its set to 3
+    Patch by: Krome
+
+  - Fixed channel add #chan from crashing the bot
+    Found by: various / Patch by: Darude
+
+  - Various small typo fixes
+    Patch by: Eugene
+
+  - Solaris make gcc fix
+    Patch by: nakee
+
+  - Small fix to the unicode stuff to handle Tcl > v9
+    Patch by: Zart
+
+  - Added matchbotattr to alltools.tcl.
+    Found by: guruz / Patch by: Sup
+
+  - Removed some legacy cygwin compatibility
+    Patch by: kirben
+
+  - cmd_stick activates the bans now
+    Patch by: dw
+
+  - Fixed a small remote-boots issue
+    Patch by: Abraham
+
+  - Fixed the remote motd bug
+    Patch by: ITE
+
+  - Fixed a small dns.c bug with hostname resolving
+    Found by: blaster / Patch by: ITE
+
+  - Removed debug-tcl, since this is something noone uses and is more bloat
+    than anything
+    Patch by: Wingman
+
+  - encrypt/decrypt with highbit character messed up the string
+    Found by: Darude / Patch by: Darude, Wingman
+
+  - Fixed rest of the problems with utf-8 characters.
+    Found by: KingBob / Patch by: Tothwolf, Wingman
+
+
+1.6.3 (February 27, 2001):
+
+  - Made blowfish.mod a bit more friendly with other encryption modules and
+    also added hooks in the core for string encryption/decryption
+    Patch by: guppy
+
+  - Fixed a memleak within the XTRA field.
+    Found by: G`Quann / Patch by: symband
+
+  - If my-ip is wrong, tell the user that as the error msg
+    Patch by: Habeeb
+
+  - Updated sentinel to v2.50
+    Patch by: slennox
+
+  - Actually remove a ban from irc when a sharebot removes it
+    Patch by: Jason
+
+  - Do not allow Eggdrop to run as root
+    Patch by: Tothwolf
+
+  - msg_hello() was unable to add users with long nicks.
+    Also slightly cleaned up irc.mod/msgcmds.c.
+    Found by: darkfall / Patch by: Sup
+
+  - Fixed misformed notices in notes module. Corrected use of language file,
+    and fixed lang file entry.
+    Patch by: Jason
+
+  - Shutdown once getting a SIGTERM by default
+    Patch by: Tothwolf
+
+  - Improved Tcl version reporting
+    Patch by: Tothwolf
+
+  - Updated the help channels in README.
+    Found by: habeeb / Patch by: Sup
+
+  - +revengebot no longer requires that the bot has a user-record for itself.
+    Found by: PPSlim / Patch by: PPSlim, guppy, Fabian
+
+  - Made the reserved-port setting into reserved-portrange
+    Found by: project10 / Patch by: guppy
+
+  - Added i18n support to fix our problems with Tcl
+    Found by: various / Patch by: Tothwolf
+
+  - Some minor doc fixes
+    Patch by: PPSlim
+
+  - '.note' wasn't correctly requiring a message parameter.
+    Found by: GregMo / Patch by: Sup
+
+  - Fixed it so that +d or +k users cannot remove hosts and thus circumvent
+    auto-kick or deop
+    Patch by: Jason
+
+  - Fixed cmd_binds when called with no argument
+    Found by: GregMo / Patch by: guppy
+
+  - Cleaned up Context and Assert usage in the modules
+    Patch by: guppy
+
+
+1.6.2 (January 14, 2001):
+
+  - Fixed a minor typo in got432().
+    Found by: S Wilcox / Patch by: Sup
+
+  - Fixed cmd_binds when doing '.binds all'
+    Patch by: blaster
+
+  - cmd_chaddr was broken thanks to a patch of mine
+    Found by: various / Patch by: guppy
+
+  - Fixed the traffic accounting code when dealing high amounts of traffic
+    Found by: SuperS / Patch by: ITE
+
+  - Made configure work properly when called with an absolute path
+    Patch by: ITE
+
+  - share.mod now uses .share.nick.unixtime.users as a temp file when
+    recieving the userfile
+    Found by: Ian / Patch by: Ian, guppy
+
+  - Fixed XTRA info from not working
+    Patch by: toot
+
+  - Fixed my bug that made revenge-mode get set back to 1 all the time.
+    Patch by: toot
+
+  - We now understand negative limits (IRCnet allows this)
+    Patch by: TaKeDa
+
+  - Parameter missing for share.mod's status information and a uff error
+    message. Minor optimisations elsewhere.
+    Found by: TaKeDa / Patch by: Fabian
+
+  - Removed old high character hack from readtclprog, as the actual problem
+    is now fixed.
+    Patch by: Fabian
+
+  - Added proper support for Tcl unicode changes since 8.1.
+    Found by: many / Patch by: Wingman
+
+  - Cleaned up Context; usage in the core
+    Patch by: guppy
+
+  - Rewrote tcl_duration
+    Patch by: guppy
+
+  - More use of strncpyz and egg_snprintf in the core
+    Patch by: guppy
+
+  - Did some cleanup in tcl[user/misc/dcc].c
+    Patch by: guppy
+
+  - Added a channel option to .[un]stick and slightly cleaned up
+    channels.mod/cmdschan.c.
+    Patch by: Sup
+
+  - Two calls to fclose() were missing in transfer.mod, causing Eggdrop to
+    leak file descriptors.
+    Found by: fabulous / Patch by: Fabian
+
+  - Hopefully fixed the cycle-flood problem on some EFnet servers
+    Patch by: Eule
+
+  - autovoice now uses autoop delay also
+    Patch by: Eule
+
+  - Cleaned up some language entries
+    Patch by: Tothwolf
+
+  - default-port was set in the wrong location.
+    Patch by: Sup
+
+  - Added '--disable-tcl-threads' to configure
+    Patch by: ITE, Tothwolf
+
+
+1.6.1 (November 22, 2000):
+
+  - Updated KNOWN-PROBLEMS
+    Patch by: Wiktor
+
+  - Fixed a crash dealing with expired masks and a memleak in misc.c
+    Patch by: Eule
+
+  - Made revenge-mode a per-channel setting, rather than global.
+    Patch by: toot
+
+  - set quiet-save was missing in the help file.
+    Patch by: dw
+
+  - Seen module returned %s instead of nick in certain replys.
+    Found by: suizide / Patch by: dw
+
+  - Small fix for enforcebans
+    Patch by: Eule
+
+  - Do not set bans if they don't match someone in the channel and the
+    channel is set +dynamicbans.
+    Patch by: dw
+
+  - Channel masks for unsupported channels weren't properly skipped when
+    parsing the user-file.
+    Found by: various / Patch by: Fabian
+
+  - Now using lines with up to 500 instead of only 480 characters.
+    Not truncating message anymore if it's longer than 500 characters and
+    doesn't contain spaces.
+    Patch by: Bob, Fabian
+
+  - Fixed crash in expired_mask() when checking ops not present in
+    the user-list.
+    Found by: paran0id / Patch by: Fabian
+
+
+1.6.0 (November 15, 2000):
+
+  - MISC_NOUSERFILE includes the actual config filename now
+    Found by: Paladin / Patch by: guppy
+
+  - strict-host's default did not match the config default of 0
+    Patch by: dw
+
+  - Do not force +f on masters or owners
+    Patch by: ITE
+
+  - Removed legacy code for an ircd2.9 bug
+    Patch by: Eule
+
+  - Removed the remaining lagcheck leftovers
+    Patch by: Wiktor, guppy
+
+  - Fixed an issue with enforcebans and exempts.
+    Patch by: Eule
+
+  - Upgraded sentinel.tcl to v2.00
+    Patch by: guppy
+
+  - Fixed minor typo in status_log().
+    Patch by: Sup
+
+  - Directly linked bots can't be removed anymore.
+    Found by: Wiktor / Patch by: Sup
+
+  - Removed 1.3.x updates from UPDATES.pre1.5
+    Patch by: guppy
+
+  - Concated the UPDATE files
+    Patch by: Wiktor
+
+  - Using "JOIN 0" instead of explicitly leaving every channel.
+    Patch by: Eule
+
+  - New script: cmd_resolve.tcl (adds a .resolve command).
+    Patch by: guppy
+
+  - DNS module failed to handle IP address 0.0.0.0 properly.
+    Found by: |^Raven^| / Patch by: Fabian
+
+  - Detect id-channel-names used as channel names (added with .+chan) during
+    IRC session.
+    Found by: guruz, Evo|ver / Patch by: Fabian
+
+  - Removed left-over command '.resolve' from dns.mod/dns.c.
+    Patch by: Sup
+
+  - Made '.[de]op' and '.[de]voice' get nick if it wasn't specified and
+    added few missing flags to '.channel' output. Also slightly cleaned up
+    irc.mod/cmdsirc.c.
+    Patch by: Sup
+
+  - Increased the length of ban reasons from 65 to 160 (I think this is what
+    RFC1459 allows for default).
+    Found by: ReBEL / Patch by: guppy
+
+  - Moved strncpyz() macro from server.mod to a global location.
+    Patch by: Fabian
+
+  - Restricted WHO stacking to add up to a maximum of MAXPENALTY penalty
+    seconds.
+    Found by: TaKeDa / Patch by: Eule
+
+  - Added channel specific aop-delay setting. Allows randomly delayed
+    auto-ops, auto-ops after a certain delay and the current behaviour, i.e.
+    immediate auto-op.
+    Patch by: Eule
+
+  - Fixed IRC_DO_CHANNEL_PART call from channels.c.
+    Found by: Eule / Patch by: Fabian
+
+  - Fixed compiler warnings about 'const' for Tcl libraries that don't
+    declare Tcl_SetVar as taking const strings.
+    Found by: Abraham / Patch by: Fabian
+
+  - Fixed overflow in proxy_connect() for sun_firewall.
+    Patch by: drummer
+
+  - Could not remove joining channel from procs called by JOIN bind.
+    Found by: Tothwolf / Patch by: Fabian
+
+  - The filesys module did not support remotely linked files. Instead, the
+    bot crashed in various places and didn't even attempt to save/load the
+    link information.
+    Found by: fabulous / Patch by: Fabian
+
+  - Removed duplicate servlimit check from irc.mod.
+    Patch by: Eule
+
+  - Added 'e' as global- and channel-flag for users exempted from the
+    stopnethack checks.
+    Patch by: Eule
+
+  - Minor cleanup of protocol in back-ground code.
+    Patch by: Fabian
+
+  - Avoid data lossage during the start of connections, while the receiving
+    dcc functions aren't listening yet. So now you can blindly start sending
+    data right after connecting and depend on the OS and Eggdrop to do The
+    Right Thing.
+    Patch by: Fabian
+
+  - Changed failure of socket() to non-fatal event.
+    Found by: Abraham, TaKeDa / Patch by: Fabian
+
+  - Fixed support for SunOS / Solaris.
+    Found by: TheUnknown / Patch by: Fabian
+
+  - Don't actually delete the bind structures immediately, use centralised
+    garbage collector instead. Cleaned up various aspects of the bind list
+    handling.
+    Patch by: Fabian
+
+  - Don't insist on proper domainname during hostname detection.
+    Found by: Sup / Patch by: Fabian
+
+  - Properly call PART bind when removing channel and the bot will therefore
+    leave the channel shortly. Also slightly reworked channel removal.
+    Found by: Sup / Patch by: Fabian
+
+  - Move actual assert check back into macro, saving a function call.
+    Patch by: Fabian
+
+  - Removed small compile warning about ambigious if/else.
+    Found by: NigtHuntr / Patch by: Fabian
+
+  - Fixed and optimised ban/exempt and invite expiration code for global and
+    channel specific masks.
+    Found by: Abraham / Patch by: Eule
+
+  - DCC send and chat requests send to channels are now ignored.
+    Found by: zart / Patch by: Sup
+
+  - Fixed typo in irc.mod/irc.h me_op export macro.
+    Patch by: Looser^
+
+  - Made the bot recognise modes during CHAN_PEND. Allows us to properly
+    recognise bans/other masks and call mode binds.
+    Patch by: Eule
+
+  - Fixed get_user_by_host, which was broken for strict_host set to 0.
+    Patch by: Eule
+
+  - Slightly optimised gotnick() by replacing the call to clear_chanlist()
+    with a specialised loop.
+    Patch by: Eule
+
+  - Instead of telnet!*@* we now use -telnet!*@* since no valid IRC
+    nicknames can be prefixed with a dash (per RFC1459).
+    Found by: labtec / Patch by: guppy
+
+  - Added proper logics to the user{bans,exempts,invites} settings and
+    removed the clearbansset setting.
+    Patch by: Eule
+
+  - Small typo in ismember() (added during cleanup) caused channel functions
+    to freak out. Sigh.
+    Found by: Abraham, DennisMV / Patch by: Fabian
+
+  - flush_mode() cleanups. -{b,e,I} now sent before +{b,e,I}. used
+    egg_strcatn to make buffer-overflow free.
+    Patch by: Cybah
+
+  - Fixed caching for Tcl configuration details. As soon as different
+    libraries are detected, we discard cached values.
+    Patch by: Fabian
+
+  - Cleaned up style for aclocal.m4 system handling.
+  - Added support for SunOS4.
+    Patch by: SuperS
+
+  - Caching -pipe test results for configure.
+    Patch by: Fabian
+
+  - Fixed linking for Sparc with SunOS/BSD/Linux, which caused the bot to
+    crash under certain circumstances.
+    Found by: various / Patch by: TheUnknown
+
+  - Added use of the -pipe compiler option, to speed-up compilation.
+    Patch by: TheUnknown
+
+  - Fixed bugs in German translation, typo in doc/MODULES and lines longer
+    than 80 characters in a few places.
+    Patch by: Eugene
+
+  - Generic cleanups.
+    Patch by: Fabian
+
+  - Fixed format-type bugs in notes.mod crashing the bot.
+    Found by: MsingLnk / Patch by: Fabian
+
+  - Added support for threaded Tcl libs by implementing the early-fork hack.
+    Cleaner support will be possible in 1.7.
+    Found by: various / Patch by: Fabian
+
+  - Disabled cycling for +a !channels. Minor cleanups.
+    Found by: Wiktor / Patch by: Fabian
+
+  - Minor optimizations in irc.mod:chan.c.
+    Patch by: Fabian
+
+  - Checking for m->user == NULL in kick_all() and refresh_ban_kick() now.
+  - Minor optimizations.
+    Patch by: Eule
+
+  - Removed 'SERVER SUPPORT LOADED' message.
+    Patch by: guppy
+
+  - Added missing checks around new_dcc() call. This prevents the bot from
+    crashing under high connection load.
+    Found by: Igmar / Patch by: Fabian
+
+  - Added egg_strcatn function.
+    Patch by: Cybah
+
+  - Repositioned help-path setting in eggdrop.simple.conf so that the
+    modules actually load the help files.
+    Patch by: Eugene
+
+  - Minor documentation fix to seen.mod help.
+    Found by: FuzzBuster / Patch by: Fabian
+
+  - transfer.mod allowed memory DoS for turbo-dcc.
+    Found by: Karsten / Patch by: Fabian
+
+  - Minor correction to the list of used flags in flag.h.
+    Found by: Johnny-, Mnemonic / Patch by: Fabian
+
+  - Added language support to assoc.mod, console.mod and notes.mod.
+  - Cosmetic fix to "module loaded" message.
+    Patch by: guppy
+
+  - Removed some unneeded language macros.
+    Patch by: guppy
+
+  - Cleaned up ctcp.mod. Reordered some of the ctcp_mode checks.
+    Patch by: guppy
+
+  - Added the [pass] argument in the .jump help reference.
+    Patch by: guppy
+
+  - Added IPv6-masks support (bans/exempts/invites/ignores).
+    Found by: Ben / Patch by: Fabian
+
+  - Fixed minor, newly introduced mess-up in '.chaninfo' output.
+    Found by: Abraham / Patch by: Fabian
+
+  - User defined flags weren't displayed correctly for inactive channels,
+    which the bot hadn't joined to yet.
+    Found by: Abraham, Kelvin / Patch by: Fabian
+
+  - Fixed further places where +/-revengebot was not properly integrated or
+    documented.
+    Found by: Joker / Patch by: Fabian
+
+  - Fixed eggdrop test-run for vpath.
+  - Using autoconf macros for caching in aclocal.m4.
+  - Changed -L. to -L`pwd` for libtcls < 7.4 support hack.
+    Patch by: Fabian
+
+  - Added strftime compatibility function.
+    Patch by: Fabian
+
+  - Re-added bell character to note message. This can be filtered out with
+    the '.strip +g' command.
+    Patch by: Eule
+
+  - We now send PASS before sending NICK or USER.
+    Patch by: Koach
+
+  - Made share.mod unlink its temp userfile.
+    Patch by: guppy, Fabian
+
+  - Fixed a few format string bugs. Cleaned up style.
+    Found by: guppy / Patch by: Fabian
+
+  - Fixed crash when a received user file failed to load.
+    Found by: Wiktor / Patch by: Fabian
+
+  - compress module didn't indicate errors correctly.
+    Found by: Wiktor / Patch by: Fabian
+
+  - Unified generic int types.
+  - Replaced my_?to?l() with ?to?l().
+  - Replaced obsolete macros.
+  - Various cleanups.
+    Patch by: Fabian
+
+  - Made sure only <module>_start function symbols were exported by modules.
+  - Fixed channels, console, dns, irc, notes and transfer modules.
+  - Removed unneeded data in non-debug mode from dns module compile.
+    Patch by: Fabian
+
+  - Fixed memory leak in channel key handling.
+  - Optimized use of recheck_channel and recheck_channel_modes.
+    Patch by: Eule
+
+  - Fixed '.whois' / '.match' crash for users without laston data, caused by
+    strftime changes.
+    Found by: ridens / Patch by: Fabian, SuperS
+
+  - finish_share() cleanups and optimizations.
+    Patch by: Fabian
+
+  - Fixed configure problems on 64bit IRIX.
+    Patch by: SuperS
+
+  - Removed connect_server() call in nuke_server() to avoid uncontrolled
+    recursion.
+    Found by: SuperS / Patch by: Fabian
+
+  - Cleaned up resolve_success and resolve_failure DNS hooks.
+    Patch by: Fabian
+
+  - Fixed various aspects of exempt handling.
+    Patch by: Eule
+
+  - add_bot_hostmask now adds static hostmasks for bots.
+    Found by: toot / Patch by: Sup
+
+  - Minor cleanups and optimizations in the irc module.
+    Patch by: Fabian
+
+  - Included +l and +k modes in modesperline-calculation.
+  - Added 'include-lk' setting to control this.
+    Patch by: Eule
+
+  - Fixed compatibility issues on IRIX. Added SINIX to configure.
+  - Removed unneeded header std_args.h.
+    Patch by: SuperS
+
+  - Fixed filesys module to use NICKMAX instead of HANDLEN in one place.
+    Patch by: FirebaII
+
+  - Minor fixups in filesys module.
+    Patch by: Fabian
+
+  - Removed lagcheck feature because it caused too many problems.
+    Patch by: G`Quann
+
+  - Added meaningful error message for disabled tcl_dccsimul.
+    Found by: Kool Cat / Patch by: Fabian
+
+  - Lowered retry timeout for failed DNS requests to 10 minutes.
+    Found by: dirtymac / Patch by: Fabian
+
+  - Fixed possible memleaks related to chan->channel.key, chan->cmode[] and
+    chan->key.
+    Patch by: Eule
+
+  - Under certain circumstances, the old user file was deleted and the new
+    user file wasn't correctly created.
+    Found by: various / Patch by: Fabian
+
+  - Fixed crash in splitc().
+    Patch by: blaster
+
+  - Removed checks for bogus masks in +ban, +exempt, and +invite.
+  - Minor error message fixes.
+  - Minor source cleanups.
+    Patch by: Tothwolf
+
+  - Added splitcn() to limit how many bytes get copied to first.
+    Patch by: Cybah
+
+  - Shrunk buffer size in cmd_boot(), using the new function.
+    Patch by: Cybah
+
+  - Fixed crash with handles larger than 19 characters.
+    Patch by: Shaun

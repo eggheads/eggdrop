@@ -1,0 +1,2379 @@
+$Id: Changes1.0,v 1.1 2008/07/05 02:14:02 tothwolf Exp $
+
+Eggdrop Changes (since version 0.9)
+
+    _____________________________________________________________________
+
+1.0p (March 16, 1997):
+
+  # Maintenance release from Wade
+
+  - Kickban reasons are now being included in the kick
+    Patch by: ???
+
+  - Kickban will now let owner's kickban anyone, and masters can kickban ops
+    Patch by: ???
+
+  - 437 numeric on DALnet/Undernet means you can't change your nickname
+    because your nickname is banned, plus some buffer overflow fixes
+    Patch by: cmwagner
+
+  - 437 numeric (nickname/channel is juped) has been changed to reflect
+    whether it is specfically the channel or the nickname, bot will not
+    change nicknames if the channel is juped :)
+    Found by: ernesto baschny / Patch by: robey pointer
+
+  - Botnet routing has been changed, no longer bothers sending out botnet
+    commands to bots that don't exist
+    Patch by: cmwagner
+
+  - Added 'restart' command, this may cause some problems
+    Patch by: cmwagner
+
+  - Long nickname mask in whois command caused bot to crash
+    Found by: ernesto baschny / Patch by: cmwagner
+
+  - Downlink can no longer unlink uplink and cause a nasty amount of noise
+    on the botnet
+    Found by: eraseme / Patch by: cmwagner
+
+  - Long filename in dcc send caused bot to crash
+    Found by: mike hammarin / Patch by: cmwagner
+
+  - Sharebots aborting xfers would cause the bot to kill off the wrong
+    socket
+    Patch by: cmwagner
+
+  - Space before ctcp commands would be stripped off, could be used to
+    detect eggdrop bots
+    Patch by: cmwagner
+
+  - When rehashing and the bot was using the alternate nickname it would
+    result in the bot thinking the nickname was in use and changing it
+    Found by: seth / Patch by: cmwagner
+
+  - Party line wasn't being updated when attributes were being changed
+    Found by: imoq / Patch by: cmwagner
+
+  - Topic command was not letting users change the topic on a non +t channel
+    when the bot was opless
+    Found by: deathhand / Patch by: cmwagner
+
+  - Users were not being deopped when channel is set +revenge and they deop
+    Found by: deathhand / Patch by: cmwagner
+
+  TO-DO:
+
+  - Allow dynamic bans to be marked as "forced"?  (ie, most bans are dynamic
+    but some could be marked as permanently active)
+  - Tcl commands for:
+      move/copy a file
+      make/remove a dir
+      get/set a dir's required flags
+      get # of downloads for a file
+  - files '.mv' move directories
+    Suggested by: andrej
+  - '.sort' to sort files
+  - Remote sharing of directories (large project)
+  - Channel-specific flags (large project, v1.1)
+  - 'listen <port> <"bot-only"|"all"|"user-only"> [nick-mask]'
+  - 'listen <port> script <procname>'
+  - 'listen <port> off'
+
+  BUG REPORTS:
+
+  - dcc chat with firewalled bot doesn't seem to work (error 2)
+    Submitted by: rajat goel
+  - Changing nicks every 60 seconds on the undernet (which eggdrop does when
+    it can't get its nick) can be perceived as a flood; suggested fix is to
+    use ISON to determine if the name is available
+    Submitted by: troy davis
+  - killdcc <idx> "on a relay to another bot that was stuck (I had lost the
+    connection to my ISP) and the bot went haywire ('Can't find user for
+    relay!')"
+
+  SUGGESTIONS:
+
+  - Be able to leave a parting comment when doing '.quit'
+    Suggested by: a person
+  - Fix up help substitutions (%[ %] is pretty lame)
+  - Quota for file system
+
+
+1.0o (February 4, 1997):
+
+  # New version from Robey Pointer <robey@netcom.com>
+
+  - Solaris sigaction thingy fixed
+    Patch by: dunk
+
+  - 'kick'/'kickban' won't kick other channel bots
+    Suggested by: mikael hammarin
+
+  - ctcp quoting removed (eggdrop was the only client that correctly did it
+    according to the ctcp-1 spec -- the new ctcp-2 quoting will be
+    introduced once the ctcp-2 draft is finalized in a month or so)
+    Patch by: butchbub
+
+  - Server renaming was case sensitive and could sometimes cause a crash
+    (fixed)
+
+  - Small bug in DEBUG_TCL (fixed)
+    Patch by: poptix
+
+  - Other bots can't use msg 'ident' command
+
+  TO-DO:
+
+  - Allow dynamic bans to be marked as "forced"?  (ie, most bans are dynamic
+    but some could be marked as permanently active)
+  - Tcl commands for:
+      move/copy a file
+      make/remove a dir
+      get/set a dir's required flags
+      get # of downloads for a file
+  - files '.mv' move directories
+    Suggested by: andrej
+  - '.sort' to sort files
+  - Remote sharing of directories (large project)
+  - Channel-specific flags (large project, v1.1)
+  - 'listen <port> <"bot-only"|"all"|"user-only"> [nick-mask]'
+  - 'listen <port> script <procname>'
+  - 'listen <port> off'
+
+  BUG REPORTS:
+
+  - dcc chat with firewalled bot doesn't seem to work (error 2)
+    Submitted by: rajat goel
+  - Changing nicks every 60 seconds on the undernet (which eggdrop does when
+    it can't get its nick) can be perceived as a flood; suggested fix is to
+    use ISON to determine if the name is available
+    Submitted by: troy davis
+  - killdcc <idx> "on a relay to another bot that was stuck (I had lost the
+    connection to my ISP) and the bot went haywire ('Can't find user for
+    relay!')"
+
+  SUGGESTIONS:
+
+  - Be able to leave a parting comment when doing '.quit'
+    Suggested by: a person
+  - Fix up help substitutions (%[ %] is pretty lame)
+  - Quota for file system
+
+
+1.0n (Jauary 6, 1997):
+
+  # New version from Robey Pointer <robey@netcom.com>
+
+  - Moved to GNU GPL licensing
+
+  - ctcp extraction from privmsg improved
+    Patch by: os2warp@invlogic.com
+
+  - Nick flood was broken (fixed)
+    Patch by: mrwizard
+
+  - mIRC ctcps and colors stripped from party-line chatter
+
+  - ctcp behaves paranoidly by popular demand
+
+  - Changing the nick of a directly-connected bot could befuddle the dcc
+    tables (fixed)
+    Found by: beldin
+
+  - Some servers apparently give broken pong replies (copes with it now)
+
+  - Won't reverse -b modes if they weren't bot-protected bans
+
+  - 'chnick' wouldn't let you change capitalization (fixed)
+    Found by: xerxes
+
+  - '+bot' will not let spaces be part of the address any more
+    Suggested by: vince@who.net
+
+  - Turns control characters into '?' in a password
+
+  - Was letting users change nicks to the bot's nick (fixed)
+    Found by: dan anatol
+
+  - 'init-server' is delayed until 001 numeric is received from the server
+    Suggested by: troy davis
+
+  - 'ispermban' Tcl command wasn't working (fixed)
+    Found by: void
+
+  - Wouldn't correctly finish the nick scroll when it couldn't get any nick
+    (fixed)
+    Found by: void
+
+  - '.topic' was sometimes refusing to change the topic when the bot wasn't
+    op'd, even if the channel was not +t (fixed)
+    Found by: james colton
+
+  - +c common users were not able to use 'hello' msg command (code was all
+    gibberish) (fixed)
+    Found by: aaron zollman
+
+  - GNU configure file updated to handle Tcl 8.0
+    Patch by: tom rini
+
+  - +secret/-secret channel settings weren't listed in sample config file
+    (fixed)
+
+  - Remote 'who' requests to unknown bots are no longer broadcast
+    Patch by: cmwagner
+
+  - Initial ban checking would try to de-ban a number instead of a detested
+    ban (fixed)
+    Found by: jesse schachter
+
+  - console.tcl will filter out c/x/r/o/d/1-5 console modes for non-masters
+
+  - Console modes weren't removed when a user's +m flag was removed and
+    he/she was still online (fixed)
+    Found by: eraseme
+
+  - compile-time option to allow lowercase ctcps
+
+  - Nick flood protection streamlined and no longer kicks the same user
+    multiple times
+    Patch by: mike mclagan
+
+  - Better checking of recently-placed bans (to avoid constantly refreshing
+    a group of bans that are under a minute old and probably pending in the
+    queue)
+    Patch by: mike mclagan
+
+  - Some changes to support Cygnus Windows/NT environment
+    Patch by: darkshde/ blap
+
+  - ctcp flood sent directly to the bot wasn't getting completely ignored
+    (fixed)
+    Found by: dejan oklobdzija
+
+  - Tcl 'dccsimul' no longer gives the user a temporary +n ('dccsimul' will
+    now only let the user do commands he/she would normally be able to use)
+
+  - Motd display could barf on long %C output (fixed)
+    Found by: seth mattinen
+
+  - Nick jupe on Euronet will get treated like "nickname in use"
+
+  - Updated the README file
+
+  TO-DO:
+
+  - Allow dynamic bans to be marked as "forced"?  (ie, most bans are dynamic
+    but some could be marked as permanently active)
+  - Tcl commands for:
+      move/copy a file
+      make/remove a dir
+      get/set a dir's required flags
+      get # of downloads for a file
+  - files '.mv' move directories
+    Suggested by: andrej
+  - '.sort' to sort files
+  - Remote sharing of directories (large project)
+  - Channel-specific flags (large project, v1.1)
+  - 'listen <port> <"bot-only"|"all"|"user-only"> [nick-mask]'
+  - 'listen <port> script <procname>'
+  - 'listen <port> off'
+
+  BUG REPORTS:
+
+  - dcc chat with firewalled bot doesn't seem to work (error 2)
+    Submitted by: rajat goel
+  - Changing nicks every 60 seconds on the undernet (which eggdrop does when
+    it can't get its nick) can be perceived as a flood; suggested fix is to
+    use ISON to determine if the name is available
+    Submitted by: troy davis
+  - killdcc <idx> "on a relay to another bot that was stuck (I had lost the
+    connection to my ISP) and the bot went haywire ('Can't find user for
+    relay!')"
+
+  SUGGESTIONS:
+
+  - Be able to leave a parting comment when doing '.quit'
+    Suggested by: a person
+  - Fix up help substitutions (%[ %] is pretty lame)
+  - Quota for file system
+
+
+1.0m (December 4, 1996):
+
+  # New version from Robey Pointer <robey@netcom.com>
+
+  - '.kick' was broken (that's what i get for meddling) (fixed)
+    Found by: tuvix
+
+  - Since undernet uses 484 ("restricted connection") to mean "you can't
+    kick or deop the channel server", bots that attempted to do this would
+    think they were i-lined (a concept that does not exist on undernet) and
+    jump -- now uses umode +r to detect
+    Found by: emmanuel marty
+
+  - 'banner' could send blank message (fixed)
+    Found by: eraseme
+
+  - 'adduser' existed for limbo bots (fixed)
+    Found by: eraseme
+
+  - Access check removed from filedb (not all OS's understand it)
+
+  - Bogus bans/channel keys weren't queueing correctly (could cause
+    inadvertant flood) (fixed)
+    Found by: coolio
+
+  - 'die' Tcl command added
+
+  - MSGM bindings checked even if a MSG binding matches
+    Suggested by: bingony
+
+  - Nick flood protection was horribly broken (fixed)
+    Found by: dejan oklobdzija
+
+  - Console masktype buffer could overflow (fixed)
+    Found by: nitemoon
+
+  - Won't deop on a ban unless the channel member was op'd (prevents
+    sharebots from sending a slew of deops all at once, most of the time)
+
+  - dcc transfers will display acked amount in the home stretch
+
+  - ^C not counted as avalanche material any more
+
+  - Euronet 437 (nick has been juped) now understood and (sort of) treated
+    Suggested by: genady
+
+  - Typo on ques3 (fixed)
+
+  - Mode changes by non-ops will be reversed (apparently on some nets, a
+    desync makes it appear that non-ops are doing mode changes)
+    Suggested by: xerox@foonet.net
+
+  - whom info wouldn't get updated on a Tcl 'setchan' (fixed)
+    Patch by: beldin
+
+  TO-DO:
+
+  - Allow dynamic bans to be marked as "forced"?  (ie, most bans are dynamic
+    but some could be marked as permanently active)
+  - Tcl commands for:
+      move/copy a file
+      make/remove a dir
+      get/set a dir's required flags
+      get # of downloads for a file
+  - files '.mv' move directories
+    Suggested by: andrej
+  - '.sort' to sort files
+  - Remote sharing of directories (large project)
+  - Channel-specific flags (large project, v1.1)
+  - 'listen <port> <"bot-only"|"all"|"user-only"> [nick-mask]'
+  - 'listen <port> script <procname>'
+  - 'listen <port> off'
+
+  BUG REPORTS:
+
+  - dcc chat with firewalled bot doesn't seem to work (error 2)
+    Submitted by: rajat goel
+  - Changing nicks every 60 seconds on the undernet (which eggdrop does when
+    it can't get its nick) can be perceived as a flood; suggested fix is to
+    use ISON to determine if the name is available
+    Submitted by: troy davis
+  - killdcc <idx> "on a relay to another bot that was stuck (I had lost the
+    connection to my ISP) and the bot went haywire ('Can't find user for
+    relay!')"
+
+  SUGGESTIONS:
+
+  - Be able to leave a parting comment when doing '.quit'
+    Suggested by: a person
+  - Fix up help substitutions (%[ %] is pretty lame)
+  - Quota for file system
+
+
+1.0l (November 11, 1996):
+
+  # New version from Robey Pointer <robey@netcom.com>
+
+  - Typo in ques3 (fixed)
+    Found by: gord-
+
+  - Limbo bot had compilation error (fixed)
+    Found by: imoq
+
+  - When using filedb-path, sometimes filenames would get spurious trailing
+    dots added (fixed)
+    Found by: trond refsnes
+
+  - NCSA telnet was causing eggdrop to think two linefeeds happened instead
+    of one (fixed, i think)
+    Found by: pepsi@gear.torque.net
+
+  - Mass deop detection was broken with respect to +o-o+o-o etc on nets that
+    allow huge numbers of modes per line (fixed)
+    Found by: sean t
+
+  - ctcp flood to channel wasn't causing kick (fixed)
+    Found by: dejan oklobdzija
+
+  - configure was checking for 'awk' and it didn't need to (fixed)
+
+  - 'whom' info wasn't updated on boots (fixed)
+    Found by: imoq
+
+  - 'whom' info wasn't updated on dcc floods (fixed)
+    Found by: beldin
+
+  - Fixed some weirdness with read-only vars
+
+  - Version shown in DEBUG output
+
+  - No longer immediately enforces bans that are placed by a server
+
+  - Channel ops/bans aren't reversed for other bots (try to prevent two bots
+    from fighting)
+
+  - Channel ops are no longer exempt from revenge (but friends still are)
+
+  - Tcl 'getinfo' was stripping off the leading @ on an info line if it was
+    locked (fixed)
+    Found by: gord-
+
+  - dcc 'kick' command follows 'kickban'-style checking now
+    Suggested by: bert bohla
+
+  - 'die' will wait a little longer for the server to catch up
+    Suggested by: bruce gingery
+
+  - ctcp avalanche detection couldn't be turned off (fixed, now can be
+    turned off by setting flood-ctcp to 0)
+    Found by: edmiester
+
+  - Remote boot was getting logged incorrectly (fixed)
+    Found by: gord-
+
+  - Display of ban in 'match' is better looking now
+
+  - Hostmask redundancy checking was being done on the ban and ignore list
+    too (causing sometimes mysterious disappearance of bans or ignores)
+    (fixed)
+
+  - 'bans <mask>' wasn't checking the hostmask correctly (fixed)
+    Found by: iceman
+
+  - 'match <mask>' would only show the first ban that matched, not
+    subsequeent ones
+
+  - Matching ignores are now displayed in 'match'
+
+  - 'ignores' can take an argument: a mask for matching only certain ignores
+    Suggested by: xerxes
+
+  - Ban list would prematurely end if there were no global bans (wouldn't
+    show channel-specific bans) (fixed)
+
+  - Better handling of IPs (doesn't depend on size of long)
+
+  - Ignored users still get flood checked
+    Suggested by: neale pickett
+
+  - Compile-time option to let ignored users still trigger many bindings
+    Suggested by: neale pickett
+
+  - Channel-specific bans wouldn't get expired if there were no global bans
+    (fixed)
+    Found by: gaven cohen
+
+  - Warning about permbans given to ops/masters made more specific
+    Suggested by: nick_
+
+  - Would take revenge on itself for deop'ing itself (fixed)
+    Found by: cuentero
+
+  - Streamlined putlog to try to save CPU and memory
+
+  - ctcps from channels with '.' in the name weren't triggering bindings
+    (fixed)
+    Found by: gaven cohen
+
+  - File descriptors could get lost in help system (fixed)
+
+  - filedb checks ctime when updating too
+
+  - Note bindings won't be triggered by notices from other bots
+    Found by: eraseme
+
+  - Wasn't echoing successfully sent notes that got trapped by bindings
+    (fixed)
+    Found by: eraseme
+
+  - Tcl 'killchanban' was using wrong args for sending the deban (fixed)
+    Found by: darkshde
+
+  - Mysteriously vanishing half of a relay could cause infinite loop -- the
+    recovery is cleaner now, though still choppy (this should not happen)
+
+  - Nick flood protection wasn't passing the whole hostmask, so the bot
+    might sometimes fail to recognize itself, and would punish itself for
+    nick floods (fixed)
+    Found by: nicholas j dear
+
+  - Random number generator wasn't seeded until after config file (and any
+    scripts that load on startup) were loaded (fixed)
+    Found by: troy davis
+
+  - '+host'/'-host' accepted incomplete parameters (fixed)
+    Found by: rawdon
+
+  - refresh_ban_kick() was mangling the kick reason (fixed)
+    Found by: gaven cohen
+
+  - Better i-line detection
+
+  TO-DO:
+
+  - Allow dynamic bans to be marked as "forced"?  (ie, most bans are dynamic
+    but some could be marked as permanently active)
+  - Tcl commands for:
+      move/copy a file
+      make/remove a dir
+      get/set a dir's required flags
+      get # of downloads for a file
+  - files '.mv' move directories
+    Suggested by: andrej
+  - '.sort' to sort files
+  - Remote sharing of directories (large project)
+  - Channel-specific flags (large project, v1.1)
+  - 'listen <port> <"bot-only"|"all"|"user-only"> [nick-mask]'
+  - 'listen <port> script <procname>'
+  - 'listen <port> off'
+
+  BUG REPORTS:
+
+  - dcc chat with firewalled bot doesn't seem to work (error 2)
+    Submitted by: rajat goel
+  - Changing nicks every 60 seconds on the undernet (which eggdrop does when
+    it can't get its nick) can be perceived as a flood; suggested fix is to
+    use ISON to determine if the name is available
+    Submitted by: troy davis
+  - Some people say their bot thinks it's i-lined when it's not, but i can't
+    duplicate it, and those people won't send me logs or info
+
+  SUGGESTIONS:
+
+  - Be able to leave a parting comment when doing '.quit'
+    Suggested by: a person
+  - Fix up help substitutions (%[ %] is pretty lame)
+  - Quota for file system
+
+
+1.0k (October 17, 1996):
+
+  # New version from Robey Pointer <robey@netcom.com>
+
+  - Spelling fixes
+
+  - Whom signoff notice was mangled when relaying off the bot (fixed)
+    Found by: gord-
+
+  - If expired dynamic bans weren't removed quickly enough by the server,
+    the bot would obsessively deban once a minute until the server reacted
+    (fixed)
+    Found by: bruce s
+
+  - expire-time for bans and ignores was displayed weird (fixed)
+
+  - When kicked from a channel, queue the join to avoid excess flood
+    Found by: xerox@foonet
+
+  - Changing nicks on the party line wouldn't update whom info on other bots
+    (fixed)
+    Found by: michele
+
+  - First word of ban comment was stripped off in the kick comment (fixed)
+    Found by: gaven cohen
+
+  - Idle time was always 15 mins for remote users in whom right after a
+    connect (fixed)
+
+  - +autoop will make the bot op a user after he/she idents or is .adduser'd
+    (if they're +o)
+    Suggested by: jesse schachter
+
+  - New Tcl command 'whom'
+    Suggested by: gord-
+
+  - Fake connections trapped by net module now (was causing failed connects
+    to look like successful connects that got immediately dropped)
+
+  - Debugging console mode
+
+  - Better version handling (patches can identify themselves more easily, to
+    the user and to scripts)
+
+  - Wasn't adding hostmasks correctly for bots when they were on the channel
+    (fixed)
+    Found by: dorgan
+
+  - Access to help files wasn't following chattr changes (fixed)
+    Found by: stephen hunter
+
+  - People with only +p can now ask for help on specific items
+
+  - New Tcl commands 'dumpfile' and 'dccdumpfile'
+    Suggested by: goo
+
+  - 'whom' away info would get mixed up when people left the party line
+    (fixed)
+    Found by: dorgan
+
+  - Keep track of time connected to a server
+    Patch by: cmwagner
+
+  - bind 'act' wasn't trapping local actions (fixed)
+    Found by: genady
+
+  - Long password entry to dcc would overflow blowfish ("ircle bug") (fixed)
+
+  - Some machines would infinite loop and create huge filedb's if an entry
+    in the file system was removed (fixed)
+
+  - Filedb will be updated (checked against the actual directory contents)
+    if it's been more than 12 hours since the last update, even if the
+    directory modification time hasn't changed (some changes in the
+    directory, like file-size changes, won't change the directory
+    modification time)
+    Suggested by: andrej
+
+  - Bots will pass idle-time hints on connect burst
+
+  - Tcl 'newchanban' wasn't coping with permanent bans correctly (fixed)
+    Found by: stephenc
+
+  - Better idle-time display in 'whom' and 'who'
+
+  - Made read-only variables (can only be changed during rehash): owner,
+    userfile, version (version can't be changed ever)
+
+  - When keeping all logs, no renaming is done (the log changes names
+    automatically at midnight)
+    Suggested by: genady
+
+  - When restructuring botnet to get to a +sh bot, if the direct uplink is
+    not +sh, this bot will disconnect from the uplink instead of asking the
+    remote +sh to unlink
+    Suggested by: gord-/genady
+
+  - Sharebots will share hostmasks & addresses for bots (and ONLY that info)
+
+  - tbuf status is shown in 'status'
+
+  - weed will expire old bans and ignores if you want it to
+
+  - 'setlaston' will take an optional timestamp argument
+    Suggested by: gord-
+
+  - Added 'flush' command to flush resync buffers
+
+  TO-DO:
+
+  - Allow dynamic bans to be marked as "forced"?  (ie, most bans are dynamic
+    but some could be marked as permanently active)
+  - Tcl commands for:
+      move/copy a file
+      make/remove a dir
+      get/set a dir's required flags
+      get # of downloads for a file
+  - files '.mv' move directories
+    Suggested by: andrej
+  - '.sort' to sort files
+  - Remote sharing of directories (large project)
+  - Channel-specific flags (large project, v1.1)
+  - 'listen <port> <"bot-only"|"all"|"user-only"> [nick-mask]'
+  - 'listen <port> script <procname>'
+  - 'listen <port> off'
+
+  BUG REPORTS:
+
+  - dcc chat with firewalled bot doesn't seem to work (error 2)
+    Submitted by: rajat goel
+  - Changing nicks every 60 seconds on the undernet (which eggdrop does when
+    it can't get its nick) can be perceived as a flood; suggested fix is to
+    use ISON to determine if the name is available
+    Submitted by: troy davis
+  - Some people say their bot thinks it's i-lined when it's not, but i can't
+    duplicate it, and those people won't send me logs or info
+
+  SUGGESTIONS:
+
+  - Be able to leave a parting comment when doing '.quit'
+    Suggested by: a person
+  - Fix up help substitutions (%[ %] is pretty lame)
+  - Quota for file system
+
+
+1.0j (October 8, 1996):
+
+  # New version from Robey Pointer <robey@netcom.com>
+
+  - Bug in limbo bots (wouldn't compile) (fixed)
+
+  - ctcp clientinfo now returns error messages like epic
+
+  - 'whoz' shows the idle time in minutes now
+    Suggested by: lsc
+
+  - Blank line (just return) was being interpreted in dcc chat as the user
+    saying something (a blank line) (fixed)
+    Found by: lsc
+
+  - ctcp clientinfo for 'action' was incorrect (fixed)
+    Patch by: peace
+
+  - Possible assoc overflow (fixed)
+    Patch by: cmwagner
+
+  - New Tcl commands: 'getdccaway', 'setdccaway'
+
+  - Note sent to a local user from the bot was displayed incorrectly (fixed)
+
+  - Tcl 'chhandle' would let you create null handles (fixed)
+    Found by: stephen p clouse
+
+  - Ban code would attempt to kick even after avoiding a desync re-ban
+    (fixed)
+    Patch by: hue truong
+
+  - Changed i-line detection algorithm slightly, although it probably makes
+    no difference
+    Suggested by: hue truong
+
+  - Blowfish would run out of boxes because it wasn't checking timestamps
+    correctly (fixed)
+    Patch by: cmwagner
+
+  - New 'note' binding to have the bot do special actions when a note is
+    received for a particular (possibly non-existant) user
+
+  - Don't set console default to '*' for dcc users on a limbo bot when there
+    are channels defined
+    Found by: ledpighp
+
+  - '.channel' display format looks better now
+    Suggested by: ledpighp
+
+  - Channels can have +secret/-secret now to keep them from being advertised
+    on the botnet
+    Patch by: cmwagner
+
+  - whom info wasn't updated to the botnet after a 'killdcc' (fixed)
+    Found by: xerxes
+
+  - Put strong connections back cos some people claimed it made a difference
+
+  - whois accepted null argument (fixed)
+    Patch by: tartarus
+
+  - Debug output writing streamlined
+    Patch by: tartarus
+
+  - Banned users were only getting kicked on join if +enforcebans was set
+    (fixed)
+    Found by: bert bohla
+
+  - Failed userfile transfers would sometimes cause a resync buffer to start
+    up (fixed)
+    Found by: danny
+
+  - Checking for +v after -o wasn't queued (fixed)
+    Found by: xerox@foonet
+
+  - Tcl 'sendnote' has more extensive return codes
+
+  - Added 'connect' Tcl command to create outgoing idx connections
+
+  - New binding 'act' to catch party-line actions
+
+  - msg 'go' command gives a specific channel now
+    Suggested by: cmwagner
+
+  - Fixed sunos/solaris detection in configure
+    Found by: joe morris
+
+  - Think i finally fixed the problem with IPs getting sent out in reverse
+    byte order over IRC
+
+  - Matching bans show up when doing '.match'
+    Suggested by: nicholas j dear
+
+  - When masking user@hosts, quoting ? or * in username could overflow
+    buffer (fixed)
+    Patch by: gilles d'andrea, cmwagner
+
+  - Made lots of dangerous and slightly incompatable changes to the way bans
+    are stored and created
+
+  - New team of Tcl commands to add/remove bans (more flexible)
+
+  - List returned by Tcl 'banlist' contains extra element: creator of the
+    ban
+
+  - Similar dangerous and incompatable changes to the ignore list (a comment
+    and timestamp are now stored)
+
+  - New Tcl 'ignorelist' similar to 'banlist'
+
+  - Sharelink was overflowing buffer sometimes (fixed)
+    Found by: cmwagner
+
+  - +sa bots were getting remotely unlinked (fixed)
+    Found by: genady
+
+  - Spelling error in "incompatible" (fixed)
+    Found by: dvlsadvct
+
+  TO-DO:
+
+  - Allow dynamic bans to be marked as "forced"?  (ie, most bans are dynamic
+    but some could be marked as permanently active)
+  - Tcl commands for:
+      move/copy a file
+      make/remove a dir
+      get/set a dir's required flags
+  - '.sort' to sort files
+  - Remote sharing of directories (large project)
+  - Channel-specific flags (large project, v1.1)
+
+  BUG REPORTS:
+
+  - +a bots are not getting linked if +h bots are down
+    Submitted by: genady
+  - dcc chat with firewalled bot doesn't seem to work (error 2)
+    Submitted by: rajat goel
+  - Changing nicks every 60 seconds on the undernet (which eggdrop does when
+    it can't get its nick) can be perceived as a flood; suggested fix is to
+    use ISON to determine if the name is available
+    Submitted by: troy davis
+  - Some people say their bot thinks it's i-lined when it's not, but i can't
+    duplicate it, and those people won't send me logs or info
+  - Occasional explosions of .filedb for no reason
+
+  SUGGESTIONS:
+
+  - Be able to leave a parting comment when doing '.quit'
+    Suggested by: a person
+  - Fix up help substitutions (%[ %] is pretty lame)
+  - Fix weed for bans & ignores
+
+
+1.0i (September 10, 1996):
+
+  # New version from Robey Pointer <robey@netcom.com>
+
+  - New Tcl commands 'encrypt' and 'decrypt' to interface blowfish
+
+  - Alarms weren't being trapped (fixed)
+
+  - +f (friends) don't get flood triggered now
+
+  - Server notices are logged with server (+s) stuff now, not msgs
+
+  - '+ignore' could overflow (fixed)
+    Patch by: cmwagner
+
+  - Keeps 3 "boxes" buffers for blowfish to prevent Tcl encryption from
+    running up the CPU time (prevents excessive re-computation of keys that
+    were recently used)
+
+  - Support for irc 2.9 mode +q (quiet; only servers can speak; useless)
+
+  - Tries to use 'clock' (ANSI C) if 'getrusage' isn't there
+    Suggested by: ayman
+
+  - Slightly better algorithm to stack outgoing mode changes
+    Suggested by: mr. wizard
+
+  - Changing telnet port on the fly might lose a socket (fixed)
+
+  - Fake 'whom' requests weren't getting caught (fixed)
+    Found by: slix
+
+  - Channel-specific bans tried to be written to a transmit userfile after
+    the file was closed (caused all userfile transmits to go weird when
+    channel-specific bans existed) (fixed)
+    Found by: ledpighp
+
+  - chmod 600 done right after fopen when writing user files to prevent
+    teeny little window when it was unprotected
+    Suggested by: ledpighp
+
+  - If channel has no ops, and there are some humans there, 'need-op' will
+    be run just in case it has a magical oper command or something
+    Suggested by: bruce s
+
+  - Directories are given more space for filename length in the 'ls' listing
+    since they don't need the other info displayed
+    Suggested by: stomper
+
+  - Made 'configure' look for new-style Tcl library names (ie libtcl75.a)
+    Suggested by: kendrick vegas
+
+  - New command 'getaddr' to get a bot's address; 'getinfo' on bots will
+    always return a blank string now (this should keep scripts from getting
+    confused)
+
+  - Added Tcl commands 'addignore', 'addpermignore', 'delignore', 'isignore'
+    Patch by: hue truong
+
+  - Added 'flud' binding to catch and react to floods as the bot detects
+    them, replacing the bot's normal punishments
+    Patch by: hue truong
+
+  - Help files typos and errors fixed
+    Found by: bruce s
+
+  - FreeBSD uses non-standard names for the Tcl library -- added to
+    configure script
+    Found by: tris
+
+  - configure script will detect Tcl 7.6 betas now
+    Patch by: tartarus
+
+  - Will try to detect and compensate for broken Windows "CR-only" input
+    strings
+
+  - 'weed' was sometimes losing part of the xtra field (fixed)
+    Patch by: bruce s
+
+  - Tcl 'getdccidle' added
+    Patch by: cmwagner
+
+  - Virtual hosting fixed (we hope)
+    Patch by: tris
+
+  - Idle times are actually updated for dcc chat/files/script now
+
+  - 'chemail' didn't complain about nonexistent users (fixed)
+    Found by: chucky burnett
+
+  - Tcl 'rand' would accept and explode on argument of 0 (fixed)
+    Found by: chucky burnett
+
+  - Bot could get confused about its current nickname during rehash (fixed)
+
+  - recheck-channel would skip bot's nickname, but not if it wasn't using
+    its desired nick (fixed)
+    Found by: chucky burnett
+
+  - Console was getting set to gibberish channel on limbo bots (fixed)
+    Patch by: cmwagner
+
+  - Tries to cope with ircd 2.9's funky mode-on-join netjoin notices
+
+  - '-m' option works for limbo bots now (i think)
+
+  - Away messages from the party line are shared across bots now (for whoz)
+
+  - User is notified if they receive a note while away
+
+  - getmyip() returned to normal behavior (see note in net.c)
+
+  TO-DO:
+
+  - Allow dynamic bans to be marked as "forced"?  (ie, most bans are dynamic
+    but some could be marked as permanently active)
+  - Tcl commands for:
+      move/copy a file
+      make/remove a dir
+      get/set a dir's required flags
+  - '.sort' to sort files
+  - Remote sharing of directories
+  - Permanent yet channel-specific bans (right now it's either global &
+    permanent, or channel-specific & temporary)
+
+  BUG REPORTS:
+
+  - +a bots are not getting linked if +h bots are down
+    Submitted by: genady
+  - dcc chat with firewalled bot doesn't seem to work (error 2)
+    Submitted by: rajat goel
+  - Changing nicks every 60 seconds on the undernet (which eggdrop does when
+    it can't get its nick) can be perceived as a flood; suggested fix is to
+    use ISON to determine if the name is available
+    Submitted by: troy davis
+  - Some people say their bot thinks it's i-lined when it's not, but i can't
+    duplicate it, and those people won't send me logs or info
+
+  SUGGESTIONS:
+
+  - Be able to leave a parting comment when doing '.quit'
+    Suggested by: a person
+  - Fix up help substitutions (%[ %] is pretty lame)
+  - Be able to grab a dcc user's idle time with something like 'dccidle'
+    (rumour is there's a patch that does this already)
+  - Be able to grab a dcc user's away status
+
+
+1.0h (August 7, 1996):
+
+  # New version from Robey Pointer <robey@netcom.com>
+
+  - Spelling mistake
+    Found by: blackjac
+
+  - Dropped relay would cause bad join data to be sent across the botnet
+    (fixed)
+
+  - Away information is shared among bots now
+
+  - Idle-time calculated locally for remote botnet users
+
+  - Doesn't stick user's nickname in '.die' message if signoff message is
+    given
+
+  - ctcp procs can return 0 to let the bot continue processing that keyword
+    Suggested by: darkshde
+
+  - Took out Tcl event-loop support ('after', 'socket', etc) since nobody
+    used it and it didn't even compile with some 7.5's
+
+  - Checking for stoned servers would sometimes ping servers with their
+    wrong name (fixed)
+    Found by: tris
+
+  - Various changes to make limbo bots less irc-bound
+    Suggestions by: slix
+
+  - Missing linefeed in transmitted userfiles
+    Patch by: cmwagner
+
+  - Password checking might explode on null password (fixed)
+    Found by: cmwagner
+
+  - 'ls dir' would just list the directory entry, not the actual contents
+    (fixed)
+    Found by: blackjac
+
+  - Compile flag SHAREBOT_BOOTS was actually checking for +d, not +s bots
+    (fixed)
+    Found by: darkshde
+
+  - Cleaned up some of the IP conversion code in net.c (at fred1's prodding)
+
+  - Majorly overhauled the Tcl command stubs and spread them out over 4
+    files
+
+  - Tcl 'matchban' command would crash when given a channel (fixed)
+    Found by: gumbie
+
+  - Added 'reserved-port' setting for using a certain port for dcc file
+    transfers
+    Suggested by: jordy
+
+  - Flood settings can now specify the time-lapse (# of seconds) which still
+    defaults to 60 (probably too high)
+
+  - Channel-specific bans are stored in the userfile and can be shared i
+    guess
+
+  - Channel-specific bans weren't set when joining or re-checking bans
+    (fixed)
+
+  - Some IAC codes would send spurious '7' under gcc (fixed)
+
+  - +bitch/+protectops still wasn't working (fixed) (i hope it really was
+    this time)
+
+  - If server hostname is different from the one in the server list, the
+    server list is updated with the new info
+    Suggested by: demon
+
+  - File system 'chdir' wasn't checking error returns on filedb's sometimes
+    (fixed)
+    Found by: fred1
+
+  - Filedb code was using wrong match routines (case insensitive, bad)
+    (fixed)
+    Found by: fred1
+
+  - Slightly better rejection of unsupported telnet IACs (thanks to ken
+    keys)
+
+  - 'handle' command renamed to the more intuitive 'chnick' (and 30,000
+    people will burn me alive for it i'm sure)
+
+  - Notes are moved along with a handle change now
+
+  - # of notes shown in 'whois' display
+    Suggested by: ledpighp
+
+  - Old or no-recipient notes expire during the logfile switchover
+    Suggested by: ledpighp
+
+  - Moved notes system into its own module for eventual cleanup (yeah right)
+
+  - Won't block on DNS searches more than 10 seconds
+
+  - Net module was returning bad lengths for non-binary sockets -- only the
+    telnet IAC code used this, and it only manifested itself as a throw-away
+    of any line less than 5 chars that had IAC codes in it (fixed)
+
+  - More informative debug info written on crash
+
+  - Attempts to grab the userfile that abort very early didn't cause an
+    unlink (fixed)
+    Found by: blackjac
+
+  - ntalk.irc bugfix
+    Fixed by: tris
+
+  - Tcl 'dccsimul' command broadcast flag changes to sharebots (fixed)
+    Found by: cold fusion
+
+  - Tried to fix weird bug where +a bots listed before +h bots wouldn't get
+    linked if the +h bots were down
+
+  - Handles FPE signal
+
+  TO-DO:
+
+  - Allow dynamic bans to be marked as "forced"?  (ie, most bans are dynamic
+    but some could be marked as permanently active)
+  - Tcl commands for:
+      move/copy a file
+      make/remove a dir
+      get/set a dir's required flags
+  - '.sort' to sort files
+  - Remote sharing of directories
+  - Permanent yet channel-specific bans (right now it's either global &
+    permanent, or channel-specific & temporary)
+  - Tcl access to blowfish
+
+  BUGS:
+
+  - None (HA!)
+  - +h/+a auto-linking is not working correctly
+  - Some people say their bot thinks it's i-lined when it's not, but i can't
+    duplicate it, and those people won't send me logs or info
+
+
+1.0g (July 23, 1996):
+
+  # New version from Robey Pointer <robey@netcom.com>
+
+  - Tcl 'killdcc' could kill off the terminal (HQ) user in -nt mode (fixed)
+    Found by: cmwagner
+
+  - Multihoming fixed
+    Patch by: tris
+
+  - Little better at checking for stoned servers
+
+  - protect-ops doesn't reop if the deop was caused by another bot (stops
+    some desync wars)
+    Suggested by: xerxes
+
+  - Bans were checked on the wrong hostmask during nick changes (fixed)
+    Found by: tris
+
+  - Several commands would behave strangely with extra spaces added (fixed)
+    Patch by: cmwagner
+
+  - file-system-only users were getting binary sockets (fixed)
+    Patch by: cmwagner
+
+  - Tcl wants fds 0/1/2 left open, but they're redirected to /dev/null now
+    so it can't harm anything
+
+  - Most normal mode flushes are queued now to avoid the bot flooding itself
+    off when it joins a bunch of channels at once and starts implementing
+    bans from the list
+
+  - 'adduser' could add users with nicks > 9 chars (fixed)
+    Found by: taz-man
+
+  - Added PRIVATE_OWNER define so that dictatorial sharebot networks can
+    have one master bot which ignores any +n modes coming from slave bots
+    (all slave bots must therefore have 'owner' set so that when downloading
+    the user file, they will at least have some local +n's that don't exist
+    on the master)
+
+  - 'invite' didn't recognize net-splits or non-invite channels (fixed)
+    Patch by: tris
+
+  - Removed "strong connection" since it was a no-op
+
+  - Userfile marks a version number now, and has upgraded to v2 (will read
+    v1 user files but writes only v2 ones)
+
+  - Passwords are encrypted now using blowfish (public domain equivalent of
+    DES without silly patent laws or government interference)
+
+  - Rudimentary socks firewall support (outbound connections only so far)
+
+  - Repetitive ban checking used wrong timestamp (fixed)
+    Patch by: hue truong
+
+  - Wasn't really switching between m/h queues when dumping to server
+    (fixed)
+
+  - Cleans out m/h queues when switching servers so they don't get cluttered
+    Suggested by: tris
+
+  - With quiet rejection off, bot responds to 'help' politely even if it
+    doesn't know the user
+    Suggested by: jonte
+
+  - Joins & parts of botnet users is shared now, to eventually replace
+    '.whom' in a few versions
+
+  - '.chinfo' pretended to change info of non-existent users (fixed)
+    Found by: aaron
+
+  - Support for sun firewalls (as much as there can be) -- will barely work,
+    if at all, since "telnet passthru" wasn't meant for machine use
+
+  - Entering anything but "*bye*" on a relay attempt that hadn't connected
+    yet would crash the bot (fixed)
+    Found by: tris
+
+  - Entering "*bye*" on a relay attempt that hadn't connected yet would fail
+    to announce that the user had rejoined the party line (fixed)
+
+  - PRIVATE_OWNER define wasn't actually working (fixed)
+    Found by: gord-
+
+  - Updated 'weed' for new userfile format
+
+  TO-DO:
+
+  - Allow dynamic bans to be marked as "forced"?  (ie, most bans are dynamic
+    but some could be marked as permanently active)
+  - Tcl commands for:
+      move/copy a file
+      make/remove a dir
+      get/set a dir's required flags
+  - '.sort' to sort files
+
+  BUGS:
+
+  - None (HA!)
+  - Some complaints that a large filedb file gets created (fixed? maybe?):
+    + fred1 says it happens in /gifs/abpem, suggesting that the removal/
+      addition of directories might be a culprit
+  - Channel bans aren't saved in the userfile, or downloaded to other bots:
+    they probably should be.
+
+
+1.0f (July 6, 1996):
+
+  # New version from Robey Pointer <robey@netcom.com>
+
+  - Various patches to fix socket 1 getting treated special when the bot is
+    in the background
+    Some by: cmwagner
+
+  - msg 'whois' command had possible nick overrun (fixed)
+    Patch by: cmwagner
+
+  - Overruns in file system (fixed)
+    Patch by: cmwagner
+
+  - Bot link/relay wasn't using strong connection for incremented ports
+    (fixed)
+    Patch by: cmwagner
+
+  - Aborted userfile transfers were killing the wrong socket (fixed)
+    Patch by: cmwagner
+
+  - Full file system would crash (fixed)
+    Patch by: tris
+
+  - Sending the userfile over NFS would just send garbage (fixed)
+    Patch by: cmwagner
+
+  - Much better definition of "bogus" channel keys and bans: char 127, or
+    any char below 32 except ^B, ^V, ^_
+
+  - Bots aren't penalized for bogus channel keys or bans
+
+  - bitch/protectops combo wasn't working quite right on deop yet (fixed):
+    new behavior is that if protectops and bitch are both set, the deop'd
+    person will get re-op'd only if +o or +m
+    Found by: brenny
+
+  - Can define 'altnick' now to avoid blatantly obvious "Lamebot0" nicks
+    Suggested by: cmwagner
+
+  - '.status' will indicate if the bot is in limbo instead of saying it's
+    trying to join various servers and channels
+    Found by: dannyboy
+
+  - Measures and displays server lag in '.status'
+
+  - Added separate flood threshold 'flood-ctcp' for CTCP floods
+
+  - Super-long CTCP ECHO/PING/ERRMSG requests are just ignored
+
+  - strong-connect sockets were losing incoming data at the beginning of the
+    connection (fixed)
+
+  - Directory wasn't closed after filedb-update (fixed) (maybe this caused
+    the explosive filedb's?)
+
+  - No longer dumps out existing chat-channel assoc's to new bots when they
+    link (caused stupid floods, etc)
+
+  - Could possibly flood itself off with channel joins when starting up
+    (fixed)
+
+  TO-DO:
+
+  - Allow dynamic bans to be marked as "forced"?  (ie, most bans are dynamic
+    but some could be marked as permanently active)
+  - Channel bans aren't passed between sharebots: should they be?
+  - Tcl commands for:
+      move/copy a file
+      make/remove a dir
+      get/set a dir's required flags
+  - '.sort' to sort files
+
+  BUGS:
+
+  - None (HA!)
+  - Some complaints that a large filedb file gets created (fixed? maybe?):
+    + fred1 says it happens in /gifs/abpem, suggesting that the removal/
+      addition of directories might be a culprit
+  - Option SOCK_STRONGCONN currently appears to be a no-op
+
+
+1.0e (Jul 2, 1996):
+
+  # New version from Robey Pointer <robey@netcom.com>
+
+  - Might confuse lag for a desync, and not kick people who joined while a
+    ban was being placed ("after" the ban was placed, from the bot's point
+    of view) (fixed)
+    Found by: fred1
+
+  - Stupid new '+', '-', '^', '=' preceding usernames are stripped unless
+    strict-host is on
+
+  - 'set' added to list of commands that are disabled if user Tcl access is
+    restricted (#undef ENABLE_TCL) -- plugs a possible security hole
+    Found by: cmwagner
+
+  - Tries to avoid abuse of '+ignore' to create duplicate identical ignores
+    Found by: blackjac
+
+  - Super-long help request could crash the bot (fixed)
+    Found by: darknight
+
+  - dcc 'email' command didn't have long enough buffer for display (fixed)
+    Found by: cmwagner
+
+  - Race condition on userfile send and receive at the same time (fixed)
+    Found by: fred1
+
+  - Got rid of some HPUX warnings
+    Patches by: cmwagner
+
+  - copyfile() would only copy part of a file if it ran out of disk space
+    (now it aborts)
+    Found by: mr. wizard
+
+  - Added 'pushmode' and 'flushmode' Tcl commands
+
+  - Buffer overrun on check_chanlist()
+    Fixed by: cmwagner
+
+  - filedb-path wasn't working (fixed)
+
+  - If the bot cycles a channel, becomes the only member, and still isn't
+    op'd, it will assume it's i-lined and jump
+
+  - Failed dcc chat was pressing on with assumed successful connect (fixed)
+
+  - Identity change (changing the bot's nick and then reloading the config
+    file) would wait a while before changing nicks on the server (fixed)
+    Found by: laurens v alphen
+
+  - Colorization (^B/^V/^_) in bans was considered bogus (fixed)
+    Found by: topcat
+
+  - Don't re-op someone if they are not +o and bitch is on, even if protect-
+    ops is on
+    Found by: seadawg
+
+  - Relay uses "strong" connections to try not to be fooled by async i/o
+
+  - Failed relay attempt would cause crash (fixed)
+
+  - Bogus IAC packets in telnet connections could cause endless loop (fixed)
+    Exploited by: "eggcrash"
+
+  - Tries harder to disassociate controlling terminal when running in the
+    background (ie, most of the time) and re-uses fd's 0-2 (server will
+    generally be socket 0 now)
+
+  TO-DO:
+
+  - Allow dynamic bans to be marked as "forced"?  (ie, most bans are dynamic
+    but some could be marked as permanently active)
+  - Channel bans aren't passed between sharebots: should they be?
+  - Tcl commands for:
+      move/copy a file
+      make/remove a dir
+      get/set a dir's required flags
+  - '.sort' to sort files
+  - Be able to clear all bans
+    Suggested by: blackjac
+  - Tcl command to add and flush mode changes
+
+  BUGS:
+
+  - None (HA!)
+  - Tcl 'sign' bindings sometimes crash (?)
+  - Some complaints that a large filedb file gets created (can't duplicate,
+    might be just a rumor):
+    + fred1 says it happens in /gifs/abpem, suggesting that the removal/
+      addition of directories might be a culprit
+  - Aborting a userfile transfer is usually fatal now (why?)
+
+
+1.0d (June 12, 1996):
+
+  # New version from Robey Pointer <robey@netcom.com>
+
+  - Turning off flood protection wasn't working for dcc chat (fixed)
+
+  - 'stat all' display was outdated for channel settings (fixed)
+
+  - ctcp finger, version, userinfo will not return anything if the responses
+    are set to blank
+    Suggested by: answer
+
+  - Better handles long file system directory names
+
+  - '.filedb' thingies don't have to be stored in the actual directories now
+    Suggested by: waxmaster
+
+  - Xerxes got laid
+
+  - eggstat wasn't keeping track of the 'xtra' field correctly
+    Fixed by: cmwagner
+
+  - Userfile was being buffered as it was received (fixed)
+
+  - Added sets 'my-ip' and 'my-hostname' to override auto-detect in odd
+    cases
+    Suggested by: rok papez
+
+  - Might have fixed OSF/1 problems with DNS
+
+  TO-DO:
+
+  - Allow dynamic bans to be marked as "forced"?  (ie, most bans are dynamic
+    but some could be marked as permanently active)
+  - Channel bans aren't passed between sharebots: should they be?
+  - Tcl commands for:
+      move/copy a file
+      make/remove a dir
+      get/set a dir's required flags
+  - '.sort' to sort files
+  - Be able to clear all bans
+    Suggested by: blackjac
+
+  BUGS:
+
+  - None (HA!)
+  - Tcl 'sign' bindings sometimes crash (?)
+  - osf/1 has dns problems -- no known solution (might be unsigned long
+    problem?)
+  - Some complaints that a large filedb file gets created (can't duplicate,
+    might be just a rumor)
+
+
+1.0c (June 1, 1996):
+
+  # New version from Robey Pointer <robey@netcom.com>
+
+  - Remote 'who' info was putting garbage before the channel list (fixed)
+
+  - link binding was giving a null parameter (fixed)
+    Patch by: cmwagner
+
+  - Relays were exploding (fixed)
+
+  - mprintf/hprintf/putlog could get overloaded (fixed, i think)
+
+  - Better (?) support for suns in trying to find libs
+    Suggested by: keyoke
+
+  - Thought all bot rejections were fake (fixed)
+    Found by: cmwagner / Caused by: cmwagner ;)
+
+  - dcc sends to the bot (including userfile transfers) were being buffered
+    by accident (fixed)
+
+  - Just does slow bot ping all the time now
+
+  - console.tcl wasn't restoring console channel correctly (fixed)
+    Found by: ben barton
+
+  - Really dumps bots when they abort the userfile transfer now
+
+  - Userfile sends were choking (fixed)
+    Found by: gord-
+
+  - Was checking for connect timeout even when between servers (fixed)
+
+  - Support for code 405 ("too many channels") and 432 ("bad nickname")
+    Suggested by: cmwagner
+
+  - No longer kicks people for having a ';' in their username
+    Suggested by: sprite
+
+  - Can set maximum number of notes to save for a user (default 50) to
+    prevent someone being flooded by stored notes
+    Suggested by: robert brice
+
+  - Added Tcl: 'getchanmode'
+    Suggested by: roger yerramsetti
+
+  - Can mark a bot +sa now
+    Suggested by: nate gardner
+
+  - Revenge is a channel option now, not a global option
+
+  - Some Tcl commands ('matchattr', 'userlist', 'chanlist') and dcc commands
+    ('match') would assume anyone matches against a non-existent flag -- now
+    nobody will match a non-existent flag
+    Patch by: answer
+
+  - Channel chanmode overrun
+    Fixed by: zamf
+
+  - Tells OS it wants to be able to re-use listening port later
+    Patch by: tris
+
+  - Uses ISON instead of PING to check for server stoned
+    Suggested by: archon
+
+  - Tcl 'addbot' command hadn't been working right (fixed)
+    Found by: cmwagner
+
+  - '.who bot1 bot2' was rude (fixed)
+    Found by: blackjac
+
+  - sharebot_boots wasn't really checking for sharebots (fixed)
+    Found by: blackjac
+
+  TO-DO:
+
+  - Allow dynamic bans to be marked as "forced"?  (ie, most bans are dynamic
+    but some could be marked as permanently active)
+  - Channel bans aren't passed between sharebots: should they be?
+  - Tcl commands for:
+      move/copy a file
+      make/remove a dir
+      get/set a dir's required flags
+  - '.sort' to sort files
+  - Be able to clear all bans
+    Suggested by: blackjac
+
+  BUGS:
+
+  - None (HA!)
+  - Tcl 'sign' bindings sometimes crash (?)
+  - osf/1 has dns problems -- no known solution
+
+
+1.0b (May 20, 1996):
+
+  # New version from Robey Pointer <robey@netcom.com>
+
+  - Owners couldn't add hostmasks to each other with '+host' (fixed)
+    Found by: waxmaster
+
+  - Nick floods are triggered by 'flood-join' now instead of 'flood-msg'
+
+  - Channels missing from the config file on a rehash will be removed
+
+  - Notes and master-comments weren't always echoing properly for file
+    system users (fixed)
+    Found by: pinchaser
+
+  - mv/cp in file system would cause chaos (fixed)
+    Found by: pinchaser
+
+  - ques3.tcl was writing 0-length files (fixed)
+    Found by: imoq
+
+  - Got confused when it joined a channel with the wrong nick (fixed)
+
+  - Setting flood levels to 0 deactivates flood protection
+
+  - No more '.exec' because i killed process control -- it can be done in
+    Tcl anyway
+
+  - Sharebots queue user changes while a userfile transfer is in progress
+
+  - Non-blocking ("asynchronous") network I/O now (re-wrote network stuff)
+
+  - Can stop a relay before it connects
+
+  - '.debug' shows abridged socket table
+
+  - '-nt' mode was leaving you on a screwy nonexistant channel (fixed)
+
+  - Lame -v option
+
+  - New set 'telnet-bots-only' to allow you to restrict the telnet port to
+    bots (no humans)
+    Suggested by: blackjac
+
+  - Telnet port can be changed on the fly
+
+  - New set 'server-timout' to replace the compile-time option
+
+  - Security hole with 'open-telnets' on (fixed)
+    Found by: cmwagner
+
+  - Added 'assoc' and 'killassoc' for Tcl
+
+  - Better protection against the bot flood-checking itself
+
+  - Bans added via Tcl are now tagged with the bot's nickname, so the ban
+    comment will be displayed on kick
+
+  - Sharebots won't bitch at each other for removing bans
+
+  - Much better about letting many channels be used without overflowing
+    buffers
+
+  - Could send fake bot rejections (fixed)
+    Patch by: cmwagner
+
+  TO-DO:
+
+  - Allow dynamic bans to be marked as "forced"?  (ie, most bans are dynamic
+    but some could be marked as permanently active)
+  - Channel bans aren't passed between sharebots: should they be?
+  - Tcl commands for:
+      move/copy a file
+      make/remove a dir
+      get/set a dir's required flags
+  - '.sort' to sort files
+  - Be able to clear all bans
+    Suggested by: blackjac
+
+  BUGS:
+
+  - None (HA!)
+  - Tcl 'sign' bindings sometimes crash (?)
+
+
+1.0a (May 4, 1996):
+
+  # New version from Robey Pointer <robey@acolyte.slip.netcom.com>
+
+  - Can use 'ENABLE_TCL' to turn off the '.tcl' command now
+    Suggested by: jay s monk
+
+  - New 'ntalk.irc' (v4.1)
+    Submitted by: fred1
+
+  - Bind string matching could get locked up
+    Fixed by: fred1
+
+  - DALnet fixes
+    Patch by: cmwagner
+
+  - Copying a file into a directory where it already existed caused
+    duplicate records (fixed)
+    Found by: fred1
+
+  - Couldn't hide/unhide dirs in the file system (fixed)
+    Found by: imoq
+
+  - timer/utimer didn't handle bad syntax in commands well (fixed)
+    Found by: dan
+
+  - Desyncs were causing the bot to repetitively kickban people who joined
+    the channel on a side of the net where the ban did not exist, which
+    would sometimes make the bot flood itself off (fixed)
+    Found by: nate gardner
+
+  - Setting the 'xtra' field blank would crash the bot (fixed)
+    Found by: dan
+
+  - Small fix to quesedilla
+    Patch by: gord
+
+  - Dropped relay connections weren't REALLY reseting echo (fixed)
+    Found by: imoq
+
+  - 'rehash' saves the user file first before reloading it -- new command
+    'reload' will reload the user file without saving it or loading anything
+    else
+
+  - Could use 'adduser' on bot owners *gulp* (fixed)
+
+  - 'rehash' will refresh channel settings from the config file now (in case
+    something has changed in the channel definition)
+
+  - When a master gave extra console modes to someone, they would be lost
+    the next time that person changed their console mode (fixed)
+    Found by: pinchaser
+
+  - Tcl 'filesend' wasn't really there (fixed)
+    Found by: cmwagner
+
+  - Small fix to console.tcl
+
+  - Asks for a disconnect when a userfile transfer gets aborted (i have no
+    idea why this should ever happen, but apparently it does in mexico)
+    Suggested by: imoq
+
+  - Console mode '*' is all allowed modes
+
+  - 'null' users and 'none' bans for sharebot no longer happen
+    Helped by: cmwagner
+
+  - Can detect and use the new standard Tcl 7.5 shared library (hint hint)
+
+  - Annoying roommate: xerxes
+
+  - '.dump' was op-level not master-level (fixed)
+    Found by: skyline
+
+  - Bans weren't being checked on nick change (fixed)
+    Found by: spacey
+
+  - Nick binding passed uhost parameter incorrectly (fixed)
+
+  - Stackable bindings weren't being checked by their individual flag
+    requirements (fixed)
+    Found by: chad fawcett
+
+  - CTCP responses use secondary queue now
+
+  - Rapid-fire kicks are queued to avoid being flooded off by rapid-fire
+    kicking a wave of clonebots
+    Suggested by: spacey
+
+  - New channel setting '+stopnethack' that can turn on/off nethack
+    protection
+
+  - When using undesired nick, bot might idle-kick itself (fixed)
+    Found by: hal
+
+  - Some socket/fd leaks in the file system could lead to unpredictable
+    filedbs i think (fixed)
+
+  TO-DO:
+
+  - Allow dynamic bans to be marked as "forced"?  (ie, most bans are dynamic
+    but some could be marked as permanently active)
+  - Channel bans aren't passed between sharebots: should they be?
+  - Tcl commands for:
+      move/copy a file
+      make/remove a dir
+      get/set a dir's required flags
+  - '.sort' to sort files
+  - Be able to clear all bans
+    Suggested by: blackjac
+
+  BUGS:
+
+  - None (HA!)
+
+
+1.0 (April 7, 1996):
+
+  # New version from Robey Pointer <robey@acolyte.slip.netcom.com>
+
+  - Security patch for 'pass' command
+    Patch by: cyberscape
+
+  - Can do 'comment <user> none' now
+    Suggested by: softlord
+
+  - Wasn't letting you describe directories any more (fixed)
+    Found by: sabi
+
+  - Mode change before /who result caused crash (fixed)
+    Found by: imoq
+
+  - chon copes better with dropped dcc's and channel changes now
+
+  - Tcl 'putloglev' to write to a user-defined log level (1-5)
+
+  - 'trace' command was still broken (fixed)
+
+  - New bans will store and display when they were created and the last time
+    they were active (popular demand)
+
+  - Tcl 'link' and 'unlink' weren't working (doh!) (fixed)
+
+  - Finished dprintf'izing
+
+  - Assoc'd channels are kept in numerical order now
+
+  - No more support for non-Tcl bots
+
+  - Was losing memory every time server list was loaded (fixed)
+
+  - No longer honors outdated op requests done thru non-Tcl
+
+  - Re-arranged config file a lot to make it cope with multiple channels
+
+  - New Tcl command 'channel' to add, remove, and modify channel entries
+
+  - Console now has channel and mode, instead of just mode
+
+  - New faster match.c from Fred1
+
+  - Now only rejects 'who' requests for secret/private channels when the
+    requestor isn't already on the channel
+
+  - Doesn't keep "hidden" track of memory any more when debugging is off
+    (downside: no way to tell memory leak unless debugging is on)
+
+  - Bot link/etc notices were going to users who had '.chat off' (fixed)
+    Found by: xerxes
+
+  - Added Tcl 'setlaston', 'echo', 'addglban', 'delglban'
+
+  - '.email' has a more standard syntax now
+    Suggested by: answer
+
+  - Each channel keeps its own banlist now for temporary bans
+
+  - Changed various Tcl ban commands to accomidate the concept of having a
+    global banlist + separate banlist for each channel
+
+  - Channel ban lists are sent by channel name to other sharebots
+
+  - Revenge generally only adds bans to a certain channel now
+
+  - Tcl 'channel info' dumps out all the info you can set
+
+  - Join flood only gets you banned on the one channel now
+
+  - Was reversing mode changes by fake-op people even if the mode changes
+    were beneficial (fixed)
+    Found by: tris
+
+  - '/msg pass' incorrect password notice was getting sent to the wrong
+    person (fixed)
+    Found by: archon
+
+  - '/msg ident' will take an optional nickname now
+    Suggested by: poseidon
+
+  - '.+bot' will try to add the hostmask if it can find it
+
+  - Changed meaning of +a and +h flags for bots -- now +h is equivalent of
+    old +ah, and +a is an alternate/secondary link if no +h can be linked
+
+  - Better DALnet support (maybe not perfect, but...)
+
+  - Password checking is case-sensitive now
+    Suggested by: jay s monk
+
+  - Removed helpbot support (useless)
+
+  - Revenge flag changes weren't propagating through sharebots properly
+    (fixed)
+    Found by: zenoran
+
+  - Tries not to block longer than 10ms when writing to a socket now
+
+  - Checks bans against userlist, just in case someone's dumb enough to ban
+    by a hostmask the bot knows
+
+  - 'unlink *' will disconnect you from the botnet
+    Suggested by: blackjac
+
+  - Aborting a relay, when a password was being asked for, could keep echo
+    off indefinitely (fixed)
+    Found by: chad wagner
+
+  - New Tcl command 'getting-users'
+
+  - Took out the old primitive 'talk'/'ntalk' script support (possibly to be
+    replaced by something better later)
+
+  - Tries to be more graceful when recovering via '.reset'
+
+  - Rewrote entire file system and help files
+
+  - Number of gets for a file is incremented AFTER a successful download
+    now, instead of before
+
+  - 'text/banner' is shown to people that telnet in
+
+  - set 'copy-to-tmp' can turn on/off copying files to /tmp before sending
+    them to people (has no effect on uploads, which are still stored in /tmp
+    until finished)
+
+  - Keeps file descriptor open while sending/receiving a file now (probably
+    not much more efficient on many machines, but apparently it has an
+    effect over NFS)
+
+  - Wasn't passing flags 8/9/0 over sharebot links (fixed)
+
+  - Local msgs (') leak to all channels by default now
+    Patch by: answer
+
+  - Old '.files' is converted to '.filedb' on first access to that directory
+
+  - New Tcl 'utimer', 'killutimer', 'utimers' to deal with "micro-timers"
+    that operate on the order of seconds instead of minutes
+
+  - Timers are no longer double-evaluated
+
+  - File sharing implemented
+
+  - New Tcl: 'deluser'
+
+  - Space for tandem bot records adjusted automatically now (no set limit)
+
+  - Wasn't enforcing a +l mode if someone did +l with a different limit
+    (fixed)
+    Patch by: cmwagner
+
+  - In help/text files, '%C' is now the list of channels the bot wants, and
+    '%E' is the full-blown eggdrop version
+
+  - Ignores store nicknames now
+    Suggested by: blackjac
+
+  - Changed behavior of Tcl 'dccsimul' to be more intuitive
+
+  - Added 'filt' bindings which filter dcc input
+
+  - Made Tcl 'dccsimul' give temporary owner access while executing
+
+  - Alleged support of file transfer recovery now
+
+  - Lots of Tcl commands to support the file system
+
+  - Flags '6'-'0' weren't getting loaded correctly (fixed)
+    Found by: dave guzeman
+
+  - '.email' was spazzing out (fixed)
+    Found by: slix
+
+  - Sockets are non-blocking after a connect now
+
+  - Something stupid about not being able to leave notes for bots
+    Found by: xerxes
+
+  - The xtra field is transmitted between sharebots differently, and should
+    now have no effective size limit
+
+  - The ILL signal will log a context and continue -- to help find locks
+
+  - Socket output is queued if it would block (non-binary sockets only), and
+    '.debug' will show the socket queues, in and out
+
+  - File system wasn't noticing an invalid dcc path (fixed)
+    Found by: dorgan
+
+  - Moved ' local-only chat to a Tcl script so it's optional
+
+  - Userfile transfers happen via a DCC send connection now (might be
+    faster)
+
+  - Added 'save-users-at' and 'switch-logfiles-at' timing options
+
+  - Killed forked processes were giving "unforseen error 234" (fixed)
+    Found by: plof
+
+  - 'putbot' wasn't up to speed (fixed)
+    Found by: shadow
+
+  - 'switch-logfiles-at' in lamestbot was set to octal value (oops)
+    Found by: xerxes
+
+  - Bans were overwriting other memory when sent to Tcl to trigger bindings
+    ("yer a dork!") (fixed)
+    Found by: fred1
+
+  - Better way to prevent the bot from going "idle"
+
+  - CTCP AWAKE wasn't correctly removed (fixed)
+    Found by: cmwagner
+
+  - Owners couldn't even boot themselves (fixed)
+    Found by: gord
+
+  - 'chattr' was letting you do +b/-b when it shouldn't (fixed)
+
+  - Leaf rejection was sometimes flooding (fixed)
+    Found by: junkie
+
+  - Bot was sometimes not noticing when it got its nickname back (fixed)
+    Found by: station
+
+  - When someone on a channel changed nicks to the same as someone who was
+    net-split, the bot would get confused (fixed)
+    Found by: station
+
+  - msg 'jump' now requires a password
+
+  - User caching used when adding users, so that the startup
+    loading-userfile phase will be faster
+
+  - New console level 's' to record server connect/disconnect/etc
+
+  - 'unlink *' forces the bot tables and assoc records to be cleared to a
+    sane state
+    Suggested by: fred1
+
+  - filt wasn't working for file system (fixed)
+    Found by: dorgan
+
+  - Missing linefeed was causing bot tree chaos (fixed by cmwagner)
+
+  - Was possible to nick-ban the bot with +ban (fixed)
+    Found by: luke detering
+
+  - Better username testing on startup
+
+  - Few problems with crashing when unlinking bots (fixed)
+    Found by: xerxes
+
+  - Hack: Tcl 'putserv' and 'puthelp' truncate embedded linefeeds now, to
+    keep braindead scripts from shooting themselves in the foot
+
+  - Excessive repetitive invites are no longer logged
+    Suggested by: derrick
+
+  TO-DO:
+
+  - Allow dynamic bans to be marked as "forced"?  (ie, most bans are dynamic
+    but some could be marked as permanently active)
+  - Channel bans aren't passed between sharebots: should they be?
+  - Tcl commands for:
+      move/copy a file
+      make/remove a dir
+      get/set a dir's required flags
+  - '.sort' to sort files
+  - Be able to clear all bans
+    Suggested by: blackjac
+
+  BUGS:
+
+  - Sometimes forks for chat aren't getting their memory freed:
+    =MyBOT= File 'dccutil.c ' accounted for 108/728 (debug follows:)
+    =MyBOT=    821:(010) 821:(010) 808:(06C) 821:(010) 821:(010) 808:(06C)
+    =MyBOT=    808:(06C) 808:(06C) 821:(010) 808:(06C) 808:(06C)
+    [not sure if this still happens]
+  - Sometimes bans are being "none!*@*" ?
+  - Raw mode crashes tclhash.c/563
+
+
+1.0beta-turtle-patched (April 3, 1996):
+
+  # Patch from Robey Pointer <robey@acolyte.slip.netcom.com>
+
+  - Bugfix patch
+
+
+1.0beta-turtle (April 1, 1996):
+
+  # New version from Robey Pointer <robey@acolyte.slip.netcom.com>
+
+  - Better way to prevent the bot from going "idle"
+
+  - CTCP AWAKE wasn't correctly removed (fixed)
+    Found by: cmwagner
+
+  - Owners couldn't even boot themselves (fixed)
+    Found by: gord
+
+  - 'chattr' was letting you do +b/-b when it shouldn't (fixed)
+
+  - Leaf rejection was sometimes flooding (fixed)
+    Found by: junkie
+
+  - Bot was sometimes not noticing when it got its nickname back (fixed)
+    Found by: station
+
+  - When someone on a channel changed nicks to the same as someone who was
+    net-split, the bot would get confused (fixed)
+    Found by: station
+
+  - msg 'jump' now requires a password
+
+  - User caching used when adding users, so that the startup
+    loading-userfile phase will be faster
+
+  - New console level 's' to record server connect/disconnect/etc
+
+  TO-DO:
+
+  - Allow dynamic bans to be marked as "forced"?  (ie, most bans are dynamic
+    but some could be marked as permanently active)
+  - Channel bans aren't passed between sharebots: should they be?
+  - Tcl commands for:
+      move/copy a file
+      make/remove a dir
+      get/set a dir's required flags
+  - '.sort' to sort files
+
+  BUGS:
+
+  - Sometimes forks for chat aren't getting their memory freed:
+    =MyBOT= File 'dccutil.c ' accounted for 108/728 (debug follows:)
+    =MyBOT=    821:(010) 821:(010) 808:(06C) 821:(010) 821:(010) 808:(06C)
+    =MyBOT=    808:(06C) 808:(06C) 821:(010) 808:(06C) 808:(06C)
+  - Problems with ques3.tcl ?
+  - Sometimes bans are being "none!*@*" ?
+  - None  (yeah right!)
+
+
+1.0beta-stegosaurus (March 28, 1996):
+
+  # New version from Robey Pointer <robey@acolyte.slip.netcom.com>
+
+  - Userfile transfers happen via a DCC send connection now (might be
+    faster)
+
+  - Added 'save-users-at' and 'switch-logfiles-at' timing options
+
+  - Killed forked processes were giving "unforseen error 234" (fixed)
+    Found by: plof
+
+  - 'putbot' wasn't up to speed (fixed)
+    Found by: shadow
+
+  - 'switch-logfiles-at' in lamestbot was set to octal value (oops)
+    Found by: xerxes
+
+  - Bans were overwriting other memory when sent to Tcl to trigger bindings
+    ("yer a dork!") (fixed)
+    Found by: fred1
+
+  TO-DO:
+
+  - Allow dynamic bans to be marked as "forced"?  (ie, most bans are dynamic
+    but some could be marked as permanently active)
+  - Channel bans aren't passed between sharebots: should they be?
+  - Tcl commands for:
+      move/copy a file
+      make/remove a dir
+      get/set a dir's required flags
+  - '.sort' to sort files
+
+
+1.0beta-rabbit (Mar 25, 1996):
+
+  # New version from Robey Pointer <robey@acolyte.slip.netcom.com>
+
+  - Security patch for 'pass' command
+    Patch by: cyberscape
+
+  - Can do 'comment <user> none' now
+    Suggested by: softlord
+
+  - Wasn't letting you describe directories any more (fixed)
+    Found by: sabi
+
+  - Mode change before /who result caused crash (fixed)
+    Found by: imoq
+
+  - chon copes better with dropped dcc's and channel changes now
+
+  - Tcl 'putloglev' to write to a user-defined log level (1-5)
+
+  - 'trace' command was still broken (fixed)
+
+  - New bans will store and display when they were created and the last time
+    they were active (popular demand)
+
+  - Tcl 'link' and 'unlink' weren't working (doh!) (fixed)
+
+  - Finished dprintf'izing
+
+  - Assoc'd channels are kept in numerical order now
+
+  - No more support for non-Tcl bots
+
+  - Was losing memory every time server list was loaded (fixed)
+
+  - No longer honors outdated op requests done thru non-Tcl
+
+  - Re-arranged config file a lot to make it cope with multiple channels
+
+  - New Tcl command 'channel' to add, remove, and modify channel entries
+
+  - Console now has channel and mode, instead of just mode
+
+  - New faster match.c from Fred1
+
+  - Now only rejects 'who' requests for secret/private channels when the
+    requestor isn't already on the channel
+
+  - Doesn't keep "hidden" track of memory any more when debugging is off
+    (downside: no way to tell memory leak unless debugging is on)
+
+  - Bot link/etc notices were going to users who had '.chat off' (fixed)
+    Found by: xerxes
+
+  - Added Tcl 'setlaston', 'echo', 'addglban', 'delglban'
+
+  - '.email' has a more standard syntax now
+    Suggested by: answer
+
+  - Each channel keeps its own banlist now for temporary bans
+
+  - Changed various Tcl ban commands to accomidate the concept of having a
+    global banlist + separate banlist for each channel
+
+  - Channel ban lists are sent by channel name to other sharebots
+
+  - Revenge generally only adds bans to a certain channel now
+
+  - Tcl 'channel info' dumps out all the info you can set
+
+  - Join flood only gets you banned on the one channel now
+
+  - Was reversing mode changes by fake-op people even if the mode changes
+    were beneficial (fixed)
+    Found by: tris
+
+  - '/msg pass' incorrect password notice was getting sent to the wrong
+    person (fixed)
+    Found by: archon
+
+  - '/msg ident' will take an optional nickname now
+    Suggested by: poseidon
+
+  - '.+bot' will try to add the hostmask if it can find it
+
+  - Changed meaning of +a and +h flags for bots -- now +h is equivalent of
+    old +ah, and +a is an alternate/secondary link if no +h can be linked
+
+  - Better DALnet support (maybe not perfect, but...)
+
+  - Password checking is case-sensitive now
+    Suggested by: jay s monk
+
+  - Removed helpbot support (useless)
+
+  - Revenge flag changes weren't propagating through sharebots properly
+    (fixed)
+    Found by: zenoran
+
+  - Tries not to block longer than 10ms when writing to a socket now
+
+  - Checks bans against userlist, just in case someone's dumb enough to ban
+    by a hostmask the bot knows
+
+  - 'unlink *' will disconnect you from the botnet
+    Suggested by: blackjac
+
+  - Aborting a relay, when a password was being asked for, could keep echo
+    off indefinitely (fixed)
+    Found by: chad wagner
+
+  - New Tcl command 'getting-users'
+
+  - Took out the old primitive 'talk'/'ntalk' script support (possibly to be
+    replaced by something better later)
+
+  - Tries to be more graceful when recovering via '.reset'
+
+  - Rewrote entire file system and help files
+
+  - Number of gets for a file is incremented AFTER a successful download
+    now, instead of before
+
+  - 'text/banner' is shown to people that telnet in
+
+  - set 'copy-to-tmp' can turn on/off copying files to /tmp before sending
+    them to people (has no effect on uploads, which are still stored in /tmp
+    until finished)
+
+  - Keeps file descriptor open while sending/receiving a file now (probably
+    not much more efficient on many machines, but apparently it has an
+    effect over NFS)
+
+  - Wasn't passing flags 8/9/0 over sharebot links (fixed)
+
+  - Local msgs (') leak to all channels by default now
+    Patch by: answer
+
+  - Old '.files' is converted to '.filedb' on first access to that directory
+
+  - New Tcl 'utimer', 'killutimer', 'utimers' to deal with "micro-timers"
+    that operate on the order of seconds instead of minutes
+
+  - Timers are no longer double-evaluated
+
+  - File sharing implemented
+
+  - New Tcl: 'deluser'
+
+  - Space for tandem bot records adjusted automatically now (no set limit)
+
+  - Wasn't enforcing a +l mode if someone did +l with a different limit
+    (fixed)
+    Patch by: cmwagner
+
+  - In help/text files, '%C' is now the list of channels the bot wants, and
+    '%E' is the full-blown eggdrop version
+
+  - Ignores store nicknames now
+    Suggested by: blackjac
+
+  - Changed behavior of Tcl 'dccsimul' to be more intuitive
+
+  - Added 'filt' bindings which filter dcc input
+
+  - Made Tcl 'dccsimul' give temporary owner access while executing
+
+  - Alleged support of file transfer recovery now
+
+  - Lots of Tcl commands to support the file system
+
+  - Flags '6'-'0' weren't getting loaded correctly (fixed)
+    Found by: dave guzeman
+
+  - '.email' was spazzing out (fixed)
+    Found by: slix
+
+  - Sockets are non-blocking after a connect now
+
+  - Something stupid about not being able to leave notes for bots
+    Found by: xerxes
+
+  - The xtra field is transmitted between sharebots differently, and should
+    now have no effective size limit
+
+  - The ILL signal will log a context and continue -- to help find locks
+
+  - Socket output is queued if it would block (non-binary sockets only), and
+    '.debug' will show the socket queues, in and out
+
+  - File system wasn't noticing an invalid dcc path (fixed)
+    Found by: dorgan
+
+  - Moved ' local-only chat to a Tcl script so it's optional
+
+  TO-DO:
+
+  - Allow dynamic bans to be marked as "forced"?  (ie, most bans are dynamic
+    but some could be marked as permanently active)
+  - Channel bans aren't passed between sharebots: should they be?
+  - Tcl commands for:
+      move/copy a file
+      make/remove a dir
+      get/set a dir's required flags
+  - '.sort' to sort files

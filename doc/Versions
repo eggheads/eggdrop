@@ -1,0 +1,277 @@
+$Id: Versions,v 1.1 2008/07/05 02:14:03 tothwolf Exp $
+
+This file lists the release dates for most of the officially released
+versions of Eggdrop and notes forks, bug fix patches and maintenance
+patches. Some of the older versions are missing from the current archive and
+their exact release dates are unknown. If you happen to have a copy of an
+old version not in the archive available on ftp.eggheads.org please get in
+contact via the email list at http://www.eggheads.org/ so it can be added
+to the current archive.
+
+Version   Release date
+
+1.6.19    Apr 18, 2008
+1.6.18    Jul  9, 2006
+1.6.17    Aug 22, 2004
+1.6.16    May 31, 2004
+1.6.15    May  4, 2003
+1.6.14    May  4, 2003
+1.6.13    Nov 22, 2002
+1.6.12    Jul 26, 2002
+1.6.11    Jul 26, 2002
+1.6.10    Mar 29, 2002
+1.6.9     Mar 10, 2002
+1.6.8     Jan  2, 2002
+1.6.7     Dec  7, 2001
+1.6.6     Jul 20, 2001
+1.6.5     Jul 10, 2001
+1.6.4     Apr 13, 2001
+1.6.3     Feb 27, 2001
+1.6.2     Jan 14, 2001
+1.6.1     Nov 22, 2000
+1.6.0     Nov 15, 2000
+
+1.5.4     Aug 22, 2000
+1.5.3     May  7, 2000
+1.5.2     Feb  4, 2000
+1.5.1
+1.5.0
+
+  Versions 1.5.x were development test versions so their release dates
+  overlap with 1.4.x.
+
+1.4.5     Nov 15, 2000
+1.4.4     Jul 16, 2000
+1.4.3     Apr 11, 2000
+1.4.2     Jan 30, 2000
+1.4.1     Dec 17, 1999
+1.4.0     Nov  9, 1999
+
+1.3.28    Aug 10, 1999
+1.3.27    May 28, 1999 [joinfloodfix bugfix patch]
+1.3.27    May 10, 1999
+1.3.26    Mar 30, 1999
+1.3.25    Mar 29, 1999 [1.3.25+ development continued by eggheads.org]
+1.3.24i   Mar  5, 1999 [maintenance release from eggheads.org]
+1.3.23    Jan  2, 1999 [Beldin abandons 1.3.x to focus only on 'Eggdrop2']
+1.3.22    Oct 24, 1998
+1.3.21    Sep 30, 1998
+1.3.20    Sep 21, 1998
+1.3.19    Aug 28, 1998
+1.3.18    Jul 19, 1998
+1.3.17    Jul  7, 1998
+1.3.16    Jun 15, 1998
+1.3.15    May 30, 1998
+1.3.14    May  3, 1998
+1.3.13    Apr 15, 1998
+1.3.12    Mar 20, 1998
+1.3.11    Feb 25, 1998
+1.3.10    Feb 11, 1998
+1.3.9     Jan 25, 1998
+1.3.8     Dec 31, 1997
+1.3.7     Dec     1997
+1.3.6     Dec     1997 [test patch, not released publicly]
+1.3.5     Dec  1, 1997
+1.3.4     Nov 24, 1997
+1.3.3     Nov 17, 1997
+1.3.2     Nov 12, 1997
+1.3.1     Nov 10, 1997
+1.3.0     Nov  9, 1997 [initial eggdrop2 development fork]
+
+  Beldin forked 1.3.0 for the 'Eggdrop2' bot written in C++. See the end
+  of this file for more information on this fork.
+
+1.3.0delta             [This release had no name listed in the UPDATES file.]
+1.3.0gamma
+1.3.0beta
+1.3.0pre+bel1
+1.3.0pre+TG2      
+1.3.0pre+TG
+1.3.0pre+BBub1
+1.3.0pre
+1.2.2+bel5     
+1.2.2+bel4
+1.2.2+bel3
+1.2.2+bel2
+1.2.2+bel1
+1.2.2
+1.2.0+bel26
+1.2.0+bel25
+1.2.0+BBub5
+1.2.0+bel24
+1.2.0+bel23
+1.2.0+kk4
+1.2.0+bel22
+1.2.0+kk3
+1.2.0+bel21
+1.2.0+bel20
+1.2.0+bel19
+1.2.0+bel18
+1.2.0+bel17
+1.2.0+bel16
+1.2.0+kk2
+1.2.0+bel15
+1.2.0+bel14
+1.2.0+bel13
+1.2.0+bel12
+1.2.0+bel11
+1.2.0+kkdoc
+1.2.0+bel10
+1.2.0+BBub4 
+1.2.0+bel9
+1.2.0+bel8 
+1.2.0+ident
+1.2.0+BBlang3
+1.2.0+bel7+pop1
+1.2.0+bel6
+1.2.0+BBlang2
+1.2.0+bel5
+1.2.0+bel4
+1.2.0+bel3+BBlang+kk
+1.2.0+bel2+BBlang      
+1.2.0+bel1
+1.2.0     Aug  7, 1997 [alpha code, premature unofficial release]
+
+  The exact dates for most of the 1.2.x series are unknown. 1.2 was never
+  intended to be a release tree but 1.2.0 was released by a 3rd party.
+
+1.1.5     Jun 29, 1997
+1.1.4     Jun 22, 1997
+1.1.3+pl3
+1.1.3+pl2
+1.1.3+pl1
+1.1.3
+1.1.2+pl2
+1.1.2+pl1 Jun 10, 1997  [dtm / beldin]
+1.1.2     Jun  6, 1997
+1.1.1+pl2               [wild / beldin]
+1.1.1+pl1 May 28, 1997
+1.1.1
+1.1.0+pl3
+1.1.0+pl2
+1.1.0+pl1 May 26, 1997
+1.1.0     May 24, 1997                        [released by ???]
+
+1.1 alpha May  7, 1997	[1.1 alpha - hayes]   [released by wade]
+1.1 alpha Apr  1, 1997	[1.1 alpha - julius]  [released by ???]
+1.1 alpha Feb  5, 1997	[1.1 alpha - grant]   [last 1.1 release by Robey]
+1.1 alpha		[1.1 alpha - lincoln] [released by Robey]
+
+  1.0n (Jan 6, 1997) -> 1.0o (Feb 4, 1997) -> 1.0p (Mar 16, 1997)
+    +-> 1.1 alpha+lincoln -> grant (Feb 5, 1997) -> julius (Apr 1, 1997) -> 
+        hayes (May 7, 1997) -> 1.1.0 (May 23, 1997)
+
+  Version 1.0n was forked for 1.1 alpha.
+
+1.0t                   [unofficial version from KingKurly]
+1.0s                   [unofficial version from KingKurly]
+1.0r                   [unofficial version from KingKurly, not released]
+1.0q                   [unofficial version from KingKurly, not released]
+1.0p      Mar 16, 1997 [maintenance release] [released by wade]
+1.0o      Feb  4, 1997 [maintenance release] [last 1.0 release by Robey]
+1.0n      Jan  6, 1997 [1.0n forked for 1.1 alpha]
+1.0m      Dec  4, 1996
+1.0l      Nov 11, 1996
+1.0k      Oct 17, 1996
+1.0j      Oct  8, 1996
+1.0i      Sep 10, 1996
+1.0h      Aug  7, 1996
+1.0g      Jul 23, 1996
+1.0f      Jul  6, 1996
+1.0e      Jul  2, 1996
+1.0d      Jun 12, 1996
+1.0c      Jun  1, 1996
+1.0c-pre  May 23, 1996 [prerelease]
+1.0b      May 20, 1996
+1.0a      May  4, 1996
+1.0+p1    Apr  7, 1996 [bugfix patch]
+1.0       Apr  7, 1996
+
+1.0 beta  Apr  3, 1996 [1.0 beta - turtle, bugfix patch]
+1.0 beta  Apr  1, 1996 [1.0 beta - turtle]
+1.0 beta  Mar 28, 1996 [1.0 beta - stegosaurus]
+1.0 beta  Mar 25, 1996 [1.0 beta - rabbit]
+
+0.9t+p2   Feb  1, 1996 [bugfix patch]
+0.9t+p1   Feb  1, 1996 [bugfix patch]
+0.9t      Feb  1, 1996
+0.9s      Jan 27, 1996
+0.9r      Dec  1, 1995
+0.9q      Nov 10, 1995
+0.9p      Oct 12, 1995
+0.9o      Jun  8, 1995
+0.9n      May 21, 1995
+0.9m      Apr  6, 1995
+0.9l      Mar 20, 1995
+0.9k      Mar  2, 1995
+0.9j      Feb  5, 1995
+0.9i      Jan 27, 1995
+0.9h      Jan 12, 1995
+0.9g      Nov 15, 1994
+0.9f      Oct 10, 1994
+0.9e      Sep 27, 1994
+0.9d      Sep 17, 1994
+0.9c      Aug 17, 1994
+0.9b      Aug  3, 1994
+0.9a      Jul 26, 1994
+0.9       Jul 23, 1994
+
+  Release dates for versions between 0.7d and 0.9 have unfortunately been
+  lost. It is a safe assumption that these versions were released between
+  Apr 11, 1994 and Jul 23, 1994.
+
+0.7d      Apr 11, 1994
+0.7c      Apr 11, 1994
+0.7b      Apr  7, 1994
+0.7a      Apr  7, 1994
+0.7       Apr  4, 1994
+
+0.6r      Apr  4, 1994
+0.6q      Apr  2, 1994
+0.6p      Apr  1, 1994
+0.6o      Mar 31, 1994
+0.6n      Mar 30, 1994
+0.6m      Mar 28, 1994
+0.6l      Mar 22, 1994
+0.6k      Mar 17, 1994
+0.6j      Mar 16, 1994
+0.6i      Mar 14, 1994
+0.6h      Mar 11, 1994
+0.6g      Mar 10, 1994
+0.6f      Mar  9, 1994
+0.6e      Mar  7, 1994
+0.6d      Mar  3, 1994
+0.6c      Mar  2, 1994
+
+----------------------
+
+  Eggdrop2 development fork
+
+  Most of these versions were development milestones and not released publicly.
+
+2.1.0                  Mar 24, 1999
+2.0.1-BETA             Jan 22, 1999
+2.0.0-ALPHA            Jan 17, 1999
+2.0.0-ALPHA19990117
+2.0.0-ALPHA19990108
+2.0.0-ALPHA19981225
+2.0.0-ALPHA19981031
+2.0.0-snap19981029 
+2.0.0-snap19981014
+2.0.0-snap19980914
+2.0.0-snap19980815     [merge eggdrop 1.3.15, 1.3.16]
+2.0.0-snap19980609     [merge eggdrop 1.3.14]
+2.0.0-snap19980509     [merge eggdrop 1.3.13]
+2.0.0-snap19980416
+2.0.0-snap19980404     [merge eggdrop 1.3.12]
+2.0.0-snap19980326
+2.0.0-snap19980310     [merge eggdrop 1.3.11]
+2.0.0-snap19980225
+2.0.0-snap19980217
+1.5.3                  [merge eggdrop 1.3.10]
+1.5.2                  [merge eggdrop 1.3.9]
+1.5.1
+1.5.0
+1.4.2
+1.4.1
+1.4.0                  [Beldin's 1.4.x branch forked from 1.3.0]
