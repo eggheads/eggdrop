@@ -1,4 +1,4 @@
-$Id: Changes1.6,v 1.1 2008/07/05 02:14:03 tothwolf Exp $
+$Id: Changes1.6,v 1.2 2008/07/05 02:32:13 tothwolf Exp $
 
 Eggdrop Changes (since version 1.6.0)
 
@@ -87,6 +87,14 @@ Eggdrop Changes (since version 1.6.0)
   - Use "$0" ${1+"$@"} in place of "$0" "$@" to avoid problems with broken
     sh implementations that expand "$@" into a single empty argument when
     there are no other arguments.
+    Patch by: Tothwolf
+
+  - Make custom configure warning messages' prefix match AC_MSG_WARN.
+  - Fixed broken EGG_TCL_CHECK_HEADER macro Tcl header 'not found' message.
+  - Don't use "${var-x}" in place of "x$var". The use of "x$var" is more
+    portable and standard practice in autoconf macros.
+  - Added AC_CANONICAL_* macros to EGG_OS_VERSION in preparation to move
+    from our old 'uname -s' and 'uname -r' hacks to a canonical triplet.
     Patch by: Tothwolf
 
   - Completely rewrote EGG_TCL_CHECK_THREADS autoconf macro to make the
