@@ -4,7 +4,7 @@
  *
  *   IF YOU ALTER THIS FILE, YOU NEED TO RECOMPILE THE BOT.
  *
- * $Id: eggdrop.h,v 1.69 2008/07/10 10:06:53 tothwolf Exp $
+ * $Id: eggdrop.h,v 1.70 2008/07/10 10:56:23 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -193,13 +193,63 @@
 #  endif
 #endif
 
-#ifndef HAVE_SRANDOM
-#  define srandom(x) srand(x)
-#endif
 
-#ifndef HAVE_RANDOM
-#  define random() (rand()/16)
-#endif
+/* Yikes...who would have thought finding a usable random() would be so much
+ * trouble?
+ * Note: random(), rand(), and lrand48() are *not* thread safe.
+ */
+#ifdef HAVE_RANDOM  
+  /* On systems with random(), RANDOM_MAX may or may not be defined.
+   *
+   * If RANDOM_MAX isn't defined, we use 0x7FFFFFFF (2^31-1), or 2147483647
+   * since this follows the 4.3BSD and POSIX.1-2001 standards. This of course
+   * assumes random() uses a 32 bit long int type per the standards.
+   */
+#  ifndef RANDOM_MAX
+#    define RANDOM_MAX 0x7FFFFFFF  /* random() -- 2^31-1 */
+#  endif 
+#else                              /* !HAVE_RANDOM */
+   /* This shouldn't exist in this case, but just to be safe... */
+#  ifdef RANDOM_MAX
+#    undef RANDOM_MAX
+#  endif
+  /* If we don't have random() it's safe to assume we also don't have
+   * srandom(), and we need both.
+   */
+#  ifdef HAVE_RAND
+#    define random() rand()   
+#    define srandom(x) srand(x)
+    /* Depending on the system int size, RAND_MAX can be either 0x7FFFFFFF
+     * (2^31-1), or 2147483647 for a 32 bit int, or 0x7FFF (2^15-1), or
+     * 32767 for a 16 bit int. The standards only state that RAND_MAX must
+     * be _at least_ 32767 but some systems with 16 bit int define it as
+     * 32767. See: SVr4, 4.3BSD, C89, C99, POSIX.1-2001.
+     */
+#    define RANDOM_MAX RAND_MAX    /* rand() -- 2^31-1 or 2^15-1 */
+#  else                            /* !HAVE_RAND */
+#    ifdef  HAVE_LRAND48
+#      define random() lrand48()
+#      define srandom(x) srand48(x)
+      /* For lrand48() we define RANDOM_MAX as 0x7FFFFFFF (2^31-1), or
+       * 2147483647 since this is what the SVr4 and POSIX.1-2001 standards
+       * call for. Note: SVID 3 declares these functions as obsolete and
+       * states rand() should be used instead.
+       */
+#      define RANDOM_MAX 0x7FFFFFFF /* lrand48() -- 2^31-1 */
+#    else                          /* !HAVE_LRAND48 */
+#      include "Error: Must define one of HAVE_RANDOM, HAVE_RAND, or HAVE_LRAND48"
+#    endif                         /* HAVE_LRAND48 */
+#  endif                           /* HAVE_RAND */
+#endif                             /* HAVE_RANDOM */
+
+
+/* Use high-order bits for getting the random integer. With a modern
+ * random() implmentation, modulo would probably be sufficient, but on
+ * systems lacking random(), it may just be a macro for an older rand()
+ * fucntion.
+ */
+#define randint(n) (unsigned long) (random() / (RANDOM_MAX + 1.0) * n)
+
 
 #ifndef HAVE_SIGACTION /* old "weird signals" */
 #  define sigaction sigvec

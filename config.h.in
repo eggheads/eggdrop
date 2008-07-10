@@ -126,6 +126,9 @@
 /* Define to 1 if you have the <locale.h> header file. */
 #undef HAVE_LOCALE_H
 
+/* Define to 1 if you have the `lrand48' function. */
+#undef HAVE_LRAND48
+
 /* Define to 1 if you have the <mach-o/dyld.h> header file. */
 #undef HAVE_MACH_O_DYLD_H
 
@@ -159,6 +162,9 @@
 /* Define to 1 if you have the `NSLinkModule' function. */
 #undef HAVE_NSLINKMODULE
 
+/* Define to 1 if you have the `rand' function. */
+#undef HAVE_RAND
+
 /* Define to 1 if you have the `random' function. */
 #undef HAVE_RANDOM
 
@@ -188,9 +194,6 @@
 
 /* Define to 1 if you have the `socklen_t' type. */
 #undef HAVE_SOCKLEN_T
-
-/* Define to 1 if you have the `srandom' function. */
-#undef HAVE_SRANDOM
 
 /* Define to 1 if you have the <stdarg.h> header file. */
 #undef HAVE_STDARG_H
@@ -322,9 +325,6 @@
 
 /* Define to the version of this package. */
 #undef PACKAGE_VERSION
-
-/* Define limit of random() function. */
-#undef RANDOM_MAX
 
 /* Define to the type of arg 1 for `select'. */
 #undef SELECT_TYPE_ARG1

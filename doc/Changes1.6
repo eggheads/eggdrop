@@ -1,10 +1,19 @@
-$Id: Changes1.6,v 1.4 2008/07/10 10:06:53 tothwolf Exp $
+$Id: Changes1.6,v 1.5 2008/07/10 10:56:23 tothwolf Exp $
 
 Eggdrop Changes (since version 1.6.0)
 
     _____________________________________________________________________
 
 1.6.20 (CVS):
+
+  - Removed Solaris RANDMAX autoconf hack.
+  - Added proper preprocessor checks for RANDOM_MAX and RAND_MAX.
+  - Added autoconf tests and preprocessor checks for rand() and lrand48().
+  - Simplified randint macro to make it faster.
+  - Added argument sanity checking for tcl_rand() / Tcl [rand] command.
+  - Added min:max value sanity checking in irc.mod set_delay(). This should
+    match the aop-delay behavior documented in eggdrop.conf now.
+    Patch by: Tothwolf
 
   - More minor autoconf changes.
   - Context and ContextNote should use 'do {} while (0)' instead of '{}'.

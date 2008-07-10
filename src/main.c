@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  *
- * $Id: main.c,v 1.125 2008/07/10 10:06:53 tothwolf Exp $
+ * $Id: main.c,v 1.126 2008/07/10 10:56:23 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -948,8 +948,19 @@ int main(int argc, char **argv)
      * calls to periodic_timers
      */
     now = time(NULL);
-    random();                   /* Woop, lets really jumble things */
-    if (now != then) {          /* Once a second */
+
+    /*
+     * FIXME: Get rid of this, it's ugly and wastes lots of cpu.
+     *
+     * pre-1.3.0 Eggdrop had random() in the once a second block below.
+     *
+     * This attempts to keep random() more random by constantly
+     * calling random() and updating the state information.
+     */
+    random();                /* Woop, lets really jumble things */
+
+    /* Once a second */
+    if (now != then) {
       call_hook(HOOK_SECONDLY);
       then = now;
     }

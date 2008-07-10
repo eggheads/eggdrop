@@ -1,11 +1,11 @@
 dnl configure.ac: this file is processed by autoconf to produce ./configure.
 dnl
-dnl $Id: configure.ac,v 1.34 2008/07/10 10:06:53 tothwolf Exp $
+dnl $Id: configure.ac,v 1.35 2008/07/10 10:56:22 tothwolf Exp $
 
 AC_PREREQ(2.60)
 AC_INIT([Eggdrop],[1.6.20],[bugs@eggheads.org])
 AC_COPYRIGHT([Copyright (C) 1999 - 2008 Eggheads Development Team])
-AC_REVISION($Revision: 1.34 $)
+AC_REVISION($Revision: 1.35 $)
 AC_CONFIG_SRCDIR(src/eggdrop.h)
 AC_CONFIG_AUX_DIR(misc)
 AC_CONFIG_HEADER(config.h)
@@ -112,7 +112,7 @@ AC_CHECK_SIZEOF(short, 0)
 
 
 # Checks for functions and their arguments.
-AC_CHECK_FUNCS([clock dprintf fsync getdtablesize getrusage inet_aton isascii mbrlen memcpy memset random rename setpgid sigaction sigemptyset snprintf srandom strcasecmp strncasecmp uname vsnprintf])
+AC_CHECK_FUNCS([clock dprintf fsync getdtablesize getrusage inet_aton isascii mbrlen memcpy memset random rand lrand48 rename setpgid sigaction sigemptyset snprintf strcasecmp strncasecmp uname vsnprintf])
 AC_FUNC_SELECT_ARGTYPES
 EGG_FUNC_VPRINTF
 AC_FUNC_STRFTIME

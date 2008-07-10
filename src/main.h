@@ -2,7 +2,7 @@
  * main.h
  *   include file to include most other include files
  *
- * $Id: main.h,v 1.37 2008/07/04 02:41:43 tothwolf Exp $
+ * $Id: main.h,v 1.38 2008/07/10 10:56:23 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -137,11 +137,5 @@ extern struct dcc_table DCC_CHAT, DCC_BOT, DCC_LOST, DCC_SCRIPT, DCC_BOT_NEW,
 #ifdef BORGCUBES
 #  define O_NONBLOCK 00000004 /* POSIX non-blocking I/O */
 #endif /* BORGCUBES */
-
-/* Use high-order bits for getting the random integer. With random()
- * modulo would probably be sufficient but on systems lacking random(),
- * the function will be just renamed rand().
- */
-#define randint(n) (unsigned long) (random() / (RANDOM_MAX + 1.0) * ((n) < 0 ? (-(n)) : (n)))
 
 #endif /* _EGG_MAIN_H */

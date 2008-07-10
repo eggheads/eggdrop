@@ -6,7 +6,7 @@
  *   user kickban, kick, op, deop
  *   idle kicking
  *
- * $Id: chan.c,v 1.127 2008/07/01 00:20:03 tothwolf Exp $
+ * $Id: chan.c,v 1.128 2008/07/10 10:56:23 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1584,31 +1584,57 @@ static int got332(char *from, char *msg)
   return 0;
 }
 
+/* Set delay for +o, +h, or +v channel modes
+ */
 static void set_delay(struct chanset_t *chan, char *nick)
 {
   time_t a_delay;
-  int aop_min = chan->aop_min, aop_max = chan->aop_max, count = 0;
+  int aop_min, aop_max, aop_diff, count = 0;
   memberlist *m, *m2;
 
   m = ismember(chan, nick);
   if (!m)
     return;
-  if (aop_min >= aop_max)
+
+  /* aop-delay 5:30 -- aop_min:aop_max */
+  aop_min = chan->aop_min;
+  aop_max = chan->aop_max;
+  aop_diff = aop_max - aop_min;
+
+  /* If either min or max is less than or equal to 0 we don't delay. */
+  if ((aop_min <= 0) || (aop_max <= 0)) {
+    a_delay = now + 1;
+
+  /* Use min value for delay if min greater then or equal to max or if the
+   * difference of max and min is greater than RANDOM_MAX (sanity check).
+   */
+  } else if ((aop_min >= aop_max) || (aop_diff > RANDOM_MAX)) {
     a_delay = now + aop_min;
-  else
-    a_delay = now + randint(aop_max - aop_min) + aop_min + 1;
+
+  /* Set a random delay based on the difference of max and min */
+  } else {
+    a_delay = now + randint(aop_diff) + aop_min + 1;
+  }
+
   for (m2 = chan->channel.member; m2 && m2->nick[0]; m2 = m2->next)
     if (m2->delay && !(m2->flags & FULL_DELAY))
       count++;
-  if (count)
-    for (m2 = chan->channel.member; m2 && m2->nick[0]; m2 = m2->next)
+
+  if (count) {
+    for (m2 = chan->channel.member; m2 && m2->nick[0]; m2 = m2->next) {
       if (m2->delay && !(m2->flags & FULL_DELAY)) {
         m2->delay = a_delay;
+
         if (count + 1 >= modesperline)
           m2->flags |= FULL_DELAY;
+
       }
+    }
+  }
+
   if (count + 1 >= modesperline)
     m->flags |= FULL_DELAY;
+
   m->delay = a_delay;
 }
 
