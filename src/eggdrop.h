@@ -4,7 +4,7 @@
  *
  *   IF YOU ALTER THIS FILE, YOU NEED TO RECOMPILE THE BOT.
  *
- * $Id: eggdrop.h,v 1.68 2008/07/04 03:17:25 tothwolf Exp $
+ * $Id: eggdrop.h,v 1.69 2008/07/10 10:06:53 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -230,8 +230,8 @@ typedef int socklen_t;
 #  define Context           eggContext(__FILE__, __LINE__, NULL)
 #  define ContextNote(note) eggContextNote(__FILE__, __LINE__, NULL, note)
 #else
-#  define Context           {}
-#  define ContextNote(note) {}
+#  define Context           do {} while (0)
+#  define ContextNote(note) do {} while (0)
 #endif
 
 #ifdef DEBUG_ASSERT
@@ -240,8 +240,7 @@ typedef int socklen_t;
             eggAssert(__FILE__, __LINE__, NULL);                        \
 } while (0)
 #else
-#  define Assert(expr) do {                                             \
-} while (0)
+#  define Assert(expr) do {} while (0)
 #endif
 
 #ifndef COMPILING_MEM
@@ -268,6 +267,7 @@ typedef unsigned char u_8bit_t;
 /* IP type */
 typedef u_32bit_t IP;
 
+/* Debug logging macros */
 #define debug0(x)             putlog(LOG_DEBUG,"*",x)
 #define debug1(x,a1)          putlog(LOG_DEBUG,"*",x,a1)
 #define debug2(x,a1,a2)       putlog(LOG_DEBUG,"*",x,a1,a2)
@@ -318,8 +318,8 @@ struct dcc_t {
   char nick[NICKLEN];
   char host[UHOSTLEN];
   struct dcc_table *type;
-  time_t timeval;               /* This is used for timeout checking.  */
-  unsigned long status;         /* A LOT of dcc types have status things; makes it more avaliabe. */
+  time_t timeval;               /* This is used for timeout checking. */
+  unsigned long status;         /* A LOT of dcc types have status things; makes it more availabe. */
   union {
     struct chat_info *chat;
     struct file_info *file;
@@ -488,7 +488,7 @@ struct dupwait_info {
 #define STAT_LEAF    0x00080    /* this bot is a leaf only               */
 #define STAT_LINKING 0x00100    /* the bot is currently going through
                                  * the linking stage                     */
-#define STAT_AGGRESSIVE   0x200 /* aggressively sharing with this bot    */
+#define STAT_AGGRESSIVE 0x00200 /* aggressively sharing with this bot    */
 
 /* Flags for listening sockets */
 #define LSTN_PUBLIC  0x000001   /* No access restrictions               */

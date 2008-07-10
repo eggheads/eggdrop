@@ -1,10 +1,15 @@
-$Id: Changes1.6,v 1.3 2008/07/10 09:22:04 tothwolf Exp $
+$Id: Changes1.6,v 1.4 2008/07/10 10:06:53 tothwolf Exp $
 
 Eggdrop Changes (since version 1.6.0)
 
     _____________________________________________________________________
 
 1.6.20 (CVS):
+
+  - More minor autoconf changes.
+  - Context and ContextNote should use 'do {} while (0)' instead of '{}'.
+  - Put Context init code into an #ifdef DEBUG_CONTEXT block.
+    Patch by: Tothwolf
 
   - Updated doc/Versions and added more milestone information.
   - Misc doc updates and fixes.

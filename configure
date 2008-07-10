@@ -3746,14 +3746,14 @@ if test "${egg_cv_var_ccpipe+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
 else
 
-        ac_old_CC="$CC"
-        CC="$CC -pipe"
-        cat >conftest.$ac_ext <<_ACEOF
+      ac_old_CC="$CC"
+      CC="$CC -pipe"
+      cat >conftest.$ac_ext <<_ACEOF
 
-          int main ()
-          {
-            return(0);
-          }
+        int main ()
+        {
+          return(0);
+        }
 
 _ACEOF
 rm -f conftest.$ac_objext
@@ -3774,19 +3774,19 @@ eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
 	 test ! -s conftest.err
        } && test -s conftest.$ac_objext; then
 
-          egg_cv_var_ccpipe="yes"
+        egg_cv_var_ccpipe="yes"
 
 else
   echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
 
 
-          egg_cv_var_ccpipe="no"
+        egg_cv_var_ccpipe="no"
 
 fi
 
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
-        CC="$ac_old_CC"
+      CC="$ac_old_CC"
 
 fi
 { echo "$as_me:$LINENO: result: $egg_cv_var_ccpipe" >&5
@@ -3815,12 +3815,12 @@ else
 
       ac_old_CFLAGS="$CFLAGS"
       CFLAGS="$CFLAGS -Wall"
-       cat >conftest.$ac_ext <<_ACEOF
+      cat >conftest.$ac_ext <<_ACEOF
 
-         int main ()
-         {
-           return(0);
-         }
+        int main ()
+        {
+          return(0);
+        }
 
 _ACEOF
 rm -f conftest.$ac_objext
@@ -3841,14 +3841,14 @@ eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
 	 test ! -s conftest.err
        } && test -s conftest.$ac_objext; then
 
-         egg_cv_var_ccwall="yes"
+        egg_cv_var_ccwall="yes"
 
 else
   echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
 
 
-         egg_cv_var_ccwall="no"
+        egg_cv_var_ccwall="no"
 
 fi
 
@@ -10923,7 +10923,7 @@ fi
     if test "$enable_value" != auto; then
       # Make sure an invalid option wasn't passed as --enable-<opt>=foo
       if test "$enable_value" != yes && test "$enable_value" != no; then
-        opt_name=`echo $enable_option | sed s/_/-/g`
+        opt_name=`echo $enable_option | sed 's/_/-/g'`
         eval opt_default=\$default_$enable_option
         { echo "$as_me:$LINENO: WARNING: Invalid option '$enable_value' passed to --enable-${opt_name}, defaulting to '$opt_default'" >&5
 echo "$as_me: WARNING: Invalid option '$enable_value' passed to --enable-${opt_name}, defaulting to '$opt_default'" >&2;}

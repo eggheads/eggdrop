@@ -16,7 +16,7 @@ dnl You should have received a copy of the GNU General Public License
 dnl along with this program; if not, write to the Free Software
 dnl Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 dnl
-dnl $Id: aclocal.m4,v 1.110 2008/07/04 03:17:25 tothwolf Exp $
+dnl $Id: aclocal.m4,v 1.111 2008/07/10 10:06:53 tothwolf Exp $
 dnl
 
 
@@ -187,19 +187,19 @@ AC_DEFUN([EGG_CHECK_CCPIPE],
 [
   if test "$GCC" = yes && test "$ICC" = no; then
     AC_CACHE_CHECK([whether the compiler understands -pipe], egg_cv_var_ccpipe, [
-        ac_old_CC="$CC"
-        CC="$CC -pipe"
-        AC_COMPILE_IFELSE([[
-          int main ()
-          {
-            return(0);
-          }
-        ]], [
-          egg_cv_var_ccpipe="yes"
-        ], [
-          egg_cv_var_ccpipe="no"
-        ])
-        CC="$ac_old_CC"
+      ac_old_CC="$CC"
+      CC="$CC -pipe"
+      AC_COMPILE_IFELSE([[
+        int main ()
+        {
+          return(0);
+        }
+      ]], [
+        egg_cv_var_ccpipe="yes"
+      ], [
+        egg_cv_var_ccpipe="no"
+      ])
+      CC="$ac_old_CC"
     ])
 
     if test "$egg_cv_var_ccpipe" = yes; then
@@ -219,16 +219,16 @@ AC_DEFUN([EGG_CHECK_CCWALL],
     AC_CACHE_CHECK([whether the compiler understands -Wall], egg_cv_var_ccwall, [
       ac_old_CFLAGS="$CFLAGS"
       CFLAGS="$CFLAGS -Wall"
-       AC_COMPILE_IFELSE([[
-         int main ()
-         {
-           return(0);
-         }
-       ]], [
-         egg_cv_var_ccwall="yes"
-       ], [
-         egg_cv_var_ccwall="no"
-       ])
+      AC_COMPILE_IFELSE([[
+        int main ()
+        {
+          return(0);
+        }
+      ]], [
+        egg_cv_var_ccwall="yes"
+      ], [
+        egg_cv_var_ccwall="no"
+      ])
       CFLAGS="$ac_old_CFLAGS"
     ])
 
@@ -1676,7 +1676,7 @@ AC_DEFUN([EGG_DEBUG_OPTIONS],
     if test "$enable_value" != auto; then
       # Make sure an invalid option wasn't passed as --enable-<opt>=foo
       if test "$enable_value" != yes && test "$enable_value" != no; then
-        opt_name=`echo $enable_option | sed s/_/-/g`
+        opt_name=`echo $enable_option | sed 's/_/-/g'`
         eval opt_default=\$default_$enable_option
         AC_MSG_WARN([Invalid option '$enable_value' passed to --enable-${opt_name}, defaulting to '$opt_default'])
         eval enable_$enable_option="auto"

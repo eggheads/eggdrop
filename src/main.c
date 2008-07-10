@@ -5,7 +5,7 @@
  *   command line arguments
  *   context and assert debugging
  *
- * $Id: main.c,v 1.124 2008/07/04 03:17:25 tothwolf Exp $
+ * $Id: main.c,v 1.125 2008/07/10 10:06:53 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -222,11 +222,11 @@ static void check_expired_dcc()
     }
 }
 
-static int nested_debug = 0;
-
 #ifndef DEBUG_CONTEXT
 #define write_debug() do {} while (0)
 #else
+static int nested_debug = 0;
+
 static void write_debug()
 {
   int x;
@@ -403,7 +403,8 @@ static void got_ill(int z)
 }
 
 #ifdef DEBUG_CONTEXT
-/* Context */
+/* Called from the Context macro.
+ */
 void eggContext(const char *file, int line, const char *module)
 {
   char x[31], *p;
@@ -678,7 +679,7 @@ int init_modules();
 int init_tcl(int, char **);
 int init_language(int);
 
-void patch(const char *str)
+static void patch(const char *str)
 {
   char *p = strchr(egg_version, '+');
 
@@ -709,6 +710,9 @@ int main(int argc, char **argv)
 #ifdef DEBUG
   struct rlimit cdlim;
 #endif
+#ifdef STOP_UAC
+  int nvpair[2];
+#endif
 
 /* Make sure it can write core, if you make debug. Else it's pretty
  * useless (dw)
@@ -723,11 +727,15 @@ int main(int argc, char **argv)
   setrlimit(RLIMIT_CORE, &cdlim);
 #endif
 
+#ifdef DEBUG_CONTEXT
   /* Initialise context list */
   for (i = 0; i < 16; i++)
     Context;
+#endif
 
+/* Include patch.h header for patch("...") */
 #include "patch.h"
+
   /* Version info! */
   egg_snprintf(ver, sizeof ver, "eggdrop v%s", egg_version);
   egg_snprintf(version, sizeof version,
@@ -736,14 +744,13 @@ int main(int argc, char **argv)
   /* Now add on the patchlevel (for Tcl) */
   sprintf(&egg_version[strlen(egg_version)], " %u", egg_numver);
   strcat(egg_version, egg_xtra);
-#ifdef STOP_UAC
-  {
-    int nvpair[2];
 
-    nvpair[0] = SSIN_UACPROC;
-    nvpair[1] = UAC_NOPRINT;
-    setsysinfo(SSI_NVPAIRS, (char *) nvpair, 1, NULL, 0);
-  }
+/* For OSF/1 */
+#ifdef STOP_UAC
+  /* Don't print "unaligned access fixup" warning to the user */
+  nvpair[0] = SSIN_UACPROC;
+  nvpair[1] = UAC_NOPRINT;
+  setsysinfo(SSI_NVPAIRS, (char *) nvpair, 1, NULL, 0);
 #endif
 
   /* Set up error traps: */
@@ -786,6 +793,7 @@ int main(int argc, char **argv)
   if (argc > 1)
     for (i = 1; i < argc; i++)
       do_arg(argv[i]);
+
   printf("\n%s\n", version);
 
   /* Don't allow eggdrop to run as root */

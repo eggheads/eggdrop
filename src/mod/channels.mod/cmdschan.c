@@ -2,7 +2,7 @@
  * cmdschan.c -- part of channels.mod
  *   commands from a user via dcc that cause server interaction
  *
- * $Id: cmdschan.c,v 1.75 2008/02/16 21:41:07 guppy Exp $
+ * $Id: cmdschan.c,v 1.76 2008/07/10 10:06:54 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1503,8 +1503,7 @@ static void cmd_chanset(struct userrec *u, int idx, char *par)
         if (strncmp(list[0], "need-", 5) || (u->flags & USER_OWNER)) {
           if (!strncmp(list[0], "need-", 5) && !(isowner(dcc[idx].nick)) &&
               must_be_owner) {
-            dprintf(idx, "Due to security concerns, only permanent owners can "
-                    "set these modes.\n");
+            dprintf(idx, "Due to security concerns, only permanent owners can set these modes.\n");
             nfree(buf);
             return;
           }

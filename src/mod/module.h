@@ -1,7 +1,7 @@
 /*
  * module.h
  *
- * $Id: module.h,v 1.85 2008/02/16 21:41:06 guppy Exp $
+ * $Id: module.h,v 1.86 2008/07/10 10:06:54 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -97,7 +97,7 @@
 #ifdef DEBUG_CONTEXT
 #  define Context (global[2](__FILE__, __LINE__, MODULE_NAME))
 #else
-#  define Context {}
+#  define Context do {} while (0)
 #endif
 #define module_rename ((int (*)(char *, char *))global[3])
 /* 4 - 7 */
@@ -389,15 +389,15 @@
 #ifdef DEBUG_CONTEXT
 #  define ContextNote(note) (global[232](__FILE__, __LINE__, MODULE_NAME, note))
 #else
-#  define ContextNote(note)     do {    } while (0)
+#  define ContextNote(note) do {} while (0)
 #endif
 #ifdef DEBUG_ASSERT
-#  define Assert(expr)          do {                                    \
-        if (!(expr))                                                    \
-                (global[233](__FILE__, __LINE__, MODULE_NAME));         \
+#  define Assert(expr) do {                                             \
+          if (!(expr))                                                  \
+            (global[233](__FILE__, __LINE__, MODULE_NAME));             \
 } while (0)
 #else
-#  define Assert(expr)  do {    } while (0)
+#  define Assert(expr) do {} while (0)
 #endif
 #define allocsock ((int(*)(int sock,int options))global[234])
 #define call_hostbyip ((void(*)(IP, char *, int))global[235])
