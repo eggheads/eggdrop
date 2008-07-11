@@ -1,10 +1,15 @@
-$Id: Changes1.6,v 1.5 2008/07/10 10:56:23 tothwolf Exp $
+$Id: Changes1.6,v 1.6 2008/07/11 23:29:28 tothwolf Exp $
 
 Eggdrop Changes (since version 1.6.0)
 
     _____________________________________________________________________
 
 1.6.20 (CVS):
+
+  - Moved the variable declaration for tcl_maskhost() to the top of the
+    function where it should be. FireEgl's tcl_maskhost patch prevented
+    tcl_maskhost() from compiling with many non-GCC and older GCC compilers.
+    Found by: simple / Patch by: Tothwolf
 
   - Removed Solaris RANDMAX autoconf hack.
   - Added proper preprocessor checks for RANDOM_MAX and RAND_MAX.
