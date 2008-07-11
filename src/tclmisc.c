@@ -2,7 +2,7 @@
  * tclmisc.c -- handles:
  *   Tcl stubs for everything else
  *
- * $Id: tclmisc.c,v 1.60 2008/07/10 10:56:23 tothwolf Exp $
+ * $Id: tclmisc.c,v 1.61 2008/07/11 12:48:59 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -430,7 +430,8 @@ static int tcl_myip STDVAR
 
 static int tcl_rand STDVAR
 {
-  unsigned long i, x;
+  long i;
+  unsigned long x;
   char s[11];
 
   BADARGS(2, 2, " limit");
