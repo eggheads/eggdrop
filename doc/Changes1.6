@@ -1,4 +1,4 @@
-$Id: Changes1.6,v 1.6 2008/07/11 23:29:28 tothwolf Exp $
+$Id: Changes1.6,v 1.7 2008/10/31 18:10:59 tothwolf Exp $
 
 Eggdrop Changes (since version 1.6.0)
 
@@ -186,7 +186,9 @@ Eggdrop Changes (since version 1.6.0)
   - Fixed a couple of typos in the FEATURES file.
     Patch by: Tomas Szaniszlo
 
-  - Fixed two buffer overflows in servmsg.c (CVE-2007-2807).
+  - Fixed two potential buffer overflows in servmsg.c
+    Reference: Secunia Advisory: SA25276
+    Reference: CVE-2007-2807
     Found by: Bow Sineath / Patch by: Nico Golde, Wcc
 
   - Fixed compatibility problems with certain time_t implementations.
@@ -507,7 +509,7 @@ Eggdrop Changes (since version 1.6.0)
 
   - Don't always set SHARE_OFFERED status in check_expired_tbufs() for
     linking bots.
-    Fixes Secunia Advisory: SA10858
+    Reference: Secunia Advisory: SA10858
     Originally reported to Full-Disclosure by Giuseppe Caulo
     Patch by: Luca De Roberto, Dania Stolfi, Giuseppe Caulo
 
