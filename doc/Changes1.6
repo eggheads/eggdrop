@@ -1,10 +1,14 @@
-$Id: Changes1.6,v 1.8 2008/10/31 22:07:14 tothwolf Exp $
+$Id: Changes1.6,v 1.9 2008/10/31 23:55:10 tothwolf Exp $
 
 Eggdrop Changes (since version 1.6.0)
 
     _____________________________________________________________________
 
 1.6.20 (CVS):
+
+  - Added .vbottree command help section to cmds2.help.
+    Fixes Bugzilla Bug # 464 ".help vbottree not working"
+    Found by: wanderer / Patch by: Tothwolf
 
   - Fixed global variable names used with Tcl_SetVar() / Tcl_VarEval() --
     Made assoc module use $_chan instead of $chan 
@@ -281,8 +285,8 @@ Eggdrop Changes (since version 1.6.0)
     Patch by: Tothwolf
 
   - Added support to MSGM, PUBM, NOTC, and WALL binds to support bound procs
-    returning 1 to prevent logging of the trigger message text. Fixes
-    Bugzilla Bug # 334 "msgm bind return values"
+    returning 1 to prevent logging of the trigger message text.
+    Fixes Bugzilla Bug # 334 "msgm bind return values"
   - Added BIND_STACKRET bit mask and support for stacked bind return values
     to check_tcl_bind(). This allows check_tcl_bind() to check if any
     stacked bound procs return 1 while allowing all matching stacked binds

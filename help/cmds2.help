@@ -467,3 +467,10 @@ See also: channel%{+n}, set%{+m}, debug
    Displays the bot's current uptime.
 
 See also: status
+%{help=vbottree}%{-}
+###  %bvbottree%b
+   Shows a tree-format diagram of the bots and their Eggdrop version
+   currently on the botnet. If 2 bots are sharing, a + will be indicated, or
+   a ? if nothing is known.
+
+See also: bots, botinfo, bottree
