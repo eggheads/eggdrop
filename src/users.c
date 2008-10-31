@@ -10,7 +10,7 @@
  *
  * dprintf'ized, 9nov1995
  *
- * $Id: users.c,v 1.51 2008/02/16 21:41:05 guppy Exp $
+ * $Id: users.c,v 1.52 2008/10/31 22:07:14 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -485,8 +485,8 @@ void tell_user(int idx, struct userrec *u, int master)
   fr.udef_global = u->flags_udef;
   build_flags(s, &fr, NULL);
   if (module_find("notes", 0, 0)) {
-    Tcl_SetVar(interp, "user", u->handle, 0);
-    if (Tcl_VarEval(interp, "notes ", "$user", NULL) == TCL_OK)
+    Tcl_SetVar(interp, "_user", u->handle, 0);
+    if (Tcl_VarEval(interp, "notes ", "$_user", NULL) == TCL_OK)
       n = atoi(interp->result);
   }
   li = get_user(&USERENTRY_LASTON, u);

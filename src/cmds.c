@@ -3,7 +3,7 @@
  *   commands from a user via dcc
  *   (split in 2, this portion contains no-irc commands)
  *
- * $Id: cmds.c,v 1.116 2008/02/16 21:41:03 guppy Exp $
+ * $Id: cmds.c,v 1.117 2008/10/31 22:07:14 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -306,8 +306,8 @@ static void cmd_whom(struct userrec *u, int idx, char *par)
     int chan = -1;
 
     if ((par[0] < '0') || (par[0] > '9')) {
-      Tcl_SetVar(interp, "chan", par, 0);
-      if ((Tcl_VarEval(interp, "assoc ", "$chan", NULL) == TCL_OK) &&
+      Tcl_SetVar(interp, "_chan", par, 0);
+      if ((Tcl_VarEval(interp, "assoc ", "$_chan", NULL) == TCL_OK) &&
           interp->result[0]) {
         chan = atoi(interp->result);
       }
@@ -1807,8 +1807,8 @@ static void cmd_chat(struct userrec *u, int idx, char *par)
         if (!arg[1])
           newchan = 0;
         else {
-          Tcl_SetVar(interp, "chan", arg, 0);
-          if ((Tcl_VarEval(interp, "assoc ", "$chan", NULL) == TCL_OK) &&
+          Tcl_SetVar(interp, "_chan", arg, 0);
+          if ((Tcl_VarEval(interp, "assoc ", "$_chan", NULL) == TCL_OK) &&
               interp->result[0])
             newchan = atoi(interp->result);
           else
@@ -1830,8 +1830,8 @@ static void cmd_chat(struct userrec *u, int idx, char *par)
         if (!egg_strcasecmp(arg, "on"))
           newchan = 0;
         else {
-          Tcl_SetVar(interp, "chan", arg, 0);
-          if ((Tcl_VarEval(interp, "assoc ", "$chan", NULL) == TCL_OK) &&
+          Tcl_SetVar(interp, "_chan", arg, 0);
+          if ((Tcl_VarEval(interp, "assoc ", "$_chan", NULL) == TCL_OK) &&
               interp->result[0])
             newchan = atoi(interp->result);
           else

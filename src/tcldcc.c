@@ -2,7 +2,7 @@
  * tcldcc.c -- handles:
  *   Tcl stubs for the dcc commands
  *
- * $Id: tcldcc.c,v 1.61 2008/02/16 21:41:04 guppy Exp $
+ * $Id: tcldcc.c,v 1.62 2008/10/31 22:07:14 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -203,8 +203,8 @@ static int tcl_setchan STDVAR
     if (!strcmp(argv[2], "-1") || !egg_strcasecmp(argv[2], "off"))
       chan = -1;
     else {
-      Tcl_SetVar(irp, "chan", argv[2], 0);
-      if (Tcl_VarEval(irp, "assoc ", "$chan", NULL) != TCL_OK ||
+      Tcl_SetVar(irp, "_chan", argv[2], 0);
+      if (Tcl_VarEval(irp, "assoc ", "$_chan", NULL) != TCL_OK ||
           !interp->result[0]) {
         Tcl_AppendResult(irp, "channel name is invalid", NULL);
         return TCL_ERROR;
@@ -658,8 +658,8 @@ static int tcl_whom STDVAR
     chan = -1;
   else {
     if ((argv[1][0] < '0') || (argv[1][0] > '9')) {
-      Tcl_SetVar(interp, "chan", argv[1], 0);
-      if ((Tcl_VarEval(interp, "assoc ", "$chan", NULL) != TCL_OK) ||
+      Tcl_SetVar(interp, "_chan", argv[1], 0);
+      if ((Tcl_VarEval(interp, "assoc ", "$_chan", NULL) != TCL_OK) ||
           !interp->result[0]) {
         Tcl_AppendResult(irp, "channel name is invalid", NULL);
         return TCL_ERROR;
