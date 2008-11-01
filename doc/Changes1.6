@@ -1,10 +1,14 @@
-$Id: Changes1.6,v 1.12 2008/11/01 22:02:27 tothwolf Exp $
+$Id: Changes1.6,v 1.13 2008/11/01 23:23:08 tothwolf Exp $
 
 Eggdrop Changes (since version 1.6.0)
 
     _____________________________________________________________________
 
 1.6.20 (CVS):
+
+  - Added support for irc numeric 465 ERR_YOUREBANNEDCREEP so a server ban
+    reason (for a Kline, Gline, etc) can be seen and logged.
+    Found by: Tothwolf / Patch by: bryand, Tothwolf
 
   - Added missing fclose() to tout_dcc_send()
     Fixes the socket leak in the transfer module.             

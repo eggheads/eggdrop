@@ -1,7 +1,7 @@
 /*
  * servmsg.c -- part of server.mod
  *
- * $Id: servmsg.c,v 1.98 2008/07/01 00:20:04 tothwolf Exp $
+ * $Id: servmsg.c,v 1.99 2008/11/01 23:23:08 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -1135,13 +1135,15 @@ static int gotkick(char *from, char *msg)
  */
 static int whoispenalty(char *from, char *msg)
 {
-  if (realservername && use_penalties) {
-    if (strcmp(realservername, from)) {
-      last_time += 1;
-      if (raw_log)
-        putlog(LOG_SRVOUT, "*", "adding 1sec penalty (remote whois)");
-    }
+  if (realservername && use_penalties &&
+      egg_strcasecmp(from, realservername)) {
+
+    last_time += 1;
+
+    if (raw_log)
+      putlog(LOG_SRVOUT, "*", "adding 1sec penalty (remote whois)");
   }
+
   return 0;
 }
 
@@ -1163,6 +1165,26 @@ static int got311(char *from, char *msg)
   return 0;
 }
 
+
+/*
+ * 465     ERR_YOUREBANNEDCREEP :You are banned from this server
+ */
+static int got465(char *from, char *msg)
+{
+  char *nick = NULL;
+
+  newsplit(&msg); /* 465 */
+  newsplit(&msg); /* nick */
+
+  fixcolon(msg);
+
+  putlog(LOG_SERV, "*", "Server (%s) says I'm banned: %s", from, msg);
+  putlog(LOG_SERV, "*", "Disconnecting from server.");
+  nuke_server("Banned from server.");
+  return 1;
+}
+
+
 static cmd_t my_raw_binds[] = {
   {"PRIVMSG", "",   (Function) gotmsg,       NULL},
   {"NOTICE",  "",   (Function) gotnotice,    NULL},
@@ -1179,6 +1201,7 @@ static cmd_t my_raw_binds[] = {
   {"438",     "",   (Function) got438,       NULL},
   {"451",     "",   (Function) got451,       NULL},
   {"442",     "",   (Function) got442,       NULL},
+  {"465",     "",   (Function) got465,       NULL},
   {"NICK",    "",   (Function) gotnick,      NULL},
   {"ERROR",   "",   (Function) goterror,     NULL},
 /* ircu2.10.10 has a bug when a client is throttled ERROR is sent wrong */
