@@ -1,10 +1,15 @@
-$Id: Changes1.6,v 1.9 2008/10/31 23:55:10 tothwolf Exp $
+$Id: Changes1.6,v 1.10 2008/11/01 00:40:03 tothwolf Exp $
 
 Eggdrop Changes (since version 1.6.0)
 
     _____________________________________________________________________
 
 1.6.20 (CVS):
+
+  - Modified tell_user() to use YYYY-MM-DD ISO 8601 date format. This
+    corrects the LAST date shown for the .whois and .match commands.
+    Fixes Bugzilla Bug # 470 "Dates in Whois/Match Don't Show Years"
+    Found by: BarkerJr / Patch by: Tothwolf
 
   - Added .vbottree command help section to cmds2.help.
     Fixes Bugzilla Bug # 464 ".help vbottree not working"

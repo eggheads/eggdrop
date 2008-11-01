@@ -10,7 +10,7 @@
  *
  * dprintf'ized, 9nov1995
  *
- * $Id: users.c,v 1.52 2008/10/31 22:07:14 tothwolf Exp $
+ * $Id: users.c,v 1.53 2008/11/01 00:40:03 tothwolf Exp $
  */
 /*
  * Copyright (C) 1997 Robey Pointer
@@ -494,8 +494,8 @@ void tell_user(int idx, struct userrec *u, int master)
     strcpy(s1, "never");
   else {
     now2 = now - li->laston;
-    if (now2 > 86400)
-      egg_strftime(s1, 7, "%d %b", localtime(&li->laston));
+    if (now2 >= 86400)
+      egg_strftime(s1, 11, "%Y-%m-%d", localtime(&li->laston));
     else
       egg_strftime(s1, 6, "%H:%M", localtime(&li->laston));
   }
@@ -513,8 +513,8 @@ void tell_user(int idx, struct userrec *u, int master)
         strcpy(s1, "never");
       else {
         now2 = now - (ch->laston);
-        if (now2 > 86400)
-          egg_strftime(s1, 7, "%d %b", localtime(&ch->laston));
+        if (now2 >= 86400)
+          egg_strftime(s1, 11, "%Y-%m-%d", localtime(&ch->laston));
         else
           egg_strftime(s1, 6, "%H:%M", localtime(&ch->laston));
       }
