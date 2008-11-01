@@ -1,7 +1,7 @@
 /*
  * transfer.c -- part of transfer.mod
  *
- * $Id: transfer.c,v 1.74 2008/02/16 21:41:11 guppy Exp $
+ * $Id: transfer.c,v 1.75 2008/11/01 22:02:27 tothwolf Exp $
  *
  * Copyright (C) 1997 Robey Pointer
  * Copyright (C) 1999 - 2008 Eggheads Development Team
@@ -300,6 +300,7 @@ static void eof_dcc_send(int idx)
   struct userrec *u;
 
   fclose(dcc[idx].u.xfer->f);
+
   if (dcc[idx].u.xfer->length == dcc[idx].status) {
     int l;
 
@@ -724,6 +725,9 @@ static void transfer_get_timeout(int i)
 
 static void tout_dcc_send(int idx)
 {
+
+  fclose(dcc[idx].u.xfer->f);
+
   if (!strcmp(dcc[idx].nick, "*users")) {
     int x, y = 0;
 
@@ -731,24 +735,29 @@ static void tout_dcc_send(int idx)
       if (!egg_strcasecmp(dcc[x].nick, dcc[idx].host) &&
           (dcc[x].type->flags & DCT_BOT))
         y = x;
+
     if (y != 0) {
       dcc[y].status &= ~STAT_GETTING;
       dcc[y].status &= ~STAT_SHARE;
     }
+
     unlink(dcc[idx].u.xfer->filename);
+
     putlog(LOG_BOTS, "*", TRANSFER_USERFILE_TIMEOUT);
   } else {
     char *buf;
+
+    buf = nmalloc(strlen(tempdir) + strlen(dcc[idx].u.xfer->filename) + 1);
+    sprintf(buf, "%s%s", tempdir, dcc[idx].u.xfer->filename);
+    unlink(buf);
+    nfree(buf);
 
     dprintf(DP_HELP, TRANSFER_NOTICE_TIMEOUT, dcc[idx].nick,
             dcc[idx].u.xfer->origname);
     putlog(LOG_FILES, "*", TRANSFER_DCC_SEND_TIMEOUT, dcc[idx].u.xfer->origname,
            dcc[idx].nick, dcc[idx].status, dcc[idx].u.xfer->length);
-    buf = nmalloc(strlen(tempdir) + strlen(dcc[idx].u.xfer->filename) + 1);
-    sprintf(buf, "%s%s", tempdir, dcc[idx].u.xfer->filename);
-    unlink(buf);
-    nfree(buf);
   }
+
   killsock(dcc[idx].sock);
   lostdcc(idx);
 }
